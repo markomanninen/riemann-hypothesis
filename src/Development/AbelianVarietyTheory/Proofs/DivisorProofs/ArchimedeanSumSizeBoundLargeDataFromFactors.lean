@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalUnitaryConjSplitSupportedFiniteAdelicPoi
-import Development.AbelianVarietyTheory.Definitions.Foundations.OfInfProjInfMulOfFinProjFin
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JetOperatorBoundAtEmbeddingOfComplexOpNormSq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalUnitaryConjSplitSupportedFiniteAdelicPoi
+public import Development.AbelianVarietyTheory.Definitions.Foundations.OfInfProjInfMulOfFinProjFin
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.JetOperatorBoundAtEmbeddingOfComplexOpNormSq
+
+@[expose] public section
 
 namespace DeltaFormSums
 section
@@ -85,10 +89,12 @@ theorem psiC_delta_lin {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : Gr
     psiC (rp.delta cl (∑ i, w i • b i)) x = ∑ i, D.what₂.embLL (w i) • psiC (rp.delta cl (b i)) x := by
   have hA := delta_fin G x hx (rp.x cl)
   have e : rp.delta cl (∑ i, w i • b i) (finG (Xp G) x) = ∑ i, w i • rp.delta cl (b i) (finG (Xp G) x) := by
-    simp only [ClassReps.delta, deltaForm_sum _ _ _ _ _ hA, map_sum, map_smul, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [ClassReps.delta, deltaForm_sum _ _ _ _ _ hA, map_sum, map_smul, Finset.smul_sum]
     exact Finset.sum_comm
   apply Subtype.ext
-  simp only [psiC, e, map_sum, LinearMap.map_smulₛₗ, Submodule.coe_sum, Submodule.coe_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [psiC, e, map_sum, LinearMap.map_smulₛₗ, Submodule.coe_sum, Submodule.coe_smul]
 
 def RatLe {D : D7} (σ : D.what₂.LL →+* ℂ) (z : ℂ) (r : ℝ) : Prop := ∃ y, D.what₂.embLL y = z ∧ ‖σ y‖ ≤ r
 
@@ -113,8 +119,8 @@ theorem RatLe.sum {ι : Type} (s : Finset ι) {z : ι → ℂ} {r : ℝ} (hr : 0
   | insert a s ha ih =>
     obtain ⟨y, e, hy⟩ := h a (Finset.mem_insert_self _ _)
     obtain ⟨y', e', hy'⟩ := ih fun i hi => h i (Finset.mem_insert_of_mem hi)
-    refine ⟨y + y', by rw [Finset.sum_insert ha, map_add, e, e'], ?_⟩
-    rw [Finset.card_insert_of_notMem ha, map_add]
+    refine ⟨y + y', by rw [Finset.sum_insert ha, map_add (f := _), e, e'], ?_⟩
+    rw [Finset.card_insert_of_notMem ha, map_add (f := _)]
     push_cast
     calc _ ≤ ‖σ y‖ + ‖σ y'‖ := norm_add_le _ _
       _ ≤ r + s.card * r := add_le_add hy hy'
@@ -166,7 +172,8 @@ theorem classSum_lin (h : S.SumOK t Φ) (β : CosFam G t) (τ : PureDat G t →�
   simp only [GridChoice.classSum, finsum_eq_sum_of_fintype, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun c _ => ?_
-  rw [hΨ c, map_sum, LinearMap.sum_apply, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hΨ c, map_sum, LinearMap.sum_apply, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, LinearMap.smul_apply, smul_eq_mul]
   ring
@@ -256,7 +263,7 @@ end Base
 
 section Ana
 
-theorem denseRange_embedding {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] (p : InfinitePlace K) :
+theorem denseRange_embedding {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (p : InfinitePlace K) :
     DenseRange p.embedding := by
   have hc : p.IsComplex := IsTotallyComplex.isComplex p
   have hr : ¬ ComplexEmbedding.IsReal p.embedding := InfinitePlace.isComplex_iff.1 hc
@@ -281,7 +288,7 @@ theorem denseRange_embedding {K : Type} [Field K] [NumberField K] [IsTotallyComp
   refine ⟨(q.1 : K) + (q.2 : K) * a, ?_⟩
   simp [f, hα]
 
-theorem denseRange_pi {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] (p : InfinitePlace K) (N : ℕ) :
+theorem denseRange_pi {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (p : InfinitePlace K) (N : ℕ) :
     DenseRange (fun (x : Fin N → K) i => p.embedding (x i)) := by
   have h := dense_pi (Set.univ : Set (Fin N)) (s := fun _ => Set.range p.embedding) fun i _ => denseRange_embedding p
   refine h.mono ?_
@@ -323,9 +330,8 @@ theorem opNorm_sq_le {N n : ℕ} {X : Matrix (Fin N) (Fin N) ℂ} {X' : Matrix (
   refine hcl.closure_subset_iff.2 ?_ (hd w)
   rintro _ ⟨⟨y, hy⟩, rfl⟩
   have e : T (g y) = WithLp.toLp 2 (X'⁻¹ *ᵥ (M *ᵥ y)) := by
-    simp only [hT, g, LinearMap.coe_toContinuousLinearMap', Matrix.toEuclideanLin_apply, Matrix.mulVec_mulVec]
-    congr 2
-    rw [Matrix.mul_assoc, Matrix.mul_assoc, hXX, Matrix.mul_one]
+    change WithLp.toLp 2 ((X'⁻¹ * M * X) *ᵥ (X⁻¹ *ᵥ y)) = _
+    rw [Matrix.mulVec_mulVec, Matrix.mul_assoc, hXX, Matrix.mul_one, Matrix.mulVec_mulVec]
   refine (sq_le_sq₀ (norm_nonneg _) (mul_nonneg (Real.sqrt_nonneg _) (norm_nonneg _))).1 ?_
   simp only [Function.comp]
   rw [e, mul_pow, Real.sq_sqrt hB, norm_toLp_sq]
@@ -401,7 +407,8 @@ theorem valAt_eq (c : Fin N → K) (b : C) : valAt lam e b c = ∑ k, c (e.symm 
 
 theorem mapVV_valAt (c : Fin N → K) (b : C) :
     GlobalTheory.CoefModel.mapVV σ lam (valAt lam e b c) = blk σ lam e (fun a => σ (c a)) b := by
-  rw [valAt_eq, blk, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [valAt_eq, blk, map_sum]
   exact Finset.sum_congr rfl fun k _ => LinearMap.map_smulₛₗ _ _ _
 
 theorem form_eq [Fintype C] (c : Fin N → ℂ) :
@@ -419,7 +426,8 @@ theorem form_eq [Fintype C] (c : Fin N → ℂ) :
   have hR : ∀ b, pairK lam (fun τ => (Gd τ).map σ) (blk σ lam e c b) (blk σ lam e c b) =
       ∑ k, ∑ k', star (c (e.symm (b, k))) * (pk k k' * c (e.symm (b, k'))) := by
     intro b
-    simp only [blk, map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul, hpk, hm,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [blk, map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul, hpk, hm,
       RingHom.id_apply, Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun k' _ => ?_
@@ -647,7 +655,8 @@ theorem test_bound (C sb : ℝ) (hm : 0 < D.R.m) (hA : 0 ≤ D.R.m * aOne ch.G C
       (Bu := nb b) (Bf := Bf) (fun x => hPsi σ b.2 _ x) hv
     refine ⟨z, ?_, ?_⟩
     · apply D.what₂.embLL.injective
-      rw [ez, valAt_eq, vPair_delta_lin ch hm hOKb b.2 u, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [ez, valAt_eq, vPair_delta_lin ch hm hOKb b.2 u, map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [map_mul, hy]
       simp
@@ -663,7 +672,8 @@ theorem test_bound (C sb : ℝ) (hm : 0 < D.R.m) (hA : 0 ≤ D.R.m * aOne ch.G C
     simp only [dotProduct]
     rw [← Equiv.sum_comp ch.e.symm, Fintype.sum_prod_type]
     refine Finset.sum_congr rfl fun b _ => ?_
-    rw [hz, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hz, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_mul, mul_comm]
   have hcard : (Fintype.card (TestIx ch.G) : ℝ) ≤ ea * ea := by

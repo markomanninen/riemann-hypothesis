@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.ClosedOrbitPieces.FeIsField
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.ClosedOrbitPieces.FeIsField
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ instance Fe_tower : IsScalarTower k (Fe hA he) (Wd e) := ⟨fun _ _ _ => rfl⟩
 
 def Psi : Module.End (Fe hA he) (Wd e) →ₗ[k] Matrix (Fin N) (Fin N) k where
   toFun φ := Th e (φ.restrictScalars k)
-  map_add' f g := by rw [← map_add]; rfl
+  map_add' f g := by rw [← map_add (f := _)]; rfl
   map_smul' c f := by rw [RingHom.id_apply, ← map_smul]; rfl
 
 lemma Psi_mulVec (φ : Module.End (Fe hA he) (Wd e)) (v : Fin N → k) :

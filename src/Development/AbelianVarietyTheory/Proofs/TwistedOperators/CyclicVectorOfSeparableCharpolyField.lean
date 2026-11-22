@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeftMulMatrixTransfer
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LeftMulMatrixTransfer
+
+@[expose] public section
 
 open Matrix
 
@@ -63,7 +67,7 @@ private theorem exists_vec_annihilator_eq_of_dvd_charpoly {K : Type} [Field K] {
       obtain ⟨a, b, hab⟩ := hπ.coprime_iff_not_dvd.mpr hn
       apply hwpne
       have h0 : Polynomial.aeval M (a * π + b * f) *ᵥ wp = 0 := by
-        rw [map_add, Matrix.add_mulVec, aeval_mul_mulVec, aeval_mul_mulVec, hwp0, hf,
+        rw [map_add (f := _), Matrix.add_mulVec, aeval_mul_mulVec, aeval_mul_mulVec, hwp0, hf,
           Matrix.mulVec_zero, Matrix.mulVec_zero, add_zero]
       rwa [hab, map_one, Matrix.one_mulVec] at h0
     refine ⟨wr + wp, ?_, ?_⟩

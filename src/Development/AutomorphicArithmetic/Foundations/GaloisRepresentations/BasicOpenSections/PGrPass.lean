@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.BasicOpenSections.PlaceData
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.AllHolds
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.BasicOpenSections.PlaceData
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.AllHolds
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC GlobalTheory.Et NumberField IsDedekindDomain TensorProduct
 open GlobalTheory.GalV (HTower Htot hop galV Splits IsCorrOp IsGalois pullTot)
@@ -75,7 +79,7 @@ private theorem blkPart_aeval (c : Fin d → ℕ) {M : Matrix (Fin d) (Fin d) L}
     (hM : M.BlockTriangular c) (P : Polynomial L) :
     blkPart c (Polynomial.aeval M P) = Polynomial.aeval (blkPart c M) P := by
   refine Polynomial.induction_on' P (fun p q hp hq => ?_) (fun n a => ?_)
-  · rw [map_add, map_add, blkPart_add, hp, hq]
+  · rw [map_add (f := _), map_add (f := _), blkPart_add, hp, hq]
   · rw [Polynomial.aeval_monomial, Polynomial.aeval_monomial, ← Algebra.smul_def, ← Algebra.smul_def,
       blkPart_smul, blkPart_pow c hM]
 

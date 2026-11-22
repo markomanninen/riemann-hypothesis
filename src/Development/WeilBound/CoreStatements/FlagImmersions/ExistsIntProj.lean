@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.FlagImmersions.FibSandwich
-import Development.WeilBound.CoreStatements.HodgeTatePoints.GhModel
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DifferentGeneratorDualIntegral
+module
+
+public import Development.WeilBound.CoreStatements.FlagImmersions.FibSandwich
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.GhModel
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DifferentGeneratorDualIntegral
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 set_option linter.unusedSectionVars false
@@ -28,14 +32,16 @@ private theorem exists_trace_dual_integral_projector {E : Type} [Field E] [Numbe
     have h1 := congr_fun (congr_fun hA j) l
     rw [Matrix.mul_apply] at h1
     simp only [Algebra.traceMatrix_apply, Algebra.traceForm_apply] at h1
-    rw [hz, Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hz, Finset.sum_mul, map_sum]
     simp only [smul_mul_assoc, map_zsmul, smul_eq_mul]
     rw [h1]
     simp [Matrix.one_apply]
   have hF : ∀ j y, Algebra.trace ℤ (𝓞 E) (z j * y) = d * B.repr y j := by
     intro j y
     conv_lhs => rw [← B.sum_repr y]
-    simp only [Finset.mul_sum, mul_smul_comm, map_sum, map_zsmul, hF0, smul_eq_mul, mul_ite, mul_zero,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.mul_sum, mul_smul_comm, map_sum, map_zsmul, hF0, smul_eq_mul, mul_ite, mul_zero,
       Finset.sum_ite_eq, Finset.mem_univ, if_true]
     ring
   have hN : ∀ x x' : 𝓞 E, (∀ y, Algebra.trace ℤ (𝓞 E) (x * y) = Algebra.trace ℤ (𝓞 E) (x' * y)) → x = x' := by
@@ -47,13 +53,16 @@ private theorem exists_trace_dual_integral_projector {E : Type} [Field E] [Numbe
     exact mul_left_cancel₀ hd h2
   refine ⟨z, fun a j => hN _ _ fun y => ?_, hN _ _ fun y => ?_⟩
   · rw [mul_comm a, _root_.mul_assoc, hF, Finset.sum_mul]
-    simp only [smul_mul_assoc, map_sum, map_zsmul, hF, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [smul_mul_assoc, map_sum, map_zsmul, hF, smul_eq_mul]
     conv_lhs => rw [← B.sum_repr y]
-    simp only [Finset.mul_sum, mul_smul_comm, map_sum, map_zsmul, Finsupp.coe_finset_sum, Finset.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.mul_sum, mul_smul_comm, map_sum, map_zsmul, Finset.sum_apply',
       Finsupp.smul_apply, smul_eq_mul]
     refine Finset.sum_congr rfl fun k _ => ?_
     ring
-  · rw [Finset.sum_mul, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_mul, map_sum]
     simp only [_root_.mul_assoc, hF]
     rw [← zsmul_eq_mul, map_zsmul, smul_eq_mul, Algebra.trace_eq_matrix_trace B, Matrix.trace, Finset.mul_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
@@ -75,18 +84,21 @@ private theorem exists_eigSp_projector_sum_mem_and_discr_smul (E : Type) [Field 
   · rw [mem_eigSp]
     intro a
     calc ρ a (∑ k, χ (z k) • ρ (B k) w) = ∑ k, χ (z k) • ρ (a * B k) w := by
-          simp [map_sum, map_smul, map_mul, Module.End.mul_apply]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp [map_sum, map_smul, map_mul, Module.End.mul_apply]
       _ = ∑ k, χ (z k) • ∑ j, ((B.repr (a * B k) j : ℤ) : K) • ρ (B j) w := by
           refine Finset.sum_congr rfl fun k _ => ?_
           conv_lhs => rw [hB a k]
-          simp [map_sum, Int.cast_smul_eq_zsmul]
+          set_option synthInstance.maxHeartbeats 100000 in
+            simp [map_sum, Int.cast_smul_eq_zsmul]
       _ = ∑ j, ∑ k, (((B.repr (a * B k) j : ℤ) : K) * χ (z k)) • ρ (B j) w := by
           simp only [Finset.smul_sum, smul_smul]
           rw [Finset.sum_comm]
           simp only [mul_comm]
       _ = ∑ j, χ (a * z j) • ρ (B j) w := by
           refine Finset.sum_congr rfl fun j _ => ?_
-          rw [hza a j, map_sum, Finset.sum_smul]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [hza a j, map_sum, Finset.sum_smul]
           simp only [map_zsmul, zsmul_eq_mul, map_mul, map_intCast]
       _ = χ a • ∑ k, χ (z k) • ρ (B k) w := by
           simp [Finset.smul_sum, smul_smul, map_mul]
@@ -95,7 +107,8 @@ private theorem exists_eigSp_projector_sum_mem_and_discr_smul (E : Type) [Field 
     simp only [hw, smul_smul]
     rw [← Finset.sum_smul]
     simp only [← map_mul]
-    rw [← map_sum, hzd, map_intCast]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, hzd, map_intCast]
 
 section Val
 
@@ -121,7 +134,7 @@ theorem lat_act (M : LieModel G ξ E) (f : G ⟶ G) [IsMonHom f] (T : E →ₗ[�
     exact Submodule.subset_span ⟨v ≫ f, key _ _ hv⟩
   | zero => simp
   | add x y _ _ hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hx hy
   | smul a x _ hx =>
     rw [LinearMap.map_smul_of_tower]
@@ -226,14 +239,14 @@ private theorem mem_lat_of_specializes {X : Scheme.{0}} {G : Over X} [GrpObj G] 
       ∃ v' : epsAt (X.fromSpecStalk q'.1) ⟶ G, M.Extends q' x v' := by
     intro v x hv
     obtain ⟨hv1, hv2⟩ := hv
-    have hφ : Spec.map (CommRingCat.ofHom (dualMap (X.presheaf.stalkSpecializes hs).hom)) ≫
+    have hφ : Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap (X.presheaf.stalkSpecializes hs).hom)) ≫
         (epsAt (X.fromSpecStalk q.1)).hom = (epsAt (X.fromSpecStalk q'.1)).hom := by
       simp only [epsAt, Over.mk_hom]
       rw [← hψ, ← Category.assoc, ← Category.assoc, ← Spec.map_comp, ← Spec.map_comp]
       congr 2
-      ext a <;> simp [dualMap] <;> first | rfl | exact map_zero _
+      ext a <;> simp [GlobalTheory.CompanionTheory.Ar.dualMap] <;> first | rfl | exact map_zero _
     let φ : epsAt (X.fromSpecStalk q'.1) ⟶ epsAt (X.fromSpecStalk q.1) := Over.homMk _ hφ
-    have hφl : φ.left = Spec.map (CommRingCat.ofHom (dualMap (X.presheaf.stalkSpecializes hs).hom)) := rfl
+    have hφl : φ.left = Spec.map (CommRingCat.ofHom (GlobalTheory.CompanionTheory.Ar.dualMap (X.presheaf.stalkSpecializes hs).hom)) := rfl
     refine ⟨φ ≫ v, ?_, ?_⟩
     · unfold IsTanAt at hv1 ⊢
       have key : Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom (X.presheaf.stalk q'.1)
@@ -242,7 +255,7 @@ private theorem mem_lat_of_specializes {X : Scheme.{0}} {G : Over X} [GrpObj G] 
           (X.presheaf.stalk q.1) (X.presheaf.stalk q.1) (X.presheaf.stalk q.1)).toRingHom) := by
         rw [hφl, ← Spec.map_comp, ← Spec.map_comp]
         congr 1
-        ext a <;> simp [dualMap] <;> first | rfl | exact map_zero _
+        ext a <;> simp [GlobalTheory.CompanionTheory.Ar.dualMap] <;> first | rfl | exact map_zero _
       rw [Over.comp_left, ← Category.assoc, key, Category.assoc, hv1]
       let ψ : Over.mk (X.fromSpecStalk q'.1) ⟶ Over.mk (X.fromSpecStalk q.1) := Over.homMk _ hψ
       have h1 : ψ ≫ (1 : Over.mk (X.fromSpecStalk q.1) ⟶ G) = 1 := by
@@ -254,7 +267,7 @@ private theorem mem_lat_of_specializes {X : Scheme.{0}} {G : Over X} [GrpObj G] 
       congr 2
       have hg : ∀ s, genMap ξ q' ((X.presheaf.stalkSpecializes hs).hom s) = genMap ξ q s :=
         fun s => ProjectiveLinePlaces.genMap_specializes hs q'.2 q.2 s
-      ext a <;> simp [dualMap, hg] <;> first | rfl | exact (hg _).symm
+      ext a <;> simp [GlobalTheory.CompanionTheory.Ar.dualMap, hg] <;> first | rfl | exact (hg _).symm
   unfold LieModel.lat at he ⊢
   induction he using Submodule.span_induction with
   | mem x hx =>
@@ -441,7 +454,7 @@ theorem fibSandwich : FibSandwich := by
           simpa [RingHom.comp_apply, algebraMap_smul] using h5
         | zero => simp
         | add w1 w2 _ _ h1 h2 =>
-          simp only [map_add, smul_add, Finset.sum_add_distrib]
+          simp only [map_add (f := _), smul_add, Finset.sum_add_distrib]
           exact add_mem h1 h2
         | smul a w _ h1 =>
           have h3 : ∀ k, ((algebraMap V L).comp σ) (zz k) • ρC (bb k) (a • w) =

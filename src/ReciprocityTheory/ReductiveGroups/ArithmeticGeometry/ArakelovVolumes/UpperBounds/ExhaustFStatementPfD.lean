@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustFStatementPfC
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FourierCoefficientDomain
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustStatementPfC
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustFStatementPfC
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FourierCoefficientDomain
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustStatementPfC
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.ExF
 
@@ -109,7 +113,7 @@ theorem isOpen_OmF (x0 : Frame X.Ψ r) : IsOpen (OmF X x0) := by
       have h := congrFun (congrFun (mat_cpt X x0 z τ) a) b
       simpa [mat, Matrix.mul_apply] using h
     rw [hfun]
-    exact continuous_finset_sum _ fun k _ => continuous_const.mul (cd_nM X τ k b).continuous
+    exact continuous_finsetSum _ fun k _ => continuous_const.mul (cd_nM X τ k b).continuous
   have hmat : ∀ τ : X.Ψ, Continuous fun x : Frame X.Ψ r => mat x τ := fun τ =>
     continuous_pi fun a => continuous_pi fun b =>
       (continuous_apply b).comp ((continuous_apply a).comp (continuous_apply τ))

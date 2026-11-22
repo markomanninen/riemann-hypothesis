@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapQuotBijective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlgebraMapQuotBijective
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory.PicDiv

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.AdicContMap
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.AdicContMap
+
+@[expose] public section
 
 open IsLocalRing Polynomial UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -10,20 +14,26 @@ private def cpZeroPol {Λ A : Type} [CommRing Λ] [CommRing A] [Algebra Λ A] (�
   neg_mem' := fun {p} hp n => by rw [coeff_neg]; exact neg_mem (hp n)
 
 private theorem cpZeroPol_graded {Λ A : Type} [CommRing Λ] [CommRing A] [Algebra Λ A] (𝒜 : ℤ × ℤ → Submodule Λ A)
-    [SetLike.GradedMonoid 𝒜] : SetLike.GradedMonoid (cpZeroPol 𝒜) where
-  one_mem := fun n => by
+    [SetLike.GradedMonoid 𝒜] : SetLike.GradedMonoid (cpZeroPol 𝒜) := by
+  refine { one_mem := ?_, mul_mem := ?_ }
+  · change ∀ n, (1 : A[X]).coeff n ∈ 𝒜 0
+    intro n
     rw [coeff_one]
     split_ifs
     · exact SetLike.one_mem_graded 𝒜
     · exact zero_mem _
-  mul_mem := fun i j p q hp hq n => by
+  · intro i j p q hp hq
+    change ∀ n, p.coeff n ∈ 𝒜 i at hp
+    change ∀ n, q.coeff n ∈ 𝒜 j at hq
+    change ∀ n, (p * q).coeff n ∈ 𝒜 (i + j)
+    intro n
     rw [coeff_mul]
     exact Submodule.sum_mem _ fun x _ => SetLike.mul_mem_graded (hp x.1) (hq x.2)
 
 theorem UpperTheory.V.Ws.sxCpZero :
     ∀ {Λ A : Type} [CommRing Λ] [CommRing A] [Algebra Λ A] (𝒜 : ℤ × ℤ → Submodule Λ A) [SetLike.GradedMonoid 𝒜] (M : M4 A), (∀ i j, M i j ∈ 𝒜 (wt i j)) → ∀ n, M.charpoly.coeff n ∈ 𝒜 0 := by
   intro Λ A _ _ _ 𝒜 _ M hM
-  haveI := cpZeroPol_graded 𝒜
+  have := cpZeroPol_graded 𝒜
   have hC : ∀ i j, C (M i j) ∈ cpZeroPol 𝒜 (wt i j) := fun i j n => by
     rw [coeff_C]
     split_ifs

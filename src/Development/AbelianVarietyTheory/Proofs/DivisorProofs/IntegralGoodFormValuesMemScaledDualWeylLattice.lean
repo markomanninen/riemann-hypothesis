@@ -1,18 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Development.AbelianVarietyTheory.Definitions.Divisors.FrameSignSimple
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteInfinitePsiBounds
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AuxiliaryVectorDecompositionEqZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RationalFormCoordinatesCoeffMemCoefficientField
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BranchingPairingMemCoefficientField
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HcParameterEAddHalfShiftLeBSucc
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSmulMemOfLeLocP
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SplitOffBadOfSuppSplitOff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeExtensionAlongFieldEmbeddingDuals
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FrameSignSimple
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteInfinitePsiBounds
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AuxiliaryVectorDecompositionEqZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RationalFormCoordinatesCoeffMemCoefficientField
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BranchingPairingMemCoefficientField
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HcParameterEAddHalfShiftLeBSucc
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSmulMemOfLeLocP
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SplitOffBadOfSuppSplitOff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeExtensionAlongFieldEmbeddingDuals
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.RowClaim GlobalTheory.TestLat GlobalTheory.SumSize
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -39,7 +44,7 @@ private theorem invTr_invTr (B : GL (Fin n) K) : inside₂ K n (inside₂ K n B)
   simp [inside₂]
 
 private theorem isBasisAt_of_dualFr (w : HeightOneSpectrum (𝓞 K)) {M : Submodule (𝓞 K) (Fin n → K)}
-    (hM : Submodule.IsLattice K M) {B : GL (Fin n) K} (hB : IsBasisAt w (dualFr M) B) : IsBasisAt w M (inside₂ K n B) := by
+    (hM : Submodule.IsFullLattice K M) {B : GL (Fin n) K} (hB : IsBasisAt w (dualFr M) B) : IsBasisAt w M (inside₂ K n B) := by
   obtain ⟨B₀, h₀⟩ := GlobalTheory.LatBasisAt.basisAtEx K n M hM w
   have h1 : IsBasisAt w (colLat (inside₂ K n B₀)) B :=
     Eq.trans (Eq.symm (GlobalTheory.DualWeylDual.isBasisAt_dualFr w hM.fg h₀)) hB
@@ -48,7 +53,7 @@ private theorem isBasisAt_of_dualFr (w : HeightOneSpectrum (𝓞 K)) {M : Submod
   exact Eq.trans h₀ h2
 
 private theorem funEquiv_nabK (lam : ι → DomWeight n) (M : ι → Submodule (𝓞 K) (Fin n → K))
-    (hM : ∀ τ, Submodule.IsLattice K (M τ)) (F : VV K lam) (hF : F ∈ nabK lam M) :
+    (hM : ∀ τ, Submodule.IsFullLattice K (M τ)) (F : VV K lam) (hF : F ∈ nabK lam M) :
     funEquiv lam F ∈ nabK (fun τ => (lam τ).dual) fun τ => dualFr (M τ) := by
   have hF' : F.1 ∈ transLat lam (nabStd K lam) M := hF
   show (funEquiv lam F).1 ∈ transLat _ (nabStd K _) _
@@ -72,6 +77,15 @@ end Lat
 section Ad
 
 variable {D : D7}
+
+private theorem hLat_full (V : HSp D) (g : Bridge.Gf V) :
+    Submodule.IsFullLattice D.host.E (Bridge.hLat V g) := by
+  obtain ⟨-, -, hfg, hsp, -⟩ := GlobalTheory.Member.latHat_eq_hat_and_gram D V
+  obtain ⟨Λ, hΛ, h1, h2, -⟩ := GlobalTheory.AdLat.exists_lattice_latOf
+    D.host.F D.host.E V.rank (GlobalTheory.Member.latC V) g.1 hfg hsp
+  rw [SetLike.coe_injective ((GlobalTheory.RepsCompare.coe_hLat V g).trans hΛ.symm)]
+  letI : Submodule.IsLattice D.host.E Λ := Submodule.IsLattice.of_fg D.host.E h1
+  exact ⟨h2⟩
 
 private theorem mem_hLat (V : HSp D) (g : Bridge.Gf V) (x : Fin V.rank → D.host.E) :
     x ∈ Bridge.hLat V g ↔ (g.1⁻¹).1 *ᵥ (fun i => (1 : Af D.host.F) ⊗ₜ[D.host.F] x i) ∈
@@ -200,7 +214,7 @@ private theorem inLat_value {V : HSp D} {β : GL (Fin V.rank) (Lev.EAf D)} {Λ :
   rw [mul_one] at e2
   refine e2 ▸ TestFunctionNorms.GlobalTheory.CompanionTheory.TestVal.nabAtr_map _ _ _ _ _ ?_
   exact funEquiv_nabK lam' _
-    (fun τ => GlobalTheory.TauLat.tauLatLattice _ _ _ _ (labLL D) τ _ (GlobalTheory.RepsCompare.isLattice_hLat _ _)) v hv
+    (fun τ => GlobalTheory.TauLat.tauLatLattice _ _ _ _ (labLL D) τ _ (hLat_full _ _)) v hv
 
 end Ad
 

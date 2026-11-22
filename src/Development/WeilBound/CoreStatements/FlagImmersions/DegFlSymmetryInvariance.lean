@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
-import Formalism.DegreeFormula.FlagDegFormula
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.CompactGapsGE
+public import Formalism.DegreeFormula.FlagDegFormula
+
+@[expose] public section
+
 open MvPolynomial Filter Topology GlobalTheory.CompanionTheory.Ar.Top
 
 namespace RootFieldNumerics
@@ -19,7 +24,7 @@ theorem pa_degFl_relabel {Ψ : Type} [Fintype Ψ] [DecidableEq Ψ] {N : ℕ} (σ
     intro ρ
     ext ⟨t, i⟩
     have ht : ((t, i) : Ψ × Fin N) = (fun x : Ψ × Fin N => (σ x.1, x.2)) (σ.symm t, i) := by simp
-    rw [ht, Finsupp.mapDomain_apply hinj]
+    rw [ht, Finsupp.mapDomain_apply_of_injective hinj]
     simp [permExp]
   unfold degFl
   congr 1
@@ -57,7 +62,7 @@ theorem degFl_symmetry_invariance : ∀ (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ
       intro ρ
       ext y
       conv_rhs => rw [← hinv y]
-      rw [Finsupp.mapDomain_apply hinj]
+      rw [Finsupp.mapDomain_apply_of_injective hinj]
       rcases y with ⟨t, i⟩
       by_cases ht : t = τ
       · subst ht
@@ -91,14 +96,16 @@ theorem degFl_symmetry_invariance : ∀ (Ψ : Type) [Fintype Ψ] [DecidableEq Ψ
     refine ⟨pa_degFl_relabel σ F, fun j τ => ⟨?_, ?_⟩⟩
     · unfold Sh
       conv_rhs => rw [← pa_degFl_relabel σ]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       congr 1
       apply Finset.sum_congr rfl
       intro i _
       exact pderiv_rename hinj (τ, i) F
     · unfold Tot
       conv_rhs => rw [← pa_degFl_relabel σ]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       congr 1
       apply Finset.sum_congr rfl
       intro i _

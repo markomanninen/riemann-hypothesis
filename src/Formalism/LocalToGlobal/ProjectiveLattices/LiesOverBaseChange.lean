@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.LatPAddRight
-import Formalism.LocalToGlobal.ProjectiveLattices.VAtVNeBot
-import Formalism.SharpRestriction.Divisibility.WeightAlgebra
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.LatPAddRight
+public import Formalism.LocalToGlobal.ProjectiveLattices.VAtVNeBot
+public import Formalism.SharpRestriction.Divisibility.WeightAlgebra
+
+@[expose] public section
 
 noncomputable section
 

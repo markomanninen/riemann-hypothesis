@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PreimageRegSet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PreimageRegSet
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -57,7 +61,8 @@ theorem symm_indep [Module.IsTorsionFree T F']
   obtain ⟨p, x, A, hx, hy⟩ := exists_indep (T := T) y
   have h2 : ∑ l, algebraMap E FE (∑ b, A b l • ε b) * θb (x l) = 0 := by
     rw [← h]
-    simp only [hy, map_sum, Finset.smul_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hy, map_sum, Finset.smul_sum, Finset.sum_mul]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by
       rw [← Algebra.smul_def]; exact (map_smul' θb hc _ _ _).symm
@@ -73,7 +78,8 @@ private theorem sum_smul_theta_eq_sum_basis_smul_theta (hc : θb.comp (algebraMa
     {K : Type} [Fintype K] {p : ℕ} (c : K → E) (z : K → F') (A : K → Fin p → T) (e : Fin p → E)
     (hcA : ∀ k, c k = ∑ l, A k l • e l) :
     ∑ k, c k • θb (z k) = ∑ l, e l • θb (∑ k, A k l • z k) := by
-  simp only [hcA, Finset.sum_smul, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hcA, Finset.sum_smul, map_sum, Finset.smul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ =>
     (map_smul' θb hc _ _ _).symm
@@ -112,7 +118,8 @@ private theorem exists_dual_coeffs_of_linearIndependent {R₀ : Type} [CommRing 
   choose D hD using hb'
   have key : ∀ a, algebraMap R₀ (FractionRing R₀) (∑ l, D l * B a l) = (b : R₀) • f ((ψ ∘ B) a) := by
     intro a
-    rw [LinearMap.pi_apply_eq_sum_univ f ((ψ ∘ B) a), map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [LinearMap.pi_apply_eq_sum_univ f ((ψ ∘ B) a), map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [map_mul, hD l, Function.comp_apply, hψ, smul_eq_mul, Algebra.smul_def, Algebra.smul_def]
     ring
@@ -176,7 +183,8 @@ private theorem sum_smul_thetab_expand_in_basis {T E F' FE : Type} [CommRing T] 
     {K : Type} [Fintype K] {p : ℕ} (c : K → E) (z : K → F') (A : K → Fin p → T) (e : Fin p → E)
     (hcA : ∀ k, c k = ∑ l, A k l • e l) :
     ∑ k, c k • θb (z k) = ∑ l, e l • θb (∑ k, A k l • z k) := by
-  simp only [hcA, Finset.sum_smul, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hcA, Finset.sum_smul, map_sum, Finset.smul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ =>
     (map_smul' θb hc _ _ _).symm
@@ -208,7 +216,7 @@ theorem gaussAt_comp_alg {T E F F' FE : Type} [CommRing T] [IsDomain T] [IsPrinc
       obtain ⟨u, hu, rfl⟩ := hx
       exact Submodule.subset_span ⟨u, hu, rfl⟩
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul a x _ hx =>
       rw [Algebra.smul_def, map_mul, hcT, ← Algebra.smul_def]
       exact Submodule.smul_mem _ _ hx

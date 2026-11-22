@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsCharLab
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralIdempotentOfIrrCharacterOrthogonalCentralStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GroupAlgebraTraceIdempotentAndIrreducibleDegreeStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraFrobeniusReciprocityStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraSeriesLabelExistsUniqueGLnStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraSeriesCentralIdempotentLawsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraSeriesLabelMulOfConstituentStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsCharLab
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralIdempotentOfIrrCharacterOrthogonalCentralStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GroupAlgebraTraceIdempotentAndIrreducibleDegreeStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraFrobeniusReciprocityStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraSeriesLabelExistsUniqueGLnStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraSeriesCentralIdempotentLawsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraSeriesLabelMulOfConstituentStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -169,13 +173,13 @@ theorem res_std (χ : Gn g (k + l) → ℂ) (x : Gn g k) (y : Gn g l) :
     intro M i j
     have hi := i.2
     have hj := j.2
-    rw [tl, entN, dif_pos ⟨by omega, by omega⟩]
+    rw [tl, entN, dite_eq_left ⟨by omega, by omega⟩]
     rfl
   have e2 : ∀ (M : Mt g (k + l)) (i j : Fin l), br k l M i j = M (finSumFinEquiv (.inr i)) (finSumFinEquiv (.inr j)) := by
     intro M i j
     have hi := i.2
     have hj := j.2
-    rw [br, entN, dif_pos ⟨by omega, by omega⟩]
+    rw [br, entN, dite_eq_left ⟨by omega, by omega⟩]
     rfl
   refine Finset.sum_bij (fun B _ => par finSumFinEquiv x B y) (fun B _ => ?_) (fun B _ B' _ h => ?_)
     (fun z hz => ?_) (fun _ _ => rfl)
@@ -224,14 +228,15 @@ theorem res_eq (σ : Fin k ⊕ Fin l ≃ Fin n) (χ : Gn g n → ℂ) (hχ : IsC
 open MonoidAlgebra in
 theorem map_zOf {G H : Type} [Group G] [Fintype G] [Group H] (i : G →* H) (α : G → ℂ) :
     mapDomainAlgHom ℂ ℂ i (zOf α) = ∑ x, single (i x) (α 1 / (Fintype.card G : ℂ) * α x⁻¹) := by
-  simp [zOf, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [zOf, map_sum]
 
 open MonoidAlgebra in
 theorem commute_map {G H : Type} [Group G] [Group H] (i : G →* H) (e : MonoidAlgebra ℂ H)
     (h : ∀ x c, Commute e (single (i x) c)) (a : MonoidAlgebra ℂ G) : Commute e (mapDomainAlgHom ℂ ℂ i a) := by
   induction a using MonoidAlgebra.induction_on with
   | of m => simpa using h m 1
-  | add x y hx hy => rw [map_add]; exact hx.add_right hy
+  | add x y hx hy => rw [map_add (f := _)]; exact hx.add_right hy
   | smul r x hx => rw [map_smul]; exact hx.smul_right r
 
 open MonoidAlgebra in
@@ -297,12 +302,12 @@ theorem ser_vanish (L : LabelDatum g) (h5 : 5 ≤ g) (hG : Green) (σ : Fin k �
   refine finsum_mem_induction (fun a => eN g σ * mapDomainAlgHom ℂ ℂ (inA σ) a *
     mapDomainAlgHom ℂ ℂ (inB σ) (eSerC L l f₂) * eSerC L n f = 0) (by simp) ?_ ?_
   · intro x y hx hy
-    simp only [map_add, mul_add, add_mul, hx, hy, add_zero]
+    simp only [map_add (f := _), mul_add, add_mul, hx, hy, add_zero]
   rintro α ⟨hα, hα'⟩
   refine finsum_mem_induction (fun b => eN g σ * mapDomainAlgHom ℂ ℂ (inA σ) (zOf α) *
     mapDomainAlgHom ℂ ℂ (inB σ) b * eSerC L n f = 0) (by simp) ?_ ?_
   · intro x y hx hy
-    simp only [map_add, mul_add, add_mul, hx, hy, add_zero]
+    simp only [map_add (f := _), mul_add, add_mul, hx, hy, add_zero]
   rintro β ⟨hβ, hβ'⟩
   refine finsum_mem_induction (fun c => eN g σ * mapDomainAlgHom ℂ ℂ (inA σ) (zOf α) *
     mapDomainAlgHom ℂ ℂ (inB σ) (zOf β) * c = 0) (by simp) ?_ ?_
@@ -333,7 +338,7 @@ theorem comp_alg {G H W : Type} [Group G] [Group H] [AddCommGroup W] [Module ℂ
     Representation.asAlgebraHom (ρ.comp i : Representation ℂ G W) a = ρ.asAlgebraHom (mapDomainAlgHom ℂ ℂ i a) := by
   induction a using MonoidAlgebra.induction_on with
   | of m => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | smul r x hx => simp only [map_smul, hx]
 
 theorem equiv_alg {G W W' : Type} [Group G] [AddCommGroup W] [Module ℂ W] [AddCommGroup W'] [Module ℂ W']
@@ -341,21 +346,23 @@ theorem equiv_alg {G W W' : Type} [Group G] [AddCommGroup W] [Module ℂ W] [Add
     (a : MonoidAlgebra ℂ G) (w : W) : T (ρ.asAlgebraHom a w) = ρ'.asAlgebraHom a (T w) := by
   induction a using MonoidAlgebra.induction_on with
   | of m => simpa using LinearMap.congr_fun (h m) w
-  | add x y hx hy => simp only [map_add, LinearMap.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), LinearMap.add_apply, hx, hy]
   | smul r x hx => simp only [map_smul, LinearMap.smul_apply, hx]
 
 theorem eN_left {W W' : Type} [AddCommGroup W] [Module ℂ W] [AddCommGroup W'] [Module ℂ W']
     (σ : Fin k ⊕ Fin l ≃ Fin n) (ρ : Representation ℂ (Gn g n) W) (T : W →ₗ[ℂ] W')
     (h : ∀ B, T ∘ₗ ρ (par σ 1 B 1) = T) (w : W) : T (ρ.asAlgebraHom (eN g σ) w) = T w := by
   have h' : ∀ B, T (ρ (par σ 1 B 1) w) = T w := fun B => LinearMap.congr_fun (h B) w
-  simp only [eN, map_sum, Representation.asAlgebraHom_single, LinearMap.sum_apply, LinearMap.smul_apply, map_smul, h']
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [eN, map_sum, Representation.asAlgebraHom_single, LinearMap.sum_apply, LinearMap.smul_apply, map_smul, h']
   rw [Finset.sum_const, Finset.card_univ, ← Nat.cast_smul_eq_nsmul ℂ, card_mat, smul_smul, mul_inv_cancel₀ gpow_ne,
     one_smul]
 
 theorem eN_right {W : Type} [AddCommGroup W] [Module ℂ W]
     (σ : Fin k ⊕ Fin l ≃ Fin n) (ρ : Representation ℂ (Gn g n) W) (w : W)
     (h : ∀ B, ρ (par σ 1 B 1) w = w) : ρ.asAlgebraHom (eN g σ) w = w := by
-  simp only [eN, map_sum, Representation.asAlgebraHom_single, LinearMap.sum_apply, LinearMap.smul_apply, h]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [eN, map_sum, Representation.asAlgebraHom_single, LinearMap.sum_apply, LinearMap.smul_apply, h]
   rw [Finset.sum_const, Finset.card_univ, ← Nat.cast_smul_eq_nsmul ℂ, card_mat, smul_smul, mul_inv_cancel₀ gpow_ne,
     one_smul]
 
@@ -384,23 +391,29 @@ theorem step (L : LabelDatum g) (h5 : 5 ≤ g) (hG : Green) (σ : Fin k ⊕ Fin 
   obtain ⟨S₂, -, h₂⟩ := (GlobalTheory.T.harishChandraSeriesCentralIdempotent_laws g L h5 hG l).2.2.2.2
   have e₁ : ∀ v : W, v = ∑ f₁ ∈ S₁, ρ.asAlgebraHom (mapDomainAlgHom ℂ ℂ (inA σ) (eSerC L k f₁)) v := by
     intro v
-    rw [← LinearMap.sum_apply, ← map_sum, ← map_sum, h₁, map_one, map_one, Module.End.one_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← LinearMap.sum_apply, ← map_sum, ← map_sum, h₁, map_one, map_one, Module.End.one_apply]
   have e₂ : ∀ v : W, v = ∑ f₂ ∈ S₂, ρ.asAlgebraHom (mapDomainAlgHom ℂ ℂ (inB σ) (eSerC L l f₂)) v := by
     intro v
-    rw [← LinearMap.sum_apply, ← map_sum, ← map_sum, h₂, map_one, map_one, Module.End.one_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← LinearMap.sum_apply, ← map_sum, ← map_sum, h₂, map_one, map_one, Module.End.one_apply]
   have e₃ : ∀ v : W', v = ∑ f₁ ∈ S₁, ρ'.asAlgebraHom (mapDomainAlgHom ℂ ℂ (inA σ) (eSerC L k f₁)) v := by
     intro v
-    rw [← LinearMap.sum_apply, ← map_sum, ← map_sum, h₁, map_one, map_one, Module.End.one_apply]
-  rw [e₂ (ρ.asAlgebraHom (eSerC L n f) w), map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← LinearMap.sum_apply, ← map_sum, ← map_sum, h₁, map_one, map_one, Module.End.one_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e₂ (ρ.asAlgebraHom (eSerC L n f) w), map_sum, map_sum]
   refine Finset.sum_eq_zero fun f₂ _ => ?_
-  rw [e₁ (ρ.asAlgebraHom (mapDomainAlgHom ℂ ℂ (inB σ) (eSerC L l f₂)) _), map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e₁ (ρ.asAlgebraHom (mapDomainAlgHom ℂ ℂ (inB σ) (eSerC L l f₂)) _), map_sum, map_sum]
   refine Finset.sum_eq_zero fun f₁ _ => ?_
   by_cases h12 : f = f₁ * f₂
   swap
   · rw [← hN, ← Module.End.mul_apply, ← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul, ← map_mul,
       ← map_mul, ser_vanish L h5 hG σ f f₁ f₂ h12]
     simp
-  rw [e₃ (T _), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e₃ (T _), map_sum]
   refine Finset.sum_eq_zero fun f₃ _ => ?_
   by_cases h13 : f₁ = f₃
   swap
@@ -489,12 +502,5 @@ theorem vanish (L : LabelDatum g) (h5 : 5 ≤ g) (hG : Green) {W W' : Type}
       · simp
       · simp
       · exact absurd ((h₂ i).trans (h₂ j).symm) hij
-
-theorem label_eq_of_opposite : ∀ (g : ℕ) [Fact g.Prime] (L : LabelDatum g), 5 ≤ g → Green → ∀ (n : ℕ) (W W' : Type) [AddCommGroup W] [Module ℂ W] [AddCommGroup W'] [Module ℂ W'] (ρ : Representation ℂ (Gn g n) W) (ρ' : Representation ℂ (Gn g n) W') (T : W →ₗ[ℂ] W') (a : Fin n → ℤ) (f f' : (ZMod g)[X]), (∀ u : Gn g n, (∀ i j, ¬ a i < a j → (u : Mt g n) i j = (1 : Mt g n) i j) → T ∘ₗ ρ u = T) → (∀ u : Gn g n, (∀ i j, ¬ a j < a i → (u : Mt g n) i j = (1 : Mt g n) i j) → ρ' u ∘ₗ T = T) → (∀ m : Gn g n, (∀ i j, a i ≠ a j → (m : Mt g n) i j = 0) → T ∘ₗ ρ m = ρ' m ∘ₗ T) → (∀ w, ρ.asAlgebraHom (eSerC L n f) w = w) → (∀ w', ρ'.asAlgebraHom (eSerC L n f') w' = w') → T ≠ 0 → f = f' := by
-  intro g _ L h5 hG n W W' _ _ _ _ ρ ρ' T a f f' hU hU' hM h h' hT
-  by_contra hf
-  refine hT (LinearMap.ext fun w => ?_)
-  have := vanish L h5 hG T n ρ ρ' a hU hU' hM f f' hf w
-  rwa [h, h'] at this
 
 end GlobalTheory.GLq.Opp

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SplitHomeoApply
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SplitHomeoApply
+
+@[expose] public section
+
 open MeasureTheory Topology
 open scoped ENNReal NNReal Matrix Pointwise
 
@@ -80,7 +85,7 @@ theorem conj_haar_character :
     have hg : ι γ ∈ Γ := hΓ γ hγ
     have hqmp : Measure.QuasiMeasurePreserving
         (fun m : π.ker => MulAut.conjNormal (ι γ) m) ν ν := by
-      refine ⟨(hcont _).measurable, ?_⟩
+      refine ⟨(hcont _).measurable.aemeasurable, ?_⟩
       rw [ha γ]
       intro s hs
       rw [Measure.smul_apply, hs, smul_zero]

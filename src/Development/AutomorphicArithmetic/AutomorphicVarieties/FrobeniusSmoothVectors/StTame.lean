@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FrobeniusSplitPrimeDatum
-import Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.TameGen
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FrobeniusSplitPrimeDatum
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.TameGen
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Base UpperTheory.V.Pr UpperTheory.V.Fr UpperTheory.V
 
@@ -67,7 +71,7 @@ theorem UpperTheory.V.Fr.st_tame :
   have hψa : ∀ a b : ↥(Ine (F := ℚ) A), ψ (a * b) = ψ a + ψ b := by
     intro a b
     simp only [ψ]
-    rw [hφIa, Subgroup.coe_mul, hyadd _ a.2 _ b.2, map_add]
+    rw [hφIa, Subgroup.coe_mul, hyadd _ a.2 _ b.2, map_add (f := _)]
     ring
   have hψγ : ψ γ = 0 := by
     simp only [ψ, c]

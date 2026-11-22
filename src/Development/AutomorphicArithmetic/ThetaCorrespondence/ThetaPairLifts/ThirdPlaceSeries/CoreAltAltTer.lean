@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InfinityTypeOfLift
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
+module
+
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InfinityTypeOfLift
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -54,8 +58,8 @@ theorem core_data_of_point (D : D7) (cf : CharFrame D) (A : _root_.GlobalTheory.
     have h2' : (cf.eta⁻¹).HasInfQ (embPsi D.host) (-(fun _ => 1 / 2)) :=
       GlobalTheory.BlockCharInf.hasInfQ_inv' ⟨fun _ => 1, fun _ => by norm_num, cf.isEta.inf⟩
     convert GlobalTheory.BlockCharInf.hasInfQ_mul' h1' h2' using 1
-    funext g
-    simp only [Pi.add_apply, Pi.neg_apply]
+    ext g
+    change -eExp D ⟨k, by omega⟩ g - 1 / 2 = -eExp D ⟨k, by omega⟩ g + -(1 / 2)
     ring
   obtain ⟨hg1, hg2⟩ := chr.infG _ _ hI (D.eTau τ)
   have hval : eExp D ⟨k, by omega⟩ (D.eTau τ) = (D.hc τ).e ⟨k, by omega⟩ := by simp [eExp]
@@ -69,7 +73,7 @@ theorem core_data_of_point (D : D7) (cf : CharFrame D) (A : _root_.GlobalTheory.
   · unfold isoInf
     simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero, hG1, Multiset.map_singleton, bindCast, List.map_map, Function.comp_def, sum_singletons]
     unfold NG.paramV GlobalTheory.IndefiniteRowSideFullHecke.CMTypeEmbeddings.hcSigma
-    rw [Multiset.map_add, Multiset.map_map, Multiset.map_map, ← Multiset.map_coe, Multiset.coe_range]
+    rw [Multiset.map_add (f := _), Multiset.map_map, Multiset.map_map, ← Multiset.map_coe, Multiset.coe_range]
     refine congrArg₂ (· + ·) (congrArg₂ (· + ·) ?_ ?_) ?_
     · refine Multiset.map_congr rfl fun i _ => ?_
       simp only [Function.comp_apply]
@@ -80,7 +84,7 @@ theorem core_data_of_point (D : D7) (cf : CharFrame D) (A : _root_.GlobalTheory.
   · unfold isoInf
     simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero, hG2, Multiset.map_singleton, bindCast, List.map_map, Function.comp_def, sum_singletons]
     unfold NG.paramV GlobalTheory.IndefiniteRowSideFullHecke.CMTypeEmbeddings.hcSigma
-    rw [Multiset.map_add, Multiset.map_add, Multiset.map_add, Multiset.map_map, Multiset.map_map, Multiset.map_map,
+    rw [Multiset.map_add (f := _), Multiset.map_add (f := _), Multiset.map_add (f := _), Multiset.map_map, Multiset.map_map, Multiset.map_map,
       Multiset.map_map, Multiset.map_map, ← Multiset.map_coe, Multiset.coe_range]
     refine congrArg₂ (· + ·) (congrArg₂ (· + ·) ?_ ?_) ?_
     · refine Multiset.map_congr rfl fun i _ => ?_

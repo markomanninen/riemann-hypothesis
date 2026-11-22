@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.MultihomogeneousSquares.SingSt
-import Development.WeilBound.CoreStatements.FlagImmersions.SumFundOnRoot
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MemAbLocusIff
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointsIffCentresStatement
+module
+
+public import Development.WeilBound.CoreStatements.MultihomogeneousSquares.SingSt
+public import Development.WeilBound.CoreStatements.FlagImmersions.SumFundOnRoot
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.MemAbLocusIff
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointsIffCentresStatement
+
+@[expose] public section
 
 noncomputable section
 

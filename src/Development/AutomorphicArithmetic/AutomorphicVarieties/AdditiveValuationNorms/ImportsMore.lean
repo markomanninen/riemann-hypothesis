@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.CokLenLeOfRangeLe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.LenComp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.ImportsTer
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.CokLen
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.CokLenLeOfRangeLe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.LenComp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.ImportsTer
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.CokLen
+
+@[expose] public section
 
 open UpperTheory.V UpperTheory.V.PropA
 

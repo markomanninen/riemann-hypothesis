@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.ComplF
+module
+
+public import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.ComplF
+
+@[expose] public section
 
 noncomputable section
 

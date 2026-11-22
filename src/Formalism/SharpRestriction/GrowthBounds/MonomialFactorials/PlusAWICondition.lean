@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BePhiSmulRight
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BePhiSmulRight
+
+@[expose] public section
 
 noncomputable section
 

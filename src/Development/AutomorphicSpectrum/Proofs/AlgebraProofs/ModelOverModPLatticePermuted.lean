@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsLatticeFamily
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DvrBundleStatementAStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DvrBundleStatementDStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LatticeFamiliesGlueToBundleStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ChartBundleProductStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LineBundleChartGenericComparisonStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ChartBundleIntersectionSymmetryStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LatticeFamilyInjectiveModelFactsStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DualBundleIntersectionStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsLatticeFamily
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DvrBundleStatementAStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DvrBundleStatementDStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LatticeFamiliesGlueToBundleStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ChartBundleProductStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LineBundleChartGenericComparisonStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ChartBundleIntersectionSymmetryStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LatticeFamilyInjectiveModelFactsStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.DualBundleIntersectionStatement
+
+@[expose] public section
+
 open MvPolynomial GlobalTheory.CompanionTheory.Ar.Num GroundTheory.Heights₂.Heights.NumbersDVR
 open ReciprocityTheory.ChartRestriction.G.Geo (ChartBundle chartRing)
 open GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.NumbersDVR.Bundles (mseg mcIdeal chartMon joinCoord bcCoord pullDeg restrictChart fnField ck rootNum SameGeneric LatLE IsPull IsPullBC)
@@ -57,7 +62,7 @@ theorem mem_stepGraph {τ : Sg} {χ : F → Ω} {i : Fin n} {c : Ω} {m : Fin (r
 
 theorem mem_mulLat {V : Type} [AddCommGroup V] [Module Ω V] {c : Ω} {L : AddSubgroup V} {v : V} :
     v ∈ mulLat c L ↔ ∃ e ∈ L, v = c • e := by
-  simp only [mulLat, AddSubgroup.mem_map, DistribMulAction.toAddMonoidHom_apply]
+  simp only [mulLat, AddSubgroup.mem_map, DistribSMul.toAddMonoidHom_apply]
   constructor
   · rintro ⟨e, he, rfl⟩; exact ⟨e, he, rfl⟩
   · rintro ⟨e, he, rfl⟩; exact ⟨e, he, rfl⟩
@@ -216,7 +221,8 @@ theorem dotB_bijective (N : ℕ) : Function.Bijective (dotB (Ω := Ω) N).flip :
     refine ⟨fun i => f (Pi.single i 1), LinearMap.ext fun v => ?_⟩
     rw [LinearMap.flip_apply, dotB_apply]
     conv_rhs => rw [← Finset.univ_sum_single v]
-    simp only [dotProduct, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     have e : Pi.single i (v i) = v i • (Pi.single i 1 : Fin N → Ω) := by
       rw [← Pi.single_smul]

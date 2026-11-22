@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.AdditiveInvariants
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.AdditiveInvariants
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -22,11 +27,6 @@ def funRep (Y : Type*) [MulAction Γ Y] (σ : Representation k Γ N) : Represent
     ext F y
     simp [mul_smul]
 
-@[simp]
-theorem funRep_apply (Y : Type*) [MulAction Γ Y] (σ : Representation k Γ N) (γ : Γ) (F : Y → N)
-    (y : Y) : funRep Y σ γ F y = σ γ (F (γ⁻¹ • y)) :=
-  rfl
-
 end Fun
 
 section Pi
@@ -42,12 +42,6 @@ def piFamilyRep {ι : Type*} (V : ι → Type*) [∀ i, AddCommMonoid (V i)] [�
   map_mul' γ δ := by
     ext
     simp
-
-@[simp]
-theorem piFamilyRep_apply {ι : Type*} (V : ι → Type*) [∀ i, AddCommMonoid (V i)]
-    [∀ i, Module k (V i)] (ρ : ∀ i, Representation k Γ (V i)) (γ : Γ) (x : ∀ i, V i) (i : ι) :
-    piFamilyRep V ρ γ x i = ρ i γ (x i) :=
-  rfl
 
 end Pi
 

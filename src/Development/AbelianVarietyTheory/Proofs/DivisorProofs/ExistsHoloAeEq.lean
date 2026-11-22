@@ -1,10 +1,15 @@
-import ReciprocityTheory.L2DbarEstimates.Imports
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSignHolds
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.L2ExtensionLogCanonical
-import Development.AbelianVarietyTheory.Definitions.Divisors.EtaleEmpty
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.RegBall
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.HoloWeak
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ExtWeak
+module
+
+public import ReciprocityTheory.L2DbarEstimates.Imports
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSignHolds
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.L2ExtensionLogCanonical
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EtaleEmpty
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.RegBall
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.HoloWeak
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.ExtWeak
+
+@[expose] public section
+
 open MeasureTheory Filter Topology Metric ReciprocityTheory.L2DbarEstimates ReciprocityTheory.L2DbarEstimates.Y GlobalTheory.OTY GlobalTheory.Published.L2Extension
 open scoped ENNReal ContDiff
 

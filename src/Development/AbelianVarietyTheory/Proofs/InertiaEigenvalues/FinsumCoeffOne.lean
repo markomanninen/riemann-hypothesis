@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PeriodDiscExtensionTateElement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SeriesTransport
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PeriodDiscExtensionTateElement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SeriesTransport
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -28,9 +32,6 @@ theorem smulS_def (T : LocLat G Qp LL O) (a : LL ⊗[Qp] B) (m : T.V ⊗[Qp] B) 
 
 scoped instance towS (T : LocLat G Qp LL O) : IsScalarTower LL (LL ⊗[Qp] B) (T.V ⊗[Qp] B) :=
   ⟨fun c a m => by rw [smulS_def, smulS_def, map_smul, LinearMap.smul_apply]⟩
-
-scoped instance commS (T : LocLat G Qp LL O) : SMulCommClass (LL ⊗[Qp] B) LL (T.V ⊗[Qp] B) :=
-  ⟨fun a c m => by rw [smulS_def, smulS_def, map_smul]⟩
 
 variable {R : WSer Γ} {b₀ : LetA O n →+* LL ⊗[Qp] B} {tS zS : BdR}
     {Zl Ai : Type} [CommRing Zl] [CommRing Ai] [Algebra Zl O] [Algebra Zl Ai]
@@ -134,7 +135,7 @@ theorem Q_pow_cancel (R : WSer Γ) (m : ℕ) (a : LetA LL n) (h : toL O LL n (R.
     conv_lhs => rw [PowerSeries.eq_X_mul_shift_add_const b]
     have : R.φ₀ (PowerSeries.C (PowerSeries.constantCoeff b)) = PowerSeries.C (PowerSeries.constantCoeff b) :=
       R.φ₀.commutes _
-    rw [map_add, map_mul, this, R.φ₀_X]
+    rw [map_add (f := _), map_mul, this, R.φ₀_X]
     simp
   have hq : PowerSeries.constantCoeff R.q₀ = (PD.p : O) := by
     have := congrArg (PowerSeries.coeff 1) R.q₀_def
@@ -232,7 +233,7 @@ theorem d_transport (F : Frame Dc Mo T) (F' : Frame Dc Mo T') (σ : LetA LL n �
   · apply Subtype.ext
     have h1 := congrFun (congrFun hU k) p
     simp only [Matrix.mul_apply, Matrix.map_apply, Matrix.smul_apply, smul_eq_mul] at h1
-    simp only [Ut, MulMemClass.coe_mul, SubmonoidClass.coe_pow, AddSubmonoidClass.coe_finset_sum, Disc.coe_jA,
+    simp only [Ut, MulMemClass.coe_mul, SubmonoidClass.coe_pow, AddSubmonoidClass.coe_finsetSum, Disc.coe_jA,
       Disc.coe_res, Disc.coe_cstC, map_mul, map_pow]
     simp only [mul_left_comm _ (σ (Dc.t : LetA LL n) ^ F.w), mul_assoc, ← Finset.mul_sum]
     rw [h1]
@@ -254,7 +255,8 @@ theorem lev_transport (F : Frame Dc Mo T) (F' : Frame Dc Mo T') (σ : LetA LL n 
       toL O LL n q' • H.map (toL O LL n) *ᵥ (σ ∘ fun k => toL O LL n (F.nb.repr x k)) := by
     funext j
     have h1 := congrArg (fun z => toL O LL n (F'.nb.repr z j)) hxy
-    simp only [map_smul, map_sum, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.finset_sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_smul, map_sum, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.finsetSum_apply,
       Finsupp.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
       if_true, map_mul, hσA] at h1
     simp only [Pi.smul_apply, smul_eq_mul, Matrix.mulVec, dotProduct, Matrix.map_apply, Function.comp_apply, h1]
@@ -264,7 +266,7 @@ theorem lev_transport (F : Frame Dc Mo T) (F' : Frame Dc Mo T') (σ : LetA LL n 
       Dc.t ^ F'.w * (Dc.jA q' * ∑ p, Dc.cstC (Cm j p) * Dc.res σ hσ (F.a x p)) := by
     intro j
     apply Subtype.ext
-    simp only [MulMemClass.coe_mul, SubmonoidClass.coe_pow, AddSubmonoidClass.coe_finset_sum, Disc.coe_jA,
+    simp only [MulMemClass.coe_mul, SubmonoidClass.coe_pow, AddSubmonoidClass.coe_finsetSum, Disc.coe_jA,
       Disc.coe_res, Disc.coe_cstC, map_mul, map_pow, coe_a, h2]
     simp only [Pi.smul_apply, smul_eq_mul]
     rw [Matrix.mulVec, dotProduct]
@@ -273,13 +275,15 @@ theorem lev_transport (F : Frame Dc Mo T) (F' : Frame Dc Mo T') (σ : LetA LL n 
   simp only [lev_apply]
   refine series_transport F.w F'.w _ _ κ hκ _ (fun j p => Cm j p i) (fun j => ?_) h _ _ hD k
   have h4 := congrArg (Dc.ex i ζ) (h3 j)
-  simpa only [map_mul, map_pow, map_sum, hex, Dc.numEx_t_eq_fifteen, Dc.ex_jA, Dc.ex_cstC, PowerSeries.rescale_X] using h4
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa only [map_mul, map_pow, map_sum, hex, Dc.numEx_t_eq_fifteen, Dc.ex_jA, Dc.ex_cstC, PowerSeries.rescale_X] using h4
 
 theorem expand (F : Frame Dc Mo T) (f : E.DD T →ₗ[O] E.DD T') (σA : LetA O n →+* LetA O n)
     (hf : ∀ (a : LetA O n) (x : E.DD T), f (a • x) = σA a • f x) (x : ↥(Mo.N T)) :
     f (x : E.DD T) = ∑ p, σA (F.nb.repr x p) • f (F.nb p : E.DD T) := by
   conv_lhs => rw [← F.nb.sum_repr x]
-  simp only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul, map_sum, hf]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul, map_sum, hf]
 
 theorem γD_smulA (T : LocLat G Qp LL O) (g : Γ.Gam) (a : LetA O n) (x : E.DD T) :
     E.γD T g (a • x) = letγ (R.γ₀ g) a • E.γD T g x := by
@@ -356,7 +360,7 @@ theorem lev_Γ (F : Frame Dc Mo T) (g : Γ.Gam) (i : ZMod n) (ζ ζ' : LL) (j a 
     x ⟨E.γD T g (x : E.DD T), hx⟩ (by
       rw [one_smul, one_smul]
       apply Subtype.ext
-      simp only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul, ← F.Gm_def]
+      simp only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul, ← F.Gm_def]
       exact F.expand _ _ (γD_smulA T g) x) LinearMap.id (fun p => (sum_one_smul (F.Dl bT i) i p).symm) k
   rw [this, map_one, finsum_coeff_one]
   simp
@@ -369,7 +373,8 @@ include hP
 theorem bT_sum (hT : IsCrys PD T.ρ) {r : ℕ} (c : Fin r → LetA O n) (y : Fin r → ↥(Mo.N T)) (x : ↥(Mo.N T))
     (hx : (x : E.DD T) = ∑ i, c i • (y i : E.DD T)) : bT T x = ∑ i, b₀ (c i) • bT T (y i) := by
   have : x = ∑ i, c i • y i := Subtype.ext (by simpa using hx)
-  rw [this, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [this, map_sum]
   simp only [hP.smul T hT, smulS_def]
 
 theorem d_gal (hT : IsCrys PD T.ρ) (F : Frame Dc Mo T) (g : G) (p : Fin F.r) :
@@ -436,7 +441,7 @@ theorem lev_φ (hT : IsCrys PD T.ρ) (F : Frame Dc Mo T) (i : ZMod n) (ζ : LL)
     (Dc.ex_φ i ζ hζ) (R.Q ^ F.m) _ (Q_pow_cancel R _) F.Pm F.Cm F.PU (letφ R.φ₀).toRingHom (toL_φ R) x _ ?_ _
     (Dl_transport bT F F _ i (i - 1) (fun z => ?_) _ hd) k
   · apply Subtype.ext
-    simp only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul, ← F.Pm_def]
+    simp only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul, ← F.Pm_def]
     rw [F.expand _ (letφ R.φ₀).toRingHom (φD_smulA T) x]
     simp only [Finset.smul_sum, smul_smul]
     refine Finset.sum_congr rfl fun p _ => ?_
@@ -463,19 +468,21 @@ theorem lev_map (hinv : ∀ a : LetA LL n, γL R Γ.gam a = a → ∃ c, a = cst
     intro p
     have := congrArg Subtype.val
       (F'.nb.sum_repr ⟨E.map f (F.nb p : E.DD T), Mo.map_N f hT hT' _ (F.nb p).2⟩)
-    simpa only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul] using this.symm
+    simpa only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul] using this.symm
   have hfA : ∀ (a : LetA O n) (z : E.DD T), E.map f (a • z) = a • E.map f z := by
     intro a z
     rw [← algebraMap_smul R.EE a z, map_smul, algebraMap_smul]
   have hHG : H * F.Gm Γ.gam = F'.Gm Γ.gam * H.map (letγ (R.γ₀ Γ.gam)) := by
     ext1 j p
     have h1 := E.map_γ f Γ.gam (F.nb p : E.DD T)
-    rw [F.Gm_def, hH, map_sum, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [F.Gm_def, hH, map_sum, map_sum] at h1
     simp only [hfA, hH, γD_smulA, F'.Gm_def] at h1
     have h2 : ∑ a, F.Gm Γ.gam a p • ∑ b, H b a • F'.nb b =
         ∑ a, letγ (R.γ₀ Γ.gam) (H a p) • ∑ b, F'.Gm Γ.gam b a • F'.nb b := Subtype.ext (by simpa using h1)
     have h3 := congrArg (fun z => F'.nb.repr z j) h2
-    simp only [map_smul, map_sum, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.finset_sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_smul, map_sum, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.finsetSum_apply,
       Finsupp.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
       if_true] at h3
     simp only [Matrix.mul_apply, Matrix.map_apply]
@@ -517,9 +524,10 @@ theorem lev_map (hinv : ∀ a : LetA LL n, γL R Γ.gam a = a → ∃ c, a = cst
     x ⟨E.map f (x : E.DD T), hx⟩ (by
       rw [one_smul, one_smul]
       apply Subtype.ext
-      simp only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul, ← hH, ← hfA, ← map_sum, RingHom.id_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul, ← hH, ← hfA, ← map_sum, RingHom.id_apply]
       congr 1
-      simpa only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul] using
+      simpa only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul] using
         (congrArg Subtype.val (F.nb.sum_repr x)).symm) _
     (Dl_transport bT F F' _ i i (fun z => hh _ z) _ hd) k
   rw [this, map_one, finsum_coeff_one]
@@ -533,21 +541,22 @@ theorem bT_eq (hT : IsCrys PD T.ρ) (F : Frame Dc Mo T) (x : ↥(Mo.N T)) :
     apply Subtype.ext
     have h2 := congrFun (Matrix.mulVec_mulVec (fun k => toL O LL n (F.nb.repr x k)) F.U F.V) i
     rw [F.UV, Matrix.one_mulVec] at h2
-    simp only [Ut, MulMemClass.coe_mul, SubmonoidClass.coe_pow, AddSubmonoidClass.coe_finset_sum, Disc.coe_jA,
+    simp only [Ut, MulMemClass.coe_mul, SubmonoidClass.coe_pow, AddSubmonoidClass.coe_finsetSum, Disc.coe_jA,
       coe_a]
     rw [← h2]
     conv_rhs => rw [Matrix.mulVec, dotProduct, Finset.mul_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     ring
   rw [Finset.smul_sum, bT_sum hP hT (F.nb.repr x) F.nb x (by
-    simpa only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul] using
+    simpa only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul] using
       (congrArg Subtype.val (F.nb.sum_repr x)).symm)]
   simp only [smul_comm (Dc.J Dc.t ^ F.w) (Dc.J (F.a x _)), d_spec]
   simp only [Finset.smul_sum, smul_smul]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [← Finset.sum_smul]
-  simp only [← map_mul, ← map_sum, h1]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← map_mul, ← map_sum, h1]
   simp only [map_mul, map_pow, Dc.J_jA, mul_assoc]
 
 omit hP in
@@ -566,18 +575,18 @@ theorem ιV_smul_sub (ι : LL →ₐ[Qp] BdR) (a : LL ⊗[Qp] B) (m : T.V ⊗[Qp
       intro u u' z
       change mulR (LL := LL) T.V BdR (u + u') z = mulR (LL := LL) T.V BdR u z + mulR (LL := LL) T.V BdR u' z
       simp
-    rw [add_smul, map_add, map_add, this, add_sub_add_comm]
+    rw [add_smul, map_add (f := _), map_add (f := _), this, add_sub_add_comm]
     exact add_mem ha hb
   | tmul c b =>
     refine Submodule.subset_span ⟨c, mulVR T (PD.ι b) (ιV PD (LL := LL) (V := T.V) m), ?_⟩
     congr 1
     · induction m using TensorProduct.induction_on with
       | zero => simp
-      | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+      | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
       | tmul x y => simp [smulS_def, actS_tmul, ιV, mulVR, smul_tmul']
     · induction m using TensorProduct.induction_on with
       | zero => simp
-      | add x y hx hy => simp only [map_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]
       | tmul x y => simp [ιV, mulVR, mul_assoc]
 
 theorem dR_basis (hT : IsCrys PD T.ρ) (F : Frame Dc Mo T) (ι : LL →ₐ[Qp] BdR) (x : ↥(Mo.N T)) :
@@ -588,7 +597,8 @@ theorem dR_basis (hT : IsCrys PD T.ρ) (F : Frame Dc Mo T) (ι : LL →ₐ[Qp] B
   have h2 : Algebra.TensorProduct.productMap ι (PD.ι.restrictScalars Qp) (Dc.J Dc.t ^ F.w) = tS ^ F.w := by
     rw [map_pow, Dc.periodDiscJ_tateElement]
     simp [Dc.ι_tb]
-  rw [h2, bT_eq hP hT, map_sum] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h2, bT_eq hP hT, map_sum] at h1
   have h3 := Submodule.sum_mem (compKer T ι) (t := Finset.univ)
     fun j _ => ιV_smul_sub (PD := PD) ι (Dc.J (F.a x j)) (F.d bT j)
   rw [Finset.sum_sub_distrib] at h3
@@ -612,7 +622,8 @@ theorem dR_lev (F : Frame Dc Mo T) (i : ZMod n) (ζ : LL) (ι : LL →ₐ[Qp] Bd
       · simp
     refine sub_eq_zero.mp (PD.Fil_sep _ fun a => ?_)
     exact antitone_int_of_succ_le PD.Fil_anti (show a ≤ ((a.toNat + 1 : ℕ) : ℤ) by omega) (h3 a.toNat)
-  rw [lev_apply, map_sum, ← Finset.sum_sub_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [lev_apply, map_sum, ← Finset.sum_sub_distrib]
   refine Submodule.sum_mem _ fun j _ => ?_
   rw [map_smul, ← smul_sub]
   refine Submodule.smul_mem _ _ ?_

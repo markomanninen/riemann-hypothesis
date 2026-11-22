@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTypeGroupBlockLift
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTypeGroupBlockLift
+
+@[expose] public section
 
 namespace GlobalTheory.EigenFamilyStabilizer
 
@@ -65,17 +69,18 @@ theorem exists_eigen_family : ∀ {G V W ι : Type} [inst : Group G] [inst_1 : T
       group
   have hN : (Fintype.card (K ⧸ H) : ℂ) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
   refine ⟨fun j => (Fintype.card (K ⧸ H) : ℂ)⁻¹ • ∑ q, F j q, fun j h hh => ?_, ?_⟩
-  · rw [map_smul, map_sum, smul_comm]
-    congr 1
-    rw [Finset.sum_congr rfl fun q _ => hact j ⟨h, hh⟩ q, ← Finset.smul_sum]
-    congr 1
-    exact Equiv.sum_comp (MulAction.toPerm (⟨h, hh⟩ : K)) (F j)
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_smul, map_sum, smul_comm]
+      apply congrArg ((Fintype.card (K ⧸ H) : ℂ)⁻¹ • ·)
+      rw [Finset.sum_congr rfl fun q _ => hact j ⟨h, hh⟩ q, ← Finset.smul_sum]
+      exact congrArg (θ h • ·) (Equiv.sum_comp (MulAction.toPerm (⟨h, hh⟩ : K)) (F j))
   · have hq : ∀ q, ∑ i, T i (F i q) = ∑ i, T i (y i) := by
       intro q
       simp only [F, f, map_smul]
       rw [← Finset.smul_sum, hy _ q.out.2, smul_smul, ← hm _ (q.out⁻¹).2 _ q.out.2, ← Subgroup.coe_mul,
         inv_mul_cancel, Subgroup.coe_one, h1, one_smul]
-    simp only [map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_smul, map_sum, Finset.sum_apply]
     rw [← Finset.smul_sum, Finset.sum_comm, Finset.sum_congr rfl fun q _ => hq q, Finset.sum_const,
       Finset.card_univ, ← Nat.cast_smul_eq_nsmul ℂ, smul_smul, inv_mul_cancel₀ hN, one_smul]
 

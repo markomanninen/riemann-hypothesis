@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ThickFrames
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.WordTens
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.MatchInf
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ArchBasic
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ThickFrames
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.WordTens
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.MatchInf
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ArchBasic
+
+@[expose] public section
 
 open MeasureTheory MeasureTheory.Measure NumberField
 open GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.L1 UpperTheory.ConvolutionTheory.C PositivityTheory.Rg.Tf.Geo
@@ -71,6 +75,7 @@ theorem UpperTheory.ConvolutionTheory.L1.pairPosition :
     congr 1
     funext g
     simp [UpperTheory.ConvolutionTheory.L1.glueA]
+  set_option synthInstance.maxHeartbeats 200000 in
   have hc1 : c = 1 := by
     refine UpperTheory.ConvolutionTheory.L1.pairPosition_one (νE.map (archEquiv E n).symm) c ?_
     have h := hμ

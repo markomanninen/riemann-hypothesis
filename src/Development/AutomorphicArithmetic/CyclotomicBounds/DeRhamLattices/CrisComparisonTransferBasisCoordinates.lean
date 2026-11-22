@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
-import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.CrisComparisonToBSmulEqDeRhamAct
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ZAEqAlgebraMapPt
+public import Development.AutomorphicArithmetic.CyclotomicBounds.DeRhamLattices.CrisComparisonToBSmulEqDeRhamAct
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 set_option maxHeartbeats 2000000
@@ -18,12 +23,15 @@ private theorem sum_through_tensor_basis {O A B M V ι κ : Type} [CommRing O] [
     simp [Finset.sum_apply, Pi.single_apply]
   have e2 : TensorProduct.map f.toLinearMap LinearMap.id (∑ k, r k ⊗ₜ[O] x k) =
       ∑ k, f (r k) • ((1 : B) ⊗ₜ[O] x k) := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     simp [TensorProduct.smul_tmul']
-  rw [e1, e2, map_sum] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e1, e2, map_sum] at h
   have h2 := congrArg X h
-  simp only [map_sum, map_smul, hF] at h2
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, hF] at h2
   exact h2
 
 theorem _root_.UpperTheory.KN.crisComparison_transfer_basis_coordinates :

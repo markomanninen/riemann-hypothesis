@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RankPosOfLeaves
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RankPosOfLeaves
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem subset_hull (S : Set (Sm E N)) : S ⊆ (hull S : Submodule ℂ (Sm E N))
   rintro U ⟨hS, -⟩
   exact hS hφ
 
-theorem hull_le {S : Set (Sm E N)} {U : Submodule ℂ (Sm E N)} (hS : S ⊆ U) (hU : IsStable U) : hull S ≤ U :=
+theorem hull_le {S : Set (Sm E N)} {U : Submodule ℂ (Sm E N)} (hS : S ⊆ U) (hU : _root_.GlobalTheory.CuspRep.IsStable U) : hull S ≤ U :=
   sInf_le ⟨hS, hU⟩
 
 theorem hull_ne_bot {S : Set (Sm E N)} {φ : Sm E N} (hφ : φ ∈ S) (h0 : φ ≠ 0) : hull S ≠ ⊥ := by
@@ -28,7 +32,7 @@ theorem hull_ne_bot {S : Set (Sm E N)} {φ : Sm E N} (hφ : φ ∈ S) (h0 : φ �
   rw [h] at h1
   exact h0 ((Submodule.mem_bot ℂ).1 h1)
 
-theorem exists_ne_of_hull {S : Set (Sm E N)} (hst : IsStable (hull S)) (T : Sm E N →ₗ[ℂ] Sm E N)
+theorem exists_ne_of_hull {S : Set (Sm E N)} (hst : _root_.GlobalTheory.CuspRep.IsStable (hull S)) (T : Sm E N →ₗ[ℂ] Sm E N)
     (he : ∀ o, ∀ χ ∈ hull S, T (act o χ) = act o (T χ)) {ψ : Sm E N} (hψ : ψ ∈ hull S) (hT : T ψ ≠ 0) :
     ∃ φ ∈ S, T φ ≠ 0 := by
   by_contra hcon
@@ -36,7 +40,7 @@ theorem exists_ne_of_hull {S : Set (Sm E N)} (hst : IsStable (hull S)) (T : Sm E
     intro φ hφ
     by_contra h
     exact hcon ⟨φ, hφ, h⟩
-  have hK : IsStable (hull S ⊓ LinearMap.ker T) := by
+  have hK : _root_.GlobalTheory.CuspRep.IsStable (hull S ⊓ LinearMap.ker T) := by
     intro o χ hχ
     refine Submodule.mem_inf.2 ⟨hst o χ hχ.1, ?_⟩
     have h0 : T χ = 0 := LinearMap.mem_ker.1 hχ.2

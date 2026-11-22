@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
+
+@[expose] public section
 
 open Matrix Filter Topology Set
 open scoped ContDiff
@@ -187,7 +191,7 @@ theorem IsSm.sub {v v' : H} (hv : IsSm G σ v) (hv' : IsSm G σ v') : IsSm G σ 
 
 theorem IsSm.smOn_mul (h : RepOn G σ) {w : H} (hw : IsSm G σ w) :
     SmOn (G ×ˢ G) (fun q : Mat n × Mat n => σ q.1 (σ q.2 w)) :=
-  (SmOn.comp hw contDiff_mul fun _ hq => h.mul_mem _ hq.1 _ hq.2).congr
+  (SmOn.comp hw (B := G ×ˢ G) contDiff_mul fun _ hq => h.mul_mem _ hq.1 _ hq.2).congr
     fun _ hq => (h.apply_mul hq.1 hq.2 w).symm
 
 theorem IsSm.apply (h : RepOn G σ) {w : H} (hw : IsSm G σ w) {x : Mat n} (hx : x ∈ G) :
@@ -198,7 +202,7 @@ theorem IsSm.apply (h : RepOn G σ) {w : H} (hw : IsSm G σ w) {x : Mat n} (hx :
 theorem ds_add (h : RepOn G σ) {X : Mat n} (hX : ∀ t, ex X t ∈ G) {v v' : H} (hv : IsSm G σ v)
     (hv' : IsSm G σ v') : ds σ X (v + v') = ds σ X v + ds σ X v' := by
   unfold ds
-  simp only [map_add]
+  simp only [map_add (f := _)]
   exact deriv_fun_add (hv.differentiableAt h hX) (hv'.differentiableAt h hX)
 
 theorem ds_smul (h : RepOn G σ) {X : Mat n} (hX : ∀ t, ex X t ∈ G) {v : H} (hv : IsSm G σ v)
@@ -213,7 +217,8 @@ theorem dsW_add (h : RepOn G σ) {v v' : H} (hv : IsSm G σ v) (hv' : IsSm G σ 
   | X :: W, hW => by
     have hW' : LieW G W := fun Y hY => hW Y (List.mem_cons_of_mem _ hY)
     simp only [dsW_cons]
-    rw [dsW_add h hv hv' hW', ds_add h (hW X List.mem_cons_self) (hv.dsW h hW') (hv'.dsW h hW')]
+    rw [dsW_add h hv hv' (W := W) hW']
+    exact ds_add h (hW X List.mem_cons_self) (hv.dsW h hW') (hv'.dsW h hW')
 
 theorem dsW_smul (h : RepOn G σ) {v : H} (hv : IsSm G σ v) (c : ℂ) :
     ∀ {W : List (Mat n)}, LieW G W → dsW σ W (c • v) = c • dsW σ W v
@@ -221,7 +226,8 @@ theorem dsW_smul (h : RepOn G σ) {v : H} (hv : IsSm G σ v) (c : ℂ) :
   | X :: W, hW => by
     have hW' : LieW G W := fun Y hY => hW Y (List.mem_cons_of_mem _ hY)
     simp only [dsW_cons]
-    rw [dsW_smul h hv c hW', ds_smul h (hW X List.mem_cons_self) (hv.dsW h hW')]
+    rw [dsW_smul h hv c (W := W) hW']
+    exact ds_smul h (hW X List.mem_cons_self) (hv.dsW h hW') c
 
 theorem dsW_sub (h : RepOn G σ) {v v' : H} (hv : IsSm G σ v) (hv' : IsSm G σ v')
     {W : List (Mat n)} (hW : LieW G W) : dsW σ W (v - v') = dsW σ W v - dsW σ W v' := by

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.TwistSubEqMatrixSubst
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.GenericMatrixEvaluationDet
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.TwistSubEqMatrixSubst
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.GenericMatrixEvaluationDet
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,8 +27,8 @@ def genericTranslate {R : Type*} [CommRing R] {ι : Type*} {n : ℕ} (LL : Lette
     (G : MvPolynomial (ι × Fin n) R) : MvPolynomial (ι × Fin n) (GLCoord R n) :=
   matrixSubst LL S (coefficientMap R n) (genericMatrixInverse R n) (genericMatrixRootWeights R n) G
 
-open Classical in
 
+open Classical in
 def weightComponent {R : Type*} [CommRing R] {ι : Type*} [Fintype ι] {n : ℕ} (LL : Letters ι) (S : Set ι)
     (nu : Fin n → ℤ) (F : MvPolynomial (ι × Fin n) R) : MvPolynomial (ι × Fin n) R :=
   ∑ m ∈ F.support.filter (fun m => wtS LL S m = nu), monomial m (F.coeff m)

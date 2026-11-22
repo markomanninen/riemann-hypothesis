@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ProdFormulaE
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.NormMod
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.TrBase
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ProdFormulaE
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.NormMod
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ProductFormulaHaar.TrBase
+
+@[expose] public section
 
 noncomputable section
 

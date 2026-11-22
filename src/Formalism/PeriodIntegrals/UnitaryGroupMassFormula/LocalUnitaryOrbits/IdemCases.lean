@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.QInertHolds
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.QInertHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,11 +77,11 @@ theorem qSplit_of (hP : QProd σ J ψ v) : QSplit σ J ψ v := by
   intro x
   have hx : x = algebraMap _ (QE (E := E) v) (e x).1 * z + algebraMap _ (QE (E := E) v) (e x).2 * (1 - z) := by
     apply e.injective
-    rw [map_add, map_mul, map_mul, he, he, map_sub, map_one, hez]
+    rw [map_add (f := _), map_mul, map_mul, he, he, map_sub, map_one, hez]
     ext <;> simp
   have key : e (sigQ σ v x) = ((e x).2, (e x).1) := by
     conv_lhs => rw [hx]
-    rw [map_add, map_mul, map_mul, sigQ_alg, sigQ_alg, map_sub, map_one, map_add, map_mul, map_mul, he, he,
+    rw [map_add (f := _), map_mul, map_mul, sigQ_alg, sigQ_alg, map_sub, map_one, map_add (f := _), map_mul, map_mul, he, he,
       map_sub, map_one, hw]
     ext <;> simp
   rw [key]

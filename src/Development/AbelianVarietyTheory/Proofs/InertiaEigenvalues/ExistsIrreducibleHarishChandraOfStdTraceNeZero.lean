@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsLiftOfMemKO
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.GoodIdempotentFixesOfOnlySeriesOfLabelActs
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroInertia
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraInductionCharacterRestrictionDecomp
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraFrobeniusReciprocity
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DetCharacterIrreducibleLabel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsLiftOfMemKO
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.GoodIdempotentFixesOfOnlySeriesOfLabelActs
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroInertia
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraInductionCharacterRestrictionDecomp
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HarishChandraFrobeniusReciprocity
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DetCharacterIrreducibleLabel
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,24 +29,24 @@ theorem stdBlock_iff (a c : ℕ) (x : Gn p (a + 1 + c)) :
       intro e; subst e; omega
     · ext i j
       simp only [br, entN]
-      rw [dif_pos (by omega), h _ _ (by simp; omega)]
+      rw [dite_eq_left (by omega), h _ _ (by simp; omega)]
       simp [Matrix.one_apply, Fin.ext_iff]
     · simp only [tl, entN]
-      rw [dif_pos (by omega), h _ _ (by simp; omega)]
+      rw [dite_eq_left (by omega), h _ _ (by simp; omega)]
       simp [Fin.ext_iff]
   · rintro ⟨h1, h2, h3⟩ i j hij
     by_cases hi : (i : ℕ) ≤ a
     · have hj : (j : ℕ) < a := by omega
       have := h3 ⟨i, by omega⟩ ⟨j, by omega⟩ hj
       simp only [tl, entN] at this
-      rw [dif_pos (by omega)] at this
+      rw [dite_eq_left (by omega)] at this
       simpa [Fin.ext_iff] using this
     · by_cases hj : (j : ℕ) < a + 1
       · rw [h1 i j hj (by omega), if_neg]
         intro e; subst e; omega
       · have := congrFun (congrFun h2 ⟨(i : ℕ) - (a + 1), by omega⟩) ⟨(j : ℕ) - (a + 1), by omega⟩
         simp only [br, entN] at this
-        rw [dif_pos (by omega)] at this
+        rw [dite_eq_left (by omega)] at this
         have ei : (⟨a + 1 + ((i : ℕ) - (a + 1)), by omega⟩ : Fin (a + 1 + c)) = i := Fin.ext (by simp; omega)
         have ej : (⟨a + 1 + ((j : ℕ) - (a + 1)), by omega⟩ : Fin (a + 1 + c)) = j := Fin.ext (by simp; omega)
         rw [ei, ej, Matrix.one_apply] at this
@@ -60,7 +64,7 @@ theorem isUnit_tl (a c : ℕ) (x : Gn p (a + 1 + c)) (h1 : InPar (a + 1) (x : Mt
 
 theorem val_toG {n : ℕ} (M : Mt p n) (h : IsUnit M) : ((toG M : Gn p n) : Mt p n) = M := by
   unfold toG
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   rfl
 
 end GlobalTheory.GLq.StdRes

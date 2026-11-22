@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.TensFun
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.InvSmooth
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CenterC
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TensFun
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.InvSmooth
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CenterC
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -28,7 +32,7 @@ private theorem tsupport_rUC (u : UC K n) (f : (isExpLieAlgebra K n).smoothFuns 
     refine subset_trans ?_ ((UpperTheory.ConvolutionTheory.Tf.invSmooth K n f f.2).2.2.2 f.2 a)
     exact tsupport_smul_subset_right (fun _ => c) _
   | add u v hu hv =>
-    rw [map_add, LinearMap.add_apply, Submodule.coe_add]
+    rw [map_add (f := _), LinearMap.add_apply, Submodule.coe_add]
     exact (tsupport_add _ _).trans (Set.union_subset hu hv)
 
 private theorem tsupport_inv_subset {f f' : archGroup K n → ℂ} (h : tsupport f ⊆ tsupport f') :
@@ -60,7 +64,7 @@ private theorem lact_apply {β : TI K n} (h : (fun g => β g⁻¹) ∈ (isExpLie
   have H : ∃ (h : (fun g => β g⁻¹) ∈ (isExpLieAlgebra K n).smoothFuns (F := ℂ)) (γ : TI K n),
       ∀ g, γ g = (rUC u ⟨fun g => β g⁻¹, h⟩ : archGroup K n → ℂ) g⁻¹ :=
     ⟨h, ⟨⟨_, hc⟩, hs⟩, fun _ => rfl⟩
-  rw [lact, dif_pos H]
+  rw [lact, dite_eq_left H]
   exact H.choose_spec.choose_spec g
 
 private theorem lact_smooth {β : TI K n} (h : (fun g => β g⁻¹) ∈ (isExpLieAlgebra K n).smoothFuns (F := ℂ))
@@ -100,7 +104,7 @@ theorem UpperTheory.ConvolutionTheory.Tf.lactSpec :
       Subtype.ext (funext fun x => by rw [← inv_inv x, ← lact_apply h v, inv_inv])
     rw [lact_apply h, lact_apply h', e, map_mul, Module.End.mul_apply]
   · ext g
-    rw [CompactlySupportedContinuousMap.add_apply, lact_apply h, lact_apply h, lact_apply h, map_add,
+    rw [CompactlySupportedContinuousMap.add_apply, lact_apply h, lact_apply h, lact_apply h, map_add (f := _),
       LinearMap.add_apply, Submodule.coe_add, Pi.add_apply]
   · ext g
     rw [CompactlySupportedContinuousMap.smul_apply, lact_apply h, lact_apply h, map_smul,
@@ -120,6 +124,6 @@ theorem UpperTheory.ConvolutionTheory.Tf.lactSpec :
       Submodule.add_mem _ h h₂
     have e : (⟨fun g => (β + β') g⁻¹, h'⟩ : (isExpLieAlgebra K n).smoothFuns (F := ℂ)) =
         ⟨fun g => β g⁻¹, h⟩ + ⟨fun g => β' g⁻¹, h₂⟩ := rfl
-    rw [CompactlySupportedContinuousMap.add_apply, lact_apply h', lact_apply h, lact_apply h₂, e, map_add,
+    rw [CompactlySupportedContinuousMap.add_apply, lact_apply h', lact_apply h, lact_apply h₂, e, map_add (f := _),
       Submodule.coe_add, Pi.add_apply]
   · rw [lact_apply h, rUC_tmul, one_smul]

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.WordFin
-import Formalism.LocalToGlobal.Columns.TiedCB
+module
+
+public import Formalism.LocalToGlobal.Columns.WordFin
+public import Formalism.LocalToGlobal.Columns.TiedCB
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module Matrix
 open scoped TensorProduct
@@ -42,15 +46,16 @@ theorem gramP_eq (hS : SpStd d.toColBase) : CF.gramP (d.colRec a) = 1 := by
   rw [hS.P_on, Matrix.one_apply]
   simp only [EmbeddingLike.apply_eq_iff_eq]
 
-theorem clsCrd_eq (u : d.what₂.Word) (i : ℕ) (hi : i ≤ d.R.m) (c : StCl (Pr := d.Pr) d.W d.lev u i) :
-    CF.clsCrd (d.colRec a) u i hi c = (d.repr u i c).1.L := by
-  show (d.clsLat u i c).map (((d.crd i hi : (d.sp.X i).V ≃ₗ[d.host.E] (Fin (d.R.N i) → d.host.E)) :
-    (d.sp.X i).V →ₗ[d.host.E] (Fin (d.R.N i) → d.host.E)).restrictScalars (𝓞 d.host.E)) = _
+private theorem map_clsLat_crd (u : d.what₂.Word) (i : ℕ) (hi : i ≤ d.R.m)
+    (c : StCl (Pr := d.Pr) d.W d.lev u i) :
+    (d.clsLat u i c).map ((d.crd i hi).toLinearMap.restrictScalars (𝓞 d.host.E)) = (d.repr u i c).1.L := by
   unfold ColDat.clsLat
-  rw [dif_pos hi, ← Submodule.map_comp]
-  convert Submodule.map_id _
-  ext x j
-  simp
+  rw [dite_eq_left hi, ← Submodule.map_comp, ← LinearMap.restrictScalars_comp,
+    LinearEquiv.comp_symm, LinearMap.restrictScalars_id, Submodule.map_id]
+
+theorem clsCrd_eq (u : d.what₂.Word) (i : ℕ) (hi : i ≤ d.R.m) (c : StCl (Pr := d.Pr) d.W d.lev u i) :
+    CF.clsCrd (d.colRec a) u i hi c = (d.repr u i c).1.L :=
+  map_clsLat_crd u i hi c
 
 theorem embT_eq (hH : HostHyp d) : CF.embT (d.colRec a) = d.X.embC d.σ₀ := by
   funext τ

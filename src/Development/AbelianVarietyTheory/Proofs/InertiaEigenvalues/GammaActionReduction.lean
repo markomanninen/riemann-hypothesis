@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIntegralCyclotomicChar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachDeltaInvariantCoboundaries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIntegralCyclotomicChar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WachDeltaInvariantCoboundaries
+
+@[expose] public section
+
 open GlobalTheory.PhiGam GlobalTheory.AdmLoc GlobalTheory.Models GlobalTheory.TopSteps GlobalTheory.Present Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc
 open scoped LaurentSeries PowerSeries
 
@@ -15,7 +20,7 @@ theorem ringHom_padicInt_eq {l : ℕ} [Fact l.Prime] {k : Type} [Field k] [CharP
   obtain ⟨c, hc⟩ := h
   have hz : z = (z.zmodRepr : ℤ_[l]) + l * c := by rw [← hc]; ring
   rw [hz]
-  simp only [map_add, map_mul, map_natCast, CharP.cast_eq_zero, zero_mul]
+  simp only [map_add (f := _), map_mul, map_natCast, CharP.cast_eq_zero, zero_mul]
 
 theorem map_act {l : ℕ} [Fact l.Prime] {O k : Type} [CommRing O] [Algebra ℤ_[l] O] [Field k] [CharP k l]
     (f : O →+* k) (c : ℤ_[l]) (a : O⟦X⟧) :
@@ -106,7 +111,7 @@ theorem action_of_surjective {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ 
       exact h1.resolve_left PadicInt.p_nonunit
     obtain ⟨g, hg⟩ := hs hu.unit
     have hg' : (χ g : ℤ_[l]) = 1 + l := by rw [hg, hu.unit_spec]
-    refine ⟨g, by rw [← hχ, hg', map_add, map_one, map_natCast], fun a => ?_⟩
+    refine ⟨g, by rw [← hχ, hg', map_add (f := _), map_one, map_natCast], fun a => ?_⟩
     rw [hγ, map_act, hg', deltaPi_one_add]
   · let f : {δ // δ ∈ W.DelF} → {z : ℤ_[l] // z ^ (l - 1) = 1} := fun δ =>
       ⟨χ δ.1, by rw [← Units.val_pow_eq_pow_val, ← map_pow, hpow δ.1 δ.2, map_one, Units.val_one]⟩

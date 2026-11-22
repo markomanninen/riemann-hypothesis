@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComplexifiedDerivedActionIsLieActionStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfInnerSmooth
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CommuteGelfandInvariantMatrixUnitsOfGlRel
-import Development.AbelianVarietyTheory.Definitions.Foundations.TracePowApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComplexifiedDerivedActionIsLieActionStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfInnerSmooth
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CommuteGelfandInvariantMatrixUnitsOfGlRel
+public import Development.AbelianVarietyTheory.Definitions.Foundations.TracePowApply
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.L2.Pj Formalism.IndefR.FWT Formalism.IndefR GlobalTheory.HolDict
 open scoped TensorProduct InnerProductSpace ContDiff
@@ -37,7 +41,8 @@ private theorem mul_inv_mul_eq_mul_inv_mul_of_factorizations (c d : ℂ) (x : A)
 theorem opM_eq (ρ : Mt n →ₗ[ℂ] A) (p q : Mt n) :
     opM ρ p q = (pᵀ).map (algebraMap ℂ A) * opM ρ 1 1 * (qᵀ).map (algebraMap ℂ A) := by
   ext a b
-  simp only [opM, Matrix.of_apply, Matrix.mul_apply, Matrix.map_apply, Matrix.transpose_apply, one_mul, mul_one,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [opM, Matrix.of_apply, Matrix.mul_apply, Matrix.map_apply, Matrix.transpose_apply, one_mul, mul_one,
     single_one_mul_single_one', map_sum, map_smul, Finset.sum_mul, mul_inv_mul_eq_mul_inv_mul_of_factorizations]
   rw [Finset.sum_comm]
 
@@ -204,8 +209,8 @@ theorem gelfRep_eq (hh : Hm.IsHermitian) (hd : Hm.det ≠ 0) (hσ : IsURepOn (Fo
   rw [e1, e2]
   exact foldr_eq _ _ _ (fun Z w => dEnd_coe hh hd hσ Z w) v
 
-omit [CompleteSpace H] in
 
+omit [CompleteSpace H] in
 theorem eq_zero_of_inner_orbit (hd : Hm.det ≠ 0) (hσ : IsURepOn (Formalism.QuantumDeterminants.UH Hm) σ)
     (hi : IsIrredOn (Formalism.QuantumDeterminants.UH Hm) σ) {v₀ : H} (h0 : v₀ ≠ 0) {y : H}
     (hy : ∀ g ∈ Formalism.QuantumDeterminants.UH Hm, ⟪y, σ g v₀⟫_ℂ = 0) : y = 0 := by

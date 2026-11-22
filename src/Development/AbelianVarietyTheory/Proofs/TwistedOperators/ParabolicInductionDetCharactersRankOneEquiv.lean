@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InstAddCommGroupTwo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InstAddCommGroupTwo
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,24 +14,29 @@ namespace GlobalTheory.SmGL.RankOneProduct
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
   {α : Type} [Fintype α] [LinearOrder α] {c : α → Type} [∀ i, Fintype (c i)] [∀ i, DecidableEq (c i)]
 
-omit [Fintype α] [LinearOrder α] [∀ i, Fintype (c i)] [∀ i, DecidableEq (c i)] in
 
+omit [Fintype α] [LinearOrder α] [∀ i, Fintype (c i)] [∀ i, DecidableEq (c i)] in
 theorem isEmpty_of_ne (g : (Σ i, c i) ≃ Unit) {a : α} (ha : a ≠ (g.symm ()).1) : IsEmpty (c a) :=
   ⟨fun x => ha (congrArg Sigma.fst (g.injective (Subsingleton.elim (g ⟨a, x⟩) (g (g.symm ())))))⟩
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [Fintype α] [LinearOrder α] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [Fintype α] [LinearOrder α] in
 theorem det_eq_one_of_ne (g : (Σ i, c i) ≃ Unit) {a : α} (ha : a ≠ (g.symm ()).1) (x : GL (c a) k) :
     Matrix.GeneralLinearGroup.det x = 1 := by
   have := isEmpty_of_ne g ha
   ext
   simp
 
+
 omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [Fintype α]
   [∀ i, Fintype (c i)] [∀ i, DecidableEq (c i)] in
-
 theorem mem_parab_unit (g : (Σ i, c i) ≃ Unit) (x : GL Unit k) : x ∈ parab k g :=
-  mem_parab.2 fun _ _ h => absurd h (lt_irrefl _)
+  by
+    change Matrix.BlockTriangular (x : Matrix Unit Unit k) (blk g)
+    intro i j h
+    cases i
+    cases j
+    exact absurd h (lt_irrefl _)
 
 theorem deltaHalf_eq_one (g : (Σ i, c i) ≃ Unit) (x : Levi k c) : deltaHalf k c x = 1 := by
   rw [deltaHalf_apply]
@@ -45,8 +54,8 @@ theorem deltaHalf_eq_one (g : (Σ i, c i) ≃ Unit) (x : Levi k c) : deltaHalf k
     simp [h]
   · rw [det_eq_one_of_ne g ha, map_one]
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem piTensor_leviProj (g : (Σ i, c i) ≃ Unit) (ψ : α → kˣ →* ℂˣ) (p : parab k g)
     (w : PiTensorProduct ℂ fun _ : α => ℂ) :
     piTensor (fun i => detRep (c i) (ψ i)) (leviProj k g p) w =
@@ -62,10 +71,13 @@ theorem piTensor_leviProj (g : (Σ i, c i) ≃ Unit) (ψ : α → kˣ →* ℂˣ
       rw [detChar_apply, det_eq_one_of_ne g hb, map_one, Units.val_one]
     · simp
   induction w using PiTensorProduct.induction_on with
-  | add x y hx hy => rw [map_add, hx, hy, smul_add]
+  | add x y hx hy => rw [map_add (f := _), hx, hy, smul_add]
   | smul_tprod r x =>
-    rw [map_smul, piTensor_tprod, smul_comm, ← hd, ← MultilinearMap.map_smul_univ]
-    congr 2
+    rw [map_smul, piTensor_tprod, ← hd, smul_comm]
+    congr 1
+    calc
+      _ = (PiTensorProduct.tprod ℂ) (fun a => (detChar (c a) (ψ a) (leviProj k g p a) : ℂ) • x a) := by rfl
+      _ = _ := MultilinearMap.map_smul_univ _ _ _
 
 theorem nonempty_equiv_multiProd_unit (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k] (α : Type) [Fintype α] [LinearOrder α] (c : α → Type)

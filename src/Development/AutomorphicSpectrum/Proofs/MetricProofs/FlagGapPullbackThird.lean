@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.HasStepCharts
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SelM
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SumSqCompBlockMap
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsPermOfRange
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsValueAtOfTorus
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.HoloOnDivCongr
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.AevalNeZeroOfNotMem
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPointsStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockMetricExplicitMatrixFormStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogBlockMetricOffBoundaryStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockMetricGrassmannChartLocalStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockMetricRowEchelonLocalStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagGapPullbackFirstStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HasStepCharts
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SelM
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SumSqCompBlockMap
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsPermOfRange
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsValueAtOfTorus
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HoloOnDivCongr
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.AevalNeZeroOfNotMem
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagModelBaseProjectionPointsStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockMetricExplicitMatrixFormStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogBlockMetricOffBoundaryStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockMetricGrassmannChartLocalStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BlockMetricRowEchelonLocalStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagGapPullbackFirstStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -173,8 +177,20 @@ theorem log_side (hyp : IsStepHyp M BM p κ v R pr) {x t : R.X} (ht : t ∈ R.U 
     {z : (Σ k, ι k) → ℂ} (hz : z ∈ mcPts (mCoordIdeal y)) (hv : z ∘ v = R.lift x t) :
     Real.log ((fsHerm ιk fun k => M.dy p (κ k)).h (R.lift x t)) + stepPh M BM p v R pr t =
       Real.log ((BM.hom p).h z) := by
-  rw [GlobalTheory.T.flag_gap_pullback_first K ι Φ y Ψ N j M n BM p Kk ιk κ v e R pr hyp x t z ht hbd hz hv, ← hv,
-    ← fsHerm_h_blockMap K ι Kk ιk κ v (M.dy p) z hyp.1 (dy_range hyp), stepGap]
+  have hstep : stepPh M BM p v R pr t = stepGap M BM p z :=
+    Wgt.main K ι Φ y Ψ N j M n BM p Kk ιk κ v e R pr hyp x t z ht hbd hz hv
+  have hnorm : (fsHerm ιk fun k => M.dy p (κ k)).h (z ∘ v) = (fsHerm ι (M.dy p)).h z := by
+    rw [fsHerm_h, fsHerm_h]
+    unfold refNorm
+    refine Fintype.prod_of_injective κ hyp.1.1 _ _ ?_ ?_
+    · intro k hk
+      have hzero : M.dy p k = 0 := by
+        by_contra hne
+        exact hk (dy_range hyp k hne)
+      simp [hzero]
+    · intro k
+      rw [sum_sq_comp_blockMap hyp.1 z k]
+  rw [hstep, ← hv, hnorm, stepGap]
   ring
 
 theorem dom_open (hyp : IsStepHyp M BM p κ v R pr) (x : R.X) (l : Fin BM.q) :

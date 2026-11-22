@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.ComplexValueBound
 
@@ -25,7 +29,8 @@ theorem main : ∀ {ι κ M : Type} [inst : AddCommGroup M] [inst_1 : Module ℂ
       have hvsum : ∑ i ∈ s, (l i k - l a k) • u i = 0 := by
         have h1 : ∑ i ∈ s, (l i k - l a k) • u i
             = T k (∑ i ∈ s, u i) - l a k • ∑ i ∈ s, u i := by
-          rw [map_sum, Finset.smul_sum, ← Finset.sum_sub_distrib]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum, Finset.smul_sum, ← Finset.sum_sub_distrib]
           refine Finset.sum_congr rfl (fun i _ => ?_)
           rw [hu, sub_smul]
         rw [h1, hsa, map_neg, hu, smul_neg, sub_neg_eq_add, neg_add_cancel]

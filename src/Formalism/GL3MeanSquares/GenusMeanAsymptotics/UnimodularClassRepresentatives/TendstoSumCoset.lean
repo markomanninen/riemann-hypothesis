@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MemIdealLatticeIff
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MemIdealLatticeIff
+
+@[expose] public section
 
 open NumberField Module Filter Topology
 open scoped Classical
@@ -32,18 +36,18 @@ theorem sum_le_sum_shift (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (h
     have hny : n + y ∈ boxSet K F T' := by
       rw [mem_boxSet_iff hK hF]
       intro w
-      rw [map_add]
+      rw [map_add (f := _)]
       constructor
       · linarith [(hb w).1, hy0 w]
       · linarith [(hb w).2, hyT w]
     refine ⟨by rw [Set.Finite.mem_toFinset]; exact ⟨hny, hAB n hnA⟩, ?_⟩
     have hle : (Ideal.absNorm (Ideal.span {n}) : ℝ) ≤ (Ideal.absNorm (Ideal.span {n + y}) : ℝ) := by
       rw [absNorm_eq_prod_of_mem hK hF hnb, absNorm_eq_prod_of_mem hK hF hny]
-      apply Finset.prod_le_prod
+      apply Finset.prod_le_prod₀
       · intro w _
         exact (hb w).1.le
       · intro w _
-        rw [map_add]
+        rw [map_add (f := _)]
         linarith [hy0 w]
     exact pow_le_pow_left₀ (Nat.cast_nonneg _) hle _
   calc ∑ n ∈ hA.toFinset, (Ideal.absNorm (Ideal.span {n}) : ℝ) ^ (m - 1)
@@ -85,7 +89,7 @@ theorem exists_shifts {I : Ideal (𝓞 F)} (hI : I ≠ ⊥) (x₀ : 𝓞 F) :
     have h := abs_le.1 (hCw w)
     constructor <;> linarith [h.1, h.2]
   · intro w
-    rw [map_add, map_natCast]
+    rw [map_add (f := _), map_natCast]
     have h := abs_le.1 (hCw w)
     constructor <;> linarith [h.1, h.2]
   · intro n hn

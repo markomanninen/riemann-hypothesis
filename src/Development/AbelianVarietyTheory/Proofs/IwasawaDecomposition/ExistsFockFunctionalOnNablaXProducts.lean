@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.WeylLatDual
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualWeylEqSpanColProd
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.WeylLatDual
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualWeylEqSpanColProd
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.FkPderivBlockEmbNe
+
+@[expose] public section
+
 open MvPolynomial
 
 noncomputable section

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -68,11 +72,11 @@ theorem le_map_comap_of_le_conj (F E : Type) [Field F] [NumberField F] [Field E]
     rw [e]
     refine Ideal.sub_mem _ (Ideal.mul_mem_right _ _ ?_) ?_
     · refine mem_map_comap_of_star_fixed hc Q _ ?_ (Q.add_mem hxQ hsxQ)
-      rw [map_add, hinv]
+      rw [map_add (f := _), hinv]
       ring
     · refine mem_map_comap_of_star_fixed hc Q _ ?_
         (Q.add_mem (Q.mul_mem_right _ hxQ) (Q.mul_mem_right _ hsxQ))
-      rw [map_add, map_mul, map_mul, hinv, hinv]
+      rw [map_add (f := _), map_mul, map_mul, hinv, hinv]
       ring
   have key : ∀ d ∈ Ideal.span (Set.range fun θ : 𝓞 E =>
       θ - RingOfIntegers.mapRingHom (starRingEnd E) θ),

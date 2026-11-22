@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory
 
 namespace GlobalTheory
@@ -29,9 +34,5 @@ theorem integrable_of_tsum_translate_norm_le
         lintegral_mono hpt
     _ = ENNReal.ofReal C * μ 𝓕 := setLIntegral_const _ _
     _ < ⊤ := ENNReal.mul_lt_top ENNReal.ofReal_lt_top h𝓕μ
-
-example : ∀ (G : Type) [AddCommGroup G] [TopologicalSpace G] [IsTopologicalAddGroup G] [SecondCountableTopology G] [MeasurableSpace G] [BorelSpace G] (Γ : AddSubgroup G) [Countable Γ] (μ : Measure G), μ.IsAddLeftInvariant → ∀ 𝓕 : Set G, IsAddFundamentalDomain Γ 𝓕 μ → μ 𝓕 < ⊤ → ∀ c : G → ℂ, Continuous c → ∀ C : ℝ, (∀ w : G, Summable (fun γ : Γ => ‖c ((γ : G) + w)‖) ∧ ∑' γ : Γ, ‖c ((γ : G) + w)‖ ≤ C) → Integrable c μ :=
-  fun G _ _ _ _ _ _ Γ _ μ hμ 𝓕 h𝓕 h𝓕μ c hc C hC =>
-    integrable_of_tsum_translate_norm_le G Γ μ hμ 𝓕 h𝓕 h𝓕μ c hc C hC
 
 end GlobalTheory

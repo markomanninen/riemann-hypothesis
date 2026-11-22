@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -28,14 +32,13 @@ def mapDR : DR k K →ₐ[K] DR k L := ExteriorAlgebra.lift K ⟨map1 k K L, kae
 def IsTrDR (T : DR k L →ₗ[k] DR k K) : Prop :=
   ∀ (b : L) (ω : DR k K), T (b • mapDR k K L ω) = Algebra.trace K L b • ω
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def trDR : DR k L →ₗ[k] DR k K := if h : ∃ T, IsTrDR k K L T then h.choose else 0
 
 variable {k K L} {ι : Type}
 
 def trC (c : Finset ι → DR k L) : Finset ι → DR k K := fun s => trDR k K L (c s)
-
-def mapC (c : Finset ι → DR k K) : Finset ι → DR k L := fun s => mapDR k K L (c s)
 
 end GlobalTheory.W1

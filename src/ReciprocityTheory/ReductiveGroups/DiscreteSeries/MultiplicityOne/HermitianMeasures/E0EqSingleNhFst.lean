@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.HermitianMeasures.OrbitIntegralAbsConvergent
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.HermitianMeasures.OrbitIntegralAbsConvergent
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,7 +86,7 @@ theorem nh_row (x : HPar k r') (n' : Mat k r') (p q : Fin (2 * (1 + r') + k + 1)
     (heis0 k r' x * ιLev k 1 r' n') p q =
       ιLev k 1 r' n' p q + liftVec k 1 r' x.1 p * ιLev k 1 r' n' (nhLst k r') q := by
   have he : e0 k r' p = 0 := by rw [e0_eq_single_nhFst, Pi.single_apply, if_neg hp]
-  rw [heis0, mul_apply]
+  rw [heis0, Matrix.mul_apply]
   simp only [nh_heisG_apply, he, zero_mul, sub_zero, mul_zero, add_zero, add_mul, ite_mul, one_mul,
     zero_mul, Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mem_univ, if_true, mul_assoc]
   rw [← Finset.mul_sum]
@@ -90,7 +94,7 @@ theorem nh_row (x : HPar k r') (n' : Mat k r') (p q : Fin (2 * (1 + r') + k + 1)
 
 theorem nh_corner (x : HPar k r') (n' : Mat k r') :
     (heis0 k r' x * ιLev k 1 r' n') (nhFst k r') (nhLst k r') = hb k r' x.1 x.2 := by
-  rw [heis0, mul_apply]
+  rw [heis0, Matrix.mul_apply]
   simp only [nh_iota_lst, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
   rw [nh_heisG_apply, nh_herm_lst_lift, nh_lift_fst, e0_eq_single_nhFst]
   have : nhFst k r' ≠ nhLst k r' := by simp [nhFst, nhLst, Fin.ext_iff]; omega

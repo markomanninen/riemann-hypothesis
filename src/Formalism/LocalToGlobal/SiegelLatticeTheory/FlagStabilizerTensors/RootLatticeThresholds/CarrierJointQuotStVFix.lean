@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierJointQuotStVKer
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.UnipBasis
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierJointQuotStVKer
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.UnipBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -145,7 +149,7 @@ theorem stVFix_holds (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.w
   intro w hw v y hy hF hGF
   set γ := gamW X u u' w with hγdef
   have hγ : IsPtRep X u u' w γ := by
-    rw [hγdef, gamW, dif_pos hw.1]; exact hw.1.choose_spec
+    rw [hγdef, gamW, dite_eq_left hw.1]; exact hw.1.choose_spec
   set e : Fin D.R.rS → Fin X.B.I.n → ℂ := fun a => Formalism.L2.SG.HidaSetting.rv X.B.I v (X.eR a)
   set z := Formalism.L2.SG.HidaSetting.rv X.B.I v (X.zR u)
   set z' := Formalism.L2.SG.HidaSetting.rv X.B.I v (X.zR u')

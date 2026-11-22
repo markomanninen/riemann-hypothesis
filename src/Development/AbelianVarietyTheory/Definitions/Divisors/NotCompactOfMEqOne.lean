@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,20 +92,6 @@ def Datum.IsSimple (D : Datum p) : Prop := D.a = 1 ∧ D.m = D.n ∧ D.IsDivisio
 def Datum.Compact (D : Datum p) : Prop :=
   2 * D.a < Module.finrank ℚ D.F ∨ (D.IsDivision ∧ D.n < 2 * D.m)
 
-theorem Datum.not_compact_of_m_eq_one (D : Datum p) (hm : D.m = 1) (hn : 2 ≤ D.n)
-    (ha : Module.finrank ℚ D.F ≤ 2 * D.a) : ¬ D.Compact := by
-  rintro (h | ⟨-, h⟩) <;> omega
-
-theorem Datum.compact_of_a_eq_zero (D : Datum p) (ha : D.a = 0) : D.Compact := by
-  left
-  rw [ha, mul_zero]
-  exact Module.finrank_pos
-
-theorem Datum.IsSimple.compact {D : Datum p} (h : D.IsSimple) : D.Compact := by
-  obtain ⟨-, hmn, hdiv⟩ := h
-  have hm := D.m_pos
-  exact Or.inr ⟨hdiv, by omega⟩
-
 structure Base (D : Datum p) (R : Type) [CommRing R] where
   unit : ∀ k : ℕ, k.Coprime p → IsUnit (k : R)
   ρ : R
@@ -136,7 +126,7 @@ def OActN.toF {G : Over S} [GrpObj G] (act : OActN D.O G) : OAct (𝓞 D.F) G wh
   hom c := act.hom _
   one := by rw [map_one]; exact act.one
   mul b c := by rw [← act.mul, ← map_mul, mul_comm]
-  add b c := by rw [map_add]; exact act.add _ _
+  add b c := by rw [map_add (f := _)]; exact act.add _ _
 
 structure TateIsoO (k : Type) [Field k] (Q : Type) [Group Q] (act : D.O → Q → Q)
     (e : ℕ → Q → Q → kˣ → Prop) where

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 noncomputable section
 open NumberField IsDedekindDomain Polynomial Filter
 open scoped ModularForm MatrixGroups

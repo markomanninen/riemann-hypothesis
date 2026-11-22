@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.InertKernelTheory.ProjRSurj
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.ProjRSurj
+
+@[expose] public section
 
 noncomputable section
 
@@ -114,12 +118,6 @@ theorem trC_heq {C C' : ColumnChain D.R D.what₂.Tau (D.hcW u)} (hC : C = C') (
   subst hC
   exact eq_of_heq hφ
 
-theorem onChain_ofTw (st : ∀ j (hj : j + 1 ≤ D.R.m), StepIn (Tw.fm u μ) (j + 1) hj (gatJ Lv (j + 1))) :
-    OnChain (⟨fun j hj => StepAt.ofTw (st j hj)⟩ : CmpJIn Tw u μ w h Lv) := fun _ _ => rfl
-
-theorem onChain_ofMem (st : ∀ j (hj : j + 1 ≤ D.R.m), StepIn (D.fm u) (j + 1) hj (gatJ Lv (j + 1))) :
-    OnChain (⟨fun j hj => StepAt.ofMem (st j hj)⟩ : CmpJIn Tw u D.what₂.mu0 w h Lv) := fun _ _ => (D.memberColumns_twistedChain_base u).symm
-
 theorem rdJ_of_isValV (I : CmpJIn Tw u μ w h Lv) (hC : OnChain I) (H : CmpJHyp c I) (hS : BlockRationalityField) {Kc : Type} [Field Kc]
     (ι : ℂ →+* Kc) (j : ℕ) (hj : j + 1 ≤ D.R.m) (c' : Lv.comp (j + 1)) (L' : (Fl.Pj (j + 1)).Tup) (hL' : (Fl.Pj (j + 1)).IsLatTup L')
     (φ : (D.chTw u μ).cls (j + 1) → (D.chTw u μ).Y (j + 1) → ℂ) (Q : XR (Fl.Pj (j + 1)) ℂ)
@@ -131,7 +129,7 @@ theorem rdJ_of_isValV (I : CmpJIn Tw u μ w h Lv) (hC : OnChain I) (H : CmpJHyp 
   have hH := ((H.core j hj) ((I.at' j hj).st.eC.symm c').1).toHyp hS
   have hsel := selOf_relV (embT_conj D) (evInj_pf (embT D) _ _ _) hH.ptEx hL' hQ
   unfold rdJ
-  rw [dif_pos hj]
+  rw [dite_eq_left hj]
   simp only [rdS, hL', ↓reduceIte]
   rw [LinearMap.comp_apply, LinearMap.comp_apply]
   exact congrArg (MvPolynomial.map ι) hsel
@@ -145,7 +143,7 @@ theorem series_reading_entries : TieReadJ := by
     y c' L' _
   unfold rdJ
   by_cases hj : j + 1 ≤ D.R.m
-  · rw [dif_pos hj]
+  · rw [dite_eq_left hj]
     have h1 : (kerAtMu_any K H hS Gt Ch hCh).cmp (j + 1) y =
         (I.at' j hj).st.cmpJ (ex.cmp.embW u w h) ((I.at' j hj).eps.symm y) := kerAtMu_cmpJ_cmp K H hS Gt j hj y
     rw [h1, LinearMap.comp_apply, LinearEquiv.coe_coe]
@@ -156,11 +154,11 @@ theorem series_reading_entries : TieReadJ := by
       rwa [LinearEquiv.apply_symm_apply] at this
     rw [h2]
     exact rdS_cmpJ (iA := Y.algKf) (I.at' j hj).st (ex.cmp.embW u w h) (H.core j hj) hS ι hι _ c' L'
-  · rw [dif_neg hj]
+  · rw [dite_eq_right hj]
     have h1 : (kerAtMu_any K H hS Gt Ch hCh).cmp (j + 1) y = 0 := by
       show cmpSJ H hS j y = 0
       unfold cmpSJ
-      rw [dif_neg hj]
+      rw [dite_eq_right hj]
       rfl
     rw [h1]
     simp

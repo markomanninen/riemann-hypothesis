@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.OFRepTop
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.OFRepRank
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.OFRepFin
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.Stage1OfUnipotentIntegralIsGroup
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.TransMemUnipotentIntegral
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.OFRepTop
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.OFRepRank
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.OFRepFin
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.Stage1OfUnipotentIntegralIsGroup
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.TransMemUnipotentIntegral
+
+@[expose] public section
 
 noncomputable section
 

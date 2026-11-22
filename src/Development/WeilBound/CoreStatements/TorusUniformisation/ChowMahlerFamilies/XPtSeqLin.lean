@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.PolarisedFlagStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LieLatticeData
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.PolarisedFlagStatement
+
+@[expose] public section
 
 open GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.GR ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Up
 
@@ -38,7 +42,7 @@ theorem smul_mem_std (R : Subalgebra o C) {m : ℕ} (L : AddSubgroup (Fin m → 
     · exact R.one_mem
     · exact R.zero_mem
   have hwe : w • (Pi.single i (1 : C) : Fin m → C) ∈ L :=
-    h (AddSubgroup.mem_map_of_mem (DistribMulAction.toAddMonoidHom (Fin m → C) w) he)
+    h (AddSubgroup.mem_map_of_mem (DistribSMul.toAddMonoidHom (Fin m → C) w) he)
   have hd := (mem_dual R L v).1 hv _ hwe
   have heq : (w • (Pi.single i (1 : C) : Fin m → C)) ⬝ᵥ v = w * v i := by
     rw [smul_dotProduct, single_dotProduct, one_mul, smul_eq_mul]
@@ -65,7 +69,7 @@ theorem PositivityTheory.Xgn.t_pt_seq_lin : ∀ {o C : Type} [CommRing o] [Field
       obtain ⟨y, hy, hy'⟩ := AddSubgroup.mem_map.1 hc
       refine AddSubgroup.mem_map.2 ⟨b + y, add_mem hb1 (hS hy), ?_⟩
       simp only [LinearMap.toAddMonoidHom_coe] at hy' ⊢
-      simp [map_add, hy']
+      simp [map_add (f := _), hy']
     · rintro ⟨b, hb1, rfl⟩
       refine AddSubgroup.mem_map.2 ⟨(b, ht b), AddSubgroup.mem_inf.2 ⟨?_, AddSubgroup.mem_prod.2 ⟨hb1, AddSubgroup.mem_top _⟩⟩, rfl⟩
       rw [hDel]

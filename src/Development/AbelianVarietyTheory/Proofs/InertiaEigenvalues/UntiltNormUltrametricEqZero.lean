@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.MemLoc
 open scoped Formalism.Per
 
@@ -16,7 +21,7 @@ lemma untilt_add (x y : Per.Fl l) :
     ∃ t : Per.OC l, (x + y).untilt = x.untilt + y.untilt + (l : Per.OC l) * t := by
   have h : Ideal.Quotient.mk (Ideal.span {(l : Per.OC l)}) (x + y).untilt =
       Ideal.Quotient.mk (Ideal.span {(l : Per.OC l)}) (x.untilt + y.untilt) := by
-    rw [PreTilt.mk_untilt_eq_coeff_zero, map_add, map_add, PreTilt.mk_untilt_eq_coeff_zero,
+    rw [PreTilt.mk_untilt_eq_coeff_zero, map_add (f := _), map_add (f := _), PreTilt.mk_untilt_eq_coeff_zero,
       PreTilt.mk_untilt_eq_coeff_zero]
   rw [Ideal.Quotient.eq, Ideal.mem_span_singleton] at h
   obtain ⟨t, ht⟩ := h

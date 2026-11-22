@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.InIdBasic
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfLocalLevelsUnitaryIsOpenIsCompactIsLeve
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.InIdBasic
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfLocalLevelsUnitaryIsOpenIsCompactIsLeve
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem inId_span {ι : Type} [Fintype ι] (w : Plc E) (b : ι → 𝓞 E) (y : 
   rw [Ideal.map_span, ← Set.range_comp, Ideal.mem_span_range_iff_exists_fun] at hz
   obtain ⟨c, rfl⟩ := hz
   refine ⟨c, ?_⟩
-  rw [AddSubmonoidClass.coe_finset_sum]
+  rw [AddSubmonoidClass.coe_finsetSum]
   exact Finset.sum_congr rfl fun j _ => mul_comm _ _
 
 theorem InId.add {w : Plc E} {𝔟 : Ideal (𝓞 E)} {y y' : w.adicCompletion E} (h : InId w 𝔟 y) (h' : InId w 𝔟 y') : InId w 𝔟 (y + y') := by
@@ -55,7 +59,7 @@ theorem mem_idHat_iff (𝔟 : Ideal (𝓞 E)) (v) :
       rw [F.vec_mul w hw x u]
       exact (InId.of_mem w hx).mul ((F.vec_hat u).1 hu w hw i)
     | zero => rw [map_zero]; exact InId.zero w 𝔟
-    | add a b _ _ ha hb => rw [map_add]; exact ha.add hb
+    | add a b _ _ ha hb => rw [map_add (f := _)]; exact ha.add hb
     | neg a _ ha =>
       rw [map_neg]
       simpa using ha.mul (neg_mem (one_mem _))
@@ -72,7 +76,8 @@ theorem mem_idHat_iff (𝔟 : Ideal (𝓞 E)) (v) :
     choose u hu using fun j : Fin r => F.vec_surj (fun w i => (z w i j : w.adicCompletion E)) fun w i => (z w i j).2
     have e : v = ∑ j, mulF S.D (b j) (u j) := by
       refine sub_eq_zero.1 (F.vec_inj _ fun w hw => ?_)
-      rw [map_sub, map_sum, sub_eq_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum, sub_eq_zero]
       funext i
       rw [hz w i hw, Finset.sum_apply]
       exact Finset.sum_congr rfl fun j _ => by rw [F.vec_mul w hw (b j) (u j), hu j w hw]; rfl

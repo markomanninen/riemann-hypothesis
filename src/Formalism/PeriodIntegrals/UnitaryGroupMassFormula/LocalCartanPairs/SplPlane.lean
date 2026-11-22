@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,8 +58,8 @@ theorem splPlane_core (E : Fin 2 ⊕ κ ≃ ι) (A : Matrix ι ι R) (hA : Aᴴ 
   have hS : S = fromBlocks S.toBlocks₁₁ 0 S.toBlocks₂₁ 1 := by
     conv_lhs => rw [← fromBlocks_toBlocks S]
     congr 1
-    · ext a j; simp [hSdef, hu₀def, splBasis, toBlocks₁₂, one_apply]
-    · ext k j; simp [hSdef, hu₀def, splBasis, toBlocks₂₂, one_apply]
+    · ext a j; simp [hSdef, hu₀def, splBasis, toBlocks₁₂]
+    · ext k j; simp [hSdef, hu₀def, splBasis, toBlocks₂₂, Matrix.one_apply]
   have hSdet : IsUnit S.det := by
     rw [hS, det_fromBlocks_zero₁₂, det_one, mul_one, det_fin_two]
     simpa [hSdef, hu₀def, splBasis, toBlocks₁₁] using hdet
@@ -82,7 +86,7 @@ theorem splPlane_core (E : Fin 2 ⊕ κ ≃ ι) (A : Matrix ι ι R) (hA : Aᴴ 
       + B 0 j • x + B 1 j • y := by
     intro j; funext i
     simp [hudef, hTdef, hu₀def, splBasis, Matrix.mul_apply, Fintype.sum_sum_type,
-      Fin.sum_univ_two, one_apply]
+      Fin.sum_univ_two, Matrix.one_apply, mul_ite]
     ring
   set G := uᴴ * A * u with hGdef
   have hG : ∀ r s, G r s = star (fun i => u i r) ⬝ᵥ (A *ᵥ fun i => u i s) :=

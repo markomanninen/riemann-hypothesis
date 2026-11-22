@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwistSmulHomApp
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TwistSmulHomApp
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -60,7 +64,7 @@ theorem lifts_succ : ∀ {A : Type} [CommRing A] [IsNoetherianRing A] (I : Ideal
     obtain ⟨c₁, rfl, h₁⟩ := hx
     obtain ⟨c₂, rfl, h₂⟩ := hy
     refine ⟨c₁ + c₂, map_add _ _ _, ?_⟩
-    rw [map_add]
+    rw [map_add (f := _)]
     exact hsub _ _ _ h₁ h₂
   | smul a x _ hx =>
     obtain ⟨c, rfl, h⟩ := hx

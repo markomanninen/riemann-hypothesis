@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ImagePolynomialAction
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinIntegralityComputationStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ImagePolynomialAction
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BreuilKisinIntegralityComputationStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,7 @@ theorem integral : ∀ (O K : Type) [CommRing O] [NormedField K] [IsUltrametricD
       exact sub_mem hENy (D.smul_mem_Man (pow_mem (E_mem l e _) η) hfM)
     exact D.mem_M_of_mem_Man hA hB
   refine (D.desc.mem_Z).2 ⟨⟨_, hy', ?_⟩, fun g => ?_⟩
-  · rw [BKDat.Lc_cls, hsplit, map_add, add_eq_left.2 ((D.cls_eq_zero_iff).2 hfM)]
+  · rw [BKDat.Lc_cls, hsplit, map_add (f := _), add_eq_left.2 ((D.cls_eq_zero_iff).2 hfM)]
   · rw [D.actPol_Lc, hinv g]
 
 end GlobalTheory.Proof.breuilKisin_descent_operator_preserves_lattice

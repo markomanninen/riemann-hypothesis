@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.FullFlag
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.FullFlag
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

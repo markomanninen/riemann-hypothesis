@@ -1,17 +1,21 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.IntegralDeterminants.PlaceConjAlt
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinitePartAtOwnWeightNeBot
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfLocalLevelsUnitaryIsOpenIsCompactIsLeve
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DefiniteUnitaryIntegralBelowPlaceCompactOpen
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.MemIsotypicOfInjective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.IntegralDeterminants.PlaceConjAlt
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinitePartAtOwnWeightNeBot
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductOfLocalLevelsUnitaryIsOpenIsCompactIsLeve
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DefiniteUnitaryIntegralBelowPlaceCompactOpen
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.MemIsotypicOfInjective
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual Formalism.BasicNotions Formalism.MainNotions.N GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.GalOfCusp UpperTheory.V.Af
 open scoped Classical
 
 private noncomputable def fixW {E : Type} [Field E] [NumberField E] [IsCMField E] (n : ℕ)
     (w : HeightOneSpectrum (𝓞 E)) : Submodule ℂ (UA E n → ℂ) where
-  carrier := {ψ | ∀ y ∈ locU n w, cLoc w y ∈ GlobalTheory.LFun.KGL w n → RU E n y ψ = ψ}
-  add_mem' ha hb y hy hk := by rw [map_add, ha y hy hk, hb y hy hk]
+  carrier := {ψ | ∀ y ∈ locU n w, cLoc w y ∈ GlobalTheory.LFun.KGL w (n := n) → RU E n y ψ = ψ}
+  add_mem' ha hb y hy hk := by rw [map_add (f := _), ha y hy hk, hb y hy hk]
   zero_mem' _ _ _ := map_zero _
   smul_mem' c _ ha y hy hk := by rw [map_smul, ha y hy hk]
 
@@ -42,7 +46,7 @@ theorem UpperTheory.V.Z.Int.vecForm :
   let π : GlobalTheory.DefU.AutSub E n := ⟨V, hV⟩
   let N : Submodule ℂ (UA E n → ℂ) := V ⊓ fixW n w
   have hNV : N ≤ V := inf_le_left
-  have hmemN : ∀ ψ, ψ ∈ N ↔ ψ ∈ V ∧ ∀ y ∈ locU n w, cLoc w y ∈ GlobalTheory.LFun.KGL w n → RU E n y ψ = ψ :=
+  have hmemN : ∀ ψ, ψ ∈ N ↔ ψ ∈ V ∧ ∀ y ∈ locU n w, cLoc w y ∈ GlobalTheory.LFun.KGL w (n := n) → RU E n y ψ = ψ :=
     fun _ => Iff.rfl
   have hst : ∀ (x : infU E n), ∀ ψ ∈ N, ((RU E n).comp (infU E n).subtype) x ψ ∈ N := by
     intro x ψ hψ
@@ -73,7 +77,7 @@ theorem UpperTheory.V.Z.Int.vecForm :
   haveI : Nontrivial N := ⟨⟨⟨φ₀, (hmemN _).2 ⟨hφ₀, hfix⟩⟩, 0, fun h => hne (congrArg Subtype.val h)⟩⟩
   obtain ⟨F, hF0, hF⟩ := GlobalTheory.T.exists_multilinearMap_of_isotypic_commuting_subgroups (InfinitePlace E) (infU E n) N (fun v => embU n (φ v))
     (fun v => nablaSq ℂ n (lam v)) ρ s σ inferInstance hirr hcomm hspan
-  let f : MultilinearMap ℂ (fun v => nablaSq ℂ n (lam v)) (UA E n → ℂ) := N.subtype.compMultilinearMap F
+  let f : MultilinearMap (RingHom.id ℂ) (fun v => nablaSq ℂ n (lam v)) (UA E n → ℂ) := N.subtype.compMultilinearMap F
   have hfN : ∀ x, f x ∈ N := fun x => (F x).2
   have hfne : f ≠ 0 := fun h => hF0 (MultilinearMap.ext fun x => Subtype.ext (congrArg (fun m => m x) h))
   have hfF : ∀ v (h : embU n (φ v)) (x : ∀ u, nablaSq ℂ n (lam u)),
@@ -121,12 +125,11 @@ theorem UpperTheory.V.Z.Int.vecForm :
     rw [h1]
     congr 1
     funext v
-    simp only [Finset.mem_toList, Finset.mem_univ, if_true]
     rw [hcg v]
-    rfl
-  let Kint : Subgroup (finU E n) :=
+    simp [σ]
+  let Kint : Subgroup (finU (E := E) (n := n)) :=
     (GroundTheory.Automorphic.AdelicGLn.integralFiniteGL E n).comap (GlobalTheory.BCT.GlobLev.finPart E n)
-  let Kst : Subgroup (finU E n) :=
+  let Kst : Subgroup (finU (E := E) (n := n)) :=
     { carrier := {k | ∀ x, RU E n k.1 (f x) = f x}
       one_mem' := fun x => by simp
       mul_mem' := fun {a b} ha hb x => by
@@ -135,12 +138,12 @@ theorem UpperTheory.V.Z.Int.vecForm :
         calc RU E n (a⁻¹).1 (f x) = RU E n (a⁻¹).1 (RU E n a.1 (f x)) := by rw [ha x]
           _ = RU E n ((a⁻¹).1 * a.1) (f x) := by rw [GlobalTheory.DefU.RU_RU]
           _ = f x := by simp }
-  have hO1 : IsOpen (Kint : Set (finU E n)) :=
+  have hO1 : IsOpen (Kint : Set (finU (E := E) (n := n))) :=
     (GroundTheory.Automorphic.AdelicGLn.isOpen_integralFiniteGL E n).preimage GlobalTheory.BCT.GlobLev.continuous_finPart
-  have hO2 : IsOpen (Kst : Set (finU E n)) := by
+  have hO2 : IsOpen (Kst : Set (finU (E := E) (n := n))) := by
     let B := fun v => Module.finBasis ℂ (nablaSq ℂ n (lam v))
-    have e : (Kst : Set (finU E n)) = ⋂ t : (∀ v, Fin (Module.finrank ℂ (nablaSq ℂ n (lam v)))),
-        {k : finU E n | RU E n k.1 (f fun v => B v (t v)) = f fun v => B v (t v)} := by
+    have e : (Kst : Set (finU (E := E) (n := n))) = ⋂ t : (∀ v, Fin (Module.finrank ℂ (nablaSq ℂ n (lam v)))),
+        {k : finU (E := E) (n := n) | RU E n k.1 (f fun v => B v (t v)) = f fun v => B v (t v)} := by
       ext k
       simp only [Set.mem_iInter]
       refine ⟨fun h t => h _, fun h x => ?_⟩

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.SpecializationMapCompUniversalSection
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AnnihilatorBaseChange.SpecializationMapCompUniversalSection
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.PrimeApproximation.yPrime_approx :
     ∀ {R σ : Type} [inst : CommRing R] {y : σ → R} {f : R} {BB : Type} [inst_1 : CommRing BB] [inst_2 : Algebra R BB],
@@ -26,7 +30,7 @@ theorem UpperTheory.Reformulated.B.PrimeApproximation.yPrime_approx :
       (Ideal.mul_mem_left _ (algebraMap R BB f ^ m) hu)
       (Ideal.mul_mem_left _ (algebraMap R BB f ^ k) hv)
     convert key using 1
-    simp only [map_add, map_mul, map_pow]
+    simp only [map_add (f := _), map_mul, map_pow]
     ring
   · rintro c u - ⟨k, a, ha, hu⟩
     obtain ⟨j, r, hr⟩ := h.dense n c

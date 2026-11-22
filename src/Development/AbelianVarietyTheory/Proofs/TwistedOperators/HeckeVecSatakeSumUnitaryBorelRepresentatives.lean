@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsPairingSingleNe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsPairingSingleNe
+
+@[expose] public section
+
 open Matrix Formalism.UG GlobalTheory.Hk3 GlobalTheory.FinWeil GlobalTheory.SphTheta ValuativeRel Classical
 open GlobalTheory.LFun (HasSatU IsSatVecU heckeVec)
 open GlobalTheory.LGrp (bcParam extProd)
@@ -57,7 +62,7 @@ theorem heckeVec_satU_borel : ∀ (L : Type) [Field L] [Valued L (WithZero (Mult
     rw [this]
     unfold chiDeltaU
     refine Finset.prod_congr rfl fun k _ => ?_
-    rw [dif_pos (by omega), mul_zpow, ← _root_.zpow_mul]
+    rw [dite_eq_left (by omega), mul_zpow, ← _root_.zpow_mul]
     have hl : lo n k = ⟨k.1, by omega⟩ := rfl
     rw [hl]
     congr 2

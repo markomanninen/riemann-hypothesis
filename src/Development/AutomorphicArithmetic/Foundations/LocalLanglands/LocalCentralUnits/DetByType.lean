@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
-import Development.WeilBound.RepresentationTheoryGL.GaloisPermutationReps.SubquotientEquivalence.ConjTorusSubApply
-import Development.DiscreteGroups.GlobalIrreducibility.DzIsoKO
-import Development.DiscreteGroups.GlobalIrreducibility.DzIsoRes
-import Development.DiscreteGroups.GlobalIrreducibility.DzLCusp
-import Development.DiscreteGroups.GlobalIrreducibility.DzKSchur
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AdmissibleLabelWeightsOfGreenCuspidalParametrisa
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SimpleIffIrreducibleStatement
+module
+
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.RecTTransport
+public import Development.WeilBound.RepresentationTheoryGL.GaloisPermutationReps.SubquotientEquivalence.ConjTorusSubApply
+public import Development.DiscreteGroups.GlobalIrreducibility.DzIsoKO
+public import Development.DiscreteGroups.GlobalIrreducibility.DzIsoRes
+public import Development.DiscreteGroups.GlobalIrreducibility.DzLCusp
+public import Development.DiscreteGroups.GlobalIrreducibility.DzKSchur
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AdmissibleLabelWeightsOfGreenCuspidalParametrisa
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SimpleIffIrreducibleStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,7 +69,7 @@ private theorem equiv_of_typeMaps [Nontrivial W] {T : Representation ℂ (GL (Fi
       exact ⟨γ * γ', w, by rw [map_mul]; rfl⟩
     | zero => simp
     | add x y _ _ hx hy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact U.add_mem hx hy
     | smul c x _ hx =>
       rw [map_smul]
@@ -309,5 +313,5 @@ theorem UpperTheory.Zero.LLC.detByType :
   have h1 := isTypeMap_of i hi τ hτ σ.ρ φ hφ0 hφ
   have h2 := isTypeMap_of i hi τ hτ σ'.ρ ψ hψ0 hψ
   obtain ⟨q⟩ := equiv_of_typeMaps (finCusp_comp i hi τ hτ) σ' σ hω' hω h2 h1
-  show (⟨n, σ'.cl⟩ : GlobalTheory.LocGL.IrrGL _) = ⟨n, σ.cl⟩
+  show (⟨n, σ'.cl⟩ : GlobalTheory.LocGL.IrrGL (k := _)) = ⟨n, σ.cl⟩
   rw [GlobalTheory.SmGL.IrrRep.cl_eq_iff.mpr ⟨q⟩]

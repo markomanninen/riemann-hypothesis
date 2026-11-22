@@ -1,18 +1,22 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
-import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.FinitePartTypes
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqExistsIffDsExists
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqUniqueOfClassification
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasTypeAllAddOfEquiv
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OneAddHsConjLe
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CasselmanWallachExtensionBanachTarget
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsKFinDRep
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CoefBoundOfCasselmanWallach
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.HasDerivAtMap
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsGrowthExponent
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.FinitePartTypes
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqExistsIffDsExists
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DiscreteSeriesUpqUniqueOfClassification
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HasTypeAllAddOfEquiv
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OneAddHsConjLe
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CasselmanWallachExtensionBanachTarget
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsKFinDRep
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CoefBoundOfCasselmanWallach
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.HasDerivAtMap
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsGrowthExponent
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Matrix
 open scoped TensorProduct
@@ -24,8 +28,8 @@ open GlobalTheory.SmoothGlob GlobalTheory.LowTypeDetermined GlobalTheory.PointAt
 
 namespace GlobalTheory.TypeSum.GKCoef
 
-open CoefLow in
 
+open CoefLow in
 theorem values_eq_coef : ∀ {D : D7} (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)) (V : HSp D)
     (τ : D.what₂.Tau), IsInfFam (D := D) θ → GlobalTheory.Published.HarishChandraModules → GlobalTheory.Published.CasselmanWallach →
     ∀ (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H]
@@ -36,6 +40,7 @@ theorem values_eq_coef : ∀ {D : D7} (θ : D.what₂.Tau → (Ainf D.host.F ⊗
     ∀ (v : GlobalTheory.IndefiniteRowSideFullHecke.FinitePartTypes.kFin ε σ) (x : GA D V), ∃ ℓ : H →ₗ[ℂ] ℂ,
       Sobolev₂ (GlobalTheory.SmoothGlob.lieSet ε) σ ℓ ∧ SmoothVec (GlobalTheory.SmoothGlob.lieSet ε) σ (v : H) ∧
       ∀ y ∈ UJset ε, T v (x * atTau θ V τ (P⁻¹ * y * P)) = ℓ (σ y v) := by
+  classical
   intro D θ V τ hθ hHC hCW H _ _ σ lam ε P T _ hDS hP h hT v x
   haveI : CompleteSpace H := hDS.1
   have hstd := std_of_isDS hHC hDS
@@ -48,15 +53,47 @@ theorem values_eq_coef : ∀ {D : D7} (θ : D.what₂.Tau → (Ainf D.host.F ⊗
         refine ⟨C, fun i => ?_⟩
         rw [norm_div, norm_wt, div_le_iff₀ (wt_pos _ _)]
         exact hC _ i.2.2)
-      map_add' := fun v w => by ext i; simp [F, add_div]
-      map_smul' := fun c v => by ext i; simp [F, mul_div_assoc] }
+      map_add' := fun v w => by ext i; simp [mkBd, F, add_div]; rfl
+      map_smul' := fun c v => by ext i; simp [mkBd, F, mul_div_assoc] }
   obtain ⟨T₀, hT₀'⟩ := LinearMap.exists_extend f
   have hT₀ : ∀ (w : H) (hw : IsKFin ε σ w) (i : Unit × UJset ε),
       T₀ w i = F ⟨w, mem_kFin_iff.2 hw⟩ i.2.1 / wt N i.2.1 := fun w hw i => by
     have : T₀ w = f ⟨w, mem_kFin_iff.2 hw⟩ := LinearMap.congr_fun hT₀' ⟨w, mem_kFin_iff.2 hw⟩
     rw [this]; rfl
+  let wcomp (c : (Unit × UJset ε) → ℂ) (B : ℝ) (hB0 : 0 ≤ B)
+      (hB : ∀ i, ‖c i‖ ≤ B) (φ : (Unit × UJset ε) → (Unit × UJset ε)) :
+      Bd (Unit × UJset ε) →L[ℂ] Bd (Unit × UJset ε) :=
+    LinearMap.mkContinuous
+      { toFun := fun F => mkBd (fun i => c i * F (φ i)) ⟨_, wcomp_le hB φ F⟩
+        map_add' := fun F G => by ext i; simp [mkBd, mul_add]; rfl
+        map_smul' := fun a F => by ext i; simp [mkBd]; ring } B
+      fun F => lp.norm_le_of_forall_le (by positivity) (wcomp_le hB φ F)
+  let rt (h : Mx V.rank) : Bd (Unit × UJset ε) →L[ℂ] Bd (Unit × UJset ε) :=
+    if hh : h ∈ UJset ε then
+      wcomp (fun i => (wt N (i.2.1 * h) : ℂ) / wt N i.2.1) (wt N h) (wt_pos N h).le
+        (fun i => by
+          rw [norm_div, norm_wt, norm_wt, div_le_iff₀' (wt_pos _ _)]
+          exact wt_mul_le _ _ _) fun i => (i.1, ⟨i.2.1 * h, mul_mem_UJ i.2.2 hh⟩)
+    else 0
+  have rt_apply {h : Mx V.rank} (hh : h ∈ UJset ε) (F : Bd (Unit × UJset ε)) (i : Unit × UJset ε) :
+      rt h F i = (wt N (i.2.1 * h) : ℂ) / wt N i.2.1 * F (i.1, ⟨i.2.1 * h, mul_mem_UJ i.2.2 hh⟩) := by
+    simp only [rt, dif_pos hh]
+    rfl
+  have modRep_rt : ModRep ε rt := by
+    refine ⟨?_, fun a ha b hb => ?_, 1, N, fun g hg => ?_⟩
+    · ext F i
+      rw [rt_apply (one_mem_UJ ε)]
+      simp [div_self (wt_ne _ _)]
+    · ext F i
+      rw [ContinuousLinearMap.comp_apply, rt_apply (mul_mem_UJ ha hb), rt_apply ha, rt_apply hb]
+      simp only [mul_assoc]
+      have := wt_ne N (i.2.1 * a)
+      field_simp
+    · simp only [rt, dif_pos hg, one_mul]
+      dsimp only [wcomp]
+      exact LinearMap.mkContinuous_norm_le _ (wt_pos N g).le _
   have key : ∀ (w : H) (hw : IsKFin ε σ w), ∀ y ∈ UJset ε, ∀ i : Unit × UJset ε,
-      rt ε Unit N y (T₀ w) i = F ⟨w, mem_kFin_iff.2 hw⟩ (i.2.1 * y) / wt N i.2.1 := by
+      rt y (T₀ w) i = F ⟨w, mem_kFin_iff.2 hw⟩ (i.2.1 * y) / wt N i.2.1 := by
     intro w hw y hy i
     rw [rt_apply hy, hT₀ w hw]
     have := wt_ne N (i.2.1 * y)
@@ -75,7 +112,7 @@ theorem values_eq_coef : ∀ {D : D7} (θ : D.what₂.Tau → (Ainf D.host.F ⊗
     simp only [F]
     rw [mul_assoc g (NormedSpace.exp (s • X)), ← exp_add_smul, add_sub_cancel]
   obtain ⟨T', hT1, hT2, S, C, hS, hC⟩ := GlobalTheory.TypeSum.casselmanWallach_banach hCW V.rank ε H σ hstd _ _
-    (modRep_rt ε Unit N) T₀
+    modRep_rt T₀
     (fun k hk w hw => by
       ext i
       rw [key w hw k (K_le_UJ hk), hT₀ _ (isKFin_translate hw hk)]

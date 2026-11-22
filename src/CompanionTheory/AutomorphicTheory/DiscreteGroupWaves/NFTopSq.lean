@@ -1,11 +1,15 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimENF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLemB
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopFirstOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThetaCompactSupport
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBTAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceContOn
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopCellsOfParts
-import CompanionTheory.AutomorphicTheory.DiscreteGroupWaves.IntegralEqOfSqrtCauchy
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimENF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLemB
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopFirstOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ThetaCompactSupport
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBTAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceContOn
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopCellsOfParts
+public import CompanionTheory.AutomorphicTheory.DiscreteGroupWaves.IntegralEqOfSqrtCauchy
+
+@[expose] public section
 
 namespace CompanionTheory.NFCpt
 
@@ -40,7 +44,7 @@ theorem hsInner_self_re (A : Wq →L[ℂ] Wp) : (B.hsInner A A).re = ‖B.hsVec 
 theorem V_of_not (p : KB.Pl P Wp Wq) (H : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) {γ : C.LPt}
     (hγ : ¬ D.IsLocPt γ (P.r + 1)) : p.V H γ = 0 := by
   unfold KB.Pl.V D.vecV
-  rw [dif_neg fun h => hγ h.1]
+  rw [dite_eq_right fun h => hγ h.1]
 
 theorem ew_top_eq (p : KB.Pl P Wp Wq) (H : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (w : List C.Letter) (γ : C.LPt) :
     TBB.Ew p (fun _ => 1) H (P.r + 1) w γ = ∑ i : SqIx P w, sqW p w γ i ^ 2 * ‖B.hsVec (sqX p H w γ i)‖ ^ 2 := by
@@ -49,7 +53,7 @@ theorem ew_top_eq (p : KB.Pl P Wp Wq) (H : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) 
   rw [Complex.re_ofReal_mul, hn, div_one, Fintype.sum_option]
   by_cases hγ : D.IsLocPt γ (P.r + 1)
   · unfold KB.Pl.RR D.RRplace
-    rw [dif_pos ⟨hγ, hγ⟩, dif_neg (by omega), if_pos rfl]
+    rw [dite_eq_left ⟨hγ, hγ⟩, dite_eq_right (by omega), if_pos rfl]
     by_cases hw : w = []
     · rw [if_pos hw, hsInner_self_re]
       simp only [sqW, sqX, if_pos hw, KB.Pl.V]
@@ -63,7 +67,7 @@ theorem ew_top_eq (p : KB.Pl P Wp Wq) (H : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) 
       ring
   · have h0 : p.RR H (P.r + 1) w γ γ = 0 := by
       unfold KB.Pl.RR D.RRplace
-      rw [dif_neg fun h => hγ h.1]
+      rw [dite_eq_right fun h => hγ h.1]
     rw [h0]
     simp [sqX, V_of_not p _ hγ, JCx1.needs.hsVec_zero]
 

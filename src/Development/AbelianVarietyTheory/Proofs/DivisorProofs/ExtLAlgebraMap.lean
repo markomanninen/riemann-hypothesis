@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLogDerivationExtensionBasicOpen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLogDerivationExtensionBasicOpen
+
+@[expose] public section
 
 noncomputable section
 set_option autoImplicit false
@@ -44,7 +48,7 @@ theorem der_ext (D₁ D₂ : Derivation ℤ S S) (h : ∀ r, D₁ (algebraMap R 
 def extL : Derivation ℤ R R →ₗ[R] Derivation ℤ S S where
   toFun := ext f
   map_add' D D' := der_ext f _ _ fun r => by
-    rw [ext_algebraMap, Derivation.add_apply, Derivation.add_apply, ext_algebraMap, ext_algebraMap, map_add]
+    rw [ext_algebraMap, Derivation.add_apply, Derivation.add_apply, ext_algebraMap, ext_algebraMap, map_add (f := _)]
   map_smul' c D := der_ext f _ _ fun r => by
     rw [ext_algebraMap, RingHom.id_apply, Derivation.smul_apply, Derivation.smul_apply, ext_algebraMap,
       smul_eq_mul, map_mul, Algebra.smul_def]

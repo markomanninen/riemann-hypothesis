@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.PAdicHodge.LogMul
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.EtaleComparisonMapOfFacts
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.LogMul
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.EtaleComparisonMapOfFacts
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory Limits AlgebraicGeometry Opposite GroundTheory.PAdicHodge CrystallineSemistableComparison CrystallineSemistableComparison.CH CrystallineSemistableComparison.E GlobalTheory.EtC
 
@@ -74,14 +79,15 @@ theorem map_dv {S' : Type*} [CommRing S'] [Algebra ℚ S'] (f : S →+* S') (k :
 theorem map_Lg {S' : Type*} [CommRing S'] [Algebra ℚ S'] (f : S →+* S') (N : ℕ) (x : S) :
     f (large₂ N x) = large₂ N (f x) := by
   unfold large₂
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_mul, map_mul, map_pow, map_neg, map_one, map_natCast, map_dv]
 
 theorem map_FF {S' : Type*} [CommRing S'] [Algebra ℚ S'] (f : S →+* S') (N : ℕ) (x y : S) :
     f (FF N x y) = FF N (f x) (f y) := by
   unfold FF
-  rw [map_sub, map_sub, map_Lg, map_Lg, map_Lg, map_add, map_add, map_mul]
+  rw [map_sub, map_sub, map_Lg, map_Lg, map_Lg, map_add (f := _), map_add (f := _), map_mul]
 
 theorem Lg_sub {T : Subring S} {u : S} (h : DP T u) {N M : ℕ} (hNM : N ≤ M) :
     ∃ c ∈ T, large₂ M u - large₂ N u = (N.factorial : S) * c := by
@@ -141,8 +147,8 @@ theorem pow_dvd_FF {R : Type*} [CommRing R] [Algebra ℚ R] {t a b : R} (ha : t 
     exact pow_dvd_pow_of_dvd hu _
   have hz : t ∣ a + b + a * b := dvd_add (dvd_add ha hb) (ha.mul_right b)
   have key := truncEval_log_mul (hpow a ha) (hpow b hb) (hpow _ hz) (by
-    rw [map_add, map_add, map_mul]; ring)
-  rw [Lg_eq_truncEval, Lg_eq_truncEval, Lg_eq_truncEval, ← map_Lg, ← map_Lg, ← map_Lg, ← map_add,
+    rw [map_add (f := _), map_add (f := _), map_mul]; ring)
+  rw [Lg_eq_truncEval, Lg_eq_truncEval, Lg_eq_truncEval, ← map_Lg, ← map_Lg, ← map_Lg, ← map_add (f := _),
     Ideal.Quotient.eq] at key
   have : FF M a b ∈ J := by
     have e : FF M a b = large₂ M (a + b + a * b) - (large₂ M a + large₂ M b) := by unfold FF; ring
@@ -173,8 +179,6 @@ def TX (T : Subring S) : Subring S[X] where
   neg_mem' hp n := by
     rw [coeff_neg]
     exact T.neg_mem (hp n)
-
-theorem mem_TX {T : Subring S} {p : S[X]} : p ∈ TX T ↔ ∀ n, p.coeff n ∈ T := Iff.rfl
 
 theorem dv_CX (k : ℕ) (x : S) : dv k (C x * X : S[X]) = C (dv k x) * X ^ k := by
   unfold dv

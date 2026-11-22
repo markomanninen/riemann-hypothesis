@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ThetaSeriesTies
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ResidueInjectivityAt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SplitOffBadOfSuppSplitOff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NablaDeltaOperatorLatticePreserved
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeExtensionAlongFieldEmbeddingDuals
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DualFrLatticeHolds
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.SecondStepGluing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ThetaSeriesTies
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ResidueInjectivityAt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SplitOffBadOfSuppSplitOff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NablaDeltaOperatorLatticePreserved
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeExtensionAlongFieldEmbeddingDuals
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DualFrLatticeHolds
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.SecondStepGluing
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -46,31 +50,6 @@ theorem fg_of_graph {R P X : Type} [CommRing R] [IsNoetherianRing R] [AddCommGro
 
 variable {K : Type} [Field K] [NumberField K] {n n' : ℕ}
 
-theorem isLatIn_comap (w : (Fin n → K) ≃ₗ[K] (Fin n' → K)) {e : (Fin n → K) →ₗ[K] (Fin n → K)}
-    {e' : (Fin n' → K) →ₗ[K] (Fin n' → K)} (he : ∀ x, w (e x) = e' (w x)) {V : Submodule K (Fin n' → K)}
-    {B : Submodule (𝓞 K) (Fin n' → K)} (h : Formalism.EigenvalueLevelCeiling.IsLatIn V (B.map (e'.restrictScalars (𝓞 K)))) :
-    Formalism.EigenvalueLevelCeiling.IsLatIn (V.comap w.toLinearMap)
-      ((B.comap (w.toLinearMap.restrictScalars (𝓞 K))).map (e.restrictScalars (𝓞 K))) := by
-  have key : (B.comap (w.toLinearMap.restrictScalars (𝓞 K))).map (e.restrictScalars (𝓞 K)) =
-      (B.map (e'.restrictScalars (𝓞 K))).map (w.symm.toLinearMap.restrictScalars (𝓞 K)) := by
-    ext x
-    constructor
-    · rintro ⟨y, hy, rfl⟩
-      exact ⟨_, ⟨w y, hy, rfl⟩, w.symm_apply_eq.2 (he y).symm⟩
-    · rintro ⟨_, ⟨y, hy, rfl⟩, rfl⟩
-      refine ⟨w.symm y, by simpa using hy, w.injective ?_⟩
-      simp [he]
-  rw [key]
-  refine ⟨h.1.map _, ?_⟩
-  rw [Submodule.map_coe, LinearMap.coe_restrictScalars, Submodule.span_image, h.2, Submodule.map_equiv_eq_comap_symm]
-  rfl
-
-theorem span_map_congr (e : (Fin n → K) →ₗ[K] (Fin n' → K)) {A B : Submodule (𝓞 K) (Fin n → K)}
-    (h : Submodule.span K (A : Set (Fin n → K)) = Submodule.span K (B : Set (Fin n → K))) :
-    Submodule.span K (A.map (e.restrictScalars (𝓞 K)) : Set (Fin n' → K)) =
-      Submodule.span K (B.map (e.restrictScalars (𝓞 K)) : Set (Fin n' → K)) := by
-  rw [Submodule.map_coe, Submodule.map_coe, LinearMap.coe_restrictScalars, Submodule.span_image, Submodule.span_image, h]
-
 theorem localization_comap_le (v : HeightOneSpectrum (𝓞 K)) (f : (Fin n → K) →ₗ[K] (Fin n' → K))
     {A B : Submodule (𝓞 K) (Fin n' → K)} (h : localization₂ v.asIdeal A ≤ localization₂ v.asIdeal B) :
     localization₂ v.asIdeal (A.comap (f.restrictScalars (𝓞 K))) ≤ localization₂ v.asIdeal (B.comap (f.restrictScalars (𝓞 K))) := by
@@ -90,8 +69,8 @@ def dataLevel (Q : Finset (Pl D.host.E)) : Subgroup (Bridge.Gf (Vc D i)) :=
   (levEnv (Vc D i) (R.βV i) (Lev.datY _ D.R.r D.R.t 1 (r_le_V i) R.Pg Q (LevelP.triv _ _ _) (fun _ _ => 1) (fun _ => 1)
     Lev.Frm.A)).J
 
-variable {i} in
 
+variable {i} in
 def MeetsClasses (J : Subgroup (Bridge.Gf (Vc D i))) {Cl : Type} (h : Cl → GA D (Vc D i)) : Prop :=
   (∀ c, h c ∈ GfC (Vc D i)) ∧
     ∀ x : Bridge.Gf (Vc D i), ∃ (c : Cl) (γ : GQ (Vc D i)) (k : J), x = Bridge.ratF (Vc D i) γ * fin (Vc D i) (h c) * k
@@ -108,16 +87,6 @@ def SpanOverClasses (U : Subgroup G) (ψ : U →* D.what₂.LLˣ) (ph : ℂ) (v 
   ∀ ω φ, IsBaseKernel R i v p ω φ → ∀ (Cl : Type) (h : Cl → GA D (Vc D i)),
     MeetsClasses (dataLevel R i (placesOver R (R.mu v) p)) h →
       thetaBase R i U ψ ph v p = Submodule.span (𝓞 D.what₂.LL) (⋃ c, seriesAt R i U ψ ph ω φ (h c))
-
-abbrev goodOp : (Fin (R.nW i) → D.what₂.LL) →ₗ[D.what₂.LL] (Fin (R.nW i) → D.what₂.LL) :=
-  (R.FW i).eOp fun g => (idemOf A.X).coeff g
-
-abbrev goodType (U : Subgroup G) (ψ : U →* D.what₂.LLˣ) : Submodule D.what₂.LL (Fin (R.nW i) → D.what₂.LL) :=
-  (R.FW i).Wgood U ψ fun g => (idemOf A.X).coeff g
-
-def ClassFullRank (U : Subgroup G) (ψ : U →* D.what₂.LLˣ) (ph : ℂ) (v : HeightOneSpectrum (𝓞 D.what₂.LL)) (p : ℕ) : Prop :=
-  Submodule.span D.what₂.LL ((thetaBase R i U ψ ph v p).map ((goodOp R i).restrictScalars (𝓞 D.what₂.LL)) :
-    Set (Fin (R.nW i) → D.what₂.LL)) = goodType R i U ψ
 
 def FormsDetermined : Prop :=
   ∀ x, (∀ v : ∀ ρ, lowT (R.MW i (sg0 D A)) ρ, adForm R i x (fun ρ => v ρ) = 0) → x = 0
@@ -159,9 +128,15 @@ theorem levJ_le_dataLevel (t : T0) {Q : Finset (Pl D.host.E)} (hQ : Q ⊆ R.Q t)
   exact ⟨⟨hx.1.1, Subgroup.mem_iInf.2 fun PP => Subgroup.mem_iInf.2 fun hP =>
     Subgroup.mem_iInf.1 (Subgroup.mem_iInf.1 hx.1.2 PP) (hQ hP)⟩, hx.2⟩
 
-theorem nabAtr_hLat_fg (g : Bridge.Gf (Vc D i)) : (nabAtr (labLL D) (lamV D i) (Bridge.hLat (Vc D i) g)).FG :=
-  (GlobalTheory.TransLattice.nabDelLattice _ _ _ _ _ fun τ => (GlobalTheory.dualFrLattice_holds D.what₂.LL _ 1 _ (by simp)
-    (GlobalTheory.TauLat.tauLatLattice _ _ _ _ (labLL D) τ _ (GlobalTheory.RepsCompare.isLattice_hLat _ g))).1).1.fg
+theorem nabAtr_hLat_fg (g : Bridge.Gf (Vc D i)) : (nabAtr (labLL D) (lamV D i) (Bridge.hLat (Vc D i) g)).FG := by
+  have hLat : Submodule.IsFullLattice D.host.E (Bridge.hLat (Vc D i) g) := by
+    obtain ⟨-, -, hfg, hsp, -⟩ := GlobalTheory.Member.latHat_eq_hat_and_gram D (Vc D i)
+    obtain ⟨Λ, hΛ, h1, h2, -⟩ := GlobalTheory.AdLat.exists_lattice_latOf D.host.F D.host.E (Vc D i).rank (GlobalTheory.Member.latC (Vc D i)) g.1 hfg hsp
+    rw [SetLike.coe_injective ((GlobalTheory.RepsCompare.coe_hLat (Vc D i) g).trans hΛ.symm)]
+    letI : Submodule.IsLattice D.host.E Λ := Submodule.IsLattice.of_fg D.host.E h1
+    exact { span_eq_top := h2 }
+  exact (GlobalTheory.TransLattice.nabDelLattice _ _ _ _ _ fun τ => (GlobalTheory.dualFrLattice_holds D.what₂.LL _ 1 _ (by simp)
+    (GlobalTheory.TauLat.tauLatLattice _ _ _ _ (labLL D) τ _ hLat)).1).1.fg
 
 theorem coefTie_class {V : HSp D} {C : Bridge.CoefDat D V} {S : CSD D.what₂.LL} {J : Subgroup (Bridge.Gf V)} {χ : J →* ℂˣ}
     {P : Bridge.ClassPres (Bridge.ratF V) S D.what₂.embLL C.ρ J χ} {lam : D.what₂.Tau → DomWeight V.rank}
@@ -195,7 +170,7 @@ theorem singleSeries_add (ω : WeilRep D i) (φ : Datum.WO (Vc D i) (Wc D i) →
     (v : ∀ ρ, lowT (R.MW i (sg0 D A)) ρ) :
     singleSeries R i ω φ h (w + w') v = singleSeries R i ω φ h w v + singleSeries R i ω φ h w' v := by
   funext g
-  simp only [singleSeries, Datum.thetaKO, map_add, Pi.add_apply]
+  simp only [singleSeries, Datum.thetaKO, map_add (f := _), Pi.add_apply]
 
 theorem singleSeries_smul (ω : WeilRep D i) (φ : Datum.WO (Vc D i) (Wc D i) → ℂ) (h : GA D (Vc D i)) (a : ℂ) (w : (R.cV i).W)
     (v : ∀ ρ, lowT (R.MW i (sg0 D A)) ρ) :
@@ -205,7 +180,7 @@ theorem singleSeries_smul (ω : WeilRep D i) (φ : Datum.WO (Vc D i) (Wc D i) �
 
 theorem adForm_add (x y : Fin (R.nW i) → D.what₂.LL) : adForm R i (x + y) = adForm R i x + adForm R i y := by
   unfold adForm
-  rw [map_add, map_add]
+  rw [map_add (f := _), map_add (f := _)]
 
 theorem adForm_smul (a : D.what₂.LL) (x : Fin (R.nW i) → D.what₂.LL) : adForm R i (a • x) = D.what₂.embLL a • adForm R i x := by
   unfold adForm
@@ -222,7 +197,7 @@ theorem seriesAt_fg (hd : FormsDetermined R i) (U : Subgroup G) (ψ : U →* D.w
     { carrier := {q | ∀ v : ∀ ρ, lowT (R.MW i (sg0 D A)) ρ,
         adForm R i q.2 (fun ρ => v ρ) = ph • levelTrace R i U ψ (singleSeries R i ω φ h (cf q.1) v)}
       add_mem' := fun {a b} ha hb v => by
-        rw [Prod.fst_add, Prod.snd_add, adForm_add, map_add, singleSeries_add, map_add, smul_add, ← ha v, ← hb v]
+        rw [Prod.fst_add, Prod.snd_add, adForm_add, map_add (f := _), singleSeries_add, map_add (f := _), smul_add, ← ha v, ← hb v]
         rfl
       zero_mem' := fun v => by
         have h1 := adForm_smul (R := R) (i := i) 0 0

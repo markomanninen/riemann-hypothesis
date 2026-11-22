@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabIntPfSk
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocFacts
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabIntPfSk
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +21,8 @@ variable {D : D7} (δ : ∀ p : PlF D, (D.s.atP p).Fp)
 
 include δ M hA
 
-omit M hA in
 
+omit M hA in
 abbrev cc : (D.s.atP p).Ep :=
   algebraMap (D.s.atP p).Fp (D.s.atP p).Ep (δ p) * (D.s.atP p).ιE (uP p : D.host.E)
 
@@ -215,8 +219,8 @@ theorem intUp_iff_L (hs : (M p).split = none) {a b : MatR D} (ha : IsLoUni a) (h
       · rw [StabShape.ρOf_diag δ M (hA p) a b ha hb]; exact Subring.one_mem _
       · rw [hr]; simp [StabShape.ρL, (hb i j).1 hji]
 
-omit δ M hA p in
 
+omit δ M hA p in
 theorem locShapeL : LocShapeL D := by
   intro δ M p hA hs a b ha hb
   rw [intLow_iff_L δ M hA p hs ha hb, intUp_iff_L δ M hA p hs ha hb]

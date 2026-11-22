@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.SumLPresHolds
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PsiInv
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.ExpTop
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.SumLPresHolds
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PsiInv
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.ExpTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,7 +100,9 @@ theorem expDens_gen {n : ℕ} (ε : Fin n → Bool) (r₀ : ℝ) (hr₀ : 0 < r�
 
   obtain ⟨-, hpres⟩ := sumLPres_holds n ε m h hmh horth ι η L₀ L₁
   set Ls := sumL ε m h hmh L₀ L₁ with hLs
-  have hLc : Continuous Ls := Ls.continuous_of_finiteDimensional
+  have hLc : Continuous Ls := by
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact Ls.continuous_of_finiteDimensional
   have hL0 : Ls 0 = 0 := map_zero Ls
   have hnorm : ∀ p, ‖Ls p‖ ≤ 2 * ‖p‖ := by
     intro p
@@ -169,8 +175,8 @@ theorem expR_zero' {n : ℕ} (ε : Fin n → Bool) : expR ε (0 : EuclideanSpace
 
 end CVI
 
-open CVI in
 
+open CVI in
 theorem cayValId_holds : CayValId := by
   intro n ε hG r₀ hr₀ f₀ hfm hfc hf
   classical

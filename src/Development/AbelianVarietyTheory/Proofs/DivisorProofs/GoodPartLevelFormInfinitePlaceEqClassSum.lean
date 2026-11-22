@@ -1,5 +1,10 @@
-import Formalism.LocalToGlobal.Divisibility.HeckeCSDICommTrRep
-import Development.AbelianVarietyTheory.Definitions.Divisors.FactorBounds
+module
+
+public import Formalism.LocalToGlobal.Divisibility.HeckeCSDICommTrRep
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FactorBounds
+
+@[expose] public section
+
 open Module NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.DIV Formalism.L2.Indef Formalism.L2.Col Matrix
 open scoped ComplexOrder
 

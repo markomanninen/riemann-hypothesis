@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SettingBlocks
-import ReciprocityTheory.ReductiveGroups.PlaceCounting.RaySplA
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SettingBlocks
+public import ReciprocityTheory.ReductiveGroups.PlaceCounting.RaySplA
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,12 +20,14 @@ theorem ef_one_of_split (E L : Type) [Field E] [NumberField E] [Field L] [Number
   have hinjEL : Function.Injective (algebraMap (𝓞 E) (𝓞 L)) :=
     FaithfulSMul.algebraMap_injective (𝓞 E) (𝓞 L)
   obtain ⟨W, -, hWp, hWQ⟩ := Ideal.exists_ideal_over_prime_of_isIntegral (S := 𝓞 L) Q ⊥
-    (by rw [Ideal.comap_bot_of_injective _ hinjEL]; exact bot_le)
+    (by rw [(show Ideal.under _ ⊥ = ⊥ from Ideal.comap_bot_of_injective _ hinjEL)]; exact bot_le)
   have hWb : W ≠ ⊥ := by
-    intro h0; apply hQb; rw [← hWQ, h0, Ideal.comap_bot_of_injective _ hinjEL]
+    intro h0; apply hQb; rw [← hWQ, h0, Ideal.under_def, Ideal.comap_bot_of_injective _ hinjEL]
   have hpW : ((p : ℕ) : 𝓞 L) ∈ W := by
     have : algebraMap (𝓞 E) (𝓞 L) ((p : ℕ) : 𝓞 E) ∈ W := by
-      rw [← Ideal.mem_comap, hWQ]; exact hpQ'
+      rw [← Ideal.mem_comap]
+      change ((p : ℕ) : 𝓞 E) ∈ Ideal.under (𝓞 E) W
+      rw [hWQ]; exact hpQ'
     simpa using this
   obtain ⟨h1, h2⟩ := hall ⟨W, hWp, hWb⟩ hpW
   have : W.LiesOver Q := ⟨hWQ.symm⟩

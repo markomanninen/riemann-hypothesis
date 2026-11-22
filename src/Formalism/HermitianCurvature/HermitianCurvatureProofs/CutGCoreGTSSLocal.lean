@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSLSliceDZ
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSLSliceSS
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSLMat
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSLSliceDZ
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSLSliceSS
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTSSLMat
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP.Gauge.GC
 

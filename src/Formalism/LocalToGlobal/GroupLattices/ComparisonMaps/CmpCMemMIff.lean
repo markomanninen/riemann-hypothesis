@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CmpCMemFunMod
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.RecThm
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.SpanImageOfSurj
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CmpCMemFunMod
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.RecThm
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.SpanImageOfSurj
+
+@[expose] public section
 
 noncomputable section
 
@@ -132,7 +136,7 @@ theorem locW_intAtW (T : ∀ u : D.what₂.Word, Forms0 D u) (u : D.what₂.Word
     obtain ⟨P, hP, hPy⟩ := h1 B hB
     obtain ⟨Q, hQ, hQz⟩ := h2 B hB
     refine ⟨P + Q, AddSubgroup.add_mem _ hP hQ, fun t => ?_⟩
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     show (D.fm u).emb 0 y c t + (D.fm u).emb 0 z c t = _
     rw [hPy t, hQz t]
     rfl

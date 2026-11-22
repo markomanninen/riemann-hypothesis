@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarFrame
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarFrame
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ variable {E : Type} [Field E] [NumberField E] [StarRing E]
 
 theorem lm_one {N l : ℕ} (hl : l ≤ N) : leadMinorE (1 : Matrix (Fin N) (Fin N) E) l = 1 := by
   unfold leadMinorE
-  rw [dif_pos hl, Matrix.submatrix_one _ (Fin.castLE_injective hl), Matrix.det_one]
+  rw [dite_eq_left hl, Matrix.submatrix_one _ (Fin.castLE_injective hl), Matrix.det_one]
 
 theorem lm_diag_right {N : ℕ} (X Dg : Matrix (Fin N) (Fin N) E) (hD : ∀ c b, c ≠ b → Dg c b = 0) (l : ℕ) :
     leadMinorE (X * Dg) l = leadMinorE X l * leadMinorE Dg l := by

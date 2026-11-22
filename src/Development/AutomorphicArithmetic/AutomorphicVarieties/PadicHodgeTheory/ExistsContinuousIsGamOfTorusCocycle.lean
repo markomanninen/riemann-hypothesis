@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TateRat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.CycInertia
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TriDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.TateRat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.CycInertia
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module Topology UpperTheory.V.Loc UpperTheory.V.U3
 
 private theorem gam_cocycle {G B : Type} [Group G] [CommRing B] {η : G →* ℤˣ} (T : Tor η B) (h : B)
@@ -8,7 +13,7 @@ private theorem gam_cocycle {G B : Type} [Group G] [CommRing B] {η : G →* ℤ
     (T.χ2 a : B) * (-(h * omg (β b) (T.M1 b (β c)))) - (-(h * omg (β (a * b)) (T.M1 (a * b) (β c))))
       + (-(h * omg (β a) (T.M1 a (β (b * c))))) - (-(h * omg (β a) (T.M1 a (β b)))) = 0 := by
   have e := T.alternatingForm_adjointSuperdiagRep a (β b) (T.M1 b (β c))
-  rw [hβ a b, hβ b c, map_mul, Module.End.mul_apply, map_add]
+  rw [hβ a b, hβ b c, map_mul, Module.End.mul_apply, map_add (f := _)]
   generalize T.M1 a (T.M1 b (β c)) = u at e ⊢
   generalize T.M1 a (β b) = w at e ⊢
   simp only [omg, Prod.fst_add, Prod.snd_add] at e ⊢

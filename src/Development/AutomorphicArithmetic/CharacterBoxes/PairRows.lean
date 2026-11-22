@@ -1,8 +1,12 @@
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
-import Development.AutomorphicArithmetic.CharacterBoxes.TwistForm
-import Development.AutomorphicArithmetic.CharacterBoxes.EventuallyRankLeRpowOfLtOneDivFiftytwo
-import Development.AutomorphicArithmetic.MeanSquareBounds.IndUnique
-import Development.AutomorphicArithmetic.MeanSquareBounds.TwistPrim
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+public import Development.AutomorphicArithmetic.CharacterBoxes.TwistForm
+public import Development.AutomorphicArithmetic.CharacterBoxes.EventuallyRankLeRpowOfLtOneDivFiftytwo
+public import Development.AutomorphicArithmetic.MeanSquareBounds.IndUnique
+public import Development.AutomorphicArithmetic.MeanSquareBounds.TwistPrim
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.HC GlobalTheory.EX UpperTheory.Top
 

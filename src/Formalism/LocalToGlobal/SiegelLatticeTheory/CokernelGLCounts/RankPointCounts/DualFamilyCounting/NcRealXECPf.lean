@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcRealXECPfC
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcRealXECPfC
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,6 +30,7 @@ theorem expChart_of (hS : ShearStep) (hC : ConstStep) : ExpChart := by
     rw [hσe y, hΛ y, Formalism.MainNotions.BridgeCSB.unrealify_RL]
   rw [e]
   exact (Measure.map_map hφ.measurable hσ.measurable).symm
+  exact hE.measurable.aemeasurable
 
 end Formalism.L2.SG.Pf.NcReal.JX.EC
 

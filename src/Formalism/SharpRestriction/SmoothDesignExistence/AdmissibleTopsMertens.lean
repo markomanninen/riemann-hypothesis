@@ -1,10 +1,15 @@
-import Formalism.SharpRestriction.GrowthBounds.PlaneCountTheoremWithConstants
-import Formalism.SharpRestriction.AdmissibleParameterJoins.GandSa
-import Formalism.SharpRestriction.AdmissibleParameterJoins.GandSb
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.CMFieldLemmas
-import Formalism.SharpRestriction.SmoothDesignExistence.DGamSmooth
-import Formalism.SharpRestriction.GrowthBounds.TopChoiceBounds
-import Formalism.SharpRestriction.GrowthBounds.JointsLit
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCountTheoremWithConstants
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.GandSa
+public import Formalism.SharpRestriction.GrowthBounds.SelectionLemmas
+public import Formalism.SharpRestriction.GlobalSchurBounds.CMFieldLemmas
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.CMFieldLemmas
+public import Formalism.SharpRestriction.SmoothDesignExistence.DGamSmooth
+public import Formalism.SharpRestriction.GrowthBounds.TopChoiceBounds
+public import Formalism.SharpRestriction.GrowthBounds.JointsLit
+
+@[expose] public section
 
 noncomputable section
 

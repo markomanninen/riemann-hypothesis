@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSegreArith
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.LemCone
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodB
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSegreArith
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.LemCone
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodB
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -33,7 +38,7 @@ theorem mConeMap_segreSub (y : (Σ k, ι k) → Ω) (Q : MvPolynomial (Ix ((k : 
     simp only [segreSub, coneMap, mConeMap, eq_intCast, map_intCast]
     exact (map_intCast (Polynomial.eval₂RingHom (MvPolynomial.C : Ω →+* MvPolynomial K Ω)
       (∏ k, (MvPolynomial.X k : MvPolynomial K Ω))) a).symm
-  | add p q hp hq => simp only [map_add, hp, hq, Polynomial.eval₂_add]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq, Polynomial.eval₂_add]
   | mul_X p i hp =>
     rw [map_mul, map_mul, hp, map_mul, Polynomial.eval₂_mul]
     congr 1
@@ -49,7 +54,7 @@ theorem eval_segreSub (z : (Σ k, ι k) → ℂ) (Q : MvPolynomial (Ix ((k : K) 
     eval z (map (Int.castRingHom ℂ) (segreSub Q)) = eval (segreCoords z) (map (Int.castRingHom ℂ) Q) := by
   induction Q using MvPolynomial.induction_on with
   | C a => simp [segreSub]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p i hp =>
     simp only [map_mul, hp]
     simp [segreSub, segreCoords, map_prod]
@@ -65,7 +70,7 @@ variable [CharZero Ω]
 theorem coneMap_qmap {J : Type} (x : J → Ω) (Q : MvPolynomial J ℤ) : coneMap ℚ x (qmap Q) = coneMap ℤ x Q := by
   induction Q using MvPolynomial.induction_on with
   | C a => simp [coneMap]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p i hp => simp only [map_mul, map_X, hp]; simp [coneMap]
 
 theorem aeval_segre_eq_zero (y : (Σ k, ι k) → Ω) {R : MvPolynomial (Ix ((k : K) → ι k)) ℚ} {N : ℕ}
@@ -118,7 +123,8 @@ theorem isMultiHomog_segreSub_linear (n : Ix ((k : K) → ι k) → ℤ) :
     IsMultiHomog (segreSub (∑ i, C (n i) * X i)) (fun _ : K => 1) := by
   apply isMultiHomog_of_weighted
   intro k
-  simp only [map_sum, map_mul, algHom_C, segreSub_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, algHom_C, segreSub_X]
   exact IsWeightedHomogeneous.sum _ _ _ fun i _ => (isWeightedHomogeneous_segreMonomial k i.2).C_mul _
 
 theorem exists_segre_prod (m : ℕ) (e : (Σ k, ι k) → ℕ) (he : ∀ k, ∑ i, e ⟨k, i⟩ = m) :
@@ -189,7 +195,8 @@ theorem exists_segre_form {f : MRing ι} {df : K → ℕ} (hf : IsMultiHomog f d
   choose! M hM hMe using key
   refine ⟨∑ μ ∈ f.support, C (f.coeff μ) * M μ,
     IsHomogeneous.sum _ _ _ fun μ hμ => (hM μ hμ).C_mul _, ?_⟩
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   conv_rhs => rw [f.as_sum]
   rw [Finset.sum_mul]
   refine Finset.sum_congr rfl fun μ hμ => ?_
@@ -210,7 +217,7 @@ theorem isIntegral_coneMap {J : Type} (x : J → Ω) (S : Subalgebra ℚ (Polyno
     simp only [coneMap, aeval_C]
     rw [IsScalarTower.algebraMap_apply ℚ S (Polynomial Ω)]
     exact isIntegral_algebraMap
-  | add p q hp hq => rw [map_add]; exact hp.add hq
+  | add p q hp hq => rw [map_add (f := _)]; exact hp.add hq
   | mul_X p i hp =>
     rw [map_mul]
     simpa [coneMap] using hp.mul (hX i)
@@ -265,9 +272,10 @@ theorem key_relation {D : ℕ} (y : (Σ k, ι k) → Ω) (w : Fin (D + 1) → Ω
       omega
     · exact isHomogeneous_zero _ _ _
   have hQx : aeval x Q = 0 := by
-    have hc := congrArg (fun q => Polynomial.coeff q N) hp
+    have hc := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q N) hp
     simp only [Polynomial.aeval_eq_sum_range, Polynomial.finsetSum_coeff, Polynomial.coeff_zero] at hc
-    rw [← hc, hQdef, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hc, hQdef, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [coneMap_of_isHomogeneous ℚ x hP, Algebra.smul_def]
     have hcoe : algebraMap (coneRing ℚ w) (Polynomial Ω) (p.coeff k) = coneMap ℚ w (g k) := (hg k).symm
@@ -278,7 +286,8 @@ theorem key_relation {D : ℕ} (y : (Σ k, ι k) → Ω) (w : Fin (D + 1) → Ω
       ring
     · rw [map_zero]
   have h0 := aeval_segre_eq_zero y hQ hQx hz
-  rw [hQdef, map_sum] at h0
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hQdef, map_sum] at h0
   refine Eq.trans (Finset.sum_congr rfl fun k _ => ?_) h0
   split_ifs
   · rw [map_mul, map_pow, aeval_aeval_eq]

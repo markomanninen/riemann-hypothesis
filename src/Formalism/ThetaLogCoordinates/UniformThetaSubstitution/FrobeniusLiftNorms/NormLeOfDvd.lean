@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementE
-import Formalism.GaussJetBounds.GaussJetProofs.ConstantCoeffAevalLinP
-import Formalism.GaussJetBounds.GaussJetProofs.NormNatCastEqPowPadicValNat
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementE
+public import Formalism.GaussJetBounds.GaussJetProofs.ConstantCoeffAevalLinP
+public import Formalism.GaussJetBounds.GaussJetProofs.NormNatCastEqPowPadicValNat
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ namespace StarEntryOperators
 
 theorem lowOp_int {K : Type} [NormedField K] [IsUltrametricDist K] {ν r0 r1 C : ℕ} (l : Fin C → ℕ)
     (sf : Fin C → ZMod (2 * ν)) (T : ∀ c, Fin (l c) → Fin r0 → K) (I : ∀ c, Fin (l c) → Fin r1)
-    (hT : ∀ c i a, ‖T c i a‖ ≤ 1) : ∀ n, ‖MvPolynomial.coeff n (lowOp l sf T I)‖ ≤ 1 := by
+    (hT : ∀ c i a, ‖T c i a‖ ≤ 1) : ∀ n, ‖AddMonoidAlgebra.coeff (lowOp l sf T I) n‖ ≤ 1 := by
   have h : lowOp l sf T I ∈ opInt K (ZV ν r0 r1) := by
     unfold lowOp minorAt
     refine Subring.prod_mem _ fun c _ => ?_
@@ -156,7 +160,8 @@ theorem cc_hhS [NeZero ν] {p : ℕ} (hp : p ≠ 0) (u : ZMod (2 * ν) → K) :
     refine Finset.sum_eq_zero fun l _ => if_neg fun h => ?_
     have := Finsupp.single_eq_zero.1 h.symm
     exact (pow_ne_zero l (pow_ne_zero 2 hp)) this
-  simp [hhS, map_sum, h]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [hhS, map_sum, h]
 
 end Lin
 
@@ -166,7 +171,7 @@ theorem int_zSub {K : Type} [NormedField K] [IsUltrametricDist K] {ν r0 r1 : �
   intro n
   classical
   unfold zSub
-  rw [map_add]
+  rw [map_add (f := _)]
   refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ?_ ?_)
   · rw [MvPowerSeries.coeff_X]
     split_ifs <;> simp
@@ -242,7 +247,7 @@ theorem star_norm {K : Type} [NormedField K] [IsUltrametricDist K] (hS : StarAri
     (by
       intro s e' he'
       simp only [hi]
-      rw [dif_neg (by simpa using he')])
+      rw [dite_eq_right (by simpa using he')])
     hioff
     (by
       intro s e'

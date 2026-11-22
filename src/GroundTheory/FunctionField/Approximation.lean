@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.FunctionField.PlaceDefs
-import GroundTheory.FunctionField.PlaceBasic
+module
+
+public import Mathlib
+public import GroundTheory.FunctionField.PlaceDefs
+public import GroundTheory.FunctionField.PlaceBasic
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.FunctionField

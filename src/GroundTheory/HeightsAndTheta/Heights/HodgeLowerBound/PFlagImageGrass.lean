@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsFlagGrassSteps
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ImageCoord
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsFlagGrassSteps
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ImageCoord
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -26,7 +31,7 @@ theorem cone_map {A B : Type} [CommRing A] [CommRing B] (φ : A →+* B) (y : (�
       map φ (eval₂ (Int.castRingHom _) (fun p => C (y p) * X p.1 : (Σ k, ι k) → MvPolynomial K A) F) := by
   induction F using MvPolynomial.induction_on with
   | C a => simp only [eval₂_C, Int.coe_castRingHom, map_intCast]
-  | add p q hp hq => simp only [eval₂_add, map_add, hp, hq]
+  | add p q hp hq => simp only [eval₂_add, map_add (f := _), hp, hq]
   | mul_X p q hp => simp only [eval₂_mul, map_mul, hp, eval₂_X, map_C, map_X]
 
 theorem cone_map_eq_zero {A B : Type} [CommRing A] [CommRing B] (φ : A →+* B) (y : (Σ k, ι k) → A)
@@ -50,7 +55,7 @@ theorem cone_smul_eq_zero_iff {Ω : Type} [Field Ω] (c : K → Ω) (hc : ∀ k,
       D c (eval₂ (Int.castRingHom _) (fun p => C (y p) * X p.1 : (Σ k, ι k) → MvPolynomial K Ω) F) := by
     induction F using MvPolynomial.induction_on with
     | C a => simp only [eval₂_C, Int.coe_castRingHom, map_intCast]
-    | add p q hp hq => simp only [eval₂_add, map_add, hp, hq]
+    | add p q hp hq => simp only [eval₂_add, map_add (f := _), hp, hq]
     | mul_X p q hp =>
       rw [eval₂_mul, eval₂_mul, map_mul, hp]
       simp only [eval₂_X, aeval_X, D, map_mul, aeval_C, algebraMap_eq, C_mul]

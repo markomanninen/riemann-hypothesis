@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NatCastMemPlaceAt
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HeckeValueIntegrality
-import Formalism.SharpRestriction.LevelLetterCocycles.GaloisEquivariantKeyFunction
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteAndIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NatCastMemPlaceAt
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HeckeValueIntegrality
+public import Formalism.SharpRestriction.LevelLetterCocycles.GaloisEquivariantKeyFunction
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteAndIntegral
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.L2.Pj GlobalTheory.GeoTie GlobalTheory.GoodPts
 
 set_option autoImplicit false
@@ -33,8 +38,8 @@ theorem vV_irr' {a : V} (ha : Irreducible a) : vV V (algebraMap V K a) = 1 := by
 theorem vV_pow' {x : K} (n : ℕ) : vV V (x ^ n) = n * vV V x := by
   simp [vV]
 
-variable (V K) in
 
+variable (V K) in
 def absOfVal (c : ℝ) (hc0 : 0 < c) (hc1 : c ≤ 1) : AbsoluteValue K ℝ where
   toFun x := if x = 0 then 0 else c ^ (vV V x)
   map_mul' x y := by
@@ -148,7 +153,7 @@ theorem isReading_ext : ∀ (p : ℕ) [Fact p.Prime] (F : Type) [Field F] [Numbe
   have hnk : ∀ y : T.Fr, ‖y‖ = ‖k y‖ := fun y => rfl
   haveI : IsUltrametricDist T.Fr :=
     IsUltrametricDist.isUltrametricDist_of_forall_norm_add_le_max_norm fun x y => by
-      rw [hnk, hnk, hnk, map_add]
+      rw [hnk, hnk, hnk, map_add (f := _)]
       exact IsUltrametricDist.norm_add_le_max _ _
   haveI : CompleteSpace T.Fr := Formalism.MainNotions.ExistsIdealDenominator.complete_of_adic (O := T.V) (K := T.Fr) (fun y => hk.int y) inferInstance
   letI := i.toAlgebra

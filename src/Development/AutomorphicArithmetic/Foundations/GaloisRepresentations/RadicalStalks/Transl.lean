@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.IsConst
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCorrFormPullTensorForm
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.IsConst
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCorrFormPullTensorForm
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.ConjSeq GlobalTheory.UPel.HT GlobalTheory.UPel.HT.ES UpperTheory.Gal.Ord
@@ -48,17 +52,21 @@ theorem UpperTheory.Gal.Ord.transl :
   let Q : Y ⟶ Y := Over.homMk (r ≫ z) (by
     show (r ≫ z) ≫ r ≫ spMap σ = r ≫ spMap σ
     rw [Category.assoc, reassoc_of% hzr])
-  have h0 : Q ≫ GlobalTheory.FrobAdjoint.down m v0 = GlobalTheory.FrobAdjoint.down m v0 := Over.OverMorphism.ext (by
+  let down (x : epsR k ⟶ A) : Y ⟶ A :=
+    Over.homMk (x.left ≫ ψ) (by simp [Y, m.w])
+  have down_mul (x y : epsR k ⟶ A) : down (x * y) = down x * down y :=
+    Over.OverMorphism.ext (m.mul (epsR k) x y (down x) (down y) rfl rfl).symm
+  have h0 : Q ≫ down v0 = down v0 := Over.OverMorphism.ext (by
     show (r ≫ z) ≫ ((r ≫ z) ≫ v.left) ≫ ψ = ((r ≫ z) ≫ v.left) ≫ ψ
     simp only [← Category.assoc]
     rw [show ((r ≫ z) ≫ r) ≫ z = r ≫ z by simpa using hqq])
-  have h1 : Q ≫ GlobalTheory.FrobAdjoint.down m t = GlobalTheory.FrobAdjoint.down m t := Over.OverMorphism.ext (by
+  have h1 : Q ≫ down t = down t := Over.OverMorphism.ext (by
     have := hT t htan
     unfold IsConst at this
     rw [hq] at this
     exact this)
-  have key : Q ≫ GlobalTheory.FrobAdjoint.down m v = GlobalTheory.FrobAdjoint.down m v := by
-    rw [hvt, GlobalTheory.FrobAdjoint.down_mul, MonObj.comp_mul, h0, h1]
+  have key : Q ≫ down v = down v := by
+    rw [hvt, down_mul, MonObj.comp_mul, h0, h1]
   unfold IsConst
   rw [hq]
   exact congrArg (fun u => u.left) key

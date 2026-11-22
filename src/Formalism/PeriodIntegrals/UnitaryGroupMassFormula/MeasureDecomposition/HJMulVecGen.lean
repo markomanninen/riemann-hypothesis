@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ScMuExists
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposition.InstDecomp
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ScMuExists
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureDecomposition.InstDecomp
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,17 +38,12 @@ theorem rv_hJ (v : NumberField.InfinitePlace I.F) (x y : Fin I.n → I.E) :
     hJ (I.ε v) (rv I v x) (rv I v y) = I.φ v (Formalism.UG.hform (starRingEnd I.E) I.J x y) := by
   simp only [rv]
   rw [hJ_mulVec_gen, gram_real I v]
-  simp only [Formalism.UG.hform, map_sum, map_mul, dotProduct, Matrix.mulVec, Pi.star_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.UG.hform, map_sum, map_mul, dotProduct, Matrix.mulVec, Pi.star_apply,
     Matrix.map_apply, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [starRingEnd_apply, phi_star I v]
   ring
-
-theorem hJ_conj {n : ℕ} (ε : Fin n → Bool) (u w : Fin n → ℂ) : hJ ε w u = star (hJ ε u w) := by
-  simp only [hJ, Formalism.REAL.Jm, dotProduct, Matrix.mulVec_diagonal, star_sum, star_mul',
-    Pi.star_apply, star_star]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  by_cases h : ε i = true <;> simp [h] <;> ring
 
 variable {I}
 

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CyclotomicInertiaSpan.DecComm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.DecActRoots
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CyclotomicInertiaSpan.DecComm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.GaloisCohomologyLength.DecActRoots
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -36,7 +40,11 @@ private theorem frobenius_fixed_of_iterate_fixed_pow_prime {k : Type} [Field k] 
   have hp1 : 1 < p := (Fact.out : p.Prime).one_lt
   have hN : m * n ≠ 0 := Nat.pos_iff_ne_zero.1 (Nat.mul_pos hm hn)
   letI : Fintype (GaloisField p (m * n)) := Fintype.ofFinite _
-  let φ : GaloisField p (m * n) →ₐ[ZMod p] k := IsAlgClosed.lift
+  let φ : GaloisField p (m * n) →ₐ[ZMod p] k := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hφinj : Function.Injective φ := φ.toRingHom.injective
   have hcardL : Fintype.card (GaloisField p (m * n)) = p ^ (m * n) := by
     rw [← Nat.card_eq_fintype_card]
@@ -46,7 +54,7 @@ private theorem frobenius_fixed_of_iterate_fixed_pow_prime {k : Type} [Field k] 
     intro z hz
     classical
     have hP0 : (Polynomial.X ^ (p ^ (m * n)) - Polynomial.X : Polynomial k) ≠ 0 :=
-      FiniteField.X_pow_card_sub_X_ne_zero k hpN
+      Polynomial.X_pow_sub_X_ne_zero hpN
     have hmem : ∀ w : k, w ^ (p ^ (m * n)) = w →
         w ∈ (Polynomial.X ^ (p ^ (m * n)) - Polynomial.X : Polynomial k).roots.toFinset := by
       intro w hw
@@ -67,7 +75,7 @@ private theorem frobenius_fixed_of_iterate_fixed_pow_prime {k : Type} [Field k] 
             Multiset.toFinset_card_le _
         _ ≤ (Polynomial.X ^ (p ^ (m * n)) - Polynomial.X : Polynomial k).natDegree :=
             Polynomial.card_roots' _
-        _ = p ^ (m * n) := FiniteField.X_pow_card_sub_X_natDegree_eq k hpN
+        _ = p ^ (m * n) := Polynomial.natDegree_X_pow_sub_X (R := k) hpN
     have hEq := Finset.eq_of_subset_of_card_le hTsub hle
     have hz' : z ∈ Finset.univ.image φ := hEq ▸ hmem z hz
     obtain ⟨x, _, hx⟩ := Finset.mem_image.1 hz'
@@ -155,7 +163,7 @@ private theorem exists_residue_pow_prime_pow_eq_self {F Ω : Type} [Field F] [Nu
     have hdvd : Polynomial.C (p : ℤ) ∣ Q := by
       rw [Polynomial.C_dvd_iff_dvd_coeff]
       intro i
-      have := congrArg (fun f => Polynomial.coeff f i) h0
+      have := congrArg (fun f => _root_.AddMonoidAlgebra.coeff (M := ℕ) f i) h0
       simp only [Polynomial.coeff_map, Polynomial.coeff_zero, eq_intCast] at this
       exact (CharP.intCast_eq_zero_iff (IsLocalRing.ResidueField A) p _).1 this
     have hu := Polynomial.isPrimitive_primPart P (p : ℤ) hdvd

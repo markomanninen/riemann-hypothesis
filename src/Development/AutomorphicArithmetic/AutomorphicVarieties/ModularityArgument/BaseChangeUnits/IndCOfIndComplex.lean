@@ -1,21 +1,25 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.QuadraticInductionGL2Alt
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChangeLifts.SplitLift
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.SatLoc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.LocCompC
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.IsGalRepOfOfIso
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.ConjIsoOf
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PBasic
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSIsoSat
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSTwSat
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.P_SSatEx
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSSmo
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSConjSpaceC
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSConjSpaceR
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSConjSatC
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSConjSatR
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSNormPow
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSGalAdEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.StrongMultOneReal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.QuadraticInductionGL2Alt
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChangeLifts.SplitLift
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.SatLoc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.LocCompC
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.IsGalRepOfOfIso
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.SConjSpaceC
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PBasic
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSIsoSat
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSTwSat
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.P_SSatEx
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSSmo
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSConjSpaceC
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSConjSpaceR
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSConjSatC
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSConjSatR
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSNormPow
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.PSGalAdEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.StrongMultOneReal
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N Polynomial GlobalTheory.CuspRep GlobalTheory.HeckeGal GlobalTheory.GalOfCusp
 open UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published UpperTheory.V.Z.Bc
@@ -37,7 +41,7 @@ private theorem infOf_ne {m m' : Fin 2 → ℤ} (h : Function.Injective ![m 0, m
   · exact absurd (@h 3 0 h2) (by decide)
 
 open UpperTheory.CBC UpperTheory.CBC.SConjSpaceCAux in
-private theorem not_conjIso {K M : Type} [Field K] [NumberField K] [Field M] [NumberField M] [IsTotallyComplex M] [Algebra K M]
+private theorem not_conjIso {K M : Type} [Field K] [NumberField K] [Field M] [NumberField M] [_root_.NumberField.IsTotallyComplex M] [Algebra K M]
     [IsGalois K M] (π : CuspSub M 2) (hm : MixWtC K π) : ¬ ∀ σ : M ≃ₐ[K] M, (Cusp.cx π).ConjIso σ.toRingEquiv := by
   intro h
   obtain ⟨φ⟩ : Nonempty (K →+* ℂ) := inferInstance

@@ -1,11 +1,14 @@
-import ReciprocityTheory.GroupCohomology.TransgressionStatement
-import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
-import ReciprocityTheory.GroupCohomology.ConnNatHolds
-import ReciprocityTheory.GroupCohomology.FinGen
-import ReciprocityTheory.GroupCohomology.FiberFirstH0Injective
-import ReciprocityTheory.GroupCohomology.ProdHolds
-import ReciprocityTheory.GroupCohomology.EqZeroOfLe
-import ReciprocityTheory.GroupCohomology.RankLenA
+module
+
+public import ReciprocityTheory.GroupCohomology.TransgressionStatement
+public import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
+public import ReciprocityTheory.GroupCohomology.ConnNatHolds
+public import ReciprocityTheory.GroupCohomology.FinGen
+public import ReciprocityTheory.GroupCohomology.CupConnRightStatement
+public import Mathlib
+public import ReciprocityTheory.GroupCohomology.RankLenA
+
+@[expose] public section
 
 namespace ReciprocityTheory.Coh
 

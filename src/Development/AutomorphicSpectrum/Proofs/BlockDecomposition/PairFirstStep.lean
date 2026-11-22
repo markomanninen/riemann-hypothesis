@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RankPosOfLeaves
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimensionalProdSpan
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RankPosOfLeaves
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimensionalProdSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,11 +53,13 @@ theorem mem_of_separating {κ V Y : Type} [AddCommGroup V] [Module ℂ V] (D : S
   have hA : A = 0 := hsep A fun y => by
     have := hf0' _ (hs y)
     rw [hval] at this
-    simpa [A, map_sum] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [A, map_sum] using this
   apply hfl
   have : f ⟨l, hlD'⟩ = L A := by
     rw [hval]
-    simp [A, map_sum, l]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [A, map_sum, l]
   rw [this, hA, map_zero]
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {a b : ℕ}
@@ -61,7 +67,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {a b : ℕ}
 theorem sl₁_eq {F : H E a b → ℂ} {m₂ : GA E b} {φ : Sm E a} (h : φ.1 = fun x => F (x, m₂)) : sl₁ F m₂ = φ := by
   have hex : ∃ φ : Sm E a, φ.1 = fun x => F (x, m₂) := ⟨φ, h⟩
   unfold sl₁
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact Subtype.ext (hex.choose_spec.trans h.symm)
 
 theorem ap₁_prod (T : Sm E a →ₗ[ℂ] Sm E a) (φ₁ : Sm E a) (φ₂ : Sm E b) :
@@ -75,7 +81,7 @@ theorem ap₁_prod (T : Sm E a →ₗ[ℂ] Sm E a) (φ₁ : Sm E a) (φ₂ : Sm 
   show φ₂.1 x.2 * (T φ₁).1 x.1 = _
   ring
 
-theorem translate_mem {U₁ : Submodule ℂ (Sm E a)} {U₂ : Submodule ℂ (Sm E b)} (hU : IsStable U₁) {F : H E a b → ℂ}
+theorem translate_mem {U₁ : Submodule ℂ (Sm E a)} {U₂ : Submodule ℂ (Sm E b)} (hU : _root_.GlobalTheory.CuspRep.IsStable U₁) {F : H E a b → ℂ}
     (hF : F ∈ pairSpace U₁ U₂) (g : Hf E a b) :
     (fun y => F (y * finH g)) ∈ pairSpace U₁ (⊤ : Submodule ℂ (Sm E b)) := by
   induction hF using Submodule.span_induction with
@@ -104,7 +110,7 @@ theorem ap₁_add (hS : PairSlices) (T : Sm E a →ₗ[ℂ] Sm E a) {F G : H E a
     sl₁_eq (funext fun y => by
       show (sl₁ F x.2).1 y + (sl₁ G x.2).1 y = F (y, x.2) + G (y, x.2)
       rw [sl_val hS hF, sl_val hS hG])
-  simp only [ap₁, e, map_add, Pi.add_apply]
+  simp only [ap₁, e, map_add (f := _), Pi.add_apply]
   rfl
 
 theorem ap₁_smul (hS : PairSlices) (T : Sm E a →ₗ[ℂ] Sm E a) {F : H E a b → ℂ} (hF : F ∈ pairSpace U₁ U₂) (c : ℂ) :

@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.ExistsLimTensor
+module
+
+public import ReciprocityTheory.DualLattices.ExistsLimTensor
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem lim (B : BX R₀) (hB1 : PairingPropertiesStatement B) {p : ℕ} (Tw : A
     sub_eq_zero.mp (Tw.sep _ (fun n => by rw [map_sub, hab n, sub_self]))
   let ht : ι → B.gg →ₗ[R₀] (Tw.O : Type u) := fun i =>
     { toFun := hta i
-      map_add' := fun v w => hsep _ _ (fun n => by simp only [map_add, hta_spec])
+      map_add' := fun v w => hsep _ _ (fun n => by simp only [map_add (f := _), hta_spec])
       map_smul' := fun c v => hsep _ _ (fun n => by simp only [map_smul, hta_spec, RingHom.id_apply]) }
   have hlift : ∀ i n, ∃ (th : B.G (Tw.R' n)) (w : B.gg ⊗[R₀] (Tw.R' n : Type u)),
       B.map (Tw.π n) th = B.map (Tw.q n) (τ i n) ∧
@@ -81,8 +85,10 @@ theorem htLin (B : BX R₀) (hB1 : PairingPropertiesStatement B) {p : ℕ} (Tw :
   have hlin : (Tw.q n).1.toLinearMap ∘ₗ ∑ i, α i • ht i =
       ∑ i, a i n • ((Tw.q n).1.toLinearMap ∘ₗ ht i) := by
     ext v
-    simp [LinearMap.sum_apply, map_sum, map_mul, hα, zsmul_eq_mul]
-  rw [map_sum, hlin]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [LinearMap.sum_apply, map_sum, map_mul, hα, zsmul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, hlin]
   simp only [map_zsmul]
   exact BX.isHeight_sum (B := B) hB1 (Dp n) (p ^ (n + 1)) hN Finset.univ
     (fun i => a i n • B.map (Tw.q n) (τ i n)) (fun i => by rw [smul_comm, hy i, smul_zero])

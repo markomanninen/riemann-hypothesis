@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.TwistStep
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N GlobalTheory.Pst GlobalTheory.PMon TensorProduct Module
 open scoped Formalism.Per
@@ -14,6 +18,6 @@ theorem phiV_crisIncl_comm : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (K : 
   | tmul v b =>
     simp only [crisIncl_tmul, phiV_tmul, phiSt_C, φVB, AlgebraTensorModule.map_tmul,
       LinearMap.id_apply, AlgHom.toLinearMap_apply, P.PD_φ K b]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 end GlobalTheory.PMon

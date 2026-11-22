@@ -1,5 +1,9 @@
-import Formalism.AdmissibleDesigns.LocCont
-import Formalism.AdmissibleDesigns.TheoremN5OfNormalizedItems
+module
+
+public import Formalism.AdmissibleDesigns.LocCont
+public import Formalism.AdmissibleDesigns.TheoremN5OfNormalizedItems
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 

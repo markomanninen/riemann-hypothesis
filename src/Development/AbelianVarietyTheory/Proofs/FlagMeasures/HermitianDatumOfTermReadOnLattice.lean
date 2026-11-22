@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToLePerp
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemPerpSpan
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetTermBasicFacts
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NotField
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToZero
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianFrameCoordinatesTransportInnerLattices
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FramePairCoordinatesTransportInnerLattices
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermOverFrameCoordinates
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BasisOfIsCompl
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToLePerp
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemPerpSpan
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianDoubleCosetTermBasicFacts
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NotField
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToZero
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianFrameCoordinatesTransportInnerLattices
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FramePairCoordinatesTransportInnerLattices
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermOverFrameCoordinates
+
+@[expose] public section
 
 open ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.Loc Formalism.MainNotions.S.LocNG GlobalTheory.LocOver
 open scoped Classical Pointwise
@@ -78,7 +82,8 @@ theorem h_sum_left {ι : Type} (s : Finset ι) (u : ι → V) (y : V) :
 
 theorem h_right_sum {ι : Type} [Fintype ι] (a : ι → E) (u : ι → V) (x : V) :
     H.h x (∑ i, a i • u i) = ∑ i, M.L.cj (a i) * H.h x (u i) := by
-  rw [H.h_herm, h_sum_left, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [H.h_herm, h_sum_left, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [H.h_smul_left, map_mul, ← H.h_herm]
 
@@ -115,8 +120,8 @@ section Coordinates
 
 variable {P : FPair H r} {S : Frames M.L r k} (c : Coord P S)
 
-include c in
 
+include c in
 theorem selfDual_of (Λ : Submodule M.L.O V) (h : IsSD M.L S.Hm (c.lat Λ)) : H.IsSelfDual Λ := by
   obtain ⟨⟨hfg, hsp⟩, hd⟩ := h
   have hmem : ∀ v, c.e v ∈ c.lat Λ ↔ v ∈ Λ := e_mem_lat_iff c Λ
@@ -240,14 +245,15 @@ theorem frame_of (Fr : FrameD H r) (g : Fin (r + 1) → S.V) (hgf : ∀ a, g a =
     rw [isom_of c g hn]
     exact Fr.h_zz
 
-include c in
 
+include c in
 theorem change_of (Fr : FrameD H r) (g : Fin (r + 1) → S.V) (hgf : ∀ a, g a = c.e (Fr.f a))
     (n : V ≃ₗ[E] V) (s : Matrix (Fin (r + 1)) (Fin (r + 1)) E)
     (hs : ∀ j, c.grp n (g j) = ∑ i, s i j • g i) (j : Fin (r + 1)) :
     n (Fr.f j) = ∑ i, s i j • Fr.f i := by
   apply c.e.injective
-  rw [← CoordUnip.grp_apply c n (Fr.f j), ← hgf j, hs j, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← CoordUnip.grp_apply c n (Fr.f j), ← hgf j, hs j, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, hgf i]
 

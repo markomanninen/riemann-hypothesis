@@ -1,29 +1,32 @@
-import Mathlib
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypCard
-import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.CompInjLocJ
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.MRatSpanOfRatInv
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.LowestInvariantLeDelta
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ProdMemSpan
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LBidetLemmas
-import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CastGLSymmBc
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.NatActRVtupR
-import Formalism.LocalToGlobal.GlobalTheory.GL6.ValuationClassTranslateMem
-import Formalism.LocalToGlobal.GroupLattices.FockModels.SwRowGenMonomial
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.WeylLatticeDescentHolds
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.LiMap
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.PStabEq
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypVin
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.LocCore
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypTwA
-import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ExistsIsCGBases
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypLat
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypChi
-import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.TiedCls
-import Formalism.SharpRestriction.GrowthBounds.ChartComparison.LocTiesOf
-import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan
-import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ClsChartedLabAt
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypCard
+public import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.CompInjLocJ
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.MRatSpanOfRatInv
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.LowestInvariantLeDelta
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ProdMemSpan
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LBidetLemmas
+public import Formalism.SharpRestriction.GrowthBounds.UnramifiedQuadraticSetting
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CastGLSymmBc
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.NatActRVtupR
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.ValuationClassTranslateMem
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.SwRowGenMonomial
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan.WeylLatticeDescentHolds
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.LiMap
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.PStabEq
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypVin
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.LocCore
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypTwA
+public import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ExistsIsCGBases
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypLat
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypChi
+public import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ClsChartedLabAt
+public import Formalism.SharpRestriction.GrowthBounds.ChartComparison.LocTiesOf
+public import Formalism.SharpRestriction.GrowthBounds.IntegralWeylLatticeSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +63,7 @@ def InvK (a : H.comp) (L : H.P.Tup) : Submodule H.Kf H.P.Xsp where
     ∀ γ : (H.lev a).Γ, (H.lev a).smul γ L = L → ((H.lev a).χ γ : H.O) • (H.lev a).actX γ X = X}
   zero_mem' := ⟨Submodule.zero_mem _, fun γ _ => by rw [map_zero, smul_zero]⟩
   add_mem' := fun {x y} hx hy => ⟨Submodule.add_mem _ hx.1 hy.1, fun γ hγ => by
-    rw [map_add, smul_add, hx.2 γ hγ, hy.2 γ hγ]⟩
+    rw [map_add (f := _), smul_add, hx.2 γ hγ, hy.2 γ hγ]⟩
   smul_mem' := fun c x hx => ⟨Submodule.smul_mem _ c hx.1, fun γ hγ => by
     rw [map_smul, ← algebraMap_smul H.Kf, smul_smul, mul_comm, ← smul_smul, algebraMap_smul, hx.2 γ hγ]⟩
 
@@ -78,7 +81,7 @@ def Eqv : Submodule H.Kf H.Fn where
       show F a _ + F' a _ = _
       rw [(hF a).2.2 γ L, (hF' a).2.2 γ L]
       show _ = ((H.lev a).χ γ : H.O) • (H.lev a).actX γ (F a L + F' a L)
-      rw [map_add, smul_add]⟩
+      rw [map_add (f := _), smul_add]⟩
   smul_mem' := fun c F hF a => ⟨fun L hL => Submodule.smul_mem _ c ((hF a).1 L hL),
     fun L hL => by
       show c • F a L = 0
@@ -227,20 +230,18 @@ def InvLeOf (S : StepIn M i hi G) (e : D.what₂.LL →+* G.Kf) : Prop :=
     FiniteDimensional G.Kf (InvK (Hc S β) (rep c).1 (rep c).2) ∧
       finrank G.Kf (InvK (Hc S β) (rep c).1 (rep c).2) ≤ finrank ℂ (FiBc S β c)
 
-def FiBPiAll (S : StepIn M i hi G) : Prop := ∀ β, FiBPi S β
-
 theorem mk_eq_of (S : StepIn M i hi G) (β : S.Ch) {γ : GL (Fin (D.R.N i)) D.host.E}
     (hγ : γ ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D i hi))
     {x x' : UPts (sigD D) (gramN D i hi) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)} {κ : (S.K β).lev.U}
     (hx : x'.1 = bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) γ * x.1 * κ.1) :
     (Quotient.mk'' x' : Cls (S.K β).lev) = Quotient.mk'' x := by
   symm
-  refine (DoubleCoset.eq _ _ _ _).2 ⟨⟨_, PStabEq.bc_mem hγ⟩, Subgroup.mem_subgroupOf.2 ⟨γ, hγ, rfl⟩, ⟨_, PStabEq.U_le κ.2⟩,
+  refine (@DoubleCoset.eq _ _ _ _ _ _).2 ⟨⟨_, PStabEq.bc_mem hγ⟩, Subgroup.mem_subgroupOf.2 ⟨γ, hγ, rfl⟩, ⟨_, PStabEq.U_le κ.2⟩,
     Subgroup.mem_subgroupOf.2 κ.2, Subtype.ext ?_⟩
   exact hx
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem fiBPi (S : StepIn M i hi G) (β : S.Ch) : FiBPi S β := by
   intro f hf
   have hφ : ∀ c, ∃ φ ∈ AdForms (S.K β).lev (embT D) (lamTG M i), φ ((S.K β).y c) = f c := by
@@ -340,7 +341,8 @@ theorem finrank_le_transfer (φK : Y →+ WK) (hK : ∀ (a : LL) y, φK (a • y
   have hsp : Submodule.span K (Set.range φK) ≤ Submodule.span K (Set.range fun j => φK (b j)) := by
     rw [Submodule.span_le]
     rintro _ ⟨y, rfl⟩
-    rw [← b.sum_repr y, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr y, map_sum]
     refine Submodule.sum_mem _ fun j _ => ?_
     rw [hK]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
@@ -384,8 +386,8 @@ theorem ker_desc {σ τ : Type} (Ts : Set (MvPolynomial σ Kf →ₗ[Kf] MvPolyn
     Prod.ext (mapE_smul e a x.1) (mapE_smul e a x.2)
   have hval : ∀ x, IsRat e ev (φ x) := by
     rintro x (m | m)
-    · exact ⟨MvPolynomial.coeff m x.1, by simp [ev, φ, MvPolynomial.coeff_map]⟩
-    · exact ⟨MvPolynomial.coeff m x.2, by simp [ev, φ, MvPolynomial.coeff_map]⟩
+    · exact ⟨AddMonoidAlgebra.coeff x.1 m, by simp [ev, φ, MvPolynomial.coeff_map]⟩
+    · exact ⟨AddMonoidAlgebra.coeff x.2 m, by simp [ev, φ, MvPolynomial.coeff_map]⟩
   let S : Set ((MvPolynomial σ Kf × MvPolynomial τ Kf) →ₗ[Kf] (MvPolynomial σ Kf × MvPolynomial τ Kf)) :=
     {Tm | ∃ T ∈ Ts, Tm = LinearMap.id + (LinearMap.inr Kf _ _).comp (T.comp (LinearMap.fst Kf _ _))}
   have hS : ∀ Tm ∈ S, ∀ x, ∃ y, φ y = Tm (φ x) := by
@@ -442,7 +444,7 @@ theorem colAddGen_map {r n : ℕ} (l j : Fin n) (Q : MvPolynomial (Fin r × Fin 
   · rename_i a
     simp [Formalism.GradedWeylDivisibility.colAddGen]
   · rename_i p q hp hq
-    simp only [map_add, hp, hq]
+    simp only [map_add (f := _), hp, hq]
   · rename_i p v hp
     simp only [map_mul]
     rw [hp, MvPolynomial.map_X]
@@ -544,7 +546,7 @@ def YInv (a : H.comp) (L : H.P.Tup) : Submodule LL (YR H LL) where
   carrier := {Q | MvPolynomial.map e Q ∈ H.P.Vtup ∧ ∀ γ : (H.lev a).Γ, (H.lev a).smul γ L = L →
     ((H.lev a).χ γ : H.O) • (H.lev a).actX γ (MvPolynomial.map e Q) = MvPolynomial.map e Q}
   add_mem' := fun {Q Q'} h h' => by
-    simp only [Set.mem_ofPred_eq, map_add] at h h' ⊢
+    simp only [Set.mem_ofPred_eq, map_add (f := _)] at h h' ⊢
     exact ⟨Submodule.add_mem _ h.1 h'.1, fun γ hγ => by rw [smul_add, h.2 γ hγ, h'.2 γ hγ]⟩
   zero_mem' := by
     simp only [Set.mem_ofPred_eq, map_zero]
@@ -578,7 +580,7 @@ theorem inv_le_span {a : H.comp} {L : H.P.Tup} (hL : H.P.IsLatTup L) (h1 : SpanR
   let Vr : Submodule LL (YR H LL) :=
     { carrier := {Q | MvPolynomial.map e Q ∈ H.P.Vtup}
       add_mem' := fun {Q Q'} h h' => by
-        simp only [Set.mem_ofPred_eq, map_add] at h h' ⊢
+        simp only [Set.mem_ofPred_eq, map_add (f := _)] at h h' ⊢
         exact Submodule.add_mem _ h h'
       zero_mem' := by
         simp only [Set.mem_ofPred_eq, map_zero]
@@ -592,7 +594,7 @@ theorem inv_le_span {a : H.comp} {L : H.P.Tup} (hL : H.P.IsLatTup L) (h1 : SpanR
     {Tm | ∃ γ : (H.lev a).Γ, (H.lev a).smul γ L = L ∧ Tm = algebraMap H.O H.Kf ((H.lev a).χ γ : H.O) • (H.lev a).actX γ}
   have hsm : ∀ (r : LL) (x : Vr), φ (r • x) = e r • φ x := fun r x => map_smul_e H e r x.1
   have hval : ∀ x : Vr, IsRat e (evX H) (φ x) := fun x m =>
-    ⟨MvPolynomial.coeff m x.1, by simp [φ, evX, MvPolynomial.lcoeff_apply, MvPolynomial.coeff_map]⟩
+    ⟨AddMonoidAlgebra.coeff x.1 m, by simp [φ, evX, MvPolynomial.lcoeff_apply, MvPolynomial.coeff_map]⟩
   have hT : ∀ Tm ∈ Sx, ∀ x : Vr, ∃ y : Vr, φ y = Tm (φ x) := by
     rintro Tm ⟨γ, hγ, rfl⟩ x
     obtain ⟨Q', hQ', e'⟩ := h2 γ hγ x.1 x.2
@@ -634,7 +636,7 @@ def ActRatOf (S : StepIn M i hi G) (e : D.what₂.LL →+* G.Kf) : Prop :=
 theorem actRat_of_core {S : StepIn M i hi G} {e : D.what₂.LL →+* G.Kf} {β : S.Ch} (H : S.Core e β) (hS : BlockRationalityField)
     (a : S.cmpt β) (L : (Hc S β).P.Tup) : ActRat (Hc S β) e a L := by
   intro γ _ Q hQ
-  obtain ⟨κ, hκ⟩ := (H.toHyp hS).away a γ
+  obtain ⟨κ, hκ⟩ := awayEx_of H.good (S.K β).lev H.gam a γ
   obtain ⟨r, -, hr⟩ := H.chi a γ κ hκ
   have hχ : algebraMap G.O G.Kf (((Hc S β).lev a).χ γ : G.O) = e r⁻¹ := by
     rw [map_inv₀]
@@ -773,8 +775,8 @@ theorem law_wd (S : StepLevel F E σ J T f bad) (emb : ι → E →+* ℂ) (hc :
     map_mul, map_inv, Units.val_mul, ← mul_assoc, ← mul_assoc, mul_comm (S.chi κ1 : ℂ), mul_assoc (S.chi κ2 : ℂ), mul_comm ((S.chi κ1 : ℂˣ) : ℂ),
     Units.inv_mul, mul_one]
 
-open Classical in
 
+open Classical in
 theorem exists_form_of_law (S : StepLevel F E σ J T f bad) (emb : ι → E →+* ℂ) (hc : ∀ τ x, emb τ (σ x) = starRingEnd ℂ (emb τ x))
     (lam : ι → DomWeight n) (y0 : UPts σ J (FiniteAdeleRing (𝓞 F) F)) (v : Formalism.L2.Forms.Frames (gramC J emb) → ℂ)
     (hV : v ∈ ValC (gramC J emb) lam) (hv : LawAt S emb y0 v) : ∃ g ∈ AdForms S emb lam, g y0 = v := by
@@ -788,12 +790,12 @@ theorem exists_form_of_law (S : StepLevel F E σ J T f bad) (emb : ι → E →+
     intro x γ hγ κ e y
     have h : Pd x := ⟨(⟨γ, hγ⟩, κ), e⟩
     show (if h : Pd x then (S.chi h.choose.2 : ℂ) * v (frameTranslate emb hc h.choose.1.1⁻¹ ((UJ _ _).inv_mem h.choose.1.2) y) else 0) = _
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     exact law_wd S emb hc y0 v hv _ _ h.choose.1.2 hγ _ _ (h.choose_spec.symm.trans e) y
   have gzero : ∀ x, ¬ Pd x → ∀ y, g x y = 0 := by
     intro x h y
     show (if h : Pd x then (S.chi h.choose.2 : ℂ) * v (frameTranslate emb hc h.choose.1.1⁻¹ ((UJ _ _).inv_mem h.choose.1.2) y) else 0) = _
-    rw [dif_neg h]
+    rw [dite_eq_right h]
   refine ⟨g, Submodule.mem_inf.2 ⟨?_, ?_⟩, ?_⟩
   · intro γ' hγ' x x' κ' hx' y y' hy
     by_cases hP : Pd x
@@ -900,7 +902,7 @@ theorem eval_blockRowSubstitution (g : ι → Matrix (Fin n) (Fin n) ℂ) (z : �
     eval z (blockRowSubstitutionAlgHom g P) = eval (fun x => ∑ c, g x.1 x.2.1 c * z (x.1, c, x.2.2)) P := by
   induction P using MvPolynomial.induction_on
   next a => simp [blockRowSubstitutionAlgHom]
-  next p q hp hq => simp only [map_add, hp, hq]
+  next p q hp hq => simp only [map_add (f := _), hp, hq]
   next p x hp => simp only [map_mul, hp, blockRowSubstitution_X, eval_X, map_sum, eval_C]
 
 theorem blockRowSubstitution_rename (g : ι → Matrix (Fin n) (Fin n) ℂ) (τ : ι) (q : MvPolynomial (Fin n × Fin n) ℂ) :
@@ -908,7 +910,8 @@ theorem blockRowSubstitution_rename (g : ι → Matrix (Fin n) (Fin n) ℂ) (τ 
   have h : (blockRowSubstitutionAlgHom g).comp (rename (Prod.mk τ)) = (rename (Prod.mk τ)).comp (Formalism.GradedWeylDivisibility.rowAct ℂ (r := n) (n := n) (g τ)) := by
     apply MvPolynomial.algHom_ext
     intro v
-    simp [blockRowSubstitutionAlgHom, Formalism.GradedWeylDivisibility.rowAct, rename_X, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [blockRowSubstitutionAlgHom, Formalism.GradedWeylDivisibility.rowAct, rename_X, map_sum]
   exact congrArg (fun φ => φ q) h
 
 theorem blockRowSubstitution_tensor (g : ι → Matrix (Fin n) (Fin n) ℂ) (f : ι → MvPolynomial (Fin n × Fin n) ℂ) :
@@ -995,14 +998,6 @@ def FoInv (S : StepLevel F E σ J T fT bad) (emb : ι → E →+* ℂ) (y0 : UPt
 
 variable (S : StepLevel F E σ J T fT bad) (emb : ι → E →+* ℂ)
 
-open Classical in
-
-def foForm (y0 : UPts σ J (FiniteAdeleRing (𝓞 F) F)) (v : Formalism.L2.Forms.Frames (gramC J emb) → ℂ) :
-    UPts σ J (FiniteAdeleRing (𝓞 F) F) → Formalism.L2.Forms.Frames (gramC J emb) → ℂ := fun x =>
-  if h : ∃ γ : GL (Fin n) E, γ ∈ UJ (σ : E →+* E) J ∧ ∃ κ : S.U,
-      x.1 = bc (inclE (F := F) (FiniteAdeleRing (𝓞 F) F)) γ * y0.1 * κ.1 then
-    fun y => (S.chi h.choose_spec.2.choose : ℂ) * v (foTrR emb h.choose⁻¹ y)
-  else 0
 
 variable {S emb}
 
@@ -1139,8 +1134,8 @@ theorem gen_mem (G : Tau → Matrix (Fin (P.m + 1)) (Fin (P.m + 1)) ℂ) (M : Ta
   have h1 := GlobalTheory.HP.foValC_tr lam (fun τ => (M τ : Matrix (Fin (P.m + 1)) (Fin (P.m + 1)) ℂ)) hu h0
   rw [hX, hM, key, hK]
   convert h1 using 1
-  funext z
-  simp only [fnOf, GlobalTheory.HP.foTr, LinearMap.coe_mk, AddHom.coe_mk, Pi.one_apply, Matrix.one_mul]
+  funext y
+  simp only [fnOf, LinearMap.coe_mk, AddHom.coe_mk, foTr, Pi.one_apply, Matrix.one_mul]
 
 end Gen
 
@@ -1291,7 +1286,7 @@ theorem lin_ext_map {σ : Type} (φ : MvPolynomial σ LL →ₗ[LL] LL) (P : MvP
       rw [MvPolynomial.smul_monomial, smul_eq_mul, mul_one]
     rw [h1, map_smul, Basis.constr_basis, h2, map_smul, smul_eq_mul, smul_eq_mul, map_mul]
   next p q hp hq =>
-    simp only [map_add, hp, hq]
+    simp only [map_add (f := _), hp, hq]
 
 theorem desc_span {σ : Type} (V : Submodule LL (MvPolynomial σ LL)) {Q : MvPolynomial σ LL}
     (hQ : MvPolynomial.map e Q ∈ Submodule.span K (MvPolynomial.map e '' (V : Set (MvPolynomial σ LL)))) : Q ∈ V := by
@@ -1377,7 +1372,7 @@ theorem span_prod_map {S : Type} [Fintype S] {σ : S → Type} {τ : Type} (f : 
     refine Submodule.subset_span ⟨fun s => MvPolynomial.map e (F s), fun s => h s _ (hF s), ?_⟩
     simp only [map_prod, MvPolynomial.map_rename]
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx => rw [mapE_smul]; exact Submodule.smul_mem _ _ hx
 
 theorem vsp_map {n' m : ℕ} (lam0 : Fin n' → Fin (m + 1) → ℤ) {x : MvPolynomial (Fin n' × (Fin (m + 1) × Fin (m + 1))) LL}
@@ -1514,8 +1509,8 @@ section Rec
 variable {D : D7} {u : D.what₂.Word} {C : ColumnChain D.R D.what₂.Tau (D.hcW u)} {A : ColumnsAtT D.R C} {P : PeriodMap D.R C}
   {M : MemberForms D.what₂.LL D.what₂.embLL D.what₂.places D.what₂.Tau (D.hcW u) C A P} {p : ℕ} {i : ℕ} {hi : i ≤ D.R.m} {G : GAtP p}
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem cmpInvRaw_holds (S : StepIn M i hi G) (e : D.what₂.LL →+* G.Kf) : CmpInvRawOf S e := by
   intro hS H X β rep hok c g γ0 κ0 hγ0 hL hpt Q hQ γ hγ κ hyc y y' hy
   have Hb := H β
@@ -1586,9 +1581,6 @@ theorem cmpInvRaw_holds (S : StepIn M i hi G) (e : D.what₂.LL →+* G.Kf) : Cm
 
 theorem cmpLiftOf_of_evVal (S : StepIn M i hi G) (e : D.what₂.LL →+* G.Kf) (hV : ∀ β, EvValLe S β) : CmpLiftOf S e :=
   cmpLiftOf_of_raw S e hV (cmpInvRaw_holds S e)
-
-def EvValCAt (S : StepIn M i hi G) (β : S.Ch) : Prop :=
-  EvValC (Hc S β).P (S.loc β).rk S.pos (gramC (gramN D i hi) (embT D)) (atInfGL (embT D) (S.loc β).B⁻¹) (M.lam i)
 
 end Rec
 
@@ -1661,28 +1653,60 @@ structure LatTies (w : D.what₂.places.Pl) (Fo : FormsIn M (j + 1) hj) (β : Fo
   chi : ∀ κ : (Fo.K β).lev.U, ∃ r ∈ intW D.what₂.places w, r⁻¹ ∈ intW D.what₂.places w ∧
     D.what₂.embLL r = ((Fo.K β).lev.chi κ : ℂ)
 
-set_option maxHeartbeats 8000000 in
 
+set_option maxHeartbeats 8000000 in
 theorem latIn_of {Fo : FormsIn M (j + 1) hj} {Lc : LocIn X u w hg Lv j Fo.Ch}
     {pos : (Σ v : Fin (Fl.Pj (j + 1)).nV, Fin ((Fl.Pj (j + 1)).n' v)) ≃ D.what₂.Tau} {β : Fo.Ch}
-    (hfr : FrRatJ (Lc.t β) Lc.B) (H : LatTies hj w Fo β (Lc.Lb β)) : LatIn (stepInOf hj Fo Lc pos) w β where
-  prime := hg.1
-  resChar := rfl
-  siteGood_prime_torsion := H.siteGood_prime_torsion
-  alg := fun v a => (X.g u w hg).spl_alg _ ((X.g u w hg).pl v).2 a
-  base := fun v t => frlat_re (rankN D (j + 1) hj) ((X.g u w hg).pl v).1 ((X.g u w hg).spl _ ((X.g u w hg).pl v).2) (Lc.Lb β)
-    Lc.B ((Lc.t β).fr _ ((X.g u w hg).pl v).2) (hfr _ _) ((Lc.t β).fr_lat _ ((X.g u w hg).pl v).2) (Fo.K β).lev.Lb H.Lb_eq t
-  lat := H.lat
-  chi := H.chi
+    (hfr : FrRatJ (Lc.t β) Lc.B) (H : LatTies hj w Fo β (Lc.Lb β)) : LatIn (stepInOf hj Fo Lc pos) w β := by
+  exact {
+    prime := hg.1
+    resChar := rfl
+    siteGood_prime_torsion := H.siteGood_prime_torsion
+    alg := fun v a => (X.g u w hg).spl_alg _ ((X.g u w hg).pl v).2 a
+    base := fun v t => frlat_re (rankN D (j + 1) hj) ((X.g u w hg).pl v).1 ((X.g u w hg).spl _ ((X.g u w hg).pl v).2) (Lc.Lb β)
+      Lc.B ((Lc.t β).fr _ ((X.g u w hg).pl v).2) (hfr _ _) ((Lc.t β).fr_lat _ ((X.g u w hg).pl v).2) (Fo.K β).lev.Lb H.Lb_eq t
+    lat := fun cl => Formalism.MainNotions.G.ChF.isLattice_chart (Fo.K β) cl
+    chi := H.chi }
+
 
 set_option maxHeartbeats 8000000 in
-
 theorem valIntN_rec {Fo : FormsIn M (j + 1) hj} {Lc : LocIn X u w hg Lv j Fo.Ch}
     {pos : (Σ v : Fin (Fl.Pj (j + 1)).nV, Fin ((Fl.Pj (j + 1)).n' v)) ≃ D.what₂.Tau} (e : D.what₂.LL →+* (D.gat u w hg).Kf)
     (HT : ∀ β, LocTies hj Fo Lc pos e β) (hS : BlockRationalityField) (hfrac : IsFractionRing (D.gat u w hg).O (D.gat u w hg).Kf)
     (hR0 : ∀ x, x ∈ intW D.what₂.places w ↔ e x ∈ Set.range (algebraMap (D.gat u w hg).O (D.gat u w hg).Kf))
-    (HL : ∀ β, LatTies hj w Fo β (Lc.Lb β)) : (stepInOf hj Fo Lc pos).ValIntN e w :=
-  valIntN_of (stepInOf hj Fo Lc pos) e w (fun β => core_of hj (HT β)) hS hfrac hR0
+    (HL : ∀ β, LatTies hj w Fo β (Lc.Lb β)) : (stepInOf hj Fo Lc pos).ValIntN e w := by
+  have core (β : Fo.Ch) : (stepInOf hj Fo Lc pos).Core e β := by
+    let ties := HT β
+    have good : LocGood (sigD D) (gramN D (j + 1) hj) (locJ hj (Lc.t β) Lc.B) := {
+      herm := isHerm_re (rankN D (j + 1) hj) _ (D.sp.X (j + 1)).gram _
+        (gramN_apply D (j + 1) hj) (gram_herm D.sp.cm (D.sp.X (j + 1)))
+      det := det_re (rankN D (j + 1) hj) (D.sp.X (j + 1)).gram _
+        (gramN_apply D (j + 1) hj) (gram_det_unit D.sp.cm (D.sp.X (j + 1)))
+      sig := fun v x => (X.g u w hg).spl_sig _ ((X.g u w hg).pl v).2 x
+      yG_mem := fun a => reGL_mem_UPts (rankN D (j + 1) hj) D.sp.cm.sig (D.sp.X (j + 1)).gram _
+        (gramN_apply D (j + 1) hj) _ _ ((Lc.t β).yG a).2
+      yG_p := fun a v => by
+        have hy := (Lc.t β).yG_p a _ ((X.g u w hg).pl v).2
+        have hbc := bc_reGL (rankN D (j + 1) hj) (prV (E := D.host.E) ((X.g u w hg).pl v).1)
+          ((Lc.t β).yG a).1
+        rw [hy, map_one] at hbc
+        exact hbc }
+    exact {
+      good := good
+      int := locInt_locJ hj (Lc.t β) Lc.B
+      hypP := locHyp_locJ hj (Lc.t β) Lc.B (Fo.K β).lev ties.sameU ties.frRat ties.hypT
+      bad_p := ties.bad_p
+      comp := comp_locJ hj (Lc.t β) Lc.B (Fo.K β).lev ties.sameU
+      gam := gam_locJ hj (Lc.t β) Lc.B (Fo.K β).lev ties.sameU
+      gamU := locJ_UJ hj (Lc.t β) Lc.B
+      std := ties.std
+      actB := locJ_actB hj (Lc.t β) Lc.B ties.frRat
+      pos_emb := ties.pos_emb
+      wt := ties.wt
+      chi := chi_locJ hj (Lc.t β) Lc.B (Fo.K β).lev e rfl ties.psi
+      chiRat := ties.chiRat
+      chRat := ties.chRat }
+  exact valIntN_of (stepInOf hj Fo Lc pos) e w core hS hfrac hR0
     (fun β => latIn_of hj (HT β).frRat (HL β))
 
 end GlobalTheory.HP
@@ -1746,8 +1770,8 @@ theorem epsU_conj (hJ : IsUnit J.det) (B B' γ : GL (Fin n) E) (k : ℕ) (hγ : 
         ring
     _ = _ := by rw [h1, h2, inv_inv, inv_one, mul_one]
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem epsU_iw (S : StepLevel F E σ J T f bad) (A : LocAt F E n G) (hW : LocInt A) (hp : p.Prime) (hT : ¬ p ∣ T)
     (halg : ∀ v (a : (A.pl v).1.adicCompletion F), A.spl v ((1 : E) ⊗ₜ[F] a) = (a, a))
     (hb : ∀ v (t : Fin n → (A.pl v).1.adicCompletion F),
@@ -1834,8 +1858,8 @@ variable {u : D.what₂.Word} {C : ColumnChain D.R D.what₂.Tau (D.hcW u)} {A :
   {M : MemberForms D.what₂.LL D.what₂.embLL D.what₂.places D.what₂.Tau (D.hcW u) C A P} {p : ℕ}
   {i : ℕ} {hi : i ≤ D.R.m} {G : GAtP p}
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem exists_pow (S : StepIn M i hi G) (β : S.Ch) (cl : {c // S.chOf c = β}) :
     ∃ (b k : ℕ), 0 < k ∧ ∃ (g κ : UPts (sigD D) (gramN D i hi) (FiniteAdeleRing (𝓞 D.host.F) D.host.F))
       (γ : GL (Fin (D.R.N i)) D.host.E), γ ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D i hi) ∧
@@ -1846,14 +1870,14 @@ theorem exists_pow (S : StepIn M i hi G) (β : S.Ch) (cl : {c // S.chOf c = β})
     (fun n : ℕ => (Quotient.mk'' ((S.K β).y cl ^ n) : Cls (S.K β).lev))
   wlog hlt : a < b generalizing a b
   · exact this b a hab.symm he.symm (by omega)
-  obtain ⟨g, hg, κ, hκ, e⟩ := (DoubleCoset.eq _ _ ((S.K β).y cl ^ a) ((S.K β).y cl ^ b)).1 he
+  obtain ⟨g, hg, κ, hκ, e⟩ := (@DoubleCoset.eq _ _ _ _ ((S.K β).y cl ^ a) ((S.K β).y cl ^ b)).1 he
   obtain ⟨γ, hγ, hγe⟩ := Subgroup.mem_subgroupOf.1 hg
   refine ⟨a, b - a, by omega, g, κ, γ, hγ, hγe.symm, Subgroup.mem_subgroupOf.1 hκ, ?_⟩
   rw [show a + (b - a) = b by omega]
   exact e
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem twUnit_of (S : StepIn M i hi G) (e : D.what₂.LL →+* G.Kf) (w : D.what₂.places.Pl) (β : S.Ch) (H : S.Core e β)
     (hR0 : ∀ x, x ∈ intW D.what₂.places w ↔ e x ∈ Set.range (algebraMap G.O G.Kf)) (L : LatIn S w β) : S.TwUnit w β := by
   intro cl B' hB'
@@ -1954,8 +1978,8 @@ variable {D : D7} {u : D.what₂.Word} {C : ColumnChain D.R D.what₂.Tau (D.hcW
   {M : MemberForms D.what₂.LL D.what₂.embLL D.what₂.places D.what₂.Tau (D.hcW u) C A P} {p : ℕ}
   {i : ℕ} {hi : i ≤ D.R.m} {G : GAtP p} {S : StepIn M i hi G} {e : D.what₂.LL →+* G.Kf}
 
-open Classical in
 
+open Classical in
 theorem finClasses_of (H : ∀ β, S.Core e β) (X : ChX S) : G.FinClasses := by
   intro a
   refine ⟨((Finset.univ : Finset (C.cls i)).filter fun c => ∃ L, G.P.IsLatTup L ∧ clsOf H a L = c).attach.image
@@ -1993,8 +2017,8 @@ section Step
 variable {j : ℕ} (hj : j + 1 ≤ D.R.m) {C : ColumnChain D.R D.what₂.Tau (D.hcW u)} {A : ColumnsAtT D.R C} {P : PeriodMap D.R C}
   {M : MemberForms D.what₂.LL D.what₂.embLL D.what₂.places D.what₂.Tau (D.hcW u) C A P}
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 structure StepTies (Fo : FormsIn M (j + 1) hj) (Lc : LocIn X0 u w h Lv j Fo.Ch) (Gt : GatTies D) (c : LatCmp D) : Prop where
 
   frRat : ∀ β, FrRatJ (Lc.t β) Lc.B
@@ -2027,39 +2051,58 @@ theorem StepTies.chi (S : StepTies hj Fo Lc Gt c) (β : Fo.Ch) (κ : (Fo.K β).l
     ∃ r ∈ intW D.what₂.places w, r⁻¹ ∈ intW D.what₂.places w ∧ D.what₂.embLL r = ((Fo.K β).lev.chi κ : ℂ) :=
   chiUnit_of hj (Fo.K β).lev (S.sameU β) (c.embW u w h) (S.psi β) S.bad_p (fun x => c.embW_int u w h x) κ
 
+
 set_option maxHeartbeats 4000000 in
+theorem StepTies.ties (S : StepTies hj Fo Lc Gt c) (β : Fo.Ch) : LocTiesR hj Fo Lc (c.embW u w h) β := by
+  exact {
+    frRat := S.frRat β
+    sameU := S.sameU β
+    hypT := S.hypT β
+    bad_p := S.bad_p
+    std := S.std
+    psi := S.psi β
+    chiRat := fun κ => let ⟨r, _, _, hr⟩ := S.chi β κ; ⟨r, hr⟩
+    chRat := S.chRat β }
 
-theorem StepTies.ties (S : StepTies hj Fo Lc Gt c) (β : Fo.Ch) : LocTiesR hj Fo Lc (c.embW u w h) β where
-  frRat := S.frRat β
-  sameU := S.sameU β
-  hypT := S.hypT β
-  bad_p := S.bad_p
-  std := S.std
-  psi := S.psi β
-  chiRat := fun κ => let ⟨r, _, _, hr⟩ := S.chi β κ; ⟨r, hr⟩
-  chRat := S.chRat β
-
-theorem StepTies.lat (S : StepTies hj Fo Lc Gt c) (β : Fo.Ch) : LatTies hj w Fo β (Lc.Lb β) where
-  siteGood_prime_torsion := S.siteGood_prime_torsion
-  Lb_eq := S.Lb_eq β
-  lat := fun cl => isLattice_chart (Fo.K β) cl
-  chi := S.chi β
+theorem StepTies.lat (S : StepTies hj Fo Lc Gt c) (β : Fo.Ch) : LatTies hj w Fo β (Lc.Lb β) := by
+  exact {
+    siteGood_prime_torsion := S.siteGood_prime_torsion
+    Lb_eq := S.Lb_eq β
+    lat := fun cl => (isLattice_chart (Fo.K β) cl).toIsLattice
+    chi := S.chi β }
 
 theorem StepTies.core (S : StepTies hj Fo Lc Gt c) (K : CmpTied D X0 T Gt c) (ht : Fl.t = D.R.t) (hF : FillTie Gt u w h Fl) (β : Fo.Ch) :
     (stepInOf hj Fo Lc (Gt.gat_pos u w h)).Core (c.embW u w h) β :=
   core_of_R hj K ht hF (S.ties β)
 
 theorem StepTies.valIntN (S : StepTies hj Fo Lc Gt c) (K : CmpTied D X0 T Gt c) (ht : Fl.t = D.R.t) (hF : FillTie Gt u w h Fl) :
-    (stepInOf hj Fo Lc (Gt.gat_pos u w h)).ValIntN (c.embW u w h) w :=
-  valIntN_rec hj (c.embW u w h) (fun β => locTies_of hj K ht hF (S.ties β)) Formalism.L2.G.RelativeIndexFlags.blockRationality_holds
+    (stepInOf hj Fo Lc (Gt.gat_pos u w h)).ValIntN (c.embW u w h) w := by
+  have ties (β : Fo.Ch) : LocTies hj Fo Lc (Gt.gat_pos u w h) (c.embW u w h) β := by
+    exact {
+      frRat := S.frRat β
+      sameU := S.sameU β
+      hypT := S.hypT β
+      bad_p := S.bad_p
+      std := S.std
+      pos_emb := fun v s x => locJ_pos_emb hj (Lc.t β) Lc.B K v s x
+      wt := StepIn.wt_of (M := M) Gt w h Lv ht hF j hj
+        (stepInOf hj Fo Lc (Gt.gat_pos u w h)) rfl β
+      psi := S.psi β
+      chiRat := (S.ties β).chiRat
+      chRat := S.chRat β }
+  exact valIntN_rec hj (c.embW u w h) ties Formalism.L2.G.RelativeIndexFlags.blockRationality_holds
     ((D.gat u w h).P.setting (plc Gt u w h)).frac_O (fun x => c.embW_int u w h x) S.lat
 
 theorem StepTies.twUnit (S : StepTies hj Fo Lc Gt c) (K : CmpTied D X0 T Gt c) (ht : Fl.t = D.R.t) (hF : FillTie Gt u w h Fl) (β : Fo.Ch) :
     (stepInOf hj Fo Lc (Gt.gat_pos u w h)).TwUnit w β :=
   twUnit_of (stepInOf hj Fo Lc (Gt.gat_pos u w h)) (c.embW u w h) w β (S.core K ht hF β) (fun x => c.embW_int u w h x) (latIn_of hj (S.ties β).frRat (S.lat β))
 
-theorem StepTies.chX (S : StepTies hj Fo Lc Gt c) : ChX (stepInOf hj Fo Lc (Gt.gat_pos u w h)) :=
-  chX_stepInOf hj Fo Lc (Gt.gat_pos u w h) (fun β => (S.ties β).sameU) (fun β => (S.ties β).frRat) S.hypC
+theorem StepTies.chX (S : StepTies hj Fo Lc Gt c) : ChX (stepInOf hj Fo Lc (Gt.gat_pos u w h)) := by
+  exact {
+    hypC := fun (β : Fo.Ch) => locHypC_locJ hj (Lc.t β) Lc.B (Fo.K β).lev (S.sameU β) (S.frRat β) (S.hypC β)
+    inj := fun (β : Fo.Ch) a => gamI_inj_locJ hj (Lc.t β) Lc.B a
+    onto := fun (β : Fo.Ch) a => gamOnto_locJ hj (Lc.t β) Lc.B (Fo.K β).lev (S.sameU β) a
+    cinj := fun (β : Fo.Ch) => compInj_locJ hj (Lc.t β) Lc.B (Fo.K β).lev (S.sameU β) }
 
 end Step
 

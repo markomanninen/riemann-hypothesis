@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPtsMonoSemipos
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PIntegralAgainstPositive
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPtsMonoSemipos
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PIntegralAgainstPositive
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -48,8 +53,8 @@ theorem PtsMonoSemipos.proof : PtsMonoSemipos.Statement := by
   unfold ptsIntegral
   by_cases hΨ : ∃ Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e + 1) → ℂ), IsGoodProj P Ψ
   swap
-  · rw [dif_neg hΨ, dif_neg hΨ]
-  rw [dif_pos hΨ, dif_pos hΨ]
+  · rw [dite_eq_right hΨ, dite_eq_right hΨ]
+  rw [dite_eq_left hΨ, dite_eq_left hΨ]
   have hΨg : IsGoodProj P hΨ.choose := hΨ.choose_spec
   unfold ptsIntegralAt
   refine integral_mono_ae (h1 _ hΨg) (h2 _ hΨg) ?_
@@ -62,12 +67,12 @@ theorem PtsMonoSemipos.proof : PtsMonoSemipos.Statement := by
   refine Finset.sum_le_sum fun w _ => ?_
   unfold sheetDensity
   by_cases hγ : ∃ γ, IsSheet P hΨ.choose y w γ
-  · rw [dif_pos hγ, dif_pos hγ]
+  · rw [dite_eq_left hγ, dite_eq_left hγ]
     obtain ⟨-, hev⟩ := hγ.choose_spec
     obtain ⟨-, hmem, hproj⟩ := hev.self_of_nhds
     have hnot : hγ.choose y ∉ N := fun hN' => hyB ⟨hγ.choose y, hmem, hN', hproj⟩
     exact mul_le_mul_of_nonneg_right (hle _ hmem hnot)
       (maDensity_logDiv_nonneg_of_sheet hL hr hγ.choose_spec)
-  · rw [dif_neg hγ, dif_neg hγ]
+  · rw [dite_eq_right hγ, dite_eq_right hγ]
 
 end GroundTheory.Heights₂.Heights.LowerBoundFree

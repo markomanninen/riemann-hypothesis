@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.ConjAtFixedIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.ConjAtFixedIff
+
+@[expose] public section
 
 open Set Filter GlobalTheory.AdelicU NumberField Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open scoped TensorProduct Topology ComplexConjugate ContDiff Matrix
@@ -18,27 +22,27 @@ def IsSmoothRealFam (u : P → GAd σ J) : Prop :=
   (∀ t, projFin σ J (u t) = 1) ∧
     ∀ (w : InfinitePlace F) (τ : EmbOver E w) i j, ContDiff ℝ ∞ fun t => archMat σ J τ (projArch σ J w (u t)) i j
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem isSmoothRealFam_one : IsSmoothRealFam fun _ : P => (1 : GAd σ J) :=
   ⟨fun _ => map_one _, fun _ _ _ _ => contDiff_const⟩
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem IsSmoothRealFam.mul {u v : P → GAd σ J} (hu : IsSmoothRealFam u) (hv : IsSmoothRealFam v) :
     IsSmoothRealFam fun t => u t * v t := by
   refine ⟨fun t => by rw [map_mul, hu.1, hv.1, one_mul], fun w τ i j => ?_⟩
   simp only [map_mul, Matrix.mul_apply]
   exact ContDiff.sum fun k _ => (hu.2 w τ i k).mul (hv.2 w τ k j)
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem IsSmoothRealFam.comp {Q : Type} [NormedAddCommGroup Q] [NormedSpace ℝ Q] {u : P → GAd σ J}
     (hu : IsSmoothRealFam u) {p : Q → P} (hp : ContDiff ℝ ∞ p) : IsSmoothRealFam fun t => u (p t) :=
   ⟨fun _ => hu.1 _, fun w τ i j => (hu.2 w τ i j).comp hp⟩
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem isSmoothRealFam_prod {k : ℕ} {u : Fin k → P → GAd σ J} (hu : ∀ i, IsSmoothRealFam (u i)) :
     IsSmoothRealFam fun t => (List.ofFn fun i => u i t).prod := by
   induction k with
@@ -47,8 +51,8 @@ theorem isSmoothRealFam_prod {k : ℕ} {u : Fin k → P → GAd σ J} (hu : ∀ 
     simp only [List.ofFn_succ, List.prod_cons]
     exact (hu 0).mul (ih fun i => hu i.succ)
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem infCoord_mul (x : GInf σ J) (y : GAd σ J) : infCoord σ J (x * projInf σ J y) =
     fun w τ i j => ∑ k, infCoord σ J x w τ i k * archMat σ J τ (projArch σ J w y) k j := by
   funext w τ i j
@@ -109,7 +113,7 @@ theorem IsSmoothRealFam.deriv_mem_ccAd {u : ℝ → GAd σ J} (hu : IsSmoothReal
   | smul c f _ h =>
     convert (CcAd σ J).smul_mem c h using 1
     funext g
-    simp only [Pi.smul_apply, smul_eq_mul, deriv_const_mul_field]
+    exact deriv_fun_const_smul_field c _
 
 theorem isSmoothRealFam_embArch (h : IsCMExt F E σ) {w : InfinitePlace F} (τ : EmbOver E w) {x : P → GArch σ J w}
     (hx : ∀ i j, ContDiff ℝ ∞ fun t => archMat σ J τ (x t) i j) :
@@ -173,7 +177,7 @@ theorem ccGA_smooth_and_Rder_mem (D : D7) (V : HSp D)
         ContDiff ℝ ∞ fun t : Fin k → ℝ => f (g * (List.ofFn fun i => oneP θ V (τs i) (Xs i) (t i)).prod)) ∧
     ∀ τ, ∀ X ∈ lieAt V τ, Rder θ V τ X f ∈ CcGA V :=
   ⟨fun _ _ _ hX g => (isSmoothRealFam_prod fun i => (isSmoothRealFam_oneP hθ (hX i)).1.comp
-      (contDiff_apply ℝ ℝ i)).contDiff hf g,
+      (contDiff_apply ℝ (fun _ => ℝ) i)).contDiff hf g,
     fun _ _ hX => have h := isSmoothRealFam_oneP hθ hX; h.1.deriv_mem_ccAd h.2.1 h.2.2 hf⟩
 
 end Record

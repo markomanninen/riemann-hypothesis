@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.PderivIterEqPderivListOfDifferentiableOn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.PderivIterEqPderivListOfDifferentiableOn
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
 
@@ -84,7 +89,7 @@ theorem cj_mem {M : IntermediateField ℚ ℂ} (ρ : M →ₐ[ℚ] ℂ) {x : ℂ
 
 theorem cj_add {M : IntermediateField ℚ ℂ} (ρ : M →ₐ[ℚ] ℂ) {x y : ℂ} (hx : x ∈ M) (hy : y ∈ M) :
     cj M ρ (x + y) = cj M ρ x + cj M ρ y := by
-  rw [cj_mem ρ hx, cj_mem ρ hy, cj_mem ρ (add_mem hx hy), ← map_add]; rfl
+  rw [cj_mem ρ hx, cj_mem ρ hy, cj_mem ρ (add_mem hx hy), ← map_add (f := _)]; rfl
 
 theorem cj_mul {M : IntermediateField ℚ ℂ} (ρ : M →ₐ[ℚ] ℂ) {x y : ℂ} (hx : x ∈ M) (hy : y ∈ M) :
     cj M ρ (x * y) = cj M ρ x * cj M ρ y := by
@@ -121,7 +126,8 @@ theorem good_torConj (D : D7) (h : admG1 D) (cc : Ideal (𝓞 D.host.K)) (δ : �
   · rw [← (hK _).2, ← h.2 y, cj_mem ρ (sum_mem fun τ _ => hM τ y)]
     have : (⟨∑ τ, embT D τ y, sum_mem fun τ _ => hM τ y⟩ : M) = ∑ τ, ⟨embT D τ y, hM τ y⟩ := by
       apply Subtype.ext; simp
-    rw [this, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [this, map_sum]
     rfl
 
 theorem Good.embV_add {D : D7} {T : Tor D} (h : Good D T) {N N' : ℕ}
@@ -151,7 +157,8 @@ theorem Good.coordB_embV {D : D7} {T : Tor D} (h : Good D T) {N N' r : ℕ}
   unfold hYY at h2
   rw [h2] at h1
   have h3 : coordB D T b j (embV D T (b i)) = ∑ τ, e τ (∑ a, ∑ c, b i a c * D.host.conj (b j a c)) := by
-    simp only [coordB, embV, he, map_sum, map_mul, emb_conj]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [coordB, embV, he, map_sum, map_mul, emb_conj]
   rw [h3, h1]
   split_ifs <;> simp
 
@@ -173,7 +180,8 @@ theorem Good.coordB_sum {D : D7} {T : Tor D} (h : Good D T) {N N' r : ℕ}
     {b : Fin r → Matrix (Fin N') (Fin N) D.host.E} (hb : TaylorLogMetric.Orthonormal D b) (c : Fin r → ℂ) (j : Fin r) :
     coordB D T b j (∑ i, c i • embV D T (b i)) = c j := by
   change coordL D T b j _ = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   have : ∀ i, coordL D T b j (c i • embV D T (b i)) = if i = j then c i else 0 := fun i => by
     change coordB D T b j _ = _
     rw [coordB_smul, h.coordB_embV hb]; simp

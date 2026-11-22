@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.Development
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.UnitCongruentToInteger
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.Development
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.UnitCongruentToInteger
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -37,7 +41,7 @@ theorem ia_add {a b : E} (ha : IntAt P a) (hb : IntAt P b) : IntAt P (a + b) := 
   obtain ⟨r, s, hs, h1⟩ := ha
   obtain ⟨r', s', hs', h2⟩ := hb
   refine ⟨r * s' + r' * s, s * s', fun hm => (P.isPrime.mem_or_mem hm).elim hs hs', ?_⟩
-  rw [map_add, map_mul, map_mul, map_mul, ← h1, ← h2]
+  rw [map_add (f := _), map_mul, map_mul, map_mul, ← h1, ← h2]
   ring
 
 theorem ia_sub {a b : E} (ha : IntAt P a) (hb : IntAt P b) : IntAt P (a - b) := by
@@ -101,10 +105,11 @@ variable {E : Type} [Field E] [NumberField E] (P : HeightOneSpectrum (𝓞 E))
 
 def UnitAt (w : E) : Prop := w ≠ 0 ∧ IntAt P w ∧ IntAt P w⁻¹
 
-open Classical in
 
-def vq (a : E) : ℤ :=
-  if h : ∃ e : ℤ, ∃ w : E, a = (qOf P : E) ^ e * w ∧ UnitAt P w then h.choose else 0
+open Classical in
+def vq (a : E) : ℤ := by
+  classical
+  exact if h : ∃ e : ℤ, ∃ w : E, a = (qOf P : E) ^ e * w ∧ UnitAt P w then h.choose else 0
 
 variable {P}
 
@@ -113,28 +118,26 @@ theorem unitAt_mul {w w' : E} (h : UnitAt P w) (h' : UnitAt P w') : UnitAt P (w 
 
 theorem unitAt_one : UnitAt P (1 : E) := ⟨one_ne_zero, ia_one P, by rw [inv_one]; exact ia_one P⟩
 
-theorem unitAt_inv {w : E} (h : UnitAt P w) : UnitAt P w⁻¹ := ⟨inv_ne_zero h.1, h.2.2, by rw [inv_inv]; exact h.2.1⟩
-
 variable (hN : NTAll) (hp : (Ideal.absNorm P.asIdeal).Prime)
     (hq : ((Ideal.absNorm P.asIdeal : ℕ) : 𝓞 E) ∉ P.asIdeal ^ 2)
 include hN hp hq
 
-theorem vq_spec {a : E} (ha : a ≠ 0) : ∃ w : E, a = (qOf P : E) ^ vq P a * w ∧ UnitAt P w := by
+theorem vq_spec {a : E} (ha : a ≠ 0) : ∃ w : E, a = (qOf P : E) ^ vq (P := P) a * w ∧ UnitAt P w := by
   have h : ∃ e : ℤ, ∃ w : E, a = (qOf P : E) ^ e * w ∧ UnitAt P w := by
     obtain ⟨e, w, h1, h2, h3, h4⟩ := hN.2.2.1 E P hp hq a ha
     exact ⟨e, w, h1, h2, h3, h4⟩
   unfold vq
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
-theorem vq_eq {a w : E} {e : ℤ} (h : a = (qOf P : E) ^ e * w) (hw : UnitAt P w) : vq P a = e := by
+theorem vq_eq {a w : E} {e : ℤ} (h : a = (qOf P : E) ^ e * w) (hw : UnitAt P w) : vq (P := P) a = e := by
   have ha : a ≠ 0 := by
     rw [h]
     exact mul_ne_zero (zpow_ne_zero _ (qE_ne P hp)) hw.1
   obtain ⟨w1, h1, hw1⟩ := vq_spec hN hp hq ha
   exact hN.2.2.2.1 E P hp hq _ _ w1 w hw1.1 hw1.2.1 hw1.2.2 hw.2.1 hw.2.2 (h1.symm.trans h)
 
-theorem vq_mul {a b : E} (ha : a ≠ 0) (hb : b ≠ 0) : vq P (a * b) = vq P a + vq P b := by
+theorem vq_mul {a b : E} (ha : a ≠ 0) (hb : b ≠ 0) : vq (P := P) (a * b) = vq (P := P) a + vq (P := P) b := by
   obtain ⟨w, h1, hw⟩ := vq_spec hN hp hq ha
   obtain ⟨w', h2, hw'⟩ := vq_spec hN hp hq hb
   apply vq_eq hN hp hq _ (unitAt_mul hw hw')
@@ -142,10 +145,10 @@ theorem vq_mul {a b : E} (ha : a ≠ 0) (hb : b ≠ 0) : vq P (a * b) = vq P a +
   conv_lhs => rw [h1, h2]
   ring
 
-theorem vq_one : vq P (1 : E) = 0 := vq_eq hN hp hq (by simp) unitAt_one
+theorem vq_one : vq (P := P) (1 : E) = 0 := vq_eq hN hp hq (by simp) unitAt_one
 
 theorem vq_prod {ι : Type*} (s : Finset ι) (f : ι → E) (hf : ∀ i ∈ s, f i ≠ 0) :
-    vq P (∏ i ∈ s, f i) = ∑ i ∈ s, vq P (f i) := by
+    vq (P := P) (∏ i ∈ s, f i) = ∑ i ∈ s, vq (P := P) (f i) := by
   classical
   induction s using Finset.induction_on with
   | empty => simpa using vq_one hN hp hq

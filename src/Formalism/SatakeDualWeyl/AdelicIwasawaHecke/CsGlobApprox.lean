@@ -1,4 +1,8 @@
-import Formalism.SatakeDualWeyl.DefsCS
+module
+
+public import Formalism.SatakeDualWeyl.DefsCS
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,6 +40,8 @@ theorem csGlobApprox_local (v : HeightOneSpectrum (𝓞 F)) (D : 𝓞 F) (hD : D
   obtain ⟨f, hf⟩ := (HeightOneSpectrum.denseRange_algebraMap F v).exists_mem_open ho
     ⟨x, by simp⟩
   have hf' : Valued.v (algebraMap F (v.adicCompletion F) f - x) ≤ Valued.v Dv := by
+    change (algebraMap F (v.adicCompletion F) f - x) * Dv⁻¹ ∈
+      (Valued.v : Valuation (v.adicCompletion F) _).integer at hf
     have h := (Valuation.mem_integer_iff _ _).1 hf
     simp only [map_mul, map_inv₀] at h
     calc Valued.v (algebraMap F (v.adicCompletion F) f - x)

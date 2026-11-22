@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DualLatticeDenominator
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.DualLatticeDenominator
+
+@[expose] public section
 
 open Polynomial Matrix IsLocalRing TensorProduct
 
 private theorem UpperTheory.V.AlgebraTools.dual_lattice_denom {A : Type} [CommRing A] [IsDomain A]
     {F V : Type} [Field F] [Algebra A F] [IsFractionRing A F] [AddCommGroup V] [Module F V]
-    [Module A V] [IsScalarTower A F V] (Y : Submodule A V) (hY : Submodule.IsLattice F Y)
+    [Module A V] [IsScalarTower A F V] (Y : Submodule A V) (hY : Submodule.IsFullLattice F Y)
     (z : V) : ∃ a : A, a ≠ 0 ∧ a • z ∈ Y :=
   _root_.UpperTheory.Reformulated.B.ExistsSmulMemOfIsLattice₂.dual_lattice_denom Y hY z
 
@@ -19,13 +23,13 @@ private theorem UpperTheory.V.AlgebraTools.dual_lattice_pow {A : Type} [CommRing
   exact (Units.isUnit u).mul_left_dvd.mpr dvd_rfl
 
 theorem UpperTheory.V.AlgebraTools.dual_lattice :
-    ∀ {A : Type} [CommRing A] [IsDomain A] [IsDiscreteValuationRing A] {F V : Type} [Field F] [Algebra A F] [IsFractionRing A F] [AddCommGroup V] [Module F V] [Module A V] [IsScalarTower A F V] [Module.Finite F V] (Bf : LinearMap.BilinForm F V), Bf.IsSymm → Bf.Nondegenerate → ∀ Y : Submodule A V, Submodule.IsLattice F Y → Submodule.IsLattice F (Bf.dualSubmodule Y) ∧ Bf.dualSubmodule (Bf.dualSubmodule Y) = Y ∧ ∀ Z : Submodule A V, Submodule.IsLattice F Z → ∃ s : ℕ, maximalIdeal A ^ s • Z ≤ Y := by
+    ∀ {A : Type} [CommRing A] [IsDomain A] [IsDiscreteValuationRing A] {F V : Type} [Field F] [Algebra A F] [IsFractionRing A F] [AddCommGroup V] [Module F V] [Module A V] [IsScalarTower A F V] [Module.Finite F V] (Bf : LinearMap.BilinForm F V), Bf.IsSymm → Bf.Nondegenerate → ∀ Y : Submodule A V, Submodule.IsFullLattice F Y → Submodule.IsFullLattice F (Bf.dualSubmodule Y) ∧ Bf.dualSubmodule (Bf.dualSubmodule Y) = Y ∧ ∀ Z : Submodule A V, Submodule.IsLattice F Z → ∃ s : ℕ, maximalIdeal A ^ s • Z ≤ Y := by
   intro A _ _ _ F V _ _ _ _ _ _ _ _ Bf hs hn Y hY
   classical
   haveI : Module.Free A Y := Submodule.IsLattice.free F Y
   haveI : Module.Finite A Y := Submodule.IsLattice.finite F Y
   let b0 := Module.Free.chooseBasis A Y
-  let b := b0.extendOfIsLattice F
+  let b := b0.extendOfIsFullLattice F
   have hb : Submodule.span A (Set.range b) = Y := by
     have : (b : _ → V) = Y.subtype ∘ b0 := by
       funext i; simp [b]
@@ -33,8 +37,8 @@ theorem UpperTheory.V.AlgebraTools.dual_lattice :
       Submodule.range_subtype]
   refine ⟨?_, ?_, ?_⟩
   · rw [← hb, LinearMap.BilinForm.dualSubmodule_span_of_basis Bf hn b]
-    refine ⟨Submodule.fg_span (Set.finite_range _), ?_⟩
-    rw [Submodule.span_span_of_tower, Module.Basis.span_eq]
+    exact { toIsLattice := Submodule.IsLattice.of_fg _ (Submodule.fg_span (Set.finite_range _))
+            span_eq_top := by rw [Submodule.span_span_of_tower, Module.Basis.span_eq] }
   · rw [← hb]
     exact LinearMap.BilinForm.dualSubmodule_dualSubmodule_of_basis Bf hn hs b
   · intro Z hZ

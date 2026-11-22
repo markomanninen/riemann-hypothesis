@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FinrankEqZeroIff
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsTangentModuleUniversalGroup
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniqueCmEmbeddingEigenvectorSum
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.EigenBasisIffTangentBasis
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LieBasisIffTangentBasisPullbackUniversal
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIsLieBasisBaseChange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FinrankEqZeroIff
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsTangentModuleUniversalGroup
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniqueCmEmbeddingEigenvectorSum
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.EigenBasisIffTangentBasis
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LieBasisIffTangentBasisPullbackUniversal
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIsLieBasisBaseChange
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,71 +19,6 @@ open scoped CategoryTheory.Obj
 namespace GlobalTheory.LocM.FrameBase
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E}
-
-theorem exists_tangent_module {X : Scheme.{0}} (t : SAB H X) {S : Type} [CommRing S] (x : Sp S ⟶ X) :
-    ∃ (N : Type) (_ : AddCommGroup N) (_ : Module S N) (v : N → (Sp (DualNumber S) ⟶ t.G.left))
-      (ρ : 𝓞 E →+* Module.End S N), Function.Injective v ∧ (∀ w, IsTanAtG t x w ↔ w ∈ Set.range v) ∧
-      (∀ (n : ℕ) (b : Fin n → N) (a : Fin n → S) w,
-        IsCombAtG t x (fun i => v (b i)) a w ↔ w = v (∑ i, a i • b i)) ∧
-      (∀ a m, v (ρ a m) = v m ≫ (t.act.act a).left) ∧ ∀ (s : S) m, v (s • m) = spMap (epsMul s) ≫ v m := by
-  have := t.semi.comm
-  refine ⟨TanMod.TanSp x t.G, inferInstance, inferInstance, fun m => m.pt.left, TanMod.TanSp.act x t.act,
-    fun m n h => TanMod.TanSp.ext (Over.OverMorphism.ext h), fun w => ⟨fun h => ?_, ?_⟩, fun n b a w => ⟨?_, ?_⟩,
-    fun a m => rfl, fun s m => rfl⟩
-  · exact ⟨TanMod.TanSp.mk (Over.homMk w h.1) (TanMod.smT_zero_of x _ h.2), rfl⟩
-  · rintro ⟨m, rfl⟩
-    exact ⟨Over.w m.pt, TanMod.unit_of_smT_zero x _ m.tan⟩
-  · rintro ⟨u, hu, rfl⟩
-    have : u = fun i => (a i • b i).pt := funext fun i => Over.OverMorphism.ext (hu i)
-    subst this
-    rw [List.prod_ofFn, ← TanMod.TanSp.pt_sum]
-  · rintro rfl
-    exact ⟨fun i => (a i • b i).pt, fun i => rfl, by rw [List.prod_ofFn, ← TanMod.TanSp.pt_sum]⟩
-
-theorem eigBasis_iff {Dw : Datum H} {l : Level H} (c : Coeff l) {X : Scheme.{0}} (t : SAB H X) {S : Type} [CommRing S]
-    (f : c.F →+* S) (x : Sp S ⟶ X) (u : Vecs Dw t S) (g : ℕ) (e : Fin g ≃ Σ τ : E →+* ℂ, Fin (Dw.mult τ))
-    (ht : ∀ τ i, IsTanAtG t x (u τ i))
-    (he : ∀ τ i (a : 𝓞 E), u τ i ≫ (t.act.act a).left = spMap (epsMul (f (embK c τ a))) ≫ u τ i) :
-    (∀ τ w, IsTanAtG t x w → (∀ a : 𝓞 E, w ≫ (t.act.act a).left = spMap (epsMul (f (embK c τ a))) ≫ w) →
-      ∃! a : Fin (Dw.mult τ) → S, IsCombAtG t x (u τ) a w) ↔
-    ∀ w, IsTanAtG t x w → ∃! a : Fin g → S, IsCombAtG t x (fun j => u (e j).1 (e j).2) a w := by
-  let _ : Algebra c.F S := f.toAlgebra
-  obtain ⟨N, _, _, v, ρ, hinj, htan, hcomb, hρ, hsm⟩ := exists_tangent_module t x
-  choose b hb using fun τ i => (htan (u τ i)).1 (ht τ i)
-  obtain rfl : u = fun τ i => v (b τ i) := by funext τ i; exact (hb τ i).symm
-  let M : (E →+* ℂ) → Submodule S N := fun τ =>
-    ⨅ a : 𝓞 E, Module.End.eigenspace (ρ a) (f (embK c τ a))
-  have hM : ∀ τ n, n ∈ M τ ↔ ∀ a, ρ a n = f (embK c τ a) • n := by
-    intro τ n
-    simp only [M, Submodule.mem_iInf, Module.End.mem_eigenspace_iff]
-  have hE : ∀ τ n, (∀ a : 𝓞 E, v n ≫ (t.act.act a).left = spMap (epsMul (f (embK c τ a))) ≫ v n) ↔ n ∈ M τ := by
-    intro τ n
-    rw [hM]
-    refine forall_congr' fun a => ?_
-    rw [← hρ, ← hsm, hinj.eq_iff]
-  have hs : ∀ n : N, ∃! f : (E →+* ℂ) → N, (∀ τ, f τ ∈ M τ) ∧ ∑ τ, f τ = n := by
-    intro n
-    simp only [hM]
-    exact GlobalTheory.Frames.existsUnique_eigen_sum E H l c S N ρ n
-  have hmain := GlobalTheory.Frames.basis_iff_of_split (fun τ => Dw.mult τ) M hs b (fun τ i => (hE τ _).1 (he τ i)) g e
-  have hT : ∀ n, IsTanAtG t x (v n) := fun n => (htan _).2 ⟨n, rfl⟩
-  have hC : ∀ (k : ℕ) (b : Fin k → N) (a : Fin k → S) (n : N),
-      IsCombAtG t x (fun i => v (b i)) a (v n) ↔ n = ∑ i, a i • b i := by
-    intro k b a n
-    rw [hcomb, hinj.eq_iff]
-  constructor
-  · intro h w hw
-    obtain ⟨n, rfl⟩ := (htan w).1 hw
-    have h1 := hmain.1 (fun τ n hn => by
-      have h2 := h τ (v n) (hT n) ((hE τ n).2 hn)
-      simpa only [hC] using h2) n
-    simpa only [hC] using h1
-  · intro h τ w hw hew
-    obtain ⟨n, rfl⟩ := (htan w).1 hw
-    have h1 := hmain.2 (fun n => by
-      have h2 := h (v n) (hT n)
-      simpa only [hC] using h2) τ n ((hE τ n).1 hew)
-    simpa only [hC] using h1
 
 theorem lieBasis_iff {X : Scheme.{0}} (t : SAB H X) {S : Type} [CommRing S] (x : Sp S ⟶ X) (G' : Over (Sp S)) [GrpObj G']
     (φ : G'.left ⟶ t.G.left) (hp : IsGrpPullback G' t.G x φ) :
@@ -168,26 +107,5 @@ theorem tanBasis_baseChange {X : Scheme.{0}} (t : SAB H X) {S T : Type} [CommRin
   refine ⟨fun i => e' i ▸ key.1 i, ?_⟩
   rw [← funext e']
   exact key.2
-
-theorem spMap_dualMap_epsMul {S T : Type} [CommRing S] [CommRing T] (ψ : S →+* T) (a : S) :
-    spMap (dualMap ψ) ≫ spMap (epsMul a) = spMap (epsMul (ψ a)) ≫ spMap (dualMap ψ) := by
-  rw [TanMod.spMap_comp', TanMod.spMap_comp']
-  congr 1
-  refine RingHom.ext fun z => ?_
-  ext <;> simp [dualMap, epsMul, mul_comm]
-
-theorem frameBase : GlobalTheory.LocM.Cht.FrameBaseSt := by
-  intro E _ _ _ H Dw l c X t R R' _ _ f x φ u h
-  let e := (Fintype.equivFin (Σ τ : E →+* ℂ, Fin (Dw.mult τ))).symm
-  have h1 := (eigBasis_iff c t f x u _ e (fun τ i => (h.1 τ i).1) (fun τ i => (h.1 τ i).2)).1 h.2
-  obtain ⟨h2, h3⟩ := tanBasis_baseChange t φ x _ _ (fun j => (h.1 (e j).1 (e j).2).1) h1
-  have ht : ∀ τ i, IsTanAtG t (spMap φ ≫ x) (u.bc φ τ i) := fun τ i => by
-    have := h2 (e.symm ⟨τ, i⟩)
-    rw [Equiv.apply_symm_apply] at this
-    exact this
-  have he : ∀ τ i (a : 𝓞 E), u.bc φ τ i ≫ (t.act.act a).left =
-      spMap (epsMul ((φ.comp f) (embK c τ a))) ≫ u.bc φ τ i := fun τ i a => by
-    rw [Vecs.bc, Category.assoc, (h.1 τ i).2 a, ← Category.assoc, spMap_dualMap_epsMul, Category.assoc, RingHom.comp_apply]
-  exact ⟨fun τ i => ⟨ht τ i, he τ i⟩, (eigBasis_iff c t (φ.comp f) _ (u.bc φ) _ e ht he).2 h3⟩
 
 end GlobalTheory.LocM.FrameBase

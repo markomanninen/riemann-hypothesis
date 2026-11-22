@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.MembershipCriterionOfLevelZero
-import Formalism.SharpRestriction.LevelLetterCocycles.SplittingOfExactnessAndData
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.MembershipCriterionOfLevelZero
+public import Formalism.SharpRestriction.LevelLetterCocycles.SplittingOfExactnessAndData
+
+@[expose] public section
 
 noncomputable section
 

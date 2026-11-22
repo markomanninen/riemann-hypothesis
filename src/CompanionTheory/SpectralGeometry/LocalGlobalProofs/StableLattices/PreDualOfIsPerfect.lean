@@ -1,8 +1,12 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.ObstructionLifting.H1StructureDimLe
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftLeftFst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDualOfIsPerfectOfAdditive
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.AdjointEndomorphismsCubeLBOfDenseFibres
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.ObstructionLifting.H1StructureDimLe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LiftLeftFst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsDualOfIsPerfectOfAdditive
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.AdjointEndomorphismsCubeLBOfDenseFibres
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,12 +22,12 @@ namespace GlobalTheory.CompanionTheory.DualScheme
 
 theorem preDual_of_isPerfect {S : Scheme.{0}} [IsLocallyNoetherian S] {A B : Over S} [GrpObj A] [GrpObj B]
     (hA : IsAbelianScheme A) (hB : IsAbelianScheme B) {P : LB (A ⊗ B).left} (h : IsPerfect A B P) :
-    PreDual A B P where
-  isLB := h.isLB
-  add₁ := CubeNoeth.isAdditive_of_triv_axes hA hB h.isLB h.zero_left h.zero_right
-  add₂ := CubeNoeth.isAdditive_swap_of_triv_axes hA hB h.isLB h.zero_left h.zero_right
-  right := h.ker_right
-  left k _ _ t := (Set.finite_singleton (1 : Over.mk t ⟶ A)).subset fun x hx ↦ h.ker_left _ x hx
+    PreDual A B P := by
+  refine ⟨h.isLB, ?_, ?_, h.ker_right, ?_⟩
+  · exact CubeNoeth.isAdditive_of_triv_axes hA hB h.isLB h.zero_left h.zero_right
+  · exact CubeNoeth.isAdditive_swap_of_triv_axes hA hB h.isLB h.zero_left h.zero_right
+  · intro k _ _ t
+    exact (Set.finite_singleton (1 : Over.mk t ⟶ A)).subset fun x hx ↦ h.ker_left _ x hx
 
 theorem pull_lam_of_left {S : Scheme.{0}} {G T T' : Over S} [GrpObj G] (c : Pic G.left) (u : T'.left ⟶ T.left)
     {a b : T ⟶ G} {a' b' : T' ⟶ G} (ha : u ≫ a.left = a'.left) (hb : u ≫ b.left = b'.left) :
@@ -40,7 +44,7 @@ theorem pull_lam_of_left {S : Scheme.{0}} {G T T' : Over S} [GrpObj G] (c : Pic 
     simpa using Over.w (toUnit X)
   have h1 : u ≫ (1 : T ⟶ G).left = (1 : T' ⟶ G).left := by
     rw [Hom.one_def, Hom.one_def, Over.comp_left, Over.comp_left, ← Category.assoc, hu, hu, hT]
-  simp only [GlobalTheory.CechPic.lam, map_add, map_sub, ← GlobalTheory.CechPic.pull_comp, hab, h1, ha, hb]
+  simp only [GlobalTheory.CechPic.lam, map_add (f := _), map_sub, ← GlobalTheory.CechPic.pull_comp, hab, h1, ha, hb]
 
 theorem pull_lam_sq {S S' : Scheme.{0}} {b : S' ⟶ S} {G : Over S} {G' : Over S'} [GrpObj G] [GrpObj G']
     {φ : G'.left ⟶ G.left} (hp : IsGrpPullback G' G b φ) (c : Pic G.left) {l : (G' ⊗ G').left ⟶ (G ⊗ G).left}

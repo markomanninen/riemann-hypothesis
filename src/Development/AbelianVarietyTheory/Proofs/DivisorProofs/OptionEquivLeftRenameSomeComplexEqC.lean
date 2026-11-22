@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MvPolynomial
 
 namespace GlobalTheory
@@ -7,7 +12,7 @@ theorem optionEquivLeft_rename_some_complex_eq_C {τ : Type} (c : MvPolynomial �
     MvPolynomial.optionEquivLeft ℂ τ (MvPolynomial.rename some c) = Polynomial.C c := by
   induction c using MvPolynomial.induction_on with
   | C a => rw [MvPolynomial.rename_C, MvPolynomial.optionEquivLeft_C, Polynomial.C_eq_algebraMap]
-  | add p q hp hq => rw [map_add, map_add, hp, hq, Polynomial.C_add]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, Polynomial.C_add]
   | mul_X p n hp => rw [map_mul, map_mul, hp, MvPolynomial.rename_X, MvPolynomial.optionEquivLeft_X_some, Polynomial.C_mul]
 
 theorem coeff_optionEquivLeft_extDerivation {τ : Type}
@@ -22,7 +27,7 @@ theorem coeff_optionEquivLeft_extDerivation {τ : Type}
     have h2 : (MvPolynomial.C a : MvPolynomial τ ℂ) = algebraMap ℂ _ a := rfl
     rw [h1, Derivation.map_algebraMap, ← h1, MvPolynomial.optionEquivLeft_C, Polynomial.coeff_C]
     split_ifs <;> simp [h2, Derivation.map_algebraMap]
-  | add p q hp hq => simp only [map_add, Polynomial.coeff_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), Polynomial.coeff_add, hp, hq]
   | mul_X p n hp =>
     rw [Derivation.leibniz, MvPolynomial.mkDerivation_X]
     rcases n with _ | v
@@ -30,7 +35,7 @@ theorem coeff_optionEquivLeft_extDerivation {τ : Type}
       rcases k with _ | k
       · simp [Polynomial.coeff_mul_X_zero, mul_comm (Polynomial.X) _]
       · rw [mul_comm Polynomial.X, Polynomial.coeff_mul_X, Polynomial.coeff_mul_X, hp]
-    · simp only [smul_eq_mul, map_add, map_mul, MvPolynomial.optionEquivLeft_X_some, optionEquivLeft_rename_some_complex_eq_C,
+    · simp only [smul_eq_mul, map_add (f := _), map_mul, MvPolynomial.optionEquivLeft_X_some, optionEquivLeft_rename_some_complex_eq_C,
         Polynomial.coeff_add, Polynomial.coeff_mul_C, Polynomial.coeff_C_mul, hp, Derivation.leibniz]
 
 end GlobalTheory

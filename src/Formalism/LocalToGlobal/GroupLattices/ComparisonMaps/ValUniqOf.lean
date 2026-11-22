@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CmpLApply
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CmpLApply
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.SplittingFieldLattices.BasisB
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.SplittingFieldLattices.BasisB
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb
 
@@ -83,7 +88,7 @@ theorem exists_ext (c : O) (W : Submodule O M) (ρ₀ : W →ₗ[O] M')
       simp only [Submodule.coe_add, Submodule.coe_smul]
       linear_combination (norm := module) e)
     refine ⟨a • p + p' + b, ?_⟩
-    rw [map_add, map_smul] at hb
+    rw [map_add (f := _), map_smul] at hb
     rw [smul_add, smul_add, ← hb, smul_comm, ← hp, ← hp', smul_sub]
     abel
   choose ρ hρ using hE
@@ -134,7 +139,8 @@ theorem exists_basic_irreducible (ϖ : O) (hϖ : Irreducible ϖ)
       ∀ i ∈ s, ϖ ∣ g i := by
     intro s g h i hi
     have h0 : q (∑ i ∈ s, g i • e i) = 0 := (Submodule.Quotient.mk_eq_zero _).2 h
-    rw [map_sum] at h0
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h0
     have h1 : ∑ i ∈ s, (Ideal.Quotient.mk I (g i)) • B i = 0 := by
       rw [← h0]
       refine Finset.sum_congr rfl fun i _ => ?_

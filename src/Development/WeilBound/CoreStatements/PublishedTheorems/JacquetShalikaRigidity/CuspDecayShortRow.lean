@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspRapidDecaySiegelGL
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdeleModuleDetDiagUnitsPosIdele
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SiegelConj
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspRapidDecaySiegelGL
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IdeleModuleDetDiagUnitsPosIdele
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SiegelConj
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ namespace CuspDecayShortRow
 
 set_option linter.unusedSectionVars false
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem pInf_posIdele (r : ℝ) (hr : 0 < r) :
     pInf E ((posIdele (K := E) r hr : GroundTheory.Global.IdeleGroup E) : Ad E) = fun _ => (r : ℂ) := by
@@ -26,7 +30,7 @@ theorem pInf_posIdele (r : ℝ) (hr : 0 < r) :
   rw [GlobalTheory.CuspBoundSiegel.posIdele_congr hr (Real.exp_pos _) (Real.exp_log hr).symm,
     GlobalTheory.CuspBoundSiegel.posIdele_exp]
   change pInf E (1 - GlobalTheory.CuspRep.sInf E 1 + GlobalTheory.CuspRep.sInf E _) = _
-  simp only [map_add, map_sub, map_one, h, sub_self, zero_add]
+  simp only [map_add (f := _), map_sub, map_one, h, sub_self, zero_add]
   funext w
   simp [expU]
   rw [← Complex.ofReal_exp, Real.exp_log hr]
@@ -103,7 +107,7 @@ namespace CuspDecayShortRow
 
 set_option linter.unusedSectionVars false
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem low (hH : H0) {C1 C2 : Set (GA E a)} (h1 : IsCompact C1) (h2 : IsCompact C2) :
     ∃ B : ℝ, ∃ N : ℕ, 0 ≤ B ∧ ∀ p ∈ C1, ∀ q ∈ C2, ∀ (y : GL (Fin a) (Cinf E)) (g : GA E a) ξ, ξ ≠ 0 →
@@ -151,7 +155,7 @@ theorem chain {t : ℝ} (ht : 0 < t) (ha : 0 < a) (r : Fin a → ℝ) (hr : ∀ 
     push_neg at hc
     have hlt : ∏ i, r i < 1 := by
       calc ∏ i, r i ≤ ∏ _i : Fin a, T ^ a * r ⟨0, ha⟩ :=
-            Finset.prod_le_prod (fun i _ => (hr i).le) fun i _ => h1 i
+            Finset.prod_le_prod₀ (fun i _ => (hr i).le) fun i _ => h1 i
         _ = (T ^ a * r ⟨0, ha⟩) ^ a := by rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
         _ < 1 := pow_lt_one₀ (by have := hr ⟨0, ha⟩; positivity) hc (by omega)
     rw [hp] at hlt
@@ -166,7 +170,7 @@ theorem chain {t : ℝ} (ht : 0 < t) (ha : 0 < a) (r : Fin a → ℝ) (hr : ∀ 
             one_lt_pow₀ ((one_lt_div hT0).2 hc) (by omega)
         _ = ∏ _i : Fin a, r ⟨a - 1, by omega⟩ / T ^ a := by
             rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
-        _ ≤ ∏ i, r i := Finset.prod_le_prod (fun i _ => by have := hr ⟨a - 1, by omega⟩; positivity)
+        _ ≤ ∏ i, r i := Finset.prod_le_prod₀ (fun i _ => by have := hr ⟨a - 1, by omega⟩; positivity)
             fun i _ => h3 i
     rw [hp] at hlt
     exact lt_irrefl _ hlt
@@ -195,7 +199,7 @@ namespace CuspDecayShortRow
 set_option linter.unusedSectionVars false
 
 open GroundTheory.Global in
-theorem siegel {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (ha : 0 < a)
+theorem siegel {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (ha : 0 < a)
     (hsc : ∀ s t, splitCentre E a (s + t) = splitCentre E a s * splitCentre E a t)
     (hcomm : ∀ t (g : GA E a), splitCentre E a t * g = g * splitCentre E a t) :
     ∃ ω : Set (GA E a), IsCompact ω ∧
@@ -286,7 +290,7 @@ namespace CuspDecayShortRow
 
 set_option linter.unusedSectionVars false
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem lam_prod (ha : 0 < a) (r : Fin a → ℝ) (hr : ∀ i, 0 < r i) (L : ℕ) :
     ∏ i, r i ^ ((Pi.single (⟨a - 1, by omega⟩ : Fin a) (L : ℝ) + Pi.single (⟨0, ha⟩ : Fin a) (-(L : ℝ)) : Fin a → ℝ) i) =

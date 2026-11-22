@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCocharLie
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CharValMultiplicativeStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCocharLie
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CharValMultiplicativeStatement
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar
@@ -12,17 +17,6 @@ noncomputable section
 namespace GlobalTheory.CompanionTheory.Ar.TorusLie
 
 variable {S : Scheme.{0}} {X : Type} [AddCommGroup X] {R : Type} [CommRing R]
-
-theorem charVal_congr {A : Type} [CommRing A] {a a' : Sp A ⟶ S} (t : Over.mk a ⟶ splitTorus S X)
-    (t' : Over.mk a' ⟶ splitTorus S X) (h : t.left = t'.left) (χ : X) : charVal t χ = charVal t' χ := by
-  have ha : a = a' := by
-    have h1 := Over.w t
-    have h2 := Over.w t'
-    simp only [Over.mk_hom] at h1 h2
-    rw [← h1, ← h2, h]
-  subst ha
-  have : t = t' := Over.OverMorphism.ext h
-  rw [this]
 
 def pullPt {A A' : Type} [CommRing A] [CommRing A'] (g : A →+* A') {a : Sp A ⟶ S} {a' : Sp A' ⟶ S}
     (h : a' = spMap g ≫ a) (t : Over.mk a ⟶ splitTorus S X) : Over.mk a' ⟶ splitTorus S X :=

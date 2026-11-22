@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicProjectionCommutesOperators
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.V2repResIsGLRep
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.MonomialsAreWeightVectors
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicProjectionCommutesOperators
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.V2repResIsGLRep
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.MonomialsAreWeightVectors
+
+@[expose] public section
 
 namespace Formalism.MainNotions.G.GLWeightTheory
 

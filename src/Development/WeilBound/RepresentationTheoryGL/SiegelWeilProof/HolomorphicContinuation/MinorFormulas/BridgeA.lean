@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MinorFormulas.BridgeH
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MinorFormulas.DetSqSplit
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MinorFormulas.BridgeH
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MinorFormulas.DetSqSplit
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,10 +25,10 @@ theorem hasDerivAt_eval {ι : Type} [Fintype ι] [DecidableEq ι] (g : ℂ → �
   | add p q hp hq =>
     have e1 : (fun t => MvPolynomial.eval (g t) (p + q)) =
         fun t => MvPolynomial.eval (g t) p + MvPolynomial.eval (g t) q := by
-      funext t; rw [map_add]
+      funext t; rw [map_add (f := _)]
     rw [e1]
     refine (hp.add hq).congr_deriv ?_
-    simp only [map_add, add_mul, Finset.sum_add_distrib]
+    simp only [map_add (f := _), add_mul, Finset.sum_add_distrib]
   | mul_X p k0 hp =>
     have h := hp.mul (hg k0)
     have e1 : (fun t => MvPolynomial.eval (g t) (p * MvPolynomial.X k0)) =
@@ -33,7 +37,7 @@ theorem hasDerivAt_eval {ι : Type} [Fintype ι] [DecidableEq ι] (g : ℂ → �
     rw [e1]
     refine h.congr_deriv ?_
     symm
-    simp only [Derivation.leibniz, MvPolynomial.pderiv_X, smul_eq_mul, map_add, map_mul, MvPolynomial.eval_X,
+    simp only [Derivation.leibniz, MvPolynomial.pderiv_X, smul_eq_mul, map_add (f := _), map_mul, MvPolynomial.eval_X,
       add_mul, Finset.sum_add_distrib]
     have e : ∑ k, MvPolynomial.eval (g 0) p * MvPolynomial.eval (g 0) ((Pi.single k (1 : MvPolynomial ι ℂ) : ι → MvPolynomial ι ℂ) k0) * g' k =
         MvPolynomial.eval (g 0) p * g' k0 := by

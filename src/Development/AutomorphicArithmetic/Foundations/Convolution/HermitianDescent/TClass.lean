@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.UniformExportStatement
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalBase
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ConjSep
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GramBasic
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.UniformExportStatement
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalBase
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ConjSep
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GramBasic
+
+@[expose] public section
 
 open Matrix Polynomial NumberField IsDedekindDomain
 open scoped TensorProduct
@@ -54,7 +58,7 @@ private theorem comm_io (c : R ≃ₐ[k] R) (z : R ⊗[k] A) :
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul r a => simp [io]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 private theorem fixed_tmul {c : R ≃ₐ[k] R}
     (h : IsGal (Algebra.TensorProduct.congr AlgEquiv.refl c : A ⊗[k] R ≃ₐ[A] A ⊗[k] R) 2)

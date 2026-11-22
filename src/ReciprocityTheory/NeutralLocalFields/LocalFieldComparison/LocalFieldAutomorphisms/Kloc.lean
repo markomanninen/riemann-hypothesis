@@ -1,4 +1,8 @@
-import ReciprocityTheory.Hypotheses.GalCohDefs
+module
+
+public import ReciprocityTheory.Hypotheses.GalCohDefs
+
+@[expose] public section
 
 noncomputable section
 

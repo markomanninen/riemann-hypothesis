@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.L2LocalComponents.ArchPolar
-import GroundTheory.AutomorphicForms.L2LocalComponents.ArchHaar
-import GroundTheory.AutomorphicForms.HarishChandraRegularity.CartanBasis
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.L2LocalComponents.ArchPolar
+public import GroundTheory.AutomorphicForms.L2LocalComponents.ArchHaar
+public import GroundTheory.AutomorphicForms.HarishChandraRegularity.CartanBasis
+
+@[expose] public section
 
 open NumberField NumberField.mixedEmbedding NumberField.InfinitePlace Matrix MeasureTheory Topology Filter
 open scoped NumberField.AdeleRing ContDiff Manifold
@@ -123,7 +127,7 @@ variable {𝕜 : Type*} [RCLike 𝕜] {n : ℕ}
 def frobSq (M : Matrix (Fin n) (Fin n) 𝕜) : ℝ := ∑ i, ∑ j, ‖M i j‖ ^ 2
 
 theorem frobSq_eq_trace (M : Matrix (Fin n) (Fin n) 𝕜) : (frobSq M : 𝕜) = Matrix.trace (Mᴴ * M) := by
-  simp only [frobSq, Matrix.trace, diag, mul_apply, conjTranspose_apply, RCLike.star_def]
+  simp only [frobSq, Matrix.trace, diag, Matrix.mul_apply, conjTranspose_apply, RCLike.star_def]
   rw [Finset.sum_comm]
   push_cast
   refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_
@@ -152,8 +156,8 @@ open scoped Classical
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
-open Reduction in
 
+open Reduction in
 theorem realCompM_mem_unitaryGroup {k : archGroup K n} (hk : k ∈ archCompact K n)
     (v : {w : InfinitePlace K // IsReal w}) :
     realCompM v ((k : (ArchMatrix K n)ˣ) : ArchMatrix K n) ∈ unitaryGroup (Fin n) ℝ := by
@@ -171,7 +175,8 @@ theorem realCompM_mem_unitaryGroup {k : archGroup K n} (hk : k ∈ archCompact K
       z ᵥ* realCompM ⟨w, hw⟩ ((k : (ArchMatrix K n)ˣ) : ArchMatrix K n) := by
     rw [← hy]
     ext j
-    simp only [vecMul, dotProduct, map_sum, map_mul, realCompM_apply, Matrix.map_apply, realComp_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [vecMul, dotProduct, map_sum, map_mul, realCompM_apply, Matrix.map_apply, realComp_apply]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [infAt_infEmb_apply]
     congr 1
@@ -183,8 +188,8 @@ theorem realCompM_mem_unitaryGroup {k : archGroup K n} (hk : k ∈ archCompact K
     _ = euclidNorm y := hk'.1 w y
     _ = euclidNorm z := by rw [← hy]; exact (euclidNorm_map ψ.toRingHom hψ y).symm
 
-open Reduction in
 
+open Reduction in
 theorem complexCompM_mem_unitaryGroup {k : archGroup K n} (hk : k ∈ archCompact K n)
     (v : {w : InfinitePlace K // IsComplex w}) :
     complexCompM v ((k : (ArchMatrix K n)ˣ) : ArchMatrix K n) ∈ unitaryGroup (Fin n) ℂ := by
@@ -201,7 +206,8 @@ theorem complexCompM_mem_unitaryGroup {k : archGroup K n} (hk : k ∈ archCompac
       z ᵥ* complexCompM ⟨w, hw⟩ ((k : (ArchMatrix K n)ˣ) : ArchMatrix K n) := by
     rw [← hy]
     ext j
-    simp only [vecMul, dotProduct, map_sum, map_mul, complexCompM_apply, Matrix.map_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [vecMul, dotProduct, map_sum, map_mul, complexCompM_apply, Matrix.map_apply,
       complexComp_apply]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [infAt_infEmb_apply]

@@ -1,11 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.FrobeniusFields.ExistsDecompositionElementAtLXiPowFourNeOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.FrobeniusFields.BarFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.DirichletGroupPowers.RedOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.ExistsStrictHenselianAbsolutelyClosedLocalRing
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.FrobeniusFields.ExistsDecompositionElementAtLXiPowFourNeOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.FrobeniusFields.BarFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.DirichletGroupPowers.RedOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.ExistsStrictHenselianAbsolutelyClosedLocalRing
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
-
-open private dirG_pow dirG_one dirG_frob psi_exp from Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.FrobeniusFields.ExistsDecompositionElementAtLXiPowFourNeOne
 
 theorem UpperTheory.V.Keep.bigOm :
     ∀ {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {c : Coef l} (D : Raw Ω c), Ctx2 D → ∀ (κ : G ℚ Ω →* c.Oˣ) (j : ℕ), κ ^ l ^ j = 1 → ∀ A : ValuationSubring Ω, A.valuation (l : Ω) < 1 → ∃ g ∈ Dec (F := ℚ) A, D.om g = 1 ∧ Raw.bar D.Psi g = 1 ∧ κ g = 1 ∧ Raw.bar D.ξ g ^ 4 ≠ 1 := by
@@ -33,7 +35,56 @@ theorem UpperTheory.V.Keep.bigOm :
       rw [h1]
       simp [chiO, hD.sg_cyc]
   obtain ⟨hIsChar, _⟩ := (Host.mem_X h).mp hX
-  obtain ⟨a, u, hu, hψu, hbound⟩ := psi_exp h ψ hIsChar hlp hl2
+  have hψexp : ∃ a u : ℕ, Odd u ∧ ψ ^ (2 ^ a * u) = 1 ∧
+      l ^ 2 * 2 ^ (a + 2) ≤ 2 ^ h.nII l ψ := by
+    have hq : 0 < h.q := NeZero.pos _
+    have ho : 0 < h.o := orderOf_pos _
+    obtain ⟨tψ, ⟨s, hs⟩, -⟩ := X.th1Facts c.O h.N ψ l hlp hl2
+    obtain ⟨-, -, t3, -⟩ := hostTh1 h c.O ψ hIsChar l hlp hl2
+    obtain ⟨-, b2⟩ := max_le_iff.1 (Nat.le_pow_clog one_lt_two _ : _ ≤ 2 ^ h.nII l ψ)
+    refine ⟨c2 ψ + 1 + h.o.factorization 2, ordCompl[2] h.o * l ^ s, ?_, ?_, ?_⟩
+    · exact (Nat.odd_iff.2 (Nat.two_dvd_ne_zero.1
+        (Nat.not_dvd_ordCompl Nat.prime_two ho.ne'))).mul (hlp.odd_of_ne_two hl2).pow
+    · have e1 : 2 ^ (c2 ψ + 1 + h.o.factorization 2) * (ordCompl[2] h.o * l ^ s) =
+          2 ^ c2 ψ * (2 * h.o) * l ^ s := by
+        conv_rhs => rw [← Nat.ordProj_mul_ordCompl_eq_self h.o 2]
+        ring
+      have p1 : psi2 ψ ^ 2 ^ c2 ψ = 1 := by
+        have hcond : (psi2 ψ).conductor = 2 ^ c2 ψ :=
+          (compCond c.O h.N ψ 2 Nat.prime_two).2.2.2.1.symm
+        have : NeZero (psi2 ψ).conductor := ⟨(psi2 ψ).conductor_ne_zero⟩
+        have hp : (psi2 ψ).primitiveCharacter ^ Nat.totient (psi2 ψ).conductor = 1 := by
+          ext u
+          rw [MulChar.pow_apply_coe, ← map_pow, ← Units.val_pow_eq_pow_val, ZMod.pow_totient,
+            Units.val_one, map_one, MulChar.one_apply_coe]
+        have hd : Nat.totient (psi2 ψ).conductor ∣ 2 ^ c2 ψ := by
+          rw [hcond]
+          generalize c2 ψ = k
+          rcases Nat.eq_zero_or_pos k with rfl | hk
+          · simp
+          · rw [Nat.totient_prime_pow Nat.prime_two hk]
+            simpa using pow_dvd_pow 2 (Nat.sub_le k 1)
+        obtain ⟨i, hi⟩ := hd
+        rw [← (psi2 ψ).changeLevel_primitiveCharacter, ← map_pow, hi, pow_mul, hp, one_pow, map_one]
+      have p2 := orderOf_dvd_iff_pow_eq_one.1 t3
+      rw [e1]
+      generalize c2 ψ = k at p1 ⊢
+      have p3 : (psi2 ψ * th1 l ψ * kap l ψ) ^ (2 ^ k * (2 * h.o) * l ^ s) = 1 := by
+        rw [mul_pow, mul_pow, mul_assoc (2 ^ k), pow_mul, p1, one_pow, one_mul, mul_left_comm,
+          pow_mul, p2, one_pow, one_mul, ← mul_assoc, mul_comm, pow_mul, hs, one_pow]
+      rwa [← tψ] at p3
+    · have v2 : 2 ^ h.o.factorization 2 ≤ h.o := Nat.ordProj_le 2 ho.ne'
+      refine le_trans ?_ b2
+      calc
+        l ^ 2 * 2 ^ (c2 ψ + 1 + h.o.factorization 2 + 2) =
+            2 ^ (c2 ψ + 3) * 2 ^ h.o.factorization 2 * l ^ 2 * 1 := by ring
+        _ ≤ 2 ^ (c2 ψ + 6) * h.o * l ^ 3 * h.q ^ 2 := by
+          have hp : 2 ^ (c2 ψ + 3) ≤ 2 ^ (c2 ψ + 6) :=
+            Nat.pow_le_pow_right (by decide) (by omega)
+          have hlpow : l ^ 2 ≤ l ^ 3 := Nat.pow_le_pow_right hlp.pos (by decide)
+          exact Nat.mul_le_mul (Nat.mul_le_mul (Nat.mul_le_mul hp v2) hlpow)
+            (Nat.one_le_pow _ _ hq)
+  obtain ⟨a, u, hu, hψu, hbound⟩ := hψexp
   set M := l ^ j * (2 ^ a * u) with hM
   set g := D.sg l ^ M with hg
   have hgD : g ∈ Dec (F := ℚ) (D.pl l) := Subgroup.pow_mem _ hσD M
@@ -41,13 +92,26 @@ theorem UpperTheory.V.Keep.bigOm :
     rw [hg, map_pow, homσ, one_pow]
   have hκ : κ g = 1 := by
     rw [hg, map_pow, hM, pow_mul, ← MonoidHom.pow_apply, hj, MonoidHom.one_apply, one_pow]
+  have dirG_one {N : ℕ} [NeZero N] :
+      Chr.dirG ℚ Ω (1 : DirichletCharacter c.O N) (D.sg l) = 1 :=
+    Units.ext (MulChar.one_apply_coe _)
   have hψ : D.ψ g = 1 := by
+    have dirG_pow (k : ℕ) :
+        Chr.dirG ℚ Ω (ψ ^ k) (D.sg l) = Chr.dirG ℚ Ω ψ (D.sg l) ^ k :=
+      Units.ext (MulChar.pow_apply_coe ψ k _)
     rw [hg, hO.psi, map_pow, hM, mul_comm, pow_mul, ← dirG_pow, hψu, dirG_one, one_pow]
   have hξ₀1 : ξ₀ = 1 := orderOf_eq_one_iff.mp hξ₀
   have hndvd : ¬ l ∣ 2 ^ h.nII l ψ := by
     intro hd
     exact hl2 ((Nat.prime_dvd_prime_iff_eq hlp Nat.prime_two).mp (hlp.dvd_of_dvd_pow hd))
-  have hfr := dirG_frob ξ' hlp (hD.pl_over l hlp) hndvd hfrob
+  have hfr : (Chr.dirG ℚ Ω ξ' (D.sg l) : c.O) = ξ' (l : ZMod (2 ^ h.nII l ψ)) := by
+    have hc := (Nat.Prime.coprime_iff_not_dvd hlp).2 hndvd
+    have h1 := (ML.placeBasic Ω).2.2.2.2.2.2.1 (D.pl l) l (2 ^ h.nII l ψ) (D.sg l) hfrob
+      ((ML.placeBasic Ω).2.2.2.1 (D.pl l) l (2 ^ h.nII l ψ) hc (hD.pl_over l hlp))
+    have h2 := (Chr.clsFacts ℚ Ω (2 ^ h.nII l ψ)).2.2.1 (D.sg l) (ZMod.unitOfCoprime l hc)
+      fun ζ hζ => by
+        rw [h1 ζ hζ, ZMod.coe_unitOfCoprime, ZMod.val_natCast, ← pow_eq_pow_mod l hζ]
+    rw [Chr.dirG, MonoidHom.comp_apply, h2, MulChar.coe_toUnitHom, ZMod.coe_unitOfCoprime]
   have hξ4 : D.ξ g ^ 4 ≠ 1 := by
     intro h4
     have hval : ξ' (l : ZMod (2 ^ h.nII l ψ)) ^ (2 ^ (a + 2) * (l ^ j * u)) = 1 := by

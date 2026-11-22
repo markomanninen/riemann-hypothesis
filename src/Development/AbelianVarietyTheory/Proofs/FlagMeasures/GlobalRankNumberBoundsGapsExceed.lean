@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SecondLabelsNonempty
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.SecondLabelsNonempty
+
+@[expose] public section
 
 open GlobalTheory.Diag.PG
 

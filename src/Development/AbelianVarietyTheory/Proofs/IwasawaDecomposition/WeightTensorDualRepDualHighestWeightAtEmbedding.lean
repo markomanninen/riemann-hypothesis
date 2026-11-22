@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IncludeLInjective
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
-import Formalism.GradedWeylDivisibility.FinalD
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.ExtremalFactsProofA
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IncludeLInjective
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+public import Formalism.GradedWeylDivisibility.FinalD
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.ExtremalFactsProofA
+
+@[expose] public section
 
 noncomputable section
 
@@ -164,16 +168,17 @@ theorem univ_map (M : ι → Matrix (Fin n) (Fin n) K) (F : Pol K ι n) :
 
 def cf (ℓ : Pol K ι n →ₗ[K] K)
     (Q : MvPolynomial (ι × Fin n × Fin n) (MvPolynomial (ι × Fin n × Fin n) K)) : MvPolynomial (ι × Fin n × Fin n) K :=
-  ∑ m ∈ Q.support, coeff m Q * C (ℓ (monomial m 1))
+  ∑ m ∈ Q.support, AddMonoidAlgebra.coeff Q m * C (ℓ (monomial m 1))
 
 theorem cf_eval (ℓ : Pol K ι n →ₗ[K] K) (y : ι × Fin n × Fin n → K)
     (Q : MvPolynomial (ι × Fin n × Fin n) (MvPolynomial (ι × Fin n × Fin n) K)) :
     eval y (cf ℓ Q) = ℓ (MvPolynomial.map (eval y) Q) := by
   conv_rhs => rw [Q.as_sum]
-  rw [map_sum, map_sum, cf, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, cf, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [MvPolynomial.map_monomial, eval_mul, eval_C,
-    show monomial m (eval y (coeff m Q)) = eval y (coeff m Q) • (monomial m 1 : Pol K ι n) by
+    show monomial m (eval y (AddMonoidAlgebra.coeff Q m)) = eval y (AddMonoidAlgebra.coeff Q m) • (monomial m 1 : Pol K ι n) by
       rw [smul_monomial, smul_eq_mul, mul_one], map_smul, smul_eq_mul]
 
 def coord (lam : ι → DomWeight n) (i : VVIdx lam) : Pol K ι n →ₗ[K] K :=
@@ -197,7 +202,7 @@ theorem eval_aeval' {σ ρ : Type} (f : σ → MvPolynomial ρ K) (d : ρ → K)
     eval d (aeval f P) = eval (fun x => eval d (f x)) P := by
   induction P using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p x hp => simp only [map_mul, hp, aeval_X, eval_X]
 
 end Poly
@@ -267,10 +272,10 @@ theorem tenRepF_toMatrix (emb : ι → L →+* K) (lam : ι → DomWeight n) (γ
       (γ₀ : Matrix (Fin n) (Fin n) L).map (Algebra.TensorProduct.includeLeftRingHom)) :
     LinearMap.toMatrix (bVV K lam) (bVV K lam) (tenRepF emb lam γ) =
       fun i j => MvPolynomial.eval (fun p => p.1 ((γ₀ : Matrix _ _ L) p.2.1 p.2.2)) (tenPF emb lam i j) := by
-  obtain rfl := ratHom_eq_of_match γ γ₀ hm
+  rw [ratHom_eq_of_match γ γ₀ hm]
   ext i j
   rw [LinearMap.toMatrix_apply, ← coord_spec, show (fun p : (L →+* K) × Fin n × Fin n =>
-    p.1 (((ratHom γ : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) p.2.1 p.2.2)) = pt (ratHom γ : Matrix (Fin n) (Fin n) L) from rfl,
+    p.1 (((ratHom (L := L) (n := n) γ : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) p.2.1 p.2.2)) = pt (ratHom (L := L) (n := n) γ : Matrix (Fin n) (Fin n) L) from rfl,
     tenPF_eval, detTwistPolynomial_eval_point _ _ _ (ratHom_mem γ)]
   simp only [tenRepF, MonoidHom.comp_apply, rhoK, MonoidHom.coe_mk, OneHom.coe_mk, LinearMap.coe_restrict_apply, bVV_coe,
     actP, trAct, LinearMap.smul_apply, AlgHom.toLinearMap_apply, map_smul, smul_eq_mul]
@@ -384,7 +389,7 @@ theorem dd_hwAt : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (n : �
   classical
   have hinj := hd.1
   have hcm := hd.2
-  refine ⟨VVIdx lam, inferInstance, inferInstance, bDD lam, tenPF emb lam,
+  refine ⟨VVIdx lam, inferInstance, inferInstance, bDD (K := K) lam, tenPF emb lam,
     fun γ γ₀ hm => by rw [dd_toMatrix]; exact tenRepF_toMatrix emb lam γ γ₀ hm,
     ⇑((bVV K lam).repr (hwV (K := K) lam)), ?_, ?_⟩
   · intro hv
@@ -435,7 +440,8 @@ theorem dd_hwAt : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (n : �
         (bVVfun K lam j)) * (bVV K lam).repr (hwV (K := K) lam) j =
         c * coord lam i (Formalism.GradedWeylDivisibility.blockAct K (fun τ => if τ = τ₀ then (B : Matrix (Fin n) (Fin n) K)ᵀ else 1)
           (∑ j, ((bVV K lam).repr (hwV (K := K) lam) j) • bVVfun K lam j)) := by
-      rw [map_sum, map_sum, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_sum, Finset.mul_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_smul, map_smul, smul_eq_mul]
       ring

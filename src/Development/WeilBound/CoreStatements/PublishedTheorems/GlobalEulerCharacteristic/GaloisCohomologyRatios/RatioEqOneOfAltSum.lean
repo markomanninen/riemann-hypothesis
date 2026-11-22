@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.GaloisCohomologyRatios.NormalOfGsOpenSubgroupNormal
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.RealHerbrand
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.Coprime
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.GaloisCohomologyRatios.NormalOfGsOpenSubgroupNormal
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.RealHerbrand
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.Coprime
+
+@[expose] public section
 
 open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheory.Global
 
@@ -23,8 +27,8 @@ theorem pow_ratio_eq_one {ι : Type*} [Fintype ι] (ℓ : ℕ) (hl0 : (ℓ : ℚ
     linarith
   exact_mod_cast h'
 
-open scoped Classical in
 
+open scoped Classical in
 theorem ratio_eq_one_of_altSum [Finite S] (hℓS : ∀ v ∉ S, ((ℓ : ℕ) : 𝓞 K.1) ∉ v.asIdeal)
     (ιr : ∀ v : {v : InfinitePlace K.1 // v.IsReal}, ℚ̄ →ₐ[K.1] AlgebraicClosure v.1.Completion)
     (M : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S)) [IsDiscreteRep M] [Finite M]

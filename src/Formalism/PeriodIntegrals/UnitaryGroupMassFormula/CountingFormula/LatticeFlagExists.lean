@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RsMemPerpIff
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RsMemPerpIff
+
+@[expose] public section
 
 open NumberField Module Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.BasicNotions Formalism.L2.SG.CntLocal
 open Classical
@@ -14,11 +18,6 @@ section Flag
 
 variable {D : D7} {T : D.host.E} {F0 : FlagG (VS D) D.R.rS T} {f : Fin D.R.rS → (VS D).V}
   {M : Submodule (𝓞 D.host.E) (WbQ D F0)}
-
-theorem rs_mem_lamC {v : (VS D).V} : v ∈ lamC D F0 f M ↔
-    (∀ a, star ((VS D).hT (F0.e a) v) ∈ (aaI D a)⁻¹) ∧
-    (∃ w : perpS (VS D) F0.X, (w : (VS D).V) = vPr D F0 f v ∧ (Submodule.Quotient.mk w : WbQ D F0) ∈ M) ∧
-    ∀ a, (VS D).hT (f a) (vPr D F0 f v) ∈ aaI D a := Iff.rfl
 
 theorem rs_mem_lamC_perp {v : (VS D).V} (hv : v ∈ perpS (VS D) F0.X) :
     v ∈ lamC D F0 f M ↔ (Submodule.Quotient.mk (⟨v, hv⟩ : perpS (VS D) F0.X) : WbQ D F0) ∈ M ∧
@@ -59,7 +58,7 @@ theorem rs_smul_e_mem (hf : PartnerOK D F0 f) {a : Fin D.R.rS} {x : D.host.E} (h
       obtain ⟨c, rfl⟩ := hz
       exact F0.e_iso c b
     | zero => rw [map_zero, LinearMap.zero_apply]
-    | add y z _ _ hy hz => rw [map_add, LinearMap.add_apply, hy, hz, add_zero]
+    | add y z _ _ hy hz => rw [map_add (f := _), LinearMap.add_apply, hy, hz, add_zero]
     | smul c y _ hy => rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hy, smul_zero]
   have hperp : x • F0.e a ∈ perpS (VS D) F0.X := by
     intro y hy
@@ -91,7 +90,8 @@ theorem rs_xlam (hf : PartnerOK D F0 f) : XLam (lamC D F0 f M) (lf D F0) = XS D 
     have hca : ∀ a, c a ∈ aaI D a := by
       intro a
       have h := hα a
-      rw [← hc, map_sum] at h
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hc, map_sum] at h
       simp only [map_smul, rs_hT_f_e hf, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
         Finset.mem_univ, if_true] at h
       exact h
@@ -131,9 +131,10 @@ theorem rs_lift_perp (w : perpS (VS D) F0.X) : rsLift (f := f) w ∈ perpS (VS D
       obtain ⟨a, rfl⟩ := hy
       exact F0.e_iso a b
     | zero => rw [map_zero, LinearMap.zero_apply]
-    | add y z _ _ hy hz => rw [map_add, LinearMap.add_apply, hy, hz, add_zero]
+    | add y z _ _ hy hz => rw [map_add (f := _), LinearMap.add_apply, hy, hz, add_zero]
     | smul c y _ hy => rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hy, smul_zero]
-  simp only [rsLift, map_sub, map_sum, map_smul, hxe, smul_zero, Finset.sum_const_zero, sub_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [rsLift, map_sub, map_sum, map_smul, hxe, smul_zero, Finset.sum_const_zero, sub_zero]
   exact w.2 x hx
 
 theorem rs_lift_mk (w : perpS (VS D) F0.X) :
@@ -154,7 +155,8 @@ theorem rs_hT_f_lift (hf : PartnerOK D F0 f) (w : perpS (VS D) F0.X) (b : Fin D.
         | exact (VS D).herm.eq (F0.e a) (f b)
     rw [← hs, hf.1 a b]
     split_ifs <;> simp
-  simp only [rsLift, map_sub, map_sum, map_smul, hfe, smul_eq_mul, mul_ite, mul_one, mul_zero,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [rsLift, map_sub, map_sum, map_smul, hfe, smul_eq_mul, mul_ite, mul_one, mul_zero,
     Finset.sum_ite_eq', Finset.mem_univ, if_true, sub_self]
 
 theorem rs_lift_mem (hf : PartnerOK D F0 f) (w : perpS (VS D) F0.X)

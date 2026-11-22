@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ResMapBijective
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -22,7 +26,8 @@ private theorem mvPowerSeries_mem_span_X_of_constantCoeff_zero {σ R : Type} [Fi
     else 0
   have key : h = ∑ s, MvPowerSeries.X s * g s := by
     ext d
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp_rw [MvPowerSeries.X_def, MvPowerSeries.coeff_monomial_mul, one_mul]
     by_cases hd : d = 0
     · subst hd
@@ -65,7 +70,8 @@ private theorem mvPowerSeries_exists_polynomial_sub_mem_span_X_pow {σ R : Type}
     refine ⟨MvPolynomial.C (MvPowerSeries.constantCoeff g) + ∑ s, p s * MvPolynomial.X s, ?_⟩
     have hsum : ((∑ s, p s * MvPolynomial.X s : MvPolynomial σ R) : MvPowerSeries σ R) =
         ∑ s, (p s : MvPowerSeries σ R) * MvPowerSeries.X s := by
-      rw [← MvPolynomial.coeToMvPowerSeries.ringHom_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← MvPolynomial.coeToMvPowerSeries.ringHom_apply, map_sum]
       simp [MvPolynomial.coeToMvPowerSeries.ringHom_apply]
     have e : g - ((MvPolynomial.C (MvPowerSeries.constantCoeff g) + ∑ s, p s * MvPolynomial.X s :
         MvPolynomial σ R) : MvPowerSeries σ R) =

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelLPfC
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ModelLPfC
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,10 +31,9 @@ theorem smulLA_tmul' (b : LetA O n) (e : W.EE) (y : LcQ W T π' c) :
 
 theorem smulLA_mul' (a b : LetA O n) (x : LA W T π' c) :
     smulLA W T π' c (a * b) x = smulLA W T π' c a (smulLA W T π' c b x) := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp
+  induction x using TensorProduct.inductionOn with
   | tmul x y => simp [smulLA_tmul', map_mul, mul_assoc]
-  | add x y hx hy => simp [map_add, hx, hy]
+  | add x y hx hy => simp [map_add (f := _), hx, hy]
 
 theorem eat_mem (E : ZMod n → Polynomial O) (hπ : π' ∈ W.AΔ) : Formalism.MainNotions.DeltaInvariantLattices.Eat E π' ∈ W.AΔ := by
   intro δ hδ
@@ -41,8 +44,8 @@ theorem eat_mem (E : ZMod n → Polynomial O) (hπ : π' ∈ W.AΔ) : Formalism.
   simp only [Formalism.MainNotions.DeltaInvariantLattices.Eat]
   rw [← Polynomial.aeval_algHom_apply, hi]
 
-open PowerSeries in
 
+open PowerSeries in
 theorem filtration_value_local (Pt : ZMod n → LL → (K →ₐ[Qp] LL) → Prop) (Eπ : LetA O n) (h' : ℕ)
     (hEΔ : Eπ ∈ W.AΔ)
     (hlev : ∀ τ ζ, Pt c ζ τ → constantCoeff (W.lev c ζ Eπ) = 0)
@@ -52,9 +55,8 @@ theorem filtration_value_local (Pt : ZMod n → LL → (K →ₐ[Qp] LL) → Pro
       Formalism.MainNotions.DeltaInvariantLattices.FilC (PD := PD) T τ a ≤ Formalism.MainNotions.DeltaInvariantLattices.FilC (PD := PD) T τ a') :
     (LinearMap.range (toLA W T π' c ⊤)).map (smulLA W T π' c (Eπ ^ h')) ≤ NL W T Pt π' Eπ h' c := by
   rintro _ ⟨_, ⟨t, rfl⟩, rfl⟩
-  induction t using TensorProduct.induction_on with
-  | zero => simp
-  | add x y hx hy => rw [map_add, map_add]; exact add_mem hx hy
+  induction t using TensorProduct.inductionOn with
+  | add x y hx hy => simpa only [map_add] using add_mem hx hy
   | tmul a s =>
     apply Submodule.subset_span
     obtain ⟨⟨y, hy⟩, hys⟩ := Submodule.Quotient.mk_surjective _ (s : LcQ W T π' c)
@@ -92,15 +94,14 @@ theorem R_smul' {b : LetA O n} (hb : b ∈ W.AΔ) {r : LA W T π' c}
     (hr : r ∈ LinearMap.range (toLA W T π' c ⊤)) :
     smulLA W T π' c b r ∈ LinearMap.range (toLA W T π' c ⊤) := by
   obtain ⟨t, rfl⟩ := hr
-  induction t using TensorProduct.induction_on with
-  | zero => simp
+  induction t using TensorProduct.inductionOn with
   | tmul a s =>
     refine ⟨(⟨b, hb⟩ * a) ⊗ₜ s, ?_⟩
     rw [toLA_tmul', toLA_tmul', smulLA_tmul', ← map_mul]
     congr 2
     simp only [Subalgebra.coe_mul]
     ring
-  | add x y hx hy => rw [map_add, map_add]; exact add_mem hx hy
+  | add x y hx hy => simpa only [map_add] using add_mem hx hy
 
 theorem lattice_contains_power_local (Pt : ZMod n → LL → (K →ₐ[Qp] LL) → Prop) (Eπ : LetA O n) (h' M : ℕ)
     (hEΔ : Eπ ∈ W.AΔ)
@@ -116,9 +117,9 @@ theorem lattice_contains_power_local (Pt : ZMod n → LL → (K →ₐ[Qp] LL) �
 
 end Local
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
-
 theorem val_fil (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F)
     (h1 : adm1 D HW F Cm) {l : ℕ} [Fact l.Prime] (K LL : FinExt l) (hG : Good K 1 LL)
     (T : LocLat ↥(GK K) ℚ_[l] ↥LL.1 ↥(OL LL)) (hT : IsCrys ((D.loc l).PD K) T.ρ) (h' : ℕ)
@@ -152,10 +153,10 @@ theorem val_fil (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : Cmp
   · exact Submodule.smul_mem _ _ (key _ _)
   · exact Submodule.zero_mem _
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
 open PowerSeries in
-
 theorem lev_eat_zero (D : D7) (HW : HWOf D.loc) {l : ℕ} [Fact l.Prime] (K LL : FinExt l)
     (hG : Good K 1 LL) (π' : LetA ↥(OL LL) (finrank ℚ_[l] ↥(K0 K)))
     (E : ZMod (finrank ℚ_[l] ↥(K0 K)) → Polynomial ↥(OL LL))
@@ -173,9 +174,9 @@ theorem lev_eat_zero (D : D7) (HW : HWOf D.loc) {l : ℕ} [Fact l.Prime] (K LL :
     (PowerSeries.isUnit_iff_constantCoeff).mp (w.isUnit.map _)
   exact (hwu.mul_right_eq_zero).mp h1.symm
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
-
 theorem model_lattice_filtration (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F)
     (CA CB CK : ℝ) (hA : Adm1 D HW F Cm CA CB CK) (l : ℕ) [Fact l.Prime] (hl : l ≠ 2) (K LL : FinExt l)
     (hG : Good K 1 LL) (π' : LetA ↥(OL LL) (finrank ℚ_[l] ↥(K0 K)))
@@ -193,9 +194,9 @@ theorem model_lattice_filtration (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.l
     (fun τ ζ hpt y hy => val_fil D HW F Cm hA.1 K LL hG T hT h' hJ π' c ζ τ hpt y hy)
     (fun τ a' a h => u3upPf_FilC_anti (PD := (D.loc l).PD K) T τ h)
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
-
 theorem model_lattice_power (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW) (Cm : CmpOf D.loc D.locA HW F)
     (CA CB CK : ℝ) (hA : Adm1 D HW F Cm CA CB CK) (l : ℕ) [Fact l.Prime] (hl : l ≠ 2) (K LL : FinExt l)
     (hG : Good K 1 LL) (π' : LetA ↥(OL LL) (finrank ℚ_[l] ↥(K0 K)))

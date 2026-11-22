@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.CondESpec
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.CardImgOneDvd
+module
+
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.DiffDefs
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.CondESpec
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.CardImgOneDvd
+
+@[expose] public section
 
 open UpperTheory.HF
 

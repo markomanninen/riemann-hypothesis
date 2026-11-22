@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnipotentRadicalBasic
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LinearChangeOfVariablesLocalFieldMatrix
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnipotentRadicalBasic
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LinearChangeOfVariablesLocalFieldMatrix
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx
 
@@ -117,16 +121,16 @@ theorem affPt_mul {g : GL (n' ⊕ Fin (c + 1)) k} (hg : InN p g) (x₀ : Matrix 
             (if h : Free p b then e ⟨b, h⟩ else 0) := by
         rw [← Fintype.sum_subtype_add_sum_subtype (fun b => Free p b)]
         rw [Finset.sum_eq_zero (s := Finset.univ) (f := fun b : {b // ¬ Free p b} => _)
-          (fun b _ => by rw [dif_neg b.2, mul_zero]), add_zero]
+          (fun b _ => by rw [dite_eq_right b.2, mul_zero]), add_zero]
         simp only [Matrix.mulVec, dotProduct, linPart, of_apply]
-        refine Finset.sum_congr rfl fun b _ => by rw [dif_pos b.2]
+        refine Finset.sum_congr rfl fun b _ => by rw [dite_eq_left b.2]
       rw [h1, Fintype.sum_prod_type, Finset.sum_eq_single r]
       · simp [mul_comm]
       · intro r' _ hr
         simp [hr]
       · simp
     unfold affPt
-    rw [Matrix.add_mul, Matrix.add_apply, Matrix.add_apply, of_apply, dif_pos h, Pi.add_apply, key]
+    rw [Matrix.add_mul, Matrix.add_apply, Matrix.add_apply, of_apply, dite_eq_left h, Pi.add_apply, key]
     simp only [Matrix.mul_apply, Matrix.sub_apply, of_apply]
     ring
   · rw [affPt_mul_nonfree hg _ _ _ _ h, affPt_nonfree _ _ _ _ h]

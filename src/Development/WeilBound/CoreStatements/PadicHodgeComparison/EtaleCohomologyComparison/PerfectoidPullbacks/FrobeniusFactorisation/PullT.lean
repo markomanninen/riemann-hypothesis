@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.PhiTTmul
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.TeichmullerCongruence
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.MuMor
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.PeriodBaseChange.FlatAcr
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.TwistedRepresentations.Tens
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.PhiTTmul
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.TeichmullerCongruence
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusWittActions.MuMor
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.PeriodBaseChange.FlatAcr
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.TwistedRepresentations.Tens
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -56,17 +60,27 @@ def phiPtT {O : Type} [CommRing O] (F : B.Fn O) (n : ℕ) (κ₁ : O →+* (B.bs
     exact B.map_sq (F.ptK _) φ (CommRingCat.ofHom (B.frb (B.l_zero (φ.hom.comp z.1.1))))
       (CommRingCat.ofHom (B.frb (B.l_zero z.1.1))) φ (RingHom.ext fun x => (map_pow φ.hom x l).symm) z
 
-def phiT' (r : Res l K) (M : Model l K) (n : ℕ) : CH.Mor (OT r M n) (OT r M n) (ACris.phi ℂ_[l] l) :=
-  B.omMor (B.crMor (F := B.schFn M.p) (F' := B.schFn M.p) (b := B.bs l true n) (b' := B.bs l true n) (ht := rfl) (ht' := rfl)
-    ((base l).phi n) rfl ((base l).dpP_phi n) (phiPtT _ n _) fun _ y r =>
-      ((congrArg y.1.1 (B.phi_mk (base l) n r)).trans (map_pow y.1.1 _ l)).symm) (ACris.phi ℂ_[l] l) ((base l).phi_cris n)
+def phiT' (r : Res l K) (M : Model l K) (n : ℕ) :
+    CH.Mor (OT r M n) (OT r M n) (ACris.phi (K := ℂ_[l]) (p := l)) := by
+  have hcris (a : Acris l) :
+      (base l).phi n ((base l).cris n a) =
+        (base l).cris n (ACris.phi (K := ℂ_[l]) (p := l) a) :=
+    (base l).pdOk_frob.acr_cris (base l).frob_comp_s (ACris.phiZero (K := ℂ_[l]) (p := l))
+      (fun y => RingHom.congr_fun (f := ACris.phiAway (K := ℂ_[l]) (p := l))
+        (awayW_ext fun x => by rw [ACris.phiAway_algebraMap, awayW_algebraMap, wmap_frobenius]) y.1) n a
+  exact
+    B.omMor (B.crMor (F := B.schFn M.p) (F' := B.schFn M.p) (b := B.bs l true n) (b' := B.bs l true n) (ht := rfl) (ht' := rfl)
+      ((base l).phi n) rfl ((base l).dpP_phi n) (phiPtT _ n _) fun _ y r =>
+        ((congrArg y.1.1 (B.phi_mk (base l) n r)).trans (map_pow y.1.1 _ l)).symm)
+      (ACris.phi (K := ℂ_[l]) (p := l)) hcris
 
 def pullT' (r : Res l K) {M N : Model l K} (u : M.X ⟶ N.X) (hu : u ≫ N.p = M.p) (n : ℕ) :
     CH.Mor (OT r N n) (OT r M n) (RingHom.id _) :=
   B.omMor (B.crMor (F := B.schFn N.p) (F' := B.schFn M.p) (b := B.bs l true n) (b' := B.bs l true n) (ht := rfl) (ht' := rfl)
     (RingHom.id _) rfl (DPMorphism.id _).isDPMorphism ((B.schMap u hu).ptK _) fun _ _ _ => rfl) (RingHom.id _) fun _ => rfl
 
-def phiM (r : Res l K) (M : Model l K) (n j : ℕ) : Mid.HM r M n j →ₛₗ[ACris.phi ℂ_[l] l] Mid.HM r M n j := (phiT' r M n).pull j
+def phiM (r : Res l K) (M : Model l K) (n j : ℕ) :
+    Mid.HM r M n j →ₛₗ[ACris.phi (K := ℂ_[l]) (p := l)] Mid.HM r M n j := (phiT' r M n).pull j
 
 def galM (r : Res l K) (M : Model l K) (σ : Gal(PadicAlgCl l/K)) (hσ : ∀ w, ACris.galCris σ (r.w w) = r.w w) (n j : ℕ) :
     Mid.HM r M n j →ₛₗ[ACris.galCris σ] Mid.HM r M n j := (galT' r M σ hσ n).pull j
@@ -74,18 +88,15 @@ def galM (r : Res l K) (M : Model l K) (σ : Gal(PadicAlgCl l/K)) (hσ : ∀ w, 
 def pullM (r : Res l K) {M N : Model l K} (u : M.X ⟶ N.X) (hu : u ≫ N.p = M.p) (n j : ℕ) :
     Mid.HM r N n j →ₗ[Acris l] Mid.HM r M n j := (pullT' r u hu n).pull j
 
-def bWMor (r : Res l K) (M : Model l K) (n : ℕ) : CH.Mor (Wc.OM l (B.schFn M.p) r.ρ n) (OT r M n) r.w :=
-  B.omMor (B.crMor (F := B.schFn M.p) (F' := B.schFn M.p) (b := Wc.bs l r.k n) (b' := B.bs l true n) (ht := rfl) (ht' := rfl)
-    (Mid.wn r n) rfl (dp_wn r n) (B.basePt _ (Ideal.quotientMap _ (Mid.wn r n) (Mid.im_le r n)) rfl) fun _ _ _ => rfl)
-    r.w (Mid.wn_mk r n)
+def bWMor (r : Res l K) (M : Model l K) (n : ℕ) : CH.Mor (Wc.OM l (B.schFn M.p) r.ρ n) (OT r M n) r.w := by
+  have hdp := GlobalTheory.T.witt_to_acris_isDPMorphism r n
+  exact
+    B.omMor (B.crMor (F := B.schFn M.p) (F' := B.schFn M.p) (b := Wc.bs l r.k n) (b' := B.bs l true n) (ht := rfl) (ht' := rfl)
+      (Mid.wn r n) rfl hdp (B.basePt _ (Ideal.quotientMap _ (Mid.wn r n) (Mid.im_le r n)) rfl) fun _ _ _ => rfl)
+      r.w (Mid.wn_mk r n)
 
 abbrev HSW (r : Res l K) (M : Model l K) (j : ℕ) : Sys.{1} (WittVector l r.k) := Wc.HS l (B.schFn M.p) r.ρ j
 
 def bW (r : Res l K) (M : Model l K) (n j : ℕ) : (HSW r M j).M n →ₛₗ[r.w] Mid.HM r M n j := (bWMor r M n).pull j
-
-def LS (r : Res l K) : Prop := ∀ M : Model l K, M.Sm → ∀ j,
-  Nonempty (Tw.LSeq l (HSW r M j) (HSW r M (j + 1))) ∧ IsFiniteLength (WittVector l r.k) ((HSW r M j).M 1)
-
-def GalW (r : Res l K) : Prop := ∀ (σ : Gal(PadicAlgCl l/K)) w, ACris.galCris σ (r.w w) = r.w w
 
 end CrystallineSemistableComparison.Pb

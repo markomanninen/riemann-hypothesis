@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.AltSum
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.AltSum
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -27,16 +31,20 @@ theorem norm_iteratedFDeriv_sub_translate_le {k : ℕ} {ρ : E → F} (hρ : Con
 
 theorem norm_altSum_le : ∀ (k : ℕ) {ρ : E → F}, ContDiff ℝ k ρ → ∀ {B : ℝ},
     (∀ w, ‖iteratedFDeriv ℝ k ρ w‖ ≤ B) → ∀ (v : Fin k → E) (z : E),
-      ‖altSum k ρ v z‖ ≤ B * ∏ i, ‖v i‖
-  | 0, ρ, _, B, hB, v, z => by
+      ‖altSum k ρ v z‖ ≤ B * ∏ i, ‖v i‖ := by
+  intro k
+  induction k with
+  | zero =>
+    intro ρ _ B hB v z
     simpa [norm_iteratedFDeriv_zero] using hB z
-  | k + 1, ρ, hρ, B, hB, v, z => by
+  | succ k ih =>
+    intro ρ hρ B hB v z
     rw [altSum_succ, Fin.prod_univ_succ, ← mul_assoc]
     have hg : ContDiff ℝ k (fun t => ρ (t + v 0) - ρ t) :=
       ((hρ.of_le (by exact_mod_cast Nat.le_succ k)).comp (contDiff_id.add contDiff_const)).sub
         (hρ.of_le (by exact_mod_cast Nat.le_succ k))
-    exact norm_altSum_le k hg (fun w => norm_iteratedFDeriv_sub_translate_le hρ hB (v 0) w)
-      (Fin.tail v) z
+    exact ih hg (B := B * ‖v 0‖)
+      (norm_iteratedFDeriv_sub_translate_le hρ hB (v 0)) (Fin.tail v) z
 
 theorem exists_norm_altSum_le {ρ : E → F} (hρ : ContDiff ℝ (⊤ : ℕ∞) ρ)
     (hc : HasCompactSupport ρ) (k : ℕ) :

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.Gs1.Wt :
     ℕ → Type :=
@@ -62,13 +66,13 @@ theorem UpperTheory.Reformulated.B.Gs1.lapD_mul :
   induction f using AddMonoidAlgebra.induction_linear with
   | zero => simp
   | add f₁ f₂ h₁ h₂ =>
-    rw [add_mul, map_add, map_add, h₁, h₂, add_mul, add_mul]
+    rw [add_mul, map_add (f := _), map_add (f := _), h₁, h₂, add_mul, add_mul]
     abel
   | single x c =>
     induction g using AddMonoidAlgebra.induction_linear with
     | zero => simp
     | add g₁ g₂ h₁ h₂ =>
-      rw [mul_add, map_add, map_add, h₁, h₂, mul_add, mul_add]
+      rw [mul_add, map_add (f := _), map_add (f := _), h₁, h₂, mul_add, mul_add]
       abel
     | single y d =>
       simp only [AddMonoidAlgebra.single_mul_single, UpperTheory.Reformulated.B.Gs1.lapD_single]

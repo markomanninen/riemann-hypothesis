@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsoOfIsClosedImmersion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsoOfIsClosedImmersion
+
+@[expose] public section
+
 set_option autoImplicit false
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
@@ -33,8 +38,7 @@ theorem exists_away_bijective_of_fg {A B : Type} [CommRing A] [CommRing B] [Alge
     refine subsingleton_of_forall_eq 0 fun z => hinj (h ?_)
     rw [map_zero, map_zero]
     induction z with
-    | zero => rw [map_zero, map_zero]
-    | add y z hy hz => rw [map_add, map_add, hy, hz, add_zero]
+    | add y z hy hz => rw [map_add (f := _), map_add (f := _), hy, hz, add_zero]
     | tmul x c =>
       have e : (x : A) ⊗ₜ[R] c = (x : A) • ((1 : A) ⊗ₜ[R] c) := by
         rw [TensorProduct.smul_tmul', smul_eq_mul, _root_.mul_one]
@@ -54,8 +58,8 @@ theorem exists_away_bijective_of_fg {A B : Type} [CommRing A] [CommRing B] [Alge
   obtain ⟨y, rfl⟩ := (lTensor_exact (Localization.Away a) hex hs z).1 hz
   rw [Subsingleton.elim y 0, map_zero]
 
-set_option backward.isDefEq.respectTransparency.types false in
 
+set_option backward.isDefEq.respectTransparency.types false in
 theorem near_isIso_of_finitePresentation {R : Type} [CommRing R] {Y X : Scheme.{0}} (s : X ⟶ Sp R)
     (f : Y ⟶ X) (K : Type) [Field K] [Algebra R K] [hcl : IsClosedImmersion f]
     [LocallyOfFinitePresentation s] [LocallyOfFinitePresentation (f ≫ s)] [Flat (f ≫ s)]

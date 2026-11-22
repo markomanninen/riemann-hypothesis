@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ISupMonomialHolderLogConvex
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsGauss
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ISupMonomialHolderLogConvex
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsGauss
+
+@[expose] public section
+
 open GlobalTheory.PMon.Gauss
 open scoped Formalism.Per
 set_option maxHeartbeats 1000000 in

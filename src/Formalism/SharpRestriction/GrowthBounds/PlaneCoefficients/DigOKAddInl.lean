@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.ValuationGeOfLeAddOne
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.ValuationGeOfLeAddOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,10 +17,6 @@ variable {p : ℕ} {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing
 def Pof : TL J Dt.nL r × Fin r → ℕ
   | (⟨_, Sum.inl _⟩, _) => 1
   | (⟨j, Sum.inr m⟩, _) => Dt.P j m
-
-def keyOf : TL J Dt.nL r × Fin r → Option ((ZMod J × Fin r) × Fin r)
-  | (⟨_, Sum.inl _⟩, _) => none
-  | (⟨j, Sum.inr m⟩, a) => some ((j, m), a)
 
 theorem liftExp_eq (mo : TL J Dt.nL r × Fin r →₀ ℕ) (v : TL J Dt.nL r × Fin r) :
     Dt.liftExp mo v = mo v / Pof Dt v := by
@@ -76,10 +76,7 @@ theorem Fdig_mono (rho : (ZMod J × Fin r) × Fin r → ℕ) (mo : TL J Dt.nL r 
 
 theorem liftMon_w (mo : TL J Dt.nL r × Fin r →₀ ℕ) (v : TL J Dt.nL r × Fin r) :
     liftMon Dt mo (Dt.liftVar v) = mo v / Pof Dt v := by
-  rw [liftMon, Finsupp.mapDomain_apply (liftVar_inj Dt)]
+  rw [liftMon, Finsupp.mapDomain_apply_of_injective (liftVar_inj Dt)]
   rfl
-
-def Oth (ke : (ZMod J × Fin r) × Fin r) (rho : (ZMod J × Fin r) × Fin r → ℕ) (mo : TL J Dt.nL r × Fin r →₀ ℕ) : Prop :=
-  ∀ (j : ZMod J) (m : Fin r) (a : Fin r), ((j, m), a) ≠ ke → mo (⟨j, Sum.inr m⟩, a) % Dt.P j m = rho ((j, m), a)
 
 end Formalism.MainNotions.PairMembershipBlocks

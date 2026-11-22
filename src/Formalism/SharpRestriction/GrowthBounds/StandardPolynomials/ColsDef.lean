@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.PreSys
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.PreSys
+
+@[expose] public section
 
 noncomputable section
 

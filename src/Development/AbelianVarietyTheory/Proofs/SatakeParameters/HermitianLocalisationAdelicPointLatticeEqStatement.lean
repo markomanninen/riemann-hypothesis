@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HermitianLocalisationAdelicPointLatticeEq
-import Mathlib
-import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.IsOrthCo
-import Formalism.LocalToGlobal.Columns.RecLevel
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AlgebraMapApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HermitianLocalisationAdelicPointLatticeEq
+public import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.IsOrthCo
+public import Formalism.LocalToGlobal.Columns.RecLevel
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AlgebraMapApply
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.UG Formalism.L2.PairingIndexBounds.F
 open scoped TensorProduct
 

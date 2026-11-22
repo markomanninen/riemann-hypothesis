@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasisBaseChange
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaCore
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleIdentityIso
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.CubePullbacks.CubePull
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.NilpotentCoordinates
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsReducedSchemeOfSmoothOfIsIntegrallyClosed
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsLieBasisBaseChange
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaCore
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CocycleIdentityIso
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.CubePullbacks.CubePull
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.NilpotentCoordinates
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TopLePreimageOfValAtNeZero
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsReducedSchemeOfSmoothOfIsIntegrallyClosed
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -36,7 +40,7 @@ theorem algChart_of_etale {R : Type} [CommRing R] {B : Type} [CommRing B] [Algeb
   have hπ : ∀ m : ℕ, ∃ π : B →ₐ[R] JetR R (Fin n) m, (jetAug R (Fin n) m).comp π = ε' ∧
       ∀ j, π (sX R j) = algebraMap R _ (ε' (sX R j)) + zR m j := fun m =>
     etale_exists (n := n) ε' (jetAug R (Fin n) m) (ker_jetAug_nil (Fin n) m) _ (fun j => by
-      rw [map_add, AlgHom.commutes, Algebra.algebraMap_self, RingHom.id_apply, jetAug_zR, add_zero])
+      rw [map_add (f := _), AlgHom.commutes, Algebra.algebraMap_self, RingHom.id_apply, jetAug_zR, add_zero])
   choose π hπaug hπX using hπ
   refine ⟨π, ?_, ?_, ?_⟩
   · intro m
@@ -45,7 +49,7 @@ theorem algChart_of_etale {R : Type} [CommRing R] {B : Type} [CommRing B] [Algeb
       exact hπaug (m + 1)
     · exact hπaug m
     · intro j
-      rw [AlgHom.comp_apply, hπX, hπX, map_add, AlgHom.commutes]
+      rw [AlgHom.comp_apply, hπX, hπX, map_add (f := _), AlgHom.commutes]
       rfl
   · intro m
     refine etale_ext (n := n) ε' (jetAug R (Fin n) 0) (ker_jetAug_nil (Fin n) 0) _ _ ?_ ?_ ?_
@@ -54,7 +58,7 @@ theorem algChart_of_etale {R : Type} [CommRing R] {B : Type} [CommRing B] [Algeb
     · ext s
       simp
     · intro j
-      rw [AlgHom.comp_apply, hπX, map_add, AlgHom.commutes, AlgHom.comp_apply, jetZero_zR, add_zero]
+      rw [AlgHom.comp_apply, hπX, map_add (f := _), AlgHom.commutes, AlgHom.comp_apply, jetZero_zR, add_zero]
       rfl
   · intro A _ _ aug m hJ φ' hφ'aug
     have hJn := nil_of_pow _ hJ
@@ -73,14 +77,14 @@ theorem algChart_of_etale {R : Type} [CommRing R] {B : Type} [CommRing B] [Algeb
         exact hπaug m
       · exact hφ'aug
       · intro j
-        rw [AlgHom.comp_apply, hπX, map_add, AlgHom.commutes, jetLift_zR, add_sub_cancel]
+        rw [AlgHom.comp_apply, hπX, map_add (f := _), AlgHom.commutes, jetLift_zR, add_sub_cancel]
     refine ⟨ψ, ⟨hψaug, hψπ⟩, ?_⟩
     rintro ψ₂ ⟨_, h4⟩
     apply jet_ext
     intro j
     rw [jetLift_zR]
     have := AlgHom.congr_fun h4 (sX R j)
-    rw [AlgHom.comp_apply, hπX, map_add, AlgHom.commutes] at this
+    rw [AlgHom.comp_apply, hπX, map_add (f := _), AlgHom.commutes] at this
     rw [← this, add_sub_cancel_left]
 
 theorem exists_isUnivChart {R : Type} [CommRing R] [IsLocalRing R] (G : Over (Spec (CommRingCat.of R))) [GrpObj G] {n : ℕ}
@@ -127,37 +131,41 @@ theorem exists_mem_nonzeroLocus (P : Out.PolAV (Sp K)) (th : P.L.Sec) (h : ∃ i
     exact hi ((basicOpen_eq_bot_iff _).1 (eq_bot_iff.2 fun z hz => hn ⟨z, hz⟩))
   exact ⟨z, Subsingleton.elim (α := PrimeSpectrum K) _ _, TopologicalSpace.Opens.mem_iSup.2 ⟨i, hz⟩⟩
 
-theorem exists_keyIn_of_sec (P : Out.PolAV (Sp K)) (hg : 1 ≤ P.g) (th : P.L.Sec) (h : ∃ i, th.f i ≠ 0) :
-    ∃ rig hr hth v hv, (⟨P, hg, rig, hr, th, hth, v, hv⟩ : KeyIn K).P = P := by
-  obtain ⟨rig, hr⟩ := P.rigid
-  obtain ⟨v, hv⟩ := exists_isLieBasis P.A P.smoothDim
-  exact ⟨rig, hr, exists_mem_nonzeroLocus P th h, v, hv, rfl⟩
-
-theorem exists_keyIn (hT : Out.SecTwistSt) (P : Out.PolAV (Sp K)) (hg : 1 ≤ P.g) : ∃ x : KeyIn K, x.P = P := by
-  obtain ⟨b, hb⟩ := principalPolarisation_exists_unique_section hT P
-  obtain ⟨a, -, hu⟩ := hb b
-  have h : ∃ i, b.f i ≠ 0 := by
-    by_contra hn
-    push Not at hn
-    exact zero_ne_one ((hu 0 fun i => by rw [hn i, mul_zero]).trans (hu 1 fun i => by rw [hn i, mul_zero]).symm)
-  obtain ⟨rig, hr, hth, v, hv, e⟩ := exists_keyIn_of_sec P hg b h
-  exact ⟨_, e⟩
-
 theorem keyPB_refl {R : Type} [CommRing R] (x : KeyIn R) : KeyPB x x (RingHom.id R) := by
   have e : spMap (RingHom.id R) = 𝟙 (Sp R) := Spec.map_id _
   have e' : spMap (RingHom.id (DualNumber R)) = 𝟙 (Sp (DualNumber R)) := Spec.map_id _
   let L : RigLB x.P.A := ⟨x.P.L, x.rig, x.P.isLB, x.rig_gen⟩
   have : IsMonHom (Iso.refl x.P.A).hom := inferInstanceAs (IsMonHom (𝟙 _))
+  have heval {Y : Scheme.{0}} (f : Y ⟶ x.P.A.left) (y : Y)
+      (j k : x.P.L.ι) (hj : f y ∈ x.P.L.U j) (hk : f y ∈ x.P.L.U k) :
+      gw (isoPullId (idIso x.P.L) (rfl : 𝟙 x.P.A.left = 𝟙 _)) f y j k =
+        gm f y _ ((idIso x.P.L).s (j, k)) := by
+    have hmem : f y ∈ (x.P.L.pull (𝟙 _)).U (fun _ => j) ⊓ x.P.L.U k := ⟨mem_pull.2 hj, hk⟩
+    exact gm_res f y _ hmem ((idIso x.P.L).s (j, k))
+  have hgen : PGen (isoPullId (idIso x.P.L) (rfl : 𝟙 x.P.A.left = 𝟙 _)) := by
+    intro Y f y j j' k k' hj hj' hk hk'
+    rw [heval f y j k hj hk, heval f y j' k' hj' hk', Category.comp_id]
+    have hV : f y ∈ (x.P.L.U j ⊓ x.P.L.U k) ⊓ (x.P.L.U j' ⊓ x.P.L.U k') := ⟨⟨hj, hk⟩, ⟨hj', hk'⟩⟩
+    have hw := idIso_isGen x.P.isLB
+    have hw' : res (inf_le_left : (x.P.L.U j ⊓ x.P.L.U k) ⊓ (x.P.L.U j' ⊓ x.P.L.U k') ≤ x.P.L.U j ⊓ x.P.L.U k) ((idIso x.P.L).s (j, k)) =
+        res (le_inf (inf_le_left.trans inf_le_left) (inf_le_right.trans inf_le_left)) (x.P.L.g j j') *
+        (res (le_inf (inf_le_left.trans inf_le_right) (inf_le_right.trans inf_le_right)) (x.P.L.g k k'))⁻¹ *
+        res (inf_le_right : (x.P.L.U j ⊓ x.P.L.U k) ⊓ (x.P.L.U j' ⊓ x.P.L.U k') ≤ x.P.L.U j' ⊓ x.P.L.U k') ((idIso x.P.L).s (j', k')) := hw (j, k) (j', k')
+    have key := congrArg (gm f y ((x.P.L.U j ⊓ x.P.L.U k) ⊓ (x.P.L.U j' ⊓ x.P.L.U k'))) hw'
+    simp only [map_mul, map_inv, gm_res f y _ hV] at key
+    rw [gm_res f y (U := x.P.L.U j ⊓ x.P.L.U k) _ hV ((idIso x.P.L).s (j, k)),
+      gm_res f y (U := x.P.L.U j' ⊓ x.P.L.U k') _ hV ((idIso x.P.L).s (j', k'))] at key
+    exact key
   refine ⟨𝟙 _, by rw [e]; exact (Category.comp_id _).trans (Category.id_comp _).symm, isoPullId (idIso x.P.L) rfl, rfl,
     RingHom.id _, (isGrpPullback_of_iso (Iso.refl x.P.A)).congr e.symm rfl,
-    (isGen_iff _).2 (isoPullId_pgen (idIso_isGen x.P.isLB) rfl), isoPullId_maps (idIso_maps L) rfl e _,
+    (isGen_iff _).2 (hgen), isoPullId_maps (idIso_maps L) rfl e _,
     fun j i h => fn_ext fun y hy => ?_, fun _ => rfl, rfl,
     fun i => by rw [e']; exact (Category.comp_id _).trans (Category.id_comp _).symm⟩
   have hj : y ∈ x.P.L.U (j PUnit.unit) := mem_pull.1 hy.1
   refine (gs_appLE (𝟙 _) _ _ h (𝟙 _) y hy _).trans ?_
   rw [Category.id_comp, gs_compat x.th (𝟙 _) y hj hy.2, gs_mul _ y _ hy, gs_res _ y _ hy]
   exact congrArg (· * _) ((gs_unit _ y _ hy _).trans
-    (congrArg Units.val (gw_isoPullId (idIso x.P.L) rfl (𝟙 _) y _ i hj hy.2))).symm
+    (congrArg Units.val (heval (𝟙 _) y _ i hj hy.2))).symm
 
 theorem appLE_eq_of_stalk {X X' : Scheme.{0}} {L : LB X} {L' : LB X'} {F : X' ⟶ X} (w : LB.Iso L' (L.pull F)) (s : L.Sec)
     (s' : L'.Sec) (h : ∀ (z : X') j k, F z ∈ L.U j → z ∈ L'.U k →

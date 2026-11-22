@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SplitEquiv
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.TwistedOrbitalIntegrals.CentComm
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.LocalGroupAnalysis.SplitEquiv
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.OrbitalIntegrals.TwistedOrbitalIntegrals.CentComm
+
+@[expose] public section
+
 open UpperTheory.ConvolutionTheory.G UpperTheory.ConvolutionTheory.T4
 
 private theorem coord_comm {F R : Type} [Field F] [CommRing R] [Algebra F R] {n : ℕ}
@@ -15,7 +20,8 @@ private theorem coord_comm {F R : Type} [Field F] [CommRing R] [Algebra F R] {n 
   show s.map φ * γ = γ * s.map φ
   ext a c
   have h := congrArg φ (congrFun (congrFun hs a) c)
-  simpa only [Matrix.mul_apply, Matrix.map_apply, map_sum, hl, hr] using h
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa only [Matrix.mul_apply, Matrix.map_apply, map_sum, hl, hr] using h
 
 private theorem coord_sum {F R ι : Type} [Field F] [CommRing R] [Algebra F R] {n : ℕ}
     (b : Module.Basis ι F R) (B : Finset ι) (s : Matrix (Fin n) (Fin n) R)

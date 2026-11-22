@@ -1,21 +1,25 @@
-import Mathlib
-import GroundTheory.GlobalFields.NormResidueSymbol.CyclotomicCompositum
-import GroundTheory.GlobalFields.IdeleGroups.NormOneCompact
-import GroundTheory.GlobalFields.CyclotomicCharacters.Degree
-import GroundTheory.GlobalFields.NormResidueSymbol.RationalContinuous
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.NormResidueSymbol.CyclotomicCompositum
+public import GroundTheory.GlobalFields.IdeleGroups.NormOneCompact
+public import GroundTheory.GlobalFields.CyclotomicCharacters.Degree
+public import GroundTheory.GlobalFields.NormResidueSymbol.RationalContinuous
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
 open NumberField IntermediateField IdeleGroup
 open scoped GroundTheory.LocalField.Abstract
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
 
 namespace CyclotomicSymbol
 
 open FiniteSubfield RationalSymbol _root_.GroundTheory.Global.Cyclotomic
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 abbrev layer (m : ℕ+) : FiniteSubfield :=
   ⟨rootsOfUnityField m, inferInstance⟩
@@ -91,9 +95,6 @@ theorem cycSymbol_mk (x : IdeleGroup K.1) :
     cycSymbol K (IdeleClassGroup.mk K.1 x) =
       reciprocityMap (IdeleClassGroup.mk ℚ (ideleNorm ℚ K.1 x)) := by
   rw [cycSymbol, MonoidHom.comp_apply, ideleClassNorm_mk]
-
-theorem continuous_cycSymbol : Continuous (cycSymbol K) :=
-  continuous_reciprocityMap.comp (continuous_ideleClassNorm (K := ℚ) (L := K.1))
 
 theorem range_diagonal_le_ker_layer (m : ℕ+) :
     (diagonal ℚ).range ≤ (ideleSymbol ℚ (rootsOfUnityField m)).ker := by

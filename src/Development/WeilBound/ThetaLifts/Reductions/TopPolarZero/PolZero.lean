@@ -1,27 +1,31 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.BotAsm
-import Development.WeilBound.ThetaLifts.LatticeBasics.NormZeta
-import Development.WeilBound.ThetaLifts.LatticeBasics.CoefLine
-import Development.WeilBound.ThetaLifts.LatticeBasics.HermCpt
-import Development.WeilBound.ThetaLifts.LatticeBasics.EulerHalf
-import Development.WeilBound.ThetaLifts.LatticeBasics.LocUnrInert
-import Development.WeilBound.ThetaLifts.LatticeBasics.LocUnrSplit
-import Development.WeilBound.ThetaLifts.LatticeBasics.FinLevel
-import Development.WeilBound.ThetaLifts.LatticeBasics.CartanBound2
-import Development.WeilBound.ThetaLifts.LatticeBasics.HgtIntOf
-import Development.WeilBound.ThetaLifts.LatticeBasics.EisCont
-import Development.WeilBound.ThetaLifts.LatticeBasics.FrameConj
-import Development.WeilBound.ThetaLifts.LatticeBasics.BadFactor
-import Development.WeilBound.ThetaLifts.LatticeBasics.NearUnits
-import Development.WeilBound.ThetaLifts.LatticeBasics.PresDOf
-import Development.WeilBound.ThetaLifts.LatticeBasics.PairsFin
-import Development.WeilBound.ThetaLifts.LatticeBasics.ThConstFin
-import Development.WeilBound.ThetaLifts.LatticeBasics.LocDist
-import Development.WeilBound.ThetaLifts.LatticeBasics.OrthAn
-import Development.WeilBound.ThetaLifts.LatticeBasics.OffOpen
-import Development.WeilBound.ThetaLifts.LatticeBasics.HeightGLLe
-import Development.WeilBound.ThetaLifts.LatticeBasics.SiegelWeilAnisoOf
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.UnitaryDensity.EqTopOfLines
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.BotAsm
+public import Development.WeilBound.ThetaLifts.LatticeBasics.NormZeta
+public import Development.WeilBound.ThetaLifts.LatticeBasics.CoefLine
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HermCpt
+public import Development.WeilBound.ThetaLifts.LatticeBasics.EulerHalf
+public import Development.WeilBound.ThetaLifts.LatticeBasics.LocUnrInert
+public import Development.WeilBound.ThetaLifts.LatticeBasics.LocUnrSplit
+public import Development.WeilBound.ThetaLifts.LatticeBasics.FinLevel
+public import Development.WeilBound.ThetaLifts.LatticeBasics.CartanBound2
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HgtIntOf
+public import Development.WeilBound.ThetaLifts.LatticeBasics.EisCont
+public import Development.WeilBound.ThetaLifts.LatticeBasics.FrameConj
+public import Development.WeilBound.ThetaLifts.LatticeBasics.BadFactor
+public import Development.WeilBound.ThetaLifts.LatticeBasics.NearUnits
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PresDOf
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PairsFin
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ThConstFin
+public import Development.WeilBound.ThetaLifts.LatticeBasics.LocDist
+public import Development.WeilBound.ThetaLifts.LatticeBasics.OrthAn
+public import Development.WeilBound.ThetaLifts.LatticeBasics.OffOpen
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HeightGLLe
+public import Development.WeilBound.ThetaLifts.LatticeBasics.SiegelWeilAnisoOf
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.UnitaryDensity.EqTopOfLines
+
+@[expose] public section
 
 namespace GlobalTheory.ThK.Dbl
 

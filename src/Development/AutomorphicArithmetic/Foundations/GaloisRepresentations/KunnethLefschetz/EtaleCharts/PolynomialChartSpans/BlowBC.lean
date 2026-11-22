@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.BlowOfBl
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.PresBC
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.CoordBC
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.BlowOfBl
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.PresBC
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.PolynomialChartSpans.CoordBC
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -116,7 +120,11 @@ private lemma rel_pb {A B : Type} [CommRing A] [CommRing B] (g : A →+* B) {d :
       (Set.range fun j => MvPolynomial.C (t j) - MvPolynomial.C (t k) * MvPolynomial.X j) : Set (MvPolynomial (Fin d) A)) =
     insert (MvPolynomial.X k - 1) (Set.range fun j => MvPolynomial.C (g (t j)) - MvPolynomial.C (g (t k)) * MvPolynomial.X j) := by
   rw [Set.image_insert_eq, ← Set.range_comp]
-  simp [Function.comp_def]
+  simp only [(MvPolynomial.map g).map_sub, (MvPolynomial.map g).map_one, MvPolynomial.map_X]
+  congr 2
+  funext j
+  simp only [Function.comp_apply, (MvPolynomial.map g).map_sub, (MvPolynomial.map g).map_mul,
+    MvPolynomial.map_X, MvPolynomial.map_C]
 
 private lemma hE_pb {K K' : Type} [CommRing K] [CommRing K'] (φ : K →+* K') {q : Z ⟶ Spec (CommRingCat.of K)} {i : W ⟶ Z}
     {π : Y ⟶ Z} {d : ℕ} {q' : Z' ⟶ Spec (CommRingCat.of K')} {a : Z' ⟶ Z}

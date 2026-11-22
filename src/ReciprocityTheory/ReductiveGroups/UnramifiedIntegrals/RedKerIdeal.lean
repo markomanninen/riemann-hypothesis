@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedKerPrin
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedPrime
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedCardG
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedGcd
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedKerPrin
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedPrime
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedCardG
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedGcd
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical

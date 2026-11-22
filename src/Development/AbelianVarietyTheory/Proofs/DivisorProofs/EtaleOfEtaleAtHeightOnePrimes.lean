@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open IsLocalRing
 
 namespace GlobalTheory.PurityDisc
@@ -72,7 +77,8 @@ theorem exists_dual (R A : Type) [CommRing R] [CommRing A] [Algebra R A] {ι : T
   have h1 : M * M⁻¹ = 1 := Matrix.mul_nonsing_inv M hM
   have := congrFun (congrFun h1 i) j
   rw [Matrix.mul_apply, Matrix.one_apply] at this
-  rw [← this, Finset.mul_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← this, Finset.mul_sum, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [mul_smul_comm, LinearMap.map_smul, smul_eq_mul, mul_comm]
   simp [M, Algebra.traceMatrix_apply, Algebra.traceForm_apply]
@@ -89,7 +95,8 @@ theorem formallyUnramified_of_dual (R A : Type) [CommRing R] [CommRing A] [Algeb
   have hrepr : ∀ (z : A) (i : ι), b.repr z i = T (z * d i) := by
     intro z i
     conv_rhs => rw [← b.sum_repr z]
-    rw [Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_mul, map_sum]
     simp_rw [smul_mul_assoc, LinearMap.map_smul, hd, smul_eq_mul, mul_ite, mul_one, mul_zero]
     simp
 
@@ -97,14 +104,16 @@ theorem formallyUnramified_of_dual (R A : Type) [CommRing R] [CommRing A] [Algeb
     intro u hu
     rw [← b.sum_repr u]
     refine Finset.sum_eq_zero fun j _ => ?_
-    rw [hrepr, ← b.sum_repr (d j), Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hrepr, ← b.sum_repr (d j), Finset.mul_sum, map_sum]
     simp_rw [mul_smul_comm, LinearMap.map_smul, hu, smul_zero, Finset.sum_const_zero, zero_smul]
 
   have hexp : ∀ z : A, ∑ i, T (z * b i) • d i = z := by
     intro z
     rw [← sub_eq_zero]
     refine hnd _ fun k => ?_
-    rw [sub_mul, map_sub, Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [sub_mul, map_sub, Finset.sum_mul, map_sum]
     simp_rw [smul_mul_assoc, LinearMap.map_smul, mul_comm (d _) (b k), hd, smul_eq_mul,
       mul_ite, mul_one, mul_zero]
     simp
@@ -132,7 +141,8 @@ theorem formallyUnramified_of_dual (R A : Type) [CommRing R] [CommRing A] [Algeb
     simp_rw [Algebra.TensorProduct.lmul'_apply_tmul]
     rw [← sub_eq_zero]
     refine hnd _ fun k => ?_
-    rw [sub_mul, one_mul, map_sub, sub_eq_zero, Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [sub_mul, one_mul, map_sub, sub_eq_zero, Finset.sum_mul, map_sum]
     rw [Algebra.trace_eq_matrix_trace b, Matrix.trace]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Matrix.diag_apply, Algebra.leftMulMatrix_eq_repr_mul, hrepr]

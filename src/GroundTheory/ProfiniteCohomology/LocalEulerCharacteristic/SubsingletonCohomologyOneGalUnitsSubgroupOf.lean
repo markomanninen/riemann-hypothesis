@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.ConjAction
-import GroundTheory.ProfiniteCohomology.ClassFormations.Corestriction
-import GroundTheory.ProfiniteCohomology.LocalClassFormationAlt
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.ConjAction
+public import GroundTheory.ProfiniteCohomology.ClassFormations.Corestriction
+public import GroundTheory.ProfiniteCohomology.LocalClassFormationAlt
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -16,8 +21,8 @@ section Formation
 variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   [CompactSpace G] {C : Rep.{u} k G} [IsDiscreteRep C]
 
-omit [CompactSpace G] in
 
+omit [CompactSpace G] in
 theorem cohomologyRes_subgroupOf_surjective {U V : OpenSubgroup G} (h : V ≤ U) (n : ℕ)
     (hs : Function.Surjective (cohomologyResLE C (show (V : Subgroup G) ≤ U from h) n).hom) :
     Function.Surjective
@@ -35,7 +40,7 @@ theorem ClassFormation.cohomologyConj_two_eq_id (F : ClassFormation C) {U V : Op
     (h : V ≤ U) [((V : Subgroup G).subgroupOf (U : Subgroup G)).Normal] (g : (U : Subgroup G)) :
     cohomologyConj (Rep.res (U : Subgroup G).subtype C) ((V : Subgroup G).subgroupOf U) 2 g = 𝟙 _ := by
   refine ModuleCat.hom_ext (LinearMap.ext fun y => ?_)
-  obtain ⟨x, rfl⟩ := cohomologyRes_subgroupOf_surjective h 2 (F.cohomologyResLE_surjective h) y
+  obtain ⟨x, rfl⟩ := cohomologyRes_subgroupOf_surjective h 2 (ClassFormation.cohomologyResLE_surjective F h) y
   exact congrArg (fun φ => φ.hom x) (cohomologyRes_comp_cohomologyConj (Rep.res (U : Subgroup G).subtype C)
     ((V : Subgroup G).subgroupOf U) 2 g)
 
@@ -83,8 +88,8 @@ theorem kummerSequenceResRes_shortExact (hl : (l : K) ≠ 0) (U : Subgroup Gal(K
     (kummerSequenceResRes (K := K) (Ksep := Ksep) l U N).ShortExact :=
   shortExact_map_res N (shortExact_map_res U (kummerSequence_shortExact l hl))
 
-omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 
+omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] in
 theorem subsingleton_cohomology_one_galUnits_subgroupOf {U V : OpenSubgroup Gal(Ksep/K)} (h : V ≤ U) :
     Subsingleton (cohomology (Rep.res ((V : Subgroup Gal(Ksep/K)).subgroupOf U).subtype
       (Rep.res (U : Subgroup Gal(Ksep/K)).subtype (galUnits.{0} K Ksep))) 1) := by

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.CauchyLoc
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.JacquetShalikaBounds.AbsoluteRigidity.CauchyLoc
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,7 @@ theorem LS_shift {E : Type} [Field E] [NumberField E] {S : Finset (HeightOneSpec
   simp only [Units.val_mul, hα, hβ]
   rw [shift_term _ (nq_ne_zero w)]
 
-theorem transfer {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] (hT : SatTw) {m : ℕ} (ρ : CG E m)
+theorem transfer {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (hT : SatTw) {m : ℕ} (ρ : CG E m)
     (χ : HChar E) (S : Finset (HeightOneSpectrum (𝓞 E))) (hχ : ∀ w, χ.UnrAt w) (α : Off E S → Fin m → ℂˣ)
     (hα : SatOff (ρ.twist χ) S α) : SatOff ρ S (fun w a => α w a * (χ⁻¹).val w.1) := by
   intro w
@@ -74,9 +78,9 @@ theorem re_mem {z : ℂ} (hz : 0 < z.re) : {s : ℂ | 0 < s.re} ∈ nhds z := op
 
 theorem re_shift (σ u : ℝ) : ((σ : ℂ) + (u : ℂ) * Complex.I).re = σ := by simp
 
-open Classical in
 
-theorem core (hR : RSPole) {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] (a b : ℕ) (ρ : CuspSub E a)
+open Classical in
+theorem core (hR : RSPole) {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a b : ℕ) (ρ : CuspSub E a)
     (ρ' : CuspSub E b) (u : ℝ) (hb : 1 ≤ b) (hab : b ≤ a) (hn : GlobalTheory.DiscSpec.IsNormalised ρ)
     (hn' : GlobalTheory.DiscSpec.IsNormalised ρ') :
     ∃ S₀ : Finset (HeightOneSpectrum (𝓞 E)), ∀ S, S₀ ⊆ S → ∀ (α : Off E S → Fin a → ℂˣ) (β : Off E S → Fin b → ℂˣ),
@@ -221,7 +225,7 @@ theorem rankin_selberg_unitary_of_pole : NormEx → SatTw → RSPole → RSU := 
         unfold LS
         rw [conj_eul]
         congr 1
-        simp only [map_add, map_mul, Complex.conj_ofReal, Complex.conj_I]
+        simp only [map_add (f := _), map_mul, Complex.conj_ofReal, Complex.conj_I]
         push_cast
         ring
       rw [hL, LS_shift α β _ _ τ τ' (hval τ) (hval τ') σ]

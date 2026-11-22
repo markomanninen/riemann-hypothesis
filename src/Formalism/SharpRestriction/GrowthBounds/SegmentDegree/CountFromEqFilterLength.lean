@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DplusLeBeA
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.TypicalPathOrdersSmall
-import Formalism.ThetaLogCoordinates.ResidueClassEstimates.FinalT
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DplusLeBeA
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.TypicalPathOrdersSmall
+public import Formalism.ThetaLogCoordinates.ResidueClassEstimates.FinalT
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,31 +74,6 @@ theorem latest_list_get_spec (P : ℕ → Bool) (M e : ℕ) (he : e < (latestLis
   rw [count_from_eq_filter_length, filter_ge_get_eq_take _ (latest_list_pairwise_gt P M) e he, List.length_take]
   omega
 
-theorem count_from_le_length (P : ℕ → Bool) (M x : ℕ) : countFrom P M x ≤ (latestList P M).length := by
-  rw [count_from_eq_filter_length]
-  exact List.length_filter_le _ _
-
-theorem count_from_antitone (P : ℕ → Bool) (M : ℕ) {x x' : ℕ} (h : x ≤ x') : countFrom P M x' ≤ countFrom P M x := by
-  unfold countFrom
-  apply Finset.card_le_card
-  intro y hy
-  simp only [Finset.mem_filter] at hy ⊢
-  exact ⟨hy.1, hy.2.1, le_trans h hy.2.2⟩
-
-theorem count_from_strict_anti (P : ℕ → Bool) (M : ℕ) {x x' : ℕ} (h : x < x') (hx : (1 ≤ x ∧ x ≤ M) ∧ P x = true) :
-    countFrom P M x' < countFrom P M x := by
-  unfold countFrom
-  apply Finset.card_lt_card
-  rw [Finset.ssubset_iff_of_subset (fun y hy => by
-    simp only [Finset.mem_filter] at hy ⊢
-    exact ⟨hy.1, hy.2.1, le_trans h.le hy.2.2⟩)]
-  refine ⟨x, ?_, ?_⟩
-  · simp only [Finset.mem_filter, Finset.mem_Icc]
-    exact ⟨hx.1, hx.2, le_rfl⟩
-  · simp only [Finset.mem_filter]
-    intro hc
-    exact absurd hc.2.2 (not_le.2 h)
-
 theorem latest_list_get_of_count (P : ℕ → Bool) (M e x : ℕ) (hx : (1 ≤ x ∧ x ≤ M) ∧ P x = true) (hc : countFrom P M x = e + 1) :
     ∃ he : e < (latestList P M).length, (latestList P M)[e] = x := by
   obtain ⟨i, hi, hix⟩ := List.mem_iff_getElem.1 ((mem_latest_list P M x).2 hx)
@@ -120,12 +99,12 @@ def toL (r K : ℕ) (LL : Letters (Fin N)) (B : Fin N → ℕ) : BranchingDimens
 theorem toL_vec (LL : Letters (Fin N)) (B : Fin N → ℕ) (i : ℕ) (h : 1 ≤ i ∧ i ≤ N) :
     (toL r K LL B).vec i = LL.vec ⟨i - 1, by omega⟩ := by
   simp only [toL]
-  rw [dif_pos h]
+  rw [dite_eq_left h]
 
 theorem toL_B (LL : Letters (Fin N)) (B : Fin N → ℕ) (i : ℕ) (h : 1 ≤ i ∧ i ≤ N) :
     (toL r K LL B).B i = B ⟨i - 1, by omega⟩ := by
   simp only [toL]
-  rw [dif_pos h]
+  rw [dite_eq_left h]
 
 section
 variable {n0 : ℕ} {LL : Letters (Fin N)} {B : Fin N → ℕ} {od : Fin N → Fin N} {bb : Fin N → ℝ} {a La : ℝ} {p : ℕ}
@@ -245,7 +224,7 @@ theorem toL_TData (H : HypT N n0 r K LL B od bb a La p) : (toL r K LL B).TData 1
   have hi : 1 ≤ i ∧ i ≤ N := ⟨by omega, h2⟩
   have hb : toB bb p i = 13 * bb ⟨i - 1, by omega⟩ / (p : ℝ) := by
     simp only [toB]
-    rw [dif_pos hi]
+    rw [dite_eq_left hi]
   refine ⟨?_, fun l hl1 hl2 hl3 => ?_⟩
   · rw [hb]
     have := H.bb_pos ⟨i - 1, by omega⟩ (by simp only; omega)

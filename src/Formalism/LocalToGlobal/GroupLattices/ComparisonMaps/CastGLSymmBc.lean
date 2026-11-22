@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ValRat
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ValRat
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,10 +13,6 @@ open scoped TensorProduct
 
 theorem castGL_symm_bc {a b : ℕ} (h : a = b) {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) (g : GL (Fin b) R) :
     (castGL h S).symm (bc f g) = bc f ((castGL h R).symm g) := by
-  subst h; rfl
-
-theorem castGL_bc {a b : ℕ} (h : a = b) {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) (g : GL (Fin a) R) :
-    castGL h S (bc f g) = bc f (castGL h R g) := by
   subst h; rfl
 
 theorem bc_comp {m : ℕ} {R S U : Type} [CommRing R] [CommRing S] [CommRing U] (f : R →+* S) (g : S →+* U) (x : GL (Fin m) R) :

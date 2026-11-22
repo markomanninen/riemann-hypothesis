@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Lit.Mix.comb :
     ∀ (s : ℕ) (L : Finset (Fin s)) (g : Fin s → ℤ), (∃ a ∈ L, g a ≤ 0) → ∃ S : Finset (Fin s), S ⊆ L ∧ S.Nonempty ∧ (∀ a ∈ S, ∀ b ∈ L, b ∉ S → 2 ≤ |g a - g b|) ∧ 2 * ∑ a ∈ S, g a ≤ (S.card : ℤ) * ((S.card : ℤ) - 1) := by

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.MirabolicMackeyTheory.StatementT
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.BoundsChain
-import Formalism.LogFactorialIndices.SignedSubspaceIndex.LogProductFormula
+module
+
+public import Mathlib
+public import Formalism.MirabolicMackeyTheory.StatementT
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ValBasic
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.BoundsChain
+public import Formalism.LogFactorialIndices.SignedSubspaceIndex.LogProductFormula
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 

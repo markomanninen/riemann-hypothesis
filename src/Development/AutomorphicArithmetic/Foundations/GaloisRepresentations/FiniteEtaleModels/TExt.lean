@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLevelGeometricFibre
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLevelGeometricFibre
+
+@[expose] public section
 
 set_option autoImplicit false
 

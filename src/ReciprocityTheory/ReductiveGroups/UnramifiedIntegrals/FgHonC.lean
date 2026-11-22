@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgHonA
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgHonB
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgHonA
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgHonB
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,12 +46,12 @@ private theorem coeff_subst_X_pow_lemma (f : PowerSeries K) {k : ℕ} (hk : k �
     simp [this]
 
 theorem desc_congr (hl : l.Prime) (hl1 : ‖(l : K)‖ < 1) (D : PowerSeries K)
-    (hD : DivBy (l : K) (derivative K D)) :
+    (hD : DivBy (l : K) (PowerSeries.derivative D)) :
     DivBy (l : K) (D - (desc l D).subst ((X : PowerSeries K) ^ l)) ∧
-      IntegralPS (derivative K (desc l D)) := by
+      IntegralPS (PowerSeries.derivative (desc l D)) := by
   have hl0 : (l : K) ≠ 0 := Nat.cast_ne_zero.mpr hl.ne_zero
   have hlpos : 0 < ‖(l : K)‖ := norm_pos_iff.mpr hl0
-  have hD' : ∀ n, ‖coeff n (derivative K D)‖ ≤ ‖(l : K)‖ := hD
+  have hD' : ∀ n, ‖coeff n (PowerSeries.derivative D)‖ ≤ ‖(l : K)‖ := hD
   have hD2 : ∀ m, ‖coeff (m + 1) D‖ * ‖((m : K) + 1)‖ ≤ ‖(l : K)‖ := by
     intro m
     have h := hD' m
@@ -83,7 +87,7 @@ theorem desc_congr (hl : l.Prime) (hl1 : ‖(l : K)‖ < 1) (D : PowerSeries K)
     exact le_of_mul_le_mul_left h2 hlpos
 
 theorem desc_key {ι : Type} (hF : FrobField K l σ) {D : PowerSeries K}
-    (hD0 : constantCoeff D = 0) (hD' : DivBy (l : K) (derivative K D)) (P : MvPowerSeries ι K)
+    (hD0 : constantCoeff D = 0) (hD' : DivBy (l : K) (PowerSeries.derivative D)) (P : MvPowerSeries ι K)
     (hP0 : MvPowerSeries.constantCoeff P = 0) (hP : IntegralMv P) :
     DivByMv (l : K) (MvPowerSeries.expand l hF.prime.ne_zero
       ((desc l D).subst (MvPowerSeries.map σ P)) - D.subst P) := by
@@ -119,7 +123,7 @@ theorem desc_key {ι : Type} (hF : FrobField K l σ) {D : PowerSeries K}
 theorem desc_QCls (hF : FrobField K l σ) {Φ : MvPowerSeries (Fin 2) K} {A : PowerSeries K} {b : K}
     (hΦ0 : MvPowerSeries.constantCoeff Φ = 0) (hΦ : IntegralMv Φ) (hA0 : constantCoeff A = 0)
     (hA : IntegralPS A) (hb : ‖b‖ ≤ 1) {D : PowerSeries K} (hD : QCls l Φ A b D)
-    (hD' : DivBy (l : K) (derivative K D)) :
+    (hD' : DivBy (l : K) (PowerSeries.derivative D)) :
     QCls l (MvPowerSeries.map σ Φ) (PowerSeries.map σ A) b (desc l D) := by
   have hl0 : l ≠ 0 := hF.prime.ne_zero
   refine ⟨by rw [desc_const, hD.D0], (desc_congr hF.prime hF.norm_l D hD').2, ?_, ?_⟩

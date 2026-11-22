@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaIntegralVacuumIntertwinesSphericalHecke
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelOperatorsAtPrimeOffLevelDatum
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FockVectorsChainIsVacuumOffThetaLevelsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaIntegrandIntegrable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegrableOnThetaDefinite
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MultiplicitySpaceEqZeroOfApplyNonzeroTensorZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaIntegralVacuumIntertwinesSphericalHecke
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelOperatorsAtPrimeOffLevelDatum
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FockVectorsChainIsVacuumOffThetaLevelsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaIntegrandIntegrable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegrableOnThetaDefinite
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MultiplicitySpaceEqZeroOfApplyNonzeroTensorZero
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues Polynomial
@@ -64,14 +68,16 @@ theorem integral_comb {G H X M ι κ : Type} [Group G] [Group H] [TopologicalSpa
       have : h * (k₁ * α⁻¹) * α = h * k₁ := by group
       simp only [this]
       rw [hFr k₁ hk₁, ← mul_assoc, ← hm1 _ k₂, hfix _ k₂ hk₂]
-    simp only [← h4, map_sum, hm1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← h4, map_sum, hm1]
     refine ⟨integrable_finsetSum _ fun a ha => (key α _ (e2 a ha)).1, ?_⟩
     rw [integral_finsetSum _ fun a ha => (key α _ (e2 a ha)).1, Finset.sum_congr rfl e1,
       Finset.sum_congr rfl fun a ha => (key α _ (e2 a ha)).2, Finset.sum_const, Finset.sum_const, h1]
   have hi1 : ∀ g, IntegrableOn (fun h => ℓ (om (h, g) (L (F h)))) 𝓕 μ := fun g => by
     simpa only [mul_one] using hint g 1
   calc _ = ∫ h in 𝓕, ∑ d ∈ s, c d * ∑ a ∈ A d, ℓ (om (h, g) (L (F (h * a)))) ∂μ := by
-        simp only [map_sum, map_smul, smul_eq_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_smul, smul_eq_mul]
     _ = ∫ h in 𝓕, ∑ d ∈ s, c d * ℓ (om (h, g) (∑ a ∈ A' d, om (a, 1) (L (F h)))) ∂μ := by
         rw [integral_finsetSum _ fun d _ => (integrable_finsetSum _ fun a _ => hint g a).const_mul _,
           integral_finsetSum _ fun d _ => (step d).1.const_mul _]
@@ -81,7 +87,8 @@ theorem integral_comb {G H X M ι κ : Type} [Group G] [Group H] [TopologicalSpa
         congr 1
         funext h
         have := congrArg (fun m => ℓ (om (h, g) m)) (hM (F h))
-        simp only [map_sum (om (h, g)), map_sum ℓ, map_smul, smul_eq_mul, hm2] at this ⊢
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum (om (h, g)), map_sum ℓ, map_smul, smul_eq_mul, hm2] at this ⊢
         exact this
     _ = _ := by
         rw [integral_finsetSum _ fun d _ => (integrable_finsetSum _ fun a _ => hi1 (g * a)).const_mul _]
@@ -121,7 +128,7 @@ theorem theta_comb {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D} {χS χT : (AE
   · have := (GlobalTheory.thetaKO_rat_left_and_eigen_right ψ S T χS χT om hW _ (hL w).1).1 γ hγ 1 (one_mem _) h g
     rwa [one_mul] at this
   · exact GlobalTheory.WeilParts.integrableOn_theta_definite D ψ hW.std S T χS χT om hW hpos X L (fun w => (hL w).1)
-      (fun h => F (h * y)) (hc.comp (continuous_mul_right y)) (fun γ hγ h => by rw [mul_assoc, hFl γ hγ]) ν 𝓕 hν h𝓕 g
+      (fun h => F (h * y)) (hc.comp (continuous_mul_const y)) (fun γ hγ h => by rw [mul_assoc, hFl γ hγ]) ν 𝓕 hν h𝓕 g
   · obtain ⟨α, -, R', h1, h2, h3, h4⟩ := ThetaIntHecke.exists_dual_rep S P d
     exact ⟨α, R', h1, h2, h3, fun w => h4 _ (om.comp (MonoidHom.inl _ _)) (L w) (hfS w)⟩
   · have h7 := hM _ (hL w)
@@ -148,9 +155,11 @@ theorem ext_hkF {V : HSp D} (c : CoefA V) (hc : c.Is) (P : Pl D.host.E) (z : Lis
     c.ext (hkF V P z f) h = ∑ d ∈ z.support, z d • ∑ a ∈ Hk3.rep V P d, c.ext f (h * a) := by
   have e : c.ext (hkF V P z f) h = c.ρ h⁻¹ (∑ d ∈ z.support, z d • ∑ a ∈ Hk3.rep V P d,
     f ((finHom V).rangeRestrict h * (finHom V).rangeRestrict a)) := rfl
-  rw [e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum]
   refine Finset.sum_congr rfl fun d _ => ?_
-  rw [map_smul, map_sum, Finset.sum_congr rfl fun a ha => ext_mul c hc f (rep_mem_GfC V P d a ha) h]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_smul, map_sum, Finset.sum_congr rfl fun a ha => ext_mul c hc f (rep_mem_GfC V P d a ha) h]
 
 theorem one_pow_notMem (P : Pl D.host.E) (n : ℕ) : ((1 ^ n : ℕ) : 𝓞 D.host.E) ∉ P.asIdeal := by
   rw [one_pow, Nat.cast_one]
@@ -191,7 +200,8 @@ theorem gaL_hk {G : Type} [Group G] [Fintype G] {V : HSp D} {β : GL (Fin V.rank
     {Φ : GA D V → ℂ} (h : ∀ g0, actG0 V β L g0 (hk V P c Φ) = hk V P c (actG0 V β L g0 Φ)) :
     gaL V β L eG z (hk V P c Φ) = hk V P c (gaL V β L eG z Φ) := by
   unfold gaL
-  rw [LinearMap.sum_apply, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.sum_apply, LinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun g _ => ?_
   rw [LinearMap.smul_apply, LinearMap.smul_apply, map_smul]
   exact congrArg (z g • ·) (h _)

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OverExtAlgebraMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.OverExtAlgebraMap
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.UnitLemma.Unr
@@ -30,7 +34,7 @@ theorem mem_adjoin_of_pow_eq_one_of_isUnit {R F L : Type*} [CommRing R] [IsDomai
     minpoly.isIntegrallyClosed_dvd hzR (by simp [hz])
   have hder : (N : L) * z ^ (N - 1) = aeval z (derivative m) * aeval z h := by
     have := congrArg (fun p => aeval z (derivative p)) hmh
-    simp only [derivative_mul, derivative_sub, derivative_X_pow, derivative_C, sub_zero, map_add, map_mul] at this
+    simp only [derivative_mul, derivative_sub, derivative_X_pow, derivative_C, sub_zero, map_add (f := _), map_mul] at this
     have h0 : aeval z m = 0 := minpoly.aeval R z
     simpa [h0] using this
   have hint : ∀ x : L, IsIntegral R x → ∃ r : R, algebraMap R F r = Algebra.norm F x := fun x hx =>

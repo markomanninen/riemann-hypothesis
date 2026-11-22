@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj TensorProduct
@@ -199,7 +204,8 @@ theorem padic_case (a b : Multiset Ω)
     refine Continuous.ext_on hd (hc a) (hc b) ?_
     rintro _ ⟨v, rfl⟩
     have := rat_case (l := l) a b h (∑ i : Fin n, monomial (i : ℕ) (v i))
-    simpa [φ, Polynomial.map_sum, aeval_monomial] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [φ, Polynomial.map_sum, aeval_monomial] using this
   have := congrFun heq fun i => F.coeff i
   have hx : ∀ x : Ω, aeval x F = ∑ i : Fin n, algebraMap ℚ_[l] Ω (F.coeff i) * x ^ (i : ℕ) := by
     intro x
@@ -230,7 +236,7 @@ theorem eq_of_norm_resultant_eq : ∀ (l : ℕ) [Fact l.Prime] (Ω : Type) [Fiel
       ‖(a.map fun x => Polynomial.aeval x G + algebraMap ℚ_[l] Ω t).prod‖ =
       ‖(b.map fun x => Polynomial.aeval x G + algebraMap ℚ_[l] Ω t).prod‖ := by
     intro t
-    simpa only [map_add, Polynomial.aeval_C] using
+    simpa only [map_add (f := _), Polynomial.aeval_C] using
       ResultantNorm.padic_case (l := l) a b h1 (G + Polynomial.C t)
   exact le_antisymm (ResultantNorm.countP_le b a _ fun t => (h2 t).symm)
     (ResultantNorm.countP_le a b _ h2)

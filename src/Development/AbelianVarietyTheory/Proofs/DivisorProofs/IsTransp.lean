@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLatPIffMulVec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemLatPIffMulVec
+
+@[expose] public section
 
 set_option autoImplicit false
 

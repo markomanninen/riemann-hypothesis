@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.CharZeroOfIsPrimitiveRoot
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaConstantTermRepresentativeDependenceStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DegenerationSeriesTermsNestStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.CharZeroOfIsPrimitiveRoot
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaConstantTermRepresentativeDependenceStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DegenerationSeriesTermsNestStatement
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -40,7 +44,7 @@ theorem qEq_of_twRel {s : Oˣ} {j : ℕ} (hs : s ^ j = u) {p p' : N.QT j} {P P' 
     have d := (show Mult β u (fun w => s ^ β.be p.1.1.toAdd w) p.1.2 P.1.2 from a.2).mul c
     refine NumD.Gt.ext (b.2.1.trans ((congrArg NumD.Gt.b h2).trans d.1.symm)) (funext fun (w : N.X) => ?_)
     refine (b.2.2 w).trans (Eq.trans ?_ (d.2 w).symm)
-    rw [h2, h1, map_add, map_nsmul, LinearMap.add_apply, LinearMap.smul_apply, nsmul_eq_mul, zpow_add, zpow_mul,
+    rw [h2, h1, map_add (f := _), map_nsmul, LinearMap.add_apply, LinearMap.smul_apply, nsmul_eq_mul, zpow_add, zpow_mul,
       zpow_natCast, hs]
 end
 
@@ -52,17 +56,31 @@ theorem tx_of_qEq {O : Type} [CommRing O] [TopologicalSpace O] (N : NumD O) {m :
 
 theorem qEq_pow {O : Type} [CommRing O] (N : NumD O) {La : Type} [AddCommGroup La] {j : ℕ} (q : La → N.QT j)
     (hq : ∀ a b, N.QEq (q a * q b) (q (a + b))) (x : La) (n : ℕ) : N.QEq (q x ^ (n + 1)) (q ((n + 1) • x)) := by
-  have E := N.qEq_equivalence j
+  have E : Equivalence (N.QEq (k := j)) := by
+    constructor
+    · intro p
+      exact ⟨0, by simp, by simp⟩
+    · rintro p p' ⟨z, h, h'⟩
+      exact ⟨-z, by rw [h, smul_neg, add_neg_cancel_right], by rw [h', N.io_neg, mul_inv_cancel_right]⟩
+    · rintro p p' p'' ⟨z, h, h'⟩ ⟨w, e, e'⟩
+      exact ⟨z + w, by rw [e, h, smul_add, add_assoc], by rw [e', h', N.io_add, _root_.mul_assoc]⟩
+  have qmul : ∀ {p p' q q' : N.QT j}, N.QEq p p' → N.QEq q q' → N.QEq (p * q) (p' * q') := by
+    intro p p' q q' ⟨z, h1, h2⟩ ⟨w, h3, h4⟩
+    refine ⟨z + w, ?_, ?_⟩
+    · change p'.1.1.toAdd + q'.1.1.toAdd = p.1.1.toAdd + q.1.1.toAdd + _
+      rw [h1, h3, smul_add]; abel
+    · change p'.1.2 * q'.1.2 = p.1.2 * q.1.2 * _
+      rw [h2, h4, N.io_add]; exact mul_mul_mul_comm _ _ _ _
   induction n with
   | zero => rw [zero_add, pow_one, one_smul]; exact E.refl _
   | succ n ih =>
     rw [pow_succ, succ_nsmul x (n + 1)]
-    exact E.trans (TateInh.qEq_mul N ih (E.refl _)) (hq _ _)
+    exact E.trans (qmul ih (E.refl _)) (hq _ _)
 end GlobalTheory.Ex.TwNest
 
 namespace GlobalTheory.Ex
-open TwNest in
 
+open TwNest in
 theorem twist_tx_nest : ∀ (C : Type) [NormedField C] (N : NumD C) (La : Type) [AddCommGroup La] (q : ∀ n : ℕ, La → N.QT n), (∀ n, 0 < n → ∀ a b, N.QEq (q n a * q n b) (q n (a + b))) → (∀ n m, 0 < n → 0 < m → ∀ a (p : N.QT n), p.1.1 = (q (n * m) a).1.1 → p.1.2 = (q (n * m) a).1.2 ^ m → N.QEq p (q n a)) → ∀ (k : ℕ) (β : N.Form k) (u : Cˣ) (r : ℕ → Cˣ), Roots u r → ∀ (n m : ℕ), Odd n → Odd m → ∀ (x : La) (p'' : (N.twist β u).QT ((n * m) ^ 2)) (p : (N.twist β u).QT (m ^ 2)), TwRel β u (r ((n * m) ^ 2)) (q _ (n • x)) p'' → TwRel β u (r (m ^ 2)) (q _ x) p → (N.twist β u).tx (n * m) p'' = (N.twist β u).tx m p := by
   intro C _ N La _ q hadd htow k β u r hr n m hn hm x p'' p h'' h
   have hK : (n * m) ^ 2 = m ^ 2 * n ^ 2 := by ring

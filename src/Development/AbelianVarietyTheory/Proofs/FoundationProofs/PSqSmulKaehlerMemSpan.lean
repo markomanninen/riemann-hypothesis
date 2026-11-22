@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.CosetTrace
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsTrDataGaussianIntOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AlmostDualTraceDerivationMemSpanValuesStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DerivationOnAdjoinMemSpanImageStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsAlmostDualTraceDataTowerUnionAdjoinStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CosetTrace
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsTrDataGaussianIntOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.AlmostDualTraceDerivationMemSpanValuesStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DerivationOnAdjoinMemSpanImageStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsAlmostDualTraceDataTowerUnionAdjoinStatement
+
+@[expose] public section
+
 open GlobalTheory.AlmostEt GlobalTheory.K5
 open scoped NNReal
 
@@ -55,10 +60,6 @@ theorem D_qS_mem_span (T : Tower p Ω) {k m : ℕ} (h : k ≤ m) :
 
 end Klc
 
-set_option hygiene false in
-local notation "𝒮" => integralClosure (O0 p) Ω
-set_option hygiene false in
-local notation "𝒟" => KaehlerDifferential.D (O0 p) (integralClosure (O0 p) Ω)
 
 theorem p_sq_smul_kaehler_mem_span : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [Field Ω] [Algebra (O0 p) Ω],
     p ≠ 2 → IsClo p Ω → ∀ (T : Tower p Ω) (η : KaehlerDifferential (O0 p) (integralClosure (O0 p) Ω))
@@ -66,10 +67,14 @@ theorem p_sq_smul_kaehler_mem_span : ∀ (p : ℕ) [Fact p.Prime] (Ω : Type) [F
       x • KaehlerDifferential.D (O0 p) (integralClosure (O0 p) Ω) (zS T m) +
         y • KaehlerDifferential.D (O0 p) (integralClosure (O0 p) Ω) (qS T m) := by
   intro p _ Ω _ _ hp2 hclo T η n
+  let 𝒮 := integralClosure (O0 p) Ω
+  let 𝒟 := KaehlerDifferential.D (O0 p) 𝒮
   let N : ℕ → Submodule 𝒮 (KaehlerDifferential (O0 p) 𝒮) :=
     fun m => Submodule.span 𝒮 {𝒟 (zS T m), 𝒟 (qS T m)}
   have hmono : Monotone N := fun k m h => Submodule.span_le.2 (by
-    rintro _ (rfl | rfl)
+    intro x hx
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
+    rcases hx with rfl | rfl
     exacts [D_zS_mem_span T h, D_qS_mem_span T h])
   have hder : ∀ B : Subalgebra (O0 p) 𝒮, IsDerOn B (fun x => 𝒟 x) := fun B =>
     ⟨fun x _ y _ => map_add 𝒟 x y, fun x _ y _ => Derivation.leibniz 𝒟 x y,

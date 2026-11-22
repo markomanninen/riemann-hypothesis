@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsAdmissibleIntegralBasisChangeOne
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LambdaCharSymMulInvEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsAdmissibleIntegralBasisChangeOne
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LambdaCharSymMulInvEqOne
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.Col Formalism.L2.DIV GlobalTheory.QNormal GlobalTheory.Mem.Col2.IdxEx
 
 noncomputable section
@@ -87,10 +92,10 @@ theorem unitV_mul {K : Type} [Field K] (χ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ) 
     rw [dif_pos hc, dif_pos hab.1, dif_pos hab.2, ← Units.val_mul, ← map_mul]
     congr 2
     exact Units.ext (by simpa using h)
-  · rw [dif_neg hc]
+  · rw [dite_eq_right hc]
     by_cases ha : IsUnit (redP P a)
-    · rw [dif_neg (fun hb => hc (h ▸ ha.mul hb)), mul_zero]
-    · rw [dif_neg ha, zero_mul]
+    · rw [dite_eq_right (fun hb => hc (h ▸ ha.mul hb)), mul_zero]
+    · rw [dite_eq_right ha, zero_mul]
 
 def co (q k₀ n c : ℕ) (v : Sp E (n + c)) (p : ℕ) : E :=
   ((q : E) ^ scE n (fun i => i + 1) (fIdx k₀ c n p))⁻¹ * atN v (fIdx k₀ c n p)
@@ -165,7 +170,8 @@ theorem entB_mul (hq : q ≠ 0) {k₀ n c : ℕ} (hk : k₀ ≤ n) (g g' : Sp E 
         entB q k₀ c n c n (fun i => i + 1) (fun i => i + 1) g'.toLinearMap l p' := by
   simp only [entB_eq hq]
   show co q k₀ n c (g.toLinearMap (g'.toLinearMap _)) p = _
-  conv_lhs => rw [eq_sum_co hq hk (g'.toLinearMap _), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [eq_sum_co hq hk (g'.toLinearMap _), map_sum]
   simp only [map_smul]
   rw [co_sum]
 

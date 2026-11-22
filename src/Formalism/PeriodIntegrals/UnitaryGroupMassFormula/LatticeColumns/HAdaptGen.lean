@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeColumns.HAdapt
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeColumns.HAdapt
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,13 +23,6 @@ def ofCols (v : Idx r k → Idx r k → K) : Matrix (Idx r k) (Idx r k) K := fun
 
 section Gen
 
-open Classical in
-
-def coefv (o : Idx r k → Fin k → K) (l : Idx r k → K) (g : K) (i : Fin k) : Idx r k → K :=
-  fun t => if IsW t then 0 else g * o (dlH t) i * (l (dlH t))⁻¹
-
-def nMat (o : Idx r k → Fin k → K) (l : Idx r k → K) (g : K) : Matrix (Idx r k) (Idx r k) K :=
-  ofCols (colv (fun _ => 0) (fun i => coefv o l g i))
 
 def IntO (M : Matrix (Idx r k) (Idx r k) K) : Prop := ∀ i j, M i j ∈ O
 

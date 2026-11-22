@@ -1,5 +1,8 @@
-import Mathlib
-import Lemmata.CofiniteContinuousBounds.LeOfCofinite
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.PG
 
@@ -14,7 +17,7 @@ theorem eval_lineHom (a w : Fin D → ℂ) (F : MvPolynomial (Fin D) ℂ) (s : �
     (lineHom a w F).eval s = eval (fun i => a i + w i * s) F := by
   induction F using MvPolynomial.induction_on with
   | C c => simp [lineHom]
-  | add p q hp hq => rw [map_add, Polynomial.eval_add, hp, hq, MvPolynomial.eval_add]
+  | add p q hp hq => rw [map_add (f := _), Polynomial.eval_add, hp, hq, MvPolynomial.eval_add]
   | mul_X p i hp =>
     rw [map_mul, Polynomial.eval_mul, hp, MvPolynomial.eval_mul, MvPolynomial.eval_X]
     simp [lineHom]

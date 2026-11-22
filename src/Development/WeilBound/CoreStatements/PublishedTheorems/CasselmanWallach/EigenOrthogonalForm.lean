@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.SmoothSeminormAndSobolevBounds
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactHaarRightInvariantInst
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.SmoothSeminormAndSobolevBounds
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactHaarRightInvariantInst
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ def bf (hU : IsURepOn (UJset ε) σ) (l : kfin ε σ →ₗ[ℂ] ℂ) : kfin ε 
       unfold fm
       rw [← integral_add (integrable_fm hU l v y) (integrable_fm hU l v' y)]
       refine integral_congr_ae (Filter.Eventually.of_forall fun k => ?_)
-      simp only [tr_add, map_add, add_mul])
+      simp only [tr_add, map_add (f := _), add_mul])
     (fun c v y => by
       unfold fm
       rw [smul_eq_mul, ← integral_const_mul]
@@ -64,7 +68,7 @@ def bf (hU : IsURepOn (UJset ε) σ) (l : kfin ε σ →ₗ[ℂ] ℂ) : kfin ε 
       unfold fm
       rw [← integral_add (integrable_fm hU l v y) (integrable_fm hU l v y')]
       refine integral_congr_ae (Filter.Eventually.of_forall fun k => ?_)
-      simp only [tr_add, map_add, mul_add])
+      simp only [tr_add, map_add (f := _), mul_add])
     (fun c v y => by
       unfold fm
       rw [RingHom.id_apply, smul_eq_mul, ← integral_const_mul]

@@ -1,18 +1,26 @@
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.BoundsIVal
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.BranchScale
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.BranchMap
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.XiNorm
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.MemBranchRangeOfDefectEq
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.GoodDual
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.Interlace
-import Formalism.BranchSandwichDivisors.StatementJ
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.TheoremDivIneq
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.MapScale
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.Numeric
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.OrthSum
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.StepDiii
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.Transfer
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.TransferMean
+module
+
+public import Formalism.BranchSandwichDivisors.StatementL
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ReductionLemmaFirst
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.BranchScale
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.BranchMap
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.XiNorm
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.MemBranchRangeOfDefectEq
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualBasic
+public import Formalism.HermitianLattices.HermitianLatticesProofs.DualLattice
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.RatHerm
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.Interlace
+public import Mathlib
+public import Formalism.QuotientMetricDivisors.StatementK
+public import Formalism.BranchSandwichDivisors.StatementR
+public import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.TheoremDivIneq
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.MapScale
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.Numeric
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.OrthSum
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.Transfer
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.TransferMean
+
+@[expose] public section
 
 namespace Formalism.BranchingDeterminantCap
 
@@ -20,8 +28,6 @@ theorem mapMu : MapMu := map_slope_mu
 theorem scaleSandwich : ScaleSandwich := scale_sandwich_bound
 theorem orthSum : OrthSum := orthogonal_sum_slope
 theorem powMu : PowMu := power_slope_mu
-theorem boundsI : BoundsI := divisor_bounds_first
-theorem boundsIVal : BoundsIVal := boundsIVal_of boundsI
 theorem orthSandwich : OrthSandwich := orthogonal_sandwich_bound
 theorem transferPart : TransferPart := transferPart_of mapMu powMu
 theorem transferMuMax : TransferMuMax := transferMuMax_of scaleSandwich orthSum powMu

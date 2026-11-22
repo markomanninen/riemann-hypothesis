@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms
-import GroundTheory.GlobalFields.Adele.Compact
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.IdeleNorms
+public import GroundTheory.GlobalFields.Adele.Compact
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -30,8 +34,8 @@ theorem abs_log_le_iff {r M : ℝ} (hr : 0 < r) :
   rw [abs_le, neg_le, ← Real.log_inv, Real.log_le_iff_le_exp (inv_pos.2 hr),
     Real.log_le_iff_le_exp hr, inv_le_comm₀ hr (Real.exp_pos _), Real.exp_neg]
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem isCompact_units_abs_log_le (w : InfinitePlace K) (M : ℝ) :
     IsCompact {z : (w.Completion)ˣ | |Real.log ‖(z : w.Completion)‖| ≤ M} := by
   rw [Units.isEmbedding_val₀.isCompact_iff]
@@ -52,8 +56,8 @@ theorem isCompact_units_abs_log_le (w : InfinitePlace K) (M : ℝ) :
   · exact (Metric.isBounded_closedBall (x := (0 : w.Completion)) (r := Real.exp M)).subset
       fun c hc ↦ by simpa using hc.2
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem isCompact_infinite_abs_log_le (M : ℝ) :
     IsCompact {y : (InfiniteAdeleRing K)ˣ |
       ∀ w : InfinitePlace K, |Real.log ‖(y : InfiniteAdeleRing K) w‖| ≤ M} := by
@@ -127,7 +131,8 @@ theorem norm_diagonal_mul (k : Kˣ) (y : IdeleGroup K) (w : InfinitePlace K) :
     ‖((diagonal K k * y : IdeleGroup K) : 𝔸[K]).1 w‖ = w (k : K) * ‖(y : 𝔸[K]).1 w‖ := by
   rw [Units.val_mul, adele_fst_mul_apply, norm_mul]
   congr 1
-  exact InfinitePlace.Completion.norm_coe (K := K) (v := w) _
+  rw [coe_diagonal, AdeleRing.algebraMap_fst_apply]
+  exact AbsoluteValue.Completion.norm_coe (WithAbs.toAbs w.1 (k : K))
 
 theorem log_infiniteModule (x : IdeleGroup K) :
     Real.log (infiniteModule x) =

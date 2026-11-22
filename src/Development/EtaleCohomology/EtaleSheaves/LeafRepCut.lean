@@ -1,5 +1,9 @@
-import Mathlib
-import Development.EtaleCohomology.EtaleSheaves.LeafGhostRelCut
+module
+
+public import Mathlib
+public import Development.EtaleCohomology.EtaleSheaves.LeafGhostRelCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -14,10 +18,6 @@ abbrev SShv (B : Scheme.{0}) (q : ℕ) : Type 2 := Sheaf (EtTop B) (ModuleCat.{1
 instance (B : Scheme.{0}) (q : ℕ) : HasSheafify (EtTop B) (ModuleCat.{1} (ULift.{1} (ZMod q))) := by
   have : EssentiallySmall.{1} B.Etale := inferInstance
   infer_instance
-
-instance (B : Scheme.{0}) (q : ℕ) : IsGrothendieckAbelian.{1} (SShv B q) := by
-  have : EssentiallySmall.{1} B.Etale := inferInstance
-  exact Sheaf.isGrothendieckAbelian_of_essentiallySmall _ _
 
 noncomputable instance (B : Scheme.{0}) (q : ℕ) : HasDerivedCategory.{2} (SShv B q) := HasDerivedCategory.standard _
 
@@ -89,8 +89,8 @@ def RepB {B W : Scheme.{0}} (ι : W ⟶ B) (L : DerivedCategory (SShv B q)) (e :
     e U' n (rpl q i (prB ι U) (prB ι U') (resBW ι a) a.left (pullback.lift_fst _ _ _).symm n c) =
       (OU B q).map a ≫ e U n c
 
-open CategoryTheory.Limits in
 
+open CategoryTheory.Limits in
 def LeafCons : Prop := ∀ (q : ℕ) [NeZero q] (i : ℤ) {B W Y0 Y1 Y2 : Scheme.{0}} (ι : W ⟶ B) [IsClosedImmersion ι]
   (p : Y0 ⟶ B) (g1 : Y1 ⟶ Y0) (g2 : Y2 ⟶ Y1),
   ∃ (K0 K1 K2 L : DerivedCategory (SShv B q)) (f : K0 ⟶ K1) (g : K1 ⟶ K2) (ℓ : L ⟶ K2)

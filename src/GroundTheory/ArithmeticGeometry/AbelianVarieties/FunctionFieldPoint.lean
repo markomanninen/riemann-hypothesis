@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.KernelCard
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.KernelCard
+
+@[expose] public section
 
 namespace GroundTheory.Arith.Abelian
 
@@ -33,12 +37,12 @@ theorem equation_gen : (W.baseChange W.toAffine.FunctionField).toAffine.Equation
   have h0 : CoordinateRing.mk W W.toAffine.polynomial = 0 := AdjoinRoot.mk_self
   have h1 := congrArg (algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField) h0
   rw [equation_iff]
-  simp only [Affine.polynomial, map_sub, map_add, map_mul, map_pow, map_zero] at h1
+  simp only [Affine.polynomial, map_sub, map_add (f := _), map_mul, map_pow, map_zero] at h1
   simp only [WeierstrassCurve.baseChange, WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₂,
     WeierstrassCurve.map_a₃, WeierstrassCurve.map_a₄, WeierstrassCurve.map_a₆, genX, genY]
   have e : ∀ a : F, algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField
       (CoordinateRing.mk W (C (C a))) = algebraMap F W.toAffine.FunctionField a := fun a => rfl
-  simp only [C_add, C_mul, map_add, map_mul, e] at h1
+  simp only [C_add, C_mul, map_add (f := _), map_mul, e] at h1
   linear_combination h1
 
 end Generic
@@ -47,7 +51,7 @@ section Lift
 
 variable {L : Type*} [Field L] [Algebra F L] {u v : L}
 
-private theorem eval₂_polynomial (h : (W.baseChange L).toAffine.Equation u v) :
+theorem eval₂_polynomial (h : (W.baseChange L).toAffine.Equation u v) :
     W.toAffine.polynomial.eval₂ (eval₂RingHom (algebraMap F L) u) v = 0 := by
   have e := (equation_iff _ _).mp h
   simp only [WeierstrassCurve.baseChange, WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₂,
@@ -86,7 +90,7 @@ instance : Algebra.IsIntegral F[X] W.toAffine.CoordinateRing := Algebra.IsIntegr
 
 theorem evalAt_injective (h : (W.baseChange L).toAffine.Equation u v) (hu : Transcendental F u) :
     Function.Injective (evalAt W h) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   have hker : RingHom.ker (evalAt W h) = ⊥ := by
     apply Ideal.eq_bot_of_comap_eq_bot (R := F[X])
     ext p
@@ -164,12 +168,12 @@ theorem adjoin_genX_genY : IntermediateField.adjoin F {genX W, genY W} = ⊤ := 
     intro a
     obtain ⟨p, rfl⟩ := AdjoinRoot.mk_surjective a
     induction p using Polynomial.induction_on' with
-    | add p q hp hq => rw [map_add, map_add]; exact add_mem hp hq
+    | add p q hp hq => rw [map_add (f := _), map_add (f := _)]; exact add_mem hp hq
     | monomial n c =>
       rw [← C_mul_X_pow_eq_monomial, map_mul, map_mul, map_pow, map_pow]
       refine mul_mem ?_ (pow_mem (IntermediateField.subset_adjoin F _ (by simp [genY])) _)
       induction c using Polynomial.induction_on' with
-      | add p q hp hq => rw [C_add, map_add, map_add]; exact add_mem hp hq
+      | add p q hp hq => rw [C_add, map_add (f := _), map_add (f := _)]; exact add_mem hp hq
       | monomial m d =>
         rw [← C_mul_X_pow_eq_monomial, C_mul, C_pow, map_mul, map_mul, map_pow, map_pow]
         refine mul_mem ?_ (pow_mem (IntermediateField.subset_adjoin F _ (by simp [genX])) _)
@@ -191,7 +195,7 @@ theorem finrank_adjoin_genX : Module.finrank (IntermediateField.adjoin F {genX W
       (mul_mem (IntermediateField.algebraMap_mem _ _) hx)) (IntermediateField.algebraMap_mem _ _)
   set q : E1[X] := X ^ 2 + C ⟨coefB W, hb⟩ * X - C ⟨coefC W, hc⟩
   have hq : aeval (genY W) q = 0 := by
-    simp only [q, map_sub, map_add, map_mul, map_pow, aeval_X, aeval_C]
+    simp only [q, map_sub, map_add (f := _), map_mul, map_pow, aeval_X, aeval_C]
     exact genY_sq W
   have hqdeg : q.natDegree = 2 := by simp only [q]; compute_degree!
   have hq0 : q ≠ 0 := fun h => by rw [h, natDegree_zero] at hqdeg; exact absurd hqdeg (by decide)

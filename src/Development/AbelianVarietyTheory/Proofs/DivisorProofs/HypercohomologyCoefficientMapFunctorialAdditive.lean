@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleHypercohomologyIsoOfInjectiveResolution
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HypercohomologyPullbackPushforwardFunctorial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleHypercohomologyIsoOfInjectiveResolution
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HypercohomologyPullbackPushforwardFunctorial
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
 noncomputable section
@@ -32,7 +37,7 @@ def resMapAddHomotopy {F G : Shv R} (φ ψ : F ⟶ G) :
         InjectiveResolution.desc ψ (injectiveResolution G) (injectiveResolution F)) := by
     apply InjectiveResolution.descHomotopy (φ + ψ)
     · simp
-    · simp [Preadditive.comp_add, Preadditive.add_comp, Functor.map_add]
+    · simp [Preadditive.comp_add, Preadditive.add_comp, Functor.map_add (f := _)]
   have H2 := H.extend ComplexShape.embeddingUpNat
   rw [HomologicalComplex.extendMap_add] at H2
   exact H2

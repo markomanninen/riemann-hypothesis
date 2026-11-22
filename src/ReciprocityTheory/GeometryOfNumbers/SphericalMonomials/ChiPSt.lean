@@ -1,4 +1,8 @@
-import ReciprocityTheory.GeometryOfNumbers.SphericalMonomials.MonoNormSq
+module
+
+public import ReciprocityTheory.GeometryOfNumbers.SphericalMonomials.MonoNormSq
+
+@[expose] public section
 
 namespace ReciprocityTheory.GeometryOfNumbersTheory
 

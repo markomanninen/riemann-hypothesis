@@ -1,5 +1,9 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroBasicTwistOfSpecialForm
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsSmooth
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroBasicTwistOfSpecialForm
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.IsSmooth
+
+@[expose] public section
 
 noncomputable section
 

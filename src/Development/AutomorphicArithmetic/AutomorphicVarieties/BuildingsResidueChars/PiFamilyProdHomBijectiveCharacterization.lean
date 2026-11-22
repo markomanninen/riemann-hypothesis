@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IsotypicSeparatesAndEmbedsIntoInvariantSubspace
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.CoefficientRepTrivialOnUnramified
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IsotypicSeparatesAndEmbedsIntoInvariantSubspace
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.CoefficientRepTrivialOnUnramified
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Polynomial GlobalTheory.CuspRep GlobalTheory.WeilDeligne UpperTheory.V.Hi
 open UpperTheory.V.W (Plc)
 
@@ -73,7 +78,8 @@ private theorem inv_iff {S : Type} [Fintype S] [DecidableEq S] {H : S → Type}
     have hmul : ∀ k k' F, A (k * k') F = A k (A k' F) := by
       intro k k' F
       funext i
-      simp only [A, map_mul, Matrix.mul_apply, Module.End.mul_apply, map_sum, map_smul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [A, map_mul, Matrix.mul_apply, Module.End.mul_apply, map_sum, map_smul,
         Finset.smul_sum, Finset.sum_smul, smul_smul]
       exact Finset.sum_comm
     have hone : ∀ F, A 1 F = F := by
@@ -123,7 +129,8 @@ private theorem main {S : Type} [Fintype S] [DecidableEq S] {G : S → Type} [�
       simpa using congrFun h0 (i0 u)
     · intro k b
       have h1 := congrArg p (h u k (Function.update i0 u b))
-      simp only [Function.update_self, Function.update_idem, map_sum, map_smul] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Function.update_self, Function.update_idem, map_sum, map_smul] at h1
       beta_reduce
       rw [← h1]
       refine Finset.sum_congr rfl fun a _ => ?_
@@ -146,7 +153,7 @@ private theorem main {S : Type} [Fintype S] [DecidableEq S] {G : S → Type} [�
             ∑ b, c u k (i u) b • ρ (Pi.mulSingle u (k : G u)) (F (Function.update i u b)) = F i}
           add_mem' := by
             intro F F' hF hF' v hv k i
-            simp only [Pi.add_apply, map_add, smul_add, Finset.sum_add_distrib]
+            simp only [Pi.add_apply, map_add (f := _), smul_add, Finset.sum_add_distrib]
             rw [hF v hv k i, hF' v hv k i]
           zero_mem' := by intro v hv k i; simp
           smul_mem' := by
@@ -162,7 +169,8 @@ private theorem main {S : Type} [Fintype S] [DecidableEq S] {G : S → Type} [�
         have hne : v ≠ u := fun h => hu (h ▸ hv)
         change ∑ b, c v k (i v) b • ρ (Pi.mulSingle v (k : G v))
           (ρ (Pi.mulSingle u g) (F (Function.update i v b))) = ρ (Pi.mulSingle u g) (F i)
-        rw [← hF v hv k i, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← hF v hv k i, map_sum]
         refine Finset.sum_congr rfl fun b _ => ?_
         rw [map_smul, ← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul, ← map_mul,
           (Pi.mulSingle_commute (Ne.symm hne) g (k : G v)).eq])
@@ -175,7 +183,8 @@ private theorem main {S : Type} [Fintype S] [DecidableEq S] {G : S → Type} [�
       · intro v hv k i
         rcases Finset.mem_insert.1 hv with rfl | hv
         · simp only [Function.update_self, Function.update_idem]
-          rw [← hy v k (i v), map_sum, Finset.sum_apply]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [← hy v k (i v), map_sum, Finset.sum_apply]
           refine Finset.sum_congr rfl fun b _ => ?_
           rw [map_smul, Pi.smul_apply, hsρ]; rfl
         · have hne : v ≠ u := fun h => hu (h ▸ hv)

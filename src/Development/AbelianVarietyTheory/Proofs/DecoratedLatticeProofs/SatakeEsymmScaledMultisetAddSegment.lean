@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TransferOn
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsPairingSingleNe
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TransferOn
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsPairingSingleNe
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
 open scoped TensorProduct InnerProductSpace ComplexConjugate
@@ -36,7 +41,7 @@ theorem coeff_prod_one_add_C (s : Multiset ℂ) (n : ℕ) :
 
 theorem esymm_add_C (s t : Multiset ℂ) (n : ℕ) :
     (s + t).esymm n = ∑ i ∈ Finset.range (n + 1), s.esymm i * t.esymm (n - i) := by
-  rw [← coeff_prod_one_add_C, Multiset.map_add, Multiset.prod_add, Polynomial.coeff_mul,
+  rw [← coeff_prod_one_add_C, Multiset.map_add (f := _), Multiset.prod_add, Polynomial.coeff_mul,
     Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk]
   simp only [coeff_prod_one_add_C]
 
@@ -145,7 +150,7 @@ theorem satEig_map_add_seg : ∀ (E : Type) [Field E] [NumberField E] (w : Heigh
         (fun j _ hn => hFa j (by simp at hn; omega)),
       Finset.sum_subset (Finset.range_mono (show k + 1 ≤ a + k + 1 by omega))
         (fun j _ hn => hFk j (by simp at hn; omega))]
-  rw [hR, satEig, Multiset.map_add, esymm_add_C, Finset.mul_sum, hA, map_coe_seg]
+  rw [hR, satEig, Multiset.map_add (f := _), esymm_add_C, Finset.mul_sum, hA, map_coe_seg]
   refine Finset.sum_congr rfl fun j hj => ?_
   have hjk : j ≤ k := Nat.lt_succ_iff.1 (Finset.mem_range.1 hj)
   rw [esymm_map_mul_C, esymm_string Q s z hs hsQ t]

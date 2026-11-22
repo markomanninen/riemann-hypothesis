@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.AlgebraicityHom
-import GroundTheory.GlobalFields.ComplexMultiplication.AutCFixed
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.AlgebraicityHom
+public import GroundTheory.GlobalFields.ComplexMultiplication.AutCFixed
+
+@[expose] public section
 
 open NumberField Module WeierstrassCurve GroundTheory.Arith.Abelian IntermediateField
 open scoped nonZeroDivisors
@@ -79,7 +83,7 @@ theorem ELL.j_map (σ : ℂ ≃+* ℂ) (x : ELL K) : ELL.j (ELL.map σ x) = σ (
 
 section Quadratic
 
-variable (hK : finrank ℚ K = 2) [IsTotallyComplex K]
+variable (hK : finrank ℚ K = 2) [_root_.NumberField.IsTotallyComplex K]
 include hK
 
 theorem ELL.finite_range_conj (x : ELL K) :
@@ -94,19 +98,6 @@ theorem ELL.isAlgebraic_j (x : ELL K) : IsAlgebraic ℚ (ELL.j x) :=
 
 end Quadratic
 
-omit [NumberField K] in
-
-theorem CMCurve.exists_model (E : CMCurve K) :
-    ∃ (W : WeierstrassCurve ℚ⟮E.curve.j⟯) (_ : W.IsElliptic) (C : VariableChange ℂ),
-      C • W.baseChange ℂ = E.curve := by
-  classical
-  set W := WeierstrassCurve.ofJ (⟨E.curve.j, mem_adjoin_simple_self ℚ _⟩ : ℚ⟮E.curve.j⟯)
-  refine ⟨W, inferInstance, ?_⟩
-  have hj : (W.baseChange ℂ).j = E.curve.j := by
-    show (W.map (algebraMap ℚ⟮E.curve.j⟯ ℂ)).j = _
-    rw [map_j, ofJ_j]
-    rfl
-  exact exists_variableChange_of_j_eq _ _ hj
 
 end Elliptic
 end GroundTheory.Global

@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.RatTors
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsDescOfSmoothOfGeometricPoints
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.PolAVIsoExtendsOfIsIntegrallyClosed
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.GenRelNeZero
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.LineBundleIsoExtendOfNormalBase
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsProjectiveModel
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsGenOfRigidifiedFaithfullyFlatDescent
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsPullbackOfFpqcLeft
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.TangentLinearity.ConstPullback
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.RatTors
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsDescOfSmoothOfGeometricPoints
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.PolAVIsoExtendsOfIsIntegrallyClosed
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.GenRelNeZero
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.LineBundleIsoExtendOfNormalBase
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsProjectiveModel
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsGenOfRigidifiedFaithfullyFlatDescent
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsPullbackOfFpqcLeft
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.TangentLinearity.ConstPullback
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -54,7 +58,7 @@ theorem eq_of_torsion (hL : Laws) {S : Scheme.{0}} (P : PolAV S) {F : Type} [Fie
     (hM : 3 ≤ M) (hF : (M : F) ≠ 0)
     (h : ∀ y : Over.mk (𝟙 (Sp F)) ⟶ W.A, y ^ M = 1 → y.left ≫ f₁ = y.left ≫ f₂) : f₁ = f₂ := by
   obtain ⟨θ, hθ, e⟩ := grpPullback_iso h₁ h₂
-  obtain ⟨w, hw⟩ := l₁.trans W.isLB (pull_isLB P.isLB _) (pull_isLB W.isLB _)
+  obtain ⟨w, hw⟩ := l₁.trans W.isLB (LB.isLB_pull P.isLB _) (LB.isLB_pull W.isLB _)
     (lbIso_pull_of_lbIso l₂ θ.hom.left e.symm).symm
   have := MatchRigid.aut_eq_id hL W (𝟙 _) hM hF θ w hw fun y hy =>
     Over.OverMorphism.ext (h₂.1.hom_ext (by rw [Over.comp_left, Category.assoc, e, h y hy]) (by rw [Over.w, Over.w]))
@@ -81,7 +85,7 @@ theorem comp_eq_of_rational (hL : Laws) {S U : Scheme.{0}} [IsLocallyNoetherian 
     have a₁ := hf'.1.lift_fst _ _ w
     have a₂ := hf'.1.lift_snd _ _ w
     exact ⟨_, a₁, a₂, ((hf'.cancel (hp.congr hi' a₁.symm) a₂).comp hf).congr hi'.symm rfl,
-      (LBIso.symm hw).trans W.isLB (pull_isLB B'.isLB _) (pull_isLB B.isLB _) (lbIso_pull_comp _ a₁.symm rfl hl)⟩
+      (LBIso.symm hw).trans W.isLB (LB.isLB_pull B'.isLB _) (LB.isLB_pull B.isLB _) (lbIso_pull_comp _ a₁.symm rfl hl)⟩
   obtain ⟨a, a₁, a₂, a₃, a₄⟩ := key _ rfl
   obtain ⟨a', a₁', a₂', a₃', a₄'⟩ := key _ e'
   have E : a ≫ f = a' ≫ f := by
@@ -149,8 +153,8 @@ theorem lbIso_descend (hG : GlobalFnsSt) {K C : Type} [Field K] [Field C] (κ : 
 
 end GlobalTheory.PolIsoDescent
 
-open GlobalTheory.PolIsoDescent GlobalTheory.GenSpread in
 
+open GlobalTheory.PolIsoDescent GlobalTheory.GenSpread in
 theorem GlobalTheory.polAV_iso_descends_of_ratTors : Laws → Laws2 → GlobalTheory.LN.HomExtSt → ∀ (R : Type) [CommRing R] [IsDomain R] [IsLocalRing R], GlobalTheory.LN.CDvr R → ∀ (C : Type) [Field C] [IsAlgClosed C] [Algebra (FractionRing R) C] (B B' : PolAV (Sp R)), RatTors B C 3 → RatTors B' C 3 → ∀ (φ : TF (R := R) C ⊗ B.A ≅ TF (R := R) C ⊗ B'.A) (g : (TF (R := R) C ⟶ B.A) ≃* (TF (R := R) C ⟶ B'.A)), φ.hom ≫ fst _ _ = fst _ _ → (∀ x, lift (𝟙 _) x ≫ φ.hom = lift (𝟙 _) (g x)) → LBIso (B.L.pull (snd (TF (R := R) C) B.A).left) (B'.L.pull (φ.hom ≫ snd (TF (R := R) C) B'.A).left) → ∃ Ψ : B'.A ≅ B.A, IsMonHom Ψ.hom ∧ LBIso B'.L (B.L.pull Ψ.hom.left) ∧ ∀ x, g x ≫ Ψ.hom = x := by
   intro hL hL₂ hext R _ _ _ ⟨_, _, _⟩ C _ _ _ B B' rB rB' φ g hφ hg hl
   have : CharZero (FractionRing R) := charZero_of_injective_algebraMap (IsFractionRing.injective R _)
@@ -190,10 +194,10 @@ theorem GlobalTheory.polAV_iso_descends_of_ratTors : Laws → Laws2 → GlobalTh
       Iso.hom_inv_id_assoc, lift_snd]
   have one : ∀ P : PolAV (Sp R), (1 : TF (R := R) C ⟶ P.A).left = (κ ≫ jK R) ≫ eSec P.A := fun _ => rfl
   have hf : IsGrpPullback Q B.A (κ ≫ jK R) f := by
-    refine isGrpPullback_of_one hL B.isAb hQ hfp ((pt 1 _ ?_ (Over.w η[Q])).trans (one B))
+    refine GlobalTheory.PolIsoDescent.isGrpPullback_of_one hL B.isAb hQ hfp ((pt 1 _ ?_ (Over.w η[Q])).trans (one B))
     rw [map_one, one, ← Category.assoc]
     erw [PolExtend.eSec_fst κ X, Category.assoc, PolExtend.eSec_fst (jK R) B'.A, Category.assoc]
-  have hl' : LBIso (B'.L.pull (π ≫ p)) (B.L.pull f) := lbIso_pull_comp (c.hom ≫ φ.inv.left)
+  have hl' : LBIso (B'.L.pull (π ≫ p)) (B.L.pull f) := GlobalTheory.GenSpread.lbIso_pull_comp (c.hom ≫ φ.inv.left)
     (by rw [Category.assoc, ← Over.comp_left, Iso.inv_hom_id_assoc, c₁]) rfl hl.symm
   have wf : f ≫ B.A.hom = (Q.hom ≫ κ) ≫ jK R := by rw [hfp.w, Category.assoc]
   obtain ⟨f₀, hf₀⟩ := exists_desc_of_smooth_of_geometricPoints (FractionRing R) C X Y hX.smooth
@@ -204,25 +208,25 @@ theorem GlobalTheory.polAV_iso_descends_of_ratTors : Laws → Laws2 → GlobalTh
         exact (Category.assoc _ _ _).symm.trans ((congrArg (· ≫ X.hom) e).trans (Category.assoc _ _ _))
       refine hY'.1.hom_ext ?_ ?_
       · rw [Category.assoc, Category.assoc, hY'.1.lift_fst]
-        exact comp_eq_of_rational hL B B' κ (jK R) (fun x hx => (rB x hx).elim fun a h => ⟨a.left, h⟩)
+        exact GlobalTheory.PolIsoDescent.comp_eq_of_rational hL B B' κ (jK R) (fun x hx => (rB x hx).elim fun a h => ⟨a.left, h⟩)
           (fun x hx => (rB' x hx).elim fun a h => ⟨a.left, h⟩) hf hf' hl' x x'
           ((Category.assoc _ _ _).symm.trans ((congrArg (· ≫ p) e).trans (Category.assoc _ _ _))) e'
       · rw [Category.assoc, Category.assoc, hY'.1.lift_snd, ← Category.assoc, ← Category.assoc]
         exact e'
   have ef : π ≫ f₀.left ≫ pullback.fst B.A.hom (jK R) = f :=
     (Category.assoc _ _ _).symm.trans ((congrArg (· ≫ pullback.fst B.A.hom (jK R)) hf₀).trans (hY'.1.lift_fst _ _ _))
-  obtain ⟨k₁, k₂⟩ := flat_surjective κ
+  obtain ⟨k₁, k₂⟩ := GlobalTheory.PolIsoDescent.flat_surjective κ
   have h₀ : IsGrpPullback X B.A (jK R) (f₀.left ≫ pullback.fst B.A.hom (jK R)) :=
     isGrpPullback_of_fpqc _ _ _ (jK R) κ B.A X Q π _ k₁ k₂ inferInstance hπ (hf.congr rfl ef.symm)
       (by rw [Category.assoc, hY'.1.w, ← Category.assoc, Over.w f₀])
   obtain ⟨ψ, hψ, eψ⟩ := grpPullback_iso h₀ hY'
   rw [← eψ] at ef
   obtain ⟨Ψ, m, hΨ, l⟩ := polAV_iso_extends_of_isIntegrallyClosed hL hL₂ R B B' ψ hψ
-    (lbIso_descend hL.globalFns κ X hX (pull_isLB B'.isLB _) (pull_isLB B.isLB _)
-      (LBIso.trans (pull_isLB (pull_isLB B'.isLB _) _) (pull_isLB B'.isLB _) (pull_isLB (pull_isLB B.isLB _) _)
-        (lbIso_pull_pull B'.isLB π rfl).symm
-        (LBIso.trans (pull_isLB B'.isLB _) (pull_isLB B.isLB _) (pull_isLB (pull_isLB B.isLB _) _) hl'
-          (lbIso_pull_pull B.isLB π ef.symm)))) hext
+    (GlobalTheory.PolIsoDescent.lbIso_descend hL.globalFns κ X hX (LB.isLB_pull B'.isLB _) (LB.isLB_pull B.isLB _)
+      (LBIso.trans (LB.isLB_pull (LB.isLB_pull B'.isLB _) _) (LB.isLB_pull B'.isLB _) (LB.isLB_pull (LB.isLB_pull B.isLB _) _)
+        (GlobalTheory.GenSpread.lbIso_pull_pull B'.isLB π rfl).symm
+        (LBIso.trans (LB.isLB_pull B'.isLB _) (LB.isLB_pull B.isLB _) (LB.isLB_pull (LB.isLB_pull B.isLB _) _) hl'
+          (GlobalTheory.GenSpread.lbIso_pull_pull B.isLB π ef.symm)))) hext
   refine ⟨Ψ, m, l, fun x => Over.OverMorphism.ext ?_⟩
   have w : (g x).left ≫ B'.A.hom = 𝟙 _ ≫ κ ≫ jK R := (Over.w (g x)).trans (Category.id_comp _).symm
   have u₁ := hf'.1.lift_fst _ _ w

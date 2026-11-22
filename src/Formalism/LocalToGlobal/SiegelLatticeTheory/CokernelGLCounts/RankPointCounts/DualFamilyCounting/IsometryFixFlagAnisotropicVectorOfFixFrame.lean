@@ -1,17 +1,21 @@
-import Mathlib
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.FiniteRepSetOfOrtho
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.PerpendicularDefinitionHolds
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SaturatedPf
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.UnimodularOfMemGenusOrtho
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.InvMemLocROfUnimod
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.GenusMassPosOfMassLowerBound
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.TransMemUnipotentIntegral
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AutLzFinite
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SplitRow
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WittExtensionTheorem
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeRowsLift
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.IsAdmissibleIntegralBasisChangeOne
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.LocalUnimodularHolds
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.FiniteRepSetOfOrtho
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.PerpendicularDefinitionHolds
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.SaturatedPf
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.UnimodularOfMemGenusOrtho
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.InvMemLocROfUnimod
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.GenusMassPosOfMassLowerBound
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.TransMemUnipotentIntegral
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AutLzFinite
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SplitRow
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WittExtensionTheorem
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeRowsLift
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.IsAdmissibleIntegralBasisChangeOne
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.LocalUnimodularHolds
+
+@[expose] public section
 
 open scoped Pointwise
 
@@ -158,8 +162,8 @@ theorem card_stab_q (t : X) (ht : t ∈ A) :
       have hc := hN.conj_mem n hn h⁻¹
       simpa [mul_inv_rev, mul_assoc] using hc
 
-include hA hfree in
 
+include hA hfree in
 theorem count [Finite (H ⧸ N)] (T : Finset X) (hTA : ∀ t ∈ T, t ∈ A)
     (hT : ∀ x ∈ A, ∃! t, t ∈ T ∧ ∃ h : H, h • t = x) :
     (nOrbs N A).Finite ∧
@@ -321,9 +325,9 @@ instance instActL (T' : D.host.E) : MulAction (G0 F0) (LFlag (VS D) D.R.rS T') w
   one_smul F := mapL_eq_self _ _ F (fun _ => rfl) rfl
   mul_smul _ _ _ := rfl
 
-theorem smul_def {T' : D.host.E} (g : G0 F0) (F : LFlag (VS D) D.R.rS T') : g • F = mapL g.1 (G0.isom g) F := rfl
+theorem smul_def {T' : D.host.E} (g : G0 F0) (F : LFlag (D.sp.Y 0) D.R.rS T') : g • F = mapL g.1 (G0.isom g) F := rfl
 
-theorem frame_smul {T' : D.host.E} (g : G0 F0) (F : LFlag (VS D) D.R.rS T') (a : Fin (D.R.rS + 1)) :
+theorem frame_smul {T' : D.host.E} (g : G0 F0) (F : LFlag (D.sp.Y 0) D.R.rS T') (a : Fin (D.R.rS + 1)) :
     (g • F).fl.fvec a = (g : (VS D).V ≃ₗ[D.host.E] (VS D).V) (F.fl.fvec a) := by
   induction a using Fin.lastCases with
   | last => simp [smul_def, Formalism.L2.SG.Saturated.mapL, Formalism.L2.SG.Saturated.mapFlag, Formalism.MainNotions.S.FlagG.fvec]
@@ -393,7 +397,7 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 variable {D : Formalism.BasicNotions.D7} {T : D.host.E} {F0 : FlagG (VS D) D.R.rS T}
 
 theorem ez_smul {T' : D.host.E} (g : G0 F0) {Λ : Submodule (𝓞 D.host.E) (VS D).V} {Z : MatZ D}
-    {F' : LFlag (VS D) D.R.rS T'} (h : F' ∈ EZ T' F0 Λ Z) :
+    {F' : LFlag (D.sp.Y 0) D.R.rS T'} (h : F' ∈ EZ T' F0 Λ Z) :
     g • F' ∈ EZ T' F0 (Formalism.HermitianLatticesTheory.gmap (g : (VS D).V ≃ₗ[D.host.E] (VS D).V) Λ) Z := by
   obtain ⟨h1, h2, h3, h4, h5⟩ := h
   have hβ := G0.isom g
@@ -417,8 +421,19 @@ theorem rowLat_gmap (g : G0 F0) {Λ : Submodule (𝓞 D.host.E) (VS D).V} (h : I
   obtain ⟨⟨hL, hG⟩, ⟨hL', hU, hLift, hFC⟩, hX⟩ := h
   have hβ := G0.isom g
   have hl := G0.lf g
-  refine ⟨⟨Formalism.HermitianLattices.Ext.L3.LocalizedFibreSets.isLattice_gmap _ hL, fun p hp => ?_⟩,
-    ⟨Formalism.HermitianLattices.Ext.L3.LocalizedFibreSets.isLattice_gmap _ hL', ?_, ?_, ?_⟩, ?_⟩
+  have hmap : ∀ {L : Submodule (𝓞 D.host.E) (VS D).V}, Submodule.IsLattice D.host.E L →
+      Submodule.IsLattice D.host.E (Formalism.HermitianLatticesTheory.gmap (g : (VS D).V ≃ₗ[D.host.E] (VS D).V) L) := by
+    intro L hL
+    refine ⟨hL.fg.map _, ?_⟩
+    exact fun _ _ hli => (LinearIndependent.iff_fractionRing _ _).mp hli
+  have hfull : Submodule.IsFullLattice D.host.E
+      (Formalism.HermitianLatticesTheory.gmap (g : (VS D).V ≃ₗ[D.host.E] (VS D).V) Λ) := by
+    refine { toIsLattice := hmap hL.toIsLattice, span_eq_top := ?_ }
+    change Submodule.span D.host.E (((g : (VS D).V ≃ₗ[D.host.E] (VS D).V) : (VS D).V →ₗ[D.host.E] (VS D).V) '' (Λ : Set (VS D).V)) = ⊤
+    rw [Submodule.span_image, hL.span_eq_top, Submodule.map_top, LinearMap.range_eq_top]
+    exact (g : (VS D).V ≃ₗ[D.host.E] (VS D).V).surjective
+  refine ⟨⟨hfull, fun p hp => ?_⟩,
+    ⟨hmap hL', ?_, ?_, ?_⟩, ?_⟩
   · obtain ⟨k, hk, hkL⟩ := hG p hp
     refine ⟨(g : (VS D).V ≃ₗ[D.host.E] (VS D).V) * k, (Formalism.HermitianLatticesTheory.isom _).mul_mem hβ hk, ?_⟩
     rw [gmap_mul_sat, hkL, Formalism.HermitianLattices.Ext.L3.loc_gmap]
@@ -432,7 +447,7 @@ theorem rowLat_gmap (g : G0 F0) {Λ : Submodule (𝓞 D.host.E) (VS D).V} (h : I
     conv_rhs => rw [← G0.mapFlag g]
     rw [XS_mapFlag]
 
-theorem fixes_upair {T' : D.host.E} (g : G0 F0) (F' : LFlag (VS D) D.R.rS T') (hF : g • F' = F') :
+theorem fixes_upair {T' : D.host.E} (g : G0 F0) (F' : LFlag (D.sp.Y 0) D.R.rS T') (hF : g • F' = F') :
     ∀ x ∈ UPair D F0 F', (g : (VS D).V ≃ₗ[D.host.E] (VS D).V) x = x := by
   intro x hx
   have h1 : Set.EqOn ((g : (VS D).V ≃ₗ[D.host.E] (VS D).V) : (VS D).V →ₗ[D.host.E] (VS D).V) (LinearMap.id : (VS D).V →ₗ[D.host.E] (VS D).V)
@@ -446,7 +461,7 @@ theorem fixes_upair {T' : D.host.E} (g : G0 F0) (F' : LFlag (VS D) D.R.rS T') (h
 
 theorem eq_one_of_fix (g : G0 F0) {Λ : Submodule (𝓞 D.host.E) (VS D).V}
     (hn : (g : (VS D).V ≃ₗ[D.host.E] (VS D).V) ∈ NLam Λ (lf D F0)) {T' : D.host.E}
-    (F' : LFlag (VS D) D.R.rS T') (hG : GZ T T' (ZhatL (lf D F0) F') ≠ 0) (hF : g • F' = F') : g = 1 := by
+    (F' : LFlag (D.sp.Y 0) D.R.rS T') (hG : GZ T T' (ZhatL (lf D F0) F') ≠ 0) (hF : g • F' = F') : g = 1 := by
   have hU := fixes_upair g F' hF
   have hC := PairSpanDimension.isCompl F0 F' hG
   obtain ⟨-, -, hno⟩ := hn
@@ -472,7 +487,7 @@ theorem eq_one_of_fix (g : G0 F0) {Λ : Submodule (𝓞 D.host.E) (VS D).V}
     trivial
   obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hv
   show (g : (VS D).V ≃ₗ[D.host.E] (VS D).V) (a + b) = a + b
-  rw [map_add, hU a ha, hW b hb]
+  rw [map_add (f := _), hU a ha, hW b hb]
 
 end Formalism.L2.SG.Pf.Cnt.StabilizerQuotient
 
@@ -626,7 +641,7 @@ theorem flagStabilizer_fixes_frame {Λ : Submodule (𝓞 D.host.E) (VS D).V} {n 
   | cast b => simpa [Formalism.MainNotions.S.FlagG.fvec] using he b
 
 theorem orbit_set_eq {T' : D.host.E} {Λ : Submodule (𝓞 D.host.E) (VS D).V} {Z : MatZ D}
-    {F' : LFlag (VS D) D.R.rS T'} (hF' : F' ∈ EZ T' F0 Λ Z) :
+    {F' : LFlag (D.sp.Y 0) D.R.rS T'} (hF' : F' ∈ EZ T' F0 Λ Z) :
     {F'' | F'' ∈ EZ T' F0 Λ Z ∧ NilradicalFlagMoved F0 Λ F' F''} = nOrb (Nsub (F0 := F0) Λ) (EZ T' F0 Λ Z) F' := by
   ext F''
   constructor
@@ -687,7 +702,7 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : Formalism.BasicNotions.D7} {T : D.host.E} {F0 : FlagG (VS D) D.R.rS T}
 
-theorem witt_trans {T' : D.host.E} (F' F'' : LFlag (VS D) D.R.rS T') (hzt' : F'.zt = F'.fl.z)
+theorem witt_trans {T' : D.host.E} (F' F'' : LFlag (D.sp.Y 0) D.R.rS T') (hzt' : F'.zt = F'.fl.z)
     (hzt'' : F''.zt = F''.fl.z) (hZ : ZhatL (lf D F0) F'' = ZhatL (lf D F0) F')
     (hG : GZ T T' (ZhatL (lf D F0) F') ≠ 0) : ∃ g : G0 F0, g • F'' = F' := by
   have hG'' : GZ T T' (ZhatL (lf D F0) F'') ≠ 0 := by rw [hZ]; exact hG
@@ -710,7 +725,8 @@ theorem witt_trans {T' : D.host.E} (F' F'' : LFlag (VS D) D.R.rS T') (hzt' : F'.
     have hx' : ∑ i, bv.repr x i • w i = 0 := by
       rw [← hx]
       conv_rhs => rw [← bv.sum_repr x]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [map_smul, hfb]
     have hc := Fintype.linearIndependent_iff.1 hlw _ hx'
     rw [Submodule.mem_bot]
@@ -728,11 +744,13 @@ theorem witt_trans {T' : D.host.E} (F' F'' : LFlag (VS D) D.R.rS T') (hzt' : F'.
       intro x
       calc f x = f (∑ i, bv.repr x i • bv i) := by rw [bv.sum_repr]
         _ = ∑ i, bv.repr x i • w i := by
-            rw [map_sum]
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [map_sum]
             simp only [map_smul, hfb]
     intro x y
     rw [hfx, hfx, hcx, hcx]
-    simp only [map_sum, LinearMap.map_smulₛₗ₂, map_smul, LinearMap.sum_apply, hgram]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.map_smulₛₗ₂, map_smul, LinearMap.sum_apply, hgram]
   obtain ⟨g, hgi, hgf⟩ := _root_.witt_extension_theorem D.host.E (VS D).V (VS D).hT
     (fun x y => (VS D).herm.eq x y) (fun x hx => (VS D).nondeg.1 x hx) _ f hinj hiso
   have hgv : ∀ i, g (v i) = w i := by
@@ -753,12 +771,12 @@ theorem witt_trans {T' : D.host.E} (F' F'' : LFlag (VS D) D.R.rS T') (hzt' : F'.
     simp only [hv, hw, PairSpanDimension.fam, Sum.elim_inr, FlagG.fvec, Fin.snoc_last] at this
     rw [hzt'', hzt', this]
 
-theorem mem_stabilizer_of_isometry_fix {T' : D.host.E} (F' : LFlag (VS D) D.R.rS T') {g : (VS D).V ≃ₗ[D.host.E] (VS D).V}
+theorem mem_stabilizer_of_isometry_fix {T' : D.host.E} (F' : LFlag (D.sp.Y 0) D.R.rS T') {g : (VS D).V ≃ₗ[D.host.E] (VS D).V}
     (hg : g ∈ isomFix (VS D).hT (UPair D F0 F')) : g ∈ G0 F0 := by
   obtain ⟨hi, hu⟩ := hg
   exact ⟨hi, fun a => hu _ (Submodule.subset_span (Or.inl ⟨a, rfl⟩))⟩
 
-theorem isomFix_iff {T' : D.host.E} (F' : LFlag (VS D) D.R.rS T') (hzt : F'.zt = F'.fl.z) (g : G0 F0) :
+theorem isomFix_iff {T' : D.host.E} (F' : LFlag (D.sp.Y 0) D.R.rS T') (hzt : F'.zt = F'.fl.z) (g : G0 F0) :
     (g : (VS D).V ≃ₗ[D.host.E] (VS D).V) ∈ isomFix (VS D).hT (UPair D F0 F') ↔ g • F' = F' := by
   constructor
   · rintro ⟨-, hu⟩
@@ -884,7 +902,7 @@ theorem class_red (u : D.what₂.Word) (F0 : FlagG (VS D) D.R.rS (Tn u)) {Λ Λ'
       obtain ⟨a, rfl⟩ := hy
       exact hP0e a
     | zero => simp
-    | add y z _ _ hy hz => rw [map_add, hy, hz]
+    | add y z _ _ hy hz => rw [map_add (f := _), hy, hz]
     | smul c y _ hy => rw [map_smul, hy]
   have hran : ∀ y, P0 y ∈ F0.X := fun y => by
     rw [retr_apply]
@@ -996,14 +1014,14 @@ theorem gmap_mul (g h : G0 F0) (M : Submodule (𝓞 D.host.E) (VS D).V) :
 
 end StabilizerQuotient
 
-open StabilizerQuotient in
 
+open StabilizerQuotient in
 theorem rowsGroupoid_of (hM : MMChar) : RowsGroupoid := by
   intro D u u' hT F0 what₂ hrows Z F' hzt hZ hP s hs
   have hG : GZ (Tn u) (Tn u') (ZhatL (lf D F0) F') ≠ 0 := by
     rw [hZ]
     exact PairSpanDimension.totPos_ne_zero hP
-  have hMF : ∀ F'' : LFlag (VS D) D.R.rS (Tn u'), F''.zt = F''.fl.z → ZhatL (lf D F0) F'' = Z →
+  have hMF : ∀ F'' : LFlag (D.sp.Y 0) D.R.rS (Tn u'), F''.zt = F''.fl.z → ZhatL (lf D F0) F'' = Z →
       ∀ Λ, (IsRowLat D F0 Λ ∧ F'' ∈ EZ (Tn u') F0 Λ Z) ↔
         Λ ∈ GlueSet (VS D).hT (UPair D F0 F'') (MMof D F0 F'') :=
     fun F'' h1 h2 => (hM D u u' hT F0 what₂ hrows Z F'' h1 h2 hP).2

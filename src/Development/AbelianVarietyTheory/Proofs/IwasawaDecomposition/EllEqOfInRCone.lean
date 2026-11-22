@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StarDepthToFunNonneg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StarDepthToFunNonneg
+
+@[expose] public section
+
 open NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.TorRef GlobalTheory.PolFan GlobalTheory.PolCell
 
 namespace GlobalTheory.PolFan.StarKey
@@ -20,8 +25,5 @@ theorem ell_eq_of_inRCone {O : Type} [CommRing O] {bar : O → O} {φ : InvFun O
   have h4 : (ℓ β : ℝ) = ∑ i, c i * ℓ (γ i) := by simp at h2; linarith
   rw [h4, h3, Finset.mul_sum]
   exact Finset.sum_congr rfl fun i _ => by rw [hsw.1 i]; ring
-
-example : InRCone ![mulForm] ((3 : ℤ) • mulForm) :=
-  ⟨![3], fun i => by fin_cases i; norm_num, LinearMap.ext₂ fun a b => by simp⟩
 
 end GlobalTheory.PolFan.StarKey

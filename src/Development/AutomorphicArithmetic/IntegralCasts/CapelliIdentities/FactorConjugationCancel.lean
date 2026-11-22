@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -35,10 +39,10 @@ theorem UpperTheory.Reformulated.B.FactorConjugationCancel.map_eq_of_conj :
   have ms : Measurable (⇑s : G → G) := s.continuous.measurable
   have hm' : ∀ r : NNReal, Measure.map (⇑m : G → G) (r • ν) = (r * a) • ν := by
     intro r
-    rw [Measure.map_smul, ha, smul_smul]
+    rw [Measure.map_smul r mm.aemeasurable, ha, smul_smul]
   have hs' : ∀ r : NNReal, Measure.map (⇑s : G → G) (r • ν) = (r * b) • ν := by
     intro r
-    rw [Measure.map_smul, hb, smul_smul]
+    rw [Measure.map_smul r ms.aemeasurable, hb, smul_smul]
   have hbb : b * b = 1 := by
     apply UpperTheory.Reformulated.B.FactorConjugationCancel.smul_cancel ν
     rw [← hs', ← hb, Measure.map_map ms ms, one_smul]

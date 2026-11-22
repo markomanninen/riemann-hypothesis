@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ScalarRelationReflexive.MapMemSupThree
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ScalarRelationReflexive.MapMemSupThree
+
+@[expose] public section
 
 noncomputable section
 
@@ -148,7 +152,7 @@ theorem sg_move (h : DC Λ F y y' n m) (a b : S.V) (al al' : E) :
       simpa using (mem_XLam.mp (mz_sub h)).2
     · have e2 : a - b = n (n.symm a - n.symm b) := by simp
       rw [e2, e, h.hzt]
-      simp only [map_add, map_sub, map_smul, smul_sub]
+      simp only [map_add (f := _), map_sub, map_smul, smul_sub]
       abel
   · rintro ⟨U, hU, U', hU', e⟩
     refine ⟨n.symm U + al • (n.symm F.zt - F.zt), ?_, n.symm U' + al' • (m y.zt - y.zt), ?_, ?_⟩
@@ -156,7 +160,7 @@ theorem sg_move (h : DC Λ F y y' n m) (a b : S.V) (al al' : E) :
     · exact add_mem ((mem_X' h).mp hU') (Submodule.smul_mem _ _ (mem_XLam.mp (mz_sub h)).2)
     · have e2 : n.symm a - n.symm b = n.symm (a - b) := by simp
       rw [e2, e, h.hzt]
-      simp only [map_add, map_sub, map_smul, LinearEquiv.symm_apply_apply, smul_sub]
+      simp only [map_add (f := _), map_sub, map_smul, LinearEquiv.symm_apply_apply, smul_sub]
       abel
 
 end Move
@@ -175,7 +179,7 @@ theorem orth_beta {T' : E} {β : S.V ≃ₗ[E] S.V} (hβ : β ∈ Formalism.Herm
   (orth_transport hβ (U := Xsp x) (U' := Xsp y)
     (fun w => by rw [← hX, Submodule.mem_map_equiv]) (β v)).mpr (by simpa using hv)
 
-theorem scalRel_move (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsLattice E Λ) (g k : ℕ) {T T' : E}
+theorem scalRel_move (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsFullLattice E Λ) (g k : ℕ) {T T' : E}
     (F : LFlag S r T) (x y y' : LFlag S r T') (n m : S.V ≃ₗ[E] S.V) (h : DC Λ F y y' n m)
     (hs : PI.ScalRelRepFree.ScalRel Λ g k F x y) : PI.ScalRelRepFree.ScalRel Λ g k F x y' := by
   obtain ⟨β, ⟨hAut, hfl, hz, hI⟩, hs0, hsc⟩ := hs

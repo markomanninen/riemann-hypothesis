@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CentralEig2
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ProjectiveAutomorphicHecke.CentralEig2
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.DefU GlobalTheory.PRep Formalism.L2.Host GlobalTheory.HeckeGal UpperTheory.Gal.CertificateRingHomMap
 open GlobalTheory.LFun (KGL IsSatVecGL heckeVec satEig)
 open GlobalTheory.CongL (SatU)
@@ -16,7 +21,7 @@ private theorem rop_single {H V : Type} [Group H] [AddCommGroup V] [Module ℂ V
 private theorem rop_sum {H V Y : Type} [Group H] [AddCommGroup V] [Module ℂ V] (R : Finset Y) (e : Y → H) (Φ : H → V) (g : H) :
     rop (∑ y ∈ R, Finsupp.single (e y) 1) Φ g = ∑ y ∈ R, Φ (g * e y) := by
   unfold rop
-  rw [← Finsupp.sum_finset_sum_index (by simp) (by simp [add_smul])]
+  rw [Finsupp.sum_finsetSum _ _ _ (by simp) (by simp [add_smul])]
   exact Finset.sum_congr rfl fun y _ => by rw [Finsupp.sum_single_index (by simp), one_smul]
 
 private structure HI {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} (U : Submodule ℂ (UA E n → ℂ)) (S : Finset (Plc E)) where
@@ -64,7 +69,7 @@ theorem pFormGU_of (hExt : ExtEig2) (hCl : ClassFin) (hXi : XiZeta) (hKer : KerF
       simp only [Kw', Function.update_self]
       exact (hS.opn w hw).isOpenMap_subtype_val _ hχ
     · simp only [Kw', Function.update_of_ne e]; exact hS.opn w hw
-  have hfix' : ∀ u : finU E n, ofU u ∈ lev S Kw' → algRep W u f = f := fun u hu => by
+  have hfix' : ∀ u : finU (E := E) (n := n), ofU u ∈ lev S Kw' → algRep W u f = f := fun u hu => by
     obtain ⟨a, h, e⟩ := (mem' _).1 hu
     have := hfix u a h
     rwa [show χ ⟨cLoc w₀ u.1, h⟩ = 1 from e, Units.val_one, one_smul] at this
@@ -88,7 +93,7 @@ theorem pFormGU_of (hExt : ExtEig2) (hCl : ClassFin) (hXi : XiZeta) (hKer : KerF
       rintro (y | a) u hu
       · obtain rfl := Finset.mem_singleton.1 (Finsupp.support_single_subset hu)
         rfl
-      · obtain ⟨y, -, hy⟩ := Finsupp.mem_support_finset_sum u hu
+      · obtain ⟨y, -, hy⟩ := Finsupp.mem_support_finsetSum u hu
         obtain rfl := Finset.mem_singleton.1 (Finsupp.support_single_subset hy)
         rfl)
     (by
@@ -131,7 +136,8 @@ theorem pFormGU_of (hExt : ExtEig2) (hCl : ClassFin) (hXi : XiZeta) (hKer : KerF
         let L : algForms W →ₗ[ℂ] Module.Dual ℂ W.Sp :=
           { toFun := fun F => algForms.val F u.1, map_add' := fun _ _ => rfl, map_smul' := fun _ _ => rfl }
         have e3 := congrArg L e
-        rw [map_sum, map_smul] at e3
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, map_smul] at e3
         rw [hφu]
         exact e3)
   refine ⟨Φ, ψ, ⟨hΦ0, hΦ.1, fun k hk h g => ?_, fun w hw h1 h2 B hB => ⟨hΦ0, ?_, (hsv w hw h1 h2 B hB).2.2.1, fun p hp i hi => ?_⟩⟩, hψ.1⟩

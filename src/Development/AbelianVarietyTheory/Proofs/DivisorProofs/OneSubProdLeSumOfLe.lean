@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped BigOperators Matrix
 open Polynomial
 
@@ -16,14 +21,14 @@ private lemma one_sub_prod_le_sum_one_sub_of_mem_Icc {ι : Type*} (s : Finset ι
     rw [Finset.prod_insert ha, Finset.sum_insert ha]
     have h0' : ∀ i ∈ s, 0 ≤ f i := fun i hi => h0 i (Finset.mem_insert_of_mem hi)
     have h1' : ∀ i ∈ s, f i ≤ 1 := fun i hi => h1 i (Finset.mem_insert_of_mem hi)
-    have hP1 : ∏ i ∈ s, f i ≤ 1 := Finset.prod_le_one h0' h1'
+    have hP1 : ∏ i ∈ s, f i ≤ 1 := Finset.prod_le_one₀ h0' h1'
     have ha1 := h1 a (Finset.mem_insert_self a s)
     have key := ih h0' h1'
     nlinarith [mul_nonneg (sub_nonneg.2 hP1) (sub_nonneg.2 ha1)]
 
+
 open scoped BigOperators Matrix in
 open Polynomial in
-
 theorem _root_.GlobalTheory.degree_ratio_shift_bound : ∀ (Pl : Type) [Fintype Pl] (N p kc : ℕ) (u1 : Pl → ℕ → ℝ) (g1 w : Pl → ℝ) (T : ℝ), kc ≤ p → p ≤ N → 0 < T → (∀ τ, 0 < w τ) → (∀ τ, 3 * (N : ℝ) < g1 τ) → (∀ τ i l, i < l → l < N → u1 τ l < u1 τ i) → (∀ τ i l, i < p → p ≤ l → l < N → g1 τ ≤ u1 τ i - u1 τ l) → (∀ τ i l, i < kc → p ≤ l → l < N → w τ / (2 * T) ≤ u1 τ i - u1 τ l) → let u' : Pl → ℕ → ℝ := fun τ i => if i < p then u1 τ i else u1 τ i + 3 * N; let deg : (Pl → ℕ → ℝ) → ℝ := fun v => ∏ τ, ∏ l ∈ Finset.range N, ∏ i ∈ Finset.range l, (v τ i - v τ l); 0 < deg u' ∧ 0 ≤ 1 - deg u' / deg u1 ∧ 1 - deg u' / deg u1 ≤ 3 * N * ∑ τ, (((p - kc : ℕ) : ℝ) * ((N - p : ℕ) : ℝ) / g1 τ + 2 * kc * ((N - p : ℕ) : ℝ) * T / w τ) := by
   intro Pl inst N p kc u1 g1 w T hkc hpN hT hw hg hmono hgap hwgap u' deg
   have hN : (0 : ℝ) ≤ 3 * N := by positivity
@@ -128,15 +133,15 @@ theorem _root_.GlobalTheory.degree_ratio_shift_bound : ∀ (Pl : Type) [Fintype 
   have hQ : ∀ τ l, l ∈ Finset.range N →
       0 < ∏ i ∈ Finset.range l, F τ l i ∧ ∏ i ∈ Finset.range l, F τ l i ≤ 1 := fun τ l hl =>
     ⟨Finset.prod_pos fun i hi => (hF01 τ l i hl hi).1,
-      Finset.prod_le_one (fun i hi => (hF01 τ l i hl hi).1.le) fun i hi => (hF01 τ l i hl hi).2⟩
+      Finset.prod_le_one₀ (fun i hi => (hF01 τ l i hl hi).1.le) fun i hi => (hF01 τ l i hl hi).2⟩
   have hR : ∀ τ, 0 < ∏ l ∈ Finset.range N, ∏ i ∈ Finset.range l, F τ l i ∧
       ∏ l ∈ Finset.range N, ∏ i ∈ Finset.range l, F τ l i ≤ 1 := fun τ =>
     ⟨Finset.prod_pos fun l hl => (hQ τ l hl).1,
-      Finset.prod_le_one (fun l hl => (hQ τ l hl).1.le) fun l hl => (hQ τ l hl).2⟩
+      Finset.prod_le_one₀ (fun l hl => (hQ τ l hl).1.le) fun l hl => (hQ τ l hl).2⟩
   have hP0 : 0 < ∏ τ, ∏ l ∈ Finset.range N, ∏ i ∈ Finset.range l, F τ l i :=
     Finset.prod_pos fun τ _ => (hR τ).1
   have hP1 : ∏ τ, ∏ l ∈ Finset.range N, ∏ i ∈ Finset.range l, F τ l i ≤ 1 :=
-    Finset.prod_le_one (fun τ _ => (hR τ).1.le) fun τ _ => (hR τ).2
+    Finset.prod_le_one₀ (fun τ _ => (hR τ).1.le) fun τ _ => (hR τ).2
   have hdeg1 : 0 < deg u1 := by
     simp only [deg]
     exact Finset.prod_pos fun τ _ => Finset.prod_pos fun l hl =>

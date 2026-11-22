@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RowLatticeMassHolds
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.RowLatticeMassHolds
+
+@[expose] public section
 
 open NumberField Module Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.BasicNotions Formalism.L2.SG.CntLocal
 open Classical
@@ -53,7 +57,8 @@ theorem exists_u (sE : WbQ D F0 →ₗ[D.host.E] perpS (VS D) F0.X) :
     apply hWb_sepR D F0 y
     intro a
     rw [← b.sum_repr a]
-    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, hy',
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, hy',
       smul_zero, Finset.sum_const_zero]
   have hMsurj : Function.Surjective M :=
     (LinearMap.injective_iff_surjective_of_finrank_eq_finrank (by simp)).1 hMinj
@@ -69,7 +74,8 @@ theorem exists_u (sE : WbQ D F0 →ₗ[D.host.E] perpS (VS D) F0.X) :
     exact (congrFun h i).symm
   simp only [LinearMap.comp_apply, LinearEquiv.coe_coe]
   rw [← b.sum_repr a]
-  simp only [map_sum, LinearMap.sum_apply, Submodule.coe_sum, LinearMap.map_smulₛₗ,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, Submodule.coe_sum, LinearMap.map_smulₛₗ,
     LinearMap.smul_apply, map_smul, Submodule.coe_smul, key]
 
 end Form
@@ -114,7 +120,7 @@ theorem u_X (hu : ∀ a v, hWb D F0 a (u v) = (VS D).hT (sE a : (VS D).V) v) {x 
 theorem u_gF (hsE : ∀ a, (Submodule.Quotient.mk (sE a) : WbQ D F0) = a)
     (hu : ∀ a v, hWb D F0 a (u v) = (VS D).hT (sE a : (VS D).V) v) (σ : WbQ D F0 ≃ₗ[D.host.E] WbQ D F0)
     (v : (VS D).V) : u (gF D F0 sE u σ v) = σ (u v) := by
-  rw [gF_apply, map_add, u_sE hsE hu]
+  rw [gF_apply, map_add (f := _), u_sE hsE hu]
   abel
 
 theorem gF_symm (hsE : ∀ a, (Submodule.Quotient.mk (sE a) : WbQ D F0) = a)
@@ -151,7 +157,7 @@ theorem gF_isom (hsE : ∀ a, (Submodule.Quotient.mk (sE a) : WbQ D F0) = a)
   have h3 : ∀ c c', (VS D).hT (sE c : (VS D).V) (sE c' : (VS D).V) = hWb D F0 c c' := by
     intro c c'
     rw [h2, u_sE hsE hu]
-  simp only [map_add, LinearMap.add_apply]
+  simp only [map_add (f := _), LinearMap.add_apply]
   rw [h3, h1, h2]
   simp only [map_sub, LinearMap.sub_apply, hσ]
   ring

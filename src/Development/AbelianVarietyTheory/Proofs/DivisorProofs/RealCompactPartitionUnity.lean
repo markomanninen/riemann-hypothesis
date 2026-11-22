@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory Filter Topology
 open scoped SchwartzMap ContDiff
 
@@ -71,7 +76,7 @@ def latPt (e : V ≃L[ℝ] (Fin n → ℝ)) (j : Fin n → ℤ) : V := e.symm (f
 theorem bumpProd_contDiff (e : V ≃L[ℝ] (Fin n → ℝ)) : ContDiff ℝ ∞ (bumpProd e) := by
   unfold bumpProd
   refine contDiff_prod fun i _ => bump_contDiff.comp ?_
-  exact (contDiff_apply ℝ ℝ i).comp e.contDiff
+  exact (contDiff_apply ℝ (fun _ => ℝ) i).comp e.contDiff
 
 theorem bumpProd_compact (e : V ≃L[ℝ] (Fin n → ℝ)) : HasCompactSupport (bumpProd e) := by
   have hK : IsCompact (Set.univ.pi fun _ : Fin n => Set.Icc (-1 : ℝ) 1) :=

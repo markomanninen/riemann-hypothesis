@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopRatio
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TopRatio
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBL
 

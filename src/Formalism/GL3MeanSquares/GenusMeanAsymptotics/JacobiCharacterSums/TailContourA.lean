@@ -1,6 +1,10 @@
-import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.PerronChi
-import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.RectShiftChi
-import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.IntegralEqIntervalIntegralAddCompl
+module
+
+public import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.PerronChi
+public import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.RectShiftChi
+public import Formalism.ZeroFreeRegion.ZetaLogDerivativeBounds.IntegralEqIntervalIntegralAddCompl
+
+@[expose] public section
 
 open Complex MeasureTheory
 

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.IsWHLetterMinorK
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.IsWHLetterMinorK
+
+@[expose] public section
 
 noncomputable section
 

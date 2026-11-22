@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTieUpFBrPl
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieUpFBrPl
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -20,7 +24,8 @@ theorem char_indep (χ : ι' → A →+* L) (hχ : Function.Injective χ) (φ : 
     have hx : ∀ j, χ j x = ∑ i, φ (r i) * χ j (b i) := by
       intro j
       have h1 : χ j (e * x) = χ j x := by rw [map_mul, he, one_mul]
-      rw [← h1, hr, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← h1, hr, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [Algebra.smul_def, map_mul, hφ]
     calc ∑ j, c j * χ j x = ∑ j, ∑ i, c j * (φ (r i) * χ j (b i)) := by
@@ -80,27 +85,6 @@ theorem det_ne_zero_of_chars [DecidableEq ι] (χ : ι → A →+* L) (hχ : Fun
 end Chars
 
 section Label
-
-theorem exists_jj (d : ℕ) [NeZero d] : ∃ jj : ZMod d ≃ Fin d, ∀ a, jj (a + 1) = jj a + 1 := ⟨(ZMod.finEquiv d).symm.toEquiv, fun a => by
-  first
-  | simp
-  | (show (ZMod.finEquiv d).symm (a + 1) = (ZMod.finEquiv d).symm a + 1
-     rw [map_add, map_one])⟩
-
-theorem assemble {X : Type} {d : ℕ} [NeZero d] (n : ℕ) (hn : n = d) (Emb : Set X) (em : ZMod d → X)
-    (hinj : Function.Injective em) (hmem : ∀ a, em a ∈ Emb) (hsurj : ∀ τ ∈ Emb, ∃ a, τ = em a) :
-    ∃ (_ : NeZero n) (t : Fin n ≃ Emb) (jj : ZMod d ≃ Fin n),
-      (∀ a, jj (a + 1) = jj a + 1) ∧ ∀ a, ((t (jj a) : Emb) : X) = em a := by
-  subst n
-  obtain ⟨jj, hjj⟩ := exists_jj d
-  let e : ZMod d ≃ Emb := Equiv.ofBijective (fun a => (⟨em a, hmem a⟩ : Emb))
-    ⟨fun a a' h => hinj (congrArg Subtype.val h), fun τ => by
-      obtain ⟨a, ha⟩ := hsurj τ τ.2
-      exact ⟨a, Subtype.ext ha.symm⟩⟩
-  refine ⟨inferInstance, jj.symm.trans e, jj, hjj, fun a => ?_⟩
-  show ((e (jj.symm (jj a)) : Emb) : X) = em a
-  rw [Equiv.symm_apply_apply]
-  rfl
 
 end Label
 

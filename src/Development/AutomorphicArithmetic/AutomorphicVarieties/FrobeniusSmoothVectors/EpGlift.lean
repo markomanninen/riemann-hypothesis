@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpresGr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.GrMIff
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EpresGr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.GrMIff
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -88,7 +92,7 @@ private theorem grM_gl_inv_of_grM {O R : Type} [CommRing O] [CommRing R] [Algebr
 private theorem av_mem_evp_of_involutive {O R : Type} [CommRing O] [CommRing R] [Algebra O R] (h : O) (σ' : R →ₐ[O] R)
     (hinv : ∀ y, σ' (σ' y) = y) (j : ZMod 2) (x : R) : av h σ' j x ∈ evp σ' j := by
   show σ' (av h σ' j x) = sg R j * av h σ' j x
-  simp only [av, map_smul, map_add, map_mul, hinv, sg_map σ' j]
+  simp only [av, map_smul, map_add (f := _), map_mul, hinv, sg_map σ' j]
   rw [mul_smul_comm]
   congr 1
   linear_combination (-(σ' x)) * sg_mul_self_eq_one (R := R) j
@@ -97,7 +101,7 @@ private theorem map_av_eq_map_of_map_mem_evp {O C' C : Type} [CommRing O] [CommR
     (p : C' →ₐ[O] C) (σ' : C' →ₐ[O] C') (σ : C →ₐ[O] C) (hcomm : ∀ y, p (σ' y) = σ (p y)) (h : O) (hh : h * 2 = 1)
     (j : ZMod 2) (x : C') (hx : p x ∈ evp σ j) : p (av h σ' j x) = p x := by
   have hx' : σ (p x) = sg C j * p x := hx
-  simp only [av, map_smul, map_add, map_mul, hcomm, hx', sg_map p j]
+  simp only [av, map_smul, map_add (f := _), map_mul, hcomm, hx', sg_map p j]
   rw [Algebra.smul_def]
   have h2 : algebraMap O C h * 2 = 1 := by
     rw [← map_ofNat (algebraMap O C) 2, ← map_mul, hh, map_one]

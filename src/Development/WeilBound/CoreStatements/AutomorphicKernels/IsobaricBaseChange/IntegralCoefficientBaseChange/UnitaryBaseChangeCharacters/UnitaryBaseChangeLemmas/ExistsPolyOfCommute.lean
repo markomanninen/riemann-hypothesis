@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StableTwistedOrbitalUnitAlmostAll
-import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.IntegralUnitaryConjugacyLattice
-import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.CharpolyDvdOfAevalEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StableTwistedOrbitalUnitAlmostAll
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.IntegralUnitaryConjugacyLattice
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.CharpolyDvdOfAevalEqZero
+
+@[expose] public section
 
 open Polynomial Matrix Formalism.UG
 
@@ -57,7 +61,18 @@ theorem isCsr_charpoly {R : Type} [CommRing R] (s : R →+* R) {n : ℕ} (M J Ji
 
 theorem exists_poly_of_commute {O : Type} [CommRing O] [IsLocalRing O] {n : ℕ} (M x : Matrix (Fin n) (Fin n) O)
     (hs : M.charpoly.Separable) (hc : x * M = M * x) : ∃ p : O[X], x = aeval M p := by
-  obtain ⟨v, hv⟩ := GlobalTheory.BCT.UnitStable.exists_cyclic M hs
+  have cyclic : ∃ v, IsUnit (GlobalTheory.ClassParam.krylov M v) := by
+    haveI : Subsingleton (MaximalSpectrum O) := ⟨fun a b =>
+      MaximalSpectrum.ext ((IsLocalRing.eq_maximalIdeal a.isMaximal).trans
+        (IsLocalRing.eq_maximalIdeal b.isMaximal).symm)⟩
+    obtain ⟨w, hw⟩ := GlobalTheory.RegSS.Semilocal.cyclicSemilocal_of_cyclicField GlobalTheory.RegSS.cyclicField _ (Fin n) M hs
+    let σ : Equiv.Perm (Fin n) := (Fintype.equivFin (Fin n)).trans (finCongr (Fintype.card_fin n))
+    have hk : GlobalTheory.RegSS.krylov M w = (GlobalTheory.ClassParam.krylov M w).submatrix id σ := by
+      ext i j
+      simp [GlobalTheory.RegSS.krylov, GlobalTheory.ClassParam.krylov, σ]
+    rw [hk, Matrix.det_permute'] at hw
+    exact ⟨w, (Matrix.isUnit_iff_isUnit_det _).2 (isUnit_of_mul_isUnit_right hw)⟩
+  obtain ⟨v, hv⟩ := cyclic
   set K := GlobalTheory.ClassParam.krylov M v with hK
   have key : ∀ r : Matrix (Fin n) (Fin n) O, r * M = M * r →
       r * K = GlobalTheory.ClassParam.krylov M (r *ᵥ v) := by
@@ -71,7 +86,8 @@ theorem exists_poly_of_commute {O : Type} [CommRing O] [IsLocalRing O] {n : ℕ}
   set c : Fin n → O := K⁻¹ *ᵥ (x *ᵥ v) with hcdef
   let p : O[X] := ∑ i : Fin n, C (c i) * X ^ (i : ℕ)
   have hp : aeval M p = ∑ i : Fin n, c i • M ^ (i : ℕ) := by
-    simp only [p, map_sum, map_mul, aeval_C, aeval_X_pow, Algebra.smul_def]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [p, map_sum, map_mul, aeval_C, aeval_X_pow, Algebra.smul_def]
   have hpv : aeval M p *ᵥ v = x *ᵥ v := by
     have h1 : aeval M p *ᵥ v = K *ᵥ c := by
       rw [hp]

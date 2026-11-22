@@ -1,5 +1,9 @@
-import Formalism.SmithDeterminants.DefsGram
-import Formalism.SmithDeterminants.DivisibilityChains.SmithExists
+module
+
+public import Formalism.SmithDeterminants.StatementGram
+public import Formalism.SmithDeterminants.DivisibilityChains.SmithExists
+
+@[expose] public section
 
 namespace Formalism.A
 

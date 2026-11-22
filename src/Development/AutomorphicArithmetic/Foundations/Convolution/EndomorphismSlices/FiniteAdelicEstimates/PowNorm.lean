@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.SphComm2
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.EndomorphismSlices.SphComm2
+
+@[expose] public section
 
 theorem UpperTheory.Zero.ConvolutionTheory.EB.powNorm :
     UpperTheory.Zero.ConvolutionTheory.EB.PowNorm := by

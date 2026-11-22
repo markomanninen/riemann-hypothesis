@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory Complex
 open scoped FourierTransform RealInnerProductSpace SchwartzMap Matrix
 
@@ -40,8 +45,10 @@ theorem hasTemperateGrowth_chirp (k : ℝ) : Function.HasTemperateGrowth (chirp 
   have h2 := hasTemperateGrowth_expI.comp h1
   convert h2 using 1
   funext u
-  simp only [chirp, Function.comp]
-  congr 1; push_cast; ring
+  simp only [chirp, Function.comp_apply]
+  congr 1
+  push_cast
+  ring
 
 def chirpS (k : ℝ) (f : 𝓢(V, ℂ)) : 𝓢(V, ℂ) := SchwartzMap.smulLeftCLM ℂ (chirp k) f
 

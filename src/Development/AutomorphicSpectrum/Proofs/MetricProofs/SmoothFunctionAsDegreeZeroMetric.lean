@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PHermExtend
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedB
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PHermExtend
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedB
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ContDiff
 
@@ -15,8 +20,6 @@ namespace GlobalTheory.CompanionTheory.Ar.PB
 
 open GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped Manifold
-
-local notation "𝕟" => ((⊤ : ℕ∞) : WithTop ℕ∞)
 
 namespace SmoothExt
 
@@ -45,11 +48,11 @@ theorem deproj_proj {p : (k : K) → ι k} {z : (Σ k, ι k) → ℂ} (hz : ∀ 
   field_simp
 
 theorem contDiffAt_deproj (p : (k : K) → ι k) {M : (Σ k, ι k × ι k) → ℂ}
-    (hM : ∀ k, M ⟨k, (p k, p k)⟩ ≠ 0) : ContDiffAt ℝ 𝕟 (deproj p) M := by
+    (hM : ∀ k, M ⟨k, (p k, p k)⟩ ≠ 0) : ContDiffAt ℝ ∞ (deproj p) M := by
   refine contDiffAt_pi.2 fun q => ?_
   simp only [deproj, div_eq_mul_inv]
-  exact (contDiff_apply ℝ ℂ _).contDiffAt.mul
-    (ContDiffAt.inv (contDiff_apply ℝ ℂ _).contDiffAt (hM q.1))
+  exact (contDiff_apply ℝ (fun _ => ℂ) _).contDiffAt.mul
+    (ContDiffAt.inv (contDiff_apply ℝ (fun _ => ℂ) _).contDiffAt (hM q.1))
 
 theorem proj_eq_of_sameOrbit {z z' : (Σ k, ι k) → ℂ} (h : SameOrbit z z') :
     HermExtend.proj z = HermExtend.proj z' := by
@@ -88,16 +91,16 @@ theorem exists_localLeftInverse {E F : Type} [NormedAddCommGroup E] [NormedSpace
 theorem exists_ext_of_local {X : Type} [TopologicalSpace X] [CompactSpace X] {F : Type}
     [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F] {g : X → F}
     (hg : Continuous g) (hinj : Function.Injective g) {u : X → ℝ}
-    (hloc : ∀ x₀, ∃ f : F → ℝ, (∀ᶠ w in 𝓝 (g x₀), ContDiffAt ℝ 𝕟 f w) ∧
+    (hloc : ∀ x₀, ∃ f : F → ℝ, (∀ᶠ w in 𝓝 (g x₀), ContDiffAt ℝ ∞ f w) ∧
       ∀ᶠ y in 𝓝 x₀, f (g y) = u y) :
-    ∃ v : F → ℝ, ContDiff ℝ 𝕟 v ∧ ∀ x, v (g x) = u x := by
+    ∃ v : F → ℝ, ContDiff ℝ ∞ v ∧ ∀ x, v (g x) = u x := by
   classical
   let t : F → Set ℝ := fun w => {v | ∀ x, g x = w → v = u x}
   have ht : ∀ w, Convex ℝ (t w) := by
     intro w a ha b hb s r hs hr hsr x hx
     show s • a + r • b = u x
     rw [ha x hx, hb x hx, ← add_smul, hsr, one_smul]
-  have Hloc : ∀ w, ∃ U ∈ 𝓝 w, ∃ f : F → ℝ, ContMDiffOn 𝓘(ℝ, F) 𝓘(ℝ, ℝ) 𝕟 f U ∧
+  have Hloc : ∀ w, ∃ U ∈ 𝓝 w, ∃ f : F → ℝ, ContMDiffOn 𝓘(ℝ, F) 𝓘(ℝ, ℝ) ∞ f U ∧
       ∀ y ∈ U, f y ∈ t y := by
     intro w
     by_cases hw : w ∈ Set.range g
@@ -109,9 +112,9 @@ theorem exists_ext_of_local {X : Type} [TopologicalSpace X] [CompactSpace X] {F 
       have hx : g x₀ ∉ g '' (interior {y | f (g y) = u y})ᶜ := by
         rintro ⟨y, hy, e⟩
         exact hy (hinj e ▸ hN)
-      refine ⟨{w | ContDiffAt ℝ 𝕟 f w} ∩ (g '' (interior {y | f (g y) = u y})ᶜ)ᶜ,
+      refine ⟨{w | ContDiffAt ℝ ∞ f w} ∩ (g '' (interior {y | f (g y) = u y})ᶜ)ᶜ,
         Filter.inter_mem hf (hC.isOpen_compl.mem_nhds hx), f, ?_, ?_⟩
-      · exact contMDiffOn_iff_contDiffOn.2 fun w hw => (show ContDiffAt ℝ 𝕟 f w from hw.1).contDiffWithinAt
+      · exact contMDiffOn_iff_contDiffOn.2 fun w hw => (show ContDiffAt ℝ ∞ f w from hw.1).contDiffWithinAt
       · rintro w ⟨_, hw⟩ x rfl
         have hxN : x ∈ interior {y | f (g y) = u y} := by
           by_contra h
@@ -138,8 +141,18 @@ theorem continuous_diag (R : AnLogRes P ⊤ D) :
   have hl : ContinuousAt (fun y => R.lift x₀ y) x₀ :=
     continuousAt_pi.2 fun q => (continuousOn_lift R x₀ q).continuousAt hU
   have hb : R.lift x₀ x₀ ∈ HermExtend.blocksNe ι := (R.mem x₀ x₀ (R.mem_U x₀)).1
-  have hp : ContinuousAt HermExtend.proj (R.lift x₀ x₀) :=
-    HermExtend.contDiffOn_proj.continuousOn.continuousAt (HermExtend.isOpen_blocksNe.mem_nhds hb)
+  have hp : ContinuousAt HermExtend.proj (R.lift x₀ x₀) := by
+    refine continuousAt_pi.2 fun q => ?_
+    unfold HermExtend.proj
+    have hconj : Continuous (fun z : (Σ k, ι k) → ℂ => starRingEnd ℂ (z ⟨q.1, q.2.2⟩)) :=
+      Complex.conjCLE.continuous.comp (continuous_apply _)
+    have hnorm : Continuous (fun z : (Σ k, ι k) → ℂ => HermExtend.blkSq z q.1) := by
+      unfold HermExtend.blkSq
+      exact continuous_finsetSum _ fun i _ => (continuous_apply (⟨q.1, i⟩ : Σ k, ι k)).norm.pow 2
+    refine ((continuous_apply _).continuousAt.mul hconj.continuousAt).mul
+      ((Complex.ofRealCLM.continuous.comp hnorm).continuousAt.inv₀ ?_)
+    change (HermExtend.blkSq (R.lift x₀ x₀) q.1 : ℂ) ≠ 0
+    exact_mod_cast (HermExtend.blkSq_pos hb q.1).ne'
   have hc : ContinuousAt (fun y => HermExtend.proj (R.lift x₀ y)) x₀ :=
     ContinuousAt.comp (f := fun y => R.lift x₀ y) hp hl
   refine hc.congr ?_
@@ -154,7 +167,7 @@ theorem injective_diag (R : AnLogRes P ⊤ D) :
 
 theorem local_ext (R : AnLogRes P ⊤ D) {u : R.X → ℝ} (hu : R.A.Smooth u) (x₀ : R.X) :
     ∃ f : ((Σ k, ι k × ι k) → ℂ) → ℝ,
-      (∀ᶠ w in 𝓝 (HermExtend.proj (R.lift x₀ x₀)), ContDiffAt ℝ 𝕟 f w) ∧
+      (∀ᶠ w in 𝓝 (HermExtend.proj (R.lift x₀ x₀)), ContDiffAt ℝ ∞ f w) ∧
       ∀ᶠ y in 𝓝 x₀, f (HermExtend.proj (R.lift y y)) = u y := by
   classical
   have hz₀ : R.lift x₀ x₀ ∈ mcPts P := R.mem x₀ x₀ (R.mem_U x₀)
@@ -192,12 +205,12 @@ theorem local_ext (R : AnLogRes P ⊤ D) {u : R.X → ℝ} (hu : R.A.Smooth u) (
       hr.self_of_nhds.continuousAt.tendsto.eventually_mem
         ((R.A.chart j).open_target.mem_nhds (by rw [hr0]; exact hy₀))
     filter_upwards [hopen, hcont.eventually hr, hcont.eventually htar] with w h1 h2 h3
-    have hus : ContDiffAt ℝ 𝕟 (u ∘ (R.A.chart j).symm) (r (deproj p w)) := by
+    have hus : ContDiffAt ℝ ∞ (u ∘ (R.A.chart j).symm) (r (deproj p w)) := by
       refine (hu j).contDiffAt ?_
       have : (R.A.chart j).target ∩ (R.A.chart j).symm ⁻¹' Set.univ = (R.A.chart j).target := by simp
       rw [this]
       exact (R.A.chart j).open_target.mem_nhds h3
-    have hrw : ContDiffAt ℝ 𝕟 r (deproj p w) := h2.contDiffAt.restrict_scalars ℝ
+    have hrw : ContDiffAt ℝ ∞ r (deproj p w) := h2.contDiffAt.restrict_scalars ℝ
     exact ContDiffAt.comp (g := u ∘ (R.A.chart j).symm) w hus (hrw.comp w (contDiffAt_deproj p h1))
   · have hl : ∀ᶠ y in 𝓝 x₀, r (affCoord p (R.lift x₀ ((R.A.chart j).symm (R.A.chart j y)))) =
         R.A.chart j y := ((R.A.chart j).continuousAt hj).tendsto.eventually hrl
@@ -225,7 +238,20 @@ theorem exists_hermLine_log_eq_of_smooth :
   · have e : HermExtend.proj (fun p : Σ k, ι k => c p.1 * z p) = HermExtend.proj z :=
       HermExtend.proj_smul c hc z
     simp [e]
-  · exact (hv.comp_contDiffOn HermExtend.contDiffOn_proj).exp
+  · have hproj : ContDiffOn ℝ ∞ (HermExtend.proj (ι := ι)) (HermExtend.blocksNe ι) := by
+      refine contDiffOn_pi.2 fun q => ?_
+      unfold HermExtend.proj
+      have hconj : ContDiff ℝ ∞ (fun z : (Σ k, ι k) → ℂ => starRingEnd ℂ (z ⟨q.1, q.2.2⟩)) :=
+        Complex.conjCLE.contDiff.comp (contDiff_apply ℝ (fun _ => ℂ) _)
+      have hnorm : ContDiff ℝ ∞ (fun z : (Σ k, ι k) → ℂ => HermExtend.blkSq z q.1) := by
+        unfold HermExtend.blkSq
+        exact ContDiff.sum fun i _ =>
+          (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ (fun _ => ℂ) (⟨q.1, i⟩ : Σ k, ι k))
+      refine ((contDiff_apply ℝ (fun _ => ℂ) _).mul hconj).contDiffOn.mul
+        ((Complex.ofRealCLM.contDiff.comp hnorm).contDiffOn.inv fun z hz => ?_)
+      change (HermExtend.blkSq z q.1 : ℂ) ≠ 0
+      exact_mod_cast (HermExtend.blkSq_pos hz q.1).ne'
+    exact (hv.comp_contDiffOn hproj).exp
   · show Real.log (Real.exp (v (HermExtend.proj (R.lift x x)))) = u x
     rw [Real.log_exp]
     exact hvu x

@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsGPull
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsHeckeMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTateSimilitudeHeckeTranslateGeometric
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommutatorPairingHeckeTranslateEqZeta
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilCommutatorPairingTorsionGeometricPoint
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateSimilitudePrimeToPPullbackSquare
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHarrisTaylorObjectPullbackBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorObjectPullbackComp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsGPull
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsHeckeMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTateSimilitudeHeckeTranslateGeometric
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommutatorPairingHeckeTranslateEqZeta
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilCommutatorPairingTorsionGeometricPoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TateSimilitudePrimeToPPullbackSquare
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHarrisTaylorObjectPullbackBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorObjectPullbackComp
+
+@[expose] public section
 
 noncomputable section
 
@@ -181,7 +185,7 @@ theorem tate_transl (G : GDatum) (g : G.La →ₗ[G.O] G.La) (c k N : ℕ) (cpos
       obtain ⟨w, hw⟩ := (ev_eq_iff I (n * k) (Nat.mul_pos hn kpos) _ _).1 hz
       obtain ⟨w', hw'⟩ := hg w
       refine ⟨z + w', ginj ?_⟩
-      rw [map_nsmul, map_add, hw', smul_add, smul_smul, ← sub_eq_iff_eq_add', hw]
+      rw [map_nsmul, map_add (f := _), hw', smul_add, smul_smul, ← sub_eq_iff_eq_add', hw]
     · rintro ⟨z, rfl⟩
       exact ⟨z, by rw [map_nsmul, hlev n hn, hlev N Npos]⟩
   have htor : ∀ n, 0 < n → ∀ y, (I.ev (n * k) (g y) ≫ ψ) ^ n = 1 := by
@@ -210,7 +214,7 @@ theorem tate_transl (G : GDatum) (g : G.La →ₗ[G.O] G.La) (c k N : ℕ) (cpos
       have e4 : w = g z + k • v := by rw [sub_sub, sub_eq_zero] at e2; exact e2
       obtain ⟨v', hv'⟩ := hg v
       refine ⟨z + v', ?_⟩
-      rw [map_add, hv', ← e4, hw, ha]
+      rw [map_add (f := _), hv', ← e4, hw, ha]
     · rintro ⟨y, rfl⟩
       exact htor n hn y
   have hiso2 : LBIso (ReciprocityTheory.ChartRestriction.G.Geo.Tor.lbPow (P.pull (lift (𝟙 A) (𝟙 A)).left) (k ^ 2 / c))
@@ -229,7 +233,7 @@ theorem tate_transl (G : GDatum) (g : G.La →ₗ[G.O] G.La) (c k N : ℕ) (cpos
       Category.comp_id]
   refine ⟨⟨I.ζ, I.ζ_prim, I.ζ_pow, fun n y => I.ev (n * k) (g y) ≫ ψ, ?_, ?_, ker', onto', ?_, ?_⟩, fun n y => rfl⟩
   · intro n y y'
-    rw [map_add, I.add, MonObj.mul_comp]
+    rw [map_add (f := _), I.add, MonObj.mul_comp]
   · intro n b' y
     rw [map_smul, I.lin, Category.assoc, hact, ← Category.assoc]
   · intro n m hn hm y
@@ -300,8 +304,8 @@ theorem isGPull_comp {b : Base D R} {gb : GBase D.toG R'} {N : ℕ} {S₁ S₂ S
   · exact (Category.assoc _ _ _).symm.trans ((congrArg (· ≫ ψ) (h₁.eta y)).trans
       ((Category.assoc _ _ _).trans ((congrArg (f ≫ ·) (heta y)).trans (Category.assoc _ _ _).symm)))
 
-open GlobalTheory.UPel.HT.Hecke in
 
+open GlobalTheory.UPel.HT.Hecke in
 theorem tate_hecke {b : Base D R} (g : D.La →ₗ[D.O] D.La) (c k N : ℕ) (cpos : 0 < c) (kpos : 0 < k) (Npos : 0 < N)
     (hEF : ∀ x y, D.EF (g x) (g y) = c * D.EF x y) (hg : ∀ x, ∃ y, g y = k • x) {S : Scheme.{0}} {s : S ⟶ Sp R}
     (o : Obj b (N * k) s) (o' : Obj b N s) (ψ : o.A ⟶ o'.A) (h : IsHecke g c k N o o' ψ)

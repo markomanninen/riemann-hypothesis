@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.GramCEqTranspose
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.GramCEqTranspose
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.IndefR.Arith
 

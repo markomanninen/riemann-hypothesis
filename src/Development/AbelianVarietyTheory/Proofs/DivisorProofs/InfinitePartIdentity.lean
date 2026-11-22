@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.TieTest
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.SizeAt
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotLeafMMZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteAndAwayFormula
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TieTest
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SlopeTestRemainingChoicesAlt
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.FormulaAt
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotLeafMMZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteAndAwayFormula
+
+@[expose] public section
 
 open Matrix NumberField
 open scoped Matrix.Norms.L2Operator
@@ -107,37 +112,6 @@ theorem bound_le {p : PtAt ex Csz} {CF C : ℝ} (d : FunIn p CF) (hC0 : 0 ≤ C)
 
 end Bound
 
-open GlobalTheory.BigTop GlobalTheory.BigTop.Fun GlobalTheory.SumSize in
-
-theorem ipa_tie : Bundle → SetAt → InfK → IPa @Comparison₂ := by
-  intro hB hS hI
-  obtain ⟨CF0, hI⟩ := hI
-  refine ⟨CF0, fun CF hCF => ?_⟩
-  obtain ⟨C0, hI⟩ := hI CF hCF
-  obtain ⟨e1, he1, hS⟩ := hS
-  refine ⟨e1, he1, fun eps h1 h2 => ?_⟩
-  obtain ⟨K, hK⟩ := hS eps h1 h2
-  refine ⟨K, fun Fm CH hc hL _ => ?_⟩
-  obtain ⟨x1, hx1⟩ := hK Fm CH hc hL
-  refine ⟨max C0 (max CF 0), fun C hC => ?_⟩
-  have hCF' : CF ≤ C := ((le_max_left _ _).trans (le_max_right _ _)).trans hC
-  have hC0 : 0 ≤ C := ((le_max_right _ _).trans (le_max_right _ _)).trans hC
-  obtain ⟨x0, hx0⟩ := hI eps C (le_of_max_le_left hC)
-  refine ⟨max x0 x1, fun x hx hle i p hp d hd vb hvb => ?_⟩
-  obtain ⟨-, a, ha⟩ := hd
-  have hset := hx1 x hx (le_of_max_le_right hle) i p hp ha.ok.eser
-  have key := hx0 _ (Fm.L x i) (Fm.L_eps x i) ((le_of_max_le_left hle).trans (Fm.L_x x i hx).ge) _ _ _ _ _ _ _ hset
-    a.ch ha.ok.is a.atScale ha.ok.field
-  have hWF := (hB p hp).1
-  have hX : ∀ v : NumberField.InfinitePlace (Fm.D x i).what₂.LL,
-      IsUnit (Formalism.L2.DIV.frameOf (((Df p).HV p.P.A3.fam3.base3.μ0).map v.embedding)).det ∧
-      ((Formalism.L2.DIV.frameOf (((Df p).HV p.P.A3.fam3.base3.μ0).map v.embedding))⁻¹)ᴴ *
-        (Formalism.L2.DIV.frameOf (((Df p).HV p.P.A3.fam3.base3.μ0).map v.embedding))⁻¹ =
-        ((Df p).HV p.P.A3.fam3.base3.μ0).map v.embedding := fun v =>
-    Formalism.L2.DIV.frameOfSpec _ _ (hWF.HV_pos _ v)
-  have k3 := key d.X' d.M ha.test _ hX (d.V p.P.A3.fam3.base3.μ0) (fun x' a' => ha.sums _ (Or.inl rfl) x' a')
-  rw [htMap_quot _ _ _ _ _ (hWF.XQ_quot _) hX vb, hvb]
-  exact k3.trans (bound_le d hC0 hCF')
 
 end GlobalTheory.QuotientNormCoisometry
 

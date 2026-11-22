@@ -1,11 +1,15 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.AbelianDeRham.AbelianHodgeDeRham.H1DimGeAbelianDim
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Pull1RestrictPairRestriction
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsFiniteTorusExtensionOfModel
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.MulLeftCompOfPullbackPointEquivMul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAbelianSchemeAndRelDimOfIsGrpPullback
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPullbackSecondCohomologyOfEq
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PrimitiveTorsorClassAdditiveStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.AbelianDeRham.AbelianHodgeDeRham.H1DimGeAbelianDim
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Pull1RestrictPairRestriction
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsFiniteTorusExtensionOfModel
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.MulLeftCompOfPullbackPointEquivMul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAbelianSchemeAndRelDimOfIsGrpPullback
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPullbackSecondCohomologyOfEq
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PrimitiveTorsorClassAdditiveStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -196,7 +200,7 @@ theorem lift_aux (hD : DescentSt) (hL : LowSt) (hAx : AxOSt) (hNP : NoPrimSt)
   have Bm : Bd (pullBC hY₀ (idSys (A ⊗ A).left)) (pullBC hYk (idSys (A ⊗ A).left)) t
       ((resSys (A₀ ⊗ A₀).hom (pullSys hY₀ (idSys (A ⊗ A).left))).pull1
         (pullHO1 (wOver (fst A₀ A₀ * snd A₀ A₀)) c')) (yp + yq) := by
-    rw [prim, map_add]
+    rw [prim, map_add (f := _)]
     exact Bp.add Bq
   have tp := transfer (wOver (fst A A)) H₀.1 hY₀ (sq_fst H₀.1.w) (wOver (fst A₀ A₀)) Hk.1 hYk (sq_fst Hk.1.w)
     (wOver (fst Ak Ak)) (haP _) (hbP _) pp Bz Bp
@@ -213,7 +217,7 @@ theorem lift_aux (hD : DescentSt) (hL : LowSt) (hAx : AxOSt) (hNP : NoPrimSt)
   have Nq : IsPullbackH2Structure (wOver (snd Ak Ak)) z' yq' :=
     isPullback_second_cohomology_of_eq hD hL sepYk Hk.1 hYk (sq_snd Hk.1.w) _ (by rw [hz, hyq]; exact tq)
   have Nm : IsPullbackH2Structure (wOver (fst Ak Ak * snd Ak Ak)) z' (yp' + yq') :=
-    isPullback_second_cohomology_of_eq hD hL sepYk Hk.1 hYk (sq_mul Hk) _ (by rw [hz, map_add, hyp, hyq]; exact tm)
+    isPullback_second_cohomology_of_eq hD hL sepYk Hk.1 hYk (sq_mul Hk) _ (by rw [hz, map_add (f := _), hyp, hyq]; exact tm)
   have zero : z' = 0 := hNP _ Ak g hAk hgk (Field.toIsField _) z' _ _ _ Nm Np Nq rfl
   rw [zero, map_zero] at hz
   rw [← hz] at Bz

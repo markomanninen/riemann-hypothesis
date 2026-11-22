@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.LCoverCut
+module
+
+public import Development.EtaleCohomology.EtaleTrace.LCoverCut
+
+@[expose] public section
 
 noncomputable section
 open MvPolynomial
@@ -9,7 +13,8 @@ theorem homRel_aeval_scale (k K : Type) [Field k] [Field K] [Algebra k K] {n : �
     (H : MvPolynomial (Fin n) k) (m : ℕ) (hH : H.IsHomogeneous m) :
     aeval (fun j => Polynomial.C (v j) * Polynomial.X) H = Polynomial.C (aeval v H) * Polynomial.X ^ m := by
   classical
-  rw [aeval_def, eval₂_eq, aeval_def, eval₂_eq, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [aeval_def, eval₂_eq, aeval_def, eval₂_eq, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun d hd => ?_
   have hdeg : (∑ i ∈ d.support, d i) = m := by
     have := hH (mem_support_iff.mp hd)
@@ -44,14 +49,15 @@ theorem HomRel_of : HomRel := by
   have hsum : aeval x G = ∑ i ∈ Finset.range (G.totalDegree + 1),
       Polynomial.C (aeval v (homogeneousComponent i G)) * Polynomial.X ^ i := by
     conv_lhs => rw [← sum_homogeneousComponent G]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl fun i _ =>
       homRel_aeval_scale k K v _ i (homogeneousComponent_isHomogeneous i G)
   have hmem : m ∈ Finset.range (G.totalDegree + 1) := by
     rw [Finset.mem_range]
     by_contra h
     exact hm (homogeneousComponent_eq_zero m G (by omega))
-  have hc := congrArg (fun p => Polynomial.coeff p m) (hsum.symm.trans hGx)
+  have hc := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p m) (hsum.symm.trans hGx)
   simp only [Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow, Polynomial.coeff_zero] at hc
   rwa [Finset.sum_ite_eq, if_pos hmem] at hc
 

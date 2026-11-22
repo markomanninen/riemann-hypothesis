@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.LiftPfA
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.LiftPfA
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalizationQuotientSeparatedDvd
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqIffConjPl
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnderEqIffConjPl
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC Formalism.UG Formalism.BasicNotions GlobalTheory.DefU
 
 noncomputable section
@@ -10,8 +15,8 @@ namespace GlobalTheory.SplitPts
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
-variable (E) in
 
+variable (E) in
 abbrev conjE : E ≃+* E := (IsCMField.complexConj E).toRingEquiv
 
 theorem conjSrc_conjSrc_cm (v : HeightOneSpectrum (𝓞 E)) : conjSrc (conjE E) (conjSrc (conjE E) v) = v :=
@@ -71,7 +76,7 @@ theorem eq_one_of_cLoc {w : HeightOneSpectrum (𝓞 E)} (hw : IsSplitAt w) (z : 
     have := congrArg (fun g : GL (Fin n) (u.adicCompletion E) => g.val i j) (hall u)
     simp only [Units.val_one, Matrix.one_apply] at this
     refine this.trans ?_
-    split_ifs with hij <;> simp [hij]
+    split_ifs with hij <;> simp [hij] <;> rfl
 
 def psi (w : HeightOneSpectrum (𝓞 E)) : w.adicCompletion E →+* (conjSrc (conjE E) w).adicCompletion E :=
   (GlobalTheory.Mem.Chr.exists_finCompl_map (conjE E) (conjPl_self_conjSrc w)).choose
@@ -211,8 +216,8 @@ theorem continuous_invT (R : Type) [CommRing R] [TopologicalSpace R] [IsTopologi
 
 end GlobalTheory.SplitPts
 
-open GlobalTheory.SplitPts in
 
+open GlobalTheory.SplitPts in
 theorem GlobalTheory.locU_equiv_GL : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ)
     (w : HeightOneSpectrum (𝓞 E)), IsSplitAt w →
       ∃ e : locU n w ≃ₜ* GL (Fin n) (w.adicCompletion E), ∀ x : locU n w, e x = cLoc w (x : UA E n) := by

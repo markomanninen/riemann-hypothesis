@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SectionCountTopSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.VeryAmpleDimSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.VeryAmpleDegreeSt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SectionCountTopSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.VeryAmpleDimSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.VeryAmpleDegreeSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -43,7 +48,8 @@ theorem aeval_mem_pow (Q : SubSystem k x Ω) {r : ℕ} {h : Fin (r + 1) → Ω} 
     | insert j s hj ih =>
       rw [Finset.prod_insert hj, Finset.sum_insert hj, mul_comm, add_comm]
       exact mul_pow_mem_pow Q I ih (hI j) (α j)
-  rw [f.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [f.as_sum, map_sum]
   refine Submodule.sum_mem _ fun α hα => ?_
   rw [aeval_monomial]
   have hdeg : ∑ i ∈ α.support, α i = n := by

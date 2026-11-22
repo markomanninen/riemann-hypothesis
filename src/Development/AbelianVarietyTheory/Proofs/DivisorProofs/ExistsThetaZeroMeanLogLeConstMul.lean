@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SignedLogMeans
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaZeroMeanLogNormConjugatesOfWeberStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LatticePeriodEtaObj
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ThetaWeberStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SignedLogMeans
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaZeroMeanLogNormConjugatesOfWeberStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LatticePeriodEtaObj
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ThetaWeberStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions
 
 namespace GlobalTheory.Theta0MeanLeC

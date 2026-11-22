@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FlagBasis
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FlagBasis
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry NumberField GlobalTheory.EtC GlobalTheory.Et TensorProduct Polynomial
 open GlobalTheory.GalV (HTower Htot hop galV galTot)
@@ -25,10 +29,11 @@ theorem UpperTheory.Gal.Int.Geo.totCont_of :
         (galHQ l Ω p n 0 σ (v n)) := by
     intro σ
     conv_lhs => rw [← DirectSum.sum_support_of v]
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     refine Finset.sum_congr rfl fun n _ => ?_
     rw [LinearMap.comp_apply]
     congr 1
     exact DirectSum.lmap_lof (fun n => galHQ l Ω p n 0 σ) n (v n)
   simp_rw [hv]
-  exact continuous_finset_sum _ fun n _ => hDC l k Ω p inferInstance inferInstance n 0 (hfin n) (v n) _
+  exact continuous_finsetSum _ fun n _ => hDC l k Ω p inferInstance inferInstance n 0 (hfin n) (v n) _

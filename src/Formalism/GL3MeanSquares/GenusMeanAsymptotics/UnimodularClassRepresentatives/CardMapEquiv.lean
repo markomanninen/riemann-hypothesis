@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CardSumNormFibres
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CardSumNormFibres
+
+@[expose] public section
 
 namespace Formalism.HermitianLattices.Ext.L3.UnitaryNormCounts
 
@@ -46,7 +50,8 @@ private theorem map_conjTranspose_mul_eq_map_transpose_mul (φ : A ≃+* k) (σ 
     (Y : Matrix m m A) :
     ((Y.map φ).map σ).transpose * Y.map φ = (Yᴴ * Y).map φ := by
   ext i j
-  simp [Matrix.mul_apply, conjTranspose_apply, map_sum, hφ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.mul_apply, conjTranspose_apply, map_sum, hφ]
 
 theorem card_map_equiv (φ : A ≃+* k) (σ : k ≃+* k) (hφ : ∀ a, φ (star a) = σ (φ a)) :
     Nat.card {Y : Matrix m m A // Yᴴ * Y = 1} =

@@ -1,18 +1,23 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.CupDecomposition
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.CupLocal
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ResLocal
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.UnitsLevels
-import GroundTheory.ProfiniteCohomology.ClassFormations.IsIsoCohomologyMapAlongResSubgroupOfHom
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.CupDecomposition
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.CupLocal
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.ResLocal
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.UnitsLevels
+public import GroundTheory.ProfiniteCohomology.ClassFormations.IsIsoCohomologyMapAlongResSubgroupOfHom
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open CategoryTheory Limits groupCohomology IntermediateField GroundTheory.Global FiniteSubfield
 
-attribute [local instance 2000] Rep.hV2 Submodule.module Submodule.Quotient.module
-
 local notation "ℚ̄" => AlgebraicClosure ℚ
+
+attribute [local instance 2000] Rep.hV2 Submodule.module Submodule.Quotient.module
 
 noncomputable section
 
@@ -51,6 +56,7 @@ variable {K E : FiniteSubfield} [Fact (K ≤ E)]
 
 theorem normal_subgroupOf_of_isGalois [IsGalois K.1 E.1] :
     (E.1.fixingSubgroup.subgroupOf K.1.fixingSubgroup).Normal := by
+  let : IsScalarTower K.1 E.1 ℚ̄ := IsScalarTower.of_algebraMap_eq fun _ => rfl
   refine ⟨fun n hn g => ?_⟩
   rw [Subgroup.mem_subgroupOf, IntermediateField.mem_fixingSubgroup_iff] at hn ⊢
   intro x hx
@@ -73,8 +79,8 @@ theorem normal_subgroupOf_of_isGalois [IsGalois K.1 E.1] :
 
 attribute [local instance] normal_subgroupOf_of_isGalois
 
-omit [Fact (K ≤ E)] in
 
+omit [Fact (K ≤ E)] in
 theorem isOpen_subgroupOf_fixingSubgroup :
     IsOpen ((E.1.fixingSubgroup.subgroupOf K.1.fixingSubgroup : Subgroup K.1.fixingSubgroup) :
       Set K.1.fixingSubgroup) :=

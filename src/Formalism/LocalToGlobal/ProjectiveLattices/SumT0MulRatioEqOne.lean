@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.PowMapMemOfPowMulMem
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.RestrictionEqZeroIffMemVanishingFiltration
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.PowMapMemOfPowMulMem
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.RestrictionEqZeroIffMemVanishingFiltration
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,10 +25,10 @@ theorem isDer_tensor {R A M : Type*} [CommRing R] [CommRing A] [Algebra R A] [Co
       simp only [Algebra.TensorProduct.tmul_mul_tmul, TensorProduct.map_tmul, LinearMap.id_apply]
       rw [hd.mul, TensorProduct.add_tmul, mul_comm n m]
     | add y z hy hz =>
-      rw [mul_add, map_add, hy, hz, map_add, mul_add]
+      rw [mul_add, map_add (f := _), hy, hz, map_add (f := _), mul_add]
       ring
   | add x z hx hz =>
-    rw [add_mul, map_add, hx, hz, map_add, add_mul]
+    rw [add_mul, map_add (f := _), hx, hz, map_add (f := _), add_mul]
     ring
 
 theorem der_div_eq_zero {L : Type*} [Field L] {δ : L → L} (h : IsDer δ) {x y : L} (hx : δ x = 0) (hy : δ y = 0) :
@@ -39,24 +43,24 @@ variable {D : D7} {B : WeightFamilies.Prov D} {P : ModuliIntegralCharts.Prov D} 
   (la : HeightOneSpectrum (𝓞 B.KO)) (N : ℕ)
 
 theorem exists_derKp (p : Idx D j N) : ∃ δ : Kp X la N → Kp X la N, IsDer δ ∧
-    (∀ f : Pol X la N, δ (algebraMap (Op X la N) (Kp X la N) (algebraMap (Pol X la N) (Op X la N) f)) =
-      algebraMap (Op X la N) (Kp X la N) (algebraMap (Pol X la N) (Op X la N) (MvPolynomial.pderiv p f))) ∧
+    (∀ f : Pol X la N, δ (@algebraMap (Op X la N) (Kp X la N) _ _ _ (algebraMap (Pol X la N) (Op X la N) f)) =
+      @algebraMap (Op X la N) (Kp X la N) _ _ _ (algebraMap (Pol X la N) (Op X la N) (MvPolynomial.pderiv p f))) ∧
     ∀ c : X.Kl la, δ (algebraMap (X.Kl la) (Kp X la N) c) = 0 := by
   obtain ⟨δ, hδ, hf⟩ := IsDer.ofLoc (gI X la N).primeCompl
     (fun f => algebraMap (Pol X la N) (Op X la N) (MvPolynomial.pderiv p f))
-    (fun x y => by simp only [map_add])
-    (fun x y => by simp only [Derivation.leibniz, smul_eq_mul, map_add, map_mul])
+    (fun x y => by simp only [map_add (f := _)])
+    (fun x y => by simp only [Derivation.leibniz, smul_eq_mul, map_add (f := _), map_mul])
   obtain ⟨δ', hδ', h'⟩ := IsDer.ofLoc (nonZeroDivisors (Op X la N))
-    (fun z => algebraMap (Op X la N) (Kp X la N) (δ z))
-    (fun x y => by simp only [hδ.add, map_add]) (fun x y => by simp only [hδ.mul, map_add, map_mul])
-  have hval : ∀ f : Pol X la N, δ' (algebraMap (Op X la N) (Kp X la N) (algebraMap (Pol X la N) (Op X la N) f)) =
-      algebraMap (Op X la N) (Kp X la N) (algebraMap (Pol X la N) (Op X la N) (MvPolynomial.pderiv p f)) := by
+    (fun z => @algebraMap (Op X la N) (Kp X la N) _ _ _ (δ z))
+    (fun x y => by simp only [hδ.add, map_add (f := _)]) (fun x y => by simp only [hδ.mul, map_add (f := _), map_mul])
+  have hval : ∀ f : Pol X la N, δ' (@algebraMap (Op X la N) (Kp X la N) _ _ _ (algebraMap (Pol X la N) (Op X la N) f)) =
+      @algebraMap (Op X la N) (Kp X la N) _ _ _ (algebraMap (Pol X la N) (Op X la N) (MvPolynomial.pderiv p f)) := by
     intro f
     rw [h', hf]
   have hOl : ∀ a : X.Ol la, δ' (algebraMap (X.Ol la) (Kp X la N) a) = 0 := by
     intro a
     have e : algebraMap (X.Ol la) (Kp X la N) a =
-        algebraMap (Op X la N) (Kp X la N) (algebraMap (Pol X la N) (Op X la N) (MvPolynomial.C a)) := by
+        @algebraMap (Op X la N) (Kp X la N) _ _ _ (algebraMap (Pol X la N) (Op X la N) (MvPolynomial.C a)) := by
       rw [IsScalarTower.algebraMap_apply (X.Ol la) (Op X la N) (Kp X la N),
         IsScalarTower.algebraMap_apply (X.Ol la) (Pol X la N) (Op X la N), MvPolynomial.algebraMap_eq]
     rw [e, hval, MvPolynomial.pderiv_C, map_zero, map_zero]
@@ -70,15 +74,15 @@ def dK (p : Idx D j N) : Kp X la N → Kp X la N := Classical.choose (exists_der
 theorem dK_isDer (p : Idx D j N) : IsDer (dK X la N p) := (Classical.choose_spec (exists_derKp X la N p)).1
 
 theorem dK_pol (p : Idx D j N) (f : Pol X la N) :
-    dK X la N p (algebraMap (Op X la N) (Kp X la N) (algebraMap (Pol X la N) (Op X la N) f)) =
-      algebraMap (Op X la N) (Kp X la N) (algebraMap (Pol X la N) (Op X la N) (MvPolynomial.pderiv p f)) :=
+    dK X la N p (@algebraMap (Op X la N) (Kp X la N) _ _ _ (algebraMap (Pol X la N) (Op X la N) f)) =
+      @algebraMap (Op X la N) (Kp X la N) _ _ _ (algebraMap (Pol X la N) (Op X la N) (MvPolynomial.pderiv p f)) :=
   (Classical.choose_spec (exists_derKp X la N p)).2.1 f
 
 theorem dK_Kl (p : Idx D j N) (c : X.Kl la) : dK X la N p (algebraMap (X.Kl la) (Kp X la N) c) = 0 :=
   (Classical.choose_spec (exists_derKp X la N p)).2.2 c
 
 theorem dK_Tv (p q : Idx D j N) :
-    dK X la N p (algebraMap (Op X la N) (Kp X la N) (Tv X la N q)) = if q = p then 1 else 0 := by
+    dK X la N p (@algebraMap (Op X la N) (Kp X la N) _ _ _ (Tv X la N q)) = if q = p then 1 else 0 := by
   classical
   have := dK_pol X la N p (MvPolynomial.X q)
   rw [MvPolynomial.pderiv_X, Pi.single_apply] at this
@@ -137,10 +141,7 @@ theorem dR_sec (l : Fin N) (i : Fin (WeightFamilies.dimY D j + 1)) :
   unfold sec
   rw [(dR_isDer X la N (0, l)).der_sum]
   simp only [dR_smul, dR_emb, smul_zero, add_zero, dK_Tv, Prod.mk.injEq]
-  split_ifs with hi
-  · subst hi
-    simp
-  · simp [hi]
+  by_cases hi : i = 0 <;> simp [hi]
 
 end Sec
 
@@ -151,8 +152,8 @@ variable {N} {wL : WeightFamilies.Wt D j} (w : Fin N → B.Cusp j wL) (l : Fin N
 theorem exists_derLw : ∃ δ : Lw X la w → Lw X la w, IsDer δ ∧
     ∀ r, δ (algebraMap (Rp X la N) (Lw X la w) r) = algebraMap (Rp X la N) (Lw X la w) (dR X la N (0, l) r) :=
   IsDer.ofLoc (Submonoid.powers (sec X la w 0)) (fun r => algebraMap (Rp X la N) (Lw X la w) (dR X la N (0, l) r))
-    (fun x y => by simp only [(dR_isDer X la N (0, l)).add, map_add])
-    (fun x y => by simp only [(dR_isDer X la N (0, l)).mul, map_add, map_mul])
+    (fun x y => by simp only [(dR_isDer X la N (0, l)).add, map_add (f := _)])
+    (fun x y => by simp only [(dR_isDer X la N (0, l)).mul, map_add (f := _), map_mul])
 
 def dL : Lw X la w → Lw X la w := Classical.choose (exists_derLw X la w l)
 
@@ -241,37 +242,26 @@ theorem exists_derOsK : ∃ δ : OsK X la w → OsK X la w, IsDer δ ∧
   obtain ⟨δ, hδ, h⟩ := (dF_isDer X la w l).quot (Jid X la w) (fun x hx => dF_Jid X la w l hx)
   exact ⟨δ, hδ, fun x => h x⟩
 
-theorem sum_T0_mul_ratio_eq_one : ∑ k, algebraMap (Kp X la N) (Frac0 X la w) (algebraMap (Op X la N) (Kp X la N) (Tv X la N (0, k))) *
+theorem sum_T0_mul_ratio_eq_one : ∑ k, algebraMap (Kp X la N) (Frac0 X la w) (@algebraMap (Op X la N) (Kp X la N) _ _ _ (Tv X la N (0, k))) *
     xr X la w k = 1 := by
-  have e : ∀ k, algebraMap (Kp X la N) (Lw X la w) (algebraMap (Op X la N) (Kp X la N) (Tv X la N (0, k))) *
+  have e : ∀ k, algebraMap (Kp X la N) (Lw X la w) (@algebraMap (Op X la N) (Kp X la N) _ _ _ (Tv X la N (0, k))) *
       frac X la w 1 (emb X la N (X.inc wL (w k))) = frac X la w 1
-        ((algebraMap (Op X la N) (Kp X la N) (Tv X la N (0, k))) • emb X la N (X.inc wL (w k))) := by
+        ((@algebraMap (Op X la N) (Kp X la N) _ _ _ (Tv X la N (0, k))) • emb X la N (X.inc wL (w k))) := by
     intro k
     rw [LinearMap.map_smul, Algebra.smul_def]
-  have hL : ∑ k, algebraMap (Kp X la N) (Lw X la w) (algebraMap (Op X la N) (Kp X la N) (Tv X la N (0, k))) *
+  have hL : ∑ k, algebraMap (Kp X la N) (Lw X la w) (@algebraMap (Op X la N) (Kp X la N) _ _ _ (Tv X la N (0, k))) *
       frac X la w 1 (emb X la N (X.inc wL (w k))) = 1 := by
     simp_rw [e]
-    rw [← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum]
     show frac X la w 1 (sec X la w 0) = 1
     rw [frac_apply, pow_one, section_mul_inverse_eq_one]
   apply Subtype.ext
   show (Frac0 X la w).val (∑ k, _) = (Frac0 X la w).val 1
-  rw [map_sum, map_one]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_one]
   simp only [map_mul, AlgHom.commutes]
   exact hL
-
-theorem sfr_eq_sum (i : Fin (WeightFamilies.dimY D j)) : sfr X la w i.succ =
-    ∑ k, algebraMap (Kp X la N) (Frac0 X la w) (algebraMap (Op X la N) (Kp X la N) (Tv X la N (i.succ, k))) * xr X la w k := by
-  apply Subtype.ext
-  show (Frac0 X la w).val (sfr X la w i.succ) = (Frac0 X la w).val (∑ k, _)
-  rw [map_sum]
-  simp only [map_mul, AlgHom.commutes]
-  show frac X la w 1 (sec X la w i.succ) = ∑ k, algebraMap (Kp X la N) (Lw X la w)
-    (algebraMap (Op X la N) (Kp X la N) (Tv X la N (i.succ, k))) * frac X la w 1 (emb X la N (X.inc wL (w k)))
-  unfold sec
-  rw [map_sum]
-  refine Finset.sum_congr rfl fun k _ => ?_
-  rw [LinearMap.map_smul, Algebra.smul_def]
 
 end Lw
 

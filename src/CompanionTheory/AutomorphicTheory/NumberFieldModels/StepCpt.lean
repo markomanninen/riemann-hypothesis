@@ -1,26 +1,17 @@
-import CompanionTheory.AutomorphicTheory.NumberFieldModels.HsVecProjLe
-import CompanionTheory.AutomorphicTheory.NumberFieldModels.ModelPt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFCoreN
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFHatProdKBStmt
+module
+
+public import CompanionTheory.AutomorphicTheory.NumberFieldModels.HsVecProjLe
+public import CompanionTheory.AutomorphicTheory.NumberFieldModels.ModelPt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFCoreN
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFHatProdKBStmt
+
+@[expose] public section
 
 open Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.P Formalism.FourierDecayAlt.P.CutBP Formalism.FourierDecayAlt.P.CutMP.Gauge
 
 namespace Formalism.MainStatements.NFTie
 
 noncomputable section
-
-def StepCpt : Prop :=
-  ∃ C₁ : ℝ, ∀ (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq]
-    [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (P : M.Par) (p : KB.Pl P Wp Wq)
-    (w : List C.Letter), KB.CutWord P p.l0 w → ∀ (a : Wd.Ix (Fin w.length)) (N : ℕ), w.length ≤ N → ∀ s : ℕ,
-    ∃ (m : ℕ) (Th : Fin m → B.DiffOp P.k P.r Wp Wq) (K : ℝ), 0 ≤ K ∧ (∀ t, NFOpOK C₁ p N (Th t)) ∧
-      ∀ F : B.Mat P.k P.r → (Wq →L[ℂ] Wp), KB.CptCoef p.T.base F →
-      ∀ (ρ : M.Ty P) (c : Fin (P.r + 1) → ℂ), D.IsLocPt (TBB.bigPt P.r c) (P.r + 1) → 0 < TBB.Gp p (TBB.bigPt P.r c) →
-        Top.dH P p.l0 (TBB.TTp p) w (TBB.bigPt P.r c) a ρ ^ 2 *
-            ‖B.hsVec (p.V (p.Θ.Θ w a fun g => ((Gf P.k P.r p.T.base.z p.T.base.z' g ^ s : ℝ) : ℂ) • F g)
-              (TBB.bigPt P.r c))‖ ^ 2 ≤
-          K * TBB.Gp p (TBB.bigPt P.r c) ^ (2 * s) * TBB.Gp p (TBB.bigPt P.r c) ^ (-(w.length : ℤ)) *
-            ∑ t, ‖B.hsVec (p.V (B.opApply (Th t) F) (TBB.bigPt P.r c))‖ ^ 2
 
 section pt
 

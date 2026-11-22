@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutSer
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.HermitianFormRealCoordinateMatrixHermitianDetNeZ
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilPairData.StandardTraceAddCharIsStandardCharOfAdmissibleCM
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnfoldPoincareSeriesLatticeFourierStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumOpTransversal
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutSer
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.HermitianFormRealCoordinateMatrixHermitianDetNeZ
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilPairData.StandardTraceAddCharIsStandardCharOfAdmissibleCM
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnfoldPoincareSeriesLatticeFourierStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumOpTransversal
+
+@[expose] public section
 
 noncomputable section
 
@@ -196,7 +200,7 @@ theorem gam_periodic {R X M : Type} [CommRing R] [AddCommGroup X] [Module R X] [
     {s : R →+* R} {w : R} {γ : X → X → ℂ} {W : X → M →ₗ[ℂ] M} (H : IsHeis s w γ W) {A : Submodule R X}
     (hA : SelfDual γ A) (φ : X →ₗ[R] X) (hφ : ∀ x y, γ (φ x) (φ y) = γ x y) (r : R) {y c : X} (hy : φ y - y ∈ A)
     (hc : c ∈ A) (hc' : φ c ∈ A) : γ (r • (φ (y + c) - (y + c))) (y + c) = γ (r • (φ y - y)) y := by
-  have e1 : φ (y + c) - (y + c) = (φ y - y) + (φ c - c) := by rw [map_add]; abel
+  have e1 : φ (y + c) - (y + c) = (φ y - y) + (φ c - c) := by rw [map_add (f := _)]; abel
   have e2 : γ (r • c) y = γ (r • φ c) y := by
     rw [← hφ, map_smul, ← sub_add_cancel (φ y) y, H.add_right, H.iso hA (A.smul_mem r hc') hy, one_mul]
   have e3 : γ (r • (φ c - c)) y = 1 := by
@@ -204,8 +208,8 @@ theorem gam_periodic {R X M : Type} [CommRing R] [AddCommGroup X] [Module R X] [
   rw [H.add_right, H.iso hA (A.smul_mem r (e1 ▸ A.add_mem hy (A.sub_mem hc' hc))) hc, mul_one, e1, smul_add,
     H.add_left, e3, mul_one]
 
-variable (σ JS JT ξ₀) in
 
+variable (σ JS JT ξ₀) in
 def gaussQF (ψ : AddChar (AF F) ℂ) (Λ : Submodule (𝓞 E) (Matrix (Fin nT) (Fin nS) E)) (w : 𝓞 E)
     (a : Matrix (Fin nS) (Fin nS) E) (b : Matrix (Fin nT) (Fin nT) E) (y : Matrix (Fin nT) (Fin nS) E) : ℂ :=
   if b * y * a - y ∈ Λ then gamQF σ JS JT ξ₀ ψ (sgOF σ w • (b * y * a - y)) y else 0
@@ -228,8 +232,8 @@ theorem chiLat_mul_exp (C : Ctx σ B JS JT ξ₀ θ ι) (hG : GoodLat Λ) (hR : 
     show B.ψ (symplOHF σ JS JT ξ₀ (intAF F w • (finRatF F (b * y * a - y) : WOF F E nS nT))
       (finRatF F (b * y * a - y))) = _
     have e : (finRatF F (b * y * a - y) : WOF F E nS nT) + finRatF F y = finRatF F (b * y * a) := by
-      rw [← XFF.coe_add, ← map_add, sub_add_cancel]
-    have h1 := phase_identity C (W := intAF F w) (by rw [cAF_intAF, ← map_add, hw, map_one])
+      rw [← XFF.coe_add, ← map_add (f := _), sub_add_cancel]
+    have h1 := phase_identity C (W := intAF F w) (by rw [cAF_intAF, ← map_add (f := _), hw, map_one])
       (finRatF F (b * y * a - y) : WOF F E nS nT) (finRatF F y)
       (by rw [e, ← act_finRat ha hb, ← actOF_smul, symplOHF_act C])
     have h2 : gamQF σ JS JT ξ₀ B.ψ (sgOF σ w • (b * y * a - y)) y =
@@ -264,7 +268,7 @@ theorem left_side (C : Ctx σ B JS JT ξ₀ θ ι) (hG : GoodLat Λ) (hR : RatSD
       Complex.exp (-(Real.pi * Complex.I) * (omV (HMF JS JT ξ₀ (tauB B)) (z + u) (x + v) : ℝ)) := by
     rw [← Complex.exp_add, ← Complex.exp_add, ← mul_add, ← mul_add, ← Complex.ofReal_add, ← Complex.ofReal_add]
     congr 3
-    simp only [map_add, map_sub, map_neg, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.neg_apply]
+    simp only [map_add (f := _), map_sub, map_neg, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.neg_apply]
     linarith [halt x u, halt v z, halt v x, halt v u]
   rw [e1, ← e2]
   ring
@@ -298,7 +302,7 @@ theorem right_side (C : Ctx σ B JS JT ξ₀ θ ι)
       Complex.exp (2 * Real.pi * Complex.I * ((-omV (HMF JS JT ξ₀ (tauB B)) (infRatF (tauB B) y)) v : ℝ)) := by
     rw [← Complex.exp_add]
     congr 1
-    simp only [map_add, map_neg, LinearMap.neg_apply, e2, halt v (infRatF (tauB B) y)]
+    simp only [map_add (f := _), map_neg, LinearMap.neg_apply, e2, halt v (infRatF (tauB B) y)]
     push_cast
     ring
   rw [coefQF, GlobalTheory.HeisLineF.symplOHF_add_right, AddChar.map_add_eq_mul, beta_iota_right C, beta_iota_left C,
@@ -372,7 +376,14 @@ theorem gauss_mul_integral_A (C : Ctx σ B JS JT ξ₀ θ ι) (hG : GoodLat Λ) 
     ∃ r : ℝ, 0 < r ∧ (∑ k, gamQF σ JS JT ξ₀ B.ψ (sgOF σ w • (b * t k * a - t k)) (t k)) *
       ∫ v, gaussV (HMF JS JT ξ₀ (tauB B)) s (mMF σ JS JT θ (g⁻¹, h⁻¹)) v = r * κ := by
   have hσ := sgsg C
-  obtain ⟨hH, -⟩ := PositivityTheory.ThKW.hermitian_majorant_selfAdjoint_posDef F E σ B C.good nS nT JS JT C.hS C.hT ξ₀ C.h0 C.hξ
+  have hH : (HMF JS JT ξ₀ (tauB B))ᴴ = HMF JS JT ξ₀ (tauB B) := by
+    have hτ := C.good.cm.2.2.2
+    unfold HMF
+    rw [GlobalTheory.RealWeil.blk_conjTranspose]
+    congr 1 <;> funext v
+    · rw [conjTranspose_smul, RealC.herm_map (hτ _) C.hT]
+      simp
+    · rw [conjTranspose_nonsing_inv, RealC.herm_map (hτ _) C.hS]
   obtain ⟨halt, -, -, hpos⟩ := omV_laws (H := HMF JS JT ξ₀ (tauB B)) hH hs.sq hs.pos
   have hw := hO.hw
   have H := isHeis_opFF hσ C.hS C.hT C.hξ hc hw

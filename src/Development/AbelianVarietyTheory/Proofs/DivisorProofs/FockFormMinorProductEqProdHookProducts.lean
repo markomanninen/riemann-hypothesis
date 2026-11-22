@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalDegreeUpperC
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PolarisationOperatorApplyVariable
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.JointHarmonicOfHookNorm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HookProductPosLogEq
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HookREqHookProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalDegreeUpperC
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PolarisationOperatorApplyVariable
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.JointHarmonicOfHookNorm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HookProductPosLogEq
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HookREqHookProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,7 +79,7 @@ theorem minorPlus_eq (τ : D.what₂.Tau) {p : ℕ} (hpm : p ≤ m) (hpn : p ≤
   have := β.2
   have := i.2
   simp only [Matrix.of_apply, AlgHom.mapMatrix_apply, Matrix.map_apply, rename_X, varF]
-  rw [dif_pos ⟨by omega, by omega⟩]
+  rw [dite_eq_left ⟨by omega, by omega⟩]
 
 theorem minorMinus_eq (τ : D.what₂.Tau) {p q : ℕ} (hm : p + q ≤ m) (hqn : q ≤ n) (i : Fin q) :
     minorMinus (D := D) (m := m) (n := n) τ p (i + 1) =
@@ -89,7 +93,7 @@ theorem minorMinus_eq (τ : D.what₂.Tau) {p q : ℕ} (hm : p + q ≤ m) (hqn :
   have := β.2
   have := i.2
   simp only [Matrix.of_apply, AlgHom.mapMatrix_apply, Matrix.map_apply, rename_X, varF]
-  rw [dif_pos ⟨by omega, by omega⟩]
+  rw [dite_eq_left ⟨by omega, by omega⟩]
 
 def embTop (τ : D.what₂.Tau) {p : ℕ} (hpm : p ≤ m) : Fin n × Fin p → FVar D m n :=
   fun v => (τ, ⟨v.2, lt_of_lt_of_le v.2.2 hpm⟩, v.1)

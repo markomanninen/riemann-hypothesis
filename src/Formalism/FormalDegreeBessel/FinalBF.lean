@@ -1,6 +1,10 @@
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.BesselUnipotentEquivHolds
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.BesselUnitaryEquivHolds
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.BFCell
+module
+
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.BesselUnipotentEquivHolds
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.BesselUnitaryEquivHolds
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.BFCell
+
+@[expose] public section
 
 namespace Formalism.QuantumDeterminants
 

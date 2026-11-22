@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DataRigidTorsionOfDataRigid
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsAffineOpenAndBijectiveOfWeightUnits
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ThickenedPointToTorusExtensionGenerator
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DataRigidTorsionOfDataRigid
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsAffineOpenAndBijectiveOfWeightUnits
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ThickenedPointToTorusExtensionGenerator
+
+@[expose] public section
 
 noncomputable section
 
@@ -140,8 +144,8 @@ theorem exists_rig {G B T : Scheme.{0}} (q : G ⟶ B) (eG : T ⟶ G) (eB : T ⟶
     rw [hs _ eG y _ _ (le J hy.1) (le J' hy.2), Category.id_comp, mul_inv, mul_inv_cancel_left]
   · exact (congrArg (_ * ·) (v (fun _ => a) y (mem_pull₂.2 hy))).trans (mul_inv_cancel _)
 
-attribute [local instance] SplitExt.free SplitExt.finite in
 
+attribute [local instance] SplitExt.free SplitExt.finite in
 theorem isGt_of_units (E : SplitExt S) {G : Over S} [GrpObj G] (q : G ⟶ E.B) (i : splitTorus S E.X ⟶ G)
     (hq : IsMonHom q) (hi : IsMonHom i) (hf : Flat q.left) (hs : Surjective q.left) (ha : IsAffineHom q.left)
     (hk : IsPullback i (toUnit _) q (η[E.B]))
@@ -361,8 +365,8 @@ end Data
 
 end CoordToExt
 
-open CoordToExt in
 
+open CoordToExt in
 theorem gtCoord_isGt : Geo.Tor.GtCoordToGtSt := by
   rintro R _ _ I D e G _ _ ⟨g⟩
   have := g.q_hom

@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.IndefiniteReal.RealRec
-import Formalism.LocalToGlobal.IndefiniteReal.RealPins
-import Formalism.LocalToGlobal.IndefiniteReal.TensCastR
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.RealRec
+public import Formalism.LocalToGlobal.IndefiniteReal.RealPins
+public import Formalism.LocalToGlobal.IndefiniteReal.TensCastR
+
+@[expose] public section
 
 noncomputable section
 

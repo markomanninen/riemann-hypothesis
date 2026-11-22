@@ -1,4 +1,8 @@
-import CompanionTheory.ThickeningEstimates.LieGroupReduction.MetaplecticRepresentation.ContinuousOm
+module
+
+public import CompanionTheory.ThickeningEstimates.LieGroupReduction.MetaplecticRepresentation.ContinuousOm
+
+@[expose] public section
 
 noncomputable section
 

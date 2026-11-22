@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.UnramifiedTrace.DUAllOfParts
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CrossDiagonalMatching.DnkLkLocP
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.UnramifiedTrace.DUAllOfParts
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CrossDiagonalMatching.DnkLkLocP
+
+@[expose] public section
 
 noncomputable section
 

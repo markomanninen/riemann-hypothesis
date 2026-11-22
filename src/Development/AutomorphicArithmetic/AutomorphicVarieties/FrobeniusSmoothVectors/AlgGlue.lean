@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgDefs
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -19,6 +23,6 @@ theorem UpperTheory.V.Fr.alg_glue :
             map_one' := uniq _ _ fun N => by rw [hg, map_one, map_one]
             map_mul' := fun a b => uniq _ _ fun N => by rw [hg, map_mul, map_mul, hg, hg]
             map_zero' := uniq _ _ fun N => by rw [hg, map_zero, map_zero]
-            map_add' := fun a b => uniq _ _ fun N => by rw [hg, map_add, map_add, hg, hg]
+            map_add' := fun a b => uniq _ _ fun N => by rw [hg, map_add (f := _), map_add (f := _), hg, hg]
             commutes' := fun r => uniq _ _ fun N => by
               rw [hg, AlgHom.commutes]; rfl }, fun a N => hg a N⟩

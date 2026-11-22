@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+
+@[expose] public section
 
 namespace GlobalTheory.SplitFlip.PathSplit
 open GlobalTheory.SplitFlip
@@ -15,7 +19,8 @@ theorem pairwise_of_isPath : ∀ {γ : List Edge}, IsPath γ → γ.Pairwise (fu
   | a :: b :: l, h => by
     unfold IsPath at h
     rw [List.isChain_cons_cons] at h
-    have ih := pairwise_of_isPath (γ := b :: l) h.2
+    have ih : (b :: l).Pairwise (fun a b => vdiff a.src < vdiff b.src) :=
+      pairwise_of_isPath (γ := b :: l) (show IsPath (b :: l) from h.2)
     have hab : vdiff a.src < vdiff b.src := by
       have := vdiff_tgt a; rw [h.1] at this; omega
     refine List.Pairwise.cons (fun c hc => ?_) ih

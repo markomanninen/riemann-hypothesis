@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsVertPointNagata
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PVertPointResidue
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsVertPointNagata
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PVertPointResidue
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -45,7 +50,8 @@ theorem aeval_C_mul_X {T : Type} [Fintype T] {S : Type*} [CommRing S] (r : (Σ _
     eval₂ (Int.castRingHom (Polynomial S)) (fun p => Polynomial.C (r p) * Polynomial.X) f =
       Polynomial.C (eval₂ (Int.castRingHom S) r f) * Polynomial.X ^ d := by
   classical
-  rw [eval₂_eq, eval₂_eq, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [eval₂_eq, eval₂_eq, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun m hm => ?_
   have hmd : ∑ i, m ⟨(), i⟩ = d := hf m hm ()
   rw [Finset.prod_subset (Finset.subset_univ m.support) (fun p _ hp => by
@@ -59,8 +65,8 @@ theorem aeval_C_mul_X {T : Type} [Fintype T] {S : Type*} [CommRing S] (r : (Σ _
 
 end VerticalPointMultiplicityChart
 
-open VerticalPointMultiplicityChart in
 
+open VerticalPointMultiplicityChart in
 theorem VertPointMultChart.proof (hCh : VertPointChart.Statement) (hN : VertPointNagata.Statement) :
     VertPointMultChart.Statement := by
   intro T _ K' _ _ y s hP hs hsP W hW t ht a b hb hab
@@ -172,7 +178,7 @@ theorem VertPointMultChart.proof (hCh : VertPointChart.Statement) (hN : VertPoin
       isSimpleModule_iff_quot_maximal.mpr ⟨_, inferInstance, ⟨LinearEquiv.refl _ _⟩⟩
     exact Module.length_eq_one _ _
 
-  rw [multAt, dif_pos hWp, locLen, dif_pos hmp]
+  rw [multAt, dite_eq_left hWp, locLen, dite_eq_left hmp]
   congr 1
   rw [length_localizedModule_quotient, length_localizedModule_quotient,
     length_quotient_of_surjective Φ hsurj _ (hker.le.trans (Ideal.map_mono le_sup_left)), hJ,

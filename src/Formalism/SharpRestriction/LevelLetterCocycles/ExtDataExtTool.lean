@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.ExtDataOneMapSmulO
-import Formalism.SharpRestriction.LevelLetterCocycles.ExistsPosConstLagrangeCondition
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExtDataOneMapSmulO
+public import Formalism.SharpRestriction.LevelLetterCocycles.ExistsPosConstLagrangeCondition
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,8 @@ theorem extData_win (d : ℕ) (b : ZMod n → ℕ) (S η : ℕ) (i : ZMod n) (h�
 theorem extData_lin {FF M I : Type} [AddCommGroup FF] [Module O FF] [AddCommGroup M] [Module O M] [Fintype I]
     (P : M → Prop) (h0 : P 0) (hadd : ∀ x y, P x → P y → P (x + y)) (hsmul : ∀ (c : O) x, P x → P (c • x))
     (bF : Module.Basis I O FF) (Φ : FF →ₗ[O] M) (h : ∀ j, P (Φ (bF j))) (f : FF) : P (Φ f) := by
-  rw [← bF.sum_equivFun f, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← bF.sum_equivFun f, map_sum]
   exact Finset.sum_induction _ P hadd h0 fun j _ => by rw [map_smul]; exact hsmul _ _ (h j)
 
 theorem extData_extTool [NeZero n] (W : LocWach PD LL O v n)
@@ -106,11 +111,14 @@ theorem extData_extTool [NeZero n] (W : LocWach PD LL O v n)
       rw [Submodule.coe_sum]
       simp only [Submodule.coe_smul]
       conv_lhs => rw [← bF.sum_equivFun f]
-      rw [map_sum, Submodule.coe_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Submodule.coe_sum]
       simp only [map_smul, Submodule.coe_smul]
     show W.clK T₂ (⟨(y f, z f), hmem⟩ : ↥(herrZ1Δ (W.γD T₂ W.gamK) (W.φD T₂) W.DelF (W.γD T₂))) = _
-    rw [hx, map_sum, hsum]
-    simp only [map_smul, hclj, ← Submodule.mkQ_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx, map_sum, hsum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_smul, hclj, ← Submodule.mkQ_apply, map_sum]
   · let sA : LetA O n → (W.DD T₂ →ₗ[O] W.DD T₂) := fun c =>
       ((c • LinearMap.id : W.DD T₂ →ₗ[LetA O n] W.DD T₂)).restrictScalars O
     have hsA : ∀ c x, sA c x = c • x := fun c x => by

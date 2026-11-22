@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StNbarSmooth
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StAPrimeChartMargin
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StNbarSmooth
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StAPrimeChartMargin
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

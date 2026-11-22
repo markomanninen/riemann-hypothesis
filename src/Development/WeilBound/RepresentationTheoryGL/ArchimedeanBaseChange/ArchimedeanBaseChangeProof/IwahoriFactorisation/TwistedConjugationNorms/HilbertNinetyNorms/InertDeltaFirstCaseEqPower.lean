@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.TwistedConjugationNorms.OneCoset
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.TwistedConjugationNorms.OneCoset
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem ordL_eq_of_v {x : L} {k : ℤ}
   have hu : WithZero.unzero h0 = Multiplicative.ofAdd k := by
     apply WithZero.coe_injective
     rw [WithZero.coe_unzero, h]
-  rw [ordL, dif_neg h0, hu, toAdd_ofAdd]
+  rw [ordL, dite_eq_right h0, hu, toAdd_ofAdd]
 
 theorem ordL_one : ordL (1 : L) = 0 := by
   simpa using ordL_eq_of_v (x := (1 : L)) (k := 0) (by simp)
@@ -99,8 +103,8 @@ theorem absHalf_eq (w : Pl E) (x : w.adicCompletion E) : absHalf w x = qh w ^ (-
   unfold absHalf qh
   rw [key _ (Nat.cast_nonneg _), Complex.ofReal_zpow]
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem delta_inert (w : Pl E) (hw : ¬ IsSplitAt w) (μ : (w.adicCompletion E)ˣ →* ℂˣ)
     (Q₁ Q₂ : (w.adicCompletion E)[X]) :
     delta w μ Q₁ Q₂ = (-qh w) ^ (-ordL (resultant Q₁ Q₂)) := by
@@ -189,7 +193,7 @@ theorem wexp_lo (n : ℕ) (l : Fin (n / 2) → ℤ) (k : Fin (n / 2)) : wexp n l
 theorem wexp_hi (n : ℕ) (l : Fin (n / 2) → ℤ) (k : Fin (n / 2)) : wexp n l (hi k) = -l k := by
   have := k.isLt
   unfold wexp hi
-  rw [dif_neg (by simp; omega), dif_pos (by simp; omega)]
+  rw [dite_eq_right (by simp; omega), dite_eq_left (by simp; omega)]
   congr 2
   ext
   simp
@@ -198,7 +202,7 @@ theorem wexp_hi (n : ℕ) (l : Fin (n / 2) → ℤ) (k : Fin (n / 2)) : wexp n l
 theorem wexp_half (n : ℕ) (l : Fin (n / 2) → ℤ) (h : n % 2 = 1) :
     wexp n l ⟨n / 2, by omega⟩ = 0 := by
   unfold wexp
-  rw [dif_neg (by simp), dif_neg (by simp; omega)]
+  rw [dite_eq_right (by simp), dite_eq_right (by simp; omega)]
 
 theorem sum_symIdx_wexp (n : ℕ) (mid : Prop) [Decidable mid] (s : Finset (Fin (n / 2))) (l : Fin (n / 2) → ℤ)
     (G : ℤ → ℤ) :
@@ -346,8 +350,8 @@ private theorem strictAnti_sub_rev {n : ℕ} (x : Fin n → ℤ) (hx : StrictAnt
   simp only
   linarith
 
-open V1 in
 
+open V1 in
 theorem inert_delta_first_case_eq_power (w : Pl E) (hw : ¬ IsSplitAt w) (n a : ℕ) (ha : a ≤ n) (x : Fin n → ℤ) (hx : StrictAnti x)
     (Q₁ Q₂ : (w.adicCompletion E)[X]) (s : Finset (Fin (n / 2))) (hA : CaseA w n a x Q₁ Q₂ s) :
     delta w 1 Q₁ Q₂ = (-qh w) ^ (-vRes n a (lOf x) s) := by

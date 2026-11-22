@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvMemIntV
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InvMemIntV
+
+@[expose] public section
+
 open Matrix NumberField IsDedekindDomain GlobalTheory.LKTrip GlobalTheory.LKMid GlobalTheory.OrbFinAf
 open scoped TensorProduct Classical
 
@@ -34,14 +39,14 @@ theorem rat_mem_integers_eventually (x : ℚ) :
 
 def starLin (G : HTGroup p) (R : Type) [CommRing R] [Algebra ℚ R] : (R ⊗[ℚ] G.C) →ₗ[R] (R ⊗[ℚ] G.C) where
   toFun a := (starT G.star R a).unop
-  map_add' x y := by rw [map_add, MulOpposite.unop_add]
+  map_add' x y := by rw [map_add (f := _), MulOpposite.unop_add]
   map_smul' r x := by
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul s y =>
       rw [TensorProduct.smul_tmul', starT_tmul, starT_tmul, TensorProduct.smul_tmul', RingHom.id_apply]
     | add x y hx hy =>
-      rw [smul_add, map_add, MulOpposite.unop_add, hx, hy, map_add, MulOpposite.unop_add, smul_add]
+      rw [smul_add, map_add (f := _), MulOpposite.unop_add, hx, hy, map_add (f := _), MulOpposite.unop_add, smul_add]
 
 theorem starLin_apply (G : HTGroup p) (R : Type) [CommRing R] [Algebra ℚ R] (a : R ⊗[ℚ] G.C) :
     starLin G R a = (starT G.star R a).unop := rfl
@@ -56,7 +61,8 @@ theorem isIntV_star_eventually : ∀ (p : ℕ) [Fact p.Prime] (G : HTGroup p),
           ∈ v.1.adicCompletionIntegers ℚ :=
     Filter.eventually_all.2 fun ij => rat_mem_integers_eventually _
   filter_upwards [hs] with v hv a ha i
-  rw [← starLin_apply, ← (basV G v).sum_repr a, map_sum, map_sum, Finsupp.finset_sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← starLin_apply, ← (basV G v).sum_repr a, map_sum, map_sum, Finsupp.finsetSum_apply]
   refine sum_mem fun j _ => ?_
   rw [map_smul, map_smul, Finsupp.smul_apply, smul_eq_mul]
   refine mul_mem (ha j) ?_

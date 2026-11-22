@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 private def unitBallSubring (K : Type) [NormedField K] [IsUltrametricDist K] : Subring K where
   carrier := {x | ‖x‖ ≤ 1}

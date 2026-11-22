@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.QuotientMetricDivisors.HeightBoundExactNorms
-import Formalism.QuotientMetricDivisors.HermitianTwistDivisors.ReductionThirdStepMean
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SlopeIneqMean
+module
+
+public import Mathlib
+public import Formalism.QuotientMetricDivisors.HeightBoundExactNorms
+public import Formalism.QuotientMetricDivisors.ProdFormula
+public import Formalism.QuotientMetricDivisors.StatementACE
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SlopeIneqMean
+
+@[expose] public section
 
 open Module NumberField
 open scoped Matrix ComplexOrder InnerProductSpace
@@ -56,7 +61,7 @@ theorem opNorm_le_iff {a D : ℕ} (A : Matrix (Fin D) (Fin a) ℂ) (c : ℝ) (hc
         Formalism.HermitianLatticesTheory.cnorm (A.mulVec x) := by
     intro x
     rw [cnorm_eq]
-    simp [Matrix.toEuclideanLin_apply]
+    simp [Matrix.toLpLin_apply]
   constructor
   · intro h x y
     have h2 : Formalism.HermitianLatticesTheory.cnorm (A.mulVec x) ≤ c * Formalism.HermitianLatticesTheory.cnorm x := by
@@ -163,14 +168,6 @@ theorem operator_norm_dual : OpNormDual := by
     rw [dot_frames]
     simpa only [fnorm, inv_mul_mulVec _ (hM v), inv_mul_mulVec _ (hE v)] using h1
 
-theorem chain_spectrum : ChainSpec := by
-  unfold ChainSpec
-  refine ⟨fun m C Kj φ => ⟨?_, fun j => ?_⟩, fun R _ m c Kj => ⟨?_, fun j => ?_⟩⟩
-  · first | rfl | simp [chainFun]
-  · first | rfl | simp [chainFun]
-  · first | rfl | simp [chainMat]
-  · first | rfl | simp [chainMat]
-
 namespace OperatorNormFrames
 
 theorem filter_succ {m : ℕ} (j : Fin m) :
@@ -200,23 +197,6 @@ theorem filter_zero {m : ℕ} :
 
 end OperatorNormFrames
 
-open OperatorNormFrames in
-theorem composition_norm : CompNorm := by
-  unfold CompNorm
-  intro m C _ Kj k hk hK φ
-  have key : ∀ i : Fin (m + 1), ‖chainFun Kj i φ‖ ≤
-      (∏ j ∈ Finset.univ.filter (fun j : Fin m => j.castSucc < i), k j) * ‖φ‖ := by
-    intro i
-    induction i using Fin.induction with
-    | zero =>
-      have h0 : chainFun Kj 0 φ = φ := by first | rfl | simp [chainFun]
-      simp only [h0, filter_zero, Finset.prod_empty, one_mul, le_refl]
-    | succ j ih =>
-      have h1 : chainFun Kj j.succ φ = Kj j (chainFun Kj j.castSucc φ) := by
-        first | rfl | simp [chainFun]
-      rw [prod_filter_succ, h1, mul_assoc]
-      exact (hK j _).trans (mul_le_mul_of_nonneg_left ih (hk j))
-  simpa only [filter_last] using key (Fin.last m)
 
 namespace OperatorNormFrames
 
@@ -272,24 +252,6 @@ namespace OperatorNormFrames
 theorem cnorm_sq_mulVec {n d : ℕ} (Z : Matrix (Fin d) (Fin n) ℂ) (y : Fin n → ℂ) :
     ((Formalism.HermitianLatticesTheory.cnorm (Z.mulVec y) ^ 2 : ℝ) : ℂ) = star y ⬝ᵥ (Zᴴ * Z).mulVec y := by
   rw [← star_dot_self, Matrix.star_mulVec, ← Matrix.dotProduct_mulVec, Matrix.mulVec_mulVec]
-
-theorem cnorm_le_of_orth {n : ℕ} (p q : Fin n → ℂ) (h : star p ⬝ᵥ q = 0) :
-    Formalism.HermitianLatticesTheory.cnorm p ≤ Formalism.HermitianLatticesTheory.cnorm (p + q) := by
-  have h2 : star q ⬝ᵥ p = 0 := by
-    have e : star q ⬝ᵥ p = star (star p ⬝ᵥ q) := by
-      first
-        | simp [dotProduct, mul_comm]
-        | simp [Matrix.dotProduct, mul_comm]
-    rw [e, h, star_zero]
-  have key : ((Formalism.HermitianLatticesTheory.cnorm (p + q) ^ 2 : ℝ) : ℂ) =
-      ((Formalism.HermitianLatticesTheory.cnorm p ^ 2 + Formalism.HermitianLatticesTheory.cnorm q ^ 2 : ℝ) : ℂ) := by
-    rw [Complex.ofReal_add, ← star_dot_self, ← star_dot_self, ← star_dot_self, star_add]
-    first
-      | rw [add_dotProduct, dotProduct_add, dotProduct_add, h, h2]
-      | rw [Matrix.add_dotProduct, Matrix.dotProduct_add, Matrix.dotProduct_add, h, h2]
-    ring
-  have key' := Complex.ofReal_injective key
-  nlinarith [cnorm_nonneg p, cnorm_nonneg (p + q), sq_nonneg (Formalism.HermitianLatticesTheory.cnorm q)]
 
 theorem quot_rep {n D : ℕ} (Hc X0 : Matrix (Fin n) (Fin n) ℂ) (h0 : IsUnit X0.det)
     (hH : (X0⁻¹)ᴴ * X0⁻¹ = Hc) (Pc : Matrix (Fin D) (Fin n) ℂ) (XQ : Matrix (Fin D) (Fin D) ℂ)
@@ -348,34 +310,8 @@ theorem quot_rep {n D : ℕ} (Hc X0 : Matrix (Fin n) (Fin n) ℂ) (h0 : IsUnit X
       hA, ← Matrix.mulVec_mulVec, hu]
     simp
 
-theorem quot_le {n D : ℕ} (Hc X0 : Matrix (Fin n) (Fin n) ℂ) (h0 : IsUnit X0.det)
-    (hH : (X0⁻¹)ᴴ * X0⁻¹ = Hc) (Pc : Matrix (Fin D) (Fin n) ℂ) (XQ : Matrix (Fin D) (Fin D) ℂ)
-    (hQ : IsUnit XQ.det) (hG : (XQ⁻¹)ᴴ * XQ⁻¹ = (Pc * Hc⁻¹ * Pcᴴ)⁻¹) (x : Fin n → ℂ) :
-    fnorm XQ (Pc.mulVec x) ≤ fnorm X0 x := by
-  obtain ⟨x0, hx0, hn, horth⟩ := quot_rep Hc X0 h0 hH Pc XQ hQ hG (Pc.mulVec x)
-  have hw : Pc.mulVec (x - x0) = 0 := by
-    rw [Matrix.mulVec_sub, hx0, sub_self]
-  have h := horth _ hw
-  rw [← hn]
-  show Formalism.HermitianLatticesTheory.cnorm (X0⁻¹ *ᵥ x0) ≤ Formalism.HermitianLatticesTheory.cnorm (X0⁻¹ *ᵥ x)
-  have e : X0⁻¹ *ᵥ x = X0⁻¹ *ᵥ x0 + X0⁻¹ *ᵥ (x - x0) := by
-    rw [← Matrix.mulVec_add]
-    congr 1
-    abel
-  rw [e]
-  exact cnorm_le_of_orth _ _ h
-
 end OperatorNormFrames
 
-open OperatorNormFrames in
-theorem quotient_metric_representation : QuotMetricRep := by
-  unfold QuotMetricRep
-  intro K _ _ _ n D H X0 h0 P hP XQ hQ v
-  obtain ⟨hQu, hQe⟩ := hQ v
-  exact ⟨fun x => quot_le (H.map v.embedding) (X0 v) (h0 v).1 (h0 v).2 (P.map v.embedding) (XQ v)
-      hQu hQe x,
-    fun y => quot_rep (H.map v.embedding) (X0 v) (h0 v).1 (h0 v).2 (P.map v.embedding) (XQ v)
-      hQu hQe y⟩
 
 namespace OperatorNormFrames
 
@@ -385,7 +321,8 @@ theorem dual_expand {K : Type} [Field K] {D : ℕ} (f : Module.Dual K (Fin D →
     ext k
     simp [Finset.sum_apply, Pi.single_apply]
   conv_lhs => rw [he]
-  simp [map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_smul]
 
 theorem map_expand {K : Type} [Field K] {a D : ℕ} (B : (Fin a → K) →ₗ[K] Module.Dual K (Fin D → K))
     (φ : Fin a → K) (e : Fin D → K) : B φ e = ∑ i, φ i * B (Pi.single i 1) e := by
@@ -393,7 +330,8 @@ theorem map_expand {K : Type} [Field K] {a D : ℕ} (B : (Fin a → K) →ₗ[K]
     ext k
     simp [Finset.sum_apply, Pi.single_apply]
   conv_lhs => rw [hφ]
-  simp [map_sum, map_smul, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, map_smul, LinearMap.sum_apply]
 
 theorem pairC_transfer {K : Type} [Field K] [NumberField K] {a b n D : ℕ} (v : InfinitePlace K)
     (B : (Fin a → K) →ₗ[K] Module.Dual K (Fin D → K)) (A : (Fin b → K) →ₗ[K] Module.Dual K (Fin n → K))
@@ -410,7 +348,8 @@ theorem pairC_transfer {K : Type} [Field K] [NumberField K] {a b n D : ℕ} (v :
     ext l i
     simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, pmat, Matrix.of_apply]
     have := congrArg v.embedding (key i l)
-    simp only [map_sum, map_mul] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul] at this
     rw [this]
     exact Finset.sum_congr rfl fun j _ => mul_comm _ _
   rw [pairC_eq, pairC_eq, Matrix.mulVec_mulVec, ← hM, ← Matrix.mulVec_mulVec]
@@ -422,13 +361,6 @@ theorem opNormAt_nonneg {K : Type} [Field K] [NumberField K] [StarRing K]
     (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ) (b' : Basis κ K W)
     (X' : InfinitePlace K → Matrix κ κ ℂ) (v : InfinitePlace K) (φ : V →ₗ[K] W) :
     0 ≤ Formalism.HN.opNormAt b X b' X' v φ := norm_nonneg _
-
-theorem exists_section {K : Type} [Field K] {n D : ℕ} (P : Matrix (Fin D) (Fin n) K)
-    (hP : Function.Surjective P.mulVec) :
-    ∃ ρ : (Fin D → K) →ₗ[K] (Fin n → K), ∀ y, P.mulVec (ρ y) = y := by
-  obtain ⟨g, hg⟩ :=
-    (Matrix.mulVecLin P).exists_rightInverse_of_surjective (LinearMap.range_eq_top.mpr hP)
-  exact ⟨g, fun y => by simpa using LinearMap.congr_fun hg y⟩
 
 end OperatorNormFrames
 
@@ -444,7 +376,7 @@ theorem nrm_mul_le {a b c : ℕ} (A : Matrix (Fin c) (Fin b) ℂ) (B : Matrix (F
       (LinearMap.toContinuousLinearMap (Matrix.toEuclideanLin A)).comp
         (LinearMap.toContinuousLinearMap (Matrix.toEuclideanLin B)) := by
     ext x : 1
-    simp [Matrix.toEuclideanLin_apply, Matrix.mulVec_mulVec]
+    simp [Matrix.toLpLin_apply, Matrix.mulVec_mulVec]
   rw [e]
   exact ContinuousLinearMap.opNorm_comp_le _ _
 
@@ -531,10 +463,6 @@ namespace OperatorNormFrames
 section G
 
 variable {K : Type} [Field K] [NumberField K] {D : ℕ}
-
-def gmap (v : InfinitePlace K) (Y : Matrix (Fin D) (Fin D) ℂ) (x : Fin D → K) :
-    EuclideanSpace ℂ (Fin D) :=
-  WithLp.toLp 2 (Y⁻¹.mulVec fun i => v.embedding (x i))
 
 theorem map_mulVec_emb {n : ℕ} (v : InfinitePlace K) (N : Matrix (Fin D) (Fin n) K) (x : Fin n → K) :
     (fun i => v.embedding (N.mulVec x i)) = (N.map v.embedding).mulVec fun i => v.embedding (x i) := by
@@ -692,7 +620,8 @@ theorem place_bound {K : Type} [Field K] [NumberField K] [StarRing K] {n D a b :
       rw [Finset.sum_apply] at h1
       rw [Finset.sum_apply]
       try simp only []
-      rw [← map_sum v.embedding, h1]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum v.embedding, h1]
       by_cases h : j = i
       · subst h
         simp
@@ -781,7 +710,7 @@ theorem place_bound {K : Type} [Field K] [NumberField K] [StarRing K] {n D a b :
     unfold nrm
     have e : WithLp.toLp 2 (M *ᵥ u) =
         LinearMap.toContinuousLinearMap (Matrix.toEuclideanLin M) (WithLp.toLp 2 u) := by
-      simp [Matrix.toEuclideanLin_apply]
+      simp [Matrix.toLpLin_apply]
     rw [e]
     exact ContinuousLinearMap.le_opNorm _ _
   have h4 : fnorm (Xb v) ((col.map v.embedding) *ᵥ x) ≤ k * fnorm (Xa v) x := by
@@ -828,7 +757,7 @@ theorem height_constant_first : HeightBoundConstant := by
   have hk : ∀ v, Formalism.HN.opNormAt (Pi.basisFun K (Fin (c 0))) (Xc 0)
       (Pi.basisFun K (Fin (c (Fin.last m)))) (Xc (Fin.last m)) v
         (Matrix.mulVecLin (chainMat Kj (Fin.last m))) ≤ ∏ j, kU j v := fun v =>
-    (hcomp.1 v).trans (Finset.prod_le_prod (fun j _ => opNormAt_nonneg _ _ _ _ _ _)
+    (hcomp.1 v).trans (Finset.prod_le_prod₀ (fun j _ => opNormAt_nonneg _ _ _ _ _ _)
       (fun j _ => hkU j v))
   have hBpos : ∀ v, 0 < Formalism.HN.opNormAt (Pi.basisFun K (Fin (c 0))) (Xc 0)
       (Pi.basisFun K (Fin D)).dualBasis (Formalism.HN.dualFrame XE) v B := by
@@ -872,7 +801,7 @@ theorem height_constant_first : HeightBoundConstant := by
       (successive_minimum_log Ix J (κ v) (fun j p => lamL j p v) (hκ v) fun j p => hlamL j p v).2.2.2
     have hs : ∀ p, κ v * minOver (fun p => ∏ j, lamL j p v) ≤ κ v * ∏ j, lam j p v := fun p =>
       (S2 p).trans (mul_le_mul_of_nonneg_left
-        (Finset.prod_le_prod (fun j _ => (hlamL j p v).le) (fun j _ => hle j p v)) (hκ v).le)
+        (Finset.prod_le_prod₀ (fun j _ => (hlamL j p v).le) (fun j _ => hle j p v)) (hκ v).le)
     have hpl := place_bound (Xc 0) (hXc 0) (Xc (Fin.last m)) (hXc (Fin.last m))
       (chainMat Kj (Fin.last m)) H X0 h0 P hP XQ hQ XE hE ι hι Qp hsup v
       (fun p => κ v * ∏ j, lam j p v) (κ v * minOver (fun p => ∏ j, lamL j p v)) S1 hs

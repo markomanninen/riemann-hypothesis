@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LineBasis
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.LineBasis
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen
 open GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKGeo Polynomial
@@ -77,7 +82,8 @@ private theorem form_core {F : Type} [Field F] [NumberField F] [IsCMField F] {n 
   have hform : ∀ u w, B u w = Algebra.trace ℚ F ((fun i => IsCMField.complexConj F (w i)) ⬝ᵥ (A *ᵥ u)) := by
     intro u w
     conv_lhs => rw [sum_single u, sum_single w]
-    simp only [map_sum, AddMonoidHom.finset_sum_apply, dotProduct, Matrix.mulVec, Finset.mul_sum, hterm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, AddMonoidHom.finsetSum_apply, dotProduct, Matrix.mulVec, Finset.mul_sum, hterm]
   refine ⟨A, ?_, ?_, hform⟩
   · intro hdet
     obtain ⟨v, hv, hAv⟩ := Matrix.exists_mulVec_eq_zero_iff.2 hdet
@@ -96,15 +102,15 @@ private theorem bc_skew {La : Type} [AddCommGroup La] (E : LinearMap.BilinForm �
   have hs : ∀ x y, E x y = - E y x := by
     intro x y
     have h := halt (x + y)
-    simp only [map_add, LinearMap.add_apply, halt, zero_add, add_zero] at h
+    simp only [map_add (f := _), LinearMap.add_apply, halt, zero_add, add_zero] at h
     exact eq_neg_of_add_eq_zero_right h
   induction u using TensorProduct.induction_on with
   | zero => simp
-  | add a b ha hb => simp only [map_add, LinearMap.add_apply, ha, hb, neg_add]
+  | add a b ha hb => simp only [map_add (f := _), LinearMap.add_apply, ha, hb, neg_add]
   | tmul a x =>
     induction w using TensorProduct.induction_on with
     | zero => simp
-    | add c d hc hd => simp only [map_add, LinearMap.add_apply, hc, hd, neg_add]
+    | add c d hc hd => simp only [map_add (f := _), LinearMap.add_apply, hc, hd, neg_add]
     | tmul b y =>
       simp only [LinearMap.BilinForm.baseChange_tmul]
       rw [hs x y]
@@ -185,7 +191,8 @@ theorem UpperTheory.Gal.W2.fForm_of :
     rw [← Matrix.mulVec_mulVec, Matrix.dotProduct_mulVec, Matrix.vecMul_transpose]
     congr 1
     ext i
-    simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
   rw [hcj, ← Matrix.mulVec_mulVec]
   have h1 := hform (σ (sh G c) *ᵥ u) w
   have h2 := hform u (σ c *ᵥ w)

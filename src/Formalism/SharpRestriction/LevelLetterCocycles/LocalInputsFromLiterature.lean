@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.KillWinFromCut
-import Formalism.SharpRestriction.LevelLetterCocycles.PsCoprimeOf
-import Formalism.SharpRestriction.LevelLetterCocycles.SaturationUnramifiedOfRingCondition
-import Formalism.SharpRestriction.LevelLetterCocycles.SaturationPullbackOfRingCondition
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.KillWinFromCut
+public import Formalism.SharpRestriction.LevelLetterCocycles.PsCoprimeOf
+public import Formalism.SharpRestriction.LevelLetterCocycles.SaturationUnramifiedOfRingCondition
+public import Formalism.SharpRestriction.LevelLetterCocycles.SaturationPullbackOfRingCondition
+
+@[expose] public section
 
 namespace Formalism.MainNotions.UnusedSlot80.RatAlg
 
@@ -209,7 +213,7 @@ theorem local_inputs_from_literature {A : ArcP n} {a : ZMod n} {e : ℕ} {E : �
       _ = algebraMap (LetA O n) W.EE (ps W s ^ (H - d) * (letE a * ps W s ^ m * u1) +
             abelian₂ W A a e * (letE a * (W.π₀ * abelian₂ W A a e) * u2)) := by
           rw [h1, h2]
-          simp only [map_add, map_mul]
+          simp only [map_add (f := _), map_mul]
   have key' := W.EE_inj key
   have e1 : ps W s ^ N = ps W s ^ (H - d) * ps W s ^ m := by rw [← pow_add, hN]
   have e2 : ps W s ^ H * ps W s ^ H = ps W s ^ N * ps W s ^ (H + H - N) := by
@@ -242,7 +246,7 @@ theorem loc_π₀ {A : ArcP n} {a : ZMod n} {e : ℕ} {f : W.EE} {u0 : LetA O n}
           rw [mul_left_comm, hsum, mul_add]
       _ = algebraMap (LetA O n) W.EE (letE a * W.π₀ * u1 + abelian₂ W A a e * (letE a * (W.π₀ * abelian₂ W A a e) * u2)) := by
           rw [h1, h2]
-          simp only [map_add, map_mul]
+          simp only [map_add (f := _), map_mul]
   have key' := W.EE_inj key
   have hLΔ : abelian₂ W A a e ∈ W.AΔ := Subalgebra.prod_mem _ fun t _ => Subalgebra.pow_mem _ (ps_mem W hπ t) _
   refine ⟨κ, letE a * u1 + abelian₂ W A a e * letE a * abelian₂ W A a e * u2, ?_, ?_⟩

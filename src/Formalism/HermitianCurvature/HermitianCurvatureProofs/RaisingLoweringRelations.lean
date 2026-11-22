@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PolyTopOf
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PolyTopOf
+
+@[expose] public section
 
 noncomputable section
 

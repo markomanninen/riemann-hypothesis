@@ -1,7 +1,11 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsUnimodularAtIffVd
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.TendstoMeanAlphaN
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.NormRepCountEqEulerFacInert
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CntIOneOfNotMem
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsUnimodularAtIffVd
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.TendstoMeanAlphaN
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.NormRepCountEqEulerFacInert
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.CntIOneOfNotMem
+
+@[expose] public section
 
 open NumberField Module
 
@@ -55,7 +59,7 @@ private lemma exists_algebraMap_eq_of_conjO_eq (hF : IsFixF K F) (y : 𝓞 K) (h
   have h1 : star (y : K) = y := by rw [← coe_conjO_eq_star, hy]
   obtain ⟨f, hf⟩ := (hF _).mp h1
   have hint : IsIntegral ℤ f := by
-    rw [← isIntegral_algebraMap_iff (algebraMap F K).injective, hf]
+    rw [← isIntegral_algebraMap_iff (B := K), hf]
     exact RingOfIntegers.isIntegral_coe y
   let a : 𝓞 F := ⟨f, (mem_integralClosure_iff ℤ F).mpr hint⟩
   refine ⟨a, RingOfIntegers.ext ?_⟩
@@ -79,13 +83,13 @@ private lemma extP_comap_eq_inf_conjIdeal_of_isMaximal (hK : Formalism.Hermitian
     rw [Ideal.mem_inf, mem_conjIdeal_iff'] at hx
     obtain ⟨hxP, hxc⟩ := hx
     have h𝔭 : (P.comap (algebraMap (𝓞 F) (𝓞 K))).IsMaximal :=
-      Ideal.isMaximal_comap_of_isIntegral_of_isMaximal P
+      Ideal.isMaximal_under_of_isIntegral_of_isMaximal P
     obtain ⟨θ, t, ht, hθ⟩ := hK.2.2 P hP
     have htc : t = conjO K θ := RingOfIntegers.ext (by rw [coe_conjO_eq_star]; exact ht)
     subst htc
-    obtain ⟨a, ha⟩ := exists_algebraMap_eq_of_conjO_eq hF (x + conjO K x) (by rw [map_add, conjO_conjO_unimodular_class_representatives, add_comm])
+    obtain ⟨a, ha⟩ := exists_algebraMap_eq_of_conjO_eq hF (x + conjO K x) (by rw [map_add (f := _), conjO_conjO_unimodular_class_representatives, add_comm])
     obtain ⟨b, hb⟩ := exists_algebraMap_eq_of_conjO_eq hF (conjO K θ * x + θ * conjO K x)
-      (by rw [map_add, map_mul, map_mul, conjO_conjO_unimodular_class_representatives, conjO_conjO_unimodular_class_representatives, add_comm])
+      (by rw [map_add (f := _), map_mul, map_mul, conjO_conjO_unimodular_class_representatives, conjO_conjO_unimodular_class_representatives, add_comm])
     obtain ⟨g, hg⟩ := exists_algebraMap_eq_of_conjO_eq hF ((θ - conjO K θ) * (θ - conjO K θ))
       (by rw [map_mul, map_sub, conjO_conjO_unimodular_class_representatives]; ring)
     have ha𝔭 : a ∈ P.comap (algebraMap (𝓞 F) (𝓞 K)) := by
@@ -99,7 +103,7 @@ private lemma extP_comap_eq_inf_conjIdeal_of_isMaximal (hK : Formalism.Hermitian
     obtain ⟨e, i, hi, hei⟩ := h𝔭.exists_inv hg𝔭
     have hEI : algebraMap (𝓞 F) (𝓞 K) e * ((θ - conjO K θ) * (θ - conjO K θ)) +
         algebraMap (𝓞 F) (𝓞 K) i = 1 := by
-      rw [← hg, ← map_mul, ← map_add, hei, map_one]
+      rw [← hg, ← map_mul, ← map_add (f := _), hei, map_one]
     have hx_eq : x = algebraMap (𝓞 F) (𝓞 K) e * (θ - conjO K θ) * θ * algebraMap (𝓞 F) (𝓞 K) a -
         algebraMap (𝓞 F) (𝓞 K) e * (θ - conjO K θ) * algebraMap (𝓞 F) (𝓞 K) b +
         algebraMap (𝓞 F) (𝓞 K) i * x := by
@@ -260,7 +264,7 @@ variable {V : Type} [AddCommGroup V] [Module K V] [FiniteDimensional K V] [Modul
 
 theorem exists_frame (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F)
     {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hd : IsTotPosDef h) {L : Submodule (𝓞 K) V}
-    (hL : Submodule.IsLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) {𝔭 : Ideal (𝓞 F)}
+    (hL : Submodule.IsFullLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) {𝔭 : Ideal (𝓞 F)}
     (h𝔭 : 𝔭.IsMaximal) (hv : vd h L 𝔭 = 0) {k : ℕ} (hk : 1 ≤ k) :
     ∃ (z : Fin (finrank K V) → ↥L) (g : Fin (finrank K V) → 𝓞 K),
       (∀ i j, i ≠ j → h (z i : V) (z j : V) = 0) ∧

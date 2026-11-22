@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.NatCastMulCoeffOfPderivEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.NatCastMulCoeffOfPderivEq
+
+@[expose] public section
 
 namespace GlobalTheory.FormalCalc
 
@@ -34,35 +38,35 @@ theorem isUnit_formalExp {f : MvPowerSeries σ A} (hf : constantCoeff f = 0) :
   isUnit_iff_constantCoeff.mpr (by rw [constantCoeff_formalExp hf]; exact isUnit_one)
 
 theorem pderiv_formalExp {f : MvPowerSeries σ A} (hf : constantCoeff f = 0) (i : σ) :
-    pderiv A i (formalExp f) = formalExp f * pderiv A i f := by
+    pderiv (R := A) i (formalExp f) = formalExp f * pderiv (R := A) i f := by
   rw [formalExp, pderiv_powerSeries_subst (PowerSeries.HasSubst.of_constantCoeff_zero hf),
     PowerSeries.derivative_exp]
 
 private theorem one_add_X_mul_deriv_log :
-    (1 + PowerSeries.X) * PowerSeries.derivative A (PowerSeries.log A) = 1 := by
+    (1 + PowerSeries.X) * PowerSeries.derivative (R := A) (PowerSeries.log A) = 1 := by
   rw [PowerSeries.deriv_log]
   ext n
-  rw [add_mul, one_mul, map_add]
+  rw [add_mul, one_mul, map_add (f := _)]
   cases n with
   | zero => simp
   | succ n => simp [PowerSeries.coeff_succ_X_mul, PowerSeries.coeff_one, pow_succ]
 
 theorem mul_pderiv_formalLog {g : MvPowerSeries σ A} (hg : constantCoeff g = 1) (i : σ) :
-    g * pderiv A i (formalLog g) = pderiv A i g := by
+    g * pderiv (R := A) i (formalLog g) = pderiv (R := A) i g := by
   have hs := hasSubst_sub_one hg
   have h := congrArg (PowerSeries.substAlgHom (R := A) hs) (one_add_X_mul_deriv_log (A := A))
-  rw [map_mul, map_add, map_one, PowerSeries.substAlgHom_X, add_sub_cancel,
+  rw [map_mul, map_add (f := _), map_one, PowerSeries.substAlgHom_X, add_sub_cancel,
     PowerSeries.coe_substAlgHom] at h
   rw [formalLog, pderiv_powerSeries_subst hs, ← mul_assoc, h, map_sub, pderiv_one, sub_zero,
     one_mul]
 
 theorem eq_formalExp_of_pderiv {f u : MvPowerSeries σ A} (hf : constantCoeff f = 0)
-    (hu : constantCoeff u = 1) (h : ∀ i, pderiv A i u = u * pderiv A i f) :
+    (hu : constantCoeff u = 1) (h : ∀ i, pderiv (R := A) i u = u * pderiv (R := A) i f) :
     u = formalExp f := by
-  haveI : IsAddTorsionFree A := .of_module_rat A
+  haveI : HasUniqueDiv A := IsAddTorsionFree.of_module_rat A
   have hn : constantCoeff (-f) = 0 := by simp [hf]
   have key : ∀ v : MvPowerSeries σ A, constantCoeff v = 1 →
-      (∀ i, pderiv A i v = v * pderiv A i f) → v * formalExp (-f) = 1 := by
+      (∀ i, pderiv (R := A) i v = v * pderiv (R := A) i f) → v * formalExp (-f) = 1 := by
     intro v hv hd
     refine pderiv.ext (fun i => ?_) (by simp [hv, constantCoeff_formalExp hn])
     rw [Derivation.leibniz, pderiv_formalExp hn, hd, map_neg, pderiv_one, smul_eq_mul,
@@ -72,9 +76,9 @@ theorem eq_formalExp_of_pderiv {f u : MvPowerSeries σ A} (hf : constantCoeff f 
     ((key u hu h).trans (key _ (constantCoeff_formalExp hf) (pderiv_formalExp hf)).symm)
 
 theorem eq_formalLog_of_pderiv {g u : MvPowerSeries σ A} (hg : constantCoeff g = 1)
-    (hu : constantCoeff u = 0) (h : ∀ i, g * pderiv A i u = pderiv A i g) :
+    (hu : constantCoeff u = 0) (h : ∀ i, g * pderiv (R := A) i u = pderiv (R := A) i g) :
     u = formalLog g := by
-  haveI : IsAddTorsionFree A := .of_module_rat A
+  haveI : HasUniqueDiv A := IsAddTorsionFree.of_module_rat A
   have hunit : IsUnit g := isUnit_iff_constantCoeff.mpr (hg ▸ isUnit_one)
   refine pderiv.ext (fun i => hunit.mul_left_cancel ?_) (by rw [hu, constantCoeff_formalLog hg])
   rw [h, mul_pderiv_formalLog hg]
@@ -85,23 +89,11 @@ theorem eq_formalLog_of_pderiv {g u : MvPowerSeries σ A} (hg : constantCoeff g 
 @[simp] theorem formalLog_one : formalLog (1 : MvPowerSeries σ A) = 0 :=
   (eq_formalLog_of_pderiv (by simp) (by simp) fun i => by simp).symm
 
-theorem formalExp_add {f g : MvPowerSeries σ A} (hf : constantCoeff f = 0)
-    (hg : constantCoeff g = 0) : formalExp (f + g) = formalExp f * formalExp g := by
-  refine (eq_formalExp_of_pderiv (by simp [hf, hg])
-    (by simp [constantCoeff_formalExp hf, constantCoeff_formalExp hg]) fun i => ?_).symm
-  rw [Derivation.leibniz, pderiv_formalExp hf, pderiv_formalExp hg, map_add, smul_eq_mul,
-    smul_eq_mul]
-  ring
-
-theorem formalExp_mul_formalExp_neg {f : MvPowerSeries σ A} (hf : constantCoeff f = 0) :
-    formalExp f * formalExp (-f) = 1 := by
-  rw [← formalExp_add hf (by simp [hf]), add_neg_cancel, formalExp_zero]
-
 theorem formalLog_mul {f g : MvPowerSeries σ A} (hf : constantCoeff f = 1)
     (hg : constantCoeff g = 1) : formalLog (f * g) = formalLog f + formalLog g := by
   refine (eq_formalLog_of_pderiv (by simp [hf, hg])
     (by simp [constantCoeff_formalLog hf, constantCoeff_formalLog hg]) fun i => ?_).symm
-  rw [Derivation.leibniz, ← mul_pderiv_formalLog hf, ← mul_pderiv_formalLog hg, map_add,
+  rw [Derivation.leibniz, ← mul_pderiv_formalLog hf, ← mul_pderiv_formalLog hg, map_add (f := _),
     smul_eq_mul, smul_eq_mul]
   ring
 

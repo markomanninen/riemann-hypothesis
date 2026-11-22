@@ -1,24 +1,19 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrData
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.WchartLePreimage
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsGenOfFibreId
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.InjectiveOfApplyEqGenericPoint
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+module
 
-open AlgebraicGeometry CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsLocalRing
-open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.M0
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrData
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.WchartLePreimage
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.InjectiveOfApplyEqGenericPoint
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+
+@[expose] public section
+
+open AlgebraicGeometry CategoryTheory CategoryTheory.Limits NumberField
+open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
 
 namespace PositivityTheory.HtPt.Ml
-
-theorem spMap_comp' {R S T : Type} [CommRing R] [CommRing S] [CommRing T] (f : R →+* S) (g : S →+* T) :
-    spMap g ≫ spMap f = spMap (g.comp f) := by
-  simp only [spMap, ← Spec.map_comp]
-  rfl
-
-theorem spMap_inj {R S : Type} [CommRing R] [CommRing S] {f g : R →+* S} (h : spMap f = spMap g) : f = g := by
-  have := Spec.map_injective h
-  exact congrArg CommRingCat.Hom.hom this
 
 theorem spMap_field_pt {R K : Type} [CommRing R] [Field K] (δ : R →+* K) (z : Sp K) :
     (spMap δ z).asIdeal = RingHom.ker δ := by
@@ -98,35 +93,7 @@ theorem mem_of_dense_of_max {X : Type} [TopologicalSpace X] [TopologicalSpace.No
 
 private theorem isLocallyNoetherian_of_closedImmersion_pSpace (O F : Type) [CommRing O] [Field F] (β : O →+* F) (X : Scheme.{0}) (s : X ⟶ Sp O)
     (hp : IsProjOver s) : TopologicalSpace.NoetherianSpace ↥(pullback (C := Scheme.{0}) s (spMap β)) := by
-  obtain ⟨N, i, hi, hs⟩ := hp
-  haveI := hi
-  haveI : Algebra.FiniteType ((MvPolynomial.homogeneousSubmodule (Fin (N + 1)) O) 0)
-      (MvPolynomial (Fin (N + 1)) O) :=
-    haveI : IsScalarTower O ((MvPolynomial.homogeneousSubmodule (Fin (N + 1)) O) 0)
-        (MvPolynomial (Fin (N + 1)) O) := IsScalarTower.of_algebraMap_eq (fun _ => rfl)
-    Algebra.FiniteType.of_restrictScalars_finiteType O _ _
-  have hsurj : Function.Surjective
-      (algebraMap O ((MvPolynomial.homogeneousSubmodule (Fin (N + 1)) O) 0)) := by
-    rintro ⟨p, hp⟩
-    have h0 : p.totalDegree = 0 := (MvPolynomial.totalDegree_zero_iff_isHomogeneous (p := p)).mpr
-      ((MvPolynomial.mem_homogeneousSubmodule _ _).mp hp)
-    refine ⟨p.coeff 0, Subtype.ext ?_⟩
-    exact (MvPolynomial.totalDegree_eq_zero_iff_eq_C.mp h0).symm
-  haveI : LocallyOfFiniteType (spMap (algebraMap O ((MvPolynomial.homogeneousSubmodule (Fin (N + 1)) O) 0))) := by
-    rw [spMap, HasRingHomProperty.Spec_iff (P := @LocallyOfFiniteType)]
-    exact RingHom.FiniteType.of_surjective _ hsurj
-  haveI : LocallyOfFiniteType (PSpace.str O N) := by
-    unfold PSpace.str
-    infer_instance
-  haveI : QuasiCompact (PSpace.str O N) := by
-    unfold PSpace.str
-    infer_instance
-  haveI : LocallyOfFiniteType s := by
-    rw [← hs]
-    infer_instance
-  haveI : QuasiCompact s := by
-    rw [← hs]
-    infer_instance
+  haveI : IsProper s := projProper O X s hp
   haveI : IsLocallyNoetherian (pullback s (spMap β)) :=
     LocallyOfFiniteType.isLocallyNoetherian (pullback.snd s (spMap β))
   haveI : CompactSpace ↥(pullback (C := Scheme.{0}) s (spMap β)) :=
@@ -142,6 +109,7 @@ theorem generic_points_range : ∀ (E : Type) [Field E] [NumberField E] [IsCMFie
   haveI := isLocallyNoetherian_of_closedImmersion_pSpace O c.F β Y.X Y.s Y.proj
   have hβ : Function.Injective β := by
     letI := β.toAlgebra
+    haveI := h
     exact IsFractionRing.injective O c.F
   let z0 : Sp c.F := IsLocalRing.closedPoint c.F
   have hgen : (spMap β z0).asIdeal = ⊥ := by

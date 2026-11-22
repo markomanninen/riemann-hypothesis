@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.StatementNF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellInversePair
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellOpenDomain
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellZetaMinors
+module
+
+public import Formalism.HermitianCurvature.StatementNF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellInversePair
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellOpenDomain
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellZetaMinors
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped ContDiff

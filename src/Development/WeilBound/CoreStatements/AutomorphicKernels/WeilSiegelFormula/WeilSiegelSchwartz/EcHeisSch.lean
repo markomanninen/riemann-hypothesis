@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TraceInnerMul
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsWeilDatumDoubledOfSchrodingerFormulas
-import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.AdelicConjTransposeBlockMatrixTwoByTwoFin
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsWeilDatumOOneOfRankZero
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TraceInnerMul
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsWeilDatumDoubledOfSchrodingerFormulas
+public import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.AdelicConjTransposeBlockMatrixTwoByTwoFin
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsWeilDatumOOneOfRankZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,11 +70,12 @@ theorem heisSch : HeisSch := by
     halfTr (Matrix.trace (GlobalTheory.StdUnn.inner V (yPart v) (yPart v))))) h5
   convert h6 using 1
   funext z
-  simp only [EC.Heisenberg₂, Pi.smul_apply, smul_eq_mul, add_neg_cancel_right]
+  dsimp [EC.Heisenberg₂]
   rw [← mul_assoc, ← mul_assoc, ← AddChar.map_add_eq_mul, ← AddChar.map_add_eq_mul,
     Unip.quad_shift V adj_one z (yPart v)]
   congr 2
   simp only [Matrix.mul_one, Matrix.one_mul, Matrix.neg_mul, Matrix.trace_neg, halfTr, map_neg, mul_neg]
-  abel
+  all_goals simp
+  all_goals abel
 
 end PositivityTheory.RdEc

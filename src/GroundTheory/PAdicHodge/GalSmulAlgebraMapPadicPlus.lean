@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.PAdicHodge.FontaineLemmaInvariants
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.FontaineLemmaInvariants
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -10,45 +15,17 @@ namespace ACris
 
 variable {p : ℕ} [hp : Fact p.Prime]
 
-local notation "𝔹" => BDeRhamPlus (normInteger ℂ_[p]) p
-local notation "𝔹dR" => BDeRham (normInteger ℂ_[p]) p
-
 variable {ε : PreTilt (normInteger ℂ_[p]) p} (hε : PreTilt.untilt ε = 1)
   (hζ : PreTilt.untilt ((_root_.frobeniusEquiv (PreTilt (normInteger ℂ_[p]) p) p).symm ε) ≠ 1)
 
 section Algebra
 
-theorem algebraMap_padic_bCris (q : ℚ_[p]) :
-    algebraMap ℚ_[p] (BCris hε) q =
-      algebraMap (BCrisPlus ℂ_[p] p) (BCris hε) (algebraMap ℚ_[p] (BCrisPlus ℂ_[p] p) q) :=
-  rfl
-
 variable {K : IntermediateField ℚ_[p] (PadicAlgCl p)}
 
-theorem gal_smul_algebraMap_padic_plus (σ : Gal(PadicAlgCl p/K)) (q : ℚ_[p]) :
-    σ • algebraMap ℚ_[p] (BCrisPlus ℂ_[p] p) q = algebraMap ℚ_[p] (BCrisPlus ℂ_[p] p) q :=
-  iotaPlus_injective (K := ℂ_[p]) (p := p) (by
-    rw [iotaPlus_gal_smul, iotaPlus_algebraMap_padic, gal_smul_algebraMap_bdR])
 
-set_option maxHeartbeats 1600000 in
 
-theorem galB_algebraMap_padic (σ : Gal(PadicAlgCl p/K)) (q : ℚ_[p]) :
-    galB hε σ (algebraMap ℚ_[p] (BCris hε) q) = algebraMap ℚ_[p] (BCris hε) q :=
-  (galB_algebraMap hε σ _).trans (congrArg (algebraMap (BCrisPlus ℂ_[p] p) (BCris hε))
-    (gal_smul_algebraMap_padic_plus σ q))
-
-set_option maxHeartbeats 1600000 in
-
-theorem smulCommClass_galBAction :
-    letI := galBAction (K := K) hε
-    SMulCommClass Gal(PadicAlgCl p/K) ℚ_[p] (BCris hε) :=
-  let _ := galBAction (K := K) hε
-  ⟨fun σ q x => (congrArg (galB hε σ) (Algebra.smul_def q x)).trans
-    ((map_mul (galB hε σ) _ _).trans ((congrArg (· * galB hε σ x) (galB_algebraMap_padic hε σ q)).trans
-      (Algebra.smul_def q (galB hε σ x)).symm))⟩
 
 include hζ in
-
 theorem isDomain_bCris : IsDomain (BCris hε) :=
   Function.Injective.isDomain (iotaB hε hζ) (iotaB_injective hε hζ)
 
@@ -59,32 +36,18 @@ section Invariants
 variable {K : IntermediateField ℚ_[p] (PadicAlgCl p)}
 
 theorem algClToBdRField_apply (k : PadicAlgCl p) :
-    algClToBdRField p k = algebraMap 𝔹 𝔹dR (algClToBdR p k) :=
+    algClToBdRField p k =
+      algebraMap (BDeRhamPlus (normInteger ℂ_[p]) p) (BDeRham (normInteger ℂ_[p]) p)
+        (algClToBdR p k) :=
   rfl
 
 theorem algClToBdRField_injective : Function.Injective (algClToBdRField p) :=
   (algClToBdRField p).injective
 
-include hζ in
-set_option maxHeartbeats 1600000 in
 
-theorem image_iotaB_fixedPoints [FiniteDimensional ℚ_[p] K] :
-    letI := galBAction (K := K) hε
-    iotaB hε hζ '' MulAction.fixedPoints Gal(PadicAlgCl p/K) (BCris hε) =
-      algClToBdRField p '' (maxUnramified p K : Set (PadicAlgCl p)) := by
-  let _ := galBAction (K := K) hε
-  ext b
-  constructor
-  · rintro ⟨x, hx, rfl⟩
-    obtain ⟨k, hk, hxk⟩ := bCris_fixed_mem_maxUnramified hε hζ x hx
-    exact ⟨k, hk, hxk.symm⟩
-  · rintro ⟨k, hk, rfl⟩
-    obtain ⟨x, hx, hxk⟩ := exists_bCris_fixed hε hζ hk
-    exact ⟨x, hx, hxk⟩
 
 include hζ in
 set_option maxHeartbeats 1600000 in
-
 theorem exists_iotaB_eq_iff {β : PadicAlgCl p} :
     (∃ x : BCris hε, iotaB hε hζ x = algClToBdRField p β) ↔ β ∈ unramifiedClosure p := by
   constructor

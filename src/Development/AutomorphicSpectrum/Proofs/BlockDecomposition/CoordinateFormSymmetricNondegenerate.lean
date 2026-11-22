@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsUnitHermOfDet
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CoordForm
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ArchimedeanHaarScalingNorm
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsAdelicHaarCovolumeOne
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.SelfDualMap
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualProdIff
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsUnitHermOfDet
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CoordForm
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ArchimedeanHaarScalingNorm
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ExistsAdelicHaarCovolumeOne
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.SelfDualMap
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualProdIff
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.Published.SiegelOneVector GlobalTheory.CompanionTheory.SiegelND GlobalTheory.CompanionTheory.SiegelND.Coef GlobalTheory.CompanionTheory.SiegelND.Coef.TestN
 open scoped TensorProduct ENNReal
 
@@ -38,7 +43,8 @@ theorem traceGram_det_ne_zero {F E : Type} [Field F] [NumberField F] [Field E] [
     intro k
     have := congrFun hmul k
     simp only [Matrix.mulVec, dotProduct, Matrix.of_apply, Pi.zero_apply] at this
-    rw [hy, map_sum, Finset.mul_sum, map_sum, ← this]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hy, map_sum, Finset.mul_sum, map_sum, ← this]
     refine Finset.sum_congr rfl fun l _ => ?_
     have hsm : σ (v l • b l) = v l • σ (b l) := by
       rw [Algebra.smul_def, map_mul, AlgHom.commutes, ← Algebra.smul_def]
@@ -46,7 +52,8 @@ theorem traceGram_det_ne_zero {F E : Type} [Field F] [NumberField F] [Field E] [
   have hz : ∀ x, Algebra.traceForm F E (σ y) x = 0 := by
     intro x
     rw [← b.sum_repr x]
-    simp only [map_sum, map_smul, Algebra.traceForm_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, Algebra.traceForm_apply]
     refine Finset.sum_eq_zero fun k _ => ?_
     rw [mul_comm (σ y), hk, smul_zero]
   have hσy : σ y = 0 := (traceForm_nondegenerate F E).1 _ hz

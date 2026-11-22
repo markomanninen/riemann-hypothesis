@@ -1,5 +1,9 @@
-import Formalism.PieriBlockIdeals.StatementLP
-import Formalism.PieriBlockIdeals.StatementLR
+module
+
+public import Formalism.PieriBlockIdeals.StatementLP
+public import Formalism.PieriBlockIdeals.StatementLR
+
+@[expose] public section
 
 open MvPolynomial
 

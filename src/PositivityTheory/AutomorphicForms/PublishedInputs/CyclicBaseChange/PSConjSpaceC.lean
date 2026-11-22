@@ -1,7 +1,11 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.SConjSpaceC
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ContinuousMapGL
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAdelicGLHomeomorphInfiniteFinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CapelliOperatorAlgebraStableUnderComplexConj
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CyclicBaseChange.SConjSpaceC
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ContinuousMapGL
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAdelicGLHomeomorphInfiniteFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CapelliOperatorAlgebraStableUnderComplexConj
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,10 +13,10 @@ open NumberField IsDedekindDomain Topology Matrix Neutral.B1 Formalism.L2.Host G
 
 namespace UpperTheory.CBC.SConjSpaceCAux
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
+
 
 open Classical in
-
 def cc (τ : E →+* ℂ) : Cinf E →+* ℂ :=
   if (InfinitePlace.mk τ).embedding = τ then Pi.evalRingHom (fun _ => ℂ) (InfinitePlace.mk τ)
   else (starRingEnd ℂ).comp (Pi.evalRingHom (fun _ => ℂ) (InfinitePlace.mk τ))
@@ -139,18 +143,6 @@ theorem Lx_symm (σ : E ≃+* E) (x : Cinf E) : Lx σ (Lx σ.symm x) = x :=
 theorem Lx_symm' (σ : E ≃+* E) (x : Cinf E) : Lx σ.symm (Lx σ x) = x := by
   simpa using Lx_symm σ.symm x
 
-def LE (σ : E ≃+* E) : Cinf E ≃+* Cinf E where
-  toFun := Lx σ
-  invFun := Lx σ.symm
-  left_inv := Lx_symm' σ
-  right_inv := Lx_symm σ
-  map_mul' := map_mul _
-  map_add' := map_add _
-
-theorem LE_apply (σ : E ≃+* E) (x : Cinf E) : LE σ x = Lx σ x := rfl
-
-theorem LE_symm_apply (σ : E ≃+* E) (x : Cinf E) : (LE σ).symm x = Lx σ.symm x := rfl
-
 theorem continuous_Lx (σ : E ≃+* E) : Continuous (Lx σ) :=
   continuous_pi fun w => continuous_cc _
 
@@ -203,7 +195,7 @@ theorem conjFin_symm_conjFin (c : E ≃+* E) (x : Af E) : conjFin c.symm (conjFi
     exact h1.symm
   · rw [Function.comp_apply, (conjLoc_spec _ _).2.1, (conjLoc_spec _ _).2.1, RingEquiv.symm_apply_apply]
 
-structure GD (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] where
+structure GD (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] where
   σ : E ≃+* E
   s : Ad E ≃+* Ad E
   c : Af E ≃+* Af E
@@ -234,12 +226,6 @@ def GD.symm (d : GD E) : GD E where
   rat x := by
     rw [RingEquiv.symm_apply_eq, d.rat, RingEquiv.apply_symm_apply]
 
-theorem GD.symm_alt (d : GD E) : d.symm.s = d.s.symm := rfl
-
-theorem GD.symm_σ (d : GD E) : d.symm.σ = d.σ.symm := rfl
-
-theorem GD.symm_c (d : GD E) : d.symm.c = d.c.symm := rfl
-
 theorem pInf_sInf (z : Cinf E) : pInf E (sInf E z) = z := (infEq E).symm_apply_apply z
 
 theorem pFin_sInf (z : Cinf E) : pFin E (sInf E z) = 0 := rfl
@@ -249,7 +235,7 @@ theorem pInf_sFin (z : Af E) : pInf E (sFin E z) = 0 := map_zero (infEq E).symm
 theorem pFin_sFin (z : Af E) : pFin E (sFin E z) = z := rfl
 
 theorem ad_decomp (x : Ad E) : x = sInf E (pInf E x) + sFin E (pFin E x) :=
-  ad_ext (by rw [map_add, pInf_sInf, pInf_sFin, add_zero]) (by rw [map_add, pFin_sInf, pFin_sFin, zero_add])
+  ad_ext (by rw [map_add (f := _), pInf_sInf, pInf_sFin, add_zero]) (by rw [map_add (f := _), pFin_sInf, pFin_sFin, zero_add])
 
 theorem exists_GD (σ : E ≃+* E) (s : Ad E ≃+* Ad E) (h : IsGalAd σ s) : ∃ d : GD E, d.s = s ∧ d.σ = σ := by
   obtain ⟨hc, hr, hf⟩ := h
@@ -258,7 +244,7 @@ theorem exists_GD (σ : E ≃+* E) (s : Ad E ≃+* Ad E) (h : IsGalAd σ s) : �
   have hsInf : ∀ y, s (sInf E y) = sInf E (L0 y) := fun y =>
     ad_ext (by rw [pInf_sInf, hL0]) (by rw [hfin, pFin_sInf, pFin_sInf, map_zero])
   have hadd : ∀ y y', L0 (y + y') = L0 y + L0 y' := fun y y' => by
-    rw [hL0, hL0, hL0, map_add, map_add, map_add]
+    rw [hL0, hL0, hL0, map_add (f := _), map_add (f := _), map_add (f := _)]
   have hmul : ∀ y y', L0 (y * y') = L0 y * L0 y' := fun y y' => by
     rw [hL0, hL0, hL0, map_mul, map_mul, map_mul]
   have hcont : Continuous L0 := by
@@ -292,7 +278,7 @@ theorem exists_GD (σ : E ≃+* E) (s : Ad E ≃+* Ad E) (h : IsGalAd σ s) : �
     rw [e, map_mul, map_mul, map_sub, map_one, map_sub, map_one, hs1, pInf_sInf, sub_self, mul_zero]
   have hinf0 : ∀ x, pInf E (s x) = L0 (pInf E x) := fun x => by
     conv_lhs => rw [ad_decomp x]
-    rw [map_add, map_add, hsFin, add_zero, hL0]
+    rw [map_add (f := _), map_add (f := _), hsFin, add_zero, hL0]
   have hD : DenseRange fun m : E => pInf E (algebraMap E (Ad E) m) := by
     have e : (fun m : E => pInf E (algebraMap E (Ad E) m)) =
         (infEq E).symm ∘ algebraMap E (InfiniteAdeleRing E) := rfl
@@ -318,8 +304,8 @@ theorem exists_GD (σ : E ≃+* E) (s : Ad E ≃+* Ad E) (h : IsGalAd σ s) : �
   have hsymm : ∀ x, s.symm x = sInf E (Lx σ.symm (pInf E x)) + sFin E (conjFin σ.symm (pFin E x)) := fun x => by
     rw [RingEquiv.symm_apply_eq]
     refine ad_ext ?_ ?_
-    · rw [hinf, map_add, pInf_sInf, pInf_sFin, add_zero, Lx_symm]
-    · rw [hfin, map_add, pFin_sInf, pFin_sFin, zero_add]
+    · rw [hinf, map_add (f := _), pInf_sInf, pInf_sFin, add_zero, Lx_symm]
+    · rw [hfin, map_add (f := _), pFin_sInf, pFin_sFin, zero_add]
       have := conjFin_symm_conjFin σ.symm (pFin E x)
       rw [RingEquiv.symm_symm] at this
       exact this.symm
@@ -505,26 +491,25 @@ theorem height_map_le : ∃ K : ℝ, 1 ≤ K ∧ ∀ y : GL (Fin a) (Cinf E),
   have n2 := norm_nonneg (toL (y⁻¹).val)
   nlinarith
 
-theorem isAutForm_pull {φ : Sm E a} (h : IsAutForm φ) : IsAutForm (pull d a φ) where
-  left γ g := by rw [pull_apply, map_mul, SA_ratGL, h.left, pull_apply]
-  level := by
-    convert h.level.preimage (GlobalTheory.BarPull.continuous_mapGL d.c.toRingHom (by exact d.contc)) using 1
+theorem isAutForm_pull {φ : Sm E a} (h : IsAutForm φ) : IsAutForm (pull d a φ) := by
+  refine { left := ?_, level := ?_, kfin := ?_, zfin := ?_, growth := ?_ }
+  · intro γ g
+    rw [pull_apply, map_mul, SA_ratGL, h.left, pull_apply]
+  · convert h.level.preimage (GlobalTheory.BarPull.continuous_mapGL d.c.toRingHom (by exact d.contc)) using 1
     ext k
     exact (Eq.congr_left (act_pull d (.fin k) φ)).trans (pull d a).injective.eq_iff
-  kfin := by
-    have := h.kfin
+  · have := h.kfin
     refine Submodule.finiteDimensional_of_le (S₂ := (Submodule.span ℂ (Set.range fun k => cptRep E a k φ)).map
       (pull d a).toLinearMap) (Submodule.span_le.2 ?_)
     rintro _ ⟨k, rfl⟩
     exact ⟨_, Submodule.subset_span ⟨_, rfl⟩, (act_pull d (.cpt k) φ).symm⟩
-  zfin := by
-    have := h.zfin
+  · have := h.zfin
     refine Submodule.finiteDimensional_of_le (S₂ := (Submodule.span ℂ ((fun z : Module.End ℂ (Sm E a) => z φ) ''
       Zalg E a)).map (pull d a).toLinearMap) (Submodule.span_le.2 ?_)
     rintro _ ⟨z, hz, rfl⟩
     obtain ⟨z', h1, h2⟩ := Zalg_pull d hz
     exact ⟨_, Submodule.subset_span ⟨z', h1, rfl⟩, (h2 φ).symm⟩
-  growth g := by
+  · intro g
     obtain ⟨C, N, h1⟩ := h.growth (SA d a g)
     obtain ⟨K, hK1, hK⟩ := height_map_le (a := a) d
     refine ⟨C * K ^ N, N, fun y => ?_⟩
@@ -564,7 +549,7 @@ theorem isCuspidal_pull {φ : GA E a → ℂ} (hφ : IsCuspidal φ) : IsCuspidal
   have h2 := hφ r h0 h1 (μ.map m) (m '' 𝓕) (β.isAddHaarMeasure_map μ)
     (hF.image_of_equiv m.toEquiv (MeasurePreserving.symm m ⟨m.measurable, rfl⟩).quasiMeasurePreserving e fun y x => by
       change β (β.symm y + x) = y + β x
-      rw [map_add, β.apply_symm_apply]) (SA d a g)
+      rw [map_add (f := _), β.apply_symm_apply]) (SA d a g)
   rw [m.measurableEmbedding.setIntegral_map, m.injective.preimage_image] at h2
   rw [← h2]
   congr 1
@@ -594,8 +579,8 @@ end Pull
 
 end UpperTheory.CBC.SConjSpaceCAux
 
-open UpperTheory.CBC.SConjSpaceCAux in
 
+open UpperTheory.CBC.SConjSpaceCAux in
 theorem UpperTheory.CBC.SConjSpaceC_holds : UpperTheory.CBC.SConjSpaceC := by
   intro M _ _ _ σ s hs n P
   obtain ⟨d, rfl, rfl⟩ := exists_GD σ s hs

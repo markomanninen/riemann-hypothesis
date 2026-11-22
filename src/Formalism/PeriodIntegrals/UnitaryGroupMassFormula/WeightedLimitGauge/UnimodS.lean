@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.PeriodIntegrals.RhsWLim
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.VolumeLieE
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.HaarUniq
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.MBaseMem
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.TBallMeas
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.ConstCut
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.ConstPair
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.Unimod
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.RhsWLim
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.VolumeLieE
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.HaarUniq
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.MBaseMem
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.TBallMeas
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.ConstCut
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.ConstPair
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedLimitGauge.Unimod
+
+@[expose] public section
 
 set_option linter.unusedVariables false
 
@@ -94,7 +98,7 @@ theorem rmul_scale (ν : Measure (Mt k r)) (hH : IsHaarOn (UWb k r) ν) (p : Mat
     (by rw [pull_apply ν hc2]; exact h0) (by rw [pull_apply ν hc2]; exact ht)
   calc ν.map (rmulM p) = (pull (ν.map (rmulM p))).map inc := (map_pull _ hc1).symm
     _ = ((pull (ν.map (rmulM p)) (inc ⁻¹' s) / pull ν (inc ⁻¹' s)) • pull ν).map inc := by rw [← key]
-    _ = _ := by rw [Measure.map_smul, map_pull ν hc2, pull_apply _ hc1, pull_apply ν hc2]
+    _ = _ := by rw [Measure.map_smul _ inc_cont.measurable.aemeasurable, map_pull ν hc2, pull_apply _ hc1, pull_apply ν hc2]
 
 theorem one_of_le (c c' : ℝ≥0∞) (h : c * c' = 1) (hc : c ≤ 1) (hc' : c' ≤ 1) : c = 1 := by
   refine le_antisymm hc ?_
@@ -122,7 +126,7 @@ theorem scale_mul_one (ν : Measure (Mt k r)) (p p' : Mat k r) (hpp : p * p' = 1
     calc ν = ν.map (rmulM (p * p')) := by rw [hpp, map_rmul_one]
       _ = (ν.map (rmulM p)).map (rmulM p') := by
           rw [Measure.map_map (rmulM_meas p') (rmulM_meas p), rmulM_comp]
-      _ = (c * c') • ν := by rw [hc, Measure.map_smul, hc', smul_smul]
+      _ = (c * c') • ν := by rw [hc, Measure.map_smul _ (rmulM_meas p').aemeasurable, hc', smul_smul]
   have e2 := congrArg (fun m : Measure (Mt k r) => m s) e
   simp only [Measure.smul_apply, smul_eq_mul] at e2
   exact (ENNReal.mul_left_inj h0 ht).1 (show (c * c') * ν s = 1 * ν s by rw [one_mul]; exact e2.symm)
@@ -173,7 +177,7 @@ theorem hermInv_of (hU : UnitInv) : HermInv := by
   set c := ν.map (rmulM (embWb k r B₀)) (bBall k r ρ) / ν (bBall k r ρ) with hc
   have h2 : ν.map (rmulM (embWb k r (Hb k) * embWb k r B₀ * embWb k r (Hb k))) = c • ν := by
     rw [← rmulM_comp, ← rmulM_comp, ← Measure.map_map (rmulM_meas _) ((rmulM_meas _).comp (rmulM_meas _)),
-      ← Measure.map_map (rmulM_meas _) (rmulM_meas _), hEinv, hsc, Measure.map_smul, hEinv]
+      ← Measure.map_map (rmulM_meas _) (rmulM_meas _), hEinv, hsc, Measure.map_smul _ (rmulM_meas _).aemeasurable, hEinv]
   have hcc := scale_mul_one ν _ _ hinv _ h0.ne' ht.ne c c hsc h2
   rw [hsc, one_of_sq c hcc, one_smul]
 

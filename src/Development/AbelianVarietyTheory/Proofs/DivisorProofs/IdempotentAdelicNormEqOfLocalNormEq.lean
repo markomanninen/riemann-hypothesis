@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.NotIsCompactUnivFv
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.Published
 open GlobalTheory.Published.StrongApprox
 open scoped TensorProduct
@@ -22,7 +27,7 @@ def iotaL (v : HeightOneSpectrum (𝓞 F)) : Fv F v →ₗ[F] AF F where
     refine Prod.ext (by change (0 : Ainf F) = 0 + 0; simp) ?_
     change singleV F v (a + b) = singleV F v a + singleV F v b
     refine af_ext fun w => ?_
-    rw [map_add]
+    rw [map_add (f := _)]
     by_cases hw : w = v
     · subst hw; simp only [evalV_single_same]
     · simp only [evalV_single_ne hw, add_zero]
@@ -34,9 +39,6 @@ def iotaL (v : HeightOneSpectrum (𝓞 F)) : Fv F v →ₗ[F] AF F where
     by_cases hw : w = v
     · subst hw; simp only [evalV_single_same]
     · simp only [evalV_single_ne hw, smul_zero]
-
-theorem iotaL_apply (v : HeightOneSpectrum (𝓞 F)) (a : Fv F v) :
-    iotaL v a = pairA F 0 (singleV F v a) := rfl
 
 theorem iotaL_mul (v : HeightOneSpectrum (𝓞 F)) (a b : Fv F v) :
     iotaL v (a * b) = iotaL v a * iotaL v b := by
@@ -89,8 +91,8 @@ theorem phi_mul (v : HeightOneSpectrum (𝓞 F)) (x y : Fv F v ⊗[F] E) :
     | tmul b f =>
       rw [Algebra.TensorProduct.tmul_mul_tmul, phi_tmul, phi_tmul, phi_tmul, iotaL_mul,
         Algebra.TensorProduct.tmul_mul_tmul]
-    | add y z hy hz => rw [mul_add, map_add, hy, hz, map_add, mul_add]
-  | add x z hx hz => rw [add_mul, map_add, hx, hz, map_add, add_mul]
+    | add y z hy hz => rw [mul_add, map_add (f := _), hy, hz, map_add (f := _), mul_add]
+  | add x z hx hz => rw [add_mul, map_add (f := _), hx, hz, map_add (f := _), add_mul]
 
 theorem phi_sig (σ : E →ₐ[F] E) (v : HeightOneSpectrum (𝓞 F)) (x : Fv F v ⊗[F] E) :
     phi v (sigR (Fv F v) σ x) = sigR (AF F) σ (phi v x) := by
@@ -99,7 +101,7 @@ theorem phi_sig (σ : E →ₐ[F] E) (v : HeightOneSpectrum (𝓞 F)) (x : Fv F 
   | tmul a e =>
     simp only [sigR, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, Algebra.TensorProduct.map_tmul,
       AlgHom.coe_id, id_eq, phi_tmul]
-  | add x z hx hz => rw [map_add, map_add, hx, hz, map_add, map_add]
+  | add x z hx hz => rw [map_add (f := _), map_add (f := _), hx, hz, map_add (f := _), map_add (f := _)]
 
 theorem idem_mul_phi (v : HeightOneSpectrum (𝓞 F)) (ε : AF F) (hε : IsPlacesIdem ∅ {v} ε)
     (x : Fv F v ⊗[F] E) : algebraMap (AF F) (AF F ⊗[F] E) ε * phi v x = phi v x := by
@@ -108,7 +110,7 @@ theorem idem_mul_phi (v : HeightOneSpectrum (𝓞 F)) (ε : AF F) (hε : IsPlace
   | tmul a e =>
     rw [Algebra.TensorProduct.algebraMap_apply, Algebra.algebraMap_self, RingHom.id_apply, phi_tmul,
       Algebra.TensorProduct.tmul_mul_tmul, one_mul, idem_mul_iotaL v ε hε]
-  | add x z hx hz => rw [map_add, mul_add, hx, hz]
+  | add x z hx hz => rw [map_add (f := _), mul_add, hx, hz]
 
 theorem phi_inclR (v : HeightOneSpectrum (𝓞 F)) (ε : AF F) (hε : IsPlacesIdem ∅ {v} ε) (c : E) :
     phi v (inclR (Fv F v) c) = algebraMap (AF F) (AF F ⊗[F] E) ε * inclR (AF F) c := by
@@ -124,6 +126,6 @@ theorem idem_norm_eq_of_local : ∀ (F E : Type) [Field F] [NumberField F] [Fiel
     ∃ t : AF F ⊗[F] E, algebraMap (AF F) (AF F ⊗[F] E) ε * (t * sigR (AF F) σ t + inclR (AF F) c) = 0 := by
   intro F E _ _ _ _ σ v ε hε c ⟨t, ht⟩
   refine ⟨phi v t, ?_⟩
-  rw [← phi_sig, ← phi_mul, mul_add, idem_mul_phi v ε hε, ← phi_inclR v ε hε, ← map_add, ht, map_zero]
+  rw [← phi_sig, ← phi_mul, mul_add, idem_mul_phi v ε hε, ← phi_inclR v ε hε, ← map_add (f := _), ht, map_zero]
 
 end GlobalTheory.NormFin

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueIsPullForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WedgeOrdVpBaseChangeOfNeBot
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SymmetryHypExtendsSemiAbelianDvr
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsAbelianSchemeOfIsGrpPullback
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsLocalizedModuleResBasicOpenOfQcqs
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueIsPullForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WedgeOrdVpBaseChangeOfNeBot
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SymmetryHypExtendsSemiAbelianDvr
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsAbelianSchemeOfIsGrpPullback
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsLocalizedModuleResBasicOpenOfQcqs
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -81,14 +85,27 @@ theorem exists_grp {R R' : Type} [CommRing R] [CommRing R'] [Algebra R R'] (A : 
     (hA : IsAbelianScheme A) (hg : SmoothOfRelativeDimension g A.hom) {X' : Scheme.{0}} (s' : X' ⟶ Sp R')
     (φ : X' ⟶ A.left) (h : IsPullback φ s' A.hom (spMap (algebraMap R R'))) :
     ∃ _ : GrpObj (Over.mk s'), IsAbelianScheme (Over.mk s') ∧ SmoothOfRelativeDimension g s' := by
+  have abelian_pull {S S' : Scheme.{0}} {f : S' ⟶ S} {G : Over S} {G' : Over S'}
+      [GrpObj G] [GrpObj G'] {φ : G'.left ⟶ G.left} (hG : IsAbelianScheme G)
+      (h : IsGrpPullback G' G f φ) : IsAbelianScheme G' := by
+    have comm : IsCommMonObj G' := by
+      have := hG.comm
+      rw [isCommMonObj_iff_isMulCommutative]
+      intro T
+      refine ⟨⟨fun x y => Over.OverMorphism.ext (h.1.hom_ext ?_ (by rw [Over.w, Over.w]))⟩⟩
+      rw [← h.2 T x y (pushPt h.1.w x) (pushPt h.1.w y) rfl rfl,
+        ← h.2 T y x (pushPt h.1.w y) (pushPt h.1.w x) rfl rfl, _root_.mul_comm]
+    exact ⟨comm, MorphismProperty.of_isPullback (P := @Smooth) h.1 hG.smooth,
+      MorphismProperty.of_isPullback (P := @IsProper) h.1 hG.proper,
+      MorphismProperty.of_isPullback (P := @GeometricallyConnected) h.1 hG.geomConnected⟩
   obtain ⟨C, _, ψ, hψ⟩ := GlobalTheory.FlagTan.exists_isGrpPullback A (spMap (algebraMap R R'))
   let e : C ≅ Over.mk s' := Over.isoMk (hψ.1.isoIsPullback _ _ h) (by simp)
   let _ : GrpObj (Over.mk s') := GrpObj.ofIso e
   have : IsMonHom e.hom := inferInstance
-  have hC := GlobalTheory.PolPull.isAbelianScheme_of_isGrpPullback hA hψ
+  have hC := abelian_pull hA hψ
   have := smoothOfRelativeDimension_isStableUnderBaseChange.{0} g
   have : IsMonHom e.symm.hom := inferInstanceAs (IsMonHom e.inv)
-  exact ⟨inferInstance, GlobalTheory.PolPull.isAbelianScheme_of_isGrpPullback hC (GlobalTheory.SymExtendDvr.isGrpPullback_of_iso e.symm),
+  exact ⟨inferInstance, abelian_pull hC (GlobalTheory.SymExtendDvr.isGrpPullback_of_iso e.symm),
     MorphismProperty.of_isPullback (P := @SmoothOfRelativeDimension g) h hg⟩
 
 theorem lTensor_bijective_of_isBaseChange {S B N M P : Type} [CommRing S] [CommRing B] [Algebra S B]
@@ -97,8 +114,7 @@ theorem lTensor_bijective_of_isBaseChange {S B N M P : Type} [CommRing S] [CommR
     (h₂ : IsBaseChange B (ev ∘ₗ T)) : Function.Bijective (T.lTensor B) := by
   have e : ∀ x, h₁.equiv (T.lTensor B x) = h₂.equiv x := fun x ↦ by
     induction x with
-    | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul b n => simp [IsBaseChange.equiv_tmul]
   refine (Function.Bijective.of_comp_iff' h₁.equiv.bijective _).1 ?_
   have e' : (h₁.equiv ∘ T.lTensor B) = h₂.equiv := funext e
@@ -113,7 +129,7 @@ theorem oneFormMap_eq_kaehlerDifferential_map {R R' B B' : Type} [CommRing R] [C
   | h b c =>
     rw [SemiHom.oneFormMap_smul_semilinear, SemiHom.m1_D, map_smul, KaehlerDifferential.map_D, algebraMap_smul]
   | h0 => simp
-  | ha x y hx hy => rw [map_add, map_add, hx, hy]
+  | ha x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem isBaseChange_of_isPushout {R R' B B' W : Type} [CommRing R] [CommRing R'] [CommRing B] [CommRing B']
     [Algebra R R'] [Algebra R B] [Algebra R' B'] [Algebra B B'] [Algebra R B'] [IsScalarTower R R' B']
@@ -129,7 +145,7 @@ theorem isBaseChange_of_isPushout {R R' B B' W : Type} [CommRing R] [CommRing R'
         obtain ⟨a, rfl⟩ := hx
         simp
       | zero => simp
-      | add x y _ _ hx hy => rw [TensorProduct.tmul_add, map_add, map_add, hx, hy]
+      | add x y _ _ hx hy => rw [TensorProduct.tmul_add, map_add (f := _), map_add (f := _), hx, hy]
       | smul a x _ hx =>
         rw [TensorProduct.tmul_smul, ← algebraMap_smul B', map_smul, hx, map_smul, algebraMap_smul]
   have h₂ := IsBaseChange.comp hev h₁

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.LocalField
 
@@ -65,9 +69,8 @@ end Uniformizer
 section Valuation
 
 noncomputable def normalizedValuation : Valuation K ℤᵐ⁰ :=
-  (valuation K).map
-    (IsNonarchimedeanLocalField.valueGroupWithZeroIsoInt K).toMulEquiv.toMonoidWithZeroHom
-    (IsNonarchimedeanLocalField.valueGroupWithZeroIsoInt K).toOrderIso.monotone
+  let e := IsNonarchimedeanLocalField.valueGroupWithZeroIsoInt K
+  (valuation K).map { e.toMulEquiv.toMonoidWithZeroHom with monotone' := e.toOrderIso.monotone }
 
 variable {K}
 
@@ -291,10 +294,6 @@ theorem ker_unitsToResidue : (unitsToResidue K).ker = unitFiltration K 1 := by
 noncomputable def unitsModPrincipalEquiv : 𝒪[K]ˣ ⧸ unitFiltration K 1 ≃* 𝓀[K]ˣ :=
   (QuotientGroup.quotientMulEquivOfEq (ker_unitsToResidue K).symm).trans
     (QuotientGroup.quotientKerEquivOfSurjective _ (unitsToResidue_surjective K))
-
-@[simp]
-theorem unitsModPrincipalEquiv_mk (u : 𝒪[K]ˣ) :
-    unitsModPrincipalEquiv K (QuotientGroup.mk u) = unitsToResidue K u := rfl
 
 end Residue
 

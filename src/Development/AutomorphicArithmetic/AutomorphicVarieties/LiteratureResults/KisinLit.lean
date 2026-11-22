@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.KisinCrTrivial
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,29 +45,6 @@ def TypeLit (n : ℕ) (t : ↥(GK K) → B) : Prop :=
       (∀ b, (actBst (γ : GQ l)).comp ((x b).comp (ρ γ⁻¹)) = ∑ a, (LinearMap.mulLeft B (toSt (M a b))).comp (x a)) →
       M.trace = t γ ⊗ₜ[ℚ_[l]] 1
 
-def PotCr : Prop := ∃ (L : FinExt l) (h : K.1 ≤ L.1), Crys L (ρ.comp (incl h))
-
 end
-
-def KisinLit : Prop :=
-  ∀ (l : ℕ) [Fact l.Prime] (K : FinExt l) (E : Type) [Field E] [Algebra ℚ_[l] E] [FiniteDimensional ℚ_[l] E]
-    (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [Algebra O E]
-    [IsFractionRing O E], (∀ z : ℤ_[l], algebraMap ℚ_[l] E (z : ℚ_[l]) = algebraMap O E (algebraMap ℤ_[l] O z)) →
-  ∀ (A₀ : Type) [CommRing A₀] [IsLocalRing A₀] [IsNoetherianRing A₀] [IsAdicComplete (maximalIdeal A₀) A₀]
-    [Finite (ResidueField A₀)] [Algebra O A₀] [IsLocalHom (algebraMap O A₀)], (∀ a : A₀, (l : A₀) * a = 0 → a = 0) →
-  ∀ (A : Type) [CommRing A] [Algebra A₀ A] [IsLocalization.Away ((l : ℕ) : A₀) A] [Algebra E A],
-    (∀ a : O, algebraMap E A (algebraMap O E a) = algebraMap A₀ A (algebraMap O A₀ a)) →
-  ∀ (n : ℕ) (r : ↥(GK K) →* GL (Fin n) A₀),
-    (∀ (N : ℕ) (i j : Fin n), IsLocallyConstant fun g =>
-      Ideal.Quotient.mk (maximalIdeal A₀ ^ N) ((r g : Matrix (Fin n) (Fin n) A₀) i j)) →
-  ∀ (h : ℕ) (m : ℕ → ℕ), ∑ i ∈ Finset.range (h + 1), m i = n →
-  ∀ (τ : ↥((Iq l).subgroupOf (GK K)) →* GL (Fin n) E), IsOpen (τ.ker : Set ↥((Iq l).subgroupOf (GK K))) →
-  ∀ (t : ↥(GK K) → E), (∀ γ : ↥((Iq l).subgroupOf (GK K)), t γ = (τ γ : Matrix (Fin n) (Fin n) E).trace) →
-  ∃ I : Ideal A,
-    ∀ (B : Type) [CommRing B] [IsLocalRing B] [Algebra E B] [Module.Finite E B] [Algebra ℚ_[l] B] [IsScalarTower ℚ_[l] E B]
-      (x : A →ₐ[E] B) (ρ : ↥(GK K) →* GL (Fin n) B),
-      ρ = (Matrix.GeneralLinearGroup.map ((x : A →+* B).comp (algebraMap A₀ A))).comp r →
-      (I ≤ RingHom.ker x ↔
-        PotCr K (colRep ρ) ∧ TypeLit K (colRep ρ) n (fun γ => algebraMap E B (t γ)) ∧ HodgeLit K (colRep ρ) h m)
 
 end UpperTheory.V.Lit

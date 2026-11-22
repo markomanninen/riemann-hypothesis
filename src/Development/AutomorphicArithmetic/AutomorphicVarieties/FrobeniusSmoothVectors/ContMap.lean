@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgTwist
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoordGrading
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartClosed
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartSpan
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgTwist
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoordGrading
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartClosed
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartSpan
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -52,7 +56,7 @@ private theorem mono {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] {k : Type}
     refine ⟨b' * b, D.mul_mem hb' hb, x' * x, ?_, ?_⟩
     · have hw : Finsupp.weight W.wt (Finsupp.single a e) = e • W.wt a := by
         simp [Finsupp.weight_apply, Finsupp.sum_single_index]
-      rw [map_add, hw]
+      rw [map_add (f := _), hw]
       exact mono_lemma ρ hx' hx
     · have hm : MvPowerSeries.monomial (Finsupp.single a e + f) (1 : O) =
           MvPowerSeries.X a ^ e * MvPowerSeries.monomial f 1 := by
@@ -90,7 +94,8 @@ private theorem dense {O R : Type} [CommRing O] [CommRing R] [IsLocalRing R] [Al
     intro m hm
     simp only [S, Set.mem_setOf_eq, not_and, not_exists, not_le] at hm
     have hl : MvPowerSeries.coeff m low = if m ∈ Finset.Iic c then MvPowerSeries.coeff m f else 0 := by
-      simp [low, map_sum, MvPowerSeries.coeff_monomial]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [low, map_sum, MvPowerSeries.coeff_monomial]
     rw [map_sub, hl]
     by_cases hw : Finsupp.weight W.wt m = 0
     · have hmc : m ∈ Finset.Iic c := by
@@ -102,9 +107,11 @@ private theorem dense {O R : Type} [CommRing O] [CommRing R] [IsLocalRing R] [Al
   obtain ⟨μ, hμ, hspan⟩ := part_span O R ℤ W S 0 (fun m hm => hm.1)
   obtain ⟨b, hb, hfb⟩ := hspan (f - low) hg
   refine ⟨W.π low, ?_, ?_⟩
-  · rw [map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Subalgebra.sum_mem _ fun m _ => key m
-  · rw [← map_sub, hfb, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sub, hfb, map_sum]
     refine Ideal.sum_mem _ fun m hm => ?_
     obtain ⟨s, hs⟩ := (hμ (Finset.mem_coe.mpr hm)).2
     have e : MvPowerSeries.monomial m (1 : O) =
@@ -346,7 +353,8 @@ theorem UpperTheory.V.Fr.wpres :
       have hw : Finsupp.weight W.wt m = j := hμ (Finset.mem_coe.mpr hm)
       rwa [hw] at this
     · simp only [AlgHom.toLinearMap_apply]
-      rw [hfb, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hfb, map_sum]
       refine Finset.sum_congr rfl fun m _ => ?_
       rw [map_mul, hBX, mul_assoc]
   refine ⟨W, hz, hr, fun y => ⟨BP y, P0 y⟩, ?_, ?_⟩
@@ -394,7 +402,7 @@ theorem UpperTheory.V.Fr.wpres :
       have hsum : a = ∑ m ∈ μ, (⟨c m, hc m⟩ : S.B) • A' m := by
         apply Subtype.ext
         rw [e]
-        simp only [AddSubmonoidClass.coe_finset_sum]
+        simp only [AddSubmonoidClass.coe_finsetSum]
         refine Finset.sum_congr rfl fun m hm => ?_
         rw [← hA'e m hm]
         rfl

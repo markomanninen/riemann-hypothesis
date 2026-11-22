@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.UnitaryActHalfSpaceStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianWeilActionUnitaryGroupTestFunctionsStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThHSiegelOperatorStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.UnitaryActHalfSpaceStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianWeilActionUnitaryGroupTestFunctionsStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThHSiegelOperatorStatement
+
+@[expose] public section
 
 open Matrix Complex NumberField GlobalTheory.SW Filter Topology
 open ReciprocityTheory.ChartRestriction.G.FD (cc herm)
@@ -20,57 +24,49 @@ variable {R S : Type} [CommRing R] [CommRing S] {N : ℕ}
 def cor (c : R) (A : Matrix (Fin N) (Fin N) R) : Matrix (Fin (N + 1)) (Fin (N + 1)) R :=
   Matrix.of fun i j => Fin.cases (Fin.cases c (fun _ => 0) j) (fun i' => Fin.cases 0 (A i') j) i
 
-@[simp] theorem corner_embedding_succ_succ (c : R) (A : Matrix (Fin N) (Fin N) R) : cor c A 0 0 = c := rfl
-@[simp] theorem cor_zs (c : R) (A : Matrix (Fin N) (Fin N) R) (j : Fin N) :
-    cor c A 0 j.succ = 0 := rfl
-@[simp] theorem cor_sz (c : R) (A : Matrix (Fin N) (Fin N) R) (i : Fin N) :
-    cor c A i.succ 0 = 0 := rfl
-@[simp] theorem cor_ss (c : R) (A : Matrix (Fin N) (Fin N) R) (i j : Fin N) :
-    cor c A i.succ j.succ = A i j := rfl
-
 theorem cor_mul (a b : R) (A B : Matrix (Fin N) (Fin N) R) :
     cor a A * cor b B = cor (a * b) (A * B) := by
   ext i j
   refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j <;>
-    simp [Matrix.mul_apply, Fin.sum_univ_succ]
+    simp [cor, Matrix.mul_apply, Fin.sum_univ_succ]
 
 theorem cor_add (a b : R) (A B : Matrix (Fin N) (Fin N) R) :
     cor a A + cor b B = cor (a + b) (A + B) := by
   ext i j
   refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j <;>
-    simp
+    simp [cor]
 
 theorem cor_neg (a : R) (A : Matrix (Fin N) (Fin N) R) : -cor a A = cor (-a) (-A) := by
   ext i j
   refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j <;>
-    simp
+    simp [cor]
 
 theorem cor_one : cor (1 : R) (1 : Matrix (Fin N) (Fin N) R) = 1 := by
   ext i j
   refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j <;>
-    simp [Matrix.one_apply, Fin.succ_ne_zero, eq_comm (a := (0 : Fin (N + 1)))]
+    simp [cor, Matrix.one_apply, Fin.succ_ne_zero, eq_comm (a := (0 : Fin (N + 1)))]
 
 theorem cor_zero : cor (0 : R) (0 : Matrix (Fin N) (Fin N) R) = 0 := by
   ext i j
   refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j <;>
-    simp
+    simp [cor]
 
 theorem cor_map (f : R →+* S) (a : R) (A : Matrix (Fin N) (Fin N) R) :
     (cor a A).map f = cor (f a) (A.map f) := by
   ext i j
   refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j <;>
-    simp
+    simp [cor]
 
 theorem cor_conjTranspose (a : ℂ) (A : Matrix (Fin N) (Fin N) ℂ) :
     (cor a A)ᴴ = cor (conj a) Aᴴ := by
   ext i j
   refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j <;>
-    simp [Matrix.conjTranspose_apply]
+    simp [cor, Matrix.conjTranspose_apply]
 
 theorem cor_mulVec (a : R) (A : Matrix (Fin N) (Fin N) R) (x : R) (v : Fin N → R) :
     cor a A *ᵥ (Fin.cons x v : Fin (N + 1) → R) = (Fin.cons (a * x) (A *ᵥ v) : Fin (N + 1) → R) := by
   ext i
-  refine Fin.cases ?_ (fun i => ?_) i <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
+  refine Fin.cases ?_ (fun i => ?_) i <;> simp [cor, Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
 
 theorem cons_dot (x y : R) (v w : Fin N → R) :
     (Fin.cons x v : Fin (N + 1) → R) ⬝ᵥ (Fin.cons y w : Fin (N + 1) → R) = x * y + v ⬝ᵥ w := by
@@ -85,9 +81,9 @@ theorem det_cor_den (C D : Matrix (Fin N) (Fin N) R) (Z : Matrix (Fin (N + 1)) (
   rw [Matrix.det_succ_row_zero, Fin.sum_univ_succ]
   have e : (cor 0 C * Z + cor 1 D).submatrix Fin.succ (Fin.succAbove 0) = C * Z.submatrix Fin.succ Fin.succ + D := by
     ext i j
-    simp [Matrix.mul_apply, Fin.sum_univ_succ]
+    simp [cor, Matrix.mul_apply, Fin.sum_univ_succ]
   rw [e]
-  simp [Matrix.mul_apply, Fin.sum_univ_succ]
+  simp [cor, Matrix.mul_apply, Fin.sum_univ_succ]
 
 theorem det_cor_one (D : Matrix (Fin N) (Fin N) R) : (cor 1 D).det = D.det := by
   simpa using det_cor_den (0 : Matrix (Fin N) (Fin N) R) D 0
@@ -117,7 +113,7 @@ theorem imH_cor (A : Matrix (Fin N) (Fin N) ℂ) : imH (cor I A) = cor 1 (imH A)
   unfold imH
   rw [cor_conjTranspose]
   ext i j
-  refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j <;> simp
+  refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j <;> simp [cor]
   field_simp
   rw [Complex.I_sq]
   ring
@@ -133,7 +129,7 @@ def emb (γ : M2 E N) : M2 E (N + 1) :=
 theorem ccT_cor (a : E) (A : Matrix (Fin N) (Fin N) E) : ccT (cor a A) = cor (cc a) (ccT A) := by
   ext i j
   refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j <;>
-    simp [ccT, cc]
+    simp [cor, ccT, cc]
 
 theorem ccT_fromBlocks {m : ℕ} (A B C D : Matrix (Fin m) (Fin m) E) :
     ccT (Matrix.fromBlocks A B C D) = Matrix.fromBlocks (ccT A) (ccT C) (ccT B) (ccT D) := by
@@ -184,13 +180,13 @@ theorem pushZ_corZ (Z : CM Ψ N N) (t : ℝ) :
   funext τ
   ext i j
   refine Fin.cases ?_ (fun i => ?_) i <;> refine Fin.cases ?_ (fun j => ?_) j <;>
-    simp [pushZ, corZ, Matrix.vecMulVec_apply, Pi.single_apply, Fin.succ_ne_zero]
+    simp [cor, pushZ, corZ, Matrix.vecMulVec_apply, Pi.single_apply, Fin.succ_ne_zero]
 
 omit [NumberField E] [IsCMField E] in
 theorem dropZ_corZ (s : ℂ) (Z : CM Ψ N N) : dropZ Ψ (corZ s Z) = Z := by
   funext τ
   ext i j
-  simp [dropZ, corZ]
+  simp [cor, dropZ, corZ]
 
 omit [NumberField E] [IsCMField E] in
 theorem drop_corV (z : CM Ψ n N) : (fun τ => (corV z τ).submatrix id Fin.succ) = z := by
@@ -262,12 +258,14 @@ theorem transH_drop (hΨ : IsType Ψ) {γ : M2 E N} (hγ : γ ∈ UU E N)
     congr 1
     · funext τ
       ext k j
+      simp only [hDen'_emb, cor_inv _ (hdet' τ)]
       refine Fin.cases ?_ (fun j => ?_) j <;>
-        simp [hw, corV, hDen'_emb, cor_inv _ (hdet' τ), Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
+        simp [cor, hw, corV, Matrix.mulVec, dotProduct, Fin.sum_univ_succ]
     · funext τ
       ext k j
+      simp only [hDen_emb, cor_inv _ (hdet τ)]
       refine Fin.cases ?_ (fun j => ?_) j <;>
-        simp [hw', corV, hDen_emb, cor_inv _ (hdet τ), Matrix.vecMul, dotProduct, Fin.sum_univ_succ]
+        simp [cor, hw', corV, Matrix.vecMul, dotProduct, Fin.sum_univ_succ]
   exact tendsto_nhds_unique_of_eventuallyEq L2 (L1.const_mul _) ((Filter.eventually_ge_atTop 0).mono key)
 
 theorem dropF_weil (hΨ : IsType Ψ) (hn : Even n) {γ : M2 E N} (hγ : γ ∈ UU E N)
@@ -288,8 +286,8 @@ def extV (E : Type) [Field E] (N : ℕ) :
   map_smul' c v := by
     ext (i | i) <;> refine Fin.cases ?_ (fun i => ?_) i <;> simp
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem botSpan_eq (h : M2 E (N + 1)) (h0 : h (Sum.inr 0) = Pi.single (Sum.inr 0) 1)
     (h1 : ∀ a, h (Sum.inr a) (Sum.inl 0) = 0) :
     botSpan h = (E ∙ Pi.single (Sum.inr 0) 1) ⊔
@@ -327,12 +325,12 @@ omit [IsCMField E] in
 theorem botSpan_emb (γ : M2 E N) :
     botSpan (emb γ) = (E ∙ Pi.single (Sum.inr 0) 1) ⊔ (botSpan γ).map (extV E N) := by
   have h0 : emb γ (Sum.inr 0) = Pi.single (Sum.inr 0) 1 := by
-    ext (j | j) <;> refine Fin.cases ?_ (fun j => ?_) j <;> simp [emb, Pi.single_apply]
+    ext (j | j) <;> refine Fin.cases ?_ (fun j => ?_) j <;> simp [cor, emb, Pi.single_apply]
   have h1 : ∀ a, emb γ (Sum.inr a) (Sum.inl 0) = 0 := by
-    intro a; refine Fin.cases ?_ (fun a => ?_) a <;> simp [emb]
+    intro a; refine Fin.cases ?_ (fun a => ?_) a <;> simp [cor, emb]
   have hs : (emb γ).submatrix (up N) (up N) = γ := by
     ext (i | i) (j | j) <;>
-      simp [emb, Matrix.toBlocks₁₁, Matrix.toBlocks₁₂, Matrix.toBlocks₂₁, Matrix.toBlocks₂₂]
+      simp [cor, emb, Matrix.toBlocks₁₁, Matrix.toBlocks₁₂, Matrix.toBlocks₂₁, Matrix.toBlocks₂₂]
   rw [botSpan_eq (emb γ) h0 h1, hs]
 
 omit [IsCMField E] in
@@ -369,8 +367,8 @@ theorem botSpan_mul_le {m : ℕ} (a d : Matrix (Fin m) (Fin m) E) (g : M2 E m) :
   rw [e]
   exact Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)
 
-omit [NumberField E] [IsCMField E] in
 
+omit [NumberField E] [IsCMField E] in
 theorem exists_col (v : Fin (N + 1) → E) (hv : v ≠ 0) :
     ∃ b : Matrix (Fin (N + 1)) (Fin (N + 1)) E, IsUnit b.det ∧ ∀ i, b i 0 = v i := by
   obtain ⟨k, hk⟩ : ∃ k, v k ≠ 0 := by
@@ -486,7 +484,7 @@ theorem exists_embedding : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E
   intro E _ _ _ Ψ hΨ n N hn
   refine ⟨emb, fun γ hγ => ⟨emb_mem hγ, fun a => ?_, fun Z τ => hDen_emb_det γ Z τ,
     fun φ hφ => dropF_weil hΨ hn hγ hφ, fun γ' _ => botSpan_emb_iff γ γ'⟩, fun g hg h0 => exists_botSpan hg h0⟩
-  refine Fin.cases ?_ (fun a => ?_) a <;> simp [emb]
+  refine Fin.cases ?_ (fun a => ?_) a <;> simp [cor, emb]
 
 end
 

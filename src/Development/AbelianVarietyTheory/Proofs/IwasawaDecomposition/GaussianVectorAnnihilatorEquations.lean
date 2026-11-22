@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataTheta
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.OscActMonomialOfUnique
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNegBaseY
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CoeffPowEqZeroOfDegreeLt
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataTheta
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.OscActMonomialOfUnique
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNegBaseY
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CoeffPowEqZeroOfDegreeLt
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,11 +19,12 @@ section General
 
 variable {σ : Type} [DecidableEq σ] {F : Fock σ} {v : F.H} {E : MvPowerSeries σ ℂ}
 
-omit [DecidableEq σ] in
 
+omit [DecidableEq σ] in
 theorem prod_factorial_add_single (α : σ →₀ ℕ) (l : σ) :
     (α + Finsupp.single l 1).prod (fun _ k => (k.factorial : ℂ)) =
       ((α l : ℂ) + 1) * α.prod (fun _ k => (k.factorial : ℂ)) := by
+  classical
   rw [← FockSeq.mfact_cast, ← FockSeq.mfact_cast, Oscillator.mfact_add_single]
   push_cast
   ring
@@ -55,7 +60,7 @@ theorem inner_X_mul_of_deriv {κ : Type} [Fintype κ] (h : HasCoeff F v E) (l : 
       c * inner ℂ (F.ι f) v + ∑ k, a k * inner ℂ (F.ι (MvPolynomial.pderiv (m k) f)) v := by
   induction f using MvPolynomial.induction_on' with
   | add f g hf hg =>
-    simp only [mul_add, map_add, inner_add_left, hf, hg, Finset.sum_add_distrib]
+    simp only [mul_add, map_add (f := _), inner_add_left, hf, hg, Finset.sum_add_distrib]
     ring
   | monomial α b =>
     have e : (MvPolynomial.monomial α b : MvPolynomial σ ℂ) = b • MvPolynomial.monomial α 1 := by
@@ -63,11 +68,13 @@ theorem inner_X_mul_of_deriv {κ : Type} [Fintype κ] (h : HasCoeff F v E) (l : 
     have e2 : ((MvPolynomial.C c + ∑ k, MvPolynomial.C (a k) * MvPolynomial.X (m k) :
         MvPolynomial σ ℂ) : MvPowerSeries σ ℂ) =
         MvPowerSeries.C c + ∑ k, MvPowerSeries.C (a k) * MvPowerSeries.X (m k) := by
-      rw [← MvPolynomial.coeToMvPowerSeries.ringHom_apply, map_add, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← MvPolynomial.coeToMvPowerSeries.ringHom_apply, map_add (f := _), map_sum]
       simp
     rw [e, mul_smul_comm]
     simp only [Derivation.map_smul, map_smul, inner_smul_left]
-    simp only [inner_X_mul_monomial h, inner_pderiv_monomial h, h α, hE, e2, add_mul, Finset.sum_mul, map_add,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [inner_X_mul_monomial h, inner_pderiv_monomial h, h α, hE, e2, add_mul, Finset.sum_mul, map_add (f := _),
       map_sum, mul_assoc, MvPowerSeries.coeff_C_mul, mul_add, Finset.mul_sum]
     congr 1
     · ring
@@ -80,7 +87,8 @@ variable {P Q : ℕ}
 theorem pderiv_inl_gaussPoly (A : Matrix (Fin P) (Fin Q) ℂ) (x : Ix P Q → ℂ) (i : Fin P) :
     MvPolynomial.pderiv (Sum.inl i) (gaussPoly A x) =
       MvPolynomial.C (x (Sum.inl i)) + ∑ j, MvPolynomial.C (A i j) * MvPolynomial.X (Sum.inr j) := by
-  simp only [gaussPoly, map_add, map_sum, mul_assoc, MvPolynomial.pderiv_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [gaussPoly, map_add (f := _), map_sum, mul_assoc, MvPolynomial.pderiv_mul,
     MvPolynomial.pderiv_X, Pi.single_apply]
   rw [add_comm, Finset.sum_comm]
   simp
@@ -88,7 +96,8 @@ theorem pderiv_inl_gaussPoly (A : Matrix (Fin P) (Fin Q) ℂ) (x : Ix P Q → �
 theorem pderiv_inr_gaussPoly (A : Matrix (Fin P) (Fin Q) ℂ) (x : Ix P Q → ℂ) (j : Fin Q) :
     MvPolynomial.pderiv (Sum.inr j) (gaussPoly A x) =
       MvPolynomial.C (x (Sum.inr j)) + ∑ i, MvPolynomial.C (A i j) * MvPolynomial.X (Sum.inl i) := by
-  simp only [gaussPoly, map_add, map_sum, mul_assoc, MvPolynomial.pderiv_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [gaussPoly, map_add (f := _), map_sum, mul_assoc, MvPolynomial.pderiv_mul,
     MvPolynomial.pderiv_X, Pi.single_apply]
   rw [add_comm]
   simp

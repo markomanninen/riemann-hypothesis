@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.PartialSumRootNonneg
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.PartialSumRootNonneg
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,8 +55,9 @@ theorem tensorAction_comm_euler (hE : IsGlRep E) (a b : Fin n) (f : Fin n → M)
       apply_ite (fun T : Module.End ℂ M => T (f d)), LinearMap.zero_apply] at h
     rw [← h]; abel
   funext c
-  rw [entry_bounds_of_partialSum, eulerAction_apply, eulerAction_apply, eulerAction_apply, map_sum]
-  simp only [entry_bounds_of_partialSum, map_add, key, Finset.sum_add_distrib, Finset.sum_sub_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [entry_bounds_of_partialSum, eulerAction_apply, eulerAction_apply, eulerAction_apply, map_sum]
+  simp only [entry_bounds_of_partialSum, map_add (f := _), key, Finset.sum_add_distrib, Finset.sum_sub_distrib]
   have e1 : ∑ d, (if b = d then E a c (f d) else 0) = E a c (f b) := by simp
   have e2 : ∑ d, E d c (if d = a then f b else 0) = E a c (f b) := by simp [apply_ite]
   rw [e1, e2]
@@ -79,7 +84,7 @@ theorem aeval_induction (A : Module.End ℂ X') (P : Module.End ℂ X' → Prop)
     P (aeval A p) := by
   induction p using Polynomial.induction_on with
   | C a => rw [aeval_C, Algebra.algebraMap_eq_smul_one]; exact h1 a
-  | add p q hp hq => rw [map_add]; exact hadd _ _ hp hq
+  | add p q hp hq => rw [map_add (f := _)]; exact hadd _ _ hp hq
   | monomial k a h =>
     rw [pow_succ, ← mul_assoc, map_mul, aeval_X]
     exact hmul _ h
@@ -186,7 +191,8 @@ theorem casimir_map_intertwiner {N : Type*} [AddCommGroup N] [Module ℂ N]
     (EN : Fin n → Fin n → Module.End ℂ N) (φ : (Fin n → M) →ₗ[ℂ] N)
     (hφ : ∀ (a b : Fin n) (f : Fin n → M), (∀ c, f c ∈ genSub E V) → φ (tensV E a b f) = EN a b (φ f))
     {f : Fin n → M} (hf : ∀ c, f c ∈ genSub E V) : casimir EN (φ f) = φ (casimir (tensV E) f) := by
-  simp only [casimir, LinearMap.sum_apply, Module.End.mul_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [casimir, LinearMap.sum_apply, Module.End.mul_apply, map_sum]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   rw [hφ a b _ (tensorAction_mem_generated hf b a), hφ b a _ hf]
 

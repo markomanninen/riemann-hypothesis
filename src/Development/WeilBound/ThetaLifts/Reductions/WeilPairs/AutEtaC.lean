@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutEtaB
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.AutEtaB
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 
 section Idem
 
-variable (F E) in
 
+variable (F E) in
 def rI : AEF F E := algebraMap (AF F) (AEF F E) (pairA F 1 0)
 
 theorem rI_idem : rI F E * rI F E = rI F E := by
@@ -49,12 +53,12 @@ theorem piInf_inc {w : InfinitePlace F} (τ : EmbOver E w) (x : E) : piInf τ (i
 
 theorem piInf_rI {w : InfinitePlace F} (τ : EmbOver E w) : piInf τ (rI F E) = 1 := by
   have h1 : piInf τ (rI F E + algebraMap (AF F) (AEF F E) (pairA F 0 1)) = 1 := by
-    rw [rI, ← map_add, show pairA F 1 0 + pairA F 0 1 = 1 from Prod.ext (add_zero _) (zero_add _), map_one, map_one]
+    rw [rI, ← map_add (f := _), show pairA F 1 0 + pairA F 0 1 = 1 from Prod.ext (add_zero _) (zero_add _), map_one, map_one]
   have h2 : piInf τ (algebraMap (AF F) (AEF F E) (pairA F 0 1)) = 0 := by
     change infEmb τ (compInf F E w (pairA F 0 1 ⊗ₜ[F] (1 : E))) = _
     rw [show compInf F E w (pairA F 0 1 ⊗ₜ[F] (1 : E)) = evInf F w (pairA F 0 1) ⊗ₜ[F] (1 : E) from rfl,
       show evInf F w (pairA F 0 1) = 0 from map_zero (GlobalTheory.AutFunCompare.evW w), TensorProduct.zero_tmul, map_zero]
-  rw [map_add, h2, add_zero] at h1
+  rw [map_add (f := _), h2, add_zero] at h1
   exact h1
 
 end Idem
@@ -76,7 +80,7 @@ theorem eta_real {B : Base F E} {η : (AEF F E)ˣ →* Circle} (h3 : HasExp B.em
   refine Finset.prod_congr rfl fun w _ => ?_
   have hpi : piInf (B.emb w) ((GlobalTheory.InertTrivial.proj (rI F E) rI_idem t : (AEF F E)ˣ) : AEF F E) =
       piInf (B.emb w) (t : AEF F E) := by
-    rw [GlobalTheory.InertTrivial.proj_val, map_add, map_mul, map_sub, map_one, piInf_rI]
+    rw [GlobalTheory.InertTrivial.proj_val, map_add (f := _), map_mul, map_sub, map_one, piInf_rI]
     ring
   rw [zpow_one, hpi]
 
@@ -113,7 +117,7 @@ theorem exists_half_character_eta_product {σ : E →ₐ[F] E} {B : Base F E} (h
       intro z hz
       refine (int_iff _).2 fun Q => ?_
       have hevf : ev F E Q (1 - rI F E - J) = 1 - ev F E Q J := by rw [map_sub, map_sub, map_one, ev_rI, sub_zero]
-      rw [GlobalTheory.InertTrivial.proj_val, map_add, map_mul, map_sub (ev F E Q) 1, map_one, hevf]
+      rw [GlobalTheory.InertTrivial.proj_val, map_add (f := _), map_mul, map_sub (ev F E Q) 1, map_one, hevf]
       by_cases hQ : Fx σ Q
       · rw [(evJ Q).1 hQ]
         simp only [sub_zero, one_mul, sub_self, add_zero]
@@ -124,7 +128,7 @@ theorem exists_half_character_eta_product {σ : E →ₐ[F] E} {B : Base F E} (h
       rw [map_sub, map_sub, map_one, infPart_rI, hJdef, infPart_fin]
       ring
     refine h4 _ ?_ ?_ (hint y hy) ?_
-    · rw [GlobalTheory.InertTrivial.proj_val, map_add, map_mul, map_sub (infPartF F E) 1 (1 - rI F E - J), hinf, map_one]
+    · rw [GlobalTheory.InertTrivial.proj_val, map_add (f := _), map_mul, map_sub (infPartF F E) 1 (1 - rI F E - J), hinf, map_one]
       ring
     · intro e he
       have hcc : ∀ z, cAF σ (cAF σ z) = z := GlobalTheory.HeisLineF.cAF_cAF σ (GlobalTheory.SplitDetCharF.sig_invol hcm)
@@ -177,7 +181,7 @@ theorem exists_half_character_eta_product {σ : E →ₐ[F] E} {B : Base F E} (h
       rw [ha2 _ hQv, map_one, map_one]
     · have hsnd : (0 + ι) * ((a : AF F).2 - 1) = 0 := by
         refine GlobalTheory.SplitDetCharF.af_ext' F fun u => ?_
-        rw [map_mul, map_sub, map_one, map_add, map_zero, zero_add]
+        rw [map_mul, map_sub, map_one, map_add (f := _), map_zero, zero_add]
         by_cases hu' : u = P.under (𝓞 F)
         · rw [hu', hι, zero_mul]
         · rw [show evalV F u (a : AF F).2 = 1 from ha2 u hu', sub_self, mul_zero]
@@ -185,7 +189,7 @@ theorem exists_half_character_eta_product {σ : E →ₐ[F] E} {B : Base F E} (h
         Prod.ext (show (1 + 0) * ((a : AF F).1 - 1) = 0 by
           rw [show (a : AF F).1 = 1 from rfl]; ring) hsnd
       have hz : (rI F E + J) * (algebraMap (AF F) (AEF F E) (a : AF F) - 1) = 0 := by
-        rw [rI, hJdef, ← map_add, ← map_one (algebraMap (AF F) (AEF F E)), ← map_sub, ← map_mul, hprod, map_zero]
+        rw [rI, hJdef, ← map_add (f := _), ← map_one (algebraMap (AF F) (AEF F E)), ← map_sub, ← map_mul, hprod, map_zero]
       have hpz : GlobalTheory.InertTrivial.proj _ hf (idFF F E a) = idFF F E a := by
         refine Units.ext ?_
         rw [GlobalTheory.InertTrivial.proj_val]

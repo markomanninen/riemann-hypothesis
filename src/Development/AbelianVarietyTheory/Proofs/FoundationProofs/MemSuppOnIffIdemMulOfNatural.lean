@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsFlatSecRankZero
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameLawsOfModuli
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.NoCommonZeroIffOfSec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsFlatSecRankZero
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameLawsOfModuli
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.NoCommonZeroIffOfSec
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem evR_of_frMap_test {f : Rul Xo c}
     evR Xo c f z = φ (f p y) := by
   have ht : Tested z := ⟨p, φ, y, h⟩
   unfold evR evalAt
-  rw [dif_pos ht]
+  rw [dite_eq_left ht]
   exact GlobalTheory.TransferCompare.evalWD_framed Xo c f hf S _ p _ φ _ y z ht.choose_spec.choose_spec.choose_spec h
 
 theorem idem_notMem_iff (Z : Comp Xo c) {p : TRing c.F} (y : FrPt Xo c p.R) (q : PrimeSpectrum p.R) :
@@ -70,8 +74,8 @@ theorem idem_mul_idem_of_ne {Z Z' : Comp Xo c} (h : Z ≠ Z') : idem Z * idem Z'
     exact Set.disjoint_left.1 (CompSplitPfD.cspD_comp_disj Xo c Z Z' h) ((idem_notMem_iff Z y q).1 h1.1)
       ((idem_notMem_iff Z' y q).1 h1.2)
 
-variable (Xo c) in
 
+variable (Xo c) in
 theorem sum_idem [Fintype (Comp Xo c)] : ∑ Z : Comp Xo c, idem Z = 1 := by
   classical
   refine funext fun p => funext fun y => ?_
@@ -91,12 +95,6 @@ theorem sum_idem [Fintype (Comp Xo c)] : ∑ Z : Comp Xo c, idem Z = 1 := by
   rw [mul_sub, h2, mul_one, sub_self]
   exact q.asIdeal.zero_mem
 
-variable (Xo c) in
-
-theorem finsum_idem : ∑ᶠ Z : Comp Xo c, idem Z = 1 := by
-  have := CompFin.finite_comp Xo c
-  have := Fintype.ofFinite (Comp Xo c)
-  rw [finsum_eq_sum_of_fintype, sum_idem]
 
 theorem sum_idem_mul [Fintype (Comp Xo c)] (f : Rul Xo c) : ∑ Z : Comp Xo c, idem Z * f = f := by
   rw [← Finset.sum_mul, sum_idem, one_mul]
@@ -106,53 +104,6 @@ namespace ConstSec
 variable {r : ℕ} {U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r} {x : ℝ} {Z : Comp Xo c} {la : Weight Dw}
   {δ : HeightOneSpectrum (𝓞 c.F) → ℝ} (s : ConstSec U x Z la δ)
 
-theorem mul_sig_mul_inv {e : Ix Dw → ℤ} {f : Rul Xo c} (hf : f ∈ secZ Xo c e ⊓ suppOn Z) :
-    f * s.sig * s.inv = f := by
-  rw [mul_assoc, s.mul_inv, mul_comm, idem_mul_eq hf]
-
-theorem mul_inv_mul_sig {e : Ix Dw → ℤ} {f : Rul Xo c} (hf : f ∈ secZ Xo c e ⊓ suppOn Z) :
-    f * s.inv * s.sig = f := by
-  rw [mul_right_comm, s.mul_sig_mul_inv hf]
-
-theorem mul_sig_mem {e : Ix Dw → ℤ} {f : Rul Xo c} (hf : f ∈ secZ Xo c e) :
-    f * s.sig ∈ secZ Xo c (e + exOf Dw la 0) ⊓ suppOn Z :=
-  ⟨mul_mem_secZ hf s.sig_mem, mul_mem_suppOn f s.sig_mem_suppOn⟩
-
-theorem mul_inv_mem {e : Ix Dw → ℤ} {f : Rul Xo c} (hf : f ∈ secZ Xo c (e + exOf Dw la 0)) :
-    f * s.inv ∈ secZ Xo c e ⊓ suppOn Z :=
-  ⟨add_neg_cancel_right e (exOf Dw la 0) ▸ mul_mem_secZ hf s.inv_mem, mul_mem_suppOn f s.inv_mem_suppOn⟩
-
-def mulEquiv (e : Ix Dw → ℤ) :
-    (secZ Xo c e ⊓ suppOn Z : Submodule c.F (Rul Xo c)) ≃ₗ[c.F]
-      (secZ Xo c (e + exOf Dw la 0) ⊓ suppOn Z : Submodule c.F (Rul Xo c)) where
-  toFun f := ⟨f.1 * s.sig, s.mul_sig_mem f.2.1⟩
-  invFun f := ⟨f.1 * s.inv, s.mul_inv_mem f.2.1⟩
-  map_add' f g := Subtype.ext (add_mul f.1 g.1 s.sig)
-  map_smul' a f := Subtype.ext (smul_mul_assoc a f.1 s.sig)
-  left_inv f := Subtype.ext (s.mul_sig_mul_inv f.2)
-  right_inv f := Subtype.ext (s.mul_inv_mul_sig f.2)
-
-@[simp] theorem coe_mulEquiv (e : Ix Dw → ℤ) (f : (secZ Xo c e ⊓ suppOn Z : Submodule c.F (Rul Xo c))) :
-    (s.mulEquiv e f : Rul Xo c) = f.1 * s.sig := rfl
-
-@[simp] theorem coe_mulEquiv_symm (e : Ix Dw → ℤ)
-    (f : (secZ Xo c (e + exOf Dw la 0) ⊓ suppOn Z : Submodule c.F (Rul Xo c))) :
-    ((s.mulEquiv e).symm f : Rul Xo c) = f.1 * s.inv := rfl
-
 end ConstSec
-
-theorem suppOn_idem_laws (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E)
-    (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) :
-    (∀ (e : Ix Dw → ℤ) (f : Rul Xo c), f ∈ secZ Xo c e → ∀ Z : Comp Xo c, f ∈ suppOn Z ↔ idem Z * f = f) ∧
-    (∀ (r : ℕ) (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (x : ℝ) (Z : Comp Xo c) (la : Weight Dw)
-      (δ : HeightOneSpectrum (𝓞 c.F) → ℝ) (s : ConstSec U x Z la δ) (e : Ix Dw → ℤ),
-      (∀ f ∈ secZ Xo c e ⊓ suppOn Z, f * s.sig * s.inv = f) ∧
-      ∃ m : (secZ Xo c e ⊓ suppOn Z : Submodule c.F (Rul Xo c)) ≃ₗ[c.F]
-          (secZ Xo c (e + exOf Dw la 0) ⊓ suppOn Z : Submodule c.F (Rul Xo c)),
-        (∀ f, (m f : Rul Xo c) = f.1 * s.sig) ∧ ∀ g, (m.symm g : Rul Xo c) = g.1 * s.inv) ∧
-    (Finite (Comp Xo c) ∧ ∀ [Fintype (Comp Xo c)], ∑ Z : Comp Xo c, idem Z = 1) :=
-  ⟨fun _ _ hf Z => mem_suppOn_iff_idem_mul hf Z,
-    fun _ _ _ _ _ _ s e => ⟨fun _ hf => s.mul_sig_mul_inv hf, s.mulEquiv e, fun _ => rfl, fun _ => rfl⟩,
-    CompFin.finite_comp Xo c, sum_idem Xo c⟩
 
 end GlobalTheory.FlatLine

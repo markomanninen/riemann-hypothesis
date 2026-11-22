@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GoodIdempotentFixesMemGoodTypeSpace
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.InjPrimeTo
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
-import Formalism.LocalRingCardinality.DataTies
-import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.NHkRow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SphericalHeckeScalarOnSphericalVectors
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeEqSmulOfIsot
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RowTypeHasSphericalHeckeEigensystem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCoordLattice
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DivisorsAtInvDualLabelAndStabilizerMul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RankWeightComponentEq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvolutionSphericalHeckeAnti
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelOperatorsAtPrimeOffLevelDatum
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaLiftLevelsGoodPrimesProperties
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinPartConjMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GoodIdempotentFixesMemGoodTypeSpace
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.InjPrimeTo
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
+public import Formalism.LocalRingCardinality.DataTies
+public import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.NHkRow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SphericalHeckeScalarOnSphericalVectors
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeEqSmulOfIsot
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RowTypeHasSphericalHeckeEigensystem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCoordLattice
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DivisorsAtInvDualLabelAndStabilizerMul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RankWeightComponentEq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvolutionSphericalHeckeAnti
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelOperatorsAtPrimeOffLevelDatum
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaLiftLevelsGoodPrimesProperties
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinPartConjMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,13 +95,6 @@ theorem exists_readW (Y : Read (A3 := A3) R F X0) (i : Fin D.R.m) {x : Formalism
   rw [lift_readW, LinearEquiv.apply_symm_apply]
   rfl
 
-abbrev SbR (Y : Read (A3 := A3) R F X0) : Finset (HeightOneSpectrum (NumberField.RingOfIntegers D.host.F)) :=
-  SsetF R (Y.tupT D.what₂.mu0)
-
-def HkOnParts (Y : Read (A3 := A3) R F X0)
-    (lam : Fin D.R.m → D.what₂.FT → HeightOneSpectrum (NumberField.RingOfIntegers D.host.E) → ℕ → ℂ) : Prop :=
-  ∀ i σ, partR Y i σ ≤ Formalism.IndefR.Mult.part R.θ (R.MW i (sg0 D A3.A)) (levW R F i) (chiW R F i) (SbR Y) (lam i σ)
-
 end Real
 
 section RealMain
@@ -132,11 +129,12 @@ def ActsOnSph (Q : principalLevelFrame.RowPsi V n) (π : Formalism.L2.NG.FinTyp 
     (a : ℂ) : Prop :=
   ∀ B, SphOp V P d B → ∀ x, IsSphVec Q π P x → principalLevelFrame.Hecke₃ Q B x = a • x
 
-open Classical in
 
+open Classical in
 def sphEig (Q : principalLevelFrame.RowPsi V n) (π : Formalism.L2.NG.FinTyp D.host.E n) (P : HeightOneSpectrum (𝓞 D.host.E)) (d : List ℤ) : ℂ :=
   if h : ∃ a, ActsOnSph Q π P d a then h.choose else 0
 
+open GlobalTheory.RowEig (lift_fixed rtV lift rtV_lift_psi heckeOperator_apply') in
 theorem actsOnSph_sphEig {hF : D.host.F = maximalRealSubfield D.host.E} {Q : principalLevelFrame.RowPsi V n} (hQ : StdPsi hF Q)
     (π : Formalism.L2.NG.FinTyp D.host.E n) (P : HeightOneSpectrum (𝓞 D.host.E)) (d : List ℤ) :
     ActsOnSph Q π P d (sphEig Q π P d) := by
@@ -145,11 +143,25 @@ theorem actsOnSph_sphEig {hF : D.host.F = maximalRealSubfield D.host.E} {Q : pri
     · obtain ⟨B, hB⟩ := hB
       obtain ⟨a, ha⟩ := GlobalTheory.SphScalar.spherical_scalar hF Q hQ π P d B hB
       refine ⟨a, fun B' hB' x hx => ?_⟩
-      rw [GlobalTheory.RowEig.heckeOperator_eq_of_spherical Q P d B' B hB' hB x hx.2]
+      have hEq : principalLevelFrame.Hecke₃ Q B' x = principalLevelFrame.Hecke₃ Q B x := by
+        have hx' := lift_fixed Q x (hyp V P) (fun _ hk => hk.1.1) hx.2
+        have hsum := fun C hC =>
+          ((GlobalTheory.SphLabelOps.label_operators V P).1 d C hC).2 (GA D V → ℂ) (rtV V) (lift Q x) hx'
+        have hmem : ∀ {C}, SphOp V P d C → ∀ γ ∈ C, γ ∈ GfC V := by
+          intro C hC γ hγ
+          obtain ⟨e, f, ϖ, α, -, -, -, -, -, -, -, -, -, -, hcos⟩ := hC
+          exact (hcos.1 γ hγ).1
+        funext y
+        have hy := congrFun ((hsum B' hB').trans (hsum B hB).symm) (Q.ψ y)
+        simp only [Finset.sum_apply] at hy
+        rw [Finset.sum_congr rfl (fun γ hγ => rtV_lift_psi Q x (hmem hB' γ hγ) y),
+          Finset.sum_congr rfl (fun γ hγ => rtV_lift_psi Q x (hmem hB γ hγ) y)] at hy
+        simpa only [heckeOperator_apply'] using hy
+      rw [hEq]
       exact ha x hx.1 hx.2
     · exact ⟨0, fun B h => (hB ⟨B, h⟩).elim⟩
   unfold sphEig
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 variable {Sp : D.what₂.Tau → SPar} {θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)} {M : DSModel V Sp}
@@ -168,6 +180,121 @@ theorem fixed_of_full {P : HeightOneSpectrum (𝓞 D.host.E)} {d : List ℤ} {B 
   show U v (g * k) = U v g
   rw [principalLevelFrame.mult_lev hU v k h1 g, hχ k h1 hk.2, one_mul]
 
+open GlobalTheory.IsotSph (piRep piRep_coe finite_quot stabN avg avg_of_fixed avg_map avg_fixed) in
+private theorem scalar_on_fixed_isot {hF : D.host.F = maximalRealSubfield D.host.E}
+    {Q : principalLevelFrame.RowPsi V n} (hQ : StdPsi hF Q)
+    (π : Formalism.L2.NG.FinTyp D.host.E n) {Pr : HeightOneSpectrum (𝓞 D.host.E)}
+    {d : List ℤ} {B : Finset (GA D V)} {a : ℂ} (hB : Hecke₂ V J χ Sb Pr d B)
+    (ha : ActsOnSph Q π Pr d a)
+    (U : MMap M) (hU : U ∈ principalLevelFrame.isotIn (principalLevelFrame.actM Q M) (principalLevelFrame.Minf θ Q M) π)
+    (hfix : ∀ k ∈ hyp V Pr, postOn M (principalLevelFrame.rtA k) U = U) :
+    heckeOn M B U = a • U := by
+  classical
+  have hS : SphOp V Pr d B := by
+    obtain ⟨e, f, ϖ, α, -, hPI, h1, h2, hd, hJ, -, hα, hdiv, hR, hcos⟩ := hB
+    have hset : {k | k ∈ J ∧ SuppF V f k} = {k | k ∈ KsphC V ∅ ∧ SuppF V f k} := by
+      ext k
+      exact ⟨fun ⟨a, b⟩ => ⟨(hJ k b).1 a, b⟩, fun ⟨a, b⟩ => ⟨(hJ k b).2 a, b⟩⟩
+    rw [hset] at hcos
+    exact ⟨e, f, ϖ, α, fun v hv => absurd hv (Finset.notMem_empty v), hPI, h1, h2, hd,
+      fun _ _ => Iff.rfl, fun _ _ _ => rfl, hα, hdiv, hR, hcos⟩
+  have hBG : ∀ γ ∈ B, Q.ψ (principalLevelFrame.pre Q γ) = γ := by
+    obtain ⟨e, f, ϖ, α, -, -, -, -, -, -, -, -, -, -, hc⟩ := hB
+    intro γ hγ
+    obtain ⟨h, hh⟩ := Q.onto γ (hc.1 γ hγ).1
+    have hex : ∃ x, Q.ψ x = γ := ⟨h, hh⟩
+    unfold principalLevelFrame.pre
+    rw [dite_eq_left hex]
+    exact hex.choose_spec
+  have hOn : ∀ T : MMap M, heckeOn M B T = ∑ γ ∈ B, principalLevelFrame.actM Q M (principalLevelFrame.pre Q γ) T := by
+    intro T
+    apply MultilinearMap.ext
+    intro v
+    funext g
+    rw [sum_apply, Finset.sum_apply]
+    show ∑ γ ∈ B, T v (g * γ) = _
+    refine Finset.sum_congr rfl fun γ hγ => ?_
+    rw [principalLevelFrame.actM_apply, hBG γ hγ]
+  have hΦ : ∀ Φ : π.S →ₗ[ℂ] MMap M, principalLevelFrame.IsEqvA (principalLevelFrame.actM Q M) π Φ → ∀ x : π.S,
+      (∀ κ, Q.ψ κ ∈ hyp V Pr → Formalism.L2.NG.rt D.host.E n κ (x : Formalism.AUTREP.GAf D.host.E n → ℂ) = x) →
+      heckeOn M B (Φ x) = a • Φ x := by
+    intro Φ hE x hx
+    have h1 := ha B hS x ⟨x.2, hx⟩
+    have h2 : (∑ γ ∈ B, piRep π (principalLevelFrame.pre Q γ) x) = a • x := by
+      apply Subtype.ext
+      rw [Submodule.coe_sum]
+      simpa [principalLevelFrame.Hecke₃, principalLevelFrame.heckeG, LinearMap.sum_apply, piRep_coe] using h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hOn, ← map_smul, ← h2, map_sum]
+    exact Finset.sum_congr rfl fun γ _ => (hE _ x).symm
+  let W : Submodule ℂ (MMap M) := Submodule.span ℂ {T | ∃ Φ : π.S →ₗ[ℂ] MMap M, principalLevelFrame.IsEqvA (principalLevelFrame.actM Q M) π Φ ∧ ∃ x : π.S,
+      (∀ κ, Q.ψ κ ∈ hyp V Pr → Formalism.L2.NG.rt D.host.E n κ (x : Formalism.AUTREP.GAf D.host.E n → ℂ) = x) ∧ T = Φ x}
+  have hWe : ∀ T ∈ W, heckeOn M B T = a • T := by
+    intro T hT
+    induction hT using Submodule.span_induction with
+    | mem T hT =>
+      obtain ⟨Φ, hE, x, hx, rfl⟩ := hT
+      exact hΦ Φ hE x hx
+    | zero => simp
+    | add T T' _ _ h h' => rw [map_add (f := _), h, h', smul_add]
+    | smul c T _ h => rw [map_smul, h, smul_comm]
+  let H : Subgroup (Formalism.AUTREP.GAf D.host.E n) := Subgroup.closure {κ | Q.ψ κ ∈ hyp V Pr}
+  have hH : H ≤ ReciprocityTheory.Aut.Umax D.host.E n := (Subgroup.closure_le _).2 fun κ hκ => (hQ.2 κ).2 hκ.1
+  have hfixH : ∀ h ∈ H, principalLevelFrame.actM Q M h U = U := by
+    intro h hh
+    induction hh using Subgroup.closure_induction with
+    | mem κ hκ => exact hfix _ hκ
+    | one => simp
+    | mul x y _ _ hx hy => rw [map_mul, mul_apply_eq_comp, hy, hx]
+    | inv x _ hx =>
+      conv_lhs => rw [← hx]
+      rw [← mul_apply_eq_comp, ← map_mul]
+      simp
+  let G : ℕ → Set (MMap M) := fun N => {T | ∃ Φ : π.S →ₗ[ℂ] MMap M, principalLevelFrame.IsEqvA (principalLevelFrame.actM Q M) π Φ ∧ ∃ x : π.S,
+      (∀ κ, Formalism.L2.NG.Cong D.host.E n N κ → piRep π κ x = x) ∧ T = Φ x}
+  have hmono : ∀ N N' : ℕ, (∀ κ, Formalism.L2.NG.Cong D.host.E n N' κ → Formalism.L2.NG.Cong D.host.E n N κ) →
+      Submodule.span ℂ (G N) ≤ Submodule.span ℂ (G N') := by
+    intro N N' hc
+    apply Submodule.span_mono
+    rintro T ⟨Φ, hE, x, hx, rfl⟩
+    exact ⟨Φ, hE, x, fun κ hκ => hx κ (hc κ hκ), rfl⟩
+  let Pn : Submodule ℂ (MMap M) :=
+    { carrier := {T | ∃ N, 0 < N ∧ T ∈ Submodule.span ℂ (G N)}
+      add_mem' := by
+        rintro T T' ⟨N, hN, h⟩ ⟨N', hN', h'⟩
+        exact ⟨N * N', Nat.mul_pos hN hN', add_mem (hmono _ _ (fun κ => Formalism.L2.NG.Cong.of_mul_left _ _) h)
+          (hmono _ _ (fun κ => Formalism.L2.NG.Cong.of_mul_right _ _) h')⟩
+      zero_mem' := ⟨1, one_pos, zero_mem _⟩
+      smul_mem' := by
+        rintro c T ⟨N, hN, h⟩
+        exact ⟨N, hN, Submodule.smul_mem _ c h⟩ }
+  have hle : principalLevelFrame.isotIn (principalLevelFrame.actM Q M) (principalLevelFrame.Minf θ Q M) π ≤ Pn := by
+    unfold principalLevelFrame.isotIn
+    refine iSup₂_le fun Φ hE => ?_
+    rintro _ ⟨x, rfl⟩
+    obtain ⟨N, hN, hx⟩ := π.smooth x x.2
+    exact ⟨N, hN, Submodule.subset_span ⟨Φ, hE.1, x, fun κ hκ => Subtype.ext (hx κ hκ), rfl⟩⟩
+  obtain ⟨N, hN, hUN⟩ := hle hU
+  have hfinq := finite_quot H hH hN (stabN π H N) (fun s hs x hx => hx _ hs)
+  let quotientFintype : Fintype (H ⧸ stabN π H N) := Fintype.ofFinite _
+  let ρ1 : H →* Module.End ℂ π.S := (piRep π).comp H.subtype
+  let ρ2 : H →* Module.End ℂ (MMap M) := (principalLevelFrame.actM Q M).comp H.subtype
+  have hAU : avg (stabN π H N) ρ2 U = U := avg_of_fixed _ ρ2 fun k => hfixH k k.2
+  have hAW : ∀ T ∈ Submodule.span ℂ (G N), avg (stabN π H N) ρ2 T ∈ W := by
+    intro T hT
+    induction hT using Submodule.span_induction with
+    | mem T hT =>
+      obtain ⟨Φ, hE, x, hx, rfl⟩ := hT
+      rw [← avg_map (stabN π H N) ρ1 ρ2 Φ (fun g b => hE g b)]
+      refine Submodule.subset_span ⟨Φ, hE, avg (stabN π H N) ρ1 x, fun κ hκ => ?_, rfl⟩
+      have hf := avg_fixed (stabN π H N) ρ1 (x := x) (fun s hs => hs x hx) ⟨κ, Subgroup.subset_closure hκ⟩
+      exact congrArg Subtype.val hf
+    | zero => simp
+    | add T T' _ _ h h' => rw [map_add]; exact add_mem h h'
+    | smul c T _ h => rw [map_smul]; exact Submodule.smul_mem _ c h
+  have := hWe _ (hAW U hUN)
+  rwa [hAU] at this
+
 theorem isotL_le_partFull {hF : D.host.F = maximalRealSubfield D.host.E} {Q : principalLevelFrame.RowPsi V n} (hQ : StdPsi hF Q)
     (e : (GA D V → ℂ) →ₗ[ℂ] (GA D V → ℂ)) (π : Formalism.L2.NG.FinTyp D.host.E n) :
     principalLevelFrame.isotL θ Q M J χ e π ≤ partFull θ M J χ Sb (sphEig Q π) := by
@@ -176,20 +303,18 @@ theorem isotL_le_partFull {hF : D.host.F = maximalRealSubfield D.host.E} {Q : pr
   refine Submodule.mem_inf.2 ⟨hM, ?_⟩
   simp only [Submodule.mem_iInf, LinearMap.mem_ker, LinearMap.sub_apply, LinearMap.smul_apply, LinearMap.id_apply, sub_eq_zero]
   intro P d B hB
-  have hS := GlobalTheory.RowEig.sph_of_full hB
-  exact GlobalTheory.IsotSph.hecke_eq_smul_of_isot hF Q hQ θ M π P d B _ hS
-    (fun x hx hf => actsOnSph_sphEig hQ π P d B hS x ⟨hx, hf⟩) U hU.2 (fixed_of_full hB hM)
+  exact scalar_on_fixed_isot hQ π hB (actsOnSph_sphEig hQ π P d) U hU.2 (fixed_of_full hB hM)
 
 theorem exists_sphVec {hF : D.host.F = maximalRealSubfield D.host.E} {Q : principalLevelFrame.RowPsi V n} (hQ : StdPsi hF Q)
     {e : (GA D V → ℂ) →ₗ[ℂ] (GA D V → ℂ)} {π : Formalism.L2.NG.FinTyp D.host.E n} (h : principalLevelFrame.isotL θ Q M J χ e π ≠ ⊥)
     {P : HeightOneSpectrum (𝓞 D.host.E)} {d : List ℤ} {B : Finset (GA D V)} (hB : Hecke₂ V J χ Sb P d B) :
     ∃ x, IsSphVec Q π P x ∧ x ≠ 0 := by
   by_contra hn
-  push_neg at hn
+  push Not at hn
   obtain ⟨U, hU, h0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot h
   have key : ∀ a : ℂ, heckeOn M B U = a • U := fun a =>
-    GlobalTheory.IsotSph.hecke_eq_smul_of_isot hF Q hQ θ M π P d B a (GlobalTheory.RowEig.sph_of_full hB)
-      (fun x hx hf => by rw [hn x ⟨hx, hf⟩, map_zero, smul_zero]) U hU.2 (fixed_of_full hB hU.1.1)
+    scalar_on_fixed_isot hQ π hB
+      (fun B' hB' x hx => by rw [hn x hx, map_zero, smul_zero]) U hU.2 (fixed_of_full hB hU.1.1)
   exact h0 (by rw [← one_smul ℂ U, ← key 1, key 0, zero_smul])
 
 theorem heckeOn_of_mem_partFull {c : HeightOneSpectrum (𝓞 D.host.E) → List ℤ → ℂ} {x : MMap M}
@@ -202,10 +327,8 @@ theorem heckeOn_of_mem_partFull {c : HeightOneSpectrum (𝓞 D.host.E) → List 
 
 def diagLab (n k : ℕ) : List ℤ := List.replicate k 1 ++ List.replicate (n - k) 0
 
-example : diagLab 3 1 = [1, 0, 0] := rfl
 
 variable (V) in
-
 def IsDiagOpAt (J : Set (GA D V)) (χ : GA D V → ℂ) (S : Finset (HeightOneSpectrum (𝓞 D.host.F)))
     (P : HeightOneSpectrum (𝓞 D.host.E)) (k : ℕ) (B : Finset (GA D V)) : Prop :=
   ∃ (e : AE D) (ϖ : 𝓞 D.host.E) (α : GA D V),

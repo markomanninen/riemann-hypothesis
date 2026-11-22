@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndFrFix
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdJet
-import ReciprocityTheory.ReductiveGroups.Models.FiniteGeneration.FiniteGenerationProofs.SolveV
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndFrFix
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FBIdJet
+public import ReciprocityTheory.ReductiveGroups.Models.FiniteGeneration.FiniteGenerationProofs.SolveV
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -103,7 +107,8 @@ private lemma lin_subst_lemma_3 {σ τ : Type} [Fintype σ] {a : σ → MvPowerS
   have ha : HasSubst a := ⟨fun s => by rw [ha0 s]; exact IsNilpotent.zero, fun _ => Set.toFinite _⟩
   have hR : Low 2 (f - ∑ s, coeff (Finsupp.single s 1) f • X s) := by
     apply low_two_of_lemma
-    · rw [← coeff_zero_eq_constantCoeff_apply, map_sub, map_sum]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [← coeff_zero_eq_constantCoeff_apply, map_sub, map_sum]
       simp only [map_smul, coeff_zero_X, smul_zero, Finset.sum_const_zero, sub_zero]
       rw [coeff_zero_eq_constantCoeff_apply]
       exact hf0
@@ -112,10 +117,12 @@ private lemma lin_subst_lemma_3 {σ τ : Type} [Fintype σ] {a : σ → MvPowerS
   have hS := low_subst' (fun s => (low_one_iff _).2 (ha0 s)) hR
   have hsplit : subst a f = subst a (f - ∑ s, coeff (Finsupp.single s 1) f • X s) +
       ∑ s, coeff (Finsupp.single s 1) f • a s := by
-    rw [← coe_substAlgHom ha, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← coe_substAlgHom ha, map_sub, map_sum]
     simp only [map_smul]
     simp only [coe_substAlgHom, subst_X ha, sub_add_cancel]
-  rw [hsplit, map_add, hS (Finsupp.single w 1) (by simp), zero_add, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsplit, map_add (f := _), hS (Finsupp.single w 1) (by simp), zero_add, map_sum]
   simp only [map_smul, smul_eq_mul]
 
 theorem dLin_logOf (G : FGLaw S d) : ReciprocityTheory.ChartRestriction.G.TB.dLin (fun i => ReciprocityTheory.ChartRestriction.G.TB.LogPf.logOf G i) = 1 := by
@@ -135,7 +142,7 @@ theorem dLin_logOf (G : FGLaw S d) : ReciprocityTheory.ChartRestriction.G.TB.dLi
       rintro ⟨a, j⟩
       fin_cases a <;> simp [ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ.pt]
     change constantCoeff (subst (fun p : Fin 2 × Fin d => (![pt S d 0, 0] : Fin 2 → Pt S 1 d) p.1 p.2)
-      (pderiv S ((1 : Fin 2), b) (G.F i))) = _
+      (pderiv ((1 : Fin 2), b) (G.F i))) = _
     rw [← coeff_zero_eq_constantCoeff_apply, cc_subst_lemma_2 ha0, coeff_pderiv, zero_add, hlin i b]
     by_cases h : i = b
     · subst h
@@ -223,7 +230,7 @@ private lemma exp_split_lemma_4 {σ : Type} {B : MvPowerSeries σ S} (hB2 : Low 
       PowerSeries.mk (fun n => algebraMap ℚ S (1 / ((n + 2).factorial : ℚ))) := by
     ext n
     rcases n with _ | _ | n <;> simp [PowerSeries.coeff_X_pow_mul', PowerSeries.coeff_X, PowerSeries.coeff_one]
-  rw [hexp, ← PowerSeries.coe_substAlgHom hB, map_add, map_add, map_mul, map_pow, map_one,
+  rw [hexp, ← PowerSeries.coe_substAlgHom hB, map_add (f := _), map_add (f := _), map_mul, map_pow, map_one,
     PowerSeries.coe_substAlgHom, PowerSeries.subst_X hB]
   have h4 : Low (2 + 2 + 0) (B ^ 2 * PowerSeries.subst B
       (PowerSeries.mk (fun n => algebraMap ℚ S (1 / ((n + 2).factorial : ℚ))))) := by
@@ -258,8 +265,10 @@ theorem psTrunc_two_twist (G : FGLaw S d) (c : Fin d → Fin d → S) :
   have hcoe : ((1 + ∑ i, ∑ l, MvPolynomial.C (c i l) * (MvPolynomial.X ((0 : Fin 2), i) * MvPolynomial.X ((1 : Fin 2), l)) :
         MvPolynomial (Fin 2 × Fin d) S) : MvPowerSeries (Fin 2 × Fin d) S) =
       1 + ∑ i, ∑ l, c i l • (X ((0 : Fin 2), i) * X ((1 : Fin 2), l)) := by
-    rw [← MvPolynomial.coeToMvPowerSeries.ringHom_apply, map_add, map_one, map_sum]
-    simp only [map_sum, map_mul, MvPolynomial.coeToMvPowerSeries.ringHom_apply, MvPolynomial.coe_C,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← MvPolynomial.coeToMvPowerSeries.ringHom_apply, map_add (f := _), map_one, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, MvPolynomial.coeToMvPowerSeries.ringHom_apply, MvPolynomial.coe_C,
       MvPolynomial.coe_X, MvPowerSeries.smul_eq_C_mul]
   have hdiff : Low 3 (CIndFrFix.expP (CIndFrFix.bilL G c) - ((1 + ∑ i, ∑ l, MvPolynomial.C (c i l) * (MvPolynomial.X ((0 : Fin 2), i) * MvPolynomial.X ((1 : Fin 2), l)) :
         MvPolynomial (Fin 2 × Fin d) S) : MvPowerSeries (Fin 2 × Fin d) S)) := by
@@ -286,7 +295,7 @@ theorem psTrunc_two_twist (G : FGLaw S d) (c : Fin d → Fin d → S) :
       · ext i
         simp
   have hpt : ∀ (g : MvPowerSeries (Fin 2 × Fin d) S) (e : Fin 2 × Fin d →₀ ℕ),
-      MvPolynomial.coeff e (psTrunc 2 g) = if e.degree ≤ 2 then coeff e g else 0 := by
+      AddMonoidAlgebra.coeff (psTrunc 2 g) e = if e.degree ≤ 2 then coeff e g else 0 := by
     intro g e
     rw [psTrunc, MvPolynomial.coeff_sum]
     simp only [MvPolynomial.coeff_monomial, Finset.sum_ite_eq', Finset.sum_ite_eq]
@@ -309,11 +318,13 @@ theorem psTrunc_two_twist (G : FGLaw S d) (c : Fin d → Fin d → S) :
   · rw [if_pos hd, ← MvPolynomial.coeff_coe]
     have h := hdiff e (by omega)
     rwa [map_sub, sub_eq_zero] at h
-  · rw [if_neg hd, ← MvPolynomial.coeff_coe, hcoe, map_add, map_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [if_neg hd, ← MvPolynomial.coeff_coe, hcoe, map_add (f := _), map_sum]
     have h2 : 2 < e.degree := by omega
     have hz : ∀ a b : Fin 2 × Fin d, coeff e (X a * X b : MvPowerSeries (Fin 2 × Fin d) S) = 0 :=
       fun a b => hXX a b e h2
-    simp only [map_sum, map_smul, hz, smul_zero, Finset.sum_const_zero, add_zero]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, hz, smul_zero, Finset.sum_const_zero, add_zero]
     rw [coeff_one, if_neg]
     rintro rfl
     simp at hd

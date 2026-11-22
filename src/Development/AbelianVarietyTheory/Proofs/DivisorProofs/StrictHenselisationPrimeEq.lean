@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpreadTorsorToEtaleAlgebraStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpreadTorsorToEtaleAlgebraStatement
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 
 noncomputable section
@@ -25,14 +30,14 @@ theorem torsor_baseChange : ∀ (B₁ B₂ D₁ : Type) [CommRing B₁] [CommRin
         induction x using TensorProduct.induction_on with
         | zero => simp
         | tmul b d => simp [Algebra.TensorProduct.congr_apply]
-        | add x y hx hy => simp only [map_add] at hx hy ⊢; rw [hx, hy]
+        | add x y hx hy => simp only [map_add (f := _)] at hx hy ⊢; rw [hx, hy]
       map_mul' := by
         intro g h
         refine AlgEquiv.ext fun x => ?_
         induction x using TensorProduct.induction_on with
         | zero => simp
         | tmul b d => simp [Algebra.TensorProduct.congr_apply]
-        | add x y hx hy => simp only [map_add] at hx hy ⊢; rw [hx, hy] }
+        | add x y hx hy => simp only [map_add (f := _)] at hx hy ⊢; rw [hx, hy] }
   refine ⟨act₂, inferInstance, inferInstance, inferInstance, ?_⟩
   let e₀ := LinearEquiv.ofBijective (Algebra.TensorProduct.productMap
       (Pi.algHom B₁ (fun _ : Multiplicative (ZMod q) => D₁) (fun _ => AlgHom.id B₁ D₁))
@@ -47,11 +52,11 @@ theorem torsor_baseChange : ∀ (B₁ B₂ D₁ : Type) [CommRing B₁] [CommRin
     intro z
     induction z using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add] at hx hy ⊢; rw [hx, hy]
+    | add x y hx hy => simp only [map_add (f := _)] at hx hy ⊢; rw [hx, hy]
     | tmul b w =>
       induction w using TensorProduct.induction_on with
       | zero => simp
-      | add x y hx hy => simp only [TensorProduct.tmul_add, map_add] at hx hy ⊢; rw [hx, hy]
+      | add x y hx hy => simp only [TensorProduct.tmul_add, map_add (f := _)] at hx hy ⊢; rw [hx, hy]
       | tmul x y =>
         funext g
         simp [act₂, e₀, TensorProduct.AlgebraTensorModule.distribBaseChange_tmul,
@@ -114,7 +119,7 @@ theorem exists_stage_torsor : ∀ (T O : Type) [CommRing T] [IsDomain T] [IsLoca
     have h1 : ψ.toRingHom.comp (algebraMap (Polynomial T) E) = φ.comp (algebraMap (Polynomial T) _) := by
       rw [hφ]; exact ψ.comp_algebraMap
     rw [h1, ← Ideal.comap_comap, hloc]
-    exact Localization.AtPrime.comap_maximalIdeal (R := Polynomial T) (I := P)
+    exact Localization.AtPrime.under_maximalIdeal (R := Polynomial T) (I := P)
 
   have hunit : ∀ y : Q.primeCompl, IsUnit (ψ.toRingHom (y : E)) := by
     intro y

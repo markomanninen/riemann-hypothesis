@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.IdentityLiftWeightedHomog
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.IdentityLiftWeightedHomog
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem wh_sub {wt : σ → ℕ} {n : ℕ} {P Q : MvPolynomial σ K} (hP : IsWei
     (hQ : IsWeightedHomogeneous wt Q n) : IsWeightedHomogeneous wt (P - Q) n := by
   intro d hd
   rw [coeff_sub] at hd
-  by_cases h : coeff d P = 0
+  by_cases h : AddMonoidAlgebra.coeff P d = 0
   · rw [h, zero_sub, neg_ne_zero] at hd
     exact hQ hd
   · exact hP h
@@ -50,13 +54,13 @@ variable {X : Loc} [Fact X.p.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDisc
   [Algebra (WF X.p X.n') O]
 
 theorem SoftOK.pow {w : O} {f sg : RHH O X} {od : ℕ} {dg : X.TT × Bool → ℕ} (h : SoftOK w f od sg dg) (u : ℕ) :
-    SoftOK w (f ^ u) (u * od) (sg ^ u) (fun l => u * dg l) where
-  fac := h.fac.pow u
-  sgHom := ndHom_iff.2 (by simpa [smul_eq_mul] using (ndHom_iff.1 h.sgHom).pow u)
-  liftPol := mem_Pol_iff.2 fun l => by
-    rw [map_pow]
-    simpa [smul_eq_mul] using (mem_Pol_iff.1 h.liftPol l).pow u
-  sgPol := mem_Pol_iff.2 fun l => by simpa [smul_eq_mul] using (mem_Pol_iff.1 h.sgPol l).pow u
+    SoftOK w (f ^ u) (u * od) (sg ^ u) (fun l => u * dg l) :=
+  { fac := h.fac.pow u
+    sgHom := ndHom_iff.2 (by simpa [smul_eq_mul] using (ndHom_iff.1 h.sgHom).pow u)
+    liftPol := mem_Pol_iff.2 fun l => by
+      rw [map_pow]
+      simpa [smul_eq_mul] using (mem_Pol_iff.1 h.liftPol l).pow u
+    sgPol := mem_Pol_iff.2 fun l => by simpa [smul_eq_mul] using (mem_Pol_iff.1 h.sgPol l).pow u }
 
 def sgKS (O : Type) [CommRing O] [IsDomain O] (X : Loc) (j : Fin (numSeg X.TT)) (i : Fin (segS X.TT j)) : RHH O X :=
   MvPolynomial.X ((topStart X j, true), 0) ^ (X.p ^ (segDists X.TT j).get i) * MvPolynomial.X ((topOdd X j i, false), 0)
@@ -92,25 +96,26 @@ theorem kS_inA (j : Fin (numSeg X.TT)) (i : Fin (segS X.TT j)) : InA (kSkey O X 
     (X.p ^ (segDists X.TT j).get i) * MvPolynomial.X ((topOdd X j i, false), a)).coeff m, ?_⟩
   rw [← MvPolynomial.coeff_map]
   congr 1
-  simp [kSkey, map_sum, map_mul, map_pow, map_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [kSkey, map_sum, map_mul, map_pow, map_X]
 
 theorem softKS (S : UniformizedDVR X.p O) (hS : S.SqP) (hD : D1num X) (j : Fin (numSeg X.TT)) (i : Fin (segS X.TT j)) :
-    SoftOK S.w (kSkey O X j i) 1 (sgKS O X j i) (dgKS X j i) where
-  fac := by
-    refine IsFac.of_exact (e := X.p ^ (segDists X.TT j).get i - 1)
-      (r := ∑ c : Fin X.m, MvPolynomial.X ((topStart X j, true), c.succ) ^ (X.p ^ (segDists X.TT j).get i) *
-        MvPolynomial.X ((topOdd X j i, false), c.succ)) (kS_inA j i)
-      (fun g hg => (key3Ord X O S hS hD j i g hg).1) (two_le_pd hD j i) ?_ ?_ ?_
-    · exact (mem_intSub O _).1 (Subalgebra.mul_mem _ (Subalgebra.pow_mem _ (X_int _) _) (X_int _))
-    · exact (mem_intSub O _).1 (Subalgebra.sum_mem _ fun a _ =>
-        Subalgebra.mul_mem _ (Subalgebra.pow_mem _ (X_int _) _) (X_int _))
-    · rw [key3One_S, pow_one]; rfl
-  sgHom := ndHom_iff.2 (by
-    have := wh_powX (K := KK O) (wN X) ((topStart X j, true), 0) ((topOdd X j i, false), 0)
-      (X.p ^ (segDists X.TT j).get i)
-    rwa [normal_weight_vector_zero_eq_zero, normal_weight_covector_zero, mul_zero, zero_add] at this)
-  liftPol := identity_lift_mem_Pol _ (kS_pol j i)
-  sgPol := mem_Pol_iff.2 fun l => wh_powX (wL X l) _ _ _
+    SoftOK S.w (kSkey O X j i) 1 (sgKS O X j i) (dgKS X j i) :=
+  { fac := by
+      refine IsFac.of_exact (e := X.p ^ (segDists X.TT j).get i - 1)
+        (r := ∑ c : Fin X.m, MvPolynomial.X ((topStart X j, true), c.succ) ^ (X.p ^ (segDists X.TT j).get i) *
+          MvPolynomial.X ((topOdd X j i, false), c.succ)) (kS_inA j i)
+        (fun g hg => (key3Ord X O S hS hD j i g hg).1) (two_le_pd hD j i) ?_ ?_ ?_
+      · exact (mem_intSub O _).1 (Subalgebra.mul_mem _ (Subalgebra.pow_mem _ (X_int _) _) (X_int _))
+      · exact (mem_intSub O _).1 (Subalgebra.sum_mem _ fun a _ =>
+          Subalgebra.mul_mem _ (Subalgebra.pow_mem _ (X_int _) _) (X_int _))
+      · rw [key3One_S, pow_one]; rfl
+    sgHom := ndHom_iff.2 (by
+      have := wh_powX (K := KK O) (wN X) ((topStart X j, true), 0) ((topOdd X j i, false), 0)
+        (X.p ^ (segDists X.TT j).get i)
+      rwa [normal_weight_vector_zero_eq_zero, normal_weight_covector_zero, mul_zero, zero_add] at this)
+    liftPol := identity_lift_mem_Pol _ (kS_pol j i)
+    sgPol := mem_Pol_iff.2 fun l => wh_powX (wL X l) _ _ _ }
 
 theorem softKSP (S : UniformizedDVR X.p O) (hS : S.SqP) (hD : D1num X) (j : Fin (numSeg X.TT)) (i : Fin (segS X.TT j))
     (P : ℕ) : SoftOK S.w (kSkey O X j i ^ P) P (sgKS O X j i ^ P) (fun l => P * dgKS X j i l) := by
@@ -142,21 +147,21 @@ theorem kW_inA (j : Fin (numSeg X.TT)) (i : Fin (segS X.TT j)) (c : Fin (X.m + 1
   simp [kWkey, map_sub, map_mul, map_pow, map_X]
 
 theorem softKW (S : UniformizedDVR X.p O) (hS : S.SqP) (hD : D1num X) (j : Fin (numSeg X.TT)) (i : Fin (segS X.TT j))
-    (c : Fin X.m) : SoftOK S.w (kWkey O X j i c.succ) 1 (sgKW O X j i c) (dgKW X j i) where
-  fac := by
-    refine IsFac.of_exact (e := X.p ^ (segDists X.TT j).get i - 1)
-      (r := -(MvPolynomial.X ((topOdd X j i, true), 0) *
-        MvPolynomial.X ((topStart X j, true), c.succ) ^ (X.p ^ (segDists X.TT j).get i))) (kW_inA j i _)
-      (fun g hg => (key3Ord X O S hS hD j i g hg).2 c) (two_le_pd hD j i) ?_ ?_ ?_
-    · exact (mem_intSub O _).1 (Subalgebra.mul_mem _ (X_int _) (Subalgebra.pow_mem _ (X_int _) _))
-    · exact (mem_intSub O _).1 (Subalgebra.neg_mem _ (Subalgebra.mul_mem _ (X_int _) (Subalgebra.pow_mem _ (X_int _) _)))
-    · rw [key_lift_identity_lower, pow_one, smul_neg, ← sub_eq_add_neg]; rfl
-  sgHom := ndHom_iff.2 (by
-    have := wh_Xpow (K := KK O) (wN X) ((topOdd X j i, true), c.succ) ((topStart X j, true), 0)
-      (X.p ^ (segDists X.TT j).get i)
-    rwa [normal_weight_vector_zero_eq_zero, wN_vecS, mul_zero, add_zero] at this)
-  liftPol := identity_lift_mem_Pol _ (kW_pol j i _)
-  sgPol := mem_Pol_iff.2 fun l => wh_Xpow (wL X l) _ _ _
+    (c : Fin X.m) : SoftOK S.w (kWkey O X j i c.succ) 1 (sgKW O X j i c) (dgKW X j i) :=
+  { fac := by
+      refine IsFac.of_exact (e := X.p ^ (segDists X.TT j).get i - 1)
+        (r := -(MvPolynomial.X ((topOdd X j i, true), 0) *
+          MvPolynomial.X ((topStart X j, true), c.succ) ^ (X.p ^ (segDists X.TT j).get i))) (kW_inA j i _)
+        (fun g hg => (key3Ord X O S hS hD j i g hg).2 c) (two_le_pd hD j i) ?_ ?_ ?_
+      · exact (mem_intSub O _).1 (Subalgebra.mul_mem _ (X_int _) (Subalgebra.pow_mem _ (X_int _) _))
+      · exact (mem_intSub O _).1 (Subalgebra.neg_mem _ (Subalgebra.mul_mem _ (X_int _) (Subalgebra.pow_mem _ (X_int _) _)))
+      · rw [key_lift_identity_lower, pow_one, smul_neg, ← sub_eq_add_neg]; rfl
+    sgHom := ndHom_iff.2 (by
+      have := wh_Xpow (K := KK O) (wN X) ((topOdd X j i, true), c.succ) ((topStart X j, true), 0)
+        (X.p ^ (segDists X.TT j).get i)
+      rwa [normal_weight_vector_zero_eq_zero, wN_vecS, mul_zero, add_zero] at this)
+    liftPol := identity_lift_mem_Pol _ (kW_pol j i _)
+    sgPol := mem_Pol_iff.2 fun l => wh_Xpow (wL X l) _ _ _ }
 
 def sgLoc (O : Type) [CommRing O] [IsDomain O] (X : Loc) : RHH O X :=
   ∏ j : Fin (numSeg X.TT), MvPolynomial.X ((topStart X j, true), 0) ^ (X.p ^ segG X.TT j - 1)
@@ -183,7 +188,7 @@ theorem prodStart_int (c : Fin (X.m + 1)) :
   have hX : ∀ v : VarH X, (MvPolynomial.X v : RHH O X) ∈ intSub O (VarH X) := by
     intro v m
     refine ⟨if Finsupp.single v 1 = m then 1 else 0, ?_⟩
-    rw [coeff_X']
+    rw [MvPolynomial.coeff_X]
     split_ifs <;> simp
   exact Subalgebra.prod_mem _ fun j _ => Subalgebra.pow_mem _ (hX _) _
 
@@ -216,20 +221,20 @@ theorem one_le_Mp (hD : D1num X) (h2 : 2 ≤ numSeg X.TT) : 1 ≤ ∑ j : Fin (n
         (Finset.mem_univ j0)
 
 theorem softLoc (w : O) (hD : D1num X) (h2 : 2 ≤ numSeg X.TT) (c : Fin X.m) :
-    SoftOK w (locC O X c.succ) 0 (sgLoc O X) (dgLoc X) where
-  fac := by
-    refine IsFac.of_exact (e := ∑ j : Fin (numSeg X.TT), (X.p ^ segG X.TT j - 1))
-      (r := -(∏ j : Fin (numSeg X.TT), MvPolynomial.X ((topStart X j, true), c.succ) ^ (X.p ^ segG X.TT j - 1)))
-      (loc_inA _) (fun g hg => inWjRg_zero_of_inA w (loc_inA _) g hg) (one_le_Mp hD h2) ?_ ?_ ?_
-    · exact (mem_intSub O _).1 (prodStart_int 0)
-    · exact (mem_intSub O _).1 (Subalgebra.neg_mem _ (prodStart_int _))
-    · rw [loc4One, pow_zero, one_smul, smul_neg, ← sub_eq_add_neg]; rfl
-  sgHom := ndHom_iff.2 (by
-    have := wh_prodStart (O := O) (wN X) 0
-    simp only [normal_weight_vector_zero_eq_zero, mul_zero, Finset.sum_const_zero] at this
-    exact this)
-  liftPol := identity_lift_mem_Pol _ (loc_pol _)
-  sgPol := mem_Pol_iff.2 fun l => wh_prodStart (wL X l) 0
+    SoftOK w (locC O X c.succ) 0 (sgLoc O X) (dgLoc X) :=
+  { fac := by
+      refine IsFac.of_exact (e := ∑ j : Fin (numSeg X.TT), (X.p ^ segG X.TT j - 1))
+        (r := -(∏ j : Fin (numSeg X.TT), MvPolynomial.X ((topStart X j, true), c.succ) ^ (X.p ^ segG X.TT j - 1)))
+        (loc_inA _) (fun g hg => inWjRg_zero_of_inA w (loc_inA _) g hg) (one_le_Mp hD h2) ?_ ?_ ?_
+      · exact (mem_intSub O _).1 (prodStart_int 0)
+      · exact (mem_intSub O _).1 (Subalgebra.neg_mem _ (prodStart_int _))
+      · rw [loc4One, pow_zero, one_smul, smul_neg, ← sub_eq_add_neg]; rfl
+    sgHom := ndHom_iff.2 (by
+      have := wh_prodStart (O := O) (wN X) 0
+      simp only [normal_weight_vector_zero_eq_zero, mul_zero, Finset.sum_const_zero] at this
+      exact this)
+    liftPol := identity_lift_mem_Pol _ (loc_pol _)
+    sgPol := mem_Pol_iff.2 fun l => wh_prodStart (wL X l) 0 }
 
 theorem locPow_ord (S : UniformizedDVR X.p O) (hS : S.SqP) (hD : D1num X) (h2 : 2 ≤ numSeg X.TT) (j0 : Fin (numSeg X.TT))
     (g : Matrix (Fin (X.m + 1)) (Fin (X.m + 1)) (WF X.p X.n')) (hg : IsGLW g)

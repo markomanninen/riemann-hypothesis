@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagBundle
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumSymm
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagBundle
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PIntNumSymm
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -80,8 +85,8 @@ section Lists
 
 variable {K : Type*} [DecidableEq K]
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem rootList_succ {i : ℕ} (x : Fin (i + 1) → K → ℤ) (α : Fin (i + 1) → ℕ) :
     rootList x α = rootList (fun j => x (Fin.castSucc j)) (Fin.init α) ++
       List.replicate (α (Fin.last i)) (x (Fin.last i)) := by
@@ -136,18 +141,19 @@ theorem segreSide_succ {K : Type*} [DecidableEq K] {ι : K → Type*} (F : Type*
   simp only [Nat.add_sub_cancel]
   by_cases h : i ≤ m + 1
   · obtain ⟨c, hc⟩ : ∃ c, m + 1 = i + c := ⟨m + 1 - i, by omega⟩
-    rw [if_pos h, if_pos (by omega), show m + 1 - i = c by omega, show m - (i - 1) = c by omega]
+    rw [ite_eq_left h, ite_eq_left (by omega), show m + 1 - i = c by omega,
+      show m - (i - 1) = c by omega]
     rcases c with _ | c
-    · rw [if_neg (by omega), add_zero, Finset.Nat.antidiagonalTuple_zero_right,
+    · rw [ite_eq_right (by omega), add_zero, Finset.Nat.antidiagonalTuple_zero_right,
         Finset.Nat.antidiagonalTuple_zero_right, Finset.sum_singleton, Finset.sum_singleton,
         rootList_zero, rootList_zero]
-    · rw [if_pos (by omega), show m - i = c by omega, sum_antidiagonalTuple_succ]
+    · rw [ite_eq_left (by omega), show m - i = c by omega, sum_antidiagonalTuple_succ]
       congr 1
       · refine Finset.sum_congr rfl fun α _ => ?_
         rw [rootList_snoc_zero]
       · refine Finset.sum_congr rfl fun β _ => ?_
         rw [rootList_update_last, List.append_assoc, List.singleton_append]
-  · rw [if_neg h, if_neg (by omega), if_neg (by omega), add_zero]
+  · rw [ite_eq_right h, ite_eq_right (by omega), ite_eq_right (by omega), add_zero]
 
 theorem zetaDeg_split {K : Type*} (a c : K → ℤ) :
     ((zetaDeg + liftDeg (c - a)) + liftDeg (a - c) : Option K → ℤ) = zetaDeg := by
@@ -177,8 +183,8 @@ theorem intNumL_cons_add (hadd : FieldNumbers.IntNumAdd.Statement.{0}) (F : Type
 
 end NumericalSegreProof
 
-open NumericalSegreProof in
 
+open NumericalSegreProof in
 theorem NumericalSegre.proof (hadd : FieldNumbers.IntNumAdd.Statement.{0})
     (hdim : FlagBundleDim.Statement) (hcut : FlagBundleCut.Statement)
     (hvan : FlagBundlePullbackVanish.Statement) (hbase : FlagBundleLineBase.Statement) :
@@ -204,7 +210,7 @@ theorem NumericalSegre.proof (hadd : FieldNumbers.IntNumAdd.Statement.{0})
           hvan F Ω K ι y e hP hdimV N E B w b hflag M a φ hφ Φ t ht (i + 1) (by omega) hi Y
             (by omega)]
         unfold segreSide
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
       | succ m ihm =>
         intro Y hY
         set l := List.replicate m (zetaDeg : Option K → ℤ) ++ Y.map liftDeg with hl

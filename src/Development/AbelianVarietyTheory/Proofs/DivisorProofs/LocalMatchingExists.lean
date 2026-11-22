@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaKernelCoinvariantStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsINeZeroKind
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaKernelCoinvariantStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsINeZeroKind
+
+@[expose] public section
 
 noncomputable section
 
@@ -134,11 +138,6 @@ theorem match_of_polMatch (hM : IsMatched B G X om om' R Rf) {Φ Φ'} (hS : Φ' 
 end GlobalTheory.ThK.Partner
 
 namespace GlobalTheory.ThK
-
-theorem matchEx_of_classicalTheorems (hK : KP) : MatchEx := by
-  intro F E _ _ _ _ _ σ B a a' G X om om' R Rf hM
-  exact ⟨fun Φ hΦ => Partner.partner_of_big hK hM hΦ, fun Φ' hΦ' => Partner.partner_of_small hM hΦ',
-    fun Φ Φ' hS h => Partner.match_of_polMatch hM hS h⟩
 
 end GlobalTheory.ThK
 

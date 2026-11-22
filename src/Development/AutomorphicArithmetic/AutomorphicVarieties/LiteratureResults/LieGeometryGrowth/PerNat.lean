@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.FNonneg
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.FNonneg
+
+@[expose] public section
+
 open UpperTheory.V.Lit.Geo
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.Af UpperTheory.V.Lit UpperTheory.V.Lit.Dr
 open scoped TensorProduct
@@ -6,7 +11,8 @@ open scoped TensorProduct
 private theorem hd_map {Γ M N : Type} [AddCommGroup M] [Module ℂ M] [AddCommGroup N] [Module ℂ N] (P : M →ₗ[ℂ] N)
     (b : List Γ → M) : hd (fun z => P (b z)) = fun z => P (hd b z) := by
   funext z
-  simp only [hd, map_sum, map_zsmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hd, map_sum, map_zsmul]
 
 private theorem zig_map {Γ V S S' : Type} [Group Γ] [NormedAddCommGroup V] [NormedSpace ℝ V] {d : ℕ}
     (G : Dr.Geo Γ V S d) (G' : Dr.Geo Γ V S' d) (f : S' → S) (P : ∀ q, G.Om q →ₗ[ℂ] G'.Om q)
@@ -31,7 +37,7 @@ private theorem zig_map {Γ V S S' : Type} [Group Γ] [NormedAddCommGroup V] [No
 
 section
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 private def pb (ho : IsOpen (cone E a)) (U U' : Subgroup (GL (Fin a) (Af E))) (Ξ : AlgRep E a)
     (f : GL (Fin a) (Af E) ⧸ U' → GL (Fin a) (Af E) ⧸ U) (q : ℕ) : (geo ho U Ξ).Om q →ₗ[ℂ] (geo ho U' Ξ).Om q where
@@ -41,17 +47,15 @@ private def pb (ho : IsOpen (cone E a)) (U U' : Subgroup (GL (Fin a) (Af E))) (�
 
 private theorem ev_rT {d : ℕ} (x : GL (Fin a) (Af E)) (m : Sm E a ⊗[ℂ] (Fin d → ℂ)) (g : GA E a) :
     ev ((act (.fin x)).rTensor (Fin d → ℂ) m) g = ev m (g * finGL E a x) := by
-  induction m using TensorProduct.induction_on with
-  | zero => simp
+  induction m using TensorProduct.inductionOn with
   | tmul φ v => rfl
-  | add m m' h h' => simp only [map_add, Pi.add_apply, h, h']
+  | add m m' h h' => simp only [map_add (f := _), Pi.add_apply, h, h']
 
 private theorem rT_map' {W : Type} [AddCommGroup W] [Module ℂ W] {d : ℕ} (T A : Module.End ℂ W)
     (B : Module.End ℂ (Fin d → ℂ)) (h : A * T = T * A) (m : W ⊗[ℂ] (Fin d → ℂ)) :
     T.rTensor _ (TensorProduct.map A B m) = TensorProduct.map A B (T.rTensor _ m) := by
-  induction m using TensorProduct.induction_on with
-  | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  induction m using TensorProduct.inductionOn with
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul φ v =>
     simp only [LinearMap.rTensor_tmul, TensorProduct.map_tmul]
     congr 1
@@ -68,7 +72,7 @@ private theorem rT_lie (Ξ : AlgRep E a) (x : GL (Fin a) (Af E)) (X : Lie E a) (
   have h1 := rT_map' (act (.fin x)) (lie E a X) LinearMap.id (lie_rt_fin X x) m
   have h2 := rT_map' (act (.fin x)) LinearMap.id (Matrix.toLin' (Ξ.dmat X)) rfl m
   change (act (.fin x)).rTensor (Fin Ξ.d → ℂ) (_ + _) = _ + _
-  rw [map_add]
+  rw [map_add (f := _)]
   exact congrArg₂ (· + ·) h1 h2
 
 private theorem lev_fin {U U' : Subgroup (GL (Fin a) (Af E))} {x : GL (Fin a) (Af E)} (hx : ∀ u ∈ U', x⁻¹ * u * x ∈ U)
@@ -110,7 +114,8 @@ theorem UpperTheory.V.Lit.Geo.perNat :
     | smul s y _ hy => rw [map_smul]; exact Submodule.smul_mem _ s hy
   · refine AlternatingMap.ext fun X => ?_
     change _ = (act (.fin x)).rTensor (Fin Ξ.d → ℂ) (dCo (smLie Ξ) α X)
-    simp only [dCo, AlternatingMap.alternatizeUncurryFin_apply, map_sum, map_zsmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dCo, AlternatingMap.alternatizeUncurryFin_apply, map_sum, map_zsmul]
     refine Finset.sum_congr rfl fun i _ => congrArg _ ?_
     exact (rT_lie Ξ x _ _).symm
   · obtain ⟨ho, w, hw, hz⟩ := h

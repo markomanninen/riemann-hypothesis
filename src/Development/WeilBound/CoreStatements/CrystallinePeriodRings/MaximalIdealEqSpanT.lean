@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.LocTied6
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.AinfMapSurjective
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.PhiGalCris
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.InstCommRingBcris
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.LocTied6
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.AinfMapSurjective
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.PhiGalCris
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.InstCommRingBcris
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,11 +20,6 @@ theorem actC_eq (AI : LocAinf l P) (g : GQ l) (y : ℂ_[l]) : AI.actC g y = actC
   congrFun (eq_galCp_of_continuous (Per6.toBot g) (AI.actC g)
     (AddMonoidHomClass.isometry_of_norm (AI.actC g) (AI.actC_norm g)).continuous
     (AI.actC_ext g)) y
-
-theorem actT_eq (AI : LocAinf l P) (g : GQ l) (x : OCb l) : AI.actT g x = galT g x :=
-  (galT_ext fun n y hy => by
-    obtain ⟨y', h1, h2⟩ := AI.actT_coeff g x n y hy
-    exact ⟨y', h1.trans (actC_eq AI g y), h2⟩).symm
 
 theorem tiltMap_ε (AI : LocAinf l P) : Per6.tiltMap l AI.ε =
     IsPerfectoidField.ofCompatible l (fun n => Per6.intEquiv l (AI.ζ n))
@@ -77,7 +76,7 @@ theorem tie_o (x : Om l) : T.eD (algebraMap (Om l) P.R.BdR x) = oD l x := by
       map_one' := hj (by rw [← hy, map_one, map_one, map_one])
       map_mul' := fun a b => hj (by rw [← hy, map_mul, map_mul, map_mul, hy, hy])
       map_zero' := hj (by rw [← hy, map_zero, map_zero, map_zero])
-      map_add' := fun a b => hj (by rw [← hy, map_add, map_add, map_add, hy, hy])
+      map_add' := fun a b => hj (by rw [← hy, map_add (f := _), map_add (f := _), map_add (f := _), hy, hy])
       commutes' := fun q => hj (by
         rw [← hy, ← IsScalarTower.algebraMap_apply, tie_qD, frob_oD_apply, AlgHom.commutes]) }
   have hf : f = algClToBdR l := eq_algClToBdR l f hθ

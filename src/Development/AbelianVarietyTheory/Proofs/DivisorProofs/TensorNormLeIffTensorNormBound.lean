@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TensorPlaceNorm
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TensorNormBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TensorPlaceNorm
+public import Formalism.LocalToGlobal.Divisibility.CoefMod
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -32,7 +36,8 @@ theorem fockS_re_pos' {σ : Type} {f : MvPolynomial σ ℂ} (hf : f ≠ 0) : 0 <
 
 theorem fockS_conj_symm {σ : Type} (f g : MvPolynomial σ ℂ) : (starRingEnd ℂ) (fockS g f) = fockS f g := by
   classical
-  rw [fockS_eq_sum g f (f.support ∪ g.support) Finset.subset_union_right,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [fockS_eq_sum g f (f.support ∪ g.support) Finset.subset_union_right,
     fockS_eq_sum f g (f.support ∪ g.support) Finset.subset_union_left, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   simp only [map_mul, map_natCast, Complex.star_def, Complex.conj_conj]
@@ -44,7 +49,7 @@ def fockCore (σ : Type) : InnerProductSpace.Core ℂ (MvPolynomial σ ℂ) wher
   re_inner_nonneg f := fockS_re_nonneg f
   add_left f f' g := by
     change fockL (f + f') g = fockL f g + fockL f' g
-    rw [map_add, LinearMap.add_apply]
+    rw [map_add (f := _), LinearMap.add_apply]
   smul_left f g r := by
     change fockL (r • f) g = _ * fockL f g
     rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul]

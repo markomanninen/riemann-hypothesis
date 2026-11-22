@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.LFun Formalism.UG Formalism.UG.P Formalism.L2.Host UpperTheory.V.Cj.S
 open GroundTheory.Automorphic.AutomorphicForm (UPos unipGL constantTerm archCompact infEmb isExpLieAlgebra)
@@ -62,7 +66,7 @@ theorem UpperTheory.V.Cj.S.satArith :
     UpperTheory.V.Cj.S.SatArith := by
   intro q r s hq B B₁ B₂ hB h₁ h₂ h α β hα hβ
   refine eq_of_satEig_eq hq hB (by simp [h₁, h₂]) fun j hj => ?_
-  rw [← h j hj, satEig, Multiset.map_add, es_add_fin (r := r) (s := s) _ _ (by simpa using h₁) (by simpa using h₂),
+  rw [← h j hj, satEig, Multiset.map_add (f := _), es_add_fin (r := r) (s := s) _ _ (by simpa using h₁) (by simpa using h₂),
     Finset.mul_sum]
   refine Finset.sum_congr rfl fun p _ => ?_
   unfold coef

@@ -1,5 +1,9 @@
-import ReciprocityTheory.DualLattices.SubgroupFreenessStatement
-import ReciprocityTheory.DualLattices.HasColengthEqPowMulPow
+module
+
+public import ReciprocityTheory.DualLattices.SubgroupFreenessStatement
+public import ReciprocityTheory.DualLattices.HasColengthEqPowMulPow
+
+@[expose] public section
 
 namespace ReciprocityTheory.PGsh.L2
 

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.BlockDeterminants.BumpLat
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsLatticeFrameIsMajorantFrame
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.BlockDeterminants.BumpLat
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsLatticeFrameIsMajorantFrame
+
+@[expose] public section
 
 open scoped Matrix
 open NumberField IsDedekindDomain Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels UpperTheory.TP.BA
@@ -12,7 +16,7 @@ private theorem e0 {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E
   change (a * 1) ⊗ₜ[F] x = _
   rw [mul_one]
 
-private theorem unit_at {F : Type} [Field F] [NumberField F] (v : Pl F) {s : 𝓞 F} (hs : s ∉ v.asIdeal) :
+private theorem unit_at {F : Type} [Field F] [NumberField F] (v : Pl (F := F)) {s : 𝓞 F} (hs : s ∉ v.asIdeal) :
     ∃ t : Fv F v, t ∈ v.adicCompletionIntegers F ∧ (s : F) • sg v t = sg v 1 := by
   have hs0 : (s : F) ≠ 0 := fun h => hs (by
     rw [show s = 0 from RingOfIntegers.coe_injective (by simpa using h)]; exact zero_mem _)
@@ -23,17 +27,17 @@ private theorem unit_at {F : Type} [Field F] [NumberField F] (v : Pl F) {s : �
     exact (h2.trans ((map_inv₀ _ _).trans ((congrArg _ h1).trans inv_one))).le
   · rw [← map_smul, Algebra.smul_def, ← map_mul, mul_inv_cancel₀ hs0, map_one]
 
-private theorem key {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E] (v : Pl F) {s : F} {t : Fv F v}
+private theorem key {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E] (v : Pl (F := F)) {s : F} {t : Fv F v}
     (h : s • sg v t = sg v 1) (x : E) :
     sg v t • inclR (F := F) (AF F) (algebraMap F E s * x) = sg v 1 • inclR (F := F) (AF F) x := by
   rw [e0, e0, ← Algebra.smul_def, ← TensorProduct.smul_tmul, h]
 
-private theorem at_one {F : Type} [Field F] [NumberField F] (v : Pl F) {M : Type} [AddCommGroup M] [Module (AF F) M] (m : M) :
+private theorem at_one {F : Type} [Field F] [NumberField F] (v : Pl (F := F)) {M : Type} [AddCommGroup M] [Module (AF F) M] (m : M) :
     At (evFin F v) (sg v 1 • m) := fun u hu => by
   rw [smul_smul, mul_sg, hu, zero_mul, map_zero, zero_smul]
 
 theorem UpperTheory.unitaryLattice_exists_frame :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (n : ℕ) (X : Spc F E n) (v : Pl F), X.L.IsLattice E → ∃ b c, IsFr X v b c := by
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (n : ℕ) (X : Spc F E n) (v : Pl (F := F)), X.L.IsFullLattice E → ∃ b c, IsFr X v b c := by
   intro F E _ _ _ _ _ n X v hL
   haveI := hL
   obtain ⟨P, h1, h2⟩ := GlobalTheory.AdelicU.Frames.exists_rational_frame (F := F) X.L v
@@ -66,7 +70,8 @@ theorem UpperTheory.unitaryLattice_exists_frame :
       · have ho' : ((o : 𝓞 E) : E) = algebraMap F E (s : F) * ((P⁻¹).1 *ᵥ x) i := by
           simpa using ho
         rw [ho', mul_smul, key v hst]
-        simp only [Matrix.mulVec, dotProduct, map_sum, Finset.smul_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [Matrix.mulVec, dotProduct, map_sum, Finset.smul_sum]
         refine Finset.sum_congr rfl fun j _ => ?_
         rw [map_mul, Matrix.smul_apply, smul_mul_assoc, mul_smul_comm, smul_comm]
         rfl

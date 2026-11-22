@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.FirstCoordsMulVec
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.FirstCoordsMulVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,12 +20,12 @@ variable {D : D7} (X : HidaSetting D) (p : TypX X) (θ : TpX X p ≃ₐ[FpX X p]
 
 theorem firstCoords_add (a b : Fin X.B.I.n → TpX X p) : crd1 X p θ Q (a + b) = crd1 X p θ Q a + crd1 X p θ Q b := by
   unfold crd1
-  rw [map_add, show (pr1 θ a + pr1 θ b) ∘ (idxEquiv X).symm =
+  rw [map_add (f := _), show (pr1 θ a + pr1 θ b) ∘ (idxEquiv X).symm =
     pr1 θ a ∘ (idxEquiv X).symm + pr1 θ b ∘ (idxEquiv X).symm from rfl, Matrix.mulVec_add]
 
 theorem secondCoords_add (a b : Fin X.B.I.n → TpX X p) : crd2 X p θ Q (a + b) = crd2 X p θ Q a + crd2 X p θ Q b := by
   unfold crd2
-  rw [map_add, show (pr2 θ a + pr2 θ b) ∘ (idxEquiv X).symm =
+  rw [map_add (f := _), show (pr2 θ a + pr2 θ b) ∘ (idxEquiv X).symm =
     pr2 θ a ∘ (idxEquiv X).symm + pr2 θ b ∘ (idxEquiv X).symm from rfl, Matrix.mulVec_add, Matrix.mulVec_add]
 
 theorem firstCoords_tensor_smul (t : TpX X p) (v : Fin X.B.I.n → TpX X p) :

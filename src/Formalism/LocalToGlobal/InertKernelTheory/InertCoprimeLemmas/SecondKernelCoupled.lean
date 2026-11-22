@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.InertKernelTheory.SecondKernelCoupledLastLift
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.SecondKernelInstances
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.CoupledSumOfEntries
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.OrbitSumStabilizer
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.SecondKernelCoupledLastLift
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.SecondKernelInstances
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.CoupledSumOfEntries
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.OrbitSumStabilizer
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem bodyC_of_span (Y : Pend X) (j : ℕ) (cK : Y.Kc) {I : Type} [Fintype I] 
     simp only [map_zero, Pi.zero_apply, ker_zero, smul_zero, Finset.sum_const_zero]
   | add x y _ _ hx hy =>
     intro c' L' hL
-    simp only [map_add, Pi.add_apply, ker_add, smul_add, Finset.sum_add_distrib, hx c' L' hL, hy c' L' hL]
+    simp only [map_add (f := _), Pi.add_apply, ker_add, smul_add, Finset.sum_add_distrib, hx c' L' hL, hy c' L' hL]
   | smul a x _ hx =>
     intro c' L' hL
     simp only [map_smul, Pi.smul_apply, ker_smul]
@@ -62,7 +66,8 @@ theorem second_kernel_coupled (t : KerEntTied ex) {σ : D.what₂.LL →+* X.G.K
         funext c1 y1
         rw [compatible_lift_exists D L hT Gi Gl Kc0 Dx cX ex t u μ j hj _ _ hQ.1 hQ.2 c1 y1]
         simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, entRec]
-      rw [hCh x y hy, hRd y c' L' hL, hy, hsum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hCh x y hy, hRd y c' L' hL, hy, hsum, map_sum]
       refine Finset.sum_congr rfl fun c _ => ?_
       rw [map_smulₛₗ, map_inv₀, map_natCast, hDel c x c' L' hL,
         kernel_of_smul p X Y j (lp c) (c', L') _ (hSer c c' L' hL), mul_smul])
@@ -106,8 +111,66 @@ theorem hecke_coupled_entry : HeckeCEntry := by
     v i F hF La' hLa'
   have hj : D.R.m - 1 < (sysAt Ch std vp unif eO eO_spec dG dG_spec om).mm :=
     lt_of_lt_of_eq (by omega : D.R.m - 1 < D.R.m) KA.fl_m.symm
-  have hk := Pf.kadj_entry D h5b (Formalism.L2.G.Pend.up_down_adjoint D _ Y) (D.R.m - 1) hj v i F hF La' hLa'
-  simp only [Finset.univ_unique, Finset.sum_singleton] at hk
+  let X := sysAt Ch std vp unif eO eO_spec dG dG_spec om
+  letI := X.G.ringO
+  letI := X.G.domO
+  letI := X.G.dvrO
+  letI := X.G.fieldK
+  letI := X.G.algOK
+  letI := Y.algKf
+  have h6 := Formalism.L2.G.Pend.up_down_adjoint D _ Y
+  have hk0 (j : ℕ) (hj : j < X.mm) (v : X.Pl) (k : ℕ)
+      (F : X.Fm j) (hF : F ∈ X.FQ j) (La' : X.Lt (j + 1)) (hLa' : (X.Pj (j + 1)).IsLatTup La'.2) :
+      ∑ La ∈ Y.Rep j, ((X.stab j La : X.G.Kf))⁻¹ •
+        ∑ A1 ∈ Pf.UP (X.Pj j) (X.vJ j v) k (La.2 (X.vJ j v)),
+          Y.ker j (La.1, Function.update La.2 (X.vJ j v) A1) La' (F La.1 La.2) =
+      ∑ La ∈ Y.Rep j, ((X.stab j La : X.G.Kf))⁻¹ • Y.ker j La La' (X.Tm v k j F La.1 La.2) := by
+    open Formalism.MainNotions.FormalGroupSystem.Pf Formalism.MainNotions.G.LatticeSystems in
+    classical
+    apply MvPolynomial.ext
+    intro n
+    let φ : X.Lv.comp j → (X.Pj j).Tup → (X.Pj j).Tup → Y.Kc := fun c L L1 =>
+      if (X.Pj j).IsLatTup L1 then AddMonoidAlgebra.coeff (Y.ker j (c, L1) La' (F c L)) n else 0
+    have hφ : ∀ c (γ : (X.Lv.lev j c).Γ) L L1,
+        φ c ((X.Lv.lev j c).smul γ L) ((X.Lv.lev j c).smul γ L1) = φ c L L1 := by
+      intro c γ L L1
+      simp only [φ]
+      by_cases h : (X.Pj j).IsLatTup L1
+      · rw [if_pos h, if_pos ((latTup_smul _ _ γ L1).2 h), (Eqv_of_FQ X hF).2 c γ L,
+          h5b j hj c L1 La' γ (F c L) (vt_FQ X hF c L) h hLa']
+      · rw [if_neg h, if_neg (fun h' => h ((latTup_smul _ _ γ L1).1 h'))]
+    have key := h6 j hj.le (X.vJ j v) k φ hφ
+    have hs : ∀ (La : X.Lt j) (z : Y.Kc), ((X.stab j La : X.G.Kf))⁻¹ • z = ((X.stab j La : Y.Kc))⁻¹ * z := by
+      intro La z
+      rw [Algebra.smul_def, map_inv₀, map_natCast]
+    rw [MvPolynomial.coeff_sum, MvPolynomial.coeff_sum]
+    refine Eq.trans ?_ (key.trans ?_)
+    · refine Finset.sum_congr rfl fun La hLa => ?_
+      have hlat := Y.Rep_lat j La hLa
+      rw [MvPolynomial.coeff_smul, hs, MvPolynomial.coeff_sum]
+      congr 1
+      refine Eq.trans ?_ (finsum_mem_eq_finite_toFinset_sum _ (up_fin (X.Pj j) (X.vJ j v) k (La.2 (X.vJ j v)))).symm
+      refine Finset.sum_congr rfl fun A1 hA1 => ?_
+      have hE := (mem_UP _).1 hA1
+      simp only [φ]
+      rw [if_pos (hk_latTup_update _ hlat _ A1 hE.2.1)]
+    · refine Finset.sum_congr rfl fun La hLa => ?_
+      have hlat := Y.Rep_lat j La hLa
+      rw [MvPolynomial.coeff_smul, hs]
+      congr 1
+      refine Eq.trans (finsum_mem_eq_finite_toFinset_sum _ (edges_fin (X.Pj j) (X.vJ j v) k (La.2 (X.vJ j v)))) ?_
+      have e : X.Tm v k j F La.1 La.2 = ∑ L0 ∈ EE (X.Pj j) (X.vJ j v) k (La.2 (X.vJ j v)),
+          F La.1 (Function.update La.2 (X.vJ j v) L0) := Tminus_eq (X.Pj j) (X.vJ j v) k (F La.1) La.2
+      rw [e, ker_sum, MvPolynomial.coeff_sum]
+      refine Finset.sum_congr rfl fun L0 _ => ?_
+      simp only [φ]
+      rw [if_pos hlat]
+  have hk := hk0 (D.R.m - 1) hj v i F hF La' hLa'
+  have hs : ∀ (n : ℕ) (z : XspC (X.Pj (D.R.m - 1 + 1)) Y.Kc), ((n : X.G.Kf))⁻¹ • z = ((n : Y.Kc))⁻¹ • z := by
+    intro n z
+    rw [← algebraMap_smul Y.Kc ((n : X.G.Kf))⁻¹ z, map_inv₀, map_natCast]
+  simp only [hs] at hk
+  have hk := ((Finset.sum_coe_sort (Y.Rep (D.R.m - 1)) _).trans hk).trans (Finset.sum_coe_sort (Y.Rep (D.R.m - 1)) _).symm
   simp only [Pf.up_finsum]
   have hb : ClsBij (Y := Y) u μ KA.cls (D.R.m - 1) :=
     class_bijection_instance D L hT Gi Gl Kc0 Dx cX ex u μ w h Fl Lv Ch KA std vp unif eO eO_spec dG dG_spec om Y (D.R.m - 1)
@@ -133,7 +196,9 @@ theorem hecke_coupled_entry : HeckeCEntry := by
     exact e
   refine (Fintype.sum_bijective _ hbij _ _ fun x => ?_).trans (hk.trans (Fintype.sum_bijective _ hbij _ _ fun x => ?_).symm)
   · simp only [hw x]
+    rfl
   · simp only [hw x]
+    rfl
 
 theorem coupled_compatibility_at_place : TiesCOfAt := by
   intro D L hT Gi Gl Kc0 Dx cX ex t u μ w h _ Fl Lv Ch KA std vp unif eO eO_spec dG dG_spec om Y ι Rd Sr lp hm hsec hTs

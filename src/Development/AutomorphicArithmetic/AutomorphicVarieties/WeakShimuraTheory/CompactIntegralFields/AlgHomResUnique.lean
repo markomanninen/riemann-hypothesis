@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedIdeal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.RedIdeal
+
+@[expose] public section
 
 open IsLocalRing Polynomial UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -36,7 +40,7 @@ private theorem point_ext {O Γ : Type} [CommRing O] [Group Γ] [TopologicalSpac
     · exact congrArg (fun Q => Q.r g i j) h
     · exact congrArg (fun Q => Q.n v i j) h
   | algebraMap b => exact hB b
-  | add u w _ _ hu hw => rw [map_add, map_add, hu, hw]
+  | add u w _ _ hu hw => rw [map_add (f := _), map_add (f := _), hu, hw]
   | mul u w _ _ hu hw => rw [map_mul, map_mul, hu, hw]
 
 private theorem ker_le_of_eval {O Γ : Type} [CommRing O] [Group Γ] [TopologicalSpace Γ] {Φ : Fr O Γ} {Λ : Type}

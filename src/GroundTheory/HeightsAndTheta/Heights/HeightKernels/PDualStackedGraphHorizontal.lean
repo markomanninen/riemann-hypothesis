@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedGraph
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualTopSimpleStacked
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedGraph
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualTopSimpleStacked
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -57,9 +62,9 @@ theorem multAt_eq_of_mul_mem {K' : Type} [Fintype K'] {ι : K' → Type} [∀ k,
     {I J W : Ideal (MRing ι)} (hIJ : I ≤ J) {s : MRing ι} (hs : s ∉ W) (hsJ : ∀ x ∈ J, s * x ∈ I) :
     multAt I W = multAt J W := by
   by_cases hW : W.IsPrime
-  · rw [multAt, multAt, dif_pos hW, dif_pos hW]
+  · rw [multAt, multAt, dite_eq_left hW, dite_eq_left hW]
     exact congrArg ENat.toNat (length_localized_eq hIJ hs hsJ)
-  · rw [multAt, multAt, dif_neg hW, dif_neg hW]
+  · rw [multAt, multAt, dite_eq_right hW, dite_eq_right hW]
 
 theorem sup_le_of_mul_mem {A : Type*} [CommRing A] {I Q : Ideal A} (hQ : Q.IsPrime) {f g s : A} (hs : s ∉ Q)
     (hsg : s * g ∈ I ⊔ Ideal.span {f}) (hle : I ⊔ Ideal.span {f} ≤ Q) : I ⊔ Ideal.span {g} ≤ Q := by
@@ -118,8 +123,8 @@ theorem C_mul_first_not_mem {P : Ideal (MRing (dualBlocks T))} {a : T → ℤ} (
 
 end StackedGraphHorizontal
 
-open StackedGraphHorizontal in
 
+open StackedGraphHorizontal in
 theorem DualStackedGraphHorizontal.proof : DualStackedGraphHorizontal.Statement := by
   intro K _ _ i F F' T _ _ b b' a _ hab t W hhor
   have ha : ∀ t, a t ≠ 0 := by

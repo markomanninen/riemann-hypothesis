@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CotInd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DetLocus
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDetKerLe
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDetKerPrime
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDetKerIndep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDetField
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CotInd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DetLocus
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDetKerLe
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDetKerPrime
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDetKerIndep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.CaDetField
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.AlgebraTools
 
@@ -29,7 +33,8 @@ theorem UpperTheory.V.AlgebraTools.exists_least_prime_detIdeal :
     have hi : z.mulVec m i ∈ Q :=
       hle (Ideal.mem_sup_left (Ideal.subset_span ⟨i, rfl⟩))
     have h2 := (hf _).2 hi
-    simpa [Matrix.mulVec, dotProduct, map_sum, map_mul] using h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [Matrix.mulVec, dotProduct, map_sum, map_mul] using h2
   have h2 : (z.map f).det = 0 := by
     have hi : z.det ∈ Q := hle (Ideal.mem_sup_right (Ideal.subset_span rfl))
     have h3 := (hf _).2 hi

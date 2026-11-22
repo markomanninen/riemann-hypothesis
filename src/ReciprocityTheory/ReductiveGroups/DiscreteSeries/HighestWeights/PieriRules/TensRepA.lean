@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PieriRules.KTypeIntDomStatement
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.DerivExistsAllPosStatement
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.PieriRules.KTypeIntDomStatement
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ContinuousRepresentations.DerivExistsAllPosStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,7 +49,8 @@ theorem tensL_mul (m m' : Matrix ι ι ℂ) (S S' : V →L[ℂ] V) :
   refine ContinuousLinearMap.ext fun x => PiLp.ext fun i => ?_
   have hSS : ∀ v : V, (S * S') v = S (S' v) := fun v => rfl
   show tensL (m * m') (S * S') x i = tensL m S (tensL m' S' x) i
-  simp only [tensL_apply, hSS, Matrix.mul_apply, map_sum, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [tensL_apply, hSS, Matrix.mul_apply, map_sum, map_smul,
     Finset.sum_smul, Finset.smul_sum, smul_smul]
   exact Finset.sum_comm
 
@@ -139,22 +144,6 @@ def tensTau : KG ε →* unitary (PiLp 2 (fun _ : ι => T.V) →L[ℂ] PiLp 2 (f
 theorem tensTau_cont (h : Continuous (fun k : KG ε => ((ρ k : unitary (Matrix ι ι ℂ)) : Matrix ι ι ℂ))) :
     Continuous (tensTau T ρ) :=
   continuous_tensHom h T.cont
-
-example (τ : KG ε →* unitary (PiLp 2 (fun _ : ι => T.V) →L[ℂ] PiLp 2 (fun _ : ι => T.V)))
-    (hc : Continuous τ)
-    (D : Matrix (Fin n) (Fin n) ℂ →ₗ[ℂ] (PiLp 2 (fun _ : ι => T.V) →L[ℂ] PiLp 2 (fun _ : ι => T.V)))
-    (hd : ∀ X, inK ε X → ∀ γ : ℝ → KG ε, (∀ t : ℝ, toMK (γ t) = NormedSpace.exp ((t : ℂ) • X)) →
-      HasDerivAt (fun t : ℝ => ((τ (γ t) : unitary (PiLp 2 (fun _ : ι => T.V) →L[ℂ]
-        PiLp 2 (fun _ : ι => T.V))) : PiLp 2 (fun _ : ι => T.V) →L[ℂ] PiLp 2 (fun _ : ι => T.V)))
-        (D X) 0)
-    (dρ : Matrix (Fin n) (Fin n) ℂ →ₗ[ℂ] Matrix ι ι ℂ)
-    (hu : ∀ a b, ((D (Matrix.single a b 1) : PiLp 2 (fun _ : ι => T.V) →L[ℂ] PiLp 2 (fun _ : ι => T.V)) :
-        Module.End ℂ (PiLp 2 (fun _ : ι => T.V))) =
-          tensAct (kunits T) (fun a b => dρ (Matrix.single a b 1)) a b) :
-    (⟨PiLp 2 (fun _ : ι => T.V), τ, hc, D, hd⟩ : KRep ε).units =
-      tensAct (kunits T) (fun a b => dρ (Matrix.single a b 1)) := by
-  funext a b
-  exact hu a b
 
 end KT
 

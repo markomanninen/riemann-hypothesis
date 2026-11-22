@@ -1,5 +1,9 @@
-import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.ArakelovDegreeEqDegreeOfFamily
-import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.CountStA
+module
+
+public import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.ArakelovDegreeEqDegreeOfFamily
+public import ReciprocityTheory.GeometryOfNumbers.LatticeCovolumes.CountStA
+
+@[expose] public section
 
 namespace ReciprocityTheory.GeometryOfNumbersTheory
 
@@ -62,14 +66,14 @@ noncomputable def crdEmb {r : ℕ} {v : Fin r → V} (hli : LinearIndependent K 
 theorem crdEmb_apply {r : ℕ} {v : Fin r → V} (hli : LinearIndependent K v) (x : V) (i : Fin r) :
     crdEmb hli x i = mixedEmbedding K (crd hli x i) := rfl
 
-variable (K) in
 
+variable (K) in
 noncomputable def latB (r : ℕ) :
     Basis (Σ _ : Fin r, Free.ChooseBasisIndex ℤ (𝓞 K)) ℝ (Fin r → mixedEmbedding.mixedSpace K) :=
   Pi.basis fun _ => mixedEmbedding.latticeBasis K
 
-variable (K) in
 
+variable (K) in
 noncomputable def lat0 (r : ℕ) : Submodule ℤ (Fin r → mixedEmbedding.mixedSpace K) :=
   Submodule.span ℤ (Set.range (latB K r))
 
@@ -197,9 +201,13 @@ theorem discrete_latE {E : Submodule (𝓞 K) V} (hE : E.FG) {r : ℕ} {v : Fin 
     exact Subtype.ext (smul_right_injective _ (Nat.cast_ne_zero.mpr hn) h2)
 
 theorem isZLattice_latE {E : Submodule (𝓞 K) V} (hE : E.FG) {r : ℕ} {v : Fin r → V}
-    (hv : IsFrame K E v) : haveI := discrete_latE hE hv; IsZLattice ℝ (latE hv.2.1 E) :=
-  haveI := discrete_latE hE hv
-  ⟨by rw [eq_top_iff, ← IsZLattice.span_top (L := lat0 K r)]; exact Submodule.span_mono (standardLattice_le_frameLattice hv)⟩
+    (hv : IsFrame K E v) :
+    letI := discrete_latE hE hv
+    IsZLattice ℝ (latE hv.2.1 E) := by
+  have := discrete_latE hE hv
+  refine ⟨?_⟩
+  rw [eq_top_iff, ← IsZLattice.span_top (L := lat0 K r)]
+  exact Submodule.span_mono (standardLattice_le_frameLattice hv)
 
 theorem covolume_standardLattice (r : ℕ) :
     ZLattice.covolume (lat0 K r) = (ZLattice.covolume (mixedEmbedding.integerLattice K)) ^ r := by
@@ -217,10 +225,10 @@ theorem covolume_standardLattice (r : ℕ) :
 
 theorem covolume_latE {E : Submodule (𝓞 K) V} (hE : E.FG) {r : ℕ} {v : Fin r → V}
     (hv : IsFrame K E v) :
-    haveI := discrete_latE hE hv; haveI := isZLattice_latE hE hv
     ZLattice.covolume (latE hv.2.1 E) = ZLattice.covolume (lat0 K r) /
       ((Submodule.span (𝓞 K) (Set.range v)).toAddSubgroup.relIndex E.toAddSubgroup : ℝ) := by
-  haveI := discrete_latE hE hv; haveI := isZLattice_latE hE hv
+  have := discrete_latE hE hv
+  have := isZLattice_latE hE hv
   have h := covol_div_covol_eq_relIndex volume (lat0 K r) (latE hv.2.1 E) (standardLattice_le_frameLattice hv)
   rw [relIndex_lat hv] at h
   have hn : ((Submodule.span (𝓞 K) (Set.range v)).toAddSubgroup.relIndex E.toAddSubgroup : ℝ) ≠ 0 :=

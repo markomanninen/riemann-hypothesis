@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.SpanSingletonEqTopIffIsUnitOfIsBaseChange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.SpanSingletonEqTopIffIsUnitOfIsBaseChange
+
+@[expose] public section
 
 open TensorProduct
 
@@ -28,13 +32,10 @@ theorem lTensor_defect (ε : Matrix (Fin d) (Fin d) (B ⊗[A] B)) (x : B ⊗[A] 
           (Algebra.TensorProduct.includeRight : B →ₐ[A] B ⊗[A] B)
             (piRight A A B (fun _ : Fin d => B) x i)) := by
   induction x with
-  | zero =>
-    ext i
-    simp [Matrix.mulVec, dotProduct]
   | add x y hx hy =>
-    rw [map_add, map_add, hx, hy, map_add]
+    rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _)]
     ext i
-    simp only [Matrix.mulVec, dotProduct, Pi.add_apply, Pi.sub_apply, map_add, mul_add,
+    simp only [Matrix.mulVec, dotProduct, Pi.add_apply, Pi.sub_apply, map_add (f := _), mul_add,
       Finset.sum_add_distrib]
     abel
   | tmul b z =>
@@ -55,9 +56,8 @@ theorem isBaseChange [Module.Flat A B] (ε : Matrix (Fin d) (Fin d) (B ⊗[A] B)
       ε.mulVec (e (N.subtype.lTensor B x)) := by
     intro x
     induction x with
-    | zero => ext i; simp
     | add x y hx hy =>
-      rw [map_add, map_add, map_add, Matrix.mulVec_add, ← hx, ← hy]
+      rw [map_add (f := _), map_add (f := _), map_add (f := _), Matrix.mulVec_add, ← hx, ← hy]
       ext i
       simp [add_tmul]
     | tmul b n =>

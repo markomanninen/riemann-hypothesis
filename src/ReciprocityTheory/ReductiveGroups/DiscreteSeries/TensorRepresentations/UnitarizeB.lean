@@ -1,10 +1,14 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.UnitarizeA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.HidaSetting
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiExistsStatement
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ModularCharacterEqOneOnExpHermitian
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.ConjTransposeEqOfInG
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.UnitarizeA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.HidaSetting
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiExistsStatement
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ModularCharacterEqOneOnExpHermitian
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.KoszulLowersPower
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.ConjTransposeEqOfInG
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,7 +82,7 @@ def cf (dual : Bool) (ε : Fin n → Bool) (σ : Matrix (Fin n) (Fin n) ℂ → 
 theorem cf_add (dual : Bool) (y : H) (ξ : Fin n) (F F' : Fin n → H) :
     cf dual ε σ y ξ (F + F') = cf dual ε σ y ξ F + cf dual ε σ y ξ F' := by
   funext g
-  simp only [cf, Pi.add_apply, map_add, inner_add_right, mul_add, Finset.sum_add_distrib]
+  simp only [cf, Pi.add_apply, map_add (f := _), inner_add_right, mul_add, Finset.sum_add_distrib]
 
 theorem cf_smul (dual : Bool) (y : H) (ξ : Fin n) (a : ℂ) (F : Fin n → H) :
     cf dual ε σ y ξ (a • F) = a • cf dual ε σ y ξ F := by
@@ -94,7 +98,7 @@ theorem continuous_orbit (hσ : IsURepOn (UJset ε) σ) (v : H) :
 theorem continuous_cf (hσ : IsURepOn (UJset ε) σ) (dual : Bool) (y : H) (ξ : Fin n) (F : Fin n → H) :
     Continuous (cf dual ε σ y ξ F) := by
   unfold cf
-  exact continuous_finset_sum _ fun c _ => ((continuous_wt dual ε ξ c).comp continuous_umat).mul
+  exact continuous_finsetSum _ fun c _ => ((continuous_wt dual ε ξ c).comp continuous_umat).mul
     (continuous_const.inner (continuous_orbit hσ (F c)))
 
 theorem memLp_cf (hσ : IsURepOn (UJset ε) σ) (dual : Bool) (y : H) (ξ : Fin n) (F : Fin n → H)
@@ -103,7 +107,7 @@ theorem memLp_cf (hσ : IsURepOn (UJset ε) σ) (dual : Bool) (y : H) (ξ : Fin 
       2 (Formalism.REAL.muG ε)) :
     MemLp (cf dual ε σ y ξ F) 2 (Formalism.REAL.muG ε) := by
   unfold cf
-  refine memLp_finset_sum _ fun c _ => ?_
+  refine MeasureTheory.memLp_finsetSum _ fun c _ => ?_
   refine MemLp.of_le (hW c) ?_ (Filter.Eventually.of_forall fun g => ?_)
   · exact (((continuous_wt dual ε ξ c).comp continuous_umat).mul
       (continuous_const.inner (continuous_orbit hσ (F c)))).aestronglyMeasurable

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.ElevenLe
-import Formalism.LocalRingCardinality.NFLeTwoMulTSq
+module
+
+public import Formalism.SharpRestriction.ElevenLe
+public import Formalism.LocalRingCardinality.NFLeTwoMulTSq
+
+@[expose] public section
 
 namespace Formalism.BasicNotions
 

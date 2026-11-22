@@ -1,12 +1,16 @@
-import Development.WeilBound.RepresentationTheoryGL.PeriodRingBases.PeriodRingUnits.DieudonneManinBasisModification
-import GroundTheory.PAdicHodge.ExistsNormLeOfNormLtOneFinite
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.PeriodRingBases.PeriodRingUnits.DieudonneManinBasisModification
+public import GroundTheory.PAdicHodge.ExistsNormLeOfNormLtOneFinite
+
+@[expose] public section
 
 noncomputable section
 
 namespace period_ring_base
 
 open Formalism.Per6 hiding σB aB
-open GroundTheory.PAdicHodge DeRhamPotentiallySemistable.DRPst PfDRPst Matrix
+open GroundTheory.PAdicHodge DeRhamPotentiallySemistable.DRPst Matrix
 
 section cont
 
@@ -77,7 +81,7 @@ theorem continuous_κ (l : ℕ) [Fact l.Prime] : Continuous (κ : GQ l → ℚ_[
     have hU : IsOpen {h : GQ l | g0⁻¹ * h ∈ (IntermediateField.adjoin ℚ_[l] {z}).fixingSubgroup} :=
       (IntermediateField.fixingSubgroup_isOpen _).preimage (continuous_const_mul _)
     have h1 : g0 ∈ {h : GQ l | g0⁻¹ * h ∈ (IntermediateField.adjoin ℚ_[l] {z}).fixingSubgroup} := by
-      simp only [Set.mem_setOf_eq, inv_mul_cancel]
+      simp only [Set.mem_ofPred_eq, inv_mul_cancel]
       exact Subgroup.one_mem _
     filter_upwards [hU.mem_nhds h1] with h hh
     have hfix := (IntermediateField.mem_fixingSubgroup_iff _ _).1 hh z (IntermediateField.mem_adjoin_simple_self _ _)

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KernSum
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KernSum
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -32,17 +37,17 @@ end Ring
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
-def pU : finU E n →* GL (Fin n) (Af E) :=
-  ((GeneralLinearGroup.map (pFin E)).comp (UA E n).subtype).comp (finU E n).subtype
+def pU : finU (E := E) (n := n) →* GL (Fin n) (Af E) :=
+  ((GeneralLinearGroup.map (pFin E)).comp (UA E n).subtype).comp (finU (E := E) (n := n)).subtype
 
-theorem finGL_pU (k : finU E n) : finGL E n (pU k) = k.1.1 := finGL_pFin k
+theorem finGL_pU (k : finU (E := E) (n := n)) : finGL E n (pU k) = k.1.1 := finGL_pFin k
 
 theorem pU_injective : Function.Injective (pU (E := E) (n := n)) := fun a b h =>
   Subtype.ext (Subtype.ext (by rw [← finGL_pU, h, finGL_pU]))
 
-theorem tw_pU (k : finU E n) : tw n (conjFin (cc E)) (pU k) = pU k := (tw_eq_iff _ _).2 (cT_pFin k.1)
+theorem tw_pU (k : finU (E := E) (n := n)) : tw n (conjFin (cc E)) (pU k) = pU k := (tw_eq_iff _ _).2 (cT_pFin k.1)
 
-def sU (g : GL (Fin n) (Af E)) (h : tw n (conjFin (cc E)) g = g) : finU E n :=
+def sU (g : GL (Fin n) (Af E)) (h : tw n (conjFin (cc E)) g = g) : finU (E := E) (n := n) :=
   ⟨⟨finGL E n g, finGL_mem_UA _ ((tw_eq_iff _ _).1 h)⟩, pInf_finGL _⟩
 
 theorem pU_sU (g : GL (Fin n) (Af E)) (h : tw n (conjFin (cc E)) g = g) : pU (sU g h) = g := pFin_finGL g
@@ -74,7 +79,7 @@ theorem pU_finPt (γ : UE E n) : pU (finPt γ) = ratF E n γ.1 := by
     exact dif_pos (sU _ h).2
   rw [e, pU_sU]
 
-theorem mem_ratFinU (k : finU E n) : k ∈ ratFinU E n ↔ pU k ∈ (ratF E n).range := by
+theorem mem_ratFinU (k : finU (E := E) (n := n)) : k ∈ ratFinU E n ↔ pU k ∈ (ratF E n).range := by
   constructor
   · rintro ⟨g, -, hg⟩
     exact ⟨g, (pFin_finGL _).symm.trans (congrArg (GeneralLinearGroup.map (pFin E)) hg)⟩
@@ -82,7 +87,7 @@ theorem mem_ratFinU (k : finU E n) : k ∈ ratFinU E n ↔ pU k ∈ (ratF E n).r
     refine ⟨g, (mem_UE g).2 (ratF_injective ?_), (congrArg (finGL E n) hg).trans (finGL_pU k)⟩
     rw [ratF_tw, hg, tw_pU]
 
-theorem finPt_props : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ), (∀ a b : UE E n, finPt (a * b) = finPt a * finPt b) ∧ Function.Injective (finPt : UE E n → finU E n) ∧ ∀ x : finU E n, x ∈ ratFinU E n ↔ ∃ γ : UE E n, finPt γ = x := by
+theorem finPt_props : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ), (∀ a b : UE E n, finPt (a * b) = finPt a * finPt b) ∧ Function.Injective (finPt : UE E n → finU (E := E) (n := n)) ∧ ∀ x : finU (E := E) (n := n), x ∈ ratFinU E n ↔ ∃ γ : UE E n, finPt γ = x := by
   intro E _ _ _ n
   refine ⟨fun a b => pU_injective ?_, fun a b h => Subtype.ext (ratF_injective ?_), fun x => ?_⟩
   · rw [map_mul, pU_finPt, pU_finPt, pU_finPt, Subgroup.coe_mul, map_mul]

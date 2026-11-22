@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.UpdDModelLet
-import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.JointEIntList
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.UpdDModelLet
+public import Formalism.SharpRestriction.GrowthBounds.TwistedSubstitution.JointEIntList
+
+@[expose] public section
 
 noncomputable section
 

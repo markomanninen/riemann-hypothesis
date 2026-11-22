@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GeometricLemmaJacquetCell
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GeometricLemmaJacquetCell
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -85,8 +90,8 @@ variable {Y : Set (GL (Fin n) F)} (hYo : IsOpen Y)
     (blockUpper F n γ))
   (hYQ : ∀ g ∈ Y, ∀ q ∈ blockUpper F n γ, g * q ∈ Y)
 
-include hYo hCY hYQ in
 
+include hYo hCY hYQ in
 theorem cellJacquet_eq_zero_of_mk_eq_zero {f : parabolicIndSpace F n β σ}
     (hf : f ∈ supportedIn σ Y)
     (h0 : Representation.Coinvariants.mk ((parabolicInd F n β σ).comp
@@ -138,8 +143,8 @@ theorem cellJacquet_eq_zero_of_mk_eq_zero {f : parabolicIndSpace F n β σ}
   unfold cellEv
   rw [avgOver_eq_zero_of_forall (fun k _ => by unfold cellFun; rw [hg0]; rfl), map_zero, smul_zero]
 
-variable (γ w) in
 
+variable (γ w) in
 def jacquetSupported (Y : Set (GL (Fin n) F)) :
     supportedIn σ Y →ₗ[ℂ] jacquetFiltration γ (σ := σ) Y :=
   ((Representation.Coinvariants.mk _).comp (supportedIn σ Y).subtype).codRestrict _
@@ -170,17 +175,17 @@ theorem cellJacquetMap_eq_of_jacquetSupported_eq {f f' : supportedIn σ Y}
   apply ker_jacquetSupported_le σ hYo hCY hYQ
   rw [LinearMap.mem_ker, map_sub, h, sub_self]
 
-variable (γ w) in
 
+variable (γ w) in
 def gradedJacquetMap :
     jacquetFiltration γ (σ := σ) Y →ₗ[ℂ] indSpace (cellLeviSub F β γ w) (cellInducing β γ w σ) where
   toFun x := cellJacquetMap γ w σ hYo hCY
     (Function.surjInv (jacquetSupported_surjective σ Y) x)
   map_add' x y := by
-    rw [← map_add]
+    rw [← map_add (f := _)]
     apply cellJacquetMap_eq_of_jacquetSupported_eq σ hYo hCY hYQ
     have hs := jacquetSupported_surjective (γ := γ) σ Y
-    rw [map_add, Function.surjInv_eq hs x, Function.surjInv_eq hs y, Function.surjInv_eq hs (x + y)]
+    rw [map_add (f := _), Function.surjInv_eq hs x, Function.surjInv_eq hs y, Function.surjInv_eq hs (x + y)]
   map_smul' c x := by
     rw [RingHom.id_apply, ← map_smul]
     apply cellJacquetMap_eq_of_jacquetSupported_eq σ hYo hCY hYQ

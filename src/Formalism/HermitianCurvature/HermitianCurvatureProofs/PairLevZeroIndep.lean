@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ModuleFormPositivity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumPairLevStarMul
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PairOperatorCommute
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GammaFamilyCommuteGenerators
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ModuleFormPositivity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumPairLevStarMul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PairOperatorCommute
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GammaFamilyCommuteGenerators
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBF
 
@@ -18,10 +22,10 @@ variable {k r : ℕ} {z z' : Fin (2 * r + k + 1) → ℂ} {Wp Wq : Type} [Normed
 
 theorem tprod_succ (L : R.LevelData (Pr (RadSp k r z z' π π')) r) (Y : ℂ) (l : Fin r) :
     P5.tprod L Y l.val = P5.tprod L Y (l.val + 1) * Ts (site L l) Y := by
-  rw [P5.tprod, dif_pos l.isLt]
+  rw [P5.tprod, dite_eq_left l.isLt]
 
 theorem tprod_top (L : R.LevelData (Pr (RadSp k r z z' π π')) r) (Y : ℂ) : P5.tprod L Y r = 1 := by
-  rw [P5.tprod, dif_neg (lt_irrefl r)]
+  rw [P5.tprod, dite_eq_right (lt_irrefl r)]
 
 theorem QQi_step (L : R.LevelData (Pr (RadSp k r z z' π π')) r) (st : Fr.Start (Pr (RadSp k r z z' π π')))
     (l : Fin r) : QQi L st l.castSucc = fun Y => Matrix.conjTranspose (Ts (site L l) (star Y)) * QQi L st l.succ Y * Ts (site L l) Y := by

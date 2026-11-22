@@ -1,10 +1,14 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyInterleaving.LInjective
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsMultisegments
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsExhaustionGL
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ShuffleWeightAntisymmetricEqStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.ZelevinskyInterleaving.LInjective
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsMultisegments
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LanglandsExhaustionGL
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ShuffleWeightAntisymmetricEqStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,15 +121,15 @@ instance : Nonempty (CuspT k) :=
 theorem inSh_of_inShW {𝔫 : Multiset (Segment k)} {h : ℕ} {Δ : Fin h → Segment k} (H : InShW 𝔫 (wtW Δ)) :
     Comb.InSh sNu (𝔫.map toA) (Comb.wt sNu ((List.ofFn Δ).map toA)) := by
   obtain ⟨Ls, rfl, hS⟩ := H
-  have hg : Function.LeftInverse (Function.invFun (Subtype.val : CuspT k → IrrGL k)) Subtype.val :=
+  have hg : Function.LeftInverse (Function.invFun (Subtype.val : CuspT k → IrrGL (k := k))) Subtype.val :=
     Function.leftInverse_invFun Subtype.val_injective
-  have hback : ∀ l : List (CuspT k), (l.map Subtype.val).map (Function.invFun (Subtype.val : CuspT k → IrrGL k)) = l :=
+  have hback : ∀ l : List (CuspT k), (l.map Subtype.val).map (Function.invFun (Subtype.val : CuspT k → IrrGL (k := k))) = l :=
     fun l => by
       rw [List.map_map, hg.comp_eq_id, List.map_id]
   refine ⟨Ls.map toA, by simp, ?_⟩
-  have h1 := shuffle_map (Function.invFun (Subtype.val : CuspT k → IrrGL k)) hS
+  have h1 := shuffle_map (Function.invFun (Subtype.val : CuspT k → IrrGL (k := k))) hS
   rw [wtW_eq, hback, List.map_map] at h1
-  have h2 : (List.map (Function.invFun (Subtype.val : CuspT k → IrrGL k))) ∘ decW = Comb.ASeg.dec sNu ∘ toA := by
+  have h2 : (List.map (Function.invFun (Subtype.val : CuspT k → IrrGL (k := k)))) ∘ decW = Comb.ASeg.dec sNu ∘ toA := by
     funext D
     simp only [Function.comp, decW_eq, hback]
   rw [h2, ← List.map_map] at h1

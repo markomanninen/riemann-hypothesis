@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open CategoryTheory TensorProduct ChangeOfRings
 
@@ -26,7 +30,7 @@ theorem mem_smul_of_tmul_eq_zero {A Q N : Type} [CommRing A] [AddCommGroup Q] [M
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul a n => simp [mul_smul]
-    | add x y hx hy => simp only [map_add, hx, hy, smul_add]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy, smul_add]
   refine ⟨TensorProduct.lid A N t, ?_⟩
   rw [← key, ht]
   simp
@@ -71,7 +75,7 @@ theorem exists_reduction (A O : Type) [CommRing A] [CommRing O] (θ : A →+* O)
       obtain ⟨u, hu⟩ := hx
       obtain ⟨v, hv⟩ := hy
       refine ⟨u + v, ?_⟩
-      rw [map_add, hu, hv]
+      rw [map_add (f := _), hu, hv]
       rfl
   · intro h
     refine mem_smul_of_tmul_eq_zero g ?_ ξ ?_ m ?_

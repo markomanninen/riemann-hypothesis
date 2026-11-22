@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.MemUniformizerHermitianIdeal
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FirstStatementA
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.MemUniformizerHermitianIdeal
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FirstStatementA
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,10 +44,12 @@ theorem oEv_eq_span : OEv (E := E) v = ((Submodule.span (v.adicCompletionInteger
   · rw [Submodule.span_le]
     rintro _ ⟨x, -, rfl⟩
     have hx := congrArg (algebraMap (𝓞 E) E) ((RingOfIntegers.basis E).sum_repr x)
-    rw [map_sum] at hx
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at hx
     simp only [map_zsmul] at hx
     show inclR (F := F) (Fv F v) (algebraMap (𝓞 E) E x) ∈ _
-    rw [← hx, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hx, map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [map_zsmul]
     exact zsmul_mem (Submodule.subset_span (Set.mem_range_self i)) _
@@ -121,7 +127,7 @@ variable {n : ℕ} (Λ : Set (Fin n → E))
 theorem ratV_add (x y : Fin n → E) :
     ratV (F := F) (Fv F v) (x + y) = ratV (F := F) (Fv F v) x + ratV (F := F) (Fv F v) y := by
   funext i
-  simp [ratV, map_add]
+  simp [ratV, map_add (f := _)]
 
 theorem ratV_zsmul (c : ℤ) (x : Fin n → E) :
     ratV (F := F) (Fv F v) (c • x) = c • ratV (F := F) (Fv F v) x := by
@@ -175,11 +181,12 @@ theorem exists_int_smul_mem (L : Submodule (𝓞 E) (Fin n → E)) (x : Fin n �
   _root_.UpperTheory.Reformulated.B.FirstStatementA.main L x hx
 
 theorem isOpen_latLoc
-    (hL : ∃ L : Submodule (𝓞 E) (Fin n → E), Submodule.IsLattice E L ∧ (L : Set (Fin n → E)) = Λ) :
+    (hL : ∃ L : Submodule (𝓞 E) (Fin n → E), Submodule.IsFullLattice E L ∧ (L : Set (Fin n → E)) = Λ) :
     IsOpen (latLoc (E := E) v Λ : Set (Fin n → Fv F v ⊗[F] E)) := by
   classical
   obtain ⟨L, hLat, rfl⟩ := hL
-  have hsp := hLat.span_eq_top
+  letI : Submodule.IsFullLattice E L := hLat
+  have hsp := Submodule.IsFullLattice.span_eq_top (A := E) (M := L)
   have hm : ∀ i : Fin n, ∃ m : ℤ, m ≠ 0 ∧ m • (Pi.single i (1 : E) : Fin n → E) ∈ L := fun i =>
     exists_int_smul_mem L _ (by rw [hsp]; exact Submodule.mem_top)
   choose m hm0 hmL using hm
@@ -249,13 +256,15 @@ theorem isOpen_latLoc
   exact AddSubgroup.isOpen_of_mem_nhds (latLoc (E := E) v (L : Set (Fin n → E))).toAddSubgroup
     (Filter.mem_of_superset (hWo.mem_nhds hW0) hWsub)
 
-theorem lamOC_holds (a : ℕ) : LamOC v Λ a := by
+theorem lamOC_holds (a : ℕ)
+    (hFull : ∃ L : Submodule (𝓞 E) (Fin n → E),
+      Submodule.IsFullLattice E L ∧ (L : Set (Fin n → E)) = Λ) : LamOC v Λ a := by
   intro hL
   have e : LamT v Λ a = Set.pi Set.univ fun _ => (latLoc (E := E) v Λ : Set (Fin n → Fv F v ⊗[F] E)) := by
     ext X
     exact ⟨fun h i _ => h i, fun h i => h i trivial⟩
   rw [e]
-  exact ⟨isOpen_set_pi Set.finite_univ fun _ _ => isOpen_latLoc v Λ hL,
+  exact ⟨isOpen_set_pi Set.finite_univ fun _ _ => isOpen_latLoc v Λ hFull,
     isCompact_univ_pi fun _ => isCompact_latLoc v Λ hL⟩
 
 end PI.OmLocU

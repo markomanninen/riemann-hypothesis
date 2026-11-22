@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.AltSum
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.AltSum
+
+@[expose] public section
 
 open MeasureTheory Set Filter Topology Function
 open NumberField IsDedekindDomain
@@ -75,9 +79,8 @@ theorem norm_le_of_forall_altSum_le (hD : IsAddFundamentalDomain L D ν) (hD1 : 
       rw [integral_sub hi0' (integrableOn_const hfin.ne)]
       simp only [zero_add, hmean, setIntegral_const, measureReal_def, hD1, ENNReal.toReal_one,
         one_smul, zero_sub]
-    calc ‖h 0‖ = ‖∫ y in D, (h (0 + y) - h 0) ∂ν‖ := by rw [hkey, norm_neg]
-      _ ≤ B * ν.real D := norm_setIntegral_le_of_norm_le_const hfin hstep
-      _ = B := by simp [measureReal_def, hD1]
+    have hbound := norm_setIntegral_le_of_norm_le_const hfin hstep
+    simpa only [hkey, norm_neg, measureReal_def, hD1, ENNReal.toReal_one, mul_one] using hbound
 
 end Abstract
 
@@ -87,8 +90,8 @@ open AutomorphicForm
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
-variable (K n) in
 
+variable (K n) in
 def scaledUnipFD (r M : ℕ) : Set (UPos n r → 𝔸[K]) :=
   {X | (fun p => algebraMap K 𝔸[K] ((M : K)⁻¹) * X p) ∈ unipFundamentalDomain K n r}
 
@@ -163,8 +166,8 @@ theorem exists_finite_eq_natCast_mul (hM : 0 < M) {X : UPos n r → 𝔸[K]}
   conv_lhs => rw [h1]
   rfl
 
-variable (K) in
 
+variable (K) in
 def scaledInfSet (M : ℕ) : Set (InfiniteAdeleRing K) :=
   (fun x => (M : InfiniteAdeleRing K) * x) '' closure (GroundTheory.Global.fundamentalSetInfinite K)
 

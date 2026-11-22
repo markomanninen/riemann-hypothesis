@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FilterOfSupported
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OneSidedLemma4
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.FilterOfSupported
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OneSidedLemma4
+
+@[expose] public section
 
 noncomputable section
 

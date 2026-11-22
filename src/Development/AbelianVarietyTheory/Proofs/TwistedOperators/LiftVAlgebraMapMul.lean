@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinMapsOfForall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Formalism.SharpRestriction.Divisibility.SchurIrreducible
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FromBlocksMem
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsComplementaryAdelicSchwartzRestFunction
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StarMemAdelicSchwartzSpaceNumberField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitEqNormCompletionTensorOfIsInertAt
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.KFinLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Formalism.SharpRestriction.Divisibility.SchurIrreducible
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FromBlocksMem
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsComplementaryAdelicSchwartzRestFunction
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LatAtVAtStable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StarMemAdelicSchwartzSpaceNumberField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitEqNormCompletionTensorOfIsInertAt
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped TensorProduct Matrix
 
 noncomputable section
@@ -17,20 +22,20 @@ namespace GlobalTheory.SplitConj
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-theorem liftV_mul (v : Pl F) (x y : Fv F v) :
+theorem liftV_mul (v : Pl (F := F)) (x y : Fv F v) :
     GlobalTheory.LatVac.liftV v (x * y) = GlobalTheory.LatVac.liftV v x * GlobalTheory.LatVac.liftV v y :=
   Prod.ext (by show (0 : Ainf F) = 0 * 0; simp)
     (by show GlobalTheory.AdelicU.singleFin v (x * y) = GlobalTheory.AdelicU.singleFin v x * GlobalTheory.AdelicU.singleFin v y
         exact GlobalTheory.AdelicU.singleFin_mul v x y)
 
-theorem liftV_algebraMap_mul (v : Pl F) (c : F) (x : Fv F v) :
+theorem liftV_algebraMap_mul (v : Pl (F := F)) (c : F) (x : Fv F v) :
     GlobalTheory.LatVac.liftV v (algebraMap F (Fv F v) c * x) = algebraMap F (AF F) c * GlobalTheory.LatVac.liftV v x := by
   rw [← Algebra.smul_def, map_smul, Algebra.smul_def]
 
-def Mult {d : ℕ} (W : Spc F E d) (v : Pl F) (c : AE F E) : Prop :=
+def Mult {d : ℕ} (W : Spc F E d) (v : Pl (F := F)) (c : AE F E) : Prop :=
   ∀ z ∈ GlobalTheory.InertSph.latAt W v, (fun i => c * z i) ∈ GlobalTheory.InertSph.latAt W v
 
-theorem mult_of_gen {d : ℕ} (W : Spc F E d) (v : Pl F) (c : AE F E)
+theorem mult_of_gen {d : ℕ} (W : Spc F E d) (v : Pl (F := F)) (c : AE F E)
     (h : ∀ a : AF F, At (evFin F v) a → evFin F v a ∈ v.adicCompletionIntegers F → ∀ y ∈ W.L,
       (fun i => c * (a • fun j => inclR (F := F) (AF F) (y j)) i) ∈ GlobalTheory.InertSph.latAt W v) : Mult W v c := by
   intro z hz
@@ -49,7 +54,7 @@ theorem mult_of_gen {d : ℕ} (W : Spc F E d) (v : Pl F) (c : AE F E)
     have : (fun i => c * (-x) i) = -(fun i => c * x i) := by ext i; simp
     rw [this]; exact neg_mem hx
 
-theorem mult_algebraMap {d : ℕ} (W : Spc F E d) (v : Pl F) (f : AF F)
+theorem mult_algebraMap {d : ℕ} (W : Spc F E d) (v : Pl (F := F)) (f : AF F)
     (hf : evFin F v f ∈ v.adicCompletionIntegers F) : Mult W v (algebraMap (AF F) (AE F E) f) := by
   refine mult_of_gen W v _ fun a ha hai y hy => ?_
   have e : (fun i => algebraMap (AF F) (AE F E) f * (a • fun j => inclR (F := F) (AF F) (y j)) i) =
@@ -63,7 +68,7 @@ theorem mult_algebraMap {d : ℕ} (W : Spc F E d) (v : Pl F) (f : AF F)
     rw [mul_left_comm, this, mul_zero]
   · rw [map_mul]; exact mul_mem hf hai
 
-theorem mult_inclR {d : ℕ} (W : Spc F E d) (v : Pl F) (o : 𝓞 E) :
+theorem mult_inclR {d : ℕ} (W : Spc F E d) (v : Pl (F := F)) (o : 𝓞 E) :
     Mult W v (inclR (F := F) (AF F) (o : E)) := by
   refine mult_of_gen W v _ fun a ha hai y hy => ?_
   have e : (fun i => inclR (F := F) (AF F) (o : E) * (a • fun j => inclR (F := F) (AF F) (y j)) i) =
@@ -75,12 +80,12 @@ theorem mult_inclR {d : ℕ} (W : Spc F E d) (v : Pl F) (o : 𝓞 E) :
   rw [e]
   exact AddSubgroup.subset_closure ⟨a, ha, hai, o • y, W.L.smul_mem o hy, rfl⟩
 
-theorem mult_add {d : ℕ} {W : Spc F E d} {v : Pl F} {c c' : AE F E} (h : Mult W v c) (h' : Mult W v c') :
+theorem mult_add {d : ℕ} {W : Spc F E d} {v : Pl (F := F)} {c c' : AE F E} (h : Mult W v c) (h' : Mult W v c') :
     Mult W v (c + c') := fun z hz => by
   have : (fun i => (c + c') * z i) = (fun i => c * z i) + (fun i => c' * z i) := by ext i; simp [add_mul]
   rw [this]; exact add_mem (h z hz) (h' z hz)
 
-theorem mult_mul {d : ℕ} {W : Spc F E d} {v : Pl F} {c c' : AE F E} (h : Mult W v c) (h' : Mult W v c') :
+theorem mult_mul {d : ℕ} {W : Spc F E d} {v : Pl (F := F)} {c c' : AE F E} (h : Mult W v c) (h' : Mult W v c') :
     Mult W v (c * c') := fun z hz => by
   have := h _ (h' z hz)
   simpa [mul_assoc] using this
@@ -94,9 +99,9 @@ namespace GlobalTheory.SplitConj
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-open IsDedekindDomain.HeightOneSpectrum in
 
-theorem exists_idem_coeffs (v : Pl F) (b c : 𝓞 F) (hc : c ∈ v.asIdeal) (hb : b ∉ v.asIdeal) :
+open IsDedekindDomain.HeightOneSpectrum in
+theorem exists_idem_coeffs (v : Pl (F := F)) (b c : 𝓞 F) (hc : c ∈ v.asIdeal) (hb : b ∉ v.asIdeal) :
     ∃ m k : v.adicCompletionIntegers F,
       m * m - algebraMap (𝓞 F) _ c * (k * k) = m ∧ m * k + m * k - algebraMap (𝓞 F) _ b * (k * k) = k ∧
       m + m - algebraMap (𝓞 F) _ b * k = 1 := by
@@ -132,7 +137,7 @@ theorem cA_inclR (σ : E →ₐ[F] E) (y : E) : cA σ (inclR (F := F) (AF F) y) 
   show Algebra.TensorProduct.map (AlgHom.id (AF F) (AF F)) σ ((1 : AF F) ⊗ₜ[F] y) = (1 : AF F) ⊗ₜ[F] σ y
   simp
 
-theorem exists_adelic_idem (σ : E →ₐ[F] E) {d : ℕ} (W : Spc F E d) (v : Pl F) (a : 𝓞 E) (b c : 𝓞 F)
+theorem exists_adelic_idem (σ : E →ₐ[F] E) {d : ℕ} (W : Spc F E d) (v : Pl (F := F)) (a : 𝓞 E) (b c : 𝓞 F)
     (hq : (a : E) ^ 2 + algebraMap F E (b : F) * a + algebraMap F E (c : F) = 0)
     (hσa : σ (a : E) = -algebraMap F E (b : F) - a) (hc : c ∈ v.asIdeal) (hb : b ∉ v.asIdeal) :
     ∃ Eid : AE F E, Eid * Eid = Eid ∧ Eid + cA σ Eid = algebraMap (AF F) (AE F E) (GlobalTheory.LatVac.liftV v 1) ∧
@@ -165,20 +170,20 @@ theorem exists_adelic_idem (σ : E →ₐ[F] E) {d : ℕ} (W : Spc F E d) (v : P
   set j : AE F E := inclR (F := F) (AF F) (a : E)
   have hj : j * j + ιA b' * j + ιA c' = 0 := by
     have := congrArg (inclR (F := F) (AF F)) hq
-    simp only [map_add, map_mul, map_pow, inclR_algebraMap, map_zero, pow_two] at this
+    simp only [map_add (f := _), map_mul, map_pow, inclR_algebraMap, map_zero, pow_two] at this
     exact this
   have hσj : cA σ j = -ιA b' - j := by
     rw [cA_inclR, hσa, map_sub, map_neg, inclR_algebraMap]
   have hσι : ∀ x : AF F, cA σ (ιA x) = ιA x := fun x => (cA σ).commutes x
   set Eid := ιA M + ιA K * j
   have hσE : cA σ Eid = ιA M + ιA K * (-ιA b' - j) := by
-    simp only [Eid, map_add, map_mul, hσι, hσj]
+    simp only [Eid, map_add (f := _), map_mul, hσι, hσj]
   have s1 := congrArg ιA r1
   have s2 := congrArg ιA r2
   have s3 := congrArg ιA r3
   have s4 := congrArg ιA r4
   have s5 := congrArg ιA r5
-  simp only [map_sub, map_add, map_mul] at s1 s2 s3 s4 s5
+  simp only [map_sub, map_add (f := _), map_mul] at s1 s2 s3 s4 s5
   have E1 : Eid * Eid = Eid := by
     linear_combination s1 + s2 * j + ιA K * ιA K * hj
   have E2 : Eid + cA σ Eid = ιA e1 := by
@@ -217,7 +222,7 @@ theorem diag_antiT_sum (d : ℕ) :
   rw [diagCols, GlobalTheory.InertDbl.antiCols, h1, h1, Matrix.fromBlocks_add, ← Matrix.fromBlocks_one, Matrix.fromBlocks_smul]
   simp [two_smul]
 
-theorem conj_eq_sq {σ : E →ₐ[F] E} {d : ℕ} {W : Spc F E d} {v : Pl F} (n : GlobalTheory.InertDbl.UD σ W)
+theorem conj_eq_sq {σ : E →ₐ[F] E} {d : ℕ} {W : Spc F E d} {v : Pl (F := F)} (n : GlobalTheory.InertDbl.UD σ W)
     (hn : n ∈ GlobalTheory.InertDbl.NabD σ W v) (s : GlobalTheory.InertDbl.UD σ W) (x y : AE F E) (w : AF F) (hw : evFin F v w = 0)
     (hyx : y - 2 * x = algebraMap (AF F) (AE F E) w)
     (hd : GlobalTheory.InertDbl.matD s * diagCols (Fin d) = diagCols (Fin d) * (x • (1 : Matrix (Fin d) (Fin d) (AE F E))))

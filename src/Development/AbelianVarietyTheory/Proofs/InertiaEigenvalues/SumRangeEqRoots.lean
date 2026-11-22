@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GreenRegularCharacters
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CuspidalCharExistsOfGreen
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FixedMemRange
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.GreenRegularCharacters
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CuspidalCharExistsOfGreen
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FixedMemRange
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -121,11 +125,11 @@ def th (L : LabelDatum g) {d : ℕ} (hd : 0 < d) (x : Fbar g) : (KK g d)ˣ →* 
 
 theorem th_apply (L : LabelDatum g) {d : ℕ} (hd : 0 < d) {x : Fbar g} (hx : x ^ (g ^ d - 1) = 1)
     (k : (KK g d)ˣ) : ((th L hd x k : ℂˣ) : ℂ) = thetaOf L d x (emb g d k) := by
-  rw [th, dif_pos hx, theta_apply]
+  rw [th, dite_eq_left hx, theta_apply]
 
 theorem th_uu (L : LabelDatum g) {d : ℕ} (hd : 0 < d) {x : Fbar g} (hx : x ^ (g ^ d - 1) = 1) :
     ((th L hd x (uu L hd) : ℂˣ) : ℂ) = L.teich x := by
-  rw [th, dif_pos hx, theta_uu, tu, Units.val_mk0]
+  rw [th, dite_eq_left hx, theta_uu, tu, Units.val_mk0]
 
 theorem th_ext (L : LabelDatum g) {d : ℕ} (hd : 0 < d) {θ θ' : (KK g d)ˣ →* ℂˣ}
     (h : ((θ (uu L hd) : ℂˣ) : ℂ) = θ' (uu L hd)) : θ = θ' :=
@@ -191,7 +195,7 @@ theorem rootOf_spec {d : ℕ} {P : (ZMod g)[X]} (hP : IsPrimeLab d P) : aeval (r
   have hex : ∃ x, x ∈ rootsBar P := by
     obtain ⟨z, hz⟩ := IsAlgClosed.exists_aeval_eq_zero (Fbar g) P (degree_pos_of_irreducible hP.2.1).ne'
     exact ⟨z, (mem_rootsBar_iff hP0).2 hz⟩
-  rw [rootOf, dif_pos hex]
+  rw [rootOf, dite_eq_left hex]
   exact (mem_rootsBar_iff hP0).1 hex.choose_spec
 
 theorem root_unit {d : ℕ} {P : (ZMod g)[X]} (hP : IsPrimeLab d P) {x : Fbar g} (hx : aeval x P = 0) :

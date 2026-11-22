@@ -1,9 +1,14 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteAdeleHaarPiRestrictedProduct
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRing
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountable
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FiniteAdeleHaarPiRestrictedProduct
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRing
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountable
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 
@@ -23,10 +28,9 @@ theorem cK_map {R R' : Type} [CommRing R] [Algebra F R] [CommRing R'] [Algebra F
     (b : Module.Basis (Fin d) F E) (f : R →ₐ[F] R') (y : R ⊗[F] E) (k : Fin d) :
     cK R' b (Algebra.TensorProduct.map f (AlgHom.id F E) y) k = f (cK R b y k) := by
   induction y with
-  | zero => simp [cK]
   | add x y hx hy =>
     simp only [cK] at hx hy ⊢
-    simp [map_add, hx, hy]
+    simp [map_add (f := _), hx, hy]
   | tmul r e =>
     simp [cK, Algebra.TensorProduct.basis_repr_tmul, Algebra.smul_def]
 
@@ -47,11 +51,11 @@ def eW (hK : IsHomeomorph (cK (F := F) (E := E) R b)) (n M : ℕ) :
   right_inv Y := by
     funext p
     simp
-  measurable_toFun := measurable_pi_lambda _ fun p =>
+  measurable_toFun := Measurable.of_eval fun p =>
     (measurable_pi_apply p.2.2).comp ((eK R hK).measurable.comp
       ((measurable_pi_apply p.2.1).comp (measurable_pi_apply p.1)))
-  measurable_invFun := measurable_pi_lambda _ fun a => measurable_pi_lambda _ fun i =>
-    (eK R hK).symm.measurable.comp (measurable_pi_lambda _ fun k => measurable_pi_apply (a, i, k))
+  measurable_invFun := Measurable.of_eval fun a => Measurable.of_eval fun i =>
+    (eK R hK).symm.measurable.comp (Measurable.of_eval fun k => measurable_pi_apply (a, i, k))
 
 theorem eW_apply (hK : IsHomeomorph (cK (F := F) (E := E) R b)) (n M : ℕ)
     (X : Fin n → Fin M → R ⊗[F] E) (p : Fin n × Fin M × Fin d) :

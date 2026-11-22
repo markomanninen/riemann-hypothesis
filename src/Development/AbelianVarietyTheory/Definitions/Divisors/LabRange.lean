@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ThetaSetupStructureMapComp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ThetaSetupStructureMapComp
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,8 +32,8 @@ namespace GlobalTheory.Poinc
 
 variable {g n : ℕ}
 
-open MonObj in
 
+open MonObj in
 def IsDiagEnd (F : SFam g n (zetaAway n)) (W : Matrix (Fin 8) (Fin 8) ℤ) {T : Scheme.{0}} (P : PolAV T) (u : T ⟶ F.X)
     (ε : Matrix (Fin 8) (Fin 8) ℤ → (P.A ⟶ P.A)) : Prop :=
   ∃ c : SiegPre g n (zetaAway n) (u ≫ F.s), SiegPB c F.univ u ∧ ∃ pr : Fin 8 → (P.A ⟶ c.A), (∀ a, IsMonHom (pr a)) ∧

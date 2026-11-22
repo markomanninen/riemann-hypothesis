@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.ParametersTermRelations
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LoopsCut
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.ParametersTermRelations
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LoopsCut
+
+@[expose] public section
 
 noncomputable section
 
@@ -162,8 +166,8 @@ section Classes
 
 variable {D : D7} {X : HidaSetting D} {Y : Full X} {hF : FinX Y} {hI : SIso D.s (sOf hF)}
 
-open Formalism.MainNotions.BridgeLemma in
 
+open Formalism.MainNotions.BridgeLemma in
 theorem ampSum_le_of_rows (T : TermTie D) (hJ : JtPin hF hI T) (hW : WRowPin hF hI T) (hC : FibreCount Y)
     {large₂ : SizeData₂ D} {u u' : D.what₂.Word} {C1 : ℝ} (L : LoopTie D large₂ T u u' C1) (Q : D.s.Pair u u' → Prop) (B : ℝ)
     (hB : RowBound T L Q B) (Q' : Set (TT Y u u' × TT Y u u'))
@@ -182,8 +186,8 @@ theorem ampSum_le_of_rows (T : TermTie D) (hJ : JtPin hF hI T) (hW : WRowPin hF 
       obtain ⟨⟨x, hx⟩, -, rfl⟩ := Finset.mem_image.1 hp
       exact (hQ x (Finset.mem_filter.1 hx).2).choose_spec
 
-open Formalism.MainNotions.BridgeLemma in
 
+open Formalism.MainNotions.BridgeLemma in
 theorem rowBound_or (T : TermTie D) {large₂ : SizeData₂ D} {u u' : D.what₂.Word} {C1 : ℝ} (L : LoopTie D large₂ T u u' C1)
     {Q₁ Q₂ : D.s.Pair u u' → Prop} {B₁ B₂ : ℝ} (h₁ : RowBound T L Q₁ B₁) (h₂ : RowBound T L Q₂ B₂) :
     RowBound T L (fun p => Q₁ p ∨ Q₂ p) (B₁ + B₂) := by
@@ -438,39 +442,6 @@ variable {eps : ℝ} (Fm : FamP eps) (C1 : ℝ) (At : ∀ x, Fm.x1 < x → ∀ i
     LoopTie (Fm.D x i) (Fm.L x i) (At x hx i) u u' C1)
   (Cc : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), ConcAt (Fm.D x i) (At x hx i))
 
-def RowLoopsF : Prop :=
-  ∀ Cg cb Cu cT CT C0 A : ℝ, ∃ C₀ : ℝ, ∀ C ≥ C₀, OwnEv Fm fun C' Cl x i => ∀ (hx : Fm.x1 < x) u u',
-    Cnt.Hyp (Fm.D x i) (Fm.L x i) u u' C' Cl Cg cb Cu cT CT C0 A →
-      (∀ s, 2 ≤ s → s ≤ (Fm.D x i).R.k →
-        ((Cc x hx i).Y.tO u u').Gam1 *
-            Formalism.L2.SG.RowsOther.ampSum ((Cc x hx i).Y.tO u u') (LoopsCut.bigS ((Cc x hx i).Y.tO u u') s) ≤
-          ((Fm.D x i).duS u : ℝ) *
-            (LatticeSumBounds.ndRow C (Fm.D x i).R.k (Fm.D x i).R.m (Fm.D x i).R.f s (Fm.L x i).sc.b (gg (Fm.D x i))
-                             (Fm.D x i).host.v (GamS (Fm.D x i) (Fm.L x i)) (Formalism.MainNotions.BridgeLemma.XiB (Fm.D x i) (Fm.L x i) u C) *
-                             Formalism.MainNotions.BridgeLemma.rDD (Fm.D x i) u' +
-              LatticeSumBounds.degRow C (Fm.D x i).R.k (Fm.D x i).R.m (Fm.D x i).R.f s (Fm.L x i).sc.b (gg (Fm.D x i))
-                (Fm.D x i).host.v (GamS (Fm.D x i) (Fm.L x i)) (Formalism.MainNotions.BridgeLemma.XiB (Fm.D x i) (Fm.L x i) u C))) ∧
-      ((Cc x hx i).Y.tO u u').Gam1 *
-          Formalism.L2.SG.RowsOther.ampSum ((Cc x hx i).Y.tO u u')
-            (((Cc x hx i).Y.tO u u').nsc ((Cc x hx i).Y.tO u u').genSet) ≤
-        ((Fm.D x i).duS u : ℝ) *
-          (Formalism.MainNotions.BridgeLemma.oneB (Fm.D x i) (Fm.L x i) C * Formalism.MainNotions.BridgeLemma.rDD (Fm.D x i) u')
-
-theorem rowLoopsF_of (hFo : ∀ x, Fm.x1 < x → ∀ (i : Fm.Ix x) u, UnitaryVolumeMass.FormAt (Fm.D x i) u)
-    (hR : Formalism.MainNotions.BridgeLemma.RowsF Fm C1 At Yt) : RowLoopsF Fm At Cc := by
-  intro Cg cb Cu cT CT C0 A
-  obtain ⟨C₀, hC₀⟩ := hR Cg cb Cu cT CT C0 A
-  refine ⟨C₀, fun C hC => ?_⟩
-  obtain ⟨x0, hx0⟩ := hC₀ C hC
-  refine ⟨x0, fun x hx i => ?_⟩
-  intro hx1 u u' hH
-  obtain ⟨hn, hd, h1⟩ := hx0 x hx i hx1 u u' hH
-  refine ⟨fun s h2 hk => ?_, ?_⟩
-  · exact gam_mul_le (Cc x hx1 i).gam (Yt x hx1 i u u') (hFo x hx1 i u)
-      (classS_le (At x hx1 i) (Cc x hx1 i).jt (Cc x hx1 i).wr (Cc x hx1 i).fc (Yt x hx1 i u u') C hn hd s h2 hk)
-  · exact gam_mul_le (Cc x hx1 i).gam (Yt x hx1 i u u') (hFo x hx1 i u)
-      (classOne_le (At x hx1 i) (Cc x hx1 i).jt (Cc x hx1 i).wr (Cc x hx1 i).fc (Yt x hx1 i u u') C h1)
-
 end Fam
 
 section Parts
@@ -551,28 +522,7 @@ def loopTieOfParts {D : D7} {large₂ : SizeData₂ D} {T : TermTie D} {u u' : D
   J_irr := M.J_irr
   J_norm := M.J_norm
 
-theorem loopTie_parts {D : D7} {large₂ : SizeData₂ D} {T : TermTie D} {u u' : D.what₂.Word} {C1 : ℝ}
-    (L : LoopTie D large₂ T u u' C1) :
-    ∃ (R : LoopRowsDat D T u u') (B : LoopLocDat D large₂ u u' C1) (M : LoopTermDat D large₂ T u u' C1 B),
-      loopTieOfParts R B M = L := by
-  exact ⟨⟨L.F0, L.flag_e_eq_hyperbolic, L.formsAtZero, L.what₂, L.isRows, L.fl_eq, L.Lam_mem, L.frame_ok, L.wRow_eq, L.pair_inj⟩,
-    ⟨L.θ, L.θ_win, L.W, L.goodW, L.A, L.goodS, L.deg_eq⟩,
-    ⟨L.γ, L.pt, L.θR, L.νR, L.volR, L.volR_pos, L.gram, L.rel, L.J_irr, L.J_norm⟩, rfl⟩
-
 variable {D : D7} {X : HidaSetting D} {Y : Full X}
-
-def VolRPin (hF : FinX Y) (hI : SIso D.s (sOf hF)) {large₂ : SizeData₂ D} {T : TermTie D} {u u' : D.what₂.Word} {C1 : ℝ}
-    {B : LoopLocDat D large₂ u u' C1} (M : LoopTermDat D large₂ T u u' C1 B) : Prop :=
-  ∀ t : D.s.Term u u', D.s.Gterm t ≠ 0 → D.s.relevant t → D.s.generic t →
-    ∃ (w : Point D.host.E (D.R.rS + 1)) (F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) (L U : Formalism.L2.SG.PairVal.MatR D),
-      Formalism.L2.SG.PairVal.NormRep (hI.eT u u' t) w F' L U ∧
-      M.volR t = Formalism.L2.SG.PairVal.volIdx D u u' (X.Fu u) (Y.what₂ u) Y.δ Y.M (hI.eT u u' t) w F' L
-
-def VolRBound {large₂ : SizeData₂ D} {T : TermTie D} {u u' : D.what₂.Word} {C1 : ℝ} {B : LoopLocDat D large₂ u u' C1}
-    (M : LoopTermDat D large₂ T u u' C1 B) : Prop :=
-  ∀ Cg cb Cu cT CT C0 A : ℝ, ∃ Cf : ℝ → ℝ, ∀ C' Cl : ℝ, Cnt.Hyp D large₂ u u' C' Cl Cg cb Cu cT CT C0 A →
-    ∀ t : D.s.Term u u', D.s.Gterm t ≠ 0 → D.s.relevant t →
-      M.volR t ≤ HHZ D large₂.sc.b (Cf Cl) (ZhatL (T.fl t) (T.fl' t)) ^ (Cf Cl * (D.R.rS : ℝ) ^ 2)
 
 end Parts
 

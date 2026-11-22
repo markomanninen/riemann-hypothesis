@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatPath
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomBaseChangeBijectiveOfLeNilradical
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NatDegreeEqZeroOfSqDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsRatIffExistsRatFunc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatPath
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomBaseChangeBijectiveOfLeNilradical
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NatDegreeEqZeroOfSqDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsRatIffExistsRatFunc
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -41,8 +45,8 @@ theorem sqr_chi {S : Scheme.{0}} (X : Type) [AddCommGroup X] (a : X) :
 
 end SplitTorusRigid
 
-open SplitTorusRigid in
 
+open SplitTorusRigid in
 theorem splitTorus_ratRigid : ∀ (Ω : Type) [Field Ω] [CharZero Ω] (X : Type) [AddCommGroup X],
     RatRigid (splitTorus (Sp Ω) X) (𝟙 (Sp Ω)) := by
   intro Ω _ _ X _ ξ hξ hr

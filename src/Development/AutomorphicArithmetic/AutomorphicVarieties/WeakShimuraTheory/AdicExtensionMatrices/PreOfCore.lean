@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.AdicContMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.ChConj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.PairNear
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.AdicContMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.ChConj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdicExtensionMatrices.PairNear
+
+@[expose] public section
 
 open IsLocalRing Polynomial UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -9,7 +13,8 @@ private theorem isGSp_map' {R R' : Type} [CommRing R] [CommRing R'] (f : R →+*
   unfold IsGSp at *
   ext i j
   have := congrArg f (congrFun (congrFun h i) j)
-  simpa [Matrix.mul_apply, adj_apply, Matrix.one_apply, map_sum, apply_ite f] using this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa [Matrix.mul_apply, adj_apply, Matrix.one_apply, map_sum, apply_ite f] using this
 
 open Classical in
 theorem UpperTheory.V.Ws.sxPreOfCore :
@@ -53,7 +58,7 @@ theorem UpperTheory.V.Ws.sxPreOfCore :
         obtain ⟨y, rfl⟩ := hx
         exact Algebra.subset_adjoin (Or.inl ⟨y, rfl⟩)
       | algebraMap b => exact S.algebraMap_mem b
-      | add x y _ _ hx hy => rw [map_add]; exact S.add_mem hx hy
+      | add x y _ _ hx hy => rw [map_add (f := _)]; exact S.add_mem hx hy
       | mul x y _ _ hx hy => rw [map_mul]; exact S.mul_mem hx hy
     rintro x -
     have hx : x ∈ Algebra.adjoin X.A (Set.range fun x : Φ.ι × Fin 4 × Fin 4 => n x.1 x.2.1 x.2.2) := by
@@ -67,12 +72,12 @@ theorem UpperTheory.V.Ws.sxPreOfCore :
     rw [hr, Matrix.charpoly_map, ← X.cp_map, Polynomial.map_map]
     rfl
   · intro v i s hs
-    rw [dif_pos hs, hB, X.ψ_map]
+    rw [dite_eq_left hs, hB, X.ψ_map]
     exact (hψ v i ⟨s, hs⟩).symm
   · intro v i
     simpa using X.ψ_cont v i
   · intro v i s hs
-    rw [dif_pos hs]
+    rw [dite_eq_left hs]
     exact X.ψ_red v i ⟨s, hs⟩
   · intro R _ _ _ f f' h1 h2
     refine X.genB R f f' h1 fun v i s => ?_

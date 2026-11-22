@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalizationSubalgebraFracStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalizationSubalgebraFracStatement
+
+@[expose] public section
+
 open IsLocalRing
 
 namespace GlobalTheory

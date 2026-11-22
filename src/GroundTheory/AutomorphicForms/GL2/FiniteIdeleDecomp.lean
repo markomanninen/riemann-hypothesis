@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.GlobalFields.LocalFieldAtPlace
-import GroundTheory.GlobalFields.TateThesis.IdeleMeasure
-import GroundTheory.LocalFields.LocalFourier
-import GroundTheory.LocalFields.LocalFourierMult
-import GroundTheory.LocalFields.LocalFourierHaar
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.LocalFieldAtPlace
+public import GroundTheory.GlobalFields.TateThesis.IdeleMeasure
+public import GroundTheory.LocalFields.LocalFourier
+public import GroundTheory.LocalFields.LocalFourierMult
+public import GroundTheory.LocalFields.LocalFourierHaar
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Filter Topology GroundTheory.Global GroundTheory.LocalField
 open scoped NumberField.AdeleRing ENNReal NNReal Pointwise
@@ -23,16 +27,8 @@ instance borelSpace_adicCompletion (v : HeightOneSpectrum (𝓞 K)) :
 def finUnitAt (v : HeightOneSpectrum (𝓞 K)) : (FiniteAdeleRing (𝓞 K) K)ˣ →* (v.adicCompletion K)ˣ :=
   Units.map (RestrictedProduct.evalMonoidHom (fun w : HeightOneSpectrum (𝓞 K) ↦ w.adicCompletion K) v)
 
-@[simp]
-theorem coe_finUnitAt (v : HeightOneSpectrum (𝓞 K)) (b : (FiniteAdeleRing (𝓞 K) K)ˣ) :
-    ((finUnitAt v b : (v.adicCompletion K)ˣ) : v.adicCompletion K) = (b : FiniteAdeleRing (𝓞 K) K) v :=
-  rfl
-
 theorem continuous_finUnitAt (v : HeightOneSpectrum (𝓞 K)) : Continuous (finUnitAt (K := K) v) :=
   Units.continuous_map (RestrictedProduct.continuous_eval v)
-
-theorem measurable_finUnitAt (v : HeightOneSpectrum (𝓞 K)) : Measurable (finUnitAt (K := K) v) :=
-  (continuous_finUnitAt v).measurable
 
 abbrev intUnitsAt (v : HeightOneSpectrum (𝓞 K)) : Subgroup (v.adicCompletion K)ˣ :=
   (Submonoid.ofClass (v.adicCompletionIntegers K)).units
@@ -80,9 +76,6 @@ theorem multHaar_intUnitsAt :
 
 theorem isOpen_intUnitsAt : IsOpen (intUnitsAt v : Set (v.adicCompletion K)ˣ) :=
   IdeleGroup.isOpen_units_adicCompletionIntegers K v
-
-theorem measurableSet_intUnitsAt : MeasurableSet (intUnitsAt v : Set (v.adicCompletion K)ˣ) :=
-  (isOpen_intUnitsAt v).measurableSet
 
 theorem finUnitAt_mem_intUnitsAt_iff (b : (FiniteAdeleRing (𝓞 K) K)ˣ) :
     finUnitAt v b ∈ intUnitsAt v ↔ (b : FiniteAdeleRing (𝓞 K) K) v ∈ v.adicCompletionIntegers K ∧
@@ -215,6 +208,9 @@ theorem awayImageS_eq_smul {g : (FiniteAdeleRing (𝓞 K) K)ˣ → ℝ≥0∞}
     awayImageS S g = awayImageS S g (intUnitsAtS S) • multHaarS S := by
   have := isMulLeftInvariant_awayImageS hinv
   have := isFiniteMeasureOnCompacts_awayImageS hinv hc
+  haveI : (multHaarS S).IsHaarMeasure := by
+    unfold multHaarS
+    infer_instance
   have h := Measure.isMulLeftInvariant_eq_smul (awayImageS S g) (multHaarS S)
   set c := Measure.haarScalarFactor (awayImageS S g) (multHaarS S)
   have hU : awayImageS S g (intUnitsAtS S) = (c : ℝ≥0∞) := by

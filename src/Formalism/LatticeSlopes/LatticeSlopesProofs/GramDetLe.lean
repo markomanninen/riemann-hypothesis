@@ -1,4 +1,8 @@
-import Formalism.LatticeSlopes.Statement
+module
+
+public import Formalism.LatticeSlopes.Statement
+
+@[expose] public section
 
 open Module
 
@@ -10,10 +14,12 @@ theorem normDet_le_pow_finrank {R F : Type*} [NormedAddCommGroup R] [InnerProduc
     [FiniteDimensional ℝ R] [NormedAddCommGroup F] [InnerProductSpace ℝ F]
     (g : R →ₗ[ℝ] F) (K : ℝ) (hK : 0 ≤ K) (hg : ∀ y, ‖g y‖ ≤ K * ‖y‖) :
     g.normDet ≤ K ^ finrank ℝ R := by
-  unfold LinearMap.normDet
-  split_ifs with h
+  by_cases h : Nonempty (OrthonormalBasis (Fin (finrank ℝ R)) ℝ g.range)
   swap
-  · positivity
+  · have hg0 : g.normDet = 0 := (g.normDet_eq_zero_tfae.out 5 1).mp (not_nonempty_iff.mp h)
+    rw [hg0]
+    positivity
+  rw [g.normDet_eq_norm_det_toMatrix_rangeRestrict (stdOrthonormalBasis ℝ R) h.some]
   letI : MeasurableSpace R := borel R
   haveI : BorelSpace R := ⟨rfl⟩
 
@@ -84,14 +90,16 @@ theorem det_gram_eq_normDet_sq {E : Type*} [NormedAddCommGroup E] [InnerProductS
   have hv : v = fun i => linearCombinationMap v (EuclideanSpace.basisFun ι ℝ i) := by
     funext i
     rw [linearCombinationMap_apply]
-    simp [EuclideanSpace.basisFun_apply, EuclideanSpace.single_apply, ite_smul]
+    simp [EuclideanSpace.basisFun_apply, PiLp.single_apply, ite_smul]
   have h1 : (Matrix.gram ℝ v).det = LinearMap.det (LinearMap.adjoint (linearCombinationMap v).rangeRestrict ∘ₗ
       (linearCombinationMap v).rangeRestrict) := by
     conv_lhs => rw [hv]
     rw [gram_linearCombinationMap_eq_toMatrix, LinearMap.det_toMatrix]
-  unfold LinearMap.normDet
-  split_ifs with h
-  · have h2 : (Matrix.gram ℝ (fun k => linearCombinationMap v (stdOrthonormalBasis ℝ (EuclideanSpace ℝ ι) k))).det =
+  by_cases h : Nonempty (OrthonormalBasis (Fin (finrank ℝ (EuclideanSpace ℝ ι))) ℝ
+    (linearCombinationMap v).range)
+  · rw [(linearCombinationMap v).normDet_eq_norm_det_toMatrix_rangeRestrict
+      (stdOrthonormalBasis ℝ (EuclideanSpace ℝ ι)) h.some]
+    have h2 : (Matrix.gram ℝ (fun k => linearCombinationMap v (stdOrthonormalBasis ℝ (EuclideanSpace ℝ ι) k))).det =
         LinearMap.det (LinearMap.adjoint (linearCombinationMap v).rangeRestrict ∘ₗ
           (linearCombinationMap v).rangeRestrict) := by
       rw [gram_linearCombinationMap_eq_toMatrix, LinearMap.det_toMatrix]
@@ -114,12 +122,12 @@ theorem det_gram_eq_normDet_sq {E : Type*} [NormedAddCommGroup E] [InnerProductS
       rw [real_inner_comm (h.some m) ((linearCombinationMap v).rangeRestrict _),
         ← OrthonormalBasis.repr_apply_apply, ← OrthonormalBasis.repr_apply_apply]
     rw [hG, Matrix.det_mul, Matrix.det_transpose, Real.norm_eq_abs, sq_abs, sq]
-  · rw [zero_pow two_ne_zero]
-    have hni : ¬ Function.Injective (linearCombinationMap v) := by
+  · have hni : ¬ Function.Injective (linearCombinationMap v) := by
       intro hinj
       exact h ⟨(stdOrthonormalBasis ℝ (LinearMap.range (linearCombinationMap v))).reindex
         (finCongr (LinearMap.finrank_range_of_inj hinj))⟩
     rw [← LinearMap.ker_eq_bot] at hni
+    rw [LinearMap.normDet_eq_zero_iff_ker_ne_bot.mpr hni, zero_pow two_ne_zero]
     obtain ⟨c, hc, hc0⟩ := (Submodule.ne_bot_iff _).1 hni
     exact det_gram_eq_zero_of_linearCombination_eq_zero v c hc0 (LinearMap.mem_ker.1 hc)
 

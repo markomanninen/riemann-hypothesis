@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ScaledExample
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualEnergy
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLineSemipositive
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualArithVar
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PIntDomainDim
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ReMulOfPos
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ScaledExample
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualEnergy
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLineSemipositive
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualArithVar
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PIntDomainDim
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ReMulOfPos
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -93,8 +98,8 @@ theorem degree_withStdMetric_sub (F : HermLattice K i) :
 
 end TopDualMetricChange
 
-open TopDualMetricChange in
 
+open TopDualMetricChange in
 theorem DualTopMetricChange.proof (hTel : TelescopeStatement) (hEnergy : DualMetricEnergy.Statement) :
     DualTopMetricChange.Statement := by
   intro K _ _ i F T _ _ b hb II hi hII

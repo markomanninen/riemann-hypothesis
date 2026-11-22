@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementT
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementT
+
+@[expose] public section
 
 open PowerSeries
 
@@ -36,7 +40,7 @@ theorem compInv_eq_substInv (s : R⟦X⟧) (h0 : constantCoeff s = 0) (h1 : IsUn
     ⟨s.substInvOfIsUnit h1, constantCoeff_substInvOfIsUnit s h1,
       subst_substInvOfIsUnit_right s h0 h1⟩
   unfold compInv
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact eq_substInv_of_right s h0 h1 _ hex.choose_spec.1 hex.choose_spec.2
 
 end Tools
@@ -73,7 +77,7 @@ theorem integration_spec : IntegSpec.{u} := by
     intro n
     unfold integ
     simp
-  have hd : derivative K (integ f) = f := by
+  have hd : PowerSeries.derivative (integ f) = f := by
     ext n
     rw [coeff_derivative, hc]
     have : ((n : K) + 1) ≠ 0 := Nat.cast_add_one_ne_zero n

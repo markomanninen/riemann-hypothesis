@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ScPiExists
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianFrameExistence.HJSumSmulRight
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ScPiExists
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianFrameExistence.HJSumSmulRight
+
+@[expose] public section
 
 noncomputable section
 

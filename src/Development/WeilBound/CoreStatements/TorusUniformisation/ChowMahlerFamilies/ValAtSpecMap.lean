@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.IsDerAt0
-import Development.WeilBound.CoreStatements.HodgeTatePoints.ExtTensor
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatBcTors
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueTangentDualNumberStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsDenominatorRegular
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.IsDerAt0
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.ExtTensor
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatBcTors
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueTangentDualNumberStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsDenominatorRegular
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct NumberField
 open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.BT GlobalTheory.CompanionTheory.Ar.Num.FamEx
@@ -57,8 +61,8 @@ theorem exists_der_ext (h1 : Function.Injective (algebraMap R RC)) (h2 : Functio
         rw [Algebra.TensorProduct.tmul_mul_tmul, Pi.mul_apply, hΛ, hΛ, hΛ]
         simp only [Subalgebra.coe_mul, Pi.mul_apply, map_mul]
         ring
-      | add u v hu hv => rw [mul_add, map_add, hu, hv, map_add, mul_add]
-    | add u v hu hv => rw [add_mul, map_add, hu, hv, map_add, add_mul]
+      | add u v hu hv => rw [mul_add, map_add (f := _), hu, hv, map_add (f := _), mul_add]
+    | add u v hu hv => rw [add_mul, map_add (f := _), hu, hv, map_add (f := _), add_mul]
   have hDmul : ∀ t t' : RC ⊗[R] A, D (t * t') = Λ t 0 • D t' + Λ t' 0 • D t := by
     intro t t'
     induction t using TensorProduct.induction_on with
@@ -72,10 +76,10 @@ theorem exists_der_ext (h1 : Function.Injective (algebraMap R RC)) (h2 : Functio
         rw [hd, smul_add, ← algebraMap_smul RC (a.1 1) (d a'), ← algebraMap_smul RC (a'.1 1) (d a)]
         module
       | add u v hu hv =>
-        rw [mul_add, map_add, hu, hv, map_add, map_add, Pi.add_apply, add_smul, smul_add]
+        rw [mul_add, map_add (f := _), hu, hv, map_add (f := _), map_add (f := _), Pi.add_apply, add_smul, smul_add]
         abel
     | add u v hu hv =>
-      rw [add_mul, map_add, hu, hv, map_add, map_add, Pi.add_apply, add_smul, smul_add]
+      rw [add_mul, map_add (f := _), hu, hv, map_add (f := _), map_add (f := _), Pi.add_apply, add_smul, smul_add]
       abel
   have hinjΛ : Function.Injective Λ := by
     let e : N → A := fun x =>
@@ -107,12 +111,12 @@ theorem exists_der_ext (h1 : Function.Injective (algebraMap R RC)) (h2 : Functio
               rw [TensorProduct.tmul_smul, TensorProduct.smul_tmul', Algebra.smul_def, mul_comm]
           _ = c ⊗ₜ (d₀ • a) := by rw [← TensorProduct.tmul_sum, hsum]
           _ = algebraMap R RC d₀ • (c ⊗ₜ a) := by rw [TensorProduct.tmul_smul, algebraMap_smul]
-      | add u v hu hv => rw [map_add, map_add, hu, hv, smul_add]
+      | add u v hu hv => rw [map_add (f := _), map_add (f := _), hu, hv, smul_add]
     intro t t' htt'
     have h0 : algebraMap R RC d₀ • (t - t') = 0 := by
       rw [smul_sub, ← key, ← key, htt', sub_self]
     have hne : algebraMap R RC d₀ ≠ 0 := fun h' => hd₀ (h1 (h'.trans (map_zero _).symm))
-    exact sub_eq_zero.1 ((Module.IsTorsionFree.isSMulRegular (isRegular_of_ne_zero hne))
+    exact sub_eq_zero.1 ((Module.IsTorsionFree.isSMulRegular (IsRegular.of_ne_zero hne))
       (h0.trans (smul_zero _).symm))
   have hinj : Function.Injective Φ := by
     intro t t' h
@@ -198,7 +202,7 @@ theorem cotMap_mul (A : Subalgebra R (T → R)) (a b : A) :
     rw [Ideal.toCotangent_eq_zero, Submodule.coe_smul, smul_eq_mul, pow_two]
     exact Ideal.mul_mem_mul (mem a) (mem b)
   set_option synthInstance.maxHeartbeats 400000 in
-  rw [key, map_add, map_add, z, zero_add, map_smul, map_smul, algebraMap_smul, algebraMap_smul]
+  rw [key, map_add (f := _), map_add (f := _), z, zero_add, map_smul, map_smul, algebraMap_smul, algebraMap_smul]
 
 end Cot
 
@@ -420,7 +424,7 @@ theorem exists_bichar {E : Type} [Field E] [NumberField E] (N p n : ℕ) [NeZero
     { toFun := fun x' => ζ ^ (e x (Multiplicative.toAdd x')).val
       map_one' := by simp
       map_mul' := fun a b => by
-        simp only [toAdd_mul, map_add]
+        simp only [toAdd_mul, map_add (f := _)]
         exact pow_val_add hζn _ _ }
   have hin : ∀ x z, qhom N p z = 1 → inner x z = 1 := fun x z hz => by
     obtain ⟨y', hy'⟩ := (qhom_eq_one N p (Multiplicative.toAdd z)).1 hz
@@ -442,7 +446,7 @@ theorem exists_bichar {E : Type} [Field E] [NumberField E] (N p n : ℕ) [NeZero
       map_mul' := fun a b => by
         refine MonoidHom.ext fun t => ?_
         obtain ⟨z, rfl⟩ := qhom_surj N p t
-        rw [MonoidHom.mul_apply, hg, hg, hg, toAdd_mul, map_add, AddMonoidHom.add_apply]
+        rw [MonoidHom.mul_apply, hg, hg, hg, toAdd_mul, map_add (f := _), AddMonoidHom.add_apply]
         exact pow_val_add hζn _ _ }
   refine ⟨liftSurj (qhom N p) (qhom_surj N p) outer ?_, fun x x' => ?_⟩
   · intro z hz

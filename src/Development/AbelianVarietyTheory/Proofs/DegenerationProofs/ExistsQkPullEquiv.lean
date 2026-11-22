@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsIsFibreIso
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsFamFieldPull
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PhiRelTransport
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsIsFibreIso
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsFamFieldPull
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PhiRelTransport
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -86,8 +91,8 @@ end GlobalTheory.QkPullEquiv
 
 namespace GlobalTheory
 
-open GlobalTheory.ArcPull GlobalTheory.TorusExt GlobalTheory.QkPullEquiv in
 
+open GlobalTheory.ArcPull GlobalTheory.TorusExt GlobalTheory.QkPullEquiv in
 theorem exists_qk_pull_equiv : Laws → Laws2 → ∀ (R R' : Type) [CommRing R] [IsDomain R] [CommRing R'] [IsDomain R'] (φ : R →+* R') (D : DegPre R) (D' : DegPre R') (hD : IsPullDeg φ D D'), D.TauBimult → D'.TauBimult → ∀ (F : Type) [Field F] [Algebra (FractionRing R) F] [Algebra (FractionRing R') F], (∀ r : R, algebraMap (FractionRing R) F (algebraMap R (FractionRing R) r) = algebraMap (FractionRing R') F (algebraMap R' (FractionRing R') (φ r))) → ∀ k : ℕ, ∃ τ : QkPt D F k ≃ QkPt D' F k, (∀ p p', τ p = p' ↔ p'.y = hD.xe.symm p.y ∧ IsPullGtF φ hD F p.g p'.g) ∧ (∀ p q, QkPt.Equiv D F p q ↔ QkPt.Equiv D' F (τ p) (τ q)) ∧ (∀ p q r, QkAdd p q r ↔ QkAdd (τ p) (τ q) (τ r)) ∧ (∀ p q z, WeilQkIs D F k p q z ↔ WeilQkIs D' F k (τ p) (τ q) z) ∧ ∀ (O : Type) [CommRing O] [StarRing O] [Module O D.X] [Module O D'.X] (o : D.OAct O) (o' : D'.OAct O), (∀ (a : O) y, hD.xe (a • y) = a • hD.xe y) → (∀ a, o'.onB.act a ≫ hD.e.hom = hD.e.hom ≫ (Over.pullback (specOf φ)).map (o.onB.act a)) → ∀ a p q, QkAct o a p q ↔ QkAct o' a (τ p) (τ q) := by
   intro hL _ R R' _ _ _ _ φ D D' hD hB hB' F _ _ _ hF k
   have hG := hL.globalFns

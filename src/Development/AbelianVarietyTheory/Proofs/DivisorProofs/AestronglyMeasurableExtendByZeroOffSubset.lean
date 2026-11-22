@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ZeroMemSolSet
-import Formalism.UnipotentAdelicQuotients.EllRegCheck
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ZeroMemSolSet
+public import Formalism.UnipotentAdelicQuotients.EllRegCheck
+
+@[expose] public section
 
 open ZetaZeros.D.EllReg GlobalTheory.HCA MeasureTheory
 open scoped ContDiff BoundedContinuousFunction
@@ -11,20 +15,23 @@ namespace GlobalTheory.HCA.SolSub
 
 variable {d : ℕ}
 
-theorem contDiff_dw {f : E d → ℂ} (hf : ContDiff ℝ ∞ f) : ∀ w : List (Fin d), ContDiff ℝ ∞ (dw w f)
-  | [] => hf
-  | j :: w => by
-      have h := contDiff_dw hf w
-      show ContDiff ℝ ∞ (fun x => fderiv ℝ (dw w f) x (ev j))
-      exact (h.fderiv_right (m := ∞) (by simp)).clm_apply contDiff_const
+theorem contDiff_dw {f : E d → ℂ} (hf : ContDiff ℝ ∞ f) :
+    ∀ w : List (Fin d), ContDiff ℝ ∞ (dw w f) := by
+  intro w
+  induction w with
+  | nil => exact hf
+  | cons j w ih =>
+    show ContDiff ℝ ∞ (fun x => fderiv ℝ (dw w f) x (ev j))
+    exact (ih.fderiv_right (m := ∞) (by simp)).clm_apply contDiff_const
 
 theorem hasCompactSupport_dw {f : E d → ℂ} (hf : HasCompactSupport f) :
-    ∀ w : List (Fin d), HasCompactSupport (dw w f)
-  | [] => hf
-  | j :: w => by
-      have h := hasCompactSupport_dw hf w
-      show HasCompactSupport (fun x => fderiv ℝ (dw w f) x (ev j))
-      exact h.fderiv_apply (𝕜 := ℝ) (ev j)
+    ∀ w : List (Fin d), HasCompactSupport (dw w f) := by
+  intro w
+  induction w with
+  | nil => exact hf
+  | cons j w ih =>
+    show HasCompactSupport (fun x => fderiv ℝ (dw w f) x (ev j))
+    exact ih.fderiv_apply (𝕜 := ℝ) (ev j)
 
 theorem contDiff_mul_of_on {U : Set (E d)} (hU : IsOpen U) {b φ : E d → ℂ}
     (hb : ContDiffOn ℝ ∞ b U) (hφ : ContDiff ℝ ∞ φ) (hs : tsupport φ ⊆ U) :
@@ -45,7 +52,7 @@ theorem integrable_tr {ι : Type} (P : Sys d ι) {U : Set (E d)} (hU : IsOpen U)
     (hφ : ContDiff ℝ ∞ φ) (hc : HasCompactSupport φ) (hs : tsupport φ ⊆ U) :
     Integrable (P.tr i φ) := by
   unfold Sys.tr trOp
-  refine integrable_finset_sum _ (fun n _ => integrable_finset_sum _ (fun w _ => ?_))
+  refine MeasureTheory.integrable_finsetSum _ (fun n _ => MeasureTheory.integrable_finsetSum _ (fun w _ => ?_))
   refine Integrable.const_mul ?_ _
   refine Continuous.integrable_of_hasCompactSupport ?_ ?_
   · exact (contDiff_dw (contDiff_mul_of_on hU (ha i n w) hφ hs) _).continuous
@@ -101,17 +108,17 @@ def pair {U : Set (E d)} (hU : IsOpen U) (ψ : E d → ℂ) (hψ : Integrable ψ
 
 end GlobalTheory.HCA.SolSub
 
-open GlobalTheory.HCA.SolSub in
 
+open GlobalTheory.HCA.SolSub in
 theorem GlobalTheory.HCA.solSet_closed_submodule :
     ∀ (d : ℕ) (ι : Type) (P : Sys d ι) (U : Set (E d)), IsOpen U → (∀ i n w, ContDiffOn ℝ ∞ (P.a i n w) U) →
       IsClosed (solSet P U) ∧ ∃ S : Submodule ℂ (U →ᵇ ℂ), (S : Set (U →ᵇ ℂ)) = solSet P U := by
   intro d ι P U hU ha
   have hint : ∀ (i : ι) (φ : E d → ℂ) (h : ContDiff ℝ ∞ φ ∧ HasCompactSupport φ ∧ tsupport φ ⊆ U),
-      Integrable (P.tr i φ) := fun i φ h => integrable_tr P hU ha i h.1 h.2.1 h.2.2
+      Integrable (P.tr i φ) := fun i φ h => SolSub.integrable_tr P hU ha i h.1 h.2.1 h.2.2
   have key : ∀ u : U →ᵇ ℂ, u ∈ solSet P U ↔
       ∀ (i : ι) (φ : E d → ℂ) (h : ContDiff ℝ ∞ φ ∧ HasCompactSupport φ ∧ tsupport φ ⊆ U),
-        pair hU (P.tr i φ) (hint i φ h) u = 0 := by
+        SolSub.pair hU (P.tr i φ) (hint i φ h) u = 0 := by
     intro u
     constructor
     · intro hu i φ h
@@ -120,16 +127,16 @@ theorem GlobalTheory.HCA.solSet_closed_submodule :
       exact hu i φ ⟨h1, h2, h3⟩
   refine ⟨?_, ?_⟩
   · have : solSet P U = ⋂ (i : ι) (φ : E d → ℂ) (h : ContDiff ℝ ∞ φ ∧ HasCompactSupport φ ∧ tsupport φ ⊆ U),
-        {u | pair hU (P.tr i φ) (hint i φ h) u = 0} := by
+        {u | SolSub.pair hU (P.tr i φ) (hint i φ h) u = 0} := by
       ext u; simp only [Set.mem_iInter, Set.mem_setOf_eq]; exact key u
     rw [this]
     exact isClosed_iInter fun i => isClosed_iInter fun φ => isClosed_iInter fun h =>
-      isClosed_eq (pair hU (P.tr i φ) (hint i φ h)).continuous continuous_const
+      isClosed_eq (SolSub.pair hU (P.tr i φ) (hint i φ h)).continuous continuous_const
   · refine ⟨{ carrier := solSet P U, add_mem' := ?_, zero_mem' := zero_mem_solSet P U, smul_mem' := ?_ }, rfl⟩
     · intro u v hu hv
       rw [key] at hu hv ⊢
       intro i φ h
-      rw [map_add, hu i φ h, hv i φ h, add_zero]
+      rw [map_add (f := _), hu i φ h, hv i φ h, add_zero]
     · intro c u hu
       rw [key] at hu ⊢
       intro i φ h

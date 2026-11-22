@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CpSeriesCoeffNormBoundedRingLaws
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ConstantCoeffShiftS
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CpSeriesCoeffNormBoundedRingLaws
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ConstantCoeffShiftS
+
+@[expose] public section
 
 noncomputable section
 open PowerSeries GlobalTheory.MomOne
@@ -41,11 +45,10 @@ structure Hom (Φ : ℂ_[q]⟦X⟧ → ℂ_[q]⟦X⟧) : Prop where
   mul : ∀ f g, Bdd f → Bdd g → Φ (f * g) = Φ f * Φ g
   const : ∀ c, Φ (C c) = C c
 
-theorem hom_shift {ζ : ℂ_[q]} (hζ : ‖ζ - 1‖ < 1) : Hom (shiftS ζ) where
-  bd := (GlobalTheory.MomOne.Shift.shift_laws q ζ hζ).1
-  add f g hf hg := ((GlobalTheory.MomOne.Shift.shift_laws q ζ hζ).2.1 f g hf hg).1
-  mul f g hf hg := ((GlobalTheory.MomOne.Shift.shift_laws q ζ hζ).2.1 f g hf hg).2
-  const := (GlobalTheory.MomOne.Shift.shift_laws q ζ hζ).2.2.1
+theorem hom_shift {ζ : ℂ_[q]} (hζ : ‖ζ - 1‖ < 1) : Hom (shiftS ζ) := by
+  obtain ⟨hbd, haddmul, hconst, _⟩ := GlobalTheory.MomOne.Shift.shift_laws q ζ hζ
+  exact ⟨hbd, fun f g hf hg => (haddmul f g hf hg).1,
+    fun f g hf hg => (haddmul f g hf hg).2, hconst⟩
 
 theorem bd_X : Bd 1 (X : ℂ_[q]⟦X⟧) := by
   intro n; rw [coeff_X]; split_ifs <;> simp
@@ -57,7 +60,7 @@ theorem bdd_C (c : ℂ_[q]) : Bdd (C c : ℂ_[q]⟦X⟧) := by
 theorem bdd_add {f g : ℂ_[q]⟦X⟧} (hf : Bdd f) (hg : Bdd g) : Bdd (f + g) := by
   obtain ⟨A, hA⟩ := hf
   obtain ⟨B, hB⟩ := hg
-  exact ⟨A + B, fun n => by rw [map_add]; exact (norm_add_le _ _).trans (add_le_add (hA n) (hB n))⟩
+  exact ⟨A + B, fun n => by rw [map_add (f := _)]; exact (norm_add_le _ _).trans (add_le_add (hA n) (hB n))⟩
 
 theorem bdd_mul {f g : ℂ_[q]⟦X⟧} (hf : Bdd f) (hg : Bdd g) : Bdd (f * g) := by
   obtain ⟨A, hA⟩ := hf
@@ -69,13 +72,14 @@ theorem bdd_mul {f g : ℂ_[q]⟦X⟧} (hf : Bdd f) (hg : Bdd g) : Bdd (f * g) :
   rw [norm_mul]
   exact mul_le_mul (hA _) (hB _) (norm_nonneg _) (bd_nonneg hA)
 
-theorem Hom.comp {Φ Ψ : ℂ_[q]⟦X⟧ → ℂ_[q]⟦X⟧} (h : Hom Φ) (h' : Hom Ψ) : Hom (fun f => Φ (Ψ f)) where
-  bd f B hf := h.bd _ _ (h'.bd _ _ hf)
-  add f g hf hg := by
+theorem Hom.comp {Φ Ψ : ℂ_[q]⟦X⟧ → ℂ_[q]⟦X⟧} (h : Hom Φ) (h' : Hom Ψ) : Hom (fun f => Φ (Ψ f)) := by
+  refine ⟨fun f B hf => h.bd _ _ (h'.bd _ _ hf), ?_, ?_, ?_⟩
+  · intro f g hf hg
     rw [h'.add f g hf hg, h.add _ _ (hf.imp fun B hB => h'.bd _ _ hB) (hg.imp fun B hB => h'.bd _ _ hB)]
-  mul f g hf hg := by
+  · intro f g hf hg
     rw [h'.mul f g hf hg, h.mul _ _ (hf.imp fun B hB => h'.bd _ _ hB) (hg.imp fun B hB => h'.bd _ _ hB)]
-  const c := by rw [h'.const, h.const]
+  · intro c
+    exact (congrArg Φ (h'.const c)).trans (h.const c)
 
 theorem Hom.ext {Φ Ψ : ℂ_[q]⟦X⟧ → ℂ_[q]⟦X⟧} (h : Hom Φ) (h' : Hom Ψ) (hX : Φ X = Ψ X)
     (h0 : ‖coeff 0 (Ψ X)‖ < 1) (f : ℂ_[q]⟦X⟧) (hf : Bdd f) : Φ f = Ψ f := by
@@ -182,11 +186,10 @@ theorem mulS_natCast (m : ℕ) : mulS (m : ℤ_[q]) = (1 + X) ^ m - 1 := by
   · simp [h]
   · simp
 
-theorem hom_subst (a : ℤ_[q]) : Hom (fun f : ℂ_[q]⟦X⟧ => f.subst (mulS a : ℂ_[q]⟦X⟧)) where
-  bd f B hf := (GlobalTheory.MomOne.sup_norm_laws q).2.1 f _ B hf (bd_mulS a) (const_mulS a)
-  add f g _ _ := subst_add (HasSubst.of_constantCoeff_zero' (const_mulS a)) f g
-  mul f g _ _ := subst_mul (HasSubst.of_constantCoeff_zero' (const_mulS a)) f g
-  const c := subst_C c
+theorem hom_subst (a : ℤ_[q]) : Hom (fun f : ℂ_[q]⟦X⟧ => f.subst (mulS a : ℂ_[q]⟦X⟧)) := by
+  have ha := HasSubst.of_constantCoeff_zero' (const_mulS a)
+  exact ⟨fun f B hf => (GlobalTheory.MomOne.sup_norm_laws q).2.1 f _ B hf (bd_mulS a) (const_mulS a),
+    fun f g _ _ => subst_add ha f g, fun f g _ _ => subst_mul ha f g, subst_C⟩
 
 theorem shift_mulS_natCast {ζ : ℂ_[q]} (hζ : ‖ζ - 1‖ < 1) (m : ℕ) :
     shiftS ζ (mulS (m : ℤ_[q])) = C (ζ ^ m) * (1 + mulS (m : ℤ_[q])) - 1 := by
@@ -264,7 +267,7 @@ theorem shift_mulS {ζ : ℂ_[q]} {n k : ℕ} {a : ℤ_[q]} (h : ζ ^ (q ^ n) = 
   have hc : Continuous fun b : ℤ_[q] => (k : ℤ_[q]) + b * (q : ℤ_[q]) ^ n := by fun_prop
   refine PadicInt.denseRange_natCast.induction_on b (isClosed_eq ?_ ?_) fun m => ?_
   · exact (continuous_coeff_shift_mulS hζ j).comp hc
-  · simp only [map_sub, coeff_C_mul, map_add]
+  · simp only [map_sub, coeff_C_mul, map_add (f := _)]
     exact (continuous_const.mul (continuous_const.add ((continuous_coeff_mulS j).comp hc))).sub continuous_const
   · have e : (k : ℤ_[q]) + (m : ℤ_[q]) * (q : ℤ_[q]) ^ n = ((k + q ^ n * m : ℕ) : ℤ_[q]) := by
       push_cast; ring

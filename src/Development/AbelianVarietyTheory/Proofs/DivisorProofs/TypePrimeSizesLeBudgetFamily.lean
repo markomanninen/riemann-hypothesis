@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.WeightDegreeSizes
-import Formalism.SharpRestriction.SmoothDesignExistence.DGamSmooth
-import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHeightOneIdealIffAdditiveValuationPos
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockDegreeGapBound
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OneLeLetterBlockLength
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.WeightDegreeSizes
+public import Formalism.SharpRestriction.SmoothDesignExistence.DGamSmooth
+public import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemHeightOneIdealIffAdditiveValuationPos
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockDegreeGapBound
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OneLeLetterBlockLength
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.DV Formalism.MainNotions NumberField Classical
 
 noncomputable section

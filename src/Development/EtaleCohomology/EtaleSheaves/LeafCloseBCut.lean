@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafSpreadVCut
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafSpreadVCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory AlgebraicGeometry LateralTheory.E.E4

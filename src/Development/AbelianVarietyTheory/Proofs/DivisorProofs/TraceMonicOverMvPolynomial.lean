@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MvPolynomial
 
 namespace GlobalTheory
@@ -14,13 +19,13 @@ theorem trace_monic_over_mvPolynomial {K : Type} [Field K] (F : Subfield K) [Fin
     intro p
     induction p using MvPolynomial.induction_on with
     | C a => simpa [hφdef] using F.intCast_mem a
-    | add p q hp hq => simpa [map_add] using F.add_mem hp hq
+    | add p q hp hq => simpa [map_add (f := _)] using F.add_mem hp hq
     | mul_X p i hp => simpa [map_mul, hφdef] using F.mul_mem hp (hz i)
   have hφS : ∀ p, φ p ∈ S := by
     intro p
     induction p using MvPolynomial.induction_on with
     | C a => simpa [hφdef] using S.intCast_mem a
-    | add p q hp hq => simpa [map_add] using S.add_mem hp hq
+    | add p q hp hq => simpa [map_add (f := _)] using S.add_mem hp hq
     | mul_X p i hp =>
         simpa [map_mul, hφdef] using S.mul_mem hp (Subring.subset_closure ⟨i, rfl⟩)
   let ψ : MvPolynomial ι ℤ →+* F := φ.codRestrict F hφF

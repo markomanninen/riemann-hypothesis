@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.PositiveOfDimensionChange
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BejjSmulLeft
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.PositiveOfDimensionChange
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.BejjSmulLeft
+
+@[expose] public section
 
 noncomputable section
 

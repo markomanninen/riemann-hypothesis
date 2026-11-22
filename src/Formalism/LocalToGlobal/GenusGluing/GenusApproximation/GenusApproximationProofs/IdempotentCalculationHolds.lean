@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.GlueExists
+module
+
+public import Formalism.LocalToGlobal.GenusGluing.GenusApproximation.GlueExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -118,7 +122,7 @@ theorem idempotentCofinite_holds : IdemCof := by
 theorem idempotentDenominator_holds : IdemDenom := by
   intro F E _ _ _ _ _ v u hu
   obtain ⟨d, hd0, hd⟩ := Formalism.UG.P.levelaf_denom (F := F) (E := E) u
-  rw [Formalism.L2.DIV.levelafC_eq_incl] at hd
+  rw [Formalism.UG.P.levelafC, ← iA_algebraMap] at hd
   obtain ⟨π, hπv, hπ0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot v.ne_bot
   have hD : d * π ≠ 0 := mul_ne_zero hd0 hπ0
   obtain ⟨r, y, hy, e⟩ := Formalism.UG.P.integral_adele_approximation_holds F (d * π) hD

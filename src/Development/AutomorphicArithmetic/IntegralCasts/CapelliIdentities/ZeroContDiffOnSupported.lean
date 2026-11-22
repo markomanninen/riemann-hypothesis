@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.H23.Pl :
     (E : Type) → [inst : Field E] → [@NumberField E inst] → Type :=

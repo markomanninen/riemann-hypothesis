@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,8 @@ theorem actT_cont {ι Γ : Type} [TopologicalSpace Γ] (lab : P → ι) (κ : ι
   have h1 : ∀ x : TV n M P, lam x = ∑ I : P → Fin n, (lam ∘ₗ LinearMap.single ℂ (fun _ : P → Fin n => M) I) (x I) := by
     intro x
     conv_lhs => rw [← Finset.univ_sum_single x]
-    simp [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum]
   have key : (fun γ => lam (actT lab κ ρ γ y)) = fun γ => ∑ I : P → Fin n, ∑ J : P → Fin n,
       (∏ p : P, κ (lab p) γ (I p) (J p)) * (lam ∘ₗ LinearMap.single ℂ (fun _ : P → Fin n => M) I) (ρ γ (y J)) := by
     funext γ
@@ -45,12 +50,13 @@ theorem actT_cont {ι Γ : Type} [TopologicalSpace Γ] (lab : P → ι) (κ : ι
     refine Finset.sum_congr rfl fun I _ => ?_
     simp only [actT, LinearMap.pi_apply, LinearMap.sum_apply, LinearMap.smul_apply,
       LinearMap.comp_apply, LinearMap.proj_apply]
-    rw [map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum]
     refine Finset.sum_congr rfl fun J _ => ?_
     rw [map_smul, map_smul, smul_eq_mul]
   rw [key]
-  refine continuous_finset_sum _ fun I _ => continuous_finset_sum _ fun J _ => ?_
-  exact (continuous_finset_prod _ fun p _ => hκ _ _ _).mul (hc (y J) _)
+  refine continuous_finsetSum _ fun I _ => continuous_finsetSum _ fun J _ => ?_
+  exact (continuous_finsetProd _ fun p _ => hκ _ _ _).mul (hc (y J) _)
 
 end PositivityTheory.Rg.Cz.TGK
 

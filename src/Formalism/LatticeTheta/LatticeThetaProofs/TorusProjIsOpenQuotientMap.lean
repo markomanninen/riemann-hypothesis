@@ -1,5 +1,9 @@
-import Formalism.LatticeTheta.LatticeThetaProofs.InnerDualVecBasis
-import Formalism.LatticeTheta.LatticeThetaProofs.FundamentalDomainEqPreimage
+module
+
+public import Formalism.LatticeTheta.LatticeThetaProofs.InnerDualVecBasis
+public import Formalism.LatticeTheta.LatticeThetaProofs.FundamentalDomainEqPreimage
+
+@[expose] public section
 
 open MeasureTheory Set Complex
 open scoped RealInnerProductSpace
@@ -44,7 +48,7 @@ theorem periodic_comp (e : Module.Basis ι ℝ V) (G : V → ℂ)
     (hper : ∀ l ∈ Submodule.span ℤ (Set.range e), ∀ x, G (l + x) = G x)
     (s : ι → ℝ) (n : ι → ℤ) :
     G (e.equivFunL.symm (s + fun i => (n i : ℝ))) = G (e.equivFunL.symm s) := by
-  rw [map_add, add_comm]
+  rw [map_add (f := _), add_comm]
   apply hper
   rw [equivFunL_symm_eq]
   refine Submodule.sum_mem _ fun i _ => ?_
@@ -102,7 +106,7 @@ theorem boxIoc_ae_eq :
     ext x
     simp [Set.mem_univ_pi]
   rw [h1]
-  show _ =ᵐ[Measure.pi fun _ => volume] _
+  rw [volume_pi]
   exact Measure.univ_pi_Ioc_ae_eq_Icc.trans Measure.univ_pi_Ico_ae_eq_Icc.symm
 
 theorem mFourierCoeff_torusFunC (e : Module.Basis ι ℝ V) (G : V → ℂ) (hG : Continuous G)

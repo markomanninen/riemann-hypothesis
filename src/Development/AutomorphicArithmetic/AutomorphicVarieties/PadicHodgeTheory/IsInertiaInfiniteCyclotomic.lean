@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.AdjointDiagonalRepPreservesWeightPiece
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ConjStable
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.AdjointDiagonalRepPreservesWeightPiece
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ConjStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,35 +34,37 @@ variable {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsLocalRing O] [Algeb
 
 def HL : Subgroup (GQ l) := D.η.ker ⊓ D.τ.ker
 
-def rz (A : Type) [CommRing A] [Algebra O A] : GQ l →* GG 3 A := (GG.map (algebraMap O A)).comp (r0 D.η D.Ψ)
+def rz (A : Type) [CommRing A] [Algebra O A] : GQ l →* GG (m := 3) (R := A) :=
+  (GG.map (algebraMap O A)).comp (r0 D.η D.Ψ)
 
 section Types
 
 variable {B : Type} [CommRing B] [Algebra O B] [Algebra ℚ_[l] B]
 
-def IsType (r : GQ l →* GG 3 B) : Prop :=
+def IsType (r : GQ l →* GG (m := 3) (R := B)) : Prop :=
   ∃ ρ : ↥(GK D.Kv) →* GL (Fin 3) B, (∀ g, ρ g = (r g).left) ∧
     PotCrysType D.Kv (colRep ρ) 3 (hodge0 D.e)
       fun γ => algebraMap O B ((D.τ γ : O) + 1 + (((D.τ γ)⁻¹ : Oˣ) : O))
 
-def IsLCr (r : GQ l →* GG 3 B) : Prop :=
+def IsLCr (r : GQ l →* GG (m := 3) (R := B)) : Prop :=
   ∃ ρ : ↥D.HL →* GL (Fin 3) B, (∀ g, ρ g = (r g).left) ∧ IsCr D.HL.subtype (colRep ρ)
 
 variable {E : Type} [CommRing E] [Algebra O E] (π : B →+* E)
 
-structure InDcrAt (r₁ : GQ l →* GG 3 E) (r : GQ l →* GG 3 B) : Prop where
+structure InDcrAt (r₁ : GQ l →* GG (m := 3) (R := E))
+    (r : GQ l →* GG (m := 3) (R := B)) : Prop where
   mult : HasMult D.η r
   red : (GG.map π).comp r = r₁
   cont : ∀ a b, QCont l fun g => (r g).mat a b
   cr : D.IsLCr r
 
-abbrev InDcr (r : GQ l →* GG 3 B) : Prop := D.InDcrAt π (D.rz E) r
+abbrev InDcr (r : GQ l →* GG (m := 3) (R := B)) : Prop := D.InDcrAt π (D.rz E) r
 
-structure InDtri (r : GQ l →* GG 3 B) : Prop extends D.InDcrAt π (D.rz E) r where
+structure InDtri (r : GQ l →* GG (m := 3) (R := B)) : Prop extends D.InDcrAt π (D.rz E) r where
   tri : ∀ g a b, wt a b < 0 → (r g).mat a b = 0
 
-def InDord (r : GQ l →* GG 3 B) : Prop :=
-  ∃ (u : GQ l →* GG 3 B) (n : GL (Fin 3) B), D.InDtri π u ∧ CongOne (RingHom.ker π) n ∧
+def InDord (r : GQ l →* GG (m := 3) (R := B)) : Prop :=
+  ∃ (u : GQ l →* GG (m := 3) (R := B)) (n : GL (Fin 3) B), D.InDtri π u ∧ CongOne (RingHom.ker π) n ∧
     (∀ a b, 0 ≤ wt a b → ((n : Matrix (Fin 3) (Fin 3) B) - 1) a b = 0) ∧ r = conjBy n u
 
 end Types
@@ -85,7 +91,7 @@ def cc (a : Fin 3) : O :=
 
 section Eq
 
-variable {C : Type} [CommRing C] [Algebra O C] (r : GQ l →* GG 3 C)
+variable {C : Type} [CommRing C] [Algebra O C] (r : GQ l →* GG (m := 3) (R := C))
 
 def sh (a : Fin 3) (s : GQ l) : Matrix (Fin 3) (Fin 3) C :=
   (r s).mat - Matrix.scalar _ (algebraMap O C (UpperTheory.V.UnitaryThreeInertia.psi D.Ψ a s))
@@ -134,7 +140,7 @@ def It : Ideal U.R := sInf (D.primesAt0 U)
 
 abbrev Rt : Type := U.R ⧸ D.It U
 
-def On {C : Type} [CommRing C] [Algebra O C] (r : GQ l →* GG 3 C) : Prop :=
+def On {C : Type} [CommRing C] [Algebra O C] (r : GQ l →* GG (m := 3) (R := C)) : Prop :=
   ∃ f : U.R →ₐ[O] C, push f U.r.hom = r ∧ D.It U ≤ RingHom.ker f
 
 def PtsCr (J : Ideal U.R) : Prop :=
@@ -161,23 +167,8 @@ structure IsCompl {O R E σ : Type} [CommRing O] [CommRing R] [Algebra O R] [Fie
   inj : ∀ (N : ℕ) (a : R), φ a ∈ maximalIdeal (MvPowerSeries σ E) ^ N →
     ∃ c : O, c ≠ 0 ∧ c • a ∈ RingHom.ker x ^ N ⊔ I
 
-def DualDef {G E : Type} [Group G] [CommRing E] (r : G →* GG 3 E) (γ : G → Matrix (Fin 3) (Fin 3) E)
-    (r' : G →* GG 3 (DualNumber E)) : Prop :=
+def DualDef {G E : Type} [Group G] [CommRing E] (r : G →* GG (m := 3) (R := E))
+    (γ : G → Matrix (Fin 3) (Fin 3) E) (r' : G →* GG (m := 3) (R := DualNumber E)) : Prop :=
   ∀ g, (r' g).right = (r g).right ∧ ∀ a b, (r' g).mat a b = ⟨(r g).mat a b, (γ g * (r g).mat) a b⟩
-
-example (l : ℕ) [Fact l.Prime] (hl : l ≠ 2) (hc : AdicCont (maximalIdeal ℤ_[l]) fun g => (cycA l l ℤ_[l] g : ℤ_[l])) :
-    Dat3 l ℤ_[l] where
-  η := 1
-  Ψ := cycA l l ℤ_[l]
-  τ := 1
-  e := 1
-  Kv := botExt l
-  odd := hl
-  e_pos := le_rfl
-  η_ker g := by simp [GK, botExt]
-  η_unr _ _ := rfl
-  τ_open := by simp
-  Ψ_cont := hc
-  Ψ_I g _ := by simp
 
 end UpperTheory.V.Loc

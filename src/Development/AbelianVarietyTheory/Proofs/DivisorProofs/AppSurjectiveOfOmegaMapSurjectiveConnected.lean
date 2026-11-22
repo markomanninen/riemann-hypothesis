@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+
+@[expose] public section
+
 open CategoryTheory TensorProduct Coalgebra Bialgebra GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Dieu
 
 namespace GlobalTheory.PDivGroup
@@ -74,7 +79,7 @@ theorem surjective_of_cotangentPullback_surjective_nilAug {k A B : Type} [Field 
             exact Ideal.mul_mem_mul (Ideal.pow_le_self (by norm_num) hu) hv
       · rintro y1 y2 ⟨b1, hb1, h1⟩ ⟨b2, hb2, h2⟩
         refine ⟨b1 + b2, Ideal.add_mem _ hb1 hb2, ?_⟩
-        have : y1 + y2 - f (b1 + b2) = (y1 - f b1) + (y2 - f b2) := by rw [map_add]; ring
+        have : y1 + y2 - f (b1 + b2) = (y1 - f b1) + (y2 - f b2) := by rw [map_add (f := _)]; ring
         rw [this]; exact Ideal.add_mem _ h1 h2
   have step3 : ∀ m : ℕ, ∀ x ∈ I, ∃ b : B, x - f b ∈ I ^ (m + 1) := by
     intro m
@@ -85,7 +90,7 @@ theorem surjective_of_cotangentPullback_surjective_nilAug {k A B : Type} [Field 
       obtain ⟨b, hb⟩ := ih x hx
       obtain ⟨b', -, hb'⟩ := step2 m _ hb
       refine ⟨b + b', ?_⟩
-      have : x - f (b + b') = x - f b - f b' := by rw [map_add]; ring
+      have : x - f (b + b') = x - f b - f b' := by rw [map_add (f := _)]; ring
       rw [this]; exact hb'
 
   haveI : IsNoetherianRing A := IsNoetherianRing.of_finite k A
@@ -106,7 +111,7 @@ theorem surjective_of_cotangentPullback_surjective_nilAug {k A B : Type} [Field 
     simp
   obtain ⟨b, hb⟩ := hI _ ha
   refine ⟨b + algebraMap k B (counit a), ?_⟩
-  rw [map_add, AlgHomClass.commutes, hb, sub_add_cancel]
+  rw [map_add (f := _), AlgHomClass.commutes, hb, sub_add_cancel]
 
 theorem app_surjective_of_omegaMap_surjective : ∀ (p : ℕ) [Fact p.Prime] (k : Type) [Field k] [CharP k p] (G H : PDivGroup p k) (q : G ⟶ H), G.IsConn → Function.Surjective (omegaMap G H q) → ∀ n, Function.Surjective (q.app n) := by
   intro p _ k _ _ G H q hG hq n

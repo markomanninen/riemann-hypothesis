@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsEqOfNatCastMulMem
-import GroundTheory.GlobalFields.ComplexMultiplication.MainTheorem
-import ReciprocityTheory.ClassFieldTheory.GlobalClassField.IsFrobAtMulOfMemInertiaGroup
-import ReciprocityTheory.ClassFieldTheory.GlobalClassField.AsGabLimB
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsDiagMulRayMulUnif
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AlgebraicValuesFinite.InvMemUFin
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsEqOfNatCastMulMem
+public import GroundTheory.GlobalFields.ComplexMultiplication.MainTheorem
+public import ReciprocityTheory.ClassFieldTheory.GlobalClassField.IsFrobAtMulOfMemInertiaGroup
+public import ReciprocityTheory.ClassFieldTheory.GlobalClassField.AsGabLimB
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsDiagMulRayMulUnif
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AlgebraicValuesFinite.InvMemUFin
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
+
+@[expose] public section
 
 noncomputable section
 
@@ -98,7 +102,7 @@ theorem localIdele_eq {Art Art' : IdeleClassGroup K →* Field.absoluteGaloisGro
 def infI : (InfiniteAdeleRing K)ˣ →* Ideles K :=
   Units.map (MonoidHom.inl (InfiniteAdeleRing K) (FiniteAdeleRing (𝓞 K) K) : _ →* _)
 
-theorem inf_mem [IsTotallyComplex K] (N : Subgroup (Ideles K)) (m : ℕ) (hm : 0 < m)
+theorem inf_mem [_root_.NumberField.IsTotallyComplex K] (N : Subgroup (Ideles K)) (m : ℕ) (hm : 0 < m)
     (hpow : ∀ x : Ideles K, x ^ m ∈ N) (y : (InfiniteAdeleRing K)ˣ) :
     infI y ∈ N := by
   haveI : ∀ w : InfinitePlace K, IsAlgClosed w.Completion := fun w =>
@@ -130,7 +134,7 @@ theorem exists_modulus (𝔡 : Ideal (𝓞 K)) (h𝔡 : 𝔡 ≠ ⊥) (S : Finse
   exact Ideal.le_of_dvd ((Finset.dvd_prod_of_mem (fun v : HeightOneSpectrum (𝓞 K) =>
     v.asIdeal ^ n) hv).mul_left _)
 
-theorem abRestrict_eq : ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K]
+theorem abRestrict_eq : ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K]
     (Art Art' : IdeleClassGroup K →* Field.absoluteGaloisGroupAbelianization K),
     IsGlobalArtinMap K Art → IsGlobalArtinMap K Art' →
     ∀ (L : IntermediateField K (AlgebraicClosure K)) (h : IsFiniteAbelian K L)

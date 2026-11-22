@@ -1,8 +1,18 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.ProductZerothFirstParts
-import Formalism.GaussJetBounds.ThmAGauss
-import Formalism.GaussJetBounds.OneLetterGauss
-import Formalism.GaussJetBounds.GaussJetProofs.WeightsAddOverOrbitFamily
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.ProductZerothFirstParts
+public import Formalism.GaussJetBounds.ThmAGauss
+public import Formalism.GaussJetBounds.OneLetterGauss
+public import Formalism.GaussJetBounds.GenLogInverse
+public import Formalism.GaussJetBounds.OneLetterRadius
+public import Formalism.GaussJetBounds.GaussJetProofs.AsmRDotAddRight
+public import Formalism.GaussJetBounds.GaussJetProofs.LemmaRA
+public import Formalism.GaussJetBounds.GaussJetProofs.NormNatCastEqPowPadicValNat
+public import Formalism.GaussJetBounds.GaussJetProofs.SubstitutionWeightBound
+public import Formalism.IncomingBounds.WeightIdentities
+
+@[expose] public section
 
 noncomputable section
 
@@ -168,9 +178,9 @@ def TieFrame : Prop :=
     (Th : MvPowerSeries (ZMod d × Fin N0 × Fin N1) ℂ_[l]) (ep : ℂ_[l]) (B : ℝ), ‖ep‖ = 1 →
     (∀ (I : ∀ s (c : Fin ((nu s).rowLen 0)), Fin ((nu s).colLen c) → Fin N1)
       (n : (ZMod d × Fin N0 × Fin N0) →₀ ℕ),
-      ‖MvPolynomial.coeff n (frameJet (fun s => (nu s).rowLen 0) (fun s c => (nu s).colLen c) hp I
+      ‖AddMonoidAlgebra.coeff (frameJet (fun s => (nu s).rowLen 0) (fun s c => (nu s).colLen c) hp I
         (MvPowerSeries.subst (fun v : ZMod d × Fin N0 × Fin N1 =>
-          MvPowerSeries.C ep * (MvPowerSeries.X v : MvPowerSeries (ZMod d × Fin N0 × Fin N1) ℂ_[l])) Th))‖ ≤
+          MvPowerSeries.C ep * (MvPowerSeries.X v : MvPowerSeries (ZMod d × Fin N0 × Fin N1) ℂ_[l])) Th)) n‖ ≤
         (l : ℝ) ^ (-B)) →
     product_zeroth_first_parts.KvalGe N0 N1 l nu Th B
 
@@ -226,9 +236,9 @@ def TieFrameOne : Prop :=
     (hp : ∀ c : Fin (nu.rowLen 0), nu.colLen c ≤ N0)
     (Th : MvPowerSeries (ZMod 1 × Fin N0 × Fin N1) ℂ_[l]) (ep0 : ℂ_[l]) (B : ℝ), ‖ep0‖ = 1 →
     (∀ (I : ∀ c : Fin (nu.rowLen 0), Fin (nu.colLen c) → Fin N1) (n : (Fin N0 × Fin N0) →₀ ℕ),
-      ‖MvPolynomial.coeff n (frameJetOne (fun c : Fin (nu.rowLen 0) => nu.colLen c) hp I
+      ‖AddMonoidAlgebra.coeff (frameJetOne (fun c : Fin (nu.rowLen 0) => nu.colLen c) hp I
         (MvPowerSeries.subst (fun v : ZMod 1 × Fin N0 × Fin N1 =>
-          MvPowerSeries.C ep0 * (MvPowerSeries.X v.2 : MvPowerSeries (Fin N0 × Fin N1) ℂ_[l])) Th))‖ ≤
+          MvPowerSeries.C ep0 * (MvPowerSeries.X v.2 : MvPowerSeries (Fin N0 × Fin N1) ℂ_[l])) Th)) n‖ ≤
         (l : ℝ) ^ (-B)) →
     product_zeroth_first_parts.KvalGe N0 N1 l (fun _ : ZMod 1 => nu) Th B
 

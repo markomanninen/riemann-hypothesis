@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerLast
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsVerticalDivOfIsVerticalDivisorAlt
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerLast
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsVerticalDivOfIsVerticalDivisorAlt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -25,9 +30,9 @@ theorem assocBlock_injective :
 variable [Fintype K] [Fintype K'] [Fintype K₂] [∀ k, Fintype (ι k)] [∀ k, Fintype (ι' k)]
   [∀ k, Fintype (ι₂ k)]
 
+
 omit [Fintype K] [Fintype K'] [Fintype K₂] [∀ k, Fintype (ι k)] [∀ k, Fintype (ι' k)]
   [∀ k, Fintype (ι₂ k)] in
-
 theorem mcMap_rename_assocVar (R : Type) [CommRing R] {Ω : Type} [Field Ω] [Algebra R Ω]
     (x : (Σ k, ι k) → Ω) (z : (Σ k, ι' k) → Ω) (w : (Σ k, ι₂ k) → Ω)
     (h : MvPolynomial (Σ k : K ⊕ K', Sum.elim ι ι' k) R) :
@@ -35,15 +40,15 @@ theorem mcMap_rename_assocVar (R : Type) [CommRing R] {Ω : Type} [Field Ω] [Al
       rename (Sum.map id Sum.inl) (mcMap R (joinCoord x z) h) := by
   induction h using MvPolynomial.induction_on with
   | C a => simp [mcMap, MvPolynomial.algebraMap_eq]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p n hp =>
     simp only [map_mul, rename_X, hp]
     congr 1
     simp [mcMap, joinCoord_assocVar, assocVar_fst]
 
+
 omit [Fintype K] [Fintype K'] [Fintype K₂] [∀ k, Fintype (ι k)] [∀ k, Fintype (ι' k)]
   [∀ k, Fintype (ι₂ k)] in
-
 theorem rename_assocVar_mem_mcIdeal_iff (R : Type) [CommRing R] {Ω : Type} [Field Ω] [Algebra R Ω]
     (x : (Σ k, ι k) → Ω) (z : (Σ k, ι' k) → Ω) (w : (Σ k, ι₂ k) → Ω)
     (h : MvPolynomial (Σ k : K ⊕ K', Sum.elim ι ι' k) R) :
@@ -52,9 +57,9 @@ theorem rename_assocVar_mem_mcIdeal_iff (R : Type) [CommRing R] {Ω : Type} [Fie
   rw [mcMap_rename_assocVar]
   exact map_eq_zero_iff _ (rename_injective _ assocBlock_injective)
 
+
 omit [Fintype K] [Fintype K'] [Fintype K₂] [∀ k, Fintype (ι k)] [∀ k, Fintype (ι' k)]
   [∀ k, Fintype (ι₂ k)] in
-
 theorem blockWeight_assocVar [DecidableEq K] [DecidableEq K'] [DecidableEq K₂]
     (p : Σ k : K ⊕ K', Sum.elim ι ι' k) (s : K ⊕ (K' ⊕ K₂)) :
     blockWeight (Sum.elim ι (Sum.elim ι' ι₂)) (assocVar ι₂ p) s =
@@ -62,9 +67,9 @@ theorem blockWeight_assocVar [DecidableEq K] [DecidableEq K'] [DecidableEq K₂]
         (Sum.elim (fun k => blockWeight (Sum.elim ι ι') p (.inr k)) 0) s := by
   obtain ⟨k | k, i⟩ := p <;> rcases s with l | l | l <;> simp [blockWeight, assocVar, Pi.single_apply]
 
+
 omit [Fintype K] [Fintype K'] [Fintype K₂] [∀ k, Fintype (ι k)] [∀ k, Fintype (ι' k)]
   [∀ k, Fintype (ι₂ k)] in
-
 theorem weight_mapDomain_assocVar [DecidableEq K] [DecidableEq K'] [DecidableEq K₂]
     (d : (Σ k : K ⊕ K', Sum.elim ι ι' k) →₀ ℕ) :
     Finsupp.weight (blockWeight (Sum.elim ι (Sum.elim ι' ι₂))) (Finsupp.mapDomain (assocVar ι₂) d) =
@@ -76,9 +81,9 @@ theorem weight_mapDomain_assocVar [DecidableEq K] [DecidableEq K'] [DecidableEq 
   simp only [Finsupp.sum, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, blockWeight_assocVar]
   rcases s with l | l | l <;> simp
 
+
 omit [Fintype K] [Fintype K'] [Fintype K₂] [∀ k, Fintype (ι k)] [∀ k, Fintype (ι' k)]
   [∀ k, Fintype (ι₂ k)] in
-
 theorem isMultiHomog_rename_assocVar' [DecidableEq K] [DecidableEq K'] [DecidableEq K₂] {R : Type}
     [CommRing R] {f : MvPolynomial (Σ k : K ⊕ K', Sum.elim ι ι' k) R} {a : K ⊕ K' → ℕ}
     (hf : IsMultiHomog f a) :
@@ -87,7 +92,7 @@ theorem isMultiHomog_rename_assocVar' [DecidableEq K] [DecidableEq K'] [Decidabl
   unfold IsMultiHomog at hf ⊢
   induction hf using IsWeightedHomogeneous.induction_on with
   | zero => simpa using isWeightedHomogeneous_zero R _ _
-  | add p q hp hq ihp ihq => simpa [map_add] using ihp.add ihq
+  | add p q hp hq ihp ihq => simpa [map_add (f := _)] using ihp.add ihq
   | monomial d r hr =>
     rw [rename_monomial]
     apply isWeightedHomogeneous_monomial
@@ -103,9 +108,9 @@ theorem isMultiHomog_rename_assocVar {R : Type} [CommRing R]
   rw [← Objects.isMultiHomog_iff] at hf ⊢
   exact isMultiHomog_rename_assocVar' hf
 
+
 omit [Fintype K] [Fintype K'] [Fintype K₂] [∀ k, Fintype (ι k)] [∀ k, Fintype (ι' k)]
   [∀ k, Fintype (ι₂ k)] in
-
 theorem rename_weightedHomogeneousComponent [DecidableEq K] [DecidableEq K'] [DecidableEq K₂] {R : Type}
     [CommRing R] (c : K ⊕ K' → ℕ) (h : MvPolynomial (Σ k : K ⊕ K', Sum.elim ι ι' k) R) :
     rename (assocVar ι₂) (weightedHomogeneousComponent (blockWeight (Sum.elim ι ι')) c h) =
@@ -133,7 +138,7 @@ theorem rename_weightedHomogeneousComponent [DecidableEq K] [DecidableEq K'] [De
         · exact congrFun e (.inr (.inl k))
       rw [IsWeightedHomogeneous.weightedHomogeneousComponent_ne c hm hc,
         IsWeightedHomogeneous.weightedHomogeneousComponent_ne _ hj hc', map_zero]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
 
 theorem comap_isMultiProjPrime {R : Type} [CommRing R]
     {Q : Ideal (MvPolynomial (Σ k : K ⊕ (K' ⊕ K₂), Sum.elim ι (Sum.elim ι' ι₂) k) R)}
@@ -154,8 +159,8 @@ theorem comap_isMultiProjPrime {R : Type} [CommRing R]
 
 end JoinVerticalDivisorLeft
 
-open JoinVerticalDivisorLeft in
 
+open JoinVerticalDivisorLeft in
 theorem JoinVerticalDivisorLeft.proof : JoinVerticalDivisorLeft.Statement := by
   intro O _ _ _ Ω _ _ K _ ι _ x K' _ ι' _ z K₂ _ ι₂ _ w b f g hD
   obtain ⟨⟨α, β, hf, hg, hb⟩, hfP, hgP, hU⟩ := hD

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.InvSqrtTwoMulSelf
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.InvSqrtTwoMulSelf
+
+@[expose] public section
 
 noncomputable section
 open Matrix MeasureTheory
@@ -53,20 +57,21 @@ theorem lv_sum {ι : Type} (s : Finset ι) (f : ι → Fin (2 * r' + k + 1) → 
     liftVec k 1 r' (∑ i ∈ s, f i) = ∑ i ∈ s, liftVec k 1 r' (f i) := by
   have e : liftVec k 1 r' (∑ i ∈ s, f i) =
       (AddMonoidHom.mk' (liftVec k 1 r') fun v w => lv_add v w) (∑ i ∈ s, f i) := rfl
-  rw [e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum]
   rfl
 
 theorem phi_lift (a : Fin (r' + 1)) : liftVec k 1 r' (phiV k r' a) = phiV k (1 + r') (su a) := by
   unfold phiV
   by_cases h : a.val < r'
   · have h' : (su a).val < 1 + r' := by rw [su_val]; omega
-    rw [dif_pos h, dif_pos h', ← bvec_lv]
+    rw [dite_eq_left h, dite_eq_left h', ← bvec_lv]
     congr 1
     ext
     simp only [sh, esI, su_val, Fin.val_mk]
     omega
   · have h' : ¬ (su a).val < 1 + r' := by rw [su_val]; omega
-    rw [dif_neg h, dif_neg h']
+    rw [dite_eq_right h, dite_eq_right h']
     unfold epsV
     have e0 : sh (wI k r' 0) = wI k (1 + r') 0 := by
       ext
@@ -80,7 +85,7 @@ theorem phi_lift (a : Fin (r' + 1)) : liftVec k 1 r' (phiV k r' a) = phiV k (1 +
 
 theorem besselPhi_eq_reindexConj_rootCoords : phiV k (1 + r') 0 = bvec ⟨2 * (1 + r') + k, by omega⟩ := by
   unfold phiV
-  rw [dif_pos (by simp only [Fin.val_zero]; omega)]
+  rw [dite_eq_left (by simp only [Fin.val_zero]; omega)]
   congr 1
 
 theorem levelEmbedding_fixes_firstVector (g : Mat k r') : ιLev k 1 r' g *ᵥ phiV k (1 + r') 0 = phiV k (1 + r') 0 := by
@@ -99,7 +104,7 @@ variable (τ : Matrix (Fin (r' + 1)) (Fin (r' + 1)) ℂ)
 
 theorem tt_su (a b : Fin (r' + 1)) : tt τ (su b) (su a) = τ b a := by
   unfold tt
-  rw [if_neg (by simp [su]), dif_neg (by simp [su])]
+  rw [if_neg (by simp [su]), dite_eq_right (by simp [su])]
   congr 1 <;> ext <;> simp [su]
 
 theorem tt_00 : tt τ 0 0 = 1 := by
@@ -120,8 +125,8 @@ theorem tt_tri (hτ : τ.BlockTriangular id) : (tt τ).BlockTriangular id := by
   · omega
   · rw [if_neg hi]
     by_cases hj : j.val = 0
-    · rw [dif_pos hj]
-    · rw [dif_neg hj]
+    · rw [dite_eq_left hj]
+    · rw [dite_eq_right hj]
       apply hτ
       simp only [id, Fin.mk_lt_mk]
       omega

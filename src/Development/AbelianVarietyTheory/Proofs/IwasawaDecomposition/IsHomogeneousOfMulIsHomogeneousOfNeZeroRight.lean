@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RootToFlag
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RootToFlag
+
+@[expose] public section
+
 open MvPolynomial NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.GoodMetric GlobalTheory.LieBase GlobalTheory.GrassTop
 open Classical
 
@@ -11,7 +16,8 @@ theorem isHomogeneous_of_mul_isHomogeneous_right {σ : Type} (P Q : MvPolynomial
   have key : ∀ k, homogeneousComponent (k + b) (P * Q) = homogeneousComponent k P * Q := by
     intro k
     conv_lhs => rw [← sum_homogeneousComponent P]
-    rw [Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_mul, map_sum]
     have hterm : ∀ i, homogeneousComponent (k + b) (homogeneousComponent i P * Q)
         = if i = k then homogeneousComponent i P * Q else 0 := by
       intro i
@@ -42,8 +48,5 @@ theorem isHomogeneous_of_mul_isHomogeneous_right {σ : Type} (P Q : MvPolynomial
   by_cases hk : k = a
   · subst hk; exact homogeneousComponent_isHomogeneous k P
   · rw [hzero k hk]; exact isHomogeneous_zero _ _ _
-
-example : ∀ {σ : Type} (P Q : MvPolynomial σ ℝ) (a b : ℕ), Q ≠ 0 → Q.IsHomogeneous b → (P * Q).IsHomogeneous (a + b) → P.IsHomogeneous a :=
-  fun P Q a b => isHomogeneous_of_mul_isHomogeneous_right P Q a b
 
 end GlobalTheory.GrassTop

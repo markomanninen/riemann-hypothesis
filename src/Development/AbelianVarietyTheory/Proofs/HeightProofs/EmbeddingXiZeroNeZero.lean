@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
-import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasSign
-import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.WeilIdempotents
-import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasSign
+public import Development.AbelianVarietyTheory.BlockTheory.HeightDefect.WeilIdempotents
+public import Development.AbelianVarietyTheory.Counterexamples.HeightSurvey.StarPurelyImaginaryEqNeg
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem gen_coord (R : Type) [CommRing R] [Algebra F R] (α β : E →ₗ[F] F) 
     simp only [r, LinearMap.comp_apply, LinearMap.baseChange_tmul, LinearEquiv.coe_coe,
       TensorProduct.AlgebraTensorModule.rid_tmul, TensorProduct.smul_tmul, ← TensorProduct.tmul_add, ← h]
   | add x y hx hy =>
-    simp only [map_add, TensorProduct.add_tmul]
+    simp only [map_add (f := _), TensorProduct.add_tmul]
     conv_lhs => rw [hx, hy]
     abel
 
@@ -44,7 +48,7 @@ theorem gen_parts (R S : Type) [CommRing R] [Algebra F R] [CommRing S] [Algebra 
     | zero => simp
     | tmul a e => simp [← TensorProduct.add_tmul]
     | add x y hx hy =>
-      simp only [map_add]
+      simp only [map_add (f := _)]
       conv_lhs => rw [hx, hy]
       abel
   rw [this z, h1, h2, map_zero, map_zero, add_zero]
@@ -115,7 +119,7 @@ theorem realAd_add (D : D7) (s t : InfinitePlace D.host.F → ℝ) :
   refine Prod.ext ?_ (add_zero _).symm
   change _ = _ + _
   simp only [pairA]
-  rw [← map_add, Prod.mk_add_mk, add_zero]
+  rw [← map_add (f := _), Prod.mk_add_mk, add_zero]
   rfl
 
 theorem continuous_realAd (D : D7) : Continuous (GlobalTheory.IndefiniteRowSideFullHecke.HeisenbergWeilMatrices.realAd D) := by
@@ -147,7 +151,7 @@ theorem continuous_realPt (D : D7) : Continuous (GlobalTheory.IndefiniteRowSideF
 theorem finPart_realPt (D : D7) (p) : finPart D (GlobalTheory.IndefiniteRowSideFullHecke.HeisenbergWeilMatrices.realPt D p) = 0 := by
   have : ∀ s e, finPart D (GlobalTheory.IndefiniteRowSideFullHecke.HeisenbergWeilMatrices.realAd D s ⊗ₜ[D.host.F] e) = 0 := fun s e =>
     TensorProduct.zero_tmul _ e
-  rw [GlobalTheory.IndefiniteRowSideFullHecke.HeisenbergWeilMatrices.realPt, RingHom.map_add, this, this, add_zero]
+  rw [GlobalTheory.IndefiniteRowSideFullHecke.HeisenbergWeilMatrices.realPt, RingHom.map_add (f := _), this, this, add_zero]
 
 theorem parts_zero (D : D7) (z : AE D) (h1 : infPart D z = 0) (h2 : finPart D z = 0) : z = 0 :=
   gen_parts (Ainf D.host.F) (Af D.host.F) z h1 h2
@@ -167,7 +171,7 @@ theorem exists_co (D : D7) : ∃ co : AE D →+ (InfinitePlace D.host.F → ℝ)
       rfl
     rw [RingHom.map_sub, e, sub_eq_zero]
     conv_lhs => rw [h z]
-    rw [RingHom.map_add, RingHom.map_add]
+    rw [RingHom.map_add (f := _), RingHom.map_add (f := _)]
     rfl
   refine ⟨co, (hr.comp hα).prodMk (hr.comp hβ), k, fun z hz => ?_⟩
   exact (sub_eq_zero.1 (parts_zero D _ (k z) (by rw [RingHom.map_sub, hz, finPart_realPt, sub_zero]))).symm
@@ -192,7 +196,7 @@ theorem plF_bijective (D : D7) : Function.Bijective (plF D) := by
     have h3 : tauE D ρ = tauE D ρ' := by
       refine RingHom.ext fun e => ?_
       rw [hc e, Algebra.smul_def, Algebra.smul_def]
-      simp only [map_add, map_mul, map_one, h2]
+      simp only [map_add (f := _), map_mul, map_one, h2]
       rw [show tauE D ρ (algebraMap _ _ (α e)) = tauE D ρ' (algebraMap _ _ (α e)) from DFunLike.congr_fun h1 _,
         show tauE D ρ (algebraMap _ _ (β e)) = tauE D ρ' (algebraMap _ _ (β e)) from DFunLike.congr_fun h1 _]
     exact D.eTau.injective (Subtype.ext ((factEmb D.R D.host).1.1 h3))
@@ -246,8 +250,11 @@ theorem gen_inf_exists (τ : E →+* ℂ) (w : InfinitePlace F) (hw : w.embeddin
   let _ : Algebra F ℂ := (τ.comp (algebraMap F E)).toAlgebra
   let f : Ainf F →ₐ[F] ℂ :=
     { toRingHom := (InfinitePlace.Completion.extensionEmbedding w).comp (Pi.evalRingHom _ w)
-      commutes' := fun x =>
-        (InfinitePlace.Completion.extensionEmbedding_coe w _).trans (DFunLike.congr_fun hw x) }
+      commutes' := fun x => by
+        change InfinitePlace.Completion.extensionEmbedding w (algebraMap F (Ainf F) x w) =
+          (τ.comp (algebraMap F E)) x
+        rw [InfiniteAdeleRing.algebraMap_apply]
+        exact (InfinitePlace.Completion.extensionEmbedding_coe w _).trans (DFunLike.congr_fun hw x) }
   let g : E →ₐ[F] ℂ := { toRingHom := τ, commutes' := fun _ => rfl }
   refine ⟨(Algebra.TensorProduct.lift f g (fun _ _ => Commute.all _ _)).toRingHom, fun x => ?_, ?_⟩
   · show f 1 * g x = τ x

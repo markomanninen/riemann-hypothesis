@@ -1,5 +1,11 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SigmaFiniteQuotients.ExistsQuotientMeasureUnitaryGroup
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.MaximalCompactIsCompact
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryQuotientCompactness.UnitaryWeylCompact
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SecondCountableQuotients.ModExists
+
+@[expose] public section
 
 open MeasureTheory MeasureTheory.Measure Matrix TopologicalSpace Set
 open scoped ENNReal NNReal Pointwise

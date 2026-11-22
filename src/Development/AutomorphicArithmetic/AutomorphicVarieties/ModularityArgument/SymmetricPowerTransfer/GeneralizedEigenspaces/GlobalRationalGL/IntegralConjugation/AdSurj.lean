@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.EStar
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.EStar
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel GlobalTheory.CuspRep GlobalTheory.PRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.SplitWeil Formalism.BasicNotions Matrix
 open UpperTheory.V UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Dict UpperTheory.V.Z.Sym.Dict.Br UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob
@@ -29,13 +33,15 @@ theorem UpperTheory.V.Z.Sym.Dict.Br.adSurj :
     rw [← sub_eq_zero]
     apply R.ρ_inj v
     intro w h
-    rw [map_sub, Matrix.mul_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, Matrix.mul_apply, map_sum]
     have e1 : ∀ k, R.ρ v w h ((star (Matrix.of (x v))) i k * (Matrix.of (x v)) k j) =
         pLoc L w (cjF (L := L) (A k i) * A k j) := by
       intro k
       rw [map_mul, map_mul, Matrix.star_apply, Matrix.of_apply, Matrix.of_apply,
         R.ρ_star v _ _ (hx v k i) w h, hx v k j w h]
-    rw [Finset.sum_congr rfl fun k _ => e1 k, ← map_sum, hU i j]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_congr rfl fun k _ => e1 k, ← map_sum, hU i j]
     by_cases hij : i = j
     · subst hij; simp
     · simp [Matrix.one_apply_ne hij]

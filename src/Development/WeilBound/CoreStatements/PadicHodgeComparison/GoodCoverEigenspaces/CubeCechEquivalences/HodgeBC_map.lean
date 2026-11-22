@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CoeEqAlgebraMapZeroEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CoeEqAlgebraMapZeroEquiv
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -26,8 +30,8 @@ theorem secMap_comp_spMap (t : X' ⟶ Sp k') (W : X'.Opens) (r : k) :
       (((Scheme.ΓSpecIso (CommRingCat.of k')).inv ≫ t.appTop).hom (φ r))
   rw [algΓ_comp_spMap]
 
-variable (s s' g) in
 
+variable (s s' g) in
 def appSecS (U : X.Opens) : Sec s U →+* Sec s' (g ⁻¹ᵁ U) := (g.app U).hom
 
 theorem semiHom_appSecS (hg : g ≫ s = s' ≫ spMap φ) (U : X.Opens) :
@@ -97,10 +101,6 @@ theorem omegaPullS_toOmega (hg : g ≫ s = s' ≫ spMap φ) (j : ℕ) (U : X.Ope
 def hodgePullS (hg : g ≫ s = s' ≫ spMap φ) (j q : ℕ) : hodgeH s j q →ₛₗ[φ] hodgeH s' j q :=
   letI := algΓ s; letI := algΓ s'
   cohOn.pull (appTop_algebraMapS hg) (omegaPullS hg j) (le_refl (g ⁻¹ᵁ ⊤)) q
-
-example (hg : g ≫ s = s' ≫ spMap φ) (x : hodgeH s 1 1) (r : k) :
-    hodgePullS hg 1 1 (r • x) = φ r • hodgePullS hg 1 1 x :=
-  map_smulₛₗ _ r x
 
 end PositivityTheory.AutomorphicGaloisHodgeTate.G8.HBC
 

@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormPowSubOneLe
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormPowSubOneLe
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.MemLoc
 open scoped Formalism.Per
 
@@ -163,8 +168,8 @@ theorem exists_poly (n : ℕ) (hn : 0 < n) (w : PadicAlgCl l) (hw : IsPrimitiveR
 
 end GlobalTheory.CycTrace
 
-open Polynomial GlobalTheory.CycTrace in
 
+open Polynomial GlobalTheory.CycTrace in
 theorem GlobalTheory.CycTrace.normalised_trace_bound (l : ℕ) [hl : Fact l.Prime] (n m : ℕ) (z : Om l)
     (hn : 1 ≤ n) (hz : IsPrimitiveRoot z (l ^ (n + m))) (a : Fin (l ^ m) → Om l)
     (ha : ∀ i, a i ∈ IntermediateField.adjoin ℚ_[l] {z ^ (l ^ m)}) :
@@ -194,12 +199,13 @@ theorem GlobalTheory.CycTrace.normalised_trace_bound (l : ℕ) [hl : Fact l.Prim
     rw [add_mul] at h3
     omega
   have hev : aeval z P = ∑ i, a i * z ^ (i : ℕ) := by
-    rw [hPdef, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hPdef, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, expand_aeval, hp2]; simp
   have hco : ∀ j, P.coeff (j * l ^ m) = (p ⟨0, hM⟩).coeff j := by
     intro j
-    rw [hPdef, finset_sum_coeff, Finset.sum_eq_single ⟨0, hM⟩]
+    rw [hPdef, Polynomial.finsetSum_coeff, Finset.sum_eq_single ⟨0, hM⟩]
     · simp [coeff_expand_mul hM]
     · intro i _ hi
       rw [coeff_mul_X_pow']

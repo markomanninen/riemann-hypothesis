@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsDiagR
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeA
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsDiagR
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeA
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -19,7 +24,7 @@ theorem ZeroSetNull.proof : ZeroSetNull.Statement := by
   classical
   unfold ptsIntegral
   by_cases hΨ : ∃ Ψ : (((k : K) → ι k) → ℂ) →ₗ[ℂ] (Fin (e + 1) → ℂ), IsGoodProj P Ψ
-  · rw [dif_pos hΨ, dif_pos hΨ]
+  · rw [dite_eq_left hΨ, dite_eq_left hΨ]
     set Ψ := hΨ.choose with hΨdef
     have hJ : IsMultiHomogIdeal (Ideal.span {s}) :=
       ⟨{s}, fun f hf => ⟨a, (Set.mem_singleton_iff.mp hf) ▸ hs⟩, rfl⟩
@@ -34,13 +39,13 @@ theorem ZeroSetNull.proof : ZeroSetNull.Statement := by
     refine finsum_mem_congr rfl fun w _ => ?_
     unfold sheetDensity
     by_cases hγ : ∃ γ, IsSheet P Ψ y w γ
-    · rw [dif_pos hγ, dif_pos hγ]
+    · rw [dite_eq_left hγ, dite_eq_left hγ]
       obtain ⟨-, hev⟩ := hγ.choose_spec
       obtain ⟨-, hmem, hproj⟩ := hev.self_of_nhds
       have hs0 : eval (hγ.choose y) (map (Int.castRingHom ℂ) s) ≠ 0 := fun h0 =>
         hyB ⟨hγ.choose y, hmem, mem_mcPts_span_singleton hmem h0, hproj⟩
       rw [hg _ hmem hs0]
-    · rw [dif_neg hγ, dif_neg hγ]
-  · rw [dif_neg hΨ, dif_neg hΨ]
+    · rw [dite_eq_right hγ, dite_eq_right hγ]
+  · rw [dite_eq_right hΨ, dite_eq_right hΨ]
 
 end GroundTheory.Heights₂.Heights.Inter

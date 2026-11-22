@@ -1,10 +1,29 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.UnlAway
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.JacquetShalikaBound
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsUnitaryTwistAbsPow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SatakeParametersOfTwist
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeilDeligneParamMonodromyEqZeroIff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SemisimpleLevels.FixedDvd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LevelIso
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AdmissibleResidues.SphericalOfHasSat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Hypotheses2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LocIsotypic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.GalUnitary
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaBound.JacquetShalikaBound
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsUnitaryTwistAbsPow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SatakeParametersOfTwist
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeilDeligneParamMonodromyEqZeroIff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SemisimpleLevels.CountRankThree
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.LocFixed
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ConclusionAbsPow
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPadicAlgClRingEquivComplexCompEqOfCountabl
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.HasSupportOfIsSubquotientProdIrr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IrreducibleWeilDeligneTameLevelEqCharacter
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.InertiaFixesRootsOfUnityOfArtinCongruence
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.JacquetBorelNontrivialOfCharacterSupport
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.JacquetBorelExistsTorusCongruenceFixed
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.FixedCongruenceNeBotOfJacquetTorusFixed
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.HasFixedOfAlgNormFixedNeBot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.MemMaximalCompactAndCongruentOfMemPrincipalCongr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.LevelIso
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.GalN UpperTheory.GalN.V
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -26,34 +45,3 @@ private lemma root_inv {K L : Type*} [Field K] [Field L] (e : K ≃+* L) {n : �
   have := (Polynomial.isRoot_map_iff (f := e.toRingHom) (x := x⁻¹) e.injective).2
     (Matrix.mem_spectrum_iff_isRoot_charpoly.1 hi)
   simpa using this
-
-theorem UpperTheory.GalN.V.L.unlfrob :
-    ∀ (F Ω : Type) [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] (l : ℕ) [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (n : ℕ) (r : G F Ω →* GL (Fin n) (Qbar l)) (w : HeightOneSpectrum (𝓞 F)) (A : ValuationSubring Ω) (S : Multiset ℂ), IsPlaceOver A w → FrobEig ι r w S → (∀ α ∈ S, ∀ β ∈ S, ‖α‖ < ((normV w : ℕ) : ℝ) * ‖β‖) → UnlAt ι r w A := by
-  intro F Ω _ _ _ _ _ l _ ι n r w A S hA hS hlt
-  obtain ⟨s, hs⟩ := exists_isFrob hA
-  refine ⟨s, 1, le_rfl, by simpa using hs, ?_⟩
-  intro α hα hqα
-  have hP := (hS A hA).2 s hs
-  have key : ∀ y : ℂ, ((r s : Matrix (Fin n) (Fin n) (Qbar l)).charpoly.map ι.toRingHom).IsRoot y →
-      y ≠ 0 ∧ y⁻¹ ∈ S := by
-    intro y hy
-    obtain ⟨hy0, hr⟩ := root_inv ι (r s) y hy
-    refine ⟨hy0, ?_⟩
-    have hroots : (((r s⁻¹ : Matrix (Fin n) (Fin n) (Qbar l))).charpoly.map ι.toRingHom).roots = S := by
-      rw [hP]; exact Polynomial.roots_multiset_prod_X_sub_C S
-    rw [← hroots, Polynomial.mem_roots ((Matrix.charpoly_monic _).map _).ne_zero, map_inv]
-    exact hr
-  obtain ⟨ha0, ha⟩ := key α hα
-  obtain ⟨hb0, hb⟩ := key _ hqα
-  have hq0 : (((normV w : ℕ) : ℂ)) ≠ 0 := by
-    intro h0
-    apply hb0
-    simp [h0]
-  have hlt' := hlt _ ha _ hb
-  have hqr : (0 : ℝ) < ((normV w : ℕ) : ℝ) := by
-    have : (normV w : ℕ) ≠ 0 := by exact_mod_cast hq0
-    exact_mod_cast Nat.pos_of_ne_zero this
-  have heq : ((normV w : ℕ) : ℝ) * ‖((((normV w : ℕ) : ℂ) ^ 1 * α))⁻¹‖ = ‖α⁻¹‖ := by
-    rw [pow_one, norm_inv, norm_mul, norm_inv, Complex.norm_natCast, mul_inv]
-    field_simp
-  exact absurd hlt' (by rw [heq]; exact lt_irrefl _)

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChebotarevDegreeOneIffCheb
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CharpolyEqRankPartMul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChebotarevDegreeOneIffCheb
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CharpolyEqRankPartMul
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -36,7 +40,7 @@ theorem continuous_character_of_rankOneRep_continuous {Γ K : Type} [Group Γ] [
 theorem coeff_heckePolyOf {L : Type} [Field L] (n q : ℕ) (a : ℕ → L) (j : ℕ) :
     (Formalism.L2.Col.heckePolyOf n q a).coeff j =
       if j ≤ n then (-1) ^ j * (q : L) ^ (j * (j - 1) / 2) * a j else 0 := by
-  simp only [Formalism.L2.Col.heckePolyOf, finset_sum_coeff, coeff_C_mul_X_pow]
+  simp only [Formalism.L2.Col.heckePolyOf, finsetSum_coeff, coeff_C_mul_X_pow]
   rw [Finset.sum_ite_eq]
   simp [Finset.mem_range, Nat.lt_succ_iff]
 
@@ -85,7 +89,7 @@ theorem blockFor_of_congr : GlobalTheory.Published.ChebotarevDegreeOne → ∀ (
   have dq : ∀ σ, (q σ).natDegree = P.Nr := fun σ => by
     simp only [hq]
     rw [(Matrix.charpoly_monic _).natDegree_mul (monic_prod_of_monic _ _ fun s _ => monic_X_sub_C _),
-      Matrix.charpoly_natDegree_eq_dim, natDegree_finset_prod_X_sub_C_eq_card, Fintype.card_fin,
+      Matrix.charpoly_natDegree_eq_dim, natDegree_finsetProd_X_sub_C_eq_card, Fintype.card_fin,
       Finset.card_univ, Fintype.card_fin, hat]
 
   have cp : CoeffCont p := fun k =>

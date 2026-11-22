@@ -1,5 +1,9 @@
-import Formalism.LandauZeroFreeBounds.Statement
-import Formalism.ZeroFreeRegion.Statement
+module
+
+public import Formalism.LandauZeroFreeBounds.Statement
+public import Formalism.ZeroFreeRegion.Statement
+
+@[expose] public section
 
 open Complex
 

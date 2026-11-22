@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.DualIsConjByOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.DualIsConjByOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,15 +24,15 @@ theorem invTOp_invTOp (o : Op L a) : invTOp (invTOp o) = o := by
   | lie X =>
     refine congrArg Op.lie ?_
     funext i j
-    simp [toL]
+    simp [toL, Function.swap, Pi.neg_apply]
 
 theorem invT_map {R : Type} [CommRing R] (c : R →+* R) (g : GL (Fin a) R) :
     invT a R (GeneralLinearGroup.map c g) = GeneralLinearGroup.map c (invT a R g) :=
   Units.ext (by rw [show (invT a R (GeneralLinearGroup.map c g)).val = ((GeneralLinearGroup.map c g)⁻¹).valᵀ from rfl,
     ← map_inv]; rfl)
 
-omit [NumberField L] [IsCMField L] in
 
+omit [NumberField L] [IsCMField L] in
 theorem barK_barK (k : Kinf L a) : barK (barK k) = k := by
   refine Subtype.ext ?_
   ext i j : 1

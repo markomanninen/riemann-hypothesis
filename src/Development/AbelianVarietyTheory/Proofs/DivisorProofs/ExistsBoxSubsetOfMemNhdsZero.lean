@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsCuspSpaceBot
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsCuspSpaceBot
+
+@[expose] public section
+
 open ValuativeRel Matrix MeasureTheory
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.Whittaker GlobalTheory.LocLanglands GlobalTheory.GamMul DiscreteGroups.sglob.LConv
 
@@ -98,7 +103,7 @@ theorem one_add_small_near_one (k : Type) [Field k] [ValuativeRel k] [Topologica
       rw [h] at hN
       simp at hN
     unfold toGL
-    rw [dif_pos hu]
+    rw [dite_eq_left hu]
     rfl
   have hGL : Filter.Tendsto (fun N : Matrix (Fin n) (Fin n) k => toGL (1 + N)) (nhds 0) (nhds 1) := by
     rw [Units.isInducing_embedProduct.tendsto_nhds_iff]
@@ -108,7 +113,7 @@ theorem one_add_small_near_one (k : Type) [Field k] [ValuativeRel k] [Topologica
     refine Filter.Tendsto.congr' ?_ h3
     filter_upwards [hv] with N hN
     simp only [Function.comp, Units.embedProduct_apply, Matrix.coe_units_inv, hval N hN]
-  obtain ⟨d, hd, hS⟩ := exists_box_subset_of_mem_nhds_zero (hv.and (hb.and (hGL hU)))
+  obtain ⟨d, hd, hS⟩ := exists_box_subset_of_mem_nhds_zero (p := n) (q := n) (hv.and (hb.and (hGL hU)))
   refine ⟨d, hd, fun N hN => ?_⟩
   obtain ⟨h1, h2, h3⟩ := hS hN
   refine ⟨toGL (1 + N), hval N h1, h3, ?_, fun i j => ?_⟩

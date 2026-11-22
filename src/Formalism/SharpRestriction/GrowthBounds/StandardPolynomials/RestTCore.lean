@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.TCGlue
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.RestSegCoreOfNum
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.TCXNum
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.TCGlue
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.RestSegCoreOfNum
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.TCXNum
+
+@[expose] public section
 
 namespace Formalism.MainNotions.ColumnSystems.Pf
 

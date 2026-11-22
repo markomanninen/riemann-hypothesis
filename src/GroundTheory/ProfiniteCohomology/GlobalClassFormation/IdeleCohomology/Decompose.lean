@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleCohomology.IsDiscreteRepCoindStabRep
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleCohomology.IsDiscreteRepCoindStabRep
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -18,7 +23,8 @@ theorem eq_sum_cohomologyMap_of_pi [DecidableEq ι] (p : ∀ i, P ⟶ A i)
     y = ∑ i ∈ T, (cohomologyMap (e i) n).hom ((cohomologyMap (p i) n).hom y) := by
   apply (cohomology_pi_bijective p hp n).1
   funext j
-  simp only [← cohomologyMapAlong_id_eq_cohomologyMap, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [← cohomologyMapAlong_id_eq_cohomologyMap, map_sum]
   by_cases hj : j ∈ T
   · rw [Finset.sum_eq_single j]
     · rw [← ModuleCat.comp_apply, ← cohomologyMapAlong_id_comp, ← ModuleCat.comp_apply,

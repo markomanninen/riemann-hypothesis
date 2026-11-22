@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.SerVal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.SerVal
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,8 @@ private theorem ff_eq {l : ℕ} [hl : Fact l.Prime] (ι : PadicAlgCl l ≃+* ℂ
       ((if (p.1 : ZMod N) = a then ι (ψ p.1) * (p.1 : ℂ) ^ (k - 2) else 0) +
         (if -(p.1 : ZMod N) = a then ι (ψ (-1)) * (ι (ψ p.1) * (p.1 : ℂ) ^ (k - 2)) else 0)) := by
   have ho' : Odd (k - 2) := Nat.Odd.sub_even (by omega) ho (by decide)
-  rw [Nat.sum_divisorsAntidiagonal' (fun A _ => if l ∣ s then 0 else
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Nat.sum_divisorsAntidiagonal' (fun A _ => if l ∣ s then 0 else
       ((if (A : ZMod N) = a then ι (ψ A) * (A : ℂ) ^ (k - 2) else 0) +
         (if -(A : ZMod N) = a then ι (ψ (-1)) * (ι (ψ A) * (A : ℂ) ^ (k - 2)) else 0))), ffMu, map_sum]
   refine Finset.sum_congr rfl fun d hd => ?_
@@ -71,7 +76,8 @@ private theorem ee_eq {l : ℕ} [hl : Fact l.Prime] (ι : PadicAlgCl l ≃+* ℂ
     (ψ : DirichletCharacter (PadicAlgCl l) (l ^ m)) (b : ℤ) (s : ℕ) :
     ι (eeMu N l m ψ b s) = ∑ p ∈ s.divisorsAntidiagonal, if l ∣ s then 0 else
       twb N (ι (ψ (-1))) b p.1 * ι (ψ ((p.2 : ZMod (l ^ m))⁻¹)) := by
-  rw [Nat.sum_divisorsAntidiagonal' (fun B d => if l ∣ s then 0 else
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Nat.sum_divisorsAntidiagonal' (fun B d => if l ∣ s then 0 else
       twb N (ι (ψ (-1))) b B * ι (ψ ((d : ZMod (l ^ m))⁻¹))), eeMu, map_sum]
   refine Finset.sum_congr rfl fun d hd => ?_
   have hs : l ∣ s ↔ ¬ (¬ l ∣ d ∧ ¬ l ∣ s / d) := by
@@ -114,7 +120,8 @@ theorem ser_eq_Zm {l : ℕ} [hl : Fact l.Prime] (ι : PadicAlgCl l ≃+* ℂ) (N
       exact wsum θ u _ _ _
   rw [Uo_iterate, ser, up]
   generalize l ^ m * i = n
-  simp only [coPtMu, ← mul_eq_cmul, mul, map_sum, map_mul, RingEquiv.apply_symm_apply, Finset.mul_sum, Zm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coPtMu, ← mul_eq_cmul, mul, map_sum, map_mul, RingEquiv.apply_symm_apply, Finset.mul_sum, Zm]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun p _ => ?_
   simp only [← mul_assoc]

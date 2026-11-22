@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothnessOnGoodSet
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SmoothnessOnGoodSet
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 
@@ -58,7 +62,9 @@ lemma step_pair (D : RealPlaceData k r Wp Wq) {m : ℕ} {F : Mat k r → (Wq →
   obtain ⟨S, hSae, hSprop⟩ : ∃ S : Set (SS k r), (∀ᵐ p ∂D.μSS, p ∈ S) ∧ ∀ p ∈ S, D.inSS p ∧
       ∀ uv ∈ ({(u, v), (u2, v2)} : Set (List (Mat k r) × List (Mat k r))), ∀ x ∈ K,
         ‖dLR uv.1 uv.2 (rho D p F) x‖ ≤ bb p :=
-    ⟨_, hgood, fun p hp => hp⟩
+    ⟨{p | D.inSS p ∧ ∀ uv ∈ ({(u, v), (u2, v2)} : Set (List (Mat k r) × List (Mat k r))),
+        ∀ x ∈ K, ‖dLR uv.1 uv.2 (rho D p F) x‖ ≤ bb p},
+      hgood, fun p hp => hp⟩
   obtain ⟨G, hGin, hGout⟩ : ∃ G : SS k r → Mat k r → (Wq →L[ℂ] Wp),
       (∀ p ∈ S, G p = dLR u v (rho D p F)) ∧ (∀ p ∉ S, G p = 0) :=
     ⟨fun p => S.indicator (fun p => dLR u v (rho D p F)) p,

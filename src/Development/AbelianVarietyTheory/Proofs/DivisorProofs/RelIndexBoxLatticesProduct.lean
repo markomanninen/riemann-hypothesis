@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntBTmulBasis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyAdicIntegralSpanClosedMulStar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntBTmulBasis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyAdicIntegralSpanClosedMulStar
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount IsDedekindDomain GlobalTheory.AdicSpan
 open scoped TensorProduct Classical
 
@@ -14,7 +19,8 @@ theorem isIntB_of_isIntB_of_repr {M : Type} [Ring M] [Algebra ℚ M] {κ κ' : T
     (h : ∀ k' k, algebraMap ℚ (v.adicCompletion ℚ) (b.repr (b' k') k) ∈ v.adicCompletionIntegers ℚ)
     (y : v.adicCompletion ℚ ⊗[ℚ] M) (hy : IsIntB v b' y) : IsIntB v b y := by
   intro k
-  rw [eq_sum_tmul b' v y, map_sum, Finsupp.finset_sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [eq_sum_tmul b' v y, map_sum, Finsupp.finsetSum_apply]
   refine sum_mem fun k' _ => ?_
   rw [repr_tmul_apply]
   exact mul_mem (hy k') (h k' k)
@@ -82,7 +88,7 @@ theorem isIntB_sum_leftBasis_iff_eventually : ∀ (L : Type) [Field L] [NumberFi
       · subst h; simp [repr_tmul_apply]
       · simp [h]
     | add x y hx hy =>
-      rw [map_add, add_mul, LinearEquiv.map_add, Finsupp.add_apply, hx, hy, Pi.single_add, Pi.add_apply,
+      rw [map_add (f := _), add_mul, LinearEquiv.map_add (e := _), Finsupp.add_apply, hx, hy, Pi.single_add, Pi.add_apply,
         LinearEquiv.map_add, Finsupp.add_apply]
   obtain ⟨S, hS⟩ := isIntB_iff_eventually b b'
   refine ⟨S, fun v hv β => ?_⟩
@@ -91,9 +97,11 @@ theorem isIntB_sum_leftBasis_iff_eventually : ∀ (L : Type) [Field L] [NumberFi
         ((1 : v.adicCompletion ℚ) ⊗ₜ[ℚ] e j)) ⟨i, a⟩ =
       (Algebra.TensorProduct.basis (v.adicCompletion ℚ) ℓ).repr (β i) a := by
     intro i a
-    rw [map_sum, Finsupp.finset_sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finsupp.finsetSum_apply]
     simp_rw [hcoord]
-    rw [← Finsupp.finset_sum_apply, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finsupp.finsetSum_apply, ← map_sum]
     congr 2
     simp [Finset.sum_apply, Pi.single_apply]
   rw [hS v hv]

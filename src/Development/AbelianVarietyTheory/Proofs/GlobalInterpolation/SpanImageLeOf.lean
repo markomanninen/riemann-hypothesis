@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MaxVSpanSingleton
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MaxVSpanSingleton
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker Formalism.MainNotions GlobalTheory.CharVal GlobalTheory.IndefiniteRowSideFullHecke.CharacterValuation
 
@@ -24,7 +28,7 @@ theorem span_image_le_of (N : Submodule R M) (N' : Submodule R' M') (S : Set M) 
   induction hm' using Submodule.span_induction with
   | mem x hx => exact hN x hx
   | zero => rw [map_zero]; exact N'.zero_mem
-  | add x y _ _ hx hy => rw [map_add]; exact N'.add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact N'.add_mem hx hy
   | smul r x _ hx => rw [h]; exact N'.smul_mem _ hx
 
 theorem span_image_span (S : Set M) :
@@ -46,7 +50,7 @@ theorem mem_span_image (N : Submodule R M) (x : M') :
       obtain ⟨m, hm, rfl⟩ := hy
       simpa using hm
     | zero => simp
-    | add y z _ _ hy hz => rw [map_add]; exact N.add_mem hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _)]; exact N.add_mem hy hz
     | smul r y _ hy => rw [hsm]; exact N.smul_mem _ hy
   · intro hx
     exact Submodule.subset_span ⟨f.symm x, hx, by simp⟩
@@ -97,7 +101,8 @@ theorem mem_one_iff (x : E') : x ∈ (1 : Submodule (𝓞 E') E') ↔ e.symm x �
 theorem map_mulVec' {n : ℕ} (A : Matrix (Fin n) (Fin n) E) (v : Fin n → E) :
     (A.map e).mulVec (fun i => e (v i)) = fun i => e (A.mulVec v i) := by
   funext i
-  simp [Matrix.mulVec, dotProduct, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.mulVec, dotProduct, map_sum]
 
 theorem det_map' {n : ℕ} (A : Matrix (Fin n) (Fin n) E) : (A.map e).det = e A.det := (RingHom.map_det (e : E →+* E') A).symm
 

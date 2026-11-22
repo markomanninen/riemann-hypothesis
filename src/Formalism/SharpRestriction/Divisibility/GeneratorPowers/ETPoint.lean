@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ETSpan
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCSpan
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ETSpan
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PhiCSpan
+
+@[expose] public section
 
 set_option autoImplicit false
 

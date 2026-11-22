@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.LocallyConstantOfOpenSet.lc_of_open :
     ∀ {G H : Type} [inst : Group G] [inst_1 : TopologicalSpace G]

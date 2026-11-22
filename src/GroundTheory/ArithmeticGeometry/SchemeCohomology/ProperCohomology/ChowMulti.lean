@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ChowGraph
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ChowLocal
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ChowGraph
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.ChowLocal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh

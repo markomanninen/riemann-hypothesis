@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerCochainEqDlogCombinationFiniteLevelStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerCochainCupProductCongruenceStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotCoboundaryConstantOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerCochainEqDlogCombinationFiniteLevelStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.KummerCochainCupProductCongruenceStatement
+
+@[expose] public section
 
 open GlobalTheory.K5 Polynomial
 
@@ -17,7 +21,10 @@ theorem map_mk_mem {n : ℕ} (f : On p n →ₐ[O0 p] Ω) (S : Subalgebra (O0 p)
   have hC : ∀ Q : Polynomial (O0 p), f (Ideal.Quotient.mk (towerIdeal p n) (C Q)) ∈ S := by
     intro Q
     induction Q using Polynomial.induction_on' with
-    | add a b ha hb => rw [map_add, map_add, map_add]; exact S.add_mem ha hb
+    | add a b ha hb =>
+      rw [(C : Polynomial (O0 p) →+* Polynomial (Polynomial (O0 p))).map_add,
+        (Ideal.Quotient.mk (towerIdeal p n)).map_add, map_add (f := f)]
+      exact S.add_mem ha hb
     | monomial j b =>
       rw [← C_mul_X_pow_eq_monomial, map_mul, map_mul, map_mul, map_pow, map_pow, map_pow]
       refine S.mul_mem ?_ (S.pow_mem hx j)
@@ -25,7 +32,9 @@ theorem map_mk_mem {n : ℕ} (f : On p n →ₐ[O0 p] Ω) (S : Subalgebra (O0 p)
       rw [e, f.commutes]
       exact S.algebraMap_mem b
   induction P using Polynomial.induction_on' with
-  | add a b ha hb => rw [map_add, map_add]; exact S.add_mem ha hb
+  | add a b ha hb =>
+    rw [(Ideal.Quotient.mk (towerIdeal p n)).map_add, map_add (f := f)]
+    exact S.add_mem ha hb
   | monomial j Q =>
     rw [← C_mul_X_pow_eq_monomial, map_mul, map_mul, map_pow, map_pow]
     exact S.mul_mem (hC Q) (S.pow_mem hy j)
@@ -121,8 +130,8 @@ theorem kum_eq {T : Tower p Ω} {n : ℕ} {r : Ω} (hr : r ≠ 0) {a : Gal p Ω 
   exact ZMod.val_injective _
     ((T.prim n).pow_inj (ZMod.val_lt _) (ZMod.val_lt _) (mul_right_cancel₀ hr e))
 
-open Classical in
 
+open Classical in
 def ext0 {M : Type} [Zero M] (H : Subgroup (Gal p Ω)) (a : Gal p Ω → M) (g : Gal p Ω) : M :=
   if g ∈ H then a g else 0
 
@@ -167,7 +176,7 @@ theorem root_ne_zero {T : Tower p Ω} {n : ℕ} (hn : 1 ≤ n) (ι : On p n →�
 
 theorem coef_int {T : Tower p Ω} {n : ℕ} (hn : 1 ≤ n) {ι : On p n →ₐ[O0 p] Ω} (hι : IsEmb T n ι)
     (c : ℕ) (k : ℤ) (β : On p n) :
-    IsInt p ((p : Ω) ^ (c + 1) * (ι β + (k : Ω) * T.ζ n / (T.ζ n - 1))) := by
+    IsInt (p := p) ((p : Ω) ^ (c + 1) * (ι β + (k : Ω) * T.ζ n / (T.ζ n - 1))) := by
   have hp : (p : Ω) ∈ integralClosure (O0 p) Ω := (integralClosure (O0 p) Ω).natCast_mem p
   have e : (p : Ω) ^ (c + 1) * (ι β + (k : Ω) * T.ζ n / (T.ζ n - 1)) =
       (p : Ω) ^ (c + 1) * ι β + (p : Ω) ^ c * (k : Ω) * T.ζ n * ((p : Ω) / (T.ζ n - 1)) := by ring
@@ -176,14 +185,14 @@ theorem coef_int {T : Tower p Ω} {n : ℕ} (hn : 1 ≤ n) {ι : On p n →ₐ[O
     (mul_mem (mul_mem (mul_mem (pow_mem hp _) (intCast_mem _ k)) (zeta_mem T n)) (p_div_mem T hn))
 
 theorem coef_int' {T : Tower p Ω} {n : ℕ} {ι : On p n →ₐ[O0 p] Ω} (hι : IsEmb T n ι)
-    (c : ℕ) (α : On p n) : IsInt p ((p : Ω) ^ c * ι α) := by
+    (c : ℕ) (α : On p n) : IsInt (p := p) ((p : Ω) ^ c * ι α) := by
   have hp : (p : Ω) ∈ integralClosure (O0 p) Ω := (integralClosure (O0 p) Ω).natCast_mem p
   exact mul_mem (pow_mem hp _) (emb_mem hι α)
 
 theorem coef_fix {T : Tower p Ω} {n : ℕ} {ι : On p n →ₐ[O0 p] Ω} (hι : IsEmb T n ι) {g : Gal p Ω}
     (hg : g ∈ Gn T n) (k : ℤ) (β : On p n) :
     g (ι β + (k : Ω) * T.ζ n / (T.ζ n - 1)) = ι β + (k : Ω) * T.ζ n / (T.ζ n - 1) := by
-  rw [map_add, map_div₀, map_mul, map_sub, map_one, map_intCast, fix_emb hι hg, (mem_Gn.mp hg).1]
+  rw [map_add (f := _), map_div₀, map_mul, map_sub, map_one, map_intCast, fix_emb hι hg, (mem_Gn.mp hg).1]
 
 theorem cup_kummer_dlog : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∃ c : ℕ, ∀ (Ω : Type) [Field Ω] [Algebra (O0 p) Ω], IsClo p Ω →
   ∀ (T : Tower p Ω) (n : ℕ), 1 ≤ n → ∀ ι : On p n →ₐ[O0 p] Ω, IsEmb T n ι →
@@ -221,7 +230,7 @@ theorem cup_kummer_dlog : ∀ (p : ℕ) [Fact p.Prime], p ≠ 2 → ∃ c : ℕ,
   have hne := zeta_sub_one_ne T hn
   have e : ι (fPi p n k l α β α' β') / (T.ζ n - 1) =
       ι α * (ι β' + (l : Ω) * T.ζ n / (T.ζ n - 1)) - (ι β + (k : Ω) * T.ζ n / (T.ζ n - 1)) * ι α' := by
-    simp only [fPi, map_sub, map_mul, map_add, map_intCast, map_one, hι.1]
+    simp only [fPi, map_sub, map_mul, map_add (f := _), map_intCast, map_one, hι.1]
     field_simp
     ring
   simp only [cochainExtendByZeroSubgroup_of_mem _ hg, cochainExtendByZeroSubgroup_of_mem _ hh, e]

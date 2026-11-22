@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.IntegralMonSelf
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.IntegralMonSelf
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,7 +77,7 @@ private theorem gip_sub_eq_of_unitary_conj_diag {ι A B : Type} [Fintype ι] [De
       (eval z) (sub 1 M f) * star ((eval z) f) * Complex.exp (-↑(∑ s : Sg ι A B, ‖z s‖ ^ 2)) :=
     ((continuous_eval _).mul (continuous_star.comp (continuous_eval _))).mul
       (Complex.continuous_exp.comp (Complex.continuous_ofReal.comp
-        (continuous_finset_sum _ fun s _ => (continuous_norm.comp (continuous_apply s)).pow 2)).neg)
+        (continuous_finsetSum _ fun s _ => (continuous_norm.comp (continuous_apply s)).pow 2)).neg)
   unfold gip
   rw [integral_Phi U hU1 hU2 _ hcont]
   refine integral_congr_ae (ae_of_all _ fun z => ?_)

@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PrinInf
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsThetaFam
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SkewGramHalfModule
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HeckeLPartialContinuationHolds
-import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwasawaBlockTriangular
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PrinInf
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsThetaFam
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SkewGramHalfModule
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HeckeLPartialContinuationHolds
+public import Development.AbelianVarietyTheory.Definitions.Foundations.GLintEqKOAndPrincEqKOne
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwasawaBlockTriangular
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,8 +30,8 @@ theorem map_keeps (f : A →+* R) {M : Matrix n n A} {j : Matrix n ρ A} {p : Ma
 
 def lev : (ρ ⊕ s) ⊕ ρ → ℕ := Sum.elim (Sum.elim (fun _ => 0) fun _ => 1) fun _ => 2
 
-omit [DecidableEq ρ] [DecidableEq s] in
 
+omit [DecidableEq ρ] [DecidableEq s] in
 theorem keeps_cols (ε : n ≃ (ρ ⊕ s) ⊕ ρ) {e e' : Matrix n ρ A} {i : Matrix n s A} {B b : GL n A}
     (hB : B.1 = (Matrix.fromCols (Matrix.fromCols e i) e').submatrix id ε) (hb : b.1.BlockTriangular (lev ∘ ε)) :
     ∃ a : Matrix ρ ρ A, (B * b * B⁻¹).1 * e = e * a := by
@@ -41,8 +45,8 @@ theorem keeps_cols (ε : n ≃ (ρ ⊕ s) ⊕ ρ) {e e' : Matrix n ρ A} {i : Ma
   rw [hB, Matrix.mul_apply, Matrix.mul_apply, ← ε.symm.sum_comp fun t => _ * b.1 t _] at h1
   simpa [Matrix.mul_apply, h2, h3] using h1
 
-omit [DecidableEq ρ] [DecidableEq s] in
 
+omit [DecidableEq ρ] [DecidableEq s] in
 theorem keeps_rows (ε : n ≃ (ρ ⊕ s) ⊕ ρ) {p p' : Matrix ρ n A} {q : Matrix s n A} {B b : GL n A}
     (hB : (B⁻¹).1 = (Matrix.fromRows (Matrix.fromRows p q) p').submatrix ε id) (hb : b.1.BlockTriangular (lev ∘ ε)) :
     ∃ c : Matrix ρ ρ A, p' * (B * b * B⁻¹).1 = c * p' := by
@@ -56,8 +60,8 @@ theorem keeps_rows (ε : n ≃ (ρ ⊕ s) ⊕ ρ) {p p' : Matrix ρ n A} {q : Ma
   rw [hB, Matrix.mul_apply, Matrix.mul_apply, ← ε.symm.sum_comp fun t => b.1 _ t * _] at h1
   simpa [Matrix.mul_apply, h2] using h1
 
-omit [DecidableEq s] [Fintype s] in
 
+omit [DecidableEq s] [Fintype s] in
 theorem keeps_dual {G x x' : Matrix n n A} {e f : Matrix n ρ A} {c : Matrix ρ ρ A} {xi Gi : Matrix n n A}
     (hx : x * xi = 1) (hG : G * Gi = 1) (h : x'.transpose * G * x = G) (hf : e.transpose * G * f = 1)
     (hc : e.transpose * G * x = c * (e.transpose * G)) : ∃ a : Matrix ρ ρ A, x' * e = e * a := by
@@ -131,7 +135,7 @@ theorem exists_flag_basis (τ : E →ₐ[F] Fv F v) (hJ : IsHermND σ J) {e e' :
     rw [Matrix.submatrix_mul_equiv, Matrix.submatrix_id_id, Matrix.fromCols_mul_fromRows, Matrix.fromCols_mul_fromRows,
       ← hm]
     have := congrArg (τ : E →+* Fv F v).mapMatrix hsum
-    rw [map_add, map_add, map_one] at this
+    rw [map_add (f := _), map_add (f := _), map_one] at this
     simp only [RingHom.mapMatrix_apply, Matrix.map_mul] at this
     rw [hm]
     exact this
@@ -147,11 +151,11 @@ theorem exists_flag_basis (τ : E →ₐ[F] Fv F v) (hJ : IsHermND σ J) {e e' :
     (by rw [hf, Matrix.map_one _ (map_zero _) (map_one _)])
 
 theorem iwasawa_of_triangular (h : IsCMExt F E σ) (hJ : IsHermND σ J) (τ : E →ₐ[F] Fv F v)
-    (L : Submodule (𝓞 E) (Fin n → E)) [Submodule.IsLattice E L] (hL : IsSelfDualAt σ J L v) (Q : Subgroup (GLoc σ J v))
+    (L : Submodule (𝓞 E) (Fin n → E)) [Submodule.IsFullLattice E L] (hL : IsSelfDualAt σ J L v) (Q : Subgroup (GLoc σ J v))
     (B : GL (Fin n) (Fv F v)) (lv : Fin n → ℕ)
     (hQ : ∀ g : GLoc σ J v, (B⁻¹ * splitHom σ J τ g * B).1.BlockTriangular lv → g ∈ Q) (y : GLoc σ J v) :
     ∃ q k : GLoc σ J v, q ∈ Q ∧ k ∈ stabLoc σ J L v ∧ y = q * k := by
-  obtain ⟨β, hβ⟩ := exists_isSplitBasis τ L h
+  obtain ⟨β, hβ⟩ : ∃ β, IsSplitBasis τ L β := exists_isSplitBasis τ L h
   have iw : ∀ x : GL (Fin n) (Fv F v), ∃ q ∈ Q, ∃ k ∈ stabLoc σ J L v,
       x * β = splitHom σ J τ q * B * β⁻¹ * splitHom σ J τ k * β := fun x => by
     letI := GlobalTheory.LocalData.complRel v

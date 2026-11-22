@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NotIntDensOfSteps
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegralityUnderRingMap.MemIntegerOfIsIntegralMap
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DensAtGoodOf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NotIntDensOfSteps
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IntegralityUnderRingMap.MemIntegerOfIsIntegralMap
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.DensAtGoodOf
+
+@[expose] public section
 
 open NumberField Formalism.MainNotions.S Formalism.MainNotions.S.LocalSplitGroups ValuativeRel
 
@@ -27,19 +31,26 @@ theorem mem_OF_of_loc (D : Formalism.BasicNotions.D7) (s : D.host.F)
   have hinj : Function.Injective (algebraMap (D.s.atP p).Fp (D.s.atP p).Ep) := by
     haveI := hnt; exact (algebraMap (D.s.atP p).Fp (D.s.atP p).Ep).injective
   have h2 : (D.s.atP p).ιF s ∈ 𝒪[(D.s.atP p).Fp] :=
-    PI.IntegralDiscriminantMembership.mem_integer_of_isIntegral ((isIntegral_algebraMap_iff hinj).1 hint)
+    PI.IntegralDiscriminantMembership.mem_integer_of_isIntegral ((isIntegral_algebraMap_iff ).1 hint)
   rw [mem_integer_iff_vle, ← map_one (D.s.atP p).ιF, (D.s.atP p).val, map_one] at h2
   exact h2
 
 theorem locGlobIntE : LocGlobIntE := by
   intro D x hx
+  have hstar : star x = D.conjF x := by
+    rw [D.conjF_eq]
+    have := D.host.isCMField_hostE
+    apply D.host.φ₀.injective
+    change D.host.φ₀ (NumberField.IsCMField.complexConj D.host.E x) = D.host.φ₀ (D.host.conj x)
+    rw [NumberField.IsCMField.complexEmbedding_complexConj]
+    exact (D.host.toHostAx.conjE_apply D.host.φ₀ x).symm
   have hcjO : ∀ p : PlF D, (D.s.atP p).ιE (star x) ∈ (D.s.atP p).O := fun p => by
-    rw [PI.UnitaryGroupMassFormula.CntFormula.star_eq_conjF, ← (D.s.atP p).cj_ιE, (D.s.atP p).O_def]
+    rw [hstar, ← (D.s.atP p).cj_ιE, (D.s.atP p).O_def]
     exact ((D.s.atP p).O_def _).1 (hx p) |>.map ((D.s.atP p).cj.toAlgHom.restrictScalars 𝒪[(D.s.atP p).Fp])
   obtain ⟨t, ht⟩ := (D.sp.cm.fixed (x + star x)).1 (by rw [star_add, star_star, add_comm])
   obtain ⟨n, hn⟩ := (D.sp.cm.fixed (x * star x)).1 (by rw [star_mul, star_star, mul_comm])
   obtain ⟨t', ht'⟩ := mem_OF_of_loc D t fun p => by
-    rw [ht, map_add]; exact (D.s.atP p).O.add_mem (hx p) (hcjO p)
+    rw [ht, map_add (f := _)]; exact (D.s.atP p).O.add_mem (hx p) (hcjO p)
   obtain ⟨n', hn'⟩ := mem_OF_of_loc D n fun p => by
     rw [hn, map_mul]; exact (D.s.atP p).O.mul_mem (hx p) (hcjO p)
 

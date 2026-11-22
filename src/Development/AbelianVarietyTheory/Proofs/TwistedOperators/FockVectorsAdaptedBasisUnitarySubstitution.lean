@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockPolynomialVectorChangeOrthonormalBasesSubst
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockPolynomialActionOneMulAdjoint
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockPolynomialVectorChangeOrthonormalBasesSubst
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockPolynomialActionOneMulAdjoint
+
+@[expose] public section
 
 noncomputable section
 
@@ -259,8 +263,8 @@ theorem aPlus_smul_dir (e : Bool) (c : ℂ) (z : Matrix (Fin T.rank) (Fin S.rank
     generalize ((fockScale D τ : ℂ))⁻¹ = k
     linear_combination (k * (c.im : ℂ) * B) * Complex.I_sq + (k * (A - Complex.I * B)) * hre
 
-open GlobalTheory.FockIndep GlobalTheory.OrientedHeis Complex in
 
+open GlobalTheory.FockIndep GlobalTheory.OrientedHeis Complex in
 theorem aPlus_comm_at (hS : IsCartanInv (gramAt D S τ) sS) (hT : IsCartanInv (gramAt D T τ) sT)
     (z z' : Matrix (Fin T.rank) (Fin S.rank) ℂ) :
     Datum.aPlus (heisO ψ S T) θ τ (cplxO sS sT) z (Datum.aPlus (heisO ψ S T) θ τ (cplxO sS sT) z' f) =
@@ -432,9 +436,10 @@ theorem ptAt_basis : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (θ : InfFam 
         unfold lsub
         rw [MvPolynomial.aeval_C, MvPolynomial.algebraMap_eq]
       rw [e2, h0, h0]
-    | add Q R hQ hR => rw [map_add, map_add, map_add, hQ, hR]
+    | add Q R hQ hR => rw [map_add (f := _), map_add (f := _), map_add (f := _), hQ, hR]
     | mul_X Q v hQ =>
-      rw [mul_comm, GlobalTheory.FockIndep.pure_X_mul hadd hsm hA' hc' Aadd' Asm' hf, hQ,
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [mul_comm, GlobalTheory.FockIndep.pure_X_mul hadd hsm hA' hc' Aadd' Asm' hf, hQ,
         hN v _ (GlobalTheory.FockIndep.pure_mem hadd hsm hA hf _), map_mul, lsub_X, Finset.sum_mul, map_sum]
       refine Finset.sum_congr rfl fun w _ => ?_
       rw [mul_assoc, ← MvPolynomial.smul_eq_C_mul, map_smul, GlobalTheory.FockIndep.pure_X_mul hadd hsm hA hc Aadd Asm hf]

@@ -1,16 +1,20 @@
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.NormalizedHeckeData
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.TwoPowS0EqTwoPartModulus
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.HeckeStdTwOfStd
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.RingSpecSidedEmbeddingFixedField
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.ValLeOneOfIsIntegral
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.GlobalDatumRegularityOfTypesCompatibility
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.WittCoreInclusionMulVecMemLatticeCompletionAtPla
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.RingHomOfBaseOrderToFraction
-import Formalism.LocalToGlobal.NormalizedHeckeFactors.Choice
-import Formalism.LocalToGlobal.GaloisLevelStructure.NGalTied
-import Formalism.LocalToGlobal.LocalInduction.BridgeInd
-import Formalism.LocalRingCardinality.DataNChTie
-import Formalism.LocalToGlobal.GaloisLevelStructure.LinkChar
+module
+
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.NormalizedHeckeData
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.TwoPowS0EqTwoPartModulus
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.HeckeStdTwOfStd
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.RingSpecSidedEmbeddingFixedField
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.ValLeOneOfIsIntegral
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.GlobalDatumRegularityOfTypesCompatibility
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.WittCoreInclusionMulVecMemLatticeCompletionAtPla
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.RingHomOfBaseOrderToFraction
+public import Formalism.LocalToGlobal.NormalizedHeckeFactors.Choice
+public import Formalism.LocalToGlobal.GaloisLevelStructure.NGalTied
+public import Formalism.LocalToGlobal.LocalInduction.BridgeInd
+public import Formalism.LocalRingCardinality.DataNChTie
+public import Formalism.LocalToGlobal.GaloisLevelStructure.LinkChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +23,8 @@ open Formalism.L2.NT
 
 namespace Formalism.L2
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 structure NormalizedTwistCompatibility (D : D7) (C : NChoice D) (I : TwIn D) where
 
   gal : NGalTied D

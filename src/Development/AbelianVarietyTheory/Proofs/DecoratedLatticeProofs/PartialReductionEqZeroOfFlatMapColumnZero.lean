@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsRead
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsRead
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData
 
 namespace GlobalTheory.FlatRed
@@ -38,7 +43,7 @@ theorem fill_eq (ρ : ℕ) (h : ρ < c + 1) (t : Matrix (n ⊕ Fin c) (n' ⊕ Fi
   ext r q
   simp only [fill, affPt, Matrix.of_apply, Matrix.add_apply]
   by_cases hF : Free (ρ + 1) (r, q)
-  · rw [dif_pos ((mem_itFree ρ _).2 hF), dif_pos hF]
+  · rw [dite_eq_left ((mem_itFree ρ _).2 hF), dite_eq_left hF]
     rcases r with r | l <;> rcases q with s | i
     · exact hF.elim
     · have h1 : ρ + 1 < i.val + 1 := hF
@@ -48,7 +53,7 @@ theorem fill_eq (ρ : ℕ) (h : ρ < c + 1) (t : Matrix (n ⊕ Fin c) (n' ⊕ Fi
     · have h1 : l.val < i.val := hF
       have h2 : l.val ≠ i.val := by omega
       simp [basePt, colAt, h2]
-  · rw [dif_neg (fun hh => hF ((mem_itFree ρ _).1 hh)), dif_neg hF]
+  · rw [dite_eq_right (fun hh => hF ((mem_itFree ρ _).1 hh)), dite_eq_right hF]
     by_cases hR : IsRead n n' c ρ (r, q)
     · rw [if_neg (fun hh => ((mem_evAll ρ _).1 hh).2 hR)]
       rcases r with r | l <;> rcases q with s | i

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.TailInt
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.TailInt
+
+@[expose] public section
 
 noncomputable section
 open MeasureTheory
@@ -130,7 +134,7 @@ lemma de_scl {p m : ℕ} (a0 : ℂ) (r : ℝ) (hr : 1 + ‖a0‖ ^ 2 = r ^ 2) (x
 
 lemma cont_lsq {p m : ℕ} (l : Fin (p + 1)) : Continuous fun x : Xp p m => Lsq x l := by
   unfold Lsq
-  exact continuous_const.add (continuous_finsetSum _ fun j _ => by split_ifs <;> fun_prop)
+  exact continuous_const.add (continuous_finsetSum (Finset.univ : Finset (Fin _)) fun j _ => by split_ifs <;> fun_prop)
 
 lemma cont_rhoSq {p m : ℕ} (l : Fin (p + 1)) : Continuous fun x : Xp p m => rhoSq x l := by
   unfold rhoSq

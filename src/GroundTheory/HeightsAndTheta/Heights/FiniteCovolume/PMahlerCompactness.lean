@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StBoundedGenerators
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StLenCauchySchwarz
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StGramDetermines
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StBoundedInverseCompact
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.SecondCountableTopologyArchUnitary
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StBoundedGenerators
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StLenCauchySchwarz
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StGramDetermines
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StBoundedInverseCompact
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -13,7 +17,7 @@ open scoped Pointwise ComplexOrder ENNReal
 noncomputable section
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 theorem vecAt_unitary (h : HermitianForm F E W) (v : Basis ι E W) (γ : h.unitaryGroup) (x : W)

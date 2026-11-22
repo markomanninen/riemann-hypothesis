@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PoleLengthBound.StepsOf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PoleLengthBound.BallQuot
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PoleLengthBound.StepsOf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.PoleLengthBound.BallQuot
+
+@[expose] public section
 
 namespace PI.PoleLengthCount
 

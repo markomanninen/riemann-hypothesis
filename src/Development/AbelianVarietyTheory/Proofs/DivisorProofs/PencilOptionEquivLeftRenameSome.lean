@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MvPolynomial
 
 namespace GlobalTheory
@@ -7,7 +12,7 @@ theorem pencil_optionEquivLeft_rename_some {τ : Type} (a : MvPolynomial τ ℂ)
     MvPolynomial.optionEquivLeft ℂ τ (MvPolynomial.rename some a) = Polynomial.C a := by
   induction a using MvPolynomial.induction_on with
   | C r => simp [MvPolynomial.optionEquivLeft_C]
-  | add p q hp hq => simp [map_add, hp, hq]
+  | add p q hp hq => simp [map_add (f := _), hp, hq]
   | mul_X p x hp => simp [map_mul, hp, MvPolynomial.optionEquivLeft_X_some]
 
 theorem pencil_natDegree_det_le_rowSum {R : Type} [CommRing R] {ι : Type} [Fintype ι] [DecidableEq ι]
@@ -28,7 +33,7 @@ theorem pencil_map_entry {τ : Type} (a b : MvPolynomial τ ℂ) :
     MvPolynomial.optionEquivLeft ℂ τ
       (MvPolynomial.X none * MvPolynomial.rename some a + MvPolynomial.rename some b) =
       Polynomial.X * Polynomial.C a + Polynomial.C b := by
-  simp [map_add, map_mul, MvPolynomial.optionEquivLeft_X_none, pencil_optionEquivLeft_rename_some]
+  simp [map_add (f := _), map_mul, MvPolynomial.optionEquivLeft_X_none, pencil_optionEquivLeft_rename_some]
 
 theorem pencil_det_adjugate_coeff :
     ∀ {τ : Type} {ι : Type} [Fintype ι] [DecidableEq ι] (A B : Matrix ι ι (MvPolynomial τ ℂ)),

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryTopology
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryTopology
+
+@[expose] public section
 
 noncomputable section
 
@@ -158,7 +162,7 @@ theorem continuous_reg [LocallyCompactSpace G] [SecondCountableTopology G] [IsFi
     exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds ht (fun _ => zero_le)
       fun g => measure_symmDiff_le h𝓕 hA g g₀
   · intro f g hf hg _ h1 h2
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact h1.add h2
   · refine isClosed_of_closure_subset fun F hF => ?_
     refine TendstoUniformly.continuous (F := fun F' g => reg h𝓕 g F') (p := 𝓝 F) ?_

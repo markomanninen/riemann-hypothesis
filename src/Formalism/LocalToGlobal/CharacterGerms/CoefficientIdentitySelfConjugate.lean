@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.IndependenceBoundRaw
-import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.IndependenceBoundRaw
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,11 +65,6 @@ theorem independence_bound_raw [IsAlgClosed C] [NeZero d] (hrk : X.RankHyp) (H :
 end IndependenceBoundPlain
 
 section Closed
-
-theorem independence_bound_all_charts_of_coefficient_identity (h : CoefficientIdentityCondition) : IndependenceBoundAllCharts := by
-  intro C _ _ V O _ _ dd Y d _ I _ p hrk H hR2
-  have := Y.algClosed
-  exact IndependenceBoundPlain.independence_bound_raw (Y.raw p) hrk H hR2 (h C V O dd Y d I p hrk H)
 
 def CoefficientIdentitySelfConjugate : Prop :=
   AllSelf fun _ _ V _ _ _ _ X => X.RankHyp → ∀ H : ∀ g, X.CartHyp V g, IndependenceBoundPlain.PlainCoefficientIdentity X H

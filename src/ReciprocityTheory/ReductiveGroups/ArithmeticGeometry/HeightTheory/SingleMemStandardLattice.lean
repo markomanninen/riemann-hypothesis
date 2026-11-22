@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.OrthogonalProjectorMulVecConjugate
-import ReciprocityTheory.SemistableReduction.DegAddHolds
-import ReciprocityTheory.SemistableReduction.SemiDegB
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.OrthogonalProjectorMulVecConjugate
+public import ReciprocityTheory.SemistableReduction.DegAddHolds
+public import ReciprocityTheory.SemistableReduction.SemiDegB
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -91,7 +95,8 @@ theorem exists_integral_completion {b : Fin k → Fin r → K} (hb : LinearIndep
     simp only [Fin.append_left, Fin.append_right] at hg
     have h1 : ∑ j, g (Fin.natAdd k j) • T (c j) = 0 := by
       have := congrArg T hg
-      rw [map_add, map_zero, map_sum, map_sum] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_add (f := _), map_zero, map_sum, map_sum] at this
       have h0 : ∑ i, T (g (Fin.castAdd (r - k) i) • b i) = 0 :=
         Finset.sum_eq_zero fun i _ => by
           rw [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
@@ -110,7 +115,8 @@ theorem exists_integral_completion {b : Fin k → Fin r → K} (hb : LinearIndep
   · intro x
     obtain ⟨β, hβ⟩ := (Submodule.mem_span_range_iff_exists_fun K).1 (hTspan (T x))
     have hT0 : T (x - ∑ j, β j • c j) = 0 := by
-      rw [map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum]
       simp only [map_smul]
       rw [hβ, sub_self]
     rw [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero] at hT0

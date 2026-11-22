@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
-import Formalism.LocalToGlobal.GlobalTheory.IsResidueClassZero
-import Formalism.SharpRestriction.GrowthBounds.SmallOrderPrimes
-import Formalism.SharpRestriction.Divisibility.LocalQuadraticParts
-import Formalism.SharpRestriction.LevelLetterCocycles.TwGood
-import Formalism.LocalRingCardinality.DataAmbForm
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DisjointExceptional
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.AuxiliaryPrimeMemAvoidedPrimes
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SetUnipotentTranslate
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+public import Formalism.LocalToGlobal.GlobalTheory.IsResidueClassZero
+public import Formalism.SharpRestriction.GrowthBounds.SmallOrderPrimes
+public import Formalism.SharpRestriction.Divisibility.LocalQuadraticParts
+public import Formalism.SharpRestriction.LevelLetterCocycles.TwGood
+public import Formalism.LocalRingCardinality.DataAmbForm
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DisjointExceptional
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.AuxiliaryPrimeMemAvoidedPrimes
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SetUnipotentTranslate
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,9 +70,6 @@ theorem TwAllAt.twAt {D : D7} {C : NChoice D} {T : ThData D} (h : TwAllAt D C T)
   refine ⟨hc, N0, S, fun w hw => ⟨(hS w hw).1, ?_⟩⟩
   have := (hS w hw).2 1 (by simp)
   rwa [zpow_one] at this
-
-theorem twAllAt_of_untwisted {D : D7} (C : NChoice D) (T : ThData D) (h : ∀ w, D.what₂.muAt w = D.what₂.mu0) : TwAllAt D C T :=
-  ⟨fun w hw => absurd (h w) hw, fun _ => 0, fun _ _ _ => ∅, fun w hw => absurd (h w) hw⟩
 
 end GlobalTheory.EX.DQ
 

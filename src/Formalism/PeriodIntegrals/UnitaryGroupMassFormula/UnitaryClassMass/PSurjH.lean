@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.PSurjSk
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.UJClassMassOfDeep
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.PSurjSk
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnitaryClassMass.UJClassMassOfDeep
+
+@[expose] public section
 
 open NumberField PI.UJClassFin PI.UJClassMass Formalism.HermitianLatticesTheory
 
@@ -81,8 +85,10 @@ theorem cofin1 {E : Type} [Field E] [NumberField E] {V : Type} [AddCommGroup V] 
 
 theorem cofinStep : CofinStep := by
   intro E _ _ V _ _ _ _ _ L N hL hN
-  obtain ⟨y1, hy1, h1⟩ := cofin1 L N hL.fg hN.span_eq_top
-  obtain ⟨y2, hy2, h2⟩ := cofin1 N L hN.fg hL.span_eq_top
+  have hLspan := Submodule.IsFullLattice.span_eq_top (self := hL)
+  have hNspan := Submodule.IsFullLattice.span_eq_top (self := hN)
+  obtain ⟨y1, hy1, h1⟩ := cofin1 L N hL.toIsLattice.fg hNspan
+  obtain ⟨y2, hy2, h2⟩ := cofin1 N L hN.toIsLattice.fg hLspan
   refine ⟨y1 * y2, mul_ne_zero hy1 hy2, fun v hv => ?_, fun v hv => ?_⟩
   · have h3 := N.smul_mem (y2 : 𝓞 E) (h1 v hv)
     rw [← mul_smul] at h3

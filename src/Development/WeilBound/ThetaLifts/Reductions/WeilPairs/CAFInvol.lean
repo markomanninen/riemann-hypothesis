@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SplitPlaceSiegelLawDiagonalLagrangianCharacterIm
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SplitPlaceSiegelLawDiagonalLagrangianCharacterIm
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -157,7 +162,7 @@ theorem cAF_invol {F E : Type} [Field F] [NumberField F] [Field E] [NumberField 
   induction z using TensorProduct.induction_on with
   | zero => rw [RingHom.map_zero, RingHom.map_zero]
   | tmul a x => rw [hs, hs, GlobalTheory.SplitDetCharF.sig_invol h]
-  | add x y hx hy => rw [RingHom.map_add, RingHom.map_add, hx, hy]
+  | add x y hx hy => rw [RingHom.map_add (f := _), RingHom.map_add (f := _), hx, hy]
 
 theorem exists_levi : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E),
     B.IsGood σ → ∀ (nT : ℕ) (JT : Matrix (Fin nT) (Fin nT) E), IsHermND σ JT →
@@ -184,7 +189,7 @@ theorem exists_levi : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Numb
   have hu : IsUnit (JR (F := F) (AF F) JT).det := by
     have := ((Ne.isUnit hT.2).map (inclR (F := F) (AF F)))
     rwa [RingHom.map_det] at this
-  have ha : cAF σ (e + cAF σ e) = e + cAF σ e := by rw [RingHom.map_add, hcc, add_comm]
+  have ha : cAF σ (e + cAF σ e) = e + cAF σ e := by rw [RingHom.map_add (f := _), hcc, add_comm]
   obtain ⟨H, H', g1, g2, g3, g4, g5, ⟨M, hM, g6⟩, g7⟩ := levi_alg (cAF σ) hcc r hr _ hJ hu _ ha t.1 (t⁻¹).1
     t.mul_inv t.inv_mul (by ext i j; exact ht i j)
   have eJ : JR (F := F) (AF F) (GlobalTheory.WeilSchrodinger.DblTargetF.dblG JT) =

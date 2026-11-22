@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.JacobiTrudi
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.JacobiTrudi
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,14 +64,6 @@ def SchurYOff : Prop :=
     (∀ i k, k ≠ i → IsUnit (g k - g i)) →
     ∑ i, sch lam (scaleOff y i g) * ∏ k ∈ univ.erase i, ((g i - y * g k) * Ring.inverse (g i - g k)) =
       sch lam g * ∑ i : Fin n, y ^ (∑ k ∈ univ.erase i, lam k + (i : ℕ))
-
-def SchurYField : Prop :=
-  ∀ (K : Type) [Field K] [CharZero K] (n : ℕ) (lam : Fin n → ℕ) (g : Fin n → K) (y : K),
-    Function.Injective g →
-    (∑ i, sch lam (scaleAt y i g) * ∏ k ∈ univ.erase i, (g k - y * g i) / (g k - g i) =
-      sch lam g * ∑ i : Fin n, y ^ (lam i + (n - 1 - (i : ℕ)))) ∧
-    (∑ i, sch lam (scaleOff y i g) * ∏ k ∈ univ.erase i, (g i - y * g k) / (g i - g k) =
-      sch lam g * ∑ i : Fin n, y ^ (∑ k ∈ univ.erase i, lam k + (i : ℕ)))
 
 def SchurHomog : Prop :=
   ∀ (R : Type) [CommRing R] [Algebra ℚ R] (n : ℕ) (lam : Fin n → ℕ) (g : Fin n → R) (y : R),

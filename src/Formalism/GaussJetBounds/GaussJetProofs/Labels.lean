@@ -1,5 +1,9 @@
-import Formalism.GaussJetBounds.FrameJetEval
-import Formalism.GaussJetBounds.GaussJetProofs.NormDetLeOneOfEntries
+module
+
+public import Formalism.GaussJetBounds.FrameJetEval
+public import Formalism.GaussJetBounds.GaussJetProofs.NormDetLeOneOfEntries
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -9,11 +13,11 @@ namespace Formalism.DworkPowerSeriesWeights
 open Formalism.IncomingBounds
 
 theorem bddAbove_norm_coeff {R : Type} [NormedField R] {σ : Type} (Q : MvPolynomial σ R) :
-    BddAbove (Set.range fun n : σ →₀ ℕ => ‖MvPolynomial.coeff n Q‖) := by
+    BddAbove (Set.range fun n : σ →₀ ℕ => ‖AddMonoidAlgebra.coeff Q n‖) := by
   classical
-  have hfin : (Set.range fun n : σ →₀ ℕ => ‖MvPolynomial.coeff n Q‖).Finite := by
+  have hfin : (Set.range fun n : σ →₀ ℕ => ‖AddMonoidAlgebra.coeff Q n‖).Finite := by
     refine Set.Finite.subset
-      ((Q.support.image fun n => ‖MvPolynomial.coeff n Q‖).finite_toSet.insert 0) ?_
+      ((Q.support.image fun n => ‖AddMonoidAlgebra.coeff Q n‖).finite_toSet.insert 0) ?_
     rintro _ ⟨n, rfl⟩
     by_cases hn : n ∈ Q.support
     · right
@@ -36,7 +40,7 @@ theorem gauss_sum_powers : GaussPow := by
     have := congrArg (fun f => f y) hnn
     simp only [hEa] at this
     exact Nat.eq_of_mul_eq_mul_left (Nat.pos_of_ne_zero (hk y)) this
-  let Q' : MvPolynomial σ F := ∑ n ∈ Q.support, MvPolynomial.monomial (E n) (MvPolynomial.coeff n Q)
+  let Q' : MvPolynomial σ F := ∑ n ∈ Q.support, MvPolynomial.monomial (E n) (AddMonoidAlgebra.coeff Q n)
   have h1 : MvPolynomial.eval₂ φ Y Q' = MvPolynomial.eval₂ φ (fun y => Y y ^ k y) Q := by
     rw [MvPolynomial.eval₂_sum, MvPolynomial.eval₂_eq]
     refine Finset.sum_congr rfl fun n _ => ?_
@@ -44,7 +48,7 @@ theorem gauss_sum_powers : GaussPow := by
     congr 1
     refine Finset.prod_congr rfl fun y _ => ?_
     rw [pow_mul]
-  have hc : ∀ n, MvPolynomial.coeff (E n) Q' = MvPolynomial.coeff n Q := by
+  have hc : ∀ n, AddMonoidAlgebra.coeff Q' (E n) = AddMonoidAlgebra.coeff Q n := by
     intro n
     simp only [Q', MvPolynomial.coeff_sum, MvPolynomial.coeff_monomial, hE.eq_iff]
     rw [Finset.sum_ite_eq' Q.support n]

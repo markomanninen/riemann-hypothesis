@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
-import ReciprocityTheory.ThetaQuasiPeriods.Transl
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+module
+
+public import Mathlib
+public import ReciprocityTheory.ThetaQuasiPeriods.ThetaQuasiPeriodStatement
+public import ReciprocityTheory.ThetaQuasiPeriods.Transl
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj Complex Matrix Filter Topology
 open ReciprocityTheory.PTheta ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -65,7 +69,7 @@ private theorem exists_homogeneous_eval_of_even_degree_monomial {X σ ρ : Type}
       rw [Finsupp.single_le_iff]; omega
     obtain ⟨m₁, rfl⟩ : ∃ m₁, m = m₁ + Finsupp.single i 1 :=
       ⟨_, (tsub_add_cancel_of_le hle₁).symm⟩
-    rw [map_add, Finsupp.degree_single] at hm
+    rw [map_add (f := _), Finsupp.degree_single] at hm
     obtain ⟨j, hj⟩ : ∃ j, m₁ j ≠ 0 := by
       by_contra h
       push Not at h
@@ -76,7 +80,7 @@ private theorem exists_homogeneous_eval_of_even_degree_monomial {X σ ρ : Type}
       rw [Finsupp.single_le_iff]; omega
     obtain ⟨m₂, rfl⟩ : ∃ m₂, m₁ = m₂ + Finsupp.single j 1 :=
       ⟨_, (tsub_add_cancel_of_le hle₂).symm⟩
-    rw [map_add, Finsupp.degree_single] at hm
+    rw [map_add (f := _), Finsupp.degree_single] at hm
     have hdeg : m₂.degree = 2 * k := by omega
     obtain ⟨G, hG, hGz⟩ := isWeightedHomogeneous_coeff_mul_rw1 b (ih m₂ hdeg) (exists_homogeneous_one_eval_of_mem_span b (hab j i))
     refine ⟨G, hG, fun z => ?_⟩

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,8 @@ open GlobalTheory.FinPl (Lat idAt idOff intAt grpAt grpOff MxAt latV latA InK Mo
 open scoped nonZeroDivisors ContDiff
 open GlobalTheory.AscFin
 
-open GlobalTheory.FinPl.LatMem in
 
+open GlobalTheory.FinPl.LatMem in
 theorem GlobalTheory.FinPl.projB_mem_of_orthAt : ∀ {D : D7} {S A B : HSp D} (o : OrthDec S A B) {L : Lat S} {LA : Lat A} {LB : Lat B}, (∀ z : Fin B.rank → D.host.E, (∀ v : GlobalTheory.FinPl.Pl D, (fun i => pairA D.host.F 0 (GlobalTheory.FinPl.LatMem.indP D.host.F (· = v)) ⊗ₜ[D.host.F] z i) ∈ latV B LB (· = v)) → z ∈ LB) → (∀ v, OrthAt o L LA LB v) → ∀ t ∈ L, o.qB *ᵥ t ∈ LB := by
   intro D S A B o L LA LB hLG hO t ht
   apply hLG
@@ -23,8 +27,8 @@ theorem GlobalTheory.FinPl.projB_mem_of_orthAt : ∀ {D : D7} {S A B : HSp D} (o
   have h2 := ((hO v _).1 hY).2
   convert h2 using 1
   funext i
-  simp only [OrthDec.pB, rat, Matrix.mulVec, dotProduct, Matrix.map_apply, one_mul]
+  simp only [Matrix.mulVec, dotProduct]
   rw [TensorProduct.tmul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   show _ = (1 : AF D.host.F) ⊗ₜ[D.host.F] (o.qB i j) * _
-  rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul]
+  simp only [Algebra.TensorProduct.tmul_mul_tmul, one_mul]

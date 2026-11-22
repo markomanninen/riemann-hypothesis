@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
-import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
-import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
-import Formalism.LocalToGlobal.CharacterGerms.NegMem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IsIntegralGaugedFormalGroupLawSelfConjugateSquar
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+public import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
+public import Formalism.LocalToGlobal.CharacterGerms.NegMem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.IsIntegralGaugedFormalGroupLawSelfConjugateSquar
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -64,7 +68,7 @@ theorem sb_gp_self (f : PS C 2 dd) : sb ![gp C (Fin dd) (0 : Fin 2), gp C (Fin d
   rw [e, subst_self]
   rfl
 
-theorem rLaw_raw : RLaw (Y.raw p) V where
+theorem rLaw_raw : RLaw (Y.raw p) V := {
   charZero := inferInstance
   closed := Y.algClosed
   odd := Y.l_odd
@@ -92,14 +96,14 @@ theorem rLaw_raw : RLaw (Y.raw p) V where
     exact Y.intF i
   ph1 := by
     rw [formalAdd_eq_law Y p (zc_gp 0) (zc_gp 1), hAt_eq_sb, hAt_eq_sb, hAt_eq_sb, mvExp_eq (by
-      rw [map_sub, map_add, cc_sb_h Y (zc_gp _) (zc_gp _), cc_sb_h Y (zc_gp _) (zc_gp _),
+      rw [map_sub, map_add (f := _), cc_sb_h Y (zc_gp _) (zc_gp _), cc_sb_h Y (zc_gp _) (zc_gp _),
         cc_sb_h Y (zc_law Y (zc_gp _) (zc_gp _)) (zc_gp _)]
       simp), exp_gauge_cocycle_first_variable Y (zc_gp _) (zc_gp _) (zc_gp _)]
     refine intS_sb V (zc3 (zc_gp _) (zc_gp _) (zc_gp _)) (fun j i => ?_) Y.intPh1
     fin_cases j <;> exact intS_gp V _ i
   ph2 := by
     rw [formalAdd_eq_law Y p (zc_gp 1) (zc_gp 2), hAt_eq_sb, hAt_eq_sb, hAt_eq_sb, mvExp_eq (by
-      rw [map_sub, map_add, cc_sb_h Y (zc_gp _) (zc_gp _), cc_sb_h Y (zc_gp _) (zc_gp _),
+      rw [map_sub, map_add (f := _), cc_sb_h Y (zc_gp _) (zc_gp _), cc_sb_h Y (zc_gp _) (zc_gp _),
         cc_sb_h Y (zc_gp _) (zc_law Y (zc_gp _) (zc_gp _))]
       simp), exp_gauge_cocycle_second_variable Y (zc_gp _) (zc_gp _) (zc_gp _)]
     refine intS_sb V (zc3 (zc_gp _) (zc_gp _) (zc_gp _)) (fun j i => ?_) Y.intPh2
@@ -114,7 +118,8 @@ theorem rLaw_raw : RLaw (Y.raw p) V where
   uint := p.u_int
   sat := fun g => by
     obtain ⟨w, hw, h⟩ := p.u_sat g
-    exact ⟨w, hw, fun c c' => ⟨fun e => (h c c').trans (if_pos e), fun e => (h c c').trans (if_neg e)⟩⟩
+    exact ⟨w, hw, fun c c' => ⟨fun e => (h c c').trans (ite_eq_left e),
+      fun e => (h c c').trans (ite_eq_right e)⟩⟩ }
 
 theorem rLaw_pairData : ∀ (C : Type) [Field C] [CharZero C] (V : VF C) (O : Type) [CommRing O] [StarRing O] (dd : ℕ)
     (Y : FBChart C V O dd) (d : ℕ) [NeZero d] (I : Fin 2 → Type) [∀ g, Fintype (I g)] (p : PairData Y d I),

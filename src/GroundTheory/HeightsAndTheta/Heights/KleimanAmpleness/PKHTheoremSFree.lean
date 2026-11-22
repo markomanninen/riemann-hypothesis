@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.KHFreeEmbedSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.KHFreeDecompSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.KHFreeIndepSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.KHCombContractSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.KHCombCyclicSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.KHFreeBadFiniteSt
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.CechHcSubsingletonOfBij
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.KHFreeEmbedSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.KHFreeDecompSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.KHFreeIndepSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.KHCombContractSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.KHCombCyclicSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.KHFreeBadFiniteSt
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.CechHcSubsingletonOfBij
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -52,7 +57,8 @@ theorem cocycle_decomp (hE : KHFreeEmbed.Statement) (hD : KHFreeDecomp.Statement
   obtain ⟨A, f, hA, rfl⟩ := hD S K ι c d n z hz.1
   refine ⟨A, f, hA, rfl, hI S K ι (n + 1) A (fun a => combD S (negSet a) n (f a)) ?_⟩
   have h0 : KH.cechD S ι _ n (∑ a ∈ A, embed S a n (f a)) = 0 := hz.2
-  rw [map_sum] at h0
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum] at h0
   simpa only [(hE S K ι _).1] using h0
 
 theorem part_cyclic (hC : KHCombContract.Statement) (hY : KHCombCyclic.Statement) (a : (Σ k, ι k) → ℤ) {n : ℕ}
@@ -73,8 +79,8 @@ theorem part_cyclic (hC : KHCombContract.Statement) (hY : KHCombCyclic.Statement
     rw [zero_smul, sub_zero]
     rwa [h0, sub_zero] at hg'
 
-omit [LinearOrder K] [∀ k, LinearOrder (ι k)] in
 
+omit [LinearOrder K] [∀ k, LinearOrder (ι k)] in
 theorem negSet_empty {a : (Σ k, ι k) → ℤ} {e : K → ℤ} (ha : blockSum a = e) (he : ∀ k, 0 ≤ e k) (hb : Bad a)
     (k : K) : negSet a k = ∅ := by
   rcases hb k with h | h
@@ -94,8 +100,8 @@ theorem nonneg_of_negSet_empty {a : (Σ k, ι k) → ℤ} (h : ∀ k, negSet a k
   rw [h p.1] at hm
   exact Finset.notMem_empty _ hm
 
-omit [LinearOrder K] [∀ k, LinearOrder (ι k)] in
 
+omit [LinearOrder K] [∀ k, LinearOrder (ι k)] in
 theorem singOne_eq_zero {J : ∀ k, Finset (ι k)} (hJ : ∀ k, J k = ∅) {n : ℕ} (hn : 1 ≤ n) :
     singOne S J n = 0 := by
   funext I
@@ -107,8 +113,8 @@ theorem singOne_eq_zero {J : ∀ k, Finset (ι k)} (hJ : ∀ k, J k = ∅) {n : 
   simp only [h1, Finset.sum_const_zero] at hs
   omega
 
-omit [LinearOrder K] [∀ k, LinearOrder (ι k)] in
 
+omit [LinearOrder K] [∀ k, LinearOrder (ι k)] in
 theorem singOne_zero {J : ∀ k, Finset (ι k)} (I : CombCell ι J 0) : singOne S J 0 I = 1 := by
   simp only [singOne]
   rw [if_pos]
@@ -209,7 +215,8 @@ theorem sections (hE : KHFreeEmbed.Statement) (hD : KHFreeDecomp.Statement) (hI 
   choose! m hm hmI using hpart
   refine ⟨∑ a ∈ A, m a, Submodule.sum_mem _ hm, fun I => ?_⟩
   rw [Finset.sum_apply]
-  rw [← LocalizedModule.mkLinearMap_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← LocalizedModule.mkLinearMap_apply, map_sum]
   exact Finset.sum_congr rfl fun a ha => by rw [hmI a ha, LocalizedModule.mkLinearMap_apply]
 
 end KHTheoremSFree

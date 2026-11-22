@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ReadMod
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatTw
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PIndMap
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ReadMod
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatTw
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PIndMap
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix
 open scoped TensorProduct
@@ -29,7 +33,8 @@ theorem mem_range_of_ker {ι : Type} (f : ι → A →ₗ[ℂ] X) (x : A ⊗[ℂ
     refine Submodule.mem_iInf _ |>.2 fun j => ?_
     have e : (c.mapRange (f j) (map_zero _)).sum (fun i m => m ⊗ₜ[ℂ] B i) = 0 := by
       rw [Finsupp.sum_mapRange_index (by simp)]
-      simpa [Finsupp.sum, map_sum] using h j
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [Finsupp.sum, map_sum] using h j
     have := TensorProduct.sum_tmul_basis_right_eq_zero B _ e
     simpa using DFunLike.congr_fun this i
   refine Submodule.sum_mem _ fun i _ => ⟨(⟨c i, hc i⟩ : (⨅ j, LinearMap.ker (f j) : Submodule ℂ A)) ⊗ₜ[ℂ] B i, ?_⟩
@@ -146,7 +151,7 @@ theorem tens_equiv (σ₁ : Representation ℂ G₁ A₁) (σ₂ : Representatio
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [h₁ _ _ (m₁ a.1 a.2), h₂ _ _ (m₂ b.1 b.2)]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem tens_joint {J₁ J₂ : Type} (f : J₁ → A₁ →ₗ[ℂ] X₁) (g : J₂ → A₂ →ₗ[ℂ] X₂)
     (bf : (⨅ j, LinearMap.ker (f j)) = ⊥) (bg : (⨅ j, LinearMap.ker (g j)) = ⊥) (z : A₁ ⊗[ℂ] A₂)
@@ -185,7 +190,7 @@ end Lin
 
 section Fn
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {r s : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {r s : ℕ}
 
 def prodFn (S₁ : Submodule ℂ (Sm E r)) (S₂ : Submodule ℂ (Sm E s)) : S₁ ⊗[ℂ] S₂ →ₗ[ℂ] (GA E r × GA E s → ℂ) :=
   TensorProduct.lift (LinearMap.mk₂ ℂ (fun a b m => a.1.1 m.1 * b.1.1 m.2)
@@ -211,7 +216,7 @@ theorem lid_map_evAt (S₁ : Submodule ℂ (Sm E r)) (S₂ : Submodule ℂ (Sm E
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul u v => simp [prodFn_tmul, evAt]
-  | add u v hu hv => simp only [map_add, hu, hv, Pi.add_apply]
+  | add u v hu hv => simp only [map_add (f := _), hu, hv, Pi.add_apply]
 
 theorem prodFn_injective (S₁ : Submodule ℂ (Sm E r)) (S₂ : Submodule ℂ (Sm E s)) :
     Function.Injective (prodFn S₁ S₂) := by
@@ -235,10 +240,11 @@ theorem prodFn_prodInv {S₁ : Submodule ℂ (Sm E r)} {S₂ : Submodule ℂ (Sm
   have : (fun m : GA E r × GA E s => ∑ i, (ψ₁ i).1 m.1 * (ψ₂ i).1 m.2) =
       prodFn S₁ S₂ (∑ i, (⟨ψ₁ i, h₁ i⟩ : S₁) ⊗ₜ[ℂ] (⟨ψ₂ i, h₂ i⟩ : S₂)) := by
     funext m
-    simp [map_sum, Finset.sum_apply, prodFn_tmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, Finset.sum_apply, prodFn_tmul]
   rw [this, prodInv_prodFn]
 
-def cc (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (r s : ℕ) : GA E r × GA E s →* ℂˣ :=
+def cc (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (r s : ℕ) : GA E r × GA E s →* ℂˣ :=
   ((chiDet r (Model.absC E ((s : ℂ) / 2))).comp (MonoidHom.fst _ _)) *
     ((chiDet s (Model.absC E (-(r : ℂ) / 2))).comp (MonoidHom.snd _ _))
 
@@ -270,7 +276,7 @@ theorem prodFn_rt (w : HeightOneSpectrum (𝓞 E)) {S₁ : Submodule ℂ (Sm E r
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => rfl
-  | add a b ha hb => simp only [map_add, Pi.add_apply, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), Pi.add_apply, ha, hb]
 
 end Fn
 

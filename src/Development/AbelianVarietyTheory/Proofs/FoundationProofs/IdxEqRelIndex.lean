@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HESmulRight
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MulVSubRight
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HESmulRight
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MulVSubRight
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
@@ -53,8 +57,6 @@ theorem sgn_one : sgn D 1 = 1 := by simp [sgn, hlf]
 
 theorem sgn_mul_self (n : ℕ) : sgn D n * sgn D n = 1 := by
   rw [sgn, ← mul_pow]; simp
-
-theorem sgn_ne_zero (n : ℕ) : sgn D n ≠ 0 := left_ne_zero_of_mul_eq_one (sgn_mul_self n)
 
 theorem sgn_pow_even (n : ℕ) {k : ℕ} (hk : Even k) : sgn D n ^ k = 1 := by
   obtain ⟨j, rfl⟩ := hk

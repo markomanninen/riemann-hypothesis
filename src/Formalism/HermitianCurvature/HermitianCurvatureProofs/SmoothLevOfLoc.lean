@@ -1,10 +1,14 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BaseIndexConstantInjective
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaFiniteOfHaar
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralIdentities
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTranslate.LyQminorLeft
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GroupFactorizationHolds
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BaseIndexConstantInjective
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SigmaFiniteOfHaar
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OrbitalIntegralIdentities
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTranslate.LyQminorLeft
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GroupFactorizationHolds
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ComplexConjugate
@@ -45,11 +49,11 @@ theorem hmat_zb (h : C.LPt) (s : ℕ) (τ : ℂ) (hl : D.IsLocPt (h ++ [(s, τ)]
     · intro e; exact Fin.ext e
   unfold C3.Zb
   by_cases h1 : a' < D.ptSize h
-  · rw [dif_pos h1]
+  · rw [dite_eq_left h1]
     have hpart : D.ptPartner h a' < D.ptSize h := by
       rw [← hspech ⟨a', h1⟩]; exact (D.ptPerm h ⟨a', h1⟩).isLt
     by_cases h2 : q < D.ptSize h
-    · rw [dif_pos h2, entry]
+    · rw [dite_eq_left h2, entry]
       have heqh : (D.ptPerm h ⟨a', h1⟩ = ⟨q, h2⟩) ↔ D.ptPartner h a' = q := by
         rw [← hspech ⟨a', h1⟩]
         constructor
@@ -60,11 +64,11 @@ theorem hmat_zb (h : C.LPt) (s : ℕ) (τ : ℂ) (hl : D.IsLocPt (h ++ [(s, τ)]
         rfl
       · rw [if_neg (fun e => h3 (by rw [heq] at e; rw [hpa, if_pos h1] at e; exact e)),
           if_neg (fun e => h3 (heqh.1 e))]
-    · rw [dif_neg h2, if_neg]
+    · rw [dite_eq_right h2, if_neg]
       intro e
       rw [heq, hpa, if_pos h1] at e
       omega
-  · rw [dif_neg h1]
+  · rw [dite_eq_right h1]
     by_cases h3 : D.ptSize h ≤ q ∧ a' < D.ptSize h + s ∧ q < D.ptSize h + s ∧
         (a' - D.ptSize h) + (q - D.ptSize h) + 1 = s
     · rw [if_pos h3, if_pos (heq.2 (by rw [hpa, if_neg h1]; omega)), hdq, if_neg (by omega)]

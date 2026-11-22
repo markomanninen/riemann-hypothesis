@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.SharpRestriction.Divisibility.LiftErrorLocal
-import Formalism.SharpRestriction.Divisibility.LocalNonemptiness.LiftErrorLocal
-import Formalism.LocalRingCardinality.Lemmas
-import Formalism.LocalRingCardinality.DataParamsT
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.Divisibility.LiftErrorLocal
+public import Formalism.SharpRestriction.Divisibility.LocalNonemptiness.LiftErrorLocal
+public import Formalism.LocalRingCardinality.Lemmas
+public import Formalism.LocalRingCardinality.DataParamsT
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,7 @@ private lemma sigPar_succ_add_one_le_sigPar (D : D7) (τ : D.what₂.Tau) (i : �
   unfold DV.sigPar
   by_cases h1 : i + 1 < D.R.k - 1
   · have h0 : i < D.R.k - 1 := by omega
-    rw [dif_pos h1, dif_pos h0]
+    rw [dite_eq_left h1, dite_eq_left h0]
     have a1 : (D.hc τ).v ⟨i + 1, h1⟩ < (D.hc τ).u ⟨i + 1, by omega⟩ := (D.hc τ).u_gt_v ⟨i + 1, h1⟩
     have a2 : (D.hc τ).u ⟨i + 1, by omega⟩ < (D.hc τ).v ⟨i, h0⟩ := (D.hc τ).v_gt_u ⟨i, h0⟩
     have a3 : (D.hc τ).v ⟨i + 1, h1⟩ < (D.hc τ).v ⟨i, h0⟩ := lt_trans a1 a2
@@ -66,12 +70,12 @@ private lemma sigPar_succ_add_one_le_sigPar (D : D7) (τ : D.what₂.Tau) (i : �
     have a4 : x < y := by exact_mod_cast a3
     have a5 : x + 1 ≤ y := by omega
     exact_mod_cast a5
-  · rw [dif_neg h1]
+  · rw [dite_eq_right h1]
     by_cases h0 : i < D.R.k - 1
-    · rw [dif_pos h0]
+    · rw [dite_eq_left h0]
       have hm : 0 < D.R.m := by omega
       have hb : i + 1 - (D.R.k - 1) < D.R.m := by omega
-      rw [dif_pos hb]
+      rw [dite_eq_left hb]
       have e1 : (⟨i + 1 - (D.R.k - 1), hb⟩ : Fin D.R.m) = ⟨0, hm⟩ :=
         Fin.ext (by show i + 1 - (D.R.k - 1) = 0; omega)
       have e2 : (⟨i + 1, by omega⟩ : Fin D.R.k) = ⟨D.R.k - 1, by omega⟩ :=
@@ -88,11 +92,11 @@ private lemma sigPar_succ_add_one_le_sigPar (D : D7) (τ : D.what₂.Tau) (i : �
       have a4 : -z < y := by exact_mod_cast key
       have a5 : -z + 1 ≤ y := by omega
       exact_mod_cast a5
-    · rw [dif_neg h0]
+    · rw [dite_eq_right h0]
       have hb1 : i + 1 - (D.R.k - 1) < D.R.m := by omega
       have hb2 : i - (D.R.k - 1) < D.R.m := by omega
       have hl : i - (D.R.k - 1) + 1 < D.R.m := by omega
-      rw [dif_pos hb1, dif_pos hb2]
+      rw [dite_eq_left hb1, dite_eq_left hb2]
       have g1 := (D.hc τ).gap_be ⟨i - (D.R.k - 1), hb2⟩
       have g2 : ((D.R.t : ℚ) + 3) / 2 ≤
           (D.hc τ).b ⟨i + 1 - (D.R.k - 1), hb1⟩ - (D.hc τ).e ⟨i - (D.R.k - 1), hb2⟩ := by
@@ -158,13 +162,13 @@ theorem kaBig_nonneg (D : D7) (hK : DV.KapDef D) {j : ℕ} (h1 : 1 ≤ j) (h2 : 
     unfold DV.sigPar
     have c1 : ¬ (D.R.k + j - 2 < D.R.k - 1) := by omega
     have c2 : D.R.k + j - 2 - (D.R.k - 1) < D.R.m := by omega
-    rw [dif_neg c1, dif_pos c2]
+    rw [dite_eq_right c1, dite_eq_left c2]
     have e : (⟨D.R.k + j - 2 - (D.R.k - 1), c2⟩ : Fin D.R.m) = ⟨j - 1, hm1⟩ :=
       Fin.ext (by show D.R.k + j - 2 - (D.R.k - 1) = j - 1; omega)
     rw [e]
   have he : DV.eQ D j τ = (D.hc τ).e ⟨j - 1, hm1⟩ := by
     unfold DV.eQ
-    rw [dif_pos ⟨h1, h2⟩]
+    rw [dite_eq_left ⟨h1, h2⟩]
   have e1 : ((D.R.k + j - 2 : ℕ) : ℚ) = (D.R.k : ℚ) + j - 2 := by
     rw [Nat.cast_sub (by omega)]
     push_cast
@@ -191,7 +195,7 @@ private lemma aMinusQ_le_aMinusQ_succ (D : D7) (j : ℕ) (τ : D.what₂.Tau) (c
     exact g3
   have ht : (0 : ℚ) ≤ D.R.t := Nat.cast_nonneg _
   unfold DV.aMinusQ
-  rw [dif_pos h0, dif_pos h1]
+  rw [dite_eq_left h0, dite_eq_left h1]
   push_cast
   linarith
 
@@ -243,11 +247,11 @@ theorem kaSmall_nonpos (D : D7) (hK : DV.KapDef D) {j : ℕ} (h1 : 1 ≤ j) (h2 
     exact g3
   have he : DV.eQ D j τ = (D.hc τ).e ⟨j - 1, hj1⟩ := by
     unfold DV.eQ
-    rw [dif_pos ⟨h1, h2⟩]
+    rw [dite_eq_left ⟨h1, h2⟩]
   have hpos : DV.aMinusQ D j τ 0 =
       (D.hc τ).b ⟨j + 0, by omega⟩ - (D.hc τ).e ⟨j - 1, hj1⟩ - ((D.R.t : ℚ) + 1) / 2 := by
     unfold DV.aMinusQ
-    rw [dif_pos (show j + 0 < D.R.m by omega), he]
+    rw [dite_eq_left (show j + 0 < D.R.m by omega), he]
     push_cast
     ring
   rw [hpos]
@@ -284,14 +288,14 @@ def kaWt (D : D7) (hK : DV.KapDef D) (hn : Even D.R.nV) (j : ℕ) : WeightFamili
 theorem kaWt_big (D : D7) (hK : DV.KapDef D) (hn : Even D.R.nV) (j : ℕ) (h1 : 1 ≤ j) (h2 : j ≤ D.R.m)
     (τ : D.what₂.Tau) (i : Fin (D.R.sigW j).1) : ((kaWt D hK hn j).aP τ i : ℤ) = D.what₂.kaBig j τ i := by
   unfold kaWt
-  rw [dif_pos ⟨h1, h2⟩]
+  rw [dite_eq_left ⟨h1, h2⟩]
   exact Int.toNat_of_nonneg (kaBig_nonneg D hK h1 h2 τ i)
 
 theorem kaWt_small (D : D7) (hK : DV.KapDef D) (hn : Even D.R.nV) (j : ℕ) (h1 : 1 ≤ j) (h2 : j ≤ D.R.m)
     (τ : D.what₂.Tau) (c : Fin (D.R.sigW j).2) :
     ((kaWt D hK hn j).aM τ c : ℤ) = -D.what₂.kaSmall j τ (Fin.rev c) := by
   unfold kaWt
-  rw [dif_pos ⟨h1, h2⟩]
+  rw [dite_eq_left ⟨h1, h2⟩]
   exact Int.toNat_of_nonneg (neg_nonneg.2 (kaSmall_nonpos D hK h1 h2 τ (Fin.rev c)))
 
 theorem kaWt_n (D : D7) (hK : DV.KapDef D) (hn : Even D.R.nV) (j : ℕ) : (kaWt D hK hn j).n = D.R.nV := by

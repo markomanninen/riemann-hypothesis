@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.Qk46.colH :
     {n : Nat} → (Fin n → Int) → Int → Nat :=

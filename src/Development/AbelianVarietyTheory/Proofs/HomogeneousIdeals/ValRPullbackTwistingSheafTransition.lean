@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsClosedImmersionIffPullRatio
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.AwayLiftCompFromZeroRingHom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsClosedImmersionIffPullRatio
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.AwayLiftCompFromZeroRingHom
+
+@[expose] public section
 
 noncomputable section
 
@@ -76,7 +80,6 @@ def point (o : Type) [CommRing o] [Algebra o L] (t : Fin (r + 1) → L) (ht : t 
 
 variable {t : Fin (r + 1) → L} {ht : t ≠ 0}
 
-@[reassoc]
 theorem point_str : point o t ht ≫ PSpace.str o r = spMap (algebraMap o L) := by
   simp only [point, PSpace.str, spMap, ProjPoint.ofHom_toSpecZero_assoc, ← Spec.map_comp]
   congr 1
@@ -175,7 +178,7 @@ theorem range_valMap_point {i : Fin (r + 1)} (h : ⊤ ≤ point o t ht ⁻¹ᵁ 
       rw [← MvPolynomial.algebraMap_eq, AlgEquiv.commutes, hc]
       exact Subalgebra.algebraMap_mem _ a
     | add p q hp hq =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact add_mem hp hq
     | mul_X p j hp =>
       rw [map_mul, map_mul, chartAlgEquiv_X, hr]

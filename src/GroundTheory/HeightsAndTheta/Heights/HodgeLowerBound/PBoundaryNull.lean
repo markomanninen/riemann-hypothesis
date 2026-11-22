@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsBoundaryNull
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PBoundaryPtsNull
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsBoundaryNull
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PBoundaryPtsNull
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

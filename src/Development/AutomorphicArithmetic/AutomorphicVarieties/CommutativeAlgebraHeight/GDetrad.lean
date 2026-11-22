@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -95,7 +99,8 @@ private theorem factor (R : Type) [CommRing R] (n : ℕ) {K : Type} [Field K] [A
 
 private theorem phi_row (R : Type) [CommRing R] (n : ℕ) (a : Fin (n+1)) :
     phi R n (∑ b : Fin (n + 1), MvPolynomial.X (Sum.inl (a, b)) * MvPolynomial.X (Sum.inr b)) = 0 := by
-  rw [map_sum, ← param_mulVec (Matrix.of fun a b => (MvPolynomial.X (some (Sum.inl (a, b))) : MvPolynomial (Bv n) R)) (Matrix.of fun a b => (MvPolynomial.X (some (Sum.inr (a, b))) : MvPolynomial (Bv n) R)) (MvPolynomial.X none) a]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← param_mulVec (Matrix.of fun a b => (MvPolynomial.X (some (Sum.inl (a, b))) : MvPolynomial (Bv n) R)) (Matrix.of fun a b => (MvPolynomial.X (some (Sum.inr (a, b))) : MvPolynomial (Bv n) R)) (MvPolynomial.X none) a]
   refine Finset.sum_congr rfl (fun b _ => ?_)
   rw [map_mul, phi, MvPolynomial.aeval_X, MvPolynomial.aeval_X]
   rfl
@@ -109,11 +114,11 @@ private theorem phi_det (R : Type) [CommRing R] (n : ℕ) :
   rfl
 
 theorem UpperTheory.V.CA.g_detrad :
-    ∀ (R : Type) [CommRing R] [IsDomain R] (n : ℕ),
+    (∀ (R : Type) [CommRing R] [IsDomain R] (n : ℕ),
       let A := MvPolynomial ((Fin (n + 1) × Fin (n + 1)) ⊕ Fin (n + 1)) R
       let I : Ideal A := Ideal.span (Set.range (fun a : Fin (n + 1) => ∑ b : Fin (n + 1), (MvPolynomial.X (Sum.inl (a, b)) * MvPolynomial.X (Sum.inr b) : A)) ∪ {Matrix.det (Matrix.of fun a b : Fin (n + 1) => (MvPolynomial.X (Sum.inl (a, b)) : A))})
       I.radical.IsPrime ∧ (MvPolynomial.X (Sum.inr 0) : A) ∉ I.radical ∧ (∀ r : R, MvPolynomial.C r ∈ I.radical → r = 0) ∧
-        ∀ f ∈ I.radical, ∀ d : ℕ, MvPolynomial.homogeneousComponent d f ∈ I.radical := by
+        ∀ f ∈ I.radical, ∀ d : ℕ, MvPolynomial.homogeneousComponent d f ∈ I.radical) := by
   intro R _ _ n A I
   have hP : (RingHom.ker (phi R n)).IsPrime := RingHom.ker_isPrime _
   have hle : I ≤ RingHom.ker (phi R n) := by

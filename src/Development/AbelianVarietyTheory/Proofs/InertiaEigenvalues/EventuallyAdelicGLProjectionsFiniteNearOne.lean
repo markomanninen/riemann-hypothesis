@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIdempotentElemIdemSf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsIdempotentElemIdemSf
+
+@[expose] public section
+
 open NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.SchurExt
 open scoped ContDiff Topology
 
@@ -21,7 +26,7 @@ theorem prS_finGL (S : Finset (HeightOneSpectrum (𝓞 E))) (a : ℕ) (k : GL (F
   generalize idemS S = I at hI ⊢
   generalize idemSf S = J at hI ⊢
   simp only [Matrix.one_apply]
-  split_ifs <;> simp only [mul_one, mul_zero, map_zero, map_sub, map_add, mul_add, mul_sub, hI, sub_zero,
+  split_ifs <;> simp only [mul_one, mul_zero, map_zero, map_sub, map_add (f := _), mul_add, mul_sub, hI, sub_zero,
     zero_sub, zero_add] <;> ring
 
 theorem prO_finGL (S : Finset (HeightOneSpectrum (𝓞 E))) (a : ℕ) (k : GL (Fin a) (Af E)) :
@@ -37,7 +42,7 @@ theorem prO_finGL (S : Finset (HeightOneSpectrum (𝓞 E))) (a : ℕ) (k : GL (F
   generalize (1 - idemS S) = I at hI ⊢
   generalize (1 - idemSf S) = J at hI ⊢
   simp only [Matrix.one_apply]
-  split_ifs <;> simp only [mul_one, mul_zero, map_zero, map_sub, map_add, mul_add, mul_sub, hI, sub_zero,
+  split_ifs <;> simp only [mul_one, mul_zero, map_zero, map_sub, map_add (f := _), mul_add, mul_sub, hI, sub_zero,
     zero_sub, zero_add] <;> ring
 
 theorem continuous_cornerGL_idemHom (a : ℕ) (e : Af E) (he : IsIdempotentElem e) :

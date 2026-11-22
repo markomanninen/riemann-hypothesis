@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ScalePolynomialQuantitiesComparisonStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExplicitRanksBasicBoundsLargeScaleStatement
-import Development.AutomorphicArithmetic.WeightCongruences.IsRootOfIntegral
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.InertJacobiLevels.AsmIface
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.PairRowIffQdRows
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ScalePolynomialQuantitiesComparisonStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExplicitRanksBasicBoundsLargeScaleStatement
+public import Development.AutomorphicArithmetic.WeightCongruences.IsRootOfIntegral
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.LevelStarExponents Formalism.MainNotions Formalism.MainNotions.Inhab GlobalTheory.EX NumberField
 
 namespace GlobalTheory.EX
@@ -101,7 +106,13 @@ theorem hc_sizes (eps cD ch : ℝ) (h0 : 0 < eps) (h1 : eps < 1 / 52) (hcD : 0 �
     have := Nat.ceil_lt_add_one (show 0 ≤ s.x ^ cD by linarith)
     unfold Delv; linarith
   have hb' : 0 < s.b' := div_pos (mul_pos hxp hb) hXp
-  have hn : (0 : ℝ) < R.n := by unfold Ranks.n; positivity
+  have hn : (0 : ℝ) < R.n := by
+    have hnNat : 0 < R.n := by
+      unfold Ranks.n
+      have := R.two_le_m
+      have := R.m_le_f
+      omega
+    exact_mod_cast hnNat
   refine ⟨?_, ?_, ?_, ?_, hb', hb, div_pos hb' (mul_pos hxp hn)⟩
   · exact Nat.one_le_iff_ne_zero.2 (Nat.ceil_pos.2 (by linarith)).ne'
   · have h401 : 1 ≤ s.x ^ (401 : ℝ) := Real.one_le_rpow hx1' (by norm_num)
@@ -145,7 +156,13 @@ theorem exists_hc_family : ∀ eps cD ch C8 : ℝ, 0 < eps → eps < 1 / 52 → 
     rw [← Finset.card_pos, hcard]
     have h1 := hH.2.2.1
     have hxp : 0 < s.x := by linarith [s.one_lt_alt]
-    have hn : (0 : ℝ) < R.n := by unfold Ranks.n; positivity
+    have hn : (0 : ℝ) < R.n := by
+      have hnNat : 0 < R.n := by
+        unfold Ranks.n
+        have := R.two_le_m
+        have := R.m_le_f
+        omega
+      exact_mod_cast hnNat
     have : (0 : ℝ) < H.T2.card := lt_of_lt_of_le (mul_pos (Real.rpow_pos_of_pos hxp _) hn) h1
     exact_mod_cast this
   obtain ⟨g0, hg0⟩ := hne

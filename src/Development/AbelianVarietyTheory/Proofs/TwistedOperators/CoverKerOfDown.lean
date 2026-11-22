@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteSupport
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DerivedAdjoint
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteSupport
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.DerivedAdjoint
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ theorem adjRule_of_pair {N : GKMod r s} {Z : Type} [NormedAddCommGroup Z] [Inner
   rw [hadj]
   have sA := h.skew A hA P P' y y'
   have sC := h.skew C hC P P' y y'
-  simp only [map_add, map_smul, map_neg, LinearMap.add_apply, LinearMap.smul_apply, LinearMap.neg_apply,
+  simp only [map_add (f := _), map_smul, map_neg, LinearMap.add_apply, LinearMap.smul_apply, LinearMap.neg_apply,
     inner_add_left, inner_add_right, inner_smul_left, inner_smul_right, inner_neg_right, Complex.conj_I]
   linear_combination sA - Complex.I * sC
 
@@ -52,7 +56,7 @@ theorem invRule_of_pair {N : GKMod r s} {Z : Type} [NormedAddCommGroup Z] [Inner
   rw [hadj]
   have iA := eq_neg_of_add_eq_zero_left (h.inv A hA P y)
   have iC := eq_neg_of_add_eq_zero_left (h.inv C hC P y)
-  simp only [map_add, map_smul, map_neg, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply,
+  simp only [map_add (f := _), map_smul, map_neg, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply,
     LinearMap.neg_apply, Complex.conj_I]
   rw [iA, iC]
   module
@@ -84,7 +88,7 @@ theorem contr_map_left {A A' V H : Type} [AddCommGroup A] [Module ℂ A] [AddCom
   induction t using TensorProduct.induction_on with
   | zero => simp
   | tmul a v => simp only [TensorProduct.map_tmul, LinearMap.id_apply, contr_tmul, map_smul]
-  | add x w hx hw => simp only [map_add, hx, hw]
+  | add x w hx hw => simp only [map_add (f := _), hx, hw]
 
 theorem contr_map_right {A : Type} [AddCommGroup A] [Module ℂ A] {T : GrpData r s} (R : DSRep T)
     (Y : Mat r s) (y : R.HK.V) (t : A ⊗[ℂ] R.HK.V) :
@@ -97,7 +101,7 @@ theorem contr_map_right {A : Type} [AddCommGroup A] [Module ℂ A] {T : GrpData 
     have key := derived_adjoint r s T R.U R.HK R.ι R.der (adjZ Y) y v
     rw [adjZ_adjZ] at key
     exact key.symm
-  | add x w hx hw => simp only [map_add, hx, hw]
+  | add x w hx hw => simp only [map_add (f := _), hx, hw]
 
 private theorem inner_eq_inner_of_eq_on_spanning {V W : Type} [AddCommGroup V] [Module ℂ V] [NormedAddCommGroup W]
     [InnerProductSpace ℂ W] {S : Set V} (hS : Submodule.span ℂ S = ⊤) (f g k l : V →ₗ[ℂ] W)
@@ -113,10 +117,10 @@ private theorem inner_eq_inner_of_eq_on_spanning {V W : Type} [AddCommGroup V] [
     induction hw using Submodule.span_induction with
     | mem w hwS => exact h x hxS w hwS
     | zero => simp
-    | add a b _ _ ha hb => simp only [map_add, inner_add_right, ha, hb]
+    | add a b _ _ ha hb => simp only [map_add (f := _), inner_add_right, ha, hb]
     | smul c a _ ha => simp only [map_smul, inner_smul_right, ha]
   | zero => simp
-  | add a b _ _ ha hb => simp only [map_add, inner_add_left, ha, hb]
+  | add a b _ _ ha hb => simp only [map_add (f := _), inner_add_left, ha, hb]
   | smul c a _ ha => simp only [map_smul, inner_smul_left, ha]
 
 theorem coverKer_of_down : ∀ (X : ProvA) (p q r s : ℕ) (lam : Ix p q → ℚ) (lam' : Ix r s → ℚ), Formalism.MainNotions.SchurIrreducible.ARiiiDown X lam lam' → Formalism.MainNotions.SchurIrreducible.IrrGK (X.ds p q lam).HK → UnitaryImage p q r s → FiniteSupport p q (X.ds r s lam') → TensorForm → CoverKer p q (X.ds r s lam').HK := by
@@ -222,7 +226,8 @@ theorem coverKer_of_down : ∀ (X : ProvA) (p q r s : ℕ) (lam : Ix p q → ℚ
   · intro n a b hsum
     have hwN : ∑ i, B' (a i) (b i) ∈ N := Submodule.sum_mem _ fun i _ => memN (a i) (b i)
     have h1 : ψ₁ (∑ i, B' (a i) (b i)) = 0 := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [hψ₁]
       exact hsum
     have hz : e.symm ⟨_, hwN⟩ ∈ N' := by
@@ -235,7 +240,8 @@ theorem coverKer_of_down : ∀ (X : ProvA) (p q r s : ℕ) (lam : Ix p q → ℚ
       rw [LinearEquiv.apply_symm_apply, map_zero] at h3
       exact congrArg Subtype.val h3
     have h2 := congrArg ψ₂ h0
-    rw [map_sum, map_zero] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h2
     simp only [hψ₂] at h2
     exact h2
   · exfalso

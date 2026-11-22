@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfO
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExtFStatementPfB
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.InterpStatementPfO
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExtFStatementPfB
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.IW
 
@@ -201,7 +205,7 @@ private theorem dmin_ne_zero' {x : Frame X.Ψ r} (hx : x ∈ X.dom) (τ : X.Ψ) 
 
 private theorem continuousOn_nfac (la : Wt X.Ψ r) : ContinuousOn (X.nfac la) X.dom := by
   unfold Data.nfac
-  refine continuousOn_finset_prod _ (fun τ _ => continuousOn_finset_prod _ (fun i _ => ?_))
+  refine continuousOn_finsetProd _ (fun τ _ => continuousOn_finsetProd _ (fun i _ => ?_))
   refine ContinuousOn.rpow_const ?_ (fun x hx => Or.inl ?_)
   · exact ((dmin_continuous X τ _).continuousOn.div (dmin_continuous X τ _).continuousOn
       (fun x hx => dmin_ne_zero' X hx τ _)).norm
@@ -220,7 +224,7 @@ theorem phla_contOn (la : Wt X.Ψ r) : ContinuousOn (phla X la) X.dom := by
 theorem pnormS_contOn (L : Wt X.Ψ r) (s : Fin (nd X) → Frame X.Ψ r → ℂ)
     (hs : ∀ k, ContinuousOn (s k) X.dom) :
     ContinuousOn (fun x => ∑ k, X.pnorm L (s k) x ^ 2) X.dom := by
-  refine continuousOn_finset_sum _ (fun k _ => ?_)
+  refine continuousOn_finsetSum _ (fun k _ => ?_)
   exact ((hs k).norm.mul (continuousOn_nfac X L)).pow 2
 
 def gφ (P : Frame X.Ψ r → ℂ) (Fp L : Wt X.Ψ r) (s : Fin (nd X) → Frame X.Ψ r → ℂ) (x : Frame X.Ψ r) :

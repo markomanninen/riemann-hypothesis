@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsRootOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsRootOne
+
+@[expose] public section
+
 open GlobalTheory.KZ GlobalTheory.KZ.H3 Matrix
 open scoped MatrixGroups
 
@@ -42,7 +47,7 @@ theorem homogeneous_lift_compatible : ∀ (l : ℕ) [Fact l.Prime] (w : ℕ) (p 
     intro m hm
     by_contra hne
     apply hm
-    refine PadicInt.ext_of_toZModPow.mp fun n => ?_
+    refine (PadicInt.ext_of_toZModPow (p := l)).mp fun n => ?_
     rw [hcn, map_zero]
     by_contra h0
     apply hne
@@ -69,9 +74,10 @@ theorem homogeneous_lift_compatible : ∀ (l : ℕ) [Fact l.Prime] (w : ℕ) (p 
     ext m
     rw [MvPolynomial.coeff_map, hq, hcn]
   · intro q' hq'
-    ext m
+    apply MvPolynomial.ext
+    intro m
     rw [hq]
-    refine PadicInt.ext_of_toZModPow.mp fun n => ?_
+    refine (PadicInt.ext_of_toZModPow (p := l)).mp fun n => ?_
     rw [hcn, ← hq' n, MvPolynomial.coeff_map]
 
 end GlobalTheory.KZ.H3

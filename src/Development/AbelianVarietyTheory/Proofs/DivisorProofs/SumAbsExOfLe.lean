@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SemiposAtOfPositive
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsHTFrameCpAndNonempty
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagNeZeroOfLinearIndependent
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTateInclusionRaynaudExtensionAlgebraicPoint
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMapToModel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilCharSurjectiveAndMapRangeAl
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.GradedDifferentComparison
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.PadicValNatAbsNormEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SemiposAtOfPositive
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsHTFrameCpAndNonempty
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagNeZeroOfLinearIndependent
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HodgeTateInclusionRaynaudExtensionAlgebraicPoint
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMapToModel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilCharSurjectiveAndMapRangeAl
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.GradedDifferentComparison
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.PadicValNatAbsNormEqZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -26,8 +30,8 @@ section Different
 variable {C : Type} [Field C] [IsAlgClosed C] [CharZero C] {v : Valuation C ℝ≥0} {O : Type} [CommRing O] [Algebra O C]
   {E : Type} [Field E] [NumberField E]
 
-omit [IsAlgClosed C] [CharZero C] in
 
+omit [IsAlgClosed C] [CharZero C] in
 theorem exists_delta [IsGalois ℚ E] (hv : v.Integers O) {p : ℕ} (hp : p.Prime) (hO : ¬ IsUnit (p : O)) (τ : E →+* C) :
     ∃ δ ∈ (differentIdeal ℤ (𝓞 E)).map (embO hv τ),
       δ ^ Module.finrank ℚ E ∣ (p : O) ^ padicValNat p (discr E).natAbs := by
@@ -41,8 +45,8 @@ theorem exists_delta [IsGalois ℚ E] (hv : v.Integers O) {p : ℕ} (hp : p.Prim
   obtain ⟨a, m, hm, hdisc⟩ := Nat.exists_eq_pow_mul_and_not_dvd hd p hp.ne_one
   have hm0 : m ≠ 0 := by rintro rfl; exact hm (dvd_zero _)
   have ha : padicValNat p (discr E).natAbs = a := by
-    rw [hdisc, padicValNat.mul (pow_ne_zero _ hp.ne_zero) hm0, padicValNat.prime_pow,
-      padicValNat.eq_zero_of_not_dvd hm, add_zero]
+    rw [hdisc, Nat.padicValNat_def, Nat.multiplicity_mul (pow_ne_zero _ hp.ne_zero) hm0,
+      Nat.multiplicity_prime_pow, multiplicity_eq_zero_of_not_dvd hm, add_zero]
   rw [ha]
   set σ := embO hv τ
   set P : Ideal (𝓞 E) := (IsLocalRing.maximalIdeal O).comap σ with hP
@@ -122,10 +126,12 @@ theorem smul_proj_mem [DecidableEq (E →+* C)] (hv : v.Integers O) {U : Type} [
   obtain ⟨ι, _, b, c, h⟩ := exists_sum_eq (C := C) hd
   have e : φ d • idem (isSplitting_embO hv) φ = ∑ i, φ (b i) ⊗ₜ[ℤ] c i := (isSplitting_embO hv).1 (by
     ext ψ
-    rw [map_smul, splitMap_idem, map_sum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, splitMap_idem, map_sum, Finset.sum_apply]
     simp only [splitMap_tmul, RingHom.comp_apply, algebraMap_embO, h, Pi.smul_apply, Pi.single_apply]
     split_ifs <;> simp)
-  rw [← algebraMap_smul C, algebraMap_embO, proj, ← LinearMap.smul_apply, ← map_smul, e, map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← algebraMap_smul C, algebraMap_embO, proj, ← LinearMap.smul_apply, ← map_smul, e, map_sum, LinearMap.sum_apply]
   refine X.sum_mem fun i _ => ?_
   rw [tensorAction_tmul, ← algebraMap_embO hv, algebraMap_smul]
   exact X.smul_mem _ (hX _ _ hx)
@@ -142,7 +148,7 @@ theorem pairV_inclT {w : P.V} (hw : w ∈ P.latT) (s : O ⊗[ℤ_[p]] P.T) :
     P.pairV w (P.inclT s) ∈ (algebraMap O C).range := by
   induction s using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => rw [map_add, map_add]; exact add_mem hx hy
+  | add x y hx hy => simp only [map_add]; exact add_mem hx hy
   | tmul c t =>
     obtain ⟨b, hb⟩ := (P.mem_latT_iff w).1 hw t
     have : (algebraMap O C c ⊗ₜ t : P.V) = algebraMap O C c • (1 : C) ⊗ₜ t := by
@@ -150,13 +156,13 @@ theorem pairV_inclT {w : P.V} (hw : w ∈ P.latT) (s : O ⊗[ℤ_[p]] P.T) :
     rw [P.inclT_tmul, this, map_smul, ← hb]
     exact ⟨c * b, map_mul _ _ _⟩
 
-omit [IsAlgClosed C] [CharZero C] in
 
+omit [IsAlgClosed C] [CharZero C] in
 theorem actV_mem (a : Λ) (x : P.V) (hx : x ∈ P.latT) : P.actV a x ∈ P.latT := by
   obtain ⟨s, rfl⟩ := hx
   induction s using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => rw [map_add, map_add]; exact add_mem hx hy
+  | add x y hx hy => simp only [map_add]; exact add_mem hx hy
   | tmul c t => exact ⟨c ⊗ₜ P.actT a t, by rw [P.inclT_tmul, P.inclT_tmul]; rfl⟩
 
 variable [Fact ¬IsUnit (p : O)] [IsAdicComplete (Ideal.span {(p : O)}) O]
@@ -178,7 +184,8 @@ theorem smul_mem_wRec (hHT : HTChar p v P.Gt) {a : O} (ha0 : a ≠ 0) (ha : v (a
       map_smul' := fun b c => by rw [hsm, P.bLie_scale]; rfl }
   have hL : ∀ y, P.bLie y = ∑ i, e.symm y i • L (Pi.single i 1) := fun y => by
     have h : L (e.symm y) = P.bLie y := congrArg P.bLie (e.apply_symm_apply y)
-    simp only [← map_smul, ← map_sum, ← h, ← Pi.single_smul, smul_eq_mul, _root_.mul_one, Finset.univ_sum_single]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [← map_smul, ← map_sum, ← h, ← Pi.single_smul, smul_eq_mul, _root_.mul_one, Finset.univ_sum_single]
   have ht : ∀ i, ∃ s : O ⊗[ℤ_[p]] P.T, ∀ y, P.pairV (P.bLie y) (P.inclT s) = algebraMap O C (a * e.symm y i) := fun i => by
     have hf : (fun y => e.symm y i) ∈ omega P.Gt := ⟨fun y z h => by
         obtain ⟨c, rfl⟩ := e.surjective y
@@ -201,7 +208,8 @@ theorem smul_mem_wRec (hHT : HTChar p v P.Gt) {a : O} (ha0 : a ≠ 0) (ha : v (a
   choose o ho using fun i => pairV_inclT P hg (s i)
   have key : P.bLie (e o) = a • ∑ j, g j • P.bLie (x j) := by
     rw [hL, e.symm_apply_apply]
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hs] at ho
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hs] at ho
     simp only [hL (x _), Finset.smul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => ?_
@@ -263,8 +271,8 @@ variable {p : ℕ} [Fact p.Prime] {C : Type} [Field C] [IsAlgClosed C] [CharZero
   {O : Type} [CommRing O] [Algebra O C] [Algebra ℤ_[p] O] [Algebra ℤ_[p] C] [IsScalarTower ℤ_[p] O C]
   [Algebra c.F C] [StarRing (𝓞 E)] [Fact ¬IsUnit (p : O)] [IsAdicComplete (Ideal.span {(p : O)}) O]
 
-omit [Fact ¬IsUnit (p : O)] [IsAdicComplete (Ideal.span {(p : O)}) O] in
 
+omit [Fact ¬IsUnit (p : O)] [IsAdicComplete (Ideal.span {(p : O)}) O] in
 theorem smul_mem_latT (P : Point p v O (𝓞 E)) (τ : E →+* ℂ) {δ : O}
     (hδ : δ ∈ (differentIdeal ℤ (𝓞 E)).map (embO P.integers (embAt c C τ))) {w : P.V} (hw : w ∈ htLat c P τ) :
     δ • w ∈ P.latT := by
@@ -387,7 +395,3 @@ theorem htCmp [IsGalois ℚ E] : HTCmp Xo c := by
   exact ⟨_, ⟨q, hq, inst, T, io, e, y₀, k, y, ho, hy, h, rfl⟩, fun u f hf => val_le hy h ho u hf⟩
 
 end GlobalTheory.CovHt.FrameCmp
-
-theorem GlobalTheory.CovHt.htCmp_of_hypotheses : GlobalTheory.CovTop.Hypotheses2 → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
-    [IsGalois ℚ E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l),
-    HTCmp Xo c := fun _ _ _ _ _ _ _ _ _ _ _ => GlobalTheory.CovHt.FrameCmp.htCmp

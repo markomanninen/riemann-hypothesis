@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Matrix Finset Real
 
@@ -98,7 +102,7 @@ theorem prod_three_eight (N : ℕ) (hN : N ≤ 8) :
       ∏ l ∈ Finset.Icc 3 N, (if l = 3 then (1.2027 : ℝ) else if l = 4 then 1.0825 else
         if l = 5 then 1.0370 else if l = 6 then 1.0174 else if l = 7 then 1.0084
         else 1.0041) := by
-    apply Finset.prod_le_prod (fun l _ => zeta_nonneg l)
+    apply Finset.prod_le_prod₀ (fun l _ => zeta_nonneg l)
     intro l hl
     rw [Finset.mem_Icc] at hl
     obtain ⟨h1, h2⟩ := hl

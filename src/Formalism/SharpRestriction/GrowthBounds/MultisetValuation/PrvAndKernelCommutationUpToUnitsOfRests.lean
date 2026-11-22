@@ -1,16 +1,20 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.LiftBoundOfIntegrality
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.FormValuationGeNegDegree
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.HeckeValueEstimateOfRecordValue
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.StabilizerCount
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.RestrictedHeckeIntegralOfEdges
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.TsumRatTail
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.HeckeConditionOfAdm
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.SmulPsiGUp
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PositivityConditionHolds
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.CommonEigenvectorThird
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.RestEntOf
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.FirstTheoremPlaceBound
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EbBrJet
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.LiftBoundOfIntegrality
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.FormValuationGeNegDegree
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.HeckeValueEstimateOfRecordValue
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.StabilizerCount
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.RestrictedHeckeIntegralOfEdges
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.TsumRatTail
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.HeckeConditionOfAdm
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.SmulPsiGUp
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.PositivityConditionHolds
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.CommonEigenvectorThird
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.RestEntOf
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.FirstTheoremPlaceBound
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.EbBrJet
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,18 +27,13 @@ attribute [local instance] Formalism.MainNotions.G.GAtP.ringO Formalism.MainNoti
 
 variable {p : ℕ} [Fact p.Prime]
 
-theorem linD (X : Sys p) : LinD X where
-  Tt_add v i j F F' := by
-    have := (TtLin X v i j).map_add F F'
-    simp only [TtLin_apply] at this
-    exact this
-  Tt_smul v i j a F := by
-    have := (TtLin X v i j).map_smul a F
-    simp only [TtLin_apply] at this
-    exact this
-  yv_add v F F' := (yvLin X v).map_add F F'
-  yv_smul v a F := (yvLin X v).map_smul a F
-  yv_comm v v' F := funext fun i => Formalism.MainNotions.G.LatticeSystems.ef_yv_comm X.G.P v v' (F i)
+theorem linD (X : Sys p) : LinD X :=
+  { Tt_add := Tt_add X
+    Tt_smul := Tt_smul X
+    yv_add := fun v F F' => (yvLin X v).map_add F F'
+    yv_smul := fun v a F => (yvLin X v).map_smul a F
+    yv_comm := fun v v' F =>
+      funext fun i => Formalism.MainNotions.G.LatticeSystems.ef_yv_comm X.G.P v v' (F i) }
 
 variable {X : Sys p}
 
@@ -94,12 +93,12 @@ theorem prv_and_kernel_commutation_up_to_units_of_rests (D : Formalism.BasicNoti
   exact ⟨⟨form_valuation_of_bound D hF h3, R.S1, R.allPlacesExpansion, slopeEstimate_of_lemmaB_slopeLine D hF R.Ent R.U2, theorem_A_entries_of_corollary D R.Ent (restRat X) R.U2, R.U2, p2b, p3, p4,
     ramifiedLattice_of_chain_estimates D R.U2 p5D, p5D⟩, pAlt⟩
 
-theorem rests (D : Formalism.BasicNotions.D7) (Y : Pend X) (hA : admitted D X Y) : Rests D X Y where
-  S1 := theta_kernel_expansion D X Y hA
-  allPlacesExpansion := expansions_multiply D X Y hA
-  U2 := auxU_of_firstTheoremPlaceBound D (first_theorem_place_bound X Y D (restGc p) (eb_brJet X)) hA
-  Ent := restEnt_of X Y D (second_lemma_place_bound X Y D (restGc p) (eb_brJet X))
-    (hecke_place_bound X Y D (restGc p) (eb_brJet X)) hA
+theorem rests (D : Formalism.BasicNotions.D7) (Y : Pend X) (hA : admitted D X Y) : Rests D X Y :=
+  { S1 := theta_kernel_expansion D X Y hA
+    allPlacesExpansion := expansions_multiply D X Y hA
+    U2 := auxU_of_firstTheoremPlaceBound D (first_theorem_place_bound X Y D (restGc p) (eb_brJet X)) hA
+    Ent := restEnt_of X Y D (second_lemma_place_bound X Y D (restGc p) (eb_brJet X))
+      (hecke_place_bound X Y D (restGc p) (eb_brJet X)) hA }
 
 theorem packet_statements_hold (D : Formalism.BasicNotions.D7) (Y : Pend X) (hA : admitted D X Y) : Conclusion₂ D X Y :=
   (prv_and_kernel_commutation_up_to_units_of_rests D Y hA (rests D Y hA)).1
@@ -109,7 +108,5 @@ theorem stmt_proved (D : Formalism.BasicNotions.D7) : Stmt D :=
 
 theorem stmtAt_proved (D : Formalism.BasicNotions.D7) : ErrorExponentStatement D :=
   fun _ _ _ _ _ Y _ hA => packet_statements_hold D Y hA
-
-theorem stmtF_proved {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) : KudlaFamilyStatement Fm := fun x i => stmt_proved (Fm.D x i)
 
 end Formalism.MainNotions.FormalGroupSystem.Pf

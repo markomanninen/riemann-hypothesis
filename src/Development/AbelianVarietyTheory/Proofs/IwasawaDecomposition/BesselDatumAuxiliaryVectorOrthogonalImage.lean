@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryTopology
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.SymplecticValTauCompat
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryTopology
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RealIdemMulOfReal
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.SymplecticValTauCompat
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,12 +91,13 @@ theorem hA_eq (x y : Fin B.rank → AE D) : hA B x y = (fun i => cA D (y i)) ⬝
   simp only [hA, dotProduct, Matrix.mulVec, Matrix.map_apply, Finset.mul_sum, mul_assoc]
 
 theorem hA_herm (x y : Fin B.rank → AE D) : cA D (hA B x y) = hA B y x := by
-  simp only [hA, map_sum, RingHom.map_mul, cA_inc, cA_cA, GlobalTheory.LatVac.gram_star]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hA, map_sum, RingHom.map_mul, cA_inc, cA_cA, GlobalTheory.LatVac.gram_star]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => by ring
 
 theorem hA_add_right (x y y' : Fin B.rank → AE D) : hA B x (y + y') = hA B x y + hA B x y' := by
-  simp only [hA, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hA, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hA_neg (x y : Fin B.rank → AE D) : hA B (-x) y = -hA B x y := by
   simp only [hA, Pi.neg_apply, mul_neg, Finset.sum_neg_distrib]
@@ -163,12 +168,12 @@ def suppGrp (ε : AE D) (B : HSp D) : Subgroup (GA D B) where
   inv_mem' := suppAt_inv
 
 theorem suppAt_of_mem_Ex {d : BesselDatum A B ι} {ε : AE D} {i} {g : GA D B} (hg : g ∈ d.Ex ε i) : SuppAt ε B g :=
-  (Subgroup.closure_le (suppGrp ε B)).2 (fun _ h => h.1) hg
+  (Subgroup.closure_le (suppGrp ε B)).2 (fun _ (h : _ ∈ d.ExSet ε i) => h.1) hg
 
 theorem suppAt_of_mem_ExGe {d : BesselDatum A B ι} {ε : AE D} {p} {g : GA D B} (hg : g ∈ ExGe d ε p) :
     SuppAt ε B g :=
   (Subgroup.closure_le (suppGrp ε B)).2
-    (Set.iUnion_subset fun _ => Set.iUnion_subset fun _ _ h => h.1) hg
+    (Set.iUnion_subset fun i => Set.iUnion_subset fun _ _ (h : _ ∈ d.ExSet ε i) => h.1) hg
 
 theorem Ex_le_ExGe (d : BesselDatum A B ι) (ε : AE D) {p : ℕ} {i : Fin (d.ρ + 1)} (h : p ≤ i.1) :
     d.Ex ε i ≤ ExGe d ε p :=
@@ -177,7 +182,7 @@ theorem Ex_le_ExGe (d : BesselDatum A B ι) (ε : AE D) {p : ℕ} {i : Fin (d.ρ
 theorem mem_GfC {e : AE D} (he : IsSplitIdem D e) {g : GA D B} (hg : SuppAt e B g) : g ∈ GfC B := by
   refine Units.ext (Matrix.ext fun i j => ?_)
   have h : infPart D ((mt B g - 1) i j) = 0 := by
-    rw [← hg i j, RingHom.map_mul, RingHom.map_add, GlobalTheory.SplitScalar.infPart_splitIdem he,
+    rw [← hg i j, RingHom.map_mul, RingHom.map_add (f := _), GlobalTheory.SplitScalar.infPart_splitIdem he,
       GlobalTheory.SplitScalar.infPart_splitIdem (GlobalTheory.SplitScalar.isSplitIdem_conj he), add_zero, zero_mul]
   rw [Matrix.sub_apply, RingHom.map_sub, sub_eq_zero] at h
   show infPart D (mt B g i j) = (1 : Matrix _ _ _) i j
@@ -203,7 +208,8 @@ theorem hA_iA (hι : HSpace.IsIsomEmb A B ι) (s t : Fin A.rank → AE D) : hA B
   have e : ∀ s, iA ι s = ∑ l, s l • vecA B (ι (A.frame l)) := fun s => by
     rw [iA, GlobalTheory.BesselCompare.frameMat_eq, GlobalTheory.BesselCompare.eMat_mulVec]
   have e2 : ∀ l, hA B (vecA B (ι (A.frame l))) (iA ι t) = ∑ k, cA D (t k) * incA D (A.gram k l) := fun l => by
-    rw [← hA_herm, e, GlobalTheory.BesselCompare.hA_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hA_herm, e, GlobalTheory.BesselCompare.hA_sum, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [hA_smul, RingHom.map_mul, hA_herm, hA_vec]
     congr 2
@@ -216,7 +222,8 @@ theorem hA_iA (hι : HSpace.IsIsomEmb A B ι) (s t : Fin A.rank → AE D) : hA B
   exact Finset.sum_congr rfl fun l _ => by ring
 
 theorem hA_vec_iA {v : B.V} (h : ∀ x, B.hD v (ι x) = 0) (t : Fin A.rank → AE D) : hA B (vecA B v) (iA ι t) = 0 := by
-  rw [← hA_herm, iA, GlobalTheory.BesselCompare.frameMat_eq, GlobalTheory.BesselCompare.eMat_mulVec, GlobalTheory.BesselCompare.hA_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hA_herm, iA, GlobalTheory.BesselCompare.frameMat_eq, GlobalTheory.BesselCompare.eMat_mulVec, GlobalTheory.BesselCompare.hA_sum, map_sum]
   refine Finset.sum_eq_zero fun k _ => ?_
   rw [hA_smul, RingHom.map_mul, hA_herm, hA_vec, h, map_zero, mul_zero]
 

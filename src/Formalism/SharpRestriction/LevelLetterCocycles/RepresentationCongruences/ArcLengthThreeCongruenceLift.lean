@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ImportsAlt
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.DivAddLogbLeEightMulErrorScale
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.TruncatedCoefficientPoly
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.LemGBInImgIff
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsPowSmulEqPiPowSmulOfTwistSub
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ImportsAlt
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.DivAddLogbLeEightMulErrorScale
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.TruncatedCoefficientPoly
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.LemGBInImgIff
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ExistsPowSmulEqPiPowSmulOfTwistSub
+
+@[expose] public section
 
 noncomputable section
 
@@ -147,9 +151,9 @@ theorem arc_length_three_congruence_lift [NeZero n] [Fintype (K →ₐ[Qp] LL)] 
     exact Formalism.MainNotions.UnusedSlot80.Relay2.InNΔi_sum W T₁ (c - 1) _ _ fun r _ =>
       Formalism.MainNotions.UnusedSlot80.Relay2.InNΔi_smul W T₁ _ (W.AΔ.pow_mem hπ r) (hvecN b₁ hb₁.1.1 _)
   have E1 : W.map F X₁ = W.π₀ • W.map F X₁' + lA W ^ κ₁ • W.map F D₁ := by
-    rw [hX₁d, map_add, Formalism.MainNotions.UnusedSlot80.Relay2.mapA_smul W F, Formalism.MainNotions.UnusedSlot80.Relay2.mapA_smul W F]
+    rw [hX₁d, map_add (f := _), Formalism.MainNotions.UnusedSlot80.Relay2.mapA_smul W F, Formalism.MainNotions.UnusedSlot80.Relay2.mapA_smul W F]
   have E2 : W.map F n₁ = W.map F D₁ + W.π₀ • W.map F z₁ := by
-    rw [hn₁c, ← hD₁, map_add, Formalism.MainNotions.UnusedSlot80.Relay2.mapA_smul W F]
+    rw [hn₁c, ← hD₁, map_add (f := _), Formalism.MainNotions.UnusedSlot80.Relay2.mapA_smul W F]
 
   obtain ⟨uq, huq⟩ := (lemG_units W hcase hP9 hT₂ hO hOv hinj).2.1
   obtain ⟨sE, hsE⟩ : ∃ sE : W.EE, sE = (↑uq⁻¹ : W.EE) ^ size (c - 1) *
@@ -182,7 +186,7 @@ theorem arc_length_three_congruence_lift [NeZero n] [Fintype (K →ₐ[Qp] LL)] 
   simp only [pow_one, Finset.prod_range_one, mul_one] at hT2
   have hql : qA W - lA W = W.π₀ := by simp [qA]
   have hp1l : ps W 1 - lA W = W.π₀ * (u2 * Formalism.MainNotions.LiftingTheory.pk W 0 ^ (PD.p - 1)) := by
-    have e0 : ps W 1 = W.φA W.π₀ + lA W := by simp only [ps, pow_one, qA, map_add, lA, map_natCast]
+    have e0 : ps W 1 = W.φA W.π₀ + lA W := by simp only [ps, pow_one, qA, map_add (f := _), lA, map_natCast]
     rw [e0, hT2]; ring
   have g1 := geom_sum₂_mul (ps W 1) (lA W) (size (c - 2) + S)
   have g2 := geom_sum₂_mul (qA W) (lA W) (size (c - 1))
@@ -267,7 +271,7 @@ theorem arc_length_three_congruence_lift [NeZero n] [Fintype (K →ₐ[Qp] LL)] 
   have hγl : W.γA W.gam (lA W) = lA W := by simp [lA]
   have hγq : W.γA W.gam (qA W) = qA W * (1 + W.π₀ * κa) := by
     have hqd : qA W = W.π₀ + lA W := rfl
-    rw [hqd, map_add, hγπ, hγl, hqd]; ring
+    rw [hqd, map_add (f := _), hγπ, hγl, hqd]; ring
   have hγp' : W.γA W.gam (ps W 1) = ps W 1 * (1 + W.π₀ * (qA W * gp)) := by rw [hγp]; ring
   obtain ⟨h1, hh1, eh1⟩ := DYCA.γ_pow_form W hκa hπ hγq (size (c - 1))
   obtain ⟨h2, hh2, eh2⟩ := DYCA.γ_pow_form W hκa hπ hγq Gb
@@ -328,7 +332,7 @@ theorem arc_length_three_congruence_lift [NeZero n] [Fintype (K →ₐ[Qp] LL)] 
       (Submonoid.mul_mem _ (Submonoid.pow_mem _ m1 _) (Submonoid.pow_mem _ m2 _))
   refine ⟨W.φA g₀, hgcl, kU + κ₁, ?_⟩
   have hrelF := congrArg (W.map F) hrel
-  simp only [map_add, Formalism.MainNotions.UnusedSlot80.Relay2.mapA_smul W F, W.map_φ] at hrelF
+  simp only [map_add (f := _), Formalism.MainNotions.UnusedSlot80.Relay2.mapA_smul W F, W.map_φ] at hrelF
   have hφV : W.φD T₂ V = lA W ^ (size (c - 1) + κ) • W.φD T₂ (W.map F X₁) -
       lA W ^ (κ₁ + E + σA + (size (c - 2) + S)) • W.φD T₂ (((W.φD T₂) ^ 2) Hh) := by
     rw [hV, map_sub, hφl, hφl]

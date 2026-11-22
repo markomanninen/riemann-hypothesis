@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.HodgeTatePoints.EqOfProdEq
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.EqOfProdEq
+
+@[expose] public section
 
 open scoped Matrix TensorProduct
 open Matrix

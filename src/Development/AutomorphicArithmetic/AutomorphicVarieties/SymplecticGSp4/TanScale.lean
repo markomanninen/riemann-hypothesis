@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SInternal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SpanMono
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartSpan
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueFixedPointOfAdicContraction
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueAlgEquivOfCompatibleQuotient
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.MvPowerSeriesEvalOfPowMem
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MonicNormLtOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SInternal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SpanMono
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.Graded
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.PartSpan
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueFixedPointOfAdicContraction
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueAlgEquivOfCompatibleQuotient
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.MvPowerSeriesEvalOfPowMem
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MonicNormLtOne
+
+@[expose] public section
 
 section Gen
 
@@ -24,7 +28,7 @@ private theorem ts_prod {X σ S : Type} [AddCommGroup X] [CommRing S] (wt : σ �
   | zero => simp
   | add f g hf hg =>
     rw [Finsupp.prod_add_index' (by simp) (fun _ _ _ => pow_add _ _ _),
-      Finsupp.prod_add_index' (by simp) (fun _ _ _ => pow_add _ _ _), hf, hg, map_add, ofAdd_add,
+      Finsupp.prod_add_index' (by simp) (fun _ _ _ => pow_add _ _ _), hf, hg, map_add (f := _), ofAdd_add,
       map_mul, Units.val_mul]
     ring
   | single i k =>
@@ -36,7 +40,8 @@ private theorem ts_approx {O X σ : Type} [CommRing O] [AddCommGroup X] [Finite 
     ∃ s : Finset X, (n : ℕ∞) ≤ (F - ∑ j ∈ s, wcomp O wt j F).order := by
   classical
   refine ⟨(truncTotal n F).support.image (Finsupp.weight wt), nat_le_order fun d hd => ?_⟩
-  rw [map_sub, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, map_sum]
   simp only [coeff_wcomp]
   rw [Finset.sum_ite_eq]
   split_ifs with h
@@ -80,20 +85,23 @@ private theorem ts_step (hg : ∀ s, ι (g (MvPowerSeries.X s)) = t (Multiplicat
   choose c hc hc' using fun m => hI (b m) (hb m) (β m) rfl
   have hx' : x = ∑ m ∈ μ, β m * m.prod fun s k => W.zA s ^ k := by
     apply Subtype.ext
-    rw [hx, map_sum, AddSubmonoidClass.coe_finset_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx, map_sum, AddSubmonoidClass.coe_finsetSum]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [Subalgebra.coe_mul, ts_zprod, map_mul]
   refine ⟨∑ m ∈ μ, c m * g (monomial m 1), ?_, ?_⟩
-  · rw [hx', map_sum, map_sum, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun m hm => ?_
-    rw [map_mul, map_mul, hc, ts_monomial, map_finsuppProd, map_finsuppProd]
-    simp only [map_pow, hg]
-    rw [ts_prod W.wt t (fun s => ξ (W.zA s)), hS m (hμ hm)]
-    ring
-  · rw [map_sum, ← Finset.sum_sub_distrib]
-    refine Ideal.sum_mem _ fun m hm => ?_
-    rw [map_mul, ← sub_mul]
-    exact Ideal.mul_mem_mul (hc' m) (hJ m (hμ hm))
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [hx', map_sum, map_sum, Finset.mul_sum]
+      refine Finset.sum_congr rfl fun m hm => ?_
+      rw [map_mul, map_mul, hc, ts_monomial, map_finsuppProd, map_finsuppProd]
+      simp only [map_pow, hg]
+      rw [ts_prod W.wt t (fun s => ξ (W.zA s)), hS m (hμ hm)]
+      ring
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [map_sum, ← Finset.sum_sub_distrib]
+      refine Ideal.sum_mem _ fun m hm => ?_
+      rw [map_mul, ← sub_mul]
+      exact Ideal.mul_mem_mul (hc' m) (hJ m (hμ hm))
 
 private theorem ts_agree (hι : Function.Injective ι)
     (hg : ∀ s, ι (g (MvPowerSeries.X s)) = t (Multiplicative.ofAdd (W.wt s)) * ξ (W.zA s))
@@ -125,7 +133,7 @@ private theorem ts_agree (hι : Function.Injective ι)
         (x - algebraMap O _ (constantCoeff b)) (by
           rw [map_sub, AlgHom.commutes, ← hx]; rfl)
       refine ⟨c + algebraMap O B (constantCoeff b), ?_, ?_⟩
-      · rw [map_add, hc, AlgHom.commutes, map_sub, AlgHom.commutes]
+      · rw [map_add (f := _), hc, AlgHom.commutes, map_sub, AlgHom.commutes]
         simp
       · rw [map_sub, AlgHom.commutes, sub_sub, add_comm] at hc'
         rwa [pow_succ]
@@ -163,7 +171,7 @@ private theorem ts_factor [DecidableEq X] (hι : Function.Injective ι)
   refine ⟨f, AlgHom.ext fun x => ?_⟩
   induction x using DirectSum.Decomposition.inductionOn W.gr with
   | zero => rw [map_zero, map_zero]
-  | add a b ha hb => rw [map_add, map_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
   | @homogeneous j x =>
     obtain ⟨x, hx⟩ := x
     rw [act_of_mem W.gr t ξ hx]
@@ -267,7 +275,7 @@ private theorem ts_ext {O X R K : Type} [CommRing O] [IsDomain O] [IsDiscreteVal
   clear h2
   induction x using DirectSum.Decomposition.inductionOn W.gr with
   | zero => rw [map_zero, map_zero]
-  | add a b ha hb => rw [map_add, map_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
   | @homogeneous j x => rw [act_of_mem W.gr 1 ξ x.2]; simp
 
 private def ts_near {O R K : Type} [CommRing O] [CommRing R] [Algebra O R] [NormedField K] [IsUltrametricDist K]
@@ -278,9 +286,9 @@ private def ts_near {O R K : Type} [CommRing O] [CommRing R] [Algebra O R] [Norm
     rintro x y ⟨a, ha, ha'⟩ ⟨b, hb, hb'⟩
     refine ⟨a + b, ?_, ?_⟩
     · convert add_mem ha hb using 1
-      rw [map_add, Subalgebra.coe_add]; ring
+      rw [map_add (f := _), Subalgebra.coe_add]; ring
     · have : f (x + y) - algebraMap O K (a + b) = (f x - algebraMap O K a) + (f y - algebraMap O K b) := by
-        rw [map_add, map_add]; ring
+        rw [map_add (f := _), map_add (f := _)]; ring
       rw [this]
       exact (IsUltrametricDist.norm_add_le_max _ _).trans_lt (max_lt ha' hb')
   mul_mem' := by

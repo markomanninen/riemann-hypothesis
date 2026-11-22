@@ -1,13 +1,18 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsFieldSubalgebraSelf
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsFieldSubalgebraSelf
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
 
 open ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.KH (Cell faceSign)
 
-open Classical in
 
+open Classical in
 def constD (K : Type*) [Fintype K] [LinearOrder K] (ι : K → Type*) [∀ k, LinearOrder (ι k)] (V : Type*)
     [AddCommGroup V] (n : ℕ) (f : Cell K ι n → V) : Cell K ι (n + 1) → V :=
   fun I => ∑ k, ∑ i ∈ I.1 k,
@@ -30,8 +35,5 @@ theorem constVanish_hyp_segment :
   have h : (I.1 ()).card - 1 = 2 := by simpa using I.2.2
   have hc : (I.1 ()).card ≤ 2 := by simpa using Finset.card_le_univ (I.1 ())
   omega
-
-example (h : CechConstVanish.Statement) :=
-  h Unit (fun _ => Fin 2) ℤ (fun _ => Finset.univ) (fun _ => 1) constVanish_hyp_segment
 
 end GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization

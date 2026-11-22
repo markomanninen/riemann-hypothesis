@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ResidueCharacters.InvariantsKilledOverCyclotomicAlt
-import Development.AutomorphicArithmetic.CyclotomicBounds.FiniteDimensionalRoots
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ResidueCharacters.InvariantsKilledOverCyclotomicAlt
+public import Development.AutomorphicArithmetic.CyclotomicBounds.FiniteDimensionalRoots
+
+@[expose] public section
 
 noncomputable section
 

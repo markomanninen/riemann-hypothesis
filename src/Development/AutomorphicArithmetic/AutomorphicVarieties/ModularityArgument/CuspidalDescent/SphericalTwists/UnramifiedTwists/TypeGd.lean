@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.SphericalTwists.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.AbConv
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PolarizedLinkage.ExtraV
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PlainTorExistsChars
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.SphericalTwists.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.AbConv
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PolarizedLinkage.ExtraV
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PlainTorExistsChars
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem UpperTheory.V.Z.Desc.W.typeGd :
     refine UpperTheory.Zero.LLC.abConv E Ω A w h rc hrc (algNorm σ) (fun j : Fin n => (χ j).comp (Weil h).subtype) fun t => ?_
     rw [← hb, WD.charPol_mk, hχ t, Matrix.charpoly_toLin', Matrix.charpoly_diagonal]
     rfl
-  obtain ⟨a, ha, ε, L⟩ := toV' hrc
+  obtain ⟨a, ha, ε, L⟩ := _root_.UpperTheory.V.Z.Win.toV' hrc
   obtain ⟨s, hs, hch⟩ := hT
   refine ⟨?_, ?_, hm⟩
   · have hs' := GlobalTheory.LocGL.SupportRing.hasSupport_nu hs (-(((1 - (n : ℝ)) / 2 : ℝ) : ℂ))

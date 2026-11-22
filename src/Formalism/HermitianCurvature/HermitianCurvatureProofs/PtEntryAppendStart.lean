@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CWConsPlus
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LoeZeroOfPsd
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParametersUPrimeForULower
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CWConsPlus
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LoeZeroOfPsd
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ParametersUPrimeForULower
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBL
 
@@ -12,17 +16,21 @@ noncomputable section
 open Classical
 
 theorem ptEntry_append_start (rest : C.LPt) : ∀ (H : C.LPt) (a b : ℕ),
-    D.ptEntry (H ++ rest) (D.ptSize H + a) b = if D.ptSize H ≤ b then D.ptEntry rest a (b - D.ptSize H) else 0
-  | [], a, b => by simp [D.ptSize]
-  | (s, t) :: H', a, b => by
-    have ih := ptEntry_append_start rest H' a (b - s)
+    D.ptEntry (H ++ rest) (D.ptSize H + a) b = if D.ptSize H ≤ b then D.ptEntry rest a (b - D.ptSize H) else 0 := by
+  intro H
+  induction H with
+  | nil => simp [D.ptSize]
+  | cons block H' ih =>
+    obtain ⟨s, t⟩ := block
+    intro a b
     have hsz : D.ptSize ((s, t) :: H') = s + D.ptSize H' := by simp [D.ptSize]
     rw [hsz]
     show D.ptEntry ((s, t) :: (H' ++ rest)) (s + D.ptSize H' + a) b = _
     simp only [D.ptEntry]
     rw [if_neg (by omega)]
     by_cases hb : s ≤ b
-    · rw [if_pos ⟨by omega, hb⟩, show s + D.ptSize H' + a - s = D.ptSize H' + a by omega, ih]
+    · rw [if_pos ⟨by omega, hb⟩, show s + D.ptSize H' + a - s = D.ptSize H' + a by omega,
+        ih a (b - s)]
       by_cases h2 : D.ptSize H' ≤ b - s
       · rw [if_pos h2, if_pos (by omega), show b - s - D.ptSize H' = b - (s + D.ptSize H') by omega]
       · rw [if_neg h2, if_neg (by omega)]
@@ -67,7 +75,7 @@ theorem vecV_of_G (Bs : B.RealPlaceData P.k P.r Wp Wq) (ν' : Fin (2 * P.r + P.k
     (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (Q : C.LPt)
     (hG : ¬ 0 < D.ptG (Tz P.k P.r Bs.z * Tz P.k P.r Bs.z') P.r Q) : D.vecV Bs ν' m₀ F Q = 0 := by
   unfold D.vecV
-  rw [dif_neg (fun h => hG h.2)]
+  rw [dite_eq_right (fun h => hG h.2)]
 
 theorem topOf_big (p : KB.Pl P Wp Wq) (F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)) (w : List C.Letter)
     (H H' : C.LPt) (s : ℕ) (t t' : ℂ) (hs : 2 ≤ s) (hH : D.ptSize H + s = P.r + 1) (hH' : D.ptSize H' + s = P.r + 1) :

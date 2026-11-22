@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.UniformizerUnitAndQFactor
-import Formalism.SharpRestriction.LevelLetterCocycles.GCoordProp
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.WachQuotientCyclicDecomposition
+public import Formalism.SharpRestriction.LevelLetterCocycles.UniformizerUnitAndQFactor
+public import Formalism.SharpRestriction.LevelLetterCocycles.GCoordProp
+
+@[expose] public section
 
 noncomputable section
 
@@ -171,7 +176,7 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
 theorem detAlg_of (hE : Formalism.MainNotions.RamifiedCoefficientChains.DcrisExactStrict PD LL) (hC : Formalism.MainNotions.RamifiedCoefficientChains.CrysSubQuot PD LL)
     (hQ : Formalism.MainNotions.RamifiedCoefficientChains.DdREqDcris PD LL) (h5 : Formalism.MainNotions.DeltaInvariantLattices.P5W W) (h9 : Formalism.MainNotions.DeltaInvariantLattices.P9W W)
     (hB : Formalism.MainNotions.RamifiedCoefficientChains.Sh.BasTool W) (hDT : 11 ≤ PD.p → Formalism.MainNotions.RamifiedCoefficientChains.Sh.DetTool W)
-    (hGC : Formalism.MainNotions.RamifiedCoefficientChains.S9.GCoord.GCoordProp W) : DetAlg W := by
+    (hGC : Formalism.MainNotions.RamifiedCoefficientChains.S9.GCoord.GCoordProp W) : DetS.DetAlg W := by
   intro d T₁ T₂ F b S η m hS i hi e' m' u had σ Z hσ hZ0 hgN
   classical
   obtain ⟨hdom, hdvr, hfrac⟩ := hS.2.2.2.1
@@ -264,15 +269,16 @@ theorem detAlg_of (hE : Formalism.MainNotions.RamifiedCoefficientChains.DcrisExa
     rw [← hsumκ, ← Finset.prod_pow_eq_pow_sum]
     refine Finset.prod_congr rfl fun k _ => ?_
     by_cases hk : (k : ℕ) < m'
-    · simp only [dd, κ, dif_pos hk, map_pow, map_add, PowerSeries.constantCoeff_X,
-        PowerSeries.constantCoeff_C, zero_add]
+    · simp only [dd, κ, dif_pos hk, map_pow, (PowerSeries.constantCoeff (R := O)).map_add,
+        PowerSeries.constantCoeff_X, PowerSeries.constantCoeff_C, zero_add]
     · simp [dd, κ, dif_neg hk]
   have hzz : ∏ k, zz k = ((PD.p : ℕ) : O) ^ (σ * m') := by
     rw [← hsumσ, ← Finset.prod_pow_eq_pow_sum]
     refine Finset.prod_congr rfl fun k _ => ?_
     by_cases hk : (k : ℕ) < m' <;> simp [zz, hk]
   have hPd : PowerSeries.constantCoeff P.det = PowerSeries.constantCoeff u0 * ((PD.p : ℕ) : O) ^ w0 := by
-    rw [hdetP, map_mul, map_pow, map_add, PowerSeries.constantCoeff_X, zero_add, map_natCast]
+    simp only [hdetP, map_mul, map_pow, (PowerSeries.constantCoeff (R := O)).map_add,
+      PowerSeries.constantCoeff_X, zero_add, map_natCast]
   have hM0 : (Matrix.of fun l k => red (cols k) l) = QQc.map PowerSeries.constantCoeff := by
     ext l k
     simp only [Matrix.of_apply, hredc (cols k) (QQc' k) (hQQc k)]

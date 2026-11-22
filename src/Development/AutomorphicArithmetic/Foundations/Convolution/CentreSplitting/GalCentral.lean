@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.DefsTw
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.AdUnique
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.InfinitesimalCharacterPullback.HasInfCharPullSub
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.L2Cusps.SplitEq
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.DefsTw
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.AdUnique
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.InfinitesimalCharacterPullback.HasInfCharPullSub
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.L2Cusps.SplitEq
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -9,21 +13,21 @@ open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalS
 open GlobalTheory.CuspRep (CuspSub GA Af Ad finGL locGL)
 open UpperTheory.ConvolutionTheory.C UpperTheory.ConvolutionTheory.Dp UpperTheory.V
 
-private theorem galAd_eq_adm {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] (σ : E ≃+* E)
+private theorem galAd_eq_adm {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (σ : E ≃+* E)
     (s : Ad E ≃+* Ad E) (h : UpperTheory.CBC.IsGalAd σ s) : s.toRingHom = UpperTheory.V.FieldIso.adm σ :=
   (UpperTheory.ConvolutionTheory.K.adUnique E σ s.toRingHom h.1 h.2.1).trans
     (UpperTheory.ConvolutionTheory.K.adUnique E σ (UpperTheory.V.FieldIso.adm σ) (UpperTheory.V.FieldIso.continuous_adm σ)
       (UpperTheory.V.FieldIso.adm_algebraMap σ)).symm
 
 open Neutral.B1 Formalism.L2.Host Formalism.L2.Host.CT GlobalTheory.CuspRep in
-private theorem cinf_real {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] (σ : E ≃+* E) (c : ℝ) :
+private theorem cinf_real {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (σ : E ≃+* E) (c : ℝ) :
     UpperTheory.V.FieldIso.cinf σ (fun _ => (c : ℂ)) = fun _ => (c : ℂ) := by
   funext u
   change coord _ _ = _
   unfold coord
   split_ifs <;> simp
 
-private theorem map_splitCentre {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] (σ : E ≃+* E) (a : ℕ)
+private theorem map_splitCentre {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (σ : E ≃+* E) (a : ℕ)
     (t : ℝ) : UpperTheory.V.FieldIso.gaMap a σ (GlobalTheory.UnitaryBC.splitCentre E a t) = GlobalTheory.UnitaryBC.splitCentre E a t := by
   unfold GlobalTheory.UnitaryBC.splitCentre
   rw [UpperTheory.V.FieldIso.gaMap_infGL]

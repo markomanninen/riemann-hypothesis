@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.MixedUnlinkedExponents.GamMixedOf
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PlainTorExistsChars
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.MixedUnlinkedExponents.GamMixedOf
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PlainTorExistsChars
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ attribute [-instance] Formalism.DoubleCosetMeasures.instMeasGL
 namespace UpperTheory.Gal.GamX
 
 def CharSupp : Prop :=
-  ∀ (K L : Type) [Field K] [NumberField K] [IsTotallyComplex K] [Field L] [NumberField L] [IsTotallyComplex L] [Algebra K L]
+  ∀ (K L : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] [Algebra K L]
     [IsGalois K L], (Module.finrank K L).Prime → ∀ n : ℕ, 1 ≤ n → ∀ (π : CuspSub K n) (P : CuspSub L n),
     WeakBC (CG.mk π).HasSat (CG.mk P).HasSat →
     ∀ (v : HeightOneSpectrum (𝓞 K)) (u : HeightOneSpectrum (𝓞 L)) [u.asIdeal.LiesOver v.asIdeal]
@@ -24,29 +28,22 @@ def CharSupp : Prop :=
           fun j => GlobalTheory.BCChar.isSmoothChar_comp_normU v u (hξ j))
 
 def CharLiftPrime : Prop :=
-  ∀ (K L : Type) [Field K] [NumberField K] [IsTotallyComplex K] [Field L] [NumberField L] [IsTotallyComplex L] [Algebra K L]
+  ∀ (K L : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] [Algebra K L]
     [IsGalois K L], (Module.finrank K L).Prime → ∀ a : ℕ, 1 ≤ a → ∀ (π : CuspSub K a) (P : CuspSub L a),
     GlobalTheory.GalCut.IsLift π P → GlobalTheory.RoadU.CharLift π P
-
-def UnlThru : Prop :=
-  ∀ (K L : Type) [Field K] [NumberField K] [IsTotallyComplex K] [Field L] [NumberField L] [IsTotallyComplex L] [Algebra K L]
-    [IsGalois K L], (Module.finrank K L).Prime → ∀ n : ℕ, 1 ≤ n → ∀ (π : CuspSub K n) (P : CuspSub L n),
-    WeakBC (CG.mk π).HasSat (CG.mk P).HasSat →
-    ∀ (v : HeightOneSpectrum (𝓞 K)) (w : PlacesOver L v) s s', SuppAt π v s → SuppAt P w.1 s' → GlobalTheory.RoadU.Unlinked s →
-      ∀ ζ hζ, IrrGL.ofChar ζ hζ ∈ s' → Thru w ζ → ∀ y ∈ s', IrrGL.ofChar ζ hζ ≠ y.nu 1 ∧ y ≠ (IrrGL.ofChar ζ hζ).nu 1
 
 section
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-theorem chs_cons (ξ : kˣ →* ℂˣ) (h : IsSmoothChar ξ) (s : Multiset (IrrGL k)) : chs (IrrGL.ofChar ξ h ::ₘ s) = ξ ::ₘ chs s := by
+theorem chs_cons (ξ : kˣ →* ℂˣ) (h : IsSmoothChar ξ) (s : Multiset (IrrGL (k := k))) : chs (IrrGL.ofChar ξ h ::ₘ s) = ξ ::ₘ chs s := by
   have e : ∃ ζ : kˣ →* ℂˣ, ∃ hζ, IrrGL.ofChar ξ h = IrrGL.ofChar ζ hζ := ⟨ξ, h, rfl⟩
   refine Multiset.filterMap_cons_some _ _ _ ?_
-  rw [dif_pos e]
+  rw [dite_eq_left e]
   obtain ⟨_, h2⟩ := e.choose_spec
   exact congrArg some (IrrGL.ofChar_inj.1 h2).symm
 
-theorem chs_cons_of_not {y : IrrGL k} (h : ¬ ∃ ξ : kˣ →* ℂˣ, ∃ hξ, y = IrrGL.ofChar ξ hξ) (s : Multiset (IrrGL k)) :
+theorem chs_cons_of_not {y : IrrGL (k := k)} (h : ¬ ∃ ξ : kˣ →* ℂˣ, ∃ hξ, y = IrrGL.ofChar ξ hξ) (s : Multiset (IrrGL (k := k))) :
     chs (y ::ₘ s) = chs s := Multiset.filterMap_cons_none _ _ (dif_neg h)
 
 theorem chs_map {ι : Type} (t : Multiset ι) (ξ : ι → (kˣ →* ℂˣ)) (hξ : ∀ j, IsSmoothChar (ξ j)) :
@@ -55,7 +52,7 @@ theorem chs_map {ι : Type} (t : Multiset ι) (ξ : ι → (kˣ →* ℂˣ)) (h�
   | empty => rfl
   | cons a t ih => rw [Multiset.map_cons, chs_cons, ih, Multiset.map_cons]
 
-theorem card_chs_le (s : Multiset (IrrGL k)) (h : ∀ y ∈ s, 0 < y.1) :
+theorem card_chs_le (s : Multiset (IrrGL (k := k))) (h : ∀ y ∈ s, 0 < y.1) :
     Multiset.card (chs s) ≤ (s.map Sigma.fst).sum ∧
       (Multiset.card (chs s) = (s.map Sigma.fst).sum → ∀ y ∈ s, ∃ ξ : kˣ →* ℂˣ, ∃ hξ, y = IrrGL.ofChar ξ hξ) := by
   induction s using Multiset.induction with
@@ -75,9 +72,9 @@ theorem card_chs_le (s : Multiset (IrrGL k)) (h : ∀ y ∈ s, 0 < y.1) :
     · rw [chs_cons_of_not c]
       exact ⟨by omega, fun H => by omega⟩
 
-theorem eq_of_chs {s t : Multiset (IrrGL k)} (hs : ∀ y ∈ s, ∃ ξ : kˣ →* ℂˣ, ∃ hξ, y = IrrGL.ofChar ξ hξ)
+theorem eq_of_chs {s t : Multiset (IrrGL (k := k))} (hs : ∀ y ∈ s, ∃ ξ : kˣ →* ℂˣ, ∃ hξ, y = IrrGL.ofChar ξ hξ)
     (ht : ∀ y ∈ t, ∃ ξ : kˣ →* ℂˣ, ∃ hξ, y = IrrGL.ofChar ξ hξ) (h : chs s = chs t) : s = t := by
-  have key : ∀ s : Multiset (IrrGL k), (∀ y ∈ s, ∃ ξ : kˣ →* ℂˣ, ∃ hξ, y = IrrGL.ofChar ξ hξ) →
+  have key : ∀ s : Multiset (IrrGL (k := k)), (∀ y ∈ s, ∃ ξ : kˣ →* ℂˣ, ∃ hξ, y = IrrGL.ofChar ξ hξ) →
       s = (chs s).map fun ξ => if h : IsSmoothChar ξ then IrrGL.ofChar ξ h else IrrGL.ofChar 1 isSmoothChar_one := by
     intro s
     induction s using Multiset.induction with
@@ -85,7 +82,7 @@ theorem eq_of_chs {s t : Multiset (IrrGL k)} (hs : ∀ y ∈ s, ∃ ξ : kˣ →
     | cons a s ih =>
       intro H
       obtain ⟨ξ, hξ, rfl⟩ := H a (Multiset.mem_cons_self _ _)
-      rw [chs_cons, Multiset.map_cons, dif_pos hξ, ← ih fun y hy => H y (Multiset.mem_cons_of_mem hy)]
+      rw [chs_cons, Multiset.map_cons, dite_eq_left hξ, ← ih fun y hy => H y (Multiset.mem_cons_of_mem hy)]
   rw [key s hs, key t ht, h]
 
 end
@@ -121,7 +118,5 @@ theorem charLiftPrime_of (h : CharSupp) : CharLiftPrime := by
     (GlobalTheory.CuspRep.UnrSat.eventually_hasSatGL_locRep GlobalTheory.automorphicFormsFiniteGL K a π)] with w hw
   obtain ⟨B, hB⟩ := hw
   exact fun f hf => ⟨B, hB, hL.sat w f B hf hB⟩
-
-def UnlThruOf : Prop := GamMixed → Spread → ChsFacts → NormVal → PolFacts → UnlThru
 
 end UpperTheory.Gal.GamX

@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ValuativeRel Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.L2.Host
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.Shin
 open GroundTheory.Global GroundTheory.Global.SemiLocal UpperTheory.V.Published UpperTheory.CBC UpperTheory.Gal.InertialTypesAlt
@@ -62,7 +67,7 @@ private theorem isUnit_map {n : ℕ} (M : Matrix (Fin n) (Fin n) F) :
 private theorem coe_toG {n : ℕ} {M : Matrix (Fin n) (Fin n) F} (h : IsUnit M) :
     ((toG M : GL (Fin n) F) : Matrix (Fin n) (Fin n) F) = M := by
   unfold toG
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   rfl
 
 private theorem toG_map {n : ℕ} (M : Matrix (Fin n) (Fin n) F) :
@@ -72,7 +77,7 @@ private theorem toG_map {n : ℕ} (M : Matrix (Fin n) (Fin n) F) :
     rw [coe_toG ((isUnit_map r M).2 h), coe_phi, coe_toG h]
   · have h' : ¬ IsUnit (M.map r) := fun k => h ((isUnit_map r M).1 k)
     unfold toG
-    rw [dif_neg h, dif_neg h', map_one]
+    rw [dite_eq_right h, dite_eq_right h', map_one]
 
 private theorem tlG_phi (a : ℕ) {n : ℕ} (x : GL (Fin n) F) :
     tlG a (Matrix.GeneralLinearGroup.map r.toRingHom x) =

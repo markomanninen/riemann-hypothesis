@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.MirabolicGenerators.SideUnfold
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.MirabolicGenerators.SideUnfold
+
+@[expose] public section
 
 noncomputable section
 
@@ -140,7 +144,7 @@ theorem wall_core : EpMain → DGood → Master → SideOf → Term → ZetaK �
   obtain ⟨F, F', hF, hF', hFE, hval⟩ := hEk ι Ψ ω hΨ hM.sq
   obtain ⟨hS, hS', htr, hdet⟩ := hSO G K hK k ι π Γ i₀ i₁ ω d c η η' l hM
   obtain ⟨a₁, ha₁, ha₁eq⟩ := hZ1 k Ψ₁ ω hΨ₁ hM.sq
-  have hΨh : GJMatrix.adelicFourierPi k Ψ ∈ GJMatrix.schwartzBruhatPi k ι :=
+  have hΨh : GJMatrix.adelicFourierPi k Ψ ∈ GJMatrix.schwartzBruhatPi (K := k) (ι := ι) :=
     GJMatrix.adelicFourierPi_mem_schwartzBruhatPi hΨ
   generalize hΨhd : GJMatrix.adelicFourierPi k Ψ = Ψh at hF' hval hΨh
   generalize hd' : (fun i => (d i)⁻¹ : ι → IdeleGroup k) = d' at hS' htr

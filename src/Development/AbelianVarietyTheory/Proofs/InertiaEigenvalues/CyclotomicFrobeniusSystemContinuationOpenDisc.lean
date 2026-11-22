@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemEurOfTeichmullerSeries
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GeomSumOneAddPrime
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsInvariantBasis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemEurOfTeichmullerSeries
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GeomSumOneAddPrime
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsInvariantBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,8 @@ theorem norm_sum_mul_le {ι : Type} (s : Finset ι) (f : ι → K) {x c : ℝ} (
 
 theorem Bd.sum {ι : Type} (s : Finset ι) (f : ι → K⟦X⟧) {r c : ℝ} (hr : 0 < r) (hc : 0 ≤ c)
     (h : ∀ i ∈ s, Bd r c (f i)) : Bd r c (∑ i ∈ s, f i) := fun k => by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact norm_sum_mul_le _ _ (by positivity) hc fun i hi => h i hi k
 
 theorem Bd.add {r c : ℝ} (hr : 0 < r) {a b : K⟦X⟧} (ha : Bd r c a) (hb : Bd r c b) : Bd r c (a + b) := by
@@ -163,18 +168,18 @@ theorem phi_X (O : Type) [CommRing O] [Algebra ℤ_[l] O] : phi l O X = (1 + X :
   act_nat_X l O l
 
 theorem phi_log_series (K : Type) [Field K] [CharZero K] [Algebra ℤ_[l] K] (t : K⟦X⟧)
-    (h0 : constantCoeff t = 0) (h1 : (1 + X) * derivative K t = 1) : phi l K t = (l : K⟦X⟧) * t := by
+    (h0 : constantCoeff t = 0) (h1 : (1 + X) * derivative t = 1) : phi l K t = (l : K⟦X⟧) * t := by
   have hs : HasSubst (cyc l K (l : ℤ_[l])) := HasSubst.of_constantCoeff_zero' (cyc_const l K _)
   have hne : (1 + X : K⟦X⟧) ≠ 0 := fun h => by simp [h] at h1
   have hl1 : l - 1 + 1 = l := Nat.sub_add_cancel hl.out.one_le
   apply derivative.ext
-  · have e : derivative K (phi l K t) = phi l K (derivative K t) * derivative K ((1 + X) ^ l - 1) := by
+  · have e : derivative (phi l K t) = phi l K (derivative t) * derivative ((1 + X) ^ l - 1) := by
       rw [phi, act_apply, act_apply, derivative_subst hs, cyc_natCast]
     have e2 := congrArg (phi l K) h1
-    rw [map_mul, map_add, map_one, phi_X, add_sub_cancel] at e2
-    have e3 : derivative K ((1 + X : K⟦X⟧) ^ l - 1) = (l : K⟦X⟧) * (1 + X : K⟦X⟧) ^ (l - 1) := by
+    rw [map_mul, map_add (f := _), map_one, phi_X, add_sub_cancel] at e2
+    have e3 : derivative ((1 + X : K⟦X⟧) ^ l - 1) = (l : K⟦X⟧) * (1 + X : K⟦X⟧) ^ (l - 1) := by
       simp [Derivation.leibniz_pow]
-    have e4 : derivative K ((l : K⟦X⟧) * t) = (l : K⟦X⟧) * derivative K t := by
+    have e4 : derivative ((l : K⟦X⟧) * t) = (l : K⟦X⟧) * derivative t := by
       rw [← nsmul_eq_mul, map_nsmul, nsmul_eq_mul]
     apply mul_left_cancel₀ hne
     have e5 : (1 + X : K⟦X⟧) ^ l = (1 + X) ^ (l - 1) * (1 + X) := by rw [← pow_succ, hl1]
@@ -189,25 +194,25 @@ theorem inv_le_norm_nat (k : ℕ) (hk : k ≠ 0) : 1 ≤ k * ‖(k : ℤ_[l])‖
   have h0 : (k : ℚ_[l]) ≠ 0 := by exact_mod_cast hk
   rw [PadicInt.norm_def, PadicInt.coe_natCast, Padic.norm_eq_zpow_neg_valuation h0,
     Padic.valuation_natCast, zpow_neg, zpow_natCast, ← div_eq_mul_inv, one_le_div (by positivity)]
-  exact_mod_cast Nat.le_of_dvd (Nat.pos_of_ne_zero hk) pow_padicValNat_dvd
+  exact_mod_cast Nat.le_of_dvd (Nat.pos_of_ne_zero hk) (pow_multiplicity_dvd l k)
 
 variable (LL : FinExt l)
 
 theorem norm_nat (k : ℕ) : ‖(k : ↥LL.1)‖ = ‖(k : ℤ_[l])‖ := by
   rw [← InvBasis.norm_algebraMap l LL, map_natCast]
 
-theorem bd_log_div (a : (↥LL.1)⟦X⟧) (h1 : (1 + X) * derivative _ (X * a) = 1) (r : ℝ) (hr : 0 < r)
+theorem bd_log_div (a : (↥LL.1)⟦X⟧) (h1 : (1 + X) * derivative (X * a) = 1) (r : ℝ) (hr : 0 < r)
     (hr1 : r < 1) : ∃ c, Bd r c a := by
-  have hd : ∀ k, ‖coeff k (derivative _ (X * a))‖ = 1 := by
+  have hd : ∀ k, ‖coeff k (derivative (X * a))‖ = 1 := by
     intro k
     induction k with
     | zero =>
       have := congrArg (coeff 0) h1
-      rw [add_mul, one_mul, map_add, coeff_zero_X_mul, add_zero, coeff_one, if_pos rfl] at this
+      rw [add_mul, one_mul, map_add (f := _), coeff_zero_X_mul, add_zero, coeff_one, if_pos rfl] at this
       rw [this, norm_one]
     | succ k ih =>
       have := congrArg (coeff (k + 1)) h1
-      rw [add_mul, one_mul, map_add, coeff_succ_X_mul, coeff_one, if_neg k.succ_ne_zero] at this
+      rw [add_mul, one_mul, map_add (f := _), coeff_succ_X_mul, coeff_one, if_neg k.succ_ne_zero] at this
       rw [eq_neg_of_add_eq_zero_left this, norm_neg, ih]
   have hb : ∀ k, ‖coeff k a‖ ≤ k + 1 := by
     intro k
@@ -231,7 +236,7 @@ theorem bd_phi_X (r : ℝ) (hr : 0 < r) (hr1 : r < 1) :
   have e : phi l ↥LL.1 X = X ^ l + C (l : ↥LL.1) * X *
       PowerSeries.map (algebraMap ↥(OL LL) ↥LL.1) b := by
     have := congrArg (PowerSeries.map (algebraMap ↥(OL LL) ↥LL.1)) hb
-    simp only [map_add, map_pow, map_mul, map_one, map_X, map_natCast] at this
+    simp only [map_add (f := _), map_pow, map_mul, map_one, map_X, map_natCast] at this
     rw [phi_X, map_natCast, add_comm 1 X, this]
     ring
   rw [e]
@@ -259,7 +264,7 @@ theorem ex_phi_pow (j : ℕ) {r : ℝ} (hr : 0 < r) (hr1 : r < 1) {a : (↥LL.1)
       (mul_le_of_le_one_left hr.le (max_le (inv_lt_one l).le hr1.le))) hc⟩
 
 theorem bd_tau (s : ℕ) (t τ : (↥LL.1)⟦X⟧) (h0 : constantCoeff t = 0)
-    (h1 : (1 + X) * derivative _ t = 1) (hτ : XX l ↥LL.1 s * τ = t) (r : ℝ) (hr : 0 < r) (hr1 : r < 1) :
+    (h1 : (1 + X) * derivative t = 1) (hτ : XX l ↥LL.1 s * τ = t) (r : ℝ) (hr : 0 < r) (hr1 : r < 1) :
     ∃ c, Bd r c τ := by
   have hj : ∀ j : ℕ, (phi l ↥LL.1 ^ j) t = (l : (↥LL.1)⟦X⟧) ^ j * t := by
     intro j
@@ -290,7 +295,7 @@ namespace GlobalTheory.Cyc
 
 open Cont
 
-theorem continuation_to_open_disc : ∀ (l : ℕ) [Fact l.Prime], ∀ (LL : FinExt l) (s r n M : ℕ) [NeZero n], 1 ≤ s → ∀ (t τ : PowerSeries ↥LL.1), PowerSeries.constantCoeff t = 0 → (1 + PowerSeries.X) * PowerSeries.derivative ↥LL.1 t = 1 → XX l ↥LL.1 s * τ = t → ∀ (U : ZMod n → Matrix (Fin r) (Fin r) (PowerSeries ↥LL.1)) (Pm : ZMod n → Matrix (Fin r) (Fin r) (PowerSeries ↥(OL LL))) (Cm : ZMod n → Matrix (Fin r) (Fin r) ↥LL.1) (ρ : ℝ), 0 < ρ → (∀ i, QQ l ↥LL.1 s ^ M • U i = (Pm i).map (PowerSeries.map (algebraMap ↥(OL LL) ↥LL.1)) * (U (i - 1)).map (phi l ↥LL.1) * (Cm i).map PowerSeries.C) → (∀ i a b, (∀ r : ℝ, 0 < r → r < ρ → Filter.Tendsto (fun k : ℕ => ‖((PowerSeries.coeff k (U i a b) : ↥LL.1) : Om l)‖ * r ^ k) Filter.atTop (nhds 0))) → ∀ i a b, (∀ r : ℝ, 0 < r → r < 1 → Filter.Tendsto (fun k : ℕ => ‖((PowerSeries.coeff k (τ ^ M * U i a b) : ↥LL.1) : Om l)‖ * r ^ k) Filter.atTop (nhds 0)) := by
+theorem continuation_to_open_disc : ∀ (l : ℕ) [Fact l.Prime], ∀ (LL : FinExt l) (s r n M : ℕ) [NeZero n], 1 ≤ s → ∀ (t τ : PowerSeries ↥LL.1), PowerSeries.constantCoeff t = 0 → (1 + PowerSeries.X) * PowerSeries.derivative t = 1 → XX l ↥LL.1 s * τ = t → ∀ (U : ZMod n → Matrix (Fin r) (Fin r) (PowerSeries ↥LL.1)) (Pm : ZMod n → Matrix (Fin r) (Fin r) (PowerSeries ↥(OL LL))) (Cm : ZMod n → Matrix (Fin r) (Fin r) ↥LL.1) (ρ : ℝ), 0 < ρ → (∀ i, QQ l ↥LL.1 s ^ M • U i = (Pm i).map (PowerSeries.map (algebraMap ↥(OL LL) ↥LL.1)) * (U (i - 1)).map (phi l ↥LL.1) * (Cm i).map PowerSeries.C) → (∀ i a b, (∀ r : ℝ, 0 < r → r < ρ → Filter.Tendsto (fun k : ℕ => ‖((PowerSeries.coeff k (U i a b) : ↥LL.1) : Om l)‖ * r ^ k) Filter.atTop (nhds 0))) → ∀ i a b, (∀ r : ℝ, 0 < r → r < 1 → Filter.Tendsto (fun k : ℕ => ‖((PowerSeries.coeff k (τ ^ M * U i a b) : ↥LL.1) : Om l)‖ * r ^ k) Filter.atTop (nhds 0)) := by
   intro l hl LL s r n M _ hs t τ h0 h1 hτ U Pm Cm ρ hρ hU hc i a b x hx hx1
   have hX : XX l ↥LL.1 s ≠ 0 := fun h => by
     rw [h, zero_mul] at hτ

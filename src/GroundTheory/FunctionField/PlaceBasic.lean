@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.FunctionField.PlaceDefs
+module
+
+public import Mathlib
+public import GroundTheory.FunctionField.PlaceDefs
+
+@[expose] public section
 
 namespace GroundTheory.FunctionField
 
@@ -97,22 +101,6 @@ theorem eq_of_le [IsFunctionField k K] {v w : Place k K} (h : v.ring ≤ w.ring)
       rw [ValuationSubring.ofPrime_top] at hPw
       exact hPw
   exact key _ (v.ring.ofPrime_idealOfLE w.ring h)
-
-noncomputable def algebraicClosureToResidueField (v : Place k K) :
-    algebraicClosure k K →ₐ[k] v.ResidueField where
-  toRingHom := (IsLocalRing.residue v.ring).comp
-    (RingHom.codRestrict ((algebraicClosure k K).val : algebraicClosure k K →+* K) v.ring
-      fun y => show (y : K) ∈ v.ring from v.mem_ring_of_isAlgebraic (mem_algebraicClosure_iff.1 y.2))
-  commutes' _ := rfl
-
-theorem algebraicClosureToResidueField_injective (v : Place k K) :
-    Function.Injective v.algebraicClosureToResidueField :=
-  v.algebraicClosureToResidueField.toRingHom.injective
-
-instance [IsFunctionField k K] : FiniteDimensional k (algebraicClosure k K) := by
-  obtain ⟨v⟩ := Place.nonempty (k := k) (K := K)
-  exact FiniteDimensional.of_injective v.algebraicClosureToResidueField.toLinearMap
-    v.algebraicClosureToResidueField_injective
 
 end Place
 

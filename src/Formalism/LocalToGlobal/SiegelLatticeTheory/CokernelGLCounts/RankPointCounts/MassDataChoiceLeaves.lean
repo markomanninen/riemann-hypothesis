@@ -1,17 +1,21 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CanonicalAnalyticData
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataXMasses
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataXColumns
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataXRed
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocVolKap
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocVolPrim
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RealObjClosed
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.MassDataLevelS
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.MassDataKppVol
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.MassDataVolumesS
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LocFramePrim
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.ThmSOwn
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataXTied
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CanonicalAnalyticData
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataXMasses
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataXColumns
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataXRed
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocVolKap
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocVolPrim
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RealObjClosed
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.MassDataLevelS
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.MassDataKppVol
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.MassDataVolumesS
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.LocFramePrim
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.ThmSOwn
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.MassDataXTied
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,36 +27,6 @@ open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Fo
 namespace Formalism.L2.SG.Pf
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-theorem stepChoiceDataC_of_leaves
-    (hSW : ∀ {D : Formalism.BasicNotions.D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D),
-      Formalism.MainNotions.UnusedSlot34.SWa1 X.B.I.F X.B.I.E X.B.I.cm.sig X.B.I.n X.B.I.J ∧
-        Formalism.L2.SG.Pf.NcWeil.StabilizerFirstChernCompatibility X.B.I.F X.B.I.E X.B.I.cm.sig X.B.I.n X.B.I.J)
-    (hTy : OnTied fun D X hb Y u u' X0 ψ =>
-      InTypedC X hb Y.hK (Y.FN u) (Y.FN u') u u' X0 ψ (Y.tO u u') 0 0 1 (F0 := X.Fu u) (what₂ := Y.what₂ u)
-        (fun _ => 0) (pairSys0 u u' (X.Fu u) (Y.what₂ u)) Y.M Y.δ (fun _ => idx0 D) (fun _ => idx0 D) (fun _ => 0))
-    (hPC : OnTied fun _ X _ _ u u' _ ψ => ProdConv X u u' ψ)
-    (hInf : OnTied fun _ X _ _ u u' _ _ => Formalism.L2.SG.RealObj.InInfinityX X u u' 1)
-    (hPos : OnTied fun _ X hb Y u u' X0 ψ => (bk0 X hb Y u u' X0 ψ).Pos)
-    (hFV : OnTied fun D X hb Y u u' X0 ψ =>
-      FrameVolAt X hb Y u u' X0 ψ 0 0 1 (F0 := X.Fu u) (what₂ := Y.what₂ u) (fun _ => 0)
-        (pairSys0 u u' (X.Fu u) (Y.what₂ u)) (fun _ => idx0 D) (fun _ => idx0 D) (fun _ => 0)) :
-    StepChoiceConstantsC := by
-  exact stepChoiceDataC_of
-    (fun _ _ _ _ _ _ _ _ _ _ X Y u u' _ hb X0 _ _ => level_s_at_instance X hb Y.hK (Y.FN u) (Y.FN u') u u' X0 _ _)
-    (fun _ _ _ _ _ _ _ _ _ _ X Y u u' _ hb X0 _ _ => MassDataX.inMassesAt_holds X hb Y.hK (Y.FN u) (Y.FN u') u u' X0 _ _)
-    (fun _ _ _ _ _ _ _ _ _ _ X Y u u' _ hb X0 _ _ => MassDataX.inColumnsAt_holds X hb Y.hK (Y.FN u) (Y.FN u') u u' X0 _ _)
-    (fun _ _ _ _ _ _ _ _ _ _ X Y u u' _ hb X0 _ _ => MassDataX.inIndicesAt_holds X hb Y.hK (Y.FN u) (Y.FN u') u u' X0 _ _)
-    (fun _ _ _ _ _ _ _ _ _ _ X Y u u' _ hb X0 _ _ =>
-      volumes_s_at_instance hSW X hb Y.hK (Y.FN u) (Y.FN u') u u' X0 _ _)
-    (fun _ _ _ _ _ _ _ _ _ _ X Y u u' _ hb X0 _ _ => kpp_volume_at_instance X hb Y.hK (Y.FN u) (Y.FN u') u u' X0 _ _)
-    hTy hPC
-    (fun _ _ _ _ _ _ _ _ _ _ X _ u u' _ _ _ _ _ =>
-      ⟨LocVolPrim.primX X u locFramePrim, LocVolPrim.primX X u' locFramePrim⟩)
-    (fun _ _ _ _ _ _ _ _ _ _ X _ u u' _ hb _ _ _ => Formalism.L2.SG.LocVolKap.kapX (X := X) hb u u')
-    (fun Cg cb Cw cT CT C0 C' Cl D large₂ X Y u u' hc hb X0 ψ hT =>
-      ⟨Formalism.L2.SG.RealObj.InfCut.inNuX X u u' 1, hInf Cg cb Cw cT CT C0 C' Cl D large₂ X Y u u' hc hb X0 ψ hT⟩)
-    hPos hFV
 
 theorem stepChoiceDataC_of_leavesG
     (hSW : ∀ {D : Formalism.BasicNotions.D7} (X : Formalism.L2.SG.HidaSetting.HidaSetting D),

@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.StrictJoinCandidates.InertInSec
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.BaseChangeWeyl.IrredCompSurj
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LemA
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.StrictJoinCandidates.InertInSec
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.BaseChangeWeyl.IrredCompSurj
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LemA
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,10 +28,10 @@ theorem satCompAt : SatCompAt := by
         ∀ x : E, s (algebraMap E _ x) = algebraMap E _ (IsCMField.complexConj E x) := by
       by_contra hne
       obtain ⟨x, -, hx⟩ := hI.2.2.2.2.1
-      have hid : cj w = RingHom.id _ := by rw [cj, dif_neg hne]
+      have hid : cj w = RingHom.id _ := by rw [cj, dite_eq_right hne]
       rw [hid, RingHom.id_apply, sub_self, map_zero] at hx
       exact zero_ne_one hx
-    have hcj' : cj w = hex.choose := by rw [cj, dif_pos hex]
+    have hcj' : cj w = hex.choose := by rw [cj, dite_eq_left hex]
     intro x
     rw [hcj']
     exact hex.choose_spec.2 x
@@ -77,7 +81,7 @@ theorem satCompAt : SatCompAt := by
       WithZero.coe_injective (by rw [WithZero.coe_unzero, hv])
     show ordL (ϖ : w.adicCompletion E) = 1
     unfold ordL
-    rw [dif_neg h0, hu1]
+    rw [dite_eq_right h0, hu1]
     simp
   exact PositivityTheory.Rg.BcB.F.Inert.lem_b E n w hw b b' ϖ ϖ' q q' σ α α' ⟨hbK, hb⟩ hb' hunif hϖ' hI hI' hs1 hS'
 

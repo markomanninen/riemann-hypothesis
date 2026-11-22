@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FockPairingHighestWeight
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDlatLemmas
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LCassemLemmas
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FockPairingHighestWeight
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LDlatLemmas
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LCassemLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -40,7 +44,7 @@ theorem lower_triangular_over_field : LowerTriK := by
     lowerTri_of_interlaced (leadInterlaced K r n ν f hf hf0)
   refine ⟨?_, ?_⟩
   · suffices key : ∀ d : (colLex r n).syn, ∀ f ∈ dualWeyl K r n ν,
-        (∀ e : Fin r × Fin n →₀ ℕ, LowerTri e → coeff e f ∈ Set.range (algebraMap O K)) →
+        (∀ e : Fin r × Fin n →₀ ℕ, LowerTri e → AddMonoidAlgebra.coeff f e ∈ Set.range (algebraMap O K)) →
         (colLex r n).toSyn ((colLex r n).degree f) = d → f ∈ (dualWeyl O r n ν).map (toK O K) by
       intro h
       exact key _ Q hQ h rfl
@@ -86,8 +90,8 @@ theorem lower_triangular_over_field : LowerTriK := by
       refine ih _ (hd ▸ hlt) f' hf'mem ?_ rfl
       intro e he
       obtain ⟨x, hx⟩ := hco e he
-      refine ⟨x - coeff e (c • bideterminant O sz hsz I), ?_⟩
-      have hce : coeff e (toK O K (c • bideterminant O sz hsz I)) = algebraMap O K (coeff e (c • bideterminant O sz hsz I)) :=
+      refine ⟨x - AddMonoidAlgebra.coeff (c • bideterminant O sz hsz I) e, ?_⟩
+      have hce : AddMonoidAlgebra.coeff (toK O K (c • bideterminant O sz hsz I)) e = algebraMap O K (AddMonoidAlgebra.coeff (c • bideterminant O sz hsz I) e) :=
         coeff_map (algebraMap O K) _ e
       rw [hf', coeff_sub, hcb, map_sub, hx, hce]
   · intro h

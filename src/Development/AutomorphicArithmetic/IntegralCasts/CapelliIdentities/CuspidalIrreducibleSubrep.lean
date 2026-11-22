@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.CuspidalIrreducibleSubrep.ev :
     {I : Type} →
@@ -9,7 +13,7 @@ noncomputable def UpperTheory.Reformulated.B.CuspidalIrreducibleSubrep.ev :
               ((i : I) → Module.Dual ℂ (W i)) → (PiTensorProduct ℂ fun (i : I) ↦ W i) →ₗ[ℂ] ℂ :=
     fun {I : Type} [Fintype I] {W : I → Type} [(i : I) → AddCommGroup (W i)] [(i : I) → _root_.Module ℂ (W i)]
         (f : (i : I) → Module.Dual ℂ (W i)) ↦
-      (PiTensorProduct.lift : MultilinearMap ℂ W ℂ → (PiTensorProduct ℂ fun (i : I) ↦ W i) →ₗ[ℂ] ℂ)
+      (PiTensorProduct.lift : ((∀ i, W i) →ₘₗ[ℂ] ℂ) → (PiTensorProduct ℂ fun (i : I) ↦ W i) →ₗ[ℂ] ℂ)
         ((MultilinearMap.mkPiAlgebra ℂ I ℂ).compLinearMap f)
 
 theorem UpperTheory.Reformulated.B.CuspidalIrreducibleSubrep.ev_tprod :

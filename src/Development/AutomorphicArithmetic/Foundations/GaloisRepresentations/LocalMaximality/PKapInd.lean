@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
+
+@[expose] public section
+
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
 
@@ -87,14 +92,15 @@ private theorem ind_of {d : ℕ} {K S E : Type} [Field K] [Algebra ℂ K] [CommR
     simp [app, inlE, sub_eq_add_neg, add_comm]
   have hr : π (wd (fun l : Mi d => (Algebra.lmul ℂ S) (app (fun _ => 1) T.mu (inrE l : Fin (d + 1) ⊕ₗ Mi d)))
       (fun L' => detC T.rowMu (uni {0, i} L')) L) = 0 := by
-    rw [wd_apply', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [wd_apply', map_sum]
     refine Finset.sum_eq_zero fun l _ => ?_
     have : app (fun _ : Fin (d + 1) => (1 : S)) T.mu (inrE l : Fin (d + 1) ⊕ₗ Mi d) = T.mu l := by simp [app, inrE]
     rw [map_zsmul]
     simp [this, map_mu T π y hX hY l]
   rw [hl] at h1
   have h2 := congrArg π h1
-  rw [map_add, map_zsmul, hr, smul_zero, add_zero, map_sub] at h2
+  rw [map_add (f := _), map_zsmul, hr, smul_zero, add_zero, map_sub] at h2
   simpa [sub_eq_zero] using h2
 
 end UpperTheory.Gal.productCup_of_system

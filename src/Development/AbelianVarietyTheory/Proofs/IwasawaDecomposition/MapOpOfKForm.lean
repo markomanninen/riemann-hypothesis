@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PlaceCharacterEqReferenceIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StableIffCarrierEq
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PlaceCharacterEqReferenceIff
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
 open scoped TensorProduct InnerProductSpace
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -19,7 +24,8 @@ theorem rowForm_rE {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A :
     (A.fam.lvl P ψ).P (A.fam.lvl P ψ).ψ (idemOf A.X) (hc _).symm).1
   unfold rowForm rE
   change _ = (A.fam.R t).S.gaOp (A.fam.R t).r (idemOf A.X) _
-  rw [Matrix.mulVec_mulVec, h1, ← Matrix.mulVec_mulVec, CSD.gaMat, Matrix.sum_mulVec, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.mulVec_mulVec, h1, ← Matrix.mulVec_mulVec, CSD.gaMat, Matrix.sum_mulVec, map_sum]
   rw [CSD.gaOp]
   rw [LinearMap.sum_apply]
   refine Finset.sum_congr rfl fun g _ => ?_

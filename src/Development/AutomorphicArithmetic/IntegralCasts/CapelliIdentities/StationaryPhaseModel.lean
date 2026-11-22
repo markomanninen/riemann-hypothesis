@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsTerMore
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsTerMore
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.StationaryPhaseModel.matIrr_conj :
     ∀ {Γ k : Type} [inst : Group Γ] [inst_1 : Field k] {n : ℕ} {U : Subgroup Γ} {a a' : Γ → Matrix (Fin n) (Fin n) k},

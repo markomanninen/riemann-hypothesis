@@ -1,4 +1,8 @@
-import Formalism.YangianSpanCharacter.StatementT
+module
+
+public import Formalism.YangianSpanCharacter.StatementT
+
+@[expose] public section
 
 namespace Formalism.YangianSpanCharacter.P
 

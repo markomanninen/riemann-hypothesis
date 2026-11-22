@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.CechAugRow
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MapHComp
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.TotalComplexPairingSign
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.CechAugRow
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MapHComp
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory Opposite CrystallineSemistableComparison CrystallineSemistableComparison.CH
 universe w w' w'' t t' v u v' u' v'' u''
@@ -31,7 +35,8 @@ theorem term_d {R : Type} [CommRing R] {C : Type u} [Category.{v} C] (F : C ⥤ 
   have e : d F p f (hg.functor ⋙ s) = ∑ i : Fin (p + 2), (-1 : ℤ) ^ (i : ℕ) •
       term F (hg.functor ⋙ s) f i.succAbove (Fin.strictMono_succAbove i).monotone := rfl
   show (F.map (s.map (homOfLE (Fin.le_last (g (Fin.last (p + 1))))))).hom (d F p f (hg.functor ⋙ s)) = _
-  rw [e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_zsmul, term_comp]
 
@@ -66,7 +71,8 @@ theorem CrystallineSemistableComparison.P.leibniz : ∀ {R : Type} [CommRing R] 
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [CrystallineSemistableComparison.Auxff.cupC_apply, ← P.nat, term_face, term_face]
   rw [hL, Pi.add_apply, Pi.smul_apply, CrystallineSemistableComparison.Auxff.cupC_apply, CrystallineSemistableComparison.Auxff.cupC_apply, CrystallineSemistableComparison.Auxff.term_d, CrystallineSemistableComparison.Auxff.term_d]
-  simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply]
   rw [CrystallineSemistableComparison.Auxff.sum_split (show p + q + 2 = (p + 1) + (q + 1) by omega), Fin.sum_univ_castSucc (n := p + 1),
     Fin.sum_univ_succ (n := q + 1), smul_add, Finset.smul_sum]
   refine CrystallineSemistableComparison.Auxff.four (Finset.sum_congr rfl fun j _ => ?_) (Finset.sum_congr rfl fun k _ => ?_) ?_
@@ -162,9 +168,9 @@ theorem cx_bilin {R : Type} [CommRing R] {K : Cx.{w} R} {L : Cx.{w'} R} {M : Cx.
     obtain ⟨a, ha, rfl⟩ := (CrystallineSemistableComparison.P.cls_surj K p).1 x
     obtain ⟨a', ha', rfl⟩ := (CrystallineSemistableComparison.P.cls_surj K p).1 x'
     obtain ⟨b, hb, rfl⟩ := (CrystallineSemistableComparison.P.cls_surj L q).1 y
-    have hs : K.d p (a + a') = 0 := by rw [map_add, ha, ha', add_zero]
+    have hs : K.d p (a + a') = 0 := by rw [map_add (f := _), ha, ha', add_zero]
     rw [← (CrystallineSemistableComparison.P.cls_surj K p).2.2.2.1 a a' ha ha' hs, cc, cc, cc]
-    simp only [map_add, LinearMap.add_apply]
+    simp only [map_add (f := _), LinearMap.add_apply]
     exact (CrystallineSemistableComparison.P.cls_surj M n).2.2.2.1 _ _ _ _ _
   · intro r x y
     obtain ⟨a, ha, rfl⟩ := (CrystallineSemistableComparison.P.cls_surj K p).1 x
@@ -177,9 +183,9 @@ theorem cx_bilin {R : Type} [CommRing R] {K : Cx.{w} R} {L : Cx.{w'} R} {M : Cx.
     obtain ⟨a, ha, rfl⟩ := (CrystallineSemistableComparison.P.cls_surj K p).1 x
     obtain ⟨b, hb, rfl⟩ := (CrystallineSemistableComparison.P.cls_surj L q).1 y
     obtain ⟨b', hb', rfl⟩ := (CrystallineSemistableComparison.P.cls_surj L q).1 y'
-    have hs : L.d q (b + b') = 0 := by rw [map_add, hb, hb', add_zero]
+    have hs : L.d q (b + b') = 0 := by rw [map_add (f := _), hb, hb', add_zero]
     rw [← (CrystallineSemistableComparison.P.cls_surj L q).2.2.2.1 b b' hb hb' hs, cc, cc, cc]
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact (CrystallineSemistableComparison.P.cls_surj M n).2.2.2.1 _ _ _ _ _
   · intro r x y
     obtain ⟨a, ha, rfl⟩ := (CrystallineSemistableComparison.P.cls_surj K p).1 x
@@ -292,12 +298,17 @@ theorem CrystallineSemistableComparison.P.cup_ring : ∀ {R : Type} [CommRing R]
   intro R _ C _ A
   refine ⟨fun n x => ?_, fun {p q r a b n} h₁ h₂ h₃ h₄ x y z => ?_⟩
   · obtain ⟨f, hf, rfl⟩ := (CrystallineSemistableComparison.P.cls_surj (cx (modF A)) n).1 x
+    have hone : d (modF A) 0 (fun s => (1 : A.obj (s.obj (Fin.last 0)))) = 0 := by
+      funext s
+      change ∑ i : Fin 2, (-1 : ℤ) ^ (i : ℕ) • (A.map (GlobalTheory.CatH.toLast i s)).hom 1 = (0 : A.obj _)
+      rw [Fin.sum_univ_two, map_one, map_one]
+      simp
     constructor
     · obtain ⟨hc, e⟩ := CrystallineSemistableComparison.P.cup_cls (mulP A) (Nat.zero_add n) (fun s => (1 : A.obj (s.obj (Fin.last 0)))) f
-        (oneH._proof_1 A) hf
+        hone hf
       exact e.trans (CrystallineSemistableComparison.Auxff.cls_congr _ (CrystallineSemistableComparison.Auxff.unit_left A f) _ _)
     · obtain ⟨hc, e⟩ := CrystallineSemistableComparison.P.cup_cls (mulP A) (Nat.add_zero n) f (fun s => (1 : A.obj (s.obj (Fin.last 0))))
-        hf (oneH._proof_1 A)
+        hf hone
       exact e.trans (CrystallineSemistableComparison.Auxff.cls_congr _ (CrystallineSemistableComparison.Auxff.unit_right A f) _ _)
   · obtain ⟨f, hf, rfl⟩ := (CrystallineSemistableComparison.P.cls_surj (cx (modF A)) p).1 x
     obtain ⟨g, hg, rfl⟩ := (CrystallineSemistableComparison.P.cls_surj (cx (modF A)) q).1 y

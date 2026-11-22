@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementA
-import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementB
+module
+
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementA
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementB
+
+@[expose] public section
 
 noncomputable section
 

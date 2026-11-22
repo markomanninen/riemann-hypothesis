@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsClosedImmersionOfCoordinateDivisibility
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsClosedImmersionOfCoordinateDivisibility
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -49,8 +53,10 @@ theorem exists_genTriv {W : Type} (s : W → H.Sec) (t : W → Ω)
   · split_ifs with hi
     · exact div_ne_zero ht0 (h1 i hi)
     · exact one_ne_zero
-  · have hi : (H.U i : Set M.Z).Nonempty := h.mono fun _ hz => hz.1
-    have hj : (H.U j : Set M.Z).Nonempty := h.mono fun _ hz => hz.2
+  · obtain ⟨z, hz⟩ := h
+    have hi : (H.U i : Set M.Z).Nonempty := ⟨z, hz.1⟩
+    have hj : (H.U j : Set M.Z).Nonempty := ⟨z, hz.2⟩
+    have h : ((H.U i ⊓ H.U j : M.Z.Opens) : Set M.Z).Nonempty := ⟨z, hz⟩
     rw [if_pos hi, if_pos hj, valF_compat (s w₀) h]
     have := h1 j hj
     have := valF_unit_ne_zero h (H.g i j)
@@ -101,7 +107,7 @@ theorem nonzero_of_comb {e : H.ι → Ω} {J : Type} {s : J → H.Sec} {t : J �
   have e0 : (⟨valF M.pt (H.U l) ((s j).f l), valF_mem_O hzl _⟩ : M.O z) =
       ∑ k, algebraMap o (M.O z) (a k) * ⟨valF M.pt (H.U l) ((s (γ k)).f l), valF_mem_O hzl _⟩ := by
     refine Subtype.ext ?_
-    rw [AddSubmonoidClass.coe_finset_sum]
+    rw [AddSubmonoidClass.coe_finsetSum]
     simp only [MulMemClass.coe_mul, SubalgebraClass.coe_algebraMap, hv _ l ⟨z, hzl⟩]
     rw [ha, Finset.sum_div]
     simp only [mul_div_assoc]
@@ -129,7 +135,8 @@ theorem gen_all {K V Ω : Type} [Field K] [NumberField K] [AddCommGroup V] [Modu
   have hs := nonzero_of_comb hv hb gw fun w => by
     obtain ⟨a, ha⟩ := (Submodule.mem_span_range_iff_exists_fun (𝓞 K)).1 (hg.ge w.2)
     refine ⟨a, ?_⟩
-    rw [← ha, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← ha, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [← algebraMap_smul K (a k), map_smul, Algebra.smul_def, ← IsScalarTower.algebraMap_apply]
   exact ⟨e, he, hv, hs, hasDiv hH he (fun k => hv (gw k)) hs⟩

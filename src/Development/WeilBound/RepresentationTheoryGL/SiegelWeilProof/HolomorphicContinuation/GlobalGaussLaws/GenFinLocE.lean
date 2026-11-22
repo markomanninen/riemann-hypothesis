@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.GenFinLocD
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.GenFinLocD
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem sigR_sigR (σ : E →ₐ[F] E) (hσ : ∀ x, σ (σ x) = x) (R : Type) [
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a x => simp [sigR, hσ]
-  | add y z hy hz => simp only [map_add, hy, hz]
+  | add y z hy hz => simp only [map_add (f := _), hy, hz]
 
 theorem sigI_sigI (σ : E →ₐ[F] E) (hσ : ∀ x, σ (σ x) = x) (v : HeightOneSpectrum (𝓞 F)) (z : intLoc F E v) :
     sigI σ v (sigI σ v z) = z := Subtype.ext (sigR_sigR σ hσ (Fv F v) (z : Fv F v ⊗[F] E))
@@ -47,7 +51,7 @@ theorem fixed_eq_tmul (σ : E →ₐ[F] E) (hfix : ∀ x, σ x = x ↔ x ∈ (al
       induction w using TensorProduct.induction_on with
       | zero => simp
       | tmul a x => simp [φ, sigR, TensorProduct.tmul_sub]
-      | add y w hy hw => rw [map_add, hy, hw, map_add]; abel
+      | add y w hy hw => rw [map_add (f := _), hy, hw, map_add (f := _)]; abel
     rw [key, hz, sub_self]
   obtain ⟨w, hw⟩ := (hex' z).1 hφ
   refine ⟨TensorProduct.rid F (Fv F v) w, ?_⟩
@@ -58,7 +62,7 @@ theorem fixed_eq_tmul (σ : E →ₐ[F] E) (hfix : ∀ x, σ x = x ↔ x ∈ (al
   | tmul a c =>
     simp only [LinearMap.lTensor_tmul, Algebra.linearMap_apply, TensorProduct.rid_tmul]
     rw [Algebra.algebraMap_eq_smul_one, TensorProduct.tmul_smul, TensorProduct.smul_tmul']
-  | add y w hy hw => rw [map_add, hy, hw, map_add, TensorProduct.add_tmul]
+  | add y w hy hw => rw [map_add (f := _), hy, hw, map_add (f := _), TensorProduct.add_tmul]
 
 theorem mem_of_tmul_mem (v : HeightOneSpectrum (𝓞 F)) (a : Fv F v) (h : a ⊗ₜ[F] (1 : E) ∈ intLoc F E v) :
     a ∈ v.adicCompletionIntegers F := by

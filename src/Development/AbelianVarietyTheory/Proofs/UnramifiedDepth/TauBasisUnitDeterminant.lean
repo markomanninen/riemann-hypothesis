@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UnitDeterminantBasis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UnitDeterminantBasis
+
+@[expose] public section
 
 open scoped TensorProduct
 open IsLocalRing ReciprocityTheory.ChartRestriction.G.Pdiv.AvDefs

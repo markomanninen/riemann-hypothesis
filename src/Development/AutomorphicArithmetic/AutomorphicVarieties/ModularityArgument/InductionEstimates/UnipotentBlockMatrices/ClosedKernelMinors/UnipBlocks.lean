@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -60,7 +64,7 @@ private theorem dec {a b : ℕ} {R : Type} [CommRing R] (g : GL (Fin (a + b)) R)
 private theorem of_low {K : Type} [Field K] [NumberField K] (s : G1 K (2 + 2))
     (h : ((s : AdelicGLn.AdelicGL K (2 + 2)).val.submatrix finSumFinEquiv finSumFinEquiv).toBlocks₂₁ = 0)
     (h' : ((s : AdelicGLn.AdelicGL K (2 + 2))⁻¹.val.submatrix finSumFinEquiv finSumFinEquiv).toBlocks₂₁ = 0) :
-    ∃ X m₁ m₂ t, s = nn X * lv m₁ m₂ t := by
+    ∃ X m₁ m₂ t, s = unipOne (K := K) (n := 2 + 2) 2 X * lv m₁ m₂ t := by
   obtain ⟨hlv, -, -, -, hdet, -⟩ := blkLaws (K := K)
   obtain ⟨a, d, -, -, X, hX⟩ := dec (s : AdelicGLn.AdelicGL K (2 + 2)) h h'
   refine ⟨X, retractOne a, retractOne d, Real.log (detModule K 2 a).1, ?_⟩
@@ -80,7 +84,8 @@ private theorem of_low {K : Type} [Field K] [NumberField K] (s : G1 K (2 + 2))
     rw [Real.exp_neg, Real.exp_log (detModule K 2 a).2]
     rfl
   refine Subtype.ext ?_
-  rw [Subgroup.coe_mul, hlv, z1, z2, coe_retractOne, coe_retractOne, inv_mul_cancel_right, inv_mul_cancel_right]
+  rw [Subgroup.coe_mul, coe_unipOne, hlv, z1, z2, coe_retractOne, coe_retractOne,
+    inv_mul_cancel_right, inv_mul_cancel_right]
   exact hX
 
 private theorem low_borel {K : Type} [Field K] [NumberField K] {b : AdelicGLn.AdelicGL K (2 + 2)} (hb : b ∈ adelicBorel) :
@@ -92,7 +97,9 @@ private theorem low_borel {K : Type} [Field K] [NumberField K] {b : AdelicGLn.Ad
   omega
 
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.iwa :
-    ∀ {K : Type} [Field K] [NumberField K] (g : G1 K (2 + 2)), ∃ (X : UPos (2 + 2) 2 → 𝔸[K]) (m₁ m₂ : G1 K 2) (t : ℝ), ∃ k ∈ KG K (2 + 2), g = nn X * lv m₁ m₂ t * k := by
+    ∀ {K : Type} [Field K] [NumberField K] (g : G1 K (2 + 2)),
+      ∃ (X : UPos (2 + 2) 2 → 𝔸[K]) (m₁ m₂ : G1 K 2) (t : ℝ),
+        ∃ k ∈ KG K (2 + 2), g = unipOne (K := K) (n := 2 + 2) 2 X * lv m₁ m₂ t * k := by
   intro K _ _ g
   obtain ⟨b, hb, k, hk, e⟩ := exists_adelicBorel_mul_maxCompact (g : AdelicGLn.AdelicGL K (2 + 2))
   let k' : G1 K (2 + 2) := ⟨k, maxCompact_le_normOneGL hk⟩

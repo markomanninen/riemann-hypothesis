@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FramedDConst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryOsc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOscillatorActionNormalisingSchrodingerOper
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FramedDConst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFockMap
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.RealMetaplecticRepresentation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryOsc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOscillatorActionNormalisingSchrodingerOper
+
+@[expose] public section
 
 open scoped TensorProduct Matrix
 open MeasureTheory Formalism.BasicNotions.TH GlobalTheory.RealLift GlobalTheory.RealWeil Matrix
@@ -37,7 +41,7 @@ theorem diagonal_lineSgn : (diagonal fun n : Lines P Q R S => if lineSgn n then 
     rcases o with ⟨w, a⟩
     rw [blockDiagonal'_apply']
     rcases a with a | a <;> rcases b with b | b <;> rcases b' with b' | b' <;>
-      simp [diagonal_apply, Jm, Formalism.UG.Jpq, lineSgn, linePos, one_apply] <;> split_ifs <;> simp_all
+      simp [diagonal_apply, Jm, Formalism.UG.Jpq, lineSgn, linePos, Matrix.one_apply] <;> split_ifs <;> simp_all
   · rw [blockDiagonal'_apply_ne _ _ _ h, diagonal_apply_ne]
     intro e
     exact h (congrArg Sigma.fst e)
@@ -163,7 +167,7 @@ theorem coordOf_mulVec (k : G →* (∀ w, Mat (R w) (S w)))
   simp only [coordOf, Function.comp_apply, Equiv.symm_symm, Equiv.symm_apply_apply]
   rw [blockDiagonal'_mulVec_apply]
   simp only [mul_apply, transpose_apply, Finset.mul_sum, Function.comp_apply]
-  exact Finset.sum_congr rfl fun _ _ => by simp only [coordOf]; ring
+  exact Finset.sum_congr rfl fun _ _ => by simp only [coordOf, transpose_apply]; ring
 
 end GlobalTheory.HoweD.Osc
 
@@ -183,7 +187,7 @@ theorem GlobalTheory.HoweD.exists_osc : ∀ (ι l : Type) [Fintype ι] [Decidabl
     (fun v => (hcont v).comp ((LinearMap.continuous_of_finiteDimensional φ.toLinearMap).comp
       GlobalTheory.HoweD.Osc.continuous_coordOf))
     (fun z z' v => by
-      rw [rho_rho, ← map_add, ← GlobalTheory.HoweD.Osc.coordOf_add, hφ, ← GlobalTheory.HoweD.Osc.two_mul_sum_coordOf]
+      rw [rho_rho, ← map_add (f := _), ← GlobalTheory.HoweD.Osc.coordOf_add, hφ, ← GlobalTheory.HoweD.Osc.two_mul_sum_coordOf]
       congr 2
       simp [Complex.mul_im]
       ring)

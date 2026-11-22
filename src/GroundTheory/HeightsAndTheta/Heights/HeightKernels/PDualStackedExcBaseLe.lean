@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedExcLead
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedExcLead
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -29,15 +34,16 @@ theorem centre_mem {b : Module.Basis T ℤ (dualLattice F)} {b' : Module.Basis T
 
 end StackedExceptionalBaseBound
 
-open StackedExceptionalBaseBound in
 
+open StackedExceptionalBaseBound in
 theorem DualStackedExcBaseLe.proof (hBihom : DualStackedGraphBihomog.Statement)
     (hLead : DualStackedExcLeadForm.Statement) : DualStackedExcBaseLe.Statement := by
   intro K _ _ i F F' T _ _ b b' a hi hlt hcov hab k _ α M hres
   refine sup_le ?_ ?_
   · intro f hf
     obtain ⟨s, g, rfl, hg⟩ := hBihom K i F F' T b b' a hab f hf
-    rw [linPrime, RingHom.mem_ker, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [linPrime, RingHom.mem_ker, map_sum]
     exact Finset.sum_eq_zero fun p hp =>
       hLead K i F F' T b b' a hi hlt hcov hab k α M hres p.1 p.2 (g p) (hg p hp).1 (hg p hp).2
   · rw [Ideal.span_le, Set.range_subset_iff]

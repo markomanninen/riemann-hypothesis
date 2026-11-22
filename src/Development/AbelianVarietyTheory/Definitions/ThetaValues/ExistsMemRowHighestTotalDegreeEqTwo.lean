@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsWeightedHomogeneousOfMemOrbitSpan
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsHarmonicProdOfDisjointColumns
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.IsWeightedHomogeneousOfMemOrbitSpan
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsHarmonicProdOfDisjointColumns
+
+@[expose] public section
 
 open MvPolynomial Matrix
 
@@ -12,27 +16,21 @@ section RowAdd
 
 variable [Fintype κ]
 
-open Classical in
 
+open Classical in
 noncomputable def rowAdd (t : T) (r r' : Fin p ⊕ Fin q) (s : R) :
     Poly R T p q κ →ₐ[R] Poly R T p q κ :=
   bind₁ fun v => X v + ∑ k : κ, if v = (t, r', k) then C s * X (t, r, k) else 0
 
-open Classical in
 
+open Classical in
 noncomputable def rowAddX (t : T) (a b : Fin p) (s : R) : Poly R T p q κ →ₐ[R] Poly R T p q κ :=
   bind₁ fun v => X v + ∑ k : κ, if v = xVar t b k then C s * X (xVar t a k) else 0
 
-open Classical in
 
+open Classical in
 noncomputable def rowAddY (t : T) (a b : Fin q) (s : R) : Poly R T p q κ →ₐ[R] Poly R T p q κ :=
   bind₁ fun v => X v + ∑ k : κ, if v = yVar t b k then C s * X (yVar t a k) else 0
-
-theorem rowAddX_eq_rowAdd (t : T) (a b : Fin p) (s : R) :
-    (rowAddX t a b s : Poly R T p q κ →ₐ[R] _) = rowAdd t (Sum.inl a) (Sum.inl b) s := rfl
-
-theorem rowAddY_eq_rowAdd (t : T) (a b : Fin q) (s : R) :
-    (rowAddY t a b s : Poly R T p q κ →ₐ[R] _) = rowAdd t (Sum.inr a) (Sum.inr b) s := rfl
 
 theorem rowAdd_eq_bind₁ [DecidableEq (Var T p q κ)] (t : T) (r r' : Fin p ⊕ Fin q) (s : R) :
     (rowAdd t r r' s : Poly R T p q κ →ₐ[R] _) =
@@ -87,40 +85,17 @@ theorem rowAddY_X_of_ne {t t' : T} (a : Fin q) {b b' : Fin q} (s : R) (k : κ)
     rowAddY t a b s (X (yVar t' b' k) : Poly R T p q κ) = X (yVar t' b' k) :=
   rowAdd_X_of_ne _ _ _ (by simpa using h)
 
-@[simp] theorem rowAddX_X_yVar (t t' : T) (a b : Fin p) (b' : Fin q) (s : R) (k : κ) :
-    rowAddX t a b s (X (yVar t' b' k) : Poly R T p q κ) = X (yVar t' b' k) :=
-  rowAdd_X_of_ne _ _ _ (by simp)
-
-@[simp] theorem rowAddY_X_xVar (t t' : T) (a b : Fin q) (b' : Fin p) (s : R) (k : κ) :
-    rowAddY t a b s (X (xVar t' b' k) : Poly R T p q κ) = X (xVar t' b' k) :=
-  rowAdd_X_of_ne _ _ _ (by simp)
-
 theorem rowAdd_rowForm_self (t : T) (r r' : Fin p ⊕ Fin q) (s : R) (v : κ → R) :
     rowAdd t r r' s (rowForm t r' v) = rowForm t r' v + C s * rowForm t r v := by
-  simp only [rowForm_apply, map_sum, map_mul, algHom_C, algebraMap_eq, rowAdd_X_self, mul_add,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [rowForm_apply, map_sum, map_mul, algHom_C, algebraMap_eq, rowAdd_X_self, mul_add,
     Finset.sum_add_distrib, Finset.mul_sum, mul_left_comm]
 
 theorem rowAdd_rowForm_of_ne {t t' : T} (r : Fin p ⊕ Fin q) {r' r'' : Fin p ⊕ Fin q} (s : R)
     (v : κ → R) (h : ¬ (t' = t ∧ r'' = r')) :
     rowAdd t r r' s (rowForm t' r'' v) = rowForm t' r'' v := by
-  simp only [rowForm_apply, map_sum, map_mul, algHom_C, algebraMap_eq, rowAdd_X_of_ne _ _ _ h]
-
-@[simp] theorem rowAdd_zero (t : T) (r r' : Fin p ⊕ Fin q) :
-    (rowAdd t r r' (0 : R) : Poly R T p q κ →ₐ[R] _) = AlgHom.id R _ := by
-  classical
-  refine MvPolynomial.algHom_ext fun ⟨t', r'', k⟩ => ?_
-  simp [rowAdd_X]
-
-theorem rowAdd_add (t : T) {r r' : Fin p ⊕ Fin q} (h : r ≠ r') (s s' : R) :
-    (rowAdd t r r' (s + s') : Poly R T p q κ →ₐ[R] _) =
-      (rowAdd t r r' s).comp (rowAdd t r r' s') := by
-  refine MvPolynomial.algHom_ext fun ⟨t', r'', k⟩ => ?_
-  by_cases e : t' = t ∧ r'' = r'
-  · obtain ⟨rfl, rfl⟩ := e
-    rw [AlgHom.comp_apply, rowAdd_X_self, rowAdd_X_self, map_add (rowAdd _ _ _ _), map_mul,
-      rowAdd_X_self, rowAdd_X_of_ne _ _ _ (fun e => h e.2), algHom_C, algebraMap_eq, map_add]
-    ring
-  · rw [AlgHom.comp_apply, rowAdd_X_of_ne _ _ _ e, rowAdd_X_of_ne _ _ _ e, rowAdd_X_of_ne _ _ _ e]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [rowForm_apply, map_sum, map_mul, algHom_C, algebraMap_eq, rowAdd_X_of_ne _ _ _ h]
 
 theorem eval_rowAdd [DecidableEq T] (z : Var T p q κ → R) (t : T) (r r' : Fin p ⊕ Fin q) (s : R)
     (P : Poly R T p q κ) :
@@ -128,7 +103,7 @@ theorem eval_rowAdd [DecidableEq T] (z : Var T p q κ → R) (t : T) (r r' : Fin
       eval (fun v => z v + if v.1 = t ∧ v.2.1 = r' then s * z (t, r, v.2.2) else 0) P := by
   induction P using MvPolynomial.induction_on with
   | C a => simp [algHom_C]
-  | add P Q hP hQ => simp only [map_add, hP, hQ]
+  | add P Q hP hQ => simp only [map_add (f := _), hP, hQ]
   | mul_X P v hP =>
     obtain ⟨t', r'', k⟩ := v
     rw [map_mul, map_mul, map_mul, hP, rowAdd_X, eval_X]
@@ -139,7 +114,7 @@ theorem map_rowAdd (f : R →+* S) (t : T) (r r' : Fin p ⊕ Fin q) (s : R) (P :
   classical
   induction P using MvPolynomial.induction_on with
   | C a => simp [algHom_C]
-  | add P Q hP hQ => simp only [map_add, hP, hQ]
+  | add P Q hP hQ => simp only [map_add (f := _), hP, hQ]
   | mul_X P v hP =>
     obtain ⟨t', r'', k⟩ := v
     rw [map_mul, map_mul, map_mul, map_mul, hP, map_X, rowAdd_X, rowAdd_X]
@@ -154,7 +129,7 @@ theorem rowAdd_colSubst [Fintype κ'] (A : T → Matrix κ κ' R) (B : T → Mat
   rw [AlgHom.comp_apply, AlgHom.comp_apply]
   by_cases e : t' = t ∧ r'' = r'
   · obtain ⟨rfl, rfl⟩ := e
-    rw [rowAdd_X_self, map_add, map_mul, algHom_C, algebraMap_eq]
+    rw [rowAdd_X_self, map_add (f := _), map_mul, algHom_C, algebraMap_eq]
     rcases r with a | a <;> rcases r'' with b | b
     · rw [colSubst_X_xVar, colSubst_X_xVar]; exact rowAdd_rowForm_self _ _ _ _ _
     · simp at h
@@ -231,14 +206,6 @@ theorem rowAdd_minorProd [Fintype T] (t : T) {r r' : Fin p ⊕ Fin q} (h : RowLT
   simp only [minorProd, map_prod, map_mul, map_pow, xMinor, yMinor, rowAdd_det_xForm t _ h,
     rowAdd_det_yForm t _ h]
 
-theorem rowAdd_blockPoly [Fintype T] (t : T) {r r' : Fin p ⊕ Fin q} (h : RowLT r r') (s : R)
-    (c : T → Fin p → ℕ) (c' : T → Fin q → ℕ) (col : T → (i : Fin p) → Fin (i.val + 1) → κ)
-    (col' : T → (i : Fin q) → Fin (i.val + 1) → κ) :
-    rowAdd t r r' s (blockPoly R c c' col col') = blockPoly R c c' col col' := by
-  classical
-  simp only [blockPoly, map_prod, map_mul, map_pow, ← xForm_single, ← yForm_single,
-    rowAdd_det_xForm t _ h, rowAdd_det_yForm t _ h]
-
 theorem rowAdd_eq_self_of_forall_int [IsDomain R] [CharZero R] {t : T} {r r' : Fin p ⊕ Fin q}
     {P : Poly R T p q κ} (h : ∀ s : ℤ, rowAdd t r r' (s : R) P = P) (s : R) :
     rowAdd t r r' s P = P := by
@@ -249,7 +216,7 @@ theorem rowAdd_eq_self_of_forall_int [IsDomain R] [CharZero R] {t : T} {r r' : F
   have hΦ (s : R) (Q : Poly R T p q κ) : (Φ Q).eval (C s) = rowAdd t r r' s Q := by
     induction Q using MvPolynomial.induction_on with
     | C a => simp [Φ, algHom_C]
-    | add P Q hP hQ => simp only [map_add, Polynomial.eval_add, hP, hQ]
+    | add P Q hP hQ => simp only [map_add (f := _), Polynomial.eval_add, hP, hQ]
     | mul_X P v hP =>
       obtain ⟨t', r'', k⟩ := v
       rw [map_mul, map_mul, Polynomial.eval_mul, hP, rowAdd_X]
@@ -269,8 +236,8 @@ end RowAdd
 
 section RowDegree
 
-open Classical in
 
+open Classical in
 noncomputable def rowInd (t : T) (r : Fin p ⊕ Fin q) : Var T p q κ → ℕ :=
   rowWeight fun t' r' => if t' = t ∧ r' = r then 1 else 0
 
@@ -314,8 +281,8 @@ section Space
 
 variable [Fintype κ]
 
-variable (R) in
 
+variable (R) in
 noncomputable def rowHighest (c : T → Fin p → ℕ) (c' : T → Fin q → ℕ) :
     Submodule R (Poly R T p q κ) :=
   harmonicSubmodule R T p q κ ⊓
@@ -378,18 +345,6 @@ theorem mem_rowHighest_iff_rowAdd : P ∈ rowHighest R c c' ↔ IsHarmonic P ∧
 theorem isHarmonic_of_mem_rowHighest (hP : P ∈ rowHighest R c c') : IsHarmonic P :=
   (mem_rowHighest_iff.1 hP).1
 
-theorem rowAddX_eq_self_of_mem_rowHighest [IsDomain R] [CharZero R] (hP : P ∈ rowHighest R c c')
-    (t : T) {a b : Fin p} (hab : a < b) (s : R) : rowAddX t a b s P = P :=
-  (mem_rowHighest_iff_of_charZero.1 hP).2.2.2.1 t a b hab s
-
-theorem rowAddY_eq_self_of_mem_rowHighest [IsDomain R] [CharZero R] (hP : P ∈ rowHighest R c c')
-    (t : T) {a b : Fin q} (hab : a < b) (s : R) : rowAddY t a b s P = P :=
-  (mem_rowHighest_iff_of_charZero.1 hP).2.2.2.2 t a b hab s
-
-variable (R c c') in
-
-theorem rowHighest_le_harmonicSubmodule : rowHighest R c c' ≤ harmonicSubmodule R T p q κ :=
-  fun _ => isHarmonic_of_mem_rowHighest
 
 theorem isWeightedHomogeneous_of_mem_rowHighest [Fintype T] {M : Type*} [AddCommMonoid M]
     (w : T → Fin p ⊕ Fin q → M) (hP : P ∈ rowHighest R c c') :
@@ -406,11 +361,6 @@ theorem isHomogeneous_of_mem_rowHighest [Fintype T] (hP : P ∈ rowHighest R c c
   simp only [smul_eq_mul, mul_one, sum_partOf] at this
   exact this
 
-variable (R c c') in
-
-theorem rowHighest_le_homogeneousSubmodule [Fintype T] :
-    rowHighest R c c' ≤ homogeneousSubmodule (Var T p q κ) R (typeDegree c c') :=
-  fun _ => isHomogeneous_of_mem_rowHighest
 
 instance finite_rowHighest [Finite T] [IsNoetherianRing R] :
     Module.Finite R (rowHighest R c c' : Submodule R (Poly R T p q κ)) := by
@@ -433,23 +383,14 @@ theorem mem_rowHighest_of_rowWeight [Fintype T] (h : IsHarmonic P)
   · funext v; rw [rowInd_apply]; rfl
   · rcases r with a | b <;> simp
 
-variable (c c') in
 
+variable (c c') in
 theorem minorProd_mem_rowHighest [Fintype T] {ε : T → Fin p → κ → R} {φ : T → Fin q → κ → R}
     (h : IsPerp ε φ) : minorProd c c' ε φ ∈ rowHighest R c c' :=
   mem_rowHighest_of_rowWeight (isHarmonic_minorProd c c' h)
     (fun w => minorProd_isWeightedHomogeneous w c c' ε φ)
     fun t _ _ hr _ => rowAdd_minorProd t hr _ c c' ε φ
 
-variable (c c') in
-
-theorem blockPoly_mem_rowHighest [Fintype T] (col : T → (i : Fin p) → Fin (i.val + 1) → κ)
-    (col' : T → (i : Fin q) → Fin (i.val + 1) → κ)
-    (h : ∀ t i j a b, c t i ≠ 0 → c' t j ≠ 0 → col t i a ≠ col' t j b) :
-    blockPoly R c c' col col' ∈ rowHighest R c c' :=
-  mem_rowHighest_of_rowWeight (isHarmonic_blockPoly c c' col col' h)
-    (fun w => blockPoly_isWeightedHomogeneous w c c' col col')
-    fun t _ _ hr _ => rowAdd_blockPoly t hr _ c c' col col'
 
 theorem colSubst_mem_rowHighest [Fintype κ'] [DecidableEq κ] {A : T → Matrix κ κ' R}
     {B : T → Matrix κ' κ R} (h : ∀ t, A t * B t = 1) (hP : P ∈ rowHighest R c c') :
@@ -463,17 +404,6 @@ theorem colAct_mem_rowHighest [DecidableEq κ] (g : T → GL κ R) (hP : P ∈ r
     colAct R T p q κ g P ∈ rowHighest R c c' :=
   colSubst_mem_rowHighest (fun t => Units.inv_mul (g t)) hP
 
-theorem colAct_mem_rowHighest_iff [DecidableEq κ] (g : T → GL κ R) :
-    colAct R T p q κ g P ∈ rowHighest R c c' ↔ P ∈ rowHighest R c c' := by
-  refine ⟨fun h => ?_, colAct_mem_rowHighest g⟩
-  have := colAct_mem_rowHighest g⁻¹ h
-  rwa [← AlgEquiv.mul_apply, ← map_mul, inv_mul_cancel, map_one, AlgEquiv.one_apply] at this
-
-variable (R κ c c') in
-
-noncomputable def rowHighestSubrep [DecidableEq κ] : Subrepresentation (colRep R T p q κ) where
-  toSubmodule := rowHighest R c c'
-  apply_mem_toSubmodule g _ hP := colAct_mem_rowHighest g hP
 
 theorem map_mem_rowHighest (f : R →+* S) (hP : P ∈ rowHighest R c c') :
     MvPolynomial.map f P ∈ rowHighest S c c' := by
@@ -505,58 +435,12 @@ theorem orbitSpan_le_rowHighest : orbitSpan R h c c' ≤ rowHighest R c c' := by
   rintro _ ⟨g, rfl⟩
   exact colAct_mem_rowHighest g (basePoly_mem_rowHighest h c c')
 
-include h in
 
+include h in
 theorem rowHighest_ne_bot [Nontrivial R] :
     (rowHighest R c c' : Submodule R (Poly R T p q (Fin n))) ≠ ⊥ := fun e =>
   basePoly_ne_zero h c c' (by simpa [e] using basePoly_mem_rowHighest (R := R) h c c')
 
 end Base
-
-theorem exists_mem_rowHighest_totalDegree_eq_two :
-    ∃ P ∈ rowHighest ℤ (fun (_ : Unit) (_ : Fin 1) => 1) (fun _ (_ : Fin 1) => 1),
-      P = (X (xVar () 0 0) * X (yVar () 0 1) : Poly ℤ Unit 1 1 (Fin 2)) ∧ P.totalDegree = 2 :=
-  ⟨_, basePoly_mem_rowHighest (show 1 + 1 ≤ 2 from le_rfl) _ _,
-    by simp [basePoly, minorProd, xMinor, yMinor, baseCovec, baseVec],
-    by rw [totalDegree_basePoly]; decide⟩
-
-example : (X (xVar () 0 0) * X (yVar () 0 0) : Poly ℤ Unit 1 1 (Fin 2)) ∉
-    rowHighest ℤ (fun _ _ => 1) (fun _ _ => 1) := fun hP => by
-  have := isHarmonic_of_mem_rowHighest hP () 0 0
-  simp only [← xForm_single, ← yForm_single, laplacian_xForm_mul_yForm] at this
-  simp at this
-
-example : (X (xVar () 0 0) * X (xVar () 1 1) - X (xVar () 0 1) * X (xVar () 1 0) :
-    Poly ℤ Unit 2 0 (Fin 2)) ∈ rowHighest ℤ (fun _ => ![0, 1]) (fun _ _ => 0) := by
-  have : (xMinor () 1 (baseCovec ℤ (show 2 + 0 ≤ 2 from le_rfl)) : Poly ℤ Unit 2 0 (Fin 2)) =
-      X (xVar () 0 0) * X (xVar () 1 1) - X (xVar () 0 1) * X (xVar () 1 0) := by
-    refine (det_fin_two _).trans ?_
-    simp only [baseCovec, of_apply, xForm_single]; rfl
-  simpa [basePoly, minorProd, this] using basePoly_mem_rowHighest (R := ℤ)
-    (show 2 + 0 ≤ 2 from le_rfl) (fun _ : Unit => ![0, 1]) (fun _ _ => 0)
-
-example : (X (xVar () 0 0) * X (xVar () 1 0) : Poly ℤ Unit 2 0 (Fin 2)) ∉
-    rowHighest ℤ (fun _ => ![0, 1]) (fun _ _ => 0) := fun hP => by
-  have := (mem_rowHighest_iff.1 hP).2.2.2.1 () 0 1 (by decide) 1
-  rw [map_mul, rowAddX_X_self, rowAddX_X_of_ne _ _ _ (by decide), mul_add] at this
-  simp at this
-
-example (k : Fin n) : (X (xVar () 0 k) : Poly ℤ Unit 2 0 (Fin n)) ∈
-    rowHighest ℤ (fun _ => ![1, 0]) (fun _ _ => 0) := by
-  simpa [minorProd, xMinor] using minorProd_mem_rowHighest (R := ℤ) (fun _ : Unit => ![1, 0])
-    (fun _ (_ : Fin 0) => 0) (ε := fun _ _ => Pi.single k 1) (φ := fun _ _ => 0)
-    fun _ _ b => b.elim0
-
-example : (X (yVar () 0 0) * X (yVar () 1 0) : Poly ℤ Unit 0 2 (Fin 2)) ∉
-    rowHighest ℤ (fun _ _ => 0) (fun _ => ![0, 1]) := fun hP => by
-  have := (mem_rowHighest_iff.1 hP).2.2.2.2 () 0 1 (by decide) 1
-  rw [map_mul, rowAddY_X_self, rowAddY_X_of_ne _ _ _ (by decide), mul_add] at this
-  simp at this
-
-example : (X (xVar () 0 0) : Poly ℤ Unit 1 1 (Fin 2)) ∉
-    rowHighest ℤ (fun _ _ => 2) (fun _ _ => 0) := fun hP => by
-  have := (isHomogeneous_of_mem_rowHighest hP).totalDegree (X_ne_zero _)
-  rw [totalDegree_X] at this
-  revert this; decide
 
 end GlobalTheory.Harm

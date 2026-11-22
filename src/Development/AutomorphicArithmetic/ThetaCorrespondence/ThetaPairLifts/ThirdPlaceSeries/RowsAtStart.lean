@@ -1,21 +1,27 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinitenessOfHyp
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SameGaloisLevelExists
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RingSpecNormalisedCharacterEq
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RootsOfUnityRingLeWittIntegers
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.NGalTied
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.NGalTiedRowLoc
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.NormChoiceOfExtension
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LocalMultiplicityFamily
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MtAdLStatement
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SeriesAtOfExpRelation
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HkRowLStatement
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.EigHkDatBackStatement
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.EmtThetaLStatement
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.GrpTieOfLCStatement
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TieOfTrue
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RankOneUnitary
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinitenessOfHyp
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TwistDataAgreeAcrossCoefficientsLocalized
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SameGaloisLevelExists
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RingSpecNormalisedCharacterEq
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RootsOfUnityRingLeWittIntegers
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.NGalTied
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.NGalTiedRowLoc
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.NormChoiceOfExtension
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LocalMultiplicityFamily
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MtAdLStatement
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SeriesAtOfExpRelation
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HkRowLStatement
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.EigHkDatBackStatement
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.EmtThetaLStatement
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.GrpTieOfLCStatement
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TieOfTrue
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -57,7 +63,9 @@ def weightedAtData : _root_.GlobalTheory.Mem.Top.Bl.NAtData hL (withLoc L) (cfL 
   all := al.a
   chr_eq := al.chr
   host := ⟨(by with_unfolding_all exact (l.a.host.fr :)), (by with_unfolding_all exact (l.a.host.jLL :)), (by with_unfolding_all exact (l.a.host.embLL :))⟩
-  frameN := fun y => (by with_unfolding_all exact (((congrArg (fun e : (Dof x).host.E →+* Qb => e ((y))) ((al.jE) : ((al.a.gal.fr.jE) : (Dof x).host.E →+* Qb) = l.a.jE)).trans (l.a.frame ((y)))) : _))
+  frameN := by
+    intro y
+    with_unfolding_all exact (RingHom.congr_fun al.jE y).trans (l.a.frame y)
   chrN := al.chrN
   chrGal := al.chrGal
   Pq := (by with_unfolding_all exact (l.Pq :))
@@ -74,7 +82,38 @@ def weightedAtData : _root_.GlobalTheory.Mem.Top.Bl.NAtData hL (withLoc L) (cfL 
   ratIn_eig := rfl
   ratIn_θ := rfl
   depth := l.a.depth
-def localAtData : _root_.GlobalTheory.Mem.Top.Bl.NAtData hL (DL x L) (cfD x L) (_root_.GlobalTheory.HeightCounting.Fin3.characterChoiceLocal L l) (_root_.GlobalTheory.HeightCounting.Fin3.localCharacterTupleAgreement L l) := (by with_unfolding_all exact ((_root_.GlobalTheory.HeightCounting.Fin3.weightedAtData l Sp Au ss al hLg) :))
+def localAtData : _root_.GlobalTheory.Mem.Top.Bl.NAtData hL (DL x L) (cfD x L) (characterChoiceLocal L l) (localCharacterTupleAgreement L l) := by
+  let a := weightedAtData l Sp Au ss al hLg
+  -- Keep the local indices on the constructors so that the row data still reduce fieldwise.
+  refine {
+    nt := ?_, all := ?_, chr_eq := ?_, host := ?_, frameN := ?_, chrN := ?_
+    chrGal := ?_, Pq := ?_, Pq_over := ?_, pq := ?_, jE_eq := ?_, mt_eq := ?_
+    Pq_eq := ?_, low := ?_, split := ?_, ratIn := ?_, ratIn_hL := ?_, ratIn_eig := ?_
+    ratIn_θ := ?_, depth := ?_ }
+  · refine { toNBuilt := { a.nt.toNBuilt with eq := DL_eq x L }, pack := ?_ }
+    with_unfolding_all rfl
+  · with_unfolding_all exact a.all
+  · with_unfolding_all exact a.chr_eq
+  · with_unfolding_all exact a.host
+  · intro y
+    with_unfolding_all exact a.frameN y
+  · with_unfolding_all exact a.chrN
+  · with_unfolding_all exact a.chrGal
+  · with_unfolding_all exact a.Pq
+  · intro v
+    with_unfolding_all exact a.Pq_over v
+  · intro i j b k Q ψ h1 h2 hadm
+    with_unfolding_all exact a.pq i j b k Q ψ h1 h2 hadm
+  · with_unfolding_all exact a.jE_eq
+  · with_unfolding_all exact a.mt_eq
+  · with_unfolding_all exact a.Pq_eq
+  · with_unfolding_all exact a.low
+  · with_unfolding_all exact a.split
+  · exact a.ratIn
+  · exact a.ratIn_hL
+  · exact a.ratIn_eig
+  · exact a.ratIn_θ
+  · exact a.depth
 include l in
 variable (L) in
 theorem grpTie_famR : Formalism.L2.DIV.GrpTie (DL x L) (famR (w.st (oL x L).Z) w.I P.hX (usedOf w.I T P.Wt) (datL x L).Xg (datL x L).tr).A
@@ -88,17 +127,26 @@ def normalizedRowDatum : _root_.GlobalTheory.Mem.Top.Bl.NormRealisationData (D :
   nexp := _root_.GlobalTheory.HeightCounting.Fin3.yStructureLocal L l
   hecke := _root_.GlobalTheory.HeightCounting.Fin3.localHeckeHeightData L l
   grp := _root_.GlobalTheory.HeightCounting.Fin3.grpTie_famR l L
-  rowLoc := (by with_unfolding_all exact ((al.loc ((by with_unfolding_all exact ((frameY Y) :))) ((by with_unfolding_all exact ((eq_of_heq (kc% hY.rep : HEq (repOf Y) (kc% (repOf x.r.Y) : type_of% (repOf Y)))) :)))) :))
+  rowLoc := by
+    let F : Formalism.L2.RowFrame (withLoc L) :=
+      ⟨(frameY Y).rep, (frameY Y).inj⟩
+    have hF : F.rep = repOf x.r.Y := by
+      with_unfolding_all exact eq_of_heq hY.rep
+    exact ⟨by with_unfolding_all exact (al.loc F hF).sat⟩
   S_eq := (by with_unfolding_all exact ((SL_heq L l.rat) :))
   hL_eq := (by with_unfolding_all exact ((HEq.refl l.rat.In.hL) :))
   rep_eq := (by with_unfolding_all exact (hY.rep.symm :))
 theorem nonempty_nMore_of_xdAll {xd : ThData (Dof x)} (hxd : XdAll xd) : Nonempty (_root_.GlobalTheory.HeightCounting.RealExpansionExtraData (_root_.GlobalTheory.HeightCounting.Fin3.normalizedRowDatum l Sp Au ss al hLg Y hY) (datL x L).geo (xdD L xd)) := by
-  obtain ⟨ad, had⟩ := _root_.GlobalTheory.T.exists_mtAd_psiVectorLocal_of_yRel L l Y hY
-  obtain ⟨ser⟩ := _root_.GlobalTheory.T.series_at_local_of_exp_relation L l al.a.exp al.exp
   have e : (_root_.GlobalTheory.HeightCounting.Fin3.localAtData l Sp Au ss al hLg).all.gal.mt = _root_.GlobalTheory.HeightCounting.Fin3.localMultiplicityFamily L l := (by with_unfolding_all exact (al.mt :))
   have H : ∃ ad' : MtAd Y (_root_.GlobalTheory.HeightCounting.Fin3.localAtData l Sp Au ss al hLg).all.gal.mt, ad'.PV = _root_.GlobalTheory.HeightCounting.Fin3.psiVectorLocal L l := by
-    rw [e]; exact ⟨ad, had⟩
+    rw [e]
+    exact _root_.GlobalTheory.T.exists_mtAd_psiVectorLocal_of_yRel (x := x) L l Y hY
   obtain ⟨ad', had'⟩ := H
+  have hSer : Nonempty (SerAt (_root_.GlobalTheory.HeightCounting.Fin3.yStructureLocal L l)
+      (datL x L).geo.v₀ (expD L al.a.exp) (_root_.GlobalTheory.HeightCounting.Fin3.psiVectorLocal L l)
+      (cfD x L) (_root_.GlobalTheory.HeightCounting.Fin3.placeMapLocal L l)) :=
+    _root_.GlobalTheory.T.series_at_local_of_exp_relation (x := x) L l al.a.exp al.exp
+  obtain ⟨ser⟩ := hSer
   have ser' : SerAt (_root_.GlobalTheory.HeightCounting.Fin3.yStructureLocal L l) (datL x L).geo.v₀ (expD L al.a.exp) ad'.PV (cfD x L) (_root_.GlobalTheory.HeightCounting.Fin3.placeMapLocal L l) := had'.symm ▸ ser
   exact ⟨{ ad := ad'
            fi := _root_.GlobalTheory.HeightCounting.Fin3.yStructureLocal_fi_e_heq L l

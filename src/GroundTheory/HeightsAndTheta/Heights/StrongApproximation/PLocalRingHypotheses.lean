@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.StrongApproximation.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -34,7 +39,7 @@ theorem LocalRingHypotheses.proof : LocalRingHypotheses.Statement := by
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => rw [htmul, htmul, hcc]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
   obtain ⟨α, hα⟩ : ∃ α, c α ≠ α := by
     by_contra h
@@ -92,7 +97,7 @@ theorem LocalRingHypotheses.proof : LocalRingHypotheses.Statement := by
     constructor
     · intro hx
       obtain ⟨a, b, rfl⟩ := hdecomp x
-      rw [map_add, map_mul, AlgHom.commutes, AlgHom.commutes, hσt] at hx
+      rw [map_add (f := _), map_mul, AlgHom.commutes, AlgHom.commutes, hσt] at hx
       have h2b : algebraMap _ (Kv E v) (2 * b) * t = 0 := by
         rw [map_mul, map_ofNat]
         linear_combination -hx
@@ -113,7 +118,8 @@ theorem LocalRingHypotheses.proof : LocalRingHypotheses.Statement := by
     exact Algebra.FormallyUnramified.isReduced_of_field (v.adicCompletion F) (Kv E v)
   refine ⟨hinv, hfix, hrank, hred, h2k, hsig_incl, ?_⟩
   intro N J x y
-  simp only [hf, map_sum, map_mul, Matrix.map_apply, Function.comp_apply, AlgHom.toRingHom_eq_coe,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hf, map_sum, map_mul, Matrix.map_apply, Function.comp_apply, AlgHom.toRingHom_eq_coe,
     RingHom.coe_coe, hsig_incl]
   rfl
 

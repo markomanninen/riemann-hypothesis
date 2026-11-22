@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.KernelLattices.KerStd
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.StdOK
-import Formalism.LocalToGlobal.GlobalTheory.GL3.LinkThetaStatementFamily
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.KerStd
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.StdOK
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.LinkThetaStatementFamily
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -31,7 +35,7 @@ variable (H : Sesq V) (H' : Sesq W) (hH : ∀ x y, H x y = H' (e x) (e y))
 include hH
 
 theorem opU_pb (x z : V) (F : W → ℂ) : opU H x (fun v => F (e v)) z = opU H' (e x) F (e z) := by
-  simp only [opU, map_add, hH]
+  simp only [opU, map_add (f := _), hH]
 
 theorem herm_pb (h : IsHerm H') : IsHerm H := fun x y => by rw [hH, hH]; exact h _ _
 
@@ -40,8 +44,8 @@ theorem semi_pb {Λ : AddSubgroup W} {α : V → ℂ} {α' : W → ℂ} (hα : �
   refine ⟨fun x hx => by rw [hα x hx]; exact h.1 _ hx, fun x hx y hy => ?_⟩
   have hx' : e x ∈ Λ := hx
   have hy' : e y ∈ Λ := hy
-  have hxy : e (x + y) ∈ Λ := by rw [map_add]; exact Λ.add_mem hx' hy'
-  rw [hα _ hxy, hα x hx', hα y hy', map_add, h.2 _ hx' _ hy']
+  have hxy : e (x + y) ∈ Λ := by rw [map_add (f := _)]; exact Λ.add_mem hx' hy'
+  rw [hα _ hxy, hα x hx', hα y hy', map_add (f := _), h.2 _ hx' _ hy']
   simp only [altE, hH]
 
 theorem fixed_pb {Λ : AddSubgroup W} {α : V → ℂ} {α' : W → ℂ} (hα : ∀ x, e x ∈ Λ → α x = α' (e x)) {F : W → ℂ}

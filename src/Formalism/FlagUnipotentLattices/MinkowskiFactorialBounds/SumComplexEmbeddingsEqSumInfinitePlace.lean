@@ -1,4 +1,8 @@
-import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.LatticeSumBounds
+module
+
+public import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.LatticeSumBounds
+
+@[expose] public section
 
 open Module Matrix Formalism.HermitianLatticeCounting.LatticeSumBounds
 open scoped BigOperators ComplexConjugate
@@ -270,7 +274,8 @@ lemma four_mul_card_le_norm_sq_mul_discr (hc : ∀ w : InfinitePlace E, w.IsComp
       first
       | rw [LinearMap.BilinForm.apply_dualBasis_left]
       | exact LinearMap.BilinForm.apply_dualBasis_left _ _ _ _ _
-    rw [Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_mul, map_sum]
     have h' : ∀ i, Algebra.trace ℚ E ((n i : ℚ) • LinearMap.BilinForm.dualBasis (Algebra.traceForm ℚ E) hnd
         (integralBasis E) i * integralBasis E j) = if j = i then (n i : ℚ) else 0 := by
       intro i
@@ -406,8 +411,8 @@ private theorem two_mul_div_two_le_sqrt_mul_sqrt_mul_rpow (r D : ℝ) (hr : 0 < 
     ring
   nlinarith [hs0, hs2, hr]
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem coveringO_of_transference (hT : Transference) : CoveringO := by
   unfold Formalism.HermitianLatticeCounting.LatticeSumBounds.CoveringO
   unfold Formalism.HermitianLatticeCounting.LatticeSumBounds.Transference at hT

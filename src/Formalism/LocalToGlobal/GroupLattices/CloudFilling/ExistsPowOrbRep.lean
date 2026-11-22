@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.SecPsiMulPow
-import Formalism.SharpRestriction.InertJacobiLevels.VVEqEmptyOfNotIsResidueClassZero
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.SecPsiMulPow
+public import Formalism.SharpRestriction.InertJacobiLevels.VVEqEmptyOfNotIsResidueClassZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -98,13 +102,6 @@ theorem bsH_orb' (φ : Formalism.HC.Frame) (h t : φ.A) : ∃ i : ℕ, i < addOr
 theorem bsH_orb (φ : Formalism.HC.Frame) (h t : φ.A) : ∃ i : ℕ, bsH φ h t + i • h = t := by
   obtain ⟨i, -, hi⟩ := bsH_orb' φ h t
   exact ⟨i, hi⟩
-
-theorem bsH_add_nsmul (φ : Formalism.HC.Frame) (h t : φ.A) (i : ℕ) : bsH φ h (t + i • h) = bsH φ h t := by
-  unfold bsH
-  rw [vOfH_add_nsmul]
-
-theorem bsH_step (φ : Formalism.HC.Frame) (h t : φ.A) : bsH φ h (t + h) = bsH φ h t := by
-  simpa using bsH_add_nsmul φ h t 1
 
 theorem vOfH_bsH (φ : Formalism.HC.Frame) (h t : φ.A) : vOfH φ h (bsH φ h t) = vOfH φ h t := by
   obtain ⟨i, hi⟩ := bsH_orb φ h t

@@ -1,7 +1,11 @@
-import Development.EtaleCohomology.KummerTheory.LimExtHlPf
-import Development.EtaleCohomology.KummerTheory.LimLHPf
-import Development.EtaleCohomology.KummerTheory.LimAssemblePf
-import Development.EtaleCohomology.KummerTheory.LimitPf
+module
+
+public import Development.EtaleCohomology.KummerTheory.LimExtHlPf
+public import Development.EtaleCohomology.KummerTheory.LimLHPf
+public import Development.EtaleCohomology.KummerTheory.LimAssemblePf
+public import Development.EtaleCohomology.KummerTheory.LimitPf
+
+@[expose] public section
 
 namespace LateralTheory.Fin.Limit
 theorem etale_limit_extension_groups_henselian_in_inverse_limits_assembly : LateralTheory.KummerTheory.LimExtHl := by

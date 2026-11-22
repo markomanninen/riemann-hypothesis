@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LemmaG3OfCoefficients
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LemmaG3OfCoefficients
+
+@[expose] public section
 
 noncomputable section
 
@@ -129,7 +133,7 @@ theorem flag_of_upUni (F : FlagG S r T) (g : S.V →ₗ[E] S.V) (N : Matrix (Fin
       rintro _ ⟨i, hi, rfl⟩
       exact ⟨i, by show (i : ℕ) < j; have : (i : ℕ) < a := hi; omega, rfl⟩
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add, add_sub_add_comm]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _), add_sub_add_comm]; exact Submodule.add_mem _ hx hy
     | smul c x _ hx => rw [map_smul, ← smul_sub]; exact Submodule.smul_mem _ _ hx
   · have := hdiff (Fin.last r)
     simp only [FlagG.fvec, Fin.snoc_last] at this

@@ -1,4 +1,8 @@
-import Formalism.SatakeDualWeyl.Statement
+module
+
+public import Formalism.SatakeDualWeyl.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,23 +31,23 @@ theorem split_map_snd_mul (M N : Matrix n n (R × R)) :
 theorem split_cT_fst (g : Matrix n n (R × R)) :
     (cT (swapR R) g).map Prod.fst = (g.map Prod.snd)ᵀ := by
   ext i j
-  rfl
+  simp [cT, swapR, Matrix.map_apply, Matrix.transpose_apply]
 
 theorem split_cT_snd (g : Matrix n n (R × R)) :
     (cT (swapR R) g).map Prod.snd = (g.map Prod.fst)ᵀ := by
   ext i j
-  rfl
+  simp [cT, swapR, Matrix.map_apply, Matrix.transpose_apply]
 
 theorem splitJ_fst (J₁ : Matrix n n R) : (splitJ J₁).map Prod.fst = J₁ := by
   ext i j
-  rfl
+  simp [splitJ, Matrix.map_apply]
 
 theorem splitJ_snd (J₁ : Matrix n n R) : (splitJ J₁).map Prod.snd = J₁ᵀ := by
   ext i j
-  rfl
+  simp [splitJ, Matrix.map_apply, Matrix.transpose_apply]
 
 theorem split_mem_iff (J₁ : Matrix n n R) (g : GL n (R × R)) :
-    g ∈ UJ (swapR R) (splitJ J₁) ↔
+    g ∈ Formalism.UG.UJ (swapR R) (splitJ J₁) ↔
       ((g : Matrix n n (R × R)).map Prod.snd)ᵀ * J₁ * (g : Matrix n n (R × R)).map Prod.fst
         = J₁ := by
   constructor
@@ -88,7 +92,7 @@ theorem pairMat_mul_eq_one {X Y X' Y' : Matrix n n R} (h1 : X * X' = 1) (h2 : Y 
     exact (Matrix.map_one _ rfl rfl).symm
 
 theorem split_injective (J₁ : Matrix n n R) (hJ : IsUnit J₁.det) (g g' : GL n (R × R))
-    (hg : g ∈ UJ (swapR R) (splitJ J₁)) (hg' : g' ∈ UJ (swapR R) (splitJ J₁))
+    (hg : g ∈ Formalism.UG.UJ (swapR R) (splitJ J₁)) (hg' : g' ∈ Formalism.UG.UJ (swapR R) (splitJ J₁))
     (h : (g : Matrix n n (R × R)).map Prod.fst = (g' : Matrix n n (R × R)).map Prod.fst) :
     g = g' := by
   have hF : (g : Matrix n n (R × R)).map Prod.fst * ((g⁻¹ : GL n (R × R)) : Matrix n n (R × R)).map Prod.fst = 1 := by
@@ -117,7 +121,7 @@ theorem split_injective (J₁ : Matrix n n R) (hJ : IsUnit J₁.det) (g g' : GL 
   exact Units.ext (split_mat_ext h k4)
 
 theorem split_surjective (J₁ : Matrix n n R) (hJ : IsUnit J₁.det) (h : GL n R) :
-    ∃ g : GL n (R × R), g ∈ UJ (swapR R) (splitJ J₁) ∧ bc (RingHom.fst R R) g = h := by
+    ∃ g : GL n (R × R), g ∈ Formalism.UG.UJ (swapR R) (splitJ J₁) ∧ bc (RingHom.fst R R) g = h := by
   have hS : (J₁ * ((h⁻¹ : GL n R) : Matrix n n R) * J₁⁻¹)ᵀ * (J₁ * (h : Matrix n n R) * J₁⁻¹)ᵀ = 1 := by
     rw [← Matrix.transpose_mul, split_conj_mul J₁ hJ (Units.mul_inv h), Matrix.transpose_one]
   have hSi : (J₁ * (h : Matrix n n R) * J₁⁻¹)ᵀ * (J₁ * ((h⁻¹ : GL n R) : Matrix n n R) * J₁⁻¹)ᵀ = 1 := by
@@ -138,7 +142,7 @@ theorem split_surjective (J₁ : Matrix n n R) (hJ : IsUnit J₁.det) (h : GL n 
 
 theorem split_unitary_group_iso : Formalism.UG.SplitIso := by
   intro R _ n _ _ J₁ hJ
-  refine ⟨MulEquiv.ofBijective ((bc (RingHom.fst R R)).comp (UJ (swapR R) (splitJ J₁)).subtype) ⟨?_, ?_⟩,
+  refine ⟨MulEquiv.ofBijective ((bc (RingHom.fst R R)).comp (Formalism.UG.UJ (swapR R) (splitJ J₁)).subtype) ⟨?_, ?_⟩,
     fun g => rfl⟩
   · intro a b hab
     apply Subtype.ext

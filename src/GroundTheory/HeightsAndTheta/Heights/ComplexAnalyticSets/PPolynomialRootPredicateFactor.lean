@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StPolynomialRootPredicateFactor
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PAnalyticRootBranch
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRiemannExtensionAnalytic
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PManifoldZerosComplementConnected
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StPolynomialRootPredicateFactor
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PAnalyticRootBranch
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRiemannExtensionAnalytic
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PManifoldZerosComplementConnected
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -54,7 +59,7 @@ theorem rootFactor_mul_not (p : ℂ[X]) (hp : p.Monic) (Q : ℂ → Prop) :
     rootFactor p Q * rootFactor p (fun τ => ¬ Q τ) = p := by
   have h : ((p.roots.filter Q).map fun τ => X - C τ).prod *
       ((p.roots.filter fun τ => ¬ Q τ).map fun τ => X - C τ).prod = p := by
-    rw [← Multiset.prod_add, ← Multiset.map_add, Multiset.filter_add_not]
+    rw [← Multiset.prod_add, ← Multiset.map_add (f := _), Multiset.filter_add_not]
     exact prod_multiset_X_sub_C_of_monic_of_roots_card_eq hp (splits_iff_card_roots.1 (IsAlgClosed.splits p))
   unfold rootFactor
   convert h
@@ -273,8 +278,8 @@ theorem analyticAt_monicEval {d m : ℕ} (F : ℕ → (Fin d → ℂ) → ℂ) (
 
 end PolynomialRootPredicateFactor
 
-open PolynomialRootPredicateFactor in
 
+open PolynomialRootPredicateFactor in
 theorem PolynomialRootPredicateFactor.proof : PolynomialRootPredicateFactor.Statement := by
   intro d N B a δ P hBo hBc ha hδ ⟨t₁, ht₁B, ht₁⟩ hsep hbr
   have hdense := exists_ne_zero_of_open hBc hδ ht₁B ht₁

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.PDifferentExtNorm
-import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.PRootsOfUnityValuation
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.PDifferentExtNorm
+public import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.PRootsOfUnityValuation
+
+@[expose] public section
+
 open NumberField IsDedekindDomain
 
 noncomputable section
@@ -20,7 +25,7 @@ theorem exists_val : ∃ v : Valuation K NNReal, v.Integers V ∧ ∀ x : V, ¬ 
   have he : (1 : NNReal) < 2 := one_lt_two
   let f := WithZeroMulInt.toNNReal he.ne_zero
   have hf : StrictMono f := WithZeroMulInt.toNNReal_strictMono he
-  refine ⟨(P.valuation K).map f hf.monotone,
+  refine ⟨Valuation.map ⟨f, hf.monotone⟩ (P.valuation K),
     ⟨IsFractionRing.injective V K, fun x => ?_, fun r hr => ?_⟩, fun x hx => ?_⟩
   · rw [Valuation.map_apply, ← map_one f]
     exact hf.monotone (P.valuation_le_one (K := K) x)

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+
+@[expose] public section
 
 open NumberField Matrix UpperTheory.V UpperTheory.V.KT
 open scoped ComplexOrder
@@ -20,7 +24,7 @@ private theorem ryne_place (L : Type) [Field L] [NumberField L] (x : 𝓞 L) (hx
   have hlt : ∀ w : InfinitePlace L, w (x : L) ^ w.mult < 1 := fun w =>
     pow_lt_one₀ (by positivity) (hc w) InfinitePlace.mult_pos.ne'
   have hle : ∏ w ∈ Finset.univ.erase w0, w (x : L) ^ w.mult ≤ 1 :=
-    Finset.prod_le_one (fun w _ => hf w) (fun w _ => (hlt w).le)
+    Finset.prod_le_one₀ (fun w _ => hf w) (fun w _ => (hlt w).le)
   have : ∏ w : InfinitePlace L, w (x : L) ^ w.mult < 1 := by
     rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ w0)]
     calc w0 (x : L) ^ w0.mult * ∏ w ∈ Finset.univ.erase w0, w (x : L) ^ w.mult

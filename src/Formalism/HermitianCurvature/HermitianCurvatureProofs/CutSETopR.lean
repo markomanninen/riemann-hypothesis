@@ -1,10 +1,14 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDIdentSpecAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSOpADone
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSPAdj
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSQQAdj
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSXiTest
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSPairDone
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE_TopSpec
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDIdentSpecAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSOpADone
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSPAdj
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSQQAdj
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSXiTest
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSPairDone
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSE_TopSpec
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutSE
 

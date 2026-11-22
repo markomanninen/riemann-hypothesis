@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.UaFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.KLevTop
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AutomorphicFormGLContinuous
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.GlobalRationalGL.IntegralConjugation.UaFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.KLevTop
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AutomorphicFormGLContinuous
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ namespace UpperTheory.V.Z.Sym.So.CongruenceExistence
 
 variable {L : Type} [Field L] [NumberField L] [IsCMField L] {n : ℕ}
 
-private theorem memK {w : Plc L} (h : GL (Fin n) (Kw w)) : h ∈ GlobalTheory.LFun.KGL w n ↔
+private theorem memK {w : Plc L} (h : GL (Fin n) (Kw w)) : h ∈ GlobalTheory.LFun.KGL w (n := n) ↔
     (∀ i j, h.1 i j ∈ w.adicCompletionIntegers L) ∧ ∀ i j, (h⁻¹).1 i j ∈ w.adicCompletionIntegers L := by
   rw [GlobalTheory.LFun.KGL, GlobalTheory.AdelicU.mem_GLint_iff]; rfl
 
@@ -37,7 +41,7 @@ private theorem pLoc_one (w : Plc L) (i j : Fin n) :
   simp only [Matrix.one_apply]; split_ifs <;> simp
 
 private theorem mem_iff {m : ℕ} (hm : m ≠ 0) (x : UA L n) :
-    (x ∈ finU L n ∧ fp x ∈ UpperTheory.V.Af.KLev L n m) ↔
+    (x ∈ finU (E := L) (n := n) ∧ fp x ∈ UpperTheory.V.Af.KLev L n m) ↔
       x ∈ Kall L n ∧ ∀ w i j, ∃ a ∈ w.adicCompletionIntegers L, (mL w x - 1) i j = (m : Kw w) * a := by
   have hd : ∀ (w : Plc L) (i j : Fin n), (mL w x - 1) i j =
       pLoc L w ((fp x).1 i j - (1 : Matrix (Fin n) (Fin n) (Af L)) i j) := fun w i j => by
@@ -52,7 +56,7 @@ private theorem mem_iff {m : ℕ} (hm : m ≠ 0) (x : UA L n) :
       refine ⟨pLoc L w y, memO.1 hy w, ?_⟩
       rw [hd, show (fp x).1 i j - (1 : Matrix (Fin n) (Fin n) (Af L)) i j = (m : Af L) * y from e, map_mul, map_natCast]
   · rintro ⟨⟨hf, hK⟩, hc⟩
-    have hK' : ∀ w : Plc L, cLoc w x ∈ GlobalTheory.LFun.KGL w n := fun w => Subgroup.mem_iInf.1 hK w
+    have hK' : ∀ w : Plc L, cLoc w x ∈ GlobalTheory.LFun.KGL w (n := n) := fun w => Subgroup.mem_iInf.1 hK w
     have hm' : (m : L) ≠ 0 := Nat.cast_ne_zero.2 hm
     set u : Af L := algebraMap L (Af L) (m : L)⁻¹ with hu'
     have hu : u * (m : Af L) = 1 := by
@@ -69,13 +73,13 @@ private theorem mem_iff {m : ℕ} (hm : m ≠ 0) (x : UA L n) :
       rwa [this, one_mul]
     · rw [← mul_assoc, mul_comm _ u, hu, one_mul]
 
-private def cong (m : ℕ) : Subgroup (UA L n) := finU L n ⊓ (UpperTheory.V.Af.KLev L n m).comap fp
+private def cong (m : ℕ) : Subgroup (UA L n) := finU (E := L) (n := n) ⊓ (UpperTheory.V.Af.KLev L n m).comap fp
 
 private theorem isCong {m : ℕ} (hm : m ≠ 0) : IsCong m (cong (L := L) (n := n) m) := fun x => mem_iff hm x
 
 private theorem isLevel {m : ℕ} (hm : m ≠ 0) : IsLevel (cong (L := L) (n := n) m) := by
   refine ⟨fun x hx => ((isCong hm x).1 hx).1, ?_⟩
-  have hc : Continuous fun x : finU L n => fp (x : UA L n) :=
+  have hc : Continuous fun x : finU (E := L) (n := n) => fp (x : UA L n) :=
     GlobalTheory.CuspRep.continuous_mapFin.comp (continuous_subtype_val.comp continuous_subtype_val)
   convert (UpperTheory.V.Af.isOpen_KLev (F := L) (n := n) (M := m) (Nat.one_le_iff_ne_zero.2 hm)).preimage hc using 1
   ext x
@@ -97,7 +101,7 @@ private def el {w : Plc L} {i j : Fin n} (h : i ≠ j) : GL (Fin n) (Kw w) :=
     by rw [Matrix.transvection_mul_transvection_same _ _ h]; simp,
     by rw [Matrix.transvection_mul_transvection_same _ _ h]; simp⟩
 
-private theorem el_mem {w : Plc L} {i j : Fin n} (h : i ≠ j) : el (w := w) h ∈ GlobalTheory.LFun.KGL w n :=
+private theorem el_mem {w : Plc L} {i j : Fin n} (h : i ≠ j) : el (w := w) h ∈ GlobalTheory.LFun.KGL w (n := n) :=
   (memK _).2 ⟨fun a b => trans_int (one_mem _) a b, fun a b => trans_int (neg_mem (one_mem _)) a b⟩
 
 private theorem last {m : ℕ} (hn : 2 ≤ n) (w : Plc L) (hw : IsSplitAt w)

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.GelfandKazhdanDuality.PairingL2
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HasDerivAtLpOfDominated
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.GelfandKazhdanDuality.PairingL2
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HasDerivAtLpOfDominated
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ open scoped InnerProductSpace
 
 namespace PositivityTheory.PRW.GKD
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 def expG (X : Lie E a) (t : ℝ) : GL (Fin a) (Cinf E) := (Matrix.isUnit_exp (t • Matrix.of X)).unit
 
@@ -22,8 +26,8 @@ theorem expG_zero (X : Lie E a) : expG X 0 = 1 := by
   rw [expG_val]
   simp
 
-open scoped Matrix.Norms.Operator in
 
+open scoped Matrix.Norms.Operator in
 theorem hasDerivAt_toL_exp (X : Lie E a) (t : ℝ) :
     HasDerivAt (fun s : ℝ => toL (NormedSpace.exp (s • Matrix.of X))) (rmul X (toL (NormedSpace.exp (t • Matrix.of X)))) t := by
   let L : Matrix (Fin a) (Fin a) (Cinf E) →L[ℝ] Lie E a :=

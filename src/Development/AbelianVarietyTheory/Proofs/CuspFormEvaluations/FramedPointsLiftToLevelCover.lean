@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
-import Formalism.LocalToGlobal.ProjectiveLattices.IsLevMove
-import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndBC
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsoEqOfMapsAlongSection
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.IsLocallyNoetherian
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThShort
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsLevMove
+public import Formalism.LocalToGlobal.ProjectiveLattices.AllTest
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndBC
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsoEqOfMapsAlongSection
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.IsLocallyNoetherian
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -288,8 +292,8 @@ theorem prod_push (h : IsGrpPullback G₂ G f φ) {a₂ : Z ⟶ X₂} {a : Z ⟶
   obtain rfl : u = ρ ∘ u₂ := funext fun i => Over.OverMorphism.ext ((hu i).trans (hρ _).symm)
   rw [← hρ, map_list_prod, List.map_ofFn]
 
-omit [GrpObj G] [GrpObj G₂] in
 
+omit [GrpObj G] [GrpObj G₂] in
 theorem exists_pm {W W' : Scheme.{0}} {x : W ⟶ X} (a : W' ⟶ W) (g : W' ⟶ G.left) (e : a ≫ x = g ≫ G.hom) :
     ∃ p : W' ⟶ (Over.mk x ⊗ G).left, p ≫ (snd (Over.mk x) G).left = g ∧ p ≫ (fst (Over.mk x) G).left = a :=
   ⟨pullback.lift a g e, pullback.lift_snd _ _ _, pullback.lift_fst _ _ _⟩

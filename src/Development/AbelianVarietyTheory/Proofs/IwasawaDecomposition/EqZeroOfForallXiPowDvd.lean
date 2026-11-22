@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.MemLoc
 open scoped Formalism.Per
 
@@ -19,7 +24,8 @@ theorem coeff_pow_pow (x : Per.Fl l) (k : ℕ) :
 
 theorem xi_coeff_zero (e : Per.Fl l) :
     (xi e).coeff 0 = ∑ i ∈ Finset.range l, ((frobeniusEquiv (Per.Fl l) l).symm e) ^ i := by
-  rw [← WittVector.constantCoeff_apply, xi, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← WittVector.constantCoeff_apply, xi, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_pow, WittVector.constantCoeff_apply, WittVector.teichmuller_coeff_zero]
 
@@ -66,8 +72,8 @@ theorem xi_sat {e : Per.Fl l} (he : IsEps e) (n : ℕ) (a : Per.Ainf l)
 end GlobalTheory.MemLoc.XiHaus
 
 namespace GlobalTheory.MemLoc
-open XiHaus in
 
+open XiHaus in
 theorem eq_zero_of_forall_xi_pow_dvd (l : ℕ) [Fact l.Prime] (e : Per.Fl l) (he : IsEps e)
     (a : Per.Ainf l) (ha : ∀ n : ℕ, xi e ^ n ∣ a) : a = 0 := by
   have key : ∀ (k : ℕ) (a : Per.Ainf l), (∀ n : ℕ, xi e ^ n ∣ a) → (l : Per.Ainf l) ^ k ∣ a := by

@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.DualDescentBase
-import GroundTheory.GlobalFields.ComplexMultiplication.BaseChangeDescent
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.DualDescentBase
+public import GroundTheory.GlobalFields.ComplexMultiplication.BaseChangeDescent
+
+@[expose] public section
 
 namespace GroundTheory.Global
 

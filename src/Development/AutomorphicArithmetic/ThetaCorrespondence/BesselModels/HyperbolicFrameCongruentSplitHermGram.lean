@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselFrameTranslatedPerpOfIsFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BesselFrameTranslatedPerpOfIsFrame
+
+@[expose] public section
 
 open Matrix GlobalTheory.RealBessel GlobalTheory.BesselMapOne Formalism.L2.Theta GlobalTheory.SmVec
 
@@ -33,7 +37,7 @@ theorem frameMat_w (i) : frameMat e f Fa y i (Formalism.QuantumDeterminants.wI m
 theorem frameMat_of_gt (i j : Fin (2 * r + m + 1)) (h : r + m < j.val) :
     frameMat e f Fa y i j = f i ⟨2 * r + m - j.val, by have := j.isLt; omega⟩ := by
   unfold frameMat
-  rw [dif_neg (by omega), dif_neg (by omega), dif_neg (by omega)]
+  rw [dite_eq_right (by omega), dite_eq_right (by omega), dite_eq_right (by omega)]
 
 theorem frameMat_es (i) (a : Fin r) : frameMat e f Fa y i (Formalism.QuantumDeterminants.esI m r a) = f i a := by
   have := a.isLt

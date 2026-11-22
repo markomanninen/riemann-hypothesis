@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Theta
@@ -11,7 +16,8 @@ variable {σ : Type*} [Fintype σ] [DecidableEq σ]
 
 theorem eval_hsymm (x : σ → ℂ) (b : ℕ) :
     eval x (hsymm σ ℂ b) = ∑ l ∈ finsuppAntidiag (univ : Finset σ) b, ∏ i, x i ^ l i := by
-  rw [hsymm, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsymm, map_sum]
   refine Finset.sum_bij' (fun s _ => Multiset.toFinsupp s.1)
     (fun l hl => ⟨Finsupp.toMultiset l, by
       rw [Finsupp.card_toMultiset, Finsupp.sum_fintype _ _ (by simp)]
@@ -68,9 +74,11 @@ theorem coeff_prod_one_sub (x : σ → ℂ) (s : ℕ) :
     refine Finset.prod_congr rfl fun i _ => ?_
     rw [map_neg, neg_mul, ← sub_eq_neg_add]
   rw [h, Finset.prod_add]
-  simp only [Finset.prod_const_one, mul_one, Finset.prod_mul_distrib, ← map_prod, Finset.prod_const,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.prod_const_one, mul_one, Finset.prod_mul_distrib, ← map_prod, Finset.prod_const,
     map_sum, PowerSeries.coeff_C_mul_X_pow]
-  rw [esymm, map_sum, Finset.mul_sum, Finset.sum_ite, Finset.sum_const_zero, add_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [esymm, map_sum, Finset.mul_sum, Finset.sum_ite, Finset.sum_const_zero, add_zero]
   rw [Finset.powersetCard_eq_filter]
   refine Finset.sum_congr (by ext t; simp [eq_comm]) fun t ht => ?_
   simp only [Finset.mem_filter] at ht

@@ -1,13 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
-import ReciprocityTheory.ThetaQuasiPeriods.Transl
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.SetIntegralPowEqZeroOfPosFreqEuclidean
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EqZeroOfSemicharacterMultiplier
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.MemThetaDomainIffIsSiegelAddTranspose
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsMulDotProductLeOfIsCompactThetaDomain
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.DifferentiableOnThetaProdOfNormal
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.GCauchyStatement
+public import ReciprocityTheory.ThetaQuasiPeriods.Transl
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.SetIntegralPowEqZeroOfPosFreqEuclidean
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EqZeroOfSemicharacterMultiplier
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.MemThetaDomainIffIsSiegelAddTranspose
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.ExistsMulDotProductLeOfIsCompactThetaDomain
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.DifferentiableOnThetaProdOfNormal
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,8 +34,8 @@ theorem hasSum_polyDeriv_of_locally_normal {ι : Type*} {F : ι → W → ℂ} {
   exact (SCV.hasSum_iteratedFDeriv_of_locally_normal hU hF hle _ hx).mapL
     (ContinuousMultilinearMap.apply ℂ (fun _ => W) ℂ _)
 
-omit [FiniteDimensional ℂ W] in
 
+omit [FiniteDimensional ℂ W] in
 theorem polyDeriv_congr_of_eventuallyEq (P : MvPolynomial σ ℂ) (u : σ → W) {F G : W → ℂ} {x : W}
     (h : F =ᶠ[𝓝 x] G) : I2.polyDeriv P u F x = I2.polyDeriv P u G x := by
   unfold I2.polyDeriv
@@ -192,7 +196,7 @@ theorem mul_prod_thTerm_locally_normal {κ : Type*} [Fintype κ] {U : Set W} (hU
     fun m => (‖G x‖ + 1) * ∏ k, v k (m k),
     (summable_prod_tuples (J := fun _ : κ => Fin g → ℤ) h0 hv).mul_left _, fun m w hw => ?_⟩
   rw [norm_mul, norm_prod]
-  exact mul_le_mul (le_of_lt hw.1) (Finset.prod_le_prod (fun k _ => norm_nonneg _)
+  exact mul_le_mul (le_of_lt hw.1) (Finset.prod_le_prod₀ (fun k _ => norm_nonneg _)
     fun k _ => h k _ w (Set.mem_iInter.1 hw.2 k))
     (Finset.prod_nonneg fun k _ => norm_nonneg _) (by positivity)
 

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.IsotropicVanish
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.IsotropicVanish
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

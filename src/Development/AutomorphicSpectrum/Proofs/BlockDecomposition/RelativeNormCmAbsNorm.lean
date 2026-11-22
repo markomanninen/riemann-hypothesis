@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsLatIntVec
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsLatIntVec
+
+@[expose] public section
+
 open NumberField Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.CompanionTheory.SiegelND.Integ.Hua GlobalTheory.CompanionTheory.SiegelND.Integ.Hua.HS
 open scoped Matrix
 
@@ -37,11 +42,14 @@ theorem norm_eq_mul_conj_and_absNorm : ∀ (F E : Type) [Field F] [NumberField F
       rw [hdeg, Nat.card_eq_fintype_card]
       apply le_antisymm hcard_le
       rw [← Finset.card_univ, huniv, Finset.card_pair hne.symm])
-    rw [RingOfIntegers.coe_norm, Algebra.norm_eq_prod_automorphisms, huniv, Finset.prod_pair hne.symm]
+    change algebraMap F E (Algebra.norm F (t : E)) = _
+    rw [Algebra.norm_eq_prod_automorphisms, huniv, Finset.prod_pair hne.symm]
     simp [hσ']
   · rw [Ideal.absNorm_span_singleton, Ideal.absNorm_span_singleton]
     congr 1
     apply Int.cast_injective (α := ℚ)
-    rw [Algebra.coe_norm_int, Algebra.coe_norm_int, RingOfIntegers.coe_norm, Algebra.norm_norm]
+    rw [Algebra.coe_norm_int, Algebra.coe_norm_int]
+    change Algebra.norm ℚ (Algebra.norm F (t : E)) = Algebra.norm ℚ (t : E)
+    rw [Algebra.norm_norm]
 
 end GlobalTheory.CompanionTheory.SiegelND.Integ.Hua.NormSig

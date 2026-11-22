@@ -1,5 +1,9 @@
-import Formalism.EisensteinCokernelLengths.ExponentChainBound
-import Formalism.EisensteinCokernelLengths.RationalTailBound
+module
+
+public import Formalism.EisensteinCokernelLengths.ExponentChainBound
+public import Formalism.EisensteinCokernelLengths.RationalTailBound
+
+@[expose] public section
 
 noncomputable section
 

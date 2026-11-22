@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open IsLocalRing Polynomial TensorProduct
 
 namespace GlobalTheory
@@ -36,25 +41,25 @@ theorem tensor_directedSystem_of_flat (R : Type) [CommRing R] {ι : Type} [Preor
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul p z => rw [hh, he, he, hsub_comp]
-    | add a b ha hb => rw [map_add, map_add, ha, hb, map_add]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb, map_add (f := _)]
   refine ⟨h, e, hh, he, hcompat, ?_, ?_, ?_, ?_⟩
   · intro k hkk y
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul p z => rw [hh, hinc_id]
-    | add a b ha hb => rw [map_add, ha, hb]
+    | add a b ha hb => rw [map_add (f := _), ha, hb]
   · intro k l m hkl hlm hkm y
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul p z => rw [hh, hh, hh, hinc_comp k l m hkl hlm hkm]
-    | add a b ha hb => rw [map_add, map_add, map_add, ha, hb]
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _), map_add (f := _), ha, hb]
   · intro k
     have hfun : ⇑(e k) = ⇑(LinearMap.rTensor E₀ (sub k).toLinearMap) := by
       funext z
       induction z using TensorProduct.induction_on with
       | zero => simp
       | tmul p y => rw [he, LinearMap.rTensor_tmul, AlgHom.toLinearMap_apply]
-      | add a b ha hb => rw [map_add, map_add, ha, hb]
+      | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
     rw [hfun]
     exact Module.Flat.rTensor_preserves_injective_linearMap _ (hsub_inj k)
   · intro z
@@ -67,7 +72,7 @@ theorem tensor_directedSystem_of_flat (R : Type) [CommRing R] {ι : Type} [Preor
       obtain ⟨k₁, y₁, rfl⟩ := ha
       obtain ⟨k₂, y₂, rfl⟩ := hb
       obtain ⟨m, h₁, h₂⟩ := directed_of (· ≤ ·) k₁ k₂
-      exact ⟨m, h k₁ m h₁ y₁ + h k₂ m h₂ y₂, by rw [map_add, hcompat, hcompat]⟩
+      exact ⟨m, h k₁ m h₁ y₁ + h k₂ m h₂ y₂, by rw [map_add (f := _), hcompat, hcompat]⟩
 
 theorem directedSystem_etaleBaseChange : ∀ (T : Type) [CommRing T] (ι : Type) [Preorder ι] [IsDirected ι (· ≤ ·)]
     (𝒜 : ι → Subring T) (hA : Monotone 𝒜), (∀ x : T, ∃ i, x ∈ 𝒜 i) →
@@ -127,7 +132,7 @@ theorem directedSystem_etaleBaseChange : ∀ (T : Type) [CommRing T] (ι : Type)
       | monomial n c =>
         obtain ⟨j, hj⟩ := hcov c
         refine ⟨j, fun m => ?_⟩
-        rw [coeff_monomial]
+        rw [coeff_monomial_apply]
         split_ifs
         · exact hj
         · exact zero_mem _

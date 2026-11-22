@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KappaA
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KappaA
+
+@[expose] public section
 
 open MeasureTheory Set Real
 open scoped ENNReal Pointwise
@@ -152,9 +156,13 @@ lemma norm_eq_sqrt_coord (y : E3) : ‖y‖ = Real.sqrt (y 0 ^ 2 + (y 1 ^ 2 + y 
 
 lemma measurableSet_cone0 {s : Set ℝ} (hs : MeasurableSet s) :
     MeasurableSet {y : E3 | 0 < ‖y‖ ∧ ‖y‖ < 1 ∧ y 0 / ‖y‖ ∈ s} := by
-  refine (measurableSet_lt measurable_const measurable_norm).inter
-    ((measurableSet_lt measurable_norm measurable_const).inter ?_)
-  exact (by fun_prop : Measurable fun y : E3 => y 0 / ‖y‖) hs
+  have h0 : MeasurableSet {y : E3 | 0 < ‖y‖} :=
+    measurableSet_lt measurable_const measurable_norm
+  have h1 : MeasurableSet {y : E3 | ‖y‖ < 1} :=
+    measurableSet_lt measurable_norm measurable_const
+  have hmem : MeasurableSet {y : E3 | y 0 / ‖y‖ ∈ s} :=
+    (by fun_prop : Measurable fun y : E3 => y 0 / ‖y‖) hs
+  exact h0.inter (h1.inter hmem)
 
 lemma volume_cone0 {s : Set ℝ} (hs : MeasurableSet s) :
     volume {y : E3 | 0 < ‖y‖ ∧ ‖y‖ < 1 ∧ y 0 / ‖y‖ ∈ s} =
@@ -176,7 +184,9 @@ lemma volume_cone0 {s : Set ℝ} (hs : MeasurableSet s) :
       · rw [indicator_of_mem (show y ∈ {y : E3 | 0 < ‖y‖ ∧ ‖y‖ < 1 ∧ y 0 / ‖y‖ ∈ s} from
           ⟨h0, h1, hy⟩), ← hn, indicator_of_mem hy]
         rfl
-      · rw [indicator_of_notMem (fun h => hy h.2.2), ← hn, indicator_of_notMem hy]
+      · have hy' : y ∉ {y : E3 | 0 < ‖y‖ ∧ ‖y‖ < 1 ∧ y 0 / ‖y‖ ∈ s} :=
+          fun h => hy h.2.2
+        rw [indicator_of_notMem hy', ← hn, indicator_of_notMem hy]
     · rw [if_neg hc, indicator_of_notMem]
       rintro ⟨h0, h1, -⟩
       apply hc

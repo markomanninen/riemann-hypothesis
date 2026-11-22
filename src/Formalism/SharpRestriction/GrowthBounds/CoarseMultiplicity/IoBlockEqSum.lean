@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Imports
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.IoBlockSupported
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.Imports
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.IoBlockSupported
+
+@[expose] public section
 
 noncomputable section
 
@@ -120,7 +124,8 @@ theorem ioBlock_eq_sum (K : Type) [Field K] (b : SegBlock (segS X.TT j) X.m) (t 
       (aeval (fun v => (MvPolynomial.X (symVar C0 CE1 CE2 X j v) :
         MvPolynomial ((X.TT × Bool) × Fin (X.m + 1)) K) ^ symLev X.p C0 CE1 CE2 X j v)).toLinearMap
   have hf : ∀ t, ioBlock K X.p C0 CE1 CE2 X j b t = f t := fun _ => rfl
-  conv_lhs => rw [hf, ← t.support_sum_monomial_coeff, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [hf, ← t.support_sum_monomial_coeff, map_sum]
   exact Finset.sum_congr rfl fun μ _ => by rw [← hf, ioBlock_monomial]
 
 end
@@ -135,7 +140,7 @@ theorem orthAt (C0 CE1 CE2 : ℝ) : OrthAt C0 CE1 CE2 := by
   have hem := support_monomial_subset he'
   rw [Finset.mem_singleton] at hem
   subst hem
-  have h0 : coeff (ioExp C0 CE1 CE2 X j b μ) (ioBlock (KK O) X.p C0 CE1 CE2 X j b' s') = 0 := by
+  have h0 : AddMonoidAlgebra.coeff (ioBlock (KK O) X.p C0 CE1 CE2 X j b' s') (ioExp C0 CE1 CE2 X j b μ) = 0 := by
     rw [ioBlock_eq_sum C0 CE1 CE2 X j (KK O) b' s', coeff_sum]
     refine Finset.sum_eq_zero fun μ' hμ' => ?_
     rw [coeff_monomial, if_neg]

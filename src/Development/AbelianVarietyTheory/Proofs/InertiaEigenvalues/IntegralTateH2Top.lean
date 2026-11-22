@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.DecompositionData
-import Formalism.GaloisCohomology.LocalTateDualityK
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.RationalDualityOfAllCoefficients
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.H2EquivOfTorsionCharacter
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIntTwoCocycleEqPowSmulOfReductionCoboundary
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicCoboundaryOfDivisible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousTwoCocycleMultipleOfFundamental
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFundamentalTwoCocycleOfLocalTateDualityStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.DecompositionData
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.RationalDualityOfAllCoefficients
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.H2EquivOfTorsionCharacter
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIntTwoCocycleEqPowSmulOfReductionCoboundary
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicCoboundaryOfDivisible
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousTwoCocycleMultipleOfFundamental
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFundamentalTwoCocycleOfLocalTateDualityStatement
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.WeaklyAdmissibleFiltrations
 
@@ -33,13 +37,13 @@ theorem int_span [IsTopologicalGroup G] [CompactSpace G] (χ : G →* ℤ_[l]ˣ)
     intro g h k
     rw [← PadicInt.ext_of_toZModPow]
     intro n
-    simpa only [map_sub, map_add, map_mul, map_zero] using (hG n).1.2 g h k
+    simpa only [map_sub, map_add (f := _), map_mul, map_zero] using (hG n).1.2 g h k
   have hlev : ∀ r, ∃ (x : ZMod (l ^ r)) (b : G → ZMod (l ^ r)), IsLocallyConstant b ∧ ∀ p,
       PadicInt.toZModPow r (w p) = PadicInt.toZModPow r (c p) * x +
         (PadicInt.toZModPow r (χ p.1 : ℤ_[l]) * b p.2 - b (p.1 * p.2) + b p.1) := fun r =>
     (hG r).2.1 _ ((IsLocallyConstant.iff_continuous _).2 ((continuous_reduction r).comp hwc))
       fun g k m => by
-        simpa only [map_sub, map_add, map_mul, map_zero] using
+        simpa only [map_sub, map_add (f := _), map_mul, map_zero] using
           congrArg (PadicInt.toZModPow r) (hwcoc g k m)
   choose X B hB hXB using hlev
   have hred : ∀ r, PadicInt.toZModPow r (((X r).val : ℕ) : ℤ_[l]) = X r := fun r => by
@@ -58,7 +62,7 @@ theorem int_span [IsTopologicalGroup G] [CompactSpace G] (χ : G →* ℤ_[l]ˣ)
         (PadicInt.toZModPow r (χ p.1 : ℤ_[l]) * ψ (B (r + 1) p.2) - ψ (B (r + 1) (p.1 * p.2)) +
           ψ (B (r + 1) p.1)) := by
       have := congrArg ψ (hXB (r + 1) p)
-      simpa only [map_add, map_sub, map_mul, hψ] using this
+      simpa only [map_add (f := _), map_sub, map_mul, hψ] using this
     have e2 := hXB r p
     show PadicInt.toZModPow r (c p) * (ψ (X (r + 1)) - X r) =
       PadicInt.toZModPow r (χ p.1 : ℤ_[l]) * (B r p.2 - ψ (B (r + 1) p.2)) -
@@ -114,7 +118,7 @@ theorem int_inj (χ : G →* ℤ_[l]ˣ) (c : G × G → ℤ_[l]) (hgen : ∀ r, 
     (fun g => PadicInt.toZModPow n (f g))
     ((IsLocallyConstant.iff_continuous _).2 ((continuous_reduction n).comp hf)) fun p => ?_
   have e := congrArg (PadicInt.toZModPow (p := l) n) (h p.1 p.2)
-  simp only [map_sub, map_add, map_mul] at e
+  simp only [map_sub, map_add (f := _), map_mul] at e
   linear_combination -e
 
 end GlobalTheory.IntTateTop
@@ -139,9 +143,9 @@ theorem nonempty_quot_equiv {R M : Type} [CommRing R] [AddCommGroup M] [Module R
 
 variable {l : ℕ} [Fact l.Prime]
 
+
 set_option maxHeartbeats 1000000 in
 set_option synthInstance.maxHeartbeats 400000 in
-
 theorem tateH2OAt_of_fund (P : LocPrime l) (K Lf : FinExt l) [CompactSpace ↥(GK K)]
     (χ : ↥(GK K) →* ℤ_[l]ˣ) (c : ↥(GK K) × ↥(GK K) → ℤ_[l])
     (hχc : Continuous (fun g => (χ g : ℤ_[l])))
@@ -193,8 +197,9 @@ theorem tateH2OAt_of_fund (P : LocPrime l) (K Lf : FinExt l) [CompactSpace ↥(G
   have hrec : ∀ {X : Type} [TopologicalSpace X] (F : Fin (Module.finrank ℤ_[l] ↥(OL Lf)) → X → ℤ_[l]),
       (∀ j, Continuous (F j)) → Continuous fun x => ι (b.equivFun.symm (fun j => F j x)) := by
     intro X _ F hF
-    simp only [Module.Basis.equivFun_symm_apply, map_sum, hsm]
-    exact continuous_finset_sum _ fun j _ => ((hAlg.comp (hcZ.comp (hF j))).mul continuous_const)
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Module.Basis.equivFun_symm_apply, map_sum, hsm]
+    exact continuous_finsetSum _ fun j _ => ((hAlg.comp (hcZ.comp (hF j))).mul continuous_const)
   have hd1 : ∀ (f : ↥(GK K) → ↥Lf.1) g h, ReciprocityTheory.Def.d1 (Formalism.WeaklyAdmissibleFiltrations.charRep (cycLL (P.PD K) ↥Lf.1)) f (g, h) =
       ((cycLL (P.PD K) ↥Lf.1 g : (↥Lf.1)ˣ) : ↥Lf.1) * f h - f (g * h) + f g := by
     intro f g h
@@ -212,7 +217,7 @@ theorem tateH2OAt_of_fund (P : LocPrime l) (K Lf : FinExt l) [CompactSpace ↥(G
     intro g h k
     rw [← PadicInt.ext_of_toZModPow]
     intro n
-    simpa only [map_sub, map_add, map_mul, map_zero] using (hG n).1.2 g h k
+    simpa only [map_sub, map_add (f := _), map_mul, map_zero] using (hG n).1.2 g h k
   have hcOc : Continuous fun p => ι (cO p) := by
     simp only [cO, hsm, map_one, mul_one]
     exact hAlg.comp (hcZ.comp hcc)
@@ -221,7 +226,7 @@ theorem tateH2OAt_of_fund (P : LocPrime l) (K Lf : FinExt l) [CompactSpace ↥(G
     show ReciprocityTheory.Def.d2 _ _ = 0
     funext ⟨g, h, k⟩
     rw [hd2]
-    simp only [hcyc, ← map_sub, ← map_add, Pi.zero_apply, cO, smul_smul, ← sub_smul, ← add_smul]
+    simp only [hcyc, ← map_sub, ← map_add (f := _), Pi.zero_apply, cO, smul_smul, ← sub_smul, ← add_smul]
     rw [hcoc, zero_smul, map_zero]
   let z0 : ↥(Formalism.MainNotions.TruncatedSeriesCountingIdentities.twoCocyclesTwist (P.PD K) ↥Lf.1 ↥(OL Lf)) := ⟨_, hz0⟩
   have haz0 : ∀ (a : ↥(OL Lf)) p, (a • z0 : ↥(Formalism.MainNotions.TruncatedSeriesCountingIdentities.twoCocyclesTwist (P.PD K) ↥Lf.1 ↥(OL Lf))).1 p =
@@ -242,13 +247,13 @@ theorem tateH2OAt_of_fund (P : LocPrime l) (K Lf : FinExt l) [CompactSpace ↥(G
       have e1 := congrFun hfd (g, h)
       simp only [LinearMap.restrictScalars_apply, Submodule.subtype_apply] at e1
       rw [hd1, haz0] at e1
-      rw [map_add, map_sub, ← hcyc, hfO', hfO', hfO', ← e1]
+      rw [map_add (f := _), map_sub, ← hcyc, hfO', hfO', hfO', ← e1]
     have hx : ∀ j, b.equivFun a j = 0 := by
       intro j
       refine int_inj χ c hgen (b.equivFun a j) (fun g => b.equivFun (fO g) j)
         (hcoord f fO hfc hfO' j) fun g h => ?_
       have e2 := congrArg (fun o => b.equivFun o j) (e g h)
-      simp only [map_add, map_sub, map_smul, Pi.add_apply, Pi.sub_apply, Pi.smul_apply,
+      simp only [map_add (f := _), map_sub, map_smul, Pi.add_apply, Pi.sub_apply, Pi.smul_apply,
         smul_eq_mul] at e2
       rw [e2, mul_comm]
     exact b.equivFun.injective (by funext j; rw [hx j, map_zero]; rfl)
@@ -260,12 +265,12 @@ theorem tateH2OAt_of_fund (P : LocPrime l) (K Lf : FinExt l) [CompactSpace ↥(G
       apply hι
       have e1 := congrFun (LinearMap.mem_ker.1 hzd) (g, h, k)
       rw [hd2] at e1
-      rw [map_sub, map_add, map_sub, ← hcyc, hzO', hzO', hzO', hzO', map_zero]
+      rw [map_sub, map_add (f := _), map_sub, ← hcyc, hzO', hzO', hzO', hzO', map_zero]
       exact e1
     have hspan := fun j => int_span χ c hχc hgen hfin (fun p => b.equivFun (zO p) j)
       (hcoord _ zO hzc hzO' j) fun g h k => by
         have e2 := congrArg (fun o => b.equivFun o j) (hzd' g h k)
-        simpa only [map_add, map_sub, map_smul, map_zero, Pi.add_apply, Pi.sub_apply,
+        simpa only [map_add (f := _), map_sub, map_smul, map_zero, Pi.add_apply, Pi.sub_apply,
           Pi.smul_apply, smul_eq_mul, Pi.zero_apply] using e2
     choose X F hF hXF using hspan
     let a : ↥(OL Lf) := b.equivFun.symm X
@@ -275,13 +280,12 @@ theorem tateH2OAt_of_fund (P : LocPrime l) (K Lf : FinExt l) [CompactSpace ↥(G
     have hcalc : (χ g : ℤ_[l]) • FO h - FO (g * h) + FO g = zO (g, h) - (c (g, h) : ℤ_[l]) • a := by
       apply b.equivFun.injective
       funext j
-      simp only [map_add, map_sub, map_smul, Pi.add_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul,
+      simp only [map_add (f := _), map_sub, map_smul, Pi.add_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul,
         FO, a, LinearEquiv.apply_symm_apply]
-      rw [hXF j g h, mul_comm]
+      simpa only [mul_comm (X j) (c (g, h))] using hXF j g h
     have hcalc' := congrArg ι hcalc
-    rw [map_add, map_sub, map_sub, ← hcyc, hzO' (g, h), ← haz0 a (g, h)] at hcalc'
-    refine (hd1 _ g h).trans (hcalc'.trans ?_)
-    rfl
+    rw [map_add (f := _), map_sub, map_sub, ← hcyc, hzO' (g, h)] at hcalc'
+    exact (hd1 _ g h).trans (hcalc'.trans (congrArg (fun x : ↥Lf.1 => z.1 (g, h) - x) (haz0 a (g, h)).symm))
 
 end GlobalTheory.IntTateTop
 

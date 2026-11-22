@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StdLvPr
-import Formalism.LocalToGlobal.HermitianForms.TiedTwJSym
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.StdLvPr
+public import Formalism.LocalToGlobal.HermitianForms.TiedTwJSym
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
@@ -31,19 +35,19 @@ theorem res_algebraMap_surjective (A : AtTTied u) (v : (D.mem u).A.vT) :
   let cO : 𝓞 D.host.E ≃+* 𝓞 D.host.E := RingOfIntegers.mapRingEquiv D.host.conj.toRingEquiv
   have hcO : ∀ y : 𝓞 D.host.E, ((cO y : 𝓞 D.host.E) : D.host.E) = D.host.conj (y : D.host.E) := fun y => rfl
   obtain ⟨t, ht⟩ := exists_intF (D := D) (A.piU + cO A.piU) (by
-    push_cast; simp only [hcO, map_add, conj_conj_host]; ring)
+    push_cast; simp only [hcO, map_add (f := _), conj_conj_host]; ring)
   obtain ⟨z, hz⟩ := exists_intF (D := D) (y * cO A.piU + cO y * A.piU) (by
-    push_cast; simp only [hcO, map_add, map_mul, conj_conj_host]; ring)
+    push_cast; simp only [hcO, map_add (f := _), map_mul, conj_conj_host]; ring)
   have htp : t ∉ (A.eV v).1.asIdeal := by
-    rw [A.res_v, ht, map_add, A.res_pi, zero_add]; exact A.res_conj v _ rfl
+    rw [A.res_v, ht, map_add (f := _), A.res_pi, zero_add]; exact A.res_conj v _ rfl
   obtain ⟨s, i, hi, hsi⟩ := ((A.eV v).1.isMaximal).exists_inv htp
   have hi0 : A.res v (algebraMap (𝓞 D.host.F) (𝓞 D.host.E) i) = 0 := (A.res_v v i).1 hi
   have hst : A.res v (algebraMap (𝓞 D.host.F) (𝓞 D.host.E) s) * A.res v (cO A.piU) = 1 := by
     have := congrArg (fun x => A.res v (algebraMap (𝓞 D.host.F) (𝓞 D.host.E) x)) hsi
-    simp only [map_add, map_mul, map_one, hi0, add_zero, ht, A.res_pi, zero_add] at this
+    simp only [map_add (f := _), map_mul, map_one, hi0, add_zero, ht, A.res_pi, zero_add] at this
     exact this
   refine ⟨s * z, ?_⟩
-  simp only [RingHom.comp_apply, map_mul, hz, map_add, A.res_pi, mul_zero, add_zero]
+  simp only [RingHom.comp_apply, map_mul, hz, map_add (f := _), A.res_pi, mul_zero, add_zero]
   rw [mul_comm (A.res v y), ← mul_assoc, hst, one_mul]
 
 theorem exists_fv_equiv (A : AtTTied u) (v : (D.mem u).A.vT) :
@@ -56,10 +60,16 @@ theorem exists_fv_equiv (A : AtTTied u) (v : (D.mem u).A.vT) :
   rw [RingEquiv.symm_apply_eq]
   rfl
 
-theorem fv_equiv_quot : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.Pins B X → ∀ (l : I.Laws) (Z : TC.Later B (I.cols l)) (u : B.Word) {Ch : ℕ → Type} {chOf : ∀ i, ((I.rec7 l Z).mem u).C.cls i → Ch i} (F : FormsTiedSym (I.rec7 l Z) u Ch chOf), I.StdF l Z u F → ∀ v : ((I.rec7 l Z).mem u).A.vT,
-  ∃ e : ((I.rec7 l Z).mem u).A.Fv v ≃+* (𝓞 (I.rec7 l Z).host.F ⧸ (F.atT.eV v).1.asIdeal),
-    ∀ a : 𝓞 (I.rec7 l Z).host.F, e (F.atT.res v (algebraMap (𝓞 (I.rec7 l Z).host.F) (𝓞 (I.rec7 l Z).host.E) a)) = Ideal.Quotient.mk _ a :=
-  by
+theorem fv_equiv_quot : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X),
+    ColIn.Ok I → TC.Pins B X →
+    ∀ (l : TC.Laws I) (Z : TC.Later B (TC.cols I l)) (u : B.Word)
+      {Ch : ℕ → Type} {chOf : ∀ i, ((TC.rec7 I l Z).mem u).C.cls i → Ch i}
+      (F : Formalism.L2.Forms.FormsTiedSym (TC.rec7 I l Z) u Ch chOf),
+      TC.StdF I l Z u F → ∀ v : ((TC.rec7 I l Z).mem u).A.vT,
+      ∃ e : ((TC.rec7 I l Z).mem u).A.Fv v ≃+* (𝓞 (TC.rec7 I l Z).host.F ⧸ (F.atT.eV v).1.asIdeal),
+        ∀ a : 𝓞 (TC.rec7 I l Z).host.F,
+          e (F.atT.res v (algebraMap (𝓞 (TC.rec7 I l Z).host.F) (𝓞 (TC.rec7 I l Z).host.E) a)) =
+            Ideal.Quotient.mk _ a := by
   intro B X I _ _ l Z u Ch chOf F _ v
   exact exists_fv_equiv F.atT v
 

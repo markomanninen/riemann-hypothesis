@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qk41.precomplete_of_pow_le :
     ∀ {A : Type} [inst : CommRing A]

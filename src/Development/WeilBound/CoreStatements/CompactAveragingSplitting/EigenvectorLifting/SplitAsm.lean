@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.SplitDict
+module
+
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.SplitDict
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,14 +15,11 @@ attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalDat
 
 def ChrFacts : Prop :=
   ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (B : Base F E) (X : Chars F E)
-    (a a' : ℕ) (v : Pl F) (τ : E →ₐ[F] Fv F v), X.IsGood B a a' →
+    (a a' : ℕ) (v : Pl F) (τ : E →ₐ[F] Fv F v), Chars.IsGood B X a a' →
     (∀ x, ‖(chrW X.α τ x : ℂ)‖ = 1) ∧ (∀ x, ‖(chrW X.β τ x : ℂ)‖ = 1) ∧ chrW X.ν τ = chrW X.α τ / chrW X.β τ ∧
     (∃ e : ℕ, CondLE (unifAt v) e (chrW X.α τ) ∧ CondLE (unifAt v) e (chrW X.β τ)) ∧
     (v ∈ X.T → ¬ GlobalTheory.SplitWeil.IsUnram (chrW X.ν τ)) ∧
     (v ∉ X.T → GlobalTheory.SplitWeil.IsUnram (chrW X.α τ) ∧ GlobalTheory.SplitWeil.IsUnram (chrW X.β τ))
-
-theorem sb_eq (Y : Type) [TopologicalSpace Y] : GlobalTheory.SplitWeil.SB Y = GlobalTheory.WeilM.SB Y := by
-  exact SetLike.ext fun _ => Iff.rfl
 
 theorem extendOn {V W : Type} [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W] (S : Submodule ℂ V)
     (g : V → W) (hg : ∀ x ∈ S, ∀ y ∈ S, ∀ c : ℂ, g (x + c • y) = g x + c • g y) :
@@ -55,7 +56,7 @@ theorem mk_p {D M P : Type} [AddCommGroup P] [Module ℂ P] (SD : Submodule ℂ 
   have hgS : ∀ φ ∈ SD, (g φ : P) = f (ι φ) := by
     intro φ hφ
     show ((if h : ι φ ∈ SM then (⟨f (ι φ), hmem _ h⟩ : N) else 0 : N) : P) = f (ι φ)
-    rw [dif_pos (show ι φ ∈ SM from hι.mapsTo hφ)]
+    rw [dite_eq_left (show ι φ ∈ SM from hι.mapsTo hφ)]
   obtain ⟨p, hp⟩ := extendOn SD g (by
     intro x hx y hy c
     apply Subtype.ext

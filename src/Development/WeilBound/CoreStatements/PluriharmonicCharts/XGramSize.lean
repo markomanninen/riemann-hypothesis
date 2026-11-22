@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.InFlagDomainOne
-import GroundTheory.HeightsAndTheta.Heights.LocalDensities.PHermitianDetMono
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.InFlagDomainOne
+public import GroundTheory.HeightsAndTheta.Heights.LocalDensities.PHermitianDetMono
+
+@[expose] public section
 
 open Matrix GlobalTheory.CompanionTheory.Ar.PB
 open scoped ComplexOrder

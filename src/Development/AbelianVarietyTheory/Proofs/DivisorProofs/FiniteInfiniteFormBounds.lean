@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralGoodFormValuesMemScaledDualWeylLattice
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseTupleGoodFormValuesBoundedByClassSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CardLevelQuotientGroupLeProdAbsNormPowSq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BigCAnd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralGoodFormValuesMemScaledDualWeylLattice
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseTupleGoodFormValuesBoundedByClassSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CardLevelQuotientGroupLeProdAbsNormPowSq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BigCAnd
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,13 +22,18 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 namespace GlobalTheory.FormVal
 
 theorem bigC_and {Q Q' : ChQ} (h : BigC Q) (h' : BigC Q') : BigC fun F ch C b => Q F ch C b ∧ Q' F ch C b := by
-  first
-  | exact @_root_.GlobalTheory.BigConstantConjunction.bigC_and
-  | exact _root_.GlobalTheory.BigConstantConjunction.bigC_and
-  | (apply _root_.GlobalTheory.BigConstantConjunction.bigC_and <;> assumption)
-  | (intros; apply _root_.GlobalTheory.BigConstantConjunction.bigC_and <;> assumption)
-  | (intros; apply @_root_.GlobalTheory.BigConstantConjunction.bigC_and <;> first | assumption | infer_instance)
-  | (intros; exact _root_.GlobalTheory.BigConstantConjunction.bigC_and ..)
+  obtain ⟨A0, hA⟩ := h
+  obtain ⟨B0, hB⟩ := h'
+  refine ⟨max A0 B0, fun CF hCF => ?_⟩
+  obtain ⟨C1, hC1⟩ := hA CF (le_trans (le_max_left _ _) hCF)
+  obtain ⟨C2, hC2⟩ := hB CF (le_trans (le_max_right _ _) hCF)
+  refine ⟨max C1 C2, fun ε C hC => ?_⟩
+  obtain ⟨x1, hx1⟩ := hC1 ε C (le_trans (le_max_left _ _) hC)
+  obtain ⟨x2, hx2⟩ := hC2 ε C (le_trans (le_max_right _ _) hC)
+  refine ⟨max x1 x2, ?_⟩
+  intro D large₂ hε hx Γ _ _ Pl0 T A Ks _ _ _ R F hS ch hIs hAt hOK
+  exact ⟨hx1 D large₂ hε (le_trans (le_max_left _ _) hx) Γ Pl0 T A Ks R F hS ch hIs hAt hOK,
+    hx2 D large₂ hε (le_trans (le_max_right _ _) hx) Γ Pl0 T A Ks R F hS ch hIs hAt hOK⟩
 
 theorem bigC_mono {Q Q' : ChQ} (h : BigC Q) (hQ : ∀ {D : D7} {Γ : Type} [Group Γ] [Fintype Γ] {Pl0 T : Type}
     {A : FamIn D.what₂.LL Γ Pl0 T D.R.m} {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] {R : RealDat D A Ks}
@@ -52,9 +61,6 @@ theorem form_fin_inf_of (h1 : BigC fun {D} {_} _ _ {_} {_} {A} {_} _ _ _ {R} F c
     obtain ⟨hq, hy⟩ := hv σ x
     obtain ⟨u, e, hu⟩ := hy y
     exact ⟨u, e, hu.trans (mul_le_mul_of_nonneg_right hK hq)⟩
-
-theorem form_fin_inf : GlobalTheory.FunPr.Hypotheses₂ → FinFormK ∧ InfFormK := fun _ =>
-  form_fin_inf_of GlobalTheory.T.integralGoodForm_values_mem_scaledDualWeylLattice GlobalTheory.T.baseTupleGoodForm_values_bounded_by_classSum GlobalTheory.T.kernelLossBound_nonneg_and_level_card_le_exp
 
 end GlobalTheory.FormVal
 

@@ -1,5 +1,9 @@
-import Formalism.MahlerMeasure.StatementTM
-import Formalism.MahlerMeasure.TieVars
+module
+
+public import Formalism.MahlerMeasure.StatementTM
+public import Formalism.MahlerMeasure.TieVars
+
+@[expose] public section
 
 namespace Formalism.GM.M
 
@@ -20,11 +24,11 @@ def finPos (N : ℕ) (k : ℕ) : Fin (N + 1) := ⟨min k N, Nat.lt_succ_of_le (m
 
 def BlockData.lettersAt (D : BlockData N) (j : Fin D.T.t → ℕ) (jp : ℕ) : Letters N where
   vec := D.LL.vec
-  deg := fun a => D.LL.deg a - (∑ i, if (a : ℕ) = D.T.pos i ∨ (a : ℕ) = D.T.pos i + 1 then j i else 0) -
-    (if a = D.uPos then jp else 0)
-
-def BlockData.withMargin (D : BlockData N) (cap : Fin D.T.q → WithTop ℤ) (m : ℕ) : BlockData N :=
-  { D with T := { D.T with thr := fun k => (cap k).map (fun x => x - (m : ℤ)) } }
+  deg := fun a =>
+    -- Unfold the sum over `Fin D.T.t` to avoid a missing compiler specialization.
+    let tieDeg := (List.finRange D.T.t).map fun i =>
+      if (a : ℕ) = D.T.pos i ∨ (a : ℕ) = D.T.pos i + 1 then j i else 0
+    D.LL.deg a - tieDeg.sum - (if a = D.uPos then jp else 0)
 
 def chainEmb (N r t : ℕ) : Fin N × Fin r → BVar N r t := fun x => Sum.inl (Fin.castSucc x.1, x.2)
 

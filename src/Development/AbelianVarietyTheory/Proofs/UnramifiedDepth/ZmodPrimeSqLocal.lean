@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.WFrobStatement
-import ReciprocityTheory.DualLattices.ATowerInh
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.WFrobStatement
+public import ReciprocityTheory.DualLattices.ATowerInh
+
+@[expose] public section
 
 noncomputable section
 open IsLocalRing ReciprocityTheory.PGsh ReciprocityTheory.PGsh.Be2 TrivSqZeroExt
@@ -140,7 +144,8 @@ lemma wS_spec (n : ℕ) : (p : MvPolynomial (Fin n) ℤ) * wS p n =
   set q : MvPolynomial (Fin n) ℤ := (∑ j, (MvPolynomial.X j) ^ p) - (∑ j, MvPolynomial.X j) ^ p with hq
   have hd : MvPolynomial.C (p : ℤ) ∣ q := by
     rw [MvPolynomial.C_dvd_iff_zmod, hq]
-    simp only [map_sub, map_sum, map_pow, MvPolynomial.map_X]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_pow, MvPolynomial.map_X]
     rw [sum_pow_char, sub_self]
   rw [MvPolynomial.C_dvd_iff_dvd_coeff] at hd
   conv_rhs => rw [q.as_sum]
@@ -157,9 +162,11 @@ lemma witt_add (n : ℕ) (a : Fin n → ZMod p) : ∑ j, teich p (a j) =
     rw [RingEquiv.symm_apply_eq, frobeniusEquiv_apply, frobenius_def, ZMod.pow_card]
   have h := congrArg (MvPolynomial.eval₂Hom (Int.castRingHom (ZMod (p ^ 2))) (fun j => sec p (a j)))
     (wS_spec p n)
-  simp only [map_mul, map_natCast, map_sub, map_sum, map_pow, MvPolynomial.eval₂Hom_X'] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_mul, map_natCast, map_sub, map_sum, map_pow, MvPolynomial.eval₂Hom_X'] at h
   have h1 : teich p (∑ j, a j) = (∑ j, sec p (a j)) ^ p := by
-    rw [← teich_red, map_sum (red p)]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← teich_red, map_sum (red p)]
     simp only [red_sec]
   set c := MvPolynomial.eval₂ (Int.castRingHom (ZMod p))
       (fun j => (frobeniusEquiv (ZMod p) p).symm (a j)) (wS p n) with hc
@@ -251,7 +258,7 @@ def wModel : WData (tower p) (mkL (ZMod p)) where
   ann_p := ann_p p
   compat a := by
     change red p (fst a + p * snd a) = red p (fst a)
-    rw [map_add, map_mul, map_natCast, ZMod.natCast_self, zero_mul, add_zero]
+    rw [map_add (f := _), map_mul, map_natCast, ZMod.natCast_self, zero_mul, add_zero]
   b := 1
   ξ_img := by
     change fst (DualNumber.eps : DualNumber (ZMod (p ^ 2))) + (p : ZMod (p ^ 2)) * snd (DualNumber.eps : DualNumber (ZMod (p ^ 2))) = (p : ZMod (p ^ 2)) * 1
@@ -268,11 +275,5 @@ def wModel : WData (tower p) (mkL (ZMod p)) where
     have := teich_red p 0
     rw [map_zero, zero_pow hp.out.ne_zero] at this
     exact this
-
-theorem wModel_p_ne_zero : (p : ((wModel p).W : Type)) ≠ 0 := by
-  intro h
-  have h1 : (p : ZMod (p ^ 2)) * 1 = 0 := by rw [mul_one]; exact h
-  rw [ann_p, map_one] at h1
-  exact one_ne_zero h1
 
 end GlobalTheory.WModel

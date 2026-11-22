@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameInert
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SatakeRigidity.LRSplit
-import GroundTheory.GlobalFields.TateThesis.Chebotarev
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameInert
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.SatakeRigidity.LRSplit
+public import GroundTheory.GlobalFields.TateThesis.Chebotarev
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,22 +26,8 @@ private theorem infinite_of_hasDirichletDensity_pos {K : Type} [Field K] [Number
     {S : Set (HeightOneSpectrum (𝓞 K))} {δ : ℝ}
     (h : NumberField.Set.HasDirichletDensity S δ) (hδ : 0 < δ) : S.Infinite := by
   intro hfin
-  have hZ := GroundTheory.Global.tendsto_primeIdealZetaSum_univ_atTop K
-  have hlim : Filter.Tendsto (fun s => NumberField.Set.primeIdealZetaSum S s /
-      NumberField.Set.primeIdealZetaSum (Set.univ : Set (HeightOneSpectrum (𝓞 K))) s) (nhdsWithin 1 (Set.Ioi 1)) (nhds 0) := by
-    have hup : Filter.Tendsto (fun s => (S.ncard : ℝ) / NumberField.Set.primeIdealZetaSum (Set.univ : Set (HeightOneSpectrum (𝓞 K))) s)
-        (nhdsWithin 1 (Set.Ioi 1)) (nhds 0) := tendsto_const_nhds.div_atTop hZ
-    apply tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hup
-    · filter_upwards with s
-      exact div_nonneg (NumberField.Set.primeIdealZetaSum_nonneg _ _)
-        (NumberField.Set.primeIdealZetaSum_nonneg _ _)
-    · filter_upwards [self_mem_nhdsWithin] with s hs
-      have hs' : (0 : ℝ) ≤ s := le_of_lt (lt_trans zero_lt_one (Set.mem_Ioi.mp hs))
-      exact div_le_div_of_nonneg_right
-        (NumberField.Set.primeIdealZetaSum_le_card_of_finite hfin hs')
-        (NumberField.Set.primeIdealZetaSum_nonneg _ _)
-  have h0 := tendsto_nhds_unique h hlim
-  linarith
+  have h0 := GroundTheory.Global.hasDirichletDensity_zero_of_finite hfin
+  exact hδ.ne' (h.dirichletDensity_eq.symm.trans h0.dirichletDensity_eq)
 
 private theorem eq_one_or_eq_complexConj_of_maximalRealSubfield (E : Type) [Field E] [NumberField E] [IsCMField E]
     (σ : Gal(E/↥(maximalRealSubfield E))) : σ = 1 ∨ σ = IsCMField.complexConj E := by

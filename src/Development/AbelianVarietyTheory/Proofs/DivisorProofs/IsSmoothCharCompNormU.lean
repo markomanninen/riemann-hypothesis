@@ -1,8 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.LocalCyclic
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsSmallStable
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdicCompletionTraceNormContinuous
-import GroundTheory.GlobalFields.CompletionAtPlace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ArthurClozelLocalSC
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Lbc
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.Langlands
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsLevelProjLevelProj
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsSubquotientDetRepParInd
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsOrbitProd
+public import GroundTheory.GlobalFields.CompletionAtPlace.Galois
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdicCompletionTraceNormContinuous
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsOpenNormalisedSubgroupSubset
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+public import GroundTheory.GlobalFields.CompletionAtPlace
+
+@[expose] public section
 
 noncomputable section
 

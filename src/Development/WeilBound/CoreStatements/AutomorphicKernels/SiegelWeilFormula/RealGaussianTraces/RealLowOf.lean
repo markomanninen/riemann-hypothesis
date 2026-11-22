@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RealGaussianTraces.CpowProdOfReal
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhitGenLowOf
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RealGaussianTraces.CpowProdOfReal
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhitGenLowOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,7 +92,7 @@ theorem realLow_of (h : WROrd) : RealLow := by
   refine ⟨fun z => (cb : ℂ) * (cμ : ℂ) * ∏ i, Wi i (z - s0), ?_, ((M : ℝ) - n) / 2 + ∑ i, |σ₀ i|,
     fun z hz => ?_⟩
   · refine (differentiable_const _).mul ?_
-    have := Differentiable.finset_prod (u := Finset.univ) (f := fun i z => Wi i (z - s0))
+    have := Differentiable.finsetProd (u := Finset.univ) (f := fun i z => Wi i (z - s0))
       (fun i _ => (hWid i).comp (differentiable_id.sub_const s0))
     rw [Finset.prod_fn] at this
     exact this

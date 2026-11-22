@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShapeFacts
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TraceZero
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ShapeFacts
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.TraceZero
+
+@[expose] public section
 
 open Polynomial Formalism.ConjugateSelfDual Formalism.MainNotions.N UpperTheory.V.Af UpperTheory.V.Sd
 open scoped Matrix
@@ -88,7 +92,7 @@ theorem UpperTheory.V.Sd.sIabs :
     rw [Matrix.charpoly_fin_two, htr t ht, Fin.prod_univ_two] at h
     have e : (X - C ((![1, Φ] : Fin 2 → Γ →* (Qbar l)ˣ) 0 t : Qbar l)) * (X - C ((![1, Φ] : Fin 2 → Γ →* (Qbar l)ˣ) 1 t : Qbar l)) =
         X ^ 2 - C ((Φ t : Qbar l) + 1) * X + C (Φ t : Qbar l) := by
-      simp only [Matrix.cons_val_zero, Matrix.cons_val_one, MonoidHom.one_apply, Units.val_one, map_add, map_one]
+      simp only [Matrix.cons_val_zero, Matrix.cons_val_one, MonoidHom.one_apply, Units.val_one, map_add (f := _), map_one]
       ring
     rw [e] at h
     simpa [coeff_X_pow, coeff_C, coeff_one] using h

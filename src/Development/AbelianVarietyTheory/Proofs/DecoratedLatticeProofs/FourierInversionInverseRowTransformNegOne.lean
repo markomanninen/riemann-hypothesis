@@ -1,9 +1,14 @@
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsFrameCol
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HermitianLinkMapAdditiveRationalEquivariant
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilCharacterSplitPlaceExistsContinuousNontrivia
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergFrameHalfInverse
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierTransformInversionLocalFieldPi
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PartialFourierInversion
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsFrameCol
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HermitianLinkMapAdditiveRationalEquivariant
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilCharacterSplitPlaceExistsContinuousNontrivia
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergFrameHalfInverse
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierTransformInversionLocalFieldPi
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PartialFourierInversion
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory Matrix ValuativeRel GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.SeeSaw GlobalTheory.LocMod
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -39,12 +44,17 @@ theorem finv_hat_neg_one : ∀ (k : Type) [Field k] [ValuativeRel k] [Topologica
       continuous_invFun := by fun_prop }
   set g : (n → k) → ℂ := fun y => c (Matrix.of fun r _ => y r) with hgdef
   have hg : g ∈ SB (n → k) := ⟨hc.1.comp_continuous e.continuous, hc.2.comp_homeomorph e⟩
+  letI : IsEmpty Empty := ⟨fun x => nomatch x⟩
+  letI : Unique (Empty → k) := ⟨⟨fun x => nomatch x⟩, fun f => funext fun x => nomatch x⟩
   let p : (n → k) × (Empty → k) ≃ₜ (n → k) := Homeomorph.prodUnique (n → k) (Empty → k)
   set f : (n → k) × (Empty → k) → ℂ := fun q => g q.1 with hfdef
-  have hf : f ∈ SB ((n → k) × (Empty → k)) := ⟨hg.1.comp_continuous p.continuous, hg.2.comp_homeomorph p⟩
+  have hf : f ∈ SB ((n → k) × (Empty → k)) := ⟨hg.1.comp_continuous continuous_fst, hg.2.comp_homeomorph p⟩
   set a : n → k := fun r => x r () with hadef
   obtain ⟨-, hinv⟩ := hC' Empty a f hf
   set μJ : Measure (Empty → k) := Measure.pi fun _ => ν with hμJ
+  letI : SFinite μJ := by
+    rw [hμJ, Measure.pi_of_empty (x := fun e => e.elim)]
+    infer_instance
   have hJ : μJ.real Set.univ = 1 := by
     rw [hμJ, Measure.pi_of_empty (x := (fun e => e.elim))]
     simp

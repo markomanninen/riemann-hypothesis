@@ -1,9 +1,13 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsNormalisedOfIsDiscrete
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSpanFormsNeBot
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SubsingletonRankZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OneMemGoodCT
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.AffineGLForms.BlockMatrixIdentity.BlockMatOne
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsNormalisedOfIsDiscrete
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StrongMultiplicityOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSpanFormsNeBot
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SubsingletonRankZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OneMemGoodCT
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.AffineGLForms.BlockMatrixIdentity.BlockMatOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ open GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.
 
 namespace PositivityTheory.Rg.Rs
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {N a r s : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {N a r s : ℕ}
 
 def aInf (E : Type) [Field E] (N r : ℕ) (t : ℝ) : GL (Fin N) (Cinf E) :=
   ⟨Matrix.diagonal fun i _ => Complex.exp (if (i : ℕ) < r then (t : ℂ) else 0),
@@ -20,7 +24,7 @@ def aInf (E : Type) [Field E] (N r : ℕ) (t : ℝ) : GL (Fin N) (Cinf E) :=
     by rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]; congr 1; funext i v; simp [← Complex.exp_add],
     by rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]; congr 1; funext i v; simp [← Complex.exp_add]⟩
 
-def aT (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (N r : ℕ) (t : ℝ) : GA E N := infGL E N (aInf E N r t)
+def aT (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (N r : ℕ) (t : ℝ) : GA E N := infGL E N (aInf E N r t)
 
 def IsCT (r : ℕ) (φ F : GA E N → ℂ) : Prop :=
   letI : MeasurableSpace (BlockIx N r → Ad E) := borel _
@@ -59,7 +63,7 @@ def RegInt (V : Submodule ℂ (Sm E N)) (τ : E →+* ℂ) : Prop :=
 
 def SatV (V : Submodule ℂ (Sm E N)) (w : HeightOneSpectrum (𝓞 E)) (B : Multiset ℂˣ) : Prop :=
   (∃ φ ∈ V, GlobalTheory.LFun.IsSatVecGL w ((finRep E N).comp (locGL E N w)) φ B) ∧
-    ∀ φ ∈ V, (∀ k ∈ GlobalTheory.LFun.KGL w N, finRep E N (locGL E N w k) φ = φ) → φ ≠ 0 →
+    ∀ φ ∈ V, (∀ k ∈ GlobalTheory.LFun.KGL w (n := N), finRep E N (locGL E N w k) φ = φ) → φ ≠ 0 →
       GlobalTheory.LFun.IsSatVecGL w ((finRep E N).comp (locGL E N w)) φ B
 
 def satTw (w : HeightOneSpectrum (𝓞 E)) (z : ℂ) (B : Multiset ℂˣ) : Multiset ℂ :=

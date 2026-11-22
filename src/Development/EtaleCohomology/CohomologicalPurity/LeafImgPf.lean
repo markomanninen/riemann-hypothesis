@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafBdCut
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafBdCut
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC CochainComplex.HomComplex
@@ -26,12 +30,12 @@ theorem T'_eq (E : Spc) (k : ℕ) (s : ℤ) (φ : ((chains S).obj E).X (-(k : �
     obtain rfl : k' = k := by omega
     simp [HomologicalComplex.XIsoOfEq_rfl]
   unfold T'
-  rw [dif_pos (by simp)]
+  rw [dite_eq_left (by simp)]
   exact key _ _
 
 theorem T'_pos (E : Spc) (p s : ℤ) (hp : 0 < p) : T' T0 E p s = 0 := by
   unfold T'
-  rw [dif_neg (by omega)]
+  rw [dite_eq_right (by omega)]
 
 theorem T'_comp_d (E : Spc) (p s t : ℤ) (φ : ((chains S).obj E).X p ⟶ I.X s)
     (hd : ∀ (P : PSh) (s t : ℤ) (φ : (free S).obj P ⟶ I.X s), T0 P t (φ ≫ I.d s t) = T0 P s φ ≫ J.d s t) :
@@ -53,7 +57,8 @@ theorem T'_free (E E' : Spc) (k k' : ℕ) (s : ℤ) {ι : Type} [Fintype ι] (c 
     (φ : ((chains S).obj E').X (-(k' : ℤ)) ⟶ I.X s) :
     T' T0 E (-(k : ℤ)) s (gS ≫ φ) = gR ≫ T' T0 E' (-(k' : ℤ)) s φ := by
   rw [T'_eq, T'_eq, hS, hR]
-  simp only [Category.assoc, Iso.inv_hom_id_assoc, Preadditive.sum_comp, Preadditive.zsmul_comp, map_sum, map_zsmul, hn]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Category.assoc, Iso.inv_hom_id_assoc, Preadditive.sum_comp, Preadditive.zsmul_comp, map_sum, map_zsmul, hn]
 
 theorem T'_d (E : Spc) (p p' s : ℤ) (h : p + 1 = p') (φ : ((chains S).obj E).X p' ⟶ I.X s)
     (hn : ∀ (P P' : PSh) (f : P ⟶ P') (s : ℤ) (φ : (free S).obj P' ⟶ I.X s),

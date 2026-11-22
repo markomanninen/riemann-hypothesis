@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.HeisenbergDividedPowerExpansion
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.HeisenbergDividedPowerExpansion
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,7 +64,7 @@ theorem raise_lower_pow_commutator_on_weight {E : GLOps n (KK O) V} (hE : IsGLRe
       · subst h
         simp
       · rw [e1, Nat.sub_add_cancel h]
-    rw [← e1, h0, ih, map_add, map_smul, e1, e2, Nat.add_sub_cancel, add_assoc, ← add_smul]
+    rw [← e1, h0, ih, map_add (f := _), map_smul, e1, e2, Nat.add_sub_cancel, add_assoc, ← add_smul]
     congr 2
     push_cast
     ring
@@ -87,7 +91,8 @@ theorem raise_pow_lower_pow_expansion {E : GLOps n (KK O) V} (hE : IsGLRep E) {a
       congr 1
       · rw [← Module.End.mul_apply (E a b), ← pow_succ', show k - j + 1 = k + 1 - j by omega]
       · rw [show l - j - 1 = l - (j + 1) by omega, show k + 1 - (j + 1) = k - j by omega]
-    rw [pow_succ', Module.End.mul_apply, ih, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [pow_succ', Module.End.mul_apply, ih, map_sum]
     simp only [map_smul]
     refine (Finset.sum_congr rfl (fun j hj => ?_)).trans
       (weighted_sum_shift_recombine (fun j => ((k.choose j * l.descFactorial j : ℕ) : KK O) *

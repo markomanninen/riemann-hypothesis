@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.LevelValueSmul
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.DescentValuation
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ConstantCoeffQZeroEqP
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GradNPfB
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.LevelValueSmul
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.DescentValuation
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ConstantCoeffQZeroEqP
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GradNPfB
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ abbrev rest (T : LocLat G Qp LL O) (τ : K →ₐ[Qp] LL) : Submodule LL (T.V �
 
 theorem fildR_gap (T : LocLat G Qp LL O) (τ : K →ₐ[Qp] LL) (a b : ℤ) (hab : a ≤ b)
     (hj : ∀ i, a ≤ i → i < b → ¬ IsJumpV PD T.ρ τ i) : FildR PD T.ρ τ b = FildR PD T.ρ τ a := by
-  induction b, hab using Int.le_induction with
+  induction b, hab using Int.leInduction with
   | base => rfl
   | succ b hb ih =>
     have hn := hj b hb (by omega)
@@ -136,10 +140,9 @@ theorem ValH.sum {T : LocLat G Qp LL O} {Pt : ZMod n → LL → (K →ₐ[Qp] LL
 
 theorem φVB_inj' (T : LocLat G Qp LL O) : Function.Injective (φVB PD (LL := LL) (V := T.V)) := by
   have h : ∀ y, φVB PD (LL := LL) (V := T.V) y = (PD.φ.toLinearMap.lTensor T.V) y := fun y => by
-    induction y using TensorProduct.induction_on with
-    | zero => simp
+    induction y using TensorProduct.inductionOn with
     | tmul x b => simp [φVB]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   have hi : Function.Injective PD.φ.toLinearMap := PD.φ_inj
   intro a b hab
   rw [h, h] at hab

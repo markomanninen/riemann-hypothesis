@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality
-import GroundTheory.ProfiniteCohomology.CoinducedModules
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality
+public import GroundTheory.ProfiniteCohomology.CoinducedModules
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -23,11 +28,6 @@ noncomputable def coindEvalOne (B : Rep.{u} k U) :
       change f.1 (1 * (u : G)) = B.ρ u (f.1 1)
       rw [one_mul]
       simpa using f.2 u 1⟩
-
-@[simp]
-theorem coindEvalOne_hom_apply (B : Rep.{u} k U) (f : Rep.coind U.subtype B) :
-    (coindEvalOne U B).hom f = f.1 1 :=
-  rfl
 
 noncomputable def coindUnit (A : Rep.{u} k G) :
     A ⟶ Rep.coind U.subtype (Rep.res U.subtype A) :=
@@ -77,7 +77,8 @@ noncomputable def coindTrace : Rep.coind U.subtype (Rep.res U.subtype A) ⟶ A :
     ext f
     change (∑ c : G ⧸ U, coindTraceTerm U A c) ((Rep.coind U.subtype (Rep.res U.subtype A)).ρ g f) =
       A.ρ g ((∑ c : G ⧸ U, coindTraceTerm U A c) f)
-    rw [LinearMap.sum_apply, LinearMap.sum_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [LinearMap.sum_apply, LinearMap.sum_apply, map_sum]
     refine (Fintype.sum_equiv (MulAction.toPerm g) _ _ fun c => ?_).symm
     induction c using QuotientGroup.induction_on with
     | H x =>

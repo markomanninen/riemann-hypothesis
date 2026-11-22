@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,15 +26,9 @@ theorem _root_.GlobalTheory.SchemeWords.isQProjOver_of_isProjOver (h : _root_.Re
   obtain ⟨N, i, hi, rfl⟩ := h
   exact ⟨N, i, inferInstance, inferInstance, rfl⟩
 
-theorem finiteType_of_isQProjOver (h : IsQProjOver f) :
-    LocallyOfFiniteType f ∧ QuasiCompact f ∧ IsSeparated f := by
-  obtain ⟨N, i, hi, hq, rfl⟩ := h
-  have := isProper_str R N
-  exact ⟨inferInstance, inferInstance, inferInstance⟩
 
 open AlgebraicGeometry CategoryTheory IsLocalRing in
 variable {R : Type} [CommRing R] {X : Scheme.{0}} {f : X ⟶ _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Sp R} in
-
 theorem _root_.GlobalTheory.SchemeWords.isProjOver_iff : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.IsProjOver f ↔ _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.IsQProjOver f ∧ IsProper f := by
   refine ⟨fun h => ⟨_root_.GlobalTheory.SchemeWords.isQProjOver_of_isProjOver h, _root_.GlobalTheory.SchemeWords.isProper_of_isProjOver h⟩, ?_⟩
   rintro ⟨⟨N, i, hi, hq, rfl⟩, hp⟩
@@ -43,14 +41,6 @@ end Proj
 section Hens
 variable {A R : Type} [CommRing A] [IsLocalRing A] [CommRing R] [IsLocalRing R]
   [Algebra A R] [IsLocalHom (algebraMap A R)]
-
-theorem faithfullyFlat (h : IsCompletedStrictHens A R) : Module.FaithfullyFlat A R :=
-  have := h.flat
-  Module.FaithfullyFlat.of_flat_of_isLocalHom
-
-theorem injective (h : IsCompletedStrictHens A R) : Function.Injective (algebraMap A R) :=
-  have := faithfullyFlat h
-  FaithfulSMul.algebraMap_injective A R
 
 end Hens
 

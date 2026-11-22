@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.GroupDetAlt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SeparatingAlgebras.GroupDetAlt
+
+@[expose] public section
+
 open UpperTheory.Gal.Gen
 
 private lemma repr_sum_mul {k X ι : Type*} [Field k] [Fintype X] [DecidableEq X]
@@ -9,7 +14,8 @@ private lemma repr_sum_mul {k X ι : Type*} [Field k] [Fintype X] [DecidableEq X
     ext y
     simp [Finset.sum_apply, Pi.single_apply]
   conv_rhs => rw [hv]
-  simp [map_sum, Finsupp.finset_sum_apply, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, Finsupp.finsetSum_apply, mul_comm]
 
 private lemma conj_apply {k X ι : Type*} [Field k] [Fintype X] [DecidableEq X] [Fintype ι]
     (b : Module.Basis ι k (X → k)) (M : Matrix X X k) (i j : ι) :

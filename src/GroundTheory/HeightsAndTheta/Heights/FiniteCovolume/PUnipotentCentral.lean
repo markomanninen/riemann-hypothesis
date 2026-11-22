@@ -1,11 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StUnipotentCentral
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StRationalUnipotent
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StUnipRadicalOfRational
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StImaginaryLatticeCocompact
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PScalingLaw
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PHermAtPlace
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PGramAtData
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StUnipotentCentral
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StRationalUnipotent
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StUnipRadicalOfRational
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StImaginaryLatticeCocompact
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PScalingLaw
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PHermAtPlace
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PGramAtData
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -14,15 +18,15 @@ open NumberField GroundTheory.Automorphic Module Matrix Topology
 noncomputable section
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 attribute [local instance] archMulAction
 
 namespace UnipotentCentral
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem pair_map {G g : Matrix ι ι ℂ} (hg : (g.map (starRingEnd ℂ))ᵀ * G * g = G)
     (a b : ι → ℂ) : star (g *ᵥ a) ⬝ᵥ (G *ᵥ (g *ᵥ b)) = star a ⬝ᵥ (G *ᵥ b) := by
   have hg' : gᴴ * G * g = G := by
@@ -30,8 +34,8 @@ theorem pair_map {G g : Matrix ι ι ℂ} (hg : (g.map (starRingEnd ℂ))ᵀ * G
   rw [star_mulVec, mulVec_mulVec, dotProduct_mulVec, vecMul_vecMul, ← Matrix.mul_assoc, hg',
     ← dotProduct_mulVec]
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem pair_swap {G : Matrix ι ι ℂ} (hG : G.IsHermitian) (a b : ι → ℂ) :
     star b ⬝ᵥ (G *ᵥ a) = star (star a ⬝ᵥ (G *ᵥ b)) := by
   rw [← star_dotProduct, star_mulVec, hG.eq, dotProduct_mulVec, dotProduct_comm]
@@ -117,7 +121,7 @@ theorem proof (h : HermitianForm F E W) (v : Basis ι E W) (h0 : RationalUnipote
   have hcre : ∀ w : InfinitePlace E, (w.embedding ((m : E) * a)).re = 0 := by
     intro w
     have e := congrArg w.embedding ha
-    rw [map_add, embedding_conj (F := F) w.embedding, map_zero, Complex.add_conj] at e
+    rw [map_add (f := _), embedding_conj (F := F) w.embedding, map_zero, Complex.add_conj] at e
     have e2 := congrArg Complex.re e
     simp only [Complex.ofReal_re, Complex.zero_re, mul_eq_zero, two_ne_zero, false_or] at e2
     exact e2
@@ -139,7 +143,7 @@ theorem proof (h : HermitianForm F E W) (v : Basis ι E W) (h0 : RationalUnipote
     have hdec : z = h.toSesq w₀ z • x₀ + (z - h.toSesq w₀ z • x₀) := by abel
     show (γ : W ≃ₗ[E] W) z = z + (0 : E) • x₀
     conv_lhs => rw [hdec]
-    rw [map_add, map_smul, hγx', e, zero_smul, add_zero]
+    rw [map_add (f := _), map_smul, hγx', e, zero_smul, add_zero]
     abel
   have hδN : archEmbed h v γ ∈ unipRadical h v x₀ := h4 x₀ γ hγx hγN
   refine ⟨⟨archEmbed h v γ, hδN⟩, ⟨⟨γ, hγLa⟩, hγx, rfl⟩, ?_⟩

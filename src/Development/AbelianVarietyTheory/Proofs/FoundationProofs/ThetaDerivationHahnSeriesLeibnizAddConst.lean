@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
+
+@[expose] public section
 
 open scoped MatrixGroups
 open GlobalTheory.KZ GlobalTheory.Glue GlobalTheory.K5 GlobalTheory.KummerEisensteinGalois
@@ -24,7 +28,7 @@ theorem theta_leibniz_add_const :
       ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun ij hij => ?_
     have := (Finset.mem_addAntidiagonal.1 hij).2.2
-    rw [← this, theta_coeff, theta_coeff, mul_add, map_add]; ring
+    rw [← this, theta_coeff, theta_coeff, mul_add, map_add (f := _)]; ring
   · ext r; simp [theta_coeff, mul_add]
   · intro c; ext r
     rw [theta_coeff]

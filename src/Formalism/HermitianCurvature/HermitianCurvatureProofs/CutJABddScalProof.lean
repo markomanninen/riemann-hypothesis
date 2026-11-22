@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddScalBound
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddGen
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SlicesFiniteRegularityBuilt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TriangleInequalityAtPlace
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddScalBound
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddGen
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SlicesFiniteRegularityBuilt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TriangleInequalityAtPlace
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 

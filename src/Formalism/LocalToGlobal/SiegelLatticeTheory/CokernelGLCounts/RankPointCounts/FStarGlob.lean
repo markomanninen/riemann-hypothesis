@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarGramPair
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarGramPair
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,7 +18,7 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 variable {D : Formalism.BasicNotions.D7} {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
   {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)}
 
-def starInU (γ : TermDef.Term D u u' F0 what₂) (F'₂ : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) : Prop :=
+def starInU (γ : TermDef.Term D u u' F0 what₂) (F'₂ : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)) : Prop :=
   ∀ b, frame F'₂ b ∈ Submodule.span D.host.E (Set.range (Sum.elim (frame (lf D F0)) (starFrame γ)))
 
 def starOmL (f f' : Fin (D.R.rS + 1) → (VS D).V) : (VS D).V :=
@@ -42,12 +46,14 @@ theorem starG_ne (γ : TermDef.Term D u u' F0 what₂) (w : Point D.host.E (D.R.
   have hrel2 := (Formalism.L2.SG.Pf.double_coset_equivalence γ.lam (lf D F0) (PD D γ.lam (lf D F0) u') (Quot.out γ.cls)
     ⟨repF γ, h2⟩).1 ((Quot.out_eq γ.cls).trans h2e.symm)
   have hGv : Gval (lf D F0) (repF γ) ≠ 0 := by
-    rw [Formalism.L2.SG.Pf.gval_rel (lf D F0) hrel2]; exact hG
+    have he := Formalism.L2.SG.Pf.gval_rel (lf D F0) hrel2
+    change Gval (lf D F0) (repF γ) = _ at he
+    rw [he]; exact hG
   rw [← FsLA.leadMinorE_full, star_frame_lead_minor, star_frame_lead_minor]
   exact hGv
 
 theorem starGlob (γ : TermDef.Term D u u' F0 what₂) (Z : PairVal.MatR D) (hC : Ctx γ Z)
-    (F'₂ : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) (hZ : ZhatL (lf D F0) F'₂ = Z)
+    (F'₂ : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)) (hZ : ZhatL (lf D F0) F'₂ = Z)
     (hU : starInU γ F'₂) :
     ∃ (g : (VS D).V ≃ₗ[D.host.E] (VS D).V) (y : Fin (D.R.rS + 1) ⊕ Fin (D.R.rS + 1) → (VS D).V),
       (∀ x x', (VS D).hT (g x) (g x') = (VS D).hT x x') ∧ (∀ b, g (starFrame γ b) = frame F'₂ b) ∧
@@ -136,7 +142,8 @@ theorem starGlob (γ : TermDef.Term D u u' F0 what₂) (Z : PairVal.MatR D) (hC 
     rw [← hZ]
     rfl
   have homh : FsLA.om (VS D) F₂.fvec h = g (starOmL f f₁) := by
-    simp only [FsLA.om, starOmL, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [FsLA.om, starOmL, map_sum, map_smul]
     have e : FsLA.gram (VS D) h F₂.fvec = Z₁ᴴ := hZ3
     rw [e]
     refine Finset.sum_congr rfl fun a _ => ?_

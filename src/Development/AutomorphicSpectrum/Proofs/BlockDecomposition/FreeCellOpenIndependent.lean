@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FreeCell
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LinearlyIndependentFramesOpenStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.UnitsOpenEmbeddingLocalTensor
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FreeCell
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LinearlyIndependentFramesOpenStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRingStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.UnitsOpenEmbeddingLocalTensor
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 open GlobalTheory.CompanionTheory.WeilSiegel.Frame GlobalTheory.CompanionTheory.WeilSiegel.Free GlobalTheory.CompanionTheory.WeilSiegel.HypStep GlobalTheory.CompanionTheory.WeilSiegel.HypStage
@@ -95,7 +100,8 @@ theorem yPart_linearIndependent (σ : E →ₐ[F] E) {M n : ℕ} (J : Matrix (Fi
   have htail : tailH w = 0 := funext hwr
   have hx0 : ∀ y, hR R σ (hypOne J) (X 0) y = hLin R σ (hypOne J) (X 0) y := fun _ => rfl
   have hzero : hR R σ (hypOne J) (X 0) w = 0 := by
-    rw [hx0, hw, map_sub, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx0, hw, map_sub, map_sum, map_smul]
     have h1 : ∀ j : Fin n, hLin R σ (hypOne J) (X 0) (g j • X j.succ) = 0 := fun j => by
       rw [map_smul, ← hx0]
       have := congrFun (congrFun hg 0) j.succ
@@ -146,7 +152,7 @@ variable {F E : Type} [Field F] [Field E] [Algebra F E] (R : Type) [CommRing R] 
 theorem measurable_vH {M : ℕ} {a s : α → R ⊗[F] E} {Y : α → Fin M → R ⊗[F] E}
     (ha : Measurable a) (hs : Measurable s) (hY : Measurable Y) :
     Measurable fun p => (vH (a p) (s p) (Y p) : Fin (M + 2) → R ⊗[F] E) := by
-  refine measurable_pi_lambda _ fun i => ?_
+  refine Measurable.of_eval fun i => ?_
   refine Fin.cases ?_ (fun i => Fin.cases ?_ (fun k => ?_) i) i
   · simpa [vH] using ha
   · simpa [vH] using hs
@@ -154,7 +160,7 @@ theorem measurable_vH {M : ℕ} {a s : α → R ⊗[F] E} {Y : α → Fin M → 
 
 theorem measurable_tailH {M : ℕ} {x : α → Fin (M + 2) → R ⊗[F] E} (hx : Measurable x) :
     Measurable fun p => tailH (x p) :=
-  measurable_pi_lambda _ fun i => (measurable_pi_apply i.succ.succ).comp hx
+  Measurable.of_eval fun i => (measurable_pi_apply i.succ.succ).comp hx
 
 theorem measurable_hR (σ : E →ₐ[F] E) (hsig : Measurable (sigR R σ)) {M : ℕ} (J : Matrix (Fin M) (Fin M) E)
     {x y : α → Fin M → R ⊗[F] E} (hx : Measurable x) (hy : Measurable y) :
@@ -177,7 +183,7 @@ theorem measurable_cvec (σ : E →ₐ[F] E) (hsig : Measurable (sigR R σ))
   refine measurable_vH R ((c 0).mul (d 0)) (((d 0).mul (c 1)).add
     ((hinv.comp (hsig.comp (c 0))).mul (((d 1).sub ((measurable_tHalf R σ hsig J hx).mul (d 0))).sub
       (measurable_hR R σ hsig J (measurable_tailH R hx) (measurable_tailH R hv))))) ?_
-  exact measurable_pi_lambda _ fun i => ((d 0).mul (c i.succ.succ)).add (d i.succ.succ)
+  exact Measurable.of_eval fun i => ((d 0).mul (c i.succ.succ)).add (d i.succ.succ)
 
 theorem measurable_chartS (σ : E →ₐ[F] E) (hsig : Measurable (sigR R σ))
     (hinv : Measurable (Ring.inverse : R ⊗[F] E → R ⊗[F] E)) {M n : ℕ} (J : Matrix (Fin M) (Fin M) E) :
@@ -187,7 +193,7 @@ theorem measurable_chartS (σ : E →ₐ[F] E) (hsig : Measurable (sigR R σ))
   have hx : Measurable fun p : (Fin 1 → Fin (M + 2) → R ⊗[F] E) × (Fin 1 → Fin n → R ⊗[F] E) ×
       (Fin 1 → Fin n → R ⊗[F] E) × (Fin n → Fin M → R ⊗[F] E) => p.1 0 :=
     (measurable_pi_apply 0).comp measurable_fst
-  refine measurable_pi_lambda _ fun i => ?_
+  refine Measurable.of_eval fun i => ?_
   refine Fin.cases ?_ (fun j => ?_) i
   · simpa [chartS] using hx
   · simp only [chartS, Fin.cons_succ]

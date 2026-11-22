@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.StatementJF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumDualVectorEqZeta
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
+module
+
+public import Formalism.HermitianCurvature.StatementJF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumDualVectorEqZeta
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LemmaDDeterminantIdentity
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ContDiff
@@ -125,7 +129,7 @@ theorem fold_trn (L : E →L[ℂ] E') {a b : Mat k r} (ha : a ∈ GV k r) (hb : 
         ((ts.map fun t => Top Eop' t.1 t.2.1 t.2.2).foldr (fun T h => T h) f)) g
     rw [top_apply, hX g hg, hC t.2.1 t.2.2 _ _ hX g hg, hI t.2.1 t.2.2 _ hY g hg]
     simp only [trn, top_apply]
-    split_ifs <;> simp [map_add, map_smul]
+    split_ifs <;> simp [map_add (f := _), map_smul]
 
 theorem qminor_trn (L : E →L[ℂ] E') {a b : Mat k r} (ha : a ∈ GV k r) (hb : b ∈ GV k r)
     (Eop : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → (Mat k r → E') → (Mat k r → E'))
@@ -140,7 +144,8 @@ theorem qminor_trn (L : E →L[ℂ] E') {a b : Mat k r} (ha : a ∈ GV k r) (hb 
     ∀ g ∈ GV k r, qminorOp Eop p q u (trn L a b f) g = trn L a b (qminorOp Eop' p q u f) g := by
   intro g hg
   unfold qminorOp
-  simp only [Finset.sum_apply, Pi.smul_apply, trn, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_apply, Pi.smul_apply, trn, map_sum, map_smul]
   refine Finset.sum_congr rfl fun σ _ => ?_
   congr 1
   have e1 : ∀ (F : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → (Mat k r → E') → (Mat k r → E')),
@@ -208,7 +213,7 @@ theorem EH_trn (L : E →L[ℂ] E') {a b : Mat k r} (ha : a ∈ GV k r) (hb : b 
   rw [EH_eq, EHc_eq]
   simp only
   rw [Dx_trn L ha hb (X := Xa k r c d) (Xa_lie c d) hf1 g hg, Dx_trn L ha hb (X := Xb k r c d) (Xb_lie c d) hf1 g hg]
-  simp only [trn, map_add, map_smul]
+  simp only [trn, map_add (f := _), map_smul]
 
 theorem EHc_one (c d : Fin (2 * r + k + 1)) (f : Mat k r → E) : EHc k r 1 c d f = Q.EH k r c d f := by
   rw [EHc_eq, EH_eq]

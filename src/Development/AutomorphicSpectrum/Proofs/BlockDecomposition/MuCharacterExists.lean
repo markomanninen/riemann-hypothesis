@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.IsPairLevel
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
-import GroundTheory.GlobalFields.TateThesis.LocalConductor
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.IsPairLevel
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+public import GroundTheory.GlobalFields.TateThesis.LocalConductor
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,8 +31,8 @@ theorem unrChar_apply_of_isUnitAt {L : Type} [Field L] [NumberField L] (w : Heig
 
 end GlobalTheory.CompanionTheory.MuOpen
 
-open GlobalTheory.CompanionTheory.MuOpen in
 
+open GlobalTheory.CompanionTheory.MuOpen in
 theorem GlobalTheory.CompanionTheory.MuOpen.muEx_of_exists :
     (∀ (E : Type) [Field E] [NumberField E] [IsCMField E], GlobalTheory.BCT.Unr E → ∃ (μ : HChar E) (e : InfinitePlace E → ℤ), IsMu μ e) → MuEx := by
   intro h E _ _ _ hU

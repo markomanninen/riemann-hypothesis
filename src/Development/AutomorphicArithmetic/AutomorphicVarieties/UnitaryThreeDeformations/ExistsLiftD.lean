@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.TorStep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CanonMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CanonGr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CanonEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.TriCanon
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.IsCharZeroPt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.TorStep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CanonMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CanonGr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.CanonEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.TriCanon
+
+@[expose] public section
 
 open Matrix IsLocalRing ReciprocityTheory.Gal UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.UnitaryThreeInertia
 
@@ -39,7 +43,7 @@ private theorem unit_of_res {y : A} {u : O} (hu : IsUnit u) (h : residue A y = r
   rw [← residue_ne_zero_iff_isUnit, h, residue_ne_zero_iff_isUnit]
   exact hu.map _
 
-private theorem res_left [IsLocalRing O] {η : D →* ℤˣ} {Ψ : D →* Oˣ} {r : D →* GG 3 A} (hr : Red η Ψ r) (g : D) :
+private theorem res_left [IsLocalRing O] {η : D →* ℤˣ} {Ψ : D →* Oˣ} {r : D →* GG (m := 3) (R := A)} (hr : Red η Ψ r) (g : D) :
     GeneralLinearGroup.map (residue A) (r g).left = GeneralLinearGroup.map (residue A) (tor A (chr Ψ A g)) := by
   apply Units.ext
   ext a b
@@ -49,7 +53,7 @@ private theorem res_left [IsLocalRing O] {η : D →* ℤˣ} {Ψ : D →* Oˣ} {
   rw [← h2]
   exact h
 
-private theorem res_conj {h : GL (Fin 3) A} (hh : InHat h) (r : D →* GG 3 A) (g : D) :
+private theorem res_conj {h : GL (Fin 3) A} (hh : InHat h) (r : D →* GG (m := 3) (R := A)) (g : D) :
     GeneralLinearGroup.map (residue A) (conjBy h⁻¹ r g).left = GeneralLinearGroup.map (residue A) (r g).left := by
   have h1 : GG.map (residue A) (GG.ofGL h) = 1 := by
     refine SemidirectProduct.ext (Units.ext ?_) rfl
@@ -65,7 +69,7 @@ private theorem res_conj {h : GL (Fin 3) A} (hh : InHat h) (r : D →* GG 3 A) (
     simp only [map_mul, map_inv, h1, inv_one, one_mul, mul_one]
   exact congrArg SemidirectProduct.left h2
 
-private theorem diag_all [Finite A] {η : D →* ℤˣ} {Ψ : D →* Oˣ} (t : D →* GG 3 A) (hm : HasMult η t)
+private theorem diag_all [Finite A] {η : D →* ℤˣ} {Ψ : D →* Oˣ} (t : D →* GG (m := 3) (R := A)) (hm : HasMult η t)
     (hres : ∀ g, GeneralLinearGroup.map (residue A) (t g).left =
       GeneralLinearGroup.map (residue A) (tor A (chr Ψ A g)))
     (hd : ∀ g, η g = 1 → (t g).mat.IsDiag) (x : D) (hηx : η x = 1) (hx : IsUnit ((Ψ x : O) ^ 2 - 1)) (g : D) :
@@ -77,7 +81,7 @@ private theorem diag_all [Finite A] {η : D →* ℤˣ} {Ψ : D →* Oˣ} (t : D
     rw [map_mul, map_mul, map_inv, mul_inv_cancel_comm]
   have e : t (g * x * g⁻¹) * t g = t g * t x := by rw [← map_mul, ← map_mul, inv_mul_cancel_right]
   have e1 : (t (g * x * g⁻¹)).mat * (t g).mat = (t g).mat * (theta (t x).left).val := by
-    have := congrArg (fun z : GG 3 A => z.left.val) e
+    have := congrArg (fun z : GG (m := 3) (R := A) => z.left.val) e
     simpa only [GG.mat, SemidirectProduct.mul_left, hm _, hη2, hg, sgnAct_one, sgnAct_neg_one, Units.val_mul] using this
   have d1 := hd _ hη2
   have d2 : (theta (t x).left).val.IsDiag := by
@@ -115,9 +119,9 @@ theorem UpperTheory.V.UnitaryThreeInertia.exists_lift_d :
       {G Γ ι : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] [T2Space G] [TotallyDisconnectedSpace G]
       [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] [CompactSpace Γ] [T2Space Γ] [TotallyDisconnectedSpace Γ] [Finite ι] (F : Frame O G Γ ι), F.Ok →
     F.LocVan → ∀ {R R' : Type} [CommRing R] [Algebra O R] [IsCO O R] [CommRing R'] [Algebra O R'] [IsCO O R'] (𝒜 : ℤ → Submodule O R) [GradedAlgebra 𝒜] (p : R →ₐ[O] R') (j : ℤ), Function.Surjective p → SmallExt O 𝒜 (RingHom.ker p) j →
-    ∀ (v : ι), v ∈ F.Sb → ∀ (r' : F.D v →* GG 3 R'), Red (F.ηv v) (F.Ψv v) r' → F.LocAt v r' → IsLocallyConstant (mats r') →
+    ∀ (v : ι), v ∈ F.Sb → ∀ (r' : F.D v →* GG (m := 3) (R := R')), Red (F.ηv v) (F.Ψv v) r' → F.LocAt v r' → IsLocallyConstant (mats r') →
       (∀ g, ∃ X, GrMat 𝒜 X ∧ X.map p = (r' g).mat) →
-      ∃ r : F.D v →* GG 3 R, push p r = r' ∧ F.LocAt v r ∧ IsLocallyConstant (mats r) ∧ ∀ g, GrMat 𝒜 (r g).mat := by
+      ∃ r : F.D v →* GG (m := 3) (R := R), push p r = r' ∧ F.LocAt v r ∧ IsLocallyConstant (mats r) ∧ ∀ g, GrMat 𝒜 (r g).mat := by
   intro O _ _ _ _ _ _ G Γ ι _ _ _ _ _ _ _ _ _ _ _ _ _ F hF _ R R' _ _ _ _ _ _ 𝒜 _ p j hp hS v hv r' hred hloc hlc hgr
   haveI : Finite R := hS.fin
   haveI : Finite R' := Finite.of_surjective p hp
@@ -147,7 +151,7 @@ theorem UpperTheory.V.UnitaryThreeInertia.exists_lift_d :
   set h' := GeneralLinearGroup.map (p : R →+* R') h with hh'def
   have hD : DiagIn (F.ηv v) (F.Ψv v) (F.Iv v) r' h' :=
     (cond_iff_canon _ _ _ r' x h' hred hηx hx hh').2.1 (hloc.2.1 hv)
-  have hconj : ∀ {A : Type} [CommRing A] (k : GL (Fin 3) A) (r : F.D v →* GG 3 A) (g : F.D v),
+  have hconj : ∀ {A : Type} [CommRing A] (k : GL (Fin 3) A) (r : F.D v →* GG (m := 3) (R := A)) (g : F.D v),
       conjBy k r g = GG.ofGL k * r g * GG.ofGL k⁻¹ := fun k r g => by rw [map_inv]; rfl
   have hmap : ∀ k : GL (Fin 3) R, GG.map (p : R →+* R') (GG.ofGL k) =
       GG.ofGL (GeneralLinearGroup.map (p : R →+* R') k) := fun k => rfl
@@ -181,7 +185,7 @@ theorem UpperTheory.V.UnitaryThreeInertia.exists_lift_d :
         rw [RingHom.map_det, RingHom.mapMatrix_apply, show W.map (p : R →+* R') = (r' φ).mat from hW2]
         exact (Matrix.isUnit_iff_isUnit_det _).1 (r' φ).left.isUnit
       obtain ⟨W, rfl⟩ := hWu
-      let w : GG 3 R := ⟨W, (r' φ).right⟩
+      let w : GG (m := 3) (R := R) := ⟨W, (r' φ).right⟩
       have hw : GG.map (p : R →+* R') w = r' φ := SemidirectProduct.ext (Units.ext hW2) rfl
       have h1 : GrMat 𝒜 (GG.ofGL h⁻¹ * w * GG.ofGL h).mat :=
         TorStep.grMat_GG_mul 𝒜 (TorStep.grMat_GG_mul 𝒜 hg2 hW1) hg1

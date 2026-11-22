@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.SecondPropositionEveryLocalisation
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.SecondPropositionEveryLocalisation
+
+@[expose] public section
 
 noncomputable section
 
@@ -319,7 +323,7 @@ theorem hOf_ord (e l : ℕ) (hl : Nat.Coprime l 2) :
     ordH (hOf e l) =
       orderOf (hcl e (ZMod.unitOfCoprime l (Nat.Coprime.pow_right (e + 2) hl))) := by
   unfold hOf
-  rw [dif_pos hl]
+  rw [dite_eq_left hl]
   unfold ordH
   rw [← orderOf_iotaH_eq_addOrderOf, iotaH_iotaHInv]
 
@@ -590,8 +594,8 @@ end PrimeReciprocalSums
 
 open PrimeReciprocalSums
 
-open Classical in
 
+open Classical in
 private theorem small_order_prime_bounds (e : ℕ) (he : 2 ≤ e) (n : ℕ) (hn : n = 2 ^ e) :
   (∀ l : ℕ, l.Prime → l ≠ 2 → ∀ j : ℕ, j ≤ e →
     ((2 ^ j : ℕ) • hOf e l = 0 ↔

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrderedCechToCatCochainsOneApplyValueAtSubset
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OrderedCechToCatCochainsOneApplyValueAtSubset
+
+@[expose] public section
+
 open Matrix Finset MeasureTheory
 open scoped ContDiff ComplexConjugate InnerProductSpace
 open PositivityTheory.RgBcC PositivityTheory.RgBcC.Real PositivityTheory.RgBcC.RealD
@@ -36,7 +41,7 @@ theorem sum_dif (v : Fin n → ℤ) (a : Fin n) : ∑ j, (if a ≤ j then dif v 
       · intro k hk
         simp [not_le.2 (mem_range.1 hk)]
     | succ m hm ih =>
-      rw [sum_range_succ, ih, if_pos hm]
+      rw [sum_range_succ, ih, ite_eq_left hm]
       ring
   rw [key n a.isLt.le]
   simp [hw]
@@ -61,7 +66,7 @@ theorem sub_out (j a b : Fin n) (z : ℂ) (h : ¬ (a ≤ j ∧ b ≤ j)) :
     (1 + single a b z : Mat n).submatrix (ini j) (ini j) = 1 := by
   ext r s
   have h0 : (single a b z : Mat n) (ini j r) (ini j s) = 0 := by
-    rw [Matrix.single_apply, if_neg]
+    rw [Matrix.single_apply, ite_eq_right]
     rintro ⟨h1, h2⟩
     exact h ⟨h1 ▸ ini_le j r, h2 ▸ ini_le j s⟩
   simp [Matrix.add_apply, h0, Matrix.one_apply, (ini_injective j).eq_iff]
@@ -101,9 +106,9 @@ theorem det_one_add_single_diag {ι : Type*} [Fintype ι] [DecidableEq ι] (a : 
       by_cases hra : r = a
       · subst hra
         simp [Matrix.add_apply]
-      · simp [Matrix.add_apply, Matrix.single_apply, hra, Ne.symm hra]
+      · simp [Matrix.add_apply, hra, Ne.symm hra]
     · have : ¬ (a = r ∧ a = s) := fun e => hrs (e.1.symm.trans e.2)
-      simp [Matrix.add_apply, Matrix.single_apply, Matrix.one_apply, hrs, this, diagonal_apply]
+      simp [Matrix.add_apply, hrs, this]
   rw [this, det_diagonal, Finset.prod_ite_eq' univ a]
   simp
 
@@ -154,7 +159,7 @@ theorem fRaw_off {lam : Fin n → ℤ} {lev : Fin n → ℕ} (hl : IsLev lam lev
         have : ¬ (a = r ∧ b = s) := by
           rintro ⟨rfl, rfl⟩
           exact hc ⟨hr, hs⟩
-        simp [Matrix.add_apply, Matrix.single_apply, Matrix.one_apply, hrs, this]
+        simp [Matrix.add_apply, hrs, this]
     simp [hlm, hgm]
 
 theorem prod_zpow_eq {ι : Type*} (s : Finset ι) {u : ℂ} (hu : u ≠ 0) (e : ι → ℤ) :
@@ -179,8 +184,8 @@ theorem fRaw_diag (lam : Fin n → ℤ) (lev : Fin n → ℕ) (a : Fin n) {z : �
     intro j
     by_cases h : a ≤ j
     · obtain ⟨a', ha⟩ := exists_ini h
-      rw [lm, sub_in j a a z a' a' ha ha, det_one_add_single_diag, if_pos h]
-    · rw [lm, sub_out j a a z (fun e => h e.1), det_one, if_neg h]
+      rw [lm, sub_in j a a z a' a' ha ha, det_one_add_single_diag, ite_eq_left h]
+    · rw [lm, sub_out j a a z (fun e => h e.1), det_one, ite_eq_right h]
   have hgm : ∀ j : Fin n, gm j (1 + single a a z) = if a ≤ j then (1 + z) * (1 + conj z) else 1 := by
     intro j
     rw [gm_eq, hlm]
@@ -188,7 +193,7 @@ theorem fRaw_diag (lam : Fin n → ℤ) (lev : Fin n → ℕ) (a : Fin n) {z : �
     · intro r s hr hs
       have hrs : r ≠ s := fun e => absurd hr (not_le.2 (e ▸ hs))
       have : ¬ (a = r ∧ a = s) := fun e => hrs (e.1.symm.trans e.2)
-      simp [Matrix.add_apply, Matrix.single_apply, Matrix.one_apply, hrs, this]
+      simp [Matrix.add_apply, hrs, this]
   rw [fRaw, Set.indicator_of_mem hdet]
   have hfac : ∀ j : Fin n, lm j (1 + single a a z) ^ dif (muZ lam lev) j *
       gm j (1 + single a a z) ^ dif (yZ lam lev) j =
@@ -197,9 +202,9 @@ theorem fRaw_diag (lam : Fin n → ℤ) (lev : Fin n → ℕ) (a : Fin n) {z : �
     intro j
     rw [hlm, hgm]
     by_cases h : a ≤ j
-    · simp only [if_pos h, mul_zpow, zpow_add₀ hz]
+    · simp only [ite_eq_left h, mul_zpow, zpow_add₀ hz]
       ring
-    · simp [if_neg h]
+    · simp [ite_eq_right h]
   rw [Finset.prod_congr rfl (fun j _ => hfac j), Finset.prod_mul_distrib, prod_zpow_eq _ hz, prod_zpow_eq _ hw,
     Finset.sum_add_distrib, sum_dif, sum_dif]
   simp [yZ]
@@ -214,13 +219,10 @@ theorem Rd_one (F : SmF n) (X : Mat n) {D : ℂ} (h : HasDerivAt (fun t : ℝ =>
     have := ((hasDerivAt_id (0 : ℝ)).smul_const X).const_add (1 : Mat n)
     simp only [id, one_smul] at this
     exact this
-  have hf' : HasFDerivAt F.1 (fderiv ℝ F.1 1) ((fun t : ℝ => (1 : Mat n) + t • X) 0) := by
-    simpa using hf
-  have hc := hf'.comp_hasDerivAt (0 : ℝ) hline
-  have := hc.unique h
+  have hc := hf.comp_hasDerivAt_of_eq (0 : ℝ) hline (by simp)
   show fderiv ℝ F.1 1 (1 * X) = D
   rw [one_mul]
-  exact this
+  exact hc.unique h
 
 theorem hasDerivAt_line (L Y : ℤ) (c : ℂ) :
     HasDerivAt (fun t : ℝ => (1 + (t : ℂ) * c) ^ L * (1 + (t : ℂ) * conj c) ^ Y) (L * c + Y * conj c) 0 := by
@@ -267,9 +269,9 @@ theorem fder (n : ℕ) (lam : Fin n → ℤ) (_ : Antitone lam) (lev : Fin n →
   rw [orderedCechToCatCochainsOne_apply_valueAtSubset a b F h1, liftOneFormsToCompatible_apply a b F h1]
   by_cases hab : a = b
   · subst hab
-    simp only [Eu, Pi.smul_apply, Pi.add_apply, if_true, Bool.false_eq_true, if_false, Rd_diag F hF a]
+    simp only [Eu, Pi.smul_apply, Pi.add_apply, ite_true, Bool.false_eq_true, ite_false, Rd_diag F hF a]
     simp
-    constructor <;> (ring_nf; simp; try ring)
+    constructor <;> (ring_nf; simp; ring)
   · simp [Eu, hab, Rd_off hl F hF hab hle]
 
 end FDer

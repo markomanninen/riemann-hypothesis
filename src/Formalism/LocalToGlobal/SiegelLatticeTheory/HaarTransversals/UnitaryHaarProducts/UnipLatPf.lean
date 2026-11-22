@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.UnipLat
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.UnipLat
+
+@[expose] public section
 
 open NumberField NumberField.InfinitePlace
 
@@ -37,7 +41,7 @@ theorem oeApprox_holds : Formalism.L2.SG.Pf.UnipLat.OEApprox := by
   have hxu : x.2 u = c v := by
     have hex : ∃ v', u.1 = w v' := ⟨v, rfl⟩
     show (if h : ∃ v', u.1 = w v' then c h.choose else 0) = c v
-    rw [dif_pos hex, hinj _ _ hex.choose_spec.symm]
+    rw [dite_eq_left hex, hinj _ _ hex.choose_spec.symm]
   have hfr : x - mixedEmbedding E (m : E) = ZSpan.fract (mixedEmbedding.latticeBasis E) x := by
     rw [hm', sub_sub_cancel]
   have hval : (ZSpan.fract (mixedEmbedding.latticeBasis E) x).2 u

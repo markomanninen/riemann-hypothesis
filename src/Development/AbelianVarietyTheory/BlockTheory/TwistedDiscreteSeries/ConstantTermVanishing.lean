@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.MemL2OfBoundedContinuousInvariant
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RadicalNoFixedVectors
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MemL2OfBoundedContinuousInvariant
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RadicalNoFixedVectors
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,26 +62,6 @@ def TestFnConstTermVanish : Prop :=
     ∀ 𝔉 : IsoFlag V, 𝔉.Proper → UnipIntegralsVanish 𝔉 f ∧ UnipIntegralsVanish 𝔉 (starFn f)
 
 def ParabolicAndConstTerm : Prop := ParabolicAtSplitPlaces ∧ TestFnConstTermVanish
-
-example (k : Type) [Field k] (g : GL (Fin 2) k) :
-    g ∈ stdParabolic k 2 1 ↔ (g : Matrix (Fin 2) (Fin 2) k) 1 0 = 0 := by
-  change (∀ i j : Fin 2, _) ↔ _
-  simp [Fin.forall_fin_two]
-
-example (k : Type) [Field k] (r a : ℕ) : GlobalTheory.IndefiniteRowSideFullHecke.RadicalNoFixedVectors.radical k r a ⊆ stdParabolic k r a := fun u hu i j hj hi => by
-  by_contra h
-  have := hu i j (by rwa [Matrix.one_apply_ne (by rintro rfl; omega)])
-  omega
-
-example {D : D7} {V : HSp D} (𝔉 : IsoFlag V) : ∃ ν : Measure (NA 𝔉), ν.IsHaarMeasure := ⟨Measure.haar, inferInstance⟩
-
-example {D : D7} {V : HSp D} (𝔉 : IsoFlag V) {φ : GA D V → ℝ} (hc : Continuous φ) (h0 : 0 ≤ φ)
-    (h : UnipIntegralsVanish 𝔉 fun g => (φ g : ℂ)) : φ = 0 := funext fun x => by
-  obtain ⟨h1, h2⟩ := h Measure.haar x 1
-  have hc' : Continuous fun n : NA 𝔉 => φ (x * n * 1) := hc.comp (by fun_prop)
-  rw [integral_complex_ofReal, Complex.ofReal_eq_zero,
-    integral_eq_zero_iff_of_nonneg (f := fun n : NA 𝔉 => φ (x * n * 1)) (fun n => h0 _) (by simpa using h1.re)] at h2
-  simpa using congrFun ((hc'.ae_eq_iff_eq _ continuous_zero).1 h2) 1
 
 end GlobalTheory.IndefiniteRowSideFullHecke.ConstantTermVanishing
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AevalEqZeroOfMemConeIdeal
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -9,7 +13,8 @@ private theorem totalDegree_aeval_le_of_totalDegree_le_one {K : Type} [Field K] 
     (hL : ∀ i, (L i).totalDegree ≤ 1) (f : MvPolynomial σ K) :
     (aeval L f).totalDegree ≤ f.totalDegree := by
   conv_lhs => rw [f.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine (totalDegree_finsetSum _ _).trans (Finset.sup_le fun s hs => ?_)
   rw [aeval_monomial, algebraMap_eq]
   refine (totalDegree_mul _ _).trans ?_
@@ -34,11 +39,10 @@ private theorem linSubst_linSubst' {K : Type} [Field K] {B N n m : ℕ} (M : Mat
     linSubst P (linSubst M f) = linSubst (M * P) f := by
   unfold linSubst
   rw [← AlgHom.comp_apply, comp_aeval]
-  congr 1
-  congr 1
+  apply congrArg (fun g : Fin B × Fin N → MvPolynomial (Fin B × Fin m) K => aeval g f)
   funext p
-  simp only [map_sum, map_mul, aeval_C, aeval_X, algebraMap_eq, Matrix.mul_apply, Finset.mul_sum,
-    Finset.sum_mul]
+  simp only [map_sum, map_mul, aeval_C, aeval_X, algebraMap_eq, Matrix.mul_apply, map_sum,
+    Finset.sum_mul, Finset.mul_sum]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun l _ => Finset.sum_congr rfl fun k _ => ?_
   ring
@@ -81,7 +85,7 @@ theorem PositivityTheory.UnitarySelfGeneration.UnitProductCombination.irreducibl
   have hunit : ∀ {σ : Type} (q : MvPolynomial σ K), q ≠ 0 → q.totalDegree = 0 → IsUnit q := by
     intro σ q hq hd
     rw [totalDegree_eq_zero_iff_eq_C] at hd
-    refine isUnit_iff_eq_C_of_isReduced.mpr ⟨coeff 0 q, isUnit_iff_ne_zero.mpr ?_, hd⟩
+    refine isUnit_iff_eq_C_of_isReduced.mpr ⟨AddMonoidAlgebra.coeff q 0, isUnit_iff_ne_zero.mpr ?_, hd⟩
     intro h0
     apply hq
     rw [hd, h0, C_0]

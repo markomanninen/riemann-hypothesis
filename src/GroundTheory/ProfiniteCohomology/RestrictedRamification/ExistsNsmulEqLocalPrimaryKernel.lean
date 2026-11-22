@@ -1,14 +1,17 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.Brauer
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.FiniteSetOfNsmulEqZeroQZ
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.RealPlaces
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.Brauer
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.FiniteSetOfNsmulEqZeroQZ
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.RealPlaces
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open NumberField IsDedekindDomain GroundTheory.Global DirectSum
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 noncomputable section
 
@@ -17,8 +20,8 @@ theorem QZ.nsmul_mk (j : ℕ) (r : ℚ) : j • QZ.mk r = QZ.mk (j * r) := by
   rw [nsmul_eq_mul] at h
   exact h.symm
 
-open Classical in
 
+open Classical in
 def qzDiv (ℓ : ℕ) (q : QZ) : QZ :=
   if q = 0 then 0 else QZ.mk ((QZ.mk_surjective q).choose / ℓ)
 
@@ -52,8 +55,8 @@ theorem eq_zero_inl_of_pow_nsmul_eq_zero {ℓ : ℕ} (hℓ : ℓ.Prime) (v : Inf
 variable (K) (S : Set (HeightOneSpectrum (𝓞 K.1))) (ℓ : ℕ) (hℓ : ℓ.Prime)
   (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
 
-include hℓ hS in
 
+include hℓ hS in
 theorem exists_nsmul_eq_localPrimaryKernel (hK : ℓ ≠ 2 ∨ IsTotallyComplex K.1)
     (t : localPrimaryKernel K S ℓ) : ∃ s : localPrimaryKernel K S ℓ, ℓ • s = t := by
   classical
@@ -104,12 +107,13 @@ theorem exists_nsmul_eq_localPrimaryKernel (hK : ℓ ≠ 2 ∨ IsTotallyComplex 
     change c - e v₀ ((e v₀).symm c) = 0
     rw [AddEquiv.apply_symm_apply, sub_self]
 
+
 set_option maxHeartbeats 1000000 in
 include hℓ hS in
-
 theorem exists_nsmul_eq_h2SUnits (hK : ℓ ≠ 2 ∨ IsTotallyComplex K.1)
-    (y : AddCommGroup.primaryComponent (cohomology (galSUnitsMax K.1 ℚ̄ S) 2) ℓ) :
-    ∃ z : AddCommGroup.primaryComponent (cohomology (galSUnitsMax K.1 ℚ̄ S) 2) ℓ, ℓ • z = y := by
+    (y : AddCommGroup.primaryComponent (cohomology (galSUnitsMax K.1 (AlgebraicClosure ℚ) S) 2) ℓ) :
+    ∃ z : AddCommGroup.primaryComponent (cohomology (galSUnitsMax K.1 (AlgebraicClosure ℚ) S) 2) ℓ,
+      ℓ • z = y := by
   obtain ⟨ιs⟩ := nonempty_localEmbeddings K
   let E := sUnitsH2PrimaryEquiv K S ℓ hℓ hS ιs
   obtain ⟨s, hs⟩ := exists_nsmul_eq_localPrimaryKernel K S ℓ hℓ hS hK (E y)

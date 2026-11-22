@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.StrictLocalStalks
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.StrictLocalStalks
+
+@[expose] public section
 
 namespace LateralTheory.E.ULAStalkPf
 

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ConnectionKillsSeries
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField IsDedekindDomain IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ Formalism.L2.Pj
 open ReciprocityTheory.ChartRestriction.G.Pdiv.ChartF ReciprocityTheory.ChartRestriction.G.Pdiv.AvDefs
@@ -58,7 +63,7 @@ theorem trace_eq_sum (E : Type) [Field E] [NumberField E] (p : ℕ) [Fact p.Prim
     have : LinearMap.mulLeft ℤ_[p] (x + y) =
         LinearMap.mulLeft ℤ_[p] x + LinearMap.mulLeft ℤ_[p] y := by
       apply LinearMap.ext; intro z; simp [add_mul]
-    simp only [this, map_add, hx, hy, Finset.sum_add_distrib]
+    simp only [this, map_add (f := _), hx, hy, Finset.sum_add_distrib]
   | tmul a y =>
     have h1 : LinearMap.mulLeft ℤ_[p] (a ⊗ₜ[ℤ] y) =
         a • (LinearMap.mulLeft ℤ y).baseChange ℤ_[p] := by

@@ -1,6 +1,10 @@
-import Formalism.HarderNarasimhan.DegSupermodZ
-import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
-import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
+module
+
+public import Formalism.HarderNarasimhan.DegSupermodZ
+public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
+
+@[expose] public section
 
 open Module Submodule
 
@@ -47,7 +51,7 @@ theorem real_saturation_property : SatR := by
             smul_mem' := ?_ }, ?_, ?_, ?_⟩
   · rintro x y ⟨hxL, hxS⟩ ⟨hyL, hyS⟩
     refine ⟨L.add_mem hxL hyL, ?_⟩
-    rw [map_add]
+    rw [map_add (f := _)]
     exact S.add_mem hxS hyS
   · refine ⟨L.zero_mem, ?_⟩
     rw [map_zero]

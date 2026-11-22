@@ -1,4 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+
+@[expose] public section
+
 open PositivityTheory.Rg.Tf.Geo
 open NumberField IsDedekindDomain Matrix Polynomial
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Global GroundTheory.Global.IdeleGroup
@@ -38,7 +43,8 @@ private theorem krylov_det_ne_zero {F : Type*} [Field F] {n : ℕ} {M : Matrix (
   rw [vecMul_krylov] at hc0
   set p : F[X] := ∑ k : Fin n, C (c k) * X ^ (k : ℕ) with hp
   have hpa : aeval M p = ∑ k : Fin n, c k • M ^ (k : ℕ) := by
-    simp [hp, map_sum, Algebra.smul_def]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hp, map_sum, Algebra.smul_def]
   have hdeg : p.degree < n := degree_sum_fin_lt c
   have hp0 : p ≠ 0 := by
     intro h
@@ -53,7 +59,7 @@ private theorem krylov_det_ne_zero {F : Type*} [Field F] {n : ℕ} {M : Matrix (
     exact absurd hdeg (not_lt.2 this)
   obtain ⟨a, b, hab⟩ := (hM.coprime_iff_not_dvd).2 hnd
   have h1 := congrArg (aeval M) hab
-  rw [map_add, map_mul, Matrix.aeval_self_charpoly, mul_zero, zero_add, mul_comm b p, map_mul, map_one, hpa] at h1
+  rw [map_add (f := _), map_mul, Matrix.aeval_self_charpoly, mul_zero, zero_add, mul_comm b p, map_mul, map_one, hpa] at h1
   apply hx
   rw [← vecMul_one x, ← h1, ← vecMul_vecMul, hc0, zero_vecMul]
 
@@ -85,7 +91,7 @@ private theorem adelic_hadamard_inequality {K : Type*} [Field K] [NumberField K]
     rw [AdelicGLn.coe_det, Matrix.det_of_isUpperTriangular hb, Units.coe_prod]
     rfl
   rw [map_mul, map_mul, Positive.val_mul, hk1, mul_one, hdet, map_prod, coe_finset_prod_pos]
-  refine Finset.prod_le_prod (fun i _ => (ideleModule K (hu i).unit).2.le) fun i _ => ?_
+  refine Finset.prod_le_prod₀ (fun i _ => (ideleModule K (hu i).unit).2.le) fun i _ => ?_
   rw [Units.val_mul, ← vecMul_vecMul, adelicNorm_vecMul_maxCompact _ hk, ← adelicNorm_single_units i]
   have he : (Pi.single i (((hu i).unit : IdeleGroup K) : 𝔸[K]) : Fin n → 𝔸[K]) =
       (((hu i).unit : IdeleGroup K) : 𝔸[K]) • (Pi.single i (1 : 𝔸[K]) : Fin n → 𝔸[K]) := by
@@ -111,7 +117,7 @@ private theorem adelic_hadamard_inequality {K : Type*} [Field K] [NumberField K]
       congr 1
       funext j
       by_cases hj : j = i
-      · subst hj; simp [finComp]
+      · subst hj; simp [finComp]; rfl
       · simp [finComp, Pi.single_eq_of_ne hj]; rfl
     rw [h1, mul_one, single_one_vecMul]
     exact norm_le_pi_norm (finComp v ((b : Matrix (Fin n) (Fin n) 𝔸[K]).row i)) i
@@ -193,7 +199,7 @@ theorem UpperTheory.ConvolutionTheory.G.elliptic_centralizer_quotient_compact :
   refine centralizer_compact_fundamental (Gam F n) (show (γ₁ : AdelicGLn.AdelicGL F n) ∈ AdelicGLn.rationalGL F n from ⟨γ, hγ.symm⟩)
     (isClosed_normOneGL.isClosedEmbedding_subtypeVal.isCompact_preimage hD) fun t => ?_
   set τ : AdelicGLn.AdelicGL F n := ((t : G1 F n) : AdelicGLn.AdelicGL F n) with hτ
-  have hτ1 : τ ∈ normOneGL F n := (t : G1 F n).2
+  have hτ1 : τ ∈ normOneGL (K := F) (n := n) := (t : G1 F n).2
   have hht : ∀ x : Fin n → F, x ≠ 0 → P⁻¹ ≤ height τ x := fun x hx => by
     obtain ⟨κ, hκ⟩ := hK x hx
     have h1 := adelic_hadamard_inequality (AdelicGLn.diagonal F n κ * τ)
@@ -201,7 +207,7 @@ theorem UpperTheory.ConvolutionTheory.G.elliptic_centralizer_quotient_compact :
       krylov_mul_commute (hcom t)] at h1
     have h2 : ∏ i : Fin n, adelicNorm ((Pi.single i (1 : 𝔸[F]) : Fin n → 𝔸[F]) ᵥ*
         krylovMatrixOfRowVector M (ratVec x ᵥ* (τ : Matrix (Fin n) (Fin n) 𝔸[F]))) ≤ ∏ _i : Fin n, P * height τ x := by
-      refine Finset.prod_le_prod (fun _ _ => adelicNorm_nonneg _) fun i _ => ?_
+      refine Finset.prod_le_prod₀ (fun _ _ => adelicNorm_nonneg _) fun i _ => ?_
       have := hPle _ ⟨i, rfl⟩ _ (hasFiniteContent_height τ hx)
       rw [single_one_vecMul]
       rw [Units.val_pow_eq_pow_val] at this
@@ -212,8 +218,8 @@ theorem UpperTheory.ConvolutionTheory.G.elliptic_centralizer_quotient_compact :
     rw [inv_le_iff_one_le_mul₀' hP]
     exact h3
   obtain ⟨g, hg, y, hy, hgy⟩ := hD' τ hτ1 hht
-  have hg1 : g ∈ normOneGL F n := rationalGL_le_normOneGL hg
-  have hy1 : y ∈ normOneGL F n := by
+  have hg1 : g ∈ normOneGL (K := F) (n := n) := rationalGL_le_normOneGL hg
+  have hy1 : y ∈ normOneGL (K := F) (n := n) := by
     have : y = g⁻¹ * τ := by rw [← hgy, inv_mul_cancel_left]
     rw [this]
     exact mul_mem (inv_mem hg1) hτ1

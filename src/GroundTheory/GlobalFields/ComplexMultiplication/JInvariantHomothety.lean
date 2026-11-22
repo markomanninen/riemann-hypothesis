@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.JInvariant
-import GroundTheory.GlobalFields.ComplexMultiplication.UniformizationEisenstein
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.JInvariant
+public import GroundTheory.GlobalFields.ComplexMultiplication.UniformizationEisenstein
+
+@[expose] public section
 
 open Complex Filter Topology Set
 open scoped PeriodPair
@@ -51,26 +55,38 @@ lemma exists_pos_le_norm (L : PeriodPair) : ∃ ε > 0, ∀ l ∈ L.lattice, l �
 
 lemma weierstrassLaurentCoeff_eq_of_G_eq {L L' : PeriodPair} {t : ℂ}
     (hG : ∀ k, 2 ≤ k → L'.G (2 * k) = t ^ (2 * k) * L.G (2 * k)) (j : ℕ) :
-    weierstrassLaurentCoeff L' j = t ^ (j + 2) * weierstrassLaurentCoeff L j := by
+    weierstrassLaurentCoeff (L := L') j = t ^ (j + 2) * weierstrassLaurentCoeff (L := L) j := by
   rcases Nat.even_or_odd' j with ⟨n, rfl | rfl⟩
   · rcases eq_or_ne n 0 with rfl | hn
     · simp [weierstrassLaurentCoeff]
-    rw [weierstrassLaurentCoeff_two_mul (L := L') hn, weierstrassLaurentCoeff_two_mul (L := L) hn,
-      show 2 * n + 2 = 2 * (n + 1) by ring, hG (n + 1) (by omega)]
+    simp only [weierstrassLaurentCoeff, ite_eq_right (show 2 * n ≠ 0 by omega)]
+    rw [show 2 * n + 2 = 2 * (n + 1) by ring, hG (n + 1) (by omega)]
     ring
-  · rw [weierstrassLaurentCoeff_odd, weierstrassLaurentCoeff_odd, mul_zero]
+  · have hodd : Odd (2 * n + 1 + 2) := ⟨n + 1, by ring⟩
+    simp [weierstrassLaurentCoeff, L'.G_eq_zero_of_odd _ hodd, L.G_eq_zero_of_odd _ hodd]
 
 theorem weierstrassP_eq_of_G_eq {L L' : PeriodPair} {t : ℂ} (ht : t ≠ 0)
     (hG : ∀ k, 2 ≤ k → L'.G (2 * k) = t ^ (2 * k) * L.G (2 * k)) {z : ℂ} (hz0 : z ≠ 0)
     (hz' : ∀ l : L'.lattice, (l : ℂ) ≠ 0 → ‖z‖ < ‖(l : ℂ)‖)
     (hz : ∀ l : L.lattice, (l : ℂ) ≠ 0 → ‖t * z‖ < ‖(l : ℂ)‖) :
     ℘[L'] z = t ^ 2 * ℘[L] (t * z) := by
-  have h1 := hasSum_weierstrassP_laurent (L := L') hz'
-  have h2 := (hasSum_weierstrassP_laurent (L := L) hz).mul_left (t ^ 2)
-  have h3 : HasSum (fun j ↦ weierstrassLaurentCoeff L' j * z ^ j)
+  have hasSum_laurent (P : PeriodPair) (w : ℂ)
+      (hw : ∀ l : P.lattice, (l : ℂ) ≠ 0 → ‖w‖ < ‖(l : ℂ)‖) :
+      HasSum (fun j ↦ weierstrassLaurentCoeff (L := P) j * w ^ j) (℘[P] w - 1 / w ^ 2) := by
+    have h := P.weierstrassPExceptSeries_hasSum 0 w 0 (fun l hl ↦ by simpa using hw l hl)
+    rw [weierstrassP_eq_except_zero w, add_sub_cancel_right]
+    convert h using 2 with j
+    rw [sub_zero, PeriodPair.weierstrassPExceptSeries, FormalMultilinearSeries.coeff_ofScalars,
+      weierstrassLaurentCoeff]
+    rcases eq_or_ne j 0 with rfl | hj
+    · simp
+    · simp [hj, P.lattice.zero_mem, P.sumInvPow_zero]
+  have h1 := hasSum_laurent L' z hz'
+  have h2 := (hasSum_laurent L (t * z) hz).mul_left (t ^ 2)
+  have h3 : HasSum (fun j ↦ weierstrassLaurentCoeff (L := L') j * z ^ j)
       (t ^ 2 * (℘[L] (t * z) - 1 / (t * z) ^ 2)) := by
-    have hfun : (fun j ↦ weierstrassLaurentCoeff L' j * z ^ j) =
-        fun j ↦ t ^ 2 * (weierstrassLaurentCoeff L j * (t * z) ^ j) := by
+    have hfun : (fun j ↦ weierstrassLaurentCoeff (L := L') j * z ^ j) =
+        fun j ↦ t ^ 2 * (weierstrassLaurentCoeff (L := L) j * (t * z) ^ j) := by
       funext j
       rw [weierstrassLaurentCoeff_eq_of_G_eq hG, mul_pow]
       ring

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -67,7 +71,7 @@ theorem exists_limit_adele (c : ℕ → ℤ)
   refine ⟨ofInt a, fun n hn hp => ?_⟩
   choose b hb using fun v => ha v n hn hp
   refine ⟨ofInt b, isInt_ofInt b, afp_ext fun v => ?_⟩
-  rw [map_add, map_mul, map_intCast, map_natCast, eval_ofInt, eval_ofInt, hb v]
+  rw [map_add (f := _), map_mul, map_intCast, map_natCast, eval_ofInt, eval_ofInt, hb v]
   push_cast
   rfl
 
@@ -122,7 +126,8 @@ theorem exists_adelic_limit (g : ℕ → D.La →+ D.La)
       obtain ⟨i, rfl⟩ := hy
       choose e he he' using fun j => ha i j n hn hp
       refine ⟨∑ j, e j • inAf D (b j), sum_mem fun j _ => smul_inAf_mem D (he j) _, ?_⟩
-      conv_rhs => rw [← b.sum_repr (g n (b i)), map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        conv_rhs => rw [← b.sum_repr (g n (b i)), map_sum]
       rw [Finset.smul_sum, ← Finset.sum_add_distrib]
       refine (h₀b i).trans (Finset.sum_congr rfl fun j _ => ?_)
       rw [he' j, map_zsmul, add_smul, mul_smul, Int.cast_smul_eq_zsmul, Nat.cast_smul_eq_nsmul]
@@ -132,7 +137,7 @@ theorem exists_adelic_limit (g : ℕ → D.La →+ D.La)
       obtain ⟨w, hw, e⟩ := hx
       obtain ⟨w', hw', e'⟩ := hy
       refine ⟨w + w', add_mem hw hw', ?_⟩
-      rw [map_add, map_add, e, e', map_add, map_add, nsmul_add]
+      rw [map_add (f := _), map_add (f := _), e, e', map_add (f := _), map_add (f := _), nsmul_add]
       abel
     | smul k x _ hx =>
       obtain ⟨w, hw, e⟩ := hx

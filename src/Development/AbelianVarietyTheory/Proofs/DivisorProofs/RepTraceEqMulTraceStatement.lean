@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RepTraceEqMulTrace
-import Mathlib
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RepTraceEqMulTrace
+
+@[expose] public section
+
 open NumberField
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.trace_ringHom_eq_mul_algebraTrace : ∀ {E : Type} [Field E] [NumberField E] {r : ℕ} (ρ : 𝓞 E →+* Matrix (Fin r) (Fin r) ℤ) (s : ℕ), r = s * Module.finrank ℚ E → ∀ a : 𝓞 E, (ρ a).trace = s * Algebra.trace ℤ (𝓞 E) a := by

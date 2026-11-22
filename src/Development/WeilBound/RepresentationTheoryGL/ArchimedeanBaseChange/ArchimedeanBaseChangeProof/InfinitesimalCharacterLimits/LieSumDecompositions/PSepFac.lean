@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,13 +24,13 @@ theorem aeval_mul_of_mul_eq {z m : A} {c : ℂ} (h : z * m = c • m) (R : ℂ[X
     | zero => simp
     | succ n ih => rw [pow_succ, mul_assoc, h, mul_smul_comm, ih, smul_smul, ← pow_succ']
   induction R using Polynomial.induction_on' with
-  | add p q hp' hq' => simp only [map_add, add_mul, hp', hq', eval_add, add_smul]
+  | add p q hp' hq' => simp only [map_add (f := _), add_mul, hp', hq', eval_add, add_smul]
   | monomial n a =>
     rw [aeval_monomial, eval_monomial, mul_assoc, hp n, ← Algebra.smul_def, smul_smul]
 
 theorem commute_aeval {x y : A} (h : Commute x y) (R : ℂ[X]) : Commute (aeval x R) y := by
   induction R using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add]; exact hp.add_left hq
+  | add p q hp hq => rw [map_add (f := _)]; exact hp.add_left hq
   | monomial n a =>
     rw [aeval_monomial]
     exact (Algebra.commute_algebraMap_left a y).mul_left (h.pow_left n)
@@ -53,7 +57,8 @@ theorem IsSS.exists_decomp {x : A} (hx : IsSS x) : ∃ (s : Finset ℂ) (e : ℂ
     have : Subsingleton A := subsingleton_of_zero_eq_one h10.symm
     exact ⟨{0}, fun _ => 1, by simp, fun _ _ => Subsingleton.elim _ _, fun _ _ _ => Commute.one_left _⟩
   refine ⟨s, fun v => aeval x (Lagrange.basis s id v), ?_, fun v hv => ?_, fun v y h => commute_aeval h _⟩
-  · rw [← map_sum, Lagrange.sum_basis (Set.injOn_id _) hne, map_one]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [← map_sum, Lagrange.sum_basis (Set.injOn_id _) hne, map_one]
   · have key : (X - C v) * Lagrange.basis s id v = (∏ j ∈ s.erase v, C (v - j)⁻¹) * ∏ j ∈ s, (X - C j) := by
       rw [← Finset.mul_prod_erase s (fun j => X - C j) hv, Lagrange.basis]
       simp only [Lagrange.basisDivisor, id, Finset.prod_mul_distrib]

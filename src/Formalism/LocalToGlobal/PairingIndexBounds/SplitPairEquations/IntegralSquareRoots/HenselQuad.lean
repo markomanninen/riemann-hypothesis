@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial
 
@@ -119,7 +123,7 @@ private theorem rep_mul_of_coprime {q d a b : ℕ} (hab : Nat.Coprime a b)
   obtain ⟨α₂, β₂, γ₂, δ₂, h₂⟩ := hb
   let e := ZMod.chineseRemainder hab
   refine ⟨e.symm (α₁, α₂), e.symm (β₁, β₂), e.symm (γ₁, γ₂), e.symm (δ₁, δ₂), e.injective ?_⟩
-  simp only [map_mul, map_add, map_pow, map_natCast, map_neg, map_one,
+  simp only [map_mul, map_add (f := _), map_pow, map_natCast, map_neg, map_one,
     RingEquiv.apply_symm_apply]
   ext <;> simp [h₁, h₂]
 

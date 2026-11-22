@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveCrystalHodgeLiftClasses
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsAffineOfIsAffinePullbackQuotientOfIsNilpotent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PrimitiveCrystalHodgeLiftClasses
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsAffineOfIsAffinePullbackQuotientOfIsNilpotent
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj DividedPowers
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.SqLift GlobalTheory.Published GlobalTheory.Published.GrothendieckMessing
@@ -93,7 +97,7 @@ theorem injective_of_flat_of_ker_le_map {A B C : Type} [CommRing A] [CommRing B]
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [mB, mC]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have hex := lTensor_exact I (LinearMap.exact_subtype_ker_map φ.toLinearMap) hs
   have hrange : ∀ b ∈ I • (⊤ : Submodule A B), ∃ t, mB t = b := by
     intro b hb
@@ -110,7 +114,9 @@ theorem injective_of_flat_of_ker_le_map {A B C : Type} [CommRing A] [CommRing B]
       simp only [mB, LinearMap.comp_apply, LinearMap.lTensor_tmul, LinearMap.rTensor_tmul,
         LinearEquiv.coe_coe, TensorProduct.lid_tmul, Submodule.subtype_apply]
       exact Submodule.smul_mem_smul a.2 x.2
-    | add x y hx hy => rw [map_add, map_add]; exact add_mem hx hy
+    | add x y hx hy =>
+      simp only [map_add]
+      exact add_mem hx hy
   have hle : K ≤ I • K := by
     intro k hk
     have hk' : k ∈ I • (⊤ : Submodule A B) := by rw [Ideal.smul_top_eq_map]; exact h k hk
@@ -128,7 +134,7 @@ theorem injective_of_flat_of_ker_le_map {A B C : Type} [CommRing A] [CommRing B]
         _ = I ^ (k + 1) • K := by rw [pow_succ, Submodule.mul_smul]
   have h3 := hle' n
   rw [hn, Ideal.zero_eq_bot, Submodule.bot_smul] at h3
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro b hb
   exact (Submodule.mem_bot A).mp (h3 hb)
 

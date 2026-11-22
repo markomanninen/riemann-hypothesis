@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigExtMapRelFrobCompRigOfOmega
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowFinrankCotangentLeFinrankFrobeniusKernelQuoti
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CartierDualHeightOneAdjoinPrimitiveEqTopStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigExtMapRelFrobCompRigOfOmega
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowFinrankCotangentLeFinrankFrobeniusKernelQuoti
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CartierDualHeightOneAdjoinPrimitiveEqTopStatement
+
+@[expose] public section
+
 open CategoryTheory TensorProduct Coalgebra Bialgebra GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup
 
 set_option autoImplicit false
@@ -17,7 +22,7 @@ theorem apply_eq_zero_of_mem_sq {K H : Type} [Field K] [CommRing H] [HopfAlgebra
   have hp := isPrimitiveElem_of_mem_ker (R := K) (A := CartierDual K H) (b := φ) hφ
   have hmul : ∀ x y : H, φ (x * y) = φ x * counit (R := K) y + counit (R := K) x * φ y := by
     intro x y
-    rw [← CartierDual.pair_comul_tmul, show comul φ = _ from hp, map_add, LinearMap.add_apply,
+    rw [← CartierDual.pair_comul_tmul, show comul φ = _ from hp, map_add (f := _), LinearMap.add_apply,
       CartierDual.pair_tmul_tmul, CartierDual.pair_tmul_tmul, CartierDual.one_apply,
       CartierDual.one_apply]
   rw [pow_two] at hb
@@ -25,11 +30,11 @@ theorem apply_eq_zero_of_mem_sq {K H : Type} [Field K] [CommRing H] [HopfAlgebra
   · have hx' : counit (R := K) x = 0 := hx
     have hy' : counit (R := K) y = 0 := hy
     rw [hmul, hx', hy', mul_zero, zero_mul, add_zero]
-  · rw [map_add, hx, hy, add_zero]
+  · rw [map_add (f := _), hx, hy, add_zero]
 
 theorem eq_zero_of_cobOne_eq_zero_of_dUnit_eq_zero : ∀ (p : ℕ) [Fact p.Prime] (K H : Type) [Field K] [CharP K p] [CommRing H]
     [HopfAlgebra K H] [IsCocomm K H] [Module.Finite K H], (∀ a ∈ augIdeal K H, a ^ p = 0) →
-    ∀ b : H, cobOne K H b = 0 → dUnit K b = 0 → b = 0 := by
+    ∀ b : H, cobOne K H b = 0 → dUnit (R := K) b = 0 → b = 0 := by
   intro p _ K H _ _ _ _ _ _ hpow b hb hd
   have hcb : counit (R := K) b = 0 := (mulBy_of_cobOne_eq_zero hb 0).2
   have hsq : b ∈ augIdeal K H ^ 2 := by

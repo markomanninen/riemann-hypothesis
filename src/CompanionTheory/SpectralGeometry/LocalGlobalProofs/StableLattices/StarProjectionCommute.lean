@@ -1,7 +1,12 @@
-import Mathlib
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StDefinite
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.FinOfPI
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HilbertSchurOfAdjointClosed
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StDefinite
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.FinOfPI
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HilbertSchurOfAdjointClosed
+
+@[expose] public section
+
 open CompanionTheory.D.gk.admitted (stdPoly)
 open GlobalTheory.AutomorphicL2Unitary
 open scoped InnerProductSpace
@@ -35,8 +40,8 @@ theorem starProjection_commute {G H : Type} [Group G] [NormedAddCommGroup H] [In
   have h1 : U.starProjection v ∈ U := Submodule.starProjection_apply_mem U v
   have h2 : v - U.starProjection v ∈ Uᗮ := Submodule.sub_starProjection_mem_orthogonal v
   have h3 : σ g v = σ g (U.starProjection v) + σ g (v - U.starProjection v) := by
-    rw [← map_add]; simp
-  rw [h3, map_add, Submodule.starProjection_eq_self_iff.2 (hU g _ h1),
+    rw [← map_add (f := _)]; simp
+  rw [h3, map_add (f := _), Submodule.starProjection_eq_self_iff.2 (hU g _ h1),
     (Submodule.starProjection_apply_eq_zero_iff U).2 (orthogonal_stable σ hσ U hU g _ h2), add_zero]
 
 theorem exists_isIrredSubrep : ∀ (G H : Type) [Group G] [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] (σ : G →* (H →L[ℂ] H)),
@@ -73,7 +78,7 @@ theorem exists_isIrredSubrep : ∀ (G H : Type) [Group G] [NormedAddCommGroup H]
     obtain ⟨c, hc⟩ := hscal g
     have e : σ g ξ = c • ξ + (σ g ξ - c • ξ) := by abel
     change Q.starProjection (σ g ξ) ∈ (ℂ ∙ ξ)
-    rw [e, map_add, (Submodule.starProjection_apply_eq_zero_iff Q).2 hc, add_zero, map_smul,
+    rw [e, map_add (f := _), (Submodule.starProjection_apply_eq_zero_iff Q).2 hc, add_zero, map_smul,
       Submodule.starProjection_eq_self_iff.2 hξQ]
     exact Submodule.smul_mem _ _ (Submodule.mem_span_singleton_self ξ)
   refine ⟨S.topologicalClosure, hW, fun h => hξ (by simpa [h] using hξW), fun U hUW hU => ?_⟩

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameOnOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameOnOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem topL_eq {a b r : ℕ} (ha : r ≤ a) (hb : r ≤ b) (A : Matrix (Fin b) 
   ext i j
   have hij : i.val < b ∧ j.val < a := ⟨lt_of_lt_of_le i.isLt hb, lt_of_lt_of_le j.isLt ha⟩
   show (if h : i.val < b ∧ j.val < a then A ⟨i.val, h.1⟩ ⟨j.val, h.2⟩ else 0) = A (Fin.castLE hb i) (Fin.castLE ha j)
-  rw [dif_pos hij]
+  rw [dite_eq_left hij]
   rfl
 
 theorem topL_mul {a b c r : ℕ} (ha : r ≤ a) (hb : r ≤ b) (hc : r ≤ c) (A : Matrix (Fin b) (Fin c) κ)
@@ -131,7 +135,7 @@ theorem omegaQ_blockTri : ∀ (D : D7) (a b r : ℕ), r ≤ a → r ≤ b → �
   unfold omegaQ
   by_cases h : ∀ PP ∈ Q, LowZero r (y PP) ∧ IsUnit (topL r (y PP)).det
   · have h' := hcond.mpr h
-    rw [dif_pos h', dif_pos h, hsplit, hsplit]
+    rw [dite_eq_left h', dite_eq_left h, hsplit, hsplit]
     refine Finset.prod_congr rfl fun PP _ => ?_
     congr 1
     obtain ⟨P, hP⟩ := PP
@@ -147,7 +151,7 @@ theorem omegaQ_blockTri : ∀ (D : D7) (a b r : ℕ), r ≤ a → r ≤ b → �
     simp only [map_mul, map_inv, Units.val_mul, Units.val_inv_eq_inv_val]
     field_simp
   · have h' : ¬ ∀ PP ∈ Q, LowZero r (y' PP) ∧ IsUnit (topL r (y' PP)).det := fun h'' => h (hcond.mp h'')
-    rw [dif_neg h', dif_neg h, mul_zero, mul_zero]
+    rw [dite_eq_right h', dite_eq_right h, mul_zero, mul_zero]
 
 end GlobalTheory.OmegaTwistLaw
 

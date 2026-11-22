@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField IsDedekindDomain TensorProduct
 
 namespace GlobalTheory
@@ -20,7 +25,7 @@ theorem norm_scale_idem_add_compl {K A : Type} [Field K] [CommRing A] [Algebra K
       have := hea (b j)
       rw [Algebra.smul_def, map_mul, map_sub, map_one]
       linear_combination (algebraMap K A c - 1) * this
-    simp only [h1, map_add, map_smul, Finsupp.add_apply, Finsupp.smul_apply,
+    simp only [h1, map_add (f := _), map_smul, Finsupp.add_apply, Finsupp.smul_apply,
       Module.Basis.repr_self, Matrix.add_apply, Matrix.one_apply, Matrix.mul_apply, Matrix.replicateCol_apply,
       Matrix.replicateRow_apply, Finset.univ_unique, Finset.sum_singleton, smul_eq_mul]
     rw [Finsupp.single_apply]
@@ -30,7 +35,8 @@ theorem norm_scale_idem_add_compl {K A : Type} [Field K] [CommRing A] [Algebra K
   rw [hM, Matrix.det_one_add_replicateCol_mul_replicateRow]
   have hs : ∑ j, ψ (b j) * ((c - 1) * b.repr e j) = (c - 1) * ψ e := by
     conv_rhs => rw [← b.sum_repr e]
-    rw [map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, smul_eq_mul]; ring
   rw [dotProduct, hs, he]; ring

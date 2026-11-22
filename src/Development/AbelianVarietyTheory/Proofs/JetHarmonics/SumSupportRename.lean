@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.JetsOnCopiesCompatibleFrames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.InvariantDerivationsCommuteFormalConnection
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.JetsOnCopiesCompatibleFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.InvariantDerivationsCommuteFormalConnection
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GaugeTrans
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -88,7 +92,7 @@ theorem inCol_C (b : Fin n) (r : k) : inCol b (C r : PS k 1 d) = C r := by
   rw [subst_C]
 
 theorem pderiv_inCol (b c : Fin n) (j : Fin d) (f : PS k 1 d) :
-    pderiv k (c, j) (inCol b f) = if b = c then inCol b (pderiv k ((0 : Fin 1), j) f) else 0 := by
+    pderiv (c, j) (inCol b f) = if b = c then inCol b (pderiv ((0 : Fin 1), j) f) else 0 := by
   unfold inCol ev
   rw [FormalLog.pderiv_subst (a := fun p : Fin 1 × Fin d => (![pt k d b] : Fin 1 → Pt k n d) p.1 p.2)
     (fun p => gp b p.1 p.2)]
@@ -120,15 +124,17 @@ theorem ev_axis (b : Fin n) (g : PS k 2 d) :
 theorem dofN_inCol (F : Fin d → PS k 2 d) (b : Fin n) (u : Fin d → k) (f : PS k 1 d) :
     DofN F b u (inCol b f) = inCol b (Dof F u f) := by
   unfold DofN Dof
-  rw [← inColHom_apply b (∑ _, _), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← inColHom_apply b (∑ _, _), map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
-  rw [map_mul, map_sum, pderiv_inCol, if_pos rfl, inColHom_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_mul, map_sum, pderiv_inCol, if_pos rfl, inColHom_apply]
   congr 1
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_mul, inColHom_apply, inColHom_apply, inCol_C, ev_axis]
 
 theorem pderiv_prod_out (b : Fin n) (j : Fin d) (g : Fin n → PS k 1 d) (s : Finset (Fin n)) (hs : b ∉ s) :
-    pderiv k (b, j) (∏ c ∈ s, inCol c (g c)) = 0 := by
+    pderiv (b, j) (∏ c ∈ s, inCol c (g c)) = 0 := by
   induction s using Finset.induction_on with
   | empty => simp
   | insert c s hc ih =>
@@ -137,7 +143,7 @@ theorem pderiv_prod_out (b : Fin n) (j : Fin d) (g : Fin n → PS k 1 d) (s : Fi
     simp
 
 theorem dofN_mul_out (F : Fin d → PS k 2 d) (b : Fin n) (u : Fin d → k) (f G : PS k n d)
-    (hG : ∀ j, pderiv k (b, j) G = 0) : DofN F b u (f * G) = DofN F b u f * G := by
+    (hG : ∀ j, pderiv (b, j) G = 0) : DofN F b u (f * G) = DofN F b u f * G := by
   unfold DofN
   rw [Finset.sum_mul]
   refine Finset.sum_congr rfl fun j _ => ?_
@@ -209,7 +215,8 @@ theorem cc_inCol (b : Fin n) (f : PS k 1 d) : constantCoeff (inCol b f) = consta
 
 theorem sum_support_eq {ι : Type} (φ : (ι →₀ ℕ) → k) (P : MvPolynomial ι k) :
     ∑ m ∈ P.support, P.coeff m * φ m = (MvPolynomial.basisMonomials ι k).constr k φ P := by
-  conv_rhs => rw [P.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [P.as_sum, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   have : MvPolynomial.monomial m (P.coeff m) = P.coeff m • MvPolynomial.basisMonomials ι k m := by
     simp [MvPolynomial.smul_monomial]
@@ -219,7 +226,8 @@ theorem sum_support_rename {ι κ : Type} (e : ι → κ) (φ : (κ →₀ ℕ) 
     ∑ m ∈ (MvPolynomial.rename e P).support, (MvPolynomial.rename e P).coeff m * φ m =
       ∑ m ∈ P.support, P.coeff m * φ (Finsupp.mapDomain e m) := by
   rw [sum_support_eq]
-  conv_lhs => rw [P.as_sum, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [P.as_sum, map_sum, map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   have : MvPolynomial.monomial (Finsupp.mapDomain e m) (P.coeff m) =
       P.coeff m • MvPolynomial.basisMonomials κ k (Finsupp.mapDomain e m) := by
@@ -246,8 +254,8 @@ end GlobalTheory.NabCol
 
 namespace GlobalTheory
 
-open NabCol in
 
+open NabCol in
 theorem nabValN_boxSer : NabColSt := by
   intro R _ d O _ _ B k _ _ _ h w0 hh q n f Λ Ix _ _ e cp u u' hcp hu P
   have hL0 : constantCoeff (B.hL k h w0) = 0 := by
@@ -269,7 +277,8 @@ theorem nabValN_boxSer : NabColSt := by
     exact (gt_ev_expS _ (gp b) _ hq0).symm
   unfold nabValN DpolyN
   rw [hprod]
-  simp only [map_sum, map_mul, constantCoeff_C]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, constantCoeff_C]
   rw [sum_support_rename e (fun m => constantCoeff (DmonN (B.FK k) cp u' m
     (∏ b, inCol b (f b * FB.expS k ((q : k) • B.hL k h w0)))))]
   refine Finset.sum_congr rfl fun mo _ => ?_
@@ -278,7 +287,8 @@ theorem nabValN_boxSer : NabColSt := by
   refine Finset.prod_congr rfl fun b _ => ?_
   rw [cc_inCol, fo_col (B.FK k) (fun v w g => FormalConnection.invariantDerivations_commute_formal_connection R d O k B v w g) e cp u u' hcp hu]
   unfold FB.nabVal DpolyOf
-  simp only [map_sum, map_mul, constantCoeff_C]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, constantCoeff_C]
   rw [sum_support_eq (fun m => constantCoeff (DmonOf (B.FK k) u m (f b * FB.expS k ((q : k) • B.hL k h w0))))]
   have hb : (MvPolynomial.monomial (colM mo b) 1 : MvPolynomial Λ k) = MvPolynomial.basisMonomials Λ k (colM mo b) := by
     simp

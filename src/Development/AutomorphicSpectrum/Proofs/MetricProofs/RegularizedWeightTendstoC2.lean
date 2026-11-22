@@ -1,12 +1,17 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
-import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
-import ReciprocityTheory.AnalyticForms.LeviForms.RegGlue
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.NormIteratedFDerivCompLeOfIsOpen
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PPropertyF
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.PGlueRegularised
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
+public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
+public import ReciprocityTheory.AnalyticForms.LeviForms.RegGlue
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.NormIteratedFDerivCompLeOfIsOpen
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PPropertyF
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.PGlueRegularised
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open MvPolynomial MeasureTheory Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.ChartRestriction.G.Geo GroundTheory.Heights₂.Heights.LowerBoundFree
@@ -214,8 +219,8 @@ theorem arg_C2_through_chart {D : ℕ} (ρ : Mollifier D) {O P L : Set (Fin D �
 
 variable {D : ℕ} {X : Type*} [TopologicalSpace X] {A : FinHolAtlas D X}
 
-open Classical in
 
+open Classical in
 theorem regularised_eq_regMax_near (R : RegChartData A) {η : Fin R.N → X → ℝ} {Cη : ℝ}
     (hcut : R.IsCutoffFamily η Cη) (x₀ : X) :
     ∃ N : Set X, IsOpen N ∧ x₀ ∈ N ∧ (∀ j, x₀ ∈ R.mid j → N ⊆ R.mid j) ∧

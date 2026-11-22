@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.DimSplitPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaCore
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsThetaOfTranslDiff
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsCommVOfLe
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LineBundleIsoLinCombSymmBiadditiveSubstitution
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.BiadditiveOfTrivAxesStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.RelAmpleFormBundlePowerOfPosDefStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbelianSchemeGerms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.DimSplitPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaCore
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsThetaOfTranslDiff
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ClsLinCombSingle
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsCommVOfLe
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LineBundleIsoLinCombSymmBiadditiveSubstitution
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.BiadditiveOfTrivAxesStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.RelAmpleFormBundlePowerOfPosDefStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbelianSchemeGerms
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -165,7 +169,8 @@ theorem eq_one_of_geometric {S : Scheme.{0}} {k : ℕ} (hk : Odd k) (u : Γ(S, �
       have := congrArg x.appTop.hom hu
       rwa [map_pow, map_one, pow_succ, pow_mul, h₂, one_pow, _root_.one_mul] at this
     have h₄ : IsUnit (x.appTop.hom (∑ i ∈ Finset.range k, u ^ i)) := by
-      simp only [map_sum, map_pow, h₃, one_pow, Finset.sum_const, Finset.card_range, nsmul_eq_mul, _root_.mul_one]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_pow, h₃, one_pow, Finset.sum_const, Finset.card_range, nsmul_eq_mul, _root_.mul_one]
       have := (Ne.isUnit h₁).map (Scheme.ΓSpecIso (CommRingCat.of K)).inv.hom
       rwa [map_natCast] at this
     have h₅ : x (default : PrimeSpectrum K) = p :=
@@ -341,7 +346,8 @@ theorem existsUnique_coord {Λ I : Type} [AddCommGroup Λ] {m k : ℕ} (hk : k �
       simp [Pi.single_apply]
     apply Additive.ofMul.injective
     show _ = F _
-    rw [h₁, map_sum, Finset.sum_apply, map_sum, ofMul_prod]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h₁, map_sum, Finset.sum_apply, map_sum, ofMul_prod]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_nsmul, Pi.smul_apply, map_nsmul, ofMul_pow]
     rfl
@@ -409,7 +415,8 @@ variable {n : ℕ} (pr : Fin n → (G ⟶ A)) (W : Matrix (Fin n) (Fin n) ℤ)
 omit [GrpObj A] [IsCommMonObj A] [GrpObj G] in
 theorem pull_sharp {T : Over S} (a : T ⟶ G) (h : (sharp Pb pr W).IsLB) :
     pull a.left (cls _ h) = quad (bi hP) W (fun u => a ≫ pr u) := by
-  rw [cls_linComb hP, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [cls_linComb hP, map_sum]
   refine Finset.sum_congr rfl fun uv _ => ?_
   rw [map_zsmul]
   exact congrArg _ (pull_bi hP a _ _)
@@ -480,7 +487,7 @@ theorem kTriv_sharp (hu : ∀ (T : Over S) (y : Fin n → (T ⟶ A)), ∃! x : T
     have e₁ : pull (lift (r ≫ j) a).left (cls _ hD) = 0 := by rw [← e, pull_comp, h₀, map_zero]
     have e₂ : cls _ hD = (1 : ℤ) • pull ((fst T G ≫ x) * snd T G).left (cls _ h) +
         (-1 : ℤ) • pull (snd T G).left (cls _ h) := (cls_linComb h _ _ hD).trans (Fin.sum_univ_two _)
-    rw [e₂, one_smul, neg_smul, one_smul, map_add, map_neg, ← pull_comp, ← pull_comp, ← Over.comp_left,
+    rw [e₂, one_smul, neg_smul, one_smul, map_add (f := _), map_neg, ← pull_comp, ← pull_comp, ← Over.comp_left,
       ← Over.comp_left, MonObj.comp_mul, lift_fst_assoc, lift_snd, pull_sharp hP, pull_sharp hP, Category.assoc] at e₁
     simp only [MonObj.mul_comp] at e₁
     rw [quad_mul (hB _) (hs _)] at e₁

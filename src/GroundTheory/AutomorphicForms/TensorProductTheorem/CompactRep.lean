@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GKModules.GKModule
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GKModules.GKModule
+
+@[expose] public section
 
 noncomputable section
 

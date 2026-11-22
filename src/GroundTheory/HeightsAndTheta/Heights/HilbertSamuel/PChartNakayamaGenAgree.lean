@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenTwistGenerated
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenSESStep
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenTwistGenerated
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenSESStep
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -227,8 +232,8 @@ theorem res_eq_of_pair {M : Type*} [AddCommGroup M] [Module (MRingOver S ι) M] 
       rfl
   change (∑ l : K, ∑ i ∈ I.1 l, _ :
     KH.CechC S ι M 0 →ₗ[MRingOver S ι] LocalizedModule (KH.cellMon S I.1) M) f = 0 at h
-  rw [Finset.sum_eq_single k, Finset.sum_eq_add_of_mem (c k) j hx hy hxy, dif_pos (hface (c k) hx),
-    dif_pos (hface j hy)] at h
+  rw [Finset.sum_eq_single k, Finset.sum_eq_add_of_mem (c k) j hx hy hxy, dite_eq_left (hface (c k) hx),
+    dite_eq_left (hface j hy)] at h
   · rw [hsign, LinearMap.add_apply] at h
     change KH.faceSign I.1 k (c k) • (KH.cellRes S M _ I.1 (f _)) +
       (-KH.faceSign I.1 k (c k)) • (KH.cellRes S M _ I.1 (f _)) = 0 at h

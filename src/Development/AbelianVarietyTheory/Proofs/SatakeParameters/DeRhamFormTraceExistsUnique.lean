@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.KaehlerOneFormsToExtensionDeRhamMulSelf
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FormsBaseChangeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.KaehlerOneFormsToExtensionDeRhamMulSelf
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FormsBaseChangeStatement
+
+@[expose] public section
+
 open GlobalTheory.W1 GlobalTheory.PD GlobalTheory.CechDR KaehlerDifferential
 
 namespace GlobalTheory.W1
@@ -19,7 +24,8 @@ theorem trDR_isTrDR_unique : ∀ (k K L : Type) [Field k] [CharZero k] [Field K]
     intro T T' hT hT'
     refine LinearMap.ext fun y => ?_
     obtain ⟨m, b, ω, rfl⟩ := hspan y
-    simp only [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum]
     exact Finset.sum_congr rfl fun j _ => by rw [hT, hT']
   let e := Module.finBasis K L
   let n := Module.finrank K L
@@ -40,7 +46,8 @@ theorem trDR_isTrDR_unique : ∀ (k K L : Type) [Field k] [CharZero k] [Field K]
       obtain ⟨m, b, ω, rfl⟩ := hspan y
       refine ⟨fun j => ∑ i, e.repr (b i) j • ω i, ?_⟩
       change ∑ j, e j • mapDR k K L (∑ i, e.repr (b i) j • ω i) = _
-      simp only [map_sum, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, Finset.smul_sum]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun i _ => ?_
       simp only [← smul_smul_mapDR]
@@ -67,11 +74,12 @@ theorem trDR_isTrDR_unique : ∀ (k K L : Type) [Field k] [CharZero k] [Field K]
     simp only [smul_smul, ← Finset.sum_smul]
     congr 1
     conv_rhs => rw [← e.sum_repr b]
-    simp only [map_sum, map_smul, smul_eq_mul, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul, mul_comm]
   have htr : IsTrDR k K L (trDR k K L) := by
     have h : ∃ T, IsTrDR k K L T := ⟨_, ex⟩
     unfold trDR
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     exact h.choose_spec
   exact ⟨htr, fun T hT => uniq T _ hT htr⟩
 

@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsUniqueTorusCompat
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsCompRedIff
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUnitCoboundaryOfMulCocycleStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsUniqueTorusCompat
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsCompRedIff
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUnitCoboundaryOfMulCocycleStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -39,7 +43,7 @@ theorem map_mapDomain (s : M → N) (F : AddMonoidAlgebra B N →+* C) (G : AddM
     F (AddMonoidAlgebra.mapDomain s a) = G a := by
   induction a using AddMonoidAlgebra.induction_linear with
   | zero => simp
-  | add a b ha hb => rw [AddMonoidAlgebra.mapDomain_add, map_add, map_add, ha, hb]
+  | add a b ha hb => rw [AddMonoidAlgebra.mapDomain_add, map_add (f := _), map_add (f := _), ha, hb]
   | single m b => rw [AddMonoidAlgebra.mapDomain_single, h]
 
 theorem hom_eq (F G : AddMonoidAlgebra B M →+* C)
@@ -47,12 +51,13 @@ theorem hom_eq (F G : AddMonoidAlgebra B M →+* C)
     F a = G a := by
   induction a using AddMonoidAlgebra.induction_linear with
   | zero => simp
-  | add a b ha hb => rw [map_add, map_add, ha, hb]
+  | add a b ha hb => rw [map_add (f := _), map_add (f := _), ha, hb]
   | single m b => exact h m b
 
 theorem ev_eq_zero (κ : B →+* C) (c : Multiplicative M →* Cˣ) (a : AddMonoidAlgebra B M)
     (h : ∀ m, κ (a.coeff m) = 0) : ev κ c a = 0 := by
-  rw [← AddMonoidAlgebra.sum_coeff_single a, Finsupp.sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← AddMonoidAlgebra.sum_coeff_single a, Finsupp.sum, map_sum]
   exact Finset.sum_eq_zero fun m _ => by rw [ev_single, h, zero_mul]
 
 theorem coeff_mem (I : Ideal B) (G : AddMonoidAlgebra B M →+* AddMonoidAlgebra (B ⧸ I) M)

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.E
 
@@ -36,7 +40,8 @@ theorem norm_sum_mul_sq_le {n : ℕ} (a c : Fin n → ℂ) :
 theorem norm_sum_sq_eq {n : ℕ} (a : Fin n → ℂ) :
     ‖∑ j, a j‖ ^ 2 = (∑ j, ∑ k, a j * conj (a k)).re := by
   have h : (∑ j, ∑ k, a j * conj (a k)) = (∑ j, a j) * conj (∑ j, a j) := by
-    rw [map_sum, Finset.sum_mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_mul_sum]
   rw [h, Complex.mul_conj, Complex.ofReal_re, Complex.normSq_eq_norm_sq]
 
 theorem half_sum_norm_sub_sq {n : ℕ} (a : Fin n → Fin n → ℂ) :

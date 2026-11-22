@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.PolarJmConjTranspose
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.PolarJmConjTranspose
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,7 +34,7 @@ private lemma Jm_conjTranspose_eq_self' : (Jm ε)ᴴ = Jm ε := by
   rw [Matrix.diagonal_conjTranspose]
   congr 1
   funext a
-  simp only [Pi.star_apply]
+  change star (if ε a = true then (1 : ℂ) else -1) = _
   split_ifs <;> simp
 
 lemma isHermitian_of_mem_noncompactPart' {X : Matrix (Fin n) (Fin n) ℂ} (hX : inP ε X) : Xᴴ = X := by

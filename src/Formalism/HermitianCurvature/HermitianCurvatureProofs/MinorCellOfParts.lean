@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadAATopOfParts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadAATopOfParts
+
+@[expose] public section
 
 open Matrix
 

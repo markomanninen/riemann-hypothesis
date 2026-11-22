@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.InjectiveOfIntegral
 
@@ -16,7 +20,11 @@ theorem exists_injective_of_isIntegral {A B O C : Type} [CommRing A] [IsDomain A
   have : Module.IsTorsionFree A B := Module.isTorsionFree_iff_algebraMap_injective.mpr hAB
   have : Module.IsTorsionFree A C := Module.isTorsionFree_iff_algebraMap_injective.mpr hAC
   have : Algebra.IsAlgebraic A B := Algebra.IsIntegral.isAlgebraic
-  let ψ : B →ₐ[A] C := IsAlgClosed.lift
+  let ψ : B →ₐ[A] C := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hker : RingHom.ker (ψ : B →+* C) = ⊥ := by
     apply Ideal.eq_bot_of_comap_eq_bot (R := A)
     ext a
@@ -34,7 +42,7 @@ theorem exists_injective_of_isIntegral {A B O C : Type} [CommRing A] [IsDomain A
       map_one' := hv.hom_inj (by simp only [hg, map_one])
       map_mul' := fun x y => hv.hom_inj (by simp only [hg, map_mul])
       map_zero' := hv.hom_inj (by simp only [hg, map_zero])
-      map_add' := fun x y => hv.hom_inj (by simp only [hg, map_add]) }
+      map_add' := fun x y => hv.hom_inj (by simp only [hg, map_add (f := _)]) }
   refine ⟨j', ?_⟩
   have e : (algebraMap O C).comp j' = (ψ : B →+* C) := RingHom.ext hg
   rw [e]

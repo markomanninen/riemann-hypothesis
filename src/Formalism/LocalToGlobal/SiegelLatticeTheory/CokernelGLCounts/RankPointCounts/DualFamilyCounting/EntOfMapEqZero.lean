@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsLocalData
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsLocalData
+
+@[expose] public section
 
 open NumberField Matrix
 
@@ -41,19 +45,26 @@ theorem ent_smul {J : Ideal (𝓞 K)} (a : 𝓞 K) {A : Matrix c c (𝓞 K)} (hA
 
 theorem ent_mono {I J : Ideal (𝓞 K)} (hIJ : I ≤ J) {A : Matrix c c (𝓞 K)} (hA : Ent I A) : Ent J A := fun i j => hIJ (hA i j)
 
-theorem ent_top (A : Matrix c c (𝓞 K)) : Ent (⊤ : Ideal (𝓞 K)) A := fun _ _ => Submodule.mem_top
-
 theorem ent_conjTranspose (hF : IsFixF K F) (𝔭 : Ideal (𝓞 F)) (k : ℕ) {A : Matrix c c (𝓞 K)}
     (hA : Ent (extP K 𝔭 ^ k) A) : Ent (extP K 𝔭 ^ k) Aᴴ := fun i j => conjO_mem_pow hF 𝔭 k _ (hA j i)
-
-theorem ent_smul_of_mem {J : Ideal (𝓞 K)} {x : 𝓞 K} (hx : x ∈ J) (A : Matrix c c (𝓞 K)) :
-    Ent J (x • A) := fun i j => J.mul_mem_right _ hx
 
 private theorem exists_add_conj_sub_one_mem_extP (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F) {𝔭 : Ideal (𝓞 F)}
     (h𝔭 : 𝔭.IsMaximal) : ∃ t : 𝓞 K, t + conjO K t - 1 ∈ extP K 𝔭 := by
   by_cases h : ∃ t : 𝓞 K, t + conjO K t ∉ extP K 𝔭
   · obtain ⟨t0, ht0⟩ := h
-    obtain ⟨a, ha⟩ := exists_tr hF t0
+    have htrace : ∃ a : 𝓞 F, algebraMap (𝓞 F) (𝓞 K) a = t0 + conjO K t0 := by
+      let w := t0 + conjO K t0
+      have hw : star (w : K) = (w : K) := by
+        change star ((t0 : K) + star (t0 : K)) = (t0 : K) + star (t0 : K)
+        rw [star_add, star_star, add_comm]
+      obtain ⟨f, hf⟩ := (hF (w : K)).mp hw
+      have hfIntegral : IsIntegral ℤ f := by
+        apply (isIntegral_algebraMap_iff (B := K)).mp
+        rw [hf]
+        exact RingOfIntegers.isIntegral_coe w
+      refine ⟨⟨f, hfIntegral⟩, RingOfIntegers.ext ?_⟩
+      exact hf
+    obtain ⟨a, ha⟩ := htrace
     have haP : a ∉ 𝔭 := by
       intro haP
       apply ht0
@@ -61,8 +72,11 @@ private theorem exists_add_conj_sub_one_mem_extP (hK : Formalism.HermitianLattic
       exact Ideal.mem_map_of_mem _ haP
     obtain ⟨b, c, hc, hbc⟩ := h𝔭.exists_inv haP
     refine ⟨algebraMap (𝓞 F) (𝓞 K) b * t0, ?_⟩
+    have hb : conjO K (algebraMap (𝓞 F) (𝓞 K) b) = algebraMap (𝓞 F) (𝓞 K) b := by
+      apply RingOfIntegers.ext
+      exact (hF (algebraMap F K (b : F))).mpr ⟨(b : F), rfl⟩
     have e1 : algebraMap (𝓞 F) (𝓞 K) b * t0 + conjO K (algebraMap (𝓞 F) (𝓞 K) b * t0) - 1 = algebraMap (𝓞 F) (𝓞 K) (b * a - 1) := by
-      rw [map_mul, conjO_map hF, map_sub, map_mul, map_one, ha]; ring
+      rw [map_mul, hb, map_sub, map_mul, map_one, ha]; ring
     have e2 : b * a - 1 = -c := by linear_combination hbc
     rw [e1, e2, map_neg]
     exact (extP K 𝔭).neg_mem (Ideal.mem_map_of_mem _ hc)
@@ -214,7 +228,7 @@ theorem exists_solve_quot (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) {
         (Z'.map (reductionMapsOfForms.mkk K 𝔭 k))ᴴ * P'.map (reductionMapsOfForms.mkk K 𝔭 k) +
         (Z'.map (reductionMapsOfForms.mkk K 𝔭 k))ᴴ * H'.map (reductionMapsOfForms.mkk K 𝔭 k) * Z'.map (reductionMapsOfForms.mkk K 𝔭 k) := by
     simp only [reductionMapsOfForms.map_conjTranspose]
-    simp only [← RingHom.mapMatrix_apply, map_add, map_mul]
+    simp only [← RingHom.mapMatrix_apply, map_add (f := _), map_mul]
   rw [← e]
   ext i j
   show Ideal.Quotient.mk (extP K 𝔭 ^ k) _ = 0

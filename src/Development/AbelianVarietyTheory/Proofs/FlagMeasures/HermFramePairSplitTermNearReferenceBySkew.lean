@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummaryStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairIdealKillsDiscriminantModulesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLocalizedModuleSubtype
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIntegerAddStarEqOneOfIsCMUnram
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairNormalFormGeometrySummaryStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFramePairIdealKillsDiscriminantModulesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLocalizedModuleSubtype
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsIntegerAddStarEqOneOfIsCMUnram
+
+@[expose] public section
+
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt
 open scoped Pointwise ENNReal Classical
 
@@ -115,7 +120,8 @@ theorem pr_apply (H : HermSpace K V) {J : Type} [Fintype J] (e f : J → V) (v :
 
 theorem pr_adj (H : HermSpace K V) {J : Type} [Fintype J] (e f : J → V) (x v : V) :
     H.B (pr H f e x) v = H.B x (pr H e f v) := by
-  simp only [pr_apply, map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, map_smulₛₗ, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [pr_apply, map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, map_smulₛₗ, smul_eq_mul]
   refine Finset.sum_congr rfl fun b _ => ?_
   rw [← H.herm v (e b), mul_comm]; rfl
 
@@ -228,7 +234,7 @@ theorem core (H : HermSpace K V) {J : Type} [Fintype J] [DecidableEq J] (e f : J
     intro y hy
     refine of_dual H hk1 (hPi ▸ Pi.sub_mem (hwPi y hy) (hePi (pr_mem H _ _ _))) fun x hx => ?_
     obtain ⟨a, ha, m, hm, rfl⟩ := hdec x hx
-    rw [map_sub, LinearMap.sub_apply, hqB, map_add p, hpA a ha, hpM m hm, zero_add, map_add, add_sub_cancel_right]
+    rw [map_sub, LinearMap.sub_apply, hqB, map_add p, hpA a ha, hpM m hm, zero_add, map_add (f := _), add_sub_cancel_right]
     exact hwA y hy a ha
   have hww : ∀ y ∈ M, ∀ x ∈ M, H.B (Φ y - y) (Φ x - x) ∈ Bd (c ^ (2 * n + 11)) (1 : Submodule R K) := by
     intro y hy x hx
@@ -248,7 +254,7 @@ theorem core (H : HermSpace K V) {J : Type} [Fintype J] [DecidableEq J] (e f : J
     rw [hz0]
     refine of_dual H hk1 (hPi ▸ Pi.sub_mem (hwPi y hy) (hePi (hs2 _))) fun x hx => ?_
     obtain ⟨a, ha, m, hm, rfl⟩ := hdec x hx
-    rw [map_sub, LinearMap.sub_apply, hs4, map_add p, hpA a ha, hpM m hm, zero_add, map_add, hpy]
+    rw [map_sub, LinearMap.sub_apply, hs4, map_add p, hpA a ha, hpM m hm, zero_add, map_add (f := _), hpy]
     have e1 : H.B (Φ y - y) a + H.B (Φ y - y) m -
         (star (algebraMap R K t) * H.B (Φ y) m - algebraMap R K t * H.B y (Φ m)) =
         H.B (Φ y - y) a + t • (H.B (Φ y) (Φ m) - H.B (Φ y - y) (Φ m - m)) := by
@@ -277,7 +283,7 @@ theorem core (H : HermSpace K V) {J : Type} [Fintype J] [DecidableEq J] (e f : J
       have hz0 : s (Φ y) - y = (Φ y - y) - (Φ y - s (Φ y)) := by abel
       have h2 : p (x + m) = 0 := by
         rw [← h, ← algebraMap_smul K a, map_smul, hz0, map_sub p, hpw y hy, hpe _ (hs2 _)]; simp
-      rw [map_add, hpA x hx, hpM m hm, zero_add] at h2
+      rw [map_add (f := _), hpA x hx, hpM m hm, zero_add] at h2
       rw [h, h2, add_zero]; exact hx
   have hP : ∀ x ∈ P, x ∈ Bd (c ^ (3 * n + 12)) (s • Λ) := by
     intro x hx
@@ -298,8 +304,8 @@ section Integers
 variable {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V]
   [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
 
-omit [StarRing K] in
 
+omit [StarRing K] in
 theorem exists_ext (L : Submodule (𝓞 K) V) (σ : L →ₗ[𝓞 K] V) : ∃ Ψ : V →ₗ[K] V, ∀ y : L, Ψ y = σ y := by
   have hB : Module.Baer (𝓞 K) V := by
     intro I g
@@ -322,7 +328,9 @@ theorem exists_lift [FiniteDimensional K V] (H : HermSpace K V) {Λ : Submodule 
     (hLf : ∀ y ∈ L, y ∈ Submodule.span K (Set.range f))
     (hint : ∀ y ∈ L, ∀ x ∈ Λ ⊓ rs (𝓞 K) (Submodule.span K (Set.range e)), H.B x y ∈ (1 : Submodule (𝓞 K) K)) :
     ∃ Ψ : V →ₗ[K] V, ∀ y ∈ L, Ψ y ∈ Λ ∧ ∀ b, H.B (Ψ y - y) (e b) = 0 := by
-  have hΛ := (isLatMod_top_bot_iff Λ).1 hU.1
+  have hΛ' := (isLatMod_top_bot_iff Λ).1 hU.1
+  letI : Submodule.IsLattice K Λ := Submodule.IsLattice.of_fg K hΛ'.1
+  have hΛ : Submodule.IsFullLattice K Λ := ⟨hΛ'.2⟩
   let p : V →ₗ[𝓞 K] V := (pr H e f).restrictScalars (𝓞 K)
   let N : Submodule (𝓞 K) V := Λ ⊓ L.comap p
   let ρ : N →ₗ[𝓞 K] L := p.restrict fun x hx => hx.2
@@ -401,7 +409,9 @@ theorem lift_bd {H : HermSpace K V} {r : ℕ} (N : NF H r) {Λ : Submodule (𝓞
     (hL : IsLift N.F N.F' N.Wt) (hsp : N.Split Λ) {c : Ideal (𝓞 K)}
     (hk : c • dual H (latTh N.F N.F' Λ) ≤ latTh N.F N.F' Λ) {l v : V} (hl : l ∈ Λ) (hv : v ∈ N.Pi)
     (hw : l - v ∈ N.Wt) : v ∈ Bd c Λ := by
-  have hΛ := (isLatMod_top_bot_iff Λ).1 hU.1
+  have hΛ' := (isLatMod_top_bot_iff Λ).1 hU.1
+  letI : Submodule.IsLattice K Λ := Submodule.IsLattice.of_fg K hΛ'.1
+  have hΛ : Submodule.IsFullLattice K Λ := ⟨hΛ'.2⟩
   have hII : II N.F N.F' ≤ V0 N.F N.F' := inf_le_left.trans (le_sup_left.trans le_sup_left)
   unfold NF.Split at hsp
   rw [hsp] at hk
@@ -417,7 +427,7 @@ theorem lift_bd {H : HermSpace K V} {r : ℕ} (N : NF H r) {Λ : Submodule (𝓞
       obtain ⟨a, ⟨ha, haW⟩, i, hi, rfl⟩ := Submodule.mem_sup.1 hx
       have e1 : H.B (l - v) i = 0 := by rw [← H.herm, hL.1 _ hw i (hII hi), star_zero]
       have e2 : H.B v a = 0 := (mem_perp_iff H _ v).1 hv a haW
-      rw [map_add, e1, add_zero, map_sub, LinearMap.sub_apply, e2, sub_zero]
+      rw [map_add (f := _), e1, add_zero, map_sub, LinearMap.sub_apply, e2, sub_zero]
       rw [← hU.2] at hl
       exact ((mem_dual_iff H Λ l).1 hl).2 a ha
   intro a ha

@@ -1,6 +1,10 @@
-import ReciprocityTheory.DualLattices.LiftMonomialDeterminantStatement
-import ReciprocityTheory.DualLattices.ProdEraseUpdate
-import ReciprocityTheory.DualLattices.IsLocalOfIntegers
+module
+
+public import ReciprocityTheory.DualLattices.LiftMonomialDeterminantStatement
+public import ReciprocityTheory.DualLattices.ProdEraseUpdate
+public import ReciprocityTheory.DualLattices.IsLocalOfIntegers
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,8 @@ theorem residue_uR (hv : v.Integers R) [IsLocalRing R] [CharP (IsLocalRing.Resid
   have hm := mem_max_of_lt hv h
   rw [← IsLocalRing.residue_eq_zero_iff, map_sub, sub_eq_zero] at hm
   rw [hm, lam]
-  simp only [map_sum, map_mul, map_natCast, Matrix.map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, map_natCast, Matrix.map_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [xc, ZMod.castHom_apply, ZMod.natCast_val]
 
@@ -61,7 +66,7 @@ theorem isUnit_det_MuR (hv : v.Integers R) (hp1 : v (algebraMap R C (p : R)) < 1
   letI : IsLocalRing R := IsLocalRing.of_nonunits_add fun a b ha hb hu => by
     have h1 := hv.isUnit_iff_valuation_eq_one.mp hu
     have h2 : v (algebraMap R C (a + b)) < 1 := by
-      rw [map_add]; exact v.map_add_lt (hlt a ha) (hlt b hb)
+      rw [map_add (f := _)]; exact v.map_add_lt (hlt a ha) (hlt b hb)
     rw [h1] at h2
     exact lt_irrefl _ h2
   haveI : CharP (IsLocalRing.ResidueField R) p :=

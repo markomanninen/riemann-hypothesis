@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemTwInv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemTwInv
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,7 @@ def rightDefect (ρ : G → E →ₗ[ℂ] E) (t : G) : (G → E) →ₗ[ℂ] (G 
   toFun u := fun x => u (x * t) - ρ t (u x)
   map_add' u v := by
     funext x
-    simp only [Pi.add_apply, map_add]
+    simp only [Pi.add_apply, map_add (f := _)]
     abel
   map_smul' c u := by
     funext x
@@ -43,7 +47,7 @@ theorem rightDefect_mem_relThree (Γ : Subgroup G) (ρ : G → E →ₗ[ℂ] E) 
     simp only [rightDefect_apply]
     refine ⟨?_, ?_⟩
     · intro h hh g
-      rw [mul_assoc, ha' h hh (g * t), ha' h hh g, map_add, hρc]
+      rw [mul_assoc, ha' h hh (g * t), ha' h hh g, map_add (f := _), hρc]
       abel
     · intro g
       have e : g * t ^ 3 * t = g * t * t ^ 3 := by

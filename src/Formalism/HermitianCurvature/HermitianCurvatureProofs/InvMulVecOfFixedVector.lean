@@ -1,10 +1,14 @@
-import Formalism.HermitianCurvature.StatementTL
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameCompletion
-import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.BlockMinorAbsoluteOfExplicit
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HomogeneityNaturalDegree
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.BFCell
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OmpCofLPd
+module
+
+public import Formalism.HermitianCurvature.StatementTL
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameCompletion
+public import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.BlockMinorAbsoluteOfExplicit
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HomogeneityNaturalDegree
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.BFCell
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OmpCofLPd
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.TLC
 

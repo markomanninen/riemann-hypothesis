@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsLocalFockIntertwinerRealPlaceOfCoverContra
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AnalyticOnNhdOrbitOfDerivSeqNormEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AnalyticOnNhdOrbitPol
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockDerivedActionsTensorMembers
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoverUpqClosureExpTopAndCartan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsLocalFockIntertwinerRealPlaceOfCoverContra
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AnalyticOnNhdOrbitOfDerivSeqNormEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AnalyticOnNhdOrbitPol
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FockDerivedActionsTensorMembers
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoverUpqClosureExpTopAndCartan
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,6 +90,7 @@ theorem family_eq_zero {p q : ℕ} (T : GrpData p q) (hgen : Subgroup.closure (T
     have := T.expt_add Y hY 1 (-1)
     rw [show ((1 : ℝ) + -1) = 0 by norm_num, zero_smul, T.expt_zero, one_smul] at this
     exact (eq_inv_of_mul_eq_one_right this.symm).symm
+  open scoped Pointwise in
   have hP : ∀ x ∈ Submonoid.closure (T.expt '' upq p q ∪ (T.expt '' upq p q)⁻¹),
       ∀ g : T.G, (∀ u, D g u = 0) → ∀ u, D (g * x) u = 0 := by
     intro x hx
@@ -104,6 +109,7 @@ theorem family_eq_zero {p q : ℕ} (T : GrpData p q) (hgen : Subgroup.closure (T
       intro g hg u
       rw [← mul_assoc]
       exact hy _ (hx g hg) u
+  open scoped Pointwise in
   have hg : g ∈ Submonoid.closure (T.expt '' upq p q ∪ (T.expt '' upq p q)⁻¹) := by
     rw [← Subgroup.closure_toSubmonoid, hgen]
     simp
@@ -232,7 +238,8 @@ theorem inner_fock (P Q : Pol p q r s) : ⟪F.ι Q, F.ι P⟫_ℂ = fockIp P Q :
   have hm : ∀ R : Pol p q r s, F.ι R = ∑ v ∈ R.support, R.coeff v • F.ι (MvPolynomial.monomial v 1) := by
     intro R
     conv_lhs => rw [R.as_sum]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun v _ => ?_
     rw [← map_smul, MvPolynomial.smul_monomial, smul_eq_mul, mul_one]
   rw [hm P, hm Q, sum_inner]
@@ -410,7 +417,7 @@ theorem coef_of_side : ∀ (p q r s n : ℕ) (T₀ : GrpData (p * r + q * s) (p 
     rw [hD]
     refine hd.congr_deriv ?_
     rw [← hL.unit _ hhU _ (hL.mem _) _ hEΘ, hQ]
-    simp only [D, hκ, map_add, map_smul, inner_add_right, inner_smul_right, inner_zero_left, Function.comp_apply,
+    simp only [D, hκ, map_add (f := _), map_smul, inner_add_right, inner_smul_right, inner_zero_left, Function.comp_apply,
       ContinuousLinearMap.coe_restrictScalars', zero_smul, T₁.expt_zero, Prod.mk_one_one, map_one,
       ContinuousLinearMap.one_apply, Complex.ofReal_zero, zero_mul, Complex.exp_zero, one_mul, add_zero]
     ring
@@ -436,7 +443,7 @@ theorem coef_of_side : ∀ (p q r s n : ℕ) (T₀ : GrpData (p * r + q * s) (p 
         have h := hexp.smul (hasDerivAt_fockData_expt_smul F hY
           ((fun w => fockAct1 p q r s Y w + ((c : ℂ) * Y.trace) • w)^[k] (κ P')) t)
         refine h.congr_deriv ?_
-        simp only [f, Function.iterate_succ_apply', map_add, map_smul, smul_add, smul_smul, one_mul]
+        simp only [f, Function.iterate_succ_apply', map_add (f := _), map_smul, smul_add, smul_smul, one_mul]
       have hA : AnalyticAt ℝ (f 0) 0 := by
         have h := (GlobalTheory.FockAlg.analyticOnNhd_orbit_pol p q r s T₀ T₁ T₂ F _ (GlobalTheory.FockEmbExp.left_mem hY r s)
           (κ P')).1 0 (Set.mem_univ _)

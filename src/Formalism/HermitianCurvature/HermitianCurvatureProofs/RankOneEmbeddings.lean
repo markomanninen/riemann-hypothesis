@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ComplexConjugate ENNReal NNReal
@@ -18,7 +22,7 @@ lemma emb_out_col (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * 
     embWb k r μ q j = if q = j then 1 else 0 := by
   have hj' : ¬ (r ≤ j.val ∧ j.val ≤ r + k) := hj
   simp only [embWb]
-  rw [dif_neg (fun h => hj' h.2)]
+  rw [dite_eq_right (fun h => hj' h.2)]
   by_cases hqj : q = j
   · subst hqj
     rw [if_pos ⟨rfl, hj'⟩, if_pos rfl]
@@ -28,7 +32,7 @@ lemma emb_out_row (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * 
     embWb k r μ q j = if q = j then 1 else 0 := by
   have hq' : ¬ (r ≤ q.val ∧ q.val ≤ r + k) := hq
   simp only [embWb]
-  rw [dif_neg (fun h => hq' h.1)]
+  rw [dite_eq_right (fun h => hq' h.1)]
   by_cases hqj : q = j
   · subst hqj
     rw [if_pos ⟨rfl, hq'⟩, if_pos rfl]
@@ -37,7 +41,7 @@ lemma emb_out_row (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * 
 lemma emb_mid (μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (q j : Fin (2 * r + k + 1)) (hq : mid k r q) (hj : mid k r j) :
     embWb k r μ q j = μ ⟨q.val - r, by have := hq; omega⟩ ⟨j.val - r, by have := hj; omega⟩ := by
   simp only [embWb]
-  rw [dif_pos ⟨hq, hj⟩]
+  rw [dite_eq_left ⟨hq, hj⟩]
 
 lemma wI_mid (l : Fin (k + 1)) : mid k r (wI k r l) := by
   have := l.isLt
@@ -97,43 +101,9 @@ lemma emb_cont : Continuous (fun μ : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ => 
     | exact (continuous_apply _).comp (continuous_apply _)
     | fun_prop
 
-def sg (k : ℕ) : Fin (k + 1) → Bool := fun j => decide (j ≠ Fin.last k)
-
-lemma Jm_sg : Jm (sg k) = Hb k := by
-  unfold Jm Hb sg
-  congr 1
-  funext j
-  by_cases h : j = Fin.last k <;> simp [h]
-
-lemma uwb_closed : IsClosed (UWb k r) := by
-  have hc : ∀ v : Fin (2 * r + k + 1) → ℂ, Continuous fun g : Mat k r => g *ᵥ v := fun v => by
-    first
-      | fun_prop
-      | exact continuous_id.matrix_mulVec continuous_const
-  unfold UWb GV UH
-  rw [Set.setOf_and]
-  refine IsClosed.inter ?_ ?_
-  · simp only [Set.setOf_mem_eq]
-    refine isClosed_eq ?_ continuous_const
-    first
-      | fun_prop
-      | exact (continuous_id.matrix_conjTranspose.matrix_mul continuous_const).matrix_mul continuous_id
-  · rw [Set.setOf_forall]
-    refine isClosed_iInter fun a => ?_
-    rw [Set.setOf_and]
-    exact (isClosed_eq (hc _) continuous_const).inter (isClosed_eq (hc _) continuous_const)
-
-def Φ (k r : ℕ) (g : UJ (sg k)) : Mt k r :=
-  embWb k r ((g : (Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ)ˣ) : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ)
-
 lemma lmulM_cont (a : Mat k r) : Continuous (lmulM a : Mt k r → Mt k r) := by
   refine continuous_pi fun i => continuous_pi fun j => ?_
   simp only [lmulM, Matrix.mul_apply, Matrix.of_apply]
-  fun_prop
-
-lemma rmulF_cont {n : ℕ} (a : Matrix (Fin n) (Fin n) ℂ) : Continuous (rmulF a) := by
-  refine continuous_pi fun i => continuous_pi fun j => ?_
-  simp only [rmulF, Matrix.mul_apply, Matrix.of_apply]
   fun_prop
 
 end Formalism.FourierDecayAlt.P.RankOneEmbeddings.Wb
@@ -141,74 +111,6 @@ end Formalism.FourierDecayAlt.P.RankOneEmbeddings.Wb
 namespace Formalism.FourierDecayAlt.P
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt.B Formalism.FourierDecayAlt.B2 Formalism.FourierDecayAlt.P.RankOneEmbeddings.Wb
-
-theorem weyl_measure_from_diagonal : Formalism.FourierDecayAlt.B2.WbFromDiag := by
-  intro hEmb hUni hBall hFacts k r
-  have hΦc : Continuous (Φ k r) := emb_cont.comp (hEmb (k + 1) (sg k)).1.continuous
-  have hΦ : Measurable (Φ k r) := hΦc.measurable
-  have hU : UWb k r = embWb k r '' {μ | μᴴ * Hb k * μ = Hb k} := (hFacts k r).1
-  have hmem : ∀ g : UJ (sg k), (Φ k r g : Mat k r) ∈ UWb k r := by
-    intro g
-    rw [hU]
-    refine ⟨_, ?_, rfl⟩
-    have : inUJ (sg k) ((g : (Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ)ˣ) : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) := g.2
-    unfold inUJ at this
-    rw [Jm_sg] at this
-    exact this
-  have hlift : ∀ a ∈ UWb k r, ∃ g₀ : UJ (sg k), a = embWb k r
-      ((g₀ : (Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ)ˣ) : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) := by
-    intro a ha
-    rw [hU] at ha
-    obtain ⟨α, hα, rfl⟩ := ha
-    have h1 : α ∈ {g | inUJ (sg k) g} := by
-      show αᴴ * Jm (sg k) * α = Jm (sg k)
-      rw [Jm_sg]; exact hα
-    rw [← (hEmb (k + 1) (sg k)).2] at h1
-    obtain ⟨g₀, hg₀⟩ := h1
-    exact ⟨g₀, by rw [← hg₀]⟩
-  refine ⟨(muG (sg k)).map (Φ k r), ?_, ?_, ?_, ?_, ?_⟩
-  · rw [Measure.map_apply hΦ (show IsOpen ((UWb k r)ᶜ : Set (Mt k r)) from uwb_closed.isOpen_compl).measurableSet]
-    have : Φ k r ⁻¹' ((UWb k r)ᶜ : Set (Mt k r)) = ∅ := by
-      ext g
-      simp only [Set.mem_preimage, Set.mem_empty_iff_false, iff_false]
-      exact fun h => h (hmem g)
-    rw [this, measure_empty]
-  · intro a ha
-    obtain ⟨g₀, hg₀⟩ := hlift a ha
-    rw [Measure.map_map (lmulM_cont _).measurable hΦ]
-    have : (lmulM a ∘ Φ k r) = Φ k r ∘ (fun x => g₀ * x) := by
-      funext x
-      rw [hg₀]
-      exact (emb_mul _ _).symm
-    rw [this, ← Measure.map_map hΦ (continuous_const_mul g₀).measurable, map_mul_left_eq_self]
-  · intro a ha
-    obtain ⟨g₀, hg₀⟩ := hlift a ha
-    rw [Measure.map_map (rmulF_cont _).measurable hΦ]
-    have : (rmulF a ∘ Φ k r) = Φ k r ∘ (fun x => x * g₀) := by
-      funext x
-      rw [hg₀]
-      exact (emb_mul _ _).symm
-    rw [this, ← Measure.map_map hΦ (continuous_mul_const g₀).measurable, hUni (k + 1) (sg k) g₀]
-  · intro K hK
-    rw [Measure.map_apply hΦ hK.isClosed.measurableSet]
-    have hφ : Continuous (fun x : Mt k r => ∑ i : Fin (k + 1), ∑ j : Fin (k + 1), ‖x (wI k r i) (wI k r j)‖ ^ 2) := by
-      refine continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => ?_
-      exact ((continuous_apply_apply (wI k r i) (wI k r j)).norm).pow 2
-    obtain ⟨R, hR⟩ := hK.bddAbove_image hφ.continuousOn
-    refine lt_of_le_of_lt (measure_mono ?_) (hBall (k + 1) (sg k) R)
-    intro g hg
-    have h1 := hR ⟨_, hg, rfl⟩
-    show hsG g ≤ R
-    unfold hsG hs
-    refine le_of_eq_of_le ?_ h1
-    refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-    show _ = ‖embWb k r _ (wI k r i) (wI k r j)‖ ^ 2
-    rw [emb_wI]
-  · intro h0
-    rw [Measure.map_eq_zero_iff hΦ.aemeasurable] at h0
-    have := isOpen_univ.measure_ne_zero (muG (sg k)) Set.univ_nonempty
-    rw [h0] at this
-    exact this rfl
 
 end Formalism.FourierDecayAlt.P
 
@@ -278,7 +180,7 @@ theorem invM_smul : (invM : Mt k r → Mt k r) = fun x => (detF x)⁻¹ • adjF
 
 theorem invM_meas : Measurable (invM : Mt k r → Mt k r) := by
   rw [invM_smul]
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   have h1 : Measurable fun x : Mt k r => (detF x)⁻¹ := detF_cont.measurable.inv
   have h2 : Measurable fun x : Mt k r => adjF x i j :=
     ((continuous_apply j).comp ((continuous_apply i).comp adjF_cont)).measurable
@@ -298,8 +200,6 @@ theorem haar_sigmaFinite {U : Set (Mat k r)} {μ : Measure (Mt k r)} (h : IsHaar
   haveI : IsFiniteMeasureOnCompacts μ := ⟨fun K hK => h.finite_compact K hK⟩
   infer_instance
 
-example (U : Set (Mt k r)) (hU : IsClosed U) : StandardBorelSpace U := hU.measurableSet.standardBorel
-
 end Formalism.FourierDecayAlt.P.RankOneEmbeddings.R1
 
 namespace Formalism.FourierDecayAlt.P.RankOneEmbeddings.R1
@@ -313,8 +213,8 @@ def Om (k r : ℕ) (z z' : Vc k r) : Set ℂ := {ζ | Tz k r z * Tz k r z' < Com
 theorem Om_open (z z' : Vc k r) : IsOpen (Om k r z z') := by
   exact isOpen_lt continuous_const Complex.continuous_normSq
 
-open Classical in
 
+open Classical in
 def secF (k r : ℕ) (z z' : Vc k r) (μsec : ℂ → Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (ζ : ℂ) :
     Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ := if ζ ∈ Om k r z z' then μsec ζ else 1
 
@@ -358,7 +258,7 @@ theorem secF_meas {z z' : Vc k r} {μsec : ℂ → Matrix (Fin (k + 1)) (Fin (k 
   have hs := hsec
   unfold IsSection at hs
   unfold MeasSec
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   have heq : (fun ζ => secF k r z z' μsec ζ i j) =
       (Om k r z z').piecewise (fun ζ => μsec ζ i j) (fun _ => (1 : Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) i j) := by
     funext ζ
@@ -398,9 +298,6 @@ abbrev wd (k r : ℕ) (z z' : Vc k r) : Measure ℂ :=
 
 def Phi (s : ℂ → Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (x : ℂ × (Mt k r × Mt k r)) : Mt k r :=
   mulM (mulM (invM x.2.1, embF k r (s x.1)), x.2.2)
-
-theorem Phi_eq (s : ℂ → Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ) (x : ℂ × (Mt k r × Mt k r)) :
-    Phi s x = (Matrix.of x.2.1 : Mat k r)⁻¹ * embWb k r (s x.1) * Matrix.of x.2.2 := rfl
 
 theorem embS_meas {s : ℂ → Matrix (Fin (k + 1)) (Fin (k + 1)) ℂ} (hs : MeasSec s) :
     Measurable fun ζ : ℂ => embF k r (s ζ) := by
@@ -990,7 +887,7 @@ attribute [local fun_prop] mulM_meas invM_meas sgF_meas
 def bc1 (k r : ℕ) (c : Fin r → ℂ) : Mt k r := bigCell k r c 1
 
 theorem big_cell_coordinate_measurable : Measurable (bc1 k r) := by
-  refine measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => ?_
+  refine Measurable.of_eval fun i => Measurable.of_eval fun j => ?_
   simp only [bc1, bigCell]
   split_ifs
   all_goals first
@@ -1007,8 +904,8 @@ theorem cW_nonneg (c : Fin r → ℂ) : 0 ≤ cWeight k r c := by
   unfold cWeight
   exact Finset.prod_nonneg fun a _ => pow_nonneg (norm_nonneg _) _
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem engine {μG μN μb μW μW' : Measure (Mt k r)} [SFinite μN] [SFinite μb] [SFinite μW] [SFinite μW'] (T T' : ℝ)
     (G0 : (Fin r → ℂ) → Mt k r) (hG0 : Measurable G0) (ES : ℂ → Mt k r) (hES : Measurable ES) (C1 C2 : ℝ≥0)
     (hIt : ∀ f : Mt k r → ℝ≥0∞, Measurable f → ∫⁻ g, f g ∂μG = (C1 : ℝ≥0∞) * ∫⁻ c : Fin r → ℂ,

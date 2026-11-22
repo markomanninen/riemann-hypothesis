@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EightDvdNCol
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.FactorDepthInertBounds
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.SplitQuadraticMinSums
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.BigBlockCharacters
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TypedPartSplitPrimes
-import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.OEOsInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EightDvdNCol
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.FactorDepthInertBounds
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.SplitQuadraticMinSums
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.BigBlockCharacters
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.TypedPartSplitPrimes
+public import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.OEOsInjective
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option synthInstance.maxHeartbeats 400000
@@ -21,8 +25,8 @@ section Free
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} (Dw : Datum H)
 
-open Classical in
 
+open Classical in
 def ExpBd (k : ℕ) (cx : Lt1 Dw → ℕ) (Mb Sm : ℝ) (M : ℕ) : Prop :=
   0 ≤ Mb ∧ (∀ τ : E →+* ℂ, ((∑ f ∈ Finset.univ.filter (fun f : Lt1 Dw => IsBig k f ∧ f.1 = τ), cx f : ℕ) : ℝ) ≤ Mb) ∧
     (sumSmallSpread k cx : ℝ) ≤ Sm ∧ ∀ f, cx f ≤ M
@@ -41,14 +45,12 @@ end Free
 def eSmall (F N m : ℕ) (Mb Sm : ℝ) (M p : ℕ) : ℝ :=
   (F * m * Mb * (4 + Real.logb p M / 2) + Sm) / ((p : ℝ) - 1) + F * (m + 1) * (N : ℝ) ^ 2 * (Real.logb p M + 1)
 
-open Classical in
 
+open Classical in
 def eOf (F N k m : ℕ) (Mb Sm : ℝ) (vd : ℕ → ℝ) (M : ℕ) (S R : Finset ℕ) (p : ℕ) : ℝ :=
   if M < p then 0 else if p ∈ S then F * m * (1 + vd p / 2) * Mb + Sm
   else if p ∈ R then (F * N * Mb + Sm) / ((p : ℝ) - 1)
   else if m * p < k then eSmall F N m Mb Sm M p + 1 else (6 * F * m * Mb + Sm) / ((p : ℝ) - 1) + 1
-
-example (F N k m : ℕ) (Mb Sm : ℝ) (vd : ℕ → ℝ) (S R : Finset ℕ) : eOf F N k m Mb Sm vd 3 S R 5 = 0 := by simp [eOf]
 
 section Point
 
@@ -67,8 +69,6 @@ def NumAt (PP C : ℝ) : Prop :=
     ∀ q ∈ ({D.host.q, D.host.d} : Finset ℕ), D.R.r * Real.log q / ((q : ℝ) - 1) ≤ C * D.R.m * L.sc.L
 
 end Point
-
-def WtPt : Prop := Lifts fun Fm x _ ι p i PP C => (i : ℕ) + 1 < (Fm.D x ι).R.m → ∀ u1, Quo p i PP u1 → WtAt p i PP C u1
 
 def NumPt : Prop := Lifts fun Fm x _ ι p i PP C => (i : ℕ) + 1 < (Fm.D x ι).R.m → NumAt p i PP C
 

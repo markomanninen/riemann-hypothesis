@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.Dchart
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnipotentRadicalBlockUnitriangularFlagStatement
-import Formalism.FormalDegreeBessel.FinalG
-import Formalism.FormalDegreeBessel.FinalBF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LongWeylElement
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.Dchart
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnipotentRadicalBlockUnitriangularFlagStatement
+public import Formalism.FormalDegreeBessel.FinalG
+public import Formalism.FormalDegreeBessel.FinalBF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OppositeWeylSubgroupClosed
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LongWeylElement
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
+
+@[expose] public section
 
 open MeasureTheory Matrix Filter Topology Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf GlobalTheory.Amp GlobalTheory.CellDens
 open scoped InnerProductSpace ENNReal
@@ -75,22 +79,22 @@ theorem bigCell_support (k r : ℕ) (c : Fin r → ℂ) (μ : Matrix (Fin (k + 1
   have hj := j.isLt
   simp only [bigCell]
   by_cases h1 : j.val < r
-  · rw [dif_pos h1]
+  · rw [dite_eq_left h1]
     split_ifs with h3
     · exfalso
       have hv : i.val = 2 * r + k - j.val := by subst h3; rfl
       unfold lev at h
       split_ifs at h <;> omega
     · rfl
-  · rw [dif_neg h1]
+  · rw [dite_eq_right h1]
     by_cases h2 : j.val ≤ r + k
-    · rw [dif_pos h2]
+    · rw [dite_eq_left h2]
       split_ifs with h3
       · exfalso
         unfold lev at h
         split_ifs at h <;> omega
       · rfl
-    · rw [dif_neg h2]
+    · rw [dite_eq_right h2]
       split_ifs with h3
       · exfalso
         unfold lev at h
@@ -101,7 +105,7 @@ theorem bigCell_entry (k r : ℕ) (c : Fin r → ℂ) (μ : Matrix (Fin (k + 1))
     bigCell k r c μ (esI k r a) (eI k r a) = c a := by
   have h1 : (eI k r a).val < r := a.isLt
   simp only [bigCell]
-  rw [dif_pos h1]
+  rw [dite_eq_left h1]
   exact if_pos rfl
 
 private theorem lev_mono' (k r : ℕ) (i j : Fin (2 * r + k + 1)) (h : j.val ≤ i.val) :
@@ -160,7 +164,7 @@ private theorem bigCell_mid_apply (k r : ℕ) (c : Fin r → ℂ) (m j : Fin (2 
     (h2 : j.val ≤ r + k) : bigCell k r c 1 m j = if m = j then 1 else 0 := by
   by_cases hm : Formalism.FourierDecayAlt.P.TwoByOneBlock.mid k r m
   · exact Formalism.FourierDecayAlt.P.TwoByOneBlock.bc_one_mid c m j hm ⟨h1, h2⟩
-  · rw [Formalism.FourierDecayAlt.P.TwoByOneBlock.bc_mid_col c 1 m j ⟨h1, h2⟩, dif_neg hm, if_neg]
+  · rw [Formalism.FourierDecayAlt.P.TwoByOneBlock.bc_mid_col c 1 m j ⟨h1, h2⟩, dite_eq_right hm, if_neg]
     intro hmj
     subst hmj
     exact hm ⟨h1, h2⟩

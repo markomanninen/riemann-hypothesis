@@ -1,5 +1,9 @@
-import Formalism.TruncatedSeriesCounting.RamifiedValuationInequality
-import Formalism.WindowSums.AnnihilatorPolynomials.DistinctTerms
+module
+
+public import Formalism.TruncatedSeriesCounting.RamifiedValuationInequality
+public import Formalism.WindowSums.AnnihilatorPolynomials.DistinctTerms
+
+@[expose] public section
 
 noncomputable section
 

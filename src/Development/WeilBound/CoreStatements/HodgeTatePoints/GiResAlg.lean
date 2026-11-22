@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.TwpdivHopf
-import Development.WeilBound.CoreStatements.HodgeTatePoints.TwhopfInd
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.TwpdivHopf
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.TwhopfInd
+
+@[expose] public section
 
 open GlobalTheory.CompanionTheory.Ar.BT
 
@@ -33,7 +37,7 @@ theorem pow_pull [Finite T] {B : Subalgebra R (T → R)} (hB : IsHopfOrder B) {f
         rw [map_zero]
         exact B.zero_mem
       | add x y _ _ hx hy =>
-        rw [map_add]
+        rw [map_add (f := _)]
         exact B.add_mem hx hy
       | smul r x _ hx =>
         rw [map_smul]
@@ -58,8 +62,8 @@ theorem isLoc_of_ind {H : Subgroup T} {B : Subalgebra R (T → R)}
   funext x
   simp [GlobalTheory.CompanionTheory.Ar.BT.pullFun, hbf x x.2]
 
-open Classical in
 
+open Classical in
 def cosetInd (R : Type) [CommRing R] (H : Subgroup T) (c : T ⧸ H) : T → R :=
   fun t => if (t : T ⧸ H) = c then 1 else 0
 
@@ -95,13 +99,11 @@ private theorem translate_mem_of_isHopfOrder' {U : Type} [CommGroup U] {A : Suba
     | mem x hx =>
       obtain ⟨a, ha, b, hb, rfl⟩ := hx
       convert A.smul_mem hb (a u) using 1
-      funext x
-      simp [L]
     | zero =>
       rw [map_zero]
       exact A.zero_mem
     | add x y _ _ hx hy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact A.add_mem hx hy
     | smul r x _ hx =>
       rw [map_smul]

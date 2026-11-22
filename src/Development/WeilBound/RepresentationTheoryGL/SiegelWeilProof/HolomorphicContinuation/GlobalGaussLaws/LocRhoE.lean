@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LocRhoD
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LocRhoD
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ variable {D : D7} {n : ℕ}
 set_option synthInstance.maxHeartbeats 400000
 set_option maxHeartbeats 2000000
 
-open Classical in
 
+open Classical in
 def substP {m : ℕ} (τ : D.what₂.Tau) (fr : Matrix (Fin m) (Fin m) ℂ) (p : MvPolynomial (D.what₂.Tau × Fin m × Fin n × Bool) ℂ) :
     PX m n :=
   aeval (fun v : D.what₂.Tau × Fin m × Fin n × Bool => if v.1 = τ then
@@ -36,8 +40,10 @@ theorem evX_substP {m : ℕ} (τ : D.what₂.Tau) (fr : Matrix (Fin m) (Fin m) �
   · subst hτ
     rw [if_pos rfl, dirAt_self]
     cases b
-    · simp only [Bool.false_eq_true, ↓reduceIte, map_sum, map_mul, eval_C, eval_X, Matrix.mul_apply]
-    · simp only [↓reduceIte, map_sum, map_mul, eval_C, eval_X, Matrix.mul_apply, map_sum, Complex.star_def]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [Bool.false_eq_true, ↓reduceIte, map_sum, map_mul, eval_C, eval_X, Matrix.mul_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [↓reduceIte, map_sum, map_mul, eval_C, eval_X, Matrix.mul_apply, map_sum, Complex.star_def]
   · rw [if_neg hτ, dirAt_ne hτ]
     cases b <;> simp
 
@@ -61,7 +67,7 @@ theorem slice {θ : InfFam D} (hθ : IsInfFam θ) {V : HSp D} {τ : D.what₂.Ta
     obtain ⟨Q₁, h₁⟩ := hF
     obtain ⟨Q₂, h₂⟩ := hG
     refine ⟨Q₁ + Q₂, fun u => ?_⟩
-    simp only [Pi.add_apply, h₁, h₂, evX, map_add]
+    simp only [Pi.add_apply, h₁, h₂, evX, map_add (f := _)]
     ring
   | smul a F _ hF =>
     obtain ⟨Q, h⟩ := hF

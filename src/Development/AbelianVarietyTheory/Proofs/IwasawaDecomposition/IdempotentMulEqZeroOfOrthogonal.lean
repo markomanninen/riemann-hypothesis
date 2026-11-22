@@ -1,15 +1,20 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
-import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
-import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
-import Formalism.LocalToGlobal.IndefiniteReal.IndefiniteWeightData
-import Formalism.LocalToGlobal.IndefiniteReal.HeckeTupleStatement
-import Formalism.LocalRingCardinality.DataExtra
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ThetaAtEqSumHeisOfFourierSum
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ScaledMatrixMemRationalLattice
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
+public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Formalism.LocalToGlobal.IndefiniteReal.IndefiniteWeightData
+public import Formalism.LocalToGlobal.IndefiniteReal.HeckeTupleStatement
+public import Formalism.LocalRingCardinality.DataExtra
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MemLatOIffExistsActO
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ThetaAtEqSumHeisOfFourierSum
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ScaledMatrixMemRationalLattice
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.PlacewiseToAdelicDecompositionForall
+
+@[expose] public section
 
 noncomputable section
 
@@ -79,7 +84,8 @@ theorem cross_eq_zero {R ι : Type} [CommRing R] (hR : ∀ n : ℕ, 0 < n → Is
     (s : Finset ι) (h : ∀ i ∈ s, p i * p i = p i) (hc : (∑ i ∈ s, p i) * c (∑ i ∈ s, p i) = 0) :
     ∀ i ∈ s, ∀ j ∈ s, p i * c (p j) = 0 := by
   intro i hi j hj
-  rw [map_sum, Finset.sum_mul_sum, ← Finset.sum_product'] at hc
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul_sum, ← Finset.sum_product'] at hc
   refine eq_zero_of_sum_idem hR (fun q : ι × ι => p q.1 * c (p q.2)) _ (fun q hq => ?_) hc
     (i := (i, j)) (Finset.mem_product.2 ⟨hi, hj⟩)
   rw [mul_mul_mul_comm, ← map_mul, h _ (Finset.mem_product.1 hq).1, h _ (Finset.mem_product.1 hq).2]
@@ -125,7 +131,8 @@ theorem idemSum_mul_self {e : AE D} {P : Finset (Formalism.L2.DIV.Pl D.host.E)} 
 
 theorem map_sum_eq_zero {R R' ι : Type} [CommRing R] [CommRing R'] (f : R →+* R') (p : ι → R) (s : Finset ι)
     (h : ∀ i ∈ s, f (p i) = 0) : f (∑ i ∈ s, p i) = 0 := by
-  rw [map_sum]; exact Finset.sum_eq_zero h
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]; exact Finset.sum_eq_zero h
 
 theorem infPart_idemSum {e : AE D} {P : Finset (Formalism.L2.DIV.Pl D.host.E)} (h : IsIdemSum e P) : infPart D e = 0 := by
   obtain ⟨⟨es, hes, rfl⟩, -⟩ := h
@@ -141,7 +148,7 @@ theorem infPart_cA {e : AE D} (h : infPart D e = 0) : infPart D (cA D e) = 0 := 
     induction z using TensorProduct.induction_on with
     | zero => rw [RingHom.map_zero, RingHom.map_zero, RingHom.map_zero]
     | tmul a x => rfl
-    | add x y hx hy => rw [RingHom.map_add, RingHom.map_add, RingHom.map_add, RingHom.map_add, hx, hy]
+    | add x y hx hy => rw [RingHom.map_add (f := _), RingHom.map_add (f := _), RingHom.map_add (f := _), RingHom.map_add (f := _), hx, hy]
   rw [key, h, RingHom.map_zero]
 
 theorem mem_waveSpan {G : Type} [AddCommGroup G] {χ : G → G → ℂ} {X Y L L' : AddSubgroup G} (h : IsBichar χ)
@@ -183,7 +190,12 @@ theorem placeModel_unique_of_dual (ψ : AddChar (AF D.host.F) ℂ) {e : AE D} (�
   have tf : ∀ k : ℕ, 0 < k → Function.Injective fun t : WO S T => k • t := fun k hk a b hab => by
     rw [← inv_smul_nsmul S T hk a, ← inv_smul_nsmul S T hk b]
     exact congrArg _ hab
-  have hb := isBichar_symplO S T ψ
+  have hb : IsBichar (fun x y : WO S T => ψ (symplO S T x y)) := by
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · intro a b y; simp only [symplO_add_left, AddChar.map_add_eq_mul]
+    · intro a y z; simp only [symplO_add_right, AddChar.map_add_eq_mul]
+    · intro y; simp [symplO_zero_left]
+    · intro a; simp [symplO_zero_right]
   have hm : Φ ∈ waveSpan (fun x y : WO S T => ψ (symplO S T x y)) (half S T e) (half S T (cA D e)) (Λ ⊓ half S T e) := by
     obtain ⟨h1, k, hk, h2, h3⟩ := hΦ
     exact mem_waveSpan hb inf_le_right inf_le_right hLL' hX (half_div S T e) (half_div S T _) tf hfin Φ
@@ -217,7 +229,7 @@ theorem placeModel_unique_of_dual (ψ : AddChar (AF D.host.F) ℂ) {e : AE D} (�
     rw [e1, h₁.trans _ s1 x ((isHalf_iff S T).2 hx), h₂.trans _ s1 x ((isHalf_iff S T).2 hx),
       h₁.modul _ s0 y ((isHalf_iff S T).2 hy), h₂.modul _ s0 y ((isHalf_iff S T).2 hy), v1, v2]
   | zero => rw [LinearMap.map_zero, LinearMap.map_zero]
-  | add f g _ _ hf hg => rw [LinearMap.map_add, LinearMap.map_add, hf, hg]
+  | add f g _ _ hf hg => rw [LinearMap.map_add (f := _), LinearMap.map_add (f := _), hf, hg]
   | smul c f _ hf => rw [LinearMap.map_smul, LinearMap.map_smul, hf]
 
 theorem exists_common_den {A ι : Type} [CommRing A] [Finite ι] (R : Subring A) {p : ι → A → Prop}
@@ -308,7 +320,7 @@ theorem exists_den_fg {M : Type} [AddCommGroup M] [Module (𝓞 E) M] {Λ : Subm
   induction hx using Submodule.span_induction with
   | mem x hx => exact h ⟨x, hx⟩ _ rfl
   | zero => simp
-  | add x y _ _ hx hy => rw [map_add, mul_add]; exact add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _), mul_add]; exact add_mem hx hy
   | smul c x _ hx =>
     rw [map_smul, Algebra.smul_def, mul_left_comm]
     exact mul_mem ⟨c, rfl⟩ hx
@@ -332,7 +344,7 @@ theorem resS_add (PP : Formalism.L2.DIV.Pl E) {x y z : E ⊗[F] Af F} (hx : x �
     (h : y = x + (Ideal.absNorm PP.asIdeal : ℕ) * z) :
     Formalism.L2.DIV.resS F PP ⟨y, hy⟩ = Formalism.L2.DIV.resS F PP ⟨x, hx⟩ := by
   have e : (⟨y, hy⟩ : Formalism.L2.Herm.intAf F E) = ⟨x, hx⟩ + (Ideal.absNorm PP.asIdeal : ℕ) * ⟨z, hz⟩ := Subtype.ext h
-  rw [e, map_add, map_mul, map_natCast, resS_natCast_absNorm, zero_mul, add_zero]
+  rw [e, map_add (f := _), map_mul, map_natCast, resS_natCast_absNorm, zero_mul, add_zero]
 
 end General
 
@@ -386,7 +398,7 @@ theorem exists_den_latO (hS : ΛS.FG) (hT : ΛT.FG) : ∃ M : ℕ, 0 < M ∧
     rw [natCast_mul_tmul]
     exact tmul_mem_int (h X hX i j) hα
   · rw [Matrix.zero_apply, RingHom.map_zero, mul_zero]; exact zero_mem _
-  · intro x y hx hy; rw [Matrix.add_apply, RingHom.map_add, mul_add]; exact add_mem hx hy
+  · intro x y hx hy; rw [Matrix.add_apply, RingHom.map_add (f := _), mul_add]; exact add_mem hx hy
   · intro x hx; rw [Matrix.neg_apply, RingHom.map_neg, mul_neg]; exact neg_mem hx
 
 theorem mul_pair_one {w : AE D} (hw : infPart D w = 0) :
@@ -396,7 +408,7 @@ theorem mul_pair_one {w : AE D} (hw : infPart D w = 0) :
   · rw [RingHom.map_sub, RingHom.map_mul, hw, zero_mul, sub_zero]
   · rw [RingHom.map_sub, RingHom.map_mul, GlobalTheory.LatVac.finPart_pair, ← Algebra.TensorProduct.one_def, mul_one, sub_self]
 
-theorem exists_nsmul_mem_latO (hS : Submodule.IsLattice D.host.E ΛS) (hT : Submodule.IsLattice D.host.E ΛT) :
+theorem exists_nsmul_mem_latO (hS : Submodule.IsFullLattice D.host.E ΛS) (hT : Submodule.IsFullLattice D.host.E ΛT) :
     ∃ K : ℕ, 0 < K ∧ ∀ t : WO S T, t.map (infPart D) = 0 →
       (∀ i j, toEAf D (t i j) ∈ Formalism.L2.Herm.intAf D.host.F D.host.E) →
       K • t ∈ latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) (fun _ => True) := by
@@ -418,7 +430,7 @@ theorem exists_nsmul_mem_latO (hS : Submodule.IsLattice D.host.E ΛS) (hT : Subm
   · rw [mul_pair_one (congrFun (congrFun ht p.1) p.2)]
   · rw [TensorProduct.tmul_zero, mul_zero, mul_zero, mul_zero]
 
-theorem exists_nsmul_mem_latO' (hS : Submodule.IsLattice D.host.E ΛS) (hT : Submodule.IsLattice D.host.E ΛT)
+theorem exists_nsmul_mem_latO' (hS : Submodule.IsFullLattice D.host.E ΛS) (hT : Submodule.IsFullLattice D.host.E ΛT)
     (t : WO S T) (ht : t.map (infPart D) = 0) : ∃ k : ℕ, 0 < k ∧
       k • t ∈ latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) (fun _ => True) := by
   obtain ⟨K, hK, h⟩ := exists_nsmul_mem_latO hS hT
@@ -457,7 +469,8 @@ theorem exists_isThetaAt {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ 
     refine ⟨_, ⟨r, hr, rfl⟩, e • u, hsm e he u hu, ?_⟩
     have := (mem_half S T).1 ht.2
     rw [← this, htr, smul_add, smul_comm e k u]
-  · exact exists_nsmul_mem_latO' hS.1 hT.1 y (infPart_of_half (infPart_cA hinf) ((isHalf_iff S T).2 hy))
+  · exact exists_nsmul_mem_latO' (GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull S ΛS hS)
+      (GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull T ΛT hT) y (infPart_of_half (infPart_cA hinf) ((isHalf_iff S T).2 hy))
 
 theorem redM_add {a b : ℕ} (PP : Formalism.L2.DIV.Pl D.host.E) (X Y Z : Matrix (Fin b) (Fin a) (EAf D)) (hX : IsIntM X)
     (hZ : IsIntM Z) (h : ∀ i j, Y i j = X i j + (Ideal.absNorm PP.asIdeal : ℕ) * Z i j) : redM PP Y = redM PP X := by
@@ -467,8 +480,8 @@ theorem redM_add {a b : ℕ} (PP : Formalism.L2.DIV.Pl D.host.E) (X Y Z : Matrix
   have e : redM PP X i j = Formalism.L2.DIV.resS D.host.F PP ⟨X i j, hX i j⟩ := dif_pos (hX i j)
   exact (dif_pos hY).trans ((resS_add PP (hX i j) hY (hZ i j) (h i j)).trans e.symm)
 
-open Classical in
 
+open Classical in
 theorem isSBHalf_of_red {a b : ℕ} (e : AE D) (Λ : AddSubgroup (WO S T)) (fr : WO S T → Matrix (Fin b) (Fin a) (EAf D))
     (hadd : ∀ (x u : WO S T) (k : ℕ) i j, fr (x + k • u) i j = fr x i j + k * fr u i j)
     (hB : ∃ M : ℕ, 0 < M ∧ ∀ u ∈ Λ, ∀ i j, (M : EAf D) * fr u i j ∈ Formalism.L2.Herm.intAf D.host.F D.host.E)
@@ -524,10 +537,10 @@ theorem omegaQ_congr {a b : ℕ} (Q : Finset (Formalism.L2.DIV.Pl D.host.E)) (r 
     refine Finset.prod_congr rfl fun PP _ => ?_
     congr 3
     exact Units.ext (by rw [IsUnit.unit_spec, IsUnit.unit_spec, h PP.1 PP.2])
-  · rw [dif_neg hy, dif_neg fun h' => hy (hiff.2 h')]
+  · rw [dite_eq_right hy, dite_eq_right fun h' => hy (hiff.2 h')]
+
 
 open Classical in
-
 def omegaTop {a : ℕ} (L : Formalism.L2.DIV.LevDat D.host.E ℂ a) (χj : ∀ PP : Formalism.L2.DIV.Pl D.host.E, (Formalism.L2.DIV.kP PP)ˣ →* ℂˣ)
     (A : Prop) (z : ∀ PP : ↥L.Pg, Matrix (Fin a) (Fin a) (Formalism.L2.DIV.kP PP.1)) : ℂ :=
   if h : A ∧
@@ -560,7 +573,7 @@ theorem frMapO_add (βS : GL (Fin S.rank) (EAf D)) (βT : GL (Fin T.rank) (EAf D
     frMapO S T βS βT (x + k • u) i j = frMapO S T βS βT x i j + k * frMapO S T βS βT u i j := by
   have : ∀ a b, toEAf D ((x + k • u) a b) = toEAf D (x a b) + k * toEAf D (u a b) := fun a b => by
     change toEAf D (x a b + k • u a b) = _
-    rw [nsmul_eq_mul, RingHom.map_add, RingHom.map_mul, map_natCast]
+    rw [nsmul_eq_mul, RingHom.map_add (f := _), RingHom.map_mul, map_natCast]
   simp only [frMapO, Matrix.mul_apply, Matrix.map_apply, this, Finset.mul_sum, Finset.sum_mul,
     ← Finset.sum_add_distrib]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
@@ -573,7 +586,7 @@ theorem exists_den_frMapO (hS : ΛS.FG) (hT : ΛT.FG) (βS : GL (Fin S.rank) (EA
   obtain ⟨N, hN, h'⟩ := exists_den_mul (Formalism.L2.Herm.intAf D.host.F D.host.E) exists_den_adele (βT⁻¹).val βS.val
   exact ⟨N * M, Nat.mul_pos hN hM, fun u hu => h' M (u.map (toEAf D)) (h u hu)⟩
 
-theorem exists_nsmul_of_frMapO (hS : Submodule.IsLattice D.host.E ΛS) (hT : Submodule.IsLattice D.host.E ΛT)
+theorem exists_nsmul_of_frMapO (hS : Submodule.IsFullLattice D.host.E ΛS) (hT : Submodule.IsFullLattice D.host.E ΛT)
     (βS : GL (Fin S.rank) (EAf D)) (βT : GL (Fin T.rank) (EAf D)) :
     ∃ K : ℕ, 0 < K ∧ ∀ t : WO S T, t.map (infPart D) = 0 → IsIntM (frMapO S T βS βT t) →
       K • t ∈ latO S T (ΛS : Set (Fin S.rank → D.host.E)) (ΛT : Set (Fin T.rank → D.host.E)) (fun _ => True) := by

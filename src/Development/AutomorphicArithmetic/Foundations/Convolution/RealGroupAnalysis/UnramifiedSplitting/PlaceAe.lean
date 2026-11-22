@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SgLaws
-import GroundTheory.GlobalFields.SemilocalAlgebras.LocalDegree
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsTwoPlacesOverOfIsSquareLocal
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsSquareOneAddFourMul
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SgLaws
+public import GroundTheory.GlobalFields.SemilocalAlgebras.LocalDegree
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsTwoPlacesOverOfIsSquareLocal
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsSquareOneAddFourMul
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -41,9 +45,9 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
 private theorem finrank_two (D : Dat F E) : Module.finrank F E = 2 := by
   rw [Module.finrank_eq_card_basis D.b, Fintype.card_fin]
 
-private theorem isQuad (D : Dat F E) : GlobalTheory.QNorm.IsQuad D.δ D.θ D.σ where
-  nonsq := by
-    rintro ⟨s, hs⟩
+private theorem isQuad (D : Dat F E) : GlobalTheory.QNorm.IsQuad D.δ D.θ D.σ := by
+  refine ⟨?_, D.sq, D.conj, ?_⟩
+  · rintro ⟨s, hs⟩
     have h1 : (D.θ - algebraMap F E s) * (D.θ + algebraMap F E s) = 0 := by
       have := D.sq
       rw [hs, map_mul] at this
@@ -59,23 +63,21 @@ private theorem isQuad (D : Dat F E) : GlobalTheory.QNorm.IsQuad D.δ D.θ D.σ 
         simp [Fin.sum_univ_two, D.b0, D.b1, Algebra.smul_def]
         linear_combination h) 1
       simp at this
-  sq := D.sq
-  conj := D.conj
-  span x := by
+  · intro x
     refine ⟨D.b.repr x 0, D.b.repr x 1, ?_⟩
     conv_lhs => rw [← D.b.sum_repr x]
     simp [Fin.sum_univ_two, D.b0, D.b1, Algebra.smul_def]
 
 variable (D : Dat F E) (v : P F) (w : P E) [hl : w.asIdeal.LiesOver v.asIdeal]
 
+local notation "ι" => completionMap v w
+local notation "θw" => algebraMap E (Kv w) D.θ
+
 private theorem notSq (hu : ∀ w' : P E, w'.asIdeal.LiesOver v.asIdeal → w' = w) :
     ¬ IsSquare (algebraMap F (Kv v) D.δ) := by
   intro h
   obtain ⟨a, b, hab, ha, hb⟩ := GlobalTheory.QNorm.two_places_of_isSquare F E D.δ D.θ D.σ (isQuad D) v h
   exact hab ((hu a ((below_eq_iff a v).1 ha)).trans (hu b ((below_eq_iff b v).1 hb)).symm)
-
-local notation "ι" => completionMap v w
-local notation "θw" => algebraMap E (Kv w) D.θ
 
 private theorem iota_delta : ι (algebraMap F (Kv v) D.δ) = θw ^ 2 := by
   rw [completionMap_algebraMap, IsScalarTower.algebraMap_apply F E (Kv w), ← D.sq, map_pow]
@@ -140,21 +142,12 @@ private theorem aniso_of (he : w.asIdeal.ramificationIdx (𝓞 F) = 1) (h2 : Val
     show ι u ^ 2 - θw ^ 2 * ι t ^ 2 = (ι u + ι t * θw) * (ι u + ι (-t) * θw) by rw [map_neg]; ring,
     map_mul, val_coord D v w he h2 hθ hu, val_coord D v w he h2 hθ hu, Valuation.map_neg, sq]
 
-end Ext
-
-section Fin2
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-variable (D : Dat F E) (v : P F) (w : P E) [hl : w.asIdeal.LiesOver v.asIdeal]
-
-local notation "ι" => completionMap v w
-local notation "θw" => algebraMap E (Kv w) D.θ
-
 private theorem normV_eq : normV w = normV v ^ w.asIdeal.inertiaDeg (𝓞 F) := by
   have e : v = below F w := ((below_eq_iff w v).2 hl).symm
   subst e
   have := w.isMaximal
   have := (below F w).isMaximal
-  show Ideal.absNorm w.asIdeal = Ideal.absNorm (below F w).asIdeal ^ _
+  simp only [normV, ← Submodule.cardQuot_apply, ← Ideal.absNorm_apply]
   rw [← Ideal.absNorm_relNorm (𝓞 F) (𝓞 E) w.asIdeal,
     Ideal.relNorm_eq_pow_of_isMaximal w.asIdeal (below F w).asIdeal, map_pow]
 
@@ -186,7 +179,7 @@ private theorem inert_of (he : w.asIdeal.ramificationIdx (𝓞 F) = 1) (h2 : Val
   haveI : Module.Finite (Kv v) (Kv w) := Module.finite_of_finrank_pos (by omega)
   let L : (Kv v × Kv v) →ₗ[Kv v] Kv w :=
     { toFun := fun p => ι p.1 + ι p.2 * θw
-      map_add' := fun p q => by simp only [Prod.fst_add, Prod.snd_add, map_add]; ring
+      map_add' := fun p q => by simp only [Prod.fst_add, Prod.snd_add, map_add (f := _)]; ring
       map_smul' := fun c p => by
         change ι (c * p.1) + ι (c * p.2) * θw = c • (ι p.1 + ι p.2 * θw)
         rw [Algebra.smul_def, algebraMap_completion_eq, map_mul, map_mul]
@@ -219,7 +212,7 @@ private theorem inert_of (he : w.asIdeal.ramificationIdx (𝓞 F) = 1) (h2 : Val
   · intro ϖ hϖ
     let ϖ' : (Kv w)ˣ := Units.map (ι : Kv v →* Kv w) ϖ
     have hco : ((idl w ϖ' : (A E)ˣ) : A E) = adeleMap F E ((idl v ϖ : (A F)ˣ) : A F) := by
-      rw [hidl, hidl', map_add, map_one, adeleMap_sg v w hu, map_sub, map_one]
+      rw [hidl, hidl', map_add (f := _), map_one, adeleMap_sg v w hu, map_sub, map_one]
       rfl
     refine ⟨ϖ', ?_, ?_, ?_⟩
     · change Valued.v (ι (ϖ : Kv v)) = _
@@ -241,7 +234,7 @@ private theorem split_of (he : w.asIdeal.ramificationIdx (𝓞 F) = 1)
   change ι _ = _
   rw [completionMap_algebraMap, IsScalarTower.algebraMap_apply F E (Kv w)]
 
-end Fin2
+end Ext
 
 section Final
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]

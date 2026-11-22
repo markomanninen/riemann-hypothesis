@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.ToricVarieties.KrullDomain
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.ToricVarieties.KrullDomain
+
+@[expose] public section
 
 open NumberField TensorProduct
 

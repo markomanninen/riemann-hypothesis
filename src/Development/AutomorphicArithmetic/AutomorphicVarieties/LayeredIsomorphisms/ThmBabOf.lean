@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.SecondBound
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CMFieldExponentialBounds.ExistsNumberFieldIsAbFieldFinrankEqDeg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.Window
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.Kmono
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.PartA
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.PartB
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.SecondBound
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CMFieldExponentialBounds.ExistsNumberFieldIsAbFieldFinrankEqDeg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.Window
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.Kmono
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.PartA
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.PartB
+
+@[expose] public section
 
 open NumberField Formalism.GaloisCohomology UpperTheory.Top UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Win
 
@@ -46,7 +50,7 @@ theorem UpperTheory.V.Win.thmBab_of :
         exact ⟨R', ⟨_, L₀, _, _, hab, hR'⟩⟩
       have hRl : Rl l (L l) = Classical.choose hP := by
         show (if h : ∃ R, P l (L l) R then Classical.choose h else 0) = _
-        rw [dif_pos hP]
+        rw [dite_eq_left hP]
       obtain ⟨_, L₀₀, _, _, hab0, hR0⟩ := Classical.choose_spec hP
       obtain ⟨x0, hx0⟩ := partB CK hCKpos hK l (Classical.choose hP) hl2 (L l) hmu L₀₀ hab0 hR0
         J Ct eps A1 hJpos hCt0.le heps

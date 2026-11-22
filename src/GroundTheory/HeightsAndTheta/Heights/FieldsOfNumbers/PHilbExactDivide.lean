@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PGradedFinite
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PGradedFinite
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -17,8 +22,9 @@ variable {K : Type} [DecidableEq K] {ι : K → Type} {F : Type u} [Field F]
 
 attribute [local instance] MvPolynomial.weightedGradedAlgebra
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 theorem component_mul_form {c : K → ℕ} {s : MRing ι F} (hs : IsMultiHomog s c)
     (t : MRing ι F) (n : K → ℕ) :
     weightedHomogeneousComponent (blockWeight ι) n (t * s) =
@@ -40,12 +46,12 @@ theorem exists_sub_component_mem {I : Ideal (MRing ι F)} (hI : IsMultiHomogIdea
     IsWeightedHomogeneous.weightedHomogeneousComponent_same hf
   have e : a + t * s - weightedHomogeneousComponent (blockWeight ι) n (t * s) =
       weightedHomogeneousComponent (blockWeight ι) n a := by
-    rw [sub_eq_iff_eq_add, ← map_add, h1]
+    rw [sub_eq_iff_eq_add, ← map_add (f := _), h1]
   rw [e]
   exact hI a ha n
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem mem_colon_span_iff {I : Ideal (MRing ι F)} {s g : MRing ι F} :
     g ∈ I.colon (Ideal.span {s}) ↔ g * s ∈ I := by
   rw [Submodule.mem_colon]
@@ -57,8 +63,8 @@ theorem mem_colon_span_iff {I : Ideal (MRing ι F)} {s g : MRing ι F} :
     rw [smul_eq_mul, show g * (t * s) = t * (g * s) by ring]
     exact I.mul_mem_left t h
 
-open Classical in
 
+open Classical in
 theorem finrank_eq (h1 : GradedFinite.Statement.{u}) [Fintype K] [∀ k, Fintype (ι k)]
     {I : Ideal (MRing ι F)} (hI : IsMultiHomogIdeal I) {c : K → ℕ} {s : MRing ι F}
     (hs : IsMultiHomog s c) (n : K → ℕ) :

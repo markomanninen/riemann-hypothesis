@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.AuxiliaryPrimeFunction
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ omit R in
 theorem crd_add (d : SD σ) (X Z : Mx F E d.m d.n) (k : Fin d.m × Fin d.n × Fin 2) :
     d.crd (X + Z) k = d.crd X k + d.crd Z k := by
   unfold SD.crd
-  rw [Matrix.add_apply, map_add, Finsupp.add_apply]
+  rw [Matrix.add_apply, map_add (f := _), Finsupp.add_apply]
 
 omit R in
 theorem crd_fin (d : SD σ) (Z : Mx F E d.m d.n) (h : finOne F • Z = 0) (k : Fin d.m × Fin d.n × Fin 2) :
@@ -125,10 +129,10 @@ omit R in
 theorem T_add (d : SD σ) (Φ Φ' : d.Fn) : d.T (Φ + Φ') = d.T Φ + d.T Φ' := by
   funext X
   show d.l (d.dd.rho d.B.ψ _ (Φ + Φ')) = d.l (d.dd.rho d.B.ψ _ Φ) + d.l (d.dd.rho d.B.ψ _ Φ')
-  rw [← map_add]
+  rw [← map_add (f := _)]
   congr 1
-  funext x
-  simp only [Darboux.rho, schr, Pi.add_apply, mul_add]
+  funext y
+  simp [Darboux.rho, schr, mul_add]
 
 omit R in
 theorem T_smul (d : SD σ) (a : ℂ) (Φ : d.Fn) : d.T (a • Φ) = a • d.T Φ := by
@@ -136,9 +140,8 @@ theorem T_smul (d : SD σ) (a : ℂ) (Φ : d.Fn) : d.T (a • Φ) = a • d.T Φ
   show d.l (d.dd.rho d.B.ψ _ (a • Φ)) = a • d.l (d.dd.rho d.B.ψ _ Φ)
   rw [← map_smul]
   congr 1
-  funext x
-  simp only [Darboux.rho, schr, Pi.smul_apply, smul_eq_mul]
-  ring
+  funext y
+  simp [Darboux.rho, schr, mul_left_comm]
 
 end PositivityTheory.SiegelWeilFormula.KFock
 

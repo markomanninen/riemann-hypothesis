@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -79,8 +84,8 @@ theorem quotEquiv_symm (a : L) (x : Γ) (h : T.red x = a) :
     T.quotEquiv.symm a = Ideal.Quotient.mk T.I x := by
   rw [RingEquiv.symm_apply_eq, quotEquiv_mk, h]
 
-variable (p) in
 
+variable (p) in
 def toPerfection : L →+* Perfection (Γ ⧸ T.I) p :=
   Perfection.lift p L (Γ ⧸ T.I) T.quotEquiv.symm.toRingHom
 
@@ -105,8 +110,6 @@ theorem teich_mul (a b : L) : T.teich (a * b) = T.teich a * T.teich b := map_mul
 
 @[simp] theorem teich_one : T.teich 1 = 1 := map_one _
 
-theorem teich_pow (a : L) (n : ℕ) : T.teich (a ^ n) = T.teich a ^ n := map_pow _ _ _
-
 theorem teich_sub_pow_mem (a : L) (n : ℕ) (z : Γ)
     (hz : T.red z = (((frobeniusEquiv L p).symm : L →+* L))^[n] a) :
     T.teich a - z ^ p ^ n ∈ Ideal.span {T.π ^ (n + 1)} := by
@@ -126,11 +129,8 @@ def tail (x : Γ) : Γ := (T.red_eq_zero_iff.1 (T.red_sub_teich_red x)).choose
 theorem sub_teich_eq_π_mul_tail (x : Γ) : x - T.teich (T.red x) = T.π * T.tail x :=
   (T.red_eq_zero_iff.1 (T.red_sub_teich_red x)).choose_spec
 
-theorem eq_teich_add_π_mul_tail (x : Γ) : x = T.teich (T.red x) + T.π * T.tail x := by
-  rw [← T.sub_teich_eq_π_mul_tail]; ring
-
 theorem tail_eq {x y : Γ} {a : L} (h : x = T.teich a + T.π * y) : T.tail x = y := by
-  have ha : T.red x = a := by rw [h, map_add, map_mul, red_π, zero_mul, add_zero, red_teich]
+  have ha : T.red x = a := by rw [h, map_add (f := _), map_mul, red_π, zero_mul, add_zero, red_teich]
   refine T.π_mul_cancel ?_
   rw [← T.sub_teich_eq_π_mul_tail, ha, h]; ring
 
@@ -169,12 +169,6 @@ theorem finSum_congr {a b : ℕ → L} {n : ℕ} (h : ∀ i < n, a i = b i) :
     T.finSum a n = T.finSum b n :=
   Finset.sum_congr rfl fun i hi => by rw [h i (Finset.mem_range.1 hi)]
 
-theorem finSum_mem_span_of_eq_zero {a : ℕ → L} {n m : ℕ} (h : ∀ i < m, a i = 0) (hmn : m ≤ n) :
-    T.finSum a n ∈ Ideal.span {T.π ^ m} := by
-  have h0 : T.finSum a m = 0 := by
-    rw [T.finSum_congr (b := 0) h]; simp [finSum]
-  simpa [h0] using T.finSum_sub_finSum_mem a hmn
-
 def partialSum (x : Γ) (n : ℕ) : Γ := T.finSum (T.coeff x) n
 
 theorem sub_partialSum (x : Γ) (n : ℕ) : x - T.partialSum x n = T.π ^ n * T.tail^[n] x := by
@@ -193,7 +187,7 @@ theorem sub_partialSum_mem (x : Γ) (n : ℕ) : x - T.partialSum x n ∈ Ideal.s
   T.mem_span_pow.2 ⟨_, T.sub_partialSum x n⟩
 
 theorem red_finSum (a : ℕ → L) (n : ℕ) : T.red (T.finSum a (n + 1)) = a 0 := by
-  rw [finSum_succ', map_add, map_mul, red_π, zero_mul, add_zero, red_teich]
+  rw [finSum_succ', map_add (f := _), map_mul, red_π, zero_mul, add_zero, red_teich]
 
 theorem coeff_eq_of_mem {n : ℕ} {x : Γ} {a : ℕ → L}
     (h : x - T.finSum a (n + 1) ∈ Ideal.span {T.π ^ (n + 1)}) : ∀ m ≤ n, T.coeff x m = a m := by
@@ -238,25 +232,6 @@ theorem eq_of_coeff_eq {x y : Γ} (h : T.coeff x = T.coeff y) : x = y := by
   have : x - y = (x - T.partialSum x n) - (y - T.partialSum y n) := by
     simp only [partialSum, h]; ring
   rw [this]; exact sub_mem h1 h2
-
-def ofCoeff (a : ℕ → L) : Γ :=
-  haveI := T.isAdicComplete
-  (IsPrecomplete.prec' (I := T.I) (T.finSum a) fun {m n} hmn => by
-    rw [SModEq.sub_mem, Ideal.smul_eq_mul, Ideal.mul_top, T.I_pow, ← neg_sub]
-    exact neg_mem (T.finSum_sub_finSum_mem a hmn)).choose
-
-theorem mk_sub_finSum_mem (a : ℕ → L) (n : ℕ) : T.ofCoeff a - T.finSum a n ∈ Ideal.span {T.π ^ n} := by
-  haveI := T.isAdicComplete
-  have := (IsPrecomplete.prec' (I := T.I) (T.finSum a) fun {m n} hmn => by
-    rw [SModEq.sub_mem, Ideal.smul_eq_mul, Ideal.mul_top, T.I_pow, ← neg_sub]
-    exact neg_mem (T.finSum_sub_finSum_mem a hmn)).choose_spec n
-  rw [SModEq.sub_mem, Ideal.smul_eq_mul, Ideal.mul_top, T.I_pow, ← neg_sub] at this
-  simpa [ofCoeff] using neg_mem this
-
-@[simp] theorem coeff_ofCoeff (a : ℕ → L) : T.coeff (T.ofCoeff a) = a :=
-  funext fun n => T.coeff_eq_of_mem (T.mk_sub_finSum_mem a (n + 1)) n le_rfl
-
-theorem ofCoeff_coeff (x : Γ) : T.ofCoeff (T.coeff x) = x := T.eq_of_coeff_eq (by simp)
 
 theorem coeff_eq_coeff_of_sub_mem {x y : Γ} {n : ℕ} (h : x - y ∈ Ideal.span {T.π ^ (n + 1)}) :
     ∀ m ≤ n, T.coeff x m = T.coeff y m := by
@@ -369,11 +344,6 @@ theorem mem_int_iff {x : Γ} : x ∈ T.int ↔ ∀ n, ‖T.coeff x n‖ ≤ 1 :=
     exact T.mem_int_of_approx x fun N =>
       ⟨T.partialSum x N, T.finSum_mem_int fun i _ => h i, T.sub_partialSum_mem x N⟩
 
-theorem red_natCast (n : ℕ) : T.red (n : Γ) = (n : L) := map_natCast _ n
-
-theorem exists_natCast_p_eq : ∃ w ∈ T.int, (p : Γ) = T.π * w :=
-  T.exists_eq_π_mul _ (natCast_mem _ p) (by rw [red_natCast, CharP.cast_eq_zero])
-
 def PrefixLe (x : Γ) (n : ℕ) (b : ℝ) : Prop := ∀ m ≤ n, ‖T.coeff x m‖ ≤ b
 
 variable {T} in
@@ -453,9 +423,6 @@ theorem prefixLe_neg {x : Γ} {n : ℕ} {b : ℝ} (hx : T.PrefixLe x n b) : T.Pr
     have := neg_mem hxu
     rwa [show -(x - T.teich c * u) = -x - T.teich c * (-u) by ring] at this
 
-theorem prefixLe_neg_iff {x : Γ} {n : ℕ} {b : ℝ} : T.PrefixLe (-x) n b ↔ T.PrefixLe x n b :=
-  ⟨fun h => by simpa using T.prefixLe_neg h, T.prefixLe_neg⟩
-
 theorem prefixLe_sub {x y : Γ} {n : ℕ} {b : ℝ} (hx : T.PrefixLe x n b) (hy : T.PrefixLe y n b) :
     T.PrefixLe (x - y) n b := by
   rw [sub_eq_add_neg]; exact T.prefixLe_add hx (T.prefixLe_neg hy)
@@ -498,231 +465,6 @@ theorem prefixLe_mul {x y : Γ} {n : ℕ} {B : ℝ} (hB : 0 ≤ B)
     exact T.prefixLe_π_pow_mul_teich _ _ _ hB fun hij => by rw [norm_mul]; exact h i j hij
   have := T.prefixLe_add h2 (T.prefixLe_of_mem_span h1 hB)
   rwa [add_sub_cancel] at this
-
-theorem exists_pow_sub_pow {X Y v : Γ} (hX : X ∈ T.int) (hY : Y ∈ T.int) (hv : v ∈ T.int)
-    {j : ℕ} (hj : 1 ≤ j) (h : X - Y = T.π ^ j * v) :
-    ∃ w ∈ T.int, X ^ p - Y ^ p = T.π ^ (j + 1) * w := by
-  have hXY : T.red X = T.red Y := by
-    have := congrArg T.red h
-    rw [map_sub, map_mul, map_pow, red_π, zero_pow (by omega), zero_mul, sub_eq_zero] at this
-    exact this
-  have hG : (∑ i ∈ Finset.range p, X ^ i * Y ^ (p - 1 - i)) ∈ T.int :=
-    Subring.sum_mem _ fun i _ => mul_mem (pow_mem hX _) (pow_mem hY _)
-  have hGred : T.red (∑ i ∈ Finset.range p, X ^ i * Y ^ (p - 1 - i)) = 0 := by
-    have : ∀ i ∈ Finset.range p, T.red (X ^ i * Y ^ (p - 1 - i)) = T.red Y ^ (p - 1) := by
-      intro i hi
-      rw [map_mul, map_pow, map_pow, hXY, ← pow_add]
-      congr 1; have := Finset.mem_range.1 hi; omega
-    rw [map_sum, Finset.sum_congr rfl this, Finset.sum_const, Finset.card_range, nsmul_eq_mul,
-      CharP.cast_eq_zero, zero_mul]
-  obtain ⟨g, hg, hGg⟩ := T.exists_eq_π_mul _ hG hGred
-  refine ⟨g * v, mul_mem hg hv, ?_⟩
-  rw [← geom_sum₂_mul, hGg, h]; ring
-
-theorem exists_add_π_mul_pow_sub (A z : Γ) (hA : A ∈ T.int) (hz : z ∈ T.int) (k : ℕ) :
-    ∃ w ∈ T.int, (A + T.π * z) ^ p ^ k - A ^ p ^ k = T.π ^ (k + 1) * w := by
-  induction k with
-  | zero => exact ⟨z, hz, by simp⟩
-  | succ k ih =>
-    obtain ⟨w, hw, h⟩ := ih
-    rw [pow_succ, pow_mul, pow_mul]
-    exact T.exists_pow_sub_pow (pow_mem (add_mem hA (mul_mem T.π_mem_int hz)) _) (pow_mem hA _) hw
-      (by omega) h
-
-theorem exists_one_add_teich_pow {b : L} (hb : ‖b‖ ≤ 1) (k : ℕ) :
-    ∃ U ∈ T.int, (1 + T.teich b) ^ p ^ k = 1 + T.teich (b ^ p ^ k) + T.π * T.teich b * U := by
-  obtain ⟨wp, hwp, hpw⟩ := T.exists_natCast_p_eq
-  rcases Nat.eq_zero_or_pos k with rfl | hk
-  · exact ⟨0, zero_mem _, by simp⟩
-  obtain ⟨N, hN⟩ : ∃ N, p ^ k = N + 1 :=
-    ⟨p ^ k - 1, by have := Nat.one_le_pow k p hp.out.pos; omega⟩
-  have hlt : N + 1 ≠ 1 := by
-    rw [← hN]; exact (Nat.one_lt_pow hk.ne' hp.out.one_lt).ne'
-  have hdvd : ∀ m < N, p ∣ (N + 1).choose (m + 1) := fun m hm =>
-    hN ▸ hp.out.dvd_choose_pow (by omega) (by omega)
-  refine ⟨wp * ∑ m ∈ Finset.range N, T.teich b ^ m * (((N + 1).choose (m + 1) / p : ℕ) : Γ), ?_, ?_⟩
-  · exact mul_mem hwp (Subring.sum_mem _ fun m _ =>
-      mul_mem (pow_mem (T.teich_mem_int hb) _) (natCast_mem _ _))
-  · have hsum : ∑ m ∈ Finset.range N, T.teich b ^ (m + 1) * 1 ^ (N + 1 - (m + 1)) *
-        ((N + 1).choose (m + 1) : Γ) = T.π * T.teich b *
-          (wp * ∑ m ∈ Finset.range N, T.teich b ^ m * (((N + 1).choose (m + 1) / p : ℕ) : Γ)) := by
-      rw [Finset.mul_sum, Finset.mul_sum]
-      refine Finset.sum_congr rfl fun m hm => ?_
-      have hc : ((N + 1).choose (m + 1) : Γ) = (p : Γ) * (((N + 1).choose (m + 1) / p : ℕ) : Γ) := by
-        rw [← Nat.cast_mul, Nat.mul_div_cancel' (hdvd m (Finset.mem_range.1 hm))]
-      rw [hc, hpw, one_pow, mul_one, pow_succ]; ring
-    rw [add_comm (1 : Γ), add_pow, T.teich_pow, hN, Finset.sum_range_succ, Finset.sum_range_succ',
-      hsum]
-    simp only [pow_zero, one_pow, mul_one, one_mul, Nat.choose_zero_right, Nat.choose_self,
-      Nat.cast_one, Nat.sub_self, Nat.sub_zero]
-    ring
-
-theorem prefixLe_teich_one_add_sub {b : L} (hb : ‖b‖ ≤ 1) (k : ℕ) :
-    T.PrefixLe (T.teich (1 + b) - 1 - T.teich b) k
-      ‖((((frobeniusEquiv L p).symm : L →+* L))^[k] b)‖ := by
-  set b' := ((((frobeniusEquiv L p).symm : L →+* L))^[k] b) with hb'def
-  have hb' : ‖b'‖ ≤ 1 := norm_iterate_frobeniusEquiv_symm_le_one hb k
-  have hpow : b' ^ p ^ k = b := iterate_frobeniusEquiv_symm_pow b k
-  by_cases hb0 : b' = 0
-  · have : b = 0 := by rw [← hpow, hb0, zero_pow (pow_ne_zero _ hp.out.ne_zero)]
-    subst this
-    rw [hb0, norm_zero]
-    exact T.prefixLe_of_mem_span (by simp) le_rfl
-  have h1b' : ‖1 + b'‖ ≤ 1 :=
-    (IsUltrametricDist.norm_add_le_max _ _).trans (max_le (by simp) hb')
-  obtain ⟨u0, hu0, hu0'⟩ := T.exists_eq_π_mul (T.teich (1 + b') - (1 + T.teich b'))
-    (sub_mem (T.teich_mem_int h1b') (add_mem (one_mem _) (T.teich_mem_int hb')))
-    (by simp [red_teich])
-  obtain ⟨w, hw, hw'⟩ := T.exists_add_π_mul_pow_sub (1 + T.teich b') u0
-    (add_mem (one_mem _) (T.teich_mem_int hb')) hu0 k
-  obtain ⟨U, hU, hU'⟩ := T.exists_one_add_teich_pow hb' k
-  refine (T.prefixLe_iff_exists hb0).2 ⟨T.π * U, mul_mem T.π_mem_int hU, ?_⟩
-  have hfr : (1 + b') ^ p ^ k = 1 + b := by rw [add_pow_char_pow, one_pow, hpow]
-  have e1 : T.teich (1 + b) = (1 + T.teich b' + T.π * u0) ^ p ^ k := by
-    rw [← hfr, T.teich_pow]
-    congr 1; rw [← hu0']; ring
-  have : T.teich (1 + b) - 1 - T.teich b - T.teich b' * (T.π * U) = T.π ^ (k + 1) * w := by
-    rw [e1, ← hw', hU', hpow]; ring
-  rw [this]; exact T.π_pow_mul_mem le_rfl w
-
-theorem le_rpow_mix {δ B t : ℝ} (hδ : 0 ≤ δ) (hδB : δ ≤ B) (ht : t ≤ 1) :
-    δ ≤ B ^ (1 - t) * δ ^ t := by
-  calc δ = δ ^ (1 - t) * δ ^ t := by
-        rw [← Real.rpow_add' hδ (by simp), sub_add_cancel, Real.rpow_one]
-    _ ≤ B ^ (1 - t) * δ ^ t :=
-        mul_le_mul_of_nonneg_right (Real.rpow_le_rpow hδ hδB (by linarith)) (Real.rpow_nonneg hδ _)
-
-theorem rpow_mix_le {δ B t : ℝ} (hδ : 0 ≤ δ) (hδB : δ ≤ B) (ht : 0 ≤ t) (ht1 : t ≤ 1) :
-    B ^ (1 - t) * δ ^ t ≤ B := by
-  have hB : 0 ≤ B := hδ.trans hδB
-  calc B ^ (1 - t) * δ ^ t ≤ B ^ (1 - t) * B ^ t :=
-        mul_le_mul_of_nonneg_left (Real.rpow_le_rpow hδ hδB ht) (Real.rpow_nonneg hB _)
-    _ = B := by rw [← Real.rpow_add' hB (by simp), sub_add_cancel, Real.rpow_one]
-
-theorem inv_pow_pos_le_one (k : ℕ) : 0 < ((p ^ k : ℕ) : ℝ)⁻¹ ∧ ((p ^ k : ℕ) : ℝ)⁻¹ ≤ 1 := by
-  have h1 : (1 : ℝ) ≤ ((p ^ k : ℕ) : ℝ) := by exact_mod_cast Nat.one_le_pow k p hp.out.pos
-  exact ⟨inv_pos.2 (by linarith), inv_le_one_of_one_le₀ h1⟩
-
-theorem prefixLe_teich_add_sub {a e : L} (h : ‖e‖ ≤ ‖a‖) (k : ℕ) :
-    T.PrefixLe (T.teich (a + e) - T.teich a - T.teich e) k
-      (‖a‖ ^ (1 - ((p ^ k : ℕ) : ℝ)⁻¹) * ‖e‖ ^ ((p ^ k : ℕ) : ℝ)⁻¹) := by
-  have hN : (p ^ k : ℕ) ≠ 0 := pow_ne_zero _ hp.out.ne_zero
-  by_cases ha : a = 0
-  · have he : e = 0 := by rw [ha, norm_zero] at h; exact norm_le_zero_iff.1 h
-    subst ha; subst he
-    exact T.prefixLe_of_mem_span (by simp) (by positivity)
-  have hb : ‖e / a‖ ≤ 1 := by rw [norm_div, div_le_one (norm_pos_iff.2 ha)]; exact h
-  have hae : T.teich (a + e) - T.teich a - T.teich e =
-      T.teich a * (T.teich (1 + e / a) - 1 - T.teich (e / a)) := by
-    have h1 : a * (1 + e / a) = a + e := by field_simp
-    have h2 : a * (e / a) = e := by field_simp
-    calc T.teich (a + e) - T.teich a - T.teich e
-        = T.teich (a * (1 + e / a)) - T.teich a - T.teich (a * (e / a)) := by rw [h1, h2]
-      _ = _ := by rw [T.teich_mul, T.teich_mul]; ring
-  intro m hm
-  rw [hae, coeff_teich_mul, norm_mul]
-  have hD := T.prefixLe_teich_one_add_sub hb k m hm
-  have hnb' : ‖((((frobeniusEquiv L p).symm : L →+* L))^[k] (e / a))‖ =
-      ‖e / a‖ ^ ((p ^ k : ℕ) : ℝ)⁻¹ := by
-    rw [← norm_iterate_frobeniusEquiv_symm_pow (e / a) k,
-      Real.pow_rpow_inv_natCast (norm_nonneg _) hN]
-  calc ‖a‖ * ‖T.coeff (T.teich (1 + e / a) - 1 - T.teich (e / a)) m‖
-      ≤ ‖a‖ * ‖((((frobeniusEquiv L p).symm : L →+* L))^[k] (e / a))‖ :=
-        mul_le_mul_of_nonneg_left hD (norm_nonneg _)
-    _ = ‖a‖ ^ (1 - ((p ^ k : ℕ) : ℝ)⁻¹) * ‖e‖ ^ ((p ^ k : ℕ) : ℝ)⁻¹ := by
-        rw [hnb', norm_div, Real.div_rpow (norm_nonneg _) (norm_nonneg _),
-          Real.rpow_sub (norm_pos_iff.2 ha), Real.rpow_one]
-        ring
-
-theorem prefixLe_teich_add_sub_of_le {a e : L} {B δ : ℝ} (ha : ‖a‖ ≤ B) (he : ‖e‖ ≤ δ) (hδ : 0 ≤ δ)
-    (hδB : δ ≤ B) (k : ℕ) :
-    T.PrefixLe (T.teich (a + e) - T.teich a - T.teich e) k
-      (B ^ (1 - ((p ^ k : ℕ) : ℝ)⁻¹) * δ ^ ((p ^ k : ℕ) : ℝ)⁻¹) := by
-  obtain ⟨ht0, ht1⟩ := inv_pow_pos_le_one (p := p) k
-  set t := ((p ^ k : ℕ) : ℝ)⁻¹
-  rcases le_total ‖e‖ ‖a‖ with h | h
-  · refine (T.prefixLe_teich_add_sub h k).mono ?_
-    exact mul_le_mul (Real.rpow_le_rpow (norm_nonneg _) ha (by linarith))
-      (Real.rpow_le_rpow (norm_nonneg _) he ht0.le) (Real.rpow_nonneg (norm_nonneg _) _)
-      (Real.rpow_nonneg (hδ.trans hδB) _)
-  · have := T.prefixLe_teich_add_sub h k
-    rw [show T.teich (e + a) - T.teich e - T.teich a = T.teich (a + e) - T.teich a - T.teich e by
-      rw [add_comm]; ring] at this
-    refine this.mono ?_
-    calc ‖e‖ ^ (1 - t) * ‖a‖ ^ t ≤ ‖e‖ := rpow_mix_le (norm_nonneg _) h ht0.le ht1
-      _ ≤ δ := he
-      _ ≤ B ^ (1 - t) * δ ^ t := le_rpow_mix hδ hδB ht1
-
-def coeffHolderExp (p n : ℕ) : ℝ := ((p ^ (∑ i ∈ Finset.range (n + 1), i) : ℕ) : ℝ)⁻¹
-
-theorem coeffHolderExp_pos_le_one (n : ℕ) : 0 < coeffHolderExp p n ∧ coeffHolderExp p n ≤ 1 :=
-  inv_pow_pos_le_one _
-
-theorem coeffHolderExp_succ (n : ℕ) :
-    coeffHolderExp p (n + 1) = ((p ^ (n + 1) : ℕ) : ℝ)⁻¹ * coeffHolderExp p n := by
-  simp only [coeffHolderExp, Finset.sum_range_succ _ (n + 1), pow_add, Nat.cast_mul, mul_inv]
-  ring
-
-theorem norm_coeff_add_sub_le (n : ℕ) : ∀ {x y : Γ} {B δ : ℝ}, 0 ≤ δ → δ ≤ B →
-    T.PrefixLe x n B → T.PrefixLe y n δ → ∀ m ≤ n,
-      ‖T.coeff (x + y) m - T.coeff x m‖ ≤ B ^ (1 - coeffHolderExp p n) * δ ^ coeffHolderExp p n := by
-  induction n with
-  | zero =>
-    intro x y B δ hδ hδB hx hy m hm
-    obtain rfl : m = 0 := by omega
-    rw [coeff_zero, coeff_zero, map_add, add_sub_cancel_left]
-    exact (hy 0 le_rfl).trans (le_rpow_mix hδ hδB (coeffHolderExp_pos_le_one 0).2)
-  | succ n ih =>
-    intro x y B δ hδ hδB hx hy m hm
-    rcases m with _ | m
-    · rw [coeff_zero, coeff_zero, map_add, add_sub_cancel_left]
-      exact (hy 0 (Nat.zero_le _)).trans (le_rpow_mix hδ hδB (coeffHolderExp_pos_le_one _).2)
-    obtain ⟨hs0, hs1⟩ := inv_pow_pos_le_one (p := p) (n + 1)
-    set s := ((p ^ (n + 1) : ℕ) : ℝ)⁻¹ with hsdef
-    have hB0 : 0 ≤ B := hδ.trans hδB
-    set H := T.teich (T.red x) + T.teich (T.red y) - T.teich (T.red x + T.red y) with hHdef
-    have hH : T.red H = 0 := by rw [hHdef]; simp [red_teich]
-    obtain ⟨h', hh'⟩ := T.red_eq_zero_iff.1 hH
-    have htail : T.tail (x + y) = T.tail x + (T.tail y + h') := by
-      refine T.tail_eq (a := T.red x + T.red y) ?_
-      have ex := T.eq_teich_add_π_mul_tail x
-      have ey := T.eq_teich_add_π_mul_tail y
-      calc x + y = T.teich (T.red x) + T.π * T.tail x + (T.teich (T.red y) + T.π * T.tail y) := by
-            rw [← ex, ← ey]
-        _ = T.teich (T.red x + T.red y) + H + T.π * T.tail x + T.π * T.tail y := by
-            rw [hHdef]; ring
-        _ = _ := by rw [hh']; ring
-    have hδ' : 0 ≤ B ^ (1 - s) * δ ^ s :=
-      mul_nonneg (Real.rpow_nonneg hB0 _) (Real.rpow_nonneg hδ _)
-    have hδδ' : δ ≤ B ^ (1 - s) * δ ^ s := le_rpow_mix hδ hδB hs1
-    have hδ'B : B ^ (1 - s) * δ ^ s ≤ B := rpow_mix_le hδ hδB hs0.le hs1
-    have hxt : T.PrefixLe (T.tail x) n B := fun i hi => by
-      rw [← coeff_succ]; exact hx (i + 1) (by omega)
-    have hyt : T.PrefixLe (T.tail y) n (B ^ (1 - s) * δ ^ s) := fun i hi => by
-      rw [← coeff_succ]; exact (hy (i + 1) (by omega)).trans hδδ'
-    have hHb : T.PrefixLe H (n + 1) (B ^ (1 - s) * δ ^ s) := by
-      have := T.prefixLe_teich_add_sub_of_le (hx 0 (Nat.zero_le _)) (hy 0 (Nat.zero_le _)) hδ hδB
-        (n + 1)
-      have e : H = -(T.teich (T.red x + T.red y) - T.teich (T.red x) - T.teich (T.red y)) := by
-        rw [hHdef]; ring
-      rw [e]; exact T.prefixLe_neg this
-    have hh'b : T.PrefixLe h' n (B ^ (1 - s) * δ ^ s) := fun i hi => by
-      rw [← T.coeff_π_mul_succ, ← hh']; exact hHb (i + 1) (by omega)
-    have := ih hδ' hδ'B hxt (T.prefixLe_add hyt hh'b) m (by omega)
-    rw [coeff_succ, coeff_succ, htail]
-    refine this.trans (le_of_eq ?_)
-    obtain ⟨ht0, ht1⟩ := coeffHolderExp_pos_le_one (p := p) n
-    have hne : 1 - coeffHolderExp p n + (1 - s) * coeffHolderExp p n ≠ 0 := by
-      have : s * coeffHolderExp p n ≤ s := mul_le_of_le_one_right hs0.le ht1
-      have hs2 : s < 1 := by
-        rw [hsdef]
-        have h2 : (1 : ℝ) < ((p ^ (n + 1) : ℕ) : ℝ) := by
-          exact_mod_cast Nat.one_lt_pow (by omega) hp.out.one_lt
-        exact inv_lt_one_of_one_lt₀ h2
-      nlinarith
-    rw [Real.mul_rpow (Real.rpow_nonneg hB0 _) (Real.rpow_nonneg hδ _), ← Real.rpow_mul hB0,
-      ← Real.rpow_mul hδ, ← mul_assoc, ← Real.rpow_add' hB0 hne, coeffHolderExp_succ]
-    congr 2 <;> ring
 
 end TeichLift
 

@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.CoeSmEqSymm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.MemArchMaxCompactIffOrthogonalAtInfinitePlaces
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AdelicHeightInfGLLeOpNorm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.ConstantTermEqZeroOfIsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.IsCuspidalOfConstantTermEqZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.IsKFiniteTotallyRealModelOfIsKFinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.ModerateGrowthTotallyRealModelOfModerateGrowth
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelHeights.CoeSmEqSymm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.MemArchMaxCompactIffOrthogonalAtInfinitePlaces
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AdelicHeightInfGLLeOpNorm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.ConstantTermEqZeroOfIsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.IsCuspidalOfConstantTermEqZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.IsKFiniteTotallyRealModelOfIsKFinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.ModerateGrowthTotallyRealModelOfModerateGrowth
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ namespace UpperTheory.V.Fb
 variable (E : Type) [Field E] [NumberField E] [IsTotallyReal E] (a : ℕ)
 
 omit [NumberField E] [IsTotallyReal E] in
-private theorem toUnits_mk (y : GL (Fin a) (TR.Rinf E)) (h : y.val ∈ Matrix.unitaryGroup (Fin a) (TR.Rinf E)) :
+theorem toUnits_mk (y : GL (Fin a) (TR.Rinf E)) (h : y.val ∈ Matrix.unitaryGroup (Fin a) (TR.Rinf E)) :
     Unitary.toUnits (⟨y.val, h⟩ : TR.Kinf E a) = y := Units.ext rfl
 
 def cptEq : TR.Kinf E a ≃* archCompact E a where
@@ -89,7 +93,5 @@ theorem isCuspForm_iff (φ : TR.Sm E a) : TR.IsCuspForm φ ↔ φ.1 ∈ cuspForm
     UpperTheory.isCuspidal_of_constantTerm_eq_zero E a _ h.isLeftInvariant h.continuous⟩
 
 theorem cuspForms_le_Sm : cuspForms E a ≤ TR.Sm E a := fun _ h => (sm_eq E a).ge h.1.isSmooth.1
-
-theorem automorphicForms_le_Sm : automorphicForms E a ≤ TR.Sm E a := fun _ h => (sm_eq E a).ge h.isSmooth.1
 
 end UpperTheory.V.Fb

@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.IsConst
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobeniusPullbackDeRhamMapExists
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianSchemeFirstDeRhamStructure
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorRelDimAndDiagonalIsLineBundleStatement
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.IsConst
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobeniusPullbackDeRhamMapExists
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianSchemeFirstDeRhamStructure
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorRelDimAndDiagonalIsLineBundleStatement
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.ConjSeq GlobalTheory.UPel.HT GlobalTheory.UPel.HT.ES UpperTheory.Gal.Ord
@@ -21,9 +25,9 @@ private theorem pull_primPull (h : IsGrpPullback A' A (spMap (algebraMap R R')) 
     [IsMonHom e] [IsMonHom e'] (he : e'.left ≫ φ = φ ≫ e.left) (c : primDR A) :
     (bcMor h).pull (primPull (dp0 R) (𝟙 _) e c) = primPull (dp0 R') (𝟙 _) e' ((bcMor h).pull c) := by
   have e1 := GrpMor.pull_pull (homMor (dp0 R) (𝟙 _) e) (bcMor h)
-    (GrpMor.comp (homMor (dp0 R) (𝟙 _) e) (bcMor h)) (fun _ => rfl) rfl c
+    (GlobalTheory.DeRham.GrpMor.comp (homMor (dp0 R) (𝟙 _) e) (bcMor h)) (fun _ => rfl) rfl c
   have e2 := GrpMor.pull_pull (bcMor h) (homMor (dp0 R') (𝟙 _) e')
-    (GrpMor.comp (homMor (dp0 R) (𝟙 _) e) (bcMor h)) (fun _ => rfl) he c
+    (GlobalTheory.DeRham.GrpMor.comp (homMor (dp0 R) (𝟙 _) e) (bcMor h)) (fun _ => rfl) he c
   exact e1.trans e2.symm
 
 private theorem pull_frob_iter (p : ℕ) [Fact p.Prime] (hR : (p : R) = 0) (hR' : (p : R') = 0)
@@ -55,7 +59,7 @@ private theorem pull_mem_span (p : ℕ) [Fact p.Prime] (hR : (p : R) = 0) (hR' :
     simp only
     rw [pull_primPull h g g' hg, pull_frob_iter p hR hR' h]
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+  | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
   | smul r a _ ha => rw [LinearMap.map_smulₛₗ]; exact Submodule.smul_mem _ _ ha
 
 private theorem no_up (p : ℕ) [Fact p.Prime] (hR : (p : R) = 0) (hR' : (p : R') = 0)
@@ -63,6 +67,7 @@ private theorem no_up (p : ℕ) [Fact p.Prime] (hR : (p : R) = 0) (hR' : (p : R'
     (hd : SmoothOfRelativeDimension d A.hom) (e g : A ⟶ A) (e' g' : A' ⟶ A')
     [IsMonHom e] [IsMonHom g] [IsMonHom e'] [IsMonHom g'] (he : e'.left ≫ φ = φ ≫ e.left)
     (hg : g'.left ≫ φ = φ ≫ g.left) (f : ℕ) (hN : NO p R hR A e g f) : NO p R' hR' A' e' g' f := by
+  unfold NO at hN ⊢
   intro x hx
   rw [(GlobalTheory.abelianDeRham.2.2.1 R A d hA hd R' A' φ h).2] at hx
   induction hx using Submodule.span_induction with
@@ -71,7 +76,7 @@ private theorem no_up (p : ℕ) [Fact p.Prime] (hR : (p : R) = 0) (hR' : (p : R'
     rw [← pull_primPull h e e' he]
     exact pull_mem_span p hR hR' h g g' hg f (hN c hc)
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+  | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
   | smul r a _ ha => rw [map_smul]; exact Submodule.smul_mem _ _ ha
 
 end SlopeTestRemainingChoices
@@ -102,8 +107,8 @@ private theorem mem_of_subtype_baseChange_eq_one_tmul {K L : Type} {V : Type*} [
     Submodule.Quotient.mk_eq_zero] at h2
   exact h2
 
-set_option maxHeartbeats 200000 in
 
+set_option maxHeartbeats 200000 in
 private theorem no_down (p : ℕ) [Fact p.Prime] (hK : (p : K) = 0) (hL : (p : L) = 0)
     (h : IsGrpPullback A' A (spMap (algebraMap K L)) φ) (d : ℕ) (hA : IsAbelianScheme A)
     (hd : SmoothOfRelativeDimension d A.hom) (e g : A ⟶ A) (e' g' : A' ⟶ A')
@@ -140,7 +145,7 @@ private theorem no_down (p : ℕ) [Fact p.Prime] (hK : (p : K) = 0) (hL : (p : L
         exact Submodule.subset_span ⟨v, rfl⟩
       exact LinearMap.mem_range.mpr ⟨(a ^ p ^ f) ⊗ₜ[K] (⟨_, hmem⟩ : W), hΦ _ _⟩
     | add t1 t2 h1 h2 =>
-      rw [map_add, iterate_map_add, map_add]
+      rw [map_add (f := _), iterate_map_add, map_add (f := _)]
       exact Submodule.add_mem _ h1 h2
   have hle : Submodule.span L (Set.range fun c => primPull (dp0 L) (𝟙 (Sp L)) g' ((frobDR p L hL A')^[f] c)) ≤
       LinearMap.range Φ := by

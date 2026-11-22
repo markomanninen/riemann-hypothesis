@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import GroundTheory.AutomorphicForms.JacquetAdmissible
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import GroundTheory.AutomorphicForms.JacquetAdmissible
+
+@[expose] public section
 
 noncomputable section
 

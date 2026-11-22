@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.EigLatBasis
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.AlgChart
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.EigLatBasis
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.AlgChart
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -211,8 +215,8 @@ theorem pushR_one : pushR G (1 : sp (R₀ := R') P ⟶ (Over.pullback (fB R R'))
     rw [← hmul, _root_.mul_one]
   exact mul_eq_left.mp h1
 
-variable (R R') in
 
+variable (R R') in
 def dualMapA : DualNumber R →ₐ[R] DualNumber R' :=
   { dualMapR (algebraMap R R') with
     commutes' := fun r => by ext <;> simp [dualMapR, TrivSqZeroExt.algebraMap_eq_inl'] }
@@ -312,10 +316,5 @@ theorem tanBC_alg {R R' : Type} [CommRing R] [IsLocalRing R] [CommRing R'] [Alge
       rfl
     rw [← pushR_left, e1, ← e3, ← e2]
     rfl
-
-theorem tanBC : TanBCSt := by
-  intro R R' _ _ _ φ G _ n x hx
-  letI := φ.toAlgebra
-  exact tanBC_alg G n x hx
 
 end ReciprocityTheory.ChartRestriction.G.Chart

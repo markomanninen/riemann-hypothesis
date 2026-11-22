@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EnnrealVolumeRatioStepCancel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.GDetps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoCaten
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EnnrealVolumeRatioStepCancel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.GDetps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoEvLow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoCaten
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosure
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -90,7 +94,7 @@ private theorem UpperTheory.V.Fr.detsec_sec (O : Type) [CommRing O] [IsDomain O]
   let e : σ ⊕ Fin b → MvPowerSeries σ R :=
     Sum.elim (fun s => MvPowerSeries.X s - MvPowerSeries.C (a s)) fun i => MvPowerSeries.C (f i)
   have he : ∀ s, e s ∈ maximalIdeal (MvPowerSeries σ R) := fun s => by
-    rw [← res_eq_zero_iff O, ← res_map F, res_eq_zero_iff]
+    rw [← res_eq_zero_iff O, ← UpperTheory.V.Alg.res_map F, res_eq_zero_iff]
     rcases s with s | i
     · simp [e, hC, hX]
     · simpa [e, hC] using hf i
@@ -105,7 +109,7 @@ private theorem UpperTheory.V.Fr.detsec_sec (O : Type) [CommRing O] [IsDomain O]
     ⟨O, inferInstance, inferInstance, inferInstance, inferInstance, inferInstance, hco⟩
     (fun i => by
       have := he (q i)
-      rw [← res_eq_zero_iff O, ← res_map (Ideal.Quotient.mkₐ O I), res_eq_zero_iff] at this
+      rw [← res_eq_zero_iff O, ← UpperTheory.V.Alg.res_map (Ideal.Quotient.mkₐ O I), res_eq_zero_iff] at this
       exact this)
     (hd.trans (ringKrullDim_le_of_surjective (Ideal.Quotient.factor I.le_radical)
       (Ideal.Quotient.factor_surjective _)))

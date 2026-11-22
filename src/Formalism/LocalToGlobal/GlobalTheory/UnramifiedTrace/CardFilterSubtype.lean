@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Formalism.L2.GlobalTheoryTheory.UnramifiedTrace
 
@@ -25,7 +29,7 @@ theorem card_fib_mul {V W : Type*} [AddCommGroup V] [AddCommGroup W] [Fintype V]
     refine Finset.card_bij' (fun x _ => x + (b - a)) (fun x _ => x - (b - a)) ?_ ?_ ?_ ?_
     · intro x hx
       simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx ⊢
-      rw [map_add, map_sub, hx, ha, hb]
+      rw [map_add (f := _), map_sub, hx, ha, hb]
       abel
     · intro x hx
       simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx ⊢

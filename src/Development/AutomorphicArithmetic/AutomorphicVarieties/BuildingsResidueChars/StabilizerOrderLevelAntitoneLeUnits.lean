@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.FixedPointCriteria.Cond
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.FixedPointCriteria.Cond
+
+@[expose] public section
+
 open QuadraticAlgebra UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Loc.PK
 
 section
@@ -23,7 +28,7 @@ private theorem ord_mul {y : Etau K τ} {c : O} (hy : y * y = algebraMap O (Etau
   obtain ⟨a, b, rfl⟩ := mem_ord.1 hv
   obtain ⟨p, q, rfl⟩ := mem_ord.1 hw
   refine mem_ord.2 ⟨a * p + b * q * c, a * q + b * p, ?_⟩
-  simp only [map_add, map_mul]
+  simp only [map_add (f := _), map_mul]
   linear_combination (algebraMap O (Etau K τ) b * algebraMap O (Etau K τ) q) * hy
 
 private theorem ord_mono (π : O) (m : ℕ) (x : Etau K τ) :

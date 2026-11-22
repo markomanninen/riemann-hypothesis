@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.GlobalFields.KummerTheory.KummerIndexLemma.Places
-import GroundTheory.GlobalFields.KummerTheory.Unramified
-import GroundTheory.GlobalFields.IdeleGroups.LocalNormsEverywhere
-import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups
-import GroundTheory.GlobalFields.SplittingFromInequality
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.KummerTheory.KummerIndexLemma.Places
+public import GroundTheory.GlobalFields.KummerTheory.Unramified
+public import GroundTheory.GlobalFields.IdeleGroups.LocalNormsEverywhere
+public import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups
+public import GroundTheory.GlobalFields.SplittingFromInequality
+
+@[expose] public section
 
 noncomputable section
 

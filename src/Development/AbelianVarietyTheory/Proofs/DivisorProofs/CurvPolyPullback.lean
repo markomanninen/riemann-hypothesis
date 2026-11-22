@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsMetricFrOfIsMetricOn
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsMetricFrOfIsMetricOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ChernDegreeComplex
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,8 @@ theorem curvPoly_pullback : (let d1 : {n n' : ℕ} → (ReciprocityTheory.L2Dbar
   intro d1 n n' r _ _ G φ w hφ hG hu
   have h2 : MContDiffAt 2 G (φ w) := hG.of_le (by norm_cast)
   refine Matrix.ext fun i j => ?_
-  simp only [d1, curvPoly, AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [d1, curvPoly, AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, map_sum, map_mul,
     aeval_X, aeval_C, algebraMap_eq, curv_comp_holo h2 hu hφ, Finset.mul_sum]
   symm
   rw [Finset.sum_congr rfl fun a _ => Finset.sum_comm, Finset.sum_comm]
@@ -71,7 +76,8 @@ theorem curvPoly_pullback : (let d1 : {n n' : ℕ} → (ReciprocityTheory.L2Dbar
   rw [Finset.sum_congr rfl fun a _ => Finset.sum_comm, Finset.sum_comm]
   refine Finset.sum_congr rfl fun d _ => ?_
   rw [curv_expand h2 hu (fderiv ℂ φ w (coordVec c))]
-  simp only [map_sum, map_mul, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, Finset.sum_mul]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   ring
 

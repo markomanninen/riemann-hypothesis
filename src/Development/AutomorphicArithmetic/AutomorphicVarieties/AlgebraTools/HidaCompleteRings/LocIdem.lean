@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.HeckeModel
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.LocAbs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.LocChar
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.ContinuousTorusCharacter
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.HeckeModel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.LocAbs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.LocChar
+
+@[expose] public section
+
 open IsLocalRing UpperTheory.V.Hi
 
 private theorem coe_mem_smul_iff {A M : Type} [CommRing A] [AddCommGroup M] [Module A M]
@@ -32,7 +37,7 @@ private theorem mem_iSup_iff {A M : Type} [CommRing A] [AddCommGroup M] [Module 
       rw [← this]
       exact (t ⟨z, hz⟩).2
     · intro a b ha hb
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem _ ha hb
   have hmono : Monotone fun n : ℕ => (J • Y).comap (f ^ n) := by
     refine monotone_nat_of_le_succ fun n x hx => ?_
@@ -62,7 +67,7 @@ theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.locIdem :
       rw [map_smul, LinearMap.smul_apply]
       exact Submodule.smul_mem_smul hr Submodule.mem_top
     · intro b c hb hc
-      rw [map_add, LinearMap.add_apply]
+      rw [map_add (f := _), LinearMap.add_apply]
       exact Submodule.add_mem _ hb hc
   have hchar := UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.locChar A Y T ι (j : T →+* Module.End A Y) _
     (fun i => t i - algebraMap A T (a i)) e hI he h1 h2

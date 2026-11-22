@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ValuationFrobeniusSumSubLeNatCastPrime
-import Development.AbelianVarietyTheory.Definitions.Foundations.CosetTrace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ValuationFrobeniusSumSubLeNatCastPrime
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CosetTrace
+
+@[expose] public section
+
 open GlobalTheory.AlmostEt
 open scoped NNReal
 set_option maxHeartbeats 1000000 in

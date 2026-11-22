@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex TensorProduct GlobalTheory.EtC
 
 namespace GlobalTheory.EtC
@@ -20,10 +25,13 @@ theorem etFF_iff_spec {A B : CommRingCat.{0}} (g : A ⟶ B) :
   · rintro ⟨h1, -, h2⟩; exact ⟨h1, h2⟩
   · rintro ⟨h1, h2⟩; exact ⟨h1, (RingHom.Etale.iff_flat_and_formallyUnramified.1 h1).1, h2⟩
 
-theorem etFF_isMultiplicative : EtFF.IsMultiplicative where
-  id_mem A := ⟨RingHom.Etale.of_bijective Function.bijective_id,
-    RingHom.FaithfullyFlat.of_bijective Function.bijective_id⟩
-  comp_mem f g hf hg := by
+theorem etFF_isMultiplicative : EtFF.IsMultiplicative := by
+  refine { id_mem := ?_, comp_mem := ?_ }
+  · intro A
+    change (RingHom.id A).Etale ∧ (RingHom.id A).FaithfullyFlat
+    exact ⟨RingHom.Etale.of_bijective Function.bijective_id,
+      RingHom.FaithfullyFlat.of_bijective Function.bijective_id⟩
+  · intro A B C f g hf hg
     change (f ≫ g).hom.Etale ∧ (f ≫ g).hom.FaithfullyFlat
     rw [CommRingCat.hom_comp]
     exact ⟨RingHom.Etale.stableUnderComposition _ _ hf.1 hg.1,

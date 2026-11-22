@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.TowerExistence.GoodTowerExistsX
-import Development.AutomorphicSpectrum.Statements.MetricStatements.ExistsFlagModelBaseMetric
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.RootOnFund
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.SplitComps
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.CmpSt
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.AgreementPos
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.TowerExistence.GoodTowerExistsX
+public import Development.AutomorphicSpectrum.Statements.MetricStatements.ExistsFlagModelBaseMetric
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.RootOnFund
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.SplitComps
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.CmpSt
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.AgreementPos
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,18 +90,6 @@ def StSing : Prop :=
     ∀ a, ∀ w ∈ mcPts (mCoordIdeal y), ∀ x, x ∉ ReciprocityTheory.AnForm.P.bdry BM.s →
       SameOrbit (PB.basePart M.blk w) (BM.Rb.lift x x) →
       Real.log ((Top.combLine sing (Cmp.fundOnRoot a)).h w) = Real.log ((BM.hom a).h w)
-
-def StSnc : Prop :=
-  ResK.ResKStatement → ∀ (Ω : Type) [Field Ω] [CharZero Ω] (K : Type) [Fintype K] (J : K → Type) [∀ k, Fintype (J k)]
-    (y : (Σ k, J k) → Ω) (P : Scheme.{0}) (ξ₀ : Spec (CommRingCat.of Ω) ⟶ P) (e : ℕ) (Ab : P.Opens),
-    (∀ q : P, GlobalTheory.CompanionTheory.Ar.genPt ξ₀ ⤳ q) → CoordTie ℤ ξ₀ (fun c' : (k : K) → J k => ∏ k, y ⟨k, c' k⟩) →
-    Flat.NormalCpt ξ₀ → SmoothGenericFibreM y → IsArithVar (mCoordIdeal y) (e + 1) → GlobalTheory.CompanionTheory.Ar.genPt ξ₀ ∈ Ab →
-    ∃ (N : ℕ) (x : Fin (N + 1) → Ω) (X : Scheme.{0}) (ξ : Spec (CommRingCat.of Ω) ⟶ X) (f : X ⟶ P)
-      (bd : Ideal (MRing (fun _ : Unit => Fin (N + 1)))),
-      (∀ q : X, GlobalTheory.CompanionTheory.Ar.genPt ξ ⤳ q) ∧ CoordTie ℤ ξ x ∧ ξ ≫ f = ξ₀ ∧
-      Cmp.IsSncModel (fun p : (Σ _ : Unit, Fin (N + 1)) => x p.2) e bd ∧
-      ∀ (z : Spec (CommRingCat.of ℂ) ⟶ X) w, CoordsAt ξ (fun p : (Σ _ : Unit, Fin (N + 1)) => x p.2) z w →
-        (w ∈ mcPts bd ↔ f (centre z) ∉ Ab)
 
 def StBase : Prop :=
   ResK.ResKStatement → Out.WeilSt →

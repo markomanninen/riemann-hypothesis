@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+
+@[expose] public section
 
 open Matrix UpperTheory.V.U3
 
 theorem UpperTheory.V.U3.isDeform_normalised_iff :
-    ∀ {G C : Type} [Group G] [CommRing C] (r r' : G →* GG 3 C) (γ : G → Matrix (Fin 3) (Fin 3) C) (c g₁ : G),
+    ∀ {G C : Type} [Group G] [CommRing C] (r r' : G →* GG (m := 3) (R := C))
+      (γ : G → Matrix (Fin 3) (Fin 3) C) (c g₁ : G),
       Normalised c g₁ r → IsDeform r γ r' → (Normalised c g₁ r' ↔ NormCoc c g₁ r γ) := by
   intro G C _ _ r r' γ c g₁ hn hd
   have hc : (r' c).mat = 1 + γ c := by rw [(hd c).2, hn.atc, Matrix.mul_one]

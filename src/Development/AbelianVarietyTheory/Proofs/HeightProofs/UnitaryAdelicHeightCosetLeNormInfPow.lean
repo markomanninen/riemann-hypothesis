@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.DenomBound
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.DenomBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -138,7 +142,7 @@ theorem height_le_normInf_pow (D : D7) (θ : D.what₂.Tau → (Ainf D.host.F �
     refine this.trans ?_
     gcongr
     rw [← Finset.card_univ, ← Finset.prod_const]
-    exact Finset.prod_le_prod (fun _ _ => NNReal.coe_nonneg _) fun τ _ => infHt_le_normInf θ V hV τ g
+    exact Finset.prod_le_prod₀ (fun _ _ => NNReal.coe_nonneg _) fun τ _ => infHt_le_normInf θ V hV τ g
 
 end GlobalTheory.SmoothForms.HeightCoset
 

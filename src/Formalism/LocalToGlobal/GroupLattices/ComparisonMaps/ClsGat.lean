@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ClsMain
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ClsMain
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +24,8 @@ variable {R : Ranks} {F E : Type} [Field F] [NumberField F] [Field E] [NumberFie
     (lam0 : Fin nV → Fin n' → Fin (m + 1) → ℤ) (dom : ∀ v, IsDominant (lam0 v)) (hk : m + 1 = R.k)
     (I : LocId L p nV W Qq) (ψ : Formalism.L2.Herm.awayFrom₂ L p →* Oˣ) (e : ℕ) (hdet : IsUnit sp.gram0.det) (hH : HypAtP I)
 
-include hH in
 
+include hH in
 theorem class_eq_iff_translate_level_one (i i' : compL L p) (y : GL (Fin R.k) (E ⊗[F] FiniteAdeleRing (𝓞 F) F))
     (hy : y = (repP L p i).1) (Lt Lt' : Fin nV → Submodule W (Fin (m + 1) → Qq))
     (h : ∀ v, IsLattice W (Lt v)) (h' : ∀ v, IsLattice W (Lt' v)) :
@@ -32,9 +36,9 @@ theorem class_eq_iff_translate_level_one (i i' : compL L p) (y : GL (Fin R.k) (E
   subst hy
   exact class_eq_iff_translate_level_zero hk I hdet hH i i' Lt Lt' h h'
 
+
 set_option maxHeartbeats 2000000 in
 include hH in
-
 theorem clsC_iff (i i' : (gatOfLevelP L hS nV r lam0 dom hk I ψ e).comp)
     (Lt Lt' : (gatOfLevelP L hS nV r lam0 dom hk I ψ e).P.Tup)
     (h : (gatOfLevelP L hS nV r lam0 dom hk I ψ e).P.IsLatTup Lt)
@@ -44,17 +48,18 @@ theorem clsC_iff (i i' : (gatOfLevelP L hS nV r lam0 dom hk I ψ e).comp)
         Lt' = ((gatOfLevelP L hS nV r lam0 dom hk I ψ e).lev i).smul γ Lt :=
   class_eq_iff_translate_level_one hS r lam0 dom hk I ψ hdet hH i i' _ rfl Lt Lt' h h'
 
-include hH in
 
+include hH in
 theorem clsC_surj (c : ClassSet (HA sp) (KA L)) :
     ∃ (i : (gatOfLevelP L hS nV r lam0 dom hk I ψ e).comp) (Lt : (gatOfLevelP L hS nV r lam0 dom hk I ψ e).P.Tup),
       (gatOfLevelP L hS nV r lam0 dom hk I ψ e).P.IsLatTup Lt ∧ clsC I hdet hk i Lt = c := by
   obtain ⟨x, rfl⟩ := Quotient.exists_rep c
-  obtain ⟨i, g, hg⟩ := (fibP I hdet hk hH).cls_surj (HA sp) (repP L p) (repP_mk L p) x
+  obtain ⟨i, g, hg⟩ := (fibP I hdet hk hH).cls_surj (HA sp) (repP L p)
+    (repP_mk L p) x (repP_mk L p)
   exact ⟨i, tupOf W g, tupOf_lat W g, (clsC_tupOf I hdet hk hH i g).trans hg⟩
 
-include hH hdet in
 
+include hH hdet in
 theorem finClasses : (gatOfLevelP L hS nV r lam0 dom hk I ψ e).FinClasses := by
   intro i
   have := finite_classSet_U L

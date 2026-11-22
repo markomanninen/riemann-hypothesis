@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.ClassFormationDefs
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.ClassFormationDefs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -31,8 +36,8 @@ theorem cohomologyMapAlong_congr {φ ψ : H →* G} (hφ : Continuous φ) (hψ :
     (n : ℕ) : cohomologyMapAlong φ hφ f n = cohomologyMapAlong ψ hψ g n := by
   rw [cohomologyMapAlong, cohomologyMapAlong, cochainsMapAlong_congr hφ hψ f g h hfg]
 
-omit [IsTopologicalGroup H] in
 
+omit [IsTopologicalGroup H] in
 theorem cohomologyMapAlong_eq_id {φ : G →* G} (hφ : Continuous φ) (f : Rep.res φ A ⟶ A)
     (h : φ = MonoidHom.id G) (hf : ∀ a : A, f.hom a = a) (n : ℕ) :
     cohomologyMapAlong φ hφ f n = 𝟙 _ := by
@@ -95,7 +100,6 @@ section ResLE
 
 variable (A : Rep.{u} k G) [IsDiscreteRep A]
 
-@[reassoc]
 theorem cohomologyResLE_comp {U V W : Subgroup G} (hVU : V ≤ U) (hWV : W ≤ V) (n : ℕ) :
     cohomologyResLE A hVU n ≫ cohomologyResLE A hWV n = cohomologyResLE A (hWV.trans hVU) n := by
   rw [cohomologyResLE, cohomologyResLE, cohomologyResLE, ← cohomologyMapAlong_comp]
@@ -107,13 +111,13 @@ section SubgroupOf
 
 variable {U V : Subgroup G} (h : V ≤ U)
 
-omit [IsTopologicalGroup G] in
 
+omit [IsTopologicalGroup G] in
 theorem continuous_subgroupOfEquivOfLe : Continuous (Subgroup.subgroupOfEquivOfLe h).toMonoidHom :=
   (continuous_subtype_val.comp continuous_subtype_val).subtype_mk _
 
-omit [IsTopologicalGroup G] in
 
+omit [IsTopologicalGroup G] in
 theorem continuous_subgroupOfEquivOfLe_symm :
     Continuous (Subgroup.subgroupOfEquivOfLe h).symm.toMonoidHom :=
   (continuous_subtype_val.subtype_mk _).subtype_mk _
@@ -127,8 +131,8 @@ def resSubgroupOfHom :
 
 variable [IsDiscreteRep A]
 
-omit h in
 
+omit h in
 instance isDiscreteRep_res_res (W : Subgroup G) (S : Subgroup W) :
     IsDiscreteRep (Rep.res S.subtype (Rep.res W.subtype A)) :=
   isDiscreteRep_res_subtype _ _
@@ -204,18 +208,6 @@ end PreClassFormation
 namespace ClassFormation
 
 variable {C : Rep.{u} k G} [IsDiscreteRep C] (F : ClassFormation C)
-
-noncomputable def invEquiv (U : OpenSubgroup G) : H2Open C U ≃+ QZ :=
-  AddEquiv.ofBijective (F.inv U) (F.inv_bijective U)
-
-@[simp]
-theorem invEquiv_apply (U : OpenSubgroup G) (x : H2Open C U) : F.invEquiv U x = F.inv U x :=
-  rfl
-
-def toClassFormationAt (P : Set Nat.Primes) : ClassFormationAt P C where
-  toPreClassFormation := F.toPreClassFormation
-  inv_injective U := (F.inv_bijective U).1
-  primaryComponent_le_range U _ _ x _ := (F.inv_bijective U).2 x
 
 end ClassFormation
 

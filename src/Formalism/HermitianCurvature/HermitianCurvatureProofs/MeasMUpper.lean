@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightStabilizerMem
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasMOfCont
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormRankZeroApply
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightStabilizerMem
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasMOfCont
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormRankZeroApply
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.StabilizerDisintegration.OF
 
@@ -35,8 +39,9 @@ theorem measM_upper {X : Type*} [MeasurableSpace X] {m : ℕ} {u : X → G.UT m 
 theorem measM_uMap {X : Type*} [MeasurableSpace X] (z : Fin (2 * r + k + 1) → ℂ) {A : X → B.Mat k r}
     (hA : MeasM A) : MeasM (fun x => C2.uMap k r z (A x)) := by
   have h := measM_of_cont
-    (f := fun y : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → ℂ => C2.uMap k r z (Matrix.of y)) ?_ hA
-  · simpa using h
+    (f := fun y : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → ℂ => C2.uMap k r z (Matrix.of y))
+    (g := fun x => Matrix.of.symm (A x)) ?_ hA
+  · simpa only [Equiv.apply_symm_apply] using h
   · refine continuous_pi fun a => continuous_pi fun b => ?_
     simp only [C2.uMap, herm, Matrix.of_symm_apply]
     split_ifs
@@ -48,7 +53,7 @@ theorem measM_uMap {X : Type*} [MeasurableSpace X] (z : Fin (2 * r + k + 1) → 
 theorem meas_utc {X : Type*} [MeasurableSpace X] {m : ℕ} {A : X → Matrix (Fin m) (Fin m) ℂ} (hA : MeasM A) :
     Measurable fun x => utc (A x) := by
   rw [measM_iff] at hA
-  exact measurable_pi_lambda _ fun q => hA q.1.1 q.1.2
+  exact Measurable.of_eval fun q => hA q.1.1 q.1.2
 
 section main
 
@@ -113,7 +118,7 @@ theorem measM_rhoX {X : Type*} [MeasurableSpace X] {x : X → C2.Lstidx w → �
       constructor
       · intro hx
         refine ⟨Matrix.of.symm (rhoX S γ w x), ⟨hx, ?_⟩, ?_⟩
-        · simpa [hR'def] using (hs x).1
+        · simpa only [hR'def, Set.mem_setOf_eq, Equiv.apply_symm_apply] using (hs x).1
         · simp only [hFdef, hHdef, Equiv.apply_symm_apply, (hs x).2]
       · rintro ⟨y, ⟨hyB, hyR⟩, hFy⟩
         have hyR2 : Matrix.of y ∈ C6.Rset γ := hyR

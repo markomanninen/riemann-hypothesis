@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.EtaKer
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.ClsFacts
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeightAndVanishing.EtaKer
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.ClsFacts
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.X
 
 private theorem hom_eq {l : ℕ} [Fact l.Prime] {k : Type} [Field k] [CharP k l] (f : ℤ_[l] →+* k) (x : ℤ_[l]) :
@@ -10,7 +15,7 @@ private theorem hom_eq {l : ℕ} [Fact l.Prime] {k : Type} [Field k] [CharP k l]
     rw [RingHom.mem_ker, map_sub, map_intCast, hn, sub_self]
   rw [PadicInt.ker_toZModPow, Ideal.mem_span_singleton] at h
   obtain ⟨y, hy⟩ := h
-  rw [← hn, map_intCast, sub_eq_iff_eq_add.1 hy, map_add, map_mul, map_pow, map_natCast, CharP.cast_eq_zero, map_intCast]
+  rw [← hn, map_intCast, sub_eq_iff_eq_add.1 hy, map_add (f := _), map_mul, map_pow, map_natCast, CharP.cast_eq_zero, map_intCast]
   simp
 
 theorem UpperTheory.V.X.cycKFacts :

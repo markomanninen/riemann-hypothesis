@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DatVtEq
-import Formalism.LocalToGlobal.Columns.MtAdWtIrr
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HwFixEx
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HwFixLine
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPolynomialModelCoefficientSpaceRealPoints
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsotypicFactorOfIsIrreduciblePiFiniteGroups
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.StdCharFinitePartRationalEqExpTrace
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCoefDualPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DatVtEq
+public import Formalism.LocalToGlobal.Columns.MtAdWtIrr
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HwFixEx
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HwFixLine
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPolynomialModelCoefficientSpaceRealPoints
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsotypicFactorOfIsIrreduciblePiFiniteGroups
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.StdCharFinitePartRationalEqExpTrace
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCoefDualPair
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice IsDedekindDomain NumberField Formalism.L2 Formalism.L2.Host Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev GlobalTheory.Mem GlobalTheory.Mem.R3 GlobalTheory.MtIn
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -43,7 +48,8 @@ theorem exists_weight_of_coefMap {L : Type} [Field L] [NumberField L] [IsCMField
     {K : Type} [Field K] (φ : K →+* ℂ) (lab : ι → L →+* K) (emb : ι → L →+* ℂ) (hlab : ∀ τ x, φ (lab τ x) = emb τ x)
     (hinj : Function.Injective emb) (hcm : ∀ τ τ', emb τ ≠ ComplexEmbedding.conjugate (emb τ'))
     (lam : ι → DomWeight n) {W : Type} [AddCommGroup W] [Module ℂ W] (ρ : Representation ℂ (ReciprocityTheory.Aut.GQ L n) W)
-    (c0 : VV K lam →ₛₗ[φ] W) (h0 : ∀ γ v, c0 (rhoVr lab lam (mtwRat γ) v) = ρ γ (c0 v))
+    (c0 : VV K lam →ₛₗ[φ] W)
+    (h0 : ∀ γ v, c0 (rhoVr lab lam (mtwRat (L := L) (n := n) γ) v) = ρ γ (c0 v))
     (h1 : LinearIndependent ℂ fun i => c0 (bVV K lam i))
     (h2 : Submodule.span ℂ (Set.range fun i => c0 (bVV K lam i)) = ⊤) :
     ∃ (alg : Formalism.AUTREP.IsAlgWeight L n ρ) (irr : ρ.IsIrreducible), ∀ (a : NG.AlgWt L n) (τ : ι) (lam0 : Fin n → ℤ),
@@ -51,14 +57,16 @@ theorem exists_weight_of_coefMap {L : Type} [Field L] [NumberField L] [IsCMField
   obtain ⟨T, hT⟩ := GlobalTheory.CoefReal.exists_scalarExt φ lam c0 h1 h2
   have hint : ∀ (γ : ReciprocityTheory.Aut.GQ L n) (x : VV ℂ lam), T (mtRep emb lam γ x) = ρ γ (T x) := by
     intro γ x
-    have hfam : (fun τ => Formalism.UG.bc φ (invTrK (embGL lab (mtwRat γ)) τ)) = mtwInvTr (mtwEmb emb (mtwRat γ)) := by
+    have hfam : (fun τ => Formalism.UG.bc φ (invTrK (embGL lab (mtwRat (L := L) (n := n) γ)) τ)) =
+        mtwInvTr (mtwEmb emb (mtwRat (L := L) (n := n) γ)) := by
       funext τ
       apply Units.ext
       ext a b
-      simp [mtwInvTr, mtwEmb, inside₂, invTrK_coe, bc_coe, embGL_coe, ← map_inv, hlab, map_inv_mat]
+      simp [mtwInvTr, mtwEmb, inside₂, invTrK_coe, bc_coe, embGL_coe, hlab, map_inv_mat]
     have hL : T.toLinearMap ∘ₗ mtRep emb lam γ = ρ γ ∘ₗ T.toLinearMap := by
       refine LinearMap.ext_on_range (GlobalTheory.CoefModel.span_mapVV φ lam) fun i => ?_
-      show T (rhoK lam (mtwInvTr (mtwEmb emb (mtwRat γ))) (GlobalTheory.CoefModel.mapVV φ lam _)) = ρ γ (T _)
+      show T (rhoK lam (mtwInvTr (mtwEmb emb (mtwRat (L := L) (n := n) γ)))
+        (GlobalTheory.CoefModel.mapVV φ lam _)) = ρ γ (T _)
       rw [← hfam, ← GlobalTheory.CoefModel.mapVV_rhoK, hT, hT]
       exact h0 γ _
     exact LinearMap.congr_fun hL x
@@ -81,7 +89,8 @@ theorem wt_main : ∀ (D : D7) (V : HSp D) (P : principalLevelFrame.RowPsi V V.r
   intro D V P e hR c lam c0 ht
   exact exists_weight_of_coefMap D.what₂.embLL (labLL D) (tauE D) GlobalTheory.CoefSpace.embLL_labLL (GlobalTheory.StdRat.tauE_injective D)
     (fun τ τ' h => (GlobalTheory.StdRat.tauE_cm D (tauE D τ')).1 ⟨τ', rfl⟩ ⟨τ, h⟩) lam (wtRep c e) c0
-    (fun γ v => ht.1 (e γ) (mtwRat γ) ((hR γ).2 _ (congrArg Units.val (mtwInc_mtwRatFun γ)).symm) v) ht.2.1 ht.2.2
+    (fun γ v => ht.1 (e γ) (mtwRat (L := D.host.E) (n := V.rank) γ)
+      ((hR γ).2 _ (congrArg Units.val (mtwInc_mtwRatFun γ)).symm) v) ht.2.1 ht.2.2
 
 end GlobalTheory.MtIn
 

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleTrace.GenUsePf
+module
+
+public import Development.EtaleCohomology.EtaleTrace.GenUsePf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry MvPolynomial
@@ -8,7 +12,7 @@ namespace LateralTheory.EtaleTrace.Cov
 
 lemma gub_stalk_inj {X : Scheme.{0}} [IsIntegral X] (x : X) :
     Function.Injective (algebraMap (X.presheaf.stalk x) X.functionField) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   obtain ⟨U, hxU, s, rfl⟩ := X.presheaf.exists_germ_eq a
   have : Nonempty U := ⟨⟨x, hxU⟩⟩

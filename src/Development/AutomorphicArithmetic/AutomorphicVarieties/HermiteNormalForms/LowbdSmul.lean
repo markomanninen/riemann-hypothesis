@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+
+@[expose] public section
 
 open NumberField Matrix UpperTheory.V UpperTheory.V.KT
 open scoped ComplexOrder
@@ -10,10 +14,10 @@ private theorem lowbd_cont (L : Type) [Field L] [NumberField L] (N : ℕ) :
   have hv : Continuous fun p : HS L N × VR L N => (p.1 : InfinitePlace L → Fin N → Fin N → ℂ) :=
     continuous_subtype_val.comp continuous_fst
   have hz : Continuous fun p : HS L N × VR L N => (p.2 : InfinitePlace L → Fin N → ℂ) := continuous_snd
-  refine continuous_finset_sum _ fun w _ => Complex.continuous_re.comp ?_
-  refine continuous_finset_sum _ fun i _ => ?_
+  refine continuous_finsetSum _ fun w _ => Complex.continuous_re.comp ?_
+  refine continuous_finsetSum _ fun i _ => ?_
   refine (continuous_star.comp ((continuous_apply i).comp ((continuous_apply w).comp hz))).mul ?_
-  refine continuous_finset_sum _ fun j _ => ?_
+  refine continuous_finsetSum _ fun j _ => ?_
   exact ((continuous_apply j).comp ((continuous_apply i).comp ((continuous_apply w).comp hv))).mul
     ((continuous_apply j).comp ((continuous_apply w).comp hz))
 

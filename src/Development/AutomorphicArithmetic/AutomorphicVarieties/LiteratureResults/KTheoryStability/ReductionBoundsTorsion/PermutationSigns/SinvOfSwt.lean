@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.PStab
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.SimplexCompact
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.SBStar
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.PStab
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PermutationSigns.SimplexCompact
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.SBStar
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,6 @@ theorem ev_stab (hT : TStab) {n N q : ℕ} (h : n ≤ N) (ω : Form (HS L N) q) 
   rw [← intS_pull]
   congr 1
   funext j
-  simp only [MonoidHom.comp_apply]
   exact hT L n N h _
 
 theorem ev_blk (hT : TBlk) {d n q : ℕ} (ω : Form (HS L (d * n)) q) (z : Chn (Gm L n) q) :
@@ -37,8 +40,7 @@ theorem ev_blk (hT : TBlk) {d n q : ℕ} (ω : Form (HS L (d * n)) q) (z : Chn (
   rw [← intS_pull]
   congr 1
   funext j
-  simp only [MonoidHom.comp_apply, add_zero]
-  exact hT L d n _
+  simpa only [add_zero, MonoidHom.comp_apply] using hT L d n _
 
 theorem padL_one (n N : ℕ) : padL n N (one L n).1 + eL n N = (one L N).1 := by
   unfold padL eL one

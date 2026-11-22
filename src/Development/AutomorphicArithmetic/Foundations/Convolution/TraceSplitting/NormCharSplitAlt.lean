@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.NormCharSplit
-import Development.AutomorphicArithmetic.Foundations.Convolution.NormCharacterPowers.NormCharPowHolds
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnramifiedAtValueHeckeCharCompIdeleNorm
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsWeilGroupRestrictExtension
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DenseRangeUnits
-import GroundTheory.GlobalFields.NormResidueSymbol.FunctorialFinite
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.NormCharSplit
+public import Development.AutomorphicArithmetic.Foundations.Convolution.NormCharacterPowers.NormCharPowHolds
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnramifiedAtValueHeckeCharCompIdeleNorm
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsWeilGroupRestrictExtension
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DenseRangeUnits
+public import GroundTheory.GlobalFields.NormResidueSymbol.FunctorialFinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,7 @@ private theorem loc_eq_one {F E : Type} [Field F] [NumberField F] [Field E] [Num
   rw [h2] at h3
   exact h3
 
-private theorem twist_inter {F : Type} [Field F] [NumberField F] [IsTotallyComplex F] {n : ℕ} (π : CuspSub F n) (η : HChar F)
+private theorem twist_inter {F : Type} [Field F] [NumberField F] [_root_.NumberField.IsTotallyComplex F] {n : ℕ} (π : CuspSub F n) (η : HChar F)
     (v : HeightOneSpectrum (𝓞 F)) (h : ∀ x, η.loc v x = 1) (g : GL (Fin n) (v.adicCompletion F)) (φ : π.V) :
     (π.twist η).locRep v g (π.toTwist η φ) = π.toTwist η (π.locRep v g φ) := by
   have hd : CuspSub.locDet n η v g = 1 := h _
@@ -84,12 +88,14 @@ theorem UpperTheory.ConvolutionTheory.T.normCharSplit :
   · rintro ⟨f, h0, hf⟩
     refine ⟨(π.toTwist η).symm.toLinearMap ∘ₗ f, fun h => h0 (LinearMap.ext fun x => (π.toTwist η).symm.injective ?_),
       fun g x => (π.toTwist η).injective ?_⟩
-    · rw [LinearMap.zero_apply, map_zero]; exact LinearMap.congr_fun h x
+    · simpa only [LinearMap.comp_apply, LinearMap.zero_apply, LinearEquiv.coe_coe,
+        LinearEquiv.map_zero] using LinearMap.congr_fun h x
     · simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, LinearEquiv.apply_symm_apply]
       rw [← twist_inter π η v hl, LinearEquiv.apply_symm_apply, hf]
   · rintro ⟨f, h0, hf⟩
     refine ⟨(π.toTwist η).toLinearMap ∘ₗ f, fun h => h0 (LinearMap.ext fun x => (π.toTwist η).injective ?_),
       fun g x => ?_⟩
-    · rw [LinearMap.zero_apply, map_zero]; exact LinearMap.congr_fun h x
+    · simpa only [LinearMap.comp_apply, LinearMap.zero_apply, LinearEquiv.coe_coe,
+        LinearEquiv.map_zero] using LinearMap.congr_fun h x
     · simp only [LinearMap.comp_apply, LinearEquiv.coe_coe]
       rw [twist_inter π η v hl, hf]

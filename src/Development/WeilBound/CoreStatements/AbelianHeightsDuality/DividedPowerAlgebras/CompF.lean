@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
-import Development.AbelianVarietyTheory.Definitions.Divisors.RatBasisLinearIndependentInt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ComparisonMemCechHodgeFiltration
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RatBasisLinearIndependentInt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -47,12 +51,6 @@ instance : Category (Tag γ s U) where
   id_comp _ := Tag.Hom.ext (Category.id_comp _)
   comp_id _ := Tag.Hom.ext (Category.comp_id _)
   assoc _ _ _ := Tag.Hom.ext (Category.assoc _ _ _)
-
-@[ext] theorem Tag.hom_ext {S T : Tag γ s U} {f g : S ⟶ T} (h : f.f = g.f) : f = g := Tag.Hom.ext h
-
-@[simp] theorem Tag.comp_f {S T V : Tag γ s U} (f : S ⟶ T) (g : T ⟶ V) : (f ≫ g).f = f.f ≫ g.f := rfl
-
-@[simp] theorem Tag.id_f (S : Tag γ s U) : Tag.Hom.f (𝟙 S) = 𝟙 S.T := rfl
 
 def Tag.forget (γ : DividedPowers I) (s : X ⟶ Sp R) (U : K → X.Opens) : Tag γ s U ⥤ Thick γ s where
   obj S := S.T

@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.BlockKernelPropertiesOfSteps
-import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.MulInvBlockDiagApplySameBlock
-import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.LowUniMulVecELast
+module
+
+public import Formalism.HermitianCurvature.BlockKernelPropertiesOfSteps
+public import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.MulInvBlockDiagApplySameBlock
+public import Formalism.DoubleCosetMeasures.LowerUnipotentOrbits.LowUniMulVecELast
+
+@[expose] public section
 
 set_option maxHeartbeats 400000
 
@@ -566,7 +570,8 @@ theorem psd_comap {X Y : Type} [DecidableEq Y] (k : Y → Y → ℂ) (f : X → 
     intro z
     rw [sum_mul_comp_eq_sum_image_filter F f (fun y => conj (a y)) (k z)]
     refine Finset.sum_congr rfl fun w _ => ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
   have key : ∑ x ∈ F, ∑ y ∈ F, a x * conj (a y) * k (f x) (f y) =
       ∑ x ∈ F.image f, ∑ y ∈ F.image f, (∑ u ∈ F.filter (fun u => f u = x), a u) *
         conj (∑ u ∈ F.filter (fun u => f u = y), a u) * k x y := by
@@ -644,12 +649,6 @@ theorem first_kernel_properties_of_hypotheses : Formalism.FourierDecayAlt.A5.Sin
   unfold Formalism.FourierDecayAlt.A5.SingleBlockOfSteps
   intro hF hI hCD hCO hCC hG
   exact ⟨first_kernel_periodic_of_formula hF, first_kernel_gram_of_second hG, first_kernel_parseval_of_formula hF hI hCD hCO hCC⟩
-
-theorem first_theta_properties_of_parts : Formalism.FourierDecayAlt.A5.SingleBlockThetaOfSteps := by
-  unfold Formalism.FourierDecayAlt.A5.SingleBlockThetaOfSteps
-  intro hPer hGram hPars hSup hBD _
-  have h := first_theta_equality_of_kernel_facts hPer hGram hPars hSup hBD
-  exact ⟨first_theta_eq_of_equality h, h⟩
 
 theorem lattice_average_lemma_from_parts : Formalism.FourierDecayAlt.A5.LemmaAAssemble := by
   unfold Formalism.FourierDecayAlt.A5.LemmaAAssemble Formalism.FourierDecayAlt.A5.LemmaA

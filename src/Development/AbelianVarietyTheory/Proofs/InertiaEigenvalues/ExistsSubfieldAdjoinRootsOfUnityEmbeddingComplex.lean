@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -14,7 +18,11 @@ theorem adjoin_roots_of_unity_embeds_complex {L0 K : Type} [Field L0] [Field K] 
     exact ⟨Polynomial.X ^ n - Polynomial.C 1, Polynomial.monic_X_pow_sub_C 1 hn.ne', by simp [hzn]⟩
   haveI : Algebra.IsAlgebraic L0 (IntermediateField.adjoin L0 Z) :=
     IntermediateField.isAlgebraic_adjoin hint
-  let φ : IntermediateField.adjoin L0 Z →ₐ[L0] ℂ := IsAlgClosed.lift
+  let φ : IntermediateField.adjoin L0 Z →ₐ[L0] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨(IntermediateField.adjoin L0 Z).toSubfield, φ.toRingHom,
     fun x => (IntermediateField.adjoin L0 Z).algebraMap_mem x,
     fun z hz => IntermediateField.subset_adjoin L0 Z hz, ?_⟩

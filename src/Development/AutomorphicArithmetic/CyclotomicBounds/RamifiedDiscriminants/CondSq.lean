@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.PrimeDiscriminants.RamDiscr
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.PrimeDiscriminants.RamDiscr
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 

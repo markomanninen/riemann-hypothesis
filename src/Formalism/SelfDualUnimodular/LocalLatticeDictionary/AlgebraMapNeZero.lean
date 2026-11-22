@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SelfDualUnimodular.LocalLatticeDictionary.UnimodOfSelfDual
+module
+
+public import Mathlib
+public import Formalism.SelfDualUnimodular.LocalLatticeDictionary.UnimodOfSelfDual
+
+@[expose] public section
 
 noncomputable section
 

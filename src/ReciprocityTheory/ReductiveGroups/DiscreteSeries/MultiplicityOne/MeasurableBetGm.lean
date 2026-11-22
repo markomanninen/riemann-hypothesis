@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.CutFold
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JBeEquivB
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StSInt
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.CutFold
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JBeEquivB
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StSInt
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ private theorem continuous_sP : Continuous (fun p : Mt k r × Mt k r => (sP p : 
 private theorem measurable_inv_lemma_2 {X : Type*} [MeasurableSpace X] [TopologicalSpace X]
     [OpensMeasurableSpace X] (A : X → Mat k r) (hA : Continuous A) :
     @Measurable X (Mt k r) _ _ (fun x => (((A x)⁻¹ : Mat k r) : Mt k r)) := by
-  refine measurable_pi_lambda _ (fun i => measurable_pi_lambda _ (fun j => ?_))
+  refine Measurable.of_eval (fun i => Measurable.of_eval (fun j => ?_))
   have e : (fun x => (((A x)⁻¹ : Mat k r) : Mt k r) i j) =
       fun x => ((A x).det)⁻¹ * (A x).adjugate i j := by
     funext x
@@ -37,7 +41,7 @@ private theorem measurable_inv_lemma_2 {X : Type*} [MeasurableSpace X] [Topologi
 private theorem meas_of_cont_lemma_3 {X : Type*} [MeasurableSpace X] [TopologicalSpace X]
     [OpensMeasurableSpace X] (F : X → Mat k r) (hF : Continuous F) :
     @Measurable X (Mt k r) _ _ (fun x => (F x : Mt k r)) :=
-  measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j => (hF.matrix_elem i j).measurable
+  Measurable.of_eval fun i => Measurable.of_eval fun j => (hF.matrix_elem i j).measurable
 
 theorem measurable_sP : @Measurable (Mt k r × Mt k r) (Mt k r) _ _ (fun p => sP p) := by
   exact meas_of_cont_lemma_3 (k := k) (r := r) _ continuous_sP
@@ -45,7 +49,7 @@ theorem measurable_sP : @Measurable (Mt k r × Mt k r) (Mt k r) _ _ (fun p => sP
 theorem measurable_Fm : Measurable (Function.uncurry (Fm (k := k) (r := r))) := by
   have hi := measurable_inv_lemma_2 (fun q : (Mt k r × Mt k r) × Mt k r => (sP q.1 : Mat k r))
     (continuous_sP.comp continuous_fst)
-  refine measurable_pi_lambda _ (fun i => measurable_pi_lambda _ (fun j => ?_))
+  refine Measurable.of_eval (fun i => Measurable.of_eval (fun j => ?_))
   simp only [Function.uncurry, Fm, lmulM, Matrix.mul_apply, Matrix.of_apply]
   refine Finset.measurable_sum _ (fun l _ => ?_)
   have h1 : Measurable (fun q : (Mt k r × Mt k r) × Mt k r => (((sP q.1)⁻¹ : Mat k r) : Mt k r) i l) :=
@@ -100,7 +104,7 @@ def bet (x : Mt k r) : ℝ := gN (Matrix.of x : Mat k r) ^ (-AB k r)
 
 private theorem continuous_gN_lemma : Continuous (fun x : Mt k r => gN (Matrix.of x : Mat k r)) := by
   unfold gN
-  exact Real.continuous_sqrt.comp (continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+  exact Real.continuous_sqrt.comp (continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
     Complex.continuous_normSq.comp ((continuous_apply j).comp (continuous_apply i)))
 
 theorem measurable_bet : Measurable (bet (k := k) (r := r)) := by

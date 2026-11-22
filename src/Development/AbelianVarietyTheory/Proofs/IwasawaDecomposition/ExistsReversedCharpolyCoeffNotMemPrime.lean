@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgebraMapNormCoeff
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCharpolyBaseChangeIntegrallyClosedStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgebraMapNormCoeff
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCharpolyBaseChangeIntegrallyClosedStatement
+
+@[expose] public section
+
 open CategoryTheory Polynomial GlobalTheory.NormalDescent
 
 namespace GlobalTheory.NormalDescent
@@ -75,12 +80,14 @@ theorem exists_normCoeff_not_mem {A B : Type} [CommRing A] [IsDomain A] [IsInteg
   have hPQ : Polynomial.aeval b P ∈ Q := hQI (by simpa [I, RingHom.mem_ker] using hker)
   have hbd : b ^ P.natDegree ∈ Q := by
     have hsum := hmon.as_sum
-    rw [hsum, map_add, map_pow, aeval_X, map_sum] at hPQ
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsum, map_add (f := _), map_pow, aeval_X, map_sum] at hPQ
     refine (Q.add_mem_iff_left ?_).1 hPQ
     refine Q.sum_mem fun j hj => ?_
     rw [map_mul, aeval_C, aeval_X_pow]
     refine Q.mul_mem_right _ ?_
     have : P.coeff j ∈ Q.comap (algebraMap A B) := by
+      change P.coeff j ∈ Ideal.under A Q
       rw [hQc]; exact hcoeff j (Finset.mem_range.1 hj)
     exact this
   exact hb Q hQp hQc (hQp.mem_of_pow_mem _ hbd)

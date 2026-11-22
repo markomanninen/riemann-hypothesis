@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.IsotropicVanish
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.IsotropicVanish
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -6,7 +10,7 @@ open scoped BigOperators
 namespace Formalism.L2.Th1.C
 
 def Dinv {K : Type} [Field K] (l f : PowerSeries K) : PowerSeries K :=
-  (PowerSeries.derivative K l)⁻¹ * PowerSeries.derivative K f
+  (PowerSeries.derivative (R := K) l)⁻¹ * PowerSeries.derivative (R := K) f
 
 def jet {K : Type} [Field K] (l f : PowerSeries K) (i : ℕ) : K :=
   PowerSeries.constantCoeff ((Dinv l)^[i] f)
@@ -17,17 +21,17 @@ def JetAdditive : Prop :=
 
 def JetLG : Prop :=
   ∀ (K : Type) [Field K] [CharZero K] (R : Subring K) (l f : PowerSeries K),
-    IsOneUnit R (PowerSeries.derivative K l) → LG R f → ∀ i : ℕ, 1 ≤ i → jet l f i ∈ R
+    IsOneUnit R (PowerSeries.derivative (R := K) l) → LG R f → ∀ i : ℕ, 1 ≤ i → jet l f i ∈ R
 
 def JetNorm : Prop :=
   ∀ (K : Type) [Field K] [CharZero K] (R : Subring K) (l linv ph : PowerSeries K) (a b : K),
-    IsLogPair l linv → IsOneUnit R (PowerSeries.derivative K l) →
+    IsLogPair l linv → IsOneUnit R (PowerSeries.derivative (R := K) l) →
     PowerSeries.constantCoeff ph = 0 → PhNormAt R l linv ph a b →
     ∀ i : ℕ, 1 ≤ i → (a ^ i - a * b) * jet l ph i ∈ R
 
 def JetOne : Prop :=
   ∀ (K : Type) [Field K] [CharZero K] (R : Subring K) (l linv ph : PowerSeries K),
-    IsLogPair l linv → IsOneUnit R (PowerSeries.derivative K l) →
+    IsLogPair l linv → IsOneUnit R (PowerSeries.derivative (R := K) l) →
     PowerSeries.constantCoeff ph = 0 → PhNormAt R l linv ph (-1) (-1) → (2 : K)⁻¹ ∈ R →
     jet l ph 1 ∈ R
 

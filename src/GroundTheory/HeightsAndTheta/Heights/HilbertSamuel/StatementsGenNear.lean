@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.GeneratedModOfSubsingleton
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGradedSubquot
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PQuotPartGraded
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.GeneratedModOfSubsingleton
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGradedSubquot
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PQuotPartGraded
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -31,8 +36,6 @@ def locIdealPart {S : Type*} [CommRing S] {K : Type*} [Fintype K] {ι : K → Ty
     y ∈ KH.locPart ι 𝓜 T (d - fun k => (a k : ℤ)) ∧ w = p • y}
 
 section Point
-
-def pointCell : KH.Cell Unit pointIdx 0 := ⟨fun _ => Finset.univ, fun _ => Finset.univ_nonempty, by simp⟩
 
 end Point
 

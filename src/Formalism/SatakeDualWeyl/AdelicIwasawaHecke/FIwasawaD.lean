@@ -1,4 +1,8 @@
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FIwasawaC
+module
+
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FIwasawaC
+
+@[expose] public section
 
 open Formalism.UG Matrix
 

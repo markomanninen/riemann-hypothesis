@@ -1,12 +1,16 @@
-import Mathlib
-import GroundTheory.GlobalFields.NormResidueSymbol.FunctorialLocal
-import GroundTheory.GlobalFields.NormResidueSymbol.RangeIdeleNormLeKerIdeleSymbol
-import GroundTheory.GlobalFields.CompletionAtPlace.Inertia
-import GroundTheory.LocalFields.MaximalUnramifiedIntegers
-import GroundTheory.LocalFields.TameExtension
-import GroundTheory.LocalFields.LocalArtinTransport
-import GroundTheory.LocalFields.LocalArtinMap
-import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeRangeNormUnits
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.NormResidueSymbol.FunctorialLocal
+public import GroundTheory.GlobalFields.NormResidueSymbol.RangeIdeleNormLeKerIdeleSymbol
+public import GroundTheory.GlobalFields.CompletionAtPlace.Inertia
+public import GroundTheory.LocalFields.MaximalUnramifiedIntegers
+public import GroundTheory.LocalFields.TameExtension
+public import GroundTheory.LocalFields.LocalArtinTransport
+public import GroundTheory.LocalFields.LocalArtinMap
+public import GroundTheory.LocalFields.ExistsUnitFiltrationUnitsLeRangeNormUnits
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -22,7 +26,7 @@ variable {k : Type*} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchi
   [IsNonarchimedeanLocalField M] [Algebra k M] [ValuativeExtension k M] [FiniteDimensional k M]
   [IsGalois k M] [IsMulCommutative (M ≃ₐ[k] M)]
 
-theorem normResidueSymbol_integer_sub_pow_mem (hM : ramificationIndex k M = 1) {π : kˣ}
+theorem normResidueSymbol_integer_sub_pow_mem (hM : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation M))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation k))) = 1) {π : kˣ}
     (hπ : ord (π : k) = 1) (z : 𝒪[M]) :
     integerAlgEquiv k M (normResidueSymbol k M π) z - z ^ Nat.card 𝓀[k] ∈ 𝓂[M] := by
   let ι : M →ₐ[k] SeparableClosure k := IsSepClosed.lift
@@ -32,7 +36,7 @@ theorem normResidueSymbol_integer_sub_pow_mem (hM : ramificationIndex k M = 1) {
   have hj : ∀ x y : M, j.toRingEquiv x ≤ᵥ j.toRingEquiv y ↔ x ≤ᵥ y :=
     vle_map_iff j.toAlgHom
 
-  have hE : ramificationIndex k E = 1 := by
+  have hE : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation E))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation k))) = 1 := by
     have h1 := ord_algebraMap (K := k) (L := M) (π : k)
     have h2 := ord_algebraMap (K := k) (L := E) (π : k)
     have h3 := ord_apply_of_vle j.toRingEquiv hj (Units.map (algebraMap k M).toMonoidHom π)
@@ -82,7 +86,7 @@ theorem localSymbol_eq_arithFrobAt (he : w.asIdeal.ramificationIdx (𝓞 K) = 1)
     localSymbol L v π = arithFrobAt (𝓞 K) Gal(L/K) w.asIdeal := by
   let w' : PlacesOver L v := ⟨w, inferInstance⟩
   have := isMulCommutative_gal_adicCompletion L v w'
-  have hM : ramificationIndex (v.adicCompletion K) (w.adicCompletion L) = 1 :=
+  have hM : (_root_.Ideal.ramificationIdx (_root_.IsLocalRing.maximalIdeal (_root_.Valuation.integer (_root_.ValuativeRel.valuation (w.adicCompletion L)))) (_root_.Valuation.integer (_root_.ValuativeRel.valuation (v.adicCompletion K)))) = 1 :=
     (ramificationIdx_integer v w).trans he
   have h := eq_decompositionToLocal_arithFrobAt v w he _
     (normResidueSymbol_integer_sub_pow_mem hM hπ)

@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.IsogenyPoints
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.IsogenyPoints
+
+@[expose] public section
 
 namespace GroundTheory.Arith.Abelian
 
@@ -49,7 +53,7 @@ theorem exists_ker_of_algHom (φ : Isogeny E E')
       constMap_injective E' Ω (by rw [key, map_zero])
     refine ⟨T, hker, ?_⟩
     apply algHom_eq_of_map_genericPoint' E
-    rw [← hsum, ← Point.map_map, map_translate_genericPoint, map_add]
+    rw [← hsum, ← Point.map_map, map_translate_genericPoint, map_add (f := _)]
     exact congrArg _ (map_constMap E ι T).symm
 
 theorem finSepDegree_le_card_ker (φ : Isogeny E E') :

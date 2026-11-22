@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.FourierCoeffIntSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasSubstEv
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsRegularOfSupportDimQuotientAddLengthLe
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RangeAlgebraMapEqIInfDiscreteValuationSubring
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueFixedPointOfAdicContraction
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.FourierCoeffIntSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasSubstEv
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsRegularOfSupportDimQuotientAddLengthLe
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RangeAlgebraMapEqIInfDiscreteValuationSubring
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueFixedPointOfAdicContraction
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,7 +103,8 @@ theorem finite_integralClosure : Module.Finite R (integralClosure R L) := by
     refine IsHausdorff.of_isDomain _ ?_
     obtain ⟨n, hn⟩ := Ideal.exists_maximal B
     refine ne_top_of_le_ne_top hn.ne_top (Ideal.map_le_iff_le_comap.2 ?_)
-    exact (eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal n)).ge
+    exact (eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal
+      (algebraMap R B) (by intro x; exact integralClosure.isIntegral x) n)).ge
   have halg : Algebra.IsAlgebraic R L :=
     (IsFractionRing.comap_isAlgebraic_iff (A := R) (K := K) (C := L)).mpr inferInstance
   obtain ⟨s, hsT, hs⟩ := (Submodule.fg_span_iff_fg_span_finset_subset (R := K) (B : Set L)).mp
@@ -151,7 +156,8 @@ theorem mem_map_C_of_coeff_mem {I : Ideal R} (hI : I.FG) {g : MvPowerSeries σ R
   choose c hc using fun d => (Submodule.mem_span_range_iff_exists_fun R).1 (hg d)
   have : g = ∑ i, (show MvPowerSeries σ R from fun d => c d i) * C (s i) := by
     ext d
-    rw [← hc d, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hc d, map_sum]
     exact Finset.sum_congr rfl fun i _ => by rw [coeff_mul_C]; rfl
   rw [this]
   exact Ideal.sum_mem _ fun i _ => Ideal.mul_mem_left _ _
@@ -299,11 +305,11 @@ theorem finite_of_finiteReduction (φ : MvPowerSeries τ R →ₐ[R] MvPowerSeri
   rw [Ideal.map_span, ← Set.range_comp]
   rfl
 
-omit [IsNoetherianRing R] [IsAdicComplete (maximalIdeal R) R] [Finite σ] in
 
+omit [IsNoetherianRing R] [IsAdicComplete (maximalIdeal R) R] [Finite σ] in
 theorem isLocalHom_of_constantCoeff_mem (φ : MvPowerSeries τ R →ₐ[R] MvPowerSeries σ R)
     (h0 : ∀ j, constantCoeff (φ (X j)) ∈ maximalIdeal R) : IsLocalHom φ.toRingHom := by
-  refine ((IsLocalRing.local_hom_TFAE _).out 0 3).2 fun g hg => ?_
+  refine ((IsLocalRing.local_hom_TFAE _).out 1 4).2 fun g hg => ?_
   have h1 := algHom_sub_constantCoeff_mem φ (K := maximalIdeal _)
     (fun j => mem_maximalIdeal_iff_constantCoeff.2 (h0 j)) g
   have h2 : algebraMap R (MvPowerSeries σ R) (constantCoeff g) ∈ maximalIdeal _ := by
@@ -424,52 +430,6 @@ section FormalGroup
 open ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB
 
 variable {R : Type} [CommRing R] {d : ℕ}
-
-theorem constantCoeff_mulN (G : FGLaw R d) (k : ℕ) (i : Fin d) :
-    constantCoeff (mulN G k i) = 0 := by
-  induction k generalizing i with
-  | zero => simp [mulN]
-  | succ k ih =>
-    have h : ∀ (j : Fin 2) (l : Fin d),
-        constantCoeff ((![mulN G k, pt R d 0] : Fin 2 → Pt R 1 d) j l) = 0 := by
-      intro j l; fin_cases j <;> simp [pt, ih]
-    exact constantCoeff_subst_eq_zero (hasSubst_ev _ h) (fun p => h p.1 p.2) (G.const i)
-
-theorem constantCoeff_vec_mulN (G : FGLaw R d) (k : ℕ) (j : Fin 1) (i : Fin d) :
-    constantCoeff ((![mulN G k] : Fin 1 → Pt R 1 d) j i) = 0 := by
-  simp [constantCoeff_mulN]
-
-def mulNHom (G : FGLaw R d) (k : ℕ) : PS R 1 d →ₐ[R] PS R 1 d :=
-  substAlgHom (hasSubst_ev ![mulN G k] (constantCoeff_vec_mulN G k))
-
-def mulLaw (R : Type) [CommRing R] (d : ℕ) : FGLaw R d where
-  F := fun i => X ((0 : Fin 2), i) + X ((1 : Fin 2), i) + X ((0 : Fin 2), i) * X ((1 : Fin 2), i)
-  const := fun i => by simp
-  unit := fun i => by
-    have h : ∀ (j : Fin 2) (l : Fin d),
-        constantCoeff ((![0, pt R d 0] : Fin 2 → Pt R 1 d) j l) = 0 := by
-      intro j l; fin_cases j <;> simp [pt]
-    simp only [ev_add _ h, ev_mul _ h, ev_X _ h]
-    simp [pt]
-  comm := fun i => by
-    have h : ∀ (j : Fin 2) (l : Fin d),
-        constantCoeff ((![pt R d 1, pt R d 0] : Fin 2 → Pt R 2 d) j l) = 0 := by
-      intro j l; fin_cases j <;> simp [pt]
-    simp only [ev_add _ h, ev_mul _ h, ev_X _ h]
-    simp [pt, add_comm, mul_comm]
-  assoc := fun i => by
-    have key : ∀ a b : Pt R 3 d, (∀ l, constantCoeff (a l) = 0) → (∀ l, constantCoeff (b l) = 0) →
-        ∀ l, ev ![a, b] (X ((0 : Fin 2), l) + X ((1 : Fin 2), l) +
-          X ((0 : Fin 2), l) * X ((1 : Fin 2), l) : PS R 2 d) = a l + b l + a l * b l := by
-      intro a b ha hb l
-      have h : ∀ (j : Fin 2) (l : Fin d), constantCoeff ((![a, b] : Fin 2 → Pt R 3 d) j l) = 0 := by
-        intro j l; fin_cases j <;> simp [ha, hb]
-      simp only [ev_add _ h, ev_mul _ h, ev_X _ h]
-      simp
-    have hp : ∀ (j : Fin 3) (l : Fin d), constantCoeff (pt R d j l) = 0 := by simp [pt]
-    rw [funext (key _ _ (hp 0) (hp 1)), funext (key _ _ (hp 1) (hp 2)),
-      key _ _ (by simp [hp]) (hp 2), key _ _ (hp 0) (by simp [hp])]
-    ring
 
 end FormalGroup
 

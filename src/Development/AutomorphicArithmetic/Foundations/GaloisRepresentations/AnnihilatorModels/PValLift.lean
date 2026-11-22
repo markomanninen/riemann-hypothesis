@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.SameNormBasic
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.SameNormBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,7 @@ theorem valLift_of : ValLift := by
       obtain ⟨w, hw⟩ : ∃ w, φ w = z := (LocalSubring.range_toSubring φ).le z.2
       have h1 : φ (algebraMap R (Localization.AtPrime 𝔭) r) * (z : K) = 1 := congrArg Subtype.val hz
       have hker : algebraMap R (Localization.AtPrime 𝔭) r * w - 1 ∈ RingHom.ker φ := by
-        rw [RingHom.mem_ker, map_sub, map_mul, map_one, hw, h1, sub_self]
+        rw [RingHom.mem_ker, RingHom.map_sub, map_mul, map_one, hw, h1, sub_self]
       have hkerle : RingHom.ker φ ≤ IsLocalRing.maximalIdeal _ :=
         IsLocalRing.le_maximalIdeal (RingHom.ker_ne_top φ)
       have h1m : (1 : Localization.AtPrime 𝔭) ∈ IsLocalRing.maximalIdeal _ := by

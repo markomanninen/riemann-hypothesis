@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.SiegelWeilUnitarySchrodinger
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.SiegelWeilUnitarySchrodinger
+
+@[expose] public section
 
 noncomputable section
 open scoped Matrix NNReal ComplexConjugate TensorProduct

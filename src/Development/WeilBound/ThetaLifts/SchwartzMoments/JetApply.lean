@@ -1,13 +1,19 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
 namespace PositivityTheory.ThKOwn
 
+open MeasureTheory
+
 namespace SchI
 
 open scoped ContDiff NNReal BoundedContinuousFunction
-open MeasureTheory Filter Topology
+open Filter Topology
 
 variable {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V]
 
@@ -98,13 +104,13 @@ theorem deriv_D (j : ℕ) (x : V) : HasFDerivAt (fun y => ∫ a, iteratedFDeriv 
       (bd_D (G a) (j + 1) y)
   · exact Filter.Eventually.of_forall fun a y _ => hcurry (G a) y
 
-theorem taylor : HasFTaylorSeriesUpTo ∞ (fun x => ∫ a, G a x ∂μ) fun x j => ∫ a, iteratedFDeriv ℝ j (G a) x ∂μ where
-  zero_eq x := by
+theorem taylor : HasFTaylorSeriesUpTo ∞ (fun x => ∫ a, G a x ∂μ) fun x j => ∫ a, iteratedFDeriv ℝ j (G a) x ∂μ := by
+  refine ⟨?_, fun m _ x => deriv_D hG hI m x, fun m _ => ?_⟩
+  · intro x
     show (∫ a, iteratedFDeriv ℝ 0 (G a) x ∂μ) 0 = ∫ a, G a x ∂μ
     rw [ContinuousMultilinearMap.integral_apply (int_D hG hI 0 x)]
     simp only [iteratedFDeriv_zero_apply]
-  fderiv m _ x := deriv_D hG hI m x
-  cont m _ := continuous_iff_continuousAt.2 fun x => (deriv_D hG hI m x).continuousAt
+  · exact continuous_iff_continuousAt.2 fun x => (deriv_D hG hI m x).continuousAt
 
 theorem eval_int (k j : ℕ) (x : V) :
     (∫ a, J k j (G a) ∂μ) x = ‖x‖ ^ k • iteratedFDeriv ℝ j (fun x => ∫ a, G a x ∂μ) x := by
@@ -165,8 +171,8 @@ theorem factor (T : SchwartzMap V ℂ →L[ℂ] ℂ) : ∃ (s : Finset (ℕ × �
 
 end SchI
 
-open MeasureTheory in
 
+open MeasureTheory in
 theorem weakInt :
     ∀ (V : Type) [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDimensional ℝ V] (α : Type) [TopologicalSpace α]
     [SecondCountableTopology α] [MeasurableSpace α] [BorelSpace α] (μ : Measure α) (G : α → SchwartzMap V ℂ), Continuous G →
@@ -178,7 +184,8 @@ theorem weakInt :
   obtain ⟨s, T', hT'⟩ := SchI.factor T
   have hsplit : ∀ g : SchwartzMap V ℂ, T g = ∑ i : s, T' (Pi.single i (SchI.J i.1.1 i.1.2 g)) := by
     intro g
-    rw [hT', ← map_sum, Finset.univ_sum_single]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hT', ← map_sum, Finset.univ_sum_single]
   have hint : ∀ i : s, Integrable (fun a => T' (Pi.single i (SchI.J i.1.1 i.1.2 (G a)))) μ := fun i =>
     (T'.comp (ContinuousLinearMap.single ℂ _ i)).integrable_comp
       (SchI.int_J hG hI _ _)

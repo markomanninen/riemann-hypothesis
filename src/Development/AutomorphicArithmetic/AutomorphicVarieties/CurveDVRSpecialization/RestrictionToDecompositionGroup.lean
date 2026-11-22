@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.RatTorsionFree
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.KisinCrTrivial
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PartsConj
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.RatTorsionFree
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PartsConj
+
+@[expose] public section
 
 open NumberField IsLocalRing Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Aut UpperTheory.V.Pr UpperTheory.V
 
 private theorem so_D {O R D : Type} [CommRing O] [IsLocalRing O] [CommRing R] [IsLocalRing R] [Algebra O R] [Group D]
-    (η : D →* ℤˣ) (Ψ : D →* Oˣ) (I : Subgroup D) (r : D →* GG 3 R) (hr : HasMult η r) (h : UnitaryThreeInertia.CondD η Ψ I r)
+    (η : D →* ℤˣ) (Ψ : D →* Oˣ) (I : Subgroup D) (r : D →* GG (m := 3) (R := R)) (hr : HasMult η r) (h : UnitaryThreeInertia.CondD η Ψ I r)
     (s : D) (hs : s ∈ I) (hη : η s = 1) (hΨ : Ψ s = 1) : r s = 1 := by
   obtain ⟨k, -, hk⟩ := h
   have h1 : conjBy k⁻¹ r s = 1 := by
@@ -41,7 +45,7 @@ private theorem so_chr {G C : Type} [Group G] [CommGroup C] (χ : G →* C) (u x
   rw [map_mul, map_mul, map_inv, inv_mul_cancel_comm]
 
 private theorem restriction_to_decomposition_group {O R G Γ ι : Type} [CommRing O] [IsLocalRing O] [CommRing R] [IsLocalRing R] [Algebra O R]
-    [Group G] [Group Γ] (F : UnitaryThreeInertia.Frame O G Γ ι) (r : Γ →* GG 3 R) (hr : F.Cond r) (D I : Subgroup G)
+    [Group G] [Group Γ] (F : UnitaryThreeInertia.Frame O G Γ ι) (r : Γ →* GG (m := 3) (R := R)) (hr : F.Cond r) (D I : Subgroup G)
     (hD : F.D F.vl = D) (hI : F.I F.vl = I) :
     UnitaryThreeInertia.CondT ((F.η.comp F.π).comp D.subtype) ((F.Ψ.comp F.π).comp D.subtype) (I.subgroupOf D)
       ((r.comp F.π).comp D.subtype) := by
@@ -49,7 +53,7 @@ private theorem restriction_to_decomposition_group {O R G Γ ι : Type} [CommRin
   exact (hr.loc F.vl).1 rfl
 
 private theorem so_loc {O R G Γ ι : Type} [CommRing O] [IsLocalRing O] [CommRing R] [IsLocalRing R] [Algebra O R]
-    [Group G] [Group Γ] (F : UnitaryThreeInertia.Frame O G Γ ι) (r : Γ →* GG 3 R) (hr : F.Cond r) (v : ι) (hv : v ≠ F.vl) (s : G)
+    [Group G] [Group Γ] (F : UnitaryThreeInertia.Frame O G Γ ι) (r : Γ →* GG (m := 3) (R := R)) (hr : F.Cond r) (v : ι) (hv : v ≠ F.vl) (s : G)
     (hD : s ∈ F.D v) (hI : s ∈ F.I v) (hη : F.η (F.π s) = 1) (hΨ : F.Ψ (F.π s) = 1) : r (F.π s) = 1 := by
   by_cases hb : v ∈ F.Sb
   · exact so_D _ _ _ (r.comp (F.loc v)) (fun g => hr.mult _) ((hr.loc v).2.1 hb) ⟨s, hD⟩ hI hη hΨ
@@ -61,7 +65,7 @@ open UpperTheory.V.Base in
 theorem UpperTheory.V.Pr.ordPt_of_isPt :
     ∀ (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] (c : Coef l) {N : ℕ} [NeZero N] (e : ℕ) (ψ : DirichletCharacter c.O N) (o₁ : ℕ), UnitaryThreeInertia.HostData l e ψ o₁ →
     ∀ (S : Finset UnitaryThreeInertia.Pl) (A : S → ValuationSubring Ω) (F : UnitaryThreeInertia.Frame c.O (Formalism.ConjugateSelfDual.G ℚ Ω) (UnitaryThreeInertia.Gam Ω S) S), UnitaryThreeInertia.IsHostFrame Ω c e ψ S A F →
-    ∀ (σ g₁ : G ℚ Ω), toGS Ω _ σ = F.c → ∀ {R : Type} [CommRing R] [IsLocalRing R] [Algebra c.O R] (r : UnitaryThreeInertia.Gam Ω S →* GG 3 R), F.IsPt (toGS Ω _ g₁) r →
+    ∀ (σ g₁ : G ℚ Ω), toGS Ω _ σ = F.c → ∀ {R : Type} [CommRing R] [IsLocalRing R] [Algebra c.O R] (r : UnitaryThreeInertia.Gam Ω S →* GG (m := 3) (R := R)), F.IsPt (toGS Ω _ g₁) r →
       OrdPt l (UnitaryThreeInertia.eta4 Ω) (Chr.Psi l e (Chr.dirG ℚ Ω ψ)) σ g₁ (A F.vl) (r.comp (toGS Ω _)) := by
   intro Ω _ _ _ l _ c N _ e ψ o₁ _ S A F hF σ g₁ hσ R _ _ _ r hr
   rw [← hF.η, ← hF.Ψ, ← hF.π]

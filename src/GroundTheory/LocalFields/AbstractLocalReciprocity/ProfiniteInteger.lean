@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.LocalField.Abstract
 
@@ -29,8 +33,6 @@ theorem castHom_proj {m n : ℕ+} (h : (m : ℕ) ∣ n) (x : ℤ̂) :
 
 @[ext] theorem ext {x y : ℤ̂} (h : ∀ n, proj n x = proj n y) : x = y :=
   Subtype.ext (funext h)
-
-@[simp] theorem proj_intCast (n : ℕ+) (m : ℤ) : proj n (m : ℤ̂) = m := map_intCast _ m
 
 theorem isClosed_profiniteIntegers :
     IsClosed (profiniteIntegers : Set (∀ n : ℕ+, ZMod n)) := by

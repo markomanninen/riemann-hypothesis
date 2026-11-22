@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.OrbitLabellings.RowDefs
-import Formalism.LocalToGlobal.CharacterGerms.RowTieMemCFin
-import Formalism.LocalToGlobal.CharacterGerms.RowTieFlagS
-import Formalism.LocalToGlobal.CharacterGerms.RowTieSelfCuts
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SeparatedEmbeddingsDirectionsTypedBasisStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.OrbitLabellings.RowDefs
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieMemCHarm
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieFlagS
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelfCuts
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.SeparatedEmbeddingsDirectionsTypedBasisStatement
+
+@[expose] public section
 
 open scoped BigOperators
 open Classical
@@ -32,9 +36,19 @@ theorem UpperTheory.labelSetGeo_of_labelSetArith :
       ∃ a : 𝓞 E, V.v (emA3 io ι (lab.tau o s) a - emA3 io ι (lab.tau o s') a) = 0 :=
     fun o s s' h => ha.sep (o, s) (o, s') fun e => h (Prod.mk.inj e).2
   have hgeo := fun o => GlobalTheory.T.separatedEmbeddings_directions_typedBasis E H Dw lv Xo c hstar T io y C3 C V ι hι k Y hY (ZMod d) (lab.tau o) (hsep1 o)
-  refine labSGeo_of hstar hι ha ⟨fun o x a => (hgeo o).2.1 x.1 x.2 a, fun o => ?_, fun o a v hv => ?_⟩
-  · obtain ⟨w, h1, h2⟩ := (hgeo o).2.2.1
+  refine { em_int := fun _ _ x => embedding_integral ι _ x
+           em_conj := ?_
+           e_int := fun _ _ i => a3uvec_int C3 hι _ i
+           e_eig := fun o x a => (hgeo o).2.1 x.1 x.2 a
+           e_sat := ?_
+           e_full := ?_ }
+  · intro o a x
+    rw [← ha.conj o a]
+    exact (embedding_conjugate hstar ι _ x).symm
+  · intro o
+    obtain ⟨w, h1, h2⟩ := (hgeo o).2.2.1
     exact ⟨w, h1, fun q q' => (h2 q q').trans (by congr)⟩
-  · obtain ⟨b, hb⟩ := (hgeo o).2.2.2 a v hv
+  · intro o a v hv
+    obtain ⟨b, hb⟩ := (hgeo o).2.2.2 a v hv
     obtain ⟨b', h1, h2⟩ := UpperTheory.extend_sigma_coefficients_by_zero (fun s => Dw.mult (lab.tau o s)) (selfLieBasisVector C3 ι lab o) a b
     exact ⟨b', h1, hb.trans h2⟩

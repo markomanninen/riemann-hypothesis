@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LineBundleGlobalSectionsDimCongrPicardClass
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsGloballyGeneratedIffGeneratingSections
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallySubsingletonCohTwistZOfIsProjOver
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsFiniteLengthOfIsArtinianRingAnnihilator
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsFiniteSubsetNonzeroLocus
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LineBundleGlobalSectionsDimCongrPicardClass
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsGloballyGeneratedIffGeneratingSections
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallySubsingletonCohTwistZOfIsProjOver
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsFiniteLengthOfIsArtinianRingAnnihilator
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.EventuallyExistsFiniteSubsetNonzeroLocus
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -104,7 +108,8 @@ theorem card_le_globalSectionsDim_of_localFnOfPowerSection {k : Type} [Field k] 
     {ι : Type} [Fintype ι] {f : ι → Γ(X, V)} (hf : LinearIndependent k f)
     (a : ∀ i, IsLocalFn h n (f i)) : Fintype.card ι ≤ lbH0 k (lbPow L n) := by
   choose u hu using a
-  let E := cohZeroTwistEquiv (lbPow L n)
+  let E := (cohOn.mapIso Γ(X, ⊤) ⊤ 0 (Twist.unitTwistIso (lbPow L n))).trans
+    ((coh.zeroEquiv _).trans (LB.globalEquiv (lbPow L n)))
   let φ : coh (twist (structureModule X) (lbPow L n)) 0 →ₗ[k] Γ(X, V) :=
     { toFun := fun w => resG X h (powFn (E w) J)
       map_add' := fun w w' => by
@@ -141,8 +146,8 @@ theorem exists_isLocalFn_mul [CompactSpace X] [QuasiSeparatedSpace X] (hL : L.Is
 
 variable {k : Type} [Field k] [Algebra k Γ(X, ⊤)]
 
-variable (k) in
 
+variable (k) in
 abbrev algebraOpen (U : X.Opens) : Algebra k Γ(X, U) :=
   ((resG X le_top).comp (algebraMap k Γ(X, ⊤))).toAlgebra
 
@@ -175,7 +180,7 @@ theorem exists_pow_le_globalSectionsDim_lineBundlePow [IsIntegral X] [CompactSpa
     (IsLocalFn.monomial (hs.pow a) hya)
   simpa using this
 
-theorem finiteType_algebraOpen [LocallyOfFiniteType (strHom k X)] {U : X.Opens}
+theorem finiteType_algebraOpen [LocallyOfFiniteType (strHom k (X := X))] {U : X.Opens}
     (hU : IsAffineOpen U) : letI := algebraOpen k U; Algebra.FiniteType k Γ(X, U) := by
   have h := ((strHom k X).finiteType_appLE (isAffineOpen_top _) hU le_top).comp
     (RingHom.FiniteType.of_surjective (Scheme.ΓSpecIso (.of k)).inv.hom
@@ -196,14 +201,14 @@ theorem topologicalKrullDim_affineOpen {U : X.Opens} (hU : IsAffineOpen U) :
 
 end AmpleBig
 
-open AmpleBig in
 
+open AmpleBig in
 theorem IsAmpleLB.isBig : ∀ (k : Type) [Field k] (X : Scheme.{0}) [IsIntegral X]
-    [Algebra k Γ(X, ⊤)], IsProjOver (strHom k X) → ∀ A : LB X, IsAmpleLB A → IsBig k A := by
+    [Algebra k Γ(X, ⊤)], IsProjOver (strHom k (X := X)) → ∀ A : LB X, IsAmpleLB A → IsBig k A := by
   intro k _ X _ _ hp A hA
   have := hA.compactSpace
   have := hA.quasiSeparatedSpace
-  have : IsProper (strHom k X) := by
+  have : IsProper (strHom k (X := X)) := by
     obtain ⟨N, i, hi, e⟩ := hp
     have := isProper_str k N
     rw [← e]

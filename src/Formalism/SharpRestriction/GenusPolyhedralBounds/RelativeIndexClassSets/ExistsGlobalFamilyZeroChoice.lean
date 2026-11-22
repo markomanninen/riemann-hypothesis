@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.WeightedPrimeSumBound
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.IteratedWeightAtVanishingOrder
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.WedgeDetNz
+module
+
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.WeightedPrimeSumBound
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.IteratedWeightAtVanishingOrder
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,7 +79,7 @@ section Transport
 variable (X : PJ D B P j) (la : HeightOneSpectrum (𝓞 B.KO)) (N : ℕ)
 
 theorem jF_injective : Function.Injective (jF X la N) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro p hp
   by_contra hne
   obtain ⟨β, hβ⟩ := MvPolynomial.ne_zero_iff.mp hne
@@ -91,12 +95,14 @@ theorem psi_eq_sum_coord (ka : WeightFamilies.Wt D j) {d : ℕ} (b : Basis (Fin 
     (p : MvPolynomial (Idx D j N) X.Forms) (zc : (Idx D j N →₀ ℕ) →₀ B.Cusp j ka)
     (h : ∀ β, X.inc ka (zc β) = p.coeff β) :
     psi X la N p = ∑ l, jF X la N (SizeBoundsAlt.polyOf (b.coord l) zc) • emb X la N (X.inc ka (b l)) := by
-  rw [SizeBoundsAlt.polynomial_eq_sum_monomials (inc := fun w => (X.inc w).toAddMonoidHom) zc h, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [SizeBoundsAlt.polynomial_eq_sum_monomials (inc := fun w => (X.inc w).toAddMonoidHom) zc h, map_sum]
   have h1 : ∀ l, jF X la N (SizeBoundsAlt.polyOf (b.coord l) zc) =
       ∑ β ∈ zc.support, jF X la N (MvPolynomial.monomial β 1) * jF X la N (MvPolynomial.C (b.coord l (zc β))) := by
     intro l
     unfold SizeBoundsAlt.polyOf
-    rw [Finsupp.sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finsupp.sum, map_sum]
     refine Finset.sum_congr rfl fun β _ => ?_
     rw [← map_mul, mul_comm, MvPolynomial.C_mul_monomial, mul_one]
   simp only [h1, Finset.sum_smul]
@@ -105,7 +111,8 @@ theorem psi_eq_sum_coord (ka : WeightFamilies.Wt D j) {d : ℕ} (b : Basis (Fin 
   rw [psi_monomial]
   show jF X la N (MvPolynomial.monomial β 1) • emb X la N (X.inc ka (zc β)) = _
   conv_lhs => rw [← b.sum_repr (zc β)]
-  rw [map_sum, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [map_smul, emb_smul_jF, smul_smul]
   rfl
@@ -184,33 +191,18 @@ theorem exists_zChoice (X : PJ D B P j) (ka wL wF : WeightFamilies.Wt D j) (T : 
       simp only [hval (e _), Finset.smul_sum]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun l _ => ?_
-      rw [← hg, ha l, map_sum, Finset.sum_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hg, ha l, map_sum, Finset.sum_smul]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [map_mul, hg, smul_smul]
     show secPow X la w al * emb X la N (X.inc _ θ) ∈ _
     rw [hsum]
     exact Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)
   | zero => simp only [map_zero, mul_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => simp only [map_add, mul_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => simp only [map_add (f := _), mul_add]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx =>
     simp only [map_smul, emb_smul_jF, mul_smul_comm]
     exact Submodule.smul_mem _ _ hx
-
-theorem exists_zChoice_addL (X : PJ D B P j) (wL wF : WeightFamilies.Wt D j) (T : ℕ) (hDT : WeightFamilies.dimY D j ≤ T) {N : ℕ}
-    (w : Fin N → B.Cusp j wL) (Sh : Finset (B.Cusp j (X.wF0 wL wF))) :
-    ∃ (rz : ℕ) (alz : Fin rz → Fin (WeightFamilies.dimY D j) → ℕ) (th0 : Fin rz → B.Cusp j (X.wF0 wL wF))
-      (zc : Fin rz → ((Fin (WeightFamilies.dimY D j + 1) × Fin N) →₀ ℕ) →₀ B.Cusp j (addL wF wL T)),
-      (∀ k, ∑ i, alz k i = a0 D j T) ∧ (∀ k, th0 k ∈ Sh) ∧
-      (∀ k β, X.inc _ (zc k β) = (SizeBoundsAlt.zPoly X w (alz k) (th0 k)).coeff β) ∧
-      (∃ φ : Fin rz → B.Cusp j (addL wF wL T) →ₗ[B.KO] B.KO, SizeBoundsAlt.detPoly φ zc ≠ 0) ∧
-      ∀ la : HeightOneSpectrum (𝓞 B.KO),
-        Submodule.span (Kp X la N)
-            {v | ∃ (al : Fin (WeightFamilies.dimY D j) → ℕ) (θ : B.Cusp j (X.wF0 wL wF)), ∑ i, al i = a0 D j T ∧
-              θ ∈ Submodule.span B.KO (Sh : Set (B.Cusp j (X.wF0 wL wF))) ∧
-              v = secPow X la w al * emb X la N (X.inc _ θ)} ≤
-          Submodule.span (Kp X la N)
-            (Set.range fun k => secPow X la w (alz k) * emb X la N (X.inc _ (th0 k))) :=
-  exists_zChoice X (addL wF wL T) wL wF T (iterated_weight_at_vanishingOrder X wL wF T hDT) w Sh
 
 theorem exists_global_family_zero_choice {X : PJ D B P j} {ka wL wF : WeightFamilies.Wt D j} (G0 : GlobalFamilyData X ka wL wF) (S : Scal B) (T : ℕ) (Gc : ℝ)
     (hwt : SizeBoundsAlt.wtIter wadd wL (X.wF0 wL wF) (a0 D j T) = ka)
@@ -245,7 +237,8 @@ theorem zFam_linearIndependent (X : PJ D B P j) (la : HeightOneSpectrum (𝓞 B.
   have hent : ∀ i k, φ1 i (z1 k) = jF X la N (SizeBoundsAlt.polyOf (φ i) (zc k)) := by
     intro i k
     unfold SizeBoundsAlt.polyOf
-    rw [Finsupp.sum, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finsupp.sum, map_sum, map_sum]
     refine Finset.sum_congr rfl fun γ _ => ?_
     rw [map_smul, smul_eq_mul, hφ1, ← map_mul, mul_comm, MvPolynomial.C_mul_monomial, mul_one]
   have hd : (Matrix.of fun i k => φ1 i (z1 k)).det = jF X la N (SizeBoundsAlt.detPoly φ zc) := by
@@ -262,7 +255,8 @@ theorem zFam_linearIndependent (X : PJ D B P j) (la : HeightOneSpectrum (𝓞 B.
     have hmv : (Matrix.of fun i k => φ1 i (z1 k)).mulVec g = 0 := by
       funext i
       have := congrArg (φ1 i) hg
-      rw [map_sum, map_zero] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero] at this
       simp only [map_smul, smul_eq_mul] at this
       simp only [Matrix.mulVec, dotProduct, Matrix.of_apply, Pi.zero_apply]
       rw [← this]

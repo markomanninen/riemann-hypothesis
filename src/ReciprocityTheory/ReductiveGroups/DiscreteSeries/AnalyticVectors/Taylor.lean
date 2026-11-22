@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.IteratedDerivOrbit
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.IteratedDerivOrbit
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,8 @@ theorem norm_orbit_sub_partial_le (hσ : IsURepOn (UJset ε) σ) (hD : IsDerived
     exact_mod_cast this.contDiffOn
   obtain ⟨x', -, heq⟩ := taylor_mean_remainder_lagrange_iteratedDeriv htt hf
   have hφsum : φ R = g t - taylorWithinEval g N (Set.uIcc t₀ t) t₀ t := by
-    rw [taylor_within_apply, hR, map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [taylor_within_apply, hR, map_sub, map_sum]
     congr 1
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [Complex.coe_smul, φ.map_smul, hwithin k, smul_eq_mul, smul_eq_mul, div_eq_inv_mul]

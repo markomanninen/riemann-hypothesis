@@ -1,14 +1,18 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.PhiIterPull
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TorsionOfVec
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SplitOnOfDisj
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SplitPointGeneric
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.MapUSharp
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.AveragingTransferKills
-import Development.AutomorphicArithmetic.EtaleIdempotents.ExistsCrystallineLatticeExpansion
-import Development.AutomorphicArithmetic.EtaleIdempotents.HeckeCorrespondenceProduct
-import Development.AutomorphicArithmetic.EtaleIdempotents.LinearCombinationTransferOfProjectorRelations
-import Development.AutomorphicArithmetic.EtaleIdempotents.CrystallineExpansionRelationOfScaledEndomorphism
-import Development.AutomorphicArithmetic.EtaleIdempotents.NatCastPrimeNeZeroAndNotIsUnitIntegers
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.PhiIterPull
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TorsionOfVec
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SplitOnOfDisj
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SplitPointGeneric
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.MapUSharp
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.AveragingTransferKills
+public import Development.AutomorphicArithmetic.EtaleIdempotents.ExistsCrystallineLatticeExpansion
+public import Development.AutomorphicArithmetic.EtaleIdempotents.HeckeCorrespondenceProduct
+public import Development.AutomorphicArithmetic.EtaleIdempotents.LinearCombinationTransferOfProjectorRelations
+public import Development.AutomorphicArithmetic.EtaleIdempotents.CrystallineExpansionRelationOfScaledEndomorphism
+public import Development.AutomorphicArithmetic.EtaleIdempotents.NatCastPrimeNeZeroAndNotIsUnitIntegers
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 set_option backward.isDefEq.respectTransparency false
@@ -103,7 +107,8 @@ private lemma h1A {A : Type} [CommRing A] {TW H : Type 1} [AddCommGroup TW] [Add
     (h : (l ^ b : ℕ) • p = (l ^ (s + b) : ℕ) • ∑ a, q a) (hp : Ψ p = p') (hq : ∀ a, Ψ (q a) = q' a) :
     ((l : A) ^ b) • p' = ((l : A) ^ (s + b)) • ∑ a, q' a := by
   have h' := congrArg Ψ h
-  rw [map_nsmul, map_nsmul, map_sum, hp] at h'
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_nsmul, map_nsmul, map_sum, hp] at h'
   simp only [hq] at h'
   rw [natS (A := A), natS (A := A)] at h'
   exact h'

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.InV
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.TyCard
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ArchimedeanH0Cards.InV
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.TyCard
+
+@[expose] public section
 
 open Matrix Filter ReciprocityTheory.Gal UpperTheory.V.W UpperTheory.V.Pa UpperTheory.V.Pa.B2
 
@@ -23,7 +27,7 @@ private theorem swap_count {M : Type} [AddCommGroup M] (s p : M →+ M) (hs : �
       left_inv := fun m => by simp
       right_inv := fun q => by
         obtain ⟨⟨u, hu⟩, ⟨w, hw⟩⟩ := q
-        ext <;> simp [map_add, hu, hw] }
+        ext <;> simp [map_add (f := _), hu, hw] }
   let eK : {u // p u = 0} ≃ {u // p u = u} :=
     { toFun := fun w => ⟨s w.1, h2 _ w.2⟩
       invFun := fun u => ⟨s u.1, h1 _ u.2⟩
@@ -31,14 +35,14 @@ private theorem swap_count {M : Type} [AddCommGroup M] (s p : M →+ M) (hs : �
       right_inv := fun u => Subtype.ext (hs _) }
   let eF : {m // s m = m} ≃ {u // p u = 0} :=
     { toFun := fun m => ⟨m.1 - p m.1, by rw [map_sub, hp, sub_self]⟩
-      invFun := fun w => ⟨w.1 + s w.1, by rw [map_add, hs, add_comm]⟩
+      invFun := fun w => ⟨w.1 + s w.1, by rw [map_add (f := _), hs, add_comm]⟩
       left_inv := fun m => Subtype.ext (by
         show m.1 - p m.1 + s (m.1 - p m.1) = m.1
         rw [map_sub, m.2, ps _ m.2]
         abel)
       right_inv := fun w => Subtype.ext (by
         show w.1 + s w.1 - p (w.1 + s w.1) = w.1
-        rw [map_add, w.2, h2 _ w.2]
+        rw [map_add (f := _), w.2, h2 _ w.2]
         abel) }
   refine ⟨?_, ?_⟩
   · rw [Nat.card_congr eM, Nat.card_prod, Nat.card_congr eK, sq]
@@ -95,7 +99,7 @@ private theorem cut_card (A X : Type) [CommRing A] [CommRing X] [Algebra A X] {n
       invFun := fun f => ⟨⟨Matrix.of fun i j =>
           if h : (i : ℕ) < a ∧ ¬ (j : ℕ) < a then f (⟨i, h.1⟩, ⟨j, h.2⟩) else 0,
           (mem_od _).2 (fun i j hij => by
-            rw [Matrix.of_apply, dif_neg]
+            rw [Matrix.of_apply, dite_eq_right]
             rintro ⟨h1, h2⟩
             exact h2 (hij.1 h1))⟩,
         (cut_eq _).2 (fun i j hi => by simp [hi])⟩
@@ -271,7 +275,7 @@ theorem UpperTheory.V.Pa.B2.odHalf :
         · right; left
           have hij : x.ty v i = x.ty v j := by rw [← h1, h2, decide_eq_decide.mpr hkm]
           show (if hh : j < i ∧ x.ty v j ≠ x.ty v i then t ⟨(j, i), hh⟩ else 0) = 0
-          rw [dif_neg]
+          rw [dite_eq_right]
           exact fun hh => hh.2 hij.symm
         · right; right
           exact hwi0 j m h2
@@ -286,7 +290,7 @@ theorem UpperTheory.V.Pa.B2.odHalf :
         (x.wiX X v * x.wX X v) * Y * (x.wiX X v * x.wX X v) by simp only [Matrix.mul_assoc],
       w_wi, Matrix.one_mul, Matrix.mul_one]
     show (if hh : p.1.1 < p.1.2 ∧ x.ty v p.1.1 ≠ x.ty v p.1.2 then t ⟨(p.1.1, p.1.2), hh⟩ else 0) = t p
-    rw [dif_pos p.2]
+    rw [dite_eq_left p.2]
   have hker : ∀ m, D.π (inV G v) m = 0 ↔ gmap m = 0 := by
     intro m
     refine (hO.kerV v m).trans ?_

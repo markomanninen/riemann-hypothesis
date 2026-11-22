@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsCompactIsOpenUnitsAt
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsFinsetOfEventually
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LintegralFintypeProdEqProd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdemSmulUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsCompactIsOpenUnitsAt
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsFinsetOfEventually
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LintegralFintypeProdEqProd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdemSmulUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,17 +21,6 @@ open GlobalTheory.Doubling (absE absEv unitFin ideleAt)
 section Lemmas
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-
-theorem compFin_unitAt (v : Pl F) (l : (AE F E)ˣ) :
-    compFin F E v (unitAt E v l : AE F E) = compFin F E v (l : AE F E) := by
-  rw [unitAt, val_idemUnit, map_add, compFin_smul, compFin_smul, map_sub, map_one, eFin, GlobalTheory.LatVac.evFin_liftV,
-    sub_self, zero_smul, one_smul, add_zero]
-
-theorem unitAt_mem_unitsAt_iff (v : Pl F) (l : (AE F E)ˣ) :
-    unitAt E v l ∈ unitsAt E v ↔ compFin F E v (l : AE F E) ∈ intLoc F E v ∧
-      compFin F E v ((l⁻¹ : (AE F E)ˣ) : AE F E) ∈ intLoc F E v := by
-  rw [mem_unitsAt, ← map_inv, compFin_unitAt, compFin_unitAt]
-  exact and_iff_right (unitAt_mem v l)
 
 theorem isOpen_integral_everywhere : IsOpen {z : AE F E | ∀ v : Pl F, compFin F E v z ∈ intLoc F E v} := by
   classical
@@ -68,7 +61,8 @@ theorem isOpen_integral_everywhere : IsOpen {z : AE F E | ∀ v : Pl F, compFin 
       (isOpen_set_pi Set.finite_univ fun _ _ => ho)
   have hsub : φ '' (Set.univ.pi fun _ => W) ⊆ (S : Set (AE F E)) := by
     rintro _ ⟨a, ha, rfl⟩ v
-    rw [hφ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hφ, map_sum]
     refine sum_mem fun i _ => ?_
     rw [show b i = ((RingOfIntegers.basis E i : 𝓞 E) : E) from integralBasis_apply E i]
     exact tmul_mem_intLoc (ha i (Set.mem_univ i) v) _
@@ -87,19 +81,5 @@ open scoped TensorProduct NNReal Matrix ENNReal
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK GlobalTheory.ThK.ConeEuler
 open GlobalTheory.Doubling (absE absEv unitFin ideleAt)
-
-theorem isOpen_setOf_forall_unitAt_mem_unitsAt : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E]
-    [Algebra F E], IsOpen {l : (AE F E)ˣ | ∀ v : Pl F, unitAt E v l ∈ unitsAt E v} := by
-  intro F E _ _ _ _ _
-  have e : {l : (AE F E)ˣ | ∀ v : Pl F, unitAt E v l ∈ unitsAt E v} =
-      (fun l : (AE F E)ˣ => (l : AE F E)) ⁻¹' {z : AE F E | ∀ v : Pl F, compFin F E v z ∈ intLoc F E v} ∩
-      (fun l : (AE F E)ˣ => ((l⁻¹ : (AE F E)ˣ) : AE F E)) ⁻¹'
-        {z : AE F E | ∀ v : Pl F, compFin F E v z ∈ intLoc F E v} := by
-    ext l
-    simp only [Set.mem_setOf_eq, Set.mem_inter_iff, Set.mem_preimage, UnitsOpen.unitAt_mem_unitsAt_iff]
-    exact forall_and
-  rw [e]
-  exact (UnitsOpen.isOpen_integral_everywhere.preimage Units.continuous_val).inter
-    (UnitsOpen.isOpen_integral_everywhere.preimage Units.continuous_coe_inv)
 
 end GlobalTheory.ThK.ConeEuler

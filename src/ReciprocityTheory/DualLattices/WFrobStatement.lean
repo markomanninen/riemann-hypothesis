@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.TowerZeroSurjective
+module
+
+public import ReciprocityTheory.DualLattices.TowerZeroSurjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ variable {p : ℕ} [Fact p.Prime] {g : ℕ} {B : BX R₀} {Tw : ATowerL R₀ p} 
 
 def WFrobStatement {K : LAlg R₀} (wd : WData Tw K) (g : ℕ) : Prop :=
   ∀ G : MvPolynomial (Fin g) (wd.W : Type),
-    (∀ m, (∃ i, ¬ p ∣ m i) → MvPolynomial.coeff m G ∈ Ideal.span {(p : (wd.W : Type))}) →
+    (∀ m, (∃ i, ¬ p ∣ m i) → AddMonoidAlgebra.coeff G m ∈ Ideal.span {(p : (wd.W : Type))}) →
     ∃ Q : MvPolynomial (Fin g) (Tw.R 0 : Type), ∀ y : Fin g → (wd.W : Type),
       MvPolynomial.eval y G ∈ Ideal.span {(p : (wd.W : Type))} →
       ∀ a : (wd.W : Type), wd.πW.1 a = MvPolynomial.eval (fun i => wd.πW.1 (y i)) Q →

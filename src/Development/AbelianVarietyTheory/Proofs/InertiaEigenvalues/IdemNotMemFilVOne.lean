@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfForallMemFilV
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EqZeroOfForallMemFilV
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,12 +71,13 @@ theorem Spans.tensor {ρ : Representation LL G V} {ρ' : Representation LL G V'}
     obtain ⟨t, rfl⟩ := E.surjective u
     induction t using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simpa only [map_add, add_tmul] using Submodule.add_mem _ hx hy
+    | add x y hx hy => simpa only [map_add (f := _), add_tmul] using Submodule.add_mem _ hx hy
     | tmul v w =>
       obtain ⟨m, c, d, hd, h1⟩ := h (v ⊗ₜ[Qp] (1 : F))
       obtain ⟨m', c', d', hd', h2⟩ := h' (w ⊗ₜ[Qp] (1 : F))
       rw [tmul_eq_sm_bil, h1, h2]
-      simp only [map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, LinearMap.sum_apply]
       refine Submodule.sum_mem _ fun j _ => Submodule.sum_mem _ fun i _ => Submodule.subset_span
         ⟨b * (c i * c' j), _, bil_mem_DdR PD ρ ρ' ρ'' (tensBil E) (fun g v w => (hE g v w).symm)
           (hd i) (hd' j), ?_⟩
@@ -94,7 +99,7 @@ theorem twist_mem_DdR {x : V ⊗[Qp] F} (hx : x ∈ DdR PD ρ) :
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul v b => simp [hw, ← hf, TensorProduct.smul_tmul]
   rw [this, hx]
 
@@ -139,13 +144,13 @@ theorem exists_twist_equiv (ρ : Representation LL G V) (ρ' : Representation LL
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul v b => simp [Φ, Ψ, ← mul_assoc, (mul_comm u _).trans hu]
   have h2 : ∀ x, Ψ (Φ x) = x := by
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul v b => simp [Φ, Ψ, ← mul_assoc, hu]
   refine ⟨LinearEquiv.ofLinear Φ Ψ (LinearMap.ext h1) (LinearMap.ext h2), le_antisymm ?_ fun y hy => ?_,
     fun τ a => le_antisymm ?_ fun y hy => ?_⟩
@@ -199,7 +204,8 @@ theorem fil_eq (a : ℤ) : FildR PD ρ τ a = Submodule.span LL (d '' {i | a ≤
       intro i g
       have := h.indep (fun i => actR PD LL g (r i) - r i) (by
         have h1 := (mem_DdR PD ρ y).1 hy.1.1 g
-        rw [hy', map_sum] at h1
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hy', map_sum] at h1
         simp only [act_sm, (mem_DdR PD ρ _).1 (h.mem _).1.1 g] at h1
         simp only [map_sub, LinearMap.sub_apply, Finset.sum_sub_distrib, h1, sub_self]) i
       rw [actR_mul, actR_idem, ← sub_eq_zero, ← mul_sub, this]
@@ -269,7 +275,8 @@ theorem dual [FiniteDimensional LL V] (ρ' : Representation LL G V') (β : V →
   · refine sm_idem_mem_FilV PD τ (Submodule.sum_mem _ fun a _ => ?_)
     simpa using sm_mem_FilV PD (hr a i) (tmul_mem_FilV PD (w a) PD.one_mem)
   · have := congrArg (bil Qp F β (d i)) hs
-    rw [map_sum, map_zero] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at this
     simp only [bil_sm_right β (s _), h2, sm_self] at this
     rw [Finset.sum_eq_single i (fun b _ hb => by simp [Ne.symm hb]) (by simp)] at this
     simpa [mul_comm] using this
@@ -291,18 +298,20 @@ theorem tensor {ρ' : Representation LL G V'} {ι' : Type} [Fintype ι'] {d' : �
         intro x y
         induction x using TensorProduct.induction_on with
         | zero => simp
-        | add r s hr hs => simp only [map_add, LinearMap.add_apply, hr, hs]
+        | add r s hr hs => simp only [map_add (f := _), LinearMap.add_apply, hr, hs]
         | tmul v b' =>
           induction y using TensorProduct.induction_on with
           | zero => simp
-          | add r s hr hs => simp only [map_add, LinearMap.add_apply, hr, hs]
+          | add r s hr hs => simp only [map_add (f := _), LinearMap.add_apply, hr, hs]
           | tmul w b'' => simp [C, mul_comm]
       have h1 := congrArg (ext Qp F C) hr
-      rw [map_sum, map_zero, Fintype.sum_prod_type] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, map_zero, Fintype.sum_prod_type] at h1
       simp only [ext_sm, hC, ← sm_mul] at h1
       have h2 := h.indep (fun i => ∑ j, r (i, j) * ext Qp F φ (d' j))
         (by simpa only [map_sum, LinearMap.sum_apply] using h1) p.1
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [ext_sm, sm_self, mul_assoc]
       rw [← Finset.mul_sum, h2]
     have := h'.indep _ key p.2
@@ -314,24 +323,26 @@ theorem tensor {ρ' : Representation LL G V'} {ι' : Type} [Fintype ι'] {d' : �
     have qa : ∀ x y, q x → q y → q (x + y) := by
       rintro x y ⟨r, hr, hx⟩ ⟨s, hs, hy⟩
       exact ⟨r + s, fun p => Submodule.add_mem _ (hr p) (hs p), by
-        simp only [map_add, hx, hy, Pi.add_apply, LinearMap.add_apply, Finset.sum_add_distrib]⟩
+        simp only [map_add (f := _), hx, hy, Pi.add_apply, LinearMap.add_apply, Finset.sum_add_distrib]⟩
     refine FilV_induction PD (p := q) q0 (fun u b hb => ?_) qa hy
     obtain ⟨t, rfl⟩ := E.surjective u
     induction t using TensorProduct.induction_on with
     | zero => simpa using q0
-    | add x y hx hy => simpa only [map_add, add_tmul] using qa _ _ hx hy
+    | add x y hx hy => simpa only [map_add (f := _), add_tmul] using qa _ _ hx hy
     | tmul v w =>
       obtain ⟨r, hr, h1⟩ := h.span 0 (v ⊗ₜ[Qp] (1 : F)) (tmul_mem_FilV PD _ PD.one_mem)
       obtain ⟨s, hs, h2⟩ := h'.span 0 (w ⊗ₜ[Qp] (1 : F)) (tmul_mem_FilV PD _ PD.one_mem)
       refine ⟨fun p => ((1 : LL) ⊗ₜ[Qp] b) * (r p.1 * s p.2), fun p => ?_, ?_⟩
       · have := mul_mem_FilV PD (tmul_mem_FilV PD (1 : LL) hb) (mul_mem_FilV PD (hr p.1) (hs p.2))
         rwa [show n + (0 - k p.1 + (0 - k' p.2)) = n - (k p.1 + k' p.2) by ring] at this
-      · rw [tmul_eq_sm_bil, sm_comm, ← sm_idem_idem, ← bil_sm_right, ← bil_sm_left, h1, h2,
-          Fintype.sum_prod_type_right, map_sum, map_sum]
-        refine Finset.sum_congr rfl fun j _ => ?_
-        rw [map_sum, LinearMap.sum_apply, map_sum]
-        refine Finset.sum_congr rfl fun i _ => ?_
-        rw [bil_sm_left, bil_sm_right, sm_mul, sm_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        · rw [tmul_eq_sm_bil, sm_comm, ← sm_idem_idem, ← bil_sm_right, ← bil_sm_left, h1, h2,
+            Fintype.sum_prod_type_right, map_sum, map_sum]
+          refine Finset.sum_congr rfl fun j _ => ?_
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum, LinearMap.sum_apply, map_sum]
+          refine Finset.sum_congr rfl fun i _ => ?_
+          rw [bil_sm_left, bil_sm_right, sm_mul, sm_mul]
 
 end Adapted
 

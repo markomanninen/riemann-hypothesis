@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.HodgeTatePoints.WeilfunCore
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.WeilfunCore
+
+@[expose] public section
 
 noncomputable section
 

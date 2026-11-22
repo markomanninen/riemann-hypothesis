@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.RealPlaceEmbeddings
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.IntegralModuleBases.DetToMatrixSq
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.RealPlaceEmbeddings
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.IntegralModuleBases.DetToMatrixSq
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -21,7 +25,7 @@ theorem ip_add_left (u u' w : X.Ψ → Fin r → ℂ) : ip X (u + u') w = ip X u
   simp only [ip, Pi.add_apply, add_mul, Finset.sum_add_distrib, Complex.add_re, mul_add]
 
 theorem ip_add_right (u w w' : X.Ψ → Fin r → ℂ) : ip X u (w + w') = ip X u w + ip X u w' := by
-  simp only [ip, Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib, Complex.add_re]
+  simp only [ip, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib, Complex.add_re]
 
 theorem ip_smul_left (k : ℝ) (u w : X.Ψ → Fin r → ℂ) : ip X (k • u) w = k * ip X u w := by
   unfold ip
@@ -100,10 +104,6 @@ noncomputable def Sg : (X.Ψ → Fin r → ℂ) →ₗ[ℝ] (X.Ψ → Fin r → 
   map_add' u w := by funext τ a; simp [mul_add]
   map_smul' k u := by funext τ a; simp [Complex.real_smul]; ring
 
-theorem sgn_sq (a : ℕ) : sgn X.p0 a * sgn X.p0 a = 1 := by
-  unfold sgn
-  split_ifs <;> norm_num
-
 noncomputable def Qy (y : X.Ψ → Matrix (Fin r) (Fin r) ℂ) (v : Fin r → E) : ℝ :=
   ∑ τ, X.c τ * ∑ a, ‖((y τ)⁻¹ *ᵥ Data.emb τ.1 v) a‖ ^ 2
 
@@ -119,7 +119,8 @@ theorem Qy_nonneg (y : X.Ψ → Matrix (Fin r) (Fin r) ℂ) (v : Fin r → E) : 
 theorem embV_sum {ι : Type} (s : Finset ι) (w : ι → Fin r → E) :
     X.embV (∑ i ∈ s, w i) = ∑ i ∈ s, X.embV (w i) := by
   funext τ a
-  simp only [Data.embV, Data.emb, Finset.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Data.embV, Data.emb, Finset.sum_apply, map_sum]
 
 theorem embV_zsmul (n : ℤ) (w : Fin r → E) : X.embV (n • w) = (n : ℝ) • X.embV w := by
   funext τ a
@@ -157,9 +158,11 @@ theorem quad_eq (y : X.Ψ → Matrix (Fin r) (Fin r) ℂ) (g : Basis ι ℤ X.Λ
       (Ly X y (∑ i, x i • X.embV (g i : Fin r → E))) := by
   have hL : Ly X y (∑ i, x i • X.embV (g i : Fin r → E)) =
       ∑ i, x i • Ly X y (X.embV (g i : Fin r → E)) := by
-    simp only [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul]
   rw [hL, ← ipB_apply]
-  simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, ipB_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, ipB_apply]
   simp only [dotProduct, Matrix.mulVec, Am, Matrix.of_apply, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [ip_comm X (Ly X y (X.embV (g j : Fin r → E)))]

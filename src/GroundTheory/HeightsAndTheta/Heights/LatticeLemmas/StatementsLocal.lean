@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.StatementsBundles
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.StatementsBundles
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -26,8 +31,8 @@ structure FullLattice (K : Type*) [Field K] [NumberField K] (V : Type*) [AddComm
 variable {K : Type*} [Field K] [NumberField K]
 variable {V : Type*} [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem isTorsionFree_of_vectorSpace : Module.IsTorsionFree (𝓞 K) V :=
   Module.IsTorsionFree.of_smul_eq_zero fun a x hax ↦ by
     by_cases ha : a = 0
@@ -38,10 +43,21 @@ theorem isTorsionFree_of_vectorSpace : Module.IsTorsionFree (𝓞 K) V :=
       exact (smul_eq_zero.mp this).resolve_left ha'
 
 def HermitianNorms.restrict (N : HermitianNorms K V) (L : Submodule (𝓞 K) V)
-    [Module.Finite (𝓞 K) L] [Module.Projective (𝓞 K) L] : HermitianMetric K L where
-  form σ := coreComap (N.form σ) (fibreMap σ L.subtype) (fibreMap_injective σ L.injective_subtype)
-  form_conj σ x y := by
-    rw [coreComap_inner, coreComap_inner, ← conjMap_fibreMap, ← conjMap_fibreMap, N.form_conj]
+    [Module.Finite (𝓞 K) L] [Module.Projective (𝓞 K) L] : HermitianMetric K L :=
+  let inclusion (σ : K →+* ℂ) : Fibre σ L →ₗ[ℂ] Fibre σ V :=
+    { toFun := L.subtype.lTensor (ComplexAt σ)
+      map_add' := map_add _
+      map_smul' := lTensor_complex_smul σ L.subtype }
+  have inclusion_injective (σ : K →+* ℂ) : Function.Injective (inclusion σ) :=
+    Module.Flat.lTensor_preserves_injective_linearMap L.subtype L.injective_subtype
+  have conj_inclusion (σ : K →+* ℂ) (x : Fibre σ L) :
+      conjMap σ V (inclusion σ x) = inclusion (conjugate σ) (conjMap σ L x) := by
+    induction x using TensorProduct.inductionOn with
+    | tmul z x => rfl
+    | add x y hx hy => simp only [map_add, hx, hy]
+  { form := fun σ ↦ coreComap (N.form σ) (inclusion σ) (inclusion_injective σ)
+    form_conj := fun σ x y ↦ by
+      rw [coreComap_inner, coreComap_inner, ← conj_inclusion, ← conj_inclusion, N.form_conj] }
 
 namespace FullLattice
 
@@ -78,15 +94,6 @@ theorem toLocal_smul (a : 𝓞 K) (x : V) :
     (algebraMap (𝓞 K) (v.adicCompletionIntegers K) a) (toLocal v x),
     ← algebraMap_smul (v.adicCompletion K) (algebraMap (𝓞 K) K a) (toLocal v x)]
   congr 1
-
-def latticeOfLocal
-    (N : ∀ v : HeightOneSpectrum (𝓞 K),
-      Submodule (v.adicCompletionIntegers K) (v.adicCompletion K ⊗[K] V)) :
-    Submodule (𝓞 K) V where
-  carrier := {x | ∀ v, toLocal v x ∈ N v}
-  add_mem' hx hy v := by rw [map_add]; exact (N v).add_mem (hx v) (hy v)
-  zero_mem' v := by rw [map_zero]; exact (N v).zero_mem
-  smul_mem' a x hx v := by rw [toLocal_smul]; exact (N v).smul_mem _ (hx v)
 
 end Local
 

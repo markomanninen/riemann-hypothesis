@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.SymZeroCommFrame
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.SymZeroCommFrame
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,8 +65,5 @@ def KapEquiv : Prop :=
     ContinuousOn (kapL ε Fr k) (GLs n) ∧ ContinuousOn (kapR ε Fr k) (GLs n) ∧
     ∀ y ∈ GLs n, ∀ k₂ : Matrix.unitaryGroup (Fin n) ℂ,
       kapL ε Fr k (y * k₂.1) = kapL ε Fr k y * E.ρ k₂ ∧ kapR ε Fr k (y * k₂.1) = kapR ε Fr k y * E.ρ k₂
-
-def ChainAsm : Prop :=
-  DCinCE → DCwave → ParamInt → ZopDC → ActDer → IBPAct → KapEquiv → KerZero → Unimod → RCalc → LgFacts → ChainOf
 
 end PositivityTheory.RgBcC.LfSt.ChainPf

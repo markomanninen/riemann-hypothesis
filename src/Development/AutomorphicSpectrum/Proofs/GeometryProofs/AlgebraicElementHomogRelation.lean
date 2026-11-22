@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ArithmeticHilbertSamuelLowerBound
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ArithmeticHilbertSamuelLowerBound
+
+@[expose] public section
 
 open ReciprocityTheory.ChartRestriction.G.Geo MvPolynomial
 
@@ -63,8 +67,8 @@ theorem form_natCast_mul {f : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a) 
 theorem cone_form (y : (Σ k, ι k) → Ω) {h : MRing ι} {d : K → ℕ} (hh : IsMultiHomog h d) :
     mConeMap y h = MvPolynomial.C (aeval y h) * ∏ k, (X k : MvPolynomial K Ω) ^ d k := by
   classical
-  have key : ∀ v ∈ h.support, mConeMap y (monomial v (coeff v h)) =
-      MvPolynomial.C (aeval y (monomial v (coeff v h))) * ∏ k, (X k : MvPolynomial K Ω) ^ d k := by
+  have key : ∀ v ∈ h.support, mConeMap y (monomial v (AddMonoidAlgebra.coeff h v)) =
+      MvPolynomial.C (aeval y (monomial v (AddMonoidAlgebra.coeff h v))) * ∏ k, (X k : MvPolynomial K Ω) ^ d k := by
     intro v hv
     have hX : (v.prod fun p e => (X p.1 : MvPolynomial K Ω) ^ e) = ∏ k, (X k : MvPolynomial K Ω) ^ d k := by
       rw [Finsupp.prod_fintype _ _ (fun _ => pow_zero _), Fintype.prod_sigma]
@@ -73,13 +77,14 @@ theorem cone_form (y : (Σ k, ι k) → Ω) {h : MRing ι} {d : K → ℕ} (hh :
         MvPolynomial.C (v.prod fun p e => y p ^ e) * v.prod fun p e => (X p.1 : MvPolynomial K Ω) ^ e := by
       rw [map_finsuppProd, ← Finsupp.prod_mul]
       exact Finsupp.prod_congr fun p _ => by simp only [mul_pow, map_pow]
-    show (aeval fun p => MvPolynomial.C (y p) * (X p.1 : MvPolynomial K Ω)) (monomial v (coeff v h)) = _
+    show (aeval fun p => MvPolynomial.C (y p) * (X p.1 : MvPolynomial K Ω)) (monomial v (AddMonoidAlgebra.coeff h v)) = _
     simp only [MvPolynomial.aeval_monomial]
     rw [h1, hX, map_mul]
     simp only [algebraMap_int_eq, eq_intCast, Int.coe_castRingHom, map_intCast]
     ring
   rw [h.as_sum]
-  simp only [map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finset.sum_mul]
   exact Finset.sum_congr rfl key
 
 theorem mem_of_aeval_eq_zero {y : (Σ k, ι k) → Ω} {h : MRing ι} {d : K → ℕ} (hh : IsMultiHomog h d)
@@ -118,12 +123,12 @@ theorem lift_poly {y : (Σ k, ι k) → Ω} {b : K → ℕ} {H : MRing ι} (P : 
   choose! g hg using hP
   refine ⟨∑ j ∈ P.support, Polynomial.monomial j (g j), fun j => ?_, ?_⟩
   · rw [Polynomial.finsetSum_coeff]
-    simp only [Polynomial.coeff_monomial, Finset.sum_ite_eq']
+    simp only [Polynomial.coeff_monomial_apply, Finset.sum_ite_eq']
     split_ifs with hj
     · exact (hg j hj).1
     · exact form_zero b
   · ext n
-    simp only [Polynomial.coeff_map, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial,
+    simp only [Polynomial.coeff_map, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial_apply,
       Finset.sum_ite_eq', Polynomial.coeff_C_mul]
     split_ifs with hn
     · exact ((hg n hn).2).trans (mul_comm _ _)
@@ -178,7 +183,7 @@ theorem core {Ω' : Type} [Field Ω'] {y : (Σ k, ι k) → Ω} (hy : Birational
     · exact form_zero _
   have hEm : (U * M + V * Polynomial.derivative M - Polynomial.C (H * H)).map
       (aeval y : MRing ι →ₐ[ℤ] Ω).toRingHom = 0 := by
-    rw [Polynomial.map_sub, Polynomial.map_add, Polynomial.map_mul, Polynomial.map_mul,
+    rw [Polynomial.map_sub, Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_mul,
       ← Polynomial.derivative_map, Polynomial.map_C, hUm, hVm, hMm, Polynomial.derivative_C_mul]
     simp only [map_mul, AlgHom.toRingHom_eq_coe, RingHom.coe_coe]
     linear_combination (Polynomial.C (aeval y H) * Polynomial.C (aeval y H)) * huv
@@ -186,7 +191,7 @@ theorem core {Ω' : Type} [Field Ω'] {y : (Σ k, ι k) → Ω} (hy : Birational
       mCoordIdeal y := by
     intro j
     refine mem_of_aeval_eq_zero (hEh j) ?_
-    have h2 := congrArg (fun p => Polynomial.coeff p j) hEm
+    have h2 := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p j) hEm
     simp only [Polynomial.coeff_map, Polynomial.coeff_zero] at h2
     exact h2
   refine ⟨M.natDegree, fun j => M.coeff j, b, H, b, hMh, hH, notMem_of_aeval_ne_zero hH hH0, ?_, ?_⟩
@@ -204,7 +209,7 @@ theorem core {Ω' : Type} [Field Ω'] {y : (Σ k, ι k) → Ω} (hy : Birational
       ext j
       rw [Polynomial.coeff_map, Polynomial.coeff_zero, evalAt_apply]
       exact key j
-    rw [Polynomial.map_sub, Polynomial.map_add, Polynomial.map_mul, Polynomial.map_mul,
+    rw [Polynomial.map_sub, Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_mul,
       ← Polynomial.derivative_map, Polynomial.map_C] at hE0
     have hMe : (M.map (evalAt w)).eval τ = 0 := by
       rw [← sum_eval (M.map (evalAt w)) M.natDegree Polynomial.natDegree_map_le τ]

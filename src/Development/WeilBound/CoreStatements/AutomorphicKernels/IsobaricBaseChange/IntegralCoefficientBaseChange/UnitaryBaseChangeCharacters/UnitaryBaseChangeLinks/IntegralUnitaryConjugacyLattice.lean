@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
-import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.LocalTwistContinuousInvolutionIntegralProperties
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteTwistedClassesCharpoly
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AevalRootEqZeroIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitOneAddPiOMul
-import GroundTheory.LocalFields.FilteredSurj
-import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.NormApproximationFirstLevel
-import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.NormApproximationFiltration
-import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.NormFiltrationComplete
-import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.EqZeroOfMemAllPowers
-import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.ConjugateSelfReciprocalCharpoly
-import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.CharpolyDvdOfAevalEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmField
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.LocalTwistContinuousInvolutionIntegralProperties
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FiniteTwistedClassesCharpoly
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AevalRootEqZeroIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitOneAddPiOMul
+public import GroundTheory.LocalFields.FilteredSurj
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.NormApproximationFirstLevel
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.NormApproximationFiltration
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.NormFiltrationComplete
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.EqZeroOfMemAllPowers
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.ConjugateSelfReciprocalCharpoly
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLinks.CharpolyDvdOfAevalEqZero
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -29,21 +34,28 @@ theorem sigO_piO {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv ϖ σ q) : 
 
 theorem conj_mem_piPow {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv ϖ σ q) (P : Csr (sigO σ h.2.1)) (m : ℕ)
     {a : Alg P} (ha : a ∈ piPow h P m) : conj P a ∈ piPow h P m := by
-  unfold piPow at *
-  rw [Ideal.mem_span_singleton] at *
-  obtain ⟨b, rfl⟩ := ha
-  exact ⟨conj P b, by rw [map_mul, map_pow, conj_algebraMap, sigO_piO]⟩
+  set_option backward.isDefEq.respectTransparency false in
+    unfold piPow at *
+    simp only [Ideal.mem_span_singleton] at ha ⊢
+    obtain ⟨b, rfl⟩ := ha
+    have hp : conj P (algebraMap (intL L) (Alg P) (piO h)) = algebraMap (intL L) (Alg P) (piO h) :=
+      (GlobalTheory.UTr.conj_algebraMap P _).trans (congrArg _ (sigO_piO h))
+    exact ⟨conj P b, by
+      rw [map_mul, map_pow]
+      exact congrArg (fun x : Alg P => x ^ m * conj P b) hp⟩
 
 theorem normU_mem_filt {ϖ : L} {σ : L →+* L} {q : ℕ} (h : IsUnramInv ϖ σ q) (P : Csr (sigO σ h.2.1)) (m : ℕ)
     {g : (Alg P)ˣ} (hg : g ∈ filt h P m) : normU P g ∈ filt h P m := by
-  rw [mem_filt] at *
-  have hc : conj P (g : Alg P) - 1 ∈ piPow h P m := by
-    have := conj_mem_piPow h P m hg
-    rwa [map_sub, map_one] at this
-  have e : ((normU P g : (Alg P)ˣ) : Alg P) - 1 = ((g : Alg P) - 1) * conj P (g : Alg P) + (conj P (g : Alg P) - 1) := by
-    rw [val_normU]; ring
-  rw [e]
-  exact (piPow h P m).add_mem ((piPow h P m).mul_mem_right _ hg) hc
+  set_option backward.isDefEq.respectTransparency false in
+    change (g : Alg P) - 1 ∈ piPow h P m at hg
+    change ((normU P g : (Alg P)ˣ) : Alg P) - 1 ∈ piPow h P m
+    have hc : conj P (g : Alg P) - 1 ∈ piPow h P m := by
+      have := conj_mem_piPow h P m hg
+      rwa [map_sub, map_one] at this
+    have e : ((normU P g : (Alg P)ˣ) : Alg P) - 1 = ((g : Alg P) - 1) * conj P (g : Alg P) + (conj P (g : Alg P) - 1) := by
+      rw [val_normU]; ring
+    rw [e]
+    exact (piPow h P m).add_mem ((piPow h P m).mul_mem_right _ hg) hc
 
 theorem div_mem_of_sub_mem {R : Type} [CommRing R] {I : Ideal R} {x u : Rˣ} (hx : (x : R) - u ∈ I) :
     ((x / u : Rˣ) : R) - 1 ∈ I := by
@@ -63,7 +75,8 @@ theorem normU_surj (L : Type) [Field L] [Valued L (WithZero (Multiplicative ℤ)
     have h0 : ((g : (Alg P)ˣ) : Alg P) - 1 = 0 := GlobalTheory.T.eq_zero_of_mem_all_powers L σ ϖ q h P _ fun m => hg m
     exact Subtype.ext (Units.ext (sub_eq_zero.1 h0))
   have hE0 : E (id 0) = ⊤ := by
-    ext g; simp [E, filt_zero]
+    ext g; change ((g : (Alg P)ˣ) ∈ filt h P 0) ↔ True
+    rw [filt_zero]; exact ⟨fun _ => trivial, fun _ => Subgroup.mem_top _⟩
   have hmap : ∀ n, ∀ g ∈ filt h P n, f g ∈ E (id n) := fun n g hg => normU_mem_filt h P n hg
   have hgr : ∀ n, ∀ z ∈ E (id n), ∃ g ∈ filt h P n, z / f g ∈ E (id (n + 1)) := by
     intro n z hz
@@ -140,7 +153,7 @@ theorem hermUnit_eq_norm : ∀ (L : Type) [Field L] [Valued L (WithZero (Multipl
       rw [this] at hdet
       exact isUnit_of_mul_isUnit_right hdet
     have e := congrArg (aeval tz) (X_mul_divX_add tO.charpoly)
-    rw [h0, map_add, map_mul, aeval_X, aeval_C] at e
+    rw [h0, map_add (f := _), map_mul, aeval_X, aeval_C] at e
     have hu : IsUnit (tz * aeval tz tO.charpoly.divX) := by
       rw [eq_neg_of_add_eq_zero_left e]
       exact (hc0.map _).neg
@@ -158,7 +171,7 @@ theorem hermUnit_eq_norm : ∀ (L : Type) [Field L] [Valued L (WithZero (Multipl
   have htz : conj P tz = tz := hevinj' (by
     rw [← hcT]
     exact hΦinj (by rw [hΦcT, htO, htc]))
-  have hT : T ∈ plus P := mem_plus.2 htz
+  have hT : T ∈ plus P := (GlobalTheory.UTr.mem_plus (P := P)).2 htz
   obtain ⟨u, hu⟩ := normU_surj L σ ϖ q h P hsep T hT
   let Ψ : Alg P →* Matrix (Fin n) (Fin n) L := (Φ.comp ev.toRingHom : Alg P →+* _)
   refine ⟨Units.map Ψ u, ?_, ?_⟩

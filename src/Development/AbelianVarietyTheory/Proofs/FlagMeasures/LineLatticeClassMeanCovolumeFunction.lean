@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsLatMeasurableConst
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TranslatedLatticeAtInfinityFullCovolumeDualStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LeftQuotientCovolumeWithDensityDetNormSqStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsLatMeasurableConst
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TranslatedLatticeAtInfinityFullCovolumeDualStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LeftQuotientCovolumeWithDensityDetNormSqStatement
+
+@[expose] public section
 
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.FlagBase
 
@@ -62,7 +66,7 @@ theorem measurable_detNorm (E : Type) [Field E] [NumberField E] (j : ℕ) :
     Measurable (detNorm E j) := by
   have hc : Continuous (fun x : InfinitePlace E → Fin j → Fin j → ℂ =>
       ∏ w, ‖(Matrix.of (x w)).det‖ ^ 2) := by
-    refine continuous_finset_prod _ (fun w _ => ?_)
+    refine continuous_finsetProd _ (fun w _ => ?_)
     exact ((Continuous.matrix_det
       (A := fun x : InfinitePlace E → Fin j → Fin j → ℂ => Matrix.of (x w)) (continuous_apply w)).norm).pow 2
   exact hc.measurable
@@ -86,21 +90,32 @@ theorem ae_detNorm_pos (E : Type) [Field E] [NumberField E] (j : ℕ) (hj : 1 �
   refine (setLIntegral_congr_fun hs hz).trans ?_
   simp
 
-theorem latMean_covAt : ∀ (E : Type) [Field E] [NumberField E], IsTotallyComplex E → ∀ j : ℕ, 1 ≤ j → ∀ w : ℝ → ENNReal, Measurable w → latMean E j (fun L => w (covAt E j L)) = glVol E j * ∫⁻ t in Set.Ioi (0 : ℝ), w t / ENNReal.ofReal t := by
-  intro E _ _ hE j hj w hw
-  unfold latMean glVol
-  rw [← ENNReal.tsum_mul_right]
-  refine tsum_congr fun c => ?_
-  obtain ⟨κ, hκ, hL⟩ := (GlobalTheory.T.translatedLatticeAtInfinity_full_covolume_dual E hE j).1 (Quot.out c).1 (Quot.out c).2
+private theorem covol_covAt (E : Type) [Field E] [NumberField E] (hE : IsTotallyComplex E)
+    (j : ℕ) (hj : 1 ≤ j) (w : ℝ → ENNReal) (hw : Measurable w)
+    (Λ : Submodule (𝓞 E) (Fin j → E)) (hΛ : Submodule.IsFullLattice E Λ) :
+    covol (autGL E j Λ) ((haarGL E j).withDensity fun g => w (covAt E j (latAt E j Λ g)))
+        {g | 0 < detNorm E j g} =
+      slabVol E j Λ * ∫⁻ t in Set.Ioi (0 : ℝ), w t / ENNReal.ofReal t := by
+  obtain ⟨κ, hκ, hL⟩ :=
+    (GlobalTheory.T.translatedLatticeAtInfinity_full_covolume_dual E hE j).1 Λ hΛ
   have hF : Measurable fun t : ℝ => w (κ / t) := hw.comp (measurable_const.div measurable_id)
-  have hd : (haarGL E j).withDensity (fun g => w (covAt E j (latAt E j (Quot.out c).1 g)))
+  have hd : (haarGL E j).withDensity (fun g => w (covAt E j (latAt E j Λ g)))
       = (haarGL E j).withDensity (fun g => w (κ / detNorm E j g)) := by
     refine withDensity_congr_ae ?_
     filter_upwards [GlobalTheory.FlagBase.MeanCov.ae_detNorm_pos E j hj] with g hg
     rw [(hL g hg).2.1]
   rw [hd]
-  refine (GlobalTheory.T.leftQuotientCovolume_withDensity_detNormSq E hE j hj _ (Quot.out c).2 (fun t => w (κ / t)) hF).trans ?_
+  refine (GlobalTheory.T.leftQuotientCovolume_withDensity_detNormSq E hE j hj _ hΛ
+    (fun t => w (κ / t)) hF).trans ?_
   congr 1
   exact GlobalTheory.FlagBase.MeanCov.lintegral_div_inv κ hκ w
+
+theorem latMean_covAt : ∀ (E : Type) [Field E] [NumberField E], IsTotallyComplex E → ∀ j : ℕ, 1 ≤ j → ∀ w : ℝ → ENNReal, Measurable w → latMean E j (fun L => w (covAt E j L)) = glVol E j * ∫⁻ t in Set.Ioi (0 : ℝ), w t / ENNReal.ofReal t := by
+  intro E _ _ hE j hj w hw
+  unfold latMean glVol
+  rw [← ENNReal.tsum_mul_right]
+  refine tsum_congr fun c => ?_
+  obtain ⟨Λ, hΛ⟩ := c.out
+  exact covol_covAt E hE j hj w hw Λ hΛ
 
 end GlobalTheory.FlagBase.MeanCov

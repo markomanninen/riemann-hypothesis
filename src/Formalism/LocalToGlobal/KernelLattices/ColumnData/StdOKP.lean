@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.ColumnData
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PStdChar
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.Family
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.IsAdmissibleFlagPairOfUnitriangularLeftAutomorph
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PStdChar
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.Family
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate
@@ -65,7 +69,8 @@ theorem denom (E K : Type*) [Field E] [NumberField E] [Field K] [NumberField K] 
   have hx : (x : E) = ∑ j, (bs.repr x j) • ((bs j : 𝓞 E) : E) := by
     conv_lhs => rw [← bs.sum_repr x]
     simp
-  rw [hx, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hx, map_sum, Finset.mul_sum]
   refine IsIntegral.sum _ fun j _ => ?_
   rw [map_zsmul, mul_smul_comm]
   exact (h _ (Finset.mem_image.2 ⟨(i, j), Finset.mem_univ _, rfl⟩)).zsmul _
@@ -258,7 +263,7 @@ theorem up : ∃ N : ℕ, 0 < N ∧
   let f : Fin 4 × (Fin 4 × D.what₂.Tau) → D.host.E →+ D.host.K := fun p =>
     { toFun := fun x => B.γ₀.g (Pi.single p.1 x) p.2
       map_zero' := by simp
-      map_add' := fun x y => by rw [Pi.single_add, map_add]; rfl }
+      map_add' := fun x y => by rw [Pi.single_add, map_add (f := _)]; rfl }
   obtain ⟨m, hm, hf⟩ := denom D.host.E D.host.K f
   refine ⟨m * k, Nat.mul_pos hm hk, ?_⟩
   have hle : pow4 B.lamM ≤ ((stdLat B.L (Fin 4 × D.what₂.Tau)).comap
@@ -278,7 +283,8 @@ theorem up : ∃ N : ℕ, 0 < N ∧
       have e : ((m * k : ℕ) : D.host.K) * B.γ₀.g y v
           = ∑ a, (m : D.host.K) * f (a, v) ((k : D.host.E) * y a) := by
         conv_lhs => rw [hy']
-        rw [map_sum, Finset.sum_apply, Finset.mul_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, Finset.sum_apply, Finset.mul_sum]
         refine Finset.sum_congr rfl fun a _ => ?_
         show ((m * k : ℕ) : D.host.K) * B.γ₀.g (Pi.single a (y a)) v
           = (m : D.host.K) * B.γ₀.g (Pi.single a ((k : D.host.E) * y a)) v

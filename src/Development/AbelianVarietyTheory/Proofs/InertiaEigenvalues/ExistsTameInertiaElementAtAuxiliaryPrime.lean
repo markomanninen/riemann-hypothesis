@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.BlochKatoReduction.Gen GlobalTheory.TwSys
 open scoped TensorProduct
 
@@ -80,8 +85,8 @@ theorem exists_place_mem (E : Type) [Field E] [NumberField E] {p : ℕ} (hp : p.
 
 end GlobalTheory.TwSys.InertiaElt
 
-open GlobalTheory.TwSys.InertiaElt in
 
+open GlobalTheory.TwSys.InertiaElt in
 theorem GlobalTheory.TwSys.exists_tameInertiaElementAtAuxiliaryPrime : ∀ (D : Formalism.BasicNotions.D7) (N : NData D.R D.host D.what₂) (X : NTw D.R D.host D.what₂ D.LL0 N)
     (i : X.Tw), ∃ z, IsTameInertiaElementAtTwistPrime X i z := by
   intro D N X i

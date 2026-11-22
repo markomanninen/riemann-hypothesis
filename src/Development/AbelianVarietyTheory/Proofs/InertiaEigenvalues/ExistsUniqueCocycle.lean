@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.HlCoc
 
@@ -34,12 +38,10 @@ def sndHom : SD M G →* G where
   map_one' := rfl
   map_mul' _ _ := rfl
 
-@[simp] lemma sndHom_apply (p : SD M G) : sndHom p = p.2 := rfl
-
 lemma pow_fst_of_fixed (p : SD M G) (h : p.2 • p.1 = p.1) (n : ℕ) :
     (p ^ n).1 = n • p.1 := by
   have hs : ∀ k : ℕ, (p ^ k).2 = p.2 ^ k := fun k => by
-    simpa using map_pow (sndHom : SD M G →* G) p k
+    exact map_pow (sndHom : SD M G →* G) p k
   have hf : ∀ k : ℕ, p.2 ^ k • p.1 = p.1 := by
     intro k
     induction k with
@@ -160,7 +162,7 @@ theorem main (l : ℕ) [Fact l.Prime] [CompactSpace G] [T2Space G] [T2Space M]
   have hl : 0 < l := (Fact.out : l.Prime).pos
   obtain ⟨e, he1, he2⟩ : ∃ e : SD M G, e.1 = z ∧ e.2 = g₀ := ⟨SD.mk z g₀, rfl, rfl⟩
   have hsn : ∀ (p : SD M G) (n : ℕ), (p ^ n).2 = p.2 ^ n := fun p n => by
-    simpa using map_pow (sndHom : SD M G →* G) p n
+    exact map_pow (sndHom : SD M G →* G) p n
 
   let F : Subgroup (SD M G) :=
     { carrier := {p | ∀ h : G, lam h = 1 → h • p.1 = p.1}

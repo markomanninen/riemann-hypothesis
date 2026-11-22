@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsHilbert
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -50,7 +55,7 @@ theorem eventualValue_of_eventually {f : (K → ℤ) → ℤ} {c : ℤ} (h : ∀
     eventualValue f = c := by
   have hex : ∃ c, ∀ᶠ m in atTop, f m = c := ⟨c, h⟩
   unfold eventualValue
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   obtain ⟨m, hm1, hm2⟩ := (hex.choose_spec.and h).exists
   exact hm1.symm.trans hm2
 
@@ -184,10 +189,11 @@ theorem low_dPoly_monomial (b : K → ℤ) (s : K →₀ ℕ) (a : ℚ) :
     exact Nat.zero_lt_one
 
 theorem low_dPoly (b : K → ℤ) (p : MvPolynomial K ℚ) : Low (dPoly b p) p.totalDegree := by
-  have hsum : dPoly b p = ∑ s ∈ p.support, dPoly b (monomial s (coeff s p)) := by
+  have hsum : dPoly b p = ∑ s ∈ p.support, dPoly b (monomial s (AddMonoidAlgebra.coeff p s)) := by
     simp only [dPoly]
     conv_lhs => rw [p.as_sum]
-    rw [map_sum, ← Finset.sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, ← Finset.sum_sub_distrib]
   rw [hsum]
   refine Finset.sum_induction _ (fun A => Low A p.totalDegree) (fun _ _ => low_add)
     (Or.inl rfl) (fun s hs => low_mono (low_dPoly_monomial b s _) ?_)

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.AdelicProofs.HasIwasawaOfFrame
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.AdelicProofs.HasIwasawaOfFrame
+
+@[expose] public section
 
 noncomputable section
 

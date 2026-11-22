@@ -1,8 +1,12 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.BesselOrbitBounds.BesselMapUniqueness.BesselMapUniqGap
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothCyc
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.PhMeas
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.IwaCore
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.BesselOrbitBounds.BesselMapUniqueness.BesselMapUniqGap
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothCyc
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.PhMeas
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.IwaCore
+
+@[expose] public section
 
 noncomputable section
 
@@ -119,35 +123,40 @@ theorem bq_eq (k r : ℕ) (i : Fin (2 * r + k + 1)) :
   · rw [if_pos h, if_pos (show i.val ≤ r ∨ r + k ≤ i.val from h)]
   · rw [if_neg h, if_neg (show ¬ (i.val ≤ r ∨ r + k ≤ i.val) from h)]
 
-theorem adapted_pq (k r : ℕ) : Adapted (pq k r) (bq k r) (fun _ => 1) where
-  invol i := by
+theorem adapted_pq (k r : ℕ) : Adapted (pq k r) (bq k r) (fun _ => 1) := by
+  constructor
+  · intro i
     apply Fin.ext
     have := i.2
     rw [pq_val, pq_val]
     split_ifs <;> omega
-  mono i j hij := by
+  · intro i j hij
     have h : i.val ≤ j.val := hij
     rw [bq_eq, bq_eq]
     split_ifs <;> omega
-  neg i := by
+  · intro i
     have := i.2
     rw [bq_eq, bq_eq, pq_val]
     split_ifs <;> omega
-  fix i hi := by
+  · intro i hi
     apply Fin.ext
     have := i.2
     rw [bq_eq] at hi
     rw [pq_val]
     split_ifs at hi ⊢ <;> omega
-  inj i j hi hij := by
+  · intro i j hi hij
     apply Fin.ext
     rw [bq_eq] at hi
     rw [bq_eq, bq_eq] at hij
     split_ifs at hi hij <;> omega
-  sq _ := by simp
-  star_eq _ := by simp
-  symm _ := rfl
-  mid _ _ _ _ := rfl
+  · intro i
+    simp
+  · intro i
+    simp
+  · intros
+    rfl
+  · intros
+    rfl
 
 theorem Hq_eq_dp (k r : ℕ) : Hq k r = dp (pq k r) 0 (fun _ => 1) := by
   ext i j

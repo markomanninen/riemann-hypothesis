@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.IsNormalSchemeSp
-import Development.AbelianVarietyTheory.Definitions.Degenerations.IsAffineSplitTorusLeft
-import Development.AbelianVarietyTheory.Definitions.Degenerations.OfTorusBased
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsScalMulEqZero
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.LinearMapEqZeroOfOneTmulMemRange
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.PullPullAndSplitPull
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.IsNormalSchemeSp
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.IsAffineSplitTorusLeft
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.OfTorusBased
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsScalMulEqZero
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.LinearMapEqZeroOfOneTmulMemRange
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.PullPullAndSplitPull
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -61,7 +66,7 @@ theorem exists_clear {R : Type} [CommRing R] [IsDomain R] {A A' : CommRingCat.{0
     obtain ⟨s, x, hs, e⟩ := hy
     obtain ⟨s', x', hs', e'⟩ := hz
     refine ⟨s * s', a.hom s' * x + a.hom s * x', mul_ne_zero hs hs', ?_⟩
-    simp only [map_mul, map_add, ← e, ← e']
+    simp only [map_mul, map_add (f := _), ← e, ← e']
     ring
   | neg y _ hy =>
     obtain ⟨s, x, hs, e⟩ := hy
@@ -380,7 +385,7 @@ theorem generic_invariants : ∀ (R : Type) [CommRing R] [IsDomain R] [IsNoether
       obtain ⟨l, rfl⟩ := hy
       exact Subring.subset_closure (Or.inr ⟨l.1, l.2, rfl⟩)
     | algebraMap r => exact Subring.subset_closure (Or.inl ⟨_, (hw r).symm⟩)
-    | add y z _ _ hy hz => rw [map_add]; exact B.add_mem hy hz
+    | add y z _ _ hy hz => rw [map_add (f := _)]; exact B.add_mem hy hz
     | mul y z _ _ hy hz => rw [map_mul]; exact B.mul_mem hy hz
   have h2 := h1 _ hr
   have hne : algebraMap R (FractionRing R) (r * s) ≠ 0 := fun e =>

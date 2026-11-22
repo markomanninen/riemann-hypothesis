@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Cup1CoboundaryMemBoundaries
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Cup1CoboundaryMemBoundaries
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -19,7 +23,7 @@ theorem con_add_form {R : Type} [CommRing R] {I : Type} [Finite I] (V : I → Ty
   · intro f m
     simp only [GlobalTheory.CompanionTheory.HopfC.con_pure, LinearMap.add_apply, add_smul]
   · intro u v hu hv
-    rw [map_add, map_add, map_add, hu, hv]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _), hu, hv]
     abel
 
 theorem con_smul_form {R : Type} [CommRing R] {I : Type} [Finite I] (V : I → Type) [∀ i, AddCommGroup (V i)]
@@ -32,7 +36,7 @@ theorem con_smul_form {R : Type} [CommRing R] {I : Type} [Finite I] (V : I → T
   · intro f m
     simp only [GlobalTheory.CompanionTheory.HopfC.con_pure, LinearMap.smul_apply, smul_eq_mul, mul_smul]
   · intro u v hu hv
-    rw [map_add, map_add, hu, hv, smul_add]
+    rw [map_add (f := _), map_add (f := _), hu, hv, smul_add]
 
 theorem Con_linear_form {R : Type} [CommRing R] {C : Type} [Category.{0} C] (F : C ⥤ CommAlgCat.{0} R) {p q : ℕ}
     [Finite (Fin (p + 1) ⥤ C)] (Ξ Ξ' : Cn F p →ₗ[R] R) (r : R) (B : Bi F p q) :

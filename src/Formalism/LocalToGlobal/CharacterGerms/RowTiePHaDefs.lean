@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.RowDeg
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.RowDeg
+
+@[expose] public section
 
 set_option autoImplicit false
 

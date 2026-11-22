@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TranslateMomentsAll
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TranslateMomentsAll
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.MainNotions Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker Formalism.L2.Th1.H GlobalTheory.IndefiniteRowSideFullHecke.JetSumTable GlobalTheory.MomT
 
 namespace GlobalTheory.MomPlace
@@ -24,10 +29,14 @@ theorem exists_extension (K : Type) [Field K] [NumberField K] (p : ℕ) [Fact p.
   have : Algebra.IsAlgebraic ℚ TaylorLogMetric.Qbar := by
     convert algebraicClosure.isAlgebraic ℚ ℂ <;> first | rfl | exact Subsingleton.elim _ _
   have : Algebra.IsAlgebraic K TaylorLogMetric.Qbar := Algebra.IsAlgebraic.tower_top (K := ℚ) K
-  let f : TaylorLogMetric.Qbar →ₐ[K] ℂ_[p] := IsAlgClosed.lift
+  let f : TaylorLogMetric.Qbar →ₐ[K] ℂ_[p] := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨f.toRingHom, fun k => ⟨hmem k, ?_⟩⟩
   unfold TaylorLogMetric.lamC
-  rw [dif_pos (hmem k)]
+  rw [dite_eq_left (hmem k)]
   exact f.commutes k
 
 theorem norm_le_one_of_valuation (K : Type) [Field K] [NumberField K] (p : ℕ) [Fact p.Prime]
@@ -61,7 +70,7 @@ theorem root_of_unity_norm {p : ℕ} [Fact p.Prime] (lam : TaylorLogMetric.Qbar 
     rw [hz]; exact isAlgebraic_one
   refine ⟨hmem, ?_⟩
   unfold TaylorLogMetric.lamC
-  rw [dif_pos hmem]
+  rw [dite_eq_left hmem]
   have h1 : (⟨z, hmem⟩ : TaylorLogMetric.Qbar) ^ n = 1 := Subtype.ext (by simpa using hz)
   have h2 : ‖lam ⟨z, hmem⟩‖ ^ n = 1 := by rw [← norm_pow, ← map_pow, h1, map_one, norm_one]
   exact (pow_eq_one_iff_of_nonneg (norm_nonneg _) hn).1 h2

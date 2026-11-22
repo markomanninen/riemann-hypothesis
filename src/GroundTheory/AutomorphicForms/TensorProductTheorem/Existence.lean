@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.TensorProductTheorem.Places
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.TensorProductTheorem.Places
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,7 +105,7 @@ theorem nonempty_equiv_of_coeff (hρirr : ρ.IsIrreducible) (hπ : ∀ v, IsAdmi
   have hr : IsRestricted ξ fun v => π v (g v) (ξ v) := by
     filter_upwards [g.2, hξ] with v h1 h2
     exact h2 _ h1
-  show _ = evalForm ξ l hl (tensorRep K π g (tprod ℂ ξ))
+  show _ = evalForm ξ l hl (tensorRep (K := K) π g (tprod ℂ ξ))
   rw [tensorRep_tprod, evalForm_tprod hr]
 
 end Coefficient
@@ -260,7 +264,7 @@ theorem exists_equiv_restrictedTensorRep (hρ : IsAdmissible ρ) (hirr : ρ.IsIr
     intro v u hu
     have hle : (genSubrep (ρ.comp (singleHom K v)) (NV v)).toSubmodule ≤
         { carrier := {u | ∀ h ∈ H, h v = 1 → ρ h u = u}
-          add_mem' := fun ha hb h hh hv => by rw [map_add, ha h hh hv, hb h hh hv]
+          add_mem' := fun ha hb h hh hv => by rw [map_add (f := _), ha h hh hv, hb h hh hv]
           zero_mem' := fun h _ _ => map_zero _
           smul_mem' := fun c u hu h hh hv => by rw [map_smul, hu h hh hv] } := by
       refine iSup_le fun g => ?_
@@ -388,7 +392,7 @@ theorem exists_equiv_restrictedTensorRep (hρ : IsAdmissible ρ) (hirr : ρ.IsIr
       obtain ⟨x, hx0, hx⟩ := ih
       let Y : Submodule ℂ M :=
         { carrier := {y | ∀ w ∈ s, p w y = y}
-          add_mem' := fun ha hb w hw => by rw [map_add, ha w hw, hb w hw]
+          add_mem' := fun ha hb w hw => by rw [map_add (f := _), ha w hw, hb w hw]
           zero_mem' := fun w _ => map_zero _
           smul_mem' := fun c y hy w hw => by rw [map_smul, hy w hw] }
       have hxY : x ∈ Y := hx

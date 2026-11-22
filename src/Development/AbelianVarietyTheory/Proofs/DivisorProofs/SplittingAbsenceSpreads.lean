@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NoCommonZeroSpreadsConstructibleNbhdStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NoCommonZeroSpreadsConstructibleNbhdStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj TopologicalSpace TensorProduct
 open scoped CategoryTheory.Obj
 
@@ -30,7 +35,7 @@ noncomputable def gen (b : Bool) : MvPolynomial σ (MvPolynomial (Var σ D) A) :
 
 noncomputable def eqs (f g : MvPolynomial σ A) :
     ((σ →₀ ℕ) ⊕ Bool ⊕ Bool) → MvPolynomial (Var σ D) A
-  | Sum.inl n => coeff n (gen A D true * gen A D false - MvPolynomial.map C f)
+  | Sum.inl n => AddMonoidAlgebra.coeff (gen A D true * gen A D false - MvPolynomial.map C f) n
   | Sum.inr (Sum.inl b) => MvPolynomial.eval (fun i => X (Sum.inr (Sum.inl (b, i)))) (gen A D b)
   | Sum.inr (Sum.inr b) =>
       X (Sum.inr (Sum.inr b)) * MvPolynomial.eval (fun i => X (Sum.inr (Sum.inl (b, i)))) (MvPolynomial.map C g) - 1
@@ -39,7 +44,8 @@ variable {A D}
 
 theorem map_gen {k : Type} [CommRing k] (ψ : A →+* k) (z : Var σ D → k) (b : Bool) :
     MvPolynomial.map (eval₂Hom ψ z) (gen A D b) = ∑ m : Mon σ D, monomial m.1 (z (Sum.inl (b, m))) := by
-  simp [gen, map_sum, map_monomial]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [gen, map_sum, map_monomial]
 
 theorem totalDegree_sum_le {k : Type} [CommRing k] (c : Mon σ D → k) :
     (∑ m : Mon σ D, monomial m.1 (c m)).totalDegree ≤ D := by
@@ -47,7 +53,7 @@ theorem totalDegree_sum_le {k : Type} [CommRing k] (c : Mon σ D → k) :
   exact (totalDegree_monomial_le _ _).trans m.2
 
 theorem sum_coeff {k : Type} [CommRing k] (p : MvPolynomial σ k) (hp : p.totalDegree ≤ D) :
-    ∑ m : Mon σ D, monomial m.1 (coeff m.1 p) = p := by
+    ∑ m : Mon σ D, monomial m.1 (AddMonoidAlgebra.coeff p m.1) = p := by
   classical
   ext n
   simp only [coeff_sum, coeff_monomial]
@@ -76,7 +82,7 @@ noncomputable def spec {k : Type} [CommRing k] (z : Var σ D → k) (b : Bool) :
 
 theorem eval_eqs_coeff {k : Type} [CommRing k] (ψ : A →+* k) (z : Var σ D → k)
     (f g : MvPolynomial σ A) (n : σ →₀ ℕ) :
-    eval₂ ψ z (eqs A D f g (Sum.inl n)) = coeff n (spec z true * spec z false - MvPolynomial.map ψ f) := by
+    eval₂ ψ z (eqs A D f g (Sum.inl n)) = AddMonoidAlgebra.coeff (spec z true * spec z false - MvPolynomial.map ψ f) n := by
   rw [← coe_eval₂Hom]
   simp only [eqs]
   rw [← MvPolynomial.coeff_map, map_sub, map_mul, map_gen, map_gen, MvPolynomial.map_map,
@@ -90,9 +96,7 @@ theorem eval_eqs_point {k : Type} [CommRing k] (ψ : A →+* k) (z : Var σ D �
   rw [← coe_eval₂Hom]
   simp only [eqs]
   rw [hom_eval, map_gen]
-  congr 2
-  funext i
-  simp
+  congr 2 <;> (ext i; simp)
 
 theorem eval_eqs_inv {k : Type} [CommRing k] (ψ : A →+* k) (z : Var σ D → k)
     (f g : MvPolynomial σ A) (b : Bool) :
@@ -101,9 +105,7 @@ theorem eval_eqs_inv {k : Type} [CommRing k] (ψ : A →+* k) (z : Var σ D → 
         MvPolynomial.eval (fun i => z (Sum.inr (Sum.inl (b, i)))) (MvPolynomial.map ψ g) - 1 := by
   simp only [eqs, eval₂_sub, eval₂_mul, eval₂_X, eval₂_one]
   rw [← coe_eval₂Hom, hom_eval, MvPolynomial.map_map, eval₂Hom_comp_C]
-  congr 4
-  funext i
-  simp
+  congr 4 <;> (ext i; simp)
 end GlobalTheory.SplitSpread
 
 namespace GlobalTheory.SplitSpread
@@ -136,7 +138,7 @@ theorem bad_iff (f g : MvPolynomial σ A) (D : ℕ) (k : Type) [Field k] (ψ : A
     · have := hz (Sum.inr (Sum.inl true)); rwa [eval_eqs_point] at this
     · have := hz (Sum.inr (Sum.inl false)); rwa [eval_eqs_point] at this
   · rintro ⟨u, v, hu, hv, huv, P, Q, hPu, hPg, hQv, hQg⟩
-    let z : Var σ D → k := Sum.elim (fun p => coeff p.2.1 (if p.1 then u else v))
+    let z : Var σ D → k := Sum.elim (fun p => AddMonoidAlgebra.coeff (if p.1 then u else v) p.2.1)
       (Sum.elim (fun p => if p.1 then P p.2 else Q p.2)
         (fun b => (MvPolynomial.eval (if b then P else Q) (MvPolynomial.map ψ g))⁻¹))
     have hs : ∀ b, spec z b = if b then u else v := by

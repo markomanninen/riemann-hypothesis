@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfRec
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfAB
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfBA
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfBeta
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfRec
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfAB
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfBA
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfBeta
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,8 +63,8 @@ theorem framepf_back (hT : IsCrys PD T.ρ) (Eπ : LetA O n) (h' M : ℕ)
 
 end Local
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem frame_pf : FrameStep := by
   intro D HW F Cm CA CB CK hA l _ hl K LL hG π' E hR h' hh' c
   exact framepf_rec D HW F Cm hA.1 l hl K LL hG π' E hR h' hh' c

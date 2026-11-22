@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.ChiQuadAlt
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModularFormCoeffSeqLinearStructureStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsModularFormCoeffSeqHeckeUAndDepletionStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsModularFormCoeffSeqHeckeTOfPrimeNotDvdStatement
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.ChiQuadAlt
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ModularFormCoeffSeqLinearStructureStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsModularFormCoeffSeqHeckeUAndDepletionStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsModularFormCoeffSeqHeckeTOfPrimeNotDvdStatement
+
+@[expose] public section
 
 open UpperTheory.V.Z.Kato.Joint
 
@@ -47,7 +51,7 @@ theorem UpperTheory.V.Z.Kato.Joint.LocFacts₂ :
       have hcomm : (fun i => ι (GlobalTheory.EisM.To k (χE q) q a i)) =
           GlobalTheory.EisM.To k (GlobalTheory.EisM.ch χ (q : ℤ)) q (fun i => ι (a i)) := by
         funext m
-        simp only [GlobalTheory.EisM.To, GlobalTheory.EisM.Vo, map_add, map_mul, map_pow, map_natCast, hχq]
+        simp only [GlobalTheory.EisM.To, GlobalTheory.EisM.Vo, map_add (f := _), map_mul, map_pow, map_natCast, hχq]
         split_ifs <;> simp
       rw [hf, hcomm]
       refine ⟨GlobalTheory.T.isModularFormCoeffSeq_heckeT_of_prime_not_dvd k (N * l) N q χ _ hk (dvd_mul_right N l) hq hqn ha, ?_⟩
@@ -86,7 +90,7 @@ theorem UpperTheory.V.Z.Kato.Joint.LocFacts₂ :
           (fun i => ι (((FreeAlgebra.lift (Formalism.ConjugateSelfDual.Qbar l) (fop k l χE)) y) a i)) := by
       funext i
       simp
-    rw [hcomm, formP_lam_add, h2, h4, map_add, map_add, add_mul]
+    rw [hcomm, formP_lam_add, h2, h4, map_add (f := _), map_add (f := _), add_mul]
     exact ⟨((GlobalTheory.T.modularFormCoeffSeq_linear_structure k (N * l) _).2.1 _ _ h1 h3).1, rfl⟩
   | mul x y _ _ hx hy =>
     intro a ha

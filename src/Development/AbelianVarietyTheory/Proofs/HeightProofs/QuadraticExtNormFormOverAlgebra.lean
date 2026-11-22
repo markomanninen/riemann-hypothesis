@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+
+@[expose] public section
+
 open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open scoped TensorProduct
 
@@ -33,7 +38,7 @@ theorem exists_basis (F E : Type) [Field F] [CharZero F] [Field E] [Algebra F E]
     rw [LinearIndependent.pair_iff]
     intro s t hst
     have h2 := congrArg σ hst
-    rw [map_add, hsm, hsm, map_one, hσθ, map_zero, smul_neg] at h2
+    rw [map_add (f := _), hsm, hsm, map_one, hσθ, map_zero, smul_neg] at h2
     have h3 : (2 : E) * (t • θ) = 0 := by linear_combination hst - h2
     have h4 : t • θ = 0 := by simpa only [mul_eq_zero, two_ne_zero, false_or] using h3
     have ht : t = 0 := (smul_eq_zero.1 h4).resolve_right hθ0
@@ -48,7 +53,7 @@ theorem exists_basis (F E : Type) [Field F] [CharZero F] [Field E] [Algebra F E]
   set s := b.repr (θ * θ) 0
   set t := b.repr (θ * θ) 1
   have h2 := congrArg σ hrep
-  rw [map_add, hsm, hsm, map_one, map_mul, hσθ, smul_neg] at h2
+  rw [map_add (f := _), hsm, hsm, map_one, map_mul, hσθ, smul_neg] at h2
   have h3 : (2 : E) * (t • θ) = 0 := by linear_combination hrep - h2
   have h4 : t • θ = 0 := by simpa only [mul_eq_zero, two_ne_zero, false_or] using h3
   have hsq : θ * θ = algebraMap F E s := by
@@ -79,7 +84,7 @@ theorem norm_form : ∀ (F E : Type) [Field F] [CharZero F] [Field E] [Algebra F
       algebraMap R (R ⊗[F] E) (x ^ 2 - algebraMap F R δ * y ^ 2) := by
     intro x y
     have e : sigR R σ (x • B 0 + y • B 1) = x • B 0 - y • B 1 := by
-      rw [map_add, hB, hB, TensorProduct.smul_tmul', TensorProduct.smul_tmul', hs, hs, hb1, hb0,
+      rw [map_add (f := _), hB, hB, TensorProduct.smul_tmul', TensorProduct.smul_tmul', hs, hs, hb1, hb0,
         map_one, TensorProduct.tmul_neg, sub_eq_add_neg]
     rw [e]
     rw [h0] at h1 ⊢

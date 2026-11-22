@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PairStructureOnLine
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.CreApply
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PairStructureOnLine
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.CreationOperators.CreApply
+
+@[expose] public section
 
 open Finset
 
@@ -182,9 +186,6 @@ end Car
 section Coefficients
 
 variable {n : ℕ}
-
-def bt (s a b : Bool) : ℂ :=
-  if s then (if a then (if b then 1 else -1) else 0) else (if b then 0 else 1)
 
 end Coefficients
 

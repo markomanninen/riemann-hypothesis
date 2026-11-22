@@ -1,13 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CubicalOfNormalised
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.MulPullOfCubeOfSymm
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.CubicalOfNormalised
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.MulPullOfCubeOfSymm
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -25,9 +29,9 @@ section Classes
 
 variable {X Y Z : Scheme.{0}}
 
-def trivialSums (L : LB X) (Y : Scheme.{0}) : Subgroup (Abelianization (FreeGroup (Y ⟶ X))) where
+def trivialSums (L : LB X) (Y : Scheme.{0}) : Subgroup (Group.Abelianization (FreeGroup (Y ⟶ X))) where
   carrier := {s | ∃ (K : Type) (_ : Fintype K) (φ : K → (Y ⟶ X)) (ε : K → ℤ), HasGen L φ ε ∧
-    ∏ k, Abelianization.of (FreeGroup.of (φ k)) ^ ε k = s}
+    ∏ k, Group.Abelianization.of (FreeGroup.of (φ k)) ^ ε k = s}
   one_mem' := ⟨PEmpty, inferInstance, PEmpty.elim, PEmpty.elim, ⟨LB.oneGen L, fun _ _ => (map_one _).trans
     ((congrArg₂ (· * ·) (Fintype.prod_empty _) (map_one _)).trans (_root_.mul_one _)).symm⟩,
     Fintype.prod_empty _⟩
@@ -38,23 +42,25 @@ def trivialSums (L : LB X) (Y : Scheme.{0}) : Subgroup (Abelianization (FreeGrou
     rintro _ ⟨K, _, φ, ε, h, rfl⟩
     exact ⟨K, inferInstance, _, _, h.inv, by simp only [zpow_neg, Finset.prod_inv_distrib]⟩
 
-abbrev PullClass (L : LB X) (Y : Scheme.{0}) : Type := Abelianization (FreeGroup (Y ⟶ X)) ⧸ trivialSums L Y
+abbrev PullClass (L : LB X) (Y : Scheme.{0}) : Type :=
+  Group.Abelianization (FreeGroup (Y ⟶ X)) ⧸ trivialSums L Y
 
-def cls (L : LB X) (ψ : Y ⟶ X) : PullClass L Y := QuotientGroup.mk' _ (Abelianization.of (FreeGroup.of ψ))
+def cls (L : LB X) (ψ : Y ⟶ X) : PullClass L Y :=
+  QuotientGroup.mk' _ (Group.Abelianization.of (FreeGroup.of ψ))
 
 variable {L : LB X} {K K' : Type} [Fintype K] [Fintype K']
 
 theorem hasGen_iff (hL : L.IsLB) (φ : K → (Y ⟶ X)) (ε : K → ℤ) :
     HasGen L φ ε ↔ ∏ k, cls L (φ k) ^ ε k = 1 := by
   have e : ∏ k, cls L (φ k) ^ ε k =
-      QuotientGroup.mk' (trivialSums L Y) (∏ k, Abelianization.of (FreeGroup.of (φ k)) ^ ε k) := by
+      QuotientGroup.mk' (trivialSums L Y) (∏ k, Group.Abelianization.of (FreeGroup.of (φ k)) ^ ε k) := by
     simp only [map_prod, map_zpow, cls]
   rw [e, QuotientGroup.mk'_apply, QuotientGroup.eq_one_iff]
   refine ⟨fun h => ⟨K, inferInstance, φ, ε, h, rfl⟩, ?_⟩
   rintro ⟨K', _, φ', ε', h, e⟩
   refine h.of_formEq hL fun U _ f => ?_
-  simpa only [map_prod, map_zpow, Abelianization.lift_apply_of, FreeGroup.lift_apply_of] using
-    congrArg (Abelianization.lift (FreeGroup.lift f)) e
+  simpa only [map_prod, map_zpow, Group.Abelianization.lift_apply_of, FreeGroup.lift_apply_of] using
+    congrArg (Group.Abelianization.lift (FreeGroup.lift f)) e
 
 def chartDivOut (L : LB X) (φ : K → (Y ⟶ X)) (ε : K → ℤ) (φ' : K' → (Y ⟶ X)) (ε' : K' → ℤ) :
     ChartPull (LB.div (LB.LinComb L φ' ε') (LB.LinComb L φ ε))
@@ -302,8 +308,8 @@ section Main
 
 variable {S : Scheme.{0}} {B : Over S} [GrpObj B] [IsCommMonObj B] {M : LB B.left}
 
-omit [IsCommMonObj B] in
 
+omit [IsCommMonObj B] in
 def postHom (f : B ⟶ B) [IsMonHom f] (T : Over S) : (T ⟶ B) →* (T ⟶ B) :=
   MonoidHom.mk' (· ≫ f) fun x y => MonObj.mul_comp x y f
 

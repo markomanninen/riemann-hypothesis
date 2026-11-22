@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryMemGLs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousOnFderivApply
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnitaryMemGLs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContinuousOnFderivApply
+
+@[expose] public section
 
 noncomputable section
 

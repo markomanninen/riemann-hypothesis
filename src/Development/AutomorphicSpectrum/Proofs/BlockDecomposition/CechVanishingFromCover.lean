@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.InclStd
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MapHComp
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MemBoundariesZeroIff
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.InclStd
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MapHComp
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.MemBoundariesZeroIff
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb
 
@@ -38,8 +43,8 @@ def liftCh {W : ObjectProperty C} (hW : Cosieve W) {n : ℕ} (s : ComposableArro
     ComposableArrows W.FullSubcategory n :=
   W.lift s fun i => hW (s.map (homOfLE (Fin.zero_le i))) h
 
-open Classical in
 
+open Classical in
 def extZ {W : ObjectProperty C} (hW : Cosieve W) {n : ℕ} (y : CrystallineSemistableComparison.CH.Cn (W.ι ⋙ F) n) : CrystallineSemistableComparison.CH.Cn F n :=
   fun s => if h : W (s.obj 0) then y (liftCh hW s h) else 0
 
@@ -49,7 +54,7 @@ theorem pull_extZ {W : ObjectProperty C} (hW : Cosieve W) {n : ℕ} (y : Crystal
   have h : W ((t ⋙ W.ι).obj 0) := (t.obj 0).property
   change extZ hW y (t ⋙ W.ι) = y t
   unfold extZ
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   rfl
 
 theorem van_of_subsingleton {W : ObjectProperty C} (hW : Cosieve W) (j : ℕ)

@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.IsQg
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RestrictsSelf
+module
+
+public import Development.AbelianVarietyTheory.Statements.EllipticCurveLevels.IsQg
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.RestrictsSelf
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalDat
 
 namespace UpperTheory.Gal.ToralGalois.R2
 
-def Apart {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (x : IrrGL k) : Prop :=
+def Apart {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (x : IrrGL (k := k)) : Prop :=
   ∀ s, HasSupport x.rep s → (s.filter fun y => 2 ≤ y.1).Pairwise fun y z => ¬ y.Inert z
 
 def LocalGlobalCompatAtIwahoriFixedPlaces : Prop :=
@@ -19,7 +23,7 @@ def LocalGlobalCompatAtIwahoriFixedPlaces : Prop :=
     InScope .all l π χ → ∀ r : G E Ω →* GL (Fin n) (Qbar l), Weak π ι r →
     ∀ (w : HeightOneSpectrum (𝓞 E)) (σ : SmIrr (GL (Fin n) (w.adicCompletion E))), π.IsLocComp w σ →
       fixed σ.ρ (KOne (w.adicCompletion E) (Fin n)) ≠ ⊥ → (PlainTor (algNorm σ) ∨ (IsQg w ∧ Apart (algNorm σ))) →
-    ∀ (A : ValuationSubring Ω) (h : IsPlaceOver A w) (rc : IrrGL (w.adicCompletion E) → WD h), UpperTheory.Zero.LLC.IsRecT h rc →
+    ∀ (A : ValuationSubring Ω) (h : IsPlaceOver A w) (rc : IrrGL (k := w.adicCompletion E) → WD h), UpperTheory.Zero.LLC.IsRecT h rc →
       (rc (algNorm σ)).mono0 →
       (∀ hl : ((l : ℕ) : 𝓞 E) ∉ w.asIdeal, (wdOf h hl ι r).mono0 ∧
         ∀ t : Ine (F := E) A, (wdOf h hl ι r).charPol (ineIncl h t) = (rc (algNorm σ)).charPol (ineIncl h t)) ∧

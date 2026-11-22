@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+
+@[expose] public section
+
 open GlobalTheory.UnitLemma Polynomial
 
 namespace GlobalTheory.UnitLemma.Bridge
@@ -25,11 +30,11 @@ theorem finrank_fixedField {E : Type} [Field E] [CharZero E] (c : E ≃+* E) (hc
         change _ = (a : E) * _
         ring }
   have hinj : Function.Injective f := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     rintro ⟨a, b⟩ h
     have h1 : (a : E) + (b : E) * d = 0 := h
     have h2 := congrArg c h1
-    rw [map_add, map_mul, (mem_fixedField c _).1 a.2, (mem_fixedField c _).1 b.2, hcd, map_zero] at h2
+    rw [map_add (f := _), map_mul, (mem_fixedField c _).1 a.2, (mem_fixedField c _).1 b.2, hcd, map_zero] at h2
     have ha : (a : E) = 0 := by linear_combination (h1 + h2) / 2
     have hb : (b : E) * d = 0 := by linear_combination (h1 - h2) / 2
     have hb' : (b : E) = 0 := (mul_eq_zero.1 hb).resolve_right hd0
@@ -37,7 +42,7 @@ theorem finrank_fixedField {E : Type} [Field E] [CharZero E] (c : E ≃+* E) (hc
   have hsurj : Function.Surjective f := by
     intro z
     refine ⟨(⟨(z + c z) / 2, ?_⟩, ⟨(z - c z) / (2 * d), ?_⟩), ?_⟩
-    · rw [mem_fixedField, map_div₀, map_add, hc, map_ofNat, add_comm]
+    · rw [mem_fixedField, map_div₀, map_add (f := _), hc, map_ofNat, add_comm]
     · rw [mem_fixedField, map_div₀, map_sub, hc, map_mul, map_ofNat, hcd]
       field_simp
       ring
@@ -146,8 +151,8 @@ theorem locallyCompact_of_complete {O E : Type} [CommRing O] [IsDomain O] [IsDis
   obtain ⟨z, hz⟩ := (hball y).1 (by simpa using hy)
   exact ⟨z, trivial, hz⟩
 
-open WithZero in
 
+open WithZero in
 theorem val_conj {E : Type} [Field E] (v : Valuation E (WithZero (Multiplicative ℤ))) (π : E)
     (hπ : v π = exp (-1)) (c : E ≃+* E) (hc : ∀ x, c (c x) = x) (hle : ∀ y, v y ≤ 1 → v (c y) ≤ 1) (y : E) :
     v (c y) = v y := by
@@ -185,8 +190,8 @@ theorem val_conj {E : Type} [Field E] (v : Valuation E (WithZero (Multiplicative
   · exact (hle2 _ _ (zpow_ne_zero _ hπ0) h3.le).trans (h4.trans h3.symm).le
   · exact (h4.trans h3.symm).symm.le.trans (hle2 _ _ hy h3.ge)
 
-open WithZero in
 
+open WithZero in
 theorem exists_fixed_val {E : Type} [Field E] (v : Valuation E (WithZero (Multiplicative ℤ))) (π : E)
     (hπ : v π = exp (-1)) (c : E ≃+* E) (hc : ∀ x, c (c x) = x) (hv : ∀ y, v (c y) = v y)
     (a : E) (ha : v a ≤ 1) (hd : v (a - c a) = 1) (y : E) : ∃ x, c x = x ∧ v y = v x := by
@@ -194,10 +199,10 @@ theorem exists_fixed_val {E : Type} [Field E] (v : Valuation E (WithZero (Multip
     by_contra h
     push Not at h
     have h1 : v (π + c π) < v π :=
-      lt_of_le_of_ne (v.map_add_le le_rfl (hv π).le) (h _ (by rw [map_add, hc, add_comm]))
+      lt_of_le_of_ne (v.map_add_le le_rfl (hv π).le) (h _ (by rw [map_add (f := _), hc, add_comm]))
     have h0 : v (a * π) ≤ v π := by rw [map_mul]; exact mul_le_of_le_one_left' ha
     have h2 : v (a * π + c (a * π)) < v π :=
-      lt_of_le_of_ne (v.map_add_le h0 ((hv _).le.trans h0)) (h _ (by rw [map_add, hc, add_comm]))
+      lt_of_le_of_ne (v.map_add_le h0 ((hv _).le.trans h0)) (h _ (by rw [map_add (f := _), hc, add_comm]))
     have h3 : v (c a * (π + c π)) < v π := by
       rw [map_mul, hv]; exact lt_of_le_of_lt (mul_le_of_le_one_left' ha) h1
     have h4 := v.map_sub_lt h2 h3

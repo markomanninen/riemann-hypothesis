@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleSimplicialChainsBasicPropertiesHold
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleSimplicialChainsBasicPropertiesHold
+
+@[expose] public section
 
 namespace LateralTheory.Fin.EtaleSimplicialChainsFreeDescription
 theorem etale_cochain_complex_basic_properties_of_components : LateralTheory.EtaleFoundations.EtaleSimplicialChainsFreeDescription := by

@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.CrystallineComparison
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TestFactsAlt
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.LiftIntegral
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SplitOnSpec
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SplitsOfSplitOn
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.CrystallineComparison
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TestFactsAlt
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.LiftIntegral
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SplitOnSpec
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SplitsOfSplitOn
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 

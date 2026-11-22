@@ -1,11 +1,15 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SExpDefs
-import GroundTheory.GlobalFields.TateThesis.TateThetaDecay
-import GroundTheory.GlobalFields.TateThesis.TateTheta
-import GroundTheory.GlobalFields.TateThesis.AdelePoisson
-import GroundTheory.GlobalFields.TateThesis.EulerFactorsInfinite
-import GroundTheory.GlobalFields.IdeleGroups.ClassGroup
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenIdeleSubgroupContainsCongruenceUnits
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.HilbertEisenstein.SExpDefs
+public import GroundTheory.GlobalFields.TateThesis.TateThetaDecay
+public import GroundTheory.GlobalFields.TateThesis.TateTheta
+public import GroundTheory.GlobalFields.TateThesis.AdelePoisson
+public import GroundTheory.GlobalFields.TateThesis.EulerFactorsInfinite
+public import GroundTheory.GlobalFields.IdeleGroups.ClassGroup
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsOpenIdeleSubgroupContainsCongruenceUnits
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,8 +65,8 @@ theorem hasTemperateGrowth_oddPoly : (oddPoly (F := F)).HasTemperateGrowth := by
         ({w : InfinitePlace F // w.IsComplex} → ℂ))) : mixedSpace F →L[ℝ] ℂ)).hasTemperateGrowth
   exact (Function.HasTemperateGrowth.const Complex.I).mul h
 
-variable (F) in
 
+variable (F) in
 def oddSchwartz : 𝓢(mixedSpace F, ℂ) :=
   SchwartzMap.smulLeftCLM ℂ oddPoly
     (SchwartzMap.compCLMOfContinuousLinearEquiv ℂ (mixedToEuclidean F)

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.PhSchurConv
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.PhSchurConv
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 
 noncomputable section
@@ -20,7 +25,7 @@ theorem height_comap_le_one_of_goingDown {A B : Type} [CommRing A] [IsDomain A] 
   haveI := hr
   obtain ⟨P₁, hP₁Q, hP₁, hP₁o⟩ := Ideal.exists_ideal_lt_liesOver_of_lt (p := r) (q := p) Q hrp
   haveI := hP₁
-  haveI : (⊥ : Ideal A).IsPrime := Ideal.bot_prime
+  haveI : (⊥ : Ideal A).IsPrime := Ideal.isPrime_bot
   obtain ⟨P₀, hP₀P₁, hP₀, -⟩ := Ideal.exists_ideal_lt_liesOver_of_lt (p := ⊥) (q := r) P₁
     (bot_lt_iff_ne_bot.mpr hr0)
   haveI := hP₀
@@ -53,7 +58,7 @@ theorem height_one_and_comap_eq_map_C : ∀ (A : Type) [CommRing A] [IsDomain A]
     have : a ∈ p := haP
     rw [h, Ideal.mem_bot] at this
     exact ha this
-  haveI : (⊥ : Ideal A).IsPrime := Ideal.bot_prime
+  haveI : (⊥ : Ideal A).IsPrime := Ideal.isPrime_bot
   have hp1 : 1 ≤ p.height := by
     have := Ideal.height_add_one_le_of_lt_of_isPrime (bot_lt_iff_ne_bot.mpr hpne)
     simpa using this
@@ -78,7 +83,7 @@ theorem height_one_and_comap_eq_map_C : ∀ (A : Type) [CommRing A] [IsDomain A]
     have : Polynomial.C x ∈ p.map (Polynomial.C : A →+* A[X]) := Ideal.mem_map_of_mem _ hx
     rw [h, Ideal.mem_bot, Polynomial.C_eq_zero] at this
     simp [this]
-  haveI : (⊥ : Ideal A[X]).IsPrime := Ideal.bot_prime
+  haveI : (⊥ : Ideal A[X]).IsPrime := Ideal.isPrime_bot
   have h1 := Ideal.height_add_one_le_of_lt_of_isPrime (bot_lt_iff_ne_bot.mpr hCne)
   have h2 := Ideal.height_add_one_le_of_lt_of_isPrime hlt
   have h4 : (1 : ℕ∞) ≤ (p.map (Polynomial.C : A →+* A[X])).height := by simpa using h1

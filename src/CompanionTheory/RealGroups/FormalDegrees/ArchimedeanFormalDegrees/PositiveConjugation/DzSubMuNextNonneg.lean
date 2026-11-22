@@ -1,7 +1,11 @@
-import CompanionTheory.RealGroups.FormalDegrees.ArchimedeanFormalDegrees.HlamStable
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiFacts
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ExpInPPosDef
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FiPmatEqFiOneSmulPmat
+module
+
+public import CompanionTheory.RealGroups.FormalDegrees.ArchimedeanFormalDegrees.HlamStable
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PhiFacts
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.ExpInPPosDef
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.FiPmatEqFiOneSmulPmat
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,14 +37,14 @@ theorem exists_pmat {ε : Fin n → Bool} {X : Matrix (Fin n) (Fin n) ℂ} (hX :
   ext a b
   simp only [pmat]
   by_cases h1 : b < a ∧ ε a ≠ ε b
-  · rw [dif_pos h1]
-  · rw [dif_neg h1]
+  · rw [dite_eq_left h1]
+  · rw [dite_eq_right h1]
     by_cases h2 : a < b ∧ ε b ≠ ε a
-    · rw [dif_pos h2]
+    · rw [dite_eq_left h2]
       have := congrFun (congrFun hH a) b
       simp only [Matrix.conjTranspose_apply] at this
       exact this
-    · rw [dif_neg h2]
+    · rw [dite_eq_right h2]
       by_cases he : ε a = ε b
       · exact (inP_entry_zero hX he).symm
       · have hab : a = b := by
@@ -86,7 +90,7 @@ theorem phiLe : PhiLe := by
     refine Finset.prod_congr rfl fun i _ => ?_
     rw [hr i, Complex.ofReal_zpow, Complex.ofReal_re]
   rw [hphi, Complex.ofReal_re]
-  refine Finset.prod_le_one (fun i _ => zpow_nonneg (zero_le_one.trans (one_le_lead_exp hP _ i.isLt)) _) fun i _ => ?_
+  refine Finset.prod_le_one₀ (fun i _ => zpow_nonneg (zero_le_one.trans (one_le_lead_exp hP _ i.isLt)) _) fun i _ => ?_
   exact zpow_le_one_of_nonpos₀ (one_le_lead_exp hP _ i.isLt) (neg_nonpos.2 (dz_sub_muNext_nonneg i))
 
 end CompanionTheory.RgFd

@@ -1,5 +1,9 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.FiniteDimensionalOfOrtho
-import Formalism.HermitianLattices.HermitianLatticesProofs.GenusCovolBound
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.FiniteDimensionalOfOrtho
+public import Formalism.HermitianLattices.HermitianLatticesProofs.GenusCovolBound
+
+@[expose] public section
 
 open NumberField Module
 

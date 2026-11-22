@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubMemTwistSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubMemTwistSpan
+
+@[expose] public section
+
 open ValuativeRel Matrix
 
 noncomputable section
@@ -12,8 +17,8 @@ open GlobalTheory.SplitFlip
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 variable {A D : Type} [Fintype A] [DecidableEq A] [Fintype D] [DecidableEq D]
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 def rowOpMat (i₀ : A) (w : A → k) : Matrix A A k :=
   replicateCol Unit (Pi.single i₀ (1 : k)) * replicateRow Unit w
 
@@ -40,8 +45,8 @@ theorem det_one_add_rowOpMat (i₀ : A) (w : A → k) (hw : w i₀ = 0) : (1 + r
   rw [rowOpMat, det_one_add_replicateCol_mul_replicateRow]
   simp [hw]
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 def unipRowGL (i₀ : A) (w : A → k) (hw : w i₀ = 0) : GL A k :=
   ⟨1 + rowOpMat i₀ w, 1 - rowOpMat i₀ w,
     by simp [add_mul, mul_sub, rowOpMat_mul_self i₀ w hw],

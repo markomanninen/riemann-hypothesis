@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,8 +46,8 @@ def Xb (P : Set (G ι N)) (T : ℝ) (m : Fin N → ℤ) : Set (G ι N) :=
 
 def Zb (R : ℝ) : Set (G ι N) := {z | ∀ w i j, ‖mt z w i j‖ ≤ R}
 
+open scoped Classical in
 open Classical in
-
 def nu (w0 : ι) : SpecialLinearGroup (Fin N) GaussianInt →* G ι N :=
   (MonoidHom.mulSingle (fun _ : ι => SpecialLinearGroup (Fin N) ℂ) w0).comp
     (SpecialLinearGroup.map GaussianInt.toComplex)

@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.EvLatStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.EvLatStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ variable {R₀ : Type} [CommRing R₀] {p : ℕ} [Fact p.Prime] {g : ℕ} {B : B
 
 end
 
-open TensorProduct IsLocalRing Matrix in
 
+open TensorProduct IsLocalRing Matrix in
 theorem _root_.GlobalTheory.evImg_isLat_subring :
   (∀ {R₀ : Type} [CommRing R₀] {p : ℕ} [Fact p.Prime] {g : ℕ} {B : _root_.ReciprocityTheory.PGsh.BX R₀} {Tw : _root_.ReciprocityTheory.PGsh.ATowerL R₀ p} {Dt : _root_.ReciprocityTheory.PGsh.DualTower Tw} [Algebra ℤ_[p] (Tw.O : Type)] {Oe : Type} [CommRing Oe] [Algebra ℤ_[p] Oe] {σ : Oe ≃ₐ[ℤ_[p]] Oe} {cp : (Tw.O : Type)} (D : _root_.ReciprocityTheory.PGsh.Be2.Dat p g B Tw Dt Oe σ cp), _root_.ReciprocityTheory.PGsh.Be2.EvLatStatement D) := by
   intro R₀ _ p _ g B Tw Dt _ Oe _ _ σ cp D
@@ -45,7 +49,7 @@ theorem _root_.GlobalTheory.evImg_isLat_subring :
     change Submodule.span _ (Set.range ⇑f) = _
     rw [← LinearMap.coe_range, Submodule.span_eq]
   have hinjΨ : Function.Injective Ψ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro F hF
     funext i
     apply D.fin.sep i
@@ -89,7 +93,8 @@ theorem _root_.GlobalTheory.evImg_isLat_subring :
       have hsum : Ψ (∑ j, v j • b j) = 0 := by
         rw [← hv]
         funext x
-        simp [Matrix.mulVec, dotProduct, map_sum, map_smul, mul_comm]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp [Matrix.mulVec, dotProduct, map_sum, map_smul, mul_comm]
       have h1 : ∑ j, v j • b j = 0 := hinjΨ (by rw [hsum, map_zero])
       funext j
       exact Fintype.linearIndependent_iff.1 b.linearIndependent v h1 j

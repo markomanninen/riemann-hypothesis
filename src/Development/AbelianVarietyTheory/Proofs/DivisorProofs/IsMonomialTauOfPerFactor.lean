@@ -1,9 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUnifOfIsMumfordOf
-import Development.AbelianVarietyTheory.Definitions.Divisors.PerFactor
-import ReciprocityTheory.CommutativeAlgebra.PowerSeriesPresentations.PresentationStatement
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsMumfordFamOfSubsingleton
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsOfPoint
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUnifOfIsMumfordOf
+public import ReciprocityTheory.CommutativeAlgebra.ChainConnInDim
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsMumfordFamOfSubsingleton
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsOfPoint
+
+@[expose] public section
 
 noncomputable section
 

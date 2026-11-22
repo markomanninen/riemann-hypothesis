@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -55,7 +59,7 @@ theorem kummer_twist_relation_and_fixed_field :
       obtain ⟨b, hb⟩ := hφF a
       rw [AlgEquiv.commutes, ← hb]
       exact ((σ ^ q).commutes b).symm
-    | add y z _ _ hy hz => simp only [map_add, hy, hz]
+    | add y z _ _ hy hz => simp only [map_add (f := _), hy, hz]
     | inv y _ hy => simp only [map_inv₀, hy]
     | mul y z _ _ hy hz => simp only [map_mul, hy, hz]
   ·
@@ -71,7 +75,8 @@ theorem kummer_twist_relation_and_fixed_field :
       rw [Algebra.adjoin_singleton_eq_range_aeval] at hy
       obtain ⟨p, rfl⟩ := (AlgHom.mem_range _).1 hy
       rw [Polynomial.aeval_eq_sum_range]
-      simp_rw [map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp_rw [map_sum, map_smul]
       rw [Finset.sum_comm]
       refine Subalgebra.sum_mem _ fun i _ => ?_
       rw [← Finset.smul_sum]

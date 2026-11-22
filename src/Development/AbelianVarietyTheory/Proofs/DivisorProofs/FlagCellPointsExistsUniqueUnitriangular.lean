@@ -1,6 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.BsLApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BearsFlagUnitriangularIffMemCellStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UpUUniqueOfLower
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BsLApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BearsFlagUnitriangularIffMemCellStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UpUUniqueOfLower
+
+@[expose] public section
 
 set_option autoImplicit false
 

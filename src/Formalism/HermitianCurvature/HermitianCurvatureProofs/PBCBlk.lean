@@ -1,13 +1,17 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCStmt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstNormRealNonneg
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PairingTriangular
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PsdFormConjRewrite
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelSizesJointMean
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DualCovolumeChangeOfVariables
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PoissonJointFirstReduction
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
-import Formalism.LatticeRigidity.HeightMinimum.SqrtAbsNormLeProd
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBCStmt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstNormRealNonneg
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PairingTriangular
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PsdFormConjRewrite
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelSizesJointMean
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DualCovolumeChangeOfVariables
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PoissonJointFirstReduction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
+public import Formalism.LatticeRigidity.HeightMinimum.SqrtAbsNormLeProd
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBC.GlobalTheory
 
@@ -191,7 +195,8 @@ theorem dual_smul_mem {f : ℕ} (La : Submodule ℤ (crystallineComparison.V f))
     ((Pi.basisFun ℝ _).sum_repr _).symm
   have h : g • Formalism.FourierDecayAlt.P.PairingConjugationLemmas.ψd La m = ∑ j, (m j) • bd j := by
     unfold Formalism.FourierDecayAlt.P.PairingConjugationLemmas.ψd
-    rw [hx, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx, map_sum, Finset.smul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, Module.Basis.isUnitSMul_apply, ← Int.cast_smul_eq_zsmul ℝ, smul_comm]
     rfl
@@ -313,7 +318,7 @@ theorem mL_le_prof (S : C.HidaSetting E Wp Wq) (K : ℕ) (Λ : Fin S.f → ℝ) 
   rw [← Equiv.prod_comp S.pl (fun w => min 1 ((Λ (S.pl.symm w) / 3 / w l) ^ K))]
   simp only [Equiv.symm_apply_apply]
   rw [← Fin.prod_const S.f ((3 : ℝ) ^ K), ← Finset.prod_mul_distrib]
-  refine Finset.prod_le_prod (fun v _ => mfac_nonneg _ _ _ (hΛ v) (norm_nonneg _)) (fun v _ => ?_)
+  refine Finset.prod_le_prod₀ (fun v _ => mfac_nonneg _ _ _ (hΛ v) (norm_nonneg _)) (fun v _ => ?_)
   have hpos : 0 < (S.pl v) l := by
     rw [← S.hemb v, InfinitePlace.apply]
     exact norm_pos_iff.2 ((map_ne_zero _).2 hl0)
@@ -372,7 +377,7 @@ theorem sum_le (S : C.HidaSetting E Wp Wq) (hg : 0 < S.g) (hU : S6.Unram E) (b s
       rw [Finset.mem_filter] at ha ha'
       exact Subtype.ext (ha.2.trans ha'.2.symm)
     calc _ ≤ ∑ σ ∈ T.filter (fun σ : crystallineComparison.dualSet (PBC.latV S (J.LaB E S.g S.G.r b s)) => σ.1 = 0), (1 : ℝ) :=
-          Finset.sum_le_sum fun σ _ => Finset.prod_le_one (fun v _ => mfac_nonneg _ _ _ (hΛ0 v) (norm_nonneg _))
+          Finset.sum_le_sum fun σ _ => Finset.prod_le_one₀ (fun v _ => mfac_nonneg _ _ _ (hΛ0 v) (norm_nonneg _))
             fun v _ => mfac_le_one _ _ _
       _ ≤ 1 := by rw [Finset.sum_const, nsmul_eq_mul, mul_one]; exact_mod_cast hcard
   ·
@@ -421,7 +426,7 @@ theorem sum_le (S : C.HidaSetting E Wp Wq) (hg : 0 < S.g) (hU : S6.Unram E) (b s
       calc ∏ w, x w = (1 / 3) ^ Fintype.card (InfinitePlace E) * ∏ w, Λ (S.pl.symm w) := by
             rw [hx, Finset.prod_div_distrib, Finset.prod_const, Finset.card_univ, one_div, inv_pow]; ring
         _ ≤ (1 / 3) ^ Fintype.card (InfinitePlace E) * ∏ w, J.thrS S.G S.CA S.de S.de' S.T S.T' S.l b s w := by
-            refine mul_le_mul_of_nonneg_left (Finset.prod_le_prod (fun w _ => hΛ0 _) fun w _ => ?_)
+            refine mul_le_mul_of_nonneg_left (Finset.prod_le_prod₀ (fun w _ => hΛ0 _) fun w _ => ?_)
               (by positivity)
             have := (hΛ (S.pl.symm w)).2
             simpa [PBC.thr] using this

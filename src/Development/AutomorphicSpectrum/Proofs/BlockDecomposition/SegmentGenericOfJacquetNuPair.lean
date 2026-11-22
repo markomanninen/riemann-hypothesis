@@ -1,11 +1,15 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.SegmentDerivatives.CuspPairSubGeneric
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.LeibnizDerivatives.GenericProdIff
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.GeometricLemmaFiltration
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LanglandsQuotientOfSpehTypeProductIsL
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConcatApplyEquiv
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.SegmentDerivatives.CuspPairSubGeneric
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.LeibnizDerivatives.GenericProdIff
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.GeometricLemmaFiltration
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LanglandsQuotientOfSpehTypeProductIsL
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraMapIntertwiningMapBijectiveOfIsSmooth
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConcatApplyEquiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem isLSeg_fine (G : Segment k) (a : Fin G.len) :
   rw [e]
   exact (single_spec hc).2.1
 
-theorem exists_cut (hJ : LSegJacquet k) {G G' : Segment k} {x : IrrGL k} (h : IsLSeg G x.rep)
+theorem exists_cut (hJ : LSegJacquet k) {G G' : Segment k} {x : IrrGL (k := k)} (h : IsLSeg G x.rep)
     (h' : IsLSeg G' x.rep) :
     ∃ Γ : Fin G.len → Segment k, IsTopCut G' Γ ∧ ∀ a, IsLSeg (Γ a) (dec G a).rep := by
   have hd : ∑ a, (dec G a).1 = x.1 := (sum_dec G).trans h.deg_eq
@@ -51,7 +55,7 @@ theorem card_le_len {G : Segment k} {s : ℕ} {Γ : Fin s → Segment k} (h : Is
   calc s = ∑ _ : Fin s, 1 := by simp
     _ ≤ ∑ a, (Γ a).len := Finset.sum_le_sum fun a _ => (Γ a).len_pos
 
-theorem first_eq (hJ : LSegJacquet k) {G G' : Segment k} {x : IrrGL k} (h : IsLSeg G x.rep)
+theorem first_eq (hJ : LSegJacquet k) {G G' : Segment k} {x : IrrGL (k := k)} (h : IsLSeg G x.rep)
     (h' : IsLSeg G' x.rep) : G.first = G'.first := by
   obtain ⟨Γ, hΓ, hL⟩ := exists_cut hJ h h'
   obtain ⟨Γ', hΓ', -⟩ := exists_cut hJ h' h

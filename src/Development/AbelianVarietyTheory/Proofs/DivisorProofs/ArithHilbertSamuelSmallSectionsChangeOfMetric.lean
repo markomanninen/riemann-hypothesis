@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResidueDegreeEqOneOfComp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArCalcOfPrincipalisation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenericDegreePullbackFormula
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NontrivialIsomClassInt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHermLineBundlePairPullbackDominantStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SemiPosPullbackGenericallyBirationalStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TendstoLogSectionCountChangeOfMetricStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DominantProjArithSurjectiveComplexPointsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RaiseFirstWeightSectionsLociValuesNormsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SemipositiveOfIsometric
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GeometricallyConnectedOfIsIsoRestrict
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResidueDegreeEqOneOfComp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArCalcOfPrincipalisation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenericDegreePullbackFormula
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NontrivialIsomClassInt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHermLineBundlePairPullbackDominantStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SemiPosPullbackGenericallyBirationalStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TendstoLogSectionCountChangeOfMetricStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DominantProjArithSurjectiveComplexPointsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RaiseFirstWeightSectionsLociValuesNormsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SemipositiveOfIsometric
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Filter Topology MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.ArInt GlobalTheory.CxPts GlobalTheory.Cartier GlobalTheory.VolBr GlobalTheory.HSAmp
@@ -57,18 +62,17 @@ theorem goodFam_map (P : Pair p) (Q : Pair q) (e : X.functionField →+* Y.funct
     (he : ∀ (a b : ℤ), ∀ f ∈ P.H a b, e f ∈ Q.H a b ∧ ∀ (σ : k →+* ℂ) (y : CxPts q σ),
       Q.nu a b σ y (e f) = P.nu a b σ (Points.PtsOver.map ρ hρ (spMap σ) y) f)
     (D : ℕ) (g : ℝ) (Λ : ℕ → AddSubgroup X.functionField) (h : GoodFam P D g Λ) :
-    GoodFam Q D g (fun m => (Λ m).map e.toAddMonoidHom) where
-  le m := by
+    GoodFam Q D g (fun m => (Λ m).map e.toAddMonoidHom) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro m
     rintro _ ⟨f, hf, rfl⟩
     exact (he m 1 f (h.le m hf)).1
-  fg m := by
-    classical
-    obtain ⟨s, hs'⟩ := h.fg m
-    refine ⟨s.image e, ?_⟩
-    rw [Finset.coe_image, ← hs', AddMonoidHom.map_closure]
+  · intro m
+    obtain ⟨s, hs', hsFinite⟩ := (AddSubgroup.fg_iff (Λ m)).mp (h.fg m)
+    refine (AddSubgroup.fg_iff _).mpr ⟨e '' s, ?_, hsFinite.image e⟩
+    rw [← hs', AddMonoidHom.map_closure]
     rfl
-  small := by
-    obtain ⟨C, hC, hCm⟩ := h.small
+  · obtain ⟨C, hC, hCm⟩ := h.small
     refine ⟨C, hC, fun m hm => ?_⟩
     have hn : ∀ f ∈ Λ m, ∀ (σ : k →+* ℂ) (y : CxPts q σ),
         Q.nu m 1 σ y (e f) = P.nu m 1 σ (Points.PtsOver.map ρ hρ (spMap σ) y) f :=
@@ -76,8 +80,7 @@ theorem goodFam_map (P : Pair p) (Q : Pair q) (e : X.functionField →+* Y.funct
     rw [ballIn_map P Q e ρ hρ hs (Λ m) m 1 hn]
     exact (AddSubgroup.map_mono (hCm m hm)).trans
       (AddMonoidHom.map_closure e.toAddMonoidHom (ballIn P (Λ m) m 1 (C ^ m))).le
-  rank := by
-    have e' : ∀ m, Module.finrank ℤ ((Λ m).map e.toAddMonoidHom) = Module.finrank ℤ (Λ m) := fun m =>
+  · have e' : ∀ m, Module.finrank ℤ ((Λ m).map e.toAddMonoidHom) = Module.finrank ℤ (Λ m) := fun m =>
       ((AddSubgroup.equivMapOfInjective (Λ m) e.toAddMonoidHom e.injective).toIntLinearEquiv.finrank_eq).symm
     simp only [e']
     exact h.rank

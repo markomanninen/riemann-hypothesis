@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsChowNorm
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsChowNorm
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -60,12 +65,14 @@ theorem coord_integral (h1 : IncidenceNull.Statement) (Q : Ideal (MvPolynomial (
     have h : chartForm y - 1 ∈ secIdeal Q' y :=
       Ideal.mem_sup_right (Ideal.mem_span_singleton_self _)
     rw [← Ideal.Quotient.eq] at h
-    simpa [chartForm, linForm, map_sum, hC, hx, secCoord] using h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [chartForm, linForm, map_sum, hC, hx, secCoord] using h
   have hl : ∀ i, ∑ j, algebraMap E (SecAlg Q' y) (y (.inl (i, j))) * x j = 0 := fun i => by
     have h : secForm y i ∈ secIdeal Q' y :=
       Ideal.mem_sup_left (Ideal.mem_sup_right (Ideal.subset_span ⟨i, rfl⟩))
     rw [← Ideal.Quotient.eq_zero_iff_mem] at h
-    simpa [secForm, linForm, map_sum, hC, hx, secCoord] using h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [secForm, linForm, map_sum, hC, hx, secCoord] using h
 
   set φ : MvPolynomial (Fin n ⊕ (Fin (e + 1) × Fin n)) k →ₐ[k] SecAlg Q' y :=
     aeval (Sum.elim x fun ij => Polynomial.aeval (x m) (lineSub y m ij)) with hφ
@@ -86,7 +93,8 @@ theorem coord_integral (h1 : IncidenceNull.Statement) (Q : Ideal (MvPolynomial (
             algebraMap E (SecAlg Q' y) (y (.inr j)) * x m - if j = m then 1 else 0 := by
           intro j
           split_ifs with hj <;> simp [lineSub, hj]
-        simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, map_sum, map_mul, hφ, aeval_X,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, map_sum, map_mul, hφ, aeval_X,
           Sum.elim_inr, Sum.elim_inl, h0, sub_mul, Finset.sum_sub_distrib, ite_mul, one_mul,
           zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
         rw [sub_eq_zero]

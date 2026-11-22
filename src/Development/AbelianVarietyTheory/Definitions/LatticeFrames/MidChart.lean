@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.HermitianForms.BothSym
-import Formalism.LocalToGlobal.HermitianForms.FramesLemmas
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.HermitianForms.BothSym
+public import Formalism.LocalToGlobal.HermitianForms.FramesLemmas
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+
+@[expose] public section
 
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.L2.Forms Formalism.UG
@@ -82,9 +86,6 @@ def rd (θ : InfFam D) (i : ℕ) (hi : i ≤ D.R.m) (β : Ch i) (ψ : (D.mem u).
 
 def OnChart (i : ℕ) (hi : i ≤ D.R.m) (β : Ch i) (ψ : (D.mem u).C.cls i → (D.mem u).C.Y i → ℂ) : Prop :=
   ∀ c, c ∉ Set.range (chart F i hi β).inc → ψ c = 0
-
-def rdP (θ : InfFam D) (z : (D.mem u).P.Wrow) (y : FrP D) : GA D D.sp.X' → ℂ :=
-  rdS θ D.sp.X' (rankP D) F.clsP.lev F.clsP.y (F.valP.eW z) y
 
 end Sym
 

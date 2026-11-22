@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.LocOpenHolds
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.MassDataIndices
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.LocOpenHolds
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.MassDataIndices
+
+@[expose] public section
 
 namespace Formalism.L2.SG.Pf.MassDataX
 

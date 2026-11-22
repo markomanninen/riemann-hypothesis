@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BasePointMemDomain
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadJ
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MemLevelZeroOfMemGroup
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BasePointMemDomain
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadJ
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MemLevelZeroOfMemGroup
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WCellMemOmPlus
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate

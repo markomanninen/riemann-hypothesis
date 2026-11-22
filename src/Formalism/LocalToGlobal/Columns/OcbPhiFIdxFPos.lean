@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Columns.OcbBEntEntB
+module
+
+public import Formalism.LocalToGlobal.Columns.OcbBEntEntB
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -56,9 +60,9 @@ theorem ocbPhi_unitV (σ : K →+* ℂ) (χ : (𝓞 E ⧸ P.asIdeal)ˣ →* Kˣ)
   · have hnu : ¬ IsUnit (redP P a) := by
       rw [hx]
       exact not_isUnit_zero
-    rw [dif_neg hnu, dif_pos hx, map_zero]
+    rw [dite_eq_right hnu, dite_eq_left hx, map_zero]
   · have hu : IsUnit (redP P a) := isUnit_iff_ne_zero.mpr hx
-    rw [dif_pos hu, dif_neg hx]
+    rw [dite_eq_left hu, dite_eq_right hx]
     rw [show hu.unit = Units.mk0 _ hx from Units.ext rfl]
     rfl
 

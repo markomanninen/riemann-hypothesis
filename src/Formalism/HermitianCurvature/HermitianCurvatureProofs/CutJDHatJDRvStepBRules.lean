@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDRStepB
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVRules
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVGrp
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVCoef
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDRStepB
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVRules
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVGrp
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDACapTodaVCoef
+
+@[expose] public section
 
 open Matrix
 open scoped ContDiff ComplexConjugate
@@ -19,19 +23,23 @@ variable {k r : ℕ}
 theorem exists_wCell_eq_wCell_succ_mul_tail_factor (c : Fin r → ℂ) (hc : ∀ a, c a ≠ 0) (b : Fin r) : ∀ n : ℕ, ∀ i : Fin (r + 1), i.val = b.val + 1 + n →
     ∃ T : Mx k r, wCell k r i c = wCell k r b.succ c * T ∧ T ∈ Glev k r b.succ ∧
       (∀ a : Fin r, i.val ≤ a.val → T *ᵥ bvec (eI k r a) = bvec (eI k r a)) ∧
-      (∀ a : Fin r, b.val < a.val → a.val < i.val → T *ᵥ bvec (esI k r a) = (star (c a))⁻¹ • bvec (eI k r a))
-  | 0, i, hi => by
-    have : i = b.succ := Fin.ext (by simp [hi])
-    subst this
+      (∀ a : Fin r, b.val < a.val → a.val < i.val → T *ᵥ bvec (esI k r a) = (star (c a))⁻¹ • bvec (eI k r a)) := by
+  intro n
+  induction n with
+  | zero =>
+    intro i hi
+    have hbase : i = b.succ := Fin.ext (by simpa using hi)
+    rw [hbase]
     refine ⟨1, by simp, glev_one _, fun a _ => by simp, fun a h1 h2 => ?_⟩
     simp at h2
     omega
-  | n + 1, i, hi => by
+  | succ n ih =>
+    intro i hi
     have hl : b.val + 1 + n < r := by have := i.isLt; omega
     set l : Fin r := ⟨b.val + 1 + n, hl⟩ with hldef
     have hil : i = l.succ := Fin.ext (by simp [l, hi]; omega)
-    subst hil
-    obtain ⟨T, hT, hTG, hTe, hTs⟩ := exists_wCell_eq_wCell_succ_mul_tail_factor c hc b n l.castSucc (by simp [l])
+    rw [hil]
+    obtain ⟨T, hT, hTG, hTe, hTs⟩ := ih l.castSucc (by simp [l])
     have hw := (Formalism.FourierDecayAlt.P.weyl_level_element_properties k r l (c l) (hc l)).1
     refine ⟨T * w1 k r l (c l), ?_, ?_, ?_, ?_⟩
     · rw [Formalism.FourierDecayAlt.P.Qx6.wCell_succ, hT, Matrix.mul_assoc]
@@ -97,7 +105,23 @@ theorem leftRuleBv (z : Fin (2 * r + k + 1) → ℂ) (D : Set (Mx k r)) (f : Mx 
     (hWD : wCell k r (Fin.last r) c * g ∈ D) (b : Fin r) (hb : b.val + 1 < r) (v : Fin (k + 1)) :
     EH k r (esI k r b) (wI k r v) f (wCell k r (Fin.last r) c * g) = 0 := by
   have hcne : ∀ l, c l ≠ 0 := hc
-  obtain ⟨hW0, hWcomm⟩ := head_comm (k := k) c hcne b.val b.castSucc (by simp)
+  have head_comm : ∀ (i : Fin (r + 1)),
+      wCell k r i c ∈ Glev k r 0 ∧
+        ∀ j : Fin (r + 1), i ≤ j → ∀ x ∈ Glev k r j, wCell k r i c * x = x * wCell k r i c := by
+    intro i
+    induction i using Fin.induction with
+    | zero =>
+      rw [Formalism.FourierDecayAlt.P.Qx6.wCell_zero]
+      exact ⟨glev_one _, fun _ _ x _ => by simp⟩
+    | succ l ih =>
+      obtain ⟨ih0, ihc⟩ := ih
+      have hw := Formalism.FourierDecayAlt.P.weyl_level_element_properties k r l (c l) (hcne l)
+      rw [Formalism.FourierDecayAlt.P.Qx6.wCell_succ]
+      refine ⟨glev_mul ih0 (glev_mono (zero_le' _) hw.1), fun j hj x hx => ?_⟩
+      have hx1 : x ∈ Glev k r l.succ := glev_mono hj hx
+      have hcj : l.castSucc ≤ j := le_trans (by rw [Fin.le_def]; simp) hj
+      rw [Matrix.mul_assoc, (hw.2 x hx1).2.1, ← Matrix.mul_assoc, ihc j hcj x hx, Matrix.mul_assoc]
+  obtain ⟨hW0, hWcomm⟩ := head_comm b.castSucc
   obtain ⟨T, hT, hTG, -, hTs⟩ := exists_wCell_eq_wCell_succ_mul_tail_factor (k := k) c hcne b (r - b.val - 1) (Fin.last r) (by simp; omega)
   have hg₁ : T * g ∈ Glev k r b.succ := glev_mul hTG (glev_mono (Fin.le_last _) hg)
   have hsplit : wCell k r (Fin.last r) c * g = wCell k r b.castSucc c * (w1 k r b (c b) * (T * g)) := by
@@ -252,7 +276,8 @@ theorem stepBv_ring {A : Type} [Ring A] [Algebra ℂ A] {n : ℕ} (E : Fin n →
       κ • Λ (qminor E (a ∘ Fin.castSucc ∘ Fin.castSucc) (b ∘ Fin.castSucc ∘ Fin.castSucc) u) := by
     have hsk := Formalism.REAL.quantumMinorRowSkew_holds A n (t + 1) E a'' b' τ u
     rw [hperm] at hsk
-    rw [hsk, Formalism.FourierDecayAlt.P.expansion_first_line A n t E hE a'' b' u, Finset.mul_sum, map_sum, Fin.sum_univ_castSucc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsk, Formalism.FourierDecayAlt.P.expansion_first_line A n t E hE a'' b' u, Finset.mul_sum, map_sum, Fin.sum_univ_castSucc]
     have hrest : ∀ m : Fin t, Λ (((Equiv.Perm.sign τ : ℤ) : A) * ((((-1 : ℤ) ^ ((m.castSucc : Fin (t + 1)) : ℕ) : ℤ) : A) *
         (Tm E (u - (t : ℂ)) (a'' 0) (b' m.castSucc) * qminor E (a'' ∘ Fin.succ) (b' ∘ m.castSucc.succAbove) u))) = 0 := by
       intro m
@@ -272,7 +297,8 @@ theorem stepBv_ring {A : Type} [Ring A] [Algebra ℂ A] {n : ℕ} (E : Fin n →
     rw [h11, Int.cast_one, one_mul, Fin.succAbove_last]
     congr 3
     all_goals (funext i; simp only [Function.comp_apply, Fin.cons_succ]; exact congrFun hcs2 i)
-  rw [Formalism.FourierDecayAlt.P.expansion_last_column A n (t + 1) E a b u, map_sum, Fin.sum_univ_castSucc, Fin.sum_univ_castSucc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Formalism.FourierDecayAlt.P.expansion_last_column A n (t + 1) E a b u, map_sum, Fin.sum_univ_castSucc, Fin.sum_univ_castSucc]
   have hrest : ∀ m : Fin t, Λ ((((-1 : ℤ) ^ (t + 1 + ((m.castSucc.castSucc : Fin (t + 2)) : ℕ)) : ℤ) : A) *
       (qminor E (a ∘ m.castSucc.castSucc.succAbove) (b ∘ Fin.castSucc) u *
         Tm E (u - ((t + 1 : ℕ) : ℂ)) (a m.castSucc.castSucc) (b (Fin.last (t + 1))))) = 0 := by

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordConstruction
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemRangeAppOfFlatBaseChangeEqualised
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormNotMemIffStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemRangeAppOfFlatBaseChangeEqualised
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormNotMemIffStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -29,7 +34,8 @@ theorem norm_map_of_basis {A A' B B' : Type} [CommRing A] [CommRing A'] [CommRin
   have h : ψ f * e' j = ∑ k, ρ (e.repr (f * e j) k) • e' k := by
     rw [← he j, ← map_mul]
     conv_lhs => rw [← e.sum_repr (f * e j)]
-    simp only [map_sum, Algebra.smul_def, map_mul, hc, he]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Algebra.smul_def, map_mul, hc, he]
   rw [h, e'.repr_sum_self]
 
 theorem exists_basis_of_ringEquiv {S₀ A T₀ B : Type} [CommRing S₀] [CommRing A] [CommRing T₀]

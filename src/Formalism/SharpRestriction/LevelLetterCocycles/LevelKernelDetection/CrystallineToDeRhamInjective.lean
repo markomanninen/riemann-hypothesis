@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.CvZeroTerm
-import Formalism.SharpRestriction.LevelLetterCocycles.FinalLevelsOf
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.VSumPowNonneg
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.CvZeroTerm
+public import Formalism.SharpRestriction.LevelLetterCocycles.FinalLevelsOf
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelKernelDetection.VSumPowNonneg
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem crystalline_to_deRham_injective (T : LocLat G Qp LL O) : Function.Inject
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul x b => simp [ιV]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   have hi : Function.Injective (PD.ι.toLinearMap.restrictScalars Qp) := PD.ι_inj
   intro a b hab
   rw [h, h] at hab
@@ -48,7 +52,7 @@ theorem level_pi_constantCoeff_zero (i : ZMod n) :
     PowerSeries.constantCoeff (W.lev i 1 (letπ : LetA O n)) = 0 := by
   obtain ⟨E, hE0, -, hE⟩ := W.lev_π i 1 ⟨0, by simp⟩
   have h := congrArg PowerSeries.constantCoeff hE
-  simp only [map_add, map_mul, hE0, mul_one, map_one] at h
+  simp only [map_add (f := _), map_mul, hE0, mul_one, map_one] at h
   linear_combination h
 
 theorem levelExpansion_neg_eq_zero

@@ -1,8 +1,12 @@
-import Formalism.HarderNarasimhan.QuotRealize
-import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.PlaceSplit
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SlopeIneqMean
+module
+
+public import Formalism.HarderNarasimhan.QuotRealize
+public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.PlaceSplit
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SlopeIneqMean
+
+@[expose] public section
 
 open Module NumberField Matrix
 
@@ -39,8 +43,8 @@ def transport (f : M →+ E) (g : M →+ F) (L1 : Submodule ℤ E) (L2 : Submodu
     have hy := ((h1 _).1 y.2).choose_spec
     have hz := ((h1 _).1 z.2).choose_spec
     show g _ = g _ + g _
-    rw [← map_add]
-    exact eq_of_norm_eq f g hn (by rw [hs, map_add, hy, hz]; rfl)
+    rw [← map_add (f := _)]
+    exact eq_of_norm_eq f g hn (by rw [hs, map_add (f := _), hy, hz]; rfl)
 
 theorem transport_apply (f : M →+ E) (g : M →+ F) (L1 : Submodule ℤ E) (L2 : Submodule ℤ F)
     (h1 : ∀ y, y ∈ L1 ↔ ∃ m, f m = y) (h2 : ∀ y, y ∈ L2 ↔ ∃ m, g m = y)
@@ -160,7 +164,7 @@ theorem exists_mat {κ ι : Type} [Fintype κ] [DecidableEq κ] [Fintype ι]
 
 section Main
 
-variable {K V ι : Type} [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K]
+variable {K V ι : Type} [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K]
   [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
   [Fintype ι] [DecidableEq ι]
 
@@ -331,7 +335,8 @@ theorem sub_mem_of_lift (hc : ∀ k, U.mkQ (c k) = b'' k) (x : V) :
     x - ∑ k, b''.repr (U.mkQ x) k • c k ∈ U := by
   apply (Submodule.Quotient.eq U).mp
   change U.mkQ x = U.mkQ (∑ k, b''.repr (U.mkQ x) k • c k)
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [LinearMap.map_smul, hc]
   exact (b''.sum_repr (U.mkQ x)).symm
 
@@ -354,7 +359,8 @@ theorem proj_eq_tv (hc : ∀ k, U.mkQ (c k) = b'' k) (v : InfinitePlace K) (x : 
   have hsplit : Formalism.HermitianLatticesTheory.fcoord b X v x = Formalism.HermitianLatticesTheory.fcoord b X v (x - ∑ k, r k • c k) +
       ∑ k, v.embedding (r k) • Formalism.HermitianLatticesTheory.fcoord b X v (c k) := by
     rw [← fcoord_finset_sum_smul, ← Formalism.HermitianLatticesTheory.fcoord_add, sub_add_cancel]
-  rw [← hL, hsplit, map_add, h0, zero_add, map_sum, tv, Fintype.linearCombination_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hL, hsplit, map_add (f := _), h0, zero_add, map_sum, tv, Fintype.linearCombination_apply]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [map_smul, hL]
 

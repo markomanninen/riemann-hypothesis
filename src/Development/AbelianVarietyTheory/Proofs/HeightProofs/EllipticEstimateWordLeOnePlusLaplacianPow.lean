@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.InvSqrtTwo
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsHermitianJmBracket
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.InvSqrtTwo
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsHermitianJmBracket
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ section Abstract
 
 variable {V : Type} [NormedAddCommGroup V] [InnerProductSpace ℂ V] {ι : Type} [Fintype ι]
 
-open Classical in
 
+open Classical in
 def words (D : ι → Module.End ℂ V) (m : ℕ) : Finset (Module.End ℂ V) :=
   Nat.rec {1} (fun _ W => W ∪ Finset.univ.biUnion fun i => W.image (D i * ·)) m
 

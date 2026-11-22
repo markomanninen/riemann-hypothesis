@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TestFacts
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.IsFirstChernClassOfLineBundle
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.EtSide
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TestFacts
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.IsFirstChernClassOfLineBundle
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.EtSide
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 set_option backward.isDefEq.respectTransparency false
@@ -15,18 +19,18 @@ open UpperTheory.Gal.crystallineComparison
 
 variable {l : ℕ} [Fact l.Prime] {K : IntermediateField ℚ_[l] (PadicAlgCl l)}
 
-variable (l) in
 
+variable (l) in
 def tA : Acris l := ACris.periodT (untilt_epsilon (p := l))
 
-variable (l) in
 
-def phiA : Acris l →+* Acris l := ACris.phi ℂ_[l] l
+variable (l) in
+def phiA : Acris l →+* Acris l := ACris.phi (K := ℂ_[l]) (p := l)
 
 def galA (g : K.fixingSubgroup) : Acris l →+* Acris l := ACris.galCris (IntermediateField.fixingSubgroupEquiv K g)
 
-variable (l) in
 
+variable (l) in
 def zA : ℤ_[l] →+* Acris l := (algebraMap (Ainf l) (Acris l)).comp (IsPerfectoidField.padicIntToWitt l)
 
 structure PBg (l : ℕ) [Fact l.Prime] {A Γ : Type} [CommRing A] (t : A) (φA : A →+* A) (σA : Γ → (A →+* A)) (z : ℤ_[l] →+* A) : Type 1 where
@@ -45,8 +49,8 @@ structure PBg (l : ℕ) [Fact l.Prime] {A Γ : Type} [CommRing A] (t : A) (φA :
 
 attribute [instance] PBg.ring PBg.alg
 
-variable (l K) in
 
+variable (l K) in
 abbrev PB : Type 1 := PBg l (tA l) (phiA l) (galA (K := K)) (zA l)
 
 variable (B : PB l K)

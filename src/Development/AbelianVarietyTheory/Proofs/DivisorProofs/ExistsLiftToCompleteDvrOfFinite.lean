@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.GroupLattices.PerfectRings.IsLocalRingOfComplete
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GroupLattices.PerfectRings.IsLocalRingOfComplete
+
+@[expose] public section
+
 open IsLocalRing
 
 namespace GlobalTheory
@@ -16,7 +21,7 @@ theorem exists_lift_to_complete_dvr_of_finite : ∀ (A R : Type) [CommRing A] [C
   haveI : p.IsPrime := RingHom.ker_isPrime h
   haveI : Algebra.IsIntegral A R := Algebra.IsIntegral.of_finite A R
   obtain ⟨Q, -, hQ, hQp⟩ := Ideal.exists_ideal_over_prime_of_isIntegral p (⊥ : Ideal R) (by
-    rw [Ideal.comap_bot_of_injective _ hinj]; exact bot_le)
+    rw [(show Ideal.under _ ⊥ = ⊥ from Ideal.comap_bot_of_injective _ hinj)]; exact bot_le)
   let K := FractionRing V
   let Ω := AlgebraicClosure K
   letI : Algebra (A ⧸ p) (R ⧸ Q) := Ideal.Quotient.algebraQuotientOfLEComap (le_of_eq hQp.symm)
@@ -38,7 +43,11 @@ theorem exists_lift_to_complete_dvr_of_finite : ∀ (A R : Type) [CommRing A] [C
     Module.isTorsionFree_iff_algebraMap_injective.2 hinj0
   haveI : Module.IsTorsionFree (A ⧸ p) Ω := Module.isTorsionFree_iff_algebraMap_injective.2 hg0
   haveI : Algebra.IsAlgebraic (A ⧸ p) (R ⧸ Q) := Algebra.IsIntegral.isAlgebraic
-  let σ : (R ⧸ Q) →ₐ[A ⧸ p] Ω := IsAlgClosed.lift
+  let σ : (R ⧸ Q) →ₐ[A ⧸ p] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let ρ1 : R →+* Ω := σ.toRingHom.comp (Ideal.Quotient.mk Q)
   have hρ1 : ∀ a : A, ρ1 (algebraMap A R a) = algebraMap K Ω (algebraMap V K (h a)) := by
     intro a
@@ -55,7 +64,7 @@ theorem exists_lift_to_complete_dvr_of_finite : ∀ (A R : Type) [CommRing A] [C
     induction hr using Submodule.span_induction with
     | mem x hx => exact IntermediateField.subset_adjoin K _ ⟨x, hx, rfl⟩
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact M.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact M.add_mem hx hy
     | smul a x _ hx => rw [Algebra.smul_def, map_mul, hρ1]; exact M.mul_mem (M.algebraMap_mem _) hx
   let ψ : R →+* M := ρ1.codRestrict M hmem
   have hψ : (algebraMap V M).comp h = ψ.comp (algebraMap A R) := by

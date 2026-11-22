@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.TrueWtAddSSNonneg
-import Formalism.LocalToGlobal.Columns.GSetLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.TrueWtAddSSNonneg
+public import Formalism.LocalToGlobal.Columns.GSetLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,22 +93,24 @@ def cplFibreEquiv (Y : Cpl S) (x : S.D) :
   left_inv p := Subtype.ext (Subtype.ext (Prod.ext (show p.1.1.1 = x from p.2).symm rfl))
   right_inv _ := rfl
 
-theorem cplGSD_ok (Y : Cpl S) (h : S.Ok) : (cplGSD S Y).Ok where
-  fin_orb := by
-    have := h.fin_orb
+theorem cplGSD_ok (Y : Cpl S) (h : S.Ok) : (cplGSD S Y).Ok := by
+  refine {
+    fin_orb := ?_
+    fin_stab := ?_
+    nab_smul := fun g d => h.nab_smul g d.1.1
+    del_smul := fun g d => h.del_smul g d.1.1
+    inv := h.inv }
+  · have := h.fin_orb
     have : ∀ x : S.D, Finite (fibre (G := S.G) (fun p : Y.Pts => p.1.1) (fun _ _ => rfl) x) := fun x =>
       have := (Y.fin x).to_subtype
       Finite.of_equiv _ (cplFibreEquiv Y x).symm
     exact Finite.of_equiv _ (orbitsFib (G := S.G) (fun p : Y.Pts => p.1.1) (fun _ _ => rfl) Quotient.out
       (fun c => Quotient.out_eq' c))
-  fin_stab d := by
+  · intro d
     have := h.fin_stab d.1.1
     have hle : MulAction.stabilizer S.G d ≤ MulAction.stabilizer S.G d.1.1 := fun g hg =>
       congrArg (fun p : Y.Pts => p.1.1) hg
     exact Finite.of_injective _ (Subgroup.inclusion_injective hle)
-  nab_smul g d := h.nab_smul g d.1.1
-  del_smul g d := h.del_smul g d.1.1
-  inv := h.inv
 
 def cplKer1 (A : CplKer S₀ S S₁ Y) : ClsKer S₀ (cplGSD S Y) where
   k d₀ d := A.k1 d₀ d.1.1 d.1.2
@@ -135,8 +141,8 @@ theorem cpl_comp_k (A : CplKer S₀ S S₁ Y) (h : S.Ok) (d₀ : S₀.D) (d₁ :
       show (A.k2 (g • p.1.1) (g • p.1.2) d₁) ∘ₗ (A.k1 d₀ (g • p.1.1) (g • p.1.2)) = _
       rw [e1, e2]
       ext x
-      simp only [LinearMap.comp_apply, Module.End.one_apply]
-      rw [← Module.End.mul_apply (S.ρ g⁻¹), ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply])
+      simp only [LinearMap.comp_apply, one_apply_eq_self]
+      rw [← mul_apply_eq_comp (S.ρ g⁻¹), ← map_mul, inv_mul_cancel, map_one, one_apply_eq_self])
   simp only [CSD.wt, ← Nat.card_eq_fintype_card]
   refine Eq.trans ?_ key
   show ∑ c : S.Cl, _ = _
@@ -148,22 +154,6 @@ theorem cpl_comp_k (A : CplKer S₀ S S₁ Y) (h : S.Ok) (d₀ : S₀.D) (d₁ :
     (fun y => (Y.fin _).mem_toFinset) _).trans ?_
   exact ((cplFibreEquiv Y c.out).symm.sum_comp
     (fun y => (A.k2 y.1.1.1 y.1.1.2 d₁) ∘ₗ (A.k1 d₀ y.1.1.1 y.1.1.2)))
-
-theorem cpl_op_eq_comp {K : Type} [Field K] [NumberField K] [StarRing K] {S₀ S S₁ : GSD K} {Y : Cpl S}
-    (A : CplKer S₀ S S₁ Y) (h₀ : S₀.Ok) (h : S.Ok) :
-    ∃ (h' : (cplGSD S Y).Ok) (k1 : ClsKer S₀ (cplGSD S Y)) (k2 : ClsKer (cplGSD S Y) S₁),
-      (∀ d₀ (d : Y.Pts), k1.k d₀ d = A.k1 d₀ d.1.1 d.1.2) ∧ (∀ (d : Y.Pts) d₁, k2.k d d₁ = A.k2 d.1.1 d.1.2 d₁) ∧
-        (A.comp h S.outSec).op h₀ = (k2.op h').comp (k1.op h₀) := by
-  refine ⟨cplGSD_ok Y h, cplKer1 A, cplKer2 A, fun _ _ => rfl, fun _ _ => rfl, ?_⟩
-  ext φ d₁
-  show (A.comp h S.outSec).appOf h₀ S₀.outSec φ d₁ =
-    (cplKer2 A).appOf (cplGSD_ok Y h) (cplGSD S Y).outSec ((cplKer1 A).appOf h₀ S₀.outSec φ) d₁
-  unfold ClsKer.appOf
-  simp only [cpl_comp_k, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.comp_apply, map_sum, map_smul,
-    Finset.smul_sum]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun q _ => Finset.sum_congr rfl fun c _ => ?_
-  rw [smul_comm]
 
 end Pairs
 

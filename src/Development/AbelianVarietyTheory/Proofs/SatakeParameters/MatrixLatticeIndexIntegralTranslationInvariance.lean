@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemIntMat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemIntMat
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,7 +66,7 @@ theorem latIdx_GLint_mul {a b : ℕ} (x : Matrix (Fin a) (Fin b) L) (h : GL (Fin
     rw [← Set.range_comp]
     congr 1
     funext v
-    simp only [Function.comp_apply, quotMul_mk, Matrix.mulVec_mulVec]
+    exact congrArg QuotientAddGroup.mk (Matrix.mulVec_mulVec _ _ _).symm
   unfold latIdx
   rw [hr, Nat.card_image_of_injective hinj]
 

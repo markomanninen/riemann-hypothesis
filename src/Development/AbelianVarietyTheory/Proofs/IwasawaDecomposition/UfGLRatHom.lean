@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MemPrinCongOfSm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitaryOfIsON
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBasisAtOfIsLocBasis
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EmbFColZeroMemMram
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsPrimesOk
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PlacesOverConjPrimes
-import Formalism.LocalToGlobal.Columns.RecLevelStep
-import Formalism.LocalToGlobal.Columns.ChainInst
-import Formalism.LocalToGlobal.Columns.TiedValRat
-import Formalism.LocalToGlobal.HermitianForms.FramesLemmas
-import Formalism.LocalToGlobal.GlobalTheory.GL6.FrobeniusNoKernelOfFrobeniusSimilitude
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.MemPrinCongOfSm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UnitaryOfIsON
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBasisAtOfIsLocBasis
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EmbFColZeroMemMram
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsPrimesOk
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PlacesOverConjPrimes
+public import Formalism.LocalToGlobal.Columns.RecLevelStep
+public import Formalism.LocalToGlobal.Columns.ChainInst
+public import Formalism.LocalToGlobal.Columns.TiedValRat
+public import Formalism.LocalToGlobal.HermitianForms.FramesLemmas
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.FrobeniusNoKernelOfFrobeniusSimilitude
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,8 +30,6 @@ section Ext
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin n) (Fin n) E} {T f : ℕ} {bad : Set (HeightOneSpectrum (𝓞 F))}
   {ι : Type} [Fintype ι]
-
-local notation "ιA" => inclE (F := F) (FiniteAdeleRing (𝓞 F) F)
 
 omit [NumberField E] in
 theorem atInf_mul (emb : ι → E →+* ℂ) (γ δ : GL (Fin n) E) (τ : ι) :
@@ -44,17 +46,17 @@ theorem mem_FiC_iff (S : StepLevel F E σ J T f bad) (emb : ι → E →+* ℂ) 
     (y : C → UPts σ J (FiniteAdeleRing (𝓞 F) F)) (hy : Function.Bijective fun c => (Quotient.mk'' (y c) : Cls S))
     (φ : C → Frames (gramC J emb) → ℂ) :
     φ ∈ FiC S emb lam y ↔ ∀ c, φ c ∈ ValC (gramC J emb) lam ∧ ∀ γ ∈ UJ (σ : E →+* E) J, ∀ κ : S.U,
-      (y c).1 = bc ιA γ * (y c).1 * κ.1 → ∀ z z' : Frames (gramC J emb),
+      (y c).1 = bc (inclE (FiniteAdeleRing (𝓞 F) F)) γ * (y c).1 * κ.1 → ∀ z z' : Frames (gramC J emb),
         IsTr (atInf emb (γ : Matrix (Fin n) (Fin n) E)) z' z → φ c z = (S.chi κ : ℂ) * φ c z' := by
   constructor
   · rintro ⟨g, ⟨h1, h2⟩, rfl⟩ c
     exact ⟨h2 (y c) trivial, fun γ hγ κ e z z' hz => h1 γ hγ (y c) (y c) κ e z z' hz⟩
   intro H
   have hdec : ∀ x : UPts σ J (FiniteAdeleRing (𝓞 F) F), ∃ c, ∃ γ : GL (Fin n) E, ∃ _ : γ ∈ UJ (σ : E →+* E) J,
-      ∃ κ : S.U, x.1 = bc ιA γ * (y c).1 * κ.1 := by
+      ∃ κ : S.U, x.1 = bc (inclE (FiniteAdeleRing (𝓞 F) F)) γ * (y c).1 * κ.1 := by
     intro x
     obtain ⟨c, hcx⟩ := hy.2 (Quotient.mk'' x)
-    obtain ⟨hh, hhH, κ, hκK, e⟩ := (DoubleCoset.eq _ _ (y c) x).1 hcx
+    obtain ⟨hh, hhH, κ, hκK, e⟩ := (@DoubleCoset.eq _ _ _ _ (y c) x).1 hcx
     obtain ⟨g, hgU, hge⟩ := Subgroup.mem_map.1 (Subgroup.mem_subgroupOf.1 hhH)
     refine ⟨c, g, hgU, ⟨κ.1, hκK⟩, ?_⟩
     have := congrArg Subtype.val e
@@ -64,18 +66,18 @@ theorem mem_FiC_iff (S : StepLevel F E σ J T f bad) (emb : ι → E →+* ℂ) 
   have hU : ∀ κ : S.U, κ.1 ∈ UPts σ J (FiniteAdeleRing (𝓞 F) F) := fun κ => ((S.U_eq κ.1).1 κ.2).1
   let g : UPts σ J (FiniteAdeleRing (𝓞 F) F) → Frames (gramC J emb) → ℂ := fun x z =>
     (S.chi (κx x) : ℂ) * φ (cx x) (z.tr _ (isUnit_det_atInf emb (γx x)⁻¹))
-  have key : ∀ x c γ, γ ∈ UJ (σ : E →+* E) J → ∀ κ : S.U, x.1 = bc ιA γ * (y c).1 * κ.1 → ∀ z z' : Frames (gramC J emb),
+  have key : ∀ x c γ, γ ∈ UJ (σ : E →+* E) J → ∀ κ : S.U, x.1 = bc (inclE (FiniteAdeleRing (𝓞 F) F)) γ * (y c).1 * κ.1 → ∀ z z' : Frames (gramC J emb),
       IsTr (atInf emb (γ : Matrix (Fin n) (Fin n) E)) z' z → g x z = (S.chi κ : ℂ) * φ c z' := by
     intro x c γ hγ κ e z z' hz
-    have e1 : (y c).1 = bc ιA (γ⁻¹ * γx x) * (y (cx x)).1 * (κx x * κ⁻¹ : S.U).1 := by
-      have e2 : (y c).1 = (bc ιA γ)⁻¹ * x.1 * κ.1⁻¹ := by rw [e]; group
+    have e1 : (y c).1 = bc (inclE (FiniteAdeleRing (𝓞 F) F)) (γ⁻¹ * γx x) * (y (cx x)).1 * (κx x * κ⁻¹ : S.U).1 := by
+      have e2 : (y c).1 = (bc (inclE (FiniteAdeleRing (𝓞 F) F)) γ)⁻¹ * x.1 * κ.1⁻¹ := by rw [e]; group
       rw [e2, hx x, map_mul, map_inv, Subgroup.coe_mul, Subgroup.coe_inv]
       group
     have hm := mul_mem (inv_mem hγ) (hγx x)
     have hc : cx x = c := by
       apply hy.1
       let k : UPts σ J (FiniteAdeleRing (𝓞 F) F) := ⟨_, hU (κx x * κ⁻¹)⟩
-      refine (DoubleCoset.eq _ _ (y (cx x)) (y c)).2 ⟨y c * k⁻¹ * (y (cx x))⁻¹, ?_, k, ?_, by group⟩
+      refine (@DoubleCoset.eq _ _ _ _ (y (cx x)) (y c)).2 ⟨y c * k⁻¹ * (y (cx x))⁻¹, ?_, k, ?_, by group⟩
       · refine Subgroup.mem_subgroupOf.2 (Subgroup.mem_map.2 ⟨_, hm, ?_⟩)
         show _ = (y c).1 * ((κx x * κ⁻¹ : S.U).1)⁻¹ * ((y (cx x)).1)⁻¹
         rw [e1]
@@ -114,8 +116,6 @@ section Cls
 variable {X : Fields} (hc : CMData X.F X.E) {n : ℕ} [NeZero n] {SG Q : Finset (HeightOneSpectrum (𝓞 X.E))}
   (Λ : LevFam X.E X.K n SG) (Θ : LevQFam X.E X.K n Q) (pref : DecoF X.E n ∅ SG Q → Prop) (σ : X.K →+* ℂ)
 
-local notation "ιA" => inclE (F := X.F) (FiniteAdeleRing (𝓞 X.F) X.F)
-
 abbrev stp : GStep X.E X.K n := stepY ∅ (Ys.triv X n) Unit (fun _ => Λ) (fun _ => Θ) pref
 
 omit [NeZero n] in
@@ -145,13 +145,13 @@ theorem L_empty (d : Deco X.E n ∅ SG) : d.L = d.N := by
     Set.ext fun x => and_iff_left fun P => absurd P.2 (Finset.notMem_empty _), Submodule.span_eq]
 
 omit [NeZero n] in
-theorem Lsh_empty (d : DecoSet X.E n ∅ SG) : d.1.Lsh = d.1.N := by
+theorem Lsh_empty (d : DecoSet (E := X.E) (n := n) (ST := ∅) (SG := SG)) : d.1.Lsh = d.1.N := by
   unfold Deco.Lsh
   rw [L_empty]
   exact d.2.uni
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem exists_cls (hQ : Q = ∅) (hs : ∀ P ∈ uSG SG ∅, conjPrime₂ P ∉ uSG SG ∅) (f : ℕ) (J : Matrix (Fin n) (Fin n) X.E) (hJ : J = 1)
     (bad : Set (HeightOneSpectrum (𝓞 X.F))) (hb : bad = plUnder X.F SG) :
     ∃ (L : StepLevel X.F X.E hc.sig J 1 f bad)
@@ -164,7 +164,7 @@ theorem exists_cls (hQ : Q = ∅) (hs : ∀ P ∈ uSG SG ∅, conjPrime₂ P ∉
         IsPtOf hc ((R.y c).1 * x.1) ((stp Λ Θ pref).act c.1 κ ((stp Λ Θ pref).rep c)).1.1 →
         ((L.chi x : ℂˣ) : ℂ) = σ (((stp Λ Θ pref).chr c.1 κ : X.Kˣ) : X.K)) ∧
       (∀ c s, (R.stabI c s).1 = (stp Λ Θ pref).gam c.1 s.1) ∧
-      ∀ c (s : (stp Λ Θ pref).Stab c) (κ : L.U), (R.y c).1 = bc ιA (R.stabI c s).1 * (R.y c).1 * κ.1 →
+      ∀ c (s : (stp Λ Θ pref).Stab c) (κ : L.U), (R.y c).1 = bc (iA X.F X.E) (R.stabI c s).1 * (R.y c).1 * κ.1 →
         ((L.chi κ : ℂˣ) : ℂ) = σ (((stp Λ Θ pref).chr c.1 s.1 : X.Kˣ) : X.K) := by
   classical
   subst hQ hJ hb
@@ -179,7 +179,7 @@ theorem exists_cls (hQ : Q = ∅) (hs : ∀ P ∈ uSG SG ∅, conjPrime₂ P ∉
     fun c q g₀ h => StepZero.exists_lift pref (fun _ => rfl) (fun _ => rfl) hΘ c.1 _ q g₀ h
   have orb : ∀ c (x : GL (Fin n) (AfE X.F X.E)) (hx : x ∈ UAd hc n) (κ : (stp Λ Θ pref).G c.1),
       decoOf ∅ SG x = ((stp Λ Θ pref).act c.1 κ ((stp Λ Θ pref).rep c)).1.1.deco →
-      ∃ k : levU hc n ∅ SG Λ.grp, Formalism.L2.Col.levRed hc n ∅ SG Λ.grp k = κ.2.1 ∧ x = bc ιA (ufGL X.E n κ.1) * y c * k.1⁻¹ := by
+      ∃ k : levU hc n ∅ SG Λ.grp, Formalism.L2.Col.levRed hc n ∅ SG Λ.grp k = κ.2.1 ∧ x = bc (iA X.F X.E) (ufGL X.E n κ.1) * y c * k.1⁻¹ := by
     intro c x hx κ h
     obtain ⟨γ, k, h1, h2, h3⟩ := rlc_rel_of_orbit hc n ∅ SG Λ.grp (x := ⟨x, hx⟩) (y := Y c) (κ.1, κ.2.1)
       (by rw [h, hd]; exact StepZero.deco_smul pref (fun _ => rfl) c.1 κ _)
@@ -233,14 +233,14 @@ theorem exists_cls (hQ : Q = ∅) (hs : ∀ P ∈ uSG SG ∅, conjPrime₂ P ∉
       have e' : ufGL X.E n s.1.1 = γ := congrArg Subtype.val e
       rw [e'] at h2
       show y c * k.1 * (y c)⁻¹ = _
-      have h3 : y c = bc ιA γ * y c * k.1⁻¹ := h2
+      have h3 : y c = bc (iA X.F X.E) γ * y c * k.1⁻¹ := h2
       rw [mul_inv_eq_iff_eq_mul, ← eq_mul_inv_iff_mul_eq]
       exact h3
     · rintro ⟨k, hk, e⟩
-      have e' : y c * k * (y c)⁻¹ = bc ιA γ := e
+      have e' : y c * k * (y c)⁻¹ = bc (iA X.F X.E) γ := e
       have h1 := sm ⟨γ, hγ⟩ ⟨k, hk⟩ (Y c)
       have h2 : bc (iA X.F X.E) γ * (Y c).1 * k⁻¹ = (Y c).1 := by
-        show bc ιA γ * y c * k⁻¹ = y c
+        show bc (iA X.F X.E) γ * y c * k⁻¹ = y c
         rw [← e']
         group
       rw [show bc (iA X.F X.E) ((⟨γ, hγ⟩ : URat hc n) : GL (Fin n) X.E) * (Y c).1 *

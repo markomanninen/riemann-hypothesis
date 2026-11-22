@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.StatementB
-import Mathlib.Geometry.Manifold.PartitionOfUnity
+module
+
+public import Formalism.HermitianCurvature.StatementB
+public import Mathlib.Geometry.Manifold.PartitionOfUnity
+
+@[expose] public section
 
 open Matrix Set Filter Topology
 open scoped Manifold ContDiff

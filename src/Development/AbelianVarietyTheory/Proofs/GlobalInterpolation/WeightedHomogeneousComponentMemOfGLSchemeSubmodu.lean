@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.GoodTopBot
-import Development.AbelianVarietyTheory.PublishedTheorems.GlobalTheta.WeylDualWeylLatticesAgreeOfLowestAlcove
-import Formalism.GradedWeylDivisibility.FinalD
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.GoodTopBot
+public import Development.AbelianVarietyTheory.PublishedTheorems.GlobalTheta.WeylDualWeylLatticesAgreeOfLowestAlcove
+public import Formalism.GradedWeylDivisibility.FinalD
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility Formalism.BasicNotions GlobalTheory.Alc
 
@@ -37,7 +41,7 @@ theorem exists_coeff_of_mem_span {k : Type} [Field k] {N : ℕ} {σ : Type}
     (M : Submodule k (MvPolynomial σ k)) (x : MvPolynomial σ (Laurent k N))
     (hx : x ∈ Submodule.span (Laurent k N)
       (map (algebraMap k (Laurent k N)) '' (M : Set (MvPolynomial σ k)))) :
-    ∀ ν : Fin N → ℤ, ∃ h ∈ M, ∀ m, coeff m h = (coeff m x : Laurent k N).coeff ν := by
+    ∀ ν : Fin N → ℤ, ∃ h ∈ M, ∀ m, AddMonoidAlgebra.coeff h m = (AddMonoidAlgebra.coeff x m : Laurent k N).coeff ν := by
   induction hx using Submodule.span_induction with
   | mem y hy =>
     obtain ⟨h, hh, rfl⟩ := hy

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FockTotalOfEuclidean
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FockTranslateSchwartzMajorant
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FockTotalOfEuclidean
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FockTranslateSchwartzMajorant
+
+@[expose] public section
+
 open GlobalTheory.CompanionTheory.ThTot
 set_option maxHeartbeats 1000000 in
 theorem _root_.GlobalTheory.T.fock_total_of_euclidean : EucTotal → FockTotal := by

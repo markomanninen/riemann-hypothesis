@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.FormalSeriesConditionsB1ToB4
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.ComponentsInFiltrationContractionSingle
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialPolynomialIdentities.FormalSeriesConditionsB1ToB4
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.ComponentsInFiltrationContractionSingle
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem iInf_span_sup_smul_le {R M X κ : Type*} [CommRing R] [AddCommGroup M] [
     obtain ⟨H, hH, rfl⟩ := (Submodule.mem_smul_pointwise_iff_exists _ _ _).1 hY
     obtain ⟨h, rfl⟩ := (Finsupp.mem_span_range_iff_exists_finsupp).1 hH
     refine ⟨z, h, hz, ?_⟩
-    rw [← hsum, map_add, map_smul]
+    rw [← hsum, map_add (f := _), map_smul]
     rfl
   choose z h hz hG' using h1
   obtain ⟨i0⟩ := (inferInstance : Nonempty κ)
@@ -103,7 +107,8 @@ theorem saturatedLowerSetSpan_of_lowerSetTypesSpan (D : Formalism.BasicNotions.D
   have hmaplc : ∀ c : WI n N LL B →₀ O, MvPolynomial.map (algebraMap O (KK O)) (Finsupp.linearCombination O (wd LL B O) c) =
       Finsupp.linearCombination (KK O) (wd LL B (KK O)) (c.mapRange (algebraMap O (KK O)) (map_zero _)) := by
     intro c
-    rw [Finsupp.linearCombination_apply, Finsupp.linearCombination_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finsupp.linearCombination_apply, Finsupp.linearCombination_apply,
       Finsupp.sum_mapRange_index (by intro i; exact zero_smul _ _), Finsupp.sum, Finsupp.sum, map_sum]
     refine Finset.sum_congr rfl fun x _ => ?_
     rw [MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.map_C, hmapwd, ← MvPolynomial.smul_eq_C_mul]
@@ -152,7 +157,7 @@ theorem saturatedLowerSetSpan_of_lowerSetTypesSpan (D : Formalism.BasicNotions.D
       | zero => exact ⟨Submodule.zero_mem _, fun i _ => by rw [map_zero]; exact Submodule.zero_mem _⟩
       | add x y _ _ hx hy =>
         exact ⟨Submodule.add_mem _ hx.1 hy.1, fun i hi => by
-          rw [map_add]; exact Submodule.add_mem _ (hx.2 i hi) (hy.2 i hi)⟩
+          rw [map_add (f := _)]; exact Submodule.add_mem _ (hx.2 i hi) (hy.2 i hi)⟩
       | smul a x _ hx =>
         exact ⟨Submodule.smul_mem _ _ hx.1, fun i hi => by
           rw [MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.map_C, ← MvPolynomial.smul_eq_C_mul]

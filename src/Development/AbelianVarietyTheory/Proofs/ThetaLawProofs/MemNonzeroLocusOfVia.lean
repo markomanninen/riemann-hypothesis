@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.IsSquareDeterminantComparison
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.IsPluriharmonicSiegel
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.OneEqSpTranslZero
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.KeyViaIsPullback
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.KeyInvariantBaseChangeStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.KeyInvariantFromIntersectionUniqueStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsKeyInvariantAfterDvrExtensionStatement
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsUnitKoszulInvariantOfFiniteClosedFibreZerosStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.IsSquareDeterminantComparison
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.IsPluriharmonicSiegel
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.OneEqSpTranslZero
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.KeyViaIsPullback
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.KeyInvariantBaseChangeStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.KeyInvariantFromIntersectionUniqueStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsKeyInvariantAfterDvrExtensionStatement
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.IsUnitKoszulInvariantOfFiniteClosedFibreZerosStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -235,7 +239,7 @@ theorem via_lineFn {X Y : Scheme.{0}} {L : LB X} {L' : LB Y} {φ : Y ⟶ X} (f :
     KeyVia.Via w l (lineFn p' (f τ) a' b') (lineFn p τ a b) := by
   intro j i h
   simp only [lineFn]
-  rw [map_add, map_mul, map_mul, ha j i h, hb j i h, KeyVia.appLE_cst f p p' hφ, KeyVia.appLE_cst f p p' hφ, map_add,
+  rw [map_add (f := _), map_mul, map_mul, ha j i h, hb j i h, KeyVia.appLE_cst f p p' hφ, KeyVia.appLE_cst f p p' hφ, map_add (f := _),
     map_mul, map_mul, rs_cst, rs_cst, map_sub f, map_one f]
   exact (congrArg₂ (· + ·) (mul_left_comm _ _ _) (mul_left_comm _ _ _)).trans (mul_add _ _ _).symm
 
@@ -245,7 +249,7 @@ theorem exists_lineSec {X : Scheme.{0}} {M : LB X} (p : X ⟶ Sp R) (τ : R) (a 
   have ha := a.compat i j
   have hb := b.compat i j
   simp only [lineFn]
-  rw [map_add, map_add, map_mul, map_mul, map_mul, map_mul, ha, hb, rs_cst, rs_cst, rs_cst, rs_cst]
+  rw [map_add (f := _), map_add (f := _), map_mul, map_mul, map_mul, map_mul, ha, hb, rs_cst, rs_cst, rs_cst, rs_cst]
   ring
 
 def OnLine (y : KeyIn R) (τ : R) (a b s : RR y n) : Prop :=
@@ -370,8 +374,8 @@ theorem finite_closedFibre {O k : Type} [CommRing O] [IsLocalRing O] [Field k] {
     (hp.trans e.symm)
   exact ⟨q, fun i hi => hz _ (mem_nonzeroLocus_of_via (hs i) q hi), rfl⟩
 
-open Polynomial in
 
+open Polynomial in
 theorem kaVal_eq_of_line : Out.Laws → ∀ (K : Type) [Field K] [CharZero K] [IsAlgClosed K] (x' : KeyIn K) (n l l' : ℕ) (al : ℕ → Matrix (Fin 4) (Fin 4) ℤ) (s₀ s₁ : Fin x'.P.g → RR x' n) (κ₀ κ₁ : Kˣ), admitted x'.P.g n l l' al → (∀ (t : K) (s : Fin x'.P.g → RR x' n), (∀ i c, (show Γ(x'.P.A.left, x'.P.L.U c) from (s i).f c) = AbLaw.cst x'.P.A.hom _ (1 - t) * (show Γ(x'.P.A.left, x'.P.L.U c) from (s₀ i).f c) + AbLaw.cst x'.P.A.hom _ t * (show Γ(x'.P.A.left, x'.P.L.U c) from (s₁ i).f c)) → FinZ x' s) → KaVal x' n l l' al s₀ κ₀ → KaVal x' n l l' al s₁ κ₁ → κ₀ = κ₁ := by
   intro hL K _ _ _ x n l l' al s₀ s₁ κ₀ κ₁ hA hfin h₀ h₁
   let V : ∀ (R : Type) [CommRing R], (K[X] →+* R) → Rˣ → Prop := fun R _ ψ κ =>

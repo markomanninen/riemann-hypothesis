@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.ColValOfTiedSOfFin
-import Formalism.LocalToGlobal.GlobalTheory.ColMemOfIsLocBasis
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.ColValOfTiedSOfFin
+public import Formalism.LocalToGlobal.GlobalTheory.ColMemOfIsLocBasis
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,8 +21,6 @@ def eqv (D : D7) : (D.sp.X 0).V ≃ₗ[D.host.E] (Fin (D.R.N 0) → D.host.E) :=
   (D.sp.X 0).frame.equivFun.trans
     (LinearEquiv.funCongrLeft D.host.E D.host.E (finCongr (Formalism.L2.Forms.rankN D 0 (Nat.zero_le _))).symm)
 
-theorem eqv_apply (y : (D.sp.X 0).V) : eqv D y = crd y := rfl
-
 theorem mem_clsCrd_iff {u : D.what₂.Word} (c : (D.mem u).C.cls 0) (z : Fin (D.R.N 0) → D.host.E) :
     z ∈ Formalism.L2.Forms.clsCrd D u 0 (Nat.zero_le _) c ↔ (eqv D).symm z ∈ D.clsLat u 0 c := by
   unfold Formalism.L2.Forms.clsCrd
@@ -32,11 +34,6 @@ theorem mem_clsCrd_iff {u : D.what₂.Word} (c : (D.mem u).C.cls 0) (z : Fin (D.
 
 def vcol (Y : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (a : Fin (D.R.N 0)) : (D.sp.X 0).V :=
   (eqv D).symm fun r => Y r a
-
-theorem crd_vcol (Y : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) (a : Fin (D.R.N 0)) :
-    crd (vcol Y a) = fun r => Y r a := by
-  rw [← eqv_apply]
-  exact (eqv D).apply_symm_apply _
 
 variable {u : D.what₂.Word} (B : ColBase D u)
 
@@ -57,7 +54,8 @@ theorem sum_gamma (c : (D.mem u).C.cls 0) (τ : D.what₂.Tau) (Y : Matrix (Fin 
   have hbc : B.bc c τ (vcol Y a) = ∑ r, B.rho τ (Y r a) •
       B.bc c τ ((D.sp.X 0).frame ((finCongr (Formalism.L2.Forms.rankN D 0 (Nat.zero_le _))).symm r)) := by
     unfold vcol
-    rw [hz, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hz, map_sum, map_sum]
     refine Finset.sum_congr rfl fun r _ => ?_
     rw [map_smul, B.bc_smul, hfr]
   have hexp : ∀ v : (B.Q c τ).V,
@@ -148,10 +146,12 @@ theorem locBasis_gamma (hB : B.rho = rhoC D) (w : D.what₂.places.Pl) (c : (D.m
           rw [Matrix.mulVec_mulVec, Units.mul_inv, Matrix.one_mulVec]
         have hyz : y = ∑ a, ((((Y⁻¹ : GL (Fin (D.R.N 0)) D.host.E)) : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) *ᵥ
             eqv D y) a • vcol (Y : Matrix (Fin (D.R.N 0)) (Fin (D.R.N 0)) D.host.E) a := by
-          conv_lhs => rw [← (eqv D).symm_apply_apply y, ← h1, hcolv, map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            conv_lhs => rw [← (eqv D).symm_apply_apply y, ← h1, hcolv, map_sum]
           simp only [LinearEquiv.map_smul]
           rfl
-        rw [hyz, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [hyz, map_sum]
         refine Submodule.sum_mem _ fun a _ => ?_
         rw [B.bc_smul, hB, hsmul _ (rhoC_mem_intW w τ _ s hs (hint a))]
         exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨a, rfl⟩)

@@ -1,5 +1,9 @@
-import Formalism.AdmissibleDesigns.FiniteClassesContinuousLattice
-import Formalism.WeaklyAdmissibleFiltrations.PhtGalois
+module
+
+public import Formalism.AdmissibleDesigns.FiniteClassesContinuousLattice
+public import Formalism.WeaklyAdmissibleFiltrations.PhtGalois
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -28,7 +32,7 @@ def cobK : V →ₗ[FractionRing O] (Γ → V) where
   toFun v γ := ρ γ v - v
   map_add' u v := by
     funext γ
-    simp only [map_add, Pi.add_apply]
+    simp only [map_add (f := _), Pi.add_apply]
     abel
   map_smul' k v := by
     funext γ
@@ -147,8 +151,8 @@ theorem finrank_invariants_eq :
     Module.finrank (FractionRing O) ↥(LinearMap.ker (cobK ρ)) = Module.finrank LL ↥(H0V (repL e ρ ι)) := by
   exact congrArg Cardinal.toNat (rank_invariants_eq e ρ hι)
 
-omit hι [TopologicalSpace LL] in
 
+omit hι [TopologicalSpace LL] in
 theorem finDim_TrV [FiniteDimensional (FractionRing O) V] : FiniteDimensional LL (TrV e V) := by
   have h : Module.rank (FractionRing O) V = Module.rank LL (TrV e V) :=
     rank_eq_of_equiv_equiv e (AddEquiv.refl V) e.bijective (fun k v => by
@@ -280,7 +284,7 @@ theorem filV_mono {a b : ℤ} (h : a ≤ b) : FilV PD (LL := LL) (V := V) b ≤ 
   induction y using TensorProduct.induction_on with
   | zero => rw [map_zero]; exact Submodule.zero_mem _
   | tmul v f => exact LinearMap.mem_range.mpr ⟨v ⊗ₜ[Qp] Submodule.inclusion hle f, rfl⟩
-  | add y z hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+  | add y z hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
 
 theorem exists_filV (x : TensorProduct Qp V BdR) : ∃ a, x ∈ FilV PD (LL := LL) a := by
   induction x using TensorProduct.induction_on with
@@ -358,7 +362,7 @@ theorem col_over (l : K.Col i dc) : K.plOf i dc (K.colIdx i dc l) ∈ placesOver
     exact Or.inl (Or.inr l.2)
   have hidx : K.plOf i dc (K.colIdx i dc l) = l.1 := by
     unfold K.plOf K.colIdx K.idx
-    rw [dif_pos hmem, dif_pos ((K.plSet i dc).equivFin ⟨l.1, hmem⟩).isLt]
+    rw [dite_eq_left hmem, dite_eq_left ((K.plSet i dc).equivFin ⟨l.1, hmem⟩).isLt]
     simp
   rw [hidx]
   exact (dc.cover l.1).mp (Or.inr l.2)
@@ -419,8 +423,8 @@ def GoodW (l : K.Col i dc) : Prop :=
     (∀ v, Continuous fun g => repW i dc ρ π (K.colIdx i dc l) (col_over i dc l) g v) ∧
     FilLow (Br.PD D.loc D.nbr i _ (col_over i dc l)) (repW i dc ρ π (K.colIdx i dc l) (col_over i dc l))
 
-omit [DecidableEq d] in
 
+omit [DecidableEq d] in
 theorem invariants_twist_eq_bot (rX : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV) (D.nd.O i))) (hG2 : TruncatedSeriesCountingIdentities.admG2 i rX ρ π)
     (n : ℕ) (hn : K.plOf i dc n ∈ placesOver D.host.E (D.nd.l i)) :
     H0V (repW i dc ρ π n hn) = ⊥ := by
@@ -445,22 +449,23 @@ private theorem lx_col_eq (x' : X') (l : K.Col i dc) :
     Lx i dc r χ x' l = finZ (eK (D.nbr i _ (col_over i dc l))) (Br.PD D.loc D.nbr i _ (col_over i dc l))
       (repE i dc r χ x' (K.colIdx i dc l)) (Br.iota D.nbr i _ (col_over i dc l)) := by
   unfold Lx fZ
-  rw [dif_pos (col_over i dc l)]
+  rw [dite_eq_left (col_over i dc l)]
 
+set_option synthInstance.maxHeartbeats 80000 in
 private theorem jK_colIdx_eq_finrank_cohomology (l : K.Col i dc) :
     jK i dc ρ π (K.colIdx i dc l) = Module.finrank (Br.LL D.nbr i _ (col_over i dc l))
       (FiniteCohomology (Br.PD D.loc D.nbr i _ (col_over i dc l))
         (repW i dc ρ π (K.colIdx i dc l) (col_over i dc l))) := by
   unfold jK
-  rw [dif_pos (col_over i dc l)]
+  rw [dite_eq_left (col_over i dc l)]
   rfl
 
 private theorem iota_bijective_col (l : K.Col i dc) :
     Function.Bijective (Br.iota D.nbr i _ (col_over i dc l)) :=
   (D.nbr i _ (col_over i dc l)).e.symm.bijective
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem dimLx_of (rX : D.nd.X i → (GE D.nd →* GL (Fin D.R.nV) (D.nd.O i))) (x' : X') (l : K.Col i dc)
     (hBK : TruncatedSeriesCountingIdentities.admBK i) (hG2 : TruncatedSeriesCountingIdentities.admG2 i rX ρ π)
     (hc : ContX i dc r χ x' l) (hcr : CrysX i dc r χ x' l) (hneg : NegX i dc r χ ρ π x' l)

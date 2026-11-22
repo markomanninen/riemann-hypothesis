@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.Divisibility.LocalQuadraticParts
-import Formalism.SharpRestriction.AdmissibleParameterJoins.SumLogPrimeFactorsLe
-import Formalism.SharpRestriction.ParamsHeightRankConstant
-import Formalism.SharpRestriction.Divisibility.SlopeExcess.FamilyStatementOfScaledLemmas
-import Formalism.SharpRestriction.Divisibility.SlopeExcess.ConstRankBaseLePolyFourth
+module
+
+public import Formalism.SharpRestriction.Divisibility.LocalQuadraticParts
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.SumLogPrimeFactorsLe
+public import Formalism.SharpRestriction.ParamsHeightRankConstant
+public import Formalism.SharpRestriction.Divisibility.SlopeExcess.FamilyStatementOfScaledLemmas
+public import Formalism.SharpRestriction.Divisibility.SlopeExcess.ConstRankBaseLePolyFourth
+
+@[expose] public section
 
 noncomputable section
 

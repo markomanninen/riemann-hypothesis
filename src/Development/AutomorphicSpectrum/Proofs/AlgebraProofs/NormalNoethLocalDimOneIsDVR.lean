@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits
 namespace GlobalTheory.CompanionTheory.Ar.Flat
 
@@ -11,6 +16,6 @@ theorem normal_noeth_local_dim_one_isDVR : ∀ (R : Type) [CommRing R] [IsDomain
       ⟨fun h => hnf (IsLocalRing.isField_iff_maximalIdeal_eq.mpr h), inferInstance⟩, ?_⟩
     rintro P ⟨hP, hPp⟩
     exact IsLocalRing.eq_maximalIdeal (Ring.krullDimLE_one_iff_of_noZeroDivisors.mp hdim P hP hPp)
-  exact ((IsDiscreteValuationRing.TFAE R hnf).out 0 3).mpr h4
+  exact ((IsDiscreteValuationRing.TFAE R hnf).out 1 4).mpr h4
 
 end GlobalTheory.CompanionTheory.Ar.Flat

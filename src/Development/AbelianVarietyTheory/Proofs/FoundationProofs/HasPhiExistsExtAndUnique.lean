@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NonnegOfMemCStarSet
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsNonzeroOfGenerator
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.PsiCoordOfIsPullDegId
-import Development.AbelianVarietyTheory.Proofs.TorusSplitting.PhiCSmulPull
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SemiAbelianModelDeterminedByGenericFibre
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NonnegOfMemCStarSet
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.ExistsNonzeroOfGenerator
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.PsiCoordOfIsPullDegId
+public import Development.AbelianVarietyTheory.Proofs.TorusSplitting.PhiCSmulPull
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SemiAbelianModelDeterminedByGenericFibre
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -59,7 +63,7 @@ theorem HasPhi.unique {T : CDVR} {io : c.F →+* T.Fr} {y : IntFr Xo c T io} {φ
     have h1 := hdiag (a + b)
     have s1 := β₁.2.1 a b
     have s2 := β.2.1 a b
-    simp only [map_add, LinearMap.add_apply] at h1
+    simp only [map_add (f := _), LinearMap.add_apply] at h1
     linarith [hdiag a, hdiag b]
   rw [← e, hφ, _root_.one_mul]
 

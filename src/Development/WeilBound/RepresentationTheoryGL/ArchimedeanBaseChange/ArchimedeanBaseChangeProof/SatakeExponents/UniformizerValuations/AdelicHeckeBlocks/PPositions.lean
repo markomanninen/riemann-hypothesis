@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelRep
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteRestrictionVanishing
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralOfTwistConjugatePlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemKGLIffVal
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.TopoThetaRCont
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelRep
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteRestrictionVanishing
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralOfTwistConjugatePlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemKGLIffVal
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.TopoThetaRCont
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,7 +45,7 @@ theorem loc_thF_congr {n : ℕ} {g h : GL (Fin n) (Af E)} (u : Pl E) (H : loc n 
   exact congrArg _ (congrArg _ e)
 
 theorem loc_thF_mem {n : ℕ} {g : GL (Fin n) (Af E)} (u : Pl E)
-    (hg : loc n (cP u) g ∈ GlobalTheory.LFun.KGL (cP u) n) : loc n u (thF E n g) ∈ GlobalTheory.LFun.KGL u n := by
+    (hg : loc n (cP u) g ∈ GlobalTheory.LFun.KGL (cP u) (n := n)) : loc n u (thF E n g) ∈ GlobalTheory.LFun.KGL u (n := n) := by
   have hs := (GlobalTheory.EulerTwKU.mem_KGL_iff_val _).1 hg
   rw [GlobalTheory.EulerTwKU.mem_KGL_iff_val]
   refine ⟨fun i j => ?_, fun i j => ?_⟩
@@ -50,7 +54,7 @@ theorem loc_thF_mem {n : ℕ} {g : GL (Fin n) (Af E)} (u : Pl E)
   · rw [← map_inv, ← map_inv, GlobalTheory.EulerTwKU.val_pLoc_thF, inv_inv]
     exact hs.1 _ _
 
-theorem exists_lift {n : ℕ} (Y : ∀ u : Pl E, GLw n u) (hc : ∀ᶠ u in cofinite, Y u ∈ GlobalTheory.LFun.KGL u n) :
+theorem exists_lift {n : ℕ} (Y : ∀ u : Pl E, GLw n u) (hc : ∀ᶠ u in cofinite, Y u ∈ GlobalTheory.LFun.KGL u (n := n)) :
     ∃ g : GL (Fin n) (Af E), ∀ u, loc n u g = Y u := by
   let M : Matrix (Fin n) (Fin n) (Af E) := Matrix.of fun i j =>
     ⟨fun w => (Y w).1 i j, hc.mono fun w h => (GlobalTheory.EulerTwRestr.mem_KGL_iff.1 h).1 i j⟩
@@ -67,7 +71,7 @@ theorem exists_lift {n : ℕ} (Y : ∀ u : Pl E, GLw n u) (hc : ∀ᶠ u in cofi
   exact ⟨⟨M, M', hMM', hM'M⟩, fun u => Units.ext (Matrix.ext fun i j => rfl)⟩
 
 theorem eventually_loc_mem {n : ℕ} (g : GL (Fin n) (Af E)) :
-    ∀ᶠ w : Pl E in cofinite, loc n w g ∈ GlobalTheory.LFun.KGL w n := by
+    ∀ᶠ w : Pl E in cofinite, loc n w g ∈ GlobalTheory.LFun.KGL w (n := n) := by
   have h1 : ∀ᶠ w : Pl E in cofinite, ∀ i j, pLoc E w (g.1 i j) ∈ w.adicCompletionIntegers E :=
     eventually_all.2 fun i => eventually_all.2 fun j => (g.1 i j).2
   have h2 : ∀ᶠ w : Pl E in cofinite, ∀ i j, pLoc E w ((g⁻¹).1 i j) ∈ w.adicCompletionIntegers E :=
@@ -84,13 +88,13 @@ theorem ev_sum {α β : Type} {P : α ⊕ β → Prop} (h1 : ∀ᶠ a in cofinit
   · exact Or.inr ⟨b, h, rfl⟩
 
 theorem ev_dite {n : ℕ} {p : Pl E → Prop} (y : ∀ w : {w // p w}, GLw n w.1)
-    (h : ∀ᶠ w in cofinite, y w ∈ GlobalTheory.LFun.KGL w.1 n) :
-    ∀ᶠ u : Pl E in cofinite, (if hu : p u then y ⟨u, hu⟩ else 1) ∈ GlobalTheory.LFun.KGL u n := by
+    (h : ∀ᶠ w in cofinite, y w ∈ GlobalTheory.LFun.KGL w.1 (n := n)) :
+    ∀ᶠ u : Pl E in cofinite, (if hu : p u then y ⟨u, hu⟩ else 1) ∈ GlobalTheory.LFun.KGL u (n := n) := by
   rw [eventually_cofinite] at h ⊢
   refine (h.image Subtype.val).subset fun u hu => ?_
   by_cases hp : p u
   · refine ⟨⟨u, hp⟩, ?_, rfl⟩
-    have hu' : ¬ (if hu : p u then y ⟨u, hu⟩ else 1) ∈ GlobalTheory.LFun.KGL u n := hu
+    have hu' : ¬ (if hu : p u then y ⟨u, hu⟩ else 1) ∈ GlobalTheory.LFun.KGL u (n := n) := hu
     rw [dif_pos hp] at hu'
     exact hu'
   · exact absurd (by rw [dif_neg hp]; exact one_mem _) hu
@@ -122,10 +126,10 @@ theorem continuous_cpH (a b : ℕ) {S : Set (Pl E)} (i : Slot S) : Continuous (c
   ((continuous_cpn a i).comp continuous_fst).prodMk ((continuous_cpn b i).comp continuous_snd)
 
 theorem F_exists {n : ℕ} {S : Set (Pl E)} (hS : IsSection S) (y : ∀ i : Slot S, GLw n i.pl)
-    (hy : ∀ᶠ i in cofinite, y i ∈ GlobalTheory.LFun.KGL i.pl n) : ∃ g : GL (Fin n) (Af E), ∀ i, cpn n i g = y i := by
-  have hy1 : ∀ᶠ w : {w // w ∈ S} in cofinite, y (.inl w) ∈ GlobalTheory.LFun.KGL w.1 n :=
+    (hy : ∀ᶠ i in cofinite, y i ∈ GlobalTheory.LFun.KGL i.pl (n := n)) : ∃ g : GL (Fin n) (Af E), ∀ i, cpn n i g = y i := by
+  have hy1 : ∀ᶠ w : {w // w ∈ S} in cofinite, y (.inl w) ∈ GlobalTheory.LFun.KGL w.1 (n := n) :=
     Sum.inl_injective.tendsto_cofinite.eventually hy
-  have hy2 : ∀ᶠ w : {w // w ∈ S ∧ IsSplitAt w} in cofinite, y (.inr w) ∈ GlobalTheory.LFun.KGL w.1 n :=
+  have hy2 : ∀ᶠ w : {w // w ∈ S ∧ IsSplitAt w} in cofinite, y (.inr w) ∈ GlobalTheory.LFun.KGL w.1 (n := n) :=
     Sum.inr_injective.tendsto_cofinite.eventually hy
   obtain ⟨g₁, h₁⟩ := exists_lift (n := n) _ (ev_dite (fun w => y (.inl w)) hy1)
   obtain ⟨g₂, h₂⟩ := exists_lift (n := n) _ (ev_dite (fun w => y (.inr w)) hy2)
@@ -172,13 +176,13 @@ theorem F_ext {n : ℕ} {S : Set (Pl E)} (hS : IsSection S) {g h : GL (Fin n) (A
       exact H (.inl ⟨v, hv⟩)
 
 theorem F_ev {n : ℕ} {S : Set (Pl E)} (g : GL (Fin n) (Af E)) :
-    ∀ᶠ i : Slot S in cofinite, cpn n i g ∈ GlobalTheory.LFun.KGL i.pl n :=
+    ∀ᶠ i : Slot S in cofinite, cpn n i g ∈ GlobalTheory.LFun.KGL i.pl (n := n) :=
   ev_sum (Subtype.val_injective.tendsto_cofinite.eventually (eventually_loc_mem g))
     (Subtype.val_injective.tendsto_cofinite.eventually (eventually_loc_mem (thF E n g)))
 
 theorem F_mem {n : ℕ} {S : Set (Pl E)} (hS : IsSection S) (g : GL (Fin n) (Af E)) :
-    g ∈ Kf E n ↔ ∀ i : Slot S, cpn n i g ∈ GlobalTheory.LFun.KGL i.pl n := by
-  have hK : g ∈ Kf E n ↔ ∀ u, loc n u g ∈ GlobalTheory.LFun.KGL u n := by
+    g ∈ Kf E n ↔ ∀ i : Slot S, cpn n i g ∈ GlobalTheory.LFun.KGL i.pl (n := n) := by
+  have hK : g ∈ Kf E n ↔ ∀ u, loc n u g ∈ GlobalTheory.LFun.KGL u (n := n) := by
     rw [Kf, Subgroup.mem_iInf]
     rfl
   rw [hK]
@@ -189,12 +193,12 @@ theorem F_mem {n : ℕ} {S : Set (Pl E)} (hS : IsSection S) (g : GL (Fin n) (Af 
   · rcases GlobalTheory.CompanionTheory.SuppFinTw.mem_or_conj hS u with hu | ⟨v, hv, rfl⟩
     · exact H (.inl ⟨u, hu⟩)
     · by_cases hsp : IsSplitAt v
-      · have H2 : loc n (cP (cP v)) (thF E n g) ∈ GlobalTheory.LFun.KGL (cP (cP v)) n := by
+      · have H2 : loc n (cP (cP v)) (thF E n g) ∈ GlobalTheory.LFun.KGL (cP (cP v)) (n := n) := by
           rw [cP_cP]
           exact H (.inr ⟨v, hv, hsp⟩)
         have := loc_thF_mem (cP v) H2
         rwa [GlobalTheory.EulerTw.Comm.thF_thF] at this
-      · show loc n (cP v) g ∈ GlobalTheory.LFun.KGL (cP v) n
+      · show loc n (cP v) g ∈ GlobalTheory.LFun.KGL (cP v) (n := n)
         rw [cP_eq_of_not_split hsp]
         exact H (.inl ⟨v, hv⟩)
 
@@ -221,7 +225,7 @@ theorem pair_compact {a b : ℕ} {S : Set (Pl E)} (hS : IsSection S) (C : ∀ i 
     rw [hT]
     exact eventually_cofinite.1 hCK
   have hopen : ∀ i : Slot S, IsOpen (K2 a b i.pl : Set (GLw a i.pl × GLw b i.pl)) := fun i => by
-    show IsOpen (((GlobalTheory.LFun.KGL i.pl a).prod (GlobalTheory.LFun.KGL i.pl b) : Subgroup _) : Set (GLw a i.pl × GLw b i.pl))
+    show IsOpen (((GlobalTheory.LFun.KGL i.pl (n := a)).prod (GlobalTheory.LFun.KGL i.pl (n := b)) : Subgroup _) : Set (GLw a i.pl × GLw b i.pl))
     rw [Subgroup.coe_prod]
     exact (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL i.pl a).1.prod (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL i.pl b).1
   have hcov : ∀ i : Slot S, ∃ t : Finset (GLw a i.pl × GLw b i.pl),
@@ -278,8 +282,8 @@ theorem pair_compact {a b : ℕ} {S : Set (Pl E)} (hS : IsSection S) (C : ∀ i 
 
 end Slots
 
-open Slots in
 
+open Slots in
 theorem slots : Slots := by
   intro E _ _ _ a b S hS
   refine ⟨fun i x y => ?_, fun i => ?_, fun x y H => ?_, fun y hy => ?_, fun x => ?_, fun x => ?_, fun C hC hCK => ?_⟩

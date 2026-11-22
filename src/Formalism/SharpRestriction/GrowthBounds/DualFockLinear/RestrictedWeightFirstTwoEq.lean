@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.DvdOfCompl
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.TestSideCounting
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.DvdOfCompl
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.TestSideCounting
+
+@[expose] public section
 
 noncomputable section
 

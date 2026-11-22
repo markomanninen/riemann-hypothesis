@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTestRep
+
+@[expose] public section
 
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
@@ -18,7 +22,7 @@ theorem fourU_hasCompactSupport : ∀ (F E : Type) [NontriviallyNormedField F] [
   set a : E := algebraMap F E (x₀ / 2) with ha
   have htra : Algebra.trace F E a = x₀ := by
     apply (algebraMap F E).injective
-    rw [htr a, ha, hUn.star_fix, ← map_add, add_halves]
+    rw [htr a, ha, hUn.star_fix, ← map_add (f := _), add_halves]
 
   have hcont : Continuous (fun t : Fin r → E => ((0 : selfAdjoint (Matrix (Fin r) (Fin r) E)), t, (0 : F))) := by
     fun_prop
@@ -49,7 +53,7 @@ theorem fourU_hasCompactSupport : ∀ (F E : Type) [NontriviallyNormedField F] [
     have hchar : ∀ c : Fin r → E, ψ (Algebra.trace F E (star (t + c) ⬝ᵥ X.2.1)) =
         ψ x₀ * ψ (Algebra.trace F E (star c ⬝ᵥ X.2.1)) := by
       intro c
-      rw [star_add, add_dotProduct, map_add, AddChar.map_add_eq_mul, hst, htra]
+      rw [star_add, add_dotProduct, map_add (f := _), AddChar.map_add_eq_mul, hst, htra]
     have key : fourU M ψ f X = ψ x₀ * fourU M ψ f X := by
       simp only [fourU]
       calc ∫ c, f (X.1, c, X.2.2) * ψ (Algebra.trace F E (star c ⬝ᵥ X.2.1)) ∂(Measure.pi fun _ : Fin r => M.μE)

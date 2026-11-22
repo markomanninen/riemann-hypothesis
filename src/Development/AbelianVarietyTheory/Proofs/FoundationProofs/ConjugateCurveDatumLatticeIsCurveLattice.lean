@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Formalism.LocalRingCardinality.ConjSqrtMinusD
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutesStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatumStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeInvariantsPeriodPairDictionaryStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GalStarComplexMultiplicationPointsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Formalism.LocalRingCardinality.ConjSqrtMinusD
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InducedTypeThetaGenusOnePermutesStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatumStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeInvariantsPeriodPairDictionaryStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GalStarComplexMultiplicationPointsStatement
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
 
@@ -66,7 +71,7 @@ theorem coprime_absNorm {K : Type*} [Field K] [NumberField K] (B : Ideal (𝓞 K
   obtain ⟨u, rfl⟩ := Ideal.mem_span_singleton'.mp hy
   have h2 : Ideal.Quotient.mk B u * (N : 𝓞 K ⧸ B) = 1 := by
     have := congrArg (Ideal.Quotient.mk B) hyz
-    rw [map_add, Ideal.Quotient.eq_zero_iff_mem.mpr hz, add_zero, map_mul, map_natCast, map_one] at this
+    rw [map_add (f := _), Ideal.Quotient.eq_zero_iff_mem.mpr hz, add_zero, map_mul, map_natCast, map_one] at this
     exact this
   have hx0 : x = 0 := by
     rw [← one_mul x, ← h2, mul_assoc, ← nsmul_eq_mul, hN, mul_zero]
@@ -86,7 +91,7 @@ theorem exists_ideal {R : Type*} [CommRing R] (f : R →+* ℂ) (Λ : AddSubgrou
   let I : Ideal R :=
     { carrier := {r | w₁ / b * f r ∈ Λ}
       add_mem' := fun {x y} hx hy => by
-        simp only [Set.mem_setOf_eq, map_add, mul_add] at *
+        simp only [Set.mem_setOf_eq, map_add (f := _), mul_add] at *
         exact Λ.add_mem hx hy
       zero_mem' := by simp
       smul_mem' := fun c x hx => by
@@ -103,7 +108,7 @@ theorem exists_ideal {R : Type*} [CommRing R] (f : R →+* ℂ) (Λ : AddSubgrou
     rw [← map_intCast f b, this, map_zero]
   · obtain ⟨m, n, hmn⟩ := (hΛ _).mp hz
     have : z = w₁ / b * f (m * b + n * (s - a)) := by
-      simp only [map_add, map_mul, map_sub, map_intCast]
+      simp only [map_add (f := _), map_mul, map_sub, map_intCast]
       field_simp
       linear_combination (-b) * hmn + n * hab
     exact ⟨_, (hI _).mpr (this ▸ hz), this⟩
@@ -133,9 +138,6 @@ theorem discr_smul (Λ Λ' : AddSubgroup ℂ) (δ : ℂ) (hδ : δ ≠ 0) (h : �
 noncomputable def embK (D : D7) : 𝓞 D.host.K →+* ℂ :=
   D.host.φ₀.comp ((D.host.K.val.toRingHom).comp (algebraMap (𝓞 D.host.K) D.host.K))
 
-theorem embK_apply (D : D7) (c : 𝓞 D.host.K) :
-    embK D c = D.host.φ₀ (((c : D.host.K) : D.host.E)) := rfl
-
 theorem embK_injective (D : D7) : Function.Injective (embK D) := fun _ _ h =>
   IsFractionRing.injective (𝓞 D.host.K) D.host.K
     (D.host.K.val.toRingHom.injective (D.host.φ₀.injective h))
@@ -150,7 +152,7 @@ theorem mem_lamOf (D : D7) (cc : Ideal (𝓞 D.host.K)) (δ z : ℂ) :
     | add x y _ _ hx hy =>
       obtain ⟨c, hc, rfl⟩ := hx
       obtain ⟨c', hc', rfl⟩ := hy
-      exact ⟨c + c', cc.add_mem hc hc', by rw [map_add, mul_add]⟩
+      exact ⟨c + c', cc.add_mem hc hc', by rw [map_add (f := _), mul_add]⟩
     | neg x _ hx =>
       obtain ⟨c, hc, rfl⟩ := hx
       exact ⟨-c, cc.neg_mem hc, by rw [map_neg, mul_neg]⟩
@@ -243,7 +245,7 @@ theorem galCurve_holds : ∀ D : D7, galCurve D := by
     have : (TaylorLogMetric.liftM M (g2 Λ)) ^ 3 - 27 * (TaylorLogMetric.liftM M (g3 Λ)) ^ 2 = 1 := by
       apply Subtype.ext
       unfold TaylorLogMetric.liftM
-      rw [dif_pos h2, dif_pos h3]
+      rw [dite_eq_left h2, dite_eq_left h3]
       exact hdisc
     have h := congrArg ρ this
     simpa [map_ofNat] using h

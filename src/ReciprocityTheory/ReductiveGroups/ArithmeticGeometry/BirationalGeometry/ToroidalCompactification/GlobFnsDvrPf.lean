@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.GlobalFunctionsDvrPowers
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.GlobalFunctionsDvrGeneric
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.GlobalFunctionsDvrPowers
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.GlobalFunctionsDvrGeneric
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -20,7 +24,21 @@ theorem globalFnsDvr_of_globalFns (hGF : GlobalFnsSt) : GlobalFnsDvrSt := by
   haveI : Smooth t.G.hom := hsemi.smooth
   haveI : IsSeparated t.G.hom := hsemi.separated
   haveI : QuasiCompact t.G.hom := hsemi.quasiCompact
-  obtain ⟨h1, h2, h3⟩ := GlobalFunctionsDvrGeneric.powObj_props t.G n
+  have hpow : ∀ k : ℕ,
+      Smooth (powObj t.G k).hom ∧ IsSeparated (powObj t.G k).hom ∧
+        QuasiCompact (powObj t.G k).hom := by
+    intro k
+    induction k with
+    | zero =>
+      change Smooth (𝟙 (Sp V)) ∧ IsSeparated (𝟙 (Sp V)) ∧ QuasiCompact (𝟙 (Sp V))
+      exact ⟨inferInstance, inferInstance, inferInstance⟩
+    | succ k ih =>
+      obtain ⟨hsmooth, hsep, hqc⟩ := ih
+      change Smooth (t.G ⊗ powObj t.G k).hom ∧ IsSeparated (t.G ⊗ powObj t.G k).hom ∧
+        QuasiCompact (t.G ⊗ powObj t.G k).hom
+      rw [Over.tensorObj_hom, pullback.condition]
+      exact ⟨inferInstance, inferInstance, inferInstance⟩
+  obtain ⟨h1, h2, h3⟩ := hpow n
   haveI := h1
   haveI := h2
   haveI := h3

@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.Development
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.Development
+
+@[expose] public section
 
 noncomputable section
 open scoped ComplexConjugate
@@ -9,7 +13,7 @@ open PI.ULS
 section Idx
 variable {V : Type*} [AddCommGroup V] [Module ℂ V]
 
-def smulHom (w : ℂ) : V →+ V := DistribMulAction.toAddMonoidHom V w
+def smulHom (w : ℂ) : V →+ V := DistribSMul.toAddMonoidHom V w
 
 @[simp] lemma smulHom_apply (w : ℂ) (v : V) : smulHom w v = w • v := rfl
 
@@ -169,7 +173,7 @@ variable {a : ℕ} {b c : ℤ} {d : ℕ}
 lemma theta_conj (b : ℤ) (d : ℕ) : conj (cmTheta b d) = b - cmTheta b d := by
   have h2 : (starRingEnd ℂ) (2 : ℂ) = 2 := map_ofNat _ 2
   first
-  | (simp only [PI.ULS.cmTheta, map_div₀, map_add, map_mul, Complex.conj_I, Complex.conj_ofReal, map_intCast, h2]; ring)
+  | (simp only [PI.ULS.cmTheta, map_div₀, map_add (f := _), map_mul, Complex.conj_I, Complex.conj_ofReal, map_intCast, h2]; ring)
   | (simp [PI.ULS.cmTheta, map_div₀]; ring)
   | (simp [PI.ULS.cmTheta, map_div₀]; done)
   | (apply Complex.ext <;> simp [PI.ULS.cmTheta] <;> ring)

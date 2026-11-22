@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PushLF
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.PushLF
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,8 @@ theorem hR_eq (x y : Fin M → R ⊗[F] E) :
 theorem sigR_mulVec (G : Matrix (Fin M) (Fin M) (R ⊗[F] E)) (x : Fin M → R ⊗[F] E) :
     (fun i => sigR R σ ((G *ᵥ x) i)) = (G.map (sigR R σ)) *ᵥ (fun i => sigR R σ (x i)) := by
   funext i
-  simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
 
 theorem hR_smul (g : HA R σ J) (x y : Fin M → R ⊗[F] E) :
     hR R σ J ((HA.mat R σ J g : Matrix (Fin M) (Fin M) (R ⊗[F] E)) *ᵥ x)
@@ -38,7 +43,8 @@ theorem gramR_smul {m : ℕ} (g : HA R σ J) (Y : Fin m → Fin M → R ⊗[F] E
 theorem gramR_ratTup {m : ℕ} (Y : Fin m → Fin M → E) :
     gramR R σ J (ratTup R Y) = (gramE σ J Y).map (inclR R) := by
   funext a b
-  simp [gramR, gramE, hR, hE, Formalism.UG.hform, ratTup, JR, inclR, sigR, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [gramR, gramE, hR, hE, Formalism.UG.hform, ratTup, JR, inclR, sigR, map_sum, map_mul]
 
 def hLin (x : Fin M → R ⊗[F] E) : (Fin M → R ⊗[F] E) →ₗ[R ⊗[F] E] R ⊗[F] E where
   toFun := hR R σ J x
@@ -74,7 +80,7 @@ theorem continuous_sigRP [FiniteDimensional F E] [TopologicalSpace R] [IsTopolog
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul r e => simp [sigR]
-    | add x y hx hy => rw [map_add, map_add, hx, hy]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
   have : (sigR R σ : R ⊗[F] E → R ⊗[F] E) = (σ.toLinearMap.baseChange R) := funext h
   rw [this]
   exact IsModuleTopology.continuous_of_linearMap _

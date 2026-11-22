@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PullHlComp
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsStrictlySemistable
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
-import GroundTheory.PAdicHodge.PerfectoidField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PullHlComp
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsStrictlySemistable
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsCompletedStrictHens
+public import GroundTheory.PAdicHodge.PerfectoidField
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,8 +74,8 @@ instance : Module K (HdR p n) := inferInstanceAs (Module (infBase K).R (H (smFun
 
 def FilR (r : ℕ) : Set (HdR p n) := Fil (smFun X p) n r
 
-variable {p} in
 
+variable {p} in
 def pullR {q : Y ⟶ Spec (CommRingCat.of K)} (u : X ⟶ Y) (hu : u ≫ q = p) : HdR q n →ₗ[K] HdR p n := (smMor u hu).pull n
 end
 

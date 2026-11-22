@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeReferenceFrame.Development
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeReferenceFrame.Development
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,6 +34,7 @@ def lam (a : E) : E →ₗ[F] F := (Algebra.trace F E) ∘ₗ (LinearMap.mulLeft
 def Phi (a : E) : E ⊗[F] Af F →ₗ[F] Af F :=
   (TensorProduct.lid F (Af F)).toLinearMap ∘ₗ TensorProduct.map (lam a) LinearMap.id
 
+omit [NumberField E] in
 theorem Phi_tmul (a x : E) (c : Af F) :
     Phi a (x ⊗ₜ[F] c) = algebraMap F (Af F) (Algebra.trace F E (a * x)) * c := by
   simp [Phi, lam, Algebra.smul_def]

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.SpanImageDenominators.exists_ne_zero_smul_mem_span_image :
     ∀ {A F M N : Type} [inst : CommRing A]
@@ -18,7 +22,7 @@ theorem UpperTheory.Reformulated.B.SpanImageDenominators.exists_ne_zero_smul_mem
     obtain ⟨d', hd', w', hw', e'⟩ := hz
     refine ⟨d * d', mul_ne_zero hd hd', d' • w + d • w',
       Submodule.add_mem _ (Submodule.smul_mem _ _ hw) (Submodule.smul_mem _ _ hw'), ?_⟩
-    rw [map_add, map_smul, map_smul, ← e, ← e', smul_add, smul_smul, smul_smul, mul_comm d' d]
+    rw [map_add (f := _), map_smul, map_smul, ← e, ← e', smul_add, smul_smul, smul_smul, mul_comm d' d]
   | smul c x _ hx =>
     obtain ⟨d, hd, w, hw, e⟩ := hx
     obtain ⟨⟨a, b⟩, hab⟩ := IsLocalization.surj (nonZeroDivisors A) c

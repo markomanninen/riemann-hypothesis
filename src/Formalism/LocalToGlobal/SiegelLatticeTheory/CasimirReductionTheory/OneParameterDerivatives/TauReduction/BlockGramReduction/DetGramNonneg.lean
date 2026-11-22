@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.TauReduction.LatticeVectorsBoundedBelow
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.TauReduction.LatticeVectorsBoundedBelow
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -67,7 +71,7 @@ theorem size_subOfEq_le (h5 : GramDistortionBound) {x x' : I.GA} (hlat : latSet 
     refine div_le_div_of_nonneg_right ?_ (Nat.cast_nonneg _)
     calc ∏ v, (gramV I x' v (subOfEq I hlat s).b).det.re
         ≤ ∏ v : InfinitePlace I.F, c ^ s.j * (gramV I x v s.b).det.re :=
-          Finset.prod_le_prod (fun v _ => det_gram_nonneg I h5 x' v s.j_pos s.b) (fun v _ => hdet v)
+          Finset.prod_le_prod₀ (fun v _ => det_gram_nonneg I h5 x' v s.j_pos s.b) (fun v _ => hdet v)
       _ = (c ^ s.j) ^ Fintype.card (InfinitePlace I.F) * ∏ v, (gramV I x v s.b).det.re := by
           rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ]
   have he : 0 ≤ 1 / (2 * (I.f : ℝ) * (s.j : ℝ)) := by positivity

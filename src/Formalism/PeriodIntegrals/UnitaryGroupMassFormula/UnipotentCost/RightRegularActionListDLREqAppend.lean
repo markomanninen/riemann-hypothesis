@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCost.LetterSize
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCost.LetterSize
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.P.BetaSesquilinearity
 open scoped ContDiff
@@ -92,7 +96,7 @@ lemma moveR {X : B.Mat k r} (hX : B.inLie k r X) : ∀ (u : List (B.Mat k r)), (
   | [], _, _, _, _, _ => rfl
   | Y :: u, hu, h, hh, g, hg => by
     have hY : B.inLie k r Y := hu Y (by simp)
-    have hu' : ∀ Z ∈ u, B.inLie k r Z := fun Z hZ => hu Z (by simp [hZ])
+    have hu' : ∀ Z ∈ u, B.inLie k r Z := fun Z hZ => hu Z (List.mem_cons_of_mem Y hZ)
     show Dx (false, X) (Dx (true, Y) (Dw (wL u) h)) g = Dx (true, Y) (Dw (wL u) (Dx (false, X) h)) g
     have h2 : B.CkOn ((2 : ℕ) : ℕ∞) (B.GV k r) (Dw (wL u) h) :=
       ckDw (lie_wL hu') hh (by rw [len_wL]; simp; omega)
@@ -108,7 +112,7 @@ lemma rightRegularAction_list_dLR_eq_append {f : B.Mat k r → E} {m : ℕ} (hf 
   | [], _, _, _, _ => rfl
   | X :: w, hw, hm, g, hg => by
     have hX : B.inLie k r X := hw X (by simp)
-    have hw' : ∀ Z ∈ w, B.inLie k r Z := fun Z hZ => hw Z (by simp [hZ])
+    have hw' : ∀ Z ∈ w, B.inLie k r Z := fun Z hZ => hw Z (List.mem_cons_of_mem X hZ)
     have hm' : u.length + v.length + w.length ≤ m := by simp at hm; omega
     have e1 : ∀ F : B.Mat k r → E, Formalism.REAL.RdV X F = Dx (false, X) F := fun F => by simp [Dx]
     show Formalism.REAL.RdV X (B.Rw w (B.dLR u v f)) g = B.dLR u (X :: (w ++ v)) f g

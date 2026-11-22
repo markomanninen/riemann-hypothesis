@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmpOfIsCocycle
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SepOfFactoringCover
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GlueCommaOfBasis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasLocOAff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RestrictPull1InjectiveOfSepGlue
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CmpOfIsCocycle
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SepOfFactoringCover
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GlueCommaOfBasis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasLocOAff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RestrictPull1InjectiveOfSepGlue
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry Limits
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 

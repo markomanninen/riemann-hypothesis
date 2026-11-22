@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SerreHolomorphicSectionsHolds
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CompactSpacePts
-import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.GagaSections
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SerreHolomorphicSectionsHolds
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CompactSpacePts
+public import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.GagaSections
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Set
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.CxPts
@@ -40,10 +45,10 @@ theorem isHolTo_chart (c : AlgChart s (RingHom.id ℂ) D) (W : X.Opens)
       ((isOpen_ptsIn (p := s) (σ := RingHom.id ℂ) W).inter (isOpen_ptsIn U))).preimage ψ.continuous
     rw [hset] at ho
     exact ho
-  · have hd := ((c.holo U f).comp ψ.differentiableOn (fun b hb => hb)).mono
-      (fun b (hb : b ∈ {b | b ∈ ψ ⁻¹' (c.e.target ∩ c.e.symm ⁻¹' ptsIn s (RingHom.id ℂ) W) ∧
-        ⊤ ≤ (Opens.map (c.e.symm (ψ b)).1.base).obj U}) => (⟨hb.1.1, hb.2⟩ :
-          ψ b ∈ c.e.target ∩ c.e.symm ⁻¹' ptsIn s (RingHom.id ℂ) U))
+  · have hd := (c.holo U f).comp
+      (ψ.differentiableOn : DifferentiableOn ℂ ψ {b | b ∈ ψ ⁻¹' (c.e.target ∩ c.e.symm ⁻¹' ptsIn s (RingHom.id ℂ) W) ∧
+        ⊤ ≤ (Opens.map (c.e.symm (ψ b)).1.base).obj U})
+      (fun b hb => ⟨hb.1.1, hb.2⟩)
     refine hd.congr ?_
     intro b _
     exact valAt'_eq_ev U f _

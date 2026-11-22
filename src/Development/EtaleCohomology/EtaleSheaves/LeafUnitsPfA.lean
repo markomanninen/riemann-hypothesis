@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.H0TwistOverClosedField
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.H0TwistOverClosedField
+
+@[expose] public section
 
 namespace LateralTheory.E.E4
 

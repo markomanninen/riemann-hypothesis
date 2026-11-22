@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EpsZeroCompOfIsTanAtG
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsBlockMetricDiagForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AppLESecEpsZeroEpsFn
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsoToBidualOfLocalFrames
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeG
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EpsZeroCompOfIsTanAtG
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsBlockMetricDiagForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AppLESecEpsZeroEpsFn
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsoToBidualOfLocalFrames
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.LieBridgeG
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -109,12 +113,22 @@ theorem exists_equiv_of_isGrpPullback {V : X.Opens} (h : ⊤ ≤ x ⁻¹ᵁ V) {
       exact hc.1 ((tanEv_eq h' p _ hp h (s b)).symm.trans
         ((congrFun hvw b).trans (tanEv_eq h' q _ hq h (s b)))))
     exact tan_ext (hp.symm.trans hq)
-  · obtain ⟨p, hp⟩ := TangentSurj.tangent_surjective R G'
-      ((he.dual.basis le_rfl).equivFun.symm fun b => cst R (c b))
+  · classical
+    let coord (i : Fin n) : Γ(VB.dual (omega G'), ⊤) :=
+      VB.homMk (fun _ h => (he.basis h).coord i) fun _ _ h h' s => he.repr_resM h h' s i
+    have hcoord (i j : Fin n) : dualApp (coord i) le_rfl (e j) = if j = i then 1 else 0 := by
+      change (he.basis le_rfl).repr (e j) i = _
+      rw [← resM_self (F := omega G') (h := le_rfl) (e j), ← he.basis_apply le_rfl j,
+        Module.Basis.repr_self, Finsupp.single_apply]
+    let l : Γ(VB.dual (omega G'), ⊤) := ∑ i, cst R (c i) • coord i
+    obtain ⟨p, hp⟩ := TangentSurj.tangent_surjective R G' l
     refine ⟨tanOf (isTanAtG_lieG h' p), funext fun b => (tanEv_eq h' p _ rfl h (s b)).trans ?_⟩
-    have k := he.dual_basis_repr le_rfl (tangent p) b
-    rw [resM_self, hp, ← Module.Basis.equivFun_apply, LinearEquiv.apply_symm_apply, ← hp] at k
-    exact (congrArg _ k.symm).trans (Iso.inv_hom_id_apply _ _)
+    rw [hp]
+    have k : dualApp l le_rfl (e b) = cst R (c b) := by
+      dsimp [l]
+      rw [dualApp_sum, LinearMap.sum_apply]
+      simp [dualApp_smul, hcoord]
+    rw [k, Iso.inv_hom_id_apply]
 
 omit h'
 

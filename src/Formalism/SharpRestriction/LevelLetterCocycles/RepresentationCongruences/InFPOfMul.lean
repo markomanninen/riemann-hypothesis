@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.Pi0MemADelta
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.GammaPi0EqPi0MulUnit
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.Pi0MemADelta
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.GammaPi0EqPi0MulUnit
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,19 +85,6 @@ theorem γ_InFP (hT : IsCrys PD T.ρ) (hP2 : Formalism.MainNotions.DeltaInvarian
   obtain ⟨y, hy, rfl⟩ := h
   exact ⟨W.γ T y, γ_Pp W hT hP2 hy, γ_smul W f y⟩
 
-theorem inMultiple_of_mul {c : ZMod n} {e : ℕ} {f g : LetA O n} (hg : g ∈ W.AΔ) {x : W.DD T}
-    (h : InFP W T c e (f * g) x) : InFP W T c e f x := by
-  obtain ⟨y, hy, rfl⟩ := h
-  refine ⟨g • y, ?_, mul_smul f g y⟩
-  induction hy using AddSubgroup.closure_induction with
-  | mem z hz =>
-    obtain ⟨a, ha, x', hx', rfl⟩ := hz
-    apply AddSubgroup.subset_closure
-    exact ⟨g * a, mul_mem hg ha, x', hx', (mul_smul g a _).symm⟩
-  | zero => rw [smul_zero]; exact (Pp W T c e).zero_mem
-  | add u v _ _ hu hv => rw [smul_add]; exact (Pp W T c e).add_mem hu hv
-  | neg u _ hu => rw [smul_neg]; exact (Pp W T c e).neg_mem hu
-
 theorem inMultiple_zero {c : ZMod n} {e : ℕ} {f : LetA O n} : InFP W T c e f 0 :=
   ⟨0, (Pp W T c e).zero_mem, (smul_zero f).symm⟩
 
@@ -158,9 +149,9 @@ theorem InI_sum {c : ZMod n} {ι : Type} (s : Finset ι) (x : ι → W.DD T) (h 
     · unfold InLet at hx1 hy1 ⊢
       rw [smul_add, hx1, hy1]
     · intro δ hδ
-      rw [map_add, hx2 δ hδ, hy2 δ hδ]
+      rw [map_add (f := _), hx2 δ hδ, hy2 δ hδ]
     · rw [smul_add, hul, hul']
-    · rw [map_add, add_sub_add_comm, hux, hux', smul_add]
+    · rw [map_add (f := _), add_sub_add_comm, hux, hux', smul_add]
   have hzero : InI W T c 0 := ⟨by unfold InLet; rw [smul_zero], fun δ _ => map_zero _, 0,
     (W.NΔ T).zero_mem, smul_zero _, by rw [map_zero, sub_zero, smul_zero]⟩
   induction s using Finset.induction_on with

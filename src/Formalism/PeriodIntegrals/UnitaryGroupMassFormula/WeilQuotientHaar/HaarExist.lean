@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.QuotProdK
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.QuotProdK
+
+@[expose] public section
 
 noncomputable section
 

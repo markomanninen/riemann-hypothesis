@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.TwoSumsCondition
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.WModel
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.TwoSumsCondition
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.WModel
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,16 +70,13 @@ theorem sx_dual {n' : ℕ} (B : OmBasis p n') (hev : Even n') (a b : Fin n') (ha
     simp only [Function.comp_apply]
     have hsig : ∑ r, sigW p ((sigW p)^[2 * i.val] (B.omS r)) * sigW p ((sigW p)^[2 * i'.val] (B.om r)) =
         sigW p (∑ r, (sigW p)^[2 * i.val] (B.omS r) * (sigW p)^[2 * i'.val] (B.om r)) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl fun r _ => (map_mul _ _ _).symm
     rw [hsig, hE]
     by_cases h : a = b
     · rw [if_pos h, if_pos (hii.mpr h), map_one]
     · rw [if_neg h, if_neg (fun h' => h (hii.mp h')), map_zero]
-
-theorem sx_iter_posAdd {n' : ℕ} (x : WW p) (hx : (sigW p)^[n'] x = x) (s : Fin n') (e : ℕ) :
-    (sigW p)^[(posAdd s e).val] x = (sigW p)^[s.val + e] x := by
-  exact Function.IsPeriodicPt.iterate_mod_apply hx (s.val + e)
 
 theorem frobenius_congruence_witt (a : WW p) : ∃ y : WW p, sigW p a = a ^ p + p * y := by
   obtain ⟨y, hy⟩ := Formalism.InvariantFactorPaths.G7.WModel.frob_sub_pow p a
@@ -115,7 +116,8 @@ theorem sx_frob_sum {ι α K' : Type} [Field K'] (R : Subring K') (s : Finset α
       simp only [y', dif_pos hi]
       exact hy i hi
     have h2 := congrArg (MvPowerSeries.map R.subtype) hr
-    simp only [map_pow, map_sum, map_add, map_mul, map_natCast] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_pow, map_sum, map_add (f := _), map_mul, map_natCast] at h2
     have e3 : ∑ i ∈ s, (MvPowerSeries.map R.subtype (y' i)) ^ p = ∑ i ∈ s, x i ^ p :=
       Finset.sum_congr rfl fun i hi => by rw [hsum i hi]
     rw [Finset.sum_congr rfl hsum, e3] at h2

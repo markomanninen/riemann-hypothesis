@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped ContDiff
 
@@ -22,15 +26,17 @@ def wirt (l : Fin m) (f : (Fin m → ℂ) → E) (x : Fin m → ℂ) : E :=
 def wirtBar (l : Fin m) (f : (Fin m → ℂ) → E) (x : Fin m → ℂ) : E :=
   (1 / 2 : ℂ) • (fderiv ℝ f x (Pi.single l 1) + Complex.I • fderiv ℝ f x (Pi.single l Complex.I))
 
-open Classical in
-
-def pOp (l : Fin m) (f : (Fin m → ℂ) → E) : (Fin m → ℂ) → E := fun x =>
-  if x ∈ OmX m then x l • wirt l f x else 0
 
 open Classical in
+def pOp (l : Fin m) (f : (Fin m → ℂ) → E) : (Fin m → ℂ) → E := by
+  classical
+  exact fun x => if x ∈ OmX m then x l • wirt l f x else 0
 
-def pbOp (l : Fin m) (f : (Fin m → ℂ) → E) : (Fin m → ℂ) → E := fun x =>
-  if x ∈ OmX m then star (x l) • wirtBar l f x else 0
+
+open Classical in
+def pbOp (l : Fin m) (f : (Fin m → ℂ) → E) : (Fin m → ℂ) → E := by
+  classical
+  exact fun x => if x ∈ OmX m then star (x l) • wirtBar l f x else 0
 
 def cOp (l : Fin m) (f : (Fin m → ℂ) → E) : (Fin m → ℂ) → E := fun x => x l • f x
 def ciOp (l : Fin m) (f : (Fin m → ℂ) → E) : (Fin m → ℂ) → E := fun x => (x l)⁻¹ • f x
@@ -61,11 +67,5 @@ def CommFun : Prop :=
   ∀ (m : ℕ) (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E] (l k : Fin m) (i j : Fin 6)
     (f : (Fin m → ℂ) → E), f ∈ WSm m E → (l ≠ k ∨ (holoIdx i ↔ ¬ holoIdx j)) →
       opL l i (opL k j f) = opL k j (opL l i f)
-
-def AdjFun : Prop :=
-  ∀ (m : ℕ) (l : Fin m) (f g : (Fin m → ℂ) → ℂ), f ∈ WSm m ℂ → g ∈ WSm m ℂ →
-    HasCompactSupport f → HasCompactSupport g → tsupport f ⊆ OmX m → tsupport g ⊆ OmX m →
-      (∫ x, pOp l f x * star (g x) * ((∏ k, Complex.normSq (x k))⁻¹ : ℝ)) =
-        -(∫ x, f x * star (pbOp l g x) * ((∏ k, Complex.normSq (x k))⁻¹ : ℝ))
 
 end Formalism.QuantumDeterminants

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.BoundMulTranslate
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.BoundMulTranslate
+
+@[expose] public section
 
 noncomputable section
 

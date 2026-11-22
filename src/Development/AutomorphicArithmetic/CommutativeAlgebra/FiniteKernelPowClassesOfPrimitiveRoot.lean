@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.IsChart
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.IsChart
+
+@[expose] public section
 
 open GroundTheory.FunctionField UpperTheory.Et.Sel
 open scoped TensorProduct
@@ -33,7 +37,11 @@ theorem UpperTheory.finite_kernel_powClasses_of_primitive_root :
   haveI := hζ.neZero'
   have hq : ((q : ℕ) : K) ≠ 0 := NeZero.ne _
   have hq0 : q ≠ 0 := NeZero.ne q
-  let σ₀ : K' →ₐ[K] AlgebraicClosure K := IsAlgClosed.lift
+  let σ₀ : K' →ₐ[K] AlgebraicClosure K := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let S : Set Kˣ := {a : Kˣ | ∃ b : K', algebraMap K K' (a : K) = b ^ q}
   let bb : Kˣ → K' := fun a => if h : ∃ b : K', algebraMap K K' (a : K) = b ^ q then h.choose else 1
   have hbb : ∀ a ∈ S, algebraMap K K' (a : K) = bb a ^ q := by

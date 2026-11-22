@@ -1,5 +1,9 @@
-import ReciprocityTheory.DualLattices.LinPairStatement
-import ReciprocityTheory.DualLattices.IsPairingValueAddRight
+module
+
+public import ReciprocityTheory.DualLattices.LinPairStatement
+public import ReciprocityTheory.DualLattices.IsPairingValueAddRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -137,7 +141,7 @@ def mr (r : (R : Type u)) : LHom Dp.D Dp.D :=
        simp only [map_mul]
        linear_combination (Dp.σ.1 r - Dp.σ.1 r * Dp.σ.1 r) * hk
      map_zero' := by simp
-     map_add' := fun d e => by simp only [map_add]; ring
+     map_add' := fun d e => by simp only [map_add (f := _)]; ring
      commutes' := fun c => by simp },
    ⟨fun d hd => by
      have h1 := hd.map Dp.π.1
@@ -204,15 +208,15 @@ theorem ht_ext (B : BX R₀) {R : LAlg R₀} (Dp : DualPair R) (N : ℕ) (y : B.
     rw [e1, e2] at k
     refine ⟨_, k, ?_⟩
     simp only [Units.coe_map, MonoidHom.coe_coe]
-    rw [ez, map_add, map_one, Dp.mr_ση, hext_tmul, map_mul]
+    rw [ez, map_add (f := _), map_one, Dp.mr_ση, hext_tmul, map_mul]
     ring
   | add V V' ihV ihV' =>
     obtain ⟨z, hz, ez⟩ := ihV
     obtain ⟨z', hz', ez'⟩ := ihV'
     refine ⟨z * z', ?_, ?_⟩
-    · rw [map_add, map_add]
+    · rw [map_add (f := _), map_add (f := _)]
       exact B.isPairingValue_add_left N _ _ _ z z' hz hz'
-    · rw [Units.val_mul, ez, ez', map_add, map_add]
+    · rw [Units.val_mul, ez, ez', map_add (f := _), map_add (f := _)]
       linear_combination (Dp.σ.1 (hext B h V) * Dp.σ.1 (hext B h V')) * Dp.η_sq
 
 namespace OAdj

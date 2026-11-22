@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CyclotomicInertiaSpan.OnePrimeOfTop
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CyclotomicInertiaSpan.OnePrimeOfTop
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum UpperTheory.V.B1
 
@@ -67,7 +71,7 @@ theorem UpperTheory.V.B1.cycCompat :
     have hcz : c ζ = ζ⁻¹ := by
       apply j.injective
       have := hj ζ
-      simp only [AlgEquiv.toRingEquiv_eq_coe, AlgEquiv.coe_ringEquiv] at this
+      simp only [AlgEquiv.coe_toRingEquiv, AlgEquiv.coe_ringEquiv] at this
       rw [this, map_inv₀]
       have hn : ‖j ζ‖ = 1 :=
         Complex.norm_eq_one_of_pow_eq_one (by rw [← map_pow, hN, map_one]) (NeZero.ne N)

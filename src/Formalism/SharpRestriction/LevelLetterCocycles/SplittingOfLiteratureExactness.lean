@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CancelUnitMulUniformizerPow
-import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CancelUnitMulUniformizerPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
+
+@[expose] public section
 
 noncomputable section
 

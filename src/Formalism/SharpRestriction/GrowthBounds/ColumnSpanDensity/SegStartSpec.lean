@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.InitialLevelFormula
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.InitialLevelFormula
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem segStart_spec {n' : ℕ} (TT : Finset (Fin n')) (j : Fin (numSeg TT)) :
 theorem ex_cast {n' : ℕ} {TT : Finset (Fin n')} (z : Fin n' → ℤ) (c : ℕ) (s : Fin n') (hs : s ∈ TT) (h0 : 0 ≤ z s) :
     ((ex (TT := TT) (fun s => (z s + c).toNat) s : ℕ) : ℝ) = (z s : ℝ) + c := by
   unfold ex
-  rw [dif_pos hs]
+  rw [dite_eq_left hs]
   have h : ((z s + c).toNat : ℤ) = z s + c := Int.toNat_of_nonneg (by positivity)
   have h' : (((z s + c).toNat : ℤ) : ℝ) = ((z s + c : ℤ) : ℝ) := by rw [h]
   push_cast at h'

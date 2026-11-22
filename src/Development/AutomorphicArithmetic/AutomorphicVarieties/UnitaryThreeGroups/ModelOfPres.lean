@@ -1,22 +1,26 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.IsLocPres
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.RhoKApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.MopBase
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsTorusTwistEqLocalPointOfWeightedPres
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsDualNumberPointOfPointDerivationVanishing
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsBasePointDerivationOfWeightHomogeneous
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsPointDerivationEmbEntryEqSmulMatEntry
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsSpanEntMonApproxOfMemWtPart
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsOriginAndChartOfIsLocPres
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsSurjectionUnivNormCondKerSpanNEq
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsEqnsOfWeightedGenerators
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.KerGen
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.HomogSpan
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.IsWRing
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ChartAdd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ChartGr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.IsLocPres
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.RhoKApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.MopBase
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsTorusTwistEqLocalPointOfWeightedPres
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsDualNumberPointOfPointDerivationVanishing
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsBasePointDerivationOfWeightHomogeneous
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsPointDerivationEmbEntryEqSmulMatEntry
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsSpanEntMonApproxOfMemWtPart
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsOriginAndChartOfIsLocPres
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsSurjectionUnivNormCondKerSpanNEq
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.ExistsEqnsOfWeightedGenerators
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.KerGen
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.HomogSpan
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.IsWRing
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ChartAdd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ChartGr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.U3.Mop
 
@@ -123,12 +127,12 @@ private theorem mop_nWt : Nat.card {i // nWt i = -1} = 2 ∧ Nat.card {i // nWt 
   simp only [Nat.card_eq_fintype_card]
   decide
 
-private theorem mop_mat_mem {O G R : Type} [CommRing O] [Group G] [CommRing R] [Algebra O R] {r : G →* GG 3 R}
+private theorem mop_mat_mem {O G R : Type} [CommRing O] [Group G] [CommRing R] [Algebra O R] {r : G →* GG (m := 3) (R := R)}
     {W : WPres O ℤ R} (h : EntHomog r W) (g : G) (a b : Fin 3) : (r g).mat a b ∈ W.part (wt a b) := by
   rw [mat_eq_emb]
   exact add_mem (h g (.inl a) (.inl b)) (h g (.inl a) (.inr b))
 
-private theorem mop_nEq_mem {O G R : Type} [CommRing O] [Group G] [CommRing R] [Algebra O R] {r : G →* GG 3 R}
+private theorem mop_nEq_mem {O G R : Type} [CommRing O] [Group G] [CommRing R] [Algebra O R] {r : G →* GG (m := 3) (R := R)}
     {W : WPres O ℤ R} (h : EntHomog r W) (c g₁ : G) (k : Fin 8) : nEq c g₁ r k ∈ W.part (nWt k) := by
   have h1 : (1 : R) ∈ W.part 0 := SetLike.GradedOne.one_mem
   have hm := mop_mat_mem h
@@ -145,7 +149,7 @@ private theorem mop_nEq_mem {O G R : Type} [CommRing O] [Group G] [CommRing R] [
 private theorem mop_der_coord {O : Type} [CommRing O] (s : ℤˣ) (t : Oˣ) (a b : Fin 3 ⊕ Fin 3) :
     ∃ (u : O) (a' b' : Fin 3), wt a' b' = wt6 a - wt6 b ∧
       ∀ {R Q : Type} [CommRing R] [Algebra O R] [AddCommGroup Q] [Module O Q] (x : R →ₐ[O] O), ∀ D ∈ PtDer x Q,
-        ∀ y : GG 3 R, GG.map (x : R →+* O) y = ⟨tor O t, s⟩ → ∀ c : O,
+        ∀ y : GG (m := 3) (R := R), GG.map (x : R →+* O) y = ⟨tor O t, s⟩ → ∀ c : O,
           D (emb y a b - algebraMap O R c) = u • D (y.mat a' b') := by
   obtain ⟨u, a', b', h1, h2⟩ := UpperTheory.exists_pointDerivation_emb_entry_eq_smul_mat_entry s t a b
   refine ⟨u, a', b', h1, fun x D hD y hy c => ?_⟩

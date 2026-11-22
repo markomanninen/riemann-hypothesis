@@ -1,12 +1,16 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.ResidualRigidity.StringsTwo
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.ResidualRigidity.StringsTwo
+
+@[expose] public section
 
 open GlobalTheory.DiscSpec
 
 namespace GlobalTheory.CompanionTheory.Rigid
 
-open Classical in
 
+open Classical in
 theorem card_spehExp_eq (d m : ℕ) (hm : 1 ≤ m) :
     ((Finset.univ : Finset (Fin d)).filter (fun k => ((m : ℝ) - 1) / 2 = spehExp d k)).card =
       if m ≤ d ∧ Even (d - m) then 1 else 0 := by
@@ -36,8 +40,8 @@ theorem card_spehExp_eq (d m : ℕ) (hm : 1 ≤ m) :
     have h2 : d = m + 2 * (k : ℕ) := by exact_mod_cast h1
     exact ⟨by omega, (k : ℕ), by omega⟩
 
-open Classical in
 
+open Classical in
 theorem count_strings {X ι : Type} [Fintype ι] (p : ι → X) (d : ι → ℕ) (x : X) (m : ℕ) (hm : 1 ≤ m) :
     (GlobalTheory.Rigid.strings p d).count (x, ((m : ℝ) - 1) / 2) =
       (Finset.univ.filter fun i => p i = x ∧ m ≤ d i ∧ Even (d i - m)).card := by
@@ -53,8 +57,8 @@ theorem count_strings {X ι : Type} [Fintype ι] (p : ι → X) (d : ι → ℕ)
   · have hx' : ¬ x = p i := fun e => hx e.symm
     simp [hx, hx']
 
-open Classical in
 
+open Classical in
 theorem card_fibre_add {ι : Type} {X : Type} [Fintype ι] (p : ι → X) (d : ι → ℕ) (x : X) (m : ℕ) :
     (Finset.univ.filter fun i => p i = x ∧ d i = m).card +
         (Finset.univ.filter fun i => p i = x ∧ m + 2 ≤ d i ∧ Even (d i - (m + 2))).card =
@@ -66,8 +70,8 @@ theorem card_fibre_add {ι : Type} {X : Type} [Fintype ι] (p : ι → X) (d : �
     split_ifs <;> omega
   · simp [hx]
 
-open Classical in
 
+open Classical in
 theorem card_fibre_eq {X ι κ : Type} [Fintype ι] [Fintype κ] (p : ι → X) (d : ι → ℕ) (p' : κ → X)
     (d' : κ → ℕ) (hd : ∀ i, 1 ≤ d i) (hd' : ∀ j, 1 ≤ d' j)
     (h : GlobalTheory.Rigid.strings p d = GlobalTheory.Rigid.strings p' d') (x : X) (m : ℕ) :

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsArith
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ProjLineRankTwoPushforwardHypotheses
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsArith
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ProjLineRankTwoPushforwardHypotheses
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -49,13 +54,6 @@ section Inhabitants
 open IndefiniteRowSideFullHecke.Inter
 
 variable {F : Type} [Field F] {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
-
-def noBlockFam (F : Type) [Field F] {K : Type} [Fintype K] [IsEmpty K] (ι : K → Type) [∀ k, Fintype (ι k)] :
-    IFamily F ι :=
-  fun V n _ => if n = 0 then (ptDeg V (fun k => isEmptyElim k) : ℤ) else 0
-
-instance isEmpty_fibreBlock_id : IsEmpty (FibreBlock (id : Unit → Unit)) :=
-  ⟨fun k => k.2 ⟨k.1, rfl⟩⟩
 
 end Inhabitants
 

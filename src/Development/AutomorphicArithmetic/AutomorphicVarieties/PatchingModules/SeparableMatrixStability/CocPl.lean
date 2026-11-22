@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.MapEta
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.PlSub
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.MapEta
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.SeparableMatrixStability.PlSub
+
+@[expose] public section
 
 open IsLocalRing Matrix Filter UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.Pa
 
@@ -95,7 +99,7 @@ theorem UpperTheory.V.Pa.coc_pl :
       simp [ρ', hm]
     have hz' : ∀ a b, z' (a * b) = z' a + ρ' a * z' b * ρ' a⁻¹ := by
       intro a b
-      simp only [z', ρ', hz, map_add, map_mul]
+      simp only [z', ρ', hz, map_add (f := _), map_mul]
     have hlq : ((l : ℕ) : R ⧸ I ^ m) = 0 := by
       rw [← map_natCast (Ideal.Quotient.mk (I ^ m)), hl, map_zero]
     have key : ∀ g : G.G₀, ρ' g = 1 → ρ' (g ^ l) = 1 ∧ z' (g ^ l) = 0 := by

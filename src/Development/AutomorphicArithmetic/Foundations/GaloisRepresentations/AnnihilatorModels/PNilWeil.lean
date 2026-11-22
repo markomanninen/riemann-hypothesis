@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.GenericScale
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemClosureMulVOfFinrankEq
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.GenericScale
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemClosureMulVOfFinrankEq
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations
 open GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.GalOfCusp TensorProduct Module
 open UpperTheory.Gal.crystallineComparison
@@ -30,9 +35,9 @@ private theorem aeval_restr (D S : Submodule L M) (hSD : S ≤ D) (T : End L D) 
   induction Q using Polynomial.induction_on' with
   | add p q hp hq =>
     refine ⟨fun s hs => ?_, fun s hs => ?_⟩
-    · rw [map_add, LinearMap.add_apply]
+    · rw [map_add (f := _), LinearMap.add_apply]
       exact add_mem (hp.1 s hs) (hq.1 s hs)
-    · rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, Submodule.coe_add, hp.2 s hs, hq.2 s hs]
+    · rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, Submodule.coe_add, hp.2 s hs, hq.2 s hs]
   | monomial n a =>
     obtain ⟨h1, h2⟩ := pow_restr D S hSD T Φ hΦ hT n
     refine ⟨fun s hs => ?_, fun s hs => ?_⟩
@@ -44,7 +49,7 @@ private theorem aeval_restr (D S : Submodule L M) (hSD : S ≤ D) (T : End L D) 
 private theorem aeval_commute {D : Type} [AddCommGroup D] [Module L D] (T m : End L D) (h : Commute T m)
     (Q : Polynomial L) : Commute (Polynomial.aeval T Q) m := by
   induction Q using Polynomial.induction_on' with
-  | add p q hp hq => rw [map_add]; exact hp.add_left hq
+  | add p q hp hq => rw [map_add (f := _)]; exact hp.add_left hq
   | monomial n a =>
     rw [Polynomial.aeval_monomial]
     exact Commute.mul_left (show Commute _ m from Algebra.commutes a m) (h.pow_left n)

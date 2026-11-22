@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChartImageNull
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Assembly
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsChartImageNull
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Assembly
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -91,10 +96,10 @@ theorem ChartRatioImageNull.proof : ChartRatioImageNull.Statement := by
     have h1 : ContDiff ℂ ⊤ (segre : ((Σ k, ι k) → ℂ) → ((k : K) → ι k) → ℂ) := by
       apply contDiff_pi.2
       intro i
-      exact contDiff_prod (fun k _ => contDiff_apply ℂ ℂ _)
+      exact contDiff_prod (fun k _ => contDiff_apply ℂ (fun _ => ℂ) _)
     exact (LinearMap.toContinuousLinearMap Ψ).contDiff.comp h1
   have hc : ∀ i, ContDiff ℂ ⊤ (fun z : (Σ k, ι k) → ℂ => Ψ (segre z) i) :=
-    fun i => (contDiff_apply ℂ ℂ i).comp hsmooth
+    fun i => (contDiff_apply ℂ (fun _ => ℂ) i).comp hsmooth
   have hG : ∀ z ∈ U, ContDiffAt ℂ 1 G z := by
     intro z hz
     apply contDiffAt_pi.2

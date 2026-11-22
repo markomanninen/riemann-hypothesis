@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.XApply
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.FockEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.FkD
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.FkLe
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.XApply
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.FockEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.FkD
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.FockOperators.FkLe
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -22,7 +26,7 @@ private def stab {F : Type} [Field F] [NumberField F] [IsTotallyReal F] (δ : F)
 end UpperTheory.ConvolutionTheory.R2.Fo
 
 theorem UpperTheory.ConvolutionTheory.R2.Fo.fockOps :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E] (D : Dat F E) (O : Ops F), ∀ φ ∈ Fock D.δ, (∀ w i, O.x w i φ ∈ Fock D.δ) ∧ (∀ w i, O.d w i φ ∈ Fock D.δ) ∧ (∀ w, O.e D.δ w φ ∈ Fock D.δ) ∧
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (D : Dat F E) (O : Ops F), ∀ φ ∈ Fock D.δ, (∀ w i, O.x w i φ ∈ Fock D.δ) ∧ (∀ w i, O.d w i φ ∈ Fock D.δ) ∧ (∀ w, O.e D.δ w φ ∈ Fock D.δ) ∧
     (∀ w, O.f D.δ w φ ∈ Fock D.δ) ∧ (∀ w, O.h w φ ∈ Fock D.δ) ∧ (∀ τ i j, O.dE D τ i j φ ∈ Fock D.δ) ∧ ∀ Y, O.dL D Y φ ∈ Fock D.δ := by
   intro F E _ _ _ _ _ _ _ D O
   have hx : ∀ w i, O.x w i ∈ stab D.δ := fun w i => (fkLe F D.δ O).1 w i

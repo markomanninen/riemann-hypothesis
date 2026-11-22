@@ -1,9 +1,14 @@
-import Formalism.LocalToGlobal.Columns.LevGSym
-import Formalism.LocalToGlobal.HermitianForms.DefsSym
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CongruenceLevelEqDepthSucc
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PhiTopTargetSym
-import Formalism.LocalToGlobal.GroupLattices.LevelCharts.JoinForms
-import Formalism.LocalToGlobal.Columns.LevGCount
+module
+
+public import Formalism.LocalToGlobal.Columns.LevGSym
+public import Formalism.LocalToGlobal.HermitianForms.DefsSym
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CongruenceLevelEqDepthSucc
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PhiTopTargetSym
+public import Formalism.LocalToGlobal.GroupLattices.LevelCharts.JoinForms
+public import Formalism.LocalToGlobal.Columns.LevGCount
+
+@[expose] public section
+
 open Formalism.L2.Col
 
 namespace GlobalTheory.MemXSym

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowsMeanC
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RowsGenusWeightedSumComparisonStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BaseLatticeConstructionHoldsStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LatsDiscStable
-import Formalism.HermitianLattices.HermitianLatticesProofs.GenusBasic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowsMeanC
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RowsGenusWeightedSumComparisonStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.BaseLatticeConstructionHoldsStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LatsDiscStable
+public import Formalism.HermitianLattices.HermitianLatticesProofs.GenusBasic
+
+@[expose] public section
+
 noncomputable section
 open scoped Classical ENNReal
 open NumberField Formalism.HermitianLatticesTheory GlobalTheory.Mass
@@ -26,7 +31,7 @@ theorem sameGenus_refl (h : V →ₗ⋆[K] V →ₗ[K] K) (L : Submodule (𝓞 K
   fun _ _ => ⟨1, one_mem _, genusBasic_gmap_one _⟩
 
 theorem genus_eq_iff (h : V →ₗ⋆[K] V →ₗ[K] K) {L M : Submodule (𝓞 K) V}
-    (hL : Submodule.IsLattice K L) (hM : Submodule.IsLattice K M) :
+    (hL : Submodule.IsFullLattice K L) (hM : Submodule.IsFullLattice K M) :
     genus h L = genus h M ↔ L ∈ genus h M := by
   constructor
   · intro e; rw [← e]; exact ⟨hL, sameGenus_refl h L⟩
@@ -151,7 +156,7 @@ theorem rowsMean : RowsMeanC := by
   unfold massRows
   rw [ENNReal.ofReal_sum_of_nonneg fun Λ _ => hw Λ]
   refine GlobalTheory.RowsMean.sum_le_of_classes (Y.what₂ u) (fun Λ => GlobalTheory.DegAsm.lat0 (F0 X u) W.subtype Λ)
-    (Formalism.HermitianLatticesTheory.genus HW.B.flip) (Submodule.IsLattice D.host.E) (fun Λ hΛ => (hLat Λ hΛ).1.1)
+    (Formalism.HermitianLatticesTheory.genus HW.B.flip) (Submodule.IsFullLattice D.host.E) (fun Λ hΛ => (hLat Λ hΛ).1.1)
     (fun a b ha hb => GlobalTheory.RowsMean.genus_eq_iff _ ha hb) _ _ _ ?_
   intro Λ₀ hΛ₀
   have h1 := hOrb φ hφ Λ₀ hΛ₀

@@ -1,14 +1,18 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedUniv
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedGrading
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTangent
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.RelPres
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ObsClass
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSurj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.MapPart
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.KerGen
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTwoCoboundaries
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedUniv
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedGrading
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.FramedTangent
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.RelPres
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ObsClass
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoSurj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoMvps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.MapPart
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.KerGen
+
+@[expose] public section
 
 open IsLocalRing MvPowerSeries UpperTheory.V.Alg
 
@@ -23,14 +27,14 @@ private theorem lp_wcomp_mul {O σ X : Type} [CommRing O] [AddCommGroup X] (wt :
     have hp' := Finset.HasAntidiagonal.mem_antidiagonal.1 hp
     by_cases h2 : Finsupp.weight wt p.2 = c
     · rw [coeff_wcomp, if_pos]
-      rw [← h, ← hp', map_add, h2, add_sub_cancel_right]
+      rw [← h, ← hp', map_add (f := _), h2, add_sub_cancel_right]
     · rw [ha _ h2, mul_zero, mul_zero]
   · refine (Finset.sum_eq_zero fun p hp => ?_).symm
     have hp' := Finset.HasAntidiagonal.mem_antidiagonal.1 hp
     by_cases h2 : Finsupp.weight wt p.2 = c
     · rw [coeff_wcomp, if_neg, zero_mul]
       intro h1
-      exact h (by rw [← hp', map_add, h1, h2, sub_add_cancel])
+      exact h (by rw [← hp', map_add (f := _), h1, h2, sub_add_cancel])
     · rw [ha _ h2, mul_zero]
 
 private theorem lp_homog_mul {O σ X κ : Type} [CommRing O] [AddCommGroup X] [Fintype κ] (wt : σ → X)
@@ -39,17 +43,18 @@ private theorem lp_homog_mul {O σ X κ : Type} [CommRing O] [AddCommGroup X] [F
   intro x hx j
   refine Submodule.mul_induction_on hx (fun a ha b hb => ?_) (fun a b ha hb => ?_)
   · obtain ⟨d, rfl⟩ := Ideal.mem_span_range_iff_exists_fun.1 hb
-    rw [Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.mul_sum, map_sum]
     refine Ideal.sum_mem _ fun u _ => ?_
     rw [← mul_assoc, lp_wcomp_mul wt (hf u)]
     exact Ideal.mul_mem_mul (hI _ (I.mul_mem_right _ ha) _) (Ideal.subset_span ⟨u, rfl⟩)
-  · rw [map_add]; exact add_mem ha hb
+  · rw [map_add (f := _)]; exact add_mem ha hb
 
 private theorem lp_homog_sup {O σ X : Type} [CommRing O] [AddCommGroup X] (wt : σ → X)
     (I J : Ideal (MvPowerSeries σ O)) (hI : IsHomog O wt I) (hJ : IsHomog O wt J) : IsHomog O wt (I ⊔ J) := by
   intro x hx j
   obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hx
-  rw [map_add]
+  rw [map_add (f := _)]
   exact Submodule.add_mem_sup (hI a ha j) (hJ b hb j)
 
 private theorem lp_mem_max {O σ : Type} [CommRing O] [IsLocalRing O] (x : MvPowerSeries σ O) :
@@ -164,7 +169,7 @@ private theorem lp_detect {O B A R κ : Type} [CommRing O] [IsLocalRing O] [Comm
     rw [h2]
     refine add_mem (Ideal.mem_sup_left (Ideal.mem_map_of_mem _ ((lp_loc p'' x).2 hx))) ?_
     obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 (hker h1)
-    rw [map_add]
+    rw [map_add (f := _)]
     refine Submodule.add_mem_sup ?_ (lp_loc_sq p' hb)
     have h3 : (maximalIdeal B).map i ≤ ((maximalIdeal R).map s).comap p' :=
       Ideal.map_le_iff_le_comap.2 fun t ht => by
@@ -219,7 +224,8 @@ private theorem lp_ker {O B A R σ σB τ : Type} [CommRing O] [IsLocalRing O] [
         (maximalIdeal B).map (q.comp i) ⊔ maximalIdeal T ^ 2 := by
     intro T _ _ _ q
     have k1 := lp_loc_sq (q.comp π) hc
-    rw [map_sub, map_sub, AlgHom.commutes, map_sum, ← e.sum_comp, Fintype.sum_sum_type] at k1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sub, AlgHom.commutes, map_sum, ← e.sum_comp, Fintype.sum_sum_type] at k1
     simp only [map_smul, AlgHom.comp_apply] at k1
     have k2 : algebraMap O T (constantCoeff g) ∈ (maximalIdeal B).map (q.comp i) := by
       rw [← (q.comp i).commutes]
@@ -348,15 +354,17 @@ theorem UpperTheory.V.Alg.lemmaP :
       have hy' : y ∈ RingHom.ker W.π := hy
       rw [q4] at hy'
       obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hy'
-      rw [map_add, (hπ0 a).2 (Ideal.mem_sup_left ha), zero_add]
+      rw [map_add (f := _), (hπ0 a).2 (Ideal.mem_sup_left ha), zero_add]
       obtain ⟨d, rfl⟩ := Ideal.mem_span_range_iff_exists_fun.1 hb
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Ideal.sum_mem _ fun u _ => ?_
       rw [map_mul]
       exact Ideal.mul_mem_left _ _ (Ideal.subset_span ⟨u, rfl⟩)
     have hind : ∀ c : κ → O, ∑ u, c u • π (f u) = 0 → ∀ u, c u ∈ maximalIdeal O := fun c hc => by
       refine p3 c ((hπ0 _).1 ?_)
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simpa only [map_smul] using hc
     have hpart : ∀ j, ∀ x ∈ W₀.part j, x ∈ (WA.part j).map p.toLinearMap := fun j x hx => by
       rw [← p2] at hx
@@ -386,7 +394,7 @@ theorem UpperTheory.V.Alg.lemmaP :
         (fun u => if h : wf u = j then c ⟨u, h⟩ else 0) (by
           intro A' _ _ _ p' p'' η k1 k2 k3 k4 k5
           obtain ⟨r', α', m1, m2, m3⟩ := ho j c (by simpa only [hc] using hcb) A' p' p'' η k1 k2 k3 k4
-            (fun u => by rw [k5, dif_pos u.2]) (fun u hu => by rw [k5, dif_neg hu, zero_smul])
+            (fun u => by rw [k5, dite_eq_left u.2]) (fun u hu => by rw [k5, dite_eq_right hu, zero_smul])
           obtain ⟨s, ⟨s1, s2, s3⟩, -⟩ := hU.2 A' _ r' α' m1
           refine ⟨s, ?_, by rw [hpi, s1]⟩
           refine (hU.2 R i r α hU.1).unique ⟨?_, ?_, fun v => ?_⟩ ⟨rfl, rfl, fun v => rfl⟩
@@ -396,7 +404,7 @@ theorem UpperTheory.V.Alg.lemmaP :
             rw [← s3 v] at m4; exact m4)
       intro u
       have h4 := h3 u
-      rw [dif_pos u.2] at h4
+      rw [dite_eq_left u.2] at h4
       rw [← hc, residue_eq_zero_iff]
       exact h4
     rw [Nat.card_eq_fintype_card]

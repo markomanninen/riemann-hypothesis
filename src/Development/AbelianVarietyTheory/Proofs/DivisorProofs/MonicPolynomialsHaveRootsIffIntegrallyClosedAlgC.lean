@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IndEtOfForallFinset
+
+@[expose] public section
+
 open GlobalTheory.EtC
 
 namespace GlobalTheory.AICIff
@@ -44,11 +49,11 @@ theorem aic_iff : ∀ (D : Type) [CommRing D] [IsDomain D],
       have hdeg : 0 < f.natDegree :=
         hf.natDegree_pos.2 (fun h1 => hirr.not_isUnit (h1 ▸ isUnit_one))
       have hinj := IsFractionRing.injective D (FractionRing D)
-      obtain ⟨b, hb⟩ := IsLocalization.integerNormalization_map_to_map (nonZeroDivisors D) f
+      obtain ⟨b, hb0, hb⟩ := IsLocalization.integerNormalization_spec (nonZeroDivisors D) f
       set g := IsLocalization.integerNormalization (nonZeroDivisors D) f with hg
-      have hc : algebraMap D (FractionRing D) (b : D) ≠ 0 :=
-        IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors b.2
-      have hgmap : g.map (algebraMap D (FractionRing D)) = C (algebraMap D (FractionRing D) (b : D)) * f := by
+      have hc : algebraMap D (FractionRing D) b ≠ 0 :=
+        IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors hb0
+      have hgmap : g.map (algebraMap D (FractionRing D)) = C (algebraMap D (FractionRing D) b) * f := by
         rw [hb, Algebra.smul_def]; rfl
       have hgdeg : g.natDegree = f.natDegree := by
         rw [← natDegree_map_eq_of_injective hinj g, hgmap, natDegree_C_mul hc]

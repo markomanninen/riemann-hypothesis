@@ -1,9 +1,13 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRing
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdelesLocalRingTotallyReal
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LinearChangeEulerProductStatement
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRing
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdelesLocalRingTotallyReal
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LinearChangeEulerProductStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,7 @@ theorem repr_incl_mul {d : ℕ} (b : Module.Basis (Fin d) F E) (e : E) (y : R �
   induction y using TensorProduct.induction_on with
   | zero => simp
   | add x y hx hy =>
-    simp only [mul_add, map_add, Finsupp.add_apply, hx, hy, Finset.sum_add_distrib]
+    simp only [mul_add, map_add (f := _), Finsupp.add_apply, hx, hy, Finset.sum_add_distrib]
   | tmul r e' =>
     have h1 : inclR R e * (r ⊗ₜ[F] e') = r ⊗ₜ[F] (e * e') := by
       simp [inclR]
@@ -42,7 +46,8 @@ theorem repr_incl_mul {d : ℕ} (b : Module.Basis (Fin d) F E) (e : E) (y : R �
     simp only [Algebra.TensorProduct.basis_repr_tmul, Finsupp.smul_apply, smul_eq_mul,
       Finsupp.mapRange_apply]
     rw [← h2]
-    simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, map_sum, map_mul, Finset.mul_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
     ring
 
@@ -53,10 +58,11 @@ theorem coTup_mulVec {n M d : ℕ} (b : Module.Basis (Fin d) F E) (G : Matrix (F
   funext ⟨a, i, k⟩
   have h0 : (G.map (inclR R) *ᵥ X a) i = ∑ j, inclR R (G i j) * X a j := by
     simp [Matrix.mulVec, dotProduct]
-  simp only [coTup, h0, map_sum, Finsupp.coe_finset_sum, Finset.sum_apply, repr_incl_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [coTup, h0, map_sum, Finset.sum_apply, repr_incl_mul]
   simp only [Matrix.mulVec, dotProduct, Matrix.map_apply, actMat, Fintype.sum_prod_type]
   rw [Finset.sum_eq_single a]
-  · simp [coTup]
+  · simp [coTup, repr_incl_mul]
   · intro a' _ h
     simp [Ne.symm h]
   · simp
@@ -167,7 +173,7 @@ theorem map_actTup {n M d : ℕ} (b : Module.Basis (Fin d) F E) (g : GL (Fin M) 
         rw [Measure.map_map hAc.measurable he, Measure.map_map hes (hAc.measurable.comp he)]
     _ = (c • μ.map e).map e.symm := by rw [h1]
     _ = c • μ := by
-        rw [Measure.map_smul, Measure.map_map hes he]
+        rw [Measure.map_smul c hes.aemeasurable, Measure.map_map hes he]
         simp
 
 end Meas

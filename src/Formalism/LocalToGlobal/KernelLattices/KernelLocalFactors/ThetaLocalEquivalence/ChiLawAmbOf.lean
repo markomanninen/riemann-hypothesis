@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThetaLocalEquivalence.ThEquivPStepCIff
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.CharacterFactorUnitaryAction
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.NormOneUnitIdeal
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThIndep
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThetaLocalEquivalence.ThEquivPStepCIff
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.CharacterFactorUnitaryAction
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.NormOneUnitIdeal
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PLinkThIndep
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -23,7 +27,8 @@ theorem Seam.vec_gmap {n : ℕ} (γ : UF X.E n) (x : Sp X.E n) : s.vec (γ.1 x) 
   have h := toGLm_mulVec γ.1 x
   rw [← h]
   funext i
-  simp only [Seam.vec, Matrix.mulVec, dotProduct, map_sum, map_mul, Seam.matU]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Seam.vec, Matrix.mulVec, dotProduct, map_sum, map_mul, Seam.matU]
   rfl
 
 theorem Seam.lat_gmap {n : ℕ} (γ : UF X.E n) (N : Submodule (𝓞 X.E) (Sp X.E n)) :

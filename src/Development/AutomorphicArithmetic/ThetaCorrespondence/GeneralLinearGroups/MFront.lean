@@ -1,31 +1,36 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.CasselmanSuffTemp
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BernsteinUnitaryProductIrreducible
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.TotallyDisjointProductIrreducibleOfPolynomialRin
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LanglandsClassificationCuspidalSupport
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
-import BuildAid.D5
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.CasselmanSuffTemp
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.BernsteinUnitaryProductIrreducible
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.TotallyDisjointProductIrreducibleOfPolynomialRin
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LanglandsClassificationCuspidalSupport
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
+public import Lean.LibrarySuggestions.Basic
+public import Lean.Elab.Command
+
+@[expose] public section
 
 open Filter Topology GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult UpperTheory.Lit.Cas
 
 private theorem UpperTheory.Lit.Mix.front_support_decomposition (hG : GlobalTheory.Published.GeometricLemma) (hBZ : GlobalTheory.Published.BernsteinZelevinskyFiniteness)
     (hZ : GlobalTheory.Published.ZelevinskyPolynomialRing) (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k]
     [IsNonarchimedeanLocalField k] (m n : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V]
-    (π : Representation ℂ (GL (Fin (m + n)) k) V) (A₀ A₁ : Multiset (IrrGL k)) (hA : HasSupport π (A₀ + A₁))
+    (π : Representation ℂ (GL (Fin (m + n)) k) V) (A₀ A₁ : Multiset (IrrGL (k := k))) (hA : HasSupport π (A₀ + A₁))
     (hm₀ : (A₀.map Sigma.fst).sum = m) (hU : ∀ x ∈ A₀, ∀ y ∈ A₁, ∀ j : ℤ, |j| ≤ 1 → x ≠ y.nu (j : ℂ))
-    (s : ℕ) (u : Fin s → IrrGL k) (e₃ : (Σ a, Fin (u a).1) ≃ Fin (m + n)) (hc : ∀ a, (u a).IsCusp)
+    (s : ℕ) (u : Fin s → IrrGL (k := k)) (e₃ : (Σ a, Fin (u a).1) ≃ Fin (m + n)) (hc : ∀ a, (u a).IsCusp)
     (φ : π.IntertwiningMap (multiProd e₃ fun a => (u a).rep)) (hφ : Function.Injective φ) :
-    ∃ (h h' : ℕ) (u : Fin h → IrrGL k) (w : Fin h' → IrrGL k) (hu : ∑ a, (u a).1 = m) (hw : ∑ a, (w a).1 = n),
+    ∃ (h h' : ℕ) (u : Fin h → IrrGL (k := k)) (w : Fin h' → IrrGL (k := k)) (hu : ∑ a, (u a).1 = m) (hw : ∑ a, (w a).1 = n),
       Finset.univ.val.map u = A₀ ∧
         ∃ f : π.IntertwiningMap (prod₂ (prodIrr u hu) (prodIrr w hw)), Function.Injective f := by
   classical
   have hAB : ∀ x ∈ A₀, x ∉ A₁ := fun x hx hx' => hU x hx x hx' 0 (by simp) (by simp)
   have hn₁ : (A₁.map Sigma.fst).sum = n := by
     have h := hA.sum_fst
-    rw [Multiset.map_add, Multiset.sum_add, hm₀, Fintype.card_fin] at h
+    rw [Multiset.map_add (f := _), Multiset.sum_add, hm₀, Fintype.card_fin] at h
     omega
   have hS₁ : HasSupport π (Finset.univ.val.map u) :=
     ⟨s, u, rfl, hA.isIrreducible, fun a => ⟨(hc a).1, (u a).2.rep.irr, (hc a).2⟩, e₃, .of_injective φ hφ⟩
@@ -49,7 +54,7 @@ private theorem UpperTheory.Lit.Mix.front_support_decomposition (hG : GlobalTheo
       rfl
     rw [h, hm, Multiset.filter_add, Multiset.filter_eq_self.2 (fun x hx => hAB x hx),
       Multiset.filter_eq_nil.2 (fun x hx h => h hx), add_zero]
-  have deg : ∀ (T : Finset (Fin s)) (C : Multiset (IrrGL k)), T.val.map u = C →
+  have deg : ∀ (T : Finset (Fin s)) (C : Multiset (IrrGL (k := k))), T.val.map u = C →
       ∑ a : Fin T.card, (u (T.orderEmbOfFin rfl a)).1 = (C.map Sigma.fst).sum := by
     intro T C h
     rw [← h, ← GlobalTheory.CompanionTheory.Hypotheses₂.TD.map_orderEmb T u, Multiset.map_map]
@@ -64,7 +69,7 @@ private theorem UpperTheory.Lit.Mix.front_support_decomposition (hG : GlobalTheo
     (GlobalTheory.CompanionTheory.Hypotheses₂.TD.map_orderEmb _ u).trans mC, Φ.toIntertwiningMap.comp φ, Φ.toLinearEquiv.injective.comp hφ⟩
 
 theorem UpperTheory.Lit.Mix.front :
-    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → GlobalTheory.Published.ZelevinskyPolynomialRing → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (m n : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V] (σ : Representation ℂ (GL (Fin (m + n)) k) V) (A₀ A₁ : Multiset (IrrGL k)), HasSupport σ (A₀ + A₁) → (A₀.map Sigma.fst).sum = m → (∀ x ∈ A₀, ∀ y ∈ A₁, ∀ j : ℤ, |j| ≤ 1 → x ≠ y.nu (j : ℂ)) → ∃ (h h' : ℕ) (u : Fin h → IrrGL k) (w : Fin h' → IrrGL k) (hu : ∑ a, (u a).1 = m) (hw : ∑ a, (w a).1 = n), Finset.univ.val.map u = A₀ ∧ ∃ f : σ.IntertwiningMap (prod₂ (prodIrr u hu) (prodIrr w hw)), Function.Injective f := by
+    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → GlobalTheory.Published.ZelevinskyPolynomialRing → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] (m n : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V] (σ : Representation ℂ (GL (Fin (m + n)) k) V) (A₀ A₁ : Multiset (IrrGL (k := k))), HasSupport σ (A₀ + A₁) → (A₀.map Sigma.fst).sum = m → (∀ x ∈ A₀, ∀ y ∈ A₁, ∀ j : ℤ, |j| ≤ 1 → x ≠ y.nu (j : ℂ)) → ∃ (h h' : ℕ) (u : Fin h → IrrGL (k := k)) (w : Fin h' → IrrGL (k := k)) (hu : ∑ a, (u a).1 = m) (hw : ∑ a, (w a).1 = n), Finset.univ.val.map u = A₀ ∧ ∃ f : σ.IntertwiningMap (prod₂ (prodIrr u hu) (prodIrr w hw)), Function.Injective f := by
   intro hG hBZ hZ k _ _ _ _ m n V _ _ π A₀ A₁ hA hm₀ hU
   exact (GlobalTheory.CompanionTheory.CuspEmbed.main hBZ hG k _ (GlobalTheory.SplitRead.Irr.mk V π hA.isSmooth hA.isIrreducible)).elim fun s H =>
     H.elim fun u H => H.elim fun e H => H.2.elim fun φ hφ =>

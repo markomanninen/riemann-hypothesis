@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittSmallGroupEmbeddingMemPointwiseStabilizerIso
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsHermNDInvTranspose
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CmDataIsCMExtAndGramIsHermND
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GinfCSecondCountable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittSmallGroupEmbeddingMemPointwiseStabilizerIso
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsHermNDInvTranspose
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CmDataIsCMExtAndGramIsHermND
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.GinfCSecondCountable
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix GlobalTheory.MixModel GlobalTheory.MixPer
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -21,8 +26,10 @@ theorem map_coord_eq {V : Type} [AddCommGroup V] [TopologicalSpace V] [IsTopolog
   subst e
   have hp : MeasurePreserving f (Measure.addHaar : Measure V) Measure.addHaar :=
     ⟨hf, hfH _ inferInstance⟩
+  have hpi := measurePreserving_pi (fun _ : Fin ρ => (Measure.addHaar : Measure V))
+    (fun _ => Measure.addHaar) (fun _ => hp)
   rw [Measure.isAddLeftInvariant_eq_smul lam (Measure.pi fun _ : Fin ρ => (Measure.addHaar : Measure V)),
-    Measure.map_smul]
+    Measure.map_smul _ hpi.measurable.aemeasurable]
   congr 1
   exact (measurePreserving_pi (fun _ : Fin ρ => (Measure.addHaar : Measure V))
     (fun _ => Measure.addHaar) (fun _ => hp)).map_eq
@@ -31,7 +38,11 @@ theorem map_mul_mt_eq : ∀ (D : D7) (S₀ : HSp D) (ρ : ℕ) (lam : Measure (M
     lam.IsAddHaarMeasure → ∀ h : GA D S₀,
       lam.map (fun b : Mx D ρ S₀.rank => b ⬝ mt S₀ h) = lam := by
   intro D S₀ ρ lam hlam h
-  obtain ⟨h1, h2, h3, h4, h5⟩ := Formalism.IndefR.Eqv.ae_facts D
+  have h1 : IsTopologicalRing (AE D) := (Formalism.IndefR.Eqv.ae_facts D).1
+  have h2 : T2Space (AE D) := (Formalism.IndefR.Eqv.ae_facts D).2.1
+  have h3 : LocallyCompactSpace (AE D) := (Formalism.IndefR.Eqv.ae_facts D).2.2.1
+  have h4 : SecondCountableTopology (AE D) := (Formalism.IndefR.Eqv.ae_facts D).2.2.2.1
+  have h5 : BorelSpace (AE D) := (Formalism.IndefR.Eqv.ae_facts D).2.2.2.2
   have hcm := GlobalTheory.Mem.Vol.cmData_isCMExt_and_gram_isHermND _ _ D.sp.cm
   have hrow := GlobalTheory.AdelicModulus.Row.map_vecMul_unitary _ _ D.sp.cm.sig hcm.1 S₀.rank S₀.gram
     (hcm.2 S₀) h

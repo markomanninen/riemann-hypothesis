@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.CosetCount
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.CosetCount
+
+@[expose] public section
 
 open TensorProduct
 
@@ -14,14 +18,14 @@ noncomputable def contr (v : V ⊗[ℂ] W) : Module.Dual ℂ W →ₗ[ℂ] V whe
     | zero => simp
     | tmul a b => simp [add_smul]
     | add s t hs ht =>
-      simp only [map_add] at hs ht ⊢
+      simp only [map_add (f := _)] at hs ht ⊢
       rw [hs, ht]; abel
   map_smul' c l := by
     induction v using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [mul_smul]
     | add s t hs ht =>
-      simp only [map_add, RingHom.id_apply, smul_add] at hs ht ⊢
+      simp only [map_add (f := _), RingHom.id_apply, smul_add] at hs ht ⊢
       rw [hs, ht]
 
 @[simp] theorem contr_tmul (a : V) (b : W) (l : Module.Dual ℂ W) :
@@ -34,7 +38,7 @@ theorem contr_apply (v : V ⊗[ℂ] W) (l : Module.Dual ℂ W) :
 
 theorem contr_add (s t : V ⊗[ℂ] W) (l : Module.Dual ℂ W) :
     contr (s + t) l = contr s l + contr t l := by
-  simp only [GlobalTheory.CompanionTheory.TensContr.contr_apply, map_add]
+  simp only [GlobalTheory.CompanionTheory.TensContr.contr_apply, map_add (f := _)]
 
 theorem contr_smul (c : ℂ) (t : V ⊗[ℂ] W) (l : Module.Dual ℂ W) :
     contr (c • t) l = c • contr t l := by
@@ -48,7 +52,7 @@ theorem contr_map (f : V →ₗ[ℂ] V) (g : W →ₗ[ℂ] W) (t : V ⊗[ℂ] W)
     rw [TensorProduct.map_tmul, GlobalTheory.CompanionTheory.TensContr.contr_tmul, GlobalTheory.CompanionTheory.TensContr.contr_tmul,
       LinearMap.comp_apply, map_smul]
   | add s t hs ht =>
-    rw [map_add, GlobalTheory.CompanionTheory.TensContr.contr_add, GlobalTheory.CompanionTheory.TensContr.contr_add, hs, ht, map_add]
+    rw [map_add (f := _), GlobalTheory.CompanionTheory.TensContr.contr_add, GlobalTheory.CompanionTheory.TensContr.contr_add, hs, ht, map_add (f := _)]
 
 theorem exists_finset_contr (v : V ⊗[ℂ] W) :
     ∃ s : Finset V, ∀ l, contr v l ∈ Submodule.span ℂ (s : Set V) := by
@@ -93,7 +97,7 @@ theorem eq_zero_of_contr (v : V ⊗[ℂ] W) (h : ∀ l, contr v l = 0) : v = 0 :
       rw [TensorProduct.equivFinsuppOfBasisRight_apply_tmul_apply, GlobalTheory.CompanionTheory.TensContr.contr_tmul,
         Module.Basis.coord_apply]
     | add s t hs ht =>
-      rw [map_add, Finsupp.add_apply, hs, ht, GlobalTheory.CompanionTheory.TensContr.contr_add]
+      rw [map_add (f := _), Finsupp.add_apply, hs, ht, GlobalTheory.CompanionTheory.TensContr.contr_add]
   have he : e v = 0 := by
     ext i
     rw [key, h, Finsupp.coe_zero, Pi.zero_apply]

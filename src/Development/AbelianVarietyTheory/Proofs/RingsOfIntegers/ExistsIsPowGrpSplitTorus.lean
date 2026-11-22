@@ -1,12 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExpandsPullOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExpPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdFam
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TWMain
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.QuadraticAlgebraValuation
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsSplitTorusPointsMulEquiv
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ExpandsPullOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExpPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdFam
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TWMain
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.TwistBCPf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.QuadraticAlgebraValuation
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DvrLem
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsSplitTorusPointsMulEquiv
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.DVR
@@ -46,17 +50,14 @@ theorem mul_comp_torusMap (φ : X →+ X') {Z : Over S} (a b : Z ⟶ splitTorus 
   rw [map_mul, points_comp_torusMap, points_comp_torusMap, points_comp_torusMap, map_mul,
     MonoidHom.mul_comp]
 
-theorem isMonHom_torusMap (φ : X →+ X') : IsMonHom (torusMap S φ) where
-  one_hom := by
-    have h : (1 : 𝟙_ (Over S) ⟶ splitTorus S X') ≫ torusMap S φ = 1 := by
+theorem isMonHom_torusMap (φ : X →+ X') : IsMonHom (torusMap S φ) := by
+  constructor
+  · have h : (1 : 𝟙_ (Over S) ⟶ splitTorus S X') ≫ torusMap S φ = 1 := by
       apply (splitTorusPointsEquiv S X _).injective
       rw [points_comp_torusMap, map_one, map_one, MonoidHom.one_comp]
     simpa [Hom.one_def] using h
-  mul_hom := by
-    have h := mul_comp_torusMap (S := S) φ (fst _ _) (snd _ _)
-    rw [Hom.mul_def, Hom.mul_def, lift_fst_snd, Category.id_comp] at h
-    rw [h]
-    congr 1
+  · simpa only [Hom.mul_def, lift_fst_snd, Category.id_comp, lift_fst_comp_snd_comp] using
+      mul_comp_torusMap (S := S) φ (fst (splitTorus S X') (splitTorus S X')) (snd _ _)
 
 def incl {j : ℕ} (xe : X' ≃+ (Fin j → X)) (i : Fin j) : X →+ X' :=
   xe.symm.toAddMonoidHom.comp (AddMonoidHom.single (fun _ => X) i)
@@ -66,7 +67,8 @@ theorem incl_apply {j : ℕ} (xe : X' ≃+ (Fin j → X)) (i : Fin j) (χ : X) :
 
 theorem sum_incl {j : ℕ} (xe : X' ≃+ (Fin j → X)) (x : X') : ∑ i, incl xe i (xe x i) = x := by
   simp only [incl_apply]
-  rw [← map_sum, Finset.univ_sum_single, AddEquiv.symm_apply_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, Finset.univ_sum_single, AddEquiv.symm_apply_apply]
 
 theorem hom_ext_incl {M : Type} [CommGroup M] {j : ℕ} (xe : X' ≃+ (Fin j → X))
     {u v : Multiplicative X' →* M}
@@ -86,7 +88,7 @@ theorem exists_hom_incl {M : Type} [CommGroup M] {j : ℕ} (xe : X' ≃+ (Fin j 
   refine ⟨∏ i, (w i).comp (AddMonoidHom.toMultiplicative
     ((Pi.evalAddMonoidHom (fun _ => X) i).comp xe.toAddMonoidHom)), fun i => ?_⟩
   refine MonoidHom.ext fun x => ?_
-  rw [MonoidHom.comp_apply, MonoidHom.finset_prod_apply, Finset.prod_eq_single i]
+  rw [MonoidHom.comp_apply, MonoidHom.finsetProd_apply, Finset.prod_eq_single i]
   · simp [incl_apply]
   · intro k _ hk
     simp [incl_apply, Pi.single_eq_of_ne hk]
@@ -96,7 +98,7 @@ noncomputable def isPowGrp (S : Scheme.{0}) {j : ℕ} (xe : X' ≃+ (Fin j → X
     IsPowGrp (splitTorus S X') (splitTorus S X) j where
   pr i := torusMap S (incl xe i)
   hom i := isMonHom_torusMap _
-  lim := mkFanLimit _
+  lim := Fan.IsLimit.mk _
     (fun s => (splitTorusPointsEquiv S X' s.pt).symm
       (exists_hom_incl xe fun i => splitTorusPointsEquiv S X s.pt (s.proj i)).choose)
     (fun s i => by

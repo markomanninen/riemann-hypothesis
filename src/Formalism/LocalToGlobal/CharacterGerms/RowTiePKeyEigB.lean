@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyEigA
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyJointDef
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyTeichDef
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyEigA
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyJointDef
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePKeyTeichDef
+
+@[expose] public section
 
 noncomputable section
 

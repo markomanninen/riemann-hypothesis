@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped BigOperators
 
 open TensorProduct in
@@ -9,7 +14,7 @@ private lemma traceForm {S : Type} [AddCommGroup S] [Module ℂ S] [FiniteDimens
   obtain ⟨u, rfl⟩ := (dualTensorHomEquiv ℂ S S).surjective t
   induction u using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, add_mul, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), add_mul, hx, hy]
   | tmul f x =>
     have hab : (dualTensorHom ℂ S S (f ⊗ₜ x)) =
         (dualTensorHom ℂ S S (ξ ⊗ₜ x)) * (dualTensorHom ℂ S S (f ⊗ₜ e)) := by

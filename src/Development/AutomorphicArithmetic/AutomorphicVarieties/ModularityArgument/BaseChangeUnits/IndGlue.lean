@@ -1,16 +1,21 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.QuadraticInductionGL2Alt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.IsAlgOfPos
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.SymmetricAdjointFrobenius.InfEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.DenseRangeUnitsR
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.AlgCyc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AdTransfer
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.FrobeniusEigenvaluesTwist
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsQuadraticSignCharacter
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.FrobeniusSignCompatibility
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.GaloisRepIrreducibilityCriterion
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSSRepTraceNondegenerate
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FrobeniusRestrictScalarsPowModInertia
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.QuadraticInductionGL2Alt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.IsAlgOfPos
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.ArthurClozelDescent
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CapCentral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.DenseRangeUnitsR
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.AlgCyc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AdTransfer
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.FrobeniusEigenvaluesTwist
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsQuadraticSignCharacter
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.FrobeniusSignCompatibility
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.GaloisRepIrreducibilityCriterion
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSSRepTraceNondegenerate
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FrobeniusRestrictScalarsPowModInertia
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N Polynomial GlobalTheory.CuspRep GlobalTheory.HeckeGal
 open GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Af.Bc UpperTheory.V.Published UpperTheory.V.Sd UpperTheory.V.Base
@@ -131,9 +136,16 @@ private theorem normV_sq (h2 : Module.finrank F E = 2) (w : HeightOneSpectrum (�
   have : w.asIdeal.LiesOver (w.under (𝓞 F)).asIdeal := ⟨rfl⟩
   have := w.isMaximal
   have := (w.under (𝓞 F)).isMaximal
-  have e : normV w = normV (w.under (𝓞 F)) ^ w.asIdeal.inertiaDeg (𝓞 F) :=
-    (Ideal.absNorm_pow_inertiaDeg (w.under (𝓞 F)).asIdeal w.asIdeal).symm
-  have h1 : 1 < normV w := NumberField.HeightOneSpectrum.one_lt_absNorm w
+  have hn {K : Type} [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K)) :
+      normV v = Ideal.absNorm v.asIdeal := by
+    rw [Ideal.absNorm_apply, Submodule.cardQuot_apply]
+    rfl
+  have e : normV w = normV (w.under (𝓞 F)) ^ w.asIdeal.inertiaDeg (𝓞 F) := by
+    rw [hn, hn]
+    exact (Ideal.absNorm_pow_inertiaDeg (w.under (𝓞 F)).asIdeal w.asIdeal).symm
+  have h1 : 1 < normV w := by
+    rw [hn]
+    exact NumberField.HeightOneSpectrum.one_lt_absNorm w
   have h3 : w.asIdeal.inertiaDeg (𝓞 F) ≤ 2 := by
     haveI : NoZeroSMulDivisors (𝓞 F) (𝓞 E) := ⟨fun {c x} h => by
       rwa [Algebra.smul_def, mul_eq_zero, map_eq_zero_iff _ (FaithfulSMul.algebraMap_injective _ _)] at h⟩
@@ -203,7 +215,7 @@ private theorem prod_inert (q : ℕ) (B : Multiset ℂˣ) :
   have e : ((q ^ 2 : ℕ) : ℝ) ^ ((((2 : ℕ) : ℝ) - 1) / 2) = ((q : ℝ) ^ ((((2 : ℕ) : ℝ) - 1) / 2)) ^ 2 := by
     rw [Nat.cast_pow, ← Real.rpow_natCast, ← Real.rpow_natCast, ← Real.rpow_mul (Nat.cast_nonneg q),
       ← Real.rpow_mul (Nat.cast_nonneg q), mul_comm]
-  simp only [algSat_eq, e, Multiset.map_add, Multiset.map_map, Multiset.prod_add, ← Multiset.prod_map_mul, multiset_prod_comp]
+  simp only [algSat_eq, e, Multiset.map_add (f := _), Multiset.map_map, Multiset.prod_add, ← Multiset.prod_map_mul, multiset_prod_comp]
   refine congrArg _ (Multiset.map_congr rfl fun b _ => ?_)
   generalize (q : ℝ) ^ ((((2 : ℕ) : ℝ) - 1) / 2) = c
   simp only [Function.comp_apply, sub_comp, mul_comp, pow_comp, X_comp, C_comp, Complex.ofReal_pow, Units.val_pow_eq_pow_val, Units.val_neg, map_mul,
@@ -267,7 +279,7 @@ private theorem loc {F E Ω : Type} [Field F] [NumberField F] [Field E] [NumberF
     have e1 := (hE A hw).2 g (hq ▸ frob_emb (F := F) hσ)
     have e2 := (hE' _ hw').2 g' (hq' ▸ frob_emb (F := F) (hg' ▸ frob_conj hσ t))
     rw [← map_inv (galEmb F E Ω), (H t ht).1 g⁻¹ g'⁻¹ (by rw [map_inv, map_inv, hg']; group), Polynomial.map_mul, e1, e2, hq, hq']
-    simp only [algSat_eq, Multiset.map_add, Multiset.prod_add]
+    simp only [algSat_eq, Multiset.map_add (f := _), Multiset.prod_add]
   · have hq := normV_sq h2 w fun h => hs ((hsg w rfl).2 h)
     obtain ⟨_, B', k1, rfl, k3⟩ := (hc w rfl).2 hq
     obtain rfl := hu _ _ _ k1 hB
@@ -334,41 +346,3 @@ private theorem tw_back {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Alge
   refine MonoidHom.ext fun s => Units.ext ?_
   rw [tw_val, tw_val, smul_smul, ← Units.val_mul]
   simp
-
-theorem UpperTheory.V.Z.Bc.isAutR_of_ind (hP : Af.Hypotheses₂) {E Ω : Type} [Field E] [NumberField E] [IsTotallyReal E] [Field Ω] [CharZero Ω]
-    [IsAlgClosure ℚ Ω] [Algebra E Ω] (h2 : Module.finrank ℚ E = 2) {l : ℕ} [Fact l.Prime] {ι : Qbar l ≃+* ℂ} {π : TR.CuspSub E 2}
-    {r : G E Ω →* GL (Fin 2) (Qbar l)} (hatt : AttR ι r π) {m m' : Fin 2 → ℤ} (hinj : Function.Injective ![m 0, m 1, m' 0, m' 1])
-    {R : G ℚ Ω →* GL (Fin 4) (Qbar l)} (hR : IsSSRep R) (H : IndCh (galEmb ℚ E Ω) r R) {P : TR.CuspSub ℚ (2 * 2)} (hfin : IndFin P π)
-    (hinf : ∀ u, P.HasInfChar u (infOf m + infOf m')) : IsAutR ι R := by
-  haveI : IsAlgClosure E Ω := ⟨IsAlgClosure.isAlgClosed ℚ, Algebra.IsAlgebraic.tower_top (K := ℚ) E⟩
-  obtain ⟨hnd, hint⟩ := infOf_add hinj
-  have key : IsAutR ι (tw R (cycBar ℚ Ω l)⁻¹) := ⟨P, fun u => ⟨_, hinf u, hnd, hint⟩,
-    attInd ℚ E Ω h2 l ι r R π.HasSat P.HasSat (fun _ _ _ => TR.CuspSub.HasSat.unique) (fun _ _ _ => TR.CuspSub.HasSat.unique) hatt hfin hR H⟩
-  rw [tw_back R]
-  exact UpperTheory.V.Sd.twR hP ℚ Ω l ι 4 _ _ ((UpperTheory.V.Sd.algCyc hP ℚ Ω l ι).1 1 1 (by simp)) key
-
-theorem UpperTheory.V.Z.Bc.quadraticInductionGL2_of (hP : Af.Hypotheses₂) (h1 : IndWeakQd) (h3 : InfOfL) : QuadraticInductionGL2 := by
-  intro E _ _ _ h2 π hm hc
-  obtain ⟨P, hfin⟩ := h1 E h2 π hm hc
-  refine ⟨P, hfin, fun v v' u m m' hne hv hv' => ?_⟩
-  obtain ⟨M, hM⟩ := UpperTheory.V.Lit.infEx hP ℚ _ P u
-  exact h3 E h2 P π hfin v v' u m m' M hne hv hv' hM ▸ hM
-
-theorem UpperTheory.V.Z.Bc.indAut_of (hP : Af.Hypotheses₂) (h1 : IndWeakQ) (h3 : InfOfL) : UpperTheory.V.Sd.IndAut := by
-  intro E Ω _ _ _ _ _ _ _ h2 l _ ι π r m m' hatt ⟨v, v', hvv, hv, hv'⟩ hinj R hR H
-  obtain ⟨P, hfin⟩ := h1 E h2 π ⟨m, m', v, v', hvv, hv, hv', hinj⟩
-  refine isAutR_of_ind hP h2 hatt hinj hR (fun u hu => H u (range_galEmb ℚ E Ω ▸ hu)) hfin fun u => ?_
-  obtain ⟨M, hM⟩ := UpperTheory.V.Lit.infEx hP ℚ _ P u
-  exact h3 E h2 P π hfin v v' u _ _ M hvv hv hv' hM ▸ hM
-
-theorem UpperTheory.V.Z.Bc.indAutC_of (hP : Af.Hypotheses₂) (h : IndC) : IndAutC := by
-  intro K M Ω _ _ _ _ _ _ _ _ _ _ _ _ h2 l _ ι π r hatt hm R hR H
-  haveI : IsAlgClosure K Ω := ⟨IsAlgClosure.isAlgClosed M, Algebra.IsAlgebraic.trans K M Ω⟩
-  obtain ⟨P, hfin, hinf⟩ := h K M h2 π hm
-  have key : IsAutC ι (tw R (cycBar K Ω l)⁻¹) := by
-    refine ⟨P, (GlobalTheory.CuspRep.CG.isRegAlg_iff _).2 fun φ => ?_, attInd K M Ω h2 l ι r R (CG.mk π).HasSat (CG.mk P).HasSat (fun _ _ _ h h' => h.unique h') (fun _ _ _ h h' => h.unique h') hatt hfin hR H⟩
-    obtain ⟨m, m', τ, τ', hne, rfl, e, hv, hv', hinj⟩ := hm φ
-    rw [CG.HasInfChar.infChar_eq (π := CG.mk P) (hinf τ τ' _ _ hne e.symm hv hv')]
-    exact infOf_add hinj
-  rw [tw_back R]
-  exact UpperTheory.V.Sd.twC hP K Ω l ι 4 _ _ ((UpperTheory.V.Sd.algCyc hP K Ω l ι).1 1 1 (by simp)) key

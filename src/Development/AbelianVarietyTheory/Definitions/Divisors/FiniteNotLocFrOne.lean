@@ -1,24 +1,28 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EigLatLe
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NvalDetFrChgConst
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFinsetIntegralOfDefinite
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenImmersionOfSection
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PosDefOneSubOfSumSqLt
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.MetricDataUnique
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.MetricChangeOfFrame
-import Development.AbelianVarietyTheory.Counterexamples.MetricPositivity.PosSemidefOfIsMetric
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CongrOfDvdModulus
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniformisationDataNonemptyComponent
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsDatumSumAndAllSignatures
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsLevelGoodAtAllPrimesAndIdx
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LevelOfSplitAndLevelCoeffExist
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsHermCoordOfDatum
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.MemRangeOfIsAlgebraicRatFun
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSpanningHypotheses
-import Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LinearIndependentOfIsLieBasis
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsTangentModuleUniversalGroupStatement
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniformisationDataNonemptyComponentStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EigLatLe
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NvalDetFrChgConst
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsFinsetIntegralOfDefinite
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenImmersionOfSection
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PosDefOneSubOfSumSqLt
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.MetricDataUnique
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.MetricChangeOfFrame
+public import Development.AbelianVarietyTheory.Counterexamples.MetricPositivity.PosSemidefOfIsMetric
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.CongrOfDvdModulus
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniformisationDataNonemptyComponent
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsDatumSumAndAllSignatures
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsLevelGoodAtAllPrimesAndIdx
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LevelOfSplitAndLevelCoeffExist
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsHermCoordOfDatum
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.MemRangeOfIsAlgebraicRatFun
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsSpanningHypotheses
+public import Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.LinearIndependentOfIsLieBasis
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsTangentModuleUniversalGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUniformisationDataNonemptyComponentStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -31,71 +35,8 @@ open scoped Matrix Classical
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E} {Dw : Datum H}
   {l : Level H} {Xo : Moduli Dw l} {c : Coeff l}
 
-theorem exists_root (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) :
-    ∃ ξ : E, cc ξ = -ξ ∧ ξ ^ 2 = -(H.d : E) ∧ ∀ τ : E →+* ℂ, τ (H.rt : E) = H.rt0 → (τ ξ).im < 0 := by
-  have hd : (0 : ℝ) < H.d := by exact_mod_cast H.d_prime.pos
-  have key : ∀ z : ℂ, z ^ 2 = -(H.d : ℂ) → z.re = 0 ∧ z.im ≠ 0 := by
-    intro z hz
-    have h1 := congrArg Complex.re hz
-    have h2 := congrArg Complex.im hz
-    simp [sq] at h1 h2
-    have him : z.im ≠ 0 := by
-      intro h; rw [h] at h1; nlinarith [mul_self_nonneg z.re]
-    refine ⟨?_, him⟩
-    have : z.re * z.im = 0 := by linarith
-    exact (mul_eq_zero.1 this).resolve_right him
-  have hE : ((H.rt : E)) ^ 2 = -(H.d : E) := by
-    have := congrArg (fun z : 𝓞 E => (z : E)) H.rt_sq
-    simpa using this
-  have hcc : cc (H.rt : E) = -(H.rt : E) := by
-    obtain ⟨τ⟩ : Nonempty (E →+* ℂ) := inferInstance
-    apply τ.injective
-    have hk := key (τ (H.rt : E)) (by rw [← map_pow, hE, map_neg, map_natCast])
-    have : τ (cc (H.rt : E)) = starRingEnd ℂ (τ (H.rt : E)) := IsCMField.complexEmbedding_complexConj E τ _
-    rw [this, map_neg]
-    apply Complex.ext <;> simp [hk.1]
-  rcases lt_or_gt_of_ne (key _ H.sqrt_neg_disc_sq).2 with h | h
-  · exact ⟨H.rt, hcc, hE, fun τ hτ => hτ ▸ h⟩
-  · refine ⟨-(H.rt : E), ?_, by rw [neg_sq, hE], fun τ hτ => by rw [map_neg, hτ]; simpa using h⟩
-    rw [show cc (-(H.rt : E)) = -cc (H.rt : E) by simp [cc], hcc]
-
-theorem exists_defCase (p : ℕ) (hp : 1 ≤ p) :
-    ∃ (E : Type) (_ : Field E) (_ : NumberField E) (_ : IsCMField E) (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H)
-      (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (r : ℕ) (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (ξ : ℝ),
-      Dw.p = p ∧ 0 < ξ ∧ Nonempty (Comp Xo c) ∧ DefCase U ξ := by
-  obtain ⟨E, i1, i2, i3, H, -, hD⟩ := GlobalTheory.exists_datum_sum_and_all_signatures.2
-  obtain ⟨D, rfl, hq⟩ := hD p 0
-  have hpq : 1 ≤ D.p + D.q := by omega
-  obtain ⟨l, hA, hg, -⟩ := GlobalTheory.exists_level_goodAt_all_primes_and_idx E H 1 one_pos
-  obtain ⟨Xo⟩ := GlobalTheory.Moduli.moduli_scheme_exists _ _ D l hpq
-  obtain ⟨c₀⟩ : Nonempty (Coeff l) := inferInstance
-  obtain ⟨-, c, -, hc⟩ := GlobalTheory.GeomIrr.compNe_and_exists_fnAlgClosed _ _ D l Xo c₀ hpq
-  obtain ⟨ξ, hξ, hsq, hneg⟩ := exists_root H
-  have hξ0 : ξ ≠ 0 := fun h => by
-    rw [h] at hsq
-    have : (H.d : E) = 0 := by linear_combination hsq
-    exact H.d_prime.ne_zero (by exact_mod_cast this)
-  obtain ⟨Gm, φ, hφ⟩ := GlobalTheory.exists_herm_coord_of_datum E H D (-ξ)
-    (by rw [show cc (-ξ) = -cc ξ by simp [cc], hξ]) (neg_ne_zero.2 hξ0) _ rfl
-  have key : ∀ σ : c.F →+* ℂ, ∃ U : Unf Xo c σ (D.p + D.q), GoodEmb c σ →
-      IsUnf U ∧ Nonempty U.Comp ∧ ∀ k, (U.X k).ξ0 = ξ := by
-    intro σ
-    by_cases hσ : GoodEmb c σ
-    · obtain ⟨U, hu, -, hk, -, hG, -⟩ := GlobalTheory.FrameUnif.exists_unf_hasPrinc E H D l Xo c σ _ ξ Gm φ hpq hσ hξ hneg hφ
-      exact ⟨U.toPj, fun _ => ⟨hu, hk, fun k => (hG k).2⟩⟩
-    · obtain ⟨U, -⟩ := GlobalTheory.T.exists_uniformisationData_nonempty_component E H D l Xo c hpq σ
-      exact ⟨U.toPj, fun h => absurd h hσ⟩
-  choose U hU using key
-  have habs : ∀ τ : E →+* ℂ, ‖τ ξ‖ = Real.sqrt H.d := fun τ => by
-    have h1 : ‖τ ξ‖ ^ 2 = H.d := by
-      rw [← norm_pow, ← map_pow, hsq, map_neg, map_natCast, norm_neg, Complex.norm_natCast]
-    rw [← h1, Real.sqrt_sq (norm_nonneg _)]
-  exact ⟨E, i1, i2, i3, H, D, l, Xo, c, _, U, Real.sqrt H.d, rfl, Real.sqrt_pos.2 (by exact_mod_cast H.d_prime.pos),
-    (GlobalTheory.GeomIrr.compNe_and_exists_fnAlgClosed _ _ D l Xo c hpq).1,
-    ⟨hq, hp, hg, hA, hc c le_rfl, fun σ h => (hU σ h).1, fun σ h k τ => by rw [(hU σ h).2.2 k]; exact habs τ⟩⟩
 
 open scoped ComplexOrder in
-
 theorem posDef_of_isMetric {σ : c.F →+* ℂ} {y : FrPt Xo c (CAt σ)} {N : ℝ} {Gr : Mats Dw ℂ}
     (h : GlobalTheory.LamT.IsMetric y N Gr) (b : E →+* ℂ) : (Gr b).PosDef := by
   obtain ⟨Φ, u, Hm, χ, θ, Fd, w, W, -, hA, -, -, -, -, h7, h8⟩ := h
@@ -142,28 +83,6 @@ theorem exists_archFr (hr : 1 ≤ Dw.p + Dw.q) (y₀ : FrPt Xo c c.F) (σ : c.F 
   have := GlobalTheory.MetricChange.isMetric_frChg E H Dw l Xo c σ z y N Gr X 1 one_ne_zero hy h
   simpa [hX'] using this
 
-theorem archFr_unique (hr : 1 ≤ Dw.p + Dw.q) {y₀ : FrPt Xo c c.F} {σ : c.F →+* ℂ} {N N' : ℝ} {X X' : Mats Dw ℂ}
-    (h : ArchFr y₀ σ N X) (h' : ArchFr y₀ σ N' X') : N = N' ∧ ∀ τ, ‖(X τ).det‖ = ‖(X' τ).det‖ := by
-  obtain ⟨z, hz⟩ := GlobalTheory.Frames.FramedBaseChange.exists_frMap GlobalTheory.lawsFieldsSeparately.2.1 E H Dw l Xo c c.F (CAt σ)
-    (Algebra.ofId _ _) y₀
-  obtain ⟨N₀, Gr, h₀⟩ := GlobalTheory.MetricTest.exists_isMetric hr z
-  have key : ∀ {N : ℝ} {X : Mats Dw ℂ}, ArchFr y₀ σ N X → N = N₀ ∧ ∀ τ, ‖(X τ).det‖ ^ 2 * ‖(Gr τ).det‖ = 1 := by
-    intro N X h
-    obtain ⟨y, hy, -⟩ := existsUnique_frChg E H Dw l Xo c (CAt σ) z (fun τ => (X τ)ᵀ) 1 fun τ => by
-      have : IsUnit ((X τ)ᵀ).det := by rw [Matrix.det_transpose]; exact (h.2.1 τ).isUnit
-      exact this
-    have h1 := GlobalTheory.MetricChange.isMetric_frChg E H Dw l Xo c σ z y N₀ Gr X 1 one_ne_zero hy h₀
-    obtain ⟨e1, e2⟩ := GlobalTheory.LamT.MetUniq.isMetric_unique E H Dw l Xo c σ y _ _ _ _ (h.2.2 z y hz hy) h1
-    refine ⟨by simpa using e1, fun τ => ?_⟩
-    have e3 := congrArg (fun M => ‖Matrix.det M‖) (congrFun e2 τ)
-    simp only [Matrix.det_one, norm_one, Matrix.det_mul, Matrix.det_conjTranspose, norm_mul, norm_star] at e3
-    linarith
-  obtain ⟨a1, a2⟩ := key h
-  obtain ⟨b1, b2⟩ := key h'
-  refine ⟨a1.trans b1.symm, fun τ => ?_⟩
-  have hg : ‖(Gr τ).det‖ ≠ 0 := fun e => by simpa [e] using a2 τ
-  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).1 (mul_right_cancel₀ hg ((a2 τ).trans (b2 τ).symm))
-
 section Dense
 
 def DenseIn {K : Type} [Field K] (T : CDVR) (io : K →+* T.Fr) : Prop :=
@@ -184,7 +103,7 @@ theorem denseIn_of_residue {K : Type} [Field K] (T : CDVR) (io : K →+* T.Fr) (
       obtain ⟨k', h', e'⟩ := h1 h
       refine ⟨k + p ^ m * k', h', ?_⟩
       rw [e, map_mul, e']
-      simp only [map_add, map_mul, map_pow, hp]
+      simp only [map_add (f := _), map_mul, map_pow, hp]
       ring
   intro x d hd
   obtain ⟨v, s, hs, rfl⟩ := IsFractionRing.div_surjective (A := T.V) x
@@ -233,7 +152,7 @@ theorem denseIn_of_initial {K : Type} [Field K] [NumberField K] (w : HeightOneSp
     obtain ⟨h, e⟩ := h1
     refine ⟨o, h, ?_⟩
     have e' : v = algebraMap O V o + algebraMap O V π * h := by rw [← e]; ring
-    exact (congrArg (algebraMap V (FractionRing V)) e').trans (by rw [map_add, hio])
+    exact (congrArg (algebraMap V (FractionRing V)) e').trans (by rw [map_add (f := _), hio])
   obtain ⟨g, χ, -, h1, h2, h3⟩ := hini T io 1 ho
   have h2' : ∀ a, χ (algebraMap T₀.V T₀.Fr a) = algebraMap T.V T.Fr (g a) := fun a => RingHom.congr_fun h2 a
   intro x d hd
@@ -403,28 +322,10 @@ theorem finite_not_locFr_one (hq : Dw.q = 0) (hp : 1 ≤ Dw.p) (hg : ∀ p : ℕ
     rw [ho.2, h0, mul_zero]) z hz
   obtain ⟨A, u, hA, hc⟩ := frChg_of_integral T io z y hz' hy hx
   refine ⟨fun τ => (A τ)ᵀ, u, fun τ => by rw [Matrix.det_transpose]; exact hA τ, ?_⟩
-  convert hc using 1
+  convert (preTransparency := .reducible) hc using 1
   · funext τ
     simp [Matrix.transpose_map]
   · simp
-
-theorem locFr_unique (hr : 1 ≤ Dw.p + Dw.q) (hg : ∀ p : ℕ, p.Prime → l.GoodAt p) {y₀ : FrPt Xo c c.F}
-    {w : HeightOneSpectrum (𝓞 c.F)} {a a' : c.F} {B B' : Mats Dw c.F} (h : LocFr y₀ w a B) (h' : LocFr y₀ w a' B') :
-    vAdd w a = vAdd w a' ∧ ∀ τ, vAdd w (B τ).det = vAdd w (B' τ).det := by
-  obtain ⟨T, io, ho, -, -⟩ := GlobalTheory.PlaceCompletion.exists_initial_completion c.F w
-  letI := io.toAlgebra
-  obtain ⟨y, z, hy, hz, hx⟩ := exists_integral hr hg y₀ w T io 1 ho
-  obtain ⟨Y, u, hY, hc⟩ := h.2.2 T io 1 ho y z hy hz hx
-  obtain ⟨Y', u', hY', hc'⟩ := h'.2.2 T io 1 ho y z hy hz hx
-  obtain ⟨e1, e2⟩ := (frChg_exists_unique E H Dw l Xo c T.Fr z y).2 _ _ _ _ hc hc'
-  have key : ∀ (s : c.F) (v : T.V), s ≠ 0 → IsUnit v → vV T.V (io s * algebraMap T.V T.Fr v) = vAdd w s := by
-    intro s v hs hv
-    rw [vV_mul ((map_ne_zero io).2 hs) (hv.map _).ne_zero, ho.2]
-    simp [vV, valV_algebraMap_unit T hv, vLa, vAdd]
-  refine ⟨by rw [← key a u h.1 u.isUnit, e2, key a' u' h'.1 u'.isUnit], fun τ => ?_⟩
-  have e3 := congrArg Matrix.det (congrFun e1 τ)
-  simp only [Matrix.det_transpose, Matrix.det_mul, ← RingHom.mapMatrix_apply, ← RingHom.map_det] at e3
-  rw [← key _ _ (h.2.1 τ) (hY τ), e3, key _ _ (h'.2.1 τ) (hY' τ)]
 
 variable {r : ℕ} {U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r} {ξ : ℝ}
 
@@ -440,45 +341,10 @@ theorem nonempty_ptData (h : DefCase U ξ) (Z : Comp Xo c) : Nonempty (PtData Z)
   choose N X hX using exists_archFr hr y₀
   exact ⟨⟨y₀, h1, h2, a, B, hl, (finite_not_locFr_one h.q h.p h.good y₀).subset fun w hw h' => hw (hl' w h'), N, X, hX⟩⟩
 
-theorem deg_eq (h : DefCase U ξ) {Z : Comp Xo c} (P P' : PtData Z) (e : P.y₀ = P'.y₀) :
-    P.degTh = P'.degTh ∧ ∀ τ, P.degLie τ = P'.degLie τ := by
-  have hr : 1 ≤ Dw.p + Dw.q := h.p.trans (Nat.le_add_right _ _)
-  have a := fun σ => archFr_unique hr (P.arch σ) (e ▸ P'.arch σ)
-  have b := fun w => locFr_unique hr h.good (P.loc w) (e ▸ P'.loc w)
-  refine ⟨?_, fun τ => ?_⟩
-  · simp only [PtData.degTh, fun σ => (a σ).1, fun w => (b w).1]
-  · simp only [PtData.degLie, detDeg, fun σ => (a σ).2 τ, fun w => (b w).2 τ]
-
-theorem exists_ptData (p : ℕ) (hp : 1 ≤ p) :
-    ∃ (E : Type) (_ : Field E) (_ : NumberField E) (_ : IsCMField E) (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (Dw : Datum H)
-      (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (Z : Comp Xo c), Dw.p = p ∧ Nonempty (PtData Z) := by
-  obtain ⟨E, i1, i2, i3, H, D, l, Xo, c, r, U, ξ, e, -, ⟨Z⟩, h⟩ := exists_defCase p hp
-  exact ⟨E, i1, i2, i3, H, D, l, Xo, c, Z, e, nonempty_ptData h Z⟩
-
 theorem nonempty_ptData_all : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E)
     (Dw : Datum H) (l : Level H) (Xo : Moduli Dw l) (c : Coeff l) (r : ℕ) (U : ∀ σ : c.F →+* ℂ, Unf Xo c σ r) (ξ : ℝ),
     DefCase U ξ → ∀ Z : Comp Xo c, Nonempty (PtData Z) :=
   fun _ _ _ _ _ _ _ _ _ _ _ _ h Z => nonempty_ptData h Z
-
-theorem not_locFr_mul (hr : 1 ≤ Dw.p + Dw.q) (hg : ∀ p : ℕ, p.Prime → l.GoodAt p) {y₀ : FrPt Xo c c.F}
-    {w : HeightOneSpectrum (𝓞 c.F)} {a t : c.F} {B : Mats Dw c.F} (h : LocFr y₀ w a B) (ht : vAdd w t ≠ 0) :
-    ¬ LocFr y₀ w (t * a) B := fun h' => by
-  have e := (locFr_unique hr hg h h').1
-  have h0 : t ≠ 0 := left_ne_zero_of_mul h'.1
-  have h1 : w.valuation c.F t ≠ 0 := by simpa using h0
-  have h2 : w.valuation c.F a ≠ 0 := by simpa using h.1
-  simp only [vAdd, map_mul, WithZero.log_mul h1 h2] at e ht
-  omega
-
-theorem tval_eq_of_reads {Z : Comp Xo c} {y₀ : FrPt Xo c c.F} {a : (E →+* ℂ) × ℕ → ℕ} {n : ℕ}
-    {x x' : TIdx (part Dw a) → c.F} {f : Rul Xo c} (h : Reads Z y₀ a n x f) (h' : Reads Z y₀ a n x' f)
-    (Y : Mats Dw c.F) (hY : ∀ τ, IsUnit (Y τ).det) : tval (part Dw a) x Y = tval (part Dw a) x' Y := by
-  obtain ⟨z, hz⟩ := GlobalTheory.Frames.FramedBaseChange.exists_frMap GlobalTheory.lawsFieldsSeparately.2.1 E H Dw l Xo c c.F c.F
-    (Algebra.ofId _ _) y₀
-  obtain ⟨y, hy, -⟩ := existsUnique_frChg E H Dw l Xo c c.F z (fun τ => (Y τ)ᵀ) 1 fun τ => by
-    rw [Matrix.det_transpose]; exact hY τ
-  have e := (h.2 c.F z y Y 1 hY isUnit_one hz hy).symm.trans (h'.2 c.F z y Y 1 hY isUnit_one hz hy)
-  simpa using e
 
 end GlobalTheory.DefPt.Model
 

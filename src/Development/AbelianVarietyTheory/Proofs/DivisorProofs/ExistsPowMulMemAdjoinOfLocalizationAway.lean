@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Algebra
 
 theorem GlobalTheory.adjoin_mem_of_away_localization {R A R' A' : Type} [CommRing R] [CommRing A] [CommRing R'] [CommRing A'] [Algebra R A] [Algebra R R'] [Algebra R' A'] [Algebra A A'] [Algebra R A'] [IsScalarTower R A A'] [IsScalarTower R R' A'] (g : R) [IsLocalization.Away g R'] [IsLocalization.Away (algebraMap R A g) A'] (T : Set A) (b : A)
@@ -25,7 +30,7 @@ theorem GlobalTheory.adjoin_mem_of_away_localization {R A R' A' : Type} [CommRin
       refine ⟨k1 + k2, algebraMap R A g ^ k2 * z1 + algebraMap R A g ^ k1 * z2, ?_, ?_⟩
       · refine add_mem (mul_mem ?_ hz1) (mul_mem ?_ hz2) <;>
           (rw [← map_pow]; exact Subalgebra.algebraMap_mem _ _)
-      · rw [map_add, map_mul, map_mul, map_pow, map_pow, hg, e1, e2]; ring
+      · rw [map_add (f := _), map_mul, map_mul, map_pow, map_pow, hg, e1, e2]; ring
     | mul x y _ _ hx hy =>
       obtain ⟨k1, z1, hz1, e1⟩ := hx
       obtain ⟨k2, z2, hz2, e2⟩ := hy

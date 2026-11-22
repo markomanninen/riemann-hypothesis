@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
-import ReciprocityTheory.AnalyticForms.PotentialTheory.DegreeIntB
-import GroundTheory.HeightsAndTheta.Heights.LocalDensities.StatementsChartPartition
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.IsPotentialOfFun
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.DegreeIntB
+public import GroundTheory.HeightsAndTheta.Heights.LocalDensities.StatementsChartPartition
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FourB

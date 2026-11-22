@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.TorsionReduceInjective
+module
+
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.TorsionReduceInjective
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -62,7 +66,7 @@ theorem tame_par {p : ℕ} (hp : p.Prime) (hw : Units.torsionOrder L + 1 < p) (h
     rw [Units.coe_prod]
     refine Finset.prod_congr rfl fun i _ => ?_
     simp [f, Units.val_zpow_eq_zpow_val]
-  rw [hθε ζ hζ, MonoidHom.inv_apply, MonoidHom.finset_prod_apply, ← hf]
+  rw [hθε ζ hζ, MonoidHom.inv_apply, MonoidHom.finsetProd_apply, ← hf]
   exact Units.mul_inv _
 
 theorem exists_unit_of_root {z : L} (hz : ∃ m : ℕ, 0 < m ∧ z ^ m = 1) : ∃ ζ : (𝓞 L)ˣ, ((ζ : 𝓞 L) : L) = z := by

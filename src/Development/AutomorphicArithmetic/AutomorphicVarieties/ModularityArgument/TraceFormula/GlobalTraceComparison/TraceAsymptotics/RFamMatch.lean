@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.SplitLineAlt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralProperties
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.TraceAsymptotics.SplitLineAlt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralProperties
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ namespace UpperTheory.V.Z.Tf.GlobalTraceComparison.Asm
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
-private theorem lc_val {n : ℕ} {w : Pl E} (hs : IsSplitAt w) {g : GLw n w → ℂ} (hg : Lc (KGL w n) g) :
+private theorem lc_val {n : ℕ} {w : Pl E} (hs : IsSplitAt w) {g : GLw n w → ℂ} (hg : Lc (KGL w (n := n)) g) :
     Lc (KL n w) (fun x : UL n w => g x.1) := by
   obtain ⟨K', ho, hle, hc, hk⟩ := hg
   refine ⟨K'.subgroupOf (UL n w), ?_, ?_, ?_, ?_⟩
@@ -32,13 +36,13 @@ private theorem lc_val {n : ℕ} {w : Pl E} (hs : IsSplitAt w) {g : GLw n w → 
 private theorem unit_eq (n : ℕ) (w : Pl E) :
     (KL n w : Set (UL n w)).indicator 1 = fun x : UL n w => fn1 n w Ex.one x.1 := by
   funext x
-  have hx : x ∈ (KL n w : Set (UL n w)) ↔ x.1 ∈ (KGL w n : Set (GLw n w)) := Iff.rfl
+  have hx : x ∈ (KL n w : Set (UL n w)) ↔ x.1 ∈ (KGL w (n := n) : Set (GLw n w)) := Iff.rfl
   simp only [fn1, Ex.fn, Set.indicator_apply, hx]
   rfl
 
 private theorem split_level {a b : ℕ} {w : Pl E} (hs : IsSplitAt w) {φ : GLw a w × GLw b w → ℂ}
     (hφ : Lc (K2 a b w) φ) : ∃ (K₁ : Subgroup (GLw a w)) (K₂ : Subgroup (GLw b w)),
-      IsLevel (thL a w) (KGL w a) K₁ ∧ IsLevel (thL b w) (KGL w b) K₂ ∧ IsHecke (K₁.prod K₂) φ := by
+      IsLevel (thL a w) (KGL w (n := a)) K₁ ∧ IsLevel (thL b w) (KGL w (n := b)) K₂ ∧ IsHecke (K₁.prod K₂) φ := by
   obtain ⟨K', ho, hle, hc, hk⟩ := hφ
   refine ⟨K'.comap (MonoidHom.inl _ _), K'.comap (MonoidHom.inr _ _), ⟨?_, ?_, ?_⟩, ⟨?_, ?_, ?_⟩, hc, ?_⟩
   · exact ho.preimage (continuous_id.prodMk continuous_const)
@@ -59,7 +63,7 @@ private theorem split_level {a b : ℕ} {w : Pl E} (hs : IsSplitAt w) {φ : GLw 
 
 private theorem inv_un {μ : HChar E} {w : Pl E} (hm : μ.val (cPl w) = (μ.val w)⁻¹) (a b : ℕ)
     (B₁ B₂ : Multiset ℂˣ) : inv (un μ a b (cPl w) B₁ B₂) = un μ a b w (inv B₁) (inv B₂) := by
-  simp only [inv, un, Multiset.map_add, Multiset.map_map, Function.comp_def, hm, mul_inv, inv_pow, inv_inv]
+  simp only [inv, un, Multiset.map_add (f := _), Multiset.map_map, Function.comp_def, hm, mul_inv, inv_pow, inv_inv]
 
 private theorem match_inert {n a b : ℕ} {w : Pl E} (hs : ¬ IsSplitAt w) (μ : (w.adicCompletion E)ˣ →* ℂˣ)
     {f : UL n w → ℂ} {φ : GLw a w × GLw b w → ℂ} (H : Match n a b w 1 f φ) : Match n a b w μ f φ := by
@@ -124,8 +128,8 @@ theorem rFamMatch : RFamMatch := by
         simp only [fam, if_neg hz, if_neg hwT, if_neg hs]
     have hLcU : ∀ w, IsSplitAt w → Lc (KL n w) (famU Z T f e₁ e₂ k w) := by
       intro w hs
-      have hK : ∀ e, Lc (KGL w n) (fn1 n w e) := fun e =>
-        ⟨KGL w n, (hbasic n w).2.2.2.2.1, le_rfl, (hAct E n w e).1⟩
+      have hK : ∀ e, Lc (KGL w (n := n)) (fn1 n w e) := fun e =>
+        ⟨KGL w (n := n), (hbasic n w).2.2.2.2.1, le_rfl, (hAct E n w e).1⟩
       by_cases hz : w ∈ Z
       · simp only [famU, if_pos hz]
         exact hLcZ w hz
@@ -136,16 +140,16 @@ theorem rFamMatch : RFamMatch := by
           rw [unit_eq]
           exact lc_val hs (hK _)
     have hlev : ∀ w : Pl E, ∃ (K₁ : Subgroup (GLw a w)) (K₂ : Subgroup (GLw b w)),
-        IsLevel (thL a w) (KGL w a) K₁ ∧ IsLevel (thL b w) (KGL w b) K₂ ∧
+        IsLevel (thL a w) (KGL w (n := a)) K₁ ∧ IsLevel (thL b w) (KGL w (n := b)) K₂ ∧
         IsHecke (K₁.prod K₂) (fam Z T (ct0 μ h f) (fun w => (e₁ w).bind (t w)) (fun w => (e₂ w).bind (t w)) k w) ∧
-        (w ∉ Z → K₁ = KGL w a ∧ K₂ = KGL w b) := by
+        (w ∉ Z → K₁ = KGL w (n := a) ∧ K₂ = KGL w (n := b)) := by
       intro w
       by_cases hz : w ∈ Z
       · obtain ⟨K₁, K₂, h₁, h₂, h₃⟩ := split_level (hZ w hz).2 (hCtLc w hz)
         refine ⟨K₁, K₂, h₁, h₂, ?_, fun hn => absurd hz hn⟩
         simp only [fam, if_pos hz]
         exact h₃
-      · refine ⟨KGL w a, KGL w b, ⟨(hbasic a w).2.2.2.2.1, le_rfl, (hbasic a w).2.2.1⟩,
+      · refine ⟨KGL w (n := a), KGL w (n := b), ⟨(hbasic a w).2.2.2.2.1, le_rfl, (hbasic a w).2.2.1⟩,
           ⟨(hbasic b w).2.2.2.2.1, le_rfl, (hbasic b w).2.2.1⟩, ?_, fun _ => ⟨rfl, rfl⟩⟩
         by_cases hwT : w ∈ T
         · simp only [fam, if_neg hz, if_pos hwT]

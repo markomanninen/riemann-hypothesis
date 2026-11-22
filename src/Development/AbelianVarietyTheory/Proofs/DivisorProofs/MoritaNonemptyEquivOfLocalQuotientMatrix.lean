@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpanEqTopIffDense
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpanEqTopIffDense
+
+@[expose] public section
 
 namespace GlobalTheory.MoritaLocal
 
@@ -127,13 +131,16 @@ theorem morita_local : ∀ (R : Type) [CommRing R] (I : Ideal R), IsLocalRing (R
     intro o x
     choose r hr using fun i j => Ideal.Quotient.mk_surjective (I := I) (φ o i j)
     have hφo : φ (∑ i, ∑ j, r i j • E i j) = φ o := by
-      rw [map_sum]
-      simp only [map_sum, map_smul, hE]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, hE]
       refine (Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_).trans
         (Matrix.matrix_eq_sum_single (φ o)).symm
       rw [Matrix.smul_single, ← hr i j, Algebra.smul_def, mul_one, Ideal.Quotient.algebraMap_eq]
     rw [act_congr hker hM hφo.symm x, act_congr hker hN hφo.symm (Φ x)]
-    simp only [Finset.sum_smul, smul_assoc, map_sum, map_smul, hΦE]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.sum_smul, smul_assoc, map_sum, map_smul, hΦE]
   exact ⟨{ Φ with map_smul' := fun o x => hΦO o x }⟩
 
 end GlobalTheory.MoritaLocal

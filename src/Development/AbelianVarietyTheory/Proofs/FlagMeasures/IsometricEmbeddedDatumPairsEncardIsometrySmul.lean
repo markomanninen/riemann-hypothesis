@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AdaptSelf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AdaptSelf
+
+@[expose] public section
+
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt GlobalTheory.DegAsm
 open scoped Pointwise ENNReal Classical
 
@@ -107,13 +112,15 @@ theorem dual_gmap {s : V ≃ₗ[K] V} (hs : ∀ x y, H.B (s x) (s y) = H.B x y) 
 theorem isIntLat_gmap {s : V ≃ₗ[K] V} (hs : ∀ x y, H.B (s x) (s y) = H.B x y) {M : Submodule (𝓞 K) V}
     (hM : GlobalTheory.Mass.IsIntLat H.B.flip M) : GlobalTheory.Mass.IsIntLat H.B.flip (Formalism.HermitianLatticesTheory.gmap s M) := by
   obtain ⟨hL, hI⟩ := hM
-  refine ⟨⟨?_, ?_⟩, ?_⟩
-  · rw [gmap_eq]
-    exact hL.fg.map _
-  · rw [gmap_eq, Submodule.map_coe]
+  have hfull : Submodule.IsFullLattice K (Formalism.HermitianLatticesTheory.gmap s M) := by
+    rw [gmap_eq]
+    haveI : Submodule.IsLattice K (M.map (lin s)) :=
+      Submodule.IsLattice.of_fg K (hL.fg.map _)
+    refine ⟨?_⟩
     change Submodule.span K ((s : V →ₗ[K] V) '' (M : Set V)) = ⊤
-    rw [Submodule.span_image, hL.span_eq_top, Submodule.map_top]
-    exact LinearEquiv.range s
+    rw [← Submodule.map_span, hL.span_eq_top, Submodule.map_top,
+      LinearMap.range_eq_top.2 s.surjective]
+  refine ⟨hfull, ?_⟩
   · intro x hx y hy
     rw [mem_gmap] at hx hy
     have := hI _ hx _ hy

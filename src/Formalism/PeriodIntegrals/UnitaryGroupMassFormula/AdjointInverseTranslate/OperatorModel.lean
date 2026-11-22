@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTranslate.OpModel
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTranslate.Imports
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTranslate.OpModel
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdjointInverseTranslate.Imports
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -23,7 +27,7 @@ def mExt (φ : {x : Matrix (Fin n) (Fin n) ℂ // inUH H x} → E) : Matrix (Fin
 lemma mExt_pos {φ : {x : Matrix (Fin n) (Fin n) ℂ // inUH H x} → E} {x : Matrix (Fin n) (Fin n) ℂ}
     (hx : inUH H x) : mExt φ x = φ ⟨x, hx⟩ := by
   unfold mExt
-  rw [dif_pos hx]
+  rw [dite_eq_left hx]
 
 lemma m_smooth_zero : SmoothOnH H (fun _ : Matrix (Fin n) (Fin n) ℂ => (0 : E)) := by
   unfold SmoothOnH
@@ -122,7 +126,7 @@ lemma mQminor (hH : HInvol H) (t : ℕ) (a b : Fin t → Fin n) (u : ℂ) (f : M
   have hc : mRel f (mCls (H := H) f) := by
     refine ⟨hf, fun y hy => ?_⟩
     unfold mCls
-    rw [dif_pos hf]
+    rw [dite_eq_left hf]
   unfold qminorOp qminor
   rw [Finset.sum_apply, LinearMap.sum_apply, Submodule.coe_sum, Finset.sum_apply]
   refine Finset.sum_congr rfl (fun σ _ => ?_)
@@ -169,7 +173,7 @@ theorem operator_model : OpModel := by
       apply Subtype.ext
       funext x
       unfold mCls
-      rw [dif_pos hf', dif_pos hf]
+      rw [dite_eq_left hf', dite_eq_left hf]
       rfl
     · intro ψ y hy y' hy' hyy
       subst hyy

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableZterm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DifferentiableZterm
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,8 +13,8 @@ namespace GlobalTheory.CMVal.IdealIdele
 
 variable {E : Type} [Field E] [NumberField E]
 
-open Classical in
 
+open Classical in
 def primeIdele (p : Ideal (𝓞 E)) : (Af E)ˣ :=
   if h : p.IsPrime ∧ p ≠ ⊥ then unifAt ⟨p, h.1, h.2⟩ else 1
 
@@ -20,14 +24,14 @@ theorem idl_top : idl (⊤ : Ideal (𝓞 E)) = 1 := by
   rw [idl, ← Ideal.one_eq_top, normalizedFactors_one]; simp
 
 theorem idl_mul {I J : Ideal (𝓞 E)} (hI : I ≠ ⊥) (hJ : J ≠ ⊥) : idl (I * J) = idl I * idl J := by
-  rw [idl, normalizedFactors_mul hI hJ, Multiset.map_add, Multiset.prod_add]; rfl
+  rw [idl, normalizedFactors_mul hI hJ, Multiset.map_add (f := _), Multiset.prod_add]; rfl
 
 theorem nf_prime (v : HeightOneSpectrum (𝓞 E)) : normalizedFactors v.asIdeal = {v.asIdeal} := by
   rw [normalizedFactors_irreducible v.irreducible, normalize_eq]
 
 theorem idl_prime (v : HeightOneSpectrum (𝓞 E)) : idl v.asIdeal = unifAt v := by
   rw [idl, nf_prime, Multiset.map_singleton, Multiset.prod_singleton, primeIdele,
-    dif_pos ⟨v.isPrime, v.ne_bot⟩]
+    dite_eq_left ⟨v.isPrime, v.ne_bot⟩]
 
 theorem ind {P : Ideal (𝓞 E) → Prop} (h1 : P ⊤)
     (h2 : ∀ (v : HeightOneSpectrum (𝓞 E)) (I : Ideal (𝓞 E)), I ≠ ⊥ → P I → P (v.asIdeal * I)) :

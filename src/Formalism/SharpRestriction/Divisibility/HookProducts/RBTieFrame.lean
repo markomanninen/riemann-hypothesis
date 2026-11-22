@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.HarderNarasimhan.ShiftInvariance
+module
+
+public import Mathlib
+public import Formalism.HarderNarasimhan.ShiftInvariance
+
+@[expose] public section
 
 open Matrix NumberField Module
 
@@ -16,7 +20,8 @@ variable {K : Type} [Field K] [NumberField K] [StarRing K]
 theorem vecAt_map (b : Basis ι K V) (b' : Basis κ K W) (v : InfinitePlace K) (u : V →ₗ[K] W) (x : V) :
     Formalism.HermitianLatticesTheory.vecAt b' v (u x) = (LinearMap.toMatrix b b' u).map v.embedding *ᵥ Formalism.HermitianLatticesTheory.vecAt b v x := by
   funext i
-  simp only [Formalism.HermitianLatticesTheory.vecAt, ← LinearMap.toMatrix_mulVec_repr b b' u x, Matrix.mulVec, dotProduct,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Formalism.HermitianLatticesTheory.vecAt, ← LinearMap.toMatrix_mulVec_repr b b' u x, Matrix.mulVec, dotProduct,
     Matrix.map_apply, map_sum, map_mul]
 
 theorem vecAt_std {d : ℕ} (v : InfinitePlace K) (x : Fin d → K) :

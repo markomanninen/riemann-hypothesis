@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormPowLeNormFactorial
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DerivationMemPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormPowLeNormFactorial
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DerivationMemPow
+
+@[expose] public section
 
 noncomputable section
 
@@ -116,7 +120,7 @@ theorem complDerFun_mul (x y : AdicCompletion I A') :
   refine AdicCompletion.ext_evalₐ fun n => ?_
   obtain ⟨r, hr⟩ := Ideal.Quotient.mk_surjective (AdicCompletion.evalₐ I (n + 1) x)
   obtain ⟨t, ht⟩ := Ideal.Quotient.mk_surjective (AdicCompletion.evalₐ I (n + 1) y)
-  rw [evalₐ_complDerFun I D (r := r * t) (by rw [map_mul, map_mul, hr, ht]), map_add,
+  rw [evalₐ_complDerFun I D (r := r * t) (by rw [map_mul, map_mul, hr, ht]), map_add (f := _),
     map_mul (AdicCompletion.evalₐ I n), map_mul (AdicCompletion.evalₐ I n),
     evalₐ_complDerFun I D hr.symm, evalₐ_complDerFun I D ht.symm,
     evalₐ_of_succ I hr.symm, evalₐ_of_succ I ht.symm, D.leibniz]
@@ -135,7 +139,7 @@ def complDer : Derivation k (AdicCompletion I A') (AdicCompletion I A') :=
         refine AdicCompletion.ext_evalₐ fun n => ?_
         obtain ⟨r, hr⟩ := Ideal.Quotient.mk_surjective (AdicCompletion.evalₐ I (n + 1) x)
         obtain ⟨t, ht⟩ := Ideal.Quotient.mk_surjective (AdicCompletion.evalₐ I (n + 1) y)
-        rw [evalₐ_complDerFun I D (r := r + t) (by rw [map_add, map_add, hr, ht]), map_add,
+        rw [evalₐ_complDerFun I D (r := r + t) (by rw [map_add (f := _), map_add (f := _), hr, ht]), map_add (f := _),
           map_add, map_add, evalₐ_complDerFun I D hr.symm, evalₐ_complDerFun I D ht.symm]
       map_smul' := fun c x => by
         have h : algebraMap k (AdicCompletion I A') c = algebraMap A' _ (algebraMap k A' c) := rfl
@@ -187,7 +191,7 @@ theorem snd_dualLift_algebraMap (s r : A') :
 def awayDer (s : A') : Derivation k (Localization.Away s) (Localization.Away s) :=
   Derivation.mk'
     { toFun := fun x => (dualLift D s x).snd
-      map_add' := fun x y => by rw [map_add, TrivSqZeroExt.snd_add]
+      map_add' := fun x y => by rw [map_add (f := _), TrivSqZeroExt.snd_add]
       map_smul' := fun c x => by
         rw [Algebra.smul_def, snd_dualLift_mul, RingHom.id_apply, Algebra.smul_def,
           IsScalarTower.algebraMap_apply k A' (Localization.Away s), snd_dualLift_algebraMap,
@@ -223,8 +227,8 @@ theorem mem_invL_A_iff {f : K⟦X⟧} : f ∈ invL l (A O K) ↔ ∃ b : ℝ, �
     rw [h2, ← map_pow, coeff_C_mul, norm_mul, norm_pow]
     exact (mul_le_mul_of_nonneg_left (hb n) (pow_pos hl m).le).trans hm.le
 
-variable (O K) in
 
+variable (O K) in
 abbrev Rpi : Subalgebra O K⟦X⟧ := R O K l (1 / e)
 
 theorem A_le_Rpi : A O K ≤ Rpi O K l e :=
@@ -237,7 +241,7 @@ theorem invL_S_le_Rpi : invL l (S O K e) ≤ Rpi O K l e := invL_le l (S_le_R l 
 omit [IsUltrametricDist K] [Fact l.Prime] [NormedAlgebra ℚ_[l] K] [NeZero e] in
 theorem coeff_E_mul (g : K⟦X⟧) (n : ℕ) :
     coeff (n + e) (E K l e * g) = coeff n g + l * coeff (n + e) g := by
-  rw [E, add_mul, map_add, coeff_X_pow_mul, ← map_natCast (C : K →+* K⟦X⟧), coeff_C_mul]
+  rw [E, add_mul, map_add (f := _), coeff_X_pow_mul, ← map_natCast (C : K →+* K⟦X⟧), coeff_C_mul]
 
 theorem tendsto_add_mul (n : ℕ) : Tendsto (fun j : ℕ => n + j * e) atTop atTop :=
   tendsto_atTop_mono (fun j => (Nat.le_mul_of_pos_right j (NeZero.pos e)).trans
@@ -367,15 +371,16 @@ theorem exists_div_E_pow (m : ℕ) {f : K⟦X⟧} (hf : f ∈ Rpi O K l e) :
       add_mem hg (mul_mem (pow_mem (E_mem l e _) m) (sub_E_mul_quotE_mem l e hh)),
       quotE l e h, quotE_mem_Rpi l e hh, by ring⟩
 
-variable (O K) in
 
+variable (O K) in
 theorem sameJets : SameJets
     (Subalgebra.inclusion (invL_A_le_Rpi (O := O) (K := K) l e)).toRingHom
-    (EIn l e (invL l (A O K))) where
-  div m x := by
+    (EIn l e (invL l (A O K))) := by
+  constructor
+  · intro m x
     obtain ⟨g, hg, h, hh, hx⟩ := exists_div_E_pow l e m x.2
     exact ⟨⟨g, hg⟩, ⟨h, hh⟩, Subtype.ext hx⟩
-  dvd m g h hx := by
+  · intro m g h hx
     have hx' : (g : K⟦X⟧) = E K l e ^ m * h := congrArg Subtype.val hx
     exact ⟨⟨h, mem_invL_A_of_E_pow_mul l e m h.2 (hx' ▸ g.2)⟩, Subtype.ext hx'⟩
 
@@ -404,16 +409,16 @@ variable [Fact l.Prime] [NormedAlgebra ℚ_[l] K]
 
 def derAl : Derivation K (invL l (A O K)) (invL l (A O K)) :=
   Derivation.mk'
-    { toFun := fun f => ⟨PowerSeries.derivative K f,
+    { toFun := fun f => ⟨PowerSeries.derivative (f : K⟦X⟧),
         derivative_mem_away _ (fun _ => derivative_mem_A) f.2⟩
-      map_add' := fun f g => Subtype.ext (map_add (PowerSeries.derivative K) _ _)
+      map_add' := fun f g => Subtype.ext (map_add (PowerSeries.derivative (R := K)) f.1 g.1)
       map_smul' := fun c f => Subtype.ext (by
-        change PowerSeries.derivative K (C c * (f : K⟦X⟧)) = C c * PowerSeries.derivative K f
-        simp) }
-    fun f g => Subtype.ext ((PowerSeries.derivative K).leibniz f g)
+        change PowerSeries.derivative (C c * f.1) = C c * PowerSeries.derivative f.1
+        simpa only [smul_eq_C_mul] using (PowerSeries.derivative (R := K)).map_smul c f.1) }
+    fun f g => Subtype.ext ((PowerSeries.derivative (R := K)).leibniz f.1 g.1)
 
 @[simp] theorem coe_derAl (f : invL l (A O K)) :
-    (derAl O K l f : K⟦X⟧) = PowerSeries.derivative K f := rfl
+    (derAl O K l f : K⟦X⟧) = PowerSeries.derivative (f : K⟦X⟧) := rfl
 
 def dHat : Derivation K (Ahat O K l e) (Ahat O K l e) := complDer _ (derAl O K l)
 
@@ -431,8 +436,8 @@ variable [NeZero e] [CompleteSpace K]
 
 def toHat : Rpi O K l e →+* Ahat O K l e := (sameJets O K l e).toCompl
 
-variable {O K} in
 
+variable {O K} in
 theorem evalₐ_toHat_eq_iff (m : ℕ) (f : Rpi O K l e) (g : invL l (A O K)) :
     AdicCompletion.evalₐ _ m (toHat O K l e f) = Ideal.Quotient.mk _ g ↔
       ∃ h ∈ Rpi O K l e, (f : K⟦X⟧) - g = E K l e ^ m * h := by
@@ -446,16 +451,13 @@ theorem toHat_eq_ofAl {f : Rpi O K l e} {g : invL l (A O K)} (h : (f : K⟦X⟧)
   rw [← (sameJets O K l e).toCompl_ι g]
   exact congrArg _ (Subtype.ext h)
 
-variable {O K} in
 
+variable {O K} in
 def toHatOf {B : Subalgebra O K⟦X⟧} (h : B ≤ Rpi O K l e) : B →+* Ahat O K l e :=
   (toHat O K l e).comp (Subalgebra.inclusion h).toRingHom
 
 def toHatS : invL l (S O K e) →+* Ahat O K l e := toHatOf l e (invL_S_le_Rpi l e)
 
-variable {e} in
-
-def toHatR {k : ℝ} (hk : k ≤ 1 / e) : R O K l k →+* Ahat O K l e := toHatOf l e (R_mono l hk)
 
 abbrev RpiE : Subalgebra O K⟦X⟧ := invE l e (Rpi O K l e)
 

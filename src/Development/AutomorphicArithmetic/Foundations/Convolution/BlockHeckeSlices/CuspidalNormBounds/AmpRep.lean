@@ -1,14 +1,18 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.DatDatum
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.RrTens
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.PrjFix
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CompatEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LactSpec
-import Development.AutomorphicArithmetic.WhittakerHecke.FiniteTranslatesMatrixCoefficient
-import Development.AutomorphicArithmetic.WhittakerHecke.TensorTestFunctionInvariantAndFiniteDimensionalS
-import Development.AutomorphicArithmetic.WhittakerHecke.LiftOneRconvMemArchSmoothAndEnvelopingActionEq
-import Development.AutomorphicArithmetic.WhittakerHecke.LiftOneRconvTensorModerateGrowthUniform
-import Development.AutomorphicArithmetic.WhittakerHecke.ZCSuccEqAndEnvelopingActionCompatible
-import Development.AutomorphicArithmetic.WhittakerHecke.LocGLEqLocalEmbeddingAndKGLEqIntegralGL
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.DatDatum
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.RrTens
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.PrjFix
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CompatEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.LactSpec
+public import Development.AutomorphicArithmetic.WhittakerHecke.FiniteTranslatesMatrixCoefficient
+public import Development.AutomorphicArithmetic.WhittakerHecke.TensorTestFunctionInvariantAndFiniteDimensionalS
+public import Development.AutomorphicArithmetic.WhittakerHecke.LiftOneRconvMemArchSmoothAndEnvelopingActionEq
+public import Development.AutomorphicArithmetic.WhittakerHecke.LiftOneRconvTensorModerateGrowthUniform
+public import Development.AutomorphicArithmetic.WhittakerHecke.ZCSuccEqAndEnvelopingActionCompatible
+public import Development.AutomorphicArithmetic.WhittakerHecke.LocGLEqLocalEmbeddingAndKGLEqIntegralGL
+
+@[expose] public section
 
 open NumberField
 
@@ -19,7 +23,7 @@ open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Au
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.C UpperTheory.ConvolutionTheory.BW UpperTheory.V
 
 variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ}
-  {μ : Measure (normOneGL E n)} [μ.IsHaarMeasure]
+  {μ : Measure (normOneGL (K := E) (n := n))} [μ.IsHaarMeasure]
 
 private theorem ampRep_open {φ : Sm E n} {U : Subgroup (AdelicGLn.FiniteAdelicGL E n)}
     (hU : IsOpen (U : Set (AdelicGLn.FiniteAdelicGL E n))) (h : ∀ u ∈ U, GlobalTheory.CuspRep.finRep E n u φ = φ) :
@@ -38,7 +42,7 @@ private theorem ampRep_open {φ : Sm E n} {U : Subgroup (AdelicGLn.FiniteAdelicG
   exact Subgroup.isOpen_mono (H₁ := U) (H₂ := S) h hU
 
 private theorem ampRep_fix {f : TG E n} {v : LL μ} {φ : Sm E n}
-    (hφ : φ.1 = liftOne (rconv (rationalGLOne E n) μ f v)) {u : AdelicGLn.FiniteAdelicGL E n}
+    (hφ : φ.1 = liftOne (rconv (rationalGLOne (K := E) (n := n)) μ f v)) {u : AdelicGLn.FiniteAdelicGL E n}
     (h : ∀ z, f ((MultiplicityOne.finProj E n u)⁻¹ * z) = f z) : GlobalTheory.CuspRep.finRep E n u φ = φ := by
   refine Subtype.ext (funext fun g => ?_)
   change φ.1 (g * finGL E n u) = φ.1 g
@@ -47,25 +51,25 @@ private theorem ampRep_fix {f : TG E n} {v : LL μ} {φ : Sm E n}
   simp only [hφ, liftOne, retractOne_mul, e, rconv, mul_inv_rev, mul_assoc, h]
 
 private theorem ampRep_rep {f : TG E n} {v : LL μ} {φ : Sm E n}
-    (hφ : φ.1 = liftOne (rconv (rationalGLOne E n) μ f v)) (hl : IsOpen {k | GlobalTheory.CuspRep.finRep E n k φ = φ})
+    (hφ : φ.1 = liftOne (rconv (rationalGLOne (K := E) (n := n)) μ f v)) (hl : IsOpen {k | GlobalTheory.CuspRep.finRep E n k φ = φ})
     (hg : ∃ N : ℕ, ∀ u : Cm.UC E n, ∃ B : ℝ, ∀ g, ‖(Cm.uC E n u φ).1 g‖ ≤ B * AutomorphicForm.height g ^ N) :
     Rep μ (RR μ f v) φ := by
-  have hc := isContRep_rconv μ f v
   refine ⟨⟨fun γ g => ?_, hl, hg⟩, fun t g => ?_, ?_⟩
   · rw [hφ]
-    have hγ1 : AdelicGLn.diagonal E n γ ∈ normOneGL E n := rationalGL_le_normOneGL ⟨γ, rfl⟩
-    have hγΓ : (⟨AdelicGLn.diagonal E n γ, hγ1⟩ : normOneGL E n) ∈ rationalGLOne E n := ⟨γ, rfl⟩
-    exact (congrArg (rconv (rationalGLOne E n) μ f v) (retractOne_coe_mul ⟨_, hγ1⟩ g)).trans (hc.2.1 _ hγΓ _)
+    have hγ1 : AdelicGLn.diagonal E n γ ∈ normOneGL (K := E) (n := n) := rationalGL_le_normOneGL ⟨γ, rfl⟩
+    have hγΓ : (⟨AdelicGLn.diagonal E n γ, hγ1⟩ : normOneGL (K := E) (n := n)) ∈ rationalGLOne (K := E) (n := n) := ⟨γ, rfl⟩
+    exact (congrArg (rconv (rationalGLOne (K := E) (n := n)) μ f v) (retractOne_coe_mul ⟨_, hγ1⟩ g)).trans (rconv_mul_left _ μ f v hγΓ _)
   · rw [hφ]
     exact liftOne_centralSection_mul _ _ g
-  · filter_upwards [hc.ae_eq_quotFun] with y hy
+  · have := isFiniteMeasure_quotientMeasure (K := E) (n := n) μ
+    filter_upwards [integrated_ae_eq_rconvQ (rationalGLOne (K := E) (n := n)) μ f v] with y hy
     exact hy.trans (((congrFun hφ _).trans (liftOne_coe _ _)).trans
-      ((quotFun_mk _ hc.2.1 _).symm.trans (congrArg (quotFun _ hc.2.1) (Quotient.out_eq y)))).symm
+      ((rconvQ_mk _ μ f v _).symm.trans (congrArg (rconvQ _ μ f v) (Quotient.out_eq y)))).symm
 
 private theorem ampRep_killed {f : TG E n} {v : LL μ} {d : ℕ} {ρ : KA E n → Matrix (Fin d) (Fin d) ℂ}
     (h : ∀ x : KA E n →₀ ℂ, (x.sum fun k c => c • ρ k) = 0 →
       ∀ z, (x.sum fun k c => c * f ((Subgroup.inclusion maxCompact_le_normOneGL k)⁻¹ * z)) = 0) :
-    Killed ρ (liftOne (rconv (rationalGLOne E n) μ f v)) := by
+    Killed ρ (liftOne (rconv (rationalGLOne (K := E) (n := n)) μ f v)) := by
   intro x hx g
   have e : ∀ k : KA E n, retractOne (g * (k : GA E n)) =
       retractOne g * Subgroup.inclusion maxCompact_le_normOneGL k :=
@@ -98,15 +102,15 @@ theorem UpperTheory.ConvolutionTheory.BW.ampRep :
   have hR : ∀ β, Oinf μ 𝔞.ν β ∘L prj (fixF μ 𝔞.U) = RR μ (tens β e) := fun β => by
     rw [Tf.rrTens E n hn μ 𝔞.ν m hm, heP]
   have hder := UpperTheory.liftOne_rconv_mem_archSmooth_and_envelopingAction_eq E n hn μ 𝔞.ν m hm
-  have huC : ∀ β, SmoothT β → ∀ (v : LL μ) (φ : Sm E n), φ.1 = liftOne (rconv (rationalGLOne E n) μ (tens β e) v) →
-      ∀ u, (Cm.uC E n u φ).1 = liftOne (rconv (rationalGLOne E n) μ (tens (lact u β) e) v) := fun β hβ v φ hφ u => by
+  have huC : ∀ β, SmoothT β → ∀ (v : LL μ) (φ : Sm E n), φ.1 = liftOne (rconv (rationalGLOne (K := E) (n := n)) μ (tens β e) v) →
+      ∀ u, (Cm.uC E n u φ).1 = liftOne (rconv (rationalGLOne (K := E) (n := n)) μ (tens (lact u β) e) v) := fun β hβ v φ hφ u => by
     obtain ⟨h, hh⟩ := hder β e hβ v
     rw [(UpperTheory.zC_succ_eq_and_envelopingAction_compatible E n).2, ← hh u]
     exact congrArg (fun ψ => (uAct u ψ).1) (Subtype.ext hφ)
-  have hfix : ∀ β (v : LL μ) (φ : Sm E n), φ.1 = liftOne (rconv (rationalGLOne E n) μ (tens β e) v) →
+  have hfix : ∀ β (v : LL μ) (φ : Sm E n), φ.1 = liftOne (rconv (rationalGLOne (K := E) (n := n)) μ (tens β e) v) →
       ∀ u ∈ 𝔞.U, GlobalTheory.CuspRep.finRep E n u φ = φ := fun β v φ hφ u hu =>
     ampRep_fix hφ ((UpperTheory.tensorTestFunction_invariant_and_finiteDimensional_span E n hn β e 𝔞.U 𝔞.le 𝔞.isOpen heU).1 u hu)
-  have hrep : ∀ β, SmoothT β → ∀ (v : LL μ) (φ : Sm E n), φ.1 = liftOne (rconv (rationalGLOne E n) μ (tens β e) v) →
+  have hrep : ∀ β, SmoothT β → ∀ (v : LL μ) (φ : Sm E n), φ.1 = liftOne (rconv (rationalGLOne (K := E) (n := n)) μ (tens β e) v) →
       Rep μ ((Oinf μ 𝔞.ν β ∘L prj (fixF μ 𝔞.U)) v) φ := fun β hβ v φ hφ => by
     rw [hR]
     obtain ⟨N, hN⟩ := UpperTheory.liftOne_rconv_tensor_moderateGrowth_uniform E n hn μ 𝔞.ν m hm β e hβ
@@ -114,11 +118,11 @@ theorem UpperTheory.ConvolutionTheory.BW.ampRep :
     obtain ⟨B, hB⟩ := hN u
     exact ⟨B * ‖v‖, fun g => by rw [huC β hβ v φ hφ]; exact hB v g⟩
   let L : LL μ →ₗ[ℂ] Sm E n :=
-    { toFun := fun v => ⟨liftOne (rconv (rationalGLOne E n) μ (tens 𝔞.a₀ e) v),
+    { toFun := fun v => ⟨liftOne (rconv (rationalGLOne (K := E) (n := n)) μ (tens 𝔞.a₀ e) v),
         (Cm.sm_eq E n).ge (hder 𝔞.a₀ e 𝔞.smooth v).1⟩
       map_add' := fun v w => Subtype.ext (funext fun g => rconv_add _ μ _ v w _)
       map_smul' := fun c v => Subtype.ext (funext fun g => rconv_smul _ μ _ c v _) }
-  obtain ⟨d, ρ, hρ, hk⟩ := UpperTheory.finite_translates_matrix_coefficient (KA E n) (normOneGL E n) (Subgroup.inclusion maxCompact_le_normOneGL)
+  obtain ⟨d, ρ, hρ, hk⟩ := UpperTheory.finite_translates_matrix_coefficient (KA E n) (normOneGL (K := E) (n := n)) (Subgroup.inclusion maxCompact_le_normOneGL)
     (continuous_subtype_val.subtype_mk _) (tens 𝔞.a₀ e) (tens 𝔞.a₀ e).continuous
     ((UpperTheory.tensorTestFunction_invariant_and_finiteDimensional_span E n hn 𝔞.a₀ e 𝔞.U 𝔞.le 𝔞.isOpen heU).2 𝔞.fin)
   obtain ⟨N, hN⟩ := UpperTheory.liftOne_rconv_tensor_moderateGrowth_uniform E n hn μ 𝔞.ν m hm 𝔞.a₀ e 𝔞.smooth

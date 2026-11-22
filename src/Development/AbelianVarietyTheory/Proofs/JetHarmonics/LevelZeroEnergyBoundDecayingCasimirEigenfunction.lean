@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimE
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormSqLeShifted
-import Development.AbelianVarietyTheory.PublishedTheorems.BesselIntegrals.BesselXiIntegrable
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.EnergyBoundPolynomialWeightPowCapelliEigenStatement
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimE
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormSqLeShifted
+public import Development.AbelianVarietyTheory.PublishedTheorems.BesselIntegrals.BesselXiIntegrable
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.EnergyBoundPolynomialWeightPowCapelliEigenStatement
+
+@[expose] public section
+
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Finset
 
 namespace GlobalTheory

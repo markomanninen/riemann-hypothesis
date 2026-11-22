@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerExtra
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PVerticalDivisorJoinPullback
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsVerticalDivOfIsVerticalDivisorAlt
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ClassListMapDomainPerm
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTerExtra
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PVerticalDivisorJoinPullback
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsVerticalDivOfIsVerticalDivisorAlt
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ClassListMapDomainPerm
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -30,8 +35,8 @@ theorem isMultiHomog_rename {R : Type} [CommRing R] {f : MvPolynomial (Σ k, ι 
   rw [← Objects.isMultiHomog_iff] at hf ⊢
   exact isMultiHomog_joinForm hf
 
-omit [Fintype K'] [∀ k, Fintype (ι k)] [∀ k, Fintype (ι' k)] in
 
+omit [Fintype K'] [∀ k, Fintype (ι k)] [∀ k, Fintype (ι' k)] in
 theorem rename_weightedHomogeneousComponent [DecidableEq K] [DecidableEq K'] {R : Type} [CommRing R]
     (b : K → ℕ) (h : MvPolynomial (Σ k, ι k) R) :
     rename (liftVar ι') (weightedHomogeneousComponent (blockWeight ι) b h) =
@@ -51,7 +56,7 @@ theorem rename_weightedHomogeneousComponent [DecidableEq K] [DecidableEq K'] {R 
         fun e => hb (funext fun k => congrFun e (Sum.inl k))
       rw [IsWeightedHomogeneous.weightedHomogeneousComponent_ne b hm hb,
         IsWeightedHomogeneous.weightedHomogeneousComponent_ne _ hj hb', map_zero]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
 
 theorem comap_isMultiProjPrime {R : Type} [CommRing R]
     {Q : Ideal (MvPolynomial (Σ k : K ⊕ K', Sum.elim ι ι' k) R)}
@@ -69,8 +74,8 @@ theorem comap_isMultiProjPrime {R : Type} [CommRing R]
 
 end JoinPointVerticalDivisor
 
-open JoinPointVerticalDivisor in
 
+open JoinPointVerticalDivisor in
 theorem JoinPointVerticalDivisor.proof : JoinPointVerticalDivisor.Statement := by
   intro O _ _ _ Ω _ _ K _ ι _ y b f g hD
   obtain ⟨⟨α, β, hf, hg, hb⟩, hfP, hgP, hU⟩ := hD

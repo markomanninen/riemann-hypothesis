@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.Statements
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PNormFormEval
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.Statements
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PNormFormEval
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -20,7 +25,8 @@ theorem NormFormLocalization.proof : NormFormLocalization.Statement := by
   rw [normForm_eq_det b, normForm_eq_det b', RingHom.map_det]
   congr 1
   ext i k
-  simp only [hM, RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.sum_apply, Matrix.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hM, RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.sum_apply, Matrix.smul_apply,
     smul_eq_mul, map_sum, map_mul, map_X, map_C]
 
 end

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.AdmissibleCasimirScalars.CompactDerivativesBounded
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSchur
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.AdmissibleCasimirScalars.CompactDerivativesBounded
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSchur
+
+@[expose] public section
 
 open MeasureTheory Matrix Filter Topology
 open scoped InnerProductSpace ComplexConjugate
@@ -68,7 +72,7 @@ theorem c3 : SchurSymmetricDense := by
 
   have hAg : ∀ (g : UJ ε) (u : D), σ (umat g) (A u) = A ⟨σ (umat g) u, hst g u u.2⟩ := by
     intro g u
-    rw [aop_apply, aop_apply, map_add, map_smul, hcomm g u u.2]
+    rw [aop_apply, aop_apply, map_add (f := _), map_smul, hcomm g u u.2]
 
   set S := (LinearMap.range A)ᗮ with hS
   have hSst : ∀ (g : UJ ε), ∀ x ∈ S, σ (umat g) x ∈ S := by

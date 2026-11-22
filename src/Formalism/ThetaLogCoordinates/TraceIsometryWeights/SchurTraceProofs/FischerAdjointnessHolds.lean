@@ -1,4 +1,8 @@
-import Formalism.ThetaLogCoordinates.TraceIsometryWeights.StatementD
+module
+
+public import Formalism.ThetaLogCoordinates.TraceIsometryWeights.StatementD
+
+@[expose] public section
 
 namespace Formalism.InvariantFactorPaths.PW
 
@@ -25,7 +29,7 @@ theorem fock_add_right' (F G G' : MvPolynomial σ ℚ_[p]) : fock p F (G + G') =
   unfold fock
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun m _ => ?_
-  rw [coeff_add]
+  rw [MvPolynomial.coeff_add]
   ring
 
 theorem fock_smul_right' (c : ℚ_[p]) (F G : MvPolynomial σ ℚ_[p]) : fock p F (c • G) = c * fock p F G := by
@@ -117,7 +121,7 @@ theorem fock_nondeg (F : MvPolynomial σ ℚ_[p]) (h : ∀ G, fock p F G = 0) : 
   ext m
   have h1 := h (monomial m 1)
   rw [fock_monomial_right, mul_one] at h1
-  rw [coeff_zero]
+  change F.coeff m = 0
   exact (mul_eq_zero.1 h1).resolve_right (facProd_ne_zero m)
 
 theorem fock_disjoint (F G : MvPolynomial σ ℚ_[p]) (h : ∀ m ∈ F.support, m ∉ G.support) : fock p F G = 0 := by
@@ -133,7 +137,8 @@ theorem intPol_iff_norm (x : MvPolynomial σ ℚ_[p]) : x ∈ IntPol p σ ↔ �
     exact PadicInt.norm_le_one _
   · intro h
     refine ⟨∑ m ∈ x.support, monomial m (⟨x.coeff m, h m⟩ : ℤ_[p]), ?_⟩
-    simp only [AlgHom.toLinearMap_apply, map_sum, mapAlgHom_apply, map_monomial]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.toLinearMap_apply, map_sum, mapAlgHom_apply, map_monomial]
     conv_rhs => rw [x.as_sum]
     refine Finset.sum_congr rfl fun m _ => ?_
     erw [map_monomial]
@@ -179,7 +184,8 @@ theorem divPow_mul (D : A →ₗ[K] A) (hD : ∀ a b, D (a * b) = a * D b + b * 
     have hk : ((k + 1 : ℕ) : K) ≠ 0 := by exact_mod_cast Nat.succ_ne_zero k
     have hL : dd (k + 1) (f * g) = ((k + 1 : ℕ) : K)⁻¹ • D (dd k (f * g)) := by
       rw [hD1, smul_smul, inv_mul_cancel₀ hk, one_smul]
-    rw [hL, ih, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hL, ih, map_sum]
     simp only [hD, hD1, mul_smul_comm, Finset.sum_add_distrib]
     rw [inv_smul_eq_iff₀ hk]
     have hsplit : ((k + 1 : ℕ) : K) • ∑ ij ∈ antidiagonal (k + 1), dd ij.1 f * dd ij.2 g
@@ -288,7 +294,7 @@ theorem divided_integral_holds : DivInt := by
     exact LinearMap.mem_range.2 ⟨u' * w', by rw [← hu', ← hw']; simp⟩
   have hadd : ∀ u w, Pr u → Pr w → Pr (u + w) := by
     intro u w hu hw k
-    rw [map_add, smul_add]
+    rw [map_add (f := _), smul_add]
     exact Submodule.add_mem _ (hu k) (hw k)
   have hall : ∀ y : MvPolynomial (Fin N × Fin r) ℤ_[p],
       Pr (MvPolynomial.map (algebraMap ℤ_[p] ℚ_[p]) y) := by
@@ -298,7 +304,7 @@ theorem divided_integral_holds : DivInt := by
       rw [map_C]
       exact fun k => divPow_C_int LL j c d a k
     next u w hu hw =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact hadd _ _ hu hw
     next u v hu =>
       rw [map_mul, map_X]

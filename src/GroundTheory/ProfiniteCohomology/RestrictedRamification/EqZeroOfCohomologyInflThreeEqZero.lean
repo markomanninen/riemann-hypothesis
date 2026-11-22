@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.InflationRestriction
-import GroundTheory.ProfiniteCohomology.Factor
-import GroundTheory.ProfiniteCohomology.CupProducts.Cocycles
-import GroundTheory.ProfiniteCohomology.ClassFormations.IsIsoCohomologyMapAlongResSubgroupOfHom
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.InflationRestriction
+public import GroundTheory.ProfiniteCohomology.Factor
+public import GroundTheory.ProfiniteCohomology.CupProducts.Cocycles
+public import GroundTheory.ProfiniteCohomology.ClassFormations.IsIsoCohomologyMapAlongResSubgroupOfHom
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -73,8 +78,8 @@ section Extension
 variable {k G : Type u} [CommRing k] [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   (A : Rep.{u} k G) [IsDiscreteRep A]
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] in
 theorem inv_mul_contractNth_mem {n : ℕ} (V : Subgroup G) [V.Normal] (g g' : Fin (n + 1) → G)
     (h : ∀ i, (g i)⁻¹ * g' i ∈ V) (j : Fin (n + 1)) (i : Fin n) :
     (Fin.contractNth j (· * ·) g i)⁻¹ * Fin.contractNth j (· * ·) g' i ∈ V := by
@@ -116,7 +121,7 @@ theorem exists_isOpen_cohomologyResLE_eq (N : Subgroup G) (hN : IsClosed (N : Se
   classical
   have : CompactSpace N := isCompact_iff_compactSpace.mp hN.isCompact
   obtain ⟨z, rfl⟩ := cohomologyπ_surjective _ n y
-  set c : (Fin n → N) → A := cochainOf _ (cocycleι _ n z) with hc_def
+  set c : (Fin n → N) → A := cochainOf _ (cocycleι (A := Rep.res N.subtype A) (p := n) z) with hc_def
   have hc : IsLocallyConstant c := isLocallyConstant_cochainOf _
   obtain ⟨U, hU⟩ := exists_openNormalSubgroup_fin_of_isLocallyConstant hc
   obtain ⟨O, hO, hOU⟩ := isOpen_induced_iff.1 U.isOpen'
@@ -197,7 +202,7 @@ theorem exists_isOpen_cohomologyResLE_eq (N : Subgroup G) (hN : IsClosed (N : Se
     (cochainsComplex (Rep.res H.subtype A)).cyclesMk (mkCochain _ c' hc') (n + 1) (by simp) (by
       apply cochainOf_injective (A := Rep.res H.subtype A)
       exact (cochainOf_d _).trans hdc)
-  have hz' : cochainOf _ (cocycleι _ n z') = c' :=
+  have hz' : cochainOf _ (cocycleι (A := Rep.res H.subtype A) (p := n) z') = c' :=
     congrArg (cochainOf (Rep.res H.subtype A)) ((cochainsComplex (Rep.res H.subtype A)).i_cyclesMk _ _ _ _)
   refine ⟨H, hHo, le_sup_left, cohomologyπ _ n z', ?_⟩
   rw [cohomologyResLE_eq, cohomologyMapAlong_cohomologyπ]

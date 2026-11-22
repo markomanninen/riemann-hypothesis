@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.RowsDef
-import Formalism.SharpRestriction.CuspSpanNormBounds.LocalModelPeriodLattices
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.RowsDef
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalModelPeriodLattices
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 noncomputable section
 
@@ -260,11 +264,11 @@ theorem rows_sizeZ_cmp (hrd : 0 < D.host.rdE) {b : ℝ} (hb : 1 ≤ b) (c Ch : �
   calc ∏ τ, ∏ l ∈ Finset.Icc 1 (D.R.rS + 1), max 1 (absDl D Z l τ / b ^ (c * (D.R.m : ℝ) ^ 2))
       ≤ ∏ τ, ∏ l ∈ Finset.Icc 1 (D.R.rS + 1),
           (b ^ (max (Ch - c) 0 * (D.R.m : ℝ) ^ 2) * max 1 (absDl D Z l τ / b ^ (Ch * (D.R.m : ℝ) ^ 2))) := by
-        apply Finset.prod_le_prod
+        apply Finset.prod_le_prod₀
         · intro τ _
           exact Finset.prod_nonneg (fun l _ => le_trans zero_le_one (le_max_left _ _))
         · intro τ _
-          apply Finset.prod_le_prod
+          apply Finset.prod_le_prod₀
           · intro l _
             exact le_trans zero_le_one (le_max_left _ _)
           · intro l _
@@ -352,7 +356,7 @@ theorem rows_term_L2dec {C' Cl Cg cb Cu cT CT C0 A Cpr C C2 Ch CV δ δm : ℝ}
     have h1 : 0 ≤ nV D (Tu D u) (Tu D u') (ZhatL (X.fl t) (X.fl' t)) τ := by
       unfold nV; exact D.R.k_even.pow_nonneg _
     exact div_nonneg (mul_nonneg h1 (d_hsNormSq_nonneg _)) (Nat.cast_nonneg _)
-  have P := Finset.prod_le_prod (s := Finset.univ) (fun τ _ => nn τ) (fun τ _ => each τ)
+  have P := Finset.prod_le_prod₀ (s := Finset.univ) (fun τ _ => nn τ) (fun τ _ => each τ)
   rw [Finset.prod_div_distrib, Finset.prod_mul_distrib, Finset.prod_mul_distrib, Finset.prod_mul_distrib,
     Finset.prod_inv_distrib, d_dims Y hH.1 ha hb,
     Real.finsetProd_rpow _ _ (fun τ _ => rows_sizeV_nonneg _ _ _ _), d_size_eq Y hrd hCh t] at P
@@ -469,7 +473,7 @@ theorem rows_term_MINdec {C' Cl Cg cb Cu cT CT C0 A Cpr C C2 Ch CV δm : ℝ}
       unfold nV; exact D.R.k_even.pow_nonneg _
     exact div_nonneg (mul_nonneg (mul_nonneg (mul_nonneg h1 (d_hsNormSq_nonneg _)) ((even_two_mul _).pow_nonneg _))
       (inv_nonneg.2 (D.R.k_even.pow_nonneg _))) (Nat.cast_nonneg _)
-  have P := Finset.prod_le_prod (s := Finset.univ) (fun τ _ => nn τ) (fun τ _ => each τ)
+  have P := Finset.prod_le_prod₀ (s := Finset.univ) (fun τ _ => nn τ) (fun τ _ => each τ)
   rw [rows_prod4, rows_prod4', D.what₂.card_Tau, d_dims Y hH.1 ha hb,
     Real.finsetProd_rpow _ _ (fun τ _ => rows_sizeV_nonneg _ _ _ _), d_size_eq Y hrd hCh t] at P
   have e : aT X t ^ 2 = Y.volR t ^ 2 * ∏ τ, hsNormSq ((Y.A τ).J (Y.νR t τ) (Y.γ t τ)) := by
@@ -544,7 +548,7 @@ theorem rows_term_MINIdec {C' Cl Cg cb Cu cT CT C0 A Cpr C C2 Ch CV δ δm : ℝ
     have h1 : 0 ≤ nV D (Tu D u) (Tu D u') (ZhatL (X.fl t) (X.fl' t)) τ := by
       unfold nV; exact D.R.k_even.pow_nonneg _
     exact div_nonneg (mul_nonneg h1 (d_hsNormSq_nonneg _)) (Nat.cast_nonneg _)
-  have P := Finset.prod_le_prod (s := Finset.univ) (fun τ _ => nn τ) (fun τ _ => each τ)
+  have P := Finset.prod_le_prod₀ (s := Finset.univ) (fun τ _ => nn τ) (fun τ _ => each τ)
   rw [rows_prod5, Finset.prod_div_distrib, Finset.prod_mul_distrib, d_dims Y hH.1 ha hb,
     Real.finsetProd_rpow _ _ (fun τ _ => rows_sizeV_nonneg _ _ _ _), d_size_eq Y hrd hCh t] at P
   have e : aT X t ^ 2 = Y.volR t ^ 2 * ∏ τ, hsNormSq ((Y.A τ).J (Y.νR t τ) (Y.γ t τ)) := by
@@ -646,7 +650,7 @@ theorem rows_ch_eq (hrd : 0 < D.host.rdE) (t : D.s.Term u u') (τ : D.what₂.Ta
   have h1 := d_norm_Dmin Y hrd t τ (D.R.rS + 1) le_rfl
   have h2 := d_norm_Dmin Y hrd t τ D.R.rS (Nat.le_succ _)
   unfold DminN at h1 h2
-  rw [dif_pos (by omega)] at h1 h2
+  rw [dite_eq_left (by omega)] at h1 h2
   have h1' : ‖Formalism.QuantumDeterminants.Dmin D.R.k D.R.rS (Y.W τ).z (Y.W τ).z' (Y.γ t τ) (Fin.last (D.R.rS + 1))‖ =
       absDl D (ZhatL (X.fl t) (X.fl' t)) (D.R.rS + 1) τ := h1
   unfold chV Lat.ch Formalism.QuantumDeterminants.zeta
@@ -682,15 +686,15 @@ theorem rows_chRatio_eq (hrd : 0 < D.host.rdE) (t : D.s.Term u u') (τ : D.what�
   · rw [if_pos (h.2 h0), if_pos h0]
   · rw [if_neg (fun h1 => h0 (h.1 h1)), if_neg h0, rows_ch_eq Y hrd t τ, rows_sh_eq Y hrd t τ]
 
-theorem rows_ch_conj (T T' : ℕ) (F : LFlag (hS D) D.R.rS (T : D.host.E)) (F' : LFlag (hS D) D.R.rS (T' : D.host.E))
+theorem rows_ch_conj (T T' : ℕ) (F : LFlag (D.sp.Y 0) D.R.rS (T : D.host.E)) (F' : LFlag (D.sp.Y 0) D.R.rS (T' : D.host.E))
     (φ : D.host.E →+* ℂ) : Lat.ch T T' F F' (ComplexEmbedding.conjugate φ) = Lat.ch T T' F F' φ := by
   simp [Lat.ch, NumberField.ComplexEmbedding.conjugate_coe_eq]
 
-theorem onePlusChSh_conjugate (T T' : ℕ) (F : LFlag (hS D) D.R.rS (T : D.host.E)) (F' : LFlag (hS D) D.R.rS (T' : D.host.E))
+theorem onePlusChSh_conjugate (T T' : ℕ) (F : LFlag (D.sp.Y 0) D.R.rS (T : D.host.E)) (F' : LFlag (D.sp.Y 0) D.R.rS (T' : D.host.E))
     (φ : D.host.E →+* ℂ) : onePlusChSh T T' F F' (ComplexEmbedding.conjugate φ) = onePlusChSh T T' F F' φ := by
   simp only [onePlusChSh, Lat.sh, rows_ch_conj]
 
-theorem onePlusChSh_nonneg (T T' : ℕ) (F : LFlag (hS D) D.R.rS (T : D.host.E)) (F' : LFlag (hS D) D.R.rS (T' : D.host.E))
+theorem onePlusChSh_nonneg (T T' : ℕ) (F : LFlag (D.sp.Y 0) D.R.rS (T : D.host.E)) (F' : LFlag (D.sp.Y 0) D.R.rS (T' : D.host.E))
     (φ : D.host.E →+* ℂ) : 0 ≤ onePlusChSh T T' F F' φ := by
   unfold onePlusChSh Lat.sh Lat.ch
   split_ifs <;> positivity
@@ -769,7 +773,7 @@ theorem rowsT_shV_pos (hrd : 0 < D.host.rdE) (t : D.s.Term u u') (hG : D.s.Gterm
   have h2 := d_norm_Dmin Y hrd t τ D.R.rS (Nat.le_succ _)
   have hD' : 0 < absDl D (termGramMatrix X t) D.R.rS τ := by rw [← h2]; exact norm_pos_iff.2 hD
   unfold DminN at h1 h2
-  rw [dif_pos (by omega)] at h1 h2
+  rw [dite_eq_left (by omega)] at h1 h2
   have h1' : ‖Formalism.QuantumDeterminants.Dmin D.R.k D.R.rS (Y.W τ).z (Y.W τ).z' (Y.γ t τ) (Fin.last (D.R.rS + 1))‖ =
       absDl D (ZhatL (X.fl t) (X.fl' t)) (D.R.rS + 1) τ := h1
   have hT := rowsT_Tr_pos D u
@@ -813,25 +817,25 @@ open NumberField
 
 variable {D : D7}
 
-theorem rowsT_chSh_conj (T T' : ℕ) (F : LFlag (hS D) D.R.rS (T : D.host.E)) (F' : LFlag (hS D) D.R.rS (T' : D.host.E))
+theorem rowsT_chSh_conj (T T' : ℕ) (F : LFlag (D.sp.Y 0) D.R.rS (T : D.host.E)) (F' : LFlag (D.sp.Y 0) D.R.rS (T' : D.host.E))
     (φ : D.host.E →+* ℂ) : chSh T T' F F' (ComplexEmbedding.conjugate φ) = chSh T T' F F' φ := by
   simp only [chSh, Lat.sh, rows_ch_conj]
 
-theorem rowsT_invSh_conj (T T' : ℕ) (F : LFlag (hS D) D.R.rS (T : D.host.E)) (F' : LFlag (hS D) D.R.rS (T' : D.host.E))
+theorem rowsT_invSh_conj (T T' : ℕ) (F : LFlag (D.sp.Y 0) D.R.rS (T : D.host.E)) (F' : LFlag (D.sp.Y 0) D.R.rS (T' : D.host.E))
     (φ : D.host.E →+* ℂ) : invSh T T' F F' (ComplexEmbedding.conjugate φ) = invSh T T' F F' φ := by
   simp only [invSh, Lat.sh, rows_ch_conj]
 
-theorem rowsT_ch_nonneg (T T' : ℕ) (F : LFlag (hS D) D.R.rS (T : D.host.E)) (F' : LFlag (hS D) D.R.rS (T' : D.host.E))
+theorem rowsT_ch_nonneg (T T' : ℕ) (F : LFlag (D.sp.Y 0) D.R.rS (T : D.host.E)) (F' : LFlag (D.sp.Y 0) D.R.rS (T' : D.host.E))
     (φ : D.host.E →+* ℂ) : 0 ≤ Lat.ch T T' F F' φ := by
   unfold Lat.ch
   positivity
 
-theorem rowsT_chSh_nonneg (T T' : ℕ) (F : LFlag (hS D) D.R.rS (T : D.host.E)) (F' : LFlag (hS D) D.R.rS (T' : D.host.E))
+theorem rowsT_chSh_nonneg (T T' : ℕ) (F : LFlag (D.sp.Y 0) D.R.rS (T : D.host.E)) (F' : LFlag (D.sp.Y 0) D.R.rS (T' : D.host.E))
     (φ : D.host.E →+* ℂ) : 0 ≤ chSh T T' F F' φ := by
   unfold chSh Lat.sh Lat.ch
   split_ifs <;> positivity
 
-theorem rowsT_invSh_nonneg (T T' : ℕ) (F : LFlag (hS D) D.R.rS (T : D.host.E)) (F' : LFlag (hS D) D.R.rS (T' : D.host.E))
+theorem rowsT_invSh_nonneg (T T' : ℕ) (F : LFlag (D.sp.Y 0) D.R.rS (T : D.host.E)) (F' : LFlag (D.sp.Y 0) D.R.rS (T' : D.host.E))
     (φ : D.host.E →+* ℂ) : 0 ≤ invSh T T' F F' φ := by
   unfold invSh Lat.sh Lat.ch
   split_ifs <;> first | positivity | exact le_rfl
@@ -876,7 +880,7 @@ theorem rowsT_small_one {ι : Type*} [Fintype ι] (s : ι → ℝ) (T T' g : ℝ
       _ = T' / g * g := by rw [h3]
       _ = T' := by field_simp
   calc ∏ v, min (T' * s v ^ 2) T' ≤ ∏ v, (T' * s v) :=
-        Finset.prod_le_prod (fun v _ => le_min (mul_nonneg hT'.le (sq_nonneg _)) hT'.le)
+        Finset.prod_le_prod₀ (fun v _ => le_min (mul_nonneg hT'.le (sq_nonneg _)) hT'.le)
           (fun v _ => hv v)
     _ = T' ^ Fintype.card ι * ∏ v, s v := by
         rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ]
@@ -929,7 +933,7 @@ theorem rowsT_nu_eq (hrd : 0 < D.host.rdE) (t : D.s.Term u u') (hG : D.s.Gterm t
   unfold nuV
   rw [h2, d_Gf_eq Y hrd t τ]
   unfold DminN at h1 h2
-  rw [dif_pos (by omega)] at h1 h2
+  rw [dite_eq_left (by omega)] at h1 h2
   have h1' : ‖Formalism.QuantumDeterminants.Dmin D.R.k D.R.rS (Y.W τ).z (Y.W τ).z' (Y.γ t τ) (Fin.last (D.R.rS + 1))‖ =
       absDl D (ZhatL (X.fl t) (X.fl' t)) (D.R.rS + 1) τ := h1
   have hT := rowsT_Tr_pos D u
@@ -975,8 +979,10 @@ theorem rowsT_small (hS : Cnt.Stand D u u') (hrd : 0 < D.host.rdE) (t t' : D.s.T
       have h0'' : Dr (X.fl t) (X.fl' t') = 0 := by rw [e]; exact h0'
       have hne : Nonempty D.what₂.Tau := by
         rw [← Fintype.card_pos_iff, D.what₂.card_Tau]
-        simp only [Formalism.BasicNotions.Ranks.f, Formalism.BasicNotions.Ranks.n]
-        positivity
+        have := D.R.two_le_m
+        have := D.R.m_le_f
+        unfold Formalism.BasicNotions.Ranks.f Formalism.BasicNotions.Ranks.n
+        omega
       obtain ⟨τ0⟩ := hne
       have : ∏ τ : D.what₂.Tau,
           (chSh (Tu D u) (Tu D u') (X.fl t) (X.fl' t) (embS D τ) *
@@ -1112,7 +1118,7 @@ theorem rowsT_Mt_small {C δ C₁ C₂ : ℝ} (hrd : 0 < D.host.rdE) (t : D.s.Te
     unfold ampMinF
     rw [if_neg fun h => hD ((rows_Dr_zero_iff Y hrd t τ).1 h)]
     exact le_min zero_le_one (by have := hν τ; have := htv τ; positivity)
-  have P := Finset.prod_le_prod (s := Finset.univ) (fun τ _ => nn τ) (fun τ _ => each τ)
+  have P := Finset.prod_le_prod₀ (s := Finset.univ) (fun τ _ => nn τ) (fun τ _ => each τ)
   rw [Finset.prod_mul_distrib, Finset.prod_mul_distrib, Finset.prod_mul_distrib, Finset.prod_const, Finset.prod_const,
     Finset.card_univ, D.what₂.card_Tau] at P
   unfold rows_Mt

@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.IsLocalHomeomorph
+module
+
+public import ReciprocityTheory.L2DbarEstimates.IsLocalHomeomorph
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.Y
 
@@ -75,10 +79,6 @@ def sqn {N : ℕ} (A : WeightedAtlas n Y ι La) (la : La) (w : Fin N → ι → 
 def leviAt (A : WeightedAtlas n Y ι La) (i : ι) (f : Y → ℝ) (y : Y) (ξ : Fin n → ℂ) : ℝ :=
   (leviV n (fun v => ((f ((A.chart i).symm v) : ℝ) : ℂ)) (A.chart i y) ξ).re
 
-def hessAt (A : WeightedAtlas n Y ι La) (i : ι) (f : Y → ℝ) (y : Y) :
-    Matrix (Fin n) (Fin n) ℂ :=
-  cHess n (fun v => ((f ((A.chart i).symm v) : ℝ) : ℂ)) (A.chart i y)
-
 def Pos (A : WeightedAtlas n Y ι La) (la : La) (ps : Y → ℝ) : Prop :=
   ∀ i y, y ∈ (A.chart i).source → ∀ ξ : Fin n → ℂ,
     0 ≤ A.leviAt i (fun x => A.ph la i x + ps x) y ξ
@@ -134,10 +134,6 @@ def flatE (A : WeightedAtlas n Y ι La) (w0 : ι → Y → ℂ) (s : Fin n → �
     (De : MvPolynomial (Fin n) ℂ) (y : Y) : ℝ :=
   ((De.totalDegree : ℝ) + 1) * Real.log (1 + ‖A.zmap w0 s y‖ ^ 2) -
     Real.log (‖MvPolynomial.eval (fun k => A.zmap w0 s y k) De‖ ^ 2)
-
-def maDens (A : WeightedAtlas n Y ι La) (la : La) (a : Y → ℝ) (y : Y) : ℝ≥0∞ :=
-  ENNReal.ofReal ((A.hessAt (A.pick y) (fun x => A.ph la (A.pick y) x + a x) y).det.re *
-    Real.exp (-A.ph A.kap (A.pick y) y))
 
 end WeightedAtlas
 

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StFnDegAdjoin
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PChartRankAdjoin
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StFnDegAdjoin
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PChartRankAdjoin
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

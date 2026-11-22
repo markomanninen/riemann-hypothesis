@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.EllipticTorsion.FormalGroupPointsTorsionFree
+module
+
+public import Mathlib
+public import Formalism.EllipticTorsion.FormalGroupPointsTorsionFree
+
+@[expose] public section
 
 noncomputable section
 
@@ -439,8 +443,8 @@ namespace Formalism.ELL
 
 open WeierstrassCurve
 
-open Classical in
 
+open Classical in
 theorem formal_group_points_no_prime_to_p_torsion : FormalGroupPointsTorsionFree.{u} := by
   intro K _ _ W hW _ n hn P hP hnP
   by_contra hP0

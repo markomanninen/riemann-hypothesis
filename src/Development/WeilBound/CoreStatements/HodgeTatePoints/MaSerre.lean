@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.HodgeTatePoints.MaBase
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsGenOnChart
+module
+
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.MaBase
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsGenOnChart
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory GlobalTheory.CompanionTheory.Ar NumberField
 

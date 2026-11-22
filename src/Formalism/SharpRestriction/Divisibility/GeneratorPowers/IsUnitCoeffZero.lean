@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FormalGroupLinearSecond
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.LogLowOrderOne
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.BalOf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ConstantCoeffAddFirstSecond
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.FormalGroupLinearSecond
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.LogLowOrderOne
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.BalOf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ConstantCoeffAddFirstSecond
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -38,7 +42,7 @@ theorem X_sub_cc {n : ℕ} (k : Fin n) :
   simp [xs]
 
 theorem isUnit_coeff_zero {m : ℕ} {P : MvPolynomial (Fin 2 × Fin d) S} (U : (Jet S (Fin 2 × Fin d) m)ˣ)
-    (hP : Ideal.Quotient.mk (orig S (Fin 2 × Fin d) ^ (m + 1)) P = U) : IsUnit (coeff 0 P) := by
+    (hP : Ideal.Quotient.mk (orig S (Fin 2 × Fin d) ^ (m + 1)) P = U) : IsUnit (AddMonoidAlgebra.coeff P 0) := by
   have hker : ∀ a ∈ orig S (Fin 2 × Fin d) ^ (m + 1),
       (constantCoeff : MvPolynomial (Fin 2 × Fin d) S →+* S) a = 0 := by
     intro a ha
@@ -52,7 +56,7 @@ theorem isUnit_coeff_zero {m : ℕ} {P : MvPolynomial (Fin 2 × Fin d) S} (U : (
       simp
     exact h2 (h1 ha)
   let φ := Ideal.Quotient.lift _ (constantCoeff : MvPolynomial (Fin 2 × Fin d) S →+* S) hker
-  have hφP : φ (Ideal.Quotient.mk _ P) = coeff 0 P := Ideal.Quotient.lift_mk _ _ _
+  have hφP : φ (Ideal.Quotient.mk _ P) = AddMonoidAlgebra.coeff P 0 := Ideal.Quotient.lift_mk _ _ _
   have hu : IsUnit (φ (U : Jet S (Fin 2 × Fin d) m)) := U.isUnit.map φ
   rw [← hP, hφP] at hu
   exact hu
@@ -75,7 +79,7 @@ theorem psIn_law_sub_mem (G : FGLaw S d) {m : ℕ} (hm : 1 ≤ m) (i : Fin d) :
   have e : psIn d m (![0, 1] : Fin 2 → Fin 3) (G.F i) - C (constantCoeff (psIn d m (![0, 1] : Fin 2 → Fin 3) (G.F i))) - (xs S d 0 i + xs S d 1 i) =
       aeval (fun p : Fin 2 × Fin d => (X (((![0, 1] : Fin 2 → Fin 3) p.1), p.2) : MvPolynomial (Fin 3 × Fin d) S))
         (psTrunc m (G.F i) - (X ((0 : Fin 2), i) + X ((1 : Fin 2), i))) := by
-    rw [hc, map_zero, sub_zero, psIn, hr, map_sub, map_add, aeval_X, aeval_X]
+    rw [hc, map_zero, sub_zero, psIn, hr, map_sub, map_add (f := _), aeval_X, aeval_X]
     rfl
   rw [e]
   exact aeval_mem_pow _ (fun p => Ideal.subset_span ⟨_, rfl⟩) 2 (psTrunc_law_sub_mem G hm i)
@@ -86,7 +90,7 @@ private theorem constantCoeff_germEvalPair_eq_zero_lemma {τ : Type} (h : MvPoly
   unfold ev2
   induction h using MvPolynomial.induction_on
   · simp
-  · simp only [map_add, *]
+  · simp only [map_add (f := _), *]
   · rename_i p n _
     rcases n with ⟨i, j⟩
     fin_cases i <;> simp [hu, hv]
@@ -95,7 +99,7 @@ theorem const_one' {P : MvPolynomial (Fin 2 × Fin d) S} {m : ℕ} (fF : Fin d �
     (hfF : ∀ i, fF i ∈ Io S (Fin 3 × Fin d))
     (hph1 : ev2 P fF (xs S d 2) - ev2 P (xs S d 0) (xs S d 2) * ev2 P (xs S d 1) (xs S d 2) ∈
       Io S (Fin 3 × Fin d) ^ (m + 1))
-    (hu : IsUnit (coeff 0 P)) : P - 1 ∈ Io S (Fin 2 × Fin d) ^ 1 := by
+    (hu : IsUnit (AddMonoidAlgebra.coeff P 0)) : P - 1 ∈ Io S (Fin 2 × Fin d) ^ 1 := by
   have hIo : ∀ {σ : Type} (f : MvPolynomial σ S), f ∈ Io S σ → constantCoeff f = 0 := by
     intro σ f hf
     have h2 : Io S σ ≤ RingHom.ker (constantCoeff : MvPolynomial σ S →+* S) := by
@@ -126,7 +130,7 @@ theorem const_one' {P : MvPolynomial (Fin 2 × Fin d) S} {m : ℕ} (fF : Fin d �
   intro e he
   have hne : e ≠ 0 := by
     rintro rfl
-    have hc' : coeff 0 P = 1 := hc
+    have hc' : AddMonoidAlgebra.coeff P 0 = 1 := hc
     rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_sub, MvPolynomial.coeff_zero_one, hc', sub_self] at he
     exact he rfl
   obtain ⟨i, hi⟩ : ∃ i, e i ≠ 0 := by
@@ -188,7 +192,7 @@ theorem fixExp (G : FGLaw S d) {O : Type} (act : O → Fin d → PS S 1 d)
   · have hF : ∀ i, fF i - (xs S d 0 i + xs S d 1 i) ∈ Io S (Fin 3 × Fin d) ^ 2 :=
       fun i => psIn_law_sub_mem G (by omega) i
     obtain ⟨h2, h3, hsymB⟩ := lead_bil hm2 fF hF hph1 hsym hu
-    set B : Fin d → Fin d → S := fun i l => coeff (sil i l) (homogeneousComponent 2 (P - 1)) with hBdef
+    set B : Fin d → Fin d → S := fun i l => AddMonoidAlgebra.coeff (homogeneousComponent 2 (P - 1)) (sil i l) with hBdef
     have hbalB : ∀ a, Matrix.transpose (Matrix.of (dLin (act a))) * Matrix.of B =
         Matrix.of B * Matrix.of (dLin (act (bar a))) := by
       intro a

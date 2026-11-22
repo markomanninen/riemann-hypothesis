@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.InFPOfMul
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.InFPOfMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,7 +94,8 @@ theorem RepVV_γ (hT : IsCrys PD T.ρ) (hP2 : Formalism.MainNotions.DeltaInvaria
     congr 1
     ring
   have h1 := congrArg (W.γ T) hxy
-  simp only [γ_smul W, map_sub, map_sum, γA_lA W, γ_φpow W, hγz, map_add, φpow_smulA W, smul_add,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [γ_smul W, map_sub, map_sum, γA_lA W, γ_φpow W, hγz, map_add (f := _), φpow_smulA W, smul_add,
     Finset.sum_add_distrib, hΛR] at h1
   rw [hZ, map_mul, map_pow, hu', hΛR] at h1
   have hlA : lA W ∈ W.AΔ := by

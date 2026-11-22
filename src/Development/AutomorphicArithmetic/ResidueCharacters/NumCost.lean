@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ResidueCharacters.NumParameters
-import Development.AutomorphicArithmetic.ResidueCharacters.NumBounds
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ResidueCharacters.NumParameters
+public import Development.AutomorphicArithmetic.ResidueCharacters.NumBounds
+
+@[expose] public section
 
 noncomputable section
 

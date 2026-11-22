@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LastSeeSawDatumIsTwoVariableThetaFunction
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatticeVacuumIffPlacewise
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SmallPair
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LastSeeSawDatumIsTwoVariableThetaFunction
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.LatticeVacuumIffPlacewise
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem heis_left (ψ : AddChar (AF D.host.F) ℂ) {V₀ A L S X T L'' : HSp D} 
   simp only [heisO, lastBi_apply]
   have e : (o.resS S).symm (u + a, kap τ S (o''.resT S v).2) =
       (o.resS S).symm (u, kap τ S (o''.resT S v).2) + (o.resS S).symm (a, 0) := by
-    rw [← map_add, Prod.mk_add_mk, add_zero]
+    rw [← map_add (f := _), Prod.mk_add_mk, add_zero]
   rw [e, GlobalTheory.LastBiTheta.sOH_resS_symm, GlobalTheory.LastBiTheta.sOH_zero_right, add_zero]
   ring
 
@@ -47,14 +51,14 @@ theorem heis_right (ψ : AddChar (AF D.host.F) ℂ) {V₀ A L S X T L'' : HSp D}
   rw [o''.heisO_boxT]
   congr 1
   funext w
-  simp only [heisO]
   have e : (o.resS S).symm (u, kap τ S (w + (o''.resT S b).2)) =
       (o.resS S).symm (u, kap τ S w) + (o.resS S).symm (0, kap τ S (o''.resT S b).2) := by
-    rw [kadd, ← map_add, Prod.mk_add_mk, add_zero]
+    rw [kadd, ← map_add (f := _), Prod.mk_add_mk, add_zero]
+  simp only [heisO]
   rw [e, GlobalTheory.LastBiTheta.sOH_resS_symm, GlobalTheory.LastBiTheta.sOH_zero_right, zero_add, kH]
 
 theorem slice_left {ψ : AddChar (AF D.host.F) ℂ} {A S A' : HSp D} {C : WO A S → WO S A' → ℂ} (h : IsBiTheta ψ A S A' C)
-    (v : WO S A') : IsThetaFunO ψ A S fun u => C u v where
+    (v : WO S A') : IsThetaFunO ψ A S fun u => C u v := {
   quasi := fun γ u => h.quasiL γ u v
   level := by
     obtain ⟨U, hU, hl⟩ := h.levL
@@ -62,10 +66,10 @@ theorem slice_left {ψ : AddChar (AF D.host.F) ℂ} {A S A' : HSp D} {C : WO A S
   cont := h.cont.comp (continuous_id.prodMk continuous_const)
   smooth := fun n L hL h0 u => by
     have := h.smooth n L 0 hL continuous_const h0 (fun _ => Matrix.map_zero _ (map_zero (finPart D))) u v
-    simpa using this
+    simpa using this }
 
 theorem slice_right {ψ : AddChar (AF D.host.F) ℂ} {A S A' : HSp D} {C : WO A S → WO S A' → ℂ} (h : IsBiTheta ψ A S A' C)
-    (u : WO A S) : IsThetaFunO ψ S A' (C u) where
+    (u : WO A S) : IsThetaFunO ψ S A' (C u) := {
   quasi := fun γ v => h.quasiR γ u v
   level := by
     obtain ⟨U, hU, hl⟩ := h.levR
@@ -73,7 +77,7 @@ theorem slice_right {ψ : AddChar (AF D.host.F) ℂ} {A S A' : HSp D} {C : WO A 
   cont := h.cont.comp (continuous_const.prodMk continuous_id)
   smooth := fun n L hL h0 v => by
     have := h.smooth n 0 L continuous_const hL (fun _ => Matrix.map_zero _ (map_zero (finPart D))) h0 u v
-    simpa using this
+    simpa using this }
 
 theorem isHalf_mul_left {e : AE D} {k m n : ℕ} (P : Mx D k m) {y : Mx D m n} (h : IsHalf e y) : IsHalf e (P * y) := by
   intro i j
@@ -107,9 +111,8 @@ theorem isHalf_kap {e : AE D} {L L'' : HSp D} (τ : Matrix (Fin L.rank) (Fin L''
   exact isHalf_smul _ (isHalf_mul_left _ (isHalf_mul_right _ (isHalf_adj (isHalf_mul_left _ h))))
 
 theorem cA_cA (x : AE D) : cA D (cA D x) = x := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  induction x using TensorProduct.inductionOn with
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul a e =>
     simp only [cA, sigR]
     simp
@@ -213,7 +216,7 @@ theorem lastVac : ∀ D : D7, GlobalTheory.FinPl.LastVac D := by
     · have hm := mono M LS x hx _ (extLat D V₀ A L S o M LA LL LS x hM hLA hLL hLS hOM a 0 ha (zero_mem _))
       have e2 : (o.resS S).symm (2 • a, 0) = 2 • (o.resS S).symm (a, 0) := by
         simp only [two_nsmul]
-        rw [← map_add, Prod.mk_add_mk, add_zero]
+        rw [← map_add (f := _), Prod.mk_add_mk, add_zero]
       rw [heis_left, e2, hΞ.2.1 _ hm]
       rfl
     · have hm := mono M LS x hx _ (extLat D V₀ A L S o M LA LL LS x hM hLA hLL hLS hOM a 0 ha (zero_mem _))
@@ -225,10 +228,10 @@ theorem lastVac : ∀ D : D7, GlobalTheory.FinPl.LastVac D := by
       have hm1 := mono LS LT x hx _ h1
       have hm2 := mono M LS x hx _ (extLat D V₀ A L S o M LA LL LS x hM hLA hLL hLS hOM 0 _ (zero_mem _) (hk _ h2))
       have e1 : (o''.resT S (2 • b)).1 = 2 • (o''.resT S b).1 := by
-        simp only [two_nsmul, map_add, Prod.fst_add]
+        simp only [two_nsmul, map_add (f := _), Prod.fst_add]
       have e2 : (o.resS S).symm (0, kap τ S (o''.resT S (2 • b)).2) = 2 • (o.resS S).symm (0, kap τ S (o''.resT S b).2) := by
         simp only [two_nsmul]
-        rw [map_add, Prod.snd_add, kadd, ← map_add, Prod.mk_add_mk, add_zero]
+        rw [map_add (f := _), Prod.snd_add, kadd, ← map_add (f := _), Prod.mk_add_mk, add_zero]
       rw [heis_right ψ o o'' τ hτ, e1, e2, hΦ.2.1 _ hm1, hΞ.2.1 _ hm2]
       rfl
     · obtain ⟨h1, h2⟩ := resLat D X T L'' S o'' LX LT LZ LS x hLX hLT hLZ hLS hOX b hb

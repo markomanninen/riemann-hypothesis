@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EndOmega
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.NormSubLeMaxOfUltrametricField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EndOmega
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.NormSubLeMaxOfUltrametricField
+
+@[expose] public section
 
 open PowerSeries GlobalTheory.Honda
 
@@ -46,19 +50,20 @@ theorem coeff_frobOp_sub_hondaSum (τ : K →+* K) (l : ℕ) {q : ℕ} (hq : 2 �
         ∑ j ∈ Finset.range N, (τ ^ i) (c j) * coeff n (frobOp τ q (i + (j + 1)) f) := by
   have hq0 : q ≠ 0 := by omega
   rw [coeff_frobOp τ hq0]
-  by_cases hd : q ^ i ∣ n
-  · rw [if_pos hd, coeff_frobOp τ hq0 i f, if_pos hd, map_sub, coeff_C_mul, hondaSum, coeff_mk,
+  set_option synthInstance.maxHeartbeats 100000 in
+   by_cases hd : q ^ i ∣ n
+   · rw [if_pos hd, coeff_frobOp τ hq0 i f, if_pos hd, map_sub, coeff_C_mul, hondaSum, coeff_mk,
       ← Finset.eventually_constant_sum (N := n / q ^ i) (n := N)
         (fun j hj => by rw [coeff_frobOp_eq_zero τ hq hf (by omega), mul_zero])
         (le_trans (Nat.div_le_self _ _) hN),
       map_sub, map_mul, map_natCast, map_sum]
-    congr 1
-    refine Finset.sum_congr rfl fun j _ => ?_
-    rw [map_mul, pow_apply_coeff_frobOp τ hq0 f i (j + 1) hd]
-  · rw [if_neg hd, coeff_frobOp τ hq0 i f, if_neg hd, mul_zero, Finset.sum_eq_zero, sub_zero]
-    intro j _
-    rw [coeff_frobOp τ hq0, if_neg, mul_zero]
-    exact fun h => hd (dvd_trans (pow_dvd_pow q (Nat.le_add_right _ _)) h)
+     congr 1
+     refine Finset.sum_congr rfl fun j _ => ?_
+     rw [map_mul, pow_apply_coeff_frobOp τ hq0 f i (j + 1) hd]
+   · rw [if_neg hd, coeff_frobOp τ hq0 i f, if_neg hd, mul_zero, Finset.sum_eq_zero, sub_zero]
+     intro j _
+     rw [coeff_frobOp τ hq0, if_neg, mul_zero]
+     exact fun h => hd (dvd_trans (pow_dvd_pow q (Nat.le_add_right _ _)) h)
 
 theorem sum_square_eq_sum_diag (N : ℕ) (F : ℕ → ℕ → K) (hF : ∀ i j, N ≤ i + j → F i j = 0) :
     ∑ i ∈ Finset.range N, ∑ j ∈ Finset.range N, F i j =

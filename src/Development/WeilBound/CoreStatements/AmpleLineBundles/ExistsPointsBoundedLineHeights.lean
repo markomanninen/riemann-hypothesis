@@ -1,5 +1,9 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCurveIsOrbit
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCurveIsOrbit
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem homog_rename {f : MRing ι} {a : K → ℕ} (hf : IsMultiHomog f a) :
   obtain ⟨m₀, hm₀, rfl⟩ := Finset.mem_image.mp hm
   rw [← hf m₀ hm₀ k]
   refine (Fintype.sum_equiv (e k) _ _ fun i => ?_).symm
-  exact (Finsupp.mapDomain_apply (E e).injective m₀ ⟨k, i⟩).symm
+  exact (Finsupp.mapDomain_apply_of_injective (E e).injective m₀ ⟨k, i⟩).symm
 
 omit [Fintype K] [DecidableEq K] [∀ k, Fintype (ι k)] in
 theorem mem_map_iff (P : Ideal (MRing ι)) (f : MRing ι) : φ e f ∈ P.map (φ e) ↔ f ∈ P :=
@@ -141,7 +145,7 @@ theorem CoverDenseAlt.exists_points_bounded_line_heights : ∀ (K : Type) [Finty
   · exact fun h => hx ((hval f).mp h)
   · rw [height_eq e (A j) (hA j)]
     have h1 := hC j x hxP
-    have h2 : (m j : ℝ) * height (HermLine.standard n) x ≤ m j * C₀ :=
+    have h2 : (m j : ℝ) * height (GroundTheory.Heights₂.Heights.HermLine.standard n) x ≤ m j * C₀ :=
       mul_le_mul_of_nonneg_left (hC₀ x hxS) (Nat.cast_nonneg _)
     have h3 : |m j * C₀ + C j| ≤ ∑ j, |m j * C₀ + C j| :=
       Finset.single_le_sum (f := fun j => |m j * C₀ + C j|) (fun _ _ => abs_nonneg _) (Finset.mem_univ j)

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemClosureUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemClosureUnitary
+
+@[expose] public section
 
 namespace EqZeroOfFinite
 section
@@ -31,7 +35,7 @@ theorem _root_.GlobalTheory.Adopt.continuous_automorphic_eq_zero_of_vanish_on_fi
   obtain ⟨u, hu, f, hf, rfl⟩ := (GlobalTheory.UnitarySplit.real_finite_split D V).1 g
 
   set ψ : GA D V → ℂ := fun x => φ (x * f) with hψ
-  have hψc : Continuous ψ := hcont.comp (continuous_mul_right f)
+  have hψc : Continuous ψ := hcont.comp (continuous_mul_const f)
   have hvan : ∀ γ ∈ GQ V, ∀ k ∈ GfC V, ψ (γ * k) = 0 := fun γ hγ k hk => by
     simp only [hψ, mul_assoc, hleft γ hγ]
     exact hzero _ ((GfC V).mul_mem hk hf)

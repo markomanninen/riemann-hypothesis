@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.LocallyProfinite
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.LocallyProfinite
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,14 +36,8 @@ theorem integralGLHom_apply (u : GL (Fin n) 𝒪[F]) (i j : Fin n) :
     integralGLHom F n u i j = (u i j : F) :=
   rfl
 
-theorem integralGLHom_injective : Function.Injective (integralGLHom F n) := fun _ _ h =>
-  Units.ext <| Matrix.ext fun i j => Subtype.ext (congrArg (fun g : GL (Fin n) F => g i j) h)
-
 def integralGL : Subgroup (GL (Fin n) F) :=
   (integralGLHom F n).range
-
-def integralGLEquiv : GL (Fin n) 𝒪[F] ≃* integralGL F n :=
-  MonoidHom.ofInjective (integralGLHom_injective F n)
 
 theorem mem_integralGL_iff {g : GL (Fin n) F} :
     g ∈ integralGL F n ↔ (∀ i j, g i j ∈ 𝒪[F]) ∧ ∀ i j, (g⁻¹ : GL (Fin n) F) i j ∈ 𝒪[F] := by
@@ -231,12 +229,6 @@ theorem conj_mem_congruenceSubgroup {m : ℕ} {k x : GL (Fin n) F} (hk : k ∈ i
   obtain ⟨y, hy, rfl⟩ := hx
   exact ⟨u * y * u⁻¹, (reduction F n m).normal_ker.conj_mem y hy u, by simp [map_mul, map_inv]⟩
 
-theorem congruenceSubgroup_normal (m : ℕ) :
-    ((congruenceSubgroup F n m).subgroupOf (integralGL F n)).Normal :=
-  ⟨fun x hx k => by
-    rw [Subgroup.mem_subgroupOf] at hx ⊢
-    simpa using conj_mem_congruenceSubgroup F n k.2 hx⟩
-
 theorem isOpen_congruenceSubgroup (m : ℕ) :
     IsOpen (congruenceSubgroup F n m : Set (GL (Fin n) F)) := by
   have : (congruenceSubgroup F n m : Set (GL (Fin n) F)) = (integralGL F n : Set _) ∩
@@ -287,7 +279,7 @@ theorem hasBasis_nhds_one :
     fun m m' h => Set.inter_subset_inter_left _
       (SetLike.coe_subset_coe.mpr (congruenceSubgroup_antitone F n h))
   obtain ⟨m, hm⟩ :=
-    (isCompact_integralGL F n).elim_directed_family_closed _ hclosed hempty hanti.directed_ge
+    ((isCompact_integralGL F n).elim_directed_family_closed _ hclosed (Set.disjoint_iff_inter_eq_empty.2 hempty) hanti.directed_ge).imp (fun _ => Disjoint.inter_eq)
   refine ⟨m, trivial, fun g hg => interior_subset (by_contra fun h => ?_)⟩
   have : g ∈ (integralGL F n : Set (GL (Fin n) F)) ∩
       ((congruenceSubgroup F n m : Set (GL (Fin n) F)) ∩ (interior U)ᶜ) :=

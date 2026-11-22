@@ -1,5 +1,9 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.PNTExplLF
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.PNTExplRect
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.PNTExplLF
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.PNTExplRect
+
+@[expose] public section
 
 open Complex Classical
 
@@ -129,7 +133,7 @@ theorem exKer_continuousAt (y : ℝ) (hy : 0 < y) {w : ℂ} (h0 : w ≠ 0) (h1 :
     ContinuousAt (exKer y) w := by
   have hy0 : (y : ℂ) ≠ 0 := by exact_mod_cast hy.ne'
   unfold exKer
-  apply ContinuousAt.div
+  apply ContinuousAt.div₀
   · exact continuousAt_const_cpow hy0
   · fun_prop
   · exact mul_ne_zero h0 (sub_ne_zero.mpr h1)

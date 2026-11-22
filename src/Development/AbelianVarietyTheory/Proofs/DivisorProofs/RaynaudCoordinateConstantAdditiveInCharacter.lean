@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStalkDerField
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsSmulPtSmulPt
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStalkDerField
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsSmulPtSmulPt
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj Matrix TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -192,8 +197,14 @@ theorem coordEq_const_add : ∀ {R : Type} [CommRing R] [IsDomain R] {Q : DegPre
           h.j (I ((Λ.left ≫ thφ Q.P.A (x3 Q.P.A) k) (Y.q.left y)))
         rw [hy]; exact congrArg (fun p => h.j (I ((Λ.left ≫ thφ Q.P.A (x3 Q.P.A) k) p))) hfix
       refine (congrArg Units.val v.symm).trans ?_
-      rw [val_cub Q.cub C3 hJ' _ _ _, Category.comp_id, show C3 = 1 from Hom.one_def.symm,
-        (isCub_cubV Q.cub hJ').face₃, Units.val_one]
+      rw [val_cub Q.cub C3 hJ' _ _ _, Category.comp_id, show C3 = 1 from Hom.one_def.symm]
+      have face3 (x y : Q.P.A ⟶ Q.P.A) : cubV Q.cub p₀ J' x y 1 = 1 := by
+        have e := val_corr hJ' (Q.cub.face 2) (lift x y).left
+        rw [val_one] at e
+        refine Eq.trans ?_ e
+        refine Eq.trans ?_ (val_cub Q.cub (lift x y) hJ' (x2 Q.P.A 0) (x2 Q.P.A 1) (pzero Q.P.A _)).symm
+        congr 1 <;> simp [x2, pzero, Hom.one_def]
+      rw [face3, Units.val_one]
     have δ'1 : δ' 1 = 0 := by
       have := δ'mul 1 1
       simp only [_root_.mul_one, map_one, _root_.one_mul] at this
@@ -201,7 +212,7 @@ theorem coordEq_const_add : ∀ {R : Type} [CommRing R] [IsDomain R] {Q : DegPre
     rw [e₁, s1, s2, ← s3, ← s4, ← s5, s6, δ'1]
   have E := dlog_const_add π δ δmul _ _ _ _ (GlobalTheory.TorusModel.cv_add (Y.Φ Y.H (𝟙 _)) hJ α β) _ _ _
     (key α c₁ H₁) (key β c₂ H₂) (key (α + β) c₃ H₃) hθ
-  rw [cst_eq_cstH, cst_eq_cstH, cst_eq_cstH, ← map_add] at E
+  rw [cst_eq_cstH, cst_eq_cstH, cst_eq_cstH, ← map_add (f := _)] at E
   exact (cstH (b ≫ A₀.hom) z).injective E
 
 end GlobalTheory.HeatConn

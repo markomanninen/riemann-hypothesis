@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.IsKTheta
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.IsKTheta
+
+@[expose] public section
 
 noncomputable section
 open scoped ComplexConjugate
@@ -100,7 +104,7 @@ lemma norm_square (hok : CmOK a b c d) {γ : ℂ} (hγ : IsK b d γ) {p q : ℤ}
       rw [map_mul, map_intCast, ← hN]
       ring
     have h2 : (r : ℂ) * γ * conj ((r : ℂ) * γ) = P ^ 2 + P * Q * b + Q ^ 2 * (a * c) := by
-      rw [hr, map_add, map_mul, map_intCast, map_intCast, theta_conj]
+      rw [hr, map_add (f := _), map_mul, map_intCast, map_intCast, theta_conj]
       linear_combination (Q : ℂ) ^ 2 * hθ
     have hq0' : (q : ℂ) ≠ 0 := by exact_mod_cast hq0
     have hC : (r : ℂ) ^ 2 * p = (P ^ 2 + P * Q * b + Q ^ 2 * (a * c)) * q := by

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.InvAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.EqLagIff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UnitsBasic
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.InvAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.EqLagIff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.UnitsBasic
+
+@[expose] public section
 
 open Polynomial Matrix IsLocalRing TensorProduct UpperTheory.V.AlgebraTools
 
@@ -88,9 +92,11 @@ private theorem rec_spec (hpq : p ≠ q) (a b : ι) (ha : a = p ∨ a = q) (hb :
       · rw [h, U.coi.ortho hpq, zero_mul]
     refine ⟨?_, ?_⟩
     · rw [← h1, mul_smul_comm, smul_mul_assoc, hid, hid]
-    · apply OddForm.Ext.ext
-      · rw [vrEnt_ev, map_smul, U.tr_ep, smul_eq_mul, mul_one]
-      · apply Subtype.ext
+    · apply Prod.ext
+      · change (vrEnt U p q (z.ev • U.ep a)).ev = z.ev
+        rw [vrEnt_ev, map_smul, U.tr_ep, smul_eq_mul, mul_one]
+      · change (vrEnt U p q (z.ev • U.ep a)).od = z.od
+        apply Subtype.ext
         rw [vrEnt_od, hod, map_smul, U.st_ep]
         simp only [mul_smul_comm, smul_mul_assoc, hpa, smul_zero, add_zero]
         rfl
@@ -98,20 +104,24 @@ private theorem rec_spec (hpq : p ≠ q) (a b : ι) (ha : a = p ∨ a = q) (hb :
     have hev := hz.2 h1
     rw [h2, hb']
     refine ⟨hmem, ?_⟩
-    apply OddForm.Ext.ext
-    · rw [vrEnt_ev, hev, ← hmem]
+    apply Prod.ext
+    · change (vrEnt U p q (z.od : E)).ev = z.ev
+      rw [vrEnt_ev, hev, ← hmem]
       exact (units_basic T o U).2.2.1 p q _ hpq
-    · apply Subtype.ext
+    · change (vrEnt U p q (z.od : E)).od = z.od
+      apply Subtype.ext
       rw [vrEnt_od, hmem, hoff, add_zero]
   · have ha' : a = q := ha.resolve_left h2
     have hb' : b = p := hb.resolve_right (fun h => h1 (ha'.trans h.symm))
     have hev := hz.2 h1
     rw [ha', hb']
     refine ⟨sand_st U p q _ hmem, ?_⟩
-    apply OddForm.Ext.ext
-    · rw [vrEnt_ev, T.tr_st, hev, ← hmem]
+    apply Prod.ext
+    · change (vrEnt U p q (T.st (z.od : E))).ev = z.ev
+      rw [vrEnt_ev, T.tr_st, hev, ← hmem]
       exact (units_basic T o U).2.2.1 p q _ hpq
-    · apply Subtype.ext
+    · change (vrEnt U p q (T.st (z.od : E))).od = z.od
+      apply Subtype.ext
       rw [vrEnt_od, T.st_st, hmem, hoff, zero_add]
 
 end aux

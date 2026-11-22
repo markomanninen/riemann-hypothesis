@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GaloisLevelStructure.LinkChar
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.NGalTied
+module
+
+public import Formalism.LocalToGlobal.GaloisLevelStructure.LinkChar
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.NGalTied
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 

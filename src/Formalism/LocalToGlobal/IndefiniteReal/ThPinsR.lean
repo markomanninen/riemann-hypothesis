@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.ExistsChosenExtremalVector
-import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonalBis
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.ExistsChosenExtremalVector
+public import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonalBis
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,16 +37,16 @@ variable {G : Type} [Group G] [Fintype G] {Pl0 T0 : Type} {A : FamIn D.what₂.L
   {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (i : Fin D.R.m)
   {K' : Type} [Field K'] (jL : D.what₂.LL →+* K') (σ' : K' →+* ℂ)
 
-variable (D) in
 
+variable (D) in
 abbrev lamV : D.what₂.Tau → DomWeight (Vc D i).rank := fun τ => Bridge.lamLdef (Vc D i).rank ((i : ℕ) + 1) τ
 
-variable (D) in
 
+variable (D) in
 abbrev VsV (K : Type) [Field K] : Type := ↥(VV K (lamV D i))
 
-variable (D) in
 
+variable (D) in
 def embV (τ : D.what₂.Tau) : D.host.E →+* K' := jL.comp (labLL D τ)
 
 theorem embV_spec (h : σ'.comp jL = D.what₂.embLL) (τ : D.what₂.Tau) : σ'.comp (embV D jL τ) = tauE D τ := by
@@ -59,12 +63,10 @@ theorem embV_eq_embF {H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host D.ho
 
 abbrev levJ (t : T0) : Subgroup (Bridge.Gf (Vc D i)) := (levEnv (Vc D i) (R.βV i) (R.datVt i t)).J
 
-variable (D) in
 
+variable (D) in
 def VStd : Prop :=
   (Vc D i).gram = 1 ∧ Bridge.hLat (Vc D i) 1 = Submodule.pi Set.univ fun _ => (1 : Submodule (𝓞 D.host.E) D.host.E)
-
-def FrameIntegralCongruentOne : Prop := IsIntM (R.βV i).val ∧ ∀ t PP, PP ∈ R.Pg ∨ PP ∈ R.Q t → redM PP (R.βV i).val = 1
 
 section Tuple
 
@@ -106,8 +108,8 @@ def XiIs (xi : (Af D.host.F ⊗[D.host.F] D.host.E)ˣ →* ℂˣ) : Prop :=
 
 variable {La : Type} [AddCommGroup La] [Module (𝓞 D.host.E) La] (ι : La →ₗ[𝓞 D.host.E] (Fin (Wc D i).rank → D.host.E))
 
-open Classical in
 
+open Classical in
 def PhiIs (N : Submodule (𝓞 D.host.E) La) (φ : (Fin (Vc D i).rank → La ⧸ N) → K') : Prop :=
   ∃ e : AE D, IsIdemSum e (R.Pg ∪ R.Q t) ∧ ∀ x : Fin (Vc D i).rank → La,
     IsIntM (uMat (Vc D i) (Wc D i) (R.βV i) (R.βW i) e fun b => ι (x b)) ∧
@@ -164,33 +166,11 @@ structure ThPinsR (v₀ : (R.MW i (sg0 D A)).Vec) (c0' : VsV D i K' →ₛₗ[σ
     (fun i τ => Bridge.lamLdef (Vc D i).rank ((i : ℕ) + 1) τ) gramR c0R c0L ∧ CoefficientBaseChange R i jL σ' (c0L i) c0'
   lev : LevIs R i ι M Mh lev
 
-theorem thF_of_pins {t : T0} {Cl : Type} [Fintype Cl] {h : Cl → GA D (Vc D i)} {c0' : VsV D i K' →ₛₗ[σ'] (R.cV i).W}
-    {v₀ : (R.MW i (sg0 D A)).Vec} {thAd : (Cl → VsV D i K') → AutQ (Wc D i) → ℂ} (hP : PlaceEx R i t h c0')
-    (hT : ThAdIs R i t h c0' v₀ thAd) (x₀ : A.fam.amb.FL i t) :
-    ∃ x, Place R i t h c0' (jVx R i t x₀) x ∧ thAd x = onQ (Wc D i) (R.thF i t (jVx R i t x₀) v₀) :=
-  (hP x₀).imp fun x hx => ⟨hx, hT (jVx R i t x₀) x hx⟩
-
-theorem chiW_val {μ0 : T0} (hL : R.toLevCh.Is μ0) (t : T0) (P : Pl D.host.E) (e : AE D) (he : Formalism.L2.JoinChr.IsPlIdem D e P)
-    (x : (AE D)ˣ) (hx : (x : AE D) = Formalism.L2.JoinChr.locE D e (Formalism.L2.Host.unif P : D.host.Eˣ)) :
-    (((Lift.chrTh (R.toLevCh.mu t) R.eta ((i : ℕ) + 1)).2 x : Circle) : ℂ) =
-      (((R.C.mu0 i * R.xiH t * R.C.eta⁻¹).val P : ℂˣ) : ℂ) := by
-  have h1 := (hL.mu0 i).2 P e he _ x hx
-  have h2 := (hL.xi t).2 P e he _ x hx
-  have h3 := hL.eta.2 P e he _ x hx
-  show (((R.mu0 ((i : ℕ) + 1) x * R.xi t x * (R.eta x)⁻¹ : Circle)) : ℂ) =
-    ((((R.C.mu0 i).locK P (Formalism.L2.Host.unif P) * (R.xiH t).locK P (Formalism.L2.Host.unif P) *
-      (R.C.eta.locK P (Formalism.L2.Host.unif P))⁻¹ : ℂˣ)) : ℂ)
-  rw [Circle.coe_mul, Circle.coe_mul, Circle.coe_inv, h1, h2, h3, Units.val_mul, Units.val_mul, Units.val_inv_eq_inv_val]
-
 theorem ext_fin {V : HSp D} (c : CoefA V) (hc : c.Is) (f : Bridge.Gf V → c.W) {h : GA D V} (hh : h ∈ GfC V) :
     c.ext f h = f (fin V h) := by
   show c.ρ h⁻¹ (f (fin V h)) = _
   rw [hc.1 _ (inv_mem hh)]
   rfl
-
-theorem extV_fin (hc : (R.cV i).Is) (t : T0) (y : (R.HV i t).H) {h : GA D (Vc D i)} (hh : h ∈ GfC (Vc D i)) :
-    R.extV i t y h = (R.HV i t).e y (fin _ h) :=
-  ext_fin (R.cV i) hc ((R.HV i t).e y) hh
 
 def MuR {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T0 : Type} {A : FamIn D.what₂.LL G Pl0 T0 D.R.m}
     (T : Core D) [Algebra T.Q.c.F D.what₂.LL] (R : RealDat D A T.Q.c.F) : Prop :=

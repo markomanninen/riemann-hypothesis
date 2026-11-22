@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.MuConc
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.MuConc
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators ComplexConjugate

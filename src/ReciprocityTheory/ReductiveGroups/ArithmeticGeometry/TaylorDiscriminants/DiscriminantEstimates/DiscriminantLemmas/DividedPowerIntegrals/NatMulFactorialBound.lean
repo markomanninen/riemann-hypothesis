@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.DiscriminantEstimates.DivPowInteg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.DiscriminantEstimates.DiscriminantLemmas.DividedPowerIntegrals.GenDefs
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.DiscriminantEstimates.DivPowInteg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.DiscriminantEstimates.DiscriminantLemmas.DividedPowerIntegrals.GenDefs
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -22,7 +26,7 @@ theorem dpow_zero (κ : I → J → K) (R : MvPolynomial (I ⊕ J) K) : dpow κ 
 
 theorem dpow_add (κ : I → J → K) (n : ℕ) (p q : MvPolynomial (I ⊕ J) K) :
     dpow κ n (p + q) = dpow κ n p + dpow κ n q := by
-  simp [dpow, map_add, smul_add]
+  simp [dpow, map_add (f := _), smul_add]
 
 theorem gdelta_C (κ : I → J → K) (c : K) : gdelta κ (C c) = 0 := by
   simp [gdelta]
@@ -62,10 +66,10 @@ theorem good_X_mul (L : Submodule A K) (n : ℕ) (s : I ⊕ J) (Q : MvPolynomial
 
 theorem good_smul_pderiv (L : Submodule A K) (k : ℕ) (c : K) (hc : c ∈ L) (s : I ⊕ J)
     (Q : MvPolynomial (I ⊕ J) K) (hQ : Good L k Q) (m : (I ⊕ J) →₀ ℕ) :
-    c * (coeff (m + Finsupp.single s 1) Q * ((m s : K) + 1)) ∈ L ^ (k + 1) := by
-  have hy : coeff (m + Finsupp.single s 1) Q * ((m s : K) + 1) ∈ L ^ k := by
-    have e : coeff (m + Finsupp.single s 1) Q * ((m s : K) + 1) =
-        (m s + 1) • coeff (m + Finsupp.single s 1) Q := by
+    c * (AddMonoidAlgebra.coeff Q (m + Finsupp.single s 1) * ((m s : K) + 1)) ∈ L ^ (k + 1) := by
+  have hy : AddMonoidAlgebra.coeff Q (m + Finsupp.single s 1) * ((m s : K) + 1) ∈ L ^ k := by
+    have e : AddMonoidAlgebra.coeff Q (m + Finsupp.single s 1) * ((m s : K) + 1) =
+        (m s + 1) • AddMonoidAlgebra.coeff Q (m + Finsupp.single s 1) := by
       rw [nsmul_eq_mul]
       push_cast
       ring
@@ -77,7 +81,7 @@ theorem good_smul_pderiv (L : Submodule A K) (k : ℕ) (c : K) (hc : c ∈ L) (s
 theorem good_dL (L : Submodule A K) (κ : I → J → K) (hκ : ∀ i j, κ i j ∈ L) (k : ℕ) (i : I)
     (Q : MvPolynomial (I ⊕ J) K) (hQ : Good L k Q) : Good L (k + 1) (dL κ i Q) := by
   intro m
-  have e : (dL κ i Q).coeff m = ∑ j, κ i j * coeff m (pderiv (Sum.inr j) Q) := by
+  have e : (dL κ i Q).coeff m = ∑ j, κ i j * AddMonoidAlgebra.coeff (pderiv (Sum.inr j) Q) m := by
     simp [dL, MvPolynomial.coeff_sum]
   rw [e]
   refine Submodule.sum_mem _ fun j _ => ?_
@@ -87,7 +91,7 @@ theorem good_dL (L : Submodule A K) (κ : I → J → K) (hκ : ∀ i j, κ i j 
 theorem good_dR (L : Submodule A K) (κ : I → J → K) (hκ : ∀ i j, κ i j ∈ L) (k : ℕ) (j : J)
     (Q : MvPolynomial (I ⊕ J) K) (hQ : Good L k Q) : Good L (k + 1) (dR κ j Q) := by
   intro m
-  have e : (dR κ j Q).coeff m = ∑ i, κ i j * coeff m (pderiv (Sum.inl i) Q) := by
+  have e : (dR κ j Q).coeff m = ∑ i, κ i j * AddMonoidAlgebra.coeff (pderiv (Sum.inl i) Q) m := by
     simp [dR, MvPolynomial.coeff_sum]
   rw [e]
   refine Submodule.sum_mem _ fun i _ => ?_
@@ -115,7 +119,7 @@ theorem integ (h1 : PowXL) (h2 : PowXR) (L : Submodule A K) (κ : I → J → K)
       rw [MvPolynomial.coeff_zero]
       exact Submodule.zero_mem _
   · intro p q hp hq n m
-    rw [map_add, dpow_add, MvPolynomial.coeff_add]
+    rw [map_add (f := _), dpow_add, MvPolynomial.coeff_add]
     exact Submodule.add_mem _ (hp n m) (hq n m)
   · intro p s hp n
     cases n with

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.GTDefs
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinTopCoefficient.CardEraseIccMin
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinTopCoefficient.InterlacingDefectEqCard
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.GTDefs
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinTopCoefficient.CardEraseIccMin
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinTopCoefficient.InterlacingDefectEqCard
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,7 +75,7 @@ theorem abs_cBr_le_cBd (hI : Interlace h lam sg) :
   have hN : 0 < N := by omega
   have hsp : lam.spread = lam.w ⟨0, by omega⟩ - lam.w ⟨N - 1, by omega⟩ + N := by
     unfold DomWeight.spread
-    rw [dif_pos hN]
+    rw [dite_eq_left hN]
   have hlast := lam_le_last h lam 0 (by omega)
   have hb := abs_cBr_le_top h lam sg hI
   rw [← hK] at hb

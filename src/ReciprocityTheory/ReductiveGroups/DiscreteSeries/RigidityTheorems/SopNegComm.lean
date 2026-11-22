@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DefsRep
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DefsRep
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,9 +22,6 @@ variable {H₁ H₂ : Type*} [NormedAddCommGroup H₁] [InnerProductSpace ℂ H�
 def sop (A : H₁ →L[ℂ] H₁) (B : H₂ →L[ℂ] H₂) : WithLp 2 (H₁ × H₂) →L[ℂ] WithLp 2 (H₁ × H₂) :=
   (WithLp.prodContinuousLinearEquiv 2 ℂ H₁ H₂).symm.toContinuousLinearMap ∘L
     ((A.prodMap B) ∘L (WithLp.prodContinuousLinearEquiv 2 ℂ H₁ H₂).toContinuousLinearMap)
-
-theorem ofLp_sop (A : H₁ →L[ℂ] H₁) (B : H₂ →L[ℂ] H₂) (x : WithLp 2 (H₁ × H₂)) :
-    ofLp (sop A B x) = (A (ofLp x).1, B (ofLp x).2) := rfl
 
 theorem sop_apply (A : H₁ →L[ℂ] H₁) (B : H₂ →L[ℂ] H₂) (x : WithLp 2 (H₁ × H₂)) :
     sop A B x = toLp 2 (A (ofLp x).1, B (ofLp x).2) := rfl
@@ -94,7 +95,8 @@ theorem actM_sE (E₁ : Fin n → Fin n → Module.End ℂ D₁) (E₂ : Fin n �
   have h : ∀ a b, X a b • sE E₁ E₂ a b = liftL (X a b • (E₁ a b, E₂ a b)) := by
     intro a b; rw [map_smul]; rfl
   unfold actM
-  simp only [h, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [h, ← map_sum]
   rw [liftL_apply]
   congr 1
   · simp [Prod.fst_sum]
@@ -105,7 +107,8 @@ theorem casimir_sE (E₁ : Fin n → Fin n → Module.End ℂ D₁) (E₂ : Fin 
   have h : ∀ a b, sE E₁ E₂ a b * sE E₁ E₂ b a = liftL (E₁ a b * E₁ b a, E₂ a b * E₂ b a) := by
     intro a b; rw [liftL_apply]; exact (lift_mul _ _ _ _).symm
   unfold casimir
-  simp only [h, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [h, ← map_sum]
   rw [liftL_apply]
   congr 1
   · simp [Prod.fst_sum]

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.TgProdPlaces
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.TgProdPlaces
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GroundTheory.BlockD.FourierDecayAlt.WaveGridLiftGrid
 
@@ -12,12 +16,15 @@ theorem lag_abs_term_le {d : ℕ} (y : Fin (d + 1) → ℝ) (h : ∀ i j, i ≠ 
     rw [Finset.card_erase_of_mem (mem_univ j)]; simp
   calc ∏ i ∈ (univ : Finset (Fin (d + 1))).erase j, |(y j - y i)⁻¹|
       ≤ ∏ _i ∈ (univ : Finset (Fin (d + 1))).erase j, (1 / 5 : ℝ) := by
-        apply Finset.prod_le_prod
+        apply Finset.prod_le_prod₀
         · intro i _; exact abs_nonneg _
         · intro i hi
           have hij : j ≠ i := (Finset.ne_of_mem_erase hi).symm
-          rw [abs_inv, one_div]
-          exact inv_anti₀ (by norm_num) (h j i hij)
+          rw [abs_inv]
+          have hx : 0 < |y j - y i| := lt_of_lt_of_le (by norm_num) (h j i hij)
+          simpa only [one_div] using
+            (div_le_div_iff₀ (a := (1 : ℝ)) (b := |y j - y i|) (c := 1) (d := 5)
+              hx (by norm_num : 0 < (5 : ℝ))).2 (by simpa using h j i hij)
     _ = (1 / 5 : ℝ) ^ d := by rw [Finset.prod_const, hcard]
 
 theorem lag_abs_sum_le_one {d : ℕ} (y : Fin (d + 1) → ℝ) (h : ∀ i j, i ≠ j → 5 ≤ |y i - y j|) :

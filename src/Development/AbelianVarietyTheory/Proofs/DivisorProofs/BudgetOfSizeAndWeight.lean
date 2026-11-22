@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.BudgetAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
-import Development.AbelianVarietyTheory.Definitions.Divisors.EightDvdNCol
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuoIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumLogDivPredLeReal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightDivisionL1Bound
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PosDividedSlopeWeightsBaseHeight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpreadLeAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumPadicValNatMulLogLeLog
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogDivPredMemOfPrime
-import Development.AutomorphicArithmetic.PrimeDiscriminants.BadCount
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BudgetAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToKnownTheoremsOf
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EightDvdNCol
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuoIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumLogDivPredLeReal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeightDivisionL1Bound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PosDividedSlopeWeightsBaseHeight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SpreadLeAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumPadicValNatMulLogLeLog
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogDivPredMemOfPrime
+public import Development.AutomorphicArithmetic.PrimeDiscriminants.BadCount
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 
@@ -146,8 +150,8 @@ theorem pp_bounds {PP A : ℝ} (h : HostNum D L PP A 1) : (D.R.f : ℝ) ^ 2 * (D
   refine le_trans ?_ (le_mul_of_one_le_right (by positivity) (one_le_pow₀ hL))
   gcongr <;> first | assumption | norm_num
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem sizes {PP A : ℝ} (h : HostNum D L PP A 1) (hw : WtNum p i PP) (h0 : ℤ) (S eta : ℝ) (hS : 0 ≤ S) (he : 0 ≤ eta)
     (hP : PP * (S + eta) ≤ 100 * L.sc.w'' D.R.n)
     (hh : PP * lenT p i PP * D.R.r * (D.R.f : ℝ) ^ 2 * (D.R.m : ℝ) ^ 2 * D.R.k * dimFlag (dat p i) ≤ h0)
@@ -313,11 +317,5 @@ theorem budgetAt {PP A : ℝ} (h : HostNum D L PP A 1) (hw : WtNum p i PP) (hi :
     exact main _ (by linarith)
 
 end Point
-
-theorem budget : (∀ M, HostN M) → WtN → Size → Budget := fun hH hW _ =>
-  Closed.imp (Closed.and (hH 1) hW) fun _ _ _ ⟨⟨_, _, h1⟩, ⟨_, _, h2⟩⟩ => by
-    obtain ⟨x0, h⟩ := h1.and h2
-    exact ⟨83400, by norm_num, x0, fun x hx hle ι p hp i hi Y hY u1 hq =>
-      budgetAt p i ((h x hx hle ι p hp).1 i) ((h x hx hle ι p hp).2 i) hi Y hY u1 hq⟩
 
 end GlobalTheory.CovHt.BudgetPf

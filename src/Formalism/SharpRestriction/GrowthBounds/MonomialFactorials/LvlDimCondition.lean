@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.LvlDimGen
-import Formalism.MahlerMeasure.MahlerMeasureProofs.TheoremM
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.LvlDimGen
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.TheoremM
+
+@[expose] public section
 
 noncomputable section
 

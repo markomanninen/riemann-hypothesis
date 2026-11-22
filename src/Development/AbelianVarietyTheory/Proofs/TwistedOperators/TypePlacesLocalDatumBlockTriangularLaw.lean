@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameOnOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TameOnOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,7 +99,7 @@ theorem det_top (hab : a ≤ b) (ea : a = r + j * t) (eb : b = r + (j + 1) * t) 
 theorem topL_apply (hab : a ≤ b) (y : Matrix (Fin b) (Fin a) κ) (p q : Fin a) :
     topL a y p q = y (Fin.castLE hab p) q := by
   unfold topL
-  rw [dif_pos ⟨lt_of_lt_of_le p.2 hab, q.2⟩]
+  rw [dite_eq_left ⟨lt_of_lt_of_le p.2 hab, q.2⟩]
   rfl
 
 theorem lowZero_mul {g : GL (Fin b) κ} (h2 : g ∈ blockTri (blk2 a)) {y : Matrix (Fin b) (Fin a) κ}

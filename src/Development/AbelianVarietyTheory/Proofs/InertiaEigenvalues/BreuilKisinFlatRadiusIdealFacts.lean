@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
 
@@ -55,7 +60,7 @@ theorem not_isUnit_flat (bk : BK K) : ¬ IsUnit bk.flat := by
   intro hu
   obtain ⟨Q, hQ⟩ := exists_E_eq bk
   have h := theta_ev_E bk
-  rw [hQ, map_add, map_mul, map_pow, map_natCast, bk.ev_X, map_add, map_mul, map_pow, map_natCast] at h
+  rw [hQ, map_add (f := _), map_mul, map_pow, map_natCast, bk.ev_X, map_add (f := _), map_mul, map_pow, map_natCast] at h
   have h1 : IsUnit (Per.θ l (WittVector.teichmuller l bk.flat) ^ bk.Ep.natDegree) :=
     ((hu.map (WittVector.teichmuller l)).map (Per.θ l)).pow _
   rw [eq_neg_of_add_eq_zero_left h, IsUnit.neg_iff] at h1

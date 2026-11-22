@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LefschetzSigmaSums.SigmaSplit
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LefschetzSigmaSums.SigmaSplit
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Hecke GlobalTheory.UPel.HT.Gen
@@ -8,7 +12,13 @@ open scoped CategoryTheory.Obj
 open UpperTheory.Gal.LocalSmoothExtension
 
 theorem UpperTheory.Gal.LocalSmoothExtension.tatePull_of :
-    TatePull := by
+    ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (R : Type) [CommRing R] [Algebra ℚ R]
+      (b : GBase D.toG R) (N : ℕ) (S S₁ : Scheme.{0})
+      (s : S ⟶ Sp R) (s₁ : S₁ ⟶ Sp R) (f : S₁ ⟶ S)
+      (o : GObj b N s) (o₁ : GObj b N s₁) (m : GObjMap o₁ o f)
+      (k : Type) [Field k] (t : Sp k ⟶ S₁) (I : UpperTheory.Gal.Int.Geo.TIso o (t ≫ f)),
+      ∃ I₁ : UpperTheory.Gal.Int.Geo.TIso o₁ t, ∀ n y,
+        (I₁.ev n y).left ≫ m.φ = (I.ev n y).left := by
   intro p _ D R _ _ b N S S₁ s s₁ f o o₁ m k _ t I
   letI := o.grp
   letI := o₁.grp

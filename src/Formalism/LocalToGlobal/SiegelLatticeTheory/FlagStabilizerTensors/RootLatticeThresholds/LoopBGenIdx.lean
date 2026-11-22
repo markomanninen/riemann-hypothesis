@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.LatticeGluingRadicals
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InvertibleIdealIndex.SubmodulePiToAddSubgroup
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.GramDeterminantOfGenericIndex
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LatticeGluingRadicals
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.InvertibleIdealIndex.SubmodulePiToAddSubgroup
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.GramDeterminantOfGenericIndex
+
+@[expose] public section
 
 noncomputable section
 
@@ -207,7 +211,8 @@ theorem spanE_psL (u : Fin e → S.V) {I : Fin e → FractionalIdeal (𝓞 E)⁰
 
 theorem hT_iota (u : Fin e → S.V) (v : S.V) (c : Fin e → E) :
     S.hT v (j_iota u c) = ∑ j, c j * S.hT v (u j) := by
-  simp [j_iota, Fintype.linearCombination_apply, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [j_iota, Fintype.linearCombination_apply, map_sum, map_smul]
 
 theorem hT_smul_left (x : E) (v w : S.V) : S.hT (x • v) w = star x * S.hT v w := by
   simp [LinearMap.map_smulₛₗ₂]
@@ -247,7 +252,7 @@ theorem mem_dual_psL (u : Fin e → S.V) {I : Fin e → FractionalIdeal (𝓞 E)
       exact mem_one_frac.1 this
     | zero => simp
     | add y z _ _ hy hz =>
-      rw [map_add, LinearMap.add_apply]
+      rw [map_add (f := _), LinearMap.add_apply]
       exact Submodule.add_mem _ hy hz
     | smul o y _ hy =>
       rw [← IsScalarTower.algebraMap_smul E o y, hT_smul_left]

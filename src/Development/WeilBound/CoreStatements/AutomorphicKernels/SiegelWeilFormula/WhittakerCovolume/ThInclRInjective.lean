@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.IsPureTIff
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.IsPureTIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,13 +22,14 @@ theorem th_inclR_injective : Function.Injective (inclR (F := F) (E := E) (AF F))
 theorem th_incM_injective {m n : Type} : Function.Injective (incM F : Matrix m n E → Matrix m n (AE F E)) :=
   fun _ _ h => Matrix.map_injective th_inclR_injective h
 
+omit [NumberField E] in
 theorem th_inclR_eq (x : E) : HeckeCharacterZeroLocus.SiegelWeilU.inclR (F := F) (AF F) x = inclR (F := F) (E := E) (AF F) x := rfl
 
+omit [NumberField E] in
 theorem th_sigR_eq (x : AE F E) : HeckeCharacterZeroLocus.SiegelWeilU.sigR (AF F) σ x = cA σ x := by
-  induction x using TensorProduct.induction_on with
-  | zero => simp
+  induction x using TensorProduct.inductionOn with
   | tmul a b => rfl
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem th_JR (d : SD σ) (η : E) :
     HeckeCharacterZeroLocus.SiegelWeilU.JR (AF F) (Jd d η) = inclR (F := F) (E := E) (AF F) η • (incM F d.A.J)ᵀ := by
@@ -67,22 +72,15 @@ theorem thE_cont (d : SD σ) {η : E} (hη : η ≠ 0) : Continuous (thE d hη) 
 theorem thE_symm_cont (d : SD σ) {η : E} (hη : η ≠ 0) : Continuous (thE d hη).symm :=
   continuous_subtype_val.subtype_mk _
 
-theorem th_haar_map {G H : Type} [Group G] [TopologicalSpace G] [MeasurableSpace G] [BorelSpace G] [Group H]
+theorem th_haar_map {G H : Type} [Group G] [TopologicalSpace G] [MeasurableSpace G] [BorelSpace G] [MeasurableMul G] [Group H]
     [TopologicalSpace H] [MeasurableSpace H] [BorelSpace H] (μ : Measure G) [hμ : μ.IsHaarMeasure] (e : G ≃* H)
     (he : Continuous e) (hs : Continuous e.symm) : (μ.map e).IsHaarMeasure := by
   let f : G ≃ᵐ H := (Homeomorph.mk e.toEquiv he hs).toMeasurableEquiv
   have hf : ∀ x, f x = e x := fun _ => rfl
   have hfe : μ.map e = μ.map f := rfl
-  have hne : μ ≠ 0 := by
-    intro h0
-    have := (isOpen_univ : IsOpen (Set.univ : Set G)).measure_ne_zero μ Set.univ_nonempty
-    rw [h0] at this; exact this rfl
   have hmeas : ∀ g : G, AEMeasurable (fun x => g * x) μ := by
     intro g
-    by_contra hn
-    have := Measure.map_of_not_aemeasurable hn
-    rw [map_mul_left_eq_self μ g] at this
-    exact hne this
+    exact (measurable_const_mul g).aemeasurable
   rw [hfe]
   refine { lt_top_of_isCompact := ?_, map_mul_left_eq_self := ?_, open_pos := ?_ }
   · intro K hK

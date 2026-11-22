@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.PolyExpand
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.DescentValuation
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.DvdOfCoeffSubstXPowNeZero
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ConstantCoeffQZeroEqP
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.PolyExpand
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.DescentValuation
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.DvdOfCoeffSubstXPowNeZero
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.ConstantCoeffQZeroEqP
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ theorem ps_div {O : Type*} [CommRing O] [IsDomain O] (I : Ideal O) [IsAdicComple
     exact not_subsingleton O hH.subsingleton
   have H : (Polynomial.X ^ k - Polynomial.C (r ^ k) : Polynomial O).IsDistinguishedAt I := by
     refine ⟨⟨fun {i} hi => ?_⟩, Polynomial.monic_X_pow_sub_C _ hk.ne'⟩
-    rw [Polynomial.natDegree_X_pow_sub_C] at hi
+    rw [Polynomial.natDegree_X_pow_sub_C _] at hi
     rw [Polynomial.coeff_sub, Polynomial.coeff_X_pow, if_neg hi.ne, Polynomial.coeff_C]
     split_ifs
     · simpa using hr
@@ -77,7 +81,7 @@ theorem levπ01 (c : ZMod n) (ζ : LL) (hζ : IsPrimitiveRoot ζ PD.p) :
   obtain ⟨E, hE0, hEd, hE⟩ := W.lev_π c ζ ⟨1, by simpa using hζ⟩
   have h0 : constantCoeff (W.lev c ζ letπ) = ζ - 1 := by
     have h := congrArg constantCoeff hE
-    rw [map_add, map_one, map_mul, constantCoeff_C, hE0, mul_one] at h
+    rw [map_add (f := _), map_one, map_mul, constantCoeff_C, hE0, mul_one] at h
     linear_combination h
   have hE1 : coeff 1 E = 1 := by
     have h1 := congrArg (coeff 0) hEd
@@ -88,16 +92,39 @@ theorem levπ01 (c : ZMod n) (ζ : LL) (hζ : IsPrimitiveRoot ζ PD.p) :
   have hq0 : constantCoeff (W.lev c ζ W.q) = 0 := by rw [hu]; simp
   refine ⟨h0, ?_, ?_, hq0⟩
   · have h := congrArg (coeff 1) hE
-    rw [map_add, coeff_C_mul, hE1, mul_one, coeff_one, if_neg one_ne_zero, zero_add] at h
+    rw [map_add (f := _), coeff_C_mul, hE1, mul_one, coeff_one, if_neg one_ne_zero, zero_add] at h
     exact h
   · have hπq : (letπ : LetA O n) * W.q = (1 + letπ) ^ PD.p - 1 := by
       funext i
       simp only [letπ, LocWach.q, Pi.mul_apply, Pi.sub_apply, Pi.pow_apply, Pi.add_apply, Pi.one_apply]
       exact W.q₀_def
     have hl := congrArg (W.lev c ζ) hπq
-    rw [map_mul, map_sub, map_pow, map_add, map_one] at hl
+    rw [map_mul, map_sub, map_pow, map_add (f := _), map_one] at hl
     rw [hE, mul_pow, ← map_pow, hζ.pow_eq_one, map_one, one_mul] at hl
-    obtain ⟨w, hw, hw0⟩ := framepf_exp_pow_sub_one E hE0 hEd PD.p
+    have hexp : ∀ p : ℕ, ∃ w : PowerSeries LL,
+        E ^ p - 1 = X * w ∧ constantCoeff w = (p : LL) := by
+      have hX1 : X ∣ E - 1 := by
+        rw [PowerSeries.X_dvd_iff]
+        simp [hE0]
+      obtain ⟨w1, hw1⟩ := hX1
+      have hc1 : constantCoeff w1 = 1 := by
+        have h1 : coeff 1 (E - 1) = coeff 0 w1 := by
+          rw [hw1]
+          exact PowerSeries.coeff_succ_X_mul 0 w1
+        have h3 : coeff 1 (E - 1) = coeff 1 E := by
+          simp [PowerSeries.coeff_one]
+        rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, ← h1, h3, hE1]
+      intro p
+      induction p with
+      | zero => exact ⟨0, by simp, by simp⟩
+      | succ k ih =>
+        obtain ⟨w, hw, hwc⟩ := ih
+        refine ⟨w * E + w1, ?_, ?_⟩
+        · have he : E ^ (k + 1) - 1 = (E ^ k - 1) * E + (E - 1) := by ring
+          rw [he, hw, hw1]
+          ring
+        · simp [hwc, hc1, hE0]
+    obtain ⟨w, hw, hw0⟩ := hexp PD.p
     rw [hw] at hl
     have h := congrArg (coeff 1) hl
     rw [coeff_one_mul, hq0, h0, coeff_succ_X_mul, coeff_zero_eq_constantCoeff_apply, hw0] at h
@@ -125,7 +152,7 @@ theorem lev_Eat (π' : LetA O n) (E : ZMod n → Polynomial O) (c : ZMod n) (ζ 
 theorem cc_aeval (f : PowerSeries LL) (r : O) (hf : constantCoeff f = algebraMap O LL r)
     (P : Polynomial O) : constantCoeff (Polynomial.aeval f P) = algebraMap O LL (P.eval r) := by
   induction P using Polynomial.induction_on' with
-  | add p q hp hq => simp only [map_add, Polynomial.eval_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), Polynomial.eval_add, hp, hq]
   | monomial k a =>
     rw [Polynomial.aeval_monomial, Polynomial.eval_monomial, map_mul, map_pow, hf,
       PowerSeries.algebraMap_apply, constantCoeff_C, map_mul, map_pow]
@@ -146,8 +173,8 @@ theorem z_dvd {ζ : LL} (hζ : IsPrimitiveRoot ζ PD.p) {z : O} (hz : algebraMap
   dvd_zeta PD.p PD.hp z (hinj (by rw [map_pow, hz, map_one, hζ.pow_eq_one]))
     (fun h => hζ.ne_one PD.hp.one_lt (by rw [← hz, h, map_one]))
 
-include hinj in
 
+include hinj in
 theorem expansion_low_coeffs_integral {ζ : LL} (hζ : IsPrimitiveRoot ζ PD.p) {z : O} (hz : algebraMap O LL z = ζ)
     (a : LetA O n) : ∃ o₀ o₁ : O, constantCoeff (W.lev c ζ a) = algebraMap O LL o₀ ∧
       coeff 1 (W.lev c ζ a) = algebraMap O LL o₁ := by
@@ -167,16 +194,16 @@ theorem expansion_low_coeffs_integral {ζ : LL} (hζ : IsPrimitiveRoot ζ PD.p) 
     rw [hy, map_sub, h0, constantCoeff_C, map_sub, hz, map_one, sub_self]
   have hy1 : coeff 1 y = ζ := by
     rw [hy, map_sub, h1, coeff_C, if_neg one_ne_zero, sub_zero]
-  simp only [map_add, map_mul, map_sub (W.lev c ζ), lev_alg] at e
+  simp only [map_add (f := _), map_mul, map_sub (W.lev c ζ), lev_alg] at e
   rw [← hy] at e
   refine ⟨o₀, o₁ * z, ?_, ?_⟩
-  · rw [e, map_add, map_mul, hy0, zero_mul, add_zero, constantCoeff_C]
-  · rw [e, map_add, coeff_C, if_neg one_ne_zero, zero_add, coeff_one_mul, hy0, hy1, map_add, map_mul,
+  · rw [e, map_add (f := _), map_mul, hy0, zero_mul, add_zero, constantCoeff_C]
+  · rw [e, map_add (f := _), coeff_C, if_neg one_ne_zero, zero_add, coeff_one_mul, hy0, hy1, map_add (f := _), map_mul,
       hy0, constantCoeff_C, map_mul, hz]
     ring
 
-include hinj hp9 hs in
 
+include hinj hp9 hs in
 theorem root {ζ : LL} (hζ : IsPrimitiveRoot ζ PD.p) {z : O} (hz : algebraMap O LL z = ζ) :
     ∃ r : O, constantCoeff (W.lev c ζ π') = algebraMap O LL r ∧ (PD.p : O) ∣ r ^ 2 := by
   obtain ⟨-, -, ⟨w, hw⟩, -⟩ := hp9
@@ -194,8 +221,8 @@ theorem cc_π' (i : ZMod n) : constantCoeff (π' i) = 0 := by
   have : π' i = (w : LetA O n) i * PowerSeries.X ^ s' := by rw [hw]; rfl
   rw [this, map_mul, map_pow, constantCoeff_X, zero_pow (by omega), mul_zero]
 
-include hp9 hs1 in
 
+include hp9 hs1 in
 theorem dv {r : O} (hr : (PD.p : O) ∣ r ^ 2) : Dv (evA W c) O (yR W π' c r) := by
   intro a
   have hπ0 := cc_π' W hp9 hs1
@@ -210,7 +237,7 @@ theorem dv {r : O} (hr : (PD.p : O) ∣ r ^ 2) : Dv (evA W c) O (yR W π' c r) :
     exact congrArg (fun p => PowerSeries.subst p g') (congrFun (hπΔ δ hδ) j)
   refine ⟨o, ⟨_, ha⟩, fun ζ => ?_⟩
   unfold evA yR
-  rw [← lev_alg W c ζ, ← lev_alg W c ζ, ← map_sub, ← map_mul, ← map_add]
+  rw [← lev_alg W c ζ, ← lev_alg W c ζ, ← map_sub, ← map_mul, ← map_add (f := _)]
   apply lev_congr
   have hS : PowerSeries.HasSubst (π' c) := PowerSeries.HasSubst.of_constantCoeff_zero' (hπ0 c)
   simp only [Pi.add_apply, Pi.mul_apply, Pi.sub_apply, alg_apply]
@@ -228,9 +255,9 @@ theorem is_root {ζ : LL} (hζ : IsPrimitiveRoot ζ PD.p) {r : O}
   rw [← cc_aeval _ r hr, ← lev_Eat, he, map_zero]
   simp
 
+
 omit [IsDomain O] [IsAdicComplete (Ideal.span {((PD.p : ℕ) : O)}) O] in
 include hinj hp9 in
-
 theorem simple {ζ : LL} (hζ : IsPrimitiveRoot ζ PD.p) {r : O}
     (hr : constantCoeff (W.lev c ζ π') = algebraMap O LL r) :
     ∃ u, yR W π' c r ζ = X * u ∧ IsUnit u := by
@@ -247,8 +274,8 @@ theorem simple {ζ : LL} (hζ : IsPrimitiveRoot ζ PD.p) {r : O}
   apply he₁
   rw [← h2, map_mul, h0, zero_mul]
 
-include hinj hp9 hs hs1 in
 
+include hinj hp9 hs hs1 in
 theorem fact2 {ζU ζD : LL} (hU : IsPrimitiveRoot ζU PD.p) (hD : IsPrimitiveRoot ζD PD.p) {z : O}
     (hz : algebraMap O LL z = ζU) {rU rD : O}
     (hrU : constantCoeff (W.lev c ζU π') = algebraMap O LL rU) (hpU : (PD.p : O) ∣ rU ^ 2)
@@ -306,7 +333,7 @@ theorem fact2 {ζU ζD : LL} (hU : IsPrimitiveRoot ζU PD.p) (hD : IsPrimitiveRo
         (ζU - 1) ^ s₀ * algebraMap O LL (o₁ * (z - 1) + o₀ * ((s₀ + 1 : ℕ) : O) * z) := by
       rw [yR, map_sub, coeff_C, if_neg one_ne_zero, sub_zero, hw, map_mul, map_pow, coeff_one_mul,
         coeff_one_pow, map_pow, h0, h1, ho₀, ho₁]
-      simp only [map_add, map_mul, map_sub, hz, map_one, map_natCast, Nat.add_sub_cancel]
+      simp only [map_add (f := _), map_mul, map_sub, hz, map_one, map_natCast, Nat.add_sub_cancel]
       ring
     rw [hw', map_mul, hfac] at hq1
     simp only [coeff_one_mul, map_mul, sectionFrameQuotient, hyD0, hyU1, ho₀', constantCoeff_C, coeff_C,
@@ -315,7 +342,7 @@ theorem fact2 {ζU ζD : LL} (hU : IsPrimitiveRoot ζU PD.p) (hD : IsPrimitiveRo
         (-(o₀' * a₂ * (o₁ * (z - 1) + o₀ * ((s₀ + 1 : ℕ) : O) * z))) := by
       apply hinj
       rw [map_natCast, ← hq1]
-      simp only [map_add, map_mul, map_sub, hz, map_one, map_natCast, map_pow, map_neg]
+      simp only [map_add (f := _), map_mul, map_sub, hz, map_one, map_natCast, map_pow, map_neg]
       ring
     obtain ⟨t, ht⟩ := z_dvd hinj hU hz
     rw [← hs] at ht

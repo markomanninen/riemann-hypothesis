@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianProducts.ExistsRowSec
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.HatSt
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.WfT
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousQuaternaryQuadraticForm
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.GaussianProducts.ExistsRowSec
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.WeilRepresentation.HatSt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.IsotypicQuotients.WfT
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousQuaternaryQuadraticForm
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -26,7 +30,7 @@ private theorem coe_al {F E : Type} [Field F] [NumberField F] [Field E] [NumberF
     ((al D ξ : (A E)ˣ) : A E) = D.mkE (rt (ξ 0)) (-rt (ξ 1)) := by
   have e := D.mkE_rt (ξ 0) (-ξ 1)
   have e' : -rt (ξ 1) = (rt (-ξ 1) : A F) := (map_neg _ _).symm
-  rw [e', e, al, dif_neg h, IdeleGroup.coe_diagonal]
+  rw [e', e, al, dite_eq_right h, IdeleGroup.coe_diagonal]
   simp [sub_eq_add_neg]
 
 private theorem vcD {F : Type} [Field F] [NumberField F] (t : (A F)ˣ) (x : G1 F) :
@@ -55,7 +59,7 @@ private theorem pt_move {F : Type} [Field F] [NumberField F] (t n : (A F)ˣ) (g 
   rw [UpperTheory.ConvolutionTheory.R2.dM_mul, ← mul_assoc, cD_dM, gl_mul, ← mul_assoc (dM t), dM_mD, mul_assoc]
 
 theorem UpperTheory.ConvolutionTheory.R2.G.wxPt :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E] (D : Dat F E) (W : Weil D) (ξ : Fin 2 → F), ξ ≠ 0 → ∃ t : Fˣ, ∀ f : GL (Fin 2) (A F) → ℂ, Pp.Lf f → ∀ φ h g,
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (D : Dat F E) (W : Weil D) (ξ : Fin 2 → F), ξ ≠ 0 → ∃ t : Fˣ, ∀ f : GL (Fin 2) (A F) → ℂ, Pp.Lf f → ∀ φ h g,
     w1 W f φ (aE (al D ξ) * h) (cD (IdeleGroup.diagonal F t) (mD (IdeleGroup.diagonal F t) * g)) = wx W f φ h ξ g := by
   intro F E _ _ _ _ _ _ _ D W ξ hξ
   have hz := conj_ne D hξ
@@ -63,7 +67,7 @@ theorem UpperTheory.ConvolutionTheory.R2.G.wxPt :
   set α := al D ξ with hαdef
   let t : Fˣ := Units.map (Algebra.norm F : E →* F) (Units.mk0 _ hz)
   have hT : ideleNorm F E α = IdeleGroup.diagonal F t := by
-    rw [hαdef, al, dif_neg hz, ideleNorm_diagonal]
+    rw [hαdef, al, dite_eq_right hz, ideleNorm_diagonal]
   have hco : D.co (α : A E) = ![rt (ξ 0), -rt (ξ 1)] := by rw [hα, D.co_mkE]
   have ht : (t : F) = ξ 0 ^ 2 - D.δ * ξ 1 ^ 2 := by
     haveI := AdeleBaseChange.nontrivial_adeleRing F

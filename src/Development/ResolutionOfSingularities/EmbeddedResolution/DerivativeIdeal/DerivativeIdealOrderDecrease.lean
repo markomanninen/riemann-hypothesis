@@ -1,6 +1,11 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdeal
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealOrder
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdeal
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.IdealOrder
+
+@[expose] public section
+
 namespace FunctorialResolution.EmbeddedResolution
 
 open IsLocalRing
@@ -54,7 +59,7 @@ private theorem eulerDerivation_sub_self_mem_sq (k : Type*) [CommRing k] {R : Ty
   | add a b _ _ iha ihb =>
       have key : eulerDerivation k x D (a + b) - (a + b)
           = (eulerDerivation k x D a - a) + (eulerDerivation k x D b - b) := by
-        rw [map_add]; ring
+        rw [map_add (f := _)]; ring
       rw [key]
       exact Submodule.add_mem _ iha ihb
   | smul c a ha iha =>
@@ -107,7 +112,7 @@ private theorem forall_eulerDerivation_sub_natCast_mul_mem (k : Type*) [CommRing
         have key : eulerDerivation k x D (y + z) - ((r + 1 : ℕ) : R) * (y + z)
             = (eulerDerivation k x D y - ((r + 1 : ℕ) : R) * y)
               + (eulerDerivation k x D z - ((r + 1 : ℕ) : R) * z) := by
-          rw [map_add]; ring
+          rw [map_add (f := _)]; ring
         have hres : eulerDerivation k x D (y + z) - ((r + 1 : ℕ) : R) * (y + z)
             ∈ Ideal.span (Set.range x) ^ (r + 1 + 1) := by
           rw [key]

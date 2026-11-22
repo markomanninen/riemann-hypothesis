@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkInd
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HkInd
+
+@[expose] public section
 
 open MvPolynomial Equiv UpperTheory.V.AlgebraTools.Hk
 
@@ -59,8 +63,8 @@ theorem UpperTheory.V.AlgebraTools.hkBern :
       obtain ⟨y, h1, h2⟩ := hp
       obtain ⟨y', h1', h2'⟩ := hp'
       refine ⟨y + y', ?_, ?_⟩
-      · rw [mul_add, h1, h1', map_add]; ring
-      · rw [map_add, map_add, map_add, mul_add, h2, h2', mul_add, map_add, add_mul, smul_add]; abel
+      · rw [mul_add, h1, h1', map_add (f := _)]; ring
+      · rw [map_add (f := _), map_add (f := _), map_add (f := _), mul_add, h2, h2', mul_add, map_add (f := _), add_mul, smul_add]; abel
     | mul_X p j hp =>
       obtain ⟨y, h1, h2⟩ := hp
       obtain ⟨y', h1', h2'⟩ := hX j
@@ -69,7 +73,7 @@ theorem UpperTheory.V.AlgebraTools.hkBern :
         linear_combination (X j) * h1 + rename (swap a c) p * h1'
       · have e : X a * (y * X j + rename (swap a c) p * y') =
             (X a * y) * X j + rename (swap a c) p * (X a * y') := by ring
-        rw [e, map_add, map_mul b.th (X a * y), map_mul b.th _ (X a * y'), map_mul (rename _), map_mul b.th p,
+        rw [e, map_add (f := _), map_mul b.th (X a * y), map_mul b.th _ (X a * y'), map_mul (rename _), map_mul b.th p,
           map_mul b.th (rename _ p), ← mul_assoc, h2, add_mul, mul_assoc, h2', mul_add, smul_add, smul_mul_assoc,
           mul_smul_comm, mul_assoc]
         abel

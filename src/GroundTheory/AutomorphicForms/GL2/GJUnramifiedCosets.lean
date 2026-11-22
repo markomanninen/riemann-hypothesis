@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.Satake
-import GroundTheory.AutomorphicForms.GL2.GJUnramifiedDegree
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.Satake
+public import GroundTheory.AutomorphicForms.GL2.GJUnramifiedDegree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -19,7 +24,6 @@ variable {F : Type*} [Field F] [ValuativeRel F] [TopologicalSpace F] [IsNonarchi
 local notation "ϖ" => (GLnLocal.uniformizer F : F)
 
 variable (F) in
-
 def digitSum (m : ℕ) (a : Fin m → 𝓀[F]) : F :=
   ∑ t : Fin m, (residueLift F (a t) : F) * ϖ ^ (t : ℕ)
 
@@ -112,12 +116,12 @@ theorem eq_of_bdd_digitSum_sub (m : ℕ) {a b : Fin m → 𝓀[F]}
 
 abbrev UpperPairs (n : ℕ) : Type := {p : Fin n × Fin n // p.1 < p.2}
 
-variable (F) in
 
+variable (F) in
 abbrev NormalData (l : Fin n → ℕ) : Type _ := ∀ p : UpperPairs n, Fin (l p.1.1) → 𝓀[F]
 
-variable (F) in
 
+variable (F) in
 def normalMat (l : Fin n → ℕ) (c : NormalData F l) : Matrix (Fin n) (Fin n) F :=
   fun i j => if h : i < j then digitSum F (l i) (c ⟨(i, j), h⟩) else if i = j then ϖ ^ l i else 0
 
@@ -145,8 +149,8 @@ theorem det_normalMat_ne_zero (l : Fin n → ℕ) (c : NormalData F l) : (normal
   rw [det_normalMat]
   exact Finset.prod_ne_zero_iff.2 fun i _ => pow_ne_zero _ (Cartan.uniformizer_ne_zero F)
 
-variable (F) in
 
+variable (F) in
 def normalGL (l : Fin n → ℕ) (c : NormalData F l) : GL (Fin n) F :=
   ((Matrix.isUnit_iff_isUnit_det _).2 (isUnit_iff_ne_zero.2 (det_normalMat_ne_zero l c))).unit
 
@@ -407,8 +411,8 @@ theorem normalGL_apply_mem (l : Fin n → ℕ) (c : NormalData F l) (i j : Fin n
   · rw [normalMat_of_gt l c hij]
     exact (𝒪[F]).zero_mem
 
-variable (F n) in
 
+variable (F n) in
 def integralShell (k : ℕ) : Set (GL (Fin n) F) :=
   {g | (∀ i j, g i j ∈ 𝒪[F]) ∧ GodementJacquet.ordDet g = k}
 
@@ -500,8 +504,8 @@ theorem two_mul_sum_upperPairs_sub_rhoPair (l : Fin n → ℕ) :
 variable [MeasurableSpace (GL (Fin n) F)] [BorelSpace (GL (Fin n) F)]
   {μ : Measure (GL (Fin n) F)} [μ.IsHaarMeasure]
 
-variable (μ) in
 
+variable (μ) in
 def integralHecke (k : ℕ) : SphericalHecke μ (F := F) (n := n) :=
   indicatorHecke μ (integralShell F n k) (isCompact_integralShell k) (isOpen_integralShell k)
     fun a ha x => ⟨by simpa using mul_mem_integralShell_iff (g := x) (k := k) ha (integralGL F n).one_mem,
@@ -557,7 +561,8 @@ theorem evalAt_satakeTransform_integralHecke (z : Fin n → ℂˣ) (k : ℕ) :
     evalAt z (satakeTransform μ (integralHecke μ k)) =
       (μ.real (integralGL F n : Set (GL (Fin n) F)) : ℂ) * sqrtQ F ^ (((n : ℤ) - 1) * k) *
         ∑ l ∈ Finset.Nat.antidiagonalTuple n k, ∏ i, (z i : ℂ) ^ l i := by
-  rw [satakeTransform_apply, evalAt_normalize, satake_integralHecke, map_smul, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [satakeTransform_apply, evalAt_normalize, satake_integralHecke, map_smul, map_sum,
     smul_eq_mul, mul_assoc]
   congr 1
   rw [Finset.mul_sum]

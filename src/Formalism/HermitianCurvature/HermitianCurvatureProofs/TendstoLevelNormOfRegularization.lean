@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleWordMemBoundedLetterLists
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleWordMemBoundedLetterLists
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 
@@ -188,7 +192,7 @@ theorem tendsto_Nhat (hInt : ∀ n, KB.IntAll (KB.withRR S (RR n)))
     rw [← Finset.sum_coe_sort Y]
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun h' _ => ?_)
     rw [norm_mul, norm_prod]
-    exact mul_le_mul_of_nonneg_left (Finset.prod_le_prod (fun v _ => norm_nonneg _)
+    exact mul_le_mul_of_nonneg_left (Finset.prod_le_prod₀ (fun v _ => norm_nonneg _)
       fun v _ => hCb v h h' _ _ (hc v)) (norm_nonneg _)
   · exact Eventually.of_forall fun c => (tendsto_level_norm_of_regularization S RR hconv ε hε i w Y κ c).mul_const _
 

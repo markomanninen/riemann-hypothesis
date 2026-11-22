@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ImCircleIntegral
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ImCircleIntegral
+
+@[expose] public section
 
 open Set Filter Topology Complex MeasureTheory intervalIntegral
 

@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.CardFinRange
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.CardFinRange
+
+@[expose] public section
 
 noncomputable section
 

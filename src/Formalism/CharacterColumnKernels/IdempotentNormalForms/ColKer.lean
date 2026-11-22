@@ -1,7 +1,11 @@
-import Formalism.CharacterColumnKernels.StatementColKer
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthKerSmulLe
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthKerOfDetEqZero
-import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthEqKerAddRange
+module
+
+public import Formalism.CharacterColumnKernels.StatementColKer
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthKerSmulLe
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthKerOfDetEqZero
+public import Formalism.CharacterColumnKernels.IdempotentNormalForms.LengthEqKerAddRange
+
+@[expose] public section
 
 open Finset
 
@@ -50,7 +54,8 @@ lemma map_colGenJ (ψ : ColFreeJ A r χ E ι j →ₗ[A] M) (y : Ymod r χ E) (l
     ψ (colGenJ y l c s c₀) = ψ (y, 0) + c • ψ (fNu l) + ∑ a, s a • ψ (fSig l a) +
       c₀ • ψ (fSig0 l) := by
   rw [colGenJ_decomp]
-  simp only [map_add, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_sum, map_smul]
 
 lemma map_sigRel (ψ : ColFreeJ A r χ E ι j →ₗ[A] M) (l : ι) (a : Fin (j l)) (t : A) :
     ψ (colGenJ 0 l 0 (Pi.single a t) 0) = t • ψ (fSig l a) := by
@@ -77,7 +82,8 @@ lemma eq_zero_of_gens [Fintype ι] {e₁ : A} {δ : T'} {D : ι → Subgroup G}
     let ψ := φ ∘ₗ (colRelJ r χ E e₁ δ D j Kc k0).mkQ
     have : ψ z = 0 := by
       have h0 : ψ ((0 : Ymod r χ E), 0) = 0 := map_zero ψ
-      rw [free_decomp z, map_add, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [free_decomp z, map_add (f := _), map_sum]
       refine (congrArg₂ (· + ·) (hY z.1) (Finset.sum_eq_zero fun l _ => ?_)).trans (add_zero 0)
       rw [map_colGenJ]
       have h1 : ψ (fNu l) = 0 := hν l

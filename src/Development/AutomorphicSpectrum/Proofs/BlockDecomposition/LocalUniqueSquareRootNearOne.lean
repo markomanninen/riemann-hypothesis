@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open MeasureTheory
 open scoped ENNReal NNReal Topology
 
@@ -26,7 +31,7 @@ theorem exists_local_sqrt : ∀ (B V : Type) [Ring B] [TopologicalSpace B] [IsTo
   obtain ⟨Q, hQdef⟩ : ∃ Q : V → V, Q = fun y => y + y + A y y := ⟨_, rfl⟩
   have hQ : ∀ y, (1 + ψ.symm y) * (1 + ψ.symm y) = 1 + ψ.symm (Q y) := by
     intro y
-    simp only [hQdef, hA, map_add, AddEquiv.symm_apply_apply, mul_add, add_mul, one_mul, mul_one]
+    simp only [hQdef, hA, map_add (f := _), AddEquiv.symm_apply_apply, mul_add, add_mul, one_mul, mul_one]
     abel
   have hQ0 : Q 0 = 0 := by simp [hQdef]
   let e : V ≃L[ℝ] V := ContinuousLinearEquiv.smulLeft (Units.mk0 (2 : ℝ) two_ne_zero)

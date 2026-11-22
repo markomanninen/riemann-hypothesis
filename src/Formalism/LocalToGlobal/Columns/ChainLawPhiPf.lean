@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.Columns.ChainLawPhiA
-import Formalism.LocalToGlobal.Columns.OcbTIntOfStab
-import Formalism.LocalToGlobal.Columns.FirstUnfoldingEqZeroOfNotIntegral
+module
+
+public import Formalism.LocalToGlobal.Columns.ChainLawPhiA
+public import Formalism.LocalToGlobal.Columns.OcbTIntOfStab
+public import Formalism.LocalToGlobal.Columns.FirstUnfoldingEqZeroOfNotIntegral
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 

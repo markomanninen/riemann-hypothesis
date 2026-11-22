@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermFunPf
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThGerm
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.GermFunPf
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -62,7 +66,7 @@ private theorem mem_degLE_lemma [Fintype ι] [DecidableEq ι] (k : ℕ) (e : ι 
 
 private theorem coeff_psTrunc_lemma_2 [Fintype ι] [DecidableEq ι] (k : ℕ) (g : MvPowerSeries ι R)
     (e : ι →₀ ℕ) :
-    MvPolynomial.coeff e (psTrunc k g) = if e.degree ≤ k then MvPowerSeries.coeff e g else 0 := by
+    AddMonoidAlgebra.coeff (psTrunc k g) e = if e.degree ≤ k then MvPowerSeries.coeff e g else 0 := by
   unfold psTrunc
   rw [MvPolynomial.coeff_sum]
   simp only [MvPolynomial.coeff_monomial]
@@ -98,8 +102,8 @@ theorem exists_ps_of_jets [Fintype ι] [DecidableEq ι] (a : ∀ m, Jet R ι m)
       have h2 : orig R ι ^ (l + 1) ≤ orig R ι ^ (k + 1) := Ideal.pow_le_pow_right (by omega)
       have h3 := Ideal.add_mem _ (h2 h1) ih
       rwa [sub_add_sub_cancel] at h3
-  obtain ⟨f, hf⟩ : ∃ f : MvPowerSeries ι R, ∀ e, MvPowerSeries.coeff e f = MvPolynomial.coeff e (p e.degree) :=
-    ⟨fun e => MvPolynomial.coeff e (p e.degree), fun e => rfl⟩
+  obtain ⟨f, hf⟩ : ∃ f : MvPowerSeries ι R, ∀ e, MvPowerSeries.coeff e f = AddMonoidAlgebra.coeff (p e.degree) e :=
+    ⟨fun e => AddMonoidAlgebra.coeff (p e.degree) e, fun e => rfl⟩
   refine ⟨f, fun k => ?_⟩
   rw [← hp k]
   unfold psJet
@@ -151,7 +155,7 @@ theorem sL_copy1 (m : ℕ) (g : Fin d → MvPowerSeries (Fin 1 × Fin d) R) :
 
 private theorem const_psTrunc_lemma_3 {κ : Type} [Fintype κ] [DecidableEq κ] (k : ℕ) (g : MvPowerSeries κ R) :
     MvPolynomial.constantCoeff (psTrunc k g) = MvPowerSeries.coeff 0 g := by
-  rw [show MvPolynomial.constantCoeff (psTrunc k g) = MvPolynomial.coeff 0 (psTrunc k g) from rfl,
+  rw [show MvPolynomial.constantCoeff (psTrunc k g) = AddMonoidAlgebra.coeff (psTrunc k g) 0 from rfl,
     coeff_psTrunc_lemma_2, if_pos (by simp)]
 
 theorem sL_trunc (m : ℕ) (g : Fin d → MvPowerSeries (Fin 1 × Fin d) R) :

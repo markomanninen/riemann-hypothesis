@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsLieDataCircle
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsLieDataCircle
+
+@[expose] public section
 
 open GlobalTheory.SmoothForms NumberField Matrix
 open scoped ContDiff Topology
@@ -89,7 +93,7 @@ theorem der_smooth_and_linear : ∀ (𝔸 L G : Type) [NormedRing 𝔸] [NormedA
   intro 𝔸 L G _ _ _ _ _ _ σ j s H hl φ hφ
   refine ⟨fun X => DerLinear.sm_der H hl hφ X, fun X Y => ?_, fun c X => ?_⟩
   · funext g
-    rw [Pi.add_apply, DerLinear.der_eq_fderiv hφ, DerLinear.der_eq_fderiv hφ, DerLinear.der_eq_fderiv hφ, map_add]
+    rw [Pi.add_apply, DerLinear.der_eq_fderiv hφ, DerLinear.der_eq_fderiv hφ, DerLinear.der_eq_fderiv hφ, map_add (f := _)]
   · funext g
     rw [Pi.smul_apply, DerLinear.der_eq_fderiv hφ, DerLinear.der_eq_fderiv hφ, map_smul, Complex.real_smul,
       smul_eq_mul]

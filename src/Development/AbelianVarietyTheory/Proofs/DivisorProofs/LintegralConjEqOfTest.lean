@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LocallyCompactSpaceAxis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LintegralConjEqOfWitness
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CoeConjEquivSymm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LocallyCompactSpaceAxis
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.CoeConjEquivSymm
+
+@[expose] public section
+
 open MeasureTheory Filter Topology GlobalTheory.ResLine
 open scoped ENNReal
 

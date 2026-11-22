@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SectionMulInjSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistAlg
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PStepThreeAway
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PStepThreeOnWGen
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SectionMulInjSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistAlg
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PStepThreeAway
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PStepThreeOnWGen
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -30,15 +35,15 @@ theorem exists_of_mem_idealMod (J : Ideal (Poly S N)) (I : Chart x) {z : Ω} (hz
     refine ⟨G * m' + m * G', m * m', e + e', J.add_mem (J.mul_mem_right _ hG) (J.mul_mem_left _ hG'),
       mul_mem hm hm', (hGe.mul hme').add (hme.mul hGe'), hme.mul hme', ?_⟩
     rw [div_add_div _ _ (eval_ne_zero_of_mem_monos I hm) (eval_ne_zero_of_mem_monos I hm')]
-    simp only [map_add, map_mul]
+    simp only [map_add (f := _), map_mul]
   | smul r a _ ha =>
     obtain ⟨F, m₀, e₀, hm₀, hF, hm₀e, hr⟩ := r.2
     obtain ⟨G, m, e, hG, hm, hGe, hme, rfl⟩ := ha
     refine ⟨F * G, m₀ * m, e₀ + e, J.mul_mem_left _ hG, mul_mem hm₀ hm, hF.mul hGe, hm₀e.mul hme, ?_⟩
     rw [chartRing_smul_def, hr, map_mul, map_mul, div_mul_div_comm]
 
-omit [Algebra S Ω] in
 
+omit [Algebra S Ω] in
 theorem not_mem_of_mem_monos {pp : Ideal (Poly S N)} (hpp : pp.IsPrime) {I : Chart x}
     (hX : ∀ j ∈ I.1, (X j : Poly S N) ∉ pp) {m : Poly S N} (hm : m ∈ monos I.1) : m ∉ pp := by
   induction hm using Submonoid.closure_induction with
@@ -79,8 +84,8 @@ theorem mem_or_mem {pp : Ideal (Poly S N)} (hpp : pp.IsPrime) (hZ : primeOf (S :
 
 end SectionMulInj
 
-open SectionMulInj in
 
+open SectionMulInj in
 theorem SectionMulInj.proof : SectionMulInj.Statement.{u, w} := by
   intro k _ Ω _ _ N x pp hpp hhom hZ D M s ⟨f, hf, hfp⟩ I y hy hsy
   rw [SubSystem.twist_sub_eq_mul_of_line]

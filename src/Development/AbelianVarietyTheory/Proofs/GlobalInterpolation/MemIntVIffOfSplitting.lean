@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataLevel
-import Formalism.LocalRingCardinality.DataLevelD
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GapAtLeast
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ValuedAlgebraMapLtOneIff
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryMassLatticeEqGenusMass
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataLevel
+public import Formalism.LocalRingCardinality.DataLevelD
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GapAtLeast
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ValuedAlgebraMapLtOneIff
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryMassLatticeEqGenusMass
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.UG Formalism.BasicNotions Formalism.MainNotions.StandardLattice
 open scoped TensorProduct
 
@@ -31,7 +36,7 @@ theorem exists_add_conj (hc : CMData F E) {R : Type} [CommRing R] [Algebra F R] 
     obtain ⟨p, hp⟩ := hx
     obtain ⟨q, hq⟩ := hy
     refine ⟨p + q, ?_⟩
-    rw [map_add, TensorProduct.tmul_add, ← hp, ← hq]; ring
+    rw [map_add (f := _), TensorProduct.tmul_add, ← hp, ← hq]; ring
 
 theorem exists_of_conj_eq (hc : CMData F E) {R : Type} [CommRing R] [Algebra F R] {z : E ⊗[F] R}
     (hz : Formalism.UG.sigR hc.sig R z = z) : ∃ p : R, (1 : E) ⊗ₜ[F] p = z := by
@@ -100,7 +105,7 @@ theorem mem_intV_iff_of_splitting : ∀ (F E : Type) [Field F] [NumberField F] [
         exact ⟨(hθ θ y).2 y.2, (hθ θ y).2 y.2⟩
     | zero => rw [map_zero]; exact ⟨zero_mem _, zero_mem _⟩
     | one => rw [map_one]; exact ⟨one_mem _, one_mem _⟩
-    | add x y _ _ hx hy => rw [map_add]; exact ⟨add_mem hx.1 hy.1, add_mem hx.2 hy.2⟩
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact ⟨add_mem hx.1 hy.1, add_mem hx.2 hy.2⟩
     | neg x _ hx => rw [map_neg]; exact ⟨neg_mem hx.1, neg_mem hx.2⟩
     | mul x y _ _ hx hy => rw [map_mul]; exact ⟨mul_mem hx.1 hy.1, mul_mem hx.2 hy.2⟩
   · rintro ⟨ha, hb⟩
@@ -138,7 +143,7 @@ theorem mem_intV_iff_of_splitting : ∀ (F E : Type) [Field F] [NumberField F] [
     have hx : x = (1 : E) ⊗ₜ[F] θ.symm ((φ x).1 - c * α) +
         ((1 : E) ⊗ₜ[F] θ.symm c) * (algebraMap (𝓞 E) E w ⊗ₜ[F] 1) := by
       apply φ.injective
-      rw [map_add, map_mul, hd, hd, hW, θ.apply_symm_apply, θ.apply_symm_apply]
+      rw [map_add (f := _), map_mul, hd, hd, hW, θ.apply_symm_apply, θ.apply_symm_apply]
       refine Prod.ext ?_ ?_
       · change (φ x).1 = (φ x).1 - c * α + c * α
         ring

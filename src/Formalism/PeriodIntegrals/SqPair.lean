@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SplitPairGen
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SplitPairGen
+
+@[expose] public section
 
 noncomputable section
 open NumberField Matrix

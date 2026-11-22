@@ -1,6 +1,11 @@
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MatrixGaussSumSingularAndInvertible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ComplexMatrixGaussSumNormIntegralGaloisStatement
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MatrixGaussSumSingularAndInvertible
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ComplexMatrixGaussSumNormIntegralGaloisStatement
+
+@[expose] public section
+
 open Matrix Formalism.IndefR.Datum
 open Classical
 
@@ -59,11 +64,11 @@ def squareAndRectColumnsEquivWideMatrix : Matrix (Fin r) (Fin r) k × Matrix (Fi
 
 theorem topLeftBlock_neg_eq_submatrix_castAdd (y : Matrix (Fin r) (Fin (r + t)) k) :
     topL r (-y) = -(y.submatrix id (Fin.castAdd t)) := by
-  ext i j; simp only [topL]; rw [dif_pos ⟨i.2, by omega⟩]; rfl
+  ext i j; simp only [topL]; rw [dite_eq_left ⟨i.2, by omega⟩]; rfl
 
 theorem topLeftBlock_eq_submatrix_castAdd (u : Matrix (Fin (r + t)) (Fin r) k) :
     topL r u = u.submatrix (Fin.castAdd t) id := by
-  ext i j; simp only [topL]; rw [dif_pos ⟨by omega, j.2⟩]; rfl
+  ext i j; simp only [topL]; rw [dite_eq_left ⟨by omega, j.2⟩]; rfl
 
 theorem lowZero_iff_submatrix_natAdd_eq_zero (u : Matrix (Fin (r + t)) (Fin r) k) :
     LowZero r u ↔ u.submatrix (Fin.natAdd r) id = 0 := by
@@ -87,13 +92,13 @@ theorem sum_GL_character_neg_det_addChar_trace (k : Type) [Field k] [Fintype k] 
   refine Fintype.sum_of_injective (fun x : GL (Fin r) k => -(x : Matrix (Fin r) (Fin r) k))
     (fun x y e => Units.ext (neg_injective e)) _ _ ?_ ?_
   · intro a ha
-    rw [dif_neg, zero_mul]
+    rw [dite_eq_right, zero_mul]
     intro h
     exact ha ⟨Matrix.GeneralLinearGroup.mkOfDetNeZero (-a) h.ne_zero, by simp⟩
   · intro x
     have hx : IsUnit (-(-(x : Matrix (Fin r) (Fin r) k))).det := by
       rw [neg_neg]; exact (Matrix.isUnit_iff_isUnit_det _).mp x.isUnit
-    rw [dif_pos hx]
+    rw [dite_eq_left hx]
     have hu : hx.unit = Matrix.GeneralLinearGroup.det x := Units.ext (by simp)
     rw [hu, MonoidHom.inv_apply, inv_inv, AddChar.inv_apply, Matrix.trace_mul_comm w, neg_mul, trace_neg]
 
@@ -108,9 +113,9 @@ theorem fourier_flatDatum_finite : ∀ (k : Type) [Field k] [Fintype k] (ψ : Ad
     have h1 : ∀ y : Matrix (Fin r) (Fin n) k, (topL r (-y)).det = 0 := fun y =>
       Matrix.det_eq_zero_of_column_eq_zero ⟨n, hnr⟩ (fun i => by simp [topL])
     have h2 : (topL r u).det = 0 := Matrix.det_eq_zero_of_row_eq_zero ⟨n, hnr⟩ (fun j => by simp [topL])
-    rw [one_mul, dif_neg (by rintro ⟨-, h⟩; rw [h2] at h; exact not_isUnit_zero h)]
+    rw [one_mul, dite_eq_right (by rintro ⟨-, h⟩; rw [h2] at h; exact not_isUnit_zero h)]
     refine Finset.sum_eq_zero fun y _ => ?_
-    rw [dif_neg (by rw [h1 y]; exact not_isUnit_zero), zero_mul]
+    rw [dite_eq_right (by rw [h1 y]; exact not_isUnit_zero), zero_mul]
   obtain ⟨t, rfl⟩ := Nat.exists_eq_add_of_le hrn
   have hψ' : (ψ⁻¹).IsPrimitive := addChar_inv_isPrimitive_of_isPrimitive ψ hψ
   have hξ' : ξ⁻¹ ≠ 1 := inv_ne_one.mpr hξ
@@ -159,18 +164,18 @@ theorem fourier_flatDatum_finite : ∀ (k : Type) [Field k] [Fintype k] (ψ : Ad
   rw [sum_GL_character_neg_det_addChar_trace, sum_addChar_trace_rectMatrix_mul ψ hψ u₂]
   by_cases hu2 : u₂ = 0
   swap
-  · rw [if_neg hu2, mul_zero, dif_neg (fun h => hu2 ((lowZero_iff_submatrix_natAdd_eq_zero u).mp h.1)), mul_zero]
+  · rw [if_neg hu2, mul_zero, dite_eq_right (fun h => hu2 ((lowZero_iff_submatrix_natAdd_eq_zero u).mp h.1)), mul_zero]
   rw [if_pos hu2]
   by_cases hdet : IsUnit u₁.det
   swap
   · have h0 : u₁.det = 0 := by
       by_contra h; exact hdet (isUnit_iff_ne_zero.mpr h)
-    rw [hsing u₁ h0, zero_mul, dif_neg, mul_zero]
+    rw [hsing u₁ h0, zero_mul, dite_eq_right, mul_zero]
     rintro ⟨-, h⟩
     rw [topLeftBlock_eq_submatrix_castAdd] at h
     exact hdet h
   have hh : LowZero r u ∧ IsUnit (topL r u).det := ⟨(lowZero_iff_submatrix_natAdd_eq_zero u).mpr hu2, by rw [topLeftBlock_eq_submatrix_castAdd]; exact hdet⟩
-  rw [dif_pos hh]
+  rw [dite_eq_left hh]
   set a : GL (Fin r) k := Matrix.GeneralLinearGroup.mkOfDetNeZero u₁ hdet.ne_zero
   have ha := hinv a
   simp only [Matrix.one_mul] at ha

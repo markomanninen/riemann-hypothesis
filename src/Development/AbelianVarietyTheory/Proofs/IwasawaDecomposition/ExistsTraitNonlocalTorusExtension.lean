@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NonemptyTorusExtensionOfIsAlgClosed
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.AllTorsMap
-import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.GeneratorValues
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsFiniteTorusExtensionOfModel
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsFiniteDvrTorusExtensionSpecialFibre
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RangeAlgebraMapEqIInfDiscreteValuationSubring
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NonemptyTorusExtensionOfIsAlgClosed
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.AllTorsMap
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.TXFrame
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.GeneratorValues
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsFiniteTorusExtensionOfModel
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsFiniteDvrTorusExtensionSpecialFibre
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RangeAlgebraMapEqIInfDiscreteValuationSubring
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -47,8 +52,8 @@ theorem spMap_comp' {A B C : Type} [CommRing A] [CommRing B] [CommRing C] (f : A
 
 end GlobalTheory.NonlocalTrait
 
-open GlobalTheory.NonlocalTrait in
 
+open GlobalTheory.NonlocalTrait in
 theorem GlobalTheory.exists_trait_nonlocal_torusExtension : ∀ (R : Type) [CommRing R] [IsDomain R] [IsLocalRing R] [IsNoetherianRing R] (G : Over (Sp R)) [GrpObj G], IsSemiAbelian G →
     ∀ (W : Type) [CommRing W] [IsLocalRing W] (g : R →+* W), ¬ IsLocalHom g →
     ∃ (V : Type) (_ : CommRing V) (_ : IsDomain V) (_ : IsDiscreteValuationRing V) (ψ : R →+* V)
@@ -86,7 +91,25 @@ theorem GlobalTheory.exists_trait_nonlocal_torusExtension : ∀ (R : Type) [Comm
   let φ₀ : R →+* k₀ := (algebraMap (R ⧸ p) k₀).comp (Ideal.Quotient.mk p)
   let σ : k₀ →+* AlgebraicClosure k₀ := algebraMap k₀ (AlgebraicClosure k₀)
   let G₀ := (Over.pullback (spMap φ₀)).obj G
-  have hG₀ : IsSemiAbelian G₀ := IsSemiAbelian.pullback _ G hG
+  have hG₀ : IsSemiAbelian G₀ := by
+    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+    · have := hG.comm
+      infer_instance
+    · have := hG.smooth
+      change Smooth (pullback.snd G.hom (spMap φ₀))
+      infer_instance
+    · have := hG.separated
+      change IsSeparated (pullback.snd G.hom (spMap φ₀))
+      infer_instance
+    · have := hG.quasiCompact
+      change QuasiCompact (pullback.snd G.hom (spMap φ₀))
+      infer_instance
+    · have := hG.geomConnected
+      change GeometricallyConnected (pullback.snd G.hom (spMap φ₀))
+      infer_instance
+    · intro Ω _ _ q
+      obtain ⟨E⟩ := hG.fibres Ω (q ≫ spMap φ₀)
+      exact ⟨torusExtOfIso (pullCompIso q (spMap φ₀) G) E⟩
   haveI := hG₀.smooth
   haveI := hG₀.quasiCompact
   haveI := hG₀.separated

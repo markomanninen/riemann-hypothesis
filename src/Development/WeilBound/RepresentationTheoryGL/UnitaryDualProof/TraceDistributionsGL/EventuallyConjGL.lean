@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TraceDistributionsGL.PhiIndep
-import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.LeviTransposeDistributions.BoundOneTwo
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TraceDistributionsGL.PhiIndep
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.LeviTransposeDistributions.BoundOneTwo
+
+@[expose] public section
 
 noncomputable section
 
@@ -124,7 +128,8 @@ theorem phiNear : PhiNear k := by
     ((continuous_apply (Fin.last n)).tendsto (eN k n)).eventually_ne (by simp [eN])
   have hev := hne.and (near_lemma_2 hf₀)
   have ht : Tendsto (fun v : Vc k n => eN k n + v) (𝓝 0) (𝓝 (eN k n)) := by
-    simpa using (continuous_add_left (eN k n)).tendsto (0 : Vc k n)
+    have hc : Continuous (fun v : Vc k n => eN k n + v) := by fun_prop
+    simpa using hc.tendsto (0 : Vc k n)
   have hU := ht.eventually hev
   obtain ⟨t, htU⟩ := exists_box_subset hU
   refine ⟨t, fun s hst => ?_⟩

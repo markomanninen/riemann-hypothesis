@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -45,7 +49,7 @@ private theorem span_orbit {ρ : Representation ℂ G W} (h : ρ.IsIrreducible) 
     rfl
   | zero => simp
   | add x y _ _ hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact add_mem hx hy
   | smul a x _ hx =>
     rw [map_smul]
@@ -91,7 +95,7 @@ private theorem E_map {ι : Type} [DecidableEq ι] (b : Module.Basis ι ℂ W') 
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v u => simp
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
 
 private theorem exists_pure {ρ : Representation ℂ G W} (h : AbsIrr ρ) (U : Submodule ℂ (W ⊗[ℂ] W'))
     (hU : ∀ a : MonoidAlgebra ℂ G, ∀ x ∈ U, TensorProduct.map (ρ.asAlgebraHom a) LinearMap.id x ∈ U)
@@ -202,7 +206,7 @@ theorem boxIrr : BoxIrr := by
         simp
       | add p q hp hq =>
         intro x hx
-        rw [map_add, TensorProduct.map_add_left]
+        rw [map_add (f := _), TensorProduct.map_add_left]
         exact add_mem (hp x hx) (hq x hx)
       | single g c =>
         intro x hx

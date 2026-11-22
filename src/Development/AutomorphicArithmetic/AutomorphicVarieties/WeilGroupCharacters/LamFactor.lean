@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.Inertia
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.Inertia
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.W
 
@@ -42,7 +46,8 @@ private theorem factor (l : ℕ) [Fact l.Prime] (G : Type) [Group G] [Topologica
         rw [← sub_eq_zero, ← map_one (Ideal.Quotient.mk m), ← map_sub, Ideal.Quotient.eq_zero_iff_mem]
         exact hy
       have hS : (∑ i ∈ Finset.range l, (x ^ (l ^ k)) ^ i) ∈ m := by
-        rw [← Ideal.Quotient.eq_zero_iff_mem, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← Ideal.Quotient.eq_zero_iff_mem, map_sum]
         simp only [map_pow, h1, one_pow, Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one]
         rw [← map_natCast (Ideal.Quotient.mk m), Ideal.Quotient.eq_zero_iff_mem]
         exact hl
@@ -149,7 +154,9 @@ theorem UpperTheory.V.W.lam_factor :
         (h0.cont N).comp (Ring.inverse : R ⧸ maximalIdeal R ^ N → R ⧸ maximalIdeal R ^ N)
       convert h1.mul h2 using 1
       funext g
-      simp only [Pi.mul_apply, hinv, δ, MonoidHom.mul_apply, MonoidHom.inv_apply, Units.val_mul, map_mul]
+      simp only [δ, MonoidHom.mul_apply, Units.val_mul, map_mul]
+      rw [MonoidHom.inv_apply, (hinv (ψ₀ g)).symm]
+      rfl
     have hδr : ∀ g, ((δ g : Rˣ) : R) - 1 ∈ maximalIdeal R := by
       intro g
       rw [← res_eq_zero_iff O R, map_sub, map_one]
@@ -183,7 +190,7 @@ theorem UpperTheory.V.W.lam_factor :
           ((χ ((A v).a g) : Rˣ) : R)) := (hχc N).comp_continuous (A v).cont
       convert h1.mul h2 using 1
       funext g
-      simp only [Pi.mul_apply, MonoidHom.mul_apply, MonoidHom.comp_apply, Units.val_mul, map_mul]
+      rfl
     · intro g
       simp only [MonoidHom.mul_apply, MonoidHom.comp_apply, Units.val_mul, map_mul, hχr, mul_one]
       exact h0.red g

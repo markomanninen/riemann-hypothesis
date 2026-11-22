@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsIncidenceZeroLocus
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsIncidenceZeroLocus
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -46,9 +51,9 @@ theorem mem_finsuppAntidiag_univ_iff {n N : ℕ} (f : Fin n →₀ ℕ) :
 theorem eval₂_eq_sum_degree {R S : Type*} [CommSemiring R] [CommSemiring S] {n N : ℕ} (g : R →+* S)
     (x : Fin n → S) (p : MvPolynomial (Fin n) R) (hp : p.IsHomogeneous N) :
     eval₂ g x p = ∑ f : ((Finset.univ : Finset (Fin n)).finsuppAntidiag N),
-      g (coeff (f : Fin n →₀ ℕ) p) * ∏ j, x j ^ (f : Fin n →₀ ℕ) j := by
+      g (AddMonoidAlgebra.coeff p (f : Fin n →₀ ℕ)) * ∏ j, x j ^ (f : Fin n →₀ ℕ) j := by
   rw [eval₂_eq', Finset.sum_coe_sort ((Finset.univ : Finset (Fin n)).finsuppAntidiag N)
-    (fun f => g (coeff f p) * ∏ j, x j ^ f j)]
+    (fun f => g (AddMonoidAlgebra.coeff p f) * ∏ j, x j ^ f j)]
   refine Finset.sum_subset (fun d hd => ?_) (fun d _ hd => ?_)
   · have h := hp (mem_support_iff.mp hd)
     rw [mem_finsuppAntidiag_univ_iff, Finsupp.degree_eq_weight_one]
@@ -119,7 +124,7 @@ theorem proof : IncidenceZeroLocus.Statement := by
   let c : (S ⊕ Fin k) × Mf → MvPolynomial (Fin n) (MvPolynomial (Fin k × Fin n) F) :=
     fun p => homogeneousComponent N (monomial (p.2 : Fin n →₀ ℕ) 1 * G p.1)
   let Mx : Matrix Rows ((S ⊕ Fin k) × Mf) (MvPolynomial (Fin k × Fin n) F) :=
-    fun f p => coeff (f : Fin n →₀ ℕ) (c p)
+    fun f p => AddMonoidAlgebra.coeff (c p) (f : Fin n →₀ ℕ)
 
   have hspanv : ∀ f : Rows, Pi.single f 1 ∈ Submodule.span Ω (Set.range (Mx.map φv).col) := by
     let π : MvPolynomial (Fin n) Ω →ₗ[Ω] (Rows → Ω) :=
@@ -153,11 +158,13 @@ theorem proof : IncidenceZeroLocus.Statement := by
     have hJW : ∀ p ∈ Jv, homogeneousComponent N p ∈ W := by
       intro p hp
       obtain ⟨a, rfl⟩ := Ideal.mem_span_range_iff_exists_fun.mp hp
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Submodule.sum_mem _ fun t _ => ?_
-      rw [(a t).as_sum, Finset.sum_mul, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [(a t).as_sum, Finset.sum_mul, map_sum]
       refine Submodule.sum_mem _ fun m _ => ?_
-      have hmon : monomial m (coeff m (a t)) = coeff m (a t) • monomial m (1 : Ω) := by
+      have hmon : monomial m (AddMonoidAlgebra.coeff (a t) m) = AddMonoidAlgebra.coeff (a t) m • monomial m (1 : Ω) := by
         rw [smul_monomial, smul_eq_mul, mul_one]
       rw [hmon, smul_mul_assoc, map_smul]
       exact W.smul_mem _ (hterm t m)

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.CuspFDOf
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CuspFDOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,11 +26,5 @@ variable {Xo c} in
 theorem rdU_mem_offZero {σ : c.F →+* ℂ} (V : Unf Xo c σ r) (f : Rul Xo c) : rdU V f ∈ offZero V.X :=
   fun _ _ hx => dif_neg hx
 
-variable {Xo c} in
-
-def HolomorphicSectionsFinDim {σ : c.F →+* ℂ} (V : Unf Xo c σ r) : Prop :=
-  ∀ (a : (E →+* ℂ) × ℕ → ℕ) (n : ℕ), Dom a n → FiniteDimensional ℂ (holSub0 V.X (laU V a n))
-
-def HolFD0 (σ : c.F →+* ℂ) : Prop := HolomorphicSectionsFinDim (U σ)
 
 end Formalism.L2.Pj

@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCorrectionU1.CoreStar
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCorrectionU1.CoreStar
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexConjugate
@@ -31,7 +35,8 @@ theorem isPolyDeg_determinant_derivative (k j ρ : ℕ) : IsPolyDeg j (DjU k j �
       _ = j := by simp
   · intro g
     rw [DjU, Matrix.det_apply']
-    simp only [map_sum, map_mul, map_prod, MvPolynomial.eval_C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_prod, MvPolynomial.eval_C]
     refine Finset.sum_congr rfl fun σ _ => ?_
     congr 1
     refine Finset.prod_congr rfl fun i _ => ?_

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsDerivSpanTrdeg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.StatementsDerivSpanTrdeg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Vertical
@@ -17,7 +22,7 @@ theorem DerivSpanTrdeg.derivation_eq_zero_of_isSeparable {k K M : Type*} [Field 
     induction hx using IntermediateField.adjoin_induction with
     | mem x hx => exact hs x hx
     | algebraMap x => exact D.map_algebraMap x
-    | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+    | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
     | inv x _ hx => rw [Derivation.leibniz_inv, hx, smul_zero]
     | mul x y _ _ hx hy => rw [Derivation.leibniz, hx, hy, smul_zero, smul_zero, add_zero]
   ext α
@@ -82,7 +87,8 @@ theorem DerivSpanTrdeg.proof : DerivSpanTrdeg.Statement := by
     have h := LinearEquiv.apply_symm_apply (KaehlerDifferential.linearMapEquivDerivation k F₀) D'
     exact (congrArg (fun D'' : Derivation k F₀ L =>
       D'' ⟨z j, IntermediateField.subset_adjoin k _ ⟨j, rfl⟩⟩) h).symm
-  rw [h1, ← ω.sum_repr (KaehlerDifferential.D k F₀ _), map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h1, ← ω.sum_repr (KaehlerDifferential.D k F₀ _), map_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [map_smul, Algebra.smul_def, mul_comm]
   rfl

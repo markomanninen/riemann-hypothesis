@@ -1,6 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PairingMulFirstChern
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.RegularAlteration
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NontrivialIsomClassInt
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsFlagModelHermSum
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Filter Topology MeasureTheory MvPolynomial
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.ArInt GlobalTheory.Cartier GlobalTheory.CxPts GlobalTheory.Points
@@ -24,11 +30,13 @@ theorem polarisation_mixed_term_of_powers : ∀ (A : Type) [CommRing A] (θ : A 
     intro t
     have ht := h (fun o => Option.elim o t n)
     have hlin : lin (fun o => ((Option.elim o t n : ℤ) : ℝ)) = MvPolynomial.C (t : ℝ) * Y + L := by
-      simp only [lin, Fintype.sum_option, Option.elim, hY, hL, map_sum, map_mul, rename_C, rename_X]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [lin, Fintype.sum_option, Option.elim, hY, hL, map_sum, map_mul, rename_C, rename_X]
     have hsum : (∑ o, (Option.elim o t n) • x o) = (t : A) * x none + y := by
       simp only [Fintype.sum_option, Option.elim, hy, zsmul_eq_mul]
-    rw [hlin, hsum, add_pow, add_pow, map_sum, map_sum] at ht
-    simp only [hP, hQ, Polynomial.eval_finset_sum, Polynomial.eval_mul, Polynomial.eval_C,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hlin, hsum, add_pow, add_pow, map_sum, map_sum] at ht
+    simp only [hP, hQ, Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_C,
       Polynomial.eval_pow, Polynomial.eval_X]
     have e1 : ∀ a : ℕ, Φ ((MvPolynomial.C (t : ℝ) * Y) ^ a * L ^ (D + 1 - a) * (((D + 1).choose a : ℕ) : MvPolynomial (Option ι) ℝ))
         = Φ (Y ^ a * L ^ (D + 1 - a)) * ((D + 1).choose a : ℝ) * (t : ℝ) ^ a := by
@@ -57,8 +65,8 @@ theorem polarisation_mixed_term_of_powers : ∀ (A : Type) [CommRing A] (θ : A 
     · rintro _ ⟨t, rfl⟩
       exact key t
     · exact Set.infinite_range_of_injective Int.cast_injective
-  have hc := congrArg (fun p => Polynomial.coeff p 1) hPQ
-  simp only [hP, hQ, Polynomial.finset_sum_coeff, Polynomial.coeff_C_mul_X_pow] at hc
+  have hc := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p 1) hPQ
+  simp only [hP, hQ, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow] at hc
   simp only [Finset.sum_ite_eq, Finset.mem_range] at hc
   rw [if_pos (by omega), if_pos (by omega)] at hc
   · simp only [pow_one, Nat.choose_one_right, Nat.add_sub_cancel] at hc

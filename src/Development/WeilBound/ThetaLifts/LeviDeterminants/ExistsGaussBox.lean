@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.AdaptC
-import Development.WeilBound.ThetaLifts.LeviDeterminants.NormIteratedFDerivIdLeOneAdd
+module
+
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.AdaptC
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.NormIteratedFDerivIdLeOneAdd
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem dop_smul {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] (a : V) (
 
 theorem dop_add' {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] (a : V) (L : V →L[ℝ] ℝ) (f g : 𝓢(V, ℂ)) :
     dop a L (f + g) = dop a L f + dop a L g := by
-  simp only [dop, LineDeriv.lineDerivOp_add, map_add, smul_add]
+  simp only [dop, LineDeriv.lineDerivOp_add, map_add (f := _), smul_add]
   abel
 
 theorem dop_neg {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] (a : V) (L : V →L[ℝ] ℝ) (f : 𝓢(V, ℂ)) :
@@ -121,7 +125,7 @@ theorem exists_gauss_box [FiniteDimensional ℝ A] (Q : (κ₀ → A) →ₗ[ℝ
   refine hcongr (h2.cexp.mul_const (g y)) (fun t => ?_) ?_
   · skip
     rw [glue_smul, glue_add, smul_zero, add_zero, hf]
-    simp only [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, hs p a]
+    simp only [map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply, smul_eq_mul, hs p a]
     push_cast
     congr 2
     ring

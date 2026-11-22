@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CastGLSymmBc
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.CastGLSymmBc
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.UniformRestrictionStatementHolds
-import Mathlib
-import ReciprocityTheory.AnalyticForms.LeviForms.UnifInt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.UniformRestrictionStatementHolds
+public import ReciprocityTheory.AnalyticForms.LeviForms.UnifInt
+
+@[expose] public section
+
 open MeasureTheory Metric Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.AnForm.M.FinHolAtlas
 open scoped ContDiff
 set_option maxHeartbeats 1000000 in

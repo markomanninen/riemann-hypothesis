@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EpsZeroCompOfIsTanAtG
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EpsZeroCompOfIsTanAtG
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -93,7 +97,8 @@ theorem tanEv_comb : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H :
       (e : y'.left ≫ pullback.fst t.G.hom x = v') : tanEv t hv' h s = F (cotMap y' hy') := by
     rw [tanEv, tanForm_eq_fibre t hp hv' hy' e]
     rfl
-  rw [hF hw hyw eyw, cotMap_list_prod z hz, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hF hw hyw eyw, cotMap_list_prod z hz, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   have e := cotMap_comp (hy i) (epsZero_dualScale (cf i)) rfl (hz i)
   rw [cotMap_dualScale] at e

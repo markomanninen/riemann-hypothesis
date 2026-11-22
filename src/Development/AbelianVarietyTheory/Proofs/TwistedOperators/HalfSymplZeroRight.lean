@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.T2SpaceHalfAdelicMatrixAddSubgroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.T2SpaceHalfAdelicMatrixAddSubgroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ def halfSympl (W : HSp D) {r : ℕ} (a t : Mx D W.rank r) : AF D.host.F :=
 theorem halfSympl_add_right (W : HSp D) {r : ℕ} (a t t' : Mx D W.rank r) :
     halfSympl W a (t + t') = halfSympl W a t + halfSympl W a t' := by
   simp only [halfSympl, halfPair]
-  rw [← map_add, ← mul_add, ← Finset.sum_add_distrib]
+  rw [← map_add (f := _), ← mul_add, ← Finset.sum_add_distrib]
   congr 2
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [← Finset.sum_add_distrib]
@@ -32,7 +36,7 @@ theorem halfSympl_add_right (W : HSp D) {r : ℕ} (a t t' : Mx D W.rank r) :
 theorem halfSympl_add_left (W : HSp D) {r : ℕ} (a a' t : Mx D W.rank r) :
     halfSympl W (a + a') t = halfSympl W a t + halfSympl W a' t := by
   simp only [halfSympl, halfPair]
-  rw [← map_add, ← mul_add, ← Finset.sum_add_distrib]
+  rw [← map_add (f := _), ← mul_add, ← Finset.sum_add_distrib]
   congr 2
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [← Finset.sum_add_distrib]

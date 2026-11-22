@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianHaarMeasure.Development
-import Formalism.FormalDegreeBessel.FinalG
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HermitianHaarMeasure.Development
+public import Formalism.FormalDegreeBessel.FinalG
+
+@[expose] public section
 
 open Matrix Finset
 

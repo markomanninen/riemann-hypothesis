@@ -1,5 +1,9 @@
-import Mathlib
-import Lemmata.GeneralBFactThirdBisForm.Imports
+module
+
+public import Mathlib
+public import Lemmata.GeneralBFactThirdBisForm.Imports
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PointShiftSt
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsGramOneZero
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIndexIdeal
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DetIdealSelfDualLatticeAndInterStandard
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PointShiftSt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsGramOneZero
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIndexIdeal
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.DetIdealSelfDualLatticeAndInterStandard
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,8 +31,8 @@ theorem bdd_of_fg {Λ : Submodule (𝓞 E) (Fin p → E)} (h : Λ.FG) : GlobalTh
   | add x y _ _ hx hy => rw [smul_add]; exact add_mem hx hy
   | smul b x _ hx => rw [smul_comm]; exact Submodule.smul_mem _ _ hx
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem ιMulti_single_ne_zero :
     exteriorPower.ιMulti E p (fun j : Fin p => (Pi.single j (1 : E) : Fin p → E)) ≠ 0 := by
   intro h
@@ -40,8 +44,8 @@ theorem ιMulti_single_ne_zero :
     ext i j; simp [Matrix.one_apply, Pi.single_apply, eq_comm], Matrix.det_one] at this
   exact one_ne_zero this
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem idx_eq (Λ : Submodule (𝓞 E) (Fin p → E)) (J : Ideal (𝓞 E)) (hJ : J • GlobalTheory.BetaEx.detSpan Λ = 1) :
     GlobalTheory.FlatCM.idx E p Λ (Submodule.span (𝓞 E) (Set.range fun a => (Pi.single a (1 : E) : Fin p → E))) = J := by
   rw [GlobalTheory.FlatCM.idx, GlobalTheory.FlatCM.Model.detSpan_span]
@@ -228,7 +232,7 @@ theorem idx_mul_map_bar_eq : ∀ (E : Type) [Field E] [NumberField E] (bar : �
       obtain ⟨b, hb, hbe⟩ := hy
       refine ⟨a + b, J.add_mem ha hb, ?_⟩
       change (a : E) + (b : E) = _
-      rw [hae, hbe, map_add]; ring
+      rw [hae, hbe, map_add (f := _)]; ring
     | smul c x _ hx =>
       obtain ⟨a, ha, hae⟩ := hx
       refine ⟨bar c * a, J.mul_mem_left _ ha, ?_⟩
@@ -311,7 +315,7 @@ theorem idx_mul_map_bar_eq : ∀ (E : Type) [Field E] [NumberField E] (bar : �
           obtain ⟨z', hz', hze'⟩ := hy'
           refine ⟨z + z', add_mem hz hz', ?_⟩
           change (z : E) + (z' : E) = _
-          rw [hze, hze', map_add]; ring
+          rw [hze, hze', map_add (f := _)]; ring
       · intro y y' hy hy'
         obtain ⟨z, hz, hze⟩ := hy
         obtain ⟨z', hz', hze'⟩ := hy'

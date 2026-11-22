@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.IsoOfFrob
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.GelfandKazhdanDual
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.IsoOfFrob
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsNormalisedThetaSub
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.GelfandKazhdanDual
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,14 +26,14 @@ def CharEig (ι : Qbar l ≃+* ℂ) (δ : G F Ω →* (Qbar l)ˣ) (w : HeightOne
 theorem charEig_one (ι : Qbar l ≃+* ℂ) (w : HeightOneSpectrum (𝓞 F)) : CharEig ι (1 : G F Ω →* (Qbar l)ˣ) w 1 :=
   fun _ _ => ⟨fun _ _ => rfl, fun _ _ => by simp⟩
 
+
 omit [NumberField F] in
 variable (F Ω) in
-
 abbrev res (E : Type) [Field E] [Algebra F E] [Algebra E Ω] [IsScalarTower F E Ω] : G E Ω →* G F Ω :=
   AlgEquiv.restrictScalarsHom F
 
-omit [NumberField F] in
 
+omit [NumberField F] in
 def IsSign (E : Type) [Field E] [Algebra F E] [Algebra E Ω] [IsScalarTower F E Ω] (δ : G F Ω →* (Qbar l)ˣ) : Prop :=
   (∀ s, δ s = 1 ↔ s ∈ (res F Ω E).range) ∧ ∀ s, δ s = 1 ∨ δ s = -1
 
@@ -89,7 +93,7 @@ def NoTwist : Prop :=
       ∀ η : HChar F, IsQuadCharOf E η → ¬ IsoTwist π η
 
 def BcAtt : Prop :=
-  ∀ (F E Ω : Type) [Field F] [NumberField F] [IsTotallyReal F] [Field E] [NumberField E] [IsTotallyComplex E] [Field Ω]
+  ∀ (F E Ω : Type) [Field F] [NumberField F] [IsTotallyReal F] [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] [Field Ω]
     [Algebra F E] [Algebra F Ω] [Algebra E Ω] [IsScalarTower F E Ω] [IsAlgClosure E Ω] (l : ℕ) [Fact l.Prime] (ι : Qbar l ≃+* ℂ)
     (n : ℕ) (r : G F Ω →* GL (Fin n) (Qbar l)) (π : TR.CuspSub F n) (P : CuspSub E n), IsBC π P →
       (π.IsRegAlg → (CG.mk P).IsRegAlg) ∧ (AttR ι r π → IsSSRep (r.comp (res F Ω E)) → AttC ι (r.comp (res F Ω E)) P)
@@ -142,14 +146,5 @@ def PolOfSat : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ), 1 ≤ n → ∀ (P : CuspSub E n) (ψ : HChar E),
     (∀ᶠ w : HeightOneSpectrum (𝓞 E) in Filter.cofinite, ψ.UnrAt w ∧ ∃ B B', (CG.mk P).HasSat w B ∧ (CG.mk P).HasSat (cPl w) B' ∧
       B'.map (·⁻¹) = B.map (· * (ψ.val w)⁻¹)) → GlobalTheory.ContraPair.DualIsConjBy P ψ
-
-def BcPolar : Prop :=
-  ∀ (K : Type) [Field K] [NumberField K] [IsCMField K], Module.finrank ℚ K = 2 → ∀ (n : ℕ), 1 ≤ n →
-    ∀ (l : ℕ) [Fact l.Prime] (Ω : Type) [Field Ω] [Algebra ℚ Ω] [Algebra K Ω] [IsScalarTower ℚ K Ω] [IsAlgClosure K Ω]
-      (ι : Qbar l ≃+* ℂ) (r : G ℚ Ω →* GL (Fin n) (Qbar l)) (wt : ℤ) (θ : G ℚ Ω →* (Qbar l)ˣ) (π : TR.CuspSub ℚ n),
-      Continuous r → AttR ι r π → IsCycWt l wt θ → DualTw r θ → IsIrr (r.comp (res ℚ Ω K)) →
-      ∃ (P : CuspSub K n) (χ : HChar (maximalRealSubfield K)) (μ : G (maximalRealSubfield K) Ω →* (Qbar l)ˣ),
-        IsBC π P ∧ AttC ι (r.comp (res ℚ Ω K)) P ∧ GlobalTheory.ContraPair.PolarizedPair P χ ∧ IsLAdicCharOf ι χ μ ∧
-        μ.comp (res (maximalRealSubfield K) Ω K) = θ.comp (res ℚ Ω K) * cycBar K Ω l ^ ((n : ℤ) - 1)
 
 end UpperTheory.V.Af.Bc

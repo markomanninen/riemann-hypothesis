@@ -1,6 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Places
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Action
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Places
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Polynomial
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Global GroundTheory.Global.SemiLocal GroundTheory.Global.AdeleBaseChange
 open PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Loc PositivityTheory.Rg.Tf.Geo
@@ -60,7 +65,7 @@ private lemma nrm_unif {E : Type} [Field E] [NumberField E] (w : HeightOneSpectr
     rw [FinitePlace.norm_def]
     exact_mod_cast (WithZeroMulInt.toNNReal_lt_one_iff h1).2 hv
   rw [FinitePlace.norm_def, WithZeroMulInt.toNNReal_neg_apply _ hvne] at hlt1 ⊢
-  generalize (WithZero.unzero hvne).toAdd = m at hlt1 ⊢
+  generalize (Valued.v x).log = m at hlt1 ⊢
   have hm : m ≤ -1 := by
     by_contra hc
     have hm0 : 0 ≤ m := by omega

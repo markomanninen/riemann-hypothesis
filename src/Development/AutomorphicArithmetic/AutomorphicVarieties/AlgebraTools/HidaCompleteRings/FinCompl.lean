@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -51,7 +55,7 @@ private theorem isPrecomplete_finite {R M : Type} [CommRing R] [AddCommGroup M] 
     induction n with
     | zero => simp [hg0]
     | succ n ih =>
-      rw [Finset.sum_range_succ, ← add_assoc, map_add, ih, hdπ]
+      rw [Finset.sum_range_succ, ← add_assoc, map_add (f := _), ih, hdπ]
       abel
   have hcau : ∀ {m n : ℕ}, m ≤ n → (g0 + ∑ k ∈ Finset.range m, d k) ≡
       (g0 + ∑ k ∈ Finset.range n, d k) [SMOD (I ^ m • ⊤ : Submodule R (Fin r → R))] := by
@@ -73,5 +77,5 @@ theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.finCompl :
     ∀ (Λ M : Type) [CommRing Λ] [IsNoetherianRing Λ] (I : Ideal Λ) [IsAdicComplete I Λ] [AddCommGroup M] [Module Λ M] [Module.Finite Λ M], IsAdicComplete I M := by
   intro Λ M _ _ I _ _ _ _
   exact
-    { toIsHausdorff := IsHausdorff.of_le_jacobson I M (IsAdicComplete.le_jacobson_bot I)
+    { toIsHausdorff := IsHausdorff.of_le_jacobson I M (IsAdicComplete.le_jacobson I)
       toIsPrecomplete := isPrecomplete_finite I }

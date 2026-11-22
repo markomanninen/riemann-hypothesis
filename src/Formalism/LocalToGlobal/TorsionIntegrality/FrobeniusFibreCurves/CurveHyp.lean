@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.IsLawOfLog
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.IsLawOfLog
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ def fLog {ι : Type} (g : MvPowerSeries ι K) : MvPowerSeries ι K :=
 def prim (f : PowerSeries K) : PowerSeries K :=
   PowerSeries.mk fun n => if n = 0 then 0 else PowerSeries.coeff (n - 1) f / (n : K)
 
-abbrev dz (f : PowerSeries K) : PowerSeries K := PowerSeries.derivative K f
+abbrev dz (f : PowerSeries K) : PowerSeries K := PowerSeries.derivative (R := K) f
 
 def IsWp (g2 g3 : K) (P : PowerSeries K) : Prop :=
   PowerSeries.constantCoeff P = 0 ∧ (∀ n, Odd n → PowerSeries.coeff n P = 0) ∧
@@ -68,7 +72,7 @@ def ev0 (h : MvPowerSeries (Fin 2) K) : PowerSeries K :=
   MvPowerSeries.subst ![(PowerSeries.X : PowerSeries K), 0] h
 
 abbrev pd {ι : Type} (i : ι) (h : MvPowerSeries ι K) : MvPowerSeries ι K :=
-  MvPowerSeries.pderiv K i h
+  MvPowerSeries.pderiv (R := K) i h
 
 def lU (l : PowerSeries K) : PowerSeries K := PowerSeries.mk fun n => PowerSeries.coeff (n + 1) l
 

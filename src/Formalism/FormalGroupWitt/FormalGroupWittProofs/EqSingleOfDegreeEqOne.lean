@@ -1,4 +1,8 @@
-import Formalism.FormalGroupWitt.SubstInjectiveV
+module
+
+public import Formalism.FormalGroupWitt.SubstInjectiveV
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem HasOrd.mono {m n : ℕ} {z : MvPowerSeries τ R} (h : HasOrd n z) (hmn :
 
 theorem HasOrd.add {n : ℕ} {x y : MvPowerSeries τ R} (hx : HasOrd n x) (hy : HasOrd n y) :
     HasOrd n (x + y) :=
-  fun d hd => by rw [map_add, hx d hd, hy d hd, add_zero]
+  fun d hd => by rw [map_add (f := _), hx d hd, hy d hd, add_zero]
 
 theorem HasOrd.sub {n : ℕ} {x y : MvPowerSeries τ R} (hx : HasOrd n x) (hy : HasOrd n y) :
     HasOrd n (x - y) :=
@@ -40,7 +44,7 @@ theorem HasOrd.mul {m n : ℕ} {x y : MvPowerSeries τ R} (hx : HasOrd m x) (hy 
   apply Finset.sum_eq_zero
   intro p hp
   have hp' : p.1 + p.2 = d := by simpa using hp
-  have hdeg : p.1.degree + p.2.degree = d.degree := by rw [← map_add, hp']
+  have hdeg : p.1.degree + p.2.degree = d.degree := by rw [← map_add (f := _), hp']
   by_cases h1 : p.1.degree < m
   · rw [hx _ h1, zero_mul]
   · rw [hy _ (by omega), mul_zero]

@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.NonarchFiniteAdeleRing
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.StabClosed
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeCharacterOfIdeleClass
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TensorIdeleNormalizedAbsIdeleHalfAtInfinity
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.NonarchFiniteAdeleRing
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.StabClosed
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeCharacterOfIdeleClass
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TensorIdeleNormalizedAbsIdeleHalfAtInfinity
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+
+@[expose] public section
 
 noncomputable section
 

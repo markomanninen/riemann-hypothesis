@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChartPointSeparable
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChartPointSeparable
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -59,7 +64,7 @@ theorem proof : ChartParAlgebraic.Statement := by
       rw [← IsScalarTower.algebraMap_apply F K L]
       exact hmem _ (hFB x)
     | add x y _ _ hx hy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact hx.add hy
     | inv x _ hx =>
       rw [map_inv₀]

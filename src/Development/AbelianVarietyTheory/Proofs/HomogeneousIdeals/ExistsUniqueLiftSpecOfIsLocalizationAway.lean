@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BijectiveAlgebraMapIntegralClosureOfBirational
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.IsOpenOfMemIrreducibleComponentsOfFinite
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BijectiveAlgebraMapIntegralClosureOfBirational
+
+@[expose] public section
 
 universe u
 
@@ -236,7 +240,7 @@ theorem isIntegrallyClosedIn_of_isLocalization {R : Type*} [CommRing R] [IsInteg
   have : IsScalarTower R R' K :=
     IsLocalization.localization_isScalarTower_of_submonoid_le R' K M (nonZeroDivisors R) hM
   refine isIntegrallyClosedIn_of_injective_fractionRing R R' K ?_
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨⟨r, m⟩, rfl⟩ := IsLocalization.mk'_surjective M x
   have h0 : algebraMap R K r = 0 := by
@@ -272,16 +276,6 @@ section Normalization
 variable {X Y : Scheme.{u}} (f : X ⟶ Y) [QuasiCompact f] [QuasiSeparated f]
 
 variable {R R' : Type u} [CommRing R] [CommRing R'] [Algebra R R']
-
-theorem existsUnique_lift_normalization_spec_of_isLocalization [IsIntegrallyClosed R]
-    (M : Submonoid R) (hM : M ≤ nonZeroDivisors R) [IsLocalization M R']
-    (χ₀ : Spec (.of R) ⟶ Y) (χ₁ : Spec (.of R') ⟶ X)
-    (h : χ₁ ≫ f = Spec.map (CommRingCat.ofHom (algebraMap R R')) ≫ χ₀) :
-    ∃! χ : Spec (.of R) ⟶ f.normalization,
-      Spec.map (CommRingCat.ofHom (algebraMap R R')) ≫ χ = χ₁ ≫ f.toNormalization ∧
-        χ ≫ f.fromNormalization = χ₀ :=
-  existsUnique_lift_spec_of_isLocalization M hM f.fromNormalization (χ₁ ≫ f.toNormalization) χ₀
-    (by rw [Category.assoc, Scheme.Hom.toNormalization_fromNormalization, h])
 
 end Normalization
 

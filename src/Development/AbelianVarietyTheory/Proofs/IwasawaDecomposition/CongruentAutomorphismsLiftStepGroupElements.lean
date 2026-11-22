@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsInvOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevQOfCongE
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.RedPEqZeroOfDiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LiftsInvOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LevQOfCongE
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.RedPEqZeroOfDiv
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC GlobalTheory.Mem.Col2.AdT Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
@@ -35,20 +39,20 @@ private theorem mem_GLint_and_exists_liftsInv_of_congE : ∀ {B : Base} {X : Pre
     intro w _
     simp only [levGAt, hb, Option.elim]
     by_cases hw : w.1 = P.1
-    · rw [dif_pos hw]
+    · rw [dite_eq_left hw]
       apply inv_mem
       rw [hO.grpG]
       obtain ⟨w, hwG⟩ := w
       simp only at hw
       subst hw
       exact ⟨g, hpr, fun x hx => GlobalTheory.TopStep.redV_redGL ⟨g, hgi⟩ hx⟩
-    · rw [dif_neg hw]
+    · rw [dite_eq_right hw]
       exact one_mem _
   · rw [LevQFam.grp, Subgroup.mem_pi]
     intro w _
     simp only [levQAt, hb, Option.elim]
     by_cases hw : w.1 = P.1
-    · rw [dif_pos hw]
+    · rw [dite_eq_left hw]
       apply inv_mem
       obtain ⟨w, hwQ⟩ := w
       simp only at hw
@@ -72,13 +76,13 @@ private theorem mem_GLint_and_exists_liftsInv_of_congE : ∀ {B : Base} {X : Pre
         rw [hk, mul_inv_cancel_left]
       rw [e2]
       exact mul_mem hgQ hd
-    · rw [dif_neg hw]
+    · rw [dite_eq_right hw]
       exact one_mem _
   · exact map_one (ufGL B.fields.E (B.R.N i))
   · refine ⟨hg', ?_, ?_⟩
     · intro h x hx
       dsimp only
-      rw [dif_pos rfl, inv_inv, ← GlobalTheory.TopStep.redV_redGL ⟨g, hgi⟩ hx]
+      rw [dite_eq_left rfl, inv_inv, ← GlobalTheory.TopStep.redV_redGL ⟨g, hgi⟩ hx]
       have hD : (I.cst a).D P = 1 := hO.depthG P h
       have hq := hc x hx
       rw [hD, pow_one] at hq
@@ -91,21 +95,21 @@ private theorem mem_GLint_and_exists_liftsInv_of_congE : ∀ {B : Base} {X : Pre
       exact h0.symm
     · intro h
       dsimp only
-      rw [dif_pos rfl, inv_inv]
+      rw [dite_eq_left rfl, inv_inv]
   · intro P' hP'
     have hne : P'.1 ≠ P.1 := fun e => hP' (Subtype.ext e)
     refine ⟨one_mem _, ?_, ?_⟩
     · intro h x hx
       dsimp only
-      rw [dif_neg hne, inv_one]
+      rw [dite_eq_right hne, inv_one]
       simp
     · intro h
       dsimp only
-      rw [dif_neg hne, inv_one]
+      rw [dite_eq_right hne, inv_one]
       all_goals rfl
 
-open Classical in
 
+open Classical in
 theorem midAt_lifts : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → ∀ (u : B.Word) (a : I.ι) (i : ℕ) (hi : i < B.R.m)
     (b : (I.stp u a i).β) (P : SBof I a) (g : Sp B.fields.E (B.R.N i) ≃ₗ[B.fields.E] Sp B.fields.E (B.R.N i)) (z : B.fields.K),
     MidAt I hi b P g z → g ∈ Formalism.L2.Col.GLint B.fields.E (B.R.N i) P.1 ∧

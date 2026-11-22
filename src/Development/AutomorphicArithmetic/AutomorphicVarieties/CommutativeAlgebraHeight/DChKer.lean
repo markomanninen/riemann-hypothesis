@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.HomTwo
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.BcChiTmul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DkerOfKills
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.HomTwo
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.BcChiTmul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DkerOfKills
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.CA
 
@@ -17,7 +21,7 @@ private theorem chk_div (x : E) (p : A[X]) : ∃ Q : A[X] ⊗[A] E,
     obtain ⟨Q, hQ⟩ := hp
     obtain ⟨R, hR⟩ := hq
     refine ⟨Q + R, ?_⟩
-    rw [add_mul, ← hQ, ← hR, map_add, add_tmul, tmul_add]
+    rw [add_mul, ← hQ, ← hR, map_add (f := _), add_tmul, tmul_add]
     abel
   | monomial k a =>
     have hc : Commute ((X : A[X]) ⊗ₜ[A] (1 : E)) (1 ⊗ₜ x) := by
@@ -46,7 +50,7 @@ private theorem chk_chi (x y : E) : D.chi (x - y * aeval x (D.chi x)) = D.chi x 
     abel
   rw [← Ideal.mem_span_singleton, ← Ideal.Quotient.eq_zero_iff_mem]
   change π (D.D A[X] _) = 0
-  rw [e, ← D.nat, map_add, Algebra.TensorProduct.map_tmul, hπ, zero_tmul, add_zero, D.nat, map_mul, map_mul]
+  rw [e, ← D.nat, map_add (f := _), Algebra.TensorProduct.map_tmul, hπ, zero_tmul, add_zero, D.nat, map_mul, map_mul]
   change _ * π (D.chi x) = 0
   rw [hπ, mul_zero]
 
@@ -59,9 +63,8 @@ private theorem chk_eval (S : Type) [CommRing S] [Algebra A S] (s : S) (y : S �
       (Algebra.TensorProduct.map (IsScalarTower.toAlgHom A S S[X]) (AlgHom.id A E) y) = y := by
     clear h
     induction y with
-    | zero => simp
     | tmul b z => simp [ev]
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
   rw [map_sub, hev] at h
   simpa [ev, Det.chiS, coe_aeval_eq_eval] using h.symm
 
@@ -100,9 +103,8 @@ private theorem chk_chiS_map (S T : Type) [CommRing S] [Algebra A S] [CommRing T
   · simp
   · clear h
     induction y with
-    | zero => simp
     | tmul s x => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 private theorem chk_F_map (S T : Type) [CommRing S] [Algebra A S] [CommRing T] [Algebra A T] (f : S →ₐ[A] T)
     (y : S ⊗[A] E) :
@@ -112,7 +114,7 @@ private theorem chk_F_map (S T : Type) [CommRing S] [Algebra A S] [CommRing T] [
   rw [chk_chiS_map]
   generalize D.chiS S y = p
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => simp only [Polynomial.map_add, map_add, hp, hq]
+  | add p q hp hq => simp only [Polynomial.map_add (f := _), map_add (f := _), hp, hq]
   | monomial k a =>
     simp [Polynomial.aeval_monomial, Algebra.TensorProduct.algebraMap_apply]
 
@@ -125,9 +127,8 @@ private theorem chk_comp {B S T : Type} [CommRing B] [Algebra A B] [CommRing S] 
     Algebra.TensorProduct.map g (AlgHom.id A E) (Algebra.TensorProduct.map f (AlgHom.id A E) w) =
       Algebra.TensorProduct.map (g.comp f) (AlgHom.id A E) w := by
   induction w with
-  | zero => simp
   | tmul s x => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 private theorem chkK_ch (B : Type) [CommRing B] [Algebra A B] (y : B ⊗[A] E) :
     chkK D B (aeval y (D.chiS B y)) := by
@@ -168,7 +169,7 @@ private theorem chkK_sat {w : A[X] ⊗[A] E} (hw : chkK D A[X] (((X : A[X]) ⊗�
     ← chk_comp, ← chk_comp, ← map_mul, ← map_one (Algebra.TensorProduct.map i (AlgHom.id A E)), ← map_add,
     D.nat, ← map_one i] at h3
   have h5 := congrArg ev (hi h3)
-  rw [← D.nat, map_add, map_one, map_mul, chk_comp, chk_comp, h1, h2, map_one] at h5
+  rw [← D.nat, map_add (f := _), map_one, map_mul, chk_comp, chk_comp, h1, h2, map_one] at h5
   simpa using h5
 
 private theorem chkK_coef (M : ℕ) : ∀ z : ℕ → E,
@@ -181,7 +182,8 @@ private theorem chkK_coef (M : ℕ) : ∀ z : ℕ → E,
     have h0 : z 0 ∈ D.ker := by
       refine (d_ker D _).1.2 fun S _ _ h => ?_
       have := hz S (aeval 0) h
-      simpa [map_sum] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum] using this
     have h1 : chkK D A[X] (∑ k ∈ Finset.range M, ((X : A[X]) ^ k) ⊗ₜ[A] z (k + 1)) := by
       apply chkK_sat
       intro S _ _ f h
@@ -199,12 +201,11 @@ private theorem chk_expand {ι : Type} (w : MvPolynomial ι A ⊗[A] E) :
       TensorProduct.lid A E ((MvPolynomial.lcoeff A α).rTensor E w) := by
   classical
   induction w with
-  | zero => exact ⟨∅, by simp⟩
   | add a b ha hb =>
     obtain ⟨s, hs⟩ := ha
     obtain ⟨s', hs'⟩ := hb
     refine ⟨s ∪ s', fun t ht => ?_⟩
-    simp only [map_add, tmul_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), tmul_add, Finset.sum_add_distrib]
     rw [← hs t (Finset.subset_union_left.trans ht), ← hs' t (Finset.subset_union_right.trans ht)]
   | tmul p z =>
     refine ⟨p.support, fun t ht => ?_⟩
@@ -247,7 +248,8 @@ private theorem chkK_mv {k : ℕ} (w : MvPolynomial (Fin k) A ⊗[A] E) (hw : ch
   have h3 : Algebra.TensorProduct.map (MvPolynomial.aeval fun i : Fin k => (X : A[X]) ^ N ^ (i : ℕ))
       (AlgHom.id A E) w = ∑ j ∈ Finset.range (t.sup φ + 1),
         ((X : A[X]) ^ j) ⊗ₜ[A] ∑ β ∈ t with φ β = j, c β := by
-    rw [h1, map_sum, ← Finset.sum_fiberwise_of_maps_to hlt]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h1, map_sum, ← Finset.sum_fiberwise_of_maps_to hlt]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [tmul_sum]
     refine Finset.sum_congr rfl fun β hβ => ?_

@@ -1,9 +1,12 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SigLamLeOfKTypes
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.FormulaF
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.PsiFor
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IntegrableOfDecayVG
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.IfaceSt
-import Formalism.RealPlaceAnalysis.InstMeasurableSpaceUJ
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SigLamLeOfKTypes
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.FormulaF
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IntegrableOfDecayVG
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.IfaceSt
+public import Formalism.RealPlaceAnalysis.InstMeasurableSpaceUJ
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,14 +38,15 @@ theorem cdom_antisymm {ε : Fin n → Bool} {μ Λ : Fin n → ℝ} (h₁ : Form
       intro a b
       by_cases h0 : c a b = 0
       · simp [h0]
-      · have := (hc a b h0).1
-        have : ((a : ℕ) : ℝ) < ((b : ℕ) : ℝ) := by exact_mod_cast this
-        have : (0 : ℝ) ≤ (c a b : ℝ) := Nat.cast_nonneg _
-        nlinarith
+      · have hab : ((a : ℕ) : ℝ) < ((b : ℕ) : ℝ) := by
+          exact_mod_cast (hc a b h0).1
+        exact mul_nonpos_of_nonneg_of_nonpos (Nat.cast_nonneg _) (sub_nonpos.mpr hab.le)
     have hLe : L (y - x) = ∑ a, ∑ b, (c a b : ℝ) * (((a : ℕ) : ℝ) - ((b : ℕ) : ℝ)) := by
-      rw [he, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [he, map_sum]
       refine Finset.sum_congr rfl fun a _ => ?_
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun b _ => ?_
       rw [map_smul, hLr, smul_eq_mul]
     refine ⟨?_, fun h0 => ?_⟩
@@ -56,12 +60,10 @@ theorem cdom_antisymm {ε : Fin n → Bool} {μ Λ : Fin n → ℝ} (h₁ : Form
         (Finset.mem_univ _)
       by_cases h0 : c a b = 0
       · simp [h0]
-      · have := (hc a b h0).1
-        have : ((a : ℕ) : ℝ) < ((b : ℕ) : ℝ) := by exact_mod_cast this
+      · have hab : ((a : ℕ) : ℝ) < ((b : ℕ) : ℝ) := by
+          exact_mod_cast (hc a b h0).1
         have hc0 : (0 : ℝ) < (c a b : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero h0
-        exfalso
-        have : (c a b : ℝ) * (((a : ℕ) : ℝ) - ((b : ℕ) : ℝ)) < 0 := mul_neg_of_pos_of_neg hc0 (by linarith)
-        linarith
+        exact ((mul_neg_of_pos_of_neg hc0 (sub_neg.mpr hab)).ne h2).elim
   obtain ⟨k1, k1'⟩ := key h₁
   obtain ⟨k2, -⟩ := key h₂
   have : L (Λ - μ) = 0 := by

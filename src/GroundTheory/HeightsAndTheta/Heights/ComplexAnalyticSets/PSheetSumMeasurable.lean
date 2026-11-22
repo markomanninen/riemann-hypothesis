@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StatementsSheetMeasurable
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.GraphChartEventuallyEqSheet
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.LogIntegrableOnOfLogIntegrable
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StatementsSheetMeasurable
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.GraphChartEventuallyEqSheet
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.LogIntegrableOnOfLogIntegrable
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -16,6 +21,7 @@ variable {n d : ℕ}
 
 theorem measurable_maDens {D : ℕ} (ψ : Fin D → (Fin D → ℂ) → ℝ) :
     Measurable (ReciprocityTheory.AnForm.maDens ψ) := by
+  set_option synthInstance.maxHeartbeats 200000 in
   set M : ((Fin D → ℂ) →L[ℝ] (Fin D → ℂ) →L[ℝ] ℝ) → Matrix (Fin D) (Fin D) ℂ := fun H i j =>
     ((H (Pi.single i 1) (Pi.single j 1) +
         H (Complex.I • Pi.single i 1) (Complex.I • Pi.single j 1) : ℝ) +
@@ -34,7 +40,7 @@ theorem measurable_maDens {D : ℕ} (ψ : Fin D → (Fin D → ℂ) → ℝ) :
       (ReciprocityTheory.AnForm.mdisc fun k => M (fderiv ℝ (fderiv ℝ (ψ k)) z)).re := rfl
   rw [heq]
   exact measurable_const.mul ((hdisc.comp (continuous_pi fun k => hM.comp (continuous_apply k))).measurable.comp
-    (measurable_pi_lambda _ fun k => measurable_fderiv ℝ _))
+    (Measurable.of_eval fun k => measurable_fderiv ℝ _))
 
 theorem sheet_eventuallyEq {J : Ideal (MvPolynomial (Fin n) ℂ)} {A : Matrix (Fin d) (Fin n) ℂ}
     {x : Fin n → ℂ} {s s' : (Fin d → ℂ) → Fin n → ℂ} (hs : IsSheetAt J A x s)
@@ -82,8 +88,8 @@ theorem isClosed_zeroSet (J : Ideal (MvPolynomial (Fin n) ℂ)) : IsClosed (zero
   rw [this]
   exact isClosed_biInter fun q _ => isClosed_eq (MvPolynomial.continuous_eval q) continuous_const
 
-open Classical in
 
+open Classical in
 theorem measurable_sheetSum {J : Ideal (MvPolynomial (Fin n) ℂ)} {A : Matrix (Fin d) (Fin n) ℂ}
     (hA : IsFiniteProjection J A) (Φ : ℝ → ℝ → ℝ) (hΦ : Measurable (Function.uncurry Φ))
     {g : (Fin n → ℂ) → ℝ} (hg : Measurable g) (φ : Fin d → (Fin n → ℂ) → ℝ) :
@@ -132,12 +138,12 @@ theorem measurable_sheetSum {J : Ideal (MvPolynomial (Fin n) ℂ)} {A : Matrix (
       t x = Φ (g x) (ReciprocityTheory.AnForm.maDens (fun k' => φ k' ∘ σ (e k)) (A *ᵥ x)) := by
     intro k x hx
     have hsh := (hWsh (e k) x (hEW k hx)).2
-    rw [htdef, dif_pos ⟨_, hsh⟩]
+    rw [htdef, dite_eq_left ⟨_, hsh⟩]
     exact term_eq Φ g φ hsh _
   have htS : ∀ x, t x ≠ 0 → ∃ s, IsSheetAt J A x s := by
     intro x hx
     by_contra h
-    exact hx (by rw [htdef, dif_neg h])
+    exact hx (by rw [htdef, dite_eq_right h])
 
   set σ' : ℕ → (Fin d → ℂ) → Fin n → ℂ := fun k => (U (e k)).piecewise (σ (e k)) fun _ => 0
     with hσ'
@@ -169,7 +175,7 @@ theorem measurable_sheetSum {J : Ideal (MvPolynomial (Fin n) ℂ)} {A : Matrix (
         rw [← hsx, hAx]
     · have hfy : f k y = 0 := by
         rw [hf]
-        refine Set.indicator_of_notMem (fun hmem => hy ⟨hmem.1, ?_⟩) _
+        refine Set.indicator_of_notMem (fun (hmem : y ∈ U (e k) ∩ σ' k ⁻¹' E k) => hy ⟨hmem.1, ?_⟩) _
         have hσ'y : σ' k y = σ (e k) y := by simp [hσ', Set.piecewise_eq_of_mem _ _ _ hmem.1]
         have := hmem.2
         simp only [Set.mem_preimage, hσ'y] at this
@@ -202,7 +208,7 @@ theorem measurable_sheetSum {J : Ideal (MvPolynomial (Fin n) ℂ)} {A : Matrix (
       rw [Finset.sum_eq_single_of_mem k0 (Finset.mem_range.2 hN), Set.indicator_of_mem hk0]
       intro k _ hk
       exact Set.indicator_of_notMem (fun hxk => hk (hEdisj k k0 x hxk hk0)) _
-    · have htx : t x = 0 := by rw [htdef, dif_neg hx]
+    · have htx : t x = 0 := by rw [htdef, dite_eq_right hx]
       refine Eventually.of_forall fun N => ?_
       rw [htx]
       refine (Finset.sum_eq_zero fun k _ => ?_).symm

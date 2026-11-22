@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.BasicOpenSections.BaseFacts
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.AllHolds
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.BasicOpenSections.BaseFacts
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.AllHolds
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC GlobalTheory.Et
 open UpperTheory.Gal.TranscendenceTraces (gp pt Wt fib IsWt nwt LocNml)
@@ -254,5 +258,6 @@ theorem UpperTheory.Gal.Mod.esGen :
     rw [LinearMap.zero_apply] at hE' ⊢
     simp only [LinearMap.sum_apply, LinearMap.smul_apply, Module.End.mul_apply] at hE' ⊢
     simp only [hpow, hopc]
-    rw [← map_zero sp, ← hE', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_zero sp, ← hE', map_sum]
     simp only [map_smul]

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FibSumOf
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FibSumOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,8 +87,7 @@ theorem sumFr_of (hD : TupFun M δ u u' F0 what₂) (hC : RepAtTup M δ u u' F0 
       subst e
       obtain ⟨hpd, hc⟩ := hr
       have hγ' : (⟨Λ', m', c'⟩ : TermDef.Term D u u' F0 what₂) = termOf Λ' m' F' (pd_of_ez hF') := by
-        simp only [termOf] at hc ⊢
-        rw [← hc]
+        exact congrArg (fun cls => TermDef.Term.mk Λ' m' cls) hc.symm
       have hS' : (⟨Λ', m', c'⟩ : TermDef.Term D u u' F0 what₂) ∈ S := by
         refine ⟨⟨hsc, ?_⟩, ?_⟩
         · rw [hγ']

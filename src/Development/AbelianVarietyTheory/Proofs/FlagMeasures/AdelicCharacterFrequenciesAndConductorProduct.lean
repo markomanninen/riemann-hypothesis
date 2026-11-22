@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
-import Formalism.LocalToGlobal.GlobalTheory.GL5.Statement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SumPlacesEqTrace
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EventuallyFinEqOne
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GaugeUnfold
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.Statement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SumPlacesEqTrace
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EventuallyFinEqOne
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open scoped TensorProduct nonZeroDivisors
@@ -35,7 +39,8 @@ theorem exists_freq {ι : Type} [Fintype ι] (f : (ι → ℝ) → ℂ) (hf : Co
   refine ⟨fun v => (L (Pi.single v 1)).im / (2 * Real.pi), fun y => ?_⟩
   rw [← hG', ← hL]
   congr 1
-  conv_lhs => rw [pi_eq_sum_univ' y, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_lhs => rw [pi_eq_sum_univ' y, map_sum]
   push_cast
   rw [Finset.mul_sum]
   refine Finset.sum_congr rfl fun v _ => ?_
@@ -110,7 +115,7 @@ theorem exists_eq_embedding [IsTotallyReal F] (lam : InfinitePlace F → ℝ)
     ∃ a : F, ∀ w, lam w = (w.embedding a).re := by
   choose q hq using h
   let T : F →ₗ[ℚ] ℝ := AddMonoidHom.toRatLinearMap (AddMonoidHom.mk' (fun x => ∑ w, lam w * (w.embedding x).re)
-    fun x y => by simp only [map_add, Complex.add_re, mul_add, Finset.sum_add_distrib])
+    fun x y => by simp only [map_add (f := _), Complex.add_re, mul_add, Finset.sum_add_distrib])
   let l : F →ₗ[ℚ] ℚ := (integralBasis F).constr ℚ fun i => q (RingOfIntegers.basis F i)
   have hT : T = (Algebra.linearMap ℚ ℝ).comp l := (integralBasis F).ext fun i => by
     rw [LinearMap.comp_apply, Module.Basis.constr_basis, integralBasis_apply]
@@ -140,7 +145,10 @@ theorem exists_eq_embedding [IsTotallyReal F] (lam : InfinitePlace F → ℝ)
 
 theorem extensionEmbedding_algebraMap (w : InfinitePlace F) (x : F) :
     InfinitePlace.Completion.extensionEmbedding w (algebraMap F (Ainf F) x w) = w.embedding x :=
-  InfinitePlace.Completion.extensionEmbedding_coe w _
+  by
+    rw [InfiniteAdeleRing.algebraMap_apply, ← InfinitePlace.Completion.algebraMap_apply,
+      AbsoluteValue.Completion.algebraMap_def, InfinitePlace.Completion.extensionEmbedding_coe]
+    simp [WithAbs.algebraMap_right_apply]
 
 theorem exists_scaling [IsTotallyReal F] {ψ : AddChar (AF F) ℂ} (h : IsCharAF F ψ) :
     ∃ a : F, a ≠ 0 ∧ ∀ x : Ainf F, psiInf F ψ x = Complex.exp (2 * Real.pi * Complex.I *
@@ -239,8 +247,8 @@ theorem finprod_absNorm_zpow_count {I : FractionalIdeal (𝓞 F)⁰ F} (hI : I �
   · refine (Filter.eventually_cofinite.1 (FractionalIdeal.finite_factors I)).subset fun u hu h0 => hu ?_
     simp only [h0, zpow_zero]
 
-open MeasureTheory Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.GaussMean in
 
+open MeasureTheory Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas GlobalTheory.GaussMean in
 theorem real_part_and_conductors : ∀ (I : AutInst) (θ : InfinitePlace I.F → (Ainf I.F ⊗[I.F] I.E →+* ℂ)), (∀ v, Formalism.MainNotions.StandardLattice.IsInfEmb (I.φ v) (θ v)) → ∀ ψ : AddChar (AF I.F) ℂ, IsCharAF I.F ψ → ∃ (lamv : InfinitePlace I.F → ℝ) (m : IsDedekindDomain.HeightOneSpectrum (𝓞 I.F) → ℤ), (∀ v, lamv v ≠ 0) ∧ (∀ x, psiInf I.F ψ x = Complex.exp (2 * Real.pi * Complex.I * ((∑ v, lamv v * (θ v (x ⊗ₜ[I.F] (1 : I.E))).re : ℝ) : ℂ))) ∧ (Function.support m).Finite ∧ (∀ u (t : Fv I.F u), (∀ s ∈ u.adicCompletionIntegers I.F, psiV I.F ψ u (t * s) = 1) ↔ Valued.v t ≤ WithZero.exp (m u)) ∧ ∏ᶠ u, (Ideal.absNorm u.asIdeal : ℝ) ^ m u = |(discr I.F : ℝ)| * ∏ v, |lamv v| := by
   intro I θ hθ ψ hψ
   haveI := I.cm.totReal

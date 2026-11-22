@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RealPlaces.VanishingCriterion
-import GroundTheory.ProfiniteCohomology.Shapiro
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite
-import GroundTheory.ProfiniteCohomology.CartierDual
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RealPlaces.VanishingCriterion
+public import GroundTheory.ProfiniteCohomology.Shapiro
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite
+public import GroundTheory.ProfiniteCohomology.CartierDual
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -116,8 +121,8 @@ instance isDiscreteRep_coind_zmodRep_openSubgroup (W : OpenSubgroup G) (n : ℕ)
     IsDiscreteRep (Rep.coind (W : Subgroup G).subtype (zmodRep.{u} (W : Subgroup G) n)) :=
   isDiscreteRep_coind W _
 
-omit [CompactSpace G] in
 
+omit [CompactSpace G] in
 theorem eq_zero_tateCompactCohomologyRes_of_subsingleton {k : Type u} [CommRing k]
     {A B : Rep.{u} k G} [IsDiscreteRep A] [IsDiscreteRep B] [Subsingleton A] (n : ℕ)
     (hB : ∀ x : tateCompactCohomologyRes φ ψ B n, x = 0) (x : tateCompactCohomologyRes φ ψ A n) :
@@ -158,7 +163,7 @@ theorem eq_zero_tateCompactCohomologyRes_coind_of_two_nsmul (n : ℕ) (W : OpenS
         change zmodTwoAddHom m (h2 m) (k : ZMod 2) = N.ρ w (zmodTwoAddHom m (h2 m) (k : ZMod 2))
         rw [zmodTwoAddHom_intCast, map_zsmul, hfix]
       have hfinj : Function.Injective f.hom := fun a b hab =>
-        ULift.ext _ _ (zmodTwoAddHom_injective (h2 m) hm0 hab)
+        ULift.ext (zmodTwoAddHom_injective (h2 m) hm0 hab)
       let S : ShortComplex (Rep.{u} (ULift.{u} ℤ) (W : Subgroup G)) :=
         ShortComplex.mk f (Rep.mkQ N T hT) (by
           apply Rep.hom_ext

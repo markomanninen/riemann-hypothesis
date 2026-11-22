@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.IsDlogFirstChernClass
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CoeEqAlgebraMapZeroEquiv
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.InstFintypeHodgeBidegree
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.IsDlogFirstChernClass
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CoeEqAlgebraMapZeroEquiv
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.InstFintypeHodgeBidegree
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -17,8 +21,8 @@ variable {K : Type} [Field K] {X Y : Scheme.{0}} (q : X ⟶ Spec (CommRingCat.of
 
 abbrev HodgeC (a j : ℕ) : Type := GlobalTheory.HodgeCoh.hodgeH q a j
 
-variable {q} in
 
+variable {q} in
 def pullC {p : Y ⟶ Spec (CommRingCat.of K)} (u : Y ⟶ X) (hu : u ≫ q = p) (a j : ℕ) : HodgeC q a j →ₗ[K] HodgeC p a j :=
   GlobalTheory.HodgeCoh.hodgePull hu a j
 

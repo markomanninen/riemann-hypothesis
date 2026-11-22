@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.FibAbs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.FibAbs
+
+@[expose] public section
 
 theorem UpperTheory.orbitalFiber_support_finite :
     UpperTheory.V.Z.Sym.Glob.Fib.SuppFin := by

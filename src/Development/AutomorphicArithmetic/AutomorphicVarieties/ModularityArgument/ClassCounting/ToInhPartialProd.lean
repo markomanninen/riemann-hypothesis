@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.HasVal
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.HasVal
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,8 @@ theorem hbd_cone (a : G) (n : ℕ) (y : Ch A G (n + 1)) :
     hbd A G (n + 1) (cone A a (n + 1) y) = y - cone A a n (hbd A G n y) := by
   refine ch_ext A (f := (hbd A G (n + 1)).comp (cone A a (n + 1)))
     (g := LinearMap.id - (cone A a n).comp (hbd A G n)) (fun x => ?_) y
-  simp only [LinearMap.comp_apply, LinearMap.sub_apply, LinearMap.id_apply, cone_single, hbd_single, one_smul, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.comp_apply, LinearMap.sub_apply, LinearMap.id_apply, cone_single, hbd_single, one_smul, map_sum,
     map_smul]
   rw [Fin.sum_univ_succ, sub_eq_add_neg, ← Finset.sum_neg_distrib]
   congr 1
@@ -58,7 +63,8 @@ theorem hbd_cone_zero (a : G) (y : Ch A G 0) : hbd A G 0 (cone A a 0 y) = y := b
 theorem hbd_hmap {H : Type} (f : G → H) (n : ℕ) (y : Ch A G (n + 1)) :
     hbd A H n (hmap A f (n + 1) y) = hmap A f n (hbd A G n y) := by
   refine ch_ext A (f := (hbd A H n).comp (hmap A f (n + 1))) (g := (hmap A f n).comp (hbd A G n)) (fun x => ?_) y
-  simp only [LinearMap.comp_apply, hmap_single, hbd_single, one_smul, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.comp_apply, hmap_single, hbd_single, one_smul, map_sum, map_smul]
 
 theorem hmap_cone {H : Type} (f : G → H) (a : G) (n : ℕ) (y : Ch A G n) :
     hmap A f (n + 1) (cone A a n y) = cone A (f a) n (hmap A f n y) := by
@@ -88,7 +94,8 @@ theorem hprism_cone (f : G → G) (a : G) (n : ℕ) (y : Ch A G n) :
   refine ch_ext A (f := (hprism A f (n + 1)).comp (cone A a n))
     (g := (cone A a (n + 1)).comp ((cone A (f a) n).comp (hmap A f n)) - (cone A a (n + 1)).comp (hprism A f n))
     (fun x => ?_) y
-  simp only [LinearMap.comp_apply, LinearMap.sub_apply, cone_single, hmap_single, hprism_single, one_smul, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.comp_apply, LinearMap.sub_apply, cone_single, hmap_single, hprism_single, one_smul, map_sum,
     map_smul]
   rw [Fin.sum_univ_succ, sub_eq_add_neg, ← Finset.sum_neg_distrib]
   congr 1
@@ -152,7 +159,8 @@ theorem toInh_surjective (n : ℕ) : Function.Surjective (toInh A G n) := fun z 
 
 theorem bd_toInh (n : ℕ) (y : Ch A G (n + 2)) : bd A G n (toInh A G (n + 1) y) = toInh A G n (hbd A G (n + 1) y) := by
   refine ch_ext A (f := (bd A G n).comp (toInh A G (n + 1))) (g := (toInh A G n).comp (hbd A G (n + 1))) (fun x => ?_) y
-  simp only [LinearMap.comp_apply, toInh_single, hbd_single, one_smul, map_sum, map_smul, bd,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.comp_apply, toInh_single, hbd_single, one_smul, map_sum, map_smul, bd,
     Finsupp.linearCombination_single]
   rw [Fin.sum_univ_succ (n := n + 1)]
   congr 1
@@ -175,7 +183,8 @@ theorem prism_toInh (k : G) (n : ℕ) (y : Ch A G (n + 1)) :
     prism A k n (toInh A G n y) = toInh A G (n + 1) (hprism A (· * k) (n + 1) y) := by
   refine ch_ext A (f := (prism A k n).comp (toInh A G n))
     (g := (toInh A G (n + 1)).comp (hprism A (· * k) (n + 1))) (fun x => ?_) y
-  simp only [LinearMap.comp_apply, toInh_single, hprism_single, one_smul, map_sum, map_smul, prism,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [LinearMap.comp_apply, toInh_single, hprism_single, one_smul, map_sum, map_smul, prism,
     Finsupp.linearCombination_single]
   refine Finset.sum_congr rfl fun i _ => ?_
   congr 2

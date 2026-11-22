@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.FinalLevelsOf
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.FinalLevelsOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem evaluation_smul (i : ι) (a : ι → LL) (z : (ι → LL) ⊗[LL] D) :
   | tmul b d =>
     rw [TensorProduct.smul_tmul', evaluation_tmul, evaluation_tmul, smul_eq_mul, Pi.mul_apply,
       mul_smul]
-  | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, smul_add]
+  | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add]
 
 theorem tensor_sum_single_eval (z : (ι → LL) ⊗[LL] D) :
     z = ∑ i, (Pi.single i (1 : LL) : ι → LL) ⊗ₜ[LL] evK i z := by
@@ -36,7 +40,7 @@ theorem tensor_sum_single_eval (z : (ι → LL) ⊗[LL] D) :
     simp_rw [evaluation_tmul, ← TensorProduct.smul_tmul, ← TensorProduct.sum_tmul, hb]
   | add x y hx hy =>
     conv_lhs => rw [hx, hy]
-    simp only [map_add, TensorProduct.tmul_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib]
 
 theorem mem_baseChange_iff (X : Submodule LL D) (z : (ι → LL) ⊗[LL] D) :
     z ∈ X.baseChange (ι → LL) ↔ ∀ i, evK i z ∈ X := by
@@ -51,7 +55,7 @@ theorem mem_baseChange_iff (X : Submodule LL D) (z : (ι → LL) ⊗[LL] D) :
       obtain ⟨m, hm, rfl⟩ := hx
       simpa [evaluation_tmul] using hm
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact X.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact X.add_mem hx hy
     | smul a x _ hx => rw [evaluation_smul]; exact X.smul_mem _ hx
   · intro h
     rw [tensor_sum_single_eval z]

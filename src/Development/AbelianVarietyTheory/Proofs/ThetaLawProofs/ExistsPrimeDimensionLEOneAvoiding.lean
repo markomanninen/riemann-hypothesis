@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 namespace GlobalTheory.LineThrough
 
@@ -140,8 +145,9 @@ theorem exists_prime_dimensionLEOne_avoiding
       · simp [Ideal.Quotient.eq_zero_iff_mem.2 hx]
       · rw [← Ideal.map_comap_of_surjective _ hs P, ← h, Ideal.map_quotient_self]
     have hlt' := Ideal.IsIntegral.comap_lt_comap (R := MvPolynomial (Fin d) ℂ) hlt
+    change Q.comap (algebraMap (MvPolynomial (Fin d) ℂ) E) < _ at hlt'
     rw [hQc] at hlt'
-    have hm := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := MvPolynomial (Fin d) ℂ) _
+    have hm := Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := MvPolynomial (Fin d) ℂ) _
       (isMaximal_of_ker_lineMap_lt a c _ hlt')
     rcases Ideal.map_eq_top_or_isMaximal_of_surjective _ hs hm with h | h
     · rw [Ideal.map_comap_of_surjective _ hs] at h

@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.HoweInert
-import Development.WeilBound.ThetaLifts.SphericalLattices.ExistsVBallSubset
-import Development.WeilBound.ThetaLifts.SphericalLattices.ExistsIsUnitAddMul
-import Development.WeilBound.ThetaLifts.SphericalLattices.LattEq
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.HoweInert
+public import Development.WeilBound.ThetaLifts.SphericalLattices.ExistsVBallSubset
+public import Development.WeilBound.ThetaLifts.SphericalLattices.ExistsIsUnitAddMul
+public import Development.WeilBound.ThetaLifts.SphericalLattices.LattEq
+
+@[expose] public section
 
 noncomputable section
 

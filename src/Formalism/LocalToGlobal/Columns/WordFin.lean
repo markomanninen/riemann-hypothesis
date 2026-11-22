@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.Columns.TiedRec
-import Formalism.LocalToGlobal.Columns.Record
-import Formalism.LocalToGlobal.Columns.RecLevelStep
-import Formalism.LocalToGlobal.Columns.RowFormsLemmas
+module
+
+public import Formalism.LocalToGlobal.Columns.TiedRec
+public import Formalism.LocalToGlobal.Columns.Record
+public import Formalism.LocalToGlobal.Columns.RecLevelStep
+public import Formalism.LocalToGlobal.Columns.RowFormsLemmas
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module Matrix
 open scoped TensorProduct
@@ -127,11 +131,11 @@ theorem f_eq : d.X.f = d.R.f := d.what₂.card_Tau
 def crd (i : ℕ) (hi : i ≤ d.R.m) : (d.sp.X i).V ≃ₗ[d.host.E] (Fin (d.R.N i) → d.host.E) :=
   (d.sp.X i).frame.equivFun.trans (LinearEquiv.funCongrLeft d.host.E d.host.E (finCongr (d.sp.X_rank i hi)).symm)
 
-def repr (u : d.what₂.Word) (i : ℕ) (c : StCl (Pr := d.Pr) d.W d.lev u i) : DecoSet d.X.E (d.R.N i) (d.Pr.vT u) d.Pr.vGs :=
+def repr (u : d.what₂.Word) (i : ℕ) (c : StCl (Pr := d.Pr) d.W d.lev u i) : DecoSet (E := d.X.E) (n := d.R.N i) (ST := d.Pr.vT u) (SG := d.Pr.vGs) :=
   (stepGSD (Pr := d.Pr) d.W d.lev u i).outSec.rep c
 
-open Classical in
 
+open Classical in
 def clsLat (u : d.what₂.Word) (i : ℕ) (c : StCl (Pr := d.Pr) d.W d.lev u i) : Submodule (𝓞 d.host.E) (d.sp.X i).V :=
   if hi : i ≤ d.R.m then
     (d.repr u i c).1.L.map (((d.crd i hi).symm : (Fin (d.R.N i) → d.host.E) →ₗ[d.host.E] (d.sp.X i).V).restrictScalars (𝓞 d.host.E))

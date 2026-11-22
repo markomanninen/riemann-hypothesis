@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.InhabCAR
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CARUnit
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.FockTA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.InhabCAR
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.CARUnit
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.FockTA
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,13 +62,13 @@ theorem cpT_cmT_isCAR : IsCAR (cpT (N := N) (n := n)) cmT := by
   obtain ⟨h1, h2, h3⟩ := isCAR_fock (n := n) i a j b
   refine ⟨?_, ?_, ?_⟩
   · have h := congrArg (Module.End.lTensorAlgHom ℂ (Fock n) N) h1
-    simp only [map_add, map_mul, map_zero] at h
+    simp only [map_add (f := _), map_mul, map_zero] at h
     exact h
   · have h := congrArg (Module.End.lTensorAlgHom ℂ (Fock n) N) h2
-    simp only [map_add, map_mul, map_zero] at h
+    simp only [map_add (f := _), map_mul, map_zero] at h
     exact h
   · have h := congrArg (Module.End.lTensorAlgHom ℂ (Fock n) N) h3
-    rw [map_add, map_mul, map_mul] at h
+    rw [map_add (f := _), map_mul, map_mul] at h
     refine h.trans ?_
     split_ifs <;> simp
 

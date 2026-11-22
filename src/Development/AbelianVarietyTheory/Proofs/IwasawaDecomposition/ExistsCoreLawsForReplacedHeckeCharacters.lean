@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JEvExists
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
-import Formalism.LocalRingCardinality.DataKap
-import Formalism.LocalToGlobal.ProjectiveLattices.HasDataCondition
-import Formalism.LocalToGlobal.ProjectiveLattices.RecCond
-import Formalism.LocalToGlobal.ProjectiveLattices.ParCanon
-import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DsExistsOfDiscreteSeriesExists
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Formalism.LocalToGlobal.ProjectiveLattices.ReadQuot
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUnitaryAdelicCharOfHeckeChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.JEvExists
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+public import Formalism.LocalRingCardinality.DataKap
+public import Formalism.LocalToGlobal.ProjectiveLattices.HasDataCondition
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecCond
+public import Formalism.LocalToGlobal.ProjectiveLattices.ParCanon
+public import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.DsExistsOfDiscreteSeriesExists
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Formalism.LocalToGlobal.ProjectiveLattices.ReadQuot
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUnitaryAdelicCharOfHeckeChar
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.L2.Pj Formalism.IndefR.FWT ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.RealGeo
 open scoped TensorProduct
@@ -58,62 +62,64 @@ theorem peterson_norm_independent_of_unitary_character (h : MuUnit V dict mu) (h
     (hL' : JMemL2 V σ rd dict mu') (f : C) : l2NormAlt V σ rd dict mu' hL' f = l2NormAlt V σ rd dict mu hL f := by
   show ‖(hL' f).toLp _‖ = ‖(hL f).toLp _‖
   rw [Lp.norm_toLp, Lp.norm_toLp,
-    eLpNorm_congr_norm_ae (Filter.Eventually.of_forall fun q => norm_jFn_eq_of_muUnit h h' f q)]
+    eLpNorm_congr_norm_ae (hL' f).aestronglyMeasurable (hL f).aestronglyMeasurable
+      (Filter.Eventually.of_forall fun q => norm_jFn_eq_of_muUnit h h' f q)]
 
 end Change
 
 theorem exists_mu_reCore : ∀ (D : D7) (T : CoreJ D) (chiW : ℕ → (T.Q.c.F →+* ℂ) → (AE D)ˣ →* Circle), LawsJ T → LawsCore T.toCore → (∀ j, InR D j → ∀ σ, GoodEmb T.Q.c σ → IsHeckeChar D (chiW j σ) ∧ (∀ a, chiW j σ (idF D a) = 1) ∧ MuConj T.σ₀ σ (chiW j T.σ₀) (chiW j σ)) → ∃ mu, LawsJ (reCore T T.dict mu chiW T.x₀ T.cE) ∧ LawsCore (reCore T T.dict mu chiW T.x₀ T.cE).toCore := by
-  intro D T chiW hJ hC hchi
-  have hex : ∀ j σ, ∃ mu : GA D (T.V j σ) → ℂ, InR D j → GoodEmb T.Q.c σ →
-      MuVal (T.V j σ) (chiW j σ) mu ∧ MuUnit (T.V j σ) (T.dict j σ) mu ∧ Continuous mu := by
-    intro j σ
-    by_cases h : InR D j ∧ GoodEmb T.Q.c σ
-    · obtain ⟨mu, h1, h2, h3, h4, h5⟩ := GlobalTheory.Member.exists_muVal D (T.V j σ) (chiW j σ) (hchi j h.1 σ h.2).1
-        (hchi j h.1 σ h.2).2.1
-      exact ⟨mu, fun hj hσ => ⟨h1, ⟨h2, h3, h4, (hJ.muUnit j hj σ hσ).2.2.2⟩, h5⟩⟩
-    · exact ⟨fun _ => 1, fun hj hσ => absurd ⟨hj, hσ⟩ h⟩
-  choose mu hmu using hex
-  have hL : ∀ j, InR D j → ∀ σ, GoodEmb T.Q.c σ → CuspL2 (T.U j) σ (T.V j σ) (T.dict j σ) (mu j σ) :=
-    fun j hj σ hσ a n hd => jMemL2_of_muUnit (hJ.muUnit j hj σ hσ) (hmu j σ hj hσ).2.1 (hJ.muCont j hj σ hσ)
-      (hmu j σ hj hσ).2.2 (hJ.cuspidalL2Subspace j hj σ hσ a n hd)
-  have hLM : LawsM (reCore T T.dict mu chiW T.x₀ T.cE).toCore :=
-    { pins := hJ.pins
-      half := hJ.half
-      evalWD := hJ.evalWD
-      unf := hJ.unf
-      unTest := hJ.unTest
-      chiTriv := hJ.chiTriv
-      dictU := hJ.dictU
-      spaceW := hJ.spaceW
-      levelK := hJ.levelK
-      xiAbs := hJ.xiAbs
-      muUnit := fun j hj σ hσ => (hmu j σ hj hσ).2.1
-      muCont := fun j hj σ hσ => (hmu j σ hj hσ).2.2
-      finVol := hJ.finVol
-      cuspFD := hJ.cuspFD
-      supDef := hJ.supDef
-      cuspidalL2Subspace := hL
-      l2Def := fun j hj σ hσ a n hd f h0 => hJ.l2Def j hj σ hσ a n hd f
-        ((peterson_norm_independent_of_unitary_character (hJ.muUnit j hj σ hσ) (hmu j σ hj hσ).2.1 (hJ.cuspidalL2Subspace j hj σ hσ a n hd)
-          (hL j hj σ hσ a n hd) f).symm.trans h0)
-      unitIndep := hJ.unitIndep
-      ptNe := hJ.ptNe }
-  refine ⟨mu, ?_, ?_⟩
-  · exact
-      { toLawsM := hLM
-        cUnit := hJ.cUnit
-        muVal := fun j hj σ hσ => (hmu j σ hj hσ).1
-        muConj := fun j hj σ hσ => (hchi j hj σ hσ).2.2
-        intAll := hJ.intAll
-        modelW := hJ.modelW
-        familyUniformisationBasePointOrthogonal := hJ.familyUniformisationBasePointOrthogonal
-        kfHalf := hJ.kfHalf
-        adPin := hJ.adPin }
-  · exact
-      { toLawsM := hLM
-        cuspMul := hC.cuspMul
-        latZ := hC.latZ
-        cuNe := hC.cuNe
-        expo := hC.expo }
+  set_option synthInstance.maxHeartbeats 200000 in
+    intro D T chiW hJ hC hchi
+    have hex : ∀ j σ, ∃ mu : GA D (T.V j σ) → ℂ, InR D j → GoodEmb T.Q.c σ →
+        MuVal (T.V j σ) (chiW j σ) mu ∧ MuUnit (T.V j σ) (T.dict j σ) mu ∧ Continuous mu := by
+      intro j σ
+      by_cases h : InR D j ∧ GoodEmb T.Q.c σ
+      · obtain ⟨mu, h1, h2, h3, h4, h5⟩ := GlobalTheory.Member.exists_muVal D (T.V j σ) (chiW j σ) (hchi j h.1 σ h.2).1
+          (hchi j h.1 σ h.2).2.1
+        exact ⟨mu, fun hj hσ => ⟨h1, ⟨h2, h3, h4, (hJ.muUnit j hj σ hσ).2.2.2⟩, h5⟩⟩
+      · exact ⟨fun _ => 1, fun hj hσ => absurd ⟨hj, hσ⟩ h⟩
+    choose mu hmu using hex
+    have hL : ∀ j, InR D j → ∀ σ, GoodEmb T.Q.c σ → CuspL2 (T.U j) σ (T.V j σ) (T.dict j σ) (mu j σ) :=
+      fun j hj σ hσ a n hd => jMemL2_of_muUnit (hJ.muUnit j hj σ hσ) (hmu j σ hj hσ).2.1 (hJ.muCont j hj σ hσ)
+        (hmu j σ hj hσ).2.2 (hJ.cuspidalL2Subspace j hj σ hσ a n hd)
+    have hLM : LawsM (reCore T T.dict mu chiW T.x₀ T.cE).toCore :=
+      { pins := hJ.pins
+        half := hJ.half
+        evalWD := hJ.evalWD
+        unf := hJ.unf
+        unTest := hJ.unTest
+        chiTriv := hJ.chiTriv
+        dictU := hJ.dictU
+        spaceW := hJ.spaceW
+        levelK := hJ.levelK
+        xiAbs := hJ.xiAbs
+        muUnit := fun j hj σ hσ => (hmu j σ hj hσ).2.1
+        muCont := fun j hj σ hσ => (hmu j σ hj hσ).2.2
+        finVol := hJ.finVol
+        cuspFD := hJ.cuspFD
+        supDef := hJ.supDef
+        cuspidalL2Subspace := hL
+        l2Def := fun j hj σ hσ a n hd f h0 => hJ.l2Def j hj σ hσ a n hd f
+          ((peterson_norm_independent_of_unitary_character (hJ.muUnit j hj σ hσ) (hmu j σ hj hσ).2.1 (hJ.cuspidalL2Subspace j hj σ hσ a n hd)
+            (hL j hj σ hσ a n hd) f).symm.trans h0)
+        unitIndep := hJ.unitIndep
+        ptNe := hJ.ptNe }
+    refine ⟨mu, ?_, ?_⟩
+    · exact
+        { toLawsM := hLM
+          cUnit := hJ.cUnit
+          muVal := fun j hj σ hσ => (hmu j σ hj hσ).1
+          muConj := fun j hj σ hσ => (hchi j hj σ hσ).2.2
+          intAll := hJ.intAll
+          modelW := hJ.modelW
+          familyUniformisationBasePointOrthogonal := hJ.familyUniformisationBasePointOrthogonal
+          kfHalf := hJ.kfHalf
+          adPin := hJ.adPin }
+    · exact
+        { toLawsM := hLM
+          cuspMul := hC.cuspMul
+          latZ := hC.latZ
+          cuNe := hC.cuNe
+          expo := hC.expo }
 
 end GlobalTheory.RealGeo

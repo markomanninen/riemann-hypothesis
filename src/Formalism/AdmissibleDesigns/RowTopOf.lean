@@ -1,5 +1,9 @@
-import Formalism.AdmissibleDesigns.FiniteClassesRowEqGeneric
-import Formalism.AdmissibleDesigns.CoboundaryMemFiniteClasses
+module
+
+public import Formalism.AdmissibleDesigns.FiniteClassesRowEqGeneric
+public import Formalism.AdmissibleDesigns.CoboundaryMemFiniteClasses
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 

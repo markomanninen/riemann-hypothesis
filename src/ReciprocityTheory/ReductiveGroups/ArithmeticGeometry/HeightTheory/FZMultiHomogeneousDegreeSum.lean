@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ProdZpowEqZpowSum
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.KerPLeOfPlace
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ProdZpowEqZpowSum
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.KerPLeOfPlace
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -19,11 +23,12 @@ theorem chiP_rename_swap (j₀ : Fin (N + 1)) (x : Fin N → Ω) (g : MvPolynomi
   have key : ∀ p : TVar D N, chiImg j₀ x (swapT p) = rename swapS (chiImg j₀ x p) := by
     rintro ⟨b, j⟩
     rcases Fin.eq_self_or_eq_succAbove j₀ j with rfl | ⟨k, rfl⟩
-    · simp [chiImg, swapT, swapS, Fin.succAbove_cases_eq_insertNth, Fin.insertNth_apply_same, map_sum, map_neg]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp [chiImg, swapT, swapS, Fin.succAbove_cases_eq_insertNth, Fin.insertNth_apply_same, map_sum, map_neg]
     · simp [chiImg, swapT, swapS, Fin.succAbove_cases_eq_insertNth, Fin.insertNth_apply_succAbove]
   induction g using MvPolynomial.induction_on with
   | C a => simp [chiP]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     simp only [map_mul, hp, rename_X]
     simp only [chiP, aeval_X, key]
@@ -198,10 +203,10 @@ theorem rename_swap_F (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (F : KTp K d.D d.N)
       by_contra hnp
       apply hg0
       unfold Data.gen
-      rw [dif_neg hnp]
+      rw [dite_eq_right hnp]
     have hgspan : Ideal.span {d.gen P} = P := by
       unfold Data.gen
-      rw [dif_pos hprin]
+      rw [dite_eq_left hprin]
       exact Ideal.span_singleton_generator P
     have hFg : F = C κ * d.gen P ^ (∑ p ∈ T, e p) := by
       rw [hFeq, ← Finset.prod_pow_eq_pow_sum]
@@ -279,7 +284,7 @@ theorem fZ_multiHomogeneous_degree_sum (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (F 
     refine Finset.sum_congr rfl fun j _ => ?_
     have hsw : (swapT (D := d.D) (N := d.N)) (1, j) = (0, j) := by
       simp [swapT, Equiv.swap_apply_right]
-    rw [← hsw, Finsupp.mapDomain_apply (swapT (D := d.D) (N := d.N)).injective]
+    rw [← hsw, Finsupp.mapDomain_apply_of_injective (swapT (D := d.D) (N := d.N)).injective]
   have hA : d.aMM h c = d.delc c := by
     have h1 := d.aMM_nonneg hd h c
     omega

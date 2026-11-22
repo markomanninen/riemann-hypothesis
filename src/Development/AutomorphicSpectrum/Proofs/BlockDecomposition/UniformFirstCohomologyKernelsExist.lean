@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubPairRight
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsHomLocBijectiveGrSum
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFinsetSum
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmulEqZeroOfMem
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GradedModuleSystemRestrictionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommutingOperatorsUniformKernelStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommutingOperatorsUniformCokernelStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommutingOperatorsKernelLiftStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubPairRight
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsHomLocBijectiveGrSum
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFinsetSum
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmulEqZeroOfMem
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GradedModuleSystemRestrictionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommutingOperatorsUniformKernelStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommutingOperatorsUniformCokernelStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommutingOperatorsKernelLiftStatement
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.AbLaw PositivityTheory.FormalThickening
 open GlobalTheory.ProjSpace GlobalTheory.QCoh.Qcqs GlobalTheory.Cartier GlobalTheory.CompanionTheory.FormalAlg GlobalTheory.CompanionTheory.FormalAlg.Lift
 
@@ -35,7 +40,7 @@ theorem resTot_self
   | hof e t a =>
     rw [resTot_of]
     exact congrArg _ (Subtype.ext (h1 _ _ _ _ _))
-  | hadd a b ha hb => rw [map_add, ha, hb]
+  | hadd a b ha hb => rw [map_add (f := _), ha, hb]
 
 theorem resTot_resTot
     (h2 : ∀ e t S S' S'' (h : S ⊆ S') (h' : S' ⊆ S'') a,
@@ -47,7 +52,7 @@ theorem resTot_resTot
   | hof e t a =>
     rw [resTot_of, resTot_of, resTot_of]
     exact congrArg _ (Subtype.ext (h2 _ _ _ _ _ _ _ _))
-  | hadd a b ha hb => simp only [map_add, ha, hb]
+  | hadd a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem X_smul_bijective_tot
     (h9 : ∀ i e t S, i ∈ S → Function.Bijective (mm i e t S)) (i : ι) (S : Finset ι) (hi : i ∈ S) :
@@ -77,7 +82,7 @@ theorem exists_uniform_h1_kernels : ∀ (ι : Type) [LinearOrder ι] [Fintype ι
     (H.ops hc {i, j}).of e t ⟨c i j, (mem_Ks (hne i j)).2 (hp i j)⟩
   obtain ⟨b', -, hcob⟩ := ht t htt c' (fun i j => (H.ops hc {i, j}).of_mem_grading e t _) (by
     intro i j k
-    simp only [c', resTot_of, ← map_add]
+    simp only [c', resTot_of, ← map_add (f := _)]
     exact congrArg _ (Subtype.ext (hcoc i j k)))
   refine ⟨fun i => ((H.ops hc {i}).comp e t (b' i) : T (e + 1) t {i}), fun i =>
     (mem_Ks (Finset.singleton_nonempty i)).1 ((H.ops hc {i}).comp e t (b' i)).2, fun i j => ?_⟩

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.PackageFromPrimitiveStatements
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.PackageFromPrimitiveStatements
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder InnerProductSpace
@@ -61,7 +65,8 @@ theorem specOp_of_mem {a : ι → ℂ} {q : ι} {x : E} (hx : x ∈ U q) : specO
 theorem proj_specOp (a : ι → ℂ) (q : ι) (x : E) :
     (U q).starProjection (specOp U a x) = a q • (U q).starProjection x := by
   classical
-  rw [specOp_apply, map_sum, Finset.sum_eq_single q]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [specOp_apply, map_sum, Finset.sum_eq_single q]
   · rw [map_smul, Submodule.starProjection_eq_self_iff.2 (proj_mem U q x)]
   · intro p _ hp
     rw [map_smul, proj_of_mem U hU (proj_mem U p x), if_neg (Ne.symm hp), smul_zero]
@@ -76,10 +81,10 @@ theorem sum_proj {x : E} (hx : x ∈ ⨆ p, U p) : ∑ p, (U p).starProjection x
     simp
   · simp
   · intro x y hx hy
-    simp only [map_add, Finset.sum_add_distrib, hx, hy]
+    simp only [map_add (f := _), Finset.sum_add_distrib, hx, hy]
+
 
 omit hU in
-
 theorem specOp_mem (a : ι → ℂ) (W : Submodule ℂ E) (hUW : ∀ p, U p ≤ W) (x : E) : specOp U a x ∈ W := by
   rw [specOp_apply]
   exact Submodule.sum_mem _ fun p _ => Submodule.smul_mem _ _ (hUW p (proj_mem U p x))
@@ -143,7 +148,8 @@ theorem spec_rat (σ : K →+* ℂ) {D : ℕ} (f : (Fin D → ℂ) →ₗ[ℂ] E
     · simp [cpt, h]
   have key : (specOp (fun p => P p ⊓ LinearMap.range f) (fun p => σ (a p)) ∘ₗ f) (Pi.single k 1) =
       f (cpt σ (∑ p, a p • ys p)) := by
-    rw [LinearMap.comp_apply, hk, hcs, map_sum, map_sum, hcs, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [LinearMap.comp_apply, hk, hcs, map_sum, map_sum, hcs, map_sum]
     refine Finset.sum_congr rfl fun p _ => ?_
     rw [specOp_of_mem (fun p => P p ⊓ LinearMap.range f) hO (hmem p), cpt_smul, map_smul]
   refine ⟨(∑ p, a p • ys p) i, ?_⟩

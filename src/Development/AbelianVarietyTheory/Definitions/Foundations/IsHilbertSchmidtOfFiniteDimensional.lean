@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SmoothPartStable
+
+@[expose] public section
 
 open MeasureTheory ContinuousLinearMap
 open scoped InnerProductSpace Pointwise
@@ -16,36 +20,36 @@ variable {H K L : Type*}
   [NormedAddCommGroup L] [InnerProductSpace ℂ L] [CompleteSpace L]
   {ι κ : Type*}
 
-variable (H) in
 
+variable (H) in
 def stdIndex : Set H := (exists_hilbertBasis ℂ H).choose
 
-variable (H) in
 
-def stdBasis : HilbertBasis (stdIndex H) ℂ H := (exists_hilbertBasis ℂ H).choose_spec.choose
+variable (H) in
+def stdBasis : HilbertBasis (stdIndex (H := H)) ℂ H := (exists_hilbertBasis ℂ H).choose_spec.choose
 
 def IsHilbertSchmidt (T : H →L[ℂ] K) : Prop :=
-  Summable fun i => ‖T (stdBasis H i)‖ ^ 2
+  Summable fun i => ‖T (stdBasis (H := H) i)‖ ^ 2
 
-def hsNormSq (T : H →L[ℂ] K) : ℝ := ∑' i, ‖T (stdBasis H i)‖ ^ 2
+def hsNormSq (T : H →L[ℂ] K) : ℝ := ∑' i, ‖T (stdBasis (H := H) i)‖ ^ 2
 
 def IsTraceClass (T : H →L[ℂ] H) : Prop :=
   ∃ (n : ℕ) (B C : Fin n → (H →L[ℂ] H)),
     (∀ i, IsHilbertSchmidt (B i)) ∧ (∀ i, IsHilbertSchmidt (C i)) ∧ T = ∑ i, B i ∘L C i
 
-def trace (T : H →L[ℂ] H) : ℂ := ∑' i, ⟪stdBasis H i, T (stdBasis H i)⟫_ℂ
+def trace (T : H →L[ℂ] H) : ℂ := ∑' i, ⟪stdBasis (H := H) i, T (stdBasis (H := H) i)⟫_ℂ
 
 def HasTrace (T : H →L[ℂ] H) (c : ℂ) : Prop := IsTraceClass T ∧ trace T = c
 
-omit [CompleteSpace H] in
 
+omit [CompleteSpace H] in
 theorem hasSum_norm_inner_sq (e : HilbertBasis ι ℂ H) (x : H) :
     HasSum (fun i => ‖⟪e i, x⟫_ℂ‖ ^ 2) (‖x‖ ^ 2) := by
   have h := lp.hasSum_norm (p := 2) (by norm_num) (e.repr x)
   simpa [e.repr_apply_apply] using h
 
-omit [CompleteSpace H] [CompleteSpace K] in
 
+omit [CompleteSpace H] [CompleteSpace K] in
 theorem summable_matrix (e : HilbertBasis ι ℂ H) (f : HilbertBasis κ ℂ K) {T : H →L[ℂ] K}
     (h : Summable fun i => ‖T (e i)‖ ^ 2) :
     Summable fun p : ι × κ => ‖⟪f p.2, T (e p.1)⟫_ℂ‖ ^ 2 := by
@@ -65,7 +69,7 @@ theorem hasSum_adjoint (e : HilbertBasis ι ℂ H) (f : HilbertBasis κ ℂ K) {
 
 theorem hasSum_basis (e : HilbertBasis ι ℂ H) (e' : HilbertBasis κ ℂ H) {T : H →L[ℂ] K} {s : ℝ}
     (h : HasSum (fun i => ‖T (e i)‖ ^ 2) s) : HasSum (fun j => ‖T (e' j)‖ ^ 2) s := by
-  simpa using hasSum_adjoint (stdBasis K) e' (hasSum_adjoint e (stdBasis K) h)
+  simpa using hasSum_adjoint (stdBasis (H := K)) e' (hasSum_adjoint e (stdBasis (H := K)) h)
 
 theorem isHilbertSchmidt_iff (e : HilbertBasis ι ℂ H) {T : H →L[ℂ] K} :
     IsHilbertSchmidt T ↔ Summable fun i => ‖T (e i)‖ ^ 2 :=
@@ -79,16 +83,16 @@ theorem IsHilbertSchmidt.adjoint {T : H →L[ℂ] K} (h : IsHilbertSchmidt T) :
     IsHilbertSchmidt (adjoint T) :=
   (hasSum_adjoint _ _ (Summable.hasSum h)).summable
 
-omit [CompleteSpace K] [CompleteSpace L] in
 
+omit [CompleteSpace K] [CompleteSpace L] in
 theorem IsHilbertSchmidt.of_norm_le {T : H →L[ℂ] K} {S : H →L[ℂ] L} (h : IsHilbertSchmidt T)
     (c : ℝ) (hS : ∀ x, ‖S x‖ ≤ c * ‖T x‖) : IsHilbertSchmidt S := by
   refine Summable.of_nonneg_of_le (fun _ => sq_nonneg _) (fun i => ?_) (Summable.mul_left (c ^ 2) h)
   rw [← mul_pow]
   exact pow_le_pow_left₀ (norm_nonneg _) (hS _) 2
 
-omit [CompleteSpace K] [CompleteSpace L] in
 
+omit [CompleteSpace K] [CompleteSpace L] in
 theorem IsHilbertSchmidt.comp_left {T : H →L[ℂ] K} (h : IsHilbertSchmidt T) (A : K →L[ℂ] L) :
     IsHilbertSchmidt (A ∘L T) :=
   h.of_norm_le ‖A‖ fun x => A.le_opNorm _
@@ -97,33 +101,33 @@ theorem IsHilbertSchmidt.comp_right {T : H →L[ℂ] K} (h : IsHilbertSchmidt T)
     IsHilbertSchmidt (T ∘L A) := by
   simpa using (h.adjoint.comp_left (ContinuousLinearMap.adjoint A)).adjoint
 
-omit [CompleteSpace K] in
 
+omit [CompleteSpace K] in
 theorem isHilbertSchmidt_zero : IsHilbertSchmidt (0 : H →L[ℂ] K) := by
   simp [IsHilbertSchmidt, summable_zero]
 
-omit [CompleteSpace K] in
 
+omit [CompleteSpace K] in
 theorem IsHilbertSchmidt.add {S T : H →L[ℂ] K} (hS : IsHilbertSchmidt S) (hT : IsHilbertSchmidt T) :
     IsHilbertSchmidt (S + T) := by
   refine Summable.of_nonneg_of_le (fun _ => sq_nonneg _) (fun i => ?_)
     ((Summable.add hS hT).mul_left 2)
-  have h1 := norm_add_le (S (stdBasis H i)) (T (stdBasis H i))
+  have h1 := norm_add_le (S (stdBasis (H := H) i)) (T (stdBasis (H := H) i))
   have h2 := pow_le_pow_left₀ (norm_nonneg _) h1 2
   rw [add_apply]
-  nlinarith [sq_nonneg (‖S (stdBasis H i)‖ - ‖T (stdBasis H i)‖)]
+  nlinarith [sq_nonneg (‖S (stdBasis (H := H) i)‖ - ‖T (stdBasis (H := H) i)‖)]
+
 
 omit [CompleteSpace K] in
-
 theorem IsHilbertSchmidt.smul {T : H →L[ℂ] K} (h : IsHilbertSchmidt T) (c : ℂ) :
     IsHilbertSchmidt (c • T) :=
   h.of_norm_le ‖c‖ fun x => by simp [norm_smul]
 
-omit [CompleteSpace K] in
 
+omit [CompleteSpace K] in
 theorem isHilbertSchmidt_of_finiteDimensional [FiniteDimensional ℂ H] (T : H →L[ℂ] K) :
     IsHilbertSchmidt T := by
-  have : Finite (stdIndex H) := (stdBasis H).orthonormal.linearIndependent.finite
+  have : Finite (stdIndex (H := H)) := (stdBasis (H := H)).orthonormal.linearIndependent.finite
   exact Summable.of_finite
 
 theorem exists_hasSum_comp (e : HilbertBasis ι ℂ H) (f : HilbertBasis κ ℂ K)
@@ -146,14 +150,14 @@ theorem exists_hasSum_comp (e : HilbertBasis ι ℂ H) (f : HilbertBasis κ ℂ 
 theorem hasSum_trace_comp (e : HilbertBasis ι ℂ H)
     {B : K →L[ℂ] H} {C : H →L[ℂ] K} (hB : IsHilbertSchmidt B) (hC : IsHilbertSchmidt C) :
     HasSum (fun i => ⟪e i, (B ∘L C) (e i)⟫_ℂ) (trace (B ∘L C)) := by
-  obtain ⟨s, h1, h2⟩ := exists_hasSum_comp e (stdBasis K) hB hC
-  obtain ⟨t, h3, h4⟩ := exists_hasSum_comp (stdBasis H) (stdBasis K) hB hC
+  obtain ⟨s, h1, h2⟩ := exists_hasSum_comp e (stdBasis (H := K)) hB hC
+  obtain ⟨t, h3, h4⟩ := exists_hasSum_comp (stdBasis (H := H)) (stdBasis (H := K)) hB hC
   have : trace (B ∘L C) = s := h3.tsum_eq.trans (h4.unique h2)
   rw [this]; exact h1
 
 theorem trace_comp_comm {B : K →L[ℂ] H} {C : H →L[ℂ] K} (hB : IsHilbertSchmidt B)
     (hC : IsHilbertSchmidt C) : trace (B ∘L C) = trace (C ∘L B) := by
-  obtain ⟨t, h3, h4⟩ := exists_hasSum_comp (stdBasis H) (stdBasis K) hB hC
+  obtain ⟨t, h3, h4⟩ := exists_hasSum_comp (stdBasis (H := H)) (stdBasis (H := K)) hB hC
   exact h3.tsum_eq.trans h4.tsum_eq.symm
 
 theorem IsTraceClass.hasSum_trace {T : H →L[ℂ] H} (h : IsTraceClass T) (e : HilbertBasis ι ℂ H) :
@@ -166,15 +170,15 @@ theorem IsTraceClass.hasSum_trace {T : H →L[ℂ] H} (h : IsTraceClass T) (e : 
   have h2 : HasSum (fun i => ⟪e i, (∑ k, B k ∘L C k) (e i)⟫_ℂ) (∑ k, trace (B k ∘L C k)) := by
     simpa only [ContinuousLinearMap.sum_apply, inner_sum] using
       hasSum_sum fun k (_ : k ∈ Finset.univ) => hasSum_trace_comp e (hB k) (hC k)
-  rw [show trace (∑ k, B k ∘L C k) = _ from (key (stdBasis H)).tsum_eq]
+  rw [show trace (∑ k, B k ∘L C k) = _ from (key (stdBasis (H := H))).tsum_eq]
   exact h2
 
 theorem IsTraceClass.summable_norm {T : H →L[ℂ] H} (h : IsTraceClass T) (e : HilbertBasis ι ℂ H) :
     Summable fun i => ‖⟪e i, T (e i)⟫_ℂ‖ :=
   (h.hasSum_trace e).summable.norm
 
-omit [CompleteSpace L] in
 
+omit [CompleteSpace L] in
 theorem exists_comp_eq_of_norm_le {C : H →L[ℂ] K} {A : H →L[ℂ] L} (h : ∀ x, ‖C x‖ ≤ ‖A x‖)
     [CompleteSpace L] : ∃ U : L →L[ℂ] K, U ∘L A = C := by
   let M : Submodule ℂ L := (LinearMap.range (A : H →ₗ[ℂ] L)).topologicalClosure
@@ -196,7 +200,7 @@ theorem exists_comp_eq_of_norm_le {C : H →L[ℂ] K} {A : H →L[ℂ] L} (h : �
 theorem norm_sqrt_apply (C : H →L[ℂ] K) (x : H) :
     ‖(CFC.sqrt (adjoint C ∘L C) : H →L[ℂ] H) x‖ = ‖C x‖ := by
   have hp : (0 : H →L[ℂ] H) ≤ adjoint C ∘L C :=
-    (nonneg_iff_isPositive _).2 (isPositive_adjoint_comp_self C)
+    (nonneg_iff_isPositive).2 (isPositive_adjoint_comp_self C)
   set A : H →L[ℂ] H := CFC.sqrt (adjoint C ∘L C)
   have hA : IsSelfAdjoint A := IsSelfAdjoint.of_nonneg (CFC.sqrt_nonneg _)
   have h2 : A * A = adjoint C ∘L C := CFC.sqrt_mul_sqrt_self _ hp
@@ -262,12 +266,12 @@ theorem IsTraceClass.isHilbertSchmidt {T : H →L[ℂ] H} (h : IsTraceClass T) :
 
 theorem trace_add {S T : H →L[ℂ] H} (hS : IsTraceClass S) (hT : IsTraceClass T) :
     trace (S + T) = trace S + trace T := by
-  have := (hS.hasSum_trace (stdBasis H)).add (hT.hasSum_trace (stdBasis H))
+  have := (hS.hasSum_trace (stdBasis (H := H))).add (hT.hasSum_trace (stdBasis (H := H)))
   simpa only [trace, add_apply, inner_add_right] using this.tsum_eq
 
 theorem trace_sum {α : Type*} (s : Finset α) {T : α → (H →L[ℂ] H)}
     (h : ∀ a ∈ s, IsTraceClass (T a)) : trace (∑ a ∈ s, T a) = ∑ a ∈ s, trace (T a) := by
-  have := hasSum_sum fun a (ha : a ∈ s) => (h a ha).hasSum_trace (stdBasis H)
+  have := hasSum_sum fun a (ha : a ∈ s) => (h a ha).hasSum_trace (stdBasis (H := H))
   simpa only [trace, ContinuousLinearMap.sum_apply, inner_sum] using this.tsum_eq
 
 theorem trace_smul (c : ℂ) (T : H →L[ℂ] H) : trace (c • T) = c * trace T := by
@@ -326,12 +330,6 @@ theorem trace_eq_linearMap_trace [FiniteDimensional ℂ H] (T : H →L[ℂ] H) :
     ← ((isTraceClass_of_finiteDimensional T).hasSum_trace b.toHilbertBasis).tsum_eq, tsum_fintype]
   simp
 
-example (n : ℕ) : HasTrace (ContinuousLinearMap.id ℂ (EuclideanSpace ℂ (Fin n))) n :=
-  ⟨isTraceClass_of_finiteDimensional _, by simp [trace_eq_linearMap_trace]⟩
-
-example : trace (Complex.I • ContinuousLinearMap.id ℂ ℂ) = Complex.I := by
-  simp [trace_smul, trace_eq_linearMap_trace]
-
 end Hilbert
 
 section Unitary
@@ -370,31 +368,32 @@ variable [MeasurableSpace G]
 def IsRepOp (π : G →* (H →L[ℂ] H)) (μ : Measure G) (f : G → ℂ) (T : H →L[ℂ] H) : Prop :=
   ∀ v, Integrable (fun g => f g • π g v) μ ∧ T v = ∫ g, f g • π g v ∂μ
 
-open Classical in
 
-def repOp (π : G →* (H →L[ℂ] H)) (μ : Measure G) (f : G → ℂ) : H →L[ℂ] H :=
-  if h : ∃ T, IsRepOp π μ f T then h.choose else 0
+open Classical in
+def repOp (π : G →* (H →L[ℂ] H)) (μ : Measure G) (f : G → ℂ) : H →L[ℂ] H := by
+  classical
+  exact if h : ∃ T, IsRepOp π μ f T then h.choose else 0
 
 def repTrace (π : G →* (H →L[ℂ] H)) (μ : Measure G) (f : G → ℂ) : ℂ := trace (repOp π μ f)
 
 variable {π : G →* (H →L[ℂ] H)} {μ : Measure G} {f f' : G → ℂ}
 
-omit [TopologicalSpace G] [CompleteSpace H] in
 
+omit [TopologicalSpace G] [CompleteSpace H] in
 theorem IsRepOp.repOp_eq {T : H →L[ℂ] H} (h : IsRepOp π μ f T) : repOp π μ f = T := by
   have h' : ∃ T, IsRepOp π μ f T := ⟨T, h⟩
   ext v
-  rw [repOp, dif_pos h', (h'.choose_spec v).2, (h v).2]
+  rw [repOp, dite_eq_left h', (h'.choose_spec v).2, (h v).2]
+
 
 omit [CompleteSpace H] in
-
 theorem IsUnitaryRep.isRepOp_of_integrable (hπ : IsUnitaryRep π) (hf : Integrable f μ)
     (hm : ∀ v, AEStronglyMeasurable (fun g => f g • π g v) μ) : IsRepOp π μ f (repOp π μ f) := by
   have hi : ∀ v, Integrable (fun g => f g • π g v) μ := fun v =>
     (hf.norm.mul_const ‖v‖).mono' (hm v) (.of_forall fun g => by simp [norm_smul, hπ.norm_apply])
   let T : H →ₗ[ℂ] H :=
     { toFun := fun v => ∫ g, f g • π g v ∂μ
-      map_add' := fun v w => by simp only [map_add, smul_add, integral_add (hi v) (hi w)]
+      map_add' := fun v w => by simp only [map_add (f := _), smul_add, integral_add (hi v) (hi w)]
       map_smul' := fun c v => by
         simp only [map_smul, RingHom.id_apply, ← integral_smul, smul_comm c] }
   have hT : IsRepOp π μ f (T.mkContinuous (∫ g, ‖f g‖ ∂μ) fun v => by
@@ -404,16 +403,16 @@ theorem IsUnitaryRep.isRepOp_of_integrable (hπ : IsUnitaryRep π) (hf : Integra
 
 variable [OpensMeasurableSpace G] [IsFiniteMeasureOnCompacts μ]
 
-omit [CompleteSpace H] in
 
+omit [CompleteSpace H] in
 theorem IsUnitaryRep.isRepOp (hπ : IsUnitaryRep π) (hf : Continuous f) (hc : HasCompactSupport f) :
     IsRepOp π μ f (repOp π μ f) :=
   hπ.isRepOp_of_integrable (hf.integrable_of_hasCompactSupport hc) fun v =>
     ((hf.smul (hπ.continuous_apply v)).integrable_of_hasCompactSupport
       hc.smul_right).aestronglyMeasurable
 
-omit [CompleteSpace H] in
 
+omit [CompleteSpace H] in
 theorem IsUnitaryRep.repOp_apply (hπ : IsUnitaryRep π) (hf : Continuous f)
     (hc : HasCompactSupport f) (v : H) : repOp π μ f v = ∫ g, f g • π g v ∂μ :=
   (hπ.isRepOp hf hc v).2
@@ -424,8 +423,8 @@ theorem IsUnitaryRep.inner_repOp (hπ : IsUnitaryRep π) (hf : Continuous f)
   rw [hπ.repOp_apply hf hc, ← integral_inner (hπ.isRepOp hf hc v).1]
   simp only [inner_smul_right]
 
-omit [CompleteSpace H] in
 
+omit [CompleteSpace H] in
 theorem IsUnitaryRep.repOp_add (hπ : IsUnitaryRep π) (hf : Continuous f) (hc : HasCompactSupport f)
     (hf' : Continuous f') (hc' : HasCompactSupport f') :
     repOp π μ (f + f') = repOp π μ f + repOp π μ f' := by
@@ -435,8 +434,8 @@ theorem IsUnitaryRep.repOp_add (hπ : IsUnitaryRep π) (hf : Continuous f) (hc :
   simp only [Pi.add_apply, add_smul, add_apply]
   exact ⟨h1.add h3, by rw [integral_add h1 h3, h2, h4]⟩
 
-omit [CompleteSpace H] in
 
+omit [CompleteSpace H] in
 theorem IsUnitaryRep.repOp_smul (hπ : IsUnitaryRep π) (hf : Continuous f)
     (hc : HasCompactSupport f) (c : ℂ) : repOp π μ (c • f) = c • repOp π μ f := by
   refine IsRepOp.repOp_eq fun v => ?_
@@ -512,17 +511,6 @@ theorem IsUnitaryRep.repOp_convolution [IsTopologicalGroup G] [BorelSpace G] [μ
     ← integral_mul_left_eq_self (fun y => f' (x⁻¹ * y) • π y v) x]
   simp
 
-theorem repTrace_charRep {χ : G →* Circle} (hχ : Continuous χ) (hf : Continuous f)
-    (hc : HasCompactSupport f) :
-    HasTrace (repOp (charRep χ) μ f) (∫ g, f g * (χ g : ℂ) ∂μ) := by
-  have h : repOp (charRep χ) μ f = (∫ g, f g * (χ g : ℂ) ∂μ) • ContinuousLinearMap.id ℂ ℂ := by
-    ext
-    rw [(isUnitaryRep_charRep hχ).repOp_apply hf hc]
-    simp [charRep]
-  refine ⟨isTraceClass_of_finiteDimensional _, ?_⟩
-  rw [h]
-  simp [trace_smul, trace_eq_linearMap_trace]
-
 end Unitary
 
 section FiniteRank
@@ -594,8 +582,8 @@ section LocallyConstant
 
 variable {X V : Type*} [TopologicalSpace X] [AddCommGroup V] [Module ℂ V]
 
-omit [Module ℂ V] in
 
+omit [Module ℂ V] in
 theorem finite_range {F : X → V} (hF : IsLocallyConstant F) (hc : HasCompactSupport F) :
     (Set.range F).Finite := by
   obtain ⟨t, ht⟩ := hc.isCompact.elim_finite_subcover (fun w => F ⁻¹' {w}) (fun w => hF _)
@@ -625,8 +613,9 @@ theorem map_lcIntegral {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [C
   have h2 : ∀ x, l (F x) = ∑ w ∈ hfin.toFinset, (F ⁻¹' {w}).indicator (fun _ => l w) x := by
     intro x
     simp [Set.indicator_apply]
-  simp only [h1, h2, map_sum, map_smul]
-  rw [integral_finset_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [h1, h2, map_sum, map_smul]
+  rw [MeasureTheory.integral_finsetSum]
   · refine Finset.sum_congr rfl fun w _ => ?_
     rw [integral_indicator_const _ (hF _).measurableSet, Complex.coe_smul]
   · intro w _
@@ -638,8 +627,8 @@ theorem map_lcIntegral {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [C
       rw [Function.mem_support, show F x = w from hx]
       exact hw
 
-omit [MeasurableSpace X] [OpensMeasurableSpace X] in
 
+omit [MeasurableSpace X] [OpensMeasurableSpace X] in
 theorem eq_of_forall_dual {v w : V} (h : ∀ l : V →ₗ[ℂ] ℂ, l v = l w) : v = w := by
   rw [← sub_eq_zero, ← Module.forall_dual_apply_eq_zero_iff ℂ]
   intro l
@@ -653,8 +642,8 @@ open GlobalTheory.PRep
 
 variable {G V : Type} [Group G] [TopologicalSpace G] [AddCommGroup V] [Module ℂ V]
 
-omit [TopologicalSpace G] in
 
+omit [TopologicalSpace G] in
 theorem mem_fixed {ρ : Representation ℂ G V} {K : Subgroup G} {v : V} :
     v ∈ fixed ρ K ↔ ∀ k ∈ K, ρ k v = v :=
   ⟨fun h k hk => by simpa using h ⟨k, hk⟩, fun h k => by simpa using h k k.2⟩
@@ -694,10 +683,11 @@ theorem isOpen_leftStabilizer [IsTopologicalGroup G] {f : G → ℂ} (hf : IsLoc
 
 variable [MeasurableSpace G]
 
-open Classical in
 
-def smoothOp (ρ : Representation ℂ G V) (μ : Measure G) (f : G → ℂ) : V →ₗ[ℂ] V :=
-  if h : ∃ T : V →ₗ[ℂ] V, ∀ v, T v = lcIntegral μ fun g => f g • ρ g v then h.choose else 0
+open Classical in
+def smoothOp (ρ : Representation ℂ G V) (μ : Measure G) (f : G → ℂ) : V →ₗ[ℂ] V := by
+  classical
+  exact if h : ∃ T : V →ₗ[ℂ] V, ∀ v, T v = lcIntegral μ fun g => f g • ρ g v then h.choose else 0
 
 def smoothTrace (ρ : Representation ℂ G V) (μ : Measure G) (f : G → ℂ) : ℂ :=
   finRankTrace (smoothOp ρ μ f)
@@ -705,15 +695,15 @@ def smoothTrace (ρ : Representation ℂ G V) (μ : Measure G) (f : G → ℂ) :
 variable [IsTopologicalGroup G] [BorelSpace G] {μ : Measure G} [IsFiniteMeasureOnCompacts μ]
   {ρ : Representation ℂ G V} {f f' : G → ℂ}
 
-omit [MeasurableSpace G] [BorelSpace G] in
 
+omit [MeasurableSpace G] [BorelSpace G] in
 theorem _root_.GlobalTheory.PRep.IsSmooth.smoothOp_integrand (hρ : IsSmooth ρ) (hf : IsLocallyConstant f)
     (hc : HasCompactSupport f) (v : V) :
     IsLocallyConstant (fun g => f g • ρ g v) ∧ HasCompactSupport fun g => f g • ρ g v :=
   ⟨hf.comp₂ (hρ.isLocallyConstant_orbit v) (· • ·), hc.smul_right⟩
 
-omit [Module ℂ V] in
 
+omit [Module ℂ V] in
 theorem integrable_map {E : Type*} [NormedAddCommGroup E] {F : G → V} (hF : IsLocallyConstant F)
     (hc : HasCompactSupport F) (l : V → E) (hl : l 0 = 0) : Integrable (fun g => l (F g)) μ :=
   (hF.comp l).continuous.integrable_of_hasCompactSupport (hc.comp_left hl)
@@ -730,12 +720,12 @@ theorem _root_.GlobalTheory.PRep.IsSmooth.smoothOp_apply (hρ : IsSmooth ρ) (hf
         map_lcIntegral (hi _).1 (hi _).2, ← integral_add
           (integrable_map (hi _).1 (hi _).2 l l.map_zero)
           (integrable_map (hi _).1 (hi _).2 l l.map_zero)]
-      simp only [map_add, smul_add]
+      simp only [map_add (f := _), smul_add]
     · refine eq_of_forall_dual fun l => ?_
       rw [RingHom.id_apply, map_smul l, map_lcIntegral (hi _).1 (hi _).2,
         map_lcIntegral (hi _).1 (hi _).2, ← integral_smul]
       simp only [map_smul, smul_comm c]
-  rw [smoothOp, dif_pos h, h.choose_spec]
+  rw [smoothOp, dite_eq_left h, h.choose_spec]
 
 theorem _root_.GlobalTheory.PRep.IsSmooth.map_smoothOp {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     [CompleteSpace E] (hρ : IsSmooth ρ) (hf : IsLocallyConstant f) (hc : HasCompactSupport f)

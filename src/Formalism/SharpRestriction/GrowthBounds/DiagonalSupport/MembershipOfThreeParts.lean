@@ -1,9 +1,13 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.DecIdentity
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ProjectionMemPartialSpan
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ImportsAlt
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembAlgF
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembDegF
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembLabF
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.DecIdentity
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ProjectionMemPartialSpan
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.ImportsAlt
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembAlgF
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembDegF
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembLabF
+
+@[expose] public section
 
 noncomputable section
 

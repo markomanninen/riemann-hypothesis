@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.Distinct
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.HeckeCommRing
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ContinuousResP
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.Distinct
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.HeckeCommRing
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ContinuousResP
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,8 +25,8 @@ section Alg
 
 variable {L : Type} [Field L] [NumberField L] {l : ℕ} [Fact l.Prime] (n : ℕ) {V : Type} [Fintype V] (S : V → Plc L)
 
-omit [Fintype V] in
 
+omit [Fintype V] in
 abbrev GV : Type := ∀ v : V, GLw n (S v)
 
 def iwS : Iwa (GV n S) := piIwa fun v : V => glIwa ((S v).adicCompletion L) n
@@ -37,25 +41,25 @@ def eV (v : V) (i : Fin n) (y : Uo ((S v).adicCompletion L)) : (iwS n S).T := by
     · rw [Pi.mulSingle_eq_of_ne h]
       exact (glIwa ((S v').adicCompletion L) n).T.one_mem⟩
 
-omit [Fintype V] in
 
+omit [Fintype V] in
 def alV (v : V) (j : ℕ) : GV n S := by
   classical
   exact Pi.mulSingle v (al ((S v).adicCompletion L) n j)
 
+
 omit [Fintype V] in
 variable (l) in
-
 abbrev Emb : Type := Σ v : V, W.Emb l (S v)
 
 variable {n S}
 
-omit [Fintype V] in
 
+omit [Fintype V] in
 def Emb.res (e : Emb l S) : L →+* Qbar l := e.2.1.comp (algebraMap L _)
 
-variable (S) in
 
+variable (S) in
 def algRep (ι : Qbar l ≃+* ℂ) (lam : Wt L l n) :
     Representation ℂ (GV n S) (⨂[ℂ] e : Emb l S, nablaSq ℂ n (lam e.res)) :=
   PiTensorProduct.mapMonoidHom.comp (Pi.monoidHom fun e : Emb l S =>
@@ -205,7 +209,7 @@ structure Part (lam : Wt L l n) {d : ℕ} (ξ : GV n H.Sl →* GL (Fin d) ℂ) :
   frob : ∀ (w : H.Wp) (B : ValuationSubring Ω) (σ : G L Ω), IsPlaceOver B w.1 → IsFrob B (normV w.1) σ →
     (r (H.prj σ⁻¹) : Matrix (Fin n) (Fin n) (Qbar l)).charpoly.map ι.toRingHom = heckePol n (normV w.1) (a w)
   atL : ∀ v, AtL ι (H.ovr v) (r.comp (H.dec v)) lam (σl v)
-  atQ : ∀ (q : H.Q) (B : ValuationSubring Ω) (h : IsPlaceOver B (H.wq q)) (rc : IrrGL ((H.wq q).adicCompletion L) → WD h), IsRec h rc →
+  atQ : ∀ (q : H.Q) (B : ValuationSubring Ω) (h : IsPlaceOver B (H.wq q)) (rc : IrrGL (k := (H.wq q).adicCompletion L) → WD h), IsRec h rc →
     Lev.WO ι (r.comp H.prj) (rc (algNorm (σq q)))
 
 def Aut (P : Wt L l n → (H.Gq →* GL (Fin n) (Qbar l)) → Prop) : Prop :=

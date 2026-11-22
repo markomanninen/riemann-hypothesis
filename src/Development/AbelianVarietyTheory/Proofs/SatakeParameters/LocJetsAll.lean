@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.FourthPowerTheta
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.FourthPowerTheta
+
+@[expose] public section
 
 namespace GlobalTheory.ThLoc
 

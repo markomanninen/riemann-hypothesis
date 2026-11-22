@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.GreenSt
+module
+
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.GreenSt
+
+@[expose] public section
 
 open MeasureTheory Set Filter Topology InnerProductSpace intervalIntegral
 open scoped Laplacian
@@ -47,7 +51,7 @@ theorem lap_eq_rot (u : ℂ → ℝ) (z : ℂ) (θ : ℝ) :
     Δ u z = fderiv ℝ (fderiv ℝ u) z (ee θ) (ee θ)
       + fderiv ℝ (fderiv ℝ u) z (Complex.I * ee θ) (Complex.I * ee θ) := by
   rw [laplacian_eq_fderiv_fderiv, iee_smul, ee_smul]
-  simp only [map_add, map_smul, ContinuousLinearMap.add_apply, ContinuousLinearMap.coe_smul', Pi.smul_apply,
+  simp only [map_add (f := _), map_smul, ContinuousLinearMap.add_apply, ContinuousLinearMap.coe_smul', Pi.smul_apply,
     smul_eq_mul]
   have hsc := Real.sin_sq_add_cos_sq θ
   set H := fderiv ℝ (fderiv ℝ u) z
@@ -78,13 +82,6 @@ theorem hasDerivAt_rad' (e : ℂ) (r : ℝ) :
     simpa using ((hasDerivAt_id r).smul_const e).const_add a
   have h2 := (((contDiff_fderiv1 hu).differentiable one_ne_zero) _).hasFDerivAt.comp_hasDerivAt r hp
   simpa using h2.clm_apply (hasDerivAt_const r e)
-
-theorem hasDerivAt_ang (r θ : ℝ) :
-    HasDerivAt (fun θ : ℝ => u (a + r • ee θ))
-      (fderiv ℝ u (a + r • ee θ) (r • (Complex.I * ee θ))) θ := by
-  have hp : HasDerivAt (fun θ : ℝ => a + r • ee θ) (r • (Complex.I * ee θ)) θ :=
-    ((hasDerivAt_ee θ).const_smul r).const_add a
-  exact ((hu.differentiable (by norm_num)) _).hasFDerivAt.comp_hasDerivAt θ hp
 
 theorem hasDerivAt_ang' (r θ : ℝ) :
     HasDerivAt (fun θ : ℝ => fderiv ℝ u (a + r • ee θ) (r • (Complex.I * ee θ)))

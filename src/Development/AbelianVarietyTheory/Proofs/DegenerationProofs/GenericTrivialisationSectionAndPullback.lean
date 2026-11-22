@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsHomOpenPart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsHomOpenPart
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.ChartRestriction.G.Out GlobalTheory.ZH
@@ -23,9 +28,9 @@ theorem GenTriv.exists_sec_hasVal (h : M.GenTriv H d) (x : Ω) (hx : ∀ k, ∀ 
   by_cases hij : ((H.U i ⊓ H.U j : M.Z.Opens) : Set M.Z).Nonempty
   · refine M.res_injective _ hij ?_
     have h1 := (M.res_apply _ hij _).trans ((M.valF_resG inf_le_left hij (f i)).trans
-      (hf i (hij.mono (fun _ hz => hz.1))))
+      (hf i (hij.mono (fun _ hz => (show _ ∈ H.U i ∧ _ ∈ H.U j from hz).1))))
     have h2 := (M.res_apply _ hij _).trans ((M.valF_resG inf_le_right hij (f j)).trans
-      (hf j (hij.mono (fun _ hz => hz.2))))
+      (hf j (hij.mono (fun _ hz => (show _ ∈ H.U i ∧ _ ∈ H.U j from hz).2))))
     have h3 := (M.res_apply _ hij _).trans (h.g_eq i j hij)
     rw [map_mul, h3]
     refine h1.trans (Eq.trans ?_ (congrArg (d j / d i * ·) h2.symm))

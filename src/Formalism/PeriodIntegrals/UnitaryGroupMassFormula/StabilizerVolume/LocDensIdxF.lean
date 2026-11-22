@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensIdxE
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.LocDensIdxE
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,8 @@ theorem idxH_holds : IdxH := by
         simp
       · simp [h, Ne.symm h]
     conv_lhs => rw [← b.sum_repr x0]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     conv_rhs => rw [← b.sum_repr x0]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [AlgHom.map_smul_of_tower, hb]
@@ -54,7 +59,8 @@ theorem idxH_holds : IdxH := by
     simp only [Matrix.mulVec, dotProduct, IdxHW.Cmat]
     have e : σ 1 = ∑ l, b.repr 1 l • σ (b l) := by
       conv_lhs => rw [← b.sum_repr 1]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [AlgHom.map_smul_of_tower]
     rw [map_one] at e
     conv_rhs => rw [e]

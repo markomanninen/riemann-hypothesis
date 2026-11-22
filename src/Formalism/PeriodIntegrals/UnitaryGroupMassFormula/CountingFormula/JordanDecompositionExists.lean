@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.NormMMOfJD
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.JordanSplittingExists
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.NormMMOfJD
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.JordanSplittingExists
+
+@[expose] public section
 
 open NumberField Module
 
@@ -20,7 +24,8 @@ theorem nondegOn_of_gram (h : V →ₗ⋆[K] V →ₗ[K] K) (x : ι → V) (hdet
   have hvec : Matrix.vecMul (fun i => star (c i)) (gram h x) = 0 := by
     funext j
     have := hv0 (x j) (Submodule.subset_span ⟨j, rfl⟩)
-    simpa [gram, Matrix.vecMul, dotProduct, map_sum, LinearMap.map_smulₛₗ, starRingEnd_apply] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [gram, Matrix.vecMul, dotProduct, map_sum, LinearMap.map_smulₛₗ, starRingEnd_apply] using this
   have h0 := Matrix.eq_zero_of_vecMul_eq_zero hdet hvec
   have hc : c = 0 := by
     funext i

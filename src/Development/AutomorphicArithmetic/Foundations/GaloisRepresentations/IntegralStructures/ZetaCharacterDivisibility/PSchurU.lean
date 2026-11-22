@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.ZetaCharacterDivisibility.CharOfZeta
-import Development.AutomorphicArithmetic.DivisorFrames.FiniteDimensionalAutomorphicFormsUnitaryOfTypeLe
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.ZetaCharacterDivisibility.CharOfZeta
+public import Development.AutomorphicArithmetic.DivisorFrames.FiniteDimensionalAutomorphicFormsUnitaryOfTypeLe
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.HeckeGal GlobalTheory.UnitaryBC GlobalTheory.Cong GlobalTheory.CongL GlobalTheory.RoadWGeo
 open Formalism.MainNotions.SumRepresentations.At (sumRep)
@@ -32,26 +37,26 @@ theorem UpperTheory.Gal.Int.Div.schurU_of :
       obtain ⟨k, rfl⟩ := hv
       exact Submodule.subset_span ⟨x * k, by simp only [Subgroup.coe_mul, GlobalTheory.DefU.RU_RU]⟩
     | zero => rw [map_zero]; exact S.zero_mem
-    | add p q _ _ hp hq => rw [map_add]; exact S.add_mem hp hq
+    | add p q _ _ hp hq => rw [map_add (f := _)]; exact S.add_mem hp hq
     | smul c p _ hp => rw [map_smul]; exact S.smul_mem c hp
   let ρ : infU E a → Module.End ℂ S := fun x => (RU E a x).restrict (hSst x)
-  let K : Subgroup (finU E a) :=
+  let K : Subgroup (finU (E := E) (n := a)) :=
     { carrier := {k | RU E a k φ = φ}
       one_mem' := by
-        change RU E a ((1 : finU E a) : UA E a) φ = φ
+        change RU E a ((1 : finU (E := E) (n := a)) : UA E a) φ = φ
         simp
       mul_mem' := fun {p q} hp hq => by
         have hp' : RU E a p φ = φ := hp
         have hq' : RU E a q φ = φ := hq
-        change RU E a ((p * q : finU E a) : UA E a) φ = φ
+        change RU E a ((p * q : finU (E := E) (n := a)) : UA E a) φ = φ
         rw [Subgroup.coe_mul, ← GlobalTheory.DefU.RU_RU, hq', hp']
       inv_mem' := fun {p} hp => by
         have hp' : RU E a p φ = φ := hp
-        change RU E a ((p⁻¹ : finU E a) : UA E a) φ = φ
+        change RU E a ((p⁻¹ : finU (E := E) (n := a)) : UA E a) φ = φ
         conv_lhs => rw [← hp']
         rw [GlobalTheory.DefU.RU_RU, Subgroup.coe_inv, inv_mul_cancel, map_one, Module.End.one_apply] }
-  have hKo : IsOpen (K : Set (finU E a)) := (hU.aut φ hφU).level
-  have hKS : ∀ k ∈ K, ∀ v ∈ S, RU E a (k : finU E a) v = v := by
+  have hKo : IsOpen (K : Set (finU (E := E) (n := a))) := (hU.aut φ hφU).level
+  have hKS : ∀ k ∈ K, ∀ v ∈ S, RU E a (k : finU (E := E) (n := a)) v = v := by
     intro k hk v hv
     have hk' : RU E a k φ = φ := hk
     induction hv using Submodule.span_induction with
@@ -60,14 +65,14 @@ theorem UpperTheory.Gal.Int.Div.schurU_of :
       change RU E a k (RU E a x φ) = RU E a x φ
       rw [GlobalTheory.DefU.RU_RU, GlobalTheory.DefU.fin_mul_inf k.2 x.2, ← GlobalTheory.DefU.RU_RU, hk']
     | zero => rw [map_zero]
-    | add p q _ _ hp hq => rw [map_add, hp, hq]
+    | add p q _ _ hp hq => rw [map_add (f := _), hp, hq]
     | smul c p _ hp => rw [map_smul, hp]
   let M : Submodule ℂ (S →ₗ[ℂ] (UA E a → ℂ)) :=
     { carrier := {f | (∀ v, f v ∈ U) ∧ (∀ (x : infU E a) v, f (ρ x v) = RU E a x (f v)) ∧
-        ∀ k ∈ K, ∀ v, RU E a (k : finU E a) (f v) = f v}
+        ∀ k ∈ K, ∀ v, RU E a (k : finU (E := E) (n := a)) (f v) = f v}
       add_mem' := fun {f g} hf hg => ⟨fun v => U.add_mem (hf.1 v) (hg.1 v),
-        fun x v => by rw [LinearMap.add_apply, LinearMap.add_apply, hf.2.1, hg.2.1, map_add],
-        fun k hk v => by rw [LinearMap.add_apply, map_add, hf.2.2 k hk, hg.2.2 k hk]⟩
+        fun x v => by rw [LinearMap.add_apply, LinearMap.add_apply, hf.2.1, hg.2.1, map_add (f := _)],
+        fun k hk v => by rw [LinearMap.add_apply, map_add (f := _), hf.2.2 k hk, hg.2.2 k hk]⟩
       zero_mem' := ⟨fun _ => U.zero_mem, fun x v => by simp, fun k _ v => by simp⟩
       smul_mem' := fun c f hf => ⟨fun v => U.smul_mem c (hf.1 v),
         fun x v => by rw [LinearMap.smul_apply, LinearMap.smul_apply, hf.2.1, map_smul],
@@ -98,7 +103,7 @@ theorem UpperTheory.Gal.Int.Div.schurU_of :
   obtain ⟨v, hv⟩ := hfne
   let W : Submodule ℂ (UA E a → ℂ) :=
     { carrier := {ψ | ψ ∈ U ∧ RU E a z ψ = c • ψ}
-      add_mem' := fun {p q} hp hq => ⟨U.add_mem hp.1 hq.1, by rw [map_add, hp.2, hq.2, smul_add]⟩
+      add_mem' := fun {p q} hp hq => ⟨U.add_mem hp.1 hq.1, by rw [map_add (f := _), hp.2, hq.2, smul_add]⟩
       zero_mem' := ⟨U.zero_mem, by rw [map_zero, smul_zero]⟩
       smul_mem' := fun b p hp => ⟨U.smul_mem b hp.1, by rw [map_smul, hp.2, smul_comm]⟩ }
   have hWU : W ≤ U := fun _ h => h.1

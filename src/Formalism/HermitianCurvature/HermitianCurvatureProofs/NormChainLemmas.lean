@@ -1,9 +1,13 @@
-import Formalism.HermitianCurvature.StatementPN
-import Formalism.HermitianCurvature.HeisenbergConjugationMeasurePreserving
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SecondDerivativeHolds
-import Formalism.FlagUnipotentLattices.ValuationProductBound
-import Formalism.FlagUnipotentLattices.AlgebraicIdentityHigherDegree
-import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+module
+
+public import Formalism.HermitianCurvature.StatementPN
+public import Formalism.HermitianCurvature.HeisenbergConjugationMeasurePreserving
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SecondDerivativeHolds
+public import Formalism.FlagUnipotentLattices.ValuationProductBound
+public import Formalism.FlagUnipotentLattices.AlgebraicIdentityHigherDegree
+public import Formalism.FlagUnipotentLattices.CardSubgroupsOfIndexLe
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.NormChainLemmas
 

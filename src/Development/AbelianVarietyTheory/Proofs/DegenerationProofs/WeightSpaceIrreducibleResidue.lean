@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.BaseFacts
-import Development.AbelianVarietyTheory.Definitions.Degenerations.IsAffineSplitTorusLeft
-import Development.AbelianVarietyTheory.Definitions.Degenerations.CompanionTheory
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.UTorsSt
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsOperators
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AddHomExtSingle
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsGlobalGenerators
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.LinearIndependentOfCommSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.BaseFacts
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.IsAffineSplitTorusLeft
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.CompanionTheory
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.UTorsSt
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsOperators
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AddHomExtSingle
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsGlobalGenerators
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.LinearIndependentOfCommSmul
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -29,10 +33,12 @@ theorem matrix_mul_of_comp {A M J : Type} [CommRing A] [AddCommGroup M] [Module 
   ext l i
   have key := h i
   refine congrFun (uniq (fun l => (m₁ * m₂) l i) (fun l => (x • m₃) l i) ?_) l
-  rw [h₂, h₃, map_sum, Finset.smul_sum] at key
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h₂, h₃, map_sum, Finset.smul_sum] at key
   simp only [map_smul, h₁, Finset.smul_sum, smul_smul] at key
   rw [Finset.sum_comm] at key
-  simp only [Matrix.mul_apply, map_sum, map_mul, Finset.sum_smul, Matrix.smul_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mul_apply, map_sum, map_mul, Finset.sum_smul, Matrix.smul_apply, smul_eq_mul]
   refine Eq.trans ?_ key
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by rw [mul_comm]
 
@@ -114,7 +120,7 @@ theorem chi_smul_rho_mul_proj {T : AddSubgroup S.Gam} (hT : S.IsoFree T) (c : T 
     ← Equiv.sum_comp (Equiv.addLeft s) fun t : T => chi S (c t) • S.ρ t]
   congr 1
   refine Finset.sum_congr rfl fun t _ => ?_
-  rw [mul_smul_comm, smul_smul, ρ_mul_ρ hT, ← chi_add, ← map_add]
+  rw [mul_smul_comm, smul_smul, ρ_mul_ρ hT, ← chi_add, ← map_add (f := _)]
   rfl
 
 theorem rho_comm (hodd : Odd S.N) (hmul : ∀ a b, S.ρ a * S.ρ b =
@@ -164,7 +170,7 @@ theorem irred_of_comm [IsDomain o] (hc : Fintype.card S.J = S.N ^ S.g)
       S.prim.pow (pow_pos (NeZero.pos _) 2) (sq _)
     have : NeZero ((S.r * S.N : ℕ) : F) := ⟨by simpa only [map_natCast] using (S.unit.map y).ne_zero⟩
     rw [← Polynomial.isRoot_cyclotomic_iff, ← Polynomial.map_cyclotomic _ y]
-    exact (hω.isRoot_cyclotomic (NeZero.pos _)).map
+    exact (hω.isRoot_cyclotomic (NeZero.pos _)).map y
   have hζ : y S.ζ ≠ 0 := ((S.prim.isUnit (pow_ne_zero _ (NeZero.ne (S.r * S.N)))).map y).ne_zero
   let ψ : ZMod (S.r * S.N) → F := fun x => y (S.ζ ^ (S.r * S.N)) ^ x.val
   have ψinj : Function.Injective ψ := fun x x' h =>
@@ -223,7 +229,8 @@ theorem irred_of_comm [IsDomain o] (hc : Fintype.card S.J = S.N ^ S.g)
   have hP : ∀ a, Λ (S.proj T c) (Λ (S.ρ a) u) ∈ W := fun a => by
     have e : Λ (S.proj T c) (Λ (S.ρ a) u) = y (Ring.inverse (Nat.card T : o)) •
         (∑ t : T, ψ (S.r • eStd S.g _ t a)) • Λ (S.ρ a) u := by
-      rw [proj_eq, hΛs, map_sum, LinearMap.smul_apply, LinearMap.sum_apply, Finset.sum_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [proj_eq, hΛs, map_sum, LinearMap.smul_apply, LinearMap.sum_apply, Finset.sum_smul]
       congr 1
       refine Finset.sum_congr rfl fun t _ => ?_
       rw [hΛs, LinearMap.smul_apply, comm, smul_comm, ← map_smul, hu]
@@ -248,7 +255,8 @@ theorem irred_of_comm [IsDomain o] (hc : Fintype.card S.J = S.N ^ S.g)
     exact ⟨φ.smulRight v, by simp [hφ]⟩
   obtain ⟨d, hd⟩ := (Submodule.mem_span_range_iff_exists_fun F).mp
     (hspan ▸ Submodule.mem_top : f ∈ Submodule.span F (Set.range fun a => Λ (S.ρ (σ a))))
-  rw [← hv, ← hf, ← hd, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hv, ← hf, ← hd, LinearMap.sum_apply, map_sum]
   refine W.sum_mem fun a _ => ?_
   rw [LinearMap.smul_apply, map_smul]
   exact W.smul_mem _ (hP _)
@@ -257,13 +265,13 @@ end GlobalTheory.WeightIrred
 
 namespace GlobalTheory
 
-open WeightIrred in
 
+open WeightIrred in
 theorem weightSpace_irreducible_residue : GlobalTheory.UT.LL → ∀ (o Ω : Type) [CommRing o] [Field Ω] [Algebra o Ω] [ArithBase o Ω] (S : ThetaSys o Ω) (ρ : S.Real) (p : ℕ) [Fact p.Prime] (y : o →+* OO p) (T : AddSubgroup S.Gam), S.IsoFree T → ∀ (c : T →+ ZMod S.N) (W : Submodule (kb p) (S.J → kb p)), (∀ v ∈ W, ((S.proj T c).map fun a => IsLocalRing.residue (OO p) (y a)).mulVec v = v) → (∀ h ∈ S.perp T, ∀ v ∈ W, ((S.ρ h).map fun a => IsLocalRing.residue (OO p) (y a)).mulVec v ∈ W) → W = ⊥ ∨ ∀ v, ((S.proj T c).map fun a => IsLocalRing.residue (OO p) (y a)).mulVec v = v → v ∈ W := by
   intro hL o Ω _ _ _ hA S ρ p _ y T hT c W hW hst
   have : IsDomain o := hA.inj.isDomain _
-  exact irred_of_comm ρ.card
-    (rho_comm (by rw [ρ.N_eq]; exact ρ.n_odd.pow.pow) (rho_mul_rho hL.1 ρ))
+  exact WeightIrred.irred_of_comm ρ.card
+    (WeightIrred.rho_comm (by rw [ρ.N_eq]; exact ρ.n_odd.pow.pow) (WeightIrred.rho_mul_rho hL.1 ρ))
     ((IsLocalRing.residue (OO p)).comp y) hT c W hW hst
 
 end GlobalTheory

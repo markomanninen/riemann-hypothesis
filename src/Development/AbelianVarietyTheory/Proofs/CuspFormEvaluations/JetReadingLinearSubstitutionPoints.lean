@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.ThConst
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnHolFamOfHolTo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.ThConst
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.AnHolFamOfHolTo
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -39,7 +43,7 @@ theorem tay_coord {N : ℕ} (k : Fin N) :
       have := (ContinuousLinearMap.proj (R := ℂ) (φ := fun _ : Fin N => ℂ) k).fderiv (x := y)
       exact congrArg (fun T : (Fin N → ℂ) →L[ℂ] ℂ => T (Pi.single j 1)) this
     rw [h2, TM.tay_const] at h1
-    have h3 : MvPowerSeries.pderiv ℂ ((0 : Fin 1), j) (MvPowerSeries.X ((0 : Fin 1), k) :
+    have h3 : MvPowerSeries.pderiv (R := ℂ) ((0 : Fin 1), j) (MvPowerSeries.X ((0 : Fin 1), k) :
         MvPowerSeries (Fin 1 × Fin N) ℂ) = MvPowerSeries.C ((Pi.single j 1 : Fin N → ℂ) k) := by
       rw [MvPowerSeries.pderiv_X]
       by_cases h : k = j
@@ -64,7 +68,7 @@ def flatL {n n' g : ℕ} (B : (Fin n' → Fin g → ℂ) →ₗ[ℂ] (Fin n → 
       map_add' := fun v w => by
         funext k
         have : colsOf n' g (v + w) = colsOf n' g v + colsOf n' g w := rfl
-        rw [this, map_add]; rfl
+        rw [this, map_add (f := _)]; rfl
       map_smul' := fun c v => by
         funext k
         have : colsOf n' g (c • v) = c • colsOf n' g v := rfl
@@ -114,7 +118,7 @@ theorem subst_jetN {n n' g m : ℕ} (B : (Fin n' → Fin g → ℂ) →ₗ[ℂ] 
   rw [jetN, subst_renN B σ hσ, ← jetOf_comp_anLin m hf (flatL B), jetN]
   congr 2
   funext v
-  simp only [Function.comp_apply, colsOf_flatL]
+  rw [Function.comp_apply, colsOf_flatL]
 
 theorem isHolFam_clm {Y : Scheme.{0}} {N N' : ℕ} (e : (Fin N → ℂ) → (Sp ℂ ⟶ Y)) (hol : IsHolFam e)
     (T : (Fin N' → ℂ) →L[ℂ] (Fin N → ℂ)) : IsHolFam (fun v => e (T v)) := by

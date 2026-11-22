@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.IntBinomScalar
-import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.ChordSecondLogDeriv
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.IntBinomScalar
+public import Formalism.LocalToGlobal.TorsionIntegrality.SecondCoefficientNorms.ChordSecondLogDeriv
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -43,10 +47,10 @@ theorem rescale_pExp (a : K) (f : PowerSeries K) (hf : constantCoeff f = 0) :
   rw [PowerSeries.rescale_eq_subst, PowerSeries.subst_comp_subst_apply hs hX, ← PowerSeries.rescale_eq_subst]
 
 theorem derivative_pExp (f : PowerSeries K) (hf : constantCoeff f = 0) :
-    derivative K (pExp f) = pExp f * derivative K f := by
+    d⁄dX (pExp f) = pExp f * d⁄dX f := by
   have hs : PowerSeries.HasSubst f := PowerSeries.HasSubst.of_constantCoeff_zero' hf
-  show derivative K (PowerSeries.subst f (PowerSeries.exp K)) =
-    PowerSeries.subst f (PowerSeries.exp K) * derivative K f
+  show d⁄dX (PowerSeries.subst f (PowerSeries.exp K)) =
+    PowerSeries.subst f (PowerSeries.exp K) * d⁄dX f
   rw [PowerSeries.derivative_subst hs, PowerSeries.derivative_exp]
 
 theorem hasSecondLogDeriv_one : HasSecondLogDeriv (1 : PowerSeries K) 0 := by
@@ -55,14 +59,14 @@ theorem hasSecondLogDeriv_one : HasSecondLogDeriv (1 : PowerSeries K) 0 := by
 theorem hasSecondLogDeriv_mul {f h g₁ g₂ : PowerSeries K} (h1 : HasSecondLogDeriv f g₁) (h2 : HasSecondLogDeriv h g₂) :
     HasSecondLogDeriv (f * h) (g₁ + g₂) := by
   unfold HasSecondLogDeriv at *
-  have e1 : derivative K (f * h) = derivative K f * h + f * derivative K h := by
+  have e1 : d⁄dX (f * h) = d⁄dX f * h + f * d⁄dX h := by
     rw [Derivation.leibniz]
     simp only [smul_eq_mul]
     ring
-  have e2 : derivative K (derivative K f * h + f * derivative K h) =
-      derivative K (derivative K f) * h + 2 * (derivative K f * derivative K h) +
-        f * derivative K (derivative K h) := by
-    rw [map_add, Derivation.leibniz, Derivation.leibniz]
+  have e2 : d⁄dX (d⁄dX f * h + f * d⁄dX h) =
+      d⁄dX (d⁄dX f) * h + 2 * (d⁄dX f * d⁄dX h) +
+        f * d⁄dX (d⁄dX h) := by
+    rw [map_add (f := _), Derivation.leibniz, Derivation.leibniz]
     simp only [smul_eq_mul]
     ring
   rw [e1, e2]
@@ -82,7 +86,7 @@ theorem hasSecondLogDeriv_prod {ι : Type} (s : Finset ι) (f g : ι → PowerSe
       (ih fun i hi => hh i (Finset.mem_insert_of_mem hi))
 
 theorem hasSecondLogDeriv_powerSeriesExp (L : PowerSeries K) (hL : constantCoeff L = 0) :
-    HasSecondLogDeriv (pExp L) (derivative K (derivative K L)) := by
+    HasSecondLogDeriv (pExp L) (d⁄dX (d⁄dX L)) := by
   unfold HasSecondLogDeriv
   have h1 := derivative_pExp L hL
   rw [h1, Derivation.leibniz, h1]
@@ -95,13 +99,13 @@ theorem hasSecondLogDeriv_right_unique {f g g' : PowerSeries K} (hf : f ≠ 0) (
   exact mul_right_cancel₀ (pow_ne_zero 2 hf) (h1.symm.trans h2)
 
 theorem eq_C_mul_of_wronskian {a b : PowerSeries K} (hb : constantCoeff b = 1)
-    (h : b * derivative K a = a * derivative K b) : a = C (constantCoeff a) * b := by
+    (h : b * d⁄dX a = a * d⁄dX b) : a = C (constantCoeff a) * b := by
   have hb0 : constantCoeff b ≠ 0 := by rw [hb]; exact one_ne_zero
   have hinv : b * b⁻¹ = 1 := PowerSeries.mul_inv_cancel b hb0
-  have hq : derivative K (a * b⁻¹) = derivative K (C (constantCoeff a)) := by
+  have hq : d⁄dX (a * b⁻¹) = d⁄dX (C (constantCoeff a)) := by
     rw [Derivation.leibniz, PowerSeries.derivative_inv', PowerSeries.derivative_C]
     simp only [smul_eq_mul]
-    linear_combination (-(b⁻¹ * derivative K a)) * hinv + (b⁻¹ ^ 2) * h
+    linear_combination (-(b⁻¹ * d⁄dX a)) * hinv + (b⁻¹ ^ 2) * h
   have hq2 : a * b⁻¹ = C (constantCoeff a) :=
     PowerSeries.derivative.ext hq (by
       rw [map_mul, PowerSeries.constantCoeff_inv, hb, inv_one, mul_one, PowerSeries.constantCoeff_C])
@@ -110,28 +114,28 @@ theorem eq_C_mul_of_wronskian {a b : PowerSeries K} (hb : constantCoeff b = 1)
 
 theorem hasSecondLogDeriv_left_unique {f h g : PowerSeries K} (hf : constantCoeff f = 1)
     (hh : constantCoeff h = 1)
-    (h1 : constantCoeff (derivative K f) = constantCoeff (derivative K h))
+    (h1 : constantCoeff (d⁄dX f) = constantCoeff (d⁄dX h))
     (hfg : HasSecondLogDeriv f g) (hhg : HasSecondLogDeriv h g) : f = h := by
   unfold HasSecondLogDeriv at hfg hhg
   have hf0 : constantCoeff f ≠ 0 := by rw [hf]; exact one_ne_zero
   have hh0 : constantCoeff h ≠ 0 := by rw [hh]; exact one_ne_zero
   have if1 := PowerSeries.mul_inv_cancel f hf0
   have ih1 := PowerSeries.mul_inv_cancel h hh0
-  have dA : derivative K (derivative K f * f⁻¹) = g := by
+  have dA : d⁄dX (d⁄dX f * f⁻¹) = g := by
     rw [Derivation.leibniz, PowerSeries.derivative_inv']
     simp only [smul_eq_mul]
     linear_combination f⁻¹ ^ 2 * hfg +
-      (g * (f * f⁻¹ + 1) - derivative K (derivative K f) * f⁻¹) * if1
-  have dB : derivative K (derivative K h * h⁻¹) = g := by
+      (g * (f * f⁻¹ + 1) - d⁄dX (d⁄dX f) * f⁻¹) * if1
+  have dB : d⁄dX (d⁄dX h * h⁻¹) = g := by
     rw [Derivation.leibniz, PowerSeries.derivative_inv']
     simp only [smul_eq_mul]
     linear_combination h⁻¹ ^ 2 * hhg +
-      (g * (h * h⁻¹ + 1) - derivative K (derivative K h) * h⁻¹) * ih1
-  have hA : derivative K f * f⁻¹ = derivative K h * h⁻¹ := by
+      (g * (h * h⁻¹ + 1) - d⁄dX (d⁄dX h) * h⁻¹) * ih1
+  have hA : d⁄dX f * f⁻¹ = d⁄dX h * h⁻¹ := by
     apply PowerSeries.derivative.ext (by rw [dA, dB])
     rw [map_mul, map_mul, PowerSeries.constantCoeff_inv, PowerSeries.constantCoeff_inv, hf, hh, h1]
-  have hw : h * derivative K f = f * derivative K h := by
-    linear_combination (f * h) * hA + (-(h * derivative K f)) * if1 + (f * derivative K h) * ih1
+  have hw : h * d⁄dX f = f * d⁄dX h := by
+    linear_combination (f * h) * hA + (-(h * d⁄dX f)) * if1 + (f * d⁄dX h) * ih1
   have hfh := eq_C_mul_of_wronskian hh hw
   rw [hfh, hf, map_one, one_mul]
 
@@ -142,7 +146,7 @@ section Calc
 variable {K : Type} [Field K] [CharZero K]
 
 theorem derivative_rescale (a : K) (f : PowerSeries K) :
-    derivative K (rescale a f) = a • rescale a (derivative K f) := by
+    d⁄dX (rescale a f) = a • rescale a (d⁄dX f) := by
   ext n
   simp only [PowerSeries.coeff_derivative, PowerSeries.coeff_rescale, PowerSeries.coeff_smul, smul_eq_mul]
   ring
@@ -158,7 +162,7 @@ theorem constantCoeff_rescale_eq (a : K) (f : PowerSeries K) :
     PowerSeries.coeff_rescale, pow_zero, one_mul]
 
 theorem derivative2_dblInt (e : PowerSeries K) :
-    derivative K (derivative K (dblInt e)) = e := by
+    d⁄dX (d⁄dX (dblInt e)) = e := by
   ext n
   simp only [dblInt, PowerSeries.coeff_derivative, PowerSeries.coeff_mk]
   rw [if_neg (show ¬ (n + 1 + 1 < 2) by omega), show n + 1 + 1 - 2 = n by omega]
@@ -169,9 +173,9 @@ theorem derivative2_dblInt (e : PowerSeries K) :
   field_simp <;> ring
 
 theorem derivative2_lam (e : PowerSeries K) (s2 : K) :
-    derivative K (derivative K (lam e s2)) = e + C s2 := by
+    d⁄dX (d⁄dX (lam e s2)) = e + C s2 := by
   unfold lam
-  rw [map_add, map_add, derivative2_dblInt]
+  rw [map_add (f := _), map_add (f := _), derivative2_dblInt]
   congr 1
   ext n
   simp only [PowerSeries.coeff_derivative, PowerSeries.coeff_C_mul, PowerSeries.coeff_X_pow, PowerSeries.coeff_C]
@@ -184,7 +188,7 @@ theorem constantCoeff_lam (e : PowerSeries K) (s2 : K) : constantCoeff (lam e s2
   simp [lam, dblInt, PowerSeries.coeff_C_mul, PowerSeries.coeff_X_pow]
 
 theorem constantCoeff_derivative_lam (e : PowerSeries K) (s2 : K) :
-    constantCoeff (derivative K (lam e s2)) = 0 := by
+    constantCoeff (d⁄dX (lam e s2)) = 0 := by
   rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, PowerSeries.coeff_derivative]
   simp [lam, dblInt, PowerSeries.coeff_C_mul, PowerSeries.coeff_X_pow]
 
@@ -256,26 +260,27 @@ theorem isogenyIff_of (hE : MvExpLaws) : IsogenyIff := by
   have hΦ : constantCoeff Φ = 0 := by
     rw [hΦdef]
     simp [PowerSeries.smul_eq_C_mul, constantCoeff_rescale_eq, hL]
-  have hΦ1 : constantCoeff (derivative K Φ) = 0 := by
+  have hΦ1 : constantCoeff (d⁄dX Φ) = 0 := by
     rw [hΦdef]
     simp [PowerSeries.smul_eq_C_mul, derivative_rescale, Derivation.map_smul, constantCoeff_rescale_eq,
       constantCoeff_derivative_lam]
   set W := ∏ P, wpShift e (c P) with hWdef
   set g := ∑ P, (2 * e - w P - w (neg P)) with hgdef
   have hWg : HasSecondLogDeriv W g := hasSecondLogDeriv_prod _ _ _ fun P _ => hD P
-  have hEg : HasSecondLogDeriv (pExp Φ) (derivative K (derivative K Φ)) := hasSecondLogDeriv_powerSeriesExp Φ hΦ
+  have hEg : HasSecondLogDeriv (pExp Φ) (d⁄dX (d⁄dX Φ)) := hasSecondLogDeriv_powerSeriesExp Φ hΦ
   have hsum_neg : ∑ P, w (neg P) = ∑ P, w P := Equiv.sum_comp (Function.Involutive.toPerm neg hneg) w
   have hg : g = (Fintype.card ι : PowerSeries K) * (2 * e) - 2 * ∑ P, w P := by
     rw [hgdef, Finset.sum_sub_distrib, Finset.sum_sub_distrib, hsum_neg, Finset.sum_const, Finset.card_univ,
       nsmul_eq_mul]
     ring
   have hend' : C al ^ 2 * rescale al e = e + ∑ P, w P - C (∑ P, c P) := by
-    rw [← map_pow, hend, Finset.sum_sub_distrib, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_pow, hend, Finset.sum_sub_distrib, map_sum]
     ring
-  have hd : derivative K (derivative K Φ) = g + C (2 * (∑ P, c P - (al ^ 2 - ((Fintype.card ι : K) + 1)) * s2)) := by
+  have hd : d⁄dX (d⁄dX Φ) = g + C (2 * (∑ P, c P - (al ^ 2 - ((Fintype.card ι : K) + 1)) * s2)) := by
     rw [hΦdef, map_sub, map_sub, Derivation.map_smul, Derivation.map_smul, Derivation.map_smul, Derivation.map_smul,
       derivative_rescale, Derivation.map_smul, derivative_rescale, derivative2_lam, map_add, rescale_C_eq, hg]
-    simp only [PowerSeries.smul_eq_C_mul, map_mul, map_sub, map_add, map_pow, map_natCast, map_one, map_ofNat]
+    simp only [PowerSeries.smul_eq_C_mul, map_mul, map_sub, map_add (f := _), map_pow, map_natCast, map_one, map_ofNat]
     linear_combination (-2 : PowerSeries K) * hend'
   constructor
   · intro h
@@ -295,16 +300,16 @@ theorem isogenyIff_of (hE : MvExpLaws) : IsogenyIff := by
     have h4 := (mul_eq_zero.1 h3).resolve_left two_ne_zero
     linear_combination -1 * h4
   · intro h
-    have hΦg : derivative K (derivative K Φ) = g := by
+    have hΦg : d⁄dX (d⁄dX Φ) = g := by
       rw [hd, ← h, sub_self, mul_zero, map_zero, add_zero]
     obtain ⟨r, hr⟩ := prod_wpShift_form Finset.univ e c
     have hW1 : constantCoeff W = 1 := by
       rw [hWdef, hr]
       simp
-    have hW2 : constantCoeff (derivative K W) = 0 := by
+    have hW2 : constantCoeff (d⁄dX W) = 0 := by
       rw [hWdef, hr, ← PowerSeries.coeff_zero_eq_constantCoeff_apply, PowerSeries.coeff_derivative]
       simp [PowerSeries.coeff_X_pow_mul', PowerSeries.coeff_one]
-    have hWg' : HasSecondLogDeriv W (derivative K (derivative K Φ)) := by rw [hΦg]; exact hWg
+    have hWg' : HasSecondLogDeriv W (d⁄dX (d⁄dX Φ)) := by rw [hΦg]; exact hWg
     exact hasSecondLogDeriv_left_unique (constantCoeff_pExp hE Φ hΦ) hW1
       (by rw [derivative_pExp Φ hΦ, map_mul, hΦ1, mul_zero, hW2]) hEg hWg'
 

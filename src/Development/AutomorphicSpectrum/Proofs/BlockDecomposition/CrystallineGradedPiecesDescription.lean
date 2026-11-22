@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ConstantCoeffSurjective
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.GaloisTwistIdentitySection
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CrystallineFiltrationSpanDividedPowers
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PerfectoidXiNonZeroDivisorStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ConstantCoeffSurjective
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.GaloisTwistIdentitySection
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CrystallineFiltrationSpanDividedPowers
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PerfectoidXiNonZeroDivisorStatement
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -91,7 +95,7 @@ theorem filtration_element_power_multiple_xi (r : ℕ) {z : A.Acr0} (hz : z ∈ 
         = (l : A.Acr0) ^ N2 * ((l : A.Acr0) ^ N1 * x) + (l : A.Acr0) ^ N1 * ((l : A.Acr0) ^ N2 * y) := by ring
     _ = _ := by
         rw [h1, h2]
-        simp only [map_mul, map_add, map_pow, map_natCast]
+        simp only [map_mul, map_add (f := _), map_pow, map_natCast]
         ring
   | smul a x _ hx =>
     obtain ⟨N, w, h⟩ := hx
@@ -123,7 +127,7 @@ theorem filtration_element_mod_next_level (r : ℕ) {z : A.Acr0} (hz : z ∈ A.F
     refine ⟨w1 + w2, ?_⟩
     have e : x + y - algebraMap A.W A.Acr0 (w1 + w2) * A.dxi0 r =
         (x - algebraMap A.W A.Acr0 w1 * A.dxi0 r) + (y - algebraMap A.W A.Acr0 w2 * A.dxi0 r) := by
-      rw [map_add]; ring
+      rw [map_add (f := _)]; ring
     rw [e]
     exact Ideal.add_mem _ h1 h2
   | smul a x _ hx =>

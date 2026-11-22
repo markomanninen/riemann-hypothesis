@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementTBB
-import Formalism.HermitianCurvature.StatementU
-import Formalism.HermitianCurvature.LetterProductDoubleDegreeCount
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutBPEqDecay
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CapelliEigenSumLinearCombinationStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PolynomialSmulCapelliEigenfunctionSum
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementTBB
+public import Formalism.HermitianCurvature.StatementU
+public import Formalism.HermitianCurvature.LetterProductDoubleDegreeCount
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutBPEqDecay
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CapelliEigenSumLinearCombinationStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.PolynomialSmulCapelliEigenfunctionSum
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.REAL Formalism.QuantumDeterminants Finset
 
@@ -54,7 +58,7 @@ private lemma entry_smul_eigenfunction_lemma_6 {k r : ℕ} {Wp Wq : Type} [Norme
     intro g hg
     have h1 := (hmul _ (hsm c)).2 a b v g hg
     have h2 := (hmul _ (hsm c)).1 ((E a b) v) g hg
-    rw [Module.End.mul_apply, LinearMap.add_apply, Module.End.mul_apply, map_add, Pi.add_apply, h1, h2, hEH]
+    rw [Module.End.mul_apply, LinearMap.add_apply, Module.End.mul_apply, map_add (f := _), Pi.add_apply, h1, h2, hEH]
     split_ifs with hbc
     · subst hbc
       have h3 := (hmul _ (hsm a)).1 v g hg
@@ -87,7 +91,8 @@ private lemma entry_smul_eigenfunction_lemma_6 {k r : ℕ} {Wp Wq : Type} [Norme
     have hcong : ∀ g ∈ _root_.Formalism.FourierDecayAlt.B.GV k r, (fun g : _root_.Formalism.FourierDecayAlt.B.Mat k r => ∑ a, g i a • ev (ι (v s a)) g) g =
         ev (∑ a, x a (ι (v s a))) g := by
       intro g hg
-      rw [map_sum, Finset.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_apply]
       refine Finset.sum_congr rfl fun a _ => ?_
       have h3 := (hmul _ (hsm a)).1 (ι (v s a)) g hg
       try simp only at h3
@@ -121,7 +126,8 @@ private lemma entry_smul_eigenfunction_lemma_6 {k r : ℕ} {Wp Wq : Type} [Norme
     show g i j • f g = _
     rw [← hw g hg, ← h3]
     show ev (x j (ι w)) g = _
-    rw [hv, map_sum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hv, map_sum, Finset.sum_apply]
 
 open Finset in
 private lemma isEigenSum_entry_smul {k r : ℕ} {Wp Wq : Type} [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp]
@@ -208,8 +214,8 @@ private lemma isEigenSum_poly_smul {k r : ℕ} {Wp Wq : Type} [NormedAddCommGrou
       Finsupp.prod_mapDomain_index (fun _ => pow_zero _) (fun _ _ _ => pow_add _ _ _)]
     rfl
 
-open Finset in
 
+open Finset in
 theorem _root_.GlobalTheory.gfPow_smul_comp_polyOp_eigenSum :
     ∀ (k r : ℕ) (Wp Wq : Type) [NormedAddCommGroup Wp] [InnerProductSpace ℂ Wp] [NormedAddCommGroup Wq] [InnerProductSpace ℂ Wq] [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq] (Wq' : Type) [NormedAddCommGroup Wq'] [InnerProductSpace ℂ Wq'] [FiniteDimensional ℂ Wq'] (z z' : Fin (2 * r + k + 1) → ℂ) (lam : Fin (2 * r + k + 1) → ℝ) (A₀ : ℝ) (p₀ dA : ℕ) (f : _root_.Formalism.FourierDecayAlt.B.Mat k r → (Wq →L[ℂ] Wp)) (Aop : _root_.Formalism.FourierDecayAlt.B.Mat k r → (Wq' →L[ℂ] Wq)), (∀ s t, s ≠ t → 2 * (((2 * r + 2) * p₀ + dA : ℕ) : ℝ) < |lam s - lam t|) → (_root_.Formalism.FourierDecayAlt.B.CkOn ⊤ (_root_.Formalism.FourierDecayAlt.B.GV k r) (f) ∧ ∀ m : ℕ, _root_.Formalism.FourierDecayAlt.B.InCC (A₀) m (f)) → (∀ Y : ℝ, ∀ g ∈ _root_.Formalism.FourierDecayAlt.B.GV k r, _root_.Formalism.FourierDecayAlt.Q.CV k r (Y : ℂ) (f) g = ((∏ s, (Y + lam s) : ℝ) : ℂ) • (f) g) → (∃ (n₁ : ℕ) (c : Fin n₁ → _root_.Formalism.FourierDecayAlt.B.Mat k r → ℂ) (L : Fin n₁ → (Wq' →L[ℂ] Wq)), (∀ i, _root_.Formalism.FourierDecayAlt.U.IsPolyDeg dA (c i)) ∧ ∀ g, Aop g = ∑ i, c i g • L i) → (∃ (N₀ : ℕ) (Fi : Fin N₀ → _root_.Formalism.FourierDecayAlt.B.Mat k r → (Wq' →L[ℂ] Wp)) (ν : Fin N₀ → Fin (2 * r + k + 1) → ℤ), (∀ i s, |ν i s| ≤ (((2 * r + 2) * p₀ + dA : ℕ) : ℤ)) ∧ (∀ i, (_root_.Formalism.FourierDecayAlt.B.CkOn ⊤ (_root_.Formalism.FourierDecayAlt.B.GV k r) (Fi i) ∧ ∀ m : ℕ, _root_.Formalism.FourierDecayAlt.B.InCC (A₀ - (((2 * r + 2) * p₀ + dA : ℕ) : ℝ)) m (Fi i))) ∧ (∀ i, (∀ Y : ℝ, ∀ g ∈ _root_.Formalism.FourierDecayAlt.B.GV k r, _root_.Formalism.FourierDecayAlt.Q.CV k r (Y : ℂ) (Fi i) g = ((∏ s, (Y + lam s + (ν i s : ℝ)) : ℝ) : ℂ) • (Fi i) g)) ∧ ∀ g ∈ _root_.Formalism.FourierDecayAlt.B.GV k r, (fun g => ((_root_.Formalism.QuantumDeterminants.Gf k r z z' g ^ p₀ : ℝ) : ℂ) • (f g).comp (Aop g)) g = ∑ i, Fi i g) := by
   intro k r Wp Wq _ _ _ _ _ _ Wq' _ _ _ z z' lam A₀ p₀ dA f Aop hgap hf heig hA
@@ -247,6 +253,7 @@ theorem _root_.GlobalTheory.gfPow_smul_comp_polyOp_eigenSum :
     (fun i g => (((_root_.Formalism.QuantumDeterminants.Gf k r z z' g ^ p₀ : ℝ) : ℂ) * c i g) • (f g).comp (L i)) _
     (fun i _ => ⟨e, A₀ - e, le_rfl, le_rfl, hpiece i⟩)
     (fun g _ => by
-      simp [hAop, ContinuousLinearMap.comp_finset_sum, ContinuousLinearMap.comp_smul, Finset.smul_sum, smul_smul])
+      ext v
+      simp [hAop, Finset.smul_sum, smul_smul])
 
 end GlobalTheory

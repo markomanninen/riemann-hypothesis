@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.LocalAtPlace
-import GroundTheory.GlobalFields.Adele.Approximation
-import GroundTheory.GlobalFields.IdeleGroups.InfiniteProjInfiniteEmbeddingOfNe
-import GroundTheory.GlobalFields.IdeleGroups.Restricted
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.LocalAtPlace
+public import GroundTheory.GlobalFields.Adele.Approximation
+public import GroundTheory.GlobalFields.IdeleGroups.InfiniteProjInfiniteEmbeddingOfNe
+public import GroundTheory.GlobalFields.IdeleGroups.Restricted
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter
 open scoped NumberField.AdeleRing RestrictedProduct
@@ -35,9 +39,6 @@ theorem t2Space_adeleRing : T2Space 𝔸[K] :=
 instance IdeleGroup.locallyCompactSpace : LocallyCompactSpace (IdeleGroup K) :=
   inferInstance
 
-theorem IdeleGroup.t2Space : T2Space (IdeleGroup K) :=
-  inferInstance
-
 instance locallyCompactSpace_units_finiteAdeleRing :
     LocallyCompactSpace (FiniteAdeleRing (𝓞 K) K)ˣ :=
   inferInstance
@@ -45,30 +46,5 @@ instance locallyCompactSpace_units_finiteAdeleRing :
 instance locallyCompactSpace_units_infiniteAdeleRing :
     LocallyCompactSpace (InfiniteAdeleRing K)ˣ :=
   inferInstance
-
-theorem isCompact_units_adicCompletionIntegers (v : HeightOneSpectrum (𝓞 K)) :
-    IsCompact ((Submonoid.ofClass (v.adicCompletionIntegers K)).units :
-      Set (v.adicCompletion K)ˣ) := by
-  have h : IsCompact ((v.adicCompletionIntegers K : Set (v.adicCompletion K)) ×ˢ
-      (MulOpposite.unop ⁻¹' (v.adicCompletionIntegers K : Set (v.adicCompletion K)))) :=
-    (isCompact_adicCompletionIntegers v).prod
-      (MulOpposite.opHomeomorph.symm.isCompact_preimage.2 (isCompact_adicCompletionIntegers v))
-  convert Units.isClosedEmbedding_embedProduct.isCompact_preimage h using 1
-  ext u
-  simp only [SetLike.mem_coe, Submonoid.mem_units_iff, Set.mem_preimage, Set.mem_prod,
-    Units.embedProduct_apply, MulOpposite.unop_op]
-  exact Iff.rfl
-
-instance locallyCompactSpace_restrictedProduct_units :
-    LocallyCompactSpace (Πʳ v : HeightOneSpectrum (𝓞 K),
-      [(v.adicCompletion K)ˣ, (Submonoid.ofClass (v.adicCompletionIntegers K)).units]) :=
-  haveI : Fact (∀ v : HeightOneSpectrum (𝓞 K),
-      IsOpen ((Submonoid.ofClass (v.adicCompletionIntegers K)).units :
-        Set (v.adicCompletion K)ˣ)) :=
-    ⟨fun v ↦ IdeleGroup.isOpen_units_adicCompletionIntegers K v⟩
-  RestrictedProduct.locallyCompactSpace_of_group
-    (R := fun v : HeightOneSpectrum (𝓞 K) ↦ (v.adicCompletion K)ˣ)
-    (B := fun v ↦ (Submonoid.ofClass (v.adicCompletionIntegers K)).units)
-    (.of_forall fun v ↦ isCompact_units_adicCompletionIntegers K v)
 
 end GroundTheory.Global

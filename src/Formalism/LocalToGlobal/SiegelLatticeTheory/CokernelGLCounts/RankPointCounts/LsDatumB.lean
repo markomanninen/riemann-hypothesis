@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.SupportProposition
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.SupportProposition
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,6 @@ theorem hasSum_rst (x0 : ∀ p, X p) (f : ∀ p, X p → ℂ) (a : ι → ℂ) (
   rw [← hj.hasSum_iff hzero]
   convert h0 using 1
   funext θ
-  simp only [Function.comp_apply]
   apply finprod_eq_prod_of_mulSupport_subset
   intro p hp
   by_contra hS

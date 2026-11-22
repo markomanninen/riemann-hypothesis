@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsMahler
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsMahler
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open MeasureTheory Matrix
@@ -24,7 +29,9 @@ theorem FsLogAverage.proof (h1 : BallAverageLinear.Statement) (h2 : FsLogPointOf
     funext w
     exact abs_of_nonpos (hle w)
   have hmeanAbs : ⨍ v in ballH h, |φ (h.mat *ᵥ v)| = (harmonic (n - 1) : ℝ) / 2 := by
-    rw [(h1 n h (fun w => |φ w|)).2, habs, average_neg, hmean]
+    rw [(h1 n h (fun w => |φ w|)).2, habs]
+    change (⨍ w in ballH (HermNorm.std n), (-φ) w) = _
+    rw [average_neg, hmean]
     ring
   obtain ⟨_, hfin⟩ := h4 n h
   refine ⟨?_, ?_, ?_⟩

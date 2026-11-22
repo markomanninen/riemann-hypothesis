@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.GenIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCoordinateNearGenericPoint
+module
+
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.GenIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCoordinateNearGenericPoint
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -94,8 +98,8 @@ theorem exists_form (h1 : StPts) [IsIntegral Z] [NoetherianSpace Z] (hE : Emb p 
 
 end ChowFormHeightComparison₂.CF.H
 
-open ChowFormHeightComparison₂.CF.H in
 
+open ChowFormHeightComparison₂.CF.H in
 theorem ChowFormHeightComparison₂.CF.stCharts (h1 : ChowFormHeightComparison₂.CF.StPts) : ChowFormHeightComparison₂.CF.StCharts := by
   intro K _ _ Z _ p B m s e hE hX
   have := hX.isNoetherian

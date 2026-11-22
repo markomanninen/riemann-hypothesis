@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Matrix
 
 namespace GlobalTheory
@@ -13,7 +18,8 @@ theorem rat_mem_span_of_real_mem_span (k r : ℕ) (w : Fin k → Fin r → ℚ) 
   have hf : ∀ x : Fin r → ℚ, f x = ∑ j, x j * a j := by
     intro x
     conv_lhs => rw [pi_eq_sum_univ x]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, smul_eq_mul]
   have hw : ∀ i, f (w i) = 0 := by

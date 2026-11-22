@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProperAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.MatchSplit
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.RegOkPi
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.PushTens
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.GlueBasic
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.ClosedProperAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.MatchSplit
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.RegOkPi
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.PushTens
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.GlueBasic
+
+@[expose] public section
 
 open MeasureTheory NumberField
 
@@ -28,7 +32,7 @@ private theorem UpperTheory.ConvolutionTheory.L1.matchInf_tens (R S : Type) [Com
   haveI : SecondCountableTopology (GL (Fin n) R) :=
     (Units.isEmbedding_embedProduct (M := Matrix (Fin n) (Fin n) R)).secondCountableTopology
   refine ⟨?_, ?_, ?_⟩
-  · exact continuous_finset_prod _ fun i _ => (hφ i).1.comp (h5 i)
+  · exact continuous_finsetProd _ fun i _ => (hφ i).1.comp (h5 i)
   · have hK : IsCompact (D.glue n '' Set.pi Set.univ fun i => tsupport (φ i)) :=
       (isCompact_univ_pi fun i => (hφ i).2.isCompact).image h4
     refine HasCompactSupport.intro hK fun x hx => ?_

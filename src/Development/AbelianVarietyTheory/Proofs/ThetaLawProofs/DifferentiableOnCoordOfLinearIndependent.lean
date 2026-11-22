@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -10,7 +14,7 @@ theorem differentiableAt_det_of_entries {E I : Type} [NormedAddCommGroup E] [Nor
     DifferentiableAt ℂ (fun e => (A e).det) x := by
   simp only [Matrix.det_apply']
   refine DifferentiableAt.fun_sum fun σ _ => DifferentiableAt.const_mul ?_ _
-  exact (HasFDerivAt.finset_prod (fun i _ => (h (σ i) i).hasFDerivAt)).differentiableAt
+  exact (HasFDerivAt.finsetProd (fun i _ => (h (σ i) i).hasFDerivAt)).differentiableAt
 
 theorem differentiableOn_coord_of_linearIndependent :
     ∀ (E Z I : Type) [NormedAddCommGroup E] [NormedSpace ℂ E] [Fintype I] (W : Set E) (Th : I → E → Z → ℂ) (F : E → Z → ℂ) (c : E → I → ℂ), IsOpen W → (∀ k z, DifferentiableOn ℂ (fun e => Th k e z) W) → (∀ z, DifferentiableOn ℂ (fun e => F e z) W) → (∀ e ∈ W, LinearIndependent ℂ (fun k => Th k e)) → (∀ e ∈ W, ∀ z, F e z = ∑ k, c e k * Th k e z) → ∀ k, DifferentiableOn ℂ (fun e => c e k) W := by

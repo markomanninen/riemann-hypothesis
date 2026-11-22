@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsIntegralCc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsIntegralCc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FundamentalDomainPointBound
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -23,7 +27,7 @@ theorem posDef_of_lminor : ∀ (n : ℕ) (A : Matrix (Fin n) (Fin n) ℂ), A.IsH
     (∀ i : Fin (n + 1), 0 < (lminor A i).re) → A.PosDef
   | 0, A, hA, _ => ⟨hA, fun x hx => absurd (Subsingleton.elim x 0) hx⟩
   | n + 1, A, hA, hm => by
-    set A' := A.submatrix Fin.castSucc Fin.castSucc with hA'def
+    set A' : Matrix (Fin n) (Fin n) ℂ := A.submatrix Fin.castSucc Fin.castSucc with hA'def
     have hA'h : A'.IsHermitian := hA.submatrix _
     have hA' : A'.PosDef := posDef_of_lminor n A' hA'h (fun i => by
       rw [lminor_submatrix_castSucc]; exact hm _)
@@ -105,7 +109,7 @@ theorem hermC_zero_left (τ : E →+* ℂ) (G : Matrix (Fin r) (Fin r) E) (v : F
 theorem hermC_add_right (τ : E →+* ℂ) (G : Matrix (Fin r) (Fin r) E) (u v v' : Fin r → ℂ) :
     hermC τ G u (v + v') = hermC τ G u v + hermC τ G u v' := by
   unfold hermC
-  simp only [Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 theorem hermC_smul_right (τ : E →+* ℂ) (G : Matrix (Fin r) (Fin r) E) (c : ℂ) (u v : Fin r → ℂ) :
     hermC τ G u (c • v) = conj c * hermC τ G u v := by
@@ -142,7 +146,8 @@ theorem hermC_sum_right {ι : Type} (τ : E →+* ℂ) (G : Matrix (Fin r) (Fin 
 theorem hermC_conj (τ : E →+* ℂ) {G : Matrix (Fin r) (Fin r) E} (hG : ∀ a b, cc (G a b) = G b a)
     (u v : Fin r → ℂ) : conj (hermC τ G u v) = hermC τ G v u := by
   unfold hermC
-  simp only [map_sum, map_mul, Complex.conj_conj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, Complex.conj_conj]
   conv_lhs => rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [← emb_cc, hG]
@@ -470,7 +475,8 @@ theorem hermC_emb {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (
     (G : Matrix (Fin r) (Fin r) E) (u v : Fin r → E) :
     hermC τ G (Data.emb τ u) (Data.emb τ v) = τ (herm G u v) := by
   unfold hermC herm Data.emb
-  simp only [map_sum, map_mul, emb_cc]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, emb_cc]
 
 theorem emb_ne_zero {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ} (τ : E →+* ℂ)
     {u : Fin r → E} (hu : u ≠ 0) : Data.emb τ u ≠ 0 := by

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMixModelB
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAwayUnitOfPowEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsMixModelB
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsAwayUnitOfPowEqOne
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Theta Formalism.L2.DIV IsDedekindDomain NumberField MeasureTheory Matrix
 open GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.FunObj.SqNum GlobalTheory.RowTest GlobalTheory.SqTop GlobalTheory.SqTower GlobalTheory.SplitFlip GlobalTheory.SplitWeil GlobalTheory.StdFrames GlobalTheory.ChainFr GlobalTheory.SquareDict GlobalTheory.SquareComm GlobalTheory.BigNZ GlobalTheory.FlipMatch GlobalTheory.AdelicU
 open GlobalTheory.IndefiniteRowSideFullHecke.UnitCharTriangle (Tri)
@@ -91,7 +96,9 @@ theorem nu_arith : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : GlobalTheory.Ch
   have hsub : G.pl.W0 ⊆ locPl G t := fun w hw => by unfold locPl; simp [hw]
   have hf : ∀ w, (((locGrid G t w).nu i j (x w) : ℂˣ) : ℂ) =
       ((L.xiH t).loc w (x w) : ℂ) * (((locGrid G μ₀ w).nu i j (x w) : ℂˣ) : ℂ) := fun w => by
-    simp only [Grid.nu, locGrid, MonoidHom.div_apply, Formalism.L2.Host.HChar.loc_mul, hL.xi_base, Formalism.L2.Host.HChar.loc_one,
+    have loc_mul (a b : HChar D.host.E) : (a * b).loc w (x w) = a.loc w (x w) * b.loc w (x w) := rfl
+    have loc_one : (1 : HChar D.host.E).loc w (x w) = 1 := rfl
+    simp only [Grid.nu, locGrid, MonoidHom.div_apply, loc_mul, hL.xi_base, loc_one,
       Units.val_div_eq_div_val, Units.val_mul, Units.val_one]
     ring
   have hb : ∀ w ∈ locPl G t, GlobalTheory.KappaArith.AwayIm D (Qn G t) (((locGrid G μ₀ w).nu i j (x w) : ℂˣ) : ℂ) := fun w hw => by
@@ -103,7 +110,7 @@ theorem nu_arith : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : GlobalTheory.Ch
     have h2 : D.R.m - (i : ℕ) ≤ D.R.m := Nat.sub_le _ _
     have a := awayIm_unit (hC.mu0 j) ((L.C.isMu0 j).tame w) (x w) hv (Qn G t)
     have b := awayIm_unit (hC.chi _ h1 h2) (chi_levelLe G h1 h2 w) (x w)⁻¹ hv' (Qn G t)
-    have hm : muBase L (j + 1) = L.C.mu0 j := by rw [muBase, dif_pos j.2]
+    have hm : muBase L (j + 1) = L.C.mu0 j := by rw [muBase, dite_eq_left j.2]
     convert a.mul b using 1
     simp only [Grid.nu, locGrid, MonoidHom.div_apply, hL.xi_base, mul_one, hm, map_inv,
       Units.val_div_eq_div_val, Units.val_inv_eq_inv_val]

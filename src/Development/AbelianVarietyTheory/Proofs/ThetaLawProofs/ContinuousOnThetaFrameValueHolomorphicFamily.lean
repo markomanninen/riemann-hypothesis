@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.KaRuleK
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.IsPluriharmonicSiegel
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.OneEqSpTranslZero
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ThetaFrameValueIndependentNormalForm
-import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsNormalOfWeil
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsRelativeExpOfParts
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LatContMapContinuous
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TorsionEqAndWeilIsOfIsHolTo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.KaRuleK
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.IsPluriharmonicSiegel
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.OneEqSpTranslZero
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ThetaFrameValueIndependentNormalForm
+public import Development.AbelianVarietyTheory.Proofs.ThetaLawProofs.ExistsNormalOfWeil
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsRelativeExpOfParts
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LatContMapContinuous
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TorsionEqAndWeilIsOfIsHolTo
+
+@[expose] public section
 
 noncomputable section
 
@@ -232,7 +236,7 @@ theorem continuousOn_value : Out.Laws → ThetaUnifAV → Key.Chi.InversionState
   have cM : ContinuousAt (fun b => Matrix.of fun i => (2 * Real.pi * Complex.I : ℂ) • h b *ᵥ W b i) b₀ := by
     refine continuousAt_pi.2 fun i => continuousAt_pi.2 fun j => ?_
     simp only [Matrix.of_apply, Pi.smul_apply, smul_eq_mul, Matrix.mulVec, dotProduct]
-    exact continuousAt_const.mul (tendsto_finset_sum _ fun l _ =>
+    exact continuousAt_const.mul (tendsto_finsetSum _ fun l _ =>
       ((dh j l).differentiableAt hCn).continuousAt.mul (continuousAt_pi.1 (cW i) l))
   refine ContinuousAt.continuousWithinAt (ContinuousAt.congr ?_ (Filter.eventuallyEq_of_mem hCn ht).symm)
   exact ((continuous_id.matrix_det.continuousAt.comp cM).pow 4).div (cc.pow 8) (pow_ne_zero _ (f₄ b₀ hC₀))

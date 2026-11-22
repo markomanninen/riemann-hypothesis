@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.TaylorWilesObstructionBound
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.TaylorWilesObstructionBound
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing Filter UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 
@@ -169,7 +173,7 @@ private theorem pow_mem (l : ℕ) [CompactSpace Γ] (H : Subgroup Γ) (V : OpenN
     simp only [UpperTheory.V.Pa.PL, Subgroup.mem_iInf]
     intro U hU
     exact Set.mem_iInter.mp hx ⟨U, hU⟩
-  obtain ⟨i, hi⟩ := hVc.elim_directed_family_closed t hclosed hempty hdir
+  obtain ⟨i, hi⟩ := (hVc.elim_directed_family_closed t hclosed (Set.disjoint_iff_inter_eq_empty.2 hempty) hdir).imp (fun _ => Disjoint.inter_eq)
   obtain ⟨e, he⟩ := i.2 k hk
   refine ⟨e, ?_⟩
   by_contra hne

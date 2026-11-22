@@ -1,7 +1,13 @@
-import Mathlib
-import GroundTheory.LocalFields.AbstractLocalReciprocity.ProfiniteInteger
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.ProfiniteInteger
+
+@[expose] public section
 
 namespace GroundTheory.LocalField.Abstract
+
+open scoped GroundTheory.LocalField.Abstract
 
 namespace ProfiniteInteger
 
@@ -79,10 +85,9 @@ theorem eq_zero_of_nsmul_eq_zero {n : ℕ} (hn : n ≠ 0) {x : ℤ̂} (h : n •
   exact Nat.dvd_of_mul_dvd_mul_left N.pos h3
 
 instance : IsAddTorsionFree ℤ̂ where
-  nsmul_right_injective n hn x y h := by
+  eq_of_nsmul_eq_nsmul_of_addCommute n hn x y _ h := by
     rw [← sub_eq_zero]
     apply eq_zero_of_nsmul_eq_zero hn
-    simp only at h
     rw [nsmul_sub, h, sub_self]
 
 theorem index_multiples (n : ℕ+) : (multiples n).index = n := by

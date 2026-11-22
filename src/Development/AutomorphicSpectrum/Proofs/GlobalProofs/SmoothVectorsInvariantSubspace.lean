@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsSmoothVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ theorem contDiff_mulRight {n : ℕ} (g : Matrix (Fin n) (Fin n) ℂ) :
   rw [e]
   refine contDiff_pi.2 fun i => contDiff_pi.2 fun j => ?_
   refine ContDiff.sum fun k _ => ?_
-  exact ((contDiff_apply ℝ ℂ k).comp (contDiff_apply ℝ (Fin n → ℂ) i)).mul contDiff_const
+  exact ((contDiff_apply ℝ (fun _ => ℂ) k).comp (contDiff_apply ℝ (fun _ => (Fin n → ℂ)) i)).mul contDiff_const
 
 theorem smooth_closed : ∀ {n : ℕ} {G : Set (Matrix (Fin n) (Fin n) ℂ)} {H : Type} [NormedAddCommGroup H]
     [InnerProductSpace ℂ H] {π : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)} (hG : IsLinRed G)
@@ -29,7 +33,7 @@ theorem smooth_closed : ∀ {n : ℕ} {G : Set (Matrix (Fin n) (Fin n) ℂ)} {H 
   refine ⟨?_, ?_, ?_⟩
   · rintro u v ⟨Fu, hFu, hu⟩ ⟨Fv, hFv, hv⟩
     refine ⟨fun z => Fu z + Fv z, hFu.add hFv, fun z hz => ?_⟩
-    rw [map_add, hu z hz, hv z hz]
+    rw [map_add (f := _), hu z hz, hv z hz]
   · rintro c v ⟨Fv, hFv, hv⟩
     refine ⟨fun z => c • Fv z, hFv.const_smul c, fun z hz => ?_⟩
     rw [map_smul, hv z hz]

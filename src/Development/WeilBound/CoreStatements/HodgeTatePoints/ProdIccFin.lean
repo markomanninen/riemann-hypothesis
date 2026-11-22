@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.CotangentSurjective
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
-import Development.WeilBound.CoreStatements.HodgeTatePoints.RcProj
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HasLenOfEquiv
-import ReciprocityTheory.DualLattices.EigenLengthProductStatementHolds
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TeichmullerCharacterOrderGenerates
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.CotangentSurjective
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.IsTight
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.StepOrderRes
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.RcProj
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HasLenOfEquiv
+public import ReciprocityTheory.DualLattices.EigenLengthProductStatementHolds
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TeichmullerCharacterOrderGenerates
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,8 @@ lemma gens_of_len {M : Type} [AddCommGroup M] [Module R M] {m : ℕ} {c : Fin m 
   refine ⟨fun i => e.symm (Pi.single i 1), fun i => ?_, fun x => ⟨fun i => Quotient.out (e x i), ?_⟩⟩
   · rw [← map_smul, single_smul_self, map_zero]
   · apply e.injective
-    simp only [map_sum, map_smul, LinearEquiv.apply_symm_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearEquiv.apply_symm_apply]
     exact eq_sum_single c (e x)
 
 lemma len_mul_le (hv : v.Integers R) {A B D : Type} [AddCommGroup A] [Module R A] [AddCommGroup B]
@@ -100,10 +105,45 @@ lemma prod_Icc_fin (r : ℕ → NNReal) (n : ℕ) :
 
 end Gen
 
-theorem om_step : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C], v.Integers R → v (p : C) < 1 → ∀ (F : Type) [Field F] [Fintype F] [DecidableEq F] [CharP F p] (f : ℕ), Fintype.card F = p ^ f → ∀ (N : Type) [AddCommGroup N] [Module F N] [Fintype N] [DecidableEq N] (AA : HopfOrder (C := C) R N), FStable F AA.carrier → ∀ (K : Submodule F N) (χ : MulChar F R) (a b c : NNReal), HasLen v R (OmType (AA.carrier.map (LinearMap.funLeft R C (Subtype.val : K → N))) χ) a → HasLen v R (OmType (AA.carrier.comap (LinearMap.funLeft R C (K.mkQ : N → N ⧸ K))) χ) b → HasLen v R (OmType AA.carrier χ) c → a * b ≤ c := by
+theorem om_step : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C], v.Integers R → v (p : C) < 1 → ∀ (F : Type) [Field F] [Fintype F] [DecidableEq F] [CharP F p] (f : ℕ), Fintype.card F = p ^ f → ∀ (N : Type) [AddCommGroup N] [Module F N] [Fintype N] [DecidableEq N] (AA : HopfOrder (C := C) R N), FStable (F := F) AA.carrier → ∀ (K : Submodule F N) (χ : MulChar F R) (a b c : NNReal), HasLen v R (OmType (AA.carrier.map (LinearMap.funLeft R C (Subtype.val : K → N))) χ) a → HasLen v R (OmType (AA.carrier.comap (LinearMap.funLeft R C (K.mkQ : N → N ⧸ K))) χ) b → HasLen v R (OmType AA.carrier χ) c → a * b ≤ c := by
   intro p _ C _ _ _ v R _ _ hv hvp F _ _ _ _ f _ N _ _ _ _ AA hAA K χ a b c ha hb hc
   have hu := exists_inv_card (F := F) hv p hvp
-  have hQ : FStable F (AA.carrier.comap (LinearMap.funLeft R C K.mkQ)) := fstable_comap _ hAA _
+  have hQ : FStable (F := F) (AA.carrier.comap (LinearMap.funLeft R C K.mkQ)) := by
+    intro a g hg
+    have hg' := hAA a _ hg
+    show LinearMap.funLeft R C K.mkQ _ ∈ AA.carrier
+    convert hg' using 1
+    funext x
+    show g (a • K.mkQ x) = g (K.mkQ (a • x))
+    rw [map_smul]
+  have hsq : FStable (F := F) (sqIdeal (augIdeal AA.carrier)) :=
+    fun a _ hg => sq_pull (LinearMap.lsmul F N a).toAddMonoidHom _ _ (hAA a) hg
+  have proj_mem {X : Type} [AddCommGroup X] [Module F X] (χ : MulChar F R)
+      (S : Submodule R (X → C)) (hS : FStable (F := F) S) {g : X → C} (hg : g ∈ S) :
+      projL χ g ∈ S := by
+    obtain ⟨u, hu⟩ := hu
+    have hproj : projL χ g = u • ∑ a : Fˣ, χ⁻¹ (a : F) • (fun x => g ((a : F) • x)) := by
+      funext x
+      rw [projL_apply, Pi.smul_apply, Finset.sum_apply, Algebra.smul_def, hu]
+      exact congrArg _ (Finset.sum_congr rfl fun a _ => (Algebra.smul_def _ _).symm)
+    rw [hproj]
+    exact S.smul_mem _ (S.sum_mem fun a _ => S.smul_mem _ (hS _ g hg))
+  have proj_eig {X : Type} [AddCommGroup X] [Module F X] (χ : MulChar F R)
+      {M : Submodule R (X → C)} (hM : FStable (F := F) M) {g : X → C} (hg : g ∈ augIdeal M) :
+      projL χ g ∈ eig M χ := by
+    rw [mem_aug] at hg
+    refine ⟨proj_mem χ M hM hg.1, fun a x => ?_⟩
+    by_cases ha : a = 0
+    · rw [ha, zero_smul, MulChar.map_zero, map_zero, zero_mul, projL_apply]
+      simp only [smul_zero, hg.2, mul_zero, Finset.sum_const_zero]
+    · obtain ⟨a, rfl⟩ := isUnit_iff_ne_zero.2 ha
+      rw [projL_apply, projL_apply, mul_left_comm, Finset.mul_sum Finset.univ _ (algebraMap R C _),
+        ← Equiv.sum_comp (Equiv.mulRight a) (fun b : Fˣ => algebraMap R C (χ (a : F)) *
+          (algebraMap R C (χ⁻¹ (b : F)) * g ((b : F) • x)))]
+      congr 1
+      refine Finset.sum_congr rfl fun b _ => ?_
+      rw [Equiv.coe_mulRight, Units.val_mul, mul_smul, ← mul_assoc, ← map_mul, map_mul χ⁻¹,
+        mul_left_comm, mul_inv_unit, mul_one]
   rw [mul_comm]
   refine len_mul_le hv (omMap χ K.mkQ (AA.carrier.comap (LinearMap.funLeft R C K.mkQ)) AA.carrier
       (fun _ hg => hg))
@@ -118,7 +158,7 @@ theorem om_step : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed
       have := ((mem_aug _ _).1 (eig_le_aug _ χ hh)).2
       rw [← hgh] at this
       exact this
-    refine ⟨Submodule.Quotient.mk ⟨projL χ g, projL_eig hu χ hAA hga⟩, ?_⟩
+    refine ⟨Submodule.Quotient.mk ⟨projL χ g, proj_eig χ hAA hga⟩, ?_⟩
     refine congrArg Submodule.Quotient.mk (Subtype.ext ?_)
     show LinearMap.funLeft R C K.subtype (projL χ g) = h
     rw [← projL_funLeft, ← projL_self χ hh, ← hgh]
@@ -127,19 +167,47 @@ theorem om_step : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed
     have hx' := (Submodule.Quotient.mk_eq_zero _).1 hx
     obtain ⟨q, hq, hgq⟩ := om_exact hv AA K.subtype.toAddMonoidHom K.mkQ.toAddMonoidHom
       K.mkQ_surjective Subtype.val_injective (range_subtype_eq K) g (eig_le_aug _ χ hg) hx'
-    refine ⟨Submodule.Quotient.mk ⟨projL χ q, projL_eig hu χ hQ hq⟩, ?_⟩
+    refine ⟨Submodule.Quotient.mk ⟨projL χ q, proj_eig χ hQ hq⟩, ?_⟩
     symm
     refine (Submodule.Quotient.eq _).2 ?_
     show g - LinearMap.funLeft R C K.mkQ (projL χ q) ∈ sqIdeal (augIdeal AA.carrier)
-    have := projL_mem hu χ _ (fstable_sq hAA) hgq
+    have := proj_mem χ _ hsq hgq
     rw [map_sub, projL_self χ hg] at this
     rw [← projL_funLeft]
     exact this
 
-theorem om_split : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C], v.Integers R → v (p : C) < 1 → ∀ (F : Type) [Field F] [Fintype F] [DecidableEq F] [CharP F p] (f : ℕ), Fintype.card F = p ^ f → ∀ (N : Type) [AddCommGroup N] [Module F N] [Fintype N] [DecidableEq N] (AA : HopfOrder (C := C) R N), FStable F AA.carrier → ∀ σ : MulChar F R, IsFund p σ → (∀ χ : MulChar F R, ∃ r : NNReal, r ≠ 0 ∧ HasLen v R (OmType AA.carrier χ) r) ∧ ∀ r : ℕ → NNReal, (∀ m ∈ Finset.Icc 1 (p ^ f - 1), HasLen v R (OmType AA.carrier (σ ^ m)) (r m)) → HasLen v R (OmAA AA.carrier) (∏ m ∈ Finset.Icc 1 (p ^ f - 1), r m) := by
+theorem om_split : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (R : Type) [CommRing R] [Algebra R C], v.Integers R → v (p : C) < 1 → ∀ (F : Type) [Field F] [Fintype F] [DecidableEq F] [CharP F p] (f : ℕ), Fintype.card F = p ^ f → ∀ (N : Type) [AddCommGroup N] [Module F N] [Fintype N] [DecidableEq N] (AA : HopfOrder (C := C) R N), FStable (F := F) AA.carrier → ∀ σ : MulChar F R, IsFund p σ → (∀ χ : MulChar F R, ∃ r : NNReal, r ≠ 0 ∧ HasLen v R (OmType AA.carrier χ) r) ∧ ∀ r : ℕ → NNReal, (∀ m ∈ Finset.Icc 1 (p ^ f - 1), HasLen v R (OmType AA.carrier (σ ^ m)) (r m)) → HasLen v R (OmAA AA.carrier) (∏ m ∈ Finset.Icc 1 (p ^ f - 1), r m) := by
   intro p _ C _ _ _ v R _ _ hv hvp F _ _ _ _ f hf N _ _ _ _ AA hAA σ hσ
   have := hv.hom_inj.isDomain
   have hu := exists_inv_card (F := F) hv p hvp
+  have hsq : FStable (F := F) (sqIdeal (augIdeal AA.carrier)) :=
+    fun a _ hg => sq_pull (LinearMap.lsmul F N a).toAddMonoidHom _ _ (hAA a) hg
+  have proj_mem (χ : MulChar F R)
+      (S : Submodule R (N → C)) (hS : FStable (F := F) S) {g : N → C} (hg : g ∈ S) :
+      projL χ g ∈ S := by
+    obtain ⟨u, hu⟩ := hu
+    have hproj : projL χ g = u • ∑ a : Fˣ, χ⁻¹ (a : F) • (fun x => g ((a : F) • x)) := by
+      funext x
+      rw [projL_apply, Pi.smul_apply, Finset.sum_apply, Algebra.smul_def, hu]
+      exact congrArg _ (Finset.sum_congr rfl fun a _ => (Algebra.smul_def _ _).symm)
+    rw [hproj]
+    exact S.smul_mem _ (S.sum_mem fun a _ => S.smul_mem _ (hS _ g hg))
+  have proj_eig (χ : MulChar F R)
+      {M : Submodule R (N → C)} (hM : FStable (F := F) M) {g : N → C} (hg : g ∈ augIdeal M) :
+      projL χ g ∈ eig M χ := by
+    rw [mem_aug] at hg
+    refine ⟨proj_mem χ M hM hg.1, fun a x => ?_⟩
+    by_cases ha : a = 0
+    · rw [ha, zero_smul, MulChar.map_zero, map_zero, zero_mul, projL_apply]
+      simp only [smul_zero, hg.2, mul_zero, Finset.sum_const_zero]
+    · obtain ⟨a, rfl⟩ := isUnit_iff_ne_zero.2 ha
+      rw [projL_apply, projL_apply, mul_left_comm, Finset.mul_sum Finset.univ _ (algebraMap R C _),
+        ← Equiv.sum_comp (Equiv.mulRight a) (fun b : Fˣ => algebraMap R C (χ (a : F)) *
+          (algebraMap R C (χ⁻¹ (b : F)) * g ((b : F) • x)))]
+      congr 1
+      refine Finset.sum_congr rfl fun b _ => ?_
+      rw [Equiv.coe_mulRight, Units.val_mul, mul_smul, ← mul_assoc, ← map_mul, map_mul χ⁻¹,
+        mul_left_comm, mul_inv_unit, mul_one]
   have hfg := fg_of_isLat AA.lat
   constructor
   · intro χ
@@ -165,7 +233,7 @@ theorem om_split : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClose
     let Ψ : augIdeal AA.carrier →ₗ[R]
         ((i : Fin (Fintype.card Fˣ)) → OmType AA.carrier (σ ^ ((i : ℕ) + 1))) :=
       LinearMap.pi fun i => Submodule.mkQ _ ∘ₗ
-        (projL (σ ^ ((i : ℕ) + 1))).restrict fun _ hg => projL_eig hu _ hAA hg
+        (projL (σ ^ ((i : ℕ) + 1))).restrict fun _ hg => proj_eig _ hAA hg
     have hsurj : Function.Surjective Ψ := by
       intro y
       choose g hg using fun i => Submodule.Quotient.mk_surjective _ (y i)
@@ -174,7 +242,8 @@ theorem om_split : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClose
       rw [← hg i]
       refine congrArg Submodule.Quotient.mk (Subtype.ext ?_)
       show projL (σ ^ ((i : ℕ) + 1)) (∑ i, (g i : N → C)) = g i
-      rw [map_sum, Finset.sum_eq_single i, projL_self _ (g i).2]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_eq_single i, projL_self _ (g i).2]
       · intro j _ hj
         refine projL_ne (fun h => hj ?_) (g j).2
         rw [pow_succ, pow_succ] at h
@@ -187,13 +256,13 @@ theorem om_split : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClose
       rw [LinearMap.mem_ker, funext_iff]
       constructor
       · intro hg i
-        exact (Submodule.Quotient.mk_eq_zero _).2 (projL_mem hu _ _ (fstable_sq hAA) hg)
+        exact (Submodule.Quotient.mk_eq_zero _).2 (proj_mem _ _ hsq hg)
       · intro hg
         show (g : N → C) ∈ sqIdeal (augIdeal AA.carrier)
         rw [← hsum g]
         refine Submodule.sum_mem _ fun i _ => ?_
         have h1 : (Submodule.Quotient.mk
-            (⟨projL (σ ^ ((i : ℕ) + 1)) (g : N → C), projL_eig hu _ hAA g.2⟩ :
+            (⟨projL (σ ^ ((i : ℕ) + 1)) (g : N → C), proj_eig _ hAA g.2⟩ :
               eig AA.carrier (σ ^ ((i : ℕ) + 1))) :
             OmType AA.carrier (σ ^ ((i : ℕ) + 1))) = 0 := hg i
         rw [Submodule.Quotient.mk_eq_zero] at h1

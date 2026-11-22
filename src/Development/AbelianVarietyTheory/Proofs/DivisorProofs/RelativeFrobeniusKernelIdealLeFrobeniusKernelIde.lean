@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobTwistBaseChangeHomApp
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -35,7 +40,7 @@ theorem kerIdeal_relFrob_le_frobKerIdeal (p : ℕ) [Fact p.Prime] (R : Type) [Co
         ← mul_sub]
       exact Ideal.mul_mem_left _ _ (pow_sub_counit_mem_frobKerIdeal h a)
     | h2 x y hx hy =>
-      rw [map_add, map_add, map_add, add_sub_add_comm]
+      rw [map_add (f := _), map_add (f := _), map_add (f := _), add_sub_add_comm]
       exact add_mem hx hy
   refine Ideal.map_le_iff_le_comap.2 fun x hx => ?_
   have hx' : counit (R := R) x = 0 := hx

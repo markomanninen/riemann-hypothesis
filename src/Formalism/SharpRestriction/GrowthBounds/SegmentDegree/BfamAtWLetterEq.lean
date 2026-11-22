@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.RestLamOf
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DivMulSubLeDivSubDiv
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DistAddTwoLeOfSameVec
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DiscriminantNonzeroModUniformiser
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.RestLamOf
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DivMulSubLeDivSubDiv
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DistAddTwoLeOfSameVec
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.DiscriminantNonzeroModUniformiser
+
+@[expose] public section
 
 noncomputable section
 

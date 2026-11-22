@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl
 
 noncomputable section
@@ -22,10 +27,10 @@ theorem repr_map {F E A B ι : Type} [Field F] [Field E] [Algebra F E] [CommRing
   | zero => simp
   | tmul a e =>
     simp [Algebra.TensorProduct.basis_repr_tmul, Algebra.algebraMap_eq_smul_one]
-  | add x y hx hy => simp [map_add, hx, hy]
+  | add x y hx hy => simp [map_add (f := _), hx, hy]
+
 
 open Classical in
-
 def ePl (D : D7) (P : Pl D → Prop) : Af D.host.F :=
   RestrictedProduct.mk (fun v => if P v then 1 else 0)
     (Filter.Eventually.of_forall fun v => by
@@ -374,8 +379,8 @@ theorem latV_repr {S : HSp D} {L : Lat S} {Q : Pl D → Prop} {t : ℕ} (g : Fin
     obtain ⟨β, hβ, rfl⟩ := hy
     obtain ⟨γ, hγ, rfl⟩ := hz
     refine ⟨β + γ, fun k => ⟨fun v => ?_, fun w hw => ?_⟩, ?_⟩
-    · rw [Pi.add_apply, map_add]; exact add_mem ((hβ k).1 v) ((hγ k).1 v)
-    · rw [Pi.add_apply, map_add, (hβ k).2 w hw, (hγ k).2 w hw, add_zero]
+    · rw [Pi.add_apply, map_add (f := _)]; exact add_mem ((hβ k).1 v) ((hγ k).1 v)
+    · rw [Pi.add_apply, map_add (f := _), (hβ k).2 w hw, (hγ k).2 w hw, add_zero]
     · funext i
       simp only [Pi.add_apply, pairA_add, TensorProduct.add_tmul, Finset.sum_add_distrib]
   | neg y _ hy =>
@@ -401,7 +406,7 @@ theorem infPart_finIn (z : Af D.host.F ⊗[D.host.F] D.host.E) : infPart D (finI
   induction z using TensorProduct.induction_on with
   | zero => rw [map_zero, map_zero]
   | tmul a e => rw [finIn_tmul, infPart_pair]
-  | add x y hx hy => rw [map_add, map_add, hx, hy, add_zero]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, add_zero]
 
 theorem compAt_finIn (w : Pl D) (z : Af D.host.F ⊗[D.host.F] D.host.E) :
     compAt D w (finIn D z) = GlobalTheory.IndefiniteRowSideFullHecke.UnramifiedCharacter.compFin D w z := by
@@ -412,7 +417,7 @@ theorem compAt_finIn (w : Pl D) (z : Af D.host.F ⊗[D.host.F] D.host.E) :
     show _ = Algebra.TensorProduct.map (evalV D.host.F w) (AlgHom.id _ _) (a ⊗ₜ[D.host.F] e)
     rw [Algebra.TensorProduct.map_tmul]
     rfl
-  | add x y hx hy => rw [map_add, map_add, hx, hy, map_add]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _)]
 
 theorem infPart_of_idAt {P : Pl D → Prop} {a : AE D} (h : a ∈ idAt D P) : infPart D a = 0 :=
   RingHom.mem_ker.1 (Ideal.mem_inf.1 h).1
@@ -457,7 +462,7 @@ theorem placeIdempotent_integral_smul_mem_latticeCompletionAtPlace {S : HSp D} {
     | add y y' _ _ h h' => rw [smul_add]; exact add_mem h h'
     | neg y _ h => rw [smul_neg]; exact neg_mem h
   | zero => rw [map_zero, mul_zero, zero_smul]; exact zero_mem _
-  | add z z' _ _ h h' => rw [map_add, mul_add, add_smul]; exact add_mem h h'
+  | add z z' _ _ h h' => rw [map_add (f := _), mul_add, add_smul]; exact add_mem h h'
   | neg z _ h => rw [map_neg, mul_neg, neg_smul]; exact neg_mem h
 
 theorem smul_latV {S : HSp D} {L : Lat S} {P : Pl D → Prop} (v : Pl D) {e : AE D} (he : e ∈ intAt D (· = v))
@@ -498,16 +503,19 @@ theorem part_lat (P : Pl D → Prop) (S : HSp D) (L : Lat S) (y : Fin S.rank →
       funext i
       rw [← sub_eq_zero]
       apply eq_zero_of_comp
-      · rw [map_sub, map_sum]
+      · set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sub, map_sum]
         simp only [infPart_pair, Finset.sum_const_zero, sub_zero]
         exact infPart_of_idAt (hid i)
       · intro w
-        rw [map_sub, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sub, map_sum]
         simp only [compAt_pair, hβ]
         by_cases hw : P w
         · have h1 : compAt D w (y i) = compAt D w ((idem D (· = w) • y) i) := by
             rw [Pi.smul_apply, smul_eq_mul, map_mul, compAt_idem, if_pos rfl, one_mul]
-          rw [h1, hBy w hw, map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [h1, hBy w hw, map_sum]
           simp only [compAt_pair, if_pos hw, sub_self]
         · rw [compAt_of_idAt (hid i) hw]
           simp only [if_neg hw, TensorProduct.zero_tmul, Finset.sum_const_zero, sub_zero]

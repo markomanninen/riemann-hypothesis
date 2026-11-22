@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsHostNormModCoprimeLevelHalfStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsHostNormModCoprimeLevelHalfStatement
+
+@[expose] public section
 
 open NumberField Matrix
 open scoped nonZeroDivisors
@@ -60,7 +64,7 @@ theorem exists_norm_tower : ∀ (E : Type) [Field E] [NumberField E] [IsCMField 
     rw [hm] at hb
     have hc' : ((ν (n * m) : ℤ) : 𝓞 E) - (ν n : 𝓞 E) = (n : 𝓞 E) * (c : 𝓞 E) := by exact_mod_cast congrArg (Int.cast : ℤ → 𝓞 E) hc
     have hsj : s j = t n + n * a := by rw [← ha]; ring
-    rw [hsj, map_add, map_mul, map_natCast] at hb
+    rw [hsj, map_add (f := _), map_mul, map_natCast] at hb
     push_cast at hb
     exact ⟨m * b + c - (a * H.bar (t n) + t n * H.bar a + n * a * H.bar a), by linear_combination hb + hc'⟩
   · intro n m hn hm

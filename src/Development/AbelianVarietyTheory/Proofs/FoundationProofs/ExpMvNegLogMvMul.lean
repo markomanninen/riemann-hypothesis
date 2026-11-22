@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DifferentiableSqTh
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddThetaFunctionExistenceUniqueness
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DifferentiableSqTh
+
+@[expose] public section
+
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum GlobalTheory.EvenTheta
 open scoped BigOperators
 
@@ -57,14 +62,14 @@ theorem exp_neg_log_one_var (K : Type*) [Field K] [CharZero K] :
     (exp K).subst (-log K) * (1 + X : PowerSeries K) = 1 := by
   have h0 : constantCoeff (-log K) = 0 := by simp
   have hs := HasSubst.of_constantCoeff_zero' h0
-  have e : (1 + X) * d⁄dX K (log K) = 1 := by
-    rw [deriv_log]
+  have e : (1 + X) * PowerSeries.derivative (log K) = 1 := by
+    rw [derivative_log]
     ext n
     cases n with
     | zero => simp [add_mul]
     | succ n => simp [add_mul, coeff_succ_X_mul, coeff_one, pow_succ]
   refine derivative.ext ?_ ?_
-  · rw [Derivation.leibniz, derivative_subst hs, derivative_exp, map_neg, derivative_one, map_add,
+  · rw [Derivation.leibniz, derivative_subst hs, derivative_exp, map_neg, derivative_one, map_add (f := _),
       derivative_one, derivative_X]
     simp only [smul_eq_mul]
     linear_combination (-(exp K).subst (-log K)) * e
@@ -87,7 +92,7 @@ theorem expMv_neg_logMv_mul : ∀ (p : ℕ) [Fact p.Prime] (σ : Type) (F : MvPo
   have e := congrArg (substAlgHom (R := ℂ_[p]) hs) (exp_neg_log_one_var ℂ_[p])
   have en : subst (F - 1) (-log ℂ_[p]) = -GL3Theta.logMv F := by
     rw [logMv_eq_subst hF, ← coe_substAlgHom hs, map_neg]
-  rw [map_mul, map_add, map_one, substAlgHom_X, coe_substAlgHom, subst_comp_subst_apply hl hs,
+  rw [map_mul, map_add (f := _), map_one, substAlgHom_X, coe_substAlgHom, subst_comp_subst_apply hl hs,
     en, add_sub_cancel] at e
   rw [expMv_eq_subst (by rw [map_neg, h0, neg_zero])]
   exact e

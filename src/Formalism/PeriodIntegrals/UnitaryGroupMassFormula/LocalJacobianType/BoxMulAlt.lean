@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LocJacTyp
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.Development
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LocJacTyp
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalJacobianType.Development
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,10 +24,6 @@ def OTop : Prop :=
   (∀ x ∈ OEv (E := E) v, -x ∈ OEv (E := E) v) ∧
   (∀ t ∈ v.adicCompletionIntegers F, ∀ x ∈ OEv (E := E) v, sc (E := E) v t * x ∈ OEv (E := E) v) ∧
   (∀ σ : E →ₐ[F] E, ∀ x ∈ OEv (E := E) v, sigR (Fv F v) σ x ∈ OEv (E := E) v)
-
-def RTop : Prop :=
-  LocallyCompactSpace (Fv F v ⊗[F] E) ∧ SecondCountableTopology (Fv F v ⊗[F] E) ∧
-  T2Space (Fv F v ⊗[F] E) ∧ IsTopologicalRing (Fv F v ⊗[F] E)
 
 def BoxMul : Prop :=
   ∀ (ι : Type) [Fintype ι] (μ : Measure (ι → Fv F v ⊗[F] E)) [μ.IsAddHaarMeasure]

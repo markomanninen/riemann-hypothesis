@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.MemW1IffPattern
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.MemW1IffPattern
+
+@[expose] public section
 
 open Matrix UpperTheory.V.Alg UpperTheory.V.W
 
@@ -163,7 +167,7 @@ theorem isLocallyConstant_rho1_of_algebraMap_pow_eq_zero (m : ℕ) (hm : algebra
     rw [Ideal.span_singleton_pow, Ideal.mem_span_singleton] at h2
     obtain ⟨c, hc⟩ := h2
     have h3 := congrArg (algebraMap x.A R) hc
-    rw [map_sub, map_mul, hR, zero_mul, sub_eq_zero] at h3
+    rw [RingHom.map_sub, map_mul, hR, zero_mul, sub_eq_zero] at h3
     exact h3
   rw [IsLocallyConstant.iff_eventually_eq]
   intro g0

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeModules
-import GroundTheory.ProfiniteCohomology.PoincarePairs.ConeProduct
-import GroundTheory.ProfiniteCohomology.PoincarePairs.MackeyCup
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseChangeModules
+public import GroundTheory.ProfiniteCohomology.PoincarePairs.ConeProduct
+public import GroundTheory.ProfiniteCohomology.PoincarePairs.MackeyCup
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -34,11 +39,6 @@ def transportLocalMor (i : ι) :
     rw [← hcomm]
     exact Rep.hom_comm_apply f (φ i h) a⟩
 
-omit [IsTopologicalGroup G] [IsTopologicalGroup G'] [∀ i, IsTopologicalGroup (H i)]
-  [∀ j, IsTopologicalGroup (H' j)] [IsDiscreteRep A'] [IsDiscreteRep A] in
-theorem transportLocalMor_hom_apply (i : ι) (a : A') :
-    (transportLocalMor φ φ' θ e ψ hcomm f i).hom a = f.hom a :=
-  rfl
 
 abbrev transportGlobal : cochainsComplex A' ⟶ cochainsComplex A :=
   cochainsMapAlong θ.toMulEquiv.toMonoidHom (continuous_mulEquiv_toMonoidHom θ) f
@@ -84,8 +84,8 @@ def transportLocalCohomology (n : ℕ) :
     (continuous_mulEquiv_toMonoidHom (ψ i)) (transportLocalMor φ φ' θ e ψ hcomm f i) n).hom.comp
       (LinearMap.proj (e i)))
 
-omit [IsTopologicalGroup G] [IsTopologicalGroup G'] in
 
+omit [IsTopologicalGroup G] [IsTopologicalGroup G'] in
 theorem homologyMap_transportLocal_localCohomologyIso (n : ℕ) :
     HomologicalComplex.homologyMap (transportLocal φ φ' θ e ψ hcomm f) n ≫
         (localCohomologyIso (fun i => Rep.res (φ i).toMonoidHom A) n).hom =
@@ -171,8 +171,8 @@ variable {K₁ K₂ : Type u} [Group K₁] [TopologicalSpace K₁] [IsTopologica
   (a : Rep.res ι₀ A ⟶ A₁) (b : Rep.res ι₀ B ⟶ B₁) (c : Rep.res ι₀ C ⟶ C₁) (μ : A ⊗ B ⟶ C)
   (μ₁ : A₁ ⊗ B₁ ⟶ C₁) (hμ : (Rep.resFunctor ι₀).map μ ≫ c = resTensorHom ι₀ a b ≫ μ₁)
 
-include hμ in
 
+include hμ in
 theorem cochainsMapAlong_cupPairingCochains {r s n : ℕ} (h : r + s = n) (x : (cochainsComplex A).X r)
     (z : (cochainsComplex B).X s) :
     ((cochainsMapAlong ι₀ hι₀ c).f n).hom (cupPairingCochains μ h x z) =
@@ -201,11 +201,11 @@ variable {A' B' C' : Rep.{u} k G'} [IsDiscreteRep A'] [IsDiscreteRep B'] [IsDisc
   (hμ : (Rep.resFunctor θ.toMulEquiv.toMonoidHom).map μ' ≫ fC =
     resTensorHom θ.toMulEquiv.toMonoidHom fA fB ≫ μ)
 
+
 omit [IsTopologicalGroup G] [IsTopologicalGroup G'] [∀ i, IsTopologicalGroup (H i)]
   [∀ j, IsTopologicalGroup (H' j)] [IsDiscreteRep A'] [IsDiscreteRep B'] [IsDiscreteRep C']
   [IsDiscreteRep A] [IsDiscreteRep B] [IsDiscreteRep C] in
 include hμ in
-
 theorem transportLocalMor_pairing (i : ι) :
     (Rep.resFunctor (ψ i).toMulEquiv.toMonoidHom).map ((Rep.resFunctor (φ' (e i)).toMonoidHom).map μ') ≫
         transportLocalMor φ φ' θ e ψ hcomm fC i =
@@ -220,9 +220,9 @@ theorem transportLocalMor_pairing (i : ι) :
   exact congrArg (fun F : Rep.res θ.toMulEquiv.toMonoidHom (A' ⊗ B') ⟶ C =>
     F.hom ((a : A') ⊗ₜ[k] (b : B') : (A' ⊗ B' : Rep k G'))) hμ
 
+
 omit [IsTopologicalGroup G] [IsTopologicalGroup G'] in
 include hμ in
-
 theorem transportLocal_pi_cup {r s n : ℕ} (hh : r + s = n)
     (y₀ : (piComplex fun j => cochainsComplex (Rep.res (φ' j).toMonoidHom A')).X r)
     (w₀ : (piComplex fun j => cochainsComplex (Rep.res (φ' j).toMonoidHom B')).X s) :
@@ -253,8 +253,8 @@ theorem transportLocal_pi_cup {r s n : ℕ} (hh : r + s = n)
     ((Rep.resFunctor (φ i).toMonoidHom).map μ)
     (transportLocalMor_pairing φ φ' θ e ψ hcomm fA fB fC μ' μ hμ i) hh (y₀ (e i)) (w₀ (e i))
 
-include hμ in
 
+include hμ in
 theorem compactTransport_compactCupRes {r s n : ℕ} (h : r + s = n) (y : compactCohomologyRes φ' A' r)
     (x : cohomology B' s) :
     (compactTransport φ φ' θ e ψ hcomm fC n).hom (compactCupRes φ' μ' h y x) =

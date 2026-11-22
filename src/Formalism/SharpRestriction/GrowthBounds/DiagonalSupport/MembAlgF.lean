@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembTop
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.Imports
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembTop
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem toKK_mul (P Q : RRing O n' (r + K)) : toKK hk (P * Q) = toKK hk P * toKK
 
 theorem toKK_add (P Q : RRing O n' (r + K)) : toKK hk (P + Q) = toKK hk P + toKK hk Q := by
   unfold toKK
-  rw [map_add, map_add]
+  rw [map_add (f := _), map_add (f := _)]
 
 theorem toKK_C (a : O) : toKK hk (C a : RRing O n' (r + K)) = C (algebraMap O (KK O) a) := by
   simp [toKK]
@@ -129,8 +133,8 @@ theorem plane_hom (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (hJ : J = Fr.J)
       unfold upPl; rw [aeval_C]; rfl
     rw [h1, h2, h3, toKK_C]
   | add P Q hP hQ =>
-    have e : xiPl Fr O Dt.nL (P + Q) = xiPl Fr O Dt.nL P + xiPl Fr O Dt.nL Q := by unfold xiPl; rw [map_add]
-    rw [e, map_add, toKK_add, hP, hQ, map_add, map_add, map_add]
+    have e : xiPl Fr O Dt.nL (P + Q) = xiPl Fr O Dt.nL P + xiPl Fr O Dt.nL Q := by unfold xiPl; rw [map_add (f := _)]
+    rw [e, map_add (f := _), toKK_add, hP, hQ, map_add (f := _), map_add (f := _), map_add (f := _)]
   | mul_X P v hP =>
     have e : xiPl Fr O Dt.nL (P * X v) = xiPl Fr O Dt.nL P * xiPl Fr O Dt.nL (X v) := by unfold xiPl; rw [map_mul]
     rw [e, map_mul, toKK_mul, hP, plane_X p O hk Fr Dt hV hr hJ hgP v, map_mul, map_mul, map_mul, map_X]
@@ -147,8 +151,8 @@ theorem normal_hom (nL : ZMod J → ℕ) (No : MvPolynomial (TL J nL r × Fin K)
       unfold upNo; rw [aeval_C]; rfl
     rw [h1, h3, toKK_C]
   | add P Q hP hQ =>
-    have e : xiNo Fr O K nL (P + Q) = xiNo Fr O K nL P + xiNo Fr O K nL Q := by unfold xiNo; rw [map_add]
-    rw [e, map_add, toKK_add, hP, hQ, map_add, map_add]
+    have e : xiNo Fr O K nL (P + Q) = xiNo Fr O K nL P + xiNo Fr O K nL Q := by unfold xiNo; rw [map_add (f := _)]
+    rw [e, map_add (f := _), toKK_add, hP, hQ, map_add (f := _), map_add (f := _)]
   | mul_X P v hP =>
     have e : xiNo Fr O K nL (P * X v) = xiNo Fr O K nL P * xiNo Fr O K nL (X v) := by unfold xiNo; rw [map_mul]
     have hX : toKK hk (PhiNo Fr p O K J (xiNo Fr O K nL (X v))) = upNo Fr p O hk nL (X v) := by

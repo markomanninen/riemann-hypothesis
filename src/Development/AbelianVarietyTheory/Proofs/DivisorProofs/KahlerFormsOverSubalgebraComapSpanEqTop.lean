@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DlogRatioVolumeFormNeZero
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -43,8 +47,8 @@ end GlobalTheory.PD.KSpan
 
 namespace GlobalTheory.PD
 
-open KSpan in
 
+open KSpan in
 theorem omB_comap_span_eq_top : ∀ (k K : Type) [Field k] [Field K] [Algebra k K] (B : Subalgebra k K) [IsFractionRing B K] (p : ℕ) (W : Type) [AddCommGroup W] [Module K W] [Module k W] [IsScalarTower k K W] (e : W →ₗ[K] DR k K), Function.Injective e → LinearMap.range e = ⋀[K]^p Ω[K⁄k] → Submodule.span K ((omB k K B p).comap (e.restrictScalars k) : Set W) = ⊤ := by
   intro k K _ _ _ B _ p W _ _ _ _ e he hr
   have hD : Submodule.span K (D k K '' (B : Set K)) = ⊤ := by

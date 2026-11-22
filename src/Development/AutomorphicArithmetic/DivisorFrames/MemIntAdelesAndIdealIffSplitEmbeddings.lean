@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.LocalEmbeddings.ComplEquivEvW
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.LocalEmbeddings.ComplEquivEvW
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory Matrix ValuativeRel
 open scoped TensorProduct GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels ComplexConjugate
@@ -58,7 +63,7 @@ private theorem le_of_mem_map {O S K Γ : Type} [CommRing O] [CommRing S] [CommR
     exact h2 a ha
   | zero => simp
   | add x y _ _ hx hy =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact (Valuation.map_add _ _ _).trans (max_le hx hy)
   | smul a x _ hx =>
     rw [smul_eq_mul, map_mul, map_mul]
@@ -144,7 +149,8 @@ theorem UpperTheory.mem_intAdeles_and_ideal_iff_splitEmbeddings :
   intro D ε Pw hε ι _ pl τ hP _ c z hz
   obtain ⟨⟨es, hes, rfl⟩, -⟩ := hε
   have h0 : ∀ Q, Q ∉ Pw → cpt (D := D) Q z = 0 := fun Q hQ => by
-    rw [← hz, RingHom.map_mul, map_sum, map_sum, Finset.sum_eq_zero, zero_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hz, RingHom.map_mul, map_sum, map_sum, Finset.sum_eq_zero, zero_mul]
     intro P hP
     exact (cpt_of_isIdemAt (hes P hP)).2 Q fun e => hQ (e ▸ hP)
   constructor

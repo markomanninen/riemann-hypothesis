@@ -1,17 +1,17 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.SigmaStarUniq
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AreaLat
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.TransInvLat
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SigmaStarUniq
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.DiscrNe
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SigmaStarEx
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.GlobalRankLatticeProofs.UnitTraceSumBounds.SigmaStarUniq
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AreaLat
+public import Mathlib
+public import Formalism.PeriodIntegrals.LatDefs
+public import Formalism.PeriodIntegrals.AreaLat
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SigmaStarUniq
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.DiscrNe
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SigmaStarEx
+
+@[expose] public section
 
 namespace Formalism.MainNotions.Ext
-
-theorem areaLat_holds : AreaLat := area_lattice_formula
-
-theorem transInvLat_holds : TransInvLat := translation_invariant_lattice
-
-theorem sigmaStarUniq_holds : SigmaStarUniq := sigma_star_unique
 
 theorem discrNe_holds : DiscrNe := discrNe'
 

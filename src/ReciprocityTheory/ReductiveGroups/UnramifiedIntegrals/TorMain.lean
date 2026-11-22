@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorTwo
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorLift
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorContr
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorClose
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorTwo
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorLift
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorContr
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorClose
+
+@[expose] public section
 
 noncomputable section
 open scoped Classical

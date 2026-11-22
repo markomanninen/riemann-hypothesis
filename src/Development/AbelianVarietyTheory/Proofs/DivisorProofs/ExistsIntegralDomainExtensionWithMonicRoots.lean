@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory
@@ -38,7 +43,11 @@ theorem exists_integral_domain_extension_monic_roots :
     exact hy'
   · intro K _ _ h hinj
     letI : Algebra (FractionRing D) K := (IsFractionRing.lift hinj : FractionRing D →+* K).toAlgebra
-    let φ : AlgebraicClosure (FractionRing D) →ₐ[FractionRing D] K := IsAlgClosed.lift
+    let φ : AlgebraicClosure (FractionRing D) →ₐ[FractionRing D] K := (by
+      refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+      solve_by_elim* (maxDepth := 2) only [*,
+        @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+        @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
     refine ⟨φ.toRingHom.comp (integralClosure D (AlgebraicClosure (FractionRing D))).val.toRingHom,
       φ.toRingHom.injective.comp Subtype.val_injective, ?_⟩
     ext a

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Module
 
@@ -83,8 +87,8 @@ theorem exists_reduced_combination {I : Type} [Fintype I] (N : ℕ) (hN : 1 ≤ 
 
 end LatticeIneq
 
-open LatticeIneq in
 
+open LatticeIneq in
 theorem lattice_inequality :
     ∀ (X : Type) [AddCommGroup X] (q : QuadraticMap ℤ X ℝ), (∀ x, 0 ≤ q x) → ∀ (I : Type) [Fintype I] (N N' j : ℕ), 1 ≤ N → N ∣ N' → 1 ≤ j → ∀ (yy w : I → X) (vth : I → ℝ) (αs c : X) (vf' : ℝ), (∀ x, ∃ μ, w x = yy x + N' • μ) → (∀ x, q (w x) ≤ (N' : ℝ) ^ 2 * vth x) → q αs ≤ N * vf' → c - αs ∈ AddSubgroup.closure (Set.range yy ∪ Set.range fun μ : X => N • μ) → ∃ μ : X, j * (q (c + N • μ) / N) ≤ (j + 1) * vf' + (j * (j + 1) * Fintype.card I * N * N' ^ 2 : ℕ) * ∑ x, vth x := by
   intro X _ q hq I _ N N' j hN hNN' _ yy w vth αs c vf' hw hwq hα hc
@@ -92,12 +96,12 @@ theorem lattice_inequality :
   have hw' : ∀ x, ∃ μ, w x = yy x + N • μ := fun x => by
     obtain ⟨μ, hμ⟩ := hw x
     exact ⟨m • μ, by rw [hμ, mul_smul]⟩
-  obtain ⟨k, μ, hk, h⟩ := exists_reduced_combination N hN yy w hw' _ hc
+  obtain ⟨k, μ, hk, h⟩ := LatticeIneq.exists_reduced_combination N hN yy w hw' _ hc
   refine ⟨μ, ?_⟩
   have hc' : c + N • μ = αs + ∑ x, k x • w x := by rw [← h]; abel
   have hNpos : (0 : ℝ) < N := by exact_mod_cast hN
-  have h1 := weighted_add_le q hq j αs (∑ x, k x • w x)
-  have h2 := map_sum_le q hq Finset.univ (fun x => k x • w x)
+  have h1 := LatticeIneq.weighted_add_le q hq j αs (∑ x, k x • w x)
+  have h2 := LatticeIneq.map_sum_le q hq Finset.univ (fun x => k x • w x)
   have h3 : ∑ x, q (k x • w x) ≤ (N : ℝ) ^ 2 * ((N * m : ℕ) : ℝ) ^ 2 * ∑ x, vth x := by
     rw [Finset.mul_sum]
     refine Finset.sum_le_sum fun x _ => ?_

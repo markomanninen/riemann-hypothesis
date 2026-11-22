@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.FullExists
-import Formalism.LocalToGlobal.ProjectiveLattices.RecCond
-import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.PermutesRefl
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.FullExists
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecCond
+public import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.PermutesRefl
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -36,17 +40,6 @@ def DeltaOK {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityT
     {l : Level H} {Xo : Moduli Dw l} {c : Coeff l} {n : ℕ} (d : DeltaDat Xo c n) (p : ℕ) (I : Ideal (𝓞 E)) : Prop :=
   CoverOK d p I ∧ RootOK d ∧ (Dw.p + Dw.q ≤ n → ∃ ph ψ x₀, ψ ≠ 1 ∧ d.PhiPin ph ψ x₀ ∧ d.PsiTie ψ)
 
-structure FieldOK (D : D7) (p : ℕ) : Prop where
-  own : p = D.host.pde ∨ p = D.host.pde'
-  full : OFull D
-  zetaM : OZeta D
-  zetaP : zeta p ∈ FO D
-  curve : GlobalTheory.CompRat.CurveOver (hostOfRecord D) (FO D) (D.host.g 0 * D.host.g 1 * p)
-  kpsi : OKPsi D
-  vol : VolTieG D
-  bad : 0 ∉ D.host.levelPrimes
-  split : D.host.cls p = PrimeClass.splitK
-
 variable {D : D7}
 
 abbrev AfE (D : D7) : Type := Af D.host.F ⊗[D.host.F] D.host.E
@@ -69,8 +62,6 @@ def XiAt (J : CoreJ D) (j : ℕ) {n : ℕ} (d : DeltaDat (J.Q.Xo j) J.Q.c n) (xi
   ∃ (hr : (J.V j J.σ₀).rank = D.R.r) (U₂ : _) (dict₂ : _),
     CXiVal (J.V j J.σ₀) hr J.σ₀ (Tup := Unit) (fun _ => d) U₂ dict₂
       (LinearMap.funLeft (𝓞 D.host.E) D.host.E (Fin.cast hr) ∘ₗ J.iota j) (J.x₀ j J.σ₀) fun _ => xi
-
-theorem xiVal_iff_xiAt (T : Full D) (j n : ℕ) : T.XiVal j n ↔ XiAt T.J j (T.dδ j n) T.xi := Iff.rfl
 
 def ChiOK (D : D7) (chi₀ : ℕ → (AE D)ˣ →* Circle) : Prop :=
   ∀ j, InR D j → IsHeckeChar D (chi₀ j) ∧ (∀ a, chi₀ j (idF D a) = 1) ∧

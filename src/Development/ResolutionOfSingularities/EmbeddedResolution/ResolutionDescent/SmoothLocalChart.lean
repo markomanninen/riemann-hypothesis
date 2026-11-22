@@ -1,5 +1,10 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.EmbeddedResolutionRule
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.EmbeddedResolutionRule
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory AlgebraicGeometry
@@ -37,24 +42,8 @@ variable {k : Type u} [Field k] [CharZero k] {Y V : Scheme.{u}}
 abbrev chartDomain (C : SmoothLocalChart G H u y) : V.Opens :=
   H.emb ⁻¹ᵁ H.ambient.basicOpen C.func
 
-instance instIsAffineAmbient (C : SmoothLocalChart G H u y) :
-    AlgebraicGeometry.IsAffine C.ambient := C.isAffine_ambient
-
-instance instSmoothAmbientStruct (C : SmoothLocalChart G H u y) :
-    AlgebraicGeometry.Smooth C.ambientStruct := C.smooth_ambientStruct
-
-instance instLocallyOfFiniteTypeAmbientStruct (C : SmoothLocalChart G H u y) :
-    AlgebraicGeometry.LocallyOfFiniteType C.ambientStruct :=
-  C.locallyOfFiniteType_ambientStruct
-
-instance instQuasiCompactAmbientStruct (C : SmoothLocalChart G H u y) :
-    AlgebraicGeometry.QuasiCompact C.ambientStruct := C.quasiCompact_ambientStruct
-
 instance instSmoothToAmbient (C : SmoothLocalChart G H u y) :
     AlgebraicGeometry.Smooth C.toAmbient := C.smooth_toAmbient
-
-instance instIsClosedImmersionImm (C : SmoothLocalChart G H u y) :
-    AlgebraicGeometry.IsClosedImmersion C.imm := C.isClosedImmersion_imm
 
 theorem isAffineOpen_chartDomain [AlgebraicGeometry.IsAffine V]
     (C : SmoothLocalChart G H u y) :

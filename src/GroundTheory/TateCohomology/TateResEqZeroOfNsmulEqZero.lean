@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.TateCohomology.CoresRes
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.CoresRes
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.GroupCoh

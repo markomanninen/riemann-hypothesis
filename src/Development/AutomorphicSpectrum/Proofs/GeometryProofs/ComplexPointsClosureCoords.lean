@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocRatio
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GrGenOfIsFlagVBOn
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordsAtSmul
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocRatio
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GrGenOfIsFlagVBOn
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CoordsAtSmul
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField TensorProduct Filter Topology Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
@@ -108,7 +112,7 @@ theorem val_aeval (hz : genPt ξ ⤳ centre z) {κ : Type} (a : κ → Ω) (r : 
     ValAt ξ z (MvPolynomial.aeval a P) (MvPolynomial.aeval r P) := by
   induction P using MvPolynomial.induction_on with
   | C n => simpa using val_int hz n
-  | add p q hp hq => simpa [map_add] using val_add hp hq
+  | add p q hp hq => simpa [map_add (f := _)] using val_add hp hq
   | mul_X p i hp => simpa using val_mul hp (h i)
 
 end Values
@@ -164,7 +168,7 @@ theorem relation_limit (hall : ∀ q : X, genPt ξ ⤳ q) (hξ : IsCptGen ξ) (c
     MvPolynomial.aeval (fun c' => segreRatio c c' w) P = 0 := by
   by_contra hne
   have hρ : ∀ c', ContinuousAt (fun v : (Σ k, J k) → ℂ => segreRatio c c' v) w := fun c' =>
-    tendsto_finset_prod _ fun k _ =>
+    tendsto_finsetProd _ fun k _ =>
       ContinuousAt.div (continuous_apply _).continuousAt (continuous_apply _).continuousAt (hc k)
   have hcont : ContinuousAt (fun v : (Σ k, J k) → ℂ => MvPolynomial.aeval (fun c' => segreRatio c c' v) P) w := by
     have e : (fun v : (Σ k, J k) → ℂ => MvPolynomial.aeval (fun c' => segreRatio c c' v) P) =

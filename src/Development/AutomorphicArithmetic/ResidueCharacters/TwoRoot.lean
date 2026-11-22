@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPrimePlaceCmTypeConjugate
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPrimePlaceCmTypeConjugate
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,7 +84,7 @@ theorem root_ne (h2 : D.nd.l i = 2) (w w' : HeightOneSpectrum (𝓞 D.host.E)) (
   have hβ : (β : D.host.E) = ω := rfl
   have hy : ((1 - β : 𝓞 D.host.E) : D.host.E) = 1 - ω := by simp [← hβ]
   have hconj : D.host.conj ω = 1 - ω := by
-    rw [hω, map_div₀, map_add, map_one, conj_sqrtE, map_ofNat]; ring
+    rw [hω, map_div₀, map_add (f := _), map_one, conj_sqrtE, map_ofNat]; ring
   have huQ : (u : ℚ_[D.nd.l i]) = (1 + (t : ℚ_[D.nd.l i])) / 2 := by
     have := congrArg (fun z : ℤ_[D.nd.l i] => (z : ℚ_[D.nd.l i])) hu
     push_cast at this
@@ -88,9 +92,9 @@ theorem root_ne (h2 : D.nd.l i = 2) (w w' : HeightOneSpectrum (𝓞 D.host.E)) (
     rw [← this, e]
     field_simp
   have a1 : β ∈ w.asIdeal ↔ ‖u‖ < 1 := mem_iff_norm D i w hw β u (by
-    rw [hβ, hω, huQ]; simp only [map_div₀, map_add, map_one, map_ofNat, ht])
+    rw [hβ, hω, huQ]; simp only [map_div₀, map_add (f := _), map_one, map_ofNat, ht])
   have a2 : 1 - β ∈ w'.asIdeal ↔ ‖1 - u‖ < 1 := mem_iff_norm D i w' hw' (1 - β) (1 - u) (by
-    rw [hy, hω]; push_cast; rw [huQ]; simp only [map_sub, map_div₀, map_add, map_one, map_ofNat, ht'])
+    rw [hy, hω]; push_cast; rw [huQ]; simp only [map_sub, map_div₀, map_add (f := _), map_one, map_ofNat, ht'])
   have a3 : β ∈ w.asIdeal ↔ 1 - β ∈ w'.asIdeal := hc β (1 - β) (by rw [hy, hβ, hconj])
   have hiff : ‖u‖ < 1 ↔ ‖1 - u‖ < 1 := a1.symm.trans (a3.trans a2)
   have hprod : ‖u‖ * ‖1 - u‖ < 1 := by

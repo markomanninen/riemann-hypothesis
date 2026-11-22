@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AestronglyMeasurableMainD
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralNormCvecSq
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermFibreKernels
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AestronglyMeasurableMainD
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralNormCvecSq
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermFibreKernels
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBK
 
@@ -155,8 +159,8 @@ theorem integral_bz_Q_le {s : ℕ} (hs : s ≠ 0) {β : ℂ} (hβ : β ≠ 0) {�
     filter_upwards [eventually_ne_cocompact 0] with x hx
     have hmD : MemLp (mainD s β ε (Qz.indicator bt) x) 2 volume := memLp_mainD hs β hε hbtQ hbQ x
     have i1 : Integrable (fun D => ‖mainD s β ε (Qz.indicator bt) x D‖ ^ 2) :=
-      (memLp_two_iff_integrable_sq_norm hmD.1).1 hmD
-    have i2 : Integrable (fun D => ‖ut x D‖ ^ 2) := (memLp_two_iff_integrable_sq_norm (memU x hx).1).1 (memU x hx)
+      (memLp_two_iff_integrable_sq_norm hmD.aestronglyMeasurable).1 hmD
+    have i2 : Integrable (fun D => ‖ut x D‖ ^ 2) := (memLp_two_iff_integrable_sq_norm (memU x hx).aestronglyMeasurable).1 (memU x hx)
     have hQm : MeasurableSet Q := hQ.isClosed.measurableSet
     have i3 : Integrable (Q.indicator fun _ => (1 + η⁻¹) * (C * ‖x‖⁻¹) ^ 2) :=
       (integrableOn_const hQ.measure_lt_top.ne).integrable_indicator hQm

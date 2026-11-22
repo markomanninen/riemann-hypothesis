@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsCovolOne
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ExistsUnitScalingSelfdualAdelicMeasures
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SelfdualMeasureTwistBySymmetricAuto
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SelfdualMeasureTransportEquiv
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ExistsTraceFormGramMatrixInBasis
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ExistsUnipotentInvariantCompactlySupportedWeight
-import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.ExistsEqAdelicCharMul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TamePartRight
-import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsCovolOne
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ExistsUnitScalingSelfdualAdelicMeasures
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SelfdualMeasureTwistBySymmetricAuto
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SelfdualMeasureTransportEquiv
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ExistsTraceFormGramMatrixInBasis
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ExistsUnipotentInvariantCompactlySupportedWeight
+public import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.ExistsEqAdelicCharMul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TamePartRight
+public import GroundTheory.AutomorphicForms.GL2.GJMatrixAdelic
+
+@[expose] public section
 
 noncomputable section
 
@@ -154,7 +158,7 @@ variable {K : Type} [Field K] [NumberField K] {ι : Type} [Fintype ι]
 
 theorem exists_bump (z : ι → AdeleRing (𝓞 K) K) (U : Set (ι → AdeleRing (𝓞 K) K)) (hU : U ∈ 𝓝 z) :
     ∃ r : (ι → AdeleRing (𝓞 K) K) → ℝ, Continuous r ∧ (∀ x, 0 ≤ r x) ∧ 0 < r z ∧
-      (∀ x, r x ≠ 0 → x ∈ U) ∧ (fun x => (r x : ℂ)) ∈ schwartzBruhatPi K ι := by
+      (∀ x, r x ≠ 0 → x ∈ U) ∧ (fun x => (r x : ℂ)) ∈ schwartzBruhatPi (K := K) (ι := ι) := by
   classical
   let inv : (ι → mixedSpace K) × (ι → FiniteAdeleRing (𝓞 K) K) → (ι → AdeleRing (𝓞 K) K) :=
     fun p i => ((homeomorphMixedSpace K).symm (p.1 i), p.2 i)
@@ -179,7 +183,7 @@ theorem exists_bump (z : ι → AdeleRing (𝓞 K) K) (U : Set (ι → AdeleRing
     GlobalTheory.TamePartR.totallyDisconnected_finiteAdele K
   obtain ⟨Kc, hKn, hKs, hKc⟩ := local_compact_nhds hB
   obtain ⟨C, hCo, hv, hCs⟩ :=
-    (loc_compact_Haus_tot_disc_of_zero_dim (H := ι → FiniteAdeleRing (𝓞 K) K)).mem_nhds_iff.1 hKn
+    (loc_compact_Haus_tot_disc_of_zero_dim (X := ι → FiniteAdeleRing (𝓞 K) K)).mem_nhds_iff.1 hKn
   have hCo' : IsClopen C := hCo
   have hCc : IsCompact C := hKc.of_isClosed_subset hCo'.1 hCs
   have hlc : ∀ {Y : Type} [Zero Y] (c : Y), IsLocallyConstant (C.indicator fun _ => c) := by
@@ -226,7 +230,7 @@ theorem exists_bump (z : ι → AdeleRing (𝓞 K) K) (U : Set (ι → AdeleRing
 theorem selfDual_std : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.SelfDual (adeleMeasurePi K (ι := ι))
     (fun x y => ((adelicChar K (∑ i, x i * y i) : Circle) : ℂ)) := by
   refine selfDual_of_rich inferInstance _ ?_ (fun _ _ => Circle.norm_coe _) ?_
-    (schwartzBruhatPi K ι : Set _) ?_ exists_bump
+    (schwartzBruhatPi (K := K) (ι := ι) : Set _) ?_ exists_bump
   · exact continuous_subtype_val.comp ((continuous_adelicChar (K := K)).comp
       (continuous_finsetSum _ fun i _ =>
         ((continuous_apply i).comp continuous_fst).mul ((continuous_apply i).comp continuous_snd)))

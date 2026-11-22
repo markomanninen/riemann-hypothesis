@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Filter Topology
 
@@ -13,9 +17,12 @@ theorem tendsto_limUnder_of_cauchy_rate :
   intro f δ t₁ ht₁ hδ hrate
   set F : Filter ℝ := nhdsWithin 0 (Set.Ioi 0) with hF
 
-  have hS : ∀ ε > 0, {t | δ t < ε ∧ 0 < t ∧ t ≤ t₁} ∈ F := fun ε hε =>
-    Filter.inter_mem (hδ (Iio_mem_nhds hε))
-      (Filter.inter_mem self_mem_nhdsWithin (mem_nhdsWithin_of_mem_nhds (Iic_mem_nhds ht₁)))
+  have hS : ∀ ε > 0, {t | δ t < ε ∧ 0 < t ∧ t ≤ t₁} ∈ F := by
+    intro ε hε
+    filter_upwards [hδ (Iio_mem_nhds hε),
+      (self_mem_nhdsWithin : Set.Ioi (0 : ℝ) ∈ F),
+      (mem_nhdsWithin_of_mem_nhds (Iic_mem_nhds ht₁) : Set.Iic t₁ ∈ F)] with t hδt ht ht₁t
+    exact ⟨hδt, ht, ht₁t⟩
   have hC : Cauchy (Filter.map f F) := by
     rw [Metric.cauchy_iff]
     refine ⟨inferInstance, fun ε hε => ⟨f '' {t | δ t < ε ∧ 0 < t ∧ t ≤ t₁}, Filter.image_mem_map (hS ε hε), ?_⟩⟩

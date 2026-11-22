@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped TensorProduct
 
@@ -57,7 +61,7 @@ theorem map_mem_of_mem_smul_top {S : Type} [CommRing S] {N : Type} [AddCommGroup
     (J : Ideal S) (φ : N →ₗ[S] S) {z : N} (hz : z ∈ J • (⊤ : Submodule S N)) : φ z ∈ J := by
   exact Submodule.smul_induction_on hz (fun a ha n _ => by
       rw [map_smul, smul_eq_mul]; exact J.mul_mem_right _ ha)
-    (fun x y hx hy => by rw [map_add]; exact J.add_mem hx hy)
+    (fun x y hx hy => by rw [map_add (f := _)]; exact J.add_mem hx hy)
 
 omit [IsDedekindDomain R] in
 theorem mem_range_of_torsion [Module.Finite R M] [Module.Projective R M] (I J : Ideal R) (c : R)
@@ -83,7 +87,8 @@ theorem mem_range_of_torsion [Module.Finite R M] [Module.Projective R M] (I J : 
     rw [map_sub, map_smul, ← hm0]; abel
   rw [this]
   refine Submodule.neg_mem _ ?_
-  rw [hdec, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hdec, map_sum]
   exact Submodule.sum_mem _ fun j _ => by
     rw [map_smul]; exact Submodule.smul_mem_smul (hr j) trivial
 

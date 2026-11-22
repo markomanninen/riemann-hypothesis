@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BdRPlusIsDomainBdRIsField
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ImportsExtra
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BdRPlusIsDomainBdRIsField
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ImportsExtra
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,11 +51,11 @@ theorem finite_finrank_le_base [FiniteDimensional Qp K] [FiniteDimensional Qp V]
     induction w using TensorProduct.induction_on with
     | zero => simp
     | tmul c v => simp [σ, TensorProduct.smul_tmul']
-    | add x y hx hy => simp only [smul_add, map_add, hx, hy]
+    | add x y hx hy => simp only [smul_add, map_add (f := _), hx, hy]
   let U : Submodule K (B ⊗[Qp] V) :=
     { carrier := {x | ∀ g, σ g x = x}
       zero_mem' := fun g => map_zero _
-      add_mem' := fun hx hy g => by rw [map_add, hx g, hy g]
+      add_mem' := fun hx hy g => by rw [map_add (f := _), hx g, hy g]
       smul_mem' := fun c x hx g => by
         rw [← algebraMap_smul B c x, hσ, hx g, AlgEquiv.commutes] }
   have hr : Module.rank K U ≤ finrank Qp V := by
@@ -72,7 +76,7 @@ theorem finite_finrank_le_base [FiniteDimensional Qp K] [FiniteDimensional Qp V]
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul c v => simp [σ]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   let f : invs (Qp := Qp) act ρ →ₗ[Qp] U :=
     { toFun := fun x => ⟨TensorProduct.comm Qp V B x, fun g => by
         have := x.2
@@ -119,8 +123,8 @@ theorem frac_dR (hF : IsField BdR) (b b' : BdR) (hb : b ≠ 0)
     rw [map_div₀, div_eq_div_iff hg hb, mul_comm, h g, mul_comm]
   exact ⟨c, by rw [hc, div_mul_cancel₀ _ hb]⟩
 
-include PD in
 
+include PD in
 theorem isDomain_cris (hF : IsField BdR) : IsDomain B :=
   letI : Field BdR := hF.toField
   PD.ι_inj.isDomain PD.ι.toRingHom

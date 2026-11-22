@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GaloisLevelStructure.NGalTied
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+module
+
+public import Formalism.LocalToGlobal.GaloisLevelStructure.NGalTied
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+
+@[expose] public section
 
 namespace Formalism.L2
 

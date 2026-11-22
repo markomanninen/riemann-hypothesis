@@ -1,17 +1,24 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.AuxiliaryInertOddPrime
-import Development.AbelianVarietyTheory.Statements.HeckeInFamilies.GenericMemChart
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LevelOfSplitAndLevelCoeffExist
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.RangeSubsetOfGeom
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.MapToUniversalObjectUnique
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFiniteEtaleSurjectiveLevelMap
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSubgroupOfFinite
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FiniteDimensionalField
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.AuxiliaryInertOddPrime
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.OneAddZeta21PowSevenAddPowFourteenEqZero
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ToMatrixTrFormBaseChange
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LevelOfSplitAndLevelCoeffExist
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.RangeSubsetOfGeom
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.MapToUniversalObjectUnique
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFiniteEtaleSurjectiveLevelMap
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSubgroupOfFinite
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FiniteDimensionalField
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -94,7 +101,7 @@ theorem exists_finite_invariant {l : Level H} (Xo : Moduli D l) :
   obtain ⟨c', hc'⟩ := hq _ _ (congrFun h (q x))
   generalize Function.invFun q (q x) = y at hc hc'
   subst hc
-  simp only [map_add, map_nsmul, hc', Xo.univ.etaA_add, Xo.univ.etaA_ker, _root_.mul_one]
+  simp only [map_add (f := _), map_nsmul, hc', Xo.univ.etaA_add, Xo.univ.etaA_ker, _root_.mul_one]
 
 section
 
@@ -102,12 +109,12 @@ variable {l₀ l₁ : Level H} {X₀ : Moduli D l₀} {X₁ : Moduli D l₁} {r 
 
 def twistMonoid (τ : autOver r →* Aut X₁.univ.t.G.left) : Submonoid (autOver r) :=
   { carrier := {ω | ∃ (g : D.La →ₗ[𝓞 E] D.La) (σ : KA l₁ ≃+* KA l₁), σ (baseKA l₁).ρ = (baseKA l₁).ρ ∧
-      SemiTwist X₁ ω.1.hom (τ ω).hom g σ.toRingHom}
+      SemiTwist X₁ ω.1.asIso.hom (τ ω).asIso.hom g σ.toRingHom}
     mul_mem' := by
       rintro a b ⟨g, σ, h₁, h₂⟩ ⟨g', σ', h₁', h₂'⟩
       refine ⟨g' ∘ₗ g, σ.trans σ', by rw [RingEquiv.trans_apply, h₁, h₁'], ?_⟩
-      have e₁ : (a * b).1.hom = b.1.hom ≫ a.1.hom := rfl
-      have e₂ : (τ (a * b)).hom = (τ b).hom ≫ (τ a).hom := by rw [map_mul]; rfl
+      have e₁ : (a * b).1.asIso.hom = b.1.asIso.hom ≫ a.1.asIso.hom := rfl
+      have e₂ : (τ (a * b)).asIso.hom = (τ b).asIso.hom ≫ (τ a).asIso.hom := by rw [map_mul]; rfl
       have e₃ : (σ.trans σ').toRingHom = σ'.toRingHom.comp σ.toRingHom := RingHom.ext fun _ => rfl
       rw [e₁, e₂, e₃, LinearMap.coe_comp]
       exact h₂'.comp h₂
@@ -124,42 +131,42 @@ theorem inv_comp_square {X P : Scheme.{0}} (a : X ≅ X) (t : P ≅ P) {b : X �
   rw [Category.assoc, ← p₂, Iso.eq_inv_comp, ← Category.assoc, ← p₁, Category.assoc, Iso.hom_inv_id_assoc]
 
 theorem finite_twistMonoid (τ : autOver r →* Aut X₁.univ.t.G.left)
-    (mu : ∀ ω : autOver r, SABMap X₁.univ.t X₁.univ.t ω.1.hom) (hmu : ∀ ω, (mu ω).φ = (τ ω).hom) :
+    (mu : ∀ ω : autOver r, SABMap X₁.univ.t X₁.univ.t ω.1.asIso.hom) (hmu : ∀ ω, (mu ω).φ = (τ ω).asIso.hom) :
     Finite (twistMonoid τ) := by
   obtain ⟨κ, _, q, hq⟩ := exists_finite_invariant X₁
   haveI := finite_fieldAut l₁
   have hch : ∀ ω : twistMonoid τ, ∃ (g : D.La →ₗ[𝓞 E] D.La) (σ : KA l₁ ≃+* KA l₁),
-      SemiTwist X₁ ω.1.1.hom (τ ω.1).hom g σ.toRingHom := fun ω => by
+      SemiTwist X₁ ω.1.1.asIso.hom (τ ω.1).asIso.hom g σ.toRingHom := fun ω => by
     obtain ⟨g, σ, -, h⟩ := ω.2
     exact ⟨g, σ, h⟩
   choose g σ hg using hch
   refine Finite.of_injective (fun ω => (q (g ω), σ ω)) fun a b hab => ?_
   have h₁ := hq _ _ (congrArg Prod.fst hab)
   have h₂ : σ a = σ b := congrArg Prod.snd hab
-  have e₀ : (b.1 * a.1⁻¹).1.hom = a.1.1.inv ≫ b.1.1.hom := rfl
-  have e₁ : (τ (b.1 * a.1⁻¹)).hom = (τ a.1).inv ≫ (τ b.1).hom := by rw [map_mul, map_inv]; rfl
-  have key : ∀ {x y : X₁.X ⟶ X₁.univ.t.G.left}, y ≫ (τ a.1).hom = a.1.1.hom ≫ x →
-      y ≫ (τ b.1).hom = b.1.1.hom ≫ x → x ≫ (mu (b.1 * a.1⁻¹)).φ = (b.1 * a.1⁻¹).1.hom ≫ x := by
+  have e₀ : (b.1 * a.1⁻¹).1.asIso.hom = a.1.1.asIso.inv ≫ b.1.1.asIso.hom := rfl
+  have e₁ : (τ (b.1 * a.1⁻¹)).asIso.hom = (τ a.1).asIso.inv ≫ (τ b.1).asIso.hom := by rw [map_mul, map_inv]; rfl
+  have key : ∀ {x y : X₁.X ⟶ X₁.univ.t.G.left}, y ≫ (τ a.1).asIso.hom = a.1.1.asIso.hom ≫ x →
+      y ≫ (τ b.1).asIso.hom = b.1.1.asIso.hom ≫ x → x ≫ (mu (b.1 * a.1⁻¹)).φ = (b.1 * a.1⁻¹).1.asIso.hom ≫ x := by
     intro x y p₁ p₂
     rw [hmu, e₀, e₁]
-    exact inv_comp_square (a.1.1 : X₁.X ≅ X₁.X) (τ a.1) p₁ p₂
-  have hid : (b.1 * a.1⁻¹).1.hom = 𝟙 _ :=
+    exact inv_comp_square a.1.1.asIso (τ a.1).asIso p₁ p₂
+  have hid : (b.1 * a.1⁻¹).1.asIso.hom = 𝟙 _ :=
     SemiTwist.eq_id (g := id) (σ := RingHom.id _) (mu (b.1 * a.1⁻¹)) ⟨by
       rw [e₀, Category.assoc, (hg b).1, ← h₂, ← (hg a).1, LevelCover.spMap_id', Category.comp_id]
-      exact Iso.inv_hom_id_assoc (a.1.1 : X₁.X ≅ X₁.X) _,
+      exact Iso.inv_hom_id_assoc a.1.1.asIso _,
       fun x => key ((hg a).2.1 x) ((hg b).2.1 x),
       fun x => key ((hg a).2.2 x) (h₁ x ▸ (hg b).2.2 x)⟩ rfl fun _ => rfl
-  have : b.1 * a.1⁻¹ = 1 := Subtype.ext (Iso.ext hid)
+  have : b.1 * a.1⁻¹ = 1 := Subtype.ext (Aut.ext (Iso.ext hid))
   exact Subtype.ext (mul_inv_eq_one.1 this).symm
 
 theorem exists_mem_twistMonoid (hL : Out.Laws) (hL2 : Out.Laws2) (hL3 : Out.Laws3)
     {ν : SABMap X₁.univ.t X₀.univ.t r} {k : KA l₀ →+* KA l₁} (hA : l₀.A = 1)
     (hk : IsInc (KA l₀).val.toRingHom (KA l₁).val.toRingHom k) (hr : r ≫ X₀.s = X₁.s ≫ spMap k)
     (hc : LevComp X₁.univ X₀.univ r ν) (τ : autOver r →* Aut X₁.univ.t.G.left)
-    (hτ : ∀ ω, (τ ω).hom ≫ ν.φ = ν.φ ∧ (τ ω).hom ≫ X₁.univ.t.G.hom = X₁.univ.t.G.hom ≫ ω.1.hom)
+    (hτ : ∀ ω, (τ ω).asIso.hom ≫ ν.φ = ν.φ ∧ (τ ω).asIso.hom ≫ X₁.univ.t.G.hom = X₁.univ.t.G.hom ≫ ω.1.asIso.hom)
     (ρ : X₁.X ≅ X₁.X) (m : SABMap X₁.univ.t X₁.univ.t ρ.hom) (g : D.La →ₗ[𝓞 E] D.La) (σ : KA l₁ ≃+* KA l₁)
     (h₁ : σ (baseKA l₁).ρ = (baseKA l₁).ρ) (h₂ : SemiTwist X₁ ρ.hom m.φ g σ.toRingHom) :
-    ∃ ω ∈ twistMonoid τ, ω.1.hom = ρ.hom := by
+    ∃ ω ∈ twistMonoid τ, ω.1.asIso.hom = ρ.hom := by
   have hkρ : k (baseKA l₀).ρ = (baseKA l₁).ρ := Subtype.ext (hk _)
   have hz : (baseKA l₀).ζ = 1 := by
     have := (baseKA l₀).ζ_prim.pow_eq_one
@@ -168,13 +175,13 @@ theorem exists_mem_twistMonoid (hL : Out.Laws) (hL2 : Out.Laws2) (hL3 : Out.Laws
     (by rw [hz, map_one, map_one])
   obtain ⟨o₁, o₂⟩ := over_of_fix hL hL2 hL3 hA hc m h₂.2.1 (by
     rw [Category.assoc, hr, ← Category.assoc, h₂.1, Category.assoc, LevCover.spMap_comp'', hσ])
-  have e : m.φ = (τ ⟨ρ, o₁⟩).hom :=
-    ν.cart.1.hom_ext (o₂.trans (hτ _).1.symm) (m.cart.1.w.trans (hτ ⟨ρ, o₁⟩).2.symm)
-  exact ⟨⟨ρ, o₁⟩, ⟨g, σ, h₁, e ▸ h₂⟩, rfl⟩
+  have e : m.φ = (τ ⟨Aut.of ρ, o₁⟩).asIso.hom :=
+    ν.cart.1.hom_ext (o₂.trans (hτ _).1.symm) (m.cart.1.w.trans (hτ ⟨Aut.of ρ, o₁⟩).2.symm)
+  exact ⟨⟨Aut.of ρ, o₁⟩, ⟨g, σ, h₁, e ▸ h₂⟩, rfl⟩
 
 end
 
-theorem exists_level_quotient : Out.Laws → Out.Laws2 → Out.Laws3 → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (Xo : ∀ l : Level H, Moduli D l), 1 ≤ D.p + D.q → ToroidalLevelCompatibility (H := H) (D := D) → ∀ (l₀ l₁ : Level H) (r : (Xo l₁).X ⟶ (Xo l₀).X) (ν : SABMap (Xo l₁).univ.t (Xo l₀).univ.t r) (k : KA l₀ →+* KA l₁), l₀.A = 1 → l₁.M = l₀.M → l₁.Mb = l₀.Mb → IsInc (KA l₀).val.toRingHom (KA l₁).val.toRingHom k → r ≫ (Xo l₀).s = (Xo l₁).s ≫ spMap k → LevComp (Xo l₁).univ (Xo l₀).univ r ν → ∃ (Γ : Type) (_ : Group Γ) (_ : Finite Γ) (ρ : Γ →* Aut (Xo l₁).X) (τ : Γ →* Aut (Xo l₁).univ.t.G.left) (mu : ∀ g, SABMap (Xo l₁).univ.t (Xo l₁).univ.t (ρ g).hom), Function.Injective ρ ∧ (IsAffineHom r ∧ (∀ g, (ρ g).hom ≫ r = r) ∧ ∀ V : (Xo l₀).X.Opens, Function.Injective (r.app V).hom ∧ ∀ f : Γ((Xo l₁).X, r ⁻¹ᵁ V), (∀ g (h : r ⁻¹ᵁ V ≤ (ρ g).hom ⁻¹ᵁ (r ⁻¹ᵁ V)), ((ρ g).hom.appLE _ _ h).hom f = f) → f ∈ Set.range (r.app V).hom) ∧ ∀ ω, (mu ω).φ = (τ ω).hom ∧ (τ ω).hom ≫ ν.φ = ν.φ ∧ (∀ x, ((Xo l₁).univ.eta x).left ≫ (τ ω).hom = (ρ ω).hom ≫ ((Xo l₁).univ.eta x).left) ∧ ∃ (g : D.La →ₗ[𝓞 E] D.La) (σ : KA l₁ ≃+* KA l₁), σ (baseKA l₁).ρ = (baseKA l₁).ρ ∧ (ρ ω).hom ≫ (Xo l₁).s = (Xo l₁).s ≫ spMap σ.toRingHom ∧ ∀ x, ((Xo l₁).univ.etaA (g x)).left ≫ (τ ω).hom = (ρ ω).hom ≫ ((Xo l₁).univ.etaA x).left := by
+theorem exists_level_quotient : Out.Laws → Out.Laws2 → Out.Laws3 → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (Xo : ∀ l : Level H, Moduli D l), 1 ≤ D.p + D.q → ToroidalLevelCompatibility (H := H) (D := D) → ∀ (l₀ l₁ : Level H) (r : (Xo l₁).X ⟶ (Xo l₀).X) (ν : SABMap (Xo l₁).univ.t (Xo l₀).univ.t r) (k : KA l₀ →+* KA l₁), l₀.A = 1 → l₁.M = l₀.M → l₁.Mb = l₀.Mb → IsInc (KA l₀).val.toRingHom (KA l₁).val.toRingHom k → r ≫ (Xo l₀).s = (Xo l₁).s ≫ spMap k → LevComp (Xo l₁).univ (Xo l₀).univ r ν → ∃ (Γ : Type) (_ : Group Γ) (_ : Finite Γ) (ρ : Γ →* Aut (Xo l₁).X) (τ : Γ →* Aut (Xo l₁).univ.t.G.left) (mu : ∀ g, SABMap (Xo l₁).univ.t (Xo l₁).univ.t (ρ g).asIso.hom), Function.Injective ρ ∧ (IsAffineHom r ∧ (∀ g, (ρ g).asIso.hom ≫ r = r) ∧ ∀ V : (Xo l₀).X.Opens, Function.Injective (r.app V).hom ∧ ∀ f : Γ((Xo l₁).X, r ⁻¹ᵁ V), (∀ g (h : r ⁻¹ᵁ V ≤ (ρ g).asIso.hom ⁻¹ᵁ (r ⁻¹ᵁ V)), ((ρ g).asIso.hom.appLE _ _ h).hom f = f) → f ∈ Set.range (r.app V).hom) ∧ ∀ ω, (mu ω).φ = (τ ω).asIso.hom ∧ (τ ω).asIso.hom ≫ ν.φ = ν.φ ∧ (∀ x, ((Xo l₁).univ.eta x).left ≫ (τ ω).asIso.hom = (ρ ω).asIso.hom ≫ ((Xo l₁).univ.eta x).left) ∧ ∃ (g : D.La →ₗ[𝓞 E] D.La) (σ : KA l₁ ≃+* KA l₁), σ (baseKA l₁).ρ = (baseKA l₁).ρ ∧ (ρ ω).asIso.hom ≫ (Xo l₁).s = (Xo l₁).s ≫ spMap σ.toRingHom ∧ ∀ x, ((Xo l₁).univ.etaA (g x)).left ≫ (τ ω).asIso.hom = (ρ ω).asIso.hom ≫ ((Xo l₁).univ.etaA x).left := by
   intro hL hL2 hL3 E _ _ _ H D Xo hpq hN l₀ l₁ r ν k hA hM hMb hk hr hc
   have hd : l₀.Dvd l₁ := ⟨hM ▸ dvd_rfl, hMb.le, hA ▸ one_dvd _⟩
   obtain ⟨hfin, het, hsur⟩ : IsFinite r ∧ Etale r ∧ Surjective r := by
@@ -184,8 +191,8 @@ theorem exists_level_quotient : Out.Laws → Out.Laws2 → Out.Laws3 → ∀ (E 
       (isReduced_moduli _) (hr.trans hr'.symm) hc hc').1
     exact h
   obtain ⟨τ, hτ⟩ := exists_liftAut ν.cart.1
-  have hmu : ∀ ω : autOver r, ∃ m : SABMap (Xo l₁).univ.t (Xo l₁).univ.t ω.1.hom, m.φ = (τ ω).hom := fun ω => by
-    obtain ⟨m, hm⟩ := LevelCover.sab_cancel ν ν ω.1.hom ω.2
+  have hmu : ∀ ω : autOver r, ∃ m : SABMap (Xo l₁).univ.t (Xo l₁).univ.t ω.1.asIso.hom, m.φ = (τ ω).asIso.hom := fun ω => by
+    obtain ⟨m, hm⟩ := LevelCover.sab_cancel ν ν ω.1.asIso.hom ω.2
     exact ⟨m, ν.cart.1.hom_ext (hm.trans (hτ ω).1.symm) (m.cart.1.w.trans (hτ ω).2.symm)⟩
   choose mu hmu using hmu
   let S := twistMonoid τ
@@ -196,7 +203,7 @@ theorem exists_level_quotient : Out.Laws → Out.Laws2 → Out.Laws3 → ∀ (E 
       fun a b h => Subtype.ext (congrArg (fun s : S => s.1) h),
     (autOver r).subtype.comp T.subtype, τ.comp T.subtype, fun t => mu t.1,
     Subtype.val_injective.comp Subtype.val_injective, ⟨inferInstance, fun t => t.1.2, ?_⟩, fun t => ?_⟩
-  · refine invariant_descends r (fun t : T => t.1.1.hom) (fun t => t.1.2) fun F _ _ y y' hy => ?_
+  · refine invariant_descends r (fun t : T => t.1.1.asIso.hom) (fun t => t.1.2) fun F _ _ y y' hy => ?_
     obtain ⟨β, hβ⟩ := LevCover.exists_spMap (y ≫ (Xo l₁).s)
     obtain ⟨β', hβ'⟩ := LevCover.exists_spMap (y' ≫ (Xo l₁).s)
     have hkρ : k (baseKA l₀).ρ = (baseKA l₁).ρ := Subtype.ext (hk _)
@@ -207,7 +214,7 @@ theorem exists_level_quotient : Out.Laws → Out.Laws2 → Out.Laws3 → ∀ (E 
     obtain ⟨ρ, m, g, h₃⟩ := exists_semiTwist_iso hpq l₀ hA hM hMb (Xo l₁) σ h₁
     obtain ⟨a, ha, ea⟩ := hS ρ m g σ h₁ h₃
     obtain ⟨ρ', m', g', h₄, h₅⟩ := exists_twist_of_fibre hL hL2 hL3 hN hd hM hMb hk hr hc (y ≫ ρ.hom) y'
-      (by rw [Category.assoc, ← ea, show a.1.hom ≫ r = r from a.2, hy])
+      (by rw [Category.assoc, ← ea, show a.1.asIso.hom ≫ r = r from a.2, hy])
       (by rw [Category.assoc, h₃.1, ← Category.assoc, hβ, hβ', LevCover.spMap_comp'', h₂])
     obtain ⟨b, hb', eb⟩ := hS ρ' m' g' (RingEquiv.refl _) rfl h₄
     refine ⟨⟨b * a, (hT _).2 (S.mul_mem hb' ha)⟩, ?_⟩

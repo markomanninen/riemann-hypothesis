@@ -1,6 +1,10 @@
-import ReciprocityTheory.L2DbarEstimates.IsLocalHomeomorph
-import ReciprocityTheory.L2DbarEstimates.JacobianInterpolationStatement
-import ReciprocityTheory.L2DbarEstimates.BasicIdentity.BasicIdentityStatement
+module
+
+public import ReciprocityTheory.L2DbarEstimates.IsLocalHomeomorph
+public import ReciprocityTheory.L2DbarEstimates.JacobianInterpolationStatement
+public import ReciprocityTheory.L2DbarEstimates.BasicIdentity.BasicIdentityStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.F
 
@@ -11,9 +15,6 @@ noncomputable section
 
 def wvol {M : Type*} [MeasurableSpace M] (n : ℕ) (z : M → V n) (ph : M → ℝ) : Measure M :=
   (vol n z).withDensity (fun x => ENNReal.ofReal (Real.exp (-ph x)))
-
-def SmoothForm {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (f : M → V n) : Prop :=
-  ∀ j, Smooth n z (fun x => f x j)
 
 def dbarF {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (g : M → ℂ) : M → V n :=
   fun x => WithLp.toLp 2 (fun j => db n z j g x)

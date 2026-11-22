@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StarDepthToFunNonneg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StarDepthToFunNonneg
+
+@[expose] public section
 
 noncomputable section
 
@@ -91,8 +95,8 @@ theorem eval_twist_of_isTwInv {φ : InvFun (𝓞 E)} (hφ : IsTwInv H φ) (τ : 
   letI := hf
   exact (φ.eval_eq (r := ⟨g.toAddHom, hg⟩) hs _).symm
 
-omit [Module (𝓞 E) X] in
 
+omit [Module (𝓞 E) X] in
 theorem depthSet_twist_subset {ψ w : InvFun (𝓞 E)} (hψ : IsTwInv H ψ) (hw : IsTwInv H w) (σ : 𝓞 E ≃+* 𝓞 E)
     (hσ : σ H.w0 = H.w0) (n : ℕ) (B : (Fin n → 𝓞 E) → (Fin n → 𝓞 E) → ℝ) :
     depthSet H.bar ψ w n (fun a b => B (fun i => σ (a i)) (fun i => σ (b i))) ⊆ depthSet H.bar ψ w n B := by
@@ -131,9 +135,5 @@ theorem isTwInv_starDepth : ∀ (E : Type) [Field E] [NumberField E] [IsCMField 
   simpa only [RingEquiv.apply_symm_apply] using h
 
 end Twist
-
-example {E : Type} [Field E] [NumberField E] [IsCMField E] (H : Host E) (ψ : InvFun (𝓞 E)) (hψ : IsTwInv H ψ) :
-    IsTwInv H (starDepth H.bar ψ (zeroFun (𝓞 E))) :=
-  isTwInv_starDepth E H ψ _ hψ fun σ _ n B => by simp [zeroFun]
 
 end GlobalTheory.PolFan

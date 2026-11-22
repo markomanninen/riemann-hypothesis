@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.Statements
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -77,7 +81,7 @@ end MatrixLevel
 section Places
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 def HermAtPlace.Statement (h : HermitianForm F E W) (v : Basis ι E W) : Prop :=
@@ -100,8 +104,8 @@ def LenSq.Statement (h : HermitianForm F E W) (v : Basis ι E W) : Prop :=
 def VecAtNeZero.Statement (v : Basis ι E W) : Prop :=
   ∀ x : W, x ≠ 0 → ∀ w : InfinitePlace E, vecAt v x w ≠ 0
 
-variable (E) in
 
+variable (E) in
 def IntegerSmallAtPlaces.Statement : Prop :=
   ∀ a ∈ integralClosure ℤ E, (∀ w : InfinitePlace E, w a < 1) → a = 0
 
@@ -112,8 +116,8 @@ section Line
 variable {E : Type*} [Field E] [NumberField E]
 variable {W : Type*} [AddCommGroup W] [Module E W]
 
-variable (E) in
 
+variable (E) in
 def intSubgroup : AddSubgroup E := (algebraMap (𝓞 E) E).toAddMonoidHom.range
 
 def lineCoeffs (La : AddSubgroup W) (x : W) : AddSubgroup E :=
@@ -127,17 +131,17 @@ def weightedEmbed (c : InfinitePlace E → ℝ) : E →+ EuclideanSpace ℝ (Inf
     simp
   map_add' a b := by
     ext p
-    simp only [map_add, Complex.add_re, Complex.add_im, PiLp.add_apply]
+    simp only [map_add (f := _), Complex.add_re, Complex.add_im, PiLp.add_apply]
     split_ifs <;> ring
 
-variable (W) in
 
+variable (W) in
 def LineIndexCoeffs.Statement : Prop :=
   ∀ (La : AddSubgroup W) (x : W), x ≠ 0 →
     lineIndex E La x = (intSubgroup E).relIndex (lineCoeffs La x)
 
-variable (W) in
 
+variable (W) in
 def LineCoeffsFG.Statement : Prop :=
   ∀ (La : AddSubgroup W) (x : W), La.FG → x ≠ 0 → (lineCoeffs (E := E) La x).FG
 
@@ -156,10 +160,10 @@ def WeightedNormSq.Statement : Prop :=
   ∀ c : InfinitePlace E → ℝ, (∀ w, 0 ≤ c w) → ∀ a : E,
     ‖weightedEmbed c a‖ ^ 2 = ∑ w, c w * ‖w.embedding a‖ ^ 2
 
-def WeightedSpaceDim.Statement [IsTotallyComplex E] : Prop :=
+def WeightedSpaceDim.Statement [_root_.NumberField.IsTotallyComplex E] : Prop :=
   finrank ℝ (EuclideanSpace ℝ (InfinitePlace E × Fin 2)) = finrank ℚ E
 
-def WeightedIndexBound.Statement [IsTotallyComplex E] : Prop :=
+def WeightedIndexBound.Statement [_root_.NumberField.IsTotallyComplex E] : Prop :=
   ∀ c : InfinitePlace E → ℝ, (∀ w, 0 < c w) → ∀ A : AddSubgroup E, intSubgroup E ≤ A → A.FG →
     (∀ a ∈ A, a ≠ 0 → ∑ w, c w ≤ ∑ w, c w * ‖w.embedding a‖ ^ 2) →
     ∀ r : ℝ, (∃ a : Fin (finrank ℚ E) → 𝓞 E, LinearIndependent ℚ (fun i => (a i : E)) ∧
@@ -187,7 +191,7 @@ end Minkowski
 section Steps
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 def WeightedLenSmul.Statement (h : HermitianForm F E W) (v : Basis ι E W) : Prop :=
@@ -206,30 +210,9 @@ section Inhabitants
 
 open GaussianPlane
 
-def H0 : Matrix (Fin 2) (Fin 2) ℂ := Matrix.diagonal ![1, -1]
-
-def z0 : Fin 2 → ℂ := fun _ => 1
-
 def e1 : Fin 2 → ℂ := Pi.single 0 1
 
 def e2 : Fin 2 → ℂ := Pi.single 1 1
-
-theorem card_chooseBasisIndex_Eg :
-    Fintype.card (Module.Free.ChooseBasisIndex ℤ (𝓞 Eg)) = finrank ℚ Eg := by
-  rw [← Module.finrank_eq_card_chooseBasisIndex, RingOfIntegers.rank]
-
-def intBasisG : Basis (Fin (finrank ℚ Eg)) ℤ (𝓞 Eg) :=
-  (RingOfIntegers.basis Eg).reindex (Fintype.equivFinOfCardEq card_chooseBasisIndex_Eg)
-
-def intSubgroupEquiv (K : Type*) [Field K] [NumberField K] : 𝓞 K ≃ₗ[ℤ] intSubgroup K :=
-  (AddMonoidHom.ofInjective (f := (algebraMap (𝓞 K) K).toAddMonoidHom)
-    (FaithfulSMul.algebraMap_injective (𝓞 K) K)).toIntLinearEquiv
-
-def intSubgroupBasisG : Basis (Fin (finrank ℚ Eg)) ℤ (intSubgroup Eg) :=
-  intBasisG.map (intSubgroupEquiv Eg)
-
-instance fact_finrank_euclidean_fin_one : Fact (finrank ℝ (EuclideanSpace ℝ (Fin 1)) = 1) :=
-  ⟨finrank_euclideanSpace_fin⟩
 
 end Inhabitants
 

@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct Module
 
 noncomputable section
@@ -29,7 +34,7 @@ theorem sum_crd (x : V ⊗[F] N) : ∑ i, b i ⊗ₜ[F] crd b i N x = x := by
     simp only [crd_tmul, ← TensorProduct.smul_tmul, ← TensorProduct.sum_tmul, Basis.coord_apply,
       b.sum_repr]
   | add x y hx hy =>
-    simp only [map_add, TensorProduct.tmul_add, Finset.sum_add_distrib, hx, hy]
+    simp only [map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib, hx, hy]
 
 theorem eq_zero_of_crd (x : V ⊗[F] N) (h : ∀ i, crd b i N x = 0) : x = 0 := by
   rw [← sum_crd b x]; simp [h]
@@ -41,7 +46,7 @@ theorem crd_map (h : V →ₗ[LL] V) (hh : ∀ v, h v = v) (f : N →ₗ[F] N') 
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul v n => simp [crd_tmul, hh]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 end Coord
 
@@ -58,9 +63,7 @@ variable {G : Type} [Group G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field 
     (ρ : Representation LL G V)
 
 theorem fil_mono {a c : ℤ} (h : a ≤ c) : PD.Fil c ≤ PD.Fil a := by
-  induction c, h using Int.le_induction with
-  | base => exact le_rfl
-  | succ n _ ih => exact (PD.Fil_anti n).trans ih
+  exact antitone_int_of_succ_le PD.Fil_anti h
 
 theorem nontrivial_B (PD : PeriodData G Qp K₀ K B BdR) : Nontrivial B := by
   by_contra h
@@ -147,7 +150,8 @@ theorem Dcris_eq_range [Module.Finite Qp V] (hρ : ∀ g x, ρ g x = x) :
     choose c hc using fun i => crd_Dcris PD hρ b hx i
     refine ⟨∑ i, b i ⊗ₜ[Qp] c i, ?_⟩
     conv_rhs => rw [← sum_crd b x]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [jK₀, AlgebraTensorModule.map_tmul, ← hc i]
     rfl
@@ -157,7 +161,7 @@ theorem Dcris_eq_range [Module.Finite Qp V] (hρ : ∀ g x, ρ g x = x) :
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul v c => simp [jK₀, actVB, hρ]
-    | add y z hy hz => rw [map_add, map_add, hy, hz]
+    | add y z hy hz => rw [map_add (f := _), map_add (f := _), hy, hz]
 
 theorem finrank_tensor [FiniteDimensional LL V] [FiniteDimensional Qp K₀] :
     finrank LL (V ⊗[Qp] K₀) = finrank LL V * finrank Qp K₀ := by
@@ -181,7 +185,8 @@ theorem DdR_le_FilV [Module.Finite Qp V] (hρ : ∀ g x, ρ g x = x) {a : ℤ} (
     exact fil_mono PD ha ((PD.Fil 0).smul_mem _ PD.one_mem)
   refine ⟨∑ i, b i ⊗ₜ[Qp] (⟨crd b i BdR x, hmem i⟩ : (PD.Fil a).restrictScalars Qp), ?_⟩
   conv_rhs => rw [← sum_crd b x]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   rfl
 
 theorem DdR_inf_FilV [Module.Finite Qp V] (hρ : ∀ g x, ρ g x = x) {a : ℤ} (ha : 1 ≤ a) :

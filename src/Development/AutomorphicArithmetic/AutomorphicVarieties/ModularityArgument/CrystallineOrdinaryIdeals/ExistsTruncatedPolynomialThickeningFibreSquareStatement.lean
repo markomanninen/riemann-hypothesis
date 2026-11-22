@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.Imports
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CrystallineOrdinaryIdeals.Imports
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg IsLocalRing Polynomial Topology
 set_option maxHeartbeats 1000000 in
@@ -57,7 +61,7 @@ theorem _root_.GlobalTheory.T.exists_truncated_polynomial_thickening_fibre_squar
     rw [hp1] at ha
     obtain ⟨r, hr⟩ : X ∣ q - C (q.coeff 0) := X_dvd_iff.mpr (by simp)
     have hq : q = C (q.coeff 0) + X * r := by rw [← hr]; ring
-    rw [hq, map_add, map_mul, AdjoinRoot.mk_X, AdjoinRoot.mk_C]
+    rw [hq, map_add (f := _), map_mul, AdjoinRoot.mk_X, AdjoinRoot.mk_C]
     exact Commute.isNilpotent_add (Commute.all _ _) ((hπ _ ha).map _)
       ⟨N, by rw [mul_pow, hrootB, zero_mul]⟩
   have hnilC : ∀ a, πC a = 0 → IsNilpotent a := by
@@ -77,9 +81,9 @@ theorem _root_.GlobalTheory.T.exists_truncated_polynomial_thickening_fibre_squar
     rw [hπC] at hbc
     refine ⟨AdjoinRoot.of _ b + AdjoinRoot.mk _ (q.map (algebraMap E B)) -
       AdjoinRoot.of _ (algebraMap E B (q.coeff 0)), ?_, ?_⟩
-    · rw [map_sub, map_add, ← AdjoinRoot.mk_C, ← AdjoinRoot.mk_C, hp1, hp1, hp1]
+    · rw [map_sub, map_add (f := _), ← AdjoinRoot.mk_C, ← AdjoinRoot.mk_C, hp1, hp1, hp1]
       simp
-    · rw [map_sub, map_add, hp2map, ← AdjoinRoot.mk_C, ← AdjoinRoot.mk_C, hp2, hp2]
+    · rw [map_sub, map_add (f := _), hp2map, ← AdjoinRoot.mk_C, ← AdjoinRoot.mk_C, hp2, hp2]
       simp [hbc]
   have hker : ∀ Q, p2 Q = 0 → Q ∈ I.map (AdjoinRoot.of ((X : B[X]) ^ N)) := by
     intro Q hQ
@@ -90,7 +94,7 @@ theorem _root_.GlobalTheory.T.exists_truncated_polynomial_thickening_fibre_squar
       exact (modByMonic_eq_zero_iff_dvd (monic_X_pow N)).mpr hQ
     have hmk : AdjoinRoot.mk ((X : B[X]) ^ N) q = AdjoinRoot.mk _ (q %ₘ (X ^ N)) := by
       conv_lhs => rw [← modByMonic_add_div q (X ^ N)]
-      rw [map_add, map_mul, AdjoinRoot.mk_self, zero_mul, add_zero]
+      rw [map_add (f := _), map_mul, AdjoinRoot.mk_self, zero_mul, add_zero]
     rw [hmk]
     have hin : q %ₘ (X ^ N) ∈ I.map (C : B →+* B[X]) := by
       rw [Ideal.mem_map_C_iff]

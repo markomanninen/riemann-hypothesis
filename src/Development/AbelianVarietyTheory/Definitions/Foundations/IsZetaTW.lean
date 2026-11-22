@@ -1,7 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.CycMOfNot
-import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
-import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CycMOfNot
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EeProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,8 +23,8 @@ def thK (l : ℕ) [Fact l.Prime] (e : ℕ) (ψ : ZMod l → Qbar l) (s : G ℚ �
 def rhoK {l : ℕ} [Fact l.Prime] (W : R2 Ω l) (e : ℕ) (ψ : ZMod l → Qbar l) (s : G ℚ Ω) : Matrix (Fin 2) (Fin 2) (Qbar l) :=
   (thK l e ψ s)⁻¹ • mat W s
 
-open Classical in
 
+open Classical in
 def nuD {l : ℕ} [Fact l.Prime] (W : R2 Ω l) (e : ℕ) (ψ : ZMod l → Qbar l) (s : G ℚ Ω) : (Qbar l)ˣ :=
   if h : rhoK W e ψ s 1 1 ≠ 0 then Units.mk0 _ h else 1
 
@@ -64,8 +67,8 @@ def wkMu (X : Tower Ω ε) (l n r N : ℕ) (x : ZMod N) (c d : ℕ) (σ : Ω ≃
   ((topW (K := topL X M) (topZeta X M l n) (topChar X M l n u) (topChar X M l n v)
     (topEta X M (topChar X M l n u) (topChar X M l n v)) (topLift X M σ)⁻¹ : topL X M) : X.K)
 
-open Classical in
 
+open Classical in
 def clsBmu (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (n r N : ℕ) [NeZero N] (x : ZMod N) (c d k : ℕ) (g : (ZMod l)ˣ → SL(2, ℤ))
     (σ : Ω ≃ₐ[ℚ] Ω) : X.Fn l :=
   let M : ℕ := topMu l n r N
@@ -91,8 +94,8 @@ def wkTmu (X : Tower Ω ε) (l n r N l' : ℕ) (x : ZMod N) (c d : ℕ) (σ : Ω
   ((topW (K := topL X M) (topZeta X M l n) (topChar X M l n u) (topChar X M l n v)
     (topEta X M (topChar X M l n u) (topChar X M l n v)) (topLift X M σ)⁻¹ : topL X M) : X.K)
 
-open Classical in
 
+open Classical in
 def clsBTmu (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (n r N l' : ℕ) [NeZero N] [NeZero l'] (x : ZMod N) (c d k : ℕ)
     (g : (ZMod l)ˣ → SL(2, ℤ)) (σ : Ω ≃ₐ[ℚ] Ω) : X.Fn l :=
   let M : ℕ := topMT l n r N l'
@@ -115,43 +118,9 @@ def YfBT (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (pr : X.Fn l → Fin 2 → Q
 def cycT (l r l' : ℕ) [Fact l.Prime] (s : Ω ≃ₐ[ℚ] Ω) : (ZMod l')ˣ × (ZMod (l ^ r))ˣ :=
   ((cycM l' s)⁻¹, (cycMod (F := ℚ) (Ω := Ω) l r s)⁻¹)
 
-open Classical in
 
+open Classical in
 def lsqInv (l l' r : ℕ) : (ZMod l')ˣ :=
   if h : IsUnit ((l : ZMod l') ^ (2 * r)) then h.unit⁻¹ else 1
-
-def IsZetaT (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (pr : X.Fn l → Fin 2 → Qbar l) (W : R2 Ω l) (e : ℕ) (ψ : ZMod l → Qbar l)
-    (N l' : ℕ) [NeZero N] [NeZero l'] (x : ZMod N) (c d k : ℕ) (g : (ZMod l)ˣ → SL(2, ℤ)) (cf : Coef l)
-    (YT : ∀ r : ℕ, (Ω ≃ₐ[ℚ] Ω) → (ZMod l')ˣ × (ZMod (l ^ r))ˣ → Fin 2 → Qbar l) : Prop :=
-  ∃ c₀ : ℕ, ∀ r n : ℕ, ∃ bB : (Ω ≃ₐ[ℚ] Ω) → X.Fn l,
-    (∀ σ ∈ fixMu Ω (topMT l n r N l'), LiftB X l N (k - 2) n c₀ (clsBTmu X l n r N l' x c d k g σ) (bB σ)) ∧
-    ∃ b : (ZMod l')ˣ × (ZMod (l ^ r))ˣ → Fin 2 → Qbar l, (∀ y i, b y i ∈ cf.O) ∧ ∀ s y,
-      Cv n (YT r s y) (YfBT X l pr W e ψ n r N l' bB s (y.1 * lsqInv l l' r, y.2) + (rhoK W e ψ s *ᵥ b (y * cycT l r l' s) - b y))
-
-def IsZeta3 (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (pr : X.Fn l → Fin 2 → Qbar l) (W : R2 Ω l) (e : ℕ) (ψ : ZMod l → Qbar l)
-    (N : ℕ) [NeZero N] (x : ZMod N) (c d k : ℕ) (g : (ZMod l)ˣ → SL(2, ℤ)) (cf : Coef l)
-    (Y : ∀ r : ℕ, (Ω ≃ₐ[ℚ] Ω) → (ZMod (l ^ r))ˣ → Fin 2 → Qbar l) : Prop :=
-  ∃ c₀ : ℕ, ∀ r n : ℕ, ∃ bB : (Ω ≃ₐ[ℚ] Ω) → X.Fn l,
-    (∀ σ ∈ fixMu Ω (topMu l n r N), LiftB X l N (k - 2) n c₀ (clsBmu X l n r N x c d k g σ) (bB σ)) ∧
-    ∃ b : (ZMod (l ^ r))ˣ → Fin 2 → Qbar l, (∀ y i, b y i ∈ cf.O) ∧ ∀ s y,
-      Cv n (Y r s y) (YfB X l pr W e ψ n r N bB s y +
-        (rhoK W e ψ s *ᵥ b (y * (cycMod (F := ℚ) (Ω := Ω) l r s)⁻¹) - b y))
-
-def AdmW {l : ℕ} [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (e : ℕ) (gN : Newform (2 * e + 1)) (A : ValuationSubring Ω) (W : R2 Ω l)
-    (X : Tower Ω ε) (pr : X.Fn l → Fin 2 → Qbar l) (N : ℕ) [NeZero N] (cw : ZMod N → Qbar l) (c d : ℕ) (gm : (ZMod l)ˣ → SL(2, ℤ))
-    (ψ : ZMod l → Qbar l) (cf : Coef l) : Prop :=
-  (∀ x, cw x ≠ 0 → Adm3 ι e gN A W X pr N x c d gm ψ cf) ∧ ∀ x, cw x ∈ cf.O
-
-def IsZetaW (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (pr : X.Fn l → Fin 2 → Qbar l) (W : R2 Ω l) (e : ℕ) (ψ : ZMod l → Qbar l)
-    (N : ℕ) [NeZero N] (cw : ZMod N → Qbar l) (c d k : ℕ) (g : (ZMod l)ˣ → SL(2, ℤ)) (cf : Coef l)
-    (Y : ∀ r : ℕ, (Ω ≃ₐ[ℚ] Ω) → (ZMod (l ^ r))ˣ → Fin 2 → Qbar l) : Prop :=
-  ∃ Yx : ZMod N → ∀ r : ℕ, (Ω ≃ₐ[ℚ] Ω) → (ZMod (l ^ r))ˣ → Fin 2 → Qbar l,
-    (∀ x, IsZeta3 X l pr W e ψ N x c d k g cf (Yx x)) ∧ ∀ r s y, Y r s y = ∑ x, cw x • Yx x r s y
-
-def IsZetaTW (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (pr : X.Fn l → Fin 2 → Qbar l) (W : R2 Ω l) (e : ℕ) (ψ : ZMod l → Qbar l)
-    (N l' : ℕ) [NeZero N] [NeZero l'] (cw : ZMod N → Qbar l) (c d k : ℕ) (g : (ZMod l)ˣ → SL(2, ℤ)) (cf : Coef l)
-    (YT : ∀ r : ℕ, (Ω ≃ₐ[ℚ] Ω) → (ZMod l')ˣ × (ZMod (l ^ r))ˣ → Fin 2 → Qbar l) : Prop :=
-  ∃ Yx : ZMod N → ∀ r : ℕ, (Ω ≃ₐ[ℚ] Ω) → (ZMod l')ˣ × (ZMod (l ^ r))ˣ → Fin 2 → Qbar l,
-    (∀ x, IsZetaT X l pr W e ψ N l' x c d k g cf (Yx x)) ∧ ∀ r s y, YT r s y = ∑ x, cw x • Yx x r s y
 
 end GlobalTheory.K4

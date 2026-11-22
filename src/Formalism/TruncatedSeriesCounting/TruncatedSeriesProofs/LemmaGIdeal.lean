@@ -1,6 +1,10 @@
-import Formalism.TruncatedSeriesCounting.RamifiedValuationInequality
-import Formalism.WindowSums.PowerSeriesRelationList
-import Formalism.LagrangeIdealLifts.LiftLagrangeIdealInt
+module
+
+public import Formalism.TruncatedSeriesCounting.RamifiedValuationInequality
+public import Formalism.WindowSums.PowerSeriesRelationList
+public import Formalism.LagrangeIdealLifts.LiftLagrangeIdealInt
+
+@[expose] public section
 
 noncomputable section
 

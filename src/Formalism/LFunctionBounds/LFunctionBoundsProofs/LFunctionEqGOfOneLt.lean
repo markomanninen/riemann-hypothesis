@@ -1,4 +1,8 @@
-import Formalism.LFunctionBounds.PositivityBound
+module
+
+public import Formalism.LFunctionBounds.PositivityBound
+
+@[expose] public section
 
 open Complex Filter Topology
 

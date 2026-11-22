@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementF
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.WeierstrassTwoTorsion.StatementF
+
+@[expose] public section
 
 universe u
 
@@ -17,13 +21,6 @@ theorem der_mul (d : Derivation ℤ A A) (a b : A) : d (a * b) = a * d b + b * d
 
 theorem der_sq (d : Derivation ℤ A A) (a : A) : d (a ^ 2) = 2 * a * d a := by
   rw [pow_two, der_mul]
-  ring
-
-theorem der_two_mul (d : Derivation ℤ A A) (a : A) : d (2 * a) = 2 * d a := by
-  rw [two_mul, map_add, two_mul]
-
-theorem der_three_mul (d : Derivation ℤ A A) (a : A) : d (3 * a) = 3 * d a := by
-  rw [show (3 : A) * a = a + a + a by ring, map_add, map_add]
   ring
 
 theorem der_inv (d : Derivation ℤ A A) {t s : A} (ht : t * s = 1) : d t = -t ^ 2 * d s := by
@@ -110,7 +107,7 @@ theorem flowLogDerivative : FlowLogDeriv.{u} := by
     simp only [WeierstrassCurve.Affine.negY]
     ring
   simp only [hd]
-  rw [hx, hsplit, map_add, map_add, hP, hQ, ht, mul_one, c1]
+  rw [hx, hsplit, map_add (f := _), map_add (f := _), hP, hQ, ht, mul_one, c1]
   ring
 
 end Formalism.L2.Th1.A

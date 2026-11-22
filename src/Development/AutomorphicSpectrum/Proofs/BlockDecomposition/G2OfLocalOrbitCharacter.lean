@@ -1,11 +1,15 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.GlobalComplexCoefficients
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.WeylSplitting.WeylSplit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharacterLaplaceFactorisation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResultantFactorsProd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KappaConstantMulOfCoprimeEllipticPolynomials
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSupportOfStTw2NeZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemProdOfMemTsupport
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.GlobalComplexCoefficients
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.WeylSplitting.WeylSplit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CharacterLaplaceFactorisation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ResultantFactorsProd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KappaConstantMulOfCoprimeEllipticPolynomials
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSupportOfStTw2NeZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MemProdOfMemTsupport
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,12 +86,13 @@ theorem resultant_factors_prod_eq_one {E : Type} [Field E] [NumberField E] [IsCM
         rw [if_pos ⟨u, hu, huw⟩]
       have hne : (-1) ^ (a * b) * algebraMap E (w.adicCompletion E) d ≠ 0 :=
         mul_ne_zero (pow_ne_zero _ (neg_ne_zero.2 one_ne_zero)) (hA0 d hd0)
-      rw [hdelta, dif_pos hne]
+      rw [hdelta, dite_eq_left hne]
       have hunit : (Units.mk0 _ hne : (w.adicCompletion E)ˣ) = atFin w (k * kc⁻¹) := by
         apply Units.ext
         have e1 : ((atFin w (k * kc⁻¹) : (w.adicCompletion E)ˣ) : w.adicCompletion E) =
             algebraMap E (w.adicCompletion E) (R * (c R)⁻¹) := by
           simp [atFin, kc, k, map_inv₀]
+          exact Or.inl rfl
         rw [e1, ← hd1, Units.val_mk0]
         simp [map_mul, map_pow]
       have hchar : ((μ.loc w (Units.mk0 _ hne) : ℂˣ) : ℂ) = ((μ.locK w k : ℂˣ) : ℂ) * ((μ.locK u k : ℂˣ) : ℂ) := by
@@ -196,7 +201,7 @@ theorem delta_eventually_one {E : Type} [Field E] [NumberField E] [IsCMField E] 
       rw [hres]
       simp only [hn₁, hn₂, hdl]
       rw [if_pos hsp]
-    rw [hdelta, dif_pos hne]
+    rw [hdelta, dite_eq_left hne]
     have hunit : (Units.mk0 _ hne : (w.adicCompletion E)ˣ) = atFin w u := by
       apply Units.ext
       simp [atFin, u, map_mul, map_pow]

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.SecondFromFirstStatement
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.EvK
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.SecondFromFirstStatement
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.EvK
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ open scoped TensorProduct
 namespace UpperTheory.V.Lit.Dr
 
 private theorem cont_multi {V F ι : Type} [Fintype ι] [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDimensional ℝ V]
-    [NormedAddCommGroup F] [NormedSpace ℝ F] (f : MultilinearMap ℝ (fun _ : ι => V) F) : Continuous f := by
+    [NormedAddCommGroup F] [NormedSpace ℝ F] (f : (ι → V) →ₘₗ[ℝ] F) : Continuous f := by
   classical
   let b := Module.finBasis ℝ V
   have h : (f : (ι → V) → F) = fun v => ∑ r : ι → Fin (Module.finrank ℝ V),
@@ -17,10 +21,11 @@ private theorem cont_multi {V F ι : Type} [Fintype ι] [NormedAddCommGroup V] [
     funext v
     have e : v = fun i => ∑ j, b.coord j (v i) • b j := funext fun i => (b.sum_repr (v i)).symm
     conv_lhs => rw [e]
-    rw [f.map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [f.map_sum]
     exact Finset.sum_congr rfl fun r _ => f.map_smul_univ _ _
   rw [h]
-  exact continuous_finset_sum _ fun r _ => (continuous_finset_prod _ fun i _ =>
+  exact continuous_finsetSum _ fun r _ => (continuous_finsetProd _ fun i _ =>
     (b.coord (r i)).continuous_of_finiteDimensional.comp (continuous_apply i)).smul continuous_const
 
 variable {E : Type} [Field E] [NumberField E] {a : ℕ}
@@ -55,7 +60,7 @@ private theorem exists_unitary {g h : GL (Fin a) (Cinf E)} (e : sand g (hOne E a
   rw [← inv_mul_eq_iff_eq_mul]
   exact Units.ext rfl
 
-variable [IsTotallyComplex E] (Ξ : AlgRep E a) {q : ℕ}
+variable [_root_.NumberField.IsTotallyComplex E] (Ξ : AlgRep E a) {q : ℕ}
   (α : Herm E a [⋀^Fin q]→ₗ[ℝ] (Sm E a ⊗[ℂ] (Fin Ξ.d → ℂ)))
 
 private def alt (g : GL (Fin a) (Cinf E)) (x : GL (Fin a) (Af E)) : HV E a [⋀^Fin q]→ₗ[ℝ] (Fin Ξ.d → ℂ) :=
@@ -92,10 +97,10 @@ theorem UpperTheory.V.Lit.Dr.corrFwd :
   classical
   intro E _ _ _ a U Ξ q α hα hU
   refine ⟨fun s p => if h : p ∈ cone E a then altL Ξ α h.choose s.out else 0, fun g x X => ?_,
-    fun s p hp => dif_neg hp⟩
+    fun s p hp => dite_eq_right hp⟩
   have hp : sand g (hOne E a) ∈ cone E a := ⟨g, rfl⟩
   obtain ⟨k, hk⟩ := exists_unitary hp.choose_spec.symm
   obtain ⟨u, hu⟩ := QuotientGroup.mk_out_eq_mul U x
   beta_reduce
-  rw [dif_pos hp, altL_apply, hk, hu, alt_cpt Ξ α hα, alt_fin Ξ α hU _ _ u.2, alt_apply]
+  rw [dite_eq_left hp, altL_apply, hk, hu, alt_cpt Ξ α hα, alt_fin Ξ α hU _ _ u.2, alt_apply]
   simp only [back_sand]

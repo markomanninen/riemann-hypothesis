@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsSumFrame
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.FinPl ValuativeRel NumberField
 
@@ -169,7 +173,7 @@ theorem toZModPow_toPadic (hcard : Nat.card (ResidueField 𝒪[k]) = T)
 
 theorem toPadic_injective (hcard : Nat.card (ResidueField 𝒪[k]) = T)
     (hirr : Irreducible (T : 𝒪[k])) : Function.Injective (toPadic hcard hirr) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   have hdiv : ∀ n : ℕ, (T : 𝒪[k]) ^ n ∣ x := by
     intro n

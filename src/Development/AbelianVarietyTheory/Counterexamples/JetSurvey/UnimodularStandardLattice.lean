@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.JetGauges.ThetaSpanAdjoint
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.JetGauges.ThetaSpanAdjoint
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -36,10 +40,10 @@ private lemma complexConj_mem_integers_iff (x : E) :
   refine ⟨fun h => ?_, fun h => h.map (IsCMField.complexConj E)⟩
   simpa using h.map (IsCMField.complexConj E).symm
 
+
 set_option autoImplicit false in
 open NumberField in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ} in
-
 theorem _root_.GlobalTheory.Survey.UnimodularStandardLattice.unimod_std :
     (⟨_root_.Formalism.L2.Pj.stdLat E n⟩ : _root_.Formalism.L2.Pj.GenLat E n).Unimod := by
   unfold _root_.Formalism.L2.Pj.GenLat.Unimod _root_.Formalism.L2.Pj.stdLat
@@ -60,10 +64,6 @@ theorem _root_.GlobalTheory.Survey.UnimodularStandardLattice.unimod_std :
       Finset.mem_univ, if_true] at hs
     exact (complexConj_mem_integers_iff (v i)).1 hs
 
-omit [IsCMField E] in
-
-theorem trivAt_std (bad : ℕ) : (⟨stdLat E n⟩ : GenLat E n).TrivAt bad :=
-  ⟨1, by simp, Submodule.smul_le_right, Submodule.smul_le_right⟩
 
 variable {H : Host E} {Dw : Datum H} {l : Level H}
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingKrullDimIntegers
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsSmoothOfRelativeDimensionSpreadFromGeneric
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingKrullDimIntegers
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsSmoothOfRelativeDimensionSpreadFromGeneric
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -41,16 +45,6 @@ theorem exists_etale_coords_of_opens {k : Type} [CommRing k] {X : Scheme.{0}} (p
   convert h3 using 1
   ext <;> simp
 
-theorem injective_emb {F : Type} [Field F] [NumberField F] (τ : 𝓞 F →+* ℂ) : Function.Injective τ := by
-  rw [injective_iff_map_eq_zero]
-  intro x hx
-  by_contra hne
-  have hI := Ideal.comap_ne_bot_of_integral_mem (R := ℤ) hne (RingHom.mem_ker.2 hx)
-    (Algebra.IsIntegral.isIntegral x)
-  obtain ⟨n, hn, hn0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hI
-  rw [Ideal.mem_comap, RingHom.mem_ker, eq_intCast, map_intCast, Int.cast_eq_zero] at hn
-  exact hn0 hn
-
 set_option maxHeartbeats 1000000 in
 private theorem exists_algChart_mem_source {R K : Type} [CommRing R] [IsDomain R] [Field K] [Algebra R K]
     [IsFractionRing R K] {D : ℕ} {X Y : Scheme.{0}} {p : X ⟶ Sp R} {q : Y ⟶ Sp K} {j : Y ⟶ X}
@@ -89,20 +83,5 @@ theorem exists_chart {R K : Type} [CommRing R] [IsDomain R] [Field K] [Algebra R
     (h : IsPullback j q p (spMap (algebraMap R K))) [LocallyOfFinitePresentation p]
     [SmoothOfRelativeDimension D q] {τ : R →+* ℂ} (hτ : Function.Injective τ) (y : CxPts p τ) :
     ∃ c : AlgChart p τ D, y ∈ c.e.source := exists_algChart_mem_source h hτ y
-
-theorem genSmooth_model : ∀ (F : Type) [Field F] [NumberField F] (Y : Var F) (M : Model Y),
-    GenSmooth M.p Y.dim := by
-  intro F _ _ Y M σ
-  haveI : LocallyOfFinitePresentation M.p := by
-    obtain ⟨N, i, hi, hip⟩ :=
-      (show ∃ N i, IsClosedImmersion i ∧ i ≫ PSpace.str (𝓞 F) N = M.p from M.ar.isProjOver)
-    rw [← hip]
-    haveI := ReciprocityTheory.ChartRestriction.G.Geo.Tor.isProper_str (𝓞 F) N
-    first
-    | infer_instance
-    | exact (locallyOfFinitePresentation_iff_locallyOfFiniteType (f := i ≫ PSpace.str (𝓞 F) N)).2 inferInstance
-  exact ⟨{ ι := CxPts M.p σ
-           chart := fun y => (exists_chart M.pb (injective_emb σ) y).choose
-           cover := fun y => ⟨y, (exists_chart M.pb (injective_emb σ) y).choose_spec⟩ }⟩
 
 end GlobalTheory.ModelCharts

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.CTExtUnitary
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.CTExtUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,23 +39,27 @@ theorem jsym_of_blk {κ : Type} [Field κ] {n N : ℕ} (hN : n + 1 = N) {k rS t 
   have hmul : ∀ (A B : Matrix (Fin (n + 1)) (Fin (n + 1)) κ), InJSym k rS t true A → ∀ x y : Fin n,
       (A * B) x.castSucc y.castSucc = ∑ j : Fin n, A x.castSucc j.castSucc * B j.castSucc y.castSucc := by
     intro A B hA x y
-    rw [mul_apply, Fin.sum_univ_castSucc, hl A hA x, zero_mul, add_zero]
+    rw [Matrix.mul_apply, Fin.sum_univ_castSucc, hl A hA x, zero_mul, add_zero]
   have e1 : R * R' = 1 := by
     ext x y
-    have := congrFun (congrFun (Mm.mul_inv) x.castSucc) y.castSucc
+    have := congrArg (fun M : Matrix (Fin (n + 1)) (Fin (n + 1)) κ => M x.castSucc y.castSucc)
+      (show Mm.1 * (Mm⁻¹).1 = 1 from Mm.mul_inv)
     rw [hmul _ _ h1] at this
-    rw [mul_apply]
+    rw [Matrix.mul_apply]
     simp only [hRc, hR']
     rw [this]
-    simp [one_apply, Fin.castSucc_inj]
+    change (if x.castSucc = y.castSucc then (1 : κ) else 0) = (if x = y then 1 else 0)
+    simp only [Fin.castSucc_inj]
   have e2 : R' * R = 1 := by
     ext x y
-    have := congrFun (congrFun (Mm.inv_mul) x.castSucc) y.castSucc
+    have := congrArg (fun M : Matrix (Fin (n + 1)) (Fin (n + 1)) κ => M x.castSucc y.castSucc)
+      (show (Mm⁻¹).1 * Mm.1 = 1 from Mm.inv_mul)
     rw [hmul _ _ h2] at this
-    rw [mul_apply]
+    rw [Matrix.mul_apply]
     simp only [hRc, hR']
     rw [this]
-    simp [one_apply, Fin.castSucc_inj]
+    change (if x.castSucc = y.castSucc then (1 : κ) else 0) = (if x = y then 1 else 0)
+    simp only [Fin.castSucc_inj]
   refine ⟨⟨R, R', e1, e2⟩, ⟨?_, ?_⟩, rfl⟩
   · exact inJSym_restrict _ R hRc h1
   · exact inJSym_restrict _ R' (fun x y => rfl) h2
@@ -70,16 +78,16 @@ theorem blk_conj {K : Type} [CommRing K] {n N : ℕ} (hN : n + 1 = N) (gm Fm Fm'
     ext x y
     refine Fin.lastCases ?_ (fun y' => ?_) y
     · have e1 : (gm * Fm) x (Fin.last n) = w x := by
-        rw [← congrFun hgw x, mul_apply]
+        rw [← congrFun hgw x, Matrix.mul_apply]
         simp only [mulVec, dotProduct]
         exact Finset.sum_congr rfl (fun j _ => by rw [hF2 j (Fin.last n) (by simp)])
-      rw [e1, mul_apply, Fin.sum_univ_castSucc]
+      rw [e1, Matrix.mul_apply, Fin.sum_univ_castSucc]
       simp [hB, hne, hF2 x (Fin.last n) (by simp)]
     · have eL : (gm * Fm) x y'.castSucc = (A * (Fp * M')) x y' := by
-        rw [hM', ← Matrix.mul_assoc, ← hgA, Matrix.mul_assoc, mul_apply, mul_apply]
+        rw [hM', ← Matrix.mul_assoc, ← hgA, Matrix.mul_assoc, Matrix.mul_apply, Matrix.mul_apply]
         exact Finset.sum_congr rfl (fun j _ => by rw [hF1 j y' y'.castSucc (by simp)])
       have eR : (Fm * B) x y'.castSucc = ((A * Fp) * M') x y' := by
-        rw [mul_apply, Fin.sum_univ_castSucc, mul_apply]
+        rw [Matrix.mul_apply, Fin.sum_univ_castSucc, Matrix.mul_apply]
         have hlast : B (Fin.last n) y'.castSucc = 0 := by
           simp [hB, (hne y').symm]
         rw [hlast, mul_zero, add_zero]
@@ -101,11 +109,11 @@ theorem redM_entry {F : Type} [Field F] [NumberField F] (v : HeightOneSpectrum (
     (a b : Fin m) (a' b' : Fin m') (h : X a b = Y a' b') : redM F v X a b = redM F v Y a' b' := by
   simp only [redM, h]
   by_cases hY : Y a' b' ∈ v.adicCompletionIntegers F
-  · rw [dif_pos (by rw [h]; exact hY), dif_pos hY]
-  · rw [dif_neg (by rw [h]; exact hY), dif_neg hY]
+  · rw [dite_eq_left (by rw [h]; exact hY), dite_eq_left hY]
+  · rw [dite_eq_right (by rw [h]; exact hY), dite_eq_right hY]
+
 
 set_option maxHeartbeats 4000000 in
-
 theorem lev_bad (Tf : FormsTiedSym D u Ch chOf) (K : GL (Fin (D.R.N D.R.m - 1)) (D.host.E ⊗[D.host.F] (FiniteAdeleRing (𝓞 D.host.F) D.host.F)))
     (G : GL (Fin (D.R.N D.R.m)) (D.host.E ⊗[D.host.F] (FiniteAdeleRing (𝓞 D.host.F) D.host.F)))
     (hE : IsExt D Tf.til.z0 (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) K.1 G.1)
@@ -148,8 +156,8 @@ theorem lev_bad (Tf : FormsTiedSym D u Ch chOf) (K : GL (Fin (D.R.N D.R.m - 1)) 
   rw [hmatK, hmatG]
   exact (hb x y).symm
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem lev_mem (Tf : FormsTiedSym D u Ch chOf) (K : GL (Fin (D.R.N D.R.m - 1)) (D.host.E ⊗[D.host.F] (FiniteAdeleRing (𝓞 D.host.F) D.host.F)))
     (G : GL (Fin (D.R.N D.R.m)) (D.host.E ⊗[D.host.F] (FiniteAdeleRing (𝓞 D.host.F) D.host.F)))
     (hE : IsExt D Tf.til.z0 (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) K.1 G.1)

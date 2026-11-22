@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Formalism.MainNotions.FormalGroupSystem.Pf
 
@@ -83,13 +87,15 @@ private theorem coeff_mem_range_algebraMap_of_linearIndependent {K Kc V Vc M : T
   have e1 : ∀ m, algebraMap K Kc (π m y) = ∑ k : s, a k * algebraMap K Kc (π m (z k)) := by
     intro m; rw [← hπ, hy', map_sum]; simp [hπ]
   refine ⟨∑ m ∈ l.support, l m * π m y, ?_⟩
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_mul, e1, Finset.mul_sum]
   rw [Finset.sum_comm]
   have h4 : ∀ k : s, ∑ m ∈ l.support, algebraMap K Kc (l m) * (a k * algebraMap K Kc (π m (z k))) =
       a k * algebraMap K Kc (if k = k0 then 1 else 0) := by
     intro k
-    rw [← hz k, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hz k, map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [map_mul]; ring
   rw [Finset.sum_congr rfl (fun k _ => h4 k)]
@@ -128,7 +134,8 @@ theorem descent_core {K Kc V Vc M : Type*} [Field K] [Field Kc] [Algebra K Kc]
         have h1 : ∑ k ∈ s, (b k / b k0) • z k = 0 := by
           simp_rw [div_eq_mul_inv, mul_comm _ (b k0)⁻¹, mul_smul, ← Finset.smul_sum, hb0, smul_zero]
         rw [← Finset.add_sum_erase s _ hk0, div_self hbk0, one_smul] at h1
-        rw [eq_neg_of_add_eq_zero_left h1, map_neg, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [eq_neg_of_add_eq_zero_left h1, map_neg, map_sum]
         simp only [hιs]
       have hy' : ι y = ∑ k ∈ s.erase k0,
           (a k - algebraMap K Kc (b k / b k0) * a k0) • ι (z k) := by
@@ -166,7 +173,8 @@ theorem descent_core {K Kc V Vc M : Type*} [Field K] [Field Kc] [Algebra K Kc]
       refine ⟨c, fun k hk => ?_, ?_⟩
       · rw [hc k hk]; exact ha k hk
       · have h6 : ι (y - ∑ k ∈ s, c k • z k) = 0 := by
-          rw [map_sub, map_sum, hy, sub_eq_zero]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sub, map_sum, hy, sub_eq_zero]
           refine Finset.sum_congr rfl fun k hk => ?_
           rw [hιs, hc k hk]
         exact sub_eq_zero.1 (hιinj _ h6)

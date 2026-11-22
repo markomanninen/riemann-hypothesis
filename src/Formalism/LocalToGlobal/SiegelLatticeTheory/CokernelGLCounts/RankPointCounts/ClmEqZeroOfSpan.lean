@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.SchurCoreA
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.NormAdditiveCharacterTypePrimeEqOne
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.SchurCoreA
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.NormAdditiveCharacterTypePrimeEqOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,7 +130,7 @@ private theorem inner_tens_apply_eq_inner_update_adjoint {ι : Type} [Fintype ι
     obtain ⟨z, rfl⟩ := hx
     rw [hT, hin, hin, prod_upd_right, prod_upd_left, hfg]
   | zero => simp
-  | add a b _ _ ha hb => rw [map_add, inner_add_right, inner_add_right, ha, hb]
+  | add a b _ _ ha hb => rw [map_add (f := _), inner_add_right, inner_add_right, ha, hb]
   | smul c a _ ha => rw [map_smul, inner_smul_right, inner_smul_right, ha]
 
 theorem schurCoreA_of (h7 : Formalism.MainNotions.NonGenericAndKTwoTheorems.adm7) : SchurCoreA := by

@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsTwoBlockModuleCycle
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PCoordArithOfFnField
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PTwoBlockFnField
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleMul
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PTwinVertDivIff
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemDivSuppOfDivCycleNeZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.DimOfMinimal
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsTwoBlockModuleCycle
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PCoordArithOfFnField
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PTwoBlockFnField
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleMul
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PTwinVertDivIff
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemDivSuppOfDivCycleNeZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.DimOfMinimal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -49,13 +54,13 @@ theorem multAt_sup_range_eq {P W : Ideal (MRing ι)} {s : MRing ι} {v : τ → 
     (hi : v i ∉ W) : multAt (P ⊔ Ideal.span (Set.range fun j => s * v j)) W = multAt (P ⊔ Ideal.span {s}) W := by
   have := hW
   unfold multAt
-  rw [dif_pos hW, dif_pos hW, GroundTheory.Heights₂.Heights.NumbersDVR.length_localizedQuot_eq_of_mul_le
+  rw [dite_eq_left hW, dite_eq_left hW, GroundTheory.Heights₂.Heights.NumbersDVR.length_localizedQuot_eq_of_mul_le
     (sup_range_le P s v) hi (fun y hy => mul_mem_sup_range i hy)]
 
 theorem multAt_eq_zero_of_not_le {J W : Ideal (MRing ι)} (hW : W.IsPrime) (h : ¬ J ≤ W) : multAt J W = 0 := by
   have := hW
   unfold multAt
-  rw [dif_pos hW, Module.length_eq_zero_iff.mpr
+  rw [dite_eq_left hW, Module.length_eq_zero_iff.mpr
     (GroundTheory.Heights₂.Heights.NumbersDVR.localizedQuot_subsingleton_of_not_le _ W h)]
   rfl
 
@@ -64,8 +69,8 @@ theorem log_charOf_of_horizontal {W : Ideal (MRing ι)} (h : IsHorizontal W) : R
     (Submodule.IsPrincipal.eq_bot_iff_generator_eq_zero _).mp h
   simp [charOf, hg]
 
-open Classical in
 
+open Classical in
 theorem vert_weight_eq (W : Ideal (MRing ι)) (g : ℤ) :
     (if IsHorizontal W then 0 else (g : ℝ) * Real.log (charOf W)) = Real.log (charOf W) * g := by
   split_ifs with h
@@ -89,7 +94,8 @@ theorem mConeMap_X_zero (x x' : Ix κ → Ω) (i : κ) :
 theorem mConeMap_num [Fintype κ] (x x' : Ix κ → Ω) (l : Ix κ → ℤ) :
     mConeMap (ι := FinTwoTypeFamily κ) (pair x x') (twoBlockNum l) =
       MvPolynomial.C (∑ j, (l j : Ω) * x' j) * MvPolynomial.X 1 := by
-  simp [twoBlockNum, mConeMap, pair, Finset.sum_mul, mul_assoc, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [twoBlockNum, mConeMap, pair, Finset.sum_mul, mul_assoc, map_sum]
 
 theorem rel_mem [Fintype κ] (x x' : Ix κ → Ω) (c : κ) (l m : Ix κ → ℤ) (i : κ)
     (hl : x ⟨(), c⟩ = ∑ j, (l j : Ω) * x' j) (hm : x ⟨(), i⟩ = ∑ j, (m j : Ω) * x' j) :
@@ -102,8 +108,8 @@ end TwoBlock
 
 end TwoBlockModuleCycleAlt
 
-open TwoBlockModuleCycleAlt in
 
+open TwoBlockModuleCycleAlt in
 theorem TwoBlockModuleCycle.proof : TwoBlockModuleCycle.Statement := by
   classical
   intro D Ω _ _ κ _ x B c l hX hx hB hsp hl e

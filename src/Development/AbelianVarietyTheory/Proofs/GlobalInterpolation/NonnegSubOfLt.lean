@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.InterlacingEquivariance
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SplitLastBlockActX
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.InterlacingEquivariance
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SplitLastBlockActX
+
+@[expose] public section
 
 open MvPolynomial NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.DIV Formalism.L2.Col GlobalTheory.IndefiniteRowSideFullHecke.InterlacingEquivariance GlobalTheory.BranchFormula
 
@@ -13,7 +17,7 @@ theorem lamTrue_lo (u : Word) (τ : X.Tau) (i : Fin (R.N R.m)) (j : Fin R.k) (h 
       (W.hc u τ).u j - ((R.k : ℚ) - 1) / 2 + (j.1 : ℚ) - (R.m : ℚ) * (((R.t : ℚ) + 1) / 2) := by
   have hi : i.1 < R.k := h ▸ j.2
   have e : (⟨i.1, hi⟩ : Fin R.k) = j := Fin.ext h
-  rw [Wts.lamTrue_eq, Wts.lamN_eq W u le_rfl, dif_pos hi, e]
+  rw [Wts.lamTrue_eq, Wts.lamN_eq W u le_rfl, dite_eq_left hi, e]
   unfold hcToWeightQ rhoVec
   ring
 
@@ -28,7 +32,7 @@ theorem lamTrue_hi (u : Word) (τ : X.Tau) (i : Fin (R.N R.m)) (B ρ : ℕ) (hρ
     rw [this]
     exact (divmod (R.t + 1) B ρ hρ).1
   have hB : B < R.m := e1 ▸ R.blk_lt le_rfl i hi
-  rw [Wts.lamTrue_eq, Wts.lamN_eq W u le_rfl, dif_neg hi, RowPar.eAt_of _ hB]
+  rw [Wts.lamTrue_eq, Wts.lamN_eq W u le_rfl, dite_eq_right hi, RowPar.eAt_of _ hB]
   simp only [e1]
   unfold wG
   push_cast

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSingle
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsEqTransposeMulMapOfIdempotent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsSingle
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsEqTransposeMulMapOfIdempotent
+
+@[expose] public section
+
 open Matrix Formalism.UG Formalism.L2.DIV GlobalTheory.LevNorm
 
 noncomputable section
@@ -25,7 +30,7 @@ theorem refl_unitary (hs : ∀ x, s (s x) = x) {n : ℕ} (d : Fin n → R) (hd :
   have e2 : ∀ k, r k b = (1 : Matrix (Fin n) (Fin n) R) k b + c * v k * (s (v b) * d b) := by
     intro k
     simp only [hr, Matrix.add_apply, Matrix.smul_apply, vecMulVec_apply, smul_eq_mul]; ring
-  rw [mul_apply]
+  rw [Matrix.mul_apply]
   simp only [mul_diagonal]
   rw [Finset.sum_congr rfl (fun k _ => by rw [e1, e2])]
   have e3 : ∀ k, ((1 : Matrix (Fin n) (Fin n) R) a k * d k + (s c * (v a * d a)) * (s (v k) * d k)) *
@@ -35,7 +40,7 @@ theorem refl_unitary (hs : ∀ x, s (s x) = x) {n : ℕ} (d : Fin n → R) (hd :
       (1 : Matrix (Fin n) (Fin n) R) k b * ((s c * (v a * d a)) * (s (v k) * d k)) +
       (s c * (v a * d a) * c * (s (v b) * d b)) * (s (v k) * d k * v k) := fun k => by ring
   rw [Finset.sum_congr rfl (fun k _ => e3 k)]
-  simp only [Finset.sum_add_distrib, ← Finset.mul_sum, one_apply, ite_mul, one_mul, zero_mul,
+  simp only [Finset.sum_add_distrib, ← Finset.mul_sum, Matrix.one_apply, ite_mul, one_mul, zero_mul,
     Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true]
   by_cases hab : a = b
   · subst hab; simp; linear_combination (v a * d a * (s (v a) * d a)) * hc
@@ -62,7 +67,8 @@ theorem vec_mem (hs : ∀ x, s (s x) = x) {ζ : R} (hζ : ζ * s ζ = 1) (hζ1 :
     vecMulVec v (fun k => s (v k) * d k) ∈ uAlg s (diagonal d) := by
   set N := ∑ k, s (v k) * d k * v k with hNdef
   have hsN : s N = N := by
-    rw [hNdef, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hNdef, map_sum]
     exact Finset.sum_congr rfl fun k _ => by rw [map_mul, map_mul, hs, hd]; ring
   set Ni : R := ((hN.unit⁻¹ : Rˣ) : R) with hNidef
   have hNi : Ni * N = 1 := hN.val_inv_mul

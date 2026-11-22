@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HESmulRight
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTraceOneIntegerConjDiffPrimeTo
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HESmulRight
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTraceOneIntegerConjDiffPrimeTo
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum GlobalTheory.InertSign
 open scoped BigOperators
@@ -101,7 +105,10 @@ theorem exists_nat {q : ℕ} (hq : q.Prime) (μ : K)
     intro hle
     obtain ⟨Q, hJQ, hQ, hc⟩ := Ideal.exists_ideal_over_prime_of_isIntegral (Ideal.span {(q : ℤ)}) J hle
     have hqQ : (q : 𝓞 K) ∈ Q := by
-      have : (q : ℤ) ∈ Q.comap (algebraMap ℤ (𝓞 K)) := by rw [hc]; exact Ideal.mem_span_singleton_self _
+      have : (q : ℤ) ∈ Q.comap (algebraMap ℤ (𝓞 K)) := by
+        change (q : ℤ) ∈ Ideal.under ℤ Q
+        rw [hc]
+        exact Ideal.mem_span_singleton_self _
       simpa [Ideal.mem_comap] using this
     obtain ⟨p, a, ha, e⟩ := h Q hQ hqQ
     exact ha (hJQ ⟨p, e⟩)
@@ -207,7 +214,7 @@ theorem exists_lam {D : D7} {q : ℕ} (hq : q.Prime) {P : Ideal (𝓞 D.host.E)}
   have htr : μ + D.host.conj μ + (c : D.host.E) * D.host.conj c *
       (algebraMap _ D.host.E a + θ + D.host.conj θ + algebraMap _ D.host.E b) = 0 := by
     rw [hμ, hsE, hNE]
-    simp only [map_sub, map_mul, map_add, conj_conj, hα', hβ']
+    simp only [map_sub, map_mul, map_add (f := _), conj_conj, hα', hβ']
     linear_combination (-((c : D.host.E) * D.host.conj c *
       (algebraMap _ D.host.E a + algebraMap _ D.host.E b))) * hw1E
   obtain ⟨m, hm, r, hr⟩ := exists_nat hq μ (by

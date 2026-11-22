@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.TypedNeOf
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.LatStab
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.TypedNeOf
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LevelStructures.LatStab
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,5 @@ theorem kSpOpen_holds : KSpOpen := by
   have := finiteDimensional_of_numberField X.B.I.F X.B.I.E
   exact (LatTop.isOpen_Kv p.1 X.B.I.L X.B.I.L_span X.B.I.L_fg X.B.I.cm.sig X.B.I.J).preimage
     continuous_subtype_val
-
-theorem typedNe_holds : TypedNe := typedNe_of kSpCompact_holds kSpOpen_holds
 
 end MassDataLevelSSteps

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.FineJacquetModules.SegDefs
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SegmentRepresentation
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContragredientProductIrreducible
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DualClassCuspidal
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DualClassTwistNeg
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SegmentDualPrecedesIff
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.ZelevinskyJacquet.FineJacquetModules.SegDefs
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.SegmentRepresentation
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ContragredientProductIrreducible
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DualClassCuspidal
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DualClassTwistNeg
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SegmentDualPrecedesIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,14 +19,14 @@ namespace GlobalTheory.CompanionTheory.SegIncDual
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-theorem exists_equiv_prodIrr_of_cast {h h' N : ℕ} (e : h = h') (x : Fin h → IrrGL k) (y : Fin h' → IrrGL k)
+theorem exists_equiv_prodIrr_of_cast {h h' N : ℕ} (e : h = h') (x : Fin h → IrrGL (k := k)) (y : Fin h' → IrrGL (k := k))
     (hxy : ∀ a, x a = y (Fin.cast e a)) (hd : ∑ a, (x a).1 = N) :
     ∃ hd' : ∑ a, (y a).1 = N, Nonempty ((prodIrr x hd).Equiv (prodIrr y hd')) := by
   subst e
   obtain rfl : x = y := funext fun a => by simpa using hxy a
   exact ⟨hd, ⟨Representation.Equiv.refl _⟩⟩
 
-theorem nonempty_contra_trans {h h' N : ℕ} {x y : Fin h → IrrGL k} {z : Fin h' → IrrGL k} {hd : ∑ a, (x a).1 = N}
+theorem nonempty_contra_trans {h h' N : ℕ} {x y : Fin h → IrrGL (k := k)} {z : Fin h' → IrrGL (k := k)} {hd : ∑ a, (x a).1 = N}
     {hy : ∑ a, (y a).1 = N} {hz : ∑ a, (z a).1 = N} (H₁ : Nonempty ((contra (prodIrr x hd)).Equiv (prodIrr y hy)))
     (H₂ : Nonempty ((prodIrr y hy).Equiv (prodIrr z hz))) :
     Nonempty ((contra (prodIrr x hd)).Equiv (prodIrr z hz)) :=
@@ -30,7 +34,7 @@ theorem nonempty_contra_trans {h h' N : ℕ} {x y : Fin h → IrrGL k} {z : Fin 
 
 theorem dualCl_term (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) (Δ : Segment k) (hl : Δ.len = (segDual Δ).len)
     (a : Fin Δ.len) : dualCl (Δ.term a) = dec (segDual Δ) (Fin.cast hl a) := by
-  have hc : ∀ x : IrrGL k, x.IsCusp → (dualCl x).IsCusp := fun x hx =>
+  have hc : ∀ x : IrrGL (k := k), x.IsCusp → (dualCl x).IsCusp := fun x hx =>
     (GlobalTheory.CompanionTheory.DualCusp.dualCl_isCusp hA x hx).1
   have hv : ((Fin.rev (Fin.cast hl a) : Fin (segDual Δ).len) : ℕ) = Δ.len - (a + 1) := by
     have h0 : ((Fin.cast hl a : Fin (segDual Δ).len) : ℕ) = a := rfl

@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsSmoothModerateOfIsAutFunSm
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryTopology
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittDecompSymplInclIsotropicInclAnisotropic
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SkewGramHalfModule
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergTranslateThetaContinuousDifferentiable
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CmTypeRestrictRealSubfieldInfinitePlaceBijective
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TsumPiProdEnnreal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsSmoothModerateOfIsAutFunSm
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdelicUnitaryTopology
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittDecompSymplInclIsotropicInclAnisotropic
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SkewGramHalfModule
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergTranslateThetaContinuousDifferentiable
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CmTypeRestrictRealSubfieldInfinitePlaceBijective
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.TsumPiProdEnnreal
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
@@ -130,8 +135,8 @@ theorem cone_pow_le {r : ℕ} {c : ℝ} (hc : 0 < c) {t : Fin r → ℝ}
   calc min c 1 ^ r ≤ min c 1 ^ (r - (k + 1) + 1) := pow_le_pow_of_le_one hm0.le hm1 (by omega)
     _ ≤ t k := key _ k hk
 
-open NumberField in
 
+open NumberField in
 theorem exists_repr_le (D : D7) : ∃ C : ℝ, 0 < C ∧ ∀ y : D.host.E,
     ∑ l, |((integralBasis D.host.E).repr y l : ℝ)| ≤ C * ∑ τ, ‖tauE D τ y‖ := by
   classical
@@ -285,7 +290,7 @@ theorem lattice_count : ∀ {D : D7} (θ : InfFam D), IsInfFam θ → ∀ (m r :
     rw [Finset.prod_inv_distrib]
     apply inv_anti₀ (Finset.prod_pos fun p _ => by positivity)
     calc ∏ p, (1 + b * |((kap ξ p : ℤ) : ℝ)|) ^ 2 ≤ ∏ _p : P, (1 + s) ^ 2 :=
-          Finset.prod_le_prod (fun p _ => by positivity)
+          Finset.prod_le_prod₀ (fun p _ => by positivity)
             (fun p _ => pow_le_pow_left₀ (by positivity) (hkp p) 2)
       _ = (1 + s) ^ (2 * Fintype.card P) := by
           rw [Finset.prod_const, Finset.card_univ, ← pow_mul]

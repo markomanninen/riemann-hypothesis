@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 universe u_3 u_4
 
@@ -18,7 +22,7 @@ theorem goal1 :
   | C c =>
     simp only [Polynomial.aeval_C, Polynomial.eval_C, Module.algebraMap_end_apply]
   | add p q hp hq =>
-    simp only [map_add, LinearMap.add_apply, hp, hq, Polynomial.eval_add, add_smul]
+    simp only [map_add (f := _), LinearMap.add_apply, hp, hq, Polynomial.eval_add, add_smul]
   | monomial n c ih =>
     have e : (Polynomial.C c * Polynomial.X ^ (n + 1) : Polynomial LL)
         = (Polynomial.C c * Polynomial.X ^ n) * Polynomial.X := by ring

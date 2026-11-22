@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.SecondDegreeKilling
-import Development.EtaleCohomology.EtaleSheaves.SecondDegreeKilling.HkpullComp
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SecondDegreeKilling
+public import Development.EtaleCohomology.EtaleSheaves.SecondDegreeKilling.HkpullComp
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC

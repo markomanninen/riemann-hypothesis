@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsRatioOfWeight
+
+@[expose] public section
+
 open Filter Topology MeasureTheory GlobalTheory.HSAmp
 open scoped ComplexOrder Matrix
 
@@ -87,7 +92,8 @@ theorem exists_int_near_of_closure_short :
     rw [this, Int.fract]; ring
   have := hBq (fun i => x i - ((∑ a : b, ⌊t a⌋ • w a) i : ℤ))
   rw [this, hy]
-  simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, map_smul, LinearMap.smul_apply, smul_eq_mul]
   calc _ ≤ ∑ _a : b, ∑ _c : b, ρ ^ 2 := by
         refine Finset.sum_le_sum fun a _ => ?_
         try rw [Finset.mul_sum]

@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCompactDefiniteUnitaryRestrictedProduct
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenProductOfLocalLevelsUnitaryStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalComponentDefiniteUnitaryFinitePartEqLocalPo
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactSetTwistedCentralizerElliptic
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommuteOfCommuteSeparableCharpoly
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexNeZeroOfSubsetCpt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueAdmissibleLocalComponentDefiniteUnit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralProperties
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentraliserCompactPartLeIntegralAlmostAllStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsLocalComponentEigenvectorAtSplitPlaceIsoty
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCompactDefiniteUnitaryRestrictedProduct
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenProductOfLocalLevelsUnitaryStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalComponentDefiniteUnitaryFinitePartEqLocalPo
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactSetTwistedCentralizerElliptic
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CommuteOfCommuteSeparableCharpoly
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RelIndexNeZeroOfSubsetCpt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueAdmissibleLocalComponentDefiniteUnit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalTwistContinuousInvolutionIntegralProperties
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentraliserCompactPartLeIntegralAlmostAllStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsLocalComponentEigenvectorAtSplitPlaceIsoty
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical TensorProduct
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -37,11 +42,11 @@ theorem loc_cpt_part {E : Type} [Field E] [NumberField E] [IsCMField E] (hU : Un
   obtain ⟨hzT, hzc⟩ := GlobalTheory.LocFinU.cptPart_subset_of_comm _ hc hz
   exact hmem z hzT hzc
 
-theorem stab_le_cptPart : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E → ∀ n : ℕ, 1 ≤ n → ∀ (S : Set (Pl E)), IsSection S → ∀ (K' : ∀ w : Pl E, Subgroup (UL n w)), IsLevelFam (fun w : Pl E => MonoidHom.id (UL n w)) (KL n) K' → ∀ γ : UE E n, γ.1.val.charpoly.Separable → ∀ x : finU E n, twCent (MonoidHom.id (finU E n)) (finPt γ) ⊓ (globLev S (KL n)).map (MulAut.conj x).toMonoidHom ≤ cptPart (twCent (MonoidHom.id (finU E n)) (finPt γ)) ∧ (twCent (MonoidHom.id (finU E n)) (finPt γ) ⊓ (globLev S K').map (MulAut.conj x).toMonoidHom).relIndex (cptPart (twCent (MonoidHom.id (finU E n)) (finPt γ))) ≠ 0 := by
+theorem stab_le_cptPart : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E], Unr E → ∀ n : ℕ, 1 ≤ n → ∀ (S : Set (Pl E)), IsSection S → ∀ (K' : ∀ w : Pl E, Subgroup (UL n w)), IsLevelFam (fun w : Pl E => MonoidHom.id (UL n w)) (KL n) K' → ∀ γ : UE E n, γ.1.val.charpoly.Separable → ∀ x : finU (E := E) (n := n), twCent (MonoidHom.id (finU (E := E) (n := n))) (finPt γ) ⊓ (globLev S (KL n)).map (MulAut.conj x).toMonoidHom ≤ cptPart (twCent (MonoidHom.id (finU (E := E) (n := n))) (finPt γ)) ∧ (twCent (MonoidHom.id (finU (E := E) (n := n))) (finPt γ) ⊓ (globLev S K').map (MulAut.conj x).toMonoidHom).relIndex (cptPart (twCent (MonoidHom.id (finU (E := E) (n := n))) (finPt γ))) ≠ 0 := by
   intro E _ _ _ hU n hn S hS K' hK' γ hγ x
-  set δ : finU E n := finPt γ with hδ
-  set T := twCent (MonoidHom.id (finU E n)) δ with hT
-  let ρ : ∀ w : Pl E, finU E n →* UL n w := fun w =>
+  set δ : finU (E := E) (n := n) := finPt γ with hδ
+  set T := twCent (MonoidHom.id (finU (E := E) (n := n))) δ with hT
+  let ρ : ∀ w : Pl E, finU (E := E) (n := n) →* UL n w := fun w =>
     { toFun := fun z => ⟨cLoc w (z : UA E n), GlobalTheory.BCT.ThBasic.cLoc_mem_UL hU n w _⟩
       map_one' := Subtype.ext (by simp)
       map_mul' := fun a b => Subtype.ext (by simp) }
@@ -62,8 +67,8 @@ theorem stab_le_cptPart : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
     have e : (GeneralLinearGroup.map (algebraMap E (w.adicCompletion E)) γ.1).val = γ.1.val.map (algebraMap E _) := rfl
     rw [e, Matrix.charpoly_map]
     exact hγ.map
-  have hsetK : ∀ K'' : ∀ w : Pl E, Subgroup (UL n w), (globLev S K'' : Set (finU E n)) =
-      {z : finU E n | ∀ w ∈ S, toSub (UL n w) (cLoc w (z : UA E n)) ∈ (K'' w : Set (UL n w))} := by
+  have hsetK : ∀ K'' : ∀ w : Pl E, Subgroup (UL n w), (globLev S K'' : Set (finU (E := E) (n := n))) =
+      {z : finU (E := E) (n := n) | ∀ w ∈ S, toSub (UL n w) (cLoc w (z : UA E n)) ∈ (K'' w : Set (UL n w))} := by
     intro K''
     ext z
     simp only [SetLike.mem_coe, Set.mem_setOf_eq, globLev, Subgroup.mem_iInf, Subgroup.mem_comap, Subgroup.mem_map,
@@ -76,14 +81,14 @@ theorem stab_le_cptPart : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
       rwa [← this]
     · intro h
       exact ⟨_, h, rfl⟩
-  have hKc : IsCompact (globLev S (KL n) : Set (finU E n)) := by
+  have hKc : IsCompact (globLev S (KL n) : Set (finU (E := E) (n := n))) := by
     rw [hsetK]
     exact GlobalTheory.BCT.LocCpt.loc_cpt E hU n S hS (fun w => (KL n w : Set (UL n w)))
       (fun w => (GlobalTheory.BCT.LocCompU.isOpen_isCompact_KL hU n w).2) (Filter.Eventually.of_forall fun _ => rfl)
-  have hcf : ⇑((MulAut.conj x).toMonoidHom) = fun g : finU E n => x * g * x⁻¹ := by
+  have hcf : ⇑((MulAut.conj x).toMonoidHom) = fun g : finU (E := E) (n := n) => x * g * x⁻¹ := by
     ext g; simp
-  have hconj : ∀ H : Subgroup (finU E n), (H.map (MulAut.conj x).toMonoidHom : Set (finU E n)) =
-      (fun g => x⁻¹ * g * x) ⁻¹' (H : Set (finU E n)) := by
+  have hconj : ∀ H : Subgroup (finU (E := E) (n := n)), (H.map (MulAut.conj x).toMonoidHom : Set (finU (E := E) (n := n))) =
+      (fun g => x⁻¹ * g * x) ⁻¹' (H : Set (finU (E := E) (n := n))) := by
     intro H; ext g
     rw [Subgroup.coe_map, hcf]
     constructor
@@ -95,11 +100,12 @@ theorem stab_le_cptPart : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
   · rintro t ⟨htT, htK⟩
     apply Subgroup.subset_closure
     refine ⟨htT, ?_⟩
-    have hKx : IsCompact ((globLev S (KL n)).map (MulAut.conj x).toMonoidHom : Set (finU E n)) := by
+    have hKx : IsCompact ((globLev S (KL n)).map (MulAut.conj x).toMonoidHom : Set (finU (E := E) (n := n))) := by
       rw [Subgroup.coe_map, hcf]
       exact hKc.image (by fun_prop)
-    exact hKx.closure_of_subset fun s hs => Subgroup.zpowers_le.2 htK hs
-  · have hUo : IsOpen ((globLev S K').map (MulAut.conj x).toMonoidHom : Set (finU E n)) := by
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact hKx.closure_of_subset fun s hs => Subgroup.zpowers_le.2 htK hs
+  · have hUo : IsOpen ((globLev S K').map (MulAut.conj x).toMonoidHom : Set (finU (E := E) (n := n))) := by
       rw [hconj]
       exact (GlobalTheory.T.isOpen_productOfLocalLevelsUnitary E hU n S K' hK').preimage (by fun_prop)
     choose C0 hC0c hC0 using fun w => loc_cpt_part hU n w (ρ w δ) (hsep w)
@@ -135,12 +141,12 @@ theorem stab_le_cptPart : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E]
       · have ht' : t * δ = δ * t := htT
         show ρ w t * ρ w δ = ρ w δ * (MonoidHom.id _) (ρ w t)
         rw [MonoidHom.id_apply, ← map_mul, ht', map_mul]
-      · have himc : IsCompact (ρ w '' closure (Subgroup.zpowers t : Set (finU E n))) := htc.image (hρc w)
+      · have himc : IsCompact (ρ w '' closure (Subgroup.zpowers t : Set (finU (E := E) (n := n)))) := htc.image (hρc w)
         refine himc.closure_of_subset ?_
         rintro _ ⟨k, rfl⟩
         exact ⟨t ^ k, subset_closure ⟨k, rfl⟩, by simp⟩
-    have hTD : (cptPart T : Set (finU E n)) ⊆
-        {z : finU E n | ∀ w ∈ S, toSub (UL n w) (cLoc w (z : UA E n)) ∈ C w} := by
+    have hTD : (cptPart T : Set (finU (E := E) (n := n))) ⊆
+        {z : finU (E := E) (n := n) | ∀ w ∈ S, toSub (UL n w) (cLoc w (z : UA E n)) ∈ C w} := by
       intro z hz w _
       have hzw := Subgroup.mem_iInf.1 (hle hz) w
       rw [Subgroup.mem_comap] at hzw

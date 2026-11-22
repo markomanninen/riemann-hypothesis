@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.CuspidalMultiplicityOneTotallyComplex
+
+@[expose] public section
 
 open MeasureTheory NumberField GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum UpperTheory.ConvolutionTheory.C
@@ -57,20 +61,21 @@ private theorem closure_iSup_summands (hWc : IsClosed (W : Set H))
     fun V => isSummandOf_map π W hWi hWc V.1 (hinv V) (hirr V)
   apply le_antisymm
   · exact Submodule.topologicalClosure_minimal _ (iSup_le fun V => V.2.le) hWc
-  · set S : Submodule ℂ H := ⨆ V : {V // IsSummandOf π W V}, V.1 with hS
+  · set S : Submodule ℂ H := ⨆ V : {V // IsSummandOf π W V}, V.1
     have hcl : IsClosed ((S.topologicalClosure.comap W.subtype : Submodule ℂ W) : Set W) :=
       S.isClosed_topologicalClosure.preimage continuous_subtype_val
-    have hle : (⨆ V : s, LinearMap.range ((V : Submodule ℂ W).subtypeₗᵢ).toLinearMap) ≤
+    have hle : (⨆ V : s, (V : Submodule ℂ W)) ≤
         S.topologicalClosure.comap W.subtype := by
-      refine iSup_le fun V => ?_
-      rintro _ ⟨w, rfl⟩
+      refine iSup_le fun V w hw => ?_
       exact S.le_topologicalClosure
-        (le_iSup (fun V : {V // IsSummandOf π W V} => V.1) ⟨_, hmain V⟩ ⟨w.1, w.2, rfl⟩)
+        (le_iSup (fun V : {V // IsSummandOf π W V} => V.1) ⟨_, hmain V⟩ ⟨w, hw, rfl⟩)
+    have hspan : (⨆ V : s, (V : Submodule ℂ W)).topologicalClosure = ⊤ := by
+      simpa only [Submodule.subtypeₗᵢ_toLinearMap, Submodule.range_subtype] using
+        hH.OrthogonalFamily.range_linearIsometry.symm.trans
+          (LinearMap.range_eq_top.2 hH.surjective_isometry)
     have htop : (⊤ : Submodule ℂ W) ≤ S.topologicalClosure.comap W.subtype := by
-      have h := Submodule.topologicalClosure_minimal _ hle hcl
-      rw [← hH.OrthogonalFamily.range_linearIsometry,
-        LinearMap.range_eq_top.2 hH.surjective_isometry] at h
-      exact h
+      rw [← hspan]
+      exact Submodule.topologicalClosure_minimal _ hle hcl
     intro x hx
     exact htop (Submodule.mem_top : (⟨x, hx⟩ : W) ∈ ⊤)
 
@@ -81,5 +86,5 @@ theorem UpperTheory.ConvolutionTheory.C.summandsSpan :
   intro K _ _ n μ _
   obtain ⟨s, hc, hinv, hH, hirr⟩ := exists_isHilbertSum_isIrreducible_cuspidal μ
   haveI := hc
-  exact closure_iSup_summands (rightRegularRep (rationalGLOne K n) μ) (cuspidalL2 μ)
+  exact closure_iSup_summands (rightRegularRep (rationalGLOne (K := K) (n := n)) μ) (cuspidalL2 μ)
     (isInvariant_cuspidalL2 μ) (isClosed_cuspidalL2 μ) s hinv hH hirr

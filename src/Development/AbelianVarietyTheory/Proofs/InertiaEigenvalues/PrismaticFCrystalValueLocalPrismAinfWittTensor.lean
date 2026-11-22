@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormLeOneOfMemOL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NormLeOneOfMemOL
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,8 @@ theorem exists_basis {A B M N ι : Type} [CommRing A] [CommRing B] [AddCommGroup
   let Q : (ι → B) →ₗ[B] N := Fintype.linearCombination B fun i => u (b i)
   have hQ : Q.comp S = LinearMap.id := h.hom_ext fun x => by
     rw [LinearMap.comp_apply, hS, LinearMap.id_apply, Fintype.linearCombination_apply]
-    conv_rhs => rw [← b.sum_equivFun x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← b.sum_equivFun x, map_sum]
     exact Finset.sum_congr rfl fun i _ => (u.map_smulₛₗ _ _).symm
   have hQ1 : ∀ i, Q (Pi.single i 1) = u (b i) := fun i => by
     simp [Q]
@@ -58,7 +63,8 @@ theorem exists_pow_smul_eq_sum {A M ι : Type} [CommRing A] [AddCommGroup M] [Mo
   obtain ⟨s, hs⟩ := (Submodule.mem_span_range_iff_exists_fun A).1 ht
   have h3 : LocalizedModule.mkLinearMap (Submonoid.powers d) M (∑ i, s i • m i) =
       LocalizedModule.mkLinearMap (Submonoid.powers d) M (d ^ t • x) := by
-    rw [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_smul]
     simp only [map_smul]
     exact hs
   rw [LocalizedModule.mkLinearMap_apply, LocalizedModule.mkLinearMap_apply, LocalizedModule.mk_eq] at h3
@@ -75,7 +81,8 @@ theorem exists_eq_smul {A B M N ι : Type} [CommRing A] [CommRing B] [AddCommGro
   obtain ⟨c, hc⟩ := exists_basis h b
   have h1 : ∑ i, f (b.equivFun x i) • c i = 0 := by
     rw [← hx]
-    conv_rhs => rw [← b.sum_equivFun x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← b.sum_equivFun x, map_sum]
     exact Finset.sum_congr rfl fun i _ => by rw [hc, u.map_smulₛₗ]
   have h2 := Fintype.linearIndependent_iff.1 c.linearIndependent _ h1
   have h3 : ∀ i, ∃ a, a * π = b.equivFun x i := fun i =>
@@ -134,7 +141,8 @@ theorem general {l : ℕ} {R : Type} [CommRing R] {PS PA : Obj l R} [IsLocalRing
     obtain ⟨r, s, hs⟩ := exists_pow_smul_eq_sum (E.Φ_bc PS ⟨Q, hQ⟩) b m k hm x
     refine ⟨r, fun i => s i * Q ^ k i, ?_⟩
     have hs' : Q ^ r • x = ∑ i, s i • m i := hs
-    rw [← map_pow, ← hsm, hs', map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_pow, ← hsm, hs', map_sum, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [hsm, ← key _ _ _ (hm i), hcb, smul_smul, map_mul, map_pow]
 

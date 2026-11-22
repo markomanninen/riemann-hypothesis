@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealLineOfPeriodsOnLine
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.MinorOrderedEntries
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RealLineOfPeriodsOnLine
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.MinorOrderedEntries
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ def InvLine (ch : Choice R) : Prop :=
 
 theorem periodsOnLine_of_invLine (hL : OneLine) (ch : Choice R) (h : InvLine ch) : PeriodsOnLine ch := by
   obtain ⟨ι, _, _, S, P, hP, e, he⟩ := h
-  haveI : Module.Free ℂ (invFun (omRep P)) := Module.Free.of_divisionRing ℂ _
+  have : Module.Free ℂ (invFun (omRep P)) := Module.Free.of_divisionRing ℂ _
   obtain ⟨L0, -, hL0⟩ := finrank_eq_one_iff'.1 (hL ι S P hP)
   refine ⟨fun Q => L0.1 (e Q), fun t a hS β hβ M hM τ hτ d hd y => ?_⟩
   obtain ⟨l, hl, hle⟩ := he t a hS β hβ M hM τ hτ d hd y

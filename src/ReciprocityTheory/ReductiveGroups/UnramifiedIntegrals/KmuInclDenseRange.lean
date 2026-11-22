@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ExistsExtendEndomorphismFractions
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ExistsExtendEndomorphismFractions
+
+@[expose] public section
 
 noncomputable section
 

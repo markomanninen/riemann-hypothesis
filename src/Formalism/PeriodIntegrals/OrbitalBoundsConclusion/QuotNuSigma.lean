@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.QuotNuSigma
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuotientSigmaFiniteness.SigmaFiniteOfWeil
+module
+
+public import Formalism.PeriodIntegrals.QuotNuSigma
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.QuotientSigmaFiniteness.SigmaFiniteOfWeil
+
+@[expose] public section
 
 theorem quotient_sigma_finite : PI.QuotNuSigma.Target :=
   fun _ _ _ _ _ _ _ _ _ μG _ A B μA μB ν hA hB hW =>

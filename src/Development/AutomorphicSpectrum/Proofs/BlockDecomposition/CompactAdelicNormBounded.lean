@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RatVInjective
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ZeroMemBoxF
-import GroundTheory.AutomorphicForms.ReductionFinite
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RatVInjective
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ZeroMemBoxF
+public import GroundTheory.AutomorphicForms.ReductionFinite
+
+@[expose] public section
 
 open NumberField MeasureTheory Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet PositivityTheory.ThKR GlobalTheory.CompanionTheory.RedCov GlobalTheory.CompanionTheory.RedCov.Simple
 open Formalism.UG (cT)
@@ -19,7 +23,7 @@ theorem finprod_le_prod_of_le {α : Type*} {f b : α → ℝ} (S : Finset α) (h
     ∏ᶠ a, f a ≤ ∏ a ∈ S, b a := by
   classical
   have hone : (1 : ℝ) ≤ ∏ a ∈ S, b a := by
-    have := Finset.prod_le_prod (s := S) (f := fun _ => (1 : ℝ)) (g := b)
+    have := Finset.prod_le_prod₀ (s := S) (f := fun _ => (1 : ℝ)) (g := b)
       (fun _ _ => zero_le_one) hb
     simpa using this
   by_cases hf : (Function.mulSupport f).Finite
@@ -103,8 +107,8 @@ end GlobalTheory.CompanionTheory.RedCov.Simple.NormBound
 
 namespace GlobalTheory.CompanionTheory.RedCov.Simple
 
-open GroundTheory.Automorphic.Reduction NormBound in
 
+open GroundTheory.Automorphic.Reduction NormBound in
 theorem exists_adelicNorm_le_of_isCompact :
     ∀ (F : Type) [Field F] [NumberField F] (N : ℕ) (D : Set (Fin N → AF F)), IsCompact D →
       ∃ P : ℝ, 0 < P ∧ ∀ y ∈ D, GroundTheory.Automorphic.Reduction.adelicNorm y ≤ P := by
@@ -116,17 +120,17 @@ theorem exists_adelicNorm_le_of_isCompact :
   choose b hb1 hb using fun v : HeightOneSpectrum (𝓞 F) =>
     exists_one_le_bound hD (continuous_norm_finComp (N := N) v)
   have hA : (1 : ℝ) ≤ ∏ w, a w ^ w.mult := by
-    have := Finset.prod_le_prod (s := Finset.univ) (f := fun _ : InfinitePlace F => (1 : ℝ))
+    have := Finset.prod_le_prod₀ (s := Finset.univ) (f := fun _ : InfinitePlace F => (1 : ℝ))
       (g := fun w => a w ^ w.mult) (fun _ _ => zero_le_one)
       (fun w _ => one_le_pow₀ (ha1 w))
     simpa using this
   have hB : (1 : ℝ) ≤ ∏ v ∈ S, b v := by
-    have := Finset.prod_le_prod (s := S) (f := fun _ => (1 : ℝ)) (g := b)
+    have := Finset.prod_le_prod₀ (s := S) (f := fun _ => (1 : ℝ)) (g := b)
       (fun _ _ => zero_le_one) (fun v _ => hb1 v)
     simpa using this
   refine ⟨(∏ w, a w ^ w.mult) * ∏ v ∈ S, b v, by positivity, fun y hy => ?_⟩
   refine mul_le_mul ?_ ?_ (finprod_nonneg fun _ => norm_nonneg _) (by positivity)
-  · exact Finset.prod_le_prod (fun w _ => pow_nonneg (euclidNorm_nonneg _) _)
+  · exact Finset.prod_le_prod₀ (fun w _ => pow_nonneg (euclidNorm_nonneg _) _)
       fun w _ => pow_le_pow_left₀ (euclidNorm_nonneg _) (ha w y hy) _
   · exact finprod_le_prod_of_le S (fun _ => norm_nonneg _) (fun v _ => hb v y hy)
       (fun v _ => hb1 v) fun v hv => norm_finComp_le_one fun i => hS hy i v hv

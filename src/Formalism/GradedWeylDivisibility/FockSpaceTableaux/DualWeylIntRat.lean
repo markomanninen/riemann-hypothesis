@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.DualWeylMap
+module
+
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.DualWeylMap
+
+@[expose] public section
 
 open MvPolynomial
 

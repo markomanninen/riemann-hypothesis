@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.BigZe
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BigZe
+
+@[expose] public section
 
 open NumberField Matrix MeasureTheory Filter Topology GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Cusp ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor GroundTheory.Heights₂.Heights.FiniteCovolume
 open scoped ENNReal InnerProductSpace
@@ -146,8 +150,8 @@ end GlobalTheory.CompanionTheory.Ar.Cusp.Univ.MemBall
 
 namespace GlobalTheory.CompanionTheory.Ar.Cusp.Univ
 
-open MemBall in
 
+open MemBall in
 theorem mem_ballDom_iff_posDef_bigZe {Ψ : Type} [Fintype Ψ] [DecidableEq Ψ] {j j' n g : ℕ} (e : Ix Ψ j j' ≃ Fin g)
     (q : Ψ × Fin j × Fin j' ≃ Fin n) (t : Fin n → ℂ) :
     t ∈ ballDom q ↔ (1 - (bigZe e q t)ᴴ * bigZe e q t).PosDef := by
@@ -159,7 +163,7 @@ theorem mem_ballDom_iff_posDef_bigZe {Ψ : Type} [Fintype Ψ] [DecidableEq Ψ] {
     funext τ
     simp only [Pi.sub_apply, Pi.one_apply]
     rw [fromBlocks_conjTranspose, fromBlocks_multiply]
-    simp only [conjTranspose_zero, mul_zero, zero_mul, add_zero, zero_add, ← fromBlocks_one]
+    simp only [conjTranspose_zero, mul_zero, add_zero, zero_add, ← fromBlocks_one]
     ext (a | a) (c | c) <;> simp [Matrix.one_apply]
   have hsub : (1 : Matrix (Fin g) (Fin g) ℂ) - (bigZe e q t)ᴴ * bigZe e q t =
       ((1 : Matrix (Ix Ψ j j') (Ix Ψ j j') ℂ) - (bigZ q t)ᴴ * bigZ q t).submatrix e.symm e.symm := by
@@ -169,8 +173,8 @@ theorem mem_ballDom_iff_posDef_bigZe {Ψ : Type} [Fintype Ψ] [DecidableEq Ψ] {
   have hequiv : ((1 - (bigZ q t)ᴴ * bigZ q t).submatrix e.symm e.symm).PosDef ↔
       (1 - (bigZ q t)ᴴ * bigZ q t).PosDef :=
     ⟨fun h => by simpa using h.submatrix e.injective, fun h => h.submatrix e.symm.injective⟩
-  rw [hsub, hequiv, hblk, posDef_blockDiagonal_iff]
-  simp only [posDef_fromBlocks_diag_iff, posDef_transpose_block, and_self]
+  rw [hsub, hequiv, hblk, MemBall.posDef_blockDiagonal_iff]
+  simp only [MemBall.posDef_fromBlocks_diag_iff, MemBall.posDef_transpose_block, and_self]
   rfl
 
 end GlobalTheory.CompanionTheory.Ar.Cusp.Univ

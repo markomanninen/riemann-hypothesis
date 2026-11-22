@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
-import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
-import Formalism.LocalToGlobal.HermitianColumns.InLocalDiscriminantKernel
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DefClassDecompIff
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryMassLatticeEqGenusMass
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.MassFormulaPositivity
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
+public import Formalism.SharpRestriction.GlobalSchurBounds.ThickPlacesCorollaryOfAnyTranslate
+public import Formalism.LocalToGlobal.HermitianColumns.InLocalDiscriminantKernel
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DefClassDecompIff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnitaryMassLatticeEqGenusMass
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBoundUnitary
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.MassFormulaPositivity
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,12 +29,12 @@ theorem exists_reps {G : Type} [Group G] {Γ K : Subgroup G} (h : FiniteClasses 
   have e : ∀ g, Unfold.stab Γ K g = Formalism.UG.stabAt Γ K g := fun g => by
     ext γ; simp only [Unfold.stab, Formalism.UG.stabAt, mul_assoc]
   refine ⟨n, fun i => (φ.symm i).out, fun x => ?_, fun i j γ γ' k k' e => ?_, fun i => ?_, ?_⟩
-  · obtain ⟨γ, hγ, k, hk, e⟩ := (DoubleCoset.eq Γ K _ x).1 (DoubleCoset.out_eq' Γ K (DoubleCoset.mk Γ K x))
+  · obtain ⟨γ, hγ, k, hk, e⟩ := (@DoubleCoset.eq _ _ Γ K _ x).1 (DoubleCoset.out_eq' (DoubleCoset.mk Γ K x))
     refine ⟨φ (DoubleCoset.mk Γ K x), ⟨γ, hγ⟩, ⟨k, hk⟩, ?_⟩
     exact e.trans (congrArg (fun c : Formalism.UG.ClassSet Γ K => γ * c.out * k) (φ.symm_apply_apply _).symm)
   · apply φ.symm.injective
-    rw [← DoubleCoset.out_eq' _ _ (φ.symm i), ← DoubleCoset.out_eq' _ _ (φ.symm j)]
-    refine (DoubleCoset.eq _ _ _ _).2 ⟨(γ'⁻¹ * γ : Γ), (γ'⁻¹ * γ).2, (k * k'⁻¹ : K), (k * k'⁻¹).2, ?_⟩
+    rw [← DoubleCoset.out_eq' (φ.symm i), ← DoubleCoset.out_eq' (φ.symm j)]
+    refine (@DoubleCoset.eq _ _ _ _ _ _).2 ⟨(γ'⁻¹ * γ : Γ), (γ'⁻¹ * γ).2, (k * k'⁻¹ : K), (k * k'⁻¹).2, ?_⟩
     rw [Subgroup.coe_mul, Subgroup.coe_mul, mul_assoc, mul_assoc, ← mul_assoc (γ : G), ← mul_assoc, ← mul_assoc,
       mul_assoc _ _ (k : G), e]
     simp [mul_assoc]
@@ -75,6 +79,36 @@ section Space
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [inst : StarRing E] [Algebra F E]
 
+theorem standardLattice_span_eq_top (W : HSpace E) :
+  Submodule.span E (W.L0 : Set W.V) = ⊤ := by
+  let U := Submodule.span E (W.L0 : Set W.V)
+  change U = ⊤
+  by_contra h
+  let e : W.V ≃ₗ⋆[E] W.V :=
+    (W.frame.equivFun.trans (starLinearEquiv E)).trans W.frame.equivFun.symm
+  let g : W.V →ₗ[E] Module.Dual E U :=
+    (LinearMap.domRestrict' U).comp (W.hT.comp e.toLinearMap)
+  have hdim : Module.finrank E (Module.Dual E U) < Module.finrank E W.V := by
+    rw [Subspace.dual_finrank_eq]
+    exact Submodule.finrank_lt h
+  obtain ⟨x, hx, hx₀⟩ :=
+    Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+  have hsmul (a : E) : a • e x ∈ W.L0 := by
+    rw [← W.baseLattice_isUnimodular, Formalism.HermitianLatticesTheory.dualBasic_mem_dual]
+    intro y hy
+    have hxy : W.hT (e x) y = 0 :=
+      congrArg (fun f : Module.Dual E U => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+    have hyx : W.hT y (e x) = 0 := by
+      rw [← W.herm.eq, hxy, map_zero]
+    simp [hyx]
+  let i : E →ₗ[𝓞 E] W.L0 :=
+    ((LinearMap.toSpanSingleton E _ (e x)).restrictScalars (𝓞 E)).codRestrict W.L0 hsmul
+  let : Module.Finite (𝓞 E) W.L0 := Module.Finite.iff_fg.mpr W.standardTuple_isLattice.fg
+  let : Module.Finite (𝓞 E) E := Module.Finite.of_injective i fun a b hab =>
+    smul_left_injective E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
+  exact RingOfIntegers.not_isField E
+    (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
+
 theorem mass_coord (hc : CMData F E) (W : HSpace E) (hW : W.SigOK) (hs : ∀ τ, W.sig τ = (W.rank, 0))
     (hσ : ∀ e, (hc.sig : E →+* E) ((hc.sig : E →+* E) e) = e) :
     (letI := Formalism.UG.CS.starOfInv (hc.sig : E →+* E) hσ
@@ -90,7 +124,10 @@ theorem mass_coord (hc : CMData F E) (W : HSpace E) (hW : W.SigOK) (hs : ∀ τ,
     change star _ * _ = star _ * _ * _
     ring
   obtain ⟨h1, h2, -⟩ := Formalism.HermitianLatticesTheory.massBasic _ _ W.hT W.herm
-    (GlobalTheory.IndefiniteRowSideFullHecke.MassFormulaPositivity.trace_pos hc.cmUnram.2.1 W hW hs) W.L0 W.standardTuple_isLattice
+    (GlobalTheory.IndefiniteRowSideFullHecke.MassFormulaPositivity.trace_pos hc.cmUnram.2.1 W hW hs) W.L0
+    (by
+      letI := W.standardTuple_isLattice
+      exact { span_eq_top := standardLattice_span_eq_top W })
   have h3 := mass_transport (Formalism.L2.Herm.crd W).symm (isoSymm _ he) (tMap (Formalism.L2.Herm.crd W) W.L0)
     (by rwa [tMap_symm]) (by rwa [tMap_symm])
   rwa [tMap_symm] at h3
@@ -109,13 +146,18 @@ theorem finite_and_mass (hc : CMData F E) (W : HSpace E) (hW : W.SigOK) (hs : �
   have hσ : IsCMExt F E hc.sig := ⟨hc.totReal, hc.cmUnram.1, hc.deg2, hc.cmUnram.2.1⟩
   have hL := tMap_lattice (Formalism.L2.Herm.crd W) W.L0 W.standardTuple_isLattice
   have hf : Module.Finite (𝓞 E) (tMap (Formalism.L2.Herm.crd W) W.L0) := Module.Finite.iff_fg.2 hL.fg
+  have hsp0 := standardLattice_span_eq_top W
+  have hsp : Submodule.span E (tMap (Formalism.L2.Herm.crd W) W.L0 : Set (Fin W.rank → E)) = ⊤ := by
+    have h := congrArg (Submodule.map (Formalism.L2.Herm.crd W : W.V →ₗ[E] (Fin W.rank → E))) hsp0
+    rw [Submodule.map_span, Submodule.map_top, LinearEquiv.range] at h
+    exact h
   obtain ⟨π, hπ, -⟩ := existsUnique_isFinProj hc.sig W.gram
   rw [levelW, ← coe_tMap, levelK_eq hπ]
   constructor
   · rw [finiteClasses_comap π _ _ hπ.surjective hπ.injOn, hπ.map_ratIn]
-    exact finiteClasses_lattice hσ hJ hd _ hf hL.span_eq_top
+    exact finiteClasses_lattice hσ hJ hd _ hf hsp
   · have hi : ∀ e, (hc.sig : E →+* E) ((hc.sig : E →+* E) e) = e := fun e => star_star e
-    rw [← hπ.unitaryMass_eq, unitaryMass_lattice_eq_genus_mass hσ hJ hd hi _ hf hL.span_eq_top]
+    rw [← hπ.unitaryMass_eq, unitaryMass_lattice_eq_genus_mass hσ hJ hd hi _ hf hsp]
     exact mass_coord hc W hW hs hi
 
 end Space

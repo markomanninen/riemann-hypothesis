@@ -1,11 +1,16 @@
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CyclicStrongAtCusp
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RestrictEqInvLocalArtinMap
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalArtinFrobeniusAction
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLocalEmbeddingOverPlace
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DecompositionGroupLocalGaloisIso
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntegralIffSpectralNormLeOne
-import GroundTheory.LocalFields.MainTheorem
-import GroundTheory.GlobalFields.CompletionAtPlace
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.CyclicStrongAtCusp
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RestrictEqInvLocalArtinMap
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalArtinFrobeniusAction
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLocalEmbeddingOverPlace
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DecompositionGroupLocalGaloisIso
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsIntegralIffSpectralNormLeOne
+public import GroundTheory.LocalFields.MainTheorem
+public import GroundTheory.GlobalFields.CompletionAtPlace
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Polynomial
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.GLq
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.GalCut GlobalTheory.RoadU GlobalTheory.AboveL
@@ -76,8 +81,129 @@ theorem localArtin_normU : ∀ (K L Ω : Type) [Field Ω] [Field K] [NumberField
       refine ⟨p, hp, (b : Kbar v →+* Kbar v').injective ?_⟩
       rw [Polynomial.hom_eval₂, map_zero, show (b : Kbar v →+* Kbar v') (b.symm (ι' z)) = ι' z from b.apply_symm_apply _]
       exact hp'
-  have HK := (GlobalTheory.ArtinCompare.restrict_eq_inv_reciprocity K Ω A v h (Kbar v') ι'.toRingHom hj hA a ha g gK hgK).1
-  have HL := GlobalTheory.ArtinCompareApply.lift_localArtinMap_apply L Ω A v' h' a' ha' ι' hι' g' gL hgL
+  have restrict_local : ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω]
+      [IsAlgClosure E Ω] (A : ValuationSubring Ω) (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w)
+      (ι : Ω →ₐ[E] Kbar w), IsLocEmb A w ι → ∀ a : Weil h →* (w.adicCompletion E)ˣ, IsLocalArtin h a →
+      ∀ [IsSepClosure (w.adicCompletion E) (Kbar w)] (σ : Weil h) (g : GalLoc w), Lifts ι g σ →
+        AlgEquiv.restrictNormalHom (maximalAbelianExtension (w.adicCompletion E) (Kbar w)) g =
+          (localArtinMap (w.adicCompletion E) (Kbar w) (a σ))⁻¹ := by
+    intro E Ω _ _ _ _ _ A w h ι hι a ha _ σ g hg
+    have hN := GlobalTheory.LocNormGrp.hasNormGroups_of_isLocalArtin GlobalTheory.globalArtinReciprocity_holds
+      GlobalTheory.Published.chevalleyUnits' E Ω A w h ι a hι ha
+    obtain ⟨θ, -, -, hl⟩ := GlobalTheory.LocDec.decomposition_mulEquiv_galLoc E Ω A w h ι hι
+    let ψ : Weil h →* GalLoc w := θ.toMonoidHom.comp (Subgroup.inclusion (Weil_le_Dec h))
+    have hψ : ∀ τ : Weil h, Lifts ι (ψ τ) τ := fun τ => hl ⟨τ, Weil_le_Dec h τ.2⟩
+    have e2 : ψ σ = g := by
+      have e : θ.symm g = Subgroup.inclusion (Weil_le_Dec h) σ := by
+        have := hl (θ.symm g)
+        rw [θ.apply_symm_apply] at this
+        exact Subtype.ext (this.eq hg)
+      show θ _ = g
+      rw [← e, θ.apply_symm_apply]
+    let r := (AlgEquiv.restrictNormalHom (maximalAbelianExtension (w.adicCompletion E) (Kbar w))).comp ψ
+    have hr : ∀ (τ : Weil h) (L : IntermediateField (w.adicCompletion E) (Kbar w)) [Normal (w.adicCompletion E) L]
+        (hL : L ≤ maximalAbelianExtension (w.adicCompletion E) (Kbar w)),
+        restrictAb L hL (r τ) = AlgEquiv.restrictNormalHom L (ψ τ) := fun τ L _ hL =>
+      restrictAb_topologicalAbelianizationEquiv L hL (ψ τ)
+    have hnorm : ∀ (τ : Weil h) (L : IntermediateField (w.adicCompletion E) (Kbar w))
+        [FiniteDimensional (w.adicCompletion E) L] [IsAbelianGalois (w.adicCompletion E) L],
+        a τ ∈ (normUnits (w.adicCompletion E) L).range →
+          restrictAb L (le_maximalAbelianExtension L) (r τ) = 1 := fun τ L _ hL hx => by
+      have := (hN L ⟨inferInstance, inferInstance, hL.is_comm.comm⟩ τ _ (hψ τ)).2 hx
+      rw [hr, ← MonoidHom.mem_ker, IntermediateField.restrictNormalHom_ker, IntermediateField.mem_fixingSubgroup_iff]
+      exact this
+    let a' : Weil h →* (w.adicCompletion E)ˣ := invMonoidHom.comp a
+    have ha' : Function.Surjective a' := inv_surjective.comp ha.surj
+    have hker : a'.ker ≤ r.ker := fun τ hτ => by
+      have h1 : a τ = 1 := inv_eq_one.1 (MonoidHom.mem_ker.1 hτ)
+      refine MonoidHom.mem_ker.2 (ext_restrictAb fun L _ _ => ?_)
+      rw [map_one]
+      exact hnorm τ L (h1 ▸ Subgroup.one_mem _)
+    let b := a'.liftOfSurjective ha' ⟨r, hker⟩
+    have hb : ∀ τ, b (a τ)⁻¹ = r τ := fun τ =>
+      MonoidHom.liftOfRightInverse_comp_apply a' _ (Function.rightInverse_surjInv ha') ⟨r, hker⟩ τ
+    have hbφ : b = localArtinMap (w.adicCompletion E) (Kbar w) := by
+      refine eq_localArtinMap_of (fun π hπ => ?_) (fun L _ _ x hx => ?_)
+      · obtain ⟨τ, rfl⟩ := ha' π
+        have h1 : GlobalTheory.SmGL.ord (w.adicCompletion E) (a τ⁻¹) = 1 := by rw [map_inv]; exact hπ
+        rw [ha.ord_eq, deg_inv, neg_neg] at h1
+        have hF := (GlobalTheory.WeilDict.isFrob_iff_of_lifts h (Weil_le_Dec h τ.2) (hψ τ)).1 (deg_eq_one_iff.1 h1)
+        change restrictAb _ _ (b (a τ)⁻¹) = _
+        rw [hb, hr]
+        refine (restrictNormal_eq_maximalUnramifiedExtensionFrobenius_iff (ψ τ)).2 ?_
+        rw [unramifiedDegree_eq_ofAdd_one_iff]
+        rintro ξ ⟨n, hn, hξ⟩
+        have hq : Nat.card (IsLocalRing.ResidueField (ValuativeRel.valuation (w.adicCompletion E)).integer) = normV w := resCard_eq_normV w
+        rw [hq] at hξ ⊢
+        refine hF ξ n (Nat.pos_of_ne_zero hn) ?_
+        have h2 : normV w ^ n = normV w ^ n - 1 + 1 :=
+          (Nat.sub_add_cancel (Nat.one_le_pow _ _ (zero_lt_one.trans (one_lt_normV w)))).symm
+        rw [h2, pow_succ, hξ, one_mul]
+      · obtain ⟨τ, rfl⟩ := ha' x
+        change restrictAb _ _ (b (a τ)⁻¹) = _
+        rw [hb]
+        exact hnorm τ L (Subgroup.inv_mem_iff _ |>.1 hx)
+    rw [← map_inv, ← hbφ, hb, ← e2]
+    rfl
+  
+  have HK : AlgEquiv.restrictNormalHom (maximalAbelianExtension (v.adicCompletion K) (Kbar v')) gK =
+      (localArtinMap (v.adicCompletion K) (Kbar v') (a g))⁻¹ := by
+    have : CharZero (v.adicCompletion K) := charZero_of_injective_algebraMap (algebraMap K _).injective
+    have : IsSepClosure (v.adicCompletion K) (Kbar v) := ⟨inferInstance, inferInstance⟩
+    let ε : (Kbar v') ≃ₐ[v.adicCompletion K] Kbar v := IsSepClosure.equiv (v.adicCompletion K) (Kbar v') (Kbar v)
+    let ι : Ω →ₐ[K] Kbar v :=
+      { (ε : (Kbar v') →+* Kbar v).comp ι'.toRingHom with
+        commutes' := fun x => by
+          change ε (ι'.toRingHom (algebraMap K Ω x)) = _
+          rw [hj, ε.commutes, IsScalarTower.algebraMap_apply K (v.adicCompletion K) (Kbar v)] }
+    have hιz : ∀ z, ι z = ε (ι'.toRingHom z) := fun _ => rfl
+    have hc : (ε : (Kbar v') →+* Kbar v).comp ((algebraMap (v.adicCompletion K) (Kbar v')).comp
+        (algebraMap (v.adicCompletionIntegers K) (v.adicCompletion K))) =
+        algebraMap (v.adicCompletionIntegers K) (Kbar v) := RingHom.ext fun x => by
+      rw [IsScalarTower.algebraMap_apply (v.adicCompletionIntegers K) (v.adicCompletion K) (Kbar v)]
+      exact ε.commutes _
+    have hι : IsLocEmb A v ι := fun z => by
+      rw [hA, hιz]
+      constructor
+      · rintro ⟨p, hp, hp'⟩
+        refine ⟨p, hp, ?_⟩
+        rw [← hc]
+        have := congrArg (ε : (Kbar v') →+* Kbar v) hp'
+        rwa [Polynomial.hom_eval₂, map_zero] at this
+      · rintro ⟨p, hp, hp'⟩
+        refine ⟨p, hp, (ε : (Kbar v') →+* Kbar v).injective ?_⟩
+        rw [Polynomial.hom_eval₂, map_zero, hc]
+        exact hp'
+    let gK' : GalLoc v := ε.symm.trans (gK.trans ε)
+    have hg' : Lifts ι gK' g := fun z => by
+      change ε (gK (ε.symm (ε (ι'.toRingHom z)))) = ε (ι'.toRingHom _)
+      rw [ε.symm_apply_apply, hgK]
+    have H := restrict_local K Ω A v h ι hι a ha g gK' hg'
+    have H1 : AlgEquiv.restrictNormalHom (maximalAbelianExtension (v.adicCompletion K) (Kbar v')) gK =
+        (localArtinMap (v.adicCompletion K) (Kbar v') (a g))⁻¹ := by
+      rw [← map_inv] at H ⊢
+      ext y
+      have h1 := localArtinMap_transport (RingEquiv.refl (v.adicCompletion K)) (fun _ _ => Iff.rfl)
+        (ε : (Kbar v') ≃+* Kbar v) (fun x => ε.commutes x) (a g)⁻¹ y.2
+      have h2 : Units.map (RingEquiv.refl (v.adicCompletion K)).toRingHom.toMonoidHom (a g)⁻¹ = (a g)⁻¹ :=
+        Units.ext rfl
+      rw [h2, ← H, AlgEquiv.restrictNormalHom_apply] at h1
+      rw [AlgEquiv.restrictNormalHom_apply]
+      apply ε.injective
+      refine Eq.trans ?_ h1.symm
+      change _ = ε (gK (ε.symm (ε y)))
+      rw [ε.symm_apply_apply]
+    exact H1
+  have HL : ∀ (z : Kbar v') (hz : z ∈ maximalAbelianExtension (v'.adicCompletion L) (Kbar v')),
+      gL ((localArtinMap (v'.adicCompletion L) (Kbar v') (a' g') ⟨z, hz⟩ :
+        maximalAbelianExtension (v'.adicCompletion L) (Kbar v')) : Kbar v') = z := by
+    intro z hz
+    have H := restrict_local L Ω A v' h' ι' hι' a' ha' g' gL hgL
+    have e : AlgEquiv.restrictNormalHom (maximalAbelianExtension (v'.adicCompletion L) (Kbar v')) gL
+        (localArtinMap (v'.adicCompletion L) (Kbar v') (a' g') ⟨z, hz⟩) = ⟨z, hz⟩ := by
+      rw [H, ← AlgEquiv.mul_apply, inv_mul_cancel, AlgEquiv.one_apply]
+    have e2 := congrArg (fun y : maximalAbelianExtension (v'.adicCompletion L) (Kbar v') => (y : Kbar v')) e
+    simpa only [AlgEquiv.restrictNormalHom_apply] using e2
   have kK : ∀ (y : Kbar v') (hy : y ∈ maximalAbelianExtension (v.adicCompletion K) (Kbar v')),
       gK ((localArtinMap (v.adicCompletion K) (Kbar v') (a g) ⟨y, hy⟩ :
         maximalAbelianExtension (v.adicCompletion K) (Kbar v')) : Kbar v') = y := fun y hy => by

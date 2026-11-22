@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.TranslateProduct
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.Elliptic
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.TranslateProduct
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.Elliptic
+
+@[expose] public section
 
 noncomputable section
 open Filter Topology
@@ -149,7 +153,5 @@ theorem isogenyWeierstrassP_of_ellipticNoPole (hN : EllipticNoPole) : IsogenyP :
   simp only [hf, hT, Finset.sum_insert h0S, add_zero] at hfz
   rw [Finset.sum_sub_distrib]
   linear_combination hfz
-
-theorem isogeny_weierstrass_p : IsogenyP := isogenyWeierstrassP_of_ellipticNoPole elliptic_no_pole_const
 
 end Formalism.L2.Th1.F

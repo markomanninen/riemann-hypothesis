@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SgnMulSelf
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.SgnMulSelf
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,16 +78,16 @@ section Mat
 
 variable {R : Type} [CommRing R]
 
-variable (R) in
 
+variable (R) in
 def hAB : Submodule R (M4 R) where
   carrier := {Y | ∀ i j, ¬ lamW i < lamW j → Y i j = 0}
   zero_mem' _ _ _ := rfl
   add_mem' ha hb i j h := by simp [ha i j h, hb i j h]
   smul_mem' c a ha i j h := by simp [ha i j h]
 
-variable (R) in
 
+variable (R) in
 def uM : Submodule R (M4 R) := hAB R ⊓ sp4 R
 
 def IsSUp (X : M4 R) : Prop := ∀ i j, j ≤ i → X i j = 0
@@ -184,17 +188,6 @@ structure BlockDiagonalOrdinaryGSpRep (S : Finset ℕ) (c s : G ℚ Ω) (B : Val
   cc : r c = eAB A
 
 end Gal
-
-example {Γ M : Type} [Group Γ] [TopologicalSpace Γ] [AddCommGroup M] (ρ : Γ → M →+ M) (c : Γ) (N : Set Γ) (H : Subgroup Γ) :
-    (0 : Γ → M) ∈ Zc (fun g x => ρ g x) c N H {0} :=
-  ⟨0, IsLocallyConstant.const 0, by simp, rfl, by simp, by simp⟩
-
-example {R : Type} [CommRing R] : Matrix.single 1 2 (1 : R) ∈ uM R := by
-  refine ⟨fun i j h => ?_, ?_⟩
-  · fin_cases i <;> fin_cases j <;> simp_all [lamW]
-  · show adj _ = -_
-    ext i j
-    fin_cases i <;> fin_cases j <;> simp [adj_apply, sgn, Fin.rev, Matrix.single_apply]
 
 end UpperTheory.V.Ws.Bl
 

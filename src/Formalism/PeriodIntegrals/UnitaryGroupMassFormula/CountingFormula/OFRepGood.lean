@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.UnipotentIntegralPreservesLattice
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FrameDeterminant.DdSNeZero
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.RingInverseMulEquiv
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.UnipotentIntegralPreservesLattice
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FrameDeterminant.DdSNeZero
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.RingInverseMulEquiv
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ theorem one_mem_ddS_zpow (D : Formalism.BasicNotions.D7) (k : ℕ) :
   have hle : ddS D ^ k ≤ 1 := by
     rw [ddS, ← FractionalIdeal.coeIdeal_pow]
     exact FractionalIdeal.coeIdeal_le_one
-  have h := FractionalIdeal.inv_anti_mono (pow_ne_zero k h0) one_ne_zero hle
+  have h := FractionalIdeal.inv_anti_mono (pow_ne_zero k h0) hle
   rw [inv_one] at h
   rw [zpow_neg, zpow_natCast]
   exact h (FractionalIdeal.one_mem_one _)

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsMirClass
+
+@[expose] public section
 
 open Polynomial Formalism.MainNotions.ArithmeticCylinders GlobalTheory.GLq GlobalTheory.GLm
 open scoped Classical
@@ -20,7 +24,7 @@ theorem pm_val (σ : Equiv.Perm (Fin n)) :
       simp [this]
     · simp
   unfold pm toG
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   rfl
 
 theorem conj_apply (σ : Equiv.Perm (Fin n)) (x : Gn g n) (r c : Fin n) :
@@ -76,7 +80,7 @@ theorem supFrom_of_col {M M' : Mt g n} {p q : Fin n} (hpq : (q : ℕ) = p + 1) (
     intro k hk
     have hk' : k < n ∧ k + 1 < n := by have := (Finset.mem_Ico.1 hk).2; omega
     unfold entN
-    rw [dif_pos hk', dif_pos hk', h]
+    rw [dite_eq_left hk', dite_eq_left hk', h]
     congr 1
     by_cases hkp : k = (p : ℕ)
     · rw [if_pos hkp, if_pos (Fin.ext (by simp [hkp, hpq])), (hM _ p).2 (Fin.ext hkp), mul_one]

@@ -1,4 +1,8 @@
-import Formalism.ThetaLogCoordinates.ResidueClassEstimates.StatementT
+module
+
+public import Formalism.ThetaLogCoordinates.ResidueClassEstimates.StatementT
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,18 +90,23 @@ private theorem list_sum_drop_eq_getD_add_sum_drop_succ (l : List ℕ) (u : ℕ)
     | zero => simp
     | succ u => simpa using ih u
 
-lemma sum_drop : ∀ (l : List ℕ) (u : ℕ), (l.drop u).sum = ∑ j ∈ Ico u l.length, l.getD j 0
-  | [], u => by simp
-  | a :: t, 0 => by
-      have e := Finset.sum_Ico_add' (fun j => (a :: t).getD j 0) 0 t.length 1
-      have h := sum_drop t 0
-      simp only [List.drop_zero, List.getD_cons_succ, zero_add] at e h
-      rw [List.drop_zero, List.sum_cons, List.length_cons,
-        Finset.sum_eq_sum_Ico_succ_bot (by omega), zero_add, ← e, h, List.getD_cons_zero]
-  | a :: t, u + 1 => by
+lemma sum_drop : ∀ (l : List ℕ) (u : ℕ), (l.drop u).sum = ∑ j ∈ Ico u l.length, l.getD j 0 := by
+  intro l
+  induction l with
+  | nil => simp
+  | cons a t ih =>
+    intro u
+    cases u with
+    | zero =>
+      have h := ih 0
+      simp only [List.drop_zero, Nat.Ico_zero_eq_range] at h
+      simp only [List.drop_zero, List.sum_cons, List.length_cons, Nat.Ico_zero_eq_range,
+        Finset.sum_range_succ', List.getD_cons_succ, List.getD_cons_zero, h]
+      exact Nat.add_comm _ _
+    | succ u =>
       have e := Finset.sum_Ico_add' (fun j => (a :: t).getD j 0) u t.length 1
       simp only [List.getD_cons_succ] at e
-      rw [List.drop_succ_cons, List.length_cons, ← e, sum_drop t u]
+      rw [List.drop_succ_cons, List.length_cons, ← e, ih u]
 
 lemma sum_lat (g : ℕ → ℝ) (q : ℕ → Bool) (B : ℕ → ℕ) : ∀ n,
     ∑ l ∈ range (lat q B n).length, g ((lat q B n).getD l 0) =
@@ -113,15 +122,17 @@ lemma sum_lat (g : ℕ → ℝ) (q : ℕ → Bool) (B : ℕ → ℕ) : ∀ n,
 
 lemma lat_split (q : ℕ → Bool) (B : ℕ → ℕ) (i : ℕ) : ∀ d, ∃ pre : List ℕ,
     lat q B (i + d) = pre ++ lat q B i ∧
-    pre.length = ((Icc (i + 1) (i + d)).filter (fun l => q l = true)).card
-  | 0 => ⟨[], by simp, by simp⟩
-  | d + 1 => by
-      obtain ⟨pre, h1, h2⟩ := lat_split q B i d
-      rw [← add_assoc, lat_succ, Finset.card_filter, Finset.sum_Icc_succ_top (by omega),
-        ← Finset.card_filter]
-      by_cases h : q (i + d + 1) = true
-      · exact ⟨B (i + d + 1) :: pre, by simp [h, h1], by simp [h, h2]⟩
-      · exact ⟨pre, by simp [h, h1], by simp [h, h2]⟩
+    pre.length = ((Icc (i + 1) (i + d)).filter (fun l => q l = true)).card := by
+  intro d
+  induction d with
+  | zero => exact ⟨[], by simp, by simp⟩
+  | succ d ih =>
+    obtain ⟨pre, h1, h2⟩ := ih
+    rw [← add_assoc, lat_succ, Finset.card_filter, Finset.sum_Icc_succ_top (by omega),
+      ← Finset.card_filter]
+    by_cases h : q (i + d + 1) = true
+    · exact ⟨B (i + d + 1) :: pre, by simp [h, h1], by simp [h, h2]⟩
+    · exact ⟨pre, by simp [h, h1], by simp [h, h2]⟩
 
 lemma mem_lat {q : ℕ → Bool} {B : ℕ → ℕ} {j x : ℕ} (h : x ∈ lat q B j) :
     ∃ l, 1 ≤ l ∧ l ≤ j ∧ q l = true ∧ x = B l := by
@@ -438,10 +449,6 @@ theorem pathWeightBound_of :
       ∑ i ∈ (Icc 1 D.n0).filter (fun i => (!D.vec i) = true), fT D.k' (D.B i : ℝ) := by
     rw [← Finset.sum_filter_add_sum_filter_not (Icc 1 D.n0) (fun i => D.vec i = true)]
     congr 1
-    apply Finset.sum_congr _ (fun _ _ => rfl)
-    apply Finset.filter_congr
-    intro x _
-    simp
   have hSv := Formalism.InvariantFactorPaths.BranchingDimensions.TTyp.sum_lat (fun x : ℕ => fT D.k' (x : ℝ)) (fun l => D.vec l) D.B D.n0
   have hSc := Formalism.InvariantFactorPaths.BranchingDimensions.TTyp.sum_lat (fun x : ℕ => fT D.k' (x : ℝ)) (fun l => !D.vec l) D.B D.n0
   have hLk : ∀ (q : ℕ → Bool) l, l < (Formalism.InvariantFactorPaths.BranchingDimensions.TTyp.lat q D.B D.n0).length →

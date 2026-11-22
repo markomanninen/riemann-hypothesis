@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeight
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassHeight
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -37,13 +42,13 @@ theorem log_block (h₃ : PlueckerKernel.Statement) (j m : ℕ) (Z : Matrix (Fin
 
 end RootLogNormBoundAlt
 
-open RootLogNormBoundAlt in
 
+open RootLogNormBoundAlt in
 theorem RootLogNormBound.proof (h₁ : RootAnchorNonzero.Statement) (h₂ : RootPointConj.Statement)
     (h₃ : PlueckerKernel.Statement) : RootLogNormBound.Statement := by
   intro f j m ζ hζ z hz
   have hpos : ∀ τ : Fin f, 0 < ‖WithLp.toLp 2 (fun I : PlIdx j m => z ⟨τ, I⟩)‖ := fun τ =>
-    (fsMetric (PlIdx j m)).pos _ fun h0 => by
+    (fsMetric (ι := PlIdx j m)).pos _ fun h0 => by
       obtain ⟨i, hi⟩ := hz.1 τ
       exact hi (congrFun h0 i)
   have key : ∀ τ : Fin f, -((j : ℝ) / 2 * Real.log (1 + m)) ≤

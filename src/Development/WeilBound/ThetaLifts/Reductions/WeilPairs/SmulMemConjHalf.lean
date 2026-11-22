@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SetIntegralAddRight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitPlaceThetaFunctionVacuumConjugatePlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralNeZeroOfCocompact
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SetIntegralAddRight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitPlaceThetaFunctionVacuumConjugatePlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IntegralNeZeroOfCocompact
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -60,13 +65,13 @@ theorem mul_mem_conjHalf {m : ℕ} {e : AEF F E} (M : Matrix (Fin m) (Fin nT) (A
   rw [Matrix.mul_apply, Finset.mul_sum]
   exact Finset.sum_congr rfl fun k _ => by rw [mul_left_comm, hy k j]
 
-variable (F E) in
 
+variable (F E) in
 def hlf : AEF F E := incAF F E (1 / 2)
 
 theorem hlf_add : hlf F E + hlf F E = 1 := by
   unfold hlf
-  rw [← map_add, show (1 / 2 : E) + 1 / 2 = 1 by norm_num, map_one]
+  rw [← map_add (f := _), show (1 / 2 : E) + 1 / 2 = 1 by norm_num, map_one]
 
 theorem exists_decomp {e : AEF F E} {u : WOF F E nS (nT + nT)} (hu : u ∈ conjHalf σ e nS (nT + nT)) :
     ∃ a ∈ conjHalf σ e nS nT, ∃ b ∈ conjHalf σ e nS nT, u = dC F E nT * a + aC F E nT * b := by

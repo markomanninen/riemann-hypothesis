@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Match
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsBruhatFunctionOfClosedEmbedding
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TwistedLocalOrbits.Match
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsBruhatFunctionOfClosedEmbedding
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.IndefiniteRowSideFullHecke.IwahoriDoubleCosets PositivityTheory.Rg.Tf.Loc UpperTheory.ConvolutionTheory.Loc
 open scoped ENNReal NNReal Pointwise
@@ -29,8 +33,8 @@ private theorem swap_fibre (hi : Measurable i) {F a b : G → ℝ≥0∞} (hF : 
   refine lintegral_congr fun g => ?_
   rw [lintegral_const_mul _ (by fun_prop), lintegral_inv_eq_self (fun t : T => a (i t * g))]
 
-omit [MeasurableInv G] [MeasurableInv T] [SFinite μT] [μT.IsInvInvariant] in
 
+omit [MeasurableInv G] [MeasurableInv T] [SFinite μT] [μT.IsInvInvariant] in
 private theorem norm_toNNReal (hi : Measurable i) {ρ : G → ℝ≥0∞} (hρ : Measurable ρ) (h1 : ∀ g, ∫⁻ t, ρ (i t * g) ∂μT = 1) (g : G) :
     ∫⁻ t, ((ρ (i t * g)).toNNReal : ℝ≥0∞) ∂μT = 1 := by
   rw [← h1 g]
@@ -189,7 +193,7 @@ theorem UpperTheory.ConvolutionTheory.Loc.quotDesc :
     exact ⟨b, hb, fun g => (hN b hb g).trans (h1 g)⟩
   have exH : ∃ ρ, IsQuotNormaliser T μT ρ :=
     GlobalTheory.exists_bruhat_function_closedEmbedding H T T.subtype hT.isClosedEmbedding_subtypeVal μT
-  rw [quotIntegral, quotIntegral, dif_pos exG, dif_pos exH]
+  rw [quotIntegral, quotIntegral, dite_eq_left exG, dite_eq_left exH]
   obtain ⟨hρ, h1⟩ := exG.choose_spec
   obtain ⟨hρ', h1'⟩ := exH.choose_spec
   have h1T : ∀ g, ∫⁻ t : T, exG.choose (j t * g) ∂μT = 1 := fun g => (hN _ hρ g).symm.trans (h1 g)

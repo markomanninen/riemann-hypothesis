@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.EqZeroOfForallLTensorEqZero
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.EqZeroOfForallLTensorEqZero
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -53,8 +57,8 @@ section Reduced
 
 universe u
 
-open Scheme.IdealSheafData in
 
+open Scheme.IdealSheafData in
 theorem isReduced_subscheme_vanishingIdeal {X : Scheme.{u}} (Z : TopologicalSpace.Closeds X) :
     IsReduced (vanishingIdeal Z).subscheme := by
   have : ∀ U, IsReduced ((vanishingIdeal Z).subschemeCover.openCover.X U) := fun U => by
@@ -63,8 +67,8 @@ theorem isReduced_subscheme_vanishingIdeal {X : Scheme.{u}} (Z : TopologicalSpac
     exact PrimeSpectrum.isRadical_vanishingIdeal _
   exact IsReduced.of_openCover _ (vanishingIdeal Z).subschemeCover.openCover
 
-open Scheme.IdealSheafData in
 
+open Scheme.IdealSheafData in
 theorem vanishingIdeal_le_ker {T X : Scheme.{u}} [IsReduced T] (g : T ⟶ X)
     (Z : TopologicalSpace.Closeds X) (h : Set.range g ⊆ Z) : vanishingIdeal Z ≤ g.ker := by
   refine le_ofIdeals_iff.mpr fun U a ha => ?_
@@ -110,8 +114,8 @@ theorem range_subset_of_points {k : Type} [Field k] [IsAlgClosed k] {T B : Over 
   refine hx (h x' ⟨IsLocalRing.closedPoint k, ?_⟩)
   exact congrArg g.left (pointOfClosedPoint_apply T.hom x hxc _)
 
-open Scheme.IdealSheafData in
 
+open Scheme.IdealSheafData in
 theorem exists_smooth_closed_subgroup (k : Type) [Field k] [IsAlgClosed k] (B : Over (Sp k))
     [GrpObj B] (hB : LocallyOfFiniteType B.hom) (C : Subgroup (𝟙_ (Over (Sp k)) ⟶ B))
     (Z : Set B.left) (hZ : IsClosed Z) (hC : ∀ x, x ∈ C ↔ Set.range x.left ⊆ Z) :

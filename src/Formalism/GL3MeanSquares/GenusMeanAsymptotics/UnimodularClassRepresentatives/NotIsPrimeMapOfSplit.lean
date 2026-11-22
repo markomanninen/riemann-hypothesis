@@ -1,38 +1,18 @@
-import Mathlib
-import Lemmata.GeneralBFactSecondVariant.Imports
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Formalism.HermitianLattices.Ext.L3.SplitPrimeIdeals
-
-theorem card_eq_sq_fixed {k : Type*} [Field k] (τ : k →+* k) (hτ : ∀ x, τ (τ x) = x) (θ : k)
-    (hθ : θ - τ θ ≠ 0) : Nat.card k = Nat.card {x : k // τ x = x} ^ 2 := by
-  first | exact Bl.general_b_fact_second_variant.goal1 .. | (apply Bl.general_b_fact_second_variant.goal1 <;> assumption) | (intros; apply Bl.general_b_fact_second_variant.goal1 <;> assumption)
 
 variable {A B : Type*} [CommRing A] [CommRing B] {ι : A →+* B} {σ : B →+* B}
 
 theorem surj_of_invol (hσ : ∀ x, σ (σ x) = x) : Function.Surjective σ := fun y => ⟨σ y, hσ y⟩
 
-theorem comap_comap_invol (hσ : ∀ x, σ (σ x) = x) (P : Ideal B) : (P.comap σ).comap σ = P := by
-  ext x
-  simp only [Ideal.mem_comap, hσ]
-
-theorem comap_eq_map_invol (hσ : ∀ x, σ (σ x) = x) (P : Ideal B) : P.comap σ = P.map σ := by
-  ext x
-  rw [Ideal.mem_comap, Ideal.mem_map_iff_of_surjective σ (surj_of_invol hσ)]
-  constructor
-  · exact fun hx => ⟨σ x, hx, hσ x⟩
-  · rintro ⟨y, hy, rfl⟩
-    rwa [hσ]
-
 theorem comap_isMaximal_invol (hσ : ∀ x, σ (σ x) = x) {P : Ideal B} (hP : P.IsMaximal) :
     (P.comap σ).IsMaximal :=
   Ideal.comap_isMaximal_of_surjective σ (surj_of_invol hσ)
-
-theorem card_quot_comap_invol (hσ : ∀ x, σ (σ x) = x) (P : Ideal B) :
-    Nat.card (B ⧸ P.comap σ) = Nat.card (B ⧸ P) := by
-  let e : B ≃+* B := RingEquiv.ofBijective σ
-    ⟨Function.Involutive.injective hσ, surj_of_invol hσ⟩
-  refine Nat.card_congr (Ideal.quotientEquiv (P.comap σ) P e ?_).toEquiv
-  exact (Ideal.map_comap_of_surjective σ (surj_of_invol hσ) P).symm
 
 theorem fix_ι (hfix : ∀ x, σ x = x ↔ x ∈ Set.range ι) (a : A) : σ (ι a) = ι a :=
   (hfix _).2 ⟨a, rfl⟩
@@ -88,7 +68,7 @@ theorem exists_sub_mem_of_split (hσ : ∀ x, σ (σ x) = x) (hfix : ∀ x, σ x
     exact Ideal.IsMaximal.coprime_of_ne hP hP' (Ne.symm hc)
   obtain ⟨u, hu, v, hv, huv⟩ := Submodule.mem_sup.1 (hsup ▸ Submodule.mem_top : (1 : B) ∈ P ⊔ P.comap σ)
   rw [Ideal.mem_comap] at hv
-  have hfx : σ (b * v + σ (b * v)) = b * v + σ (b * v) := by rw [map_add, hσ, add_comm]
+  have hfx : σ (b * v + σ (b * v)) = b * v + σ (b * v) := by rw [map_add (f := _), hσ, add_comm]
   obtain ⟨a, ha⟩ := (hfix _).1 hfx
   refine ⟨a, ?_⟩
   have hv' : v = 1 - u := by rw [← huv]; ring

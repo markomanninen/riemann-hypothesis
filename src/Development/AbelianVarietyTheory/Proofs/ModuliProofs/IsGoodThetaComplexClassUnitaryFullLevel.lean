@@ -1,19 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.GoodThetaClassOfLatticeFamiliesStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TransportThetaLevelUniformisationCoordinates
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ImAdjointOfSpan
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FiniteMarkedDataInGenus
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsPELObjectOfPrimitivePeriodMapUniformisedStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPeriodsComplexPELObjectStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PelObjectClassPrimAndIsoClosed
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIsTypeFnOfRank
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPeriodDomainParam
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.GoodThetaClassOfLatticeFamiliesStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.TransportThetaLevelUniformisationCoordinates
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ImAdjointOfSpan
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FiniteMarkedDataInGenus
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsPELObjectOfPrimitivePeriodMapUniformisedStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPeriodsComplexPELObjectStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PelObjectClassPrimAndIsoClosed
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIsTypeFnOfRank
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPeriodDomainParam
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.FiniteHomogeneousInf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -72,7 +76,8 @@ theorem goodClass_pelClass : Out.Laws → Out.Laws2 → (∀ (S : Scheme.{0}) (P
   have hMat : ∀ j i, a j • bas (Pi.single i 1) = ∑ i', Mat j i' i • bas (Pi.single i' 1) := by
     intro j i
     apply bas.symm.injective
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_smul, LinearEquiv.symm_apply_apply]
     ext i₀
     simp [Mat, Finset.sum_apply, Pi.single_apply]
@@ -104,8 +109,9 @@ theorem goodClass_pelClass : Out.Laws → Out.Laws2 → (∀ (S : Scheme.{0}) (P
       apply exp_eq_zpow _ hk
       rw [← hbas]
       exact (hfam i).1.2.2.2.2 _ hk _ _
-    · rw [smul_zero, add_zero, ← map_smul, hMat, map_sum]
-      simp only [map_zsmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [smul_zero, add_zero, ← map_smul, hMat, map_sum]
+        simp only [map_zsmul]
     · exact ConjBound.exists_action_lt E H (Di i) g ty (P i bb) (Hm i bb) (a j₁) κ ((hBh i).1 bb hb).1 (hHm i bb hb)
         (hκ j₁)
     · exact (hBu i _ ((hBh i).1 z hz)).unique ⟨hb, hh⟩ ⟨hz, LinearEquiv.refl _ _, fun _ => rfl⟩

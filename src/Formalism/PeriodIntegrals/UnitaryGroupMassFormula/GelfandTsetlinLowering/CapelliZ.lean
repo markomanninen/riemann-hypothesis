@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.CapelliShift
-import Lemmata.GeneralBFactRight.Imports
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.CapelliShift
+public import Lemmata.GeneralBFactRight.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,7 @@ def presRing {N : ℕ} (lam : DomWeight N) : Subring (Module.End ℂ (MvPolynomi
     intro Q1 Q2 h1 h2 f hf
     obtain ⟨f1, hf1, e1⟩ := h1 f hf
     obtain ⟨f2, hf2, e2⟩ := h2 f hf
-    exact ⟨f1 + f2, add_mem hf1 hf2, by rw [LinearMap.add_apply, e1, e2, map_add]⟩
+    exact ⟨f1 + f2, add_mem hf1 hf2, by rw [LinearMap.add_apply, e1, e2, map_add (f := _)]⟩
   zero_mem' := fun f hf => ⟨0, zero_mem _, by simp⟩
   neg_mem' := by
     intro Q h1 f hf

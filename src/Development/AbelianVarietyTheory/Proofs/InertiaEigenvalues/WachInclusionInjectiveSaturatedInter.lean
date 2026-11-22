@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltWittEqZeroOfPrimeMulEqZero
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltWittEqZeroOfPrimeMulEqZero
+
+@[expose] public section
 
 namespace GlobalTheory.IoInj
 
@@ -30,7 +34,7 @@ theorem series_form {O : Type} [CommRing O] (ϖ : O) (hO : ∀ a, IsUnit a ∨ �
     · rw [isUnit_iff_constantCoeff]
       simpa using (hO _).resolve_right h1
     · ext n
-      rw [map_add, coeff_C_mul, coeff_X_pow_mul', coeff_mk]
+      rw [map_add (f := _), coeff_C_mul, coeff_X_pow_mul', coeff_mk]
       by_cases hn : n < Nat.find h
       · rw [if_pos hn, if_neg (by omega), hd n hn, add_zero]
       · rw [if_neg hn, if_pos (by omega), coeff_mk, Nat.sub_add_cancel (by omega), mul_zero, zero_add]
@@ -152,7 +156,7 @@ theorem abstract (j : A →+* E) (f : E →+* W) (g : A →+* B) (c : B →+* W)
     have ha : f (j t) ∣ f (j a) := by
       have : f (j a) = f x * f (j π) ^ m - f (j t) * f z := by
         have := congrArg f h
-        simp only [map_mul, map_add, map_pow] at this
+        simp only [map_mul, map_add (f := _), map_pow] at this
         linear_combination -this
       rw [this]
       exact dvd_sub (hx.mul_right _) (dvd_mul_right _ _)
@@ -163,7 +167,7 @@ theorem abstract (j : A →+* E) (f : E →+* W) (g : A →+* B) (c : B →+* W)
       · exfalso
         apply hne' i
         have h3 := congrArg (fun x => f (j x)) hb
-        simp only [map_mul, map_add, map_pow] at h3
+        simp only [map_mul, map_add (f := _), map_pow] at h3
         have h4 : IsUnit (f (j π) ^ k * f (j u)) := ((hπ.map f).pow k).mul ((hu.map j).map f)
         rw [← h4.dvd_mul_left]
         have : f (j π) ^ k * f (j u) * f (j (e i)) = f (j (e i)) * f (j a) - f (j t) * f (j b) := by
@@ -203,13 +207,13 @@ theorem abstract (j : A →+* E) (f : E →+* W) (g : A →+* B) (c : B →+* W)
           obtain ⟨r, rfl⟩ := Nat.exists_eq_add_of_lt (not_le.mp hk)
           apply hne' i
           have h3 := congrArg (fun x => f (j x)) hb
-          simp only [map_mul, map_add, map_pow] at h3
+          simp only [map_mul, map_add (f := _), map_pow] at h3
           have h4 := congrArg f h
-          simp only [map_mul, map_add, map_pow] at h4
+          simp only [map_mul, map_add (f := _), map_pow] at h4
           obtain ⟨v, hv⟩ := hu.exists_right_inv
           have h5 : IsUnit (c (g π * (-(y * g π ^ r * g v)) + 1)) :=
             (Ideal.mem_jacobson_bot.mp hBJ _).map c
-          simp only [map_mul, map_add, map_pow, map_neg, map_one, ← hcomm, hy] at h5
+          simp only [map_mul, map_add (f := _), map_pow, map_neg, map_one, ← hcomm, hy] at h5
           have h6 : f (j u) * f (j v) = 1 := by rw [← map_mul, ← map_mul, hv, map_one, map_one]
           rw [← (h5.mul ((hπ.map f).pow k)).dvd_mul_left]
           refine ⟨-(f (j v)) * (f (j b) + f (j (e i)) * f z), ?_⟩
@@ -220,12 +224,12 @@ theorem abstract (j : A →+* E) (f : E →+* W) (g : A →+* B) (c : B →+* W)
       exact Finset.sum_congr rfl fun i _ => hbd i
     have h6 : x = j (∑ i, d i) + j t * ((j (∑ i, b i) + z) * πi ^ m) := by
       rw [h5] at h
-      simp only [map_mul, map_add, map_pow] at h
+      simp only [map_mul, map_add (f := _), map_pow] at h
       linear_combination πi ^ m * h - (x - j (∑ i, d i)) * hπm m
     refine ⟨_, _, h6, ?_⟩
     apply hcs (g U * g t ^ n * (y - g (∑ i, d i)))
     have h7 := congrArg f h6
-    rw [map_add, map_mul] at h7
+    rw [map_add (f := _), map_mul] at h7
     simp only [map_mul c, map_pow c, map_sub c, ← hcomm, hy, hpW]
     linear_combination f (j U) * f (j t) ^ n * h7
   have key2' : ∀ (k : ℕ) (x : E), (∃ y, c y = f x) → ∃ a : A, j t ^ k ∣ x - j a := by
@@ -237,7 +241,7 @@ theorem abstract (j : A →+* E) (f : E →+* W) (g : A →+* B) (c : B →+* W)
       obtain ⟨a, x', rfl, hx'⟩ := key2 x hx
       obtain ⟨a', w, hw⟩ := ih x' hx'
       refine ⟨a + t * a', w, ?_⟩
-      rw [map_add, map_mul]
+      rw [map_add (f := _), map_mul]
       linear_combination j t * hw
   refine ⟨?_, ?_, ?_, ?_⟩
   · rw [injective_iff_map_eq_zero]
@@ -253,7 +257,8 @@ theorem abstract (j : A →+* E) (f : E →+* W) (g : A →+* B) (c : B →+* W)
       rw [this]
       exact M.sub_mem (M.mul_mem_right _ hxM) (M.mul_mem_right _ htM)
     apply hM.ne_top
-    rw [Ideal.eq_top_iff_one, ← map_one j, ← hsum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Ideal.eq_top_iff_one, ← map_one j, ← hsum, map_sum]
     refine M.sum_mem fun i _ => ?_
     rcases dich a i with ⟨b, hb⟩ | ⟨b, k, u, hu, hb⟩
     · exfalso
@@ -261,12 +266,12 @@ theorem abstract (j : A →+* E) (f : E →+* W) (g : A →+* B) (c : B →+* W)
       have h3 := congrArg (fun x => f (j x)) hb
       simp only [map_mul] at h3
       have h4 := congrArg f h
-      simp only [map_mul, map_add, map_pow] at h4
+      simp only [map_mul, map_add (f := _), map_pow] at h4
       rw [← (hx.mul ((hπ.map f).pow m)).dvd_mul_left]
       refine ⟨f (j b) + f (j (e i)) * f z, ?_⟩
       linear_combination h3 + f (j (e i)) * h4
     · have h3 := congrArg j hb
-      simp only [map_mul, map_add, map_pow] at h3
+      simp only [map_mul, map_add (f := _), map_pow] at h3
       rw [← Ideal.unit_mul_mem_iff_mem M ((hπ.pow k).mul (hu.map j))]
       have : j π ^ k * j u * j (e i) = j (e i) * j a - j t * j b := by linear_combination -h3
       rw [this]
@@ -331,85 +336,87 @@ theorem idem_ne_zero {O E W : Type} [CommRing O] [CommRing E] [CommRing W] [Nont
     | zero => simpa using hi
     | succ m ih => rw [Nat.cast_succ, ← add_assoc, ← letφ_letE φ₀, ← h₁, h₂, ih, h0]
   apply one_ne_zero (α := W)
-  rw [← map_one f, ← map_one j, ← Finset.univ_sum_single (1 : LetA O n), map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_one f, ← map_one j, ← Finset.univ_sum_single (1 : LetA O n), map_sum, map_sum]
   refine Finset.sum_eq_zero fun i' _ => ?_
   have := h1 (i' - i).val
   rwa [ZMod.natCast_zmod_val, add_sub_cancel] at this
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem ioE_injective_saturated_inter (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P) (K : FinExt l)
     (s : ℕ) (LL : FinExt l) (_h : Good K s LL) (Γ : GamS P K s LL) (R : WSer Γ) (I : IoS AI R) (_hI : IoW I) :
     Function.Injective I.ioE ∧ (∀ x : R.EE, IsUnit (I.ioE x) → IsUnit x) ∧
       (∀ (x : R.EE) (y : RW LL), I.ioE x = ((l : ℕ) : RW LL) * y → ∃ x', x = ((l : ℕ) : R.EE) * x') ∧
       ∀ x : R.EE, (∃ y, inclR LL y = I.ioE x) →
         ∃ a : LetA ↥(OL LL) (Module.finrank ℚ_[l] ↥(K0 K)), algebraMap _ R.EE a = x := by
-  classical
-  obtain ⟨_, hc, hl0, hlu, hfree, -, -⟩ := GlobalTheory.Per.integers_completeDVR l LL
-  obtain ⟨hWc, hWtf, -, hsat, hμ⟩ := GlobalTheory.HWL.TensorWitt.main l LL
-  haveI : FiniteDimensional ℚ_[l] K.1 := K.2
-  haveI : FiniteDimensional ℚ_[l] (K0 K) :=
-    Module.Finite.of_injective (IntermediateField.inclusion (inf_le_left : K0 K ≤ K.1)).toLinearMap
-      (IntermediateField.inclusion_injective (inf_le_left : K0 K ≤ K.1))
-  haveI : NeZero (Module.finrank ℚ_[l] (K0 K)) := ⟨Module.finrank_pos.ne'⟩
-  haveI : Nontrivial (RW LL) := Module.FaithfullyFlat.lTensor_nontrivial ℤ_[l] ↥(OL LL) (WCb l)
-  obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible ↥(OL LL)
-  obtain ⟨N, hN⟩ := IsDiscreteValuationRing.associated_pow_irreducible hl0 hϖ
-  obtain ⟨n, rfl⟩ : ∃ n, N = n + 1 := by
-    rcases N with _ | n
-    · exact absurd (by simpa using hN) hlu
-    · exact ⟨n, rfl⟩
-  obtain ⟨u, hu⟩ := hN.symm
-  have hm : IsLocalRing.maximalIdeal ↥(OL LL) = Ideal.span {ϖ} := hϖ.maximalIdeal_eq
-  have hO : ∀ a : ↥(OL LL), IsUnit a ∨ ϖ ∣ a := by
-    intro a
-    by_cases h : IsUnit a
-    · exact Or.inl h
-    · right
-      rw [← Ideal.mem_span_singleton, ← hm]
-      exact h
-  have hOp : ∀ a : ℕ → ↥(OL LL), (∀ k k', k ≤ k' → (l : ↥(OL LL)) ^ k ∣ a k - a k') →
-      ∃ L, ∀ k, (l : ↥(OL LL)) ^ k ∣ a k - L := by
-    intro a ha
-    have hiff : ∀ (k : ℕ) (x y : ↥(OL LL)),
-        x ≡ y [SMOD (IsLocalRing.maximalIdeal ↥(OL LL) ^ k • ⊤ : Submodule ↥(OL LL) ↥(OL LL))] ↔ ϖ ^ k ∣ x - y := by
-      intro k x y
-      rw [SModEq.sub_mem, smul_eq_mul, Ideal.mul_top, hm, Ideal.span_singleton_pow, Ideal.mem_span_singleton]
-    obtain ⟨L, hL⟩ := IsPrecomplete.prec hc.toIsPrecomplete (f := a) (by
-      intro k k' hk
-      rw [hiff]
-      refine (pow_dvd_pow_of_dvd ?_ k).trans (ha k k' hk)
-      exact ⟨ϖ ^ n * u, by rw [← hu]; ring⟩)
-    refine ⟨L, fun k => ?_⟩
-    have h1 := (hiff _ _ _).mp (hL ((n + 1) * k))
-    have h2 : (l : ↥(OL LL)) ^ k ∣ ϖ ^ ((n + 1) * k) := by
-      rw [pow_mul]
-      exact pow_dvd_pow_of_dvd hN.dvd k
-    have : a k - L = (a k - a ((n + 1) * k)) + (a ((n + 1) * k) - L) := by ring
-    rw [this]
-    exact dvd_add (ha _ _ (by nlinarith)) (h2.trans h1)
-  have hp := P.PD_p K
-  have hE := R.EE_complete
-  have hdense := R.EE_dense
-  have hEsat := R.EE_sat
-  rw [hp] at hE hdense hEsat
-  refine abstract (algebraMap _ R.EE) I.ioE.toRingHom I.io.toRingHom (inclR LL).toRingHom I.ioE_ext l
-    (fun _ => C ϖ) letπ (fun _ => C (u : ↥(OL LL))) n
-    (Pi.isUnit_iff.mpr fun _ => u.isUnit.map C) ?_ (fun i => Pi.single i 1) ?_ ?_
-    (letter_form ϖ hO) (prec_pi l hOp) R.EE_π hE (fun x => hdense x 1) hEsat
-    (IsAdicComplete.le_jacobson_bot _ (Ideal.mem_span_singleton_self _)) hWtf hsat ?_ ?_
-  · funext i
-    have := congrArg (C : ↥(OL LL) →+* _) hu
-    rw [map_natCast, map_mul, map_pow] at this
-    simp only [Pi.natCast_apply, Pi.mul_apply, Pi.pow_apply, ← this]
-    ring
-  · intro i
-    rw [← Pi.single_mul, mul_one]
-  · exact Finset.univ_sum_single (1 : LetA ↥(OL LL) _)
-  · haveI := hμ _ (not_isUnit_εroot_sub_one AI s)
-    change I.io letπ ∈ _
-    rw [I.io_π]
-    exact IsAdicComplete.le_jacobson_bot _ (Ideal.mem_span_singleton_self _)
-  · exact idem_ne_zero (algebraMap _ R.EE) I.ioE.toRingHom R.φ₀ R.φE (φRW LL) (map_zero _) R.φE_ext I.ioE_φ
+  set_option synthInstance.maxHeartbeats 200000 in
+    classical
+    obtain ⟨_, hc, hl0, hlu, hfree, -, -⟩ := GlobalTheory.Per.integers_completeDVR l LL
+    obtain ⟨hWc, hWtf, -, hsat, hμ⟩ := GlobalTheory.HWL.TensorWitt.main l LL
+    haveI : FiniteDimensional ℚ_[l] K.1 := K.2
+    haveI : FiniteDimensional ℚ_[l] (K0 K) :=
+      Module.Finite.of_injective (IntermediateField.inclusion (inf_le_left : K0 K ≤ K.1)).toLinearMap
+        (IntermediateField.inclusion_injective (inf_le_left : K0 K ≤ K.1))
+    haveI : NeZero (Module.finrank ℚ_[l] (K0 K)) := ⟨Module.finrank_pos.ne'⟩
+    haveI : Nontrivial (RW LL) := Module.FaithfullyFlat.lTensor_nontrivial ℤ_[l] ↥(OL LL) (WCb l)
+    obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible ↥(OL LL)
+    obtain ⟨N, hN⟩ := IsDiscreteValuationRing.associated_pow_irreducible hl0 hϖ
+    obtain ⟨n, rfl⟩ : ∃ n, N = n + 1 := by
+      rcases N with _ | n
+      · exact absurd (by simpa using hN) hlu
+      · exact ⟨n, rfl⟩
+    obtain ⟨u, hu⟩ := hN.symm
+    have hm : IsLocalRing.maximalIdeal ↥(OL LL) = Ideal.span {ϖ} := hϖ.maximalIdeal_eq
+    have hO : ∀ a : ↥(OL LL), IsUnit a ∨ ϖ ∣ a := by
+      intro a
+      by_cases h : IsUnit a
+      · exact Or.inl h
+      · right
+        rw [← Ideal.mem_span_singleton, ← hm]
+        exact h
+    have hOp : ∀ a : ℕ → ↥(OL LL), (∀ k k', k ≤ k' → (l : ↥(OL LL)) ^ k ∣ a k - a k') →
+        ∃ L, ∀ k, (l : ↥(OL LL)) ^ k ∣ a k - L := by
+      intro a ha
+      have hiff : ∀ (k : ℕ) (x y : ↥(OL LL)),
+          x ≡ y [SMOD (IsLocalRing.maximalIdeal ↥(OL LL) ^ k • ⊤ : Submodule ↥(OL LL) ↥(OL LL))] ↔ ϖ ^ k ∣ x - y := by
+        intro k x y
+        rw [SModEq.sub_mem, smul_eq_mul, Ideal.mul_top, hm, Ideal.span_singleton_pow, Ideal.mem_span_singleton]
+      obtain ⟨L, hL⟩ := IsPrecomplete.prec hc.toIsPrecomplete (f := a) (by
+        intro k k' hk
+        rw [hiff]
+        refine (pow_dvd_pow_of_dvd ?_ k).trans (ha k k' hk)
+        exact ⟨ϖ ^ n * u, by rw [← hu]; ring⟩)
+      refine ⟨L, fun k => ?_⟩
+      have h1 := (hiff _ _ _).mp (hL ((n + 1) * k))
+      have h2 : (l : ↥(OL LL)) ^ k ∣ ϖ ^ ((n + 1) * k) := by
+        rw [pow_mul]
+        exact pow_dvd_pow_of_dvd hN.dvd k
+      have : a k - L = (a k - a ((n + 1) * k)) + (a ((n + 1) * k) - L) := by ring
+      rw [this]
+      exact dvd_add (ha _ _ (by nlinarith)) (h2.trans h1)
+    have hp := P.PD_p K
+    have hE := R.EE_complete
+    have hdense := R.EE_dense
+    have hEsat := R.EE_sat
+    rw [hp] at hE hdense hEsat
+    refine abstract (algebraMap _ R.EE) I.ioE.toRingHom I.io.toRingHom (inclR LL).toRingHom I.ioE_ext l
+      (fun _ => C ϖ) letπ (fun _ => C (u : ↥(OL LL))) n
+      (Pi.isUnit_iff.mpr fun _ => u.isUnit.map C) ?_ (fun i => Pi.single i 1) ?_ ?_
+      (letter_form ϖ hO) (prec_pi l hOp) R.EE_π hE (fun x => hdense x 1) hEsat
+      (IsAdicComplete.le_jacobson_bot _ (Ideal.mem_span_singleton_self _)) hWtf hsat ?_ ?_
+    · funext i
+      have := congrArg (C : ↥(OL LL) →+* _) hu
+      rw [map_natCast, map_mul, map_pow] at this
+      simp only [Pi.natCast_apply, Pi.mul_apply, Pi.pow_apply, ← this]
+      ring
+    · intro i
+      rw [← Pi.single_mul, mul_one]
+    · exact Finset.univ_sum_single (1 : LetA ↥(OL LL) _)
+    · haveI := hμ _ (not_isUnit_εroot_sub_one AI s)
+      change I.io letπ ∈ _
+      rw [I.io_π]
+      exact IsAdicComplete.le_jacobson_bot _ (Ideal.mem_span_singleton_self _)
+    · exact idem_ne_zero (algebraMap _ R.EE) I.ioE.toRingHom R.φ₀ R.φE (φRW LL) (map_zero _) R.φE_ext I.ioE_φ
 
 end GlobalTheory.IoInj

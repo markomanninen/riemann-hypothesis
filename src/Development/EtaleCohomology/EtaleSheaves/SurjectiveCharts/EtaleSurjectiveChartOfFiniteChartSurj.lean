@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.SurjectiveCharts
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SurjectiveCharts
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,15 +57,18 @@ theorem graphPatch : GraphPatch := by
   let r : S := ∑ h ∈ s, f h
   have hr : (r : A') = ∑ h ∈ s, algebraMap A A' (a h) * h := by
     show S.val (∑ h ∈ s, f h) = _
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl hf
   refine ⟨S, fg_sup s Sh hfg, r, ?_, ?_⟩
   · have : φ r.1 = 1 := by
-      rw [hr, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hr, map_sum]
       have e1 : φ y = 1 := by
         have : φ k = 0 := hk
-        rw [← map_one φ, ← hyk, map_add, this, add_zero]
-      rw [← e1, ← hc, map_sum]
+        rw [← map_one φ, ← hyk, map_add (f := _), this, add_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← e1, ← hc, map_sum]
       refine Finset.sum_congr rfl fun h _ => ?_
       rw [map_mul, AlgHom.commutes, smul_eq_mul, map_mul]
       simp [Ideal.Quotient.algebraMap_eq, ha]

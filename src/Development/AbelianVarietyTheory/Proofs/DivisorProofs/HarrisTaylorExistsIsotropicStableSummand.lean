@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
-import Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GroupObjectLiftDividedPowers
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorModOfTmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCrystalReductionSquareZeroArtinian
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCrysForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveDeRham
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystalProjectiveOverTensorRingOfIntegersStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorLieConditionModHodgeFiltration
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FilLagrangianOfLocal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLagrangianLiftLieSquareZeroHarrisTaylorStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ConnectedSpaceSpecOfIsLocalRing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NotCompactOfMEqOne
+public import Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GroupObjectLiftDividedPowers
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TensorModOfTmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCrystalReductionSquareZeroArtinian
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCrysForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveDeRham
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystalProjectiveOverTensorRingOfIntegersStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorLieConditionModHodgeFiltration
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FilLagrangianOfLocal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLagrangianLiftLieSquareZeroHarrisTaylorStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ConnectedSpaceSpecOfIsLocalRing
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -47,7 +51,7 @@ theorem exists_summand : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel.HT.
     intro x hx
     refine Submodule.smul_induction_on hx (fun r hr n _ ↦ ?_) (fun x y hx hy ↦ ?_)
     · rw [LinearMap.map_smulₛₗ, RingHom.mem_ker.1 hr, zero_smul]
-    · rw [map_add, hx, hy, add_zero]
+    · rw [map_add (f := _), hx, hy, add_zero]
   have hIF : RingHom.ker π • (⊤ : Submodule C (Crys (divided₂ hsq) (spMap π) o₀.A)) ≤ F := fun x hx ↦ by
     show red x ∈ Fil o₀.A
     rw [hredI x hx]; exact zero_mem _
@@ -89,7 +93,8 @@ theorem exists_summand : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel.HT.
       rw [map_sub, LinearMap.map_smulₛₗ, hpush, hw]
       exact hw₀ i c
     · show red _ ∈ Fil o₀.A
-      rw [map_sub, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, map_sum]
       simp only [hw]
       exact hsum
   obtain ⟨E, ⟨M, hEM⟩, hEF, hstab, hiso, hlieE⟩ := GlobalTheory.T.exists_lagrangian_lift_lie_squareZero_harrisTaylor p D R b C (RingHom.ker π) hI2 tR
@@ -101,7 +106,7 @@ theorem exists_summand : ∀ (p : ℕ) [Fact p.Prime] (D : GlobalTheory.UPel.HT.
     have hx : x ∈ F := hy
     rw [← hEF] at hx
     obtain ⟨d, hd, j, hj, rfl⟩ := Submodule.mem_sup.1 hx
-    exact ⟨d, hd, (hcorr _ _).2 (by rw [map_add, hredI j hj, add_zero])⟩
+    exact ⟨d, hd, (hcorr _ _).2 (by rw [map_add (f := _), hredI j hj, add_zero])⟩
   · rw [← (hcorr d y).1 hc]
     have : d ∈ F := hEF ▸ Submodule.mem_sup_left hd
     exact this

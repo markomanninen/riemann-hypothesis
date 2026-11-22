@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicUnitaryHaarBiInvariant
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CmDataIsCMExtAndGramIsHermND
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
-import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
-import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
-import Formalism.LocalToGlobal.IndefiniteReal.IndefiniteWeightData
-import Formalism.LocalToGlobal.IndefiniteReal.HeckeTupleStatement
-import Formalism.LocalRingCardinality.DataExtra
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AdelicUnitaryHaarBiInvariant
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CmDataIsCMExtAndGramIsHermND
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Formalism.LocalToGlobal.IndefiniteReal.SubgroupCharExtensionOneApply
+public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Formalism.LocalToGlobal.IndefiniteReal.IndefiniteWeightData
+public import Formalism.LocalToGlobal.IndefiniteReal.HeckeTupleStatement
+public import Formalism.LocalRingCardinality.DataExtra
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Matrix Topology Filter Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicUnimod
 open Formalism.UG (UJ cT intAd)
@@ -125,7 +129,7 @@ theorem exists_split_adele {κ : Type} [Finite κ] (a : κ → AF F) :
   let s : (∀ v : S, v.1.adicCompletion F) → Af F := fun y =>
     ⟨fun v => if h : v ∈ S then y ⟨v, h⟩ else 0, by
       filter_upwards [hS.compl_mem_cofinite] with v hv
-      rw [dif_neg hv]
+      rw [dite_eq_right hv]
       exact zero_mem _⟩
   have hs : ∀ x y, p ((x, s y) : Ainf F × Af F) = (x, y) := fun x y => Prod.ext rfl (funext fun v => dif_pos v.2)
   have hs1 : ∀ v, s 1 v = if v ∈ S then 1 else 0 := fun v => by
@@ -191,7 +195,8 @@ theorem exists_compact_subring [TopologicalSpace R] [IsTopologicalRing R] (R₀ 
     show f _ = _
     rw [hf]
     show ∑ i, _ ⊗ₜ[F] algebraMap (𝓞 E) E _ = r ⊗ₜ[F] algebraMap (𝓞 E) E β
-    conv_rhs => rw [← (RingOfIntegers.basis E).sum_repr β, map_sum, TensorProduct.tmul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← (RingOfIntegers.basis E).sum_repr β, map_sum, TensorProduct.tmul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_zsmul, TensorProduct.smul_tmul]
   refine ⟨{ C₀ with mul_mem' := ?_ }, ?_, h1⟩
@@ -207,7 +212,7 @@ theorem sigR_sigR {σ : E →ₐ[F] E} (hσ : ∀ x, σ (σ x) = x) (x : R ⊗[F
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [sigR, hσ]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem exists_split_tensor (σ : E →ₐ[F] E) {δ : E} (hδ : δ ≠ 0) (hσδ : σ δ = -δ) {κ : Type} [Finite κ]
     (C : NonUnitalSubring (AF F ⊗[F] E)) (hC : ∀ r ∈ intFin F, ∀ β : 𝓞 E, r ⊗ₜ[F] (β : E) ∈ C)
@@ -227,7 +232,7 @@ theorem exists_split_tensor (σ : E →ₐ[F] E) {δ : E} (hδ : δ ≠ 0) (hσ�
   · induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [sigR]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   · simp [hpe, Algebra.TensorProduct.one_def]
   · have hy' : y ∈ RingHom.ker (Algebra.TensorProduct.map p (AlgHom.id F E)) := hy
     rw [Algebra.TensorProduct.rTensor_ker _ hp] at hy'
@@ -285,9 +290,9 @@ end Tensor
 
 end GlobalTheory.AdelicPointsUnimod
 
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta in
 attribute [local instance] Formalism.BasicNotions.Host.cmStar in
-
 theorem GlobalTheory.AdelicPointsUnimod.isMulRightInvariant_of_isHaarMeasure :
     ∀ (D : D7) (V : HSp D) (μ : Measure (GA D V)), μ.IsHaarMeasure → μ.IsMulRightInvariant := by
   intro D V μ hμ

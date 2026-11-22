@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.JacquetSubsetSums.JacquetSubsetSum
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RadicalNoFixedVectors
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPermMatrixRepParabolicDoubleCoset
+module
+
+public import Mathlib
+public import Formalism.JacquetSubsetSums.JacquetSubsetSum
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RadicalNoFixedVectors
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPermMatrixRepParabolicDoubleCoset
+
+@[expose] public section
 
 noncomputable section
 

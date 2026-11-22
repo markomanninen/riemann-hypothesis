@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.AbelianVarieties.IsogenyFrobenius
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.AbelianVarieties.IsogenyFrobenius
+
+@[expose] public section
 
 namespace GroundTheory.Arith.Abelian
 

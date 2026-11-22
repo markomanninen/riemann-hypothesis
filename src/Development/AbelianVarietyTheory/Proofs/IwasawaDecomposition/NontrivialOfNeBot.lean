@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryAdmissibleFiniteMultiplicity
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightRepresentationIrreducible
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinitePartAtOwnWeightNeBot
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ArchimedeanUnitaryPointsEquivUnitaryGroupStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqBotOrTopOfTensor
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SpanRangeEqTopOfIsIrreducible
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryAdmissibleFiniteMultiplicity
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightRepresentationIrreducible
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightEqOfFinitePartNeBot
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FinitePartAtOwnWeightNeBot
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ArchimedeanUnitaryPointsEquivUnitaryGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqBotOrTopOfTensor
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SpanRangeEqTopOfIsIrreducible
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,8 @@ theorem total_apply (b : ι → S) (j : P →ₗ[ℂ] S →ₗ[ℂ] F) (c : ι �
 theorem total_repr (b : Module.Basis ι ℂ S) (j : P →ₗ[ℂ] S →ₗ[ℂ] F) (p : P) (v : S) :
     total b j (fun a => b.repr v a • p) = j p v := by
   rw [total_apply]
-  conv_rhs => rw [← b.sum_repr v, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    conv_rhs => rw [← b.sum_repr v, map_sum]
   simp
 
 theorem range_total (b : Module.Basis ι ℂ S) (j : P →ₗ[ℂ] S →ₗ[ℂ] F) :
@@ -60,7 +65,8 @@ theorem coeff_mem {ρ : Representation ℂ H S} (hsp : Submodule.span ℂ (Set.r
     | mem x hx =>
       obtain ⟨g, rfl⟩ := hx
       have e : ∑ a, j (c a) (ρ g (b a)) = R g (total b j c) := by
-        rw [total_apply, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [total_apply, map_sum]
         exact Finset.sum_congr rfl fun a _ => hj _ _ _
       rw [e]
       exact hU _ _ h
@@ -99,30 +105,13 @@ theorem eq_bot_or_eq_img [FiniteDimensional ℂ S] {K : Type} {ρ : Representati
     rintro _ ⟨p, v, rfl⟩
     exact (hN p).1 (h ▸ Submodule.mem_top) v
 
-def part (Alg : Submodule ℂ (S →ₗ[ℂ] F)) (A : Submodule ℂ F) : Submodule ℂ Alg :=
-  ⨅ v : S, A.comap ((LinearMap.applyₗ v).comp Alg.subtype)
-
-theorem mem_part {Alg : Submodule ℂ (S →ₗ[ℂ] F)} {A : Submodule ℂ F} {f : Alg} : f ∈ part Alg A ↔ ∀ v, f.1 v ∈ A :=
-  Submodule.mem_iInf _
-
-def partVal (Alg : Submodule ℂ (S →ₗ[ℂ] F)) (A : Submodule ℂ F) : part Alg A →ₗ[ℂ] S →ₗ[ℂ] A where
-  toFun f := f.1.1.codRestrict A (mem_part.1 f.2)
-  map_add' _ _ := LinearMap.ext fun _ => Subtype.ext rfl
-  map_smul' _ _ := LinearMap.ext fun _ => Subtype.ext rfl
-
-def partMap {Alg : Submodule ℂ (S →ₗ[ℂ] F)} {A B : Submodule ℂ F} (t : A →ₗ[ℂ] B)
-    (ht : ∀ f : part Alg A, B.subtype ∘ₗ t ∘ₗ partVal Alg A f ∈ Alg) : part Alg A →ₗ[ℂ] part Alg B :=
-  LinearMap.codRestrict _ (LinearMap.codRestrict Alg
-    ((LinearMap.llcomp ℂ S A F (B.subtype ∘ₗ t)) ∘ₗ partVal Alg A) ht)
-    fun f => mem_part.2 fun v => (t (partVal Alg A f v)).2
-
 end Abstract
 
 section Concrete
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
-theorem exists_inf_mul_fin (x : UA E n) : ∃ a ∈ infU E n, ∃ k ∈ finU E n, x = a * k := by
+theorem exists_inf_mul_fin (x : UA E n) : ∃ a ∈ infU E n, ∃ k ∈ finU (E := E) (n := n), x = a * k := by
   let y : GL (Fin n) (Cinf E) := cInf x
   have hx : cT (conjAd E) x.1.val * 1 * x.1.val = 1 := x.2
   have h1 : x.1.val.map (pInf E) = y.val := rfl
@@ -142,7 +131,7 @@ theorem exists_inf_mul_fin (x : UA E n) : ∃ a ∈ infU E n, ∃ k ∈ finU E n
   exact inv_mul_cancel y
 
 theorem stable_of {U : Submodule ℂ (UA E n → ℂ)} (h1 : ∀ x : infU E n, ∀ φ ∈ U, RU E n x.1 φ ∈ U)
-    (h2 : ∀ k : finU E n, ∀ φ ∈ U, RU E n k.1 φ ∈ U) (x : UA E n) (φ : UA E n → ℂ) (hφ : φ ∈ U) : RU E n x φ ∈ U := by
+    (h2 : ∀ k : finU (E := E) (n := n), ∀ φ ∈ U, RU E n k.1 φ ∈ U) (x : UA E n) (φ : UA E n → ℂ) (hφ : φ ∈ U) : RU E n x φ ∈ U := by
   obtain ⟨a, ha, k, hk, rfl⟩ := exists_inf_mul_fin x
   rw [← RU_RU]
   exact h1 ⟨a, ha⟩ _ (h2 ⟨k, hk⟩ _ hφ)

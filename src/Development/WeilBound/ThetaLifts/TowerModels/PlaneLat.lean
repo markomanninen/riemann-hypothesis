@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.TowerModels.PlaneForm
+module
+
+public import Development.WeilBound.ThetaLifts.TowerModels.PlaneForm
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,7 +92,7 @@ theorem exists_max_val {V : Type} [AddCommGroup V] [Module E V] [Module (𝓞 E)
     · induction hz using Submodule.span_induction with
       | mem x hx => exact hmax x (Finset.mem_insert_of_mem hx)
       | zero => simp
-      | add x y _ _ hx hy => rw [map_add]; exact (Valuation.map_add _ _ _).trans (max_le hx hy)
+      | add x y _ _ hx hy => rw [map_add (f := _)]; exact (Valuation.map_add _ _ _).trans (max_le hx hy)
       | smul a x _ hx =>
         rw [← algebraMap_smul E a, map_smul, smul_eq_mul, map_mul]
         exact (mul_le_of_le_one_left' (w.valuation_le_one a)).trans hx
@@ -113,7 +117,8 @@ theorem exists_max_val {V : Type} [AddCommGroup V] [Module E V] [Module (𝓞 E)
   have hval : ∀ w ∈ S, w.valuation E (f (∑ w' ∈ S, e w' • c w')) = w.valuation E (f (c w)) := fun w hw => by
     have t : ∀ w', f (e w' • c w') = algebraMap _ E (e w') * f (c w') := fun w' => by
       rw [← algebraMap_smul E (e w'), map_smul, smul_eq_mul]
-    rw [← Finset.add_sum_erase S _ hw, map_add, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Finset.add_sum_erase S _ hw, map_add (f := _), map_sum]
     have a1 : w.valuation E (f (e w • c w)) = w.valuation E (f (c w)) := by rw [t, map_mul, he, one_mul]
     rw [Valuation.map_add_eq_of_lt_left, a1]
     rw [a1]

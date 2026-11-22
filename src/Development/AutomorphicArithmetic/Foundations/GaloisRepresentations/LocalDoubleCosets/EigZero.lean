@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.TracePow
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CommonEigenvectorExistence
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.TracePow
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CommonEigenvectorExistence
+
+@[expose] public section
 
 noncomputable section
 

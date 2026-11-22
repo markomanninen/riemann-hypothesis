@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.CechDefs
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.TotPairing
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DvMemOf
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeZigzagCompat
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NegOneSmulCancel
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.CechDefs
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.TotPairing
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DvMemOf
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConeZigzagCompat
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NegOneSmulCancel
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -40,7 +44,8 @@ theorem d_val {q : ℕ} (f : CH.Cn (sq a b) q) (x : CH.Cn (CH.modF A) q)
     vl a b _ (CH.d _ q f s) = mk2 b _ (CH.d _ q x s) := by
   change vl a b _ (∑ i : Fin (q + 2), (-1 : ℤ) ^ (i : ℕ) • ((sq a b).map (GlobalTheory.CatH.toLast i s)).hom (f (GlobalTheory.CatH.face i s))) =
     mk2 b _ (∑ i : Fin (q + 2), (-1 : ℤ) ^ (i : ℕ) • ((CH.modF A).map (GlobalTheory.CatH.toLast i s)).hom (x (GlobalTheory.CatH.face i s)))
-  rw [map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_zsmul, map_zsmul, map_val _ _ _ (h _)]
 
@@ -93,7 +98,8 @@ theorem cls_sub_sum {K : Cx.{1} R} {m : ℕ} {ι : Type} [Fintype ι] (g : K.X m
     refine Subtype.ext ?_
     rw [Submodule.coe_sub, Submodule.coe_sum]
   change _ = Submodule.mkQ _ (⟨g - ∑ k, Y k, h⟩ : K.Z m)
-  rw [e, map_sub, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sub, map_sum]
   rfl
 
 theorem rep_fin {m : ℕ} {ι : Type} [Fintype ι] {Cl E : CH.Cn (CH.modF A) m} {c : CH.H (sq a b) m} (hc : Rep a b Cl c)
@@ -102,12 +108,14 @@ theorem rep_fin {m : ℕ} {ι : Type} [Fintype ι] {Cl E : CH.Cn (CH.modF A) m} 
     Rep a b E (c - ∑ k, (CH.cx (sq a b)).cls (Y k) (hY k)) := by
   obtain ⟨g, hg, rfl, hgs⟩ := hc
   have h : CH.d _ m (g - ∑ k, Y k) = 0 := by
-    rw [map_sub, map_sum, hg]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum, hg]
     simp [hY]
   refine ⟨g - ∑ k, Y k, h, cls_sub_sum (K := CH.cx (sq a b)) g hg Y hY h, fun s => ?_⟩
   subst hE
   change vl a b _ (g s - (∑ k, Y k) s) = mk2 b _ (Cl s - (∑ k, y k) s)
-  rw [Finset.sum_apply, Finset.sum_apply, map_sub, map_sub, map_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_apply, Finset.sum_apply, map_sub, map_sub, map_sum, map_sum]
   exact congrArg₂ (· - ·) (hgs s) (Finset.sum_congr rfl fun k _ => hy k s)
 
 end SQ

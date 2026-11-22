@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.SysFMPfSys
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIsoNormalizationPullbackOfToIntegralClosure
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SysFMPfSys
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsIsoNormalizationPullbackOfToIntegralClosure
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry LateralTheory.E.BuildCut LateralTheory.E.SysFMPf Topology
@@ -108,8 +112,9 @@ theorem FMrange_of (hC : RRsub) : FMrange := by
     rw [← Set.range_comp, ← Set.range_comp]
     congr 1
     funext x
-    simp only [Function.comp_apply]
-    rw [← Scheme.Hom.comp_apply, ← e1, Scheme.Hom.comp_apply]
+    simpa only [Function.comp_apply, ← Scheme.Hom.comp_apply] using
+      congrArg (fun f : Spec (CommRingCat.of (Localization.AtPrime q.asIdeal)) ⟶
+        w.normalization => f x) e1.symm
   rw [subset_antisymm (hC W w hW q) (closure_sub_RR w q), ← range_spec_atPrime q, ← Set.image_univ, ← hd,
     ← hcl.closure_image_eq_of_continuous m.continuous, himg]
 

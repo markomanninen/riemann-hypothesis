@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GapGeSubKapBase
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrMoveTransfer
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedPointMoveCalculusStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GapGeSubKapBase
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrMoveTransfer
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedPointMoveCalculusStatement
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.BasicNotions
@@ -157,25 +161,27 @@ theorem inv_mem_stab {h : LevelAut Dw l} (hh : h ∈ stab hpq hA Xo c Z) :
   simpa only [inv_inv] using h2
 
 def resAut (h : LevelAut Dw l) (hh : h ∈ stab hpq hA Xo c Z) : Aut (V₀ Y Z) where
-  hom := (mvF hpq hA Xo c h⁻¹).resLE _ _ (le_V₀ Y Z h⁻¹ hh)
-  inv := (mvF hpq hA Xo c h).resLE _ _ (le_V₀ Y Z h (inv_mem_stab Z hh))
-  hom_inv_id := by
-    rw [← cancel_mono (Y.j ⁻¹ᵁ barComp Y Z).ι, Category.assoc, Scheme.Hom.resLE_comp_ι, ← Category.assoc,
-      Scheme.Hom.resLE_comp_ι, Category.assoc, mvF_inv_comp, Category.comp_id, Category.id_comp]
-  inv_hom_id := by
-    rw [← cancel_mono (Y.j ⁻¹ᵁ barComp Y Z).ι, Category.assoc, Scheme.Hom.resLE_comp_ι, ← Category.assoc,
-      Scheme.Hom.resLE_comp_ι, Category.assoc, mvF_comp_inv, Category.comp_id, Category.id_comp]
+  asIso :=
+    { hom := (mvF hpq hA Xo c h⁻¹).resLE _ _ (le_V₀ Y Z h⁻¹ hh)
+      inv := (mvF hpq hA Xo c h).resLE _ _ (le_V₀ Y Z h (inv_mem_stab Z hh))
+      hom_inv_id := by
+        rw [← cancel_mono (Y.j ⁻¹ᵁ barComp Y Z).ι, Category.assoc, Scheme.Hom.resLE_comp_ι, ← Category.assoc,
+          Scheme.Hom.resLE_comp_ι, Category.assoc, mvF_inv_comp, Category.comp_id, Category.id_comp]
+      inv_hom_id := by
+        rw [← cancel_mono (Y.j ⁻¹ᵁ barComp Y Z).ι, Category.assoc, Scheme.Hom.resLE_comp_ι, ← Category.assoc,
+          Scheme.Hom.resLE_comp_ι, Category.assoc, mvF_comp_inv, Category.comp_id, Category.id_comp] }
 
 theorem resAut_ι (h : LevelAut Dw l) (hh : h ∈ stab hpq hA Xo c Z) :
-    (resAut Y Z h hh).hom ≫ i₀ Y Z = i₀ Y Z ≫ mvF hpq hA Xo c h⁻¹ :=
+    (resAut Y Z h hh).asIso.hom ≫ i₀ Y Z = i₀ Y Z ≫ mvF hpq hA Xo c h⁻¹ :=
   Scheme.Hom.resLE_comp_ι _ _
 
 def resHom (S : Subgroup (LevelAut Dw l)) : ↥(S ⊓ stab hpq hA Xo c Z) →* Aut (V₀ Y Z) :=
   MonoidHom.mk' (fun g => resAut Y Z g.1 (Subgroup.mem_inf.1 g.2).2) fun a b => by
+    apply Aut.ext
     apply Iso.ext
-    rw [Aut.Aut_mul_def]
-    change (resAut Y Z (a * b).1 (Subgroup.mem_inf.1 (a * b).2).2).hom =
-      (resAut Y Z b.1 (Subgroup.mem_inf.1 b.2).2).hom ≫ (resAut Y Z a.1 (Subgroup.mem_inf.1 a.2).2).hom
+    change (resAut Y Z (a * b).1 (Subgroup.mem_inf.1 (a * b).2).2).asIso.hom =
+      (resAut Y Z b.1 (Subgroup.mem_inf.1 b.2).2).asIso.hom ≫
+        (resAut Y Z a.1 (Subgroup.mem_inf.1 a.2).2).asIso.hom
     rw [← cancel_mono (i₀ Y Z), Category.assoc, resAut_ι, resAut_ι,
       ← Category.assoc, resAut_ι, Category.assoc, ← mvF_mul, Subgroup.coe_mul, mul_inv_rev]
 
@@ -190,10 +196,10 @@ theorem stab_acts : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : 
   intro E _ _ _ H Dw l Xo c Y Z hpq hl S
   have hA : l.A.Coprime l.M := by rw [hl]; exact Nat.coprime_one_left _
   refine ⟨S ⊓ stab hpq hA Xo c Z, resHom (hpq := hpq) (hA := hA) Y Z S, inf_le_left, ⟨fun g => ?_, ?_⟩, ?_⟩
-  · show (resAut Y Z g.1 (Subgroup.mem_inf.1 g.2).2).hom ≫ j₀ Y Z ≫ s₀ Y Z = j₀ Y Z ≫ s₀ Y Z
+  · show (resAut Y Z g.1 (Subgroup.mem_inf.1 g.2).2).asIso.hom ≫ j₀ Y Z ≫ s₀ Y Z = j₀ Y Z ≫ s₀ Y Z
     rw [j₀_s₀, ← Category.assoc, resAut_ι, Category.assoc, ← Category.assoc (mvF _ _ _ _ _), mvF_snd]
   · intro g R _ _ y v hv
-    show v ≫ (resAut Y Z g.1 (Subgroup.mem_inf.1 g.2).2).hom ≫ i₀ Y Z = _
+    show v ≫ (resAut Y Z g.1 (Subgroup.mem_inf.1 g.2).2).asIso.hom ≫ i₀ Y Z = _
     rw [resAut_ι, ← Category.assoc, hv, ← ptF_move]
     rfl
   · intro h hS y hy hy'

@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DUnit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DkerOfKills
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.BcChiTmul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DKillsPoly
-import Mathlib.RingTheory.Jacobson.Radical
-import Mathlib.RingTheory.Jacobson.Ring
-import Mathlib.Algebra.MvPolynomial.Nilpotent
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DUnit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DkerOfKills
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.BcChiTmul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DKillsPoly
+public import Mathlib.RingTheory.Jacobson.Radical
+public import Mathlib.RingTheory.Jacobson.Ring
+public import Mathlib.Algebra.MvPolynomial.Nilpotent
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.CA
 
@@ -17,7 +21,6 @@ private theorem left_inv_of_jac {A E K : Type} [CommRing A] [Ring E] [Algebra A 
   have hw : ∀ y : E ⊗[A] K, y * w ∈ Module.jacobson E (E ⊗[A] K) := by
     intro y
     induction y with
-    | zero => simp
     | add a b ha hb => rw [add_mul]; exact add_mem ha hb
     | tmul e a =>
       rw [Finset.mul_sum]
@@ -44,7 +47,8 @@ private theorem left_inv_of_jac {A E K : Type} [CommRing A] [Ring E] [Algebra A 
   have hv' : v * (1 + w) = 1 := hv
   have h := congrArg (Algebra.TensorProduct.comm A E K) hv'
   rw [map_mul, map_one] at h
-  simpa [w, map_sum] using h
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa [w, map_sum] using h
 
 private theorem kills_of_jac {n : ℕ} {k R : Type} [Field k] [Ring R] [Algebra k R] (D : Det n k R) (x : R)
     (hx : x ∈ Ring.jacobson R) : D.Kills x := by
@@ -55,7 +59,8 @@ private theorem kills_of_jac {n : ℕ} {k R : Type} [Field k] [Ring R] [Algebra 
     intro K _ _ φ
     rw [hP, ← D.nat]
     congr 1
-    simp [Det.gen, map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Det.gen, map_sum, Finset.sum_mul]
   have hu : IsUnit P := by
     by_contra hnu
     obtain ⟨M, hM, hPM⟩ := exists_max_ideal_of_mem_nonunits hnu
@@ -99,7 +104,6 @@ theorem UpperTheory.V.CA.d_rad :
       (Algebra.TensorProduct.includeRight : E →ₐ[A] ResidueField A ⊗[A] E).toRingHom
     haveI : RingHomSurjective f := ⟨fun t => by
       induction t with
-      | zero => exact ⟨0, map_zero _⟩
       | add a b ha hb =>
         obtain ⟨a, rfl⟩ := ha
         obtain ⟨b, rfl⟩ := hb

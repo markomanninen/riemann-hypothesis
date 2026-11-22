@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.ResidueOfTraceIsFiberSum
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.ResidueOfTraceIsFiberSum
+
+@[expose] public section
+
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
 
@@ -11,7 +16,8 @@ variable {S E : Type} [CommRing S] [Algebra ℂ S] [AddCommGroup E] [Module ℂ 
 private theorem pyc_inSp_act {κ : Type} [Fintype κ] {R : Subalgebra ℂ S} {M : Submodule ℂ E} (hst : Stab act R M)
     {r : κ → S} {g : S} (hg : InSp R r g) {m : E} (hm : m ∈ M) : act g m ∈ sm act M (Set.range r) := by
   obtain ⟨a, ha, rfl⟩ := hg
-  rw [map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, LinearMap.sum_apply]
   refine Submodule.sum_mem _ fun l _ => ?_
   have e1 : act (a l * r l) m = act (r l) (act (a l) m) := by
     rw [mul_comm, map_mul, Module.End.mul_apply]

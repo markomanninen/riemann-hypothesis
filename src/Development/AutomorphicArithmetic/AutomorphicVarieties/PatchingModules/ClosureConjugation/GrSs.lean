@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.GrAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.AlghomOfUnits
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.ClosureConjugation.GrAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.AlghomOfUnits
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.AlgebraTools UpperTheory.V.CA UpperTheory.V.Pa Polynomial
 open scoped TensorProduct
@@ -46,7 +50,8 @@ theorem UpperTheory.V.Pa.gr_ss :
     simp only [M, if_neg hik, Matrix.single_zero]
   have hsum : ∑ i, e i i = 1 := by
     apply g.φ_inj
-    rw [map_sum, map_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_one]
     simp only [he, M, iff_self, if_true]
     ext p q
     rw [Matrix.sum_apply]
@@ -71,9 +76,11 @@ theorem UpperTheory.V.Pa.gr_ss :
         simpa using congrArg Subtype.val this
     choose c hc using hent
     refine ⟨c, g.φ_inj ?_⟩
-    rw [map_smul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_smul, map_sum]
     ext p q
-    simp only [map_sum, map_smul, he, M, Matrix.smul_apply, Matrix.sum_apply, Matrix.single_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, he, M, Matrix.smul_apply, Matrix.sum_apply, Matrix.single_apply]
     rw [hc, Finset.sum_eq_single p (fun i _ hi => Finset.sum_eq_zero (fun k _ => by
         rw [if_neg (fun h => hi h.1), smul_zero])) (by simp),
       Finset.sum_eq_single q (fun k _ hk => by rw [if_neg (fun h => hk h.2), smul_zero]) (by simp)]
@@ -137,4 +144,4 @@ theorem UpperTheory.V.Pa.gr_ss :
   | add x y hx hy =>
     obtain ⟨z, hz⟩ := hx
     obtain ⟨w, hw⟩ := hy
-    exact ⟨z + w, by rw [map_add, hz, hw]⟩
+    exact ⟨z + w, by rw [map_add (f := _), hz, hw]⟩

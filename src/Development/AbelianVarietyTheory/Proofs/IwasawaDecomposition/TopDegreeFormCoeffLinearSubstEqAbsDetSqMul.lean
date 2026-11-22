@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MultOfNotMem
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MultOfNotMem
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory MvPolynomial NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj GlobalTheory.Toroidal GlobalTheory.ShFam GlobalTheory.ProjVar GlobalTheory.FlagBundle GlobalTheory.GoodMetric GlobalTheory.LieBase
 open Classical
 open GlobalTheory GlobalTheory.Cartier GlobalTheory.ProjVar GlobalTheory.CxPts GlobalTheory.ChartGlue GlobalTheory.FlagBundle GlobalTheory.HermFrame
@@ -21,7 +26,7 @@ def rowSel (c : Fin n → Fin n) : Matrix (Fin n) (Fin n) ℂ := Matrix.of fun i
 
 theorem topCoeff_add (P Q : MvPolynomial (Fin n × Fin n) ℂ) :
     topCoeff (P + Q) = topCoeff P + topCoeff Q := by
-  simp [topCoeff, coeff_add, mul_add, Finset.sum_add_distrib]
+  simp [topCoeff, MvPolynomial.coeff_add, mul_add, Finset.sum_add_distrib]
 
 theorem topCoeff_C_mul (a : ℂ) (P : MvPolynomial (Fin n × Fin n) ℂ) : topCoeff (C a * P) = a * topCoeff P := by
   simp only [topCoeff, coeff_C_mul, Finset.mul_sum]
@@ -34,7 +39,7 @@ theorem topCoeff_sum {ι : Type} (s : Finset ι) (f : ι → MvPolynomial (Fin n
 
 theorem sum_apply_sum_single {k : ℕ} (f : Fin k → Fin n × Fin n) :
     ∑ x, (∑ i, Finsupp.single (f i) 1 : Fin n × Fin n →₀ ℕ) x = k := by
-  simp only [Finsupp.finset_sum_apply]
+  simp only [Finsupp.finsetSum_apply]
   rw [Finset.sum_comm]
   simp [Finsupp.single_apply]
 
@@ -56,7 +61,7 @@ theorem topCoeff_prod_X_of_ne {k : ℕ} (hk : k ≠ n) (f : Fin k → Fin n × F
 
 theorem graph_apply (g : Fin n → Fin n) (x y : Fin n) :
     (∑ a, Finsupp.single (a, g a) 1 : Fin n × Fin n →₀ ℕ) (x, y) = if g x = y then 1 else 0 := by
-  rw [Finsupp.finset_sum_apply, Finset.sum_eq_single x (fun c _ hc => by simp [Finsupp.single_apply, hc]) (by simp)]
+  rw [Finsupp.finsetSum_apply, Finset.sum_eq_single x (fun c _ hc => by simp [Finsupp.single_apply, hc]) (by simp)]
   simp [Finsupp.single_apply]
 
 theorem graph_eq_iff (g h : Fin n → Fin n) :
@@ -92,7 +97,8 @@ theorem sum_prod_mul_det_rowSel (U : Matrix (Fin n) (Fin n) ℂ) :
     simp [Pi.single_apply]
   conv_rhs => rw [← h]
   change _ = (Matrix.detRowAlternating : AlternatingMap ℂ (Fin n → ℂ) ℂ (Fin n)) _
-  rw [← AlternatingMap.coe_multilinearMap, MultilinearMap.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← AlternatingMap.coe_multilinearMap, MultilinearMap.map_sum]
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [MultilinearMap.map_smul_univ, smul_eq_mul]
   rfl
@@ -140,7 +146,7 @@ theorem topCoeff_prod_X_pair (c d : Fin n → Fin n) :
       have : ¬ Function.Surjective c := fun hs => hc (Finite.injective_iff_surjective.mpr hs)
       simpa [Function.Surjective] using this
     have h1 := DFunLike.congr_fun h (x, w x)
-    rw [graph_apply, if_pos rfl, Finsupp.finset_sum_apply] at h1
+    rw [graph_apply, if_pos rfl, Finsupp.finsetSum_apply] at h1
     simp [Finsupp.single_apply, hx] at h1
 
 theorem rowSel_mul_apply (c : Fin n → Fin n) (M : Matrix (Fin n) (Fin n) ℂ) (i b : Fin n) :
@@ -205,7 +211,7 @@ theorem topCoeff_subst_conj (J : Matrix (Fin n) (Fin n) ℂ) (P : MvPolynomial (
     rw [e, map_mul, aeval_C, algebraMap_eq, topCoeff_C_mul, topCoeff_C_mul, topCoeff_subst_prod]
     ring
   | add p q hp hq =>
-    rw [map_add, topCoeff_add, topCoeff_add, hp, hq, mul_add]
+    rw [map_add (f := _), topCoeff_add, topCoeff_add, hp, hq, mul_add]
 
 end Subst
 

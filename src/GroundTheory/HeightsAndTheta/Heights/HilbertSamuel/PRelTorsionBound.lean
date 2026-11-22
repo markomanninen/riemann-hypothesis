@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRelTorsionBound
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsRelTorsionBound
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -28,8 +33,8 @@ theorem weight_blockWeight (μ : (Σ k, ι k) →₀ ℕ) :
     simp [blockWeight, Ne.symm hk]
   · simp
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem aeval_monomial_one (R : Subalgebra ℤ Ω) (y : (Σ k, ι k) → Ω) (μ : (Σ k, ι k) →₀ ℕ) :
     aeval y (monomial μ (1 : R)) = ∏ p, y p ^ μ p := by
   rw [aeval_monomial, Finsupp.prod_fintype _ _ (by simp)]
@@ -46,8 +51,8 @@ theorem relSecM_le_map (R : Subalgebra ℤ Ω) (y : (Σ k, ι k) → Ω) (b : K 
     simpa using hμ k
   · simp [aeval_monomial_one]
 
-omit [Fintype K] [DecidableEq K] in
 
+omit [Fintype K] [DecidableEq K] in
 theorem exists_chart_le (N : ℕ) (μ : (Σ k, ι k) → ℕ)
     (h : ∀ k, Fintype.card (ι k) * N < ∑ i, μ ⟨k, i⟩) : ∃ c : ∀ k, ι k, ∀ k, N ≤ μ ⟨k, c k⟩ := by
   have hk : ∀ k, ∃ i, N ≤ μ ⟨k, i⟩ := by
@@ -59,16 +64,14 @@ theorem exists_chart_le (N : ℕ) (μ : (Σ k, ι k) → ℕ)
     exact absurd (h k) (not_lt.2 hle)
   exact ⟨fun k => (hk k).choose, fun k => (hk k).choose_spec⟩
 
-omit [Fintype K] [DecidableEq K] in
-open Classical in
 
+open Classical in
 theorem sum_chart (c : ∀ k, ι k) (N : ℕ) (k : K) : ∑ i, (if c k = i then N else 0) = N := by
   rw [Finset.sum_ite_eq]
   simp
 
-omit [DecidableEq K] in
-open Classical in
 
+open Classical in
 theorem prod_chart (z : (Σ k, ι k) → Ω) (c : ∀ k, ι k) (N : ℕ) :
     ∏ p : Σ k, ι k, z p ^ (if c p.1 = p.2 then N else 0) = (∏ k, z ⟨k, c k⟩) ^ N := by
   rw [Fintype.prod_sigma, ← Finset.prod_pow]
@@ -79,16 +82,16 @@ theorem prod_chart (z : (Σ k, ι k) → Ω) (c : ∀ k, ι k) (N : ℕ) :
     simp [Ne.symm hi]
   · simp
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem chart_pow_mem (R : Subalgebra ℤ Ω) (y : (Σ k, ι k) → Ω) (c : ∀ k, ι k) (N : ℕ) :
     (∏ k, y ⟨k, c k⟩) ^ N ∈ relSecM R y (fun _ => N) := by
   classical
   rw [← prod_chart]
   exact monomial_mem_relSecM R y _ fun k => sum_chart c N k
 
-omit [DecidableEq K] in
 
+omit [DecidableEq K] in
 theorem exists_chart_factor (N : ℕ) (μ : (Σ k, ι k) → ℕ) (c : ∀ k, ι k) (hc : ∀ k, N ≤ μ ⟨k, c k⟩) :
     ∃ ν : (Σ k, ι k) → ℕ, (∀ k, ∑ i, ν ⟨k, i⟩ + N = ∑ i, μ ⟨k, i⟩) ∧
       ∀ z : (Σ k, ι k) → Ω, ∏ p, z p ^ μ p = (∏ p, z p ^ ν p) * (∏ k, z ⟨k, c k⟩) ^ N := by
@@ -111,9 +114,8 @@ theorem exists_chart_factor (N : ℕ) (μ : (Σ k, ι k) → ℕ) (c : ∀ k, ι
     refine Finset.prod_congr rfl fun p _ => ?_
     rw [← pow_add, ← hsplit p]
 
-omit [∀ k, Fintype (ι k)] in
-open Classical in
 
+open Classical in
 theorem comp_mul (R : Type*) [CommRing R] {d : K → ℕ} (m : K → ℕ) {G : MvPolynomial (Σ k, ι k) R}
     (hG : G ∈ weightedHomogeneousSubmodule R (blockWeight (ι := ι)) d) (A : MvPolynomial (Σ k, ι k) R) :
     weightedHomogeneousComponent blockWeight m (A * G) =
@@ -155,15 +157,16 @@ theorem aeval_mul_mem (R : Subalgebra ℤ Ω) (y : (Σ k, ι k) → Ω) (c0 : �
     (ha : ∀ k, Fintype.card (ι k) * N < a k) (hab : a + d = b + Pi.single k0 1)
     {A : MvPolynomial (Σ k, ι k) R} (hA : A ∈ weightedHomogeneousSubmodule R (blockWeight (ι := ι)) a) :
     aeval y (A * G) ∈ (relSecM R y b).map (LinearMap.mulLeft R (y ⟨k0, c0 k0⟩)) := by
-  rw [A.as_sum, Finset.sum_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [A.as_sum, Finset.sum_mul, map_sum]
   refine Submodule.sum_mem _ fun μ hμ => ?_
   have hwμ : Finsupp.weight blockWeight μ = a := hA (mem_support_iff.1 hμ)
   rw [weight_blockWeight] at hwμ
   obtain ⟨c, hc⟩ := exists_chart_le N μ fun k => by rw [congrFun hwμ k]; exact ha k
   obtain ⟨ν, hν, hfac⟩ := exists_chart_factor (Ω := Ω) N μ c hc
-  have hval : aeval y (monomial μ (coeff μ A) * G) = algebraMap R Ω (coeff μ A) *
+  have hval : aeval y (monomial μ (AddMonoidAlgebra.coeff A μ) * G) = algebraMap R Ω (AddMonoidAlgebra.coeff A μ) *
       ((∏ p, y p ^ ν p) * ((∏ k, y ⟨k, c k⟩) ^ N * aeval y G)) := by
-    rw [show monomial μ (coeff μ A) = C (coeff μ A) * monomial μ 1 by rw [C_mul_monomial, mul_one],
+    rw [show monomial μ (AddMonoidAlgebra.coeff A μ) = C (AddMonoidAlgebra.coeff A μ) * monomial μ 1 by rw [C_mul_monomial, mul_one],
       map_mul, map_mul, aeval_C, aeval_monomial_one, hfac y]
     ring
   by_cases hgood : ∀ k, y ⟨k, c k⟩ ≠ 0
@@ -178,7 +181,7 @@ theorem aeval_mul_mem (R : Subalgebra ℤ Ω) (y : (Σ k, ι k) → Ω) (c0 : �
       omega
     have hmem := mul_mem_relSecM R y (monomial_mem_relSecM R y ν fun k => rfl) hg
     rw [hdeg] at hmem
-    refine ⟨coeff μ A • ((∏ p, y p ^ ν p) * g), Submodule.smul_mem _ _ hmem, ?_⟩
+    refine ⟨AddMonoidAlgebra.coeff A μ • ((∏ p, y p ^ ν p) * g), Submodule.smul_mem _ _ hmem, ?_⟩
     rw [hval, hgv, LinearMap.mulLeft_apply, Algebra.smul_def]
     ring
   · simp only [not_forall, not_not] at hgood
@@ -217,12 +220,14 @@ theorem proof : RelTorsionBound.Statement := by
       IsWeightedHomogeneous.weightedHomogeneousComponent_same ((mem_weightedHomogeneousSubmodule _ _ _ _).1 hF)
     rw [← h1]
     conv_lhs => rw [← hA]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [smul_eq_mul]
   suffices h : aeval y F ∈ (relSecM R y b).map (LinearMap.mulLeft R (y ⟨k0, c0 k0⟩)) by
     obtain ⟨g', hg', hgx⟩ := h
     exact ⟨g', hg', by simpa using hgx.symm⟩
-  rw [hFsum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hFsum, map_sum]
   refine Submodule.sum_mem _ fun G hG => ?_
   rw [comp_mul _ _ (hT G hG).1]
   split_ifs with hle

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalMaximality.DualForm
+
+@[expose] public section
+
 open KaehlerDifferential GlobalTheory.CechDR GlobalTheory.PD GlobalTheory.WH GlobalTheory.W1 UpperTheory.Gal.productCup_of_system
 open scoped TensorProduct
 
@@ -16,7 +21,8 @@ private lemma wd_map {ι E E' : Type} [LinearOrder ι] [AddCommGroup E] [Module 
     (w : ι → Module.End ℂ E) (w' : ι → Module.End ℂ E') (φ : E →ₗ[ℂ] E')
     (h : ∀ i y, φ (w i y) = w' i (φ y)) (c : Finset ι → E) (t : Finset ι) :
     wd w' (fun s => φ (c s)) t = φ (wd w c t) := by
-  simp [wd, map_sum, h, map_zsmul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [wd, map_sum, h, map_zsmul]
 
 private lemma minors_cocycle (hU : WdUni) (hM : ThMu) {d : ℕ} {S E : Type} [CommRing S] [Algebra ℂ S]
     [AddCommGroup E] [Module ℂ E] (T : Sys d S E) (i : Fin (d + 1)) (g : S) (m : E) :

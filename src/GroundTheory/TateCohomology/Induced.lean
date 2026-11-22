@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.GroupCoh
@@ -82,29 +87,33 @@ theorem isZero_tateCohomology_neg_one_of_sum_eq (M : Rep.{u} k G) (φ : M.V →�
     exact Fintype.sum_equiv (Equiv.inv G) _ _ (fun _ => rfl)
   show (Finsupp.lsum k fun g : G => M.ρ g⁻¹ - LinearMap.id)
     (∑ g : G, Finsupp.single g⁻¹ (φ (M.ρ g⁻¹ m))) = m
-  simp only [map_sum, Finsupp.lsum_single, LinearMap.sub_apply, LinearMap.id_apply, inv_inv]
-  rw [Finset.sum_sub_distrib, ← map_sum, hsum, hm, map_zero, sub_zero, hφ]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, Finsupp.lsum_single, LinearMap.sub_apply, LinearMap.id_apply, inv_inv]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_sub_distrib, ← map_sum, hsum, hm, map_zero, sub_zero, hφ]
 
 section Coind
 
 variable (B : Rep.{u} k (⊥ : Subgroup G))
 
-open scoped Classical in
 
+open scoped Classical in
 noncomputable def coindBotProj :
-    (coind (⊥ : Subgroup G).subtype B).V →ₗ[k] (coind (⊥ : Subgroup G).subtype B).V :=
-  LinearMap.codRestrict _ ((LinearMap.single k (fun _ : G => B.V) 1) ∘ₗ LinearMap.proj 1 ∘ₗ
+    (coind (⊥ : Subgroup G).subtype B).V →ₗ[k] (coind (⊥ : Subgroup G).subtype B).V := by
+  classical
+  exact LinearMap.codRestrict _ ((LinearMap.single k (fun _ : G => B.V) 1) ∘ₗ LinearMap.proj 1 ∘ₗ
     (Representation.coindV (⊥ : Subgroup G).subtype B.ρ).subtype) fun f => by
       rw [Representation.mem_coindV]
       intro s x
       obtain rfl : s = 1 := Subsingleton.elim _ _
       simp
 
-open scoped Classical in
 
+open scoped Classical in
 theorem sum_coindBotProj (f : coind (⊥ : Subgroup G).subtype B) :
     ∑ g : G, (coind (⊥ : Subgroup G).subtype B).ρ g
       (coindBotProj B ((coind (⊥ : Subgroup G).subtype B).ρ g⁻¹ f)) = f := by
+  classical
   apply Subtype.ext
   funext x
   rw [Submodule.coe_sum, Finset.sum_apply]

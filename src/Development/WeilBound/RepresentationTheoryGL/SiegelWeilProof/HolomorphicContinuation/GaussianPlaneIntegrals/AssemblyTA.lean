@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.AssemblyAlt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GaussianPlaneIntegrals.AssemblyAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,7 +15,7 @@ theorem eval_aeval' {σ τ : Type} (φ : σ → MvPolynomial τ ℂ) (z : τ →
     eval z (aeval φ p) = eval (fun v => eval z (φ v)) p := by
   induction p using MvPolynomial.induction_on with
   | C a => simp only [aeval_C, MvPolynomial.algebraMap_eq, eval_C]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp => simp only [map_mul, aeval_X, eval_X, hp]
 
 variable {ι A B : Type} [Fintype ι]
@@ -56,11 +60,12 @@ theorem totalDegree_aeval_le {σ τ : Type} (φ : σ → MvPolynomial τ ℂ) (h
     (p : MvPolynomial σ ℂ) : (aeval φ p).totalDegree ≤ p.totalDegree := by
   classical
   conv_lhs => rw [p.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine (totalDegree_finsetSum _ _).trans (Finset.sup_le fun m hm => ?_)
   rw [aeval_monomial]
   refine (totalDegree_mul _ _).trans ?_
-  have h1 : (algebraMap ℂ (MvPolynomial τ ℂ) (coeff m p)).totalDegree = 0 := by
+  have h1 : (algebraMap ℂ (MvPolynomial τ ℂ) (AddMonoidAlgebra.coeff p m)).totalDegree = 0 := by
     rw [MvPolynomial.algebraMap_eq]; exact totalDegree_C _
   rw [h1, zero_add, Finsupp.prod]
   refine (totalDegree_finsetProd _ _).trans ?_

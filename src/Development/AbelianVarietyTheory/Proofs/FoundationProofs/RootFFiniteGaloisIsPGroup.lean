@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiagMod
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLevelMulPowOfInvariantModPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiagMod
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLevelMulPowOfInvariantModPow
+
+@[expose] public section
 
 open scoped MatrixGroups TensorProduct
 open Matrix GlobalTheory.KZ GlobalTheory.KZ.ES IntermediateField
@@ -58,7 +62,7 @@ theorem aut_eq_one_of_fix {F E : Type} [Field F] [Field E] [Algebra F E] (S : Se
   | algebraMap c => exact ρ.commutes c
   | add x y hx hy ihx ihy =>
     change ρ (⟨x, hx⟩ + ⟨y, hy⟩) = ⟨x, hx⟩ + ⟨y, hy⟩
-    rw [map_add, ihx, ihy]
+    rw [map_add (f := _), ihx, ihy]
   | inv x hx ihx =>
     change ρ (⟨x, hx⟩⁻¹) = ⟨x, hx⟩⁻¹
     rw [map_inv₀, ihx]
@@ -92,7 +96,7 @@ variable {Ω : Type} [Field Ω] [Algebra ℚ Ω] {ε : Ω →+* ℂ}
 def levSub (X : Tower Ω ε) (M : ℕ) : IntermediateField Ω X.K where
   carrier := {f | Lev X M f}
   mul_mem' := fun ha hb γ hγ => by rw [map_mul, ha γ hγ, hb γ hγ]
-  add_mem' := fun ha hb γ hγ => by rw [map_add, ha γ hγ, hb γ hγ]
+  add_mem' := fun ha hb γ hγ => by rw [map_add (f := _), ha γ hγ, hb γ hγ]
   algebraMap_mem' := fun c γ _ => AlgEquiv.commutes _ c
   inv_mem' := fun x hx γ hγ => by rw [map_inv₀, hx γ hγ]
 
@@ -143,7 +147,7 @@ theorem exists_orbit_poly (X : Tower Ω ε) (M₀ M : ℕ) (hM : 0 < M) :
   have hpmon : p.Monic := Polynomial.monic_prod_of_monic _ _ fun c _ => Polynomial.monic_X_pow_sub_C c hm.ne'
   have hpdeg : p.natDegree = S.card * m := by
     rw [Polynomial.natDegree_prod_of_monic _ _ fun c _ => Polynomial.monic_X_pow_sub_C c hm.ne']
-    simp [Polynomial.natDegree_X_pow_sub_C]
+    simp [Polynomial.natDegree_X_pow_sub_C _]
   have hpinv : ∀ δ ∈ CongruenceSubgroup.Gamma M₀, p.map (X.sl (ofSL δ) : X.K →+* X.K) = p := by
     intro δ hδ
     simp only [p, Polynomial.map_prod, Polynomial.map_sub, Polynomial.map_pow, Polynomial.map_X, Polynomial.map_C]

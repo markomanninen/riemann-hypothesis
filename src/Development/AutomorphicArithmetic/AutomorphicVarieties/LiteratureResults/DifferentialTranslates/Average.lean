@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.IntegralityGoodReduction
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.AvgMem
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.IntegralityGoodReduction
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.AvgMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,14 +54,14 @@ theorem average : Average := by
         funext s p
         show ∑ᶠ γ, u (G.σ γ⁻¹ s) (G.ρ γ⁻¹ p) • (z • a γ).1 s p =
           z • ∑ᶠ γ, u (G.σ γ⁻¹ s) (G.ρ γ⁻¹ p) • (a γ).1 s p
-        have hm := map_finsum (DistribMulAction.toAddMonoidHom (V [⋀^Fin q]→L[ℝ] (Fin d → ℂ)) z)
+        have hm := map_finsum (DistribSMul.toAddMonoidHom (V [⋀^Fin q]→L[ℝ] (Fin d → ℂ)) z)
           (hfs a s p)
-        simp only [DistribMulAction.toAddMonoidHom_apply] at hm
+        simp only [DistribSMul.toAddMonoidHom_apply] at hm
         rw [hm]
         congr 1
-        funext g
+        funext i
         simp only [Submodule.coe_smul, Pi.smul_apply]
-        rw [smul_comm] }
+        exact smul_comm _ _ _ }
   refine ⟨A, ?_, ?_⟩
   · intro x
     apply Subtype.ext

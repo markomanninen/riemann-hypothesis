@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierTFr
-import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierTFr
+public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+
+@[expose] public section
 
 noncomputable section
 

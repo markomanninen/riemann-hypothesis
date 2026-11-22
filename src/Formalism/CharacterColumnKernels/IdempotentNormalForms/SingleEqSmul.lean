@@ -1,4 +1,8 @@
-import Formalism.CharacterColumnKernels.Statement
+module
+
+public import Formalism.CharacterColumnKernels.Statement
+
+@[expose] public section
 
 open Finset
 
@@ -47,7 +51,8 @@ theorem toVec_mem (Θ : Matrix m g R) (φ : Coker Θ →ₗ[R] M) :
   simp only [toVec]
   have h : ∑ j, Θ i j • φ ((relSpan Θ).mkQ (Pi.single j (1 : R))) =
       φ ((relSpan Θ).mkQ (∑ j, Θ i j • (Pi.single j (1 : R) : g → R))) := by
-    simp [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_smul]
   rw [h, sum_row]
   have hmem : Θ i ∈ relSpan Θ := Submodule.subset_span ⟨i, rfl⟩
   rw [Submodule.mkQ_apply, (Submodule.Quotient.mk_eq_zero _).mpr hmem, map_zero]
@@ -84,9 +89,5 @@ def homEquiv (Θ : Matrix m g R) : (Coker Θ →ₗ[R] M) ≃ₗ[O] LinearMap.ke
     rw [ofVec_mk, combo_single, one_smul]
 
 end HomAux
-
-theorem homCoker : StatHomCoker := by
-  intro R O M _ _ _ _ _ _ m g _ _ _ Θ
-  exact ⟨homEquiv Θ⟩
 
 end Formalism.NG

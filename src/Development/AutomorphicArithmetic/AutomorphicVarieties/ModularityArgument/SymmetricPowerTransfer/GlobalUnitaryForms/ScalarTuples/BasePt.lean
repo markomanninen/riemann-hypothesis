@@ -1,16 +1,20 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.EvUnit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.KappaZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.GVals
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.HsNE
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.DatLam
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.ScalarTuples.HsCast
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.ScalarTuples.HsHasse
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.ScalarTuples.ChiVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.ScalarTuples.SigOneAdd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.ScalarTuples.QuoMulInv
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.ScalarTuples.ModelMap
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.TraceFormulaEigenvalues.FormsFin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.EvUnit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.KappaZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.GVals
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.HsNE
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.LocalOrbitCounts.DatLam
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.ScalarTuples.HsCast
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.ScalarTuples.HsHasse
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.ScalarTuples.ChiVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.ScalarTuples.SigOneAdd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.ScalarTuples.QuoMulInv
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.ScalarTuples.ModelMap
+
+@[expose] public section
 
 open NumberField IsDedekindDomain QuadraticAlgebra UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob
 
@@ -71,7 +75,7 @@ private theorem unit_om {K : Type} [Field K] (τ : K) :
     rw [e]
     exact one_ne_zero
   unfold toUnit
-  rw [dif_pos hu]
+  rw [dite_eq_left hu]
   rfl
 
 private theorem jstd_tr {K : Type} [Field K] (τ : K) : (jstd τ ω).trace = τ := by
@@ -91,7 +95,7 @@ private theorem elmap_dLam {K K' : Type} [Field K] [Field K'] (f : K →+* K') {
   have hi' := inv_val h' z' hz'
   unfold dLam
   rw [hi, hi']
-  ext <;> simp [elmap, ofE, lmap, map_div₀, map_add, map_mul, map_neg, map_one, map_ofNat]
+  ext <;> simp [elmap, ofE, lmap, map_div₀, map_add (f := _), map_mul, map_neg, map_one, map_ofNat]
 
 private theorem elmap_one {K K' : Type} [Field K] [Field K'] (f : K →+* K') {Δ τ : K} :
     elmap f (1 : EL Δ τ) = 1 := by
@@ -113,7 +117,7 @@ private theorem posF_one {F : Type} [Field F] [NumberField F] {Δ τ : F} (hΔ :
     have h' := hτ σ
     rw [map_sub, map_pow, map_ofNat] at h'
     linarith
-  simp only [map_add, map_sub, map_mul, map_pow, map_ofNat]
+  simp only [map_add (f := _), map_sub, map_mul, map_pow, map_ofNat]
   set D := σ Δ
   set T := σ τ
   set a1 := σ x.1.re with ha1
@@ -244,7 +248,7 @@ private theorem ae_g {F : Type} [Field F] [NumberField F] {Δ : F} (D : Dat Δ) 
   have g := gVals (Ov v) (Kv v) (cv v Δ) (cv v τ) (hD.off v hvS) (loc_ne h v) (hi v hvS)
     (jstd (cv v τ)) (D.χ v) (jstd_tr _) (hD.chi v).1 (toUnit ω) (unit_om _) (toUnit (1 + ω))
     (unit_one_add (loc_ne h v))
-  rw [g.1 ⟨u1, by rw [e1, map_add, map_ofNat]⟩, g.2.1 ⟨u2, by rw [e2, map_sub, map_pow, map_ofNat]⟩]
+  rw [g.1 ⟨u1, by rw [e1, map_add (f := _), map_ofNat]⟩, g.2.1 ⟨u2, by rw [e2, map_sub, map_pow, map_ofNat]⟩]
 
 private theorem kap_one (O K : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Field K] [Algebra O K] (Δ τ : K) (L : IsLoc O Δ)
     (h : τ ^ 2 - 4 ≠ 0) (c : K) (d m : EL Δ τ) (H : ∀ t : Kˣ, lcount O c d ((t : K) • m) = one (t ∈ NE τ)) : kapSum O c d m = 1 := by
@@ -328,14 +332,14 @@ theorem UpperTheory.V.Z.Sym.Glob.basePt :
       have hnorm : QuadraticAlgebra.norm (lmap (cv v) Δ lam) = 2 + cv v τ := by
         have e : QuadraticAlgebra.norm (lmap (cv v) Δ lam) = cv v (QuadraticAlgebra.norm lam) := by
           simp [QuadraticAlgebra.norm_def, lmap]
-        rw [e, hl, map_add, map_ofNat]
+        rw [e, hl, map_add (f := _), map_ofNat]
       have htr' : QuadraticAlgebra.trace (lmap (cv v) Δ lam) = cv v (QuadraticAlgebra.trace lam) := by
         simp [QuadraticAlgebra.trace_def, lmap]
         left
         exact (map_ofNat (cv v) 2).symm
       have e2 : cv v (2 + τ + QuadraticAlgebra.trace lam) =
           2 + cv v τ + QuadraticAlgebra.trace (lmap (cv v) Δ lam) := by
-        rw [htr', map_add, map_add, map_ofNat]
+        rw [htr', map_add (f := _), map_add (f := _), map_ofNat]
       have hX : 2 + cv v τ + QuadraticAlgebra.trace (lmap (cv v) Δ lam) ≠ 0 := by
         rw [← e2]
         exact (map_ne_zero _).mpr htr
@@ -386,7 +390,7 @@ theorem UpperTheory.V.Z.Sym.Glob.basePt :
   · have hnot : hs Δ (2 + τ) ≠ 1 := fun h1 => hglob (hs_iff' Δ (2 + τ) h1)
     have hreal : ∀ σ : F →+* ℝ, hs (σ Δ) (σ (2 + τ)) = 1 := fun σ => by
       apply hs_pos
-      rw [map_add, map_ofNat]
+      rw [map_add (f := _), map_ofNat]
       nlinarith [hTb σ]
     obtain ⟨v, hv⟩ : ∃ v : Pl F, hs (cv v Δ) (cv v (2 + τ)) ≠ 1 := by
       by_contra hcon
@@ -396,7 +400,7 @@ theorem UpperTheory.V.Z.Sym.Glob.basePt :
     have hnl : ¬ ∃ lam : Lsq (Kv v) (cv v Δ), QuadraticAlgebra.norm lam = 2 + cv v τ := by
       intro hex
       apply hv
-      rw [map_add, map_ofNat]
+      rw [map_add (f := _), map_ofNat]
       exact hs_iff _ _ hex
     obtain ⟨d, m, hdm, hpos⟩ := datEx F Δ D hD τ hτ hi
     refine ⟨d, m, hdm, hpos, ?_⟩

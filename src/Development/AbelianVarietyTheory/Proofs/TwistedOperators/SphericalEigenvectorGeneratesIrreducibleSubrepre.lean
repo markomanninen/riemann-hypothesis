@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConstMemBddAut
+module
+
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ConstMemBddAut
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum GlobalTheory.LFun GlobalTheory.AdelicU GlobalTheory.PRep GlobalTheory.FinZeta GlobalTheory.AdelicScalar GlobalTheory.IndefiniteRowSideFullHecke.TwistedLevelValues GlobalTheory.LiftRows
 open Formalism.IndefR.Lev (levG levChi IsBaseFrame)
@@ -126,7 +131,8 @@ theorem pairing_translate_eq_zero (ρ : Representation ℂ G V) (K : Subgroup G)
     rw [hh]
     exact DoubleCoset.mem_doubleCoset.2 ⟨1, K.one_mem, h, h.2, by simp⟩
   have h0 : B y (c • x) = 0 := by simp [hyx]
-  rw [← hc', hsum, map_sum, Finset.sum_congr rfl hterm, Finset.sum_const, nsmul_eq_mul] at h0
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hc', hsum, map_sum, Finset.sum_congr rfl hterm, Finset.sum_const, nsmul_eq_mul] at h0
   have hcard : ((hfin.toFinset.card : ℕ) : ℂ) ≠ 0 :=
     Nat.cast_ne_zero.2 (Finset.card_ne_zero.2 ⟨_, hne⟩)
   exact (mul_eq_zero.1 h0).resolve_left hcard
@@ -164,7 +170,7 @@ theorem exists_open_fix [TopologicalSpace G] [IsTopologicalGroup G] (ρ : Repres
     obtain ⟨H₁, o₁, i₁, f₁⟩ := ha
     obtain ⟨H₂, o₂, i₂, f₂⟩ := hb
     refine ⟨H₁ ⊓ H₂, o₁.inter o₂, Subgroup.relIndex_inf_ne_zero i₁ i₂, fun h hh => ?_⟩
-    rw [map_add, f₁ h hh.1, f₂ h hh.2]
+    rw [map_add (f := _), f₁ h hh.1, f₂ h hh.2]
   | smul a b _ hb =>
     obtain ⟨H, o, i, f⟩ := hb
     exact ⟨H, o, i, fun h hh => by rw [map_smul, f h hh]⟩
@@ -241,7 +247,8 @@ theorem mem_of_invariant [TopologicalSpace G] [IsTopologicalGroup G] (ρ : Repre
     exact hW _ _ hy1W
   have hzf : ∀ k ∈ K, ρ k (∑ u ∈ hfin.toFinset, u) = ∑ u ∈ hfin.toFinset, u := by
     intro k hk
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_nbij' (ρ k) (ρ k⁻¹) ?_ ?_ ?_ ?_ (fun _ _ => rfl)
     · intro u hu
       obtain ⟨l, rfl⟩ := (hF u).1 hu
@@ -263,7 +270,8 @@ theorem mem_of_invariant [TopologicalSpace G] [IsTopologicalGroup G] (ρ : Repre
       _ = B y₁ x := hB _ _ _
   have hmem : y₁ ∈ hfin.toFinset := (hF _).2 ⟨1, by simp⟩
   have hBz : B (∑ u ∈ hfin.toFinset, u) x ≠ 0 := by
-    rw [map_sum, LinearMap.sum_apply, Finset.sum_congr rfl hterm, Finset.sum_const, nsmul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, LinearMap.sum_apply, Finset.sum_congr rfl hterm, Finset.sum_const, nsmul_eq_mul]
     exact mul_ne_zero (Nat.cast_ne_zero.2 (Finset.card_ne_zero.2 ⟨_, hmem⟩)) hy1x
   have hc0 : c ≠ 0 := by
     rintro rfl
@@ -276,8 +284,8 @@ theorem mem_of_invariant [TopologicalSpace G] [IsTopologicalGroup G] (ρ : Repre
 
 end GlobalTheory.SphericalSpan
 
-open GlobalTheory.SphericalSpan in
 
+open GlobalTheory.SphericalSpan in
 theorem GlobalTheory.spherical_eigenvector_generates_irreducible :
     ∀ {G V : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [AddCommGroup V]
       [Module ℂ V] (ρ : Representation ℂ G V) (K : Subgroup G), IsOpen (K : Set G) →
@@ -297,7 +305,7 @@ theorem GlobalTheory.spherical_eigenvector_generates_irreducible :
       obtain ⟨a, rfl⟩ := h
       exact Submodule.subset_span ⟨g * a, by simp [map_mul]⟩
     | zero => simp
-    | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+    | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
     | smul a b _ hb => rw [map_smul]; exact Submodule.smul_mem _ _ hb
   have hxU : x ∈ Submodule.span ℂ (Set.range fun g : G => ρ g x) :=
     Submodule.subset_span ⟨1, by simp⟩

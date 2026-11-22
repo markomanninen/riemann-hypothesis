@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ESecToUnit
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ESecToUnit
+
+@[expose] public section
 
 set_option autoImplicit false
 

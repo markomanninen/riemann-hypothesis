@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory
 open scoped BigOperators
@@ -75,7 +79,7 @@ theorem mean_prod_eq_pow : ∀ (Λ : AddSubgroup ℂ), (∃ w₁ w₂ : ℂ, Lin
   swap
   · intro a ha z
     refine Finset.prod_congr rfl fun k _ => ?_
-    rw [map_add, Pi.add_apply, hf _ ((hA a).1 ha k)]
+    rw [map_add (f := _), Pi.add_apply, hf _ ((hA a).1 ha k)]
   haveI : (μ.map em).IsAddHaarMeasure := ec.isAddHaarMeasure_map μ
   have hs := Measure.isAddLeftInvariant_eq_smul (μ.map em) (volume : Measure (Fin r → ℂ))
   have hc0 : Measure.addHaarScalarFactor (μ.map em) (volume : Measure (Fin r → ℂ)) ≠ 0 :=

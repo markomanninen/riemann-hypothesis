@@ -1,17 +1,22 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualTopSimpleStacked
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedGraph
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassFibreDegree
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsArith
-import GroundTheory.HeightsAndTheta.Heights.Intersections.TableDegreeThreeBase
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PConsequences
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ChangeOfModel
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLineSemipositive
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualArithVar
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PIntDomainDim
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGrassArithVar
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PFsLineSmooth
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualTopSimpleStacked
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStackedGraph
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassFibreDegree
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsArith
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.TableDegreeThreeBase
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PConsequences
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ChangeOfModel
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualLineSemipositive
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PDualArithVar
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.PIntDomainDim
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PGrassArithVar
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PFsLineSmooth
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -159,8 +164,8 @@ theorem degSecond_eq (k : Unit ⊕ Unit) :
   · simp [degSecond_inl]
   · simp [degSecond_inr]
 
-open IndefiniteRowSideFullHecke.Inter in
 
+open IndefiniteRowSideFullHecke.Inter in
 theorem logNorm_eq {F F' : HermLattice K i} {b : Module.Basis T ℤ (dualLattice F)}
     (hb : Function.Bijective (Matrix.mulVecLin (dualEmbMatrix b)))
     {b' : Module.Basis T ℤ (dualLattice F')} (hb' : Function.Bijective (Matrix.mulVecLin (dualEmbMatrix b')))
@@ -186,8 +191,8 @@ theorem logNorm_eq {F F' : HermLattice K i} {b : Module.Basis T ℤ (dualLattice
   simp only [graphSecond, graphFirst, map_X, map_mul, map_C, map_intCast, eval_X, eval_mul, eval_C, eq_intCast]
   rw [hcz t, norm_mul, mul_div_mul_left _ _ (norm_ne_zero_iff.mpr hc)]
 
-open IndefiniteRowSideFullHecke.Inter in
 
+open IndefiniteRowSideFullHecke.Inter in
 theorem step (hHor : DualStackedGraphHorizontal.Statement) {F F' : HermLattice K i}
     {b : Module.Basis T ℤ (dualLattice F)} (hb : Function.Bijective (Matrix.mulVecLin (dualEmbMatrix b)))
     {b' : Module.Basis T ℤ (dualLattice F')} (hb' : Function.Bijective (Matrix.mulVecLin (dualEmbMatrix b')))
@@ -349,8 +354,8 @@ theorem geomDeg_proj_eq_one (hGF : GrassFibreDegree.Statement) {II : Intersectio
 
 end TopDualSimpleStacked
 
-open TopDualSimpleStacked IndefiniteRowSideFullHecke.Inter in
 
+open TopDualSimpleStacked IndefiniteRowSideFullHecke.Inter in
 theorem DualTopSimpleStacked.proof (hAI3 : Inter.PushforwardArithIntersection.Statement) (hGr : GraphStatement)
     (hImg : DualStackedGraphImage.Statement) (hHor : DualStackedGraphHorizontal.Statement)
     (hFib : DualStackedGraphFibre.Statement) (hGF : GrassFibreDegree.Statement) :

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.JacRev
-import Lemmata.GeneralBFactRightAlt.Imports
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.OddDualWeylJacobian.JacRev
+public import Lemmata.GeneralBFactRightAlt.Imports
+
+@[expose] public section
 
 open MvPolynomial Matrix
 

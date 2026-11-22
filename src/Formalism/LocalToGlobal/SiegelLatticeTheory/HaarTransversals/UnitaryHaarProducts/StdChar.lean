@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.MeasCore
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.EmbeddingTraceSumAlt.NormUnitsOfCalculation
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FundamentalEquivalence.FundamentalContinuity.AdelicIsomorphismStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.MeasCore
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.EmbeddingTraceSumAlt.NormUnitsOfCalculation
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FundamentalEquivalence.FundamentalContinuity.AdelicIsomorphismStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ def psiA (x : Ainf F) : ℂ :=
 
 theorem psiA_add (x y : Ainf F) : psiA F (x + y) = psiA F x * psiA F y := by
   have h : ∀ w : InfinitePlace F, (x + y) w = x w + y w := fun w => rfl
-  simp only [psiA, h, map_add, Complex.add_re, Finset.sum_add_distrib]
+  simp only [psiA, h, map_add (f := _), Complex.add_re, Finset.sum_add_distrib]
   rw [← Complex.exp_add]
   congr 1
   push_cast
@@ -43,14 +47,14 @@ theorem continuous_psiA : Continuous (psiA F) := by
       | exact UniformSpace.Completion.continuous_extension
   have hs : Continuous (fun x : Ainf F =>
       (∑ w : InfinitePlace F, (InfinitePlace.Completion.extensionEmbedding w (x w)).re : ℝ)) :=
-    continuous_finset_sum _ (fun w _ => Complex.continuous_re.comp ((hc w).comp (hp w)))
+    continuous_finsetSum _ (fun w _ => Complex.continuous_re.comp ((hc w).comp (hp w)))
   unfold psiA
   exact Complex.continuous_exp.comp (continuous_const.mul (Complex.continuous_ofReal.comp hs))
 
 def trR : F →+ ℝ :=
   AddMonoidHom.mk' (fun a => ∑ w : InfinitePlace F, (w.embedding a).re) (by
     intro a b
-    simp only [map_add, Complex.add_re, Finset.sum_add_distrib])
+    simp only [map_add (f := _), Complex.add_re, Finset.sum_add_distrib])
 
 theorem trR_int [IsTotallyReal F] (d : 𝓞 F) : ∃ n : ℤ, trR F (algebraMap (𝓞 F) F d) = n := by
   have hsurj : Function.Surjective (InfinitePlace.mk : (F →+* ℂ) → InfinitePlace F) :=
@@ -140,7 +144,7 @@ def psiFin (z : Af F) : ℂ := ((AddCircle.toCircle (-((exists_psiF F).choose z)
 
 theorem psiFin_add (z w : Af F) : psiFin F (z + w) = psiFin F z * psiFin F w := by
   unfold psiFin
-  rw [map_add, neg_add, AddCircle.toCircle_add]
+  rw [map_add (f := _), neg_add, AddCircle.toCircle_add]
   first | rfl | simp
 
 theorem psiFin_int (z : Af F) (hz : z ∈ Formalism.UG.intAd F) : psiFin F z = 1 := by

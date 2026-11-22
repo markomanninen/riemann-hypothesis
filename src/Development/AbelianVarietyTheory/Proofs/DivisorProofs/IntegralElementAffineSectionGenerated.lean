@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartValEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AddSumIntegral
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ChartValEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AddSumIntegral
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -67,13 +72,12 @@ theorem eq_sum_of_isIntegral_genericChart : ∀ (R : Type) [CommRing R] [IsDomai
   rw [hfy]
   clear hfy hy
   induction y with
-  | zero => exact ⟨0, Fin.elim0, Fin.elim0, fun m => m.elim0, by simp⟩
   | tmul c b =>
     refine ⟨1, fun _ => c, fun _ => (b : Γ(Sp (FractionRing R), M.gp ⁻¹ᵁ U)), fun _ => b.2, ?_⟩
     rw [Fin.sum_univ_one]
     exact Algebra.IsPushout.equiv_tmul _ _ _ _ c (b : Γ(Sp (FractionRing R), M.gp ⁻¹ᵁ U))
   | add u v hu hv =>
-    rw [map_add, Subalgebra.coe_add, map_add]
+    rw [map_add (f := _), Subalgebra.coe_add, map_add (f := _)]
     exact sumForm_add _ _ _ hu hv
 
 end GlobalTheory.Mum

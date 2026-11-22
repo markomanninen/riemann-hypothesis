@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.KapIntegral
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.KapIntegral
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,10 +31,8 @@ theorem rpAbs_holds : RPAbs := by
     rw [Measure.sum_apply_eq_zero]
     intro S
     apply kap_eval_null hC.compl
-    simp only [mu]
-    split_ifs
-    · exact nonpos_iff_eq_zero.1 ((Measure.restrict_apply_le _ _).trans hCm.le)
-    · exact nonpos_iff_eq_zero.1 ((Measure.restrict_apply_le _ _).trans hCm.le)
+    by_cases hi : i ∈ S <;> simp only [mu, hi, if_true, if_false] <;>
+      exact Measure.restrict_le_self.absolutelyContinuous hCm
   · intro f hfi hf
     obtain ⟨T0, hT0⟩ : ∃ T0 : Finset ι, ∀ i ∉ T0, f i = (L i).indicator 1 :=
       ⟨(Filter.eventually_cofinite.1 hf).toFinset, fun i hi => by simpa using hi⟩

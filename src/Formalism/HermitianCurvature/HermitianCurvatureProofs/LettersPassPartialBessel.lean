@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.VanishKr
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutoffExists
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsOpenDminNe
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VanishKr
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutoffExists
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsOpenDminNe
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 
@@ -27,7 +31,7 @@ theorem pbF_congr_D (Bj : B.RealPlaceData k ρ Wp Wq) (B0 : B.RealPlaceData k n 
   unfold TI
   refine integral_congr_ae (Eventually.of_forall fun x => ?_)
   by_cases hx : PBQ.GoodP Bj x
-  · simp only [gI, if_pos hx]
+  · simp only [gI, ite_eq_left hx]
     congr 2
     have hs : sE Bj e x ∈ Sset k n B0.z := hzS ▸ sE_mem_S Bj e x
     have hs1 : (1 : B.Mat k n) ∈ Sset k n B0.z' := Formalism.FourierDecayAlt.P.PBG.one_mem_Sset k n B0.z'
@@ -63,10 +67,22 @@ theorem pbWords_core (Bj : B.RealPlaceData k ρ Wp Wq) (B0 : B.RealPlaceData k n
   | l :: w, ew, y, hyU, hy => by
     have ih := pbWords_core Bj B0 e hzS i hi H Cs hL hCs hS U hU hD hP w (fun a => ew a.succ)
     set H' := D.uwG k n B0.z B0.z' H i hi w (fun a => ew a.succ) with hH'
-    obtain ⟨hL', hS'⟩ := uwG_locSupp B0.z B0.z' i hi hCs.isClosed hL hS w (fun a => ew a.succ)
+    have hCsClosed : IsClosed Cs := IsCompact.isClosed hCs
+    have hLocSupp :
+        (∀ g ∈ B.GV k n, Dmin k n B0.z B0.z' g ⟨i, by omega⟩ ≠ 0 →
+          CapelliWordSumExpansion.Loc ⊤ H' g) ∧
+        (∀ g ∈ B.GV k n, g ∉ Cs → H' g = 0) :=
+      uwG_locSupp (k := k) (n := n) (E := Wq →L[ℂ] Wp) (H := H) (Cs := Cs)
+        B0.z B0.z' i hi hCsClosed hL hS w (fun a => ew a.succ)
     set c0 := Dmin k n B0.z B0.z' y ⟨i, by omega⟩ with hc0
     have hc0ne : c0 ≠ 0 := hD y hyU
-    obtain ⟨Ht, hHt, hHtS, hHtE⟩ := cutoff_exists B0.z B0.z' i hi hL' hS' hc0ne
+    have hCutoff :
+        ∃ Ht : B.Mat k n → (Wq →L[ℂ] Wp), B.CkOn ⊤ (B.GV k n) Ht ∧
+          (∀ g ∈ B.GV k n, g ∉ Cs → Ht g = 0) ∧
+          ∀ g ∈ B.GV k n, dist (Dmin k n B0.z B0.z' g ⟨i, by omega⟩) c0 < ‖c0‖ / 4 →
+            Ht g = H' g :=
+      cutoff_exists (H := H') (Cs := Cs) (c0 := c0) B0.z B0.z' i hi hLocSupp.1 hLocSupp.2 hc0ne
+    rcases hCutoff with ⟨Ht, hHt, hHtS, hHtE⟩
     have hDc : Continuous (fun g : B.Mat k n => Dmin k n B0.z B0.z' g ⟨i, by omega⟩) :=
       (Formalism.FourierDecayAlt.P.JCx1.contDiff_Dmin B0.z B0.z' ⟨i, by omega⟩).continuous
     set W0 := {g : B.Mat k n | dist (Dmin k n B0.z B0.z' g ⟨i, by omega⟩) c0 < ‖c0‖ / 4} with hW0

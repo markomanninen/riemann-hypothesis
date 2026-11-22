@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.OneDir
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.OneDir
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem tupFun_holds {D : D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.
     exact ⟨(w, y), hy⟩
   have hzT : zT γ = ZhatL (lf D F0) hex.choose.2.1 := by
     unfold zT nrep
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
   obtain ⟨⟨hPD₁, hmk₁⟩, hA₁, -⟩ := hex.choose_spec
   obtain ⟨F₂, hF₂, hPD₂, hmk₂⟩ := hrep
   have hRL : IsRowLat D F0 γ.lam := hR.1 γ.lam γ.mem

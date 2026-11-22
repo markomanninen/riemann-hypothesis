@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.GLinkQuot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.IsClosedOfClosedFiniteIndex
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.DecZhat
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.LocEuler
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcUrIndex
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcUrAbs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
-import Mathlib.Topology.Algebra.ClopenNhdofOne
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.GLinkQuot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.IsClosedOfClosedFiniteIndex
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.DecZhat
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisCochains.LocEuler
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcUrIndex
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.HcUrAbs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
+public import Mathlib.Topology.Algebra.ClopenNhdofOne
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module UpperTheory.V UpperTheory.V.Fr UpperTheory.V.GC
 
@@ -77,7 +81,7 @@ private theorem tameEq_cochain {k Γ M : Type} [CommRing k] [Group Γ] [Topologi
       have h3 : j.1⁻¹ * (i.1⁻¹ * ((r g)⁻¹ * g)) * j.1⁻¹⁻¹ ∈ U := hUn.conj_mem _ hi j.1⁻¹
       simpa [mul_assoc] using h3
     show ρ (r (g * j)) (f' ((r (g * j))⁻¹ * (g * j))) = ρ (r g) (f' ((r g)⁻¹ * g)) + _
-    rw [hrN g j (Subgroup.mem_sup_left j.2), hf' _ _ h2, hf' _ _ hi, hadd, map_add, e]
+    rw [hrN g j (Subgroup.mem_sup_left j.2), hf' _ _ h2, hf' _ _ hi, hadd, map_add (f := _), e]
 
 private theorem tameEq_ext {k Γ M : Type} [CommRing k] [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ]
     [CompactSpace Γ] [TotallyDisconnectedSpace Γ] [AddCommGroup M] [Module k M] [Finite M] [TopologicalSpace M]
@@ -96,7 +100,7 @@ private theorem tameEq_ext {k Γ M : Type} [CommRing k] [Group Γ] [TopologicalS
       simp [mul_assoc]
     have e2 := heq t ⟨t⁻¹ * j * t, hm⟩ ⟨j, hj⟩ (by simp [mul_assoc])
     rw [e, hcj, hcj s ⟨j, hj⟩, hcj t ⟨j', hj'⟩, hadd, e2]
-    simp only [map_mul, map_add, hJ j hj, mul_one, Module.End.mul_apply]
+    simp only [map_mul, map_add (f := _), hJ j hj, mul_one, Module.End.mul_apply]
     abel)
   have hz : c - b ∈ Z1 ρ := ⟨hc.continuous.sub hb.continuous, fun s t => by
     have e : ρ s (c t) - c (s * t) + c s = _ := hbz s t

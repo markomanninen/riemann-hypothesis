@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
+module
+
+public import Formalism.HermitianCurvature.ThetaExistenceInductiveFromPieces
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt.A6 Formalism.FourierDecayAlt.A5 Filter Topology Matrix
 
@@ -99,12 +103,12 @@ theorem adic_of_datum {R : Subring K} {ψ : AddChar K ℂ} (hD : LocalDatum K R 
     obtain ⟨r, hr, rfl⟩ := hx
     obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hnm
     exact ⟨(ϖ : K) ^ d * r, R.mul_mem (R.pow_mem hϖ d) hr, by ring⟩
-  obtain ⟨n, hn'⟩ := hs.elim_directed_family_closed (fun n : ℕ => I R ((ϖ : K) ^ n))
+  obtain ⟨n, hn'⟩ := (hs.elim_directed_family_closed (fun n : ℕ => I R ((ϖ : K) ^ n))
     (fun n => (I_compact hD.isCompact _).isClosed) (by
-      rw [Set.eq_empty_iff_forall_notMem]
+      rw [Set.disjoint_iff_inter_eq_empty, Set.eq_empty_iff_forall_notMem]
       rintro x ⟨⟨-, hxW⟩, hx⟩
       have := inter_zero hD.isCompact hn (ϖ : K) hu x (fun n => Set.mem_iInter.1 hx n)
-      exact hxW (this ▸ h0)) hanti.directed_ge
+      exact hxW (this ▸ h0)) hanti.directed_ge).imp (fun _ => Disjoint.inter_eq)
   refine ⟨n, fun r hr => hW'W ?_⟩
   by_contra hc
   have : (ϖ : K) ^ n * r ∈ ((R : Set K) ∩ W'ᶜ) ∩ I R ((ϖ : K) ^ n) :=

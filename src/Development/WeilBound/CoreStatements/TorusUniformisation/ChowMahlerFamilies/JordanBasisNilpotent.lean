@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace PositivityTheory.Xgn.JordanBasis
 
@@ -26,7 +30,8 @@ theorem exists_span_sup_range {k W : Type} [Field k] [AddCommGroup W] [Module k 
     Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (hspan j), ?_⟩
   have hq : (LinearMap.range π).mkQ
       (v - ∑ j, b.repr ((LinearMap.range π).mkQ v) j • g (b j)) = 0 := by
-    rw [map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, map_sum]
     simp only [map_smul, hg]
     rw [b.sum_repr, sub_self]
   rw [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero] at hq
@@ -64,7 +69,7 @@ theorem span_eq_top {k W : Type} [Field k] [AddCommGroup W] [Module k W]
         exact S.zero_mem
     · simp
     · intro a c _ _ ha hc
-      rw [map_add]
+      rw [map_add (f := _)]
       exact S.add_mem ha hc
     · intro c a _ ha
       rw [map_smul]
@@ -92,7 +97,7 @@ theorem span_eq_top {k W : Type} [Field k] [AddCommGroup W] [Module k W]
       obtain ⟨s, hs, u, rfl⟩ := ih v
       obtain ⟨a, ha, u', rfl⟩ := hx u
       refine ⟨s + (π ^ n) a, S.add_mem hs (hpow n a (hxS a ha)), u', ?_⟩
-      rw [map_add, pow_succ, Module.End.mul_apply, add_assoc]
+      rw [map_add (f := _), pow_succ, Module.End.mul_apply, add_assoc]
   refine Submodule.eq_top_iff'.2 fun v => ?_
   obtain ⟨s, hs, u, rfl⟩ := key e v
   rw [hπ, LinearMap.zero_apply, add_zero]

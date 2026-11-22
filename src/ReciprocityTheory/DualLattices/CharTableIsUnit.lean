@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.TensorSpan
+module
+
+public import ReciprocityTheory.DualLattices.TensorSpan
+
+@[expose] public section
 
 noncomputable section
 

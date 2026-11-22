@@ -1,4 +1,8 @@
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.PreMemIrreducibleComponents
+module
+
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.PreMemIrreducibleComponents
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.R.IrreducibleComponentPreimages
 

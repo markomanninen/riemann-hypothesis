@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermForm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.IsHermForm
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GlobalTheory.AdLat GlobalTheory.UnRep
 open scoped TensorProduct Matrix
@@ -55,7 +59,8 @@ private theorem hermE_conj_eq_swap_of_involutive_of_conj_symm (hinv : ∀ z : E,
     (a b : Fin n → E) :
     c (_root_.GlobalTheory.UnRep.hermE c G a b) = _root_.GlobalTheory.UnRep.hermE c G b a := by
   unfold _root_.GlobalTheory.UnRep.hermE
-  simp only [map_sum, map_mul, hinv, hG]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, hinv, hG]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring
@@ -69,7 +74,7 @@ private theorem hermE_add_smul_right' (v x y : Fin n → E) (t : E) :
       _root_.GlobalTheory.UnRep.hermE c G v y + c t * _root_.GlobalTheory.UnRep.hermE c G v x := by
   have hfun : (fun b => c ((y + t • x) b)) = (fun b => c (y b)) + c t • fun b => c (x b) := by
     funext b
-    simp [map_add, map_mul]
+    simp [map_add (f := _), map_mul]
   simp only [_root_.GlobalTheory.UnRep.ReflLaws.hermE_eq_dot, hfun, Matrix.mulVec_add,
     Matrix.mulVec_smul, add_dotProduct, smul_dotProduct, smul_eq_mul]
 

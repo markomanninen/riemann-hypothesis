@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.StatementG
-import Formalism.LocalToGlobal.BesselHermitianTheta.TiedLocW
-import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteAdeleBaseChangeEquiv
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.StatementG
+public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedLocW
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HermitianSpaceBaseLatticeEqFrameLattice
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteAdeleBaseChangeEquiv
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsSatVecUOfIsSphericalU
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,18 +51,18 @@ variable (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (L : Subm
 def locMat (h : w.under (𝓞 F) = v) : GLoc σ J v →* GL (Fin n) (w.adicCompletion E) :=
   (bc (toCompl h)).comp (matHom _ σ J)
 
-variable (w) in
 
+variable (w) in
 def latAt : Submodule (Ov E w) (Fin n → w.adicCompletion E) :=
   Submodule.span (Ov E w) ((fun x i => algebraMap E (w.adicCompletion E) (x i)) '' (L : Set (Fin n → E)))
 
-variable (w) in
 
+variable (w) in
 def IsFrameAt (a : GL (Fin n) (w.adicCompletion E)) : Prop :=
   ∀ y : Fin n → w.adicCompletion E, (∀ i, y i ∈ Ov E w) ↔ a.1 *ᵥ y ∈ latAt w L
 
 def IsSplitChart (h : w.under (𝓞 F) = v) (e : GLoc σ J v ≃* GL (Fin n) (w.adicCompletion E)) : Prop :=
-  (∃ a, IsFrameAt w L a ∧ ∀ g, e g = a⁻¹ * locMat σ J h g * a) ∧ ∀ g, g ∈ stabLoc σ J L v ↔ e g ∈ KGL w n
+  (∃ a, IsFrameAt w L a ∧ ∀ g, e g = a⁻¹ * locMat σ J h g * a) ∧ ∀ g, g ∈ stabLoc σ J L v ↔ e g ∈ KGL w (n := n)
 
 def IsConjAt (h : w.under (𝓞 F) = v) (c : w.adicCompletion E →+* w.adicCompletion E) : Prop :=
   ∀ y, c (toCompl h y) = toCompl h (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR _ σ y)
@@ -73,7 +77,7 @@ def IsInertChart (h : w.under (𝓞 F) = v) (c : w.adicCompletion E →+* w.adic
 variable {σ J L}
 
 theorem IsFrameAt.inv_mul_mem {a b : GL (Fin n) (w.adicCompletion E)} (ha : IsFrameAt w L a) (hb : IsFrameAt w L b) :
-    a⁻¹ * b ∈ KGL w n := by
+    a⁻¹ * b ∈ KGL w (n := n) := by
   have e := Final.StabStd (w.adicCompletion E) (Ov E w) (Fin n) Subtype.val_injective
   have hm : ∀ y : Fin n → w.adicCompletion E, y ∈ stdLat (n := Fin n) (Ov E w) ↔ ∀ i, y i ∈ Ov E w := fun y =>
     ⟨fun h i => by obtain ⟨r, hr⟩ := h i trivial; exact hr ▸ r.2, fun h i _ => ⟨⟨_, h i⟩, rfl⟩⟩
@@ -81,7 +85,7 @@ theorem IsFrameAt.inv_mul_mem {a b : GL (Fin n) (w.adicCompletion E)} (ha : IsFr
   rw [hm, hm, hb, ha, Matrix.mulVec_mulVec, ← Units.val_mul, mul_inv_cancel_left]
 
 theorem IsSplitChart.exists_conj {h : w.under (𝓞 F) = v} {e e' : GLoc σ J v ≃* GL (Fin n) (w.adicCompletion E)}
-    (he : IsSplitChart σ J L h e) (he' : IsSplitChart σ J L h e') : ∃ k ∈ KGL w n, ∀ g, e' g = k⁻¹ * e g * k := by
+    (he : IsSplitChart σ J L h e) (he' : IsSplitChart σ J L h e') : ∃ k ∈ KGL w (n := n), ∀ g, e' g = k⁻¹ * e g * k := by
   obtain ⟨⟨a, ha, e1⟩, -⟩ := he
   obtain ⟨⟨b, hb, e2⟩, -⟩ := he'
   exact ⟨_, ha.inv_mul_mem hb, fun g => by rw [e1, e2]; group⟩
@@ -115,13 +119,9 @@ def HasParam (h : w.under (𝓞 F) = v) (ρ : Representation ℂ (GLoc σ J v) V
   (IsInertAt F E v w ∧ ∃ c ϖ e α, IsUnramInv ϖ c (qV F v) ∧ IsInertChart σ J L h c e ∧
     HasSatU ϖ (qV F v) (ρ.comp e.symm.toMonoidHom) α ∧ B = bcParam n α)
 
-open Classical in
 
-def paramOf (h : w.under (𝓞 F) = v) (ρ : Representation ℂ (GLoc σ J v) V) : Multiset ℂˣ :=
-  if hB : ∃ B, HasParam σ J L h ρ B then hB.choose else 0
 
 variable (n) in
-
 def IsSysParam (h : w.under (𝓞 F) = v) (c : List ℤ → ℂ) (B : Multiset ℂˣ) : Prop :=
   (IsSplit (E := E) v ∧ B.card = n ∧
     ∀ j ≤ n, c (List.replicate j 1 ++ List.replicate (n - j) 0) = satEig (qV E w) n B j) ∨
@@ -162,10 +162,6 @@ theorem HasParam.exists_vec (hρ : HasParam σ J L h ρ B) : ∃ x, IsParamVec �
   · exact hρ.exists_vec.imp fun x hx => Or.inl ⟨hv, e, he, hx⟩
   · exact hρ.exists_vec.imp fun x hx => Or.inr ⟨hv, c, ϖ, e, α, hU, he, hx, hB⟩
 
-theorem HasParam.isSpherical (hρ : HasParam σ J L h ρ B) : GlobalTheory.LGrp.IsSpherical ρ (stabLoc σ J L v) := by
-  obtain ⟨x, hx⟩ := hρ.exists_vec
-  exact (Submodule.ne_bot_iff _).2 ⟨x, hx.mem_fixed, hx.ne_zero⟩
-
 theorem IsParamVec.isSatVecGL (hx : IsParamVec σ J L h ρ x B) (hv : IsSplit (E := E) v)
     {e : GLoc σ J v ≃* GL (Fin n) (w.adicCompletion E)} (he : IsSplitChart σ J L h e) :
     IsSatVecGL w (ρ.comp e.symm.toMonoidHom) x B := by
@@ -191,15 +187,6 @@ theorem IsParamVec.unique_of_isSplit (hv : IsSplit (E := E) v) (hx : IsParamVec 
   · exact (hx.isSatVecGL hv he).unique hx'
   · exact absurd hv (not_isSplit_of_isInertAt hw)
 
-theorem HasParam.hasParam_paramOf (hρ : HasParam σ J L h ρ B) : HasParam σ J L h ρ (paramOf σ J L h ρ) := by
-  rw [paramOf, dif_pos ⟨B, hρ⟩]
-  exact Exists.choose_spec (⟨B, hρ⟩ : ∃ B, HasParam σ J L h ρ B)
-
-theorem HasParam.paramOf_eq_of_isSplit (hv : IsSplit (E := E) v) (hρ : HasParam σ J L h ρ B) :
-    paramOf σ J L h ρ = B := by
-  obtain ⟨x, hx⟩ := hρ.exists_vec
-  exact (hρ.hasParam_paramOf.isParamVec hx.mem_fixed hx.ne_zero).unique_of_isSplit hv hx
-
 theorem hasParam_psFunGL (hv : IsSplit (E := E) v) {e : GLoc σ J v ≃* GL (Fin n) (w.adicCompletion E)}
     (he : IsSplitChart σ J L h e) (α : Fin n → ℂˣ) :
     HasParam σ J L h ((psFunGL w α).comp e.toMonoidHom) (Finset.univ.val.map α) := by
@@ -215,45 +202,18 @@ variable (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E) (L : Subm
   (S : Set (HeightOneSpectrum (𝓞 F))) {V : Type} [AddCommGroup V] [Module ℂ V]
   {Vl : HeightOneSpectrum (𝓞 F) → Type} [∀ v, AddCommGroup (Vl v)] [∀ v, Module ℂ (Vl v)]
 
-def HasParamOff (π : ∀ v, Representation ℂ (GLoc σ J v) (Vl v)) (c : Fam E) : Prop :=
-  ∀ v ∉ S, ∀ (w : HeightOneSpectrum (𝓞 E)) (h : w.under (𝓞 F) = v), HasParam σ J L h (π v) (c w)
-
-def HasParamOffFin (ρ : Representation ℂ (GFin σ J) V) (c : Fam E) : Prop :=
-  HasParamOff σ J L S (Vl := fun _ => V) (fun v => ρ.comp (embLocFin σ J v)) c
-
-def HasParamOffAd (ρ : Representation ℂ (GAd σ J) V) (c : Fam E) : Prop :=
-  HasParamOff σ J L S (Vl := fun _ => V) (fun v => ρ.comp (emb σ J v)) c
-
 def IsParamVecOff (ρ : Representation ℂ (GAd σ J) V) (x : V) (c : Fam E) : Prop :=
   ∀ v ∉ S, ∀ (w : HeightOneSpectrum (𝓞 E)) (h : w.under (𝓞 F) = v),
     IsParamVec σ J L h (ρ.comp (emb σ J v)) x (c w)
 
 def IsParamFun (f : GAd σ J → V) (c : Fam E) : Prop := IsParamVecOff σ J L S (rightReg ℂ _ V) f c
 
-variable (n) in
 
+variable (n) in
 def IsSysParamOff (c : HeightOneSpectrum (𝓞 E) → List ℤ → ℂ) (B : Fam E) : Prop :=
   ∀ v ∉ S, ∀ (w : HeightOneSpectrum (𝓞 E)) (h : w.under (𝓞 F) = v), IsSysParam σ n h (c w) (B w)
 
-def paramFam (π : ∀ v, Representation ℂ (GLoc σ J v) (Vl v)) : Fam E :=
-  fun w => paramOf σ J L (rfl : w.under (𝓞 F) = _) (π _)
-
-def LvRep (π : ∀ v, Representation ℂ (GLoc σ J v) (Vl v)) (m : HeightOneSpectrum (𝓞 E) → ℂˣ)
-    (v : HeightOneSpectrum (𝓞 F)) (s : ℂ) : ℂ := LvTw (paramFam σ J L π) m v s
-
-def LSRep (π : ∀ v, Representation ℂ (GLoc σ J v) (Vl v)) (m : HeightOneSpectrum (𝓞 E) → ℂˣ) (s : ℂ) : ℂ :=
-  LSTw S (paramFam σ J L π) m s
-
 variable {σ J L S}
-
-theorem HasParamOff.paramFam {π : ∀ v, Representation ℂ (GLoc σ J v) (Vl v)} {c : Fam E}
-    (h : HasParamOff σ J L S π c) : HasParamOff σ J L S π (paramFam σ J L π) := fun v hv w e => by
-  subst e; exact (h _ hv w rfl).hasParam_paramOf
-
-theorem HasParamOff.card {π : ∀ v, Representation ℂ (GLoc σ J v) (Vl v)} {c : Fam E}
-    (h : HasParamOff σ J L S π c) {w : HeightOneSpectrum (𝓞 E)} (hw : w ∉ above E S) : (c w).card = n := by
-  obtain ⟨x, hx⟩ := (h _ hw w rfl).exists_vec
-  exact hx.card
 
 end Global
 
@@ -261,28 +221,28 @@ section Characters
 
 open Formalism.L2.Host (HChar IsUnitAt IsUnifAt atFin unif)
 
-variable (F E) in
 
+variable (F E) in
 def IsHecke (χ : (AF F ⊗[F] E)ˣ →* Circle) : Prop :=
   Continuous χ ∧ ∀ x : Eˣ, χ (Units.map (inclR (F := F) (AF F)).toMonoidHom x) = 1
 
-variable (F) in
 
+variable (F) in
 def IsHeckeF (χ : (AF F)ˣ →* Circle) : Prop :=
   Continuous χ ∧ ∀ a : Fˣ, χ (Units.map (algebraMap F (AF F)).toMonoidHom a) = 1
 
-variable (F E) in
 
+variable (F E) in
 def ideleMap : (AF F)ˣ →* (AF F ⊗[F] E)ˣ := Units.map (algebraMap (AF F) (AF F ⊗[F] E)).toMonoidHom
 
-variable (F E) in
 
+variable (F E) in
 def IsEta (η : (AF F)ˣ →* Circle) : Prop :=
   Continuous η ∧ (∀ a : Fˣ, η (Units.map (algebraMap F (AF F)).toMonoidHom a) = 1) ∧
     (∀ x : (AF F ⊗[F] E)ˣ, η (Units.map (Algebra.norm (AF F) : AF F ⊗[F] E →* AF F) x) = 1) ∧ η ≠ 1
 
-variable (F E) in
 
+variable (F E) in
 def ResEta (χ : (AF F ⊗[F] E)ˣ →* Circle) (k : ℕ) : Prop :=
   AllSome (IsEta F E) fun η => ∀ a, χ (ideleMap F E a) = η a ^ k
 
@@ -295,8 +255,8 @@ theorem isUnitary_toHChar (χ : (AF F)ˣ →* Circle) (h : IsHeckeF F χ) : (toH
 
 theorem IsEta.isHeckeF {η : (AF F)ˣ →* Circle} (h : IsEta F E η) : IsHeckeF F η := ⟨h.1, h.2.1⟩
 
-variable (F E) in
 
+variable (F E) in
 def toFinAd : Af F ⊗[F] E →+* FiniteAdeleRing (𝓞 E) E :=
   letI : Algebra F (FiniteAdeleRing (𝓞 E) E) :=
     ((algebraMap E (FiniteAdeleRing (𝓞 E) E)).comp (algebraMap F E)).toAlgebra
@@ -314,8 +274,8 @@ theorem toFinAd_bijective : Function.Bijective (toFinAd F E) := by
   exact (Function.Bijective.of_comp_iff _ c.bijective).1
     ⟨GlobalTheory.AdeleBaseChange.map_injective h, GlobalTheory.AdeleBaseChange.map_surjective h⟩
 
-variable (F E) in
 
+variable (F E) in
 def finAdEquiv : Af F ⊗[F] E ≃+* FiniteAdeleRing (𝓞 E) E := RingEquiv.ofBijective _ toFinAd_bijective
 
 theorem finAdEquiv_apply {v : HeightOneSpectrum (𝓞 F)} {w : HeightOneSpectrum (𝓞 E)} (h : w.under (𝓞 F) = v)
@@ -325,15 +285,15 @@ theorem finAdEquiv_apply {v : HeightOneSpectrum (𝓞 F)} {w : HeightOneSpectrum
   induction y using TensorProduct.induction_on with
   | zero => simp only [map_zero]; rfl
   | tmul a x => rfl
-  | add a b ha hb => simp only [map_add, ← ha, ← hb]; rfl
+  | add a b ha hb => simp only [map_add (f := _), ← ha, ← hb]; rfl
+
 
 variable (F E) in
-
 def extZero : Af F ⊗[F] E →ₙ+* AF F ⊗[F] E :=
   GlobalTheory.IndefiniteRowSideFullHecke.AdelicUnitaryGroups.tensNU (R' := AF F) (LinearMap.inr F (Ainf F) (Af F)) fun _ _ => Prod.ext (mul_zero _).symm rfl
 
-variable (F E) in
 
+variable (F E) in
 def ofFinIdele : (Af F ⊗[F] E)ˣ →* (AF F ⊗[F] E)ˣ :=
   Units.map
     { toFun := fun y => 1 - extZero F E 1 + extZero F E y
@@ -347,8 +307,8 @@ def ofFinIdele : (Af F ⊗[F] E)ˣ →* (AF F ⊗[F] E)ˣ :=
         rw [map_mul]
         linear_combination h1 - h2 - h3 }
 
-variable (F) in
 
+variable (F) in
 def locIdele (w : HeightOneSpectrum (𝓞 E)) : (w.adicCompletion E)ˣ →* (AF F ⊗[F] E)ˣ :=
   (ofFinIdele F E).comp ((Units.map (finAdEquiv F E).symm.toRingHom.toMonoidHom).comp (GlobalTheory.CMVal.single w))
 
@@ -362,8 +322,8 @@ def UnrOff (S : Set (HeightOneSpectrum (𝓞 F))) : Prop := ∀ w ∉ above E S,
 
 def val : ℂˣ := locChar χ w (atFin w (unif w))
 
-open Classical in
 
+open Classical in
 def charFam : Fam E := fun w => if UnrAt χ w then {val χ w} else 0
 
 def charL (S : Set (HeightOneSpectrum (𝓞 F))) (s : ℂ) : ℂ := LS S (charFam χ) s
@@ -420,7 +380,6 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 
-theorem isHeckeChar_iff (χ : (AE D)ˣ →* Circle) : IsHeckeChar D χ ↔ IsHecke D.host.F D.host.E χ := Iff.rfl
 theorem resEta_iff (χ : (AE D)ˣ →* Circle) (k : ℕ) :
     Formalism.L2.Theta.ResEta D χ k ↔ ResEta D.host.F D.host.E χ k := Iff.rfl
 
@@ -429,29 +388,16 @@ variable (V : HSp D) (S : Finset (HeightOneSpectrum (𝓞 D.host.F)))
 abbrev IsParamFunV {X : Type} [AddCommGroup X] [Module ℂ X] (f : GA D V → X) (c : Fam D.host.E) : Prop :=
   IsParamFun D.sp.cm.sig V.gram (frameLat V) (S : Set _) f c
 
-abbrev HasParamOffV {X : Type} [AddCommGroup X] [Module ℂ X] (ρ : Representation ℂ (GA D V) X)
-    (c : Fam D.host.E) : Prop :=
-  HasParamOffAd D.sp.cm.sig V.gram (frameLat V) (S : Set _) ρ c
 
 variable (D) in
-
 abbrev IsSysParamD (n : ℕ) (c : HeightOneSpectrum (𝓞 D.host.E) → List ℤ → ℂ) (B : Fam D.host.E) : Prop :=
   IsSysParamOff D.sp.cm.sig n (S : Set _) c B
 
-variable (D) in
 
+variable (D) in
 abbrev LSD (c : Fam D.host.E) (μ : (AE D)ˣ →* Circle) (s : ℂ) : ℂ := LSTw (F := D.host.F) (S : Set _) c (val μ) s
 
 end Record
-
-example (S : Set (HeightOneSpectrum (𝓞 F))) (s : ℂ) :
-    charL (1 : (AF F ⊗[F] E)ˣ →* Circle) S s = zetaOff (above E S) s := by
-  have : charFam (1 : (AF F ⊗[F] E)ˣ →* Circle) = fun _ => {1} :=
-    funext fun w => (charFam_of_unrAt (χ := 1) fun _ _ => map_one Circle.toUnits).trans (by simp)
-  rw [charL, this, LS, zetaOff]
-
-example (μ : (AF F ⊗[F] E)ˣ →* Circle) : twist (fun w => {val μ w}) (val μ)⁻¹ = fun _ => {1} := by
-  funext w; simp [twist]
 
 end GlobalTheory.LFun
 

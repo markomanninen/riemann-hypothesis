@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.TwistedFourierKernels.IsTwistTwD
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.TwistedFourierKernels.IsTwistTwD
+
+@[expose] public section
 
 open IsLocalRing Polynomial UpperTheory.V UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Ws.H5
 
@@ -12,7 +16,8 @@ private theorem pow_pow_sub_one_mem {R : Type} [CommRing R] (I : Ideal R) (l : �
     refine Ideal.mul_mem_mul ih ?_
     rw [← Ideal.Quotient.eq_zero_iff_mem] at hl h1 ⊢
     rw [map_sub, map_one, sub_eq_zero] at h1
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [map_pow (Ideal.Quotient.mk I) (x ^ (l ^ k)), h1, one_pow]
     simpa using hl
 

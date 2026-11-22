@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.StatementTC
+module
+
+public import Formalism.HermitianCurvature.StatementTC
+
+@[expose] public section
 
 open Finset Filter Topology Formalism.FourierDecayAlt Formalism.FourierDecayAlt.TC
 open scoped ComplexInnerProductSpace ComplexOrder ComplexConjugate

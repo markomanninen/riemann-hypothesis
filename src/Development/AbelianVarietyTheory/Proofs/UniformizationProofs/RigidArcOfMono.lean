@@ -1,17 +1,22 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AgreeOfCore
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DataRigidTorsionOfDataRigid
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsOpenImmersionJKPowerSeries
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsHomOfPullbackId
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsIsPullDegId
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ArcWitMemRangeJKOfMemRangeJ
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ArcWitPointEqOfIso
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ArcWitAgreeOfIsPullUnif
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsIsoUniformisationsOfIsoDegenerationDataStatement
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisedArcIsoMatchesLevelPointsStatement
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ToStkAInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DataRigidTorsionOfDataRigid
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsOpenImmersionJKPowerSeries
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsHomOfPullbackId
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsIsPullDegId
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ArcWitMemRangeJKOfMemRangeJ
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ArcWitPointEqOfIso
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ArcWitAgreeOfIsPullUnif
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsIsoUniformisationsOfIsoDegenerationDataStatement
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisedArcIsoMatchesLevelPointsStatement
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -43,7 +48,7 @@ theorem core (hL : Laws) (hL₂ : Laws2) (hL₅ : Laws5)
         g ≫ W.m.φ = g₁ ≫ Y.m.φ → g₁ ≫ Y.m0.toSABMap.φ = g₂ ≫ Y'.m0.toSABMap.φ →
         g₁ ≫ Y.oF.t.G.hom = g₂ ≫ Y'.oF.t.G.hom → g ≫ ψ.hom.left ≫ W'.m.φ = g₂ ≫ Y'.m.φ) → W.Agree W' ψ) := by
   letI := H.starRing
-  obtain ⟨hD, hdat⟩ := arcWit_data_iso hL₅ E H D l Xo c k bF a O O' β β' Y Y' χ χ' W W'
+  obtain ⟨hD, hdat⟩ := GlobalTheory.arcWit_data_iso hL₅ E H D l Xo c k bF a O O' β β' Y Y' χ χ' W W'
   have hI : Ideal.span {(PowerSeries.X : PowerSeries k)} = IsLocalRing.maximalIdeal (PowerSeries k) :=
     PowerSeries.maximalIdeal_eq_span_X.symm
   obtain ⟨ψ, bc, hψ, hbc, hfst, hU⟩ := GlobalTheory.T.exists_iso_uniformisations_of_iso_degeneration_data hL hL₂ (PowerSeries k) _ (admissibleBase_powerSeries k) hI W'.P.D W.P.D W'.P.A W.P.A
@@ -124,17 +129,5 @@ theorem rigidArc_of_mono : Laws → Laws2 → Laws5 →
   obtain ⟨q, τ, hτ⟩ := ArcRigidity.exists_generic W g g₁ h₁
   refine h T g g₁ g₂ τ hτ ?_ h₁ h₂ h₃
   rw [← cancel_mono Y.j, ← q, hτ, Category.assoc, Category.assoc, hy]
-
-theorem uniqWit_of_laws : Laws → Laws2 → Laws5 → UniqWitSt := by
-  intro hL hL₂ hL₅ E _ _ _ H D l Xo c k _ bF a O _ β Y χ W W' y hy hs
-  obtain ⟨-, ψ, h, hA⟩ := ArcRigidity.core hL hL₂ hL₅ W W' y y hy hy hs hs
-  refine ⟨ψ, hA fun T g g₁ g₂ h₁ h₂ h₃ => ?_⟩
-  obtain rfl : g₁ = g₂ := Y.m0.toSABMap.cart.1.hom_ext h₂ h₃
-  obtain ⟨-, τ, hτ⟩ := ArcRigidity.exists_generic W g g₁ h₁
-  have w : (g ≫ W.m.cm.F) ≫ Y.t.G.hom = (τ ≫ y) ≫ Y.j := by
-    rw [Category.assoc, W.m.cart.1.w, reassoc_of% hτ, Category.assoc, hy]
-  obtain ⟨u, u₁, u₂⟩ : ∃ u : T ⟶ Y.oF.t.G.left, u ≫ Y.m.φ = g ≫ W.m.φ ∧ u ≫ Y.oF.t.G.hom = τ ≫ y :=
-    ⟨Y.m.cart.1.lift _ _ w, Y.m.cart.1.lift_fst _ _ _, Y.m.cart.1.lift_snd _ _ _⟩
-  rw [h T g u u τ hτ u₂ u₁.symm rfl rfl, u₁, h₁]
 
 end GlobalTheory

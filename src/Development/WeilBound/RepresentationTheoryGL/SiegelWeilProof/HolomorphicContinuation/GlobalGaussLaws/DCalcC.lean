@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.DCalcB
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.DCalcB
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,7 +77,8 @@ theorem ptZ_one (X : Fin n → ℝ) (z s₀ : ℂ) :
 
 theorem gramB_diag (ε : Fin m → Bool) (b : Bool) (u : Fin m → Fin n → ℂ) (j : Fin n) :
     gramB ε b u j j = ∑ a ∈ Finset.univ.filter (fun a => ε a = b), star (u a j) * u a j := by
-  simp [gramB, Qb, evX, map_sum, eval_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [gramB, Qb, evX, map_sum, eval_X]
 
 theorem trace_sdiag (s₀ : ℂ) (w : Fin n → ℂ) (G : Matrix (Fin n) (Fin n) ℂ) :
     ((s₀ • diagonal w) * G).trace = s₀ * ∑ j, w j * G j j := by

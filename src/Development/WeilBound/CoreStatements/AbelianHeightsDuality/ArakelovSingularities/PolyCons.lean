@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ArakelovSingularities.PolyDef
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.ArakelovSingularities.PolyDef
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -33,7 +37,7 @@ theorem topologicalKrullDim_of_polyCovered' [IsDomain k] [IsNoetherianRing k] (h
     intro σ _ hσ
     change topologicalKrullDim (PrimeSpectrum (MvPolynomial σ k)) = _
     rw [PrimeSpectrum.topologicalKrullDim_eq_ringKrullDim,
-      MvPolynomial.ringKrullDim_of_isNoetherianRing, hk, Nat.card_eq_fintype_card, hσ, add_comm]
+      MvPolynomial.ringKrullDim_of_isNoetherianRing_of_finite, hk, Nat.card_eq_fintype_card, hσ, add_comm]
     norm_cast
   apply le_antisymm
   · unfold topologicalKrullDim
@@ -91,7 +95,7 @@ theorem polyCovered_pSpace' [IsDomain k] (N : ℕ) : PolyCovered (PSpace.str k N
   letI : GradedAlgebra (ProjSpace.grading k N) := MvPolynomial.gradedAlgebra
   have hX : ∀ i : Fin (N + 1), (MvPolynomial.X i : MvPolynomial (Fin (N + 1)) k) ≠ 0 :=
     fun i => MvPolynomial.X_ne_zero i
-  let ξ0 : PSpace k N := (⟨⊥, by rw [HomogeneousIdeal.toIdeal_bot]; exact Ideal.bot_prime, fun hle => hX 0 (by
+  let ξ0 : PSpace k N := (⟨⊥, by rw [HomogeneousIdeal.toIdeal_bot]; exact Ideal.isPrime_bot, fun hle => hX 0 (by
       have h0 : MvPolynomial.X 0 ∈ HomogeneousIdeal.irrelevant (ProjSpace.grading k N) := by
         rw [HomogeneousIdeal.mem_irrelevant_iff, GradedRing.proj_apply]
         exact DirectSum.decompose_of_mem_ne _ (ProjSpace.X_mem k N 0) one_ne_zero
@@ -113,7 +117,7 @@ theorem polyCovered_pSpace' [IsDomain k] (N : ℕ) : PolyCovered (PSpace.str k N
     rw [← ProjSpace.opensRange_chartι] at this
     exact this
   obtain ⟨η, hη⟩ := hr 0
-  let w : Sp (MvPolynomial {j : Fin (N + 1) // j ≠ 0} k) := ⟨⊥, Ideal.bot_prime⟩
+  let w : Sp (MvPolynomial {j : Fin (N + 1) // j ≠ 0} k) := ⟨⊥, Ideal.isPrime_bot⟩
   have hηw : η ⤳ w := by
     have h1 : ProjSpace.chartι k N 0 η ⤳ ProjSpace.chartι k N 0 w := by
       rw [hη]

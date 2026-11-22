@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IsCplAtSelf
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IsCplAtSelf
+
+@[expose] public section
 
 open IsLocalRing TensorProduct
 
@@ -106,7 +110,7 @@ private lemma flat_of_isCplAt {R : Type} [CommRing R] [IsNoetherianRing R] {q : 
     exact hsa
   have hinj : Function.Injective
       (AdicCompletion.map (maximalIdeal S) (Algebra.linearMap S B)) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     ext n
     have h1 := AdicCompletion.map_val_apply (maximalIdeal S) (Algebra.linearMap S B) (n := n) x
@@ -227,7 +231,7 @@ private lemma finite_of_dense {L R B N : Type} [CommRing L] [IsLocalRing L] [Com
     induction hx using Submodule.span_induction with
     | mem x hx => exact (hV _).2 ⟨x, hx, rfl⟩
     | zero => rw [map_zero]; exact V.zero_mem
-    | add x y _ _ hx hy => rw [map_add]; exact V.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact V.add_mem hx hy
     | smul b x _ hx =>
       rw [map_smul]
       refine smul_mem_of_dense hd V ?_ b _ hx
@@ -257,11 +261,11 @@ private lemma flat_tensor {Λ R B M : Type} [CommRing Λ] [CommRing R] [CommRing
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul y i =>
       induction y using TensorProduct.induction_on with
       | zero => simp
-      | add x y hx hy => simp only [add_tmul, map_add, hx, hy]
+      | add x y hx hy => simp only [add_tmul, map_add (f := _), hx, hy]
       | tmul b m => simp
   intro x y hxy
   apply (AlgebraTensorModule.assoc Λ R B B M I).injective
@@ -319,9 +323,9 @@ private lemma free_of_flat {Λ L N : Type} [CommRing Λ] [CommRing L] [IsLocalRi
     intro y
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul x n => rw [hψ]; simp
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro z hz
   obtain ⟨y, rfl⟩ := hsurj z
   have h0 := hcomp y

@@ -1,4 +1,8 @@
-import Formalism.LogFactorialIndices.StatementNorm
+module
+
+public import Formalism.LogFactorialIndices.StatementNorm
+
+@[expose] public section
 
 noncomputable section
 

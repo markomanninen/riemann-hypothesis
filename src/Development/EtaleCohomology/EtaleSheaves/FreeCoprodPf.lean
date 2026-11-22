@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.CoprodPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.CoprodPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC Opposite

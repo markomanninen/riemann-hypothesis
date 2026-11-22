@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.Af UpperTheory.V.AlgRepEndIrreducible UpperTheory.V.Lit UpperTheory.V.Lit.Bor
 open scoped TensorProduct
 
@@ -16,7 +21,7 @@ theorem UpperTheory.V.Lit.Bor.kugaZero :
   have h1 : ∀ (Y Z) (m : M), A Y (B Z m) = B Z (A Y m) := fun Y Z m => LinearMap.congr_fun (hc Y Z).eq m
   have h2 := congrArg (B (toL (Complex.I • (e j).1))) h0
   have h3 := congrArg (A (toL (Complex.I • (e j).1))) h0
-  rw [map_add, map_zero] at h2 h3
+  rw [map_add (f := _), map_zero] at h2 h3
   rw [h1] at h3
   have h4 : B (toL (Complex.I • (e j).1)) (B (toL (Complex.I • (e j).1)) (ω X)) =
       A (toL (Complex.I • (e j).1)) (A (toL (Complex.I • (e j).1)) (ω X)) := by
@@ -25,5 +30,5 @@ theorem UpperTheory.V.Lit.Bor.kugaZero :
     rw [← h3]
     abel
   rw [dCo_apply, Fin.sum_univ_one, Subsingleton.elim (Fin.removeNth _ _) X]
-  simp only [Fin.val_zero, pow_zero, one_smul, Matrix.cons_val_zero, LinearMap.add_apply, map_add, Module.End.mul_apply, h1, h4]
+  simp only [Fin.val_zero, pow_zero, one_smul, Matrix.cons_val_zero, LinearMap.add_apply, map_add (f := _), Module.End.mul_apply, h1, h4]
   abel

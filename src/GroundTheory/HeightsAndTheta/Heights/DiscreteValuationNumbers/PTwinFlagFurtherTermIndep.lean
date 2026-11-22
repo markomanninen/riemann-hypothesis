@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsBisFurther
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsMoreMore
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.FullFlag
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PTwinPlainPolyPairNum
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSymmRelabel
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsBisFurther
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsMoreMore
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.FullFlag
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PTwinPlainPolyPairNum
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSymmRelabel
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -45,7 +50,8 @@ theorem term_head {N r : ℕ} (l : Fin r) (α : Fin N →₀ ℕ) (β : Fin r �
     simp only [hgt, if_false, Finset.prod_const_one, one_mul, hnn, hn]
   unfold term
   rw [h1, h3, hn l]
-  simp only [map_mul, map_prod, map_pow, map_sum, rename_X, Sum.map_inl, Sum.map_inr]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_mul, map_prod, map_pow, map_sum, rename_X, Sum.map_inl, Sum.map_inr]
   ring
 
 theorem rename_monomial_head {N r : ℕ} (α : Fin N →₀ ℕ) (c : ℤ) :
@@ -77,7 +83,8 @@ theorem rename_divDiff_natAdd_monomial {N r : ℕ} (l : Fin r) (α : Fin N →�
       obtain ⟨μ, hμ, he⟩ := hmem
       exact Finset.mem_image.mpr ⟨μ, hμ, by rw [he, add_tsub_cancel_of_le hle]⟩
     · exact absurd rfl hν
-  rw [rename_monomial, ← hA, rename_divDiff_eq_sum (Fin.natAdd N l) _ hsub,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [rename_monomial, ← hA, rename_divDiff_eq_sum (Fin.natAdd N l) _ hsub,
     Finset.sum_image fun a _ b _ h => hinj h, rename_divDiff_eq_sum l Q subset_rfl, map_sum,
     Finset.mul_sum, rename_monomial_head]
   refine Finset.sum_congr rfl fun μ _ => ?_
@@ -88,7 +95,7 @@ theorem rename_divDiff_natAdd_monomial {N r : ℕ} (l : Fin r) (α : Fin N →�
       have := congrArg Fin.val hk
       simp only [Fin.val_natAdd, Fin.val_castAdd] at this
       omega
-    rw [Finsupp.add_apply, hA, Finsupp.mapDomain_apply (Fin.castAdd_injective _ _),
+    rw [Finsupp.add_apply, hA, Finsupp.mapDomain_apply_of_injective (Fin.castAdd_injective _ _),
       Finsupp.mapDomain_of_notMem_range _ _ hj, add_zero]
   have hn : ∀ j, (A + Finsupp.mapDomain (Fin.natAdd N) μ) (Fin.natAdd N j) = μ j := by
     intro j
@@ -98,7 +105,7 @@ theorem rename_divDiff_natAdd_monomial {N r : ℕ} (l : Fin r) (α : Fin N →�
       simp only [Fin.val_natAdd, Fin.val_castAdd] at this
       omega
     rw [Finsupp.add_apply, hA, Finsupp.mapDomain_of_notMem_range _ _ hj,
-      Finsupp.mapDomain_apply (Fin.natAdd_injective _ _), zero_add]
+      Finsupp.mapDomain_apply_of_injective (Fin.natAdd_injective _ _), zero_add]
   rw [coeff_monomial_mul', if_pos le_self_add, add_tsub_cancel_left,
     coeff_rename_mapDomain _ (Fin.natAdd_injective _ _), term_head l α μ _ hc hn, C_mul]
   simp only [map_mul, rename_C]
@@ -114,7 +121,7 @@ theorem rename_divDiff_natAdd_mul {N r : ℕ} (l : Fin r) (G : MvPolynomial (Fin
   induction G using MvPolynomial.induction_on' with
   | monomial α c => exact rename_divDiff_natAdd_monomial l α c Q
   | add A B hA hB =>
-    rw [map_add, add_mul, plainPolynomialPairNumber.rename_divDiff_add, hA, hB, map_add, add_mul]
+    rw [map_add (f := _), add_mul, plainPolynomialPairNumber.rename_divDiff_add, hA, hB, map_add (f := _), add_mul]
 
 def emb (N r : ℕ) : Fin (N + (r + r)) → Fin ((N + r) + (N + r)) :=
   Fin.append (fun i : Fin N => Fin.natAdd (N + r) (Fin.castAdd r i))
@@ -236,21 +243,19 @@ theorem polyNum_rename_perm {F : Type*} [Field F] {K : Type} [Fintype K] {κ : K
   have hlen := hp.length_eq
   by_cases h₂ : (IndefiniteRowSideFullHecke.NumbersDVR.Bundles.monoList (deg ∘ e) ν).length = n
   · have h₁ : (IndefiniteRowSideFullHecke.NumbersDVR.Bundles.monoList deg (Finsupp.mapDomain e ν)).length = n := hlen.trans h₂
-    rw [dif_pos h₁, dif_pos h₂]
+    rw [dite_eq_left h₁, dite_eq_left h₂]
     have key := hsym (fun j => (IndefiniteRowSideFullHecke.NumbersDVR.Bundles.monoList (deg ∘ e) ν).get (Fin.cast h₂.symm j))
       ((finCongr h₁.symm).trans (σ.trans (finCongr h₂)))
     rw [← key]
     congr 1
     funext j
-    simp only [Function.comp_apply, Equiv.trans_apply, finCongr_apply, Fin.cast_cast]
-    rw [hσ]
-    rfl
-  · rw [dif_neg (fun h => h₂ (hlen.symm.trans h)), dif_neg h₂]
+    simpa using hσ (Fin.cast h₁.symm j)
+  · rw [dite_eq_right (fun h => h₂ (hlen.symm.trans h)), dite_eq_right h₂]
 
 end flagFurtherTerm_independent
 
-open flagFurtherTerm_independent in
 
+open flagFurtherTerm_independent in
 theorem flagFurtherTerm_independent.proof (hFib : VerticalDivisorFibreVariety.Statement)
     (hInd : FullFlagVerticalSymmetric.Statement) : flagFurtherTerm_independent.Statement := by
   intro O _ _ _ Ω _ _ K _ ι _ x d N V _ _ E E' hM _ φ₁ φ₂ I hI G hG r y y' f g hv c Q _ _ _ l

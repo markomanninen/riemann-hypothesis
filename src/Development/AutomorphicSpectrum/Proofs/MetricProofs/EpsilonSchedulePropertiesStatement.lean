@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.EpsilonScheduleProperties
-import Mathlib
-import ReciprocityTheory.AnalyticForms.LeviForms.RegGlue
-import ReciprocityTheory.AnalyticForms.LeviForms.RegChartC
-import ReciprocityTheory.AnalyticForms.LeviForms.TailCut
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LoglogQuotNonneg
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.EpsilonScheduleProperties
+public import ReciprocityTheory.AnalyticForms.LeviForms.RegGlue
+public import ReciprocityTheory.AnalyticForms.LeviForms.RegChartC
+public import ReciprocityTheory.AnalyticForms.LeviForms.TailCut
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LoglogQuotNonneg
+
+@[expose] public section
+
 open MeasureTheory Metric Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.AnForm.M.FinHolAtlas
 open scoped ContDiff
 set_option maxHeartbeats 1000000 in

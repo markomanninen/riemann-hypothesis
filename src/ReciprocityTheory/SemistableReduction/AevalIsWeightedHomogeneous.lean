@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+module
+
+public import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,12 +65,12 @@ private lemma sum_primitiveRoot_pow_mul_inv_pow_eq_ite {N : ℕ} {ζ : ℂ} (hζ
     simp
 
 theorem exists_torus_coeff_le {ι : Type*} [Fintype ι] (g : MvPolynomial ι ℂ) (s : ι →₀ ℕ) :
-    ∃ z : ι → ℂ, (∀ i, ‖z i‖ = 1) ∧ ‖coeff s g‖ ≤ ‖eval z g‖ := by
+    ∃ z : ι → ℂ, (∀ i, ‖z i‖ = 1) ∧ ‖AddMonoidAlgebra.coeff g s‖ ≤ ‖eval z g‖ := by
   classical
   by_cases hs : s ∈ g.support
   swap
   · refine ⟨fun _ => 1, fun _ => by simp, ?_⟩
-    rw [show coeff s g = 0 by simpa using hs, norm_zero]
+    rw [show AddMonoidAlgebra.coeff g s = 0 by simpa using hs, norm_zero]
     exact norm_nonneg _
   obtain ⟨N, hN⟩ : ∃ N, N = g.totalDegree + 1 := ⟨_, rfl⟩
   have hN0 : N ≠ 0 := by omega
@@ -82,9 +86,9 @@ theorem exists_torus_coeff_le {ι : Type*} [Fintype ι] (g : MvPolynomial ι ℂ
     omega
   let z : (ι → Fin N) → ι → ℂ := fun k i => ζ ^ (k i : ℕ)
   let c : (ι → Fin N) → ℂ := fun k => ∏ i, ζ⁻¹ ^ ((k i : ℕ) * s i)
-  have key : ∑ k, eval (z k) g * c k = (N : ℂ) ^ Fintype.card ι * coeff s g := by
+  have key : ∑ k, eval (z k) g * c k = (N : ℂ) ^ Fintype.card ι * AddMonoidAlgebra.coeff g s := by
     calc ∑ k, eval (z k) g * c k
-        = ∑ d ∈ g.support, coeff d g * ∏ i, ∑ j : Fin N, (ζ ^ d i * ζ⁻¹ ^ s i) ^ (j : ℕ) := by
+        = ∑ d ∈ g.support, AddMonoidAlgebra.coeff g d * ∏ i, ∑ j : Fin N, (ζ ^ d i * ζ⁻¹ ^ s i) ^ (j : ℕ) := by
           simp only [eval_eq', Finset.sum_mul, z, c]
           rw [Finset.sum_comm]
           refine Finset.sum_congr rfl fun d _ => ?_
@@ -94,7 +98,7 @@ theorem exists_torus_coeff_le {ι : Type*} [Fintype ι] (g : MvPolynomial ι ℂ
           congr 1
           refine Finset.prod_congr rfl fun i _ => ?_
           rw [mul_pow, ← pow_mul, ← pow_mul, ← pow_mul, Nat.mul_comm (d i), Nat.mul_comm (s i)]
-      _ = ∑ d ∈ g.support, coeff d g * (if d = s then (N : ℂ) ^ Fintype.card ι else 0) := by
+      _ = ∑ d ∈ g.support, AddMonoidAlgebra.coeff g d * (if d = s then (N : ℂ) ^ Fintype.card ι else 0) := by
           refine Finset.sum_congr rfl fun d hd => ?_
           congr 1
           simp_rw [sum_primitiveRoot_pow_mul_inv_pow_eq_ite hζ (hlt d hd _) (hlt s hs _)]
@@ -106,18 +110,18 @@ theorem exists_torus_coeff_le {ι : Type*} [Fintype ι] (g : MvPolynomial ι ℂ
               push_neg at h
               exact hds (Finsupp.ext h)
             exact Finset.prod_eq_zero (Finset.mem_univ i) (if_neg hi)
-      _ = (N : ℂ) ^ Fintype.card ι * coeff s g := by
+      _ = (N : ℂ) ^ Fintype.card ι * AddMonoidAlgebra.coeff g s := by
           rw [Finset.sum_eq_single s (fun d _ hd => by simp [hd]) (fun h => absurd hs h)]
           simp [mul_comm]
   by_contra hcon
   push_neg at hcon
-  have hlt2 : ∀ k, ‖eval (z k) g * c k‖ < ‖coeff s g‖ := by
+  have hlt2 : ∀ k, ‖eval (z k) g * c k‖ < ‖AddMonoidAlgebra.coeff g s‖ := by
     intro k
     have hc : ‖c k‖ = 1 := by simp [c, norm_prod, norm_pow, norm_inv, hζn]
     rw [norm_mul, hc, mul_one]
     exact hcon (z k) (fun i => by simp [z, norm_pow, hζn])
   have hsum := norm_sum_le (Finset.univ : Finset (ι → Fin N)) (fun k => eval (z k) g * c k)
-  have hsum2 : ∑ k, ‖eval (z k) g * c k‖ < ∑ _k : ι → Fin N, ‖coeff s g‖ :=
+  have hsum2 : ∑ k, ‖eval (z k) g * c k‖ < ∑ _k : ι → Fin N, ‖AddMonoidAlgebra.coeff g s‖ :=
     Finset.sum_lt_sum_of_nonempty Finset.univ_nonempty (fun k _ => hlt2 k)
   rw [key, norm_mul, norm_pow, Complex.norm_natCast] at hsum
   rw [Finset.sum_const, Finset.card_univ, Fintype.card_fun, Fintype.card_fin, nsmul_eq_mul] at hsum2

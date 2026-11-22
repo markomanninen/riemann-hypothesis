@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 set_option autoImplicit false
@@ -97,9 +101,6 @@ def coefIdeal (δ : DividedPowers J) (Q : PDPoly B) (r : ℕ) : Ideal Q.P where
   smul_mem' := by
     intro c x hx
     simpa using mul_mem_coefFil δ Q (mem_coefFil_zero δ Q c) hx
-
-theorem mem_coefIdeal (δ : DividedPowers J) (Q : PDPoly B) (r : ℕ) (z : Q.P) :
-    z ∈ coefIdeal δ Q r ↔ z ∈ coefFil δ Q r := Iff.rfl
 
 theorem algebraMap_mem_coefFil (δ : DividedPowers J) (Q : PDPoly B) {r : ℕ} {b : B}
     (hb : b ∈ GlobalTheory.PDA.fil δ r) : algebraMap B Q.P b ∈ coefFil δ Q r := by

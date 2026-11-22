@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GeometricLemmaCells
-import GroundTheory.AutomorphicForms.InductionParabolic
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GeometricLemmaCells
+public import GroundTheory.AutomorphicForms.InductionParabolic
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -76,8 +81,8 @@ theorem isOpen_cellUnion (j : ℕ) : IsOpen (cellUnion C j) := by
   rw [← isClosed_compl_iff, hc, hc']
   exact isClosed_biUnion_finset fun l _ => isClosed_closure
 
-omit hcov in
 
+omit hcov in
 theorem closure_inter_cellUnion_succ (j : Fin k) :
     closure (C j) ∩ cellUnion C ((j : ℕ) + 1) = C j := by
   apply subset_antisymm
@@ -195,10 +200,6 @@ def supportedIn (Y : Set (GL (Fin n) F)) : Submodule ℂ (parabolicIndSpace F n 
     simp [hf g hg]
 
 variable {σ}
-
-theorem mem_supportedIn {Y : Set (GL (Fin n) F)} {f : parabolicIndSpace F n β σ} :
-    f ∈ supportedIn σ Y ↔ ∀ g ∉ Y, (f : GL (Fin n) F → W) g = 0 :=
-  Iff.rfl
 
 theorem supportedIn_mono {Y Y' : Set (GL (Fin n) F)} (h : Y ⊆ Y') :
     supportedIn σ Y ≤ supportedIn σ Y' :=

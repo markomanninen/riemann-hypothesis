@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.WeightCharacters.DeltaNear
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.WeightCharacters.DeltaNear
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory.LocLanglands GlobalTheory.HeckeGal GlobalTheory.LocGL GlobalTheory.GalOfCusp
@@ -15,15 +19,7 @@ private theorem tor_entry_mem_expLe_one_expGe_zero (h : ExpBasic) (a k : ℕ) (A
         ((if (l:ℕ) < k then (z:ℂ) else 1) * (B : Matrix (Fin a) (Fin a) ℂ) l j) := by
     funext z
     rw [Finset.sum_apply, Units.val_mul, Units.val_mul, Matrix.mul_apply]
-    congr 1
-    funext l
-    simp only [tor, dg, Matrix.diagonal_mul]
-    split_ifs
-    · simp only [Circle.toUnits]
-      first
-        | rfl
-        | simp [unitSphereToUnits_apply_coe]
-    · simp
+    simp [tor_coe, Matrix.diagonal_mul]
   rw [heq]
   constructor
   · refine Submodule.sum_mem _ fun l _ => ?_
@@ -96,7 +92,7 @@ theorem UpperTheory.Gal.Wt.pevExp_of :
     ((A * (tor a k z * B) : GL (Fin a) ℂ) : Matrix (Fin a) (Fin a) ℂ) p.1 p.2
   have he : ∀ p, e p ∈ ExpLe 1 ∧ e p ∈ ExpGe 0 := fun p => tor_entry_mem_expLe_one_expGe_zero h a k A B p.1 p.2
   have hsum : (fun z => pev P (A * (tor a k z * B))) =
-      ∑ d ∈ P.support, fun z => MvPolynomial.coeff d P * ∏ i ∈ d.support, e i z ^ d i := by
+      ∑ d ∈ P.support, fun z => AddMonoidAlgebra.coeff P d * ∏ i ∈ d.support, e i z ^ d i := by
     funext z
     rw [Finset.sum_apply]
     simp only [pev]
@@ -108,11 +104,7 @@ theorem UpperTheory.Gal.Wt.pevExp_of :
     have hle : ((∑ i ∈ d.support, d i : ℕ) : ℤ) ≤ (P.totalDegree : ℤ) := by
       exact_mod_cast MvPolynomial.le_totalDegree hd
     have hm := (h.2.2.1 _ _ hle).1 hp
-    convert Submodule.smul_mem _ (MvPolynomial.coeff d P) hm using 1
-    funext z
-    rfl
+    convert Submodule.smul_mem _ (AddMonoidAlgebra.coeff P d) hm using 1
   · refine Submodule.sum_mem _ fun d _ => ?_
     have hp := (prod_pow_mem_expLe_sum_expGe h e he d d.support).2
-    convert Submodule.smul_mem _ (MvPolynomial.coeff d P) hp using 1
-    funext z
-    rfl
+    convert Submodule.smul_mem _ (AddMonoidAlgebra.coeff P d) hp using 1

@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SideOnePositive
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PointLevelZeroEqEmbedding
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHBFinal
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadJacquetOfLetterAndHead
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHLFinal
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SideOnePositive
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PointLevelZeroEqEmbedding
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHBFinal
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HeadJacquetOfLetterAndHead
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutHLFinal
+
+@[expose] public section
 
 open Matrix MeasureTheory
 

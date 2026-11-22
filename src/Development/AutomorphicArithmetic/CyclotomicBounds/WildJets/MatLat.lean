@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ExistsSmallSpherical
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicValuationThetaKernelJetBound
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VwNatCastNonneg
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JetKapIff
-import Development.AutomorphicArithmetic.CyclotomicBounds.WildJets.LatCoordA
-import Development.AutomorphicArithmetic.CyclotomicBounds.WildJets.LatCoordB
-import Formalism.PairingDivisors.PairingDivisorProofs.ValAdd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ExistsSmallSpherical
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicValuationThetaKernelJetBound
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VwNatCastNonneg
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.JetKapIff
+public import Development.AutomorphicArithmetic.CyclotomicBounds.WildJets.LatCoordA
+public import Development.AutomorphicArithmetic.CyclotomicBounds.WildJets.LatCoordB
+public import Formalism.PairingDivisors.PairingDivisorProofs.ValAdd
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField Matrix GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.RowClaim GlobalTheory.TestLat GlobalTheory.SumSize
 open Formalism.DivisionValues (vw lw)
@@ -37,7 +42,7 @@ private theorem lossLe_add {D : D7} (w : PlL D) {x y : ℂ} {a : ℝ}
     (hx : LossLe w x a) (hy : LossLe w y a) : LossLe w (x + y) a := by
   obtain ⟨s, hs, hs'⟩ := hx
   obtain ⟨t, ht, ht'⟩ := hy
-  refine ⟨s + t, by rw [map_add, hs, ht], ?_⟩
+  refine ⟨s + t, by rw [map_add (f := _), hs, ht], ?_⟩
   by_cases hs0 : s = 0
   · subst hs0; simpa using ht'
   by_cases ht0 : t = 0
@@ -77,7 +82,8 @@ theorem UpperTheory.WildA.matLat :
     calc (bVV ℂ lam').repr (f v) i
         = (bVV ℂ lam').repr (f (∑ j, (bVV ℂ lam).repr v j • bVV ℂ lam j)) i := by rw [hsum]
       _ = _ := by
-        rw [map_sum, map_sum, Finsupp.coe_finset_sum, Finset.sum_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, map_sum, Finset.sum_apply']
         refine Finset.sum_congr rfl fun j _ => ?_
         rw [map_smul, map_smul, Finsupp.smul_apply, smul_eq_mul]
   rw [hrepr]

@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.Localization.UnweightBackStatement
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
+module
+
+public import ReciprocityTheory.L2DbarEstimates.Localization.UnweightBackStatement
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.F
 
@@ -18,7 +22,7 @@ theorem loc_weaklyLocallyCompact {M : Type*} [TopologicalSpace M] (n : ℕ) (z :
   · exact (isCompact_closedBall _ _).image_of_continuousOn
       (e.continuousOn_symm.mono ((Metric.closedBall_subset_ball (by linarith)).trans hsub))
   · have h1 : e.source ∩ e ⁻¹' Metric.ball (e x) (r / 2) ∈ 𝓝 x :=
-      (e.isOpen_inter_preimage Metric.isOpen_ball).mem_nhds ⟨hx, Metric.mem_ball_self (by linarith)⟩
+      (e.isOpen_inter_preimage Metric.isOpen_ball).mem_nhds ⟨hx, Set.mem_preimage.mpr (Metric.mem_ball_self (by linarith))⟩
     refine Filter.mem_of_superset h1 ?_
     rintro y ⟨hy1, hy2⟩
     exact ⟨e y, Metric.ball_subset_closedBall hy2, e.left_inv hy1⟩
@@ -144,14 +148,9 @@ theorem two_form_sq_finset_sum_le {n N : ℕ} (σ : Fin N → Fin n → Fin n �
 theorem loc_memLp_iff {M E : Type*} [MeasurableSpace M] [NormedAddCommGroup E] (ν : Measure M)
     (f : M → E) (hf : AEStronglyMeasurable f ν) :
     MemLp f 2 ν ↔ ∫⁻ x, ‖f x‖ₑ ^ 2 ∂ν < ⊤ := by
-  constructor
-  · intro h
-    have := (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (p := 2) (by norm_num) (by norm_num)).mp h.2
-    simpa [ENNReal.rpow_two] using this
-  · intro h
-    refine ⟨hf, ?_⟩
-    refine (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (p := 2) (by norm_num) (by norm_num)).mpr ?_
-    simpa [ENNReal.rpow_two] using h
+  rw [memLp_iff]
+  simpa [ENNReal.rpow_two] using
+    eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top (p := 2) (by norm_num) (by norm_num) hf
 
 theorem locL2_of_le_sum {M E F₁ F₂ : Type*} [TopologicalSpace M] [MeasurableSpace M]
     [NormedAddCommGroup E] [NormedAddCommGroup F₁] [NormedAddCommGroup F₂] (μ : Measure M)
@@ -507,7 +506,7 @@ theorem loc_lintegral_sum_lt {M : Type*} [MeasurableSpace M] (μ : Measure M) {N
     (hδ : δ' * (N * N) < δ) : ∫⁻ x, F x ∂μ < δ := by
   calc ∫⁻ x, F x ∂μ ≤ ∫⁻ x, N * ∑ i, f i x ∂μ := lintegral_mono hle
     _ = N * ∑ i, ∫⁻ x, f i x ∂μ := by
-      rw [lintegral_const_mul' _ _ (ENNReal.natCast_ne_top N), lintegral_finset_sum' _ (fun i _ => hf i)]
+      rw [lintegral_const_mul' _ _ (ENNReal.natCast_ne_top N), MeasureTheory.lintegral_finsetSum' _ (fun i _ => hf i)]
     _ ≤ N * ∑ _i : Fin N, δ' := by
       gcongr with i
       exact (hi i).le

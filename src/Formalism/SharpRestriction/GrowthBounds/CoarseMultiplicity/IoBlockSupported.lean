@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.FtFockZeroLeft
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.OtherStart
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.FtFockZeroLeft
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.OtherStart
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,7 @@ theorem supp_of_supported {A : Set σ} {F : MvPolynomial σ K} (hF : F ∈ suppo
     (ha : a ∈ F.support) : (a.support : Set σ) ⊆ A := by
   intro x hx
   rw [mem_supported] at hF
-  exact hF ((mem_vars x).mpr ⟨a, ha, hx⟩)
+  exact hF ((mem_vars_iff_mem_support x).mpr ⟨a, ha, hx⟩)
 
 theorem add_eq_add_disj {A B : Set σ} (hAB : Disjoint A B) {a a' b b' : σ →₀ ℕ} (ha : (a.support : Set σ) ⊆ A)
     (ha' : (a'.support : Set σ) ⊆ A) (hb : (b.support : Set σ) ⊆ B) (hb' : (b'.support : Set σ) ⊆ B) :

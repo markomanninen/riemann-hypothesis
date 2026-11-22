@@ -1,34 +1,42 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.MatchIndOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ExpAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ExpIndep
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.LocUnr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.SatDict
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.CoefSm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.SideCenOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.SideOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ExistsPullback
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.Regroup
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.UnionOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.CharSep
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnramifiedAtValueHeckeCharCompIdeleNorm
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsGoodConjSelfDualTwistSplitUnramifiedStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeLAdicCharacterAndPrincipalIdealSt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeilDeligneParamOfLadicRepTwistDetAwayFromL
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.QuadraticTwists.AttTwist
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.EventuallyUnr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ContDiffFderivApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.HasDerivAtProdLog
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ShiftOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.HasFDerivAtExpF
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.TestEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.IsOpenEmbeddingVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.BridgeOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ArchOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.GenericFunctionalEquation.GenFE
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHasInfCharGL
-import GroundTheory.AutomorphicForms.GL2.GJLocalFEGamma
-import GroundTheory.GlobalFields.TateThesis.RootNumberLocalPlace
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.GammaLaurentFactors.MatchIndOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ExpAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ExpIndep
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.LocUnr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.SatDict
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.CoefSm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.SideCenOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.SideOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ExistsPullback
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.Regroup
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.UnionOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.NormChar
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOfTameLoc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeCharacterThetaInvariantExponent
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnramifiedAtValueHeckeCharCompIdeleNorm
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsGoodConjSelfDualTwistSplitUnramifiedStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeLAdicCharacterAndPrincipalIdealSt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeilDeligneParamOfLadicRepTwistDetAwayFromL
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.QuadraticTwists.AttTwist
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsUnitaryTwistAbsPow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTwistDiscreteCsd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHasInfCharGL
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterUnramifiedAeAndExistsLevel
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ContDiffFderivApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.HasDerivAtProdLog
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ShiftOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.HasFDerivAtExpF
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.TestEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.IsOpenEmbeddingVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.BridgeOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.ArchimedeanDerivatives.ArchOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ArchimedeanSchwartz.GenericFunctionalEquation.GenFE
+public import GroundTheory.AutomorphicForms.GL2.GJLocalFEGamma
+public import GroundTheory.GlobalFields.TateThesis.RootNumberLocalPlace
+
+@[expose] public section
 
 noncomputable section
 
@@ -140,139 +148,140 @@ private theorem far_ne {A : ℂ → ℂ} (hA : Differentiable ℂ A) (h0 : A ≠
 set_option maxHeartbeats 1600000 in
 theorem UpperTheory.V.Z.Gam.sideGCenOf :
     UpperTheory.V.Z.Gam.SideGCenOf := by
-  intro hGL hLI K _ _ _ n hn σ h S hRS B hB sp q f hq hsp
-  classical
-  have hLU := locUnr
-  have hSD := satDict
-  have hCS := coefSm
-  have hAS := archOf (shiftOf (ptwOf weyl) parts) fourD testEx (bridgeOf haarL)
-  choose m hm using fun τ : K →+* ℂ => (GlobalTheory.ResW.IrrInfChar.main K n τ).1 σ
-  have hn1 : 1 ≤ n := by omega
-  obtain ⟨D⟩ := (Cm.toRep σ h).nonempty_adelicDecomposition
-  let μ : Measure (Reduction.normOneGL K n) := Measure.haar
-  obtain ⟨a, x, hx, ha, hx0, hxK⟩ := exists_pureTensor_spherical _ D
-  obtain ⟨ℓ, fi, hℓs, hℓ1, hℓK, hf, hF1⟩ := matrixCoeff_factorization_of_pureTensor _ D μ a x hx ha hx0
-  have hfix : ∀ v ∉ S, x v ∈ fixedVectors (D.finite.π v) (integralGL (v.adicCompletion K) n) := fun v hv =>
-    hxK v ((hLI K n σ h D v).2 _ (hB v hv))
-  have hsm : ∀ v, x v ∈ smoothVectors (D.finite.π v) := fun v => (D.finite.isAdmissible v).1 (x v)
-  set φ₀ : cuspForms K n := Phi0 _ D a x hx with hφ₀
-  have hmem : φ₀ ∈ Cm.carrier σ := (phi D a x hx).2
-  have hf' : ∀ g, GJGlobal.matrixCoeff μ φ₀.1 φ₀.1 g = fi (archComp K n g) *
-      ∏ᶠ v : HeightOneSpectrum (𝓞 K), Parabolic.matrixCoeff (F := v.adicCompletion K) (D.finite.π v) (x v) (ℓ v)
-        (localComp n v g) := hf
-  have hF1' : GJGlobal.matrixCoeff μ φ₀.1 φ₀.1 1 ≠ 0 := hF1
-  have hone : ∀ v : HeightOneSpectrum (𝓞 K),
-      Parabolic.matrixCoeff (F := v.adicCompletion K) (D.finite.π v) (x v) (ℓ v) 1 = 1 := fun v => by
-    simpa [Parabolic.matrixCoeff] using hℓ1 v
+  set_option synthInstance.maxHeartbeats 400000 in
+    intro hGL hLI K _ _ _ n hn σ h S hRS B hB sp q f hq hsp
+    classical
+    have hLU := locUnr
+    have hSD := satDict
+    have hCS := coefSm
+    have hAS := archOf (shiftOf (ptwOf weyl) parts) fourD testEx (bridgeOf haarL)
+    choose m hm using fun τ : K →+* ℂ => (GlobalTheory.ResW.IrrInfChar.main K n τ).1 σ
+    have hn1 : 1 ≤ n := by omega
+    obtain ⟨D⟩ := (Cm.toRep σ h).nonempty_adelicDecomposition
+    let μ : Measure (Reduction.normOneGL (K := K) (n := n)) := Measure.haar
+    obtain ⟨a, x, hx, ha, hx0, hxK⟩ := exists_pureTensor_spherical _ D
+    obtain ⟨ℓ, fi, hℓs, hℓ1, hℓK, hf, hF1⟩ := matrixCoeff_factorization_of_pureTensor _ D μ a x hx ha hx0
+    have hfix : ∀ v ∉ S, x v ∈ fixedVectors (D.finite.π v) (integralGL (v.adicCompletion K) n) := fun v hv =>
+      hxK v ((hLI K n σ h D v).2 _ (hB v hv))
+    have hsm : ∀ v, x v ∈ smoothVectors (D.finite.π v) := fun v => (D.finite.isAdmissible v).1 (x v)
+    set φ₀ : cuspForms K n := Phi0 _ D a x hx with hφ₀
+    have hmem : φ₀ ∈ Cm.carrier σ := (phi D a x hx).2
+    have hf' : ∀ g, GJGlobal.matrixCoeff μ φ₀.1 φ₀.1 g = fi (archComp K n g) *
+        ∏ᶠ v : HeightOneSpectrum (𝓞 K), Parabolic.matrixCoeff (F := v.adicCompletion K) (D.finite.π v) (x v) (ℓ v)
+          (localComp n v g) := hf
+    have hF1' : GJGlobal.matrixCoeff μ φ₀.1 φ₀.1 1 ≠ 0 := hF1
+    have hone : ∀ v : HeightOneSpectrum (𝓞 K),
+        Parabolic.matrixCoeff (F := v.adicCompletion K) (D.finite.π v) (x v) (ℓ v) 1 = 1 := fun v => by
+      simpa [Parabolic.matrixCoeff] using hℓ1 v
 
-  obtain ⟨T, hT, hTc⟩ := hCS K n hn1 μ σ h φ₀
-  let p : σ.V := ⟨Cm.ofCusp K n φ₀, hmem⟩
-  have hfi : ∀ y, fi y = (T p).1 ((AdelicGLn.prodEquiv K n).symm (y, 1)) := fun y => by
-    have e1 : archComp K n ((AdelicGLn.prodEquiv K n).symm (y, 1)) = y :=
-      congrArg Prod.fst ((AdelicGLn.prodEquiv K n).apply_symm_apply (y, 1))
-    have e2 : ∀ v, localComp n v ((AdelicGLn.prodEquiv K n).symm (y, 1)) = 1 := fun v => by
-      have e : finComp K n ((AdelicGLn.prodEquiv K n).symm (y, 1)) = 1 :=
-        congrArg Prod.snd ((AdelicGLn.prodEquiv K n).apply_symm_apply (y, 1))
-      change AdelicGLn.finiteRestrictedEquiv K n (finComp K n _) v = 1
-      rw [e, map_one, RestrictedProduct.one_apply]
-    rw [hT]
-    change _ = GJGlobal.matrixCoeff μ φ₀.1 φ₀.1 _
-    rw [hf', e1]
-    simp [e2, hone]
-  have hfi0 : ∃ y, fi y ≠ 0 := ⟨_, left_ne_zero_of_mul (hf' 1 ▸ hF1')⟩
-  obtain ⟨φ, φ', k, k', hk, hk', hAd, hA0, hsh, hsh'⟩ := hAS K n hn1 (T p) m (fun τ u => by
-    rw [← hTc τ u p (((m τ).map (u + ·)).prod • p) (show _ = _ by first | exact (hm τ u _ hmem).symm | exact ((hm τ).2 u _ hmem).symm | exact (hm τ _ hmem u).symm | exact ((hm τ).2 _ hmem u).symm), map_smul]) fi hfi hfi0 Measure.haar
+    obtain ⟨T, hT, hTc⟩ := hCS K n hn1 μ σ h φ₀
+    let p : σ.V := ⟨Cm.ofCusp K n φ₀, hmem⟩
+    have hfi : ∀ y, fi y = (T p).1 ((AdelicGLn.prodEquiv K n).symm (y, 1)) := fun y => by
+      have e1 : archComp K n ((AdelicGLn.prodEquiv K n).symm (y, 1)) = y :=
+        congrArg Prod.fst ((AdelicGLn.prodEquiv K n).apply_symm_apply (y, 1))
+      have e2 : ∀ v, localComp n v ((AdelicGLn.prodEquiv K n).symm (y, 1)) = 1 := fun v => by
+        have e : finComp K n ((AdelicGLn.prodEquiv K n).symm (y, 1)) = 1 :=
+          congrArg Prod.snd ((AdelicGLn.prodEquiv K n).apply_symm_apply (y, 1))
+        change AdelicGLn.finiteRestrictedEquiv K n (finComp K n _) v = 1
+        rw [e, map_one, RestrictedProduct.one_apply]
+      rw [hT]
+      change _ = GJGlobal.matrixCoeff μ φ₀.1 φ₀.1 _
+      rw [hf', e1]
+      simp [e2, hone]
+    have hfi0 : ∃ y, fi y ≠ 0 := ⟨_, left_ne_zero_of_mul (hf' 1 ▸ hF1')⟩
+    obtain ⟨φ, φ', k, k', hk, hk', hAd, hA0, hsh, hsh'⟩ := hAS K n hn1 (T p) m (fun τ u => by
+      rw [← hTc τ u p (((m τ).map (u + ·)).prod • p) (show _ = _ by first | exact (hm τ u _ hmem).symm | exact ((hm τ).2 u _ hmem).symm | exact (hm τ _ hmem u).symm | exact ((hm τ).2 _ hmem u).symm), map_smul]) fi hfi hfi0 Measure.haar
 
-  have hz : ∀ v, ∃ z : Fin n → ℂˣ, v ∉ S →
-      Spherical.IsSatakeParameter (F := v.adicCompletion K) (D.finite.π v) (localHaar n v) z ∧ B v = Finset.univ.val.map z :=
-    fun v => by
-      by_cases hv : v ∈ S
-      · exact ⟨1, fun e => absurd hv e⟩
-      · exact (hSD K n σ h D v _ (hB v hv)).imp fun z hz _ => hz
-  choose z hz using hz
-  have hb := fun v : HeightOneSpectrum (𝓞 K) => exists_localBump (localHaar n v) (D.finite.π v) (hsm v) (ℓ v) (g₀ := 1)
-    (by rw [hone]; exact one_ne_zero)
-  choose Φb hΦb b hb0 hb using hb
-  let Φ : ∀ v : HeightOneSpectrum (𝓞 K), Matrix (Fin n) (Fin n) (v.adicCompletion K) → ℂ :=
-    fun v => if v ∈ S then Φb v else integralIndicator (v.adicCompletion K) n
-  have hΦS : ∀ v ∈ S, Φ v = Φb v := fun v hv => if_pos hv
-  obtain ⟨c, c', hc, hc', hSB1, hG⟩ := genFE hn μ φ₀.2 φ₀.2 (h hmem) S hRS
-    D.finite.π x ℓ hsm hℓs (fun v hv => ⟨hfix v hv, hℓ1 v⟩) (fun v hv => hℓK v (hfix v hv)) D.finite.isIrreducible
-    D.finite.isAdmissible z (fun v hv => (hz v hv).1) fi hf' ⟨1, hF1'⟩ Φ (fun v hv => hΦS v hv ▸ hΦb v)
-    (fun v hv => if_neg hv)
-  obtain ⟨σ₁, Λ, hΛ, h1⟩ := hG φ
-  obtain ⟨σ₂, Λ', hΛ', h2⟩ := hG φ'
-  have hloc : ∀ s, ∏ v ∈ S, zetaIntegral (localHaar n v) (Φ v)
-      (Parabolic.matrixCoeff (F := v.adicCompletion K) (D.finite.π v) (x v) (ℓ v)) s = ∏ v ∈ S, b v := fun s =>
-    Finset.prod_congr rfl fun v hv => by rw [hΦS v hv, (hb v s).2.2, detPow, GodementJacquet.absDet]; simp
-  have hU := fun v (hv : v ∉ S) => hLU K n hn1 v _ (D.finite.π v) (D.finite.isIrreducible v) (D.finite.isAdmissible v)
-    (fun e => hx0 v (by simpa [e] using hfix v hv)) (z v) (hz v hv).1
-  have hL : ∀ s, partialL S D.finite.π s = eulerL K (cx B) S s := fun s =>
-    tprod_congr fun v => by
-      rw [(hU v.1 v.2 s).1, cx, (hz v.1 v.2).2, Multiset.map_map, Multiset.map_map]
-      rfl
-  have hL' : ∀ s, dualPartialL S D.finite.π (1 - s) = eulerLd K (cx B) S s := fun s =>
-    tprod_congr fun v => by
-      rw [(hU v.1 v.2 (1 - s)).2]
-      simp only [cx]
-      rw [(hz v.1 v.2).2, Multiset.map_map, Multiset.map_map, Multiset.map_map]
-      rfl
-  have hd : ∀ v, ∃ (P : ℂ[X]) (e : ℂ) (j : ℤ) (c : ℝ), v ∈ S → P.eval 0 = 1 ∧ P.natDegree = cnt (sp v) 1 ∧
-      ∀ s : ℂ, s.re < -c →
-      zetaIntegral (localHaar n v) (GJMatrix.localMatrixFourier (GroundTheory.Global.localAdelicChar K v) (Φ v))
-        (fun g => Parabolic.matrixCoeff (F := v.adicCompletion K) (D.finite.π v) (x v) (ℓ v) g⁻¹) (1 - s) =
-        e * (((Ideal.absNorm v.asIdeal : ℕ) : ℂ) ^ (-s)) ^ j * P.eval (((Ideal.absNorm v.asIdeal : ℕ) : ℂ) ^ (-s)) /
-          P.eval (((Ideal.absNorm v.asIdeal : ℕ) : ℂ) * ((Ideal.absNorm v.asIdeal : ℕ) : ℂ) ^ (-s)) :=
-    fun v => by
-      by_cases hv : v ∈ S
-      · obtain ⟨P, e, j, hP0, hPd, -, hγ⟩ := hGL K n hn1 v _ (D.finite.π v) (sp v) ((hLI K n σ h D v).1 _ (hsp v hv).1)
-        obtain ⟨r, hr⟩ := loc_dual P e _ (b v) j hP0 (hγ (Φ v) (hΦS v hv ▸ hΦb v) (x v) (ℓ v) (hℓs v)) fun s => by
-          rw [hΦS v hv, (hb v s).2.2, detPow, GodementJacquet.absDet]; simp
-        refine ⟨P, e * b v, j, r, fun _ => ⟨hP0, hPd, fun s hs => ?_⟩⟩
-        have hqs : qs (v.adicCompletion K) s = ((Ideal.absNorm v.asIdeal : ℕ) : ℂ) ^ (-s) := by
-          rw [qs, GroundTheory.Global.residueCard_adicCompletion]
-        rw [← hqs]
-        exact hr s hs
-      · exact ⟨0, 0, 0, 0, fun e => absurd e hv⟩
-  choose P e j cv hd using hd
-  obtain ⟨P₀, c₀, t, hP0, hPd, hfac⟩ := comb S (fun v => Ideal.absNorm v.asIdeal) P e j q f (fun v => cnt (sp v) 1) hq
-    fun v hv => ⟨NumberField.HeightOneSpectrum.one_lt_absNorm v, (hd v hv).1, (hd v hv).2.1, (hsp v hv).2⟩
-  have hb' : ∏ v ∈ S, b v ≠ 0 := Finset.prod_ne_zero_iff.2 fun v _ => hb0 v
-  set r : ℝ := |σ₁| + |σ₂| + ∑ v ∈ S, |cv v| + 2 with hr
-  have hs0 : 0 ≤ ∑ v ∈ S, |cv v| := Finset.sum_nonneg fun _ _ => abs_nonneg _
-  have a1 := le_abs_self σ₁
-  have a2 := le_abs_self σ₂
-  have a3 := abs_nonneg σ₁
-  have a4 := abs_nonneg σ₂
-  have hND : ∀ s : ℂ, s.re < -r + 1 → (∏ v ∈ S, zetaIntegral (localHaar n v)
-      (GJMatrix.localMatrixFourier (GroundTheory.Global.localAdelicChar K v) (Φ v))
-      (fun g => Parabolic.matrixCoeff (F := v.adicCompletion K) (D.finite.π v) (x v) (ℓ v) g⁻¹) (1 - s)) =
-      fac c₀ t q P₀ s := fun s hs => by
-    rw [← hfac]
-    refine Finset.prod_congr rfl fun v hv => (hd v hv).2.2 s ?_
-    have := Finset.single_le_sum (f := fun v => |cv v|) (fun _ _ => abs_nonneg _) hv
-    linarith [le_abs_self (cv v)]
-  refine ⟨linPoly (∑ τ, m τ), P₀, (monic_multiset_prod_of_monic _ _ fun z _ => monic_X_add_C z).ne_zero, hP0, hPd,
-    Λ, fun s => Λ' (s + 1), fun s => c * archZeta Measure.haar φ fi s * ∏ v ∈ S, b v,
-    fun s => c' * archZeta Measure.haar (archMatrixFourier φ) (fun y => fi y⁻¹) (1 - s),
-    k, k', c₀, t, r, hΛ, hΛ'.comp (differentiable_id.add_const 1), ?_, hk, hk', fun s hs => ⟨?_, ?_⟩,
-    fun s hs => ⟨?_, ?_⟩⟩
-  · obtain ⟨s, hs, hA⟩ := far_ne hAd hA0 σ₁
-    intro e
-    have := (h1 s hs).2.1
-    rw [e, hloc] at this
-    exact mul_ne_zero (mul_ne_zero (mul_ne_zero hc hA) hb') (h1 s hs).1 this.symm
-  · rw [(h1 s (by linarith)).2.1, hloc, hL]
-    ring
-  · beta_reduce
-    rw [(h2 (s + 1) (by simp; linarith)).2.1, hloc, hL, hsh]
-    ring
-  · have := (h1 (1 - s) (by simp; linarith)).2.2
-    rw [sub_sub_cancel, hL', hND s (by linarith)] at this
-    rw [this]
-    ring
-  · have := (h2 (1 - (s + 1)) (by simp; linarith)).2.2
-    rw [sub_sub_cancel, hL', hND (s + 1) (by simp; linarith), hsh', show 1 - (s + 1) + 1 = 1 - s by ring] at this
-    beta_reduce
-    rw [this]
-    ring
+    have hz : ∀ v, ∃ z : Fin n → ℂˣ, v ∉ S →
+        Spherical.IsSatakeParameter (F := v.adicCompletion K) (D.finite.π v) (localHaar n v) z ∧ B v = Finset.univ.val.map z :=
+      fun v => by
+        by_cases hv : v ∈ S
+        · exact ⟨1, fun e => absurd hv e⟩
+        · exact (hSD K n σ h D v _ (hB v hv)).imp fun z hz _ => hz
+    choose z hz using hz
+    have hb := fun v : HeightOneSpectrum (𝓞 K) => exists_localBump (localHaar n v) (D.finite.π v) (hsm v) (ℓ v) (g₀ := 1)
+      (by rw [hone]; exact one_ne_zero)
+    choose Φb hΦb b hb0 hb using hb
+    let Φ : ∀ v : HeightOneSpectrum (𝓞 K), Matrix (Fin n) (Fin n) (v.adicCompletion K) → ℂ :=
+      fun v => if v ∈ S then Φb v else integralIndicator (v.adicCompletion K) n
+    have hΦS : ∀ v ∈ S, Φ v = Φb v := fun v hv => if_pos hv
+    obtain ⟨c, c', hc, hc', hSB1, hG⟩ := genFE hn μ φ₀.2 φ₀.2 (h hmem) S hRS
+      D.finite.π x ℓ hsm hℓs (fun v hv => ⟨hfix v hv, hℓ1 v⟩) (fun v hv => hℓK v (hfix v hv)) D.finite.isIrreducible
+      D.finite.isAdmissible z (fun v hv => (hz v hv).1) fi hf' ⟨1, hF1'⟩ Φ (fun v hv => hΦS v hv ▸ hΦb v)
+      (fun v hv => if_neg hv)
+    obtain ⟨σ₁, Λ, hΛ, h1⟩ := hG φ
+    obtain ⟨σ₂, Λ', hΛ', h2⟩ := hG φ'
+    have hloc : ∀ s, ∏ v ∈ S, zetaIntegral (localHaar n v) (Φ v)
+        (Parabolic.matrixCoeff (F := v.adicCompletion K) (D.finite.π v) (x v) (ℓ v)) s = ∏ v ∈ S, b v := fun s =>
+      Finset.prod_congr rfl fun v hv => by rw [hΦS v hv, (hb v s).2.2, detPow, GodementJacquet.absDet]; simp
+    have hU := fun v (hv : v ∉ S) => hLU K n hn1 v _ (D.finite.π v) (D.finite.isIrreducible v) (D.finite.isAdmissible v)
+      (fun e => hx0 v (by simpa [e] using hfix v hv)) (z v) (hz v hv).1
+    have hL : ∀ s, partialL S D.finite.π s = eulerL K (cx B) S s := fun s =>
+      tprod_congr fun v => by
+        rw [(hU v.1 v.2 s).1, cx, (hz v.1 v.2).2, Multiset.map_map, Multiset.map_map]
+        rfl
+    have hL' : ∀ s, dualPartialL S D.finite.π (1 - s) = eulerLd K (cx B) S s := fun s =>
+      tprod_congr fun v => by
+        rw [(hU v.1 v.2 (1 - s)).2]
+        simp only [cx]
+        rw [(hz v.1 v.2).2, Multiset.map_map, Multiset.map_map, Multiset.map_map]
+        rfl
+    have hd : ∀ v, ∃ (P : ℂ[X]) (e : ℂ) (j : ℤ) (c : ℝ), v ∈ S → P.eval 0 = 1 ∧ P.natDegree = cnt (sp v) 1 ∧
+        ∀ s : ℂ, s.re < -c →
+        zetaIntegral (localHaar n v) (GJMatrix.localMatrixFourier (GroundTheory.Global.localAdelicChar K v) (Φ v))
+          (fun g => Parabolic.matrixCoeff (F := v.adicCompletion K) (D.finite.π v) (x v) (ℓ v) g⁻¹) (1 - s) =
+          e * (((Ideal.absNorm v.asIdeal : ℕ) : ℂ) ^ (-s)) ^ j * P.eval (((Ideal.absNorm v.asIdeal : ℕ) : ℂ) ^ (-s)) /
+            P.eval (((Ideal.absNorm v.asIdeal : ℕ) : ℂ) * ((Ideal.absNorm v.asIdeal : ℕ) : ℂ) ^ (-s)) :=
+      fun v => by
+        by_cases hv : v ∈ S
+        · obtain ⟨P, e, j, hP0, hPd, -, hγ⟩ := hGL K n hn1 v _ (D.finite.π v) (sp v) ((hLI K n σ h D v).1 _ (hsp v hv).1)
+          obtain ⟨r, hr⟩ := loc_dual P e _ (b v) j hP0 (hγ (Φ v) (hΦS v hv ▸ hΦb v) (x v) (ℓ v) (hℓs v)) fun s => by
+            rw [hΦS v hv, (hb v s).2.2, detPow, GodementJacquet.absDet]; simp
+          refine ⟨P, e * b v, j, r, fun _ => ⟨hP0, hPd, fun s hs => ?_⟩⟩
+          have hqs : qs (v.adicCompletion K) s = ((Ideal.absNorm v.asIdeal : ℕ) : ℂ) ^ (-s) := by
+            rw [qs, GroundTheory.Global.residueCard_adicCompletion]
+          rw [← hqs]
+          exact hr s hs
+        · exact ⟨0, 0, 0, 0, fun e => absurd e hv⟩
+    choose P e j cv hd using hd
+    obtain ⟨P₀, c₀, t, hP0, hPd, hfac⟩ := comb S (fun v => Ideal.absNorm v.asIdeal) P e j q f (fun v => cnt (sp v) 1) hq
+      fun v hv => ⟨NumberField.HeightOneSpectrum.one_lt_absNorm v, (hd v hv).1, (hd v hv).2.1, (hsp v hv).2⟩
+    have hb' : ∏ v ∈ S, b v ≠ 0 := Finset.prod_ne_zero_iff.2 fun v _ => hb0 v
+    set r : ℝ := |σ₁| + |σ₂| + ∑ v ∈ S, |cv v| + 2 with hr
+    have hs0 : 0 ≤ ∑ v ∈ S, |cv v| := Finset.sum_nonneg fun _ _ => abs_nonneg _
+    have a1 := le_abs_self σ₁
+    have a2 := le_abs_self σ₂
+    have a3 := abs_nonneg σ₁
+    have a4 := abs_nonneg σ₂
+    have hND : ∀ s : ℂ, s.re < -r + 1 → (∏ v ∈ S, zetaIntegral (localHaar n v)
+        (GJMatrix.localMatrixFourier (GroundTheory.Global.localAdelicChar K v) (Φ v))
+        (fun g => Parabolic.matrixCoeff (F := v.adicCompletion K) (D.finite.π v) (x v) (ℓ v) g⁻¹) (1 - s)) =
+        fac c₀ t q P₀ s := fun s hs => by
+      rw [← hfac]
+      refine Finset.prod_congr rfl fun v hv => (hd v hv).2.2 s ?_
+      have := Finset.single_le_sum (f := fun v => |cv v|) (fun _ _ => abs_nonneg _) hv
+      linarith [le_abs_self (cv v)]
+    refine ⟨linPoly (∑ τ, m τ), P₀, (monic_multiset_prod_of_monic _ _ fun z _ => monic_X_add_C z).ne_zero, hP0, hPd,
+      Λ, fun s => Λ' (s + 1), fun s => c * archZeta Measure.haar φ fi s * ∏ v ∈ S, b v,
+      fun s => c' * archZeta Measure.haar (archMatrixFourier φ) (fun y => fi y⁻¹) (1 - s),
+      k, k', c₀, t, r, hΛ, hΛ'.comp (differentiable_id.add_const 1), ?_, hk, hk', fun s hs => ⟨?_, ?_⟩,
+      fun s hs => ⟨?_, ?_⟩⟩
+    · obtain ⟨s, hs, hA⟩ := far_ne hAd hA0 σ₁
+      intro e
+      have := (h1 s hs).2.1
+      rw [e, hloc] at this
+      exact mul_ne_zero (mul_ne_zero (mul_ne_zero hc hA) hb') (h1 s hs).1 this.symm
+    · rw [(h1 s (by linarith)).2.1, hloc, hL]
+      ring
+    · beta_reduce
+      rw [(h2 (s + 1) (by simp; linarith)).2.1, hloc, hL, hsh]
+      ring
+    · have := (h1 (1 - s) (by simp; linarith)).2.2
+      rw [sub_sub_cancel, hL', hND s (by linarith)] at this
+      rw [this]
+      ring
+    · have := (h2 (1 - (s + 1)) (by simp; linarith)).2.2
+      rw [sub_sub_cancel, hL', hND (s + 1) (by simp; linarith), hsh', show 1 - (s + 1) + 1 = 1 - s by ring] at this
+      beta_reduce
+      rw [this]
+      ring

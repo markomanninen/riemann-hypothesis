@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.FormalIdeal
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.FormalIdeal
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -22,7 +27,8 @@ lemma exists_smulHom_eq_comp_idealSumMap (J : Ideal A) {a : A} (ha : a ∈ J) :
   rw [← span_idealGen J] at ha
   obtain ⟨c, hc⟩ := (Ideal.mem_span_range_iff_exists_fun).1 ha
   refine ⟨biproduct.lift fun j => smulHom F (algebraMap A Γ(X, ⊤) (c j)), ?_⟩
-  simp only [idealSumMap, biproduct.lift_desc, smulHom_comp_smulHom, ← map_mul, ← smulHom_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [idealSumMap, biproduct.lift_desc, smulHom_comp_smulHom, ← map_mul, ← smulHom_sum,
     ← map_sum]
   rw [hc]
 
@@ -31,7 +37,6 @@ def idealPowOfMem {k : ℕ} (a : A) (ha : a ∈ I ^ k) : F ⟶ idealPow I F k :=
     obtain ⟨h, hh⟩ := exists_smulHom_eq_comp_idealSumMap F (I ^ k) ha
     rw [hh, Category.assoc, cokernel.condition, comp_zero])
 
-@[reassoc (attr := simp)]
 lemma idealPowOfMem_ι {k : ℕ} (a : A) (ha : a ∈ I ^ k) :
     idealPowOfMem I F a ha ≫ idealPowι I F k = smulHom F (algebraMap A Γ(X, ⊤) a) :=
   kernel.lift_ι _ _ _

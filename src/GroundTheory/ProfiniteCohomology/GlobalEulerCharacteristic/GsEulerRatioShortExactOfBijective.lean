@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.DefsForms
-import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.RealHerbrand
-import GroundTheory.ProfiniteCohomology.EulerChar
-import GroundTheory.ProfiniteCohomology.CupProducts.Projection
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.DefsForms
+public import GroundTheory.ProfiniteCohomology.GlobalEulerCharacteristic.RealHerbrand
+public import GroundTheory.ProfiniteCohomology.EulerChar
+public import GroundTheory.ProfiniteCohomology.CupProducts.Projection
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -71,9 +76,9 @@ theorem eulerChar_mul_eq_mul_card_ker (hS : S.ShortExact)
   rw [eulerChar_mul_eq_mul_card_range_δ hS,
     card_range_eq_card_ker_of_exact (cohomology_exact₁ hS 2 3 rfl)]
 
+
 omit [TopologicalSpace G] [IsTopologicalGroup G] [IsDiscreteRep S.X₁] [IsDiscreteRep S.X₂]
   [IsDiscreteRep S.X₃] in
-
 theorem card_X₂_eq_of_shortExact (hS : S.ShortExact) [Finite S.X₂] :
     Nat.card S.X₂ = Nat.card S.X₁ * Nat.card S.X₃ := by
   have hinj : Function.Injective S.f.hom := (Rep.mono_iff_injective _).1 hS.mono_f
@@ -118,13 +123,13 @@ end Kernels
 
 section GS
 
+local notation "ℚ̄" => AlgebraicClosure ℚ
+
 theorem ratio_mul_eq {a b c nA nB nC PA PB PC κ : ℚ} (r : ℕ) (hPA : PA ≠ 0) (hPB : PB ≠ 0)
     (hPC : PC ≠ 0) (hn : nB = nA * nC) (hχ : a * c = b * κ) (hP : PA * PC = PB * κ) :
     b * nB ^ r / PB = a * nA ^ r / PA * (c * nC ^ r / PC) := by
   rw [div_mul_div_comm, div_eq_div_iff hPB (mul_ne_zero hPA hPC), hP, hn, mul_pow]
   linear_combination (-(nA ^ r * nC ^ r * PB)) * hχ
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
   (ιr : ∀ v : {v : InfinitePlace K.1 // v.IsReal}, ℚ̄ →ₐ[K.1] AlgebraicClosure v.1.Completion)
@@ -158,8 +163,8 @@ theorem gsReal_card_mul_eq (hT : T.ShortExact) [Finite T.X₁] [Finite T.X₂] [
       (gsRealH0Card S T.X₃ ιr v : ℚ) := gsReal_eulerChar_eq_card_cohomology_zero S ιr T.X₃ v
   exact ((congrArg₂ (· * ·) e1 e3).symm.trans h).trans (congrArg (· * _) e2)
 
-omit [IsDiscreteRep T.X₁] [IsDiscreteRep T.X₂] [IsDiscreteRep T.X₃] in
 
+omit [IsDiscreteRep T.X₁] [IsDiscreteRep T.X₂] [IsDiscreteRep T.X₃] in
 theorem gsRealRes_cohomologyMap {A B : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOutside K.1 ℚ̄ S)}
     [IsDiscreteRep A] [IsDiscreteRep B] (f : A ⟶ B) (n : ℕ) (x : cohomology A n)
     (v : {v : InfinitePlace K.1 // v.IsReal}) :
@@ -178,8 +183,8 @@ theorem gsRealRes_cohomologyMap {A B : Rep.{0} (ULift.{0} ℤ) (galUnramifiedOut
     (Category.id_comp ((Rep.resFunctor (gsRealFamily S ιr v).toMonoidHom).map f))
   exact (h1.trans c1).trans (h2.trans c2).symm
 
-open scoped Classical in
 
+open scoped Classical in
 theorem gsEulerRatio_shortExact [Finite S] (hT : T.ShortExact) [Finite T.X₂]
     (hn : ∀ v : HeightOneSpectrum (𝓞 K.1), ((Nat.card T.X₂ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
     (hA : Function.Bijective (gsRealRes S ιr T.X₁ 3).hom)
@@ -219,8 +224,8 @@ theorem gsEulerRatio_shortExact [Finite S] (hT : T.ShortExact) [Finite T.X₂]
   exact ratio_mul_eq (Fintype.card (InfinitePlace K.1)) hPA hPB hPC (by exact_mod_cast hcard)
     hglob hprod
 
-open scoped Classical in
 
+open scoped Classical in
 theorem gsEulerRatio_shortExact_of_bijective [Finite S] (hT : T.ShortExact) [Finite T.X₂]
     (hn : ∀ v : HeightOneSpectrum (𝓞 K.1), ((Nat.card T.X₂ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
     (hA : Function.Bijective (gsRealRes S ιr T.X₁ 3).hom)

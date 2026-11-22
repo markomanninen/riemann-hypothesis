@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.SCharts
-import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NaturalRuleValueBaseChangeOfIsReduced
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsAlgebraMapEqOfValVLeOne
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsMulEqOfSubfieldClosureEqTop
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsExtendOfPowDenom
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.InjectiveAlgebraMapOfDvrOfIsIntegral
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsUnramifiedExtension
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsValuationSubringLeDominatingOfFractionFiel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.SCharts
+public import Formalism.LocalToGlobal.ProjectiveLattices.FrameCharts
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NaturalRuleValueBaseChangeOfIsReduced
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsAlgebraMapEqOfValVLeOne
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsMulEqOfSubfieldClosureEqTop
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsExtendOfPowDenom
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.InjectiveAlgebraMapOfDvrOfIsIntegral
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsUnramifiedExtension
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.ExistsValuationSubringLeDominatingOfFractionFiel
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 
@@ -40,8 +44,8 @@ theorem mem_range_iff_vV_nonneg (x : K') : x ∈ Set.range (algebraMap V K') ↔
 theorem vV_of_irreducible {v : V} (hv : Irreducible v) : vV V (algebraMap V K' v) = 1 := by
   rw [vV, valV_algebraMap_of_irreducible hv, WithZero.log_exp]; simp
 
-variable (V K') in
 
+variable (V K') in
 def imageVal : ValuationSubring K' := (valV V (K' := K')).valuationSubring
 
 theorem mem_imageVal (x : K') : x ∈ imageVal V K' ↔ x ∈ Set.range (algebraMap V K') :=
@@ -106,7 +110,7 @@ theorem regular_span (q : FractionRing A) (ϖ : A) (s : Set A)
     { carrier := {s | ∃ x : A, q * algebraMap A _ s = algebraMap A _ x}
       add_mem' := by
         rintro a b ⟨x, hx⟩ ⟨y, hy⟩
-        exact ⟨x + y, by rw [map_add, map_add, mul_add, hx, hy]⟩
+        exact ⟨x + y, by rw [map_add (f := _), map_add (f := _), mul_add, hx, hy]⟩
       zero_mem' := ⟨0, by simp⟩
       smul_mem' := by
         rintro r a ⟨x, hx⟩
@@ -351,7 +355,7 @@ theorem sup_ne_top_of_nonunits {A V : Type} [CommRing A] [CommRing V] [IsDomain 
     refine (hm : ¬ IsUnit (φ m)) (IsUnit.of_mul_eq_one v (IsFractionRing.injective V (FractionRing V) ?_))
     rw [map_mul, hv, map_one, mul_inv_cancel₀ h0]
   have h3 := W.valuation.map_add_lt h1 h2
-  rw [← map_add, ← map_add, hum, map_one, map_one, map_one] at h3
+  rw [← map_add (f := _), ← map_add (f := _), hum, map_one, map_one, map_one] at h3
   exact lt_irrefl _ h3
 
 theorem exists_unramified_of_trivial {K F T Fr : Type} [Field K] [CharZero K] [Field F] [CommRing T]

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SegreJoin
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SegreJoin
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSOpR
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFOpOKMulGPf
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellVanishingOfCommute
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSOpR
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFOpOKMulGPf
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BigCellVanishingOfCommute
+
+@[expose] public section
 
 open MeasureTheory
 open scoped Matrix ContDiff

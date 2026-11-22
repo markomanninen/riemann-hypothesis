@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealEqBotOfFlatQuotientOfMapMaximalIdeal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealEqBotOfFlatQuotientOfMapMaximalIdeal
+
+@[expose] public section
 
 open TensorProduct LinearMap IsLocalRing
 
@@ -22,7 +26,6 @@ theorem lTensor_map_injective {R A M : Type*} [CommRing R] [CommRing A] [Algebra
   have hsurj : ∀ x, x ∈ LinearMap.range φ := by
     intro x
     induction x with
-    | zero => exact zero_mem _
     | add a b ha hb => exact add_mem ha hb
     | tmul m i =>
       obtain ⟨i, hi⟩ := i
@@ -46,10 +49,9 @@ theorem lTensor_map_injective {R A M : Type*} [CommRing R] [CommRing A] [Algebra
       TensorProduct.rid R M (p.subtype.lTensor M y) := by
     intro y
     induction y with
-    | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | tmul m r => simp [hφ, c]
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨y, rfl⟩ := hsurj x
   have h0 := hcomp y
@@ -71,13 +73,13 @@ theorem exists_of_lTensor_eq {F G N : Type} [AddCommGroup F] [Module A F] [AddCo
       (snd A F G ∘ₗ (ker (f.coprod g)).subtype).lTensor M z = y := by
   have hex := lTensor_exact M (f.coprod g).exact_subtype_ker_map hs
   have h0 : (f.coprod g).lTensor M ((inl A F G).lTensor M x + (inr A F G).lTensor M y) = 0 := by
-    rw [map_add, ← lTensor_comp_apply, ← lTensor_comp_apply, coprod_inl, coprod_inr, h]
+    rw [map_add (f := _), ← lTensor_comp_apply, ← lTensor_comp_apply, coprod_inl, coprod_inr, h]
   obtain ⟨z, hz⟩ := (hex _).mp h0
   refine ⟨z, ?_, ?_⟩
-  · rw [lTensor_comp_apply, hz, map_add, ← lTensor_comp_apply, ← lTensor_comp_apply,
+  · rw [lTensor_comp_apply, hz, map_add (f := _), ← lTensor_comp_apply, ← lTensor_comp_apply,
       fst_comp_inl, fst_comp_inr]
     simp
-  · rw [lTensor_comp_apply, hz, map_add, ← lTensor_comp_apply, ← lTensor_comp_apply,
+  · rw [lTensor_comp_apply, hz, map_add (f := _), ← lTensor_comp_apply, ← lTensor_comp_apply,
       snd_comp_inl, snd_comp_inr]
     simp
 
@@ -85,7 +87,7 @@ theorem lTensor_injective_of_le_range {I : Ideal A} (hrel : RelationsLift I M)
     (hI : Function.Injective (I.subtype.lTensor M)) {F : Type} [AddCommGroup F] [Module A F]
     (f : F →ₗ[A] A) (hf : Function.Injective f) (hle : I ≤ range f) :
     Function.Injective (f.lTensor M) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨y, rfl⟩ := hrel F f x (by rw [hx]; simp)
   let e₀ : Submodule.comap f I →ₗ[A] I := f.restrict fun _ h => h
@@ -119,7 +121,7 @@ theorem lTensor_injective_of_pow_le [IsNoetherianRing A] {I : Ideal A} (hrel : R
       obtain ⟨j, hj, c, hc, rfl⟩ := Submodule.mem_sup.mp hb
       obtain ⟨c, rfl⟩ := Ideal.mem_span_singleton'.mp hc
       exact ⟨(⟨j, hj⟩, c), rfl⟩
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     have hfx : f.lTensor M x = 0 := by
       apply h'
@@ -129,7 +131,7 @@ theorem lTensor_injective_of_pow_le [IsNoetherianRing A] {I : Ideal A} (hrel : R
     have hinj : Function.Injective
         ((snd A J A ∘ₗ (ker (f.coprod g)).subtype).lTensor M) := by
       refine lTensor_injective_of_le_range hrel hI _ ?_ fun i hi => ?_
-      · rw [injective_iff_map_eq_zero]
+      · set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
         rintro ⟨⟨j, c⟩, hjc⟩ hc
         have hc' : c = 0 := hc
         subst hc'
@@ -182,7 +184,7 @@ theorem relationsLift_of_injective {J : Ideal A}
     exact ⟨(a, ⟨c, hc⟩), rfl⟩
   have h0 : f'.lTensor M x + g.lTensor M (-y) = 0 := by
     apply h J' le_sup_right
-    rw [map_add, ← lTensor_comp_apply, ← lTensor_comp_apply, map_zero, map_neg]
+    rw [map_add (f := _), ← lTensor_comp_apply, ← lTensor_comp_apply, map_zero, map_neg]
     change f.lTensor M x + -(J.subtype.lTensor M y) = 0
     rw [hy', add_neg_cancel]
   obtain ⟨z, hz, -⟩ := exists_of_lTensor_eq f' g hs x (-y) h0

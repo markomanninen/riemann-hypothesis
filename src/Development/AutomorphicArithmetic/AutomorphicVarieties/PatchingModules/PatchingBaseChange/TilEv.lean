@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.AlgebraMapEq
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.PatchingBaseChange.AlgebraMapEq
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 open scoped TensorProduct
@@ -13,7 +17,7 @@ private theorem UpperTheory.V.Pa.BC.ev_nat {M M' : Type} [AddCommGroup M] [Modul
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp
-  | add a b ha hb => simp only [map_add, Pi.add_apply, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), Pi.add_apply, ha, hb]
 
 private theorem UpperTheory.V.Pa.BC.ev_free (n : ℕ) :
     Function.Bijective (TensorProduct.piRightHom R R (Fin n → R) (fun _ : ι => N)) := by
@@ -41,7 +45,7 @@ private theorem UpperTheory.V.Pa.BC.ev_free (n : ℕ) :
       ext k i
       have h1 := congrFun (congrFun ha k) i
       have h2 := congrFun (congrFun hb k) i
-      simp only [map_add, Pi.add_apply, Equiv.piComm_apply] at h1 h2 ⊢
+      simp only [map_add (f := _), Pi.add_apply, Equiv.piComm_apply] at h1 h2 ⊢
       rw [h1, h2]
       rfl
   have hfun : ⇑(TensorProduct.piRightHom R R (Fin n → R) (fun _ : ι => N)) =
@@ -64,7 +68,7 @@ private theorem UpperTheory.V.Pa.BC.ev_bij [IsNoetherianRing R] (M : Type) [AddC
   haveI := Module.finitePresentation_of_finite R M
   refine ⟨?_, UpperTheory.V.Pa.BC.ev_surj N M⟩
   obtain ⟨n, m, f, g, hf, hfg⟩ := Module.FinitePresentation.exists_fin' R M
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨y, rfl⟩ := LinearMap.rTensor_surjective (ι → N) hf x
   have hex := rTensor_exact N hfg hf
@@ -108,12 +112,12 @@ theorem UpperTheory.V.Pa.BC.til_ev :
     | tmul o s =>
       simp only [tc, Algebra.TensorProduct.tmul_mul_tmul, one_mul]
       rw [TensorProduct.comm_tmul, TensorProduct.comm_tmul, TensorProduct.smul_tmul', smul_eq_mul]
-    | add x y hx hy => rw [mul_add, map_add, hx, hy, map_add, smul_add]
+    | add x y hx hy => rw [mul_add, map_add (f := _), hx, hy, map_add (f := _), smul_add]
   let cf : Til O O' R →ₗ[R] (ℕ → N) :=
     { toFun := fun a k => tc (Til.coeff O O' R k a)
       map_add' := fun a b => by
         funext k
-        simp only [hadd, map_add, Pi.add_apply]
+        simp only [hadd, map_add (f := _), Pi.add_apply]
       map_smul' := fun r a => by
         funext k
         simp only [RingHom.id_apply, Pi.smul_apply]
@@ -145,7 +149,7 @@ theorem UpperTheory.V.Pa.BC.til_ev :
       simp [cb, tc, Til.act, TensorProduct.AlgebraTensorModule.cancelBaseChange_tmul]
       rw [TensorProduct.comm_tmul, TensorProduct.AlgebraTensorModule.cancelBaseChange_tmul,
         TensorProduct.comm_tmul]
-    | add x y hx hy => rw [map_add, TensorProduct.tmul_add, map_add, hx, hy, map_add]
+    | add x y hx hy => rw [map_add (f := _), TensorProduct.tmul_add, map_add (f := _), hx, hy, map_add (f := _)]
   refine ⟨(TensorProduct.comm R (Til O O' R) M).toAddEquiv.trans
     ((cfe.lTensor M).toAddEquiv.trans (eve.toAddEquiv.trans (AddEquiv.piCongrRight (fun _ => cb)))), ?_⟩
   intro a m k

@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.LocalRepresentationL2
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.InnerZero
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.LocalRepresentationL2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.InnerZero
+import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.StrongMultiplicityOne.Compl
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
 open GroundTheory.Automorphic.AutomorphicForm GroundTheory.Automorphic.CuspidalSpectrum
 open GlobalTheory.CuspRep (CuspSub GA Af Ad finGL locGL)
 open UpperTheory.ConvolutionTheory.C UpperTheory.ConvolutionTheory.Dp UpperTheory.V
-open private stab_orthRel from Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.InnerZero
 
 private theorem le_or_iso {M I : Type} [AddCommGroup M] [Module ℂ M] (A : I → M →ₗ[ℂ] M) (U U' C : Submodule ℂ M)
     (hU : ∀ i, ∀ x ∈ U, A i x ∈ U) (hU' : ∀ i, ∀ x ∈ U', A i x ∈ U') (hC : ∀ i, ∀ x ∈ C, A i x ∈ C)
@@ -55,21 +59,23 @@ private theorem le_or_iso {M I : Type} [AddCommGroup M] [Module ℂ M] (A : I �
 theorem UpperTheory.ConvolutionTheory.Dp.orthOrIso :
     UpperTheory.ConvolutionTheory.Dp.OrthOrIso := by
   intro K _ _ n μ _ U U' l l' hs hs' hi hi'
-  have hC := stab_orthRel (CuspidalSpectrum.cuspToL2 μ) (fun X a ha c hc => petersson_inner_lieAlgebra_skewAdjoint μ X ha hc)
-    (fun k a ha c hc => petersson_inner_maximalCompact_invariant μ k ha hc) (fun g a ha c hc => petersson_inner_finiteAdelic_invariant μ g ha hc) l' hs'
-  have hsup := CuspidalSpectrum.sup_orthRel_centralCuspForms μ _ l' hs'.ρ hs'.τ
-  have hinf := inf_orthRel_eq_bot (ι := CuspidalSpectrum.cuspToL2 μ) l' fun a ha h0 =>
-    CuspidalSpectrum.eq_zero_of_cuspVecL_eq_zero (μ := μ) ha h0
+  obtain ⟨C, hC, hsup, horth⟩ := UpperTheory.V.Af.StrongMultiplicityOne.compl K n μ U' l' hs'
+  have hinf : U' ⊓ C = ⊥ := by
+    rw [eq_bot_iff]
+    rintro a ⟨ha, haC⟩
+    have hzero := horth a ha a haC
+    rw [inner_self_eq_zero] at hzero
+    exact (Submodule.mem_bot ℂ).2 (CuspidalSpectrum.eq_zero_of_cuspVecL_eq_zero (μ := μ) (l' ha) hzero)
   let A : ((isExpLieAlgebra K n).lieSubalgebra ⊕ archCompact K n ⊕ AdelicGLn.FiniteAdelicGL K n) → cuspForms K n →ₗ[ℂ] cuspForms K n :=
     Sum.elim (fun X => (gkModuleCusp K n).ρ X) (Sum.elim (fun k => (gkModuleCusp K n).σ k) fun g => finRepCusp K n g)
   have hA : ∀ W, Fb.Stab W ↔ ∀ i, ∀ x ∈ W, A i x ∈ W := fun W =>
     ⟨fun h i => by
       rcases i with X | k | g
       exacts [h.ρ X, h.σ k, h.τ g], fun h => ⟨fun X => h (.inl X), fun k => h (.inr (.inl k)), fun g => h (.inr (.inr g))⟩⟩
-  rcases le_or_iso A U U' _ ((hA _).1 hs) ((hA _).1 hs') ((hA _).1 hC) (fun W h1 h2 => hi W h1 ((hA _).2 h2))
+  rcases le_or_iso A U U' C ((hA _).1 hs) ((hA _).1 hs') ((hA _).1 hC) (fun W h1 h2 => hi W h1 ((hA _).2 h2))
     (fun W h1 h2 => hi' W h1 ((hA _).2 h2)) hinf (l.trans hsup.ge) with h | ⟨T, hT⟩
   · refine Or.inl (Submodule.IsOrtho.symm ?_)
     rw [Submodule.isOrtho_iff_inner_eq]
     rintro _ ⟨a, ha, rfl⟩ _ ⟨b, hb, rfl⟩
-    exact (h hb).2 a ha
+    exact horth a ha b (h hb)
   · exact Or.inr ⟨T, fun X => hT (.inl X), fun k => hT (.inr (.inl k)), fun g => hT (.inr (.inr g))⟩

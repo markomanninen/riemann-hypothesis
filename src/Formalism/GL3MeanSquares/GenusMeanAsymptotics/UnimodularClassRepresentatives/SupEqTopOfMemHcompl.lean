@@ -1,4 +1,8 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsUnimodularAtIffVd
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.IsUnimodularAtIffVd
+
+@[expose] public section
 
 open NumberField Module Matrix
 
@@ -21,7 +25,7 @@ theorem sup_eq_top_of_mem_hcompl (hK : Formalism.HermitianLatticesTheory.IsCMUnr
   have hpQ : P.comap (algebraMap (𝓞 F) (𝓞 K)) ≤ Q.comap (algebraMap (𝓞 F) (𝓞 K)) :=
     Ideal.map_le_iff_le_comap.1 hext
   have hmax : (P.comap (algebraMap (𝓞 F) (𝓞 K))).IsMaximal :=
-    Ideal.isMaximal_comap_of_isIntegral_of_isMaximal P
+    Ideal.isMaximal_under_of_isIntegral_of_isMaximal P
   haveI := hQ.isPrime
   have heq : P.comap (algebraMap (𝓞 F) (𝓞 K)) = Q.comap (algebraMap (𝓞 F) (𝓞 K)) :=
     hmax.eq_of_le (inferInstance : (Q.comap (algebraMap (𝓞 F) (𝓞 K))).IsPrime).ne_top hpQ
@@ -35,14 +39,15 @@ private theorem isUnitIn_mul' {S : Subring K} {a b : K} (ha : Formalism.Hermitia
 
 theorem exists_orth_basis (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (hF : IsFixF K F)
     {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hd : IsTotPosDef h) {L : Submodule (𝓞 K) V}
-    (hL : Submodule.IsLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) {𝔭 : Ideal (𝓞 F)}
+    (hL : Submodule.IsFullLattice K L) (hLi : Formalism.HermitianLatticesTheory.IsIntegralLat h L) {𝔭 : Ideal (𝓞 F)}
     (h𝔭 : 𝔭.IsMaximal) (hv : vd h L 𝔭 = 0) :
     ∃ (b : Basis (Fin (finrank K V)) K V) (u : Fin (finrank K V) → 𝓞 K), (∀ i, b i ∈ L) ∧
       locF 𝔭 (Submodule.span (𝓞 K) (Set.range b)) = locF 𝔭 L ∧
       (∀ i j, algebraMap (𝓞 K) K (diagonal u i j) = h (b i) (b j)) ∧
       (∀ i, conjO K (u i) = u i) ∧ ∀ i, Ideal.span {u i} ⊔ extP K 𝔭 = ⊤ := by
   obtain ⟨P, hP, rfl⟩ := exists_maximal_over hK hF h𝔭
-  have hU : Formalism.HermitianLatticesTheory.IsUnimodularAt h P L := (isUnimodularAt_iff_vd hK hF hs hd hL hLi hP).2 hv
+  have hU : Formalism.HermitianLatticesTheory.IsUnimodularAt h P L :=
+    (isUnimodularAt_iff_vd hK hF hs hd hL hLi hP).2 hv
   have hSD := Formalism.HermitianLattices.Ext.L3.WA.isSelfDualMod_loc hL hP.isPrime hU
   have hdd : ∀ x, h x x = 0 → x = 0 := by
     intro x hx
@@ -50,8 +55,10 @@ theorem exists_orth_basis (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (
     have := hd x hx0 (Classical.arbitrary (NumberField.InfinitePlace K)).embedding
     rw [hx, map_zero, Complex.zero_re] at this
     exact lt_irrefl 0 this
-  obtain ⟨x, hxM, hxo, hxu⟩ := Formalism.HermitianLattices.Ext.L3.LocF.exists_orth_unit_frame
-    (Formalism.HermitianLattices.Ext.L3.WA.isHermSemilocal_locRing hK hP)
+  have hS : WA.IsHermSemilocal (WA.locRing P) :=
+    ⟨fun _ ha => WA.star_mem_locRing hP.isPrime ha, WA.frac_locRing P, WA.unram_locRing hK hP,
+      WA.principal_locRing hK hP, WA.unit_or_locRing hP.isPrime⟩
+  obtain ⟨x, hxM, hxo, hxu⟩ := Formalism.HermitianLattices.Ext.L3.LocF.exists_orth_unit_frame hS
     (Formalism.HermitianLattices.Ext.L3.LocF.locRing_local hP.isPrime) hs hdd hSD
   have hx' : ∀ i, ∃ s ∈ Formalism.HermitianLatticesTheory.hcompl (K := K) P, s • x i ∈ L := fun i => hxM i
   choose s hsP hsL using hx'
@@ -86,7 +93,8 @@ theorem exists_orth_basis (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (
     rw [linearIndependent_iff']
     intro t g hg i hi
     have := congrArg (h (b0 i)) hg
-    rw [map_sum, map_zero, Finset.sum_eq_single i] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero, Finset.sum_eq_single i] at this
     · rw [map_smul, smul_eq_mul] at this
       exact (mul_eq_zero.1 this).resolve_right (hunit i).1
     · intro j _ hji
@@ -113,7 +121,8 @@ theorem exists_orth_basis (hK : Formalism.HermitianLatticesTheory.IsCMUnram K) (
         obtain ⟨a, ha⟩ := Submodule.mem_one.1 (hLi _ (hb0L i) _ hy)
         have hrep : h (b0 i) (t • y) = b.repr (t • y) i * h (b0 i) (b0 i) := by
           conv_lhs => rw [← b.sum_repr (t • y)]
-          rw [map_sum, Finset.sum_eq_single i]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum, Finset.sum_eq_single i]
           · rw [map_smul, smul_eq_mul, hb]
           · intro j _ hji
             rw [map_smul, hb, horth i j (Ne.symm hji), smul_zero]

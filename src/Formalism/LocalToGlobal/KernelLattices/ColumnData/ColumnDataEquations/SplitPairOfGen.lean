@@ -1,9 +1,13 @@
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqLTop
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.BaseLinkOfNonzeroDelta
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ProvisionExtensionLink
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SplitPairGen
-import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SplitPairGen
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqLTop
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.BaseLinkOfNonzeroDelta
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ProvisionExtensionLink
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SplitPairGen
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SplitPairGen
+
+@[expose] public section
 
 noncomputable section
 open NumberField Matrix

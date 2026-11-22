@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SettingsFormsExistList
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CenUsedOfCenReal
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NonzeroIndexPlacesTransferAlongSameFiniteGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SettingsFormsExistList
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.CenUsedOfCenReal
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NonzeroIndexPlacesTransferAlongSameFiniteGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,8 @@ def oL (x : St P) (L : LocAll (lay0 (Dof x))) : P.q.Over :=
 
 abbrev DL (x : St P) (L : LocAll (lay0 (Dof x))) : D7 := (w.st (oL x L).Z).toD7
 
-theorem DL_eq (x : St P) (L : LocAll (lay0 (Dof x))) : DL x L = withLoc L := (Eq.refl (withLoc L))
+theorem DL_eq (x : St P) (L : LocAll (lay0 (Dof x))) : DL x L = withLoc L := by
+  with_unfolding_all rfl
 
 def sameL (x : St P) (L : LocAll (lay0 (Dof x))) : SameGrp (B := B) (C := w.C) x.o.Z (oL x L).Z where
   e k := (Equiv.refl ((Dof x).nd.PlG k))
@@ -61,9 +66,6 @@ def sameL (x : St P) (L : LocAll (lay0 (Dof x))) : SameGrp (B := B) (C := w.C) x
 
 def datL (x : St P) (L : LocAll (lay0 (Dof x))) : Dat (w.st (oL x L).Z) w.I P.hX T P.Wt :=
   Dat.transfer (B := B) (C := w.C) (a := x.o.Z) (b := (oL x L).Z) (sameL x L) x.m.z
-
-theorem datL_cG (x : St P) (L : LocAll (lay0 (Dof x))) : HEq (datL x L).cG x.m.z.cG := (HEq.refl x.m.z.cG)
-theorem cf_eq (x : St P) (L : LocAll (lay0 (Dof x))) : HEq (TC.cf w.I w.l (oL x L).Z) (cfL L (cfOf x)) := (HEq.refl (cfL L (cfOf x)))
 
 variable {x : St P} (L : LocAll (lay0 (Dof x)))
 
@@ -86,14 +88,29 @@ theorem SL_heq (n : InRat x.r.Y x.m.z.cG) : HEq (ratL L n.S) (SL L n) := (HEq.re
 
 variable (l : LC hL x)
 
-def ysL : NExpRealS (datL x L).R (datL x L).cG (SL L l.rat) where
-  fi := (l.b.YS.fi)
-  geq := (l.b.YS.geq)
-  rho := (l.b.YS.rho)
-  chi := (l.b.YS.chi)
-  eF := kc% l.b.YS.eF
-  bsup := kc% l.b.YS.bsup
-  act := kc% l.b.YS.act
+-- Comparing the transported fields in the elaborator expands the localization data.
+open Lean Elab Tactic in
+local elab "exact_by_kernel " term:term : tactic =>
+  closeMainGoalUsing `exact_by_kernel fun target _ => do
+    let value ← elabTerm term none
+    let actual ← instantiateMVars (← Meta.inferType value)
+    let target ← instantiateMVars target
+    match Kernel.isDefEq (← getEnv) (← getLCtx) actual target with
+    | .ok true => pure value
+    | .ok false => throwError "expected{indentExpr target}\nbut the term has type{indentExpr actual}"
+    | .error error => throwError (error.toMessageData (← getOptions))
+
+set_option maxHeartbeats 8000000 in
+def ysL : NExpRealS (datL x L).R (datL x L).cG (SL L l.rat) := by
+  let Y : NExpRealS (datL x L).R (datL x L).cG (ratL L l.rat.S) := {
+    fi := by with_unfolding_all exact (l.b.YS.fi :)
+    geq := by with_unfolding_all exact (l.b.YS.geq :)
+    rho := by with_unfolding_all exact (l.b.YS.rho :)
+    chi := by with_unfolding_all exact (l.b.YS.chi :)
+    eF := by exact_by_kernel l.b.YS.eF
+    bsup := by exact_by_kernel l.b.YS.bsup
+    act := by exact_by_kernel l.b.YS.act }
+  with_unfolding_all exact (Y :)
 
 def hkH : NExpRealH x.m.z.R x.m.z.cG l.rat.S l.b.YS where
   hL := l.rat.In.hL
@@ -105,50 +122,72 @@ def hkH : NExpRealH x.m.z.R x.m.z.cG l.rat.S l.b.YS where
   cHk_pow := fun i b k Q => by simp only [pow_one]
   hkEq := by rw [l.b.eF]; exact l.b.Bs.hkEq
 
-def hkHL : NExpRealH (datL x L).R (datL x L).cG (SL L l.rat) (ysL L l) where
-  hL := ((hkH l).hL)
-  hs := ((hkH l).hs)
-  cHk := ((hkH l).cHk)
-  cHk_zero := ((hkH l).cHk_zero)
-  cHk_unit := ((hkH l).cHk_unit)
-  cHk_pow := ((hkH l).cHk_pow)
-  hkEq := kc% (hkH l).hkEq
-
-def pvL : ∀ i : Fin (DL x L).R.m, principalLevelFrame.RowPsi (Formalism.IndefR.Links.Vc (DL x L) i) (DL x L).R.nV :=
-  fun i => (by with_unfolding_all exact ((rowPsi (a := x.o.Z) (oL x L).Z (l.mt.ad.PV ((i)))) : _))
+def hkHL : NExpRealH (datL x L).R (datL x L).cG (SL L l.rat) (ysL L l) := by
+  let Y : NExpRealS (datL x L).R (datL x L).cG (ratL L l.rat.S) := by
+    with_unfolding_all exact (ysL L l :)
+  let H : NExpRealH (datL x L).R (datL x L).cG (ratL L l.rat.S) Y := {
+    hL := by with_unfolding_all exact ((hkH l).hL :)
+    hs := by with_unfolding_all exact ((hkH l).hs :)
+    cHk := ((hkH l).cHk)
+    cHk_zero := ((hkH l).cHk_zero)
+    cHk_unit := ((hkH l).cHk_unit)
+    cHk_pow := ((hkH l).cHk_pow)
+    hkEq := by exact_by_kernel (hkH l).hkEq }
+  with_unfolding_all exact (H :)
 
 abbrev cfD (x : St P) (L : LocAll (lay0 (Dof x))) : CharFrame (DL x L) := TC.cf w.I w.l (oL x L).Z
 
-def chD : NChoice (DL x L) := (chL L l.c.ch)
+-- Keep the target indices on the constructors. Record updates can eta-reduce
+-- to the source with its original indices during elaboration.
+def chD : NChoice (DL x L) :=
+  let c := chL L l.c.ch
+  @NChoice.mk (DL x L) c.twI c.twI_l c.sd c.Q c.k' c.psi' c.Oe
+    c.crOe c.domOe c.dvrOe c.algOe c.algOOe c.towOe c.Oe_inj c.Oe_fin c.Oe_loc
+    c.embW c.embW_w c.eMt c.eMt_basis c.eMt_lat
 
-def tpD : TupTied (DL x L) (cfD x L) (chD L l) := (tpL L l.c.tp)
+def tpD : TupTied (DL x L) (cfD x L) (chD L l) :=
+  let tp := tpL L l.c.tp
+  @TupTied.mk (DL x L) (cfD x L) (chD L l) tp.xi tp.xi_inj tp.xi_fin tp.xi_triv tp.xi_tame
+    tp.psi tp.trueColumnChoices_heckeChar_reference_eq_one tp.xi_star tp.xi_star' tp.xi_tw
+    tp.psi_is tp.psi_un
 
-def mtD : MtFam (DL x L) := (mtL L l.mt.M)
-
-def expD (X : NExpTied (withLoc L)) : NExpTied (DL x L) := (X)
-
-def pqD : HeightOneSpectrum (𝓞 (maximalRealSubfield (DL x L).host.E)) → PlE (DL x L).host := (l.Pq)
-
-def eigD : ℕ → (DL x L).what₂.FT → ℕ → PlE (DL x L).host → ↥(DL x L).LL0 := (l.rat.In.eig)
-
-def sbD : Finset (PlE (DL x L).host) := (l.rat.In.Sb)
+def expD (X : NExpTied (withLoc L)) : NExpTied (DL x L) :=
+  (DL_eq x L).symm ▸ X
 
 theorem fitsL : (oL x L).Fits :=
-  ⟨⟨(x.fits.div.left), fun _ _ G => kc% (x.fits.div.2 x.o.S x.o.N G)⟩,
+  ⟨⟨x.fits.div.left, fun S N G => by
+      let a := assemble B w.C (P.q.W x.o.η x.o.hη) x.o.V x.o.S x.o.N G
+      let b := assemble B w.C (P.q.W (oL x L).η (oL x L).hη) (oL x L).V S N G
+      change (RowSide.sharp b).RRDef
+      have h : (RowSide.sharp a).RRDef := x.fits.div.2 x.o.S x.o.N G
+      have hdown (μ : w.C.Tup) (j : ℕ) :
+          (RowSide.sharp b).downTo μ j = (RowSide.sharp a).downTo μ j := by
+        induction j with
+        | zero => rfl
+        | succ j ih =>
+          with_unfolding_all
+            rw [RowSide.downTo.eq_2 (RowSide.sharp b) μ j,
+              RowSide.downTo.eq_2 (RowSide.sharp a) μ j, ih]; rfl
+      have hiota (μ : w.C.Tup) : (RowSide.sharp b).iota μ = (RowSide.sharp a).iota μ := by
+        unfold RowSide.iota
+        rw [hdown]; with_unfolding_all rfl
+      have hset (μ : w.C.Tup) : (RowSide.sharp b).RRset μ = (RowSide.sharp a).RRset μ := by
+        simp only [RowSide.RRset, RowSide.LamSet, RowSide.Qsp, RowSide.Usp, hiota]; rfl
+      unfold RowSide.RRDef at h ⊢
+      intro z
+      refine (h z).trans (forall_congr' fun v => ?_)
+      apply Iff.of_eq
+      let z' : a.div.RR.V := by with_unfolding_all exact z
+      with_unfolding_all
+        exact (congrArg (fun s : Set a.what₂.EE =>
+          ∃ d : 𝓞 a.what₂.LL, d ∉ (a.plEq v).asIdeal ∧
+            d • z' ∈ Submodule.span (𝓞 a.what₂.LL) {y | a.jEE y ∈ s})
+          (hset (a.what₂.muAt v)).symm :)⟩,
     ⟨(x.fits.grp.pl), (x.fits.grp.teich), (x.fits.grp.chi), (x.fits.grp.ser)⟩,
     ⟨(x.fits.grpAt.pl), (x.fits.grpAt.idem), (x.fits.grpAt.cen)⟩,
     fun eR h => ⟨((x.fits.cen eR h).amb), ((x.fits.cen eR h).mt)⟩⟩
 
 theorem bkL : BkLaw (w.D (oL x L).Z) := (x.bk)
-
-theorem okL : ∀ v, TwistedAt (DL x L) v → IntegralHeckeForms.TwOK ((chD L l).twI v) ((chD L l).k' v) ((chD L l).Q v)
-    (((chD L l).psi' v).comp ((DL x L).ntw.art ((chD L l).twI v) ((chD L l).Q v))) := (l.c.ok)
-
-theorem geoL : Nonempty (GlobalTheory.GeoTie.ThetaTie (ysL L l) (datL x L).geo.fw (DL x L).nth) := by
-  obtain ⟨g⟩ := l.b.geo
-  exact ⟨⟨fun i j b => ⟨((g.side i j b).pt), ((g.side i j b).cover),
-    ((g.side i j b).ev_eq), kc% (g.side (kc% i) (kc% j) b).fmUr, (by with_unfolding_all exact ((g.side ((i)) ((j)) b).hk : _)),
-    ((g.side i j b).hk_none)⟩, (g.isUnramified₂)⟩⟩
 
 theorem sameGaloisL : GlobalTheory.TwistChoice.SameGalois (Dof x).nd (DL x L).nd :=
   ⟨(Eq.refl (Dof x).R), (HEq.refl (Dof x).host), (Eq.refl (Dof x).loc),
@@ -177,15 +216,9 @@ theorem sameFormsL : GlobalTheory.TwistChoice.SameForms (Dof x).nexp (DL x L).ne
     (HEq.refl (Dof x).nexp.modMtO), (HEq.refl (Dof x).nexp.MtLat), (HEq.refl (Dof x).nexp.thP),
     (HEq.refl (Dof x).nexp.hkF)⟩
 
-theorem keptL : Kept l.c.ch (chD L l) :=
-  ⟨sameGaloisL L, twistDataAgreeAcrossCoefficients_localized L, sameFormsL L, (HEq.refl (Dof x).ntwbr), (HEq.refl l.c.ch.twI), (HEq.refl l.c.ch.sd),
-    (HEq.refl l.c.ch.Q), (HEq.refl l.c.ch.k'), (HEq.refl l.c.ch.psi')⟩
-
 def xdD (xd : ThData (Dof x)) : ThData (DL x L) := ⟨(xd.xd0), (xd.thetaBase_invariant_action)⟩
 
 theorem xdD_all {xd : ThData (Dof x)} (h : XdAll xd) : XdAll (xdD L xd) := (h)
-
-theorem ysL_fi : ∀ i y, HEq (((ysL L l).fi i).e y) y := (l.b.fi)
 
 end GlobalTheory.HeightCounting.Fin3
 

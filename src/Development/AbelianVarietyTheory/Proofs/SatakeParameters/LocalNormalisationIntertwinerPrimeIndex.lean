@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.AlgebraicTheory.StatementNorm
-import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.NormInter
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.AlgebraicTheory.StatementNorm
+public import Formalism.LocalToGlobal.AlgebraicTheory.AlgebraicTheoryProofs.NormInter
+
+@[expose] public section
 
 namespace GlobalTheory
 

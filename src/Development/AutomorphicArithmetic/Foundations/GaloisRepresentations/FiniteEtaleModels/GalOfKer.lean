@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.BaseOnto
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTranslA
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenModelEqGenericFibre
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.FinModel
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.IntegOfMem
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.BaseOnto
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTranslA
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenModelEqGenericFibre
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -59,8 +64,9 @@ variable {q : ℕ} [Fact q.Prime] {D : Datum q} {R R' : Type} [CommRing R] [Comm
 end
 
 def DictP : Prop :=
-  ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (G : HTGroup p) (L : Link D G) (h : G.GAf) (κ c' : ℕ), 0 < κ → κ.Coprime p → c'.Coprime p →
-    Integ L h → (∀ v ∈ LaHat D, ∃ v' ∈ LaHat D, L.actG h v' = κ • v) →
+  ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (G : HTGroup p) (L : GlobalTheory.LKGeo.Link D G) (h : G.GAf) (κ c' : ℕ),
+    0 < κ → κ.Coprime p → c'.Coprime p →
+    UpperTheory.Gal.Int.Geo.Integ L h → (∀ v ∈ LaHat D, ∃ v' ∈ LaHat D, L.actG h v' = κ • v) →
     (∃ t t' : AfP p, IsIntAf t ∧ IsIntAf t' ∧ t * t' = 1 ∧
       (((h : (AfP p ⊗[ℚ] G.C)ˣ × (AfP p)ˣ).2 : (AfP p)ˣ) : AfP p) = (c' : AfP p) * t) →
     ∃ (f : ℕ → D.La →+ D.La) (u : ℕ → ℤ) (c : ℕ), c * c' = κ ^ 2 ∧ Sys D.toG p f u c κ ∧
@@ -71,13 +77,13 @@ def SysExt : Prop :=
     ∃ (f' : ℕ → G.La →+ G.La) (u' : ℕ → ℤ), Sys G 1 f' u' c κ ∧ ∀ n, 0 < n → n.Coprime p → ∀ x, ∃ z, f' n x = f n x + n • z
 
 def TrEtaK : Prop :=
-  ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (G : HTGroup p) (L : Link D G) (R : Type) [CommRing R] [Algebra ℚ R] (gb : GBase D.toG R)
+  ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (G : HTGroup p) (L : GlobalTheory.LKGeo.Link D G) (R : Type) [CommRing R] [Algebra ℚ R] (gb : GBase D.toG R)
     (h : G.GAf) (X : Scheme.{0}) (s : X ⟶ Sp R) (M₁ M₂ : Lv p) (o' : GObj gb M₁.1 s) (o : GObj gb M₂.1 s) (ψ : o'.A ⟶ o.A), IsTrans L h o' o ψ →
     ∀ (n κ c₁ c₂ : ℕ), M₁.1 = n * κ * c₁ → M₂.1 = n * c₂ → ∀ x y : D.La,
     (∃ v ∈ LaHat D, L.actG h (inAf D x) = κ • inAf D y + (n * κ) • v) → o'.eta (c₁ • x) ≫ ψ = o.eta (c₂ • y)
 
 def TrKer : Prop :=
-  ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (G : HTGroup p) (L : Link D G) (R : Type) [CommRing R] [Algebra ℚ R] (gb : GBase D.toG R)
+  ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (G : HTGroup p) (L : GlobalTheory.LKGeo.Link D G) (R : Type) [CommRing R] [Algebra ℚ R] (gb : GBase D.toG R)
     (h : G.GAf) (X : Scheme.{0}) (s : X ⟶ Sp R) (M₁ M₂ : Lv p) (o' : GObj gb M₁.1 s) (o : GObj gb M₂.1 s) (ψ : o'.A ⟶ o.A), IsTrans L h o' o ψ →
     ∀ (n κ c₁ : ℕ), M₁.1 = n * κ * c₁ → (∀ v ∈ LaHat D, ∃ v' ∈ LaHat D, L.actG h v' = κ • v) → ∀ f : D.La →+ D.La,
     (∀ x, ∃ w ∈ LaHat D, κ • L.actG h⁻¹ (inAf D x) = inAf D (f x) + (n * κ) • w) →
@@ -112,8 +118,9 @@ def LevRe : Prop :=
     ∀ (S : Scheme.{0}) (s : S ⟶ Sp R) (o : Obj b N s) (lv : D.La → (𝟙_ (Over S) ⟶ o.A)), IsEtLev o 𝔟₁ 1 lv → IsEtLev o 𝔟₂ 1 fun y => lv (β y)
 
 def BetaH : Prop :=
-  ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (G : HTGroup p) (L : Link D G) (h : G.GAf) (κ n : ℕ), 0 < n → n.Coprime p → n.Coprime κ →
-    Integ L h → (∀ v ∈ LaHat D, ∃ v' ∈ LaHat D, L.actG h v' = κ • v) →
+  ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (G : HTGroup p) (L : GlobalTheory.LKGeo.Link D G) (h : G.GAf) (κ n : ℕ),
+    0 < n → n.Coprime p → n.Coprime κ →
+    UpperTheory.Gal.Int.Geo.Integ L h → (∀ v ∈ LaHat D, ∃ v' ∈ LaHat D, L.actG h v' = κ • v) →
     ∃ g : D.La →+ D.La, (∀ (a : D.O) x, ∃ z, g (a • x) = a • g x + n • z) ∧ (∀ x z, g x = n • z → ∃ v, x = n • v) ∧
       (∀ x, ∃ y z, g y = x + n • z) ∧ ∀ x, ∃ v ∈ LaHat D, L.actG h (inAf D (g x)) = inAf D x + n • v
 

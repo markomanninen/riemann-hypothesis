@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.PrimitiveCosets.CoreAtH
-import Development.AutomorphicArithmetic.PrimitiveCosets.ToEBij
-import Development.AutomorphicArithmetic.PrimitiveCosets.hostFactsS
+module
+
+public import Development.AutomorphicArithmetic.PrimitiveCosets.CoreAtH
+public import Development.AutomorphicArithmetic.PrimitiveCosets.ToEBij
+public import Development.AutomorphicArithmetic.PrimitiveCosets.hostFactsS
+
+@[expose] public section
 
 open UpperTheory.Comparison₂ Deduction.CH Formalism Formalism.HC Formalism.D5 Formalism.LFunctionChainParameters.characterSumData Formalism.LFunctionChainParameters.ThickSetMeanBounds Formalism.LFunctionChainParameters.LHost NumberField Ideal
 

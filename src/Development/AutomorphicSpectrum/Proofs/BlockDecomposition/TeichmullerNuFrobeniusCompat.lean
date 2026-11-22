@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusFactorisation.PullT
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.CrSEqOne
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.FrobeniusFactorisation.PullT
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.CrSEqOne
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory Limits AlgebraicGeometry TensorProduct GroundTheory.PAdicHodge GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison.PAlg CrystallineSemistableComparison CrystallineSemistableComparison.Pb
 
@@ -29,14 +34,14 @@ theorem cr_square_semi {O : Type} [CommRing O] {F₁ F₂ F₃ F₄ : B.Fn O} {b
 
 variable {l : ℕ} [Fact l.Prime]
 
-instance tripleL (N : ℕ) : RingHomCompTriple (ACris.phi ℂ_[l] l) (Mid.phiA l N) (Mid.phiA l (N + 1)) :=
+instance tripleL (N : ℕ) : RingHomCompTriple (ACris.phi (K := ℂ_[l]) (p := l)) (Mid.phiA l N) (Mid.phiA l (N + 1)) :=
   ⟨by
-    have e : Mid.phiA l (N + 1) = Mid.phiA l N * ACris.phi ℂ_[l] l := pow_succ _ _
+    have e : Mid.phiA l (N + 1) = Mid.phiA l N * ACris.phi (K := ℂ_[l]) (p := l) := pow_succ _ _
     rw [e]; rfl⟩
 
-instance tripleR (N : ℕ) : RingHomCompTriple (Mid.phiA l N) (ACris.phi ℂ_[l] l) (Mid.phiA l (N + 1)) :=
+instance tripleR (N : ℕ) : RingHomCompTriple (Mid.phiA l N) (ACris.phi (K := ℂ_[l]) (p := l)) (Mid.phiA l (N + 1)) :=
   ⟨by
-    have e : Mid.phiA l (N + 1) = ACris.phi ℂ_[l] l * Mid.phiA l N := pow_succ' _ _
+    have e : Mid.phiA l (N + 1) = ACris.phi (K := ℂ_[l]) (p := l) * Mid.phiA l N := pow_succ' _ _
     rw [e]; rfl⟩
 
 theorem phiP_phi (n N : ℕ) (x : (base l).Acr n) :

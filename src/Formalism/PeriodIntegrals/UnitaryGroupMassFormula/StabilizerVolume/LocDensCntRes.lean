@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.UnifVSpec
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerVolume.UnifVSpec
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,8 +59,8 @@ theorem exists_appr {x : Fv F v} (hx : x ∈ v.adicCompletionIntegers F) :
   · rw [Valuation.map_neg, e2, vcoe]
     simpa using ha
 
-open Classical in
 
+open Classical in
 def appr (x : Fv F v) : 𝓞 F :=
   if h : ∃ a : 𝓞 F, Valued.v (x - iO v a) < 1 then h.choose else 0
 
@@ -64,7 +68,7 @@ theorem appr_spec {x : Fv F v} (hx : x ∈ v.adicCompletionIntegers F) :
     Valued.v (x - iO v (appr v x)) < 1 := by
   have h := exists_appr v hx
   unfold appr
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact h.choose_spec
 
 def red (x : Fv F v) : 𝓞 F ⧸ v.asIdeal := Ideal.Quotient.mk _ (appr v x)
@@ -98,10 +102,10 @@ theorem red_add {x y : Fv F v} (hx : x ∈ v.adicCompletionIntegers F)
     (hy : y ∈ v.adicCompletionIntegers F) : red v (x + y) = red v x + red v y := by
   have hxy : x + y ∈ v.adicCompletionIntegers F := add_mem hx hy
   have e1 : red v x + red v y = Ideal.Quotient.mk _ (appr v x + appr v y) := by
-    simp only [red, map_add]
+    simp only [red, map_add (f := _)]
   rw [e1, red_eq_mk_iff v hxy]
   have e : x + y - iO v (appr v x + appr v y) = (x - iO v (appr v x)) + (y - iO v (appr v y)) := by
-    simp only [iO, map_add]
+    simp only [iO, map_add (f := _)]
     ring
   rw [e]
   exact lt_of_le_of_lt (Valuation.map_add _ _ _) (max_lt (appr_spec v hx) (appr_spec v hy))

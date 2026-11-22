@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.IdeleNormCharacters.AbsFactsAlt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsOpenEmbeddingVal
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ContinuousInfiniteAdeleMap
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.IdeleNormCharacters.AbsFactsAlt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsOpenEmbeddingVal
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ContinuousInfiniteAdeleMap
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Host Formalism.ConjugateSelfDual Neutral.B1 ReciprocityTheory.Gal
 open GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.HeckeGal GlobalTheory.CuspRep UpperTheory.Gal.TP.Chr
@@ -17,7 +21,9 @@ private theorem exists_read {E : Type} [Field E] [NumberField E] (φ : E →+* �
   have hc := (InfinitePlace.Completion.isometry_extensionEmbedding (InfinitePlace.mk φ)).continuous
   have he : ∀ x : E, InfinitePlace.Completion.extensionEmbedding (InfinitePlace.mk φ)
       (algebraMap E (InfinitePlace.mk φ).Completion x) = (InfinitePlace.mk φ).embedding x := fun x =>
-    InfinitePlace.Completion.extensionEmbedding_coe (InfinitePlace.mk φ) (WithAbs.toAbs _ x)
+    by
+      rw [InfinitePlace.Completion.algebraMap_apply]
+      exact InfinitePlace.Completion.extensionEmbedding_coe (InfinitePlace.mk φ) (WithAbs.toAbs _ x)
   rcases InfinitePlace.embedding_mk_eq φ with h | h
   · exact ⟨_, hc, fun x => (he x).trans (by rw [h])⟩
   · refine ⟨(starRingEnd ℂ).comp (InfinitePlace.Completion.extensionEmbedding (InfinitePlace.mk φ)),
@@ -46,7 +52,7 @@ private theorem inf_formula {E ι : Type} [Field E] [NumberField E] [Fintype ι]
     Units.continuous_val.comp (μ.2.1.comp (GlobalTheory.CompanionTheory.HeckeFin.continuous_infIdele E))
   have hR : Continuous fun u : (InfiniteAdeleRing E)ˣ => ∏ i, (ρ i ((u : InfiniteAdeleRing E) (InfinitePlace.mk (φ i))) /
       ‖ρ i ((u : InfiniteAdeleRing E) (InfinitePlace.mk (φ i)))‖) ^ m i := by
-    refine continuous_finset_prod _ fun i _ => ?_
+    refine continuous_finsetProd _ fun i _ => ?_
     refine Continuous.zpow₀ ((hci i).div (Complex.continuous_ofReal.comp (hci i).norm) fun u => ?_) _ fun u => Or.inl ?_
     · exact Complex.ofReal_ne_zero.2 (norm_ne_zero_iff.2 (hne i u))
     · exact div_ne_zero (hne i u) (Complex.ofReal_ne_zero.2 (norm_ne_zero_iff.2 (hne i u)))
@@ -74,7 +80,7 @@ private theorem inf_formula {E ι : Type} [Field E] [NumberField E] [Fintype ι]
 
 private theorem piInf_read {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     {w : InfinitePlace F} (τ : EmbOver E w) (ρ : (InfinitePlace.mk τ.1).Completion →+* ℂ) (hc : Continuous ρ)
-    (hρ : ∀ x, ρ (algebraMap E _ x) = τ.1 x) (z : AE F E) :
+    (hρ : ∀ x, ρ (algebraMap E _ x) = τ.1 x) (z : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) :
     piInf τ z = ρ ((GlobalTheory.UnitaryHeckeBaseChange.toAdele F E z).1 (InfinitePlace.mk τ.1)) := by
   have key : (fun b : InfiniteAdeleRing F => InfinitePlace.Completion.extensionEmbedding w (b w)) =
       fun b => ρ (GlobalTheory.IndefiniteRowSideFullHecke.UnitaryHeckeCharacterIdele.infiniteAdeleMap F E b (InfinitePlace.mk τ.1)) := by
@@ -82,7 +88,9 @@ private theorem piInf_read {F E : Type} [Field F] [NumberField F] [Field E] [Num
       ((InfinitePlace.Completion.isometry_extensionEmbedding w).continuous.comp (continuous_apply _))
       (hc.comp ((continuous_apply _).comp (GlobalTheory.UnitaryHeckeBaseChange.continuous_infiniteAdeleMap F E))) (funext fun x => ?_)
     have h1 : InfinitePlace.Completion.extensionEmbedding w (algebraMap F w.Completion x) = w.embedding x :=
-      InfinitePlace.Completion.extensionEmbedding_coe w (WithAbs.toAbs _ x)
+      by
+        rw [InfinitePlace.Completion.algebraMap_apply]
+        exact InfinitePlace.Completion.extensionEmbedding_coe w (WithAbs.toAbs _ x)
     have h2 : GlobalTheory.IndefiniteRowSideFullHecke.UnitaryHeckeCharacterIdele.infiniteAdeleMap F E (algebraMap F _ x) (InfinitePlace.mk τ.1) =
         algebraMap E (InfinitePlace.mk τ.1).Completion (algebraMap F E x) :=
       congrFun (congrArg Prod.fst (GlobalTheory.IndefiniteRowSideFullHecke.UnitaryHeckeCharacterIdele.adeleMap_algebraMap F E x)) _
@@ -95,7 +103,7 @@ private theorem piInf_read {F E : Type} [Field F] [NumberField F] [Field E] [Num
     rw [map_zero, map_zero]
     exact (map_zero ρ).symm
   | add x y hx hy =>
-    rw [map_add, hx, hy, map_add, ← map_add]
+    rw [map_add (f := _), hx, hy, map_add (f := _), ← map_add (f := _)]
     rfl
   | tmul a e =>
     rw [GlobalTheory.UnitaryHeckeBaseChange.toAdele_tmul]

@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsConjugateUnitaryKTypeSameWeight
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DetTwistedConjugateIsKTypeOfReversed
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsConjLinearIsometryCompactUnitaryTypeWeylMo
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsHCTypeWConj
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsConjugateUnitaryKTypeSameWeight
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DetTwistedConjugateIsKTypeOfReversed
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsConjLinearIsometryCompactUnitaryTypeWeylMo
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsHCTypeWConj
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.Forms
 open scoped InnerProductSpace Matrix
 
@@ -40,14 +45,14 @@ theorem dual_weyl_type : ∀ (k n : ℕ) (h : k = n) (lam : DomWeight n) (H : Ty
 
   let j : H →ₗ[ℂ] MvPolynomial (Fin n × Fin n) ℂ :=
     { toFun := fun ξ => jE (J ξ)
-      map_add' := fun x y => by rw [map_add, map_add]
+      map_add' := fun x y => by rw [map_add (f := _), map_add (f := _)]
       map_smul' := fun c x => by
         rw [map_smulₛₗ, map_smulₛₗ, RingHom.id_apply, Complex.conj_conj] }
   have hj : ∀ ξ, j ξ = jE (J ξ) := fun _ => rfl
 
   let Φ : H →ₗ[ℂ] ConjSp E :=
     { toFun := fun ξ => ConjSp.mk (J ξ)
-      map_add' := fun x y => by rw [map_add]; rfl
+      map_add' := fun x y => by rw [map_add (f := _)]; rfl
       map_smul' := fun c x => by
         show ConjSp.mk (J (c • x)) = c • ConjSp.mk (J x)
         have e := (ConjSp.mkL E).map_smulₛₗ (starRingEnd ℂ c) (J x)

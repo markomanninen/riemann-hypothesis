@@ -1,4 +1,8 @@
-import Formalism.TorsionNormIteration.InvIntegralOfClass
+module
+
+public import Formalism.TorsionNormIteration.InvIntegralOfClass
+
+@[expose] public section
 
 noncomputable section
 
@@ -129,7 +133,7 @@ theorem FunEqSubst_of (h4 : Formalism.LT.IntegralSubst.{u, v}) (h5 : Formalism.L
   unfold IsFunEqTypeMv
   rw [hdec]
   intro d
-  rw [map_add, MvPowerSeries.coeff_smul]
+  rw [map_add (f := _), MvPowerSeries.coeff_smul]
   refine norm_add_le_of (hgI d) ?_
   rw [norm_mul, norm_inv]
   calc ‖(p : K)‖⁻¹ * ‖MvPowerSeries.coeff d (fs.subst (α ^ q) - fs.subst β)‖

@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsDiscreteValuationRingOfMaximalIdealEqSpa
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsDiscreteValuationRingOfMaximalIdealEqSpa
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -51,7 +55,8 @@ theorem exists_finite_dvr_algHom_mem_range {B K : Type} [CommRing B] [IsDomain B
       have h₀ : (g - μ * c).map (algebraMap B k) = 0 := by
         rw [Polynomial.map_sub, Polynomial.map_mul, hμ, hc, sub_self]
       have h₁ : AdjoinRoot.mk μ (g - μ * c) ∈ (maximalIdeal B).map (algebraMap B B') := by
-        rw [(g - μ * c).as_sum_support_C_mul_X_pow, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [(g - μ * c).as_sum_support_C_mul_X_pow, map_sum]
         refine Ideal.sum_mem _ fun i _ => ?_
         rw [map_mul]
         refine Ideal.mul_mem_right _ _ ?_

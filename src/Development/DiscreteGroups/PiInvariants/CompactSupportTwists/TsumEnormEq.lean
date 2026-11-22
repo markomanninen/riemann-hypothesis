@@ -1,4 +1,8 @@
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvA
+module
+
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvA
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,10 +49,10 @@ theorem unfold (hb : KerBasic) (hl2 : KernelL2RowsColumns) {φ : X.G → ℂ} (h
     (hinv : ∀ γ : X.Γ, ∀ y, f ((γ : X.G) * y) = f y) (hf : MemLp f 2 X.ν) (x : X.G) :
     Integrable (fun y => φ (x⁻¹ * y) * f y) X.μ ∧
     ∫ y, ker X.Γ φ x y * f y ∂X.ν = ∫ y, φ (x⁻¹ * y) * f y ∂X.μ := by
-  have hfm : AEStronglyMeasurable f X.μ := aesm_of_inv X hinv hf.1
+  have hfm : AEStronglyMeasurable f X.μ := aesm_of_inv X hinv hf.aestronglyMeasurable
   have hk := (hl2 X _ (tst_norm X hφ)).2 x
   have hint : Integrable (fun y => ker X.Γ (fun w => ((‖φ w‖ : ℝ) : ℂ)) x y * f y) X.ν := hk.integrable_mul hf
-  have hlu := lint_unfold X hb hφ hinv hf.1 x
+  have hlu := lint_unfold X hb hφ hinv hf.aestronglyMeasurable x
   have hgm : AEStronglyMeasurable (fun y => φ (x⁻¹ * y) * f y) X.μ :=
     (hφ.1.comp (continuous_const.mul continuous_id)).aestronglyMeasurable.mul hfm
   have hlin : ∫⁻ y, ‖φ (x⁻¹ * y) * f y‖ₑ ∂X.μ =
@@ -75,8 +79,8 @@ theorem unfold (hb : KerBasic) (hl2 : KernelL2RowsColumns) {φ : X.G → ℂ} (h
     rw [tsum_mul_right, tsum_eq_finsum ((hb X φ hφ).1 x y)]
     rfl
   · intro γ
-    exact (hφ.1.comp (continuous_const.mul continuous_id)).aestronglyMeasurable.mul hf.1
-  · rw [lint_unfold X hb hφ hinv hf.1 x]
+    exact (hφ.1.comp (continuous_const.mul continuous_id)).aestronglyMeasurable.mul hf.aestronglyMeasurable
+  · rw [lint_unfold X hb hφ hinv hf.aestronglyMeasurable x]
     exact hint.2.ne
 
 end DiscreteGroups.T1.G

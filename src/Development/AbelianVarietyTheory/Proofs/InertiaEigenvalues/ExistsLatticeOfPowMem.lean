@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FaithfullyFlatOfTie
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.JSmul
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FaithfullyFlatOfTie
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,8 +26,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     [Algebra O RW] {inclR : RA →ₐ[O] RW} {φR : RW →ₐ[O] RW} {gR : G → (RW →ₐ[O] RW)} {πA : RA}
     (E : EtTie W RA RW inclR φR gR πA)
 
-include E in
 
+include E in
 theorem surjective_of_tie (hfl : Module.Flat O RW) {T' T : LocLat G Qp LL O}
     (hfix : ∀ b, TWmap φR T' b = b → ∃ t : ↥T'.L.T, b = (1 : RW) ⊗ₜ[O] t)
     (hone : Function.Injective fun t : ↥T.L.T => (1 : RW) ⊗ₜ[O] t)
@@ -53,7 +57,7 @@ theorem surjective_of_tie (hfl : Module.Flat O RW) {T' T : LocLat G Qp LL O}
     induction c using TensorProduct.induction_on with
     | zero => simp
     | tmul r t => simp [TWmap]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have h2 : ∀ t : ↥T.L.T, ∃ t' : ↥T'.L.T, latMap ι t' = m • t := by
     intro t
     obtain ⟨c, hc⟩ := hkill ((1 : RW) ⊗ₜ[O] t)

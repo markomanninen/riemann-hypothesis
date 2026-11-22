@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedMeasureSplitting.SplTApply
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeightedMeasureSplitting.SplTApply
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicLocalCompactness.T2SpaceTensorProductFiniteExtension
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +31,7 @@ theorem crd_tensMap {R R' : Type} [CommRing R] [Algebra F R] [CommRing R'] [Alge
     funext i
     have h1 := congrFun hx i
     have h2 := congrFun hy i
-    simp only [map_add, Pi.add_apply] at h1 h2 ⊢
+    simp only [map_add (f := _), Pi.add_apply] at h1 h2 ⊢
     rw [h1, h2]
 
 variable [FiniteDimensional F E] (R : Type) [CommRing R] [Algebra F R] [TopologicalSpace R] [IsTopologicalRing R]
@@ -38,8 +42,6 @@ def crdH : R ⊗[F] E ≃ₜ (Fin d → R) where
   continuous_invFun := IsModuleTopology.continuous_of_linearMap (crd b R).symm.toLinearMap
 
 theorem crdH_apply (x : R ⊗[F] E) : crdH b R x = crd b R x := rfl
-
-theorem crdH_symm_apply (c : Fin d → R) : (crdH b R).symm c = (crd b R).symm c := rfl
 
 theorem continuous_tensMap {R' : Type} [CommRing R'] [Algebra F R'] [TopologicalSpace R']
     [IsTopologicalRing R'] (φ : R →ₐ[F] R') (hφ : Continuous φ) :

@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SymplOHZeroRight
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HermitianLinkMapAdditiveRationalEquivariant
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselLineLinkGramSimilitudeBijective
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicMatrixQuotientPeriodicIntegralContinuousPa
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ContinuousOfIsTheta
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulEqZeroOfInf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SymplOHZeroRight
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HermitianLinkMapAdditiveRationalEquivariant
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.BesselLineLinkGramSimilitudeBijective
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.AdelicMatrixQuotientPeriodicIntegralContinuousPa
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ContinuousOfIsTheta
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SmulEqZeroOfInf
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory Matrix
 open GlobalTheory.FinPl GlobalTheory.MixPer GlobalTheory.MixModel GlobalTheory.Unf GlobalTheory.LatPair GlobalTheory.SplitWeil GlobalTheory.SeeSaw
 open scoped ContDiff Topology
@@ -118,8 +123,8 @@ theorem contDiff_integral (v : VolM D m n) {K : Mx D m n → E → ℂ} (h : Loc
 
 end Int
 
-open GlobalTheory.DualPairCompare in
 
+open GlobalTheory.DualPairCompare in
 theorem locSm_theta {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D}
     {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) (M : E →+ WO S T) (hM : Continuous M)
     (h0 : ∀ t, (M t).map (finPart D) = 0) : LocSm fun x t => f (x + M t) := by
@@ -146,7 +151,7 @@ theorem locSm_theta {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] {ψ : 
     rw [← h1, ← mul_assoc, ← AddChar.map_add_eq_mul, neg_add_cancel, AddChar.map_zero_eq_one, one_mul]
   have dec : ∀ x t, x + M t = x₀ + realMat D T.rank S.rank (co (x - x₀) + N t) + a x := by
     intro x t
-    rw [map_add, hN]
+    rw [map_add (f := _), hN]
     simp only [a]
     abel
   have hF : ContDiff ℝ ∞ (Function.uncurry fun p t => f (x₀ + realMat D T.rank S.rank (p + N t))) :=
@@ -197,9 +202,9 @@ theorem integrand_periodic {ρ σ : ℕ} {B : BesLev D ρ} {B' : BesLev D σ} (l
   have q1 := h₁.quasi γ₁ ((B.o.resS S).symm (u, l.κ S a))
   have e2 : ratW B'.V₀ S γ₂ = (B'.o.resT S).symm (0, γ) := hγ₂
   have e1 : ratW S B.V₀ γ₁ = (B.o.resS S).symm (0, l.κ S γ) := hγ₁
-  rw [e2, ← map_add, Prod.mk_add_mk, zero_add, B'.o.symplOH_resT, AddEquiv.apply_symm_apply, AddEquiv.apply_symm_apply,
+  rw [e2, ← map_add (f := _), Prod.mk_add_mk, zero_add, B'.o.symplOH_resT, AddEquiv.apply_symm_apply, AddEquiv.apply_symm_apply,
     ContrComb.symplOH_zero_left, zero_add] at q2
-  rw [e1, ← map_add, Prod.mk_add_mk, zero_add, B.o.symplOH_resS, AddEquiv.apply_symm_apply, AddEquiv.apply_symm_apply,
+  rw [e1, ← map_add (f := _), Prod.mk_add_mk, zero_add, B.o.symplOH_resS, AddEquiv.apply_symm_apply, AddEquiv.apply_symm_apply,
     ContrComb.symplOH_zero_left, zero_add, hκ, neg_neg] at q1
   rw [hadd, q2, q1]
   have e : ψ (-symplOH S B'.L γ a) * ψ (symplOH S B'.L γ a) = 1 := by
@@ -219,8 +224,8 @@ theorem contr_isBiSmooth : ∀ (D : D7) (ρ σ : ℕ) (B : BesLev D ρ) (B' : Be
   have k : LocSm fun (w : WO S B'.L) (t : Fin n → ℝ) =>
       f₂ ((B'.o.resT S).symm (v + L' t, w)) * f₁ ((B.o.resS S).symm (u + L t, l.κ S w)) := by
     convert k₂.mul k₁ using 5 with w t w t
-    · rw [AddMonoidHom.comp_apply, ContrComb.extR_apply, ← map_add, Prod.mk_add_mk, add_zero]
-    · rw [AddMonoidHom.comp_apply, ContrComb.extL_apply, ← map_add, Prod.mk_add_mk, add_zero]
+    · rw [AddMonoidHom.comp_apply, ContrComb.extR_apply, ← map_add (f := _), Prod.mk_add_mk, add_zero]
+    · rw [AddMonoidHom.comp_apply, ContrComb.extL_apply, ← map_add (f := _), Prod.mk_add_mk, add_zero]
   exact contDiff_integral vL k fun γ hγ w t => integrand_periodic l S h₁ h₂ _ _ γ hγ w
 
 end GlobalTheory.ContrSmooth

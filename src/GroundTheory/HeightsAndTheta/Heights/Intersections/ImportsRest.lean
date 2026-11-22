@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImageVarIdBotTwo
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsMoreTail
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsChartRankAdjoin
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsFurtherSide
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImageVarIdBotTwo
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsMoreTail
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsChartRankAdjoin
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsFurtherSide
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

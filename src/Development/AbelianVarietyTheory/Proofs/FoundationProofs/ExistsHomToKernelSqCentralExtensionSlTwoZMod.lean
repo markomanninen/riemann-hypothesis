@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiagMod
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.Sl2CentralExtensionCommutatorSqStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSymplecticBasisToMatrixOffDiagDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DiagMod
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.Sl2CentralExtensionCommutatorSqStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsSymplecticBasisToMatrixOffDiagDvd
+
+@[expose] public section
+
 open scoped MatrixGroups TensorProduct commutatorElement
 open Matrix GlobalTheory.KZ GlobalTheory.KZ.ES
 
@@ -88,7 +93,7 @@ theorem commutator_sl2_zmod (m : ℕ) (hm : Nat.Coprime m 6) :
     rw [h]
     simp only [map_mul, map_inv]
     refine mul_mem (mul_mem (inv_mem hT) ?_) (inv_mem hT)
-    exact Subgroup.Normal.conj_mem inferInstance _ (inv_mem hT) _
+    exact Subgroup.Normal.conj_mem _ (inv_mem hT) _
   rw [eq_top_iff, ← Subgroup.map_top_of_surjective ρ hs, ← _root_.SpecialLinearGroup.SL2Z_generators,
     MonoidHom.map_closure, Subgroup.closure_le]
   rintro _ ⟨x, hx, rfl⟩

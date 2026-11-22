@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportFlatIntegrand
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportFlatIntegrand
+
+@[expose] public section
 
 open MeasureTheory GlobalTheory.FunObj
 
@@ -26,7 +30,7 @@ theorem flatTensor_moved_sum {k : Type} [Field k] [ValuativeRel k] [TopologicalS
     simp only [flatIntegrand, moved, GlobalTheory.SplitFlip.Grid.pathAct, Finset.mul_sum, Finset.sum_mul]
     exact Finset.sum_congr rfl fun i _ => by ring
   simp only [flatTensor, h]
-  rw [integral_finset_sum _ fun i hi => (hint i hi).const_mul _]
+  rw [MeasureTheory.integral_finsetSum _ fun i hi => (hint i hi).const_mul _]
   simp only [integral_const_mul]
 
 end GlobalTheory.FunObj

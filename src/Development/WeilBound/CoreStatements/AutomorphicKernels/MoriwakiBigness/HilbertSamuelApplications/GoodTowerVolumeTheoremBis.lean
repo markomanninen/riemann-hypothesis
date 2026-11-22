@@ -1,6 +1,127 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.MoriwakiBigness.HilbertSamuelApplications.GivenOfUse
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GoodTowerVolumeTheoremAlt
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.MoriwakiBigness.HilbertSamuelApplications.GivenOfUse
+public import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.MetricsProjectionFormulaNef
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterNamed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.MoriwakiSt
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPushDown
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsUniqueStatement
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsEmbeddingPieces
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.HasMultiplier
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.HeckeSectionsIsotropicCommutatorPairingPower
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.GoodOrigin
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.SplitComps
+public import Development.AutomorphicSpectrum.Statements.TowerExistence.GoodTowerExistsX
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.CmpPair
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsPreFamilyOfLatticeFamilyTwo
+public import Development.AutomorphicSpectrum.PublishedTheorems.Algebra₂.QuotientByFiniteFlatStatement
+public import Development.AutomorphicSpectrum.PublishedTheorems.Algebra₂.ZarhinStatement
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.OrdinaryCurveStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import GroundTheory.HeightsAndTheta.Heights.KernelsLattice
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.RationalSections.ThmISt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ThetaUniformisationComplexAbelianVarieties
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.TopAvoid
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PointsIntegrableOfResolutionStatementStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FinalTheoremOfInputsRightStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.FinalTheoremOfInputsLeftStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ConvergenceStatementHoldsStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ConvergenceRateStatementHoldsStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SignedConvergenceStatementHoldsStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.DegreeOfIsIntersectionSystem
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.FibreDim
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.ZhangDimensionPushDownGrassmannianHeightBounds
+public import GroundTheory.HeightsAndTheta.Heights.SemipositiveHeights.Imports
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PtsIntegralCurveConst
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNefOnGenericOfSemipos
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PCurvePointsFinite
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBirationalModelExists
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PBirationalModelExists
+public import GroundTheory.HeightsAndTheta.Heights.SemipositiveHeights.ImportsBis
+public import GroundTheory.HeightsAndTheta.Heights.SemipositiveHeights.BigLineBundleMoriwaki
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PZhangLowerX
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.RingKrullDimLocalizationInt
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.KleimanNefCriteriaHoldStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.LineFibreHolds
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MetricLocal
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ProjectionFormulaOfArithSystemStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PullbackStatementHoldsStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RationalityOfResolutionStatementStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.GlobalRegularizationStatementHoldsStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ResolutionExistsOfResolutionStatementStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SiuInequalityIntegralHoldsStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.UniformIntegrabilityStatementHoldsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AnalyticProvisionHoldsStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsArith
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsPieceDegree
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.Statements
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.SmallSectionCountLeOfInjOn
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PLocalRep
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PConstantShift
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSmallSectionPointHeight
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionOrderAtPoint
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PBoundedSectionTransfer
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenOnFibres
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsAmpleOfGenTwist
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyBridgeFull
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.KleimanSt
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGeneratedProductNonneg
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGeneratedRestrict
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGeneratedEffectiveSection
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNefAmpleFibre
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSemiampleNef
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.GeoNum
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PackingStatement
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.ExistsFormOfMemChartRingZ
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PEmbeddingWeight
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PTwistIntersectionInt
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PUnitApprox
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PConstantsRegular
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PConstantsDescend
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PChartConstantsDetermined
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.DegreeGenericOfDegree
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.EmbeddingPiecesOfIntersectionAndResolutionStatement
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.SmallSectionCountLeOfIntegralMul
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AssemblyBase
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PTwistMetric
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PTwistIntersectionAnyDegree
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.ContractMixedFieldStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.KleimanNefness.TargetSt
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenDegGeomDeg
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.IsConjInvariantHZcomb
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PUpperNormalisation
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PMonomialShift
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PSmallGenHeightsNonneg
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.MoriwakiHSFull
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSecEq
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PConductor
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PRootGridLower
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGridSeparation
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PNormalLocusRep
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreNormBound
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PProjAvoidingForm
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSegreArith
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreRepresentatives
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PAvoidFormFinite
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreNormMax
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PMetricMaxComparison
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.BigLineImpliesHeightPositivityStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PushDownOfArithIntersectionSystemStatement
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsFlagGrassPush
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.GrassmannHeightZ2OfInputsAndZ2Statement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ModelClauseHolds
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.NumericalSegreClosed
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExactKeyFormulaProof
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
 
@@ -13,9 +134,13 @@ theorem good_tower_volume_theorem_bis :
     GroundTheory.Heights₂.Heights.LineOfLargeDegree.Statement → GR.QuotientByFiniteFlatStatement → GR.ZarhinStatement →
     Top.GoodTowerExistsX ∧ Top.VolumeTheoremX := by
   intro hAI hU hBig hResK hSA hFHT hGaga hLine hQ hZ
-  obtain ⟨hM, hKey, hSA', hSeg, hResK', _hSAst, hFHT', hGaga', _hSlope, hPB, hPHS, hPAn, hNine, _hAnti⟩ :=
-    given_of_use hAI hU hBig hResK hSA hFHT hGaga hLine
-  exact GlobalTheory.T.final_theorem_of_inputs_right hM hKey hSA' hSeg hResK' hFHT' hGaga' hLine hPB hPHS hPAn hNine
-    (GlobalTheory.T.points_integrable_of_resolution_statement hResK) GlobalTheory.CompanionTheory.Ar.Giv.topAvoid hQ hZ GlobalTheory.thetaUnifAV_closed
+  exact GlobalTheory.T.final_theorem_of_inputs_right
+    GlobalTheory.CompanionTheory.Ar.Top.modelClause_holds GlobalTheory.KeyFam.keyFormula_holds hSA
+    GlobalTheory.CompanionTheory.Segre.numericalSegre_closed hResK hFHT hGaga hLine
+    (GlobalTheory.CompanionTheory.Ar.Giv.inputs_of_use hAI hU hBig hResK)
+    (provHS_of_use hAI hU hBig hResK) GlobalTheory.T.analytic_provision_holds
+    (nineFree_of_use hAI hU hBig hResK)
+    (GlobalTheory.T.points_integrable_of_resolution_statement hResK)
+    GlobalTheory.CompanionTheory.Ar.Giv.topAvoid hQ hZ GlobalTheory.thetaUnifAV_closed
 
 end GlobalTheory.CompanionTheory.Ar.Link

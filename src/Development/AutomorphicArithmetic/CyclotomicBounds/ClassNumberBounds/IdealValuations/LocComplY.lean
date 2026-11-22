@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.IdealValuations.LocDefY
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MemOfAdjoinTop
+module
+
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.IdealValuations.LocDefY
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MemOfAdjoinTop
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open KStar.TotallyRealRoots
@@ -27,7 +31,7 @@ private def indPrime (j : E →+* PadicAlgCl l) : Ideal (𝓞 E) where
   carrier := {x | ‖j (x : E)‖ < 1}
   zero_mem' := by simp
   add_mem' := fun {a b} ha hb => by
-    simp only [Set.mem_ofPred_eq, map_add] at *
+    simp only [Set.mem_ofPred_eq, map_add (f := _)] at *
     exact (IsUltrametricDist.norm_add_le_max _ _).trans_lt (max_lt ha hb)
   smul_mem' := fun c x hx => by
     simp only [Set.mem_ofPred_eq, smul_eq_mul, map_mul, norm_mul] at *
@@ -89,7 +93,11 @@ theorem exists_embedding_place (v : HeightOneSpectrum (𝓞 E)) (hv : (l : 𝓞 
   have : IsGalois ℚ (AlgebraicClosure E) := IsAlgClosure.isGalois ℚ _
   have : IsGalois ℚ L := IsGalois.normalClosure ℚ E (AlgebraicClosure E)
   have : NumberField L := {}
-  let j0 : L →ₐ[ℚ] PadicAlgCl l := IsAlgClosed.lift
+  let j0 : L →ₐ[ℚ] PadicAlgCl l := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have := v.isPrime
   obtain ⟨Q, hQ, hQv⟩ := Ideal.exists_ideal_over_prime_of_isIntegral_of_isDomain (S := 𝓞 L)
     v.asIdeal (by

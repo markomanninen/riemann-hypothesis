@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthRestrictScalarsEqSumInertiaDegOfSubset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthRestrictScalarsEqSumInertiaDegOfSubset
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -165,9 +169,9 @@ private lemma length_quotient_smul_univ_eq_finrank_mul {A M : Type*} [CommRing A
   rw [e1, add_comm] at e2
   exact (WithTop.add_left_cancel hfin e2).symm
 
+
 open IsLocalRing in
 open scoped Pointwise in
-
 theorem _root_.GlobalTheory.finsum_ord_mul_inertiaDeg_eq_finrank_mul_ord (A B : Type) [CommRing A] [IsDomain A]
     [IsNoetherianRing A] [IsLocalRing A] [CommRing B] [IsDomain B] [Algebra A B]
     [Module.Finite A B] (hinj : Function.Injective (algebraMap A B)) (hdim : ringKrullDim A = 1)
@@ -241,9 +245,13 @@ theorem _root_.GlobalTheory.finsum_ord_mul_inertiaDeg_eq_finrank_mul_ord (A B : 
     · intro hQ
       have : (Q.asIdeal.comap (algebraMap A B)).IsMaximal := by
         rw [show Q.asIdeal.comap (algebraMap A B) = maximalIdeal A from hQ]; infer_instance
-      exact ⟨⟨Q.asIdeal, Ideal.isMaximal_of_isIntegral_of_isMaximal_comap _ this⟩, rfl⟩
+      have hInt : (algebraMap A B).IsIntegral := fun x ↦ IsIntegral.of_finite A x
+      exact ⟨⟨Q.asIdeal,
+        Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (algebraMap A B) hInt _ this⟩, rfl⟩
     · rintro ⟨n, rfl⟩
-      exact IsLocalRing.eq_maximalIdeal (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal n.asIdeal)
+      have hInt : (algebraMap A B).IsIntegral := fun x ↦ IsIntegral.of_finite A x
+      exact IsLocalRing.eq_maximalIdeal
+        (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (algebraMap A B) hInt n.asIdeal)
   rw [hS, finsum_mem_range MaximalSpectrum.toPrimeSpectrum_injective, finsum_eq_sum_of_fintype]
   exact_mod_cast h3.symm
 

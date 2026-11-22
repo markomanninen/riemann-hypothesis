@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModDefs
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModDefs
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators Classical UpperHalfPlane MatrixGroups CongruenceSubgroup Manifold
@@ -58,7 +62,7 @@ theorem isMF_AA : IsMF 12 AA := by
 
 theorem isMF_DD : IsMF 12 DD := by
   first
-    | exact ⟨ModularFormClass.modularForm ModularForm.discriminantCuspForm, fun τ => rfl⟩
+    | exact ⟨ModularFormClass.modularForm CuspForm.discriminant, fun τ => rfl⟩
     | exact ⟨ModularFormClass.modularForm CuspForm.discriminant, fun τ => rfl⟩
 
 theorem IsMF.smul_eq {k : ℤ} {f : ℍ → ℂ} (h : IsMF k f) (γ : SL(2, ℤ)) (τ : ℍ) :
@@ -117,25 +121,8 @@ theorem zetaC_pow_self {m : ℕ} (hm : 0 < m) : zetaC m ^ m = 1 := by
   have : (m : ℂ) * (2 * Real.pi * Complex.I / m) = 2 * Real.pi * Complex.I := by field_simp
   rw [this, Complex.exp_two_pi_mul_I]
 
-theorem zetaC_mul {a e : ℕ} (ha : 0 < a) (he : 0 < e) : zetaC (a * e) ^ a = zetaC e := by
-  unfold zetaC
-  rw [← Complex.exp_nat_mul]
-  have ha' : (a : ℂ) ≠ 0 := by exact_mod_cast ha.ne'
-  have he' : (e : ℂ) ≠ 0 := by exact_mod_cast he.ne'
-  congr 1
-  push_cast
-  field_simp
-
 theorem zetaC_mem (m : ℕ) : zetaC m ∈ Rm m := by
   exact Subring.subset_closure (Set.mem_singleton _)
-
-theorem zetaC_inv_mem {m : ℕ} (hm : 0 < m) : (zetaC m)⁻¹ ∈ Rm m := by
-  have h : (zetaC m)⁻¹ = zetaC m ^ (m - 1) := by
-    symm
-    apply eq_inv_of_mul_eq_one_left
-    rw [← pow_succ, Nat.sub_add_cancel hm, zetaC_pow_self hm]
-  rw [h]
-  exact pow_mem (zetaC_mem m) _
 
 theorem Rm_isIntegral {m : ℕ} (hm : 0 < m) {x : ℂ} (hx : x ∈ Rm m) : IsIntegral ℤ x := by
   have hζ : IsIntegral ℤ (zetaC m) :=

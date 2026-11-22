@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.ConstSectionStatement
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.ConstSectionStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,7 +11,7 @@ namespace LevelStatements.Lv
 open PowerSeries IsLocalRing
 
 theorem expRescale_coeff (S : Type) [CommRing S] [Algebra ℚ S] (E : PowerSeries S)
-    (h0 : constantCoeff E = 1) (hd : derivative S E = E) (n : ℕ) :
+    (h0 : constantCoeff E = 1) (hd : PowerSeries.derivative E = E) (n : ℕ) :
     coeff n E = algebraMap ℚ S (1 / (n.factorial : ℚ)) := by
   induction n with
   | zero => simp [h0]

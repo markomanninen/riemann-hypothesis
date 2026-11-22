@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsLastFurther
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistModNatMul
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.ImportsLastFurther
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistModNatMul
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization

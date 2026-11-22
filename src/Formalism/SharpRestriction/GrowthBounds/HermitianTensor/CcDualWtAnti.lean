@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudDefs
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.ResidueClassCountOfTensorBasisInclusion
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.HermitianTensor.CloudDefs
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.ResidueClassCountOfTensorBasisInclusion
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LCpeelLemmas
+module
+
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LCpeelLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -8,7 +12,7 @@ namespace Formalism.GradedWeylDivisibility
 
 theorem lcpeel_support {B : Type*} [CommRing B] {r n : ℕ} (l j : Fin n) (a0 : Fin r) (k : ℕ)
     (g : MvPolynomial (Fin r × Fin n) B) (d : Fin r × Fin n →₀ ℕ)
-    (hd : coeff d (peel l j a0 k g) ≠ 0) :
+    (hd : AddMonoidAlgebra.coeff (peel l j a0 k g) d ≠ 0) :
     ∃ m ∈ g.support, m (a0, l) = k ∧ d = (m.erase (a0, l)).erase (a0, j) := by
   unfold peel at hd
   rw [coeff_sum] at hd
@@ -81,7 +85,7 @@ private theorem weight_pairW_eq_erase_of_split {r n : ℕ} (l j : Fin n) (hlj : 
       Finsupp.single (a0, l) (m (a0, l) + m (a0, j)) := by
     rw [← hw]
     conv_lhs => rw [hsplit]
-    rw [map_add, map_add, weight_single_eq_nsmul, weight_single_eq_nsmul, hpl, hpj]
+    rw [map_add (f := _), map_add (f := _), weight_single_eq_nsmul, weight_single_eq_nsmul, hpl, hpj]
     first
       | (rw [add_assoc, ← add_smul, Finsupp.smul_single, smul_eq_mul, mul_one])
       | (ext y

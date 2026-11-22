@@ -1,6 +1,10 @@
-import Mathlib
-import Development.DiscreteGroups.GlobalIrreducibility.DzTypeCut
-import Development.DiscreteGroups.GlobalIrreducibility.ExistsOfMemKOne
+module
+
+public import Mathlib
+public import Development.DiscreteGroups.GlobalIrreducibility.DzTypeCut
+public import Development.DiscreteGroups.GlobalIrreducibility.ExistsOfMemKOne
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,11 @@
-import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.CuspidalExhaustion.CuspEmbP
-import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.CuspidalExhaustion.MidGen
-import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.CuspidalExhaustion.MidExact
-import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.CuspidalExhaustion.EquivTripleProductOfIso
+module
+
+public import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.CuspidalExhaustion.CuspEmbP
+public import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.CuspidalExhaustion.MidGen
+public import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.CuspidalExhaustion.MidExact
+public import CompanionTheory.AutomorphicTheory.ProductFormulaTheory.CuspidalExhaustion.EquivTripleProductOfIso
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,45 +39,45 @@ theorem embedding_middle_factor_triple {nA nB m m' N : ℕ} (h2 : m + nB = m') (
   exact Iff.rfl
 
 unseal GlobalTheory.ProdFlatten.one GlobalTheory.ProdFlatten.two GlobalTheory.ProdFlatten.mp GlobalTheory.ProdFlatten.pr GlobalTheory.ProdFlatten.Iso GlobalTheory.ProdFlatten.Sm in
-theorem mid_br {nA nB m m' : ℕ} (x : IrrGL k) (h2 : m + nB = m') (h1 : nA + m' = x.1) (A : BR k nA) (B : BR k nB) (M : BR k m)
+theorem mid_br {nA nB m m' : ℕ} (x : IrrGL (k := k)) (h2 : m + nB = m') (h1 : nA + m' = x.1) (A : BR k nA) (B : BR k nB) (M : BR k m)
     (hM : FL M) (hs : Sm M) (h : Emb (one x) (two h1 A (two h2 M B))) :
     ∃ c : IrrCl (GL (Fin m) k), Sq (one ⟨m, c⟩) M ∧ Emb (one x) (two h1 A (two h2 (one ⟨m, c⟩) B)) :=
   let ⟨f, hf⟩ := h
   mid_gen (fun τ => ⟨_, T3 h2 h1 A.ρ B.ρ τ⟩) (fun f => tripleProductMap h2 h1 A.ρ B.ρ f) (fun f g => tripleProductMap_injective h2 h1 A.ρ B.ρ f g) hM hs x.2 f hf
 
 unseal GlobalTheory.ProdFlatten.one GlobalTheory.ProdFlatten.two GlobalTheory.ProdFlatten.mp GlobalTheory.ProdFlatten.pr GlobalTheory.ProdFlatten.Iso GlobalTheory.ProdFlatten.Sm in
-theorem emb_pr_iff (x : IrrGL k) {a : ℕ} (z : Fin a → IrrGL k) (hd : ∑ i, (z i).1 = x.1) :
+theorem emb_pr_iff (x : IrrGL (k := k)) {a : ℕ} (z : Fin a → IrrGL (k := k)) (hd : ∑ i, (z i).1 = x.1) :
     Emb (one x) (pr z hd) ↔ ∃ f : x.rep.IntertwiningMap (prodIrr z hd), Function.Injective f := Iff.rfl
 
 unseal GlobalTheory.ProdFlatten.one GlobalTheory.ProdFlatten.two GlobalTheory.ProdFlatten.mp GlobalTheory.ProdFlatten.pr GlobalTheory.ProdFlatten.Iso GlobalTheory.ProdFlatten.Sm in
-theorem sq_pr_iff (x : IrrGL k) {a : ℕ} (z : Fin a → IrrGL k) (hd : ∑ i, (z i).1 = x.1) :
+theorem sq_pr_iff (x : IrrGL (k := k)) {a : ℕ} (z : Fin a → IrrGL (k := k)) (hd : ∑ i, (z i).1 = x.1) :
     Sq (one x) (pr z hd) ↔ IsSubquotient x.rep (prodIrr z hd) := Iff.rfl
 
 unseal GlobalTheory.ProdFlatten.one GlobalTheory.ProdFlatten.two GlobalTheory.ProdFlatten.mp GlobalTheory.ProdFlatten.pr GlobalTheory.ProdFlatten.Iso GlobalTheory.ProdFlatten.Sm in
-theorem fl_pr (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) {a N : ℕ} (z : Fin a → IrrGL k) (hd : ∑ i, (z i).1 = N) : FL (pr z hd) :=
+theorem fl_pr (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) {a N : ℕ} (z : Fin a → IrrGL (k := k)) (hd : ∑ i, (z i).1 = N) : FL (pr z hd) :=
   GlobalTheory.T.product_irreducible_finite_length hA z hd
 
 unseal GlobalTheory.ProdFlatten.one GlobalTheory.ProdFlatten.two GlobalTheory.ProdFlatten.mp GlobalTheory.ProdFlatten.pr GlobalTheory.ProdFlatten.Iso GlobalTheory.ProdFlatten.Sm in
-theorem iso_one_pr (x : IrrGL k) (hd : ∑ _ : Fin 1, x.1 = x.1) : Iso (one x) (pr (fun _ : Fin 1 => x) hd) :=
+theorem iso_one_pr (x : IrrGL (k := k)) (hd : ∑ _ : Fin 1, x.1 = x.1) : Iso (one x) (pr (fun _ : Fin 1 => x) hd) :=
   nonempty_equiv_prodIrr_one x hd
 
 unseal GlobalTheory.ProdFlatten.one GlobalTheory.ProdFlatten.two GlobalTheory.ProdFlatten.mp GlobalTheory.ProdFlatten.pr GlobalTheory.ProdFlatten.Iso GlobalTheory.ProdFlatten.Sm in
-theorem iso_pr_of {a b N : ℕ} (z : Fin a → IrrGL k) (w : Fin b → IrrGL k) (hz : ∑ i, (z i).1 = N) (hw : ∑ i, (w i).1 = N)
+theorem iso_pr_of {a b N : ℕ} (z : Fin a → IrrGL (k := k)) (w : Fin b → IrrGL (k := k)) (hz : ∑ i, (z i).1 = N) (hw : ∑ i, (w i).1 = N)
     (h : Nonempty ((prodIrr z hz).Equiv (prodIrr w hw))) : Iso (pr z hz) (pr w hw) := h
 
 attribute [irreducible] Emb Sq FL
 
-theorem embL_iff (x : IrrGL k) (l : List (IrrGL k)) : EmbL x l ↔ ∃ hd, Emb (one x) (pr l.get hd) :=
+theorem embL_iff (x : IrrGL (k := k)) (l : List (IrrGL (k := k))) : EmbL x l ↔ ∃ hd, Emb (one x) (pr l.get hd) :=
   exists_congr fun hd => (emb_pr_iff x l.get hd).symm
 
-theorem deg3 (A M B : List (IrrGL k)) :
+theorem deg3 (A M B : List (IrrGL (k := k))) :
     ∑ a, ((A ++ M ++ B).get a).1 = ∑ a, (A.get a).1 + (∑ a, (M.get a).1 + ∑ a, (B.get a).1) := by
   simp only [sum_get_eq', List.map_append, List.sum_append, add_assoc]
 
-theorem iso_single (σ : IrrGL k) (h : ∑ a, ([σ].get a).1 = σ.1) : Iso (one σ) (pr [σ].get h) :=
+theorem iso_single (σ : IrrGL (k := k)) (h : ∑ a, ([σ].get a).1 = σ.1) : Iso (one σ) (pr [σ].get h) :=
   iso_trans (iso_one_pr σ (by simp)) (pr_congr (by simp) _ h)
 
-theorem embL_block {x : IrrGL k} {A M M' B : List (IrrGL k)} {m : ℕ} (hM : ∑ a, (M.get a).1 = m) (hM' : ∑ a, (M'.get a).1 = m)
+theorem embL_block {x : IrrGL (k := k)} {A M M' B : List (IrrGL (k := k))} {m : ℕ} (hM : ∑ a, (M.get a).1 = m) (hM' : ∑ a, (M'.get a).1 = m)
     (h : Emb (pr M.get hM) (pr M'.get hM')) (hx : EmbL x (A ++ M ++ B)) : EmbL x (A ++ M' ++ B) := by
   obtain ⟨hd, e⟩ := (embL_iff _ _).1 hx
   have h1 : ∑ a, (A.get a).1 + (m + ∑ a, (B.get a).1) = x.1 := by rw [← hM, ← deg3, hd]
@@ -103,8 +107,8 @@ theorem midP' (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) : MidP k := 
   have h1 : ∑ a, (A.get a).1 + (m + ∑ a, (B.get a).1) = x.1 := by rw [← hM, ← deg3, hd]
   obtain ⟨c, hc, e'⟩ := mid_br x rfl h1 _ _ _ (fl_pr hA M.get hM) (sm_pr M.get hM)
     (emb_trans e (emb_of_iso (stage3_iso A M B hd rfl hM rfl rfl h1)))
-  have hs : ∑ a, ([(⟨m, c⟩ : IrrGL k)].get a).1 = m := by simp
-  have hd' : ∑ a, ((A ++ [(⟨m, c⟩ : IrrGL k)] ++ B).get a).1 = x.1 := by rw [deg3, hs, h1]
+  have hs : ∑ a, ([(⟨m, c⟩ : IrrGL (k := k))].get a).1 = m := by simp
+  have hd' : ∑ a, ((A ++ [(⟨m, c⟩ : IrrGL (k := k))] ++ B).get a).1 = x.1 := by rw [deg3, hs, h1]
   refine ⟨⟨m, c⟩, ⟨hM, (sq_pr_iff ⟨m, c⟩ M.get hM).1 hc⟩, (embL_iff _ _).2 ⟨hd', ?_⟩⟩
   exact emb_trans (emb_trans e' (embedding_middle_factor_triple rfl h1 _ _ (emb_of_iso (iso_single ⟨m, c⟩ hs))))
     (emb_of_iso (iso_symm (stage3_iso A [⟨m, c⟩] B hd' rfl hs rfl rfl h1)))

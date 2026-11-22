@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRingHomPowPrimePow
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PfFacts
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsRingHomPowPrimePow
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PfFacts
+
+@[expose] public section
+
 open TensorProduct CrystallineSemistableComparison.D
 open scoped LaurentPolynomial
 
@@ -14,7 +19,8 @@ theorem solv_of_solv_pow : ∀ (p : ℕ) [Fact p.Prime] (A : Type) [CommRing A](
   obtain ⟨F, hF⟩ := GlobalTheory.CompanionTheory.Frobenius.exists_ringHom_pow_prime_pow p B hB.char k
   choose y' hy' using fun j => hroot k (y j)
   refine ⟨y', fun i => hinj k _ _ ?_⟩
-  rw [← hF, ← hF, map_sum, hF, ← map_pow, ← hy i]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hF, ← hF, map_sum, hF, ← map_pow, ← hy i]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [hF, Algebra.smul_def, Algebra.smul_def, mul_pow, map_pow, hy' j]
 

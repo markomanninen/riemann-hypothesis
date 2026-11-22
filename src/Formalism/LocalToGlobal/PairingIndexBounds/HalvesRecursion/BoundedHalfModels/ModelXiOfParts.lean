@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.BoundedHalfModels.Assemble
-import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.BoundedHalfModels.AdicBoxOpenness.ClosureCharacterHolds
-import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.ModelXiAll
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.BoundedHalfModels.Assemble
+public import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.BoundedHalfModels.AdicBoxOpenness.ClosureCharacterHolds
+public import Formalism.LocalToGlobal.PairingIndexBounds.HalvesRecursion.ModelXiAll
+
+@[expose] public section
 
 namespace Formalism.L2.PairingIndexBounds.Rec
 

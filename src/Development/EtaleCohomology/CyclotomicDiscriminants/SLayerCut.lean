@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LemmaKOfSteps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.ExistsDescends
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.Rootdeg
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LemmaKOfSteps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.ExistsDescends
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LayeredIsomorphisms.Rootdeg
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ theorem disc_cyc (L L' : Type) [Field L] [NumberField L] [Field L'] [NumberField
     minpoly.isIntegrallyClosed_dvd hint (by simp [hx])
   obtain ⟨g, hg⟩ := hdvd
   have h1 := congrArg (fun p => aeval x (derivative p) * x) hg
-  simp only [derivative_sub, derivative_X_pow, derivative_one, sub_zero, derivative_mul, map_add, map_mul,
+  simp only [derivative_sub, derivative_X_pow, derivative_one, sub_zero, derivative_mul, map_add (f := _), map_mul,
     minpoly.aeval, zero_mul, add_zero, map_pow, aeval_X, map_natCast] at h1
   have h2 : (N : 𝓞 L') ∈ differentIdeal (𝓞 L) (𝓞 L') := by
     have h3 : (N : 𝓞 L') = aeval x (derivative (minpoly (𝓞 L) x)) * (aeval x g * x) := by
@@ -59,7 +63,7 @@ theorem goal_of : UpperTheory.V.ZK.SLayer := by
   let m := Nat.clog l (4 * E + 4)
   have hm1 : 4 * E + 4 ≤ l ^ m := Nat.le_pow_clog hp.one_lt _
   have hm2 : l ^ m ≤ l * (4 * E + 4) := by
-    have h1 := Nat.pow_pred_clog_lt_self hp.one_lt (x := 4 * E + 4) (by omega)
+    have h1 := Nat.pow_pred_clog_lt_self l (x := 4 * E + 4) (by omega)
     have h2 : 0 < m := Nat.clog_pos hp.one_lt (by omega)
     calc l ^ m = l * l ^ (m - 1) := by rw [← pow_succ', Nat.sub_add_cancel h2]
       _ ≤ _ := Nat.mul_le_mul_left _ h1.le

@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.Entire
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatHerm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitarisableOfIsLocCompCusp
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsUnitaryTwistAbsPow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeTjCosetsFiniteCardLe
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormHeckeEigenvalueLeCardCosetsStatement
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.Entire
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatHerm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitarisableOfIsLocCompCusp
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIsUnitaryTwistAbsPow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeTjCosetsFiniteCardLe
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormHeckeEigenvalueLeCardCosetsStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,11 +20,11 @@ section Loc
 variable {E : Type} [Field E] [NumberField E]
 
 private theorem card_heckeT1_cosets (w : HeightOneSpectrum (𝓞 E)) (ϖ : w.adicCompletion E) (hϖ : Formalism.UG.IsUnifV E w ϖ) :
-    Nat.card {q : GL (Fin 2) (w.adicCompletion E) ⧸ KGL w 2 // Formalism.UG.Tj ℂ 2 (Formalism.UG.Ov E w) ϖ 1 q.out ≠ 0} =
+    Nat.card {q : GL (Fin 2) (w.adicCompletion E) ⧸ KGL w (n := 2) // Formalism.UG.Tj ℂ 2 (Formalism.UG.Ov E w) ϖ 1 q.out ≠ 0} =
       Formalism.UG.qV E w + 1 := by
   have h := Formalism.UG.P.Tj_double_coset_decomposition E w 2 ϖ (mem_Ov_of_isUnifV hϖ) hϖ 1 (by norm_num)
   have hq : 2 ≤ Formalism.UG.qV E w := one_lt_absNorm w
-  have hcard : Nat.card {q : GL (Fin 2) (w.adicCompletion E) ⧸ KGL w 2 //
+  have hcard : Nat.card {q : GL (Fin 2) (w.adicCompletion E) ⧸ KGL w (n := 2) //
       Formalism.UG.Tj ℂ 2 (Formalism.UG.Ov E w) ϖ 1 q.out ≠ 0} =
       Nat.card {x : GL (Fin 2) (w.adicCompletion E) ⧸ Formalism.UG.GLint (Fin 2) (Formalism.UG.Ov E w) |
         Formalism.UG.Tj ℤ 2 (Formalism.UG.Ov E w) ϖ 1 x.out ≠ 0} :=
@@ -30,7 +34,7 @@ private theorem card_heckeT1_cosets (w : HeightOneSpectrum (𝓞 E)) (ϖ : w.adi
   have hq' : ((Formalism.UG.qV E w : ℤ) - 1) ≠ 0 := by
     have : (2 : ℤ) ≤ Formalism.UG.qV E w := by exact_mod_cast hq
     omega
-  have e : (Nat.card {q : GL (Fin 2) (w.adicCompletion E) ⧸ KGL w 2 //
+  have e : (Nat.card {q : GL (Fin 2) (w.adicCompletion E) ⧸ KGL w (n := 2) //
       Formalism.UG.Tj ℂ 2 (Formalism.UG.Ov E w) ϖ 1 q.out ≠ 0} : ℤ) = (Formalism.UG.qV E w : ℤ) + 1 :=
     mul_right_cancel₀ hq' (h.trans (by ring))
   exact_mod_cast e
@@ -65,7 +69,7 @@ private theorem loc_sat (w : HeightOneSpectrum (𝓞 E)) {V : Type} [AddCommGrou
   have hs := GlobalTheory.T.satakeParameterGL_star_eq_inv_of_unitarisable E w 2 V ρ x _ hU hx
   obtain ⟨ϖ, hϖ⟩ := exists_isUnifV w
   obtain ⟨B0, h1, h2, h3⟩ := hU
-  have k1 := GlobalTheory.T.norm_heckeEigenvalue_le_card_cosets _ (KGL w 2) V ρ B0.flip (fun u v => h1 v u) (fun u hu => h2 u hu) (fun g u v => h3 g v u) _ x _
+  have k1 := GlobalTheory.T.norm_heckeEigenvalue_le_card_cosets _ (KGL w (n := 2)) V ρ B0.flip (fun u v => h1 v u) (fun u hu => h2 u hu) (fun g u v => h3 g v u) _ x _
     (fun g => by
       unfold Formalism.UG.Tj
       exact (norm_indicator_le_norm_self _ _).trans (by simp))
@@ -104,7 +108,7 @@ private theorem loc_sat (w : HeightOneSpectrum (𝓞 E)) {V : Type} [AddCommGrou
       have hr' : 0 < ‖(b : ℂ)‖ := norm_pos_iff.2 hB0
       nlinarith [mul_inv_cancel₀ hr'.ne']
     refine ⟨by rw [norm_mul, n1, n2, one_mul], ?_, ?_⟩
-    · rw [map_add, c1, c2]
+    · rw [map_add (f := _), c1, c2]
       field_simp
       ring
     · rw [n1]
@@ -116,7 +120,7 @@ private theorem loc_sat (w : HeightOneSpectrum (𝓞 E)) {V : Type} [AddCommGrou
       have := congrArg norm c1
       rwa [RCLike.norm_conj, norm_inv] at this
     refine ⟨by rw [norm_mul, n1, inv_mul_cancel₀ (norm_ne_zero_iff.2 hB0)], ?_, ?_⟩
-    · rw [map_add, c1, c2]
+    · rw [map_add (f := _), c1, c2]
       field_simp
     · have hbe : (b : ℂ) = (starRingEnd ℂ (a : ℂ))⁻¹ := by rw [c1, inv_inv]
       have e3 : ‖(a + b : ℂ)‖ = ‖(a : ℂ)‖ + ‖(a : ℂ)‖⁻¹ := by
@@ -140,7 +144,7 @@ end Loc
 
 section Glob
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 private theorem isUnitary_of_cenN {P : CuspSub E 2} {ω : HChar ℚ} (hc : CenN P ω) (hu : Unit1 ω) : P.IsUnitary := by
   obtain ⟨κ, hκ⟩ := Central.exists_hasCentral E 2 P
@@ -222,11 +226,12 @@ theorem UpperTheory.ConvolutionTheory.RankTwoDescent.satU_of :
     exact k1
   · have e : starRingEnd ℂ ((α : ℂ) * c + β * c) * (α * c * (β * c)) =
         starRingEnd ℂ ((α : ℂ) + β) * (α * β) * (starRingEnd ℂ c * c) * c := by
-      simp only [map_add, map_mul]
+      simp only [map_add (f := _), map_mul]
       ring
     rw [e, hcc, mul_one] at k2
     exact mul_right_cancel₀ hc0 (k2.trans (by ring))
   · rw [norm_mul, hc1, mul_one] at k3
-    exact k3
+    simpa [Formalism.UG.qV, Formalism.ConjugateSelfDual.normV,
+      Ideal.absNorm_apply, Submodule.cardQuot_apply] using k3
 
 end

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
+
+@[expose] public section
 
 open MeasureTheory Set Filter GlobalTheory.AdelicU GlobalTheory.SplitWeil NumberField
 open GlobalTheory.AutomorphicL2Unitary (conv starFn hasCompactSupport_starFn)
@@ -105,14 +109,6 @@ theorem isGroupCoord_matCoord {n : Type} [Fintype n] [DecidableEq n] {ι : H →
 
 variable [IsTopologicalGroup H] {c : H → X} {f f' : H → ℂ}
 
-theorem IsGroupCoord.translate_mem (h : IsGroupCoord c) (hf : f ∈ CcSmooth c) (a b : H) :
-    (fun g => f (a * g * b)) ∈ CcSmooth c := by
-  obtain ⟨-, ⟨m, hm, em⟩, -⟩ := h
-  obtain ⟨hc, Φ, hΦ, e⟩ := hf
-  exact ⟨hc.comp_homeomorph ((Homeomorph.mulLeft a).trans (Homeomorph.mulRight b)),
-    fun y => Φ (m (m (c a, y), c b)), hΦ.comp (hm.comp ((hm.comp (by fun_prop)).prodMk contDiff_const)),
-    fun g => by simp only [e, em]⟩
-
 variable [FiniteDimensional ℝ X]
 
 theorem IsGroupCoord.inv_mem (h : IsGroupCoord c) (hf : f ∈ CcSmooth c) : (fun g => f g⁻¹) ∈ CcSmooth c := by
@@ -167,9 +163,6 @@ section General
 
 variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 
-theorem translate_mem_SB {f : G → ℂ} (h : f ∈ SB G) (a b : G) : (fun g => f (a * g * b)) ∈ SB G :=
-  comp_mem_SB h ((Homeomorph.mulLeft a).trans (Homeomorph.mulRight b))
-
 variable [MeasurableSpace G] [BorelSpace G] (μ : Measure G) [IsFiniteMeasureOnCompacts μ]
 
 theorem conv_add_left {f₁ f₂ f' : G → ℂ} (h₁ : Continuous f₁) (c₁ : HasCompactSupport f₁) (h₂ : Continuous f₂)
@@ -188,8 +181,8 @@ theorem conv_add_right {f f₁ f₂ : G → ℂ} (h : Continuous f) (c : HasComp
   exact integral_add ((h.mul (h₁.comp hy)).integrable_of_hasCompactSupport c.mul_right)
     ((h.mul (h₂.comp hy)).integrable_of_hasCompactSupport c.mul_right)
 
-omit [TopologicalSpace G] [IsTopologicalGroup G] [BorelSpace G] [IsFiniteMeasureOnCompacts μ] in
 
+omit [TopologicalSpace G] [IsTopologicalGroup G] [BorelSpace G] [IsFiniteMeasureOnCompacts μ] in
 theorem conv_smul_smul (a b : ℂ) (f f' : G → ℂ) : conv μ (a • f) (b • f') = (a * b) • conv μ f f' := by
   funext y
   simp only [conv, Pi.smul_apply, smul_eq_mul, ← integral_const_mul]
@@ -228,8 +221,8 @@ end Inf
 
 section Ad
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem starFn_infFin (a : GInf σ J → ℂ) (b : GFin σ J → ℂ) :
     starFn (infFin σ J a b) = infFin σ J (starFn a) (starFn b) := by
   funext g

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SameFns
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SameFns
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.R Formalism.FourierDecayAlt.Wd Formalism.FourierDecayAlt.Fr Formalism.REAL Formalism.QuantumDeterminants MeasureTheory GlobalTheory.HatNF
 
@@ -21,8 +25,9 @@ theorem ofFn_mul_inv : ∀ {n : ℕ} (f g : Fin n → A), (∀ l, f l * g l = 1)
   | 0, _, _, _, _ => by simp
   | n + 1, f, g, h, hc => by
     rw [List.ofFn_succ, List.ofFn_succ, List.prod_cons, List.prod_cons]
-    have ih := ofFn_mul_inv (fun i => f i.succ) (fun i => g i.succ) (fun l => h _) (fun l m => hc _ _)
-    have hc' := comm_ofFn (fun i : Fin n => f i.succ) (g 0) (fun l => hc _ _)
+    have ih := ofFn_mul_inv (n := n) (fun i => f i.succ) (fun i => g i.succ)
+      (fun l => h l.succ) (fun l m => hc l.succ m.succ)
+    have hc' := comm_ofFn (fun i : Fin n => f i.succ) (g 0) (fun l => hc 0 l.succ)
     rw [mul_assoc, ← mul_assoc _ (g 0), ← hc'.eq, mul_assoc, ih, mul_one, h]
 
 theorem star_ofFn [StarRing A] : ∀ {n : ℕ} (f g : Fin n → A), (∀ l, star (f l) = g l) →
@@ -30,8 +35,9 @@ theorem star_ofFn [StarRing A] : ∀ {n : ℕ} (f g : Fin n → A), (∀ l, star
   | 0, _, _, _, _ => by simp
   | n + 1, f, g, h, hc => by
     rw [List.ofFn_succ, List.ofFn_succ, List.prod_cons, List.prod_cons, star_mul]
-    have ih := star_ofFn (fun i => f i.succ) (fun i => g i.succ) (fun l => h _) (fun l m => hc _ _)
-    have hc' := comm_ofFn (fun i : Fin n => g i.succ) (g 0) (fun l => hc _ _)
+    have ih := star_ofFn (n := n) (fun i => f i.succ) (fun i => g i.succ)
+      (fun l => h l.succ) (fun l m => hc l.succ m.succ)
+    have hc' := comm_ofFn (fun i : Fin n => g i.succ) (g 0) (fun l => hc 0 l.succ)
     rw [ih, h, hc'.eq]
 
 end lists

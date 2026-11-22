@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueIsTanFrameOfIsEmpty
-import Development.AbelianVarietyTheory.Definitions.Divisors.P22
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KodairaSpencerMatrixUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPolarizationFormIsotropicFiltration
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsUniqueIsConnOfLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueIsTanFrameOfIsEmpty
+public import Development.AbelianVarietyTheory.Definitions.Divisors.P22
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KodairaSpencerMatrixUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPolarizationFormIsotropicFiltration
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsUniqueIsConnOfLift
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -113,10 +117,10 @@ theorem eq_zero_of_pull2 (hs : s' = s ≫ DeRham.epsRed R) {φ : X ⟶ X} (hφ :
     (m.coef.pullCohomologyTwo_comp n z).symm.trans
       ((inlCoef hs).pullCohomologyTwo_eq_of_natTrans (m.coef.comp n) θ (fun _ _ ↦ rfl) z).symm
   have h1 := congrArg n.pull2 h
-  rw [map_add, map_smul, key, key, map_zero] at h1
+  rw [map_add (f := _), map_smul, key, key, map_zero] at h1
   obtain ⟨z₀, rfl⟩ := H2.mk_surjective _ z₀
   obtain ⟨z₁, rfl⟩ := H2.mk_surjective _ z₁
-  rw [CoefMap.pullCohomologyTwo_class, CoefMap.pullCohomologyTwo_class, ← map_smul, ← map_add, H2.mk_eq_zero] at h1
+  rw [CoefMap.pullCohomologyTwo_class, CoefMap.pullCohomologyTwo_class, ← map_smul, ← map_add (f := _), H2.mk_eq_zero] at h1
   obtain ⟨f, hf⟩ := h1
   have alg : ∀ {B B' : Type} [CommRing B] [CommRing B'] (σ : B →+* B') (τ : R →+* B') (u : DualNumber B)
       (v w : DualNumber B') (a b : B'), epsMap σ u - v + w = inl a + epsMap τ DualNumber.eps * inl b →
@@ -140,12 +144,11 @@ theorem exists_const_add (P : AbelianDeRham) {A : Over (Sp R)} [GrpObj A] {g : �
     ∃ u v : primDR A, p = (constMor A).pull u + (DualNumber.eps : DualNumber R) • (constMor A).pull v := by
   obtain ⟨z, rfl⟩ := constMor_surjective P hA hg p
   induction z with
-  | zero => exact ⟨0, 0, by simp only [map_zero, smul_zero, add_zero]⟩
   | add x y hx hy =>
     obtain ⟨u, v, e⟩ := hx
     obtain ⟨u', v', e'⟩ := hy
     refine ⟨u + u', v + v', ?_⟩
-    rw [map_add, e, e', map_add, map_add, smul_add]
+    rw [map_add (f := _), e, e', map_add (f := _), map_add (f := _), smul_add]
     abel
   | tmul r c =>
     refine ⟨r.fst • c, r.snd • c, ?_⟩
@@ -166,8 +169,8 @@ theorem exists_wedge (P : AbelianDeRham.Free) {A : Over (Sp R)} [GrpObj A] {g : 
   rw [← he, LinearMap.comp_apply, LinearEquiv.coe_coe, e.symm_apply_apply]
   simp [wedgeDual, ex, ey]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem snd_polForm (P : AbelianDeRham) {A : Over (Sp R)} [GrpObj A] {n : ℕ} (hA : IsAbelianScheme A)
     (hn : SmoothOfRelativeDimension n A.hom) {A' : Over (Sp (DualNumber R))} [GrpObj A'] {i : A.left ⟶ A'.left}
     (h : IsGrpPullback A A' (DeRham.epsRed R) i) {Y : Scheme.{0}} {L : LB Y} (hL : L.IsLB) {π' : A'.left ⟶ Y}
@@ -196,14 +199,15 @@ theorem snd_polForm (P : AbelianDeRham) {A : Over (Sp R)} [GrpObj A] {n : ℕ} (
   have hz' : (constMor A).isMor.pull2 (∑ j, cup _ (u j).1 (w j).1 - ∑ j, cup _ (a j).1 (b j).1) +
       (DualNumber.eps : DualNumber R) •
         (constMor A).isMor.pull2 (∑ j, (cup _ (u j).1 (x j).1 + cup _ (v j).1 (w j).1)) = 0 := by
-    rw [map_sub, ← hz, sub_add_eq_add_sub, sub_eq_zero, map_sum, map_sum, map_sum, Finset.smul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, ← hz, sub_add_eq_add_sub, sub_eq_zero, map_sum, map_sum, map_sum, Finset.smul_sum,
       ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun j _ ↦ ?_
     have e₁ : (liftMor (epsDP R) h).isMor.pull1 (a' j).1 = (constMor A).isMor.pull1 (u j).1 +
       (DualNumber.eps : DualNumber R) • (constMor A).isMor.pull1 (v j).1 := congrArg Subtype.val (huv j)
     have e₂ : (liftMor (epsDP R) h).isMor.pull1 (b' j).1 = (constMor A).isMor.pull1 (w j).1 +
       (DualNumber.eps : DualNumber R) • (constMor A).isMor.pull1 (x j).1 := congrArg Subtype.val (hwx j)
-    simp only [map_add, IsMor.pullCohomologyTwo_cup, e₁, e₂,
+    simp only [map_add (f := _), IsMor.pullCohomologyTwo_cup, e₁, e₂,
       map_smul, LinearMap.add_apply, LinearMap.smul_apply, smul_add, smul_smul, DualNumber.eps_mul_eps, zero_smul,
       add_zero]
     abel
@@ -214,11 +218,12 @@ theorem snd_polForm (P : AbelianDeRham) {A : Over (Sp R)} [GrpObj A] {n : ℕ} (
   have t₁ := congrArg Λ₁ (sub_eq_zero.1 z₀)
   have t₂ := congrArg Λ₂ (sub_eq_zero.1 z₀)
   have t₃ := congrArg Λ₃ z₁
-  simp only [map_sum, map_add, map_zero, e₁, e₂, e₃] at t₁ t₂ t₃
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_add (f := _), map_zero, e₁, e₂, e₃] at t₁ t₂ t₃
   rw [wedgeForm_apply, wedgeForm_apply, wedgeForm_apply, ← t₁, ← t₂, ← add_zero (_ + _ : R), ← t₃,
     ← Finset.sum_add_distrib, ← Finset.sum_add_distrib, snd_sum]
   refine Finset.sum_congr rfl fun j _ ↦ ?_
-  simp only [crysToDR_apply, huv, hwx, map_add, map_smul, ed, ed', smul_eq_mul]
+  simp only [crysToDR_apply, huv, hwx, map_add (f := _), map_smul, ed, ed', smul_eq_mul]
   simp
   ring
 

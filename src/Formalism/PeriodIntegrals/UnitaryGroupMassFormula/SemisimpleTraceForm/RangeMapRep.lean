@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.SSAscent
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemisimpleTraceForm.TraceNilStep
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.SSAscent
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemisimpleTraceForm.TraceNilStep
+
+@[expose] public section
 
 namespace PI.SSAscent.UnitaryGroupMassFormula
 

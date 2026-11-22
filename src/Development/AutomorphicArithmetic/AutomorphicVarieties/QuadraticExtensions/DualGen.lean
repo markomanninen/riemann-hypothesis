@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.ModulusAdjoinISqrtNegPrimes
-import Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.XTwApplyApply
-import Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.EmbedQZ
-import Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.QzEnd
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.QzInj
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.ModulusAdjoinISqrtNegPrimes
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.NumberFieldTowers.XTwApplyApply
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.EmbedQZ
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.QuadraticExtensions.QzEnd
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AdditiveValuationNorms.QzInj
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum UpperTheory.V.Two
 open scoped Pointwise
@@ -23,7 +27,8 @@ theorem UpperTheory.V.Two.dualGen :
   rw [Fintype.linearCombination_apply, ← hψ d]
   simp only [LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.comp_apply, LinearMap.proj_apply]
   conv_rhs => rw [← Finset.univ_sum_single (f d)]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl (fun i _ => ?_)
   have h1 := hc i (f d i)
   simp only [LinearMap.comp_apply, LinearMap.single_apply] at h1

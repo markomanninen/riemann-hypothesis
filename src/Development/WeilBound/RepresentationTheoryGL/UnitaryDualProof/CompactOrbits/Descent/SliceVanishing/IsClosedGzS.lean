@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.Descent.SliceVan
-import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.FrobeniusReciprocity.SupportedInIffOfFrob
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
-import GroundTheory.AutomorphicForms.GLnLocal
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.Descent.CommutingInverses.InvCommOfComm
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.Descent.SliceVan
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.FrobeniusReciprocity.SupportedInIffOfFrob
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+public import GroundTheory.AutomorphicForms.GLnLocal
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.Descent.CommutingInverses.InvCommOfComm
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,10 +55,6 @@ def conjB (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) (g : GL (Fin n) k) (hg :
       _ = g.val * x.1 * g⁻¹.val * a := by rw [h2]; simp only [mul_assoc]⟩
   map_add' x y := Subtype.ext (by simp [mul_add, add_mul])
   map_smul' c x := Subtype.ext (by simp)
-
-def DetConj : Prop :=
-  ∀ (n : ℕ) (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)), CR Z → ∀ (g : GL (Fin n) k) (hg : g ∈ Gz Z),
-    LinearMap.det (conjB Z g hg) = 1
 
 def Unimod : Prop :=
   ∀ (n : ℕ) (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)), CR Z → PositivityTheory.PfBern.Frob.IsUnimod (GzS Z)

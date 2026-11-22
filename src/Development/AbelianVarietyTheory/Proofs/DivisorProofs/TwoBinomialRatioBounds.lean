@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsArchOne
-import Development.AbelianVarietyTheory.BlockTheory.PoincareCuspForms.SmallUnipotentElements
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsArchOne
+public import Development.AbelianVarietyTheory.BlockTheory.PoincareCuspForms.SmallUnipotentElements
+
+@[expose] public section
+
 open NumberField Module ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up GlobalTheory.IndefiniteRowSideFullHecke.FrameWeightGapBounds GlobalTheory.ShareOn
 
 namespace GlobalTheory.BinomRatio
@@ -20,7 +25,7 @@ theorem prod_upper (T a n : ℕ) :
       ≤ (1 + (a : ℝ) / (T + 1)) ^ n * ∏ i ∈ range n, ((T : ℝ) + 0 + 1 + i) := by
   have hc : (1 + (a : ℝ) / (T + 1)) ^ n = ∏ _i ∈ range n, (1 + (a : ℝ) / (T + 1)) := by simp
   rw [hc, ← prod_mul_distrib]
-  apply prod_le_prod
+  apply prod_le_prod₀
   · intro i _; positivity
   · intro i _
     have hT : (0 : ℝ) < T + 1 := by positivity
@@ -38,7 +43,7 @@ theorem prod_lower (T c n : ℕ) (hc : (c : ℝ) ≤ T) (hT : 0 < T) :
   have hT' : (0 : ℝ) < T := by exact_mod_cast hT
   have hcp : (1 - (c : ℝ) / T) ^ n = ∏ _i ∈ range n, (1 - (c : ℝ) / T) := by simp
   rw [hcp, ← prod_mul_distrib]
-  apply prod_le_prod
+  apply prod_le_prod₀
   · intro i _
     have : (0 : ℝ) ≤ 1 - c / T := by rw [sub_nonneg, div_le_one hT']; exact hc
     positivity

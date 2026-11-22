@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColMapEqColMapV
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmEqSumLattice
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsThetaAtOfVac
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SumProdPartialEqZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColumnArrowRealAverageHoweDualityFockComponentStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VacMoveHigh
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnfoldingExpansionProductFunctionLocalInvariantStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColMapEqColMapV
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.OmEqSumLattice
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsIsThetaAtOfVac
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SumProdPartialEqZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ColumnArrowRealAverageHoweDualityFockComponentStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.VacMoveHigh
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.UnfoldingExpansionProductFunctionLocalInvariantStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.ExpansionInvariance
 attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
@@ -55,18 +60,23 @@ theorem product_invariant : ∀ {D : D7} {T : Type} {L : LevCh D T} {sc : Consts
   have hvr : ∀ d ∈ τ.support, ∀ i, S.Z.vec (d.2 i) = Tr i (d.2 i).fn := fun d hd i =>
     vec_eq_model S _ ((hsupp d hd).2 i).2.2 ((hvec d hd).2 i) _ (by rw [((hsupp d hd).2 i).2.1]; exact hTr i)
   set g : FinPt G (.top (j + 1)) := (S.N.u (.top (j + 1)))⁻¹ * k * S.N.u (.top (j + 1)) with hg
-  obtain ⟨c₁, hc₁⟩ := GlobalTheory.T.columnArrow_realAverage_howeDuality_fockComponent S ht j hj k hk e he (Tc ⟨j, by omega⟩) (hTc ⟨j, by omega⟩)
+  obtain ⟨c₁, hc₁⟩ := GlobalTheory.T.columnArrow_realAverage_howeDuality_fockComponent S ht (Φ := Φ) (β := β) j hj k hk e he (Tc ⟨j, by omega⟩) (hTc ⟨j, by omega⟩)
   obtain ⟨c₂, hc₂⟩ := vac_move_high S ht j hj k hk e he (Tc ⟨j + 1, hj⟩) (hTc ⟨j + 1, hj⟩)
   have hla : ∀ X : Node, DefNode D.R.m X → (∀ i, X ≠ .grid 0 i) → X.InRange D.R.m →
-      Submodule.IsLattice D.host.E (G.Λ X) := fun X _ h0 hX => (G.isV hX h0).sd.1
+      Submodule.IsFullLattice D.host.E (G.Λ X) := fun X _ h0 hX =>
+        GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ (G.isV hX h0).sd
   have hsb : ∀ d ∈ τ.support, ∀ j' : Fin D.R.m, IsSBHalf e (stdLatO S (.top t j')) (d.1 j').fn := fun d hd j' => by
     have h1 := (d.1 j').sb
     rw [((hsupp d hd).1 j').2.1] at h1
-    exact VecEx.isSBHalf_of_lattices (hla (.top j') (by show (j' : ℕ) ≤ D.R.m; omega) (by simp)
-        (by show (j' : ℕ) ≤ D.R.m; omega))
-      (hla (.top (j' + 1)) (by show (j' : ℕ) + 1 ≤ D.R.m; omega) (by simp) (by show (j' : ℕ) + 1 ≤ D.R.m; omega))
-      (S.N.selfDual (X := .top j') (by show (j' : ℕ) ≤ D.R.m; omega)).1
-      (S.N.selfDual (X := .top (j' + 1)) (by show (j' : ℕ) + 1 ≤ D.R.m; omega)).1
+    have hj₀ : (j' : ℕ) ≤ D.R.m := Nat.le_of_lt j'.2
+    have hj₁ : (j' : ℕ) + 1 ≤ D.R.m := j'.2
+    letI := hla (.top j') hj₀ (by simp) hj₀
+    letI := hla (.top (j' + 1)) hj₁ (by simp) hj₁
+    letI : Submodule.IsFullLattice D.host.E (S.N.latS (.top t j')) :=
+      GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ (S.N.selfDual (X := .top j') hj₀)
+    letI : Submodule.IsFullLattice D.host.E (S.N.latT (.top t j')) :=
+      GlobalTheory.FinPl.PlacesAdeles.selfDual_isFull _ _ (S.N.selfDual (X := .top (j' + 1)) hj₁)
+    exact VecEx.isSBHalf_of_lattices inferInstance inferInstance inferInstance inferInstance
       (GlobalTheory.PlaceDatum.infPart_idemSum he) h1
   have hmv : ∀ d ∈ τ.support, ∀ j', movedCol S d j hj g j' =
       (Function.update (Function.update (1 : Fin D.R.m → ℂ) ⟨j, by omega⟩ c₁) ⟨j + 1, hj⟩ c₂ j') •

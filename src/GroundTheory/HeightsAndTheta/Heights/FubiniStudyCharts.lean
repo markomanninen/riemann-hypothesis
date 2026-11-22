@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexProjective
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexProjective
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -133,33 +138,6 @@ def chartIndex (x : CP N) : Fin (N + 1) := (exists_mem_chartDomain x).choose
 
 lemma mem_chartDomain_chartIndex (x : CP N) : x ∈ chartDomain (chartIndex x) :=
   (exists_mem_chartDomain x).choose_spec
-
-instance instChartedSpace : ChartedSpace (Fin N → ℂ) (CP N) where
-  atlas := range chart
-  chartAt x := chart (chartIndex x)
-  mem_chart_source x := mem_chartDomain_chartIndex x
-  chart_mem_atlas _ := mem_range_self _
-
-lemma chartCoord_chartInv_eq (i j : Fin (N + 1)) (z : Fin N → ℂ) :
-    chartCoord j (chartInv i z) = fun k => chartVec i z (j.succAbove k) / chartVec i z j := rfl
-
-lemma contDiffOn_transition (i j : Fin (N + 1)) :
-    ContDiffOn ℂ ∞ (fun z => chartCoord j (chartInv i z)) {z | chartVec i z j ≠ 0} := by
-  simp only [chartCoord_chartInv_eq]
-  refine contDiffOn_pi.mpr fun k => ?_
-  exact (contDiff_chartVec_apply ℂ i _).contDiffOn.div (contDiff_chartVec_apply ℂ i _).contDiffOn
-    fun z hz => hz
-
-instance instIsManifold : IsManifold 𝓘(ℂ, Fin N → ℂ) ∞ (CP N) := by
-  apply isManifold_of_contDiffOn
-  rintro e e' ⟨i, rfl⟩ ⟨j, rfl⟩
-  simp only [modelWithCornersSelf_coe, modelWithCornersSelf_coe_symm, range_id, inter_univ,
-    preimage_id_eq, Function.id_comp, Function.comp_id]
-  refine (contDiffOn_transition i j).congr_mono ?_ ?_
-  · intro _ _; rfl
-  · intro z hz
-    simp only [OpenPartialHomeomorph.trans_source, OpenPartialHomeomorph.symm_toPartialEquiv] at hz
-    exact hz.2
 
 end CP
 

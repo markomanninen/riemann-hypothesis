@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.StrongApproxN
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.StrongApproxN
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,13 +27,13 @@ theorem prodFirstProjection_smul (c : R1 × R2) (z : (R1 × R2) ⊗[F] E) : q1 R
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul x e => simp [tensMap, TensorProduct.smul_tmul']
-  | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, smul_add]
+  | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add]
 
 theorem second_factor_proj_smul (c : R1 × R2) (z : (R1 × R2) ⊗[F] E) : q2 R1 R2 (c • z) = c.2 • q2 R1 R2 z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul x e => simp [tensMap, TensorProduct.smul_tmul']
-  | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, smul_add]
+  | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add]
 
 theorem prodLeft_apply (z : (R1 × R2) ⊗[F] E) :
     TensorProduct.prodLeft F F R1 R2 E z = qq R1 R2 z := by
@@ -38,7 +42,7 @@ theorem prodLeft_apply (z : (R1 × R2) ⊗[F] E) :
   | tmul x e =>
     rw [TensorProduct.prodLeft_tmul]
     simp [qq, tensMap]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem qq_bijective : Function.Bijective (qq (F := F) (E := E) R1 R2) := by
   have h : (qq (F := F) (E := E) R1 R2 : (R1 × R2) ⊗[F] E → (R1 ⊗[F] E) × (R2 ⊗[F] E)) =
@@ -79,7 +83,7 @@ theorem second_factor_incl_smul (b : R2) (y : R2 ⊗[F] E) :
 
 theorem QQ_symm_eq_add (p : (R1 ⊗[F] E) × (R2 ⊗[F] E)) :
     (QQ R1 R2).symm p = j1 R1 R2 p.1 + j2 R1 R2 p.2 := by
-  rw [j1, j2, ← map_add, Prod.mk_add_mk, add_zero, zero_add]
+  rw [j1, j2, ← map_add (f := _), Prod.mk_add_mk, add_zero, zero_add]
 
 section Top
 
@@ -124,13 +128,13 @@ theorem continuous_second_factor_proj : Continuous (q2 (F := F) (E := E) R1 R2) 
 theorem continuous_first_factor_incl : Continuous (j1 (F := F) (E := E) R1 R2) := by
   exact continuous_moduleTopology_of_semilinear (fun a : R1 => ((a, 1) : R1 × R2)) (by fun_prop)
     (AddMonoidHom.mk' (j1 (F := F) (E := E) R1 R2) fun x y => by
-      rw [j1, j1, j1, ← map_add, Prod.mk_add_mk, add_zero])
+      rw [j1, j1, j1, ← map_add (f := _), Prod.mk_add_mk, add_zero])
     (first_factor_incl_smul R1 R2)
 
 theorem continuous_second_factor_incl : Continuous (j2 (F := F) (E := E) R1 R2) := by
   exact continuous_moduleTopology_of_semilinear (fun b : R2 => ((1, b) : R1 × R2)) (by fun_prop)
     (AddMonoidHom.mk' (j2 (F := F) (E := E) R1 R2) fun x y => by
-      rw [j2, j2, j2, ← map_add, Prod.mk_add_mk, add_zero])
+      rw [j2, j2, j2, ← map_add (f := _), Prod.mk_add_mk, add_zero])
     (second_factor_incl_smul R1 R2)
 
 theorem continuous_QQ_symm : Continuous (QQ (F := F) (E := E) R1 R2).symm := by

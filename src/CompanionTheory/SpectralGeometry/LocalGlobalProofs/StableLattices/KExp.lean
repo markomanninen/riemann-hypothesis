@@ -1,8 +1,12 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormRankFour
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactExponentialSurjective
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.CapelliDeterminantBlockProduct
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HermitianFormRankFour
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CompactExponentialSurjective
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.DSICKExp
 

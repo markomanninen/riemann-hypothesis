@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OfE
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FactorConjugationCancel
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OfE
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FactorConjugationCancel
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,6 @@ theorem pi_map_mul {R ι : Type} [Fintype ι] [CommRing R] [MeasurableSpace R] (
 theorem sigR_sigR {F E : Type} [Field F] [Field E] [Algebra F E] (R : Type) [CommRing R] [Algebra F R]
     (σ : E →ₐ[F] E) (hσ : ∀ x, σ (σ x) = x) (z : R ⊗[F] E) : sigR R σ (sigR R σ z) = z := by
   induction z with
-  | zero => simp
   | add x y hx hy => simp [hx, hy]
   | tmul r e => simp [sigR, hσ]
 
@@ -113,7 +116,7 @@ theorem map_coordW_unit : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [
   have hmp := GlobalTheory.CompanionTheory.SW.WBox.map_coordW R hK lam 1 1
   have hf : Measurable (fun t : R => (n : R) * t) := (continuous_const.mul continuous_id).measurable
   have hTm : Measurable (fun (t : Fin 1 × Fin 1 × Fin 2 → R) i => (n : R) * t i) :=
-    measurable_pi_lambda _ fun i => hf.comp (measurable_pi_apply i)
+    Measurable.of_eval fun i => hf.comp (measurable_pi_apply i)
   have hT : π.map (fun t i => (n : R) * t i) = (c * c) • π := by
     have h1 := pi_map_mul (ι := Fin 1 × Fin 1 × Fin 2) lam _ hf c hc
     have e : c ^ Fintype.card (Fin 1 × Fin 1 × Fin 2) = c * c := by
@@ -144,7 +147,9 @@ theorem map_coordW_unit : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [
           rw [Measure.map_map hNm (eW R hK 1 1).symm.measurable, hcomm]
       _ = (π.map (fun t i => (n : R) * t i)).map (eW R hK 1 1).symm := by
           rw [Measure.map_map (eW R hK 1 1).symm.measurable hTm]
-      _ = _ := by rw [hT, Measure.map_smul, ← hνπ]
+      _ = _ := by
+          rw [hT, Measure.map_smul, ← hνπ]
+          exact (eW R hK 1 1).symm.measurable.aemeasurable
   refine map_eq_of_conj (mulT y) (sigT (sigR R σ) hsc hinv) _ c (fun X => ?_) ?_
   · funext a i
     exact hinv _

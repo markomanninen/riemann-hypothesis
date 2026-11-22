@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SchurEqJtDet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SchurEqJtDet
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem jacobi_trudi_det_pad_zeros {A : Type*} [CommRing A] (h : ℕ → A) (h0 
     simp
     omega
   have h22 : M.toBlocks₂₂.det = 1 := by
-    rw [Matrix.det_of_upperTriangular]
+    rw [Matrix.det_of_isUpperTriangular]
     · apply Finset.prod_eq_one
       intro i _
       simp [hM, Matrix.toBlocks₂₂, padTo, h0]

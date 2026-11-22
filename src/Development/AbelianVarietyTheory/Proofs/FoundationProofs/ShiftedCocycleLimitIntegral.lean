@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ShCocOn
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsLocallyConstantCycMod
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InertiaTorsionQuotientConjInvariantDecomposition
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemCoc
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormCompatibleSystemFrobeniusEqZeroStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CoboundaryOfPadicAlgClUniformApproxStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIntegralCoboundaryWildInertiaAwayFromLStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InertiaCocycleEqZeroOfVanishWildTameGeneratorStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FgInertiaCocyclesModCoboundariesCoefRingStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ShCocOn
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsLocallyConstantCycMod
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InertiaTorsionQuotientConjInvariantDecomposition
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemCoc
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormCompatibleSystemFrobeniusEqZeroStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CoboundaryOfPadicAlgClUniformApproxStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIntegralCoboundaryWildInertiaAwayFromLStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.InertiaCocycleEqZeroOfVanishWildTameGeneratorStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FgInertiaCocyclesModCoboundariesCoefRingStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,7 +81,7 @@ theorem frobOp_coc (W : R2 Ω l) (c : Coef l) (B : ValuationSubring Ω) (hWO : �
   have hconj : Continuous fun s : G ℚ Ω => φ⁻¹ * s * φ := (continuous_const.mul continuous_id).mul continuous_const
   refine ⟨fun i => ?_, fun s i => ?_, fun s hs t ht => ?_⟩
   · simp only [frobOp_apply, Matrix.mulVec, dotProduct]
-    exact continuous_finset_sum _ fun j _ => continuous_const.mul ((h1 j).comp hconj)
+    exact continuous_finsetSum _ fun j _ => continuous_const.mul ((h1 j).comp hconj)
   · simp only [frobOp_apply, Matrix.mulVec, dotProduct]
     exact Subalgebra.sum_mem _ fun j _ => Subalgebra.mul_mem _ (hWO _ _ _) (h2 _ _)
   · simp only [frobOp_apply]
@@ -101,7 +105,11 @@ theorem cycMod_eq_one_of_mem_Ine {B : ValuationSubring Ω} {q : Pl} (hB : IsPlac
 theorem coprime_normV {q : Pl} (hl : ((l : ℕ) : 𝓞 ℚ) ∉ q.asIdeal) : Nat.Coprime (normV q) l := by
   have hp := GlobalTheory.TameConjInv.prime_normV q
   refine (Nat.coprime_primes hp (Fact.out : l.Prime)).2 fun h => hl ?_
-  have hmem : ((normV q : ℕ) : 𝓞 ℚ) ∈ q.asIdeal := Ideal.absNorm_mem q.asIdeal
+  have hnorm : normV q = Ideal.absNorm q.asIdeal := by
+    rw [Ideal.absNorm_apply, Submodule.cardQuot_apply]; rfl
+  have hmem : ((normV q : ℕ) : 𝓞 ℚ) ∈ q.asIdeal := by
+    rw [hnorm]
+    exact Ideal.absNorm_mem q.asIdeal
   rwa [h] at hmem
 
 theorem cycMod_frob {B : ValuationSubring Ω} {q : Pl} (hB : IsPlaceOver B q) (hl : ((l : ℕ) : 𝓞 ℚ) ∉ q.asIdeal)
@@ -175,7 +183,8 @@ theorem unr_of_limit_spec : ∀ (l : ℕ) [Fact l.Prime] (Ω : Type) [Field Ω] 
       Units.map (ZMod.castHom (pow_dvd_pow l (Nat.le_succ r)) (ZMod (l ^ r))).toMonoidHom x' = x),
       (cob W c (Ine (F := ℚ) B)).mkQ (z (r + 1) x') := by
     intro r x
-    rw [← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum]
     congr 1
     funext s
     rw [Finset.sum_apply]

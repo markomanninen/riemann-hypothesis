@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsFurtherAlt
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsEvalKerKrullDim
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IsMultiProjPrimeImageZ
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsFurtherAlt
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsEvalKerKrullDim
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IsMultiProjPrimeImageZ
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -17,7 +22,7 @@ theorem aeval_red {L : Type} [Field L] (p : ℕ) [Fact p.Prime] [Algebra (ZMod p
     aeval y (MvPolynomial.map (Int.castRingHom (ZMod p)) g) = aeval y g := by
   induction g using MvPolynomial.induction_on with
   | C a => simp
-  | add f g hf hg => simp only [map_add, hf, hg]
+  | add f g hf hg => simp only [map_add (f := _), hf, hg]
   | mul_X f i hf => simp only [map_mul, hf, map_X, aeval_X]
 
 theorem aeval_mem_adjoin {L : Type} [Field L] (p : ℕ) [Fact p.Prime] [Algebra (ZMod p) L] {J : Type} (y : J → L)
@@ -50,8 +55,8 @@ theorem trdeg_adjoin [Fintype K] [∀ k, Fintype (ι k)] (hE : EvalKerKrullDim.S
 
 end FibreTranscendence
 
-open FibreTranscendence in
 
+open FibreTranscendence in
 theorem FibreTranscendenceDegreeAlt.proof (hE : EvalKerKrullDim.Statement) : FibreTranscendenceDegreeAlt.Statement := by
   intro K _ ι _ K' _ ι' _ κ v p _ W' n hv hp hW hV G'
   classical
@@ -96,7 +101,7 @@ theorem FibreTranscendenceDegreeAlt.proof (hE : EvalKerKrullDim.Statement) : Fib
             intro f
             induction f using MvPolynomial.induction_on with
             | C a => simp
-            | add f g hf hg => simp only [map_add, hf, hg]
+            | add f g hf hg => simp only [map_add (f := _), hf, hg]
             | mul_X f i hf => simp only [map_mul, hf, aeval_X, rename_X, G'.compat]
           rw [map_div₀, key, key]
           exact div_mem (aeval_mem_adjoin p _ _) (aeval_mem_adjoin p _ _)

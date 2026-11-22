@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelSubgroupCharacterUnitary
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NormStepsLeviOntoS
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SignActionMapComm
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelSubgroupCharacterUnitary
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.NormStepsLeviOntoS
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SignActionMapComm
+
+@[expose] public section
 
 noncomputable section
 
@@ -177,7 +181,8 @@ variable {D : D7} {X : Formalism.L2.SG.HidaSetting.HidaSetting D} (TR : TypedRed
 
 theorem hA_sum_smul (x : VA X.B.I) {k : ℕ} (w : Fin k → X.B.I.E ⊗[X.B.I.F] Af X.B.I.F) (b : Fin k → VA X.B.I) :
     hA X.B.I x (∑ l, w l • b l) = ∑ l, w l * hA X.B.I x (b l) := by
-  rw [← hL_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hL_apply, map_sum]
   simp only [LinearMap.map_smul, hL_apply, smul_eq_mul]
 
 theorem resT_of_mem (v : TR.Pl) {x : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F} (hx : x ∈ IntAf X.B.I.F X.B.I.E) :
@@ -185,7 +190,7 @@ theorem resT_of_mem (v : TR.Pl) {x : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F} (hx : x �
 
 theorem resT_add (v : TR.Pl) {x y : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F} (hx : x ∈ IntAf X.B.I.F X.B.I.E)
     (hy : y ∈ IntAf X.B.I.F X.B.I.E) : resT TR v (x + y) = resT TR v x + resT TR v y := by
-  rw [resT_of_mem TR v (add_mem hx hy), resT_of_mem TR v hx, resT_of_mem TR v hy, ← map_add]; rfl
+  rw [resT_of_mem TR v (add_mem hx hy), resT_of_mem TR v hx, resT_of_mem TR v hy, ← map_add (f := _)]; rfl
 
 theorem resT_sub (v : TR.Pl) {x y : X.B.I.E ⊗[X.B.I.F] Af X.B.I.F} (hx : x ∈ IntAf X.B.I.F X.B.I.E)
     (hy : y ∈ IntAf X.B.I.F X.B.I.E) : resT TR v (x - y) = resT TR v x - resT TR v y := by
@@ -200,7 +205,8 @@ theorem resT_sum (v : TR.Pl) {k : ℕ} (f : Fin k → X.B.I.E ⊗[X.B.I.F] Af X.
   rw [resT_of_mem TR v (Subring.sum_mem _ fun l _ => hf l)]
   have e : (⟨∑ l, f l, Subring.sum_mem _ fun l _ => hf l⟩ : ↥(IntAf X.B.I.F X.B.I.E)) =
       ∑ l, (⟨f l, hf l⟩ : ↥(IntAf X.B.I.F X.B.I.E)) := Subtype.ext (by simp)
-  rw [e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum]
   exact Finset.sum_congr rfl fun l _ => (resT_of_mem TR v (hf l)).symm
 
 theorem resT_one (v : TR.Pl) : resT TR v 1 = 1 := by

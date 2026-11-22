@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.PullbackDecomposition
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.CrystallineAlgebraAlgebraMap
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TheoryEx
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SumSecEqZero
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.PullbackDecomposition
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.CrystallineAlgebraAlgebraMap
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.TheoryEx
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SumSecEqZero
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -30,7 +34,8 @@ private theorem bij_transport {ι X X' : Type*} {Y Y' : ι → Type*} (c : X ≃
 private theorem sum_transport {W Y I : Type*} [AddCommGroup W] [AddCommGroup Y] [Fintype I] (a : I → ℤ) (e : Y ≃+ W)
     (f : I → Y) (g : I → W) (h : ∀ i, e (f i) = g i) (key : ∑ i, a i • g i = 0) : ∑ i, a i • f i = 0 := by
   apply e.injective
-  rw [map_zero, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_zero, map_sum]
   simp only [map_zsmul, h]
   exact key
 

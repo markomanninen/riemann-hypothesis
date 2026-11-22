@@ -1,9 +1,13 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.UpMkApplyInl
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.UpMkApplyInl
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
-open Polynomial in
 
+open Polynomial in
 noncomputable def hupsTw {σ R : Type*} [CommRing R] (w : σ → ℕ) :
     MvPolynomial σ R →ₐ[R] Polynomial (MvPolynomial σ R) :=
   MvPolynomial.aeval fun v => Polynomial.C (MvPolynomial.X v) * Polynomial.X ^ (w v)
@@ -25,17 +29,18 @@ theorem hupsTw_eq {σ R : Type*} [CommRing R] (w : σ → ℕ) (p : MvPolynomial
     hupsTw w p = ∑ s ∈ p.support,
       Polynomial.C (MvPolynomial.monomial s (p.coeff s)) * Polynomial.X ^ hupsWt w s := by
   conv_lhs => rw [p.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [hupsTw_monomial]
 
 theorem hupsTw_coeff_coeff {σ R : Type*} [CommRing R] (w : σ → ℕ) (p : MvPolynomial σ R)
     (j : ℕ) (s : σ →₀ ℕ) :
     ((hupsTw w p).coeff j).coeff s = if hupsWt w s = j then p.coeff s else 0 := by
   classical
-  rw [hupsTw_eq, Polynomial.finset_sum_coeff]
+  rw [hupsTw_eq, Polynomial.finsetSum_coeff]
   simp only [Polynomial.coeff_C_mul_X_pow]
   rw [MvPolynomial.coeff_sum]
-  simp only [apply_ite (MvPolynomial.coeff s), MvPolynomial.coeff_monomial, MvPolynomial.coeff_zero]
+  simp only [apply_ite (AddMonoidAlgebra.coeff · s), MvPolynomial.coeff_monomial, MvPolynomial.coeff_zero]
   rw [Finset.sum_eq_single s]
   · by_cases h : hupsWt w s = j
     · rw [if_pos h.symm, if_pos h, if_pos rfl]

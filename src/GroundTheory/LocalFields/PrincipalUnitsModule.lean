@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.LocalFields.PadicExp
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.PadicExp
+
+@[expose] public section
 
 namespace GroundTheory.LocalField
 
@@ -10,30 +14,25 @@ variable {K : Type*} [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarchi
 
 section Filtration
 
-variable (K) in
 
+variable (K) in
 noncomputable def principalFiltration (k : ℕ) : AddSubgroup (Additive (unitFiltrationUnits K 1)) :=
   Subgroup.toAddSubgroup ((unitFiltrationUnits K (k + 1)).comap (unitFiltrationUnits K 1).subtype)
 
 theorem mem_principalFiltration {k : ℕ} {u : Additive (unitFiltrationUnits K 1)} :
-    u ∈ principalFiltration K k ↔
-      ((((Additive.toMul u : unitFiltrationUnits K 1) : Kˣ) : K) - 1) ∈ valBall K (k + 1) := by
+    u ∈ principalFiltration (K := K) k ↔
+      ((((Additive.toMul u : unitFiltrationUnits K 1) : Kˣ) : K) - 1) ∈ valBall (K := K) (k + 1) := by
   have := mem_unitFiltrationUnits_iff_valBall (K := K) (n := k + 1) (by omega)
     (x := ((Additive.toMul u : unitFiltrationUnits K 1) : Kˣ))
   push_cast at this
   exact this
 
-theorem principalFiltration_antitone : Antitone (principalFiltration K) := by
-  intro j k hjk u hu
-  rw [mem_principalFiltration] at hu ⊢
-  exact valBall_antitone (by omega) hu
-
-theorem principalFiltration_zero : principalFiltration K 0 = ⊤ := by
+theorem principalFiltration_zero : principalFiltration (K := K) 0 = ⊤ := by
   ext u
   simp only [AddSubgroup.mem_top, iff_true, mem_principalFiltration]
   simpa using sub_one_mem_valBall_one (Additive.toMul u)
 
-theorem normalizedValuation_eq_one_of_sub_one_mem {y : K} (hy : y - 1 ∈ valBall K 1) :
+theorem normalizedValuation_eq_one_of_sub_one_mem {y : K} (hy : y - 1 ∈ valBall (K := K) 1) :
     normalizedValuation K y = 1 := by
   have h : normalizedValuation K (y - 1) < 1 := by
     refine lt_of_le_of_lt hy ?_
@@ -41,11 +40,13 @@ theorem normalizedValuation_eq_one_of_sub_one_mem {y : K} (hy : y - 1 ∈ valBal
   have := Valuation.map_one_add_of_lt (normalizedValuation K) h
   simpa using this
 
-theorem mem_valBall_zero_of_sub_one_mem {y : K} (hy : y - 1 ∈ valBall K 1) : y ∈ valBall K 0 := by
-  rw [mem_valBall, normalizedValuation_eq_one_of_sub_one_mem hy]; simp
+theorem mem_valBall_zero_of_sub_one_mem {y : K} (hy : y - 1 ∈ valBall (K := K) 1) : y ∈ valBall (K := K) 0 := by
+  change normalizedValuation K y ≤ WithZero.exp (-(0 : ℤ))
+  rw [normalizedValuation_eq_one_of_sub_one_mem hy]
+  simp
 
 theorem eq_zero_of_forall_mem_principalFiltration {w : Additive (unitFiltrationUnits K 1)}
-    (h : ∀ k, w ∈ principalFiltration K k) : w = 0 := by
+    (h : ∀ k, w ∈ principalFiltration (K := K) k) : w = 0 := by
   set y : K := (((Additive.toMul w : unitFiltrationUnits K 1) : Kˣ) : K) - 1
   have hy : y = 0 := by
     by_contra hy0
@@ -60,14 +61,18 @@ theorem eq_zero_of_forall_mem_principalFiltration {w : Additive (unitFiltrationU
 variable (p : ℕ) [hp : Fact p.Prime] [CharP 𝓀[K] p]
 
 omit hp in
-theorem natCast_prime_mem_valBall_one : (p : K) ∈ valBall K 1 := by
+theorem natCast_prime_mem_valBall_one : (p : K) ∈ valBall (K := K) 1 := by
   have h : ((p : 𝒪[K]) : 𝒪[K]) ∈ 𝓂[K] ^ 1 := by
     rw [pow_one, ← residue_eq_zero_iff, map_natCast, CharP.cast_eq_zero]
   have := mem_maximalIdeal_pow_iff_valBall.mp h
   simpa using this
 
-theorem pow_prime_sub_one_mem {k : ℤ} (hk : 1 ≤ k) {y : K} (hy : y - 1 ∈ valBall K k) :
-    y ^ p - 1 ∈ valBall K (k + 1) := by
+theorem pow_prime_sub_one_mem {k : ℤ} (hk : 1 ≤ k) {y : K} (hy : y - 1 ∈ valBall (K := K) k) :
+    y ^ p - 1 ∈ valBall (K := K) (k + 1) := by
+  have hball_le {m n : ℤ} (h : m ≤ n) : valBall (K := K) n ≤ valBall (K := K) m := by
+    intro x hx
+    rw [mem_valBall] at hx ⊢
+    exact hx.trans (WithZero.exp_le_exp.mpr (neg_le_neg h))
   set x := y - 1
   have hyx : y = x + 1 := by ring
   rw [hyx, add_pow, Finset.sum_range_succ']
@@ -77,26 +82,26 @@ theorem pow_prime_sub_one_mem {k : ℤ} (hk : 1 ≤ k) {y : K} (hy : y - 1 ∈ v
   rcases Nat.lt_or_ge (i + 1) p with hlt | hge
   · obtain ⟨c, hc⟩ := hp.out.dvd_choose_self (Nat.succ_ne_zero i) hlt
     rw [hc, Nat.cast_mul]
-    have h1 : (p : K) * (c : K) ∈ valBall K (1 + 0) :=
+    have h1 : (p : K) * (c : K) ∈ valBall (K := K) (1 + 0) :=
       mul_mem_valBall (natCast_prime_mem_valBall_one p)
         (by simpa using intCast_mem_valBall_zero (K := K) (c : ℤ))
     have h2 := mul_mem_valBall (pow_mem_valBall hy (i + 1)) h1
-    refine valBall_antitone ?_ h2
+    refine hball_le ?_ h2
     push_cast; nlinarith
   · have hi' : i + 1 = p := by omega
     rw [hi', Nat.choose_self, Nat.cast_one, mul_one]
-    refine valBall_antitone ?_ (pow_mem_valBall hy p)
+    refine hball_le ?_ (pow_mem_valBall hy p)
     have : (2 : ℤ) ≤ p := by exact_mod_cast hp.out.two_le
     nlinarith
 
 theorem nsmul_prime_mem_principalFiltration {k : ℕ} {u : Additive (unitFiltrationUnits K 1)}
-    (hu : u ∈ principalFiltration K k) : p • u ∈ principalFiltration K (k + 1) := by
+    (hu : u ∈ principalFiltration (K := K) k) : p • u ∈ principalFiltration (K := K) (k + 1) := by
   rw [mem_principalFiltration] at hu ⊢
   have := pow_prime_sub_one_mem p (by omega) hu
   simpa using this
 
 theorem nsmul_prime_pow_mem_principalFiltration {k : ℕ} {u : Additive (unitFiltrationUnits K 1)}
-    (hu : u ∈ principalFiltration K k) (j : ℕ) : p ^ j • u ∈ principalFiltration K (k + j) := by
+    (hu : u ∈ principalFiltration (K := K) k) (j : ℕ) : p ^ j • u ∈ principalFiltration (K := K) (k + j) := by
   induction j with
   | zero => simpa using hu
   | succ j ih =>
@@ -104,12 +109,12 @@ theorem nsmul_prime_pow_mem_principalFiltration {k : ℕ} {u : Additive (unitFil
     exact nsmul_prime_mem_principalFiltration p ih
 
 theorem zsmul_mem_principalFiltration_of_dvd {k : ℕ} {c : ℤ} (hc : (p ^ k : ℤ) ∣ c)
-    (u : Additive (unitFiltrationUnits K 1)) : c • u ∈ principalFiltration K k := by
+    (u : Additive (unitFiltrationUnits K 1)) : c • u ∈ principalFiltration (K := K) k := by
   obtain ⟨d, rfl⟩ := hc
   rw [mul_comm, mul_zsmul]
   refine zsmul_mem ?_ d
   have := nsmul_prime_pow_mem_principalFiltration p
-    (by rw [principalFiltration_zero]; trivial : u ∈ principalFiltration K 0) k
+    (by rw [principalFiltration_zero]; trivial : u ∈ principalFiltration (K := K) 0) k
   rw [zero_add] at this
   exact_mod_cast this
 
@@ -118,17 +123,21 @@ end Filtration
 section Complete
 
 theorem exists_forall_sub_mem_principalFiltration {s : ℕ → Additive (unitFiltrationUnits K 1)}
-    (hs : ∀ k, s (k + 1) - s k ∈ principalFiltration K k) :
-    ∃ l, ∀ k, l - s k ∈ principalFiltration K k := by
+    (hs : ∀ k, s (k + 1) - s k ∈ principalFiltration (K := K) k) :
+    ∃ l, ∀ k, l - s k ∈ principalFiltration (K := K) k := by
+  have hball_le {m n : ℤ} (h : m ≤ n) : valBall (K := K) n ≤ valBall (K := K) m := by
+    intro x hx
+    rw [mem_valBall] at hx ⊢
+    exact hx.trans (WithZero.exp_le_exp.mpr (neg_le_neg h))
   set σ : ℕ → K := fun k ↦ (((Additive.toMul (s k) : unitFiltrationUnits K 1) : Kˣ) : K)
-  have hσ1 : ∀ k, σ k - 1 ∈ valBall K 1 := fun k ↦ sub_one_mem_valBall_one (Additive.toMul (s k))
+  have hσ1 : ∀ k, σ k - 1 ∈ valBall (K := K) 1 := fun k ↦ sub_one_mem_valBall_one (Additive.toMul (s k))
   have hσ0 : ∀ k, σ k ≠ 0 := fun k ↦ Units.ne_zero _
-  have hquot : ∀ k : ℕ, σ (k + 1) / σ k - 1 ∈ valBall K (k + 1) := by
+  have hquot : ∀ k : ℕ, σ (k + 1) / σ k - 1 ∈ valBall (K := K) (k + 1) := by
     intro k
     have := mem_principalFiltration.mp (hs k)
     simpa [σ, toMul_sub, div_eq_mul_inv] using this
   set f : ℕ → K := fun j ↦ σ (j + 1) - σ j
-  have hf : ∀ j : ℕ, f j ∈ valBall K (j + 1) := by
+  have hf : ∀ j : ℕ, f j ∈ valBall (K := K) (j + 1) := by
     intro j
     have h : f j = σ j * (σ (j + 1) / σ j - 1) := by
       simp only [f]; field_simp [hσ0 j]
@@ -137,7 +146,7 @@ theorem exists_forall_sub_mem_principalFiltration {s : ℕ → Additive (unitFil
   have hsum : Summable f := by
     refine summable_of_tendsto_zero (tendsto_zero_iff_valBall.mpr fun N ↦ ?_)
     rw [eventually_atTop]
-    exact ⟨N.toNat, fun j hj ↦ valBall_antitone (by have := Int.self_le_toNat N; omega) (hf j)⟩
+    exact ⟨N.toNat, fun j hj ↦ hball_le (by have := Int.self_le_toNat N; omega) (hf j)⟩
   set L := σ 0 + ∑' j, f j
   have hL : ∀ k : ℕ, L - σ k = ∑' j, f (j + k) := by
     intro k
@@ -146,11 +155,11 @@ theorem exists_forall_sub_mem_principalFiltration {s : ℕ → Additive (unitFil
     simp only [L]
     rw [← h1, h2]
     ring
-  have hLk : ∀ k : ℕ, L - σ k ∈ valBall K (k + 1) := by
+  have hLk : ∀ k : ℕ, L - σ k ∈ valBall (K := K) (k + 1) := by
     intro k
     rw [hL k]
-    exact tsum_mem_valBall fun j ↦ valBall_antitone (by omega) (hf (j + k))
-  have hL1 : L - 1 ∈ valBall K 1 := by
+    exact tsum_mem_valBall fun j ↦ hball_le (by omega) (hf (j + k))
+  have hL1 : L - 1 ∈ valBall (K := K) 1 := by
     have := add_mem (hLk 0) (hσ1 0)
     simpa using this
   have hL0 : L ≠ 0 := by
@@ -168,7 +177,7 @@ theorem exists_forall_sub_mem_principalFiltration {s : ℕ → Additive (unitFil
     simp [σ, div_eq_mul_inv]
     field_simp [hσ0 k]
   rw [heq]
-  have hinv : (σ k)⁻¹ ∈ valBall K 0 := by
+  have hinv : (σ k)⁻¹ ∈ valBall (K := K) 0 := by
     rw [mem_valBall, map_inv₀, normalizedValuation_eq_one_of_sub_one_mem (hσ1 k)]; simp
   simpa using mul_mem_valBall (hLk k) hinv
 
@@ -199,9 +208,9 @@ variable [CharP 𝓀[K] p]
 
 theorem exists_padicInt_pow (a : ℤ_[p]) (u : Additive (unitFiltrationUnits K 1)) :
     ∃ l : Additive (unitFiltrationUnits K 1), ∀ (k : ℕ) (c : ℤ), (p : ℤ_[p]) ^ k ∣ a - c →
-      l - c • u ∈ principalFiltration K k := by
+      l - c • u ∈ principalFiltration (K := K) k := by
   set s : ℕ → Additive (unitFiltrationUnits K 1) := fun k ↦ ((a.appr k : ℕ) : ℤ) • u
-  have hs : ∀ k, s (k + 1) - s k ∈ principalFiltration K k := by
+  have hs : ∀ k, s (k + 1) - s k ∈ principalFiltration (K := K) k := by
     intro k
     simp only [s]
     rw [show ((a.appr (k + 1) : ℕ) : ℤ) • u - ((a.appr k : ℕ) : ℤ) • u =
@@ -225,11 +234,11 @@ noncomputable def padicIntSMul (a : ℤ_[p]) (u : Additive (unitFiltrationUnits 
   Classical.choose (exists_padicInt_pow p a u)
 
 theorem padicIntSMul_spec (a : ℤ_[p]) (u : Additive (unitFiltrationUnits K 1)) {k : ℕ} {c : ℤ}
-    (hc : (p : ℤ_[p]) ^ k ∣ a - c) : padicIntSMul p a u - c • u ∈ principalFiltration K k :=
+    (hc : (p : ℤ_[p]) ^ k ∣ a - c) : padicIntSMul p a u - c • u ∈ principalFiltration (K := K) k :=
   Classical.choose_spec (exists_padicInt_pow p a u) k c hc
 
 theorem padicIntSMul_eq_of {a : ℤ_[p]} {u l : Additive (unitFiltrationUnits K 1)}
-    (h : ∀ k : ℕ, ∃ c : ℤ, (p : ℤ_[p]) ^ k ∣ a - c ∧ l - c • u ∈ principalFiltration K k) :
+    (h : ∀ k : ℕ, ∃ c : ℤ, (p : ℤ_[p]) ^ k ∣ a - c ∧ l - c • u ∈ principalFiltration (K := K) k) :
     padicIntSMul p a u = l := by
   refine (sub_eq_zero.mp (eq_zero_of_forall_mem_principalFiltration fun k ↦ ?_))
   obtain ⟨c, hc, hl⟩ := h k
@@ -293,11 +302,8 @@ section ModuleProps
 
 variable (p : ℕ) [hp : Fact p.Prime] [CharP 𝓀[K] p]
 
-theorem padicInt_smul_def (a : ℤ_[p]) (u : Additive (unitFiltrationUnits K 1)) :
-    a • u = padicIntSMul p a u := rfl
-
 theorem smul_sub_intCast_smul_mem {a : ℤ_[p]} {k : ℕ} {c : ℤ} (hc : (p : ℤ_[p]) ^ k ∣ a - c)
-    (u : Additive (unitFiltrationUnits K 1)) : a • u - c • u ∈ principalFiltration K k :=
+    (u : Additive (unitFiltrationUnits K 1)) : a • u - c • u ∈ principalFiltration (K := K) k :=
   padicIntSMul_spec p a u hc
 
 theorem intCast_smul (c : ℤ) (u : Additive (unitFiltrationUnits K 1)) :
@@ -310,19 +316,19 @@ theorem natCast_smul (n : ℕ) (u : Additive (unitFiltrationUnits K 1)) :
   simpa using this
 
 theorem smul_mem_of_dvd {a : ℤ_[p]} {k : ℕ} (ha : (p : ℤ_[p]) ^ k ∣ a)
-    (u : Additive (unitFiltrationUnits K 1)) : a • u ∈ principalFiltration K k := by
+    (u : Additive (unitFiltrationUnits K 1)) : a • u ∈ principalFiltration (K := K) k := by
   have := smul_sub_intCast_smul_mem p (c := 0) (by simpa using ha) u
   simpa using this
 
 theorem smul_mem_principalFiltration (a : ℤ_[p]) {k : ℕ} {u : Additive (unitFiltrationUnits K 1)}
-    (hu : u ∈ principalFiltration K k) : a • u ∈ principalFiltration K k := by
+    (hu : u ∈ principalFiltration (K := K) k) : a • u ∈ principalFiltration (K := K) k := by
   have h1 := smul_sub_intCast_smul_mem p (dvd_sub_appr p k a) u
-  have h2 : ((a.appr k : ℕ) : ℤ) • u ∈ principalFiltration K k := zsmul_mem hu _
+  have h2 : ((a.appr k : ℕ) : ℤ) • u ∈ principalFiltration (K := K) k := zsmul_mem hu _
   simpa using add_mem h1 h2
 
 theorem hasBasis_nhds_zero_principalFiltration :
     (𝓝 (0 : Additive (unitFiltrationUnits K 1))).HasBasis (fun _ ↦ True)
-      (fun k ↦ (principalFiltration K k : Set (Additive (unitFiltrationUnits K 1)))) := by
+      (fun k ↦ (principalFiltration (K := K) k : Set (Additive (unitFiltrationUnits K 1)))) := by
   have h1 : 𝓝 (0 : Additive (unitFiltrationUnits K 1)) =
       Filter.comap (fun u : Additive (unitFiltrationUnits K 1) ↦
         ((Additive.toMul u : unitFiltrationUnits K 1) : Kˣ)) (𝓝 1) :=
@@ -333,7 +339,7 @@ theorem hasBasis_nhds_zero_principalFiltration :
     (fun k _ ↦ ⟨k + 1, trivial, fun u hu ↦ hu⟩)
 
 theorem principalFiltration_mem_nhds (k : ℕ) :
-    (principalFiltration K k : Set (Additive (unitFiltrationUnits K 1))) ∈ 𝓝 0 :=
+    (principalFiltration (K := K) k : Set (Additive (unitFiltrationUnits K 1))) ∈ 𝓝 0 :=
   hasBasis_nhds_zero_principalFiltration.mem_of_mem trivial
 
 instance continuousSMul_padicInt_principalUnits : ContinuousSMul ℤ_[p] (Additive (unitFiltrationUnits K 1)) := by
@@ -350,7 +356,7 @@ instance continuousSMul_padicInt_principalUnits : ContinuousSMul ℤ_[p] (Additi
     rw [Metric.mem_closedBall, dist_eq_norm, PadicInt.norm_le_pow_iff_mem_span_pow,
       Ideal.mem_span_singleton] at ha
     exact ha
-  have h2 : {u : Additive (unitFiltrationUnits K 1) | u - u0 ∈ principalFiltration K k} ∈ 𝓝 u0 := by
+  have h2 : {u : Additive (unitFiltrationUnits K 1) | u - u0 ∈ principalFiltration (K := K) k} ∈ 𝓝 u0 := by
     have ht : Tendsto (fun u : Additive (unitFiltrationUnits K 1) ↦ u - u0) (𝓝 u0) (𝓝 0) := by
       have : Tendsto (fun u : Additive (unitFiltrationUnits K 1) ↦ u - u0) (𝓝 u0) (𝓝 (u0 - u0)) :=
         tendsto_id.sub tendsto_const_nhds
@@ -360,7 +366,7 @@ instance continuousSMul_padicInt_principalUnits : ContinuousSMul ℤ_[p] (Additi
   obtain ⟨a, u⟩ := x
   obtain ⟨ha, hu⟩ := hx
   have : a • u - a0 • u0 = (a - a0) • u + a0 • (u - u0) := by rw [sub_smul, smul_sub]; abel
-  show a • u - a0 • u0 ∈ principalFiltration K k
+  show a • u - a0 • u0 ∈ principalFiltration (K := K) k
   rw [this]
   exact add_mem (smul_mem_of_dvd p ha u) (smul_mem_principalFiltration p a0 hu)
 

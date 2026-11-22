@@ -1,6 +1,10 @@
-import Formalism.BranchSandwichDivisors.StatementL
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.MapScale
+module
+
+public import Formalism.BranchSandwichDivisors.StatementL
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.MapScale
+
+@[expose] public section
 
 open Module NumberField
 open scoped Matrix
@@ -11,7 +15,7 @@ namespace Formalism.BranchingDeterminantCap
 
 namespace OrthogonalSumAlt
 
-variable {K V ι : Type} [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K]
+variable {K V ι : Type} [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K]
   [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [Fintype ι]
   [DecidableEq ι]
 
@@ -84,7 +88,8 @@ theorem main (b : Basis ι K V) (X : InfinitePlace K → Matrix ι ι ℂ)
         inner ℝ (Formalism.HermitianLatticesTheory.realize b X x) (Formalism.HermitianLatticesTheory.realize b X y) = 0 := by
       intro x hx y hy
       obtain ⟨μ, hμ⟩ := (Submodule.mem_iSup_finset_iff_exists_sum A y).1 hy
-      rw [← hμ, map_sum, inner_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hμ, map_sum, inner_sum]
       refine Finset.sum_eq_zero fun i hi => ?_
       exact orth_inner b X (horth a i (fun h => ha (h ▸ hi))) x hx _ (μ i).2
     have hlA := (Formalism.HN.plLat K V ι b X hX (A a) (hA a)).1
@@ -143,7 +148,7 @@ theorem orthogonal_sum_slope : OrthSum := by
 
 namespace OrthogonalSumAlt
 
-variable {K V ι : Type} [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K]
+variable {K V ι : Type} [Field K] [NumberField K] [StarRing K] [_root_.NumberField.IsTotallyComplex K]
   [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] [Fintype ι]
   [DecidableEq ι]
 

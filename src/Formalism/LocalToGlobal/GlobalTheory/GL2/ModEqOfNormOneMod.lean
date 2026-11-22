@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL2.Statement
-import Formalism.SharpRestriction.GlobalSchurBounds.TopDensityNGeSixteen
-import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.EqZeroOfNegEq
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL2.Statement
+public import Formalism.SharpRestriction.GlobalSchurBounds.TopDensityNGeSixteen
+public import Formalism.LocalRingCardinality.SpanPowerMembership.ExampleLayerExistsGenerators
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.EqZeroOfNegEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem modEq_of_normOneMod (D : D7) {M g : ℕ} (h : NormOneMod D M g) : g ≡ 
   have ht : ((g : D.host.E) - 1) = (M : D.host.E) * ((ρ : D.host.E) + D.host.conj (ρ : D.host.E) +
       (M : D.host.E) * (ρ : D.host.E) * D.host.conj (ρ : D.host.E)) := by
     have hπ : (π : D.host.E) = 1 + M * ρ := by linear_combination h1
-    rw [← h2, hπ, map_add, map_one, map_mul, map_natCast]
+    rw [← h2, hπ, map_add (f := _), map_one, map_mul, map_natCast]
     ring
   rcases Nat.eq_zero_or_pos M with hM | hM
   · subst hM
@@ -48,7 +52,7 @@ theorem modEq_of_normOneMod (D : D7) {M g : ℕ} (h : NormOneMod D M g) : g ≡ 
         (M : D.host.E) * (ρ : D.host.E) * D.host.conj (ρ : D.host.E) := by
       rw [map_div₀, map_sub, map_natCast, map_one, map_natCast, ht]
       field_simp
-    rw [← hq, isIntegral_algebraMap_iff (algebraMap ℚ D.host.E).injective] at hint
+    rw [← hq, isIntegral_algebraMap_iff ] at hint
     obtain ⟨n, hn⟩ := IsIntegrallyClosed.isIntegral_iff.1 hint
     rw [algebraMap_int_eq, eq_intCast] at hn
     have hgq : ((g : ℚ) - 1) = M * n := by

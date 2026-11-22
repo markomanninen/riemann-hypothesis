@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAsAlgebraHomEq
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriBlocks.SimpleIn
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsAsAlgebraHomEq
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -20,7 +24,7 @@ private theorem tens_sep {V B : Type} [AddCommGroup V] [Module ℂ V] [AddCommGr
     induction y using TensorProduct.induction_on with
     | zero => simp
     | tmul v w => simp [F, TensorProduct.equivFinsuppOfBasisLeft_apply_tmul_apply]
-    | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
   apply F.injective
   rw [map_zero]
   ext j
@@ -35,7 +39,7 @@ private theorem comm_ext {G H V W : Type} [Group G] [Group H] [AddCommGroup V] [
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul v w => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 private noncomputable def swapSub {G H V W : Type} [Group G] [Group H] [AddCommGroup V] [Module ℂ V]
     [AddCommGroup W] [Module ℂ W] (X : Representation ℂ G V) (T : Representation ℂ H W)
@@ -94,19 +98,19 @@ private theorem schur_ext {G Γ V B : Type} [Group G] [Group Γ] [AddCommGroup V
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul x y => simp [hLt]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have hR : ∀ g z, R (extTensor σ m (g, 1) z) = σ g (R z) := by
     intro g z
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul x y => simp [hRt]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have hLR : ∀ (φ : Module.Dual ℂ V) z, φ (R z) = β (L φ z) := by
     intro φ z
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul x y => simp [hLt, hRt, mul_comm]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   let S : V →ₗ[ℂ] V := R ∘ₗ T ∘ₗ (TensorProduct.mk ℂ V B).flip b₀
   have hS : ∀ v, S v = R (T (v ⊗ₜ b₀)) := fun v => rfl
   have hpure : ∀ v b, T (v ⊗ₜ b) = S v ⊗ₜ b := by
@@ -132,7 +136,7 @@ private theorem schur_ext {G Γ V B : Type} [Group G] [Group Γ] [AddCommGroup V
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul x y => rw [hpure, hc, TensorProduct.smul_tmul']
-  | add x y hx hy => simp only [map_add, hx, hy, smul_add]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, smul_add]
 
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.IwahoriBlocks.tensSimple :
     ∀ {G : Type} [Group G] {Γ : Type} [Group Γ] {V : Type} [AddCommGroup V] [Module ℂ V] {B : Type} [AddCommGroup B] [Module ℂ B] (σ : Representation ℂ G V) (m : Representation ℂ Γ B), σ.IsIrreducible → Schur σ → m.IsIrreducible →

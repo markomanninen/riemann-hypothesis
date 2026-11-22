@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,7 +78,7 @@ theorem evalAt_mul (f g : Rules pts) {S : Type} [CommRing S] [Algebra K S] (y : 
 
 theorem evalAt_one {S : Type} [CommRing S] [Algebra K S] (y : pts S) (h : FromTest pts mapR y) :
     evalAt pts mapR (1 : Rules pts) y = 1 := by
-  unfold evalAt; rw [dif_pos h]; simp
+  unfold evalAt; rw [dite_eq_left h]; simp
 
 def evalL {S : Type} [CommRing S] [Algebra K S] (y : pts S) : Rules pts →ₗ[K] S where
   toFun f := evalAt pts mapR f y
@@ -99,8 +103,6 @@ instance (σ : K →+* ℂ) : Algebra K (CAt σ) := σ.toAlgebra
 
 def cabs {σ : K →+* ℂ} (z : CAt σ) : ℝ := ‖(show ℂ from z)‖
 
-theorem algebraMap_CAt (σ : K →+* ℂ) (c : K) : (show ℂ from algebraMap K (CAt σ) c) = σ c := rfl
-
 variable {ι : Type} [Fintype ι]
 variable (pts : ∀ (S : Type) [CommRing S] [Algebra K S], Type)
 variable (mapR : ∀ {S T : Type} [CommRing S] [Algebra K S] [CommRing T] [Algebra K T],
@@ -113,23 +115,6 @@ def ptNorm (σ : K →+* ℂ) (fnorm : pts (CAt σ) → ι → ℝ) (e : ι → 
 theorem ptNorm_nonneg (σ : K →+* ℂ) (fnorm : pts (CAt σ) → ι → ℝ) (e : ι → ℕ) (f : Rules pts)
     (y : pts (CAt σ)) : 0 ≤ ptNorm pts mapR σ fnorm e f y :=
   mul_nonneg (norm_nonneg _) (Finset.prod_nonneg fun _ _ => pow_nonneg (inv_nonneg.2 (abs_nonneg _)) _)
-
-theorem ptNorm_add_le (σ : K →+* ℂ) (fnorm : pts (CAt σ) → ι → ℝ) (e : ι → ℕ) (f g : Rules pts)
-    (y : pts (CAt σ)) :
-    ptNorm pts mapR σ fnorm e (f + g) y ≤ ptNorm pts mapR σ fnorm e f y + ptNorm pts mapR σ fnorm e g y := by
-  unfold ptNorm
-  rw [evalAt_add, ← add_mul]
-  exact mul_le_mul_of_nonneg_right (norm_add_le _ _)
-    (Finset.prod_nonneg fun _ _ => pow_nonneg (inv_nonneg.2 (abs_nonneg _)) _)
-
-theorem ptNorm_smul (σ : K →+* ℂ) (fnorm : pts (CAt σ) → ι → ℝ) (e : ι → ℕ) (a : K) (f : Rules pts)
-    (y : pts (CAt σ)) :
-    ptNorm pts mapR σ fnorm e (a • f) y = ‖σ a‖ * ptNorm pts mapR σ fnorm e f y := by
-  unfold ptNorm
-  rw [evalAt_smul, ← mul_assoc]
-  congr 1
-  unfold cabs
-  exact norm_mul (σ a) _
 
 theorem ptNorm_zero (σ : K →+* ℂ) (fnorm : pts (CAt σ) → ι → ℝ) (e : ι → ℕ) (y : pts (CAt σ)) :
     ptNorm pts mapR σ fnorm e 0 y = 0 := by

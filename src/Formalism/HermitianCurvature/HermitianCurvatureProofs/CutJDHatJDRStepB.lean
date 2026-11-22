@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDRStepBRules
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialRaisingTopOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.HasDerivAtNormPow
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJDHatJDRStepBRules
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialRaisingTopOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.HasDerivAtNormPow
+
+@[expose] public section
 
 open Matrix
 
@@ -228,7 +232,7 @@ theorem stepB_pt (z z' : Fin (2 * r + k + 1) → ℂ) (hz : inWb k r z) (hz' : i
       u • Λ Q1 + EH k r (eI k r ⟨l, by omega⟩) (eI k r ⟨l, by omega⟩)
         (((Q1 : Module.End ℂ (VS k r 0 D E)) v₀ : VS k r 0 D E) : Mx k r → E) x0 := by
     unfold Tm
-    rw [if_pos rfl, add_mul, map_add, la_E hD v₀ hx0, Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul,
+    rw [if_pos rfl, add_mul, map_add (f := _), la_E hD v₀ hx0, Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul,
       map_smul]
   rw [hT', Formalism.FourierDecayAlt.P.torus_cell E k r D _ hD (((Q1 : Module.End ℂ (VS k r 0 D E)) v₀ : VS k r 0 D E)).2.1
     c hc g hg hcD ⟨l, by omega⟩]

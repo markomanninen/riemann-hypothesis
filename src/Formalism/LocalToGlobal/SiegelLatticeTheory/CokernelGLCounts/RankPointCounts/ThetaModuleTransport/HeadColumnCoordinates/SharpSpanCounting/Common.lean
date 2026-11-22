@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumACut
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumACut
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,7 +69,7 @@ theorem zzplusOf_none (hs : M.split = none) {r : ℕ} (Zh : Matrix (Fin (r + 1))
 theorem dl_eq_det (H : HermSp M V) {r : ℕ} (f f' : Fin (r + 1) → V) :
     H.Dl f f' r = ((H.Zhat f f').submatrix Fin.castSucc Fin.castSucc).det := by
   unfold HermSp.Dl
-  rw [dif_pos (Nat.le_succ r)]
+  rw [dite_eq_left (Nat.le_succ r)]
   rfl
 
 theorem dl_succ_unit {H : HermSp M V} {r : ℕ} {t₁ : Term V M r} {f₂ f₂' : Fin (r + 1) → V}

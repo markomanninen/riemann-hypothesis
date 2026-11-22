@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.EmDefs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianMeasureConjugation
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.EmDefs
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HermitianMeasureConjugation
+
+@[expose] public section
+
 noncomputable section
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory
@@ -26,9 +31,9 @@ def imKer [IsTopologicalAddGroup M] (S : AddSubgroup M) (P : M →+ M) (hPc : Co
     have h2 : P p.2.1 = 0 := p.2.2
     refine Prod.ext (Subtype.ext ?_) (Subtype.ext ?_)
     · change P (p.1.1 + p.2.1) = p.1.1
-      rw [map_add, hPs _ p.1.2, h2, add_zero]
+      rw [map_add (f := _), hPs _ p.1.2, h2, add_zero]
     · change (p.1.1 + p.2.1) - P (p.1.1 + p.2.1) = p.2.1
-      rw [map_add, hPs _ p.1.2, h2, add_zero, add_sub_cancel_left]
+      rw [map_add (f := _), hPs _ p.1.2, h2, add_zero, add_sub_cancel_left]
   right_inv x := by
     change P x + (x - P x) = x
     abel
@@ -63,7 +68,7 @@ theorem char_restr [IsTopologicalAddGroup M] [LocallyCompactSpace M] [SecondCoun
     have hl : Ψ.symm (Ψ p) = p := Ψ.left_inv p
     rw [hl]
     change U p.1.1 + p.2.1 = U (p.1.1 + p.2.1)
-    rw [map_add, hfix _ p.2.2]
+    rw [map_add (f := _), hfix _ p.2.2]
   rw [← e, GlobalTheory.ModuLR.addEquivAddHaarChar_transport Ψ, GlobalTheory.T.addEquivAddHaarChar_prodCongr, addEquivAddHaarChar_refl, mul_one]
 
 end Abstract
@@ -74,9 +79,9 @@ open GlobalTheory.CompanionTheory.IwaAd GlobalTheory.CompanionTheory.HermVol Glo
 
 variable {D : D7} {n : ℕ}
 
+
 set_option synthInstance.maxHeartbeats 400000 in
 set_option maxHeartbeats 1000000 in
-
 theorem char_herm [BorelSpace (Mx D n n)] [LocallyCompactSpace (hermA D n)] (a : GL (Fin n) (AE D)) :
     addEquivAddHaarChar (restr (hermA D n) (GlobalTheory.ModuLR.lrCE a (ad a)⁻¹) (lr_herm a) (lr_herm_symm a)) =
       absA D (Matrix.GeneralLinearGroup.det a : (AE D)ˣ) ^ n := by

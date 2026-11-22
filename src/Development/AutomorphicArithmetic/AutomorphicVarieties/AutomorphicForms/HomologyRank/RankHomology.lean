@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.KLevTop
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.KLevTop
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.GelfandKazhdanReal
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,9 +28,6 @@ def funRep {Γ : Type} [Group Γ] (X : Type) [MulAction Γ X] {d : ℕ} (ξ : Γ
       map_smul' := fun c f => funext fun x => by simp [Matrix.mulVec_smul] }
   map_one' := by ext f x; simp
   map_mul' γ δ := by ext f x; simp [mul_smul]
-
-@[simp] theorem funRep_apply {Γ : Type} [Group Γ] (X : Type) [MulAction Γ X] {d : ℕ} (ξ : Γ →* Matrix (Fin d) (Fin d) ℂ)
-    (γ : Γ) (f : X → Fin d → ℂ) (x : X) : funRep X ξ γ f x = ξ γ *ᵥ f (γ⁻¹ • x) := rfl
 
 variable {Γ X Y I : Type} [Group Γ] [MulAction Γ X] [MulAction Γ Y]
 
@@ -63,13 +64,6 @@ end Hom
 
 def RankHomology : Prop :=
   ∀ (C : CochainComplex (ModuleCat.{0} ℂ) ℕ) (q : ℕ), Module.rank ℂ (C.homology q) ≤ Module.rank ℂ (C.X q)
-
-def RankCohFree : Prop :=
-  ∀ (Γ : Type) [Group Γ] (P : ProjectiveResolution (Rep.trivial ℂ Γ ℂ)) (q r : ℕ),
-    Nonempty (P.complex.X q ≅ Rep.free ℂ Γ (Fin r)) → ∀ A : Rep.{0} ℂ Γ,
-      Module.rank ℂ (groupCohomology A q) ≤ r * Module.rank ℂ A
-
-def BddOfFL : Prop := ∀ (Γ : Type) [Group Γ], UpperTheory.V.Published.IsFL Γ → Bdd Γ
 
 def BddEquiv : Prop := ∀ (Γ Γ' : Type) [Group Γ] [Group Γ'], Nonempty (Γ ≃* Γ') → Bdd Γ → Bdd Γ'
 
@@ -123,18 +117,14 @@ def FinOrbAbs : Prop :=
     (∃ T : Finset G, ∀ g, ∃ h : H, ∃ t ∈ T, ∃ k ∈ K, g = ι h * t * k) →
     ∃ T : Finset G, ∀ g, ∃ γ ∈ Γ, ∃ t ∈ T, ∃ u ∈ U, g = ι γ * t * u
 
-def MinkRing : Prop :=
-  ∀ (A : Type) [CommRing A] (n : ℕ), (∀ a : A, 3 * a = 0 → a = 0) → ∀ (r : ℕ), r.Prime →
-    ∀ u : Matrix (Fin n) (Fin n) A, u ^ r = 1 → (∀ i j, (3 : A) ∣ (u - 1) i j) → ∀ (k : ℕ) i j, (3 : A) ^ k ∣ (u - 1) i j
-
 section Arith
 
 variable (F : Type) [Field F] [NumberField F] (n : ℕ)
 
 abbrev ratAf : GL (Fin n) F →* GL (Fin n) (Af F) := Matrix.GeneralLinearGroup.map (algebraMap F (Af F))
 
-variable {F n} in
 
+variable {F n} in
 def arith (g : GL (Fin n) (Af F)) (U : Subgroup (GL (Fin n) (Af F))) : Subgroup (GL (Fin n) F) :=
   (U.comap (MulAut.conj g⁻¹).toMonoidHom).comap (ratAf F n)
 
@@ -156,17 +146,6 @@ def KLevIdx : Prop :=
 def FinDC : Prop :=
   ∀ (F : Type) [Field F] [NumberField F] (n : ℕ), ∃ T : Finset (GL (Fin n) (Af F)),
     ∀ g, ∃ h : GL (Fin n) F, ∃ t ∈ T, ∃ k ∈ KLev F n 1, g = ratAf F n h * t * k
-
-def VanishThree : Prop :=
-  ∀ (F : Type) [Field F] [NumberField F], ∃ w : HeightOneSpectrum (𝓞 F),
-    ∀ y : Af F, (∀ k : ℕ, ∃ z ∈ Ohat F, y = 3 ^ k * z) → pLoc F w y = 0
-
-def KThreeLoc : Prop :=
-  ∀ (F : Type) [Field F] [NumberField F] (n : ℕ), ∃ w : HeightOneSpectrum (𝓞 F), ∀ u ∈ KLev F n 3, ∀ r : ℕ, r.Prime → u ^ r = 1 →
-    Matrix.GeneralLinearGroup.map (n := Fin n) (pLoc F w) u = 1
-
-def TorsFree : Prop :=
-  ∀ (F : Type) [Field F] [NumberField F] (n : ℕ) (g : GL (Fin n) (Af F)), ∀ γ ∈ arith g (KLev F n 3), IsOfFinOrder γ → γ = 1
 
 def ArithOne : Prop :=
   ∀ (F : Type) [Field F] [NumberField F] (n : ℕ), (KLev F n 1).comap (ratAf F n) =

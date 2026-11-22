@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL6.ValuationClassTranslateMem
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ClassMapEstimateOfPartial
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ExistsOnOfPosDef
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.TilEqLevel
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.DefNOfFact
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.ValuationClassTranslateMem
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ClassMapEstimateOfPartial
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.ExistsOnOfPosDef
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.TilEqLevel
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.DefNOfFact
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem cls_eq_of_dec (S : StepLevel F E σ J T f bad) {C : Type} (yc : C → UP
     rw [e']; group
   apply hinj
   show (Quotient.mk'' (yc c1) : Cls S) = Quotient.mk'' (yc c2)
-  refine (DoubleCoset.eq _ _ (yc c1) (yc c2)).2 ⟨h, ?_, k, ?_, ?_⟩
+  refine (@DoubleCoset.eq _ _ _ _ (yc c1) (yc c2)).2 ⟨h, ?_, k, ?_, ?_⟩
   · exact Subgroup.mem_subgroupOf.2 (Subgroup.mem_map.2 ⟨γ2⁻¹ * γ1, (UJ _ _).mul_mem ((UJ _ _).inv_mem h2) h1, hh.symm⟩)
   · exact Subgroup.mem_subgroupOf.2 (S.U.mul_mem κ1.2 (S.U.inv_mem κ2.2))
   · simp only [h]; group
@@ -53,7 +57,7 @@ theorem fic_of_stab (S : StepLevel F E σ J T f bad) (emb : ι → E →+* ℂ)
       ∃ κ : S.U, x.1 = bc (inclE (F := F) (FiniteAdeleRing (𝓞 F) F)) γ * (yc c).1 * κ.1 := by
     intro x
     obtain ⟨c, hcx⟩ := hbij.2 (Quotient.mk'' x)
-    obtain ⟨hh, hhH, κ, hκK, e⟩ := (DoubleCoset.eq _ _ (yc c) x).1 hcx
+    obtain ⟨hh, hhH, κ, hκK, e⟩ := (@DoubleCoset.eq _ _ _ _ (yc c) x).1 hcx
     obtain ⟨g, hgU, hge⟩ := Subgroup.mem_map.1 (Subgroup.mem_subgroupOf.1 hhH)
     refine ⟨c, g, hgU, ⟨κ.1, hκK⟩, ?_⟩
     have := congrArg Subtype.val e
@@ -203,11 +207,11 @@ theorem ext_mul_bZ (Tf : FormsTiedSym D u Ch chOf) (γ : Matrix (Fin (D.R.N D.R.
   ext a b
   simp only [Matrix.mul_apply, bZ, bZg]
   by_cases hb : (b : ℕ) < D.R.N D.R.m - 1
-  · simp only [dif_pos hb]
+  · simp only [dite_eq_left hb]
     have := congrFun (congrFun h1 a) ⟨b, hb⟩
     simp only [Matrix.mul_apply] at this
     exact_mod_cast this
-  · simp only [dif_neg hb]
+  · simp only [dite_eq_right hb]
     have := congrFun h2' a
     simp only [Matrix.mulVec, dotProduct] at this
     rw [← this, Finset.sum_div]
@@ -221,8 +225,8 @@ open Formalism.MainNotions.product_first_zeroth_parts
 
 variable {D : D7} {u : D.what₂.Word} {Ch : ℕ → Type} {chOf : ∀ i, (D.mem u).C.cls i → Ch i}
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem extU (Tf : FormsTiedSym D u Ch chOf) (γ : GL (Fin (D.R.N D.R.m - 1)) D.host.E)
     (hγ : γ ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramP D)) :
     ∃ Γ : GL (Fin (D.R.N D.R.m)) D.host.E, Γ ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D D.R.m le_rfl) ∧
@@ -277,8 +281,8 @@ open Formalism.MainNotions.product_first_zeroth_parts TensorProduct
 
 variable {D : D7} {u : D.what₂.Word} {Ch : ℕ → Type} {chOf : ∀ i, (D.mem u).C.cls i → Ch i}
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem stab_m (Tf : FormsTiedSym D u Ch chOf) (hE : ExtLevS Tf)
     (c : (D.fm u).clsP) (γ : GL (Fin (D.R.N D.R.m - 1)) D.host.E) (κ : Tf.clsP.lev.U)
     (hst : bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) γ * (Tf.clsP.y c).1 * κ.1 = (Tf.clsP.y c).1)
@@ -313,8 +317,8 @@ theorem stab_m (Tf : FormsTiedSym D u Ch chOf) (hE : ExtLevS Tf)
       _ = _ := by group
   · rw [← hGchi, map_mul, map_mul, map_inv, mul_comm ((Tf.cls D.R.m le_rfl (Or.inr rfl)).lev.chi (Tf.tilAd.ka c))⁻¹, mul_assoc, inv_mul_cancel, mul_one]
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem val_inv (Tf : FormsTiedSym D u Ch chOf) (hE : ExtLevS Tf) (φ : Fn D u D.R.m) (hφ : φ ∈ (D.fm u).Fi D.R.m)
     (c : (D.fm u).clsP) (γ : GL (Fin (D.R.N D.R.m - 1)) D.host.E) (κ : Tf.clsP.lev.U)
     (hst : bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) γ * (Tf.clsP.y c).1 * κ.1 = (Tf.clsP.y c).1)
@@ -368,8 +372,8 @@ open Formalism.MainNotions.product_first_zeroth_parts
 
 variable {D : D7} {u : D.what₂.Word} {Ch : ℕ → Type} {chOf : ∀ i, (D.mem u).C.cls i → Ch i}
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem stab_of_ext (Tf : FormsTiedSym D u Ch chOf) (hL : Formalism.L2.Rows.LowerMapTieS Tf) (hE : ExtLevS Tf) : StabCompS Tf := by
   intro φ hφ c γ hγ κ hst y y' hy
   obtain ⟨Γ0, hΓ0U, hΓ0E⟩ := hE.1 γ hγ
@@ -458,8 +462,8 @@ open Formalism.MainNotions.product_first_zeroth_parts TensorProduct
 
 variable {D : D7} {u : D.what₂.Word} {Ch : ℕ → Type} {chOf : ∀ i, (D.mem u).C.cls i → Ch i}
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem extUA (Tf : FormsTiedSym D u Ch chOf) (k : Matrix (Fin (D.R.N D.R.m - 1)) (Fin (D.R.N D.R.m - 1)) (D.host.E ⊗[D.host.F] FiniteAdeleRing (𝓞 D.host.F) D.host.F))
     (hk : cT (sigR (sigD D) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) k * (gramP D).map (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) * k = (gramP D).map (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)))
     (G : Matrix (Fin (D.R.N D.R.m)) (Fin (D.R.N D.R.m)) (D.host.E ⊗[D.host.F] FiniteAdeleRing (𝓞 D.host.F) D.host.F)) (hE : IsExt D Tf.til.z0 (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) k G) :
@@ -542,8 +546,8 @@ open Formalism.MainNotions.product_first_zeroth_parts TensorProduct
 
 variable {D : D7} {u : D.what₂.Word} {Ch : ℕ → Type} {chOf : ∀ i, (D.mem u).C.cls i → Ch i}
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 theorem extUR {R : Type} [CommRing R] [Algebra D.host.F R] (Tf : FormsTiedSym D u Ch chOf) (k : Matrix (Fin (D.R.N D.R.m - 1)) (Fin (D.R.N D.R.m - 1)) (D.host.E ⊗[D.host.F] R))
     (hk : cT (sigR (sigD D) R) k * (gramP D).map (inclE (F := D.host.F) R) * k = (gramP D).map (inclE (F := D.host.F) R))
     (G : Matrix (Fin (D.R.N D.R.m)) (Fin (D.R.N D.R.m)) (D.host.E ⊗[D.host.F] R)) (hE : IsExt D Tf.til.z0 (inclE (F := D.host.F) R) k G) :

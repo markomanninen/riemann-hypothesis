@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.YvRatOfValRat
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.YvRatOfValRat
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -19,7 +23,7 @@ theorem isRational_add {F F' : FnP P α} (h : RatFnP P α e F) (h' : RatFnP P α
   intro i L
   obtain ⟨Q, hQ⟩ := h i L
   obtain ⟨Q', hQ'⟩ := h' i L
-  exact ⟨Q + Q', by rw [map_add, hQ, hQ']; rfl⟩
+  exact ⟨Q + Q', by rw [map_add (f := _), hQ, hQ']; rfl⟩
 
 theorem isRational_smul (a : LL) {F : FnP P α} (h : RatFnP P α e F) : RatFnP P α e (e a • F) := by
   intro i L

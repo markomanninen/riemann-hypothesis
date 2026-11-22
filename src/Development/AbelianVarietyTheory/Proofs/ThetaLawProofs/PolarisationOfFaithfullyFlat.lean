@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ProperRelAmpleKTrivOfFieldExtension
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsGenOfGenericFibre
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SmoothOfRelativeDimensionOfFibre
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsGenOfLocalOnBase
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.GroupSchemeMorphismDescends
-import Development.AbelianVarietyTheory.Definitions.KeyFormula.IsSquareDeterminantComparison
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.IsPluriharmonicSiegel
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.OneEqSpTranslZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ProperRelAmpleKTrivOfFieldExtension
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsGenOfGenericFibre
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SmoothOfRelativeDimensionOfFibre
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsGenOfLocalOnBase
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.GroupSchemeMorphismDescends
+public import Development.AbelianVarietyTheory.Definitions.KeyFormula.IsSquareDeterminantComparison
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.IsPluriharmonicSiegel
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ThetaUnifAV
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.MapsAtLeA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SymplecticGenerators.SymplecticCharacters.OneEqSpTranslZero
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -58,15 +62,61 @@ theorem exists_gen_pull_of_sym (hG : Out.GlobalFnsSt) (h : IsGrpPullback A' A f 
     ∃ t : ((LB.LinComb L (K := Fin 2) ![(GrpObj.inv : A ⟶ A).left, 𝟙 _] ![1, -1]).pull (r ≫ φ)).Gen, t.IsGen := by
   obtain ⟨w, hw⟩ := hw
   obtain ⟨c, hc⟩ := exists_gen_neg_of_sym hG hA hL' hS
-  obtain ⟨c₁, h₁⟩ := gen_chartPull (chartPullSame L' ![r ≫ (GrpObj.inv : A' ⟶ A').left, r] _ _ r fun k => by
-    fin_cases k
-    · rfl
-    · exact (Category.comp_id r).symm) c hc
-  obtain ⟨c₂, h₂, -⟩ := exists_up ((isGen_iff w).1 hw) hL hL' c₁ h₁
-  exact gen_chartPull (chartPullOut L _ _ (r ≫ φ) _ fun k => by
-      fin_cases k
-      · exact (Category.assoc _ _ _).trans ((congrArg (r ≫ ·) (inv_left_comp h)).trans (Category.assoc _ _ _).symm)
-      · exact (Category.comp_id _).symm) c₂ h₂
+  let δ : Fin 2 → (A.left ⟶ A.left) := ![(GrpObj.inv : A ⟶ A).left, 𝟙 _]
+  let δ' : Fin 2 → (A'.left ⟶ A'.left) := ![(GrpObj.inv : A' ⟶ A').left, 𝟙 _]
+  let ε : Fin 2 → ℤ := ![1, -1]
+  let q := r ≫ φ
+  let ψ : Fin 2 → (Y ⟶ A'.left) := fun k => r ≫ δ' k
+  have e (k : Fin 2) : ψ k ≫ φ = q ≫ δ k := by
+    fin_cases k <;> simp [ψ, q, δ, δ', Category.assoc, inv_left_comp h]
+  let B := LB.LinComb L' ψ ε
+  let C := LB.LinComb (L.pull φ) ψ ε
+  let N := LB.LinComb L δ ε
+  let D := N.pull q
+  let b : B.Gen := LB.pullGen L' δ' ε c r
+  have hb : b.IsGen := DVR.pullGen_isGen L' δ' ε c hc r
+  have hB : B.IsLB := DVR.linComb_isLB _ hL' ψ ε
+  have hC : C.IsLB := DVR.linComb_isLB _ (LB.isLB_pull hL φ) ψ ε
+  let v := LB.linCombIso w ψ ε
+  have hv := (Transport.invIso_spec hB hC v (DVR.linCombIso_isGen w hw ψ ε)).1
+  obtain ⟨u, hu, -⟩ := Transport.exists_transport hC hB (Transport.invIso v) hv b hb
+  let idx (j : D.ι) : C.ι := fun k _ => j PUnit.unit k
+  have le' (j : D.ι) : D.U j ≤ LB.wchart L (fun k => q ≫ δ k) (j PUnit.unit) :=
+    fun _ hy => Set.mem_iInter.2 fun k => Set.mem_iInter.1 (Set.mem_iInter.1 hy PUnit.unit) k
+  have le (j : D.ι) : D.U j ≤ C.U (idx j) := by
+    intro y hy
+    refine Set.mem_iInter.2 fun k => Set.mem_iInter.2 fun _ => ?_
+    change y ∈ (ψ k ≫ φ) ⁻¹ᵁ L.U (j PUnit.unit k)
+    rw [e k]
+    exact Set.mem_iInter.1 (le' j hy) k
+  have transition (i j : D.ι) : D.g i j =
+      res (le_inf (inf_le_left.trans (le i)) (inf_le_right.trans (le j))) (C.g (idx i) (idx j)) := by
+    let leOverlap := le_inf (inf_le_left.trans (le' i)) (inf_le_right.trans (le' j))
+    calc
+      D.g i j = res leOverlap (L.lcg (fun k => q ≫ δ k) ε (i PUnit.unit) (j PUnit.unit)) := by
+        change N.lcg (fun _ : PUnit => q) (fun _ => 1) i j = _
+        erw [LB.lcg_pull, LB.lcg_comp, LB.res_res]
+        rfl
+      _ = _ := by
+        change _ = res _ ((L.pull φ).lcg ψ ε (idx i) (idx j))
+        erw [LB.res_lcg, LB.res_lcg]
+        refine Finset.prod_congr rfl fun k _ => congrArg (· ^ ε k) ?_
+        change _ = res _ (pullU (ψ k) _ (L.lcg (fun _ : PUnit => φ) (fun _ => 1) (idx i k) (idx j k)))
+        have pull_eq {a a' : Y ⟶ A.left} (ha : a = a') {U : A.left.Opens} {V : Y.Opens}
+            (hle : V ≤ a ⁻¹ᵁ U) (hle' : V ≤ a' ⁻¹ᵁ U) (x : Γ(A.left, U)ˣ) :
+            res hle (pullU a U x) = res hle' (pullU a' U x) := by
+          subst a'
+          rfl
+        erw [LB.lcg_pull, LB.pull_res_comp]
+        · exact pull_eq (e k).symm _ _ _
+        · rw [e k]
+          exact leOverlap.trans (LB.wchart_inter_le L _ _ _ k)
+  refine ⟨⟨fun j => res (le j) (u.s (idx j))⟩, fun i j => ?_⟩
+  change res inf_le_left (res (le i) (u.s (idx i))) =
+    D.g i j * res inf_le_right (res (le j) (u.s (idx j)))
+  have eq := congrArg (res (le_inf (inf_le_left.trans (le i)) (inf_le_right.trans (le j)))) (hu (idx i) (idx j))
+  rw [transition]
+  simpa only [map_mul, LB.res_res] using eq
 
 theorem polarisation_of_faithfullyFlat : Out.Laws → ∀ (R₀ R : Type) [CommRing R₀] [IsDomain R₀] [IsLocalRing R₀] [IsPrincipalIdealRing R₀] [CommRing R] [IsNoetherianRing R] [Algebra R₀ R] [Module.FaithfullyFlat R₀ R] (P : Out.PolAV (Sp R)) (A₀ : Over (Sp R₀)) [GrpObj A₀] [Flat A₀.hom] (L₀ : LB A₀.left) (π : P.A.left ⟶ A₀.left), IsProjBy A₀.hom → L₀.IsLB → IsGrpPullback P.A A₀ (spMap (algebraMap R₀ R)) π → LBIso P.L (L₀.pull π) → IsAbelianScheme A₀ ∧ SmoothOfRelativeDimension P.g A₀.hom ∧ Out.Rigidified A₀ L₀ ∧ Out.Sym A₀ L₀ ∧ Out.RelAmple A₀ L₀ ∧ Out.KTriv A₀ L₀ := by
   intro hL R₀ R _ _ _ _ _ _ _ _ P A₀ _ _ L₀ π _ hL₀ h hw
@@ -100,10 +150,17 @@ theorem polarisation_of_faithfullyFlat : Out.Laws → ∀ (R₀ R : Type) [CommR
     obtain ⟨c, hc⟩ := GenericTriv.exists_gen_of_fibre _ hj A₀.hom (eSec A₀) (Over.w η[A₀]) _ _ H
       (Out.TLinPf.const_pullback hL.globalFns (spMap β) P.A P.isAb) hN ρ hρ t ht
     intro s
-    refine ⟨⊤, trivial, gen_chartPull (chartPullSame L₀ _ _ _ (A₀.hom ⁻¹ᵁ ⊤).ι fun k => ?_) c hc⟩
-    fin_cases k
-    · rfl
-    · exact (Category.comp_id _).symm
+    let i := (A₀.hom ⁻¹ᵁ ⊤).ι
+    have e : ![i ≫ (GrpObj.inv : A₀ ⟶ A₀).left, i] =
+        fun k : Fin 2 => i ≫ ![(GrpObj.inv : A₀ ⟶ A₀).left, 𝟙 _] k := by
+      funext k
+      fin_cases k
+      · rfl
+      · exact (Category.comp_id i).symm
+    refine ⟨⊤, trivial, ?_⟩
+    change ∃ u : (LB.LinComb L₀ ![i ≫ (GrpObj.inv : A₀ ⟶ A₀).left, i] ![1, -1]).Gen, u.IsGen
+    rw [e]
+    exact ⟨_, DVR.pullGen_isGen L₀ _ _ c hc i⟩
   · have : Flat (Out.specOf (algebraMap R₀ R)) := ‹Flat (spMap (algebraMap R₀ R))›
     have : Surjective (Out.specOf (algebraMap R₀ R)) := ‹Surjective (spMap (algebraMap R₀ R))›
     refine (relAmple_iff_isAmpleLB_of_isAffine A₀ hL₀).2 (AmpleDescent.isAmpleLB_of_pull _ h.1 hL₀ ?_)

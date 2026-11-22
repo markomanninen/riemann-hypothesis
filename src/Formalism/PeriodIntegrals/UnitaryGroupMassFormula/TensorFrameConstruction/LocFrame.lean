@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ScPiExists
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorFrameConstruction.LocalFramePreservesOrthogonal
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ScPiExists
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TensorFrameConstruction.LocalFramePreservesOrthogonal
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,8 @@ lemma hJ_rv (I : Formalism.MainNotions.S.AutInst) (v : InfinitePlace I.F) (x y :
     rw [Matrix.mulVec_mulVec, hJm, ← Matrix.mulVec_mulVec, Matrix.star_mulVec,
       ← Matrix.dotProduct_mulVec, Matrix.mulVec_mulVec, hPP, Matrix.one_mulVec]
   rw [key]
-  simp only [u, w, Formalism.UG.hform, dotProduct, Matrix.mulVec, Matrix.map_apply, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [u, w, Formalism.UG.hform, dotProduct, Matrix.mulVec, Matrix.map_apply, map_sum, map_mul,
     Pi.star_apply, Finset.mul_sum, starRingEnd_apply, phi_star, mul_assoc]
 
 lemma phi_ite (I : Formalism.MainNotions.S.AutInst) (v : InfinitePlace I.F) {r : ℕ} (a b : Fin r) :
@@ -65,11 +70,6 @@ variable (I : Formalism.MainNotions.S.AutInst) {r k : ℕ} (e f : Fin r → Fin 
   (hw : (∀ a b, hJ (I.ε v) (w a) (w b) = if a = b then 1 else 0) ∧
       ∀ a, (∀ c, hJ (I.ε v) (rv I v (e c)) (w a) = 0 ∧ hJ (I.ε v) (rv I v (f c)) (w a) = 0) ∧
         hJ (I.ε v) (rv I v z) (w a) = 0)
-
-@[simp] lemma locFrame_e : (locFrame I e f z hn hF hz v w hw).e = fun a => rv I v (e a) := rfl
-@[simp] lemma locFrame_f : (locFrame I e f z hn hF hz v w hw).f = fun a => rv I v (f a) := rfl
-@[simp] lemma locFrame_z : (locFrame I e f z hn hF hz v w hw).z = rv I v z := rfl
-@[simp] lemma locFrame_w : (locFrame I e f z hn hF hz v w hw).w = w := rfl
 
 end Simp
 

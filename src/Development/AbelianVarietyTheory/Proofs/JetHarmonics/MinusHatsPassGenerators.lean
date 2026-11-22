@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SameFns
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsAdmissibleSplittingCharPairMulTwist
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.StarStartConjugationIdentity
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SameFns
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IsAdmissibleSplittingCharPairMulTwist
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.StarStartConjugationIdentity
+
+@[expose] public section
 
 namespace GlobalTheory.HatNF.GenMinus
 

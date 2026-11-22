@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.InducedAutomorphicForms.IsIrreducibleIff
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.InducedAutomorphicForms.IsIrreducibleIff
+
+@[expose] public section
 
 open UpperTheory.V.AlgebraTools
 
@@ -59,7 +63,7 @@ theorem UpperTheory.V.AlgebraTools.mackeyTwo :
     rw [Submodule.disjoint_def.1 d1 v hv this, map_zero]
   rcases hirr (V₁ ⊓ (V₁.map (ρ s) ⊔ W)) inf_le_left (fun h hh v hv => ⟨hst h hh v hv.1, by
       obtain ⟨a, ha, w, hw, rfl⟩ := Submodule.mem_sup.1 hv.2
-      rw [map_add]
+      rw [map_add (f := _)]
       exact Submodule.add_mem_sup (hst2 h hh a ha) (hW' h w hw)⟩) with h2 | h2
   · left
     rw [eq_bot_iff]
@@ -86,7 +90,7 @@ theorem UpperTheory.V.AlgebraTools.mackeyTwo :
     refine sup_le le_sup_left ?_
     rintro _ ⟨v, hv, rfl⟩
     obtain ⟨_, ⟨a, ha, rfl⟩, w, hw, rfl⟩ := Submodule.mem_sup.1 (hle hv)
-    rw [map_add, hmul]
+    rw [map_add (f := _), hmul]
     exact Submodule.add_mem_sup (hst _ hss a ha) (hW' s w hw)
   obtain ⟨e, he⟩ := graph_equiv _ _ _ c1 c2
   refine hne ⟨e, fun h hh v w hvw => ?_⟩

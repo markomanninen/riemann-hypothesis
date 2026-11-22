@@ -1,10 +1,14 @@
-import Formalism.HermitianLattices.HermitianLatticesProofs.ClassSetAssembly
-import Formalism.HermitianLattices.HermitianLatticesProofs.TraceReal
-import Formalism.HermitianLattices.HermitianLatticesProofs.GenusCovolBound
-import Formalism.HermitianLattices.HermitianLatticesProofs.ShortVectors
-import Formalism.HermitianLattices.HermitianLatticesProofs.GenusScale
-import Formalism.HermitianLattices.HermitianLatticesProofs.FinIntermediate
-import Formalism.HermitianLattices.HermitianLatticesProofs.IsomOfTrace
+module
+
+public import Formalism.HermitianLattices.HermitianLatticesProofs.ClassSetAssembly
+public import Formalism.HermitianLattices.HermitianLatticesProofs.TraceReal
+public import Formalism.HermitianLattices.HermitianLatticesProofs.GenusCovolBound
+public import Formalism.HermitianLattices.HermitianLatticesProofs.ShortVectors
+public import Formalism.HermitianLattices.HermitianLatticesProofs.GenusScale
+public import Formalism.HermitianLattices.HermitianLatticesProofs.FinIntermediate
+public import Formalism.HermitianLattices.HermitianLatticesProofs.IsomOfTrace
+
+@[expose] public section
 
 namespace Formalism.HermitianLatticesTheory
 

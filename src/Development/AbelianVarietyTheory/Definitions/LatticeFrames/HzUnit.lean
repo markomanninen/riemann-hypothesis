@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlaceLaws
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.PlaceLaws
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+
+@[expose] public section
 
 set_option genSizeOfSpec false
 set_option genInjectivity false

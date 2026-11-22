@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePHaSpan
-import Formalism.LocalToGlobal.CharacterGerms.RowTiePHaLeaves
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePHaSpan
+public import Formalism.LocalToGlobal.CharacterGerms.RowTiePHaLeaves
+
+@[expose] public section
 
 set_option autoImplicit false
 

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DifferentiableAtChart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.DifferentiableAtChart
+
+@[expose] public section
+
 open NumberField
 open scoped ContDiff
 
@@ -45,7 +50,7 @@ theorem contDiff_prodExp (y : Lie E d) {k : ℕ} (X : Fin k → Matrix (Fin d) (
       simp only [List.ofFn_succ, List.prod_cons]
       exact (hg 0).mul (ih _ fun i => hg _)
   have h := hprod k (fun i t => NormedSpace.exp (t i • X i))
-    fun i => hexp.comp ((contDiff_apply ℝ ℝ i).smul contDiff_const)
+    fun i => hexp.comp ((contDiff_apply ℝ (fun _ => ℝ) i).smul contDiff_const)
   exact T.contDiff.comp (contDiff_const.mul h)
 
 end GlobalTheory.SecondKind

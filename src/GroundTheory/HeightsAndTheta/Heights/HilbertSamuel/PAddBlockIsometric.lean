@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsAddBlockIsometric
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionPointValue
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocRing
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.LiftOldChartMonomialMemPrimeCompl
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ImageCoord
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsAddBlockIsometric
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionPointValue
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocRing
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.LiftOldChartMonomialMemPrimeCompl
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.ImageCoord
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -65,7 +70,7 @@ theorem divCycle_apply_eq_of_cross (P : Ideal (MRing ι)) {f g f' g' : MRing ι}
   · have hc' : W ∈ divSupp P g := by
       simp only [divSupp, Set.mem_ofPred_eq] at hc ⊢
       exact ⟨e2.mp (e1.mpr hc.1), hc.2⟩
-    rw [if_pos hc, if_pos hc', multAt, multAt, dif_pos hW, dif_pos hW]
+    rw [if_pos hc, if_pos hc', multAt, multAt, dite_eq_left hW, dite_eq_left hW]
     exact congrArg ENat.toNat (l1.symm.trans l2)
   · have hc' : W ∉ divSupp P g := by
       intro h
@@ -164,8 +169,8 @@ end Block
 
 end AddBlockIsometric
 
-open AddBlockIsometric in
 
+open AddBlockIsometric in
 theorem AddBlockIsometric.proof : AddBlockIsometric.Statement := by
   intro K _ _ ι _ Ω _ _ y D A m N v B L hY hm hv hgen hBa hLa hLh hBh
   classical
@@ -265,20 +270,22 @@ theorem AddBlockIsometric.proof : AddBlockIsometric.Statement := by
         · simp only [Pi.add_apply]
           have := hle i k
           omega
-        · rw [map_sub, map_sum, aeval_chartMon, sub_eq_zero]
-          calc ∑ i, aeval y (U i * Gs i * chartMon c (fun k => Dt k - (ε i k + δs i k)))
-              = ∑ i, u i * (v i * ∏ k, y ⟨k, c k⟩ ^ (-((m : ℤ) * A.a k))) * ∏ k, y ⟨k, c k⟩ ^ Dt k := by
-                refine Finset.sum_congr rfl fun i _ => ?_
-                rw [map_mul, map_mul, hUv i, hGsv i, aeval_chartMon]
-                calc (u i * ∏ k, y ⟨k, c k⟩ ^ ε i k) * (v i * ∏ k, y ⟨k, c k⟩ ^ Ns i k) *
-                      ∏ k, y ⟨k, c k⟩ ^ (Dt k - (ε i k + δs i k))
-                    = u i * v i * ((∏ k, y ⟨k, c k⟩ ^ ε i k) * (∏ k, y ⟨k, c k⟩ ^ Ns i k) *
-                      (∏ k, y ⟨k, c k⟩ ^ (Dt k - (ε i k + δs i k)))) := by ring
-                  _ = _ := by rw [key i]; ring
-            _ = ∏ k, y ⟨k, c k⟩ ^ Dt k := by rw [← Finset.sum_mul, hsum', one_mul]
+        set_option synthInstance.maxHeartbeats 100000 in
+          · rw [map_sub, map_sum, aeval_chartMon, sub_eq_zero]
+            calc ∑ i, aeval y (U i * Gs i * chartMon c (fun k => Dt k - (ε i k + δs i k)))
+                = ∑ i, u i * (v i * ∏ k, y ⟨k, c k⟩ ^ (-((m : ℤ) * A.a k))) * ∏ k, y ⟨k, c k⟩ ^ Dt k := by
+                  refine Finset.sum_congr rfl fun i _ => ?_
+                  rw [map_mul, map_mul, hUv i, hGsv i, aeval_chartMon]
+                  calc (u i * ∏ k, y ⟨k, c k⟩ ^ ε i k) * (v i * ∏ k, y ⟨k, c k⟩ ^ Ns i k) *
+                        ∏ k, y ⟨k, c k⟩ ^ (Dt k - (ε i k + δs i k))
+                      = u i * v i * ((∏ k, y ⟨k, c k⟩ ^ ε i k) * (∏ k, y ⟨k, c k⟩ ^ Ns i k) *
+                        (∏ k, y ⟨k, c k⟩ ^ (Dt k - (ε i k + δs i k)))) := by ring
+                    _ = _ := by rw [key i]; ring
+              _ = ∏ k, y ⟨k, c k⟩ ^ Dt k := by rw [← Finset.sum_mul, hsum', one_mul]
       have hΦW := hPW (rename_mem v hΦ)
       have hS : rename (oldV N) (∑ i, U i * Gs i * chartMon c (fun k => Dt k - (ε i k + δs i k))) ∈ W := by
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         exact W.sum_mem fun i _ => by
           rw [map_mul, map_mul]
           exact W.mul_mem_right _ (W.mul_mem_left _ (hall i))

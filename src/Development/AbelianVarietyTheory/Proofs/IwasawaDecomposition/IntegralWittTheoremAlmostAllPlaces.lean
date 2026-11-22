@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntegralPointsFinitePlaceTensorProperties
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IntegralPointsFinitePlaceTensorProperties
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.GaugeEx
 open scoped TensorProduct NNReal ENNReal
@@ -43,11 +47,12 @@ theorem exists_isUnit_sub {O : Type} [CommRing O] (s : O →+* O) (hs : ∀ z, s
   obtain ⟨c, hc⟩ := Ideal.mem_span_range_iff_exists_fun.1 ((Ideal.eq_top_iff_one _).1 htop)
   have hc' : ∑ i, s (c i) * (D i * s (D i)) = 1 := by
     have := congrArg s hc
-    simp only [map_sum, map_mul, hs, map_one] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, hs, map_one] at this
     rw [← this]
     exact Finset.sum_congr rfl fun i _ => by ring
   obtain ⟨i, hi⟩ := hloc (fun i => (c i + s (c i)) * (D i * s (D i)))
-    (fun i => by simp only [map_mul, map_add, hs]; ring)
+    (fun i => by simp only [map_mul, map_add (f := _), hs]; ring)
     (by simp only [add_mul, Finset.sum_add_distrib, hc, hc']; norm_num)
   exact ⟨i, isUnit_of_mul_isUnit_left (isUnit_of_mul_isUnit_right hi)⟩
 
@@ -66,7 +71,8 @@ theorem exists_unitary {A : Type} [CommRing A] {M : ℕ} (s : A →+* A) (hs : �
     exact Finset.sum_comm
   have hsym : ∀ p q : Fin M → A, s (Formalism.UG.hform s J p q) = Formalism.UG.hform s J q p := by
     intro p q
-    simp only [Formalism.UG.hform, map_sum, map_mul, hs]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Formalism.UG.hform, map_sum, map_mul, hs]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     rw [hJ]; ring
@@ -96,7 +102,8 @@ theorem exists_unitary {A : Type} [CommRing A] {M : ℕ} (s : A →+* A) (hs : �
     exact Finset.sum_congr rfl fun k _ => by ring
   have hPJ : Formalism.UG.cT s P * J = J * P := by
     ext i j
-    simp only [hP, hl, Formalism.UG.cT, Matrix.mul_apply, Matrix.vecMulVec_apply, Matrix.transpose_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hP, hl, Formalism.UG.cT, Matrix.mul_apply, Matrix.vecMulVec_apply, Matrix.transpose_apply,
       Matrix.map_apply, Matrix.vecMul, dotProduct, map_mul, map_sum, hs, hJ, Finset.mul_sum, Finset.sum_mul]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun k' _ => by ring
@@ -165,7 +172,7 @@ theorem exists_three {F E : Type} [Field F] [NumberField F] [Field E] [NumberFie
   have h1' : 1 + δ ≠ 0 := by
     intro h0
     have h2 := congrArg σ h0
-    rw [map_add, map_one, hδ, map_zero] at h2
+    rw [map_add (f := _), map_one, hδ, map_zero] at h2
     exact two_ne_zero (α := E) (by linear_combination h0 + h2)
   have a1 : (1 : E) ≠ -1 := fun h0 => two_ne_zero (α := E) (by linear_combination h0)
   have a2 : (1 : E) ≠ (1 + δ) / (1 - δ) := by
@@ -188,7 +195,7 @@ theorem exists_three {F E : Type} [Field F] [NumberField F] [Field E] [NumberFie
     · simp
     · simp
     · change σ ((1 + δ) / (1 - δ)) * ((1 + δ) / (1 - δ)) = 1
-      rw [map_div₀, map_add, map_sub, map_one, hδ, sub_neg_eq_add, ← sub_eq_add_neg]
+      rw [map_div₀, map_add (f := _), map_sub, map_one, hδ, sub_neg_eq_add, ← sub_eq_add_neg]
       field_simp
 
 section Loc
@@ -248,7 +255,7 @@ theorem witt_integral : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
       mul_mem' := fun {p q} hp hq => hmul p hp q hq
       zero_mem' := fun k => by simp
       add_mem' := fun {p q} hp hq k => by
-        rw [map_add, Finsupp.add_apply]; exact add_mem (hp k) (hq k)
+        rw [map_add (f := _), Finsupp.add_apply]; exact add_mem (hp k) (hq k)
       neg_mem' := fun {p} hp k => by
         rw [map_neg, Finsupp.neg_apply]; exact neg_mem (hp k) }
   have hss := GlobalTheory.SelfDualLatticeCompare.sigR_sigR (Fv F v) h
@@ -296,7 +303,7 @@ theorem witt_integral : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
     O.sum_mem fun i _ => O.sum_mem fun j _ => O.mul_mem (O.mul_mem (hsig _ (hyO i)) (hJO' i j)) (hxO' j)
   obtain ⟨i, hi⟩ := exists_isUnit_sub s (fun z => Subtype.ext (hss z)) (φ ⟨_, hb⟩) ⟨_, htO⟩
     ((hunit β hβ hb hb').map φ) (fun i => s ⟨_, huO i⟩) (fun i j hij => by
-      rw [← map_sub]
+      rw [← s.map_sub]
       refine IsUnit.map s (IsUnit.of_mul_eq_one ⟨_, hdO i j⟩ (Subtype.ext ?_))
       change (inclR (F := F) (Fv F v) (u i) - inclR (F := F) (Fv F v) (u j)) *
         inclR (F := F) (Fv F v) (u i - u j)⁻¹ = 1
@@ -305,7 +312,8 @@ theorem witt_integral : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
   have hxx : Formalism.UG.hform (sigR (Fv F v) σ) (JR (Fv F v) J) (ratTup (F := F) (Fv F v) x 0)
       (ratTup (F := F) (Fv F v) x 0) = algebraMap (Fv F v) _ (algebraMap F (Fv F v) β) := by
     have e := congrArg (inclR (F := F) (Fv F v)) hx
-    simp only [hE, Formalism.UG.hform, map_sum, map_mul] at e
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hE, Formalism.UG.hform, map_sum, map_mul] at e
     refine Eq.trans e ?_
     rw [← IsScalarTower.algebraMap_apply]
     exact (Algebra.TensorProduct.includeRight : E →ₐ[F] Fv F v ⊗[F] E).commutes β

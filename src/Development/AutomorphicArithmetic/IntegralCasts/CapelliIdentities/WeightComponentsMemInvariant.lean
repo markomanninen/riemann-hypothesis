@@ -1,15 +1,13 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 @[reducible] noncomputable def UpperTheory.Reformulated.B.Qf7.GLOps.{u_2, u_3} :
     ℕ → (K : Type u_2) → (V : Type u_3) → [inst : Field K] → [inst_1 : AddCommGroup V] → [_root_.Module K V] → Type u_3 :=
     fun (n : ℕ) (K : Type u_2) (V : Type u_3) [Field K] [AddCommGroup V] [_root_.Module K V] ↦
       Fin n → Fin n → Module.End K V
-
-theorem UpperTheory.Reformulated.B.Qf7.aux2.{u_1, u_2} :
-    ∀ {K : Type u_1} {V : Type u_2} [inst : Field K] [inst_1 : AddCommGroup V] [inst_2 : _root_.Module K V],
-      SMulCommClass K K V := by
-  intro K V _ _ _
-  infer_instance
 
 noncomputable def UpperTheory.Reformulated.B.Qf7.weightSp.{u_2, u_3} :
     {n : ℕ} →
@@ -51,7 +49,8 @@ theorem UpperTheory.Reformulated.B.Qf7.weight_components_mem_invariant.{u_1, u_2
         W.sub_mem (hW a _ hsum) (W.smul_mem _ hsum)
       have h2 : E a a (∑ l ∈ insert nu t, f l) - (nu a : K) • (∑ l ∈ insert nu t, f l)
           = ∑ l ∈ insert nu t, ((l a : K) - (nu a : K)) • f l := by
-        rw [map_sum, Finset.smul_sum, ← Finset.sum_sub_distrib]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, Finset.smul_sum, ← Finset.sum_sub_distrib]
         refine Finset.sum_congr rfl fun l hl => ?_
         rw [UpperTheory.Reformulated.B.Qf7.apply_of_mem_weightSp (hf l hl) a, sub_smul]
       rw [h2, Finset.sum_insert hnu, sub_self, zero_smul, zero_add] at h1

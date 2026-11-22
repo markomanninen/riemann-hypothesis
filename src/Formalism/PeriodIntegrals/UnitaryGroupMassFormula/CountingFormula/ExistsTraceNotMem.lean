@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.PairUnitLoc
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.PairUnitLoc
+
+@[expose] public section
 
 open NumberField Formalism.HermitianLattices.Ext.L3 Formalism.HermitianLattices.Ext.L3.WA
 
@@ -128,7 +132,7 @@ theorem pair_unit_local : PairUnitLoc := by
   refine ⟨1, (locRing p).one_mem, algebraMap (𝓞 K) K l, hAmem l, ?_⟩
   have hv : h ((1 : K) • w + algebraMap (𝓞 K) K l • y) ((1 : K) • w + algebraMap (𝓞 K) K l • y) =
       h w w + algebraMap (𝓞 K) K (l + conjO K l) + algebraMap (𝓞 K) K (conjO K l * l) * h y y := by
-    simp only [one_smul, map_add, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply,
+    simp only [one_smul, map_add (f := _), map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply,
       smul_eq_mul, starRingEnd_apply, RingHom.id_apply, map_smul, hyw, hwy, map_mul,
       algebraMap_conjO, star_one]
     ring
@@ -155,9 +159,9 @@ theorem pair_unit_local : PairUnitLoc := by
     apply hinj
     have e1 : algebraMap (𝓞 K) K n = (h w w + algebraMap (𝓞 K) K (l + conjO K l) + algebraMap (𝓞 K) K (conjO K l * l) * h y y) * algebraMap (𝓞 K) K t := by
       rw [hve, div_mul_cancel₀ _ ht0]
-    simp only [map_mul, map_add]
+    simp only [map_mul, map_add (f := _)]
     rw [e1, hae, hbe]
-    simp only [map_mul, map_add]
+    simp only [map_mul, map_add (f := _)]
     field_simp
   have hN : a₁ * s₂ + (l + conjO K l) * (s₁ * s₂) + conjO K l * l * b₁ * s₁ ∈ p := by
     have hmem : (a₁ * s₂ + (l + conjO K l) * (s₁ * s₂) + conjO K l * l * b₁ * s₁) * t ∈ p := by

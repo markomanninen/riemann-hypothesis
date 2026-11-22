@@ -1,10 +1,14 @@
-import ReciprocityTheory.AnalyticForms.LeviForms.TailCut
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PLLocalStatement
-import ReciprocityTheory.AnalyticForms.PotentialTheory.Stokes
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
-import ReciprocityTheory.AnalyticForms.PotentialTheory.SNCAtlas
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShift
-import ReciprocityTheory.AnalyticForms.LeviForms.TailBoundB
+module
+
+public import ReciprocityTheory.AnalyticForms.LeviForms.TailCut
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PLLocalStatement
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Stokes
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PotentialContDiffAt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.SNCAtlas
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShift
+public import ReciprocityTheory.AnalyticForms.LeviForms.TailBoundB
+
+@[expose] public section
 
 namespace ReciprocityTheory.AnForm.P
 
@@ -104,7 +108,7 @@ theorem lintegral_log_tail_shells_le {X : Type} [MeasurableSpace X] (μ : Measur
         lintegral_mono_ae ((ae_restrict_iff' hS).2 (Filter.Eventually.of_forall hpt))
     _ = ENNReal.ofReal (Real.log R) * μ S + ENNReal.ofReal (Real.log 2) * ∑' j : ℕ, ∫⁻ y in S, ind j y ∂μ := by
         rw [lintegral_add_left measurable_const, lintegral_const, Measure.restrict_apply MeasurableSet.univ,
-          Set.univ_inter, lintegral_const_mul _ (Measurable.ennreal_tsum fun j =>
+          Set.univ_inter, lintegral_const_mul _ (Measurable.tsum fun j =>
             (measurable_const.indicator (hmeas _))), lintegral_tsum fun j =>
             (measurable_const.indicator (hmeas _)).aemeasurable]
     _ ≤ ENNReal.ofReal (Real.log R) * ENNReal.ofReal (K * Real.log R / R) +

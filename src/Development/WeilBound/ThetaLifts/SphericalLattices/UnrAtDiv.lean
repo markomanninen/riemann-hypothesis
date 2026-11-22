@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.HoweDefs
-import Development.WeilBound.ThetaLifts.DoubleEigenvalues.DblEigenW
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.HoweDefs
+public import Development.WeilBound.ThetaLifts.DoubleEigenvalues.DblEigenW
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Formalism.SatakeDualWeyl.Statement
+module
+
+public import Formalism.SatakeDualWeyl.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -45,10 +49,11 @@ def chiDeltaU {σ : L →+* L} {n m : ℕ} (q : ℕ) (α : Fin m → ℂ) (b : G
           ((n : ℤ) - 1 - 2 * (i.val : ℤ)))
     else 1
 
-open Classical in
 
-def SatU {σ : L →+* L} {n m : ℕ} (ϖ : L) (q : ℕ) (h : GU σ n → ℂ) (α : Fin m → ℂ) : ℂ :=
-  ∑ᶠ a : Fin m → ℤ, (∏ i : Fin m, α i ^ (a i) * (q : ℂ) ^ (-(a i) * ((n : ℤ) - 1 - 2 * (i.val : ℤ)))) *
+open Classical in
+def SatU {σ : L →+* L} {n m : ℕ} (ϖ : L) (q : ℕ) (h : GU σ n → ℂ) (α : Fin m → ℂ) : ℂ := by
+  classical
+  exact ∑ᶠ a : Fin m → ℤ, (∏ i : Fin m, α i ^ (a i) * (q : ℂ) ^ (-(a i) * ((n : ℤ) - 1 - 2 * (i.val : ℤ)))) *
     ∑ᶠ x : GU σ n ⧸ KU σ n,
       if ∃ u : GU σ n, IsUnipU u ∧ ∃ k ∈ KU σ n,
           (((x.out : GU σ n) : GL (Fin n) L) : Matrix (Fin n) (Fin n) L) =

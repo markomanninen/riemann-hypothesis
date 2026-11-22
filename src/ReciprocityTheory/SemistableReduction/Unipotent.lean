@@ -1,5 +1,9 @@
-import ReciprocityTheory.SemistableReduction.UnipotentA
-import ReciprocityTheory.SemistableReduction.UnipotentB
+module
+
+public import ReciprocityTheory.SemistableReduction.UnipotentA
+public import ReciprocityTheory.SemistableReduction.UnipotentB
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 
@@ -24,7 +28,8 @@ theorem unip_trace_conj {r : ℕ} (Q M : Matrix (Fin r) (Fin r) ℂ) (hQ : Q.det
 
 theorem unip_trace_map {K : Type*} [Field K] {r : ℕ} (σ : K →+* ℂ) (M : Matrix (Fin r) (Fin r) K) :
     (M.map σ).trace = σ M.trace := by
-  simp only [Matrix.trace, Matrix.diag, Matrix.map_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.trace, Matrix.diag, Matrix.map_apply, map_sum]
 
 theorem unip_map_pow {K : Type*} [Field K] {r : ℕ} (σ : K →+* ℂ) (M : Matrix (Fin r) (Fin r) K)
     (n : ℕ) : (M.map σ) ^ n = (M ^ n).map σ := by

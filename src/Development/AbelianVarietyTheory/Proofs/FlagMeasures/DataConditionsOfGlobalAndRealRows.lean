@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ToGlob0
-import Formalism.SharpRestriction.CuspSpanNormBounds.StandingHypothesesHoldFamily
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GlobalRankNumberBoundsSizeComparisonsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ToGlob0
+public import Formalism.SharpRestriction.CuspSpanNormBounds.StandingHypothesesHoldFamily
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GlobalRankNumberBoundsSizeComparisonsStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,16 +38,16 @@ theorem data_of_rows (eps CD : ℝ) (he : 0 < eps) (he' : eps < 1 / 52) (hCD : 3
       Formalism.MainNotions.S.uOne D u τ i = (((D.hcW u τ).u ⟨i - 1, by omega⟩ : ℚ) : ℝ) := by
     intro u τ i h1 h2
     unfold Formalism.MainNotions.S.uOne Formalism.MainNotions.S.uS
-    rw [dif_pos ⟨h1, h2⟩]
+    rw [dite_eq_left ⟨h1, h2⟩]
   have hvO : ∀ τ (l : ℕ) (h1 : 1 ≤ l) (h2 : l ≤ D.R.k - 1),
       Formalism.MainNotions.S.vOne D τ l = (((D.hc τ).v ⟨l - 1, by omega⟩ : ℚ) : ℝ) := by
     intro τ l h1 h2
     unfold Formalism.MainNotions.S.vOne
-    rw [dif_pos ⟨h1, h2⟩]
+    rw [dite_eq_left ⟨h1, h2⟩]
   have hbO : ∀ τ, Formalism.MainNotions.S.bOne D τ 1 = bFirst D τ := by
     intro τ
     unfold Formalism.MainNotions.S.bOne bFirst
-    rw [dif_pos ⟨le_rfl, by have := D.R.two_le_m; omega⟩]
+    rw [dite_eq_left ⟨le_rfl, by have := D.R.two_le_m; omega⟩]
   have hu1 : ∀ u τ, Formalism.MainNotions.S.uOne D u τ 1 = uFirst D τ := by
     intro u τ
     rw [huO u τ 1 le_rfl (by omega)]
@@ -140,7 +144,7 @@ theorem data_of_rows (eps CD : ℝ) (he : 0 < eps) (he' : eps < 1 / 52) (hCD : 3
     · intro i hi
       have hl : Formalism.MainNotions.S.lamS D.R (D.hc τ) ⟨i, by omega⟩ = (((D.hcW u τ).v ⟨i, by omega⟩ : ℚ) : ℝ) := by
         unfold Formalism.MainNotions.S.lamS
-        rw [dif_pos (show i < D.R.k - 1 by omega), D.hcW_v u τ]
+        rw [dite_eq_left (show i < D.R.k - 1 by omega), D.hcW_v u τ]
       rw [hl]
       unfold Formalism.MainNotions.S.uS
       exact ⟨by exact_mod_cast (D.hcW u τ).u_gt_v ⟨i, by omega⟩,
@@ -152,8 +156,8 @@ theorem data_of_rows (eps CD : ℝ) (he : 0 < eps) (he' : eps < 1 / 52) (hCD : 3
       have hl : Formalism.MainNotions.S.lamS D.R (D.hc τ) ⟨D.R.k - 1, by omega⟩ =
           -(((D.hcW u τ).b ⟨0, hm⟩ : ℚ) : ℝ) := by
         unfold Formalism.MainNotions.S.lamS
-        rw [dif_neg (show ¬ (D.R.k - 1 < D.R.k - 1) by omega),
-          dif_pos (show D.R.k - 1 - (D.R.k - 1) < D.R.m by omega), D.hcW_b u τ]
+        rw [dite_eq_right (show ¬ (D.R.k - 1 < D.R.k - 1) by omega),
+          dite_eq_left (show D.R.k - 1 - (D.R.k - 1) < D.R.m by omega), D.hcW_b u τ]
         exact congrArg (fun q : ℚ => -(q : ℝ)) (hF _ _ _ _ _ (by simp))
       rw [hl]
       unfold Formalism.MainNotions.S.uS

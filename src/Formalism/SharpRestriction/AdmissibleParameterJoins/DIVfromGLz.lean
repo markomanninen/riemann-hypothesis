@@ -1,8 +1,13 @@
-import Formalism.SharpRestriction.AdmissibleParameterJoins.DIVfromGLe
-import Formalism.SharpRestriction.AdmissibleParameterJoins.SfromGLu
-import Formalism.SharpRestriction.GlobalSchurBounds.JointsL
-import Formalism.LocalRingCardinality.SpanPowerMembership.PlacesOverNcardOfSplitInj
-import Formalism.LocalRingCardinality.IntCastDvdOfDvdIntegers
+module
+
+public import Formalism.SharpRestriction.Divisibility.LocalQuadraticParts
+public import Formalism.SharpRestriction.GlobalSchurBounds.StandardLattice
+public import Formalism.SharpRestriction.AdmissibleParameterJoins.SfromGLu
+public import Formalism.SharpRestriction.GlobalSchurBounds.JointsL
+public import Formalism.LocalRingCardinality.SpanPowerMembership.PlacesOverNcardOfSplitInj
+public import Formalism.LocalRingCardinality.IntCastDvdOfDvdIntegers
+
+@[expose] public section
 
 noncomputable section
 

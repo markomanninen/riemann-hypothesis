@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitChart
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitChart
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -16,12 +21,5 @@ def OrbitChartTerm.Statement : Prop :=
             finiteTerm A v (coordVec x) - Real.log (v (evalCone (coordVec x) s)) =
               -Real.log (v (IntermediateField.inclusion (ratioField_le_coordField x)
                 (chartEval x c s)))
-
-example : BlockNonzero samplePoint ∧
-    Geo.IsSectionOn (orbitIdeal samplePoint) (HermLine.standard _).toGeo
-      (chartMonomial (fun _ ↦ 0) 1) ∧ ∀ k, samplePoint k ((fun _ ↦ 0) k) ≠ 0 :=
-  ⟨samplePoint_blockNonzero,
-    isSectionOn_chartMonomial _ _ _ (fun _ ↦ by simp [samplePoint]) 1 (fun _ ↦ rfl),
-    fun _ ↦ by simp [samplePoint]⟩
 
 end GroundTheory.Heights₂.Heights

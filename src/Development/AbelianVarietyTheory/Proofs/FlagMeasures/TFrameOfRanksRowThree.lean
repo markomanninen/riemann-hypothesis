@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.SzHypFam
-import Formalism.LocalToGlobal.SiegelLatticeTheory.WeightedGaugeFactors.FactsFD
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermRepUnram
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.SzHypFam
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.WeightedGaugeFactors.FactsFD
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermRepUnram
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions
 
 namespace GlobalTheory

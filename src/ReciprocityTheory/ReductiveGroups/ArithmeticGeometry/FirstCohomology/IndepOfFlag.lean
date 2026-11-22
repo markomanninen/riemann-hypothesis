@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.ReducedBasisStatement
-import ReciprocityTheory.ReducedBases.LatticeReduction
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.ReducedBasisStatement
+public import ReciprocityTheory.ReducedBases.LatticeReduction
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ lemma mem_V_of_lt {d : ℕ} (u : Fin d → E) {l : Fin d} {n : ℕ} (h : l.val <
 lemma finite_ball [FiniteDimensional ℝ E] (X : Submodule ℤ E) [DiscreteTopology X] (R : ℝ) :
     (Metric.closedBall (0 : E) R ∩ (X : Set E)).Finite := by
   haveI : DiscreteTopology X.toAddSubgroup := ‹DiscreteTopology X›
-  have hc : IsClosed (X : Set E) := AddSubgroup.isClosed_of_discrete (H := X.toAddSubgroup)
+  have hc : IsClosed (X : Set E) := (X.toAddSubgroup).isClosed_of_discreteTopology
   have hdisc : IsDiscrete (X : Set E) := by
     first
     | exact ⟨‹DiscreteTopology X›⟩

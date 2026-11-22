@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.MRatSpanOfE
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.MRatSpanOfE
+
+@[expose] public section
 
 noncomputable section
 

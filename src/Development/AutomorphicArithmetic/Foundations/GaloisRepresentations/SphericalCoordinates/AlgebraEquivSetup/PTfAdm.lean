@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.HeckeTraceEq
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.HeckeTraceEq
+
+@[expose] public section
+
 open Formalism.UG GlobalTheory.LKDef.HeckeTraceForms UpperTheory.Gal.W2.Seed
 open scoped Classical
 
@@ -10,22 +15,22 @@ private lemma tyFn_mul_right {M : Type} [Group M] (J : Subgroup M) (ψ : J →* 
   unfold tyFn
   by_cases ha : a ∈ J
   · have haj : a * j ∈ J := J.mul_mem ha hj
-    rw [dif_pos ha, dif_pos haj]
+    rw [dite_eq_left ha, dite_eq_left haj]
     have e : (⟨a * j, haj⟩ : J) = ⟨a, ha⟩ * ⟨j, hj⟩ := rfl
     rw [e, map_mul, mul_inv, Units.val_mul]
   · have haj : a * j ∉ J := fun h => ha ((J.mul_mem_cancel_right hj).1 h)
-    rw [dif_neg ha, dif_neg haj, zero_mul]
+    rw [dite_eq_right ha, dite_eq_right haj, zero_mul]
 
 private lemma tyFn_mul_left {M : Type} [Group M] (J : Subgroup M) (ψ : J →* ℂˣ) (a j : M) (hj : j ∈ J) :
     tyFn J ψ (j * a) = (((ψ ⟨j, hj⟩)⁻¹ : ℂˣ) : ℂ) * tyFn J ψ a := by
   unfold tyFn
   by_cases ha : a ∈ J
   · have haj : j * a ∈ J := J.mul_mem hj ha
-    rw [dif_pos ha, dif_pos haj]
+    rw [dite_eq_left ha, dite_eq_left haj]
     have e : (⟨j * a, haj⟩ : J) = ⟨j, hj⟩ * ⟨a, ha⟩ := rfl
     rw [e, map_mul, mul_inv, Units.val_mul]
   · have haj : j * a ∉ J := fun h => ha ((J.mul_mem_cancel_left hj).1 h)
-    rw [dif_neg ha, dif_neg haj, mul_zero]
+    rw [dite_eq_right ha, dite_eq_right haj, mul_zero]
 
 private lemma doset_left {X : Type} [Group X] (K : Subgroup X) (h k g : X) (hk : k ∈ K) :
     dosetInd ℂ K h (k * g) = dosetInd ℂ K h g := by
@@ -119,7 +124,7 @@ theorem pTfAdm : TfAdm := by
     by_contra hn
     apply hg
     unfold TyLev.tf tyFn
-    rw [dif_neg hn]
+    rw [dite_eq_right hn]
     simp
   · intro j g
     have e : (⟨T.L.pr (T.L.loc j), T.fact.2 _ (T.fact.1 j j.2)⟩ : T.J) = j := Subtype.ext (T.L.pr_loc j)

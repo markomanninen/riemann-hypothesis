@@ -1,13 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajorantOperators
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.QuadraticCoefficientForms
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermitianTraceFormVanishing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.DiscriminantEstimates.DiscriminantTheorems.ScaledBoundInequality
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MinimumGrowthBounds
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.TraceHermNondegenerate
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HyperbolicFlagDataBasePoint
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.FirstMinimumInvariantContinuousPosOnFrames
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajorantOperators
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.QuadraticCoefficientForms
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermitianTraceFormVanishing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.DiscriminantEstimates.DiscriminantTheorems.ScaledBoundInequality
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MinimumGrowthBounds
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.TraceHermNondegenerate
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.HyperbolicFlagDataBasePoint
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.FirstMinimumInvariantContinuousPosOnFrames
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.FD Module Submodule
 open scoped nonZeroDivisors
@@ -20,10 +24,10 @@ section Abstract
 
 variable {W : Type} [AddCommGroup W] [Module ℝ W]
 
+
 open NumberField Module Submodule in
 open scoped nonZeroDivisors in
 variable {W : Type} [AddCommGroup W] [Module ℝ W] in
-
 theorem _root_.GlobalTheory.ThickPoint.exists_euclidean_real {M : ℕ} [FiniteDimensional ℝ W] (hM : finrank ℝ W = M)
     (B : LinearMap.BilinForm ℝ W) (hs : B.IsSymm) (hp : ∀ x, 0 ≤ B x x) :
     ∃ φ : W →ₗ[ℝ] EuclideanSpace ℝ (Fin M), ∀ x y, inner ℝ (φ x) (φ y) = B x y := by
@@ -36,7 +40,8 @@ theorem _root_.GlobalTheory.ThickPoint.exists_euclidean_real {M : ℕ} [FiniteDi
   refine ⟨(EuclideanSpace.equiv (Fin _) ℝ).symm.toLinearEquiv.toLinearMap ∘ₗ L, fun x y => ?_⟩
   have hB : B x y = ∑ i, v.repr x i * v.repr y i * B (v i) (v i) := by
     conv_lhs => rw [← v.sum_repr x, ← v.sum_repr y]
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [Finset.sum_eq_single i (fun j _ hj => by rw [hv hj]; ring) (by simp)]
     ring
@@ -47,11 +52,11 @@ theorem _root_.GlobalTheory.ThickPoint.exists_euclidean_real {M : ℕ} [FiniteDi
 
 variable {V : Type} [AddCommGroup V] [Module ℚ V]
 
+
 open NumberField Module Submodule in
 open scoped nonZeroDivisors in
 variable {W : Type} [AddCommGroup W] [Module ℝ W] in
 variable {V : Type} [AddCommGroup V] [Module ℚ V] in
-
 theorem _root_.GlobalTheory.ThickPoint.transference_pair {M : ℕ} (b : Basis (Fin M) ℚ V)
     (B : LinearMap.BilinForm ℚ V) (hs : B.IsSymm) (hn : B.Nondegenerate)
     (φ ψ : V →+ EuclideanSpace ℝ (Fin M)) (hφ : ∀ x y, inner ℝ (φ x) (ψ y) = (B x y : ℝ))
@@ -83,7 +88,8 @@ theorem _root_.GlobalTheory.ThickPoint.transference_pair {M : ℕ} (b : Basis (F
     have hψu : ψ u = ∑ j, m j • c j := by simp [hu, map_sum, map_zsmul, hc]
     have hu0 : u ≠ 0 := fun h => hx0 (by rw [← hψu, h, map_zero])
     have hint : ∀ j, ∃ k : ℤ, B u (b j) = k := fun j => ⟨m j, by
-      simp [hu, map_sum, map_zsmul, LinearMap.sum_apply, hd,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [hu, map_sum, map_zsmul, LinearMap.sum_apply, hd,
         LinearMap.BilinForm.apply_dualBasis_left]⟩
     have h := hmin u hu0 hint
     rw [hψu] at h
@@ -93,14 +99,16 @@ theorem _root_.GlobalTheory.ThickPoint.transference_pair {M : ℕ} (b : Basis (F
   have hφv : ∀ i, φ (∑ j, m i j • b j) = y i := by
     intro i
     refine InnerProductSpace.ext_inner_right_basis c fun j => ?_
-    rw [hm i j, hc j, map_sum, sum_inner]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hm i j, hc j, map_sum, sum_inner]
     simp [map_zsmul, ← Int.cast_smul_eq_zsmul ℝ, inner_smul_left, hpair]
   refine ⟨fun i => ∑ j, m i j • b j, fun i => ?_, ?_, fun i => ?_⟩
   · exact Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _ (subset_span ⟨j, rfl⟩)
   · rw [Fintype.linearIndependent_iff]
     intro g hg i
     have h1 : ∑ j, (g j : ℝ) • y j = 0 := by
-      rw [← map_zero φ, ← hg, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_zero φ, ← hg, map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [← hφv j, ← map_ratCast_smul φ ℚ ℝ (g j)]
       simp
@@ -114,7 +122,7 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {r : ℕ}
 
 noncomputable def traceFormOf (G : Matrix (Fin r) (Fin r) E) : LinearMap.BilinForm ℚ (Fin r → E) :=
   LinearMap.mk₂ ℚ (fun x y => Algebra.trace ℚ E (herm G x y))
-    (fun x x' y => by rw [HermitianTraceFormVanishing.herm_add_left, map_add])
+    (fun x x' y => by rw [HermitianTraceFormVanishing.herm_add_left, map_add (f := _)])
     (fun c x y => by
       rw [← map_smul, ← algebraMap_smul E c x, HermitianTraceFormVanishing.herm_smul_left, Algebra.smul_def])
     (fun x y y' => by simp [herm, cc, mul_add, Finset.sum_add_distrib])
@@ -135,7 +143,8 @@ private lemma herm_swap_eq_cc_herm {G : Matrix (Fin r) (Fin r) E}
   have hcc : ∀ z : E, IsCMField.complexConj E (IsCMField.complexConj E z) = z := fun z => by
     simpa [hc] using _root_.GlobalTheory.TraceDualMin.cc_cc z
   simp only [hc] at hG
-  simp only [_root_.ReciprocityTheory.ChartRestriction.G.FD.herm, hc, map_sum, map_mul, hcc, hG]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [_root_.ReciprocityTheory.ChartRestriction.G.FD.herm, hc, map_sum, map_mul, hcc, hG]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   ring
@@ -176,32 +185,6 @@ theorem _root_.GlobalTheory.ThickPoint.traceFormOf_nondegenerate {G : Matrix (Fi
     simpa [Matrix.vecMul, dotProduct, Pi.single_apply] using h
   exact Matrix.eq_zero_of_vecMul_eq_zero hdet h2
 
-theorem discr_smul_mem (X : DataX E r) (u : Fin r → E)
-    (htr : ∀ y ∈ X.L', ∃ k : ℤ, Algebra.trace ℚ E (herm X.Gm u y) = k) :
-    ((discr E : ℤ) : E) • u ∈ X.L' := by
-  set D : FractionalIdeal (𝓞 E)⁰ E := (differentIdeal ℤ (𝓞 E) : FractionalIdeal (𝓞 E)⁰ E) with hD
-  have hD0 : D ≠ 0 := FractionalIdeal.coeIdeal_ne_zero.mpr differentIdeal_ne_bot
-  have h1 : ∀ y ∈ X.L', herm X.Gm u y ∈ D⁻¹ := by
-    intro y hy
-    refine TraceDualMin.mem_inv_different fun a => ?_
-    obtain ⟨k, hk⟩ := htr _ (X.L'.smul_mem
-      (⟨cc (a : E), TraceDualMin.isIntegral_cc a.isIntegral_coe⟩ : 𝓞 E) hy)
-    refine ⟨k, ?_⟩
-    rw [← hk]
-    change _ = Algebra.trace ℚ E (herm X.Gm u (cc (a : E) • y))
-    rw [HermitianTraceFormVanishing.herm_smul_right, HermitianTraceFormVanishing.cc_cc, mul_comm]
-  have hδ : ((discr E : ℤ) : E) ∈ D := by
-    have := FractionalIdeal.mem_coeIdeal_of_mem (𝓞 E)⁰ (P := E)
-      (NumberField.discr_mem_differentIdeal E (𝓞 E))
-    rwa [map_intCast] at this
-  refine X.L'_dual _ fun y hy => ?_
-  rw [HermitianTraceFormVanishing.herm_smul_left]
-  have := FractionalIdeal.mul_mem_mul hδ (h1 y hy)
-  rw [mul_inv_cancel₀ hD0] at this
-  obtain ⟨b, hb⟩ := (FractionalIdeal.mem_one_iff _).mp this
-  rw [← hb]
-  exact b.isIntegral_coe
-
 noncomputable def majForm (X : Data E r) (x : Frame X.Ψ r) (hx : x ∈ X.dom) :
     LinearMap.BilinForm ℝ (X.Ψ → Fin r → ℂ) :=
   LinearMap.mk₂ ℝ (MajorantOperators.gI x) (MajorantOperators.gI_add_left x)
@@ -223,7 +206,7 @@ noncomputable def embHom (X : Data E r) : (Fin r → E) →+ (X.Ψ → Fin r →
 noncomputable def reflHom (X : Data E r) (x : Frame X.Ψ r) : (Fin r → E) →+ (X.Ψ → Fin r → ℂ) :=
   AddMonoidHom.mk' (fun v τ => (2 : ℂ) • X.jp x τ (embHom X v τ)) fun u v => by
     funext τ
-    simp only [map_add, Pi.add_apply, Data.jp_add, smul_add]
+    simp only [map_add (f := _), Pi.add_apply, Data.jp_add, smul_add]
 
 open NumberField Module Submodule in
 open scoped nonZeroDivisors in
@@ -262,10 +245,10 @@ private lemma isIntegral_natAbs_discr_mul_of_mem_inv_differentIdeal {z : E}
   rw [← ha]
   exact RingOfIntegers.isIntegral_coe a
 
+
 open NumberField Module Submodule in
 open scoped nonZeroDivisors in
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] in
-
 theorem _root_.GlobalTheory.exists_short_basis_at {r : ℕ} (X : _root_.ReciprocityTheory.ChartRestriction.G.FD.DataX E r) (x : _root_.ReciprocityTheory.ChartRestriction.G.FD.Frame X.Ψ r)
     (hx : x ∈ X.dom) (ε : ℝ) (hε : 0 < ε)
     (hmin : ∀ v ∈ X.L', v ≠ 0 → ε ≤ ∑ τ, X.maj x τ (_root_.ReciprocityTheory.ChartRestriction.G.FD.Data.emb τ.1 v)) :
@@ -353,7 +336,7 @@ theorem _root_.GlobalTheory.exists_short_basis_at {r : ℕ} (X : _root_.Reciproc
       | add y z _ _ hy hz =>
         obtain ⟨k, hk⟩ := hy
         obtain ⟨l, hl⟩ := hz
-        exact ⟨k + l, by rw [map_add, hk, hl]; push_cast; ring⟩
+        exact ⟨k + l, by rw [map_add (f := _), hk, hl]; push_cast; ring⟩
       | smul n y _ hy =>
         obtain ⟨k, hk⟩ := hy
         exact ⟨n * k, by rw [map_zsmul, hk]; push_cast; simp⟩

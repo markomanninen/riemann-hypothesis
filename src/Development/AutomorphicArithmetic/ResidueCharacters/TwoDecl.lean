@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
-import Development.AutomorphicArithmetic.ResidueCharacters.TwoRoot
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPrimeImpliesPlacesSplit
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CmHalfTypePlacesMeetConjugatePairsAndCount
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSplitPlacesDeclarationSplitRowPrime
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjugatePlaces
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
+public import Development.AutomorphicArithmetic.ResidueCharacters.TwoRoot
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPrimeImpliesPlacesSplit
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CmHalfTypePlacesMeetConjugatePairsAndCount
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSplitPlacesDeclarationSplitRowPrime
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjugatePlaces
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ namespace UpperTheory.N.Two
 
 theorem columns_xor (D : D7) (i : D.nd.Loc) (h2 : D.nd.l i = 2) (s : Bool) :
     ∀ w ∈ placesOver D.host.E (D.nd.l i), ∀ w', IsConjPl D.host w w' →
-      Xor' (w ∈ columns (N := D.nd) D.nbr i s) (w' ∈ columns (N := D.nd) D.nbr i s) := by
+      Xor (w ∈ columns (N := D.nd) D.nbr i s) (w' ∈ columns (N := D.nd) D.nbr i s) := by
   intro w hw w' h
   have hw' := GlobalTheory.SplitCount.mem_placesOver_of_conj D.host hw h
   have n1 := GlobalTheory.SplitRowProbe.not_both_columns D i w hw

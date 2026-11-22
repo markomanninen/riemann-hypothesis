@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsIntersectionFamily
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsIntersectionFamily
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,19 +21,20 @@ abbrev CechC (S : Type*) [CommRing S] {K : Type*} [Fintype K] (ι : K → Type*)
     [AddCommGroup M] [Module (MRingOver S ι) M] (n : ℕ) : Type _ :=
   ∀ I : Cell K ι n, LocalizedModule (cellMon S I.1) M
 
-open Classical in
 
+open Classical in
 def cellRes (S : Type*) [CommRing S] {K : Type*} {ι : K → Type*} (M : Type*) [AddCommGroup M]
     [Module (MRingOver S ι) M] (J I : ∀ k, Finset (ι k)) :
-    LocalizedModule (cellMon S J) M →ₗ[MRingOver S ι] LocalizedModule (cellMon S I) M :=
-  if h : cellMon S J ≤ cellMon S I then LocalizedModule.liftOfLE _ _ h else 0
+    LocalizedModule (cellMon S J) M →ₗ[MRingOver S ι] LocalizedModule (cellMon S I) M := by
+  classical
+  exact if h : cellMon S J ≤ cellMon S I then LocalizedModule.liftOfLE _ _ h else 0
 
 def faceSign {K : Type*} [Fintype K] [LinearOrder K] {ι : K → Type*} [∀ k, LinearOrder (ι k)]
     (I : ∀ k, Finset (ι k)) (k : K) (i : ι k) : ℤ :=
   (-1) ^ (((I k).filter (· < i)).card + ∑ l ∈ Finset.univ.filter (· < k), ((I l).card - 1))
 
-open Classical in
 
+open Classical in
 def cechD (S : Type*) [CommRing S] {K : Type*} [Fintype K] [LinearOrder K] (ι : K → Type*)
     [∀ k, LinearOrder (ι k)] (M : Type*) [AddCommGroup M] [Module (MRingOver S ι) M] (n : ℕ) :
     CechC S ι M n →ₗ[MRingOver S ι] CechC S ι M (n + 1) :=

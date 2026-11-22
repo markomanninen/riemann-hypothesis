@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.RhoKApply
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.RhoKApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,16 +13,19 @@ namespace UpperTheory.V.Aut
 variable {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {K : Type} [Field K] [NumberField K] [Algebra K Ω]
   {l : ℕ} [Fact l.Prime] {c : Coef l} {N : ℕ} [NeZero N] {e : ℕ} {ψ : DirichletCharacter c.O N} (D : Dat Ω K c e ψ)
 
+set_option synthInstance.maxHeartbeats 200000 in
 def FinA (g₁ : G ℚ Ω) : Prop :=
   ∀ (U : D.ULoc) (S : D.Ring U g₁), Module.Finite c.O (weightZeroSubalgebra c.O S.r.hom)
 
+set_option synthInstance.maxHeartbeats 200000 in
 def AutB [IsCMField K] (ι : Qbar l ≃+* ℂ) (g₁ : G ℚ Ω) : Prop :=
   ∀ (U : D.ULoc) (S : D.Ring U g₁) (ξ : entAlg c.O S.r.hom →ₐ[c.O] PadicAlgCl l)
-    (r : G ℚ Ω →* GG 3 (PadicAlgCl l)) (hr : HasMult D.η r), IsPush ξ S.r.hom r → TypeI D.η r → D.IsAutI ι r hr
+    (r : G ℚ Ω →* GG (m := 3) (R := PadicAlgCl l)) (hr : HasMult D.η r), IsPush ξ S.r.hom r → TypeI D.η r → D.IsAutI ι r hr
 
+set_option synthInstance.maxHeartbeats 200000 in
 def LemW (ι : Qbar l ≃+* ℂ) (g₁ : G ℚ Ω) : Prop :=
   ∀ (U : D.ULoc) (S : D.Ring U g₁) (ξ : entAlg c.O S.r.hom →ₐ[c.O] PadicAlgCl l)
-    (r : G ℚ Ω →* GG 3 (PadicAlgCl l)), IsPush ξ S.r.hom r → TypeII D.η r → (∀ g ∈ D.η.ker, (r g).mat 1 1 = 1) →
+    (r : G ℚ Ω →* GG (m := 3) (R := PadicAlgCl l)), IsPush ξ S.r.hom r → TypeII D.η r → (∀ g ∈ D.η.ker, (r g).mat 1 1 = 1) →
     ∀ W : G ℚ Ω →* GL (Fin 2) (PadicAlgCl l), D.IsExt r W → D.IsModular ι W
 
 def AutomorphyUnramifiedCoefficients : Prop :=

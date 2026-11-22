@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.CupGradedCommOfFlip
+module
+
+public import Development.EtaleCohomology.TateTwists.CupGradedCommOfFlip
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -18,7 +22,7 @@ def cupflip_aw_leibniz : Prop :=
 
 theorem ev_zero_cochain {R : Type} [CommRing R] {E : Spc} {I : Cx R} {n : ℤ} (p : ℕ) (s : ℤ)
     (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx E p U) :
-    ev (0 : Cochain ((chains R).obj E) I n) p s h U x = 0 := by
+    ev (R := R) (0 : Cochain ((chains R).obj E) I n) p s h U x = 0 := by
   simp [ev]
 
 theorem isAW_zero_left {R : Type} [CommRing R] {I J K : Cx R} (μ : Pair I J K) {E : Spc} {n m k : ℤ}

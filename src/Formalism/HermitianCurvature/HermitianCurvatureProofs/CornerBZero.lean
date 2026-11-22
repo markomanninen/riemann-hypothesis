@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContDiffBumpG
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightCosetActionMeasurePreserving
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContDiffBumpG
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightCosetActionMeasurePreserving
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 open scoped ComplexConjugate
@@ -90,8 +94,8 @@ def GoodL (Bj : B.RealPlaceData k ρ Wp Wq) (σ : Equiv.Perm (Fin p)) (x : XL k 
 def GoodR (Bj : B.RealPlaceData k ρ Wp Wq) (y : XR k p ρ) : Prop :=
   (Matrix.of y.1.1 : B.Mat k ρ) ∈ UWset k ρ Bj.z' ∧ (Matrix.of y.1.2 : B.Mat k ρ) ∈ Nset k ρ
 
-open Classical in
 
+open Classical in
 def sxL (Bj : B.RealPlaceData k ρ Wp Wq) (σ : Equiv.Perm (Fin p)) (x : XL k p ρ σ) : B.Mat k (p + ρ) :=
   if GoodL Bj σ x then
     U.Rn k p ρ (-x.2.1) * U.muP k p ρ (lhOf σ x.2.2.2)ᴴ⁻¹ *
@@ -206,10 +210,10 @@ theorem gpsi_add (β a b : ℂ) : G.psi β (a + b) = G.psi β a * G.psi β b := 
   rw [← Complex.exp_add, mul_add, Complex.add_re, Complex.ofReal_add, mul_add]
 
 theorem cornerA_zero {p : ℕ} (a : Fin 0 → Fin p → ℂ) : U.cornerA a = 0 := by
-  unfold U.cornerA; rw [dif_neg (fun h => absurd h.1 (lt_irrefl 0))]
+  unfold U.cornerA; rw [dite_eq_right (fun h => absurd h.1 (lt_irrefl 0))]
 
 theorem cornerB_zero {p : ℕ} (b : Fin p → Fin 0 → ℂ) : U.cornerB b = 0 := by
-  unfold U.cornerB; rw [dif_neg (fun h => absurd h.1 (lt_irrefl 0))]
+  unfold U.cornerB; rw [dite_eq_right (fun h => absurd h.1 (lt_irrefl 0))]
 
 theorem of_levMt (x : Mt k ρ) : (Matrix.of (Formalism.FourierDecayAlt.P.PBM.levMt p ρ rfl x) : B.Mat k (p + ρ)) =
     U.embG k p ρ (Matrix.of x) := by

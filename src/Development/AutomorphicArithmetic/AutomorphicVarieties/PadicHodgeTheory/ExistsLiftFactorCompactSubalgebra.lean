@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsFirstOrderDeformationOfRZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PtCont
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoFinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsFirstOrderDeformationOfRZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.PtCont
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoFinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+
+@[expose] public section
+
 open Formalism.ConjugateSelfDual ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.HV UpperTheory.V.Base IsLocalRing
 
 private theorem continuous_linear_functional_comp {l : ℕ} [Fact l.Prime] {X V : Type} [TopologicalSpace X] [AddCommGroup V] [Module ℚ_[l] V]
@@ -50,7 +55,8 @@ private theorem eventually_congruent_mod_l_pow {l : ℕ} [Fact l.Prime] {X V M :
     have h3 : j m = Finsupp.linearCombination ℚ_[l] (j ∘ b)
         ((Finsupp.linearEquivFunOnFinite ℚ_[l] ℚ_[l] _).symm fun i => algebraMap ℤ_[l] ℚ_[l] (b.repr m i)) := by
       rw [Finsupp.linearCombination_eq_fintype_linearCombination_apply, Fintype.linearCombination_apply]
-      conv_lhs => rw [← b.sum_repr m, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        conv_lhs => rw [← b.sum_repr m, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_smul, algebraMap_smul]
       rfl
@@ -89,7 +95,7 @@ private theorem isUnit_of_nilpotent_kernel {O C A : Type} [CommRing O] [CommRing
     conv_lhs => rw [← Polynomial.X_mul_divX_add p.reverse]
     rw [Polynomial.coeff_zero_reverse, hp.leadingCoeff]
   have h5 := (hπ _ h1).isUnit_sub_one
-  rw [h4, map_add, map_mul, Polynomial.aeval_X, Polynomial.aeval_C, map_one, add_sub_cancel_right] at h5
+  rw [h4, map_add (f := _), map_mul, Polynomial.aeval_X, Polynomial.aeval_C, map_one, add_sub_cancel_right] at h5
   exact isUnit_of_mul_isUnit_left h5
 
 private theorem complete_of_nilpotent_kernel_finite {O C A : Type} [CommRing O] [IsLocalRing O] [IsNoetherianRing O]
@@ -169,6 +175,6 @@ theorem UpperTheory.V.Loc.exists_lift_factor_compact_subalgebra :
     refine Ideal.Quotient.eq.2 ?_
     rw [hm, Algebra.smul_def, map_pow]
     exact Ideal.mul_mem_right _ _ (Ideal.pow_mem_pow hl N)
-  · rw [← res_map p, ← ρ.red, ← res_map x.rangeRestrict]
+  · rw [← res_map p _, ← ρ.red, ← res_map x.rangeRestrict _]
     congr 1
     exact Subtype.ext (hr g a b)

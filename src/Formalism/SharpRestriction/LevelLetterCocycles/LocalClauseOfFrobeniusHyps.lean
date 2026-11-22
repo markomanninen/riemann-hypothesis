@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingInputs
-import Formalism.SharpRestriction.LevelLetterCocycles.RamifiedCoefficientChains
-import Formalism.SharpRestriction.LevelLetterCocycles.LevelClauseOfOpenTool
-import Formalism.SharpRestriction.LevelLetterCocycles.WachFrobeniusLatticeUnramifiedFunctor
-import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusIterateUniformizerUnitProducts
-import Formalism.SharpRestriction.LevelLetterCocycles.SaturationUnramifiedOfRingCondition
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkFilLetter
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HodgeFontaineExactness.OneNotMemFilOne
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.CrystallineLiftingInputs
+public import Formalism.SharpRestriction.LevelLetterCocycles.RamifiedCoefficientChains
+public import Formalism.SharpRestriction.LevelLetterCocycles.LevelClauseOfOpenTool
+public import Formalism.SharpRestriction.LevelLetterCocycles.WachFrobeniusLatticeUnramifiedFunctor
+public import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusIterateUniformizerUnitProducts
+public import Formalism.SharpRestriction.LevelLetterCocycles.SaturationUnramifiedOfRingCondition
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkFilLetter
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HodgeFontaineExactness.OneNotMemFilOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -132,14 +136,15 @@ theorem Frobenius_divisibility_unique_solution [IsDomain O] (hR : RingA W) (hs :
     (∀ w : W.DD T, (∃ y ∈ W.NΔ T, w = W.π₀ ^ M • y) →
       ∃! z : W.DD T, (∃ y ∈ W.NΔ T, z = W.π₀ ^ M • y) ∧ W.φD T z - z = w) := by
   let I : BaseId W := baseIdOf hR
+  have hℓ : I.Bs.ℓ = PD.p := rfl
   have hInj : I.Inj := baseIdOf_inj hR
   have hFull : I.Full := baseIdOf_full hR
   have hE3 : I.Bs.E3 := frobenius_uniformizer_identity hR
   have hfree : ∀ i, (latD I T).Free i := latD_free I T hInj hFull hmod
   have hA := Formalism.ExponentWindows.E.lattice_filtration_first_form O I.Bs n M (DV I T) (latD I T) (fun _ => hh) hE3
-    (fun i => latD_p5M I T hs hR h5 i hh le_rfl) (fun _ => by exact hM)
+    (fun i => latD_p5M I T hs hR h5 i hh le_rfl) (fun _ => by simpa [hℓ] using hM)
   have hq : (latD I T).FrobeniusMapsXPow M := hA.1
-  have hC : (latD I T).Complete := Formalism.ExponentWindows.E.completion_holds O I.Bs n (DV I T) (latD I T) hcomp hfree
+  have hC : (latD I T).Complete := Formalism.ExponentWindows.E.completion_holds O I.Bs n (DV I T) (latD I T) (by simpa [hℓ] using hcomp) hfree
   have hX : (latD I T).XReg := Formalism.ExponentWindows.E.X_regular_on_lattice O I.Bs n (DV I T) (latD I T) hfree
   have hdX : I.d (PowerSeries.X ^ M) = W.π₀ ^ M := by rw [map_pow, I.d_X]
   have hdXq : I.d (PowerSeries.X ^ M * I.Bs.q) = W.π₀ ^ M * Formalism.MainNotions.WachCoordinates.qP W := by
@@ -173,7 +178,8 @@ theorem Frobenius_divisibility_unique_solution [IsDomain O] (hR : RingA W) (hs :
       simpa [Formalism.ExponentWindows.E.Lat.dφ, t] using this
     refine ⟨∑ i, (z i).d, ⟨?_, ?_⟩, ?_⟩
     · exact mul_mem_sum T _ _ hzd
-    · rw [map_sum, ← sum_shift (fun i => W.φD T (z i).d), ← Finset.sum_sub_distrib]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, ← sum_shift (fun i => W.φD T (z i).d), ← Finset.sum_sub_distrib]
       rw [Finset.sum_congr rfl fun i _ => hdzi i, sum_letE_smul]
     · rintro Z ⟨⟨yZ, hyZ, rfl⟩, hZ⟩
       let z' : ZMod n → DV I T := fun i => toDV I ((letE i : LetA O n) • (W.π₀ ^ M • yZ))
@@ -246,7 +252,7 @@ theorem UPi_γA (g : W.Gam) {a : LetA O n} (ha : UPi PD.p a) : UPi PD.p (W.γA g
   obtain ⟨u, m, r, rfl⟩ := ha
   obtain ⟨u', hu'⟩ := γA_letπ (W := W) g
   refine ⟨(Units.map (W.γA g : LetA O n →* LetA O n) u) * u' ^ m, m, W.γA g r, ?_⟩
-  rw [map_add, map_mul, map_mul, map_pow, hu', map_natCast, mul_pow, Units.val_mul, Units.val_pow_eq_pow_val]
+  rw [map_add (f := _), map_mul, map_mul, map_pow, hu', map_natCast, mul_pow, Units.val_mul, Units.val_pow_eq_pow_val]
   simp only [Units.coe_map, MonoidHom.coe_coe]
   ring
 
@@ -324,7 +330,8 @@ theorem lin_id {T : LocLat G Qp LL O} (f : W.DD T →ₗ[O] W.DD T)
         (((PD.p : ℕ) : LetA O n) ^ J • w - ∑ y ∈ Finset.range K, ((PD.p : ℕ) : LetA O n) ^ a y • B y) =
       ((PD.p : ℕ) : LetA O n) ^ J • (f w - w) -
         ∑ y ∈ Finset.range K, ((PD.p : ℕ) : LetA O n) ^ a y • (f (B y) - B y) := by
-  rw [map_sub, hf, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, hf, map_sum]
   simp only [hf, smul_sub, Finset.sum_sub_distrib]
   abel
 
@@ -370,7 +377,8 @@ theorem key_id {T : LocLat G Qp LL O} (σ J K : ℕ) (e : ℕ → ℕ) (he : ∀
       _ = ((PD.p : ℕ) : LetA O n) ^ (σ + (J - e y)) * r y := by
           rw [hrs, pow_add]
           ring
-  rw [lO_smul, map_sub, map_sum, φ_lA]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [lO_smul, map_sub, map_sum, φ_lA]
   simp only [φ_lA, φD_smulA, map_pow, map_natCast]
   rw [smul_sub, smul_sub, Finset.smul_sum, Finset.smul_sum, smul_smul, smul_smul,
     mul_comm (((PD.p : ℕ) : LetA O n) ^ J), sub_add, sub_right_inj, ← Finset.sum_sub_distrib]
@@ -451,7 +459,8 @@ theorem clause5 [IsDomain O] (hA : Formalism.MainNotions.LiftingTheory.CaseA W) 
     rw [hrs' y]; exact W.AΔ.mul_mem (W.AΔ.pow_mem (W.AΔ.natCast_mem _) _) (hrΔ y))
   have hzΔ : ∀ δ ∈ W.DelF, W.γD T δ z = z := by
     intro δ hδ
-    rw [hz', map_sub, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hz', map_sub, map_sum, map_smul]
     congr 1
     · rw [← W.φγ_comm, hDL.2 δ hδ]
     · refine Finset.sum_congr rfl fun y _ => ?_
@@ -517,9 +526,10 @@ theorem clause5 [IsDomain O] (hA : Formalism.MainNotions.LiftingTheory.CaseA W) 
       fun x => by rw [γ'_lA, hγφ, ← smul_sub, ← map_sub]
     have eS : ∀ (f : ℕ → W.DD T), W.γ T (∑ y ∈ Finset.range K, f y) - ∑ y ∈ Finset.range K, f y =
         ∑ y ∈ Finset.range K, (W.γ T (f y) - f y) := fun f => by
-      rw [map_sum, Finset.sum_sub_distrib]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_sub_distrib]
     have e2 : ∀ a b : W.DD T, W.γ T (a + b) - (a + b) = (W.γ T a - a) + (W.γ T b - b) := fun a b => by
-      rw [map_add]; abel
+      rw [map_add (f := _)]; abel
     rw [e1, hz', key_id σ J K (eY PD.p) hJ w cc r s hrs', e2, eA, eS, hφ]
     exact ((htop ν hν).smul _).add (InMN.sum _ _ fun y _ => ((ht y).smul _).γsub hR)
   refine ⟨?_, ?_⟩
@@ -581,7 +591,8 @@ theorem clause5 [IsDomain O] (hA : Formalism.MainNotions.LiftingTheory.CaseA W) 
       · refine Submodule.smul_mem _ _ (Submodule.sub_mem _ (Submodule.smul_mem _ _ hw')
           (Submodule.sum_mem _ fun y _ => Submodule.smul_mem _ _ (Submodule.smul_mem _ _ (hcc y).2)))
       · intro δ hδ
-        rw [γ_lA, map_sub, γ_lA, hw'Δ δ hδ, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [γ_lA, map_sub, γ_lA, hw'Δ δ hδ, map_sum]
         congr 2
         refine Finset.sum_congr rfl fun y _ => ?_
         rw [γ_lA, γD_smulA, (W.AΔ.pow_mem hR.1 _) δ hδ, (hcc y).1.2 δ hδ]
@@ -633,7 +644,7 @@ theorem cc_γ₀ (g : W.Gam) (a : PowerSeries O) :
     have : PowerSeries.C c = algebraMap O (PowerSeries O) c := by simp
     rw [this, AlgHom.commutes]
   conv_lhs => rw [PowerSeries.eq_X_mul_shift_add_const a]
-  rw [map_add, map_mul, hC, map_add, map_mul, (W.γ₀_X g).1, zero_mul, zero_add,
+  rw [map_add (f := _), map_mul, hC, map_add (f := _), map_mul, (W.γ₀_X g).1, zero_mul, zero_add,
     PowerSeries.constantCoeff_C]
 
 theorem divπ (a : LetA O n) (h : ∀ i, PowerSeries.constantCoeff (a i) = 0) : ∃ r : LetA O n, a = letπ * r := by
@@ -992,12 +1003,6 @@ theorem QToolOpen_of (W : LocWach PD LL O v n) (hX : Formalism.MainNotions.Lifti
       exact ⟨by simp, by simp⟩
   have hSπ : Formalism.MainNotions.LiftingTheory.Sur W π := ⟨hYc, hone, hses.2.2.1⟩
   exact ⟨hkill π i (hX Y W.one π Mi hi hSπ hJY i), hWA hA Y W.one π Mi hi hSπ hJY i⟩
-
-theorem QTool_of_crys (W : LocWach PD LL O v n) (hX : Formalism.MainNotions.LiftingTheory.coreWX W) (hWA : Formalism.MainNotions.LiftingTheory.coreWA W)
-    (h9 : Formalism.MainNotions.DeltaInvariantLattices.P9W W) (hE : Formalism.MainNotions.RamifiedCoefficientChains.DcrisExactStrict PD LL)
-    (hC : Formalism.MainNotions.RamifiedCoefficientChains.CrysSubQuot PD LL) (hQ : Formalism.MainNotions.RamifiedCoefficientChains.DdREqDcris PD LL) (hY : ExtJumps W) :
-    QTool W :=
-  QTool_of_open W hWA (QToolOpen_of W hX hWA h9 hE hC hQ hY)
 
 end QMain
 

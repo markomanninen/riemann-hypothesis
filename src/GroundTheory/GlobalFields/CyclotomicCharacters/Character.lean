@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.LocalFields.AbstractLocalReciprocity.ProfiniteInteger
-import GroundTheory.GlobalFields.CyclotomicCharacters.Frobenius
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.AbstractLocalReciprocity.ProfiniteInteger
+public import GroundTheory.GlobalFields.CyclotomicCharacters.Frobenius
+
+@[expose] public section
 
 open NumberField IntermediateField
 open scoped Pointwise
@@ -12,13 +16,10 @@ namespace Cyclotomic
 
 open GroundTheory.LocalField.Abstract
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
-instance isAlgClosure_rat : IsAlgClosure ℚ ℚ̄ := by
-  let i : Algebra ℚ ℚ̄ := AlgebraicClosure.instAlgebra ℚ (R := ℚ)
-  have h : IsAlgClosure ℚ ℚ̄ := inferInstance
+instance isAlgClosure_rat : IsAlgClosure ℚ (AlgebraicClosure ℚ) := by
+  let i : Algebra ℚ (AlgebraicClosure ℚ) := AlgebraicClosure.instAlgebra ℚ (R := ℚ)
+  have h : IsAlgClosure ℚ (AlgebraicClosure ℚ) := inferInstance
   convert h
-  exact Subsingleton.elim _ _
 
 section FixingSubgroup
 
@@ -36,11 +37,11 @@ end FixingSubgroup
 
 section Fields
 
-noncomputable def rootsOfUnityField (n : ℕ) : IntermediateField ℚ ℚ̄ :=
-  adjoin ℚ {x : ℚ̄ | x ^ n = 1}
+noncomputable def rootsOfUnityField (n : ℕ) : IntermediateField ℚ (AlgebraicClosure ℚ) :=
+  adjoin ℚ {x : (AlgebraicClosure ℚ) | x ^ n = 1}
 
-noncomputable def maxCyclotomic : IntermediateField ℚ ℚ̄ :=
-  adjoin ℚ {x : ℚ̄ | ∃ n : ℕ, 0 < n ∧ x ^ n = 1}
+noncomputable def maxCyclotomic : IntermediateField ℚ (AlgebraicClosure ℚ) :=
+  adjoin ℚ {x : (AlgebraicClosure ℚ) | ∃ n : ℕ, 0 < n ∧ x ^ n = 1}
 
 theorem maxCyclotomic_eq_iSup : maxCyclotomic = ⨆ n : ℕ+, rootsOfUnityField n := by
   refine le_antisymm (adjoin_le_iff.mpr ?_) (iSup_le fun n => adjoin_le_iff.mpr ?_)
@@ -49,7 +50,7 @@ theorem maxCyclotomic_eq_iSup : maxCyclotomic = ⨆ n : ℕ+, rootsOfUnityField 
   · intro x hx
     exact subset_adjoin ℚ _ ⟨n, n.pos, hx⟩
 
-theorem rootsOfUnityField_eq_adjoin {n : ℕ} [NeZero n] {ζ : ℚ̄} (hζ : IsPrimitiveRoot ζ n) :
+theorem rootsOfUnityField_eq_adjoin {n : ℕ} [NeZero n] {ζ : (AlgebraicClosure ℚ)} (hζ : IsPrimitiveRoot ζ n) :
     rootsOfUnityField n = ℚ⟮ζ⟯ := by
   refine le_antisymm (adjoin_le_iff.mpr fun x hx => ?_) (adjoin_le_iff.mpr ?_)
   · obtain ⟨i, -, rfl⟩ := hζ.eq_pow_of_pow_eq_one hx
@@ -58,7 +59,7 @@ theorem rootsOfUnityField_eq_adjoin {n : ℕ} [NeZero n] {ζ : ℚ̄} (hζ : IsP
     exact subset_adjoin ℚ _ hζ.pow_eq_one
 
 instance (n : ℕ) [NeZero n] : IsCyclotomicExtension {n} ℚ (rootsOfUnityField n) := by
-  obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot ℚ̄ n
+  obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot (AlgebraicClosure ℚ) n
   rw [rootsOfUnityField_eq_adjoin hζ]
   exact hζ.intermediateField_adjoin_isCyclotomicExtension ℚ
 
@@ -82,41 +83,41 @@ theorem pow_val_one {M : Type*} [Monoid M] {n : ℕ} {t : M} (ht : t ^ n = 1) :
   have := pow_val_natCast ht 1
   rwa [Nat.cast_one, pow_one] at this
 
-theorem natCard_rootsOfUnity (n : ℕ) [NeZero n] : Nat.card (rootsOfUnity n ℚ̄) = n :=
-  HasEnoughRootsOfUnity.natCard_rootsOfUnity ℚ̄ n
+theorem natCard_rootsOfUnity (n : ℕ) [NeZero n] : Nat.card (rootsOfUnity n (AlgebraicClosure ℚ)) = n :=
+  HasEnoughRootsOfUnity.natCard_rootsOfUnity (AlgebraicClosure ℚ) n
 
-noncomputable def modCharacter (n : ℕ) [NeZero n] : Gal(ℚ̄/ℚ) →* (ZMod n)ˣ :=
-  (modularCyclotomicCharacter ℚ̄ (natCard_rootsOfUnity n)).comp
-    (MulSemiringAction.toRingAut Gal(ℚ̄/ℚ) ℚ̄)
+noncomputable def modCharacter (n : ℕ) [NeZero n] : Gal((AlgebraicClosure ℚ)/ℚ) →* (ZMod n)ˣ :=
+  (modularCyclotomicCharacter (AlgebraicClosure ℚ) (natCard_rootsOfUnity n)).comp
+    (MulSemiringAction.toRingAut Gal((AlgebraicClosure ℚ)/ℚ) (AlgebraicClosure ℚ))
 
 variable {n : ℕ} [NeZero n]
 
-theorem modCharacter_spec (σ : Gal(ℚ̄/ℚ)) {t : ℚ̄} (ht : t ^ n = 1) :
+theorem modCharacter_spec (σ : Gal((AlgebraicClosure ℚ)/ℚ)) {t : (AlgebraicClosure ℚ)} (ht : t ^ n = 1) :
     σ t = t ^ (modCharacter n σ : ZMod n).val := by
   have ht0 : t ≠ 0 := by
     rintro rfl
     simp [NeZero.ne n] at ht
-  have hmem : Units.mk0 t ht0 ∈ rootsOfUnity n ℚ̄ := by
+  have hmem : Units.mk0 t ht0 ∈ rootsOfUnity n (AlgebraicClosure ℚ) := by
     rw [mem_rootsOfUnity]; ext; simpa using ht
-  exact modularCyclotomicCharacter.spec ℚ̄ (natCard_rootsOfUnity n)
-    (MulSemiringAction.toRingAut Gal(ℚ̄/ℚ) ℚ̄ σ) hmem
+  exact modularCyclotomicCharacter.spec (AlgebraicClosure ℚ) (natCard_rootsOfUnity n)
+    (MulSemiringAction.toRingAut Gal((AlgebraicClosure ℚ)/ℚ) (AlgebraicClosure ℚ) σ) hmem
 
-theorem modCharacter_unique (σ : Gal(ℚ̄/ℚ)) {c : ZMod n}
-    (hc : ∀ t : ℚ̄, t ^ n = 1 → σ t = t ^ c.val) : (modCharacter n σ : ZMod n) = c := by
-  refine (modularCyclotomicCharacter.unique ℚ̄ (natCard_rootsOfUnity n)
-    (MulSemiringAction.toRingAut Gal(ℚ̄/ℚ) ℚ̄ σ) fun t ht => ?_).symm
-  have ht' : (t : ℚ̄) ^ n = 1 := by
+theorem modCharacter_unique (σ : Gal((AlgebraicClosure ℚ)/ℚ)) {c : ZMod n}
+    (hc : ∀ t : (AlgebraicClosure ℚ), t ^ n = 1 → σ t = t ^ c.val) : (modCharacter n σ : ZMod n) = c := by
+  refine (modularCyclotomicCharacter.unique (AlgebraicClosure ℚ) (natCard_rootsOfUnity n)
+    (MulSemiringAction.toRingAut Gal((AlgebraicClosure ℚ)/ℚ) (AlgebraicClosure ℚ) σ) fun t ht => ?_).symm
+  have ht' : (t : (AlgebraicClosure ℚ)) ^ n = 1 := by
     rw [mem_rootsOfUnity] at ht
     simpa using congrArg Units.val ht
   simpa using hc t ht'
 
-theorem modCharacter_eq_of_apply {ζ : ℚ̄} (hζ : IsPrimitiveRoot ζ n) {σ : Gal(ℚ̄/ℚ)}
+theorem modCharacter_eq_of_apply {ζ : (AlgebraicClosure ℚ)} (hζ : IsPrimitiveRoot ζ n) {σ : Gal((AlgebraicClosure ℚ)/ℚ)}
     {c : ZMod n} (h : σ ζ = ζ ^ c.val) : (modCharacter n σ : ZMod n) = c := by
   refine modCharacter_unique σ fun t ht => ?_
   obtain ⟨i, -, rfl⟩ := hζ.eq_pow_of_pow_eq_one ht
   rw [map_pow, h, ← pow_mul, ← pow_mul, mul_comm]
 
-theorem castHom_modCharacter {m : ℕ} [NeZero m] (h : m ∣ n) (σ : Gal(ℚ̄/ℚ)) :
+theorem castHom_modCharacter {m : ℕ} [NeZero m] (h : m ∣ n) (σ : Gal((AlgebraicClosure ℚ)/ℚ)) :
     ZMod.castHom h (ZMod m) (modCharacter n σ : ZMod n) = modCharacter m σ := by
   refine (modCharacter_unique σ fun t ht => ?_).symm
   have ht' : t ^ n = 1 := by
@@ -126,21 +127,21 @@ theorem castHom_modCharacter {m : ℕ} [NeZero m] (h : m ∣ n) (σ : Gal(ℚ̄/
   conv_rhs => rw [← ZMod.natCast_zmod_val (modCharacter n σ : ZMod n), ZMod.cast_natCast h,
     pow_val_natCast ht]
 
-theorem modCharacter_eq_one {ζ : ℚ̄} (hζ : IsPrimitiveRoot ζ n) {σ : Gal(ℚ̄/ℚ)} (h : σ ζ = ζ) :
+theorem modCharacter_eq_one {ζ : (AlgebraicClosure ℚ)} (hζ : IsPrimitiveRoot ζ n) {σ : Gal((AlgebraicClosure ℚ)/ℚ)} (h : σ ζ = ζ) :
     modCharacter n σ = 1 := by
   refine Units.ext (modCharacter_eq_of_apply hζ ?_)
   rw [Units.val_one, pow_val_one hζ.pow_eq_one, h]
 
 theorem continuous_modCharacter (n : ℕ) [NeZero n] :
-    Continuous fun σ : Gal(ℚ̄/ℚ) => (modCharacter n σ : ZMod n) := by
-  obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot ℚ̄ n
+    Continuous fun σ : Gal((AlgebraicClosure ℚ)/ℚ) => (modCharacter n σ : ZMod n) := by
+  obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot (AlgebraicClosure ℚ) n
   have : FiniteDimensional ℚ ℚ⟮ζ⟯ := adjoin.finiteDimensional (Algebra.IsIntegral.isIntegral ζ)
   have hU := (ℚ⟮ζ⟯).fixingSubgroup_isOpen
   rw [continuous_discrete_rng]
   intro b
   rw [isOpen_iff_forall_mem_open]
   intro σ hσ
-  refine ⟨σ • ((ℚ⟮ζ⟯).fixingSubgroup : Set Gal(ℚ̄/ℚ)), ?_, hU.smul σ,
+  refine ⟨σ • ((ℚ⟮ζ⟯).fixingSubgroup : Set Gal((AlgebraicClosure ℚ)/ℚ)), ?_, hU.smul σ,
     ⟨1, one_mem _, mul_one σ⟩⟩
   rintro _ ⟨τ, hτ, rfl⟩
   have hτζ : τ ζ = ζ := (mem_fixingSubgroup_iff _ τ).mp hτ ζ (mem_adjoin_simple_self ℚ ζ)
@@ -149,8 +150,8 @@ theorem continuous_modCharacter (n : ℕ) [NeZero n] :
   exact hσ
 
 theorem exists_modCharacter_eq (n : ℕ) [NeZero n] (a : (ZMod n)ˣ) :
-    ∃ σ : Gal(ℚ̄/ℚ), modCharacter n σ = a := by
-  obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot ℚ̄ n
+    ∃ σ : Gal((AlgebraicClosure ℚ)/ℚ), modCharacter n σ = a := by
+  obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot (AlgebraicClosure ℚ) n
   have : IsCyclotomicExtension {n} ℚ ℚ⟮ζ⟯ := hζ.intermediateField_adjoin_isCyclotomicExtension ℚ
   have : NumberField ℚ⟮ζ⟯ := IsCyclotomicExtension.numberField {n} ℚ _
   let τ := (IsCyclotomicExtension.Rat.galEquivZMod n ℚ⟮ζ⟯).symm a
@@ -158,8 +159,8 @@ theorem exists_modCharacter_eq (n : ℕ) [NeZero n] (a : (ZMod n)ˣ) :
   have hζ' : ζ' ^ n = 1 := Subtype.ext hζ.pow_eq_one
   have hτ := IsCyclotomicExtension.Rat.galEquivZMod_apply_of_pow_eq n ℚ⟮ζ⟯ τ hζ'
   rw [MulEquiv.apply_symm_apply] at hτ
-  refine ⟨τ.liftNormal ℚ̄, Units.ext (modCharacter_eq_of_apply hζ ?_)⟩
-  have := AlgEquiv.liftNormal_commutes τ ℚ̄ ζ'
+  refine ⟨τ.liftNormal (AlgebraicClosure ℚ), Units.ext (modCharacter_eq_of_apply hζ ?_)⟩
+  have := AlgEquiv.liftNormal_commutes τ (AlgebraicClosure ℚ) ζ'
   rw [hτ, map_pow] at this
   exact this
 
@@ -167,7 +168,7 @@ end Modular
 
 section Character
 
-noncomputable def characterToZHat : Gal(ℚ̄/ℚ) →* ℤ̂ where
+noncomputable def characterToZHat : Gal((AlgebraicClosure ℚ)/ℚ) →* ℤ̂ where
   toFun σ := ⟨fun n => (modCharacter n σ : ZMod n), mem_profiniteIntegers.mpr
     fun m n h => castHom_modCharacter h σ⟩
   map_one' := by
@@ -177,45 +178,45 @@ noncomputable def characterToZHat : Gal(ℚ̄/ℚ) →* ℤ̂ where
     ext n
     simp [ProfiniteInteger.proj_apply]
 
-noncomputable def character : Gal(ℚ̄/ℚ) →* ℤ̂ˣ :=
+noncomputable def character : Gal((AlgebraicClosure ℚ)/ℚ) →* ℤ̂ˣ :=
   characterToZHat.toHomUnits
 
-@[simp] theorem proj_character (n : ℕ+) (σ : Gal(ℚ̄/ℚ)) :
+@[simp] theorem proj_character (n : ℕ+) (σ : Gal((AlgebraicClosure ℚ)/ℚ)) :
     ProfiniteInteger.proj n (character σ : ℤ̂) = (modCharacter n σ : ZMod n) :=
   rfl
 
-theorem character_spec (σ : Gal(ℚ̄/ℚ)) (n : ℕ+) {t : ℚ̄} (ht : t ^ (n : ℕ) = 1) :
+theorem character_spec (σ : Gal((AlgebraicClosure ℚ)/ℚ)) (n : ℕ+) {t : (AlgebraicClosure ℚ)} (ht : t ^ (n : ℕ) = 1) :
     σ t = t ^ (ProfiniteInteger.proj n (character σ : ℤ̂)).val := by
   rw [proj_character]
   exact modCharacter_spec σ ht
 
-theorem eq_character (σ : Gal(ℚ̄/ℚ)) (u : ℤ̂)
-    (hu : ∀ (n : ℕ+) (t : ℚ̄), t ^ (n : ℕ) = 1 → σ t = t ^ (ProfiniteInteger.proj n u).val) :
+theorem eq_character (σ : Gal((AlgebraicClosure ℚ)/ℚ)) (u : ℤ̂)
+    (hu : ∀ (n : ℕ+) (t : (AlgebraicClosure ℚ)), t ^ (n : ℕ) = 1 → σ t = t ^ (ProfiniteInteger.proj n u).val) :
     u = character σ := by
   ext n
   rw [proj_character, modCharacter_unique σ (hu n)]
 
-theorem continuous_character_val : Continuous fun σ : Gal(ℚ̄/ℚ) => (character σ : ℤ̂) := by
+theorem continuous_character_val : Continuous fun σ : Gal((AlgebraicClosure ℚ)/ℚ) => (character σ : ℤ̂) := by
   refine continuous_induced_rng.2 (continuous_pi fun n => ?_)
   exact continuous_modCharacter n
 
 theorem continuous_character : Continuous character := by
   rw [Units.continuous_iff]
   refine ⟨continuous_character_val, ?_⟩
-  have : (fun σ : Gal(ℚ̄/ℚ) => (((character σ)⁻¹ : ℤ̂ˣ) : ℤ̂)) = fun σ => (character σ⁻¹ : ℤ̂) := by
+  have : (fun σ : Gal((AlgebraicClosure ℚ)/ℚ) => (((character σ)⁻¹ : ℤ̂ˣ) : ℤ̂)) = fun σ => (character σ⁻¹ : ℤ̂) := by
     funext σ; rw [map_inv]
   rw [this]
   exact continuous_character_val.comp continuous_inv
 
 theorem character_surjective : Function.Surjective character := by
   intro u
-  have : IsGalois ℚ ℚ̄ := IsAlgClosure.isGalois ℚ ℚ̄
+  have : IsGalois ℚ (AlgebraicClosure ℚ) := IsAlgClosure.isGalois ℚ (AlgebraicClosure ℚ)
   let N : ℕ → ℕ+ := fun k => ⟨(k + 1).factorial, Nat.factorial_pos _⟩
   have hdvd : ∀ {k l : ℕ}, k ≤ l → (N k : ℕ) ∣ N l := fun h =>
     Nat.factorial_dvd_factorial (Nat.succ_le_succ h)
-  have hcont : ∀ n : ℕ+, Continuous fun σ : Gal(ℚ̄/ℚ) => ProfiniteInteger.proj n (character σ : ℤ̂) :=
+  have hcont : ∀ n : ℕ+, Continuous fun σ : Gal((AlgebraicClosure ℚ)/ℚ) => ProfiniteInteger.proj n (character σ : ℤ̂) :=
     fun n => (ProfiniteInteger.continuous_proj n).comp continuous_character_val
-  let S : ℕ → Set Gal(ℚ̄/ℚ) := fun k =>
+  let S : ℕ → Set Gal((AlgebraicClosure ℚ)/ℚ) := fun k =>
     {σ | ProfiniteInteger.proj (N k) (character σ : ℤ̂) = ProfiniteInteger.proj (N k) (u : ℤ̂)}
   have hmono : ∀ k, S (k + 1) ⊆ S k := fun k σ hσ => by
     simp only [S, Set.mem_ofPred_eq] at hσ ⊢
@@ -236,8 +237,8 @@ theorem character_surjective : Function.Surjective character := by
   rw [← ProfiniteInteger.castHom_proj hn (character σ : ℤ̂), ← ProfiniteInteger.castHom_proj hn,
     show ProfiniteInteger.proj (N n) (character σ : ℤ̂) = _ from hσ n]
 
-theorem character_eq_one_iff (σ : Gal(ℚ̄/ℚ)) :
-    character σ = 1 ↔ ∀ x : ℚ̄, (∃ n : ℕ, 0 < n ∧ x ^ n = 1) → σ x = x := by
+theorem character_eq_one_iff (σ : Gal((AlgebraicClosure ℚ)/ℚ)) :
+    character σ = 1 ↔ ∀ x : (AlgebraicClosure ℚ), (∃ n : ℕ, 0 < n ∧ x ^ n = 1) → σ x = x := by
   constructor
   · rintro h x ⟨n, hn, hx⟩
     obtain ⟨N, rfl⟩ : ∃ N : ℕ+, (N : ℕ) = n := ⟨⟨n, hn⟩, rfl⟩
@@ -255,7 +256,7 @@ theorem ker_character : character.ker = maxCyclotomic.fixingSubgroup := by
   rfl
 
 theorem fixedField_ker_character : fixedField character.ker = maxCyclotomic := by
-  have : IsGalois ℚ ℚ̄ := IsAlgClosure.isGalois ℚ ℚ̄
+  have : IsGalois ℚ (AlgebraicClosure ℚ) := IsAlgClosure.isGalois ℚ (AlgebraicClosure ℚ)
   rw [ker_character, InfiniteGalois.fixedField_fixingSubgroup]
 
 end Character
@@ -265,24 +266,24 @@ section Frobenius
 variable (m : ℕ) [NeZero m] (p : ℕ) [Fact p.Prime] (P : Ideal (𝓞 (rootsOfUnityField m)))
   [P.IsPrime] [P.LiesOver (Ideal.span {(p : ℤ)})]
 
-theorem isArithFrobAt_restrictNormal_iff (hm : ¬ p ∣ m) (σ : Gal(ℚ̄/ℚ)) :
+theorem isArithFrobAt_restrictNormal_iff (hm : ¬ p ∣ m) (σ : Gal((AlgebraicClosure ℚ)/ℚ)) :
     IsArithFrobAt ℤ (σ.restrictNormal (rootsOfUnityField m)) P ↔
       (modCharacter m σ : ZMod m) = p := by
   rw [isArithFrobAt_iff p _ P hm]
   constructor
   · intro h
-    obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot ℚ̄ m
+    obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot (AlgebraicClosure ℚ) m
     let ζ' : rootsOfUnityField m := ⟨ζ, subset_adjoin ℚ _ hζ.pow_eq_one⟩
     have hζ' : ζ' ^ m = 1 := Subtype.ext hζ.pow_eq_one
-    have := congrArg (algebraMap (rootsOfUnityField m) ℚ̄) (h ζ' hζ')
+    have := congrArg (algebraMap (rootsOfUnityField m) (AlgebraicClosure ℚ)) (h ζ' hζ')
     rw [AlgEquiv.restrictNormal_commutes, map_pow] at this
     refine modCharacter_eq_of_apply hζ ?_
     rw [pow_val_natCast hζ.pow_eq_one]
     exact this
   · intro h x hx
-    have hx' : (algebraMap (rootsOfUnityField m) ℚ̄ x) ^ m = 1 := by
+    have hx' : (algebraMap (rootsOfUnityField m) (AlgebraicClosure ℚ) x) ^ m = 1 := by
       rw [← map_pow, hx, map_one]
-    apply (algebraMap (rootsOfUnityField m) ℚ̄).injective
+    apply (algebraMap (rootsOfUnityField m) (AlgebraicClosure ℚ)).injective
     rw [AlgEquiv.restrictNormal_commutes, map_pow, modCharacter_spec σ hx', h,
       pow_val_natCast hx']
 
@@ -307,13 +308,6 @@ theorem toZModPow_toPadicInt (k : ℕ) (x : ℤ̂) :
     PadicInt.toZModPow k (toPadicInt ℓ x) =
       ProfiniteInteger.proj (primePowPNat ℓ k) x :=
   RingHom.congr_fun (PadicInt.lift_spec _ k) x
-
-theorem toPadicInt_character (σ : Gal(ℚ̄/ℚ)) :
-    toPadicInt ℓ (character σ : ℤ̂) =
-      (cyclotomicCharacter ℚ̄ ℓ (MulSemiringAction.toRingAut Gal(ℚ̄/ℚ) ℚ̄ σ) : ℤ_[ℓ]) := by
-  refine PadicInt.ext_of_toZModPow.mp fun k => ?_
-  rw [toZModPow_toPadicInt, cyclotomicCharacter.toZModPow, proj_character]
-  rfl
 
 end Padic
 

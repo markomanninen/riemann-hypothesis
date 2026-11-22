@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.GeneratedCechTieSt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.DegreeOneCellEqChartUpdate
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenTwistGenerated
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.GeneratedCechTieSt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.DegreeOneCellEqChartUpdate
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenTwistGenerated
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -97,8 +102,8 @@ theorem exists_cocycle {n : K → ℤ} {s : Ω} (hs : s ∈ secOver S y n) :
 
 end GeneratedCechTie
 
-open GeneratedCechTie HZeroRowPlaceData in
 
+open GeneratedCechTie HZeroRowPlaceData in
 theorem GeneratedCechTie.proof : GeneratedCechTie.Statement := by
   intro S _ K _ _ ι _ _ Ω _ _ y β _ hgen I
   obtain ⟨n, s, hs, hgen⟩ := hgen
@@ -124,7 +129,8 @@ theorem GeneratedCechTie.proof : GeneratedCechTie.Statement := by
         (Submodule.mem_pi.mp (Submodule.mem_inf.mp (hz j)).1 (cell0 c) (Set.mem_univ _))
       rwa [neg_add_cancel] at h
     refine evMap_injOn y (good_chart hc) 0 hmem (one_mem_locPart _) ?_
-    rw [evMap_one (good_chart hc), map_sum, ← hsum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [evMap_one (good_chart hc), map_sum, ← hsum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [evMap_mul (good_chart hc), hUv j, show evMap y (chart c) (Z j) = s j from hzv j c hc]
     ring

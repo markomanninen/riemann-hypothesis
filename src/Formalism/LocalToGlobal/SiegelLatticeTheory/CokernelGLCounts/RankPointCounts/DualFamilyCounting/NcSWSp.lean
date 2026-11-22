@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSSplS
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSGLP
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSSplS
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcSGLP
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,9 +48,10 @@ theorem indep_coord {n m : ℕ} (hinj : ∀ s t, π s = π t → π' s = π' t �
     have e := congrFun hc i
     simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply] at e ⊢
     apply hinj
-    · simp only [map_sum, map_mul, (hs _).1, map_zero]
-      exact e
-    · simp [map_sum, map_mul, (hs _).2]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simpa only [map_sum, map_mul, (hs _).1, map_zero] using e
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp [map_sum, map_mul, (hs _).2]
   have e := hX _ hsum j
   rw [← (hs (c j)).1, e, map_zero]
 
@@ -57,7 +62,8 @@ theorem mat_ext {n : ℕ} (hinj : ∀ s t, π s = π t → π' s = π' t → s =
 
 theorem map_mulVec {n : ℕ} (M : Matrix (Fin n) (Fin n) S) (x : Fin n → S) (i : Fin n) :
     π ((M *ᵥ x) i) = (M.map π *ᵥ fun j => π (x j)) i := by
-  simp [mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [mulVec, dotProduct, map_sum, map_mul]
 
 end Split
 
@@ -88,7 +94,8 @@ theorem witt_split (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E)
   have hform : ∀ x y : Fin n → (Fv F v) ⊗[F] E,
       π₁ (hR (Fv F v) σ J x y) = (fun i => π₂ (x i)) ⬝ᵥ (J1 *ᵥ fun i => π₁ (y i)) := by
     intro x y
-    simp only [hR, Formalism.UG.hform, map_sum, map_mul, hσ1, dotProduct, mulVec, Finset.mul_sum, hJ1,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hR, Formalism.UG.hform, map_sum, map_mul, hσ1, dotProduct, mulVec, Finset.mul_sum, hJ1,
       Matrix.map_apply, mul_assoc]
   set x1 : Fin m → Fin n → (Fv F v) := fun j i => π₁ (X j i)
   set y1 : Fin m → Fin n → (Fv F v) := fun j i => π₁ (Y j i)
@@ -120,7 +127,8 @@ theorem witt_split (σ : E →ₐ[F] E) {n : ℕ} (J : Matrix (Fin n) (Fin n) E)
       LinearMap.zero_apply] at e
     have key : ∀ u, (u ᵥ* J1) ⬝ᵥ w = dl (J1 *ᵥ w) u := fun u => by
       rw [dl_apply, ← dotProduct_mulVec, dotProduct_comm]
-    rw [key, zero_dotProduct, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [key, zero_dotProduct, map_sum]
     refine (Finset.sum_congr rfl fun x _ => ?_).trans e
     rw [map_smul, ← key, smul_eq_mul]
   have hpair : ∀ i j, dl (x2 i ᵥ* J1) (x1 j) = dl (y2 i ᵥ* J1) (y1 j) := by

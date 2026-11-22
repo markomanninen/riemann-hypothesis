@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHAlg
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelSubgroupCharacterUnitary
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelCore
-import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.PsiTrCore
-import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.DdTraceCore
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHAlg
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelSubgroupCharacterUnitary
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelCore
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.PsiTrCore
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.DdTraceCore
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,7 +101,7 @@ theorem toV_crd (v : (VS D).V) : toV X (X.crd v) = v := by
   simp [toV, HidaSetting.crd, crdOf, Module.Basis.sum_repr]
 
 theorem toV_add (x y : Fin X.B.I.n → X.B.I.E) : toV X (x + y) = toV X x + toV X y := by
-  simp only [toV, Pi.add_apply, map_add, add_smul, Finset.sum_add_distrib]
+  simp only [toV, Pi.add_apply, map_add (f := _), add_smul, Finset.sum_add_distrib]
 
 theorem toV_sub (x y : Fin X.B.I.n → X.B.I.E) : toV X (x - y) = toV X x - toV X y := by
   simp only [toV, Pi.sub_apply, map_sub, sub_smul, Finset.sum_sub_distrib]
@@ -154,7 +158,8 @@ theorem incl_smul (c : X.B.I.E) (x : Fin X.B.I.n → X.B.I.E) :
 theorem incl_sum {ι : Type} (s : Finset ι) (x : ι → Fin X.B.I.n → X.B.I.E) :
     incl X.B.I (∑ j ∈ s, x j) = ∑ j ∈ s, incl X.B.I (x j) := by
   funext i
-  simp [incl, Finset.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [incl, Finset.sum_apply, map_sum]
 
 theorem prA_incl (x : Fin X.B.I.n → X.B.I.E) : prA X (incl X.B.I x) = incl X.B.I (prE X x) := by
   rw [prA_apply]
@@ -171,7 +176,10 @@ theorem prA_Lf (y : VA X.B.I) (hy : y ∈ X.B.I.Lf) : prA X y ∈ X.B.I.Lf := by
     rw [prA_incl]
     exact incl_mem_Lf X _ (prE_L X _ x.2)
   | zero => simp
-  | add y z _ _ hy hz => rw [map_add]; exact add_mem hy hz
+  | add y z _ _ hy hz =>
+    have hAdd : prA X (y + z) = prA X y + prA X z := map_add (prA X) y z
+    rw [hAdd]
+    exact add_mem hy hz
   | smul c y _ hy =>
     rw [Subring.smul_def, map_smul]
     exact X.B.I.Lf.smul_mem c hy
@@ -210,12 +218,14 @@ theorem hA_e_prA (y : VA X.B.I) (a : Fin D.R.rS) : hA X.B.I (incl X.B.I (X.eR a)
     | rfl
     | simp [hAlin]
   rw [key, prA_apply]
-  simp only [map_sub, map_sum, map_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_sum, map_smul, smul_eq_mul]
   simp [← key, hA_e_e, hA_e_f]
 
 theorem hA_f_prA (y : VA X.B.I) (a : Fin D.R.rS) : hA X.B.I (incl X.B.I (X.fR a)) (prA X y) = 0 := by
   rw [← hAlin_apply, prA_apply]
-  simp only [map_sub, map_sum, map_smul, hAlin_apply, hA_f_e, hA_f_f, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_sum, map_smul, hAlin_apply, hA_f_e, hA_f_f, smul_eq_mul]
   simp
 
 theorem prA_fix (q : VA X.B.I) (he : ∀ a, hA X.B.I (incl X.B.I (X.eR a)) q = 0)
@@ -253,7 +263,7 @@ theorem kset_split_fwd (n : X.B.I.Gf) (hn : n ∈ X.NfinU u) (h : Hfin X u)
   have hs := hn.2.2 q hqe
   have hpr : prA X (X.B.I.fmat n *ᵥ q) = q := by
     have e : X.B.I.fmat n *ᵥ q = q + (X.B.I.fmat n - 1) *ᵥ q := by rw [sub_mulVec, one_mulVec]; abel
-    rw [e, map_add, prA_span_e X _ hs, add_zero, prA_fix X q hqe hqf]
+    rw [e, map_add (f := _), prA_span_e X _ hs, add_zero, prA_fix X q hqe hqf]
   have hq : q ∈ X.B.I.Lf := hpr ▸ prA_Lf X _ hnq
   have hsplit : X.B.I.fmat (h : X.B.I.Gf) *ᵥ y = (y - p) + q := by
     rw [hqdef, ← hfin_fix_sub X u h y, ← mulVec_add]
@@ -443,7 +453,7 @@ theorem span_repr (y : VA X.B.I)
     simp [hA_f_e]
   | zero => simp only [← hAlin_apply, map_zero, zero_smul, Finset.sum_const_zero]
   | add y z _ _ hy hz =>
-    simp only [← hAlin_apply, map_add, add_smul, Finset.sum_add_distrib]
+    simp only [← hAlin_apply, map_add (f := _), add_smul, Finset.sum_add_distrib]
     simp only [hAlin_apply]
     rw [← hy, ← hz]
   | smul c y _ hy =>
@@ -769,7 +779,7 @@ theorem hA_f_Lf (a : Fin D.R.rS) (y : VA X.B.I) (hy : y ∈ X.B.I.Lf) :
     have hx : toV X (x : Fin X.B.I.n → X.B.I.E) ∈ (VS D).L0 := (X.L_eq x).1 x.2
     exact hermitian_f_lattice_mem_ideal X a _ hx
   | zero => simp only [← hAlin_apply, map_zero]; exact zero_mem _
-  | add y z _ _ hy hz => rw [← hAlin_apply, map_add]; exact add_mem hy hz
+  | add y z _ _ hy hz => rw [← hAlin_apply, map_add (f := _)]; exact add_mem hy hz
   | smul c y _ hy =>
     rw [Subring.smul_def, ← hAlin_apply, map_smul, hAlin_apply, smul_eq_mul, ← smul_eq_mul, ← Subring.smul_def]
     exact Submodule.smul_mem _ c hy
@@ -814,7 +824,7 @@ theorem coord_dd {n : X.B.I.Gf} (hnK : n ∈ X.B.I.Kset) (a : Fin D.R.rS) :
         hone (fun t ht s hs => ?_) (fun x y hx hy => ?_)
       · rw [map_mul, map_mul, mul_comm (Formalism.UG.inclE (F := X.B.I.F) (Af X.B.I.F) (X.ιE.symm t)), mul_assoc]
         exact Iad_mul X _ _ s hs _ (hstep t ht)
-      · rw [map_add, map_add, add_mul]; exact add_mem hx hy
+      · rw [map_add (f := _), map_add (f := _), add_mul]; exact add_mem hx hy
     rw [map_one, map_one, one_mul, ← FractionalIdeal.coe_mul] at hind
     have e : (aaD D b)⁻¹ * aaD D a = (ddS D)⁻¹ := by
       unfold aaD
@@ -853,7 +863,7 @@ theorem psi_B (hP : PsiDd X) {n : X.B.I.Gf} (hnK : n ∈ X.B.I.Kset) :
   refine psi_sum _ _ fun a _ => ?_
   have e : X.B.I.fmat n *ᵥ incl X.B.I (nxt X.eR (X.zR u) a) = incl X.B.I (nxt X.eR (X.zR u) a) +
       (X.B.I.fmat n - 1) *ᵥ incl X.B.I (nxt X.eR (X.zR u) a) := by rw [sub_mulVec, one_mulVec]; abel
-  rw [e, ← hAlin_apply, map_add, hAlin_apply, hAlin_apply, hA_f_nxt, zero_add]
+  rw [e, ← hAlin_apply, map_add (f := _), hAlin_apply, hAlin_apply, hA_f_nxt, zero_add]
   exact psi_Iad X hP _ (coord_dd hnK a)
 
 theorem xw_diff {C : ℕ} (hC : GoodC X u C) (a : Fin D.R.rS) :
@@ -985,7 +995,8 @@ theorem hJ_rv (v : InfinitePlace X.B.I.F) (x y : Fin X.B.I.n → X.B.I.E) :
     rw [Matrix.mul_nonsing_inv _ hPu, Matrix.mul_one, ← Matrix.mul_assoc, Matrix.nonsing_inv_mul _ hPH, Matrix.one_mul]
   unfold hJ rv
   rw [Matrix.star_mulVec, ← Matrix.dotProduct_mulVec, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, hJ']
-  simp only [dotProduct, mulVec, Formalism.UG.hform, map_sum, map_mul, Pi.star_apply, Matrix.map_apply, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dotProduct, mulVec, Formalism.UG.hform, map_sum, map_mul, Pi.star_apply, Matrix.map_apply, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [starRingEnd_apply, phi_star]
   ring
@@ -998,12 +1009,14 @@ theorem rv_mulVec (v : InfinitePlace X.B.I.F) (G : Matrix (Fin X.B.I.n) (Fin X.B
     ← Matrix.mulVec_mulVec]
   congr 1
   funext i
-  simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
 
 theorem incl_mulVec (G : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E) (y : Fin X.B.I.n → X.B.I.E) :
     G.map (Formalism.UG.inclE (F := X.B.I.F) (Af X.B.I.F)) *ᵥ incl X.B.I y = incl X.B.I (G *ᵥ y) := by
   funext i
-  simp [incl, Matrix.mulVec, dotProduct, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [incl, Matrix.mulVec, dotProduct, map_sum, map_mul]
 
 theorem nxt_rv (v : InfinitePlace X.B.I.F) (a : Fin D.R.rS) :
     nxt (fun b => rv X.B.I v (X.eR b)) (rv X.B.I v (X.zR u)) a = rv X.B.I v (nxt X.eR (X.zR u) a) := by
@@ -1035,7 +1048,8 @@ theorem psiProd_holds : PsiProd X u := by
   have hfin' : X.psiFinU u ν.2 = X.psiEf (Formalism.UG.inclE (F := X.B.I.F) (Af X.B.I.F) q) := by
     unfold HidaSetting.psiFinU psiFin divN
     congr 1
-    rw [hq, map_mul, ← algebraMap_tens, hc, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hq, map_mul, ← algebraMap_tens, hc, map_sum]
     congr 1
     refine Finset.sum_congr rfl fun a _ => ?_
     rw [hfin, incl_mulVec, hA_incl]
@@ -1051,7 +1065,8 @@ theorem psiProd_holds : PsiProd X u := by
     simp only [hrc]
     have hg : X.B.I.φ v (algebraMap X.B.I.F X.B.I.E ((X.B.g : X.B.I.F)⁻¹)) = ((X.B.g : ℂ))⁻¹ := by
       rw [map_inv₀, map_inv₀, map_natCast, map_natCast]
-    rw [hq, map_mul, hg, hc, map_sum, Finset.sum_add_distrib, star_mul', star_inv₀, star_natCast, ← star_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hq, map_mul, hg, hc, map_sum, Finset.sum_add_distrib, star_mul', star_inv₀, star_natCast, ← star_sum]
     ring
   rw [hinf', hfin', mul_comm]
   exact X.psiEf_rat q
@@ -1075,12 +1090,8 @@ theorem hE_symm (x y : Fin X.B.I.n → X.B.I.E) : hE X y x = star (hE X x y) := 
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring
 
-theorem hE_smul_left (x y : Fin X.B.I.n → X.B.I.E) (c : X.B.I.E) : hE X (c • x) y = star c * hE X x y := by
-  simp only [hE, Formalism.UG.hform, Pi.smul_apply, smul_eq_mul, map_mul, starRingEnd_apply, Finset.mul_sum]
-  exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
-
 theorem hE_add_left (x x' y : Fin X.B.I.n → X.B.I.E) : hE X (x + x') y = hE X x y + hE X x' y := by
-  simp only [hE, Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hE, Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 def hEl (x : Fin X.B.I.n → X.B.I.E) : (Fin X.B.I.n → X.B.I.E) →ₗ[X.B.I.E] X.B.I.E where
   toFun := hE X x
@@ -1144,19 +1155,22 @@ theorem PW_sub (y y' : Fin X.B.I.n → X.B.I.E) : PW X u (y - y') = PW X u y - P
 theorem hE_e_PW (a : Fin D.R.rS) (y : Fin X.B.I.n → X.B.I.E) : hE X (X.eR a) (PW X u y) = 0 := by
   have key : hE X (X.eR a) (PW X u y) = hEl X (X.eR a) (PW X u y) := rfl
   rw [key]
-  simp only [PW, map_sub, map_sum, map_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [PW, map_sub, map_sum, map_smul, smul_eq_mul]
   simp [hEl_apply, hE_e_e, hE_e_f, hermitian_e_z_zero]
 
 theorem hE_f_PW (a : Fin D.R.rS) (y : Fin X.B.I.n → X.B.I.E) : hE X (X.fR a) (PW X u y) = 0 := by
   have key : hE X (X.fR a) (PW X u y) = hEl X (X.fR a) (PW X u y) := rfl
   rw [key]
-  simp only [PW, map_sub, map_sum, map_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [PW, map_sub, map_sum, map_smul, smul_eq_mul]
   simp [hEl_apply, hE_f_e, hE_f_f, hermitian_f_z_zero]
 
 theorem hE_z_PW (y : Fin X.B.I.n → X.B.I.E) : hE X (X.zR u) (PW X u y) = 0 := by
   have key : hE X (X.zR u) (PW X u y) = hEl X (X.zR u) (PW X u y) := rfl
   rw [key]
-  simp only [PW, map_sub, map_sum, map_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [PW, map_sub, map_sum, map_smul, smul_eq_mul]
   simp [hEl_apply, hE_z_e, hE_z_f, inv_mul_cancel_right₀ (hE_z_z_ne X u)]
 
 theorem PW_fix (w : Fin X.B.I.n → X.B.I.E) (he : ∀ a, hE X (X.eR a) w = 0) (hf : ∀ a, hE X (X.fR a) w = 0)
@@ -1187,7 +1201,8 @@ theorem hE_perp_sub (p y : Fin X.B.I.n → X.B.I.E) (he : ∀ a, hE X (X.eR a) p
   have h2 : hE X p (y - PW X u y) = 0 := by
     rw [sub_PW]
     show hEl X p _ = 0
-    simp only [map_add, map_sum, map_smul, smul_eq_mul, hEl_apply, hpe, hpf, hpz, mul_zero,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_sum, map_smul, smul_eq_mul, hEl_apply, hpe, hpf, hpz, mul_zero,
       Finset.sum_const_zero, add_zero]
   exact ⟨by rw [hE_symm X p, h2, star_zero], h2⟩
 
@@ -1213,17 +1228,9 @@ theorem hE_span_left (s w : Fin X.B.I.n → X.B.I.E) (hs : s ∈ Submodule.span 
   have hw' : ∀ b, hE X w (X.eR b) = 0 := fun b => by rw [hE_symm, hw, star_zero]
   rw [span_repr_E X s hs, hE_symm X w]
   show star (hEl X w (∑ b, hE X (X.fR b) s • X.eR b)) = 0
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul, smul_eq_mul, hEl_apply, hw', mul_zero, Finset.sum_const_zero, star_zero]
-
-theorem hE_span_right (x s : Fin X.B.I.n → X.B.I.E) (hs : s ∈ Submodule.span X.B.I.E (Set.range X.eR))
-    (hx : ∀ a, hE X x (X.eR a) = 0) : hE X x s = 0 := by
-  rw [span_repr_E X s hs]
-  show hEl X x (∑ b, hE X (X.fR b) s • X.eR b) = 0
-  rw [map_sum]
-  simp only [map_smul, smul_eq_mul, hEl_apply, hx, mul_zero, Finset.sum_const_zero]
-
-theorem e_mem_span (a : Fin D.R.rS) : X.eR a ∈ Submodule.span X.B.I.E (Set.range X.eR) := Submodule.subset_span ⟨a, rfl⟩
 
 theorem unit_of_form (M : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E)
     (hM : ∀ x y, hE X (M *ᵥ x) (M *ᵥ y) = hE X x y) :
@@ -1279,7 +1286,8 @@ theorem SRat.hE_G {G G' : Matrix (Fin X.B.I.n) (Fin X.B.I.n) X.B.I.E} (h : SRat 
   have hσ : (fun i => starRingEnd X.B.I.E ((G *ᵥ x) i)) =
       (G.map (starRingEnd X.B.I.E)) *ᵥ (fun i => starRingEnd X.B.I.E (x i)) := by
     funext i
-    simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.mulVec, dotProduct, map_sum, map_mul]
   rw [L, L, hσ, Matrix.mulVec_mulVec, ← Matrix.vecMul_transpose (G.map (starRingEnd X.B.I.E)),
     ← Matrix.dotProduct_mulVec, Matrix.mulVec_mulVec]
   congr 2
@@ -1519,9 +1527,11 @@ theorem transfer3 {R : Type} [CommRing R] (ψ : X.B.I.E →+* R) (ι : (Fin X.B.
   have hTι : ∀ x, T (ι x) = 0 := fun x => by
     set qx := x - ∑ b, hE X (X.eR b) x • X.fR b with hqx
     have hQ : Q (ι x) = ι qx := by
-      simp only [Q, hqx, map_sub, map_sum, hιs, hh]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Q, hqx, map_sub, map_sum, hιs, hh]
     have hperp : ∀ a, hE X (X.eR a) qx = 0 := fun a => by
-      simp only [hqx, ← hEl_apply, map_sub, map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hqx, ← hEl_apply, map_sub, map_sum, map_smul]
       simp [hEl_apply, hE_e_f]
     clear_value qx
     have hs := hN.n3 qx hperp
@@ -1530,7 +1540,8 @@ theorem transfer3 {R : Type} [CommRing R] (ψ : X.B.I.E →+* R) (ι : (Fin X.B.
     simp only [T, hQ, hMs, hh]
     have hr : (∑ b, ψ (hE X (X.fR b) ((N - 1) *ᵥ qx)) • ι (X.eR b)) = ι ((N - 1) *ᵥ qx) := by
       conv_rhs => rw [span_repr_E X _ hs]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [hιs]
     rw [hr, sub_self]
   have hT0 : ∀ y, T y = 0 := fun y => by
@@ -1697,7 +1708,7 @@ def rvHom (v : InfinitePlace X.B.I.F) : (Fin X.B.I.n → X.B.I.E) →+ (Fin X.B.
     rw [← mulVec_add]
     congr 1
     funext i
-    simp
+    exact map_add (X.B.I.φ v) (x i) (y i)
 
 theorem rvHom_apply (v : InfinitePlace X.B.I.F) (x : Fin X.B.I.n → X.B.I.E) : rvHom X v x = rv X.B.I v x := rfl
 
@@ -1714,8 +1725,6 @@ def inclHom : (Fin X.B.I.n → X.B.I.E) →+ VA X.B.I where
   toFun := incl X.B.I
   map_zero' := by funext i; simp [incl]
   map_add' x y := by funext i; simp [incl]
-
-theorem inclHom_apply (x : Fin X.B.I.n → X.B.I.E) : inclHom X x = incl X.B.I x := rfl
 
 theorem sum_single {R : Type} [CommRing R] (c : Fin X.B.I.n → R) :
     ∑ i, c i • (Pi.single i (1 : R) : Fin X.B.I.n → R) = c := by

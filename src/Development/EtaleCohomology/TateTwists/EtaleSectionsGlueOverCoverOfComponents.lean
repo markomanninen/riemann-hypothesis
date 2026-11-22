@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleSheafSectionsGlueOfForgetIsSheaf
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleSheafSectionsGlueOfForgetIsSheaf
+
+@[expose] public section
 
 namespace LateralTheory.Fin.EtaleSheafSectionsSeparatedAndGlue
 theorem etale_sections_glue_over_cover_of_components : LateralTheory.EtaleFoundations.EtaleSheafSectionsSeparatedAndGlue := by

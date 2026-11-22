@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Formalism.GaloisCohomology.LocalTateDualityK
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanQ
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SpanQ
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct Module
 
 noncomputable section
@@ -29,9 +34,10 @@ theorem cont_act {V : Type} [AddCommGroup V] [Module LL V] [FiniteDimensional LL
   have h : (fun p : G × V => ρ p.1 p.2) = fun p => ∑ i, b.repr p.2 i • ρ p.1 (b i) := by
     funext p
     conv_lhs => rw [← b.sum_repr p.2]
-    simp only [map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul]
   rw [h]
-  refine continuous_finset_sum _ fun i _ => ?_
+  refine continuous_finsetSum _ fun i _ => ?_
   exact ((cont_form ((Finsupp.lapply i).comp b.repr.toLinearMap)).comp continuous_snd).smul
     ((hρ (b i)).comp continuous_fst)
 
@@ -43,10 +49,11 @@ theorem cont_bil {V V' : Type} [AddCommGroup V] [Module LL V] [FiniteDimensional
   have h : (fun q : V × V' => m q.1 q.2) = fun q => ∑ i, b.repr q.1 i * m (b i) q.2 := by
     funext q
     conv_lhs => rw [← b.sum_repr q.1]
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply,
       smul_eq_mul]
   rw [h]
-  refine continuous_finset_sum _ fun i _ => ?_
+  refine continuous_finsetSum _ fun i _ => ?_
   exact ((cont_form ((Finsupp.lapply i).comp b.repr.toLinearMap)).comp continuous_fst).mul
     ((cont_form (m (b i))).comp continuous_snd)
 
@@ -67,18 +74,18 @@ theorem exists_pair : Formalism.GaloisCohomology.LocalTateDualityK → ∀ (l : 
       exact (cont_bil m).comp ((ha.comp continuous_fst).prodMk h1)
     · simp only [cupL]
       rw [← hm.1 g (a.1 h) (A'.ρ h (b.1 k)), ha', hb', map_mul, Module.End.mul_apply]
-      simp only [map_add, LinearMap.add_apply]
+      simp only [map_add (f := _), LinearMap.add_apply]
       ring
   refine ⟨LinearMap.mk₂ LL (fun a b => inv ⟨cupL A'.ρ m a.1 b.1, hmem a b⟩) ?_ ?_ ?_ ?_,
     fun a b => ?_⟩
   · intro a a' b
-    rw [← map_add]; congr 1; apply Subtype.ext; funext p
+    rw [← map_add (f := _)]; congr 1; apply Subtype.ext; funext p
     simp [cupL]
   · intro c a b
     rw [← map_smul]; congr 1; apply Subtype.ext; funext p
     simp [cupL]
   · intro a b b'
-    rw [← map_add]; congr 1; apply Subtype.ext; funext p
+    rw [← map_add (f := _)]; congr 1; apply Subtype.ext; funext p
     simp [cupL]
   · intro c a b
     rw [← map_smul]; congr 1; apply Subtype.ext; funext p

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.FormalGroupLog.Statement
+module
+
+public import Mathlib
+public import Formalism.FormalGroupLog.Statement
+
+@[expose] public section
 
 open PowerSeries
 
@@ -50,13 +54,6 @@ def IntValuedZp : Prop :=
     (P : Polynomial K), (∀ n : ℕ, ‖P.eval (n : K)‖ ≤ 1) →
       ∀ b : ℤ_[p], ‖P.eval (algebraMap ℚ_[p] K (b : ℚ_[p]))‖ ≤ 1
 
-def PadicMult : Prop :=
-  ∀ (p : ℕ) [Fact p.Prime] (K : Type u) [NormedField K] [IsUltrametricDist K]
-    [NormedAlgebra ℚ_[p] K] (F : FormalGroup (unitBall K)) (l e : PowerSeries K),
-    IsLog (F.map (unitBall K).subtype) l →
-    constantCoeff e = 0 → e.subst l = X → l.subst e = X →
-      ∀ b : ℤ_[p], IntegralPS (e.subst (algebraMap ℚ_[p] K (b : ℚ_[p]) • l))
-
 section Cong
 
 variable {K : Type u} [NormedField K] [CharZero K] {σ : Type}
@@ -83,6 +80,6 @@ def NZpSmul : Prop :=
 
 def NPderiv : Prop :=
   ∀ (K : Type u) [NormedField K] [IsUltrametricDist K] [CharZero K] (σ : Type)
-    (G : MvPowerSeries σ K), InN G → ∀ i : σ, IntegralMv (MvPowerSeries.pderiv K i G)
+    (G : MvPowerSeries σ K), InN G → ∀ i : σ, IntegralMv (MvPowerSeries.pderiv (R := K) i G)
 
 end Formalism.ELL

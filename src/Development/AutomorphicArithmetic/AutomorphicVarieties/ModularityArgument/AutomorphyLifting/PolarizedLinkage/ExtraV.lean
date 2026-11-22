@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.AbsCentral
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.Multi
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsLanglandsClassificationDetCharacterStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistRecCompatible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralCharacterRecCompatible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LFactorRecCompatible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EpsilonFactorRecCompatible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SupercuspidalSupportOfPrincipalSeriesSubquotientStatement
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SumTrWEqZeroOfFrobCoset
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.AbsCentral
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.Multi
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsLanglandsClassificationDetCharacterStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistRecCompatible
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CentralCharacterRecCompatible
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LFactorRecCompatible
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EpsilonFactorRecCompatible
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SupercuspidalSupportOfPrincipalSeriesSubquotientStatement
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.SumTrWEqZeroOfFrobCoset
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,14 +24,14 @@ namespace UpperTheory.V.Z.Win.Extra
 
 variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
   {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} {h : IsPlaceOver A w}
-  {a : Weil h →* (w.adicCompletion E)ˣ} {ha : IsLocalArtin h a} {rc : IrrGL (w.adicCompletion E) → WD h}
+  {a : Weil h →* (w.adicCompletion E)ˣ} {ha : IsLocalArtin h a} {rc : IrrGL (k := w.adicCompletion E) → WD h}
 
 private theorem cz : CharZero (w.adicCompletion E) := charZero_of_injective_algebraMap (algebraMap E _).injective
 
 private theorem geo : GlobalTheory.Published.GeometricLemma := PositivityTheory.Exh.geometricLemmaGL
 
 private theorem eq_of_support_singleton {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k]
-    [IsNonarchimedeanLocalField k] {y z : IrrGL k} (h : HasSupport y.rep {z}) : y = z := by
+    [IsNonarchimedeanLocalField k] {y z : IrrGL (k := k)} (h : HasSupport y.rep {z}) : y = z := by
   obtain ⟨r, u, hu, hi, hc, e, hsub⟩ := h
   obtain rfl : r = 1 := by simpa using congrArg Multiset.card hu
   obtain rfl : u = fun _ => z := funext fun i => by
@@ -55,7 +59,7 @@ private theorem det_law (H : LawsT a ha rc) (t : ℕ) (χ : (w.adicCompletion E)
   refine List.map_congr_left fun j _ => ?_
   simp only [Function.comp_apply]
   show ((rc ((IrrGL.ofChar χ hχ).nu ((((t : ℝ) - 1) / 2 - j : ℝ) : ℂ))).lpTw ((((1 : ℕ) : ℝ) - 1) / 2)).lpChar
-      (WD.lpSp h 1) = _
+      (WD.lpSp (h := h) 1) = _
   have h0 : ((((1 : ℕ) : ℝ) - 1) / 2) = 0 := by norm_num
   rw [h0, (GlobalTheory.T.weilDeligne_charpoly_twist_special E Ω A w h _).1, H.nu]
 
@@ -74,7 +78,7 @@ private theorem prod_law (H : LawsT a ha rc) (r t : ℕ) (σ : IrrRep (GL (Fin r
       exact hp.of_equiv (equivRep π)), segSum_append_lpSum]
 
 private theorem charPol_seg (H : LawsT a ha rc) (Δ : Segment (w.adicCompletion E)) (σ : Weil h) :
-    (((rc Δ.first).lpTw (((Δ.len : ℝ) - 1) / 2)).lpChar (WD.lpSp h Δ.len)).charPol σ
+    (((rc Δ.first).lpTw (((Δ.len : ℝ) - 1) / 2)).lpChar (WD.lpSp (h := h) Δ.len)).charPol σ
       = (Δ.ms.map fun y => (rc y).charPol σ).prod := by
   rw [(GlobalTheory.T.weilDeligne_charpoly_twist_special E Ω A w h (rc Δ.first)).2 Δ.len σ, Segment.ms, Multiset.map_map]
   have h1 : ∀ j : Fin Δ.len, (rc (Δ.term j)).charPol σ = ((rc Δ.first).lpTw ((j : ℕ) : ℝ)).charPol σ := by
@@ -85,7 +89,7 @@ private theorem charPol_seg (H : LawsT a ha rc) (Δ : Segment (w.adicCompletion 
   rw [Fin.prod_univ_eq_prod_range (fun j => ((rc Δ.first).lpTw (j : ℝ)).charPol σ) Δ.len]
   rfl
 
-private theorem supp_law (H : LawsT a ha rc) (x : IrrGL (w.adicCompletion E)) (s : Multiset (IrrGL (w.adicCompletion E)))
+private theorem supp_law (H : LawsT a ha rc) (x : IrrGL (k := w.adicCompletion E)) (s : Multiset (IrrGL (k := w.adicCompletion E)))
     (hs : HasSupport x.rep s) (σ : Weil h) : (rc x).charPol σ = (s.map fun y => (rc y).charPol σ).prod := by
   haveI := cz (E := E) (w := w)
   obtain ⟨𝔪, hm⟩ := Pr.exh (w.adicCompletion E) x
@@ -98,7 +102,7 @@ private theorem supp_law (H : LawsT a ha rc) (x : IrrGL (w.adicCompletion E)) (s
   rw [hl, Multiset.coe_toList]
   exact congrArg Multiset.prod (Multiset.map_congr rfl fun Δ _ => charPol_seg H Δ σ)
 
-private theorem sat_law (H : LawsT a ha rc) (x : IrrGL (w.adicCompletion E)) (α : Fin x.1 → ℂˣ)
+private theorem sat_law (H : LawsT a ha rc) (x : IrrGL (k := w.adicCompletion E)) (α : Fin x.1 → ℂˣ)
     (hα : HasSatake x.rep α) : rc x = WD.mk (WDRep.diag h fun i => (α i)⁻¹) := by
   haveI := cz (E := E) (w := w)
   have hL := GlobalTheory.T.spherical_satake_eq_langlandsQuotient_unramified Pr.exh Pr.multi Pr.cos Pr.zel geo Pr.bz (w.adicCompletion E) x α hα
@@ -110,7 +114,7 @@ private theorem sat_law (H : LawsT a ha rc) (x : IrrGL (w.adicCompletion E)) (α
     zero_div, WD.lpTw_zero, Test.lpChar_lpSp_one, H.one]
   exact Test.lpOfChar_unrChar ha (α i) _
 
-private theorem good_of_hasSatake (x : IrrGL (w.adicCompletion E)) (α : Fin x.1 → ℂˣ) (hα : HasSatake x.rep α) :
+private theorem good_of_hasSatake (x : IrrGL (k := w.adicCompletion E)) (α : Fin x.1 → ℂˣ) (hα : HasSatake x.rep α) :
     Good x := by
   haveI := cz (E := E) (w := w)
   refine ⟨_, GlobalTheory.T.supercuspidalSupport_of_principalSeries_subquotient (w.adicCompletion E) x.1 (fun i => GlobalTheory.SmGL.unrChar _ (α i))
@@ -118,7 +122,7 @@ private theorem good_of_hasSatake (x : IrrGL (w.adicCompletion E)) (α : Fin x.1
   obtain ⟨i, -, rfl⟩ := Multiset.mem_map.1 hy
   exact Or.inl rfl
 
-private theorem sph_law (H : LawsT a ha rc) (x : IrrGL (w.adicCompletion E)) : IsSpherical x.rep ↔ (rc x).unr := by
+private theorem sph_law (H : LawsT a ha rc) (x : IrrGL (k := w.adicCompletion E)) : IsSpherical x.rep ↔ (rc x).unr := by
   constructor
   · intro hs
     obtain ⟨α, hα⟩ := GlobalTheory.SatakeExists.main Pr.bz (w.adicCompletion E) x.1
@@ -156,7 +160,7 @@ private theorem dim_zero_of_irr_sum {x y : WD h} (hi : IsIrrWD (x.lpSum y)) : x.
     exact hv
 
 private theorem not_mono0_sp {x : WD h} (h0 : x.mono0) (hd : 0 < x.lpDim) {n : ℕ} (hn : 2 ≤ n) :
-    ¬ (x.lpChar (WD.lpSp h n)).mono0 := by
+    ¬ (x.lpChar (WD.lpSp (h := h) n)).mono0 := by
   obtain ⟨m, b, rfl⟩ := x.exists_rep
   rw [WD.lpDim_mk, Module.finrank_fin_fun] at hd
   rw [WD.monodromyZero_ofWeilDeligneRepClass_iff] at h0
@@ -169,26 +173,26 @@ private theorem not_mono0_sp {x : WD h} (h0 : x.mono0) (hd : 0 < x.lpDim) {n : �
   simpa using h1
 
 private theorem seg_dim_pos (H : LawsT a ha rc) (Δ : Segment (w.adicCompletion E)) :
-    0 < (((rc Δ.first).lpTw (((Δ.len : ℝ) - 1) / 2)).lpChar (WD.lpSp h Δ.len)).lpDim := by
+    0 < (((rc Δ.first).lpTw (((Δ.len : ℝ) - 1) / 2)).lpChar (WD.lpSp (h := h) Δ.len)).lpDim := by
   rw [WD.lpDim_tensor, WD.lpDim_tw, H.dim, WD.lpSp, WD.lpDim_mk, Module.finrank_fin_fun]
   exact Nat.mul_pos Δ.isCusp_first.1 Δ.len_pos
 
-private theorem cusp_law (H : LawsT a ha rc) (x : IrrGL (w.adicCompletion E)) (hx : IsIrrWD (rc x)) : x.IsCusp := by
+private theorem cusp_law (H : LawsT a ha rc) (x : IrrGL (k := w.adicCompletion E)) (hx : IsIrrWD (rc x)) : x.IsCusp := by
   haveI := cz (E := E) (w := w)
   obtain ⟨𝔪, hm⟩ := Pr.exh (w.adicCompletion E) x
   obtain ⟨l, rfl⟩ : ∃ l : List (Segment (w.adicCompletion E)), (l : Multiset _) = 𝔪 := ⟨_, 𝔪.coe_toList⟩
   have hs := GlobalTheory.T.langlandsClassification_supercuspidalSupport_multisegment Pr.zel _ _ x hm
   rw [H.langlands l x hm] at hx
   have key : ∀ (Δ : Segment (w.adicCompletion E)) (m : List (Segment (w.adicCompletion E))), segSum rc (Δ :: m) =
-      (((rc Δ.first).lpTw (((Δ.len : ℝ) - 1) / 2)).lpChar (WD.lpSp h Δ.len)).lpSum (segSum rc m) := fun _ _ => rfl
+      (((rc Δ.first).lpTw (((Δ.len : ℝ) - 1) / 2)).lpChar (WD.lpSp (h := h) Δ.len)).lpSum (segSum rc m) := fun _ _ => rfl
   match l, hs, hx with
   | [], _, hx =>
     exact absurd (GlobalTheory.VWeil.IrrW.lpDim_pos ⟨_, hx⟩) (by
-      show ¬ 0 < (WD.lpZero h).lpDim
+      show ¬ 0 < (WD.lpZero (h := h)).lpDim
       rw [WD.lpDim_zero]
       exact lt_irrefl 0)
   | [Δ], hs, hx =>
-    have e : segSum rc [Δ] = ((rc Δ.first).lpTw (((Δ.len : ℝ) - 1) / 2)).lpChar (WD.lpSp h Δ.len) := WD.lpSum_zero _
+    have e : segSum rc [Δ] = ((rc Δ.first).lpTw (((Δ.len : ℝ) - 1) / 2)).lpChar (WD.lpSp (h := h) Δ.len) := WD.lpSum_zero _
     rw [e] at hx
     have hf := H.cusp _ Δ.isCusp_first
     have hlen : Δ.len = 1 := by
@@ -224,7 +228,7 @@ theorem UpperTheory.V.Z.Win.extraV :
 
 theorem UpperTheory.V.Z.Win.toV' {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
     {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} {h : IsPlaceOver A w}
-    {rc : IrrGL (w.adicCompletion E) → WD h} (H : IsRecT h rc) : UpperTheory.V.Z.Win.IsRecV h rc :=
+    {rc : IrrGL (k := w.adicCompletion E) → WD h} (H : IsRecT h rc) : UpperTheory.V.Z.Win.IsRecV h rc :=
   UpperTheory.V.Z.Win.extraV E Ω A w h rc H
 
 end

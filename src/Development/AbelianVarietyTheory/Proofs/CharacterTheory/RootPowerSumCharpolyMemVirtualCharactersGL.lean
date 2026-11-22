@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.OneMemClosureInducedCentralByPrimePower
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.MatrixTraceIffIsCharacterOverSubfieldComplexStatement
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.RootsCharpolyPowEqMapPowStatement
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsCharacterEsymmRootsCharpoly
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.MultisetPowerSumNewtonIdentity
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsCharacterBrauerLiftAbelianByPrimePower
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.OneMemClosureInducedCentralByPrimePower
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.MatrixTraceIffIsCharacterOverSubfieldComplexStatement
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.RootsCharpolyPowEqMapPowStatement
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsCharacterEsymmRootsCharpoly
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.MultisetPowerSumNewtonIdentity
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.IsCharacterBrauerLiftAbelianByPrimePower
+
+@[expose] public section
+
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI
 namespace GlobalTheory.CuspGL
 
@@ -56,7 +61,7 @@ private theorem exists_p_regular_split_of_normal_sylow_commute (E : Type) [Group
     have hs : ((h : E))⁻¹ * g ∈ (P : Subgroup E) := by
       have := QuotientGroup.eq.1 hq.symm
       exact this
-    obtain ⟨m, hm⟩ := P.2 ⟨_, hs⟩
+    obtain ⟨m, hm⟩ := P.isPGroup ⟨_, hs⟩
     refine ⟨((h : E))⁻¹ * g, m, ?_, ?_, ?_⟩
     · simp [h]
     · apply hcomm _ _ hs
@@ -94,7 +99,7 @@ private theorem exists_p_regular_split_of_pow_mem_center (E : Type) [Group E] [F
     exact (Subgroup.mem_center_iff.1 this x).symm
   · have hPc : ∀ x ∈ (P : Subgroup E), x ∈ Subgroup.center E := by
       intro x hx
-      obtain ⟨a, ha⟩ := P.2 ⟨x, hx⟩
+      obtain ⟨a, ha⟩ := P.isPGroup ⟨x, hx⟩
       have ha' : x ^ p ^ a = 1 := by simpa using congrArg Subtype.val ha
       apply hcen
       exact Nat.Coprime.coprime_dvd_right (orderOf_dvd_of_pow_eq_one ha')
@@ -119,7 +124,7 @@ private theorem powerSum_roots_charpoly_complex_mem_virt (G : Type) [Group G] [F
       _root_.GlobalTheory.BI.isChar_mem_virt_complex (_root_.GlobalTheory.BI.isChar_one ℂ ℂ G)
     have := zsmul_mem h1 c
     convert this using 1
-    funext g
+    ext x
     simp
   induction r using Nat.strong_induction_on with
   | _ r ih =>
@@ -208,8 +213,8 @@ private theorem rootSum_charpoly_mem_virt_of_pow_mem_center (F : Type) [Field F]
   congr 3
   simp [ρ, Matrix.charpoly_map]
 
-open Polynomial in
 
+open Polynomial in
 theorem _root_.GlobalTheory.CuspGL.rootSum_charpoly_mem_virt (F : Type) [Field F] [Finite F] (θ : AlgebraicClosure F →* ℂ)
     (hθ : ∀ x y : AlgebraicClosure F, x ≠ 0 → y ≠ 0 → θ x = θ y → x = y) (n k : ℕ) :
     (fun x : GL (Fin n) F => _root_.GlobalTheory.CuspGL.rootSum θ k (Matrix.charpoly (x : Matrix (Fin n) (Fin n) F)))

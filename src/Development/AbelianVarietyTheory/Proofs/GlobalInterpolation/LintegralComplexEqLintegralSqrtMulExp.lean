@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ImageSqIoi
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ImageSqIoi
+
+@[expose] public section
+
 open MeasureTheory
 
 namespace GlobalTheory

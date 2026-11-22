@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.CartanFactorisation.SpanOrbitStab
+module
+
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.SpanOrbitStab
+
+@[expose] public section
 
 noncomputable section
 

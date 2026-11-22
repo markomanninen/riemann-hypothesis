@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.EndoZInstance
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.Taylor
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.TaylorWp
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.TaylorSigma
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.EndoZInstance
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.Taylor
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.TaylorWp
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.TaylorSigma
+
+@[expose] public section
 
 noncomputable section
 open Filter Topology
@@ -12,27 +16,19 @@ namespace Formalism.L2.Th1.F
 namespace ThetaZeroTaylorLemmas
 
 open PowerSeries in
-lemma derivative_prim (f : PowerSeries ℂ) : derivative ℂ (B.prim f) = f := B.dz_prim f
+lemma derivative_prim (f : PowerSeries ℂ) : derivative (B.prim f) = f := B.dz_prim f
+
 
 open PowerSeries in
-
 lemma sigS_add_const (Q : PowerSeries ℂ) (s : ℂ) :
     B.sigS (Q + C s) = -B.prim (B.prim Q) + -(C (s / 2) * X ^ 2) := by
-  have h1 : derivative ℂ (C (s / 2) * X ^ 2 : PowerSeries ℂ) = C s * X := by
-    have hs : (C s : PowerSeries ℂ) = C (s / 2) * 2 := by
-      rw [show (2 : PowerSeries ℂ) = C 2 from (map_ofNat C 2).symm, ← map_mul]
-      congr 1
-      ring
-    rw [Derivation.leibniz, derivative_C, Derivation.leibniz_pow, derivative_X, hs]
-    simp only [smul_eq_mul, nsmul_eq_mul, mul_zero, add_zero, mul_one, Nat.cast_ofNat]
-    ring
-  have h2 : derivative ℂ (C s * X : PowerSeries ℂ) = C s := by
-    rw [Derivation.leibniz, derivative_C, derivative_X]
-    simp
+  have h1 : derivative (C (s / 2) * X ^ 2 : PowerSeries ℂ) = C s * X := by
+    rw [derivative_C_mul_X_sq, show s / 2 * 2 = s by ring]
+  have h2 : derivative (C s * X : PowerSeries ℂ) = C s := derivative_C_mul_X s
   refine derivative.ext (derivative.ext ?_ ?_) ?_
-  · rw [B.sigS, map_neg, map_neg, derivative_prim, derivative_prim, map_add, map_add, map_neg,
+  · rw [B.sigS, map_neg, map_neg, derivative_prim, derivative_prim, map_add (f := _), map_add (f := _), map_neg,
       map_neg, map_neg, map_neg, derivative_prim, derivative_prim, h1, h2, neg_add]
-  · rw [B.sigS, map_neg, map_neg, derivative_prim, map_add, map_neg, map_neg, derivative_prim, h1]
+  · rw [B.sigS, map_neg, map_neg, derivative_prim, map_add (f := _), map_neg, map_neg, derivative_prim, h1]
     simp [B.constantCoeff_prim]
   · simp [B.sigS, B.constantCoeff_prim]
 
@@ -84,8 +80,8 @@ lemma ode_v (L : PeriodPair) {t : ℂ} (ht : t ∉ L.lattice) (h2t : 2 * t ∈ L
 
 end ThetaZeroTaylorLemmas
 
-open ThetaZeroTaylorLemmas TaylorWp in
 
+open ThetaZeroTaylorLemmas TaylorWp PowerSeries in
 theorem taylor_even_theta : TaylorTh0 := by
   intro L ω₀ hω ht
   have hr := taylor_ring
@@ -98,14 +94,15 @@ theorem taylor_even_theta : TaylorTh0 := by
   obtain ⟨hdiff, h0, -⟩ := th0Basic L ω₀ hω ht
   have hθ : AnalyticAt ℂ (th0 L t) 0 := hdiff.analyticAt 0
   have hv : AnalyticAt ℂ (v L t) 0 := analyticAt_v L ht
-  have eU : PowerSeries.derivative ℂ (taylor0 (th0 L t)) = taylor0 (v L t) * taylor0 (th0 L t) := by
-    rw [← Taylor.taylor0_deriv, ← Taylor.taylor0_mul hv hθ]
+  have htd := taylor_deriv.1
+  have eU : PowerSeries.derivative (R := ℂ) (taylor0 (th0 L t)) = taylor0 (v L t) * taylor0 (th0 L t) := by
+    rw [← htd _ hθ, ← Taylor.taylor0_mul hv hθ]
     exact Taylor.taylor0_congr (ode_th L hω ht)
   have Tid := T.id hr
   have Tzz := T.mul hr Tid Tid
   have Tp : T (L.weierstrassPExcept 0) (pSeries L) := ⟨TaylorSigmaUniqueness.analyticAt_pExcept L, rfl⟩
-  have Tdv : T (deriv (v L t)) (PowerSeries.derivative ℂ (taylor0 (v L t))) :=
-    ⟨hv.deriv, Taylor.taylor0_deriv _⟩
+  have Tdv : T (deriv (v L t)) (PowerSeries.derivative (R := ℂ) (taylor0 (v L t))) :=
+    ⟨hv.deriv, htd _ hv⟩
   have TL := T.mul hr (T.add hr (T.add hr (T.const hr 1) (T.mul hr Tzz Tp)) (T.mul hr (T.const hr (-e)) Tzz))
     (T.add hr (T.add hr Tdv (T.const hr e)) (T.const hr (s2 L)))
   have TR := T.mul hr (T.const hr (-κ)) Tzz
@@ -117,18 +114,46 @@ theorem taylor_even_theta : TaylorTh0 := by
       (1 + PowerSeries.X ^ 2 * P - PowerSeries.C e * PowerSeries.X ^ 2 : PowerSeries ℂ) ≠ 0 := by
     simp
   have hD := PowerSeries.mul_inv_cancel _ hD0
-  have eV : PowerSeries.derivative ℂ V
+  have eV : PowerSeries.derivative (R := ℂ) V
       = -(PowerSeries.C e + PowerSeries.C κ * B.wOf e P + PowerSeries.C (s2 L)) := by
     rw [B.wOf]
     generalize (1 + PowerSeries.X ^ 2 * P - PowerSeries.C e * PowerSeries.X ^ 2 : PowerSeries ℂ)⁻¹ = Di
       at hD ⊢
     linear_combination Di * hE
-      - (PowerSeries.derivative ℂ V + PowerSeries.C e + PowerSeries.C (s2 L)) * hD
-  have key := TaylorSigmaUniqueness.formal_unique
-    (PowerSeries.C e + PowerSeries.C κ * B.wOf e P + PowerSeries.C (s2 L)) (taylor0 (th0 L t)) V
-    (by rw [eV, mul_neg]) (by rw [TaylorSigmaUniqueness.constantCoeff_taylor0, v_zero])
-    (by rw [eU]) (by rw [TaylorSigmaUniqueness.constantCoeff_taylor0, h0])
-  rw [key, sigS_add_const, B.sigma1, B.sigmaOneSeries]
+      - (PowerSeries.derivative (R := ℂ) V + PowerSeries.C e + PowerSeries.C (s2 L)) * hD
+  let Q := PowerSeries.C e + PowerSeries.C κ * B.wOf e P + PowerSeries.C (s2 L)
+  let U := taylor0 (th0 L t)
+  have key : U = B.fExp (B.sigS Q) := by
+    have hV0 : constantCoeff V = 0 := by
+      rw [hV, TaylorSigmaUniqueness.constantCoeff_taylor0, v_zero]
+    have hU0 : constantCoeff U = 1 := by
+      rw [show U = taylor0 (th0 L t) from rfl, TaylorSigmaUniqueness.constantCoeff_taylor0, h0]
+    have hVp : V = -B.prim Q := by
+      apply derivative.ext
+      · rw [eV, map_neg, derivative_prim]
+      · simp [hV0, B.constantCoeff_prim]
+    have hS0 : constantCoeff (B.sigS Q) = 0 := by
+      simp [B.sigS, B.constantCoeff_prim]
+    have hS0' : constantCoeff (-B.sigS Q) = 0 := by simp [hS0]
+    have hSd : derivative (B.sigS Q) = V := by
+      rw [B.sigS, map_neg, derivative_prim, hVp]
+    have hprod : U * (C.mvExp (-B.sigS Q) : PowerSeries ℂ) = 1 := by
+      apply derivative.ext
+      · rw [Derivation.leibniz, C.derivative_mvExp hS0', map_neg, hSd, show derivative U = V * U from eU,
+          Derivation.map_one_eq_zero]
+        simp only [smul_eq_mul]
+        ring
+      · rw [map_mul, hU0, map_one, one_mul]
+        exact C.constantCoeff_mvExp hS0'
+    calc
+      U = U * ((C.mvExp (-B.sigS Q) : PowerSeries ℂ) * C.mvExp (B.sigS Q)) := by
+        rw [C.mvExp_neg hS0, mul_one]
+      _ = C.mvExp (B.sigS Q) := by rw [← mul_assoc, hprod, one_mul]
+      _ = B.fExp (B.sigS Q) := rfl
+  change U = _
+  rw [key]
+  dsimp only [Q]
+  rw [sigS_add_const, B.sigma1, B.sigmaOneSeries]
   refine B.fExp_add ?_ ?_
   · have : PowerSeries.constantCoeff
         (-B.prim (B.prim (PowerSeries.C e + PowerSeries.C κ * B.wOf e P)) : PowerSeries ℂ) = 0 := by

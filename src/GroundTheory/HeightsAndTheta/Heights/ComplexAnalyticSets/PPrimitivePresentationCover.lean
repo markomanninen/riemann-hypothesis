@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StPrimitivePresentationCover
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSeparateWeierstrassDivision
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PevEqZeroOfPresentation
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StPrimitivePresentationCover
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSeparateWeierstrassDivision
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PevEqZeroOfPresentation
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -55,7 +60,8 @@ theorem PrimitivePresentationCover.proof (hdiv : SeparateWeierstrassDivision.Sta
     C (δ' ^ (M - Mm m)) * ∑ j : Fin N, C (⟨a m j, ha m j⟩ : analyticSubring (A w)) * X ^ (j : ℕ)
   have hqp : ∀ m y t, pev y t (qp m) = δ y ^ (M - Mm m) * ∑ j : Fin N, a m j y * t ^ (j : ℕ) := by
     intro m y t
-    simp [qp, δ', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [qp, δ', map_sum]
   have hQan : ∀ m, AnalyticAt ℂ (fun z => pev (A z) (ℓ z) (qp m)) w := fun m =>
     analyticAt_pev_comp w A ℓ (qp m)
   have hDan : ∀ m, AnalyticAt ℂ (fun z => δ (A z) ^ M * z m) w := fun m => (hδA.pow M).mul (hcoord m)
@@ -75,7 +81,8 @@ theorem PrimitivePresentationCover.proof (hdiv : SeparateWeierstrassDivision.Sta
   have hpevH1 : ∀ m y t, pev y t (H1 m) = pev y t (qp m) ^ n m +
       ∑ j : Fin (n m), b m j y * δ y ^ (M * (n m - j)) * pev y t (qp m) ^ (j : ℕ) := by
     intro m y t
-    simp [H1, δ', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [H1, δ', map_sum]
   have hE1 : ∀ m, ∀ᶠ y in 𝓝 (A w), ∀ t : ℂ, t ^ N + ∑ j, c j y * t ^ (j : ℕ) = 0 →
       pev y t (H1 m) = 0 := by
     intro m
@@ -101,7 +108,8 @@ theorem PrimitivePresentationCover.proof (hdiv : SeparateWeierstrassDivision.Sta
   have hpevHlin : ∀ lam L y t, pev y t (Hlin lam L) =
       ∑ m, lam (ev m) * pev y t (qp m) - δ y ^ M * pev y t L := by
     intro lam L y t
-    simp [Hlin, δ', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Hlin, δ', map_sum]
   have hElin : ∀ (lam : (σ → ℂ) →L[ℂ] ℂ) (L : (analyticSubring (A w))[X]),
       (∀ z, pev (A z) (ℓ z) L = lam z) →
       ∀ᶠ y in 𝓝 (A w), ∀ t : ℂ, t ^ N + ∑ j, c j y * t ^ (j : ℕ) = 0 → pev y t (Hlin lam L) = 0 := by
@@ -133,7 +141,8 @@ theorem PrimitivePresentationCover.proof (hdiv : SeparateWeierstrassDivision.Sta
   have hpevH4 : ∀ i y t, pev y t (H4 i) = ∑ α : (m : σ) → Fin (n m),
       r i α y * δ y ^ (M * (Ntot - ∑ m, (α m : ℕ))) * ∏ m, pev y t (qp m) ^ (α m : ℕ) := by
     intro i y t
-    simp [H4, δ', map_sum, map_prod]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [H4, δ', map_sum, map_prod]
   have hrem : ∀ i (y : Fin d → ℂ) (e : ℂ) (x : σ → ℂ), ∑ α : (m : σ) → Fin (n m),
       r i α y * e ^ (M * (Ntot - ∑ m, (α m : ℕ))) * ∏ m, (e ^ M * x m) ^ (α m : ℕ) =
       e ^ (M * Ntot) * ∑ α : (m : σ) → Fin (n m), r i α y * ∏ m, x m ^ (α m : ℕ) := by

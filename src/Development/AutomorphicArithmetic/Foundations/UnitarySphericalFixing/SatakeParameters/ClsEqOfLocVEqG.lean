@@ -1,9 +1,24 @@
-import Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.AbsCentral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValuationLtOneIffTendsto
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ConjugateCompletionIso
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PointsEqualEigenMatch
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.OrdinaryJacquetModules.ConjTor
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ClBasic
+module
+
+public import Development.AutomorphicArithmetic.Foundations.UnitarySphericalFixing.SatakeParameters.AbsCentral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ValuationLtOneIffTendsto
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTypeGroupBlockLift
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.GoodIdempotentFixesOfOnlySeriesOfLabelActs
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroInertia
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceLocalComponentExistsUniqueClassStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplitPlaceGoodSignature
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsSplitPlaceEqFixedTypePrimePlace
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ConjugateSplitPlaceEqConjugatePlaceAndEmbedding
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsLevelCharacterAtConjugateSplitPlace
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EquivContra
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EqOrIsConjPlaceOfOverSplitPlace
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PointsEqualEigenMatch
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.OrdinaryJacquetModules.ConjTor
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ClBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,9 +26,6 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formal
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 namespace UpperTheory.One.M
-
-open private hasSupport_contra from Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.OrdinaryJacquetModules.ConjTor
-open private goodCusp_dualCl from Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.ClBasic
 
 section
 
@@ -23,59 +35,43 @@ theorem good_contra {n : ℕ} (π π' : IrrRep (GL (Fin n) k)) (e : Nonempty (π
     Good (cls π') := by
   obtain ⟨s, h1, h2⟩ := hg
   obtain ⟨φ⟩ := e
+  have hA := CompanionTheory.Tls2.BZGL.irreducibleAdmissibleGL_top
   have h3 : HasSupport π.ρ s := h1.of_equiv (equivRep π).symm
-  refine ⟨s.map Zc.dualCl, ((hasSupport_contra h3).of_equiv φ.symm).of_equiv (equivRep π'), fun y hy => ?_⟩
+  have hdual : HasSupport (contra π.ρ) (s.map Zc.dualCl) := by
+    have hsm := h3.isSmooth
+    obtain ⟨m, x, hs, hirr, hcusp, P, hsub⟩ := h3
+    have hcs : IsCuspSupport (contra π.ρ) (fun a => (x a).1) (fun a => contra (x a).rep) := by
+      refine ⟨GlobalTheory.ContraRefl.contra_isIrreducible (GlobalTheory.SqIntUnit.compactOpen_basis k n)
+        (hA k n π.V π.ρ hsm hirr) hirr, fun a => ?_, P, ?_⟩
+      · have hc := (GlobalTheory.CompanionTheory.DualCusp.dualCl_isCusp hA (x a)
+          ⟨(hcusp a).1, (hcusp a).2.2⟩).1
+        rw [GlobalTheory.CompanionTheory.ZcDual.dualCl_eq hA, IrrGL.isCusp_of] at hc
+        exact ⟨(hcusp a).1, GlobalTheory.CompanionTheory.ContraProd.contra_rep_isIrreducible hA (x a), hc.2⟩
+      · have hsub' := GlobalTheory.CompanionTheory.ContraSub.main k n _ _ π.ρ
+          (parInd P (piTensor fun a => (x a).rep)) hsm (isSmooth_parInd P _) hsub
+        obtain ⟨E⟩ := GlobalTheory.CompanionTheory.ContraProd.parInd_equiv_contra
+          (σ := piTensor fun a => contra (x a).rep) (ρ := piTensor fun a => (x a).rep) P
+          (isSmooth_piTensor fun a => (x a).2.rep.smooth)
+          (GlobalTheory.CompanionTheory.ContraProd.contra_piTensor_rep hA x)
+        exact hsub'.trans (IsSubquotient.of_surjective E.toIntertwiningMap E.toLinearEquiv.surjective)
+    rw [← hs, Multiset.map_map]
+    simpa only [Function.comp_apply, GlobalTheory.CompanionTheory.ZcDual.dualCl_eq hA] using
+      hasSupport_of_isCuspSupport hcs
+  refine ⟨s.map Zc.dualCl, (hdual.of_equiv φ.symm).of_equiv (equivRep π'), fun y hy => ?_⟩
   obtain ⟨z, hz, rfl⟩ := Multiset.mem_map.1 hy
-  exact goodCusp_dualCl (h2 z hz)
+  have hc := h2 z hz
+  rcases hc with h | ⟨⟨p, hp, i, hi⟩, _⟩
+  · apply Or.inl
+    rw [GlobalTheory.CompanionTheory.ZcDual.dualCl_eq hA z]
+    exact h
+  · let : CharZero k := charZero_of_injective_ringHom (f := i.toRingHom) i.injective
+    have hd : DualCl z (Zc.dualCl z) :=
+      ⟨z.1, z.2.rep, ⟨_, contra z.rep, isSmooth_contra z.rep,
+        GlobalTheory.CompanionTheory.ZcDual.isIrreducible_contra hA _ z.2.rep.smooth z.2.rep.irr⟩,
+        congrArg (Sigma.mk z.1) z.2.cl_rep.symm,
+        GlobalTheory.CompanionTheory.ZcDual.dualCl_eq hA z, ⟨.refl _⟩⟩
+    exact ((clBasic k z).2.2.2.2.2.2 _ hd).2.2.2.1.mpr (h2 z hz)
 
 end
-
-theorem tw_eqG {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
-    {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} {h : IsPlaceOver A w}
-    {a : Weil h →* (w.adicCompletion E)ˣ} {ha : IsLocalArtin h a} {ε : EpsFamily A} {rc : IrrGL (w.adicCompletion E) → WD h}
-    (H : Laws a ha ε rc) (x : IrrGL (w.adicCompletion E)) (χ : (w.adicCompletion E)ˣ →* ℂˣ) (hχ : IsSmoothChar χ) (hg : Good x) :
-    rc (x.tw χ hχ) = (rc x).lpTwist (χ.comp a) (ha.smooth hχ) := by
-  rw [Old.twist H x χ hχ hg, H.one, lpChar_lpOfChar]
-
-theorem cls_eq_of_locV_eqG (hL : GlobalTheory.Published.LocalLanglandsGL) (D : D7) (P : Pin hL D) (i : D.nd.Loc) (Q Q' : D.naut.AV i)
-    (sp : SplitPlace D.host.E) (σ σ' : GlobalTheory.SmGL.IrrRep (GL (Fin D.R.nV) (sp.w.adicCompletion D.host.E)))
-    (hσ : IsLocS (P.H.av.S i Q) sp σ) (hσ' : IsLocS (P.H.av.S i Q') sp σ')
-    (he : D.naut.locV i Q sp.w = D.naut.locV i Q' sp.w) (hg : Good (GlobalTheory.LocLanglands.cls σ')) :
-    GlobalTheory.LocLanglands.cls σ = GlobalTheory.LocLanglands.cls σ' := by
-  have h3 := P.au (D.nd.j i) (D.nd.j_range i).1 (D.nd.j_range i).2 (P.H.av.rep i Q) sp σ hσ
-  have h3' := P.au (D.nd.j i) (D.nd.j_range i).1 (D.nd.j_range i).2 (P.H.av.rep i Q') sp σ' hσ'
-  rw [← P.H.emb i Q, ← D.nbc.embAV_loc i Q sp.w] at h3
-  rw [← P.H.emb i Q', ← D.nbc.embAV_loc i Q' sp.w] at h3'
-  rw [he] at h3
-  obtain ⟨a, ha, ε, -, hlaws⟩ := GlobalTheory.CuspRep.ParLaws.isRec_locRec hL (D.nd.plOm.2 sp.w)
-  exact Old.inj hlaws _ _ hg (h3.symm.trans h3')
-
-theorem conjDualParamG : GlobalTheory.NRows.Hypotheses₂ → ∀ (hL : GlobalTheory.Published.LocalLanglandsGL) (D : D7) (w w' : PlE D.host) (c : D.nd.Om ≃+* D.nd.Om),
-    (∀ x : D.host.E, c (algebraMap D.host.E D.nd.Om x) = algebraMap D.host.E D.nd.Om (D.host.conj x)) →
-    (∀ y, y ∈ D.nd.plOm.1 w ↔ c y ∈ D.nd.plOm.1 w') →
-    ∀ (κ : w.adicCompletion D.host.E ≃+* w'.adicCompletion D.host.E), Continuous κ →
-    (∀ x : D.host.E, κ (algebraMap D.host.E _ x) = algebraMap D.host.E _ (D.host.conj x)) →
-    ∀ (n : ℕ) (σ : GlobalTheory.SmGL.IrrRep (GL (Fin n) (w.adicCompletion D.host.E)))
-      (σ' : GlobalTheory.SmGL.IrrRep (GL (Fin n) (w'.adicCompletion D.host.E))) (e : σ.V ≃ₗ[ℂ] σ'.V),
-    (∀ g a, e (σ.ρ (GlobalTheory.TypeTame.invTranspose n g) a) = σ'.ρ (Matrix.GeneralLinearGroup.map κ.toRingHom g) (e a)) →
-    Good (GlobalTheory.LocLanglands.cls σ) →
-    ∃ (b : GlobalTheory.WeilDeligne.WDRep (D.nd.plOm.2 w) (Fin n → ℂ)) (b' : GlobalTheory.WeilDeligne.WDRep (D.nd.plOm.2 w') (Fin n → ℂ)),
-      GlobalTheory.WeilDeligne.WD.mk b = (GlobalTheory.CuspRep.ParLaws.locRec hL (D.nd.plOm.2 w) (GlobalTheory.LocLanglands.cls σ)).lpDual ∧
-      GlobalTheory.WeilDeligne.WD.mk b' = GlobalTheory.CuspRep.ParLaws.locRec hL (D.nd.plOm.2 w') (GlobalTheory.LocLanglands.cls σ') ∧
-      b.N = b'.N ∧ ∀ (τ : GlobalTheory.WeilDeligne.Weil (D.nd.plOm.2 w)) (τ' : GlobalTheory.WeilDeligne.Weil (D.nd.plOm.2 w')),
-        (∀ z, c ((τ : GE D.nd) z) = (τ' : GE D.nd) (c z)) → b.ρ τ = b'.ρ τ' := by
-  intro hP hL D w w' c hc hA κ hκ hκE n σ σ' e he hg
-  let π₁ : GlobalTheory.SmGL.IrrRep (GL (Fin n) (w.adicCompletion D.host.E)) :=
-    ⟨σ.V, σ.ρ.comp (GlobalTheory.TypeTame.invTranspose n),
-      fun v => (σ.smooth v).preimage (GlobalTheory.TypeTame.continuous_invTranspose n),
-      GlobalTheory.GelfandKazhdan.isIrreducible_comp _ (fun g => ⟨_, GlobalTheory.TypeTame.invTranspose_invTranspose n g⟩) σ.irr⟩
-  have ha : GlobalTheory.PRep.IsAdmissible σ.ρ := (hP.bz _).1 (Fin n) σ.V σ.ρ σ.smooth σ.irr
-  have hE := GlobalTheory.GelfandKazhdan.equiv_contra _ n σ.V σ.ρ ha σ.irr
-  have hr := GlobalTheory.CuspRep.ParLaws.isRec_locRec hL (D.nd.plOm.2 w)
-  obtain ⟨b, b', h1, h2, h3, h4⟩ := Old.field hL hr
-    (GlobalTheory.CuspRep.ParLaws.isRec_locRec hL (D.nd.plOm.2 w')) c (D.host.conj : D.host.E →+* D.host.E) κ
-    (fun z => (hA z).symm) hc hκ hκE n π₁ σ' e he (good_contra σ π₁ hE hg)
-  obtain ⟨_, _, _, -, H⟩ := hr
-  exact ⟨b, b', h1.trans (Old.dual H n σ π₁ hg hE), h2, h3, h4⟩
 
 end UpperTheory.One.M

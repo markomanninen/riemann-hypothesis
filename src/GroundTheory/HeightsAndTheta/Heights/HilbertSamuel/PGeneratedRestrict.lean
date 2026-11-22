@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGeneratedRestrict
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGeneratedRestrict
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -35,7 +40,7 @@ theorem locMap_cellRes (g : M →ₗ[MRingOver S ι] N) (J I : ∀ k, Finset (ι
     | h m t =>
       rw [GenTwistGenerated.cellRes_mk h, locMap_mk, locMap_mk, GenTwistGenerated.cellRes_mk h]
   · unfold KH.cellRes
-    rw [dif_neg h, dif_neg h]
+    rw [dite_eq_right h, dite_eq_right h]
     simp
 
 end General
@@ -79,7 +84,8 @@ theorem cechD_cechMap {M N : Type*} [AddCommGroup M] [Module (MRingOver S ι) M]
     [Module (MRingOver S ι) N] (g : M →ₗ[MRingOver S ι] N) (n : ℕ) (f : KH.CechC S ι M n) :
     KH.cechD S ι N n (KH.cechMap S ι g n f) = KH.cechMap S ι g (n + 1) (KH.cechD S ι M n f) := by
   funext I
-  simp only [KH.cechD, KH.cechMap, LinearMap.pi_apply, LinearMap.comp_apply, LinearMap.proj_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [KH.cechD, KH.cechMap, LinearMap.pi_apply, LinearMap.comp_apply, LinearMap.proj_apply,
     LinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun i _ => ?_
   split_ifs with h
@@ -113,8 +119,8 @@ theorem locMap_mem_locPart (hVW : V ≤ W) (T : Submonoid (MRingOver S ι)) {c :
 
 end GeneratedRestrict
 
-open GeneratedRestrict in
 
+open GeneratedRestrict in
 theorem GeneratedRestrict.proof : GeneratedRestrict.Statement := by
   intro S _ K _ _ ι _ _ V W a hVW hV I
   obtain ⟨r, z, u, hz, hu, h1⟩ := hV I
@@ -125,7 +131,8 @@ theorem GeneratedRestrict.proof : GeneratedRestrict.Statement := by
     · exact locMap_mem_locPart hVW _ ((Submodule.mem_pi.mp hzc) J (Set.mem_univ _))
     · rw [cechD_cechMap, LinearMap.mem_ker.mp hzd, map_zero]
   · have hc : ∀ j, KH.cechMap S ι (quotMap hVW) 0 (z j) I = locMap _ (quotMap hVW) (z j I) := fun j => rfl
-    simp only [hc, ← locMap_mul, ← map_sum, h1, locMap_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hc, ← locMap_mul, ← map_sum, h1, locMap_one]
 
 end
 

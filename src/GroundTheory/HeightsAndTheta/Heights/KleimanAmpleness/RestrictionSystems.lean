@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RestrictionLocal
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RestrictionPowers
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RestrictionLocal
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.RestrictionPowers
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -44,7 +49,7 @@ theorem mem_redSys_iff {P : SubSystem k x Ω} {γ : Ω} (hP : RedGood hxy P γ) 
       refine ⟨q + q', Submodule.add_mem _ hq hq', ?_⟩
       rw [add_div]; exact (locAt_add hsp (hP I q hq) (hP I q' hq')).2
     · rintro c u _ ⟨q, hq, rfl⟩
-      obtain ⟨a, ha, hac⟩ := exists_redAt_eq hsp hxy I c.2
+      obtain ⟨a, ha, hac⟩ := exists_redAt_eq (k := k) (x := x) (y := y) hsp hxy I c.2
       refine ⟨a * q, ?_, ?_⟩
       · have := Submodule.smul_mem _ (⟨a, ha⟩ : chartRing k x (liftChart hxy I)) hq
         rwa [chartRing_smul_def] at this
@@ -110,7 +115,7 @@ theorem redSys_twistSys_zero : redSys hxy (twistSys k x 0) 1 = twistSys k y 0 :=
     exact res_mem_twistMod_zero_of_mem_chartRing
       (chartRing_sub_locAt hsp hxy I (res_mem_chartRing_of_mem_twistMod_zero hq)).2
   · intro z hz
-    obtain ⟨a, ha, rfl⟩ := exists_redAt_eq hsp hxy I (res_mem_chartRing_of_mem_twistMod_zero hz)
+    obtain ⟨a, ha, rfl⟩ := exists_redAt_eq (k := k) (x := x) (y := y) hsp hxy I (res_mem_chartRing_of_mem_twistMod_zero hz)
     exact Submodule.subset_span ⟨a, res_mem_twistMod_zero_of_mem_chartRing ha, by
       change redAt k x y (a / 1) = redAt k x y a
       rw [div_one]⟩

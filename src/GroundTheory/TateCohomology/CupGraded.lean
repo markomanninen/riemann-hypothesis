@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.TateCohomology.CupProduct
-import GroundTheory.TateCohomology.CochainReverse
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.CupProduct
+public import GroundTheory.TateCohomology.CochainReverse
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

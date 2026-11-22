@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StComponentsGenericCount
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PComponentsPairPoly
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StComponentsGenericCount
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PComponentsPairPoly
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

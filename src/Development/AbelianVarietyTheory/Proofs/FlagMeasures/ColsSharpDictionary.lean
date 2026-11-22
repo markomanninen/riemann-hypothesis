@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LevelMatchIff
+module
+
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LevelMatchIff
+
+@[expose] public section
 
 noncomputable section
 

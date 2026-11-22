@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbAApply
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsValuedHeckeCharRamified
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbAApply
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsValuedHeckeCharRamified
+
+@[expose] public section
+
 open NumberField MeasureTheory
 open scoped RealInnerProductSpace FourierTransform
 
@@ -11,7 +16,7 @@ namespace GlobalTheory.HeckePoisson
 open GlobalTheory.CMVal InfinitePlace ComplexConjugate
 open scoped nonZeroDivisors
 
-variable {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] {I : Type} [Fintype I]
+variable {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] {I : Type} [Fintype I]
 
 def toMixed {φ : I → K →+* ℂ} (h : IsCMType φ) : EuclideanSpace ℂ I ≃ₗ[ℝ] mixedEmbedding.mixedSpace K := by
   classical

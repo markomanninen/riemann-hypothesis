@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -20,7 +24,7 @@ theorem exists_mul_invol_eq_of_fixed (k : Type) [Field k] [Finite k] (τ : k →
       have eb' : τ (β' : k) = β' := β'.2
       have h0 : (α : k) + β * b = α' + β' * b := h
       have h1 : τ ((α : k) + β * b) = τ ((α' : k) + β' * b) := by rw [h0]
-      rw [map_add, map_mul, map_add, map_mul, ea, eb, ea', eb'] at h1
+      rw [map_add (f := _), map_mul, map_add (f := _), map_mul, ea, eb, ea', eb'] at h1
       have hβ : (β : k) = β' := by
         have h2 : ((β : k) - β') * (b - τ b) = 0 := by linear_combination h0 - h1
         rcases mul_eq_zero.mp h2 with h3 | h3

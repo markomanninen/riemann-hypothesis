@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.ColimLift
 
@@ -71,6 +75,6 @@ theorem exists_lift_of_surj_ker
     simpa using this
   · intro l₁ l₂
     obtain ⟨n, a, b, rfl, rfl⟩ := two l₁ l₂
-    rw [← map_add, hz, hz, hz, map_add]
+    rw [← map_add (f := _), hz, hz, hz, map_add (f := _)]
 
 end GlobalTheory.CompanionTheory.ColimLift

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.BlowOfBl
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.BlowOfBl
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory AlgebraicGeometry
@@ -53,8 +57,9 @@ private theorem prod_first (O : Type) [CommRing O] (D : ℕ) :
   rw [h, Finset.prod_singleton]
 
 private def modelEquiv (O : Type) [CommRing O] (ϖ : O) (D : ℕ) :
-    (MvPolynomial (Fin (D + 1)) O ⧸ Ideal.span {(∏ i ∈ Finset.univ.filter (fun i : Fin (D + 1) => (i : ℕ) < 1),
-      MvPolynomial.X i) - MvPolynomial.C ϖ}) ≃+* MvPolynomial (Fin D) O :=
+    (MvPolynomial (Fin (D + 1)) O ⧸ Ideal.span (Set.singleton
+      ((∏ i ∈ Finset.univ.filter (fun i : Fin (D + 1) => (i : ℕ) < 1),
+        MvPolynomial.X i) - MvPolynomial.C ϖ))) ≃+* MvPolynomial (Fin D) O :=
   RingEquiv.ofRingHom
     (Ideal.Quotient.lift _ (subst O ϖ D) (by
       intro a ha

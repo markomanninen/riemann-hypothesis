@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LatIntZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LatIntZero
+
+@[expose] public section
 
 open GlobalTheory.MomOne GlobalTheory.MomN PowerSeries
 open scoped ComplexConjugate
@@ -37,7 +41,7 @@ theorem pullCLM_apply {q : ℕ} [Fact q.Prime] {X Y : Type} [TopologicalSpace X]
 
 def monoC {q : ℕ} [Fact q.Prime] {κ : Type} {k : ℕ} (σ : Fin k → κ) : C(κ → ℤ_[q], ℂ_[q]) :=
   ⟨fun x => ∏ l, zc (x (σ l)), by
-    refine continuous_finset_prod _ fun l _ => zc_continuous'.comp (continuous_apply (σ l))⟩
+    exact continuous_finsetProd _ fun l _ => zc_continuous'.comp (continuous_apply (σ l))⟩
 
 theorem momInt_push (q : ℕ) [Fact q.Prime] (ι : ℂ ≃+* ℂ_[q]) (V : Type) [NormedAddCommGroup V] [NormedSpace ℂ V]
     (κ κ' : Type) [Fintype κ] [Fintype κ'] (v : κ → V) (w : κ' → V) (c : κ' → κ → ℂ) (a : κ' → κ → ℤ_[q])
@@ -55,16 +59,19 @@ theorem momInt_push (q : ℕ) [Fact q.Prime] (ι : ℂ ≃+* ℂ_[q]) (V : Type)
       rw [pullCLM_apply, ContinuousMap.comp_apply, hf]
       simp only [ContinuousMap.coe_sum, ContinuousMap.coe_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul,
         monoC, ContinuousMap.coe_mk, linZ]
-      simp only [zc_eq_zcHom, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [zc_eq_zcHom, map_sum, map_mul]
       rw [Finset.prod_univ_sum]
       simp [Fintype.piFinset_univ, Finset.prod_mul_distrib]
     have hd : iteratedFDeriv ℂ k G 0 (fun l => w (j l)) =
         ∑ σ : Fin k → κ, (∏ l, c (j l) (σ l)) • iteratedFDeriv ℂ k G 0 (fun l => v (σ l)) := by
       simp only [hw]
-      rw [ContinuousMultilinearMap.map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [ContinuousMultilinearMap.map_sum]
       refine Finset.sum_congr rfl fun σ _ => ?_
       exact ContinuousMultilinearMap.map_smul_univ _ _ _
-    rw [ContinuousLinearMap.comp_apply, hfe, hd, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ContinuousLinearMap.comp_apply, hfe, hd, map_sum, map_sum]
     refine Finset.sum_congr rfl fun σ _ => ?_
     rw [smul_eq_mul, map_mul, map_prod, map_smul, smul_eq_mul, ← hm k σ (monoC σ) (fun _ => rfl)]
     simp only [hc]

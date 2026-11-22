@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NotCompactOfIdempotent
+
+@[expose] public section
 
 open GlobalTheory.RegSS Matrix
 
 namespace GlobalTheory.RegSS.Semilocal
 
-open Matrix in
 
+open Matrix in
 theorem _root_.GlobalTheory.RegSS.Semilocal.krylov_map_ringHom {A B : Type} [CommRing A] [CommRing B] (f : A →+* B) {n : Type}
     [Fintype n] [DecidableEq n] (M : Matrix n n A) (v : n → A) :
     (_root_.GlobalTheory.RegSS.krylov M v).map f = _root_.GlobalTheory.RegSS.krylov (M.map f) (f ∘ v) := by
@@ -16,8 +20,8 @@ theorem _root_.GlobalTheory.RegSS.Semilocal.krylov_map_ringHom {A B : Type} [Com
   congr 2
   exact RingHom.map_pow f.mapMatrix M _
 
-open Matrix in
 
+open Matrix in
 theorem _root_.GlobalTheory.RegSS.Semilocal.cyclicSemilocal_of_cyclicField :
     _root_.GlobalTheory.RegSS.CyclicField → _root_.GlobalTheory.RegSS.CyclicSemilocal := by
   intro hF A _ _ n _ _ M hM

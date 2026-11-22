@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RankPosOfLeaves
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RankPosOfLeaves
+
+@[expose] public section
 
 noncomputable section
 
@@ -134,7 +138,8 @@ theorem limLists : ConvStrip → ConvShift → ConvComp → LimLists := by
     by_cases h : FiniteDimensional ℂ W ∧ IsOpen (K : Set (GL (Fin M) (Af E)))
     · obtain ⟨Θ, hΘ, hb⟩ := hOm' M W h.1 K h.2
       exact ⟨Θ, hΘ, fun _ _ => hb⟩
-    · exact ⟨fun _ => ∅, fun _ => ⟨Set.finite_empty, by simp⟩, fun a b => absurd ⟨a, b⟩ h⟩
+    · exact ⟨fun _ => ∅, fun _ => ⟨Set.finite_empty, fun _ hk => False.elim hk⟩,
+        fun a b => absurd ⟨a, b⟩ h⟩
   choose Th hTh hTh' using h2
   refine ⟨fun M' => ⋃ M ∈ Set.Icc 1 N, ⋃ W ∈ Ωs M, ⋃ K ∈ Θs M, Th M W K M', ?_, ?_⟩
   · intro M'

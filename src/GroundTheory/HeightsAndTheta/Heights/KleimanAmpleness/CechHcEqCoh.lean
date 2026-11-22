@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CechHcSubsingletonOfBlock
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.DegZero
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PKHCechSES
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PKHCechDDeg
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SnapperComponentMulX
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.CechHcSubsingletonOfBij
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PQuotPartGraded
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.CechHcSubsingletonOfBlock
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.DegZero
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PKHCechSES
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PKHCechDDeg
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SnapperComponentMulX
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.CechHcSubsingletonOfBij
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PQuotPartGraded
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -58,9 +63,9 @@ theorem coh_top {M : Type} [AddCommGroup M] [Module (MRingOver F ι) M] [Module 
 
 end EulerVar
 
+
 set_option maxHeartbeats 1600000 in
 open EulerVar in
-
 theorem EulerVar.proof (hSq : KH.CechDSqStatement) (hE : EulerSES.Statement) : EulerVar.Statement := by
   classical
   intro F _ K _ _ ι _ _ V v hV hfV hfW hfU m

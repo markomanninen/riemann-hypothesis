@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.GoodXgFin
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.GoodXgFin
+
+@[expose] public section
+
 open Formalism.L2.DIV
 
 open Module
@@ -53,7 +58,8 @@ theorem classFun_char_scalar {G : Type} [Group G] [Fintype G] (e : MonoidAlgebra
     intro y
     have h2 : T * ρ y = c • ρ y := by rw [hT, smul_mul_assoc]; exact congrArg _ (LinearMap.id_comp _)
     have h3 := congrArg (LinearMap.trace ℂ (Fin n → ℂ)) h2
-    simp only [T, Finset.sum_mul, smul_mul_assoc, ← map_mul, map_sum, map_smul, smul_eq_mul] at h3
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [T, Finset.sum_mul, smul_mul_assoc, ← map_mul, map_sum, map_smul, smul_eq_mul] at h3
     simpa only [Representation.character] using h3
   have hx := htr x
   have h1' := htr 1

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingKrullDimIntegers
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.FlatImageOfOverFractionFieldOfValuationRing
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNormalProjectiveModel
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EventuallySectionAndRelAmplePowDiv
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpanFinrankMaximalIdealLeNcardOfLeSupSq
-import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.AlgStep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingKrullDimIntegers
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.FlatImageOfOverFractionFieldOfValuationRing
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNormalProjectiveModel
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EventuallySectionAndRelAmplePowDiv
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpanFinrankMaximalIdealLeNcardOfLeSupSq
+public import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.AlgStep
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -47,7 +51,7 @@ theorem ringKrullDim_adjoin_le {R S : Type} [CommRing R] [IsDomain R] [IsNoether
       | add x y _ _ hx hy =>
         obtain ⟨p, hp⟩ := hx
         obtain ⟨q, hq⟩ := hy
-        exact ⟨p + q, by rw [map_add, hp, hq]; rfl⟩
+        exact ⟨p + q, by rw [map_add (f := _), hp, hq]; rfl⟩
       | mul x y _ _ hx hy =>
         obtain ⟨p, hp⟩ := hx
         obtain ⟨q, hq⟩ := hy
@@ -71,7 +75,7 @@ theorem ringKrullDim_le_add {O A : Type} (K : Type) [CommRing O] [IsDomain O] [I
   rw [ringKrullDim_genericFibre_eq O K hd]
   obtain ⟨s, hs⟩ := exists_isTranscendenceBasis O A
   have hc : Cardinal.mk s = d := hs.cardinalMk_eq_trdeg.trans hd
-  have : Finite s := Cardinal.lt_aleph0_iff_finite.1 (hc ▸ Cardinal.nat_lt_aleph0 d)
+  have : Finite s := Cardinal.lt_aleph0_iff_finite.1 (hc ▸ Cardinal.natCast_lt_aleph0)
   let R := Algebra.adjoin O (Set.range ((↑) : s → A))
   have e : MvPolynomial s O ≃+* R := hs.1.aevalEquiv.toRingEquiv
   have : IsNoetherianRing R := isNoetherianRing_of_ringEquiv _ e
@@ -80,7 +84,7 @@ theorem ringKrullDim_le_add {O A : Type} (K : Type) [CommRing O] [IsDomain O] [I
   obtain ⟨t, ht⟩ := Algebra.FiniteType.out (R := R) (A := A)
   have h := ringKrullDim_adjoin_le (R := R) t
   rw [ht, ringKrullDim_eq_of_ringEquiv Subalgebra.topEquiv.toRingEquiv, ← ringKrullDim_eq_of_ringEquiv e,
-    MvPolynomial.ringKrullDim_of_isNoetherianRing, Nat.card, hc, Cardinal.toNat_natCast] at h
+    MvPolynomial.ringKrullDim_of_isNoetherianRing, ENat.card_eq_coe_natCard, ← Cardinal.toNat_mk, hc, Cardinal.toNat_natCast] at h
   exact h
 
 theorem topologicalKrullDim_eq_succ {O K : Type} [CommRing O] [IsDedekindDomain O] (hO : ¬ IsField O) [Field K]
@@ -179,83 +183,5 @@ theorem exists_flat_model {O K : Type} [CommRing O] [IsDedekindDomain O] [Field 
     rwa [hf'] at this
   · obtain ⟨g, h₁, h₂⟩ := hg i (Finset.mem_univ i)
     exact ⟨h.imageι ≫ g, by rw [← Category.assoc, h.toImage_imageι, h₁], by rw [Category.assoc, h₂]⟩
-
-theorem exists_presents {Z : Scheme.{0}} [IsIntegral Z] (Δ : CartierDiv Z) {L : LB Z} (hL : L.IsLB)
-    (e : toPic Δ = cls L hL) : ∃ r : L.ι → Z.functionFieldˣ, Presents Δ L r := by
-  obtain ⟨r, hr⟩ := exists_isRatSec hL
-  have h := presents_divOfRatSec hL hr
-  set E := divOfRatSec hL hr
-  have h0 : toPic (Δ - E) = 0 := by rw [map_sub, e, h.toPic_eq, sub_self]
-  obtain ⟨t, ht⟩ := (cls_eq_zero_iff (isLB_toLB (Δ - E))).1 h0
-  let s : (toLB (Δ - E)).Sec := ⟨fun i => (t.s i).val, fun i j => congrArg Units.val (ht i j)⟩
-  have P := presents_toLB (Δ - E)
-  have hg (x : Z) : (Δ - E).GeneratesAt x (P.rat s) := by
-    obtain ⟨i, hi⟩ := exists_chart P.isLB x
-    exact ⟨_, P.isEqn i x hi, (P.rat_mul s i (gen_mem hi)).symm ▸ unitAt_fnOf hi _ (t.s i)⟩
-  let g : Z.functionFieldˣ := (Units.mk0 _ (hg (genericPoint Z)).ne_zero)⁻¹
-  have eg : Δ - E = CartierDiv.principal g := CartierDiv.ext_of_isEqn fun x =>
-    ⟨g, CartierDiv.isEqn_iff_generatesAt_inv.2 (by simpa [g] using hg x), CartierDiv.isEqn_principal g x⟩
-  have := h.add_principal g
-  rw [← eg, add_sub_cancel] at this
-  exact ⟨_, this⟩
-
-theorem exists_flat_model_two {O K : Type} [CommRing O] [IsDedekindDomain O] [Field K] [Algebra O K] [IsFractionRing O K]
-    {Y : Scheme.{0}} [IsIntegral Y] (q : Y ⟶ Sp K) (hq : IsProjOver q) {P P' : Scheme.{0}} {p : P ⟶ Sp O}
-    {p' : P' ⟶ Sp O} {f : Y ⟶ P} {f' : Y ⟶ P'} (hp : IsProjOver p) (hp' : IsProjOver p')
-    (hf : f ≫ p = q ≫ spMap (algebraMap O K)) (hf' : f' ≫ p' = q ≫ spMap (algebraMap O K)) :
-    ∃ (X : Scheme.{0}) (π : X ⟶ Sp O) (j : Y ⟶ X), IsIntegral X ∧ IsProjOver π ∧ Flat π ∧
-      IsPullback j q π (spMap (algebraMap O K)) ∧ (∃ g : X ⟶ P, j ≫ g = f ∧ g ≫ p = π) ∧
-        ∃ g : X ⟶ P', j ≫ g = f' ∧ g ≫ p' = π := by
-  obtain ⟨X, π, j, hX, hπ, hfl, H, hg⟩ := exists_flat_model (O := O) q hq (fun i : Bool => Bool.rec P P' i)
-    (fun i => Bool.rec p p' i) (fun i => Bool.rec f f' i) (fun i => by cases i <;> assumption)
-    (fun i => by cases i <;> assumption)
-  exact ⟨X, π, j, hX, hπ, hfl, H, hg false, hg true⟩
-
-theorem pull_cls_O1 {R : Type} [CommRing R] {X Y : Scheme.{0}} (j : Y ⟶ X) (c : Y ⟶ Sp R) {n : ℕ} {B : LB Y} (hB : B.IsLB)
-    (s : Fin (n + 1) → B.Sec) (hs : ⨆ i, Out.nonzeroLocus (s i) = ⊤) (g : X ⟶ PSpace R n)
-    (h₁ : j ≫ g = ProjSpace.toProj c s hs) (h : ((ProjSpace.O1 R n).pull g).IsLB) : pull j (cls _ h) = cls B hB := by
-  have hO := ProjSpace.O1_isLB R n
-  rw [cls_pull hO, ← pull_comp, h₁, ← cls_pull hO _ (LB.isLB_pull hO _)]
-  exact (cls_eq_iff _ _).2 (ProjSpace.lbIso_pullback_O1_toProj c s hs)
-
-theorem exists_model_pair {O K : Type} [CommRing O] [IsDedekindDomain O] [Field K] [Algebra O K] [IsFractionRing O K]
-    {Y : Scheme.{0}} [IsIntegral Y] (q : Y ⟶ Sp K) (hq : IsProjOver q) {A B : LB Y} (hA : IsGenerated A)
-    (hB : IsGenerated B) :
-    ∃ (X : Scheme.{0}) (π : X ⟶ Sp O) (j : Y ⟶ X), IsIntegral X ∧ IsProjOver π ∧ Flat π ∧
-      IsPullback j q π (spMap (algebraMap O K)) ∧ ∃ La Lb : HermLB π,
-        pull j (cls _ La.isLB) = cls _ hA.isLB ∧ pull j (cls _ Lb.isLB) = cls _ hB.isLB := by
-  obtain ⟨a, sa, hsa⟩ := hA.exists_fin_succ
-  obtain ⟨b, sb, hsb⟩ := hB.exists_fin_succ
-  let c := q ≫ spMap (algebraMap O K)
-  obtain ⟨X, π, j, hX, hπ, hfl, H, ⟨ga, ha₁, ha₂⟩, gb, hb₁, hb₂⟩ := exists_flat_model_two q hq
-    ⟨a, 𝟙 _, inferInstance, Category.id_comp _⟩ ⟨b, 𝟙 _, inferInstance, Category.id_comp _⟩ (ProjSpace.toProj_str c sa hsa)
-    (ProjSpace.toProj_str c sb hsb)
-  have ea := pull_cls_O1 j c hA.isLB sa hsa ga ha₁ (LB.isLB_pull (ProjSpace.O1_isLB O a) ga)
-  have eb := pull_cls_O1 j c hB.isLB sb hsb gb hb₁ (LB.isLB_pull (ProjSpace.O1_isLB O b) gb)
-  obtain ⟨La, hLa⟩ : ∃ L : HermLB π, L.B = (ProjSpace.O1 O a).pull ga := ⟨(ProjSpace.hermitianTwistingSheaf O a).pull ga ha₂, rfl⟩
-  obtain ⟨Lb, hLb⟩ : ∃ L : HermLB π, L.B = (ProjSpace.O1 O b).pull gb := ⟨(ProjSpace.hermitianTwistingSheaf O b).pull gb hb₂, rfl⟩
-  refine ⟨X, π, j, hX, hπ, hfl, H, La, Lb, ?_, ?_⟩
-  · rw [← ea]
-    congr 2
-  · rw [← eb]
-    congr 2
-
-theorem exists_model : ∀ (F : Type) [Field F] [NumberField F] (Y : Var F) (Δ : Y.Dv), ∃ (M : TrueGeo.Model Y)
-    (L : HermLB M.p) (r : (L.B.pull M.j).ι → Y.Fnˣ), Presents Δ (L.B.pull M.j) r := by
-  intro F _ _ Y Δ
-  obtain ⟨t, ht⟩ := (AmpleDominates.eventually_isGenerated Y.str Y.isAmple_projective_O_one (isLB_toLB Δ)).exists
-  have hA : IsGenerated (lbPow Y.O1 t) := ((isGenerated_O1 F Y.N).pull Y.ι).pow t
-  obtain ⟨X, π, j, hX, hπ, hfl, H, La, Lb, ea, eb⟩ := exists_model_pair (O := 𝓞 F) Y.str Y.isProjOver hA ht
-  have := CommonModel.isProper_of_isProjOver hπ
-  have hZ : Flat (spMap (Int.castRingHom (𝓞 F))) := by
-    rw [HasRingHomProperty.Spec_iff (P := @Flat)]
-    exact (RingHom.flat_algebraMap_iff (R := ℤ) (S := 𝓞 F)).2 inferInstance
-  have har : IsArithVar π Y.dim := ⟨inferInstance, inferInstance, hX, hπ, inferInstance,
-    topologicalKrullDim_eq_succ (RingOfIntegers.not_isField F) H Y.topologicalKrullDim_eq⟩
-  refine ⟨⟨X, π, har, j, H⟩, La.tens Lb.dual, exists_presents Δ (LB.isLB_pull (La.tens Lb.dual).isLB j) ?_⟩
-  have e : cls _ (La.tens Lb.dual).isLB = cls _ La.isLB - cls _ Lb.isLB :=
-    (cls_tens La.isLB Lb.dual.isLB _).trans ((congrArg _ (cls_dual Lb.isLB _)).trans (sub_eq_add_neg _ _).symm)
-  refine Eq.trans ?_ (cls_pull (La.tens Lb.dual).isLB j _).symm
-  rw [e, map_sub, ea, eb, cls_div hA.isLB (isLB_toLB Δ), sub_sub_cancel, toPic_apply]
 
 end GlobalTheory.IntModel

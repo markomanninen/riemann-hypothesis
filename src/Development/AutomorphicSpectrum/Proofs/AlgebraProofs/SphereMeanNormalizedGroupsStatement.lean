@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SphereMeanNormalizedGroups
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IsScaleStable
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.SphereMeanNormalizedGroups
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IsScaleStable
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 open GroundTheory.Heights₂.Heights MeasureTheory MvPolynomial Matrix GlobalTheory.CompanionTheory.Ar.Short.Crofton
 open scoped ENNReal

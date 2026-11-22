@@ -1,15 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HypercohomologyPullbackBijectiveOfQuasiIso
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HypercohomologyPullbackBijectiveOfQuasiIso
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
 namespace GlobalTheory.EtC.ConeRes
 
 variable {C : Type*} [Category C] [Abelian C]
 
-open DerivedCategory Pretriangulated in
 
+open DerivedCategory Pretriangulated in
 theorem quasiIso_mappingCone_map {K₁ L₁ K₂ L₂ : CochainComplex C ℤ} (φ₁ : K₁ ⟶ L₁) (φ₂ : K₂ ⟶ L₂)
     (a : K₁ ⟶ K₂) (b : L₁ ⟶ L₂) (comm : φ₁ ≫ b = a ≫ φ₂) [QuasiIso a] [QuasiIso b] :
     QuasiIso (mappingCone.map φ₁ φ₂ a b comm) := by
@@ -65,8 +70,8 @@ theorem cone_isKInjective {F G : Shv R} (φ : F ⟶ G) : (mappingCone (resMap R 
 
 end GlobalTheory.EtC.ConeRes
 
-open GlobalTheory.EtC.ConeRes in
 
+open GlobalTheory.EtC.ConeRes in
 theorem GlobalTheory.EtC.cone_resMap_homotopyEquiv : ∀ (R : Type) [CommRing R] (S : ShortComplex (Shv R)), S.ShortExact →
     ∃ e : HomotopyEquiv (mappingCone (resMap R S.f)) (res R S.X₃),
       Nonempty (Homotopy (mappingCone.inr (resMap R S.f) ≫ e.hom) (resMap R S.g)) := by

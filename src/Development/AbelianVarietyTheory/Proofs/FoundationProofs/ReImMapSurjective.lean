@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataCD
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.HaarUpqEqOfOmegaDensity
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataCD
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.HaarUpqEqOfOmegaDensity
+
+@[expose] public section
 
 open Formalism.BasicNotions MeasureTheory Filter Topology Matrix
 open scoped NNReal
@@ -32,7 +36,7 @@ def reImMap (P Q : ℕ) :
     ring
 
 theorem reImMap_injective (P Q : ℕ) : Function.Injective (reImMap P Q) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   rintro ⟨⟨a, ha⟩, ⟨b, hb⟩⟩ h
   have h1 : a + Complex.I • b = 0 := by
     ext i j
@@ -112,6 +116,8 @@ theorem exists_isOmegaLeb : ∀ P Q : ℕ, ∃ lam : Measure (lieU P Q), IsOmega
   refine ⟨NNReal.sqrt t • l, Measure.IsAddHaarMeasure.nnreal_smul l hs, ?_⟩
   rw [Measure.prod_smul_left, Measure.prod_smul_right, smul_smul, NNReal.mul_self_sqrt,
     Measure.map_smul]
-  exact ht.symm
+  · exact ht.symm
+  · change AEMeasurable e (l.prod l)
+    exact e.continuous.measurable.aemeasurable
 
 end GlobalTheory.CompactDualOmega

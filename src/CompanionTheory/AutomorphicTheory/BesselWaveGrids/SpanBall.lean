@@ -1,6 +1,10 @@
-import CompanionTheory.AutomorphicTheory.SchurLimitBounds.ZuckermanDuality.Letter
-import CompanionTheory.AutomorphicTheory.SchurLimitBounds.ZuckermanDuality.Assemble
-import CompanionTheory.AutomorphicTheory.SchurLimitBounds.ZuckermanDuality.GeneratingFunctionPolynomial
+module
+
+public import CompanionTheory.AutomorphicTheory.SchurLimitBounds.ZuckermanDuality.Letter
+public import CompanionTheory.AutomorphicTheory.SchurLimitBounds.ZuckermanDuality.Assemble
+public import CompanionTheory.AutomorphicTheory.SchurLimitBounds.ZuckermanDuality.GeneratingFunctionPolynomial
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,13 +53,18 @@ theorem sum_natAbs_le_one_of_mem_unitShifts {n : ℕ} {s : Fin n → ℤ} (h : s
   · exact (key t).le
   · simpa only [Pi.neg_apply, Int.natAbs_neg] using (key t).le
 
-theorem sum_natAbs_le_of_mem_ball {n : ℕ} : ∀ e, ∀ ν ∈ ball n e, ∑ i, (ν i).natAbs ≤ e
-  | 0, ν, h => by
+theorem sum_natAbs_le_of_mem_ball {n : ℕ} : ∀ e, ∀ ν ∈ ball n e, ∑ i, (ν i).natAbs ≤ e := by
+  intro e
+  induction e with
+  | zero =>
+    intro ν h
     rw [ball, Finset.mem_singleton] at h
     simp [h]
-  | e + 1, ν, h => by
-    obtain ⟨x, hx, s, hs, rfl⟩ := Finset.mem_image₂.1 h
-    have h1 := sum_natAbs_le_of_mem_ball e x hx
+  | succ e ih =>
+    intro ν h
+    rw [ball, Finset.mem_image₂] at h
+    obtain ⟨x, hx, s, hs, rfl⟩ := h
+    have h1 := ih x hx
     have h2 := sum_natAbs_le_one_of_mem_unitShifts hs
     have h3 : ∑ i, ((x + s) i).natAbs ≤ ∑ i, (x i).natAbs + ∑ i, (s i).natAbs := by
       rw [← Finset.sum_add_distrib]

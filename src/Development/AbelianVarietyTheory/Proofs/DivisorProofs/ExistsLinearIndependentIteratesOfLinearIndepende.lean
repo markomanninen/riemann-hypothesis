@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped Matrix
 open Polynomial
 
@@ -17,7 +22,8 @@ theorem exists_linearIndependent_iterates_of_linearIndependent_pow {K : Type} [F
   intro c hc
   let q : K[X] := ∑ j : Fin r, monomial (j : ℕ) (c j)
   have haq : aeval g q = ∑ j : Fin r, c j • g ^ (j : ℕ) := by
-    simp [q, map_sum, aeval_monomial, Algebra.smul_def]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [q, map_sum, aeval_monomial, Algebra.smul_def]
   have ha : ∀ p : K[X], aeval (Matrix.toLin' g) p = Matrix.toLin' (aeval g p) := fun p =>
     (aeval_algHom_apply (Matrix.toLinAlgEquiv' (R := K) (n := Fin r)) g p)
   have hqv : aeval g q *ᵥ v = 0 := by

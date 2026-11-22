@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.NormBoundOfInjectiveStable
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.SymmetricClausesOfFormsNorm
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.NormBoundOfInjectiveStable
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.SymmetricClausesOfFormsNorm
+
+@[expose] public section
 
 namespace Formalism.L2.GlobalTheoryTheory.Br
 

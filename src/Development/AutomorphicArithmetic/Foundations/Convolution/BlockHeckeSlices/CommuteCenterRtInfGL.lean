@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.ZSpec
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.HkApply
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.BandOps
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.DatBasics
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CompBound
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CompShift
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CompCap
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CompHecke
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.ZSpec
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.HkApply
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.BandOps
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.DatBasics
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CompBound
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CompShift
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CompCap
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CompHecke
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ private theorem exists_alg {M : Type} [AddCommGroup M] [Module ℂ M] (V : Submo
     exact LinearMap.ext fun v => Subtype.ext (hc x hx y hy v v.2)
   letI : CommRing (Algebra.adjoin ℂ s') :=
     { (inferInstance : Ring (Algebra.adjoin ℂ s')) with
-      mul_comm := (Algebra.isMulCommutative_adjoin ℂ hs).is_comm.comm }
+      mul_comm := (Algebra.isMulCommutative_adjoin ℂ (fun a ha b hb _ => hs a ha b hb)).is_comm.comm }
   refine ⟨Algebra.adjoin ℂ s', inferInstance, Subalgebra.algebra _, inferInstance, ⟨fun _ _ _ => rfl⟩, fun x hx => ?_,
     fun a b h => Subtype.ext (LinearMap.ext h)⟩
   exact ⟨⟨_, Algebra.subset_adjoin ⟨x, hx, rfl⟩⟩, fun v => rfl⟩
@@ -34,14 +38,14 @@ private theorem coef_zero (n : ℕ) (a : ℕ → ℂ) (h : ∀ u : ℂ, ∑ k �
     {k : ℕ} (hk : k ≤ n) : a k = 0 := by
   have hp : (∑ k ∈ Finset.range (n + 1), Polynomial.monomial (n - k) (a k)) = 0 :=
     Polynomial.funext fun u => by
-      rw [Polynomial.eval_finset_sum, Polynomial.eval_zero, ← h u]
+      rw [Polynomial.eval_finsetSum, Polynomial.eval_zero, ← h u]
       exact Finset.sum_congr rfl fun k _ => by rw [Polynomial.eval_monomial, mul_comm]
-  have := congrArg (fun p => Polynomial.coeff p (n - k)) hp
-  simp only [Polynomial.finset_sum_coeff, Polynomial.coeff_monomial, Polynomial.coeff_zero] at this
+  have := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p (n - k)) hp
+  simp only [Polynomial.finsetSum_coeff, Polynomial.coeff_monomial, Polynomial.coeff_zero] at this
   rw [Finset.sum_eq_single k] at this
   · simpa using this
   · intro b hb hne
-    rw [if_neg]
+    rw [Finsupp.single_apply, if_neg]
     have := Finset.mem_range.1 hb
     omega
   · intro h'
@@ -52,7 +56,7 @@ private theorem prod_add_esymm {A : Type} [CommRing A] [Algebra ℂ A] (n : ℕ)
       ∑ k ∈ Finset.range (n + 1), u ^ (n - k) • MvPolynomial.aeval X (MvPolynomial.esymm (Fin n) ℂ k) := by
   have h := congrArg (Polynomial.eval (algebraMap ℂ A u))
     (Multiset.prod_X_add_C_eq_sum_esymm (Finset.univ.val.map X))
-  rw [Multiset.map_map, ← Finset.prod_eq_multiset_prod, Polynomial.eval_prod, Polynomial.eval_finset_sum] at h
+  rw [Multiset.map_map, ← Finset.prod_eq_multiset_prod, Polynomial.eval_prod, Polynomial.eval_finsetSum] at h
   simp only [Function.comp, Polynomial.eval_add, Polynomial.eval_X, Polynomial.eval_C, Multiset.card_map,
     Finset.card_val, Finset.card_univ, Fintype.card_fin, Polynomial.eval_mul, Polynomial.eval_pow] at h
   rw [h]
@@ -67,13 +71,13 @@ private theorem ofFn_rel {M A : Type} [AddCommGroup M] [Module ℂ M] {V : Submo
     rw [Fin.prod_univ_succ, List.ofFn_succ, List.prod_cons, mul_smul, h, Module.End.mul_apply,
       ofFn_rel n _ _ fun i => h i.succ]
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {n : ℕ} {S : Set (Pl E)}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {n : ℕ} {S : Set (Pl E)}
 
 theorem commute_uC_finRep (u : UC E n) (k : GL (Fin n) (Af E)) : Commute (uC E n u) (finRep E n k) := by
   have hu : u ∈ Algebra.adjoin ℂ {x : UC E n | ∃ τ i j, x = genC τ i j} := by rw [adjoin_genC]; trivial
   refine Algebra.adjoin_induction (p := fun x _ => Commute (uC E n x) (finRep E n k)) ?_
     (fun r => by rw [AlgHom.commutes]; exact Algebra.commutes r _)
-    (fun _ _ _ _ hx hy => by rw [map_add]; exact hx.add_left hy)
+    (fun _ _ _ _ hx hy => by rw [map_add (f := _)]; exact hx.add_left hy)
     (fun _ _ _ _ hx hy => by rw [map_mul]; exact hx.mul_left hy) hu
   rintro _ ⟨τ, i, j, rfl⟩
   have h : ∀ i j x, Commute (lieS E n i j x) (finRep E n k) := fun i j x => lie_rt_fin _ k
@@ -85,7 +89,7 @@ theorem commute_center_rt_infGL {u : UC E n} (hu : u ∈ Subalgebra.center ℂ (
   rw [center_UC] at hu
   refine Algebra.adjoin_induction (p := fun x _ => Commute (uC E n x) (rt E n (infGL E n y))) ?_
     (fun r => by rw [AlgHom.commutes]; exact Algebra.commutes r _)
-    (fun _ _ _ _ hx hy => by rw [map_add]; exact hx.add_left hy)
+    (fun _ _ _ _ hx hy => by rw [map_add (f := _)]; exact hx.add_left hy)
     (fun _ _ _ _ hx hy => by rw [map_mul]; exact hx.mul_left hy) hu
   rintro _ ⟨τ, u, rfl⟩
   rw [uC_capC]
@@ -102,7 +106,7 @@ def bsp (S : Set (Pl E)) (n : ℕ) {C : ℝ} (hC : 0 ≤ C) : Submodule ℂ (Sm 
   carrier := {φ | Band C φ ∧ Sph S φ}
   zero_mem' := ⟨(bandOps E n C hC).1, fun _ _ _ _ => map_zero _⟩
   add_mem' {φ ψ} hφ hψ := ⟨((bandOps E n C hC).2 φ hφ.1).1 ψ hψ.1, fun w hw k hk => by
-    rw [map_add, hφ.2 w hw k hk, hψ.2 w hw k hk]⟩
+    rw [map_add (f := _), hφ.2 w hw k hk, hψ.2 w hw k hk]⟩
   smul_mem' c φ hφ := ⟨((bandOps E n C hC).2 φ hφ.1).2.1 c, fun w hw k hk => by rw [map_smul, hφ.2 w hw k hk]⟩
 
 def cmp (d : Dat S n) {C : ℝ} (hC : 0 ≤ C) : bsp S n hC →ₗ[ℂ] ((Fin d.len → ℝ) → ℂ) where
@@ -203,14 +207,14 @@ theorem exists_sys (d : Dat S n) {C : ℝ} (hC : 0 ≤ C) :
       rfl
     | add p q hp hq =>
       intro v
-      rw [map_add, add_smul, Submodule.coe_add, hp, hq]
-      simp only [zop, map_add, Subalgebra.coe_add, LinearMap.add_apply]
+      rw [map_add (f := _), add_smul, Submodule.coe_add, hp, hq]
+      simp only [zop, map_add (f := _), Subalgebra.coe_add, LinearMap.add_apply]
     | mul_X p q hp =>
       intro v
       rw [map_mul, mul_smul, hp, MvPolynomial.aeval_X, hz]
       simp only [zop, evZ, map_mul, Subalgebra.coe_mul, MvPolynomial.aeval_X, Module.End.mul_apply]
   refine ⟨A, inferInstance, inferInstance, inferInstance, inferInstance, fun p => z p.1 (p.2 + 1),
-    fun k => if h : k.1 ∉ S then H' k.1 h (k.2 + 1) else 0, I, t, hZ, fun k hk v => by beta_reduce; rw [dif_pos hk, hH'],
+    fun k => if h : k.1 ∉ S then H' k.1 h (k.2 + 1) else 0, I, t, hZ, fun k hk v => by beta_reduce; rw [dite_eq_left hk, hH'],
     hsurj, fun v φ x => ?_, fun j φ x => ?_, fun p φ => ?_, fun k hk φ => ?_, fun φ β R => ?_⟩
   · rw [hc, hc]
     exact (congrArg (fun ψ : Sm E n => d.comp ψ.1 x) (hT v φ)).trans ((compShift E S n d φ x φ.2.1.toUmg).1 v)
@@ -222,7 +226,8 @@ theorem exists_sys (d : Dat S n) {C : ℝ} (hC : 0 ≤ C) :
         ∑ k ∈ Finset.range (n + 1), u ^ (n - k) •
           cmp d hC (MvPolynomial.aeval X (MvPolynomial.esymm (Fin n) ℂ k) • φ) := fun u => by
       have e1 : (((∑ k ∈ Finset.range (n + 1), u ^ (n - k) • z τ k) • φ : bsp S n hC) : Sm E n) = cap τ u φ := by
-        rw [← uC_capC, ((zSpec E) n τ).2 u, map_sum, Finset.sum_smul, Submodule.coe_sum, LinearMap.sum_apply]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← uC_capC, ((zSpec E) n τ).2 u, map_sum, Finset.sum_smul, Submodule.coe_sum, LinearMap.sum_apply]
         refine Finset.sum_congr rfl fun k _ => ?_
         rw [smul_assoc, Submodule.coe_smul, hz, map_smul, LinearMap.smul_apply]
       have e2 := ofFn_rel n (fun i => algebraMap ℂ A u + X i) (fun i : Fin n =>
@@ -232,7 +237,8 @@ theorem exists_sys (d : Dat S n) {C : ℝ} (hC : 0 ≤ C) :
             LinearMap.add_apply, Module.algebraMap_end_apply, add_assoc]) φ
       have e3 := compCap E S n d φ τ u φ.2.1.toUmg
       rw [← e1, ← e2, ← hc, ← hc, prod_add_esymm] at e3
-      simpa only [Finset.sum_smul, smul_assoc, map_sum, map_smul] using e3
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa only [Finset.sum_smul, smul_assoc, map_sum, map_smul] using e3
     have e : MvPolynomial.aeval (fun q : (E →+* ℂ) × Fin n => algebraMap ℂ A (d.lamR q) + I (d.idx q.2)) (blockE (τ, i)) =
         MvPolynomial.aeval X (MvPolynomial.esymm (Fin n) ℂ (i + 1)) := by
       rw [blockE, MvPolynomial.aeval_rename]; rfl
@@ -245,7 +251,8 @@ theorem exists_sys (d : Dat S n) {C : ℝ} (hC : 0 ≤ C) :
     simp only [mul_sub, Finset.sum_sub_distrib, this, sub_self]
   · have hk' : k.1 ∉ S := hk
     funext x
-    rw [dif_pos hk', hc, hH', compHecke E S n d φ k.1 (k.2 + 1) x φ.2.1.toUmg φ.2.2 hk' k.2.2, Dat.hEP, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [dite_eq_left hk', hc, hH', compHecke E S n d φ k.1 (k.2 + 1) x φ.2.1.toUmg φ.2.2 hk' k.2.2, Dat.hEP, map_sum,
       Finset.sum_smul, map_sum, Finset.sum_apply]
     refine Finset.sum_congr rfl fun a _ => ?_
     have e : ∀ (v : Fin d.len → ℝ) (c : ℂ), lift I t (AddMonoidAlgebra.single v (MvPolynomial.C c)) =

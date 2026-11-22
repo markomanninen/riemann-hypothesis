@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExistsXPowMul
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExistsXPowMul
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -30,7 +34,8 @@ theorem smulS_linMap {V' : Type} [AddCommGroup V'] [Module LL V'] (Φ : V →ₗ
   have hf' : LB m (fun j => Φ (f j)) := fun j hj => by simp [hf j hj]
   obtain ⟨N, hN⟩ : ∃ N : ℕ, k - m < N :=
     ⟨Int.toNat (k - m) + 1, by have := Int.self_le_toNat (k - m); push_cast; omega⟩
-  rw [smulS_eq_sum hf g k N hN, smulS_eq_sum hf' g k N hN, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [smulS_eq_sum hf g k N hN, smulS_eq_sum hf' g k N hN, map_sum]
   simp [map_smul]
 
 end Div2
@@ -105,7 +110,7 @@ theorem expRules_of (h4 : Formalism.MainNotions.WachCoordinates.LevelMapHodgeFil
       Subtype.ext (by
         simp only [Submodule.coe_add, SetLike.val_smul]
         rw [smul_add, smul_smul, smul_smul, mul_comm b a])
-    rw [e1, map_add, Pi.add_apply, levN_smulS, levN_smulS, funext hd, funext he]
+    rw [e1, map_add (f := _), Pi.add_apply, levN_smulS, levN_smulS, funext hd, funext he]
     show smulS (W.lev i ζ b) (smulS (W.lev i ζ a) d) k + smulS (W.lev i ζ a) (smulS (W.lev i ζ b) e) k =
       smulS (W.lev i ζ (a * b)) (d + e) k
     rw [map_mul, smulS_add hdl hel, ← smulS_mul hdl, ← smulS_mul hel, mul_comm (W.lev i ζ b)]

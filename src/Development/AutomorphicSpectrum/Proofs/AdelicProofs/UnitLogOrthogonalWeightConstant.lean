@@ -1,14 +1,20 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory.CompanionTheory.Ar.Giv
 
-open NumberField.InfinitePlace NumberField.Units NumberField.Units.dirichletUnitTheorem in
 
+open NumberField.InfinitePlace NumberField.Units NumberField.Units.dirichletUnitTheorem in
 theorem const_of_orthogonal_log_units : ∀ (F : Type) [Field F] [NumberField F] (m : (F →+* ℂ) → ℝ),
     (∀ sg, m (ComplexEmbedding.conjugate sg) = m sg) →
     (∀ θ : (𝓞 F)ˣ, ∑ sg : F →+* ℂ, Real.log ‖sg ((θ : 𝓞 F) : F)‖ * m sg = 0) →
     ∀ sg sg', m sg = m sg' := by
+  open NumberField.InfinitePlace NumberField.Units NumberField.Units.dirichletUnitTheorem in
   intro F _ _ m hconj horth
   classical
 

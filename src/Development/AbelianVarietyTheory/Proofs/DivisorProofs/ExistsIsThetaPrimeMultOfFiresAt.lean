@@ -1,7 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ThetaKernelFiring
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaPrimeMultiplicity
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ThetaKernelFiring
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,7 +30,7 @@ theorem exists_isThetaP (ν : Measure H') (𝓕 : Set H') (th : G' → H' → S'
     fun f e g => rfl⟩
   · intro f f' e
     funext g
-    simp only [Submodule.coe_add, Pi.add_apply, map_add]
+    simp only [Submodule.coe_add, Pi.add_apply, map_add (f := _)]
     exact integral_add (hint f e g) (hint f' e g)
   · intro c f e
     funext g
@@ -35,7 +38,7 @@ theorem exists_isThetaP (ν : Measure H') (𝓕 : Set H') (th : G' → H' → S'
     exact integral_smul c _
   · intro f e e'
     funext g
-    simp only [Pi.add_apply, map_add, LinearMap.add_apply]
+    simp only [Pi.add_apply, map_add (f := _), LinearMap.add_apply]
     exact integral_add (hint f e g) (hint f e' g)
   · intro c f e
     funext g
@@ -63,20 +66,20 @@ theorem exists_linear_choice {X M N : Type} [AddCommGroup X] [Module ℂ X] [Add
   exact LinearMap.congr_fun this x
 
 theorem exists_linear_lift {ι X : Type} [AddCommGroup X] [Module ℂ X] {M : ι → Type} [∀ a, AddCommGroup (M a)]
-    [∀ a, Module ℂ (M a)] (low : ∀ a, Submodule ℂ (M a)) (W : Submodule ℂ (MultilinearMap ℂ M (G' → ℂ)))
+    [∀ a, Module ℂ (M a)] (low : ∀ a, Submodule ℂ (M a)) (W : Submodule ℂ ((∀ a, M a) →ₘₗ[ℂ] (G' → ℂ)))
     (ν : Measure H') (𝓕 : Set H') (th : G' → H' → S' → ℂ) (pt : Sinf → S')
     (thL : G' → H' → S' →ₗ[ℂ] ℂ) (ptL : Sinf →ₗ[ℂ] S') (h1 : ∀ g h s, th g h s = thL g h s) (h2 : ∀ s, pt s = ptL s)
     (io : (⨂[ℂ] a, low a) →ₗ[ℂ] Tau →ₗ[ℂ] Sinf) (ext : X →ₗ[ℂ] (H' → Tau))
     (h : ∀ x, (∀ e g, IntegrableOn (fun h => th g h (pt (io e (ext x h)))) 𝓕 ν) ∧
       ∃ U ∈ W, ∀ v : ∀ a, low a, U (fun a => (v a : M a)) = Lift.thetaPInt ν 𝓕 th pt io (ext x) (PiTensorProduct.tprod ℂ v)) :
-    ∃ y : X →ₗ[ℂ] MultilinearMap ℂ M (G' → ℂ), (∀ x, y x ∈ W) ∧
+    ∃ y : X →ₗ[ℂ] ((∀ a, M a) →ₘₗ[ℂ] (G' → ℂ)), (∀ x, y x ∈ W) ∧
       ∃ thP : LinearMap.range ext →ₗ[ℂ] ((⨂[ℂ] a, low a) →ₗ[ℂ] (G' → ℂ)),
         Lift.IsThetaP ν 𝓕 th pt io (LinearMap.range ext) thP ∧
           ∀ (x : X) (v : ∀ a, low a), y x (fun a => (v a : M a)) = thP (ext.rangeRestrict x) (PiTensorProduct.tprod ℂ v) := by
   obtain ⟨thP, hP⟩ := exists_isThetaP' ν 𝓕 th pt thL ptL h1 h2 io (LinearMap.range ext) (by
     rintro ⟨_, x, rfl⟩ e g
     exact (h x).1 e g)
-  let r : MultilinearMap ℂ M (G' → ℂ) →ₗ[ℂ] ((∀ a, low a) → G' → ℂ) :=
+  let r : ((∀ a, M a) →ₘₗ[ℂ] (G' → ℂ)) →ₗ[ℂ] ((∀ a, low a) → G' → ℂ) :=
     { toFun := fun U v => U fun a => (v a : M a)
       map_add' := fun _ _ => rfl
       map_smul' := fun _ _ => rfl }
@@ -92,7 +95,7 @@ theorem exists_linear_lift {ι X : Type} [AddCommGroup X] [Module ℂ X] {M : ι
 
 end Gen
 
-open GlobalTheory.IndefiniteRowSideFullHecke.ThetaKernelFiring GlobalTheory.IndefiniteRowSideFullHecke.ThetaPrimeMultiplicity
+open GlobalTheory.IndefiniteRowSideFullHecke.ThetaKernelFiring
 
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m}
   {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.BijectiveSmulChartSec
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsQuasicoherentOfForallExistsAffine
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.QuasicoherentCohomology.BijectiveSmulChartSec
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.IsQuasicoherentOfForallExistsAffine
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -96,24 +100,24 @@ def restrictIsoOfLinear {U : X.Opens}
         right_inv := LinearEquiv.apply_symm_apply _ })
     fun {V W} h s => hφ _ (g.image_mono h) s
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 def overIsoOfRestrictIso {U : X.Opens} (e : F.restrict U.ι ≅ G.restrict U.ι) :
     F.over U ≅ G.over U :=
   (Scheme.Modules.overEquiv U).fullyFaithfulFunctor.preimageIso
     ((Scheme.Modules.overFunctorEquiv U).app F ≪≫ e ≪≫
       ((Scheme.Modules.overFunctorEquiv U).app G).symm)
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 def generatorsOver {U V : X.Opens} (h : V ≤ U) (σ : (F.over U).GeneratingSections) :
     (F.over V).GeneratingSections :=
   (σ.map (SheafOfModules.overMap X.ringCatSheaf (homOfLE h))
     (SheafOfModules.overMapUnitIso (homOfLE h)).symm).ofEpi
     ((SheafOfModules.overFunctorMap X.ringCatSheaf (homOfLE h)).app F).hom
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 def generatorsOfLocallyIso {ι : Type} {U : ι → X.Opens} (hU : ⨆ k, U k = ⊤)
     (e : ∀ (k : ι) (W : X.Opens), W ≤ U k → (F.restrict W.ι ≅ G.restrict W.ι))
     (σ : SheafOfModules.LocalGeneratorsData.{0} F) : SheafOfModules.LocalGeneratorsData.{0} G where
@@ -129,8 +133,8 @@ def generatorsOfLocallyIso {ι : Type} {U : ι → X.Opens} (hU : ⨆ k, U k = �
   generators p := (generatorsOver inf_le_left (σ.generators p.1)).ofEpi
     (overIsoOfRestrictIso (e p.2 _ inf_le_right)).hom
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem isFiniteType_of_locally_iso {ι : Type} {U : ι → X.Opens} (hU : ⨆ k, U k = ⊤)
     (e : ∀ (k : ι) (W : X.Opens), W ≤ U k → (F.restrict W.ι ≅ G.restrict W.ι))
     [hF : F.IsFiniteType] : G.IsFiniteType := by
@@ -182,15 +186,15 @@ theorem stalkHomOfLinear_germ {V : X.Opens} (hV : V ≤ U) (hxV : x ∈ V) (s : 
   rw [e, hφ hV]
   exact germ_resM _ _ _
 
-include hx in
 
+include hx in
 theorem exists_germ_eq_of_mem (t : (F.presheaf.stalk x :)) :
     ∃ (V : X.Opens) (_ : V ≤ U) (hxV : x ∈ V) (s : Γ(F, V)), F.presheaf.germ V x hxV s = t := by
   obtain ⟨V, hV, s, rfl⟩ := F.presheaf.exists_germ_eq t
   exact ⟨V ⊓ U, inf_le_right, ⟨hV, hx⟩, resM F inf_le_left s, germ_resM _ _ _⟩
 
-include hφ in
 
+include hφ in
 theorem symm_resM {V W : X.Opens} (hV : V ≤ U) (h : W ≤ V) (s : Γ(G, V)) :
     (φ W (h.trans hV)).symm (resM G h s) = resM F h ((φ V hV).symm s) := by
   rw [LinearEquiv.symm_apply_eq, hφ hV, LinearEquiv.apply_symm_apply]
@@ -231,16 +235,6 @@ variable {C D : Type*} [Category C] [Category D] {P : C ⥤ D} {Q : D ⥤ C} (ad
 
 def mateHom (A : C) : P.obj (S.obj A) ⟶ T.obj (P.obj A) :=
   (adj.homEquiv _ _).symm (S.map (adj.unit.app A) ≫ e.hom.app (P.obj A))
-
-theorem mateHom_naturality {A B : C} (f : A ⟶ B) :
-    P.map (S.map f) ≫ mateHom adj S T e B = mateHom adj S T e A ≫ T.map (P.map f) := by
-  rw [mateHom, mateHom, ← Adjunction.homEquiv_naturality_left_symm,
-    ← Adjunction.homEquiv_naturality_right_symm, ← S.map_comp_assoc, Category.assoc]
-  congr 1
-  have h₁ := adj.unit.naturality f
-  have h₂ := e.hom.naturality (P.map f)
-  dsimp at h₁ h₂ ⊢
-  rw [h₁, S.map_comp_assoc, h₂]
 
 theorem isIso_mateHom [S.IsEquivalence] [T.IsEquivalence] (A : C) : IsIso (mateHom adj S T e A) := by
   have key (B : D) : Function.Bijective

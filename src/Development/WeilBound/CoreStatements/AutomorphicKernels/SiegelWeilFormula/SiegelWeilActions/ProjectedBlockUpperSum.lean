@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.EllA
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.EllA
+
+@[expose] public section
 
 noncomputable section
 
@@ -131,7 +135,7 @@ theorem sB_cond (b : Fin L.n → AE F E) : sB R L b ∈ kfour.nCond σ d.n R.ε 
 
 theorem continuous_sB : Continuous (sB R L) := by
   unfold sB
-  refine continuous_finset_sum _ fun j _ => Continuous.add ?_ ?_
+  refine continuous_finsetSum _ fun j _ => Continuous.add ?_ ?_
   · have e : (fun b : Fin L.n → AE F E => Matrix.single L.i₀ (L.em j) (b j)) =
         fun b => b j • Matrix.single L.i₀ (L.em j) (1 : AE F E) := by
       funext b; rw [Matrix.smul_single, smul_eq_mul, mul_one]
@@ -146,7 +150,7 @@ theorem inFrame_sM' (b : Fin L.n → AE F E) : inFrame d.b (sM R L b) = bMat (sB
   have hex : ∃ x : d.G, inFrame d.b x = bMat (sB R L b) :=
     ⟨⟨kfour.nU d.b (sB R L b), kfour.nU_mem (sig2 d) R.hε (sB_cond b)⟩, kfour.inFrame_nU _ _⟩
   unfold sM elt
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact hex.choose_spec
 
 theorem sig_delta (h : Hyp L nb uM nb' w₁ cM δ) : σ δ = -(((R.ε : ℤ) : E)) * δ := by
@@ -155,8 +159,9 @@ theorem sig_delta (h : Hyp L nb uM nb' w₁ cM δ) : σ δ = -(((R.ε : ℤ) : E
     simp [uA, kfour.nM, Matrix.transpose_one]
   have hc := kfour.cond_of_inFrame R.hε (cM (0, 1)) _ hx
   have e := congrFun (congrFun hc L.i₀) L.i₀
+  have c_incl : cA σ (inclR (F := F) (AF F) δ) = inclR (F := F) (AF F) (σ δ) := rfl
   simp only [aB, Matrix.transpose_apply, Matrix.neg_apply, Matrix.smul_apply, Matrix.map_apply, Matrix.single_apply_same,
-    one_smul, smul_eq_mul, GlobalTheory.EisBL.DoubledUnipotentRadical.cA_inclR] at e
+    one_smul, smul_eq_mul, c_incl] at e
   have e' : inclR (F := F) (AF F) δ = inclR (F := F) (AF F) (-(((R.ε : ℤ) : E) * σ δ)) := by
     rw [e, map_neg, map_mul, map_intCast]
   have hδ := Algebra.TensorProduct.includeRight_injective (AdeleRing.algebraMap_injective (𝓞 F) F) e'
@@ -247,9 +252,9 @@ theorem eig (h : Hyp L nb uM nb' w₁ cM δ) (y : AE F E) (hy : cA σ y = -(((R.
         TensorProduct.smul_tmul', smul_eq_mul, mul_one, TensorProduct.smul_tmul]
       exact congrArg (a ⊗ₜ[F] ·) hl
     | add x z hx hz =>
-      rw [map_add, mul_add, add_sub_add_comm, map_add, add_smul, hx, hz]
+      rw [map_add (f := _), mul_add, add_sub_add_comm, map_add (f := _), add_smul, hx, hz]
   have key := hψ y
-  rw [hy, neg_mul, mul_neg, ← mul_assoc, eps_mul R, one_mul, sub_neg_eq_add, map_add, add_smul] at key
+  rw [hy, neg_mul, mul_neg, ← mul_assoc, eps_mul R, one_mul, sub_neg_eq_add, map_add (f := _), add_smul] at key
   have h2 : (2 : F) • (ellA δ y • inclR (F := F) (AF F) δ) = (2 : F) • y := by
     rw [two_smul, two_smul]; exact key
   exact smul_right_injective (AE F E) (two_ne_zero) h2

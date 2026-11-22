@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PerValNeZero
-import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.RelabBijective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PerValNeZero
+public import Development.AbelianVarietyTheory.Counterexamples.LevelGroupExamples.RelabBijective
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -15,7 +19,7 @@ section General
 
 variable {R L J : Type} [CommRing R] [AddCommGroup L] [Module R L] [Fintype J] [DecidableEq J]
 
-theorem multilinear_add_sub_mem (F : MultilinearMap R (fun _ : J => L) R) (I : Ideal R) (v w : J → L)
+theorem multilinear_add_sub_mem (F : (J → L) →ₘₗ[R] R) (I : Ideal R) (v w : J → L)
     (hw : ∀ j, w j ∈ I • (⊤ : Submodule R L)) : F (w + v) - F v ∈ I * Ideal.span (Set.range F) := by
   have key : ∀ (y : J → L) (j : J) (z : L), z ∈ I • (⊤ : Submodule R L) →
       F (Function.update y j z) ∈ I * Ideal.span (Set.range F) := by
@@ -31,7 +35,7 @@ theorem multilinear_add_sub_mem (F : MultilinearMap R (fun _ : J => L) R) (I : I
   have := key (s.piecewise w v) j (w j) (hw j)
   rwa [← Finset.piecewise_eq_of_mem s w v hj, Function.update_eq_self] at this
 
-theorem multiplier_congr [IsDedekindDomain R] (F : MultilinearMap R (fun _ : J => L) R) (I : Ideal R) (g : L → L)
+theorem multiplier_congr [IsDedekindDomain R] (F : (J → L) →ₘₗ[R] R) (I : Ideal R) (g : L → L)
     (hg : ∀ v, g v - v ∈ I • (⊤ : Submodule R L)) (v₀ : J → L) (h₀ : F v₀ ≠ 0) (c D : R)
     (h : ∀ v : J → L, c * F (fun j => g (v j)) = D * F v) : ∃ i ∈ I, D = c * (1 + i) := by
   have hN : Ideal.span (Set.range F) ≠ 0 := fun e => h₀ (by
@@ -193,10 +197,12 @@ theorem exists_matrix (Di : Datum H) {J : Type} [Fintype J] [DecidableEq J] (x :
         rw [← hg, map_smul, smul_comm a n, map_nsmul, map_nsmul]
         simp [mul_assoc]
       rw [e1, hA, hA, Finset.smul_sum, LinearMap.map_sum₂]
-      simp only [map_sum, LinearMap.sum_apply, hb, mul_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, LinearMap.sum_apply, hb, mul_smul]
     have h2 := congrArg (Int.cast : ℤ → ℚ) h1
     push_cast at h2
-    simp only [htr, ← map_sum] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [htr, ← map_sum] at h2
     have hnQ : (n : ℚ) ≠ 0 := Nat.cast_ne_zero.2 hn
     rw [mul_sub, map_sub, sub_eq_zero]
     refine mul_left_cancel₀ (mul_ne_zero hnQ hnQ) ?_
@@ -211,12 +217,13 @@ theorem exists_matrix (Di : Datum H) {J : Type} [Fintype J] [DecidableEq J] (x :
   · intro ρ f hf k
     have hnC : (n : ℂ) ≠ 0 := Nat.cast_ne_zero.2 hn
     refine mul_left_cancel₀ hnC ?_
-    rw [← nsmul_eq_mul, ← map_nsmul, hA, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← nsmul_eq_mul, ← map_nsmul, hA, map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     simp only [hf, Matrix.map_apply, Matrix.smul_apply, smul_eq_mul, map_mul, map_natCast, map_inv₀]
     field_simp
   · intro I hI
-    let F : MultilinearMap (𝓞 E) (fun _ : J => Di.La) (𝓞 E) :=
+    let F : (J → Di.La) →ₘₗ[𝓞 E] (𝓞 E) :=
       (Matrix.detRowAlternating (n := J) (R := 𝓞 E)).toMultilinearMap.compLinearMap fun _ => ψ
     have hF : ∀ v, F v = (Matrix.of fun j => ψ (v j)).det := fun v => rfl
     have hnO : (n : 𝓞 E) ≠ 0 := Nat.cast_ne_zero.2 hn

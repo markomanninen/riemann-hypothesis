@@ -1,7 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodF
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsOrbitCompNonvanish
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterGoodF
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeB
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsOrbitCompNonvanish
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -57,16 +62,19 @@ theorem OrbitCompNonvanish.proof : OrbitCompNonvanish.Statement := by
   have hQ : ∀ c : K → ℂ, eval c Q = eval (fun p => c p.1 * z p) (map (Int.castRingHom ℂ) E) := by
     intro c
     conv_rhs => rw [← hsum]
-    simp only [Q, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Q, map_sum]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [eval_smul_homog (comp b) b (OrbitCompNonvanish.isMultiHomog_component E b) c z, eval_monomial,
       Finsupp.prod_fintype _ _ (by simp)]
     ring
   have hQ0 : Q ≠ 0 := by
     intro h0
-    have hc := congrArg (coeff δ) h0
-    simp only [Q, coeff_sum, coeff_monomial, coeff_zero] at hc
-    rw [Finset.sum_ite_eq' T δ, if_pos (Finset.mem_insert_self _ _)] at hc
+    have hc := congrArg (AddMonoidAlgebra.coeff · δ) h0
+    simp only [Q, coeff_sum, coeff_monomial, AddMonoidAlgebra.coeff_zero,
+      Finsupp.zero_apply] at hc
+    rw [Finset.sum_ite_eq' T δ] at hc
+    simp only [show δ ∈ T from Finset.mem_insert_self _ _, ↓reduceIte] at hc
     exact hz hc
   by_contra hno
   push Not at hno

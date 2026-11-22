@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IdentityCellTrace.AlgIdentity
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RelevantCarrierNonempty.InSCarrierNonempty
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.FourParts
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IdentityCellTrace.AlgIdentity
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.RelevantCarrierNonempty.InSCarrierNonempty
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.FourParts
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem coef_add (G : FlagG S r T) (a : Fin r) (x : S.V) (hx : x ∈ G.X) (y : S
   have hxy : x + y ∈ Submodule.span E (Set.range G.e) := Submodule.add_mem _ hx' hy'
   simp only [FlagG.coefX, dif_pos hx', dif_pos hy', dif_pos hxy]
   have e : (⟨x + y, hxy⟩ : Submodule.span E (Set.range G.e)) = ⟨x, hx'⟩ + ⟨y, hy'⟩ := rfl
-  rw [e, map_add, Finsupp.add_apply]
+  rw [e, map_add (f := _), Finsupp.add_apply]
 
 theorem coef_smul (G : FlagG S r T) (a : Fin r) (t : E) (x : S.V) (hx : x ∈ G.X) :
     G.coefX (t • x) a = t * G.coefX x a := by
@@ -112,7 +116,7 @@ theorem smul_e_mem_XS {D : D7} {T : D.host.E} (G : FlagG (VS D) D.R.rS T) (a : F
 
 theorem isIdF_of (D : D7) (hθ : TraceOne D) {u u' : D.what₂.Word}
     (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)) (Λ : Submodule (𝓞 D.host.E) (VS D).V)
-    (hΛ : IsRowLat D F0 Λ) (F' : LFlag (hS D) D.R.rS ((Tu D u' : ℕ) : D.host.E))
+    (hΛ : IsRowLat D F0 Λ) (F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E))
     (hP : PD D Λ (lf D F0) u' F') (hin : InSF (lf D F0) F') : IsIdF Λ (lf D F0) F' := by
   obtain ⟨θ, hθ⟩ := hθ
   obtain ⟨_, ⟨hlat, hU, _, _⟩, hXS⟩ := hΛ
@@ -130,20 +134,76 @@ theorem isIdF_of (D : D7) (hθ : TraceOne D) {u u' : D.what₂.Word}
     rw [← hXS]
     exact ⟨hy, hyX⟩
   have hXΛ' : ∀ y ∈ Λ, y ∈ F0.X → y ∈ XS D F'.fl := fun y hy hyX => by
-    rw [← hXS']
-    refine ⟨hy, ?_⟩
-    show y ∈ F'.fl.X
-    rw [hXX]
-    exact hyX
+    have hy' : y ∈ XLam Λ F' := ⟨hy, by
+      show y ∈ F'.fl.X
+      rw [hXX]
+      exact hyX⟩
+    exact hXS' ▸ hy'
   have hXSΛ : ∀ y ∈ XS D F0, y ∈ Λ := fun y hy => by
     rw [← hXS] at hy
     exact hy.1
   have hXSΛ' : ∀ y ∈ XS D F'.fl, y ∈ Λ := fun y hy => by
-    rw [← hXS'] at hy
-    exact hy.1
+    have hy' : y ∈ XLam Λ F' := hXS'.symm ▸ hy
+    exact hy'.1
   have he' : ∀ a, F'.fl.e a ∈ F0.X := fun a => hXX ▸ e_mem_X F'.fl a
+  have hriesz (φ : (VS D).V →ₗ[D.host.E] D.host.E) : ∃ μ : (VS D).V, ∀ v, (VS D).hT μ v = φ v := by
+    classical
+    obtain ⟨bs, hbs⟩ := Formalism.HermitianLatticesTheory.dualLattice_dualBasis (VS D).hT (VS D).nondeg (VS D).frame
+    refine ⟨∑ j, star (φ ((VS D).frame j)) • bs j, fun v => ?_⟩
+    have key : (VS D).hT (∑ j, star (φ ((VS D).frame j)) • bs j) = φ := by
+      apply (VS D).frame.ext
+      intro i
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, LinearMap.sum_apply]
+      have hs : ∀ j, (VS D).hT (star (φ ((VS D).frame j)) • bs j) ((VS D).frame i) =
+          φ ((VS D).frame j) * (if i = j then 1 else 0) := by
+        intro j
+        rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply, star_star]
+        congr 1
+        rw [← (VS D).herm.eq ((VS D).frame i) (bs j), hbs]
+        split_ifs <;> simp
+      simp only [hs, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    rw [key]
+  have hspan : Submodule.span D.host.E (Λ : Set (VS D).V) = ⊤ := by
+    by_contra hspan
+    obtain ⟨φ, hφ₀, hφ⟩ := Submodule.exists_le_ker_of_lt_top _ (lt_top_iff_ne_top.mpr hspan)
+    obtain ⟨μ, hμ⟩ := hriesz φ
+    have hμ₀ : μ ≠ 0 := by
+      intro h
+      apply hφ₀
+      ext y
+      simpa [h] using (hμ y).symm
+    have hline (a : D.host.E) : a • μ ∈ Λ := by
+      rw [← hU]
+      change a • μ ∈ Formalism.E.hdual (VS D).hT Λ
+      simp only [Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap, LinearMap.restrictScalars_apply]
+      intro y hy
+      have hy₀ := LinearMap.mem_ker.mp (hφ (Submodule.subset_span hy))
+      simp [← (VS D).herm.eq (a • μ) y, LinearMap.map_smulₛₗ, hμ, hy₀]
+    obtain ⟨ψ, hψ, -⟩ := Submodule.exists_le_ker_of_notMem
+      (show μ ∉ (⊥ : Submodule D.host.E (VS D).V) by simpa using hμ₀)
+    let f := ψ.restrictScalars (𝓞 D.host.E)
+    have hmap (x : D.host.E) : x ∈ Λ.map f := by
+      refine ⟨(x / ψ μ) • μ, hline _, ?_⟩
+      change ψ ((x / ψ μ) • μ) = x
+      rw [map_smul, smul_eq_mul, div_mul_cancel₀ _ hψ]
+    obtain ⟨d, hd₀, hd⟩ := FractionalIdeal.isFractional_of_fg
+      (S := nonZeroDivisors (𝓞 D.host.E)) (hlat.fg.map f)
+    have hinj := IsFractionRing.injective (𝓞 D.host.E) D.host.E
+    have hne {a : 𝓞 D.host.E} (ha : a ≠ 0) : algebraMap (𝓞 D.host.E) D.host.E a ≠ 0 :=
+      fun h => ha (hinj (h.trans (map_zero _).symm))
+    have hinteger (x : D.host.E) : IsLocalization.IsInteger (𝓞 D.host.E) x := by
+      have hx := hd _ (hmap ((algebraMap (𝓞 D.host.E) D.host.E d)⁻¹ * x))
+      rwa [Algebra.smul_def, ← mul_assoc, mul_inv_cancel₀ (hne (nonZeroDivisors.ne_zero hd₀)),
+        one_mul] at hx
+    apply RingOfIntegers.not_isField D.host.E
+    refine ⟨⟨0, 1, zero_ne_one⟩, mul_comm, ?_⟩
+    intro a ha
+    obtain ⟨b, hb⟩ := hinteger ((algebraMap (𝓞 D.host.E) D.host.E a)⁻¹)
+    refine ⟨b, hinj ?_⟩
+    rw [map_mul, hb, map_one, mul_inv_cancel₀ (hne ha)]
   obtain ⟨n, hnisom, hngmap, hne, hnperp⟩ :=
-    core (VS D).hT (VS D).herm (VS D).nondeg Λ hlat.fg hlat.span_eq_top hU F0.X (X_iso F0)
+    core (VS D).hT (VS D).herm (VS D).nondeg Λ hlat.fg hspan hU F0.X (X_iso F0)
       F0.e F'.fl.e (e_mem_X F0) he'
       (fun a x => F0.coefX x a) (fun a x => F'.fl.coefX x a)
       (fun x hx => coef_expand F0 x hx) (fun x hx => coef_expand F'.fl x (hXX ▸ hx))
@@ -171,7 +231,7 @@ theorem isIdF_of (D : D7) (hθ : TraceOne D) {u u' : D.what₂.Word}
       exact PI.UnitaryGroupMassFormula.InSRelevantW.xa_mono F0 (Nat.lt_succ_iff.1 hi') (hin.1 i)
     | zero => simp
     | add y w _ _ hy hw =>
-      have e : n (y + w) - (y + w) = (n y - y) + (n w - w) := by rw [map_add]; abel
+      have e : n (y + w) - (y + w) = (n y - y) + (n w - w) := by rw [map_add (f := _)]; abel
       rw [e]
       exact Submodule.add_mem _ hy hw
     | smul t y _ hy =>

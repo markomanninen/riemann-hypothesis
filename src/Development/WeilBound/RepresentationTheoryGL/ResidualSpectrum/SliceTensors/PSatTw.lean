@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatDefs
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SatakeParametersOfTwist
-import Development.AbelianVarietyTheory.Definitions.Foundations.AbsCharNotUnitary
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSatDefs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SatakeParametersOfTwist
+public import Development.AbelianVarietyTheory.Definitions.Foundations.AbsCharNotUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ open GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.SmGL GlobalTheory.
 
 namespace PositivityTheory.Rg.Rs.SatakeVectors
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem finRep_mulChi {m : ℕ} (χ : HChar E) (w : HeightOneSpectrum (𝓞 E)) (g : GL (Fin m) (w.adicCompletion E))
     (x : Sm E m) :
@@ -24,7 +28,7 @@ theorem satLike_map_mulChi {m : ℕ} {V : Submodule ℂ (Sm E m)} {w : HeightOne
     SatLike (V.map (mulChi m χ).toLinearMap) w (B.map (· * χ.val w)) := by
   intro ψ hψ hK h0
   obtain ⟨x, hx, rfl⟩ := Submodule.mem_map.1 hψ
-  have hxK : ∀ k ∈ KGL w m, finRep E m (locGL E m w k) x = x := fun k hk => by
+  have hxK : ∀ k ∈ KGL w (n := m), finRep E m (locGL E m w k) x = x := fun k hk => by
     have e := hK k hk
     rw [LinearEquiv.coe_coe, finRep_mulChi, hχ _ (GlobalTheory.SphGal.isUnitAt_det_of_mem hk), Units.val_one,
       one_smul] at e
@@ -36,7 +40,7 @@ theorem satLike_map_mulChi {m : ℕ} {V : Submodule ℂ (Sm E m)} {w : HeightOne
   rw [LinearEquiv.coe_coe, GlobalTheory.SphGal.satEig_map_mul, mul_smul, ← map_smul (mulChi m χ),
     ← hs.2.2.2 ϖ hϖ j hj, heckeVec, heckeVec]
   have e := (mulChi m χ).toAddEquiv.map_finsum
-    (fun c : _ ⧸ KGL w m => Tj ℂ m (Ov E w) ϖ j c.out • ((finRep E m).comp (locGL E m w)) c.out x)
+    (fun c : _ ⧸ KGL w (n := m) => Tj ℂ m (Ov E w) ϖ j c.out • ((finRep E m).comp (locGL E m w)) c.out x)
   rw [show (mulChi m χ) _ = _ from e, smul_finsum]
   refine finsum_congr fun c => ?_
   by_cases hc : Tj ℂ m (Ov E w) ϖ j c.out = 0
@@ -46,7 +50,7 @@ theorem satLike_map_mulChi {m : ℕ} {V : Submodule ℂ (Sm E m)} {w : HeightOne
     simp
 
 open GlobalTheory.Mem.Chr.CharModel in
-omit [IsTotallyComplex E] in
+omit [_root_.NumberField.IsTotallyComplex E] in
 theorem unrAt_absC (s : ℂ) (w : HeightOneSpectrum (𝓞 E)) : (Model.absC E s).UnrAt w := fun x hx => Units.ext (by
   change Complex.exp (s * logNorm E (GlobalTheory.Mem.Chr.localIdele E w x)) = 1
   rw [logNorm_local w x 0 (by simpa [Formalism.L2.Host.IsUnitAt] using hx)]; simp)

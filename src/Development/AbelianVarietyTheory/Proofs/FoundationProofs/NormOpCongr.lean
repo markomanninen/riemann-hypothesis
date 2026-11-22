@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.CyclotomicDvdExpandOfCoprime
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBasisOneAddXPow
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormOpCongrOfBasis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CyclotomicDvdExpandOfCoprime
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsBasisOneAddXPow
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormOpCongrOfBasis
+
+@[expose] public section
 
 open GlobalTheory.Col PowerSeries
 

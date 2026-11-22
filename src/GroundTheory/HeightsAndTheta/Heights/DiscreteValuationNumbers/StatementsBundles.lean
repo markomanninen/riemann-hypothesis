@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Statements
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.BundleObjects
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.Statements
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.BundleObjects
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -134,24 +139,18 @@ def ScalarQuotient.Statement : Prop :=
 
 section Examples
 
-abbrev LineIdx : Unit → Type := fun _ => Fin 2
-
 theorem isVerticalDivisor_one {K : Type*} [DecidableEq K] {ι : K → Type*} {O : Type*} [CommRing O]
     [IsDomain O] [IsDiscreteValuationRing O] (ϖ : O) (H : Ideal (MRing ι O)) [H.IsPrime] :
-    IsVerticalDivisor H ϖ 0 1 1 where
-  degrees := ⟨0, 0, isWeightedHomogeneous_one _ _, isWeightedHomogeneous_one _ _, by
-    funext k; simp⟩
-  num_not_mem := Ideal.IsPrime.ne_top' ∘ (Ideal.eq_top_of_isUnit_mem _ · isUnit_one)
-  den_not_mem := Ideal.IsPrime.ne_top' ∘ (Ideal.eq_top_of_isUnit_mem _ · isUnit_one)
-  vertical := by
-    intro W hW
-    simp [ratDiv, divCycle_one] at hW
-  unit_off_special := by
-    intro W hW _ _ _
-    refine ⟨1, 1, ?_, ?_, ?_⟩
-    · exact (Ideal.ne_top_iff_one W).mp hW.ne_top
-    · exact (Ideal.ne_top_iff_one W).mp hW.ne_top
-    · simp
+    IsVerticalDivisor H ϖ 0 1 1 := by
+  have hHom : IsMultiHomog (1 : MRing ι O) 0 := isWeightedHomogeneous_one O (blockWeight ι)
+  have hOne : (1 : MRing ι O) ∉ H := (Ideal.ne_top_iff_one H).mp Ideal.IsPrime.ne_top'
+  refine ⟨⟨0, 0, hHom, hHom, ?_⟩, hOne, hOne, ?_, ?_⟩
+  · funext k
+    simp
+  · simp [ratDiv]
+  · intro W hW _ _ _
+    have hOneW : (1 : MRing ι O) ∉ W := (Ideal.ne_top_iff_one W).mp hW.ne_top
+    exact ⟨1, 1, hOneW, hOneW, by simp⟩
 
 def psumExpansion (N k : ℕ) : Fin N → MvPolynomial (Fin N ⊕ Fin N) ℤ :=
   fun i => ∑ j ∈ Finset.range k, X (Sum.inl i) ^ j * X (Sum.inr i) ^ (k - 1 - j)
@@ -171,11 +170,10 @@ theorem isPairExpansion_psum (N k : ℕ) :
     IsPairExpansion k (psum (Fin N) ℤ k) (psumExpansion N k) := by
   refine ⟨?_, isHomogeneous_psumExpansion N k⟩
   unfold psumExpansion
-  simp only [psum, map_sum, map_pow, rename_X, ← Finset.sum_sub_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [psum, map_sum, map_pow, rename_X, ← Finset.sum_sub_distrib]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [mul_comm, (Commute.all _ _).geom_sum₂_mul]
-
-abbrev LineFieldTwoElement : Type := FractionRing (MRing LineIdx (ZMod 2))
 
 end Examples
 
@@ -189,65 +187,31 @@ instance pointIdeal_isPrime (y : (Σ k, ι k) → Ω) : (pointIdeal O y).IsPrime
 
 theorem isFlagPair_self (ϖ : O) (y : (Σ k, ι k) → Ω) (r : ℕ) {s : Ω} (hs : s ≠ 0) :
     IsFlagPair ϖ y (scaledTrivBundle O (segreVec y) r hs) (scaledTrivBundle O (segreVec y) r hs)
-      (scaledBasis r hs) (scaledBasis r hs) 0 0 (fun _ => 1) (fun _ => 1) where
-  flag := isFlagFrame_scaledTriv O y r hs
-  flag' := isFlagFrame_scaledTriv O y r hs
-  sameFlag i j hij := by
-    simp [Module.Basis.repr_self, ne_of_lt hij]
-  vertical i := by
-    have h0 : ((0 : Fin r → K → ℤ) i - (0 : Fin r → K → ℤ) i) = 0 := sub_self _
-    rw [h0]
+      (scaledBasis r hs) (scaledBasis r hs) 0 0 (fun _ => 1) (fun _ => 1) := by
+  have hFlag := isFlagFrame_scaledTriv O y r hs
+  refine ⟨hFlag, hFlag, ?_, ?_, ?_⟩
+  · intro i j hij
+    rw [Module.Basis.repr_self, Finsupp.single_apply, ite_eq_right hij.ne]
+  · intro i
+    rw [sub_self]
     exact isVerticalDivisor_one ϖ _
-  generic i := by
-    simp
-
-def firstLine (Ω : Type*) [Field Ω] : (Fin 1 → Ω) →ₗ[Ω] (Fin 2 → Ω) :=
-  LinearMap.pi fun q : Fin 2 => if q = 0 then LinearMap.proj 0 else 0
-
-def secondCoord (Ω : Type*) [Field Ω] : (Fin 2 → Ω) →ₗ[Ω] (Fin 1 → Ω) :=
-  LinearMap.pi fun _ : Fin 1 => LinearMap.proj 1
+  · intro i
+    simp [Module.Basis.repr_self]
 
 end ExamplesDVR
 
 section ExamplesZ2
-
-abbrev LineFieldDyadic : Type := FractionRing (MRing LineIdx ℤ_[2])
 
 theorem isHomogeneous_psum (N k : ℕ) : (psum (Fin N) ℤ k).IsHomogeneous k := by
   unfold psum
   refine IsHomogeneous.sum _ _ _ fun i _ => ?_
   simpa using (isHomogeneous_X ℤ i).pow k
 
-abbrev scaledTrivialBundleDyadicLine (r : ℕ) {s : LineFieldDyadic} (hs : s ≠ 0) :
-    ChartBundle ℤ_[2] (segreVec (genericPt ℤ_[2] LineIdx)) r (Fin r → LineFieldDyadic) :=
-  scaledTrivBundle ℤ_[2] (segreVec (genericPt ℤ_[2] LineIdx)) r hs
-
-abbrev PointIdx : Unit → Type := fun _ => Fin 1
-
 end ExamplesZ2
 
 section ExamplesEuler
 
 variable {Ω : Type*} [Field Ω] {R : Type*} [CommRing R] [Algebra R Ω]
-
-abbrev LinePt (Ω : Type*) := (Σ k : Unit, LineIdx k) → Ω
-
-def eulerEquiv (y0 y1 s : Ω) (h0 : y0 ≠ 0) (hs : s ≠ 0) : (Fin 2 → Ω) ≃ₗ[Ω] (Fin 2 → Ω) where
-  toFun v := ![-(v 1) / (s * y0), (y0 * v 0 + y1 * v 1) / s]
-  map_add' u v := by
-    funext i; fin_cases i <;> simp <;> field_simp <;> ring
-  map_smul' a v := by
-    funext i; fin_cases i <;> simp <;> field_simp
-  invFun p := ![s * (p 0 * y1 + p 1 / y0), - (s * p 0 * y0)]
-  left_inv v := by
-    funext i; fin_cases i <;> simp <;> field_simp <;> ring
-  right_inv p := by
-    funext i; fin_cases i <;> simp <;> field_simp <;> ring
-
-def eulerBasis (y0 y1 s : Ω) (h0 : y0 ≠ 0) (hs : s ≠ 0) : Module.Basis (Fin 2) Ω (Fin 2 → Ω) :=
-  Module.Basis.ofEquivFun (eulerEquiv y0 y1 s h0 hs)
-
-def eulerDeg : Fin 2 → Unit → ℤ := ![fun _ => -1, fun _ => 1]
 
 section Pair
 variable {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [Algebra O Ω]

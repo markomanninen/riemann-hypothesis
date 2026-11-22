@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.AdmCusp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ComapIrreducible
-import GroundTheory.AutomorphicForms.L2LocalComponents.NonEmpty
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.AdmCusp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.ComapIrreducible
+public import GroundTheory.AutomorphicForms.L2LocalComponents.NonEmpty
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -45,7 +49,7 @@ private theorem admissible_finite_window {R M : Type*} [Ring R] [AddCommGroup M]
       obtain ⟨p, hp, hx⟩ := hx
       obtain ⟨q, hq, hy⟩ := hy
       obtain ⟨a, b⟩ := g2 p q x y hp hq hx hy
-      exact ⟨p * q, gm p q hp hq, by rw [map_add, a, b, add_zero]⟩
+      exact ⟨p * q, gm p q hp hq, by rw [map_add (f := _), a, b, add_zero]⟩
   have h2 : ∃ q, G q ∧ ∀ t ∈ T, q t = 0 := by
     induction T using Finset.induction_on with
     | empty => exact ⟨1, g1, by simp⟩
@@ -156,7 +160,7 @@ private theorem admissible_cusp_forms_finite {K : Type} [Field K] [NumberField K
       | add a b ha hb =>
         obtain ⟨l, hl⟩ := ha
         obtain ⟨l', hl'⟩ := hb
-        exact ⟨l + l', fun Ψ g => by rw [map_add, LinearMap.add_apply, LinearMap.add_apply, ← hl, ← hl']; rfl⟩
+        exact ⟨l + l', fun Ψ g => by rw [map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, ← hl, ← hl']; rfl⟩
       | smul c a ha =>
         obtain ⟨l, hl⟩ := ha
         exact ⟨c • l, fun Ψ g => by rw [map_smul, LinearMap.smul_apply, LinearMap.smul_apply, ← hl]; rfl⟩
@@ -169,7 +173,7 @@ private theorem admissible_cusp_forms_finite {K : Type} [Field K] [NumberField K
     exact (hl p.1.1 p.2).symm.trans (by rw [h0]; rfl)
 
 theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.adm :
-    ∀ {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] (μ₂ : Measure (G1 K 2)) [μ₂.IsHaarMeasure] (τ : Submodule ℂ (L2 μ₂)), CuspIrr μ₂ τ → ∀ U : Subgroup (G1 K 2), U ≤ KG K 2 → (∃ O : Set (G1 K 2), IsOpen O ∧ ∀ g ∈ KG K 2, g ∈ U ↔ g ∈ O) →
+    ∀ {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (μ₂ : Measure (G1 K 2)) [μ₂.IsHaarMeasure] (τ : Submodule ℂ (L2 μ₂)), CuspIrr μ₂ τ → ∀ U : Subgroup (G1 K 2), U ≤ KG K 2 → (∃ O : Set (G1 K 2), IsOpen O ∧ ∀ g ∈ KG K 2, g ∈ U ↔ g ∈ O) →
       ∀ 𝒜 : Submodule ℂ (U → ℂ), FiniteDimensional ℂ 𝒜 → (∀ a ∈ 𝒜, Continuous a ∧ ∀ u : U, (fun x => a (x * u)) ∈ 𝒜) →
       ∃ E : Submodule ℂ (G1 K 2 → ℂ), FiniteDimensional ℂ E ∧ (∀ φ ∈ E, Rd τ φ) ∧
         ∀ φ : G1 K 2 → ℂ, Continuous φ → (∃ v ∈ τ, Reps μ₂ v φ) → (∀ m, (fun u : U => φ (m * u)) ∈ 𝒜) → φ ∈ E := by
@@ -183,23 +187,24 @@ theorem UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.adm :
   have : (U.subgroupOf (KG K 2)).FiniteIndex := Subgroup.finiteIndex_of_finite_quotient
   obtain ⟨B, hB, hB'⟩ := admissible_induced_finite (U.subgroupOf (KG K 2)) (Subgroup.subgroupOfEquivOfLe hU).symm 𝒜
     (Subgroup.subgroupOfEquivOfLe hU).symm.surjective
-  obtain ⟨hcs, hI, hirr⟩ := UpperTheory.ConvolutionTheory.Dp.sumT K 2 μ τ ⟨hτ.le, hτ.closed, hτ.inv, hτ.ne, hτ.irr⟩
+  have hS : UpperTheory.ConvolutionTheory.C.IsSummand μ τ := ⟨hτ.le, hτ.closed, hτ.inv, hτ.ne, hτ.irr⟩
+  obtain ⟨hcs, hI, hirr⟩ := UpperTheory.ConvolutionTheory.Dp.sumT K 2 μ τ hS
   let π := CuspidalAutomorphicRepresentation.ofSummand _ hI hirr (summandCuspForms_ne_bot μ _ hI hirr)
   obtain ⟨W, hW, hW'⟩ := admissible_cusp_forms_finite π B
   let E : Submodule ℂ (G1 K 2 → ℂ) :=
     { carrier := {φ | Continuous φ ∧ (∃ v ∈ τ, Reps μ v φ) ∧ ∀ m, (fun u : U => φ (m * u)) ∈ 𝒜}
       zero_mem' := ⟨continuous_const, ⟨0, τ.zero_mem, by
-        filter_upwards [(quasiMeasurePreserving_mk (Gam K 2) μ).ae (Lp.coeFn_zero ℂ 2 (quotientMeasure (Gam K 2) μ))]
+        filter_upwards [QuasiMeasurePreserving.ae (quasiMeasurePreserving_mk (Gam K 2) μ) (Lp.coeFn_zero ℂ 2 (quotientMeasure (Gam K 2) μ))]
           with y e using e⟩, fun _ => 𝒜.zero_mem⟩
       add_mem' := by
         rintro a b ⟨h1, ⟨v, hv, h2⟩, h3⟩ ⟨h1', ⟨v', hv', h2'⟩, h3'⟩
         refine ⟨h1.add h1', ⟨v + v', τ.add_mem hv hv', ?_⟩, fun m => 𝒜.add_mem (h3 m) (h3' m)⟩
-        filter_upwards [(quasiMeasurePreserving_mk (Gam K 2) μ).ae (Lp.coeFn_add v v'), h2, h2'] with y e p q
+        filter_upwards [QuasiMeasurePreserving.ae (quasiMeasurePreserving_mk (Gam K 2) μ) (Lp.coeFn_add v v'), h2, h2'] with y e p q
         rw [e, Pi.add_apply, p, q, Pi.add_apply]
       smul_mem' := by
         rintro c a ⟨h1, ⟨v, hv, h2⟩, h3⟩
         refine ⟨h1.const_smul c, ⟨c • v, τ.smul_mem c hv, ?_⟩, fun m => 𝒜.smul_mem c (h3 m)⟩
-        filter_upwards [(quasiMeasurePreserving_mk (Gam K 2) μ).ae (Lp.coeFn_smul c v), h2] with y e p
+        filter_upwards [QuasiMeasurePreserving.ae (quasiMeasurePreserving_mk (Gam K 2) μ) (Lp.coeFn_smul c v), h2] with y e p
         rw [e, Pi.smul_apply, p, Pi.smul_apply] }
   have hsl : ∀ φ ∈ E, ∀ m : G1 K 2, (fun k : KG K 2 => φ (m * k)) ∈ B := fun φ hφ m => hB' _ fun k => by
     convert hφ.2.2 (m * k) using 2 with u

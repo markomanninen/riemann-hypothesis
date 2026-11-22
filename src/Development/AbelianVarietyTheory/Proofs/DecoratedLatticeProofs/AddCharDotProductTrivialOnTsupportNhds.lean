@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierTransformInversionLocalFieldPi
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddCharConductorAndHaarIntegersExist
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactOpenAddSubgroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierTransformInversionLocalFieldPi
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.AddCharConductorAndHaarIntegersExist
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactOpenAddSubgroup
+
+@[expose] public section
 
 open GlobalTheory.SplitWeil MeasureTheory ValuativeRel Matrix
 open scoped Topology
@@ -23,8 +27,7 @@ def boxSub (s : kˣ) : OpenAddSubgroup (n → k) where
   isOpen' := isOpen_box s
 
 theorem nonarch : NonarchimedeanAddGroup (n → k) where
-  toIsTopologicalAddGroup := inferInstance
-  is_nonarchimedean U hU := by
+  is_nonarchimedean := fun U hU => by
     obtain ⟨s, hs⟩ := exists_box_subset hU
     exact ⟨boxSub s, hs⟩
 
@@ -102,6 +105,7 @@ theorem box_nhds (s : kˣ) : box n s ∈ 𝓝 (0 : n → k) :=
 omit [MeasurableSpace k] [BorelSpace k] in
 theorem invariant_nhds {f : (n → k) → ℂ} (hf : f ∈ SB (n → k)) :
     {t : n → k | ∀ x, f (x + t) = f x} ∈ 𝓝 (0 : n → k) := by
+  classical
   obtain ⟨s, hs⟩ := exists_box_invariant hf
   exact Filter.mem_of_superset (box_nhds s) fun t ht => hs t ht
 
@@ -154,7 +158,8 @@ theorem law_integrated (hχ : HasConductor χ c) (μ : Measure (n → k)) [μ.Is
       ring
     · have h0 : b.1 η = 0 := image_eq_zero_of_notMem_tsupport hη
       simp [h0]
-  rw [ea, eb, map_sum, LinearMap.sum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ea, eb, map_sum, LinearMap.sum_apply, map_sum]
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [map_smul, LinearMap.smul_apply, map_smul]
   congr 1
@@ -200,9 +205,6 @@ theorem isAdmissibleBoxForCharacter_of_subset {s : kˣ} {g : (n → k) → ℂ}
     (h : box n s ⊆ {t : n → k | ∀ η ∈ tsupport g, χ (η ⬝ᵥ t) = 1}) : admitted χ s g :=
   fun η hη t ht => h ht η (subset_tsupport _ hη)
 
-omit [MeasurableSpace k] [BorelSpace k] in
-theorem admitted.mono {s s' : kˣ} {g : (n → k) → ℂ} (h : admitted χ s g) (hs : box n s' ⊆ box n s) : admitted χ s' g :=
-  fun η hη t ht => h η hη t (hs ht)
 
 theorem ratio_indep (hχ : HasConductor χ c) (μ : Measure (n → k)) [μ.IsAddHaarMeasure]
     (B : SB (n → k) →ₗ[ℂ] SB (n → k) →ₗ[ℂ] ℂ)
@@ -239,8 +241,9 @@ theorem exists_adm (hχ : HasConductor χ c) (g : SB (n → k)) : ∃ s : kˣ, a
   obtain ⟨s, hs⟩ := exists_box_subset (addChar_dotProduct_trivial_on_tsupport_nhds hχ g.2)
   exact ⟨s, isAdmissibleBoxForCharacter_of_subset hs⟩
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 def ell (χ : AddChar k Circle) (μ : Measure (n → k)) (B : SB (n → k) →ₗ[ℂ] SB (n → k) →ₗ[ℂ] ℂ)
     (g : SB (n → k)) : ℂ :=
   if h : ∃ s : kˣ, admitted χ s g.1 then (μ.real (box n h.choose) : ℂ)⁻¹ * B (ind h.choose) g else 0
@@ -255,7 +258,7 @@ include hχ h2
 theorem ell_eq {s : kˣ} (g : SB (n → k)) (hs : admitted χ s g.1) :
     ell χ μ B g = (μ.real (box n s) : ℂ)⁻¹ * B (ind s) g := by
   have h : ∃ s : kˣ, admitted χ s g.1 := ⟨s, hs⟩
-  rw [ell, dif_pos h]
+  rw [ell, dite_eq_left h]
   rcases box_total (n := n) h.choose s with h1 | h1
   · exact (ratio_indep hχ μ B h2 g hs h1).symm
   · exact ratio_indep hχ μ B h2 g h.choose_spec h1
@@ -274,7 +277,7 @@ def ellL : SB (n → k) →ₗ[ℂ] ℂ where
           simp [h, h']
         exact a2 η this t ht
       · exact a1 η h t ht
-    rw [ell_eq hχ μ B h2 _ a1, ell_eq hχ μ B h2 _ a2, ell_eq hχ μ B h2 _ a3, map_add]
+    rw [ell_eq hχ μ B h2 _ a1, ell_eq hχ μ B h2 _ a2, ell_eq hχ μ B h2 _ a3, map_add (f := _)]
     ring
   map_smul' z g := by
     obtain ⟨s, hs⟩ := exists_adm hχ g

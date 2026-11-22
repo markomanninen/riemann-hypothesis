@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.OpensRangeChartYSupOpensRangeChartZ
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.OpensRangeChartYSupOpensRangeChartZ
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits
 
@@ -51,23 +55,10 @@ namespace WeierstrassCurve
 
 variable {R : Type u} [CommRing R] (W : WeierstrassCurve R)
 
+
 open Polynomial in
-
 instance free_coordinateRing : Module.Free R W.toAffine.CoordinateRing :=
-  have : Module.Free R[X] W.toAffine.CoordinateRing :=
-    .of_basis (WeierstrassCurve.Affine.CoordinateRing.basis W.toAffine)
-  .trans (S := R[X])
-
-instance flat_toSpec : Flat (toSpec W) :=
-  have := HasRingHomProperty.instIsZariskiLocalAtSource (P := @Flat.{u})
-  IsZariskiLocalAtSource.of_openCover (P := @Flat) (chartCover W).openCover fun b => by
-    cases b
-    · change Flat (chartZ W ≫ toSpec W)
-      rw [chartZ_toSpec]
-      exact Flat.SpecMap_iff.2 (RingHom.flat_algebraMap_iff.2 inferInstance)
-    · change Flat (chartY W ≫ toSpec W)
-      rw [chartY_toSpec]
-      exact Flat.SpecMap_iff.2 (RingHom.flat_algebraMap_iff.2 inferInstance)
+  inferInstance
 
 section Presentation
 
@@ -123,20 +114,30 @@ theorem bijective_awayEval_dehom : Function.Bijective
   · exact awayRing_hom_ext W i (fun r => by simp [hr, gr]) (fun j => by simp [hm, gc])
 
 def dehomChart : Spec (.of (DehomRing W i)) ⟶ scheme W :=
-  pt W (dehomCoord W i) (.of_isUnit (equation_dehomCoord W i) i (by simp))
+  Spec.map (CommRingCat.ofHom
+    (awayEval W i (algebraMap R _) (dehomCoord W i) (equation_dehomCoord W i) (by simp))) ≫
+      awayChart W i
 
-instance : IsOpenImmersion (dehomChart W i) :=
-  isOpenImmersion_ptHom W i _ _ (.of_isUnit (equation_dehomCoord W i) i (by simp)) (by simp)
-    (bijective_awayEval_dehom W i)
+private theorem isIso_dehomChart_eval : IsIso (CommRingCat.ofHom
+    (awayEval W i (algebraMap R _) (dehomCoord W i) (equation_dehomCoord W i) (by simp))) :=
+  (ConcreteCategory.isIso_iff_bijective _).mpr (bijective_awayEval_dehom W i)
 
-theorem opensRange_dehomChart : (dehomChart W i).opensRange = coordOpen W i :=
-  TopologicalSpace.Opens.ext (range_ptHom W i _ _
-    (.of_isUnit (equation_dehomCoord W i) i (by simp)) (by simp) (bijective_awayEval_dehom W i))
+instance : IsOpenImmersion (dehomChart W i) := by
+  have := isIso_dehomChart_eval W i
+  unfold dehomChart
+  infer_instance
 
-@[reassoc (attr := simp)]
+theorem opensRange_dehomChart : (dehomChart W i).opensRange = coordOpen W i := by
+  have := isIso_dehomChart_eval W i
+  unfold dehomChart
+  rw [Scheme.Hom.opensRange_comp_of_isIso, opensRange_awayChart]
+
 theorem dehomChart_toSpec : dehomChart W i ≫ toSpec W =
-    Spec.map (CommRingCat.ofHom (algebraMap R (DehomRing W i))) :=
-  pt_toSpec ..
+    Spec.map (CommRingCat.ofHom (algebraMap R (DehomRing W i))) := by
+  rw [dehomChart, Category.assoc, awayChart_toSpec, ← Spec.map_comp, ← CommRingCat.ofHom_comp]
+  congr 2
+  ext r
+  exact awayEval_awayConst W i _ _ _ (by simp) r
 
 end Presentation
 
@@ -153,13 +154,6 @@ theorem of_dehomChart (P : MorphismProperty Scheme.{u}) [IsZariskiLocalAtSource 
   · change P (dehomChart W i ≫ toSpec W)
     rw [dehomChart_toSpec]
     exact h i
-
-instance locallyOfFinitePresentation_toSpec : LocallyOfFinitePresentation (toSpec W) :=
-  have := HasRingHomProperty.instIsZariskiLocalAtSource (P := @LocallyOfFinitePresentation.{u})
-  of_dehomChart W @LocallyOfFinitePresentation fun _ =>
-    (HasRingHomProperty.Spec_iff (P := @LocallyOfFinitePresentation)).2
-      (RingHom.finitePresentation_algebraMap.2
-        (Algebra.FinitePresentation.quotient (Submodule.fg_span (Set.finite_range _))))
 
 section Smooth
 
@@ -234,8 +228,8 @@ theorem jacobian_dehomPresentation : (dehomPresentation W hij).jacobian =
   rw [h₁, h₂, mul_one, zero_mul, sub_zero, h, Algebra.Generators.algebraMap_apply]
   exact eval₂_dehomCoord W i _
 
-include hij in
 
+include hij in
 theorem isStandardSmoothOfRelativeDimension_away_pderiv (T : Type*) [CommRing T]
     [Algebra (DehomRing W i) T] [Algebra R T] [IsScalarTower R (DehomRing W i) T]
     [IsLocalization.Away
@@ -267,41 +261,6 @@ theorem smoothOfRelativeDimension_toSpec_of_isUnit (hΔ : IsUnit W.Δ) :
     (HasRingHomProperty.Spec_iff (P := @SmoothOfRelativeDimension 1)).2
       (locally_isStandardSmoothOfRelativeDimension_dehomRing W hΔ i)
 
-instance smoothOfRelativeDimension_toSpec [W.IsElliptic] :
-    SmoothOfRelativeDimension 1 (toSpec W) :=
-  smoothOfRelativeDimension_toSpec_of_isUnit W W.isUnit_Δ
-
-instance smooth_toSpec [W.IsElliptic] : Smooth (toSpec W) :=
-  SmoothOfRelativeDimension.smooth 1 _
-
-theorem locally_isStandardSmoothOfRelativeDimension_coordinateRing [W.IsElliptic] :
-    RingHom.Locally (RingHom.IsStandardSmoothOfRelativeDimension 1)
-      (algebraMap R W.toAffine.CoordinateRing) := by
-  refine (HasRingHomProperty.Spec_iff (P := @SmoothOfRelativeDimension 1)
-    (φ := CommRingCat.ofHom (algebraMap R W.toAffine.CoordinateRing))).1 ?_
-  rw [← chartZ_toSpec]
-  exact inferInstanceAs (SmoothOfRelativeDimension (0 + 1) _)
-
-theorem locally_isStandardSmoothOfRelativeDimension_originRing [W.IsElliptic] :
-    RingHom.Locally (RingHom.IsStandardSmoothOfRelativeDimension 1)
-      (algebraMap R (OriginRing W)) := by
-  refine (HasRingHomProperty.Spec_iff (P := @SmoothOfRelativeDimension 1)
-    (φ := CommRingCat.ofHom (algebraMap R (OriginRing W)))).1 ?_
-  rw [← chartY_toSpec]
-  exact inferInstanceAs (SmoothOfRelativeDimension (0 + 1) _)
-
-instance smooth_coordinateRing [W.IsElliptic] : Algebra.Smooth R W.toAffine.CoordinateRing := by
-  refine RingHom.smooth_algebraMap.1 ((HasRingHomProperty.Spec_iff (P := @Smooth)
-    (φ := CommRingCat.ofHom (algebraMap R W.toAffine.CoordinateRing))).1 ?_)
-  rw [← chartZ_toSpec]
-  infer_instance
-
-instance smooth_originRing [W.IsElliptic] : Algebra.Smooth R (OriginRing W) := by
-  refine RingHom.smooth_algebraMap.1 ((HasRingHomProperty.Spec_iff (P := @Smooth)
-    (φ := CommRingCat.ofHom (algebraMap R (OriginRing W)))).1 ?_)
-  rw [← chartY_toSpec]
-  infer_instance
-
 end Smooth
 
 section Integral
@@ -318,25 +277,67 @@ theorem originW_mem_nonZeroDivisors_originRing : originW W ∈ nonZeroDivisors (
   rw [Algebra.smul_def]
   exact ha
 
+private theorem exists_isOpenImmersion_of_origin_preimage {X : Scheme.{u}}
+    (fY : Spec (.of (OriginRing W)) ⟶ scheme W) (fZ : X ⟶ scheme W)
+    [IsOpenImmersion fY] [IsOpenImmersion fZ]
+    (hY : fY ⁻¹ᵁ coordOpen W 2 = PrimeSpectrum.basicOpen (originW W))
+    (hZ : fZ.opensRange = coordOpen W 2) :
+    ∃ f : Spec (.of (Localization.Away (originW W))) ⟶ X,
+      IsOpenImmersion f ∧ f ≫ fZ =
+        Spec.map (CommRingCat.ofHom (algebraMap (OriginRing W) _)) ≫ fY := by
+  let g := Spec.map (CommRingCat.ofHom (algebraMap (OriginRing W) (Localization.Away (originW W))))
+  have : IsOpenImmersion g := IsOpenImmersion.of_isLocalization (originW W)
+  have hr : Set.range (g ≫ fY) ⊆ Set.range fZ := by
+    rintro _ ⟨x, rfl⟩
+    rw [← Scheme.Hom.coe_opensRange, hZ, Scheme.Hom.comp_apply]
+    change g x ∈ fY ⁻¹ᵁ coordOpen W 2
+    rw [hY]
+    exact (PrimeSpectrum.localization_away_comap_range (Localization.Away (originW W))
+      (originW W)).le ⟨x, rfl⟩
+  refine ⟨IsOpenImmersion.lift fZ (g ≫ fY) hr, ?_, IsOpenImmersion.lift_fac ..⟩
+  have : IsOpenImmersion (IsOpenImmersion.lift fZ (g ≫ fY) hr ≫ fZ) := by
+    rw [IsOpenImmersion.lift_fac]
+    infer_instance
+  exact .of_comp _ fZ
+
 theorem exists_isOpenImmersion_away_originW :
     ∃ f : Spec (.of (Localization.Away (originW W))) ⟶ Spec (.of W.toAffine.CoordinateRing),
       IsOpenImmersion f ∧ f ≫ chartZ W =
-        Spec.map (CommRingCat.ofHom (algebraMap (OriginRing W) _)) ≫ chartY W := by
-  set g := Spec.map (CommRingCat.ofHom
-    (algebraMap (OriginRing W) (Localization.Away (originW W)))) with hg
-  have : IsOpenImmersion g := IsOpenImmersion.of_isLocalization (originW W)
-  have hr : Set.range (g ≫ chartY W) ⊆ Set.range (chartZ W) := by
-    rintro _ ⟨x, rfl⟩
-    rw [← Scheme.Hom.coe_opensRange, opensRange_chartZ, Scheme.Hom.comp_apply]
-    change g x ∈ chartY W ⁻¹ᵁ coordOpen W 2
-    rw [chartY_preimage_coordOpen_two]
-    exact (PrimeSpectrum.localization_away_comap_range (Localization.Away (originW W))
-      (originW W)).le ⟨x, rfl⟩
-  refine ⟨IsOpenImmersion.lift (chartZ W) (g ≫ chartY W) hr, ?_, IsOpenImmersion.lift_fac ..⟩
-  have : IsOpenImmersion (IsOpenImmersion.lift (chartZ W) (g ≫ chartY W) hr ≫ chartZ W) := by
-    rw [IsOpenImmersion.lift_fac]
-    infer_instance
-  exact .of_comp _ (chartZ W)
+        Spec.map (CommRingCat.ofHom (algebraMap (OriginRing W) _)) ≫ chartY W :=
+  exists_isOpenImmersion_of_origin_preimage W (chartY W) (chartZ W)
+    (chartY_preimage_coordOpen_two W) (opensRange_chartZ W)
+
+private def originAwayChart : Spec (.of (OriginRing W)) ⟶ scheme W :=
+  Spec.map (CommRingCat.ofHom (awayEquivOrigin W).toRingHom) ≫ awayChart W 1
+
+private theorem isIso_originAwayChart_eval :
+    IsIso (CommRingCat.ofHom (awayEquivOrigin W).toRingHom) :=
+  (ConcreteCategory.isIso_iff_bijective _).mpr (awayEquivOrigin W).bijective
+
+private instance : IsOpenImmersion (originAwayChart W) := by
+  have := isIso_originAwayChart_eval W
+  unfold originAwayChart
+  infer_instance
+
+private theorem originAwayChart_preimage_coordOpen_two :
+    originAwayChart W ⁻¹ᵁ coordOpen W 2 = PrimeSpectrum.basicOpen (originW W) := by
+  have he : (awayChart W 1) ⁻¹ᵁ coordOpen W 2 = PrimeSpectrum.basicOpen (awayCoord W 1 2) := by
+    refine (Proj.awayι_preimage_basicOpen (grading W) (coord_mem W 1) one_pos
+      (coord_mem W 2) one_pos).trans ?_
+    congr 1
+    apply HomogeneousLocalization.val_injective
+    simp [HomogeneousLocalization.Away.isLocalizationElem, awayCoord]
+  rw [originAwayChart, Scheme.Hom.comp_preimage, he, SpecMap_preimage_basicOpen]
+  have hm := awayEval_awayCoord_mul W 1 (algebraMap R _) ![originZ W, -1, originW W]
+    (equation_originZ_originW W) isUnit_one.neg 2
+  have h : (awayEquivOrigin W) (awayCoord W 1 2) = -originW W := by
+    change awayEval W 1 (algebraMap R _) ![originZ W, -1, originW W]
+      (equation_originZ_originW W) isUnit_one.neg (awayCoord W 1 2) = _
+    simpa [neg_eq_iff_eq_neg] using hm
+  change PrimeSpectrum.basicOpen ((awayEquivOrigin W) (awayCoord W 1 2)) = _
+  rw [h]
+  ext x
+  simp
 
 instance isDomain_originRing [IsDomain R] : IsDomain (OriginRing W) := by
   have : Nontrivial (OriginRing W) := (originAug W).toRingHom.domain_nontrivial
@@ -344,17 +345,25 @@ instance isDomain_originRing [IsDomain R] : IsDomain (OriginRing W) := by
     IsLocalization.injective _ (M := Submonoid.powers (originW W))
       (Submonoid.powers_le.mpr (originW_mem_nonZeroDivisors_originRing W))
   have : Nontrivial (Localization.Away (originW W)) := hinj.nontrivial
-  obtain ⟨f, hf, -⟩ := exists_isOpenImmersion_away_originW W
+  have : IsDomain (AwayRing W 2) := (awayEquivAffine W).injective.isDomain _
+  obtain ⟨f, hf, -⟩ := exists_isOpenImmersion_of_origin_preimage W (originAwayChart W) (awayChart W 2)
+    (originAwayChart_preimage_coordOpen_two W) (opensRange_awayChart W 2)
   have : IsIntegral (Spec (.of (Localization.Away (originW W)))) :=
     isIntegral_of_isOpenImmersion f
   have : IsDomain (Localization.Away (originW W)) :=
     (affine_isIntegral_iff (.of (Localization.Away (originW W)))).mp this
   exact hinj.isDomain _
 
-theorem denseRange_chartZ : DenseRange (chartZ W) := by
+private theorem denseRange_of_origin_preimage {X : Scheme.{u}}
+    (fY : Spec (.of (OriginRing W)) ⟶ scheme W) (fZ : X ⟶ scheme W)
+    [IsOpenImmersion fY] [IsOpenImmersion fZ]
+    (hY : fY.opensRange = coordOpen W 1) (hZ : fZ.opensRange = coordOpen W 2)
+    (h : fY ⁻¹ᵁ coordOpen W 2 = PrimeSpectrum.basicOpen (originW W)) : DenseRange fZ := by
   intro x
-  rcases exists_chartY_or_chartZ W x with ⟨y, rfl⟩ | hx
-  · have hd : Dense (PrimeSpectrum.basicOpen (originW W) : Set (PrimeSpectrum (OriginRing W))) := by
+  rcases (coordOpen_one_sup_coordOpen_two W).ge (Set.mem_univ x) with hx | hx
+  · rw [← hY] at hx
+    obtain ⟨y, rfl⟩ := Scheme.Hom.mem_opensRange.mp hx
+    have hd : Dense (PrimeSpectrum.basicOpen (originW W) : Set (PrimeSpectrum (OriginRing W))) := by
       rw [← PrimeSpectrum.localization_away_comap_range (Localization.Away (originW W))
         (originW W)]
       refine (PrimeSpectrum.denseRange_comap_iff_ker_le_nilRadical _).mpr ?_
@@ -362,20 +371,52 @@ theorem denseRange_chartZ : DenseRange (chartZ W) := by
         (M := Submonoid.powers (originW W))
         (Submonoid.powers_le.mpr (originW_mem_nonZeroDivisors_originRing W)))]
       exact bot_le
-    rw [← chartY_preimage_coordOpen_two, ← opensRange_chartZ] at hd
-    exact (chartY W).continuous.closure_preimage_subset _ (hd y)
-  · exact subset_closure hx
+    rw [← h, ← hZ] at hd
+    exact fY.continuous.closure_preimage_subset _ (hd y)
+  · rw [← hZ] at hx
+    exact subset_closure hx
+
+theorem denseRange_chartZ : DenseRange (chartZ W) :=
+  denseRange_of_origin_preimage W (chartY W) (chartZ W)
+    (opensRange_chartY W) (opensRange_chartZ W) (chartY_preimage_coordOpen_two W)
+
+private theorem isReduced_scheme_of_reduced_charts
+    [IsReduced W.toAffine.CoordinateRing] [IsReduced (OriginRing W)] :
+    AlgebraicGeometry.IsReduced (scheme W) := by
+  have : IsReduced (AwayRing W 1) :=
+    isReduced_of_injective (awayEquivOrigin W) (awayEquivOrigin W).injective
+  have : IsReduced (AwayRing W 2) :=
+    isReduced_of_injective (awayEquivAffine W) (awayEquivAffine W).injective
+  let f : (b : Bool) → Spec (.of (AwayRing W (if b then 1 else 2))) ⟶ scheme W :=
+    fun b => awayChart W (if b then 1 else 2)
+  let U : (scheme W).OpenCover := Scheme.Cover.mkOfCovers Bool _ f fun x => by
+    rcases (coordOpen_one_sup_coordOpen_two W).ge (Set.mem_univ x) with hx | hx
+    · rw [← opensRange_awayChart] at hx
+      exact ⟨true, hx⟩
+    · rw [← opensRange_awayChart] at hx
+      exact ⟨false, hx⟩
+  have : ∀ b, AlgebraicGeometry.IsReduced (U.X b) := by
+    intro b
+    cases b
+    · exact inferInstanceAs (AlgebraicGeometry.IsReduced (Spec (.of (AwayRing W 2))))
+    · exact inferInstanceAs (AlgebraicGeometry.IsReduced (Spec (.of (AwayRing W 1))))
+  exact .of_openCover _ U
+
+private theorem denseRange_awayChart_two : DenseRange (awayChart W 2) := by
+  have := isIso_originAwayChart_eval W
+  have hY : (originAwayChart W).opensRange = coordOpen W 1 := by
+    unfold originAwayChart
+    rw [Scheme.Hom.opensRange_comp_of_isIso, opensRange_awayChart]
+  exact denseRange_of_origin_preimage W (originAwayChart W) (awayChart W 2)
+    hY (opensRange_awayChart W 2) (originAwayChart_preimage_coordOpen_two W)
 
 instance isIntegral_scheme [IsDomain R] : IsIntegral (scheme W) := by
-  have : ∀ b, IsReduced ((chartCover W).openCover.X b) := fun b => by
-    cases b
-    · exact inferInstanceAs (IsReduced (Spec (.of W.toAffine.CoordinateRing)))
-    · exact inferInstanceAs (IsReduced (Spec (.of (OriginRing W))))
-  have : IsReduced (scheme W) := .of_openCover _ (chartCover W).openCover
+  have : AlgebraicGeometry.IsReduced (scheme W) := isReduced_scheme_of_reduced_charts W
+  have : IsDomain (AwayRing W 2) := (awayEquivAffine W).injective.isDomain _
   have : IrreducibleSpace (scheme W) := by
-    have h := ((IrreducibleSpace.isIrreducible_univ _).image (chartZ W)
-      (chartZ W).continuous.continuousOn).closure
-    rw [Set.image_univ, (denseRange_chartZ W).closure_range] at h
+    have h := ((IrreducibleSpace.isIrreducible_univ _).image (awayChart W 2)
+      (awayChart W 2).continuous.continuousOn).closure
+    rw [Set.image_univ, (denseRange_awayChart_two W).closure_range] at h
     exact (irreducibleSpace_def _).mpr h
   exact isIntegral_of_irreducibleSpace_of_isReduced _
 
@@ -408,28 +449,9 @@ instance isReduced_originRing [_root_.IsReduced R] : _root_.IsReduced (OriginRin
   isReduced_of_free_of_geometricallyReduced (R := R)
 
 instance isReduced_scheme [_root_.IsReduced R] : AlgebraicGeometry.IsReduced (scheme W) :=
-  have : ∀ b, AlgebraicGeometry.IsReduced ((chartCover W).openCover.X b) := fun b => by
-    cases b
-    · exact inferInstanceAs (AlgebraicGeometry.IsReduced (Spec (.of W.toAffine.CoordinateRing)))
-    · exact inferInstanceAs (AlgebraicGeometry.IsReduced (Spec (.of (OriginRing W))))
-  .of_openCover _ (chartCover W).openCover
+  isReduced_scheme_of_reduced_charts W
 
 end Integral
-
-theorem proper_flat_geometricallyIntegral_smooth :
-    IsProper (toSpec W) ∧ Flat (toSpec W) ∧
-      (LocallyOfFinitePresentation (toSpec W) ∧ QuasiCompact (toSpec W) ∧
-        QuasiSeparated (toSpec W)) ∧
-      GeometricallyIntegral (toSpec W) ∧
-      (IsUnit W.Δ → SmoothOfRelativeDimension 1 (toSpec W)) :=
-  ⟨inferInstance, inferInstance, ⟨inferInstance, inferInstance, inferInstance⟩, inferInstance,
-    smoothOfRelativeDimension_toSpec_of_isUnit W⟩
-
-example : SmoothOfRelativeDimension 1 (toSpec (⟨0, 0, 1, -1, 0⟩ : WeierstrassCurve ℚ)) :=
-  smoothOfRelativeDimension_toSpec_of_isUnit _ (by
-    simp only [isUnit_iff_ne_zero, WeierstrassCurve.Δ, WeierstrassCurve.b₂, WeierstrassCurve.b₄,
-      WeierstrassCurve.b₆, WeierstrassCurve.b₈]
-    norm_num)
 
 end WeierstrassCurve
 

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.AlmostEverywhereEigen.OneStepOf
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.AlmostEverywhereEigen.OneStepOf
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped ENNReal
@@ -29,14 +33,15 @@ theorem ae_tendsto {S : Type} [MeasurableSpace S] {ν : Measure S} (h : Lp ℂ 2
     have e2 : eLpNorm' (fun s => (v j : S → ℂ) s - h s) 2 ν = edist (v j) h := by
       rw [Lp.edist_def, eLpNorm_eq_eLpNorm' two_ne_zero ENNReal.ofNat_ne_top]
       simp only [ENNReal.toReal_ofNat]
-      rfl
+      · rfl
+      · exact (Lp.stronglyMeasurable (v j)).aestronglyMeasurable.sub (Lp.stronglyMeasurable h).aestronglyMeasurable
     rw [e1, e2, ENNReal.rpow_two]
     gcongr
     rw [edist_comm]; exact (hv j).le
   have hsum : ∫⁻ s, ∑' j, g j s ∂ν ≠ ⊤ := by
     rw [lintegral_tsum fun j => (gm j).aemeasurable]
     exact ne_top_of_le_ne_top geom (ENNReal.tsum_le_tsum hint)
-  filter_upwards [ae_lt_top (Measurable.ennreal_tsum gm) hsum] with s hs
+  filter_upwards [ae_lt_top (Measurable.tsum gm) hsum] with s hs
   have h0 : Tendsto (fun j => g j s) atTop (𝓝 0) := ENNReal.tendsto_atTop_zero_of_tsum_ne_top hs.ne
   have h1 : Tendsto (fun j => (g j s) ^ (2⁻¹ : ℝ)) atTop (𝓝 0) := by
     have := ((ENNReal.continuous_rpow_const (y := (2⁻¹:ℝ))).tendsto 0).comp h0

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousFixingSubgroupEquiv
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NatCardAddMonoidHomZmodLe
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContinuousFixingSubgroupEquiv
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NatCardAddMonoidHomZmodLe
+
+@[expose] public section
 
 open GlobalTheory.Cyc GlobalTheory.Cyc.TwistLift ReciprocityTheory.Gal
 
@@ -89,8 +93,9 @@ theorem card_invariants_twistedDual_charRep_le_pow (χ ψ : G →* ℤ_[l]ˣ) (N
   have hf : Function.Injective f := by
     intro x y hxy
     apply Subtype.ext
-    apply TDual.ext
+    apply LinearMap.ext
     intro m
+    change x.1 m = y.1 m
     rw [key x.1 m, key y.1 m]
     exact congrArg (m * ·) hxy
   obtain ⟨v, hv⟩ := Ideal.mem_span_singleton'.1

@@ -1,16 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaAbsoluteSum
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RealSizeNonneg
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SupNormWordSumSubLeAndDerivativeCost
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsInverseChart
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaKernelModerateGrowthWithSeminorms
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaFunctionProductsSlicesOrthogonalDecompositiStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittDecompSymplInclIsotropicInclAnisotropic
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RealSizeNonneg
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SupNormWordSumSubLeAndDerivativeCost
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EqZeroOfLintegralEqZero
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsInverseChart
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsTopologicalRingAE
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaKernelModerateGrowthWithSeminorms
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaFunctionProductsSlicesOrthogonalDecompositiStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,7 +77,7 @@ theorem heisO_slice (ψ : AddChar (AF D.host.F) ℂ) (o : OrthDec S A B) (u : WO
     heisO ψ A T u (slA o g) = slA o (heisO ψ S T ((o.resS T).symm (u, 0)) g) := by
   funext w
   simp only [slA, heisO]
-  rw [o.symplOH_resS T, ← map_add, Prod.mk_add_mk, add_zero]
+  rw [o.symplOH_resS T, ← map_add (f := _), Prod.mk_add_mk, add_zero]
   simp only [AddEquiv.apply_symm_apply, symplOH_zero_left, add_zero]
 
 theorem dRho_slice (ψ : AddChar (AF D.host.F) ℂ) {θ : InfFam D} (hθ : IsInfFam θ) (o : OrthDec S A B)
@@ -130,10 +136,14 @@ theorem word_bound {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1)) 
         rw [List.length_cons, show k + (l.length + 1) = k + 1 + l.length by omega, ← mul_assoc, ENNReal.ofReal,
           ENNReal.coe_mul]
 
-theorem l2O_le_supN_of_measure_eq_one {μ : Measure (WO S T)} {𝓕 : Set (WO S T)} (h1 : μ 𝓕 = 1) (φ : WO S T → ℂ) :
+theorem l2O_le_supN_of_measure_eq_one {μ : Measure (WO S T)} {𝓕 : Set (WO S T)} (h1 : μ 𝓕 = 1) (φ : WO S T → ℂ) (hφ : Continuous φ) :
     l2O μ 𝓕 φ ≤ supN φ := by
   have h : l2O μ 𝓕 φ ^ 2 ≤ supN φ ^ 2 := by
-    rw [l2O_sq_eq_lintegral]
+    have : BorelSpace (WO S T) := ⟨rfl⟩
+    have he : l2O μ 𝓕 φ ^ 2 = ∫⁻ w in 𝓕, ‖φ w‖ₑ ^ 2 ∂μ := by
+      simpa [l2O] using eLpNorm_nnreal_pow_eq_lintegral (μ := μ.restrict 𝓕) (p := 2)
+        two_ne_zero hφ.measurable.aestronglyMeasurable
+    rw [he]
     calc ∫⁻ w in 𝓕, ‖φ w‖ₑ ^ 2 ∂μ ≤ ∫⁻ _ in 𝓕, supN φ ^ 2 ∂μ :=
           lintegral_mono fun w => by gcongr; exact le_iSup (fun w => ‖φ w‖ₑ) w
       _ = supN φ ^ 2 := by rw [setLIntegral_const, h1, mul_one]
@@ -164,8 +174,13 @@ theorem sobO_slice_le {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1
   refine Finset.sum_le_sum fun a _ => ?_
   have hkd : k ≤ d := Nat.lt_succ_iff.1 (Finset.mem_range.1 hk)
   rw [word_slice ψ hθ o]
+  have hg : IsThetaFunO ψ S T (wordAct (opA ψ θ o) (List.ofFn a) f) :=
+    wordAct_rel (B := opA ψ θ o) (R := fun x _ => IsThetaFunO ψ S T x) (List.ofFn a)
+      (fun a _ _ _ h => theta_dRho hθ hψ a.1 _ h) (y := f) hf
+  have hs : Continuous (slA o (wordAct (opA ψ θ o) (List.ofFn a) f)) :=
+    hg.cont.comp ((o.continuous_resS_symm T).comp (continuous_id.prodMk continuous_const))
   calc l2O μ 𝓕 (slA o (wordAct (opA ψ θ o) (List.ofFn a) f)) ≤ supN (wordAct (opA ψ θ o) (List.ofFn a) f) :=
-        (l2O_le_supN_of_measure_eq_one h1 _).trans (supN_slice o _)
+        (l2O_le_supN_of_measure_eq_one h1 _ hs).trans (supN_slice o _)
     _ = wordSum (heisDer ψ θ) supN 0 (wordAct (opA ψ θ o) (List.ofFn a) f) := (wordSum_zero _ _ _).symm
     _ ≤ c (List.ofFn a) * wordSum (heisDer ψ θ) supN (0 + (List.ofFn a).length) f := hc _ f hf 0
     _ ≤ c (List.ofFn a) * wordSum (heisDer ψ θ) supN d f := by
@@ -175,14 +190,13 @@ theorem sobO_slice_le {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1
 
 theorem isSobForm_slice {ψ : AddChar (AF D.host.F) ℂ} {θ : InfFam D} (hθ : IsInfFam θ) (o : OrthDec S A B)
     {χ χ' : (AE D)ˣ →* Circle} {om : Om A T} (hom : IsWeilDatumO ψ A T χ χ' om) (p : GA D A × GA D T) :
-    IsSobForm ψ θ S T fun f => om p (fun u => f ((o.resS T).symm (u, 0))) 0 where
-  add f g _ _ := by
-    show om p (slA o f + slA o g) 0 = _
-    rw [map_add]; rfl
-  smul c f _ := by
-    show om p (c • slA o f) 0 = _
-    rw [map_smul]; rfl
-  bound U hU := by
+    IsSobForm ψ θ S T (fun f => om p (fun u => f ((o.resS T).symm (u, 0))) 0) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro f g _ _
+    exact congrFun ((om p).map_add (slA o f) (slA o g)) 0
+  · intro c f _
+    exact congrFun ((om p).map_smul c (slA o f)) 0
+  · intro U hU
     have hψ := hom.std
     let U' : AddSubgroup (WO A T) := U.comap (extA o T)
     have hU' : IsOpen (U' : Set (WO A T)) :=

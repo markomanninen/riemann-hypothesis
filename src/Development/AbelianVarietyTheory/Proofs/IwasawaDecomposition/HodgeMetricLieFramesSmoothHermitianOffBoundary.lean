@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LieGramEqGramOf
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LinearIndependentOfCutSec
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HodgeMetricUniformisationSmoothOnInteriorStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EigenMetricGramSmoothInFamilyFramesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LieGramEqGramOf
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LinearIndependentOfCutSec
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HodgeMetricUniformisationSmoothOnInteriorStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EigenMetricGramSmoothInFamilyFramesStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -93,12 +97,12 @@ theorem isMetricOn_gramOf (G : EigMet Z σ) (hj : j ≫ genStr Z ≫ spMap e.toR
     IsMetricOn S Ω (gramOf e G hj f₀ A₀) := by
   refine ⟨fun y _ A hA τ => ?_, fun y hy A hA τ a b => hs y hy A hA τ a b, fun y _ A hA A' hA' τ => ?_⟩
   · have h := exists_frameAt hj hT y hA
-    rw [gramOf, dif_pos h]
+    rw [gramOf, dite_eq_left h]
     exact (G.pos _ _ τ).transpose
   · have h := exists_frameAt hj hT y hA
     have h' := exists_frameAt hj hT y hA'
     unfold gramOf
-    rw [dif_pos h, dif_pos h']
+    rw [dite_eq_left h, dite_eq_left h']
     rw [G.change _ h.choose h'.choose τ, map_ratVal_eq_co hj hT hA' h.choose_spec h'.choose_spec τ]
     rw [transpose_mul, transpose_mul, Matrix.mul_assoc]
     congr 2

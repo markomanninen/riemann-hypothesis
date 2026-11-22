@@ -1,5 +1,9 @@
-import Formalism.UnipotentAdelicQuotients.EllRegCut
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ConvSqLe
+module
+
+public import Formalism.UnipotentAdelicQuotients.EllRegCut
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ConvSqLe
+
+@[expose] public section
 
 namespace ZetaZeros.D.EllReg
 

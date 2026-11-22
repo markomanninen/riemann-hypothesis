@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.IntPFmat
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.EmbeddingIntegerAlgebraMap
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.IntPFmat
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.EmbeddingIntegerAlgebraMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,7 +53,9 @@ theorem iota_mem_O (p : PlF D) (y : D.host.E)
   have hQ0 : Q ≠ ⊥ := by
     intro hb
     apply p.ne_bot
-    rw [← hQc, hb, Ideal.comap_bot_of_injective]
+    rw [← hQc, hb]
+    change Ideal.comap (algebraMap (𝓞 D.host.F) (𝓞 D.host.E)) ⊥ = ⊥
+    rw [Ideal.comap_bot_of_injective]
     exact FaithfulSMul.algebraMap_injective (𝓞 D.host.F) (𝓞 D.host.E)
   obtain ⟨t, ht, o, hto⟩ := h ⟨Q, hQp, hQ0⟩ hQc
   exact ht (hIQ ⟨o, hto⟩)

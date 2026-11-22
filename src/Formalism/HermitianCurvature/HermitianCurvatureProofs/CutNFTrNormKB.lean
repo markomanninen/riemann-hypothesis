@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopDomCore
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLemB
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TriangleInequalityAtPlace
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutNFTopDomCore
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLemB
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TriangleInequalityAtPlace
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP
 

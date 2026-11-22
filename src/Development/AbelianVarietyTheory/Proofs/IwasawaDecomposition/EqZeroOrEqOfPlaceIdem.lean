@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsSelfDualCLatFrame
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,13 +56,13 @@ theorem exists_add_conj (a : AE D) : ∃ t : AF D.host.F, algebraMap (AF D.host.
   | add x y hx hy =>
     obtain ⟨s, hs⟩ := hx
     obtain ⟨t, ht⟩ := hy
-    exact ⟨s + t, by rw [RingHom.map_add, RingHom.map_add, hs, ht]; ring⟩
+    exact ⟨s + t, by rw [RingHom.map_add (f := _), RingHom.map_add (f := _), hs, ht]; ring⟩
   | tmul a x =>
     have hσ : ∀ x, D.sp.cm.sig (D.sp.cm.sig x) = x := fun x => star_star x
     obtain ⟨t, ht⟩ : ∃ t : D.host.F, algebraMap _ _ t = x + D.sp.cm.sig x := by
       apply (D.sp.cm.fixed _).1
       change D.sp.cm.sig _ = _
-      rw [map_add, hσ, add_comm]
+      rw [map_add (f := _), hσ, add_comm]
     refine ⟨t • a, ?_⟩
     change (t • a) ⊗ₜ[D.host.F] (1 : D.host.E) = a ⊗ₜ[D.host.F] x + a ⊗ₜ[D.host.F] D.sp.cm.sig x
     rw [← TensorProduct.tmul_add, ← ht, smul_tmul_one]
@@ -140,7 +144,7 @@ theorem infPart_split {e : AE D} (he : IsSplitIdem D e) : infPart D e = 0 := by
 theorem IsOrthSum.infPart_eq {e : AE D} (h : IsOrthSum e) : infPart D e = 0 := by
   obtain ⟨ι, P, es, h1, -, rfl⟩ := h
   exact Finset.sum_induction _ (fun y => infPart D y = 0)
-    (fun x y hx hy => by rw [RingHom.map_add, hx, hy, add_zero]) (RingHom.map_zero _) fun i hi => infPart_split (h1 i hi)
+    (fun x y hx hy => by rw [RingHom.map_add (f := _), hx, hy, add_zero]) (RingHom.map_zero _) fun i hi => infPart_split (h1 i hi)
 
 variable {S T : HSp D} {LS : Set (Fin S.rank → D.host.E)} {LT : Set (Fin T.rank → D.host.E)}
 

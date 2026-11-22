@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsComplementaryProductOfIsCuspidal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsComplementaryProductOfIsCuspidal
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,8 +13,8 @@ namespace GlobalTheory.Published
 
 def LanglandsMultisegments : Prop :=
   ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [CharZero k],
-    (∀ (𝔪 𝔫 : Multiset (Segment k)) (x : IrrGL k), IsL 𝔪 x.rep → IsL 𝔫 x.rep → 𝔪 = 𝔫) ∧
-    ∀ (𝔪 𝔫 : Multiset (Segment k)) (x : Fin 2 → IrrGL k) (y : IrrGL k) (hd : ∑ a, (x a).1 = y.1),
+    (∀ (𝔪 𝔫 : Multiset (Segment k)) (x : IrrGL (k := k)), IsL 𝔪 x.rep → IsL 𝔫 x.rep → 𝔪 = 𝔫) ∧
+    ∀ (𝔪 𝔫 : Multiset (Segment k)) (x : Fin 2 → IrrGL (k := k)) (y : IrrGL (k := k)) (hd : ∑ a, (x a).1 = y.1),
       IsL 𝔪 (x 0).rep → IsL 𝔫 (x 1).rep → IsL (𝔪 + 𝔫) y.rep → IsSubquotient y.rep (prodIrr x hd)
 
 end GlobalTheory.Published

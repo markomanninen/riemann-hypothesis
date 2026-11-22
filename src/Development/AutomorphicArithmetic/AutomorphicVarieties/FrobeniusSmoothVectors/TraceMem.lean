@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Imports
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EntryMod
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgClosed
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Imports
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.EntryMod
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgClosed
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.CoQuot
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr UpperTheory.V.Fr.PF
 
@@ -12,7 +16,7 @@ variable {O R : Type} [CommRing O] [IsLocalRing O] [CommRing R] [Algebra O R] [I
   [IsCO O A]
 
 private theorem mem_max (a : A) : (a : R) ∈ maximalIdeal R ↔ a ∈ maximalIdeal A := by
-  rw [← res_eq_zero_iff O, ← res_eq_zero_iff O, ← res_map A.val]
+  rw [← res_eq_zero_iff O, ← res_eq_zero_iff O, ← UpperTheory.V.Alg.res_map A.val]
   rfl
 
 private theorem closed {x : R} (hx : ∀ N : ℕ, ∃ y ∈ A, x - y ∈ maximalIdeal R ^ N) : x ∈ A := by
@@ -125,7 +129,7 @@ private theorem trace_mem {G C K : Type} [Monoid G] [CommRing C] [CommRing K] [A
   | add x y _ _ hx hy =>
     obtain ⟨c, h1⟩ := hx
     obtain ⟨d, h2⟩ := hy
-    exact ⟨c + d, by rw [map_add, h1, h2, trace_add]⟩
+    exact ⟨c + d, by rw [map_add (f := _), h1, h2, trace_add]⟩
   | smul a x _ hx =>
     obtain ⟨c, h1⟩ := hx
     exact ⟨a * c, by rw [map_mul, h1, trace_smul, Algebra.smul_def]⟩
@@ -138,7 +142,7 @@ private theorem mon_mem (hF : F.Ok C₀) (hn : n = 2 ∨ n = 3) {C K : Type} [Co
     (ρ : NRep F n K) (ht : ∀ g, ∃ c, algebraMap C K c = (ρ.r g).trace)
     (hE : ∀ i, Matrix.single i i (1 : K) ∈ Submodule.span C (Set.range ρ.r)) {x : K} (hx : x ∈ ρ.mon 0) :
     ∃ c, algebraMap C K c = x := by
-  obtain ⟨-, -, -, -, hs⟩ := UpperTheory.V.Fr.star hF
+  have hs := (UpperTheory.V.Fr.star hF).2.2.2.2 ρ
   obtain ⟨-, w2, w3, w4, -⟩ := w_facts hn
   obtain ⟨L, hL, rfl⟩ := hx
   let E : Fin n → Fin n → Submodule C K := fun i j => Submodule.span C (Set.range fun g => ρ.r g i j)
@@ -186,7 +190,7 @@ private theorem mon_mem (hF : F.Ok C₀) (hn : n = 2 ∨ n = 3) {C K : Type} [Co
 private theorem z_diag (hF : F.Ok C₀) (hn : n = 2 ∨ n = 3) {K : Type} [CommRing K] (ρ : NRep F n K) {i₀ : Fin n}
     (h0 : w n i₀ = 1) : ρ.r F.g0 - ρ.r (F.star F.g0) =
       (ρ.r F.g0 - ρ.r (F.star F.g0)) i₀ i₀ • diagonal fun i => (w n i : K) := by
-  obtain ⟨-, -, -, -, hs⟩ := UpperTheory.V.Fr.star hF
+  have hs := (UpperTheory.V.Fr.star hF).2.2.2.2 ρ
   obtain ⟨w1, w2, w3, -⟩ := w_facts hn
   ext i j
   rw [Matrix.smul_apply]

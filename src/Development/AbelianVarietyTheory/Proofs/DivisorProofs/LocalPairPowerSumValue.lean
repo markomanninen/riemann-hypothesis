@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTotalBiChains
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTotalBiChains
+
+@[expose] public section
+
 open CategoryTheory Limits Opposite AlgebraicTopology GlobalTheory.EZ
 universe u v
 
@@ -112,7 +117,7 @@ lemma ι_homF (a b m : ℕ) (h : a + b = m) :
       homF K (-(m : ℤ)) =
     (kN K a b).hom ≫ K.ιTotal (ComplexShape.down ℕ) a b m h ≫
       ((K.total (ComplexShape.down ℕ)).extendXIso ComplexShape.embeddingDownNat (fN m)).inv := by
-  rw [homF, HomologicalComplex₂.ι_totalDesc, dif_pos (by omega)]
+  rw [homF, HomologicalComplex₂.ι_totalDesc, dite_eq_left (by omega)]
   exact cmp_congr K _ _ _ a b m _ _ _ _ (fN a) (fN b) (fN m) h
 
 def invC {n : ℤ} (m : ℕ) (hm : ComplexShape.embeddingDownNat.f m = n) :
@@ -136,7 +141,7 @@ lemma ι_invF (a b m : ℕ) (h : a + b = m) :
       ((K.total (ComplexShape.down ℕ)).extendXIso ComplexShape.embeddingDownNat (fN m)).inv ≫ invF K (-(m : ℤ)) =
     (kN K a b).inv ≫ (ext2 K).ιTotal (ComplexShape.up ℤ) (-(a : ℤ)) (-(b : ℤ)) (-(m : ℤ))
       (by simp only [ComplexShape.π_def]; omega) := by
-  rw [invF, dif_pos (by omega), invC_congr K _ m _ (fN m), invC, Iso.inv_hom_id_assoc,
+  rw [invF, dite_eq_left (by omega), invC_congr K _ m _ (fN m), invC, Iso.inv_hom_id_assoc,
     HomologicalComplex₂.ι_totalDesc]
 
 end Tot
@@ -278,8 +283,8 @@ lemma ev_awO (X : SimplicialObject Spc) (n a : ℕ) (ha : a ≤ n) :
 
 end Sheaves
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem homotopyEquiv_chains_totChains : ∀ (R : Type) [CommRing R] (X : SimplicialObject GlobalTheory.EtC.Spc), (∃ e : HomotopyEquiv (diagCx ((freeBi R).obj X)) (tot ((freeBi R).obj X)), ∀ n : ℕ, e.hom.f n = awF _ n) → ∃ e : HomotopyEquiv ((GlobalTheory.EtC.chains R).obj (GlobalTheory.EtC.bidiag.obj X)) (totChains R X), ∀ n : ℕ, e.hom.f (-(n : ℤ)) = awZ R X n := by
   intro R _ X ⟨e, he⟩
   haveI : (ext2 (dbl ((freeBi R).obj X))).HasTotal (ComplexShape.up ℤ) := hasTotal_biChains R X

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsContinuousRetractionOntoUnitaryArchimedean
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsContinuousRetractionOntoUnitaryArchimedean
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,8 +33,8 @@ theorem cInf_cutPt (v : InfinitePlace E) (x : UA E n) : cInf (cutPt v x) = cutGL
   unfold cutPt
   rw [cInf_embRet, InfinitePlace.mk_embedding]
 
-open Classical in
 
+open Classical in
 theorem evGL_cInf_cutPt (x : UA E n) (v w : InfinitePlace E) :
     evGL w (cInf (cutPt v x)) = (Pi.mulSingle w (evGL w (cInf x)) : InfinitePlace E → GL (Fin n) ℂ) v := by
   rw [cInf_cutPt, Pi.mulSingle_apply]
@@ -43,8 +47,8 @@ end GlobalTheory.DefU.InfDecomp
 
 namespace GlobalTheory.DefU
 
-open InfDecomp in
 
+open InfDecomp in
 theorem infU_eq_list_prod_embU : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (x : UA E n),
     x ∈ infU E n → ∃ y : InfinitePlace E → UA E n, (∀ v, y v ∈ embU n v.embedding) ∧
       (∀ v, cEmb v.embedding (y v) = cEmb v.embedding x) ∧ (Finset.univ.toList.map y).prod = x := by

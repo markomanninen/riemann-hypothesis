@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.TriHaar
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.HaarVolumes.TriHaar
+
+@[expose] public section
 
 noncomputable section
 
@@ -115,8 +119,6 @@ abbrev TG (N : ℕ) : Type := ↥(triPos N)
 scoped instance : Mul (TG N) := ⟨fun a b => ⟨triCoOf (upMat b.1 * upMat a.1), (upMat_mul_mem b.1 a.1 b.2 a.2).2⟩⟩
 scoped instance : One (TG N) := ⟨⟨triCoOf 1, one_mem.2⟩⟩
 scoped instance : Inv (TG N) := ⟨fun a => ⟨triCoOf (upMat a.1)⁻¹, (upMat_inv_mem a.1 a.2).2⟩⟩
-
-theorem tg_mul_val (a b : TG N) : (a * b).1 = triCoOf (upMat b.1 * upMat a.1) := rfl
 
 theorem upMat_tg_mul (a b : TG N) : upMat (a * b).1 = upMat b.1 * upMat a.1 :=
   (upMat_mul_mem b.1 a.1 b.2 a.2).1
@@ -243,10 +245,12 @@ theorem triMeas_unique (κ : Measure (TriCo N)) (hκ0 : κ (triPos N)ᶜ = 0)
   obtain ⟨b, h2⟩ : ∃ b : NNReal, ((triMeas N).comap Subtype.val : Measure (TG N)) = b • Measure.haar :=
     ⟨_, Measure.isMulLeftInvariant_eq_smul _ _⟩
   set η : Measure (TriCo N) := (Measure.haar : Measure (TG N)).map Subtype.val
+  have hval : AEMeasurable (Subtype.val : TG N → TriCo N) Measure.haar :=
+    measurable_subtype_coe.aemeasurable
   have hk : κ = (a : ENNReal) • η := by
-    rw [← restore κ hκ0, h1, ENNReal.smul_def, Measure.map_smul]
+    rw [← restore κ hκ0, h1, ENNReal.smul_def, Measure.map_smul _ hval]
   have ht : triMeas N = (b : ENNReal) • η := by
-    rw [← restore (triMeas N) triMeas_compl, h2, ENNReal.smul_def, Measure.map_smul]
+    rw [← restore (triMeas N) triMeas_compl, h2, ENNReal.smul_def, Measure.map_smul _ hval]
   have hb : b ≠ 0 := by
     rintro hb0
     apply triMeas_ne_zero (N := N)

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DUnitMemRangeOfMemKerIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvEqOneOfForallPairing
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DerivationDivisibleOfCocomm
-import ReciprocityTheory.DualLattices.BlockOneMulMulBlockOne
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DUnitMemRangeOfMemKerIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvEqOneOfForallPairing
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DerivationDivisibleOfCocomm
+public import ReciprocityTheory.DualLattices.BlockOneMulMulBlockOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem norm_le_of_mem_span (h1 : ∀ o : O, ‖algebraMap O C o‖ ≤ 1) (f : 
   | mem x hx => exact h x hx
   | zero => simpa using hr
   | add x y _ _ hx hy =>
-    rw [map_add]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
+    rw [map_add (f := _)]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
   | smul o x _ hx => rw [map_smul]; exact (norm_smul_le h1 _ _).trans hx
 
 theorem bddAbove_norm (h1 : ∀ o : O, ‖algebraMap O C o‖ ≤ 1) [Module.Finite O M] (f : M →ₗ[O] C) :
@@ -79,10 +83,9 @@ theorem supN_le_of_tmul {f : WithConv (M ⊗[O] M →ₗ[O] C)} {r : ℝ}
     (hr : 0 ≤ r) (h : ∀ a b, ‖f.ofConv (a ⊗ₜ b)‖ ≤ r) : supN f ≤ r := by
   refine supN_le fun t => ?_
   induction t with
-  | zero => simpa using hr
   | tmul a b => exact h a b
   | add x y hx hy =>
-    rw [map_add]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
+    rw [map_add (f := _)]; exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
 
 theorem supN_eq_mul (h1 : ∀ o : O, ‖algebraMap O C o‖ ≤ 1) [Module.Finite O M]
     [Module.Finite O (M ⊗[O] M)] (f g : WithConv (M →ₗ[O] C))
@@ -196,7 +199,7 @@ theorem exists_diag {C : Type} [Field C] {v : Valuation C NNReal} {O : Type} [Co
       ∀ j, d j • e j ∈ Submodule.span O (Set.range g) := by
   classical
   let A : Matrix (Fin r) (Fin m) O := fun j k => b.equivFun (g k) j
-  obtain ⟨P, Q, a, hP, hQ, hD⟩ := ReciprocityTheory.PGsh.Up.Smith.smith_mat hv r m A
+  obtain ⟨P, Q, a, hP, hQ, hD⟩ := ReciprocityTheory.PGsh.Up.Smith.smith_mat (v := v) hv r m A
   have hPP : P * P⁻¹ = 1 := Matrix.mul_nonsing_inv P hP
   have hPP' : P⁻¹ * P = 1 := Matrix.nonsing_inv_mul P hP
   have hQQ : Q * Q⁻¹ = 1 := Matrix.mul_nonsing_inv Q hQ
@@ -213,7 +216,8 @@ theorem exists_diag {C : Type} [Field C] {v : Valuation C NNReal} {O : Type} [Co
   have hsum : ∀ w, w = ∑ j, φ j w • e j := fun w => by
     apply b.equivFun.injective
     funext i
-    rw [map_sum, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_apply]
     have h := congrFun (Matrix.mulVec_mulVec (b.equivFun w) P⁻¹ P) i
     rw [hPP', Matrix.one_mulVec] at h
     rw [← h]
@@ -250,7 +254,8 @@ theorem exists_diag {C : Type} [Field C] {v : Valuation C NNReal} {O : Type} [Co
         Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨k, rfl⟩)
       have hφx : ∀ i, φ i x = if (j : ℕ) = (i : ℕ) then a i else 0 := fun i => by
         have h1 : φ i x = (P * A * Q) i ⟨j, h⟩ := by
-          rw [Matrix.mul_apply, map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [Matrix.mul_apply, map_sum]
           refine Finset.sum_congr rfl fun k _ => ?_
           rw [map_smul, hφg, smul_eq_mul, mul_comm]
         rw [h1, hD]
@@ -379,10 +384,10 @@ theorem dvd_mul_of_dvd_dlog (hv : v.Integers O) (hp : v (p : C) < 1) (G : PDivGr
     rfl
   obtain ⟨D, hD⟩ := Module.projective_lifting_property I.mkQ
     (ψ ∘ₗ AugCot.d (counitAlgHom O (G.A n))) (Submodule.mkQ_surjective I)
-  have hDa : ∀ a, I.mkQ (D a) = ψ (dUnit O a) := fun a => LinearMap.congr_fun hD a
-  have hdm : ∀ a b, ψ (dUnit O (a * b)) =
-      counit (R := O) a • ψ (dUnit O b) + counit (R := O) b • ψ (dUnit O a) := fun a b => by
-    rw [dUnit, AugCot.d_mul, map_add, map_smul, map_smul]
+  have hDa : ∀ a, I.mkQ (D a) = ψ (dUnit (R := O) a) := fun a => LinearMap.congr_fun hD a
+  have hdm : ∀ a b, ψ (dUnit (R := O) (a * b)) =
+      counit (R := O) a • ψ (dUnit (R := O) b) + counit (R := O) b • ψ (dUnit (R := O) a) := fun a b => by
+    rw [dUnit, AugCot.d_mul, map_add (f := _), map_smul, map_smul]
     rfl
   have key := dvd_mul_of_groupLike_val v p O hv hp (G.A n) q hq D
     (fun a b => hz _ (by
@@ -454,7 +459,7 @@ theorem coker_dlog_killed : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [I
       exact hk k
     | zero => simp
     | add x y _ _ hx hy =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact dvd_add hx hy
     | smul a x _ hx =>
       rw [dlog_smul (algebraMap ℤ_[p] O), map_smul, smul_eq_mul]

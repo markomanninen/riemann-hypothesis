@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GenReads
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameUniformEmbeddingSecond
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicElementLatticeFullAndCompletion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GenReads
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FrameUniformEmbeddingSecond
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicElementLatticeFullAndCompletion
+
+@[expose] public section
 
 namespace GlobalTheory.AdMark
 
@@ -26,7 +30,7 @@ theorem exists_lift {R S La U A : Type} [CommRing R] [CommRing S] [AddCommGroup 
         rintro p q ⟨hp, w, hw, e⟩ ⟨hq, w', hw', e'⟩
         refine ⟨L.add_mem hp hq, w + w', add_mem hw hw', ?_⟩
         rw [smul_add, ← e, ← e']
-        simp only [Prod.fst_add, Prod.snd_add, map_add]
+        simp only [Prod.fst_add, Prod.snd_add, map_add (f := _)]
         abel
       smul_mem' := by
         rintro c p ⟨hp, w, hw, e⟩
@@ -61,7 +65,7 @@ theorem exists_lift {R S La U A : Type} [CommRing R] [CommRing S] [AddCommGroup 
     obtain ⟨a, w, hw, rfl⟩ := ap1 y hy
     obtain ⟨w', hw', e'⟩ := m2 a
     obtain ⟨u, hu, eu⟩ := hdiv (v - mk a) (K w - w') (by
-      rw [map_sub, ← ey, smul_sub, ← e', map_add, map_nsmul]
+      rw [map_sub, ← ey, smul_sub, ← e', map_add (f := _), map_nsmul]
       abel)
     refine ⟨a, u, (hL u).2 (hu ▸ sub_mem ((hK _).2 ⟨w, hw, rfl⟩) hw'), ?_⟩
     rw [← eu]
@@ -146,7 +150,7 @@ theorem exists_marking : ∀ (D : D7) (H : Geo.Tor.Host D.host.E) (Dw : Datum H)
       rw [smul_add, map_smul, smul_comm m]
     · obtain ⟨a, ha, u, hu, rfl⟩ := hx
       obtain ⟨a', ha', u', hu', rfl⟩ := hy
-      exact ⟨a + a', add_mem ha ha', u + u', add_mem hu hu', by rw [map_add, smul_add]; abel⟩
+      exact ⟨a + a', add_mem ha ha', u + u', add_mem hu hu', by rw [map_add (f := _), smul_add]; abel⟩
   · obtain ⟨c, hc⟩ := hM
     obtain ⟨w, hw, e⟩ := hmk a (Submodule.smul_mono_left (Ideal.map_mono hMb) ha)
     obtain ⟨w', hw', e'⟩ := m2 a

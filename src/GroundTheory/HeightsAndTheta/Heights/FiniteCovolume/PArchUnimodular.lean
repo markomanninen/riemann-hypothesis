@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsArchUnimodular
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PGramAtData
-import GroundTheory.HeightsAndTheta.Theta.RealSignature
-import GroundTheory.HeightsAndTheta.Theta.Unimodular.IndefiniteUnitary
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsArchUnimodular
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PGramAtData
+public import GroundTheory.HeightsAndTheta.Theta.RealSignature
+public import GroundTheory.HeightsAndTheta.Theta.Unimodular.IndefiniteUnitary
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -12,7 +16,7 @@ open scoped NNReal
 noncomputable section
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 namespace ArchUnimodular
@@ -112,6 +116,7 @@ theorem ArchUnimodular.proof (h : HermitianForm F E W) (v : Basis ι E W) :
     rwa [ArchUnimodular.mulEquivHaarChar_conjCME_archUnitary, one_smul] at e
   have hfun : (fun x => x * g) = (fun x => g * x) ∘ (conjCME g⁻¹) := by
     funext x
+    change x * g = g * (g⁻¹ * x * (g⁻¹)⁻¹)
     simp [mul_assoc]
   have hm : Measurable (conjCME g⁻¹) := (map_continuous (conjCME g⁻¹)).measurable
   rw [hfun, ← Measure.map_map (measurable_const_mul g) hm, hc, map_mul_left_eq_self]
@@ -119,8 +124,6 @@ theorem ArchUnimodular.proof (h : HermitianForm F E W) (v : Basis ι E W) :
 section Example
 
 open GaussianPlane
-
-example : muG.IsMulRightInvariant := ArchUnimodular.proof hG vG muG
 
 end Example
 

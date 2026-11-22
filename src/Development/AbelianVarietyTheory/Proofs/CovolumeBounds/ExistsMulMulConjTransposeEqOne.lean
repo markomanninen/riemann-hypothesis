@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Module
 
@@ -267,7 +271,8 @@ theorem IsOrthonormal.linearIndependent {ι : Type*} [DecidableEq ι] {s : ι �
   rw [linearIndependent_iff']
   intro t g hg i hi
   have := congrArg (fun v => h v (s i)) hg
-  simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hs _ i, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, hs _ i, smul_eq_mul,
     mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', hi, if_true, map_zero,
     LinearMap.zero_apply] at this
   exact this
@@ -275,7 +280,8 @@ theorem IsOrthonormal.linearIndependent {ι : Type*} [DecidableEq ι] {s : ι �
 theorem IsOrthonormal.apply_eq_sum {ι : Type*} [Fintype ι] [DecidableEq ι] {b : Basis ι K V}
     (hb : IsOrthonormal h b) (x y : V) : h x y = ∑ i, b.repr x i * star (b.repr y i) := by
   conv_lhs => rw [← b.sum_repr x, ← b.sum_repr y]
-  simp only [map_sum, map_smul, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, LinearMap.map_smulₛₗ, LinearMap.sum_apply, LinearMap.smul_apply,
     hb _ _, smul_eq_mul, mul_ite, mul_one, mul_zero, starRingEnd_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
   simp [mul_comm]
@@ -288,7 +294,7 @@ theorem exists_apply_self_eq_one [Finite K] (hs : ∃ a : K, star a ≠ a)
     have htr : ∀ b : K, b + star b = 0 := by
       intro b
       have h1 := hne ((b / h x y) • x + y)
-      simp only [map_add, map_smul, LinearMap.map_smulₛₗ, LinearMap.add_apply,
+      simp only [map_add (f := _), map_smul, LinearMap.map_smulₛₗ, LinearMap.add_apply,
         LinearMap.smul_apply, hne, smul_eq_mul, starRingEnd_apply, hh x y, mul_zero, zero_add,
         add_zero, ← star_mul', div_mul_cancel₀ _ hxy] at h1
       linear_combination h1
@@ -307,8 +313,6 @@ private abbrev perp (h : V →ₗ[K] V →ₗ⋆[K] K) (v : V) : Submodule K V :
 
 private abbrev res (h : V →ₗ[K] V →ₗ⋆[K] K) (v : V) : perp h v →ₗ[K] perp h v →ₗ⋆[K] K :=
   h.domRestrict₁₂ (perp h v) (perp h v)
-
-@[simp] private theorem res_apply (v : V) (x y : perp h v) : res h v x y = h x y := rfl
 
 private theorem finrank_perp [FiniteDimensional K V] {v : V} (hv : h v v = 1) {n : ℕ}
     (hn : finrank K V = n + 1) : finrank K (perp h v) = n := by
@@ -329,6 +333,7 @@ private theorem res_nondeg (hh : ∀ x y, h y x = star (h x y))
   intro y
   have h1 := hx ⟨y - h y v • v, by simp [hv]⟩
   have h2 : h x v = 0 := x.2
+  simp only [res, LinearMap.domRestrict₁₂_apply] at h1
   simpa [LinearMap.map_smulₛₗ, h2] using h1
 
 private theorem isOrthonormal_cons (hh : ∀ x y, h y x = star (h x y)) {v : V} (hv : h v v = 1)
@@ -341,7 +346,7 @@ private theorem isOrthonormal_cons (hh : ∀ x y, h y x = star (h x y)) {v : V} 
   · simp only [Fin.cons_zero, Fin.cons_succ]
     rw [hh, h0, star_zero, if_neg (Fin.succ_ne_zero j).symm]
   · simp [h0]
-  · simpa using hs i j
+  · simpa [res, LinearMap.domRestrict₁₂_apply] using hs i j
 
 private theorem card_frames_succ [Finite V] (hh : ∀ x y, h y x = star (h x y)) (n : ℕ) :
     Nat.card {s : Fin (n + 1) → V // IsOrthonormal h s} =
@@ -360,7 +365,7 @@ private theorem card_frames_succ [Finite V] (hh : ∀ x y, h y x = star (h x y))
     refine ⟨⟨⟨s 0, by simpa using hs 0 0⟩, fun i => ⟨s i.succ, ?_⟩, fun i j => ?_⟩,
       Subtype.ext (Fin.cons_self_tail s)⟩
     · simpa using hs i.succ 0
-    · simpa using hs i.succ j.succ
+    · simpa [res, LinearMap.domRestrict₁₂_apply] using hs i.succ j.succ
 
 end
 
@@ -631,18 +636,6 @@ theorem card_specialLinearGroup {q : ℕ} (hq : Nat.card F = q)
 end Linear
 
 section Frobenius
-
-@[reducible] noncomputable def frobeniusStarRing (F K : Type*) [Field F] [Fintype F] [Field K]
-    [Algebra F K] (h2 : finrank F K = 2) : StarRing K :=
-  haveI : FiniteDimensional F K := Module.finite_of_finrank_pos (by omega)
-  haveI : Finite K := Module.finite_of_finite F
-  { star := FiniteField.frobeniusAlgEquivOfAlgebraic F K
-    star_involutive := fun x => by
-      have h := pow_orderOf_eq_one (FiniteField.frobeniusAlgEquivOfAlgebraic F K)
-      rw [FiniteField.orderOf_frobeniusAlgEquivOfAlgebraic, h2] at h
-      exact DFunLike.congr_fun h x
-    star_mul := fun x y => by rw [map_mul, mul_comm]
-    star_add := fun x y => map_add _ x y }
 
 end Frobenius
 

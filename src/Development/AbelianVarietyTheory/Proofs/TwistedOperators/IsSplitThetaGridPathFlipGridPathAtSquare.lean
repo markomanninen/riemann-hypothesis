@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+
+@[expose] public section
+
 open GlobalTheory.SplitFlip
 
 namespace GlobalTheory.FlipPathPairwise
@@ -20,8 +25,8 @@ theorem pairwise_of_isPath {γ : List Edge} (h : IsPath γ) :
 
 end GlobalTheory.FlipPathPairwise
 
-open GlobalTheory.FlipPathPairwise in
 
+open GlobalTheory.FlipPathPairwise in
 theorem GlobalTheory.SplitFlip.isPath_flipPath : ∀ {γ : List Edge} {i j : ℕ}, IsPath γ → PassesThrough i j γ →
     IsPath (flipPath i j γ) := by
   intro γ i j hγ hP

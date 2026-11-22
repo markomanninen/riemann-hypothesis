@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.FunctionalCalculusLaws
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.FunctionalCalculusLaws
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,8 +90,8 @@ lemma memJ_right (h : Hyp ε E) (i j : ℕ) {x y : Module.End ℂ V} (hy : y ∈
         rwa [show j + (2 + i - 1) = j + i + 1 by omega] at this
     · simp only [add_mul, Finset.sum_mul, mul_sub, mul_assoc, Finset.sum_sub_distrib]; abel
 
-variable (ε E) in
 
+variable (ε E) in
 def Rr (h : Hyp ε E) : Subalgebra ℂ (Module.End ℂ V)[X] where
   carrier := {f | ∀ k, f.coeff k ∈ U E k}
   mul_mem' {f g} hf hg k := by
@@ -101,8 +105,8 @@ def Rr (h : Hyp ε E) : Subalgebra ℂ (Module.End ℂ V)[X] where
     · subst hk; rw [Algebra.algebraMap_eq_smul_one]; exact Submodule.smul_mem _ r h.one
     · exact zero_mem _
 
-variable (ε E) in
 
+variable (ε E) in
 def inJ (f : (Module.End ℂ V)[X]) : Prop := ∀ k, f.coeff k ∈ Jk ε E k
 
 lemma inJ_mul_right (h : Hyp ε E) {x g : (Module.End ℂ V)[X]} (hx : inJ ε E x) (hg : g ∈ Rr ε E h) :
@@ -130,8 +134,8 @@ lemma inJ_comm (h : Hyp ε E) {f g : (Module.End ℂ V)[X]} (hf : f ∈ Rr ε E 
     have := h.comm _ _ _ (hf x.1) _ (hg x.2)
     rwa [Finset.HasAntidiagonal.mem_antidiagonal.mp hx, Nat.add_sub_cancel] at this
 
-variable (ε E) in
 
+variable (ε E) in
 def con (h : Hyp ε E) : RingCon (Rr ε E h) where
   r f g := inJ ε E ((f : (Module.End ℂ V)[X]) - g)
   iseqv := ⟨fun f k => by simp,
@@ -149,8 +153,8 @@ def con (h : Hyp ε E) : RingCon (Rr ε E h) where
     rw [e, coeff_add]
     exact add_mem (inJ_mul_right h h1 c.2 k) (inJ_mul_left h h2 b.2 k)
 
-variable (ε E) in
 
+variable (ε E) in
 abbrev Q (h : Hyp ε E) := (con ε E h).Quotient
 
 instance instCR (h : Hyp ε E) : CommRing (Q ε E h) :=
@@ -165,9 +169,6 @@ instance instCR (h : Hyp ε E) : CommRing (Q ε E h) :=
       exact inJ_comm h f.2 g.2 }
 
 instance instQA (h : Hyp ε E) : Algebra ℚ (Q ε E h) := Algebra.compHom _ (algebraMap ℚ ℂ)
-
-example (h : Hyp ε E) (A4' : A4) (N : Matrix (Fin n) (Fin n) (Q ε E h)) (hN : ∀ k, (N ^ (k + 1)).trace = 0) :
-    N ^ n = 0 := A4' (Q ε E h) n N hN
 
 variable (h : Hyp ε E)
 
@@ -196,7 +197,8 @@ lemma MR_mul (M M' : Matrix (Fin n) (Fin n) (Module.End ℂ V)) (i j : ℕ) (hM 
   · rw [Matrix.mul_apply]
     exact Submodule.sum_mem _ fun c _ => h.mul _ _ _ (hM a c) _ (hM' c b)
   · refine Matrix.ext fun a b => Subtype.ext ?_
-    simp only [Matrix.mul_apply, MR, AddSubmonoidClass.coe_finsetSum, Subalgebra.coe_mul, coe_L, CX_mul, map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mul_apply, MR, AddSubmonoidClass.coe_finsetSum, Subalgebra.coe_mul, coe_L, CX_mul, map_sum,
       Finset.sum_mul]
 
 lemma MR_pow (M : Matrix (Fin n) (Fin n) (Module.End ℂ V)) (j : ℕ) (hM : ∀ a b, M a b ∈ U E j) (k : ℕ) :
@@ -237,7 +239,8 @@ lemma trace_MR (M : Matrix (Fin n) (Fin n) (Module.End ℂ V)) (j : ℕ) (hM : �
   have : L h j M.trace hT = ∑ i, MR h M j hM i i := by
     apply Subtype.ext
     simp [MR, Matrix.trace, Finset.sum_mul]
-  rw [this, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [this, map_sum]
   rfl
 
 include h in

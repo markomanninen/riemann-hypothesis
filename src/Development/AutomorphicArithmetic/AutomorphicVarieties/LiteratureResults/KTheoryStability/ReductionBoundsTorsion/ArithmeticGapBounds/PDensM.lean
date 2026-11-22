@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace PositivityTheory.KB.SpectralGap.WordTransvectionCongruences
 
@@ -56,7 +60,7 @@ theorem exists_small {L : Type*} [Field L] [NumberField L] (π : 𝓞 L) (hπ : 
   rw [map_div₀, map_pow, div_lt_iff₀ (pow_pos (hπw w) _)]
   exact ha w
 
-theorem exists_near {L : Type*} [Field L] [NumberField L] [IsTotallyComplex L] :
+theorem exists_near {L : Type*} [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] :
     ∃ R : ℝ, ∀ v : InfinitePlace L → ℂ, ∃ a : 𝓞 L, ∀ w, ‖v w - w.embedding (a : L)‖ ≤ R := by
   classical
   set b := mixedEmbedding.latticeBasis L
@@ -74,7 +78,7 @@ theorem exists_near {L : Type*} [Field L] [NumberField L] [IsTotallyComplex L] :
   refine le_trans (le_of_eq ?_) (norm_le_pi_norm _ ⟨w, hw⟩)
   simp [x, mixedEmbedding.mixedEmbedding_apply_isComplex]
 
-theorem dense_pow {L : Type*} [Field L] [NumberField L] [IsTotallyComplex L] (π : 𝓞 L)
+theorem dense_pow {L : Type*} [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] (π : 𝓞 L)
     (hπ : ¬ IsUnit π) (h0 : π ≠ 0) :
     Dense {z : InfinitePlace L → ℂ | ∃ t : 𝓞 L, ∃ k : ℕ,
       z = fun w => w.embedding ((t : L) / (π : L) ^ k)} := by

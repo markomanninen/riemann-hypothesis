@@ -1,6 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsLattice
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StandardLatticeVecIndep
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsLattice
+public import GroundTheory.HeightsAndTheta.Heights.ArithDegree
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.Slopes
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -43,7 +49,7 @@ theorem LogDetDerivative.sum_cramer_eq {m : ℕ} (A B : Matrix (Fin m) (Fin m) �
     (hA : IsUnit A.det) :
     ∑ i, A.cramer (fun k ↦ B k i) i = A.det * (A⁻¹ * B).trace := by
   simp only [← det_smul_inv_mulVec_eq_cramer A _ hA, Pi.smul_apply, smul_eq_mul, trace,
-    diag_apply, mul_apply, mulVec, dotProduct, Finset.mul_sum]
+    diag_apply, Matrix.mul_apply, mulVec, dotProduct, Finset.mul_sum]
 
 theorem LogDetDerivative.intersectionNumber_baseChange : LogDetDerivative.Statement := by
   intro m G G' hpos hG t
@@ -60,18 +66,6 @@ theorem LogDetDerivative.intersectionNumber_baseChange : LogDetDerivative.Statem
   refine hlog.congr_deriv ?_
   rw [Complex.mul_re, ← him0, zero_mul, sub_zero]
   field_simp
-
-theorem LogDetDerivative.equiv :
-    GroundTheory.Heights₂.Heights.HilbertSamuel.LogDetDerivative.Statement ↔
-      GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.HilbertSamuel.LogDetDerivative.Statement := by
-  constructor
-  · intro h m F t
-    refine h m F.G (GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.HilbertSamuel.entryDeriv F.G) F.posDef
-      (fun s i j ↦ ?_) t
-    have hd := ((F.smooth i j).differentiable (by norm_num) s).hasDerivAt
-    simpa [GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.HilbertSamuel.entryDeriv] using hd
-  · intro _
-    exact LogDetDerivative.intersectionNumber_baseChange
 
 end
 

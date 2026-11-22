@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.GaussRMulFactor
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HeisGFixOfMemLattice
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SymplecticCharacterRealFinitePointsMatchStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RealPointsClassicalModelRealVectorSpaceStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CompletedTensorLatticeStrongApproxOpenCompactStatement
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaFunctionSpaceHeisenbergLawsStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HomSymplecticHalfFormAlgebraicLawsContinuous
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EventuallyFinEqOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsWeakOfDatum
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.GaussRMulFactor
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HeisGFixOfMemLattice
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SymplecticCharacterRealFinitePointsMatchStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.RealPointsClassicalModelRealVectorSpaceStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CompletedTensorLatticeStrongApproxOpenCompactStatement
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaFunctionSpaceHeisenbergLawsStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.HomSymplecticHalfFormAlgebraicLawsContinuous
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EventuallyFinEqOne
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum Formalism.L2.Pj MeasureTheory IsDedekindDomain NumberField Matrix Complex
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD GlobalTheory GlobalTheory.ThFr GlobalTheory.Ker
@@ -73,7 +77,7 @@ theorem exists_extension {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ 
     have h3 : w + u - c w ∈ O := by
       rw [add_sub_right_comm]; exact O.add_mem (hcO w) hu
     show ψ (symplOH S T w u) * f (w + u) = ψ (-symplOH S T (c w) w) * F (p (w - c w))
-    rw [key _ (hc w) _ h3, add_sub_right_comm, map_add, h1, add_zero, ← mul_assoc, ← AddChar.map_add_eq_mul,
+    rw [key _ (hc w) _ h3, add_sub_right_comm, map_add (f := _), h1, add_zero, ← mul_assoc, ← AddChar.map_add_eq_mul,
       ← one_mul (ψ (-symplOH S T (c w) w)), ← h2 _ (hcO w), ← AddChar.map_add_eq_mul, sym_sub_left,
       symplOH_add_right]
     congr 2
@@ -142,8 +146,8 @@ theorem stdL_full (E : Type) [Field E] [NumberField E] (n : ℕ) :
   rw [GlobalTheory.SW.stdL, Submodule.span_span_of_tower]
   have := (Pi.basisFun E (Fin n)).span_eq
   convert this using 3
-  funext a
-  simp
+  funext i
+  exact (Pi.basisFun_apply E (Fin n) i).symm
 
 theorem psi_hat (C : Ctx S T) {u u' : WO S T} (hu : u ∈ hatA S T (tens (GlobalTheory.SW.stdL D.host.E S.rank) C.X.Λ))
     (hu' : u' ∈ hatA S T (tens (GlobalTheory.SW.stdL D.host.E S.rank) C.X.Λ)) : C.ψ (symplOH S T (2 • u) u') = 1 := by
@@ -272,7 +276,7 @@ theorem isZak_Th : ∀ (D : D7) (S T : HSp D) (C : Ctx S T), ∀ x ∈ C.X.dom, 
   intro D S T C x hx φ hφ
   have h := exists_isZak C hx hφ
   have h1 : C.IsZak x φ (C.Th x φ) := by
-    rw [Ctx.Th, dif_pos h]
+    rw [Ctx.Th, dite_eq_left h]
     exact h.choose_spec
   exact ⟨h1, fun f hf => ((GlobalTheory.T.thetaFunction_space_heisenberg_laws D S T C).2.1 f _ hf.1 h1.1).2 fun w hw => (hf.2 w hw).trans (h1.2 w hw).symm⟩
 

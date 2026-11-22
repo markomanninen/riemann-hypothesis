@@ -1,7 +1,11 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafGlueProperPf
-import Mathlib.AlgebraicGeometry.Morphisms.FiniteType
-import Mathlib.AlgebraicGeometry.Morphisms.QuasiCompact
-import Mathlib.AlgebraicGeometry.ValuativeCriterion
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafGlueProperPf
+public import Mathlib.AlgebraicGeometry.Morphisms.FiniteType
+public import Mathlib.AlgebraicGeometry.Morphisms.QuasiCompact
+public import Mathlib.AlgebraicGeometry.ValuativeCriterion
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite LateralTheory.E.E4 LateralTheory.E.LeafGlueProperPf

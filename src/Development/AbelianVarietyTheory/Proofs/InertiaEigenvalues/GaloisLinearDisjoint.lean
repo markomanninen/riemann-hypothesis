@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial
 
@@ -64,8 +68,8 @@ private theorem natDegree_minpoly_le_natDegree_minpoly_map {k Ω D : Type} [Fiel
         rw [← hg, natDegree_map_eq_of_injective hinj]
     _ = (minpoly F (o α)).natDegree := natDegree_map_eq_of_injective (RingHom.injective _) _
 
-open Polynomial in
 
+open Polynomial in
 theorem _root_.GlobalTheory.GalDisj.galois_linearDisjoint : ∀ (k Ω D : Type) [Field k] [Field Ω] [Field D] [Algebra k Ω] [IsGalois k Ω] (o : Ω →+* D) (F : Subfield D), (∀ x : Ω, o x ∈ F ↔ x ∈ (algebraMap k Ω).range) → ∀ (m : ℕ) (x : Fin m → Ω), LinearIndependent k x → ∀ b : Fin m → D, (∀ i, b i ∈ F) → ∑ i, o (x i) * b i = 0 → ∀ i, b i = 0 := by
   intro k Ω D _ _ _ _ _ o F hF m x hx b hb hsum
   classical
@@ -100,7 +104,8 @@ theorem _root_.GlobalTheory.GalDisj.galois_linearDisjoint : ∀ (k Ω D : Type) 
     have := Fintype.linearIndependent_iff.1 hli (fun j => ⟨_, hmem j⟩) ?_ j
     · exact congrArg Subtype.val this
     rw [← hsum]
-    simp only [hexp, Subfield.smul_def, map_sum, map_smul, Algebra.smul_def, map_mul, map_pow,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hexp, Subfield.smul_def, map_sum, map_smul, Algebra.smul_def, map_mul, map_pow,
       Finset.sum_mul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun j _ => ?_
@@ -118,7 +123,8 @@ theorem _root_.GlobalTheory.GalDisj.galois_linearDisjoint : ∀ (k Ω D : Type) 
         simp [hgx, Finsupp.single_apply]
     _ = ∑ j : Fin pb.dim, o (algebraMap k Ω (g (α ^ (j : ℕ)) l)) *
           ∑ i, o (algebraMap k Ω (c i j)) * b i := by
-        simp only [hexp, map_sum, map_smul, Finsupp.coe_finset_sum, Finset.sum_apply,
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [hexp, map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply,
           Finsupp.smul_apply, smul_eq_mul, map_mul, Finset.mul_sum, Finset.sum_mul]
         rw [Finset.sum_comm]
         refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_

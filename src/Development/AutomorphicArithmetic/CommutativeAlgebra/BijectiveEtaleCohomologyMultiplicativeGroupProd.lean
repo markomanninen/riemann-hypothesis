@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AutomorphicArithmetic.CommutativeAlgebra.BijectiveEtaleCohomologyLaurentPolynomialOfCoord
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupHypercohomologyPullbackStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KummerClassOfUnitCocycleNaturalAdditiveStatement
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LaurentCharacterLambda
+module
+
+public import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.BijectiveEtaleCohomologyLaurentPolynomialOfCoord
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupHypercohomologyPullbackStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KummerClassOfUnitCocycleNaturalAdditiveStatement
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LaurentCharacterLambda
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Pbf
 
 namespace UpperTheory.KG
@@ -35,7 +40,7 @@ private theorem lp_hom_ext {R : Type} [CommRing R] {f g : LaurentPolynomial S �
     exact congrArg (fun v : Rˣ => (v : R)) h
   refine RingHom.ext fun p => ?_
   induction p using LaurentPolynomial.induction_on' with
-  | add p q hp hq => rw [map_add, map_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq]
   | C_mul_T n a => rw [map_mul, map_mul, hT n]; exact congrArg (· * _) (RingHom.congr_fun h1 a)
 
 private noncomputable def lam (q : ℕ) (hq : IsUnit (q : S)) : Localization.Away (q : ℤ) →+* S :=
@@ -153,5 +158,5 @@ theorem UpperTheory.bijective_etaleCohomology_multiplicativeGroup_prod :
       kum q (Units.map (Spec.map (CommRingCat.ofHom (UpperTheory.KG.iot q hq))).appTop.hom.toMonoidHom (tq q)) := by
     rw [← GlobalTheory.EtC.pull_comp, ← Functor.map_comp, h1]
     exact (GlobalTheory.T.kummerClassOfUnit_cocycle_natural_additive q).2.1 _ _ (UpperTheory.KG.isUnit_q q)
-  simp only [Function.comp_apply, map_add, UpperTheory.KG.pull_cup, hκ]
+  simp only [Function.comp_apply, map_add (f := _), UpperTheory.KG.pull_cup, hκ]
   rw [← GlobalTheory.EtC.pull_comp, ← GlobalTheory.EtC.pull_comp, ← Functor.map_comp, h2]

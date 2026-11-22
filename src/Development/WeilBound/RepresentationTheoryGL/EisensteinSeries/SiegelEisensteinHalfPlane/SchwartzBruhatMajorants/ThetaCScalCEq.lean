@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.HeisenbergTheta.HeisenbergThetaConstant.ThetaC
-import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.SchwartzBruhatMajorants.MeasurePreservingCompEquiv
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LinearChangeMemSchwartzBruhatPiStatement
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.EisensteinSeriesG2.HeisenbergTheta.HeisenbergThetaConstant.ThetaC
+public import Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.SchwartzBruhatMajorants.MeasurePreservingCompEquiv
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LinearChangeMemSchwartzBruhatPiStatement
+
+@[expose] public section
 
 open NumberField Matrix MeasureTheory Filter Topology
 open scoped NumberField.AdeleRing
@@ -23,7 +27,7 @@ theorem tInv_scalC (a : IdeleGroup k) :
   show (Matrix.scalar ι ((↑a⁻¹ : 𝔸[k])))ᵀ i j = Matrix.scalar ι ((↑a⁻¹ : 𝔸[k])) i j
   rw [Matrix.scalar_apply, Matrix.diagonal_transpose]
 
-theorem thetaC_scalC_eq {F : (ι → 𝔸[k]) → ℂ} (hF : F ∈ schwartzBruhatPi k ι) (a : IdeleGroup k) :
+theorem thetaC_scalC_eq {F : (ι → 𝔸[k]) → ℂ} (hF : F ∈ schwartzBruhatPi (K := k) (ι := ι)) (a : IdeleGroup k) :
     thetaC F (scalC a) =
       ((((ideleModule k a : ℝ) ^ Fintype.card ι)⁻¹ : ℝ) : ℂ) *
         thetaC (adelicFourierPi k F) (scalC a⁻¹) := by

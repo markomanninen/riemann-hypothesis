@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SplitTripleEquations.EqPOfSplit
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.PullIopOf
-import Formalism.LocalToGlobal.GlobalTheory.GL3.LinkThetaStatementFamily
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SplitTripleEquations.EqPOfSplit
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.PullIopOf
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.LinkThetaStatementFamily
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.BasicNotions Classical Matrix

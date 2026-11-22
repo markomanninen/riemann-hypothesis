@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHaarOfIsCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsComplementaryAdelicSchwartzRestFunction
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartzBruhat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActsRhoOfAtInf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartz
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHaarOfIsCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsComplementaryAdelicSchwartzRestFunction
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicHeisenbergActsByLocalSchrodinger
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchrodingerPreservesSchwartzBruhat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ActsRhoOfAtInf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationPreservesSchwartz
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,8 +28,8 @@ variable {M : Type} [AddCommGroup M] [Module (AF F) M]
 
 def partFin (v : Pl F) (z : M) : M := GlobalTheory.LatVac.liftV v 1 • z
 
-variable (F) in
 
+variable (F) in
 def partInf (z : M) : M := realAd F 1 • z
 
 theorem at_partFin (v : Pl F) (z : M) : At (evFin F v) (partFin v z) := fun u hu => by
@@ -56,8 +60,8 @@ section Groups
 
 variable {R : Type} [Zero R] {n : ℕ}
 
-variable (σ) in
 
+variable (σ) in
 def UAtSub (X : Spc F E n) (ev : AF F → R) : Subgroup (UA σ X.J) where
   carrier := UAt σ X ev
   one_mem' := fun u _ => by rw [GlobalTheory.StabHaar.mat_one, sub_self, smul_zero]
@@ -74,8 +78,8 @@ def UAtSub (X : Spc F E n) (ev : AF F → R) : Subgroup (UA σ X.J) where
 
 def KAt {X : Spc F E n} (K : Subgroup (UA σ X.J)) (ev : AF F → R) : Subgroup (UA σ X.J) := K ⊓ UAtSub σ X ev
 
-variable (E) in
 
+variable (E) in
 def idelesAt (ev : AF F → R) : Subgroup (AE F E)ˣ where
   carrier := {l | At ev ((l : AE F E) - 1)}
   one_mem' := fun u _ => by rw [Units.val_one, sub_self, smul_zero]
@@ -90,12 +94,10 @@ def idelesAt (ev : AF F → R) : Subgroup (AE F E)ˣ where
       rw [sub_mul, Units.mul_inv]; ring
     rw [e, smul_neg, ← smul_mul_assoc, hg u hu, zero_mul, neg_zero]
 
-variable (E) in
 
+variable (E) in
 def unitsAt (v : Pl F) : Subgroup (AE F E)ˣ :=
   idelesAt E (evFin F v) ⊓ (intLoc F E v).toSubmonoid.units.comap (unitFin F E v)
-
-theorem mem_UAtSub {X : Spc F E n} {ev : AF F → R} {g : UA σ X.J} : g ∈ UAtSub σ X ev ↔ g ∈ UAt σ X ev := Iff.rfl
 
 theorem mem_KAt {X : Spc F E n} {K : Subgroup (UA σ X.J)} {ev : AF F → R} {g : UA σ X.J} :
     g ∈ KAt K ev ↔ g ∈ K ∧ g ∈ UAt σ X ev := Iff.rfl
@@ -104,8 +106,6 @@ theorem mem_idelesAt {ev : AF F → R} {l : (AE F E)ˣ} : l ∈ idelesAt E ev �
 
 theorem mem_unitsAt {v : Pl F} {l : (AE F E)ˣ} : l ∈ unitsAt E v ↔ l ∈ idelesAt E (evFin F v) ∧
     compFin F E v l ∈ intLoc F E v ∧ compFin F E v (l⁻¹ : (AE F E)ˣ) ∈ intLoc F E v := Iff.rfl
-
-theorem unitsAt_le (v : Pl F) : unitsAt E v ≤ idelesAt E (evFin F v) := inf_le_left
 
 theorem isClosed_UAtSub (X : Spc F E n) (ev : AF F → R) : IsClosed (UAtSub σ X ev : Set (UA σ X.J)) := by
   haveI : Module.Finite F E := Module.Finite.of_restrictScalars_finite ℚ F E
@@ -131,22 +131,22 @@ theorem isClosed_idelesAt (ev : AF F → R) : IsClosed (idelesAt E ev : Set (AE 
   exact isClosed_iInter fun u => isClosed_iInter fun _ =>
     isClosed_eq ((Units.continuous_val.sub continuous_const).const_smul u) continuous_const
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem compFin_smul (v : Pl F) (a : AF F) (z : AE F E) : compFin F E v (a • z) = evFin F v a • compFin F E v z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul b x => exact congrArg (· ⊗ₜ[F] x) (map_mul (evFin F v) a b)
-  | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, smul_add]
+  | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add]
+
 
 omit [NumberField E] in
-
 theorem compInf_smul (w : InfinitePlace F) (a : AF F) (z : AE F E) :
     compInf F E w (a • z) = evInf F w a • compInf F E w z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul b x => exact congrArg (· ⊗ₜ[F] x) (map_mul (evInf F w) a b)
-  | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, smul_add]
+  | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add]
 
 theorem at_evFin_iff {v : Pl F} {z : AE F E} : At (evFin F v) z ↔
     (∀ w, compInf F E w z = 0) ∧ ∀ w, w ≠ v → compFin F E w z = 0 := by
@@ -196,8 +196,8 @@ theorem ideleAt_unitFin {v : Pl F} {l : (AE F E)ˣ} (hl : l ∈ idelesAt E (evFi
       rw [map_sub, map_one, sub_eq_zero] at this
       exact Units.ext this.symm
 
-variable (E) in
 
+variable (E) in
 def idelesAtEquiv (v : Pl F) : idelesAt E (evFin F v) ≃ₜ* (Fv F v ⊗[F] E)ˣ where
   toFun l := unitFin F E v l.1
   invFun x := ⟨ideleAt F E v x, ideleAt_mem v x⟩
@@ -288,8 +288,8 @@ variable {R : Type} [Zero R] {n : ℕ} {X : Spc F E n}
 def IsNormK (K : Subgroup (UA σ X.J)) (ev : AF F → R) (μ : Measure (KAt K ev)) : Prop :=
   μ.IsHaarMeasure ∧ μ Set.univ = 1
 
-variable (E) in
 
+variable (E) in
 def IsNormE (v : Pl F) (μ : Measure (idelesAt E (evFin F v))) : Prop :=
   μ.IsHaarMeasure ∧ μ {l | l.1 ∈ unitsAt E v} = 1
 
@@ -310,8 +310,8 @@ theorem existsUnique_isNormK {K : Subgroup (UA σ X.J)} (hK : IsCompact (K : Set
     IsCompact.locallyCompactSpace_of_mem_nhds_of_group isCompact_univ (x := 1) univ_mem
   exact Measure.isHaarMeasure_eq_of_isProbabilityMeasure _ _
 
-variable (E) in
 
+variable (E) in
 theorem idelesAt_facts (ev : AF F → R) : IsTopologicalGroup (idelesAt E ev) ∧ LocallyCompactSpace (idelesAt E ev) ∧
     SecondCountableTopology (idelesAt E ev) ∧ T2Space (idelesAt E ev) ∧ BorelSpace (idelesAt E ev) := by
   haveI : Module.Finite F E := Module.Finite.of_restrictScalars_finite ℚ F E
@@ -329,8 +329,8 @@ theorem idelesAt_facts (ev : AF F → R) : IsTopologicalGroup (idelesAt E ev) �
   haveI : BorelSpace (AE F E)ˣ := ⟨rfl⟩
   exact ⟨inferInstance, (isClosed_idelesAt ev).locallyCompactSpace, inferInstance, inferInstance, inferInstance⟩
 
-variable (E) in
 
+variable (E) in
 theorem exists_haar_idelesAt (ev : AF F → R) : ∃ μ : Measure (idelesAt E ev), μ.IsHaarMeasure := by
   obtain ⟨_, _, _, _, _⟩ := idelesAt_facts E ev
   exact ⟨Measure.haar, inferInstance⟩
@@ -340,8 +340,8 @@ theorem haar_idelesAt_eq_smul {ev : AF F → R} (μ' μ : Measure (idelesAt E ev
   obtain ⟨_, _, _, _, _⟩ := idelesAt_facts E ev
   exact ⟨_, (Measure.haarScalarFactor_pos_of_isHaarMeasure μ' μ).ne', Measure.isMulLeftInvariant_eq_smul μ' μ⟩
 
-variable (E) in
 
+variable (E) in
 theorem existsUnique_isNormE (v : Pl F) : ∃! μ, IsNormE E v μ := by
   obtain ⟨_, _, _, _, _⟩ := idelesAt_facts E (evFin F v)
   obtain ⟨hc, ho⟩ := isCompact_isOpen_unitsAt (E := E) v
@@ -379,13 +379,13 @@ section Ops
 
 variable {κ : Type} [Fintype κ]
 
-open Classical in
 
+open Classical in
 def locOp (v : Pl F) (T : ((κ → AF F) → ℂ) → ((κ → AF F) → ℂ)) (φ : (κ → Fv F v) → ℂ) : (κ → Fv F v) → ℂ :=
   if h : ∃ φ₁, φ₁ ∈ SB (κ → Fv F v) ∧ Acts (evFin F v) T φ φ₁ then h.choose else 0
 
-open Classical in
 
+open Classical in
 def locOpInf (T : ((κ → AF F) → ℂ) → ((κ → AF F) → ℂ)) (f : SInf F κ) : SInf F κ :=
   if h : ∃ f₁ : SInf F κ, Acts (evI F) T f f₁ then h.choose else 0
 
@@ -396,7 +396,7 @@ theorem locOp_mem (v : Pl F) (T : ((κ → AF F) → ℂ) → ((κ → AF F) →
 
 theorem acts_locOp {v : Pl F} {T : ((κ → AF F) → ℂ) → ((κ → AF F) → ℂ)} {φ : (κ → Fv F v) → ℂ}
     (h : ∃ φ₁, φ₁ ∈ SB (κ → Fv F v) ∧ Acts (evFin F v) T φ φ₁) : Acts (evFin F v) T φ (locOp v T φ) := by
-  rw [locOp, dif_pos h]
+  rw [locOp, dite_eq_left h]
   exact h.choose_spec.2
 
 theorem locOp_eq {v : Pl F} {T : ((κ → AF F) → ℂ) → ((κ → AF F) → ℂ)} {φ φ₁ : (κ → Fv F v) → ℂ} (hφ : φ ∈ SB (κ → Fv F v))
@@ -405,11 +405,11 @@ theorem locOp_eq {v : Pl F} {T : ((κ → AF F) → ℂ) → ((κ → AF F) → 
 
 theorem acts_locOpInf {T : ((κ → AF F) → ℂ) → ((κ → AF F) → ℂ)} {f : SInf F κ} (h : ∃ f₁ : SInf F κ, Acts (evI F) T f f₁) :
     Acts (evI F) T f (locOpInf T f) := by
-  rw [locOpInf, dif_pos h]
+  rw [locOpInf, dite_eq_left h]
   exact h.choose_spec
 
-variable (F κ) in
 
+variable (F κ) in
 theorem exists_rest_inf : ∃ r : ((κ → AF F) → ℂ), r 0 ≠ 0 ∧ ∀ f : SInf F κ, Rest (evI F) f r := by
   let φ : ∀ w : Pl F, (κ → Fv F w) → ℂ := fun w => Set.indicator {x | ∀ i, x i ∈ w.adicCompletionIntegers F} 1
   refine ⟨fun x => ∏ᶠ w, φ w fun i => evFin F w (x i), ?_, fun f => ⟨fun x z hz => ?_, ?_⟩⟩
@@ -422,7 +422,7 @@ theorem exists_rest_inf : ∃ r : ((κ → AF F) → ℂ), r 0 ≠ 0 ∧ ∀ f :
   · have h : ∀ w i, evFin F w (z i) = 0 := fun w i => by
       rw [← partInf_of_at hz, partInf, Pi.smul_apply, smul_eq_mul, map_mul,
         show evFin F w (realAd F 1) = 0 from map_zero (evalV F w), zero_mul]
-    simp only [Pi.add_apply, map_add, h, add_zero]
+    simp only [Pi.add_apply, map_add (f := _), h, add_zero]
   · exact GlobalTheory.TensUniq.pure_mem_schA f φ (fun w => GlobalTheory.StdVacuum.indicator_mem_SB w) (Eventually.of_forall fun _ => rfl)
 
 theorem eq_of_tens_inf {r : ((κ → AF F) → ℂ)} (h0 : r 0 ≠ 0) (hr : ∀ x z, At (evI F) z → r (x + z) = r x)
@@ -454,7 +454,7 @@ theorem locOp_lin {v : Pl F} {T : ((κ → AF F) → ℂ) → ((κ → AF F) →
   have hs : a • φ + b • φ' ∈ SB (κ → Fv F v) := add_mem ((SB _).smul_mem a hφ) ((SB _).smul_mem b hφ')
   obtain ⟨r, h0, hr⟩ := GlobalTheory.RestWitness.exists_rest κ v
   have key : tens (evFin F v) (locOp v T (a • φ + b • φ')) r = tens (evFin F v) (a • locOp v T φ + b • locOp v T φ') r := by
-    rw [← acts_locOp (hex _ hs) r (hr _ hs), tens_lin, tens_lin, hT.map_add, hT.map_smul, hT.map_smul,
+    rw [← acts_locOp (hex _ hs) r (hr _ hs), tens_lin, tens_lin, hT.map_add (f := _), hT.map_smul, hT.map_smul,
       acts_locOp (hex _ hφ) r (hr _ hφ), acts_locOp (hex _ hφ') r (hr _ hφ')]
   funext t
   have hz : At (evFin F v) (fun i => GlobalTheory.LatVac.liftV v (t i)) := fun u hu => funext fun i => GlobalTheory.LatVac.at_liftV v _ u hu
@@ -463,23 +463,10 @@ theorem locOp_lin {v : Pl F} {T : ((κ → AF F) → ℂ) → ((κ → AF F) →
   simp only [tens, GlobalTheory.LatVac.evFin_liftV, hrz] at e
   exact mul_right_cancel₀ h0 e
 
-theorem locOpInf_lin {T : ((κ → AF F) → ℂ) → ((κ → AF F) → ℂ)} (hT : IsLinearMap ℂ T)
-    (hex : ∀ f : SInf F κ, ∃ f₁ : SInf F κ, Acts (evI F) T f f₁) (a b : ℂ) (f f' : SInf F κ) :
-    locOpInf T (a • f + b • f') = a • locOpInf T f + b • locOpInf T f' := by
-  obtain ⟨r, h0, hr⟩ := exists_rest_inf F κ
-  refine DFunLike.coe_injective (eq_of_tens_inf h0 (hr f).1 ?_)
-  rw [← acts_locOpInf (hex _) r (hr _)]
-  change T (tens (evI F) (a • ⇑f + b • ⇑f') r) = tens (evI F) (a • ⇑(locOpInf T f) + b • ⇑(locOpInf T f')) r
-  rw [tens_lin, tens_lin, hT.map_add, hT.map_smul, hT.map_smul, acts_locOpInf (hex _) r (hr _),
-    acts_locOpInf (hex _) r (hr _)]
-
-theorem locOp_of_fix {v : Pl F} {T : ((κ → AF F) → ℂ) → ((κ → AF F) → ℂ)} (hT : ∀ Φ ∈ schA F κ, T Φ = Φ) {φ : (κ → Fv F v) → ℂ}
-    (hφ : φ ∈ SB (κ → Fv F v)) : locOp v T φ = φ := locOp_eq hφ hφ fun _ hr => hT _ hr.2
-
 variable {V : Type} [AddCommGroup V] [Module (AF F) V] {Bf : V → V → AF F}
 
-open scoped GlobalTheory.VacAny in
 
+open scoped GlobalTheory.VacAny in
 theorem locOp_rho (co : Darboux Bf κ) {ψ : AddChar (AF F) ℂ} (hψ : Continuous ψ) (v : Pl F) (u : V)
     {φ : (κ → Fv F v) → ℂ} (hφ : φ ∈ SB (κ → Fv F v)) :
     Acts (evFin F v) (co.rho ψ (partFin v u)) φ (locOp v (co.rho ψ (partFin v u)) φ) ∧
@@ -492,8 +479,8 @@ theorem locOp_rho (co : Darboux Bf κ) {ψ : AddChar (AF F) ℂ} (hψ : Continuo
   have hm := GlobalTheory.SchrSB.schr_mem_SB ψ hψ v (GlobalTheory.LatVac.locCo co v u) φ hφ
   exact ⟨acts_locOp ⟨_, hm, h⟩, locOp_eq hφ hm h⟩
 
-open GlobalTheory.ArchUniq Classical in
 
+open GlobalTheory.ArchUniq Classical in
 theorem locOpInf_rho (co : Darboux Bf κ) {ψ : AddChar (AF F) ℂ} (hψ : IsStd ψ) (u : V) (f : SInf F κ) :
     Acts (evI F) (co.rho ψ (partInf F u)) f (locOpInf (co.rho ψ (partInf F u)) f) ∧
       ⇑(locOpInf (co.rho ψ (partInf F u)) f) = schrF (trP F κ) (locV (co.e u).1, locV (co.e u).2) f := by
@@ -519,14 +506,6 @@ section Cone
 
 variable {n d n₁ d₁ : ℕ} {X : Spc F E n} {W : Spc F E d}
 
-theorem smul_shiftA (H : Plane E n n₁) (H' : Plane E d d₁) (a : AF F) (l : (AE F E)ˣ) :
-    a • shiftA H H' l = (a • l.1) • Matrix.vecMulVec (incV F H.x) (incV F H'.y) := (smul_assoc _ _ _).symm
-
-theorem smul_shiftB (H : Plane E n n₁) (H' : Plane E d d₁) (a : AF F) (l : (AE F E)ˣ) :
-    a • shiftB σ H H' l = cA σ (a • l.1) • Matrix.vecMulVec (incV F H.y) (incV F H'.x) := by
-  rw [map_smul]
-  exact (smul_assoc _ _ _).symm
-
 theorem acts_locOp_om (hA : ActsEx) {B : Base F E} {M : Model σ X W} {χX χW : Chr F E} {om : Rep σ X W} {r s r' s' : ℕ}
     (hP : IsPair B M χX χW om r s r' s') {v : Pl F} {g : UA σ X.J} (hg : g ∈ UAt σ X (evFin F v)) {h : UA σ W.J}
     (hh : h ∈ UAt σ W (evFin F v)) {φ : (Fin n × Fin d → Fv F v) → ℂ} (hφ : φ ∈ SB (Fin n × Fin d → Fv F v)) :
@@ -549,68 +528,7 @@ def coneFin (φ : (Fin n × Fin d → Fv F v) → ℂ) : (Fin n₁ × Fin d₁ �
 
 variable {B M om v ev K μK μ u ν z}
 
-open scoped GlobalTheory.VacAny in
 
-theorem coneFinInt_eq (hψ : Continuous B.ψ) (φ : (Fin n × Fin d → Fv F v) → ℂ) (k : UA σ X.J) {l : (AE F E)ˣ}
-    (hl : l ∈ idelesAt E (evFin F v)) (y : Fin n₁ × Fin d₁ → Fv F v) :
-    coneFinInt B M om v ev u ν z φ k l y =
-      ev (schr (GlobalTheory.LatVac.psiAt B.ψ v) (GlobalTheory.LatVac.locCo M.co v (u l)) (locOp v (om (k, 1)) φ)) y * (ν l : ℂ) *
-        ((absEv F E v (unitFin F E v l) : ℝ) : ℂ) ^ z := by
-  rw [coneFinInt, (locOp_rho M.co hψ v (u l) (locOp_mem v _ φ)).2, absE_of_mem hl]
-
-open scoped GlobalTheory.VacAny in
-
-theorem coneFinInt_lin (hψ : Continuous B.ψ) {k : UA σ X.J}
-    (hk : ∀ φ ∈ SB (Fin n × Fin d → Fv F v), ∃ φ₁, φ₁ ∈ SB (Fin n × Fin d → Fv F v) ∧ Acts (evFin F v) (om (k, 1)) φ φ₁)
-    (a b : ℂ) {φ φ' : (Fin n × Fin d → Fv F v) → ℂ} (hφ : φ ∈ SB (Fin n × Fin d → Fv F v))
-    (hφ' : φ' ∈ SB (Fin n × Fin d → Fv F v)) (l : (AE F E)ˣ) (y : Fin n₁ × Fin d₁ → Fv F v) :
-    coneFinInt B M om v ev u ν z (a • φ + b • φ') k l y =
-      a * coneFinInt B M om v ev u ν z φ k l y + b * coneFinInt B M om v ev u ν z φ' k l y := by
-  have hT : IsLinearMap ℂ (M.co.rho B.ψ (partFin v (u l))) :=
-    ⟨fun f g => funext fun x => mul_add _ _ _, fun c f => funext fun x => mul_left_comm _ _ _⟩
-  simp only [coneFinInt]
-  rw [locOp_lin (om (k, 1)).isLinear hk a b hφ hφ', locOp_lin hT
-    (fun f hf => ⟨_, locOp_mem v _ f, (locOp_rho M.co hψ v (u l) hf).1⟩) a b (locOp_mem _ _ _) (locOp_mem _ _ _),
-    map_add, map_smul, map_smul]
-  simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
-  ring
-
-theorem coneFin_lin (hψ : Continuous B.ψ)
-    (hk : ∀ k ∈ KAt K (evFin F v), ∀ φ ∈ SB (Fin n × Fin d → Fv F v),
-      ∃ φ₁, φ₁ ∈ SB (Fin n × Fin d → Fv F v) ∧ Acts (evFin F v) (om (k, 1)) φ φ₁)
-    (a b : ℂ) {φ φ' : (Fin n × Fin d → Fv F v) → ℂ} (hφ : φ ∈ SB (Fin n × Fin d → Fv F v))
-    (hφ' : φ' ∈ SB (Fin n × Fin d → Fv F v)) (y : Fin n₁ × Fin d₁ → Fv F v)
-    (h1 : ∀ k : KAt K (evFin F v), Integrable (fun l : idelesAt E (evFin F v) => coneFinInt B M om v ev u ν z φ k.1 l.1 y) μ)
-    (h1' : ∀ k : KAt K (evFin F v), Integrable (fun l : idelesAt E (evFin F v) => coneFinInt B M om v ev u ν z φ' k.1 l.1 y) μ)
-    (h2 : Integrable (fun k : KAt K (evFin F v) => ∫ l, coneFinInt B M om v ev u ν z φ k.1 l.1 y ∂μ) μK)
-    (h2' : Integrable (fun k : KAt K (evFin F v) => ∫ l, coneFinInt B M om v ev u ν z φ' k.1 l.1 y ∂μ) μK) :
-    coneFin B M om v ev K μK μ u ν z (a • φ + b • φ') y =
-      a * coneFin B M om v ev K μK μ u ν z φ y + b * coneFin B M om v ev K μK μ u ν z φ' y := by
-  simp only [coneFin]
-  rw [← integral_const_mul, ← integral_const_mul, ← integral_add (h2.const_mul a) (h2'.const_mul b)]
-  refine integral_congr_ae (Eventually.of_forall fun k => ?_)
-  beta_reduce
-  rw [← integral_const_mul, ← integral_const_mul, ← integral_add ((h1 k).const_mul a) ((h1' k).const_mul b)]
-  exact integral_congr_ae (Eventually.of_forall fun l => coneFinInt_lin hψ (hk k.1 k.2) a b hφ hφ' l.1 y)
-
-theorem coneFin_of_fixed (hK : IsNormK K (evFin F v) μK) {φ : (Fin n × Fin d → Fv F v) → ℂ}
-    (hφ : φ ∈ SB (Fin n × Fin d → Fv F v)) (hfix : ∀ k ∈ KAt K (evFin F v), Acts (evFin F v) (om (k, 1)) φ φ)
-    (y : Fin n₁ × Fin d₁ → Fv F v) :
-    coneFin B M om v ev K μK μ u ν z φ y =
-      ∫ l, ev (locOp v (M.co.rho B.ψ (partFin v (u l.1))) φ) y * (ν l.1 : ℂ) * ((absE F E l.1 : ℝ) : ℂ) ^ z ∂μ := by
-  haveI : IsProbabilityMeasure μK := ⟨hK.2⟩
-  have e : ∀ k : KAt K (evFin F v), locOp v (om (k.1, 1)) φ = φ := fun k => locOp_eq hφ hφ (hfix k.1 k.2)
-  simp only [coneFin, coneFinInt, e]
-  simp
-
-example : coneFin B M om v ev K μK μ u ν z 0 = 0 := by
-  have t : ∀ r, tens (evFin F v) (0 : (Fin n × Fin d → Fv F v) → ℂ) r = 0 := fun r => funext fun x => zero_mul _
-  have e : ∀ k, locOp v (om (k, 1)) 0 = 0 := fun k =>
-    locOp_eq (zero_mem _) (zero_mem _) fun r _ => by rw [t, map_zero]
-  have e' : ∀ w, locOp v (M.co.rho B.ψ w) 0 = 0 := fun w =>
-    locOp_eq (zero_mem _) (zero_mem _) fun r _ => by rw [t]; exact funext fun x => mul_zero _
-  funext y
-  simp [coneFin, coneFinInt, e, e']
 
 end Fin
 
@@ -626,98 +544,16 @@ def coneInfInt (f : SInf F (Fin n × Fin d)) (k : UA σ X.J) (l : (AE F E)ˣ) : 
 def coneInfFun (f : SInf F (Fin n × Fin d)) : (Fin n₁ × Fin d₁ → mixedEmbedding.mixedSpace F) → ℂ :=
   fun y => ∫ k, ∫ l, coneInfInt B M om ei u ν z f k.1 l.1 y ∂μ ∂μK
 
-open Classical in
 
+open Classical in
 def coneInf (f : SInf F (Fin n × Fin d)) : SInf F (Fin n₁ × Fin d₁) :=
   if h : ∃ g : SInf F (Fin n₁ × Fin d₁), ⇑g = coneInfFun B M om ei K μK μ u ν z f then h.choose else 0
 
 variable {B M om ei K μK μ u ν z}
 
-theorem coneInfInt_apply (f : SInf F (Fin n × Fin d)) (k : UA σ X.J) (l : (AE F E)ˣ)
-    (y : Fin n₁ × Fin d₁ → mixedEmbedding.mixedSpace F) :
-    coneInfInt B M om ei u ν z f k l y =
-      ei (locOpInf (M.co.rho B.ψ (partInf F (u l))) (locOpInf (om (k, 1)) f)) y * (ν l : ℂ) * ((absE F E l : ℝ) : ℂ) ^ z :=
-  (mul_comm _ _).trans (mul_assoc _ _ _).symm
-
-theorem coe_coneInf {f : SInf F (Fin n × Fin d)}
-    (h : ∃ g : SInf F (Fin n₁ × Fin d₁), ⇑g = coneInfFun B M om ei K μK μ u ν z f) :
-    ⇑(coneInf B M om ei K μK μ u ν z f) = coneInfFun B M om ei K μK μ u ν z f := by
-  rw [coneInf, dif_pos h]
-  exact h.choose_spec
-
-theorem coneInf_eq {f : SInf F (Fin n × Fin d)} {g : SInf F (Fin n₁ × Fin d₁)}
-    (h : ⇑g = coneInfFun B M om ei K μK μ u ν z f) : coneInf B M om ei K μK μ u ν z f = g :=
-  DFunLike.coe_injective ((coe_coneInf ⟨g, h⟩).trans h.symm)
-
-theorem coneInfInt_lin (hψ : IsStd B.ψ) {k : UA σ X.J}
-    (hk : ∀ f : SInf F (Fin n × Fin d), ∃ f₁ : SInf F (Fin n × Fin d), Acts (evI F) (om (k, 1)) f f₁)
-    (a b : ℂ) (f f' : SInf F (Fin n × Fin d)) (l : (AE F E)ˣ) :
-    coneInfInt B M om ei u ν z (a • f + b • f') k l =
-      a • coneInfInt B M om ei u ν z f k l + b • coneInfInt B M om ei u ν z f' k l := by
-  have hT : IsLinearMap ℂ (M.co.rho B.ψ (partInf F (u l))) :=
-    ⟨fun f g => funext fun x => mul_add _ _ _, fun c f => funext fun x => mul_left_comm _ _ _⟩
-  simp only [coneInfInt]
-  rw [locOpInf_lin (om (k, 1)).isLinear hk, locOpInf_lin hT fun g => ⟨_, (locOpInf_rho M.co hψ (u l) g).1⟩,
-    map_add, map_smul, map_smul, smul_add, smul_comm _ a, smul_comm _ b]
-
-theorem mem_KAt_inf {B : Base F E} {K : Subgroup (UA σ X.J)} (hK : IsStab B K) {k : UA σ X.J} :
-    k ∈ KAt K (evI F) ↔ k ∈ KInf σ X B.emb := by
-  refine ⟨fun h => ⟨h.2, ((hK k).1 h.1).1⟩, fun h => ⟨(hK k).2 ⟨h.2, fun y hy => ?_⟩, h.1⟩⟩
-  have h0 : realAd F 1 • y = 0 := by
-    induction hy using AddSubgroup.closure_induction with
-    | mem y hy =>
-      obtain ⟨a, ha, -, x, -, rfl⟩ := hy
-      rw [smul_comm]
-      exact at_partInf _ a ha
-    | zero => exact smul_zero _
-    | add _ _ _ _ h1 h2 => rw [smul_add, h1, h2, add_zero]
-    | neg _ _ h1 => rw [smul_neg, h1, neg_zero]
-  have key : ∀ g ∈ UAtSub σ X (evI F), mat g *ᵥ y = y := fun g hg => by
-    have h1 : (mat g - 1) *ᵥ y = 0 := by
-      rw [← partInf_of_at hg, partInf, Matrix.smul_mulVec, ← Matrix.mulVec_smul, h0, Matrix.mulVec_zero]
-    rwa [Matrix.sub_mulVec, Matrix.one_mulVec, sub_eq_zero] at h1
-  rw [key k h.1, key k⁻¹ (inv_mem (show k ∈ UAtSub σ X (evI F) from h.1))]
-  exact ⟨hy, hy⟩
-
 end Inf
 
 end Cone
-
-example (v : Pl F) (a : (Fv F v)ˣ) (ha : ‖a.1‖₊ ≠ 1) :
-    ideleAt F E v (Units.map (algebraMap (Fv F v) (Fv F v ⊗[F] E)).toMonoidHom a) ∉ unitsAt E v := fun h => by
-  haveI : Module.Finite F E := Module.Finite.of_restrictScalars_finite ℚ F E
-  have h1 := absE_of_mem_unitsAt h
-  rw [GlobalTheory.Doubling.absE_ideleAt, GlobalTheory.Doubling.absEv_algebraMap] at h1
-  exact ha ((pow_eq_one_iff_of_nonneg zero_le' Module.finrank_pos.ne').1 h1)
-
-example (v : Pl F) : ideleAt F E v (-1) ∈ unitsAt E v := by
-  refine ⟨ideleAt_mem v _, ?_⟩
-  change unitFin F E v (ideleAt F E v (-1)) ∈ (intLoc F E v).toSubmonoid.units
-  rw [GlobalTheory.Doubling.unitFin_ideleAt_self]
-  exact (Submonoid.mem_units_iff _ _).2 ⟨(intLoc F E v).neg_mem (one_mem _), (intLoc F E v).neg_mem (one_mem _)⟩
-
-example {κ : Type} [Fintype κ] (v : Pl F) (t : κ → Fv F v) {φ : (κ → Fv F v) → ℂ} (hφ : φ ∈ SB (κ → Fv F v)) :
-    locOp v (fun Φ x => Φ (x + fun i => GlobalTheory.LatVac.liftV v (t i))) φ = fun x => φ (x + t) := by
-  refine locOp_eq hφ ⟨hφ.1.comp_continuous (continuous_add_const t),
-    hφ.2.comp_homeomorph (Homeomorph.addRight t)⟩ fun r hr => funext fun x => ?_
-  have hz : At (evFin F v) (fun i => GlobalTheory.LatVac.liftV v (t i)) := fun u hu => funext fun i => GlobalTheory.LatVac.at_liftV v _ u hu
-  simp only [tens, hr.1 x _ hz, Pi.add_apply, map_add, GlobalTheory.LatVac.evFin_liftV]
-  rfl
-
-example {b a' : ℕ} (B : Base F E) (G : Geo σ (b + 2) a') (H : Plane E (b + 2) b) (H' : Plane E (b + 2 + a') (b + a'))
-    (X : Chars F E) (om : Rep σ G.V G.W) (v : Pl F)
-    (ev : ((Fin (b + 2) × Fin (b + 2 + a') → Fv F v) → ℂ) →ₗ[ℂ] (Fin b × Fin (b + a') → Fv F v) → ℂ)
-    (K : Subgroup (UA σ G.V.J)) (hK : IsCompact (K : Set (UA σ G.V.J))) :
-    ((Fin (b + 2) × Fin (b + 2 + a') → Fv F v) → ℂ) → (Fin b × Fin (b + a') → Fv F v) → ℂ :=
-  coneFin B G.M om v ev K (existsUnique_isNormK hK _).choose (existsUnique_isNormE E v).choose (shiftA H H') X.ν
-    ((b + 2 - a') / 2)
-
-example {a b : ℕ} (B : Base F E) (G : Geo σ a (b + 2)) (H : Plane E (b + 2) b) (H' : Plane E (a + (b + 2)) (a + b))
-    (X : Chars F E) (om' : Rep σ G.V' G.W) (ei : SInf F (Fin (b + 2) × Fin (a + (b + 2))) →L[ℂ] SInf F (Fin b × Fin (a + b)))
-    (K : Subgroup (UA σ G.V'.J)) (hK : IsCompact (K : Set (UA σ G.V'.J))) :
-    SInf F (Fin (b + 2) × Fin (a + (b + 2))) → SInf F (Fin b × Fin (a + b)) :=
-  coneInf B G.M' om' ei K (existsUnique_isNormK hK _).choose (exists_haar_idelesAt E (evI F)).choose (shiftB σ H H') X.ν
-    ((a - (b + 2)) / 2 + 1)
 
 end GlobalTheory.ThK
 

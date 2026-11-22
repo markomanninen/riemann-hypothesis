@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.LocTheta
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.UTorsSt
-import Development.AbelianVarietyTheory.PublishedTheorems.SemistableReduction₂.SemistableReductionSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FrameUnit
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.LocTheta
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.UTorsSt
+public import Development.AbelianVarietyTheory.PublishedTheorems.SemistableReduction₂.SemistableReductionSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.FrameUnit
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.MemRangeCompIffOfIsClosedImmersion
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -115,15 +120,15 @@ theorem exists_eq_mul_unit (hne : (U₀ : Set M.Z).Nonempty) {N : M.Z.Opens} {σ
 
 end GlobalTheory.ZH.TorsReg
 
-open GlobalTheory.Points GlobalTheory.ZH.TorsReg in
 
+open GlobalTheory.Points GlobalTheory.ZH.TorsReg in
 theorem GlobalTheory.ZH.mul_theta_regular_and_unit : ∀ (o Ω : Type) [CommRing o] [Field Ω] [Algebra o Ω] [ArithBase o Ω] (S : ThetaSys o Ω) (ρ : S.Real) (M : RatModel o Ω) (U₀ : M.Z.Opens) (Q : ZHPre ρ M U₀), S.Over₀ M U₀ → ∀ (N : M.Z.Opens) (σ : Q.SecFam N) (c : Ω), σ ∈ secOn Q.LOne (Q.G.hom ⁻¹ᵁ N) → Q.ThMul c N σ → ∀ (a : S.Gam) (W : M.Z.Opens) (h : W.toScheme ⟶ Q.G.left) (w : W.toScheme), Q.ExtPt a W h → Q.FrameUnit a W h w → W.ι w ∈ N → c * S.th a ∈ M.O (W.ι w) ∧ ∀ (K : Type) [Field K] (x : Sp K ⟶ W.toScheme) (j : Q.LOne.ι), Set.range x = {w} → valF (x ≫ h) _ (σ j) ≠ 0 → c * S.th a ≠ 0 ∧ (c * S.th a)⁻¹ ∈ M.O (W.ι w) := by
   intro o Ω _ _ _ _ S ρ M U₀ Q hO N σ c _ hσ a W h w hE hF hw
   constructor
   · have h5 : h w ∈ ⨆ i, Q.L.L.U i := by
       rw [Q.L.isLB.cover]; trivial
     obtain ⟨i, hi⟩ := TopologicalSpace.Opens.mem_iSup.1 h5
-    obtain ⟨T, f, e, hT, -, -, he, hc, -⟩ := exists_eq_mul_unit Q hO.ne hσ hE hF hw i hi
+    obtain ⟨T, f, e, hT, -, -, he, hc, -⟩ := GlobalTheory.ZH.TorsReg.exists_eq_mul_unit Q hO.ne hσ hE hF hw i hi
     rw [hc]
     exact mul_mem (RatModel.valF_mem_O hT f) he
   · intro K _ x j hx hv
@@ -136,12 +141,12 @@ theorem GlobalTheory.ZH.mul_theta_regular_and_unit : ∀ (o Ω : Type) [CommRing
       refine hv (dif_neg fun hle => hi ?_)
       rw [← hxw]
       exact Set.mem_iInter.1 (hle (x := IsLocalRing.closedPoint K) trivial).2 0
-    obtain ⟨T, f, e, hT, he0, he1, -, hc, hK⟩ := exists_eq_mul_unit Q hO.ne hσ hE hF hw i hi
+    obtain ⟨T, f, e, hT, he0, he1, -, hc, hK⟩ := GlobalTheory.ZH.TorsReg.exists_eq_mul_unit Q hO.ne hσ hE hF hw i hi
     rw [← hK K x hx] at hv
     have hxw' : (x ≫ W.ι) (IsLocalRing.closedPoint K) = W.ι w := by rw [← hxw]; rfl
-    have hle : ⊤ ≤ (x ≫ W.ι) ⁻¹ᵁ T := (le_preimage_iff _ _).2 (hxw' ▸ hT)
+    have hle : ⊤ ≤ (x ≫ W.ι) ⁻¹ᵁ T := (GlobalTheory.Points.le_preimage_iff _ _).2 (hxw' ▸ hT)
     have hb : W.ι w ∈ M.Z.basicOpen f :=
-      hxw' ▸ (le_preimage_iff _ _).1 ((le_preimage_basicOpen_iff _ hle f).2 (isUnit_iff_ne_zero.2 hv))
+      hxw' ▸ (GlobalTheory.Points.le_preimage_iff _ _).1 ((GlobalTheory.Points.le_preimage_basicOpen_iff _ hle f).2 (isUnit_iff_ne_zero.2 hv))
     obtain ⟨hf0, hf1⟩ := (RatModel.isUnit_O_iff _).1 ((RatModel.isUnit_valF_iff hT f).2 hb)
     rw [hc]
     refine ⟨mul_ne_zero hf0 (inv_ne_zero he0), ?_⟩

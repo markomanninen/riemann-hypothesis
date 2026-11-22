@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.GelfandSpectralNormalisation.NormalisedInvariants.PTConclAt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NineTermExactIff
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.TransportA
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.GelfandSpectralNormalisation.NormalisedInvariants.PTConclAt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.NineTermExactIff
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.TransportA
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Representation Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.Published GlobalTheory.Published.PoitouTate PositivityTheory.PoitouTateConclusion GlobalTheory.CompanionTheory.PTIso
 
 noncomputable section

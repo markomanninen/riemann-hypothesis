@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.ThLinKConst
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.ThLinKConst
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,8 +37,8 @@ theorem th_sSer_int (R : Subring K') (t : Fin n') (a : Fin r0) (b : Fin r1) : In
   · exact R.pow_mem (R.neg_mem R.one_mem) l
   · exact R.zero_mem
 
-set_option maxHeartbeats 200000 in
 
+set_option maxHeartbeats 200000 in
 theorem th_sumR {ν : ℕ} (w1 w2 : Fin ν → WW p) (P Q : Finset (Fin n'))
     (hQ : ∀ t' ∈ Q, posAdd t' 1 ∈ P)
     (hD : ∀ t ∈ P, ∀ t' ∈ Q, ∑ r, Aw K' (w1 r) t.val * Aw K' (w2 r) (t'.val + 1) = if t = posAdd t' 1 then 1 else 0)
@@ -55,7 +59,8 @@ theorem th_sumR {ν : ℕ} (w1 w2 : Fin ν → WW p) (P Q : Finset (Fin n'))
         intro r
         rw [map_mul]
         ring
-      rw [Finset.sum_congr rfl (fun r _ => h1 r), ← Finset.sum_mul, ← map_sum, hD t ht t' ht']
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Finset.sum_congr rfl (fun r _ => h1 r), ← Finset.sum_mul, ← map_sum, hD t ht t' ht']
       split_ifs <;> simp
     rw [Finset.sum_congr rfl e, Finset.sum_ite_eq' P (posAdd t' 1), if_pos (hQ t' ht')]
   simp only [Finset.sum_mul, Finset.mul_sum]
@@ -96,7 +101,8 @@ theorem th_coordZ_inr (B : OmBasis p n') (r : Fin (n' / 2)) (a : Fin r0) (b : Fi
 theorem th_dual_K (hT2 : DualH p) (hev : Even n') (B : OmBasis p n') (a b : Fin n') (hab : a.val % 2 = b.val % 2) :
     ∑ r, Aw K' (B.omS r) a.val * Aw K' (B.om r) b.val = if a = b then 1 else 0 := by
   have := congrArg (wK' p K') (hT2 n' B hev a b hab)
-  simp only [wK', map_sum, map_mul] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [wK', map_sum, map_mul] at this
   rw [apply_ite (algebraMap (WW p) (K0 p)), apply_ite (algebraMap (K0 p) K')] at this
   simpa [Aw, wK'] using this
 
@@ -118,7 +124,7 @@ private theorem intR_C_of_mem {ι F : Type} [Field F] (R : Subring F) {c : F} (h
 private theorem intR_add' {ι F : Type} [Field F] (R : Subring F) {f g : MvPowerSeries ι F}
     (hf : IntR R f) (hg : IntR R g) : IntR R (f + g) := by
   intro n
-  rw [map_add]
+  rw [map_add (f := _)]
   exact R.add_mem (hf n) (hg n)
 
 private theorem intR_mul' {ι F : Type} [Field F] (R : Subring F) {f g : MvPowerSeries ι F}
@@ -145,7 +151,8 @@ private theorem intR_pow {ι F : Type} [Field F] (R : Subring F) {f : MvPowerSer
 private theorem intR_sum' {ι F α : Type} [Field F] (R : Subring F) (s : Finset α)
     (f : α → MvPowerSeries ι F) (h : ∀ i ∈ s, IntR R (f i)) : IntR R (∑ i ∈ s, f i) := by
   intro n
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact R.sum_mem fun i hi => h i hi n
 
 private theorem cg_of_eq' {ι F : Type} [Field F] (R : Subring F) (pp : F)

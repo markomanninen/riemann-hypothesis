@@ -1,5 +1,33 @@
-import Formalism.HermitianCurvature.StatementMA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LowerLevelsSameScalar
+module
+
+public import Formalism.HermitianCurvature.StatementMA
+public import Formalism.HermitianCurvature.StatementM
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Interlace
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QuasiDeterminantFromEntries
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdmissibleRecOfAdmissibleWord
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FrameOfAdmissibleWord
+public import Formalism.HermitianCurvature.StatementWd
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositionInsertionDiagonalCompat
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KroneckerEmbedMulApply
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SecondEmbedMulFirstEmbedApply
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QEFirstMulSecondEqSwap
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TransferMatrixFactorization
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.EntryCommuteTransposedRMatrix
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ScalarCommuteTransposedRMatrixEntry
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LiftMatrixTransferConjTransposeCommute
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DiagScalarCommuteOfEntries
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PartialFlipCommuteDiagScalarOfFree
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DiagScalarCommuteTransposedRMatrix
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MultiplicationOpHom
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelNablaStarRelations
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.InterlaceSignTwo
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.EulerZetaGammaInvIdentity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TransferRtt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WeightedSumDifferenceIdentity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GammaFamilyCommuteGenerators
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ModelWordsAssemble
+
+@[expose] public section
 
 section
 
@@ -567,54 +595,49 @@ section Mat
 
 variable (P : Par) (D : DAlg P.r) [hF : Fact (D.Laws P.TT)]
 
-theorem nabA_eq : nabA P D = Matrix.diagonal fun π => nabE D (aC P π) P.TT := rfl
-theorem nabsA_eq : nabsA P D = Matrix.diagonal fun π => nabsE D (aC P π) P.TT := rfl
-
-local macro "mx2_dg" : tactic => `(tactic| (simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA_eq, nabsA_eq, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, ← Matrix.diagonal_one]; congr 1; funext π))
-
 theorem levNab : LevNab := by
   intro P D _
   have hL : D.Laws P.TT := Fact.out
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · mx2_dg; exact nabla_zeta_comm hL _
-  · mx2_dg; exact nab_zi hL _
-  · mx2_dg; exact nab_zb hL _
-  · mx2_dg; exact nab_cf hL _ _ _ (by rw [eci hL, if_neg vz_ne]) (by rw [eci hL, if_neg vz_ne.symm])
-  · mx2_dg; exact nab_gg hL _
-  · mx2_dg; exact nab_ggi hL _
+  · rw [← Matrix.diagonal_one]; simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub]; congr 1; funext π; exact nabla_zeta_comm hL _
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact nab_zi hL _
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact nab_zb hL _
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact nab_cf hL _ _ _ (by rw [eci hL, if_neg vz_ne]) (by rw [eci hL, if_neg vz_ne.symm])
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact nab_gg hL _
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact nab_ggi hL _
   · rintro x (((⟨m, rfl⟩ | ⟨m, rfl⟩) | ⟨m, rfl⟩) | ⟨m, rfl⟩)
-    · mx2_dg; exact nab_cf hL _ _ _ (cf_c hL m).1 (cf_cb hL m).2
-    · mx2_dg; exact nab_cf hL _ _ _ (cf_ci hL m).1 (cf_cbi hL m).2
-    · mx2_dg; exact nab_cf hL _ _ _ (cf_cb hL m).1 (cf_c hL m).2
-    · mx2_dg; exact nab_cf hL _ _ _ (cf_cbi hL m).1 (cf_ci hL m).2
+    · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact nab_cf hL _ _ _ (cf_c hL m).1 (cf_cb hL m).2
+    · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact nab_cf hL _ _ _ (cf_ci hL m).1 (cf_cbi hL m).2
+    · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact nab_cf hL _ _ _ (cf_cb hL m).1 (cf_c hL m).2
+    · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact nab_cf hL _ _ _ (cf_cbi hL m).1 (cf_ci hL m).2
 
 theorem levNabs : LevNabs := by
   intro P D _
   have hL : D.Laws P.TT := Fact.out
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · mx2_dg; exact nabs_zb hL _
-  · mx2_dg; exact nabs_zbi hL _
-  · mx2_dg; exact nabs_cf hL _ _ _ (by rw [ec hL, if_neg vz_ne.symm]) (by rw [ec hL, if_neg vz_ne])
-  · mx2_dg; exact nabs_cf hL _ _ _ (by rw [eci hL, if_neg vz_ne.symm]) (by rw [eci hL, if_neg vz_ne])
-  · mx2_dg; exact nabs_gg hL _
-  · mx2_dg; exact nabs_ggi hL _
+  · rw [← Matrix.diagonal_one]; simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub]; congr 1; funext π; exact nabs_zb hL _
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact nabs_zbi hL _
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact nabs_cf hL _ _ _ (by rw [ec hL, if_neg vz_ne.symm]) (by rw [ec hL, if_neg vz_ne])
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact nabs_cf hL _ _ _ (by rw [eci hL, if_neg vz_ne.symm]) (by rw [eci hL, if_neg vz_ne])
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact nabs_gg hL _
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact nabs_ggi hL _
   · rintro x (((⟨m, rfl⟩ | ⟨m, rfl⟩) | ⟨m, rfl⟩) | ⟨m, rfl⟩)
-    · mx2_dg; exact nabs_cf hL _ _ _ (cf_c hL m).2 (cf_cb hL m).1
-    · mx2_dg; exact nabs_cf hL _ _ _ (cf_ci hL m).2 (cf_cbi hL m).1
-    · mx2_dg; exact nabs_cf hL _ _ _ (cf_cb hL m).2 (cf_c hL m).1
-    · mx2_dg; exact nabs_cf hL _ _ _ (cf_cbi hL m).2 (cf_ci hL m).1
+    · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact nabs_cf hL _ _ _ (cf_c hL m).2 (cf_cb hL m).1
+    · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact nabs_cf hL _ _ _ (cf_ci hL m).2 (cf_cbi hL m).1
+    · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact nabs_cf hL _ _ _ (cf_cb hL m).2 (cf_c hL m).1
+    · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact nabs_cf hL _ _ _ (cf_cbi hL m).2 (cf_ci hL m).1
 
 theorem levPP : LevPP := by
   intro P D _ l m
   have hL : D.Laws P.TT := Fact.out
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · mx2_dg; exact mk_comm D _ _ _ _ (hL.comm _ _) (by rw [neg_mul_neg, neg_mul_neg]; exact hL.comm _ _)
-  · mx2_dg; exact mk_comm D _ _ _ _ (hL.comm _ _) (by rw [neg_mul_neg, neg_mul_neg]; exact hL.comm _ _)
-  · mx2_dg; exact mk_comm D _ _ _ _ (hL.comm _ _) (by rw [neg_mul_neg, neg_mul_neg]; exact hL.comm _ _)
-  · mx2_dg; exact partialDeriv_commute_nab hL _ _
-  · mx2_dg; exact partialDerivBar_commute_nab hL _ _
-  · mx2_dg; exact partialDeriv_commute_nabs hL _ _
-  · mx2_dg; exact partialDerivBar_commute_nabs hL _ _
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact mk_comm D _ _ _ _ (hL.comm _ _) (by rw [neg_mul_neg, neg_mul_neg]; exact hL.comm _ _)
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact mk_comm D _ _ _ _ (hL.comm _ _) (by rw [neg_mul_neg, neg_mul_neg]; exact hL.comm _ _)
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact mk_comm D _ _ _ _ (hL.comm _ _) (by rw [neg_mul_neg, neg_mul_neg]; exact hL.comm _ _)
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact partialDeriv_commute_nab hL _ _
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact partialDerivBar_commute_nab hL _ _
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact partialDeriv_commute_nabs hL _ _
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact partialDerivBar_commute_nabs hL _ _
 
 theorem levP : LevP := by
   intro P D _ l
@@ -622,27 +645,27 @@ theorem levP : LevP := by
   refine ⟨?_, ?_, ?_⟩
   · intro m
     by_cases h : l = m
-    · subst h; rw [if_pos rfl]; mx2_dg; exact p_c hL l
-    · rw [if_neg h, add_zero]; mx2_dg
+    · subst h; rw [if_pos rfl]; simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact p_c hL l
+    · rw [if_neg h, add_zero]; simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π
       exact pP_0 hL _ _ _ (by rw [ec hL, if_neg (fun e => h ((vc_inj _ _).1 e))])
         (by rw [ec hL, if_neg (fun e => h ((vcb_inj _ _).1 e))])
   · intro m
     by_cases h : l = m
-    · subst h; rw [if_pos rfl]; mx2_dg; exact p_ci hL l
-    · rw [if_neg h, sub_zero]; mx2_dg
+    · subst h; rw [if_pos rfl]; simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact p_ci hL l
+    · rw [if_neg h, sub_zero]; simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π
       exact pP_0 hL _ _ _ (by rw [eci hL, if_neg (fun e => h ((vc_inj _ _).1 e))])
         (by rw [eci hL, if_neg (fun e => h ((vcb_inj _ _).1 e))])
   · rintro x ((⟨m, rfl⟩ | ⟨m, rfl⟩) | hx)
-    · mx2_dg; exact pP_0 hL _ _ _ (by rw [ec hL, if_neg (vc_vcb _ _)]) (by rw [ec hL, if_neg (vc_vcb _ _).symm])
-    · mx2_dg; exact pP_0 hL _ _ _ (by rw [eci hL, if_neg (vc_vcb _ _)]) (by rw [eci hL, if_neg (vc_vcb _ _).symm])
+    · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact pP_0 hL _ _ _ (by rw [ec hL, if_neg (vc_vcb _ _)]) (by rw [ec hL, if_neg (vc_vcb _ _).symm])
+    · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact pP_0 hL _ _ _ (by rw [eci hL, if_neg (vc_vcb _ _)]) (by rw [eci hL, if_neg (vc_vcb _ _).symm])
     · simp only [zfnsA, Set.mem_insert_iff, Set.mem_singleton_iff] at hx
       rcases hx with rfl | rfl | rfl | rfl | rfl | rfl
-      · mx2_dg; exact pP_0 hL _ _ _ (zeta_free_of_variable hL l).1 (zf_zb hL l).2
-      · mx2_dg; exact pP_0 hL _ _ _ (zf_zi hL l).1 (zf_zbi hL l).2
-      · mx2_dg; exact pP_0 hL _ _ _ (zf_zb hL l).1 (zeta_free_of_variable hL l).2
-      · mx2_dg; exact pP_0 hL _ _ _ (zf_zbi hL l).1 (zf_zi hL l).2
-      · mx2_dg; exact pP_0 hL _ _ _ (zf_gg hL l).1 (zf_gg hL l).2
-      · mx2_dg; exact pP_0 hL _ _ _ (zf_ggi hL l).1 (zf_ggi hL l).2
+      · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact pP_0 hL _ _ _ (zeta_free_of_variable hL l).1 (zf_zb hL l).2
+      · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact pP_0 hL _ _ _ (zf_zi hL l).1 (zf_zbi hL l).2
+      · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact pP_0 hL _ _ _ (zf_zb hL l).1 (zeta_free_of_variable hL l).2
+      · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact pP_0 hL _ _ _ (zf_zbi hL l).1 (zf_zi hL l).2
+      · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact pP_0 hL _ _ _ (zf_gg hL l).1 (zf_gg hL l).2
+      · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact pP_0 hL _ _ _ (zf_ggi hL l).1 (zf_ggi hL l).2
 
 theorem levPb : LevPb := by
   intro P D _ l
@@ -650,29 +673,29 @@ theorem levPb : LevPb := by
   refine ⟨?_, ?_, ?_⟩
   · intro m
     by_cases h : l = m
-    · subst h; rw [if_pos rfl]; mx2_dg
+    · subst h; rw [if_pos rfl]; simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π
       rw [DAlg.cbP, partialDerivBar_mul_fn hL, ec hL, ec hL, if_pos rfl, if_pos rfl]
-    · rw [if_neg h, add_zero]; mx2_dg
+    · rw [if_neg h, add_zero]; simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π
       exact pbP_0 hL _ _ _ (by rw [ec hL, if_neg (fun e => h ((vcb_inj _ _).1 e))])
         (by rw [ec hL, if_neg (fun e => h ((vc_inj _ _).1 e))])
   · intro m
     by_cases h : l = m
-    · subst h; rw [if_pos rfl]; mx2_dg
+    · subst h; rw [if_pos rfl]; simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π
       rw [DAlg.cbiP, partialDerivBar_mul_fn hL, eci hL, eci hL, if_pos rfl, if_pos rfl, sub_eq_add_neg, multiplierPair_neg]
-    · rw [if_neg h, sub_zero]; mx2_dg
+    · rw [if_neg h, sub_zero]; simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π
       exact pbP_0 hL _ _ _ (by rw [eci hL, if_neg (fun e => h ((vcb_inj _ _).1 e))])
         (by rw [eci hL, if_neg (fun e => h ((vc_inj _ _).1 e))])
   · rintro x ((⟨m, rfl⟩ | ⟨m, rfl⟩) | hx)
-    · mx2_dg; exact pbP_0 hL _ _ _ (by rw [ec hL, if_neg (vc_vcb _ _).symm]) (by rw [ec hL, if_neg (vc_vcb _ _)])
-    · mx2_dg; exact pbP_0 hL _ _ _ (by rw [eci hL, if_neg (vc_vcb _ _).symm]) (by rw [eci hL, if_neg (vc_vcb _ _)])
+    · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact pbP_0 hL _ _ _ (by rw [ec hL, if_neg (vc_vcb _ _).symm]) (by rw [ec hL, if_neg (vc_vcb _ _)])
+    · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact pbP_0 hL _ _ _ (by rw [eci hL, if_neg (vc_vcb _ _).symm]) (by rw [eci hL, if_neg (vc_vcb _ _)])
     · simp only [zfnsA, Set.mem_insert_iff, Set.mem_singleton_iff] at hx
       rcases hx with rfl | rfl | rfl | rfl | rfl | rfl
-      · mx2_dg; exact pbP_0 hL _ _ _ (zeta_free_of_variable hL l).2 (zf_zb hL l).1
-      · mx2_dg; exact pbP_0 hL _ _ _ (zf_zi hL l).2 (zf_zbi hL l).1
-      · mx2_dg; exact pbP_0 hL _ _ _ (zf_zb hL l).2 (zeta_free_of_variable hL l).1
-      · mx2_dg; exact pbP_0 hL _ _ _ (zf_zbi hL l).2 (zf_zi hL l).1
-      · mx2_dg; exact pbP_0 hL _ _ _ (zf_gg hL l).2 (zf_gg hL l).1
-      · mx2_dg; exact pbP_0 hL _ _ _ (zf_ggi hL l).2 (zf_ggi hL l).1
+      · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact pbP_0 hL _ _ _ (zeta_free_of_variable hL l).2 (zf_zb hL l).1
+      · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact pbP_0 hL _ _ _ (zf_zi hL l).2 (zf_zbi hL l).1
+      · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact pbP_0 hL _ _ _ (zf_zb hL l).2 (zeta_free_of_variable hL l).1
+      · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact pbP_0 hL _ _ _ (zf_zbi hL l).2 (zf_zi hL l).1
+      · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact pbP_0 hL _ _ _ (zf_gg hL l).2 (zf_gg hL l).1
+      · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact pbP_0 hL _ _ _ (zf_ggi hL l).2 (zf_ggi hL l).1
 
 theorem form (x : A P D) (hx : x ∈ fnsA P D) : ∃ f fb, x = sc P D (D.fnP f fb) := by
   rcases hx with ((((⟨m, rfl⟩ | ⟨m, rfl⟩) | ⟨m, rfl⟩) | ⟨m, rfl⟩) | hx)
@@ -690,21 +713,21 @@ theorem levFns : LevFns := by
   · intro x hx y hy
     obtain ⟨f, fb, rfl⟩ := form P D x hx
     obtain ⟨g, gb, rfl⟩ := form P D y hy
-    mx2_dg; exact multiplierPair_comm D _ _ _ _
+    simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact multiplierPair_comm D _ _ _ _
   · intro l
     refine ⟨?_, ?_, ?_, ?_⟩
-    · mx2_dg; exact inv1 hL _ _ (ux hL _) (ux hL _)
-    · mx2_dg; exact inv2 hL _ _ (ux hL _) (ux hL _)
-    · mx2_dg; exact inv1 hL _ _ (ux hL _) (ux hL _)
-    · mx2_dg; exact inv2 hL _ _ (ux hL _) (ux hL _)
-  · mx2_dg; exact inv1 hL _ _ (ux hL _) (ux hL _)
-  · mx2_dg; exact inv2 hL _ _ (ux hL _) (ux hL _)
-  · mx2_dg; exact inv1 hL _ _ (ux hL _) (ux hL _)
-  · mx2_dg; exact inv2 hL _ _ (ux hL _) (ux hL _)
-  · mx2_dg; exact inv1 hL _ _ hL.unit_gg hL.unit_gg
-  · mx2_dg; exact inv2 hL _ _ hL.unit_gg hL.unit_gg
+    · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact inv1 hL _ _ (ux hL _) (ux hL _)
+    · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact inv2 hL _ _ (ux hL _) (ux hL _)
+    · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact inv1 hL _ _ (ux hL _) (ux hL _)
+    · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact inv2 hL _ _ (ux hL _) (ux hL _)
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact inv1 hL _ _ (ux hL _) (ux hL _)
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact inv2 hL _ _ (ux hL _) (ux hL _)
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact inv1 hL _ _ (ux hL _) (ux hL _)
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact inv2 hL _ _ (ux hL _) (ux hL _)
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact inv1 hL _ _ hL.unit_gg hL.unit_gg
+  · simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π; exact inv2 hL _ _ hL.unit_gg hL.unit_gg
   · rw [Matrix.algebraMap_eq_diagonal]
-    mx2_dg
+    simp only [pA, pbA, cA, ciA, cbA, cbiA, zA, ziA, zbA, zbiA, ggA, ggiA, nabA, nabsA, sc, Matrix.scalar_apply, Matrix.diagonal_mul_diagonal, Matrix.diagonal_add, Matrix.diagonal_sub, Matrix.diagonal_one]; congr 1; funext π
     rw [Pi.algebraMap_apply, Algebra.algebraMap_eq_smul_one, ← multiplierPair_one, smul_fnP, DAlg.zP, DAlg.zbP, multiplierPair_mul,
       sub_eq_add_neg, multiplierPair_neg, multiplierPair_add, DAlg.ggP]
     congr 1
@@ -774,8 +797,6 @@ theorem starGens : StarGens := by
   · exact star_sc P D _
   · simp only [nabA, nabsA, Matrix.star_eq_conjTranspose, Matrix.diagonal_conjTranspose]
     congr 1
-    funext π
-    simp only [Pi.star_apply, star_add, star_smul, star_mul]
     have h1 : star D.dzP = -D.dzbP := by
       refine Prod.ext ?_ ?_
       · rfl
@@ -789,6 +810,8 @@ theorem starGens : StarGens := by
       · show MulOpposite.op (D.mulOp _ * D.mulOp _) = MulOpposite.op (D.mulOp _ * D.mulOp _)
         congr 1
         ext h : 1; simp [DAlg.mulOp, mul_left_comm]
+    funext π
+    simp only [Pi.star_apply, star_add, star_smul, star_mul]
     rw [h1, h2]; simp
 
 theorem levelStar : LevelStar := by
@@ -941,14 +964,10 @@ theorem kap_diag (f : Ty P → ℂ) (d : Ty P → D.Pr) :
 
 theorem kap_sc (f : Ty P → ℂ) (w : D.Pr) : Commute (kap P D f) (sc P D w) := kap_diag P D f _
 
-theorem kap_kap (f g : Ty P → ℂ) : Commute (kap P D f) (kap P D g) := kap_diag P D f _
-
 theorem star_kap (f : Ty P → ℂ) : star (kap P D f) = kap P D fun π => star (f π) := by
   rw [kap_eq, kap_eq, Matrix.star_eq_conjTranspose, Matrix.diagonal_conjTranspose]
   congr 1; funext π
   exact (algebraMap_star_comm (f π)).symm
-
-theorem kap_const (c : ℂ) : (kap P D fun _ => c) = algebraMap ℂ (A P D) c := (kap P D).commutes c
 
 theorem kap_mul (f g : Ty P → ℂ) : (kap P D fun π => f π * g π) = kap P D f * kap P D g :=
   map_mul (kap P D) f g
@@ -961,7 +980,8 @@ theorem kap_smul (c : ℂ) (f : Ty P → ℂ) : (kap P D fun π => c * f π) = c
 
 theorem kap_sum {ι : Type} (s : Finset ι) (f : ι → Ty P → ℂ) :
     (kap P D fun π => ∑ i ∈ s, f i π) = ∑ i ∈ s, kap P D (f i) := by
-  rw [← map_sum]; congr 1; funext π; simp
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum]; congr 1; funext π; simp
 
 theorem ss_sc (l : ℕ) (w : D.Pr) : Commute (SS P D l) (sc P D w) := by
   show SS P D l * sc P D w = sc P D w * SS P D l
@@ -1003,13 +1023,9 @@ theorem gg_ggi : ggA P D * ggiA P D = 1 := by
   obtain ⟨-, -, -, -, -, -, h, -, -⟩ := levFns P D; exact h
 theorem ggi_gg : ggiA P D * ggA P D = 1 := by
   obtain ⟨-, -, -, -, -, -, -, h, -⟩ := levFns P D; exact h
-theorem gg_def : ggA P D = zA P D * zbA P D - algebraMap ℂ (A P D) (P.TT : ℂ) := by
-  obtain ⟨-, -, -, -, -, -, -, -, h⟩ := levFns P D; exact h
 theorem nabla_zeta_comm : nabA P D * zA P D = zA P D * nabA P D + 1 := (levNab P D).1
 theorem nab_gg : nabA P D * ggA P D = ggA P D * nabA P D + zbA P D := by
   obtain ⟨-, -, -, -, h, -, -⟩ := levNab P D; exact h
-theorem nabs_alt : nabsA P D * zA P D = zA P D * nabsA P D := by
-  obtain ⟨-, -, h, -, -, -, -⟩ := levNabs P D; exact h
 theorem nabs_gg : nabsA P D * ggA P D = ggA P D * nabsA P D - zA P D := by
   obtain ⟨-, -, -, -, h, -, -⟩ := levNabs P D; exact h
 theorem star_alt : star (zA P D) = zbA P D := (starGens P D).2.1
@@ -1024,20 +1040,6 @@ theorem l0_eq_neg_nabla_sub (Y : ℂ) : l0A P D Y = -nabA P D - (Y + 1 / 2) • 
 theorem raising_constant_eq_nabla_star (Y : ℂ) : m0A P D Y = -nabsA P D - (Y - 1 / 2) • (zA P D * ggiA P D) := by
   rw [m0A, Algebra.smul_def]
 
-theorem lowering_constant_zeta_comm (Y : ℂ) : l0A P D Y * zA P D = zA P D * l0A P D Y - 1 := by
-  have h : Commute (zbA P D * ggiA P D) (zA P D) := (fn_comm P D _ _ _ _).mul_left (fn_comm P D _ _ _ _)
-  rw [l0_eq_neg_nabla_sub, sub_mul, mul_sub, neg_mul, mul_neg, nabla_zeta_comm, smul_mul_assoc, mul_smul_comm, h.eq]
-  abel
-
-theorem raising_constant_commute_zeta (Y : ℂ) : Commute (m0A P D Y) (zA P D) := by
-  rw [raising_constant_eq_nabla_star]
-  exact ((show Commute (nabsA P D) (zA P D) from nabs_alt P D).neg_left).sub_left
-    (((fn_comm P D _ _ _ _).mul_left (fn_comm P D _ _ _ _)).smul_left _)
-
-theorem S21_commute_scalar (Y : ℂ) (w : D.Pr) : Commute (weightedSumBis P D Y) (sc P D w) := by
-  unfold weightedSumBis
-  exact Commute.sum_left _ _ _ fun l _ => (ss_sc P D l w).mul_left (kap_sc P D _ w)
-
 theorem upper_sum_commute_scalar (Y : ℂ) (w : D.Pr) : Commute (S12 P D Y) (sc P D w) := by
   unfold S12
   exact Commute.sum_left _ _ _ fun l _ => (kap_sc P D _ w).mul_left (sss_sc P D l w)
@@ -1046,31 +1048,6 @@ theorem quartic_sum_commute_scalar (Y : ℂ) (w : D.Pr) : Commute (S4 P D Y) (sc
   unfold S4
   exact Commute.sum_left _ _ _ fun l _ => Commute.sum_left _ _ _ fun j _ =>
     ((sss_sc P D l w).mul_left (ss_sc P D j w)).mul_left (kap_sc P D _ w)
-
-theorem commGroup_mul_eq_mul_mul_div {R : Type*} [Ring R] (a B c D e l z : R) (ha : Commute a z) (hB : Commute B z)
-    (hc : Commute c z) (hD : Commute D z) (he : Commute e z) (hl : l * z = z * l - 1) :
-    (a + B * l + c + D * l + e) * z - z * (a + B * l + c + D * l + e) = -(B + D) := by
-  have h1 : B * l * z = z * (B * l) - B := by
-    rw [mul_assoc, hl, mul_sub, mul_one, ← mul_assoc, hB.eq, mul_assoc]
-  have h2 : D * l * z = z * (D * l) - D := by
-    rw [mul_assoc, hl, mul_sub, mul_one, ← mul_assoc, hD.eq, mul_assoc]
-  simp only [add_mul, mul_add, h1, h2, ha.eq, hc.eq, he.eq]
-  abel
-
-theorem qQZeta : QQZeta := by
-  intro P D _ Y
-  have hgx : Commute (ggA P D * xA P D Y) (zA P D) := (fn_comm P D _ _ _ _).mul_left (kap_sc P D _ _)
-  refine ⟨?_, ?_, ?_, hgx⟩
-  · have h := commGroup_mul_eq_mul_mul_div 0 (ggA P D * xA P D Y) (weightedSumBis P D Y) 0 0 (l0A P D Y) (zA P D) (Commute.zero_left _) hgx
-      (S21_commute_scalar P D Y _) (Commute.zero_left _) (Commute.zero_left _) (lowering_constant_zeta_comm P D Y)
-    simpa [t21, t22] using h
-  · have h := commGroup_mul_eq_mul_mul_div (ggiA P D * (kap P D fun π => wC P π Y)) (ggA P D * xA P D Y * m0A P D Y)
-      (ggA P D * m0A P D Y * ggiA P D * weightedSumBis P D Y) (S12 P D Y) (ggiA P D * S4 P D Y) (l0A P D Y) (zA P D)
-      ((fn_comm P D _ _ _ _).mul_left (kap_sc P D _ _)) (hgx.mul_left (raising_constant_commute_zeta P D Y))
-      ((((fn_comm P D _ _ _ _).mul_left (raising_constant_commute_zeta P D Y)).mul_left (fn_comm P D _ _ _ _)).mul_left (S21_commute_scalar P D Y _))
-      (upper_sum_commute_scalar P D Y _) ((fn_comm P D _ _ _ _).mul_left (quartic_sum_commute_scalar P D Y _)) (lowering_constant_zeta_comm P D Y)
-    exact h
-  · exact (hgx.mul_left (raising_constant_commute_zeta P D Y)).add_left (upper_sum_commute_scalar P D Y _)
 
 theorem block_frame_conjugation_identity {R : Type*} [Ring R] [Algebra ℂ R] (g gi z N : R) (a e : ℂ) (h1 : g * gi = 1)
     (hN : N * g = g * N - e • z) (hzg : Commute z g) (hzgi : Commute z gi) :
@@ -1170,7 +1147,8 @@ theorem coordinate_polynomial_monic (π : Ty P) : (coordinatePolynomial P π).Mo
 
 theorem star_wC (π : Ty P) (Y : ℂ) : star (wC P π Y) = wC P π (star Y) := by
   have h1 : (wNum P π).map (starRingEnd ℂ) = wNum P π := by
-    simp [wNum, qP, Polynomial.map_sum, Polynomial.map_prod, conj_two]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [wNum, qP, Polynomial.map_sum, Polynomial.map_prod, conj_two]
   have h2 : (coordinatePolynomial P π).map (starRingEnd ℂ) = coordinatePolynomial P π := by simp [coordinatePolynomial, Polynomial.map_prod]
   have h3 : (wNum P π /ₘ coordinatePolynomial P π).map (starRingEnd ℂ) = wNum P π /ₘ coordinatePolynomial P π := by
     rw [Polynomial.map_divByMonic _ (coordinate_polynomial_monic P π), h1, h2]
@@ -1178,7 +1156,6 @@ theorem star_wC (π : Ty P) (Y : ℂ) : star (wC P π Y) = wC P π (star Y) := b
   rw [← Polynomial.eval₂_at_apply, ← Polynomial.eval_map, h3]
 
 theorem kap_ggi (f : Ty P → ℂ) : kap P D f * ggiA P D = ggiA P D * kap P D f := (kap_sc P D f _).eq
-theorem kap_gg (f : Ty P → ℂ) : kap P D f * ggA P D = ggA P D * kap P D f := (kap_sc P D f _).eq
 theorem quartic_sum_gamma_inv_comm (Y : ℂ) : S4 P D Y * ggiA P D = ggiA P D * S4 P D Y := (quartic_sum_commute_scalar P D Y _).eq
 
 theorem ggi_kap_gg (f : Ty P → ℂ) : ggiA P D * (kap P D f * ggA P D) = kap P D f := by
@@ -1238,260 +1215,9 @@ section lead
 
 variable {R : Type*} [Ring R] [Algebra ℂ R]
 
-def Lead (n : ℕ) (c : R) (f : ℂ → R) : Prop :=
-  ∃ a : ℕ → R, ∀ Y, f Y = Y ^ n • c + ∑ i ∈ range n, Y ^ i • a i
-
-theorem mon_eval (c : R) (n : ℕ) (Y : ℂ) : c * (algebraMap ℂ R Y) ^ n = Y ^ n • c := by
-  rw [← map_pow, ← Algebra.commutes, ← Algebra.smul_def]
-
-theorem lead_iff (n : ℕ) (c : R) (f : ℂ → R) : Lead n c f ↔
-    ∃ p : R[X], p.natDegree ≤ n ∧ p.coeff n = c ∧ ∀ Y, f Y = p.eval (algebraMap ℂ R Y) := by
-  constructor
-  · rintro ⟨a, ha⟩
-    refine ⟨monomial n c + ∑ i ∈ range n, monomial i (a i), ?_, ?_, ?_⟩
-    · exact natDegree_add_le_of_degree_le (natDegree_monomial_le _)
-        (natDegree_sum_le_of_forall_le _ _ fun i hi =>
-          (natDegree_monomial_le _).trans (mem_range.1 hi).le)
-    · rw [coeff_add, coeff_monomial, if_pos rfl, finsetSum_coeff, sum_eq_zero, add_zero]
-      intro i hi
-      rw [coeff_monomial, if_neg (mem_range.1 hi).ne]
-    · intro Y
-      rw [ha, eval_add, eval_monomial, eval_finsetSum, mon_eval]
-      congr 1
-      refine sum_congr rfl fun i _ => ?_
-      rw [eval_monomial, mon_eval]
-  · rintro ⟨p, hp, rfl, hf⟩
-    refine ⟨p.coeff, fun Y => ?_⟩
-    rw [hf, eval_eq_sum_range' (Nat.lt_succ_of_le hp), sum_range_succ, add_comm, mon_eval]
-    congr 1
-    exact sum_congr rfl fun i _ => mon_eval _ _ _
-
 variable {n m : ℕ} {c d : R} {f g : ℂ → R}
 
-theorem Lead.mul (hf : Lead n c f) (hg : Lead m d g) : Lead (n + m) (c * d) fun Y => f Y * g Y := by
-  rw [lead_iff] at *
-  obtain ⟨p, hp, rfl, hpf⟩ := hf
-  obtain ⟨q, hq, rfl, hqg⟩ := hg
-  refine ⟨p * q, natDegree_mul_le_of_le hp hq, coeff_mul_add_eq_of_natDegree_le hp hq, fun Y => ?_⟩
-  rw [hpf, hqg]
-  exact (eval₂_mul_noncomm (RingHom.id R) _ fun k => (Algebra.commutes Y (q.coeff k)).symm).symm
-
-theorem Lead.add (hf : Lead n c f) (hg : Lead n d g) : Lead n (c + d) fun Y => f Y + g Y := by
-  obtain ⟨a, ha⟩ := hf
-  obtain ⟨b, hb⟩ := hg
-  refine ⟨fun i => a i + b i, fun Y => ?_⟩
-  beta_reduce
-  rw [ha, hb]
-  simp only [smul_add, sum_add_distrib]
-  abel
-
-theorem Lead.const (c : R) : Lead 0 c fun _ => c := ⟨0, fun Y => by simp⟩
-
-theorem Lead.succ (hf : Lead n c f) : Lead (n + 1) 0 f := by
-  obtain ⟨a, ha⟩ := hf
-  refine ⟨fun i => if i = n then c else a i, fun Y => ?_⟩
-  beta_reduce
-  rw [ha, sum_range_succ, if_pos rfl, smul_zero, zero_add, add_comm]
-  congr 1
-  exact sum_congr rfl fun i hi => by rw [if_neg (mem_range.1 hi).ne]
-
-theorem Lead.lt (hf : Lead n c f) (h : n < m) : Lead m 0 f := by
-  induction m, h using Nat.le_induction with
-  | base => exact hf.succ
-  | succ k _ ih => exact ih.succ
-
-theorem Lead.congr (hf : Lead n c f) (hn : n = m) (hc : c = d) (hg : ∀ Y, g Y = f Y) : Lead m d g := by
-  subst hn hc
-  obtain ⟨a, ha⟩ := hf
-  exact ⟨a, fun Y => by rw [hg, ha]⟩
-
-theorem Lead.const_mul (a : R) (hf : Lead n c f) : Lead n (a * c) fun Y => a * f Y :=
-  ((Lead.const a).mul hf).congr (zero_add n) rfl fun _ => rfl
-
-theorem Lead.mul_const (a : R) (hf : Lead n c f) : Lead n (c * a) fun Y => f Y * a :=
-  (hf.mul (Lead.const a)).congr (add_zero n) rfl fun _ => rfl
-
-theorem Lead.sum {ι : Type} (s : Finset ι) (F : ι → ℂ → R) (h : ∀ i ∈ s, Lead n 0 (F i)) :
-    Lead n 0 fun Y => ∑ i ∈ s, F i Y := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => exact ⟨0, fun Y => by simp⟩
-  | insert a s ha ih =>
-    exact ((h a (mem_insert_self a s)).add (ih fun i hi => h i (mem_insert_of_mem hi))).congr rfl
-      (add_zero 0) fun Y => sum_insert ha
-
-theorem Lead.lin (a b : R) : Lead 1 b fun Y => a + Y • b :=
-  ⟨fun _ => a, fun Y => by simp [add_comm]⟩
-
 end lead
-
-theorem lead_kap (n : ℕ) (p : Ty P → ℂ[X]) (c : Ty P → ℂ) (hp : ∀ π, (p π).natDegree ≤ n)
-    (hc : ∀ π, (p π).coeff n = c π) : Lead n (kap P D c) fun Y => kap P D fun π => (p π).eval Y := by
-  refine ⟨fun i => kap P D fun π => (p π).coeff i, fun Y => ?_⟩
-  have h : (fun π => (p π).eval Y) = Y ^ n • c + ∑ i ∈ range n, Y ^ i • fun π => (p π).coeff i := by
-    funext π
-    rw [eval_eq_sum_range' (Nat.lt_succ_of_le (hp π)), sum_range_succ, hc, add_comm]
-    simp [mul_comm]
-  beta_reduce
-  rw [h, map_add, map_smul, map_sum]
-  simp only [map_smul]
-
-theorem lead_prod (s : Finset ℕ) :
-    Lead s.card (1 : A P D) fun Y => kap P D fun π => ∏ i ∈ s, (Y + (rho P π i : ℂ)) := by
-  have hm : ∀ π : Ty P, (∏ i ∈ s, (X + C (rho P π i : ℂ))).Monic := fun π =>
-    monic_prod_of_monic _ _ fun _ _ => monic_X_add_C _
-  have hd : ∀ π : Ty P, (∏ i ∈ s, (X + C (rho P π i : ℂ))).natDegree = s.card := fun π => by
-    rw [natDegree_prod_of_monic _ _ fun _ _ => monic_X_add_C _]; simp
-  refine (lead_kap P D s.card (fun π => ∏ i ∈ s, (X + C (rho P π i : ℂ))) (fun _ => 1)
-    (fun π => (hd π).le) (fun π => ?_)).congr rfl (map_one (kap P D)) fun Y => ?_
-  · have := (hm π).coeff_natDegree
-    rwa [hd π] at this
-  · congr 1; funext π
-    simp [eval_prod]
-
-theorem card_I : (Icc 1 (P.k - 1)).card = P.k - 1 := by simp
-
-theorem lead_xA : Lead (P.k - 1) (1 : A P D) (xA P D) :=
-  (lead_prod P D (Icc 1 (P.k - 1))).congr (card_I P) rfl fun _ => rfl
-
-theorem lead_xEx (ex : Finset ℕ) (m : ℕ) (hm : P.k - 1 < m) :
-    Lead m (0 : A P D) fun Y => kap P D fun π => xEx P ex π Y :=
-  ((lead_prod P D (Icc 1 (P.k - 1) \ ex)).lt
-    (lt_of_le_of_lt ((card_le_card sdiff_subset).trans (card_I P).le) hm)).congr rfl rfl fun _ => rfl
-
-theorem leading_coeff_S21 (m : ℕ) (hm : P.k - 1 < m) : Lead m (0 : A P D) (weightedSumBis P D) :=
-  (Lead.sum _ _ fun l _ => ((lead_xEx P D {l} m hm).const_mul (SS P D l)).congr rfl (mul_zero _)
-    fun _ => rfl).congr rfl rfl fun _ => rfl
-
-theorem leading_term_upper_sum (m : ℕ) (hm : P.k - 1 < m) : Lead m (0 : A P D) (S12 P D) :=
-  (Lead.sum _ _ fun l _ => ((lead_xEx P D {l} m hm).mul_const (star (SS P D l))).congr rfl (zero_mul _)
-    fun _ => rfl).congr rfl rfl fun _ => rfl
-
-theorem leading_coeff_S4 (m : ℕ) (hm : P.k - 1 < m) : Lead m (0 : A P D) (S4 P D) :=
-  (Lead.sum _ _ fun l _ => Lead.sum _ _ fun j _ =>
-    ((lead_xEx P D {l, j} m hm).const_mul (star (SS P D l) * SS P D j)).congr rfl (mul_zero _)
-    fun _ => rfl).congr rfl rfl fun _ => rfl
-
-theorem leading_coeff_l0 : Lead 1 (-(zbA P D * ggiA P D)) (l0A P D) :=
-  (Lead.lin (-nabA P D - (1 / 2 : ℂ) • (zbA P D * ggiA P D)) (-(zbA P D * ggiA P D))).congr rfl rfl fun Y => by
-    rw [l0_eq_neg_nabla_sub, add_smul, smul_neg]; abel
-
-theorem leading_term_lowering_constant : Lead 1 (-(zA P D * ggiA P D)) (m0A P D) :=
-  (Lead.lin (-nabsA P D + (1 / 2 : ℂ) • (zA P D * ggiA P D)) (-(zA P D * ggiA P D))).congr rfl rfl fun Y => by
-    rw [raising_constant_eq_nabla_star, sub_smul, smul_neg]; abel
-
-theorem natDegree_x_polynomial (π : Ty P) : (coordinatePolynomial P π).natDegree = P.k - 1 := by
-  unfold coordinatePolynomial
-  rw [natDegree_prod_of_monic _ _ fun _ _ => monic_X_add_C _]
-  simp only [natDegree_X_add_C, sum_const, smul_eq_mul, mul_one]
-  exact card_I P
-
-theorem wNum_deg (hk : 1 ≤ P.k) (π : Ty P) : (wNum P π).natDegree ≤ 2 * P.k ∧
-    (wNum P π).coeff (2 * P.k) = -((P.T : ℂ) * P.T') := by
-  have hm : (∏ i ∈ Icc 1 P.k, ((X + C (1 / 2 + (P.u i : ℂ))) * (X + C (1 / 2 + (P.u' i : ℂ))))).Monic :=
-    monic_prod_of_monic _ _ fun _ _ => (monic_X_add_C _).mul (monic_X_add_C _)
-  have hd : (∏ i ∈ Icc 1 P.k, ((X + C (1 / 2 + (P.u i : ℂ))) * (X + C (1 / 2 + (P.u' i : ℂ))))).natDegree
-      = 2 * P.k := by
-    rw [natDegree_prod_of_monic _ _ fun _ _ => (monic_X_add_C _).mul (monic_X_add_C _)]
-    have : ∀ i ∈ Icc 1 P.k,
-        ((X + C (1 / 2 + (P.u i : ℂ))) * (X + C (1 / 2 + (P.u' i : ℂ)))).natDegree = 2 := fun i _ => by
-      rw [(monic_X_add_C _).natDegree_mul (monic_X_add_C _), natDegree_X_add_C, natDegree_X_add_C]
-    rw [sum_congr rfl this]
-    simp [mul_comm]
-  have he : ∀ (l : ℕ) (ρ : ℕ → ℂ), (∏ j ∈ (Icc 1 (P.k - 1)).erase l, (X + C (ρ j))).natDegree ≤ P.k - 1 := by
-    intro l ρ
-    rw [natDegree_prod_of_monic _ _ fun _ _ => monic_X_add_C _]
-    simp only [natDegree_X_add_C, sum_const, smul_eq_mul, mul_one]
-    exact (card_le_card (erase_subset _ _)).trans (card_I P).le
-  have ht : (∑ l ∈ Icc 1 (P.k - 1), C ((Nrm P l π : ℝ) : ℂ) *
-      ((∏ j ∈ (Icc 1 (P.k - 1)).erase l, (X + C (rho P π j : ℂ))) *
-        ∏ j ∈ (Icc 1 (P.k - 1)).erase l, (X + C ((rho P π j : ℂ) + 1)))).natDegree ≤
-      (P.k - 1) + (P.k - 1) :=
-    natDegree_sum_le_of_forall_le _ _ fun l _ => (natDegree_C_mul_le _ _).trans
-      (natDegree_mul_le_of_le (he l _) (he l _))
-  have hq : (qP P).natDegree ≤ 2 * P.k := (natDegree_C_mul_le _ _).trans hd.le
-  constructor
-  · exact natDegree_add_le_of_degree_le hq (ht.trans (by omega))
-  · unfold wNum
-    rw [coeff_add, coeff_eq_zero_of_natDegree_lt (lt_of_le_of_lt ht (by omega)), add_zero, qP,
-      coeff_C_mul, ← hd, hm.coeff_natDegree, mul_one]
-
-theorem wq_deg (hP : P.OK) (π : Ty P) : (wNum P π /ₘ coordinatePolynomial P π).natDegree ≤ P.k + 1 ∧
-    (wNum P π /ₘ coordinatePolynomial P π).coeff (P.k + 1) = -((P.T : ℂ) * P.T') := by
-  have hk := hP.k_pos
-  have hm := coordinate_polynomial_monic P π
-  have hd := natDegree_x_polynomial P π
-  obtain ⟨h1, h2⟩ := wNum_deg P hk π
-  have h3 : (wNum P π /ₘ coordinatePolynomial P π).natDegree ≤ P.k + 1 := by
-    rw [natDegree_divByMonic _ hm, hd]; omega
-  refine ⟨h3, ?_⟩
-  have h6 := coeff_mul_add_eq_of_natDegree_le hd.le h3
-  rw [← weight_exact P hP π] at h6
-  have h7 : (coordinatePolynomial P π).coeff (P.k - 1) = 1 := by
-    have := hm.coeff_natDegree
-    rwa [hd] at this
-  have e : P.k - 1 + (P.k + 1) = 2 * P.k := by omega
-  rw [h7, one_mul, e, h2] at h6
-  exact h6.symm
-
-theorem gg_zb : ggA P D * zbA P D = zbA P D * ggA P D := (fn_comm P D _ _ _ _).eq
-theorem GG_commute_z : ggA P D * zA P D = zA P D * ggA P D := (fn_comm P D _ _ _ _).eq
-
-theorem gg_zb_ggi : ggA P D * (zbA P D * ggiA P D) = zbA P D := by
-  rw [← mul_assoc, gg_zb, mul_assoc, gg_ggi, mul_one]
-
-theorem gg_z_ggi : ggA P D * (zA P D * ggiA P D) = zA P D := by
-  rw [← mul_assoc, GG_commute_z, mul_assoc, gg_ggi, mul_one]
-
-theorem leading_coeff_t22 : Lead (P.k - 1) (ggA P D) (t22 P D) :=
-  ((lead_xA P D).const_mul (ggA P D)).congr rfl (mul_one _) fun _ => rfl
-
-theorem leading_term_lower_left (hk : 1 ≤ P.k) : Lead P.k (-zbA P D) (t21 P D) :=
-  ((((lead_xA P D).const_mul (ggA P D)).mul (leading_coeff_l0 P D)).congr (m := P.k) (by omega) rfl (fun _ => rfl)
-    |>.add (leading_coeff_S21 P D P.k (by omega))).congr rfl
-    (by rw [mul_one, mul_neg, gg_zb_ggi, add_zero]) fun _ => rfl
-
-theorem leading_coeff_t12 (hk : 1 ≤ P.k) : Lead P.k (-zA P D) (t12 P D) :=
-  ((((lead_xA P D).const_mul (ggA P D)).mul (leading_term_lowering_constant P D)).congr (m := P.k) (by omega) rfl (fun _ => rfl)
-    |>.add (leading_term_upper_sum P D P.k (by omega))).congr rfl
-    (by rw [mul_one, mul_neg, gg_z_ggi, add_zero]) fun _ => rfl
-
-theorem lead_coef : ggiA P D * (kap P D fun _ => -((P.T : ℂ) * P.T')) +
-    ggA P D * 1 * -(zA P D * ggiA P D) * -(zbA P D * ggiA P D) = 1 := by
-  have e : ggA P D * 1 * -(zA P D * ggiA P D) * -(zbA P D * ggiA P D) = zA P D * zbA P D * ggiA P D := by
-    rw [mul_one, mul_neg (ggA P D), gg_z_ggi, neg_mul_neg, mul_assoc]
-  rw [e, kap_const, ← Algebra.commutes, ← add_mul]
-  have h : algebraMap ℂ (A P D) (-((P.T : ℂ) * P.T')) + zA P D * zbA P D = ggA P D := by
-    rw [gg_def, map_neg, Par.TT]; push_cast; abel
-  rw [h, gg_ggi]
-
-theorem leading_coeff_t11 (hP : P.OK) : Lead (P.k + 1) (1 : A P D) (t11 P D) := by
-  have hk := hP.k_pos
-  have h1 : Lead (P.k + 1) (ggiA P D * (kap P D fun _ => -((P.T : ℂ) * P.T')))
-      fun Y => ggiA P D * (kap P D fun π => wC P π Y) :=
-    (lead_kap P D (P.k + 1) (fun π => wNum P π /ₘ coordinatePolynomial P π) _ (fun π => (wq_deg P hP π).1)
-      (fun π => (wq_deg P hP π).2)).const_mul (ggiA P D)
-  have h2 : Lead (P.k + 1) (ggA P D * 1 * -(zA P D * ggiA P D) * -(zbA P D * ggiA P D))
-      fun Y => ggA P D * xA P D Y * m0A P D Y * l0A P D Y :=
-    ((((lead_xA P D).const_mul (ggA P D)).mul (leading_term_lowering_constant P D)).mul (leading_coeff_l0 P D)).congr (by omega) rfl fun _ => rfl
-  have h3 : Lead (P.k + 1) (0 : A P D) fun Y => ggA P D * m0A P D Y * ggiA P D * weightedSumBis P D Y :=
-    ((((leading_term_lowering_constant P D).const_mul (ggA P D)).mul_const (ggiA P D)).mul (leading_coeff_S21 P D P.k (by omega))).congr
-      (by omega) (mul_zero _) fun _ => rfl
-  have h4 : Lead (P.k + 1) (0 : A P D) fun Y => S12 P D Y * l0A P D Y :=
-    ((leading_term_upper_sum P D P.k (by omega)).mul (leading_coeff_l0 P D)).congr rfl (zero_mul _) fun _ => rfl
-  have h5 : Lead (P.k + 1) (0 : A P D) fun Y => ggiA P D * S4 P D Y :=
-    ((leading_coeff_S4 P D (P.k + 1) (by omega)).const_mul (ggiA P D)).congr rfl (mul_zero _) fun _ => rfl
-  exact ((((h1.add h2).add h3).add h4).add h5).congr rfl
-    (by rw [lead_coef, add_zero, add_zero, add_zero]) fun _ => rfl
-
-theorem qQLeading : QQLeading := by
-  intro P D _ hP
-  have hk := hP.k_pos
-  obtain ⟨a11, h11⟩ := leading_coeff_t11 P D hP
-  obtain ⟨a12, h12⟩ := leading_coeff_t12 P D hk
-  obtain ⟨a21, h21⟩ := leading_term_lower_left P D hk
-  obtain ⟨a22, h22⟩ := leading_coeff_t22 P D
-  exact ⟨a11, a12, a21, a22, fun Y => ⟨h11 Y, by rw [h12 Y, smul_neg], by rw [h21 Y, smul_neg], h22 Y⟩⟩
 
 theorem xC_split (j : ℕ) (hj : j ∈ Icc 1 (P.k - 1)) (π : Ty P) (Y : ℂ) :
     xC P π Y = (Y + (rho P π j : ℂ)) * xEx P {j} π Y := by
@@ -1709,8 +1435,6 @@ namespace Formalism.FourierDecayAlt.P.MAx1
 
 theorem qQNormal : QQNormal := D5.qQNormal_of sSNorm
 theorem qQHerm : QQHerm := D5.qQHerm
-theorem qQLeading : QQLeading := D5.qQLeading
-theorem qQZeta : QQZeta := D5.qQZeta
 
 end Formalism.FourierDecayAlt.P.MAx1
 
@@ -2555,7 +2279,7 @@ theorem IsPoly.const (b : B) : IsPoly fun _ => b := ⟨C b, fun y => (ev_C y b).
 
 theorem IsPoly.add {f g : ℂ → B} (hf : IsPoly f) (hg : IsPoly g) : IsPoly fun y => f y + g y := by
   obtain ⟨p, hp⟩ := hf; obtain ⟨q, hq⟩ := hg
-  exact ⟨p + q, fun y => by show f y + g y = _; rw [hp, hq, map_add]⟩
+  exact ⟨p + q, fun y => by show f y + g y = _; rw [hp, hq, map_add (f := _)]⟩
 
 theorem IsPoly.sub {f g : ℂ → B} (hf : IsPoly f) (hg : IsPoly g) : IsPoly fun y => f y - g y := by
   obtain ⟨p, hp⟩ := hf; obtain ⟨q, hq⟩ := hg
@@ -2606,7 +2330,8 @@ theorem IsPoly.dual {f : ℂ → B} (hf : IsPoly f) (φ : Module.Dual ℂ B) : I
   refine ⟨∑ n ∈ p.support, monomial n (φ (p.coeff n)), fun y => ?_⟩
   show φ (f y) = _
   rw [hp, ev_apply]
-  simp only [Polynomial.eval₂_eq_sum, Polynomial.sum_def, RingHom.id_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Polynomial.eval₂_eq_sum, Polynomial.sum_def, RingHom.id_apply,
     map_sum, eval_finsetSum, eval_monomial]
   refine Finset.sum_congr rfl fun n _ => ?_
   rw [← map_pow, ← Algebra.commutes, ← Algebra.smul_def, map_smul, smul_eq_mul, mul_comm]
@@ -2632,7 +2357,8 @@ variable (P : Par) (D : DAlg P.r) [Fact (D.Laws P.TT)]
 
 theorem kap_sum (f : Ty P → ℂ) : kap P D f = ∑ π, f π • kap P D (Pi.single π 1) := by
   conv_lhs => rw [pi_eq_sum_univ' f]
-  simp only [map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul]
 
 theorem isPoly_kap {F : Ty P → ℂ → ℂ} (hF : ∀ π, IsPolyS (F π)) : IsPoly fun Y => kap P D fun π => F π Y := by
   have : (fun Y => kap P D fun π => F π Y) = fun Y => ∑ π, F π Y • kap P D (Pi.single π 1) := by
@@ -2791,7 +2517,7 @@ theorem comm_term (j : ℕ) (f f' : Ty P → ℂ) (hs : ∀ π π', Up P j π π
     rw [← sub_mul, ← map_sub, ← mul_assoc, kap_mul]
   rw [e1, e2, e3, ← sub_mul, ← map_sub, ← smul_mul_assoc, ← smul_mul_assoc, ← map_smul, ← map_smul]
   congr 2
-  funext π
+  ext π
   simp only [Pi.smul_apply, Pi.sub_apply, Pi.mul_apply, smul_eq_mul]
   linear_combination hf π
 
@@ -2986,7 +2712,8 @@ variable (P : Par) (D : DAlg P.r) [Fact (D.Laws P.TT)]
 
 theorem kap_sum' (s : Finset ℕ) (f : ℕ → Ty P → ℂ) :
     kap P D (fun π => ∑ l ∈ s, f l π) = ∑ l ∈ s, kap P D (f l) := by
-  rw [← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum]
   congr 1
   funext π
   simp [Finset.sum_apply]
@@ -3116,7 +2843,7 @@ theorem Lam4 (hP : P.OK) (u v : ℂ) (hN : SSNorm) (hM : SSMixed) :
     rw [h1, h2, ← map_sub]
     congr 1
     funext π
-    simp only [Pi.sub_apply, Pi.mul_apply, rr, rr1]
+    simp only [Pi.mul_apply, Pi.sub_apply, rr, rr1]
     rw [div_eq_mul_inv, div_eq_mul_inv, mul_inv, mul_inv]
     ring
   · intro j hj hne
@@ -3223,7 +2950,6 @@ theorem N_zb : nabA P D * zbA P D = zbA P D * nabA P D := (levNab P D).2.2.1
 theorem nabla_gamma_relations : nabA P D * ggA P D = ggA P D * nabA P D + zbA P D := (levNab P D).2.2.2.2.1
 theorem nabla_star_gamma_relations : nabA P D * ggiA P D = ggiA P D * nabA P D - zbA P D * ggiA P D * ggiA P D := (levNab P D).2.2.2.2.2.1
 theorem Ns_zb : nabsA P D * zbA P D = zbA P D * nabsA P D - 1 := (levNabs P D).1
-theorem nabla_star_commute_z : nabsA P D * zA P D = zA P D * nabsA P D := (levNabs P D).2.2.1
 theorem nabla_star_mul_GG : nabsA P D * ggA P D = ggA P D * nabsA P D - zA P D := (levNabs P D).2.2.2.2.1
 theorem nabla_star_gamma_inv_comm : nabsA P D * ggiA P D = ggiA P D * nabsA P D + zA P D * ggiA P D * ggiA P D := (levNabs P D).2.2.2.2.2.1
 
@@ -3258,7 +2984,6 @@ theorem cz_cc : cz P D * cc P D = cc P D * cz P D := by
   rw [multiplierPair_mul D, multiplierPair_mul D]
   exact multiplierPair_comm D _ _ _ _
 
-theorem g_sc : ggA P D = sc P D (D.ggP P.TT) := rfl
 theorem G_sc : ggiA P D = sc P D (D.ggiP P.TT) := rfl
 
 theorem star_g : star (ggA P D) = ggA P D := (starGens P D).2.2.2.1
@@ -3289,11 +3014,6 @@ theorem N_Lams (hS : NabSS) (u : ℂ) : nabA P D * Lams P D u = Lams P D u * nab
   have h := congrArg star (Ns_Lam P D hS (star u))
   rw [star_mul, star_sub, star_mul, star_mul, star_Lam, star_Ns, star_cz] at h
   rw [h, cc_sc, Lams_sc]; abel
-
-theorem Ns_Lams (hS : NabSS) (u : ℂ) : nabsA P D * Lams P D u = Lams P D u * nabsA P D + cz P D * Lams P D u := by
-  have h := congrArg star (N_Lam P D hS (star u))
-  rw [star_mul, star_sub, star_mul, star_mul, star_Lam, star_N, star_cc] at h
-  rw [h, cz_sc, Lams_sc]; abel
 
 theorem mt_eq (u : ℂ) : mt P D u = -nabsA P D - (u + 1 / 2) • cz P D + ggiA P D * Lams P D u := by
   unfold mt
@@ -3389,7 +3109,7 @@ theorem relD4core (hN : SSNorm) (hM : SSMixed) (hS : NabSS) (hK : Curvature) (hP
   have e2 : ∀ z : ℂ, z • (ggiA P D * ggiA P D) = kap P D (fun _ => z) * (ggiA P D * ggiA P D) := fun z => by
     have : kap P D (fun _ => z) = algebraMap ℂ (A P D) z := (kap P D).commutes z
     rw [this, Algebra.smul_def]
-  rw [e1, e2, ← add_mul, ← add_mul, ← map_add, ← map_add, ← smul_mul_assoc, ← map_smul]
+  rw [e1, e2, ← add_mul, ← add_mul, ← map_add (f := _), ← map_add (f := _), ← smul_mul_assoc, ← map_smul]
   congr 2
   funext π
   have hs := WB.scalar_partial_fraction_identity P hP π u v hu hv
@@ -3411,12 +3131,14 @@ theorem mixed_relation_diagonal_four (hN : SSNorm) (hM : SSMixed) (hS : NabSS) (
     rw [dA, smul_mul_assoc, mul_assoc, lc (kap_g P D _), lc1 (Gg P D), kap_mul, ← map_smul]
     congr 1
     funext π
-    simp only [Pi.smul_apply, Pi.mul_apply, smul_eq_mul]; ring
+    simp only [Pi.smul_apply, Pi.mul_apply, smul_eq_mul]
+    ring
   have e4 : (ggA P D * kap P D fun π => xC P π v) * dA P D u = kap P D fun π => xC P π v * (qC P u * (xC P π (u + 1))⁻¹) := by
     rw [dA, mul_smul_comm, mul_assoc, lc (kap_G P D _), lc1 (gG P D), kap_mul, ← map_smul]
     congr 1
     funext π
-    simp only [Pi.smul_apply, Pi.mul_apply, smul_eq_mul]; ring
+    simp only [Pi.smul_apply, Pi.mul_apply, smul_eq_mul]
+    ring
   rw [e3, e4, kap_mul, kap_mul, ← map_sub]
   congr 1
   funext π
@@ -3526,7 +3248,7 @@ theorem nf11 (hN : SSNorm) (hP : P.OK) {u : ℂ} (hu : Good P u) :
     L4.upper_sum_mul_lambda P D hP hu hN, t11, mul_add]
   have e : ggiA P D * (kap P D fun π => wC P π u) = dA P D u + ggiA P D * kap P D fun π =>
       ∑ l ∈ Icc 1 (P.k - 1), ((Nrm P l π : ℝ) : ℂ) * xEx P {l} π u / (u + (rho P π l : ℂ) + 1) := by
-    rw [dA, ← mul_smul_comm, ← map_smul, ← mul_add, ← map_add]
+    rw [dA, ← mul_smul_comm, ← map_smul, ← mul_add, ← map_add (f := _)]
     congr 2
     funext π
     rw [WB.wC_eq P hP π u hu]
@@ -3757,7 +3479,7 @@ theorem absCombo {C : Type*} [CommRing C] [Algebra ℂ C] (κ : C →ₐ[ℂ] R)
     κ φ1 * ((-N - cu • b) + b) + κ φ2 * (-N - cv • b) = κ ψ1 * ((-N - cv • b) + b) + κ ψ2 * (-N - cu • b) := by
   have e1 := congrArg (fun f => κ f * N) h1
   have e2 := congrArg (fun f => κ f * b) h2
-  simp only [map_add, map_sub, map_smul, add_mul, sub_mul, smul_mul_assoc] at e1 e2
+  simp only [map_add (f := _), map_sub, map_smul, add_mul, sub_mul, smul_mul_assoc] at e1 e2
   simp only [mul_add, mul_sub, mul_neg, mul_smul_comm]
   linear_combination (norm := module) -e1 + e2
 
@@ -4403,8 +4125,8 @@ theorem ev_eq_sum (Y : ℂ) (p : B[X]) : ev Y p = ∑ i ∈ p.support, Y ^ i •
 
 theorem ev_comp (Y c : ℂ) (p : B[X]) : ev Y (p.comp (X + C (algebraMap ℂ B c))) = ev (Y + c) p := by
   induction p using Polynomial.induction_on' with
-  | add p q hp hq => rw [add_comp, map_add, map_add, hp, hq]
-  | monomial n a => rw [monomial_comp, map_mul, map_pow, map_add, ev_C, ev_X, ev_C, ev_monomial, map_add]
+  | add p q hp hq => rw [add_comp, map_add (f := _), map_add (f := _), hp, hq]
+  | monomial n a => rw [monomial_comp, map_mul, map_pow, map_add (f := _), ev_C, ev_X, ev_C, ev_monomial, map_add (f := _)]
 
 def IsPoly (F : ℂ → B) : Prop := ∃ p : B[X], ∀ Y, F Y = ev Y p
 
@@ -4416,7 +4138,7 @@ theorem IsPoly.const (a : B) : IsPoly (fun _ => a) := ⟨C a, fun Y => (ev_C Y a
 
 theorem IsPoly.add {F G : ℂ → B} (hF : IsPoly F) (hG : IsPoly G) : IsPoly (fun Y => F Y + G Y) := by
   obtain ⟨p, hp⟩ := hF; obtain ⟨q, hq⟩ := hG
-  exact ⟨p + q, fun Y => by show F Y + G Y = _; rw [map_add, hp, hq]⟩
+  exact ⟨p + q, fun Y => by show F Y + G Y = _; rw [map_add (f := _), hp, hq]⟩
 
 theorem IsPoly.sub {F G : ℂ → B} (hF : IsPoly F) (hG : IsPoly G) : IsPoly (fun Y => F Y - G Y) := by
   obtain ⟨p, hp⟩ := hF; obtain ⟨q, hq⟩ := hG
@@ -4453,7 +4175,8 @@ theorem IsPoly.eq_zero {F : ℂ → B} (hF : IsPoly F) {S : Set ℂ} (hS : S.Fin
   intro φ
   have hev : ∀ Z, φ (F Z) = (∑ i ∈ p.support, monomial i (φ (p.coeff i)) : ℂ[X]).eval Z := by
     intro Z
-    rw [hp, ev_eq_sum, map_sum, eval_finsetSum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hp, ev_eq_sum, map_sum, eval_finsetSum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, eval_monomial, smul_eq_mul, mul_comm]
   have h0 : (∑ i ∈ p.support, monomial i (φ (p.coeff i)) : ℂ[X]) = 0 := by
@@ -4955,7 +4678,8 @@ theorem UmUl (hSh : SSShift) (hR : RhoUp) (hNorm : SSNorm) (hMix : SSMixed) (P :
   have e2 : Ul P D u * Um P D u = ∑ l ∈ Icc 1 (P.k - 1), ∑ j ∈ Icc 1 (P.k - 1),
       kap P D (bb P u j) * SS P D j * (kap P D (bb P u l) * star (SS P D l)) :=
     (Finset.sum_mul_sum _ _ _ _).trans Finset.sum_comm
-  rw [e1, e2, ← Finset.sum_sub_distrib, Finset.sum_congr rfl (per_l hSh hR hNorm hMix P D hP u), ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e1, e2, ← Finset.sum_sub_distrib, Finset.sum_congr rfl (per_l hSh hR hNorm hMix P D hP u), ← map_sum]
   exact congrArg (kap P D) (funext fun π => Finset.sum_apply _ _ _)
 
 theorem raising_lowering_commutator_alt (hSc : SSScalar) (hSh : SSShift) (hR : RhoUp) (hLF : LevFns) (hLN : LevNab) (hLNs : LevNabs)
@@ -4978,7 +4702,7 @@ theorem raising_lowering_commutator_alt (hSc : SSScalar) (hSh : SSShift) (hR : R
     absC _ _ _ _ _ _ _ _ hGGi hGdef czzb.eq cGiz.eq cGizb.eq nz nGi nszb nsGi (hCurv P D), ti_mul, ti_mul,
     absFin _ _ _ _ cK, ← mul_smul_comm, ← mul_smul_comm, ← mul_sub]
   refine congrArg (fun t => ggiA P D * ggiA P D * t) ?_
-  rw [← map_smul, ← map_smul, ← map_sub, ← map_one (kap P D), ← map_smul, ← map_add, ← map_add]
+  rw [← map_smul, ← map_smul, ← map_sub, ← map_one (kap P D), ← map_smul, ← map_add (f := _), ← map_add (f := _)]
   refine congrArg (kap P D) (funext fun π => ?_)
   have := pf P hP π u (h0 π) (h1 π) (h2 π)
   simp only [Pi.add_apply, Pi.smul_apply, Pi.sub_apply, Pi.one_apply, smul_eq_mul]
@@ -5024,7 +4748,8 @@ theorem isPoly_kap (P : Par) (D : DAlg P.r) [Fact (D.Laws P.TT)] (p : Ty P → �
       ∑ π : Ty P, algebraMap ℂ (A P D) ((p π).eval Y) * kap P D (fun j => if π = j then 1 else 0) := by
     intro Y
     conv_lhs => rw [pi_eq_sum_univ (fun π => (p π).eval Y)]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun π _ => ?_
     rw [map_smul, Algebra.smul_def]
   exact (IsPoly.sum _ _ fun π _ => (IsPoly.scalar (p π)).mul (IsPoly.const _)).congr h
@@ -5195,53 +4920,6 @@ theorem isStart_smul (QQ : ℂ → M2 A) (q : ℂ → ℂ) (s : ℂ) (hs : s * s
   · simp only [Matrix.transpose_smul, mul_smul_comm, smul_mul_assoc, smul_smul, hs, one_smul]
     exact (h.det Y).2
 
-def sStar (σ : Site A) : Site A := ⟨star σ.p, -star σ.ci, -star σ.c⟩
-
-theorem Ts_conj (σ : Site A) (Y : ℂ) : (Ts σ (star Y))ᴴ = Ts (sStar σ) Y := by
-  ext a b
-  fin_cases a <;> fin_cases b <;>
-    simp [Ts, Tm, sStar, Matrix.conjTranspose_apply, ← algebraMap_star_comm]
-
-theorem weyl_ci {p c ci : A} (h : WeylRel p c ci) : p * ci = ci * p - ci := by
-  obtain ⟨h1, h2, h3⟩ := h
-  have e : ci * (p * c) * ci = ci * (c * p + c) * ci := by rw [h3]
-  have l : ci * (p * c) * ci = ci * p := by rw [mul_assoc, mul_assoc, h1, mul_one]
-  have r : ci * (c * p + c) * ci = p * ci + ci := by
-    rw [mul_add, ← mul_assoc, h2, one_mul, add_mul, one_mul]
-  rw [l, r] at e
-  rw [e]; abel
-
-theorem weyl_star {σ : Site A} (h : WeylRel σ.p σ.c σ.ci) :
-    WeylRel (sStar σ).p (sStar σ).c (sStar σ).ci := by
-  have h4 := weyl_ci h
-  obtain ⟨h1, h2, h3⟩ := h
-  refine ⟨?_, ?_, ?_⟩
-  · show -star σ.ci * -star σ.c = 1
-    rw [neg_mul_neg, ← star_mul, h1, star_one]
-  · show -star σ.c * -star σ.ci = 1
-    rw [neg_mul_neg, ← star_mul, h2, star_one]
-  · show star σ.p * -star σ.ci = -star σ.ci * star σ.p + -star σ.ci
-    rw [mul_neg, neg_mul, ← star_mul, ← star_mul, h4, star_sub]; abel
-
-theorem isRTT_Tm {p c ci : A} (h : WeylRel p c ci) : IsRTT (fun Y : ℂ => Tm Y p c ci) :=
-  fun Y Y' => Formalism.YangianSpanCharacter.P.rttRelation ℂ A p c ci Y Y' h
-
-theorem isDet_Tm {p c ci : A} (h : WeylRel p c ci) : IsDet (fun Y : ℂ => Tm Y p c ci) (fun _ => 1) := by
-  intro Y
-  refine ⟨?_, ?_⟩
-  · rw [map_one, one_smul]
-    exact Formalism.YangianSpanCharacter.P.transposeSymplecticShift ℂ A p c ci Y h
-  · rw [map_one, one_smul]
-    obtain ⟨h1, h2, h3⟩ := h
-    have hc : algebraMap ℂ A Y * c = c * algebraMap ℂ A Y := Algebra.commutes _ _
-    ext a b
-    fin_cases a <;> fin_cases b
-    · simp [Tm, Formalism.YangianSpanCharacter.T.J, Matrix.mul_apply, Fin.sum_univ_two, add_mul, mul_add, h3, hc]
-      abel
-    · simp [Tm, Formalism.YangianSpanCharacter.T.J, Matrix.mul_apply, Fin.sum_univ_two, h1]
-    · simp [Tm, Formalism.YangianSpanCharacter.T.J, Matrix.mul_apply, Fin.sum_univ_two, h2]
-    · simp [Tm, Formalism.YangianSpanCharacter.T.J, Matrix.mul_apply, Fin.sum_univ_two]
-
 theorem Ts_comm (σ : Site A) (x : A) (hp : Commute x σ.p) (hc : Commute x σ.c) (hci : Commute x σ.ci)
     (Y : ℂ) (a b : Fin 2) : Commute x (Ts σ Y a b) := by
   fin_cases a <;> fin_cases b
@@ -5251,58 +4929,6 @@ theorem Ts_comm (σ : Site A) (x : A) (hp : Commute x σ.p) (hc : Commute x σ.c
     exact hc.neg_right
   · exact hci
   · exact Commute.zero_right x
-
-theorem isStart_step (σ : Site A) (QQ : ℂ → M2 A) (q : ℂ → ℂ) (hσ : IsSite σ)
-    (hc : QQCommutes QQ σ) (h : IsStart QQ q) :
-    IsStart (fun Y => (Ts σ (star Y))ᴴ * QQ Y * Ts σ Y) q := by
-  obtain ⟨hW, hH⟩ := hσ
-  have mp : σ.p ∈ hol σ := by simp [hol]
-  have mc : σ.c ∈ hol σ := by simp [hol]
-  have mci : σ.ci ∈ hol σ := by simp [hol]
-  have c1 : EntriesCommute (fun Y : ℂ => Ts (sStar σ) Y) QQ := by
-    intro Y Y' i j k l
-    refine (Ts_comm (sStar σ) (QQ Y' k l) ?_ ?_ ?_ Y i j).symm
-    · exact hc Y' k l (star σ.p) (Or.inr (by rw [star_star]; exact mp))
-    · exact (hc Y' k l (star σ.ci) (Or.inr (by rw [star_star]; exact mci))).neg_right
-    · exact (hc Y' k l (star σ.c) (Or.inr (by rw [star_star]; exact mc))).neg_right
-  have c2 : EntriesCommute QQ (fun Y : ℂ => Ts σ Y) := by
-    intro Y Y' i j k l
-    exact Ts_comm σ (QQ Y i j) (hc Y i j _ (Or.inl mp)) (hc Y i j _ (Or.inl mc)) (hc Y i j _ (Or.inl mci)) Y' k l
-  have c3 : EntriesCommute (fun Y : ℂ => Ts (sStar σ) Y) (fun Y : ℂ => Ts σ Y) := by
-    intro Y Y' i j k l
-    have key : ∀ x ∈ hol σ, Commute (Ts (sStar σ) Y i j) x := fun x hx =>
-      (Ts_comm (sStar σ) x (hH x hx _ mp) (hH x hx _ mci).neg_right (hH x hx _ mc).neg_right Y i j).symm
-    exact Ts_comm σ _ (key _ mp) (key _ mc) (key _ mci) Y' k l
-  have hF := Formalism.FourierDecayAlt.P.W.wordFusion_list (R := ℂ) (B := A)
-    [(fun Y : ℂ => Ts (sStar σ) Y, fun _ => 1), (QQ, q), (fun Y : ℂ => Ts σ Y, fun _ => 1)]
-    (by
-      intro x hx
-      simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
-      rcases hx with rfl | rfl | rfl
-      · exact ⟨isRTT_Tm (weyl_star hW), isDet_Tm (weyl_star hW)⟩
-      · exact ⟨h.rtt, h.det⟩
-      · exact ⟨isRTT_Tm hW, isDet_Tm hW⟩)
-    (by
-      simp only [List.pairwise_cons, List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq,
-        IsEmpty.forall_iff, implies_true, List.Pairwise.nil, and_true]
-      exact ⟨⟨c1, c3⟩, c2⟩)
-  have e1 : (fun Y => (Ts σ (star Y))ᴴ * QQ Y * Ts σ Y) = fun Y =>
-      (([(fun Y : ℂ => Ts (sStar σ) Y, fun _ => 1), (QQ, q), (fun Y : ℂ => Ts σ Y, fun _ => 1)] :
-        List ((ℂ → Matrix (Fin 2) (Fin 2) A) × (ℂ → ℂ))).map (fun x => x.1 Y)).prod := by
-    funext Y
-    rw [Ts_conj]
-    simp [mul_assoc]
-  have e2 : q = fun Y =>
-      (([(fun Y : ℂ => Ts (sStar σ) Y, fun _ => 1), (QQ, q), (fun Y : ℂ => Ts σ Y, fun _ => 1)] :
-        List ((ℂ → Matrix (Fin 2) (Fin 2) A) × (ℂ → ℂ))).map (fun x => x.2 Y)).prod := by
-    funext Y
-    simp
-  refine ⟨fun Y hY => ?_, ?_, ?_, h.q_real⟩
-  · simp only [hY, Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose, h.herm Y hY, mul_assoc]
-  · rw [e1]; exact hF.1
-  · rw [e1]
-    have := hF.2
-    rwa [← e2] at this
 
 end Abstract
 
@@ -5620,31 +5246,6 @@ section Ent
 
 variable {A : Type} [Ring A] [Algebra ℂ A] {C : Subalgebra ℂ A}
 
-theorem Ent.mul {M N : M2 A} (hM : Ent C M) (hN : Ent C N) : Ent C (M * N) := by
-  intro a b
-  rw [Matrix.mul_apply]
-  exact sum_mem fun c _ => mul_mem (hM a c) (hN c b)
-
-theorem Ent.one : Ent C (1 : M2 A) := by
-  intro a b
-  rw [Matrix.one_apply]
-  split_ifs
-  · exact one_mem C
-  · exact zero_mem C
-
-theorem Ent.prod {l : List (M2 A)} (h : ∀ M ∈ l, Ent C M) : Ent C l.prod :=
-  List.prod_induction (Ent C) (fun _ _ => Ent.mul) Ent.one h
-
-theorem Ent.Ts {σ : Site A} (hp : σ.p ∈ C) (hc : σ.c ∈ C) (hci : σ.ci ∈ C) (Y : ℂ) : Ent C (Ts σ Y) := by
-  intro a b
-  fin_cases a <;> fin_cases b
-  · show algebraMap ℂ A Y + σ.p ∈ C
-    exact add_mem (C.algebraMap_mem Y) hp
-  · show -σ.c ∈ C
-    exact neg_mem hc
-  · exact hci
-  · exact zero_mem C
-
 end Ent
 
 theorem QQr_ent (P : Par) (D : DAlg P.r) [Fact (D.Laws P.TT)] (i : Fin P.r) (Y : ℂ) : Ent (Cen P D i) (QQr P D Y) := by
@@ -5686,11 +5287,6 @@ theorem commutes_of_ent (P : Par) (D : DAlg P.r) [Fact (D.Laws P.TT)] (i : Fin P
     QQCommutes QQ (siteA P D i) :=
   fun Y a b x hx => (mem_Cen.1 (h Y a b) x hx).symm
 
-theorem Ts_ent (P : Par) (D : DAlg P.r) [Fact (D.Laws P.TT)] (i j : Fin P.r) (h : i ≠ j) (Y : ℂ) : Ent (Cen P D i) (Ts (siteA P D j) Y) := by
-  have key : ∀ y ∈ hol (siteA P D j), y ∈ Cen P D i := fun y hy =>
-    mem_Cen.2 fun g hg => sitesCommuteA P D i j h g hg y (Or.inl hy)
-  exact Ent.Ts (key _ (by simp [hol])) (key _ (by simp [hol])) (key _ (by simp [hol])) Y
-
 theorem mem_sitesFrom (P : Par) (D : DAlg P.r) [Fact (D.Laws P.TT)] (n : ℕ) (σ : Site (A P D)) (h : σ ∈ sitesFromD P D n) :
     ∃ j : Fin P.r, n ≤ j ∧ σ = siteA P D j := by
   unfold sitesFromD at h
@@ -5699,64 +5295,6 @@ theorem mem_sitesFrom (P : Par) (D : DAlg P.r) [Fact (D.Laws P.TT)] (n : ℕ) (�
   rw [List.length_drop, List.length_ofFn] at hk
   refine ⟨⟨n + k, by omega⟩, Nat.le_add_right _ _, ?_⟩
   rw [List.getElem_drop, List.getElem_ofFn]
-
-theorem QQlev_ent (P : Par) (D : DAlg P.r) [Fact (D.Laws P.TT)] (l : ℕ) (i : Fin P.r) (Y : ℂ) : Ent (Cen P D i) (QQlev P D l (i + 1) Y) := by
-  have hT : ∀ Z : ℂ, Ent (Cen P D i) (((sitesFromD P D (i + 1)).map fun σ => Ts σ Z).prod) := by
-    intro Z
-    refine Ent.prod fun M hM => ?_
-    obtain ⟨σ, hσ, rfl⟩ := List.mem_map.1 hM
-    obtain ⟨j, hj, rfl⟩ := mem_sitesFrom P D _ σ hσ
-    refine Ts_ent P D i j ?_ Z
-    intro e
-    rw [e] at hj
-    omega
-  refine Ent.mul (Ent.mul ?_ (start_ent P D l i Y)) (hT Y)
-  intro a b
-  rw [Matrix.conjTranspose_apply]
-  exact star_mem_Cen (hT (star Y) b a)
-
-theorem sites_step (P : Par) (D : DAlg P.r) [Fact (D.Laws P.TT)] (i : Fin P.r) : sitesFromD P D i = sitesFromD P D (i + 1) ++ [siteA P D i] := by
-  unfold sitesFromD
-  rw [List.drop_eq_getElem_cons (by simp), List.reverse_cons]
-  simp
-
-theorem chainM : ChainM := by
-  intro P D _ l
-  refine ⟨fun Y => ?_, fun i Y => ?_⟩
-  · have h : sitesFromD P D P.r = [] := by
-      unfold sitesFromD
-      rw [List.drop_eq_nil_of_le (by simp)]; rfl
-    simp [QQlev, h]
-  · simp only [QQlev, sites_step P D i, List.map_append, List.prod_append, List.map_cons, List.map_nil,
-      List.prod_cons, List.prod_nil, mul_one, Matrix.conjTranspose_mul, Matrix.mul_assoc]
-
-theorem lowerCommutes : LowerCommutes :=
-  fun P D _ l i => commutes_of_ent P D i _ (QQlev_ent P D l i)
-
-theorem lowerStart_of (h : StartIsStart) : LowerStart := by
-  intro P D _ hP l
-  have key : ∀ d i : ℕ, i + d = P.r → IsStart (QQlev P D l i) (qC P) := by
-    intro d
-    induction d with
-    | zero =>
-      intro i hi
-      have e : QQlev P D l i = (startM P D l).QQ := by
-        funext Y
-        rw [show i = P.r by omega]
-        exact (chainM P D l).1 Y
-      rw [e]
-      exact h P D hP l
-    | succ d ih =>
-      intro i hi
-      have hlt : i < P.r := by omega
-      have e : QQlev P D l i = fun Y => (Ts (siteA P D ⟨i, hlt⟩) (star Y))ᴴ * QQlev P D l (i + 1) Y *
-          Ts (siteA P D ⟨i, hlt⟩) Y := by
-        funext Y
-        exact (chainM P D l).2 ⟨i, hlt⟩ Y
-      rw [e]
-      exact isStart_step _ _ _ (isSiteA P D _) (lowerCommutes P D l ⟨i, hlt⟩) (ih (i + 1) (by omega))
-  intro i hi
-  exact key (P.r - i) i (by omega)
 
 end
 
@@ -5782,10 +5320,6 @@ theorem sitesOKM : SitesOKM := by
     rw [List.drop_zero, List.pairwise_reverse, List.pairwise_ofFn]
     intro i j hij
     exact WeylSymmetry.sitesCommuteA P D j i (ne_of_gt hij)
-
-theorem chainM : ChainM := WeylSymmetry.chainM
-
-theorem lowerCommutes : LowerCommutes := WeylSymmetry.lowerCommutes
 
 end Formalism.FourierDecayAlt.P.MAx1
 
@@ -5951,7 +5485,7 @@ theorem wirt_wirt (v w : M.Var r) {F : E r → ℂ} {s : Set (E r)} (hs : IsOpen
   have e1 : wirt v (wirt w F) x = WL v (fderiv ℝ (wirt w F) x) := by rw [wirt_eq v (wirt w F)]
   have e2 : wirt w (wirt v F) x = WL w (fderiv ℝ (wirt v F) x) := by rw [wirt_eq w (wirt v F)]
   rw [e1, e2, key, key]
-  simp only [WL_apply, ContinuousLinearMap.coe_comp, Function.comp_apply, map_add, map_smul,
+  simp only [WL_apply, ContinuousLinearMap.coe_comp, Function.comp_apply, map_add (f := _), map_smul,
     add_apply, smul_apply, smul_eq_mul]
   rw [hsym (dirE w) (dirE v), hsym (dirE w) (Complex.I • dirE v), hsym (Complex.I • dirE w) (dirE v),
     hsym (Complex.I • dirE w) (Complex.I • dirE v)]
@@ -6101,51 +5635,11 @@ theorem startIsStart : StartIsStart := startIsStartAssemble qQHerm qQRTT qQDet
 
 theorem startOK : StartOK := startAssemble startIsStart lower_left_commute sSScalar sSShift rho_raise
 
-theorem hahn_inv {r : ℕ} (f : M.Fn r) : (hahn r).inv f = f⁻¹ := by
-  show Ring.inverse f = f⁻¹
-  rw [Ring.inverse_eq_inv']
-
 end Formalism.FourierDecayAlt.P.MAx1
 
 namespace Formalism.FourierDecayAlt.P
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.MA MAx1
-
-theorem hahn_laws_hold : Formalism.FourierDecayAlt.MA.HahnLaws := by
-  intro r TT
-  have hL := Formalism.FourierDecayAlt.P.euler_leibniz
-  have hC := Formalism.FourierDecayAlt.P.euler_coordinates
-  have hM := Formalism.FourierDecayAlt.P.euler_commute
-  have hN := Formalism.FourierDecayAlt.P.function_nonzero
-  refine ⟨fun v f g => hL r v f g, fun v w => (hC r v w 0).1, fun v w => hM r v w, fun v => ?_, ?_, ?_⟩
-  · exact isUnit_iff_ne_zero.2 (hN r v 0).1
-  · exact isUnit_iff_ne_zero.2 (hN r M.vz TT).2
-  · exact inferInstanceAs (Nontrivial (M.Fn r))
-
-theorem hahn_joint : Formalism.FourierDecayAlt.MA.HahnJoint := by
-  intro P
-  have hi : ∀ f : (hahn P.r).R, (hahn P.r).inv f = @Inv.inv (M.Fn P.r) _ f := fun f => hahn_inv f
-  have e_ci : ∀ l, ciA P (hahn P.r) l = M.ciA P l := fun l => by
-    simp only [ciA, M.ciA, sc, M.sc, DAlg.ciP, M.ciP, hi]; rfl
-  have e_cbi : ∀ l, cbiA P (hahn P.r) l = M.cbiA P l := fun l => by
-    simp only [cbiA, M.cbiA, sc, M.sc, DAlg.cbiP, M.cbiP, hi]; rfl
-  have e_zi : ziA P (hahn P.r) = M.ziA P := by simp only [ziA, M.ziA, sc, M.sc, DAlg.ziP, M.ziP, hi]; rfl
-  have e_zbi : zbiA P (hahn P.r) = M.zbiA P := by simp only [zbiA, M.zbiA, sc, M.sc, DAlg.zbiP, M.zbiP, hi]; rfl
-  have e_ggi : ggiA P (hahn P.r) = M.ggiA P := by simp only [ggiA, M.ggiA, sc, M.sc, DAlg.ggiP, M.ggiP, hi]; rfl
-  have e_dz : (hahn P.r).dzP = M.dzP := by simp only [DAlg.dzP, M.dzP, hi]; rfl
-  have e_dzb : (hahn P.r).dzbP = M.dzbP := by simp only [DAlg.dzbP, M.dzbP, hi]; rfl
-  have e_ggiP : (hahn P.r).ggiP P.TT = M.ggiP P.TT := by simp only [DAlg.ggiP, M.ggiP, hi]; rfl
-  have e_nab : nabA P (hahn P.r) = M.nabA P := by simp only [nabA, M.nabA, e_dz, e_ggiP]; rfl
-  have e_nabs : nabsA P (hahn P.r) = M.nabsA P := by simp only [nabsA, M.nabsA, e_dzb, e_ggiP]; rfl
-  have e_l0 : ∀ Y, l0A P (hahn P.r) Y = M.l0A P Y := fun Y => by simp only [l0A, M.l0A, e_nab, e_ggi]; rfl
-  have e_m0 : ∀ Y, m0A P (hahn P.r) Y = M.m0A P Y := fun Y => by simp only [m0A, M.m0A, e_nabs, e_ggi]; rfl
-  have e_QQ : ∀ Y, QQr P (hahn P.r) Y = M.QQr P Y := fun Y => by
-    simp only [QQr, M.QQr, t11, M.t11, t12, M.t12, t21, M.t21, t22, M.t22, e_l0, e_m0, e_ggi]; rfl
-  have e_ee : eeA P (hahn P.r) = M.eeA P := by funext Y; simp only [eeA, M.eeA, e_zbi]; rfl
-  refine ⟨fun l => rfl, fun l => rfl, fun l => rfl, e_ci, fun l => rfl, e_cbi, rfl, e_zi, rfl, e_zbi, rfl, e_ggi, e_nab,
-    e_nabs, fun l => rfl, fun l => ?_⟩
-  simp only [startM, M.startM, e_QQ, e_ee]
-  rfl
 
 theorem level_exists_alt : Formalism.FourierDecayAlt.MA.LevelExistsD := by
   intro P D hD

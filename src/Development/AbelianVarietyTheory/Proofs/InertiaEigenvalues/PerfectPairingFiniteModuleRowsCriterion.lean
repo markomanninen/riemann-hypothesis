@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VecPairApply
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.OrthogonalFreeOfPerfectAltZmod
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VecPairApply
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.OrthogonalFreeOfPerfectAltZmod
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,22 +37,18 @@ def charModule : Module A (A →+ ZMod n) where
   add_smul a a' φ := by
     ext b
     show φ ((a + a') * b) = φ (a * b) + φ (a' * b)
-    rw [add_mul, map_add]
+    rw [add_mul, map_add (f := _)]
   zero_smul φ := by
     ext b
     show φ (0 * b) = 0
     rw [zero_mul, map_zero]
 
-theorem charModule_smul_apply (a : A) (φ : A →+ ZMod n) (b : A) :
-    (@HSMul.hSMul A (A →+ ZMod n) (A →+ ZMod n)
-      (@instHSMul A (A →+ ZMod n) (charModule A n).toSMul) a φ) b = φ (a * b) := rfl
-
 end GlobalTheory.NewPrime.CharDual
 
 namespace GlobalTheory.NewPrime
 
-open GlobalTheory.NewPrime.CharDual in
 
+open GlobalTheory.NewPrime.CharDual in
 theorem charDual_cogenerator : ∀ (A : Type) [CommRing A] [Finite A] (n : ℕ), n ≠ 0 → (n : A) = 0 →
     ∃ (Y : Type) (_ : AddCommGroup Y) (_ : Module A Y) (_ : Finite Y) (β : Y →+ A →+ ZMod n),
       Perf A β ∧ ∀ (a : ℕ) (Φ : Matrix (Fin a) (Fin a) A) (v : Fin a → A),
@@ -86,9 +86,15 @@ theorem charDual_cogenerator : ∀ (A : Type) [CommRing A] [Finite A] (n : ℕ),
     let x : Fin a → (A →+ ZMod n) := fun j => L.comp (AddMonoidHom.single (fun _ => A) j)
     have key : ∀ (w : Fin a → A) (b : A), (∑ j, w j • x j) b = L (fun k => w k * b) := by
       intro w b
-      rw [AddMonoidHom.finset_sum_apply]
+      have hsum (s : Finset (Fin a)) : (∑ j ∈ s, w j • x j) b = ∑ j ∈ s, (w j • x j) b := by
+        classical
+        induction s using Finset.induction_on with
+        | empty => simp
+        | @insert j s hj ih => simp [hj, ih]
+      rw [hsum]
       have : (fun k => w k * b) = ∑ j, Pi.single j (w j * b) := (Finset.univ_sum_single _).symm
-      rw [this, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [this, map_sum]
       rfl
     have hx : matAct Φ x = 0 := by
       funext i

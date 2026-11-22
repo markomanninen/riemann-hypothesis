@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsNotRelZero
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.UnitaryConjugation
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasInfExpOfOrder
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.ThetaIntegralsAgree
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsNotRelZero
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.UnitaryConjugation
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasInfExpOfOrder
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,13 +62,13 @@ theorem finsupp_sum_eq (m : σ₁ →₀ ℕ) (n : σ₂ →₀ ℕ) :
   rcases s with s | s
   · rw [Finsupp.add_apply, Finsupp.domCongr_apply, Finsupp.equivMapDomain_apply, Equiv.symm_apply_apply,
       Finsupp.sumElim_inl]
-    rw [show e (Sum.inl s) = (e ∘ Sum.inl) s from rfl, Finsupp.mapDomain_apply h1, Finsupp.mapDomain_notin_range]
+    rw [show e (Sum.inl s) = (e ∘ Sum.inl) s from rfl, Finsupp.mapDomain_apply_of_injective h1, Finsupp.mapDomain_notin_range]
     · simp
     · rintro ⟨u, hu⟩
       exact Sum.inl_ne_inr (e.injective hu).symm
   · rw [Finsupp.add_apply, Finsupp.domCongr_apply, Finsupp.equivMapDomain_apply, Equiv.symm_apply_apply,
       Finsupp.sumElim_inr]
-    rw [show e (Sum.inr s) = (e ∘ Sum.inr) s from rfl, Finsupp.mapDomain_apply h2, Finsupp.mapDomain_notin_range]
+    rw [show e (Sum.inr s) = (e ∘ Sum.inr) s from rfl, Finsupp.mapDomain_apply_of_injective h2, Finsupp.mapDomain_notin_range]
     · simp
     · rintro ⟨u, hu⟩
       exact Sum.inl_ne_inr (e.injective hu)
@@ -97,43 +101,11 @@ section Route
 
 variable {D : D7} {a b c d b' : ℕ}
 
-def routeVar (en : Fin a ⊕ Fin c ≃ Fin d) (eb : Fin b ≃ Fin b') : FVar D a b ⊕ FVar D b c ≃ FVar D d b' where
-  toFun := Sum.elim (fun v => (v.1, en (.inl v.2.1), eb v.2.2)) (fun v => (v.1, en (.inr v.2.2), eb v.2.1))
-  invFun w := Sum.elim (fun x => Sum.inl (w.1, x, eb.symm w.2.2)) (fun z => Sum.inr (w.1, eb.symm w.2.2, z)) (en.symm w.2.1)
-  left_inv := by rintro (⟨τ, x, y⟩ | ⟨τ, y, z⟩) <;> simp
-  right_inv := by
-    rintro ⟨τ, k, y⟩
-    rcases h : en.symm k with x | z
-    · obtain rfl := en.symm_apply_eq.1 h
-      simp
-    · obtain rfl := en.symm_apply_eq.1 h
-      simp
-
-def polRoute (en : Fin a ⊕ Fin c ≃ Fin d) (eb : Fin b ≃ Fin b') : PolF D a b ⊗[ℂ] PolF D b c ≃ₗ[ℂ] PolF D d b' :=
-  polTens (routeVar en eb)
-
 end Route
 
 section Grid
 
 variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} (G : GridData L sc) (i j : ℕ) {d b' b₁ : ℕ}
-
-def iotaBig (en : Fin (G.V (.grid i (j + 1))).rank ⊕ Fin (G.V (.grid (i + 1) j)).rank ≃ Fin d)
-    (eb : Fin (G.V (.grid (i + 1) (j + 1))).rank ≃ Fin b') :
-    PolRoute G (.grid i (j + 1)) (.grid (i + 1) (j + 1)) (.grid (i + 1) j) ≃ₗ[ℂ] PolF D d b' :=
-  polRoute en eb
-
-def iotaSmall (en : Fin (G.V (.grid i (j + 1))).rank ⊕ Fin (G.V (.grid (i + 1) j)).rank ≃ Fin d)
-    (eb₁ : Fin (G.V (.grid i j)).rank ≃ Fin b₁) :
-    PolRoute G (.grid i (j + 1)) (.grid i j) (.grid (i + 1) j) ≃ₗ[ℂ] PolF D d b₁ :=
-  polRoute en eb₁
-
-def squareRel (en : Fin (G.V (.grid i (j + 1))).rank ⊕ Fin (G.V (.grid (i + 1) j)).rank ≃ Fin d)
-    (eb : Fin (G.V (.grid (i + 1) (j + 1))).rank ≃ Fin b') (eb₁ : Fin (G.V (.grid i j)).rank ≃ Fin b₁) {Pr : Type*}
-    [AddCommGroup Pr] [Module ℂ Pr] (q : PolF D d b' →ₗ[ℂ] Pr) (q' : PolF D d b₁ →ₗ[ℂ] Pr) :
-    Submodule ℂ (PolRoute G (.grid i (j + 1)) (.grid (i + 1) (j + 1)) (.grid (i + 1) j) ×
-      PolRoute G (.grid i (j + 1)) (.grid i j) (.grid (i + 1) j)) :=
-  relOf (q ∘ₗ (iotaBig G i j en eb).toLinearMap) (q' ∘ₗ (iotaSmall G i j en eb₁).toLinearMap)
 
 theorem hasInfExp_alpha {μ₀ : T} (hL : L.Is μ₀) (t t' : T) (τ : D.what₂.Tau) {a : ℚ}
     (h : HasInfExp D (GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.alpha G t i j) τ a) : HasInfExp D (GlobalTheory.IndefiniteRowSideFullHecke.UnitaryConjugation.alpha G t' i j) τ a := by

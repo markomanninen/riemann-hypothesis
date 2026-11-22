@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenConnectedComponentOfIsLocallyNoetherian
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenConnectedComponentOfIsLocallyNoetherian
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -10,21 +15,20 @@ open GlobalTheory.Mum
 namespace GlobalTheory.EtaleFinitePiece
 
 open Polynomial in
-
 theorem exists_etale_algebra (R L : Type) [CommRing R] [Field L] [Algebra R L] [Algebra.QuasiFinite R L] :
     ∃ (R₁ : Type) (_ : CommRing R₁) (_ : Algebra R R₁) (_ : Algebra.Etale R R₁) (ψ : R₁ →ₐ[R] L),
       ∀ (Ω : Type) [Field Ω] (a₁ a₂ : L →+* Ω),
         a₁.comp ψ.toRingHom = a₂.comp ψ.toRingHom → a₁ = a₂ := by
   let p : Ideal R := RingHom.ker (algebraMap R L)
-  haveI : p.IsPrime := RingHom.ker_isPrime _
+  have : p.IsPrime := RingHom.ker_isPrime _
   let K := p.ResidueField
-  letI : Algebra K L := (Ideal.ResidueField.lift p (algebraMap R L) le_rfl (by
+  let : Algebra K L := (Ideal.ResidueField.lift p (algebraMap R L) le_rfl (by
     intro r hr
     exact (IsUnit.mem_submonoid_iff _).2 (isUnit_iff_ne_zero.2 (by simpa [p] using hr)))).toAlgebra
-  haveI : IsScalarTower R K L := IsScalarTower.of_algebraMap_eq fun r =>
+  have : IsScalarTower R K L := IsScalarTower.of_algebraMap_eq fun r =>
     (Ideal.ResidueField.lift_algebraMap _ _ _ _ r).symm
-  haveI : Algebra.QuasiFinite K L := .of_restrictScalars R K L
-  haveI : Module.Finite K L := .of_quasiFinite
+  have : Algebra.QuasiFinite K L := .of_restrictScalars R K L
+  have : Module.Finite K L := .of_quasiFinite
   let Ks := separableClosure K L
   obtain ⟨θ, hθ⟩ := Field.exists_primitive_element K Ks
   have hint : IsIntegral K θ := .of_finite K θ
@@ -97,34 +101,36 @@ theorem exists_etale_algebra (R L : Type) [CommRing R] [Field L] [Algebra R L] [
     induction hz using IntermediateField.adjoin_induction with
     | mem x hx => obtain rfl := hx; exact hθ'
     | algebraMap k => exact hK k
-    | add x y _ _ hx hy => rw [map_add, map_add, hx, hy]
+    | add x y _ _ hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
     | inv x _ hx => rw [map_inv₀, map_inv₀, hx]
     | mul x y _ _ hx hy => rw [map_mul, map_mul, hx, hy]
   exact IsPurelyInseparable.injective_comp_algebraMap Ks L Ω hKs
 
-set_option backward.defeqAttrib.useBackward true in
-set_option backward.isDefEq.respectTransparency false in
 open TensorProduct in
-
 theorem exists_finite_piece {X S : Scheme.{0}} (f : X ⟶ S) [LocallyOfFiniteType f]
     {x : X} (hx : f.QuasiFiniteAt x) :
     ∃ (T : Scheme.{0}) (g : T ⟶ S) (Z : Scheme.{0}) (io : Z ⟶ pullback f g) (z : Z), Etale g ∧
       IsOpenImmersion io ∧ IsFinite (io ≫ pullback.snd f g) ∧ (io ≫ pullback.fst f g) z = x ∧
       ∀ w, (io ≫ pullback.snd f g) w = (io ≫ pullback.snd f g) z → w = z := by
-  obtain ⟨_, ⟨U, hU, rfl⟩, hxU, -⟩ := S.isBasis_affineOpens.exists_subset_of_mem_open
+  obtain ⟨_, ⟨U, (hU : IsAffineOpen U), rfl⟩, hxU, -⟩ := S.isBasis_affineOpens.exists_subset_of_mem_open
     (Set.mem_univ (f x)) isOpen_univ
-  obtain ⟨_, ⟨V, hV, rfl⟩, hxV, hUV : V ≤ f ⁻¹ᵁ U⟩ :=
+  obtain ⟨_, ⟨V, (hV : IsAffineOpen V), rfl⟩, hxV, hUV : V ≤ f ⁻¹ᵁ U⟩ :=
     X.isBasis_affineOpens.exists_subset_of_mem_open hxU (f ⁻¹ᵁ U).2
   have : (f.appLE U V hUV).hom.FiniteType := f.finiteType_appLE hU hV hUV
   algebraize [(f.appLE U V hUV).hom]
   have : (hV.primeIdealOf ⟨x, hxV⟩).asIdeal.LiesOver (hU.primeIdealOf ⟨f x, hxU⟩).asIdeal := by
     suffices hU.primeIdealOf ⟨f x, hxU⟩ = Spec.map (f.appLE U V hUV) (hV.primeIdealOf ⟨x, hxV⟩) from
       ⟨congr(($this).1)⟩
-    apply hU.isoSpec.inv.homeomorph.injective
-    apply Subtype.ext
-    simp only [IsAffineOpen.primeIdealOf, Scheme.Hom.homeomorph_apply,
-      ← Scheme.Hom.comp_apply, ← Scheme.Opens.ι_apply, IsAffineOpen.isoSpec_hom]
-    simp
+    let pV : Spec Γ(X, V) := hV.primeIdealOf ⟨x, hxV⟩
+    have happ : Spec.map (f.appLE U V hUV) ≫ hU.fromSpec = hV.fromSpec ≫ f :=
+      IsAffineOpen.SpecMap_appLE_fromSpec ..
+    have h1 : hU.fromSpec (hU.primeIdealOf ⟨f x, hxU⟩) = f x := hU.fromSpec_primeIdealOf ⟨f x, hxU⟩
+    have h2 : hU.fromSpec (Spec.map (f.appLE U V hUV) pV) = f x :=
+      (Scheme.Hom.comp_apply (Spec.map (f.appLE U V hUV)) hU.fromSpec pV).symm.trans
+        ((congrFun (congrArg (fun g : Spec Γ(X, V) ⟶ S => (g : Spec Γ(X, V) → S)) happ) pV).trans
+          ((Scheme.Hom.comp_apply hV.fromSpec f pV).trans
+            (congrArg f (hV.fromSpec_primeIdealOf ⟨x, hxV⟩))))
+    exact hU.fromSpec.isOpenEmbedding.injective (h1.trans h2.symm)
   have : Algebra.QuasiFiniteAt Γ(S, U) (hV.primeIdealOf ⟨x, hxV⟩).asIdeal :=
     hx.quasiFiniteAt hV hU hUV hxV
   obtain ⟨R, _, _, _, P, _, _, e, _, P', _, hP'P, hP', heP', -, _, huniq⟩ :=
@@ -147,25 +153,37 @@ theorem exists_finite_piece {X S : Scheme.{0}} (f : X ⟶ S) [LocallyOfFiniteTyp
   let l : Spec (.of (Localization.Away e)) ⟶ Spec (.of (R ⊗[Γ(S, U)] Γ(X, V))) :=
     Spec.map (CommRingCat.ofHom <| algebraMap _ _)
   have hl : Set.range l = ((PrimeSpectrum.basicOpen e : TopologicalSpace.Opens (PrimeSpectrum _)) : Set (PrimeSpectrum _)) := PrimeSpectrum.localization_away_comap_range _ _
-  have hg : g ≫ pullback.snd f _ = Spec.map (CommRingCat.ofHom (algebraMap R _)) := by
-    have H : (pullbackSpecIso _ R _).inv ≫ pullback.fst _ (Spec.map (f.appLE U V hUV)) = _ :=
-      pullbackSpecIso_inv_fst ..
-    simp [g, e₁, RingHom.algebraMap_toAlgebra, φ, H]
-    rfl
-  obtain ⟨z, hz⟩ : (⟨P', ‹_›⟩ : PrimeSpectrum _) ∈ Set.range l := by rw [hl]; exact heP'
+  have hg : g ≫ pullback.snd f _ = Spec.map (CommRingCat.ofHom (algebraMap R _)) :=
+    (Category.assoc _ _ _).trans
+      ((congrArg (e₁.hom ≫ ·) ((pullback.lift_snd _ _ _).trans (Category.comp_id _))).trans
+        ((Category.assoc _ _ _).trans
+          ((congrArg ((pullbackSpecIso (Γ(S, U)) R (Γ(X, V))).inv ≫ ·)
+            (pullbackSymmetry_hom_comp_snd _ _)).trans
+            (pullbackSpecIso_inv_fst ..))))
+  have hgf : g ≫ pullback.fst f _ =
+      Spec.map (CommRingCat.ofHom Algebra.TensorProduct.includeRight.toRingHom) ≫ hV.fromSpec := by
+    dsimp only [g]
+    rw [Category.assoc, pullback.lift_fst, reassoc_of% he₁]
+  have : IsOpenImmersion l :=
+    IsOpenImmersion.of_isLocalization e
+  have : IsOpenImmersion g := by
+    dsimp only [g]
+    infer_instance
+  let p' : Spec (.of (R ⊗[Γ(S, U)] Γ(X, V))) := ⟨P', ‹_›⟩
+  obtain ⟨z, hz⟩ : p' ∈ Set.range l := by rw [hl]; exact heP'
   refine ⟨Spec (.of R), Spec.map φ ≫ hU.fromSpec, _, l ≫ g, z, inferInstance, inferInstance, ?_, ?_, ?_⟩
   · rw [Category.assoc, hg, ← Spec.map_comp, IsFinite.SpecMap_iff]
     exact hfin
-  · rw [Category.assoc, Scheme.Hom.comp_apply, hz]
-    trans hV.fromSpec ⟨P'.comap Algebra.TensorProduct.includeRight.toRingHom, inferInstance⟩
-    · simp [-Scheme.Hom.comp_base, g, reassoc_of% he₁]; rfl
-    convert! hV.fromSpec_primeIdealOf ⟨x, hxV⟩
+  · rw [Category.assoc, Scheme.Hom.comp_apply, hz, hgf, Scheme.Hom.comp_apply]
+    exact (congrArg hV.fromSpec (PrimeSpectrum.ext hP' :
+      Spec.map (CommRingCat.ofHom Algebra.TensorProduct.includeRight.toRingHom) p' =
+        hV.primeIdealOf ⟨x, hxV⟩)).trans (hV.fromSpec_primeIdealOf ⟨x, hxV⟩)
   · intro w hw
     rw [Category.assoc, hg, Scheme.Hom.comp_apply, Scheme.Hom.comp_apply, hz] at hw
     apply l.isOpenEmbedding.injective
     rw [hz]
     have h1 : l w ∈ ((PrimeSpectrum.basicOpen e : TopologicalSpace.Opens (PrimeSpectrum _)) : Set (PrimeSpectrum _)) := hl ▸ Set.mem_range_self w
-    refine PrimeSpectrum.ext (huniq _ inferInstance ⟨?_⟩ h1)
+    refine PrimeSpectrum.ext (huniq _ (l w).isPrime ⟨?_⟩ h1)
     exact hP'P.over.trans congr(($hw).1).symm
 
 theorem exists_factor_of_isPreimmersion {A X : Scheme.{0}} (j : A ⟶ X) [IsPreimmersion j]
@@ -234,7 +252,13 @@ theorem quasiFiniteAt_of_isolated {H X : Scheme.{0}} (φ : H ⟶ X) [LocallyOfFi
     have : w = z := congrArg Subtype.val h
     exact this ▸ hzO
 
-set_option backward.isDefEq.respectTransparency false in
+private def isFiniteProp : MorphismProperty Scheme.{0} := fun _ _ h => IsFinite h
+
+private lemma isZariskiLocalAtTarget_isFiniteProp : IsZariskiLocalAtTarget isFiniteProp :=
+  (HasAffineProperty.iff.mp
+    ((HasAffineProperty.affineAnd_iff isFiniteProp RingHom.finite_respectsIso
+      RingHom.finite_localizationPreserves.away RingHom.finite_ofLocalizationSpan).mpr
+      isFinite_iff)).1
 
 theorem main : ∀ (U Y : Scheme.{0}) (τ : U ⟶ Y), IsLocallyNoetherian Y → LocallyOfFiniteType τ → IsSeparated τ →
     ∀ x : U, (∃ O : U.Opens, x ∈ O ∧ ∀ u ∈ O, τ u = τ x → u = x) →
@@ -250,9 +274,7 @@ theorem main : ∀ (U Y : Scheme.{0}) (τ : U ⟶ Y), IsLocallyNoetherian Y → 
   have hxQ : x ∈ Q := hx
   have hQ : LocallyQuasiFinite (Q.ι ≫ τ) := by
     rw [← Scheme.Hom.quasiFiniteLocus_eq_top_iff, Scheme.Hom.quasiFiniteLocus_comp]
-    exact top_le_iff.mp fun u _ => by
-      show Q.ι u ∈ Q
-      simpa using u.2
+    exact top_le_iff.mp fun u _ => u.2
   have hfx : ∀ a : Spec (.of (U.residueField x)), U.fromSpecResidueField x a = x :=
     fun a => Scheme.fromSpecResidueField_apply x a
 
@@ -267,25 +289,34 @@ theorem main : ∀ (U Y : Scheme.{0}) (τ : U ⟶ Y), IsLocallyNoetherian Y → 
     pullback.lift (U.fromSpecResidueField x) s (by rw [hs])
   have hjf : j ≫ pullback.fst τ h₁ = U.fromSpecResidueField x := pullback.lift_fst ..
   have hjs : j ≫ pullback.snd τ h₁ = s := pullback.lift_snd ..
-  haveI : IsPreimmersion (j ≫ pullback.fst τ h₁) := by rw [hjf]; infer_instance
-  haveI : IsPreimmersion j := AmpUniq.isPreimmersion_of_comp j (pullback.fst τ h₁)
+  have : IsPreimmersion (j ≫ pullback.fst τ h₁) := by rw [hjf]; infer_instance
+  have : IsPreimmersion j := AmpUniq.isPreimmersion_of_comp j (pullback.fst τ h₁)
   let x₁ := j (closedPoint _)
 
   let σ : Spec (.of (U.residueField x)) ⟶ Q :=
     IsOpenImmersion.lift Q.ι (U.fromSpecResidueField x) (by
       rintro _ ⟨a, rfl⟩
       exact ⟨⟨x, hxQ⟩, (hfx a).symm⟩)
+  have hσ : σ ≫ Q.ι = U.fromSpecResidueField x := IsOpenImmersion.lift_fac _ _ _
   let j' : Spec (.of (U.residueField x)) ⟶ pullback (Q.ι ≫ τ) h₁ :=
-    pullback.lift σ s (by rw [← Category.assoc, IsOpenImmersion.lift_fac, hs])
+    pullback.lift σ s
+      ((Category.assoc _ _ _).symm.trans ((congrArg (· ≫ τ) hσ).trans hs.symm))
   let m := pullback.map (Q.ι ≫ τ) h₁ τ h₁ Q.ι (𝟙 _) (𝟙 _) (by simp) (by simp)
   have hjm : j' ≫ m = j := by
     apply pullback.hom_ext
-    · simp [m, j', j, σ]
-    · simp [m, j', j]
+    · dsimp only [m, j', j]
+      rw [Category.assoc, pullback.lift_fst, pullback.lift_fst_assoc, hσ, pullback.lift_fst]
+    · dsimp only [m, j', j]
+      rw [Category.assoc, pullback.lift_snd, pullback.lift_snd_assoc, Category.comp_id,
+        pullback.lift_snd]
   have hqf : (pullback.snd τ h₁).QuasiFiniteAt x₁ := by
-    have hms : m ≫ pullback.snd τ h₁ = pullback.snd (Q.ι ≫ τ) h₁ := by simp [m]
+    have hms : m ≫ pullback.snd τ h₁ = pullback.snd (Q.ι ≫ τ) h₁ := by
+      dsimp only [m]
+      rw [pullback.lift_snd, Category.comp_id]
     have : x₁ = m (j' (closedPoint _)) := by
-      simp only [x₁, ← hjm, Scheme.Hom.comp_apply]
+      dsimp only [x₁]
+      rw [← hjm]
+      rfl
     rw [this, ← Scheme.Hom.quasiFiniteAt_comp_iff_of_isOpenImmersion, hms]
     exact Scheme.Hom.quasiFiniteAt _ _
 
@@ -314,7 +345,7 @@ theorem main : ∀ (U Y : Scheme.{0}) (τ : U ⟶ Y), IsLocallyNoetherian Y → 
     · rw [Category.assoc, Category.assoc, ← hc₁, ← hc₂, hc]
     · simpa [b] using hb
 
-  haveI : IsLocallyNoetherian T₂ := LocallyOfFiniteType.isLocallyNoetherian (g₂ ≫ h₁)
+  have : IsLocallyNoetherian T₂ := LocallyOfFiniteType.isLocallyNoetherian (g₂ ≫ h₁)
   let C : T₂.Opens := ⟨connectedComponent (b z),
     GlobalTheory.isOpen_connectedComponent_of_isLocallyNoetherian T₂ inferInstance (b z)⟩
   have hzC : b z ∈ C := mem_connectedComponent
@@ -332,21 +363,23 @@ theorem main : ∀ (U Y : Scheme.{0}) (τ : U ⟶ Y), IsLocallyNoetherian Y → 
   let mC := pullback.map τ h τ (g₂ ≫ h₁) (𝟙 _) C.ι (𝟙 _) (by simp) (by simp [h])
   have hmC : io' ≫ mC = Z'.ι ≫ io ≫ (pullbackLeftPullbackSndIso τ h₁ g₂).hom := by
     apply pullback.hom_ext
-    · simp [mC, hio'f]
+    · dsimp only [mC]
+      rw [Category.assoc, pullback.lift_fst, Category.comp_id, hio'f, Category.assoc,
+        Category.assoc, pullbackLeftPullbackSndIso_hom_fst]
     · simp only [mC, Category.assoc, pullback.lift_snd, pullbackLeftPullbackSndIso_hom_snd]
       rw [← Category.assoc, hio's, hb']
-  haveI : IsOpenImmersion (io' ≫ mC) := by rw [hmC]; infer_instance
-  haveI : IsOpenImmersion io' := IsOpenImmersion.of_comp io' mC
-  let z' : Z' := ⟨z, hzC⟩
-  haveI : IsFinite b := hfin
-  have hb'inj : ∀ w : Z', b' w = b' z' → w = z' := by
+  have : IsOpenImmersion (io' ≫ mC) := by rw [hmC]; infer_instance
+  have : IsOpenImmersion io' := IsOpenImmersion.of_comp io' mC
+  let z' : Z'.toScheme := ⟨z, hzC⟩
+  have : IsFinite b := hfin
+  have hb'inj : ∀ w : Z'.toScheme, b' w = b' z' → w = z' := by
     intro w hw
     apply Subtype.ext
     apply huniq
     have := congr(C.ι $hw)
     rw [← Scheme.Hom.comp_apply, ← Scheme.Hom.comp_apply, hb', Scheme.Hom.comp_apply,
       Scheme.Hom.comp_apply] at this
-    simp only [Scheme.Hom.comp_apply, Scheme.Opens.ι_apply] at this ⊢
+    simp only [Scheme.Hom.comp_apply] at this ⊢
     exact this
   have he : io'.opensRange.ι = io'.isoOpensRange.inv ≫ io' := by
     rw [Iso.eq_inv_comp, Scheme.Hom.isoOpensRange_hom_ι]
@@ -355,9 +388,15 @@ theorem main : ∀ (U Y : Scheme.{0}) (τ : U ⟶ Y), IsLocallyNoetherian Y → 
   · rw [← Scheme.Hom.comp_apply, hio'f]
     simp only [Scheme.Hom.comp_apply]
     change pullback.fst τ h₁ ((io ≫ pullback.fst _ _) z) = x
-    rw [hz, ← Scheme.Hom.comp_apply, hjf]
-    exact hfx _
-  · rw [he, Category.assoc, hio's, MorphismProperty.cancel_left_of_respectsIso @IsFinite]
+    rw [hz]
+    let c₀ : Spec (.of (U.residueField x)) := closedPoint _
+    change pullback.fst τ h₁ (j c₀) = x
+    rw [← Scheme.Hom.comp_apply, hjf]
+    exact hfx c₀
+  · have := isZariskiLocalAtTarget_isFiniteProp
+    change isFiniteProp _
+    rw [he, Category.assoc, hio's, MorphismProperty.cancel_left_of_respectsIso isFiniteProp]
+    change IsFinite b'
     infer_instance
   · rintro _ ⟨w, rfl⟩ hw
     rw [← Scheme.Hom.comp_apply, ← Scheme.Hom.comp_apply, hio's] at hw

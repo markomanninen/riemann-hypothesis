@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.HalfDegreeVanishing
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.HalfDegreeVanishing
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC LateralTheory.E.D2 LateralTheory.E.LeafGeomPf LateralTheory.E.HalfDegreeVanishing
@@ -10,19 +14,23 @@ variable {E : Spc} {a b : ℕ} (V : E ⟶ ofCat (glCat a)) (W : E ⟶ ofCat (glC
 theorem pvm_res {n : ℕ} {X Y : Scheme.{0}} (k : Y ⟶ X) (x : Sx (PB (bsumOf V W)) n X) {i j : Fin (n + 1)} (f : i ⟶ j) :
     (((pv V W (((PB (bsumOf V W)).obj (op (SimplexCategory.mk n))).map k.op x)).map f).1.2 : Scheme.Γ.obj (op Y)) =
       Scheme.Γ.map k.op (((pv V W x).map f).1.2 : Scheme.Γ.obj (op X)) := by
-  have h := ConcreteCategory.congr_hom (((pullback.snd (bsumOf V W) (PGL.pr (a + b))).app (op (SimplexCategory.mk n))).naturality k.op) x
+  let N := op (SimplexCategory.mk n)
+  let projection : (PB (bsumOf V W)).obj N ⟶ (PGL (a + b)).obj N :=
+    (pullback.snd (bsumOf V W) (PGL.pr (a + b))).app N
+  have h := types_congr_hom (projection.naturality k.op) x
   have h2 := congrArg (fun p => (p.1.2 : Scheme.Γ.obj (op Y))) (Functor.congr_hom h f)
   refine h2.trans ?_
-  have h3 := congrArg (fun p => (p.2 : Scheme.Γ.obj (op Y))) (um_hom_val (Functor.congr_obj h i) (Functor.congr_obj h j) (((ConcreteCategory.hom
-      (((pullback.snd (bsumOf V W) (PGL.pr (a + b))).app (op (SimplexCategory.mk n))).app (op X) ≫
-        ((PGL (a + b)).obj (op (SimplexCategory.mk n))).map k.op)) x).map f))
+  have h3 := congrArg (fun p => (p.2 : Scheme.Γ.obj (op Y)))
+    (um_hom_val (Functor.congr_obj h i) (Functor.congr_obj h j)
+      ((((PGL (a + b)).obj N).map k.op (pv V W x)).map f))
   exact h3.trans rfl
 
 theorem pvm_simp {n m : ℕ} {X : Scheme.{0}} (θ : SimplexCategory.mk m ⟶ SimplexCategory.mk n) (x : Sx (PB (bsumOf V W)) n X)
     {i j : Fin (m + 1)} (f : i ⟶ j) :
     (((pv V W ((((PB (bsumOf V W)).map θ.op).app (op X)) x)).map f).1.2 : Scheme.Γ.obj (op X)) =
       (((((PGL (a + b)).map θ.op).app (op X)) (pv V W x) : Fin (m + 1) ⥤ Um (a + b) (Scheme.Γ.obj (op X))).map f).1.2 := by
-  have h := ConcreteCategory.congr_hom (NatTrans.congr_app ((pullback.snd (bsumOf V W) (PGL.pr (a + b))).naturality θ.op) (op X)) x
+  have h := types_congr_hom
+    (NatTrans.congr_app ((pullback.snd (bsumOf V W) (PGL.pr (a + b))).naturality θ.op) (op X)) x
   have h2 := congrArg (fun p => (p.1.2 : Scheme.Γ.obj (op X))) (Functor.congr_hom h f)
   refine h2.trans ?_
   have h3 := congrArg (fun p => (p.2 : Scheme.Γ.obj (op X))) (um_hom_val (Functor.congr_obj h i) (Functor.congr_obj h j) (((ConcreteCategory.hom
@@ -32,14 +40,15 @@ theorem pvm_simp {n m : ℕ} {X : Scheme.{0}} (θ : SimplexCategory.mk m ⟶ Sim
 
 theorem pe_simp {n m : ℕ} {X : Scheme.{0}} (θ : SimplexCategory.mk m ⟶ SimplexCategory.mk n) (x : Sx (PB (bsumOf V W)) n X) :
     pe V W ((((PB (bsumOf V W)).map θ.op).app (op X)) x) = ((E.map θ.op).app (op X)) (pe V W x) :=
-  ConcreteCategory.congr_hom (NatTrans.congr_app ((pullback.fst (bsumOf V W) (PGL.pr (a + b))).naturality θ.op) (op X)) x
+  types_congr_hom
+    (NatTrans.congr_app ((pullback.fst (bsumOf V W) (PGL.pr (a + b))).naturality θ.op) (op X)) x
 
 theorem pw_simp {n m : ℕ} {X : Scheme.{0}} (θ : SimplexCategory.mk m ⟶ SimplexCategory.mk n) (e : Sx E n X)
     {i j : Fin (m + 1)} (f : i ⟶ j) :
     (show GL (Fin b) (Scheme.Γ.obj (op X)) from (pw W (((E.map θ.op).app (op X)) e)).map f) =
       (show GL (Fin b) (Scheme.Γ.obj (op X)) from
         ((((ofCat (glCat b)).map θ.op).app (op X)) (pw W e) : Fin (m + 1) ⥤ SingleObj (GL (Fin b) (Scheme.Γ.obj (op X)))).map f) :=
-  eq_of_heq (Functor.hcongr_hom (ConcreteCategory.congr_hom (NatTrans.congr_app (W.naturality θ.op) (op X)) e) f)
+  eq_of_heq (Functor.hcongr_hom (types_congr_hom (NatTrans.congr_app (W.naturality θ.op) (op X)) e) f)
 
 def gX (n : SimplexCategoryᵒᵖ) (X : Scheme.{0}ᵒᵖ) (x : ((U2 V W).obj n).obj X) : ((PGL b).obj n).obj X :=
   show Fin (n.unop.len + 1) ⥤ Um b (Scheme.Γ.obj (op X.unop)) from gfun V W x.1 x.2

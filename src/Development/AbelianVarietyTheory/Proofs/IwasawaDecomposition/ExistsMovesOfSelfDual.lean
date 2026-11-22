@@ -1,32 +1,36 @@
-import Mathlib
-import Formalism.SharpRestriction.GrowthBounds.WeilJacquetShalikaLaw
-import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.FrameTransport
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
-import Formalism.LocalRingCardinality.DataKerP
-import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
-import Formalism.SharpRestriction.Divisibility.ZetaProductPairs
-import Formalism.SharpRestriction.Divisibility.InnerProductFormulaField
-import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
-import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
-import Formalism.LocalRingCardinality.DataTies
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.WeilOperatorVacuumExactConstantEvenRank
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CharacterTrivialAtInertPrimes
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUnitaryExtension
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsWeilOfVacuum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddEqOfEven
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormSqMulGaussianLatticeTranslateEqShifted
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTwoTorsionCMPointAllConjugates
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaVacuaConjugatesCmPoints
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaTaylorCoeffsAlgebraicAtComplexMultiplicatio
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmThetaTaylorCoeffAlgebraicAndConjugate
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralJAndAlgebraicData
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TaylorCoeffConjugateSeries
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.WeilRepresentationCommHeisenbergIntertwiner
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaFunctionsAllLevelsClosure
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLocalComponentUnitaryMatrix
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsTriv
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GrowthBounds.WeilJacquetShalikaLaw
+public import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.FrameTransport
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Formalism.LocalRingCardinality.DataKerP
+public import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
+public import Formalism.SharpRestriction.Divisibility.ZetaProductPairs
+public import Formalism.SharpRestriction.Divisibility.InnerProductFormulaField
+public import Formalism.SharpRestriction.CuspSpanNormBounds.GlobAut
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RelevantZeroGramTerms
+public import Formalism.LocalRingCardinality.DataTies
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.WeilOperatorVacuumExactConstantEvenRank
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CharacterTrivialAtInertPrimes
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUnitaryExtension
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsWeilOfVacuum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddEqOfEven
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormSqMulGaussianLatticeTranslateEqShifted
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsTwoTorsionCMPointAllConjugates
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaVacuaConjugatesCmPoints
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaTaylorCoeffsAlgebraicAtComplexMultiplicatio
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmThetaTaylorCoeffAlgebraicAndConjugate
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntegralJAndAlgebraicData
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TaylorCoeffConjugateSeries
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.WeilRepresentationCommHeisenbergIntertwiner
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaFunctionsAllLevelsClosure
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLocalComponentUnitaryMatrix
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealPeriodLatticeOfCurveDatum
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsTriv
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators
@@ -87,7 +91,7 @@ theorem exists_moves_of_selfDual : ∀ (D : D7) (N : ℕ) (L : Submodule (𝓞 D
     induction hx using Submodule.span_induction with
     | mem x hx => exact hm (⟨x, hx⟩, i)
     | zero => simp
-    | add x y _ _ hx hy => rw [Pi.add_apply, map_add, mul_add]; exact add_mem hx hy
+    | add x y _ _ hx hy => rw [Pi.add_apply, map_add (f := _), mul_add]; exact add_mem hx hy
     | smul a x _ hx =>
       rw [Pi.smul_apply, Algebra.smul_def, map_mul, mul_left_comm]
       exact mul_mem (VacMove.inc_int D a) hx
@@ -142,7 +146,7 @@ theorem idele_ideal_laws : ∀ (D : D7), (∀ (u v : (AE D)ˣ) (𝔞 𝔟 : IdE 
       rw [mul_inv, Units.val_mul, map_mul]
       convert this using 1
       ring
-    · rw [map_add, mul_add]; exact add_mem hx hy
+    · rw [map_add (f := _), mul_add]; exact add_mem hx hy
   · obtain ⟨k₁, hk₁, h₁⟩ := GlobalTheory.HeckeVal.exists_denom D ((u⁻¹ : (AE D)ˣ) : AE D)
     obtain ⟨k₂, hk₂, h₂⟩ := GlobalTheory.HeckeVal.exists_denom D (u : AE D)
     rw [mul_inv, Units.val_mul] at ha
@@ -240,7 +244,7 @@ theorem det_one_add {A : Type} [CommRing A] (S : Subring A) {n : ℕ} {X : Matri
     ⟨Y.trace + (Polynomial.eval (m : S) _) * m, by rw [Matrix.det_one_add_smul]; ring_nf⟩
   refine ⟨t, t.2, ?_⟩
   have := congrArg S.subtype ht
-  rw [RingHom.map_det, map_add, map_add, map_one, map_one, map_mul, map_natCast] at this
+  rw [RingHom.map_det, map_add (f := _), map_add (f := _), map_one, map_one, map_mul, map_natCast] at this
   refine Eq.trans ?_ this
   congr 2
 
@@ -322,7 +326,7 @@ theorem mem_det_iff (hden : ∀ {κ : Type} [Fintype κ] (y : κ → A), ∃ m :
       rw [hdet]
       exact det_mem _ ((maps_iff hden happ m₁ m₂ B).1 hA)
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add, mul_add]; exact add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _), mul_add]; exact add_mem hx hy
     | smul c x _ hx =>
       rw [Algebra.smul_def, map_mul, mul_left_comm]
       exact mul_mem ((hint _).2 c.isIntegral_coe) hx
@@ -580,7 +584,7 @@ theorem exists_kappa (D : D7) : ∃ κ : (AE D)ˣ →* ℂˣ, (∀ u, IntU D u �
   have h1 : (ε + sgA D ε) * (ε + sgA D ε) = ε + sgA D ε := by
     have a3 : sgA D ε * sgA D ε = sgA D ε := by rw [← map_mul, a1]
     linear_combination a1 + a3 + 2 * a2
-  have h2 : sgA D (ε + sgA D ε) = ε + sgA D ε := by rw [map_add, VacMove.sgA_sgA, add_comm]
+  have h2 : sgA D (ε + sgA D ε) = ε + sgA D ε := by rw [map_add (f := _), VacMove.sgA_sgA, add_comm]
   have hsol := fun (n : ℕ) (g : GA D n) => exists_solution a1 a2 h1 h2 g
   have heO : ε + sgA D ε ∈ OhE D := add_mem hε (VacMove.sgA_mem D hε)
   generalize ε + sgA D ε = e at h1 h2 h3 hsol heO
@@ -602,7 +606,7 @@ theorem exists_kappa (D : D7) : ∃ κ : (AE D)ˣ →* ℂˣ, (∀ u, IntU D u �
     have hs : P (sgU D (incU D b)) = sgU D (P (incU D b)) := by
       ext
       change _ = sgA D (P (incU D b) : (AE D)ˣ)
-      rw [hP, hP, map_add, map_mul, map_sub, map_one, h2]
+      rw [hP, hP, map_add (f := _), map_mul, map_sub, map_one, h2]
       rfl
     have hsplit : incU D b = P (incU D b) * Units.map (cut (1 - e) (compl_idem h1)) (incU D b) :=
       Units.ext (cut_mul_cut e h1 (incU D b : AE D)).1.symm

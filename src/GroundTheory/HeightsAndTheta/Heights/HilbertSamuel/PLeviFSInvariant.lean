@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionNormSqLevi
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsSectionNormSqLevi
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -62,7 +67,7 @@ theorem hasFDerivAt_phi {z : J → ℂ} (hz : sqSum z ≠ 0) :
 theorem contDiffAt_phi {z : J → ℂ} (hz : sqSum z ≠ 0) {n : WithTop ℕ∞} :
     ContDiffAt ℝ n phi z := by
   have hs : ContDiff ℝ n (sqSum : (J → ℂ) → ℝ) :=
-    ContDiff.sum fun p _ => (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ ℂ p)
+    ContDiff.sum fun p _ => (contDiff_norm_sq ℝ).comp (contDiff_apply ℝ (fun _ => ℂ) p)
   exact (hs.contDiffAt.log hz).mul contDiffAt_const
 
 theorem fderiv_fderiv_phi {z : J → ℂ} (hz : sqSum z ≠ 0) (u : J → ℂ) :
@@ -110,7 +115,8 @@ theorem herm_self (a : J → ℂ) : herm a a = (sqSum a : ℂ) := by
   exact Finset.sum_congr rfl fun p _ => Complex.conj_mul' (a p)
 
 theorem herm_swap (a b : J → ℂ) : herm b a = conj (herm a b) := by
-  simp only [herm, map_sum, map_mul, Complex.conj_conj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [herm, map_sum, map_mul, Complex.conj_conj]
   exact Finset.sum_congr rfl fun p _ => mul_comm _ _
 
 theorem reInner_sq_add (a b : J → ℂ) :
@@ -135,7 +141,7 @@ theorem herm_add_right (a b b' : J → ℂ) : herm a (b + b') = herm a b + herm 
   simp only [herm, Pi.add_apply, mul_add, Finset.sum_add_distrib]
 
 theorem herm_add_left (a a' b : J → ℂ) : herm (a + a') b = herm a b + herm a' b := by
-  simp only [herm, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [herm, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem herm_smul_right (c : ℂ) (a b : J → ℂ) : herm a (c • b) = c * herm a b := by
   simp only [herm, Finset.mul_sum, Pi.smul_apply, smul_eq_mul]
@@ -148,8 +154,8 @@ theorem sqSum_ne_zero {a : J → ℂ} (ha : a ≠ 0) : sqSum a ≠ 0 := by
 
 end LeviFSInvariant
 
-open LeviFSInvariant in
 
+open LeviFSInvariant in
 theorem LeviFSInvariant.proof : LeviFSInvariant.Statement := by
   intro M _ a b c μ ha hc
   have hf : (fun u : M → ℂ => Real.log (∑ j, ‖u j‖ ^ 2) / 2) = phi := by

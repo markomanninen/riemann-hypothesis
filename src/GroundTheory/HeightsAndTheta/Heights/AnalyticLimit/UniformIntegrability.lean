@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.GreenMassZero
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.GreenMassStep
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.GreenMassReplace
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.GreenMassError
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.GreenMassZero
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.GreenMassStep
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.GreenMassReplace
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.GreenMassError
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit

@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
-import GroundTheory.GlobalFields.ClassFieldConsequences.RayClassField
-import GroundTheory.GlobalFields.Artin.OneDim
-import CompanionTheory.AutomorphicTheory.PlaceSeparation.ArtinA
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
+public import GroundTheory.GlobalFields.ClassFieldConsequences.RayClassField
+public import GroundTheory.GlobalFields.Artin.OneDim
+public import CompanionTheory.AutomorphicTheory.PlaceSeparation.ArtinA
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V UpperTheory.V.Base UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
 namespace UpperTheory.V.Ws.Tw
@@ -66,7 +71,7 @@ private theorem rc_frac (𝔪 : Ideal (𝓞 K)) (h𝔪 : 𝔪 ≠ ⊥) (x : K)
       zero_mem' := ⟨0, by simp⟩
       add_mem' := by
         rintro a b ⟨d, hd⟩ ⟨e, he⟩
-        exact ⟨d + e, by rw [map_add, mul_add, hd, he, map_add]⟩
+        exact ⟨d + e, by rw [map_add (f := _), mul_add, hd, he, map_add (f := _)]⟩
       smul_mem' := by
         rintro r a ⟨d, hd⟩
         exact ⟨r * d, by rw [smul_eq_mul, map_mul, map_mul, ← hd]; ring⟩ }
@@ -105,7 +110,7 @@ private theorem rc_frac (𝔪 : Ideal (𝓞 K)) (h𝔪 : 𝔪 ≠ ⊥) (x : K)
     change v.valuation K (algebraMap (𝓞 K) K d) ≤ _
     rw [← hd, map_mul]
     exact (mul_le_of_le_one_right' (v.valuation_le_one c)).trans (hx v hv)
-  · rw [multiplicity_eq_zero.2 hv, pow_zero, Ideal.one_eq_top]; trivial
+  · rw [multiplicity_eq_zero_of_not_dvd hv, pow_zero, Ideal.one_eq_top]; trivial
 
 private theorem rc_cop {𝔪 : Ideal (𝓞 K)} {a : 𝓞 K} (h : a - 1 ∈ 𝔪) : IsCoprime (Ideal.span {a}) 𝔪 := by
   rw [Ideal.isCoprime_iff_sup_eq, Ideal.eq_top_iff_one]
@@ -129,10 +134,15 @@ private theorem rc_hom (𝔪 : GroundTheory.Global.Modulus K) (f : Ideal (𝓞 K
   refine ⟨QuotientGroup.lift _ F₀ ?_, fun w hw => rcExt_prime f w⟩
   intro I hI
   obtain ⟨a, ha, e⟩ := 𝔪.mem_principalRay.1 hI
-  obtain ⟨c, d, hc0, hc1, hd, hcd⟩ := rc_frac 𝔪.ideal 𝔪.ideal_ne_bot ((a : K) - 1) (𝔪.mem_rayUnits.1 ha).1
+  have hval : ∀ v : HeightOneSpectrum (𝓞 K), v.asIdeal ∣ 𝔪.ideal →
+      v.valuation K ((a : K) - 1) ≤ WithZero.exp (-(multiplicity v.asIdeal 𝔪.ideal : ℤ)) := by
+    intro v hv
+    simpa [GroundTheory.Global.Modulus.exponent,
+      FiniteMultiplicity.of_prime_left v.prime 𝔪.ideal_ne_bot] using (𝔪.mem_rayUnits.1 ha).1 v hv
+  obtain ⟨c, d, hc0, hc1, hd, hcd⟩ := rc_frac 𝔪.ideal 𝔪.ideal_ne_bot ((a : K) - 1) hval
   have hcK : algebraMap (𝓞 K) K c ≠ 0 := (map_ne_zero_iff _ (IsFractionRing.injective (𝓞 K) K)).2 hc0
   have e2 : (a : K) * algebraMap (𝓞 K) K c = algebraMap (𝓞 K) K (c + d) := by
-    rw [map_add, ← hcd]; ring
+    rw [map_add (f := _), ← hcd]; ring
   have hb0 : c + d ≠ 0 := fun h => by
     rw [h, map_zero] at e2
     exact mul_ne_zero a.ne_zero hcK e2
@@ -149,7 +159,7 @@ private theorem rc_hom (𝔪 : GroundTheory.Global.Modulus K) (f : Ideal (𝓞 K
 end UpperTheory.V.Ws.Tw
 
 theorem UpperTheory.V.Ws.Tw.rayChar :
-    ∀ (K Ω : Type) [Field K] [NumberField K] [IsTotallyComplex K] [Field Ω] [Algebra K Ω] [IsAlgClosure K Ω] (𝔪 : Ideal (𝓞 K)), 𝔪 ≠ ⊥ → ∀ (C : Type) [CommGroup C] (f : Ideal (𝓞 K) → C), (∀ I J, I ≠ ⊥ → J ≠ ⊥ → IsCoprime I 𝔪 → IsCoprime J 𝔪 → f (I * J) = f I * f J) → (∀ a : 𝓞 K, a ≠ 0 → a - 1 ∈ 𝔪 → f (Ideal.span {a}) = 1) → ∃ κ : G K Ω →* C, IsOpen (κ.ker : Set (G K Ω)) ∧ ∀ w : HeightOneSpectrum (𝓞 K), ¬ w.asIdeal ∣ 𝔪 → ∀ A : ValuationSubring Ω, IsPlaceOver A w → Ine (F := K) A ≤ κ.ker ∧ ∀ σ : G K Ω, IsFrob A (normV w) σ → κ σ = f w.asIdeal := by
+    ∀ (K Ω : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] [Field Ω] [Algebra K Ω] [IsAlgClosure K Ω] (𝔪 : Ideal (𝓞 K)), 𝔪 ≠ ⊥ → ∀ (C : Type) [CommGroup C] (f : Ideal (𝓞 K) → C), (∀ I J, I ≠ ⊥ → J ≠ ⊥ → IsCoprime I 𝔪 → IsCoprime J 𝔪 → f (I * J) = f I * f J) → (∀ a : 𝓞 K, a ≠ 0 → a - 1 ∈ 𝔪 → f (Ideal.span {a}) = 1) → ∃ κ : G K Ω →* C, IsOpen (κ.ker : Set (G K Ω)) ∧ ∀ w : HeightOneSpectrum (𝓞 K), ¬ w.asIdeal ∣ 𝔪 → ∀ A : ValuationSubring Ω, IsPlaceOver A w → Ine (F := K) A ≤ κ.ker ∧ ∀ σ : G K Ω, IsFrob A (normV w) σ → κ σ = f w.asIdeal := by
   intro K Ω _ _ _ _ _ _ 𝔪 h𝔪 C _ f hm h1
   haveI : IsAlgClosed Ω := IsAlgClosure.isAlgClosed K
   let M : GroundTheory.Global.Modulus K := ⟨𝔪, h𝔪, ∅⟩

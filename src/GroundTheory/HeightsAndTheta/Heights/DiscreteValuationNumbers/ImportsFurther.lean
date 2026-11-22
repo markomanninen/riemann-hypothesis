@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTail
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleMul
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.ImportsTail
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleMul
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -29,7 +34,10 @@ theorem ResidualComparison.proof (hpieces : BlowUpDecomposition.Statement.{u})
     by_contra h; exact hx (form_mem_of_divCycle_ne_zero h)
 
   have hG'supp : G' ∈ (P' ⊔ Ideal.span {liftForm s}).minimalPrimes ∧ IsRelevant G' := by
-    by_contra h; unfold divCycle at hsG'; rw [dif_neg h] at hsG'; exact lt_irrefl _ hsG'
+    by_contra h
+    unfold divCycle at hsG'
+    rw [dite_eq_right h] at hsG'
+    exact lt_irrefl _ hsG'
   have hG'prime : G'.IsPrime := hG'supp.1.1.1
   have hP'G' : P' ≤ G' := le_sup_left.trans hG'supp.1.1.2
   have hlift : ∀ p ∈ P, liftForm (J := BlowUpIdx ι) p ∈ P' := fun p hp => by

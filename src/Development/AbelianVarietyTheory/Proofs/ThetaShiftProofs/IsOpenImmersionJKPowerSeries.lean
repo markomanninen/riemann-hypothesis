@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+
+@[expose] public section
 
 noncomputable section
 
@@ -30,10 +34,5 @@ theorem j_mem_abLocus {O : Type} [CommRing O] {β : O →+* c.F} (Y : Model Xo c
 theorem mono_j {O : Type} [CommRing O] {β : O →+* c.F} (Y : Model Xo c β) (hm : Mono (spMap β)) : Mono Y.j := by
   have := Y.jQ_open
   unfold Model.j; infer_instance
-
-theorem j_over {O : Type} [CommRing O] {β : O →+* c.F} (Y : Model Xo c β) :
-    Y.j ≫ Y.s = pullback.snd _ _ ≫ spMap β := by
-  unfold Model.j
-  rw [Category.assoc, pullback.condition, ← Category.assoc, Y.jQ_over]
 
 end GlobalTheory.ThetaShiftProofs

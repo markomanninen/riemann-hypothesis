@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.ClassNumImQ
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.ClassNumImQ
+
+@[expose] public section
 
 open NumberField Polynomial
 

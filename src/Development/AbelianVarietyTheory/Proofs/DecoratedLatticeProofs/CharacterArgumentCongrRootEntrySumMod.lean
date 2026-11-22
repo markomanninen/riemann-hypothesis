@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagLevelCharacterEqPsiDivN
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FlagLevelCharacterEqPsiDivN
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.MainNotions.S Formalism.L2.SG.HidaSetting Formalism.L2.DIV GlobalTheory.FlagBasis
 open scoped TensorProduct
 
@@ -37,7 +42,7 @@ theorem rootSum_eq {A : Type} [CommRing A] {n ρ k : ℕ} (hn : n = 2 * ρ + k +
   · refine Finset.sum_congr rfl fun i _ => ?_
     have hi := i.2
     by_cases h : i.1 + 1 < k
-    · rw [dif_pos h, Finset.sum_eq_single (⟨ρ + (i.1 + 1), by omega⟩ : Fin (ρ + (k + (ρ + 1))))]
+    · rw [dite_eq_left h, Finset.sum_eq_single (⟨ρ + (i.1 + 1), by omega⟩ : Fin (ρ + (k + (ρ + 1))))]
       · rw [if_neg, if_pos]
         · rfl
         · simp only [Fin.val_natAdd, Fin.val_castAdd]
@@ -49,7 +54,7 @@ theorem rootSum_eq {A : Type} [CommRing A] {n ρ k : ℕ} (hn : n = 2 * ρ + k +
         simp only [Fin.val_natAdd, Fin.val_castAdd]
         rw [if_neg (by omega), if_neg (by omega)]
       · intro h; exact absurd (Finset.mem_univ _) h
-    · rw [dif_neg h]
+    · rw [dite_eq_right h]
       refine Finset.sum_eq_zero fun j _ => ?_
       simp only [Fin.val_natAdd, Fin.val_castAdd]
       rw [if_neg (by omega), if_neg (by omega)]
@@ -134,7 +139,8 @@ theorem hA_col (I : AutInst) (β : GL (Fin I.n) (I.E ⊗[I.F] Formalism.MainNoti
     refine Eq.trans this.symm ?_
     rw [Matrix.mul_apply]
     exact Finset.sum_congr rfl fun l _ => mul_comm _ _
-  rw [e, ← hL_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, ← hL_apply, map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [hL_apply, hA_smul_right]
   rfl
@@ -188,7 +194,7 @@ theorem chiArg_sub_rootSum : ∀ (I : AutInst) (g : ℕ) {ρ k : ℕ} (e0 f0 : F
       (by show a.1 = dualIdx ρ k (2 * ρ + k - a.1); unfold dualIdx; split_ifs <;> omega)
     have e1 : flagVec e0 f0 z0 bw bwd (2 * ρ + k - a.1) = f0 a := by
       unfold flagVec
-      rw [dif_neg (by omega), dif_neg (by omega), if_neg (by omega), dif_pos (by omega)]
+      rw [dite_eq_right (by omega), dite_eq_right (by omega), if_neg (by omega), dite_eq_left (by omega)]
       congr 1
       apply Fin.ext
       show 2 * ρ + k - (2 * ρ + k - a.1) = a.1
@@ -196,20 +202,20 @@ theorem chiArg_sub_rootSum : ∀ (I : AutInst) (g : ℕ) {ρ k : ℕ} (e0 f0 : F
     have e2 : flagVec e0 f0 z0 bw bwd (if a.1 + 1 < ρ then a.1 + 1 else ρ + k) = nxt e0 z0 a := by
       unfold nxt
       by_cases h : a.1 + 1 < ρ
-      · rw [if_pos h, dif_pos h]
+      · rw [if_pos h, dite_eq_left h]
         unfold flagVec
-        rw [dif_pos h]
-      · rw [if_neg h, dif_neg h]
+        rw [dite_eq_left h]
+      · rw [if_neg h, dite_eq_right h]
         unfold flagVec
-        rw [dif_neg (by omega), dif_neg (by omega), if_pos rfl]
+        rw [dite_eq_right (by omega), dite_eq_right (by omega), if_pos rfl]
     rw [← e1, ← e2]
     exact key
   · have hi := i.2
     by_cases h : i.1 + 1 < k
     swap
-    · rw [dif_neg h, dif_neg h, sub_zero]
+    · rw [dite_eq_right h, dite_eq_right h, sub_zero]
       exact Z_zero I g
-    rw [dif_pos h, dif_pos h]
+    rw [dite_eq_left h, dite_eq_left h]
     have key := pair_zmod I g ρ k _ β hβ hG x hx ⟨ρ + (k - (i.1 + 1)), by omega⟩
       ⟨ρ + (i.1 + 1), by omega⟩ ⟨ρ + i.1, by omega⟩ (by show ρ + (k - (i.1 + 1)) ≠ _; omega)
       (by show ρ + i.1 = dualIdx ρ k (ρ + (k - (i.1 + 1))); unfold dualIdx; split_ifs <;> omega)
@@ -218,7 +224,7 @@ theorem chiArg_sub_rootSum : ∀ (I : AutInst) (g : ℕ) {ρ k : ℕ} (e0 f0 : F
       have hl := l.2
       have : (⟨ρ + l.1 - ρ, by omega⟩ : Fin k) = l := Fin.ext (by show ρ + l.1 - ρ = l.1; omega)
       unfold flagVec
-      rw [dif_neg (by omega), dif_pos (by omega), this]
+      rw [dite_eq_right (by omega), dite_eq_left (by omega), this]
     have e1 : bwd i = sigA I ew • flagVec e0 f0 z0 bw bwd (ρ + (k - (i.1 + 1))) := by
       have := c (Fin.rev i)
       rw [Fin.val_rev, Fin.rev_rev] at this

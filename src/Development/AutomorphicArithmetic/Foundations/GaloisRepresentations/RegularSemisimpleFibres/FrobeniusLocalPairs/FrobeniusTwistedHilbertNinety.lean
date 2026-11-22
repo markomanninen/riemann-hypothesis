@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobeniusTwistedHilbertNinetyAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ExistsNotMem
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalField
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalExt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.FrobeniusLocalPairs.FrobeniusTwistedHilbertNinetyAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.ExistsNotMem
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalField
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalExt
+
+@[expose] public section
 
 theorem UpperTheory.Gal.InertialTypesAlt.L.hilbert_ninety_frobenius_twisted_finite_algebra :
     UpperTheory.Gal.InertialTypesAlt.L.FrobeniusTwistedHilbertNinety := by
@@ -42,7 +46,8 @@ theorem UpperTheory.Gal.InertialTypesAlt.L.hilbert_ninety_frobenius_twisted_fini
     · rw [hpow, hd]; rfl
     · obtain ⟨s, x, y, h⟩ := hG.sep
       refine ⟨s, fun i => algebraMap F₁ A (x i), fun i => algebraMap F₁ A (y i), fun j hj => ?_⟩
-      simp only [hpow, hpowF, ← map_mul, ← map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hpow, hpowF, ← map_mul, ← map_sum]
       rw [h j hj]
       split_ifs <;> simp
   have hu : IsUnit c := by

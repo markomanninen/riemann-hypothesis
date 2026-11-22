@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
+
+@[expose] public section
 
 namespace GlobalTheory.UnrLoc
 
@@ -58,7 +62,7 @@ theorem fixed_ne_bot_of_mem_iSup_range :
             have h2 : (T j).toLinearMap (σ k v) = ρ k ((T j).toLinearMap v) := by
               simp only [Representation.IntertwiningMap.toLinearMap_apply,
                 Representation.IntertwiningMap.isIntertwining]
-            rw [map_add] at h1
+            rw [map_add (f := _)] at h1
             have h3 : (T j).toLinearMap (σ k v) - (T j).toLinearMap v = z - ρ k z := by
               rw [h2, sub_eq_sub_iff_add_eq_add, h1, add_comm]
             rw [h3]

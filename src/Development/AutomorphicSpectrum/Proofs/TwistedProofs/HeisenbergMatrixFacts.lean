@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasLenOfLatLen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HasLenOfLatLen
+
+@[expose] public section
 
 noncomputable section
 
@@ -246,8 +250,6 @@ theorem mem_KU_rad (hσσ : ∀ x, σ (σ x) = x) (hσ : ∀ x, Valued.v (σ x) 
 
 def ext (v : Fin N → L) : Fin (N + 2) → L := Fin.cons 0 (Fin.snoc (α := fun _ => L) v 0)
 
-@[simp] theorem ext_zero (v : Fin N → L) : ext v 0 = 0 := rfl
-
 @[simp] theorem ext_mid (v : Fin N → L) (j : Fin N) : ext v (mid j) = v j := by
   rw [GlobalTheory.CompanionTheory.InertHeis.ext, mid, Fin.cons_succ, Fin.snoc_castSucc]
 
@@ -265,7 +267,7 @@ variable (r b : Fin N → L) (c : L)
 
 theorem heis_00 : heisMat r b c 0 0 = 1 := by
   have h0 : (0 : Fin (N + 2)) ≠ Fin.last (N + 1) := fun h => last_ne_zero h.symm
-  simp [heisMat, h0]
+  simp [heisMat, h0, ext]
 
 theorem heis_0m (j : Fin N) : heisMat r b c 0 (mid j) = r j := by
   have h0 : (0 : Fin (N + 2)) ≠ mid j := (mid_ne_zero j).symm
@@ -273,7 +275,7 @@ theorem heis_0m (j : Fin N) : heisMat r b c 0 (mid j) = r j := by
 
 theorem heis_0l : heisMat r b c 0 (Fin.last (N + 1)) = c := by
   have h0 : (0 : Fin (N + 2)) ≠ Fin.last (N + 1) := fun h => last_ne_zero h.symm
-  simp [heisMat, h0]
+  simp [heisMat, h0, ext]
 
 theorem heisenberg_middle_first_zero (i : Fin N) : heisMat r b c (mid i) 0 = 0 := by
   have h0 : (0 : Fin (N + 2)) ≠ Fin.last (N + 1) := fun h => last_ne_zero h.symm

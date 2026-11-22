@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.StatementKB
-import Formalism.HermitianCurvature.LatticeHerglotzBound
+module
+
+public import Formalism.HermitianCurvature.StatementKB
+public import Formalism.HermitianCurvature.LatticeHerglotzBound
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBC
 

@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open IsLocalRing CategoryTheory Limits
 
 namespace GlobalTheory.EtaleDescent
@@ -6,7 +11,7 @@ namespace GlobalTheory.EtaleDescent
 open TensorProduct
 
 theorem exists_etale_model_of_isColimit :
-    ∀ (J : Type) [SmallCategory J] [IsFiltered J] (D : J ⥤ CommRingCat.{0}) (c : Cocone D), IsColimit c → ∀ (A : Type) [CommRing A] [Algebra c.pt A] [Algebra.Etale c.pt A], ∃ (j : J), letI : Algebra (D.obj j) c.pt := (c.ι.app j).hom.toAlgebra; ∃ (Aj : Type) (_ : CommRing Aj) (_ : Algebra (D.obj j) Aj), Algebra.Etale (D.obj j) Aj ∧ Nonempty (TensorProduct (D.obj j) c.pt Aj ≃ₐ[c.pt] A) := by
+    ∀ (J : Type) [SmallCategory J] [IsFiltered J] (D : J ⥤ CommRingCat.{0}) (c : Cocone D), IsColimit c → ∀ (A : Type) [CommRing A] [Algebra c.pt A] [Algebra.Etale c.pt A], ∃ (j : J), (letI : Algebra (D.obj j) c.pt := (c.ι.app j).hom.toAlgebra; ∃ (Aj : Type) (_ : CommRing Aj) (_ : Algebra (D.obj j) Aj), Algebra.Etale (D.obj j) Aj ∧ Nonempty (TensorProduct (D.obj j) c.pt Aj ≃ₐ[c.pt] A)) := by
   intro J _ _ D c hc A _ _ _
   classical
   have hc' := isColimitOfPreserves (forget _) hc
@@ -49,7 +54,7 @@ theorem exists_etale_model_of_isColimit :
     intro m
     have h0 : (c.ι.app j).hom (E.coeff m) = (c.ι.app j).hom 0 := by
       rw [map_zero]
-      have := congr(MvPolynomial.coeff (m : ι →₀ ℕ) $hE)
+      have := congr(($hE).coeff (m : ι →₀ ℕ))
       simp only [MvPolynomial.coeff_map, MvPolynomial.coeff_zero] at this
       exact this
     obtain ⟨k, f, e⟩ := (Types.FilteredColimit.isColimit_eq_iff' hc' (E.coeff m) 0).1 (by exact h0)
@@ -60,13 +65,13 @@ theorem exists_etale_model_of_isColimit :
   set g : j ⟶ K := c'.ι.app none
   have hEK : E.map (D.map g).hom = 0 := by
     ext m
-    rw [MvPolynomial.coeff_map, MvPolynomial.coeff_zero]
+    rw [MvPolynomial.coeff_map]
+    change (D.map g).hom (E.coeff m) = 0
     by_cases hm : m ∈ E.support
     · have hw := c'.w (WidePushoutShape.Hom.init ⟨m, hm⟩)
       have h3 : (D.map g).hom (E.coeff m) = (D.map ((WidePushoutShape.wideSpan j k f).map
           (WidePushoutShape.Hom.init ⟨m, hm⟩) ≫ c'.ι.app (some ⟨m, hm⟩))).hom (E.coeff m) := by
         rw [hw]
-        rfl
       rw [h3, Functor.map_comp, CommRingCat.hom_comp, RingHom.comp_apply]
       erw [hf ⟨m, hm⟩]
       exact map_zero _
@@ -100,7 +105,8 @@ theorem exists_etale_model_of_isColimit :
           - E + 1 := by
       rw [hEdef]; ring
     have h2 := congr(φ $h1)
-    simp only [map_mul, map_add, map_sub, map_sum, map_one, hφrel, mul_zero,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_mul, map_add (f := _), map_sub, map_sum, map_one, hφrel, mul_zero,
       Finset.sum_const_zero, hφE, sub_zero, zero_add] at h2
     exact h2
   let Q' : Algebra.SubmersivePresentation (D.obj K) (D.obj K ⊗[D.obj j] M) ι σ :=

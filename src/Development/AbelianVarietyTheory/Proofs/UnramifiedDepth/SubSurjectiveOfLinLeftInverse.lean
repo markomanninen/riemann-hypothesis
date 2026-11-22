@@ -1,13 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartFH
-import ReciprocityTheory.DualLattices.TowerZeroSurjective
-import ReciprocityTheory.DualLattices.LinPairStatement
-import ReciprocityTheory.DualLattices.LengthDegreeAbelianVariety
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.IsEigBasisIff
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.PredMulSumPadicValNatFactorialAddCardLe
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.MemSupSpanXPowIffAndIsAdicComplete
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartFH
+public import ReciprocityTheory.DualLattices.TowerZeroSurjective
+public import ReciprocityTheory.DualLattices.LinPairStatement
+public import ReciprocityTheory.DualLattices.LengthDegreeAbelianVariety
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Clauses
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.IsEigBasisIff
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.PredMulSumPadicValNatFactorialAddCardLe
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.MemSupSpanXPowIffAndIsAdicComplete
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry TensorProduct Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.Pdiv.ChartF ReciprocityTheory.ChartRestriction.G.Pdiv.AvDefs
@@ -33,7 +37,7 @@ private theorem eq_zero_or_single {κ : Type} {e : κ →₀ ℕ} (he : e.degree
       rw [Finsupp.single_le_iff]
       exact Nat.one_le_iff_ne_zero.2 hk
     obtain ⟨c, hc⟩ := exists_add_of_le hle
-    have hd : e.degree = 1 + c.degree := by rw [hc, map_add, Finsupp.degree_single]
+    have hd : e.degree = 1 + c.degree := by rw [hc, map_add (f := _), Finsupp.degree_single]
     have : c = 0 := (Finsupp.degree_eq_zero_iff c).1 (by omega)
     exact ⟨k, by rw [hc, this, add_zero]⟩
 
@@ -84,7 +88,8 @@ theorem sub_surjective_of_lin_leftInverse : ∀ (R : Type) [CommRing R] (d r : �
             have h3 := congrFun (congrFun hA i) k
             rw [Matrix.mul_apply, Matrix.one_apply] at h3
             simp only [lin, Matrix.of_apply] at h3
-            rw [map_sub, map_sum]
+            set_option synthInstance.maxHeartbeats 100000 in
+              rw [map_sub, map_sum]
             simp only [map_smul, smul_eq_mul]
             rw [h3, MvPowerSeries.coeff_X]
             simp [Finsupp.single_left_inj, eq_comm]

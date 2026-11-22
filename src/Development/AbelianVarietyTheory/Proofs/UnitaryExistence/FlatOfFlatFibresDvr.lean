@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealEqBotOfFlatQuotientOfMapMaximalIdeal
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IdealEqBotOfFlatQuotientOfMapMaximalIdeal
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -64,7 +68,7 @@ theorem ringHom_flat {A B : Type*} [CommRing A] [CommRing B] [Algebra T A] [Alge
       · rw [Algebra.TensorProduct.map_id_comp]
         exact hK.comp (RingHom.Flat.lTensor (S := T) K hl)
     · have : IsLocalHom (algebraMap T (Localization.AtPrime P)) := by
-        refine ((local_hom_TFAE (algebraMap T (Localization.AtPrime P))).out 0 2).mpr ?_
+        refine ((local_hom_TFAE (algebraMap T (Localization.AtPrime P))).out 1 3).mpr ?_
         rw [hπ.maximalIdeal_eq, Ideal.map_span, Set.image_singleton,
           Ideal.span_singleton_le_iff_mem]
         exact hu

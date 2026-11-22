@@ -1,6 +1,10 @@
-import Formalism.FlagUnipotentLattices.MemOfOrthogonalAnisotropic
-import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.ExistsHasLeadingCoeffOfMemSpanBelow
-import Formalism.HyperbolicPlaceProducts.SecondLevelArithmeticNorm
+module
+
+public import Formalism.FlagUnipotentLattices.MemOfOrthogonalAnisotropic
+public import Formalism.FlagUnipotentLattices.MinkowskiFactorialBounds.ExistsHasLeadingCoeffOfMemSpanBelow
+public import Formalism.HyperbolicPlaceProducts.SecondLevelArithmeticNorm
+
+@[expose] public section
 
 open Formalism.HermitianLatticeCounting.S6
 open scoped BigOperators
@@ -17,7 +21,7 @@ theorem norm_singular_value_bound : Formalism.HermitianLatticeCounting.S6.NormSg
     have := hD v
     rw [div_le_iff₀ hp0] at this; rw [mul_comm]; exact this
   calc ∏ v, D v ^ 2 ≤ ∏ v, ((2 * H₁) ^ (2 * r) * sg v) ^ 2 :=
-        Finset.prod_le_prod (fun v _ => by positivity) (fun v _ => pow_le_pow_left₀ (hD0 v) (h1 v) 2)
+        Finset.prod_le_prod₀ (fun v _ => by positivity) (fun v _ => pow_le_pow_left₀ (hD0 v) (h1 v) 2)
     _ = (2 * H₁) ^ (4 * r * f) * ∏ v, sg v ^ 2 := by
         simp_rw [mul_pow]
         rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, hf, ← pow_mul, ← pow_mul]
@@ -58,29 +62,6 @@ lemma sublatticeCount_of (hS : Formalism.SLP.SubmoduleIndexCountO) (hC : Formali
 theorem sublattice_count_alt : Formalism.HermitianLatticeCounting.S6.SublatticeCount :=
   sublatticeCount_of Formalism.SLP.Final.submoduleIndexCountO coefficient_field_bound
 
-theorem exponential_identity : Formalism.HermitianLatticeCounting.S6.ExpIdentity := by
-  intro k j D hD
-  rw [← Real.rpow_add hD]
-  congr 1
-  ring
-
-lemma norm_det_le (n : ℕ) (M : Matrix (Fin n) (Fin n) ℂ) (β : ℝ) (hM : ∀ i j, ‖M i j‖ ≤ β) :
-    ‖M.det‖ ≤ (n.factorial : ℝ) * β ^ n := by
-  rw [Matrix.det_apply]
-  calc ‖∑ σ : Equiv.Perm (Fin n), Equiv.Perm.sign σ • ∏ i, M (σ i) i‖
-      ≤ ∑ σ : Equiv.Perm (Fin n), ‖Equiv.Perm.sign σ • ∏ i, M (σ i) i‖ := norm_sum_le _ _
-    _ ≤ ∑ _σ : Equiv.Perm (Fin n), β ^ n := by
-        apply Finset.sum_le_sum
-        intro σ _
-        have h1 : ‖Equiv.Perm.sign σ • ∏ i, M (σ i) i‖ = ‖∏ i, M (σ i) i‖ := by
-          rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with h | h <;> simp [h]
-        rw [h1, norm_prod]
-        calc ∏ i, ‖M (σ i) i‖ ≤ ∏ _i : Fin n, β :=
-              Finset.prod_le_prod (fun _ _ => norm_nonneg _) (fun i _ => hM _ _)
-          _ = β ^ n := by simp
-    _ = (n.factorial : ℝ) * β ^ n := by
-        simp [Fintype.card_perm]
-
 lemma prod_primepow_dvd (s : Finset ℕ) (hs : ∀ p ∈ s, p.Prime) (e : ℕ → ℕ) (n : ℕ)
     (h : ∀ p ∈ s, p ^ e p ∣ n) : ∏ p ∈ s, p ^ e p ∣ n := by
   classical
@@ -104,7 +85,7 @@ theorem minkowski_number_dvd_factorial : Formalism.HermitianLatticeCounting.S6.M
   have hpp : p.Prime := (Finset.mem_filter.1 hp).2
   have := Fact.mk hpp
   have hp2 : 2 ≤ p := hpp.two_le
-  rw [padicValNat_dvd_iff_le (Nat.factorial_ne_zero _)]
+  rw [(by simpa only [_root_.Nat.padicValNat_def] using @_root_.multiplicity_dvd_iff_le : ∀ {p : _root_.Nat} [hp : _root_.Fact (_root_.Nat.Prime p)] {a n : _root_.Nat} (ha : a ≠ 0), p ^ n ∣ a ↔ n ≤ _root_.padicValNat p a) (Nat.factorial_ne_zero _)]
   have hlog : Nat.log p (2 * N) < N + 2 := by
     by_cases h0 : 2 * N = 0
     · simp [h0]
@@ -113,7 +94,7 @@ theorem minkowski_number_dvd_factorial : Formalism.HermitianLatticeCounting.S6.M
       have h2 : 2 ^ (N + 2) = 4 * 2 ^ N := by ring
       have h3 : 2 ^ (N + 2) ≤ p ^ (N + 2) := Nat.pow_le_pow_left hp2 _
       omega
-  rw [padicValNat_factorial hlog, Finset.sum_Ico_eq_sum_range]
+  rw [Nat.padicValNat_def, multiplicity_factorial hlog, Finset.sum_Ico_eq_sum_range]
   unfold minkowskiExp
   have e : N + 2 - 1 = N + 1 := by omega
   rw [e]
@@ -128,15 +109,6 @@ theorem minkowski_number_dvd_factorial : Formalism.HermitianLatticeCounting.S6.M
   calc N / (p ^ i * (p - 1)) = (2 * N) / (2 * (p ^ i * (p - 1))) := by
         rw [Nat.mul_div_mul_left _ _ (by norm_num : 0 < 2)]
     _ ≤ (2 * N) / p ^ (1 + i) := Nat.div_le_div_left hle hpos
-
-theorem automorphism_bound_of_hyp : Formalism.HermitianLatticeCounting.S6.AutBoundAsm := by
-  intro hM hD s f G hG
-  have h1 := (hM (2 * s * f) G hG).trans (hD (2 * s * f))
-  have h2 := Nat.le_of_dvd (Nat.factorial_pos _) h1
-  have h3 := h2.trans (Nat.factorial_le_pow _)
-  have e : 2 * (2 * s * f) = 4 * s * f := by ring
-  rw [e] at h3
-  exact_mod_cast h3
 
 theorem exterior_power_bound : Formalism.HermitianLatticeCounting.S6.ExtPowerBound := by
   intro j m A A' Z hyp
@@ -422,7 +394,8 @@ lemma gsK (h : U →ₗ[K] U →ₗ⋆[K] K) (herm : ∀ x y : U, star (h x y) =
     have hLll : L (Fin.last s) (Fin.last s) = 1 := by simp [L]
     have hglo : ∀ b, h gl (g₀ b) = 0 := by
       intro b
-      simp only [gl, map_sub, map_sum, map_smul, LinearMap.sub_apply, LinearMap.sum_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [gl, map_sub, map_sum, map_smul, LinearMap.sub_apply, LinearMap.sum_apply,
         LinearMap.smul_apply, smul_eq_mul]
       rw [Finset.sum_eq_single b]
       · by_cases h0 : h (g₀ b) (g₀ b) = 0
@@ -459,7 +432,8 @@ lemma bmatK (h' : U →ₗ[K] U →ₗ⋆[K] K) {m : ℕ} (e f : Fin m → U) (A
     (u w : Fin m → U) (hu : ∀ i, u i = ∑ k, A i k • e k) (hw : ∀ j, w j = ∑ l, C j l • f l) :
     (Matrix.of fun i j => h' (u i) (w j)) = A * (Matrix.of fun k l => h' (e k) (f l)) * Cᴴ := by
   ext i j
-  simp only [Matrix.of_apply, hu, hw, map_sum, map_smul, LinearMap.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.of_apply, hu, hw, map_sum, map_smul, LinearMap.sum_apply,
     LinearMap.smul_apply, map_smulₛₗ, smul_eq_mul, Matrix.mul_apply,
     Matrix.conjTranspose_apply, Finset.sum_mul, Finset.mul_sum, starRingEnd_apply]
   exact Finset.sum_congr rfl fun l _ => Finset.sum_congr rfl fun k _ => by ring
@@ -478,17 +452,20 @@ lemma besselK (σ : K →+* ℂ) (h : U →ₗ[K] U →ₗ⋆[K] K) (hσ : ∀ x
   set y' : U := y - ∑ a, c a • g a with hy'
   have h1 : ∀ b, h y' (g b) = 0 := by
     intro b
-    simp only [hy', map_sub, map_sum, map_smul, LinearMap.sub_apply, LinearMap.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hy', map_sub, map_sum, map_smul, LinearMap.sub_apply, LinearMap.sum_apply,
       LinearMap.smul_apply, smul_eq_mul]
     rw [Finset.sum_eq_single b]
     · simp only [c]; rw [div_mul_cancel₀ _ (hd b), sub_self]
     · intro a _ ha; rw [horth a b ha, mul_zero]
     · intro hb; exact absurd (Finset.mem_univ b) hb
   have h2 : h y' y' = h y' y := by
-    conv_lhs => rw [hy', (h y').map_sub, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [hy', (h y').map_sub, map_sum]
     simp [h1]
   have h3 : h y' y = h y y - ∑ a, c a * h (g a) y := by
-    simp only [hy', map_sub, map_sum, map_smul, LinearMap.sub_apply, LinearMap.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hy', map_sub, map_sum, map_smul, LinearMap.sub_apply, LinearMap.sum_apply,
       LinearMap.smul_apply, smul_eq_mul]
   have h4 : ∀ a, (σ (c a * h (g a) y)).re = ‖σ (h (g a) y)‖ ^ 2 / (σ (h (g a) (g a))).re := by
     intro a
@@ -503,7 +480,8 @@ lemma besselK (σ : K →+* ℂ) (h : U →ₗ[K] U →ₗ⋆[K] K) (hσ : ∀ x
     rw [e2, Complex.ofReal_re]
     simp
   have h5 := hnn y'
-  rw [h2, h3, map_sub, map_sum, Complex.sub_re, Complex.re_sum] at h5
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h2, h3, map_sub, map_sum, Complex.sub_re, Complex.re_sum] at h5
   simp only [h4] at h5
   linarith
 
@@ -581,10 +559,10 @@ theorem det_form_bound_field : Formalism.HermitianLatticeCounting.S6.DetBBoundK 
     have hpar : ∀ x : U, (σ (h (x - η x) (x - η x))).re ≤ 4 * (σ (h x x)).re := by
       intro x
       have e : h (x - η x) (x - η x) + h (x + η x) (x + η x) = 4 * h x x := by
-        simp only [map_sub, map_add, LinearMap.sub_apply, LinearMap.add_apply, hη]
+        simp only [map_sub, map_add (f := _), LinearMap.sub_apply, LinearMap.add_apply, hη]
         ring
       have h1 : (σ (h (x - η x) (x - η x) + h (x + η x) (x + η x))).re = (σ (4 * h x x)).re := by rw [e]
-      rw [σ.map_add, σ.map_mul, Complex.add_re] at h1
+      rw [map_add, map_mul, Complex.add_re] at h1
       have h2 : (σ 4 * σ (h x x)).re = 4 * (σ (h x x)).re := by
         have : σ 4 = ((4:ℝ) : ℂ) := by
           rw [map_ofNat]; norm_num
@@ -607,7 +585,7 @@ theorem det_form_bound_field : Formalism.HermitianLatticeCounting.S6.DetBBoundK 
     have hfin : ‖N'.det‖ ^ 2 ≤ (2 ^ s) ^ 2 * ∏ a, (σ (h (g' a) (g' a))).re := by
       refine le_trans hH ?_
       calc ∏ b, ∑ a, ‖N'ᵀ b a‖ ^ 2 ≤ ∏ b, (4 * (σ (h (g' b) (g' b))).re) :=
-            Finset.prod_le_prod (fun b _ => Finset.sum_nonneg (fun a _ => by positivity)) (fun b _ => hrow b)
+            Finset.prod_le_prod₀ (fun b _ => Finset.sum_nonneg (fun a _ => by positivity)) (fun b _ => hrow b)
         _ = (2 ^ s) ^ 2 * ∏ a, (σ (h (g' a) (g' a))).re := by
             rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_fin, ← pow_mul,
               mul_comm s 2, pow_mul]
@@ -617,8 +595,5 @@ theorem det_form_bound_field : Formalism.HermitianLatticeCounting.S6.DetBBoundK 
         ≤ ((2 ^ s) ^ 2 * ∏ a, (σ (h (g' a) (g' a))).re) * ∏ a, (σ (h (g a) (g a))).re :=
           mul_le_mul_of_nonneg_right hfin hP
       _ = _ := by ring
-
-theorem autBound_of_minkowskiBound (hM : Formalism.HermitianLatticeCounting.S6.MinkowskiBound) : Formalism.HermitianLatticeCounting.S6.AutBound :=
-  automorphism_bound_of_hyp hM minkowski_number_dvd_factorial
 
 end Formalism.HermitianLatticeCounting.P

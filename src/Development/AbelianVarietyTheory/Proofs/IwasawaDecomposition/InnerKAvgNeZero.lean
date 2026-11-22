@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormDwLeSobNorm
+
+@[expose] public section
 
 open MeasureTheory Matrix Filter Formalism.REAL Formalism.MainNotions.S Formalism.L2.Theta GlobalTheory.SmoothGlob GlobalTheory.LowTypeDetermined GlobalTheory.TypeSum
 open scoped InnerProductSpace Topology
@@ -99,7 +103,7 @@ theorem inner_kAvg (hσ : IsURepOn (UJset ε) σ) {e : KG ε → ℂ} (he : Cont
 theorem inner_kAvg_ne_zero (hσ : IsURepOn (UJset ε) σ) {y : H} (hy : y ≠ 0) :
     ⟪y, kAvg ε σ (fun k => star ⟪y, σ (toMK k) y⟫_ℂ) y⟫_ℂ ≠ 0 := by
   have hc : Continuous fun k : KG ε => ⟪y, σ (toMK k) y⟫_ℂ := continuous_const.inner (continuous_orbit hσ y)
-  rw [inner_kAvg hσ hc.star]
+  rw [inner_kAvg hσ (e := fun k => star ⟪y, σ (toMK k) y⟫_ℂ) (continuous_star.comp hc)]
   have e : ∀ z : ℂ, star z * z = ((‖z‖ ^ 2 : ℝ) : ℂ) := fun z => by
     rw [Complex.star_def, Complex.conj_mul']; push_cast; rfl
   simp only [e]
@@ -112,14 +116,14 @@ theorem inner_kAvg_ne_zero (hσ : IsURepOn (UJset ε) σ) {y : H} (hy : y ≠ 0)
     exact pow_ne_zero _ (norm_ne_zero_iff.2 (inner_self_ne_zero.2 hy))
   exact_mod_cast hpos.ne'
 
-omit [CompleteSpace H] in
 
+omit [CompleteSpace H] in
 theorem exists_clm_kAvg (hσ : IsURepOn (UJset ε) σ) {e : KG ε → ℂ} (he : Continuous e) :
     ∃ Q : H →L[ℂ] H, ∀ w, Q w = kAvg ε σ e w := by
   let L : H →ₗ[ℂ] H :=
     { toFun := kAvg ε σ e
       map_add' := fun x y => by
-        simp only [kAvg, map_add, smul_add]
+        simp only [kAvg, map_add (f := _), smul_add]
         exact integral_add (integrable_avg hσ he x) (integrable_avg hσ he y)
       map_smul' := fun c x => by
         simp only [kAvg, map_smul, RingHom.id_apply, smul_comm _ c]

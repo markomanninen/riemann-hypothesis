@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.GoodLat
-import GroundTheory.GlobalFields.Adele.Compact
-import GroundTheory.GlobalFields.Adele.Approximation
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceDualB
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.GoodLat
+public import GroundTheory.GlobalFields.Adele.Compact
+public import GroundTheory.GlobalFields.Adele.Approximation
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.PlaceDualB
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,7 +62,8 @@ theorem exists_dualBasis {Λ : Submodule (𝓞 E) (Matrix (Fin nT) (Fin nS) E)} 
   have hM : ∀ x : M, (x : Matrix (Fin nT) (Fin nS) E) = ∑ j, l j x • ((g (Finsupp.single j 1) : M) : Matrix (Fin nT) (Fin nS) E) := by
     intro x
     have h1 : x = g (f x) := LinearMap.congr_fun e x
-    conv_lhs => rw [h1, ← (f x).univ_sum_single, map_sum, Submodule.coe_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [h1, ← (f x).univ_sum_single, map_sum, Submodule.coe_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [show l j x = f x j from hl₀ j x, ← Finsupp.smul_single_one, map_smul, Submodule.coe_smul]
     exact (algebraMap_smul F _ _).symm
@@ -106,8 +111,8 @@ def sng (i : Fin nT) (k : Fin nS) : E →ₗ[F] Matrix (Fin nT) (Fin nS) E where
     simp only [sngG, Matrix.of_apply, Matrix.smul_apply, RingHom.id_apply]
     split_ifs <;> simp
 
-variable (F) in
 
+variable (F) in
 def tm (a : R) (γ : Matrix (Fin nT) (Fin nS) E) : Matrix (Fin nT) (Fin nS) (R ⊗[F] E) :=
   γ.map fun e => a ⊗ₜ[F] e
 
@@ -137,8 +142,8 @@ theorem tm_nsmul (n : ℕ) (a : R) (γ : Matrix (Fin nT) (Fin nS) E) : n • tm 
   | zero => simp [tm_zero_left]
   | succ n ih => rw [succ_nsmul, ih, succ_nsmul, tm_add_left]
 
-variable (R) in
 
+variable (R) in
 def coordM (l : Matrix (Fin nT) (Fin nS) E →ₗ[F] F) (z : Matrix (Fin nT) (Fin nS) (R ⊗[F] E)) : R :=
   ∑ i, ∑ k, cE R (l ∘ₗ sng i k) (z i k)
 
@@ -157,7 +162,8 @@ theorem coordM_tm (l : Matrix (Fin nT) (Fin nS) E →ₗ[F] F) (a : R) (γ : Mat
     coordM R l (tm F a γ) = l γ • a := by
   have h : l γ = ∑ i, ∑ k, l (sng (F := F) i k (γ i k)) := by
     conv_lhs => rw [← sum_sngG γ]
-    simp only [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum]
     rfl
   rw [h, Finset.sum_smul]
   refine Finset.sum_congr rfl fun i _ => ?_
@@ -205,7 +211,7 @@ theorem map_coordM {S : Type} [CommRing S] [Algebra F S] (f : R →ₐ[F] S) (l 
       simp [tm]
     rw [this, coordM_tm, coordM_tm, map_smul]
   | h2 a b ha hb =>
-    rw [coordM_add, map_add, ha, hb, Matrix.map_add _ (map_add _), coordM_add]
+    rw [coordM_add, map_add (f := _), ha, hb, Matrix.map_add _ (map_add _), coordM_add]
 
 end coord
 
@@ -214,8 +220,6 @@ theorem smul_ratWF (c : AF F) (γ : Matrix (Fin nT) (Fin nS) E) :
   ext i k
   simp [ratWF, tm, Matrix.smul_apply, Matrix.map_apply, incAF, inclR, Algebra.TensorProduct.algebraMap_apply,
     Algebra.TensorProduct.tmul_mul_tmul]
-
-theorem intAf_eq : Formalism.MainNotions.StandardLattice.intAf F = (GroundTheory.Global.integralFiniteAdeles (𝓞 F) F : Set (Af F)) := rfl
 
 theorem tm_mem_latOF {Λ : Submodule (𝓞 E) (Matrix (Fin nT) (Fin nS) E)} {β : Af F}
     (hβ : β ∈ GroundTheory.Global.integralFiniteAdeles (𝓞 F) F) {γ : Matrix (Fin nT) (Fin nS) E} (hγ : γ ∈ Λ) :

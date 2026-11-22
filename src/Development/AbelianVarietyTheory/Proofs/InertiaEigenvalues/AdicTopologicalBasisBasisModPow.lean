@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
 
@@ -15,7 +20,7 @@ private theorem TopBasis.c_mem_of_mem_map_pow {S A : Type} [CommRing S] [CommRin
     exact Ideal.mul_mem_right _ _ ha
   · intro r; simp
   · intro x y _ _ hx hy r
-    rw [mul_add, map_add]
+    rw [mul_add, map_add (f := _)]
     exact Ideal.add_mem _ (hx r) (hy r)
   · intro a x _ hx r
     rw [smul_eq_mul, ← mul_assoc]
@@ -35,11 +40,13 @@ theorem TopBasis.basis_mod_pow : ∀ (S A : Type) [CommRing S] [CommRing A] (s :
     intro F g hg j hj
     choose h hh using fun i => Ideal.Quotient.mk_surjective (I := I ^ m) (g i)
     have hsum : (∑ i ∈ F, s (h i) * tb.b i) ∈ (I ^ m).map s := by
-      rw [← Ideal.Quotient.eq_zero_iff_mem, map_sum, ← hg]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← Ideal.Quotient.eq_zero_iff_mem, map_sum, ← hg]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [← hh i, hsmul]
     have hc := tb.c_mem_of_mem_map_pow m j hsum
-    rw [map_sum, Finset.sum_eq_single j] at hc
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_single j] at hc
     · rw [tb.c_mul, tb.c_self, mul_one] at hc
       rw [← hh j]
       exact Ideal.Quotient.eq_zero_iff_mem.mpr hc
@@ -55,7 +62,8 @@ theorem TopBasis.basis_mod_pow : ∀ (S A : Type) [CommRing S] [CommRing A] (s :
     have hx := tb.approx y m (tb.fin y m).toFinset hF
     have : Ideal.Quotient.mk ((I ^ m).map s) y = ∑ i ∈ (tb.fin y m).toFinset,
         (Ideal.Quotient.mk (I ^ m) (tb.c i y)) • Ideal.Quotient.mk ((I ^ m).map s) (tb.b i) := by
-      simp_rw [hsmul, ← map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp_rw [hsmul, ← map_sum]
       exact Ideal.Quotient.eq.mpr hx
     rw [this]
     exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)

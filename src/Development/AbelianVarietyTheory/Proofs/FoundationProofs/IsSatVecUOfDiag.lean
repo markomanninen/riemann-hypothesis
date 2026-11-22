@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAntiJFrame
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsSplitOfIsInertAt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsAntiJFrame
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ theorem hecke_induction {p : (G → ℂ) → Prop} (h0 : p 0)
   intro a
   induction a using Finsupp.induction_linear with
   | zero => simpa using h0
-  | add a b ha hb => rw [map_add]; exact hadd _ (e.symm a).2 _ (e.symm b).2 ha hb
+  | add a b ha hb => rw [map_add (f := _)]; exact hadd _ (e.symm a).2 _ (e.symm b).2 ha hb
   | single c r =>
     obtain ⟨g, rfl⟩ : ∃ g, DoubleCoset.mk K K g = c := Quotient.exists_rep c
     convert hind r g
@@ -71,8 +75,8 @@ variable {E : Type} [Field E] [NumberField E] {w : HeightOneSpectrum (𝓞 E)}
   {σ : w.adicCompletion E →+* w.adicCompletion E} {n q : ℕ} {ϖ : w.adicCompletion E}
   {V : Type} [AddCommGroup V] [Module ℂ V]
 
-open GlobalTheory.InertThetaCompare in
 
+open GlobalTheory.InertThetaCompare in
 theorem cartanU (hU : IsUnramInv ϖ σ q) (g : GU σ n) : ∃ (d : Fin n → ℤ) (t : GU σ n), Antitone d ∧
     t.1.1 = Matrix.diagonal (fun i => ϖ ^ d i) ∧ ∃ k₁ ∈ KU σ n, ∃ k₂ ∈ KU σ n, g = k₁ * t * k₂ := by
   have hϖ : IsUnifV E w ϖ := hU.2.2.2.1
@@ -85,7 +89,8 @@ theorem cartanU (hU : IsUnramInv ϖ σ q) (g : GU σ n) : ∃ (d : Fin n → ℤ
     (GlobalTheory.InertDoubleCoset.conj_mem_UJ σ (GlobalTheory.InertDoubleCoset.inv_frame σ eh) g.2)
     ⟨h * k₁, mul_mem hh' h₁, k₂ * h⁻¹, mul_mem h₂ (inv_mem hh'), by
       simp only [Units.val_mul, e, hd', inv_inv, Matrix.mul_assoc]; rfl⟩
-  obtain ⟨t, ht⟩ := exists_diag hU hG
+  obtain ⟨t, ht, -⟩ := P.fSatake_diag_exists (σ := σ) (fun i : Fin n => ϖ ^ (List.ofFn d).getD i.1 0) fun i => by
+    rw [map_zpow₀, hU.2.2.1, hG.rev, ← zpow_add₀ (unif_ne_zero hU), add_neg_cancel, zpow_zero]
   simp only [hd'] at ht
   exact ⟨d, t, hd, ht, dc_GU hU (a := k₁) (b := k₂) h₁ h₂ (Units.ext (by simp only [Units.val_mul, ht]; exact e))⟩
 
@@ -132,13 +137,13 @@ variable {σ J L} {h : w.under (𝓞 F) = v} {ρ : Representation ℂ (GLoc σ J
 theorem IsEigenSys.split (hc : IsEigenSys σ J L h ρ x c) (hx : x ∈ fixed ρ (stabLoc σ J L v))
     {e : GLoc σ J v ≃* GL (Fin n) (w.adicCompletion E)} (he : IsSplitChart σ J L h e) {ϖ : w.adicCompletion E}
     (hϖ : IsUnifV E w ϖ) {j : ℕ} (hj : j ≤ n) :
-    heckeVec (ρ.comp e.symm.toMonoidHom) (KGL w n) (Tj ℂ n (Ov E w) ϖ j) x =
+    heckeVec (ρ.comp e.symm.toMonoidHom) (KGL w (n := n)) (Tj ℂ n (Ov E w) ϖ j) x =
       c (List.replicate j 1 ++ List.replicate (n - j) 0) • x := by
   have h0 : ϖ ≠ 0 := fun h0 => by simp [IsUnifV, h0] at hϖ
   let t : GL (Fin n) (w.adicCompletion E) := Matrix.GeneralLinearGroup.mkOfDetNeZero (diagJ n ϖ j) (by
     rw [diagJ, Matrix.det_diagonal]
     exact Finset.prod_ne_zero_iff.2 fun i _ => by split_ifs <;> simp [h0])
-  have ht : Tj ℂ n (Ov E w) ϖ j = dosetInd ℂ (KGL w n) t := by
+  have ht : Tj ℂ n (Ov E w) ϖ j = dosetInd ℂ (KGL w (n := n)) t := by
     rw [Tj, dosetInd]
     congr 1
     ext g

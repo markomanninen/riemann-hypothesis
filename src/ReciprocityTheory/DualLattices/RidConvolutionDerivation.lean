@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,11 +28,11 @@ private lemma rid_convolution_derivation (δ : A →ₗ[R] R) (hδ : IsPtDer δ)
           (TensorProduct.rid R A) ((Coalgebra.counit (R := R) (A := A)).lTensor A v) := by
   induction u using TensorProduct.induction_on with
   | zero => simp
-  | add u u' hu hu' => simp only [add_mul, map_add, hu, hu']; ring
+  | add u u' hu hu' => simp only [add_mul, map_add (f := _), hu, hu']; ring
   | tmul a b =>
     induction v using TensorProduct.induction_on with
     | zero => simp
-    | add v v' hv hv' => simp only [mul_add, map_add, hv, hv']; ring
+    | add v v' hv hv' => simp only [mul_add, map_add (f := _), hv, hv']; ring
     | tmul c e =>
       simp only [Algebra.TensorProduct.tmul_mul_tmul, LinearMap.lTensor_tmul,
         TensorProduct.rid_tmul, hδ b e, Algebra.smul_def, map_add, map_mul]
@@ -50,29 +54,11 @@ lemma counit_convD (δ : A →ₗ[R] R) (f : A) :
     intro u
     induction u using TensorProduct.induction_on with
     | zero => simp
-    | add u v hu hv => simp only [map_add, hu, hv]
+    | add u v hu hv => simp only [map_add (f := _), hu, hv]
     | tmul a b => simp [mul_comm]
   simp only [convD, LinearMap.coe_comp, LinearEquiv.coe_coe, Function.comp_apply, key,
     Coalgebra.rTensor_counit_comul]
   simp
-
-lemma convD_groupLike (δ : A →ₗ[R] R) {χ : A} (h : IsGroupLikeElem R χ) :
-    convD δ χ = δ χ • χ := by
-  simp [convD, h.comul_eq_tmul_self]
-
-lemma IsPtDer.map_one {δ : A →ₗ[R] R} (hδ : IsPtDer δ) : δ 1 = 0 := by
-  have h := hδ 1 1
-  simp only [mul_one, Bialgebra.counit_one, one_mul] at h
-  linear_combination -h
-
-lemma IsPtDer.map_sq {δ : A →ₗ[R] R} (hδ : IsPtDer δ) {f : A}
-    (hf : f ∈ RingHom.ker (Bialgebra.counitAlgHom R A) ^ 2) : δ f = 0 := by
-  rw [pow_two] at hf
-  refine Submodule.mul_induction_on hf ?_ ?_
-  · intro a ha b hb
-    rw [RingHom.mem_ker, Bialgebra.counitAlgHom_apply] at ha hb
-    rw [hδ, ha, hb]; ring
-  · intro a b ha hb; rw [map_add, ha, hb, add_zero]
 
 end Bialg
 
@@ -90,14 +76,14 @@ lemma map_aeval_of_leibniz {d : ℕ} (D : A →ₗ[R] A) (hD : ∀ f g, D (f * g
     linear_combination -h
   induction P using MvPolynomial.induction_on with
   | C a => simp [Algebra.algebraMap_eq_smul_one, h1]
-  | add P Q hP hQ => simp only [map_add, hP, hQ, add_mul, Finset.sum_add_distrib]
+  | add P Q hP hQ => simp only [map_add (f := _), hP, hQ, add_mul, Finset.sum_add_distrib]
   | mul_X P n hP =>
     have hs : ∑ j, aeval x (pderiv j (P * X n)) * D (x j) =
         x n * ∑ j, aeval x (pderiv j P) * D (x j) + aeval x P * D (x n) := by
       have : ∀ j, aeval x (pderiv j (P * X n)) * D (x j) =
           x n * (aeval x (pderiv j P) * D (x j)) + aeval x P * (aeval x (pderiv j (X n : MvPolynomial (Fin d) R)) * D (x j)) := by
         intro j
-        rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul, map_add, map_mul, map_mul, aeval_X]
+        rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul, map_add (f := _), map_mul, map_mul, aeval_X]
         ring
       rw [Finset.sum_congr rfl (fun j _ => this j), Finset.sum_add_distrib, ← Finset.mul_sum,
         ← Finset.mul_sum]
@@ -115,21 +101,21 @@ section Coeff
 variable {R : Type*} [CommRing R] {d p : ℕ}
 
 def LowRed (p m : ℕ) (P : MvPolynomial (Fin d) R) : Prop :=
-  ∀ β : Fin d →₀ ℕ, (∀ j, β j < p) → β.degree < m → coeff β P = 0
+  ∀ β : Fin d →₀ ℕ, (∀ j, β j < p) → β.degree < m → AddMonoidAlgebra.coeff P β = 0
 
 lemma lowRed_mul {m : ℕ} {F G : MvPolynomial (Fin d) R} (hF : LowRed p m F)
     (hG : constantCoeff G = 0) (β : Fin d →₀ ℕ) (hβ : ∀ j, β j < p) (hdeg : β.degree ≤ m) :
-    coeff β (F * G) = 0 := by
+    AddMonoidAlgebra.coeff (F * G) β = 0 := by
   classical
   rw [coeff_mul]
   refine Finset.sum_eq_zero fun y hy => ?_
   rw [Finset.HasAntidiagonal.mem_antidiagonal] at hy
   by_cases h2 : y.2 = 0
-  · rw [h2, ← congrFun constantCoeff_eq G, hG, mul_zero]
+  · rw [h2, ← constantCoeff_eq G, hG, mul_zero]
   · have hle : ∀ j, y.1 j ≤ β j := fun j => by rw [← hy]; simp
     have h2' : y.2.degree ≠ 0 := fun h => h2 ((Finsupp.degree_eq_zero_iff _).1 h)
     have hdeg1 : y.1.degree < β.degree := by
-      rw [← hy, map_add]; omega
+      rw [← hy, map_add (f := _)]; omega
     rw [hF y.1 (fun j => lt_of_le_of_lt (hle j) (hβ j)) (by omega), zero_mul]
 
 lemma lowRed_pderiv {m : ℕ} (hp0 : (p : R) = 0) {P : MvPolynomial (Fin d) R}
@@ -143,7 +129,7 @@ lemma lowRed_pderiv {m : ℕ} (hp0 : (p : R) = 0) {P : MvPolynomial (Fin d) R}
       by_cases hij : i = j
       · subst hij; simpa using hlt
       · simpa [Finsupp.single_apply, Ne.symm hij] using hγ i
-    · rw [map_add, Finsupp.degree_single]; omega
+    · rw [map_add (f := _), Finsupp.degree_single]; omega
   · have h : γ j + 1 = p := by have := hγ j; omega
     have hc : ((γ j : R) + 1) = 0 := by
       have : ((γ j + 1 : ℕ) : R) = 0 := by rw [h, hp0]
@@ -168,7 +154,7 @@ lemma isPtDer_of {δ : A →ₗ[R] R} (h1 : δ 1 = 0)
   have hfg := h2 _ (by rw [pow_two]; exact Ideal.mul_mem_mul hf hg)
   have e : f * g = (f - algebraMap R A a) * (g - algebraMap R A b) + a • g + b • f - (a * b) • 1 := by
     simp only [Algebra.smul_def, map_mul, mul_one]; ring
-  rw [e, map_sub, map_add, map_add, hfg, map_smul, map_smul, map_smul, h1, smul_eq_mul,
+  rw [e, map_sub, map_add (f := _), map_add (f := _), hfg, map_smul, map_smul, map_smul, h1, smul_eq_mul,
     smul_eq_mul, smul_eq_mul]
   ring
 
@@ -179,7 +165,7 @@ section Core
 variable {R A : Type*} [CommRing R] [CommRing A] [Algebra R A] {d p : ℕ}
 
 lemma mem_span_pow_of_coeff {P : MvPolynomial (Fin d) R}
-    (h : ∀ β : Fin d →₀ ℕ, (∀ j, β j < p) → coeff β P = 0) :
+    (h : ∀ β : Fin d →₀ ℕ, (∀ j, β j < p) → AddMonoidAlgebra.coeff P β = 0) :
     P ∈ Ideal.span (Set.range fun j : Fin d => (X j : MvPolynomial (Fin d) R) ^ p) := by
   classical
   rw [P.as_sum]
@@ -187,7 +173,7 @@ lemma mem_span_pow_of_coeff {P : MvPolynomial (Fin d) R}
   have hnot : ¬ ∀ j, β j < p := fun h' => (mem_support_iff.1 hβ) (h β h')
   push Not at hnot
   obtain ⟨j, hj⟩ := hnot
-  have e : monomial β (coeff β P) = X j ^ p * monomial (β - Finsupp.single j p) (coeff β P) := by
+  have e : monomial β (AddMonoidAlgebra.coeff P β) = X j ^ p * monomial (β - Finsupp.single j p) (AddMonoidAlgebra.coeff P β) := by
     have hs : Finsupp.single j p + (β - Finsupp.single j p) = β := by
       ext l
       by_cases hl : j = l
@@ -218,7 +204,7 @@ theorem coeff_eq_zero_of_stable (ε : A →ₐ[R] R) (x : Fin d → A) (hx : ∀
     (hp0 : (p : R) = 0) (hunit : ∀ n, 0 < n → n < p → IsUnit (n : R))
     (K : Set A) (hK : ∀ a ∈ K, ε a = 0) (hKD : ∀ i, ∀ a ∈ K, D i a ∈ K)
     (P : MvPolynomial (Fin d) R) (hP : aeval x P ∈ K) :
-    ∀ β : Fin d →₀ ℕ, (∀ j, β j < p) → coeff β P = 0 := by
+    ∀ β : Fin d →₀ ℕ, (∀ j, β j < p) → AddMonoidAlgebra.coeff P β = 0 := by
   classical
   have hε : ∀ Q : MvPolynomial (Fin d) R, ε (aeval x Q) = constantCoeff Q := by
     intro Q
@@ -227,14 +213,14 @@ theorem coeff_eq_zero_of_stable (ε : A →ₐ[R] R) (x : Fin d → A) (hx : ∀
     rw [← AlgHom.comp_apply, e, aeval_zero']
     rfl
   have Z : ∀ m, ∀ Q : MvPolynomial (Fin d) R, aeval x Q ∈ K → LowRed p m Q →
-      ∀ α : Fin d →₀ ℕ, (∀ j, α j < p) → α.degree = m → coeff α Q = 0 := by
+      ∀ α : Fin d →₀ ℕ, (∀ j, α j < p) → α.degree = m → AddMonoidAlgebra.coeff Q α = 0 := by
     intro m
     induction m with
     | zero =>
       intro Q hQ _ α _ hα
       have h0 : α = 0 := (Finsupp.degree_eq_zero_iff α).1 hα
       subst h0
-      rw [← congrFun constantCoeff_eq Q, ← hε, hK _ hQ]
+      rw [← constantCoeff_eq Q, ← hε, hK _ hQ]
     | succ m ih =>
       intro Q hQ hlow α hα hdeg
       obtain ⟨i, hi⟩ : ∃ i, α i ≠ 0 := by
@@ -257,15 +243,16 @@ theorem coeff_eq_zero_of_stable (ε : A →ₐ[R] R) (x : Fin d → A) (hx : ∀
       set Q' : MvPolynomial (Fin d) R := ∑ j, pderiv j Q * T j with hQ'def
       have hQ' : aeval x Q' ∈ K := by
         have e : aeval x Q' = D i (aeval x Q) := by
-          rw [map_aeval_of_leibniz (D i) (hD i), hQ'def, map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_aeval_of_leibniz (D i) (hD i), hQ'def, map_sum]
           refine Finset.sum_congr rfl fun j _ => ?_
           rw [map_mul, hT]
         rw [e]; exact hKD i _ hQ
       have hsplit : ∀ j (γ : Fin d →₀ ℕ), γ.degree ≤ m → (∀ l, γ l < p) →
-          coeff γ (pderiv j Q * T j) = coeff γ (pderiv j Q) * (if i = j then 1 else 0) := by
+          AddMonoidAlgebra.coeff (pderiv j Q * T j) γ = AddMonoidAlgebra.coeff (pderiv j Q) γ * (if i = j then 1 else 0) := by
         intro j γ hγd hγ
         have e : T j = C (constantCoeff (T j)) + (T j - C (constantCoeff (T j))) := by ring
-        rw [e, mul_add, coeff_add, mul_comm (pderiv j Q) (C _), coeff_C_mul,
+        rw [e, mul_add, MvPolynomial.coeff_add, mul_comm (pderiv j Q) (C _), coeff_C_mul,
           lowRed_mul (G := T j - C (constantCoeff (T j))) (lowRed_pderiv hp0 hlow j) (by simp) γ hγ hγd,
           add_zero, hTc, mul_comm]
       have hlow' : LowRed p m Q' := by
@@ -277,7 +264,7 @@ theorem coeff_eq_zero_of_stable (ε : A →ₐ[R] R) (x : Fin d → A) (hx : ∀
         lt_of_le_of_lt (by rw [hβdef]; exact tsub_le_self) (hα j)
       have hβd : β.degree = m := by
         have := congrArg Finsupp.degree hαβ
-        rw [map_add, Finsupp.degree_single] at this
+        rw [map_add (f := _), Finsupp.degree_single] at this
         omega
       have h0 := ih Q' hQ' hlow' β hβr hβd
       rw [hQ'def, coeff_sum, Finset.sum_eq_single i] at h0

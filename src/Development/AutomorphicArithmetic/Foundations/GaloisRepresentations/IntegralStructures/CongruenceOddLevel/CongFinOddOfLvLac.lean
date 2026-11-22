@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.CongruenceOddLevel.NotApartOfOverPair
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.CongruenceOddLevel.ExistsEllType
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LinearIndependentSimulEigen
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.CongruenceOddLevel.NotApartOfOverPair
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.CongruenceOddLevel.ExistsEllType
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LinearIndependentSimulEigen
+
+@[expose] public section
 
 open GlobalTheory.Cong GlobalTheory.CongL GlobalTheory.CongW
 

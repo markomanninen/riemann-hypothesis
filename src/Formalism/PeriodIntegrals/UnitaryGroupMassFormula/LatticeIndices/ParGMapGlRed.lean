@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.CardNuGZmod
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.GlRedEqOneIff
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.CardNuGZmod
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.GlRedEqOneIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,8 @@ section Lift
 
 variable {R S : Type} [CommRing R] [CommRing S] (π : R →+* S) (hπ : Function.Surjective π)
 
-open Classical in
 
+open Classical in
 def lift (s : S) : R := if s = 0 then 0 else if s = 1 then 1 else Function.surjInv hπ s
 
 theorem lift_zero : lift π hπ 0 = 0 := by
@@ -85,11 +89,6 @@ theorem parG_map_glRed {P : Matrix (Fin k) (Fin k) A → Prop} {P' : Matrix (Fin
     rw [glRed_coe]
     exact map_lift π hπ _
 
-include hπ in
-
-theorem nuG_map_glRed : (nuG A r k).map (glRed π) = nuG B r k :=
-  parG_map_glRed π hπ _ _ (fun _ hh => isUpUni_map π (map_zero π) (map_one π) hh)
-    (fun _ hh => isUpUni_map _ (lift_zero π hπ) (lift_one π hπ) hh)
 
 end Par
 

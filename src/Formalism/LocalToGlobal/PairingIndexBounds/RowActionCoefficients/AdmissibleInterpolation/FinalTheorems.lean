@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.FockRSmulLeft
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.CoefProd
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.FockRSmulLeft
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.CoefProd
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -21,20 +25,20 @@ variable {O K Kc : Type} [CommRing O] [Field K] [Algebra O K] [Infinite K] [Fiel
   (h hi : B → Matrix (Fin n) (Fin n) K) (hh : ∀ b, hi b * h b = 1)
   (M : AddSubgroup Kc) (hM : ∀ (o : O), ∀ a ∈ M, algebraMap K Kc (algebraMap O K o) * a ∈ M)
   (Hg : B → GenR K n)
-  (hQ : ∀ b, (weyl O n n le_rfl (ν b)).map (toK O K) ≤ Submodule.span O (Set.range fun m => coeff m (Hg b)))
-  (Φ : MvPolynomial τ K →ₗ[K] Kc) (A : MvPolynomial τx Kc) (hA : ∀ m, coeff m A ∈ M)
+  (hQ : ∀ b, (weyl O n n le_rfl (ν b)).map (toK O K) ≤ Submodule.span O (Set.range fun m => AddMonoidAlgebra.coeff (Hg b) m))
+  (Φ : MvPolynomial τ K →ₗ[K] Kc) (A : MvPolynomial τx Kc) (hA : ∀ m, AddMonoidAlgebra.coeff A m ∈ M)
   (hnum : ∀ x : τx → K, Φ (∏ b, rename (em b) (rowAct K (hi b) (evX (fun s => x (xm b s)) (Hg b)))) =
     eval (fun t => algebraMap K Kc (x t)) A)
 
-include hxm hh hM hQ hA hnum in
 
+include hxm hh hM hQ hA hnum in
 theorem src_abs (hI : Interp) (hCP : CoefProd) (F : B → MvPolynomial (Fin n × Fin n) K)
     (hF : ∀ b, F b ∈ deltaL O K n (ν b) (h b)) : Φ (∏ b, rename (em b) (F b)) ∈ M := by
   classical
   have hh' : ∀ b, h b * hi b = 1 := fun b => mul_eq_one_comm.1 (hh b)
   let ψ : ∀ b, MvPolynomial (Fin n × Fin n) K →ₐ[K] MvPolynomial τ K := fun b => (rename (em b)).comp (rowAct K (hi b))
   let HH : MvPolynomial τx (MvPolynomial τ K) := ∏ b, rename (xm b) (map (ψ b : MvPolynomial (Fin n × Fin n) K →+* MvPolynomial τ K) (Hg b))
-  have hcoef : ∀ p : B → (ℕ × Fin n →₀ ℕ), coeff (∑ b, (p b).mapDomain (xm b)) HH = ∏ b, ψ b (coeff (p b) (Hg b)) := by
+  have hcoef : ∀ p : B → (ℕ × Fin n →₀ ℕ), AddMonoidAlgebra.coeff HH (∑ b, (p b).mapDomain (xm b)) = ∏ b, ψ b (AddMonoidAlgebra.coeff (Hg b) (p b)) := by
     intro p
     rw [hCP (MvPolynomial τ K) B (ℕ × Fin n) τx xm hxm]
     exact Finset.prod_congr rfl fun b _ => coeff_map _ _ _
@@ -51,17 +55,18 @@ theorem src_abs (hI : Interp) (hCP : CoefProd) (F : B → MvPolynomial (Fin n ×
     funext s
     show C (x (xm b s)) = ψ b (C (x (xm b s)))
     exact ((ψ b).commutes (x (xm b s))).symm
-  have hw : ∀ m, Φ (coeff m HH) = coeff m A := by
+  have hw : ∀ m, Φ (AddMonoidAlgebra.coeff HH m) = AddMonoidAlgebra.coeff A m := by
     intro m
     by_cases hm : m ∈ HH.support ∪ A.support
-    · have := hI K τx Kc (HH.support ∪ A.support) (fun m => Φ (coeff m HH) - coeff m A) ?_ m hm
+    · have := hI K τx Kc (HH.support ∪ A.support) (fun m => Φ (AddMonoidAlgebra.coeff HH m) - AddMonoidAlgebra.coeff A m) ?_ m hm
       · exact sub_eq_zero.1 this
       · intro x
         simp only [smul_sub]
         rw [Finset.sum_sub_distrib, sub_eq_zero]
-        have e1 : ∑ m ∈ HH.support ∪ A.support, (m.prod fun t k => x t ^ k) • Φ (coeff m HH) =
+        have e1 : ∑ m ∈ HH.support ∪ A.support, (m.prod fun t k => x t ^ k) • Φ (AddMonoidAlgebra.coeff HH m) =
             Φ (eval₂ (RingHom.id (MvPolynomial τ K)) (fun t => C (x t)) HH) := by
-          rw [eval₂_eq, map_sum, ← Finset.sum_subset Finset.subset_union_left]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [eval₂_eq, map_sum, ← Finset.sum_subset Finset.subset_union_left]
           · refine Finset.sum_congr rfl fun d _ => ?_
             rw [← map_smul]
             congr 1
@@ -69,7 +74,7 @@ theorem src_abs (hI : Interp) (hCP : CoefProd) (F : B → MvPolynomial (Fin n ×
             simp only [map_pow]
           · intro d _ hd
             rw [notMem_support_iff.1 hd, map_zero, smul_zero]
-        have e2 : ∑ m ∈ HH.support ∪ A.support, (m.prod fun t k => x t ^ k) • coeff m A =
+        have e2 : ∑ m ∈ HH.support ∪ A.support, (m.prod fun t k => x t ^ k) • AddMonoidAlgebra.coeff A m =
             eval (fun t => algebraMap K Kc (x t)) A := by
           rw [eval_eq, ← Finset.sum_subset Finset.subset_union_right]
           · refine Finset.sum_congr rfl fun d _ => ?_
@@ -84,20 +89,20 @@ theorem src_abs (hI : Interp) (hCP : CoefProd) (F : B → MvPolynomial (Fin n ×
     { carrier := {G | Φ G ∈ M}
       add_mem' := fun {a b} ha hb => by
         show Φ (a + b) ∈ M
-        rw [map_add]; exact M.add_mem ha hb
+        rw [map_add (f := _)]; exact M.add_mem ha hb
       zero_mem' := by show Φ 0 ∈ M; rw [map_zero]; exact M.zero_mem
       smul_mem' := fun o G hG => by
         show Φ (o • G) ∈ M
         rw [← algebraMap_smul K o G, map_smul, Algebra.smul_def]
         exact hM o _ hG }
-  refine prod_span (R := O) (fun b => Set.range fun m => ψ b (coeff m (Hg b))) T ?_ _ ?_
+  refine prod_span (R := O) (fun b => Set.range fun m => ψ b (AddMonoidAlgebra.coeff (Hg b) m)) T ?_ _ ?_
   · intro f hf
     choose p hp using hf
     show Φ _ ∈ M
     rw [← Finset.prod_congr rfl fun b _ => hp b, ← hcoef, hw]
     exact hA _
   · intro b
-    have h2 : rowAct K (h b) (F b) ∈ Submodule.span O (Set.range fun m => coeff m (Hg b)) := hQ b (hF b)
+    have h2 : rowAct K (h b) (F b) ∈ Submodule.span O (Set.range fun m => AddMonoidAlgebra.coeff (Hg b) m) := hQ b (hF b)
     have h3 : rename (em b) (F b) = ψ b (rowAct K (h b) (F b)) := by
       show _ = rename (em b) (rowAct K (hi b) (rowAct K (h b) (F b)))
       rw [rowAct_rowAct, hh' b, rowAct_one]

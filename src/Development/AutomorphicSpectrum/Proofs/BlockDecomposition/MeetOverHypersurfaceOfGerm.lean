@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StIrreducibleGermMeetOverHypersurface
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFiniteFibreGermIntegral
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StIrreducibleGermMeetOverHypersurface
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFiniteFibreGermIntegral
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.ComplexSets
 
@@ -28,7 +32,7 @@ theorem exists_hypersurface_of_monic_relation {σ : Type} [Fintype σ] {Y : Set 
         refine (hφ.pow n).add ?_
         refine Finset.analyticAt_fun_sum _ fun j _ => ?_
         have hc : AnalyticAt ℂ (fun z => a j.succ (A z)) w :=
-          AnalyticAt.comp' (ha j.succ) (A.analyticAt w)
+          AnalyticAt.fun_comp (ha j.succ) (A.analyticAt w)
         exact hc.mul (hφ.pow _)
       have hprod : ∀ᶠ z in 𝓝 w, z ∈ Y →
           φ z * (φ z ^ n + ∑ j : Fin n, a j.succ (A z) * φ z ^ (j : ℕ)) = 0 := by

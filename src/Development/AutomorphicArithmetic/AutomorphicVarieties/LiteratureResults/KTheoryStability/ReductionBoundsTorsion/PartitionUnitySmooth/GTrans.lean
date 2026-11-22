@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.Smoothing
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.RealVec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Realsurj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Grampd
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PartitionUnitySmooth.Smoothing
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.RealVec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Realsurj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.Grampd
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,7 +69,8 @@ private theorem exists_f (L : Type) [Field L] [NumberField L] (hC : IsTotallyCom
     have e : (((fun j => c (a, j)) ᵥ* M.adjugate) ᵥ* M) j = discr L * c (a, j) := by
       rw [vecMul_vecMul, adjugate_mul, vecMul_smul, vecMul_one, hD]; rfl
     rw [← e]
-    simp only [f, Finset.sum_mul, map_sum, smul_mul_assoc, map_zsmul, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [f, Finset.sum_mul, map_sum, smul_mul_assoc, map_zsmul, smul_eq_mul]
     rfl
   refine ⟨f, fun h0 => hc ?_, fun x => ?_⟩
   · funext ⟨a, j⟩

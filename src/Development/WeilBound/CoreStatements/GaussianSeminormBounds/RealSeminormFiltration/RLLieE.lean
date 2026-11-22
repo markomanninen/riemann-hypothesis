@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardTraceAdelicAddCharLocalComponentNeOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLLieB
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLLieD
-import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLFock
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.StandardTraceAdelicAddCharLocalComponentNeOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantAddChar
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLLieB
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLLieD
+public import Development.WeilBound.CoreStatements.GaussianSeminormBounds.RealSeminormFiltration.RLFock
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,12 +33,13 @@ theorem trace_nondeg (l : κ → mixedEmbedding.mixedSpace F)
   refine (mixedEmbedding.latticeBasis F).ext_elem fun j => ?_
   have := h (Pi.single i (mixedEmbedding F ((integralBasis F).traceDual j)))
   rw [dotProduct_single, ← (mixedEmbedding.latticeBasis F).sum_repr (l i)] at this
-  simp only [Finset.sum_mul, smul_mul_assoc, map_sum, map_smul, mixedEmbedding.latticeBasis_apply, ← map_mul, trace_emb,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_mul, smul_mul_assoc, map_sum, map_smul, mixedEmbedding.latticeBasis_apply, ← map_mul, trace_emb,
     Module.Basis.trace_mul_traceDual] at this
   simpa [apply_ite] using this
 
-variable (F κ) in
 
+variable (F κ) in
 structure Co (l : Type) [Fintype l] where
   e1 : (κ → mixedEmbedding.mixedSpace F) ≃L[ℝ] EuclideanSpace ℝ l
   e2 : (κ → mixedEmbedding.mixedSpace F) ≃ₗ[ℝ] EuclideanSpace ℝ l
@@ -113,9 +118,9 @@ theorem vec_ext {w w' : l ⊕ l → ℝ} (h1 : pPart w = pPart w') (h2 : qPart w
 
 theorem vec_add (w w') : c.vec (w + w') = c.vec w + c.vec w' := by
   refine vec_ext ?_ ?_
-  · rw [pPart_add, pPart_vec, pPart_vec, pPart_vec, ← map_add]
+  · rw [pPart_add, pPart_vec, pPart_vec, pPart_vec, ← map_add (f := _)]
     exact congrArg c.e1 (funext fun i => Fock.evI_add _ _)
-  · rw [qPart_add, qPart_vec, qPart_vec, qPart_vec, ← map_add]
+  · rw [qPart_add, qPart_vec, qPart_vec, qPart_vec, ← map_add (f := _)]
     exact congrArg c.e2 (funext fun i => Fock.evI_add _ _)
 
 theorem vec_smul (t : ℝ) (w) : c.vec (realAd F t • w) = t • c.vec w := by
@@ -143,7 +148,8 @@ theorem eq_zero_of_vec {p : (κ → AF F) × (κ → AF F)} (hp : At (evI F) p) 
 theorem sympl_vec (w w') : sympl (c.vec w) (c.vec w') =
     -Algebra.trace ℝ (mixedEmbedding.mixedSpace F) (evI F (w.1 ⬝ᵥ w'.2 - w'.1 ⬝ᵥ w.2)) := by
   rw [sympl, real_inner_comm, pPart_vec, qPart_vec, pPart_vec, qPart_vec, c.pair, c.pair, ← Fock.evIh_apply]
-  simp only [dotProduct, map_sub, map_sum, map_mul, Fock.evIh_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dotProduct, map_sub, map_sum, map_mul, Fock.evIh_apply]
   ring
 
 theorem schr_P {ψ : AddChar (AF F) ℂ} (hψ : IsStd ψ) {w : (κ → AF F) × (κ → AF F)} (hw : At (evI F) w) (f : Sch l)

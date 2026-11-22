@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.NuRecord
+module
+
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RootsOfUnity.NuRecord
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions
 

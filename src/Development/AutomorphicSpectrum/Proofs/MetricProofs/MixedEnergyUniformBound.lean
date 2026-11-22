@@ -1,12 +1,17 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
-import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
-import GroundTheory.HeightsAndTheta.Heights.SemipositiveHeights.TailBound
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Assembly
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PListTailLogSmooth
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LemmaETailMass
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
+public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
+public import GroundTheory.HeightsAndTheta.Heights.SemipositiveHeights.TailBound
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Assembly
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PListTailLogSmooth
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LemmaETailMass
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.ChartRestriction.G.Geo GroundTheory.Heights₂.Heights.LowerBoundFree
 
 namespace GlobalTheory.CompanionTheory.Ar.Giv

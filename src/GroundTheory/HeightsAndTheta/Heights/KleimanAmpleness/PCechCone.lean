@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsSerrePoly
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.Statements
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsSerrePoly
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -55,7 +60,7 @@ def onSet {i : ℕ} (s : Cech.Cochain (fun _ : StdCell N => V) i) (A : Finset (F
 theorem onSet_idx {i : ℕ} (s : Cech.Cochain (fun _ : StdCell N => V) i)
     (I : Cech.Idx (Finset.univ : Finset (Fin (N + 1))) i) : onSet s I.1.1 = s I := by
   unfold onSet
-  rw [dif_pos I.2]
+  rw [dite_eq_left I.2]
 
 theorem d_eq {i : ℕ} (s : Cech.Cochain (fun _ : StdCell N => V) i)
     (K : Cech.Idx (Finset.univ : Finset (Fin (N + 1))) (i + 1)) :
@@ -102,8 +107,8 @@ theorem const {z : Cech.Cochain (fun _ : StdCell N => V) 0}
 
 end Cech.Cone
 
-open Cech.Cone in
 
+open Cech.Cone in
 theorem Cech.Cone.proof : Cech.Cone.Statement.{u, v} := by
   intro R _ V _ _ N J
   refine ⟨?_, ?_, fun z hz I K => const hz I K⟩
@@ -139,7 +144,7 @@ theorem Cech.Cone.proof : Cech.Cone.Statement.{u, v} := by
           Cech.Cochain (fun _ : StdCell N => V) i) (K.1.1.erase j) = coneY i₀ z (K.1.1.erase j) := by
         intro j hj
         unfold onSet
-        rw [dif_pos (by rw [Finset.card_erase_of_mem hj, hK]; rfl)]
+        rw [dite_eq_left (by rw [Finset.card_erase_of_mem hj, hK]; rfl)]
       rw [Finset.sum_congr rfl fun j hj => by rw [hY j hj]]
       generalize K.1.1 = Kf at hK ⊢
       by_cases h : i₀ ∈ Kf

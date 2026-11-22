@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.EtaleComplexTensorPairingExists
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleComplexTensorPairingExists
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 open scoped TensorProduct DirectSum

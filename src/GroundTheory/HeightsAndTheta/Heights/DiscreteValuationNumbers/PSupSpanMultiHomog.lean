@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsMultiHomogIdealSpanSingleton
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsMultiHomogIdealSpanSingleton
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -8,11 +13,13 @@ open MvPolynomial
 
 attribute [local instance] MvPolynomial.weightedGradedAlgebra
 
-open scoped Classical in
 
+open scoped Classical in
 theorem isHomogeneous_of_isMultiHomogIdeal' {K : Type*} [DecidableEq K] {ι : K → Type*}
     {R : Type*} [CommRing R] {I : Ideal (MRing ι R)} (hI : IsMultiHomogIdeal I) :
-    I.IsHomogeneous (weightedHomogeneousSubmodule R (blockWeight ι)) := by
+    (by
+      classical
+      exact I.IsHomogeneous (weightedHomogeneousSubmodule R (blockWeight ι))) := by
   classical
   have e : I = Ideal.span
       {g | ∃ f ∈ I, ∃ b, g = weightedHomogeneousComponent (blockWeight ι) b f} := by

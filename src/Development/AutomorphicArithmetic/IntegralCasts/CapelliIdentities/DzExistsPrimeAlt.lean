@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qk5.dz_exists_prime :
     ∀ {F : Type} [inst : Field F] [NumberField F]

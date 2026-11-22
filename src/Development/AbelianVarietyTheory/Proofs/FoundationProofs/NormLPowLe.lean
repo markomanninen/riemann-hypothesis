@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsZetaSystemFixedExponent
-import Development.AbelianVarietyTheory.Definitions.Foundations.AdmissibleNewformZetaData
-import Development.AbelianVarietyTheory.Definitions.Foundations.AdmissibleHodgeTateZetaClassParams
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTPresNuOfPolys
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamF
-import Development.AbelianVarietyTheory.Definitions.Foundations.CoPtMu
-import Development.AbelianVarietyTheory.Definitions.Foundations.HtCoLOfEq
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsPrimitiveRootEOmLevel
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HtPresNu7MonoLoss
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PsumGaloisUnitPiece
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HtCoLSum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MapOneDirichlet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsZetaSystemFixedExponent
+public import Development.AbelianVarietyTheory.Definitions.Foundations.AdmissibleNewformZetaData
+public import Development.AbelianVarietyTheory.Definitions.Foundations.AdmissibleHodgeTateZetaClassParams
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTPresNuOfPolys
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsLamOfLSmulIff
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HtCoIOfEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CoPtMu
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HtCoLOfEq
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsPrimitiveRootEOmLevel
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HtPresNu7MonoLoss
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PsumGaloisUnitPiece
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HtCoLSum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MapOneDirichlet
+
+@[expose] public section
 
 noncomputable section
 
@@ -98,7 +103,8 @@ theorem sum_unitVal [IsAlgClosure ℚ Ω] (ε : Ω →+* ℂ) (j : Ω →+* Qbar
       funext i
       simpa [Finset.sum_apply] using h i
     have e2 := congrArg lam e
-    simpa [map_sum, map_smul] using e2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum, map_smul] using e2
   refine key _ _ _ fun i => ?_
   have h1 := hE (j ζ) hjζ i
   rw [toQ, ← hP, gaussS, ← map_pow, hrN] at h1
@@ -179,7 +185,7 @@ theorem law_of_parts [IsAlgClosure ℚ Ω] (A : ValuationSubring Ω) (cf : Coef 
           exact htCoL_of_eq A cf j _ m C y 0 (fun s => by simp)
         · simp only [hx, if_false]
           exact htCoL_mono (hc' x hx m (by omega) y (β y) t (hβ y).1 (hβ y).2 ht) (hle x))
-    convert h1 using 1
+    convert (preTransparency := .reducible) h1 using 1
     · funext r s y'
       rw [hZ]
       refine Finset.sum_congr rfl fun x _ => ?_
@@ -199,7 +205,8 @@ theorem law_of_parts [IsAlgClosure ℚ Ω] (A : ValuationSubring Ω) (cf : Coef 
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun b _ => Finset.mul_sum _ _ _
   beta_reduce
-  rw [hsw, hup, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsw, hup, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun x _ => ?_
   by_cases hx : cw x = 0
   · simp [hx]

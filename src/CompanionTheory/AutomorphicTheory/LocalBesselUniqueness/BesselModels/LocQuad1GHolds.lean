@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.WeightedGaugeFactors.FactsDS
-import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.BesselModels.EClose
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocQuad1GHolds
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.WeightedGaugeFactors.FactsDS
+public import CompanionTheory.AutomorphicTheory.LocalBesselUniqueness.BesselModels.EClose
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocQuad1GHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,8 +18,8 @@ namespace BM
 
 variable {D : D7}
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem locQuad1_G_holds (hI : CompanionTheory.Lime.BM.Inputs2) : LocQuad1_G := by
   intro D hG X w μSl νl C hQ v
   obtain ⟨τ, hτ⟩ : ∃ τ, vOf X τ = v := ⟨X.pl v, X.pl.symm_apply_apply v⟩
@@ -50,7 +54,11 @@ theorem locQuad1_G_holds (hI : CompanionTheory.Lime.BM.Inputs2) : LocQuad1_G := 
   have hfc : IsFiniteMeasureOnCompacts (μS w) := fin_of_weil _ (μS w) (ν w) hG0 hWe
   obtain ⟨c, hc0, hct, hceq⟩ := Formalism.L2.SG.RealObj.InfCut.JacobianCoordinates.JL.HC.unique_sf S hSc (μS w) (μSl (vOf X τ)) hne
     (by rw [hSset]; exact h0) (fun s hs => hli s hs) hfc hnel hsfl
-    (by rw [hSset]; exact measure_mono_null (fun x hx h' => hx (hNHsub x h')) hconcl)
+    (by
+      rw [hSset]
+      apply measure_mono_null (t := (Formalism.L2.SG.Pf.WuDec.NHloc X w (vOf X τ))ᶜ) _ hconcl
+      intro x hx h'
+      exact hx (hNHsub x h'))
     (fun s hs => hlil s (sloc_sub_NH X w _ hs))
 
   have hsub : MeasurableEmbedding (Subtype.val : S → Formalism.REAL.UJ (X.B.I.ε (vOf X τ))) :=

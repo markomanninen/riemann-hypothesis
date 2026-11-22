@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsBoundedMultipleNearInteger
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ExistsBoundedMultipleNearInteger
+
+@[expose] public section
+
 open Matrix Complex NumberField GlobalTheory.SW Filter Topology
 open ReciprocityTheory.ChartRestriction.G.FD (cc herm)
 open scoped ComplexConjugate ComplexOrder Real
@@ -22,7 +27,8 @@ theorem exists_reduce (E : Type) [Field E] [NumberField E] :
       rw [← Finset.sum_sub_distrib]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [Int.fract, sub_smul, Int.cast_smul_eq_zsmul]
-    rw [h, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h, map_sum]
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => ?_)
     rw [map_rat_smul, norm_smul]
     have h0 := Int.fract_nonneg (b.repr x i)
@@ -78,7 +84,8 @@ theorem exists_den {E : Type} [Field E] [NumberField E] {k : ℕ} {m : Type} [Fi
   refine ⟨d, hd, fun s hs i => ?_⟩
   have h1 : g (s ᵥ* W) = s := by simpa using LinearMap.congr_fun hg s
   have h2 : s ᵥ* W = ∑ j, (s ᵥ* W) j • (Pi.single j 1 : m → E) := pi_eq_sum_univ' _
-  rw [← h1, h2, map_sum, Finset.sum_apply, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← h1, h2, map_sum, Finset.sum_apply, Finset.mul_sum]
   refine IsIntegral.sum _ fun j _ => ?_
   rw [map_smul, Pi.smul_apply, smul_eq_mul, mul_left_comm]
   refine (hs j).mul ?_
@@ -185,8 +192,8 @@ end GlobalTheory.SW.NearPrim
 
 namespace GlobalTheory.SW
 
-open NearPrim in
 
+open NearPrim in
 theorem exists_nearly_primitive : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (k : ℕ), ∃ (c : ℕ) (C : ℝ), 0 < c ∧ ∀ (m : Type) [Fintype m] (W : Matrix (Fin k) m E), IntM W → LinearIndependent E (fun i => W i) → ∃ a : Matrix (Fin k) (Fin k) E, a.det ≠ 0 ∧ (∀ (τ : E →+* ℂ) i j, ‖τ (a i j)‖ ≤ C) ∧ IntM (a * W) ∧ ∀ t : Fin k → E, (∀ j, IsIntegral ℤ ((t ᵥ* (a * W)) j)) → ∀ i, IsIntegral ℤ ((c : E) * t i) := by
   intro E _ _ _ k
   obtain ⟨C, hC⟩ := exists_reduce E

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMHeightOneGeneral
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMLocusOpen
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSpecChartQuot
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMHeightOneGeneral
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StCMLocusOpen
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PSpecChartQuot
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

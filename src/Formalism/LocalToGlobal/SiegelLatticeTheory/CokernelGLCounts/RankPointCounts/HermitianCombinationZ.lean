@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHDef
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.InHHDef
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,9 +56,6 @@ private theorem hJ_conj_lemma (x y : Fin n → ℂ) : star (hJ ε x y) = hJ ε y
   simp only [Matrix.mulVec_diagonal, dotProduct, star_sum, star_mul', star_star, Pi.star_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
   split_ifs <;> simp [mul_comm]
-
-theorem hJ_swap {x y : Fin n → ℂ} (h : hJ ε x y = 0) : hJ ε y x = 0 := by
-  rw [← hJ_conj_lemma, h, star_zero]
 
 theorem hJ_mulVec (A : Matrix (Fin n) (Fin n) ℂ) (x y : Fin n → ℂ) :
     hJ ε (A *ᵥ x) (A *ᵥ y) = star x ⬝ᵥ ((Aᴴ * Formalism.REAL.Jm ε * A) *ᵥ y) := by

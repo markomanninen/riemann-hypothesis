@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerElements.CoefMapSingle
-import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerElements.SamePrimesMulPow
-import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerElements.SingleInvMulGroupRingSumOverUnitsInv
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerElements.CoefMapSingle
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerElements.SamePrimesMulPow
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.StickelbergerElements.SingleInvMulGroupRingSumOverUnitsInv
+
+@[expose] public section
 
 open Finset UpperTheory.V.Bern UpperTheory.V
 

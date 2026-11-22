@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IntegralBound
-import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LogMeanShares.LogMeanStatements.HSClaim
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IntegralBound
+public import Development.AbelianVarietyTheory.Definitions.Divisors.JoinCastSucc
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LogMeanShares.LogMeanStatements.HSClaim
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -35,40 +39,6 @@ def HtLow : Prop :=
   ∀ (F : Type) [Field F] [NumberField F] (B N n : ℕ) (w : Matrix (Fin N) (Fin n) F) (A : (F →+* ℂ) → Matrix (Fin N) (Fin N) ℂ)
     (Λ : ℝ), Lat w A Λ → ∀ (a : Fin B → ℕ) (G : MvPolynomial (Fin B × Fin N) F), G ≠ 0 → IsMultiHomogeneous a G →
       -(cst n Λ * ∑ b, (a b : ℝ)) ≤ ht w A G
-
-abbrev GenK (F : Type) [Field F] (D N : ℕ) : Type := FractionRing (MvPolynomial (Fin D × Fin N) F)
-
-def gen (F : Type) [Field F] (D N : ℕ) : Fin D → Fin N → GenK F D N :=
-  fun i j => algebraMap (MvPolynomial (Fin D × Fin N) F) _ (X (i, j))
-
-def normForm (K : Type) [Field K] {O : Type} [CommRing O] [Algebra K O] [Module.Finite K O] {N : ℕ} (r : Fin N → O) :
-    MvPolynomial (Fin 1 × Fin N) K :=
-  (∑ j, (X ((0 : Fin 1), j) : MvPolynomial (Fin 1 × Fin N) K) •
-    (Algebra.leftMulMatrix (Module.finBasis K O) (r j)).map (C : K → MvPolynomial (Fin 1 × Fin N) K)).det
-
-def Primitive {F : Type} [Field F] {D N : ℕ} (G : MvPolynomial (Fin (D + 1) × Fin N) F) : Prop :=
-  ∀ a : MvPolynomial (Fin D × Fin N) F, rename (Prod.map Fin.castSucc id) a ∣ G → IsUnit a
-
-def IsCh {F : Type} [Field F] {D N : ℕ} {O : Type} [CommRing O] [Algebra (GenK F D N) O] [Module.Finite (GenK F D N) O]
-    (r : Fin N → O) (G : MvPolynomial (Fin (D + 1) × Fin N) F) : Prop :=
-  (∃ c : GenK F D N, c ≠ 0 ∧ spec (gen F D N) G = C c * normForm (GenK F D N) r) ∧ Primitive G
-
-structure IsSection {F K : Type} [Field F] [Field K] [Algebra F K] {D N : ℕ} (I : Ideal (MvPolynomial (Fin N) F))
-    (s : Fin D → Fin N → K) {O : Type} [CommRing O] [Algebra K O] (r : Fin N → O) (e : ℕ) : Prop where
-  ne : ∀ τ : O →ₐ[K] AlgebraicClosure K, (fun j => τ (r j)) ≠ 0
-  on : ∀ τ : O →ₐ[K] AlgebraicClosure K, ∀ g ∈ I, aeval (fun j => τ (r j)) g = 0
-  cut : ∀ i, ∑ j, s i j • r j = 0
-  count : ∀ y : Fin N → AlgebraicClosure K, y ≠ 0 → (∀ g ∈ I, aeval y g = 0) →
-    (∀ i, ∑ j, algebraMap K _ (s i j) * y j = 0) →
-    Nat.card {τ : O →ₐ[K] AlgebraicClosure K // ∃ c : AlgebraicClosure K, (fun j => τ (r j)) = c • y} = e
-
-def ChowPower : Prop :=
-  ∀ (F : Type) [Field F] [CharZero F] (D N d : ℕ) (I : Ideal (MvPolynomial (Fin N) F))
-    (f : MvPolynomial (Fin (D + 1) × Fin N) F), IsChowForm I D d f →
-    ∀ (O : Type) [CommRing O] [Algebra (GenK F D N) O] [Module.Finite (GenK F D N) O] [Algebra.Etale (GenK F D N) O]
-      (r : Fin N → O) (e : ℕ), 1 ≤ e → IsSection I (gen F D N) r e →
-      Module.finrank (GenK F D N) O = e * d ∧ IsCh r (f ^ e) ∧
-        ∀ G, IsCh r G → (∃ c : F, c ≠ 0 ∧ G = C c * f ^ e) ∧ IsMultiHomogeneous (fun _ => Module.finrank (GenK F D N) O) G
 
 def HeightTie : Prop :=
   ∀ (F : Type) [Field F] [NumberField F] (T : HermSys F) (Λ : ℝ), Lat T.w T.A Λ → ∀ h, T.IsHeight h →
@@ -257,8 +227,8 @@ structure GeoHyp {F : Type} [Field F] [NumberField F] (X : Data F) (Λ₀ : ℝ)
   big : IsBig F X.LA
   nef₂ : IsNef F X.L₂
   big₂ : IsBig F X.L₂
-  mulStable : X.MulStable
-  mulBound : X.MulBound fun _ => X.beta
+  mulStable : Data.MulStable X
+  mulBound : Data.MulBound X fun _ => X.beta
   normsLe : X.NormsLe
   one_le_Lam : 1 ≤ X.abelian₂
   hermSysHyp_one_le_lambdaZero : 1 ≤ Λ₀
@@ -269,8 +239,5 @@ structure GeoHyp {F : Type} [Field F] [NumberField F] (X : Data F) (Λ₀ : ℝ)
 def GeoBound : Prop :=
   ∀ (F : Type) [Field F] [NumberField F] (X : Data F) (Λ₀ : ℝ), GeoHyp X Λ₀ → ∀ h, X.IsHeight h →
     Formalism.NormVectorIdentities.Items.HSClaimS 26 X.T X.D X.n 1 X.abelian₂ X.beta X.LamD X.LamT (Real.log Λ₀) X.del h X.d (X.degM X.T)
-
-example {K A : Type} [Field K] [AddCommGroup A] [Module K A] {N : ℕ} (mul : (Fin N → K) →ₗ[K] Module.End K A)
-    (u : Fin 0 → Fin N → K) : word mul u = 1 := by simp [word]
 
 end GlobalTheory.HSShort

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.RestrictedCharpolys.ContinuousEF
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.RestrictedCharpolys.ContinuousEF
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,8 +30,8 @@ theorem eI_add (w w' : Fin (n * d) → k) : eI B (w + w') = eI B w + eI B w' := 
   funext i
   simp only [eI, Pi.add_apply, add_pow_char_pow, add_mul, Finset.sum_add_distrib]
 
-omit [ValuativeRel k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [IsNonarchimedeanLocalField k] in
 theorem φ_ψ_of_comm (y : Matrix (Fin (n * d)) (Fin (n * d)) k)
     (hy : ∀ b : k, φ B (algebraMap k _ b) * y = y * φ B (algebraMap k _ b)) : φ B (ψ B y) = y := by
   have hsm : ∀ (b : k) (v : Fin n → k), b • v = algebraMap k (Matrix (Fin n) (Fin n) k) b *ᵥ v := by

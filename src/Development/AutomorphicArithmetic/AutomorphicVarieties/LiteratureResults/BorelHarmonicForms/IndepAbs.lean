@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.Af UpperTheory.V.AlgRepEndIrreducible UpperTheory.V.Lit UpperTheory.V.Lit.Bor
 open scoped TensorProduct
@@ -11,7 +15,7 @@ theorem UpperTheory.V.Lit.Bor.indepAbs :
       ∀ o, ∀ x ∈ P ⊔ Q, A o x ∈ P ⊔ Q := by
     intro P Q hP hQ o x hx
     obtain ⟨y, hy, z, hz, rfl⟩ := Submodule.mem_sup.mp hx
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (hP o y hy) (hQ o z hz)
   have hfs : ∀ t : Finset (Fin s), ∀ o, ∀ x ∈ t.sup V, A o x ∈ t.sup V := by
     intro t
@@ -60,7 +64,7 @@ theorem UpperTheory.V.Lit.Bor.indepAbs :
         obtain ⟨y, hy, z, hz, hyz⟩ := Submodule.mem_sup.mp (hle x.2)
         refine ⟨⟨y, hy⟩, ?_⟩
         show S.mkQ y = S.mkQ x
-        rw [← hyz, map_add, Submodule.mkQ_apply S z, (Submodule.Quotient.mk_eq_zero S).mpr hz,
+        rw [← hyz, map_add (f := _), Submodule.mkQ_apply S z, (Submodule.Quotient.mk_eq_zero S).mpr hz,
           add_zero]
       let T : V i →ₗ[ℂ] V j := ej.symm.toLinearMap ∘ₗ (fi.codRestrict (LinearMap.range fj) hrange)
       have hT : ∀ x : V i, ((T x : W) - x) ∈ S := by

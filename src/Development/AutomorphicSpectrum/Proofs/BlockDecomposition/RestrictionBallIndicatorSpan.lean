@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MvecLeviMulUv
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsMemTwKerPolyBall
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothIntegralLinear
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MvecLeviMulUv
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsMemTwKerPolyBall
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothIntegralLinear
+
+@[expose] public section
 
 noncomputable section
 
@@ -128,7 +132,7 @@ theorem exists_twisted_integral : ∀ (k : Type) [Field k] [ValuativeRel k] [Top
       map_add' := fun f g => by
         have e : tw ψ (r (f + g)) = tw ψ (r f) + tw ψ (r g) := by
           funext v
-          simp [tw, map_add, smul_add]
+          simp [tw, map_add (f := _), smul_add]
         show smInt μ (tw ψ (r (f + g))) = smInt μ (tw ψ (r f)) + smInt μ (tw ψ (r g))
         rw [e, smInt_add μ (hl f) (hc f) (hl g) (hc g)]
       map_smul' := fun c f => by

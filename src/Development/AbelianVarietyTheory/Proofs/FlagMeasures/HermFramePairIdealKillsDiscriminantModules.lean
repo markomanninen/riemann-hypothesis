@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLocalizedModuleSubtype
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemOfForall
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFlagPairingCramerOfLeadingCoeffs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLocalizedModuleSubtype
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemOfForall
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermFlagPairingCramerOfLeadingCoeffs
+
+@[expose] public section
+
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt
 open scoped Pointwise ENNReal Classical
 
@@ -401,7 +406,7 @@ theorem kill_ideal_V0 (N : NF H r) {Λ : Submodule (𝓞 K) V}
   obtain ⟨o₁, ho₁⟩ := Submodule.mem_one.1 hβ
   obtain ⟨o₂, ho₂⟩ := Submodule.mem_one.1 hβ2
   have ho : (γ₁ : K) * γ₂ * β = algebraMap (𝓞 K) K (-(δ * (γ₁ * o₁ + o₂))) := by
-    rw [map_neg, map_mul, map_add, map_mul, ho₁, ho₂, hδ]
+    rw [map_neg, map_mul, map_add (f := _), map_mul, ho₁, ho₂, hδ]
     show (γ₁ : K) * algebraMap (𝓞 K) K _ * β = -((δ : K) * ((γ₁ : K) * _ + _))
     rw [map_mul, map_natCast]
     show (γ₁ : K) * (_ * (δ : K)) * β = _
@@ -434,7 +439,9 @@ theorem kill_Th (N : NF H r) {Λ : Submodule (𝓞 K) V} (hU : IsUnimod H Λ) (h
         (x : K) * y / Dl N.F N.F' l hl ∈ (1 : Submodule (𝓞 K) K) ∧
         (x : K) * y / star (Dl N.F N.F' l hl) ∈ (1 : Submodule (𝓞 K) K)) :
     𝔠 ^ 3 • dual H (latTh N.F N.F' Λ) ≤ latTh N.F N.F' Λ := by
-  have hL := (isLatMod_top_bot_iff Λ).1 hU.1
+  have hL₀ := (isLatMod_top_bot_iff Λ).1 hU.1
+  have hL : Submodule.IsFullLattice K Λ :=
+    { toIsLattice := Submodule.IsLattice.of_fg K hL₀.1, span_eq_top := hL₀.2 }
   have hint : ∀ y ∈ Λ, ∀ x ∈ Λ, H.B y x ∈ (1 : Submodule (𝓞 K) K) := by
     intro y hy
     rw [← hU.2, mem_dual_iff] at hy
@@ -467,7 +474,9 @@ theorem kill_Th (N : NF H r) {Λ : Submodule (𝓞 K) V} (hU : IsUnimod H Λ) (h
       γ₁ • γ₂ • γ₃ • y ∈ latTh N.F N.F' Λ := by
     intro γ₁ h₁ γ₂ h₂ γ₃ h₃ y hy
     rw [mem_dual_iff] at hy
-    have hyW : y ∈ W := (Submodule.span_le.2 fun x hx => hx.2) hy.1
+    have hyW : y ∈ W :=
+      (show Submodule.span K (latTh N.F N.F' Λ : Set V) ≤ W from
+        Submodule.span_le.2 fun x hx => hx.2) hy.1
     have hx : ∀ x : ↥(Λ ⊓ rs (𝓞 K) W), IsIntegral ℤ (H.B x y) := by
       intro x
       rw [← mem_one_iff, ← H.herm]

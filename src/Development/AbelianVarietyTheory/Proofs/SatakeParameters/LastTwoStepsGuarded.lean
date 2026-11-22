@@ -1,10 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.RedPEqZeroOfDiv
-import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.FourierColumnIndicator
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemZmuOfPowPred
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ChainDataGuarded
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ContinuousOfInvariant
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.RedPEqZeroOfDiv
+public import Development.AbelianVarietyTheory.BlockTheory.ThetaLiftGeometry.FourierColumnIndicator
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemZmuOfPowPred
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ChainDataGuarded
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col GlobalTheory.TopStep GlobalTheory.IndefiniteRowSideFullHecke.FourierColumnIndicator
@@ -44,7 +47,7 @@ section Til
 
 variable {E : Type} [Field E] [NumberField E] [StarRing E] {N n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 E))}
 
-theorem mem_tilH (hN : N = n + 1) (d : DecoSet E n ∅ SG) {pi : 𝓞 E} (hT : ∀ P : ST, cO E pi ∉ P.1.asIdeal)
+theorem mem_tilH (hN : N = n + 1) (d : DecoSet (E := E) (n := n) (ST := ∅) (SG := SG)) {pi : 𝓞 E} (hT : ∀ P : ST, cO E pi ∉ P.1.asIdeal)
     (hG : ∀ w : SG, pi ∉ w.1.asIdeal) (Q : HeightOneSpectrum (𝓞 E)) (v : Sp E N) :
     v ∈ localization₂ Q.asIdeal (DecoSet.tilH (ST := ST) hN pi d).1.N ↔
       prH E hN v ∈ localization₂ Q.asIdeal d.1.N ∧ IntAt Q (v (Br.iL hN)) := by
@@ -71,7 +74,7 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks} (Ch : Chars X Pr R.m)
 theorem atNL_last (v : Sp X.E (R.N R.m)) : atNL X.E (R.N R.m) (R.N R.m - 1) v = v (Br.iL (N_m_succ R)) := by
   have h : R.N R.m - 1 < R.N R.m := (Br.iL (N_m_succ R)).2
   unfold atNL
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   rfl
 
 theorem good_ftY (hc : cst.Ok) (P : rowSG Pr sel mu) (hP : P.1 ∈ Pr.vGs) {n : ℕ} {y : Sp X.E n}
@@ -195,7 +198,7 @@ theorem fnMod_topDatum (hc : cst.Ok) {m2 : ℕ} (hm : R.m = m2 + 2) (P : rowSG P
 theorem frsF_mem {u : Pr.Word} {j : ℕ} (p : ChPt (R := R) sel mu u j) (P : rowSG Pr sel mu) (hP : P.1 ∈ Pr.vGs)
     (x : Sp X.E (R.N j)) : frsF sel mu p P x ∈ localization₂ P.1.asIdeal p.deco.1.N ↔ x ∈ stdAt X.E (R.N j) P.1 := by
   unfold frsF
-  rw [dif_pos hP]
+  rw [dite_eq_left hP]
   exact (liftFr_spec p.deco.2 ⟨P.1, hP⟩).1 x
 
 theorem frsF_symm_mem {u : Pr.Word} {j : ℕ} (p : ChPt (R := R) sel mu u j) (P : rowSG Pr sel mu) (hP : P.1 ∈ Pr.vGs)

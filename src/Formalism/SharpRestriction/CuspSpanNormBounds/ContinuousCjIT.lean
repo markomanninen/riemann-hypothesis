@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.OnePlaceEstimates
-import Formalism.SharpRestriction.CuspSpanNormBounds.RootMeasBig
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.OnePlaceEstimates
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RootMeasBig
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset
 
@@ -71,9 +75,6 @@ theorem cj_mul (hκ : 0 < κ) (hτ : 0 < τ) (x y : Mx k r) :
     cj k r κ τ (x * y) = cj k r κ τ x * cj k r κ τ y := by
   simp only [cj, Matrix.mul_assoc]
   rw [← Matrix.mul_assoc (dM k r κ τ) (dMi k r κ τ), dM_mul_dMi hκ hτ, Matrix.one_mul]
-
-theorem cj_one (hκ : 0 < κ) (hτ : 0 < τ) : cj k r κ τ 1 = 1 := by
-  rw [cj, Matrix.mul_one, dMi_mul_dM hκ hτ]
 
 theorem dM_inv (hκ : 0 < κ) (hτ : 0 < τ) : (dM k r κ τ)⁻¹ = dMi k r κ τ :=
   Matrix.inv_eq_left_inv (dMi_mul_dM hκ hτ)

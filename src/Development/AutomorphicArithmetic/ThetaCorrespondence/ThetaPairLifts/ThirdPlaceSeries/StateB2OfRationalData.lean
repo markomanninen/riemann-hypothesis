@@ -1,10 +1,16 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StateB2OfRationalData
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RootsOfUnityRingLeWittIntegers
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SameGaloisLevelExists
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TwistSettingsUnread
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GoodLEq
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StateB2OfRationalData
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SideTw
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CohomologicalCsdTempered
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RootsOfUnityRingLeWittIntegers
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeckeOpen
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SameGaloisLevelExists
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TwistSettingsUnread
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.IsRecTOfIsRec
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 
@@ -70,7 +76,8 @@ theorem exists_in_mt_theta_twist_pv_eq (x : St P) (l : _root_.GlobalTheory.Heigh
                 rat := (by with_unfolding_all exact (l.mt.ad.rat :))
                 wt := (by with_unfolding_all exact (l.mt.ad.wt :))
                 id := (by with_unfolding_all exact (l.mt.ad.id :)) }
-            mt := (by with_unfolding_all exact (((_root_.GlobalTheory.HeightCounting.twist_settings_unread_alt (Dof x) (cfOf x) l.a.jE l.a.A (thTw (Dof x) th)).2.1 _ _ _ l.mt.mt) :)) }, rfl⟩
+            mt := by
+              with_unfolding_all exact LiTw.mtIn (thTw (Dof x) th) l.mt.mt }, rfl⟩
 end MtCopy
 end GlobalTheory.HeightCounting.Up
 end

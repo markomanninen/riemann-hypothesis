@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.SmallCones.ConstantTermRationalUnipotentInvariant
-import Development.WeilBound.ThetaLifts.SmallCones.ContinuousEvI
-import Development.WeilBound.ThetaLifts.SmallCones.ThetaKernelGeneralIdentity
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.ConstantTermRationalUnipotentInvariant
+public import Development.WeilBound.ThetaLifts.SmallCones.ContinuousEvI
+public import Development.WeilBound.ThetaLifts.SmallCones.ThetaKernelGeneralIdentity
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 

@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.HeckeAlgebraActions.BackStable
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.QuantumDeterminantTensorStatement
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.HeckeAlgebraActions.BackStable
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.QuantumDeterminantTensorStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,8 @@ def qdetPoly {n : ℕ} (E : Fin n → Fin n → A) : A[X] :=
 
 theorem evAt_qdetPoly {n : ℕ} (E : Fin n → Fin n → A) (u : ℂ) : evAt u (qdetPoly E) = qdet E u := by
   unfold qdet qminor qdetPoly
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun σ _ => ?_
   rw [map_mul, map_intCast, map_list_prod, List.map_ofFn]
   simp [Function.comp_def, evAt_tmPoly]
@@ -55,7 +60,8 @@ theorem cont {M : Type*} [AddCommGroup M] [Module ℂ M] (p : (Module.End ℂ M)
       rw [← map_pow, RingHom.id_apply, ← Algebra.commutes, ← Algebra.smul_def]
       rfl
     rw [e1, hr]
-    simp [eval_finsetSum, map_sum, eval_monomial, mul_comm]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [eval_finsetSum, map_sum, eval_monomial, mul_comm]
   have hz : r = 0 := by
     refine eq_zero_of_infinite_isRoot r ?_
     refine Set.Infinite.mono (s := {b}ᶜ) ?_ (Set.finite_singleton b).infinite_compl

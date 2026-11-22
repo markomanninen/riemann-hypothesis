@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.TateCohomology.AugmentationSES
-import GroundTheory.TateCohomology.TateConnecting
-import GroundTheory.TateCohomology.TateLow
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.AugmentationSES
+public import GroundTheory.TateCohomology.TateConnecting
+public import GroundTheory.TateCohomology.TateLow
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open CategoryTheory MonoidalCategory groupCohomology
@@ -101,15 +106,15 @@ termination_by (1 - p).toNat + (1 - q).toNat
 decreasing_by all_goals omega
 
 theorem tateCup_of_nonpos {p : ℤ} (q : ℤ) (hp : p ≤ 0) : tateCup (k := k) (G := G) p q = tateCupL (tateCup (p + 1) q) := by
-  rw [tateCup, dif_pos hp]
+  rw [tateCup, dite_eq_left hp]
 
 theorem tateCup_of_pos_of_nonpos {p q : ℤ} (hp : 0 < p) (hq : q ≤ 0) :
     tateCup (k := k) (G := G) p q = tateCupR (tateCup p (q + 1)) := by
-  rw [tateCup, dif_neg (by omega), dif_pos hq]
+  rw [tateCup, dite_eq_right (by omega), dite_eq_left hq]
 
 theorem tateCup_of_pos {p q : ℤ} (hp : 0 < p) (hq : 0 < q) :
     tateCup (k := k) (G := G) p q = tateCupBase p q (by omega) (by omega) := by
-  rw [tateCup, dif_neg (by omega), dif_neg (by omega)]
+  rw [tateCup, dite_eq_right (by omega), dite_eq_right (by omega)]
 
 theorem tateLeftIso_hom (A B : Rep.{u} k G) (r : ℤ) :
     (tateLeftIso A B r).hom = tδ (augSES_tensorRight_shortExact A B) r (r + 1) rfl := rfl
@@ -173,8 +178,8 @@ section Anticomm
 
 variable {E : ShortComplex (Rep.{u} k G)} (hE : E.ShortExact)
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem tateRightIso_tδ (B : Rep.{u} k G) (hEB : (E.map (tensorRight B)).ShortExact) (r : ℤ)
     (z : tateCohomology (E.X₃ ⊗ B) r) :
     (tateRightIso E.X₁ B (r + 1)).hom.hom ((tδ hEB r (r + 1) rfl).hom z) =
@@ -187,8 +192,8 @@ theorem tateRightIso_tδ (B : Rep.{u} k G) (hEB : (E.map (tensorRight B)).ShortE
   have e := congr(($key).hom z)
   exact e
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem tateLeftIso_tδ (B : Rep.{u} k G) (hEB : (E.map (tensorRight B)).ShortExact) (r : ℤ)
     (z : tateCohomology (E.X₃ ⊗ B) r) :
     (tateLeftIso E.X₁ B (r + 1)).hom.hom ((tδ hEB r (r + 1) rfl).hom z) =
@@ -202,8 +207,8 @@ theorem tateLeftIso_tδ (B : Rep.{u} k G) (hEB : (E.map (tensorRight B)).ShortEx
   have e := congr(($key).hom z)
   exact e
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem augShiftδ_tδ (p : ℤ) (a : tateCohomology E.X₃ p) :
     (augShiftδ E.X₁ (p + 1)).hom ((tδ hE p (p + 1) rfl).hom a) =
       -(tδ (shortExact_tensorLeft_of_flat hE (augIdeal k G)) (p + 1) (p + 1 + 1) rfl).hom
@@ -215,8 +220,8 @@ theorem augShiftδ_tδ (p : ℤ) (a : tateCohomology E.X₃ p) :
   have e := congr(($key).hom a)
   exact e
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem tateLeftIso_tδ' (A : Rep.{u} k G) (hAE : (E.map (tensorLeft A)).ShortExact) (r : ℤ)
     (z : tateCohomology (A ⊗ E.X₃) r) :
     (tateLeftIso A E.X₁ (r + 1)).hom.hom ((tδ hAE r (r + 1) rfl).hom z) =
@@ -230,8 +235,8 @@ theorem tateLeftIso_tδ' (A : Rep.{u} k G) (hAE : (E.map (tensorLeft A)).ShortEx
   have e := congr(($key).hom z)
   exact (neg_eq_iff_eq_neg.mpr e).symm
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem tateRightIso_tδ' (A : Rep.{u} k G) (hAE : (E.map (tensorLeft A)).ShortExact) (r : ℤ)
     (z : tateCohomology (A ⊗ E.X₃) r) :
     (tateRightIso A E.X₁ (r + 1)).hom.hom ((tδ hAE r (r + 1) rfl).hom z) =
@@ -271,8 +276,8 @@ theorem tateIsoH_tateCup {p q r : ℤ} {n m l : ℕ} [NeZero n] [NeZero m] [NeZe
   simp only [tateCupBase, LinearMap.compr₂_apply, LinearMap.compl₁₂_apply]
   exact (tateIsoH (A ⊗ B) l l rfl).inv_hom_id_apply _
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem tateCup_connecting_left (m : ℕ) : ∀ (p q : ℤ), (1 - p).toNat + (1 - q).toNat = m →
     ∀ {E : ShortComplex (Rep.{u} k G)} (hE : E.ShortExact) (B : Rep.{u} k G)
       (hEB : (E.map (tensorRight B)).ShortExact) (r : ℤ) (h : p + q = r)
@@ -301,7 +306,6 @@ theorem tateCup_connecting_left (m : ℕ) : ∀ (p q : ℤ), (1 - p).toNat + (1 
     erw [ih _ (by omega) p (q + 1) rfl hE (augIdeal k G ⊗ B)
       (shortExact_tensorRight_tensor hE B (augIdeal k G) hEB) (r + 1) (by omega) a _]
     rw [tsgn_add_one, neg_smul]
-    rfl
   · obtain ⟨n, rfl⟩ : ∃ n : ℕ, p = n := ⟨p.toNat, by omega⟩
     obtain ⟨m', rfl⟩ : ∃ m' : ℕ, q = m' := ⟨q.toNat, by omega⟩
     obtain ⟨l, rfl⟩ : ∃ l : ℕ, r = l := ⟨r.toNat, by omega⟩
@@ -325,8 +329,8 @@ theorem tateCup_connecting_left (m : ℕ) : ∀ (p q : ℤ), (1 - p).toNat + (1 
       ((tateIsoH B m' m' rfl).hom.hom b)) e4.symm).trans ?_
     exact e5.symm
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem tateCup_connecting_right (m : ℕ) : ∀ (p q : ℤ), (1 - p).toNat + (1 - q).toNat = m →
     ∀ {E : ShortComplex (Rep.{u} k G)} (hE : E.ShortExact) (A : Rep.{u} k G)
       (hAE : (E.map (tensorLeft A)).ShortExact) (r : ℤ) (h : p + q = r)
@@ -381,8 +385,8 @@ theorem tateCup_connecting_right (m : ℕ) : ∀ (p q : ℤ), (1 - p).toNat + (1
       ((tateIsoH A n n rfl).hom.hom a) y) e4.symm).trans ?_
     exact e5.symm
 
-set_option backward.isDefEq.respectTransparency false in
 
+set_option backward.isDefEq.respectTransparency false in
 theorem tateIsoH_tδ_homologyπ {S : ShortComplex (Rep.{u} k G)} (hS : S.ShortExact) (n : ℕ)
     (z : (tateComplex S.X₃).cycles n) :
     (tateIsoH S.X₁ (n + 1) (n + 1) (Nat.cast_succ n).symm).hom.hom

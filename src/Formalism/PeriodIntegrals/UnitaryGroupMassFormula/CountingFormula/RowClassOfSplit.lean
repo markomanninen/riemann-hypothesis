@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.StabFSymmMemPerp
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountingFormula.StabFSymmMemPerp
+
+@[expose] public section
 
 open NumberField Module Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.BasicNotions Formalism.L2.SG.CntLocal
 open Classical
@@ -77,12 +81,14 @@ theorem hT_f_e (hf : IsDualF F0 f) (a b : Fin D.R.rS) :
 
 theorem hT_e_yc (hf : IsDualF F0 f) (a : Fin D.R.rS) (v : (VS D).V) :
     (VS D).hT (F0.e a) (ycL F0 f v) = (VS D).hT (F0.e a) v := by
-  rw [ycL_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ycL_apply, map_sum]
   simp [hf.1]
 
 theorem hT_f_xc (hf : IsDualF F0 f) (a : Fin D.R.rS) (v : (VS D).V) :
     (VS D).hT (f a) (xcL F0 f v) = (VS D).hT (f a) v := by
-  rw [xcL_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [xcL_apply, map_sum]
   simp [hT_f_e hf]
 
 theorem xc_mem_X (v : (VS D).V) : xcL F0 f v ∈ F0.X := by
@@ -100,7 +106,7 @@ theorem xc_of_X (hf : IsDualF F0 f) {x : (VS D).V} (hx : x ∈ F0.X) : xcL F0 f 
     rw [xcL_apply]
     simp [hT_f_e hf]
   | zero => simp
-  | add w w' _ _ h1 h2 => rw [map_add, h1, h2]
+  | add w w' _ _ h1 h2 => rw [map_add (f := _), h1, h2]
   | smul c w _ h => rw [map_smul, h]
 
 theorem yc_of_span (hf : IsDualF F0 f) {y : (VS D).V} (hy : y ∈ Submodule.span D.host.E (Set.range f)) :
@@ -111,7 +117,7 @@ theorem yc_of_span (hf : IsDualF F0 f) {y : (VS D).V} (hy : y ∈ Submodule.span
     rw [ycL_apply]
     simp [hf.1]
   | zero => simp
-  | add w w' _ _ h1 h2 => rw [map_add, h1, h2]
+  | add w w' _ _ h1 h2 => rw [map_add (f := _), h1, h2]
   | smul c w _ h => rw [map_smul, h]
 
 theorem xc_of_perpf {u : (VS D).V} (hu : ∀ a, (VS D).hT (f a) u = 0) : xcL F0 f u = 0 := by
@@ -174,7 +180,7 @@ theorem hT_split (hf : IsDualF F0 f) (v w : (VS D).V) :
   have A3 : (VS D).hT (ycL F0 f v) (ycL F0 f w) = 0 := hspan_span hf (yc_mem_span v) (yc_mem_span w)
   have e : (VS D).hT v w = (VS D).hT ((v - ycL F0 f v) + ycL F0 f v) ((w - ycL F0 f w) + ycL F0 f w) := by
     rw [sub_add_cancel, sub_add_cancel]
-  rw [e, map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, A1, A2, A3]
+  rw [e, map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, A1, A2, A3]
   ring
 
 theorem sub_yc_perp (hf : IsDualF F0 f) (v : (VS D).V) : v - ycL F0 f v ∈ perpS (VS D) F0.X :=
@@ -237,7 +243,7 @@ theorem gL_apply (σ : WbQ D F0 →ₗ[D.host.E] WbQ D F0) (hf : IsDualF F0 f) (
 variable (σ : WbQ D F0 →ₗ[D.host.E] WbQ D F0) (hf : IsDualF F0 f) (hf' : IsDualF F0 f')
 
 theorem gL_yc (v : (VS D).V) : ycL F0 f' (gL σ hf hf' v) = ycL F0 f' v := by
-  rw [gL_apply, map_add, map_add, yc_of_perp (X_le_perp F0 (xc_mem_X _)), yc_of_perp (iotaL_perp hf' _),
+  rw [gL_apply, map_add (f := _), map_add (f := _), yc_of_perp (X_le_perp F0 (xc_mem_X _)), yc_of_perp (iotaL_perp hf' _),
     yc_of_span hf' (yc_mem_span _), zero_add, zero_add]
 
 theorem gL_sub_yc (v : (VS D).V) :
@@ -246,11 +252,11 @@ theorem gL_sub_yc (v : (VS D).V) :
 
 theorem gL_xc (v : (VS D).V) :
     xcL F0 f' (xcL F0 f (v - ycL F0 f v) + iotaL hf' (σ (pL hf v))) = xcL F0 f (v - ycL F0 f v) := by
-  rw [map_add, xc_of_X hf' (xc_mem_X _), xc_of_perpf (iotaL_f hf' _), add_zero]
+  rw [map_add (f := _), xc_of_X hf' (xc_mem_X _), xc_of_perpf (iotaL_f hf' _), add_zero]
 
 theorem hX_gL {x : (VS D).V} (hx : x ∈ F0.X) (w : (VS D).V) :
     (VS D).hT x (gL σ hf hf' w) = (VS D).hT x w := by
-  rw [gL_apply, map_add, map_add, hX_X F0 hx (xc_mem_X _), hX_perp F0 hx (iotaL_perp hf' _), hX_yc hf' hx,
+  rw [gL_apply, map_add (f := _), map_add (f := _), hX_X F0 hx (xc_mem_X _), hX_perp F0 hx (iotaL_perp hf' _), hX_yc hf' hx,
     zero_add, zero_add]
 
 theorem gL_isom (hσ : ∀ m m', hWb D F0 (σ m) (σ m') = hWb D F0 m m') (v w : (VS D).V) :
@@ -261,7 +267,7 @@ theorem gL_isom (hσ : ∀ m m', hWb D F0 (σ m) (σ m') = hWb D F0 m m') (v w :
   have h1 := hX_X F0 (xc_mem_X (f := f) (v - ycL F0 f v)) (xc_mem_X (f := f) (w - ycL F0 f w))
   have h2 := hX_perp F0 (xc_mem_X (f := f) (v - ycL F0 f v)) (iotaL_perp hf' (σ (pL hf w)))
   have h3 := hperp_X F0 (iotaL_perp hf' (σ (pL hf v))) (xc_mem_X (f := f) (w - ycL F0 f w))
-  rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, h1, h2, h3, iotaL_hT, hσ,
+  rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, h1, h2, h3, iotaL_hT, hσ,
     pL_apply, pL_apply, hWb_mk]
   ring
 
@@ -334,7 +340,7 @@ theorem yc_mem {Λ₁ Λ₂ : Submodule (𝓞 D.host.E) (VS D).V} {f₂ : Fin D.
   rw [← h, mem_dual_iff]
   intro l hl
   obtain ⟨x, u, y, hxΛ, hxX, _, _, huf, _, hyS, rfl⟩ := hs.2.2 l hl
-  rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, hX_yc hs.1 hxX,
+  rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, hX_yc hs.1 hxX,
     hperpf_span huf (yc_mem_span w), hspan_span hs.1 hyS (yc_mem_span w), add_zero, add_zero]
   exact int_of_unimod hu₁ (hX x hxΛ hxX) hw
 
@@ -351,7 +357,7 @@ theorem perp_sub_xc {Λ : Submodule (𝓞 D.host.E) (VS D).V} {f : Fin D.R.rS �
   have hy0 : y = 0 := by rw [← yc_of_span hs.1 hyS, yc_of_perp hyp]
   subst hy0
   have e : x + u + 0 - xcL F0 f (x + u + 0) = u := by
-    rw [add_zero, map_add, xc_of_X hs.1 hxX, xc_of_perpf huf]
+    rw [add_zero, map_add (f := _), xc_of_X hs.1 hxX, xc_of_perpf huf]
     abel
   rw [e]
   exact ⟨huΛ, hue, huf⟩
@@ -377,7 +383,7 @@ theorem gL_maps {Λ Λ' : Submodule (𝓞 D.host.E) (VS D).V} {f f' : Fin D.R.rS
     ∀ v ∈ Λ, gL (σ : WbQ D F0 →ₗ[D.host.E] WbQ D F0) hs.1 hs'.1 v ∈ Λ' := by
   intro v hv
   obtain ⟨x, u, y, hxΛ, hxX, huΛ, hue, huf, hyΛ, hyS, rfl⟩ := hs.2.2 v hv
-  rw [map_add, map_add]
+  rw [map_add (f := _), map_add (f := _)]
   refine Submodule.add_mem _ (Submodule.add_mem _ ?_ ?_) ?_
   · rw [gL_X _ hs.1 hs'.1 hxX]
     exact (hX x hxX).1 hxΛ
@@ -438,7 +444,7 @@ theorem gL_onto {Λ Λ' : Submodule (𝓞 D.host.E) (VS D).V} {f f' : Fin D.R.rS
   have hxΛ' : x ∈ Λ := (hX x hxX).2 hxΛ
   refine ⟨x + (w.1 - xcL F0 f w.1) + ycL F0 f y,
     Submodule.add_mem _ (Submodule.add_mem _ hxΛ' hu0Λ) hyc, ?_⟩
-  rw [map_add, map_add, gx, gu, gy]
+  rw [map_add (f := _), map_add (f := _), gx, gu, gy]
 
 end Main
 

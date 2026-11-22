@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.OneSubPhiOntoOfFilZero
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.ConductorExponents
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 
@@ -54,10 +59,10 @@ theorem frac_formula {A M B : Type} [CommRing A] [AddCommGroup M] [Module A M] [
       obtain ⟨m, j, hm, em⟩ := hy
       refine ⟨d ^ j • n + d ^ k • m, k + j, ?_, ?_⟩
       · unfold IsFrac at hn hm ⊢
-        rw [map_add, hn, hm, LocalizedModule.mk_add_mk]
+        rw [map_add (f := _), hn, hm, LocalizedModule.mk_add_mk]
         congr 1
         exact Subtype.ext (pow_add d k j).symm
-      · rw [map_add, hlam, hlam, en, em, map_add, map_pow, map_pow]; ring
+      · rw [map_add (f := _), hlam, hlam, en, em, map_add (f := _), map_pow, map_pow]; ring
     | smul r x _ hx =>
       obtain ⟨n, k, hn, en⟩ := hx
       refine ⟨φ r • n, k, ?_, ?_⟩
@@ -87,7 +92,7 @@ theorem coe_toAc_eis (τ : ZMod a) : (toAc t K (eis l a e) τ : K⟦X⟧) = E K 
   have hX : toAc t K X = fun _ => uIn (A O K) :=
     funext fun τ => Subtype.ext ((congrArg (PowerSeries.map _) (PowerSeries.map_X _)).trans
       (PowerSeries.map_X _))
-  rw [eis, map_add, map_pow, hX, map_natCast]
+  rw [eis, map_add (f := _), map_pow, hX, map_natCast]
   simp [E]
 
 end Maps
@@ -130,7 +135,8 @@ theorem frob_in_coordinates : ∀ (l : ℕ) [Fact l.Prime] (a e : ℕ) [NeZero a
     refine mul_left_cancel₀ (pow_ne_zero k' hJE0) ?_
     change _ * lam n τ i = _
     rw [← h2]
-    simp only [F, AddMonoidHom.coe_mk, ZeroHom.coe_mk, Matrix.mulVec, dotProduct, hlamtr, hφg,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [F, AddMonoidHom.coe_mk, ZeroHom.coe_mk, Matrix.mulVec, dotProduct, hlamtr, hφg,
       PhiMod.phi_apply, frobV_apply, map_mul, map_pow, map_sum, Matrix.map_apply]
     ring
 

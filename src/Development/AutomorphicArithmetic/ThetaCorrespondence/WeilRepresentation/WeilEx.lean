@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilPairExistence.WeilEx
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.WeilRepresentationExists
+module
+
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.WeilPairExistence.WeilEx
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.WeilRepresentationExists
+
+@[expose] public section
 
 namespace UpperTheory.Lit
 

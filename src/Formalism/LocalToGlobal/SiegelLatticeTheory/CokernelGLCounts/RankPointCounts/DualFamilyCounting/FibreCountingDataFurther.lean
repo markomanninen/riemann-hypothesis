@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.FibreCountingDataMore
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.FibreCountingDataMore
+
+@[expose] public section
 
 open NumberField Module Matrix
 
@@ -25,10 +29,11 @@ namespace JD
 variable (J : JD h L 𝔭 b a)
 include J
 
-theorem crd_phi (z : Fin m → 𝓞 K) (k : Fin m) : crd h b a (phi b a z) k = jK (z k) / jK (ι (a k)) := by
+theorem crd_phi (z : Fin m → 𝓞 K) (k : Fin m) :
+    crd h b a (G2.phi (K := K) b a z) k = jK (z k) / jK (ι (a k)) := by
   rw [crd, h_phi J.orth J.diag J.ne]
 
-theorem phi_memA (z : Fin m → 𝓞 K) : phi b a z ∈ locF 𝔭 (dualIn h ⊤ L) := by
+theorem phi_memA (z : Fin m → 𝓞 K) : G2.phi (K := K) b a z ∈ locF 𝔭 (dualIn h ⊤ L) := by
   have := J.max.isPrime
   rw [J.memA]
   intro i
@@ -36,10 +41,11 @@ theorem phi_memA (z : Fin m → 𝓞 K) : phi b a z ∈ locF 𝔭 (dualIn h ⊤ 
   exact HU.jK_mem_SP _
 
 def Psi : (Fin m → 𝓞 K) →ₗ[𝓞 K] DiscMod h ⊤ L 𝔭 :=
-  ((locF 𝔭 L).comap (locF 𝔭 (dualIn h ⊤ L)).subtype).mkQ ∘ₗ (phi b a).codRestrict _ J.phi_memA
+  ((locF 𝔭 L).comap (locF 𝔭 (dualIn h ⊤ L)).subtype).mkQ ∘ₗ
+    LinearMap.codRestrict _ (G2.phi (K := K) b a) J.phi_memA
 
 theorem Psi_apply (z : Fin m → 𝓞 K) :
-    J.Psi z = Submodule.Quotient.mk ⟨phi b a z, J.phi_memA z⟩ := rfl
+    J.Psi z = Submodule.Quotient.mk ⟨G2.phi (K := K) b a z, J.phi_memA z⟩ := rfl
 
 theorem Psi_surjective : Function.Surjective J.Psi := by
   have := J.max.isPrime
@@ -54,7 +60,8 @@ theorem Psi_surjective : Function.Surjective J.Psi := by
   rw [crd_sub, J.crd_phi]
   have e : jK (z k) / jK (ι (a k)) - crd h b a x k =
       -((jK (ι (a k)) * crd h b a x k - jK (z k)) / jK (ι (a k))) := by
-    rw [sub_div, mul_div_cancel_left₀ _ (jK_ι_ne_zero (J.ne k))]; ring
+    rw [sub_div, mul_div_cancel_left₀ _ (jK_ι_ne_zero (K := K) (J.ne k))]
+    exact (neg_sub _ _).symm
   rw [e]
   exact neg_mem (hz k)
 
@@ -68,7 +75,8 @@ theorem exists_E_eq (P : Module.End (𝓞 K) (DiscMod h ⊤ L 𝔭))
       (∀ i j, haveI := J.max.isPrime;
         jK (gramO a Y i j) / (jK (ι (a i)) * jK (ι (a j))) ∈ HU.SP K 𝔭) ∧ J.E Y hY = P := by
   have := J.max.isPrime
-  set u : Fin m → ↥(locF 𝔭 (dualIn h ⊤ L)) := fun j => ⟨_, J.u_mem j⟩ with hu
+  set u : Fin m → ↥(locF 𝔭 (dualIn h ⊤ L)) :=
+    fun j => ⟨G2.phi (K := K) b a (Pi.single j 1), J.u_mem j⟩ with hu
   choose v hv using fun j => Submodule.Quotient.mk_surjective _ (P (Submodule.Quotient.mk (u j)))
 
   have hav : ∀ j k, jK (ι (a j)) * crd h b a (v j) k ∈ HU.SP K 𝔭 := by
@@ -77,12 +85,14 @@ theorem exists_E_eq (P : Module.End (𝓞 K) (DiscMod h ⊤ L 𝔭))
       rw [← Submodule.Quotient.mk_smul, Submodule.Quotient.mk_eq_zero, Submodule.mem_comap,
         Submodule.subtype_apply, Submodule.coe_smul, J.memB]
       intro l
-      rw [crd_smul, J.crd_u]
-      split_ifs with hl
-      · subst hl; rw [mul_one_div, div_self (jK_ι_ne_zero (J.ne l))]; exact one_mem _
-      · rw [mul_zero]; exact zero_mem _
+      simp only [hu, crd_smul, J.crd_u]
+      by_cases hl : l = j
+      · rw [ite_eq_left hl, mul_one_div, div_self (jK_ι_ne_zero (K := K) (J.ne j))]
+        exact one_mem _
+      · rw [ite_eq_right hl, mul_zero]
+        exact zero_mem _
     have h1 : (Submodule.Quotient.mk (ι (a j) • v j) : DiscMod h ⊤ L 𝔭) = 0 := by
-      rw [Submodule.Quotient.mk_smul, hv, ← LinearMap.map_smul, h0, map_zero]
+      rw [Submodule.Quotient.mk_smul, hv j, ← LinearMap.map_smul, h0, map_zero]
     rw [Submodule.Quotient.mk_eq_zero, Submodule.mem_comap, Submodule.subtype_apply,
       Submodule.coe_smul, J.memB] at h1
     have h2 := h1 k
@@ -101,7 +111,8 @@ theorem exists_E_eq (P : Module.End (𝓞 K) (DiscMod h ⊤ L 𝔭))
     rw [crd_sub, hcg]
     have e : jK (Y k j) / jK (ι (a j)) - crd h b a (v j) k =
         -((jK (ι (a j)) * crd h b a (v j) k - jK (z k j)) / jK (ι (a j))) := by
-      rw [sub_div, mul_div_cancel_left₀ _ (jK_ι_ne_zero (J.ne j)), hY, of_apply]; ring
+      rw [sub_div, mul_div_cancel_left₀ _ (jK_ι_ne_zero (K := K) (J.ne j)), hY, of_apply]
+      exact (neg_sub _ _).symm
     rw [e]
     exact neg_mem (hz k j)
   have hgA : ∀ j, gmap h b a Y (u j) ∈ locF 𝔭 (dualIn h ⊤ L) := fun j => by
@@ -119,10 +130,10 @@ theorem exists_E_eq (P : Module.End (𝓞 K) (DiscMod h ⊤ L 𝔭))
         J.sum_crd_u (fun q => star (crd h b a (u i) p) * jK (gramO a Y p q)) j).trans ?_
       rw [Finset.sum_eq_single i]
       · simp only [hu]
-        rw [J.crd_u, if_pos rfl, star_div₀, star_one, star_jK_ι J.fix, one_div_mul_eq_div, div_div]
+        rw [J.crd_u, ite_eq_left rfl, star_div₀, star_one, star_jK_ι J.fix, one_div_mul_eq_div, div_div]
       · intro p _ hp
         simp only [hu]
-        rw [J.crd_u, if_neg hp, star_zero, zero_mul, zero_div]
+        rw [J.crd_u, ite_eq_right hp, star_zero, zero_mul, zero_div]
       · intro hi; exact absurd (Finset.mem_univ i) hi
     rw [← hsum, ← form_identity J.orth J.diag J.ne J.bX J.loc J.fix J.max J.lat]
     have e : h (gmap h b a Y (u i)) (gmap h b a Y (u j)) - h (u i : V) (u j : V) =
@@ -137,7 +148,7 @@ theorem exists_E_eq (P : Module.End (𝓞 K) (DiscMod h ⊤ L 𝔭))
       simp only [LinearMap.comp_apply, LinearMap.coe_single, Psi_apply]
       rw [E_mk]
       change _ = P (Submodule.Quotient.mk (u j))
-      rw [← hv, Submodule.Quotient.eq, Submodule.mem_comap, Submodule.subtype_apply,
+      rw [← hv j, Submodule.Quotient.eq, Submodule.mem_comap, Submodule.subtype_apply,
         Submodule.coe_sub]
       exact hgv j
     refine LinearMap.ext fun q => ?_

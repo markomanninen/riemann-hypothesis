@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyAlgebraMapMemIntegers
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IntegrandSZero
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyAlgebraMapMemIntegers
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NsmulProjectionXColumnsMemSelfDualLattice
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +24,7 @@ theorem measurableSet_openOff {D : D7} (A : HSp D) (L : Lat A) (hL : IsSelfDualC
     MeasurableSet (openOff A L S) := by
   have : BorelSpace (GA D A) := ⟨rfl⟩
   have : Countable (FinPl D) := GlobalTheory.AdelicUnitaryTop.countable_heightOneSpectrum D.host.F
-  have := hL.1
+  haveI := GlobalTheory.ProjXCols.selfDual_isFullLattice A L hL
   have e : openOff A L S = ⋂ v, ⋂ (_ : v ∉ S),
       (proj D.sp.cm.sig A.gram v) ⁻¹' (stabLoc D.sp.cm.sig A.gram L v : Set _) := by
     ext g; simp [openOff]
@@ -31,7 +36,7 @@ theorem monotone_openOff {D : D7} (A : HSp D) (L : Lat A) : Monotone (openOff A 
   fun _ _ h _ hg v hv => hg v fun h' => hv (h h')
 
 theorem iUnion_openOff {D : D7} (A : HSp D) (L : Lat A) (hL : IsSelfDualC A L) : ⋃ S, openOff A L S = Set.univ := by
-  have := hL.1
+  haveI := GlobalTheory.ProjXCols.selfDual_isFullLattice A L hL
   refine Set.eq_univ_of_forall fun g => ?_
   have h := Filter.eventually_cofinite.1 (eventually_proj_mem_stabLoc D.sp.cm.sig A.gram L g)
   exact Set.mem_iUnion.2 ⟨h.toFinset, fun v hv => by_contra fun h' => hv (h.mem_toFinset.2 h')⟩

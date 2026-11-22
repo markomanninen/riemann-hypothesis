@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+
+@[expose] public section
+
 open scoped MatrixGroups TensorProduct
 open Matrix GlobalTheory.KZ
 
@@ -7,10 +12,10 @@ namespace GlobalTheory.FunctionFieldPrimitive
 
 open Polynomial
 
+
 open scoped MatrixGroups TensorProduct in
 open Matrix in
 open Polynomial in
-
 theorem _root_.GlobalTheory.FunctionFieldPrimitive.exists_integral_primitive {F : Type} [Field F] [CharZero F]
     {L : Type} [Field L]
     [Algebra F L] (t : L) (ht : Transcendental F t)
@@ -45,7 +50,7 @@ theorem _root_.GlobalTheory.FunctionFieldPrimitive.exists_integral_primitive {F 
     obtain ⟨s, hs, r, hsr⟩ := hden k.1 k.2
     refine ⟨Polynomial.C s * Polynomial.X - Polynomial.C r, ?_, ?_⟩
     · intro h
-      have h1 := congrArg (fun P => Polynomial.coeff P 1) h
+      have h1 := congrArg (fun P => _root_.AddMonoidAlgebra.coeff (M := ℕ) P 1) h
       simp at h1
       exact hs h1
     · apply Subtype.val_injective

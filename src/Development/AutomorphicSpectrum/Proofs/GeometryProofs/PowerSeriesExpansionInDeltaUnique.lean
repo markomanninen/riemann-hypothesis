@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TranslDiffEq
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TranslDiffEq
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1 GlobalTheory.CompanionTheory.Ar.Crv GlobalTheory.CompanionTheory.Ar.Conj GlobalTheory.CompanionTheory.Ar.Coc
 open scoped CategoryTheory.Obj
@@ -47,7 +52,8 @@ theorem sections_of_affine (e : ∀ U : Z.Opens, Fin n → Γ(Y, π ⁻¹ᵁ U))
       (Y.presheaf.map (homOfLE (π.preimage_mono h)).op).hom g =
         ∑ i, (π.app U).hom ((Z.presheaf.map (homOfLE h).op).hom (c i)) * e U i := by
     intro U V h g c hg
-    rw [hg, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hg, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, app_res π h, he U V h]
   have uniq : ∀ (V : Z.Opens) (g : Γ(Y, π ⁻¹ᵁ V)) (c c' : Fin n → Γ(Z, V)),
@@ -105,7 +111,7 @@ open Polynomial in
 theorem jet_basis (k : Type) [Field k] (m : ℕ) :
     ∃ b : Module.Basis (Fin (m + 1)) k (Jet k Unit m),
       ∀ i : Fin (m + 1), b i = (Ideal.Quotient.mk (orig k Unit ^ (m + 1)) (MvPolynomial.X ())) ^ (i : ℕ) := by
-  let φ : MvPolynomial Unit k ≃ₐ[k] k[X] := MvPolynomial.pUnitAlgEquiv k
+  let φ : MvPolynomial Unit k ≃ₐ[k] k[X] := MvPolynomial.uniqueAlgEquiv k Unit
   have hX : φ (MvPolynomial.X ()) = X := by simp [φ]
   have hI : Ideal.span {(X : k[X]) ^ (m + 1)} = (orig k Unit ^ (m + 1)).map (φ : MvPolynomial Unit k →+* k[X]) := by
     rw [Ideal.map_pow, orig, Ideal.map_span, ← Ideal.span_singleton_pow]
@@ -157,7 +163,8 @@ theorem spec_case {Y : Scheme.{0}} (p : Y ⟶ Sp A) (q : Y ⟶ Sp J)
   let B := Algebra.TensorProduct.basis A b
   have key : ∀ c : I → A, ∑ i, p.appTop.hom (toΓ A (c i)) * q.appTop.hom (toΓ J (b i)) = Φ (∑ i, c i • B i) := by
     intro c
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [hl, hr, ← map_mul, Algebra.TensorProduct.basis_apply]
     simp [B, Algebra.TensorProduct.basis_apply, TensorProduct.smul_tmul']
@@ -271,7 +278,8 @@ theorem prZ_affine (U : (pullback G.hom x).Opens) (hU : IsAffineOpen U) (f : Γ(
         ((prZ G x m ⁻¹ᵁ U).ι ≫ (fst (Tm x m) G).left).appTop.hom (toΓ _ (b i))) =
       ∑ i, ((prZ G x m).app U).hom (U.topIso.hom.hom (c i)) * dltOn G x m _ ^ (i : ℕ) := by
     intro c
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_mul, restrict_appTop, fm]
   obtain ⟨c, hc, hu⟩ := affine_case b _ _ _ sq ((prZ G x m ⁻¹ᵁ U).topIso.inv.hom f)

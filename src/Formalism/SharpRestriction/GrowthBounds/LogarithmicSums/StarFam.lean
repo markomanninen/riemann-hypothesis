@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.StarNum
-import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.StarNumB
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.StarNum
+public import Formalism.SharpRestriction.GrowthBounds.LogarithmicSums.StarNumB
+
+@[expose] public section
 
 noncomputable section
 

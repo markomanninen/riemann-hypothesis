@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeAlgebraMapOC
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeAlgebraMapOC
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,7 @@ theorem actMat_props {Z O N C : Type} [CommRing Z] [CommRing O] [Algebra Z O] [A
     rw [hs, hs, smul_smul, smul_smul, mul_comm]
   refine ⟨fun a a' => ?_, fun x a => ?_, ?_, fun a a' => ?_⟩
   · ext i j
-    simp only [hA, Matrix.add_apply, add_smul, map_add, Finsupp.add_apply]
+    simp only [hA, Matrix.add_apply, add_smul, map_add (f := _), Finsupp.add_apply]
   · ext i j
     have hx : (x • a) • b j = x • (a • b j) := by
       rw [Algebra.smul_def, mul_smul, ← hs]
@@ -37,7 +41,8 @@ theorem actMat_props {Z O N C : Type} [CommRing Z] [CommRing O] [Algebra Z O] [A
     rw [Matrix.mul_apply, hA, mul_smul]
     conv_lhs => rw [← b.sum_repr (a' • b j)]
     rw [Finset.smul_sum]
-    simp only [hc, map_sum, map_smul, Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hc, map_sum, map_smul, Finset.sum_apply', Finsupp.smul_apply,
       smul_eq_mul, map_mul, hA]
     exact Finset.sum_congr rfl fun k _ => mul_comm _ _
 

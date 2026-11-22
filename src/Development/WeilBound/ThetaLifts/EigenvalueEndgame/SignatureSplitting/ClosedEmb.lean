@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.ConvCont
+module
+
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.SignatureSplitting.ConvCont
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,7 @@ theorem box [T2Space R] {C : Fin 2 → Fin 2 → Set R} (h : ∀ i j, IsCompact 
   closedEmb.isCompact_preimage (isCompact_pi_infinite fun i => isCompact_pi_infinite (h i))
 
 theorem nhds_box {W : Set SL(2, R)} (hW : W ∈ 𝓝 1) : ∃ O ∈ 𝓝 (0 : R), ∀ y : SL(2, R), (∀ i j, (y.1 - 1) i j ∈ O) → y ∈ W := by
-  obtain ⟨O₁, h1, h2⟩ := (mem_nhds_subtype _ _ _).1 hW
+  obtain ⟨O₁, h1, h2⟩ := (mem_nhds_subtype {A : Matrix (Fin 2) (Fin 2) R | A.det = 1} (1 : SL(2, R)) W).1 hW
   have h3 : (fun M : Fin 2 → Fin 2 → R => Matrix.of M + 1) ⁻¹' O₁ ∈ 𝓝 0 :=
     ((show Continuous (Matrix.of : (Fin 2 → Fin 2 → R) → _) from continuous_id).add continuous_const).continuousAt.preimage_mem_nhds
       (by change O₁ ∈ 𝓝 ((0 : Matrix (Fin 2) (Fin 2) R) + 1); rw [zero_add]; exact h1)

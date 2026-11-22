@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.WedgeSplitTan
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.LiftedColumnMultidegree
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.LatticeCountingFormula
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.WedgeSplitTan
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.LiftedColumnMultidegree
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.LatticeCountingFormula
+
+@[expose] public section
 
 noncomputable section
 

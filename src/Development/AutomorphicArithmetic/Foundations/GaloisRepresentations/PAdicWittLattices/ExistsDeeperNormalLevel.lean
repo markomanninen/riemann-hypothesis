@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.TransCancel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FibrePowerMapOfTotalSpacesIsPullback
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryCharZeroGenericModelNonemptyStatement
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.TransCancel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FibrePowerMapOfTotalSpacesIsPullback
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryCharZeroGenericModelNonemptyStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen GlobalTheory.LKTrip GlobalTheory.LKGeo UpperTheory.Gal.G3
@@ -74,7 +78,7 @@ private theorem exists_deeper_normal_level (hK : KNBasic) (L : Link D G) (j : Lv
   choose c hc hadm using fun (N : ℕ) (g : G.GAf) => (hK p D G L N).2.1 g
   set M : ℕ := j.1 * ∏ x ∈ S, (x.1.1 * c x.1.1 x.2) with hMdef
   have hcop : M.Coprime p :=
-    Nat.Coprime.mul j.2.2 (Nat.Coprime.prod_left fun x _ => Nat.Coprime.mul x.1.2.2 (hc _ _))
+    Nat.Coprime.mul_left j.2.2 (Nat.Coprime.prod_left fun x _ => Nat.Coprime.mul_left x.1.2.2 (hc _ _))
   have hM0 : 0 < M := by
     rcases Nat.eq_zero_or_pos M with h | h
     · rw [h, Nat.coprime_zero_left] at hcop

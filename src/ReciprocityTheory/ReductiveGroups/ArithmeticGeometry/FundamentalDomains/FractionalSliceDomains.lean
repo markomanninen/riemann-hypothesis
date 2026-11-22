@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MinimumGrowthBounds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowMeanContinuity
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSignHolds
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MinimumGrowthBounds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowMeanContinuity
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.FourSignHolds
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -27,7 +31,7 @@ theorem Om_open_conn (hx : x ∈ X.dom) : IsOpen (Om X ξ x ω) ∧ IsPreconnect
   obtain ⟨ho, hc⟩ := AdmissibleHermitianColumns.admissibleImaginary_open_convex (X := X) (ξ := ξ) x hx
   have hcont : Continuous (fun b : Fin n → ℝ => fun τ : X.Ψ => ∑ j, b j * ω j τ) := by
     refine continuous_pi fun τ => ?_
-    exact continuous_finset_sum _ fun j _ => (continuous_apply j).mul continuous_const
+    fun_prop
   refine ⟨ho.preimage hcont, ?_⟩
   have hconv : Convex ℝ (Om X ξ x ω) := by
     intro a ha b hb s t hs ht hst
@@ -134,8 +138,17 @@ theorem slice_fract (P : Frame X.Ψ r → ℂ) (la : Wt X.Ψ r) (hP : X.IsSec la
   rw [← h]
   congr 1
   funext k
-  simp only [Pi.add_apply, Int.fract, Complex.ofReal_sub, Complex.ofReal_intCast, Int.cast_neg]
-  ring
+  have hreal : (y k : ℝ) - (⌊(y k : ℝ)⌋ : ℤ) = Int.fract (y k : ℝ) := Int.self_sub_floor _
+  change ((y k : ℂ) + (b k : ℂ) * I + ((-(⌊(y k : ℝ)⌋ : ℤ) : ℤ) : ℂ)) =
+    ((Int.fract (y k : ℝ) : ℝ) : ℂ) + (b k : ℂ) * I
+  calc
+    ((y k : ℂ) + (b k : ℂ) * I) + (↑(-⌊y k⌋) : ℂ) =
+        (((y k : ℝ) - (⌊(y k : ℝ)⌋ : ℝ) : ℝ) : ℂ) + (b k : ℂ) * I := by
+          push_cast
+          ring
+    _ = ((Int.fract (y k : ℝ) : ℝ) : ℂ) + (b k : ℂ) * I := by
+          exact congrArg (fun z : ℂ => z + (b k : ℂ) * I)
+            (congrArg (fun z : ℝ => (z : ℂ)) hreal)
 
 noncomputable def Bω : ℝ := ∑ τ : X.Ψ, ∑ j, |ω j τ|
 

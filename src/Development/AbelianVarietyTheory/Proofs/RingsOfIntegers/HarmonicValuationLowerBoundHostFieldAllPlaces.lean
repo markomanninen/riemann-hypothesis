@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.PrimeDiscriminants.SlopeTestRemainingChoices
-import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
-import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.HarmonicValueBoundIntegralChartRamifiedStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.HarmonicValueIntegralOfUnitDiscriminantStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.HostFieldGaloisDegreeDiscrConjMovesPrimesStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.PrimeDiscriminants.SlopeTestRemainingChoices
+public import Formalism.SharpRestriction.RamificationFrobenius.TotientGaloisClasses.HostFacts
+public import Development.AbelianVarietyTheory.Definitions.PlaceAdaptation.AdaptStd
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.HarmonicValueBoundIntegralChartRamifiedStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.HarmonicValueIntegralOfUnitDiscriminantStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.HostFieldGaloisDegreeDiscrConjMovesPrimesStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.MainNotions.ModuliIntegralCharts.H1
@@ -45,7 +49,7 @@ theorem chBound_host : ∀ (D : D7) (H : ReciprocityTheory.ChartRestriction.G.Ge
   by_cases hu : ∀ p ∈ D.host.condN.primeFactors, IsUnit (p : T.V)
   · refine chBound_mono (GlobalTheory.T.harmonic_value_integral_of_unit_discriminant D.host.E H Dw l Xo c hstar T io y C ?_ e w n) (Finset.sum_nonneg hnn)
     have h1 : IsUnit (((NumberField.discr D.host.E).natAbs : ℕ) : T.V) := by
-      rw [← Nat.factorization_prod_pow_eq_self hd0, Finsupp.prod, Nat.cast_prod]
+      rw [← Nat.prod_factorization_pow_eq_self hd0, Finsupp.prod, Nat.cast_prod]
       refine IsUnit.prod_iff.2 fun p hp => ?_
       have hp' := Nat.mem_primeFactors.1 (Nat.support_factorization _ ▸ hp)
       rw [Nat.cast_pow]
@@ -65,7 +69,7 @@ theorem chBound_host : ∀ (D : D7) (H : ReciprocityTheory.ChartRestriction.G.Ge
     have h1 : (0 : ℝ) ≤ (vV T.V (p : T.Fr) : ℝ) := by exact_mod_cast vV_nat_nonneg T p
     have h2 := D.host.vdH_nonneg p
     have h3 : (Formalism.L2.Pj.DF Dw w : ℝ) ≤ DFw := by exact_mod_cast hDF
-    show (vV T.V (p : T.Fr) : ℝ) / e * D.host.vdH p * _ / 2 ≤ _
+    simp only [Formalism.HC.HostRaw.vdH, Nat.padicValNat_def] at h2 ⊢
     gcongr
 
 end GlobalTheory.PlaceInt.HostChart

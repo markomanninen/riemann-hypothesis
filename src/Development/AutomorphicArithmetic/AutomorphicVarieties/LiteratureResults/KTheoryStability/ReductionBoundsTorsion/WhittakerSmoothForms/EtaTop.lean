@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.WhittakerSmoothForms.PSmooth
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.WhittakerSmoothForms.IntegrableOnSimp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.WhittakerSmoothForms.PSmooth
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.WhittakerSmoothForms.IntegrableOnSimp
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,8 +111,8 @@ theorem chain (H : Hyp U A φ) (hH : PHom U A φ) (hSm : PSmooth U A φ) (hD : P
     rw [hK _ (by omega)]
     congr 1
     funext l
-    simp only [skip, Fin.succAbove, Fin.lt_def, Fin.coe_castSucc, Fin.val_succ]
-    split_ifs <;> simp only [Fin.coe_castSucc, Fin.val_succ] <;>
+    simp only [skip, Fin.succAbove]
+    split_ifs <;> simp only [Fin.lt_def, Fin.val_castSucc, Fin.val_succ] at * <;>
       first | (exfalso; omega) | (congr 3; omega)
   have hExt : extDeriv ω = eta A φ c (j + 1) g := by rw [hω]; rfl
   have hSt := hS j ω (by

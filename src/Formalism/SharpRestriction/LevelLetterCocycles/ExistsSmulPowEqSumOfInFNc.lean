@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvOZeroHigh
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvOZeroHigh
+
+@[expose] public section
 
 noncomputable section
 

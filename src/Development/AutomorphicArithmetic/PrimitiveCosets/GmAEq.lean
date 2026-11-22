@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.PrimitiveCosets.CoreAtH
-import Development.AutomorphicArithmetic.PrimitiveCosets.PrimRead
-import Development.AutomorphicArithmetic.PrimitiveCosets.PrimInj
-import Development.AutomorphicArithmetic.PrimitiveCosets.ChrBij
-import Development.AutomorphicArithmetic.PrimitiveCosets.GzEq
+module
+
+public import Development.AutomorphicArithmetic.PrimitiveCosets.CoreAtH
+public import Development.AutomorphicArithmetic.PrimitiveCosets.PrimRead
+public import Development.AutomorphicArithmetic.PrimitiveCosets.PrimInj
+public import Development.AutomorphicArithmetic.PrimitiveCosets.ChrBij
+public import Development.AutomorphicArithmetic.PrimitiveCosets.GzEq
+
+@[expose] public section
 
 open UpperTheory.Comparison₂ Deduction.CH Formalism Formalism.HC Formalism.D5 Formalism.RankGapBounds.WeightedMeanData Formalism.LFunctionChainParameters.WeightedSlopeBounds Formalism.LFunctionChainParameters.characterSumData Formalism.LFunctionChainParameters.ThickSetMeanBounds Formalism.LFunctionChainParameters.LErr
   Formalism.LFunctionChainParameters.LChain Formalism.LFunctionChainParameters.LHost

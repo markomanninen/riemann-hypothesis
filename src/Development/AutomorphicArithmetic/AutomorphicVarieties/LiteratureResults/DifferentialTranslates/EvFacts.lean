@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.SecondFromFirstStatement
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.DifferentialTranslates.SecondFromFirstStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,18 +11,19 @@ open scoped TensorProduct
 
 namespace UpperTheory.V.Lit.Dr
 
-private theorem ev_comp {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a d : ℕ}
+private theorem ev_comp {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a d : ℕ}
     (m : Sm E a ⊗[ℂ] (Fin d → ℂ)) (j : Fin d) :
     (fun g => ev m g j) = (TensorProduct.piScalarRight ℂ ℂ (Sm E a) (Fin d) m j).1 := by
   induction m using TensorProduct.induction_on with
   | zero =>
-    rw [map_zero, map_zero]
+    rw [(ev (E := E) (a := a) (d := d)).map_zero,
+      (TensorProduct.piScalarRight ℂ ℂ (Sm E a) (Fin d)).map_zero]
     rfl
   | tmul φ v =>
     funext g
     simp [mul_comm]
   | add x y hx hy =>
-    rw [map_add, map_add, Pi.add_apply, Submodule.coe_add, ← hx, ← hy]
+    rw [map_add (f := _), map_add (f := _), Pi.add_apply, Submodule.coe_add, ← hx, ← hy]
     rfl
 
 theorem evFacts : EvFacts := by

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SphConj
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.TwoLeAbsNorm
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.Imports
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.SphConj
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.TwoLeAbsNorm
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.Imports
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 

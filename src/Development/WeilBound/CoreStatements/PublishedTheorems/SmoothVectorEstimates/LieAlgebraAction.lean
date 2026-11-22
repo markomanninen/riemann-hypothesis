@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.MirabolicColumnBlock
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.MirabolicColumnBlock
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,7 +71,7 @@ theorem inverse_lm {M : LieI ι a} (hM : IsUnit (Matrix.of M)) : Ring.inverse (l
 omit [Fintype ι] in
 theorem orb_unit (ρ : GL (Fin a) (ι → ℂ) →* (X →L[ℂ] X)) (v : X) {M : LieI ι a} (hM : IsUnit (Matrix.of M)) :
     orb ρ v M = ρ hM.unit v := by
-  unfold orb; rw [dif_pos hM]
+  unfold orb; rw [dite_eq_left hM]
 
 omit [Fintype ι] in
 theorem orb_mul (ρ : GL (Fin a) (ι → ℂ) →* (X →L[ℂ] X)) (v : X) (g : GL (Fin a) (ι → ℂ)) (M : LieI ι a) :
@@ -84,7 +88,7 @@ theorem orb_mul (ρ : GL (Fin a) (ι → ℂ) →* (X →L[ℂ] X)) (v : X) (g :
       have e : Matrix.of M = (g⁻¹).val * (g.val * Matrix.of M) := by
         rw [← mul_assoc, ← Units.val_mul, inv_mul_cancel, Units.val_one, one_mul]
       rw [e]; exact (g⁻¹).isUnit.mul h
-    unfold orb; rw [dif_neg hM, dif_neg h', map_zero]
+    unfold orb; rw [dite_eq_right hM, dite_eq_right h', map_zero]
 
 theorem hasFDerivAt_orb (ρ : GL (Fin a) (ι → ℂ) →* (X →L[ℂ] X)) {v : X} {D : LieI ι a →L[ℝ] X}
     (hD : HasFDerivAt (orb ρ v) D (oneI ι a)) {M : LieI ι a} (hM : IsUnit (Matrix.of M)) :
@@ -111,7 +115,8 @@ theorem fderiv_orb (ρ : GL (Fin a) (ι → ℂ) →* (X →L[ℂ] X)) {v : X} {
   ext1 Z
   rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.comp_apply]
   conv_lhs => rw [← b.sum_repr (Ring.inverse (lm M) Z)]
-  rw [map_sum, map_sum, ContinuousLinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, ContinuousLinearMap.sum_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, map_smul, ContinuousLinearMap.smulRight_apply, ContinuousLinearMap.comp_apply,
     LinearMap.coe_toContinuousLinearMap', Module.Basis.coord_apply, orb_unit ρ _ hM]

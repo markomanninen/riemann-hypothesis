@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
-import GroundTheory.GlobalFields.TateThesis.AdelicCharDual
-import GroundTheory.GlobalFields.TateThesis.RootNumberLocalPlace
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsInfiniteAdelicCharNeOne
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FactorialTendstoZero
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.UnitaryAnnihilator
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HilbertNinetyQuotientHomEqIff
+public import GroundTheory.GlobalFields.TateThesis.AdelicCharDual
+public import GroundTheory.GlobalFields.TateThesis.RootNumberLocalPlace
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ExistsInfiniteAdelicCharNeOne
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FactorialTendstoZero
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.UnitaryAnnihilator
+
+@[expose] public section
 
 open Matrix NumberField IsDedekindDomain GlobalTheory.WeilM MeasureTheory
 open scoped TensorProduct

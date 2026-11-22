@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.RowFormsGood
-import Formalism.LocalToGlobal.Columns.ToHLatLemmas
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.RowFormsGood
+public import Formalism.LocalToGlobal.Columns.ToHLatLemmas
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 open scoped Matrix ComplexOrder
@@ -32,7 +36,8 @@ variable {K : Type} [Field K] [NumberField K] [StarRing K] (S : CSD K)
 theorem pair_mem (R : S.Rat) (x y : S.V) (hx : ∀ i, S.bV.repr x i ∈ cmMax K) (hy : ∀ i, S.bV.repr y i ∈ cmMax K) :
     S.pair x y ∈ cmMax K := by
   rw [← S.bV.sum_repr x, ← S.bV.sum_repr y]
-  simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul,
     starRingEnd_apply]
   refine sum_mem fun j _ => mul_mem (hy j) (sum_mem fun i _ => ?_)
   exact mul_mem (Formalism.L2.DIV.star_mem_cmMax (hx i)) (R.pair_rat i j)
@@ -95,7 +100,8 @@ theorem GSD.rho_mem (R : S.Rat) (g : S.G) (x : S.V) (hx : ∀ i, S.bV.repr x i �
     S.bV.repr (S.ρ g x) i ∈ cmMax K := by
   have e : S.ρ g x = S.ρ g (∑ j, S.bV.repr x j • S.bV j) := by rw [S.bV.sum_repr x]
   rw [e]
-  simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finsupp.coe_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finsupp.coe_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
   exact sum_mem fun j _ => mul_mem (hx j) (R.act_rat g i j)
 
 theorem GSD.det_H_ne_zero (R : S.Rat) (h : S.Ok) : (S.toCSD h).H.det ≠ 0 := by

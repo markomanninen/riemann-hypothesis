@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.PullHlComp
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsContinuousForgetForget
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PullPreservesFiniteLimits
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteMaximalSpectrumOfFiniteOfIsLocalRing
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.PullHXApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.PullHlComp
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsContinuousForgetForget
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.IsMatrixForm
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteMaximalSpectrumOfFiniteOfIsLocalRing
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.PullHXApply
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite IsLocalRing
@@ -49,8 +53,6 @@ def galInt (σ : Ω ≃ₐ[K] Ω) : integralClosure O Ω ≃+* integralClosure O
 
 variable {O K}
 
-@[simp] theorem galInt_apply (σ : Ω ≃ₐ[K] Ω) (x : integralClosure O Ω) : ((galInt O K σ x : integralClosure O Ω) : Ω) = σ x := rfl
-
 theorem galInt_algebraMap (σ : Ω ≃ₐ[K] Ω) (r : O) :
     galInt O K σ (algebraMap O (integralClosure O Ω) r) = algebraMap O (integralClosure O Ω) r := by
   apply Subtype.ext
@@ -60,12 +62,6 @@ theorem galInt_algebraMap (σ : Ω ≃ₐ[K] Ω) (r : O) :
 theorem galInt_mul (σ τ : Ω ≃ₐ[K] Ω) (x : integralClosure O Ω) : galInt O K (σ * τ) x = galInt O K σ (galInt O K τ x) := rfl
 
 theorem galInt_one (x : integralClosure O Ω) : galInt O K (1 : Ω ≃ₐ[K] Ω) x = x := rfl
-
-def galRes (σ : Ω ≃ₐ[K] Ω) : ResidueField (integralClosure O Ω) ≃+* ResidueField (integralClosure O Ω) :=
-  ResidueField.mapEquiv (galInt O K σ)
-
-theorem galRes_residue (σ : Ω ≃ₐ[K] Ω) (x : integralClosure O Ω) :
-    galRes σ (residue _ x) = residue _ (galInt O K σ x) := rfl
 
 variable (O K Ω)
 
@@ -116,8 +112,6 @@ def jGen : genFib K Ω p ⟶ intFib Ω p :=
       rw [Category.assoc, pullback.condition, ← Category.assoc, pullback.condition, Category.assoc,
         Category.assoc, ← Spec.map_comp, ← Spec.map_comp, ringHom_tower])
 
-@[reassoc] theorem jGen_fst : jGen K Ω p ≫ pullback.fst _ _ = pullback.fst _ _ ≫ pullback.fst _ _ := pullback.lift_fst _ _ _
-
 @[reassoc] theorem jGen_snd : jGen K Ω p ≫ intStr Ω p =
     pullback.snd _ _ ≫ Spec.map (CommRingCat.ofHom (integralClosure O Ω).val.toRingHom) := pullback.lift_snd _ _ _
 
@@ -130,26 +124,19 @@ def galIntMap (σ : Ω ≃ₐ[K] Ω) : intFib Ω p ⟶ intFib Ω p :=
     ext r
     exact congrArg Subtype.val (galInt_algebraMap σ r).symm)
 
-@[reassoc] theorem galIntMap_fst (σ : Ω ≃ₐ[K] Ω) : galIntMap p σ ≫ pullback.fst _ _ = pullback.fst _ _ :=
+@[reassoc] theorem galIntMap_fst (σ : Ω ≃ₐ[K] Ω) :
+    galIntMap p σ ≫ pullback.fst _ _ = pullback.fst _ _ :=
   pullback.lift_fst _ _ _
 
 @[reassoc] theorem galIntMap_snd (σ : Ω ≃ₐ[K] Ω) :
     galIntMap p σ ≫ intStr Ω p = intStr Ω p ≫ Spec.map (CommRingCat.ofHom (galInt O K σ).toRingHom) :=
   pullback.lift_snd _ _ _
 
-def galSpMap (σ : Ω ≃ₐ[K] Ω) : spFib Ω p ⟶ spFib Ω p :=
-  pullback.lift (iSp Ω p ≫ galIntMap p σ) (pullback.snd _ _ ≫ Spec.map (CommRingCat.ofHom (galRes σ).toRingHom)) (by
-    have e : CommRingCat.ofHom (galInt O K σ).toRingHom ≫ CommRingCat.ofHom (residue (integralClosure O Ω)) =
-        CommRingCat.ofHom (residue (integralClosure O Ω)) ≫ CommRingCat.ofHom (galRes σ).toRingHom := by
-      ext x; rfl
-    rw [Category.assoc, galIntMap_snd, pullback.condition_assoc, Category.assoc, ← Spec.map_comp, ← Spec.map_comp, e])
-
-@[reassoc] theorem galSpMap_i (σ : Ω ≃ₐ[K] Ω) : galSpMap p σ ≫ iSp Ω p = iSp Ω p ≫ galIntMap p σ :=
-  pullback.lift_fst _ _ _
-
 theorem galGen_j (σ : Ω ≃ₐ[K] Ω) : GlobalTheory.Et.galMap Ω (genStr K p) σ ≫ jGen K Ω p = jGen K Ω p ≫ galIntMap p σ := by
   apply pullback.hom_ext
-  · rw [Category.assoc, Category.assoc, galIntMap_fst, jGen_fst, GlobalTheory.Et.galMap_fst_assoc]
+  · have h : jGen K Ω p ≫ pullback.fst _ _ = pullback.fst _ _ ≫ pullback.fst _ _ :=
+      pullback.lift_fst _ _ _
+    rw [Category.assoc, Category.assoc, galIntMap_fst, h, GlobalTheory.Et.galMap_fst_assoc]
   · have e : CommRingCat.ofHom (integralClosure O Ω).val.toRingHom ≫ CommRingCat.ofHom (σ : Ω →+* Ω) =
         CommRingCat.ofHom (galInt O K σ).toRingHom ≫ CommRingCat.ofHom (integralClosure O Ω).val.toRingHom := by
       ext x; rfl
@@ -181,27 +168,9 @@ def RPsiC (F : Shv R) : CochainComplex (ShvS R (spFib Ω p)) ℤ := nbC R (iSp �
 
 def RPsi (F : Shv R) : DerivedCategory (ShvS R (spFib Ω p)) := DerivedCategory.Q.obj (RPsiC R K Ω p F)
 
-def RPsiStd (F : Shv R) : DerivedCategory (ShvS R (spFib Ω p)) :=
-  (Rel.pull R (iSp Ω p)).mapDerivedCategory.obj (DerivedCategory.Plus.ι.obj
-    ((Rpush R (jGen K Ω p)).obj ((DerivedCategory.Plus.singleFunctor _ 0).obj ((Rel.res R _).obj F))))
-
-def RqPsi (q : ℤ) (F : Shv R) : ShvS R (spFib Ω p) := (RPsiC R K Ω p F).homology q
-
-def stalkPsi (q : ℤ) (F : Shv R) {Ω' : Type} [Field Ω'] [IsSepClosed Ω'] (s : Spec (CommRingCat.of Ω') ⟶ spFib Ω p) :
-    ModuleCat.{1} (ULift.{1} R) :=
-  (Scheme.pointSmallEtale s).sheafFiber.obj (RqPsi R K Ω p q F)
-
 abbrev HPsi (F : Shv R) (n : ℤ) : Type _ := HXC R (spFib Ω p) (RPsiC R K Ω p F) n
 
 variable {K Ω}
-
-def galC (F : Shv R) (σ : Ω ≃ₐ[K] Ω) : (pullC R (galSpMap p σ)).obj (RPsiC R K Ω p F) ⟶ RPsiC R K Ω p F :=
-  transC R (bcSq (galSpMap_i p σ)).hom (galGen_j p σ) F
-
-def galPushC (F : Shv R) (σ : Ω ≃ₐ[K] Ω) :
-    RPsiC R K Ω p F ⟶ (((bc (galSpMap p σ)).sheafPushforwardContinuous _ _ _).mapHomologicalComplex _).obj
-      (RPsiC R K Ω p F) :=
-  (NatTrans.mapHomologicalComplex (trans R (bcSq (galSpMap_i p σ)).hom (galGen_j p σ)) _).app (GlobalTheory.EtC.res R F)
 
 def ineNat {σ : Ω ≃ₐ[K] Ω} (hσ : σ ∈ inertia O K Ω) :
     nb R (iSp Ω p) (jGen K Ω p) ⟶ nb R (iSp Ω p) (jGen K Ω p) :=
@@ -210,19 +179,6 @@ def ineNat {σ : Ω ≃ₐ[K] Ω} (hσ : σ ∈ inertia O K Ω) :
 
 def ineC (F : Shv R) {σ : Ω ≃ₐ[K] Ω} (hσ : σ ∈ inertia O K Ω) : RPsiC R K Ω p F ⟶ RPsiC R K Ω p F :=
   (NatTrans.mapHomologicalComplex (ineNat R p hσ) _).app (GlobalTheory.EtC.res R F)
-
-def ineRq (q : ℤ) (F : Shv R) {σ : Ω ≃ₐ[K] Ω} (hσ : σ ∈ inertia O K Ω) : RqPsi R K Ω p q F ⟶ RqPsi R K Ω p q F :=
-  HomologicalComplex.homologyMap (ineC R p F hσ) q
-
-def ineStalk (q : ℤ) (F : Shv R) {σ : Ω ≃ₐ[K] Ω} (hσ : σ ∈ inertia O K Ω) {Ω' : Type} [Field Ω'] [IsSepClosed Ω']
-    (s : Spec (CommRingCat.of Ω') ⟶ spFib Ω p) : stalkPsi R K Ω p q F s ⟶ stalkPsi R K Ω p q F s :=
-  (Scheme.pointSmallEtale s).sheafFiber.map (ineRq R p q F hσ)
-
-def galH (F : Shv R) (n : ℤ) (σ : Ω ≃ₐ[K] Ω) : HPsi R K Ω p F n →+ HPsi R K Ω p F n :=
-  (postHX R (DerivedCategory.Q.map (galC R p F σ)) n).comp (pullHXC R (galSpMap p σ) (RPsiC R K Ω p F) n)
-
-def ineH (F : Shv R) (n : ℤ) {σ : Ω ≃ₐ[K] Ω} (hσ : σ ∈ inertia O K Ω) : HPsi R K Ω p F n →+ HPsi R K Ω p F n :=
-  postHX R (DerivedCategory.Q.map (ineC R p F hσ)) n
 
 end Nearby
 end GlobalTheory.EtC.Psi
@@ -293,18 +249,6 @@ variable {O : Type} [CommRing O] [HenselianLocalRing O] {K : Type} [Field K] [Al
   {Ω : Type} [Field Ω] [Algebra K Ω] [Algebra O Ω] [IsScalarTower O K Ω]
   {X : Scheme.{0}} (p : X ⟶ Spec (CommRingCat.of O))
 
-theorem galC_natural {F G : Shv R} (φ : F ⟶ G) (σ : Ω ≃ₐ[K] Ω) :
-    (pullC R (galSpMap p σ)).map (nbCMap R (iSp Ω p) (jGen K Ω p) φ) ≫ galC R p G σ =
-      galC R p F σ ≫ nbCMap R (iSp Ω p) (jGen K Ω p) φ :=
-  (NatTrans.mapHomologicalComplex (transFlat R (bcSq (galSpMap_i p σ)).hom (galGen_j p σ)) _).naturality
-    (resMap R φ)
-
-def galHFam (l : ℕ) [Fact l.Prime] (n : ℤ) (σ : Ω ≃ₐ[K] Ω) :
-    HPsiL l K Ω p n →+ (∀ k, HPsi ℤ_[l] K Ω p (lam l k) n) where
-  toFun x k := galH ℤ_[l] p (lam l k) n σ (x.1 k)
-  map_zero' := funext fun k => map_zero (galH ℤ_[l] p (lam l k) n σ)
-  map_add' x y := funext fun k => map_add (galH ℤ_[l] p (lam l k) n σ) (x.1 k) (y.1 k)
-
 end AdicGal
 end GlobalTheory.EtC.Psi
 
@@ -316,34 +260,6 @@ section Examples
 variable (R : Type) [CommRing R] (O : Type) [CommRing O] [HenselianLocalRing O] (K : Type) [Field K] [Algebra O K]
   (Ω : Type) [Field Ω] [Algebra K Ω] [Algebra O Ω] [IsScalarTower O K Ω]
 
-example : DerivedCategory (ShvS R (spFib Ω (𝟙 (Spec (CommRingCat.of O))))) :=
-  RPsi R K Ω (𝟙 (Spec (CommRingCat.of O))) (coef R)
-
-example (n : ℤ) : AddCommGroup (HPsi R K Ω (𝟙 (Spec (CommRingCat.of O))) (coef R) n) := inferInstance
-
-example {X : Scheme.{0}} (p : X ⟶ Spec (CommRingCat.of O)) (F : Shv R) :
-    RPsiC R K Ω p F ⟶ RPsiC R K Ω p F :=
-  ineC R p F (one_mem (inertia O K Ω))
-
-example (σ : Ω ≃ₐ[K] Ω) (r : O) :
-    galInt O K σ (algebraMap O (integralClosure O Ω) r) = algebraMap O (integralClosure O Ω) r :=
-  galInt_algebraMap σ r
-
-example (x : integralClosure O Ω) : galInt O K (1 : Ω ≃ₐ[K] Ω) x = x := rfl
-
-example : Field (ResidueField (integralClosure O Ω)) := inferInstance
-
-example (n : ℤ) : Module ℚ_[3] (HPsiQ 3 K Ω (𝟙 (Spec (CommRingCat.of O))) n) := inferInstance
-
-example : (lamRedLin 3 1).hom (⟨1⟩ : ULift.{1} (ZMod (3 ^ 2))) = (⟨1⟩ : ULift.{1} (ZMod (3 ^ 1))) := by
-  apply congrArg ULift.up
-  exact map_one _
-
 end Examples
-
-example : Subgroup (AlgebraicClosure ℚ_[3] ≃ₐ[ℚ_[3]] AlgebraicClosure ℚ_[3]) × Type 2 :=
-  haveI : HenselianLocalRing ℤ_[3] := GlobalTheory.henselianLocalRing_of_henselianRing ℤ_[3]
-  (inertia ℤ_[3] ℚ_[3] (AlgebraicClosure ℚ_[3]),
-    HPsi ℤ_[3] ℚ_[3] (AlgebraicClosure ℚ_[3]) (𝟙 (Spec (CommRingCat.of ℤ_[3]))) (lam 3 1) 0)
 
 end GlobalTheory.EtC.Psi

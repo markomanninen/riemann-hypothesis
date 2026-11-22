@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheSection
-import Formalism.HermitianCurvature.StatementNF
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreCut
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheSection
+public import Formalism.HermitianCurvature.StatementNF
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TwoByOneBlock
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreCut
+
+@[expose] public section
 
 open Matrix
 

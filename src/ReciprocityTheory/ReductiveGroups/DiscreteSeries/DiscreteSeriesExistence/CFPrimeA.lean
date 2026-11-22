@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.InhabCAR
-import Mathlib.LinearAlgebra.ExteriorAlgebra.Basis
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.InhabCAR
+public import Mathlib.LinearAlgebra.ExteriorAlgebra.Basis
+
+@[expose] public section
 
 noncomputable section
 
@@ -122,7 +126,7 @@ theorem fockBasis_wt (ε : Fin n → Bool) (s : Finset (Fin (n * n))) (c : Fin n
       Set.powersetCard.ofFinEmbEquiv_symm_apply]
     congr 1
     funext i
-    simp
+    simp [Pi.basisFun_apply]
     rfl
   rw [hb, sg_ιMulti]
   congr 2

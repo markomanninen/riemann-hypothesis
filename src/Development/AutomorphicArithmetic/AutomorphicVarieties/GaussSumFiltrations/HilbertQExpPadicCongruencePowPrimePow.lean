@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPos
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.HilbertQExpPadicBoundAlgebraProperties
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.EvenPos
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.HilbertQExpPadicBoundAlgebraProperties
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep UpperTheory.V UpperTheory.V.Af UpperTheory.V.Sd GlobalTheory.HilbertThetaSeries
 open scoped Matrix
@@ -79,7 +83,7 @@ theorem small_add {r s : ℝ} {f g : Hn F → ℂ} (hf : Small ι r f) (hg : Sma
   obtain ⟨a, ha, ha'⟩ := hf
   obtain ⟨b, hb, hb'⟩ := hg
   refine ⟨a + b, hasQ_add ha hb, fun ξ => ?_⟩
-  rw [Pi.add_apply, map_add]
+  rw [Pi.add_apply, map_add (f := _)]
   exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le_max (ha' ξ) (hb' ξ))
 
 theorem small_mul {r s : ℝ} {f g : Hn F → ℂ} (hf : Small ι r f) (hg : Small ι s g) : Small ι (r * s) (f * g) := by
@@ -90,7 +94,8 @@ theorem small_mul {r s : ℝ} {f g : Hn F → ℂ} (hf : Small ι r f) (hg : Sma
   obtain ⟨c, hc, hc'⟩ := hasQ_mul F f g a b ha hb
   refine ⟨c, hc, fun ξ => ?_⟩
   obtain ⟨t, ht⟩ := hc' ξ
-  rw [ht, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [ht, map_sum]
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (mul_nonneg hr hs) fun η _ => ?_
   rw [map_mul, norm_mul]
   exact mul_le_mul (ha' η) (hb' (ξ - η)) (norm_nonneg _) hr

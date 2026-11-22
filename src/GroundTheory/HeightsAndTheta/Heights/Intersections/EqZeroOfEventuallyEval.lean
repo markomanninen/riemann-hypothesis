@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ExMapAlt
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StRatioAlgDep
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ExMapAlt
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StRatioAlgDep
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -35,10 +40,10 @@ theorem pointFormRank_holds.exists_surj_coords {σ : Type*} {n : ℕ} (ℓ : σ 
     obtain ⟨x0, hx0'⟩ := hq (Fin.init t)
     refine ⟨x0 + ((t (Fin.last m) - ℓ s x0) / ℓ s x) • x, funext fun j => ?_⟩
     refine Fin.lastCases ?_ (fun j => ?_) j
-    · simp only [Fin.snoc_last, map_add, map_smul, smul_eq_mul]
+    · simp only [Fin.snoc_last, map_add (f := _), map_smul, smul_eq_mul]
       rw [div_mul_cancel₀ _ hs]
       ring
-    · simp only [Fin.snoc_castSucc, map_add, map_smul, hΦx, smul_eq_mul, mul_zero, add_zero]
+    · simp only [Fin.snoc_castSucc, map_add (f := _), map_smul, hΦx, smul_eq_mul, mul_zero, add_zero]
       exact congr_fun hx0' j
 
 theorem pointFormRank_holds.eq_zero_of_eventually_eval {d : ℕ} (f : MvPolynomial (Fin d) ℂ) (a : Fin d → ℂ)

@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularUFDLocalization
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularUFDLocalization
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -56,7 +61,7 @@ theorem hasProjectiveDimensionLT_of_quotSMulTop [IsLocalRing R] [IsNoetherianRin
     have hfree : Module.Free (R ⧸ span {x}) (QuotSMulTop x M) := Module.free_of_flat_of_isLocalRing
     have := Module.finitePresentation_of_finite R M
     have : Module.Free R M :=
-      (Module.free_quotSMulTop_iff_free R M (IsLocalRing.maximalIdeal_le_jacobson _ hx) hxM).mp hfree
+      (Module.free_quotSMulTop_iff_free R M (IsLocalRing.ringJacobson_eq_maximalIdeal R ▸ hx) hxM).mp hfree
     infer_instance
   | succ k ih =>
     obtain ⟨n, π, hπ⟩ := Module.Finite.exists_fin' R M

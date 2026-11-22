@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory
@@ -30,7 +35,7 @@ theorem fg_inf_sup_of_isCompl (K V : Type) [Field K] [NumberField K] [AddCommGro
       refine ⟨a, ha, ?_⟩
       change p a = a + u
       have e1 : p (a + u) = a + u := hpl _ hxU
-      rw [map_add, hpr u hu, add_zero] at e1
+      rw [map_add (f := _), hpr u hu, add_zero] at e1
       exact e1
     · rintro ⟨a, ha, rfl⟩
       refine ⟨hpU a, ?_⟩

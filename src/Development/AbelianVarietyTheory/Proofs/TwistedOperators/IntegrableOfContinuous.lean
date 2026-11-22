@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteSupport
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothVectorWordActionContinuous
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DerivedActionSmoothVectorRealLinear
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SobolevContinuousFormSumLieWordInner
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothVectorsSubspaceStableSobolevFormDeriv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FiniteSupport
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothVectorWordActionContinuous
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DerivedActionSmoothVectorRealLinear
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SobolevContinuousFormSumLieWordInner
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothVectorsSubspaceStableSobolevFormDeriv
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,10 +31,15 @@ theorem continuous_pr (hG : IsUnit G) (hπ : IsURepOn (UH G) π) {k : ℕ} {Xs :
 
 theorem pr_add (hG : IsUnit G) : ∀ {k : ℕ} (Xs : Fin k → Matrix (Fin n) (Fin n) ℂ), (∀ i, Xs i ∈ lieG G) →
     ∃ Y : (Fin k → ℝ) → Fin k → Matrix (Fin n) (Fin n) ℂ, (∀ i, ContDiff ℝ ∞ fun t => Y t i) ∧
-      (∀ t i, Y t i ∈ lieG G) ∧ ∀ t h, pr Xs (t + h) = pr Xs t * pr (Y t) h
-  | 0, Xs, _ => ⟨fun _ => Xs, fun i => i.elim0, fun _ i => i.elim0, fun t h => by simp [pr_zero]⟩
-  | k + 1, Xs, hX => by
-    obtain ⟨Y, h1, h2, h3⟩ := pr_add hG (Fin.init Xs) fun i => hX _
+      (∀ t i, Y t i ∈ lieG G) ∧ ∀ t h, pr Xs (t + h) = pr Xs t * pr (Y t) h := by
+  intro k
+  induction k with
+  | zero =>
+    intro Xs _
+    exact ⟨fun _ => Xs, fun i => i.elim0, fun _ i => i.elim0, fun t h => by simp [pr_zero]⟩
+  | succ k ih =>
+    intro Xs hX
+    obtain ⟨Y, h1, h2, h3⟩ := ih (Fin.init Xs) (fun i => hX i.castSucc)
     set X := Xs (Fin.last k) with hXd
     have hexp : ContDiff ℝ ∞ (NormedSpace.exp : Matrix (Fin n) (Fin n) ℂ → _) :=
       contDiff_iff_contDiffAt.2 fun x => (NormedSpace.exp_analytic (𝕂 := ℝ) x).contDiffAt
@@ -41,9 +50,9 @@ theorem pr_add (hG : IsUnit G) : ∀ {k : ℕ} (Xs : Fin k → Matrix (Fin n) (F
       · simpa using contDiff_const
       · simp only [Fin.snoc_castSucc, ← Matrix.exp_neg]
         have a1 : ContDiff ℝ ∞ fun t : Fin (k + 1) → ℝ => t (Fin.last k) • X :=
-          (contDiff_apply ℝ ℝ (Fin.last k)).smul contDiff_const
+          (contDiff_apply ℝ (fun _ => ℝ) (Fin.last k)).smul contDiff_const
         have a2 : ContDiff ℝ ∞ fun t : Fin (k + 1) → ℝ => (Fin.init t : Fin k → ℝ) :=
-          contDiff_pi.2 fun j => contDiff_apply ℝ ℝ _
+          contDiff_pi.2 fun j => contDiff_apply ℝ (fun _ => ℝ) _
         exact ((hexp.comp a1.neg).mul ((h1 j).comp a2)).mul (hexp.comp a1)
     · refine Fin.lastCases ?_ (fun j => ?_) i
       · simpa using hX _
@@ -132,11 +141,13 @@ theorem mem_smSub_of_closed (hG : IsUnit G) (hπ : IsURepOn (UH G) π) (N : Set 
       rw [Nat.cast_succ, contDiff_succ_iff_fderiv_apply]
       refine ⟨fun t => (hF t).differentiableAt, by simp, fun z => ?_⟩
       have e : ∀ t i, D ⟨Y t i, h2 t i⟩ = ∑ j, c j (Y t i) • D (b j) := fun t i => by
-        conv_lhs => rw [← b.sum_repr ⟨Y t i, h2 t i⟩, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          conv_lhs => rw [← b.sum_repr ⟨Y t i, h2 t i⟩, map_sum]
         refine Finset.sum_congr rfl fun j _ => ?_
         rw [map_smul, ← b.coord_apply, ← hc j]
         rfl
-      simp only [(hF _).fderiv, e, ContinuousLinearMap.comp_apply, _root_.sum_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [(hF _).fderiv, e, ContinuousLinearMap.comp_apply, _root_.sum_apply,
         ContinuousLinearMap.smulRight_apply, map_sum, ContinuousLinearMap.coe_restrictScalars',
         ContinuousLinearMap.map_smul_of_tower]
       refine ContDiff.sum fun i _ => ContDiff.const_smul _ (ContDiff.sum fun j _ =>
@@ -250,8 +261,8 @@ theorem smoothFamily_orbit [CompleteSpace H] {ε : Fin n → Bool} {σ : Matrix 
 
 end GlobalTheory.SmoothAverage
 
-open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.IndefR Formalism.IndefR.Mult GlobalTheory.Chain.IoLift in
 
+open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.IndefR Formalism.IndefR.Mult GlobalTheory.Chain.IoLift in
 theorem GlobalTheory.SmoothAverage.kMean_smooth : ∀ (D : D7) (V : HSp D) (S : D.what₂.Tau → SPar) (M : DSModel V S) (τ : D.what₂.Tau) (e : Formalism.REAL.KG (M.ε τ) → ℂ), Continuous e → ∀ w ∈ M.sm τ, kMean M τ e w ∈ M.sm τ ∧ ∀ ℓ : M.H τ →ₗ[ℂ] ℂ, Sobolev₂ (lieAt V τ) (M.rep τ) ℓ → (Continuous fun k : Formalism.REAL.KG (M.ε τ) => ℓ (M.σ τ (Formalism.REAL.toMK k) w)) ∧ ℓ (kMean M τ e w) = ∫ k, e k * ℓ (M.σ τ (Formalism.REAL.toMK k) w) ∂(Formalism.REAL.muK (M.ε τ)) := by
   intro D V S M τ e he w hw
   have : CompleteSpace (M.H τ) := (M.ds τ).1

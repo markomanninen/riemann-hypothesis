@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierJointQuotRel
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.DetUpMatSub
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.InfCut
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierJointQuotRel
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.DetUpMatSub
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.InfCut
+
+@[expose] public section
 
 noncomputable section
 
@@ -124,7 +128,7 @@ theorem stRel_holds (X : Formalism.L2.SG.HidaSetting.HidaSetting D) (u u' : D.wh
   intro w hw s hs
   set γ := gamW X u u' w with hγdef
   have hγ : IsPtRep X u u' w γ := by
-    rw [hγdef, gamW, dif_pos hw.1]; exact hw.1.choose_spec
+    rw [hγdef, gamW, dite_eq_left hw.1]; exact hw.1.choose_spec
   unfold psiU psiInf
   rw [Complex.star_def, map_prod, ← Finset.prod_mul_distrib]
   refine Finset.prod_eq_one fun v _ => ?_

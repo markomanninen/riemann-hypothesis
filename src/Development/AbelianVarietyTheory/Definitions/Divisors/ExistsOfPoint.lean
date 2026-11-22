@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUnifOfIsMumfordOf
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTauLattice
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HasTrivialKernelIff
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.ExistsUniqueEqConstMulEllTheta
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUnifOfIsMumfordOf
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTauLattice
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HasTrivialKernelIff
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.ExistsUniqueEqConstMulEllTheta
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,8 +51,8 @@ structure TautBase (o : Type) [CommRing o] (W : Type) [CommRing W] [IsLocalRing 
 
 attribute [instance] TautBase.grp TautBase.comm
 
-open InhTate Inh in
 
+open InhTate Inh in
 def TautBase.torus {o W : Type} [CommRing o] [CommRing W] [IsLocalRing W] (b : o →+* W) (r : ℕ)
     (u : Γ((𝟙_ (Over (Sp W))).left, ⊤)ˣ) (β : LinearMap.BilinForm ℤ (Fin r → ℤ)) (hβ : ∀ a a', β a a' = β a' a) :
     TautBase o W where
@@ -82,7 +86,7 @@ def TautBase.torus {o W : Type} [CommRing o] [CommRing W] [IsLocalRing W] (b : o
   τ₀_add a a' a'' z J hJ := by
     refine (congrArg₂ (· * ·) (gm_res _ z _ (hJ.mem _ _) _) ((gm_res _ z _ (hJ.mem _ _) _).trans (map_one _))).trans
       (Eq.trans ?_ (congrArg₂ (· * ·) (gm_res _ z _ (hJ.mem _ _) _) (gm_res _ z _ (hJ.mem _ _) _)).symm)
-    rw [_root_.mul_one, ← map_mul, ← zpow_add, map_add, LinearMap.add_apply]
+    rw [_root_.mul_one, ← map_mul, ← zpow_add, map_add (f := _), LinearMap.add_apply]
 
 def TautBase.ofPolAV {o W : Type} [CommRing o] [CommRing W] [IsLocalRing W] (b : o →+* W) (P : PolAV (Sp W))
     [IsCommMonObj P.A] (rig : LB.Gen (P.L.pull (eSec P.A))) (hr : rig.IsGen)
@@ -126,23 +130,5 @@ theorem TautBase.c₀_zero {o W : Type} [CommRing o] [CommRing W] [IsLocalRing W
   have h := T.c₀_add 0 0
   rw [add_zero] at h
   exact (mul_eq_left.mp h.symm)
-
-theorem TautBase.c₀_neg {o W : Type} [CommRing o] [CommRing W] [IsLocalRing W] (T : TautBase o W) (a : Fin T.r → ℤ) :
-    T.c₀ (-a) = (T.c₀ a)⁻¹ := by
-  have h := T.c₀_add (-a) a
-  rw [neg_add_cancel, T.c₀_zero] at h
-  exact eq_inv_of_mul_eq_one_left h.symm
-
-example {o W : Type} [CommRing o] [CommRing W] [IsLocalRing W] (b : o →+* W) (r : ℕ) :
-    (TautBase.torus b r 1 0 (fun _ _ => rfl)).r = r := rfl
-
-example : ∃ T : TautBase ℤ ℚ, T.g = 1 ∧ T.r = 1 := by
-  let E : _root_.WeierstrassCurve ℚ := ⟨0, 0, 0, 0, 1⟩
-  have : E.IsElliptic := ⟨by
-    rw [isUnit_iff_ne_zero]
-    norm_num [E, _root_.WeierstrassCurve.Δ, _root_.WeierstrassCurve.b₂, _root_.WeierstrassCurve.b₄,
-      _root_.WeierstrassCurve.b₆, _root_.WeierstrassCurve.b₈]⟩
-  obtain ⟨T, -, -, h₁, h₂, -⟩ := TautBase.exists_ell (Int.castRingHom ℚ) E 1
-  exact ⟨T, h₁, h₂⟩
 
 end GlobalTheory.PolDeg

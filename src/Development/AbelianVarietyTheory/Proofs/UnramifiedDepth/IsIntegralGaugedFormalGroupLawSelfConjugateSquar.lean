@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
-import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
-import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
-import Formalism.LocalToGlobal.CharacterGerms.NegMem
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
-import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.NondegenerateCharts
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieSelf
+public import Formalism.LocalToGlobal.CharacterGerms.BlockAdmissibleChart
+public import Formalism.LocalToGlobal.CharacterGerms.NegMem
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.StChartF
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CalcExp
+public import Development.AbelianVarietyTheory.Definitions.TeichmullerDepth.HasTeich
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -34,7 +38,7 @@ def intSer (V : VF C) (σ : Type) : Subring (MvPowerSeries σ C) where
     split_ifs
     · exact VF.Ge.one
     · exact VF.Ge.zero 0
-  add_mem' := fun hf hg μ => by rw [map_add]; exact (hf μ).add (hg μ)
+  add_mem' := fun hf hg μ => by rw [map_add (f := _)]; exact (hf μ).add (hg μ)
   zero_mem' := fun μ => by rw [map_zero]; exact VF.Ge.zero 0
   neg_mem' := fun hf μ => by rw [map_neg]; exact (hf μ).neg
 
@@ -201,7 +205,7 @@ theorem subst_hCol {a : Fin 2 × (Fin 2 × Fin dd) → MvPowerSeries τ C} (ha :
 
 theorem map_self (f : MvPowerSeries σ C) : MvPowerSeries.map (algebraMap C C) f = f := by
   ext n
-  simp [coeff_map]
+  simp
 
 end Series
 
@@ -278,7 +282,7 @@ theorem exp_gauge_cocycle_first_variable {a b c : Fin dd → MvPowerSeries τ C}
   have e := Y.gauge.ph1
   rw [FB.toK, map_self, FK_self] at e
   rw [e, sb_exp h3 (by
-      rw [map_sub, map_add, cc_hev Y (zc_pt _) (zc_pt _), cc_hev Y (zc_pt _) (zc_pt _),
+      rw [map_sub, map_add (f := _), cc_hev Y (zc_pt _) (zc_pt _), cc_hev Y (zc_pt _) (zc_pt _),
         cc_hev Y (zc_addOf Y _ _) (zc_pt _)]
       simp),
     sb_sub h3, sb_add h3, substPointsPowerSeries_eval_two h3 (zc_pt _) (zc_pt _), substPointsPowerSeries_eval_two h3 (zc_pt _) (zc_pt _),
@@ -292,7 +296,7 @@ theorem exp_gauge_cocycle_second_variable {a b c : Fin dd → MvPowerSeries τ C
   have e := Y.gauge.ph2
   rw [FB.toK, map_self, FK_self] at e
   rw [e, sb_exp h3 (by
-      rw [map_sub, map_add, cc_hev Y (zc_pt _) (zc_pt _), cc_hev Y (zc_pt _) (zc_pt _),
+      rw [map_sub, map_add (f := _), cc_hev Y (zc_pt _) (zc_pt _), cc_hev Y (zc_pt _) (zc_pt _),
         cc_hev Y (zc_pt _) (zc_addOf Y _ _)]
       simp),
     sb_sub h3, sb_add h3, substPointsPowerSeries_eval_two h3 (zc_pt _) (zc_pt _), substPointsPowerSeries_eval_two h3 (zc_pt _) (zc_pt _),
@@ -349,7 +353,7 @@ theorem hAt_eq {a b : Fin 2 × Fin dd → MvPowerSeries τ C} (ha : Zc a) (hb : 
   unfold hAt
   show subst _ (∑ col, hCol col Y.h) = _
   rw [Fin.sum_univ_two, subst_add (hasSubst_of_constantCoeff_zero hz), subst_hCol hz, subst_hCol hz]
-  simp only [if_true, one_ne_zero, if_false]
+  simp only [ite_true, one_ne_zero, ite_false]
   rfl
 
 omit [CharZero C] in
@@ -383,7 +387,8 @@ end Chart
 
 theorem rlaw_rawSelf (C : Type) [Field C] [CharZero C] (V : VF C) (O : Type) [CommRing O] [StarRing O] (dd : ℕ)
     (Y : FBChart C V O dd) (d : ℕ) [NeZero d] (I0 : Type) [Fintype I0] (p : SelfData Y d I0) :
-    RLaw (Y.rawSelf p) V where
+    RLaw (Y.rawSelf p) V := by
+  exact {
   charZero := inferInstance
   closed := Y.algClosed
   odd := Y.l_odd
@@ -426,12 +431,13 @@ theorem rlaw_rawSelf (C : Type) [Field C] [CharZero C] (V : VF C) (O : Type) [Co
     classical
     intro g e he
     show coeff e (∑ col, hCol col Y.h) = 0
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_eq_zero fun col _ => ?_
     refine Van.subst (T := {s : Fin 2 × (Fin 2 × Fin dd) | s.1 = g}) {s : Fin 2 × Fin dd | s.1 = g}
       (fun _ => constantCoeff_X _) ?_ (h_axes Y g) e he
     intro s hs ν hν
-    rw [coeff_X, if_neg]
+    rw [coeff_X, ite_eq_right]
     rintro rfl
     exact hν (s.1, (col, s.2)) (by simp) hs
   addInt := by
@@ -447,7 +453,7 @@ theorem rlaw_rawSelf (C : Type) [Field C] [CharZero C] (V : VF C) (O : Type) [Co
       col_addP Y p (zc_gp _) (zc_gp _), add_add_add_comm, add_sub_add_comm]
     refine intS_exp_add ?_ ?_ ?_ ?_
     iterate 2
-      rw [map_sub, map_add, cc_hsb Y (z _ _) (z _ _), cc_hsb Y (z _ _) (z _ _),
+      rw [map_sub, map_add (f := _), cc_hsb Y (z _ _) (z _ _), cc_hsb Y (z _ _) (z _ _),
         cc_hsb Y (zc_law Y (z _ _) (z _ _)) (z _ _), add_zero, sub_zero]
     all_goals
       rw [exp_gauge_cocycle_first_variable Y (z _ _) (z _ _) (z _ _)]
@@ -461,7 +467,7 @@ theorem rlaw_rawSelf (C : Type) [Field C] [CharZero C] (V : VF C) (O : Type) [Co
       col_addP Y p (zc_gp _) (zc_gp _), add_add_add_comm, add_sub_add_comm]
     refine intS_exp_add ?_ ?_ ?_ ?_
     iterate 2
-      rw [map_sub, map_add, cc_hsb Y (z _ _) (z _ _), cc_hsb Y (z _ _) (z _ _),
+      rw [map_sub, map_add (f := _), cc_hsb Y (z _ _) (z _ _), cc_hsb Y (z _ _) (z _ _),
         cc_hsb Y (z _ _) (zc_law Y (z _ _) (z _ _)), add_zero, sub_zero]
     all_goals
       rw [exp_gauge_cocycle_second_variable Y (z _ _) (z _ _) (z _ _)]
@@ -495,7 +501,8 @@ theorem rlaw_rawSelf (C : Type) [Field C] [CharZero C] (V : VF C) (O : Type) [Co
     refine ⟨fun h => ?_, fun h => ?_⟩
     · subst h
       have hg : 1 - g ≠ g := by fin_cases g <;> decide
-      rw [key, hew, p.gm_hyp, if_neg hg, if_pos rfl, one_mul]
-    · rw [key, hew, if_neg h, mul_zero]
+      rw [key, hew, p.gm_hyp, ite_eq_right hg, ite_eq_left rfl, one_mul]
+    · rw [key, hew, ite_eq_right h, mul_zero]
+  }
 
 end GlobalTheory.RowLawSquare

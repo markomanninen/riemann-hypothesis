@@ -1,17 +1,21 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.CoreDescOf
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.AbsLast
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PullBack
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.UnitTrace
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.OneTerm
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.SideSum
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PickS
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PickInf
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.TyEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.FdFixed
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.GoodEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OccursBasics
-import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.EigBasic
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.CoreDescOf
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.AbsLast
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PullBack
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.UnitTrace
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.OneTerm
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.SideSum
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PickS
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.PickInf
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.TyEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.FdFixed
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.GoodEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.Places
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OccursBasics
+public import Development.AutomorphicArithmetic.Foundations.Convolution.IntegrableConvolution.EigBasic
+
+@[expose] public section
 
 open UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.T in
 theorem UpperTheory.ConvolutionTheory.T.coreDesc :

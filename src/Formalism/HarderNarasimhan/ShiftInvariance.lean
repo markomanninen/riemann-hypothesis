@@ -1,35 +1,41 @@
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DegSupermodZ
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.ExistsSmulMemOfFinrankEq
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.FinSup
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SatBasic
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.RatioMax
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DegSupermod
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.MuChar
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HNStep
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SlopeIneq
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.PolygonSlopeSum
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HNSlopes
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.ShiftInvariance
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.Duality
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HNExtreme
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.PiSumForallInsertOnly
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.Example
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SizeMu
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.PlaceSplit
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.GramBlock
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.RescaleCovol
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.TwistFinrankEq
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SlopeIneqMean
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HtGram
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HtImage
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SizeIneq
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.Rerealize
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.FrameHermSharpB
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.QuotRealize
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.FrameLinearAlgebraFirst
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.TheoremFSharp
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DualPl
+module
+
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DegSupermodZ
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.ExistsSmulMemOfFinrankEq
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.FinSup
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SatBasic
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.RatioMax
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DegSupermod
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.MuChar
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HNStep
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SlopeIneq
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.PolygonSlopeSum
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HNSlopes
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.ShiftInvariance
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.Duality
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HNExtreme
+public import Formalism.HarderNarasimhan.DegSupermodZ
+public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.DiscreteTopologyOfLe
+public import Formalism.LatticeSlopes.LatticeSlopesProofs.ShortVector
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SizeMu
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.PlaceSplit
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.GramBlock
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.RescaleCovol
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.TwistFinrankEq
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SlopeIneqMean
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HtGram
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HtImage
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SizeIneq
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.Rerealize
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.FrameHermSharpB
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.QuotRealize
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.FrameLinearAlgebraFirst
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.TheoremFSharp
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DualPl
+
+@[expose] public section
 
 namespace Formalism.HN
 
@@ -40,15 +46,11 @@ theorem ratioMax : RatioMax := maximal_slope_ratio
 theorem degSupermod : DegSupermod := degree_supermodular
 theorem muChar : MuChar := slope_characterization
 theorem hnStep_spec : HNStep := hnStep_of degSupermod muChar ratioMax finSup satR satBasic
-theorem slopeIneq : SlopeIneq := slope_inequality_general
 theorem hnSum : HNSum := polygon_slope_sum
 theorem hnSlopes : HNSlopes := polygon_slopes_characterization
 theorem shiftInvariance : ShiftInvariance := shiftInvariance_of muChar muChar hnSlopes
-theorem duality : Duality := slope_duality_formula
-theorem piSum : PiSum := product_slope_sum
 theorem plLat : PlLat := place_lattice_structure
 theorem sizeMu : SizeMu := size_maximal_slope
-theorem gramBlock : GramBlock := gram_block_determinant
 theorem rescaleCovol : RescaleCovol := rescale_covolume_formula
 theorem twist : Twist := twist_of rescaleCovol plLat shiftInvariance
 theorem slopeIneqMean : SlopeIneqMean := slope_inequality_mean

@@ -1,8 +1,30 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsThetaFunctionMixedCoordinateBumpMulCoreStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittMixedCoordsConjHermitianAdjoint
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HermitianAdjointSymplecticActionThetaHeisenberg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsAuxiliaryVectorWittDec
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsThetaFunctionMixedCoordinateBumpMulCoreStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittMixedCoordsConjHermitianAdjoint
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HermitianAdjointSymplecticActionThetaHeisenberg
+
+namespace I195MixedCoordinates_5724cff7a327dd5e61feafed
+
+open Formalism.BasicNotions Formalism.BasicNotions.TH
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
+open Formalism.L2.Theta Formalism.IndefR.Datum GlobalTheory.MixModel MeasureTheory
+attribute [local instance] Formalism.BasicNotions.Host.cmStar
+
+public noncomputable abbrev target
+    {D : D7} {T T₀ : HSp D} {ρ : ℕ} (d : HypDec T T₀ ρ) (S : HSp D)
+    (ψ : AddChar (AF D.host.F) ℂ) (μ : Measure (Mx D ρ S.rank))
+    (𝓕 : Set (Mx D ρ S.rank)) (f : WO S T → ℂ) (y : Mx D S.rank ρ) : WO S T₀ → ℂ :=
+  fun w₀ => ∫ ξ in 𝓕, heisO ψ S T (d.jX * ξ)
+    (heisO ψ S T (d.jY * (incA D (-D.host.xi0⁻¹) • (adj y * gA S)))
+      (heisO ψ S T (d.j0 * w₀) f)) 0 ∂μ
+
+end I195MixedCoordinates_5724cff7a327dd5e61feafed
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow GlobalTheory.Unf GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.SepRows GlobalTheory.Asc
 open scoped TensorProduct
@@ -34,19 +56,19 @@ theorem isBump_conj_smul {D : D7} {m n : ℕ} (c c' : AE D) (hc : c' * c = 1) (h
   · exact Complex.continuous_conj.comp (hβ.cont.comp (continuous_const_smul c))
   · exact (hβ.supp.comp_homeomorph e).comp_left (map_zero (starRingEnd ℂ))
   · obtain ⟨U, hU, hper⟩ := hβ.level
-    refine ⟨U.comap (DistribMulAction.toAddMonoidHom (Mx D m n) c), hU.preimage (continuous_const_smul c), ?_⟩
+    refine ⟨U.comap (DistribSMul.toAddMonoidHom (Mx D m n) c), hU.preimage (continuous_const_smul c), ?_⟩
     intro u hu hu0 x
     simp only [smul_add]
     rw [hper (c • u) hu (hinf u hu0)]
   · intro k l hl hl0 w
-    have h0 : ContDiff ℝ ∞ fun t => β (c • w + ((DistribMulAction.toAddMonoidHom (Mx D m n) c).comp l) t) :=
-      hβ.smooth k ((DistribMulAction.toAddMonoidHom (Mx D m n) c).comp l)
+    have h0 : ContDiff ℝ ∞ fun t => β (c • w + ((DistribSMul.toAddMonoidHom (Mx D m n) c).comp l) t) :=
+      hβ.smooth k ((DistribSMul.toAddMonoidHom (Mx D m n) c).comp l)
         ((continuous_const_smul c).comp hl) (fun t => hfin _ (hl0 t)) (c • w)
     have h := (Complex.conjCLE.contDiff (n := ∞)).comp h0
     convert h using 2 with t
     simp [smul_add]
 
-theorem mixT_bump_smul : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ (S T T₀ : HSp D) (ρ : ℕ) (d : HypDec T T₀ ρ) (v : VolM D ρ S.rank) (β : Mx D S.rank ρ → ℂ) (g : WO S T₀ → ℂ), IsBump β → IsThetaFunO ψ S T₀ g → ∃ Φ, IsThetaFunO ψ S T Φ ∧ ∀ y, d.mixT S ψ v.μ v.𝓕 Φ y = β y • g := by
+theorem mixT_bump_smul : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ (S T T₀ : HSp D) (ρ : ℕ) (d : HypDec T T₀ ρ) (v : VolM D ρ S.rank) (β : Mx D S.rank ρ → ℂ) (g : WO S T₀ → ℂ), IsBump β → IsThetaFunO ψ S T₀ g → ∃ Φ, IsThetaFunO ψ S T Φ ∧ ∀ y, (_root_.I195MixedCoordinates_5724cff7a327dd5e61feafed.target d) S ψ v.μ v.𝓕 Φ y = β y • g := by
   intro D ψ hψ S T T₀ ρ d v β g hβ hg
   obtain ⟨μ', 𝓕', hcov, -, -, -, hsw⟩ := GlobalTheory.MixSwap.mixS_cj_dagger D ψ hψ S T T₀ ρ d v.μ v.𝓕 v.covol
   have hadj := fun X Y : HSp D => (GlobalTheory.AdjointPair.adjoint_clauses D ψ hψ X Y).2.2.1
@@ -60,7 +82,8 @@ theorem mixT_bump_smul : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdCha
   have h1 := hsw (GlobalTheory.IndefiniteRowSideFullHecke.ConjugateAdjointDagger.cj (GlobalTheory.IndefiniteRowSideFullHecke.ConjugateAdjointDagger.dagger S T) Φ') y
   rw [GlobalTheory.IndefiniteRowSideFullHecke.ConjugateAdjointDagger.cj_cj _ _ (GlobalTheory.IndefiniteRowSideFullHecke.ConjugateAdjointDagger.dagger_dagger T S)] at h1
   have h2 := hmix (incA D D.host.xi0⁻¹ • y)
-  simp only at h2
+  change I195MixedCoordinates_8df3303fbb03152b340aba95.source d S ψ μ' 𝓕' Φ'
+    (incA D D.host.xi0⁻¹ • y) = _ at h2
   rw [h2, smul_smul, hc', one_smul] at h1
   funext z
   have h3 := congrFun h1 (GlobalTheory.IndefiniteRowSideFullHecke.ConjugateAdjointDagger.dagger S T₀ z)
@@ -68,6 +91,7 @@ theorem mixT_bump_smul : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdCha
     Complex.conj_conj] at h3
   have h4 := congrArg (starRingEnd ℂ) h3
   simp only [map_mul, Complex.conj_conj] at h4
-  rw [Pi.smul_apply, smul_eq_mul, ← h4]
+  simp only [Pi.smul_apply, smul_eq_mul]
+  exact h4.symm
 
 end GlobalTheory.MixAdj

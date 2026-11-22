@@ -1,8 +1,12 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MassConstSucc
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsMassConstOne
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsFixF
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LiStatOf
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MassLand
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MassConstSucc
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsMassConstOne
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsFixF
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.LiStatOf
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.MassLand
+
+@[expose] public section
 
 open NumberField Module
 
@@ -39,9 +43,9 @@ theorem siegelMassRatio_of_LI (hH : HermRepUnram) (hLI : LIStat) : Formalism.Her
   have := finiteDimensional_of_ortho hL
   have := finiteDimensional_of_ortho hL'
   have e1 := hall M (by omega) V h L hs (isTotPosDef_of_ortho hK hs hL) (finrank_of_ortho hL)
-    (isLattice_of_ortho hL) (isIntegralLat_of_ortho hL)
+    (isFullLattice_of_ortho hL) (isIntegralLat_of_ortho hL)
   have e2 := hall (M - 1) (by omega) V' h' L' hs' (isTotPosDef_of_ortho hK hs' hL')
-    (finrank_of_ortho hL') (isLattice_of_ortho hL') (isIntegralLat_of_ortho hL')
+    (finrank_of_ortho hL') (isFullLattice_of_ortho hL') (isIntegralLat_of_ortho hL')
   rw [lamG_eq_one_of_ortho hK hF hs hL, mul_one] at e1
   rw [lamG_eq_one_of_ortho hK hF hs' hL', mul_one] at e2
   have hprod : ∏ j ∈ Finset.Icc 2 M, Formalism.HermitianLatticesTheory.massRatioRightSide K j =
@@ -54,8 +58,8 @@ theorem siegelMassRatio_of_LI (hH : HermRepUnram) (hLI : LIStat) : Formalism.Her
   rw [e1, e2, hprod, div_eq_iff (by positivity)]
   ring
 
-variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
 
+variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
 theorem siegelMassRatio : Formalism.HermitianLatticesTheory.SiegelMassRatio := siegelMassRatio_of_LI hermRepUnram liStat
 
 end Formalism.HermitianLattices.Ext.L3

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.IsConst
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RadicalStalks.IsConst
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrystallinePull2SumCup
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.ConjSeq GlobalTheory.UPel.HT GlobalTheory.UPel.HT.ES UpperTheory.Gal.Ord
@@ -49,7 +53,7 @@ private lemma art_tangent (p : ℕ) [Fact p.Prime] (k : Type) [Field k] [CharP k
       map_one' := by simp [hq0]
       map_zero' := by simp [hq0]
       map_add' := fun z w => by
-        simp only [TrivSqZeroExt.fst_add, TrivSqZeroExt.snd_add, hq, add_pow_char_pow, map_add]
+        simp only [TrivSqZeroExt.fst_add, TrivSqZeroExt.snd_add, hq, add_pow_char_pow, map_add (f := _)]
         ring
       map_mul' := fun z w => by
         simp only [TrivSqZeroExt.fst_mul, TrivSqZeroExt.snd_mul, smul_eq_mul, MulOpposite.smul_eq_mul_unop,
@@ -62,7 +66,7 @@ private lemma art_tangent (p : ℕ) [Fact p.Prime] (k : Type) [Field k] [CharP k
     have h1 : z.fst = 0 := by
       have h0 : τ (j z) = algebraMap k (DualNumber k) (z.fst ^ q) := by
         have e : τ (r ^ q) = 0 := by rw [map_pow, hτr, heq q hq2]
-        rw [hj, map_add, map_mul, e, mul_zero, add_zero]
+        rw [hj, map_add (f := _), map_mul, e, mul_zero, add_zero]
         exact τ.commutes _
       rw [hz, map_zero] at h0
       have h0' := congrArg TrivSqZeroExt.fst h0
@@ -134,7 +138,7 @@ private lemma art_der (π : B →ₐ[k] k) (hπ : ∀ b, b - algebraMap k B (π 
     have e : (a - algebraMap k B (π a)) * (b - algebraMap k B (π b)) =
         a * b - algebraMap k B (π a) * b - algebraMap k B (π b) * a + algebraMap k B (π a * π b) := by
       rw [map_mul]; ring
-    rw [e, map_add, map_sub, map_sub, halg, halg, halg1] at h
+    rw [e, map_add (f := _), map_sub, map_sub, halg, halg, halg1] at h
     linear_combination h
   let L : B →ₗ[k] DualNumber k :=
     { toFun := fun b => TrivSqZeroExt.inl (π b) + TrivSqZeroExt.inr (φ b)
@@ -307,7 +311,7 @@ private lemma art_map [Module.Finite k B] (π : B →ₐ[k] k)
         by_contra hu
         have hmem : aeval x Q ∈ maximalIdeal B := (mem_maximalIdeal _).2 hu
         have hdiv := congrArg (aeval x) (divX_mul_X_add Q)
-        rw [map_add, map_mul, aeval_X, aeval_C] at hdiv
+        rw [map_add (f := _), map_mul, aeval_X, aeval_C] at hdiv
         have : algebraMap k B (Q.coeff 0) ∈ maximalIdeal B := by
           have h3 := Ideal.sub_mem _ hmem (Ideal.mul_mem_left _ (aeval x (divX Q)) hxm)
           rwa [← hdiv, add_sub_cancel_left] at h3

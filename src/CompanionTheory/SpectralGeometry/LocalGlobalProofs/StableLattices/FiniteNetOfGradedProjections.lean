@@ -1,8 +1,13 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.HsConjTranspose
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ParabolicSubgroupEquality
+
+@[expose] public section
 
 open Matrix
-open CompanionTheory.RgExh.Dec CompanionTheory.RgExh.Dec.L ReciprocityTheory.ChartRestriction.DS GlobalTheory.CompanionTheory.PSubFlag GlobalTheory.CompanionTheory.UGeo
+open CompanionTheory.RgExh.Dec (IsGrad)
+open GlobalTheory.CompanionTheory.PSubFlag (Pm Pp)
 
 namespace GlobalTheory.CompanionTheory.UGeo.GradNet
 
@@ -22,7 +27,7 @@ theorem norm_entry_le {M : Matrix (Fin n) (Fin n) ℂ} (h : Formalism.REAL.hs M 
   have h1 := (norm_entry_sq_le_hs M i j).trans h
   have h0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n
   by_contra hc
-  push_neg at hc
+  push Not at hc
   nlinarith
 
 theorem hs_le_quarter {M : Matrix (Fin n) (Fin n) ℂ}
@@ -43,6 +48,43 @@ theorem hs_le_quarter {M : Matrix (Fin n) (Fin n) ℂ}
   rw [e] at h1
   nlinarith
 
+section
+open scoped Matrix.Norms.L2Operator
+
+private theorem norm_entry_le_operator_norm (M : Matrix (Fin n) (Fin n) ℂ) (i j : Fin n) :
+    ‖M i j‖ ≤ ‖M‖ := by
+  let x := EuclideanSpace.single j (1 : ℂ)
+  have h := M.l2_opNorm_mulVec x
+  have hx : ‖x‖ = 1 := by simp [x]
+  rw [hx, mul_one] at h
+  have hi := PiLp.norm_apply_le ((EuclideanSpace.equiv (Fin n) ℂ).symm (M *ᵥ x)) i
+  change ‖(M *ᵥ Pi.single j (1 : ℂ)) i‖ ≤ _ at hi
+  rw [Matrix.mulVec_single_one, Matrix.col_apply] at hi
+  exact hi.trans h
+
+private theorem graded_projection_norms_le_one {ε : Fin n → Bool}
+    {A : Matrix (Fin n) (Fin n) ℂ} (hA : IsGrad ε A) : ‖Pm A‖ ≤ 1 ∧ ‖Pp A‖ ≤ 1 := by
+  have hHerm : Aᴴ = A := hA.2.1
+  have hCube : A * A * A = A := hA.2.2.1
+  have hSquare : ‖A * A‖ ≤ 1 := by
+    apply IsStarProjection.norm_le
+    refine isStarProjection_iff'.mpr ⟨?_, ?_⟩
+    · rw [← Matrix.mul_assoc, hCube]
+    · change (A * A)ᴴ = A * A
+      rw [conjTranspose_mul, hHerm]
+  have hNorm : ‖A‖ ≤ 1 := by
+    have h := A.l2_opNorm_conjTranspose_mul_self
+    rw [hHerm] at h
+    apply (sq_le_sq₀ (norm_nonneg _) zero_le_one).mp
+    simpa only [pow_two, ← h, mul_one] using hSquare
+  constructor
+  · simp only [Pm, norm_smul, norm_div, norm_one, Complex.norm_ofNat]
+    linarith [norm_sub_le (A * A) A]
+  · simp only [Pp, norm_smul, norm_div, norm_one, Complex.norm_ofNat]
+    linarith [norm_add_le (A * A) A]
+
+end
+
 theorem exists_net (n : ℕ) (ε : Fin n → Bool) :
     ∃ (m : ℕ) (A : Fin m → Matrix (Fin n) (Fin n) ℂ), (∀ j, IsGrad ε (A j)) ∧
       ∀ A' : Matrix (Fin n) (Fin n) ℂ, IsGrad ε A' →
@@ -53,18 +95,18 @@ theorem exists_net (n : ℕ) (ε : Fin n → Bool) :
     fun A => (fun i j => Pm A i j, fun i j => Pp A i j)
   have hb : Bornology.IsBounded (f '' {A | IsGrad ε A}) := by
     refine (Metric.isBounded_closedBall
-      (x := (0 : (Fin n → Fin n → ℂ) × (Fin n → Fin n → ℂ))) (r := (n : ℝ) + 1)).subset ?_
+      (x := (0 : (Fin n → Fin n → ℂ) × (Fin n → Fin n → ℂ))) (r := 1)).subset ?_
     rintro _ ⟨A, hA, rfl⟩
     have hA' : IsGrad ε A := hA
-    have hm := hs_proj_le (Pm_conj hA') (Pm_idem hA')
-    have hp := hs_proj_le (Pp_conj hA') (Pp_idem hA')
-    have hn : (0 : ℝ) ≤ (n : ℝ) + 1 := by positivity
+    obtain ⟨hm, hp⟩ := graded_projection_norms_le_one hA'
     rw [mem_closedBall_zero_iff, Prod.norm_def]
     refine max_le ?_ ?_
-    · exact (pi_norm_le_iff_of_nonneg hn).2 fun i =>
-        (pi_norm_le_iff_of_nonneg hn).2 fun j => norm_entry_le hm i j
-    · exact (pi_norm_le_iff_of_nonneg hn).2 fun i =>
-        (pi_norm_le_iff_of_nonneg hn).2 fun j => norm_entry_le hp i j
+    · exact (pi_norm_le_iff_of_nonneg zero_le_one).2 fun i =>
+        (pi_norm_le_iff_of_nonneg zero_le_one).2 fun j =>
+          (norm_entry_le_operator_norm (Pm A) i j).trans hm
+    · exact (pi_norm_le_iff_of_nonneg zero_le_one).2 fun i =>
+        (pi_norm_le_iff_of_nonneg zero_le_one).2 fun j =>
+          (norm_entry_le_operator_norm (Pp A) i j).trans hp
   have hr : 0 < 1 / (2 * ((n : ℝ) + 1)) := by positivity
   obtain ⟨t, hts, htf, hcov⟩ := Metric.finite_approx_of_totallyBounded
     ((Bornology.IsBounded.isCompact_closure hb).totallyBounded.subset subset_closure) _ hr
@@ -72,7 +114,7 @@ theorem exists_net (n : ℕ) (ε : Fin n → Bool) :
     obtain ⟨A, hA, e⟩ := hts y.2
     exact ⟨A, hA, e⟩
   choose a ha hfa using hch
-  haveI : Fintype t := htf.fintype
+  let : Fintype t := htf.fintype
   let e := Fintype.equivFin t
   refine ⟨Fintype.card t, fun j => a (e.symm j), fun j => ha _, fun A' hA' => ?_⟩
   have hmem : f A' ∈ ⋃ y ∈ t, Metric.ball y (1 / (2 * ((n : ℝ) + 1))) := hcov ⟨A', hA', rfl⟩

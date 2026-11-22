@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.TPairAssocPf
+module
+
+public import Development.EtaleCohomology.TateTwists.TPairAssocPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC
@@ -122,7 +126,7 @@ theorem uf_comm {I J T K : Cx R} (τ : Pair I J T) (hτ : τ.IsTensor) (μ : Pai
   have l1 := μ.leibniz U.unop s t i h a b
   have l2 := τ.leibniz U.unop s t i h a b
   simp only [Sec.map] at l1 l2
-  rw [l1, l2, map_add, Units.smul_def, Units.smul_def, map_zsmul, uf_mul, uf_mul]
+  rw [l1, l2, map_add (f := _), Units.smul_def, Units.smul_def, map_zsmul, uf_mul, uf_mul]
 
 def uc {I J T K : Cx R} (τ : Pair I J T) (hτ : τ.IsTensor) (μ : Pair I J K) : T ⟶ K where
   f w := ⟨uf τ hτ μ w⟩

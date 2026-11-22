@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivialIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStrictHenselisation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndEtaleLocalizedPiecesTrans
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStrictHenselisationOfDirectedUnion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivialIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStrictHenselisation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IndEtaleLocalizedPiecesTrans
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsStrictHenselisationOfDirectedUnion
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 open scoped TensorProduct
 
@@ -26,9 +31,9 @@ private lemma locPiecesEtale_localization_atPrime {R A : Type} [CommRing R] [Com
     fun _ => ⟨(), Algebra.mem_top⟩, fun _ => ⟨A, inferInstance, inferInstance, inferInstance, q,
       inferInstance, ⟨Subalgebra.topEquiv.symm⟩⟩⟩
 
+
 open IsLocalRing Polynomial in
 open scoped TensorProduct in
-
 theorem _root_.GlobalTheory.strictHenselisation_etale_over_polynomial : ∀ (T E : Type) [CommRing T] [IsDomain T]
     [IsLocalRing T] [CommRing E]
     [Algebra (Polynomial T) E] [Algebra T E] [IsScalarTower T (Polynomial T) E]
@@ -67,7 +72,7 @@ theorem _root_.GlobalTheory.strictHenselisation_etale_over_polynomial : ∀ (T E
   have hcomap : (maximalIdeal S).comap (algebraMap E S) = y := by
     rw [IsScalarTower.algebraMap_eq E (Localization.AtPrime y) S, ← Ideal.comap_comap,
       _root_.GlobalTheory.comap_maximalIdeal_of_localHom_strictHens]
-    exact Localization.AtPrime.comap_maximalIdeal ..
+    exact Localization.AtPrime.under_maximalIdeal ..
   haveI : Module.Flat E (Localization.AtPrime y) := IsLocalization.flat _ y.primeCompl
   haveI := hflat
   have hflatE : Module.Flat E S := Module.Flat.trans E (Localization.AtPrime y) S
@@ -82,7 +87,7 @@ theorem _root_.GlobalTheory.strictHenselisation_etale_over_polynomial : ∀ (T E
     haveI : IsLocalHom φ := hφs.2.2.1
     calc P = ((maximalIdeal S).comap φ).comap (algebraMap (Polynomial T) (Localization.AtPrime P)) := by
           rw [_root_.GlobalTheory.comap_maximalIdeal_of_localHom_strictHens]
-          exact (Localization.AtPrime.comap_maximalIdeal ..).symm
+          exact (Localization.AtPrime.under_maximalIdeal ..).symm
       _ = (maximalIdeal S).comap (algebraMap (Polynomial T) S) := by
           rw [Ideal.comap_comap, hφc]
       _ = y.comap (algebraMap (Polynomial T) E) := by

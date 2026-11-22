@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.LseConvexOn
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.LseConvexOn
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,7 +59,7 @@ theorem fi_nonneg {ε : Fin n → Bool} (z : PCoord ε → ℂ) (i : ℕ) : 0 �
     have h := lse_one_le (wS z hi) (fun S => yS z S.1) (wS_nonneg' z hi) (lemma3b z hi) (lemma3c z hi)
     simpa only [one_mul] using h
   · unfold Fi Del
-    rw [dif_neg hi]
+    rw [dite_eq_right hi]
     simp
 
 theorem fi_lower {ε : Fin n → Bool} (z : PCoord ε → ℂ) {i : ℕ} (hi : i ≤ n) {ep : ℝ}
@@ -66,16 +70,6 @@ theorem fi_lower {ε : Fin n → Bool} (z : PCoord ε → ℂ) {i : ℕ} (hi : i
   rw [fi_pmat_eq_fi_one_smul_pmat, fi_eq_lse z hi, ← lemma3d z hi]
   have h := lse_lower (wS z hi) (fun S => yS z S.1) (wS_nonneg' z hi) (lemma3b z hi) (lemma3c z hi)
     (hr.trans h1) h2 (fun S => by
-      have := abs_sum_pev_le z S.1
-      unfold yS
-      linarith)
-  simpa only [one_mul] using h
-
-theorem fi_upper {ε : Fin n → Bool} (z : PCoord ε → ℂ) {i : ℕ} (hi : i ≤ n) (h1 : rhoP z ≤ 1) :
-    Fi (pmat z) i ≤ Vi (pmat z) i := by
-  rw [fi_pmat_eq_fi_one_smul_pmat, fi_eq_lse z hi, ← lemma3d z hi]
-  have h := lse_upper (wS z hi) (fun S => yS z S.1) (wS_nonneg' z hi) (lemma3b z hi) (lemma3c z hi)
-    (fun S => by
       have := abs_sum_pev_le z S.1
       unfold yS
       linarith)

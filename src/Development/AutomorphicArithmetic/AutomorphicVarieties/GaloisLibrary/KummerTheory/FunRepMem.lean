@@ -1,12 +1,20 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.Mk0IdMapCongr
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum
 
 theorem UpperTheory.V.Kum.funRepMem :
-    ∀ (F Ω : Type) [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] (N : ℕ) (U : Subgroup (G F Ω)) [U.Normal] (R M : Type) [CommRing R] [AddCommGroup M] [Module R M], (∀ g, ∀ φ ∈ XDual N U R M, funRep R M U g φ ∈ XDual N U R M) ∧ (∀ g ∈ U, ∀ φ ∈ XDual N U R M, funRep R M U g φ = φ) ∧
-    ∀ (ρ : Representation R (G F Ω) M) (φ : U → M), φ ∈ EqHom N U ρ ↔ φ ∈ XDual N U R M ∧ ∀ g u, ρ g (funRep R M U g φ u) = φ u := by
+    ∀ (F Ω : Type) [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] (N : ℕ) (U : Subgroup (G F Ω)) [U.Normal] (R M : Type) [CommRing R] [AddCommGroup M] [Module R M],
+    (∀ g, ∀ φ ∈ XDual N U R M, funRep (R := R) (M := M) U g φ ∈ XDual N U R M) ∧
+    (∀ g ∈ U, ∀ φ ∈ XDual N U R M, funRep (R := R) (M := M) U g φ = φ) ∧
+    ∀ (ρ : Representation R (G F Ω) M) (φ : U → M), φ ∈ EqHom N U ρ ↔
+      φ ∈ XDual N U R M ∧ ∀ g u, ρ g (funRep (R := R) (M := M) U g φ u) = φ u := by
   intro F Ω _ _ _ _ _ N U _ R M _ _ _
-  have hf : ∀ (g : G F Ω) (φ : U → M) (u : U), funRep R M U g φ u = φ (UpperTheory.V.Base.conjHom U g u) := fun _ _ _ => rfl
+  have hf : ∀ (g : G F Ω) (φ : U → M) (u : U),
+      funRep (R := R) (M := M) U g φ u = φ (UpperTheory.V.Base.conjHom U g u) := fun _ _ _ => rfl
   have hc : ∀ (g : G F Ω) (u : U), (UpperTheory.V.Base.conjHom U g u).1 = g⁻¹ * u.1 * g := fun _ _ => rfl
   refine ⟨fun g φ hφ => ?_, fun g hg φ hφ => ?_, fun ρ φ => ?_⟩
   · have h : IsLift (RingEquiv.refl F) g.toRingEquiv := fun x => g.commutes x

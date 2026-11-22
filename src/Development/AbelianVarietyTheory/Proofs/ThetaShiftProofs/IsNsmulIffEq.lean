@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ExistsZeroGt
+
+@[expose] public section
 
 noncomputable section
 
@@ -241,8 +245,6 @@ theorem zero_val (χ : D.X) {y J} (hJ : Good D.P.L y J) : charVal (0 : GtPtF D F
 def gtProj (D : DegPre R) (F : Type) [Field F] [Algebra (FractionRing R) F] :
     GtPtF D F →+ Additive (TF (R := R) F ⟶ D.P.A) :=
   AddMonoidHom.mk' (fun g => Additive.ofMul g.b) fun g g' => congrArg Additive.ofMul (add_b g g')
-
-theorem gtProj_apply (g : GtPtF D F) : gtProj D F g = Additive.ofMul g.b := rfl
 
 theorem neg_b (g : GtPtF D F) : (-g).b = g.b⁻¹ := congrArg Additive.toMul (map_neg (gtProj D F) g)
 

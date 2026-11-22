@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueDualWeylWeightProjectorStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueDualWeylWeightProjector
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BaseChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueDualWeylWeightProjectorStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueDualWeylWeightProjector
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.DIV Formalism.L2.Pj GlobalTheory.BigTop GlobalTheory.BigOn GlobalTheory.ExpTie GlobalTheory.ExpFrame Formalism.CohomologicalDescent.DepthNonnegative Formalism.CohomologicalDescent.LogSmallConstantBounds Formalism.CohomologicalDescent.ShortWeightBounds Formalism.CohomologicalDescent.LD Formalism.RankGapBounds.FormsTensorLocalization
 
 set_option autoImplicit false
@@ -100,7 +105,8 @@ theorem isProj_sum (τ : ι) (e : (Fin N → ℕ) → Module.End O (NablaT O N l
     rw [MultilinearMap.toLinearMap_apply]
     exact he w x _ rfl
   rw [Finset.sum_congr rfl (fun w _ => key w)]
-  rw [← map_sum, MultilinearMap.toLinearMap_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, MultilinearMap.toLinearMap_apply]
   have : ∑ w ∈ wtBox N lam τ, rowProj O N (res N (lam τ)) w (x τ) = x τ := by
     apply Subtype.ext
     rw [Submodule.coe_sum]
@@ -134,7 +140,7 @@ theorem projA_comm {τ τ' : ι} (hne : τ ≠ τ') (w w' : Fin N → ℕ) :
 
 theorem projA_sum (τ : ι) : ∑ w ∈ wtBox N lam τ, projA (O := O) (lam := lam) τ w = 1 := by
   apply Subtype.ext
-  rw [AddSubmonoidClass.coe_finset_sum, OneMemClass.coe_one]
+  rw [AddSubmonoidClass.coe_finsetSum, OneMemClass.coe_one]
   exact isProj_sum τ _ (projA_isProj τ)
 
 end Main

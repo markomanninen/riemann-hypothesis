@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GlobSet
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GlobSet
+
+@[expose] public section
+
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.TermLoc GlobalTheory.Unfold GlobalTheory.LocOver GlobalTheory.GenMass
 open scoped Classical
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -261,7 +266,7 @@ theorem exists_unit_smul {L : Submodule M.L.O (H.Wb Fr.f)} (hL : Fr.IsInner L)
     induction hz using Submodule.span_induction with
     | mem z hz => exact hint _ (Finset.mem_image_of_mem _ hz)
     | zero => simp
-    | add z z' _ _ h h' => rw [map_add, mul_add]; exact M.L.O.add_mem h h'
+    | add z z' _ _ h h' => rw [map_add (f := _), mul_add]; exact M.L.O.add_mem h h'
     | smul o z _ h =>
       rw [LinearMap.map_smul_of_tower]
       show algebraMap 𝒪[F] E a * ((o : E) * ψ z) ∈ M.L.O

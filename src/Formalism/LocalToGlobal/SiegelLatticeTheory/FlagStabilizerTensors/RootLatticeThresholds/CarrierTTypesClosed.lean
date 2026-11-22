@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierTTypes
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NotCdomRaiseOfLt
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.CarrierTTypes
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NotCdomRaiseOfLt
+
+@[expose] public section
 
 noncomputable section
 

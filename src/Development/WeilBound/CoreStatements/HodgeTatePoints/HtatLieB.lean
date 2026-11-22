@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieChartOfSmoothChart
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TangentVectorSumDualNumber
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeVectorBundleOfSmooth
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieChartOfSmoothChart
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.TangentVectorSumDualNumber
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeVectorBundleOfSmooth
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj
@@ -145,7 +149,7 @@ theorem lieChart_of_smooth_chart : ∀ (S : Scheme.{0}) (G : Over S) [GrpObj G] 
     obtain ⟨l1, l2, l3⟩ := hP C _ hκ
     exact exists_lieModel (E := P →ₗ[R] C) G U V hU hV hUV C _ _ (hunit C _ hκ)
       (fun (w : P →ₗ[R] C) a => w (d a))
-      (fun w a b => by simp [dadd]) (fun w a b => by simp only [dmul, map_add, l1, RingHom.comp_apply])
+      (fun w a b => by simp [dadd]) (fun w a b => by simp only [dmul, map_add (f := _), l1, RingHom.comp_apply])
       (fun w b => by simp [dker]) (fun w w' a => rfl) (fun c w a => by simp) l2 l3
   refine ⟨P, i1, i2, i3, i4, i5, i6, fun C _ _ hC => (key C hC).choose, ?_⟩
   intro C C' _ _ _ _ hC hC' c w

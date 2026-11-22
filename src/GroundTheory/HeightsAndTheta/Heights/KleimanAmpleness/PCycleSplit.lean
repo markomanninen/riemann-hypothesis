@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsCycleSplit
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsCycleSplitFilt
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsCycleSplitCurve
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsCycleSplitSmall
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsCycleSplit
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsCycleSplitFilt
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsCycleSplitCurve
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.StatementsCycleSplitSmall
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -78,8 +83,8 @@ theorem withBot_not_succ_le {a b : WithBot ℕ∞} (ha : a = ((1 + 1 : ℕ) : Wi
 
 end Lemmas
 
-open Classical in
 
+open Classical in
 theorem CycleSplit.proof (hF : CycleSplit.Filt.Statement.{u, w}) (hCu : CycleSplit.Curve.Statement.{u, w})
     (hSm : CycleSplit.Small.Statement.{u, w}) : CycleSplit.Statement.{u, w} := by
   intro S _ _ Ω _ _ N x M 𝔪 h𝔪 J hJhom hJle hJm hdim
@@ -145,10 +150,10 @@ theorem CycleSplit.proof (hF : CycleSplit.Filt.Statement.{u, w}) (hCu : CycleSpl
     by_cases hsv : IsSubvar x (pp j) 1
     · have hm := hmin j hsv
       have : (pp j).IsPrime := (hpp j).1
-      rw [dif_pos ⟨hm, hsv⟩, nsmul_eq_mul]
+      rw [dite_eq_left ⟨hm, hsv⟩, nsmul_eq_mul]
       simp only [v, if_pos hsv]
       rw [← hcount (pp j) hm, ENat.toNat_natCast]
-    · rw [dif_neg fun h => hsv h.2]
+    · rw [dite_eq_right fun h => hsv h.2]
       simp only [v, if_neg hsv, smul_zero]
   · intro G hG
     rw [Function.mem_support] at hG

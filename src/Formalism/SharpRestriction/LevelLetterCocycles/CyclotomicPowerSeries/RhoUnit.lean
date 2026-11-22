@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.ConstSectionStatement
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.ConstSectionStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,7 @@ theorem rhoUnit : RhoUnitStatement := by
   obtain ⟨u, v, huv⟩ := Ideal.mem_span_pair.mp hmem
   have h2 : constantCoeff (ρ v) * constantCoeff (ρ a) = algebraMap O S c := by
     rw [← constantCoeff_algHom_C_eq_algebraMap ρ c, ← huv]
-    simp only [map_add, map_mul, hp, mul_zero, zero_add]
+    simp only [map_add (f := _), map_mul, hp, mul_zero, zero_add]
   rw [← h2] at hc
   exact isUnit_of_isUnit_constantCoeff (IsUnit.mul_iff.mp hc).2
 

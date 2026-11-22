@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenCastIsGen
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GenCastIsGen
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,8 +64,8 @@ theorem txFrame_frTw (R : Type) [CommRing R] [IsDomain R] (D : DegPre R) (N : �
       unfold GlobalTheory.UT.rigV
       rw [← val_comp_stalkMap _ f _ z J hJ]
       exact congrArg (fun r => val D.rig r z J) (spMap_jFKR τ).symm
-    rw [id_eq, hfr z J hJ, hpsi, hrig, h.2.1, val_comp_stalkMap κ f _ z J hJ, ← map_pow, ← map_mul, ← map_mul,
-]
+    rw [id_eq, hfr z J hJ, hpsi, hrig, h.2.1, val_comp_stalkMap κ f _ z J hJ, ← map_pow,
+      ← map_mul, ← map_mul]
     exact congrArg _ (hN κ hκ (f z) _ (good_comp f hJ))
 
 end GlobalTheory.Mum.Conj

@@ -1,7 +1,11 @@
-import Formalism.PeriodIntegrals.GoodTwo
-import Formalism.EllipticTorsion.EllipticTorsionProofs.Deuring
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModJInt
+module
+
+public import Formalism.PeriodIntegrals.GoodTwo
+public import Formalism.EllipticTorsion.EllipticTorsionProofs.Deuring
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModJInt
+
+@[expose] public section
 
 noncomputable section
 open scoped ComplexConjugate

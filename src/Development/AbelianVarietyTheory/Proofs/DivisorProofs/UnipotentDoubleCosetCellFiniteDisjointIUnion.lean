@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemSupportComp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemSupportComp
+
+@[expose] public section
+
 open Matrix Topology
 
 namespace GlobalTheory.JSW.Cut

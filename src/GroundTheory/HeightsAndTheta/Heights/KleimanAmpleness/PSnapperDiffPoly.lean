@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SnapperDiffPolySt
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PPolyOfDiffs
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.SnapperDiffPolySt
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.PPolyOfDiffs
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -18,7 +23,7 @@ theorem eval_aeval_eq {K : Type} (x : K → ℚ) (σ : K → MvPolynomial K ℚ)
     eval x (aeval σ P) = eval (fun k => eval x (σ k)) P := by
   induction P using MvPolynomial.induction_on with
   | C a => simp
-  | add p r hp hr => rw [map_add, map_add, hp, hr, map_add]
+  | add p r hp hr => rw [map_add (f := _), map_add (f := _), hp, hr, map_add (f := _)]
   | mul_X p j hp => simp only [map_mul, hp, aeval_X, eval_X]
 
 theorem numPt_succ {t : ℕ} (n : Fin t → ℕ) (c : ℤ) :
@@ -147,7 +152,7 @@ theorem unit_steps {t D : ℕ} (g : (Fin t → ℕ) → ℤ → ℚ)
       · refine (totalDegree_add _ _).trans (max_le ?_ (by rw [totalDegree_C]; exact Nat.zero_le _))
         exact (FieldNumbers.PolyOfDiffs.totalDegree_aeval_le _ (hσd ∅) _).trans hPcd
       · have h0 : tr ∅ n = 0 := by funext i; simp [tr]
-        rw [map_add, eval_C, eval_aeval_eq, hσe, h0]
+        rw [map_add (f := _), eval_C, eval_aeval_eq, hσe, h0]
         linarith [hcol c]
     | insert i s hi ih =>
       obtain ⟨Γ, hΓd, hΓ⟩ := ih
@@ -167,7 +172,7 @@ theorem unit_steps {t D : ℕ} (g : (Fin t → ℕ) → ℤ → ℚ)
           · simp [hk]
         have h := hrow i (tr s n) c (n i)
         rw [← e1, ← e2] at h
-        rw [map_add, map_sub, eval_aeval_eq, eval_aeval_eq, hσe, hσe, ← hΓ n c]
+        rw [map_add (f := _), map_sub, eval_aeval_eq, eval_aeval_eq, hσe, hσe, ← hΓ n c]
         linarith
   obtain ⟨Γ, hΓd, hΓ⟩ := key Finset.univ
   refine ⟨Γ, Or.inr (by omega), fun n c => ?_⟩

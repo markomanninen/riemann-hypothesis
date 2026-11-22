@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Formalism.LocalToGlobal.BesselHermitianTheta.TiedBessel
-import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
-import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ComplexEmbeddingHermitianQuadrupleSum
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsNormaliseMeanSquareOfCocompact
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.EmbeddingXiZeroNeZero
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Formalism.LocalToGlobal.BesselHermitianTheta.TiedBessel
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Spaces
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ComplexEmbeddingHermitianQuadrupleSum
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsNormaliseMeanSquareOfCocompact
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.EmbeddingXiZeroNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -101,13 +105,14 @@ theorem cT_sig (M : Matrix (Fin m) (Fin n) D.host.E) :
   funext i j; exact map_mul (cA D) a (x j i)
 
 theorem trace_adj (x : Mx D n n) : (adj x).trace = cA D x.trace := by
-  simp only [Matrix.trace, map_sum]; rfl
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.trace, map_sum]; rfl
 
 @[simp] theorem cA_half : cA D (half D) = half D := by
   rw [half, GlobalTheory.DualPairCheck.cA_incA]; congr 1; simp
 
 theorem half_add_half : half D + half D = 1 := by
-  rw [half, ← map_add, add_halves, map_one]
+  rw [half, ← map_add (f := _), add_halves, map_one]
 
 theorem half_smul_add (x : Mx D m n) : half D • x + half D • x = x := by
   rw [← add_smul, half_add_half, one_smul]
@@ -305,7 +310,7 @@ def trHalf (D : D7) : AE D →+ AF D.host.F where
   toFun z := algebraMap D.host.F (AF D.host.F) (1 / 2) *
     Algebra.trace (AF D.host.F) (AE D) (incA D D.host.xi0 * z)
   map_zero' := by rw [mul_zero, map_zero, mul_zero]
-  map_add' x y := by rw [mul_add, map_add, mul_add]
+  map_add' x y := by rw [mul_add, map_add (f := _), mul_add]
 
 theorem symplOH_eq (S T : HSp D) (x y : WO S T) : symplOH S T x y = trHalf D (hO S T x y) := rfl
 
@@ -351,13 +356,13 @@ theorem isThetaFunO_prod (P₁ : Matrix (Fin T₁.rank) (Fin T.rank) D.host.E) (
       symplOH S₁ T₁ (sandwich (rat P₁) (rat Q₁) x) (sandwich (rat P₁) (rat Q₁) y) +
         symplOH S₂ T₂ (sandwich (rat P₂) (rat Q₂) x) (sandwich (rat P₂) (rat Q₂) y))
     {f₁ : WO S₁ T₁ → ℂ} {f₂ : WO S₂ T₂ → ℂ} (h₁ : IsThetaFunO ψ S₁ T₁ f₁) (h₂ : IsThetaFunO ψ S₂ T₂ f₂) :
-    IsThetaFunO ψ S T fun w => f₁ (sandwich (rat P₁) (rat Q₁) w) * f₂ (sandwich (rat P₂) (rat Q₂) w) where
+    IsThetaFunO ψ S T fun w => f₁ (sandwich (rat P₁) (rat Q₁) w) * f₂ (sandwich (rat P₂) (rat Q₂) w) := {
   quasi γ w := by
     have e₁ : sandwich (rat P₁) (rat Q₁) (ratW T S γ) = ratW T₁ S₁ (P₁ * γ * Q₁) := by
       rw [ratW_eq, ratW_eq, rat_mul, rat_mul]; rfl
     have e₂ : sandwich (rat P₂) (rat Q₂) (ratW T S γ) = ratW T₂ S₂ (P₂ * γ * Q₂) := by
       rw [ratW_eq, ratW_eq, rat_mul, rat_mul]; rfl
-    rw [map_add, map_add, h, e₁, e₂, h₁.quasi, h₂.quasi, neg_add, AddChar.map_add_eq_mul]
+    rw [map_add (f := _), map_add (f := _), h, e₁, e₂, h₁.quasi, h₂.quasi, neg_add, AddChar.map_add_eq_mul]
     ring
   level := by
     obtain ⟨U₁, hU₁, k₁⟩ := h₁.level
@@ -368,15 +373,15 @@ theorem isThetaFunO_prod (P₁ : Matrix (Fin T₁.rank) (Fin T.rank) D.host.E) (
     have e₁ := congrFun (k₁ _ hu.1 (map_sandwich _ _ _ h0)) (sandwich (rat P₁) (rat Q₁) w)
     have e₂ := congrFun (k₂ _ hu.2 (map_sandwich _ _ _ h0)) (sandwich (rat P₂) (rat Q₂) w)
     simp only [heisO] at e₁ e₂ ⊢
-    rw [← e₁, ← e₂, h, AddChar.map_add_eq_mul, map_add, map_add]
+    rw [← e₁, ← e₂, h, AddChar.map_add_eq_mul, map_add (f := _), map_add (f := _)]
     ring
   cont := (h₁.cont.comp (continuous_sandwich _ _)).mul (h₂.cont.comp (continuous_sandwich _ _))
   smooth k L hL h0 w := by
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact (h₁.smooth k ((sandwich (rat P₁) (rat Q₁)).comp L) ((continuous_sandwich _ _).comp hL)
       (fun t => map_sandwich _ _ _ (h0 t)) _).mul
       (h₂.smooth k ((sandwich (rat P₂) (rat Q₂)).comp L) ((continuous_sandwich _ _).comp hL)
-        (fun t => map_sandwich _ _ _ (h0 t)) _)
+        (fun t => map_sandwich _ _ _ (h0 t)) _) }
 
 end Product
 

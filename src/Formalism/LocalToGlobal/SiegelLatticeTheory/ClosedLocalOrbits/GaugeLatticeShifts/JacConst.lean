@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+
+@[expose] public section
 
 noncomputable section
 

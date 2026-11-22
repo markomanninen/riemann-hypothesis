@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VecMulMapEqZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormalizedPointHeightLatticeAlgebraMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.VecMulMapEqZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormalizedPointHeightLatticeAlgebraMap
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,7 +21,6 @@ theorem exists_under_valuation_sum_log_absNorm : ∀ (k k' : Type) [Field k] [Nu
   refine ⟨fun 𝔓 => 𝔓.under (𝓞 k), fun 𝔓 => 𝔓.asIdeal.ramificationIdx (𝓞 k), fun 𝔓 z => ?_, fun 𝔭 => ?_⟩
   · have : 𝔓.asIdeal.LiesOver (𝔓.under (𝓞 k)).asIdeal := ⟨rfl⟩
     have h := HeightOneSpectrum.valuation_liesOver k' (𝔓.under (𝓞 k)) 𝔓 z
-    rw [Ideal.ramificationIdx'_eq_ramificationIdx _ _ (𝔓.under (𝓞 k)).ne_bot] at h
     exact h.symm
   · have hs := GlobalTheory.Adelic.HeightExt.sum_locDeg (L := k') 𝔭
     have hpos : 0 < Module.finrank k k' := Module.finrank_pos

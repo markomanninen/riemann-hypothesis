@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.TateThesis.IdeleMeasureCosets
-import GroundTheory.GlobalFields.TateThesis.HeckeLFunction
-import GroundTheory.GlobalFields.TateThesis.SchwartzBruhatFinite
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.TateThesis.IdeleMeasureCosets
+public import GroundTheory.GlobalFields.TateThesis.HeckeLFunction
+public import GroundTheory.GlobalFields.TateThesis.SchwartzBruhatFinite
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter MeasureTheory
 open scoped NumberField.AdeleRing ENNReal NNReal nonZeroDivisors
@@ -145,8 +149,8 @@ theorem ordFinsupp_ofFinite_out_injective :
   rw [map_mul, map_inv, ord_mul, ord_inv, this]
   omega
 
-open Classical in
 
+open Classical in
 def zetaTerm (L : (FractionalIdeal (𝓞 K)⁰ K)ˣ) (σ : ℝ) (n : HeightOneSpectrum (𝓞 K) →₀ ℤ) : ℝ :=
   if ∀ v, FractionalIdeal.count K v (L : FractionalIdeal (𝓞 K)⁰ K) ≤ n v then zetaWeight σ n
   else 0
@@ -237,8 +241,8 @@ theorem tsum_ofReal_zetaTerm_lt_top (L : (FractionalIdeal (𝓞 K)⁰ K)ˣ) {σ 
   rw [← ENNReal.ofReal_tsum_of_nonneg (fun I ↦ by positivity) (summable_absNorm_rpow_inv hσ)]
   exact ENNReal.ofReal_lt_top
 
-open Classical in
 
+open Classical in
 def finiteZetaBound (L : (FractionalIdeal (𝓞 K)⁰ K)ˣ) (σ : ℝ) (b : (FiniteAdeleRing (𝓞 K) K)ˣ) :
     ℝ :=
   if (b : FiniteAdeleRing (𝓞 K) K) ∈ idealFiniteAdeles L then finiteModule (ofFinite b) ^ σ else 0

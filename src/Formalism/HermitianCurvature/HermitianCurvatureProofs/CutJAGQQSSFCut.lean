@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepCore
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCGenToQQ
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepCore
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCGenToQQ
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField
 

@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HkSum
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HkSum
+
+@[expose] public section
+
 open MeasureTheory NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.CompanionTheory.CTFin GlobalTheory.LFun Formalism.UG Formalism.UG.P
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace UpperTheory.ConvolutionTheory.BW
 
@@ -18,8 +23,9 @@ private theorem det_finGL_any (k : GL (Fin a) (Af E)) :
     refine h.symm.trans ?_
     change _ = RingHom.fst (InfiniteAdeleRing E) (Af E) ((1 : Ad E) - sFin E 1 + sFin E _)
     have hz : ∀ x, (sFin E x).1 = 0 := fun _ => rfl
+    simp only [map_one, map_sub, map_add]
+    change (1 : InfiniteAdeleRing E) = 1 - (sFin E 1).1 + (sFin E (Matrix.GeneralLinearGroup.det k : Af E)).1
     simp [hz]
-    rfl
   · have h := GlobalTheory.CuspRep.det_map (pFin E) (finGL E a k)
     rw [pFin_finGL] at h
     refine h.symm.trans ?_
@@ -37,6 +43,7 @@ private theorem norm_unif {w : Pl E} {ϖ : w.adicCompletion E} (hu : IsUnifV E w
     have : ((WithZero.unzero h0 : Multiplicative ℤ) : WithZero (Multiplicative ℤ)) = _ :=
       (WithZero.coe_unzero h0).trans hu
     exact congrArg Multiplicative.toAdd (WithZero.coe_injective this)
+  rw [WithZero.toAdd_unzero_eq_log] at e
   rw [e, zpow_neg_one]
   simp [qV]
 

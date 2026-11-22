@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.GoodPartHasComplexCoordinates
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.GoodPartHasComplexCoordinates
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.L2.Indef Formalism.L2.DIV Formalism.IndefR.Cx Formalism.IndefR.Links NumberField GlobalTheory.Mem.SJ
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -9,7 +13,7 @@ namespace GlobalTheory.Mem.SJ
 theorem kOf_apply_self_on {K : Type} [Field K] (σ : K →+* ℂ) (a : K) : kOf σ (σ a) = a := by
   unfold kOf
   have h : ∃ b : K, σ b = σ a := ⟨a, rfl⟩
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact σ.injective h.choose_spec
 
 theorem relMat_self_on {E : Type} [AddCommGroup E] [Module ℂ E] {n : ℕ} (f : (Fin n → ℂ) →ₗ[ℂ] E)
@@ -18,7 +22,7 @@ theorem relMat_self_on {E : Type} [AddCommGroup E] [Module ℂ E] {n : ℕ} (f :
   have h : ∃ y, f y = f (Pi.single k 1) := ⟨_, rfl⟩
   have : solve f (f (Pi.single k 1)) = Pi.single k 1 := by
     unfold solve
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     exact hf h.choose_spec
   simp only [relMat, Matrix.of_apply, this, Matrix.one_apply, Pi.single_apply]
 

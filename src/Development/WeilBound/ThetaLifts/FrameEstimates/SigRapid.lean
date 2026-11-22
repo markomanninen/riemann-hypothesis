@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.FrameEstimates.TowerRallisLemma
-import Development.WeilBound.ThetaLifts.FrameEstimates.ThickFrames
-import Development.WeilBound.ThetaLifts.FrameEstimates.IsCompactIntV
-import Development.WeilBound.ThetaLifts.EigenvalueEndgame.OrthogonalDecomposition.SigThConst
+module
+
+public import Development.WeilBound.ThetaLifts.FrameEstimates.TowerRallisLemma
+public import Development.WeilBound.ThetaLifts.FrameEstimates.ThickFrames
+public import Development.WeilBound.ThetaLifts.FrameEstimates.IsCompactIntV
+public import Development.WeilBound.ThetaLifts.EigenvalueEndgame.OrthogonalDecomposition.SigThConst
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,8 +78,8 @@ theorem polData_sum (hp : IsPair B M χX χW om r s r' s') {Φ : Fn F n d} (hΦ 
   funext z
   simp [pureA, mul_assoc]
 
-variable (B W) in
 
+variable (B W) in
 def Nice (f : UA σ W.J → ℂ) : Prop := LeftInv f ∧ UMG W f ∧ SmoothFin W B.emb f
 
 theorem nice_zero : Nice B W (0 : UA σ W.J → ℂ) :=

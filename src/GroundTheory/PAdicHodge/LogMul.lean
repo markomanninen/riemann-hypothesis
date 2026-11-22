@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.PAdicHodge.BdRSeries
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.BdRSeries
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -10,40 +15,8 @@ open PowerSeries
 
 section Formal
 
-theorem exp_subst_log : (exp ℚ).subst (log ℚ) = (1 + X : ℚ⟦X⟧) := by
-  have hS : HasSubst (log ℚ) := HasSubst.log
-  set F : ℚ⟦X⟧ := (exp ℚ).subst (log ℚ) with hF
-  set G : ℚ⟦X⟧ := mk (fun n => algebraMap ℚ ℚ ((-1) ^ n)) with hG
-  have h1 : (1 + X : ℚ⟦X⟧) * G = 1 := one_add_X_mul_geom
-  have hF' : d⁄dX ℚ F = F * G := by
-    rw [hF, derivative_subst hS, derivative_exp, deriv_log]
-  have hG' : d⁄dX ℚ G = -(G * G) := by
-    have h := congrArg (d⁄dX ℚ) h1
-    rw [Derivation.leibniz, derivative_one, map_add, derivative_one, derivative_X, zero_add,
-      smul_eq_mul, smul_eq_mul, mul_one] at h
-    calc d⁄dX ℚ G = G * ((1 + X) * d⁄dX ℚ G) := by
-          rw [← mul_assoc, mul_comm G, h1, one_mul]
-      _ = -(G * G) := by
-          rw [show (1 + X) * d⁄dX ℚ G = -G from eq_neg_of_add_eq_zero_left h]
-          ring
-  have hc : constantCoeff F = 1 := by
-    have h0 : MvPowerSeries.constantCoeff (log ℚ) = 0 := constantCoeff_log
-    have hz := constantCoeff_subst_eq_zero h0 (exp ℚ - 1) (by simp [constantCoeff_exp])
-    have hsub : (exp ℚ - 1 : ℚ⟦X⟧).subst (log ℚ) = F - 1 := by
-      rw [hF, ← coe_substAlgHom hS, map_sub, map_one]
-    rw [hsub, map_sub, map_one, sub_eq_zero] at hz
-    exact hz
-  have hGc : constantCoeff G = 1 := by
-    rw [hG, ← coeff_zero_eq_constantCoeff_apply, coeff_mk]
-    simp
-  have hH : F * G = 1 := by
-    apply derivative.ext
-    · rw [Derivation.leibniz, hF', hG', derivative_one, smul_eq_mul, smul_eq_mul]
-      ring
-    · rw [map_mul, hc, hGc, map_one, mul_one]
-  calc F = F * ((1 + X) * G) := by rw [h1, mul_one]
-    _ = (F * G) * (1 + X) := by ring
-    _ = 1 + X := by rw [hH, one_mul]
+theorem exp_subst_log : (exp ℚ).subst (log ℚ) = (1 + X : ℚ⟦X⟧) :=
+  PowerSeries.subst_exp_log ℚ
 
 end Formal
 
@@ -146,9 +119,9 @@ theorem logOnePlus_mul {x y z : B} (hx : x ∈ I) (hy : y ∈ I) (hz : z ∈ I)
     (hxyz : 1 + z = (1 + x) * (1 + y)) :
     logOnePlus I z hz = logOnePlus I x hx + logOnePlus I y hy := by
   refine eq_of_forall_sub_mem_pow I fun n => ?_
-  rw [← Ideal.Quotient.eq, map_add, logOnePlus, logOnePlus, logOnePlus,
+  rw [← Ideal.Quotient.eq, map_add (f := _), logOnePlus, logOnePlus, logOnePlus,
     mk_seriesEval_eq_truncEval, mk_seriesEval_eq_truncEval, mk_seriesEval_eq_truncEval]
-  exact truncEval_log_mul _ _ _ (by rw [← map_one (Ideal.Quotient.mk (I ^ n)), ← map_add, hxyz,
+  exact truncEval_log_mul _ _ _ (by rw [← map_one (Ideal.Quotient.mk (I ^ n)), ← map_add (f := _), hxyz,
     map_mul, map_add, map_add, map_one])
 
 end Complete

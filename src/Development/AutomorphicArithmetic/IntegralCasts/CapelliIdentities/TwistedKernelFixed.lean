@@ -1,71 +1,49 @@
-import Mathlib
+module
 
-noncomputable def UpperTheory.Reformulated.B.TwistedKernelFixed.IsSmooth :
-    {k G V : Type} →
-      [inst : Field k] →
-        [inst_1 : Group G] →
-          [inst_2 : AddCommGroup V] → [inst_3 : _root_.Module k V] → [TopologicalSpace G] → Representation k G V → Prop :=
-    fun {k G V : Type} [Field k] [Group G] [AddCommGroup V] [_root_.Module k V] [TopologicalSpace G]
-        (ρ : Representation k G V) ↦
-      ∀ (v : V), IsOpen {g : G | ((ρ : G → V →ₗ[k] V) g : V → V) v = v}
+public import Mathlib
 
-theorem UpperTheory.Reformulated.B.TwistedKernelFixed.aux2 :
-    ∀ {k G V : Type} [inst : Field k] [inst_1 : Group G] [inst_2 : AddCommGroup V] [inst_3 : _root_.Module k V]
-      (ρ : Representation k G V) (H : Subgroup G) (χ : ↥H →* kˣ) {a b : V},
-      a ∈ {v : V | ∀ (h : ↥H), ((ρ : G → V →ₗ[k] V) (↑h : G) : V → V) v = (↑((χ : ↥H → kˣ) h) : k) • v} →
-        b ∈ {v : V | ∀ (h : ↥H), ((ρ : G → V →ₗ[k] V) (↑h : G) : V → V) v = (↑((χ : ↥H → kˣ) h) : k) • v} →
-          ∀ (h : ↥H), ((ρ : G → V →ₗ[k] V) (↑h : G) : V → V) (a + b) = (↑((χ : ↥H → kˣ) h) : k) • (a + b) := by
-  intro k G V _ _ _ _ ρ H χ a b ha hb h
-  rw [map_add, ha h, hb h, smul_add]
+@[expose] public section
 
-theorem UpperTheory.Reformulated.B.TwistedKernelFixed.aux3 :
-    ∀ {k G V : Type} [inst : Field k] [inst_1 : Group G] [inst_2 : AddCommGroup V] [inst_3 : _root_.Module k V]
-      (ρ : Representation k G V) (H : Subgroup G) (χ : ↥H →* kˣ) (h : ↥H),
-      ((ρ : G → V →ₗ[k] V) (↑h : G) : V → V) (0 : V) = (↑((χ : ↥H → kˣ) h) : k) • (0 : V) := by
-  intro k G V _ _ _ _ ρ H χ h
+namespace UpperTheory.Reformulated.B.TwistedKernelFixed
+
+noncomputable def IsSmooth {k G V : Type} [Field k] [Group G] [AddCommGroup V] [Module k V]
+    [TopologicalSpace G] (ρ : Representation k G V) : Prop :=
+  ∀ v : V, IsOpen {g : G | ρ g v = v}
+
+theorem aux2 {k G V : Type} [Field k] [Group G] [AddCommGroup V] [Module k V]
+    (ρ : Representation k G V) (H : Subgroup G) (χ : H →* kˣ) {a b : V}
+    (ha : a ∈ {v : V | ∀ h : H, ρ h v = (χ h : k) • v})
+    (hb : b ∈ {v : V | ∀ h : H, ρ h v = (χ h : k) • v}) (h : H) :
+    ρ h (a + b) = (χ h : k) • (a + b) := by
+  rw [map_add (f := _), ha h, hb h, smul_add]
+
+theorem aux3 {k G V : Type} [Field k] [Group G] [AddCommGroup V] [Module k V]
+    (ρ : Representation k G V) (H : Subgroup G) (χ : H →* kˣ) (h : H) :
+    ρ h (0 : V) = (χ h : k) • (0 : V) := by
   rw [map_zero, smul_zero]
 
-theorem UpperTheory.Reformulated.B.TwistedKernelFixed.aux4 :
-    ∀ {k G V : Type} [inst : Field k] [inst_1 : Group G] [inst_2 : AddCommGroup V] [inst_3 : _root_.Module k V]
-      (ρ : Representation k G V) (H : Subgroup G) (χ : ↥H →* kˣ) (c : k) {v : V},
-      v ∈ {v : V | ∀ (h : ↥H), ((ρ : G → V →ₗ[k] V) (↑h : G) : V → V) v = (↑((χ : ↥H → kˣ) h) : k) • v} →
-        ∀ (h : ↥H), ((ρ : G → V →ₗ[k] V) (↑h : G) : V → V) (c • v) = (↑((χ : ↥H → kˣ) h) : k) • c • v := by
-  intro k G V _ _ _ _ ρ H χ c v hv h
+theorem aux4 {k G V : Type} [Field k] [Group G] [AddCommGroup V] [Module k V]
+    (ρ : Representation k G V) (H : Subgroup G) (χ : H →* kˣ) (c : k) {v : V}
+    (hv : v ∈ {v : V | ∀ h : H, ρ h v = (χ h : k) • v}) (h : H) :
+    ρ h (c • v) = (χ h : k) • c • v := by
   rw [map_smul, hv h, smul_comm]
 
-noncomputable def UpperTheory.Reformulated.B.TwistedKernelFixed.eig :
-    {k G V : Type} →
-      [inst : Field k] →
-        [inst_1 : Group G] →
-          [inst_2 : AddCommGroup V] →
-            [inst_3 : _root_.Module k V] → Representation k G V → (H : Subgroup G) → (↥H →* kˣ) → Submodule k V :=
-    fun {k G V : Type} [inst : Field k] [inst_1 : Group G] [inst_2 : AddCommGroup V] [inst_3 : _root_.Module k V]
-        (ρ : Representation k G V) (H : Subgroup G) (χ : ↥H →* kˣ) ↦
-      { carrier := {v : V | ∀ (h : ↥H), ((ρ : G → V →ₗ[k] V) (↑h : G) : V → V) v = (↑((χ : ↥H → kˣ) h) : k) • v},
-        add_mem' := @UpperTheory.Reformulated.B.TwistedKernelFixed.aux2 k G V inst inst_1 inst_2 inst_3 ρ H χ,
-        zero_mem' := UpperTheory.Reformulated.B.TwistedKernelFixed.aux3 ρ H χ, smul_mem' := UpperTheory.Reformulated.B.TwistedKernelFixed.aux4 ρ H χ : Submodule k V }
+noncomputable def eig {k G V : Type} [Field k] [Group G] [AddCommGroup V] [Module k V]
+    (ρ : Representation k G V) (H : Subgroup G) (χ : H →* kˣ) : Submodule k V where
+  carrier := {v : V | ∀ h : H, ρ h v = (χ h : k) • v}
+  add_mem' := @aux2 k G V _ _ _ _ ρ H χ
+  zero_mem' := aux3 ρ H χ
+  smul_mem' := aux4 ρ H χ
 
-noncomputable def UpperTheory.Reformulated.B.TwistedKernelFixed.fixed :
-    {k G V : Type} →
-      [inst : Field k] →
-        [inst_1 : Group G] →
-          [inst_2 : AddCommGroup V] → [inst_3 : _root_.Module k V] → Representation k G V → Subgroup G → Submodule k V :=
-    fun {k G V : Type} [Field k] [Group G] [AddCommGroup V] [_root_.Module k V] (ρ : Representation k G V)
-        (H : Subgroup G) ↦
-      UpperTheory.Reformulated.B.TwistedKernelFixed.eig ρ H (1 : ↥H →* kˣ)
+noncomputable def fixed {k G V : Type} [Field k] [Group G] [AddCommGroup V] [Module k V]
+    (ρ : Representation k G V) (H : Subgroup G) : Submodule k V :=
+  eig ρ H 1
 
-noncomputable def UpperTheory.Reformulated.B.TwistedKernelFixed.twKer :
-    {k G V : Type} →
-      [inst : Field k] →
-        [inst_1 : Group G] →
-          [inst_2 : AddCommGroup V] →
-            [inst_3 : _root_.Module k V] → Representation k G V → (N : Subgroup G) → (↥N →* kˣ) → Submodule k V :=
-    fun {k G V : Type} [Field k] [Group G] [AddCommGroup V] [_root_.Module k V] (ρ : Representation k G V) (N : Subgroup G)
-        (ψ : ↥N →* kˣ) ↦
-      Submodule.span k
-        {w : V | ∃ (n : ↥N) (v : V), w = ((ρ : G → V →ₗ[k] V) (↑n : G) : V → V) v - (↑((ψ : ↥N → kˣ) n) : k) • v}
+noncomputable def twKer {k G V : Type} [Field k] [Group G] [AddCommGroup V] [Module k V]
+    (ρ : Representation k G V) (N : Subgroup G) (ψ : N →* kˣ) : Submodule k V :=
+  Submodule.span k {w : V | ∃ (n : N) (v : V), w = ρ n v - (ψ n : k) • v}
 
-private theorem UpperTheory.Reformulated.B.TwistedKernelFixed.sum_shift {H V : Type} [Group H] [AddCommGroup V] [_root_.Module ℂ V]
+private theorem sum_shift {H V : Type} [Group H] [AddCommGroup V] [Module ℂ V]
     (ρ : H →* (V →ₗ[ℂ] V)) (K : Subgroup H) [K.Normal] [Fintype (H ⧸ K)] (u : V)
     (hu : ∀ k ∈ K, ρ k u = u) (n : H) :
     ∑ q : H ⧸ K, ρ q.out (ρ n u) = ∑ q : H ⧸ K, ρ q.out u := by
@@ -77,17 +55,13 @@ private theorem UpperTheory.Reformulated.B.TwistedKernelFixed.sum_shift {H V : T
     rw [mul_inv_cancel_left]
   rw [Equiv.coe_mulRight, h3, map_mul, Module.End.mul_apply, h2, map_mul, Module.End.mul_apply]
 
-theorem UpperTheory.Reformulated.B.TwistedKernelFixed.eq_zero_of_fixed :
-    ∀ {G V : Type} [inst : Group G] [inst_1 : AddCommGroup V] [inst_2 : _root_.Module ℂ V] {π : Representation ℂ G V}
-      [inst_3 : TopologicalSpace G] [IsTopologicalGroup G],
-      UpperTheory.Reformulated.B.TwistedKernelFixed.IsSmooth π →
-        ∀ {H : Subgroup G},
-          IsCompact (↑H : Set G) →
-            ∀ {v : V}, v ∈ UpperTheory.Reformulated.B.TwistedKernelFixed.fixed π H → v ∈ UpperTheory.Reformulated.B.TwistedKernelFixed.twKer π H (1 : ↥H →* ℂˣ) → v = (0 : V) := by
-  intro G V _ _ _ π _ _ hs H hH v hv hw
+theorem eq_zero_of_fixed {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V]
+    {π : Representation ℂ G V} [TopologicalSpace G] [IsTopologicalGroup G] (hs : IsSmooth π)
+    {H : Subgroup G} (hH : IsCompact (H : Set G)) {v : V} (hv : v ∈ fixed π H)
+    (hw : v ∈ twKer π H (1 : H →* ℂˣ)) : v = 0 := by
   classical
-  haveI : CompactSpace H := isCompact_iff_compactSpace.mp hH
-  have key : ∀ w ∈ UpperTheory.Reformulated.B.TwistedKernelFixed.twKer π H (1 : ↥H →* ℂˣ),
+  have : CompactSpace H := isCompact_iff_compactSpace.mp hH
+  have key : ∀ w ∈ twKer π H (1 : H →* ℂˣ),
       ∃ K : Subgroup H, K.FiniteIndex ∧ ∀ (L : Subgroup H) [L.Normal] [Fintype (H ⧸ L)], L ≤ K →
         ∑ q : H ⧸ L, π (q.out : H) w = 0 := by
     intro w hw
@@ -110,9 +84,9 @@ theorem UpperTheory.Reformulated.B.TwistedKernelFixed.eq_zero_of_fixed :
             conv_lhs => rw [← ha']
             rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply] }
       have hK : IsOpen (K : Set H) := (hs u).preimage continuous_subtype_val
-      haveI := Subgroup.quotient_finite_of_isOpen K hK
+      have := Subgroup.quotient_finite_of_isOpen K hK
       refine ⟨K, Subgroup.finiteIndex_of_finite_quotient, fun L _ _ hL => ?_⟩
-      have := UpperTheory.Reformulated.B.TwistedKernelFixed.sum_shift (π.comp H.subtype) L u (fun k hk => hL hk) n
+      have := sum_shift (π.comp H.subtype) L u (fun k hk => hL hk) n
       simp only [MonoidHom.one_apply, Units.val_one, one_smul, map_sub, Finset.sum_sub_distrib]
       exact sub_eq_zero.mpr this
     | zero => exact ⟨⊤, inferInstance, fun L _ _ _ => by simp⟩
@@ -120,7 +94,7 @@ theorem UpperTheory.Reformulated.B.TwistedKernelFixed.eq_zero_of_fixed :
       obtain ⟨K₁, h₁, hx⟩ := hx
       obtain ⟨K₂, h₂, hy⟩ := hy
       refine ⟨K₁ ⊓ K₂, inferInstance, fun L _ _ hL => ?_⟩
-      simp only [map_add, Finset.sum_add_distrib]
+      simp only [map_add (f := _), Finset.sum_add_distrib]
       rw [hx L (hL.trans inf_le_left), hy L (hL.trans inf_le_right), add_zero]
     | smul c x _ hx =>
       obtain ⟨K, h, hx⟩ := hx
@@ -128,7 +102,7 @@ theorem UpperTheory.Reformulated.B.TwistedKernelFixed.eq_zero_of_fixed :
       simp only [map_smul]
       rw [← Finset.smul_sum, hx L hL, smul_zero]
   obtain ⟨K, hK, h⟩ := key v hw
-  haveI : Fintype (H ⧸ K.normalCore) := Fintype.ofFinite _
+  have : Fintype (H ⧸ K.normalCore) := Fintype.ofFinite _
   have h0 := h K.normalCore K.normalCore_le
   have hv' : ∀ g : H, π (g : G) v = v := fun g => by
     have := hv g
@@ -136,3 +110,5 @@ theorem UpperTheory.Reformulated.B.TwistedKernelFixed.eq_zero_of_fixed :
   simp only [hv', Finset.sum_const, Finset.card_univ] at h0
   rw [← Nat.cast_smul_eq_nsmul ℂ] at h0
   exact (smul_eq_zero.mp h0).resolve_left (Nat.cast_ne_zero.mpr Fintype.card_ne_zero)
+
+end UpperTheory.Reformulated.B.TwistedKernelFixed

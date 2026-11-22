@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsQuadOfPlane
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsQuadOfPlane
+
+@[expose] public section
 
 open MeasureTheory Complex Matrix GlobalTheory.RealWeil GlobalTheory.Mem.Lift
 open scoped RealInnerProductSpace ContDiff Real ComplexOrder Topology
@@ -32,7 +36,7 @@ variable {om : V →L[ℝ] V →L[ℝ] ℝ} {ρ : V → B →L[ℂ] B}
 
 theorem skew (h0 : ∀ x, om x x = 0) (x y : V) : om y x = -om x y := by
   have hxy := h0 (x + y)
-  simp only [map_add, _root_.add_apply, h0] at hxy
+  simp only [map_add (f := _), _root_.add_apply, h0] at hxy
   linarith
 
 theorem heis_dH (h : IsHeis (fun x y => om x y) ρ) {f : B} (hf : Sm ρ f) (w y : V) :
@@ -45,7 +49,7 @@ theorem heis_dH (h : IsHeis (fun x y => om x y) ρ) {f : B} (hf : Sm ρ f) (w y 
   have h2 : HasDerivAt (fun t : ℝ => ρ w (ρ (t • y) f))
       (fderiv ℝ (fun u => ρ u f) w y + (π * I * (om w y : ℂ)) • ρ w f) 0 := by
     have hp := hasDerivAt_phase (om w y) (hasDerivAt_line hd w y)
-    convert hp using 1
+    convert (preTransparency := .reducible) hp using 1
     · funext t
       rw [h.2.1]
       simp
@@ -86,7 +90,7 @@ theorem dH_heis (h0 : ∀ x, om x x = 0) (h : IsHeis (fun x y => om x y) ρ) {f 
   have h2 : HasDerivAt (fun t : ℝ => ρ (t • v) (ρ w f))
       (fderiv ℝ (fun u => ρ u f) w v + (π * I * (om v w : ℂ)) • ρ w f) 0 := by
     have hp := hasDerivAt_phase (om v w) (hasDerivAt_line hd w v)
-    convert hp using 1
+    convert (preTransparency := .reducible) hp using 1
     · funext t
       rw [h.2.1, add_comm (t • v) w]
       simp

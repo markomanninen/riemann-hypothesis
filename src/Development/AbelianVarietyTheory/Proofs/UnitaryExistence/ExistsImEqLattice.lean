@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.FourierCoeffUnitCubeTranslateOfEntirePeriodic
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.EntirePeriodicEqZeroOfFourierCoeffEqZero
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.CardLePowOfLinearIndependent
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsUnitOfLagrangian
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.CardLePowOfLinearIndependentThetaPrincipal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.FourierCoeffUnitCubeTranslateOfEntirePeriodic
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.EntirePeriodicEqZeroOfFourierCoeffEqZero
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.CardLePowOfLinearIndependent
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsUnitOfLagrangian
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.CardLePowOfLinearIndependentThetaPrincipal
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexOrder
@@ -150,7 +154,7 @@ theorem exists_log_addChar {A : Type} [AddCommGroup A] [Module.Free ℤ A] (ψ :
     rw [one_mul]; congr 1; field_simp
   | zero => simp
   | add x y _ _ hx hy =>
-    rw [AddChar.map_add_eq_mul, hx, hy, map_add, ← Complex.exp_add]; congr 1; push_cast; ring
+    rw [AddChar.map_add_eq_mul, hx, hy, map_add (f := _), ← Complex.exp_add]; congr 1; push_cast; ring
   | smul t x _ hx =>
     rw [AddChar.map_zsmul_eq_zpow, hx, map_zsmul, ← Complex.exp_int_mul]; congr 1
     simp; ring

@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GKModules.Casimir
-import GroundTheory.AutomorphicForms.HarishChandraRegularity.ExpHaar
-import GroundTheory.AutomorphicForms.HarishChandraInvariance.Compact
-import GroundTheory.AutomorphicForms.DixmierMalliavin
-import GroundTheory.AutomorphicForms.GKModules.ParametricIntegral
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GKModules.Casimir
+public import GroundTheory.AutomorphicForms.HarishChandraRegularity.ExpHaar
+public import GroundTheory.AutomorphicForms.HarishChandraInvariance.Compact
+public import GroundTheory.AutomorphicForms.DixmierMalliavin
+public import GroundTheory.AutomorphicForms.GKModules.ParametricIntegral
+
+@[expose] public section
+
 open MeasureTheory GroundTheory.Automorphic
 open scoped ContDiff
 
@@ -147,8 +152,8 @@ theorem rightDeriv_conv (hκ : Continuous κ) (hκs : HasCompactSupport κ) {f :
   rw [iteratedFDeriv_one_apply]
   rfl
 
-variable (h X) in
 
+variable (h X) in
 noncomputable def convEnd (hκ : Continuous κ) (hκs : HasCompactSupport κ) :
     Module.End ℂ (h.smoothFuns (F := ℂ)) where
   toFun f := ⟨conv h X κ f, isSmoothFun_conv hκ hκs f.2⟩
@@ -195,8 +200,8 @@ theorem adjoin_commute_convEnd (hκ : Continuous κ) (hκs : HasCompactSupport �
 
 end GlobalTheory.LeftSmoothing
 
-open GlobalTheory.LeftSmoothing in
 
+open GlobalTheory.LeftSmoothing in
 theorem GlobalTheory.leftSmoothing_prodExp :
     ∀ (𝔸 : Type) [NormedRing 𝔸] [NormedAlgebra ℝ 𝔸] [CompleteSpace 𝔸] [FiniteDimensional ℝ 𝔸] (G : Subgroup 𝔸ˣ) (𝔤 : Submodule ℝ 𝔸) (h : IsExpLieAlgebra G 𝔤) (n : ℕ) (X : Fin n → 𝔤) (κ : (Fin n → ℝ) → ℂ), Continuous κ → HasCompactSupport κ → ∀ f : h.smoothFuns (F := ℂ), ∃ v : h.smoothFuns (F := ℂ), (∀ y, (v : G → ℂ) y = ∫ t, κ t * (f : G → ℂ) (h.prodExp X t * y)) ∧ ∀ T ∈ Algebra.adjoin ℂ (Set.range (h.rightDerivEnd (F := ℂ))), ∀ y, (T v : G → ℂ) y = ∫ t, κ t * (T f : G → ℂ) (h.prodExp X t * y) := by
   intro 𝔸 _ _ _ _ G 𝔤 h n X κ hκ hκs f

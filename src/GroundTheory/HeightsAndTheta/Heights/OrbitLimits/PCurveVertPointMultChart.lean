@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveVertPointNagata
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.CurveCountObjects
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PVertPointMultChart
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StatementsCurveVertPointNagata
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.CurveCountObjects
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PVertPointMultChart
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Targets
@@ -18,7 +23,8 @@ theorem aeval_mul_of_homog [Fintype K] [∀ k, Fintype (ι k)] {S : Type*} [Comm
     {d : K → ℕ} (hf : IsMultiHomog f d) :
     aeval (fun p => r p * t p.1) f = aeval r f * ∏ k, t k ^ d k := by
   classical
-  rw [f.as_sum, map_sum, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [f.as_sum, map_sum, map_sum, Finset.sum_mul]
   refine Finset.sum_congr rfl fun m hm => ?_
   rw [aeval_monomial, aeval_monomial, mul_assoc]
   congr 1
@@ -39,8 +45,8 @@ theorem map_aeval_int {S T : Type*} [CommRing S] [CommRing T] [Algebra ℤ S] [A
 
 end CurveVerticalPointMultiplicity
 
-open CurveVerticalPointMultiplicity GroundTheory.Heights₂.Heights.VerticalPointMultiplicityChart in
 
+open CurveVerticalPointMultiplicity GroundTheory.Heights₂.Heights.VerticalPointMultiplicityChart in
 theorem CurveVertPointMultChart.proof (hCh : CurveVertPointChart.Statement)
     (hN : CurveVertPointNagata.Statement) : CurveVertPointMultChart.Statement := by
   classical
@@ -150,7 +156,7 @@ theorem CurveVertPointMultChart.proof (hCh : CurveVertPointChart.Statement)
       isSimpleModule_iff_quot_maximal.mpr ⟨_, inferInstance, ⟨LinearEquiv.refl _ _⟩⟩
     exact Module.length_eq_one _ _
 
-  rw [multAt, dif_pos hWp, locLen, dif_pos hmp]
+  rw [multAt, dite_eq_left hWp, locLen, dite_eq_left hmp]
   congr 1
   rw [length_localizedModule_quotient, length_localizedModule_quotient,
     length_quotient_of_surjective Φ hsurj _ (hker.le.trans (Ideal.map_mono le_sup_left)), hJ,

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.InvariantSubspaceMobiusInverseCharpolyOfIrreduci
-import Formalism.GaloisIrreducibility.GaloisIrreducibilityProofs.RestrictRoots
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.Reductions.SiegelCore
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.InvariantSubspaceMobiusInverseCharpolyOfIrreduci
+public import Formalism.GaloisIrreducibility.GaloisIrreducibilityProofs.RestrictRoots
+
+@[expose] public section
+
 open NumberField MeasureTheory Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.AdelicU GlobalTheory.SiegelSet
 open Formalism.UG (cT)
 open scoped TensorProduct NNReal ENNReal
@@ -47,7 +52,7 @@ theorem exists_poly_proj {V : Type} [AddCommGroup V] [Module E V] [FiniteDimensi
     rw [map_mul, Module.End.mul_apply, hzW₁ x hx, map_zero]
   refine ⟨v * b, fun x => ?_, h1⟩
   obtain ⟨w, hw, w₁, hw₁, rfl⟩ := Submodule.mem_sup.mp (hc.sup_eq_top ▸ Submodule.mem_top (x := x))
-  rw [map_add, h1 w hw, h0 w₁ hw₁, add_zero]
+  rw [map_add (f := _), h1 w hw, h0 w₁ hw₁, add_zero]
   exact hw
 
 theorem exists_poly_proj_matrix {ι : Type} [Fintype ι] [DecidableEq ι]
@@ -224,7 +229,7 @@ theorem stab_iff (A : Matrix (Fin n) (Fin n) E) (X : Matrix (Fin n) (Fin r) E) (
       _ = ∑ u : {l : Fin r // l ≤ j}, X a u.1 * (if h : u.1 ≤ j then C ⟨u.1, h⟩ ⟨l, hl⟩ else 0) := by
         simp only [Matrix.mul_apply, Pj, Matrix.submatrix_apply, id]
         refine Finset.sum_congr rfl fun u _ => ?_
-        rw [dif_pos u.2]
+        rw [dite_eq_left u.2]
       _ = _ := h2.symm
 
 theorem exists_sel (X : Matrix (Fin n) (Fin r) E) {i a : Fin r} (h : i ≤ a) :

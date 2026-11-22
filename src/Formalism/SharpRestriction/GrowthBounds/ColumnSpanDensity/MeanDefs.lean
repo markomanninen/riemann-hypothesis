@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoLowerBoundLargeConductor
-import Formalism.PolynomialDimension.DigitClassSize
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.RhoLowerBoundLargeConductor
+public import Formalism.PolynomialDimension.DigitClassSize
+
+@[expose] public section
 
 noncomputable section
 

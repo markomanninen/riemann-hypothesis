@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCoordCurveAlgebraic
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.PCoordCurveAlgebraic
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -17,7 +22,7 @@ variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)] {Ω : 
 def blockDeg (m : (Σ k, ι k) →₀ ℕ) (k : K) : ℕ := ∑ i, m ⟨k, i⟩
 
 def homog (d : ∀ k, ι k) (N : ℕ) (g : MvPolynomial (Σ k, ι k) ℚ) : MvPolynomial (Σ k, ι k) ℚ :=
-  ∑ m ∈ g.support, monomial m (coeff m g) * ∏ k, X ⟨k, d k⟩ ^ (N - blockDeg m k)
+  ∑ m ∈ g.support, monomial m (AddMonoidAlgebra.coeff g m) * ∏ k, X ⟨k, d k⟩ ^ (N - blockDeg m k)
 
 theorem blockDeg_le_totalDegree {R : Type*} [CommSemiring R] {g : MvPolynomial (Σ k, ι k) R}
     {m : (Σ k, ι k) →₀ ℕ} (hm : m ∈ g.support) (k : K) : blockDeg m k ≤ g.totalDegree := by
@@ -155,7 +160,6 @@ theorem aeval_pt_eq_zero {y : (Σ k, ι k) → Ω} (hP : IsArithVar (mCoordIdeal
       have := hz.2 f hf
       rw [eval_map] at this
       convert this using 2
-      exact RingHom.ext_int _ _
     exact hle hG
   rw [aeval_def, eval₂_homog _ d _ g hN _ hd] at hGz
   rw [aeval_def]

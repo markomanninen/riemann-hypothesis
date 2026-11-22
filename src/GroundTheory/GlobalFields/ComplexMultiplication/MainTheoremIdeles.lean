@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.GlobalFields.ClassFieldConsequences.RayClassField
-import GroundTheory.GlobalFields.ComplexMultiplication.IdeleActionQuotient
-import GroundTheory.GlobalFields.ComplexMultiplication.HilbertClassFieldArtin
-import GroundTheory.GlobalFields.WeilGroups.SignSymbol
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ClassFieldConsequences.RayClassField
+public import GroundTheory.GlobalFields.ComplexMultiplication.IdeleActionQuotient
+public import GroundTheory.GlobalFields.ComplexMultiplication.HilbertClassFieldArtin
+public import GroundTheory.GlobalFields.WeilGroups.SignSymbol
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Global
@@ -39,7 +44,10 @@ theorem valued_natCast (m : ℕ) (hm : m ≠ 0) (v : HeightOneSpectrum (𝓞 K))
   have hm' : (m : 𝓞 K) ≠ 0 := by exact_mod_cast hm
   rw [valuedAdicCompletion_eq_valuation', show (m : K) = algebraMap (𝓞 K) K (m : 𝓞 K) by simp,
     valuation_of_algebraMap, intValuation_eq_exp_neg_multiplicity _ hm']
-  rfl
+  have hfin : FiniteMultiplicity v.asIdeal (ofNat (K := K) m hm).ideal :=
+    FiniteMultiplicity.of_not_isUnit (irreducible v).not_isUnit (ofNat m hm).ideal_ne_bot
+  unfold exponent
+  rw [if_pos hfin, ofNat_ideal]
 
 end Modulus
 
@@ -116,8 +124,8 @@ theorem exists_eq_diagonal_mul_mul_finiteEmbedding (m : ℕ) (hm : m ≠ 0) (σ 
 variable {m : ℕ} {hm : m ≠ 0} {s : IdeleGroup K} {x : Kˣ} {u : IdeleGroup K}
   {𝔭 : HeightOneSpectrum (𝓞 K)} {π : (𝔭.adicCompletion K)ˣ}
 
-omit [Algebra K ℂ] in
 
+omit [Algebra K ℂ] in
 theorem inv_smul_eq_of_eq (hu : u ∈ (Modulus.ofNat m hm).congruenceSubgroup)
     (hπ : toFractionalIdeal (finiteEmbedding 𝔭 π) = primeIdealUnit 𝔭)
     (hs : s = diagonal K x * u * finiteEmbedding 𝔭 π) (𝔞 : 𝓘) :
@@ -128,8 +136,8 @@ theorem inv_smul_eq_of_eq (hu : u ∈ (Modulus.ofNat m hm).congruenceSubgroup)
     rw [IdeleGroup.smul_def, map_inv, hπ]
   rw [hs, mul_inv, mul_inv, mul_smul, mul_smul, hπ', hu', map_inv]
 
-omit [Algebra K ℂ] in
 
+omit [Algebra K ℂ] in
 theorem smulQuotient_inv_mk_of_eq (h𝔭 : (m : 𝓞 K) ∉ 𝔭.asIdeal)
     (hu : u ∈ (Modulus.ofNat m hm).congruenceSubgroup)
     (hπ : toFractionalIdeal (finiteEmbedding 𝔭 π) = primeIdealUnit 𝔭)
@@ -229,12 +237,6 @@ theorem mem_diagonal_smul_iff (a : Kˣ) (J : 𝓘) (k : K) :
     rwa [← mul_assoc, inv_mul_cancel₀ a.ne_zero, one_mul]
   · intro h
     exact ⟨_, h, by rw [← mul_assoc, mul_inv_cancel₀ a.ne_zero, one_mul]⟩
-
-@[simp]
-theorem coe_primeIdealUnit_inv_mul (𝔭 : HeightOneSpectrum (𝓞 K)) (𝔞 : 𝓘) :
-    (((primeIdealUnit 𝔭)⁻¹ * 𝔞 : 𝓘) : FractionalIdeal (𝓞 K)⁰ K) =
-      (𝔭.asIdeal : FractionalIdeal (𝓞 K)⁰ K)⁻¹ * 𝔞 := by
-  rw [Units.val_mul, Units.val_inv_eq_inv_val, coe_primeIdealUnit]
 
 end
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.ArithBase
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsAffineOpenRingOnEqAdjoinInv
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPointOfRingHom
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.ArithBase
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsAffineOpenRingOnEqAdjoinInv
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPointOfRingHom
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AbProj
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -21,7 +25,8 @@ theorem map_dotProduct_of_mem {B : Subalgebra o Ω} {f : Ω → K} (φ : B →+*
     f (u ⬝ᵥ v) = (fun j => f (u j)) ⬝ᵥ fun j => f (v j) := by
   have h : u ⬝ᵥ v = ((∑ j, (⟨u j, hu j⟩ : B) * ⟨v j, hv j⟩ : B) : Ω) := by
     simp [dotProduct]
-  rw [h, ← hf, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h, ← hf, map_sum]
   exact Finset.sum_congr rfl fun j _ => by rw [map_mul, hf, hf]
 
 theorem dotProduct_mem_of_mem_span {σ : Type} [SetLike σ K] [SubringClass σ K] (O : σ) {s : Set (J → K)} {w v : J → K}
@@ -35,8 +40,8 @@ theorem dotProduct_mem_of_mem_span {σ : Type} [SetLike σ K] [SubringClass σ K
     rw [this]
     exact mul_mem c.2 hx
 
-omit [Fintype J] in
 
+omit [Fintype J] in
 theorem map_mem_span_of_mem_span {A B : Subalgebra o Ω} (hAB : A ≤ B) {f : Ω → K} (φ : B →+* K)
     (hf : ∀ x : B, φ x = f x) (O : ValuationSubring K) (hO : ∀ x ∈ A, f x ∈ O) {I : Type} {g : I → J → Ω}
     (hg : ∀ k j, g k j ∈ B) {v : J → Ω} (hv : v ∈ Submodule.span A (Set.range g)) :
@@ -54,7 +59,7 @@ theorem map_mem_span_of_mem_span {A B : Subalgebra o Ω} (hAB : A ≤ B) {f : Ω
   | add x y _ _ hx hy =>
     refine ⟨fun j => add_mem (hx.1 j) (hy.1 j), ?_⟩
     have : (fun j => f ((x + y) j)) = (fun j => f (x j)) + fun j => f (y j) := funext fun j =>
-      (hf (⟨_, hx.1 j⟩ + ⟨_, hy.1 j⟩)).symm.trans (by rw [map_add, hf, hf]; rfl)
+      (hf (⟨_, hx.1 j⟩ + ⟨_, hy.1 j⟩)).symm.trans (by rw [map_add (f := _), hf, hf]; rfl)
     rw [this]
     exact add_mem hx.2 hy.2
   | smul c x _ hx =>
@@ -127,8 +132,8 @@ theorem mem_span_map_iff_forall_dotProduct_mem [DecidableEq J] {A B : Subalgebra
     exact Submodule.sum_mem _ fun i _ =>
       Submodule.smul_mem _ _ (map_mem_span_of_mem_span hAB φ hf O hO hg (h2 i)).2
 
-omit [Fintype J] in
 
+omit [Fintype J] in
 theorem mem_span_iff_div_mem_span (O : ValuationSubring K) {I : Type} (G : I → J → K) {u : K} (hu : u ≠ 0)
     (w : J → K) :
     w ∈ Submodule.span O (Set.range G) ↔ u⁻¹ • w ∈ Submodule.span O (Set.range fun k j => G k j / u) := by

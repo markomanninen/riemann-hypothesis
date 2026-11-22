@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.FlagGramNonneg
+module
+
+public import Formalism.PeriodIntegrals.FlagGramNonneg
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,13 +52,15 @@ theorem herm {hT : V →ₗ⋆[E] V →ₗ[E] E} (hS : hT.IsSymm) (x y : V) : hT
 theorem left_sub_sum (hT : V →ₗ⋆[E] V →ₗ[E] E) {ι : Type} [Fintype ι] (z : V) (c : ι → E)
     (f : ι → V) (x : V) :
     hT (z - ∑ a, c a • f a) x = hT z x - ∑ a, star (c a) * hT (f a) x := by
-  simp only [map_sub, map_sum, LinearMap.sub_apply, LinearMap.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_sum, LinearMap.sub_apply, LinearMap.sum_apply,
     LinearMap.map_smulₛₗ₂, smul_eq_mul, starRingEnd_apply]
 
 theorem right_sub_sum (hT : V →ₗ⋆[E] V →ₗ[E] E) {ι : Type} [Fintype ι] (z : V) (c : ι → E)
     (f : ι → V) (x : V) :
     hT x (z - ∑ a, c a • f a) = hT x z - ∑ a, c a * hT x (f a) := by
-  simp only [map_sub, map_sum, map_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_sum, map_smul, smul_eq_mul]
 
 variable (hT : V →ₗ⋆[E] V →ₗ[E] E) {r : ℕ} (e e' : Fin r → V) (z z' : V)
 

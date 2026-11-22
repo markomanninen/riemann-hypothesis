@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsDeltaDelAtOwnAt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsDeltaDelAtOwnAt
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -27,12 +31,12 @@ end Any
 variable {J : CoreJ D} [Algebra J.Q.c.F D.what₂.LL] {R : RealDat D A J.Q.c.F}
   {κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1)} {v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec}
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 def reFw (fw : FWTie J R κ v₀) (F : Face D A) : FWTie J (charOf R F) κ v₀ := { fw with }
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 def reOM {i : Fin D.R.m} (O : OMDat J.toCore R i Unit (fun _ => A.μ0)) (F : Face D A) :
     OMDat J.toCore (charOf R F) i Unit (fun _ => A.μ0) := { O with }
 

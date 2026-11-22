@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.CuspSemisimpleReal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.RepNewform
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CuspidalFiniteness.TypePoly
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CapCentral
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CuspidalFiniteness.ExistsZalgOfCenterU
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.CuspSemisimpleReal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.RepNewform
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CuspidalFiniteness.TypePoly
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CapCentral
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CuspidalFiniteness.ExistsZalgOfCenterU
+
+@[expose] public section
+
 open NumberField GlobalTheory.CuspRep UpperTheory.V
 
 private theorem sqId {A : Type} [Ring A] [Algebra ℂ A] {n : ℕ} (E : Fin n → Fin n → A) :
@@ -58,7 +63,8 @@ theorem UpperTheory.V.Af.cuspFormsFiniteReal :
     by_cases hij : i = j <;> simp [Matrix.single_apply, Matrix.one_apply, Pi.single_apply, hij, ite_and, ite_apply]
   obtain ⟨t, ht⟩ : TR.lie F a (TR.oneL F a) ∈ S := by
     rw [hone]
-    simp only [map_sum, hbE]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, hbE]
     exact sum_mem fun v _ => GlobalTheory.CuspRep.Central.trace_mem _ (Subalgebra.toSubmodule S) (one_mem S) (hS v)
   let X : InfinitePlace F × Fin a × Fin a → TR.Lie F a := fun l => b l - b (l.1, l.2.2, l.2.1)
   have hX : ∀ l i j, X l j i = -X l i j := by

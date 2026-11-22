@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WBMemLatS
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WBMemLatS
+
+@[expose] public section
+
 noncomputable section
 open NumberField IsDedekindDomain Neutral.B1 Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2.Host Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations
 open GlobalTheory.HeckeGal GlobalTheory.Pst GlobalTheory.TripleGal GlobalTheory.CompanionTheory.LTHodge GlobalTheory.CompanionTheory.LTPer
@@ -71,7 +76,8 @@ theorem sum_exists {W B : Type} [CommRing W] [CommRing B] (w : W →+* B) (p : �
       + (p : B) ^ (M / N) * w (c t M) := by
     intro t
     have h := congrArg w (hc t M)
-    simp only [map_sub, map_sum, map_mul, map_pow, map_natCast] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_mul, map_pow, map_natCast] at h
     rw [← h]; ring
   simp only [hpow, hterm, mul_add, Finset.sum_add_distrib, Finset.mul_sum]
   have hswap : ∑ n ∈ Finset.range M, ∑ t ∈ T, (p : B) ^ (n / N) * (t * w (a n t))

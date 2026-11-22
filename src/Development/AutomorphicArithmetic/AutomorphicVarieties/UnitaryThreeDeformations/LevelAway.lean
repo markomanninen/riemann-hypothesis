@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostNumber
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNormalised
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostOk
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.ClsFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PartsConj
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostNumber
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNormalised
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostOk
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CharacterLevelBounds.ClsFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PartsConj
+
+@[expose] public section
 
 open NumberField Matrix IsLocalRing Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.Aut UpperTheory.V.UnitaryThreeInertia
 
@@ -34,7 +38,8 @@ private theorem la_avg {A H C : Type} [CommRing A] [IsLocalRing A] [Group H] [Gr
     show (residue A).mapMatrix ((a s * (b s)⁻¹ : GL (Fin 3) A) : Matrix (Fin 3) (Fin 3) A) = 1
     rw [Units.val_mul, map_mul, h1, ← map_mul, Units.mul_inv, map_one]
   have hM : IsUnit M := by
-    rw [Matrix.isUnit_iff_isUnit_det, ← residue_ne_zero_iff_isUnit, RingHom.map_det, ← isUnit_iff_ne_zero,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Matrix.isUnit_iff_isUnit_det, ← residue_ne_zero_iff_isUnit, RingHom.map_det, ← isUnit_iff_ne_zero,
       ← Matrix.isUnit_iff_isUnit_det, map_sum]
     simp only [hred, Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one]
     have := (hQ.map (residue A)).map (algebraMap _ (Matrix (Fin 3) (Fin 3) (ResidueField A)))
@@ -50,7 +55,7 @@ private theorem la_avg {A H C : Type} [CommRing A] [IsLocalRing A] [Group H] [Gr
   simp only [Equiv.coe_mulLeft, map_mul]
   group
 
-private theorem la_left {R : Type} [CommRing R] (k : GG 3 R) (t : Rˣ) :
+private theorem la_left {R : Type} [CommRing R] (k : GG (m := 3) (R := R)) (t : Rˣ) :
     (k * GG.ofGL (tor R t) * k⁻¹).left = k.left * tor R t * k.left⁻¹ := by
   have h : k * GG.ofGL (tor R t) = GG.ofGL (k.left * tor R t * k.left⁻¹) * k := by
     refine SemidirectProduct.ext ?_ (by simp)
@@ -67,8 +72,8 @@ private theorem la_map {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) (t
   rfl
 
 private theorem la_D {O R D : Type} [CommRing O] [IsLocalRing O] [CommRing R] [IsLocalRing R] [Algebra O R] [Group D]
-    (η : D →* ℤˣ) (Ψ : D →* Oˣ) (I : Subgroup D) (r : D →* GG 3 R) (hr : HasMult η r) (h : CondD η Ψ I r) :
-    ∃ k : GG 3 R, ∀ s ∈ I, η s = 1 →
+    (η : D →* ℤˣ) (Ψ : D →* Oˣ) (I : Subgroup D) (r : D →* GG (m := 3) (R := R)) (hr : HasMult η r) (h : CondD η Ψ I r) :
+    ∃ k : GG (m := 3) (R := R), ∀ s ∈ I, η s = 1 →
       r s = k * GG.ofGL (tor R (Units.map (algebraMap O R).toMonoidHom (Ψ s))) * k⁻¹ := by
   obtain ⟨k, -, hk⟩ := h
   refine ⟨GG.ofGL k, fun s hs hη => ?_⟩
@@ -89,9 +94,9 @@ private theorem la_D {O R D : Type} [CommRing O] [IsLocalRing O] [CommRing R] [I
   simp [conjBy, mul_assoc]
 
 private theorem la_U {O R D : Type} [CommRing O] [IsLocalRing O] [Finite (ResidueField O)] [CommRing R] [IsLocalRing R]
-    [Algebra O R] [Group D] (η : D →* ℤˣ) (Ψ : D →* Oˣ) (I : Subgroup D) (r : D →* GG 3 R) (hr : Red η Ψ r)
+    [Algebra O R] [Group D] (η : D →* ℤˣ) (Ψ : D →* Oˣ) (I : Subgroup D) (r : D →* GG (m := 3) (R := R)) (hr : Red η Ψ r)
     (h : CondU η Ψ I r) (ht : ∀ s ∈ kerBar η Ψ I, Ψ s = 1) :
-    ∃ k : GG 3 R, ∀ s ∈ I, η s = 1 →
+    ∃ k : GG (m := 3) (R := R), ∀ s ∈ I, η s = 1 →
       r s = k * GG.ofGL (tor R (Units.map (algebraMap O R).toMonoidHom (Ψ s))) * k⁻¹ := by
   have hu : IsUnit (Nat.card (ResidueField O)ˣ : O) := by
     letI := Fintype.ofFinite (ResidueField O)
@@ -149,12 +154,12 @@ private theorem la_eta {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω
 
 private theorem la_loc {O G Γ ι K : Type} [CommRing O] [IsLocalRing O] [Finite (ResidueField O)] [Group G] [Group Γ]
     [TopologicalSpace G] [IsTopologicalGroup G] [TopologicalSpace Γ] (F : Frame O G Γ ι) (hF : F.Ok) [Field K]
-    [Algebra O K] (g₁ : Γ) (r : Γ →* GG 3 K) (hr : F.IsCharZeroPt g₁ r) (v : ι) (hv : v ≠ F.vl) :
-    ∃ k : GG 3 K, ∀ s ∈ F.Iv v, F.ηv v s = 1 →
+    [Algebra O K] (g₁ : Γ) (r : Γ →* GG (m := 3) (R := K)) (hr : F.IsCharZeroPt g₁ r) (v : ι) (hv : v ≠ F.vl) :
+    ∃ k : GG (m := 3) (R := K), ∀ s ∈ F.Iv v, F.ηv v s = 1 →
       r (F.loc v s) = k * GG.ofGL (tor K (Units.map (algebraMap O K).toMonoidHom (F.Ψv v s))) * k⁻¹ := by
   obtain ⟨A, _, _, t, r', hp, he⟩ := hr
   have hred : Red (F.ηv v) (F.Ψv v) (r'.comp (F.loc v)) := ⟨fun g => hp.mult _, fun g => hp.red _⟩
-  obtain ⟨k, hk⟩ : ∃ k : GG 3 A, ∀ s ∈ F.Iv v, F.ηv v s = 1 → (r'.comp (F.loc v)) s =
+  obtain ⟨k, hk⟩ : ∃ k : GG (m := 3) (R := A), ∀ s ∈ F.Iv v, F.ηv v s = 1 → (r'.comp (F.loc v)) s =
       k * GG.ofGL (tor A (Units.map (algebraMap O A).toMonoidHom (F.Ψv v s))) * k⁻¹ := by
     by_cases hb : v ∈ F.Sb
     · exact la_D _ _ _ _ hred.mult ((hp.loc v).2.1 hb)
@@ -176,7 +181,7 @@ open UpperTheory.V UpperTheory.V.Base in
 theorem UpperTheory.V.UnitaryThreeInertia.levelAway_of_pt :
     ∀ (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] (c : Coef l) {N : ℕ} [NeZero N] (e : ℕ) (ψ : DirichletCharacter c.O N) (o₁ : ℕ), HostData l e ψ o₁ →
     ∀ (S : Finset Pl) (A : S → ValuationSubring Ω) (F : Frame c.O (Formalism.ConjugateSelfDual.G ℚ Ω) (Gam Ω S) S), IsHostFrame Ω c e ψ S A F →
-    ∀ (K : Type) [Field K] [NumberField K] [Algebra K Ω] [IsScalarTower ℚ K Ω], IsQi K → ∀ (g₁ : Gam Ω S), F.Marked g₁ → ∀ r : Gam Ω S →* GG 3 (PadicAlgCl l), F.IsCharZeroPt g₁ r → ∀ ρ : G K Ω →* GL (Fin 3) (Qbar l), (∀ s : G K Ω, (ρ s : Matrix (Fin 3) (Fin 3) (Qbar l)) = (r (toGS Ω _ (s.restrictScalars ℚ))).mat) → Af.LevelAway l N ρ := by
+    ∀ (K : Type) [Field K] [NumberField K] [Algebra K Ω] [IsScalarTower ℚ K Ω], IsQi K → ∀ (g₁ : Gam Ω S), F.Marked g₁ → ∀ r : Gam Ω S →* GG (m := 3) (R := PadicAlgCl l), F.IsCharZeroPt g₁ r → ∀ ρ : G K Ω →* GL (Fin 3) (Qbar l), (∀ s : G K Ω, (ρ s : Matrix (Fin 3) (Fin 3) (Qbar l)) = (r (toGS Ω _ (s.restrictScalars ℚ))).mat) → Af.LevelAway l N ρ := by
   intro Ω _ _ _ l _ c N _ e ψ o₁ hD S A F hF K _ _ _ _ hK g₁ _ r hr ρ hρ w hw
   have hok := hostFrame_ok Ω c e ψ o₁ hD S A F hF
   haveI : IsAlgClosure K Ω := ⟨IsAlgClosure.isAlgClosed ℚ,

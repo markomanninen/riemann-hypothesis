@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ZeroMemUnrHom
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.RadExists
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.DvdOfIne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.PlaceDict
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ZeroMemUnrHom
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.RadExists
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.DvdOfIne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.PlaceDict
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum UpperTheory.V.Bern UpperTheory.V.B4 UpperTheory.V.B5 UpperTheory.V.Odd
 
@@ -27,7 +31,12 @@ theorem UpperTheory.V.Odd.unrSel :
     obtain ⟨A, hA⟩ := exists_isPlaceOver Ω v
     refine dvdOfIne E Ω l A v (β φ) (a φ) hA (hβa φ) ?_
     intro g hg
-    have hnot : ¬ A.valuation (l : Ω) < 1 := fun h => hv (((placeDict E Ω).2.2.2 A v l hA).mp h)
+    have hnot : ¬ A.valuation (l : Ω) < 1 := by
+      intro h
+      apply hv
+      have hp := hA (l : 𝓞 E)
+      have he : algebraMap E Ω (((l : 𝓞 E) : E)) = (l : Ω) := by simp
+      exact hp.mp (he ▸ h)
     have h0 : φ.1 g = 0 := φ.2.2.2 A hnot g hg
     rw [hgβ, h0, ZMod.val_zero, pow_zero, one_mul]
   refine ⟨fun φ => QuotientGroup.mk ⟨a φ, hsel φ⟩, fun φ ψ hfe => ?_⟩

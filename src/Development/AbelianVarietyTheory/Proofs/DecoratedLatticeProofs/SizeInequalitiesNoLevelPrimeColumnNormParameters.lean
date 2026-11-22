@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.HostCls
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RecHeightSWith
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogLeLOfLeCond
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FockPartitionRowsNumericDatumMemIccStatement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.HostCls
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.RecHeightSWith
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogLeLOfLeCond
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FockPartitionRowsNumericDatumMemIccStatement
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Core GlobalTheory.Core.Ht2 GlobalTheory.CoreHt
 open GlobalTheory.ColumnNormCompare (numDatumOfParameters codeRec plRec)
 attribute [local instance] GlobalTheory.Mem.Col2.starE
@@ -57,7 +62,7 @@ theorem sizeRowsS_numRec : ∀ (D : D7) (L : SizeData₂ D) (CY : ℝ), HtRowsS 
     have e : (numDatumOfParameters D large₂).uW (codeRec large₂ u) z ⟨l + 1, hi⟩ = (D.hcW u (tauPl D z)).u ⟨l + 1, hi⟩ := by
       rw [D.s.u_letter u (tauPl D z) l hl, D.hcW_v]
       unfold NumDatum.uW
-      rw [dif_pos ⟨h1, h2⟩]
+      rw [dite_eq_left ⟨h1, h2⟩]
       show _ - _ - (if D.s.letter u ⟨l, hl⟩ = true then ((⌊D.s.Del⌋₊ : ℕ) : ℚ) else 0) = _
       rw [hDel]
       rfl

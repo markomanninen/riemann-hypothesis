@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.FerreroWashington
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EiiUnit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.GeAlgTop
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.NearSplit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EntryMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.FerreroWashington
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.EiiUnit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.GeAlgTop
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -165,7 +169,7 @@ private theorem ee_up [IsLocalRing R] {u v X : M4 R} (h1 : v * u = 1) (hX : IsUp
     IsUp (v * ee * u) := by
   refine ee_mem (stab h1) X hX hb ?_
   rw [← residue_ne_zero_iff_isUnit]
-  simp only [map_sub, map_mul, map_add, ho 0 2 (by decide), ho 2 0 (by decide), ho 1 3 (by decide)]
+  simp only [map_sub, map_mul, map_add (f := _), ho 0 2 (by decide), ho 2 0 (by decide), ho 1 3 (by decide)]
   have k := mul_ne_zero (mul_ne_zero (sub_ne_zero.2 (hd 0 1 (by decide))) (sub_ne_zero.2 (hd 0 3 (by decide))))
     (mul_ne_zero (sub_ne_zero.2 (hd 2 1 (by decide))) (sub_ne_zero.2 (hd 2 3 (by decide))))
   convert k using 1
@@ -266,7 +270,8 @@ theorem UpperTheory.V.Ws.blockPart :
       fun g i j h => ?_
     · ext a b
       have := congrArg 𝔞.toK (congrFun (congrFun (hm g) a) b)
-      simp only [Matrix.mul_apply, adj_apply, map_sum, map_mul, map_zsmul, Matrix.smul_apply, smul_eq_mul, Matrix.one_apply] at this ⊢
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.mul_apply, adj_apply, map_sum, map_mul, map_zsmul, Matrix.smul_apply, smul_eq_mul, Matrix.one_apply] at this ⊢
       rw [apply_ite 𝔞.toK, map_one, map_zero] at this
       exact this
     · obtain ⟨g, hg⟩ := h02

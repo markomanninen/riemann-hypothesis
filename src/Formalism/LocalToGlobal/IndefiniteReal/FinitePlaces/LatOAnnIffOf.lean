@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FiniteIdempotentMulEq
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.FiniteIdempotentMulEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,8 +19,8 @@ open Formalism.IndefR.Datum
 
 variable {D : D7} {ψ : AddChar (AF D.host.F) ℂ}
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_sub_pairA_ratW_mem_latO (S T : HSp D) {ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)}
     {ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)}
     (hbox : ∃ N : ℕ, 0 < N ∧ ∀ Y : WO S T, (∀ i j, finPart D (Y i j) ∈ intAE D) → (∀ i j, infPart D (Y i j) = 0) →
@@ -46,8 +50,8 @@ theorem exists_sub_pairA_ratW_mem_latO (S T : HSp D) {ΛS : Submodule (𝓞 D.ho
   · intro i j; rw [Matrix.of_apply, finPart_jF]; exact hy i j
   · intro i j; rw [Matrix.of_apply, infPart_jF]
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem ann_rat_mem (hψ : IsStdChar D ψ (-1)) (S T : HSp D) {ΛS : Submodule (𝓞 D.host.E) (Fin S.rank → D.host.E)}
     {ΛT : Submodule (𝓞 D.host.E) (Fin T.rank → D.host.E)}
     (hglob : ∀ γ : Matrix (Fin T.rank) (Fin S.rank) D.host.E,

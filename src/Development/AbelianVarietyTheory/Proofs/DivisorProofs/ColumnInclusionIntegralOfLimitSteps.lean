@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvIsIntMapMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvIsIntMapMap
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -25,13 +29,15 @@ theorem subst_expAlong {C : Type} [Field C] {v : AddValuation C (WithTop ℝ)} {
   have hs : HasSubst (expAlong (fun _ : κ => G) u) :=
     hasSubst_of_constantCoeff_zero fun q => cc_expPt G (hu q.1) q.2
   have hX : ∀ (b : κ) (e : Fin d), constantCoeff (X ⟨b, e⟩ : MvPowerSeries (Σ _ : κ, Fin d) C) = 0 := by simp
-  rw [subst_expPt G hs (fun e => by
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [subst_expPt G hs (fun e => by
     rw [Finset.sum_apply, map_sum]
     exact Finset.sum_eq_zero fun b _ => cc_mv _ (cc_lgPt G (hX b)) e)]
   unfold expPt
   congr 1
   funext e
-  rw [Finset.sum_apply, ← coe_substAlgHom hs, map_sum, coe_substAlgHom, Fintype.sum_sigma]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_apply, ← coe_substAlgHom hs, map_sum, coe_substAlgHom, Fintype.sum_sigma]
   refine Finset.sum_congr rfl fun b _ => ?_
   rw [subst_mv hs]
   have h1 : (fun e' => subst (expAlong (fun _ : κ => G) u)

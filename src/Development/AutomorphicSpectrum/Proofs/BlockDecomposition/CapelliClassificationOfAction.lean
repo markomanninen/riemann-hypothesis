@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.ThetaSelfH
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SecondLeviFamily
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EpowRightEqPow
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CapPNeg
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CapelliOfGelfand
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.FirstSubSecondLeviFamily
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SecondLeviFamily
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EpowRightEqPow
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CapPNeg
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CapelliOfGelfand
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.CapClsA
 

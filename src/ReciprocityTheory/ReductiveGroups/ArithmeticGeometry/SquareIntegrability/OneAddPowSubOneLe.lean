@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -18,9 +22,9 @@ theorem norm_prod_sub_prod_le {ι : Type*} (s : Finset ι) (x y : ι → ℂ) (�
     rw [Finset.prod_insert ha, Finset.prod_insert ha, Finset.prod_insert ha, Finset.prod_insert ha]
     have hX : ‖∏ i ∈ s, x i‖ ≤ ∏ i ∈ s, (β i + δ i) := by
       rw [norm_prod]
-      exact Finset.prod_le_prod (fun i _ => norm_nonneg _) (fun i _ => hx i)
+      exact Finset.prod_le_prod₀ (fun i _ => norm_nonneg _) (fun i _ => hx i)
     have hP : ∏ i ∈ s, β i ≤ ∏ i ∈ s, (β i + δ i) :=
-      Finset.prod_le_prod (fun i _ => hβ i) (fun i _ => le_add_of_nonneg_right (hδ i))
+      Finset.prod_le_prod₀ (fun i _ => hβ i) (fun i _ => le_add_of_nonneg_right (hδ i))
     calc ‖x a * ∏ i ∈ s, x i - y a * ∏ i ∈ s, y i‖
         = ‖(x a - y a) * ∏ i ∈ s, x i + y a * (∏ i ∈ s, x i - ∏ i ∈ s, y i)‖ := by ring_nf
       _ ≤ ‖(x a - y a) * ∏ i ∈ s, x i‖ + ‖y a * (∏ i ∈ s, x i - ∏ i ∈ s, y i)‖ := norm_add_le _ _

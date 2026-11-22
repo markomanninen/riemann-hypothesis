@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostNumber
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.DyadicCharacterPowerNeOne
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharInertiaSurjective
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SingleMemSubmodule
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.HostNumber
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeDeformations.DyadicCharacterPowerNeOne
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CyclotomicCharInertiaSurjective
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SingleMemSubmodule
+
+@[expose] public section
 
 open NumberField Matrix IsLocalRing Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.Aut UpperTheory.V.UnitaryThreeInertia
 
@@ -121,7 +125,7 @@ private theorem core (H U : Subgroup G) (hUH : U ≤ H) [hn : U.Normal] (a : G �
   have hc : ∀ g ∈ H, ∀ i, L i → ∀ s ∈ U, ∃ c, ∀ k, (a s * a g) k i = a g k i * c := fun g hg i hi s hs => by
     have h2 := hn.conj_mem' s hs g
     refine ⟨a (g⁻¹ * s * g) i i, fun k => ?_⟩
-    rw [← hm s (hUH hs) g hg, show s * g = g * (g⁻¹ * s * g) by group, hm g hg _ (hUH h2), mul_apply,
+    rw [← hm s (hUH hs) g hg, show s * g = g * (g⁻¹ * s * g) by group, hm g hg _ (hUH h2), Matrix.mul_apply,
       Finset.sum_eq_single i (fun b _ hb => by rw [hi _ h2 b hb, mul_zero]) (by simp)]
   have hone : ∀ g ∈ H, ∀ i, L i → ∀ j, a g j i ≠ 0 → ∀ k, k ≠ j → a g k i = 0 := fun g hg i hi j hj k hk => by
     by_contra h
@@ -133,7 +137,7 @@ private theorem core (H U : Subgroup G) (hUH : U ≤ H) [hn : U.Normal] (a : G �
     refine hj fun s hs k hk => ?_
     obtain ⟨c, e⟩ := hc g hg i hi s hs
     have e' := e k
-    rw [hone g hg i hi j h k hk, zero_mul, mul_apply,
+    rw [hone g hg i hi j h k hk, zero_mul, Matrix.mul_apply,
       Finset.sum_eq_single j (fun b _ hb => by rw [hone g hg i hi j h b hb, mul_zero]) (by simp)] at e'
     exact (mul_eq_zero.1 e').resolve_right h) hi₀
   have hex : ∀ g : G, ∀ i, ∃ j, g ∈ H → a g j i ≠ 0 := fun g i => by
@@ -141,7 +145,7 @@ private theorem core (H U : Subgroup G) (hUH : U ≤ H) [hn : U.Normal] (a : G �
     push Not at h
     have hg := (h 0).1
     have e := congrFun (congrFun (hm _ (H.inv_mem hg) g hg) i) i
-    rw [inv_mul_cancel, h1, mul_apply] at e
+    rw [inv_mul_cancel, h1, Matrix.mul_apply] at e
     simp [fun j => (h j).2] at e
   choose σ hσ using hex
   have hiff : ∀ g ∈ H, ∀ i j, a g j i ≠ 0 → σ g i = j := fun g hg i j h => by
@@ -149,7 +153,7 @@ private theorem core (H U : Subgroup G) (hUH : U ≤ H) [hn : U.Normal] (a : G �
     exact hσ g i hg (hone g hg i (hall i) j h _ h')
   have hmul : ∀ g ∈ H, ∀ h ∈ H, ∀ i, σ (g * h) i = σ g (σ h i) := fun g hg h hh i => by
     refine hiff _ (H.mul_mem hg hh) _ _ ?_
-    rw [hm g hg h hh, mul_apply, Finset.sum_eq_single (σ h i)
+    rw [hm g hg h hh, Matrix.mul_apply, Finset.sum_eq_single (σ h i)
       (fun b _ hb => by rw [hone h hh i (hall i) _ (hσ h i hh) b hb, mul_zero]) (by simp)]
     exact mul_ne_zero (hσ g _ hg) (hσ h i hh)
   have hσ1 : ∀ i, σ 1 i = i := fun i => hiff 1 H.one_mem i i (by simp [h1])
@@ -215,7 +219,7 @@ private theorem diagonalise (T : Matrix (Fin 3) (Fin 3) K) (hT : T.BlockTriangul
   obtain ⟨q, hq⟩ : ∃ q, q * (T 2 2 - T 0 0) = T 0 2 + T 0 1 * r := ⟨_, div_mul_cancel₀ _ h3⟩
   have e : (!![1, -p, p * r - q; 0, 1, -r; 0, 0, 1] : Matrix (Fin 3) (Fin 3) K) * !![1, p, q; 0, 1, r; 0, 0, 1] = 1 := by
     ext i j
-    fin_cases i <;> fin_cases j <;> simp [mul_apply, Fin.sum_univ_three]
+    fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_three]
     ring
   refine ⟨!![1, p, q; 0, 1, r; 0, 0, 1], !![1, -p, p * r - q; 0, 1, -r; 0, 0, 1], mul_eq_one_comm.1 e, e, ?_, ?_, ?_⟩
   · intro i j hij
@@ -225,7 +229,7 @@ private theorem diagonalise (T : Matrix (Fin 3) (Fin 3) K) (hT : T.BlockTriangul
   · have : T * !![1, p, q; 0, 1, r; 0, 0, 1] = !![1, p, q; 0, 1, r; 0, 0, 1] * diagonal T.diag := by
       ext i j
       rw [mul_diagonal]
-      fin_cases i <;> fin_cases j <;> simp [mul_apply, Fin.sum_univ_three, z1, z2, z3]
+      fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_three, z1, z2, z3]
       · linear_combination -hp
       · linear_combination -hq
       · linear_combination -hr
@@ -268,13 +272,13 @@ private theorem roots {k : Type} [Field k] (a b : kˣ) (h : ∀ n : ℕ, ((a * b
   have e2 : (a : k) * b ^ 2 + a + 1 = 0 := mul_left_cancel₀ (mul_ne_zero a.ne_zero hb) (by linear_combination h' 2 - h' 0)
   exact mul_ne_zero (mul_ne_zero a.ne_zero b.ne_zero) hb1 (by linear_combination e2 - e1)
 
-private theorem conj_mat {G R : Type} [Group G] [CommRing R] (h : GL (Fin 3) R) (r : G →* GG 3 R) {g : G}
+private theorem conj_mat {G R : Type} [Group G] [CommRing R] (h : GL (Fin 3) R) (r : G →* GG (m := 3) (R := R)) {g : G}
     (hg : (r g).right = 1) : (conjBy h r g).mat = (h : Matrix _ _ R) * (r g).mat * ((h⁻¹ : GL (Fin 3) R) : Matrix _ _ R) := by
   simp [conjBy, GG.mat, hg]
 
 private theorem frame {O K G Γ ι : Type} [CommRing O] [IsLocalRing O] [Field K] [Algebra O K] [FaithfulSMul O K] [Group G]
     [Group Γ] [TopologicalSpace Γ] (F : Frame O G Γ ι) (hπ : Function.Surjective F.π) (g₁ : Γ)
-    (r : Γ →* GG 3 K) (hr : F.IsCharZeroPt g₁ r) (hI : TypeI F.η r) (U : Subgroup G) [U.Normal]
+    (r : Γ →* GG (m := 3) (R := K)) (hr : F.IsCharZeroPt g₁ r) (hI : TypeI F.η r) (U : Subgroup G) [U.Normal]
     (hU : U ≤ (F.η.comp F.π).ker) (x : F.D F.vl) (hx : F.ηv _ x = 1) (hx' : IsUnit ((F.Ψv _ x : O) ^ 2 - 1))
     (u : F.D F.vl) (hu : u ∈ F.Iv _) (huU : u.1 ∈ U) (hu' : F.Ψv _ u ^ 2 ≠ 1) : MatIrr U fun s => (r (F.π s)).mat := by
   by_contra hc
@@ -328,19 +332,20 @@ private theorem frame {O K G Γ ι : Type} [CommRing O] [IsLocalRing O] [Field K
   have e1 : (r' y).mat.trace = 0 := by
     refine Subtype.ext ?_
     show A.val (r' y).mat.trace = 0
-    rw [← e, trace, trace, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← e, trace, trace, map_sum]
     refine Finset.sum_congr rfl fun i _ => (c1 y i i).trans ?_
     simp [wt]
   have e2 : ∀ i, residue A ((r' y).mat i i) = φ ((r0 F.η F.Ψ y).mat i i) := fun i =>
     Ideal.Quotient.eq.2 (hpt.red y i i)
   have e3 := congrArg (residue A) e1
-  rw [trace_fin_three, map_add, map_add, e2, e2, e2, map_zero] at e3
+  rw [trace_fin_three, map_add (f := _), map_add (f := _), e2, e2, e2, map_zero] at e3
   simpa [GG.mat, tor_val, wt1] using e3
 
 theorem UpperTheory.V.UnitaryThreeInertia.matIrr_open :
     ∀ (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] (c : Coef l) {N : ℕ} [NeZero N] (e : ℕ) (ψ : DirichletCharacter c.O N) (o₁ : ℕ), HostData l e ψ o₁ →
     ∀ (S : Finset Pl) (A : S → ValuationSubring Ω) (F : Frame c.O (Formalism.ConjugateSelfDual.G ℚ Ω) (Gam Ω S) S), IsHostFrame Ω c e ψ S A F →
-    ∀ (g₁ : Gam Ω S), F.Marked g₁ → ∀ r : Gam Ω S →* GG 3 (PadicAlgCl l), F.IsCharZeroPt g₁ r → TypeI F.η r → ∀ U : Subgroup (G ℚ Ω), IsOpen (U : Set (G ℚ Ω)) → U ≤ (eta4 Ω).ker → MatIrr U fun s => (r (toGS Ω _ s)).mat := by
+    ∀ (g₁ : Gam Ω S), F.Marked g₁ → ∀ r : Gam Ω S →* GG (m := 3) (R := PadicAlgCl l), F.IsCharZeroPt g₁ r → TypeI F.η r → ∀ U : Subgroup (G ℚ Ω), IsOpen (U : Set (G ℚ Ω)) → U ≤ (eta4 Ω).ker → MatIrr U fun s => (r (toGS Ω _ s)).mat := by
   intro Ω _ _ _ l hl c N _ e ψ o₁ hD S A F hF g₁ _ r hr hI U hU hUη
   have : IsGalois ℚ Ω := IsAlgClosure.isGalois ℚ Ω
   have : CompactSpace (G ℚ Ω) := inferInstanceAs (CompactSpace (Ω ≃ₐ[ℚ] Ω))

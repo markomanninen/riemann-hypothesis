@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPtsBddConv
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPtsBddConv
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -16,11 +21,5 @@ def ModelLogIntegrable.Statement : Prop :=
     (∀ x ∈ R.Yo, |u x| ≤ C + C' * Real.log (R.r x)) →
     (∀ z ∈ mcPts P, z ∉ N → M.proj z ∈ R.Yo → g z = u (M.proj z)) →
       IsPtsIntegrable P (fun (_ : Fin e) z => c * Real.log (L.h z)) g
-
-namespace Line
-
-open GroundTheory.Heights₂.Heights.Regular.ProjectiveLine
-
-end Line
 
 end GroundTheory.Heights₂.Heights.LowerBoundFree

@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.KFiniteVectors.KFinOfMem
-import Development.WeilBound.ThetaLifts.LatticeBasics.ExistsIsGauss
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.KFiniteVectors.KFinOfMem
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ExistsIsGauss
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ theorem sp_smul_right (c : AF F) (x y : Matrix (Fin d.m) (Fin d.n ⊕ Fin d.n) (
 theorem rho_rho (v w : Matrix (Fin d.m) (Fin d.n ⊕ Fin d.n) (AE F E)) (Φ : d.Fn) :
     d.dd.rho d.B.ψ v (d.dd.rho d.B.ψ w Φ) = d.B.ψ (⅟(2 : AF F) * sp d v w) • d.dd.rho d.B.ψ (v + w) Φ := by
   funext x
-  simp only [Darboux.rho, schr, Pi.smul_apply, smul_eq_mul, ← mul_assoc, ← AddChar.map_add_eq_mul, map_add, Prod.fst_add,
+  simp only [Darboux.rho, schr, Pi.smul_apply, smul_eq_mul, ← mul_assoc, ← AddChar.map_add_eq_mul, map_add (f := _), Prod.fst_add,
     Prod.snd_add, add_assoc, add_dotProduct, dotProduct_add, sp_eq]
   congr 2
   linear_combination (-((d.dd.e v).1 ⬝ᵥ (d.dd.e w).2)) * invOf_mul_self (2 : AF F)
@@ -174,8 +178,8 @@ theorem l_D {Ψ : d.Fn} (hΨ : Ψ ∈ d.sch) {u : Matrix (Fin d.m) (Fin d.n ⊕ 
   | add x y hx hy ix iy =>
     have : ∀ t : ℝ, schr d.B.ψ (realAd F t • w) (x + y) = schr d.B.ψ (realAd F t • w) x + schr d.B.ψ (realAd F t • w) y :=
       fun t => funext fun _ => mul_add _ _ _
-    simp only [this, map_add]
-    rw [Box.D, Box.DP_add hx hy, map_add]
+    simp only [this, map_add (f := _)]
+    rw [Box.D, Box.DP_add hx hy, map_add (f := _)]
     exact ix.add iy
   | smul c x hx ix =>
     have : ∀ t : ℝ, schr d.B.ψ (realAd F t • w) (c • x) = c • schr d.B.ψ (realAd F t • w) x :=
@@ -184,7 +188,7 @@ theorem l_D {Ψ : d.Fn} (hΨ : Ψ ∈ d.sch) {u : Matrix (Fin d.m) (Fin d.n ⊕ 
     rw [Box.D, Box.DP_smul hx, map_smul, smul_eq_mul]
     exact ix.const_mul c
 
-theorem td_realAd_zero : realAd F 0 = 0 := by simp only [realAd, map_zero]; rfl
+theorem td_realAd_zero : realAd F 0 = 0 := by simp only [realAd, map_zero]
 
 theorem schr_zero_at (Ψ : d.Fn) (u : Matrix (Fin d.m) (Fin d.n ⊕ Fin d.n) (AE F E)) :
     d.dd.rho d.B.ψ (realAd F 0 • u) Ψ = Ψ := by
@@ -235,7 +239,7 @@ theorem T_D {Φ : d.Fn} (hΦ : Φ ∈ d.sch) {u : Matrix (Fin d.m) (Fin d.n ⊕ 
   have h4 := (psi_line_deriv (d := d) (sp d v u)).mul (l_D hΨ hu ha)
   rw [schr_zero_at, psi_zero_line] at h4
   refine h4.congr_deriv ?_
-  rw [show d.T (Box.D (d.dd.e u) Φ) X = d.l (d.dd.rho d.B.ψ v (Box.D (d.dd.e u) Φ)) from rfl, rho_D hΦ hu, map_add,
+  rw [show d.T (Box.D (d.dd.e u) Φ) X = d.l (d.dd.rho d.B.ψ v (Box.D (d.dd.e u) Φ)) from rfl, rho_D hΦ hu, map_add (f := _),
     map_smul, smul_eq_mul]
   ring
 
@@ -244,7 +248,7 @@ theorem evI_add' (a b : AF F) : evI F (a + b) = evI F a + evI F b :=
 
 theorem sp_add_right (x y y' : Matrix (Fin d.m) (Fin d.n ⊕ Fin d.n) (AE F E)) :
     sp d x (y + y') = sp d x y + sp d x y' := by
-  rw [sp_eq, sp_eq, sp_eq, map_add, Prod.fst_add, Prod.snd_add, dotProduct_add, add_dotProduct]
+  rw [sp_eq, sp_eq, sp_eq, map_add (f := _), Prod.fst_add, Prod.snd_add, dotProduct_add, add_dotProduct]
   ring
 
 theorem sp_smul_left (c : AF F) (x y : Matrix (Fin d.m) (Fin d.n ⊕ Fin d.n) (AE F E)) :
@@ -253,10 +257,10 @@ theorem sp_smul_left (c : AF F) (x y : Matrix (Fin d.m) (Fin d.n ⊕ Fin d.n) (A
   ring
 
 theorem mZ_add (Z Z' X : Mx F E d.m d.n) : mZ d (Z + Z') X = mZ d Z X + mZ d Z' X := by
-  simp only [mZ, Matrix.add_mul, sp_add_right, evI_add', map_add]
+  simp only [mZ, Matrix.add_mul, sp_add_right, evI_add', map_add (f := _)]
 
 theorem td_T_add (Φ Ψ : d.Fn) (X : Mx F E d.m d.n) : d.T (Φ + Ψ) X = d.T Φ X + d.T Ψ X := by
-  simp only [SD.T, rho_add_fn, map_add]
+  simp only [SD.T, rho_add_fn, map_add (f := _)]
 
 theorem T_smul (c : ℂ) (Φ : d.Fn) (X : Mx F E d.m d.n) : d.T (c • Φ) X = c * d.T Φ X := by
   simp only [SD.T, rho_smul_fn, map_smul, smul_eq_mul]
@@ -292,8 +296,6 @@ theorem exists_at' (ξ : d.κ → mixedEmbedding.mixedSpace F) :
   rw [← map_smul, LinearEquiv.map_eq_zero_iff]
   refine Prod.ext ?_ (by simp)
   exact Box.at_pt ξ s hs
-
-theorem nf_add' (a b : d.κ → AF F) : Box.nf (a + b) = Box.nf a + Box.nf b := Box.nf_add a b
 
 theorem td_at_mul {p : Type} [Fintype p] {Z : Matrix (Fin d.m) p (AE F E)} (hZ : At (evI F) Z) {q : Type}
     (N : Matrix p q (AE F E)) : At (evI F) (Z * N) := fun c hc => by rw [← Matrix.smul_mul, hZ c hc, Matrix.zero_mul]
@@ -357,7 +359,7 @@ theorem character_quadratic_derivative_zero (s : AF F) : HasDerivAt (fun t : ℝ
 
 theorem nfe_add (u v : Matrix (Fin d.m) (Fin d.n ⊕ Fin d.n) (AE F E)) :
     Box.nf (d.dd.e (u + v)).1 = Box.nf (d.dd.e u).1 + Box.nf (d.dd.e v).1 := by
-  rw [map_add, Prod.fst_add, Box.nf_add]
+  rw [map_add (f := _), Prod.fst_add, Box.nf_add]
 
 theorem at_add' {u v : Matrix (Fin d.m) (Fin d.n ⊕ Fin d.n) (AE F E)} (hu : At (evI F) u) (hv : At (evI F) v) :
     At (evI F) (u + v) := fun c hc => by rw [smul_add, hu c hc, hv c hc, add_zero]
@@ -411,7 +413,7 @@ theorem T_D_dg {Φ : d.Fn} (hΦ : Φ ∈ d.sch) {Z : Mx F E d.m d.n} (hZ : At (e
     have hs : Box.nf (d.dd.e ((Z + Z₀) * (dg d)ᵀ)).1 ≠ 0 := by rwa [Matrix.add_mul, nfe_add, ha, zero_add]
     have e1 := T_D_dg_ne hΦ (atZ_add hZ h0) hs X
     have e2 := T_D_dg_ne hΦ h0 h0' X
-    rw [Matrix.add_mul, map_add, Box.D_add_left, td_T_add, e2, mZ_add] at e1
+    rw [Matrix.add_mul, map_add (f := _), Box.D_add_left, td_T_add, e2, mZ_add] at e1
     push_cast at e1
     linear_combination e1
   by_cases hC : ∃ Z₀ : Mx F E d.m d.n, At (evI F) Z₀ ∧ Box.nf (d.dd.e (Z₀ * (b2 d)ᵀ)).1 ≠ 0
@@ -437,7 +439,7 @@ theorem T_D_dg {Φ : d.Fn} (hΦ : Φ ∈ d.sch) {Z : Mx F E d.m d.n} (hZ : At (e
     have E := hL'.unique hR
     rw [schr_zero_at] at E
     simp only [td_realAd_zero, zero_mul, AddChar.map_zero_eq_one, zero_smul, add_zero, one_mul, zero_add] at E
-    rw [map_add, Box.D_add_left, td_T_add] at E
+    rw [map_add (f := _), Box.D_add_left, td_T_add] at E
     simp only [mZ]
     linear_combination E
   push_neg at hB hC
@@ -481,7 +483,7 @@ theorem theta_derivative_second_frame {Φ : d.Fn} (hΦ : Φ ∈ d.sch) {Z : Mx F
     simp only [Pi.mul_apply]
     rw [schr_zero_at]
     simp only [td_realAd_zero, zero_mul, AddChar.map_zero_eq_one, one_mul, zero_add]
-    rw [map_add, Box.D_add_left, td_T_add, e2, evI_neg', map_neg]
+    rw [map_add (f := _), Box.D_add_left, td_T_add, e2, evI_neg', map_neg]
     simp only [mZ]
     push_cast
     ring

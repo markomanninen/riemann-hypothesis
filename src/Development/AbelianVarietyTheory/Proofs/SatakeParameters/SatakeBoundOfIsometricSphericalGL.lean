@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.FiniteResidueFieldPadicInt
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SatakeParametersBoundedLatticeEigenfunctionStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GeneralLinearTransitiveOnLatticesOverDVRStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.FiniteResidueFieldPadicInt
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SatakeParametersBoundedLatticeEigenfunctionStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.GeneralLinearTransitiveOnLatticesOverDVRStatement
+
+@[expose] public section
 
 open GlobalTheory.LatHecke
 
@@ -15,7 +19,7 @@ theorem satake_bound_of_isometric_spherical : ∀ (O K : Type) [CommRing O] [IsD
   have hone : ∀ x : V, ρ 1 x = x := fun x => by
     rw [map_one]; rfl
   choose γ hγ using (GlobalTheory.T.generalLinear_transitive_on_lattices_over_DVR O K r).1
-  have hγ' : ∀ L : Lat O K r, γ L • std O K r = L := fun L => Lat.ext (hγ L)
+  have hγ' : ∀ L : Lat O K r, γ L • std O K r = L := fun L => Subtype.ext (hγ L)
   let φ : Lat O K r → V := fun L => ρ (γ L) v
 
   have hφ : ∀ g : GL (Fin r) K, φ (g • std O K r) = ρ g v := by
@@ -55,7 +59,7 @@ theorem satake_bound_of_isometric_spherical : ∀ (O K : Type) [CommRing O] [IsD
         · intro g hg g' hg' h
           obtain ⟨M, hM, rfl⟩ := Finset.mem_image.1 (Finset.mem_coe.1 hg)
           obtain ⟨M', hM', rfl⟩ := Finset.mem_image.1 (Finset.mem_coe.1 hg')
-          have h' : M = M' := Lat.ext (by simpa only [hγ] using h)
+          have h' : M = M' := Subtype.ext (by simpa only [hγ] using h)
           rw [h']
         · rintro _ ⟨M, hM, rfl⟩
           exact ⟨γ M, Finset.mem_coe.2 (Finset.mem_image.2
@@ -63,7 +67,8 @@ theorem satake_bound_of_isometric_spherical : ∀ (O K : Type) [CommRing O] [IsD
 
     have h1 : heckeElem k φ L = ρ (γ L) (heckeElem k φ (std O K r)) := by
       conv_lhs => rw [← hγ' L]
-      rw [heckeElem_smul, heckeElem_eq_sum, heckeElem_eq_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [heckeElem_smul, heckeElem_eq_sum, heckeElem_eq_sum, map_sum]
       exact Finset.sum_congr rfl fun M _ => hφg _ _
     rw [h1, h0, map_smul]
 end GlobalTheory.LatHecke

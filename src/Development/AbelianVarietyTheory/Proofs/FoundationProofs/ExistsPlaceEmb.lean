@@ -1,7 +1,20 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.SelmerRankVanishing
-open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.BlochKatoReduction GlobalTheory.IndefiniteRowSideFullHecke.LengthValuationTwists
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.GaloisCohomology.Statement
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+public import ReciprocityTheory.GaloisValuations.ContinuousConstSMulQuotient
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.BlochKatoReduction
 
 namespace GlobalTheory.EmbThroughCompletion
 
@@ -151,23 +164,6 @@ theorem exists_conj (a b : E →+* PadicAlgCl l) (h : ∀ x, ‖a x‖ < 1 ↔ �
 variable {Ω : Type} [Field Ω] [Algebra E Ω]
   {Gw : Subgroup (Ω ≃ₐ[E] Ω)} {O : Type} [CommRing O] [Algebra ℤ_[l] O] [TopologicalSpace O]
   (Bw : LocBridge l E Ω Gw O)
-
-theorem exists_factor (v : HeightOneSpectrum (𝓞 E)) (A : ValuationSubring Ω) (hA : IsPlaceOver A v)
-    (hj : ∀ x, x ∈ A ↔ ‖Bw.j x‖ ≤ 1) (b : E →+* Bw.LL.1)
-    (hb : ∀ x : 𝓞 E, ‖((b (x : E) : Bw.LL.1) : PadicAlgCl l)‖ < 1 ↔ x ∈ v.asIdeal) :
-    ∃ τ : Bw.Kw.1 →ₐ[ℚ_[l]] Bw.LL.1, ∀ x : E, τ ⟨Bw.j (algebraMap E Ω x), Bw.j_E x⟩ = b x := by
-  obtain ⟨g, hg⟩ := exists_conj (Bw.j.comp (algebraMap E Ω)) (Bw.LL.1.val.toRingHom.comp b)
-    (norm_lt_one_iff v _ _ (fun x => by
-      rw [← hA x, ← ValuationSubring.mem_nonunits_iff, ValuationSubring.mem_nonunits_iff_or, hj,
-        RingHom.comp_apply, map_inv₀, norm_inv]
-      generalize algebraMap E Ω (x : E) = y
-      by_cases hy : y = 0
-      · simp [hy]
-      · have : 0 < ‖Bw.j y‖ := norm_pos_iff.2 ((map_ne_zero _).2 hy)
-        simp only [hy, false_or, not_le]
-        rw [one_lt_inv₀ this]) hb)
-  let σ : Bw.Kw.1 →ₐ[ℚ_[l]] PadicAlgCl l := (g : PadicAlgCl l →ₐ[ℚ_[l]] PadicAlgCl l).comp Bw.Kw.1.val
-  exact ⟨σ.codRestrict Bw.LL.1.toSubalgebra (Bw.LL_split σ), fun x => Subtype.ext (hg x)⟩
 
 end Padic
 

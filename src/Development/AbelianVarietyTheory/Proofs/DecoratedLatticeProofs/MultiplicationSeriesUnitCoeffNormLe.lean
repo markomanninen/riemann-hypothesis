@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EndOmega
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.EndOmega
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,7 +86,8 @@ theorem htSmallTo_sum {ι : Type} (s : Finset ι) (f : ι → K⟦X⟧) (h : ∀
     HtSmallTo 0 (∑ j ∈ s, f j) := by
   rw [htSmallTo_zero_iff]
   intro n
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact htform_norm_sum_le _ _ fun j hj => (h j hj).1 n
 
 theorem htSmallTo_sub {f g : K⟦X⟧} (hf : HtSmallTo 0 f) (hg : HtSmallTo 0 g) : HtSmallTo 0 (f - g) := by
@@ -177,7 +182,8 @@ theorem htform_unit_coeff_le : ∀ (K : Type) [NormedField K] [IsUltrametricDist
     | _ k ih =>
     intro hk
     have hc := h3 (2 * k) (by omega)
-    rw [hG, map_sum] at hc
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hG, map_sum] at hc
     simp_rw [hterm k] at hc
     have hmem : M - k ∈ Finset.range (M + 1) := Finset.mem_range.2 (by omega)
     rw [← Finset.add_sum_erase _ _ hmem] at hc

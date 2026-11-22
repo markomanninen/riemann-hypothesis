@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToRingActOpOfRingAct
-import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyHomFixRepTrivial
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsRepresentableOfCover
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToRingActOpOfRingAct
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyHomFixRepTrivial
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.IsRepresentableOfCover
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -63,8 +67,8 @@ theorem wit_pull (hL : L.IsLB) (hM : M.IsLB) {Z Z' : Scheme.{0}} {t : Z ⟶ S} {
       show ((Over.pullback g).map Φ).left ≫ pullback.fst B'.hom g =
         pullback.fst A'.hom g ≫ Φ.left from pullback.lift_fst _ _ _]
 
-variable (A B L M) in
 
+variable (A B L M) in
 structure Pt (Z : Scheme.{0}) where
 
   t : Z ⟶ S
@@ -115,8 +119,8 @@ theorem Pt.map_comp (hL : L.IsLB) (hM : M.IsLB) {Z Z' Z'' : Scheme.{0}} (g : Z' 
   exact (Category.assoc _ _ _).symm.trans ((congrArg (· ≫ x.f) (lift_pmap_comp x.t g g' _)).trans
     (Category.assoc _ _ _))
 
-variable (A B L M) in
 
+variable (A B L M) in
 def homFun (hL : L.IsLB) (hM : M.IsLB) : Scheme.{0}ᵒᵖ ⥤ Type where
   obj Z := Pt A B L M Z.unop
   map g := TypeCat.ofHom (Pt.map hL hM g.unop)
@@ -127,8 +131,8 @@ def homFun (hL : L.IsLB) (hM : M.IsLB) : Scheme.{0}ᵒᵖ ⥤ Type where
     ext x
     exact Pt.map_comp hL hM _ _ x
 
-variable (A B L M) in
 
+variable (A B L M) in
 def homProj (hL : L.IsLB) (hM : M.IsLB) : homFun A B L M hL hM ⟶ yoneda.obj S where
   app Z := TypeCat.ofHom fun x => x.t
 
@@ -140,16 +144,5 @@ def Pt.ofData {Z : Scheme.{0}} (t : Z ⟶ S) (A' B' : Over Z) [GrpObj A'] [GrpOb
     (hΦ : IsMonHom Φ) (hI : LBIso (L.pull φA) ((M.pull φB).pull Φ.left)) : Pt A B L M Z :=
   ⟨t, hA.1.isoPullback.inv ≫ Φ.left ≫ φB, A', B', inferInstance, inferInstance, φA, φB, Φ, hA, hB, hΦ, hI,
     hA.1.isoPullback.hom, by simp, by simp, by simp⟩
-
-@[simp] theorem Pt.ofGroupPullbackData_base {Z : Scheme.{0}} (t : Z ⟶ S) (A' B' : Over Z) [GrpObj A'] [GrpObj B']
-    (φA : A'.left ⟶ A.left) (φB : B'.left ⟶ B.left) (Φ : A' ⟶ B') (hA : IsGrpPullback A' A t φA)
-    (hB : IsGrpPullback B' B t φB) (hΦ : IsMonHom Φ) (hI : LBIso (L.pull φA) ((M.pull φB).pull Φ.left)) :
-    (Pt.ofData (L := L) (M := M) t A' B' φA φB Φ hA hB hΦ hI).t = t := rfl
-
-theorem homFun_map (hL : L.IsLB) (hM : M.IsLB) {Z Z' : Scheme.{0}} (g : Z' ⟶ Z) (x : Pt A B L M Z) :
-    (homFun A B L M hL hM).map g.op x = x.map hL hM g := rfl
-
-theorem homProj_app (hL : L.IsLB) (hM : M.IsLB) {Z : Scheme.{0}} (x : Pt A B L M Z) :
-    (homProj A B L M hL hM).app (Opposite.op Z) x = x.t := rfl
 
 end GlobalTheory.EndLoc.HomGlue

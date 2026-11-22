@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.StdChar
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.LocVol
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.DictRing
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.StdChar
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.LocVol
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicClassFiniteness.DictRing
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,8 +57,8 @@ theorem dense_F : DenseRange (algebraMap F (Af F)) := by
 
 variable [IsTotallyReal F]
 
-open Formalism.L2.SG.Pf.StdChar in
 
+open Formalism.L2.SG.Pf.StdChar in
 theorem eq_psiStd (ψ : AddChar (AF F) ℂ) (h1 : IsCharAF F ψ) (h2 : Formalism.L2.SG.LocVol.IsStdChar ψ) (x : AF F) :
     ψ x = psiStd F x := by
   obtain ⟨hcont, -, htriv, -⟩ := h1
@@ -68,7 +72,7 @@ theorem eq_psiStd (ψ : AddChar (AF F) ℂ) (h1 : IsCharAF F ψ) (h2 : Formalism
       first
         | exact InfinitePlace.Completion.extensionEmbedding_coe w a
         | exact InfinitePlace.Completion.extensionEmbedding_coe a
-        | simp [InfiniteAdeleRing]
+        | simp [InfiniteAdeleRing, AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply]
     simp only [psiA, hw]
     first
       | rfl
@@ -120,8 +124,8 @@ def LocTrDual : Prop :=
         singleV F v (x * y) - algebraMap F (Af F) q ∈ Formalism.UG.intAd F → ∃ n : ℤ, Algebra.trace ℚ F q = n) ↔
       Formalism.L2.SG.LocVol.dV v * x ∈ v.adicCompletionIntegers F
 
-open Formalism.L2.SG.Pf.StdChar in
 
+open Formalism.L2.SG.Pf.StdChar in
 theorem condAllTR_of (hL : LocTrDual) (F : Type) [Field F] [NumberField F] [IsTotallyReal F]
     (ψ : AddChar (AF F) ℂ) (h1 : IsCharAF F ψ) (h2 : Formalism.L2.SG.LocVol.IsStdChar ψ)
     (v : HeightOneSpectrum (𝓞 F)) (x : Fv F v) :

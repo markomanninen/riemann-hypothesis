@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.ArithmeticGapBounds.AEConst
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.ArithmeticGapBounds.AEConst
+
+@[expose] public section
 
 open MeasureTheory Filter Set
 open scoped symmDiff Topology ENNReal
@@ -69,7 +73,7 @@ theorem isClosed_stab {T : Set S} (hT : MeasurableSet T) :
   exact measure_iUnion_null fun n => key _ (isCompact_compactCovering S n)
 
 theorem aeconst_set {A : Subgroup S} (hA : Dense (A : Set S)) {T : Set S} (hT : MeasurableSet T)
-    (h : ∀ g ∈ A, (g * ·) ⁻¹' T =ᵐ[μ] T) : EventuallyConst T (ae μ) := by
+    (h : ∀ g ∈ A, (g * ·) ⁻¹' T =ᵐ[μ] T) : EventuallyEmptyOrUniv T (ae μ) := by
   have hcl : closure (A : Set S) ⊆ {g : S | (g * ·) ⁻¹' T =ᵐ[μ] T} :=
     closure_minimal (fun g hg => h g hg) (isClosed_stab μ hT)
   rw [hA.closure_eq] at hcl
@@ -84,8 +88,8 @@ theorem aeConst_holds : AEConst := by
   have hT : MeasurableSet (u ⁻¹' U) := hu hU
   have key := AlmostEverywhereConstant.aeconst_set μ hA hT fun g hg => by
     filter_upwards [hinv g hg] with x hx
-    show (u (g * x) ∈ U) = (u x ∈ U)
+    show u (g * x) ∈ U ↔ u x ∈ U
     rw [hx]
-  exact eventuallyConst_set.1 key
+  exact eventuallyEmptyOrUniv_iff.1 key
 
 end PositivityTheory.KB.SpectralGap

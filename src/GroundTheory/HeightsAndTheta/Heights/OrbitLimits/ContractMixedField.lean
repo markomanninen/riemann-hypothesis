@@ -1,10 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.ContractMixedFieldStatement
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsFieldIntersectionExample
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyBridgeFull
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.ContractRelevant
-import GroundTheory.HeightsAndTheta.Heights.Intersections.TableDegreeThreeBase
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MixedFieldContraction.ContractMixedFieldStatement
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsFieldIntersectionExample
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyBridgeFull
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.IsMultiHomogIdealIff
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.ContractRelevant
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.TableDegreeThreeBase
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -18,8 +23,8 @@ namespace ContractMixedField
 variable {F : Type} [Field F] {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
   {K' : Type} [Fintype K'] {ι' : K' → Type} [∀ k, Fintype (ι' k)]
 
-omit [Fintype K] [Fintype K'] in
 
+omit [Fintype K] [Fintype K'] in
 theorem isMultiHomog_rename {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} (hv : IsBlockMap κ v)
     {t : MRingOver F ι} {a : K → ℕ} (ht : IsMultiHomog t a) :
     IsMultiHomog (rename v t) (Function.extend κ a 0) := by
@@ -31,8 +36,8 @@ theorem isMultiHomog_rename {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k'
   rw [e]
   exact weightedHomogeneousComponent_isWeightedHomogeneous _ _
 
-omit [Fintype K] [Fintype K'] in
 
+omit [Fintype K] [Fintype K'] in
 theorem isMultiProjPrime_imageVar {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} (hv : IsBlockMap κ v)
     {W : Ideal (MRingOver F ι')} (hW : IsMultiProjPrime W) : IsMultiProjPrime (imageVar F v W) := by
   classical
@@ -84,8 +89,8 @@ theorem component [DecidableEq K'] {κ : K → K'} {v : (Σ k, ι k) → (Σ k',
   refine ⟨D - Fintype.card K, by omega, hIm, ?_⟩
   rw [hD, Nat.sub_add_cancel hKD]
 
-open Classical in
 
+open Classical in
 theorem intNum_eq_zero [DecidableEq K'] {κ : K → K'} {v : (Σ k, ι k) → (Σ k', ι' k')} (hv : IsBlockMap κ v) :
     ∀ (n : ℕ) (V' : Ideal (MRingOver F ι')) (d₀ : ℕ) (bs : Fin n → K' → ℤ),
       IsProjVarF V' n → IsProjVarF (imageVar F v V') d₀ →
@@ -153,9 +158,10 @@ theorem intNum_eq_zero [DecidableEq K'] {κ : K → K'} {v : (Σ k, ι k) → (�
 
 end ContractMixedField
 
-open ContractMixedField in
 
+open ContractMixedField in
 theorem contractMixedField : ReciprocityTheory.ChartRestriction.G.AI.I4.ContractMixedFieldStatement := by
+  unfold ReciprocityTheory.ChartRestriction.G.AI.I4.ContractMixedFieldStatement
   intro F _ K _ ι _ K' _ ι' _ J' hJ' κ v V' d₀ d r L N hv hV' hI hd
   classical
   rw [NumbersDVR.Numbers.agree_of FieldNumbers.IntNumBase.full FieldNumbers.CutRational.full

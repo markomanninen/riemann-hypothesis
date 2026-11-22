@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.AdicLimPfCok
+module
+
+public import Development.EtaleCohomology.KummerTheory.AdicLimPfCok
+
+@[expose] public section
 
 namespace LateralTheory.KummerTheory
 

@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.StrictLocalStalks.PolyPO
-import Development.EtaleCohomology.EtaleSheaves.StrictLocalStalks.FracOf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.StrictLocalStalks.PolyPO
+public import Development.EtaleCohomology.EtaleSheaves.StrictLocalStalks.FracOf
+
+@[expose] public section
 
 open LateralTheory.E.t_E3Cut
 

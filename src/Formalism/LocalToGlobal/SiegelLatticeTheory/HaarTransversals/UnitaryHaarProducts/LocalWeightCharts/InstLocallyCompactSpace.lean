@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SettingBlocks
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HCReprodM
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.SettingBlocks
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.HCReprodM
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,12 +46,9 @@ instance : TopologicalSpace (Grp U h) := inferInstanceAs (TopologicalSpace U)
 instance : MeasurableSpace (Grp U h) := borel _
 instance : BorelSpace (Grp U h) := ⟨rfl⟩
 
-lemma val_mul (a b : Grp U h) : (a * b).val = a.val * b.val := rfl
 lemma val_one : (1 : Grp U h).val = 1 := rfl
 
 lemma emb : IsClosedEmbedding (val : Grp U h → Mx k r) := h.closed.isClosedEmbedding_subtypeVal
-
-lemma range_val : Set.range (val : Grp U h → Mx k r) = U := Subtype.range_val
 
 instance : IsTopologicalGroup (Grp U h) where
   continuous_mul := by
@@ -95,9 +96,6 @@ lemma hmeas_compact (U : Set (Mx k r)) (h : ClSub U) (K : Set (Mt k r)) (hK : Is
   unfold hmeas
   rw [Measure.map_apply (val_cemb U h).continuous.measurable hK.isClosed.measurableSet]
   exact ((val_cemb U h).isCompact_preimage hK).measure_lt_top
-
-instance hmeas_fc (U : Set (Mx k r)) (h : ClSub U) : IsFiniteMeasureOnCompacts (hmeas U h) :=
-  ⟨fun K hK => hmeas_compact U h K hK⟩
 
 lemma sigma_of_compact (μ : Measure (Mt k r)) (hμ : ∀ K : Set (Mt k r), IsCompact K → μ K < ⊤) :
     SigmaFinite μ := by
@@ -198,7 +196,7 @@ theorem haar_unique (U : Set (Mx k r)) (h : ClSub U) (μ : Measure (Mt k r)) (h�
       exact measure_iUnion_null hnull
     exact (NeZero.ne (Measure.haar : Measure (Grp U h))) (Measure.measure_univ_eq_zero.mp this)
   refine ⟨c, hcne0, hcnetop, ?_⟩
-  rw [← hmapν, heq, Measure.map_smul]
+  rw [← hmapν, heq, Measure.map_smul c hE.measurable.aemeasurable]
   rfl
 
 def tau (k r : ℕ) (i : Fin (2 * r + k + 1)) : Fin (2 * r + k + 1) :=

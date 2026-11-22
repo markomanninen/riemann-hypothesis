@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgebraMapNormCoeff
+module
+
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AlgebraMapNormCoeff
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,11 +41,11 @@ theorem charK_map_of_isPushout {A B A' B' K K' : Type} [CommRing A] [CommRing B]
   simp only [LinearEquiv.conj_apply_apply, LinearEquiv.symm_apply_apply]
   induction t using TensorProduct.induction_on with
   | zero => simp
-  | add s t hs ht => simp only [map_add, hs, ht]
+  | add s t hs ht => simp only [map_add (f := _), hs, ht]
   | tmul c' u =>
     induction u using TensorProduct.induction_on with
     | zero => simp
-    | add s t hs ht => simp only [tmul_add, map_add, hs, ht]
+    | add s t hs ht => simp only [tmul_add, map_add (f := _), hs, ht]
     | tmul c x =>
       simp [e, IsBaseChange.equiv_tmul]
       rfl

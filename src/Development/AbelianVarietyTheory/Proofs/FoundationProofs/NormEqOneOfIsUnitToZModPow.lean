@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ZetaUr
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsLocallyConstantCycMod
-import Development.AbelianVarietyTheory.Definitions.Foundations.IwSys2
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsZetaTW
-import Development.AbelianVarietyTheory.Definitions.Foundations.AdmissibleNewformZetaData
-import Development.AbelianVarietyTheory.Definitions.Foundations.LiftSLMapMulInvMem
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.VanishOrdOfKatoUse
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.ZetaUr
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsLocallyConstantCycMod
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IwSys2
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsZetaTW
+public import Development.AbelianVarietyTheory.Definitions.Foundations.AdmissibleNewformZetaData
+public import Development.AbelianVarietyTheory.Definitions.Foundations.LiftSLMapMulInvMem
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.VanishOrdOfKatoUse
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ GlobalTheory.K4 GlobalTheory.KA
 open scoped Matrix MatrixGroups
 
@@ -59,7 +64,7 @@ theorem norm_inv_pow_sub_le {r : ℕ} (hr : r ≠ 0) (e : ℕ) {a b : ℤ_[l]} (
   rw [PadicInt.ker_toZModPow, Ideal.mem_span_singleton] at hk
   obtain ⟨k, hk⟩ := hk
   have hk' := congrArg (algebraMap ℤ_[l] (Qbar l)) hk
-  rw [map_sub, map_pow, map_pow, map_mul, map_pow, map_natCast] at hk'
+  rw [RingHom.map_sub, map_pow, map_pow, map_mul, map_pow, map_natCast] at hk'
   rw [inv_sub_inv (norm_ne_zero_iff.1 (by rw [na]; exact one_ne_zero)) (norm_ne_zero_iff.1 (by rw [nb]; exact one_ne_zero)),
     norm_div, norm_mul, na, nb, mul_one, div_one, hk', norm_mul, norm_algebraMap_padicInt]
   exact mul_le_of_le_one_right (norm_nonneg _) k.norm_le_one
@@ -81,8 +86,8 @@ theorem val_level_zero (z : ZMod (l ^ 0)) : z.val = 0 := by
 
 variable {Ω : Type} [Field Ω] [Algebra ℚ Ω]
 
-variable (Ω l) in
 
+variable (Ω l) in
 def cycRes : G ℚ Ω →* ZMod l :=
   (ZMod.castHom (dvd_pow_self l one_ne_zero) (ZMod l)).toMonoidHom.comp ((Units.coeHom (ZMod (l ^ 1))).comp (cycMod ℚ Ω l 1))
 
@@ -181,8 +186,8 @@ end GlobalTheory.K4.TwistClauses
 
 namespace GlobalTheory.K4
 
-open TwistClauses in
 
+open TwistClauses in
 theorem twist_clauses : ∀ (l : ℕ) [Fact l.Prime] (Ω : Type) [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] (ι : Qbar l ≃+* ℂ) (e : ℕ)
   (gN : Newform (2 * e + 1)) (A : ValuationSubring Ω) (W : R2 Ω l) (ε : Ω →+* ℂ) (X : Tower Ω ε)
   (pr : X.Fn l → Fin 2 → Qbar l) (N : ℕ) [NeZero N] (cw : ZMod N → Qbar l) (c d : ℕ) (gm : (ZMod l)ˣ → SL(2, ℤ))
@@ -236,7 +241,7 @@ theorem twist_clauses : ∀ (l : ℕ) [Fact l.Prime] (Ω : Type) [Field Ω] [Alg
     have h11 : rhoK W e ψ s 1 1 ≠ 0 := by
       rw [hρ]; exact mul_ne_zero (inv_ne_zero (θ s).ne_zero) (right_ne_zero_of_mul hdet)
     refine ⟨by rw [hρ, h10, mul_zero], ?_⟩
-    rw [nuD, dif_pos h11, Units.val_mk0]
+    rw [nuD, dite_eq_left h11, Units.val_mk0]
   · rcases eq_or_ne r 0 with rfl | hr
     · rw [val_level_zero, Nat.cast_zero, zero_pow (Nat.one_le_iff_ne_zero.1 hNf.e_pos), inv_zero, zero_mul, zero_mul]
     · rw [chiK_update hr]

@@ -1,5 +1,9 @@
-import Formalism.TruncatedSeriesCounting.RamifiedValuationInequality
-import Formalism.WindowSums.PowerSeriesRelationList
+module
+
+public import Formalism.TruncatedSeriesCounting.RamifiedValuationInequality
+public import Formalism.WindowSums.PowerSeriesRelationList
+
+@[expose] public section
 
 namespace Formalism.TruncatedSeriesCounting.RamifiedCoefficientChains
 

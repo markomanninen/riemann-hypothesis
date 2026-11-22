@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.FlatModels.PolynomialThetaProduct
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.FlatModels.PolynomialThetaProduct
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -125,7 +129,7 @@ theorem tens_iff (R K : Type) [CommRing R] [CommRing K] [Algebra R K] (m : ℕ) 
     | add x y _ _ hx hy =>
       obtain ⟨F, hF, rfl⟩ := hx
       obtain ⟨G, hG, rfl⟩ := hy
-      exact ⟨F + G, Submodule.add_mem _ hF hG, by simp only [map_add]⟩
+      exact ⟨F + G, Submodule.add_mem _ hF hG, by simp only [map_add (f := _)]⟩
     | smul a x _ hx =>
       obtain ⟨F, hF, rfl⟩ := hx
       refine ⟨a • F, Submodule.smul_mem _ _ hF, ?_⟩
@@ -145,7 +149,7 @@ theorem tens_iff (R K : Type) [CommRing R] [CommRing K] [Algebra R K] (m : ℕ) 
       intro s _
       rw [map_embS, Lin_emb, Th0_emb]
     | zero => simp
-    | add x y _ _ hx hy => simp only [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => simp only [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul a x _ hx =>
       rw [fl_map_smul, ← algebraMap_smul K a (map (algebraMap R K) x), map_smul, map_smul, algebraMap_smul]
       exact Submodule.smul_mem _ _ hx

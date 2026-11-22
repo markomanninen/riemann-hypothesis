@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CuspidalFiniteness.HasUnivOfStep
-import Mathlib.Algebra.Algebra.Subalgebra.Centralizer
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CuspidalFiniteness.HasUnivOfStep
+public import Mathlib.Algebra.Algebra.Subalgebra.Centralizer
+
+@[expose] public section
 
 theorem UpperTheory.center_tensorProduct_le_sup_map_center :
     ∀ (A B : Type) [Ring A] [Algebra ℂ A] [Ring B] [Algebra ℂ B], Subalgebra.center ℂ (TensorProduct ℂ A B) ≤ (Subalgebra.center ℂ A).map (Algebra.TensorProduct.includeLeft : A →ₐ[ℂ] TensorProduct ℂ A B) ⊔ (Subalgebra.center ℂ B).map (Algebra.TensorProduct.includeRight : B →ₐ[ℂ] TensorProduct ℂ A B) := by
@@ -36,7 +40,9 @@ theorem UpperTheory.center_tensorProduct_le_sup_map_center :
   clear hv' hv hw' hw hz' hz
   induction v using TensorProduct.induction_on with
   | zero => rw [map_zero, map_zero]; exact Subalgebra.zero_mem _
-  | add x y hx hy => rw [map_add, map_add]; exact Subalgebra.add_mem _ hx hy
+  | add x y hx hy =>
+    rw [map_add, map_add]
+    exact Subalgebra.add_mem _ hx hy
   | tmul a b =>
     have e : Algebra.TensorProduct.map (Subalgebra.center ℂ A).val (AlgHom.id ℂ B)
         (Algebra.TensorProduct.map (AlgHom.id ℂ (Subalgebra.center ℂ A))

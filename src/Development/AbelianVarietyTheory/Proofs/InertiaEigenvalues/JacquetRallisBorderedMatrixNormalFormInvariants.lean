@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+module
+
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+
+@[expose] public section
+
 open GlobalTheory.JR Matrix MeasureTheory Filter Topology
 
 namespace GlobalTheory.JR.NormalFormL
@@ -157,8 +162,8 @@ theorem mul_Bm (Y : Gl r k) : Y.1 * Bm Y = Bm Y * companion (inv Y).1 := by
   ext i j
   have hl : (Y.1 * Bm Y) i j = (Y.1 ^ ((j : ℕ) + 1) *ᵥ Y.2.1) i := by
     rw [pow_succ', ← mulVec_mulVec]
-    simp [mul_apply, Bm, mulVec, dotProduct]
-  rw [hl, mul_apply]
+    simp [Matrix.mul_apply, Bm, mulVec, dotProduct]
+  rw [hl, Matrix.mul_apply]
   by_cases hj : (j : ℕ) + 1 = r
   · simp only [companion, of_apply, hj, if_true, Bm, inv]
     rw [pow_card_eq Y.1, neg_mulVec, sum_mulVec']
@@ -214,7 +219,7 @@ theorem unique_conj (Y Y₁ : Gl r k) (hΔ : Delta (inv Y) ≠ 0) (hI : inv Y₁
       · subst hr; funext i; exact i.elim0
       have e0 : ∀ (B : Matrix (Fin r) (Fin r) k) (Z : Gl r k), B = Bm Z →
           B *ᵥ Pi.single (⟨0, hr⟩ : Fin r) 1 = Z.2.1 := by
-        intro B Z hBZ; subst hBZ; funext i; simp [mulVec_single, Bm]
+        intro B Z hBZ; subst hBZ; funext i; simp [mulVec_single, Bm, Function.swap]
       have hb : (u : Matrix (Fin r) (Fin r) k) *ᵥ Pi.single (⟨0, hr⟩ : Fin r) 1 = b :=
         e0 _ (A, b, c, l) eu
       have hb₁ : (u₁ : Matrix (Fin r) (Fin r) k) *ᵥ Pi.single (⟨0, hr⟩ : Fin r) 1 = b₁ :=

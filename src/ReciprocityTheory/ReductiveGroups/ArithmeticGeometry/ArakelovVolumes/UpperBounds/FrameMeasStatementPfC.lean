@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FrameMeasStatementPfB
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.FrameMeasStatementPfB
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.FM
 
@@ -47,9 +51,6 @@ theorem lintegral_ufC (F : Frame X.Ψ r → ℝ≥0∞) :
   rw [lintegral_smul_measure]
   rfl
 
-theorem cont_ent (τ : X.Ψ) (a b : Fin r) : Continuous fun x : Frame X.Ψ r => x τ a b := by
-  exact (continuous_apply b).comp ((continuous_apply a).comp (continuous_apply τ))
-
 theorem continuous_UF : Continuous (UF X) := by
   apply continuous_pi
   intro τ
@@ -72,7 +73,7 @@ theorem continuous_rmul : Continuous fun q : Frame X.Ψ r × Frame X.Ψ r => rmu
   apply continuous_pi
   intro b
   simp only [rmul, mat, Matrix.mul_apply, Matrix.of_apply]
-  apply continuous_finset_sum
+  apply continuous_finsetSum
   intro k _
   fun_prop
 
@@ -83,7 +84,7 @@ def fI (C : Set (Frame X.Ψ r)) (q : Frame X.Ψ r × (UpI X.Ψ r → ℂ)) : ℝ
 theorem measurable_fI {C : Set (Frame X.Ψ r)} (hCm : MeasurableSet C) : Measurable (fI X C) := by
   have hJ : Continuous (fun y : UpI X.Ψ r → ℂ => jacU y) := by
     unfold jacU
-    apply continuous_finset_prod
+    apply continuous_finsetProd
     intro i _
     split_ifs
     · exact continuous_apply _

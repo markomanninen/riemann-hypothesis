@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
-import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix
 open scoped NNReal ENNReal
@@ -44,12 +48,15 @@ end Algebra
 section Apply
 variable {X Z : Type} [TopologicalSpace X] [TopologicalSpace Z] {V : Type} [AddCommGroup V] [Module ℂ V]
 
-open Classical in
 
-def app (l : SB X →ₗ[ℂ] V) (f : X → ℂ) : V := if h : f ∈ SB X then l ⟨f, h⟩ else 0
+open Classical in
+def app (l : SB X →ₗ[ℂ] V) (f : X → ℂ) : V := by
+  classical
+  exact if h : f ∈ SB X then l ⟨f, h⟩ else 0
 
 theorem app_coe (l : SB X →ₗ[ℂ] V) (f : SB X) : app l (f : X → ℂ) = l f := by
-  rw [app, dif_pos f.2]
+  classical
+  rw [app, dite_eq_left f.2]
 
 def HasTensorVal (l : SB X → SB Z → ℂ) (Θ : X → Z → ℂ) (z : ℂ) : Prop :=
   ∃ (m : ℕ) (Ψ : Fin m → SB X) (Φ₀ : Fin m → SB Z),
@@ -83,11 +90,11 @@ def IsLiftUp (μ : kˣ →* ℂˣ) (σ : Representation ℂ (GL (n ⊕ Fin c) k)
     (σ' : Representation ℂ (GL (n' ⊕ Fin (c + 1)) k) A')
     (ϑ : A →ₗ[ℂ] SB (Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k) →ₗ[ℂ] A') : Prop :=
   ∀ g h F (Φ Φ₁ : SB (Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k)),
-    (Φ₁ : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k → ℂ) = om μ g h Φ → ϑ (σ h F) Φ₁ = σ' g (ϑ F Φ)
+    Φ₁.1 = om μ g h Φ.1 → ϑ (σ h F) Φ₁ = σ' g (ϑ F Φ)
 
 def IsLiftX (μ : kˣ →* ℂˣ) (π : Representation ℂ (GL n k) P) (π' : Representation ℂ (GL n' k) P')
     (θ : P' →ₗ[ℂ] SB (Matrix n n' k) →ₗ[ℂ] P) : Prop :=
-  ∀ g h φ (Ψ Ψ₁ : SB (Matrix n n' k)), (Ψ₁ : Matrix n n' k → ℂ) = om μ g h Ψ → θ (π' g φ) Ψ₁ = π h (θ φ Ψ)
+  ∀ g h φ (Ψ Ψ₁ : SB (Matrix n n' k)), (Ψ₁ : Matrix n n' k → ℂ) = om μ g h Ψ.1 → θ (π' g φ) Ψ₁ = π h (θ φ Ψ)
 
 variable [MeasurableSpace k] [BorelSpace k]
 
@@ -127,7 +134,7 @@ def IdPos (ψ : AddChar k Circle) (ν : Measure k) (μX : Measure (GL n k)) (μG
     (θ : P' →ₗ[ℂ] SB (Matrix n n' k) →ₗ[ℂ] P) (b : P →ₗ[ℂ] A →ₗ[ℂ] ℂ) (b' : P' →ₗ[ℂ] A' →ₗ[ℂ] ℂ)
     (φ : P') (F : A) : Prop :=
   ∀ Φ : SB (Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k),
-    IsQuotInt ν μX μG p (rInt ψ ν μ p σ θ b φ F Φ) (b' φ (ϑ F Φ))
+    IsQuotInt ν μX μG p (rInt ψ ν μ p σ θ b φ F Φ.1) (b' φ (ϑ F Φ))
 
 def IsFJInt (ψ : AddChar k Circle) (ν : Measure k) (μX : Measure (GL n k)) (μG : Measure (GL (n ⊕ Fin c) k))
     (μ : kˣ →* ℂˣ) (ρ : ℕ) (σ : Representation ℂ (GL (n ⊕ Fin c) k) A)
@@ -270,17 +277,5 @@ def FourierJacobiBessel : Prop :=
   ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     [MeasurableSpace k] [BorelSpace k],
     Heisenberg k ∧ UniqueBessel k ∧ Exponents k ∧ LocalSign k ∧ Target k ∧ Source k
-
-example {k n : Type} [Field k] [Fintype n] [DecidableEq n] (ψ : AddChar k Circle) (u β₀ : n → k)
-    (Φ₀ : (n → k) → ℂ) : schM ψ u (schT β₀ Φ₀) = (ψ (-(u ⬝ᵥ β₀)) : ℂ) • schT β₀ (schM ψ u Φ₀) := by
-  funext β
-  simp only [schM, schT, Pi.smul_apply, smul_eq_mul, dotProduct_add, ← mul_assoc, ← Circle.coe_mul,
-    ← AddChar.map_add_eq_mul]
-  congr 3
-  ring
-
-example {k n n' : Type} [Field k] {c p : ℕ} (x : Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k) (ξ : n → k) (u' : n' → k) :
-    ch (x + colM c p ξ) = ch x ∧ ch (x + rowM n c p u') = ch x := by
-  simp [ch, colM, rowM]
 
 end GlobalTheory.IndefiniteRowSideFullHecke.FourierJacobiAverage

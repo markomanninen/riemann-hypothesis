@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FrobeniusSplitPrimeDatum
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.FrobeniusSplitPrimeDatum
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Base UpperTheory.V.Pr UpperTheory.V.Fr UpperTheory.V
 
@@ -25,7 +29,7 @@ theorem UpperTheory.V.Fr.st_dual :
     rw [twDual_apply, hinv, hc] at h1
     change (μ g : ZMod (l ^ 1)) * ψ m = ψ (c * m) at h1
     rw [sub_mul, map_sub, hsmul, map_smul, ← h1, smul_eq_mul, sub_self]
-  apply TDual.ext
+  apply LinearMap.ext
   intro x
   have hx : x = (c - a) * ((c - a)⁻¹ * x) := by
     rw [← mul_assoc, mul_inv_cancel₀ hne', one_mul]

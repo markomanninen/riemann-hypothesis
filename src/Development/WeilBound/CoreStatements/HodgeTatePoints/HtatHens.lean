@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatHensA
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatHensA
+
+@[expose] public section
 
 namespace PositivityTheory.HtPt.Htat.Hens
 
@@ -21,11 +25,10 @@ theorem stage_int [IsIntegrallyClosed R] {z : S ⊗[R] FractionRing R} (hz : IsI
   rw [← ht']
   clear ht ht'
   induction t with
-  | zero => exact ⟨0, by simp⟩
   | add x y hx hy =>
     obtain ⟨a, ha⟩ := hx
     obtain ⟨b, hb⟩ := hy
-    exact ⟨a + b, by rw [map_add, map_add, ha, hb]⟩
+    exact ⟨a + b, by rw [map_add (f := _), map_add (f := _), ha, hb]⟩
   | tmul x y =>
     obtain ⟨r, hr⟩ := IsIntegrallyClosed.algebraMap_eq_of_integral (R := R) y.2
     refine ⟨r • x, ?_⟩
@@ -37,12 +40,11 @@ omit [Algebra.Etale R S] in
 theorem stage_den (z : S ⊗[R] FractionRing R) :
     ∃ (r : R) (y : S), r ≠ 0 ∧ algebraMap S _ y = algebraMap S _ (algebraMap R S r) * z := by
   induction z with
-  | zero => exact ⟨1, 0, one_ne_zero, by simp⟩
   | add x y hx hy =>
     obtain ⟨r, a, hr, ha⟩ := hx
     obtain ⟨s, b, hs, hb⟩ := hy
     refine ⟨r * s, algebraMap R S s * a + algebraMap R S r * b, mul_ne_zero hr hs, ?_⟩
-    simp only [map_add, map_mul, ha, hb]
+    simp only [map_add (f := _), map_mul, ha, hb]
     ring
   | tmul x y =>
     obtain ⟨a, b, hb, rfl⟩ := IsFractionRing.div_surjective (A := R) y
@@ -98,15 +100,18 @@ theorem flat : Module.Flat R (etaleColimit R K) := by
   obtain ⟨X, hX⟩ := exists_of_finset (Finset.univ.image x)
   choose x' hx' using fun i => hX (x i) (Finset.mem_image_of_mem _ (Finset.mem_univ i))
   have h0 : of X (∑ i, f i • x' i) = of X 0 := by
-    rw [map_zero, ← h, ← ofAlgHom_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_zero, ← h, ← ofAlgHom_apply, map_sum]
     simp only [map_smul, ofAlgHom_apply, hx']
   obtain ⟨Y, g, hg⟩ := exists_hom_eq_of_of_eq h0
-  rw [map_zero, map_sum] at hg
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_zero, map_sum] at hg
   simp only [map_smul] at hg
   obtain ⟨k, a, y, h1, h2⟩ := Module.Flat.isTrivialRelation_of_sum_smul_eq_zero (R := R) (M := Y) (f := f)
     (x := fun i => g.alg (x' i)) hg
   refine ⟨k, a, fun j => of Y (y j), fun i => ?_, h2⟩
-  rw [← hx', ← of_map g, show g.alg (x' i) = _ from h1 i, ← ofAlgHom_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hx', ← of_map g, show g.alg (x' i) = _ from h1 i, ← ofAlgHom_apply, map_sum]
   simp only [map_smul, ofAlgHom_apply]
 
 variable [IsDomain R]

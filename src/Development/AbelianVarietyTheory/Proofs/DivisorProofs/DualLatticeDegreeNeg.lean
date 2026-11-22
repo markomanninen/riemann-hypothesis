@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PtOverClosureIso
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomFiniteFreeFinrankLeFourMulDim
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDivPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PtOverClosureIso
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomFiniteFreeFinrankLeFourMulDim
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.AV GlobalTheory.AV.AbVar GlobalTheory.PDivGroup GlobalTheory.Dieu GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKMid GlobalTheory.LKGeo GlobalTheory.LKRes
@@ -44,15 +49,14 @@ theorem actG_actAf {D : Datum p} {G : HTGroup p} (L : Link D G) (g : G.GAf) (c :
     (v : AfP p ⊗[ℚ] VQ D) : L.actG g (actAf D c v) = actAf D c (L.actG g v) := by
   have key : ∀ z : AfP p ⊗[ℚ] G.C, Commute (actOn L.rep (AfP p) z) (actAf D c) := by
     intro z
-    induction z using TensorProduct.induction_on with
-    | zero => rw [map_zero]; exact Commute.zero_left _
+    induction z using TensorProduct.inductionOn with
     | tmul r x =>
       have h1 : Commute (L.rep x) (actQ D c) := (L.rep_range (L.rep x)).1 ⟨x, rfl⟩ c
-      simp only [actOn, Algebra.TensorProduct.lift_tmul]
+      simp only [actOn]
       refine Commute.mul_left ?_ ?_
       · exact Algebra.commute_algebraMap_left r _
       · exact h1.map (Module.End.baseChangeHom ℚ (AfP p) (VQ D))
-    | add a b ha hb => rw [map_add]; exact ha.add_left hb
+    | add a b ha hb => rw [map_add (f := _)]; exact ha.add_left hb
   unfold Link.actG
   simp only [MonoidHom.coe_comp, Function.comp_apply]
   exact LinearMap.congr_fun (key _).eq v

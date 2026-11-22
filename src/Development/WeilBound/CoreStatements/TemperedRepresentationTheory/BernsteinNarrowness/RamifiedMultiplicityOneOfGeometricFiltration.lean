@@ -1,10 +1,14 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.GeometricLemmaFiltration
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Imports
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KCoinvOfNarrow
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SoCoinvOfNarrow
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalMultiplicityOneIrreducibleGL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothCharOfCondLE
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinSplitOfNarrow
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.GeometricLemmaFiltration
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.Imports
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KCoinvOfNarrow
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SoCoinvOfNarrow
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalMultiplicityOneIrreducibleGL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSmoothCharOfCondLE
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinSplitOfNarrow
+
+@[expose] public section
 
 noncomputable section
 

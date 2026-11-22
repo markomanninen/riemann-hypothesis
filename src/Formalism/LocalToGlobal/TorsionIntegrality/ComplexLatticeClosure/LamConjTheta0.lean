@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.ComplexLatticeClosure.LatticeAreaPositivity.LambdaConjLatticeUniform
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.ComplexLatticeClosure.LatticeAreaPositivity.LambdaConjLatticeUniform
+
+@[expose] public section
 
 namespace Formalism.L2.Th1.F2
 

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.NormAlmostAll
-import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalBase
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.NormAlmostAll
+public import Development.AutomorphicArithmetic.Foundations.Convolution.HermitianDescent.GalBase
+
+@[expose] public section
 
 namespace UpperTheory.ConvolutionTheory.D
 
@@ -27,7 +31,8 @@ private theorem exists_notMem {σ : T ≃ₐ[S] T} {q : ℕ} (h : IsGal σ q) (a
   have hz : ∀ t, a * σ (z t) = z t := by
     intro t
     have h1 : a * σ (z t) = ∑ j ∈ Finset.range q, c (j + 1) * (σ ^ (j + 1)) t := by
-      simp only [z, map_sum, Finset.mul_sum, map_mul, ← hc, pow_succ_app, mul_assoc]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [z, map_sum, Finset.mul_sum, map_mul, ← hc, pow_succ_app, mul_assoc]
     have h2 := Finset.sum_range_succ (fun j => c j * (σ ^ j) t) q
     rw [Finset.sum_range_succ'] at h2
     have h3 : c q = 1 := ha
@@ -89,7 +94,7 @@ private theorem finite_max (k S : Type) [CommRing k] [IsLocalRing k] [CommRing S
     (fun m => ⟨m.asIdeal, m.isMaximal.isPrime, ⟨?_⟩⟩) ?_
   · have := m.isMaximal
     exact (IsLocalRing.eq_maximalIdeal
-      (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := k) m.asIdeal)).symm
+      (Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := k) m.asIdeal)).symm
   · intro m m' hm
     exact MaximalSpectrum.ext (congrArg Subtype.val hm)
 
@@ -119,7 +124,7 @@ theorem h90 : H90 := by
   have hu : IsUnit (∑ m, algebraMap S T (e m) * z m) := by
     by_contra hnu
     obtain ⟨P, hP, hmem⟩ := exists_max_ideal_of_mem_nonunits hnu
-    let m : MaximalSpectrum S := ⟨P.comap (algebraMap S T), Ideal.isMaximal_comap_of_isIntegral_of_isMaximal P⟩
+    let m : MaximalSpectrum S := ⟨P.comap (algebraMap S T), Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := S) P⟩
     apply hzP m P hP rfl
     rw [← Finset.add_sum_erase _ _ (Finset.mem_univ m)] at hmem
     have h1 : ∑ m' ∈ Finset.univ.erase m, algebraMap S T (e m') * z m' ∈ P :=
@@ -130,7 +135,8 @@ theorem h90 : H90 := by
     convert h3 using 1
     ring
   refine ⟨hu.unit, ?_⟩
-  rw [hu.unit_spec, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hu.unit_spec, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [map_mul, σ.commutes, mul_left_comm, hz]
 

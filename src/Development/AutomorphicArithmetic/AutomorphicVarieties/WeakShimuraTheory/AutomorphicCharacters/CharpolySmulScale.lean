@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.IsAlgClosureField
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGext
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.RepApi
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.IsAlgClosureField
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGext
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.RepApi
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual Formalism.HC ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws GlobalTheory.GalOfCusp
 
@@ -41,7 +45,9 @@ private theorem chi_map_single {n : ℕ} {A B G : Type} [CommRing A] [CommRing B
   have e : MonoidAlgebra.mapRingHom G (F : A[X] →+* B[X])
       (MonoidAlgebra.single 1 X - MonoidAlgebra.single g 1) =
       MonoidAlgebra.single 1 X - MonoidAlgebra.single g 1 := by
-    simp [F]
+    simp only [map_sub, MonoidAlgebra.mapRingHom_single, map_one]
+    change MonoidAlgebra.single 1 (Polynomial.map f X) - MonoidAlgebra.single g 1 = _
+    rw [Polynomial.map_X]
   rw [e] at h
   simp only [W.GDet.chi, W.GDet.map, map_sub, MonoidAlgebra.mapRingHom_single, map_one]
   exact h
@@ -77,7 +83,8 @@ theorem UpperTheory.V.Ws.auRep :
   rw [hxφ, ← Polynomial.map_map]
   erw [hφ.1 g]
   rw [scale_point (algebraMap X.B X.A) X.inj (y : X.A →+* PadicAlgCl l) _ (X.P.r _) (X.cp_map _), e]
-  · congr 1
+  · set_option maxRecDepth 4096 in
+    congr 1
     simp [W.mat.eq_1, Af.tw_val, W.pushCh.eq_1, PD.map.eq_1]
     rfl
   · rw [e]

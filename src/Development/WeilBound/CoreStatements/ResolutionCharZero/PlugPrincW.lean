@@ -1,6 +1,10 @@
-import Mathlib
-import Development.ResolutionOfSingularities.HasSimpleNormalCrossingsOfInStrictNormalCrossing
-import Development.WeilBound.CoreStatements.ResolutionCharZero.FromRes
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.HasSimpleNormalCrossingsOfInStrictNormalCrossing
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.FromRes
+
+@[expose] public section
 
 namespace PositivityTheory.ResPlug.FromRes
 

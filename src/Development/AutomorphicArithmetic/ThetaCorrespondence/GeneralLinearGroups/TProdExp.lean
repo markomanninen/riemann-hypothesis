@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.CasselmanSuffTemp
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.TCells
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.TScalarProd
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.TScalarFull
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.TSchur
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.TSplit
-import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.TUnitcent
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.CasselmanSuffTemp
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsCellOfIsSubquotient
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HasFiniteLengthOfIsIrreducible
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IrreducibleAdmissibleGL
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.TCells
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.TScalarProd
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.TScalarFull
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.TSchur
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.TSplit
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.GeneralLinearGroups.TUnitcent
+
+@[expose] public section
 
 open Filter Topology GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.JHMult UpperTheory.Lit.Cas
 
@@ -32,8 +36,8 @@ private theorem jac_equiv_of_equiv {k : Type} [Field k] [ValuativeRel k] [Topolo
       simp
 
 private theorem cell_exp (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) {k : Type} [Field k] [ValuativeRel k]
-    [TopologicalSpace k] [IsNonarchimedeanLocalField k] (hC : CasselmanNecSq k) (δ : IrrGL k)
-    (h1 : 1 ≤ δ.1) (h2 : IsSqIntCoeff δ.rep) (y : Fin 2 → IrrGL k) (hr : ∑ j, (y j).1 = δ.1)
+    [TopologicalSpace k] [IsNonarchimedeanLocalField k] (hC : CasselmanNecSq k) (δ : IrrGL (k := k))
+    (h1 : 1 ≤ δ.1) (h2 : IsSqIntCoeff δ.rep) (y : Fin 2 → IrrGL (k := k)) (hr : ∑ j, (y j).1 = δ.1)
     (hj : jm y hr δ.rep ≠ 0) (t : kˣ) (ht : Tendsto (fun n : ℕ => (t : k) ^ n) atTop (𝓝 0))
     (a : Fin 2 → ℂ) (ha : ∀ j, ScalarBy (y j) t (a j)) : ‖a 0‖ ≤ 1 ∧ ‖a 0‖ * ‖a 1‖ = 1 := by
   obtain ⟨⟨c, hc⟩, -, -⟩ := schur hA k δ t
@@ -55,7 +59,7 @@ private theorem cell_exp (hA : GlobalTheory.Published.IrreducibleAdmissibleGL) {
   exact hlt.le
 
 theorem UpperTheory.Lit.Cas.prodExp :
-    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → GlobalTheory.Published.IrreducibleAdmissibleGL → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k], CasselmanNecSq k → ∀ (h N : ℕ) (δ : Fin h → IrrGL k) (hd : ∑ i, (δ i).1 = N), (∀ i, 1 ≤ (δ i).1 ∧ IsSqIntCoeff (δ i).rep) → ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V), π.IsIrreducible → Nonempty (π.Equiv (prodIrr δ hd)) → UnitaryCentral π ∧ MaxExpWeak π := by
+    GlobalTheory.Published.GeometricLemma → GlobalTheory.Published.BernsteinZelevinskyFiniteness → GlobalTheory.Published.IrreducibleAdmissibleGL → ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k], CasselmanNecSq k → ∀ (h N : ℕ) (δ : Fin h → IrrGL (k := k)) (hd : ∑ i, (δ i).1 = N), (∀ i, 1 ≤ (δ i).1 ∧ IsSqIntCoeff (δ i).rep) → ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin N) k) V), π.IsIrreducible → Nonempty (π.Equiv (prodIrr δ hd)) → UnitaryCentral π ∧ MaxExpWeak π := by
   intro hG hBZ hA k _ _ _ _ hC h N δ hd hδ V _ _ π hirr hφ
   obtain ⟨φ⟩ := hφ
   haveI := nontrivial_of_irreducible hirr
@@ -96,7 +100,7 @@ theorem UpperTheory.Lit.Cas.prodExp :
       cell_exp hA hC (δ i) (hδ i).1 (hδ i).2 (y i) (hr i) (hyj i) t ht (a i) (ha i)
     have n0 : ‖c 0‖ ≤ 1 := by
       rw [hcj 0, norm_prod]
-      exact Finset.prod_le_one (fun i _ => norm_nonneg _) (fun i _ => (hcell i).1)
+      exact Finset.prod_le_one₀ (fun i _ => norm_nonneg _) (fun i _ => (hcell i).1)
     have n01 : ‖c 0‖ * ‖c 1‖ = 1 := by
       rw [hcj 0, hcj 1, norm_prod, norm_prod, ← Finset.prod_mul_distrib]
       exact Finset.prod_eq_one (fun i _ => (hcell i).2)

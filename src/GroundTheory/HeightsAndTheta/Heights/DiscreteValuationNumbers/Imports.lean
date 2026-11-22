@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.CutIdentityRightSideCongrOfSubMem
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.CutIdentityRightSideCongrOfSubMem
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -19,8 +24,8 @@ theorem CommonFactorInduction.proof (hpos : ExcessPositive.Statement.{u}) (havoi
 
   obtain ⟨e, h, hh, hhP, hle, hhH, hhG, hh0, hmulε⟩ :=
     havoid O ϖ hϖ K ι P d hP b f g hD (fun k => (b k).toNat)
-  have hdiv : ∀ W, divCycle P (s * h) W = divCycle P s W + divCycle P h W := fun W => by
-    rw [hmul O K ι P s h hPp hsP hhP]; rfl
+  have hdiv : ∀ W, divCycle P (s * h) W = divCycle P s W + divCycle P h W :=
+    fun W => congrFun (hmul O K ι P s h hPp hsP hhP) W
   have hshP : s * h ∉ P := fun hm => (hPp.mem_or_mem hm).elim hsP hhP
   have hshH : ∀ H, divCycle P (s * h) H ≠ 0 → (C ϖ : MRing ι O) ∉ H → IsVerticalDivisor H ϖ b f g := by
     intro H hH hϖH

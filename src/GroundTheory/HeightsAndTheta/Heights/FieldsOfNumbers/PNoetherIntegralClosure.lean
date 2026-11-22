@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsNoetherIntegralClosure
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.NoetherReduction
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.NoetherCharP
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsNoetherIntegralClosure
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.NoetherReduction
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.NoetherCharP
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers

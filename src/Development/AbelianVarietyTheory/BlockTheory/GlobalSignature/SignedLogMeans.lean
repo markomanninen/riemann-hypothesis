@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.IsDiscriminantTwelfthRootOfIdealLattice
-import Development.AbelianVarietyTheory.Definitions.Foundations.LatticeIntegralCoordinates
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.IsDiscriminantTwelfthRootOfIdealLattice
+public import Development.AbelianVarietyTheory.Definitions.Foundations.LatticeIntegralCoordinates
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,9 +63,5 @@ def Theta0PosMean : Prop :=
   (∃ C : ℝ, 0 ≤ C ∧ ∀ D : D7, PosMean C D) ∧ ∃ C : ℝ, 0 ≤ C ∧ ∀ D : D7, PosMeanLeC C D
 
 def Theta0Mean : Prop := Theta0SignedMean ∧ Theta0PosMean
-
-example (M : IntermediateField ℚ ℂ) [FiniteDimensional ℚ M] :
-    Fintype.card (M →ₐ[ℚ] ℂ) = Module.finrank ℚ M ∧ 0 < Module.finrank ℚ M :=
-  ⟨AlgHom.card ℚ M ℂ, Module.finrank_pos⟩
 
 end GlobalTheory.IndefiniteRowSideFullHecke.SignedLogMeans

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -38,7 +42,7 @@ theorem localization_away_injective_of_dvd (R : Type) [CommRing R] [IsNoetherian
     simpa using hle hx
   refine ⟨t, ht, ?_⟩
   intro c ⟨d, hd⟩ κ hκ
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨⟨a, m⟩, rfl⟩ := IsLocalization.mk'_surjective (Submonoid.powers c) x
   have hspec := IsLocalization.mk'_spec (Localization.Away c) a m

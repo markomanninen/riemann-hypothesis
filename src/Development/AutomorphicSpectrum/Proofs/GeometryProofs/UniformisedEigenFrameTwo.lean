@@ -1,16 +1,21 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
-import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannFormPeriodDeterminantBoundStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HermitianPeriodLinearAlgebra
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.UniformisedEigenFrameOneStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsDerivAt0CompLinMap
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.PeriodHermitianTypeCompatibility
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PeriodEigenFrameStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.LevelSectionsExactKernelLocusOpen
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.PointEqOfSubsingleton
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.RiemannFormPeriodDeterminantBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HermitianPeriodLinearAlgebra
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.UniformisedEigenFrameOneStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsDerivAt0CompLinMap
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PeriodHermitianTypeCompatibility
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PeriodEigenFrameStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl GlobalTheory.CompanionTheory.Ar.Flat Filter Topology Metric
 
@@ -18,8 +23,6 @@ namespace GlobalTheory.CompanionTheory.Ar.Flat
 
 open Matrix GlobalTheory.CompanionTheory.Ar.LinFlat
 open scoped ComplexOrder
-
-local notation "HF" => ReciprocityTheory.ChartRestriction.G.Geo.Tor.hermForm
 
 theorem det_rows_mul_det_rows {p q : ℕ} (A C : Matrix (Fin p) (Fin q ⊕ Fin p) ℂ)
     (F : Matrix (Fin q) (Fin q ⊕ Fin p) ℂ) (hAF : A * Fᵀ = 0) (hAC : A * Cᵀ = 1) :
@@ -32,24 +35,24 @@ theorem det_rows_mul_det_rows {p q : ℕ} (A C : Matrix (Fin p) (Fin q ⊕ Fin p
 theorem norm_core {p q g : ℕ} (V : Fin p → Fin g → ℂ) (W : Fin q → Fin g → ℂ)
     (U U' : Fin p ⊕ Fin q → Fin g → ℂ) (S : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ)
     (Hm : Matrix (Fin g) (Fin g) ℂ) (hH : Hm.IsHermitian)
-    (hpos : ∀ z : Fin g → ℂ, z ≠ 0 → 0 < (HF Hm z z).re) (hS : S.det ≠ 0)
+    (hpos : ∀ z : Fin g → ℂ, z ≠ 0 → 0 < (hermForm Hm z z).re) (hS : S.det ≠ 0)
     (hV : LinearIndependent ℂ V) (hW : LinearIndependent ℂ W)
     (hU : ∀ n, U n ∈ Submodule.span ℂ (Set.range V))
     (C : Matrix (Fin p) (Fin p ⊕ Fin q) ℂ) (Fm B : Matrix (Fin q) (Fin p ⊕ Fin q) ℂ)
     (hB : ∀ n, U' n = ∑ j, B j n • W j) (hFm : ∀ j n, ∑ m, Fm j m * S m n = B j n)
     (hC : ∀ a, ∑ m, C a m • U m = V a)
-    (hR : ∀ m n, HF Hm (U m) (U n) - star (HF Hm (U' m) (U' n)) = 2 * Complex.I * S m n)
+    (hR : ∀ m n, hermForm Hm (U m) (U n) - star (hermForm Hm (U' m) (U' n)) = 2 * Complex.I * S m n)
     (Γ : Matrix (Fin p) (Fin p) ℂ) (Δ : Matrix (Fin q) (Fin q) ℂ)
-    (hΓ : ∀ a b, Γ a b = Real.pi * HF Hm (V a) (V b))
-    (hΔ : ∀ a b, Δ a b = Real.pi * HF Hm (W a) (W b)) :
+    (hΓ : ∀ a b, Γ a b = Real.pi * hermForm Hm (V a) (V b))
+    (hΔ : ∀ a b, Δ a b = Real.pi * hermForm Hm (W a) (W b)) :
     ‖Γ.det‖ = ‖(fromRows C Fm).det‖ ^ 2 *
       ((2 * Real.pi) ^ p * (2 * Real.pi)⁻¹ ^ q * ‖S.det‖) * ‖Δ.det‖ := by
   choose a ha using fun n => (Submodule.mem_span_range_iff_exists_fun ℂ).mp (hU n)
   let A : Matrix (Fin p) (Fin p ⊕ Fin q) ℂ := Matrix.of fun i n => a n i
   have hA : ∀ n, ∑ i, A i n • V i = U n := ha
   clear_value A
-  set H₁ : Matrix (Fin p) (Fin p) ℂ := Matrix.of fun i j => HF Hm (V i) (V j) with hH₁
-  set H₂ : Matrix (Fin q) (Fin q) ℂ := Matrix.of fun i j => HF Hm (W i) (W j) with hH₂
+  set H₁ : Matrix (Fin p) (Fin p) ℂ := Matrix.of fun i j => hermForm Hm (V i) (V j) with hH₁
+  set H₂ : Matrix (Fin q) (Fin q) ℂ := Matrix.of fun i j => hermForm Hm (W i) (W j) with hH₂
   have pd₁ : H₁.PosDef := gram_posDef Hm hH hpos V hV
   have pd₂ : H₂.PosDef := gram_posDef Hm hH hpos W hW
   have hrel : Aᵀ * H₁ * A.map star - (Bᵀ * H₂ * B.map star)ᵀ = (2 * Complex.I) • S := by

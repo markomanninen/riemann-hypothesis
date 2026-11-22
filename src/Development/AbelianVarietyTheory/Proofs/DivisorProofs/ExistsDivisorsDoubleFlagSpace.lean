@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsDominantOfSection
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCartierDivisorPullbackOfDominantStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCartierLocalEquationDiagonalOfAdaptedFrameStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitStalkTransitionPulledBackFlagFramesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MinorTwoByTwoTriangularProductStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlmostLowerTriangularDiagMinorIsUnitStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ParabolicMatrixFamilyDiagIsUnitStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemRangeDiagonalOfNotUnitTransitionEntryStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NotIsUnitOffDiagonalTransitionOnCommonSectionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsDominantOfSection
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCartierDivisorPullbackOfDominantStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCartierLocalEquationDiagonalOfAdaptedFrameStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsUnitStalkTransitionPulledBackFlagFramesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MinorTwoByTwoTriangularProductStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AlmostLowerTriangularDiagMinorIsUnitStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ParabolicMatrixFamilyDiagIsUnitStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemRangeDiagonalOfNotUnitTransitionEntryStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NotIsUnitOffDiagonalTransitionOnCommonSectionStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -108,7 +112,7 @@ theorem exists_divisors : ∀ (F : Type) [Field F] (X Y : Var F) (ι : Type) [Fi
         convert hu x hxa hxb using 1
         rw [Units.val_mul, Units.val_mk0]
         ring
-    rw [← e, map_add, toPic_principal, add_zero]
+    rw [← e, map_add (f := _), toPic_principal, add_zero]
   · have e : D₂ ⟨τ, a⟩ + D₂ ⟨τ, b⟩ + CartierDiv.principal (Units.mk0 _ hCm) = D₁ ⟨τ, a⟩ + D₁ ⟨τ, b⟩ :=
       CartierDiv.ext_of_isEqn fun z => by
         obtain ⟨A₁, hA₁⟩ := E'.nonempty (W.p₁ z)
@@ -118,8 +122,8 @@ theorem exists_divisors : ∀ (F : Type) [Field F] (X Y : Var F) (ι : Type) [Fi
         convert hu using 1
         simp only [Units.val_mul, Units.val_mk0]
         ring
-    rw [← map_add, ← map_add, ← e, map_add _ (_ + _), toPic_principal, add_zero]
-  · rw [map_add, toPic_principal, add_zero, map_sub]
+    rw [← map_add (f := _), ← map_add (f := _), ← e, map_add _ (_ + _), toPic_principal, add_zero]
+  · rw [map_add (f := _), toPic_principal, add_zero, map_sub]
   · obtain ⟨A₁, hA₁⟩ := E'.nonempty (W.p₁ z)
     obtain ⟨A₂, hA₂⟩ := E'.nonempty (W.p₂ z)
     obtain ⟨g, e, hg⟩ := hΘ z hA₁ hA₂

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LocallyCompactSpaceAxis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnimodularAndLintegralUnfoldOfLattice
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LocallyCompactSpaceAxis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnimodularAndLintegralUnfoldOfLattice
+
+@[expose] public section
+
 open MeasureTheory Filter Topology GlobalTheory.ResLine
 open scoped ENNReal Pointwise
 
@@ -18,15 +23,15 @@ theorem right_of_closed {G : Type} [Group G] [TopologicalSpace G] [IsTopological
     (N Λ : Subgroup G) [Countable Λ] (hN : IsClosed (N : Set G)) (ν : Measure N)
     (hν : ν.IsHaarMeasure) (D : Set N) (hD : IsFundamentalDomain (Λ.subgroupOf N) D ν)
     (hfin : ν D ≠ ⊤) : ν.IsMulRightInvariant := by
-  haveI : BorelSpace N := Subtype.borelSpace (N : Set G)
+  haveI : BorelSpace N := Subtype.borelSpace (fun x => x ∈ (N : Set G))
   haveI : LocallyCompactSpace N := hN.isClosedEmbedding_subtypeVal.locallyCompactSpace
   haveI := countable_subgroupOf Λ N
   exact RightUnfold.isMulRightInvariant_of_lattice ν (Λ.subgroupOf N) D hD hfin
 
 theorem average_lower : ∀ (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [LocallyCompactSpace G] [SecondCountableTopology G] [T2Space G] [MeasurableSpace G] [BorelSpace G] (N M Λ : Subgroup G) [Countable Λ] (ν : Measure N) (π : Measure M) (DN : Set N) (DM : Set M), SemiLat N M Λ ν π DN DM → ∀ (μ : Measure G), μ.IsHaarMeasure → ∀ C : Set G, IsCompact C → ∃ (U : Set G) (c : ℝ≥0∞), IsOpen U ∧ μ U ≠ ⊤ ∧ c ≠ 0 ∧ ∀ u₀ ∈ N, ∀ m₀ ∈ M, ∀ y ∈ C, c ≤ ∫⁻ m : M, ∫⁻ u : N, U.indicator 1 ((u : G) * m * (u₀ * m₀ * y)) ∂ν ∂π := by
   intro G _ _ _ _ _ _ _ _ N M Λ _ ν π DN DM H μ hμ C hC
-  haveI : BorelSpace N := Subtype.borelSpace (N : Set G)
-  haveI : BorelSpace M := Subtype.borelSpace (M : Set G)
+  haveI : BorelSpace N := Subtype.borelSpace (fun x => x ∈ (N : Set G))
+  haveI : BorelSpace M := Subtype.borelSpace (fun x => x ∈ (M : Set G))
   haveI := H.haarN
   haveI := H.haarM
   haveI := right_of_closed N Λ H.closedN ν H.haarN DN H.domN H.finN

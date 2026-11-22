@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.StdBases
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.BeData
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementB
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.SqrtInUnramifiedCompletion
-import Formalism.FrobeniusOrbits.HostCorollaries
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PrimeOfLiesOver
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HostFieldPadicEmbeddingMemMaxUnramified
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.StdBases
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.BeData
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.StatementB
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.KummerThetaLogarithms.SqrtInUnramifiedCompletion
+public import Formalism.FrobeniusOrbits.HostCorollaries
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PrimeOfLiesOver
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HostFieldPadicEmbeddingMemMaxUnramified
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ theorem exists_aut_of_algHoms {E K : Type} [Field E] [NumberField E] [IsGalois �
       map_one' := hf (by rw [hv, map_one, map_one])
       map_mul' := fun a b => hf (by rw [hv, map_mul, map_mul, hv, hv])
       map_zero' := hf (by rw [hv, map_zero, map_zero])
-      map_add' := fun a b => hf (by rw [hv, map_add, map_add, hv, hv])
+      map_add' := fun a b => hf (by rw [hv, map_add (f := _), map_add (f := _), hv, hv])
       commutes' := fun r => hf (by
         rw [hv, AlgHom.commutes, AlgHom.commutes]) }
   exact ⟨AlgEquiv.ofBijective w (AlgHom.normal_bijective ℚ E E w), fun x => (hv x).symm⟩
@@ -75,7 +79,12 @@ theorem host_image_mem_Kur_complex {R : Ranks} (H : Host R) (p : ℕ) [Fact p.Pr
 
 theorem exists_kur_frob_tauEmb_posPl : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (lam : Qbar →+* ℂ_[p]) (σ : MaximalUnramifiedExtension p →+* MaximalUnramifiedExtension p), UnrOK (MaximalUnramifiedExtension p) p σ → (IsResidueClassZero D p ∨ IsSg D p) → ∀ (z : Bool × HH D) (y : D.host.E), ∃ a : MaximalUnramifiedExtension p, (a : ℂ_[p]) = tauEmb D lam (tauPl D z) y ∧ ((σ a : MaximalUnramifiedExtension p) : ℂ_[p]) = tauEmb D lam (tauPl D (posPl D p z 1)) (D.host.conj y) := by
   intro D p _ lam σ hσ h z y
-  obtain ⟨h2, hq, hd⟩ := ne_of_inert D p h
+  have ⟨h2, hq, hd⟩ : p ∉ D.host.small ∧ p ≠ D.host.q ∧ p ≠ D.host.d := by
+    rcases h with h | h
+    · have k := (primeClass_eq_inert_iff D.host.toHostRaw).1 h
+      exact ⟨k.1, k.2.1, k.2.2.1⟩
+    · have k := (primeClass_eq_signal_iff D.host.toHostRaw).1 h
+      exact ⟨k.1, k.2.1, k.2.2.1⟩
   have : IsGalois ℚ D.host.E := D.host.hostE_isGalois
   obtain ⟨ρ, hρ⟩ : ∃ ρ, ρ = rhoH D lam (tauPl D z) := ⟨_, rfl⟩
   have hK : ∀ x, ρ x ∈ MaximalUnramifiedExtension p := host_image_mem_Kur_complex D.host p h2 hq hd ρ
@@ -102,7 +111,7 @@ theorem exists_kur_frob_tauEmb_posPl : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (la
       rfl
     rw [e1]
     rfl
-  obtain ⟨φ, hφ, -⟩ := exists_frob_step D p h (primeOf ρ)
+  obtain ⟨φ, hφ⟩ := (D.host.der.frob p (UpperTheory.Small.not_dvd_condN D.host Fact.out h2 hq hd) (primeOf ρ)).1
   have hgφ : g = φ := by
     have hI := hgF.mul_inv_mem_inertia hφ
     have h1 := ((D.host.der.frob p (UpperTheory.Small.not_dvd_condN D.host Fact.out h2 hq hd) (primeOf ρ)).2.2.2 (g * φ⁻¹)).1 (fun x => hI x)
@@ -111,7 +120,47 @@ theorem exists_kur_frob_tauEmb_posPl : ∀ (D : D7) (p : ℕ) [Fact p.Prime] (la
     rw [D.host.conjE_apply, D.host.conjE_apply, Complex.conj_conj])
   refine ⟨ρ' y, ?_, ?_⟩
   · rw [hρ', hρ, ← coe_rhoH]
-  · have h4 := rhoH_posPl_one D p lam h (primeOf ρ) φ hφ z (D.host.conj y)
+  · have hplGG : ∀ z : Bool × HH D, plGG D (posPl D p z 1) = plGG D z * D.host.galE φ * D.R.cc := by
+      have hC := factClassFrob D.R D.host p (UpperTheory.Small.not_dvd_condN D.host Fact.out h2 hq hd) (primeOf ρ) φ hφ
+      have hc := (Nat.Prime.coprime_iff_not_dvd Fact.out).2 (UpperTheory.Small.not_dvd_condN D.host Fact.out h2 hq hd)
+      have hne : ∃ g, g ∈ Formalism.MainNotions.G.frobSet D p := ⟨_, primeOf ρ, inferInstance, inferInstance, φ, hφ, rfl⟩
+      obtain ⟨P₀, hP₀, hL₀, σ₀, hσ₀, hg₀⟩ := Classical.epsilon_spec hne
+      have e1 := (D.host.toHostAx.frob_iff p hc (primeOf ρ) φ).1 hφ
+      have e2 := (@Formalism.HC.HostAx.frob_iff _ D.host.toHostAx p _ hc P₀ hP₀ hL₀ σ₀).1 hσ₀
+      have hH : (D.host.galE φ).2 = D.R.iota (G.hP D p) := by
+        unfold Formalism.MainNotions.G.hP
+        rw [Formalism.HC.Frame.iota_iotaInv, ← hg₀]
+        exact congrArg Prod.snd (e1.trans e2.symm)
+      have hp : ∀ z : Bool × HH D, plGG D z = ((if z.1 then -1 else 1, 1), D.R.iota z.2) := by
+        rintro ⟨b, t⟩
+        cases b <;> rfl
+      intro z
+      rw [hp, hp]
+      refine Prod.ext ?_ ?_
+      · rcases h with h | h
+        · have h1 := hC.2.2.1 h
+          have hs : ¬ IsSg D p := fun hs => by have := h.symm.trans hs; cases this
+          simp only [Prod.fst_mul, h1, Formalism.HC.Frame.cc, Formalism.FrobeniusOrbits.c0, posPl, partner, hs]
+          cases z.1 <;> simp
+        · have h1 := hC.2.1.1 h
+          have hp : (partner D p z.2 1).1 = true := decide_eq_true ⟨h, odd_one⟩
+          simp only [Prod.fst_mul, h1, Formalism.HC.Frame.cc, Formalism.FrobeniusOrbits.c0, posPl, hp]
+          cases z.1 <;> simp
+      · simp only [Prod.snd_mul, Formalism.HC.Frame.cc, mul_one, hH, posPl, partner, one_smul]
+        rw [Formalism.HC.Frame.iota_add]
+    have hemb : ∀ (g : _ ) (σ : D.host.E ≃ₐ[ℚ] D.host.E) (x : D.host.E), D.host.emb (g * D.host.galE σ) x = D.host.emb g (σ x) := by
+      intro g σ x
+      have he : D.host.sigmaOf (g * D.host.galE σ) = D.host.sigmaOf g * σ := by
+        unfold Host.sigmaOf
+        rw [map_mul, MulEquiv.symm_apply_apply]
+      change D.host.φ₀ (D.host.sigmaOf (g * D.host.galE σ) x) = D.host.φ₀ ((D.host.sigmaOf g * σ) x)
+      rw [he]
+    have het : ∀ z : Bool × HH D, embT D (tauPl D z) = D.host.emb (plGG D z) := by
+      intro z
+      unfold embT tauPl
+      rw [Equiv.apply_symm_apply]
+    have h4 : rhoH D lam (tauPl D (posPl D p z 1)) (D.host.conj y) = rhoH D lam (tauPl D z) (φ (D.host.conj (D.host.conj y))) := by
+      rw [rhoH_apply, rhoH_apply, het, het, hplGG, ← D.host.galE_conjE, hemb, hemb]
     rw [hcc] at h4
     rw [← coe_rhoH, h4, ← hρ, ← hgφ, ← hg]
     rfl

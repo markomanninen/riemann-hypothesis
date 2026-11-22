@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.OffSmall
-import Formalism.LocalToGlobal.KernelLattices.ThDistC
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SumRepsEquiv
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SpanRangeEmb4EqTop
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormalisedFamilySatisfiesEquivarianceLaws
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmulLatMatOf
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsWeilOThZeroTriv
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaTranslationIntertwinerUnitary
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DeltaNeZero
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FieldIsoSelfDualAndPeriodLatticesAgree
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HeisenbergCocycleFormIntegralSelfDual
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AddSubgroupRepsExistenceCardSum
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LocPAAAndPrimesNe
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsSdLatTwOExpS
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CyclotomicBounds.RamifiedDiscriminants.OffSmall
+public import Formalism.LocalToGlobal.KernelLattices.ThDistC
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SumRepsEquiv
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SpanRangeEmb4EqTop
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NormalisedFamilySatisfiesEquivarianceLaws
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmulLatMatOf
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsWeilOThZeroTriv
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ThetaTranslationIntertwinerUnitary
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DeltaNeZero
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FieldIsoSelfDualAndPeriodLatticesAgree
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HeisenbergCocycleFormIntegralSelfDual
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.AddSubgroupRepsExistenceCardSum
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LocPAAAndPrimesNe
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsSdLatTwOExpS
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker Formalism.L2.Th1.H NumberField IsDedekindDomain Classical
 open GlobalTheory.MomT GlobalTheory.MomT.CocInt GlobalTheory.ThetaMove
@@ -27,7 +31,7 @@ theorem semi_iff {V : Type} [AddCommGroup V] [Module ℂ V] {H : Sesq V} (hH : I
   have him : ∀ x y, altE H y x = -altE H x y := GlobalTheory.ThetaInter.altE_swap hH
   have hadd : ∀ x y, alphaQ (s / 2) H (x + y) = alphaQ (s / 2) H x * alphaQ (s / 2) H y *
       Complex.exp (Real.pi * Complex.I * ((s * (H x y).re : ℝ) : ℂ)) := fun x y => by
-    simp only [alphaQ, Formalism.L2.Th1.H.qOf, ← Complex.exp_add, map_add, LinearMap.add_apply, Complex.add_re, hre x y]
+    simp only [alphaQ, Formalism.L2.Th1.H.qOf, ← Complex.exp_add, map_add (f := _), LinearMap.add_apply, Complex.add_re, hre x y]
     congr 1
     push_cast
     ring
@@ -131,11 +135,12 @@ theorem leftV_id (z : VCx X.Tau a b) : leftV A LinearMap.id z = z := by
 theorem leftV_emb (f : Sp X.E b →ₗ[X.E] Sp X.E b) (x : HomE X.E a b) : leftV A f (emb A x) = emb A (f ∘ₗ x) := by
   funext τ i j
   rw [leftV_apply, emb_apply, LinearMap.comp_apply, ← LinearMap.toMatrix'_mulVec f]
-  simp only [emb_apply, Matrix.mulVec, dotProduct, map_sum, map_mul, Finset.mul_sum, LinearMap.toMatrix'_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [emb_apply, Matrix.mulVec, dotProduct, map_sum, map_mul, Finset.mul_sum, LinearMap.toMatrix'_apply]
   exact Finset.sum_congr rfl fun k _ => by ring
 
-variable (a) in
 
+variable (a) in
 def leftE (g : Sp X.E b ≃ₗ[X.E] Sp X.E b) : VCx X.Tau a b ≃+ VCx X.Tau a b where
   toFun := leftV A g.toLinearMap
   invFun := leftV A g.symm.toLinearMap
@@ -152,7 +157,8 @@ theorem hv_leftE (hconj : ∀ τ x, X.embC A.σ₀ τ (star x) = starRingEnd ℂ
     rw [hv_apply, hv_apply]
     congr 1
     refine Finset.sum_congr rfl fun τ _ => ?_
-    simp only [leftV_apply, LinearEquiv.coe_coe, GlobalTheory.Mem.Col2.JetEx.VacEqPf.symm_single, hconj, map_sum, map_mul, Complex.conj_conj,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [leftV_apply, LinearEquiv.coe_coe, GlobalTheory.Mem.Col2.JetEx.VacEqPf.symm_single, hconj, map_sum, map_mul, Complex.conj_conj,
       Finset.sum_mul, Finset.mul_sum]
     rw [Finset.sum_comm]
     conv_rhs => rw [Finset.sum_comm]
@@ -188,7 +194,7 @@ theorem onV_emb (hδ : A.δ ≠ 0) [Nonempty X.Tau] (Ξ : HomE X.E a b → ℂ) 
     onV (X.embC A.σ₀) A.δ Ξ (emb A x) = Ξ x := by
   have h : ∃ y, embH (X.embC A.σ₀) A.δ y = emb A x := ⟨x, rfl⟩
   unfold onV
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact congrArg Ξ (embH_injective _ hδ h.choose_spec)
 
 theorem onV_leftE (hδ : A.δ ≠ 0) [Nonempty X.Tau] (g : Sp X.E b ≃ₗ[X.E] Sp X.E b) {Ξ : HomE X.E a b → ℂ} {k : ℂ}
@@ -202,7 +208,7 @@ theorem onV_leftE (hδ : A.δ ≠ 0) [Nonempty X.Tau] (g : Sp X.E b ≃ₗ[X.E] 
       rintro ⟨y, hy⟩
       exact h ⟨_, (leftV_emb A _ y).symm.trans ((congrArg _ hy).trans ((leftE A a g).left_inv v))⟩
     unfold onV
-    rw [dif_neg h, dif_neg h2, mul_zero]
+    rw [dite_eq_right h, dite_eq_right h2, mul_zero]
 
 theorem coc_smul (hconj : ∀ τ x, X.embC A.σ₀ τ (star x) = starRingEnd ℂ (X.embC A.σ₀ τ x)) (r : X.E) (x y : HomE X.E a b) :
     coc A (r • x) y = coc A x (star r • y) := by
@@ -313,7 +319,7 @@ theorem core (hconj : ∀ τ x, X.embC A.σ₀ τ (star x) = starRingEnd ℂ (X.
   · rintro _ ⟨⟨x, hx, rfl⟩, -⟩
     exact ⟨_, nsmul_mem_tw hc (fun Q => (expS_bound SS Q).2) hx, map_nsmul _ _ _⟩
   · rintro _ ⟨x, -, rfl⟩ _ - ⟨y, hy, rfl⟩
-    rw [← map_add]
+    rw [← map_add (f := _)]
     refine (onV_emb A hδ Ξ _).trans ((hΞ x y ⟨(c : X.E)⁻¹ • y, fun P hP => per_loc A (hAA P hP) ?_, ?_⟩).trans (onV_emb A hδ Ξ x).symm)
     · have := (mem_tw _ _ _ _).1 hy P
       rwa [expS, if_pos hP, zpow_one] at this
@@ -398,8 +404,8 @@ theorem vac_leftE (hok : s.Ok) (hE : B.EqP χ) {a b : ℕ} {N : Submodule (𝓞 
 
 end Record
 
-open GlobalTheory.ThetaMove.SeamMoves in
 
+open GlobalTheory.ThetaMove.SeamMoves in
 theorem thC_left_stab : ∀ (D : D7) (X : Fields) (s : Seam D X) (cc : Ideal (𝓞 D.host.K)) (δ : ℂ) (B : Base D cc δ) (χ : TaylorLogMetric.IdE D → ℂ) (cD : D.what₂.Tau → ℂ), s.Ok → TaylorLogMetric.IsCurveIdeal D cc → TaylorLogMetric.IsDiscriminantTwelfthRootOfIdealLattice D cc δ → TaylorLogMetric.IsChi D χ → ∀ (a b : ℕ) (N : Submodule (𝓞 X.E) (Sp X.E a)) (N' : Submodule (𝓞 X.E) (Sp X.E b)), TaylorLogMetric.admitted D a b (s.lat N) (s.lat N') → ∀ (SS : Finset (HeightOneSpectrum (𝓞 X.E))) (c : ℕ) (Ξ : HomE X.E a b → ℂ), 0 < c → (∀ P ∈ SS, conjPrime₂ P ∉ SS) → (∀ P ∈ SS, ((D.host.QS : ℕ) : 𝓞 X.E) ∉ P.asIdeal ∧ ((D.host.q : ℕ) : 𝓞 X.E) ∉ P.asIdeal) → (∀ x, ∀ z ∈ mulLat c (homAt SS N N'), Ξ (x + z) = Ξ x) → ∀ (γ : UF X.E b), gmap γ.1 N' = N' → ∀ k : ℂ, (∀ x, Ξ (γ.1.toLinearMap ∘ₗ x) = k * Ξ x) → ∀ z : VCx X.Tau a b, thC (X.embC (ambOf s B χ cD : Amb X).σ₀) (ambOf s B χ cD : Amb X).δ (ambOf s B χ cD : Amb X).d (ambOf s B χ cD : Amb X).sc (ambOf s B χ cD : Amb X).AA SS N N' c Ξ ((ambOf s B χ cD : Amb X).e a b N N') (fun τ => (((LinearMap.toMatrix' γ.1.toLinearMap).map (X.embC (ambOf s B χ cD : Amb X).σ₀ τ)) * Matrix.of (z τ) : Matrix _ _ ℂ)) = k * thC (X.embC (ambOf s B χ cD : Amb X).σ₀) (ambOf s B χ cD : Amb X).δ (ambOf s B χ cD : Amb X).d (ambOf s B χ cD : Amb X).sc (ambOf s B χ cD : Amb X).AA SS N N' c Ξ ((ambOf s B χ cD : Amb X).e a b N N') z := by
   intro D X s cc δ B χ cD hok hcc hδ hχ a b N N' hA SS c Ξ hc hSS h2q hΞ γ hγ k hk z
   have hC : StandardLatticesGL3.Crv D cc δ := ⟨hcc, hδ⟩
@@ -427,8 +433,8 @@ theorem thC_left_stab : ∀ (D : D7) (X : Fields) (s : Seam D X) (cc : Ideal (�
       change reidx s a b ((reidx s a b).symm y) ∈ _
       rwa [LinearEquiv.apply_symm_apply]
     rw [e]
-    obtain ⟨S, hS⟩ := f1
-    exact ⟨S.image _, by rw [Finset.coe_image, ← AddMonoidHom.map_closure, hS]⟩
+    letI := f1
+    infer_instance
   exact core (ambOf s B χ cD) (fun τ x => by
       change s.σ₀ (X.emb τ (star x)) = starRingEnd ℂ (s.σ₀ (X.emb τ x))
       rw [hok.1, hok.1, hok.2, GlobalTheory.InertSign.embT_conj]) (delta_ne_zero B) hc hSS

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsStabForm
-import Development.AbelianVarietyTheory.Definitions.ThetaValues.FlatMemLatIffStdLat
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsotropicCoefficientSplitting
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsFramedPointBaseChangeAlgebraMap
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedPointReducedFromTestRing
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedModuliAlgebraicLawsChartWeightIntegrality
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsStabForm
+public import Development.AbelianVarietyTheory.Definitions.ThetaValues.FlatMemLatIffStdLat
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.IsotropicCoefficientSplitting
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsFramedPointBaseChangeAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedPointReducedFromTestRing
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.FramedModuliAlgebraicLawsChartWeightIntegrality
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,7 +26,11 @@ theorem eq_zero_of_forall_algHom {K R Ω : Type} [Field K] [CommRing R] [Algebra
   rintro J ⟨-, hM⟩
   letI := Ideal.Quotient.field J
   haveI : Module.Finite K (R ⧸ J) := finite_of_finite_type_of_isJacobsonRing K (R ⧸ J)
-  let ψ : (R ⧸ J) →ₐ[K] Ω := IsAlgClosed.lift
+  let ψ : (R ⧸ J) →ₐ[K] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have h0 := h (ψ.comp (Ideal.Quotient.mkₐ K J))
   have h1 : Ideal.Quotient.mk J x = 0 := by
     apply ψ.toRingHom.injective
@@ -49,7 +57,7 @@ theorem pow_eq_one_of_complex {K : Type} [Field K]
   have hT : FromTest pts mapR z := ⟨p, φ', y, hz⟩
   have h0 := h z
   unfold evalAt at h0
-  rw [dif_pos hT, ← hW f hf (CAt σ) p _ φ' _ y _ z hz hT.choose_spec.choose_spec.choose_spec] at h0
+  rw [dite_eq_left hT, ← hW f hf (CAt σ) p _ φ' _ y _ z hz hT.choose_spec.choose_spec.choose_spec] at h0
   show φ' _ = 0
   rw [map_sub, map_pow, h0, map_one, sub_self]
 
@@ -61,7 +69,7 @@ theorem evalAt_pow_eq_one {K : Type} [Field K]
     {S : Type} [CommRing S] [Algebra K S] (y : pts S) (hT : FromTest pts mapR y) :
     evalAt pts mapR f y ^ k = 1 := by
   unfold evalAt
-  rw [dif_pos hT, ← map_pow, h, map_one]
+  rw [dite_eq_left hT, ← map_pow, h, map_one]
 
 end GlobalTheory.FiniteOrderRule
 

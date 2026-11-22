@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverFramesValueAtPoint
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticFirst
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticFifth
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticEighth
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.TransPtBase
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.SamePotBlock
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticSecondStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverFramesAtPointStatement
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.PullbackPullback
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverFramesValueAtPoint
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticFirst
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticFifth
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticEighth
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.TransPtBase
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.SamePotBlock
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverArithmeticSecondStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverFramesAtPointStatement
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PullbackPullback
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexOrder Classical
 open GlobalTheory.CompanionTheory.Ar.PB.WSq GlobalTheory.CompanionTheory.Ar.PB.CovMap GlobalTheory.CompanionTheory.Ar.PB.CovGraph GlobalTheory.CompanionTheory.Ar.PB.CovMap.LocImg
@@ -106,7 +111,7 @@ theorem sum_dy (M : FlagModel y Ψ N j) (p : Ψ × Fin N) (L : K → ℝ) :
   congr 1
   · have e : ∀ k : {k // ¬ ∀ p', M.blk p' ≠ some k}, (M.dy p k.1 : ℝ) * L k.1 = if M.blk p = some k.1 then L k.1 else 0 :=
       fun k => by
-        rw [FlagModel.dy, dif_neg k.2]
+        rw [FlagModel.dy, dite_eq_right k.2]
         split_ifs <;> simp
     simp only [e]
     cases hp : M.blk p with
@@ -125,7 +130,7 @@ theorem sum_dy (M : FlagModel y Ψ N j) (p : Ψ × Fin N) (L : K → ℝ) :
 
 theorem exists_exact (M : FlagModel y Ψ N j) {F : FrameData ι Ψ N M.Ω M.blk} {z : (Σ k, ι k) → ℂ}
     {h : Ψ → Matrix (Fin N) (Fin N) ℂ} (H : M.IsFlagOf F z h) :
-    ∃ z₁, SameOrbit z₁ z ∧ basePart M.blk z₁ = basePart M.blk z ∧ ∀ p, M.ExactAt F p z₁ (h p.1) := by
+    ∃ z₁, SameOrbit z₁ z ∧ basePart M.blk z₁ = basePart M.blk z ∧ ∀ p, ((fun {jExact : ℕ} (mExact : _root_.GlobalTheory.CompanionTheory.Ar.PB.FlagModel _ _ _ jExact) (fExact : _root_.GlobalTheory.CompanionTheory.Ar.PB.FrameData _ _ _ mExact.Ω mExact.blk) (pExact : _) (zExact : _ → ℂ) (hExact : _root_.Matrix _ _ ℂ) => (∀ kExact, _root_.GlobalTheory.CompanionTheory.Ar.PB.basePart mExact.blk zExact ⟨kExact, fExact.c kExact⟩ = 1) ∧ ∀ kExact, mExact.blk pExact = some kExact → ∀ iExact, zExact ⟨kExact, iExact⟩ = _root_.Finset.sum _root_.Finset.univ (fun aExact => _root_.GroundTheory.Heights₂.Heights.LowerBoundFree.valAt mExact.x (fExact.u ⟨kExact, iExact⟩ aExact) (_root_.GlobalTheory.CompanionTheory.Ar.PB.basePart mExact.blk zExact) * _root_.GlobalTheory.CompanionTheory.Ar.PB.minorIJ hExact aExact (_root_.GlobalTheory.CompanionTheory.Ar.PB.stepCols _ jExact pExact.2))) M) F p z₁ (h p.1) := by
   have key : ∀ k, ∃ c : ℂ, c ≠ 0 ∧ ((∀ p, M.blk p ≠ some k) → c = 1) ∧ ∀ p, M.blk p = some k → ∀ m,
       c * z ⟨k, m⟩ = ∑ I, valAt M.x (F.u ⟨k, m⟩ I) (basePart M.blk z) * minorIJ (h p.1) I (stepCols N j p.2) := by
     intro k
@@ -240,7 +245,7 @@ theorem met (CR : CovReal FA Cv) {z : (Σ k, ι' k) → ℂ} (hz : z ∈ mcPts (
       · exact inv_ne_zero (hch _)
       · cases M'.blk p <;> simp [hc]
     · dsimp only
-      rw [dif_neg fun h => h p h1, h2]
+      rw [dite_eq_right fun h => h p h1, h2]
       rfl
   have ow : SameOrbit (fun q => e q.1 * img Cv F' F z q) (img Cv F' F z) := ⟨e, he, rfl⟩
   have owb : SameOrbit (basePart M.blk fun q => e q.1 * img Cv F' F z q) (basePart M'.blk z ∘ Cv.v) := by

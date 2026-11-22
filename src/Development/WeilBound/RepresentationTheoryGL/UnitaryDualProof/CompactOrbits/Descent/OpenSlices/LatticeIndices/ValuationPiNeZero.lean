@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.Descent.OpenSlices.OpenSlice
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.Descent.OpenSlices.OpenSlice
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,12 +71,6 @@ theorem val_mul_le {A B : Matrix (Fin n) (Fin n) k} {α β : ValueGroupWithZero 
   refine Valuation.map_sum_le _ fun l _ => ?_
   rw [Valuation.map_mul]
   exact mul_le_mul' (hA i l) (hB l j)
-
-theorem mul_mem_Lat {Z : Subalgebra k (Matrix (Fin n) (Fin n) k)} {h x : Matrix (Fin n) (Fin n) k}
-    (hh : h ∈ Lat Z 0) {m : ℕ} (hx : x ∈ Lat Z m) : h * x ∈ Lat Z m := by
-  refine ⟨fun a ha => ?_, fun i j => ?_⟩
-  · rw [← mul_assoc, hh.1 a ha, mul_assoc, hx.1 a ha, mul_assoc]
-  · simpa using val_mul_le hh.2 hx.2 i j
 
 private theorem exists_mat_scale (A : Matrix (Fin n) (Fin n) k) :
     ∃ a : ℕ, 1 ≤ a ∧ ∀ i j, valuation k (pi k) ^ a * valuation k (A i j) ≤ 1 := by
@@ -154,9 +152,6 @@ theorem Lat_add (Z : Subalgebra k (Matrix (Fin n) (Fin n) k)) (m r : ℕ) :
     · rw [smulA_apply, Matrix.mul_smul, Matrix.smul_mul, hy1 a ha]
     · rw [smulA_apply, Matrix.smul_apply, smul_eq_mul, Valuation.map_mul, map_pow, pow_add]
       exact mul_le_mul' le_rfl (hy2 i j)
-
-theorem smulA_injective {c : k} (hc : c ≠ 0) : Function.Injective (smulA (n := n) c) :=
-  fun _ _ h => smul_right_injective _ hc h
 
 theorem conjA_inv_conjA (g : GL (Fin n) k) (x : Matrix (Fin n) (Fin n) k) : conjA g⁻¹ (conjA g x) = x := by
   simp [mul_assoc]

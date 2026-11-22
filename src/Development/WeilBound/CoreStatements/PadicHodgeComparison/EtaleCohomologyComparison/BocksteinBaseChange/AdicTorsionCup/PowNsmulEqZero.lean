@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,12 +58,6 @@ theorem nsmul_mod {n : ℕ} (a : ℕ) (y : A n) : a • y = (a % l ^ n) • y :=
   conv_lhs => rw [← Nat.mod_add_div a (l ^ n)]
   rw [add_nsmul, mul_comm, mul_nsmul, hA.pow_nsmul_eq_zero]
   simp
-
-theorem map_smul {m n : ℕ} (h : n ≤ m) (r : ℤ_[l]) (x : A m) : ρ m n (r • x) = r • ρ m n x := by
-  have : NeZero (l ^ m) := ⟨pow_ne_zero _ (Fact.out : l.Prime).ne_zero⟩
-  rw [hA.smul m, hA.smul n, map_nsmul, hA.nsmul_mod (PadicInt.toZModPow m r).val]
-  congr 1
-  rw [← PadicInt.cast_toZModPow n m h r, ZMod.cast_eq_val, ZMod.val_natCast]
 
 theorem exists_sec (P : ∀ m, A m → Prop) (hP : ∀ m n w, n ≤ m → P m w → P n (ρ m n w)) (hne : ∀ m, ∃ w, P m w) :
     ∃ y : ∀ m, A m, (∀ m, P m (y m)) ∧ ∀ m, ρ (m + 1) m (y (m + 1)) = y m := by
@@ -119,7 +117,8 @@ theorem mem_span_of {I : Type*} [Fintype I] (g : I → ∀ k, A k) (hg : ∀ i, 
       exact (ZMod.natCast_eq_natCast_iff' _ _ _).2 (Nat.mod_mod_of_dvd _ (pow_dvd_pow l hpn)))
     (fun m c => ∑ i, (c i).val • g i m = x m)
     (fun m n c hnm hc => by
-      rw [← hA.compat hS hx hnm, ← hc, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hA.compat hS hx hnm, ← hc, map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_nsmul, hA.compat hS (hg i) hnm, ZMod.val_natCast, ← hA.nsmul_mod])
     (fun m => by

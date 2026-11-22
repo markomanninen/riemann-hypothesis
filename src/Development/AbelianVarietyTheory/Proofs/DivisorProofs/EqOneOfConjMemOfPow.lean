@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GridTestLatticeLargestSlopeBound
-import Formalism.LocalToGlobal.GroupLattices.LevelCharts.FiniteClassSetOfFiniteIndex
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GridTestLatticeLargestSlopeBound
+public import Formalism.LocalToGlobal.GroupLattices.LevelCharts.FiniteClassSetOfFiniteIndex
+import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemHatIffOfSelfDual
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +38,7 @@ theorem fix_of_pow_eq_one {R V : Type} [CommRing R] [IsDomain R] [AddCommGroup V
     intro y hy
     have h5 : ∑ i ∈ Finset.range m, (δ ^ i) y = 0 := by
       obtain ⟨x, -, rfl⟩ := hy
-      rw [← LinearMap.sum_apply, ← Module.End.mul_apply, geom_sum_mul, h1, sub_self, LinearMap.zero_apply]
+      rw [← LinearMap.sum_apply, ← mul_apply_eq_comp, geom_sum_mul, h1, sub_self, LinearMap.zero_apply]
     have h6 := Submodule.neg_mem _ (Submodule.sum_mem _ fun i (_ : i ∈ Finset.range m) => h3 i y hy)
     rw [Finset.sum_sub_distrib, h5, zero_sub, neg_neg, Finset.sum_const, Finset.card_range,
       ← Nat.cast_smul_eq_nsmul R] at h6
@@ -65,12 +70,15 @@ theorem smul_mem_hatL (Λ : Submodule (𝓞 E) (Fin n → E)) {𝔪 : Ideal (�
     simp [Algebra.smul_def]
   | zero => simp
   | add x y _ _ hx hy => rw [smul_add]; exact Submodule.add_mem _ hx hy
-  | smul a x _ hx => rw [smul_comm]; exact Submodule.smul_mem _ a hx
+  | smul b x _ hx =>
+    rw [smul_comm (ιA (algebraMap (𝓞 E) E a)) b x]
+    exact Submodule.smul_mem _ b hx
 
-theorem globLat_smul_le {Λ : Submodule (𝓞 E) (Fin n → E)} (hΛ : Submodule.IsLattice E Λ) {𝔪 : Ideal (𝓞 E)} (h𝔪 : 𝔪 ≠ ⊥)
+theorem globLat_smul_le {Λ : Submodule (𝓞 E) (Fin n → E)} (hΛ : Submodule.IsFullLattice E Λ) {𝔪 : Ideal (𝓞 E)} (h𝔪 : 𝔪 ≠ ⊥)
     (g : GL (Fin n) 𝒜) : CS.globLat g (𝔪 • Λ) ≤ 𝔪 • CS.globLat g Λ := by
   have hf := Module.Finite.iff_fg.2 hΛ.fg
-  have hL := P.global_lattice_isLattice_holds F E (Fin n) Λ hf hΛ.span_eq_top g
+  have hspan := Submodule.IsFullLattice.span_eq_top (self := hΛ)
+  have hL := P.csGlob_lattice Λ hf hspan g
   have key : ∀ u ∈ Formalism.L2.Herm.hatL (F := F) (𝔪 • Λ), g.1 *ᵥ u ∈ Formalism.L2.Herm.hatL (F := F) (𝔪 • CS.globLat g Λ) := by
     intro u hu
     unfold Formalism.L2.Herm.hatL Formalism.UG.latS at hu
@@ -82,7 +90,8 @@ theorem globLat_smul_le {Λ : Submodule (𝓞 E) (Fin n → E)} (hΛ : Submodule
       · have e : (fun i => ιA ((a • y) i)) = ιA (algebraMap (𝓞 E) E a) • fun i => ιA (y i) := by
           funext i; simp [Algebra.smul_def]
         rw [e, mulVec_smul]
-        refine smul_mem_hatL _ ha ((P.span_recovery_of_integral_adelic_approx P.integral_adele_approximation_holds F E (Fin n) Λ hf hΛ.span_eq_top g _).2 ?_)
+        refine smul_mem_hatL _ ha ((P.span_recovery_of_integral_adelic_approx
+          P.integral_adele_approximation_holds F E (Fin n) Λ hf hspan g _).2 ?_)
         rw [mulVec_mulVec, Units.inv_mul, one_mulVec]
         exact Submodule.subset_span ⟨y, hy, rfl⟩
       · have e : (fun i => ιA ((x + y) i)) = (fun i => ιA (x i)) + fun i => ιA (y i) := by
@@ -94,21 +103,24 @@ theorem globLat_smul_le {Λ : Submodule (𝓞 E) (Fin n → E)} (hΛ : Submodule
     | smul a x _ hx => rw [mulVec_smul]; exact Submodule.smul_mem _ a hx
   obtain ⟨a, ha, ha0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot h𝔪
   have hsp : Submodule.span E ((𝔪 • CS.globLat g Λ : Submodule (𝓞 E) (Fin n → E)) : Set (Fin n → E)) = ⊤ := by
-    rw [eq_top_iff, ← hL.span_eq_top, Submodule.span_le]
+    rw [eq_top_iff, ← Submodule.IsFullLattice.span_eq_top (self := hL), Submodule.span_le]
     intro y hy
-    have := Submodule.smul_mem _ (algebraMap (𝓞 E) E a)⁻¹
-      (Submodule.subset_span (R := E) (Submodule.smul_mem_smul ha hy : a • y ∈ 𝔪 • CS.globLat g Λ))
-    rwa [← algebraMap_smul E a y, inv_smul_smul₀ (by simpa using ha0)] at this
+    have haE : (a : E) ≠ 0 := by exact_mod_cast ha0
+    have hy' : (a : E) • y ∈ 𝔪 • CS.globLat g Λ := Submodule.smul_mem_smul ha hy
+    have hm := (Submodule.span E _).smul_mem (a : E)⁻¹ (Submodule.subset_span hy')
+    rwa [inv_smul_smul₀ haE] at hm
   intro y hy
-  rw [← P.global_lattice_one_holds F E (Fin n) _
-    (Module.Finite.iff_fg.2 (hL.fg.smul (IsNoetherian.noetherian _))) hsp]
-  have := key _ hy
-  rw [mulVec_mulVec, Units.mul_inv] at this
-  exact this
+  have h𝔪fg : 𝔪.FG := IsNoetherian.noetherian (𝔪 : Submodule (𝓞 E) (𝓞 E))
+  have hfg : (𝔪 • CS.globLat g Λ).FG := Submodule.FG.smul h𝔪fg hL.fg
+  rw [← P.global_lattice_one_holds F E (Fin n) _ (Module.Finite.iff_fg.2 hfg) hsp]
+  have hy' := key ((g⁻¹).1 *ᵥ fun i => ιA (y i)) hy
+  rw [mulVec_mulVec, Units.mul_inv, one_mulVec] at hy'
+  change ((1 : GL (Fin n) 𝒜)⁻¹).1 *ᵥ (fun i => ιA (y i)) ∈ Formalism.L2.Herm.hatL (F := F) _
+  simpa only [inv_one, Units.val_one, one_mulVec] using hy'
 
 variable [StarRing E] {hc : CMData F E} {J : Matrix (Fin n) (Fin n) E} {Λ : Submodule (𝓞 E) (Fin n → E)} {𝔪 : Ideal (𝓞 E)}
 
-theorem cong_of_conj_mem (hΛ : Submodule.IsLattice E Λ) (h𝔪 : 𝔪 ≠ ⊥) {g : GL (Fin n) 𝒜} {γ : GL (Fin n) E}
+theorem cong_of_conj_mem (hΛ : Submodule.IsFullLattice E Λ) (h𝔪 : 𝔪 ≠ ⊥) {g : GL (Fin n) 𝒜} {γ : GL (Fin n) E}
     (h : g⁻¹ * bc ιA γ * g ∈ congLev hc J Λ 𝔪) :
     γ ∈ stabGL (CS.globLat g Λ) ∧ ∀ y ∈ CS.globLat g Λ, γ.1 *ᵥ y - y ∈ 𝔪 • CS.globLat g Λ := by
   have e : ∀ y : Fin n → E, (g⁻¹ * bc ιA γ * g).1 *ᵥ ((g⁻¹).1 *ᵥ fun i => ιA (y i)) =
@@ -125,28 +137,30 @@ theorem cong_of_conj_mem (hΛ : Submodule.IsLattice E Λ) (h𝔪 : 𝔪 ≠ ⊥)
     rw [e2] at this
     exact this
 
-theorem eq_one_of_conj_mem_of_pow (hΛ : Submodule.IsLattice E Λ) (h𝔪 : 𝔪 ≠ ⊥) {g : GL (Fin n) 𝒜} {γ : GL (Fin n) E}
+theorem eq_one_of_conj_mem_of_pow (hΛ : Submodule.IsFullLattice E Λ) (h𝔪 : 𝔪 ≠ ⊥) {g : GL (Fin n) 𝒜} {γ : GL (Fin n) E}
     (h : g⁻¹ * bc ιA γ * g ∈ congLev hc J Λ 𝔪) (w : HeightOneSpectrum (𝓞 E)) (hw : 𝔪 ≤ w.asIdeal) {m : ℕ}
     (hm : (m : 𝓞 E) ∉ w.asIdeal) (h1 : γ ^ m = 1) : γ = 1 := by
-  have hL := P.global_lattice_isLattice_holds F E (Fin n) Λ (Module.Finite.iff_fg.2 hΛ.fg) hΛ.span_eq_top g
+  have hL := P.csGlob_lattice Λ (Module.Finite.iff_fg.2 hΛ.fg)
+    (Submodule.IsFullLattice.span_eq_top (self := hΛ)) g
   let δ : Module.End E (Fin n → E) := Matrix.toLinAlgEquiv' γ.1
   have hδ : δ ^ m = 1 := by rw [← map_pow, ← Units.val_pow_eq_pow_val, h1, Units.val_one, map_one]
   have h2 := fix_of_pow_eq_one hL.fg w.isMaximal (δ := δ.restrictScalars (𝓞 E))
     (fun y hy => Submodule.smul_mono_left hw ((cong_of_conj_mem hΛ h𝔪 h).2 y hy)) hm (by
       refine LinearMap.ext fun y => ?_
-      rw [Module.End.pow_apply, LinearMap.coe_restrictScalars, ← Module.End.pow_apply, hδ]
+      rw [pow_apply_eq_iterate, LinearMap.coe_restrictScalars, ← pow_apply_eq_iterate, hδ]
       rfl)
-  have h3 : δ = 1 := LinearMap.ext_on hL.span_eq_top h2
+  have h3 : δ = 1 := LinearMap.ext_on (Submodule.IsFullLattice.span_eq_top (self := hL)) h2
   exact Units.ext (Matrix.toLinAlgEquiv'.injective (h3.trans (map_one _).symm))
 
 theorem eq_one_of_conj_mem (hH : IsHerm (hc.sig : E →+* E) J) (hd : IsUnit J.det) (hdef : IsTotDef hc.sig J)
-    (hΛ : Submodule.IsLattice E Λ) (h𝔪 : 𝔪 ≠ ⊥) {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpq : p ≠ q)
+    (hΛ : Submodule.IsFullLattice E Λ) (h𝔪 : 𝔪 ≠ ⊥) {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpq : p ≠ q)
     (w w' : HeightOneSpectrum (𝓞 E)) (hw : 𝔪 ≤ w.asIdeal) (hw' : 𝔪 ≤ w'.asIdeal) (hpw : (p : 𝓞 E) ∈ w.asIdeal)
     (hqw : (q : 𝓞 E) ∈ w'.asIdeal) {g : GL (Fin n) 𝒜} {γ : GL (Fin n) E} (hγ : γ ∈ UR hc J)
     (h : g⁻¹ * bc ιA γ * g ∈ congLev hc J Λ 𝔪) : γ = 1 := by
-  have hL := P.global_lattice_isLattice_holds F E (Fin n) Λ (Module.Finite.iff_fg.2 hΛ.fg) hΛ.span_eq_top g
+  have hL := P.csGlob_lattice Λ (Module.Finite.iff_fg.2 hΛ.fg)
+    (Submodule.IsFullLattice.span_eq_top (self := hΛ)) g
   have hfin := Formalism.UG.Final.StabFinite F E (Fin n) hc.sig J (Formalism.L2.G.sig_conj hc) hH hd hdef _
-    (Module.Finite.iff_fg.2 hL.fg) hL.span_eq_top
+    (Module.Finite.iff_fg.2 hL.fg) (Submodule.IsFullLattice.span_eq_top (self := hL))
   obtain ⟨N, hN, h1⟩ := isOfFinOrder_iff_pow_eq_one.1 (isOfFinOrder_of_finite
     (⟨γ, hγ, (cong_of_conj_mem hΛ h𝔪 h).1⟩ : level (hc.sig : E →+* E) J (CS.globLat g Λ)))
   have h2 : γ ^ N = 1 := congrArg Subtype.val h1
@@ -178,7 +192,9 @@ theorem ClassReps.neat {D : D7} {T : Type} {L : LevCh D T} {sc : GlobalTheory.Ch
         (Ideal.span {((D.host.g k : ℕ) : ℤ)})
         (((RingHom.injective_iff_ker_eq_bot _).1 (algebraMap ℤ (𝓞 D.host.F)).injective_int).trans_le bot_le)
       refine ⟨⟨Q, hQ.isPrime, Ring.ne_bot_of_isMaximal_of_not_isField hQ (RingOfIntegers.not_isField _)⟩, ?_⟩
-      have : ((D.host.g k : ℕ) : ℤ) ∈ Q.comap (algebraMap ℤ (𝓞 D.host.F)) := hQ' ▸ Ideal.mem_span_singleton_self _
+      have : ((D.host.g k : ℕ) : ℤ) ∈ Q.under ℤ := by
+        rw [hQ']
+        exact Ideal.mem_span_singleton_self _
       simpa using this
     have hS : v ∈ G.pl.S0 := G.pl.mem_S0_of_sum_eq.2 (Or.inr ((S1_mem_OmF D).2 (by fin_cases k; exacts [Or.inl hv, Or.inr (Or.inl hv)])))
     refine ⟨G.pl.w v, Ideal.le_of_dvd ((dvd_pow_self _ (G.pl.depth_pos sc v).ne').trans (Finset.dvd_prod_of_mem _ hS)), ?_⟩
@@ -189,7 +205,8 @@ theorem ClassReps.neat {D : D7} {T : Type} {L : LevCh D T} {sc : GlobalTheory.Ch
   obtain ⟨w', hw0', hw1'⟩ := hw 1
   exact Subtype.ext (eq_one_of_conj_mem (Formalism.L2.G.gram_herm _ _) (Formalism.L2.G.gram_det_unit D.sp.cm _)
     (Formalism.L2.G.gram_totDef _ _ (isV_Xp G).sigOK fun τ => by rw [(isV_Xp G).sig τ, ← (isV_Xp G).rank]; simp)
-    (isV_Xp G).sd.1 (G.pl.modul_ne_bot sc) (D.host.g_prime 0) (D.host.g_prime 1) D.host.g_ne w w' hw0 hw0' hw1 hw1' γ.2 h)
+    (GlobalTheory.AdIsom.selfDual_isFullLattice (isV_Xp G).sd) (G.pl.modul_ne_bot sc)
+    (D.host.g_prime 0) (D.host.g_prime 1) D.host.g_ne w w' hw0 hw0' hw1 hw1' γ.2 h)
 
 end GlobalTheory.FunObj
 

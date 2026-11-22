@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.ConeHypotheses.CtSmallCone
+module
+
+public import Development.WeilBound.ThetaLifts.ConeHypotheses.CtSmallCone
+
+@[expose] public section
 
 namespace PositivityTheory.ThKG
 

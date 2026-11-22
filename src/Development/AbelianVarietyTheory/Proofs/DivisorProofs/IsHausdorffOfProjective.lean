@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PadicContinuousEvaluationExistsUniqueSubstNatura
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PadicContinuousEvaluationExistsUniqueSubstNatura
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -89,7 +93,7 @@ theorem isHausdorff₂ (G : PDivGroup p O) (n : ℕ) :
 
 theorem ev₂_subst_μ (n : ℕ) (s : MvPowerSeries (Fin d) O) :
     c.ev₂ n (subst c.μ s) = Coalgebra.comul (R := O) (c.ev n s) := by
-  haveI := isHausdorff₂ G n
+  have := isHausdorff₂ G n
   have h := isEval_comp p (c.isEval n) (Bialgebra.comulAlgHom O (G.A n))
   rw [eval_subst p (c.isEval₂ n) c.μ ((Bialgebra.comulAlgHom O (G.A n)).comp (c.ev n))
     c.isLaw.const ?_ s]
@@ -100,7 +104,7 @@ theorem ev₂_subst_μ (n : ℕ) (s : MvPowerSeries (Fin d) O) :
 
 theorem ev₂_inL (n : ℕ) (s : MvPowerSeries (Fin d) O) :
     c.ev₂ n (inL s) = c.ev n s ⊗ₜ[O] (1 : G.A n) := by
-  haveI := isHausdorff₂ G n
+  have := isHausdorff₂ G n
   have h := isEval_comp p (c.isEval n) (Algebra.TensorProduct.includeLeft (R := O) (S := O)
     (A := G.A n) (B := G.A n))
   rw [inL, eval_subst p (c.isEval₂ n) (fun i => X (Sum.inl i))
@@ -111,7 +115,7 @@ theorem ev₂_inL (n : ℕ) (s : MvPowerSeries (Fin d) O) :
 
 theorem ev₂_inR (n : ℕ) (s : MvPowerSeries (Fin d) O) :
     c.ev₂ n (inR s) = (1 : G.A n) ⊗ₜ[O] c.ev n s := by
-  haveI := isHausdorff₂ G n
+  have := isHausdorff₂ G n
   have h := isEval_comp p (c.isEval n) (Algebra.TensorProduct.includeRight (R := O)
     (A := G.A n) (B := G.A n))
   rw [inR, eval_subst p (c.isEval₂ n) (fun i => X (Sum.inr i))

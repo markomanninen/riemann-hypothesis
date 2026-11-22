@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.CellAbs
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.HermitianCellMeasures.CellAbs
+
+@[expose] public section
 
 noncomputable section
 
@@ -172,7 +176,7 @@ theorem local_null [IsTopologicalGroup G] [LocallyCompactSpace G] {P : Subgroup 
             rw [Finset.sum_boole]
         _ ≤ d := by exact_mod_cast hc
     · calc ∑ j, (A (γ j)).indicator (1 : G ⧸ P → ℝ≥0∞) q = 0 :=
-            Finset.sum_eq_zero (fun j _ => Set.indicator_of_notMem (fun h => hq h.1) _)
+            Finset.sum_eq_zero (fun j _ => Set.indicator_of_notMem (by exact fun h => hq h.1) _)
         _ ≤ d := zero_le
   have hsumA : ∑ j, ν (A (γ j)) ≤ (d : ℝ≥0∞) * ν univ := by
     calc ∑ j, ν (A (γ j)) = ∑ j, ∫⁻ q, (A (γ j)).indicator 1 q ∂ν :=

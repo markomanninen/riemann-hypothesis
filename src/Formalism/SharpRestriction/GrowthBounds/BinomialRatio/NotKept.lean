@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ThresholdStandardLarge
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ThresholdStandardLarge
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,13 +51,13 @@ theorem nk_core {s : ℕ} (r : ℕ) (hr : 1 ≤ r) (L A : ℕ) (R n Ai Ci : Fin 
       (((L : ℝ) + r) ^ (r - 1) * f) * (∏ i, (((R i : ℝ) + r) ^ (r - 1) * f)) *
         (∏ i, (((n i : ℝ) + r) ^ (r - 1) * f)) := by
     apply mul_le_mul (mul_le_mul (nk_b_up r L)
-      (Finset.prod_le_prod (fun _ _ => by positivity) (fun i _ => nk_b_up r (R i))) (by positivity) (by positivity))
-      (Finset.prod_le_prod (fun _ _ => by positivity) (fun i _ => nk_b_up r (n i))) (by positivity) (by positivity)
+      (Finset.prod_le_prod₀ (fun _ _ => by positivity) (fun i _ => nk_b_up r (R i))) (by positivity) (by positivity))
+      (Finset.prod_le_prod₀ (fun _ _ => by positivity) (fun i _ => nk_b_up r (n i))) (by positivity) (by positivity)
   have low : (((A : ℝ)) ^ (r - 1) * f) * (∏ i, ((Ai i : ℝ) ^ (r - 1) * f)) * (∏ i, ((Ci i : ℝ) ^ (r - 1) * f)) ≤
       (sdXi r A : ℝ) * (∏ i, (sdXi r (Ai i) : ℝ)) * ∏ i, (sdXi r (Ci i) : ℝ) := by
     apply mul_le_mul (mul_le_mul (nk_b_low r A hr)
-      (Finset.prod_le_prod (fun _ _ => by positivity) (fun i _ => nk_b_low r (Ai i) hr)) (by positivity) (by positivity))
-      (Finset.prod_le_prod (fun _ _ => by positivity) (fun i _ => nk_b_low r (Ci i) hr)) (by positivity) (by positivity)
+      (Finset.prod_le_prod₀ (fun _ _ => by positivity) (fun i _ => nk_b_low r (Ai i) hr)) (by positivity) (by positivity))
+      (Finset.prod_le_prod₀ (fun _ _ => by positivity) (fun i _ => nk_b_low r (Ci i) hr)) (by positivity) (by positivity)
   have e1 : (((L : ℝ) + r) ^ (r - 1) * f) * (∏ i, (((R i : ℝ) + r) ^ (r - 1) * f)) *
         (∏ i, (((n i : ℝ) + r) ^ (r - 1) * f)) =
       (((L : ℝ) + r) * (∏ i, ((R i : ℝ) + r)) * (∏ i, ((n i : ℝ) + r))) ^ (r - 1) *
@@ -104,8 +108,8 @@ theorem nk_prod_le_dimMM {s : ℕ} (m : ℕ) (hm : 1 ≤ m) (A : ℕ) (Ai Ci : F
   push_cast
   rw [Finset.prod_mul_distrib, ← mul_assoc]
   have h : ∀ y : ℕ, (sdXi m y : ℝ) ≤ (sd m y : ℝ) := fun y => by exact_mod_cast nk_sdXi_le_sd m y hm
-  apply mul_le_mul (mul_le_mul (h A) (Finset.prod_le_prod (fun _ _ => by positivity) (fun i _ => h (Ai i)))
-    (by positivity) (by positivity)) (Finset.prod_le_prod (fun _ _ => by positivity) (fun i _ => h (Ci i)))
+  apply mul_le_mul (mul_le_mul (h A) (Finset.prod_le_prod₀ (fun _ _ => by positivity) (fun i _ => h (Ai i)))
+    (by positivity) (by positivity)) (Finset.prod_le_prod₀ (fun _ _ => by positivity) (fun i _ => h (Ci i)))
     (by positivity) (by positivity)
 
 theorem notKeptWt_of {C0 CYb Cde Ck CD Cb CE1 CE2 Cc : ℝ} (hW : WtBoundAt)

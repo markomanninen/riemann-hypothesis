@@ -1,8 +1,13 @@
-import Mathlib
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdeal
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.LogDerivativeIdeal
-import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.OrderAtMultiplicativity
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.EtaleCoordinates
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.DerivativeIdeal
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.LogDerivativeIdeal
+public import Development.ResolutionOfSingularities.EmbeddedResolution.DerivativeIdeal.OrderAtMultiplicativity
+
+@[expose] public section
+
 namespace FunctorialResolution.EmbeddedResolution
 
 namespace EtaleCoordinates
@@ -85,9 +90,6 @@ theorem partialDerivIdealIterate_succ (h : ι) (l : ℕ) (J : Ideal S) :
     partialDerivIdealIterate k ι S h (l + 1) J =
       partialDerivIdeal k ι S h (partialDerivIdealIterate k ι S h l J) := rfl
 
-theorem partialDerivIdealIterate_one (h : ι) (J : Ideal S) :
-    partialDerivIdealIterate k ι S h 1 J = partialDerivIdeal k ι S h J := rfl
-
 private def evalDerivationAddHom (g : S) : Derivation k S S →+ S where
   toFun D := D g
   map_zero' := rfl
@@ -131,7 +133,7 @@ private def idealInfComapPartialDeriv (h : ι) (K : Ideal S) : Ideal S where
     obtain ⟨ha1, ha2⟩ := ha
     obtain ⟨hb1, hb2⟩ := hb
     refine ⟨Submodule.add_mem K ha1 hb1, ?_⟩
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem K ha2 hb2
   zero_mem' := by
     refine ⟨Submodule.zero_mem K, ?_⟩
@@ -175,7 +177,8 @@ private theorem partialDerivIdeal_logDerivIdeal_le [Fintype ι] [DecidableEq ι]
       · exact logDerivIdeal_mono k _ (le_partialDerivIdeal k ι S h I)
           (derivation_apply_mem_logDerivIdeal k _ I D hD hy)
       · rw [derivation_apply_eq_sum_partialDeriv k ι S D y]
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         refine Ideal.sum_mem _ ?_
         intro i _
         rw [Derivation.leibniz]

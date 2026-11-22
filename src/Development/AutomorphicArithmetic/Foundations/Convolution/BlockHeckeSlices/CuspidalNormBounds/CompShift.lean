@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.DatCons
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.SliceShift
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CompBound
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.DatCons
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.SliceShift
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.CompBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction UpperTheory.V.C
 
 namespace UpperTheory.ConvolutionTheory.BW
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {S : Set (Pl E)} {n r s : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {S : Set (Pl E)} {n r s : ℕ}
 
 private theorem taylor2 {f f' f'' : ℝ → ℂ} (h1 : ∀ v, HasDerivAt f (f' v) v) (h2 : ∀ v, HasDerivAt f' (f'' v) v) {t K : ℝ}
     (hK : ∀ v ∈ Metric.closedBall t 1, ‖f'' v‖ ≤ K) {x : ℝ} (hx : |x| ≤ 1) : ‖f (t + x) - f t - x * f' t‖ ≤ K * x ^ 2 := by
@@ -93,11 +97,11 @@ private theorem main : ∀ {n : ℕ} (d : Dat S n) (φ : Sm E n) (t : Fin d.len 
       refine h.congr_of_eventuallyEq (Filter.Eventually.of_forall fun x => ?_)
       simp only [Dat.comp_cons, Pi.add_apply, Pi.single_eq_of_ne (Dat.sc_ne b d _).symm, add_zero]
       congr 1
-      funext l
-      simp only [Pi.add_apply, Pi.single_apply, Dat.sc_inj]
+      ext k
+      simp [Pi.single_apply, Dat.sc_inj]
 
 end UpperTheory.ConvolutionTheory.BW
 
 theorem UpperTheory.ConvolutionTheory.BW.compShift :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.CompShift E :=
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E], UpperTheory.ConvolutionTheory.BW.CompShift E :=
   fun _ _ _ _ _ _ d => UpperTheory.ConvolutionTheory.BW.main d

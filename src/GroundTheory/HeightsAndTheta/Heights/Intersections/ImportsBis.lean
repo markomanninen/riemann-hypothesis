@@ -1,11 +1,16 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.IdDeg
-import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerBis
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsLocRingDimOne
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocFinite
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocRank
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocLength
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KrullDimQuotientEqOneIffEqBot
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.IdDeg
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.ImportsTerBis
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsLocRingDimOne
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocFinite
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocRank
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsSemilocLength
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.KrullDimQuotientEqOneIffEqBot
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

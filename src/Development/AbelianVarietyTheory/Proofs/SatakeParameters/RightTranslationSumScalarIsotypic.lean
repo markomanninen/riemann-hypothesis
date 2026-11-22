@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPlaceHeckeOperatorScalarOnSpherical
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPlaceHeckeOperatorScalarOnSpherical
+
+@[expose] public section
+
 open NumberField IsDedekindDomain ReciprocityTheory.Aut
 
 noncomputable section
@@ -35,7 +40,8 @@ theorem sumRt_iso {ρ : Representation ℂ (GQ L n) W} {S S' : Submodule ℂ (Fo
   have hσ : (σ : Formalism.AUTREP.GAf L n → W) = ∑ γ ∈ R, Formalism.L2.NG.rt L n (r γ) f := by
     simp only [σ, Submodule.coe_sum]
   have hTσ : ((T σ : S') : Formalism.AUTREP.GAf L n → W) = ∑ γ ∈ R, Formalism.L2.NG.rt L n (r γ) f' := by
-    simp only [σ, map_sum, Submodule.coe_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [σ, map_sum, Submodule.coe_sum]
     exact Finset.sum_congr rfl fun γ _ => hrt _
   have key : σ = c • f := Subtype.ext (by rw [hσ, Submodule.coe_smul]; exact hcf)
   have h3 := congrArg (fun y => ((T y : S') : Formalism.AUTREP.GAf L n → W)) key
@@ -82,7 +88,7 @@ theorem sumRt_finset_sum {ρ : Representation ℂ (GQ L n) W} {S : Submodule ℂ
       have hyfix : ∀ κ ∈ Umax L n, TrivOutside {v} κ → Formalism.L2.NG.rt L n κ y = y := by
         intro κ hκ hκt
         have e := hfix κ hκ hκt
-        rw [map_add] at e
+        rw [map_add (f := _)] at e
         have hd : Formalism.L2.NG.rt L n κ y - y ∈ a ⊓ ⨆ i ∈ t, i := by
           refine ⟨Submodule.sub_mem _ (haF.1.1.stable κ y hy) hy, ?_⟩
           have h4 : Formalism.L2.NG.rt L n κ y - y = z - Formalism.L2.NG.rt L n κ z := by
@@ -95,11 +101,11 @@ theorem sumRt_finset_sum {ρ : Representation ℂ (GQ L n) W} {S : Submodule ℂ
       have hzfix : ∀ κ ∈ Umax L n, TrivOutside {v} κ → Formalism.L2.NG.rt L n κ z = z := by
         intro κ hκ hκt
         have e := hfix κ hκ hκt
-        rw [map_add, hyfix κ hκ hκt] at e
+        rw [map_add (f := _), hyfix κ hκ hκt] at e
         exact add_left_cancel e
       have e1 := sumRt_iso hS.1 haF.2 v R r c hc y hy hyfix
       have e2 := ih htF z hz hzfix
-      simp only [map_add, Finset.sum_add_distrib, e1, e2, smul_add]
+      simp only [map_add (f := _), Finset.sum_add_distrib, e1, e2, smul_add]
     · have hle : a ≤ ⨆ i ∈ t, i := inf_eq_left.1 htop
       exact ih htF f ((sup_le hle le_rfl) hf) hfix
 

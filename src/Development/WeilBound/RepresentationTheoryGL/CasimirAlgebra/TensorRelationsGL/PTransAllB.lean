@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PTransAllA
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.PTransAllA
+
+@[expose] public section
 
 noncomputable section
 
@@ -111,7 +115,8 @@ theorem cA_split {C : Type} [DecidableEq C] (col : P → C) (hq : ∀ p p', col 
     (b : P → Fin n) (F : TV n M P) :
     cA col b F = cA (fun x : {p // ¬ q p} => col x.1) (fun x => b x.1)
       (cA (fun x : {p // q p} => col x.1) (fun x => b x.1) (spl q F)) := by
-  simp only [cA, alt, colG, LinearMap.comp_apply, LinearMap.proj_apply, LinearMap.sum_apply, Finset.sum_apply, LinearMap.smul_apply, Pi.smul_apply, map_sum, map_smul, pm, LinearMap.pi_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [cA, alt, colG, LinearMap.comp_apply, LinearMap.proj_apply, LinearMap.sum_apply, Finset.sum_apply, LinearMap.smul_apply, Pi.smul_apply, map_sum, map_smul, pm, LinearMap.pi_apply]
   simp_rw [Finset.smul_sum, smul_smul, spl_apply]
   rw [← Finset.sum_product']
   symm

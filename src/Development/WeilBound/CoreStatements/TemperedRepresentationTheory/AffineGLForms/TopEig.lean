@@ -1,10 +1,14 @@
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.AffineGLForms.GenSpace
+module
+
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.AffineGLForms.GenSpace
+
+@[expose] public section
 
 noncomputable section
 open NumberField GlobalTheory.CuspRep MeasureTheory PositivityTheory.Affgl
 
 namespace PositivityTheory.Affgl.TopEig
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 def Jc (c : (E →+* ℂ) → ℂ → ℂ) : Set (Module.End ℂ (Sm E a)) :=
   {z | ∃ τ u, z = cap τ u - c τ u • (1 : Module.End ℂ (Sm E a))}
@@ -60,7 +64,7 @@ theorem forms_subset (L : Subgroup (GL (Fin a) (Af E))) {W : Type} [AddCommGroup
   rintro _ ⟨τ, u, rfl⟩
   rw [LinearMap.sub_apply, h4, LinearMap.smul_apply, Module.End.one_apply, sub_self]
 
-theorem top : (∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), GenFin E a) → GlobalTheory.Published.AutomorphicFormsFiniteGL := by
+theorem top : (∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), GenFin E a) → GlobalTheory.Published.AutomorphicFormsFiniteGL := by
   intro h E _ _ _ a L hL W _ _ _ ρ hρ c
   have := h E a L hL W ρ hρ (Jc c) (cofin_Jc c)
   exact Submodule.finiteDimensional_of_le (Submodule.span_mono (forms_subset L ρ c))

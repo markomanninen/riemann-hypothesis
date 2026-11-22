@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.WeilSiegelTheta.ThetaOrbits
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.WeilSiegelTheta.ThetaOrbits
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,8 @@ theorem two_mul_finrank_isotropic_le {E : Type} [Field E] [NumberField E] [StarR
   have hl : LinearIndependent E fun i => B.hT (b i) := by
     refine Fintype.linearIndependent_iff.2 fun c hc i => ?_
     have h1 : B.hT ((∑ i, star (c i) • b i : W) : B.V) = 0 := by
-      rw [← hc]; simp [map_sum, LinearMap.map_smulₛₗ, starRingEnd_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hc]; simp [map_sum, LinearMap.map_smulₛₗ, starRingEnd_apply]
     have h2 : (∑ i, star (c i) • b i : W) = 0 := Subtype.ext (B.nondeg.1 _ fun y => by rw [h1]; rfl)
     simpa using Fintype.linearIndependent_iff.1 b.linearIndependent _ h2 i
   have h3 := Subspace.finrank_add_finrank_dualCoannihilator_eq (Submodule.span E (Set.range fun i => B.hT (b i)))

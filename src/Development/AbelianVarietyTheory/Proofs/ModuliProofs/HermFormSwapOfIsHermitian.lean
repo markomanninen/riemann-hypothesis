@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SemicharacterSqEqOneOfSymmetric
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.SectionsPowThetaFunctions
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.SemicharacterSqEqOneOfSymmetric
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.SectionsPowThetaFunctions
+
+@[expose] public section
 
 noncomputable section
 
@@ -147,7 +151,7 @@ theorem exists_complementary_theta
     ⟨fun l => ⟨F l, hF l l.2⟩, fun _ => rfl⟩
   have hFl_add : ∀ l m, Fl (l + m) = Fl l + Fl m := fun l m => by
     apply Subtype.ext
-    rw [Submodule.coe_add, hFl, hFl, hFl, Submodule.coe_add, map_add]
+    rw [Submodule.coe_add, hFl, hFl, hFl, Submodule.coe_add, map_add (f := _)]
   obtain ⟨ρ, hρ⟩ := hth g u.Λ u.discrete u.full Hm h.2.1
   obtain ⟨C, hC⟩ := exists_le_mul_of_homogeneous (fun z => (hermForm Hm z z).re) (fun z => (hermForm K z z).re)
     (continuous_re_hermForm Hm) (continuous_re_hermForm K) h.2.1 (re_hermForm_real_smul Hm)
@@ -211,7 +215,7 @@ theorem exists_complementary_theta
       congr 1
       ring
     show θ (F (z + l)) * G (z + l) = _ * (θ (F z) * G z)
-    rw [map_add, t1, t2, hHg_form, hHg_form, hχg]
+    rw [map_add (f := _), t1, t2, hHg_form, hHg_form, hχg]
     linear_combination (χ l ^ d * θ (F z) * G z * (cexp (Real.pi * (d * hermForm Hm z l - N * hermForm K z l) +
         Real.pi / 2 * (d * hermForm Hm l l - N * hermForm K l l)) *
         cexp (Real.pi * hermForm K z l + Real.pi / 2 * hermForm K l l) ^ N)) * hψN +

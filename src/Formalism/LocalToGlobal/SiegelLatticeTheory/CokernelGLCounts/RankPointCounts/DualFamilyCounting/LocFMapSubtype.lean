@@ -1,6 +1,10 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsBasisLocF
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.ExistsOrthGen
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.JordanExists
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsBasisLocF
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.ExistsOrthGen
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.JordanExists
+
+@[expose] public section
 
 open NumberField Module
 
@@ -72,8 +76,9 @@ theorem exists_basis_in {X : Submodule K V} {L : Submodule (𝓞 K) V} (hL : Cnt
       ((L.comap (X.subtype.restrictScalars (𝓞 K)) : Submodule (𝓞 K) X) : Set X) = ⊤ := by
     apply Submodule.map_injective_of_injective X.injective_subtype
     rw [Submodule.map_span, himg, hspan, Submodule.map_top, Submodule.range_subtype]
-  have hNlat : Submodule.IsLattice K (L.comap (X.subtype.restrictScalars (𝓞 K))) :=
-    ⟨hfgN, hspanN⟩
+  have hNlat : Submodule.IsFullLattice K (L.comap (X.subtype.restrictScalars (𝓞 K))) :=
+    { toIsLattice := Submodule.IsLattice.of_fg K hfgN
+      span_eq_top := hspanN }
   obtain ⟨b, hbN, hbloc⟩ := Formalism.HermitianLattices.Ext.L3.LocalSpans.exists_basis_locF hNlat h𝔭
   refine ⟨fun i => (b i : V), fun i => hbN i, ?_, ?_, ?_⟩
   · exact b.linearIndependent.map' X.subtype X.ker_subtype
@@ -95,7 +100,8 @@ theorem det_gram_ne_zero [StarRing K] {h : V →ₗ⋆[K] V →ₗ[K] K} {X : Su
     intro j
     have hj := congrFun hc j
     simp only [Matrix.vecMul, dotProduct, U0.gram, Matrix.of_apply, Pi.zero_apply] at hj
-    simp only [map_sum, map_smulₛₗ, starRingEnd_apply, star_star, LinearMap.sum_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smulₛₗ, starRingEnd_apply, star_star, LinearMap.sum_apply,
       LinearMap.smul_apply, smul_eq_mul]
     exact hj
   have hall : ∀ z ∈ X, h (∑ i, star (c i) • x i) z = 0 := by

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.SingularNullSets.WeakApproximationFinitePlace
+
+@[expose] public section
 
 noncomputable section
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct Topology
@@ -40,7 +44,8 @@ theorem continuity_characters_projection : ∀ {D : D7} {t ρ : ℕ} {ψ : AddCh
   · exact hψc.comp (htr.comp (hpr _ _ continuous_fst (hyv.comp continuous_snd)).matrix_trace)
   · have hq : Continuous (fun z : Mx D V.rank ρ × Mx D V.rank t => qv V b₀ z) := by
       unfold qv
-      exact (hip _ _ continuous_snd continuous_snd).sub (hpr _ _ hyv hyv)
+      set_option synthInstance.maxHeartbeats 200000 in
+        exact (hip _ _ continuous_snd continuous_snd).sub (hpr _ _ hyv hyv)
     exact (hpch b.1).comp hq
   · intro T
     unfold pch

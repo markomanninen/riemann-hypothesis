@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.LogAbsBasic
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IsotropicMahlerBounds.LogAbsoluteWedges.LogAbsBasic
+
+@[expose] public section
 
 open Matrix PositivityTheory.Rg.BcB PositivityTheory.Rg.BcB.D1
 
@@ -47,11 +51,6 @@ variable {m : ℕ}
 
 def rk (e : Fin m → SignType) : ℕ := (Finset.univ.filter fun j => e j ≠ 0).card
 
-theorem rk_le {x y : Fin m → SignType} (h : SLe x y) : rk x ≤ rk y := by
-  refine Finset.card_le_card fun j hj => ?_
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hj ⊢
-  rw [h j hj]; exact hj
-
 theorem eq_of_rk_le {x y : Fin m → SignType} (h : SLe x y) (h' : rk y ≤ rk x) : x = y := by
   have hsub : (Finset.univ.filter fun j => x j ≠ 0) ⊆ Finset.univ.filter fun j => y j ≠ 0 := by
     intro j hj
@@ -74,26 +73,26 @@ theorem sle_trans {x y z : Fin m → SignType} (h : SLe x y) (h' : SLe y z) : SL
 
 theorem zero_sle (x : Fin m → SignType) : SLe 0 x := fun _ h => absurd rfl h
 
-open Classical in
 
+open Classical in
 noncomputable def lo (S : Finset (Fin m → SignType)) : Fin m → SignType :=
   if h : S.Nonempty then (S.exists_min_image rk h).choose else 0
 
-open Classical in
 
+open Classical in
 noncomputable def hi (S : Finset (Fin m → SignType)) : Fin m → SignType :=
   if h : S.Nonempty then (S.exists_max_image rk h).choose else 0
 
 theorem lo_mem {S : Finset (Fin m → SignType)} (h : S.Nonempty) : lo S ∈ S := by
-  rw [lo, dif_pos h]; exact (S.exists_min_image rk h).choose_spec.1
+  rw [lo, dite_eq_left h]; exact (S.exists_min_image rk h).choose_spec.1
 
 theorem hi_mem {S : Finset (Fin m → SignType)} (h : S.Nonempty) : hi S ∈ S := by
-  rw [hi, dif_pos h]; exact (S.exists_max_image rk h).choose_spec.1
+  rw [hi, dite_eq_left h]; exact (S.exists_max_image rk h).choose_spec.1
 
 theorem lo_sle {S : Finset (Fin m → SignType)} (h : S.Nonempty)
     (hc : IsChain SLe (↑S : Set (Fin m → SignType))) {x} (hx : x ∈ S) : SLe (lo S) x := by
   have hmin : rk (lo S) ≤ rk x := by
-    rw [lo, dif_pos h]; exact (S.exists_min_image rk h).choose_spec.2 x hx
+    rw [lo, dite_eq_left h]; exact (S.exists_min_image rk h).choose_spec.2 x hx
   by_cases hne : lo S = x
   · rw [hne]; exact sle_refl x
   · rcases hc (Finset.mem_coe.mpr (lo_mem h)) (Finset.mem_coe.mpr hx) hne with h' | h'
@@ -103,7 +102,7 @@ theorem lo_sle {S : Finset (Fin m → SignType)} (h : S.Nonempty)
 theorem sle_hi {S : Finset (Fin m → SignType)} (h : S.Nonempty)
     (hc : IsChain SLe (↑S : Set (Fin m → SignType))) {x} (hx : x ∈ S) : SLe x (hi S) := by
   have hmax : rk x ≤ rk (hi S) := by
-    rw [hi, dif_pos h]; exact (S.exists_max_image rk h).choose_spec.2 x hx
+    rw [hi, dite_eq_left h]; exact (S.exists_max_image rk h).choose_spec.2 x hx
   by_cases hne : hi S = x
   · rw [hne]; exact sle_refl x
   · rcases hc (Finset.mem_coe.mpr (hi_mem h)) (Finset.mem_coe.mpr hx) hne with h' | h'

@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HomTransport
-import Development.AbelianVarietyTheory.Definitions.Divisors.TanRel
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsPolAVSectionInverseImage
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbsoluteSiegel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffTopMonEqZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.HomTransport
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TanRel
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsPolAVSectionInverseImage
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbsoluteSiegel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffTopMonEqZero
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField MeasureTheory
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory
-open GlobalTheory GlobalTheory.LieHt GlobalTheory.Cartier GlobalTheory.ThetaOnto GlobalTheory.MBModel GlobalTheory.KeyCl GlobalTheory.Ex GlobalTheory.MBLow GlobalTheory.SecJet
+open GlobalTheory GlobalTheory.LieHt GlobalTheory.Cartier GlobalTheory.ThetaOnto GlobalTheory.KeyCl GlobalTheory.Ex GlobalTheory.MBLow GlobalTheory.SecJet
 open scoped CategoryTheory.Obj
 attribute [local instance] Over.cartesianMonoidalCategory
 
@@ -40,12 +45,12 @@ theorem qEq_imgQ (hi : Function.Injective I.img) {k : ℕ} (p q : N.QT k) :
   · rintro ⟨z, h1, h2⟩
     obtain ⟨z, rfl⟩ := I.e.surjective z
     refine ⟨z, I.e.injective ?_, hi ?_⟩
-    · rw [map_add, map_nsmul]; exact h1
+    · rw [map_add (f := _), map_nsmul]; exact h1
     · rw [img_mul, img_io]; exact h2
   · rintro ⟨z, h1, h2⟩
     refine ⟨I.e z, ?_, ?_⟩
     · change I.e q.1.1.toAdd = I.e p.1.1.toAdd + k • I.e z
-      rw [h1, map_add, map_nsmul]
+      rw [h1, map_add (f := _), map_nsmul]
     · change I.img q.1.2 = I.img p.1.2 * N'.io (I.e z)
       rw [h2, img_mul, img_io]
 
@@ -91,7 +96,7 @@ theorem img_bijective (hφ : Function.Bijective I.φ) (hh : ∀ x, I.h x = 1) : 
     refine ⟨⟨b, s, fun χ χ' => hu.1 ?_⟩, ((I.rel_iff _ _).1 ⟨hb.symm, fun χ => ?_⟩).symm⟩
     · have a := I.θ_eq (N.c χ) (N.c χ') b
       simp only [hh, _root_.mul_one] at a
-      rw [map_mul, map_mul, hs, hs, hs, ← a, ← I.c_eq, ← I.c_eq, hb, map_add]
+      rw [map_mul, map_mul, hs, hs, hs, ← a, ← I.c_eq, ← I.c_eq, hb, map_add (f := _)]
       exact g'.mult _ _
     · simp only [hh, _root_.mul_one]
       exact (hs χ).symm
@@ -119,12 +124,12 @@ theorem transport : ∀ (F F' : Type) [Field F] [Field F'] (e : F ≃+* F') (N :
       have r := (I.rel_img h).2 ((q a).1.1.toAdd + m • χ)
       simp only [hh, _root_.mul_one] at r
       have t : (imgQ I (q a)).1.1.toAdd + m • I.e χ = I.e ((q a).1.1.toAdd + m • χ) := by
-        rw [map_add, map_nsmul]; rfl
+        rw [map_add (f := _), map_nsmul]; rfl
       rw [t, r, (I.rel_img h).1, hf, hl, hh]
       simp
     · obtain ⟨α, rfl⟩ := I.e.surjective α
       obtain ⟨x, rfl⟩ := hφ.2 x
-      rw [hf, h2 α (fun χ h => hα (I.e χ) (by rw [h, map_add, map_nsmul]; rfl)), map_zero]
+      rw [hf, h2 α (fun χ h => hα (I.e χ) (by rw [h, map_add (f := _), map_nsmul]; rfl)), map_zero]
 
 end GlobalTheory.MBLow.TrNum
 end

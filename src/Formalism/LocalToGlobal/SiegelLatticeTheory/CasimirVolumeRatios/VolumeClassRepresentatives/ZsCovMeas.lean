@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirVolumeRatios.VolumeClassRepresentatives.ZsCovFin
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirVolumeRatios.VolumeClassRepresentatives.ZsCovInf
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirVolumeRatios.VolumeClassRepresentatives.ZsCovFin
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirVolumeRatios.VolumeClassRepresentatives.ZsCovInf
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,10 @@ def muV (μf : Measure (Formalism.IndefR.Eqv.UI.instV fr).Gf) [SigmaFinite μf] 
 theorem isHaar_muV (hc0 : ∀ v, D.s.cdScale V.rank (fr.ε v) ≠ 0)
     (μf : Measure (Formalism.IndefR.Eqv.UI.instV fr).Gf) [μf.IsHaarMeasure] [SigmaFinite μf] :
     (muV fr μf).IsHaarMeasure := by
-  obtain ⟨k1, k2, k3, k4, k5⟩ := Formalism.IndefR.Eqv.ga_facts D V
+  have ⟨k1, k2, k3, k4, k5⟩ : IsTopologicalGroup (GA D V) ∧ T2Space (GA D V) ∧
+      LocallyCompactSpace (GA D V) ∧ SecondCountableTopology (GA D V) ∧ BorelSpace (GA D V) := by
+    obtain ⟨h1, h2, h3⟩ := Formalism.IndefR.Eqv.G5.af_facts D.host.F
+    exact Formalism.IndefR.Eqv.G5.ha_facts (AF D.host.F) D.sp.cm.deg2 D.sp.cm.sig V.gram
   have hμi : (Measure.pi fun v => Formalism.REAL.muG ((Formalism.IndefR.Eqv.UI.instV fr).ε v)).IsHaarMeasure :=
     Measure.pi.isHaarMeasure _
   have hμA : ((Formalism.IndefR.Eqv.UI.instV fr).muA μf).IsHaarMeasure := Measure.prod.instIsHaarMeasure _ _
@@ -36,7 +43,10 @@ theorem isVolMeas_muV (hcd : cdScaleTie D) (hΛ : fr.Λ = Formalism.IndefR.Eqv.U
     (μf : Measure (Formalism.IndefR.Eqv.UI.instV fr).Gf) [μf.IsHaarMeasure] [SigmaFinite μf]
     (hK : μf (Formalism.IndefR.Eqv.UI.instV fr).Kset = 1) :
     IsVolMeas D V P Q (muV fr μf) := by
-  obtain ⟨k1, k2, k3, k4, k5⟩ := Formalism.IndefR.Eqv.ga_facts D V
+  have ⟨k1, k2, k3, k4, k5⟩ : IsTopologicalGroup (GA D V) ∧ T2Space (GA D V) ∧
+      LocallyCompactSpace (GA D V) ∧ SecondCountableTopology (GA D V) ∧ BorelSpace (GA D V) := by
+    obtain ⟨h1, h2, h3⟩ := Formalism.IndefR.Eqv.G5.af_facts D.host.F
+    exact Formalism.IndefR.Eqv.G5.ha_facts (AF D.host.F) D.sp.cm.deg2 D.sp.cm.sig V.gram
   refine ⟨isHaar_muV fr hc0 μf, ?_⟩
   refine ⟨⟨Formalism.IndefR.Eqv.thetaC D, Formalism.IndefR.Eqv.isInfFam_thetaC D⟩, fun θ hθ => ?_⟩
   rw [Formalism.IndefR.Eqv.eq_thetaC D hθ]

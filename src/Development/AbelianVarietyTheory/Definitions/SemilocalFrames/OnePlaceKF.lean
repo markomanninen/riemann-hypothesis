@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
-import Formalism.HermitianCurvature.FiniteOrderIntersectionInSmooth
-import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NormalizedLocalScale
+public import Formalism.HermitianCurvature.FiniteOrderIntersectionInSmooth
+public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped InnerProductSpace ENNReal

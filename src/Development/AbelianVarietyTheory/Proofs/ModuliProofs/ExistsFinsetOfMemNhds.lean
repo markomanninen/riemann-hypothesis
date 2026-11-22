@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DifferentiableOnLeftInverse
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsPreconnectedBlockUnits
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DifferentiableOnLeftInverse
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.IsPreconnectedBlockUnits
+
+@[expose] public section
 
 open NumberField Matrix
 open scoped ComplexConjugate
@@ -34,7 +38,8 @@ theorem herm_smul_right (M : Matrix (Fin g) (Fin g) ℂ) (c : ℂ) (z w : Fin g 
 
 theorem herm_conj {M : Matrix (Fin g) (Fin g) ℂ} (hM : M.IsHermitian) (z w : Fin g → ℂ) :
     hermForm M z w = conj (hermForm M w z) := by
-  simp only [hermForm, dotProduct, mulVec, map_sum, map_mul, Finset.mul_sum, Pi.star_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hermForm, dotProduct, mulVec, map_sum, map_mul, Finset.mul_sum, Pi.star_apply]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   rw [← hM.apply j i]
@@ -97,7 +102,7 @@ theorem riemann_symm {M M₀ C : Matrix (Fin g) (Fin g) ℂ} (hM : M.IsHermitian
     rw [(key _ _).2, (key _ _).2, (key z w).1, herm_conj hM (c w) (c (c z)), (key (c w) (c z)).1,
       ← herm_conj hM]
   have := key2 (Pi.single i 1) (Pi.single j 1)
-  simpa [hc, hermForm, ← Pi.single_star, mul_apply, dotProduct] using this
+  simpa [hc, hermForm, ← Pi.single_star, Matrix.mul_apply, dotProduct] using this
 
 theorem eq_zero_of_imForm {M : Matrix (Fin g) (Fin g) ℂ}
     (hpos : ∀ z : Fin g → ℂ, z ≠ 0 → 0 < (hermForm M z z).re) {u : Fin g → ℂ} (h : imForm M u = 0) : u = 0 := by
@@ -139,7 +144,8 @@ theorem relation {P₀ P : D.La →+ (Fin g → ℂ)} (hP₀ : IsPeriod D ty P�
   obtain ⟨M, -, hpos, h⟩ := hP.2.2.2.2
   refine eq_zero_of_imForm hpos (ext_period hP fun y => ?_)
   have := congrArg (fun u => imForm M₀ u (P₀ y)) hc
-  simp only [Finsupp.linearCombination_apply, Finsupp.sum, map_sum, map_smul, LinearMap.sum_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finsupp.linearCombination_apply, Finsupp.sum, map_sum, map_smul, LinearMap.sum_apply,
     LinearMap.smul_apply, imForm_apply, h, h₀, map_zero, LinearMap.zero_apply] at this ⊢
   exact this
 
@@ -167,13 +173,15 @@ theorem exists_colMat {P₀ : D.La →+ (Fin g → ℂ)} (hP₀ : IsPeriod D ty 
   refine ⟨fun j => (1 / 2 : ℂ) • k (r j) - (Complex.I / 2) • k (r' j),
     fun j => (1 / 2 : ℂ) • k (r j) + (Complex.I / 2) • k (r' j), fun P hP x => ?_⟩
   have := relation hP₀ hP (Finsupp.single x 1 - ∑ j, ((P₀ x j).re • r j + (P₀ x j).im • r' j)) (by
-    simp only [map_sub, map_sum, map_add, map_smul, hr, hr', Finsupp.linearCombination_single, one_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_add (f := _), map_smul, hr, hr', Finsupp.linearCombination_single, one_smul]
     funext i
     simp [Finset.sum_apply, Pi.single_apply, Finset.sum_add_distrib])
-  simp only [map_sub, map_sum, map_add, map_smul, Finsupp.linearCombination_single, one_smul, sub_eq_zero] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_sum, map_add (f := _), map_smul, Finsupp.linearCombination_single, one_smul, sub_eq_zero] at this
   rw [this]
   funext i
-  simp only [realMap_apply, Pi.add_apply, mulVec, dotProduct, colMat_apply, map_sub, map_add, map_smul, hk,
+  simp only [realMap_apply, Pi.add_apply, mulVec, dotProduct, colMat_apply, map_sub, map_add (f := _), map_smul, hk,
     Finset.sum_apply, ← Finset.sum_add_distrib, Pi.smul_apply, Pi.sub_apply, Pi.star_apply]
   refine Finset.sum_congr rfl fun j _ => ?_
   apply Complex.ext <;> simp <;> ring
@@ -346,7 +354,7 @@ theorem exists_period_coordinates : ∀ (E : Type) [Field E] [NumberField E] [Is
     have hinv := RiemannRel.differentiableOn_left_inverse (fun b => colMat α (P b)) (fun b => (colMat α (P b))⁻¹)
       (hc α) (fun b hb => nonsing_inv_mul _ (isUnit_iff_ne_zero.2 (hs _ (hnear b hb))))
     refine differentiableOn_pi.2 fun k => ?_
-    simp only [mul_apply, transpose_apply]
+    simp only [Matrix.mul_apply, transpose_apply]
     exact DifferentiableOn.fun_sum fun l _ =>
       (DifferentiableOn.fun_sum fun n _ => (hinv _ _).mul (hc β _ _)).mul_const _
   · intro P P' hP hP' hn hn' hZ

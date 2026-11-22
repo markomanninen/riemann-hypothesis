@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.CutIdentityRightSideCongrOfSubMem
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.CutIdentityRightSideCongrOfSubMem
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -28,7 +33,7 @@ theorem TautologicalCase.proof (h3 : IntNumAddFirst.Statement.{u}) (h5 : Minimal
   have hfin : ∀ x : MRing ι O, (Function.support (divCycle P x)).Finite := fun x =>
     (Ideal.finite_minimalPrimes_of_isNoetherianRing _ (P ⊔ Ideal.span {x})).subset fun W hW => by
       by_contra hmin
-      exact hW (by unfold divCycle; rw [dif_neg]; exact fun h => hmin h.1)
+      exact hW (by unfold divCycle; rw [dite_eq_right]; exact fun h => hmin h.1)
   have hZfin : (Function.support (ratDiv P f g)).Finite :=
     ((hfin f).union (hfin g)).subset fun W hW => by
       by_contra h

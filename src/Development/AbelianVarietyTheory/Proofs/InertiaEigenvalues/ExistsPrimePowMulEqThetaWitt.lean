@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
-import Formalism.SharpRestriction.LevelLetterCocycles.ProdOneSubPrimitiveRoots
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsStratHom
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+public import Formalism.SharpRestriction.LevelLetterCocycles.ProdOneSubPrimitiveRoots
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP GlobalTheory.MemLoc
 open scoped Formalism.Per NNReal
 
@@ -102,7 +107,7 @@ theorem step {K : FinExt l} (bk : BK K) (y : Om l) (hyK : y ∈ K.1) (hyU : y �
     have e2 : Ψ X = π := rfl
     have e3 : Ψ f' = B := rfl
     rw [e1, hfe, hc]
-    simp only [map_add, map_mul, map_natCast, hΨC, e2, e3]
+    simp only [map_add (f := _), map_mul, map_natCast, hΨC, e2, e3]
     rw [ht, hA]
     ring
 
@@ -189,7 +194,7 @@ theorem exists_of_int {K : FinExt l} (bk : BK K) (y : Om l) (hyK : y ∈ K.1) (h
     | succ k ih =>
       have h := hg (ys k)
       rw [← hys] at h
-      simp only [s, Finset.sum_range_succ, map_add, map_mul, map_pow, map_natCast]
+      simp only [s, Finset.sum_range_succ, map_add (f := _), map_mul, map_pow, map_natCast]
       linear_combination ih + (l : ℂ_[l]) ^ k * h
   have hcau : ∀ m n, m ≤ n → (l : Wq l bk.a) ^ m ∣ s n - s m := by
     intro m n hmn

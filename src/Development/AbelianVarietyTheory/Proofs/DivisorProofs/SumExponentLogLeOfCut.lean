@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.PieriBlockIdeals.StatementE
-import Formalism.PieriBlockIdeals.TailInequalityEventually
-import Formalism.PieriBlockIdeals.PieriColumnMinors.RecursionInclusionExceptional
-import Formalism.PieriBlockIdeals.PieriColumnMinors.LargeParameterEstimates
-import Formalism.PieriBlockIdeals.PieriColumnMinors.CorollaryOfParamsSevenLinkageAlt
+module
+
+public import Mathlib
+public import Formalism.PieriBlockIdeals.StatementE
+public import Formalism.PieriBlockIdeals.TailInequalityEventually
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.RecursionInclusionExceptional
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.LargeParameterEstimates
+public import Formalism.PieriBlockIdeals.PieriColumnMinors.CorollaryOfParamsSevenLinkageAlt
+
+@[expose] public section
 
 open Formalism.CohomologicalDescent Formalism.CohomologicalDescent.LogSmallConstantBounds Formalism.CohomologicalDescent.ShortWeightBounds
 

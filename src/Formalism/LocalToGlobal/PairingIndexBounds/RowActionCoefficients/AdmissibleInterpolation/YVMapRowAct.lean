@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.FinalTheorems
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.RowActionCoefficients.AdmissibleInterpolation.FinalTheorems
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -20,7 +24,8 @@ theorem map_hvE (f : A →+* A') {n : ℕ} (x : Fin n → ℕ → A) (y : Matrix
   rw [RingHom.map_det]
   congr 1
   ext i t
-  simp [Matrix.map_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.map_apply, map_sum, map_mul]
 
 theorem map_hvO (f : A →+* A') {n : ℕ} (x : Fin n → ℕ → A) (y : Matrix (Fin n) (Fin n) A) (c : ℕ) (h : Fin c → ℕ) :
     f (hvO x y c h) = hvO (fun a i => f (x a i)) (y.map f) c h := by
@@ -68,7 +73,8 @@ theorem rowAct_hvE (g : Matrix (Fin n) (Fin n) K) (x : Fin n → ℕ → K) (c :
   rw [h1, yV_map_rowAct g, hvE_mul]
   congr 1
   funext a i
-  simp only [mulC, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mulC, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul]
   refine Finset.sum_congr rfl fun b _ => ?_
   congr 1
   exact (rowAct K g).commutes _
@@ -85,7 +91,8 @@ theorem rowAct_hvO (g gi : Matrix (Fin n) (Fin n) K) (hg : g * gi = 1) (x : Fin 
     rw [show rowAct K (n := n) g (C (x a i)) = C (x a i) from (rowAct K g).commutes _]
     have h3 : x a i = mulC g (mulC gi x) a i := by rw [← mulC_mul, hg]; simp [mulC, Matrix.one_apply]
     rw [h3]
-    simp only [mulC, Matrix.map_apply, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [mulC, Matrix.map_apply, map_sum, map_mul]
   rw [h2, hvO_mul, smul_eq_C_mul, map_pow]
   congr 2
   exact (RingHom.map_det C g).symm

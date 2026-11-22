@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.GramReDetLe
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.GramReDetLe
+
+@[expose] public section
 
 noncomputable section
 
@@ -122,7 +126,7 @@ theorem xi_bd {k r : ℕ} (s : Fin (r + 1) → ℝ) (hs : ∀ l, 0 ≤ s l) (h :
     xiR k r s (h * m) ≤ (∏ l, (K ^ (l.val + 1)) ^ s l) * xiR k r s m := by
   unfold xiR
   rw [← Finset.prod_mul_distrib]
-  apply Finset.prod_le_prod
+  apply Finset.prod_le_prod₀
   · intro l _
     exact Real.rpow_nonneg (Real.sqrt_nonneg _) _
   · intro l _
@@ -151,7 +155,7 @@ theorem xi_bd {k r : ℕ} (s : Fin (r + 1) → ℝ) (hs : ∀ l, 0 ≤ s l) (h :
 theorem cont_gN {k r : ℕ} : Continuous (gN : Mat k r → ℝ) := by
   unfold gN
   refine Continuous.sqrt ?_
-  refine continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ => ?_
+  refine continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ => ?_
   exact Complex.continuous_normSq.comp (continuous_id.matrix_elem i j)
 
 theorem cont_ga {k r : ℕ} (l : Fin (r + 1)) :

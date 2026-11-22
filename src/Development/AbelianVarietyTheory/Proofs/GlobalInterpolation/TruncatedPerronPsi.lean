@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TruncatedPerronKernel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TruncatedPerronKernel
+
+@[expose] public section
+
 open Complex DirichletCharacter ArithmeticFunction MeasureTheory
 
 namespace GlobalTheory.PerronPsi
@@ -451,22 +456,18 @@ theorem truncated_perron_psi : ∃ C : ℝ, 0 < C ∧ ∀ (q : ℕ) [NeZero q] (
   have hB0 : 0 ≤ B := div_nonneg (by linarith) hT0.le
   set a : ℕ → ℂ := fun n => (Λ n : ℂ) * χ (n : ZMod q) with ha
   have ha0 : a 0 = 0 := by simp [ha]
+  have ha_twist : a = (fun n : ℕ => χ (n : ZMod q)) * (fun n => (Λ n : ℂ)) := by
+    funext n
+    exact mul_comm _ _
   have hre : ∀ t : ℝ, 1 < ((σ : ℂ) + t * I).re := fun t => by simpa using hσ1
   have hsum : LSeriesSummable a σ := by
-    have h1 := LSeriesSummable_twist_vonMangoldt χ (s := (σ : ℂ)) (by simpa using hσ1)
-    convert h1 using 1
-    funext n
-    simp only [ha, Pi.mul_apply]
-    ring
+    rw [ha_twist]
+    exact LSeriesSummable_twist_vonMangoldt χ (by simpa using hσ1)
   have hLS : ∀ t : ℝ, -(deriv (LFunction χ) ((σ : ℂ) + t * I) / LFunction χ ((σ : ℂ) + t * I))
       = LSeries a ((σ : ℂ) + t * I) := by
     intro t
     rw [LFunction_eq_LSeries χ (hre t), deriv_LFunction_eq_deriv_LSeries χ (hre t), ← neg_div,
-      ← LSeries_twist_vonMangoldt_eq χ (hre t)]
-    congr 1
-    funext n
-    simp only [ha, Pi.mul_apply]
-    ring
+      ← LSeries_twist_vonMangoldt_eq χ (hre t), ha_twist]
   have hJ : ∫ t in (-T)..T, -(deriv (LFunction χ) ((σ : ℂ) + t * I) / LFunction χ ((σ : ℂ) + t * I))
         * (u : ℂ) ^ ((σ : ℂ) + t * I) / ((σ : ℂ) + t * I)
       = ∫ t in (-T)..T, LSeries a ((σ : ℂ) + t * I) * (u : ℂ) ^ ((σ : ℂ) + t * I) / ((σ : ℂ) + t * I) := by

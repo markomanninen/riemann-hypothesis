@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DerRingInjective
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueBtOrderEmbeddingStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BtOrderEmbeddingOpenImmersionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteBaseChangeStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualLatticePointUniversalStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HomAddMulOfUnitSectionStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BtOrderValueEvalStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DerRingInjective
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueBtOrderEmbeddingStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BtOrderEmbeddingOpenImmersionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteBaseChangeStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.DualLatticePointUniversalStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HomAddMulOfUnitSectionStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BtOrderValueEvalStatement
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.CompanionTheory.Ar.BT.Tan
@@ -28,7 +32,7 @@ theorem exists_der (ρ : B →ₐ[R] TrivSqZeroExt R V) (h : ∀ f, (ρ f).fst =
       rw [map_mul, TrivSqZeroExt.snd_mul, h1, h2]
       simp
     · intro a b ha hb
-      rw [map_add, TrivSqZeroExt.snd_add, ha, hb, add_zero]
+      rw [map_add (f := _), TrivSqZeroExt.snd_add, ha, hb, add_zero]
   let d : RingHom.ker ε →ₗ[R] V :=
     { toFun := fun f => (ρ f.1).snd
       map_add' := fun a b => by simp

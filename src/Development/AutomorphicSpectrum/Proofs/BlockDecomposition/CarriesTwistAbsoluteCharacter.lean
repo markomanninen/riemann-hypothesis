@@ -1,4 +1,8 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStable
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FinStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ open scoped ContDiff
 
 namespace GlobalTheory.CompanionTheory.LimV
 
-theorem carries_absFn_tw {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {N : ℕ}
+theorem carries_absFn_tw {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {N : ℕ}
     (U : Submodule ℂ (Sm E N)) (z z' : ℂ) : Carries (absFn N (z' - z)) (tw U z) (tw U z') := by
   rintro φ ⟨ψ, hψ, rfl⟩
   refine ⟨mulChi N (GlobalTheory.CuspRep.Model.absC E z') ψ, ⟨ψ, hψ, rfl⟩, fun x => ?_⟩

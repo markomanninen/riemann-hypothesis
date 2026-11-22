@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -21,7 +25,7 @@ theorem _root_.GlobalTheory.exists_isUnit_sub_of_ringHom_ne : ∀ (A O : Type) [
     | zero => simp
     | add y z _ _ hy hz =>
         have : σ (y + z) - σ' (y + z) = (σ y - σ' y) + (σ z - σ' z) := by
-          rw [map_add, map_add]; ring
+          rw [map_add (f := _), map_add (f := _)]; ring
         rw [this]
         exact J.add_mem hy hz
     | smul n y _ hy =>
@@ -49,7 +53,8 @@ theorem _root_.GlobalTheory.exists_isUnit_sub_of_ringHom_ne : ∀ (A O : Type) [
       exact (IsLocalRing.mem_maximalIdeal _).mpr (mem_nonunits_iff.mpr (hcon a))
     have hS : (∑ i ∈ Finset.range g, σ a ^ i * σ' a ^ (g - 1 - i)) ∈
         IsLocalRing.maximalIdeal O := by
-      rw [← IsLocalRing.residue_eq_zero_iff, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← IsLocalRing.residue_eq_zero_iff, map_sum]
       simp_rw [map_mul, map_pow, hr, ← pow_add]
       rw [Finset.sum_congr rfl (g := fun _ => IsLocalRing.residue O (σ a) ^ (g - 1))
         (fun i hi => by have := Finset.mem_range.mp hi; congr 1; omega)]

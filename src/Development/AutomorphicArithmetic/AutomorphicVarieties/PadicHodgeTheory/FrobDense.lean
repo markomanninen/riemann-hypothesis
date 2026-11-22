@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.IdealValuations.LocRootsY
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.IdealValuations.LocRootsY
+
+@[expose] public section
+
 open Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal TensorProduct Module UpperTheory.V.Loc Topology
 
 private theorem fd_pow_root {K : Type*} [Field K] {m n : ℕ} {y : K} (h : y ^ m = 1) :
@@ -28,7 +33,7 @@ private theorem fd_level {v : ℕ} [Fact v.Prime] {x : Om v} (hx : x ∈ Maximal
     exact ⟨1, hv.not_dvd_one, fun g h _ => by rw [AlgEquiv.commutes, AlgEquiv.commutes]⟩
   | add x y _ _ hx hy =>
     obtain ⟨m, hm, h⟩ := key hx hy
-    exact ⟨m, hm, fun g k hgk => by rw [map_add, map_add, (h g k hgk).1, (h g k hgk).2]⟩
+    exact ⟨m, hm, fun g k hgk => by rw [map_add (f := _), map_add (f := _), (h g k hgk).1, (h g k hgk).2]⟩
   | inv x _ hx =>
     obtain ⟨m, hm, h⟩ := hx
     exact ⟨m, hm, fun g k hgk => by rw [map_inv₀, map_inv₀, h g k hgk]⟩
@@ -36,7 +41,8 @@ private theorem fd_level {v : ℕ} [Fact v.Prime] {x : Om v} (hx : x ∈ Maximal
     obtain ⟨m, hm, h⟩ := key hx hy
     exact ⟨m, hm, fun g k hgk => by rw [map_mul, map_mul, (h g k hgk).1, (h g k hgk).2]⟩
 
-private theorem fd_frob {v : ℕ} [Fact v.Prime] {σ : GQ v} (hσ : IsFrob σ) {m : ℕ} (hm : ¬ v ∣ m)
+private theorem fd_frob {v : ℕ} [Fact v.Prime] {σ : GQ v}
+    (hσ : UpperTheory.V.Loc.IsFrob (v := v) σ) {m : ℕ} (hm : ¬ v ∣ m)
     (j : ℕ) (y : Om v) (hy : y ^ m = 1) : (σ ^ j) y = y ^ v ^ j := by
   have hm0 : m ≠ 0 := by rintro rfl; exact hm (dvd_zero _)
   have h1 : σ y = y ^ v := by
@@ -49,7 +55,8 @@ private theorem fd_frob {v : ℕ} [Fact v.Prime] {σ : GQ v} (hσ : IsFrob σ) {
   | succ j ih => rw [pow_succ', AlgEquiv.mul_apply, ih, map_pow, h1, ← pow_mul, pow_succ']
 
 theorem UpperTheory.V.Loc.frobDense :
-    ∀ {v : ℕ} [Fact v.Prime] (σ : GQ v), IsFrob σ → (Iq v ⊔ Subgroup.zpowers σ).topologicalClosure = ⊤ := by
+    ∀ {v : ℕ} [Fact v.Prime] (σ : GQ v), UpperTheory.V.Loc.IsFrob (v := v) σ →
+      (Iq v ⊔ Subgroup.zpowers σ).topologicalClosure = ⊤ := by
   intro v _ σ hσ
   let H : ClosedSubgroup (GQ v) :=
     ⟨(Iq v ⊔ Subgroup.zpowers σ).topologicalClosure, Subgroup.isClosed_topologicalClosure _⟩

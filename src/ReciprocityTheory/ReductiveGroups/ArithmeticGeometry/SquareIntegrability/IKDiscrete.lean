@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.QuotientTorusMinimumBound
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TofSpanCondition
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.QuotientTorusMinimumBound
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.TofSpanCondition
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -40,12 +44,6 @@ theorem IK_span : Submodule.span ℝ (IK I : Set (IR I)) = ⊤ := by
     exact mem_IK.1 hz
   · intro hy
     exact ⟨⟨y, Submodule.subset_span hy⟩, mem_IK.2 hy, rfl⟩
-
-theorem IK_lattice (hI : IsSplit P I) : ∃ (_ : DiscreteTopology (IK I)) (_ : IsZLattice ℝ (IK I)),
-    Module.finrank ℤ (IK I) = Module.finrank ℝ (IR I) := by
-  haveI := IK_discrete hI
-  haveI : IsZLattice ℝ (IK I) := ⟨IK_span⟩
-  exact ⟨inferInstance, inferInstance, ZLattice.rank ℝ (IK I)⟩
 
 def Ib (hI : IsSplit P I) : Module.Basis (Fin (Module.finrank ℝ (IR I))) ℝ (IR I) :=
   haveI := IK_discrete hI

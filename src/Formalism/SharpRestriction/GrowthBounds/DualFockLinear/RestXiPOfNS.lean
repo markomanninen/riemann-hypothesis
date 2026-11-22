@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.ValLeOfVK
-import Formalism.SharpRestriction.GrowthBounds.FlipOneThree
-import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.ValLeOfVK
+public import Formalism.SharpRestriction.GrowthBounds.FlipOneThree
+public import Formalism.SharpRestriction.GrowthBounds.GLWeightTheory
+
+@[expose] public section
 
 noncomputable section
 

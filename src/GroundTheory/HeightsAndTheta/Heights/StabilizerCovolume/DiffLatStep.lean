@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.DiffLatFree
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.StabilizerCovolume.DiffLatFree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -21,8 +26,8 @@ theorem absNorm_map_mapRingHom (s : Em →+* K) (b : Ideal (𝓞 Em)) :
     (IsFractionRing.finrank_eq (𝓞 Em) Em (𝓞 K) K).symm
   rw [h1, Ideal.absNorm_algebraMap, h3]
 
-omit [NumberField Em] in
 
+omit [NumberField Em] in
 theorem span_singleton_toAddSubgroup (x : Fin N → Em) :
     (Submodule.span (𝓞 Em) {x}).toAddSubgroup =
       (⊤ : AddSubgroup (𝓞 Em)).map (LinearMap.toSpanSingleton (𝓞 Em) _ x).toAddMonoidHom := by

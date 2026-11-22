@@ -1,9 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.KisinCrTrivial
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.RtConj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.RtChart
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.UnivEx
-open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.Published IsLocalRing Polynomial
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.RtConj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.RtChart
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.UnivEx
+
+@[expose] public section
+
+open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg IsLocalRing Polynomial
 
 section Series
 
@@ -62,7 +67,7 @@ private theorem coeff_lin_of_mem_sq {f : MvPowerSeries σ E} (hf : f ∈ maximal
   rw [pow_two] at hf
   refine Submodule.mul_induction_on hf (fun a ha b hb => ?_) fun a b ha hb => ?_
   · rw [coeff_lin_mul, (mem_max_iff a).1 ha, (mem_max_iff b).1 hb, zero_mul, mul_zero, add_zero]
-  · rw [map_add, ha, hb, add_zero]
+  · rw [map_add (f := _), ha, hb, add_zero]
 
 private theorem mem_sq_of_coeff [Fintype σ] {f : MvPowerSeries σ E} (h0 : MvPowerSeries.constantCoeff f = 0)
     (h1 : ∀ i, MvPowerSeries.coeff (Finsupp.single i 1) f = 0) : f ∈ maximalIdeal (MvPowerSeries σ E) ^ 2 := by
@@ -73,7 +78,8 @@ private theorem mem_sq_of_coeff [Fintype σ] {f : MvPowerSeries σ E} (h0 : MvPo
     simpa using h0
   have hg : ∀ i, MvPowerSeries.constantCoeff (g i) = 0 := fun i => by
     have := h1 i
-    rw [e, map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e, map_sum] at this
     simpa [coeff_lin_mul, coeff_lin_X] using this
   rw [e, pow_two]
   exact Ideal.sum_mem _ fun i _ =>
@@ -87,11 +93,11 @@ private theorem zl_inj (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [IsDomai
   by_contra h
   have hp : (Ideal.comap (algebraMap ℤ_[l] O) ⊥).IsPrime := inferInstance
   have hm : (Ideal.comap (algebraMap ℤ_[l] O) ⊥).IsMaximal := hp.isMaximal h
-  have h2 : (⊥ : Ideal O).IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := ℤ_[l]) _ hm
+  have h2 : (⊥ : Ideal O).IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := ℤ_[l]) _ hm
   exact IsDiscreteValuationRing.not_a_field O (IsLocalRing.eq_maximalIdeal h2).symm
 
 theorem UpperTheory.V.Loc.locGood :
-    LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [CharZero O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (U : D.Univ), LocGood U (D.It U) := by
+    LocalPublishedTheorems → ∀ {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] [CharZero O] [Algebra ℤ_[l] O] [Module.Finite ℤ_[l] O] [IsAdicComplete (maximalIdeal O) O] (D : Dat3 l O) (U : _root_.UpperTheory.V.U3.Univ (_root_.UpperTheory.V.U3.GCond.noCondition O D.η D.Ψ)), LocGood U (D.It U) := by
   intro hP l _ O _ _ _ _ _ _ _ D U
   refine ⟨?_, ?_⟩
   · rintro R _ _ _ r r' h hh e ⟨f, hf, hI⟩

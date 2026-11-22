@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.LeviForms.BergmanExistsStatement
-import Lemmata.DetMonotoneStarMulSelf.OneLeReDetOneAdd
+module
+
+public import ReciprocityTheory.L2DbarEstimates.LeviForms.BergmanExistsStatement
+public import Lemmata.DetMonotoneStarMulSelf.OneLeReDetOneAdd
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.I
 

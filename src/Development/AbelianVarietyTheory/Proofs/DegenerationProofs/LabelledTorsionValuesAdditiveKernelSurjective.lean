@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Definitions.Degenerations.HomExtSt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.HomExtSt
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -20,7 +24,7 @@ theorem arcF_values_add_ker_onto : BrGtSt → AllD fun D => ∀ (R : Type) [Comm
       refine Subtype.ext (Prod.ext ?_ ((hadd _ _ _ _ _ _ (A.hq n a).2 (A.hq n b).2 hq.2).1 h₂))
       apply Multiplicative.toAdd.injective
       apply A.ν.eX.injective
-      rw [hq.1, h₁, ← (A.hq n a).1, ← (A.hq n b).1, ← map_add]
+      rw [hq.1, h₁, ← (A.hq n a).1, ← (A.hq n b).1, ← map_add (f := _)]
       rfl
     rw [← e]
     exact ((hQ n).2.2 _ _ _ _ hq (A.hq n _)).1 h₃

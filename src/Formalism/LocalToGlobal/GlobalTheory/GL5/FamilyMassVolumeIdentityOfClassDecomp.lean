@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL5.TheoremTwoFamilyOfVolume
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.TheoremThreeAllUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,8 +45,8 @@ def hitEquiv {Γ K : Subgroup G} (gj : G) (δ : Γ) (k : K) :
   left_inv γ := by ext; simp
   right_inv γ := by ext; simp
 
-open Classical in
 
+open Classical in
 theorem measure_fd_eq_sum {Γ K : Subgroup G} [Countable Γ] (μ : Measure G) [μ.IsMulLeftInvariant]
     (hK : MeasurableSet (K : Set G)) {ι : Type*} [Fintype ι] (g : ι → G)
     (hcov : ∀ x : G, ∃ i, ∃ γ : Γ, ∃ k : K, x = (γ : G) * g i * k)
@@ -209,7 +213,8 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 theorem mapAlg_mul {R A B : Type*} [CommSemiring R] [Semiring A] [Semiring B] [Algebra R A] [Algebra R B]
     (φ : A →ₐ[R] B) {n : ℕ} (X Y : Matrix (Fin n) (Fin n) A) : (X * Y).map φ = X.map φ * Y.map φ := by
   ext i j
-  simp [Matrix.map_apply, Matrix.mul_apply, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.map_apply, Matrix.mul_apply, map_sum, map_mul]
 
 theorem mapAlg_one {R A B : Type*} [CommSemiring R] [Semiring A] [Semiring B] [Algebra R A] [Algebra R B]
     (φ : A →ₐ[R] B) {n : ℕ} : (1 : Matrix (Fin n) (Fin n) A).map φ = 1 := Matrix.map_one _ (map_zero φ) (map_one φ)
@@ -371,13 +376,5 @@ theorem mass_volume_identity_of_class_decomp (D : D7) (hT : VolTie D) (hG : Genu
     | exact hG W
     | exact (hG W hW hdef).symm
     | (clear hT hall hvol hμ𝓕 hθall key e2 hpos hmpos; unfold GenusMassStd at hG; done)
-
-theorem family_mass_volume_identity_of_class_decomp {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) (hR : TiedRealF Fm) (hH : HostInputsF Fm)
-    (hC : ∀ x (i : Fm.Ix x), DefClassDecomp (Fm.D x i)) : ∀ x (i : Fm.Ix x), DefiniteVolumeEqMass (Fm.D x i) :=
-  fun x i => mass_volume_identity_of_class_decomp _ (Formalism.L2.Theta.VolTieG.volTie (hR x i).vol) (hH x i).2.2 (hC x i)
-
-theorem Link2_of_decomp (hC : ∀ (eps : ℝ) (Fm : Formalism.MainNotions.FamP eps) x (i : Fm.Ix x), DefClassDecomp (Fm.D x i)) :
-    Link2 :=
-  fun eps Fm hR _ hH hV => theorem_two_family_of_volume Fm hR hV (family_mass_volume_identity_of_class_decomp Fm hR hH (hC eps Fm))
 
 end Formalism.L2.GlobalTheoryTheory.GenusMassVolumes

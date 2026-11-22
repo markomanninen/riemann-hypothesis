@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalRingCardinality.SpanPowerMembership.Adelic
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Adelic
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,53 @@ theorem finite_quot : Finite (𝓞 F ⧸ v.asIdeal) := Ideal.finiteQuotientOfFre
 theorem proper : ProperSpace (v.adicCompletion F) := by
   have := finite_quot v
   have h1 : IsDiscreteValuationRing (v.adicCompletionIntegers F) := inferInstance
-  have h2 := adicInt_residue_finite (K := F) v
+  let Ov := v.adicCompletionIntegers F
+  let Kv := v.adicCompletion F
+  have hv (y : F) : Valued.v (algebraMap F Kv y) = v.valuation F y := by
+    exact valuedAdicCompletion_eq_valuation' v y
+  have hm (x : Ov) : x ∈ IsLocalRing.maximalIdeal Ov ↔ Valued.v (x : Kv) < 1 := by
+    have hI : Valuation.Integers (Valued.v : Valuation Kv ℤᵐ⁰) Ov := Valuation.integer.integers _
+    rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff, hI.isUnit_iff_valuation_eq_one]
+    exact (hI.map_le_one x).lt_iff_ne.symm
+  have hs : Function.Surjective ((IsLocalRing.residue Ov).comp (algebraMap (𝓞 F) Ov)) := by
+    intro y
+    obtain ⟨x, rfl⟩ := IsLocalRing.residue_surjective y
+    have hn : {z : Kv | Valued.v (z - x) < 1} ∈ nhds (x : Kv) := by
+      rw [Valued.mem_nhds]
+      refine ⟨1, fun z hz => ?_⟩
+      simp only [Set.mem_ofPred_eq, Valuation.restrict_lt_iff_lt_embedding, Units.val_one,
+        map_one] at hz ⊢
+      exact hz
+    obtain ⟨_, hz, ⟨k, rfl⟩⟩ := mem_closure_iff_nhds.1
+      (denseRange_algebraMap (R := 𝓞 F) (K := F) (v := v) (x : Kv)) _ hn
+    have hz' : Valued.v (algebraMap F Kv k - x) < 1 := hz
+    have hk : v.valuation F k ≤ 1 := by
+      rw [← hv]
+      have e : algebraMap F Kv k = (algebraMap F Kv k - x) + x := by ring
+      rw [e]
+      exact Valuation.map_add_le _ hz'.le x.2
+    obtain ⟨a, ha⟩ := exists_valuation_sub_lt_of_integer (K := F) v hk 1
+    refine ⟨a, ?_⟩
+    simp only [RingHom.coe_comp, Function.comp_apply]
+    apply (Ideal.Quotient.eq).2
+    rw [hm]
+    have e1 : ((algebraMap (𝓞 F) Ov a : Ov) : Kv) = algebraMap F Kv (algebraMap (𝓞 F) F a) := rfl
+    have e2 : ((algebraMap (𝓞 F) Ov a - x : Ov) : Kv) =
+        algebraMap F Kv (algebraMap (𝓞 F) F a - k) + (algebraMap F Kv k - x) := by
+      rw [map_sub, AddSubgroupClass.coe_sub, e1]
+      ring
+    rw [e2]
+    refine Valuation.map_add_lt _ ?_ hz'
+    rw [hv]
+    simpa using ha
+  have hf : ∀ a ∈ v.asIdeal, ((IsLocalRing.residue Ov).comp (algebraMap (𝓞 F) Ov)) a = 0 := by
+    intro a ha
+    rw [RingHom.comp_apply, IsLocalRing.residue_eq_zero_iff, hm]
+    have h1 : ((algebraMap (𝓞 F) Ov a : Ov) : Kv) = algebraMap F Kv (algebraMap (𝓞 F) F a) := rfl
+    rw [h1, hv, valuation_of_algebraMap]
+    exact (v.intValuation_lt_one_iff_dvd a).mpr (Ideal.dvd_span_singleton.mpr ha)
+  have h2 : Finite (IsLocalRing.ResidueField Ov) := Finite.of_surjective _
+    (Ideal.Quotient.lift_surjective_of_surjective v.asIdeal hf hs)
   exact Valued.integer.properSpace_iff_completeSpace_and_isDiscreteValuationRing_integer_and_finite_residueField.mpr
     ⟨inferInstance, h1, h2⟩
 

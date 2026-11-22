@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.UnipBlocks
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SubDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.AdMeas
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PkLaws
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.UnipotentBlockPairs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.UnipBlocks
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SubDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.AdMeas
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.PkLaws
+
+@[expose] public section
 
 open MeasureTheory NumberField Set Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -63,7 +67,7 @@ private def top : PS R →* GL (Fin 2) R where
 
 private theorem low_unip (X : UPos (2 + 2) 2 → R) : Low (unipMatrix X) := by
   intro i j
-  rw [unipMatrix, Matrix.add_apply, low_one i j, blockEntry_apply, dif_neg, add_zero]
+  rw [unipMatrix, Matrix.add_apply, low_one i j, blockEntry_apply, dite_eq_right, add_zero]
   simp only [Fin.val_natAdd, Fin.val_castAdd]
   omega
 
@@ -74,7 +78,7 @@ private theorem top_unip (X : UPos (2 + 2) 2 → R) : top ⟨unipGL X, unip_mem 
   rw [Units.val_one, ← ul_one]
   ext i j
   change unipMatrix X (Fin.castAdd 2 i) (Fin.castAdd 2 j) = (1 : Matrix _ _ R) (Fin.castAdd 2 i) (Fin.castAdd 2 j)
-  rw [unipMatrix, Matrix.add_apply, blockEntry_apply, dif_neg, add_zero]
+  rw [unipMatrix, Matrix.add_apply, blockEntry_apply, dite_eq_right, add_zero]
   simp only [Fin.val_castAdd]
   omega
 
@@ -176,7 +180,7 @@ private theorem hp_mul (p : G1 K (2 + 2)) (s : PS 𝔸[K]) (h : (p : AdelicGLn.A
   simp only [Subgroup.coe_mul, h, mul_assoc, Subgroup.coe_subtype]
 
 private theorem cont_hp : Continuous (HH (K := K)) := by
-  let S : Subgroup (G1 K (2 + 2)) := (PS 𝔸[K]).comap (normOneGL K (2 + 2)).subtype
+  let S : Subgroup (G1 K (2 + 2)) := (PS 𝔸[K]).comap (normOneGL (K := K) (n := (2 + 2))).subtype
   have c1 : Continuous fun g : G1 K (2 + 2) => (g : AdelicGLn.AdelicGL K (2 + 2)).val :=
     Units.continuous_val.comp continuous_subtype_val
   have c2 : Continuous fun g : G1 K (2 + 2) => ((g : AdelicGLn.AdelicGL K (2 + 2))⁻¹).val :=

@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.VolPin
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.Vanish
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.PlacesOf
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalIsometryExtendsLocalIsometryStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitriangularChangeRationalFlagIffRationalUnipot
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.VolPin
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.Vanish
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.PlacesOf
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.RationalIsometryExtendsLocalIsometryStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitriangularChangeRationalFlagIffRationalUnipot
+
+@[expose] public section
 
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.L2.SG.RowsConc Formalism.L2.SG.NGData Formalism.L2.SG.TermLoc GlobalTheory.HL GlobalTheory.LocOver
 open scoped Pointwise ENNReal Classical
@@ -17,14 +21,14 @@ namespace GlobalTheory.FlagMove
 
 variable {D : D7}
 
-theorem Xsp_eq_Xflag {T : D.host.E} (F : LFlag (VS D) D.R.rS T) : Xsp F = Xflag F D.R.rS := by
+theorem Xsp_eq_Xflag {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) : Xsp F = Xflag F D.R.rS := by
   unfold Xsp Xflag
   simp only [Formalism.MainNotions.S.FlagG.X, Formalism.MainNotions.S.FlagG.Xa]
   congr 1
   ext v
   simp
 
-private lemma finrank_Xflag {T : D.host.E} (F : LFlag (VS D) D.R.rS T) (j : ℕ) :
+private lemma finrank_Xflag {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (j : ℕ) :
     Module.finrank D.host.E (Xflag F j) = Fintype.card {i : Fin D.R.rS // i.1 < j} := by
   have h : Xflag F j = Submodule.span D.host.E
       (Set.range (fun i : {i : Fin D.R.rS // i.1 < j} => F.fl.e i.1)) := by
@@ -36,7 +40,7 @@ private lemma finrank_Xflag {T : D.host.E} (F : LFlag (VS D) D.R.rS T) (j : ℕ)
   rw [h, finrank_span_eq_card]
   exact F.fl.e_indep.comp _ Subtype.val_injective
 
-theorem finrank_Xflag_eq {T T0 : D.host.E} (F : LFlag (VS D) D.R.rS T) (F0 : LFlag (VS D) D.R.rS T0) (j : ℕ) :
+theorem finrank_Xflag_eq {T T0 : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F0 : LFlag (D.sp.Y 0) D.R.rS T0) (j : ℕ) :
     Module.finrank D.host.E (Xflag F j) = Module.finrank D.host.E (Xflag F0 j) := by
   rw [finrank_Xflag, finrank_Xflag]
 
@@ -56,7 +60,7 @@ theorem orth_iff {β : (VS D).V ≃ₗ[D.host.E] (VS D).V} (hi : β ∈ Formalis
     rw [← hiso, LinearEquiv.apply_symm_apply] at h'
     exact h'
 
-private lemma frame_mem_Xflag {T0 : D.host.E} (F0 : LFlag (VS D) D.R.rS T0) (j : ℕ)
+private lemma frame_mem_Xflag {T0 : D.host.E} (F0 : LFlag (D.sp.Y 0) D.R.rS T0) (j : ℕ)
     (a : Fin (D.R.rS + 1)) (ha : a.1 < j) (hr : a.1 < D.R.rS) : frame F0 a ∈ Xflag F0 j := by
   have e : a = Fin.castSucc ⟨a.1, hr⟩ := Fin.ext rfl
   rw [e]
@@ -64,7 +68,7 @@ private lemma frame_mem_Xflag {T0 : D.host.E} (F0 : LFlag (VS D) D.R.rS T0) (j :
   simp only [Formalism.MainNotions.S.FlagG.fvec, Fin.snoc_castSucc, Formalism.MainNotions.S.FlagG.Xa]
   exact Submodule.subset_span ⟨⟨a.1, hr⟩, ha, rfl⟩
 
-theorem map_Xflag_le {T T0 : D.host.E} (F : LFlag (VS D) D.R.rS T) (F0 : LFlag (VS D) D.R.rS T0)
+theorem map_Xflag_le {T T0 : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F0 : LFlag (D.sp.Y 0) D.R.rS T0)
     (σ : (VS D).V ≃ₗ[D.host.E] (VS D).V) (U : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) D.host.E)
     (hU : IsUpUni U) (hf : ∀ b, σ (frame F b) = ∑ a, U a b • frame F0 a) (j : ℕ) :
     ∀ x ∈ Xflag F j, σ x ∈ Xflag F0 j := by
@@ -89,7 +93,7 @@ theorem map_Xflag_le {T T0 : D.host.E} (F : LFlag (VS D) D.R.rS T) (F0 : LFlag (
       exact Submodule.smul_mem _ _ (frame_mem_Xflag F0 j a (by omega) (by omega))
   exact key hx
 
-theorem mem_Xflag_iff {T T0 : D.host.E} (F : LFlag (VS D) D.R.rS T) (F0 : LFlag (VS D) D.R.rS T0)
+theorem mem_Xflag_iff {T T0 : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F0 : LFlag (D.sp.Y 0) D.R.rS T0)
     (σ : (VS D).V ≃ₗ[D.host.E] (VS D).V) (U : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) D.host.E)
     (hU : IsUpUni U) (hf : ∀ b, σ (frame F b) = ∑ a, U a b • frame F0 a) (j : ℕ) (x : (VS D).V) :
     σ x ∈ Xflag F0 j ↔ x ∈ Xflag F j := by
@@ -112,7 +116,7 @@ theorem mem_Xflag_iff {T T0 : D.host.E} (F : LFlag (VS D) D.R.rS T) (F0 : LFlag 
     exact hy
   · exact map_Xflag_le F F0 σ U hU hf j x
 
-theorem nrat_conj_iff : ∀ (D : D7) {T : D.host.E} (F F0 : LFlag (VS D) D.R.rS T)
+theorem nrat_conj_iff : ∀ (D : D7) {T : D.host.E} (F F0 : LFlag (D.sp.Y 0) D.R.rS T)
     (σ : (VS D).V ≃ₗ[D.host.E] (VS D).V) (U : Matrix (Fin (D.R.rS + 1)) (Fin (D.R.rS + 1)) D.host.E),
     σ ∈ Formalism.HermitianLatticesTheory.isom (VS D).hT → IsUpUni U → (∀ b, σ (frame F b) = ∑ a, U a b • frame F0 a) →
     ∀ n, n ∈ NRat F ↔ σ * n * σ⁻¹ ∈ NRat F0 := by

@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.StrSMul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Imports
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.SmoothVectorFixedByOpenSubgroup
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LocallyConstantOfKernel
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.StrSMul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Imports
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.SmoothVectorFixedByOpenSubgroup
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LocallyConstantOfKernel
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -44,7 +48,10 @@ theorem UpperTheory.exists_mem_strS_ne_zero_of_frameOk :
     have e1 := x2 g (g : F.Γ)⁻¹
     rw [mul_inv_cancel, x0, hχ] at e1
     show x (F.star g) * F.Ψ (F.star g) = x g * F.Ψ g
-    rw [(star h).2.2.1 g, hs, x2, x2, x3, hc, Units.val_inv_eq_inv_val]
+    have hstar : F.Ψ (F.star g) = (F.Ψ g)⁻¹ := by
+      rw [hs, map_mul, map_mul, map_inv, h.Ψ_c]
+      simp
+    rw [hstar, hs, x2, x2, x3, hc, Units.val_inv_eq_inv_val]
     have e2 : x g = -((F.Ψ g : k)⁻¹ ^ 2 * x (g : F.Γ)⁻¹) := by linear_combination -e1
     rw [e2]
     simp only [Units.val_neg, Units.val_one]

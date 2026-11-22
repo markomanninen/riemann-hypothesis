@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv
-import Development.AbelianVarietyTheory.Definitions.Divisors.KottwitzDimSignatureOneOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankMapEqOfKerEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.InfUniv
+public import Development.AbelianVarietyTheory.Definitions.Divisors.KottwitzDimSignatureOneOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinrankMapEqOfKerEq
+
+@[expose] public section
 
 open Module GlobalTheory.UPel.Sm GlobalTheory.UPel.Sm.Model GlobalTheory.UPel.Sm.KSCount
 
@@ -58,7 +62,7 @@ theorem ksDim_of_eigen_reduce : ∀ (k : Type) (H : Type 1) (O : Type) [Field k]
     intro a b
     have e : φ a b = φ (P a + (a - P a)) (P b + (b - P b)) := by simp
     rw [e]
-    simp only [map_add, LinearMap.add_apply, hφPP, hφQQ]
+    simp only [map_add (f := _), LinearMap.add_apply, hφPP, hφQQ]
     ring
   have hnd' : φ.Nondegenerate := ⟨hnd, fun y h => hnd y (fun x => by rw [hskew, h x, neg_zero])⟩
   have hperp : ∀ v, (∀ y ∈ Fil, φ v y = 0) → v ∈ Fil := by
@@ -86,7 +90,7 @@ theorem ksDim_of_eigen_reduce : ∀ (k : Type) (H : Type 1) (O : Type) [Field k]
   have hmemG : ∀ x ∈ G, P x ∈ Fil := by
     intro x hx
     obtain ⟨f, hf, y, hy, rfl⟩ := Submodule.mem_sup.1 hx
-    rw [map_add, hrangeP y hy, add_zero]
+    rw [map_add (f := _), hrangeP y hy, add_zero]
     exact hPFil f hf
   have hQG : ∀ x, x - P x ∈ G := by
     intro x
@@ -169,7 +173,7 @@ theorem ksDim_of_eigen_reduce : ∀ (k : Type) (H : Type 1) (O : Type) [Field k]
         have h2 := hiso (x - P x) hu _ (hgP y hy)
         linear_combination h1 - h2
       have e : g x = g (P x) + (P (g (x - P x)) + (g (x - P x) - P (g (x - P x)))) := by
-        rw [add_sub_cancel, ← map_add, add_sub_cancel]
+        rw [add_sub_cancel, ← map_add (f := _), add_sub_cancel]
       rw [e]
       exact Fil.add_mem (hgP x hx) (Fil.add_mem hp hq)
 
@@ -204,7 +208,7 @@ theorem ksDim_of_eigen_reduce : ∀ (k : Type) (H : Type 1) (O : Type) [Field k]
       have eq : g (ρ a x) - ρ a (g x) = P (f' (ρ a (P x)) - ρ a (f' (P x))) + (e - P e) := by
         have hq' : ρ a x - P (ρ a x) = ρ a q := by rw [hq, hPρ, ← map_sub]
         rw [hg, hg, hq', he, ← hq]
-        simp only [hPρ, map_sub, map_add]
+        simp only [hPρ, map_sub, map_add (f := _)]
         abel
       rw [eq]
       refine Fil.add_mem (hmemG _ (hf'.1 a _ (hFilG (hPFil x hx)))) (hQcrit e fun y hy => ?_)
@@ -227,9 +231,9 @@ theorem ksDim_of_eigen_reduce : ∀ (k : Type) (H : Type 1) (O : Type) [Field k]
     · rw [hg, hZP z hz, sub_self, hT0, map_zero, sub_zero, add_zero]
       exact hmemG _ (hf'.2.1 z hz)
     · have ex : φ (g x) y = φ (P (f' (P x))) y + φ (T (x - P x) - P (T (x - P x))) y := by
-        rw [hg, map_add, LinearMap.add_apply]
+        rw [hg, map_add (f := _), LinearMap.add_apply]
       have ey : φ x (g y) = φ x (P (f' (P y))) + φ x (T (y - P y) - P (T (y - P y))) := by
-        rw [hg, map_add]
+        rw [hg, map_add (f := _)]
       have K1 := L1 (f' (P x)) y
       have K2 := L2 (T (x - P x)) y
       have K3 := L3 x (f' (P y))
@@ -247,7 +251,7 @@ theorem ksDim_of_eigen_reduce : ∀ (k : Type) (H : Type 1) (O : Type) [Field k]
         rwa [← hAdef, hQA, map_smul] at this)
       have hq1 := hQG (f' (x - P x))
       have hq2 := hQG (f' (P x))
-      have e1 : f' x = f' (P x) + f' (x - P x) := by rw [← map_add, add_sub_cancel]
+      have e1 : f' x = f' (P x) + f' (x - P x) := by rw [← map_add (f := _), add_sub_cancel]
       have e : P (f' (P x)) - f' x = -(f' (P x) - P (f' (P x))) -
           (P (f' (x - P x)) + (f' (x - P x) - P (f' (x - P x)))) := by rw [e1]; abel
       rw [e]

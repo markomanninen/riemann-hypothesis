@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.Statements
-import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.StatementsBounds
-import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.PChartBounds
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.Statements
+public import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.StatementsBounds
+public import GroundTheory.HeightsAndTheta.Heights.MatrixCharts.PChartBounds
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Regular
@@ -192,8 +197,8 @@ theorem chartImag_entry_deriv {n a g : ℕ} (h : a ≤ n) (T0 : (Fin n → ℂ) 
 
 end HodgeDerivative
 
-open HodgeDerivative in
 
+open HodgeDerivative in
 theorem HodgeDerivative.proof (h0 : ImTauBounds.Statement) (h1 : Tau0Holomorphic.Statement)
     (hAn : AnalyticDerivBound.Statement) (hInv : InvEntryDeriv.Statement)
     (hLDG : LogDetGramDeriv.Statement) : HodgeDerivative.Statement := by

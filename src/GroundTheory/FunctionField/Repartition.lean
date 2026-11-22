@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.FunctionField.PlaceDefs
-import GroundTheory.FunctionField.PlaceBasic
-import GroundTheory.FunctionField.Approximation
-import GroundTheory.FunctionField.ValuationAevalSubCoeffZeroLe
-import GroundTheory.FunctionField.Divisor
-import GroundTheory.FunctionField.DivisorDegree
+module
+
+public import Mathlib
+public import GroundTheory.FunctionField.PlaceDefs
+public import GroundTheory.FunctionField.PlaceBasic
+public import GroundTheory.FunctionField.Approximation
+public import GroundTheory.FunctionField.ValuationAevalSubCoeffZeroLe
+public import GroundTheory.FunctionField.Divisor
+public import GroundTheory.FunctionField.DivisorDegree
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.FunctionField
@@ -68,8 +73,8 @@ theorem Place.finite_not_mem_ring (x : K) : {v : Place k K | x ∉ v.ring}.Finit
     intro h
     exact hv ((v.ord_nonneg_iff hx0).1 (by rw [h]))
 
-variable (k K) in
 
+variable (k K) in
 def repartitions : Submodule k (Place k K → K) where
   carrier := {a | {v : Place k K | a v ∉ v.ring}.Finite}
   add_mem' {a b} ha hb := (ha.union hb).subset fun v (hv : a v + b v ∉ v.ring) => by
@@ -83,8 +88,8 @@ def repartitions : Submodule k (Place k K → K) where
     rw [Algebra.smul_def] at hv
     exact hv (mul_mem (v.algebraMap_mem c) h)
 
-variable (k K) in
 
+variable (k K) in
 def Repartition : Type _ := repartitions k K
 
 namespace Repartition
@@ -100,11 +105,6 @@ instance : FunLike (Repartition k K) (Place k K) K where
 def mk (f : Place k K → K) (hf : {v : Place k K | f v ∉ v.ring}.Finite) : Repartition k K :=
   (⟨f, hf⟩ : repartitions k K)
 
-omit [IsFunctionField k K] in
-@[simp]
-theorem mk_apply (f : Place k K → K) (hf : {v : Place k K | f v ∉ v.ring}.Finite) (v : Place k K) :
-    mk f hf v = f v :=
-  rfl
 
 omit [IsFunctionField k K] in
 theorem finite_not_mem (a : Repartition k K) : {v : Place k K | a v ∉ v.ring}.Finite :=
@@ -125,10 +125,6 @@ omit [IsFunctionField k K] in
 theorem sub_apply (a b : Repartition k K) (v : Place k K) : (a - b) v = a v - b v :=
   rfl
 
-omit [IsFunctionField k K] in
-@[simp]
-theorem neg_apply (a : Repartition k K) (v : Place k K) : (-a) v = -a v :=
-  rfl
 
 omit [IsFunctionField k K] in
 @[simp]
@@ -142,59 +138,18 @@ theorem smul_apply (c : k) (a : Repartition k K) (v : Place k K) :
   change c • a v = _
   rw [Algebra.smul_def]
 
-noncomputable def mul (x : K) : Repartition k K →ₗ[k] Repartition k K where
-  toFun a := mk (fun v => x * a v) (((Place.finite_not_mem_ring x).union a.finite_not_mem).subset
-    fun v (hv : x * a v ∉ v.ring) => by
-      by_contra h
-      simp only [Set.mem_union, Set.mem_ofPred_eq, not_or, not_not] at h
-      exact hv (mul_mem h.1 h.2))
-  map_add' a b := by ext v; simp [mul_add]
-  map_smul' c a := by ext v; simp only [mk_apply, smul_apply, RingHom.id_apply]; ring
-
-@[simp]
-theorem mul_apply (x : K) (a : Repartition k K) (v : Place k K) : mul x a v = x * a v :=
-  rfl
-
-theorem mul_mul (x y : K) (a : Repartition k K) : mul (x * y) a = mul x (mul y a) := by
-  ext v; simp [_root_.mul_assoc]
-
-theorem mul_one' (a : Repartition k K) : mul (1 : K) a = a := by
-  ext v; simp
-
 noncomputable def diag : K →ₗ[k] Repartition k K where
   toFun x := mk (fun _ => x) (Place.finite_not_mem_ring x)
   map_add' _ _ := rfl
-  map_smul' c x := by ext v; simp [Algebra.smul_def]
+  map_smul' c x := by ext v; rfl
 
-@[simp]
-theorem diag_apply (x : K) (v : Place k K) : diag (k := k) x v = x :=
-  rfl
-
-theorem diag_injective : Function.Injective (diag (k := k) (K := K)) := by
-  intro x y h
-  obtain ⟨v⟩ := Place.nonempty (k := k) (K := K)
-  have := congrArg (fun a : Repartition k K => a v) h
-  simpa using this
-
-theorem mul_diag (x y : K) : mul x (diag (k := k) y) = diag (x * y) := by
-  ext v; simp
 
 variable (k K) in
-
 noncomputable def principal : Submodule k (Repartition k K) :=
   LinearMap.range (diag (k := k) (K := K))
 
-theorem mem_principal {a : Repartition k K} : a ∈ principal k K ↔ ∃ x : K, diag x = a :=
-  Iff.rfl
-
 theorem diag_mem_principal (x : K) : diag x ∈ principal k K :=
   ⟨x, rfl⟩
-
-theorem mul_mem_principal (x : K) {a : Repartition k K} (ha : a ∈ principal k K) :
-    mul x a ∈ principal k K := by
-  obtain ⟨y, rfl⟩ := ha
-  rw [mul_diag]
-  exact diag_mem_principal _
 
 end Repartition
 
@@ -214,18 +169,14 @@ def A (D : Divisor k K) : Submodule k (Repartition k K) where
     rw [Repartition.smul_apply, map_mul]
     exact (mul_le_of_le_one_left' ((v.valuation_le_one_iff _).2 (v.algebraMap_mem c))).trans (ha v)
 
-theorem mem_A {D : Divisor k K} {a : Repartition k K} :
-    a ∈ A D ↔ ∀ v : Place k K, v.valuation (a v) ≤ WithZero.exp (D v) :=
-  Iff.rfl
-
 theorem A_mono {D E : Divisor k K} (h : D ≤ E) : A D ≤ A E := fun _a ha v =>
   (ha v).trans (WithZero.exp_le_exp.2 (Finsupp.le_def.1 h v))
 
 theorem diag_mem_A_iff {D : Divisor k K} {x : K} : diag x ∈ A D ↔ x ∈ L D :=
   Iff.rfl
 
-omit [IsFunctionField k K] in
 
+omit [IsFunctionField k K] in
 theorem add_single_apply_self (D : Divisor k K) (P : Place k K) :
     (D + Finsupp.single P 1 : Divisor k K) P = D P + 1 := by
   simp
@@ -249,7 +200,7 @@ noncomputable def residueMap (D : Divisor k K) (P : Place k K) {t : K}
   toFun a := IsLocalRing.residue P.ring ⟨t * (a : Repartition k K) P,
     mul_mem_ring_of_valuation ht (by rw [← add_single_apply_self D P]; exact a.2 P)⟩
   map_add' a b := by
-    rw [← map_add]
+    rw [← map_add (f := _)]
     congr 1
     ext
     simp [mul_add]
@@ -306,7 +257,7 @@ theorem residueMap_surjective (D : Divisor k K) (P : Place k K) {t : K}
     by_contra hvP
     apply hv
     rw [Set.mem_singleton_iff] at hvP
-    simp only [f, Pi.single_apply, hvP, if_false]
+    simp only [f, Pi.single_apply, hvP, ite_false]
     exact v.ring.zero_mem
   let a : Repartition k K := Repartition.mk f hf
   have haA : a ∈ A (D + Finsupp.single P 1) := by
@@ -318,7 +269,7 @@ theorem residueMap_surjective (D : Divisor k K) (P : Place k K) {t : K}
       rw [map_mul, map_inv₀, ht, add_single_apply_self, ← WithZero.exp_neg, neg_neg]
       exact mul_le_of_le_one_right' ((w.valuation_le_one_iff _).2 y.2)
     · change w.valuation (f w) ≤ _
-      simp only [f, Pi.single_apply, hw, if_false, map_zero]
+      simp only [f, Pi.single_apply, hw, ite_false, map_zero]
       exact zero_le
   refine ⟨⟨a, haA⟩, ?_⟩
   rw [residueMap_apply]
@@ -396,7 +347,7 @@ theorem relSpace_add_single (D : Divisor k K) (P : Place k K) :
         exact (A E).sub_mem a.2 (hDE hb)
       refine ⟨⟨x, hxE⟩, ?_⟩
       have hsplit : a = ⟨b, hDE hb⟩ + ψ ⟨x, hxE⟩ := Subtype.ext hbc.symm
-      rw [hsplit, map_add]
+      rw [hsplit, map_add (f := _)]
       have : ρ ⟨b, hDE hb⟩ = 0 := (residueMap_eq_zero_iff D P ht _).2 hb
       rw [this, zero_add]
       rfl
@@ -473,7 +424,7 @@ theorem relSpace_finrank_of_le_of_deg_lt (n : ℕ) :
     rw [e3]
     refine ⟨hfin, ?_⟩
     rw [hsum]
-    have hdeg : deg E = deg E' + v.deg := by rw [hE, map_add, deg_single, one_mul]
+    have hdeg : deg E = deg E' + v.deg := by rw [hE, map_add (f := _), deg_single, one_mul]
     push_cast
     omega
 

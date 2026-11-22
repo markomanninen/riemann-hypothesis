@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.ArchimedeanCompact.OneTmulMemCenter
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelSetInterTranslateFinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.ConstantTermEqZeroOfIsCuspidal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.IsCuspidalOfConstantTermEqZero
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelSetHeightBound
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.ArchimedeanCompact.OneTmulMemCenter
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelSetInterTranslateFinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.ConstantTermEqZeroOfIsCuspidal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.IsCuspidalOfConstantTermEqZero
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SiegelSetHeightBound
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,10 +14,10 @@ open NumberField Matrix GlobalTheory.CuspRep GroundTheory.Automorphic GroundTheo
 
 namespace UpperTheory.V.Cm
 
-variable (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ)
+variable (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ)
 
-omit [NumberField E] [IsTotallyComplex E] in
-private theorem toUnits_mk (y : GL (Fin a) (Cinf E)) (h : y.val ∈ Matrix.unitaryGroup (Fin a) (Cinf E)) :
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
+theorem toUnits_mk (y : GL (Fin a) (Cinf E)) (h : y.val ∈ Matrix.unitaryGroup (Fin a) (Cinf E)) :
     Unitary.toUnits (⟨y.val, h⟩ : Kinf E a) = y := Units.ext rfl
 
 def cptEq : Kinf E a ≃* archCompact E a where
@@ -189,9 +193,6 @@ theorem isCuspForm_iff (φ : Sm E a) : GlobalTheory.CuspRep.IsCuspForm φ ↔ φ
 theorem cuspForms_le_Sm : cuspForms E a ≤ Sm E a := fun _ h => (sm_eq E a).ge h.1.isSmooth.1
 
 theorem automorphicForms_le_Sm : automorphicForms E a ≤ Sm E a := fun _ h => (sm_eq E a).ge h.isSmooth.1
-
-theorem exists_isCuspForm {f : GA E a → ℂ} (hf : f ∈ cuspForms E a) : ∃ h : f ∈ Sm E a, GlobalTheory.CuspRep.IsCuspForm ⟨f, h⟩ :=
-  ⟨cuspForms_le_Sm hf, (isCuspForm_iff _).2 hf⟩
 
 theorem lie_val (X : Lie E a) (φ : Sm E a) (h : φ.1 ∈ archSmooth E a) :
     (lie E a X φ).1 = (uAction (UniversalEnvelopingAlgebra.ι ℝ (lieEq E a X)) ⟨φ.1, h⟩).1 :=

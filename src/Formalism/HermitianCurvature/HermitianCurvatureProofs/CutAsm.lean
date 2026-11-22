@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutMP2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelSystemAdmissibleSize
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutRegFF
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutMP2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelSystemAdmissibleSize
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutRegFF
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt
 
@@ -30,14 +34,14 @@ theorem isBuiltPlace_mono {Cc₁ Cc₂ : ℝ} (h : Cc₁ ≤ Cc₂) {S : C.HidaS
 theorem toSm_smul (P : M.Par) (c : ℂ) (u : MA.Qp P.r P.TT → ℂ) : MA.toSm P (c • u) = c • MA.toSm P u := by
   unfold Formalism.FourierDecayAlt.MA.toSm
   by_cases hu : u ∈ MA.smSub P.r P.TT
-  · rw [dif_pos hu, dif_pos (Subalgebra.smul_mem _ hu c)]
+  · rw [dite_eq_left hu, dite_eq_left (Subalgebra.smul_mem _ hu c)]
     rfl
-  · rw [dif_neg hu, smul_zero]
+  · rw [dite_eq_right hu, smul_zero]
     by_cases hc : c = 0
     · subst hc
-      rw [dif_pos (by rw [zero_smul]; exact Subalgebra.zero_mem _)]
+      rw [dite_eq_left (by rw [zero_smul]; exact Subalgebra.zero_mem _)]
       exact Subtype.ext (by simp)
-    · rw [dif_neg]
+    · rw [dite_eq_right]
       intro h
       apply hu
       have h2 := Subalgebra.smul_mem _ h c⁻¹
@@ -104,7 +108,8 @@ theorem actA_mul (P : M.Par) (a b : MA.A P (MA.DQ P)) (x : M.Ty P → MA.SmQ P.r
       | (simp; rfl)
   rw [Finset.sum_congr rfl fun π' _ => e π', Finset.sum_comm]
   refine Finset.sum_congr rfl fun σ _ => ?_
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
 
 theorem actA_smul (P : M.Par) (c : ℂ) (a : MA.A P (MA.DQ P)) (x : M.Ty P → MA.SmQ P.r P.TT) :
     MA.actA P (c • a) x = c • MA.actA P a x := by

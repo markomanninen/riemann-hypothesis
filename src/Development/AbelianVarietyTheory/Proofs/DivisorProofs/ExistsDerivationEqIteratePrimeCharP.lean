@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
+
+@[expose] public section
+
 open GlobalTheory GlobalTheory.LogDR
 
 namespace GlobalTheory
@@ -9,7 +14,8 @@ theorem derivation_iterate_leibniz {R : Type} [CommRing R] (D : Derivation ℤ R
   induction n with
   | zero => simp
   | succ n ih =>
-    rw [Finset.sum_antidiagonal_choose_succ_mul (fun i j => (⇑D)^[i] a * (⇑D)^[j] b) n,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_antidiagonal_choose_succ_mul (fun i j => (⇑D)^[i] a * (⇑D)^[j] b) n,
       Function.iterate_succ_apply', ih, map_sum, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun ij hij => ?_
     rw [Finset.HasAntidiagonal.mem_antidiagonal] at hij

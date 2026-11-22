@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.PhisBRenameMul
-import Formalism.MahlerMeasure.MahlerMeasureProofs.RemoveS
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.PhisBRenameMul
+public import Formalism.MahlerMeasure.MahlerMeasureProofs.RemoveS
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ theorem mapDomain_add_inj (e : τ → σ) (he : Function.Injective e) (a b : τ 
   have ha : a = b := by
     ext x
     have h1 := DFunLike.congr_fun h (e x)
-    simpa [Finsupp.mapDomain_apply he, hβ, hβ'] using h1
+    simpa [Finsupp.mapDomain_apply_of_injective he, hβ, hβ'] using h1
   subst ha
   exact ⟨rfl, add_left_cancel h⟩
 

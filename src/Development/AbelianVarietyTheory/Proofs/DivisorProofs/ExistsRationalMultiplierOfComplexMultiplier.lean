@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -25,7 +29,8 @@ theorem relation_descends_along_functional (K A B : Type) [Field K] [CommRing A]
   obtain ⟨α, hα⟩ := hcoord
   have hrdx : ∀ s, rd (x s) = ∑ j, σ (α s j) • rd (bW j : A) := by
     intro s
-    rw [hα s, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hα s, map_sum]
     simp only [hrd]
   have hcoef : ∀ j, ∑ s, c s * σ (α s j) = 0 := by
     have h' : ∑ j, (∑ s, c s * σ (α s j)) • rd (bW j : A) = 0 := by
@@ -39,7 +44,8 @@ theorem relation_descends_along_functional (K A B : Type) [Field K] [CommRing A]
   rw [hgoal]
   refine Finset.sum_eq_zero fun j _ => ?_
   have h5 : ∑ s, φ (c s) * α s j = φ (∑ s, c s * σ (α s j)) := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun s _ => ?_
     rw [mul_comm (c s), hφ]
     exact mul_comm _ _
@@ -67,7 +73,8 @@ theorem exists_rational_multiplier_of_complex :
   have hrdsum : ∀ {m : ℕ} (a : Fin m → K) (v : Fin m → A),
       rd (∑ j, a j • v j) = ∑ j, σ (a j) • rd (v j) := by
     intro m a v
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [hrd]
   have hexp : ∀ {U : Submodule K A} {m : ℕ} (b : Basis (Fin m) K U) (u : U),
       (u : A) = ∑ j, b.repr u j • (b j : A) := by

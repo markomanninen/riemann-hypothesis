@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.T2SpaceLatticeVOfGoodSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.ZlWCbInjective
-import Formalism.SharpRestriction.LevelLetterCocycles.NormLtOneIffToZMod
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.T2SpaceLatticeVOfGoodSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.ZlWCbInjective
+public import Formalism.SharpRestriction.LevelLetterCocycles.NormLtOneIffToZMod
+
+@[expose] public section
 
 noncomputable section
 

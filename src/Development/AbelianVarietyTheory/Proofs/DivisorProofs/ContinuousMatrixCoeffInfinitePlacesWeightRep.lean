@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSplitFinMulSplitInf
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntertwiningGlOfUnitary
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsAutRepOfVecFun
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqSplitFinMulSplitInf
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntertwiningGlOfUnitary
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsAutRepOfVecFun
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT GlobalTheory.BCT.TrKer
 open scoped Classical TensorProduct Topology
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -22,18 +27,20 @@ theorem continuous_coef_piTensorMap {X ι : Type} [TopologicalSpace X] [Fintype 
   have key : ∀ k k', Continuous fun g => B.repr (PiTensorProduct.map (f g) (B k)) k' := by
     intro k k'
     simp only [B, Basis.piTensorProduct_apply, PiTensorProduct.map_tprod, Basis.piTensorProduct_repr_tprod_apply]
-    exact continuous_finset_prod _ fun c _ => by
+    exact continuous_finsetProd _ fun c _ => by
       simpa [Module.Basis.coord_apply] using hf c (bc c (k c)) ((bc c).coord (k' c))
   have h : ∀ g, ℓ (PiTensorProduct.map (f g) u) =
       ∑ k, ∑ k', B.repr u k * (B.repr (PiTensorProduct.map (f g) (B k)) k' * ℓ (B k')) := by
     intro g
     conv_lhs => rw [← B.sum_repr u]
-    simp only [map_sum, map_smul, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul]
     refine Finset.sum_congr rfl fun k _ => ?_
     conv_lhs => rw [← B.sum_repr (PiTensorProduct.map (f g) (B k))]
-    simp only [map_sum, map_smul, smul_eq_mul, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul, Finset.mul_sum]
   simp_rw [h]
-  exact continuous_finset_sum _ fun k _ => continuous_finset_sum _ fun k' _ =>
+  exact continuous_finsetSum _ fun k _ => continuous_finsetSum _ fun k' _ =>
     continuous_const.mul ((key k k').mul continuous_const)
 
 theorem continuous_coef_sqRep (n : ℕ) (mu : DomWeight n) (x : nablaSq ℂ n mu) (ℓ : Module.Dual ℂ (nablaSq ℂ n mu)) :

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.H1MapSubgroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.H1MapSubgroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ namespace GlobalTheory.ResSel
 variable {D : Formalism.BasicNotions.D7} {N : NData D.R D.host D.what₂} {X : NTw D.R D.host D.what₂ D.LL0 N} (bkP : BKPh X)
   (i : X.Tw) (s : X.Sig i)
 
-variable (X) in
 
+variable (X) in
 def IsCj (g g' : GE N) : Prop := ∀ x, g' x = X.cc (g (X.cc.symm x))
 
 def IsDual (ρ : GE N →* GL (Fin D.R.r) (X.O0 i)) : Prop :=
@@ -97,13 +101,6 @@ theorem mod_l_eq_one {M n : ℕ} (hM : 1 ≤ M) (hn : n % (2 * X.l i ^ M) = 1) :
   have hd : X.l i ∣ 2 * X.l i ^ M := Dvd.dvd.mul_left (dvd_pow_self _ (by omega)) 2
   rw [← Nat.mod_mod_of_dvd _ hd, hn, Nat.mod_eq_of_lt (Fact.out : (X.l i).Prime).one_lt]
 
-theorem FirstPlace.firstHalf (h : FirstPlace i s) : FirstHalf i s := by
-  intro M R P d φ φ' hM hP Λ _ _ _ _ κ hκ hκ' B _ _ _ _ hB ρ hρ a v hv
-  obtain ⟨hA, ⟨z, L, hz, hL, hS⟩, -⟩ := hP
-  refine h (P (.inl a)) z L hz hL (fun w hw => ?_) (hS.1 a) Λ κ hκ hκ' B hB ρ hρ v hv
-  obtain ⟨-, -, -, h0, -, hn⟩ := hA.1 _ w hw
-  exact ⟨h0, mod_l_eq_one i hM hn⟩
-
 def Recip : Prop :=
   ∀ (K : Type) [Field K] [Algebra (X.O0 i) K] [TopologicalSpace K] [DiscreteTopology K], IsRes i K → ∀ ρ, IsDual i s ρ →
     ∀ (M R : ℕ) (P : Fin R ⊕ Fin R → PlE D.host) d φ φ' (Q : Finset (PlE D.host)), 1 ≤ M → Position i s M P d φ φ' → IsQ P Q →
@@ -113,8 +110,8 @@ def Recip : Prop :=
       cl x ∈ selOn bkP i (Tgl i s) (1 : GE N →* Kˣ) K Q → cl y ∈ selOn bkP i ρ (1 : GE N →* Kˣ) K ∅ →
       ∑ a, (c a : K) * form x y (γ a) (φ a) (γ' a) (φ' a) = 0
 
-variable (X) in
 
+variable (X) in
 def StepAB : Prop :=
   ∀ (M : ℕ), 1 ≤ M → ∀ H S d, AdmFam X i M H S d → ∀ z, IsTameInertiaElementAtTwistPrime X i z →
     ∀ U : Subgroup (GE N), IsOpen (U : Set (GE N)) → U.Normal → ∀ (A : Finset (PlE D.host)) (R : ℕ) (h : Fin R → GE N),
@@ -147,23 +144,6 @@ def ChooseH : Prop :=
 
 theorem IsCj.unique {g g' g'' : GE N} (h : IsCj X g g') (h' : IsCj X g g'') : g' = g'' :=
   AlgEquiv.ext fun x => (h x).trans (h' x).symm
-
-theorem isCj_one : IsCj X (1 : GE N) 1 := fun x => by simp
-
-theorem IsCj.mul {g g' h h' : GE N} (hg : IsCj X g g') (hh : IsCj X h h') : IsCj X (g * h) (g' * h') := fun x => by
-  rw [AlgEquiv.mul_apply, AlgEquiv.mul_apply, hh x, hg]
-  simp
-
-theorem IsDual.unique {ρ ρ' : GE N →* GL (Fin D.R.r) (X.O0 i)} (h : IsDual i s ρ) (h' : IsDual i s ρ') : ρ = ρ' :=
-  MonoidHom.ext fun g => Units.ext ((h g).trans (h' g).symm)
-
-example : IsRes i (IsLocalRing.ResidueField (X.O0 i)) := fun x hx =>
-  (IsLocalRing.residue_eq_zero_iff x).2 hx
-
-theorem form_swap {K : Type} [Field K] [Algebra (X.O0 i) K] [TopologicalSpace K] [DiscreteTopology K]
-    {ρ ρ' : GE N →* GL (Fin D.R.r) (X.O0 i)} (x : Z1 (red i K ρ)) (y : Z1 (red i K ρ')) (g h g' h' : GE N) :
-    form x y g' h' g h = -form x y g h g' h' := by
-  simp [form]
 
 def dualRep : GE N →* GL (Fin D.R.r) (X.O0 i) :=
   MonoidHom.toHomUnits

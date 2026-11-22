@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.EvalBasis
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.OrthZero
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelDiagonalIntegrableHolds
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvTop
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiVecExHolds
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.TwtrContOfMem
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.EvalBasis
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.AutomorphicRepresentations.OrthZero
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelDiagonalIntegrableHolds
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiInvTop
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.PiVecExHolds
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.TwtrContOfMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,7 +70,8 @@ private lemma trace_sum {J : Type*} (s : Finset J) (c : J → ℂ) (L : J → V 
     simp only [LinearMap.restrict_coe_apply, LinearMap.sum_apply, LinearMap.smul_apply,
       Submodule.coe_sum, Submodule.coe_smul]
     rw [← Finset.sum_attach s]
-  rw [e, map_sum, ← Finset.sum_attach s]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum, ← Finset.sum_attach s]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_smul, smul_eq_mul, trace_range_eq (L j.1) W (hle j.1 j.2) (hj' j.1 j.2)]
 
@@ -89,7 +94,7 @@ theorem UpperTheory.V.Z.Tf.GlobalTraceComparison.Pi.twTrSum_pf :
       simp [LinearMap.sum_apply]
     rw [hv, Finset.sum_congr rfl fun j hj => by rw [e j hj ψ x]]
     simp_rw [← integral_const_mul]
-    rw [← integral_finset_sum _ fun j hj => (hi j hj).const_mul _]
+    rw [← integral_finsetSum _ fun j hj => (hi j hj).const_mul _]
     refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
     simp [Finset.sum_apply, Finset.sum_mul, mul_assoc]
   · rw [hT.2]

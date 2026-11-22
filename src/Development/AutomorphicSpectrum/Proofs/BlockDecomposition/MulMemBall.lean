@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AvgVanish
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AvgVanish
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,8 +44,8 @@ theorem NearOne.mul {s : kˣ} (hs : valuation k (s : k) ≤ 1) {m : ℕ}
   rw [Matrix.mul_apply]
   exact (ballSub s).sum_mem fun l _ => mul_mem_ball hs (hA a l) (hB l b)
 
-variable (k) in
 
+variable (k) in
 def congGL (s : kˣ) (hs : valuation k (s : k) ≤ 1) (m : ℕ) : Subgroup (GL (Fin m) k) where
   carrier := {g | NearOne s (g : Matrix (Fin m) (Fin m) k) ∧
     NearOne s ((g⁻¹ : GL (Fin m) k) : Matrix (Fin m) (Fin m) k)}
@@ -58,8 +62,8 @@ def congGL (s : kˣ) (hs : valuation k (s : k) ≤ 1) (m : ℕ) : Subgroup (GL (
     rintro g ⟨g1, g2⟩
     exact ⟨g2, by simpa using g1⟩
 
-variable (k) in
 
+variable (k) in
 def congM (s : kˣ) (hs : valuation k (s : k) ≤ 1) (n : ℕ) : Subgroup (Mir k n) :=
   (congGL k s hs (n + 1)).comap (Mir k n).subtype
 

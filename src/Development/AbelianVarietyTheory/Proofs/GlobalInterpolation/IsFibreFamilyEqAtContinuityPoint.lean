@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+
+@[expose] public section
 
 open MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Set Topology
 open scoped ENNReal
@@ -66,9 +70,9 @@ private lemma measure_isOpen_le_of_lintegral_le {V : Type} [MetricSpace V] [Prop
           simp [this]
     _ = m' G := lintegral_indicator_one hG.measurableSet
 
+
 open MeasureTheory Set Topology in
 open scoped ENNReal in
-
 theorem _root_.GlobalTheory.measure_eq_of_lintegral_eq_on_compactSupport {V : Type} [MetricSpace V] [ProperSpace V]
     [MeasurableSpace V] [BorelSpace V] (m m' : Measure V) (O : Set V) (hO : IsOpen O)
     (hm : m Oᶜ = 0) (hm' : m' Oᶜ = 0)
@@ -112,9 +116,9 @@ theorem _root_.GlobalTheory.measure_eq_of_lintegral_eq_on_compactSupport {V : Ty
       exact hopen _ (hs.inter hWo) (inter_subset_right.trans hWO)
     · simpa using hopen _ hWo hWO
 
+
 open MeasureTheory Set Topology in
 open scoped ENNReal in
-
 theorem _root_.GlobalTheory.IsFibreFamily_lintegral_preimage {V : Type} [TopologicalSpace V]
     [MeasurableSpace V] [BorelSpace V] {μ : Measure V} {f : V → ℝ} {O U : Set V} {B : Set ℝ}
     {fib : ℝ → Measure V}
@@ -176,9 +180,9 @@ private lemma le_of_setLIntegral_eq_near {g g' : ℝ → ℝ} {β : ℝ} {W : Se
   rw [ENNReal.ofReal_le_ofReal_iff (hg0.trans h₁.le)] at key'
   exact absurd key' (not_le.2 h₃)
 
+
 open MeasureTheory Set Topology in
 open scoped ENNReal in
-
 theorem _root_.GlobalTheory.IsFibreFamily_eq_at {V : Type} [NormedAddCommGroup V]
     [NormedSpace ℝ V] [FiniteDimensional ℝ V] [MeasurableSpace V] [BorelSpace V]
     (μ : Measure V) (f : V → ℝ)

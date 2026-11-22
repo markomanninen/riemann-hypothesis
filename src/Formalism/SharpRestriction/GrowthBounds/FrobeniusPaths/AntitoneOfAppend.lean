@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.StatementOfDegreeAndBound
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StatementOfDegreeAndBound
+
+@[expose] public section
 
 noncomputable section
 

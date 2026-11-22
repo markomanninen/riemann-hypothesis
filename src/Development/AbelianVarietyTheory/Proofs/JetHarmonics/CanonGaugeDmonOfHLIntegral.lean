@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.FormalSecondPointDerivativeSecondCoordinate
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import Development.AbelianVarietyTheory.Proofs.FormalGroupCharts.FormalSecondPointDerivativeSecondCoordinate
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -17,7 +21,7 @@ def IntS (n d : ℕ) : Subring (PS k n d) := (MvPowerSeries.map (σ := Fin n × 
 
 def IP {n : ℕ} (a : Pt k n d) : Prop := ∃ a' : Pt R n d, GP a' ∧ mapP φ a' = a
 
-def DI {n : ℕ} (f : PS k n d) : Prop := ∀ s, pderiv k s f ∈ IntS φ n d
+def DI {n : ℕ} (f : PS k n d) : Prop := ∀ s, pderiv s f ∈ IntS φ n d
 
 variable {φ}
 
@@ -53,7 +57,7 @@ theorem int_const {n : ℕ} {f : PS k n d} (hf : f ∈ IntS φ n d) : constantCo
 
 theorem int_pderiv {n : ℕ} {f : PS k n d} (hf : f ∈ IntS φ n d) : DI φ f := by
   obtain ⟨f, rfl⟩ := hf
-  exact fun s => ⟨pderiv R s f, (GlobalTheory.FormalCalc.pderiv_map φ s f).symm⟩
+  exact fun s => ⟨pderiv s f, (GlobalTheory.FormalCalc.pderiv_map φ s f).symm⟩
 
 theorem int_ev {m n : ℕ} {V : Fin m → Pt k n d} (hV : ∀ j, IP φ (V j)) {f : PS k m d}
     (hf : f ∈ IntS φ m d) : ev V f ∈ IntS φ n d := by
@@ -87,24 +91,24 @@ theorem di_ev {m n : ℕ} {V : Fin m → Pt k n d} (hV : ∀ j, IP φ (V j)) {f 
 theorem di_of_exp [Algebra ℚ k] {n : ℕ} (p : PS R n d) (hp : constantCoeff p = 1) (a : PS k n d)
     (ha : constantCoeff a = 0) (h : MvPowerSeries.map φ p = FB.expS k a) : DI φ a := by
   intro s
-  have h1 : pderiv k s (FB.expS k a) = FB.expS k a * pderiv k s a := by
+  have h1 : pderiv s (FB.expS k a) = FB.expS k a * pderiv s a := by
     unfold FB.expS
     rw [GlobalTheory.FormalCalc.pderiv_powerSeries_subst (PowerSeries.HasSubst.of_constantCoeff_zero ha),
       PowerSeries.derivative_exp]
   have h2 := MvPowerSeries.mul_invOfUnit p 1 (by simpa using hp)
-  refine ⟨invOfUnit p 1 * pderiv R s p, ?_⟩
+  refine ⟨invOfUnit p 1 * pderiv s p, ?_⟩
   rw [map_mul, ← GlobalTheory.FormalCalc.pderiv_map, h, h1, ← h, ← mul_assoc, ← map_mul, mul_comm (invOfUnit p 1),
     h2, map_one, one_mul]
 
-theorem dy_sub (v : Fin d → k) (f g : PS k 2 d) : dy v (f - g) = dy v f - dy v g := by
-  simp only [dy, map_sub, gt_ev_sub _ hX0, mul_sub, Finset.sum_sub_distrib]
+theorem dy_sub (v : Fin d → k) (f g : PS k 2 d) : QuadDeriv.dy v (f - g) = QuadDeriv.dy v f - QuadDeriv.dy v g := by
+  simp only [QuadDeriv.dy, map_sub, gt_ev_sub _ hX0, mul_sub, Finset.sum_sub_distrib]
 
 theorem dy_int {v : Fin d → k} (hv : ∀ i, v i ∈ φ.range) {f : PS k 2 d} (hf : DI φ f) :
-    dy v f ∈ IntS φ 1 d :=
+    QuadDeriv.dy v f ∈ IntS φ 1 d :=
   sum_mem fun i _ => mul_mem (int_C (hv i)) (int_ev (ip2 (ip_pt 0) ip_zero) (hf _))
 
 theorem lin_int {v : Fin d → k} (hv : ∀ i, v i ∈ φ.range) {f : PS k 1 d} (hf : f ∈ IntS φ 1 d) :
-    lin v f ∈ φ.range :=
+    QuadDeriv.lin v f ∈ φ.range :=
   sum_mem fun i _ => mul_mem (hv i) (int_const (int_pderiv hf _))
 
 theorem dof_int {F : Pt k 2 d} (hF : IP φ F) {v : Fin d → k} (hv : ∀ i, v i ∈ φ.range)
@@ -119,7 +123,7 @@ theorem dof_almost_additive {F : Pt k 2 d} (hF : GP F)
     (hU : evP (n := 1) ![pt k d 0, 0] F = pt k d 0) {v : Fin d → k} (hv : ∀ i, v i ∈ φ.range)
     (f : PS k 1 d)
     (hf : ev (n := 2) ![pt k d 0] f + ev (n := 2) ![pt k d 1] f - ev ![F] f ∈ IntS φ 2 d) :
-    Dof F v f - C (lin v f) ∈ IntS φ 1 d := by
+    Dof F v f - C (QuadDeriv.lin v f) ∈ IntS φ 1 d := by
   have h := neg_mem (dy_int hv (int_pderiv hf))
   rwa [dy_sub, dy_add, formalSecondPointDerivative_subst_first_point, formalSecondPointDerivative_subst_second_point, zero_add, neg_sub, ← dof_eq F hF hU] at h
 
@@ -157,8 +161,8 @@ theorem ev_defR (F : Pt k 2 d) (hF : GP F) (g : PS k 2 d)
 
 theorem dz_defL {F : Pt k 2 d} (hF : IP φ F) (g : PS k 2 d) (h : DI φ (defL F g))
     {a b : Pt k 2 d} (ha : IP φ a) (hb : IP φ b) (i : Fin d) :
-    ev ![a, 0] (pderiv k ((1 : Fin 2), i) g) + ev ![b, 0] (pderiv k ((1 : Fin 2), i) g) -
-      ev ![addOf F a b, 0] (pderiv k ((1 : Fin 2), i) g) ∈ IntS φ 2 d := by
+    ev ![a, 0] (pderiv ((1 : Fin 2), i) g) + ev ![b, 0] (pderiv ((1 : Fin 2), i) g) -
+      ev ![addOf F a b, 0] (pderiv ((1 : Fin 2), i) g) ∈ IntS φ 2 d := by
   have e : up (addOf F a b) = addOf F (up a) (up b) := evP_addOf _ hUp F _ _ ha.gp hb.gp
   rw [← dz_right g _ (ip_addOf hF ha hb).gp, ← dz_right g _ ha.gp, ← dz_right g _ hb.gp,
     ← gt_ev_add _ hDown, ← gt_ev_sub _ hDown, ← map_add, ← map_sub, e,
@@ -167,8 +171,8 @@ theorem dz_defL {F : Pt k 2 d} (hF : IP φ F) (g : PS k 2 d) (h : DI φ (defL F 
 
 theorem dz_defR {F : Pt k 2 d} (hF : IP φ F) (g : PS k 2 d) (h : DI φ (defR F g))
     {a b : Pt k 2 d} (ha : IP φ a) (hb : IP φ b) (i : Fin d) :
-    ev ![0, a] (pderiv k ((0 : Fin 2), i) g) + ev ![0, b] (pderiv k ((0 : Fin 2), i) g) -
-      ev ![0, addOf F a b] (pderiv k ((0 : Fin 2), i) g) ∈ IntS φ 2 d := by
+    ev ![0, a] (pderiv ((0 : Fin 2), i) g) + ev ![0, b] (pderiv ((0 : Fin 2), i) g) -
+      ev ![0, addOf F a b] (pderiv ((0 : Fin 2), i) g) ∈ IntS φ 2 d := by
   have e : up (addOf F a b) = addOf F (up a) (up b) := evP_addOf _ hUp F _ _ ha.gp hb.gp
   rw [← dz_left g _ (ip_addOf hF ha hb).gp, ← dz_left g _ ha.gp, ← dz_left g _ hb.gp,
     ← gt_ev_add _ hDown, ← gt_ev_sub _ hDown, ← map_add, ← map_sub, e,
@@ -178,7 +182,7 @@ theorem dz_defR {F : Pt k 2 d} (hF : IP φ F) (g : PS k 2 d) (h : DI φ (defR F 
 theorem quad_int {F : Pt k 2 d} (iF : IP φ F) (hU : evP (n := 1) ![pt k d 0, 0] F = pt k d 0)
     {w : Pt k 1 d} (iw : IP φ w)
     (hom : comp1 w F = addOf F (comp1 w (pt k (n := 2) d 0)) (comp1 w (pt k (n := 2) d 1)))
-    (g : PS k 2 d) (c1 : ∀ s, constantCoeff (pderiv k s g) = 0)
+    (g : PS k 2 d) (c1 : ∀ s, constantCoeff (pderiv s g) = 0)
     (hl : DI φ (defL F g)) (hr : DI φ (defR F g)) {u v : Fin d → k} (hu : ∀ i, u i ∈ φ.range)
     (hv : ∀ i, v i ∈ φ.range) :
     Dof F u (Dof F v (ev (n := 1) ![pt k d 0, w] g)) -
@@ -204,13 +208,13 @@ theorem quad_int {F : Pt k 2 d} (iF : IP φ F) (hU : evP (n := 1) ![pt k d 0, 0]
     rw [evP_comp1 _ hX0 _ _ p0, e0, gt_comp1_pt_right]
   have f1 : evP (n := 1) ![pt k d 0, 0] (comp1 w (pt k d 1)) = 0 := by
     rw [evP_comp1 _ hX0 _ _ p1, e1, gt_comp1_zero w hw]
-  have g0 : ∀ v i, dy v (comp1 w (pt k d 0) i) = 0 := fun v i => formalSecondPointDerivative_subst_first_point v _
-  have g1 : ∀ v i, dy v (comp1 w (pt k d 1) i) = C (lin v (w i)) := fun v i => formalSecondPointDerivative_subst_second_point v _
-  have z : ∀ s, ev (n := 1) ![0, 0] (pderiv k s g) = 0 := fun s => by
+  have g0 : ∀ v i, QuadDeriv.dy v (comp1 w (pt k d 0) i) = 0 := fun v i => formalSecondPointDerivative_subst_first_point v _
+  have g1 : ∀ v i, QuadDeriv.dy v (comp1 w (pt k d 1) i) = C (QuadDeriv.lin v (w i)) := fun v i => formalSecondPointDerivative_subst_second_point v _
+  have z : ∀ s, ev (n := 1) ![0, 0] (pderiv s g) = 0 := fun s => by
     rw [ev_zero_pts _ (by intro j; fin_cases j <;> rfl), c1, map_zero]
   obtain ⟨E, hE, hD⟩ : ∃ E ∈ IntS φ 1 d, Dof F v (ev (n := 1) ![pt k d 0, w] g) =
-      ∑ j, C (lin v (w j)) * ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), j) g) +
-      ∑ i, C (v i) * ev (n := 1) ![0, w] (pderiv k ((0 : Fin 2), i) g) - E := by
+      ∑ j, C (QuadDeriv.lin v (w j)) * ev (n := 1) ![pt k d 0, 0] (pderiv ((1 : Fin 2), j) g) +
+      ∑ i, C (v i) * ev (n := 1) ![0, w] (pderiv ((0 : Fin 2), i) g) - E := by
     refine ⟨_, add_mem (add_mem (dy_int hv (di_ev (ip3 ip0 ip1' (ip_addOf iF iw0 iw1)) hl))
       (dy_int hv (di_ev (ip3 ip0 iw0 iw1) hr))) (dy_int hv (di_ev (ip3 ip1' iw0 iw1) hr)), ?_⟩
     rw [dof_eq F hF hU, formalSubst_single_of_formalSubst_two F hF _ _ q0 hw, gt_comp1_pt F hF, hom,
@@ -221,11 +225,11 @@ theorem quad_int {F : Pt k 2 d} (iF : IP φ F) (hU : evP (n := 1) ![pt k d 0, 0]
     simp only [e0, e1, f0, f1, g0, g1, formalSecondPointDerivative_first_coordinate, formalSecondPointDerivative_second_coordinate, z, zero_mul, mul_zero, Finset.sum_const_zero,
       zero_add, add_zero]
     ring
-  have hb : ∀ j, Dof F u (ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), j) g)) -
+  have hb : ∀ j, Dof F u (ev (n := 1) ![pt k d 0, 0] (pderiv ((1 : Fin 2), j) g)) -
       C (∑ i, u i * coeff (Finsupp.single ((0 : Fin 2), i) 1 + Finsupp.single ((1 : Fin 2), j) 1) g)
         ∈ IntS φ 1 d := by
     intro j
-    have h := dof_almost_additive hF hU hu (ev (n := 1) ![pt k d 0, 0] (pderiv k ((1 : Fin 2), j) g)) (by
+    have h := dof_almost_additive hF hU hu (ev (n := 1) ![pt k d 0, 0] (pderiv ((1 : Fin 2), j) g)) (by
       rw [formalSubst_single_of_formalSubst_two _ hF _ _ q0 gp_zero₂, formalSubst_single_of_formalSubst_two _ p0 _ _ q0 gp_zero₂,
         formalSubst_single_of_formalSubst_two _ p1 _ _ q0 gp_zero₂, gt_comp1_pt _ hF, gt_comp1_pt _ p0, gt_comp1_pt _ p1,
         formalComp_zero_left_point _ hF, formalComp_zero_left_point _ p0, formalComp_zero_left_point _ p1]
@@ -235,12 +239,12 @@ theorem quad_int {F : Pt k 2 d} (iF : IP φ F) (hU : evP (n := 1) ![pt k d 0, 0]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [constantCoeff_pderiv_formalSubst_two _ _ q0 gp_zero₂]
     simp [pderiv_pt_self, const_pderiv_pderiv, apply_ite]
-  have ha : ∀ i, Dof F u (ev (n := 1) ![0, w] (pderiv k ((0 : Fin 2), i) g)) -
+  have ha : ∀ i, Dof F u (ev (n := 1) ![0, w] (pderiv ((0 : Fin 2), i) g)) -
       C (∑ l, u l * ∑ j,
         coeff (Finsupp.single ((0 : Fin 2), i) 1 + Finsupp.single ((1 : Fin 2), j) 1) g *
           coeff (Finsupp.single ((0 : Fin 1), l) 1) (w j)) ∈ IntS φ 1 d := by
     intro i
-    have h := dof_almost_additive hF hU hu (ev (n := 1) ![0, w] (pderiv k ((0 : Fin 2), i) g)) (by
+    have h := dof_almost_additive hF hU hu (ev (n := 1) ![0, w] (pderiv ((0 : Fin 2), i) g)) (by
       rw [formalSubst_single_of_formalSubst_two _ hF _ _ gp_zero₂ hw, formalSubst_single_of_formalSubst_two _ p0 _ _ gp_zero₂ hw,
         formalSubst_single_of_formalSubst_two _ p1 _ _ gp_zero₂ hw,
         formalComp_zero_left_point _ hF, formalComp_zero_left_point _ p0, formalComp_zero_left_point _ p1, hom]
@@ -257,7 +261,8 @@ theorem quad_int {F : Pt k 2 d} (iF : IP φ F) (hU : evP (n := 1) ![pt k d 0, 0]
     (sum_mem (t := Finset.univ) fun i _ => mul_mem (int_C (hv i)) (ha i))) (dof_int iF hu hE)
   convert h using 1
   rw [hD, dof_sub, GE.dof_add, GE.dof_sum, GE.dof_sum]
-  simp only [GE.dof_C_mul, mul_sub, Finset.sum_sub_distrib, ← map_mul, ← map_sum, map_add, lin,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [GE.dof_C_mul, mul_sub, Finset.sum_sub_distrib, ← map_mul, ← map_sum, map_add (f := _), QuadDeriv.lin,
     const_pderiv]
   ring
 
@@ -296,21 +301,21 @@ theorem canonGauge_dmonOf_hL_integral :
   have c0 : constantCoeff g = 0 := by
     rw [← coeff_zero_eq_constantCoeff_apply]
     exact coeff_eq_zero_of_axes g hg.ax0 hg.ax1 0 (by simp)
-  have c1 : ∀ s, constantCoeff (pderiv k s g) = 0 := fun s => by
+  have c1 : ∀ s, constantCoeff (pderiv s g) = 0 := fun s => by
     rw [const_pderiv]
     exact coeff_eq_zero_of_axes g hg.ax0 hg.ax1 _ (by simp)
   have hp : ∀ j : Fin 3, GP (pt k d j) := gp_pt
   have hl : DI (algebraMap R k) (defL (B.FK k) g) := by
     refine di_of_exp B.ph1 ?_ _ ?_ hg.ph1
     · rw [← gt_const_ev_eq _ (triple_points_zero_constant (n := 2) gp_zero₂ (gp_pt 0) (gp_pt 1)), B.cocycleLeft_zero_fst, map_one]
-    · rw [defL, map_sub, map_add, gt_const_ev _ (pair_points_zero_constant (hp _) (hp _)) _ c0,
+    · rw [defL, map_sub, map_add (f := _), gt_const_ev _ (pair_points_zero_constant (hp _) (hp _)) _ c0,
         gt_const_ev _ (pair_points_zero_constant (hp _) (hp _)) _ c0,
         gt_const_ev _ (pair_points_zero_constant (gp_addOf _ hF _ _ (hp _) (hp _)) (hp _)) _ c0]
       simp
   have hr : DI (algebraMap R k) (defR (B.FK k) g) := by
     refine di_of_exp B.ph2 ?_ _ ?_ hg.ph2
     · rw [← gt_const_ev_eq _ (triple_points_zero_constant (n := 2) gp_zero₂ (gp_pt 0) (gp_pt 1)), B.cocycleRight_zero_fst, map_one]
-    · rw [defR, map_sub, map_add, gt_const_ev _ (pair_points_zero_constant (hp _) (hp _)) _ c0,
+    · rw [defR, map_sub, map_add (f := _), gt_const_ev _ (pair_points_zero_constant (hp _) (hp _)) _ c0,
         gt_const_ev _ (pair_points_zero_constant (hp _) (hp _)) _ c0,
         gt_const_ev _ (pair_points_zero_constant (hp _) (gp_addOf _ hF _ _ (hp _) (hp _))) _ c0]
       simp
@@ -351,7 +356,8 @@ theorem canonGauge_dmonOf_hL_integral :
   · rw [e, hq, gt_const_ev _ (pair_points_zero_constant (gp_pt 0) hw) _ c0]
     exact zero_mem _
   · rw [e, hq, Dof]
-    simp only [map_sum, map_mul, constantCoeff_pderiv_formalSubst_two _ _ (gp_pt 0) hw, c1, zero_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, constantCoeff_pderiv_formalSubst_two _ _ (gp_pt 0) hw, c1, zero_mul,
       Finset.sum_const_zero, add_zero, mul_zero]
     exact zero_mem _
   · exact int_const e

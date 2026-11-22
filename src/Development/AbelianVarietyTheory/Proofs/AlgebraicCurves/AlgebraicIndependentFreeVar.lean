@@ -1,8 +1,12 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
-import ReciprocityTheory.SemistableReduction.GaussIndepOfLeTrdeg
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ValuationResidueLemmas
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.AlgebraMapOLInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.NormOrderStatement
+public import ReciprocityTheory.SemistableReduction.GaussIndepOfLeTrdeg
+
+@[expose] public section
 
 open NumberField ReciprocityTheory.ChartRestriction.G.T0
 open scoped TensorProduct
@@ -18,10 +22,10 @@ def freeVarIndex {D N : ℕ} (j₀ : Fin (N + 1)) : SVar D N → TVar D N :=
 
 end SectionPoint
 
+
 open NumberField in
 open scoped TensorProduct in
 open MvPolynomial in
-
 theorem _root_.GlobalTheory.existsUnique_ringHom_OmS :
     ∀ (K Ω L : Type) [Field K] [Field Ω] [Algebra K Ω] [Field L] [Algebra K L] (D N : ℕ)
       (j₀ : Fin (N + 1)) (x : Fin N → Ω) (τ : _root_.ReciprocityTheory.ChartRestriction.G.T0.TVar D N → L) (φ : Ω →ₐ[K] L),
@@ -62,7 +66,7 @@ theorem _root_.GlobalTheory.existsUnique_ringHom_OmS :
       rw [hm] at hcard ⊢
       norm_cast at hcard ⊢
       nlinarith
-    · exact le_trans (Cardinal.nat_lt_aleph0 _).le ht
+    · exact le_trans Cardinal.natCast_lt_aleph0.le ht
   have hinj : Function.Injective (MvPolynomial.aeval (R := Ω) g).toRingHom :=
     algebraicIndependent_iff_injective_aeval.1 hind
   let P : _root_.ReciprocityTheory.ChartRestriction.G.T0.OmS Ω D N →+* L := IsFractionRing.lift (K := _root_.ReciprocityTheory.ChartRestriction.G.T0.OmS Ω D N) hinj

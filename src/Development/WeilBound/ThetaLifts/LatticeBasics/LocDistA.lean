@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactOpenAddSubgroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactOpenAddSubgroup
+
+@[expose] public section
 
 open MeasureTheory Filter Topology GlobalTheory.WeilM
 
@@ -91,7 +95,8 @@ theorem kill_tens {X V : Type} [TopologicalSpace X] [T2Space X] [AddCommGroup V]
     · intro h
       rw [hx, image_eq_zero_of_notMem_tsupport (f := F) (x := (x, v)), zero_mul]
       exact fun hs => h (hfin.mem_toFinset.2 ⟨_, hs, rfl⟩)
-  rw [this, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [this, map_sum]
   refine Finset.sum_eq_zero fun q _ => ?_
   exact h (fun x => F (x, q.out)) (sb_comp (fun x => (x, q.out)) Prod.fst (by fun_prop) (by fun_prop) (fun _ => rfl) hF)
     (fun x hx => hS _ hx) (fun v => Set.indicator (K : Set V) (fun _ => (1 : ℂ)) (v + -q.out))
@@ -109,7 +114,7 @@ theorem kill_loc {V : Type} [AddCommGroup V] [TopologicalSpace V] [Nonarchimedea
     · rintro s t hst ⟨A, h1, h2, h3⟩; exact ⟨A, h1, hst.trans h2, h3⟩
     · rintro s t ⟨A, h1, h2, h3⟩ ⟨B, k1, k2, k3⟩
       refine ⟨A ∪ B, h1.union k1, Set.union_subset_union h2 k2, fun ψ hψ h => ?_⟩
-      rw [← Set.indicator_self_add_compl A ψ, map_add, h3 _ (sb_cut h1 hψ) (fun y hy => Set.indicator_of_notMem hy _),
+      rw [← Set.indicator_self_add_compl A ψ, map_add (f := _), h3 _ (sb_cut h1 hψ) (fun y hy => Set.indicator_of_notMem hy _),
         k3 _ (sb_cut h1.compl hψ), add_zero]
       intro y hy
       by_cases hA : y ∈ A
@@ -117,7 +122,7 @@ theorem kill_loc {V : Type} [AddCommGroup V] [TopologicalSpace V] [Nonarchimedea
       · rw [Set.indicator_of_mem hA]; exact h y (not_or.2 ⟨hA, hy⟩)
     · intro x hx
       obtain ⟨U, hU, hl⟩ := h x hx
-      have : (fun k => k + x) ⁻¹' U ∈ 𝓝 (0 : V) := (continuous_add_right x).continuousAt.preimage_mem_nhds (by simpa using hU)
+      have : (fun k => k + x) ⁻¹' U ∈ 𝓝 (0 : V) := (continuous_add_const x).continuousAt.preimage_mem_nhds (by simpa using hU)
       obtain ⟨K, hK⟩ := NonarchimedeanAddGroup.is_nonarchimedean _ this
       have hA : IsClopen ((fun y => y - x) ⁻¹' (K : Set V)) := K.isClopen.preimage (by fun_prop)
       refine ⟨_, mem_nhdsWithin_of_mem_nhds (hA.isOpen.mem_nhds (by simp)), _, hA, subset_rfl,

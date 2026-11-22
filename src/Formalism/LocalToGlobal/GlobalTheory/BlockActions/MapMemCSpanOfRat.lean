@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.BrOneGFull
-import Formalism.LocalToGlobal.GroupLattices.FockModels.SwRowGenMonomial
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.BrOneGFull
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.SwRowGenMonomial
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,8 +84,8 @@ theorem map_mem_CSpan_of_rat {n : ℕ} (lam : D.what₂.Tau → DomWeight n)
       intro F hF
       obtain ⟨Fx, hFx⟩ := exists_map_of_ratSpan D hx'
       obtain ⟨Fy, hFy⟩ := exists_map_of_ratSpan D hy'
-      have : F = Fx + Fy := hinj (by rw [map_add, hFx, hFy, hF])
-      rw [this, map_add]
+      have : F = Fx + Fy := hinj (by rw [map_add (f := _), hFx, hFy, hF])
+      rw [this, map_add (f := _)]
       exact Submodule.add_mem _ (hx Fx hFx) (hy Fy hFy)
     | neg x hx' hx =>
       intro F hF

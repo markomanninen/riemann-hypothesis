@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.CoeffOneLNe
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementW
-import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.UniformGaussModelCondition
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.CoeffOneLNe
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.StatementW
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.UniformGaussModelCondition
+
+@[expose] public section
 
 noncomputable section
 

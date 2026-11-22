@@ -1,13 +1,17 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.OfUnfolding
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PArchUnimodular
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PMajorantStabCompact
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLineStabHaar
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PSemidirectCovering
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PStabilizerLevi
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentModulus
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentCocompact
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PCongruenceLift
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.OfUnfolding
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PArchUnimodular
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PMajorantStabCompact
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PLineStabHaar
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PSemidirectCovering
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PStabilizerLevi
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentModulus
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PUnipotentCocompact
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.PCongruenceLift
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -19,7 +23,7 @@ noncomputable section
 universe u
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 
 variable
     (hTE : ∀ (W : Type u) [AddCommGroup W] [Module E W] [FiniteDimensional E W]
@@ -47,22 +51,6 @@ variable (hTE' : TorusEmbedding.Statement h v) (hLE' : LineEigenvalue.Statement 
     (hUZ' : UnipotentCentral.Statement h v)
 
 include hTE hLE hTM hSH hUI hCP hUH hUZ hTE' hLE' hTM' hSH' hCP' hUH' hUZ'
-
-theorem UnfoldingIntegral.of_remaining : UnfoldingIntegral.Statement h v :=
-  UnfoldingIntegral.of_open
-    (fun _ _ _ _ h _ v => ArchUnimodular.proof h v)
-    (fun _ _ _ _ h _ v => MajorantStabCompact.proof h v)
-    (fun W _ _ _ h n v => LineStabHaar.proof h v (WittPartner.full h) (VecAtNeZero.full v)
-      (hTE W h n v) (hLE W h n v) (hTM W h n v) (hSH W h n v) hUI)
-    (fun _ _ _ _ _ _ _ _ _ _ _ _ => SemidirectCovering.proof _ _ _)
-    (fun _ _ _ _ h _ v => StabilizerLevi.proof h v)
-    (fun _ _ _ _ h _ v => UnipotentModulus.proof h v)
-    (fun W _ _ _ h n v => UnipotentCocompact.proof h v (hCP W h n v) (hUH W h n v) (hUZ W h n v))
-    (fun _ _ _ _ h => CongruenceLift.proof h)
-    h v (fun _ _ _ _ _ => SemidirectCovering.proof _ _ _) (StabilizerLevi.proof h v)
-    (UnipotentModulus.proof h v) (UnipotentCocompact.proof h v hCP' hUH' hUZ')
-    (ArchUnimodular.proof h v) (MajorantStabCompact.proof h v)
-    (LineStabHaar.proof h v (WittPartner.full h) (VecAtNeZero.full v) hTE' hLE' hTM' hSH' hUI)
 
 theorem ScalingLaw.of_remaining : ScalingLaw.Statement h v :=
   ScalingLaw.of_open

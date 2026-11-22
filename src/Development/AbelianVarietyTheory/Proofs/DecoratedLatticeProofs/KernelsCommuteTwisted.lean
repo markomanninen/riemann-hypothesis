@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.IndicatorFunctionIdentity
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairOperatorStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IndicatorIdentity
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.IndicatorFunctionIdentity
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PairOperatorStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IndicatorIdentity
+
+@[expose] public section
 
 open ValuativeRel Matrix IsLocalRing
 open scoped Pointwise
@@ -86,17 +90,65 @@ theorem U_KK (hl' : IsUnram l') (q : Unif k) {φ : Form k n' V'} (hφ : φ ∈ E
       ((l' q.unit : ℂ) * (l q.unit : ℂ))⁻¹ •
         ∑ P ∈ withLat P₀.lat, if cross q P₁ P = 1 then θ (φ P₁) (phiOneSB P Q₀) else 0 := fun P₁ hP => by
     rw [mem_withKer] at hP
-    rw [U_apply, Finset.sum_congr rfl fun Q₁ hQ =>
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [U_apply, Finset.sum_congr rfl fun Q₁ hQ =>
       KK_up hl hθ P₀ Q₀ hl' q hφ hP (mem_withKer.1 (Finset.mem_filter.1 hQ).1), ← Finset.smul_sum,
       ← Finset.sum_filter, ← map_sum, ← map_sum, ← hP]
     congr 2
     refine Subtype.ext (funext fun x => ?_)
     simp only [Submodule.coe_sum, Finset.sum_apply, phiOneSB]
-    exact (GlobalTheory.KernelComm.sum_target q P₁.hasVal_vec Q₀ x).trans (GlobalTheory.KernelComm.sum_source q P₁.hasVal_vec Q₀ x)
+    have htarget {e₁ : n' → k} (he : P₁.HasVal e₁ 1) (Q : Pair k n) (x : Matrix n n' k) :
+        ∑ Q₁ ∈ withKer Q.lat with cross q Q₁ Q = 1, phiOne P₁ Q₁ x = midInd q P₁.ker e₁ Q x := by
+      have hm : ∀ Q₁ : Pair k n, Maps P₁ Q₁ x ↔ (∀ y ∈ P₁.ker, x *ᵥ y ∈ Q₁.ker) ∧ Q₁.HasVal (x *ᵥ e₁) 1 := fun Q₁ => by
+        rw [maps_iff_glue he Q₁.hasVal_vec, Pair.hasVal_one_iff Q₁.hasVal_vec]
+      rw [midInd, mulVec_smul]
+      split_ifs with h
+      · have hg : IsGlue Q.lat (x *ᵥ e₁) := (isGlue_iff q).2 ⟨Q.isLat, fun h0 =>
+          one_ne_zero (h.2.unique (Pair.mem_ker.1 (Pair.smul_mem_ker q.mem_max h0))), h.2.mem⟩
+        rw [Finset.sum_eq_single_of_mem (glue hg)]
+        · exact if_pos ((hm _).2 ⟨by rw [glue_ker]; exact h.1, glue_hasVal hg⟩)
+        · exact Finset.mem_filter.2 ⟨mem_withKer.2 (glue_ker hg),
+            (cross_hasVal q (glue_ker hg).symm (glue_hasVal hg)).unique h.2⟩
+        · exact fun Q₁ h1 h2 => if_neg fun h3 =>
+            h2 ((eq_glue_iff hg).2 ⟨mem_withKer.1 (Finset.mem_filter.1 h1).1, ((hm _).1 h3).2⟩)
+      · refine Finset.sum_eq_zero fun Q₁ h1 => if_neg fun h3 => h ?_
+        obtain ⟨h1, h2⟩ := Finset.mem_filter.1 h1
+        rw [mem_withKer] at h1
+        exact ⟨h1 ▸ ((hm _).1 h3).1, h2 ▸ cross_hasVal q h1.symm ((hm _).1 h3).2⟩
+    
+    have hsource {e₁ : n' → k} (he : P₁.HasVal e₁ 1) (Q : Pair k n) (x : Matrix n n' k) :
+        midInd q P₁.ker e₁ Q x = ∑ P ∈ withLat P₁.ker with cross q P₁ P = 1, phiOne P Q x := by
+      rw [midInd]
+      have hq : q.1 • e₁ ∈ P₁.ker := Pair.smul_mem_ker q.mem_max he.mem
+      split_ifs with h
+      · let f : P₁.ker →ₗ[𝒪[k]] 𝓀[k] := Q.fn ∘ₗ ((Matrix.mulVecLin x).restrictScalars 𝒪[k]).restrict h.1
+        have hf : ∀ y : P₁.ker, Q.HasVal (x *ᵥ y) (f y) := fun y => ⟨h.1 y y.2, rfl⟩
+        have h1 : f ⟨_, hq⟩ = 1 := (hf ⟨_, hq⟩).unique h.2
+        let R : Pair k n' := ⟨P₁.ker, P₁.ker_isLat, f, fun h0 => by simp [h0] at h1⟩
+        have hR : Maps R Q x := ⟨h.1, fun _ => rfl⟩
+        rw [Finset.sum_eq_single_of_mem R]
+        · exact (if_pos hR).symm
+        · exact Finset.mem_filter.2 ⟨mem_withLat.2 rfl, (cross_hasVal q (P := R) rfl he).unique ⟨hq, h1⟩⟩
+        · refine fun P hP h2 => if_neg fun h3 => h2 (Pair.ext fun y a => ?_)
+          have hl : P.lat = R.lat := mem_withLat.1 (Finset.mem_filter.1 hP).1
+          rw [maps_iff_hasVal] at hR h3
+          constructor
+          · intro hy
+            have h4 := R.hasVal_fn ⟨y, hl ▸ hy.mem⟩
+            exact (hR _ _ h4).unique (h3 _ _ hy) ▸ h4
+          · intro hy
+            have h4 := P.hasVal_fn ⟨y, hl ▸ hy.mem⟩
+            exact (h3 _ _ h4).unique (hR _ _ hy) ▸ h4
+      · refine (Finset.sum_eq_zero fun P h1 => if_neg fun h3 => h ?_).symm
+        obtain ⟨h1, h2⟩ := Finset.mem_filter.1 h1
+        rw [mem_withLat] at h1
+        exact ⟨h1 ▸ h3.1, maps_iff_hasVal.1 h3 _ _ (h2 ▸ cross_hasVal q h1 he)⟩
+    exact (htarget P₁.hasVal_vec Q₀ x).trans (hsource P₁.hasVal_vec Q₀ x)
   have h2 : ∀ P ∈ withLat P₀.lat, KK hl hθ P₀ Q₀ (U q φ) Q₀ =
       ∑ P₁ ∈ withKer P₀.lat, if cross q P₁ P = 1 then θ (φ P₁) (phiOneSB P Q₀) else 0 := fun P hP => by
     rw [mem_withLat] at hP
-    rw [KK_same hl hθ P₀ Q₀ hl' (U_mem_EqForm q hφ) hP rfl, U_apply, map_sum, LinearMap.sum_apply, hP,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [KK_same hl hθ P₀ Q₀ hl' (U_mem_EqForm q hφ) hP rfl, U_apply, map_sum, LinearMap.sum_apply, hP,
       Finset.sum_filter]
   have h3 := Finset.sum_congr rfl h1
   rw [← Finset.smul_sum, Finset.sum_comm, ← Finset.sum_congr rfl h2, Finset.sum_const, Finset.sum_const,
@@ -115,7 +167,8 @@ theorem KK_dia (hl' : IsUnram l') (s : 𝓀[k]ˣ) {φ : Form k n' V'} (hφ : φ 
 theorem KK_ram (hl' : IsUnram l') {φ : Form k n' V'} (hφ : φ ∈ EqForm π') (h : φ ∈ Mram k n' V') :
     KK hl hθ P₀ Q₀ φ ∈ Mram k n V := by
   have : Nm (KK hl hθ P₀ Q₀ φ) = KK hl hθ P₀ Q₀ (Nm φ) := by
-    simp only [Nm, LinearMap.sum_apply, map_sum, KK_dia hl hθ P₀ Q₀ hl' _ hφ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Nm, LinearMap.sum_apply, map_sum, KK_dia hl hθ P₀ Q₀ hl' _ hφ]
   rw [show Nm φ = 0 from h, map_zero] at this
   exact this
 
@@ -123,7 +176,8 @@ theorem FFStar_KK (hl' : IsUnram l') (q : Unif k) (χ : AddChar 𝓀[k] ℂ) {φ
     (h : φ ∈ Mram k n' V') :
     FFStar q χ (KK hl hθ P₀ Q₀ φ) = ((l' q.unit : ℂ) * (l q.unit : ℂ))⁻¹ • KK hl hθ P₀ Q₀ (FFStar q χ φ) := by
   have h1 : GsStar χ (KK hl hθ P₀ Q₀ φ) = KK hl hθ P₀ Q₀ (GsStar χ φ) := by
-    simp only [GsStar, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, KK_dia hl hθ P₀ Q₀ hl' _ hφ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [GsStar, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, KK_dia hl hθ P₀ Q₀ hl' _ hφ]
   have h2 : GsStar χ φ ∈ EqForm π' := by
     simp only [GsStar, LinearMap.sum_apply, LinearMap.smul_apply]
     exact sum_mem fun c _ => Submodule.smul_mem _ _ (dia_mem_EqForm _ hφ)

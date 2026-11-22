@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.FrobStep
-import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.NormAddLeKur
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.FrobStep
+public import Formalism.LocalToGlobal.TorsionIntegrality.UniformGaussModels.OrthogonalGaussModels.HermitianBlockFrames.NormAddLeKur
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -86,7 +90,7 @@ theorem lmat_apply (δ : MaximalUnramifiedExtension l) (A B : Matrix m m' ℚ) (
 theorem lmat_map_σ (σ : MaximalUnramifiedExtension l →+* MaximalUnramifiedExtension l) (δ : MaximalUnramifiedExtension l) (hσδ : σ δ = -δ) (A B : Matrix m m' ℚ) :
     (lmat δ A B).map σ = lmat δ A (-B) := by
   ext x y
-  simp only [Matrix.map_apply, lmat_apply, map_add, map_mul, map_ratCast, hσδ, Matrix.neg_apply, Rat.cast_neg]
+  simp only [Matrix.map_apply, lmat_apply, map_add (f := _), map_mul, map_ratCast, hσδ, Matrix.neg_apply, Rat.cast_neg]
   ring
 
 theorem lmat_mem {dK : ℕ} {δ : MaximalUnramifiedExtension l} {hδ : δ ^ 2 = -(dK : MaximalUnramifiedExtension l)} (U₁ U₂ : Matrix m m' ℚ)

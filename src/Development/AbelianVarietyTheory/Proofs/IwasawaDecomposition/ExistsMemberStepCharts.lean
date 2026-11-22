@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SetStab
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.RedPDivOfUnit
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsDefiniteLaws
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoordsStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DecoratedLatticeDiagonalBasePointMulStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnitaryDiagonalBasePointLevelPrimeStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CouplingCosetInFramesEqIffReductionEqStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColumnPointEqOfDecoAndCosetReductionStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCouplingCosetWithGivenReductionStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAdelicPointDecoratedLatticeAllTwistsStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SetStab
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.RedPDivOfUnit
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsDefiniteLaws
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoordsStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DecoratedLatticeDiagonalBasePointMulStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsUnitaryDiagonalBasePointLevelPrimeStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CouplingCosetInFramesEqIffReductionEqStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ColumnPointEqOfDecoAndCosetReductionStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCouplingCosetWithGivenReductionStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsAdelicPointDecoratedLatticeAllTwistsStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,7 +46,7 @@ theorem ufGL_inj : Function.Injective (ufGL E n) := fun a b h => by
   rw [ufGL_ratHom, ufGL_ratHom] at h
   rw [Subtype.ext h]
 
-theorem cls_dia (H : Subgroup (GLG E n SG)) (c : DiaG E ST) (d d' : DecoSet E n ST SG) :
+theorem cls_dia (H : Subgroup (GLG (E := E) (n := n) (SG := SG))) (c : DiaG (E := E) (ST := ST)) (d d' : DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) :
     decoCls n ST SG H (d.dia c) = decoCls n ST SG H (d'.dia c) ↔ decoCls n ST SG H d = decoCls n ST SG H d' := by
   rw [rla_cls_eq, rla_cls_eq]
   refine exists_congr fun g => ?_
@@ -55,14 +59,14 @@ theorem chart_exists (Hw : ∀ w : SG, Subgroup (GL (Fin n) (𝓞 E ⧸ w.1.asId
     (hSG : ∀ v : HeightOneSpectrum (𝓞 F), (T : 𝓞 F) ∈ v.asIdeal → v ∉ plUnder F SG)
     (hidx : (baseLb E n ST).toAddSubgroup.relIndex
       (Submodule.span (𝓞 E) (Formalism.BasicNotions.dualSet (hc.sig : E →+* E) (1 : Matrix (Fin n) (Fin n) E) (baseLb E n ST))).toAddSubgroup = T ^ (2 * f))
-    (lam : (Subgroup.pi Set.univ Hw : Subgroup (GLG E n SG)) →* ℂˣ)
+    (lam : (Subgroup.pi Set.univ Hw : Subgroup (GLG (E := E) (n := n) (SG := SG))) →* ℂˣ)
     (J : Matrix (Fin n) (Fin n) E) (hJ : J = 1) (bad : Set (HeightOneSpectrum (𝓞 F))) (hb : bad = plUnder F SG)
-    {cl : Type} (stab : cl → Type) [∀ c, Group (stab c)] (lat : cl → Submodule (𝓞 E) (Fin n → E)) (c₀ : DiaG E ST)
-    (s : cl → DecoSet E n ST SG) (y : cl → GL (Fin n) (AfE F E)) (hy : ∀ c, y c ∈ UAd hc n)
+    {cl : Type} (stab : cl → Type) [∀ c, Group (stab c)] (lat : cl → Submodule (𝓞 E) (Fin n → E)) (c₀ : DiaG (E := E) (ST := ST))
+    (s : cl → DecoSet (E := E) (n := n) (ST := ST) (SG := SG)) (y : cl → GL (Fin n) (AfE F E)) (hy : ∀ c, y c ∈ UAd hc n)
     (hd : ∀ c, (decoOf ST SG (y c)).dia c₀ = s c)
     (hs : Function.Bijective fun c => decoCls n ST SG (Subgroup.pi Set.univ Hw) (s c)) (hlat : ∀ c, lat c = (s c).1.L)
     (st : ∀ c, stab c →* GL (Fin n) E) (hinj : ∀ c, Function.Injective (st c))
-    (hr : ∀ c γ, γ ∈ (st c).range ↔ ∃ g : UF E n × (Subgroup.pi Set.univ Hw : Subgroup (GLG E n SG)), ufGL E n g.1 = γ ∧ g • s c = s c) :
+    (hr : ∀ c γ, γ ∈ (st c).range ↔ ∃ g : UF E n × (Subgroup.pi Set.univ Hw : Subgroup (GLG (E := E) (n := n) (SG := SG))), ufGL E n g.1 = γ ∧ g • s c = s c) :
     ∃ (lev : StepLevel F E hc.sig J T f bad) (Y : cl → UPts hc.sig J (FiniteAdeleRing (𝓞 F) F))
       (SI : ∀ c, stab c →* UJ (hc.sig : E →+* E) J),
       Function.Bijective (fun c => (Quotient.mk'' (Y c) : Cls lev)) ∧
@@ -119,10 +123,10 @@ theorem chart_exists (Hw : ∀ w : SG, Subgroup (GL (Fin n) (𝓞 E ⧸ w.1.asId
     · rintro ⟨h, hg⟩
       exact ⟨(_, h), ufGL_ratHom hc n γ, hg⟩
 
-theorem red_of_act (c₀ : DiaG E ST) {y x : GL (Fin n) (AfE F E)} (hy : y ∈ UAd hc n) (hx : y * x ∈ UAd hc n) (h : GLG E n SG)
-    (e : (decoOf ST SG (y * x)).dia c₀ = ((1, h) : UF E n × GLG E n SG) • (decoOf ST SG y).dia c₀) :
+theorem red_of_act (c₀ : DiaG (E := E) (ST := ST)) {y x : GL (Fin n) (AfE F E)} (hy : y ∈ UAd hc n) (hx : y * x ∈ UAd hc n) (h : GLG (E := E) (n := n) (SG := SG))
+    (e : (decoOf ST SG (y * x)).dia c₀ = ((1, h) : UF E n × GLG (E := E) (n := n) (SG := SG)) • (decoOf ST SG y).dia c₀) :
     ∃ hJ : x ∈ J0 hc n ST, redG hc n ST SG ⟨x, hJ⟩ = h⁻¹ := by
-  have e1 : decoOf ST SG (y * x) = ((1, h) : UF E n × GLG E n SG) • decoOf ST SG y := rla_dia_inj n ST SG c₀ e
+  have e1 : decoOf ST SG (y * x) = ((1, h) : UF E n × GLG (E := E) (n := n) (SG := SG)) • decoOf ST SG y := rla_dia_inj n ST SG c₀ e
   have e2 : decoRaw ST SG (y * x) = (decoRaw ST SG y).act 1 h := by
     rw [← rlc_decoOf_val hc n ST SG hx, ← rlc_decoOf_val hc n ST SG hy, e1]
     rfl
@@ -132,9 +136,9 @@ theorem red_of_act (c₀ : DiaG E ST) {y x : GL (Fin n) (AfE F E)} (hy : y ∈ U
   rw [← hr, ← map_inv]
   exact congrArg _ (Subtype.ext e3)
 
-theorem act_of_mem (H : Subgroup (GLG E n SG)) (c₀ : DiaG E ST) {y : GL (Fin n) (AfE F E)} (hy : y ∈ UAd hc n) (x : levU hc n ST SG H) :
+theorem act_of_mem (H : Subgroup (GLG (E := E) (n := n) (SG := SG))) (c₀ : DiaG (E := E) (ST := ST)) {y : GL (Fin n) (AfE F E)} (hy : y ∈ UAd hc n) (x : levU hc n ST SG H) :
     (decoOf ST SG (y * x.1)).dia c₀ =
-      ((1, ((Formalism.L2.Col.levRed hc n ST SG H x)⁻¹ : H).1) : UF E n × GLG E n SG) • (decoOf ST SG y).dia c₀ := by
+      ((1, ((Formalism.L2.Col.levRed hc n ST SG H x)⁻¹ : H).1) : UF E n × GLG (E := E) (n := n) (SG := SG)) • (decoOf ST SG y).dia c₀ := by
   have h := rlc_decoOf_sm hc n ST SG H 1 x⁻¹ ⟨y, hy⟩
   rw [map_one, map_inv] at h
   simp only [OneMemClass.coe_one, map_one, one_mul, InvMemClass.coe_inv, inv_inv] at h
@@ -149,9 +153,6 @@ variable {X : Fields} {n : ℕ} {ST SG Q : Finset (HeightOneSpectrum (𝓞 X.E))
 
 def ya (Λ : LevFam X.E X.K n SG) (Θ : LevQFam X.E X.K n Q) (g : FrmG Λ Θ) (q : PtY ST SG Q y) : PtY ST SG Q y :=
   (ptYAct y Λ Θ).smul g q
-
-theorem ya_deco (Λ : LevFam X.E X.K n SG) (Θ : LevQFam X.E X.K n Q) (g : FrmG Λ Θ) (q : PtY ST SG Q y) :
-    (ya Λ Θ g q).1.1.deco = ((g.1, g.2.1.1) : UF X.E n × GLG X.E n SG) • q.1.1.deco := rfl
 
 theorem bar_ya (Λ : LevFam X.E X.K n SG) (Θ : LevQFam X.E X.K n Q) (g : FrmG Λ Θ) (q : PtY ST SG Q y) (w : SG) :
     bar (ya Λ Θ g q) w = (fun v => (g.2.1.1 w).1 *ᵥ v) '' bar q w := by
@@ -196,13 +197,13 @@ theorem bar_ya_eq_iff (Λ : LevFam X.E X.K n SG) (Θ : LevQFam X.E X.K n Q) (g :
 def chH (Λ : LevFam X.E X.K n SG) (C : ∀ w : SG, Set (Fin n → 𝓞 X.E ⧸ w.1.asIdeal)) (w : SG) :
     Subgroup (GL (Fin n) (𝓞 X.E ⧸ w.1.asIdeal)) := (Λ w).H ⊓ setStab (C w)
 
-abbrev chG (Λ : LevFam X.E X.K n SG) (C : ∀ w : SG, Set (Fin n → 𝓞 X.E ⧸ w.1.asIdeal)) : Subgroup (GLG X.E n SG) :=
+abbrev chG (Λ : LevFam X.E X.K n SG) (C : ∀ w : SG, Set (Fin n → 𝓞 X.E ⧸ w.1.asIdeal)) : Subgroup (GLG (E := X.E) (n := n) (SG := SG)) :=
   Subgroup.pi Set.univ (chH Λ C)
 
 theorem chG_le (Λ : LevFam X.E X.K n SG) (C : ∀ w : SG, Set (Fin n → 𝓞 X.E ⧸ w.1.asIdeal)) : chG Λ C ≤ Λ.grp :=
   fun _ h w hw => (h w hw).1
 
-theorem mem_chG {Λ : LevFam X.E X.K n SG} {C : ∀ w : SG, Set (Fin n → 𝓞 X.E ⧸ w.1.asIdeal)} {h : GLG X.E n SG} :
+theorem mem_chG {Λ : LevFam X.E X.K n SG} {C : ∀ w : SG, Set (Fin n → 𝓞 X.E ⧸ w.1.asIdeal)} {h : GLG (E := X.E) (n := n) (SG := SG)} :
     h ∈ chG Λ C ↔ h ∈ Λ.grp ∧ ∀ w, h w ∈ setStab (C w) :=
   ⟨fun a => ⟨chG_le Λ C a, fun w => (a w trivial).2⟩, fun a w hw => ⟨a.1 w hw, a.2 w⟩⟩
 
@@ -219,7 +220,7 @@ theorem grpQ_eq_one (hQ : Q = ∅) (Θ : LevQFam X.E X.K n Q) (t : Θ.grp) : t =
 
 variable [NeZero n] (hc : Formalism.BasicNotions.CMData X.F X.E)
 
-theorem lev_iff (hQ : Q = ∅) (Λ : LevFam X.E X.K n SG) (Θ : LevQFam X.E X.K n Q) (r : PtY ST SG Q y) (c₀ : DiaG X.E ST)
+theorem lev_iff (hQ : Q = ∅) (Λ : LevFam X.E X.K n SG) (Θ : LevQFam X.E X.K n Q) (r : PtY ST SG Q y) (c₀ : DiaG (E := X.E) (ST := ST))
     {g x : GL (Fin n) (AfE X.F X.E)} (hg : g ∈ UAd hc n) (hx : g * x ∈ UAd hc n) (q : DecoF X.E n ST SG Q)
     (e : (decoOf ST SG g).dia c₀ = r.1.1.deco) (e' : (decoOf ST SG (g * x)).dia c₀ = q.deco) :
     x ∈ levU hc n ST SG (chG Λ (bar r)) ↔
@@ -238,7 +239,7 @@ theorem lev_iff (hQ : Q = ∅) (Λ : LevFam X.E X.K n SG) (Θ : LevQFam X.E X.K 
     rw [hr]
     exact inv_mem (mem_chG.2 ⟨h.2, (bar_ya_eq_iff _ _ _ _).1 h3⟩)
 
-theorem chr_eq (σ : X.K →+* ℂ) (hQ : Q = ∅) (Λ : LevFam X.E X.K n SG) (Θ : LevQFam X.E X.K n Q) (r : PtY ST SG Q y) (c₀ : DiaG X.E ST)
+theorem chr_eq (σ : X.K →+* ℂ) (hQ : Q = ∅) (Λ : LevFam X.E X.K n SG) (Θ : LevQFam X.E X.K n Q) (r : PtY ST SG Q y) (c₀ : DiaG (E := X.E) (ST := ST))
     (C : ∀ w : SG, Set (Fin n → 𝓞 X.E ⧸ w.1.asIdeal))
     {g : GL (Fin n) (AfE X.F X.E)} (x : levU hc n ST SG (chG Λ C)) (hg : g ∈ UAd hc n) (κ : FrmG Λ Θ) (h1 : ufGL X.E n κ.1 = 1)
     (e : (decoOf ST SG g).dia c₀ = r.1.1.deco) (e' : (decoOf ST SG (g * x.1)).dia c₀ = (ya Λ Θ κ r).1.1.deco) :
@@ -271,7 +272,7 @@ theorem prefRep_normal {G D A : Type} [Group G] [MulAction G D] [Nonempty A] (f 
     have h : Quotient.mk (MulAction.orbitRel G D) (g • q) = Quotient.mk _ q := Quotient.sound (MulAction.orbitRel_apply.2 ⟨g, rfl⟩)
     exact ⟨g • q, h, (hp _).2 (by rw [key _ h]; exact e.symm)⟩
   unfold prefRep
-  rw [dif_pos hex, (hp _).1 hex.choose_spec.2, key _ hex.choose_spec.1]
+  rw [dite_eq_left hex, (hp _).1 hex.choose_spec.2, key _ hex.choose_spec.1]
 
 end Normal
 
@@ -307,7 +308,7 @@ theorem ya_eq (Λ : LevFam X.E X.K n SG) (Θ : LevQFam X.E X.K n Q) (q q' : PtY 
   hinj _ _ hg (((bar_ya_eq_iff _ _ _ _).2 (mem_chG.1 g.2.2).2).trans hb.symm)
 
 include hinj in
-theorem cls_bij (hsur : ∀ (q : PtY ST SG Q y) (d : DecoSet X.E n ST SG), ∃ q' : PtY ST SG Q y, q'.1.1.deco = d ∧ bar q' = bar q)
+theorem cls_bij (hsur : ∀ (q : PtY ST SG Q y) (d : DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)), ∃ q' : PtY ST SG Q y, q'.1.1.deco = d ∧ bar q' = bar q)
     (hnorm : ∀ b q q', bar q = bar q' →
       bar (rp Λ Θ p₀ pref ((stR Λ Θ p₀ pref).cl b q)) = bar (rp Λ Θ p₀ pref ((stR Λ Θ p₀ pref).cl b q')))
     (c₀ : (stR Λ Θ p₀ pref).Cl) (p : (stR Λ Θ p₀ pref).Cl → Prop)
@@ -448,13 +449,13 @@ theorem dia_of_pt (hPr : (B.primes X).Ok) (u : B.Word) {n : ℕ} [NeZero n] {Q :
     have e : ((diaT (Pr := B.primes X) u P : (𝓞 B.fields.E ⧸ P.1.asIdeal)ˣ) : 𝓞 B.fields.E ⧸ P.1.asIdeal) =
         Ideal.Quotient.mk P.1.asIdeal (B.fields.conjO (X.piT u)) := by
       unfold diaT
-      rw [dif_pos hu]
+      rw [dite_eq_left hu]
       rfl
     rw [e]
     exact k3 P r j hr
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem chart_of (hI : I.Ok) (hP : TC.Pins B X) (l : I.Laws) (Z : TC.Later B (I.cols l)) (u : B.Word) (i : ℕ) (hi : i ≤ B.R.m)
     (c₀ : (I.stp u I.mu0 i).Cl) (p : (I.stp u I.mu0 i).Cl → Prop)
     (hp : ∀ c, p c ↔ c.1 = c₀.1 ∧ bar (rpI I u i c) = bar (rpI I u i c₀)) :
@@ -474,7 +475,7 @@ theorem chart_of (hI : I.Ok) (hP : TC.Pins B X) (l : I.Laws) (Z : TC.Later B (I.
   obtain ⟨lev, Y, SI, h1, h2, h3, h4, h5⟩ := chart_exists (F := B.host.F) (E := B.host.E) B.sp.cm (B.R.N i)
     (chH (X := B.fields) (lvG I i c₀.1) (bar (rpI I u i c₀))) (f := B.R.f)
     (basePi_of_ok hX hPr u) (hPr.piT_norm u) (rls_vT_iff hX hPr u)
-    (fun P hP => (hPr.vT_norm u P hP : Ideal.absNorm P.asIdeal = B.T u)) (rls_T_notUnder hPr u)
+    (fun P hP => by simpa only [Ideal.absNorm_eq_natCard] using hPr.vT_norm u P hP) (rls_T_notUnder hPr u)
     (hf ▸ colBase_index (X := B.fields) B.sp.cm (B.R.N i) hPr u) (chLam (X := B.fields) B.embLL (lvG I i c₀.1) (bar (rpI I u i c₀)))
     (gramN (I.rec7 l Z) i hi) hg (badG (I.rec7 l Z)) (Set.ext fun v => (plUnder_vGs (X := B.fields) B.sp.cm hPr v).symm)
     (fun c : {c // p c} => (I.stp u I.mu0 i).Stab c.1) (fun c => latCrd (I.rec7 l Z) i hi (I.latAt u I.mu0 i c.1))
@@ -516,8 +517,8 @@ theorem mem_baseLb (hPr : (B.primes X).Ok) (u : B.Word) (n : ℕ) [NeZero n] (x 
     choose r h1 h2 using h
     exact ⟨r, fun j => (h1 j).symm, (hB.dvd _).2 (h2 _ (by simp only [lastIdx]; omega))⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_charts : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.Pins B X → ∀ (l : I.Laws) (Z : TC.Later B (I.cols l)), ∀ (u : B.Word) (i : ℕ) (hi : i ≤ B.R.m), ∃ (Ch : Type) (_ : Finite Ch) (chOf : (I.stp u I.mu0 i).Cl → Ch) (K : ∀ β : Ch, LevelChart (I.rec7 l Z) (B.T u) (badG (I.rec7 l Z)) i hi (fun c : {c // chOf c = β} => (I.chain l u I.mu0).stab i c.1) (fun c => latCrd (I.rec7 l Z) i hi (I.latAt u I.mu0 i c.1))), I.ReadsK l Z u I.mu0 i hi chOf K ∧ (∀ c, ((K (chOf c)).y ⟨c, rfl⟩).1 = I.yStd u i c) ∧ ((i = 0 ∨ i = B.R.m) → Nonempty (Unique Ch)) := by
   intro B X I hI hP l Z u i hi
   have hPr := l.pr

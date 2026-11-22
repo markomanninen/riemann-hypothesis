@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOfFinOrderOfIsOfFinOrderMapRingHomStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOfFinOrderOfIsOfFinOrderMapRingHomStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 open NumberField
@@ -37,7 +41,9 @@ theorem finiteDimensional_of_isFractionRing (K : Type) [Field K] [Algebra B K] [
     induction hy using Submodule.span_induction with
     | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
+    | add x y _ _ hx hy =>
+      rw [map_add]
+      exact add_mem hx hy
     | smul a x _ hx => rw [map_zsmul]; exact zsmul_mem hx a
   classical
   refine Module.finite_def.2 ⟨s.image (algebraMap B K), ?_⟩
@@ -74,7 +80,7 @@ theorem isOfFinOrder_of_numberField (K : Type) [Field K] [Algebra B K] [IsFracti
     { toFun := fun b => ⟨algebraMap B K b, (Algebra.IsIntegral.isIntegral (R := ℤ) b).algebraMap⟩
       map_zero' := by ext; simp only [RingOfIntegers.map_mk, map_zero]
       map_one' := by ext; simp only [RingOfIntegers.map_mk, map_one]
-      map_add' := fun x y => by ext; simp only [RingOfIntegers.map_mk, map_add]; rfl
+      map_add' := fun x y => by ext; simp only [RingOfIntegers.map_mk, map_add (f := _)]; rfl
       map_mul' := fun x y => by ext; simp only [RingOfIntegers.map_mk, map_mul]; rfl }
   have hφ : ∀ b, ((φ b : 𝓞 K) : K) = algebraMap B K b := fun b => rfl
   have hinj : Function.Injective φ := fun x y h => IsFractionRing.injective B K (by

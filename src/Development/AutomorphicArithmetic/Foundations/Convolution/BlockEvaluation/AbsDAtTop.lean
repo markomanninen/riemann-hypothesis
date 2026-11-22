@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.TruncSpec
-import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.PowLeExpEventually
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockEvaluation.TruncSpec
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.PowLeExpEventually
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter Topology GroundTheory.Automorphic GroundTheory.Automorphic.Reduction UpperTheory.ConvolutionTheory UpperTheory.ConvolutionTheory.C UpperTheory.ConvolutionTheory.Ci PositivityTheory.Rg.Fx PositivityTheory.Rg.Tf.Core
 
@@ -93,7 +97,7 @@ theorem UpperTheory.ConvolutionTheory.Ci.abs :
       (fun q q' h => Subtype.ext h)
       (fun j q => ∑ i ∈ s with a i = q.1.1, u i (d j) * C i q.1.2)
       (fun q => ∑ i ∈ s with a i = q.1.1, u' i * C i q.1.2)
-      (fun q => tendsto_finset_sum _ fun i hi =>
+      (fun q => tendsto_finsetSum _ fun i hi =>
         ((hu i (Finset.mem_filter.1 hi).1).comp hdt).mul_const _)
       (fun s₀ => by
         obtain ⟨K, hK⟩ := hb N s₀

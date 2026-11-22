@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LandauZeroFreeBounds.Statement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LFunctionConjEqZero
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OrderNeTop
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ZeroFreePrincipal
+module
+
+public import Mathlib
+public import Formalism.LandauZeroFreeBounds.Statement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LFunctionConjEqZero
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OrderNeTop
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ZeroFreePrincipal
+
+@[expose] public section
 
 open Complex DirichletCharacter
 

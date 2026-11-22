@@ -1,24 +1,28 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.HasDataCondition
-import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonalBis
-import Formalism.LocalToGlobal.ProjectiveLattices.RecCond
-import Formalism.LocalToGlobal.ProjectiveLattices.ParCanon
-import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
-import Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.ContDiffOfDifferentiableFd
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.L2NormFundamentalDomain
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.Taylor
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianFormAtFrameLaws
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FockHxDifferentiable
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaValueStandardLatticeEqClassicalThetaStatement
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsTorusOfSelfD
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsIntegralHarmonicNeZeroAndIsHomogeneous
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ThetaRuleExistsAndEval
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsAnalyticDataUnitFrameFramedPointStatement
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ThetaFunctionIsogenyRestrictionStatement
-import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NumericalConsequencesOfPins
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.HasDataCondition
+public import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonalBis
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecCond
+public import Formalism.LocalToGlobal.ProjectiveLattices.ParCanon
+public import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
+public import Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.ContDiffOfDifferentiableFd
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.L2NormFundamentalDomain
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.Taylor
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianFormAtFrameLaws
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FockHxDifferentiable
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaValueStandardLatticeEqClassicalThetaStatement
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsTorusOfSelfD
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsIntegralHarmonicNeZeroAndIsHomogeneous
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ThetaRuleExistsAndEval
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsAnalyticDataUnitFrameFramedPointStatement
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ThetaFunctionIsogenyRestrictionStatement
+public import Development.AbelianVarietyTheory.Proofs.GenericRegularity.NumericalConsequencesOfPins
+
+@[expose] public section
 
 section Analytic
 
@@ -251,8 +255,8 @@ theorem mem_smul_iff {L : Lt E r} (hL : SelfD X L) {M : ℕ} (hM : M ≠ 0) {P Q
       push_cast
       ring
 
-open scoped ComplexOrder in
 
+open scoped ComplexOrder in
 theorem exists_jet_ne_zero (hs : IsSympl X bas) (hd : x ∈ X.dom) {L : Lt E r} (hL : SelfD X L) {M : ℕ}
     (hM : M ≠ 0) {P Q : Ideal (𝓞 E)} (cj : 𝓞 E → 𝓞 E) (hcj : ∀ a, ((cj a : 𝓞 E) : E) = cc (a : E))
     (hPQ : Q * P = Ideal.span {(M : 𝓞 E)}) (h1 : ∀ a ∈ P, cj a ∈ Q) (h2 : ∀ b ∈ Q, cj b ∈ P) {w : E}
@@ -359,7 +363,14 @@ theorem exists_jet_ne_zero (hs : IsSympl X bas) (hd : x ∈ X.dom) {L : Lt E r} 
     have hb : ∀ b, Differentiable ℂ fun z : Fin n → Fin g → ℂ =>
         fock X bas idx x 1 (pv X idx x (Y b)) θ (z b) := fun b =>
       (hdiff hθ.1 (pv X idx x (Y b))).comp (f := fun z : Fin n → Fin g → ℂ => z b) (differentiable_apply b)
-    exact fun z => (HasFDerivAt.finset_prod (u := Finset.univ) fun b _ => (hb b z).hasFDerivAt).differentiableAt
+    have hprod : ∀ s : Finset (Fin n), Differentiable ℂ (fun z : Fin n → Fin g → ℂ =>
+        ∏ b ∈ s, fock X bas idx x 1 (pv X idx x (Y b)) θ (z b)) := by
+      intro s
+      induction s using Finset.induction_on with
+      | empty => simpa using (differentiable_const (c := (1 : ℂ)))
+      | @insert b s hbs ih =>
+        convert (hb b).mul ih using 1 <;> funext z <;> simp [Finset.prod_insert, hbs]
+    simpa using hprod Finset.univ
   simp only [hc, Finset.prod_mul_distrib] at hne
   rw [polyDeriv_const_mul _ _ _ hent] at hne
   exact right_ne_zero_of_mul hne
@@ -472,7 +483,14 @@ theorem exists_thGen_ne_zero (hC : Formalism.MainNotions.ModuliIntegralCharts.H1
     have hb : ∀ b, Differentiable ℂ fun z : Fin n → Fin W.g → ℂ =>
         fock (U.X k) Dc.bas Dc.idx x.1 1 (pv (U.X k) Dc.idx x.1 (Y b)) θ (z b) := fun b =>
       (hdiff hθ.1 _).comp (f := fun z : Fin n → Fin W.g → ℂ => z b) (differentiable_apply b)
-    exact fun z => (HasFDerivAt.finset_prod (u := Finset.univ) fun b _ => (hb b z).hasFDerivAt).differentiableAt
+    have hprod : ∀ s : Finset (Fin n), Differentiable ℂ (fun z : Fin n → Fin W.g → ℂ =>
+        ∏ b ∈ s, fock (U.X k) Dc.bas Dc.idx x.1 1 (pv (U.X k) Dc.idx x.1 (Y b)) θ (z b)) := by
+      intro s
+      induction s using Finset.induction_on with
+      | empty => simpa using (differentiable_const (c := (1 : ℂ)))
+      | @insert b s hbs ih =>
+        convert (hb b).mul ih using 1 <;> funext z <;> simp [Finset.prod_insert, hbs]
+    simpa using hprod Finset.univ
   refine hjet Y hYu ?_
   rw [thP, ← polyDeriv_const_mul' _ _ _ (hfun ▸ hent), ← hfun] at hval
   have e1 := polyDeriv_rename hent 0 Dc.eL Dc.eL.injective (MvPolynomial.map σ P) (letterDir (U.X k) Dc.hr Dc.idx)

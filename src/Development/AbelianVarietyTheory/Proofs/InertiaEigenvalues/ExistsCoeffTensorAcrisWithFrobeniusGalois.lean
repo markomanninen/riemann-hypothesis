@@ -1,19 +1,23 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PowMulMemLatIff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GoodOfComplete
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinExt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemFilPIffEvPt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BoundedAndEventuallySubMemLat
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemRangeOfIsIntegral
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMaps
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMapsLoc
-import Development.AbelianVarietyTheory.CrystallinePeriods.CrisIncl
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ConvZero
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PowMulMemLatIff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GoodOfComplete
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinExt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemFilPIffEvPt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BoundedAndEventuallySubMemLat
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.MemRangeOfIsIntegral
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMaps
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisMapsLoc
+public import Development.AbelianVarietyTheory.CrystallinePeriods.CrisIncl
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct GlobalTheory.HWL GlobalTheory.MemLoc GlobalTheory.ExpImage
 open scoped Formalism.Per
@@ -77,10 +81,12 @@ theorem exists_acris (P : LocPrime l) (AI : LocAinf l P) (T : LocTied l P AI) :
           (algebraMap (Per.Ainf l) (Per.Acris0 l) (mu AI.ε)) ^ (k + 1) := by
       apply Subtype.val_injective
       rw [← Subalgebra.val_apply, ← Subalgebra.val_apply]
-      simp only [map_mul, map_sum, map_pow, map_neg, map_one, map_natCast, AlgHom.commutes]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_mul, map_sum, map_pow, map_neg, map_one, map_natCast, AlgHom.commutes]
       exact hs
     have h2 := congrArg (algebraMap (Per.Acris0 l) (Per.Acris l)) hs'
-    simp only [map_mul, map_sum, map_pow, map_neg, map_one, map_natCast, alg_alg] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_mul, map_sum, map_pow, map_neg, map_one, map_natCast, alg_alg] at h2
     exact h2
   · obtain ⟨j, hj, -, hb⟩ := GlobalTheory.CrisIncl.exists_restrict l _ T.incl
     obtain ⟨N, hN⟩ := hb m
@@ -117,8 +123,21 @@ theorem bounded_OL (P : LocPrime l) (AI : LocAinf l P) (T : LocTied l P AI) (LL 
     (ι : ↥LL.1 →ₐ[ℚ_[l]] P.R.BdR) (m : ℕ) :
     ∃ k : ℕ, ∀ o : ↥(OL LL), (l : P.R.BdR) ^ k * ι (o : ↥LL.1) ∈ Lat AI m 0 := by
   let e := GlobalTheory.Decompl.basisO LL
-  choose k hk using fun i => (bounded_and_eventually_sub_mem_Lat l P AI T _
-    (EmbFil.emb_mem_fil_zero l P AI T LL ι (e i : ↥LL.1)) m 0).1
+  have hfil (x : ↥LL.1) : ι x ∈ FilB P 0 := by
+    have := (GlobalTheory.Per.TiedField.tied_field l P AI T).1.isDomain
+    have : FiniteDimensional ℚ_[l] ↥LL.1 := LL.2
+    obtain ⟨a, ha⟩ := IsAlgClosed.algebraMap_bijective_of_isIntegral
+      (k := Om l) (K := integralClosure (Om l) P.R.BdR) |>.2
+        ⟨ι x, ((IsIntegral.of_finite ℚ_[l] x).map ι).tower_top⟩
+    have ha' : algebraMap (Om l) P.R.BdR a = ι x := congrArg Subtype.val ha
+    rw [← ha']
+    obtain ⟨y, h1, -⟩ := T.om a
+    obtain ⟨-, hone, -⟩ := GlobalTheory.MemLoc.filD_laws l
+    refine (T.fil _ 0 _).2 ?_
+    have := Submodule.smul_mem _ y hone
+    rwa [Algebra.smul_def, mul_one, ← h1] at this
+  choose k hk using fun i : Fin (Module.finrank ℤ_[l] ↥(OL LL)) => (bounded_and_eventually_sub_mem_Lat l P AI T _
+    (hfil (e i : ↥LL.1)) m 0).1
   refine ⟨∑ i, k i, fun o => ?_⟩
   have ho : o ∈ Submodule.span ℤ_[l] (Set.range e) := e.mem_span o
   induction ho using Submodule.span_induction with
@@ -130,15 +149,16 @@ theorem bounded_OL (P : LocPrime l) (AI : LocAinf l P) (T : LocTied l P AI) (LL 
     exact Lat_anti AI (Nat.zero_le _) ((pow_mul_mem_Lat_iff AI).2 (hk i))
   | zero => simpa using zero_mem _
   | add x y _ _ hx hy =>
-    rw [Subalgebra.coe_add, map_add, mul_add]
+    rw [Subalgebra.coe_add, map_add (f := _), mul_add]
     exact add_mem hx hy
   | smul z x _ hx =>
     have := qB_mul_mem_Lat AI T z hx
     rw [Subalgebra.coe_smul, ← algebraMap_smul ℚ_[l] z, map_smul, Algebra.smul_def, mul_left_comm]
     exact this
 
-set_option maxHeartbeats 800000 in
 
+set_option synthInstance.maxHeartbeats 200000 in
+set_option maxHeartbeats 4000000 in
 theorem exists_tensor_acris : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : LocAinf l P), LocTied l P AI → ∀ (LL : FinExt l) (β : RA LL →+* ↥LL.1 ⊗[ℚ_[l]] P.R.B), IsBeta AI β → ∃ (A : Type) (_ : CommRing A) (b : RA LL →+* A) (κ : A →+* ↥LL.1 ⊗[ℚ_[l]] P.R.B) (φ : A →+* A) (γ : GQ l → (A →+* A)) (t : A), GlobalTheory.Decompl.LAdic.Good l A ∧ ((∀ y, κ (b y) = β y) ∧ (∀ o w, φ (b (o ⊗ₜ[ℤ_[l]] w)) = b (o ⊗ₜ[ℤ_[l]] WittVector.frobenius w)) ∧ (∀ x, κ (φ x) = Algebra.TensorProduct.map (AlgHom.id ℚ_[l] ↥LL.1) P.φB (κ x)) ∧ (∀ g o w, γ g (b (o ⊗ₜ[ℤ_[l]] w)) = b (o ⊗ₜ[ℤ_[l]] AI.actW g w)) ∧ (∀ g x, κ (γ g x) = Algebra.TensorProduct.map (AlgHom.id ℚ_[l] ↥LL.1) (P.actQ g).toAlgHom (κ x)) ∧ κ t = (1 : ↥LL.1) ⊗ₜ[ℚ_[l]] P.tB) ∧ (∀ s : ℕ, ∃ d : ℕ, 0 < d ∧ (l : A) ∣ b ((1 : ↥(OL LL)) ⊗ₜ[ℤ_[l]] (WittVector.teichmuller l (AI.εroot s) - 1)) ^ d) ∧ (∀ r : ℕ, ∃ N : ℕ, ∀ n ≥ N, ∃ u z : A, ((n.factorial : ℕ) : A) * u = ∑ k ∈ Finset.range n, (-1) ^ k * ((n.factorial / (k + 1) : ℕ) : A) * b ((1 : ↥(OL LL)) ⊗ₜ[ℤ_[l]] AI.μ) ^ (k + 1) ∧ t - u = (l : A) ^ r * z) ∧ ∀ (ι : ↥LL.1 →ₐ[ℚ_[l]] P.R.BdR) (m : ℕ), ∃ C : ℕ, ∀ y : A, (l : P.R.BdR) ^ C * Algebra.TensorProduct.productMap ι P.ιB (κ y) ∈ GlobalTheory.ExpImage.Lat AI m 0 := by
   intro l _ P AI T LL β hβ
   obtain ⟨W, _, a, c, φ, γ, t, hg, hca, hφa, hcφ, hγa, hcγ, hct, hμ, hlog, hb⟩ := exists_acris P AI T
@@ -215,7 +235,8 @@ theorem exists_tensor_acris : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI 
     obtain ⟨u, z, h1, h2⟩ := hN n hn
     refine ⟨j u, j z, ?_, ?_⟩
     · have := congrArg j h1
-      simp only [map_mul, map_sum, map_pow, map_neg, map_one, map_natCast] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_mul, map_sum, map_pow, map_neg, map_one, map_natCast] at this
       rwa [hj]
     · have := congrArg j h2
       rwa [map_sub, map_mul, map_pow, map_natCast] at this
@@ -230,7 +251,7 @@ theorem exists_tensor_acris : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI 
       rw [hκ, Algebra.TensorProduct.productMap_apply_tmul, pow_add, mul_mul_mul_comm]
       exact Lat_anti AI (Nat.zero_le _) (Lat_mul AI (hk o) (hN w))
     | add x y hx hy =>
-      rw [map_add, map_add, mul_add]
+      rw [map_add κ, map_add, mul_add]
       exact add_mem hx hy
 
 end GlobalTheory.HWLCris

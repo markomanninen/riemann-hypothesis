@@ -1,15 +1,19 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DChKer
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.LeftInvOfJac
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.HomTwo
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.ChEltOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DkerOfKills
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.BcChiTmul
-import Mathlib.RingTheory.SimpleModule.Basic
-import Mathlib.RingTheory.Artinian.Module
-import Mathlib.RingTheory.Artinian.Ring
-import Mathlib.FieldTheory.IsAlgClosed.Basic
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.OfDetToDet
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.IsLocalHom
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DChKer
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.LeftInvOfJac
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.HomTwo
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.ChEltOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DkerOfKills
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.BcChiTmul
+public import Mathlib.RingTheory.SimpleModule.Basic
+public import Mathlib.RingTheory.Artinian.Module
+public import Mathlib.RingTheory.Artinian.Ring
+public import Mathlib.FieldTheory.IsAlgClosed.Basic
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Polynomial UpperTheory.V.W UpperTheory.V.Alg UpperTheory.V.CA
 
@@ -99,7 +103,8 @@ private theorem fss_count {n : ℕ} {k E : Type} [Field k] [IsAlgClosed k] [Ring
       map_add' := fun v w => funext fun j => smul_add _ _ _
       map_smul' := fun φ v => funext fun j => by
         have h1 : ∀ w : M, φ w j = φ (Pi.single j (w j)) j := fun w => by
-          conv_lhs => rw [← Finset.univ_sum_single w, map_sum, Finset.sum_apply]
+          set_option synthInstance.maxHeartbeats 100000 in
+            conv_lhs => rw [← Finset.univ_sum_single w, map_sum, Finset.sum_apply]
           exact Finset.sum_eq_single j (fun i _ hi => hz φ i j _ hi) (by simp)
         change algebraMap k E (a j) • φ v j = φ (fun j => algebraMap k E (a j) • v j) j
         rw [h1 v, h1 (fun j => algebraMap k E (a j) • v j), Pi.single_smul, map_smul]
@@ -171,7 +176,6 @@ theorem UpperTheory.V.CA.d_faithful_ss :
       haveI : IsScalarTower k (ResidueField k) S := .of_algebraMap_eq fun _ => rfl
       obtain ⟨z, rfl⟩ : ∃ z, Det.cancel k E (ResidueField k) S z = y := by
         induction y with
-        | zero => exact ⟨0, map_zero _⟩
         | tmul s e => exact ⟨s ⊗ₜ (1 ⊗ₜ e), by simp [Det.cancel_tmul]⟩
         | add a b ha hb =>
           obtain ⟨a, rfl⟩ := ha

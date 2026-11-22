@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsContractNeZero
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.PIndDetK
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsContractNeZero
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.PIndDetK
+
+@[expose] public section
 
 namespace UpperTheory.Gal.InertialTypesAlt.SubquotientMaps
 
@@ -97,8 +101,8 @@ private theorem val_of_redK_mem (hPF : ParaFactor) (F : IndSp (stdBlocks d hd) �
   rw [h4, hF _ c hc]
   exact h3
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 private theorem evalOne_parab (hPF : ParaFactor)
     {κ : Representation ℂ (Levi 𝓀[k] fun a => Fin (d a)) Z} {Φ : W →ₗ[ℂ] Z}
     (hΦ : ∀ (x : leviK k fun a => Fin (d a)) (w : W),

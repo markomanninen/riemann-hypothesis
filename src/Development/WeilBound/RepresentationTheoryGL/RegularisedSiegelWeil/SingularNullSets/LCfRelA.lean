@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,7 @@ theorem diffOn_integral (ν : Measure X) [IsFiniteMeasure ν] (F : ℂ → X →
         rw [mem_sphere] at hz; rw [mem_ball, ← h, hz] at hw; exact lt_irrefl _ hw
     obtain ⟨B, hB⟩ := (isCompact_sphere z₀ (R : ℝ)).exists_bound_of_continuousOn hinv
     have hsw := circle_swap ν (fun z x => (z - w)⁻¹ • F z x) z₀ hR.le
-      ((hinv.comp continuousOn_fst fun p hp => hp.1).smul (hc.mono (Set.prod_mono (hsph.trans hsub) le_rfl)))
+      ((hinv.comp continuousOn_fst fun (p : ℂ × X) (hp : p ∈ sphere z₀ (R : ℝ) ×ˢ (Set.univ : Set X)) => hp.1).smul (hc.mono (Set.prod_mono (hsph.trans hsub) le_rfl)))
       (M := B * M) fun z hz x => by
         rw [norm_smul]
         exact mul_le_mul (hB z hz) (hM z (hsph hz) x) (norm_nonneg _) ((norm_nonneg _).trans (hB z hz))

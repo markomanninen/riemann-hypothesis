@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsValFam
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenLatticeVectorBundleStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalAtLocalRingStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.VectorsAtComplexPoint
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieOmegaLatticeVectorBundle
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenLatticeConstantRank
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeEigenVectorBundle
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelEigenvectorsActionStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsFlatAnIffIsConstMul
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsValFam
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsExcisionNbhdAway
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenLatticeVectorBundleStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieLatticeEvalAtLocalRingStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.VectorsAtComplexPoint
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieOmegaLatticeVectorBundle
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.EigenLatticeConstantRank
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatticeEigenVectorBundle
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelEigenvectorsActionStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl GlobalTheory.CompanionTheory.Ar.Flat
 open GlobalTheory.CompanionTheory.Ar.Flat.Rep
@@ -34,7 +39,7 @@ theorem ev_mem_span (ev : L →+ ER) (hev : ∀ a : A, ∃ r : F, ∀ e : L, ev 
   induction h using Submodule.span_induction with
   | mem e he => exact Submodule.subset_span ⟨e, he, rfl⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+  | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
   | smul a e _ he =>
     obtain ⟨r, hr⟩ := hev a
     rw [hr]
@@ -128,7 +133,8 @@ theorem frame_values {O I : Type} (ev : L →+ ER) (hev : ∀ a : A, ∃ r : F, 
       have hne : t i ≠ s₀ := fun h => hn (h ▸ ht i)
       obtain ⟨a, ha⟩ := hχ _ _ hne
       have e1 : T a w = ∑ j, (d j * χ (t j) a) • B j := by
-        conv_lhs => rw [hw', map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          conv_lhs => rw [hw', map_sum]
         refine Finset.sum_congr rfl fun j _ => ?_
         rw [map_smul, hB]
         show d j • T a (ev (c j)) = _
@@ -170,9 +176,10 @@ theorem valAt_act {X : Scheme.{0}} {G : Over X} [GrpObj G] {Ω : Type} [Field Ω
     [AddCommGroup V] [Module Ω V] (M : LieModel G ξ V) (f : G ⟶ G) [IsMonHom f] (A : V →ₗ[Ω] V)
     (hA : M.IsDiffOf f A) {R : Type} [CommRing R] [IsLocalRing R] {z : Sp R ⟶ X} {e : V} {w : epsAt z ⟶ G}
     (h : M.ValAt z e w) : M.ValAt z (A e) (w ≫ f) := by
-  rw [LieModel.valAt_iff] at *
-  obtain ⟨h1, v, hv, rfl⟩ := h
-  exact ⟨h1, v ≫ f, extends_act M f A hA _ hv, Category.assoc _ _ _⟩
+  obtain ⟨h1, v, hv, hw⟩ := h
+  refine ⟨h1, v ≫ f, extends_act M f A hA _ hv, ?_⟩
+  rw [Over.comp_left, hw, Over.comp_left]
+  exact Category.assoc _ _ _
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {D : Datum H} {l : Level H}
   {Xo : Moduli D l} {c : Coeff l} {O : Type} [CommRing O] {β : O →+* c.F} {Y : Model Xo c β} {U : Set (Xo.XF c)}

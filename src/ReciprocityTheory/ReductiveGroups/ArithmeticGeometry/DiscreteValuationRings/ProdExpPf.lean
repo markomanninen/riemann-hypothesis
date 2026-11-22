@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ProdExp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.PhiGenPf
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,9 +42,9 @@ variable {R : Type} [CommRing R] [IsDomain R] {I : Ideal R} {D : DegData R I}
 
 abbrev pGl : (thickObj R I e G).left ⟶ D.toPre.P.A.left := (U.gt e).pG.left
 
+
 variable (I G) in
 omit [IsDomain R] [GrpObj G] [IsCommMonObj G] in
-
 abbrev fGl : (thickObj R I e G).left ⟶ G.left := (fstG I e G).left
 
 abbrev Oφl (α : D.toPre.X) : Fin 4 → ((thickObj R I e G).left ⟶ D.toPre.P.A.left) := D.toPre.Oφ (U.gt e).pG α
@@ -211,13 +215,13 @@ variable {R : Type} [CommRing R] [IsDomain R] {I : Ideal R} {j : ℕ} {D D' : De
   {pD : IsPowDeg D'.toPre D.toPre j} {pA : IsPowPolAV A' A j} {pG : IsPowGrp G' G j}
   {U' : Unif I D' A' G'} {U : Unif I D A G}
 
-variable (I pG) in
 
+variable (I pG) in
 abbrev rhoE (e : ℕ) (i : Fin j) : (thickObj R I e G').left ⟶ (thickObj R I e G).left :=
   ((Over.pullback (thick R I e)).map (pG.pr i)).left
 
-variable (pD) in
 
+variable (pD) in
 def omB {Z : Scheme.{0}} (y : Z) (J : (Z ⟶ D.toPre.P.A.left) → D.toPre.P.L.ι) (J' : (Z ⟶ D'.toPre.P.A.left) → D'.toPre.P.L.ι)
     (ψ : Z ⟶ D'.toPre.P.A.left) : (Z.presheaf.stalk y)ˣ := bw pD.w ψ y (fun i => J (ψ ≫ (pD.pw.pr i).left)) (J' ψ)
 

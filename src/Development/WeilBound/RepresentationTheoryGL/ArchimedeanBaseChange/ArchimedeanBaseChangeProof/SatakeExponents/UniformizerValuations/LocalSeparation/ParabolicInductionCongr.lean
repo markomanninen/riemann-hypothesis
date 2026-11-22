@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ReadMod
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ParabolicProductEquivProductOfPartition
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ParabolicInductionTwoBlocksEmptyProductLeft
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ReadMod
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ParabolicProductEquivProductOfPartition
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ParabolicInductionTwoBlocksEmptyProductLeft
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsEquivProdIrrTw
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 noncomputable section
@@ -12,8 +16,8 @@ namespace PositivityTheory.Rg.BcB.F.RS.JB
 
 variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
 
-variable (k) in
 
+variable (k) in
 structure RB (N : ℕ) : Type 1 where
   V : Type
   [ag : AddCommGroup V]
@@ -32,9 +36,9 @@ theorem Iso.symm {N : ℕ} {A B : RB k N} (h : Iso A B) : Iso B A := h.elim fun 
 theorem Iso.trans {N : ℕ} {A B C : RB k N} (h : Iso A B) (h' : Iso B C) : Iso A C := by
   exact eqv_trans h h'
 
-def one (u : IrrGL k) : RB k u.1 := ⟨_, u.rep, u.2.rep.smooth⟩
+def one (u : IrrGL (k := k)) : RB k u.1 := ⟨_, u.rep, u.2.rep.smooth⟩
 
-def mp {c N : ℕ} (z : Fin c → IrrGL k) (e : (Σ a, Fin (z a).1) ≃ Fin N) : RB k N :=
+def mp {c N : ℕ} (z : Fin c → IrrGL (k := k)) (e : (Σ a, Fin (z a).1) ≃ Fin N) : RB k N :=
   ⟨_, multiProd e fun a => (z a).rep, isSmooth_parInd _ _⟩
 
 def i2 {r t N : ℕ} (h : r + t = N) (A : RB k r) (B : RB k t) : RB k N :=
@@ -47,30 +51,30 @@ theorem parabolic_induction_assoc {r s t M M' N : ℕ} (h₁ : r + s = M) (h₂ 
     (A : RB k r) (B : RB k s) (C : RB k t) : Iso (i2 h₂ (i2 h₁ A B) C) (i2 h₄ A (i2 h₃ B C)) :=
   ind₂_assoc' h₁ h₂ h₃ h₄ A.ρ B.ρ C.ρ A.sm B.sm C.sm
 
-theorem mp_placing {c N : ℕ} (z : Fin c → IrrGL k) (e e' : (Σ a, Fin (z a).1) ≃ Fin N) : Iso (mp z e) (mp z e') :=
+theorem mp_placing {c N : ℕ} (z : Fin c → IrrGL (k := k)) (e e' : (Σ a, Fin (z a).1) ≃ Fin N) : Iso (mp z e) (mp z e') :=
   multiProd_placing e e' fun a => (z a).rep
 
-theorem mp_head {c T N : ℕ} (z : Fin (c + 1) → IrrGL k) (e : (Σ a, Fin (z a).1) ≃ Fin N) (h : (z 0).1 + T = N)
+theorem mp_head {c T N : ℕ} (z : Fin (c + 1) → IrrGL (k := k)) (e : (Σ a, Fin (z a).1) ≃ Fin N) (h : (z 0).1 + T = N)
     (e' : (Σ a : Fin c, Fin (z a.succ).1) ≃ Fin T) : Iso (mp z e) (i2 h (one (z 0)) (mp (fun a => z a.succ) e')) :=
   multiProd_head (k := k) (fun a => (z a).rep) e h e'
 
-theorem parabolic_induction_unit {r t : ℕ} (h : t + r = r) (A : RB k r) (x : Fin 0 → IrrGL k) (e : (Σ a, Fin (x a).1) ≃ Fin t) :
+theorem parabolic_induction_unit {r t : ℕ} (h : t + r = r) (A : RB k r) (x : Fin 0 → IrrGL (k := k)) (e : (Σ a, Fin (x a).1) ≃ Fin t) :
     Iso (i2 h (mp x e) A) A :=
   ind₂_unit_left k r t h A.V A.ρ A.sm (fun a => (x a).1) _ (fun a => (x a).rep) e
 
-theorem card_eq {c N : ℕ} (z : Fin c → IrrGL k) (e : (Σ a, Fin (z a).1) ≃ Fin N) : ∑ a, (z a).1 = N := by
+theorem card_eq {c N : ℕ} (z : Fin c → IrrGL (k := k)) (e : (Σ a, Fin (z a).1) ≃ Fin N) : ∑ a, (z a).1 = N := by
   simpa using Fintype.card_congr e
 
-theorem ex_e {c : ℕ} (z : Fin c → IrrGL k) : ∃ N, Nonempty ((Σ a, Fin (z a).1) ≃ Fin N) := ⟨_, ⟨finSigmaFinEquiv⟩⟩
+theorem ex_e {c : ℕ} (z : Fin c → IrrGL (k := k)) : ∃ N, Nonempty ((Σ a, Fin (z a).1) ≃ Fin N) := ⟨_, ⟨finSigmaFinEquiv⟩⟩
 
 attribute [irreducible] Iso one mp i2
 
-theorem head_congr {u u' : IrrGL k} (hu : u = u') {T N : ℕ} (h : u.1 + T = N) (h' : u'.1 + T = N) (B : RB k T) :
+theorem head_congr {u u' : IrrGL (k := k)} (hu : u = u') {T N : ℕ} (h : u.1 + T = N) (h' : u'.1 + T = N) (B : RB k T) :
     Iso (i2 h (one u) B) (i2 h' (one u') B) := by
   subst hu
   exact Iso.refl _
 
-theorem stagesB : ∀ (s₁ s₂ c : ℕ) (z : Fin c → IrrGL k) (x : Fin s₁ → IrrGL k) (y : Fin s₂ → IrrGL k),
+theorem stagesB : ∀ (s₁ s₂ c : ℕ) (z : Fin c → IrrGL (k := k)) (x : Fin s₁ → IrrGL (k := k)) (y : Fin s₂ → IrrGL (k := k)),
     List.ofFn z = List.ofFn x ++ List.ofFn y → ∀ {N r t : ℕ} (h : r + t = N) (e : (Σ a, Fin (z a).1) ≃ Fin N)
       (e₁ : (Σ a, Fin (x a).1) ≃ Fin r) (e₂ : (Σ a, Fin (y a).1) ≃ Fin t), Iso (mp z e) (i2 h (mp x e₁) (mp y e₂)) := by
   intro s₁

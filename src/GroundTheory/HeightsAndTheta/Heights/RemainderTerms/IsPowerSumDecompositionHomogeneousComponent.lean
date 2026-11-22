@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.IsFlagIntegralOne
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PHomogeneousComponentMul
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.IsFlagIntegralOne
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PHomogeneousComponentMul
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.RestTerms
@@ -76,7 +81,8 @@ theorem rootRingToReal_blockPowerSum (f N j k : ℕ) (h : N = j + k) (m : ℕ) (
 theorem rootRingToReal_smallPowerSum_last (f r a m : ℕ) (τ : Fin f) :
     rootRingToReal f (r + a) a r (Nat.add_comm r a) (smallPowerSum f r a .last m τ) =
       IndefiniteRowSideFullHecke.RestTerms.smallPsum f a r true m τ := by
-  simp only [smallPowerSum, yRoot, SmallBlock.sign, yIndex, map_sum, map_pow, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [smallPowerSum, yRoot, SmallBlock.sign, yIndex, map_sum, map_pow, map_mul,
     rootRingToReal_C, rootRingToReal_X, IndefiniteRowSideFullHecke.RestTerms.smallPsum, if_true, Rat.cast_one, C_1, one_mul]
   refine sum_congr rfl fun i _ => ?_
   rfl
@@ -84,7 +90,8 @@ theorem rootRingToReal_smallPowerSum_last (f r a m : ℕ) (τ : Fin f) :
 theorem rootRingToReal_smallPowerSum_first (f r a m : ℕ) (τ : Fin f) :
     rootRingToReal f (r + a) r a rfl (smallPowerSum f r a .first m τ) =
       IndefiniteRowSideFullHecke.RestTerms.smallPsum f r a false m τ := by
-  simp only [smallPowerSum, yRoot, SmallBlock.sign, yIndex, map_sum, map_pow, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [smallPowerSum, yRoot, SmallBlock.sign, yIndex, map_sum, map_pow, map_mul,
     rootRingToReal_C, rootRingToReal_X, IndefiniteRowSideFullHecke.RestTerms.smallPsum, Bool.false_eq_true, if_false,
     Rat.cast_neg, Rat.cast_one, C_neg, C_1, neg_one_mul, map_neg]
   refine sum_congr rfl fun i _ => ?_
@@ -93,7 +100,8 @@ theorem rootRingToReal_smallPowerSum_first (f r a m : ℕ) (τ : Fin f) :
 theorem rootRingToReal_smallBlockMu_last (f r a : ℕ) :
     rootRingToReal f (r + a) a r (Nat.add_comm r a) (smallBlockMu f r a .last) =
       IndefiniteRowSideFullHecke.RestTerms.muClass f a r true := by
-  rw [IndefiniteRowSideFullHecke.RestTerms.muClass, smallBlockMu, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [IndefiniteRowSideFullHecke.RestTerms.muClass, smallBlockMu, map_sum]
   refine sum_congr rfl fun τ _ => ?_
   rw [← rootRingToReal_smallPowerSum_last]
   simp [smallPowerSum]
@@ -101,7 +109,8 @@ theorem rootRingToReal_smallBlockMu_last (f r a : ℕ) :
 theorem rootRingToReal_smallBlockMu_first (f r a : ℕ) :
     rootRingToReal f (r + a) r a rfl (smallBlockMu f r a .first) =
       IndefiniteRowSideFullHecke.RestTerms.muClass f r a false := by
-  rw [IndefiniteRowSideFullHecke.RestTerms.muClass, smallBlockMu, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [IndefiniteRowSideFullHecke.RestTerms.muClass, smallBlockMu, map_sum]
   refine sum_congr rfl fun τ _ => ?_
   rw [← rootRingToReal_smallPowerSum_first]
   simp [smallPowerSum]
@@ -188,7 +197,8 @@ theorem isPowerSumDecomposition_homogeneousComponent (f N : ℕ) (F : RootRing f
   have hcomp : homogeneousComponent (topDegree f N + 1) F = F := by
     rw [homogeneousComponent_of_mem ((mem_homogeneousSubmodule _ _).2 hF), if_pos rfl]
   conv_lhs => rw [← hcomp, hQ]
-  simp only [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
   refine sum_congr rfl fun m hm => sum_congr rfl fun τ _ => ?_
   rw [HomogeneousComponentMul.proof _ _ _ _ _ _ (blockPowerSum_isHomogeneous f N m τ),
     if_pos (hle m (Finset.mem_Icc.1 hm).2 τ)]

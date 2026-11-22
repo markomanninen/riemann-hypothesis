@@ -1,11 +1,16 @@
-import Development.AutomorphicArithmetic.CharacterBoxes.Supply
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LogCondLeThree
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsFamPOfKits
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MPowFiveMulFMulLLe
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SzRowNumAt
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.KitOfPoints
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.WeightWindowRequirementHostOfPoint
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsWeightsInWindows
+module
+
+public import Development.AutomorphicArithmetic.CharacterBoxes.Supply
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LogCondLeThree
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsFamPOfKits
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MPowFiveMulFMulLLe
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SzRowNumAt
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.KitOfPoints
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.WeightWindowRequirementHostOfPoint
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsWeightsInWindows
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.Inhab Formalism.HC GlobalTheory.EX UpperTheory.Top
 
 private theorem gk_nonneg {C : FC} (h : Std C) : C.GK.Nonneg := by

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowsMeanC
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagFramesSameGradedDefinitePartLatticeEq
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RatIota
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.RowsMeanC
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FlagFramesSameGradedDefinitePartLatticeEq
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.RatIota
+
+@[expose] public section
 
 noncomputable section
 open scoped Classical
@@ -111,7 +115,7 @@ theorem frame_gen {T : E} (G : Formalism.MainNotions.S.Lat.LFlag S r T) (hT : T 
     · intro ht
       obtain ⟨y, hy, x, hx, hxy⟩ := Submodule.mem_sup.1 ht
       have h1 : S.hT (f a) (t • G.fl.e a) = t := by rw [map_smul, hfe, if_pos rfl, smul_eq_mul, mul_one]
-      rw [← hxy, map_add, hXa0 a x hx, add_zero] at h1
+      rw [← hxy, map_add (f := _), hXa0 a x hx, add_zero] at h1
       rw [← h1]; exact hval a y hy
     · intro ht
       exact Submodule.mem_sup_left (hmem a t ht)
@@ -166,11 +170,11 @@ theorem admissibleFrame_congruent_mod_unitriangular {T T' : E} (G : Formalism.Ma
   have hmono : ∀ i j : Fin r, i ≤ j → ∀ s ∈ aaI 𝔡 j, s ∈ aaI 𝔡 i := by
     intro i j hij s hs
     rw [hp] at hs ⊢
-    exact FractionalIdeal.inv_anti_mono (pow_ne_zero _ hD0) (pow_ne_zero _ hD0)
+    exact FractionalIdeal.inv_anti_mono (pow_ne_zero _ hD0)
       (pow_le_pow_right_of_le_one' hD1 (Nat.sub_le_sub_left (Fin.le_iff_val_le_val.1 hij) r)) hs
   have hone : ∀ i : Fin r, ∀ o : 𝓞 E, (o : E) ∈ aaI 𝔡 i := by
     intro i o
-    have h1 := FractionalIdeal.inv_anti_mono (pow_ne_zero _ hD0) one_ne_zero (pow_le_one' hD1 (r - i.val))
+    have h1 := FractionalIdeal.inv_anti_mono (pow_ne_zero _ hD0) (pow_le_one' hD1 (r - i.val))
     rw [inv_one] at h1
     rw [hp]; exact h1 ((FractionalIdeal.mem_one_iff _).2 ⟨o, rfl⟩)
   have hsmulI : ∀ i : Fin r, ∀ s ∈ aaI 𝔡 i, ∀ o : 𝓞 E, s * (o : E) ∈ aaI 𝔡 i := by
@@ -248,7 +252,8 @@ theorem admissibleFrame_congruent_mod_unitriangular {T T' : E} (G : Formalism.Ma
     obtain ⟨s, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun E).1 hy
     refine Finset.sum_congr rfl fun c _ => ?_
     congr 1
-    simp [map_sum, hfe']
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, hfe']
   have hloc : ∀ P : IsDedekindDomain.HeightOneSpectrum (𝓞 E), (g : 𝓞 E) ∈ P.asIdeal → ∀ y ∈ Λ, y ∈ G'.fl.X →
       ∃ s : 𝓞 E, s ∉ P.asIdeal ∧ ∀ b, ∃ o : 𝓞 E, (o : E) = (s : E) * S.hT (f' b) y := by
     intro P hg y hy hyX
@@ -362,7 +367,7 @@ theorem admissibleFrame_congruent_mod_unitriangular {T T' : E} (G : Formalism.Ma
 theorem fl_mapLF {T : E} (γ : S.V ≃ₗ[E] S.V) (hγ : γ ∈ Formalism.HermitianLatticesTheory.isom S.hT) (F : Formalism.MainNotions.S.FlagG S r T) :
     (Formalism.L2.SG.TermOp.mapLF γ (⟨F, F.z⟩ : Formalism.MainNotions.S.Lat.LFlag S r T)).fl = Formalism.L2.SG.TermOp.mapFlag γ hγ F := by
   unfold Formalism.L2.SG.TermOp.mapLF
-  rw [dif_pos hγ]
+  rw [dite_eq_left hγ]
 
 end Gen
 
@@ -417,9 +422,61 @@ theorem termC_holds : GlobalTheory.TypeAsm.TermC := by
   have hframe' := frame_gen G' hT (GlobalTheory.TypeAsm.dI D) t.lam (fun a => γ (f1 a)) hfe' hval' hmem' hz' hOK.1.2
   refine ⟨⟨?_, hframe, hframe'⟩, admissibleFrame_congruent_mod_unitriangular G G' hT hT (GlobalTheory.TypeAsm.dI D) hne t.lam _ (fun a => γ (f1 a)) hfe' hval'
     hmem hzΛ hmem' hz' hframe' hOK.1 hAdm⟩
-  refine (GlobalTheory.HermLat.isUnimod_iff _ _).2 ⟨hrow.1, ?_⟩
-  rw [show (GlobalTheory.TypeAsm.HV D).B.flip = (Formalism.MainNotions.S.VS D).hT from LinearMap.flip_flip _]
-  exact hrow.2.1
+  let E := D.host.E
+  let S := Formalism.MainNotions.S.VS D
+  have hsurj : Function.Surjective S.hT := by
+    have hinj : Function.Injective S.hT := by
+      set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
+      intro x hx
+      exact S.nondeg.1 x (fun y => by rw [hx]; rfl)
+    have hbij : Function.Bijective S.hT.rangeRestrict :=
+      ⟨fun a b hab => hinj (congrArg Subtype.val hab), S.hT.surjective_rangeRestrict⟩
+    let j : S.V ≃+ LinearMap.range S.hT := AddEquiv.ofBijective S.hT.rangeRestrict.toAddMonoidHom hbij
+    have hr : Module.rank E S.V = Module.rank E (LinearMap.range S.hT) :=
+      rank_eq_of_equiv_equiv (starRingEnd E) j star_involutive.bijective (fun r m => by
+        apply Subtype.ext
+        show S.hT (r • m) = (starRingEnd E) r • S.hT m
+        rw [map_smulₛₗ])
+    have hf : Module.finrank E (LinearMap.range S.hT) = Module.finrank E (Module.Dual E S.V) := by
+      rw [Subspace.dual_finrank_eq]
+      unfold Module.finrank
+      rw [hr]
+    exact LinearMap.range_eq_top.1 (Submodule.eq_top_of_finrank_eq hf)
+  have hspan : Submodule.span E (t.lam : Set S.V) = ⊤ := by
+    apply Submodule.dualAnnihilator_eq_bot_iff.mp
+    apply le_antisymm ?_ bot_le
+    intro φ hφ
+    obtain ⟨v, hv⟩ := hsurj φ
+    have hline (c : E) : c • v ∈ t.lam := by
+      rw [← hrow.2.1]
+      change c • v ∈ Formalism.E.hdual S.hT t.lam
+      simp only [Formalism.E.hdual, Submodule.mem_iInf, Submodule.mem_comap, LinearMap.restrictScalars_apply]
+      intro y hy
+      have hy0 : S.hT v y = 0 := by
+        rw [hv]
+        exact (Submodule.mem_dualAnnihilator φ).mp hφ y (Submodule.subset_span hy)
+      have hz : S.hT y v = 0 := by
+        simpa [hy0] using (S.herm.eq v y).symm
+      simp [hz]
+    have hv0 : v = 0 := by
+      apply S.frame.repr.injective
+      ext i
+      simp only [map_zero, Finsupp.zero_apply]
+      by_contra hi
+      let coord := (S.frame.coord i).restrictScalars (𝓞 E)
+      have htop : t.lam.map coord = ⊤ := by
+        rw [eq_top_iff]
+        intro x _
+        refine ⟨(x / S.frame.repr v i) • v, hline _, ?_⟩
+        simp [coord, div_mul_cancel₀ _ hi]
+      have : Module.Finite (𝓞 E) E := Module.finite_def.mpr (htop ▸ hrow.1.fg.map coord)
+      exact RingOfIntegers.not_isField E
+        (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 E) E) (Field.toIsField E))
+    rw [Submodule.mem_bot]
+    simpa [hv0] using hv.symm
+
+  refine (GlobalTheory.HermLat.isUnimod_iff _ _).2 ⟨⟨hrow.1.fg, hspan⟩, ?_⟩
+  simpa only [show (GlobalTheory.TypeAsm.HV D).B.flip = (Formalism.MainNotions.S.VS D).hT from LinearMap.flip_flip _] using hrow.2.1
 
 end D7
 

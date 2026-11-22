@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteAdelicUnitaryPointCutToFibreUnionStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemOpenNhdOneOfIntegralEqOneOnFinsetStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFiniteAdelicUnitaryPointCutToFibreUnionStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemOpenNhdOneOfIntegralEqOneOnFinsetStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalDat
 namespace GlobalTheory.FixLev
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
-theorem ext_fin {x y : UA E n} (hx : x ∈ finU E n) (hy : y ∈ finU E n) (h : ∀ v : Pl E, cLoc v x = cLoc v y) : x = y := by
+theorem ext_fin {x y : UA E n} (hx : x ∈ finU (E := E) (n := n)) (hy : y ∈ finU (E := E) (n := n)) (h : ∀ v : Pl E, cLoc v x = cLoc v y) : x = y := by
   have hx' : cInf x = 1 := hx
   have hy' : cInf y = 1 := hy
   apply Subtype.ext
@@ -65,7 +69,7 @@ theorem one_entry_mem (v : Pl E) (i j : Fin n) : (1 : GLw n v) i j ∈ v.adicCom
 
 theorem local_fixed (S : Set (Pl E)) (hS : IsSection S) (K' : ∀ w : Pl E, Subgroup (UL n w)) (φ : UA E n → ℂ)
     (hφ : ∀ w ∈ S, ∀ x ∈ locU n w, (∃ k ∈ K' w, k.1 = cLoc w x) → RU E n x φ = φ) (B : Finset (Pl E)) :
-    ∀ h : UA E n, h ∈ finU E n → (∀ w ∈ S, ∃ k ∈ K' w, k.1 = cLoc w h) → (∀ v, v ∉ fib B → cLoc v h = 1) →
+    ∀ h : UA E n, h ∈ finU (E := E) (n := n) → (∀ w ∈ S, ∃ k ∈ K' w, k.1 = cLoc w h) → (∀ v, v ∉ fib B → cLoc v h = 1) →
       h ∈ stabU φ := by
   induction B using Finset.induction_on with
   | empty =>
@@ -117,7 +121,7 @@ theorem inf_fixed_globLev_ne_bot : ∀ (E : Type) [Field E] [NumberField E] [IsC
   intro E _ _ _ n S hS K' _ π hπ hL
   obtain ⟨φ, hφπ, hφ0, hφfix⟩ := hL
   have hlev := (hπ.aut φ hφπ).level
-  have key : ∀ g : finU E n, g ∈ globLev S K' → (g : UA E n) ∈ stabU φ := by
+  have key : ∀ g : finU (E := E) (n := n), g ∈ globLev S K' → (g : UA E n) ∈ stabU φ := by
     intro g hg
     have hgS : ∀ w ∈ S, ∃ k ∈ K' w, k.1 = cLoc w (g : UA E n) := by
       intro w hw
@@ -174,7 +178,7 @@ theorem inf_fixed_globLev_ne_bot : ∀ (E : Type) [Field E] [NumberField E] [IsC
   have hmem : φ ∈ π ⊓ fixed (RF E n) (globLev S K') := by
     refine ⟨hφπ, ?_⟩
     intro h
-    change RU E n ((h : finU E n) : UA E n) φ = (1 : ℂˣ) • φ
+    change RU E n ((h : finU (E := E) (n := n)) : UA E n) φ = (1 : ℂˣ) • φ
     rw [one_smul]
     exact key h h.2
   rw [hbot] at hmem

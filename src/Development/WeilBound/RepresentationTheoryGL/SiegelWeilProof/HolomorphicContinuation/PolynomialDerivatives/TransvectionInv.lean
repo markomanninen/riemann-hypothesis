@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.PairSym
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.PairSym
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,9 +82,9 @@ theorem symK_rename (ε : Fin m → Bool) (i j : Fin n) (p : MvPolynomial (Final
   · intro a
     simp [MvPolynomial.derivation_C]
   · intro p q hp hq
-    simp only [map_add, hp, hq]
+    simp only [map_add (f := _), hp, hq]
   · intro p v hp
-    simp only [map_mul, Derivation.leibniz, smul_eq_mul, map_add, hp, symK_rename_X]
+    simp only [map_mul, Derivation.leibniz, smul_eq_mul, map_add (f := _), hp, symK_rename_X]
 
 theorem Dsrc_eq_zero (ε : Fin m → Bool) (i j : Fin n) (p : MvPolynomial (FinalTheorems m n) ℂ)
     (h : symK ε i j (rename (phi ε) p) = 0) : Dsrc (m := m) i j p = 0 := by
@@ -95,15 +99,17 @@ theorem act_comp (A B : Matrix (Fin n) (Fin n) ℂ) :
     act (m := m) (B * A) = (act A).comp (act B) := by
   apply MvPolynomial.algHom_ext
   rintro (⟨l, a⟩ | ⟨l, b⟩)
-  · simp only [act, AlgHom.comp_apply, aeval_X, Sum.elim_inl, map_sum, map_mul, aeval_C,
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [act, AlgHom.comp_apply, aeval_X, Sum.elim_inl, map_sum, map_mul, aeval_C,
       MvPolynomial.algebraMap_eq, Matrix.mul_apply, Finset.sum_mul, Finset.mul_sum, mul_assoc]
-    rw [Finset.sum_comm]
-  · simp only [act, AlgHom.comp_apply, aeval_X, Sum.elim_inr, map_sum, map_mul, aeval_C,
+      rw [Finset.sum_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [act, AlgHom.comp_apply, aeval_X, Sum.elim_inr, map_sum, map_mul, aeval_C,
       MvPolynomial.algebraMap_eq, Matrix.mul_inv_rev, Matrix.mul_apply, Finset.sum_mul, Finset.mul_sum,
       mul_assoc]
-    rw [Finset.sum_comm]
-    refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun j _ => ?_
-    ring
+      rw [Finset.sum_comm]
+      refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun j _ => ?_
+      ring
 
 theorem act_mul (A B : Matrix (Fin n) (Fin n) ℂ) (q : MvPolynomial (FinalTheorems m n) ℂ) :
     act (A * B) q = act B (act A q) := by
@@ -132,10 +138,10 @@ theorem fix_of_exp (δ : Derivation ℂ (MvPolynomial (FinalTheorems m n) ℂ) (
     · intro a
       simp [Φ, MvPolynomial.derivation_C, Polynomial.algebraMap_apply, MvPolynomial.algebraMap_eq]
     · intro p q hp hq
-      simp only [map_add, Polynomial.derivative_add, hp, hq, mul_add]
+      simp only [map_add (f := _), Polynomial.derivative_add, hp, hq, mul_add]
     · intro p v hp
       rw [map_mul, Polynomial.derivative_mul, hp, Derivation.leibniz, smul_eq_mul, smul_eq_mul]
-      simp only [mul_add, map_add, map_mul, hΦδ, hX, hC, Polynomial.derivative_add, Polynomial.derivative_C,
+      simp only [mul_add, map_add (f := _), map_mul, hΦδ, hX, hC, Polynomial.derivative_add, Polynomial.derivative_C,
         Polynomial.derivative_mul, Polynomial.derivative_X, zero_add, one_mul, mul_zero, add_zero, Polynomial.C_mul]
       ring
   have hev1 : ∀ q, Polynomial.eval 1 (Φ q) = φ q := by
@@ -144,7 +150,7 @@ theorem fix_of_exp (δ : Derivation ℂ (MvPolynomial (FinalTheorems m n) ℂ) (
     · intro a
       simp [Φ, Polynomial.algebraMap_apply, MvPolynomial.algebraMap_eq]
     · intro p q hp hq
-      simp only [map_add, Polynomial.eval_add, hp, hq]
+      simp only [map_add (f := _), Polynomial.eval_add, hp, hq]
     · intro p v hp
       rw [map_mul, map_mul, Polynomial.eval_mul, hp, hX, hφ]
       simp
@@ -154,7 +160,7 @@ theorem fix_of_exp (δ : Derivation ℂ (MvPolynomial (FinalTheorems m n) ℂ) (
     · intro a
       simp [Φ, Polynomial.algebraMap_apply, MvPolynomial.algebraMap_eq]
     · intro p q hp hq
-      simp only [map_add, Polynomial.eval_add, hp, hq]
+      simp only [map_add (f := _), Polynomial.eval_add, hp, hq]
     · intro p v hp
       rw [map_mul, Polynomial.eval_mul, hp, hX]
       simp
@@ -254,16 +260,17 @@ theorem Dsrc_monomial (l : Fin n) (d : FinalTheorems m n →₀ ℕ) (r : ℂ) :
       wgt_single l k v]
     have hX : (X v : MvPolynomial (FinalTheorems m n) ℂ) ^ (k - 1) * X v = X v ^ k := by
       rw [← pow_succ, Nat.sub_add_cancel (Nat.pos_of_ne_zero hk)]
-    simp only [smul_eq_mul, nsmul_eq_mul, Int.cast_add, Int.cast_mul, Int.cast_natCast, map_add, map_mul,
+    simp only [smul_eq_mul, nsmul_eq_mul, Int.cast_add, Int.cast_mul, Int.cast_natCast, map_add (f := _), map_mul,
       map_natCast]
     calc _ = (k : MvPolynomial (FinalTheorems m n) ℂ) * C ((wgt l (Finsupp.single v 1) : ℤ) : ℂ) * (X v ^ (k - 1) * X v) *
             monomial f r + C ((wgt l f : ℤ) : ℂ) * (X v ^ k * monomial f r) := by ring
       _ = _ := by rw [hX]; ring
 
 theorem coeff_Dsrc (l : Fin n) (p : MvPolynomial (FinalTheorems m n) ℂ) (d : FinalTheorems m n →₀ ℕ) :
-    coeff d (Dsrc (m := m) l l p) = ((wgt l d : ℤ) : ℂ) * coeff d p := by
+    AddMonoidAlgebra.coeff (Dsrc (m := m) l l p) d = ((wgt l d : ℤ) : ℂ) * AddMonoidAlgebra.coeff p d := by
   conv_lhs => rw [p.as_sum]
-  rw [map_sum, coeff_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, coeff_sum]
   simp only [Dsrc_monomial, coeff_C_mul, coeff_monomial]
   rw [Finset.sum_eq_single d]
   · simp
@@ -296,9 +303,9 @@ theorem act_diag (D : Fin n → ℂ) (hD : ∀ l, D l ≠ 0) (p : MvPolynomial (
     ring
   have hw : ∀ d ∈ p.support, ∀ l, wgt l d = 0 := by
     intro d hd l
-    have h := congrArg (coeff d) (hp l)
-    rw [coeff_Dsrc, coeff_zero] at h
-    have hc : coeff d p ≠ 0 := mem_support_iff.mp hd
+    have h := congrArg (AddMonoidAlgebra.coeff · d) (hp l)
+    rw [coeff_Dsrc, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at h
+    have hc : AddMonoidAlgebra.coeff p d ≠ 0 := mem_support_iff.mp hd
     exact_mod_cast (mul_eq_zero.mp h).resolve_right hc
   have hprod : ∀ d ∈ p.support, (d.prod fun v k => cv v ^ k) = 1 := by
     intro d hd
@@ -314,7 +321,8 @@ theorem act_diag (D : Fin n → ℂ) (hD : ∀ l, D l ≠ 0) (p : MvPolynomial (
     congr 1
     exact_mod_cast h
   conv_lhs => rw [p.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   conv_rhs => rw [p.as_sum]
   refine Finset.sum_congr rfl fun d hd => ?_
   rw [hmono, hprod d hd, map_one, one_mul]

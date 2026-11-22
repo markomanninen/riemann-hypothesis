@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TwistedAutomorphicForms.EqOneOfMemLev
-import GroundTheory.GlobalFields.SemilocalAlgebras.Finite
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EqZeroOfForallLeExp
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TwistedAutomorphicForms.EqOneOfMemLev
+public import GroundTheory.GlobalFields.SemilocalAlgebras.Finite
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.EqZeroOfForallLeExp
+
+@[expose] public section
 
 open NumberField IsDedekindDomain GroundTheory.Global.SemiLocal
 

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.Entire
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.Entire
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ private theorem wr_bot (k r : ℕ) : wr k r =O[𝓝[>] 0] (fun y : ℝ => y ^ (-
 
 private theorem wr_cont (k r : ℕ) : ContinuousOn (wr k r) (Set.Ioi 0) := by
   unfold wr
-  refine ContinuousOn.mul (by fun_prop) (ContinuousOn.inv₀ (by fun_prop) fun y hy => ?_)
+  refine ContinuousOn.mul (by fun_prop) (ContinuousOn.fun_inv₀ (by fun_prop) fun y hy => ?_)
   have : (0 : ℝ) < y := hy
   positivity
 
@@ -230,12 +234,12 @@ private theorem cont_iy : ContinuousOn iy {0}ᶜ := by
     exact continuous_subtype_val.inv₀ fun y => y.2
   refine ((TR.continuous_infId ℚ).comp h).congr fun y => ?_
   change _ = iy y.1
-  rw [iy, dif_neg (show (y : ℝ) ≠ 0 from y.2)]
+  rw [iy, dite_eq_right (show (y : ℝ) ≠ 0 from y.2)]
   rfl
 
 private theorem re_iy {y : ℝ} (hy : y ≠ 0) : re (iy y : A ℚ) = y := by
   have h : ∀ x, TR.pInf ℚ (TR.sInf ℚ x) = x := fun x => (TR.infEq ℚ).symm_apply_apply x
-  rw [re, iy, dif_neg hy]
+  rw [re, iy, dite_eq_right hy]
   change TR.pInf ℚ (1 - TR.sInf ℚ 1 + TR.sInf ℚ _) _ = y
   simp [h]
 

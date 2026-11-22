@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.DinvExact
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.DinvExact
+
+@[expose] public section
 
 open TensorProduct Module
 open UpperTheory.Gal.crystallineComparison
@@ -15,7 +19,7 @@ private theorem algebraTensorModule_map_map_id_right_comm_of_comm {F L U V B : T
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [h]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 set_option maxHeartbeats 800000 in
 theorem UpperTheory.Gal.crystallineComparison.annSub_of :
@@ -30,7 +34,7 @@ theorem UpperTheory.Gal.crystallineComparison.annSub_of :
       induction x using TensorProduct.induction_on with
       | zero => simp
       | tmul a b => simp [M]
-      | add x y hx hy => simp only [map_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]
     rw [h1]
     exact Module.Flat.rTensor_preserves_injective_linearMap (i.restrictScalars F) hi
   have hpow : ∀ k, ∀ b, (LinearMap.id : B →ₗ[F] B) ((ψ ^ k) b) = (ψ ^ k) ((LinearMap.id : B →ₗ[F] B) b) :=
@@ -42,7 +46,8 @@ theorem UpperTheory.Gal.crystallineComparison.annSub_of :
     intro g
     exact (algebraTensorModule_map_map_id_right_comm_of_comm i (ρU g) (ρ g) (σ g) (hI g) x).trans (congrArg M (hx g))
   apply hM_inj
-  rw [map_zero, ← hAnn (M x) hmx, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_zero, ← hAnn (M x) hmx, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [LinearMap.map_smul_of_tower]
   congr 1

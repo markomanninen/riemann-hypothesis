@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
-import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SideFam
+public import Development.AbelianVarietyTheory.Definitions.Jets.SumIoPr
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+
+@[expose] public section
 
 open BranchingSupport Formalism.FourierDecayAlt Formalism.FourierDecayAlt.ThreeDimData Matrix MeasureTheory Finset
 open scoped InnerProductSpace ENNReal
@@ -77,7 +81,7 @@ lemma dst_inv_continuousOn [Nonempty n] (x : n → ℂ) (f : ι → n → ℂ) (
     have h : (fun g : Matrix n n ℂ => g⁻¹) = fun g => (g.det)⁻¹ • g.adjugate := by
       funext g; rw [Matrix.inv_def, Ring.inverse_eq_inv']
     rw [h]
-    exact (continuous_id.matrix_det.continuousOn.inv₀ fun g hg => hg.ne_zero).smul
+    exact (continuous_id.matrix_det.continuousOn.inv₀ fun (g : Matrix n n ℂ) (hg : g ∈ U) => (show IsUnit g.det from hg).ne_zero).smul
       continuous_id.matrix_adjugate.continuousOn
   intro g0 hg0
   have hg0' : IsUnit g0.det := hg0

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompEqOneOfTransl
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSecImageNonzeroLocus
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompEqOneOfTransl
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSecImageNonzeroLocus
+
+@[expose] public section
 
 noncomputable section
 
@@ -87,8 +91,8 @@ theorem exists_sec_image_nonzeroLocus_fp [IsFinite f] [Flat f] [LocallyOfFiniteP
     have lg : W ≤ M.U a.1.2 ⊓ M.U b.1.2 := le_inf (la.trans a.2.2.1) (lb.trans b.2.2.1)
     have : Nonempty W := ⟨⟨x, hx⟩⟩
     obtain ⟨hF, ea⟩ := finFree_revChar_of_isPushout (isPushout_app f a.2.1 hW la) a.2.2.2
-    have ea := congrArg (coeff · k) (ea hF (τ a))
-    have eb := congrArg (coeff · k)
+    have ea := congrArg (fun p => p.coeff k) (ea hF (τ a))
+    have eb := congrArg (fun p => p.coeff k)
       ((finFree_revChar_of_isPushout (isPushout_app f b.2.1 hW lb) b.2.2.2).2 hF (τ b))
     simp only [coeff_map] at ea eb
     have eτ : resG Y (show f ⁻¹ᵁ W ≤ f ⁻¹ᵁ a.1.1 from fun _ hy => la hy) (τ a) =

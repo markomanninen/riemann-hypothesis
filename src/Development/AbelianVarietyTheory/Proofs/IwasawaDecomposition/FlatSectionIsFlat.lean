@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PerValNeZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TwoMarkingsDifferByLevelIsometryStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HorizontalCoordinateLatticeIsometryDetOneStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PeriodLinearAlgebraHodgeSequenceExactStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HorizontalFunctionMatrixRelationStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPeriodsInFrameOffBoundaryStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PeriodsChangeOfEigenFrameStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLocallyHolomorphicPeriodsFamilyStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHermitianPeriodLatticeBasisSameSignatureStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.H0NeBotOfHorizontalFunctionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PerValNeZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TwoMarkingsDifferByLevelIsometryStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HorizontalCoordinateLatticeIsometryDetOneStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PeriodLinearAlgebraHodgeSequenceExactStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HorizontalFunctionMatrixRelation
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPeriodsInFrameOffBoundaryStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PeriodsChangeOfEigenFrameStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsLocallyHolomorphicPeriodsFamilyStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsHermitianPeriodLatticeBasisSameSignatureStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.H0NeBotOfHorizontalFunction
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -50,7 +54,7 @@ theorem differentiableAt_det {A : V → Matrix m m ℂ} {b : V} (h : ∀ i j, Di
     DifferentiableAt ℂ (fun b => (A b).det) b := by
   simp only [Matrix.det_apply']
   refine DifferentiableAt.fun_sum fun s _ => (differentiableAt_const _).mul ?_
-  exact (HasFDerivAt.finset_prod fun i _ => (h _ _).hasFDerivAt).differentiableAt
+  exact (HasFDerivAt.finsetProd fun i _ => (h _ _).hasFDerivAt).differentiableAt
 
 theorem differentiableAt_horVal {K : V → Matrix (m ⊕ n) m ℂ} {C : V → Matrix n (m ⊕ n) ℂ} {b₀ : V}
     (hK : ∀ i j, DifferentiableAt ℂ (fun b => K b i j) b₀) (hC : ∀ i j, DifferentiableAt ℂ (fun b => C b i j) b₀)
@@ -87,6 +91,18 @@ theorem exists_generates {F : Type} [Field F] (Y : GlobalTheory.ProjVar.Var F) (
     add_zero (0 : Y.Dv) ▸ Y.mul_mem_riemannRochSpace_add _ _ _ _ hst hg
   have hinj : Function.Injective L := fun a b e =>
     Subtype.ext (mul_left_cancel₀ (mul_ne_zero hs0 ht0) (congrArg Subtype.val e))
+  letI : FiniteDimensional F (Y.H0 0) := by
+    have := finite_coh_of_isProjOver Y.algebraMap_Γ (structureModule Y.X) Y.isProjOver 0
+    haveI : Module.Finite F Γ(Y.X, ⊤) := .equiv ((coh.zeroUnitEquiv Y.X).restrictScalars F)
+    let f : Γ(Y.X, ⊤) →ₗ[F] Y.Fn := (IsScalarTower.toAlgHom F Γ(Y.X, ⊤) Y.Fn).toLinearMap
+    have hf : ∀ a, f a ∈ Y.H0 0 := fun a =>
+      GlobalTheory.ProjVar.Var.mem_riemannRochSpace_iff_regularAt_everywhere.2 fun x =>
+        CartierDiv.regularAt_zero_iff.2 (regAt_fnOf trivial trivial a)
+    apply Module.Finite.of_surjective (f.codRestrict _ hf)
+    intro a
+    obtain ⟨b, hb⟩ := exists_fnOf_eq (X := Y.X) (U := ⊤) trivial fun x _ =>
+      CartierDiv.regularAt_zero_iff.1 (GlobalTheory.ProjVar.Var.mem_riemannRochSpace_iff_regularAt_everywhere.1 a.2 x)
+    exact ⟨b, Subtype.ext hb⟩
   obtain ⟨u, hu⟩ := LinearMap.injective_iff_surjective.1 hinj ⟨1, GlobalTheory.ProjVar.Var.eff_iff_one_mem.1 Y.eff_zero⟩
   have hu' : s * t * u = 1 := congrArg Subtype.val hu
   refine ⟨s, fun y => ?_⟩
@@ -107,68 +123,5 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {H : ReciprocityTheo
   {g : ℕ} {e : Fin g ≃ Letter Dw} {Fu : Fam Xo c σ e} {τ : E →+* ℂ} {x : ∀ i, Idx Dw τ → (Fu.Di i).La}
   {hm : Fin Fu.n → Matrix (Idx Dw τ) (Idx Dw τ) E}
 
-theorem horOf_eq {Z : Model Xo c β} (hl : ∀ p : ℕ, p.Prime → l.GoodAt p) (hx : ∀ i, IsPerBasis (Fu.Di i) (x i) (hm i))
-    (a : CxFr Z σ) (i : Fin Fu.n) (Q : (Fu.Di i).La →+ (Letter Dw → ℂ)) (h : Per Fu a i Q) :
-    horOf Fu τ x hm a = perVal c σ τ (x i) (hm i) Q := by
-  have hex : ∃ iQ : Σ i : Fin Fu.n, (Fu.Di i).La →+ (Letter Dw → ℂ), Per Fu a iQ.1 iQ.2 := ⟨⟨i, Q⟩, h⟩
-  rw [horOf, dif_pos hex]
-  have hs := hex.choose_spec
-  generalize hex.choose = w at hs
-  obtain ⟨j, Q'⟩ := w
-  obtain rfl : j = i := (GlobalTheory.T.two_markings_differ_by_level_isometry E H Dw l Xo c O β Z σ g e Fu a).1 _ _ _ _ hs h
-  obtain ⟨gm, h1, h2, h3⟩ := (GlobalTheory.T.two_markings_differ_by_level_isometry E H Dw l Xo c O β Z σ g e Fu a).2 _ _ _ h hs
-  have := (GlobalTheory.T.horizontalCoordinate_lattice_isometry_det_one E H Dw l c σ _ τ (x j) (hm j) Q' gm (hx j) (GlobalTheory.T.periodLinearAlgebra_hodgeSequence_exact E H Dw l Xo c O β Z σ g e Fu τ a j Q' _ _ hs (hx j))
-    h1).2.2 hl h2
-  rw [← this]
-  congr 1
-  exact AddMonoidHom.ext h3
-
-theorem horFn_horOf {Y : Model Xo c β} (T : TorModel Y) (hσ : Formalism.L2.PjFree.GoodEmb c σ) (hr : 1 ≤ Dw.p + Dw.q)
-    (hl : ∀ p : ℕ, p.Prime → l.GoodAt p) (hx : ∀ i, IsPerBasis (Fu.Di i) (x i) (hm i)) :
-    HorFn (Z := T.Z) τ (horOf Fu τ x hm) := by
-  have good := fun a i Q h => GlobalTheory.T.periodLinearAlgebra_hodgeSequence_exact E H Dw l Xo c O β T.Z σ g e Fu τ a i Q _ _ h (hx i)
-  refine ⟨fun a ha => ?_, fun a a' M N ha hM hN => ?_, fun V _ _ _ B a hB hf hi b₀ hb => ?_,
-    GlobalTheory.T.horizontal_function_matrix_relation E H Dw l Xo c O β Y T σ g e Fu τ x hm _ hσ hr hx (horOf_eq hl hx)⟩
-  · obtain ⟨i, Q, h⟩ := GlobalTheory.T.exists_periods_in_frame_off_boundary E H Dw l Xo c O β T.Z σ g e Fu a ha
-    rw [horOf_eq hl hx a i Q h]
-    exact (good a i Q h).perVal_ne_zero
-  · obtain ⟨i, Q, h⟩ := GlobalTheory.T.exists_periods_in_frame_off_boundary E H Dw l Xo c O β T.Z σ g e Fu a ha
-    obtain ⟨Q', h', hc⟩ := GlobalTheory.T.periods_change_of_eigenFrame E H Dw l Xo c O β T.Z σ g e Fu a a' i Q h hM.1
-    have key : ∀ ρ M, Chg a a' ρ M → perMat (x i) Q ρ = Mᵀ * perMat (x i) Q' ρ := fun ρ M hM => by
-      ext j k
-      simp only [perMat, Matrix.of_apply, Matrix.mul_apply, Matrix.transpose_apply, hc ρ M hM, mul_comm]
-    have k2 : kerMat c σ τ (x i) (hm i) Q = kerMat c σ τ (x i) (hm i) Q' * N := by
-      rw [kerMat, key _ _ hN, Matrix.transpose_mul, Matrix.transpose_transpose, ← Matrix.mul_assoc, kerMat]
-    obtain ⟨-, -, ⟨R, hR⟩, S, hS⟩ := good a i Q h
-    obtain ⟨-, h0, -, S', hS'⟩ := good a' i Q' h'
-    rw [horOf_eq hl hx a i Q h, horOf_eq hl hx a' i Q' h', perVal, perVal, k2, key _ _ hM]
-    exact horVal_change N M h0 hS' (k2 ▸ hR) (key _ _ hM ▸ hS)
-  · obtain ⟨B', i, Q, hB', hb', -, hP, hd⟩ := GlobalTheory.T.exists_locally_holomorphic_periods_family E H Dw l Xo c O β T.Z σ g e Fu V B a hB hf hi b₀ hb
-    have hn := hB'.mem_nhds hb'
-    have hd' : ∀ v z, DifferentiableAt ℂ (fun b => Q b v z) b₀ := fun v z => (hd v z).differentiableAt hn
-    obtain ⟨R, hR⟩ := (good _ i _ (hP b₀ hb')).2.2.1
-    refine DifferentiableAt.differentiableWithinAt (DifferentiableAt.congr_of_eventuallyEq
-      (differentiableAt_horVal (K := fun b => kerMat c σ τ (x i) (hm i) (Q b)) (C := fun b => perMat (x i) (Q b) τ)
-        (fun j k => ?_) (fun j k => hd' _ _) hR ?_) ?_)
-    · simp only [kerMat, Matrix.mul_apply]
-      exact DifferentiableAt.fun_sum fun k _ => (differentiableAt_const _).mul (hd' _ _)
-    · filter_upwards [hn] with b hb
-      exact ⟨(good _ i _ (hP b hb)).2.1, (good _ i _ (hP b hb)).2.2.2⟩
-    · filter_upwards [hn] with b hb
-      exact horOf_eq hl hx _ i _ (hP b hb)
-
 end GlobalTheory.ShFam.Hor
 
-open AlgebraicGeometry CategoryTheory Limits NumberField IsDedekindDomain ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Pj
-  Formalism.L2.Geo GlobalTheory.Toroidal GlobalTheory.ShFam GlobalTheory.ShFam.Pad GlobalTheory.TrueGeo in
-
-theorem GlobalTheory.ShFam.Hor.isFlat_flatSec : ∀ (D : D7) (A : Amb D) (N j : ℕ) (S : Sig A N j) (κ : Lv A) (s : FinalTheorems S κ) (fl : s.Flag) (k : s.Comp) (τ : D.what₂.Tau), IsFlat (fl.C k) (DV.tauEmb D τ) (flatSec s fl k τ) := by
-  intro D A N j S κ s fl k τ
-  have hσ : Formalism.L2.PjFree.GoodEmb κ.c κ.σ₀ := rfl
-  obtain ⟨g, e, Fu, -⟩ := (s.unf κ.σ₀ hσ).1.2.2.2.2.2
-  choose x hm hx using fun i : Fin Fu.n =>
-    GlobalTheory.T.exists_hermitianPeriodLatticeBasis_same_signature _ A.H S.Dw (Fu.Di i) (DV.tauEmb D τ) (Fu.sig i)
-  have hr : 1 ≤ S.Dw.p + S.Dw.q := by have := S.two_le; have := S.rank_eq; omega
-  obtain ⟨h1, h2⟩ := GlobalTheory.T.H0_divOf_ne_bot_of_horFn _ A.H S.Dw κ.l _ κ.c _ _ s.T.Z κ.σ₀ _ κ.e (fl.C k) (DV.tauEmb D τ) _ (A.cm τ)
-    (GlobalTheory.ShFam.Hor.horFn_horOf (Fu := Fu) s.T hσ hr κ.good hx)
-  exact Classical.epsilon_spec (GlobalTheory.ShFam.Hor.exists_generates _ _ h1 h2)

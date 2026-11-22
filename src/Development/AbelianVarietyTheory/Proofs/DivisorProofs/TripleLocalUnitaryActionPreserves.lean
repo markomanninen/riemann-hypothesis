@@ -1,14 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFactorPureTensorComponentAtPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralPointsIndicatorIsVacuum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurableThetaSumOfSchrodinger
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzMemL2Statement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinPartIdemMulMemIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFactorPureTensorComponentAtPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfComponentTensorAdelicFunctionEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyIntegralPointsIndicatorIsVacuum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeasurableThetaSumOfSchrodinger
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSchwartzMemL2Statement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinPartIdemMulMemIff
+
+@[expose] public section
+
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun MeasureTheory Topology
 open scoped Matrix
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
@@ -22,34 +27,29 @@ open scoped ENNReal NNReal
 
 variable {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ]
 
-local instance mA : MeasurableSpace (κ → AF F) := borel _
-local instance bA : BorelSpace (κ → AF F) := ⟨rfl⟩
-local instance mV (v : Pl F) : MeasurableSpace (κ → Fv F v) := borel _
-local instance bV (v : Pl F) : BorelSpace (κ → Fv F v) := ⟨rfl⟩
-
-theorem continuous_evFin (v : Pl F) : Continuous (evFin F v) :=
+theorem continuous_evFin (v : Pl (F := F)) : Continuous (evFin F v) :=
   (RestrictedProduct.continuous_eval v).comp continuous_snd
 
-def prj (v : Pl F) (x : κ → AF F) : κ → Fv F v := fun i => evFin F v (x i)
+def prj (v : Pl (F := F)) (x : κ → AF F) : κ → Fv F v := fun i => evFin F v (x i)
 
-theorem continuous_prj (v : Pl F) : Continuous (prj (κ := κ) v) :=
+theorem continuous_prj (v : Pl (F := F)) : Continuous (prj (κ := κ) v) :=
   continuous_pi fun i => (continuous_evFin v).comp (continuous_apply i)
 
-def lift (v : Pl F) (y : κ → Fv F v) : κ → AF F := fun i => GlobalTheory.EmbChart.atPlace v (y i)
+def lift (v : Pl (F := F)) (y : κ → Fv F v) : κ → AF F := fun i => GlobalTheory.EmbChart.atPlace v (y i)
 
-theorem at_lift (v : Pl F) (y : κ → Fv F v) : At (evFin F v) (lift v y) := by
+theorem at_lift (v : Pl (F := F)) (y : κ → Fv F v) : At (evFin F v) (lift v y) := by
   intro u hu
   funext i
   show u * GlobalTheory.EmbChart.atPlace v (y i) = 0
   rw [mul_comm, GlobalTheory.EmbChart.atPlace_mul_right, hu, mul_zero, map_zero]
 
-theorem prj_add_lift (v : Pl F) (x : κ → AF F) (y : κ → Fv F v) : prj v (x + lift v y) = prj v x + y := by
+theorem prj_add_lift (v : Pl (F := F)) (x : κ → AF F) (y : κ → Fv F v) : prj v (x + lift v y) = prj v x + y := by
   funext i
-  simp [prj, lift, map_add, GlobalTheory.EmbChart.evFin_atPlace]
+  simp [prj, lift, map_add (f := _), GlobalTheory.EmbChart.evFin_atPlace]
 
-def box (v : Pl F) (y₀ : κ → Fv F v) : Set (κ → Fv F v) := {y | ∀ k, y k - y₀ k ∈ v.adicCompletionIntegers F}
+def box (v : Pl (F := F)) (y₀ : κ → Fv F v) : Set (κ → Fv F v) := {y | ∀ k, y k - y₀ k ∈ v.adicCompletionIntegers F}
 
-theorem sb_box (v : Pl F) (y₀ : κ → Fv F v) : (box v y₀).indicator (1 : (κ → Fv F v) → ℂ) ∈ SB (κ → Fv F v) := by
+theorem sb_box (v : Pl (F := F)) (y₀ : κ → Fv F v) : (box v y₀).indicator (1 : (κ → Fv F v) → ℂ) ∈ SB (κ → Fv F v) := by
   have h := GlobalTheory.StdVacuum.indicator_mem_SB (κ := κ) v
   have e : (box v y₀).indicator (1 : (κ → Fv F v) → ℂ) =
       ({x : κ → Fv F v | ∀ k, x k ∈ v.adicCompletionIntegers F}.indicator 1) ∘ (Homeomorph.subRight y₀) := by
@@ -64,17 +64,17 @@ theorem sb_box (v : Pl F) (y₀ : κ → Fv F v) : (box v y₀).indicator (1 : (
   rw [e]
   exact ⟨h.1.comp_continuous (Homeomorph.subRight y₀).continuous, h.2.comp_homeomorph _⟩
 
-theorem mem_box_self (v : Pl F) (y₀ : κ → Fv F v) : y₀ ∈ box v y₀ := fun k => by simp
+theorem mem_box_self (v : Pl (F := F)) (y₀ : κ → Fv F v) : y₀ ∈ box v y₀ := fun k => by simp
 
-theorem box_eq_fiber (v : Pl F) (y₀ : κ → Fv F v) :
+theorem box_eq_fiber (v : Pl (F := F)) (y₀ : κ → Fv F v) :
     box v y₀ = (box v y₀).indicator (1 : (κ → Fv F v) → ℂ) ⁻¹' {1} := by
   ext y
   by_cases hy : y ∈ box v y₀ <;> simp [hy]
 
-theorem isOpen_box (v : Pl F) (y₀ : κ → Fv F v) : IsOpen (box v y₀) := by
+theorem isOpen_box (v : Pl (F := F)) (y₀ : κ → Fv F v) : IsOpen (box v y₀) := by
   rw [box_eq_fiber]; exact (sb_box v y₀).1.isOpen_fiber 1
 
-theorem isCompact_closure_box (v : Pl F) (y₀ : κ → Fv F v) : IsCompact (closure (box v y₀)) := by
+theorem isCompact_closure_box (v : Pl (F := F)) (y₀ : κ → Fv F v) : IsCompact (closure (box v y₀)) := by
   have h := (sb_box v y₀).2
   unfold HasCompactSupport tsupport at h
   rwa [Set.support_indicator, Function.support_one, Set.inter_univ] at h
@@ -90,12 +90,12 @@ variable {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ]
 
 local instance mA' : MeasurableSpace (κ → AF F) := borel _
 local instance bA' : BorelSpace (κ → AF F) := ⟨rfl⟩
-local instance mV' (v : Pl F) : MeasurableSpace (κ → Fv F v) := borel _
-local instance bV' (v : Pl F) : BorelSpace (κ → Fv F v) := ⟨rfl⟩
+local instance mV' (v : Pl (F := F)) : MeasurableSpace (κ → Fv F v) := borel _
+local instance bV' (v : Pl (F := F)) : BorelSpace (κ → Fv F v) := ⟨rfl⟩
 
 section Meas
 
-variable (v : Pl F) (r : (κ → AF F) → ℂ)
+variable (v : Pl (F := F)) (r : (κ → AF F) → ℂ)
   (hr : ∀ x z, At (evFin F v) z → r (x + z) = r x)
   (hS : ∀ ψ ∈ SB (κ → Fv F v), tens (evFin F v) ψ r ∈ schA F κ)
 
@@ -213,12 +213,13 @@ namespace GlobalTheory.LocalUnitaryL2
 
 variable {F : Type} [Field F] [NumberField F] {κ : Type} [Fintype κ]
 
-open scoped Classical in
 
-theorem exists_r (v : Pl F) : ∃ r : (κ → AF F) → ℂ, (∀ x z, At (evFin F v) z → r (x + z) = r x) ∧
+open scoped Classical in
+theorem exists_r (v : Pl (F := F)) : ∃ r : (κ → AF F) → ℂ, (∀ x z, At (evFin F v) z → r (x + z) = r x) ∧
     (∀ ψ ∈ SB (κ → Fv F v), tens (evFin F v) ψ r ∈ schA F κ) ∧ r 0 ≠ 0 := by
+  classical
   obtain ⟨f, hf⟩ := GlobalTheory.TensUniq.exists_sInf_ne_zero F κ
-  let φs : ∀ w : Pl F, (κ → Fv F w) → ℂ :=
+  let φs : ∀ w : Pl (F := F), (κ → Fv F w) → ℂ :=
     fun w => Set.indicator {x | ∀ i, x i ∈ w.adicCompletionIntegers F} 1
   have hstd : ∀ᶠ w in Filter.cofinite, φs w = Set.indicator {x | ∀ i, x i ∈ w.adicCompletionIntegers F} 1 :=
     Filter.Eventually.of_forall fun _ => rfl
@@ -252,7 +253,7 @@ end GlobalTheory.LocalUnitaryL2
 
 theorem GlobalTheory.LocalUnitaryL2.lintegral_eq : GlobalTheory.FunPr.Hypotheses₂ → ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (σ : E →ₐ[F] E) (B : Base F E)
     (a a' : ℕ) (G : Geo σ a a') (X : Chars F E) (om : Rep σ G.V G.W) (om' : Rep σ G.V' G.W), IsTriple B G X om om' →
-    ∀ v : Pl F, ∀ h ∈ UAt σ G.W (evFin F v), ∀ φ ∈ SB (Fin a × Fin (a + a') → Fv F v),
+    ∀ v : Pl (F := F), ∀ h ∈ UAt σ G.W (evFin F v), ∀ φ ∈ SB (Fin a × Fin (a + a') → Fv F v),
     ∀ φ₁ ∈ SB (Fin a × Fin (a + a') → Fv F v), Acts (evFin F v) (om (1, h)) φ φ₁ →
     ∀ μ : @Measure (Fin a × Fin (a + a') → Fv F v) (borel _), @Measure.IsAddHaarMeasure _ _ _ (borel _) μ →
       ∫⁻ x, ‖φ₁ x‖ₑ ^ 2 ∂μ = ∫⁻ x, ‖φ x‖ₑ ^ 2 ∂μ := by

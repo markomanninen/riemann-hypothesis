@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.InvariantVectorFieldsBasisVerticalDerivations
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.InvariantVectorFieldsBasisVerticalDerivations
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -44,7 +48,7 @@ private theorem exists_openImmersion_restrict_pullback_constFn {S X A : Scheme.{
       rw [Scheme.Hom.comp_appLE, IsAffineOpen.fromSpec_app_self, Category.assoc]
       congr 1
       exact Scheme.Hom.map_appLE _ _ _
-    rw [pbT, dif_pos hW, constFn]
+    rw [pbT, dite_eq_left hW, constFn]
     exact congrArg (fun φ => φ.hom r) key
 
 private theorem false_of_pullback_point_mem_preimage_of_not_univ_le {S X A T : Scheme.{0}} (x₀ : Sp K ⟶ S) (p : X ⟶ S) (h₀ : A ⟶ Sp K)
@@ -78,7 +82,7 @@ theorem existsUnique_coeff_alg [Smooth G.hom] {v : Fin n → (epsR K ⟶ G)} (hv
     have key : ∀ f, ((m' ≫ q).app W).hom f = (m'.app (q ⁻¹ᵁ W)).hom (e f) := fun _ => rfl
     obtain ⟨c, hc, hu⟩ := GlobalTheory.InvFieldBasis.existsUnique_coeff_alg hv hd x₀' p' m' H' y
       (hW.preimage_of_isOpenImmersion q hWq) h (fun f' => δ (e.symm f'))
-      (fun f f' => by rw [map_add, hadd])
+      (fun f f' => by rw [map_add (f := _), hadd])
       (fun f f' => by
         obtain ⟨f, rfl⟩ := e.surjective f
         obtain ⟨f', rfl⟩ := e.surjective f'
@@ -118,7 +122,7 @@ theorem existsUnique_coeff_affine [Smooth G.hom] {v : Fin n → (epsR K ⟶ G)} 
     have key : ∀ f, ((m' ≫ q).app W).hom f = (m'.app (q ⁻¹ᵁ W)).hom (e f) := fun _ => rfl
     obtain ⟨c, hc, hu⟩ := GlobalTheory.InvFieldBasis.existsUnique_coeff_affine hv hd x₀' p' m' H' y
       (hW.preimage_of_isOpenImmersion q hWq) hV h (fun f' => δ (e.symm f'))
-      (fun f f' => by rw [map_add, hadd])
+      (fun f f' => by rw [map_add (f := _), hadd])
       (fun f f' => by
         obtain ⟨f, rfl⟩ := e.surjective f
         obtain ⟨f', rfl⟩ := e.surjective f'
@@ -145,7 +149,7 @@ private theorem resG_resG_divisor {Y : Scheme.{0}} {O O₁ O₂ : Y.Opens} (h₁
 
 private theorem rsT_eq_resG_of_le {Y : Scheme.{0}} {O₀ : Y.Opens} (s : Γ(Y, O₀)) {O : Y.Opens} (h : O ≤ O₀) :
     rsT s O = resG Y h s := by
-  rw [rsT, dif_pos h]
+  rw [rsT, dite_eq_left h]
 
 private theorem resG_self_eq {Y : Scheme.{0}} {O : Y.Opens} (h : O ≤ O) (s : Γ(Y, O)) :
     resG Y h s = s := by
@@ -153,7 +157,7 @@ private theorem resG_self_eq {Y : Scheme.{0}} {O : Y.Opens} (h : O ≤ O) (s : �
 
 private theorem resG_pbT_eq_pbT_of_le {Z Y : Scheme.{0}} (y : Z ⟶ Y) {O₀ : Y.Opens} (s : Γ(Y, O₀))
     {O O' : Z.Opens} (h : O' ≤ O) (hO : O ≤ y ⁻¹ᵁ O₀) : resG Z h (pbT y s O) = pbT y s O' := by
-  rw [pbT, pbT, dif_pos hO, dif_pos (h.trans hO), ← CommRingCat.comp_apply, Scheme.Hom.appLE_map]
+  rw [pbT, pbT, dite_eq_left hO, dite_eq_left (h.trans hO), ← CommRingCat.comp_apply, Scheme.Hom.appLE_map]
 
 private theorem pbT_app_presheaf_map_eqToHom_eq {Z Y T' : Scheme.{0}} (F : ∀ O : Z.Opens, Γ(Z, O) → Γ(Z, O)) (m' : Z ⟶ Y)
     (y : T' ⟶ Z) {O O' : Y.Opens} (h : O' = O) (f : Γ(Y, O)) (V : T'.Opens) :
@@ -225,8 +229,8 @@ theorem existsUnique_coeff {A₀ : Over (Sp K)} [GrpObj A₀] {g : ℕ} {v : Fin
     have hL : LocDerK (y ≫ A₀.hom) p' (y ≫ m') (fun _ => 0) (q ⁻¹ᵁ W₀) d' := by
       refine ⟨fun W' hW' f f' => ?_, fun W' hW' f f' => ?_, fun W₁ W₂ h₂ hW₁ f => ?_,
         fun W' hW' r => ?_⟩
-      · simp only [d', map_add, hadd _ (hle W' hW')]
-      · simp only [d', map_mul, hmul _ (hle W' hW'), map_add, K1]
+      · simp only [d', map_add (f := _), hadd _ (hle W' hW')]
+      · simp only [d', map_mul, hmul _ (hle W' hW'), map_add (f := _), K1]
       · simp only [d']
         have hh : q ''ᵁ W₂ ≤ q ''ᵁ W₁ := (Scheme.Hom.image_le_image_iff q W₂ W₁).2 h₂
         have hi := congrArg (fun φ => φ.hom f) (Scheme.Hom.appIso_inv_naturality q (homOfLE h₂).op)
@@ -253,7 +257,8 @@ theorem existsUnique_coeff {A₀ : Over (Sp K)} [GrpObj A₀] {g : ℕ} {v : Fin
       rfl
     · have h1 := hc' (q ''ᵁ W') (hle W' hW') ((q.appIso W').inv.hom f')
       show resG T (hO W') (d (q ''ᵁ W') ((q.appIso W').inv.hom f')) = _
-      rw [h1, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [h1, map_sum]
       refine Finset.sum_congr rfl fun a _ => ?_
       have hA : (y ≫ m' ≫ q) ⁻¹ᵁ (q ''ᵁ W') ≤ (y ≫ m' ≫ q) ⁻¹ᵁ W₀ :=
         (y ≫ m' ≫ q).preimage_mono (hle W' hW')

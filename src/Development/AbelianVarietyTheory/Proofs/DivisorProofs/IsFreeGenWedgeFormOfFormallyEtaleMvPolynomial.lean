@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsAlgHomOfIsBaseChange
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTopFormFrameBaseCoordinatesAddVariablesEtale
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsAlgHomOfIsBaseChange
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTopFormFrameBaseCoordinatesAddVariablesEtale
+
+@[expose] public section
+
 open GlobalTheory GlobalTheory.TopForm
 open scoped TensorProduct
 
@@ -28,7 +33,7 @@ theorem isFreeGen_dForm_of_formallyEtale_mvPolynomial :
   haveI : Subsingleton (Algebra.H1Cotangent A₀ A) :=
     Algebra.FormallySmooth.subsingleton_h1Cotangent
   have hinj : Function.Injective (KaehlerDifferential.mapBaseChange k A₀ A) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro y hy
     obtain ⟨w, rfl⟩ := (Algebra.H1Cotangent.exact_δ_mapBaseChange k A₀ A y).1 hy
     rw [Subsingleton.elim w 0, map_zero]

@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+
+@[expose] public section
 
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
@@ -25,7 +29,8 @@ theorem split_anisotropic : ∀ (F E : Type) [Field F] [NumberField F] [Field E]
     rw [hconj, hconj, star_star]
   have hherm : ∀ y z, σ (hE σ J y z) = hE σ J z y := by
     intro y z
-    simp only [hE, hform, map_sum, map_mul, AlgHom.coe_toRingHom, RingHom.coe_coe, hσ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hE, hform, map_sum, map_mul, AlgHom.coe_toRingHom, RingHom.coe_coe, hσ]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     rw [hJ.1 i j]
@@ -68,7 +73,8 @@ theorem split_anisotropic : ∀ (F E : Type) [Field F] [NumberField F] [Field E]
       simp [gm, col, Matrix.mulVec, dotProduct, Fin.sum_univ_succ, mul_comm]
     have hv00 : v 0 = 0 := by
       have h1 := congrArg φ hsum
-      rw [map_add, map_smul, map_sum, map_zero, hφ, hx, smul_eq_mul] at h1
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_add (f := _), map_smul, map_sum, map_zero, hφ, hx, smul_eq_mul] at h1
       have h2 : ∀ k : Fin M, φ (v k.succ • (b k : Fin (M + 1) → E)) = 0 := by
         intro k
         rw [map_smul, hφ, hb, smul_zero]

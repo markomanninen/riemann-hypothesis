@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RamDef
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RamDef
+
+@[expose] public section
 
 noncomputable section
 open scoped ComplexConjugate
@@ -138,7 +142,7 @@ theorem unitVecRam : UnitVecRam := by
   · by_cases hp2 : (d : ℤ) ∣ p2
     · refine ⟨xh + y', rep_sat_add d Λ hl hxhs hy's, ?_, ?_, ?_⟩
       · intro j hj; simp [hxhT j hj, hy'T j hj]
-      · rw [map_add, LinearMap.add_apply, hxhx, hy'x, add_zero]
+      · rw [map_add (f := _), LinearMap.add_apply, hxhx, hy'x, add_zero]
       · refine ⟨p1 * q2 * s + p2 * q1 * s + (2 * n - c₂ * b) * q1 * q2, q1 * q2 * s, ?_,
           not_dvd_mul' hl (not_dvd_mul' hl hq1 hq2) hs', ?_⟩
         · intro hdv
@@ -153,7 +157,7 @@ theorem unitVecRam : UnitVecRam := by
             rw [← rep_H_conj (cmL a b d ha hd lam hlam) m xh y', hxhy', hxhy]
             simp only [map_div₀, map_mul, map_sub, map_intCast, map_natCast, Complex.conj_conj,
               kappa_real a b d ha hd lam hlam]
-          rw [map_add (stdH (cmL a b d ha hd lam hlam) m) xh y', LinearMap.add_apply, map_add, map_add, e1, e2, hxhy',
+          rw [map_add (stdH (cmL a b d ha hd lam hlam) m) xh y', LinearMap.add_apply, map_add (f := _), map_add (f := _), e1, e2, hxhy',
             hxhy, hyx]
           have htb := rep_theta_add_conj b d
           have hA : (q1 : ℂ) * (q1 : ℂ)⁻¹ = 1 := mul_inv_cancel₀ (nz hq1)

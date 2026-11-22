@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
-import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenNsmulAdelicCompletionOfVectorSet
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAdeleRingTensorEquivInfiniteProdFinite
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsInverseChart
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.DefsReal
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.FamilyMassVolumeIdentityOfClassDecomp
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.LcscAdelicUnitaryGroup
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenNsmulAdelicCompletionOfVectorSet
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsAdeleRingTensorEquivInfiniteProdFinite
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsCompactAdeleRingModNumberField
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsInverseChart
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta MeasureTheory NumberField
 open scoped TensorProduct
@@ -58,7 +62,7 @@ theorem exists_compact_latHat (F E : Type) [Field F] [NumberField F] [Field E] [
   obtain ⟨m, x, hx⟩ := Submodule.fg_iff_exists_fin_generating_family.1 hZ
   let g : (Fin m → Af F) → Fin M → Af F ⊗[F] E := fun c i => ∑ k, c k ⊗ₜ[F] x k i
   have hg : Continuous g := by
-    refine continuous_pi fun i => continuous_finset_sum _ fun k _ => ?_
+    refine continuous_pi fun i => continuous_finsetSum _ fun k _ => ?_
     have : (fun c : Fin m → Af F => c k ⊗ₜ[F] x k i) = fun c => c k • ((1 : Af F) ⊗ₜ[F] x k i) := by
       funext c
       rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one]
@@ -88,7 +92,7 @@ theorem exists_compact_latHat (F E : Type) [Field F] [NumberField F] [Field E] [
     obtain ⟨c, hc, rfl⟩ := hy
     obtain ⟨d, hd, rfl⟩ := hz
     refine ⟨c + d, fun k _ w => ?_, ?_⟩
-    · rw [Pi.add_apply, map_add]
+    · rw [Pi.add_apply, map_add (f := _)]
       exact add_mem (hc k trivial w) (hd k trivial w)
     · funext i
       simp only [g, Pi.add_apply, TensorProduct.add_tmul, Finset.sum_add_distrib]
@@ -136,9 +140,11 @@ theorem det_gram_ne_zero {E : Type} [Field E] [NumberField E] [StarRing E] (S : 
     have hi : ∀ i, S.hT (S.frame i) (S.frame.equivFun.symm v) = 0 := by
       intro i
       have := congrFun h0 i
-      rw [Module.Basis.equivFun_symm_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Module.Basis.equivFun_symm_apply, map_sum]
       simpa [Matrix.mulVec, dotProduct, Formalism.BasicNotions.HSpace.gram, mul_comm] using this
-    rw [← S.frame.sum_repr x, map_sum, LinearMap.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← S.frame.sum_repr x, map_sum, LinearMap.sum_apply]
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [LinearMap.map_smulₛₗ, LinearMap.smul_apply, hi, smul_zero]
   exact S.frame.equivFun.symm.map_eq_zero_iff.1 hy
@@ -162,9 +168,9 @@ theorem exists_compact_adele (D : D7) (θ : D.what₂.Tau → (Ainf D.host.F ⊗
   refine ⟨(fun ρ => θ ρ (infPart D z), finPart D z), ⟨fun ρ _ => mem_closedBall_zero_iff.2 (hR ρ), hz⟩, ?_⟩
   refine sub_eq_zero.1 (hs.ext _ ?_ fun τ => ?_)
   · change finPart D (s (fun ρ => θ ρ (infPart D z)) + j (finPart D z) - z) = 0
-    rw [RingHom.map_sub, RingHom.map_add, hs.fin, hj2, zero_add, sub_self]
+    rw [RingHom.map_sub, RingHom.map_add (f := _), hs.fin, hj2, zero_add, sub_self]
   · change θ τ (infPart D (s (fun ρ => θ ρ (infPart D z)) + j (finPart D z) - z)) = 0
-    rw [RingHom.map_sub, RingHom.map_add, hj1, add_zero, RingHom.map_sub, hs.comp, sub_self]
+    rw [RingHom.map_sub, RingHom.map_add (f := _), hj1, add_zero, RingHom.map_sub, hs.comp, sub_self]
 
 theorem exists_compact_stab : ∀ (D : D7) (V : HSp D) (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)), IsInfFam θ → ∀ R : ℝ, ∃ K : Set (GA D V), IsCompact K ∧ ∀ h : GA D V, (∀ y, y ∈ Formalism.MainNotions.StandardLattice.latHat D.host.F D.host.E (L0c D V) ↔ (finMat D.sp.cm.sig V.gram h).mulVec y ∈ Formalism.MainNotions.StandardLattice.latHat D.host.F D.host.E (L0c D V)) → (∀ ρ i j, ‖infMat D.sp.cm.sig V.gram (θ ρ) h i j‖ ≤ R) → h ∈ K := by
   intro D V θ hθ R
@@ -185,7 +191,40 @@ theorem exists_compact_stab : ∀ (D : D7) (V : HSp D) (θ : D.what₂.Tau → (
     intro v _
     obtain ⟨x, rfl⟩ := V.frame.equivFun.surjective v
     have hx : x ∈ Submodule.span D.host.E (V.L0 : Set V.V) := by
-      rw [V.standardTuple_isLattice.span_eq_top]; trivial
+      have hspan : Submodule.span D.host.E (V.L0 : Set V.V) = ⊤ := by
+        let W := Submodule.span D.host.E (V.L0 : Set V.V)
+        change W = ⊤
+        by_contra h
+        let e : V.V ≃ₗ⋆[D.host.E] V.V :=
+          (V.frame.equivFun.trans (starLinearEquiv D.host.E)).trans V.frame.equivFun.symm
+        let g : V.V →ₗ[D.host.E] Module.Dual D.host.E W :=
+          (LinearMap.domRestrict' W).comp (V.hT.comp e.toLinearMap)
+        have hdim : Module.finrank D.host.E (Module.Dual D.host.E W) <
+            Module.finrank D.host.E V.V := by
+          rw [Subspace.dual_finrank_eq]
+          exact Submodule.finrank_lt h
+        obtain ⟨z, hz, hz₀⟩ :=
+          Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+        have hsmul (a : D.host.E) : a • e z ∈ V.L0 := by
+          rw [← V.baseLattice_isUnimodular]
+          simp only [Formalism.HermitianLatticesTheory.dual, Formalism.E.hdual,
+            Submodule.mem_iInf, Submodule.mem_comap, LinearMap.restrictScalars_apply]
+          intro y hy
+          have hzy : V.hT (e z) y = 0 :=
+            congrArg (fun f : Module.Dual D.host.E W => f ⟨y, Submodule.subset_span hy⟩)
+              (LinearMap.mem_ker.mp hz)
+          have hyz : V.hT y (e z) = 0 := by
+            have hh := V.herm.eq (e z) y
+            simpa [hzy] using hh.symm
+          simp [hyz]
+        let i : D.host.E →ₗ[𝓞 D.host.E] V.L0 :=
+          ((LinearMap.toSpanSingleton D.host.E _ (e z)).restrictScalars (𝓞 D.host.E)).codRestrict V.L0 hsmul
+        let : Module.Finite (𝓞 D.host.E) V.L0 := Module.Finite.iff_fg.mpr V.standardTuple_isLattice.fg
+        let : Module.Finite (𝓞 D.host.E) D.host.E := Module.Finite.of_injective i fun a b hab =>
+          smul_left_injective D.host.E (fun hzero => hz₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
+        exact RingOfIntegers.not_isField D.host.E
+          (isField_of_isIntegral_of_isField (IsFractionRing.injective (𝓞 D.host.E) D.host.E) (Field.toIsField D.host.E))
+      rw [hspan]; trivial
     have := Submodule.mem_map_of_mem (f := f) hx
     rw [Submodule.map_span] at this
     exact this

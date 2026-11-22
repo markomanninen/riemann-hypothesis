@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReducedBases.LatticeReduction
+module
+
+public import ReciprocityTheory.ReducedBases.LatticeReduction
+
+@[expose] public section
 
 noncomputable section
 
@@ -113,7 +117,8 @@ private lemma exists_basis_sub_sum_lower {E : Type*} [NormedAddCommGroup E] [Inn
   set v : Fin d → (Fin d → ℤ) := fun i => e0 i - ∑ l, W i l • e0 l with hv
   have hfv : (fun i => f (v i)) = fun i => f (e0 i) - ∑ l, (W i l : ℝ) • f (e0 l) := by
     funext i
-    simp only [hv, map_sub, map_sum, map_zsmul, Int.cast_smul_eq_zsmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hv, map_sub, map_sum, map_zsmul, Int.cast_smul_eq_zsmul]
   have hspR : span ℝ (Set.range (fun i => f (v i))) = span ℝ (Set.range (fun i => f (e0 i))) := by
     rw [hfv, ← Set.image_univ, ← Set.image_univ]
     exact (span_tri (fun i => f (e0 i)) (fun i l => (W i l : ℝ)) (fun i l h => by simp [hW i l h])
@@ -146,7 +151,8 @@ private lemma exists_basis_size_reduce_column {E : Type*} [NormedAddCommGroup E]
       ∑ l, ((if l = j ∧ j < i then round (mu b i j) else 0 : ℤ) : ℝ) • b l := by
     funext i
     rw [he1 i]
-    simp only [map_sub, map_sum, map_zsmul, Int.cast_smul_eq_zsmul, hb]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_sum, map_zsmul, Int.cast_smul_eq_zsmul, hb]
   have hsum : ∀ i, ∑ l, ((if l = j ∧ j < i then round (mu b i j) else 0 : ℤ) : ℝ) • b l
       = ((if j < i then round (mu b i j) else 0 : ℤ) : ℝ) • b j := by
     intro i

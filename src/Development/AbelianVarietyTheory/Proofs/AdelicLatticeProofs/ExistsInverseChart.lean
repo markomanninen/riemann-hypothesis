@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.CmTypeRestrictRealSubfieldInfinitePlaceBijective
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsRealChartInfiniteAdelesCmType
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsIsArchimedeanAdeleChartOfRealChart
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.CmTypeRestrictRealSubfieldInfinitePlaceBijective
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsRealChartInfiniteAdelesCmType
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsIsArchimedeanAdeleChartOfRealChart
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open scoped TensorProduct
@@ -17,8 +21,8 @@ theorem exists_inverse_chart {D : D7} {θ : InfFam D} (hθ : IsInfFam θ) :
   obtain ⟨ρ, h1, h2, h3⟩ := GlobalTheory.FockCompare.exists_real_chart D θ hθ (GlobalTheory.CMTypePlaces.places_bijective D)
   exact GlobalTheory.FockCompare.RealChart.exists_chart D θ hθ ρ h1 h2 h3
 
-open Classical in
 
+open Classical in
 def ray {ι : Type} (τ : ι) (c : ℂ) : ℝ →+ (ι → ℂ) where
   toFun t := fun τ' => if τ' = τ then (t : ℂ) * c else 0
   map_zero' := by funext τ'; simp
@@ -49,7 +53,7 @@ theorem lineAt_exists (D : D7) : LineAtExists D := by
       map_add' := fun s t => by
         funext i j
         show σ (ray τ (z i j) (s + t)) = σ (ray τ (z i j) s) + σ (ray τ (z i j) t)
-        rw [(ray τ (z i j)).map_add, σ.map_add] }
+        rw [map_add, map_add] }
   refine ⟨L, ?_, fun t => ?_, fun t τ' => ?_⟩
   · exact continuous_pi fun i => continuous_pi fun j => hσ.cont.comp (continuous_ray τ (z i j))
   · funext i j

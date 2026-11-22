@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.PotentialsBoundedRegSettingEqReference
-import GroundTheory.HeightsAndTheta.Heights.Regularisation.BoundedStatements
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PMuLineNormEq
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PMuFrameExists
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PWedgeTransition
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.PotentialsBoundedRegSettingEqReference
+public import GroundTheory.HeightsAndTheta.Heights.Regularisation.BoundedStatements
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PMuLineNormEq
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.PMuFrameExists
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PWedgeTransition
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField Matrix Filter Topology
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi
@@ -75,7 +79,8 @@ theorem form_quotWedge (hb' : Submodule.span Ω (Set.range (b' ∘ Fin.castLE hj
   rw [quotWedge, quotWedge, ← this]
   congr 2
   funext q
-  rw [hS, map_sum, sum_split hj]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hS, map_sum, sum_split hj]
   have h0 : ∀ a, F.mkQ (S (Fin.castLE hj a) (tailIdx hj q) • b' (Fin.castLE hj a)) = 0 := fun a => by
     simpa using Or.inr (hF' a)
   simp only [h0, Finset.sum_const_zero, zero_add, map_smul]

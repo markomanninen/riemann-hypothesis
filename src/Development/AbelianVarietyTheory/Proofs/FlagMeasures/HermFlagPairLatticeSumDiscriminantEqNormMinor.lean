@@ -1,12 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
-import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LeOfLatMod
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsStarStableIdealAbsorbingMinors
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsSmulMemOfMemSpanLattice
-import ReciprocityTheory.SemistableReduction.SemiDegCA
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.FlagPairDefinitePartLattice
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ChartGen
+public import Development.AbelianVarietyTheory.PublishedTheorems.DiscreteSeriesUnitary₂.MaxMass
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.NormalFormDualOrthogonalLast
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LeOfLatMod
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsStarStableIdealAbsorbingMinors
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsSmulMemOfMemSpanLattice
+public import ReciprocityTheory.SemistableReduction.SemiDegCA
+
+@[expose] public section
 
 open NumberField Formalism.HermitianLatticeCounting.S6 GlobalTheory.HermLat GlobalTheory.DegCnt
 open scoped Pointwise ENNReal Classical nonZeroDivisors
@@ -30,8 +34,8 @@ theorem idx_sum {R W : Type} [CommRing R] [AddCommGroup W] [Module R W] {A A' B 
 variable {K V : Type} [Field K] [NumberField K] [StarRing K] [AddCommGroup V] [Module K V]
   [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] {H : HermSpace K V} {r : ℕ}
 
-omit [StarRing K] in
 
+omit [StarRing K] in
 theorem idx_ipow {𝔡 : Ideal (𝓞 K)} (h : 𝔡 ≠ ⊥) (n : ℤ) (hn : 0 ≤ n) :
     (1 : K) ∈ ipow 𝔡 (-n) ∧ (idx (ipow 𝔡 (-n)) 1 : ℝ) = (Ideal.absNorm 𝔡 : ℝ) ^ n := by
   lift n to ℕ using hn
@@ -50,8 +54,8 @@ theorem idx_ipow {𝔡 : Ideal (𝓞 K)} (h : 𝔡 ≠ ⊥) (n : ℤ) (hn : 0 �
   have := congrArg (fun q : ℚ => (q : ℝ)) this
   simpa [idx] using this.symm
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem norm_star [NumberField K] (x : K) : Algebra.norm ℚ (star x) = Algebra.norm ℚ x :=
   Algebra.norm_eq_of_algEquiv ((starRingAut : K ≃+* K).toRatAlgEquiv) x
 
@@ -115,7 +119,7 @@ theorem idx_free {ι : Type} [Fintype ι] [DecidableEq ι] (x x' : ι → V) (hx
           rw [pu]
           exact Submodule.mem_one.2 ⟨_, rfl⟩
         | zero => rw [map_zero]; exact zero_mem _
-        | add a b _ _ ha hb => rw [map_add]; exact add_mem ha hb
+        | add a b _ _ ha hb => rw [map_add (f := _)]; exact add_mem ha hb
         | smul a b _ hb =>
           rw [← algebraMap_smul K a b, LinearMap.map_smulₛₗ]
           exact Submodule.smul_mem _ (sig K a) hb
@@ -128,8 +132,8 @@ theorem idx_free {ι : Type} [Fintype ι] [DecidableEq ι] (x x' : ι → V) (hx
   · rw [rep (x p) (Submodule.subset_span ⟨p, rfl⟩)]
     simp only [← hg, algebraMap_smul, Matrix.of_apply]
 
-omit [NumberField K] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 
+omit [NumberField K] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 theorem Xa_succ (F : FlagD H r) (a : Fin r) :
     F.Xa (a.val + 1) = F.Xa a.val ⊔ Submodule.span K {F.e a.castSucc} := by
   unfold FlagD.Xa
@@ -139,16 +143,16 @@ theorem Xa_succ (F : FlagD H r) (a : Fin r) :
   simp only [Set.mem_setOf_eq, Set.mem_union, Set.mem_singleton_iff, Fin.ext_iff]
   omega
 
-omit [NumberField K] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 
+omit [NumberField K] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 theorem eq_zero_of_smul_mem (F : FlagD H r) (a : Fin r) {t : K} (h : t • F.e a.castSucc ∈ F.Xa a.val) : t = 0 := by
   by_contra ht
   have := (F.Xa a.val).smul_mem t⁻¹ h
   rw [inv_smul_smul₀ ht] at this
   exact F.indep.notMem_span_image (s := {b | b.val < a.val}) (x := a) (lt_irrefl a.val) this
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem idx_flag (F : FlagD H r) (Λ : Submodule (𝓞 K) V) (y : Fin r → V) (hy : ∀ a, y a ∈ Λ)
     (he : ∀ a, F.e a.castSucc - y a ∈ F.Xa a.val) (n : ℕ → ℝ)
     (hn : ∀ a : Fin r, (idx (lead F Λ a.castSucc) 1 : ℝ) = n a.val) : ∀ l ≤ r,
@@ -246,12 +250,48 @@ theorem idx_flag (F : FlagD H r) (Λ : Submodule (𝓞 K) V) (y : Fin r → V) (
       idx_sup le_sup_right, ← e2]
     exact (AddSubgroup.relIndex_comap T.toAddSubgroup f.toAddMonoidHom (lead F Λ a.castSucc).toAddSubgroup).symm
 
-omit [NumberField K] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 
+omit [NumberField K] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 theorem exists_unitri (F : FlagD H r) (y : Fin r → V) (he : ∀ a, F.e a.castSucc - y a ∈ F.Xa a.val) {l : ℕ}
     (hr : l ≤ r) (hl : l ≤ r + 1) : ∃ M : Matrix (Fin l) (Fin l) K, M.det = 1 ∧
       ∀ a, y (Fin.castLE hr a) = ∑ b, M a b • F.e (Fin.castLE hl b) := by
-  choose m h1 h2 using fun a : Fin l => exists_coord F hl a (he (Fin.castLE hr a))
+  have hc : ∀ a : Fin l, ∃ m : Fin l → K, (∀ b, a ≤ b → m b = 0) ∧
+      F.e (Fin.castLE hr a).castSucc - y (Fin.castLE hr a) =
+        ∑ b, m b • F.e (Fin.castLE hl b) := by
+    intro a
+    have hy := he (Fin.castLE hr a)
+    change F.e (Fin.castLE hr a).castSucc - y (Fin.castLE hr a) ∈ F.Xa a.val at hy
+    generalize hx : F.e (Fin.castLE hr a).castSucc - y (Fin.castLE hr a) = x at hy ⊢
+    clear hx
+    unfold FlagD.Xa at hy
+    induction hy using Submodule.span_induction with
+    | mem x hx =>
+      obtain ⟨c, hc, rfl⟩ := hx
+      have hc' : (c : ℕ) < a := hc
+      have hca : (c : ℕ) < l := lt_trans hc' a.isLt
+      refine ⟨fun b => if (b : ℕ) = c then 1 else 0, fun b hb => ?_, ?_⟩
+      · have : (a : ℕ) ≤ b := hb
+        simp only [ite_eq_right_iff]
+        intro h
+        omega
+      · rw [Finset.sum_eq_single ⟨c, hca⟩]
+        · simp only [if_true, one_smul]
+          congr 1
+        · intro b _ hb
+          dsimp only
+          rw [if_neg (fun h => hb (Fin.ext h)), zero_smul]
+        · intro h
+          exact absurd (Finset.mem_univ _) h
+    | zero => exact ⟨0, fun _ _ => rfl, by simp⟩
+    | add x y _ _ hx hy =>
+      obtain ⟨m, hm, rfl⟩ := hx
+      obtain ⟨n, hn, rfl⟩ := hy
+      exact ⟨m + n, fun b hb => by simp [hm b hb, hn b hb],
+        by simp [add_smul, Finset.sum_add_distrib]⟩
+    | smul c x _ hx =>
+      obtain ⟨m, hm, rfl⟩ := hx
+      exact ⟨c • m, fun b hb => by simp [hm b hb], by simp [Finset.smul_sum, smul_smul]⟩
+  choose m h1 h2 using hc
   refine ⟨1 - Matrix.of m, ?_, fun a => ?_⟩
   · rw [Matrix.det_of_lowerTriangular (1 - Matrix.of m) (fun a b hab => ?_)]
     · simp [fun a => h1 a a le_rfl]
@@ -261,8 +301,8 @@ theorem exists_unitri (F : FlagD H r) (y : Fin r → V) (he : ∀ a, F.e a.castS
       ite_smul, one_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, if_true]
     exact (sub_sub_cancel _ _).symm
 
-omit [NumberField K] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 
+omit [NumberField K] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V] in
 theorem iso_Xa (F : FlagD H r) (l : ℕ) {v w : V} (hv : v ∈ F.Xa l) (hw : w ∈ F.Xa l) : H.B v w = 0 := by
   induction hv using Submodule.span_induction with
   | mem x hx =>
@@ -270,10 +310,10 @@ theorem iso_Xa (F : FlagD H r) (l : ℕ) {v w : V} (hv : v ∈ F.Xa l) (hw : w �
     induction hw using Submodule.span_induction with
     | mem x hx => obtain ⟨b, -, rfl⟩ := hx; exact F.iso a b
     | zero => simp
-    | add a b _ _ ha hb => rw [map_add, ha, hb, add_zero]
+    | add a b _ _ ha hb => rw [map_add (f := _), ha, hb, add_zero]
     | smul a b _ hb => rw [LinearMap.map_smulₛₗ, hb, smul_zero]
   | zero => simp
-  | add a b _ _ ha hb => rw [map_add, LinearMap.add_apply, ha, hb, add_zero]
+  | add a b _ _ ha hb => rw [map_add (f := _), LinearMap.add_apply, ha, hb, add_zero]
   | smul a b _ hb => rw [map_smul, LinearMap.smul_apply, hb, smul_zero]
 
 theorem exists_vectors (N : NF H r) (F : FlagD H r) {Λ : Submodule (𝓞 K) V} (h : IsFrame F Λ N.aa) {l : ℕ}
@@ -309,7 +349,7 @@ theorem main : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommG
   intro K V _ _ _ _ _ _ _ _ H hK r N g Λ _ hΛ l hj hne
   have hr := hj.trans N.j_le
   have hl : l ≤ r + 1 := hr.trans (Nat.le_succ r)
-  have hD : Dl N.F N.F' l hl ≠ 0 := fun e => hne (by rw [NF.nD, dif_pos hl, e]; simp)
+  have hD : Dl N.F N.F' l hl ≠ 0 := fun e => hne (by rw [NF.nD, dite_eq_left hl, e]; simp)
   refine ⟨?_, ?_⟩
   swap
   · obtain ⟨A, hA0, hA⟩ := exists_ideal N hΛ.1 l
@@ -320,7 +360,7 @@ theorem main : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommG
     intro x hx
     rw [← hU.2] at hx
     exact ((mem_dual_iff H Λ x).1 hx).2
-  have hfg : Λ.FG := ((isUnimod_iff H Λ).1 hU).1.fg
+  have hfg : Λ.FG := ((isUnimod_iff H Λ).1 hU).1.1
   obtain ⟨y, M, d1, c1, s1, l1, i1⟩ := exists_vectors N N.F hF hr hl
   obtain ⟨y', M', d2, c2, s2, l2, i2⟩ := exists_vectors N N.F' hF' hr hl
   have m1 : ∀ a, y a ∈ latF N.F Λ l := fun a => l1 (Submodule.subset_span ⟨a, rfl⟩)
@@ -329,7 +369,8 @@ theorem main : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommG
   have dP : P.det = Dl N.F N.F' l hl := by
     have e : P = M * (Zhat N.F N.F').submatrix (Fin.castLE hl) (Fin.castLE hl) * M'.conjTranspose := by
       ext a b
-      simp only [hP, c1, c2, Matrix.of_apply, Matrix.mul_apply, Zhat,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hP, c1, c2, Matrix.of_apply, Matrix.mul_apply, Zhat,
         Matrix.submatrix_apply, Matrix.conjTranspose_apply, map_sum, LinearMap.sum_apply, map_smul,
         LinearMap.map_smulₛₗ, LinearMap.smul_apply, smul_eq_mul, starRingEnd_apply]
       exact Finset.sum_congr rfl fun _ _ => mul_comm _ _
@@ -385,7 +426,7 @@ theorem main : ∀ (K V : Type) [Field K] [NumberField K] [StarRing K] [AddCommG
     rw [gidx, idx_eq L, GlobalTheory.Mass.DiscOrder.idxN_eq_one.2 hLT, eL, idx_sum l1 l2 hd, Nat.cast_one, div_one,
       Nat.cast_mul, i1, i2, mul_comm (2 : ℤ), zpow_mul, zpow_two]
   have h0 : (Ideal.absNorm N.𝔡 : ℝ) ≠ 0 := by exact_mod_cast fun e => N.𝔡_ne (Ideal.absNorm_eq_zero_iff.1 e)
-  rw [normD, NF.nD, dif_pos hl, ← k3, k1, k4, zpow_neg, mul_comm, ← mul_assoc,
+  rw [normD, NF.nD, dite_eq_left hl, ← k3, k1, k4, zpow_neg, mul_comm, ← mul_assoc,
     inv_mul_cancel₀ (zpow_ne_zero _ h0), one_mul]
 
 end GlobalTheory.DegCnt.FlagDisc

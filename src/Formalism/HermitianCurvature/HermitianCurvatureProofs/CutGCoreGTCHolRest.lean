@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCHolCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCHolPh
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCHolPhaseRel
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCHolConnUniq
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGaugeC
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCHolCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCHolPh
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCHolPhaseRel
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTCHolConnUniq
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreGTConnGaugeC
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 

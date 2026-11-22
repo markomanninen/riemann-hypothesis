@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.ActUVariableEqPow
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.NilpotentLevelLowering.ActUVariableEqPow
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.N ValuativeRel IsLocalRing
 open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil
 open UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Hi UpperTheory.V.AlgebraTools UpperTheory.V.Pa UpperTheory.V.Pa.Lev
@@ -76,8 +81,9 @@ private theorem psm_rad {Λ B M : Type} [CommRing Λ] [CommRing B] [Algebra Λ B
     rintro _ ⟨_, ⟨i, rfl⟩, rfl⟩
     exact hr i
   obtain ⟨p, hp, -, hc, h0⟩ :=
-    LinearMap.exists_monic_and_coeff_mem_pow_and_aeval_eq_zero_of_range_le_smul Λ (ι b ^ r) I h1
-  rw [← map_pow, Polynomial.aeval_algHom_apply, map_eq_zero_iff _ hι, hp.as_sum, map_add, map_sum,
+    LinearMap.exists_monic_and_natDegree_eq_and_coeff_mem_pow_and_aeval_eq_zero Λ (ι b ^ r) I h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_pow, Polynomial.aeval_algHom_apply, map_eq_zero_iff _ hι, hp.as_sum, map_add (f := _), map_sum,
     add_eq_zero_iff_eq_neg, map_pow, Polynomial.aeval_X, ← pow_mul] at h0
   refine ⟨_, h0 ▸ neg_mem (Ideal.sum_mem _ fun k hk => ?_)⟩
   rw [map_mul, Polynomial.aeval_C]
@@ -107,7 +113,8 @@ theorem UpperTheory.V.Pa.Lev.psModule :
   let B := Algebra.adjoin A (Set.range T)
   have hcomm : IsMulCommutative B := Algebra.isMulCommutative_adjoin A (by
     rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩
-    exact (hT i j).eq)
+    intro _
+    exact hT i j)
   letI : CommRing B := { (inferInstance : Ring B) with mul_comm := fun x y => hcomm.is_comm.comm x y }
   let ι : B →+* Module.End Λ M :=
     { toFun := fun x => (x : Module.End A M).restrictScalars Λ

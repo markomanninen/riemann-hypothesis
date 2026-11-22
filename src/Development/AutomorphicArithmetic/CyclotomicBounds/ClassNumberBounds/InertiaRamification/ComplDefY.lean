@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.HeckeCharacterChoice.TendstoUnderCofinite
+module
+
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.HeckeCharacterChoice.TendstoUnderCofinite
+
+@[expose] public section
 
 namespace KStar.Ram
 
@@ -147,7 +151,7 @@ theorem existsUnique_padic_hom :
     have hx : x = (x.appr k : ℤ_[l]) + (l : ℤ_[l]) ^ k * z := by rw [← hz]; ring
     have : f' x - f x = (l : w.adicCompletionIntegers E) ^ k * (f' z - f z) := by
       conv_lhs => rw [hx]
-      simp only [map_add, map_mul, map_pow, map_natCast]
+      simp only [map_add (f := _), map_mul, map_pow, map_natCast]
       ring
     rw [this]
     exact Ideal.mul_mem_right _ _ (Ideal.pow_mem_pow hlm k)

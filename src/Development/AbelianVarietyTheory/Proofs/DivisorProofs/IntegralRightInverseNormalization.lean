@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubMemTwistSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MatchingOfParts
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubMemTwistSpan
+
+@[expose] public section
+
 open ValuativeRel Matrix
 
 namespace GlobalTheory
@@ -15,7 +20,7 @@ theorem frame_normalise_integral (k : Type) [Field k] [ValuativeRel k] [Topologi
   classical
 
   have key : (Y * Q').det = ∑ p : Fin s → D, (∏ i, Q' (p i) i) * (Y.submatrix id p).det := by
-    simp only [det_apply', mul_apply, Finset.prod_univ_sum, Finset.mul_sum, Fintype.piFinset_univ,
+    simp only [det_apply', Matrix.mul_apply, Finset.prod_univ_sum, Finset.mul_sum, Fintype.piFinset_univ,
       submatrix_apply, id]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun p _ => Finset.sum_congr rfl fun σ _ => ?_
@@ -31,7 +36,7 @@ theorem frame_normalise_integral (k : Type) [Field k] [ValuativeRel k] [Topologi
     exact right_ne_zero_of_mul hp₀ ((valuation k).zero_iff.mp (le_antisymm this zero_le'))
   set h := (Y.submatrix id κ)⁻¹ with hh
   have hsub : ∀ p : Fin s → D, (h * Y).submatrix id p = h * Y.submatrix id p := by
-    intro p; ext r c; simp [mul_apply]
+    intro p; ext r c; simp [Matrix.mul_apply]
   have hone : (h * Y).submatrix id κ = 1 := by
     rw [hsub, hh]
     exact nonsing_inv_mul _ (isUnit_iff_ne_zero.mpr hne)
@@ -59,7 +64,7 @@ theorem frame_normalise_integral (k : Type) [Field k] [ValuativeRel k] [Topologi
     · exact zero_mem _
   · have : h * Y * (Matrix.of fun j l => if j = κ l then (1 : k) else 0 : Matrix D (Fin s) k) =
         (h * Y).submatrix id κ := by
-      ext r l; simp [mul_apply]
+      ext r l; simp [Matrix.mul_apply]
     rw [this, hone]
 
 end GlobalTheory

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.BaseCoefJump
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CoefficientBaseChange.CoordBaseChange
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CoefficientBaseChange.FinrankIInfKerEquiv
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.BaseCoefJump
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CoefficientBaseChange.CoordBaseChange
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CoefficientBaseChange.FinrankIInfKerEquiv
+
+@[expose] public section
 
 open TensorProduct
 
@@ -70,7 +74,7 @@ theorem extS_range {U : Type} [AddCommGroup U] [Module K U] (N : U →ₗ[K] W) 
     | tmul l s =>
       obtain ⟨u, hu⟩ := s.2
       exact ⟨l ⊗ₜ u, by simp [LinearMap.baseChange_tmul, hu]⟩
-    | add y z hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
+    | add y z hy hz => rw [map_add (f := _)]; exact Submodule.add_mem _ hy hz
   · rintro _ ⟨y, rfl⟩
     rw [mem_extS b]
     intro i
@@ -158,12 +162,12 @@ theorem comm_mul (β : BdR →ₗ[Qp] BdR) (r : LL) (x : LL' ⊗[LL] ((Fin k →
           - (algebraMap LL LL' r) • LinearMap.id :
         (Fin k → LL') ⊗[Qp] BdR →ₗ[LL'] (Fin k → LL') ⊗[Qp] BdR) (EE BdR x) := by
   induction x using TensorProduct.induction_on with
-  | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | zero => simp only [LinearMap.map_zero, LinearEquiv.map_zero]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul c y =>
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add y z hy hz => simp only [tmul_add, map_add, hy, hz]
+    | add y z hy hz => simp only [tmul_add, map_add (f := _), hy, hz]
     | tmul v b =>
       rw [LinearMap.baseChange_tmul]
       simp only [LinearMap.sub_apply, LinearMap.smul_apply, LinearMap.id_apply, AlgebraTensorModule.map_tmul,
@@ -212,12 +216,12 @@ theorem fil_ext (a : ℤ) :
     intro x
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [LinearMap.comp_apply, map_add] at hx hy ⊢; rw [hx, hy]
+    | add x y hx hy => simp only [LinearMap.comp_apply, map_add (f := _)] at hx hy ⊢; rw [hx, hy]
     | tmul c y =>
       induction y using TensorProduct.induction_on with
       | zero => simp
       | add y z hy hz =>
-        simp only [LinearMap.comp_apply, tmul_add, map_add] at hy hz ⊢; rw [hy, hz]
+        simp only [LinearMap.comp_apply, tmul_add, map_add (f := _)] at hy hz ⊢; rw [hy, hz]
       | tmul v b =>
         simp [LinearMap.baseChange_tmul, AlgebraTensorModule.map_tmul, PI.CoefExt.coefEquiv_tmul]
   rw [hc, LinearMap.range_comp_of_range_eq_top _ (LinearEquiv.range _)]

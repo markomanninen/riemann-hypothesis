@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFamilySettingOfSettingBis
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RoomOffGridSymmetric
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GramProductIdentities
+module
+
+public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFamilySettingOfSettingBis
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RoomOffGridSymmetric
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GramProductIdentities
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBD
 

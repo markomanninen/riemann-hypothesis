@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ExDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.OnCompSelf
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.ExDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.SymplecticGSp4.OnCompSelf
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.Alg UpperTheory.V.HV UpperTheory.V.GradeZeroInterpolatingElement
 
@@ -74,7 +78,8 @@ private def cjL {O : Type} [CommRing O] [IsLocalRing O] [Algebra O B] [IsCO O B]
         Ideal.Quotient.mk (maximalIdeal B ^ N) (r.hom x i j) :=
       Filter.eventually_all.2 fun i => Filter.eventually_all.2 fun j => (r.cont i j N).eventually_eq x
     filter_upwards [this] with y hy
-    simp only [cj_apply, Matrix.mul_apply, map_sum, map_mul, hy]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [cj_apply, Matrix.mul_apply, map_sum, map_mul, hy]
   red g a b := by
     have : (cj h r.hom g).map (res O B) = (r.hom g).map (res O B) := by
       rw [cj_apply, Matrix.map_mul, Matrix.map_mul, h1, h2, one_mul, mul_one]

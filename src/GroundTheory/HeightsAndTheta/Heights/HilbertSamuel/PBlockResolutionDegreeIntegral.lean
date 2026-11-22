@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
-import ReciprocityTheory.AnalyticForms.PotentialTheory.Stokes
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockResolutionDegreeIntegral
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenDegGeomDeg
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AnResBridge
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedF
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.Stokes
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockResolutionDegreeIntegral
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenDegGeomDeg
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AnResBridge
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -122,7 +127,7 @@ theorem mass_potOf (hGG : GenDegGeomDeg.Statement) (d : HSMBlockDatum D K ι Ω)
   rw [hdeg] at hg
   rw [← hg]
   unfold geomDeg ptsIntegral
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   exact key.symm
 
 end BlockResolutionDegreeIntegral

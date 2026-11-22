@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DTermOrigin
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdNormSq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DTermOrigin
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProdNormSq
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LoopTermLem
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LoopTermLem
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactGroupHaarExists
+
+@[expose] public section
 
 noncomputable section
 

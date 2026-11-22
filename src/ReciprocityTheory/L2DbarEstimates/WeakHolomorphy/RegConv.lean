@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.IntegralBumpProfOnePos
+module
+
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.IntegralBumpProfOnePos
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.C
 
@@ -56,7 +60,7 @@ theorem differentiableAt_of_fderiv_I {n : ℕ} {f : V n → ℂ} {x : V n}
   have hsmul : ∀ (c : ℂ) (v : V n), fderiv ℝ f x (c • v) = c * fderiv ℝ f x v := by
     intro c v
     conv_lhs => rw [← Complex.re_add_im c, add_smul, mul_smul, Complex.coe_smul, Complex.coe_smul]
-    rw [map_add, map_smul, map_smul, h, Complex.real_smul, Complex.real_smul]
+    rw [map_add (f := _), map_smul, map_smul, h, Complex.real_smul, Complex.real_smul]
     conv_rhs => rw [← Complex.re_add_im c]
     ring
   let g' : V n →L[ℂ] ℂ :=

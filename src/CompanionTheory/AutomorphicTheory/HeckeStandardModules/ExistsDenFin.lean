@@ -1,6 +1,10 @@
-import CompanionTheory.AutomorphicTheory.HeckeStandardModules.EqZeroOfCompAt
-import Formalism.LocalToGlobal.GaloisLevelStructure.DefsAut
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+module
+
+public import CompanionTheory.AutomorphicTheory.HeckeStandardModules.EqZeroOfCompAt
+public import Formalism.LocalToGlobal.GaloisLevelStructure.DefsAut
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ReciprocityTheory.Aut TensorProduct Formalism.UG Formalism.L2
 
@@ -18,7 +22,7 @@ theorem ALint_eq : ALint L = tensInt (F := L⁺) (AFplus L) (intOE L) (intAd L�
   · exact ⟨fun ⟨y, h⟩ => ⟨⟨y, y, rfl⟩, h.symm⟩, fun ⟨⟨_, y, rfl⟩, h⟩ => ⟨y, h.symm⟩⟩
   · exact ⟨fun ⟨a, ha, h⟩ => ⟨⟨a, ha⟩, h.symm⟩, fun ⟨⟨a, ha⟩, h⟩ => ⟨a, ha, h.symm⟩⟩
 
-theorem levelafC_nat (N : ℕ) : P.levelafC L (N : 𝓞 L⁺) = (N : AL L) := by
+theorem levelafC_nat (N : ℕ) : P.levelafC (E := L) (N : 𝓞 L⁺) = (N : AL L) := by
   rw [P.levelafC, map_natCast]
   exact map_natCast (Algebra.TensorProduct.includeRight (R := L⁺) (A := L) (B := AFplus L)) N
 
@@ -58,7 +62,7 @@ theorem reps_Umax : ∃ T : Set (GA L n), T.Finite ∧ ∀ g, ∃ γ ∈ GQ L n,
   refine ⟨Set.range fun q : ClassSet _ _ => e q.out, @Set.finite_range _ _ _ hfin, fun g => ?_⟩
   set q := DoubleCoset.mk ((ratPts σ (1 : Matrix (Fin n) (Fin n) L) (AFplus L)).subgroupOf _)
     ((levelAf σ 1).subgroupOf _) (⟨g, (hU g).2 g.2⟩ : UPts σ (1 : Matrix (Fin n) (Fin n) L) (AFplus L)) with hq
-  obtain ⟨γ, κ, hγ, hκ, h⟩ := DoubleCoset.mk_out_eq_mul
+  obtain ⟨γ, hγ, κ, hκ, h⟩ := DoubleCoset.mk_out_eq_mul
     ((ratPts σ (1 : Matrix (Fin n) (Fin n) L) (AFplus L)).subgroupOf _) ((levelAf σ 1).subgroupOf _) ⟨g, (hU g).2 g.2⟩
   refine ⟨(e γ)⁻¹, (GQ L n).inv_mem ?_, e q.out, ⟨q, rfl⟩, (e κ)⁻¹, (Umax L n).inv_mem (show e κ ∈ Umax L n from fun i j => ?_), ?_⟩
   · obtain ⟨γ₀, h0, e0⟩ := Subgroup.mem_subgroupOf.1 hγ
@@ -71,7 +75,9 @@ theorem reps_Umax : ∃ T : Set (GA L n), T.Finite ∧ ∀ g, ∃ γ ∈ GQ L n,
     refine (show ((κ : GL (Fin n) (AL L)) : Matrix (Fin n) (Fin n) (AL L)) i j ∈ tensInt (F := L⁺) (AFplus L) (intOE L) (intAd L⁺) from ?_)
     rw [← e1]
     exact ((a : Matrix (Fin n) (Fin n) (tensInt (F := L⁺) (AFplus L) (intOE L) (intAd L⁺))) i j).2
-  · have h' : (q.out : GL (Fin n) (AL L)) = γ * g * κ := congrArg Subtype.val h
+  · have h' : (q.out : GL (Fin n) (AL L)) =
+        (γ : GL (Fin n) (AL L)) * (g : GL (Fin n) (AL L)) * (κ : GL (Fin n) (AL L)) :=
+      congrArg Subtype.val h
     refine Subtype.ext ?_
     show (g : GL (Fin n) (AL L)) = ((γ : GL (Fin n) (AL L)))⁻¹ * q.out * ((κ : GL (Fin n) (AL L)))⁻¹
     rw [h']
@@ -182,9 +188,9 @@ theorem pow_mul_mem {p : ℕ} (hp : s.Above p) {z : AL L} (hz : ∀ w, w ≠ s.v
     refine ⟨a, fun b hb => ?_⟩
     rw [map_mul, map_pow, ← le_mul_inv_iff₀ (zero_lt_iff.2 hy'), one_mul]
     exact (pow_le_pow_right_of_le_one' hv.le hb).trans ha.le
-  obtain ⟨a, ha⟩ := key (s.proj z)
-  obtain ⟨b, hb⟩ := key (s.proj (conjAL L z))
-  obtain ⟨e, he, he'⟩ := GlobalTheory.SplitSep.exists_sep L s
+  obtain ⟨a, ha⟩ := key (s.proj (L := L) z)
+  obtain ⟨b, hb⟩ := key (s.proj (L := L) (conjAL L z))
+  obtain ⟨e, he, he'⟩ := GlobalTheory.SplitSep.exists_sep (L := L) s
   refine ⟨a + b, GlobalTheory.mem_ALint_of_supported_at_split L s e he he' _ (fun w hw => by rw [map_mul, hz w hw, mul_zero]) ?_ ?_⟩
   · rw [map_mul, map_natCast, Nat.cast_pow]
     exact ha _ (Nat.le_add_right _ _)
@@ -211,7 +217,7 @@ def Sl (L : Type) [Field L] [NumberField L] [IsCMField L] {l : ℕ} (hl : l.Prim
 
 theorem ALint_le_Sl {l : ℕ} (hl : l.Prime) : ALint L ≤ Sl L hl := fun z hz => ⟨1, hl.not_dvd_one, by simpa using hz⟩
 
-theorem ent_mem_Sl {l : ℕ} (hl : l.Prime) (hs : ¬ s.Above l) {x : GA L n} (hx : TrivOutside {s.v} x) (i j : Fin n) :
+theorem ent_mem_Sl {l : ℕ} (hl : l.Prime) (hs : ¬ s.Above l) {x : GA L n} (hx : TrivOutside (L := L) {s.v} x) (i j : Fin n) :
     ent x i j ∈ Sl L hl := by
   obtain ⟨p, hp, hA, -⟩ := exists_prime s
   obtain ⟨a, ha⟩ := pow_mul_mem s hA fun w => sub_one_supp hx i j

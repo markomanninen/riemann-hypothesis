@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace Formalism.MainNotions.Gaps.EtaleWeightGaps.Num
 
@@ -109,12 +113,6 @@ theorem modulus_pos_alt : 0 < q0 := by
 theorem TO_le_sq : TO ≤ TO ^ 2 := by
   have h1 : TO * 1 ≤ TO * TO := mul_le_mul_of_nonneg_left h.one_le_order_alt (by linarith [h.one_le_order_alt])
   nlinarith
-
-theorem kl_ge : b ≤ D2 * nW + 2 * r + (TO + D2) * q0 := by
-  have hq := h.modulus_pos_alt
-  have h1 : 0 ≤ D2 * nW := mul_nonneg (by linarith [h.two_le_degree_alt]) (by linarith [h.forty_le_weight_count])
-  have h2 : 0 ≤ D2 * q0 := mul_nonneg (by linarith [h.two_le_degree_alt]) hq.le
-  linarith [h.q0lo, h.r6]
 
 theorem kl_le : D2 * nW + 2 * r + (TO + D2) * q0 ≤ 3 * TO + 2 * b := by
   have hq := h.modulus_pos_alt
@@ -372,27 +370,5 @@ theorem g_gt {s q : ℝ} (hs : s ≤ 4 * A * b) (hq : (k * b) ^ 8 ≤ q) : 2 * s
   linarith
 
 end Rn
-
-theorem polyA {Z PP tableDegreeThreeBase PO lk Dp : ℝ} (hZ : 10 ^ 60 ≤ Z) (hPP : Z ^ 12 ≤ PP) (hP0 : tableDegreeThreeBase ≤ 30 * Z)
-    (hPO : PO ≤ 217 * Z ^ 2) (hl1 : 1 ≤ lk) (hl : lk ≤ 6 * Z) (hD : 1 ≤ Dp) :
-    (2 * 0 + 1 / 2 + tableDegreeThreeBase * lk + 3 / 2 * (Z * lk + PO) ≤ PP) ∧
-    (60 * 0 + 180 * (1 / 2) + 44 * (2 * 0 + 1 / 2 + tableDegreeThreeBase * lk + 3 / 2 * (Z * lk + PO)) + 22 * (2 * Z) ≤ PP ^ 2 * Dp) := by
-  have hZ1 : (1 : ℝ) ≤ Z := le_trans (by norm_num) hZ
-  have hZ0 : (0 : ℝ) ≤ Z := by linarith
-  have hZZ : Z ≤ Z ^ 10 := by simpa using pow_le_pow_right₀ hZ1 (show 1 ≤ 10 by norm_num)
-  have hZ10 : (10 : ℝ) ^ 60 ≤ Z ^ 10 := le_trans hZ hZZ
-  have hZ12 : Z ^ 2 * 10 ^ 60 ≤ Z ^ 2 * Z ^ 10 := mul_le_mul_of_nonneg_left hZ10 (sq_nonneg Z)
-  have e12 : Z ^ 2 * Z ^ 10 = Z ^ 12 := by ring
-  have hZ2 : (1 : ℝ) ≤ Z ^ 2 := by nlinarith
-  have a1 : tableDegreeThreeBase * lk ≤ 30 * Z * lk := mul_le_mul_of_nonneg_right hP0 (by linarith)
-  have a2 : 30 * Z * lk ≤ 30 * Z * (6 * Z) := mul_le_mul_of_nonneg_left hl (by linarith)
-  have a3 : Z * lk ≤ Z * (6 * Z) := mul_le_mul_of_nonneg_left hl hZ0
-  have hE : 2 * 0 + 1 / 2 + tableDegreeThreeBase * lk + 3 / 2 * (Z * lk + PO) ≤ 600 * Z ^ 2 := by nlinarith
-  have hP1 : (1 : ℝ) ≤ PP := by nlinarith
-  have hPsq : PP * 1 ≤ PP * PP := mul_le_mul_of_nonneg_left hP1 (by linarith)
-  have hPD : PP ^ 2 * 1 ≤ PP ^ 2 * Dp := mul_le_mul_of_nonneg_left hD (sq_nonneg PP)
-  constructor
-  · nlinarith
-  · nlinarith
 
 end Formalism.MainNotions.Gaps.EtaleWeightGaps.Num

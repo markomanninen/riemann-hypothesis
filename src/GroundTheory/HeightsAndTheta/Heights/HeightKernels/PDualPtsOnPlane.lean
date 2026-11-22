@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.DualProjApply
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.DualProjApply
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -31,8 +36,8 @@ theorem mulMat_sum (b : Module.Basis T ℤ (dualLattice F)) (α : 𝓞 K) (s : T
     zsmul_eq_mul, smul_eq_mul] at h2
   exact h2
 
-omit [Fintype T] in
 
+omit [Fintype T] in
 theorem recover_spec (b : Module.Basis T ℤ (dualLattice F))
     (hb : Function.Bijective (Matrix.mulVecLin (dualEmbMatrix b))) (Z : T → ℂ) (t : T) :
     Z t = ∑ p : (K →+* ℂ) × Fin i, p.1 ((b t : Fin i → K) p.2) * dualRecover b hb Z p := by
@@ -60,7 +65,8 @@ theorem mulMat_recover (b : Module.Basis T ℤ (dualLattice F))
     _ = _ := by
         refine Finset.sum_congr rfl fun p _ => ?_
         have h := congrArg p.1 (mulMat_sum b α s p.2)
-        simp only [map_sum, map_mul, map_intCast] at h
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_sum, map_mul, map_intCast] at h
         rw [h]
         ring
 
@@ -76,7 +82,8 @@ theorem quad_mem (b : Module.Basis T ℤ (dualLattice F)) (α : 𝓞 K) (s r : T
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun j _ => ?_
     have h := congrArg (C : K → MvPolynomial (Fin i) K) (mulMat_sum b α u j)
-    simp only [map_sum, map_mul, map_intCast] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, map_intCast] at h
     rw [← mul_assoc, ← h, Finset.sum_mul]
     refine Finset.sum_congr rfl fun t _ => ?_
     ring
@@ -84,12 +91,14 @@ theorem quad_mem (b : Module.Basis T ℤ (dualLattice F)) (α : 𝓞 K) (s r : T
       algebraMap (MvPolynomial (Fin i) K) (ProjField K i) (C (α : K)) * dualLatticeCoord b ⟨(), u⟩ := by
     intro u
     have h := congrArg (algebraMap (MvPolynomial (Fin i) K) (ProjField K i)) (hlin u)
-    simpa only [dualLatticeCoord, map_sum, map_mul, map_intCast] using h
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [dualLatticeCoord, map_sum, map_mul, map_intCast] using h
   have hsum : ∀ u, mConeMap (dualLatticeCoord b) (∑ t, C (mulMat b α u t) * X ⟨(), t⟩) =
       MvPolynomial.C (algebraMap (MvPolynomial (Fin i) K) (ProjField K i) (C (α : K)) *
         dualLatticeCoord b ⟨(), u⟩) * MvPolynomial.X () := by
     intro u
-    rw [← hS u, map_sum, map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hS u, map_sum, map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun t _ => ?_
     simp only [mConeMap, aeval_X, map_mul, map_intCast, eq_intCast]
     ring
@@ -144,8 +153,8 @@ theorem agree (b : Module.Basis T ℤ (dualLattice F))
 
 end DualPointsOnPlane
 
-open DualPointsOnPlane in
 
+open DualPointsOnPlane in
 theorem DualPtsOnPlane.proof : DualPtsOnPlane.Statement := by
   intro K _ _ i F T _ _ b hb z hz
   obtain ⟨s0, hs0⟩ := hz.1 ()

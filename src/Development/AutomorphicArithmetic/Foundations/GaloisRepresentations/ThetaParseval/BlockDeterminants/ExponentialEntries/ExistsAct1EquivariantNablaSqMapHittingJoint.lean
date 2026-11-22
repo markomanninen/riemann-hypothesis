@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.BlockDeterminants.ExponentialEntries.RightSub
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.BlockDeterminants.ExponentialEntries.RightSub
+
+@[expose] public section
 
 open MvPolynomial Formalism.BasicNotions UpperTheory.TP.RP
 
@@ -13,7 +17,8 @@ private theorem sAlg_rowAct {n d : ℕ} (h : n ≤ d) (g : Matrix (Fin n) (Fin n
   have key : (sAlg h).comp (Formalism.GradedWeylDivisibility.rowAct ℂ (n := n) g.transpose) = (leftSub g).comp (sAlg h) := by
     apply MvPolynomial.algHom_ext
     intro v
-    simp [sAlg, Formalism.GradedWeylDivisibility.rowAct, leftSub, xv, Matrix.transpose_apply, map_sum, aeval_X, MvPolynomial.algebraMap_eq]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [sAlg, Formalism.GradedWeylDivisibility.rowAct, leftSub, xv, Matrix.transpose_apply, map_sum, aeval_X, MvPolynomial.algebraMap_eq]
   exact congrArg (fun φ => φ f) key
 
 private theorem rowAct_lp {n : ℕ} (g : Matrix (Fin n) (Fin n) ℂ) :

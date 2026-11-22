@@ -1,13 +1,17 @@
-import Mathlib
-import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.FdOfCharts
-import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceRepresentativesLaw
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NatCastMemOfPlace
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.RepComb
-import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntPull
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.FinalEq
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.AlternatingFormStandardHermitian
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ImportsLast
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.FdOfCharts
+public import Formalism.LocalToGlobal.GroupLattices.PendingLemmas.InvarianceRepresentativesLaw
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NatCastMemOfPlace
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.RepComb
+public import Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.IntPull
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.FinalEq
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.AlternatingFormStandardHermitian
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ImportsLast
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,7 @@ theorem hatS_map (hH : ∀ x y, H (T x) (T y) = H x y) (vol : ℝ) (SA : Finset 
 theorem opU_map (hH : ∀ x y, H (T x) (T y) = H x y) (x : V) (e : V → ℂ) (z : V) :
     opU H (T x) e (T z) = opU H x (fun v => e (T v)) z := by
   unfold opU
-  rw [hH, hH, ← map_add]
+  rw [hH, hH, ← map_add (f := _)]
 
 theorem xiL_map (hH : ∀ x y, H (T x) (T y) = H x y) (hα : ∀ x, α (T x) = α x) (vol : ℝ) (SX SA SB : Finset V) (Φ e : V → ℂ) (z : V) :
     xiL H α vol (SX.image T) (SA.image T) (SB.image T) Φ e (T z) =
@@ -48,7 +52,7 @@ theorem xiL_map (hH : ∀ x y, H (T x) (T y) = H x y) (hα : ∀ x, α (T x) = �
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [Finset.sum_image (fun a _ b _ h => T.injective h)]
   refine Finset.sum_congr rfl fun y _ => ?_
-  rw [hatS_map H T hH, hα, hα, hH, hH, ← map_add, opU_map H T hH]
+  rw [hatS_map H T hH, hα, hα, hH, hH, ← map_add (f := _), opU_map H T hH]
 
 theorem isReps_image {Λ₁ Λ₂ M₁ M₂ : AddSubgroup V} {S : Finset V} (hS : IsReps Λ₁ Λ₂ S) (h1 : ∀ x, T x ∈ M₁ ↔ x ∈ Λ₁)
     (h2 : ∀ x, T x ∈ M₂ ↔ x ∈ Λ₂) : IsReps M₁ M₂ (S.image T) := by
@@ -60,8 +64,8 @@ theorem isReps_image {Λ₁ Λ₂ M₁ M₂ : AddSubgroup V} {S : Finset V} (hS 
   | (intros; apply @_root_.GlobalTheory.TransportLemma.main <;> first | assumption | infer_instance)
   | (intros; exact _root_.GlobalTheory.TransportLemma.main ..)
 
-omit [DecidableEq V] in
 
+omit [DecidableEq V] in
 theorem repsOf_of_exists {Λ₁ Λ₂ : AddSubgroup V} (h : ∃ S, IsReps Λ₁ Λ₂ S) : IsReps Λ₁ Λ₂ (repsOf Λ₁ Λ₂) := by
   unfold repsOf
   exact Classical.epsilon_spec h
@@ -107,8 +111,8 @@ theorem tPull_one (z : TaylorLogMetric.VC D a b) :
   rw [Matrix.map_one _ (map_zero _) (map_one _), Matrix.map_one _ (map_zero _) (map_one _), Matrix.conjTranspose_one,
     Matrix.one_mul, Matrix.mul_one]
 
-variable (cc δ) in
 
+variable (cc δ) in
 def TT (e : Matrix (Fin a) (Fin a) D.host.E) (e' : Matrix (Fin b) (Fin b) D.host.E) (he : e * star e = 1) (he' : e' * star e' = 1) :
     TaylorLogMetric.VC D a b ≃+ TaylorLogMetric.VC D a b where
   toFun := tPull D (TaylorLogMetric.tor0 D cc δ) e e'
@@ -252,7 +256,7 @@ theorem onV_embH (hδ0 : δ ≠ 0) (Ξ : Formalism.L2.Col.HomE D.host.E a b → 
   have := tau_nonempty D
   have h : ∃ y, embH (ι := D.what₂.Tau) (fun τ => TaylorLogMetric.embT D τ) δ y = embH (ι := D.what₂.Tau) (fun τ => TaylorLogMetric.embT D τ) δ x := ⟨x, rfl⟩
   unfold onV
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   exact congrArg Ξ (embH_inj _ hδ0 h.choose_spec)
 
 theorem onV_TT (hδ0 : δ ≠ 0) (e : Matrix (Fin a) (Fin a) D.host.E) (e' : Matrix (Fin b) (Fin b) D.host.E) (he : e * star e = 1)
@@ -269,7 +273,7 @@ theorem onV_TT (hδ0 : δ ≠ 0) (e : Matrix (Fin a) (Fin a) D.host.E) (e' : Mat
       rw [← tPull_embH (cc := cc), hy]
       exact (TT cc δ e e' he he').left_inv v
     unfold onV
-    rw [dif_neg h, dif_neg h2]
+    rw [dite_eq_right h, dite_eq_right h2]
 
 theorem unimod_iff {n : ℕ} (L : Submodule (𝓞 D.host.E) (Formalism.L2.Col.Sp D.host.E n)) :
     Formalism.HermitianLatticesTheory.IsUnimodular (Formalism.L2.Col.hStd D.host.E n) L ↔
@@ -295,8 +299,22 @@ variable (SS : Finset (HeightOneSpectrum (𝓞 D.host.E))) (cl : ℕ)
 theorem admissible_pair_twist (hA : TaylorLogMetric.admitted D a b N N') (hcl : 0 < cl) (ex : HeightOneSpectrum (𝓞 D.host.E) → ℤ)
     (h01 : ∀ Q, ex Q = 1 ∨ ex Q = 0 ∨ ex Q = -1) (hc : ∀ Q, ex (Formalism.L2.Col.conjPrime₂ Q) = -ex Q) :
     TaylorLogMetric.admitted D a b N (twist₂ N' cl ex) := by
-  have hl := hh_tw_lattice N' ⟨hA.2.2.2.1, hA.2.2.2.2.1⟩ hcl ex h01
-  exact ⟨hA.1, hA.2.1, hA.2.2.1, hl.fg, hl.span_eq_top,
+  have hl : Submodule.IsLattice D.host.E N' :=
+    ⟨hA.2.2.2.1, fun _ _ h => (LinearIndependent.iff_fractionRing _ _).mp h⟩
+  have ht := hh_tw_lattice N' hl hcl ex h01
+  have hs : Submodule.span D.host.E (↑(twist₂ N' cl ex) : Set (Formalism.L2.Col.Sp D.host.E b)) = ⊤ := by
+    apply top_unique
+    rw [← hA.2.2.2.2.1]
+    apply Submodule.span_le.2
+    intro x hx
+    have hx' : (cl : 𝓞 D.host.E) • x ∈ Submodule.span D.host.E
+        (↑(twist₂ N' cl ex) : Set (Formalism.L2.Col.Sp D.host.E b)) :=
+      Submodule.subset_span (hh_tw_of N' hcl ex h01 hx)
+    have hc : (cl : D.host.E) ≠ 0 := Nat.cast_ne_zero.2 hcl.ne'
+    rw [Nat.cast_smul_eq_nsmul, ← Nat.cast_smul_eq_nsmul D.host.E] at hx'
+    have := (Submodule.span D.host.E (↑(twist₂ N' cl ex) : Set (Formalism.L2.Col.Sp D.host.E b))).smul_mem (cl : D.host.E)⁻¹ hx'
+    rwa [smul_smul, inv_mul_cancel₀ hc, one_smul] at this
+  exact ⟨hA.1, hA.2.1, hA.2.2.1, ht.fg, hs,
     (unimod_iff _).1 (twist_selfDual D.host.E b N' cl ex hA.2.2.2.1 hcl hc ((unimod_iff _).2 hA.2.2.2.2.2))⟩
 
 theorem split_of_adm (B : Base D cc δ) (hcc : TaylorLogMetric.IsCurveIdeal D cc) (hδ : TaylorLogMetric.IsDiscriminantTwelfthRootOfIdealLattice D cc δ) (hδ0 : δ ≠ 0)

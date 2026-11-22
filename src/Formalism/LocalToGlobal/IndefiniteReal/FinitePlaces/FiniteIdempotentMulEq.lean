@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatAnn
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.LatAnn
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem inf_mul (z : AE D) :
     have : pairA D.host.F 1 0 * a = (fstA D.host.F a, (0 : Af D.host.F)) :=
       Prod.ext (by show (1 : Ainf D.host.F) * a.1 = a.1; rw [one_mul]) (by show (0 : Af D.host.F) * a.2 = 0; rw [zero_mul])
     rw [this]; rfl
-  | add x y hx hy => rw [mul_add, hx, hy, map_add, map_add]
+  | add x y hx hy => rw [mul_add, hx, hy, map_add (f := _), map_add (f := _)]
 
 theorem finite_idempotent_mul_eq (z : AE D) :
     algebraMap (AF D.host.F) (AE D) (pairA D.host.F 0 1) * z = jF D (finPart D z) := by
@@ -40,18 +44,18 @@ theorem finite_idempotent_mul_eq (z : AE D) :
       Algebra.TensorProduct.tmul_mul_tmul, one_mul, finPart_tmul, jF_tmul]
     congr 1
     exact Prod.ext (by show (0 : Ainf D.host.F) * a.1 = 0; rw [zero_mul]) (by show (1 : Af D.host.F) * a.2 = a.2; rw [one_mul])
-  | add x y hx hy => rw [mul_add, hx, hy, map_add, map_add]
+  | add x y hx hy => rw [mul_add, hx, hy, map_add (f := _), map_add (f := _)]
 
 theorem eq_jF_of_inf (z : AE D) (hz : infPart D z = 0) : z = jF D (finPart D z) := by
   have h1 : pairA D.host.F 1 0 + pairA D.host.F 0 1 = (1 : AF D.host.F) := Prod.ext (add_zero _) (zero_add _)
   calc z = algebraMap (AF D.host.F) (AE D) (pairA D.host.F 1 0 + pairA D.host.F 0 1) * z := by rw [h1, map_one, one_mul]
-    _ = jF D (finPart D z) := by rw [map_add, add_mul, inf_mul, hz, map_zero, zero_add, finite_idempotent_mul_eq]
+    _ = jF D (finPart D z) := by rw [map_add (f := _), add_mul, inf_mul, hz, map_zero, zero_add, finite_idempotent_mul_eq]
 
 theorem finPart_jF (y : Af D.host.F ⊗[D.host.F] D.host.E) : finPart D (jF D y) = y := by
   induction y using TensorProduct.induction_on with
   | zero => rw [map_zero, map_zero]
   | tmul a e => rw [jF_tmul, finPart_tmul]; rfl
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem infPart_jF (y : Af D.host.F ⊗[D.host.F] D.host.E) : infPart D (jF D y) = 0 := by
   induction y using TensorProduct.induction_on with
@@ -62,7 +66,7 @@ theorem infPart_jF (y : Af D.host.F ⊗[D.host.F] D.host.E) : infPart D (jF D y)
     rw [Algebra.TensorProduct.map_tmul]
     show (0 : Ainf D.host.F) ⊗ₜ[D.host.F] _ = 0
     rw [TensorProduct.zero_tmul]
-  | add x y hx hy => rw [map_add, map_add, hx, hy, add_zero]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, add_zero]
 
 theorem approx_Af (a : Af D.host.F) (N : ℕ) (hN : 0 < N) :
     ∃ f : D.host.F, ∃ c ∈ intAf D.host.F, a = algebraMap D.host.F (Af D.host.F) f + algebraMap D.host.F (Af D.host.F) N * c := by
@@ -76,8 +80,8 @@ theorem approx_Af (a : Af D.host.F) (N : ℕ) (hN : 0 < N) :
 theorem isAlg_Z (e : D.host.E) : IsAlgebraic ℤ e :=
   (IsFractionRing.isAlgebraic_iff ℤ ℚ D.host.E).2 (Algebra.IsAlgebraic.isAlgebraic e)
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem approx_AfE (N : ℕ) (hN : 0 < N) (z : Af D.host.F ⊗[D.host.F] D.host.E) :
     ∃ w : D.host.E, ∃ y ∈ intAE D, z = (1 : Af D.host.F) ⊗ₜ[D.host.F] w + N • y := by
   induction z using TensorProduct.induction_on with

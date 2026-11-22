@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GGMirabolic
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MatrixCoefficientBound.PermRepApply
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GGMirabolic
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MatrixCoefficientBound.PermRepApply
+
+@[expose] public section
 
 open Finset
 
@@ -52,7 +56,7 @@ theorem eigBound_of (hP : PlaceBound) (hJ : JointEig) (hF : ProdFormula) : EigBo
   · exact mul_nonneg (Finset.prod_nonneg fun v _ => hg0 v) (Finset.prod_nonneg fun v _ => (hc v).2.1)
   · rw [hG1, Complex.ofReal_re, mul_comm (∏ v, (1 + 3 / (Fintype.card (Fq v) : ℝ)))]
     exact mul_le_mul_of_nonneg_left
-      (Finset.prod_le_prod (fun v _ => (hc v).2.1) (fun v _ => (hc v).2.2))
+      (Finset.prod_le_prod₀ (fun v _ => (hc v).2.1) (fun v _ => (hc v).2.2))
       (Finset.prod_nonneg fun v _ => hg0 v)
 
 end PI.GGMatBoundW

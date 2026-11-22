@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NoTowerQ
-import GroundTheory.LocalFields.DifferentGalois
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NoTowerQ
+public import GroundTheory.LocalFields.DifferentGalois
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.Loc ValuativeRel GroundTheory.LocalField GlobalTheory.PMon.Ram
 
 namespace GlobalTheory.PMon.Ram
@@ -23,8 +28,8 @@ theorem card_add_two_mul_card_inf_le_of_not_le {G : Type} [Group G] [Finite G] (
   rw [hk]
   nlinarith
 
-open Classical in
 
+open Classical in
 theorem ite_add_two_mul_card_inf_sub_one_le {G : Type} [Group G] [Finite G] (H J : Subgroup G) :
     (if H ≤ J then 0 else Nat.card ↥H) + 2 * (Nat.card ↥(H ⊓ J) - 1) ≤ 2 * (Nat.card ↥H - 1) := by
   have h1 : 0 < Nat.card ↥(H ⊓ J) := Nat.card_pos

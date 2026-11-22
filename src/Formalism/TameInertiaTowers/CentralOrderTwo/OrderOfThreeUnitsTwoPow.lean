@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.TameInertiaTowers.StatementGroup
-import Formalism.TameInertiaTowers.CentralOrderTwo.TwoAdic
+module
+
+public import Mathlib
+public import Formalism.TameInertiaTowers.StatementGroup
+public import Formalism.TameInertiaTowers.CentralOrderTwo.TwoAdic
+
+@[expose] public section
 
 namespace Formalism.TwoAdicCyclotomicDecomposition
 

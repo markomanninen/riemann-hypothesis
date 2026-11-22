@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockHarmonicSplitting.FockInnerSelfReNonneg
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FockHarmonicSplitting.FockInnerSelfReNonneg
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,8 +40,8 @@ private lemma finiteDimensional_homog' [Fintype σ] (n : ℕ) :
        have hph : p.IsHomogeneous n := (MvPolynomial.mem_homogeneousSubmodule n p).1 hp
        rw [p.as_sum]
        refine Submodule.sum_mem _ (fun d hd => ?_)
-       have hmono : MvPolynomial.monomial d (MvPolynomial.coeff d p)
-           = MvPolynomial.coeff d p • MvPolynomial.monomial d (1 : ℂ) := by
+       have hmono : MvPolynomial.monomial d (AddMonoidAlgebra.coeff p d)
+           = AddMonoidAlgebra.coeff p d • MvPolynomial.monomial d (1 : ℂ) := by
          first
          | simp [MvPolynomial.smul_monomial]
          | rw [MvPolynomial.smul_monomial, smul_eq_mul, mul_one]
@@ -64,8 +68,8 @@ private lemma finiteDimensional_homog' [Fintype σ] (n : ℕ) :
        FiniteDimensional.span_of_finite ℂ (hS.image _)
      exact Submodule.finiteDimensional_of_le hle)
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 lemma exists_orth [Fintype σ] (K : Submodule ℂ (MvPolynomial σ ℂ)) (n : ℕ)
     (hK : K ≤ FockH1Action.homog σ n) (f : MvPolynomial σ ℂ) :
     ∃ y ∈ K, ∀ x ∈ K, FockH1Action.fockInner x (f - y) = 0 := by

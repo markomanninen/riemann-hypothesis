@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.StableBlock
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GlobalTraceComparison.StableBlock
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E] {N : ℕ}
 
 structure Lev (bad : Set (Pl E)) (K : Subgroup (GL (Fin N) (Af E))) : Prop where
   isOpen : IsOpen (K : Set (GL (Fin N) (Af E)))
-  int : ∀ u ∈ K, ∀ w, GeneralLinearGroup.map (pLoc E w) u ∈ KGL w N
-  loc : ∀ w ∉ bad, ∀ k ∈ KGL w N, locGL E N w k ∈ K
+  int : ∀ u ∈ K, ∀ w, GeneralLinearGroup.map (pLoc E w) u ∈ KGL w (n := N)
+  loc : ∀ w ∉ bad, ∀ k ∈ KGL w (n := N), locGL E N w k ∈ K
 
 structure EigT (bad : Set (Pl E)) (K : Subgroup (GL (Fin N) (Af E))) (W : Submodule ℂ (Kinf E N → ℂ)) (φ : Sm E N)
     (m : (E →+* ℂ) → Multiset ℂ) (B : Pl E → Multiset ℂˣ) : Prop where
@@ -36,19 +40,11 @@ def STo (q n : ℕ) (B : ℕ → Multiset ℂˣ) (C : Multiset ℂˣ) : Prop :=
 def Excl (X : Set (CuspSub E N)) (φ : Sm E N) : Prop :=
   ∀ π ∈ X, ∀ ψ ∈ π.V, ∀ z : ℂ, ¬ ∀ g, φ.1 g = ψ.1 g * Complex.exp (z * PositivityTheory.Rg.BcB.logAbs g.val.det)
 
-def Read (bad : Set (Pl E)) (K : Subgroup (GL (Fin N) (Af E))) (W : Submodule ℂ (Kinf E N → ℂ)) (m₀ : (E →+* ℂ) → Multiset ℂ)
-    (X : Set (CuspSub E N)) (P : Sm E N → Prop) : Prop :=
-  ∃ (J : Type) (_ : Fintype J) (D : J → CD E N) (C : J → Pl E → Multiset ℂˣ),
-    (∀ j, (∀ π ∈ X, ¬ (D j).Has π) ∧ ∀ w ∉ bad, (D j).Sat w (C j w)) ∧
-    ∀ (φ : ℕ → Sm E N) (m : ℕ → (E →+* ℂ) → Multiset ℂ) (B : ℕ → Pl E → Multiset ℂˣ),
-      (∀ k, EigT bad K W (φ k) (m k) (B k) ∧ P (φ k)) → MTo m m₀ →
-      ∃ (j : J) (s : ℕ → ℕ), StrictMono s ∧ ∀ w ∉ bad, STo (qV E w) N (fun k => B (s k) w) (C j w)
-
 end
 
 def LevShrink : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (N : ℕ) (bad : Set (Pl E))
-  (K : Subgroup (GL (Fin N) (Af E))), IsOpen (K : Set (GL (Fin N) (Af E))) → (∀ w ∉ bad, ∀ k ∈ KGL w N, locGL E N w k ∈ K) →
-    ∃ K' ≤ K, Lev bad K' ∧ ∀ c : GL (Fin N) (Af E), (∀ w, GeneralLinearGroup.map (pLoc E w) c ∈ KGL w N) → ∀ u ∈ K', c⁻¹ * u * c ∈ K'
+  (K : Subgroup (GL (Fin N) (Af E))), IsOpen (K : Set (GL (Fin N) (Af E))) → (∀ w ∉ bad, ∀ k ∈ KGL w (n := N), locGL E N w k ∈ K) →
+    ∃ K' ≤ K, Lev bad K' ∧ ∀ c : GL (Fin N) (Af E), (∀ w, GeneralLinearGroup.map (pLoc E w) c ∈ KGL w (n := N)) → ∀ u ∈ K', c⁻¹ * u * c ∈ K'
 
 def TypeSat : Prop := ∀ (G : Type) [Group G] (W : Submodule ℂ (G → ℂ)), FiniteDimensional ℂ W →
   ∃ W' : Submodule ℂ (G → ℂ), FiniteDimensional ℂ W' ∧ ∀ f : G → ℂ, (∀ a, (fun k => f (a * k)) ∈ W) → ∀ b, (fun k => f (k * b)) ∈ W'
@@ -69,7 +65,7 @@ def SliceT : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r s
 def StabT : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (N : ℕ) (bad : Set (Pl E))
   (K : Subgroup (GL (Fin N) (Af E))) (W : Submodule ℂ (Kinf E N → ℂ)), Lev bad K → FiniteDimensional ℂ W →
     ∀ S : Submodule ℂ (Sm E N), BddS S → (∀ φ ∈ S, TypeB K W φ) → ∃ V : Submodule ℂ (Sm E N), S ≤ V ∧ FiniteDimensional ℂ V ∧
-      (∀ φ ∈ V, IsAutForm φ ∧ TypeB K W φ) ∧ (∀ w ∉ bad, V ≤ fixed (fL N w) (KGL w N)) ∧ ∀ i : Ix N bad, ∀ φ ∈ V, opIx i φ ∈ V
+      (∀ φ ∈ V, IsAutForm φ ∧ TypeB K W φ) ∧ (∀ w ∉ bad, V ≤ fixed (fL N w) (KGL w (n := N))) ∧ ∀ i : Ix N bad, ∀ φ ∈ V, opIx i φ ∈ V
 
 def StepT : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r s : ℕ) (bad : Set (Pl E))
   (K : Subgroup (GL (Fin (r + s)) (Af E))) (W : Submodule ℂ (Kinf E (r + s) → ℂ)), Lev bad K → FiniteDimensional ℂ W →
@@ -109,18 +105,5 @@ def SplitLim : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (m
   ∃ T : Finset (((E →+* ℂ) → Multiset ℂ) × ((E →+* ℂ) → Multiset ℂ)), ∀ m m₁ m₂ : ℕ → (E →+* ℂ) → Multiset ℂ,
     (∀ k t, m k t = (m₁ k t).map (· + α) + (m₂ k t).map (· + β)) → MTo m m₀ →
     ∃ p ∈ T, ∃ s : ℕ → ℕ, StrictMono s ∧ MTo (fun k => m₁ (s k)) p.1 ∧ MTo (fun k => m₂ (s k)) p.2
-
-def CDAdd : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r s : ℕ) (D₁ : CD E r) (D₂ : CD E s) (ν ν' : HChar E),
-  1 ≤ r → 1 ≤ s → ∃ D : CD E (r + s), (∀ π : CuspSub E (r + s), ¬ D.Has π) ∧ ∀ w B₁ B₂, ν.UnrAt w → ν'.UnrAt w → D₁.Sat w B₁ →
-    D₂.Sat w B₂ → D.Sat w (B₁.map (· * ν.val w) + B₂.map (· * ν'.val w))
-
-def CuspCase : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (N : ℕ), 1 ≤ N → ∀ (bad : Set (Pl E)) (K : Subgroup (GL (Fin N) (Af E)))
-  (W : Submodule ℂ (Kinf E N → ℂ)) m₀ (X : Set (CuspSub E N)), bad.Finite → Lev bad K → FiniteDimensional ℂ W →
-    (∀ π ∈ X, ∀ ψ ∈ π.V, ∀ t g, ψ.1 (splitCentre E N t * g) = ψ.1 g) → Read bad K W m₀ X fun φ => IsCuspForm φ ∧ Excl X φ
-
-def CtCase : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (r s : ℕ), 1 ≤ r → 1 ≤ s → ∀ bad : Set (Pl E),
-  (∀ K (W : Submodule ℂ (Kinf E r → ℂ)) m₀, Lev bad K → FiniteDimensional ℂ W → Read (N := r) bad K W m₀ ∅ fun _ => True) →
-  (∀ K (W : Submodule ℂ (Kinf E s → ℂ)) m₀, Lev bad K → FiniteDimensional ℂ W → Read (N := s) bad K W m₀ ∅ fun _ => True) →
-  ∀ K (W : Submodule ℂ (Kinf E (r + s) → ℂ)) m₀ X, Lev bad K → FiniteDimensional ℂ W → Read (N := r + s) bad K W m₀ X fun φ => ∃ g, constantTerm r φ.1 g ≠ 0
 
 end UpperTheory.V.Z.Tf.GlobalTraceComparison.Cusp

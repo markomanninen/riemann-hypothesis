@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantPDivGroupOmegaTrivialHodgeTateBasisStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntegrallyClosedInOfIntegers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.GhostFrobenius
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstantPDivGroupOmegaTrivialHodgeTateBasisStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntegrallyClosedInOfIntegers
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem isLocalRing_of_integers {C : Type} [Field C] {v : Valuation C NNReal} {O
   have h2 : v (algebraMap O C (1 - a)) < 1 :=
     lt_of_le_of_ne (hv.map_le_one _) (fun e => h.2 (hv.isUnit_of_one' e))
   have h3 := v.map_add (algebraMap O C a) (algebraMap O C (1 - a))
-  have h4 : algebraMap O C a + algebraMap O C (1 - a) = 1 := by rw [← map_add]; simp
+  have h4 : algebraMap O C a + algebraMap O C (1 - a) = 1 := by rw [← map_add (f := _)]; simp
   rw [h4, v.map_one] at h3
   exact lt_irrefl _ (lt_of_le_of_lt h3 (max_lt h1 h2))
 
@@ -44,8 +48,8 @@ theorem etale_Fil {ε : PreTilt O p} (hε : IsPrimitiveSystem ε) (h : ℕ) : (e
 
 end GlobalTheory.ConstDatum
 
-open GlobalTheory.ConstDatum in
 
+open GlobalTheory.ConstDatum in
 theorem GlobalTheory.PDivLat.hasDatum_of_isConst : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (O : Type) [CommRing O] [Algebra O C] [Fact ¬IsUnit (p : O)] [IsAdicComplete (Ideal.span {(p : O)}) O] [IsDomain O], v.Integers O → ∀ (ε : PreTilt O p) (hε : IsPrimitiveSystem ε), ∀ G : PDivGroup p O, IsConst G → HasDatum hε G := by
   intro p _ C _ _ _ v O _ _ _ _ _ hv ε hε G hG
   haveI := GlobalTheory.PointGroup.isIntegrallyClosedIn_of_integers hv
@@ -76,7 +80,8 @@ theorem GlobalTheory.PDivLat.hasDatum_of_isConst : ∀ (p : ℕ) [Fact p.Prime] 
     rw [Fintype.linearCombination_apply]
     have hb : b.equivFun = e := Module.Basis.equivFun_ofEquivFun e
     conv_rhs => rw [← b.sum_equivFun t]
-    rw [map_sum, hb]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, hb]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [hodgeTate_smul (padicToO p O)]
     rfl

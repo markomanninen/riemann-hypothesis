@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.EmbKCoe
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.EmbKCoe
+
+@[expose] public section
 
 noncomputable section
 
@@ -99,7 +103,7 @@ theorem exists_unique_eigen_sum : ∀ {E : Type} [Field E] [NumberField E] [IsCM
   have heig : ∀ (μ : c.F) (x : V), A x = φ μ • x → ∀ p : Polynomial c.F, ev p x = φ (p.eval μ) • x := by
     intro μ x hx p
     induction p using Polynomial.induction_on' with
-    | add p q hp hq => rw [map_add, LinearMap.add_apply, hp, hq, eval_add, map_add, add_smul]
+    | add p q hp hq => rw [map_add (f := _), LinearMap.add_apply, hp, hq, eval_add, map_add (f := _), add_smul]
     | monomial k a =>
       have hk : ∀ k : ℕ, (A ^ k) x = φ μ ^ k • x := by
         intro k
@@ -123,7 +127,8 @@ theorem exists_unique_eigen_sum : ∀ {E : Type} [Field E] [NumberField E] [IsCM
     simpa [ψ, sub_eq_zero, P] using h
   have hsum : ∑ τ, P τ = 1 := by
     simp only [P]
-    rw [← map_sum, Lagrange.sum_basis hlinj.injOn Finset.univ_nonempty, map_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, Lagrange.sum_basis hlinj.injOn Finset.univ_nonempty, map_one]
   have hall : ∀ τ x, A x = φ (lam τ) • x → ∀ a, ρ a x = φ (embK c τ a) • x := by
     intro τ x hx a
     obtain ⟨N, hN, g, hg⟩ := hden a
@@ -146,7 +151,8 @@ theorem exists_unique_eigen_sum : ∀ {E : Type} [Field E] [NumberField E] [IsCM
   · rintro w ⟨hw, hws⟩
     funext τ
     show w τ = P τ v
-    rw [← hws, map_sum, Finset.sum_eq_single τ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hws, map_sum, Finset.sum_eq_single τ]
     · rw [heig (lam τ) _ (hw τ α), Lagrange.eval_basis_self hlinj.injOn (Finset.mem_univ τ), map_one, one_smul]
     · intro τ' _ hne
       rw [heig (lam τ') _ (hw τ' α), Lagrange.eval_basis_of_ne (Ne.symm hne) (Finset.mem_univ τ'), map_zero, zero_smul]

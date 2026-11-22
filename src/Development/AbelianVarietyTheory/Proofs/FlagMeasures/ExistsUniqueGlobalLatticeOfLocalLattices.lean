@@ -1,19 +1,24 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GFrames
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StrongApproximationAdditiveQuadraticExtensionStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NumberFieldLatticeDeterminedByLocalLatticesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsNatMulMemIntegersQuadraticCompletionStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalLatticeBetweenScaledStandardLatticesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsNatBoundLocalLatticesStandardAeStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsIntegralOfIntegralAllQuadraticCompletionsStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NatCastIsUnitQuadraticCompletionAlmostAllStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLatticeOfSqueezedBetweenNatMultiplesStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalLatticeLeCompletionGluedLatticeStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemSpanSingleIff
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GFrames
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StrongApproximationAdditiveQuadraticExtensionStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NumberFieldLatticeDeterminedByLocalLatticesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsNatMulMemIntegersQuadraticCompletionStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalLatticeBetweenScaledStandardLatticesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsNatBoundLocalLatticesStandardAeStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsIntegralOfIntegralAllQuadraticCompletionsStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NatCastIsUnitQuadraticCompletionAlmostAllStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsLatticeOfSqueezedBetweenNatMultiplesStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalLatticeLeCompletionGluedLatticeStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemSpanSingleIff
+
+@[expose] public section
+
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL NumberField IsDedekindDomain
 open scoped Pointwise ENNReal Classical
 
@@ -66,9 +71,45 @@ theorem glue : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField
       intro y hy
       obtain ⟨x, hx⟩ := happN y hy
       exact ⟨x, fun q => by simpa using hx q⟩
-  · rintro Γ₁ Γ₂ ⟨h1, e1⟩ ⟨h2, e2⟩
+  · have full (Γ : Submodule (𝓞 E) (Fin n → E)) (hΓ : Submodule.IsLattice E Γ)
+        (e : ∀ p, A.lat p Γ = Λ p) : Submodule.IsFullLattice E Γ := by
+      refine { toIsLattice := hΓ, span_eq_top := ?_ }
+      by_contra hspan
+      obtain ⟨φ, hφ, hker⟩ := (Submodule.span E (Γ : Set (Fin n → E))).exists_le_ker_of_lt_top
+        (lt_top_iff_ne_top.mpr hspan)
+      obtain ⟨p⟩ := GlueInt.nonempty_place' (F := F)
+      have := GlueInt.nontrivial_Ep A p
+      -- A functional annihilating the global span extends by mapping its coefficients.
+      let ψ : (Fin n → (A.loc p).Ep) →ₗ[(A.loc p).Ep] (A.loc p).Ep :=
+        ∑ i, (A.loc p).ιE (φ (Pi.single i 1)) • LinearMap.proj i
+      have hψ (x : Fin n → E) : ψ (A.bc p x) = (A.loc p).ιE (φ x) := by
+        have hx : φ x = ∑ i, x i * φ (Pi.single i 1) := by
+          have hi (i : Fin n) : (fun j : Fin n => if i = j then (1 : E) else 0) =
+              Pi.single i 1 := by
+            funext j
+            simp [Pi.single_apply, eq_comm]
+          simpa only [hi, smul_eq_mul] using LinearMap.pi_apply_eq_sum_univ φ x
+        simp only [hx, ψ, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.proj_apply,
+          smul_eq_mul, map_sum, map_mul, mul_comm, Places.bc]
+      have htop : Submodule.span (A.loc p).Ep (A.bc p '' (Γ : Set (Fin n → E))) = ⊤ := by
+        simpa only [← e p, Places.lat, Submodule.span_span_of_tower] using (hlat p).2
+      have hle : Submodule.span (A.loc p).Ep (A.bc p '' (Γ : Set (Fin n → E))) ≤
+          LinearMap.ker ψ := by
+        refine Submodule.span_le.2 ?_
+        rintro _ ⟨x, hx, rfl⟩
+        change ψ (A.bc p x) = 0
+        rw [hψ, LinearMap.mem_ker.mp (hker (Submodule.subset_span hx)), map_zero]
+      rw [htop] at hle
+      apply hφ
+      apply LinearMap.ext
+      intro x
+      have hz : A.bc p x ∈ LinearMap.ker ψ := hle Submodule.mem_top
+      apply (A.loc p).ιE.injective
+      simpa only [LinearMap.mem_ker, hψ, LinearMap.zero_apply, map_zero] using hz
+    rintro Γ₁ Γ₂ ⟨h1, e1⟩ ⟨h2, e2⟩
     ext x
-    rw [(GlobalTheory.T.numberField_lattice_determined_by_local_lattices A n Γ₁ h1).1 x, (GlobalTheory.T.numberField_lattice_determined_by_local_lattices A n Γ₂ h2).1 x]
+    rw [(GlobalTheory.T.numberField_lattice_determined_by_local_lattices A n Γ₁ (full Γ₁ h1 e1)).1 x,
+      (GlobalTheory.T.numberField_lattice_determined_by_local_lattices A n Γ₂ (full Γ₂ h2 e2)).1 x]
     simp only [e1, e2]
 
 end GlobalTheory.HL.Glue

@@ -1,9 +1,13 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafOrdInfLocalPf
-import Mathlib.RingTheory.DedekindDomain.IntegralClosure
-import Mathlib.RingTheory.DedekindDomain.AdicValuation
-import Mathlib.RingTheory.DedekindDomain.Dvr
-import Mathlib.FieldTheory.PurelyInseparable.Basic
-import Mathlib.RingTheory.Norm.Defs
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafOrdInfLocalPf
+public import Mathlib.RingTheory.DedekindDomain.IntegralClosure
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation
+public import Mathlib.RingTheory.DedekindDomain.Dvr
+public import Mathlib.FieldTheory.PurelyInseparable.Basic
+public import Mathlib.RingTheory.Norm.Defs
+
+@[expose] public section
 
 namespace LateralTheory.E.E4
 
@@ -20,7 +24,7 @@ theorem finVal_dedekind (D L : Type) [CommRing D] [IsDedekindDomain D] [Field L]
     rw [← ofAdd_add]
     congr 1
     funext i
-    simp only [Units.val_mul, map_mul, Pi.add_apply]
+    simp only [Units.val_mul, Pi.add_apply, map_mul]
     exact WithZero.log_mul ((Valuation.ne_zero_iff _).mpr x.ne_zero)
       ((Valuation.ne_zero_iff _).mpr y.ne_zero)
   · intro x hx
@@ -40,7 +44,7 @@ theorem finVal_finite (A D : Type) [CommRing A] [IsLocalRing A] [CommRing D] [Is
     (fun v => ⟨v.asIdeal, v.isPrime, ⟨?_⟩⟩) ?_
   · have := v.isMaximal
     exact (IsLocalRing.eq_maximalIdeal
-      (Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := A) v.asIdeal)).symm
+      (Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := A) v.asIdeal)).symm
   · intro v w h
     exact HeightOneSpectrum.ext (congrArg Subtype.val h)
 
@@ -109,7 +113,7 @@ theorem LeafFinVal_of : LeafFinVal := by
     rw [map_mul, hf, hf] at this
     exact (eq_div_iff (hu b).ne_zero).mpr this
   have hinj : Function.Injective f := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro c hc
     obtain ⟨⟨a, b⟩, hab⟩ := IsLocalization.surj P.primeCompl c
     have h1 := congrArg f hab

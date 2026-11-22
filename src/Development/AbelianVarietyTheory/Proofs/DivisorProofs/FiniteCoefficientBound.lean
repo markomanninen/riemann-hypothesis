@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneCosetOfIsTensor
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumOKEx
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnfoldingTermCoefEqResidueCardZpow
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnipotentLevelNilpotent
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGivenStageEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalBlockDetBlockTriangular
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.FormulaAtOfSubsingleton
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BandMono
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsFurtherBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsFurtherTer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsFurtherMore
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneCosetOfIsTensor
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumOKEx
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnfoldingTermCoefEqResidueCardZpow
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnipotentLevelNilpotent
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsGivenStageEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiagonalBlockDetBlockTriangular
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.FormulaAtOfSubsingleton
+public import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BandMono
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsFurtherBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsFurtherTer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsFurtherMore
+
+@[expose] public section
 
 namespace ResidueCardinalityNilpotence
 section
@@ -455,12 +459,12 @@ section Coef
 
 variable {D : D7} {T : Type} {L : LevCh D T} {sc : Consts} {G : GridData L sc} {W : G.Weil} {U : Set T}
 
-variable (G) in
 
+variable (G) in
 def expAt (P : Pl D.host.E) : ℝ := (D.R.m : ℝ) ^ 3 * bigN D * cosExp G P
 
-variable (G) in
 
+variable (G) in
 def dlF (w : PlL D) : ℝ := ∑ P ∈ G.pl.W0, expAt G P * vw w ((resCard (Kw P) : ℕ) : D.what₂.LL)
 
 theorem coefficient_local_term_at_split_place {μ₀ : T} (hL : L.Is μ₀) (S : GridChoice W U) (t : T) (Φ : G.Datum)
@@ -694,26 +698,6 @@ namespace GlobalTheory.CompanionTheory.VolVal
 
 open Formalism.BasicNotions Formalism.L2.DIV
 
-theorem finCoefK : GlobalTheory.FunPr.Hypotheses₂ → FinCoefK := by
-  intro _
-  refine ⟨0, fun CF _ => ⟨2, fun ε C hC => ⟨0, fun D large₂ _ _ Γ _ _ Pl0 T A Ks _ _ _ R F s ch _ _ _ => ?_⟩⟩⟩
-  have hL := s.core.lev
-  have hde := Test.pde_ne_q s
-  have hb : 1 ≤ large₂.sc.b := Real.one_le_exp (Real.rpow_nonneg (by linarith [large₂.sc.one_lt_alt]) _)
-  have hf : 1 ≤ D.R.f := by
-    have h1 : D.R.m ≤ D.R.f := D.R.m_le_f
-    have h2 := D.R.two_le_m
-    omega
-  refine ⟨dlF ch.G, loss_dlF ch.G hC hb hf, fun t w hA Φ β hβ => ?_⟩
-  have hq := coef_QL hL ch.S.toGridChoice t Φ hde (GlobalTheory.RowTest.guard_of_qGuard s.guard t) hA hβ
-  refine ⟨((∏ v, (ch.S.term t Φ β v).coef : ℚ) : D.what₂.LL), ?_, ?_⟩
-  · rw [map_ratCast]
-    push_cast
-    rfl
-  · rcases hq with h | h
-    · exact Or.inl (by rw [h]; simp)
-    · exact Or.inr h
-
 end GlobalTheory.CompanionTheory.VolVal
 
 end
@@ -722,7 +706,5 @@ end
 end ResidueCardinalityNilpotence
 section
 open GlobalTheory.SumSize GlobalTheory.RowClaim
-theorem _root_.GlobalTheory.Adopt.finite_coefficient_bound : GlobalTheory.FunPr.Hypotheses₂ → FinCoefK := by
-  first | exact @ResidueCardinalityNilpotence.GlobalTheory.CompanionTheory.VolVal.finCoefK | exact ResidueCardinalityNilpotence.GlobalTheory.CompanionTheory.VolVal.finCoefK | (intros; apply ResidueCardinalityNilpotence.GlobalTheory.CompanionTheory.VolVal.finCoefK <;> assumption)
 
 end

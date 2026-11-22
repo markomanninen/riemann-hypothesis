@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorRes
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.KurNewton
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.TorRes
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.KurNewton
+
+@[expose] public section
 
 noncomputable section
 open scoped Classical

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.RowHighestLeSpanColWordComplex
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.RowHighestLeSpanColWordComplex
+
+@[expose] public section
 
 open MvPolynomial GlobalTheory.Capelli GlobalTheory.Harm GlobalTheory.Harm.HighestUnique
 
@@ -17,7 +21,7 @@ def JointTop (z : Fin k × Fin m → σ) (y : Fin l × Fin m → σ) (κ : Fin m
 theorem row_degree (z : Fin k × Fin m → σ) {P : MvPolynomial σ ℂ} {c : Fin k} {w : ℂ}
     (h : rowOp ℂ z c c P = w • P) {s : σ →₀ ℕ} (hs : s ∈ P.support) :
     ((∑ i, s (z (c, i)) : ℕ) : ℂ) = w := by
-  have := congrArg (coeff s) h
+  have := congrArg (AddMonoidAlgebra.coeff · s) h
   rw [rowOp_apply, coeff_sum, coeff_smul] at this
   simp only [coeff_X_mul_pderiv, ← Finset.sum_mul, smul_eq_mul] at this
   have h2 := mul_right_cancel₀ (mem_support_iff.1 hs) this
@@ -26,7 +30,7 @@ theorem row_degree (z : Fin k × Fin m → σ) {P : MvPolynomial σ ℂ} {c : Fi
 theorem col_degree (z : Fin k × Fin m → σ) (y : Fin l × Fin m → σ) {P : MvPolynomial σ ℂ}
     {i : Fin m} {w : ℂ} (h : mixedOp ℂ z y i i P = w • P) {s : σ →₀ ℕ} (hs : s ∈ P.support) :
     ((∑ c, (s (z (c, i)) : ℤ) - ∑ d, (s (y (d, i)) : ℤ) : ℤ) : ℂ) = w := by
-  have := congrArg (coeff s) h
+  have := congrArg (AddMonoidAlgebra.coeff · s) h
   rw [mixedOp_apply, coeff_sub, coeff_sum, coeff_sum, coeff_smul] at this
   simp only [coeff_X_mul_pderiv, ← Finset.sum_mul, ← sub_mul, smul_eq_mul] at this
   have h2 := mul_right_cancel₀ (mem_support_iff.1 hs) this
@@ -47,7 +51,7 @@ theorem row_invariant [DecidableEq σ] (z : Fin k × Fin m → σ) (hz : Functio
   rw [rowOp_apply]
   exact (rowAdd_invariant_iff (fun k => z (a, k)) (fun k => z (b, k))
       (fun k l e => by simpa using hz e)
-      (fun k l e => hab.ne (congrArg Prod.fst (hz e))) P).out 2 1
+      (fun k l e => hab.ne (congrArg Prod.fst (hz e))) P).out 3 2
 
 theorem polar_homog (u v : σ) {d : ℕ} {P : MvPolynomial σ ℂ} (h : P.IsHomogeneous d) :
     (polar ℂ u v P).IsHomogeneous d := by
@@ -82,7 +86,8 @@ theorem jointTop_rename (f : τ → σ) (hf : Function.Injective f) (z : Fin k �
     rename_injective f hf
   have h0 : ∀ R : MvPolynomial τ ℂ, rename f R = 0 ↔ R = 0 := fun R => map_eq_zero_iff _ hi
   simp only [JointTop, mixedOp_apply, rowOp_apply, Function.comp_apply, polar_rename f hf]
-  simp only [pderiv_rename hf, ← map_sum, ← map_sub, ← map_smul, h0, hi.eq_iff]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [pderiv_rename hf, ← map_sum, ← map_sub, ← map_smul, h0, hi.eq_iff]
 
 theorem sum_castLE (hp : p ≤ k) {M : Type} [AddCommMonoid M] (f : Fin k → M)
     (hf : ∀ c : Fin k, p ≤ c → f c = 0) : ∑ c : Fin p, f (Fin.castLE hp c) = ∑ c, f c :=
@@ -158,40 +163,184 @@ theorem exists_unique_base (h : p + q ≤ m) (a : Fin p → ℕ) (b : Fin q → 
   have hc : ∀ t, partOf (c t) = a := fun _ => partOf_diffOf ha
   have hc' : ∀ t, partOf (c' t) = b := fun _ => partOf_diffOf hb
   let W : Submodule ℂ (Poly ℂ Unit p q (Fin m)) := rowHighest ℂ c c'
-  have hs : ∀ t k l, ∀ w ∈ W, colLie ℂ p q t k l w ∈ W := fun t k l w hw =>
-    colLie_mem_of_colAct_mem _ (fun g _ hP => colAct_mem_rowHighest g hP) t k l hw
-  obtain ⟨v, hv, hv0, hup, μ, hμ⟩ := exists_highest_vector (colLie ℂ p q) colLie_diag_comm
-    (iSup_iInf_eigenspace_colLie ℂ Unit p q (Fin m)) W hs (rowHighest_ne_bot h c c')
-  have hant := fun t => highest_weight_antitone _ (colLie_lie t) W (hs t) v hv hv0 _ (hup t) (hμ t)
-  obtain ⟨r₀, hr₀⟩ := exists_eq_smul_basePoly h c c' hv μ hant
-    (fun t k l hkl => (colLie_apply t k l v).symm.trans (hup t k l hkl))
-    fun t k => (colLie_apply t k k v).symm.trans (hμ t k)
-  obtain ⟨hh, hrx, hry, hix, hiy⟩ := mem_rowHighest_iff_of_charZero.1 hv
+  let E := mixedOp ℂ z y
+  have hlap (i j : Fin m) (u : Fin p) (v : Fin q) (P : Poly ℂ Unit p q (Fin m)) :
+      laplacian () u v (E i j P) = E i j (laplacian () u v P) := by
+    simp only [E, laplacian_apply, mixedOp_apply, map_sub]
+    change (∑ s, pderiv (z (u, s)) (pderiv (y (v, s)) _)) -
+        (∑ s, pderiv (z (u, s)) (pderiv (y (v, s)) _)) = _
+    simp only [map_sum, pderiv_X_mul', ite_eq_right (hzy _ _), ite_eq_right (Ne.symm (hzy _ _)),
+      add_zero, map_add, apply_ite (pderiv _), map_zero, Finset.sum_add_distrib,
+      hz.eq_iff, hy.eq_iff, Prod.mk.injEq, ite_and]
+    rw [Finset.sum_comm (f := fun s x => X (z (x, i)) * _),
+      Finset.sum_comm (f := fun s x => X (y (x, j)) * _)]
+    simp only [Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
+    have hx (x : Fin p) (s : Fin m) :
+        pderiv (z (u, s)) (pderiv (y (v, s)) (pderiv (z (x, j)) P)) =
+          pderiv (z (x, j)) (pderiv (z (u, s)) (pderiv (y (v, s)) P)) := by
+      rw [pderiv_swap (y (v, s)) (z (x, j)), pderiv_swap (z (u, s)) (z (x, j))]
+    have hy' (x : Fin q) (s : Fin m) :
+        pderiv (z (u, s)) (pderiv (y (v, s)) (pderiv (y (x, i)) P)) =
+          pderiv (y (x, i)) (pderiv (z (u, s)) (pderiv (y (v, s)) P)) := by
+      rw [pderiv_swap (y (v, s)) (y (x, i)), pderiv_swap (z (u, s)) (y (x, i))]
+    simp only [hx, hy', ← Finset.mul_sum, ← map_sum]
+    rw [pderiv_swap (y (v, i)) (z (u, j))]
+    abel
+  have hrows (P : Poly ℂ Unit p q (Fin m)) : P ∈ W ↔
+      (∀ i j, i < j → rowOp ℂ z i j P = 0) ∧ (∀ i, rowOp ℂ z i i P = (a i : ℂ) • P) ∧
+      (∀ i j, i < j → rowOp ℂ y i j P = 0) ∧ (∀ i, rowOp ℂ y i i P = (b i : ℂ) • P) ∧
+      IsHarmonic P := by
+    constructor
+    · intro hP
+      obtain ⟨hh, hrx, hry, hix, hiy⟩ := (mem_rowHighest_iff_of_charZero (c := c) (c' := c')).1 hP
+      simp only [rowAddX_eq_bind₁, hc] at hix hrx
+      simp only [rowAddY_eq_bind₁, hc'] at hiy hry
+      exact ⟨fun i j hij => (row_invariant z hz P hij).2 (hix () i j hij),
+        fun i => by simpa using rowOp_self z (hrx () i),
+        fun i j hij => (row_invariant y hy P hij).2 (hiy () i j hij),
+        fun i => by simpa using rowOp_self y (hry () i), hh⟩
+    · rintro ⟨grx, gdx, gry, gdy, gh⟩
+      refine (mem_rowHighest_iff_of_charZero (c := c) (c' := c')).2 ⟨gh,
+        fun ⟨⟩ i s hs => ?_, fun ⟨⟩ i s hs => ?_,
+        fun ⟨⟩ i j hij t => ?_, fun ⟨⟩ i j hij t => ?_⟩
+      · rw [hc ()]; exact Nat.cast_injective (R := ℂ) (row_degree z (gdx i) hs)
+      · rw [hc' ()]; exact Nat.cast_injective (R := ℂ) (row_degree y (gdy i) hs)
+      · rw [rowAddX_eq_bind₁]; exact (row_invariant z hz P hij).1 (grx i j hij) t
+      · rw [rowAddY_eq_bind₁]; exact (row_invariant y hy P hij).1 (gry i j hij) t
+  have hs (_t : Unit) (i j : Fin m) (P : Poly ℂ Unit p q (Fin m)) (hP : P ∈ W) : E i j P ∈ W := by
+    obtain ⟨grx, gdx, gry, gdy, gh⟩ := (hrows P).1 hP
+    have commute_apply (L : Module.End ℂ (Poly ℂ Unit p q (Fin m))) (hh : Commute L (E i j)) :
+        L (E i j P) = E i j (L P) := LinearMap.congr_fun hh.eq P
+    exact (hrows _).2 ⟨
+      fun u v huv => by
+        rw [commute_apply _ (commute_rowOp_left_mixedOp z hz y hzy _ _ _ _), grx u v huv, map_zero],
+      fun u => by rw [commute_apply _ (commute_rowOp_left_mixedOp z hz y hzy _ _ _ _), gdx u, map_smul],
+      fun u v huv => by
+        rw [commute_apply _ (commute_rowOp_right_mixedOp z y hy hzy _ _ _ _), gry u v huv, map_zero],
+      fun u => by rw [commute_apply _ (commute_rowOp_right_mixedOp z y hy hzy _ _ _ _), gdy u, map_smul],
+      fun ⟨⟩ u v => by rw [hlap, gh () u v, map_zero]⟩
+  have hdiag : (⨆ μ : Unit → Fin m → ℤ, ⨅ t, ⨅ i,
+      Module.End.eigenspace (E i i) (μ t i : ℂ)) = ⊤ := by
+    rw [eq_top_iff]
+    intro P _
+    rw [P.as_sum]
+    refine Submodule.sum_mem _ fun s _ => Submodule.mem_iSup_of_mem (colWeight s) ?_
+    simp only [Submodule.mem_iInf, Module.End.mem_eigenspace_iff]
+    intro ⟨⟩ i
+    simp only [E, mixedOp_apply, X_mul_pderiv_monomial, colWeight, Int.cast_sub, Int.cast_sum,
+      Int.cast_natCast, sub_smul, Finset.sum_smul, Nat.cast_smul_eq_nsmul, z, y]
+  obtain ⟨v, hv, hv0, hup, μ, hμ⟩ := exists_highest_vector (fun _ : Unit => E)
+    (fun t t' i k l => by
+      cases t; cases t'
+      rw [ite_eq_left rfl, sub_smul]
+      rw [mixedOp_lie z hz y hy hzy]
+      by_cases hik : i = k <;> by_cases hil : i = l <;> simp_all [E, eq_comm])
+    hdiag W hs (rowHighest_ne_bot (c := c) (c' := c') h)
+  have hant := highest_weight_antitone E (mixedOp_lie z hz y hy hzy) W (hs ()) v hv hv0 _
+    (hup ()) (hμ ())
+  obtain ⟨hh, hrx, hry, hix, hiy⟩ := (mem_rowHighest_iff_of_charZero (c := c) (c' := c')).1 hv
   simp only [rowAddX_eq_bind₁, hc] at hix hrx
   simp only [rowAddY_eq_bind₁, hc'] at hiy hry
   have hh' := fun i j => (laplacian_apply () i j v).symm.trans (hh () i j)
-  have hup' : ∀ k l, k < l → mixedOp ℂ z y k l v = 0 := fun k l hkl =>
-    (mixedOp_apply _ _ _ _ _).trans ((colLie_apply () k l v).symm.trans (hup () k l hkl))
-  have hμ' : ∀ k, mixedOp ℂ z y k k v = (μ () k : ℂ) • v := fun k =>
-    (mixedOp_apply _ _ _ _ _).trans ((colLie_apply () k k v).symm.trans (hμ () k))
   have hw := weight_eq_mixedWeight h z hz y hy hzy a b ha hb (hrx ()) (hry ()) (hix ()) (hiy ())
-    hh' (μ ()) (hant ()) hup' hμ' hv0
-  refine ⟨v, hv0, ⟨hup', hw ▸ hμ', fun i j hij => (row_invariant z hz v hij).2 (hix () i j hij),
-    fun i => by simpa using rowOp_self z (hrx () i),
-    fun i j hij => (row_invariant y hy v hij).2 (hiy () i j hij),
-    fun i => by simpa using rowOp_self y (hry () i), hh'⟩, ?_⟩
+    hh' (μ ()) hant (hup ()) (hμ ()) hv0
+  have hμ' : ∀ i, E i i v = (mixedWeight m a b i : ℂ) • v := hw ▸ hμ ()
+  have hscalar (P : Poly ℂ Unit p q (Fin m)) (hP : P ∈ W)
+      (hup : ∀ i j, i < j → E i j P = 0)
+      (hwt : ∀ i, E i i P = (mixedWeight m a b i : ℂ) • P) :
+      ∃ r : ℂ, P = r • basePoly ℂ h c c' := by
+    obtain ⟨hh, hrx, hry, hix, hiy⟩ := (mem_rowHighest_iff_of_charZero (c := c) (c' := c')).1 hP
+    simp only [rowAddX_eq_bind₁] at hix
+    simp only [rowAddY_eq_bind₁] at hiy
+    have hvars := notMem_vars h z hz y hy hzy a b ha hb
+      (by simpa only [hc] using hrx ()) (by simpa only [hc'] using hry ()) (hix ()) (hiy ())
+      (fun i j => (laplacian_apply () i j P).symm.trans (hh () i j))
+      (mixedWeight m a b) (antitone_mixedWeight m ha hb) hup hwt
+    let e : Fin p → Fin m := Fin.castLE (by omega)
+    let e' : Fin q → Fin m := fun j => Fin.rev (Fin.castLE (by omega) j)
+    have he (i : Fin m) (hi : i ∉ Set.range e) : p ≤ i :=
+      not_lt.1 fun hi' => hi ⟨⟨i, hi'⟩, rfl⟩
+    have he' (i : Fin m) (hi : i ∉ Set.range e') : (i : ℕ) < m - q := by
+      refine not_le.1 fun hi' => hi ⟨⟨m - 1 - i, by have := i.2; omega⟩, ?_⟩
+      ext
+      have := i.2
+      simp only [e', Fin.val_rev, Fin.val_castLE]
+      omega
+    have hX := exists_eq_mul_prod_minors z hz e (Fin.castLE_injective _) (c ())
+      (hrx ()) (hix ()) (fun i j hj => hvars.1 i j (he j hj)) fun i j hij => by
+        have hzero := hup (e i) (e j) hij
+        have hy0 : colOp ℂ y (e j) (e i) P = 0 := by
+          rw [colOp_apply]
+          refine Finset.sum_eq_zero fun u _ => ?_
+          rw [pderiv_eq_zero_of_notMem_vars (hvars.2 u (e i) ?_), mul_zero]
+          have := i.2
+          simp only [e, Fin.val_castLE]
+          omega
+        simpa only [E, mixedOp, LinearMap.sub_apply, hy0, sub_zero] using hzero
+    have hY := exists_eq_mul_prod_minors y hy e' (Fin.rev_injective.comp (Fin.castLE_injective _))
+      (c' ()) (hry ()) (hiy ()) (fun i j hj => hvars.2 i j (he' j hj)) fun i j hij => by
+        have hzero := hup (e' j) (e' i) (Fin.rev_lt_rev.2 hij)
+        have hx0 : colOp ℂ z (e' j) (e' i) P = 0 := by
+          rw [colOp_apply]
+          refine Finset.sum_eq_zero fun u _ => ?_
+          rw [pderiv_eq_zero_of_notMem_vars (hvars.1 u (e' i) ?_), mul_zero]
+          have := i.2
+          simp only [e', Fin.val_rev, Fin.val_castLE]
+          omega
+        simpa only [E, mixedOp, LinearMap.sub_apply, hx0, zero_sub, neg_eq_zero] using hzero
+    let B : Unit ⊕ Unit → Set (Var Unit p q (Fin m)) := Sum.elim
+      (fun _ => Set.range fun w : Fin p × Fin p => z (w.1, e w.2))
+      (fun _ => Set.range fun w : Fin q × Fin q => y (w.1, e' w.2))
+    let D : Unit ⊕ Unit → Poly ℂ Unit p q (Fin m) := Sum.elim
+      (fun _ => ∏ i : Fin p, (Matrix.of fun u v : Fin (i.val + 1) =>
+        (X (z (lead i u, e (lead i v))) : Poly ℂ Unit p q (Fin m))).det ^ c () i)
+      (fun _ => ∏ i : Fin q, (Matrix.of fun u v : Fin (i.val + 1) =>
+        (X (y (lead i u, e' (lead i v))) : Poly ℂ Unit p q (Fin m))).det ^ c' () i)
+    have hD : ∏ j, D j = basePoly ℂ h c c' := by
+      simp only [D, Fintype.prod_sum_type, Sum.elim_inl, Sum.elim_inr, basePoly, minorProd,
+        Finset.univ_unique, Finset.prod_singleton, xMinor, yMinor, baseCovec, baseVec,
+        xForm_single, yForm_single]
+      rfl
+    let x₀ : Var Unit p q (Fin m) → ℂ := fun v =>
+      Sum.elim (baseCovec ℂ h) (baseVec ℂ h) v.2.1 v.2.2
+    refine ⟨eval x₀ P, MvPolynomial.funext fun x => ?_⟩
+    have key := eval_mul_prod_eq B ?_ D ?_ P ?_ ?_ x₀ x
+    · rw [← map_prod, ← map_prod, hD, eval_basePoly, mul_one] at key
+      rw [key, smul_eval]
+    · rintro (⟨⟩ | ⟨⟩) (⟨⟩ | ⟨⟩) hne _ ⟨w, rfl⟩ ⟨w', hw'⟩
+      · exact hne rfl
+      · exact hzy _ _ hw'.symm
+      · exact hzy _ _ hw'
+      · exact hne rfl
+    · rintro (⟨⟩ | ⟨⟩) x x' hx
+      all_goals
+        simp only [D, Sum.elim_inl, Sum.elim_inr, map_prod, map_pow, RingHom.map_det]
+        refine Finset.prod_congr rfl fun i _ => ?_
+        congr 2
+        ext u v
+        simp only [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply, eval_X]
+        exact hx _ ⟨(lead i u, lead i v), rfl⟩
+    · rintro (⟨⟩ | ⟨⟩)
+      · obtain ⟨Q, hQ, hPQ⟩ := hX
+        exact ⟨Q, by rintro _ ⟨w, rfl⟩; exact hQ w, hPQ⟩
+      · obtain ⟨Q, hQ, hPQ⟩ := hY
+        exact ⟨Q, by rintro _ ⟨w, rfl⟩; exact hQ w, hPQ⟩
+    · rintro ⟨⟨⟩, u | u, i⟩ hi
+      · by_cases hi' : i ∈ Set.range e
+        · obtain ⟨j, rfl⟩ := hi'
+          exact ⟨Sum.inl (), (u, j), rfl⟩
+        · exact absurd hi (hvars.1 u i (he i hi'))
+      · by_cases hi' : i ∈ Set.range e'
+        · obtain ⟨j, rfl⟩ := hi'
+          exact ⟨Sum.inr (), (u, j), rfl⟩
+        · exact absurd hi (hvars.2 u i (he' i hi'))
+  obtain ⟨grx, gdx, gry, gdy, _⟩ := (hrows v).1 hv
+  refine ⟨v, hv0, ⟨hup (), hμ', grx, gdx, gry, gdy, hh'⟩, ?_⟩
   rintro Q ⟨g1, g2, g3, g4, g5, g6, g7⟩
-  have hQ : Q ∈ rowHighest ℂ c c' := by
-    refine mem_rowHighest_iff_of_charZero.2 ⟨fun t i j => (laplacian_apply t i j Q).trans (g7 i j),
-      fun t i s hs => ?_, fun t i s hs => ?_, fun t i j hij s => ?_, fun t i j hij s => ?_⟩
-    · rw [hc t]; exact Nat.cast_injective (R := ℂ) (row_degree z (g4 i) hs)
-    · rw [hc' t]; exact Nat.cast_injective (R := ℂ) (row_degree y (g6 i) hs)
-    · rw [rowAddX_eq_bind₁]; exact (row_invariant z hz Q hij).1 (g3 i j hij) s
-    · rw [rowAddY_eq_bind₁]; exact (row_invariant y hy Q hij).1 (g5 i j hij) s
-  obtain ⟨r, hr⟩ := exists_eq_smul_basePoly h c c' hQ (fun _ => mixedWeight m a b)
-    (fun _ => antitone_mixedWeight m ha hb)
-    (fun t k l hkl => (mixedOp_apply z y k l Q).symm.trans (g1 k l hkl))
-    fun t k => (mixedOp_apply z y k k Q).symm.trans (g2 k)
+  have hQ := (hrows Q).2 ⟨g3, g4, g5, g6,
+    fun ⟨⟩ i j => (laplacian_apply () i j Q).trans (g7 i j)⟩
+  obtain ⟨r₀, hr₀⟩ := hscalar v hv (hup ()) hμ'
+  obtain ⟨r, hr⟩ := hscalar Q hQ g1 g2
   have hr0 : r₀ ≠ 0 := fun e => hv0 (by rw [hr₀, e, zero_smul])
   exact ⟨r / r₀, by rw [hr, hr₀, smul_smul, div_mul_cancel₀ _ hr0]⟩
 
@@ -374,7 +523,7 @@ theorem rows_add_le (z : Fin p × Fin m → σ) (hz : Function.Injective z)
   have := (Finset.sum_eq_zero_iff_of_nonneg fun i _ => mul_nonneg (hA0 i) (hB0 i)).1 h0
     ⟨p - 1, by omega⟩ (Finset.mem_univ _)
   simp only [hA, hB] at this
-  rw [dif_pos (by omega), dif_pos (by omega)] at this
+  rw [dite_eq_left (by omega), dite_eq_left (by omega)] at this
   exact absurd this (mul_pos (by exact_mod_cast ha0 _) (by exact_mod_cast hb0 _)).ne'
 
 theorem exists_support_length (a : Fin k → ℕ) (ha : Antitone a) :

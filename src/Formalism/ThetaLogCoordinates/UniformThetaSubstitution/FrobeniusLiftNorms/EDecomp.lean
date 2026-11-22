@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementE
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TheoremSFromKOneOf
+module
+
+public import Mathlib
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.StatementE
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.TheoremSFromKOneOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ open Formalism.DworkPowerSeriesWeights (Integral low_subst_of_low)
 open Formalism.FG.SolveVAux (Low low_zero low_mono low_add low_sub low_mul low_pow low_one_iff low_mul_sub
   low_of_zero)
 open Formalism.FG.IntegralSubstitution (integral_mul integral_pow integral_one)
-open TwoS (Cg cg_refl cg_of_eq cg_symm cg_trans cg_add cg_sum cg_mul cg_pow cg_frob_add cg_frob_sum
-  integral_add integral_neg integral_sum integral_C integral_X integral_zero coeff_sPos pinv_nonneg)
+open TwoS (Cg cg_refl cg_trans cg_sum cg_mul cg_pow cg_frob_add cg_frob_sum
+  integral_add integral_neg integral_sum integral_C integral_X integral_zero coeff_sPos)
 
 namespace EDec
 
@@ -40,12 +44,13 @@ theorem lowGe_add {m : ℕ} {f g : MvPowerSeries (Tp ⊕ Lw) K} (hf : LowGe m f)
     by_contra h1; exact hlt (hf n h1)
   have h2 : MvPowerSeries.coeff n g = 0 := by
     by_contra h2; exact hlt (hg n h2)
-  rw [map_add, h1, h2, add_zero]
+  rw [map_add (f := _), h1, h2, add_zero]
 
 theorem lowGe_sum {α : Type} {m : ℕ} (s : Finset α) (F : α → MvPowerSeries (Tp ⊕ Lw) K)
     (h : ∀ a ∈ s, LowGe m (F a)) : LowGe m (∑ a ∈ s, F a) := by
   intro n hn
-  rw [map_sum] at hn
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum] at hn
   obtain ⟨a, ha, hne⟩ := Finset.exists_ne_zero_of_sum_ne_zero hn
   exact h a ha n hne
 
@@ -173,7 +178,8 @@ theorem low_sPos_sub {p : ℕ} (hp : 2 ≤ p) (E : ℕ) (s : ZMod (2 * ν)) (ab 
     refine ⟨by rw [hd]; exact lt_powq hp l, ?_⟩
     rw [hd] at hn
     exact (Nat.pow_lt_pow_iff_right (show 1 < p ^ 2 by nlinarith)).1 hn
-  rw [map_sub, coeff_sPos, sT, map_sum, sub_eq_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sub, coeff_sPos, sT, map_sum, sub_eq_zero]
   simp only [MvPowerSeries.coeff_C_mul, MvPowerSeries.coeff_X_pow]
   calc _ = ∑ l ∈ range (E + n.degree + 1),
         (if n = Finsupp.single (s - 2 * (l : ZMod (2 * ν)), ab) ((p ^ 2) ^ l) then (-1 : K) ^ l
@@ -221,7 +227,7 @@ theorem zSub_eq (TT : Finset (ZMod (2 * ν))) (ξ : ZMod (2 * ν) → Fin r0 →
 
 theorem constantCoeff_zSub (TT : Finset (ZMod (2 * ν))) (ξ : ZMod (2 * ν) → Fin r0 → K)
     (x : ZV ν r0 r1) : MvPowerSeries.constantCoeff (zSub TT ξ x) = 0 := by
-  rw [zSub, map_add, MvPowerSeries.constantCoeff_X, zero_add]
+  rw [zSub, map_add (f := _), MvPowerSeries.constantCoeff_X, zero_add]
   split_ifs <;> simp
 
 theorem subst_sT [NeZero ν] (TT : Finset (ZMod (2 * ν))) (ξ : ZMod (2 * ν) → Fin r0 → K) (p E : ℕ)
@@ -231,7 +237,8 @@ theorem subst_sT [NeZero ν] (TT : Finset (ZMod (2 * ν))) (ξ : ZMod (2 * ν) �
         tpS TT ξ (s - 2 * (l : ZMod (2 * ν)), ab)) ^ ((p ^ 2) ^ l) := by
   have hs : MvPowerSeries.HasSubst (zSub (r1 := r1) TT ξ) :=
     MvPowerSeries.hasSubst_of_constantCoeff_zero (constantCoeff_zSub TT ξ)
-  rw [← MvPowerSeries.coe_substAlgHom hs, sT, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPowerSeries.coe_substAlgHom hs, sT, map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
   simp only [map_mul, map_pow, MvPowerSeries.substAlgHom_X, zSub_eq, map_neg, map_one]
 
@@ -245,9 +252,11 @@ theorem subst_hhT [NeZero ν] (TT : Finset (ZMod (2 * ν))) (ξ : ZMod (2 * ν) 
     MvPowerSeries.hasSubst_of_constantCoeff_zero (constantCoeff_zSub TT ξ)
   have hC : ∀ r : K, MvPowerSeries.substAlgHom hs (MvPowerSeries.C r) = MvPowerSeries.C r :=
     fun r => (MvPowerSeries.substAlgHom hs).commutes r
-  rw [← MvPowerSeries.coe_substAlgHom hs, hhT, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← MvPowerSeries.coe_substAlgHom hs, hhT, map_sum]
   refine Finset.sum_congr rfl fun s _ => ?_
-  rw [map_mul, hC, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_mul, hC, map_sum]
   congr 1
   refine Finset.sum_congr rfl fun ab _ => ?_
   rw [map_mul, map_pow]
@@ -493,8 +502,8 @@ end Rest
 
 end EDec
 
-open EDec in
 
+open EDec in
 theorem decomposition_of_hh : HhDecomp := by
   intro K _ _ p ν r0 r1 E D _ u TT ξ hp h2 hn hu hξ hD
   have hp0 : p ≠ 0 := hp.ne_zero

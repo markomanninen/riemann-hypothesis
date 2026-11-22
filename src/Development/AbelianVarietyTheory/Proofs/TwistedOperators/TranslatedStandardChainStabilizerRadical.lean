@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.StandardMaximalParabolic
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.StdMaxParabolicRadicalLeBlockUnipotentRadical
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.StandardMaximalParabolic
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.StdMaxParabolicRadicalLeBlockUnipotentRadical
+
+@[expose] public section
 
 open scoped Matrix
 
@@ -45,7 +49,7 @@ theorem rad_iff (b : Fin n → Fin m) (z : Matrix (Fin n) (Fin n) K) :
     have h1 := H (b c) _ (by simpa using lowVec_single (K := K) b c) i
       (by simp; exact (not_lt.1 hic))
     rw [Pi.sub_apply, mulVec_single_apply, sub_eq_zero] at h1
-    rw [h1, Pi.single_apply, one_apply]
+    simpa [Pi.single_apply, Matrix.one_apply, eq_comm] using h1
   · intro H j w hw i hi
     have e : z *ᵥ w - w = (z - 1) *ᵥ w := by rw [sub_mulVec, one_mulVec]
     rw [e]

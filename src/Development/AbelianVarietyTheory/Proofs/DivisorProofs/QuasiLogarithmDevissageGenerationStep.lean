@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupLawCoboundarySymmCocycleModStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymmetricCocycleModIdealEqCoboundaryQuasiLogStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedInOfQuasiLogarithmStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFormalGroupLawLogWithLinearPartStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalGroupLawCoboundarySymmCocycleModStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymmetricCocycleModIdealEqCoboundaryQuasiLogStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedInOfQuasiLogarithmStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFormalGroupLawLogWithLinearPartStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -77,7 +81,7 @@ theorem map_formalGroupLawCoboundaryTwo (φ : R →+* S) {μ : Fin d → MvPower
   have o2 : (fun i => map φ (op μ x2 x3 i)) = op (fun i => map φ (μ i)) x2 x3 :=
     funext fun i => by unfold op; rw [mvPowerSeriesMap_evalTwoGroups φ c2 c3, e2, e3]
   unfold cob2
-  rw [map_sub, map_add, map_sub, mvPowerSeriesMap_evalTwoGroups φ c2 c3, mvPowerSeriesMap_evalTwoGroups φ (cc_op h c1 c2) c3,
+  rw [map_sub, map_add (f := _), map_sub, mvPowerSeriesMap_evalTwoGroups φ c2 c3, mvPowerSeriesMap_evalTwoGroups φ (cc_op h c1 c2) c3,
     mvPowerSeriesMap_evalTwoGroups φ c1 (cc_op h c2 c3), mvPowerSeriesMap_evalTwoGroups φ c1 c2, o1, o2, e1, e2, e3]
 
 theorem formalGroupLawCoboundaryTwo_smul_add {μ : Fin d → MvPowerSeries (Fin d ⊕ Fin d) R}
@@ -150,13 +154,13 @@ theorem cc_up (h : ∀ i, constantCoeff (μ i) = 0) (i : Fin d) : constantCoeff 
 
 theorem ql_add (h : ∀ i, constantCoeff (μ i) = 0) {f g : MvPowerSeries (Fin d) Q}
     (hf : QL μ ⊤ f) (hg : QL μ ⊤ g) : QL μ ⊤ (f + g) := by
-  refine ⟨by rw [map_add, hf.1, hg.1, add_zero], fun i => ?_, fun α => ?_⟩
+  refine ⟨by rw [map_add (f := _), hf.1, hg.1, add_zero], fun i => ?_, fun α => ?_⟩
   · obtain ⟨a, -, ha⟩ := hf.2.1 i
     obtain ⟨b, -, hb⟩ := hg.2.1 i
-    exact ⟨a + b, trivial, by rw [map_add, ← ha, ← hb]; exact map_add _ _ _⟩
+    exact ⟨a + b, trivial, by rw [map_add (f := _), ← ha, ← hb]; exact map_add _ _ _⟩
   · obtain ⟨a, -, ha⟩ := hf.2.2 α
     obtain ⟨b, -, hb⟩ := hg.2.2 α
-    exact ⟨a + b, trivial, by rw [formalCoboundary_add (cc_up h), map_add, ha, hb, map_add]⟩
+    exact ⟨a + b, trivial, by rw [formalCoboundary_add (cc_up h), map_add (f := _), ha, hb, map_add (f := _)]⟩
 
 theorem ql_smul (h : ∀ i, constantCoeff (μ i) = 0) (r : B) {f : MvPowerSeries (Fin d) Q}
     (hf : QL μ ⊤ f) : QL μ ⊤ (algebraMap B Q r • f) := by
@@ -247,7 +251,7 @@ theorem step_generation : ∀ (p : ℕ) [Fact p.Prime] (B O Q : Type) [CommRing 
     have k4 := hF.inj k3
     have e3 : swap (n • c + r) = n • swap c + swap r :=
       at2_lin (fun _ => constantCoeff_X _) (fun _ => constantCoeff_X _) n c r
-    rw [e3, map_add, map_add, coeff_smul, coeff_smul] at k4
+    rw [e3, map_add (f := _), map_add (f := _), coeff_smul, coeff_smul] at k4
     have e2 : coeff α (swap c - c) * n = coeff α r - coeff α (swap r) := by
       rw [map_sub]; linear_combination k4
     rw [e2]
@@ -282,7 +286,8 @@ theorem step_generation : ∀ (p : ℕ) [Fact p.Prime] (B O Q : Type) [CommRing 
     rw [this, coeff_map, map_add (coeff α), map_add Θ, coeff_map, hΘ, add_comm]
     congr 1
     unfold comb
-    simp only [map_sum, coeff_smul, map_mul, hΘ, hγ, coeff_map]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, coeff_smul, map_mul, hΘ, hγ, coeff_map]
   have hup : (fun i => map Θ (up Q μ i)) = up C fun i => map θ (μ i) := by
     funext i
     ext α
@@ -291,14 +296,15 @@ theorem step_generation : ∀ (p : ℕ) [Fact p.Prime] (B O Q : Type) [CommRing 
       f + (-algebraMap B Q n) • (comb γ e + map (algebraMap B Q) s) := by
     ext α
     unfold comb
-    simp only [map_sub, map_add, map_sum, coeff_smul, coeff_map, map_mul, mul_add, Finset.mul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sub, map_add (f := _), map_sum, coeff_smul, coeff_map, map_mul, mul_add, Finset.mul_sum,
       neg_mul, mul_assoc, Finset.sum_neg_distrib]
     ring
   refine ⟨fun i => n * γ i, map (algebraMap B Q) (n • s), fun i => Ideal.mul_mem_right _ _ hnN,
     fun α => ⟨n * coeff α s, Ideal.mul_mem_right _ _ hnN, by rw [coeff_map, coeff_smul]⟩, ?_⟩
   rw [hdiff]
   generalize comb γ e + map (algebraMap B Q) s = h at hh hΘh
-  refine ⟨by rw [map_add, constantCoeff_smul, hf.1, hh.1]; simp, fun i => ?_, fun α => ?_⟩
+  refine ⟨by rw [map_add (f := _), constantCoeff_smul, hf.1, hh.1]; simp, fun i => ?_, fun α => ?_⟩
   · obtain ⟨u, -, hu⟩ := hh.2.1 i
     have e1 : algebraMap O C (θ u) = algebraMap O C (θ (w i)) := by
       rw [← hΘ, ← hu, ← l2]
@@ -310,9 +316,9 @@ theorem step_generation : ∀ (p : ℕ) [Fact p.Prime] (B O Q : Type) [CommRing 
     refine ⟨(w i - u) * n + t i, add_mem (hker _ e4) (ht i), ?_⟩
     have e5 : lin (f + (-algebraMap B Q n) • h) i = lin f i + (-algebraMap B Q n) * lin h i := by
       unfold lin
-      rw [map_add, coeff_smul]
+      rw [map_add (f := _), coeff_smul]
     rw [e5, hwt, hu]
-    simp only [map_add, map_mul, map_sub]
+    simp only [map_add (f := _), map_mul, map_sub]
     ring
   · obtain ⟨u, -, hu⟩ := hh.2.2 α
     obtain ⟨v, hv, hv'⟩ := g3 α
@@ -324,9 +330,9 @@ theorem step_generation : ∀ (p : ℕ) [Fact p.Prime] (B O Q : Type) [CommRing 
       rw [map_sub, hC.inj e1]
       simpa using Ideal.mem_span_singleton.1 hv
     refine ⟨(coeff α c - u) * n + coeff α r, add_mem ((hna _).2 e4) (hr α), ?_⟩
-    rw [formalCoboundary_add (cc_up hc), formalCoboundary_smul (cc_up hc), map_add, coeff_smul, hu, hcob, coeff_map,
+    rw [formalCoboundary_add (cc_up hc), formalCoboundary_smul (cc_up hc), map_add (f := _), coeff_smul, hu, hcob, coeff_map,
       map_add (coeff α), coeff_smul]
-    simp only [map_add, map_mul, map_sub]
+    simp only [map_add (f := _), map_mul, map_sub]
     ring
 
 end GlobalTheory.QLog.StepGen

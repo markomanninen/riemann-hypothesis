@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.MonomialRepresentations.Clifford
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.MonomialRepresentations.Clifford
+
+@[expose] public section
 
 open Polynomial Matrix
 
@@ -131,7 +135,7 @@ private theorem exists_proj {K H V : Type} [Field K] [Group H] [AddCommGroup V] 
     have e2 : q a = 0 := Submodule.linearProjOfIsCompl_apply_right hc ⟨a, ha⟩
     have e3 : q (τ g b) = ⟨τ g b, hb'⟩ := Submodule.linearProjOfIsCompl_apply_left hc ⟨_, hb'⟩
     have e4 : q (τ g a) = 0 := Submodule.linearProjOfIsCompl_apply_right hc ⟨_, ha'⟩
-    simp only [LinearMap.comp_apply, map_add, e1, e2, e3, e4]
+    simp only [LinearMap.comp_apply, map_add (f := _), e1, e2, e3, e4]
     simp
   · rw [hker]
     intro h
@@ -187,7 +191,7 @@ theorem UpperTheory.V.AlgebraTools.twistOfRed :
     intro g f hf m hm v
     rw [hc_apply, hc_apply]
     have hn' : g⁻¹ * m * g ∈ N := by
-      simpa using Subgroup.Normal.conj_mem ‹N.Normal› m hm g⁻¹
+      simpa using Subgroup.Normal.conj_mem' ‹N.Normal› m hm g
     have e1 : ∀ w, ρ m (ρ g w) = ρ g (ρ (g⁻¹ * m * g) w) := by
       intro w
       rw [hρ, hρ]

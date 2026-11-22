@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MeasurePreservingPiCurry
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MeasurePreservingPiCurry
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.SplitFlip GlobalTheory.ColFourier
 open scoped Pointwise
@@ -149,7 +153,7 @@ theorem fourierInt_eq_fourierSum : ∀ (k : Type) [Field k] [ValuativeRel k] [To
           exact pow_le_one' (hϖ.mem) n
         simpa using add_mem h2 (liftRes_mem T i j)
     rw [show F = fun U => ∑ T, (S T).indicator (fun _ => F (liftRes T)) U from funext hpt]
-    rw [integral_finset_sum _ (fun T _ => (integrable_indicator_iff (hS T)).2
+    rw [integral_finsetSum _ (fun T _ => (integrable_indicator_iff (hS T)).2
       (integrableOn_const (lt_top_iff_ne_top.2 (hfin T)).ne)), Finset.mul_sum]
     refine Finset.sum_congr rfl fun T _ => ?_
     rw [integral_indicator_const _ (hS T), hvol, Complex.real_smul]

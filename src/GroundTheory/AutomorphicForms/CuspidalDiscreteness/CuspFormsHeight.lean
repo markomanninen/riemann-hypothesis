@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsDiff
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsNormRconvLeSiegel
-import GroundTheory.AutomorphicForms.NormDetDiagUnitsPosRealToUnits
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.CuspFormsDiff
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.ExistsNormRconvLeSiegel
+public import GroundTheory.AutomorphicForms.NormDetDiagUnitsPosRealToUnits
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter Set MeasureTheory
 open scoped NumberField.AdeleRing Pointwise
@@ -47,7 +51,8 @@ theorem exists_height_le_of_isCompact {ω : Set (AdelicGLn.AdelicGL K n)} (hω :
     exact mul_le_mul_of_nonneg_left ((hMA _ hw.1).trans (le_max_left _ _)) hc0
   obtain ⟨s, -, hs⟩ := hω.elim_nhds_subcover (fun g => (fun y => g * y) '' W) fun g _ => by
     have := (Homeomorph.mulLeft g).isOpenMap.image_mem_nhds hW
-    simpa using this
+    change (fun y => g * y) '' W ∈ 𝓝 (g * 1) at this
+    simpa only [mul_one] using this
   refine ⟨∑ g ∈ s, c * height g * (c * max MA 1), fun b hb => ?_⟩
   obtain ⟨g, hg, hbg⟩ := mem_iUnion₂.1 (hs hb)
   obtain ⟨w, hw, rfl⟩ := hbg
@@ -97,7 +102,7 @@ theorem height_diagUnits_posIdele_le {ρ : Fin n → ℝ} (hρ : ∀ i, 0 < ρ i
   rw [finprod_eq_one_of_forall_eq_one (fun v => by rw [hfin v, locHeight_one]), mul_one]
   calc ∏ w : InfinitePlace K, locHeight (Reduction.infAt w a) ^ w.mult
       ≤ ∏ _w : InfinitePlace K, L ^ 2 :=
-        Finset.prod_le_prod (fun w _ => pow_nonneg (locHeight_pos _).le _) fun w _ =>
+        Finset.prod_le_prod₀ (fun w _ => pow_nonneg (locHeight_pos _).le _) fun w _ =>
           (pow_le_pow_left₀ (locHeight_pos _).le (hinf w) _).trans
             (pow_le_pow_right₀ hL1 (mult_le_two w))
     _ = L ^ (2 * Fintype.card (InfinitePlace K)) := by
@@ -113,7 +118,7 @@ theorem detModule_diagUnits_posIdele {ρ : Fin n → ℝ} (hρ : ∀ i, 0 < ρ i
 theorem exists_height_le_normOne {ω : Set (AdelicGLn.AdelicGL K n)} (hω : IsCompact ω) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ b ∈ ω, ∀ (ρ : Fin n → ℝ) (hρ : ∀ i, 0 < ρ i),
       ∀ kk ∈ (Reduction.maxCompact : Subgroup (AdelicGLn.AdelicGL K n)),
-      ∀ x : AdelicGLn.AdelicGL K n, x ∈ Reduction.normOneGL K n →
+      ∀ x : AdelicGLn.AdelicGL K n, x ∈ Reduction.normOneGL (K := K) (n := n) →
       x = b * Reduction.diagUnits n (fun i => Reduction.posIdele (K := K) (ρ i) (hρ i)) * kk →
       ∀ A : ℝ, 1 ≤ A → (∀ i j : Fin n, ρ i / ρ j ≤ A) →
       height x ≤ C * A ^ (2 * Fintype.card (InfinitePlace K)) := by
@@ -178,7 +183,7 @@ theorem exists_height_le_normOne {ω : Set (AdelicGLn.AdelicGL K n)} (hω : IsCo
       exact mul_le_mul_of_nonneg_right (le_self_pow₀ hc₀1 hn) (pow_nonneg hA0 _)
     have hprodA : ∀ f : Fin n → ℝ, (∀ j, 0 ≤ f j) → (∀ j, f j ≤ A) → ∏ j, f j ≤ A ^ n := by
       intro f hf0 hfA
-      calc ∏ j, f j ≤ ∏ _j : Fin n, A := Finset.prod_le_prod (fun j _ => hf0 j) fun j _ => hfA j
+      calc ∏ j, f j ≤ ∏ _j : Fin n, A := Finset.prod_le_prod₀ (fun j _ => hf0 j) fun j _ => hfA j
         _ = A ^ n := by rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
     constructor
     · have e1 : ρ i ^ n = P * ∏ j, (ρ i / ρ j) := by

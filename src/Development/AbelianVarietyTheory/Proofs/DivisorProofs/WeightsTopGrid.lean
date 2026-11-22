@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocCO
-import Development.AbelianVarietyTheory.Definitions.Divisors.BplusOfEquivariant
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocCO
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BplusOfEquivariant
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
+
+@[expose] public section
 
 noncomputable section
 
@@ -547,7 +551,7 @@ theorem sameShift_wtOf {N n : ℕ} (hN : N = n + 1) (hn : 0 < n) {A B : Finset �
     Formalism.L2.Col.Br.SameShift (wtOf N A) (wtOf n B) := by
   subst hN
   unfold Formalism.L2.Col.Br.SameShift DomWeight.detShift
-  rw [dif_pos hn, dif_pos (Nat.succ_pos n)]
+  rw [dite_eq_left hn, dite_eq_left (Nat.succ_pos n)]
   have e1 := wtOf_cast hB hBc ⟨n - 1, by omega⟩
   have e2 := wtOf_cast hA hAc ⟨n + 1 - 1, by omega⟩
   simp only [highestWeight] at e1 e2

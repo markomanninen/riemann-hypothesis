@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.Carries
-import GroundTheory.AutomorphicForms.TraceNormComp
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.ConvolutionSpectra.ConvSpec
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.Carries
+public import GroundTheory.AutomorphicForms.TraceNormComp
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ScatteringLimits.ConvolutionSpectra.ConvSpec
+
+@[expose] public section
 
 open MeasureTheory GroundTheory.Automorphic PositivityTheory.Rg.Tf.IntegralApplyAeEq Set Filter Topology UpperTheory.V.Z.IntegralApplyAeEq
 open scoped InnerProductSpace FourierTransform ComplexConjugate
@@ -84,7 +88,7 @@ theorem UpperTheory.V.Z.IntegralApplyAeEq.convNear :
     rw [intervalIntegral.integral_of_le (by linarith), ← integral_const_mul]
     refine (setIntegral_mono_on (g := fun t => Real.exp R * (Real.exp t * d t ^ 2)) (dc.pow 2).integrableOn_Ioc
       (Continuous.integrableOn_Ioc (by fun_prop)) measurableSet_Ioc fun t ht => ?_).trans
-      (setIntegral_mono_set (iw.const_mul _) (Eventually.of_forall fun t => by positivity) Ioc_subset_Iic_self.eventuallyLE)
+      (setIntegral_mono_set (iw.const_mul _) (Eventually.of_forall fun t => by positivity) (Eventually.of_forall fun _ ht => Ioc_subset_Iic_self ht))
     rw [← mul_assoc, ← Real.exp_add]
     exact le_mul_of_one_le_left (sq_nonneg _) (Real.one_le_exp (by linarith [ht.1]))
   calc _ ≤ (2 * B * ∫ t in (-R)..0, d t) ^ 2 := by gcongr

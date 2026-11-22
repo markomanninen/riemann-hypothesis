@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.FinalPtfsData
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.LocalCmp2
-import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsDualPf
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.FinalPtfsData
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.LocalCmp2
+public import Development.WeilBound.CoreStatements.PublishedTheorems.PoitouTateDuality.PtfsDualPf
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.IsNilpotentOfIsNilDP
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.TagIso
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.IsDPMorphismId
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.IsNilpotentOfIsNilDP
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.TagIso
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.IsDPMorphismId
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ExistsCrystalPairing
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -41,10 +45,10 @@ theorem acyc_NT (T : Tag (dp0 R) s (chartOpen s)) :
   have hu : ∀ {a b : D} (f : a ⟶ b), u f ≫ c b = c a := fun f ↦
     congrArg Tag.Hom.f (CostructuredArrow.w f)
   have ext : ∀ {a b : D} (f g : a ⟶ b), u f = u g → f = g := fun f g h ↦
-    CostructuredArrow.hom_ext _ _ (ObjectProperty.hom_ext _ (Tag.hom_ext h))
+    CostructuredArrow.hom_ext _ _ (ObjectProperty.hom_ext _ (Tag.Hom.ext h))
   let hom : ∀ (a b : D) (φ : a.left.obj.T ⟶ b.left.obj.T) (_ : chartOpen s a.left.obj.k ≤ chartOpen s b.left.obj.k)
       (_ : φ ≫ c b = c a), a ⟶ b := fun a b φ h e ↦
-    CostructuredArrow.homMk (ObjectProperty.homMk (⟨φ, h⟩ : Tag.Hom _ _)) (Tag.hom_ext e)
+    CostructuredArrow.homMk (ObjectProperty.homMk (⟨φ, h⟩ : Tag.Hom _ _)) (Tag.Hom.ext e)
   choose P i j hP hl hun using fun a : D ↦ exists_coprod T.k a.left.obj.T a.left.property (hle a) n hn
   choose q hq using fun a : D ↦ (hun a T.T hT (c a) a₀).exists
   let d : D := mk _ (bas_inN T.k) (bas_le T.k.1) a₀

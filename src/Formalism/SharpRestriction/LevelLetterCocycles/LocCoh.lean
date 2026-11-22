@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.WeaklyAdmissibleFiltrations.Statement
-import Formalism.WeaklyAdmissibleFiltrations.StatementTor
-import ReciprocityTheory.BasicDefinitions.AdRep
+module
+
+public import Mathlib
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+public import Formalism.WeaklyAdmissibleFiltrations.StatementTor
+public import ReciprocityTheory.BasicDefinitions.AdRep
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DieudonneFunctorBaseFunctorPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DieudonneBaseChangeBasisStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DieudonneFunctorBaseFunctorPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DieudonneBaseChangeBasisStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
 noncomputable section
 
-open CategoryTheory TensorProduct Coalgebra Bialgebra GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Dieu
+open CategoryTheory TensorProduct Coalgebra Bialgebra GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup
 
 namespace GlobalTheory.Dieu
 
@@ -27,7 +31,7 @@ theorem bijective_of_basis {R R' M M' : Type} [CommRing R] [CommRing R'] [AddCom
     (hf : ∀ (a : R) (m : M), f (a • m) = σ a • f m) {ι : Type} [Fintype ι] (b : Module.Basis ι R M)
     (b' : Module.Basis ι R' M') (hb : ∀ i, b' i = f (b i)) : Function.Bijective f := by
   have key : ∀ c : ι → R, f (∑ i, c i • b i) = ∑ i, σ (c i) • b' i := fun c => by
-    rw [map_sum]
+    rw [map_sum f]
     exact Finset.sum_congr rfl fun i _ => by rw [hf, hb]
   refine ⟨(injective_iff_map_eq_zero f).2 fun m hm => ?_, fun x => ?_⟩
   · rw [← b.sum_repr m, key] at hm
@@ -43,10 +47,13 @@ theorem bijective_of_basis {R R' M M' : Type} [CommRing R] [CommRing R'] [AddCom
     simp only [hc]
     exact b'.sum_repr x
 
-end GlobalTheory.Dieu
-
-theorem GlobalTheory.Dieu.frobTwist_module : ∀ (p : ℕ) [Fact p.Prime] (B : Base p fun _ _ _ => True) (k : Type) [Field k] [CharP k p] [PerfectRing k p] (G : PDivGroup p k), Function.Bijective (B.smap trivial trivial (frobProj (p_eq_zero p k) G)) ∧ (∀ m, B.map trivial trivial (relFrob (p_eq_zero p k) G) (B.smap trivial trivial (frobProj (p_eq_zero p k) G) m) = B.F G trivial m) ∧ ∀ m n, B.smap trivial trivial (frobProj (p_eq_zero p k) G) n = B.map trivial trivial (verschiebung (p_eq_zero p k) G) m → B.F G trivial n = p • m := by
-  intro p _ B k _ _ _ G
+theorem frobTwist_module (p : ℕ) [Fact p.Prime] (B : Base p fun _ _ _ => True)
+    (k : Type) [Field k] [CharP k p] [PerfectRing k p] (G : PDivGroup p k) :
+    Function.Bijective (B.smap trivial trivial (frobProj (p_eq_zero p k) G)) ∧
+    (∀ m, B.map trivial trivial (relFrob (p_eq_zero p k) G)
+      (B.smap trivial trivial (frobProj (p_eq_zero p k) G) m) = B.F G trivial m) ∧
+    ∀ m n, B.smap trivial trivial (frobProj (p_eq_zero p k) G) n =
+      B.map trivial trivial (verschiebung (p_eq_zero p k) G) m → B.F G trivial n = p • m := by
   have h2 : ∀ m, B.map trivial trivial (relFrob (p_eq_zero p k) G)
       (B.smap trivial trivial (frobProj (p_eq_zero p k) G) m) = B.F G trivial m := fun m =>
     (B.smap_comp trivial trivial trivial (frobProj (p_eq_zero p k) G)
@@ -65,3 +72,5 @@ theorem GlobalTheory.Dieu.frobTwist_module : ∀ (p : ℕ) [Fact p.Prime] (B : B
     obtain ⟨hid, -, -, -, hp, -⟩ := GlobalTheory.T.dieudonneFunctorBase_functor_properties p (fun _ _ _ => True) B k G G G trivial trivial trivial
     rw [← h2, e, ← LinearMap.comp_apply, ← hc, relFrob_comp_verschiebung, ← pow_one (p : ℤ_[p]), hp,
       pow_one, hid, LinearMap.id_apply]
+
+end GlobalTheory.Dieu

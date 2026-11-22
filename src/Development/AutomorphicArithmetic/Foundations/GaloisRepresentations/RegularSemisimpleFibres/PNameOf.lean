@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.InvariantSubspaceMobiusInverseCharpolyOfIrreduciStatement
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.RootPowerSumCharacterAdditiveAndXSubOnePowStatement
-import Development.AbelianVarietyTheory.Proofs.CharacterTheory.RegularIffNatDegreeAndExistsEllipticGLStatement
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.ResEmbCompat
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.InvariantSubspaceMobiusInverseCharpolyOfIrreduciStatement
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.RootPowerSumCharacterAdditiveAndXSubOnePowStatement
+public import Development.AbelianVarietyTheory.Proofs.CharacterTheory.RegularIffNatDegreeAndExistsEllipticGLStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain ValuativeRel Polynomial Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.L2.Host
 open GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.LocGL GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.Shin
@@ -57,7 +61,7 @@ private theorem conj_ne {g : ℕ} [Fact g.Prime] {m : ℕ} (hm : 0 < m) {K : Typ
     show (aeval (z : K) p) ^ g ^ a = aeval (z : K) p
     rw [← aeval_pow_prime_pow_eq_pow, h]
   have hq : 1 < g ^ a := Nat.one_lt_pow ha.ne' hg.one_lt
-  have hP0 : (X ^ (g ^ a) - X : K[X]) ≠ 0 := FiniteField.X_pow_card_sub_X_ne_zero K hq
+  have hP0 : (X ^ (g ^ a) - X : K[X]) ≠ 0 := Polynomial.X_pow_sub_X_ne_zero hq
   have hle := Polynomial.card_le_degree_of_subset_roots (p := (X ^ (g ^ a) - X : K[X]))
     (Z := Finset.univ.map (Function.Embedding.subtype (· ∈ F))) (by
       intro y hy
@@ -66,7 +70,7 @@ private theorem conj_ne {g : ℕ} [Fact g.Prime] {m : ℕ} (hm : 0 < m) {K : Typ
       rw [Polynomial.mem_roots hP0, IsRoot, eval_sub, eval_pow, eval_X]
       simp only [Function.Embedding.coe_subtype]
       rw [hfix y hyF, sub_self])
-  rw [FiniteField.X_pow_card_sub_X_natDegree_eq K hq, Finset.card_map, Finset.card_univ,
+  rw [Polynomial.natDegree_X_pow_sub_X (R := K) hq, Finset.card_map, Finset.card_univ,
     Module.card_eq_pow_finrank (K := ZMod g), ZMod.card, hF] at hle
   have := Nat.pow_lt_pow_right hg.one_lt ham
   omega

@@ -1,20 +1,26 @@
-import Formalism.HarderNarasimhan.StatementFrame
-import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.PlaceSplit
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SlopeIneqMean
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HNSlopes
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HNExtreme
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HNStep
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DegSupermod
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.MuChar
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.RatioMax
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.FinSup
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.ExistsSmulMemOfFinrankEq
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SatBasic
-import Formalism.HarderNarasimhan.HarderNarasimhanProofs.TwistFinrankEq
-import Formalism.CorankShare.CorankShareProofs.LayerCakeFormula
-import Formalism.CorankShare.CorankShareProofs.SumNormSqLeHilbertSchmidt
+module
+
+public import Mathlib
+public import Formalism.HarderNarasimhan.StatementPl
+public import Formalism.CorankShare.StatementFR
+public import Formalism.LatticeSlopes.ExistsSaturatedSlopeEqMuMax
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DiscreteSpanOfLinIndep
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.PlaceSplit
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SlopeIneqMean
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HNSlopes
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HNExtreme
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.HNStep
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.DegSupermod
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.MuChar
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.RatioMax
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.FinSup
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.ExistsSmulMemOfFinrankEq
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.SatBasic
+public import Formalism.HarderNarasimhan.HarderNarasimhanProofs.TwistFinrankEq
+public import Formalism.CorankShare.CorankShareProofs.LayerCakeFormula
+public import Formalism.CorankShare.CorankShareProofs.SumNormSqLeHilbertSchmidt
+
+@[expose] public section
 
 open Module NumberField Finset Formalism.CorankShareLayerCake.FR
 
@@ -103,12 +109,6 @@ theorem frameB_rkK_top (b : Basis ι K V) (L : Submodule (𝓞 K) V)
     (hL : Submodule.span K (L : Set V) = ⊤) : rkK L = Fintype.card ι := by
   unfold rkK
   rw [hL, finrank_top, Module.finrank_eq_card_basis b]
-
-theorem frameB_ne_bot [Nontrivial V] (L : Submodule (𝓞 K) V)
-    (hL : Submodule.span K (L : Set V) = ⊤) : L ≠ ⊥ := by
-  intro h0
-  rw [h0, Submodule.bot_coe, Submodule.span_zero_singleton] at hL
-  exact bot_ne_top hL
 
 end Herm
 

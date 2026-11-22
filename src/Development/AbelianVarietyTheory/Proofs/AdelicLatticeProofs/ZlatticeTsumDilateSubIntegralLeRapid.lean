@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LatticeTheta.ThetaShiftInversion
+module
+
+public import Mathlib
+public import Formalism.LatticeTheta.ThetaShiftInversion
+
+@[expose] public section
 
 open NumberField IsDedekindDomain NumberField.mixedEmbedding MeasureTheory Complex Classical
 open scoped ContDiff nonZeroDivisors

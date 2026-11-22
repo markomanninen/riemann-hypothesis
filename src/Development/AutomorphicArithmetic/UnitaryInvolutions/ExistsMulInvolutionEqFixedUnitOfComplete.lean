@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteInvolutionFixedUnitEqMulConj
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.FiniteInvolutionFixedUnitEqMulConj
+
+@[expose] public section
+
 open scoped Classical
 
 private lemma normStep_algebra {T : Type} [CommRing T] (z zb u P a b bb v : T)
@@ -98,7 +103,7 @@ private lemma norm_step (T : Type) [CommRing T] (ι : T →+* T) (ϖ ω : T)
     ϖ ^ (j + 1) * a * b * ι b), ?_⟩, ⟨z * b, by ring⟩⟩
   have h := normStep_algebra z (ι z) u (ϖ ^ (j + 1)) a b (ι b) v ha hbsum hv
   have hι' : ι (z * (1 + ϖ ^ (j + 1) * b)) = ι z * (1 + ϖ ^ (j + 1) * ι b) := by
-    simp only [map_mul, map_add, map_one, hιP]
+    simp only [map_mul, map_add (f := _), map_one, hιP]
   rw [hι', h]
   ring
 

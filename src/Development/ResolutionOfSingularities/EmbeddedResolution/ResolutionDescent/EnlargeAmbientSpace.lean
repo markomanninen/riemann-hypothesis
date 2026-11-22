@@ -1,20 +1,25 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceRelations
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ConstantCodimension
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.ChartPushforward
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.InactiveTotalSpacePushforward
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.EmbeddedResolutionRule
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.FunctorialPrincipalization
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedStrictTransform
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.SequenceIsomorphism
-import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
-import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.StrongResolution
-import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
-import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupExistence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceRelations
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.ConstantCodimension
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossings
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.ChartPushforward
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.InactiveTotalSpacePushforward
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionDescent.EmbeddedResolutionRule
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.FunctorialPrincipalization
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.EmbeddedStrictTransform
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.SequenceIsomorphism
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IteratedBlowups.BlowupSequenceBasic
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MarkedBlowupSequence.IdealBlowupSequence
+public import Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.StrongResolution
+public import Development.ResolutionOfSingularities.Foundations.BlowupUniversalProperty
+public import Development.ResolutionOfSingularities.EmbeddedResolution.ResolutionOfSingularities
+
+@[expose] public section
+
 universe u
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
@@ -28,7 +33,7 @@ namespace EmbeddingDatum
 variable {k : Type u} [Field k] [CharZero k] {Y : Scheme.{u}}
   {p : Y ⟶ Spec (CommRingCat.of k)}
 
-private theorem emb_comp_comp_eq_of_comp_eq (G : EmbeddingDatum k Y p) {A' : Scheme.{u}}
+theorem emb_comp_comp_eq_of_comp_eq (G : EmbeddingDatum k Y p) {A' : Scheme.{u}}
     (q : A' ⟶ Spec (CommRingCat.of k)) (τ : G.ambient ⟶ A')
     (hτ : τ ≫ q = G.ambientStruct) :
     (G.emb ≫ τ) ≫ q = p := by
@@ -43,36 +48,6 @@ def enlargeAmbient (G : EmbeddingDatum k Y p) (A' : Scheme.{u}) [AlgebraicGeomet
     (hsnc : InStrictNormalCrossingPosition q ([] : List A'.IdealSheafData)) :
     EmbeddingDatum k Y p :=
   embeddingDatumOfClosedImmersion A' q (G.emb ≫ τ) hker (emb_comp_comp_eq_of_comp_eq G q τ hτ) hsnc
-
-@[simp]
-theorem enlargeAmbient_ambient (G : EmbeddingDatum k Y p) (A' : Scheme.{u})
-    [AlgebraicGeometry.IsAffine A'] (q : A' ⟶ Spec (CommRingCat.of k))
-    [AlgebraicGeometry.Smooth q] [AlgebraicGeometry.LocallyOfFiniteType q]
-    [AlgebraicGeometry.QuasiCompact q] (τ : G.ambient ⟶ A')
-    [AlgebraicGeometry.IsClosedImmersion τ] (hτ : τ ≫ q = G.ambientStruct)
-    (hker : NonzeroOnComponents (G.emb ≫ τ).ker)
-    (hsnc : InStrictNormalCrossingPosition q ([] : List A'.IdealSheafData)) :
-    (G.enlargeAmbient A' q τ hτ hker hsnc).ambient = A' := rfl
-
-@[simp]
-theorem enlargeAmbient_ambientToSpec (G : EmbeddingDatum k Y p) (A' : Scheme.{u})
-    [AlgebraicGeometry.IsAffine A'] (q : A' ⟶ Spec (CommRingCat.of k))
-    [AlgebraicGeometry.Smooth q] [AlgebraicGeometry.LocallyOfFiniteType q]
-    [AlgebraicGeometry.QuasiCompact q] (τ : G.ambient ⟶ A')
-    [AlgebraicGeometry.IsClosedImmersion τ] (hτ : τ ≫ q = G.ambientStruct)
-    (hker : NonzeroOnComponents (G.emb ≫ τ).ker)
-    (hsnc : InStrictNormalCrossingPosition q ([] : List A'.IdealSheafData)) :
-    (G.enlargeAmbient A' q τ hτ hker hsnc).ambientStruct = q := rfl
-
-@[simp]
-theorem enlargeAmbient_emb (G : EmbeddingDatum k Y p) (A' : Scheme.{u})
-    [AlgebraicGeometry.IsAffine A'] (q : A' ⟶ Spec (CommRingCat.of k))
-    [AlgebraicGeometry.Smooth q] [AlgebraicGeometry.LocallyOfFiniteType q]
-    [AlgebraicGeometry.QuasiCompact q] (τ : G.ambient ⟶ A')
-    [AlgebraicGeometry.IsClosedImmersion τ] (hτ : τ ≫ q = G.ambientStruct)
-    (hker : NonzeroOnComponents (G.emb ≫ τ).ker)
-    (hsnc : InStrictNormalCrossingPosition q ([] : List A'.IdealSheafData)) :
-    (G.enlargeAmbient A' q τ hτ hker hsnc).emb = G.emb ≫ τ := rfl
 
 private theorem imageIdealSheaf_ker_eq_ker_comp {Yc A A' : Scheme.{u}} (e : Yc ⟶ A)
     [AlgebraicGeometry.IsClosedImmersion e] (σ : A ⟶ A') :
@@ -130,21 +105,6 @@ theorem isomorphic_embeddedResolutionRule_enlargeAmbient [AlgebraicGeometry.IsAf
       (inferInstanceAs (AlgebraicGeometry.IsClosedImmersion τ)) rfl
       (isPushforwardBlowupSeq_ambientBlowups_enlargeAmbient G Alg hAlg A' q τ hτ hker hsnc c hc hcodim)
   exact P.inducedBlowupsWithoutIso_isomorphic (hw k Y p G) (hw k Y p (G.enlargeAmbient A' q τ hτ hker hsnc))
-
-private theorem emb_comp_ambientMap_eq_enlargeAmbient_emb [AlgebraicGeometry.IsAffine Y]
-    [AlgebraicGeometry.LocallyOfFiniteType p]
-    (G : EmbeddingDatum k Y p) (Alg : PrincipalizationAlgorithm.{u})
-    (A' : Scheme.{u}) [AlgebraicGeometry.IsAffine A']
-    (q : A' ⟶ Spec (CommRingCat.of k)) [AlgebraicGeometry.Smooth q]
-    [AlgebraicGeometry.LocallyOfFiniteType q] [AlgebraicGeometry.QuasiCompact q]
-    (τ : G.ambient ⟶ A') [AlgebraicGeometry.IsClosedImmersion τ]
-    (hτ : τ ≫ q = G.ambientStruct)
-    (hker : NonzeroOnComponents (G.emb ≫ τ).ker)
-    (hsnc : InStrictNormalCrossingPosition q ([] : List A'.IdealSheafData)) :
-    (G.toEmbeddedBlowupSequence Alg).emb ≫
-        (show (G.toEmbeddedBlowupSequence Alg).ambient ⟶
-            ((G.enlargeAmbient A' q τ hτ hker hsnc).toEmbeddedBlowupSequence Alg).ambient from τ) =
-      ((G.enlargeAmbient A' q τ hτ hker hsnc).toEmbeddedBlowupSequence Alg).emb := rfl
 
 end EmbeddingDatum
 

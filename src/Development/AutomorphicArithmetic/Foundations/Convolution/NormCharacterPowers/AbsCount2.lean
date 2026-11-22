@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.AnalyticSeries.NeZeroOne
-import Development.AutomorphicArithmetic.Foundations.Convolution.NormCharacterPowers.OrderAsym
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.AnalyticSeries.NeZeroOne
+public import Development.AutomorphicArithmetic.Foundations.Convolution.NormCharacterPowers.OrderAsym
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,8 @@ open PositivityTheory.RgJS UpperTheory.ConvolutionTheory.Rs
 theorem ps {ι M : Type} [Fintype ι] [AddCommMonoid M] {d : ι → ℕ} {m : ℕ} {g : ∀ i, Fin (d i) → ℂ} {h : Fin m → ℂ}
     (e : ∑ i, Finset.univ.val.map (g i) = Finset.univ.val.map h) (φ : ℂ → M) : ∑ i, ∑ a, φ (g i a) = ∑ a, φ (h a) := by
   have := congrArg (Multiset.sumAddMonoidHom.comp (Multiset.mapAddMonoidHom φ)) e
-  rw [map_sum] at this
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum] at this
   have e1 : ∀ {n : ℕ} (k : Fin n → ℂ), (Multiset.sumAddMonoidHom.comp (Multiset.mapAddMonoidHom φ)) (Finset.univ.val.map k) =
       ∑ a, φ (k a) := fun k => congrArg Multiset.sum (Multiset.map_map φ k Finset.univ.val)
   simpa only [e1] using this
@@ -131,7 +136,8 @@ theorem absCount2 : BCSum → ZeroExp → LogAsym → AbsCount := by
       (fun w (a : Σ i, Fin (d' (z i).1)) => A' (z a.1).1 w a.2) σ p =
         ∑ r : ι × ι, lterm q' (A' (z r.1).1) (A' (z r.2).1) σ p := fun p => by
     simp only [lterm, Fintype.sum_sigma, Fintype.sum_prod_type]
-    rw [map_sum, Finset.sum_mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_mul_sum]
     simp only [Finset.sum_mul, Finset.sum_div]
   simp only [eR, eL] at e
   rw [Summable.tsum_finsetSum fun r _ => ((conv1 W' q' X' d' A' hS' _ _).1 σ a).of_norm] at e

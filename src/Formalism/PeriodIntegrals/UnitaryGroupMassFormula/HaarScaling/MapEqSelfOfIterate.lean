@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.CdHaarScale
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.CdHaarScale
+
+@[expose] public section
 
 noncomputable section
 
@@ -149,8 +153,8 @@ theorem map_eq_self_of_iterate {G : Type*} [Group G] [TopologicalSpace G] [IsTop
     induction k with
     | zero => simp
     | succ k ih =>
-      rw [Function.iterate_succ', ← Measure.map_map hm (hm.iterate k), ih, Measure.map_smul, hμc,
-        smul_smul, pow_succ]
+      rw [Function.iterate_succ', ← Measure.map_map hm (hm.iterate k), ih,
+        Measure.map_smul (c ^ k) hm.aemeasurable, hμc, smul_smul, pow_succ]
   have hid : (⇑ψ)^[N] = id := funext hψ
   have hN' : μ = c ^ N • μ := by rw [← hk N, hid, Measure.map_id]
   obtain ⟨K, hK, hK1⟩ := exists_compact_mem_nhds (1 : G)

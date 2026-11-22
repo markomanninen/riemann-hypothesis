@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoLevFacts
-import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.SelmerDuality.Frobenius
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardDualZmodModuleEqCardStatement
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoLevFacts
+public import Development.AutomorphicArithmetic.CyclotomicBounds.ClassNumberBounds.SelmerDuality.PerfCard
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CardDualZmodModuleEqCardStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.X
 
@@ -74,7 +78,7 @@ theorem UpperTheory.V.X.So.dualGen :
       rw [hann x hx m, map_zero]
   refine ⟨φ₀, hcond, fun φ => ?_⟩
   let sm : O → (M →ₗ[ZMod (l ^ r)] M) :=
-    fun x => (DistribMulAction.toAddMonoidHom M x).toZModLinearMap (l ^ r)
+    fun x => (DistribSMul.toAddMonoidHom M x).toZModLinearMap (l ^ r)
   let Ψ : O →+ Module.Dual (ZMod (l ^ r)) M :=
     { toFun := fun x => φ₀ ∘ₗ sm x
       map_zero' := by

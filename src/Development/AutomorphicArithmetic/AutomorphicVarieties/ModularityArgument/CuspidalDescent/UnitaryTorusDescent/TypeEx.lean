@@ -1,19 +1,24 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.UniqRec
-import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.AbConv
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.UnitaryTorusDescent.ToTL
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.TypeExNZ
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.IsTheta
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.KIface
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.LocCFTAll
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.Classical
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.TypeConj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.TypeLoc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IsTypeWeilDeligneIffMonodromyZeroCharpoly
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.PiFamilyProdHomBijectiveCharacterization
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalLanglandsOfHyp
-import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.UniqRec
+public import Development.AutomorphicArithmetic.Foundations.LocalLanglands.LocalCentralUnits.AbConv
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.UnitaryTorusDescent.ToTL
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.TypeExNZ
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.IsTheta
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.KIface
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.LocCFTAll
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.Classical
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.TypeConj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.TypeLoc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IsTypeWeilDeligneIffMonodromyZeroCharpoly
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.PiFamilyProdHomBijectiveCharacterization
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalLanglandsOfHyp
+public import Development.AbelianVarietyTheory.Definitions.Divisors.T2SpaceGeneralLinearGroup
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Polynomial ValuativeRel IsLocalRing GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.LocGL GlobalTheory.GalOfCusp GlobalTheory.SmGL GlobalTheory.SplitWeil GlobalTheory.UnitaryBC UpperTheory.V UpperTheory.V.Hi UpperTheory.V.Hi.CaseU
 open UpperTheory.V.W (Plc Lp HidaSetting Vl Resid LamObj UniversalOrdinaryDeterminantRing Pair)
 open UpperTheory.V.HV (Coef)
@@ -40,13 +45,14 @@ private theorem te_loc (P : GlobalTheory.Mem.LiteralAutomorphy.LitN) (NZ : Upper
   have hsm : ∀ i, IsSmooth (h := h) ((χ i).comp (Subgroup.inclusion (Weil_le_Dec h))) := fun i =>
     (ho i).preimage (f := Subgroup.inclusion (Ine_le_Dec (F := L) A)) (continuous_inclusion (Ine_le_Dec (F := L) A))
   have hT := NZ L Ω A w h rc hrc n χ ho
-  rw [← show KO (w.adicCompletion L) (Fin n) = GlobalTheory.LFun.KGL w n from SphCompletion.KO_completion w n] at hT
+  rw [← show KO (w.adicCompletion L) (Fin n) = GlobalTheory.LFun.KGL w (n := n) from SphCompletion.KO_completion w n] at hT
   obtain ⟨d, ξ, -, hξ, hπ⟩ := hT
   refine typeLoc O _ _ GlobalTheory.SplitFlip.isCompact_KO _ d ξ hξ (fun π => ?_) fun γ σ σ' f h1 h2 hσ rc' hrc' => ?_
   · rw [hπ π, UpperTheory.NonzeroTypeTheory.Cond]
     have e : IsTypeWD h (fun i => (χ i).comp (Subgroup.inclusion (Ine_le_Dec A))) (rc (algNorm π)) ↔ _ :=
       UpperTheory.isTypeWeilDeligne_iff_monodromy_zero_charpoly L Ω n w A h _ _
-    obtain ⟨a, ha, ε, H⟩ := Z.Win.toV hrc
+    have hV : Z.Win.IsRecV h rc := Z.Win.toV hrc
+    obtain ⟨a, ha, ε, H⟩ := hV
     rw [algNorm, H.nu_eq, (te_unr _ _).1] at e
     simp only [(te_unr _ _).2] at e
     simp only [WD.charPol_mk, WDRep.ofChars_ρ, charpoly_diagEnd]
@@ -84,56 +90,8 @@ private theorem te_root {O : Type} [CommRing O] [IsDomain O] [IsLocalRing O] [Fi
   rw [hu, sub_self] at h1
   rcases mul_eq_zero.1 h1 with h2 | h2
   · have h3 := congrArg (residue O) h2
-    simp only [map_sum, map_pow, hr, one_pow, Finset.sum_const, Finset.card_range, map_zero, nsmul_eq_mul, mul_one] at h3
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_pow, hr, one_pow, Finset.sum_const, Finset.card_range, map_zero, nsmul_eq_mul, mul_one] at h3
     rw [Nat.cast_sub Nat.card_pos, Nat.card_eq_fintype_card, FiniteField.cast_card_eq_zero] at h3
     simp at h3
   · exact mul_inv_eq_one.1 (Units.ext (sub_eq_zero.1 h2))
-
-theorem UpperTheory.V.Z.Desc.P.typeEx :
-    GlobalTheory.Mem.LiteralAutomorphy.LitN → UpperTheory.NonzeroTypeTheory.NZ → ∀ (l : ℕ) [Fact l.Prime] (L Ω : Type) [Field L] [NumberField L] [IsCMField L] [Field Ω] [Algebra L Ω] [IsAlgClosure L Ω] (s : HidaSetting l L Ω) (n : ℕ), 1 ≤ n →
-    ∀ (V : s.Lev) (Q : QData V) (c : Coef l), ∀ (r : Resid V.frame c.O n) (ι : Qbar l ≃+* ℂ), ∃ (m : ℕ) (τ₀ : KT n (wt s) →* GL (Fin m) c.O), TypeFor r ι τ₀ := by
-  intro P NZ l _ L Ω _ _ _ _ _ _ s n _ V _ c r ι
-  by_cases hex : ∃ t, r.IsTeich t
-  swap
-  · exact ⟨0, 1, fun t ht => absurd ⟨t, ht⟩ hex⟩
-  obtain ⟨t, ht⟩ := hex
-  haveI : Finite (ResidueField c.O) := (UpperTheory.V.abelian₂.dvr_finite l c.O).2.1
-  let j : c.O →+* ℂ := ι.toRingHom.comp (algebraMap c.O (Qbar l))
-  letI : Algebra c.O ℂ := j.toAlgebra
-  have hj : Function.Injective j := ι.injective.comp Subtype.val_injective
-  haveI : FaithfulSMul c.O ℂ := (faithfulSMul_iff_algebraMap_injective _ _).2 hj
-  haveI : Algebra.IsAlgebraic c.O ℂ := by
-    haveI : Algebra.IsAlgebraic ℤ_[l] (Qbar l) := (IsFractionRing.comap_isAlgebraic_iff (K := ℚ_[l])).2 inferInstance
-    haveI : Algebra.IsAlgebraic c.O (Qbar l) := Algebra.IsAlgebraic.extendScalars (R := ℤ_[l]) (FaithfulSMul.algebraMap_injective ℤ_[l] c.O)
-    exact (AlgEquiv.ofRingEquiv (f := ι) fun _ => rfl : Qbar l ≃ₐ[c.O] ℂ).isAlgebraic
-  have hker : ∀ i, (t i).ker = (r.chib i).ker := fun i => Subgroup.ext fun g => by
-    rw [MonoidHom.mem_ker, MonoidHom.mem_ker]
-    refine ⟨fun h => Units.ext ?_, fun h => te_root (ht i g).2 (one_pow _) ?_⟩
-    · rw [← (ht i g).1, h]; simp
-    · rw [(ht i g).1, h]; simp
-  have hloc := fun u : s.St => te_loc P NZ n (s.hw u) c.O
-    (fun i => W.pushCh j ((t i).comp (V.pr.comp (Dec (F := L) (s.A u)).subtype)))
-    (fun i => Subgroup.isOpen_mono (H₁ := (r.chib i).ker.comap (V.pr.comp (Dec (F := L) (s.A u)).subtype))
-      (fun g hg => by
-        have h1 : t i (V.pr g) = 1 := by
-          rw [← hker] at hg
-          exact hg
-        change Units.map _ (t i (V.pr g)) = 1
-        rw [h1, map_one])
-      ((r.chib_open i).preimage ((V.pr_cont W.continuous_resP).comp continuous_subtype_val)))
-    fun i g => ⟨_, rfl⟩
-  choose m τ ho hτ using hloc
-  obtain ⟨m', τ', hk, hM⟩ := @UpperTheory.piFamilyProdHom_bijective_characterization c.O _ j s.St _ (fun _ _ => Classical.propDecidable _) (fun u => GLw n (wt s u)) _ _ _
-    (fun u => KO ((wt s u).adicCompletion L) (Fin n)) m τ
-  refine ⟨m', τ', fun t' ht' => ?_⟩
-  obtain rfl : t = t' := funext fun i => MonoidHom.ext fun g =>
-    te_root (ht i g).2 (ht' i g).2 ((ht i g).1.trans (ht' i g).1.symm)
-  refine ⟨?_, fun M _ _ _ ρ σ hσ => ?_⟩
-  · refine Subgroup.isOpen_of_mem_nhds _ (g := 1) (Filter.mem_of_superset (IsOpen.mem_nhds
-      (isOpen_iInter_of_finite fun u => (ho u).preimage
-        (f := fun k : KT n (wt s) => (⟨k.1 u, k.2 u trivial⟩ : KO ((wt s u).adicCompletion L) (Fin n)))
-        (((continuous_apply u).comp continuous_subtype_val).subtype_mk _)) ?_) fun k hk' => ?_)
-    · exact Set.mem_iInter.2 fun u => (τ u).ker.one_mem
-    · change Matrix.GeneralLinearGroup.map _ (τ' k) = 1
-      rw [hk k (Set.mem_iInter.1 hk'), map_one]
-  · exact (hM M ρ σ hσ).trans (forall_congr' fun u => hτ u (σ u))

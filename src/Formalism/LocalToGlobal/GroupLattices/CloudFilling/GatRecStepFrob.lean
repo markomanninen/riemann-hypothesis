@@ -1,6 +1,12 @@
-import Formalism.LocalToGlobal.GroupLattices.CloudFilling.ExistsPowOrbRep
-import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.LevelGatherings
-import Formalism.LocalRingCardinality.SpanPowerMembership.GatAdd
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.CloudFilling.ExistsPowOrbRep
+public import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.LevelGatherings
+public import Formalism.SharpRestriction.GrowthBounds.IsResidueClassZero
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.LocalRingCardinality.SpanPowerMembership.GatTies
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,8 +39,8 @@ variable (D : D7) (u : D.what₂.Word) {T : ℕ} (hg : GIdx D.host T p)
     (I : LocId L p (nOrb (zH D.R.toFrame (hP D p))) W Qq) (ψ : Formalism.L2.Herm.awayFrom₂ L p →* Oˣ)
     (y : compL L p → UPts D.sp.cm.sig D.sp.gram0 (Formalism.L2.Herm.Af D.host.F)) (e : ℕ)
 
-include hg in
 
+include hg in
 theorem gatRec_n_frob (v : Fin (gatRec D u (D.R.iota (hP D p)) hS r L I ψ y e).P.nV)
     (P : Ideal (𝓞 D.host.E)) [P.IsPrime] [P.LiesOver (Ideal.span {(p : ℤ)})] (τ : D.host.E ≃ₐ[ℚ] D.host.E)
     (hτ : IsArithFrobAt ℤ τ P) :
@@ -49,8 +55,8 @@ theorem gatRec_n_frob (v : Fin (gatRec D u (D.R.iota (hP D p)) hS r L I ψ y e).
   | simp [zPsi, Prod.orderOf]
   | simp [zPsi, Prod.orderOf_mk]
 
-include hg in
 
+include hg in
 theorem gatRec_step_frob (v : Fin (gatRec D u (D.R.iota (hP D p)) hS r L I ψ y e).P.nV)
     (s : Fin ((gatRec D u (D.R.iota (hP D p)) hS r L I ψ y e).P.n' v))
     (P : Ideal (𝓞 D.host.E)) [P.IsPrime] [P.LiesOver (Ideal.span {(p : ℤ)})] (τ : D.host.E ≃ₐ[ℚ] D.host.E)

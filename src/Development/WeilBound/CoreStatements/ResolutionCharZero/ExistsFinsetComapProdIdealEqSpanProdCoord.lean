@@ -1,8 +1,12 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Statements
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsClopen
-import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsChartNormalization
-import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.NotSubsetOfDenseCompl
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Statements
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsClopen
+public import Development.ResolutionOfSingularities.EmbeddedResolution.EtaleCoordinates.StrictNormalCrossingsChartNormalization
+public import Development.AutomorphicSpectrum.PublishedTheorems.Geometry₂.NotSubsetOfDenseCompl
+
+@[expose] public section
 
 universe u
 
@@ -98,11 +102,6 @@ theorem mem_primeIdealOf_of_mem_support_of_ideal_eq_span_singleton {X : Scheme.{
     (by rw [hI]; exact Ideal.mem_span_singleton_self g)
   by_contra hc
   exact h ((mem_basicOpen_iff_notMem_primeIdealOf hU g ⟨x, hx⟩).mpr hc)
-
-theorem subschemeι_base_mem_support_of_subscheme {W : Scheme.{u}} (Z : W.IdealSheafData)
-    (z : ↥Z.subscheme) : Z.subschemeι.base z ∈ Z.support := by
-  have h : Z.subschemeι.base z ∈ Set.range Z.subschemeι.base := ⟨z, rfl⟩
-  rwa [Scheme.IdealSheafData.range_subschemeι] at h
 
 theorem restrictIdeal_eq_top_of_le_basicOpen {X : Scheme.{u}} {U : X.Opens}
     (hU : IsAffineOpen U) (I : X.IdealSheafData) (f : Γ(X, U))

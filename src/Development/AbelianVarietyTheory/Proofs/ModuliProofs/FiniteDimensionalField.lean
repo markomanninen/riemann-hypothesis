@@ -1,20 +1,27 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.AuxiliaryInertOddPrime
-import Development.AbelianVarietyTheory.Statements.HeckeInFamilies.GenericMemChart
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFormEqOne
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ModNOfDvdModulus
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsObjTwistBySimilitude
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SpMapComp
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSimTrivialOfMult
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsReducedIsNormalSchemeIsLocallyNoetherianOfSmoo
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ModuliRepOfBase
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CompEqIdOfTwists
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelMapFiniteEtaleSurjective
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.AuxiliaryInertOddPrime
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.OneAddZeta21PowSevenAddPowFourteenEqZero
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ToMatrixTrFormBaseChange
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFormEqOne
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ModNOfDvdModulus
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsObjTwistBySimilitude
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SpMapComp
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSimTrivialOfMult
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsReducedIsNormalSchemeIsLocallyNoetherianOfSmoo
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ModuliRepOfBase
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.CompEqIdOfTwists
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelMapFiniteEtaleSurjective
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -156,10 +163,10 @@ theorem exists_semiTwist (hpq : 1 ≤ D.p + D.q) (Xo : Moduli D l) (σ : KA l �
       ample := Xo.univ.ample
       ktriv := Xo.univ.ktriv
       eta := fun a => Xo.univ.eta (g.f l.M a)
-      eta_add := fun a c => by simp only [map_add, Xo.univ.eta_add]
+      eta_add := fun a c => by simp only [map_add (f := _), Xo.univ.eta_add]
       eta_ker := fun a ha => Xo.univ.eta_ker _ (GlobalTheory.LevelTwist.map_mem_smul_top _ _ ha)
       etaA := fun a => Xo.univ.etaA (g.f l.A a)
-      etaA_add := fun a c => by simp only [map_add, Xo.univ.etaA_add]
+      etaA_add := fun a c => by simp only [map_add (f := _), Xo.univ.etaA_add]
       etaA_ker := fun a => by simp only [map_nsmul, Xo.univ.etaA_ker]
       geom := fun k _ _ x β hx => by
         obtain ⟨hdet, I, hI1, hI2, hI3⟩ := Xo.univ.geom k x β hx
@@ -222,7 +229,7 @@ theorem exists_semiTwist_iso (hpq : 1 ≤ D.p + D.q) (l₀ : Level H) (hA : l₀
     refine ⟨D.EF a (t • b), ?_⟩
     simp only [fc, LinearMap.smul_apply, LinearMap.id_apply]
     rw [D.adj, smul_smul, hc', add_smul, mul_smul]
-    simp only [map_add, Int.cast_smul_eq_zsmul, Nat.cast_smul_eq_nsmul, map_zsmul, map_nsmul, zsmul_eq_mul,
+    simp only [map_add (f := _), Int.cast_smul_eq_zsmul, Nat.cast_smul_eq_nsmul, map_zsmul, map_nsmul, zsmul_eq_mul,
       nsmul_eq_mul]
     push_cast
     ring

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ThetaLiftEqAnisotropicPart
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.EqAmOfBarEq
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousQuaternaryQuadraticForm
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.ThetaLiftEqAnisotropicPart
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.EqAmOfBarEq
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.ContinuousQuaternaryQuadraticForm
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -37,14 +41,14 @@ private theorem orbField {K : Type} [Field K] [CharZero K] (s : K →+* K) (θ :
           intro h0
           apply hz
           apply s.injective
-          rw [map_add, hsθ, map_zero]
+          rw [map_add (f := _), hsθ, map_zero]
           linear_combination h0
         have sa : s ((θ + z) / θ) = (s z - θ) / (-θ) := by
-          rw [map_div₀, map_add, hsθ]
+          rw [map_div₀, map_add (f := _), hsθ]
           congr 1
           ring
         have sd : s (θ / (θ + z)) = (-θ) / (s z - θ) := by
-          rw [map_div₀, map_add, hsθ]
+          rw [map_div₀, map_add (f := _), hsθ]
           congr 1
           ring
         refine ⟨(θ + z) / θ, 0, 0, θ / (θ + z), ?_, ?_, ?_, ?_, ?_⟩
@@ -68,7 +72,7 @@ private theorem orbField {K : Type} [Field K] [CharZero K] (s : K →+* K) (θ :
         field_simp
         ring
       have sd : s ((s z + θ) / x) = (z - θ) / x := by
-        rw [map_div₀, map_add, hsθ, hss, hx]
+        rw [map_div₀, map_add (f := _), hsθ, hss, hx]
         ring
       refine ⟨x / (2 * θ), 1, (s z - θ) / (2 * θ), (s z + θ) / x, ?_, ?_, ?_, ?_, ?_⟩
       · field_simp
@@ -86,7 +90,7 @@ private theorem orbField {K : Type} [Field K] [CharZero K] (s : K →+* K) (θ :
         field_simp
         linear_combination (-2) * hdet
   · have sa : s ((z + θ) / (2 * θ)) = -((s z - θ) / (2 * θ)) := by
-      rw [map_div₀, map_mul, hsθ, s2, map_add, hsθ]
+      rw [map_div₀, map_mul, hsθ, s2, map_add (f := _), hsθ]
       field_simp
       ring
     have sb : s ((z - θ) / y) = (s z + θ) / y := by
@@ -235,7 +239,7 @@ private theorem part1 (ξ : Fin 4 → ℚ) (hq : qr D.δ ξ = qr D.δ X0) :
     rwa [D.bar_rt, D.bar_rt] at this
   obtain ⟨z, hzdef⟩ : ∃ z, z = algebraMap ℚ E (ξ 2) + algebraMap ℚ E (ξ 3) * D.θ := ⟨_, rfl⟩
   have hsz : D.σ z = algebraMap ℚ E (ξ 2) - algebraMap ℚ E (ξ 3) * D.θ := by
-    rw [hzdef, map_add, map_mul, D.conj, AlgEquiv.commutes, AlgEquiv.commutes]
+    rw [hzdef, map_add (f := _), map_mul, D.conj, AlgEquiv.commutes, AlgEquiv.commutes]
     ring
   have hdet : algebraMap ℚ E (ξ 1) * algebraMap ℚ E (ξ 0) - z * D.σ z = D.θ ^ 2 := by
     have h0 : ξ 1 * ξ 0 - (ξ 2 ^ 2 - D.δ * ξ 3 ^ 2) = D.δ := by

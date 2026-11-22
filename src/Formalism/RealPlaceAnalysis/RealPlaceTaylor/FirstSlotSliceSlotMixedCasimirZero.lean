@@ -1,4 +1,8 @@
-import Formalism.RealPlaceAnalysis.StatementU
+module
+
+public import Formalism.RealPlaceAnalysis.StatementU
+
+@[expose] public section
 
 open scoped InnerProductSpace
 open Finset
@@ -441,11 +445,11 @@ theorem firstPositionSlice_indexArrayAction (E : Fin n → Fin n → Module.End 
     sliceLin V n α' (arrE E (j+1) a b F) = arrE E 1 a b (sliceLin V n α' F) +
       ∑ k : Fin j, sliceLin V n α' (factorAction k.succ a b F) := by
   first
-    | simp only [arrE, LinearMap.add_apply, LinearMap.sum_apply, map_add, map_sum,
+    | simp only [arrE, LinearMap.add_apply, LinearMap.sum_apply, map_add (f := _), map_sum,
       Fin.sum_univ_succ, Fin.sum_univ_zero, firstPositionSlice_positionAction_zero, firstPositionSlice_pointwiseAction, add_zero]
-    | simp only [arrE, LinearMap.add_apply, LinearMap.coe_sum, Finset.sum_apply, map_add, map_sum,
+    | simp only [arrE, LinearMap.add_apply, LinearMap.coe_sum, Finset.sum_apply, map_add (f := _), map_sum,
       Fin.sum_univ_succ, Fin.sum_univ_zero, firstPositionSlice_positionAction_zero, firstPositionSlice_pointwiseAction, add_zero]
-    | simp only [arrE, LinearMap.add_apply, LinearMap.coe_fn_sum, Finset.sum_apply, map_add, map_sum,
+    | simp only [arrE, LinearMap.add_apply, LinearMap.coe_fn_sum, Finset.sum_apply, map_add (f := _), map_sum,
       Fin.sum_univ_succ, Fin.sum_univ_zero, firstPositionSlice_positionAction_zero, firstPositionSlice_pointwiseAction, add_zero]
   abel
 

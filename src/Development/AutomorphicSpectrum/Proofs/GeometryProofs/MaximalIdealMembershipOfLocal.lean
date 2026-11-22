@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.CompanionTheory.IntegralClosureLocal
 
@@ -18,7 +22,8 @@ theorem mem_maximal_iff_not_inv_mem {K : Type} [Field K] (R : Subring K) [IsLoca
     have key := Polynomial.hom_eval₂ p f (integralClosure R K).toSubring.subtype x
     exact key.trans h
   have hm : (P.comap (algebraMap R (integralClosure R K).toSubring)).IsMaximal :=
-    Ideal.isMaximal_comap_of_isIntegral_of_isMaximal P
+    letI := hP
+    Ideal.isMaximal_under_of_isIntegral_of_isMaximal P
   have hmax : P.comap (algebraMap R (integralClosure R K).toSubring)
       = IsLocalRing.maximalIdeal R := IsLocalRing.eq_maximalIdeal hm
   have hrt : algebraMap R (integralClosure R K).toSubring ⟨t, htR⟩ = t := Subtype.ext rfl

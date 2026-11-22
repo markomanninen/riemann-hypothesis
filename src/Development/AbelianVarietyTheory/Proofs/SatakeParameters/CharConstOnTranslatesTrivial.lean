@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ContinuousCharUnitsComplexStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ContinuousCharUnitsComplexStatement
+
+@[expose] public section
 
 open Filter Topology
 
@@ -84,7 +88,7 @@ lemma real_trivial (ψ : (ι → ℂˣ) →* ℂˣ) (hψ : Continuous ψ) (θ : 
     · rw [map_mul, map_inv, hc _ (hA m)]
     · have := tendsto_div (θ i) (q i) C tendsto_succ (a := fun m => A m i)
         (fun m => abs_coord_le (hAd m) i)
-      convert this using 1
+      convert (preTransparency := .reducible) this using 1
       · funext m
         simp [shift, realUnits, D, div_eq_mul_inv]
       · simp [realUnits]
@@ -111,7 +115,7 @@ lemma const_eq_one (ψ : (ι → ℂˣ) →* ℂˣ) (hψ : Continuous ψ) (θ : 
     intro i
     have := tendsto_div (θ i) 1 C tendsto_succ (a := fun m => A m i)
       (fun m => abs_coord_le (hAd m) i)
-    convert this using 1
+    convert (preTransparency := .reducible) this using 1
     · funext m
       simp [shift, realUnits, div_eq_mul_inv]
     · simp
@@ -149,7 +153,7 @@ lemma exists_near (ψ : (ι → ℂˣ) →* ℂˣ) (hψ : Continuous ψ) (θ : �
       · have h1 := tendsto_div (θ j) 1 C tendsto_succ (a := fun m => A m j) (fun m => by
             simpa [y, hj] using abs_coord_le (hAd m) j)
         have h2 := h1.comp hφ.tendsto_atTop
-        convert h2 using 1
+        convert (preTransparency := .reducible) h2 using 1
         · funext m
           simp [shift, D, realUnits, hj, div_eq_mul_inv]
         · simp [hj]

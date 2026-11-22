@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.MapMapEq
+module
+
+public import Development.EtaleCohomology.TateTwists.MapMapEq
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex GlobalTheory.EtC
 open scoped TensorProduct
@@ -35,7 +39,8 @@ theorem vanish_fg {S : Type*} [CommRing S] {N G Pv : Type*} [AddCommGroup N] [Mo
   have hsum : ∑ i, m' i ⊗ₜ[S] n' i = 0 := by
     rw [Fintype.sum_sum_type]
     simp only [m', n', Sum.elim_inl, Sum.elim_inr, TensorProduct.tmul_zero, Finset.sum_const_zero, add_zero]
-    simpa [t, map_sum] using ht'
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [t, map_sum] using ht'
   obtain ⟨l, a, y, hn, hm⟩ := TensorProduct.vanishesTrivially_of_sum_tmul_eq_zero S hspan hsum
   refine ⟨gs, l, fun j => a (Sum.inl j), fun g => a (Sum.inr g), y, fun j => hn (Sum.inl j), fun g => hn (Sum.inr g),
     fun κ => ?_⟩
@@ -52,7 +57,8 @@ theorem LateralTheory.EtaleFoundations.columnPf.kerLoc_of : kerLoc := by
   obtain ⟨k, b, q, rfl⟩ := TensorProduct.exists_sum_tmul_eq u
   have h : ∑ j, (φ.app (op V)).hom (q j) ⊗ₜ[ULift.{1} R] b j = 0 := by
     have := congrArg (TensorProduct.comm _ _ _) hu
-    simpa [map_sum] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum] using this
   obtain ⟨gs, l, a, c, y, hb, hc, hrel⟩ := vanish_fg (φ.app (op V)).hom b q h
   refine loc_bind (loc_finset (Finset.univ : Finset gs) fun i _ => hsurj V (i : Sec M V)) ?_
   intro W hW hl
@@ -63,8 +69,10 @@ theorem LateralTheory.EtaleFoundations.columnPf.kerLoc_of : kerLoc := by
     ∑ j, a j κ • (P.map hW.op).hom (q j) + ∑ g, c g κ • pt g (Finset.mem_univ g)
   have he : ∀ κ, (φ.app (op W)).hom (e κ) = 0 := fun κ => by
     have := congrArg (M.obj.map hW.op).hom (hrel κ)
-    simp only [map_add, map_sum, map_smul, map_zero] at this
-    simp only [e, map_add, map_sum, map_smul, nφ]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_sum, map_smul, map_zero] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [e, map_add (f := _), map_sum, map_smul, nφ]
     rw [← this]
     congr 1
     refine Finset.sum_congr rfl fun g _ => ?_
@@ -74,15 +82,18 @@ theorem LateralTheory.EtaleFoundations.columnPf.kerLoc_of : kerLoc := by
     have hz : ∀ g : gs, ∑ κ, (G.obj.map hW.op).hom (y κ) ⊗ₜ[ULift.{1} R] (c g κ • pt g (Finset.mem_univ g)) = 0 :=
       fun g => by
         have := congrArg (fun z => (G.obj.map hW.op).hom z ⊗ₜ[ULift.{1} R] pt g (Finset.mem_univ g)) (hc g)
-        simp only [map_zero, TensorProduct.zero_tmul, map_sum, map_smul, TensorProduct.sum_tmul] at this
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [map_zero, TensorProduct.zero_tmul, map_sum, map_smul, TensorProduct.sum_tmul] at this
         rw [this]
         refine Finset.sum_congr rfl fun κ _ => ?_
         rw [TensorProduct.tmul_smul, TensorProduct.smul_tmul']
     simp only [e, TensorProduct.tmul_add, TensorProduct.tmul_sum, Finset.sum_add_distrib]
-    rw [Finset.sum_comm (s := Finset.univ) (t := (Finset.univ : Finset gs)), Finset.sum_congr rfl fun g _ => hz g,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.sum_comm (s := Finset.univ) (t := (Finset.univ : Finset gs)), Finset.sum_congr rfl fun g _ => hz g,
       Finset.sum_const_zero, add_zero, map_sum, Finset.sum_comm]
     refine Finset.sum_congr rfl fun j _ => ?_
-    rw [TensorProduct.map_tmul, hb j, map_sum, TensorProduct.sum_tmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [TensorProduct.map_tmul, hb j, map_sum, TensorProduct.sum_tmul]
     refine Finset.sum_congr rfl fun κ _ => ?_
     rw [map_smul, TensorProduct.tmul_smul, TensorProduct.smul_tmul']
   refine loc_mono (loc_finset (Finset.univ : Finset (Fin l)) fun κ _ => hker W (e κ) (he κ)) ?_
@@ -92,7 +103,8 @@ theorem LateralTheory.EtaleFoundations.columnPf.kerLoc_of : kerLoc := by
       (TensorProduct.map (G.obj.map hW.op).hom (P.map hW.op).hom (∑ j, b j ⊗ₜ[ULift.{1} R] q j)) := by
     rw [← LinearMap.comp_apply, ← TensorProduct.map_comp]
     simp only [op_comp, Functor.map_comp, ModuleCat.hom_comp]
-  rw [hcomp, hu', map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hcomp, hu', map_sum]
   refine Finset.sum_eq_zero fun κ _ => ?_
   rw [TensorProduct.map_tmul, hk' κ (Finset.mem_univ κ), TensorProduct.tmul_zero]
 

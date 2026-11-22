@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.LocalDef
-import Development.WeilBound.CoreStatements.LocalThetaKernels.Locrep
+module
+
+public import Development.WeilBound.CoreStatements.CompactAveragingSplitting.EigenvectorLifting.LocalDef
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.Locrep
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ theorem repr_map (f : R →ₐ[F] R') (y : R ⊗[F] E) (i) : (Algebra.TensorProd
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul a e => simp [Algebra.TensorProduct.basis_repr_tmul]
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
 
 theorem lmm_map (f : R →ₐ[F] R') (y : R ⊗[F] E) :
     Algebra.leftMulMatrix (Algebra.TensorProduct.basis R' (Module.finBasis F E))
@@ -51,8 +55,8 @@ abbrev Qv : Type := AF F ⧸ Ideal.span {atPlace v (1 : Fv F v)}
 
 def awF : AF F →ₐ[F] Qv v := Ideal.Quotient.mkₐ F _
 
-variable (E) in
 
+variable (E) in
 def aw : AE F E →+* Qv v ⊗[F] E := (Algebra.TensorProduct.map (awF v) (AlgHom.id F E)).toRingHom
 
 theorem awF_at (a : Fv F v) : awF v (atPlace v a) = 0 :=
@@ -76,7 +80,7 @@ omit [NumberField E] in
 theorem aw_tensAt (y : Ev E v) : aw E v (tensAt E v y) = 0 := by
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy, add_zero]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, add_zero]
   | tmul a x =>
     change awF v (atPlace v a) ⊗ₜ[F] x = 0
     rw [awF_at, TensorProduct.zero_tmul]
@@ -85,7 +89,7 @@ omit [NumberField E] in
 theorem smul_tensAt (a : Fv F v) (y : Ev E v) : tensAt E v (a • y) = atPlace v a • tensAt E v y := by
   induction y using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, smul_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), smul_add, hx, hy]
   | tmul b x =>
     rw [TensorProduct.smul_tmul', tensAt_tmul, tensAt_tmul, TensorProduct.smul_tmul', smul_eq_mul, smul_eq_mul,
       atPlace_mul_right, evFin_atPlace]
@@ -94,7 +98,7 @@ omit [NumberField E] in
 theorem tensAt_comp (z : AE F E) : tensAt E v (compFin F E v z) = atPlace v (1 : Fv F v) • z := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, smul_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), smul_add, hx, hy]
   | tmul b x =>
     change atPlace v (evFin F v b) ⊗ₜ[F] x = _
     rw [TensorProduct.smul_tmul', smul_eq_mul, atPlace_mul_right, one_mul]
@@ -115,22 +119,22 @@ omit [NumberField E] in
 theorem comp_cA (z : AE F E) : compFin F E v (cA σ z) = cV σ v (compFin F E v z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul b x => rfl
 
-variable (σ) in
 
+variable (σ) in
 def cQ : Qv v ⊗[F] E →ₐ[Qv v] Qv v ⊗[F] E := Algebra.TensorProduct.map (AlgHom.id _ _) σ
 
 omit [NumberField E] in
 theorem aw_cA (z : AE F E) : aw E v (cA σ z) = cQ σ v (aw E v z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul b x => rfl
 
-variable (E) in
 
+variable (E) in
 def liftE : Ev E v →* AE F E where
   toFun y := 1 + tensAt E v (y - 1)
   map_one' := by simp
@@ -212,8 +216,8 @@ omit [NumberField E] [Fintype β] in
 theorem aw_lift' (m : Matrix β β (Ev E v)) : (1 + (m - 1).map (tensAt E v)).map (aw E v) = 1 := by
   rw [Matrix.map_add _ (map_add _), aw_up, Matrix.map_one _ (map_zero _) (map_one _), add_zero]
 
-variable (E β) in
 
+variable (E β) in
 def liftM : Matrix β β (Ev E v) →* Matrix β β (AE F E) where
   toFun m := 1 + (m - 1).map (tensAt E v)
   map_one' := by rw [sub_self, Matrix.map_zero _ (map_zero _), add_zero]
@@ -257,8 +261,8 @@ theorem exists_liftU {J : Matrix β β (AE F E)} {Jv : Matrix β β (Ev E v)} (h
     rw [Matrix.map_sub _ (map_sub _), Matrix.map_one _ (map_zero _) (map_one _), sub_eq_zero] at this
     exact (aw_liftM v _).trans this.symm
 
-variable (v) in
 
+variable (v) in
 def locW (w : (κ → AF F) × (κ → AF F)) : (κ → Fv F v) × (κ → Fv F v) := (evA κ v w.1, evA κ v w.2)
 
 omit [Fintype κ] in
@@ -279,7 +283,8 @@ theorem in_locW (w : (κ → AF F) × (κ → AF F)) :
     rw [atPlace_mul_right, one_mul]
 
 theorem ev_dot (a b : κ → AF F) : evFin F v (a ⬝ᵥ b) = evA κ v a ⬝ᵥ evA κ v b := by
-  simp only [dotProduct, map_sum, map_mul]; rfl
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dotProduct, map_sum, map_mul]; rfl
 
 variable {JA : Matrix α α (AE F E)} {JB : Matrix β β (AE F E)} {JAv : Matrix α α (Ev E v)} {JBv : Matrix β β (Ev E v)}
 
@@ -294,7 +299,8 @@ theorem ev_symp (hA : JA.map (compFin F E v) = JAv) (hB : JB.map (compFin F E v)
   subst hA hB
   rw [symp, symp, ← trace_map']
   change _ = Algebra.trace _ _ (compFin F E v _)
-  simp only [hTens, map_mul, map_sum, map_neg, map_one, comp_cA, Matrix.map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hTens, map_mul, map_sum, map_neg, map_one, comp_cA, Matrix.map_apply]
 
 omit [DecidableEq α] [DecidableEq β] in
 theorem exists_locD (hA : JA.map (compFin F E v) = JAv) (hB : JB.map (compFin F E v) = JBv)
@@ -308,7 +314,7 @@ theorem exists_locD (hA : JA.map (compFin F E v) = JAv) (hB : JB.map (compFin F 
              invFun := fun p => (co.e.symm (inA κ v p.1, inA κ v p.2)).map (compFin F E v)
              left_inv := fun w => ?_
              right_inv := fun p => ?_ }, fun w w' => ?_⟩, key⟩
-  · rw [Matrix.map_add _ (map_add _), map_add]
+  · rw [Matrix.map_add _ (map_add _), map_add (f := _)]
     exact Prod.ext (map_add _ _ _) (map_add _ _ _)
   · rw [show (a • w).map (tensAt E v) = atPlace v a • w.map (tensAt E v) from Matrix.ext fun _ _ => smul_tensAt v _ _,
       map_smul, locW_smul]

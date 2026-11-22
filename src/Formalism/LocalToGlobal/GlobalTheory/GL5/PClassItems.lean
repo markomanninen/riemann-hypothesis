@@ -1,9 +1,14 @@
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.UJClassFin
-import Formalism.PeriodIntegrals.UJClassMassAlt
-import Formalism.PeriodIntegrals.MassRankOne
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.FiniteDimensionalOfOrtho
-import Formalism.LocalToGlobal.GlobalTheory.GL5.PClassZero
-import Formalism.LocalToGlobal.GlobalTheory.GL5.PClassSteps
+module
+
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.UJClassFin
+public import Formalism.PeriodIntegrals.UJClassMassAlt
+public import Mathlib
+public import Formalism.HermitianLattices.StatementMass
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.FiniteDimensionalOfOrtho
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.DiscreteSeriesOfFormalDegree
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.PClassSteps
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,64 +41,31 @@ theorem class_number_finite_rank (D : D7) (n : ℕ) : ClassFinAt D n := classFin
 
 theorem class_mass_of_genus_classes (hM : PI.UJClassMass2.UJClassMass) (D : D7) : ClassMass D := by
   intro W hW hsig n g hcov hdisj
+  classical
+  have hL : Submodule.IsFullLattice D.host.E W.L0 := by
+    refine { toIsLattice := W.standardTuple_isLattice, span_eq_top := ?_ }
+    obtain ⟨c, hc, hlow⟩ := StabFin.crd_low (F := D.host.F) W
+    let a : D.host.E := (c : D.host.F) • (1 : D.host.E)
+    have ha : a ≠ 0 := by
+      change (c : D.host.F) • (1 : D.host.E) ≠ 0
+      rw [Algebra.smul_def, mul_one]
+      exact (algebraMap D.host.F D.host.E).injective.ne (NumberField.RingOfIntegers.coe_ne_zero_iff.mpr hc)
+    rw [eq_top_iff, ← W.frame.span_eq, Submodule.span_le]
+    rintro _ ⟨i, rfl⟩
+    have hi : a • W.frame i ∈ W.L0 := by
+      have h := hlow i 1 isIntegral_one
+      change ∑ j, (Pi.single i a : Fin W.rank → D.host.E) j • W.frame j ∈ W.L0 at h
+      rwa [Finset.sum_eq_single i (fun j _ hj => by rw [Pi.single_eq_of_ne hj, zero_smul])
+        (fun h => absurd (Finset.mem_univ i) h), Pi.single_eq_same] at h
+    have hframe : W.frame i = a⁻¹ • (a • W.frame i) := by
+      rw [smul_smul, inv_mul_cancel₀ ha, one_smul]
+    rw [hframe]
+    exact Submodule.smul_mem _ _ (Submodule.subset_span hi)
   exact hM D.host.F D.host.E D.sp.cm.sig W.V W.hT W.rank W.frame W.L0 (fun _ => rfl) (exists_sig_ne D)
-    (fun τ => D.sp.cm.cmUnram.2.1 τ) W.herm W.nondeg W.standardTuple_isLattice
+    (fun τ => D.sp.cm.cmUnram.2.1 τ) W.herm W.nondeg hL
     (fun τ => by have h1 := hW τ; rw [hsig τ] at h1; exact h1) n g hcov hdisj
 
-theorem classMass_of_steps (hG : ClassSteps.LatGenus) (hS : PI.UnitaryGroupMassFormula.UJClassMass.SurjStep) (D : D7) : ClassMass D :=
-  class_mass_of_genus_classes (ClassSteps.uJClassMass_of_genus hG hS) D
 
-theorem defClassDecomp_of_UJ (hM : PI.UJClassMass2.UJClassMass) (D : D7) : DefClassDecomp D :=
-  defClassDecomp_of_rest D (defClassRest_of D (class_number_finite D) (class_mass_of_genus_classes hM D))
-
-theorem volume_mass_of_genus_classes (D : D7) (hT : VolTie D) (hG : GenusMassStd D) (hM : PI.UJClassMass2.UJClassMass) :
-    DefiniteVolumeEqMass D :=
-  volume_mass_of_class_items D hT hG (class_number_finite D) (class_mass_of_genus_classes hM D)
-
-theorem Link2_of_UJ (hM : PI.UJClassMass2.UJClassMass) : Link2 :=
-  Link2_of_items (fun _ _ _ _ => class_number_finite _) (fun _ _ _ _ => class_mass_of_genus_classes hM _)
-
-theorem isIntegralLat_of_unimod {E : Type} [Field E] [NumberField E] [StarRing E] (W : HSpace E) :
-    Formalism.HermitianLatticesTheory.IsIntegralLat W.hT W.L0 := by
-  intro x hx y hy
-  have hd : y ∈ Formalism.HermitianLatticesTheory.dual W.hT W.L0 := by rw [W.baseLattice_isUnimodular]; exact hy
-  have h1 := (Submodule.mem_iInf _).1 hd x
-  exact (Submodule.mem_iInf _).1 h1 hx
-
-theorem isPosDef_of_sig (D : D7) (W : HSpace D.host.E) (hW : W.SigOK) (hsig : ∀ τ, W.sig τ = (W.rank, 0)) :
-    PI.MassRankOne.IsPosDef W.hT := by
-  intro τ x hx
-  obtain ⟨c, hc, e⟩ := W.form_pos hW τ (D.sp.cm.cmUnram.2.1 τ) (hsig τ) x hx
-  rw [e, Complex.ofReal_re]
-  exact hc
-
-theorem genusMassAt_one_of (hR : PI.MassRankOne.MassRankOne) (D : D7) : GenusMassAt D 1 := by
-  intro W hW hsig hrk
-  unfold massI
-  exact hR D.host.E D.sp.cm.cmUnram W.V (Fin 1 → D.host.E) W.hT (stdForm D.host.E 1) W.L0
-    (stdLat D.host.E 1) W.herm (isPosDef_of_sig D W hW hsig) (W.rank_eq.trans hrk) W.standardTuple_isLattice
-    (isIntegralLat_of_unimod W) (Formalism.HermitianLattices.Ext.L3.stdForm_isSymm D.host.E 1)
-    (Formalism.HermitianLattices.Ext.L3.stdLat_isOrtho D.host.E 1)
-
-theorem classItemsAt_of_UJ (hM : PI.UJClassMass2.UJClassMass) (D : D7) (n : ℕ) (hG : GenusMassAt D n) :
-    ClassItemsAt D n :=
-  ⟨hG, class_number_finite_rank D n, classMassAt_of D (class_mass_of_genus_classes hM D) n⟩
-
-theorem classItemsAt_one_of_UJ (hR : PI.MassRankOne.MassRankOne) (hM : PI.UJClassMass2.UJClassMass) (D : D7) :
-    ClassItemsAt D 1 :=
-  classItemsAt_of_UJ hM D 1 (genusMassAt_one_of hR D)
-
-variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
-
-theorem volume_eq_mass_of_genus (D : D7) (hT : VolTie D) (hV : VolRatioTrue D) (hG2 : GenusMassAt D 2)
-    (hM : PI.UJClassMass2.UJClassMass) : BaseVolumeEqualsMass D :=
-  volume_eq_mass_of_ratio D hT hV (classItemsAt_of_UJ hM D 2 hG2)
-
-variable [Fact Formalism.HermitianLattices.Ext.L3.HermRepUnram] in
-
-theorem volume_mass_indefinite_genus (D : D7) (hT : VolTie D) (hV : VolRatioTrue D) (hG2 : GenusMassAt D 2)
-    (hR : PI.MassRankOne.MassRankOne) (hM : PI.UJClassMass2.UJClassMass) : VolumeEqMass₂ D :=
-  volume_mass_of_low_ranks D hT hV (classItemsAt_one_of_UJ hR hM D) (classItemsAt_of_UJ hM D 2 hG2)
 
 end Formalism.L2.GlobalTheoryTheory.GenusMassVolumes
 

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceOmBlock
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FormModel
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceOmBlock
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FormModel
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.FormNormSumIdentities
 

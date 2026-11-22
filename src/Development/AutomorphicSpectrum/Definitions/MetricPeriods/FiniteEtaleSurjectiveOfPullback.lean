@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsCoordsAtOfCoordTie
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatRestrictComapSpan
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsVBOnDualAndBidual
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsHodgeLine
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsCoordsAtOfCoordTie
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LatRestrictComapSpan
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.IsVBOnDualAndBidual
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.PCoordConeArithVar
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,8 +47,8 @@ theorem unitAt_iff_of_valAt {a : Ω} {r : R} (h : ValAt ξ z a r) (hz : genPt ξ
     obtain ⟨_, s, hs, -⟩ := h
     exact ⟨h0, ⟨s, hs⟩, ⟨t, ht⟩⟩
 
-omit [Fintype K] [∀ k, Fintype (J k)] in
 
+omit [Fintype K] [∀ k, Fintype (J k)] in
 theorem valAt_aeval {σ : Type} {a : σ → Ω} {r : σ → R} (hz : genPt ξ ⤳ centre z) (h : ∀ p, ValAt ξ z (a p) (r p))
     (s : MvPolynomial σ ℤ) : ValAt ξ z (MvPolynomial.aeval a s) (MvPolynomial.aeval r s) := by
   induction s using MvPolynomial.induction_on with
@@ -52,12 +56,12 @@ theorem valAt_aeval {σ : Type} {a : σ → Ω} {r : σ → R} (hz : genPt ξ �
   | add p q hp hq =>
     obtain ⟨_, x, hx, hx'⟩ := hp
     obtain ⟨_, y, hy, hy'⟩ := hq
-    exact ⟨hz, x + y, by rw [map_add, map_add, hx, hy],
-      (map_add (Scheme.stalkClosedPointTo z).hom x y).trans (by rw [map_add, ← hx', ← hy']; rfl)⟩
+    exact ⟨hz, x + y, by rw [map_add (f := _), map_add (f := _), hx, hy],
+      (map_add (Scheme.stalkClosedPointTo z).hom x y).trans (by rw [map_add (f := _), ← hx', ← hy']; rfl)⟩
   | mul_X p i hp => simpa using CoordModel.valAt_mul hp (h i)
 
-omit [Fintype K] [∀ k, Fintype (J k)] in
 
+omit [Fintype K] [∀ k, Fintype (J k)] in
 theorem inBlockChart_centre_iff (hw : CoordsAt ξ x z w) (hz : genPt ξ ⤳ centre z) (c : ∀ k, J k) :
     InBlockChart ξ x c ⟨centre z, hz⟩ ↔ ∀ k, w ⟨k, c k⟩ ≠ 0 := by
   refine forall_congr' fun k => ⟨fun h => ?_, fun h => ?_⟩
@@ -124,16 +128,8 @@ theorem ptIdeal_centre (hw : CoordsAt ξ x z w) (hz : genPt ξ ⤳ centre z) :
     obtain ⟨d, hd⟩ := hT g hg
     exact ⟨d, hd, fun c hc => (key g d hd c hc).2 (e ▸ Ideal.subset_span hg)⟩
 
-theorem mCoordIdeal_le_ptIdeal (ξ : Spec (CommRingCat.of Ω) ⟶ Z) (x : (Σ k, J k) → Ω) (q : Cpt ξ) :
-    mCoordIdeal x ≤ ptIdeal ξ x q := by
-  obtain ⟨T, hT, e⟩ := GroundTheory.Heights₂.Heights.CoordinateConeArithVar.isMultiHomogIdeal x
-  refine e.le.trans (Ideal.span_mono fun g hg => ?_)
-  obtain ⟨d, hd⟩ := hT g hg
-  refine ⟨d, hd, fun c _ h => h.1 ?_⟩
-  rw [(form_mem_mCoordIdeal_iff x hd).1 (e ▸ Ideal.subset_span hg), zero_div]
 
 omit [∀ k, Fintype (J k)] in
-
 theorem exists_inBlockChart (h : CoordTie ℤ ξ fun c' : (k : K) → J k => ∏ k, x ⟨k, c' k⟩) (q : Cpt ξ) :
     ∃ c, InBlockChart ξ x c q := by
   classical
@@ -157,19 +153,6 @@ theorem exists_ptIdeal_eq (h : CoordTie ℤ ξ fun c' : (k : K) → J k => ∏ k
   obtain ⟨c, hc⟩ := exists_inBlockChart h ⟨centre z, hz⟩
   obtain ⟨w, hw⟩ := CoordModel.exists_coordsAt x hz (fun k => ⟨c k, hc k⟩) h.gen
   exact ⟨_, inferInstance, z, w, e, hw, (congrArg (ptIdeal ξ x) eq).trans (ptIdeal_centre hw hz)⟩
-
-theorem ptIdeal_isPrime (h : CoordTie ℤ ξ fun c' : (k : K) → J k => ∏ k, x ⟨k, c' k⟩) (q : Cpt ξ) :
-    (ptIdeal ξ x q).IsPrime := by
-  obtain ⟨R, _, z, w, -, -, e⟩ := exists_ptIdeal_eq h q
-  rw [e]
-  exact RingHom.ker_isPrime _
-
-theorem ptIdeal_isRelevant (h : CoordTie ℤ ξ fun c' : (k : K) → J k => ∏ k, x ⟨k, c' k⟩) (q : Cpt ξ) :
-    IsRelevant (ptIdeal ξ x q) := by
-  obtain ⟨R, _, z, w, -, hw, e⟩ := exists_ptIdeal_eq h q
-  rw [e]
-  choose c hc using hw.1
-  exact GroundTheory.Heights₂.Heights.CoordinateConeArithVar.relevant w c fun k => (hc k).ne_zero
 
 theorem RegAt.mem_regAt (h : CoordTie ℤ ξ fun c' : (k : K) → J k => ∏ k, x ⟨k, c' k⟩) {q : Cpt ξ} {s : Ω}
     (hs : RegAt x (ptIdeal ξ x q) s) : s ∈ regAt ξ q := by
@@ -252,7 +235,7 @@ theorem IsBlockDiag.det_eq_blocks {T : Matrix (Fin (p + q)) (Fin (p + q)) R} (h 
 
 theorem minorIJ_omIdx (T : Matrix (Fin (p + q)) (Fin (p + q)) R) :
     minorIJ T (omIdx (p + q) p) (omIdx (p + q) p) = (omBlock T).det := by
-  rw [minorIJ, dif_pos rfl]
+  rw [minorIJ, dite_eq_left rfl]
   let e : Fin q ≃ omIdx (p + q) p := Equiv.ofBijective (fun a => ⟨omEmb p q a, (mem_omIdx_iff p q _).2 ⟨a, rfl⟩⟩)
     ⟨fun a b h => (omEmb_strictMono p q).injective (congrArg Subtype.val h),
       fun i => let ⟨a, ha⟩ := (mem_omIdx_iff p q _).1 i.2; ⟨a, Subtype.ext ha⟩⟩
@@ -264,7 +247,7 @@ theorem minorIJ_omIdx (T : Matrix (Fin (p + q)) (Fin (p + q)) R) :
 
 theorem minorIJ_wIdx (T : Matrix (Fin (p + q)) (Fin (p + q)) R) :
     minorIJ T (wIdx (p + q) p) (wIdx (p + q) p) = (wBlock T).det := by
-  rw [minorIJ, dif_pos rfl]
+  rw [minorIJ, dite_eq_left rfl]
   let e : Fin p ≃ wIdx (p + q) p := Equiv.ofBijective (fun a => ⟨wEmb p q a, (mem_wIdx_iff p q _).2 ⟨a, rfl⟩⟩)
     ⟨fun a b h => (wEmb_strictMono p q).injective (congrArg Subtype.val h),
       fun i => let ⟨a, ha⟩ := (mem_wIdx_iff p q _).1 i.2; ⟨a, Subtype.ext ha⟩⟩
@@ -289,13 +272,6 @@ theorem colFrame_mul {V : Type} [AddCommGroup V] [Module R V] {r : ℕ} (e : Fin
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by rw [mul_comm]
 
-example : omBlock (p := 1) (q := 2) !![(1 : ℤ), 2, 0; 3, 4, 0; 0, 0, 5] = !![1, 2; 3, 4] ∧
-    wBlock (p := 1) (q := 2) !![(1 : ℤ), 2, 0; 3, 4, 0; 0, 0, 5] = !![5] := by
-  constructor <;> decide
-
-example : colFrame (R := ℤ) (fun a : Fin 2 => (Pi.single a 1 : Fin 2 → ℤ)) !![1, 2; 0, 1] 1 = ![2, 1] := by
-  decide
-
 end Blocks
 
 section DualMetric
@@ -307,33 +283,6 @@ def DualGramAt (M : LieModel G ξ Li) (L : LB G.left) (z : Spec (CommRingCat.of 
     (φ : Fin r → Module.Dual Ω V) (Γ' : Matrix (Fin r) (Fin r) ℂ) : Prop :=
   ∃ (v : Fin r → V) (Γ : Matrix (Fin r) (Fin r) ℂ), (∀ a b, φ a (v b) = if a = b then 1 else 0) ∧
     M.GramAt L z (fun b => (v b : Li)) Γ ∧ Γ'ᵀ * Γ = 1
-
-theorem gramAt_conjTranspose {M : LieModel G ξ Li} {L : LB G.left} {z : Spec (CommRingCat.of ℂ) ⟶ Z} {r : ℕ}
-    {b : Fin r → Li} {Γ : Matrix (Fin r) (Fin r) ℂ} (h : M.GramAt L z b Γ) : M.GramAt L z b Γᴴ :=
-  let ⟨v, hv, h'⟩ := h
-  ⟨v, hv, fun p q => (h' q p).conj⟩
-
-theorem dualGram_inner {r : ℕ} {Γ Γ' : Matrix (Fin r) (Fin r) ℂ} (hΓ : Γ.IsHermitian) (h : Γ'ᵀ * Γ = 1)
-    {y y' u u' : Fin r → ℂ} (hu : ∀ x, star u ⬝ᵥ Γ *ᵥ x = y ⬝ᵥ x) (hu' : ∀ x, star u' ⬝ᵥ Γ *ᵥ x = y' ⬝ᵥ x) :
-    star y ⬝ᵥ Γ' *ᵥ y' = star u' ⬝ᵥ Γ *ᵥ u := by
-  have rep : ∀ {y u : Fin r → ℂ}, (∀ x, star u ⬝ᵥ Γ *ᵥ x = y ⬝ᵥ x) → star u ᵥ* Γ = y := fun {y u} hu =>
-    dotProduct_eq _ _ fun x => by rw [← Matrix.dotProduct_mulVec, hu]
-  have h1 : Γ' *ᵥ y' = star u' := by
-    rw [← rep hu', ← Matrix.vecMul_transpose, Matrix.vecMul_vecMul, mul_eq_one_comm.1 h, Matrix.vecMul_one]
-  have h2 : star y = Γ *ᵥ u := by
-    rw [← rep hu, Matrix.star_vecMul, star_star, hΓ.eq]
-  rw [h1, h2, dotProduct_comm]
-
-theorem dualGram_norm {r : ℕ} {Γ Γ' : Matrix (Fin r) (Fin r) ℂ} (hΓ : Γ.IsHermitian) (h : Γ'ᵀ * Γ = 1)
-    {y u : Fin r → ℂ} (hu : ∀ x, star u ⬝ᵥ Γ *ᵥ x = y ⬝ᵥ x) : star y ⬝ᵥ Γ' *ᵥ y = star u ⬝ᵥ Γ *ᵥ u :=
-  dualGram_inner hΓ h hu hu
-
-theorem dualGram_det {r : ℕ} {Γ Γ' : Matrix (Fin r) (Fin r) ℂ} (h : Γ'ᵀ * Γ = 1) : Γ'.det * Γ.det = 1 := by
-  rw [← Matrix.det_transpose Γ', ← Matrix.det_mul, h, Matrix.det_one]
-
-example : (!![2, Complex.I; -Complex.I, 1] : Matrix (Fin 2) (Fin 2) ℂ)ᵀ * !![1, Complex.I; -Complex.I, 2] = 1 := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> simp [Matrix.mul_apply, Fin.sum_univ_two] <;> ring
 
 end DualMetric
 
@@ -417,16 +366,6 @@ def FlagTie.wFrame (tie : FlagTie M 𝔐) (F : FrameData ι (CMType H) (D.p + D.
 
 def FlagTie.omFrame (tie : FlagTie M 𝔐) (F : FrameData ι (CMType H) (D.p + D.q) M.Ω M.blk) (τ : CMType H) :
     Fin D.q → Module.Dual M.Ω (𝔐.Vgen (.inr τ)) := colFrame (tie.eO τ) (omBlock (F.T τ))
-
-theorem exists_goodFrame (𝔐 : HodgeCpt Y S M.x) (q : Cpt 𝔐.ξ) :
-    ∃ F, M.IsFrame F ∧ M.GoodAt F (ptIdeal 𝔐.ξ M.x q) :=
-  M.frames _ (ptIdeal_isPrime 𝔐.tie q) (ptIdeal_isRelevant 𝔐.tie q) (mCoordIdeal_le_ptIdeal _ _ q)
-
-theorem FlagTie.exists_frames (tie : FlagTie M 𝔐) (q : Cpt 𝔐.ξ) :
-    ∃ F, M.IsFrame F ∧ M.GoodAt F (ptIdeal 𝔐.ξ M.x q) ∧ ∀ τ,
-      (𝔐.V (.inl τ)).IsFrameAt (tie.wFrame F τ) q ∧ (omBundle 𝔐 τ).IsFrameAt (tie.omFrame F τ) q :=
-  let ⟨F, h, h'⟩ := exists_goodFrame 𝔐 q
-  ⟨F, h, h', fun τ => ⟨tie.frameW q F h h' τ, tie.frameO q F h h' τ⟩⟩
 
 theorem FlagTie.frames_centre (tie : FlagTie M 𝔐) {R : Type} [Field R] {z : Spec (CommRingCat.of R) ⟶ 𝔐.X}
     {w : (Σ k, baseIdx ι M.blk k) → R} (hw : CoordsAt 𝔐.ξ M.x z w)

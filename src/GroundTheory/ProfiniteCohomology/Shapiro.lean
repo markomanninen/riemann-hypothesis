@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.ShapiroDefs
-import GroundTheory.ProfiniteCohomology.CoinducedModules.CohomologyCoindCokernelIsoHom
-import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality.QuotientToInvariantsFunctorPreservesZeroMorphism
-import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality.Naturality
-import GroundTheory.ProfiniteCohomology.InflationRestriction.Coinduced
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.ShapiroDefs
+public import GroundTheory.ProfiniteCohomology.CoinducedModules.CohomologyCoindCokernelIsoHom
+public import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality.QuotientToInvariantsFunctorPreservesZeroMorphism
+public import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality.Naturality
+public import GroundTheory.ProfiniteCohomology.InflationRestriction.Coinduced
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -63,7 +68,6 @@ variable [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G] (U : OpenS
 
 section Naturality
 
-@[reassoc]
 theorem shapiroMap_naturality {B B' : Rep.{u} k (U : Subgroup G)} [IsDiscreteRep B]
     [IsDiscreteRep B'] (g : B ⟶ B') (n : ℕ) :
     cohomologyMap (Rep.coindMap (U : Subgroup G).subtype g) n ≫ shapiroMap U B' n =
@@ -121,7 +125,7 @@ noncomputable def coindDiscreteCoindIso :
 theorem isZero_cohomology_coind_discreteCoind (n : ℕ) :
     IsZero (cohomology (Rep.coind.{u} (U : Subgroup G).subtype
       (discreteCoind k (U : Subgroup G) X)) (n + 1)) :=
-  (isZero_cohomology_discreteCoind k G X n).of_iso
+  (isZero_cohomology_discreteCoind (k := k) (G := G) (X := X) n).of_iso
     (cohomologyIsoOfIso (coindDiscreteCoindIso U X) (n + 1))
 
 end Acyclic
@@ -131,7 +135,6 @@ section DegreeZero
 variable (B : Rep.{u} k (U : Subgroup G)) [IsDiscreteRep B]
 
 omit [IsTopologicalGroup G] [CompactSpace G] [IsDiscreteRep B] in
-
 theorem coind_invariant_apply (f : (Rep.coind (U : Subgroup G).subtype B).ρ.invariants) (x : G) :
     f.1.1 x = f.1.1 1 := by
   have h : f.1.1 (1 * x) = f.1.1 1 :=
@@ -228,7 +231,7 @@ theorem isIso_shapiroMap (n : ℕ) :
 
     have hδU : Epi (δ hX n (n + 1) rfl) :=
       (cohomology_exact₁ hX n (n + 1) rfl).epi_f
-        ((isZero_cohomology_discreteCoind k (U : Subgroup G) B n).eq_of_tgt _ _)
+        ((isZero_cohomology_discreteCoind (k := k) (G := (U : Subgroup G)) (X := B) n).eq_of_tgt _ _)
     have hδG : Epi (δ hY n (n + 1) rfl) :=
       (cohomology_exact₁ hY n (n + 1) rfl).epi_f
         ((isZero_cohomology_coind_discreteCoind U B n).eq_of_tgt _ _)
@@ -275,11 +278,6 @@ instance isIso_shapiroMap' (B : Rep.{u} k (U : Subgroup G)) [IsDiscreteRep B] (n
 noncomputable def shapiroIso (B : Rep.{u} k (U : Subgroup G)) [IsDiscreteRep B] (n : ℕ) :
     cohomology (Rep.coind (U : Subgroup G).subtype B) n ≅ cohomology B n :=
   asIso (shapiroMap U B n)
-
-@[simp]
-theorem shapiroIso_hom (B : Rep.{u} k (U : Subgroup G)) [IsDiscreteRep B] (n : ℕ) :
-    (shapiroIso U B n).hom = shapiroMap U B n :=
-  rfl
 
 end Shapiro
 

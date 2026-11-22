@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.IsLocallyConstantRankAtStalkEigenSub
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import Development.AbelianVarietyTheory.Proofs.HermitianTraceForms.IsLocallyConstantRankAtStalkEigenSub
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -13,10 +17,10 @@ namespace GlobalTheory.TraceSpread
 
 variable {E : Type} [Field E] [NumberField E]
 
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField in
 open scoped CategoryTheory.Obj TensorProduct in
 variable {E : Type} [Field E] [NumberField E] in
-
 theorem _root_.GlobalTheory.TraceSpread.isSplitting_embeddings (K : Type) [Field K] [IsAlgClosed K]
     [CharZero K] :
     _root_.GlobalTheory.EigenSplit.IsSplitting fun φ : E →+* K => φ.comp (algebraMap (𝓞 E) E) := by
@@ -47,10 +51,10 @@ private lemma ringOfIntegers_ringHom_injective' {K : Type} [Field K] [CharZero K
   rw [map_intCast] at this
   exact hz (Int.cast_eq_zero.mp this)
 
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField in
 open scoped CategoryTheory.Obj TensorProduct in
 variable {E : Type} [Field E] [NumberField E] in
-
 theorem _root_.GlobalTheory.TraceSpread.exists_embedding {K : Type} [Field K] [CharZero K]
     (τ : 𝓞 E →+* K) :
     ∃ φ : E →+* K, φ.comp (algebraMap (𝓞 E) E) = τ := by
@@ -58,10 +62,10 @@ theorem _root_.GlobalTheory.TraceSpread.exists_embedding {K : Type} [Field K] [C
   ext a
   exact IsFractionRing.lift_algebraMap (ringOfIntegers_ringHom_injective' τ) a
 
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField in
 open scoped CategoryTheory.Obj TensorProduct in
 variable {E : Type} [Field E] [NumberField E] in
-
 theorem _root_.GlobalTheory.TraceSpread.trace_eq_sum {K : Type} [Field K] [IsAlgClosed K]
     [CharZero K] {V : Type} [AddCommGroup V] [Module K V]
     [Module.Finite K V] (ρ : 𝓞 E →+* Module.End K V) (a : 𝓞 E) :
@@ -83,16 +87,17 @@ theorem _root_.GlobalTheory.TraceSpread.trace_eq_sum {K : Type} [Field K] [IsAlg
     exact (_root_.GlobalTheory.EigenSplit.mem_eigenSub.mp x.2) a
   rw [hres, map_smul, LinearMap.trace_id, smul_eq_mul, mul_comm]
 
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField in
 open scoped CategoryTheory.Obj TensorProduct in
 variable {E : Type} [Field E] [NumberField E] in
-
 theorem _root_.GlobalTheory.TraceSpread.map_trace {R K : Type} [CommRing R] [CommRing K]
     {n : ℕ} (f : R →+* K) (A : Module.End R (Fin n → R))
     (A' : Module.End K (Fin n → K)) (h : ∀ c, f ∘ A c = A' (f ∘ c)) :
     f (LinearMap.trace R _ A) = LinearMap.trace K _ A' := by
   classical
-  rw [LinearMap.trace_eq_matrix_trace R (Pi.basisFun R (Fin n)),
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [LinearMap.trace_eq_matrix_trace R (Pi.basisFun R (Fin n)),
     LinearMap.trace_eq_matrix_trace K (Pi.basisFun K (Fin n)), Matrix.trace, Matrix.trace, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   simp only [Matrix.diag_apply, LinearMap.toMatrix_apply, Pi.basisFun_repr, Pi.basisFun_apply]
@@ -121,11 +126,11 @@ private lemma intTrace_cast_eq_sum_embeddings {K : Type} [Field K] [IsAlgClosed 
     _ = ∑ φ : E →+* K, φ a :=
       (Fintype.sum_equiv (RingHom.equivRatAlgHom E K) _ _ fun φ => rfl).symm
 
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField in
 open scoped CategoryTheory.Obj TensorProduct in
 variable {E : Type} [Field E] [NumberField E] in
 variable [IsCMField E] in
-
 theorem _root_.GlobalTheory.TraceSpread.finrank_iff_trace (H : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (p q : ℕ) {K : Type} [Field K]
     [IsAlgClosed K] [CharZero K] {V : Type}
     [AddCommGroup V] [Module K V] [Module.Finite K V] (ρ : 𝓞 E →+* Module.End K V) (s : K)
@@ -207,9 +212,9 @@ theorem _root_.GlobalTheory.TraceSpread.finrank_iff_trace (H : _root_.Reciprocit
 
 end GlobalTheory.TraceSpread
 
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField in
 open scoped CategoryTheory.Obj TensorProduct in
-
 theorem _root_.GlobalTheory.eigenMult_of_dense : ∀ (E : Type) [Field E] [NumberField E]
     [IsCMField E] (H : _root_.ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (p q n : ℕ) (R : Type) [CommRing R] [IsReduced R]
     (M : 𝓞 E →+* Module.End R (Fin n → R)) (r : R), r ^ 2 = -(H.d : R) →
@@ -233,7 +238,7 @@ theorem _root_.GlobalTheory.eigenMult_of_dense : ∀ (E : Type) [Field E] [Numbe
         ((p + q) * f₁ r * ((Algebra.intTrace ℤ (𝓞 E) a : ℤ) : K₁) +
           (p - q) * ((Algebra.intTrace ℤ (𝓞 E) (H.rt * a) : ℤ) : K₁)) := by
     intro K₁ _ f₁ M₁ h₁ a
-    simp only [X, map_sub, map_add, map_mul, map_natCast, map_intCast, map_ofNat]
+    simp only [X, map_sub, map_add (f := _), map_mul, map_natCast, map_intCast, map_ofNat]
     rw [_root_.GlobalTheory.TraceSpread.map_trace f₁ (M a) (M₁ a) (h₁ a)]
   have hX : ∀ a, X a = 0 := by
     intro a

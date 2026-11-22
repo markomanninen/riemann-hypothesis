@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.IsChart
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.IsChart
+
+@[expose] public section
 
 open GroundTheory.FunctionField UpperTheory.Et.Sel
 open scoped TensorProduct
@@ -22,12 +26,14 @@ theorem UpperTheory.exists_finite_span_kummerSelmer_representatives :
       (IsAlgClosed.degree_eq_one_of_irreducible k (minpoly.irreducible hz.isIntegral))
   obtain ⟨x, hxt, hfd⟩ := IsFunctionField.exists_transcendental_finiteDimensional (k := k) (K := K)
   have hd : 0 < Module.finrank (IntermediateField.adjoin k ({x} : Set K)) K := Module.finrank_pos
-  set E : Divisor k K := genus k K • poleDivisor x with hE
-  have hdegE : (genus k K : ℤ) ≤ Divisor.deg E := by
+  obtain ⟨γ, hγ⟩ := Divisor.exists_bound_deg_sub_finrank_L (k := k) (K := K)
+  set n := γ.toNat + 1
+  set E : Divisor k K := n • poleDivisor x with hE
+  have hdegE : (n : ℤ) ≤ Divisor.deg E := by
     rw [hE, map_nsmul, Divisor.deg_poleDivisor hxt, nsmul_eq_mul]
     have h1 : (1 : ℤ) ≤ (Module.finrank (IntermediateField.adjoin k ({x} : Set K)) K : ℤ) := by
       exact_mod_cast hd
-    have h2 : (0 : ℤ) ≤ (genus k K : ℤ) := by positivity
+    have h2 : (0 : ℤ) ≤ (n : ℤ) := by positivity
     nlinarith
   set V := (q • E).L with hV
   let b := Module.finBasis k V
@@ -48,8 +54,15 @@ theorem UpperTheory.exists_finite_span_kummerSelmer_representatives :
     rcases mul_eq_zero.mp h0 with h | h
     · exact absurd h hq
     · exact h
-  have hri := Divisor.riemann_inequality hcl (D + E)
-  rw [map_add, hdegD, zero_add] at hri
+  have hri := hγ (D + E)
+  rw [map_add (f := _), hdegD, zero_add] at hri
+  have hn : γ < (n : ℤ) := by
+    dsimp [n]
+    by_cases h : 0 ≤ γ
+    · rw [Int.toNat_of_nonneg h]
+      omega
+    · have : (0 : ℤ) ≤ (γ.toNat : ℤ) := by positivity
+      omega
   have hpos : 0 < Module.finrank k (D + E).L := by omega
   obtain ⟨⟨h, hmem⟩, hne⟩ := Module.finrank_pos_iff_exists_ne_zero.mp hpos
   have hh : h ≠ 0 := fun h0 => hne (Subtype.ext h0)

@@ -1,4 +1,8 @@
-import Formalism.LandauZeroFreeBounds.SameCharacterLFunctionOne
+module
+
+public import Formalism.LandauZeroFreeBounds.SameCharacterLFunctionOne
+
+@[expose] public section
 
 open Complex
 noncomputable section

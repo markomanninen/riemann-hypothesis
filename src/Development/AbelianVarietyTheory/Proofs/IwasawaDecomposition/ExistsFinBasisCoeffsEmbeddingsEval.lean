@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField
 
@@ -29,7 +33,8 @@ theorem embeddings_eval_onto (L : Type) [Field L] [NumberField L] (K : Type) [Fi
       simpa [M, Matrix.row, Finset.sum_apply] using this
     funext x
     rw [← b.sum_repr x]
-    simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, Pi.zero_apply, map_sum]
     have : ∀ σ : L →+* K, ∀ i, σ (b.repr x i • b i) = (b.repr x i : K) * σ (b i) := by
       intro σ i
       rw [Algebra.smul_def, map_mul]

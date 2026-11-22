@@ -1,19 +1,24 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HkSum
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HkLocal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.SumInner
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.MatBlock
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.Gl2LocalToAdelicEmbedding
-import Development.AutomorphicArithmetic.WhittakerHecke.BlockDiagonalEqLeviEmbedding
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSliceB
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HkSum
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HkLocal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.SumInner
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.MatBlock
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.Gl2LocalToAdelicEmbedding
+public import Development.AutomorphicArithmetic.WhittakerHecke.BlockDiagonalEqLeviEmbedding
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.UmgOps
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PSliceB
+
+@[expose] public section
+
 open MeasureTheory NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.CompanionTheory.CTFin GlobalTheory.LFun Formalism.UG Formalism.UG.P
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace UpperTheory.ConvolutionTheory.BW
 
 theorem UpperTheory.constantTerm_heckeOperator_eq_sum_satake :
-    ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (r s : ℕ) (w : Pl E) (ϖ : w.adicCompletion E) (hϖ : ϖ ∈ Ov E w) (hu : IsUnifV E w ϖ)
-      [Fintype (satakeRes (Ov E w) ⟨ϖ, hϖ⟩)] (j : ℕ), j ≤ r + s → ∀ φ : Sm E (r + s), Umg φ → (∀ k ∈ KGL w (r + s), rw (r + s) w k φ = φ) → ∀ (x : GA E r) (m : GA E s),
-      AutomorphicForm.constantTerm r (heckeVec (rw (r + s) w) (KGL w (r + s)) (Tj ℂ (r + s) (Ov E w) ϖ j) φ).1 (lev (Ad E) r s (x, m)) =
+    ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (r s : ℕ) (w : Pl E) (ϖ : w.adicCompletion E) (hϖ : ϖ ∈ Ov E w) (hu : IsUnifV E w ϖ)
+      [Fintype (satakeRes (Ov E w) ⟨ϖ, hϖ⟩)] (j : ℕ), j ≤ r + s → ∀ φ : Sm E (r + s), Umg φ → (∀ k ∈ KGL w (n := (r + s)), rw (r + s) w k φ = φ) → ∀ (x : GA E r) (m : GA E s),
+      AutomorphicForm.constantTerm r (heckeVec (rw (r + s) w) (KGL w (n := (r + s))) (Tj ℂ (r + s) (Ov E w) ϖ j) φ).1 (lev (Ad E) r s (x, m)) =
         ∑ p : Fin (r + 1) × Fin (s + 1), UpperTheory.V.Cj.S.coef (qV E w) r s j p *
           ∑ i₁ : SatakeIdx w hϖ (n := r) p.1, ∑ i₂ : SatakeIdx w hϖ (n := s) p.2,
             AutomorphicForm.constantTerm r φ.1 (lev (Ad E) r s (x * finGL E r (locGL E r w (satakeB w hϖ hu i₁)), m * finGL E s (locGL E s w (satakeB w hϖ hu i₂)))) := by
@@ -21,7 +26,7 @@ theorem UpperTheory.constantTerm_heckeOperator_eq_sum_satake :
   have hc : Continuous φ.1 := ((UpperTheory.ConvolutionTheory.BW.umgOps E (r + s)).2 φ hφ).1
   obtain ⟨b1, b2, b3, -⟩ := UpperTheory.V.Cj.S.gl2_local_to_adelic_embedding E w r s
   have h1 := UpperTheory.V.Cj.S.hkSum E w (r + s) (Sm E (r + s)) (rw (r + s) w) ϖ hϖ hu j hj φ (GlobalTheory.LGrp.mem_fixed.2 hK)
-  have h2 : ∀ g, AutomorphicForm.constantTerm r (heckeVec (rw (r + s) w) (KGL w (r + s)) (Tj ℂ (r + s) (Ov E w) ϖ j) φ).1 g =
+  have h2 : ∀ g, AutomorphicForm.constantTerm r (heckeVec (rw (r + s) w) (KGL w (n := (r + s))) (Tj ℂ (r + s) (Ov E w) ϖ j) φ).1 g =
       ∑ i : SatakeIdx w hϖ (n := r + s) j,
         AutomorphicForm.constantTerm r φ.1 (g * finGL E _ (locGL E _ w (satakeB w hϖ hu i))) := fun g => by
     unfold AutomorphicForm.constantTerm

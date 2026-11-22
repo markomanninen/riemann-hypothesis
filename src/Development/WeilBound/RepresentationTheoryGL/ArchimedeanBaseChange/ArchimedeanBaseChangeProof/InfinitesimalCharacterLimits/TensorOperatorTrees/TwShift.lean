@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.AllLeaves
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PProjA
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.AllLeaves
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PProjA
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,45 @@ theorem chiDet_unip_absC {N r : ℕ} (z : ℂ) (x : BlockIx N r → Ad E) : chiD
 theorem chiDet_lev_absC {r s : ℕ} (z : ℂ) (m : GA E r × GA E s) :
     chiDet (r + s) (Model.absC E z) (lev (Ad E) r s m) =
       chiDet r (Model.absC E z) m.1 * chiDet s (Model.absC E z) m.2 := by
-  simp only [chiDet, MonoidHom.comp_apply, lev, det_emb₂, map_mul]
+  change ((Model.absC E z : HChar E) : GlobalTheory.Mem.Chr.Ideles E →* ℂˣ)
+      (Matrix.GeneralLinearGroup.det (lev (Ad E) r s m)) =
+    ((Model.absC E z : HChar E) : GlobalTheory.Mem.Chr.Ideles E →* ℂˣ)
+      (Matrix.GeneralLinearGroup.det m.1) *
+    ((Model.absC E z : HChar E) : GlobalTheory.Mem.Chr.Ideles E →* ℂˣ)
+      (Matrix.GeneralLinearGroup.det m.2)
+  rw [← map_mul]
+  congr 1
+  classical
+  let e := two (stdSum (rfl : r + s = r + s))
+  let g := leviTwo (Ad E) (Fin r) (Fin s) m
+  change Matrix.GeneralLinearGroup.det (leviEmb (Ad E) e g) = _
+  have hp : (((leviEmb (Ad E) e g : GA E (r + s)) :
+      Matrix (Fin (r + s)) (Fin (r + s)) (Ad E))).BlockTriangular (blk e) := by
+    intro i j hij
+    obtain ⟨⟨a, x⟩, rfl⟩ := e.surjective i
+    obtain ⟨⟨b, y⟩, rfl⟩ := e.surjective j
+    have hab : a ≠ b := by simpa using hij.ne'
+    simp [leviEmb, Matrix.blockDiagonal'_apply, hab]
+  ext
+  rw [Matrix.GeneralLinearGroup.val_det_apply, Units.val_mul,
+    Matrix.GeneralLinearGroup.val_det_apply, Matrix.GeneralLinearGroup.val_det_apply, hp.det_fintype]
+  rw [Fintype.prod_bool, mul_comm]
+  have hb (a : Bool) : Function.Bijective (fun i : Two (Fin r) (Fin s) a =>
+      (⟨e ⟨a, i⟩, blk_apply e a i⟩ : {k // blk e k = a})) := by
+    constructor
+    · intro i j hij
+      have h := e.injective (Subtype.ext_iff.1 hij)
+      simpa using h
+    · rintro ⟨k, hk⟩
+      obtain ⟨⟨b, i⟩, rfl⟩ := e.surjective k
+      simp only [blk_apply] at hk
+      subst hk
+      exact ⟨i, rfl⟩
+  congr 1 <;> rw [← Matrix.det_submatrix_equiv_self (Equiv.ofBijective _ (hb _))]
+  all_goals
+    congr 1
+    ext i j
+    simp [leviEmb, Matrix.toSquareBlock, Matrix.toSquareBlockProp, Matrix.blockDiagonal'_apply_eq, g, leviTwo]
 
 theorem mulChi_mem_finVec {n : ℕ} (χ : HChar E) {φ : Sm E n} (h : φ ∈ finVec (cptRep E n)) :
     mulChi n χ φ ∈ finVec (cptRep E n) := by
@@ -80,7 +122,7 @@ theorem mulChi_mem_shift (z : ℂ) {N : ℕ} (t : Tr E N) :
     induction hφ using Submodule.span_induction with
     | mem φ h => exact Submodule.subset_span ⟨memInd2_mulChi z hA hB h.1, mulChi_mem_finVec _ h.2⟩
     | zero => rw [map_zero]; exact Submodule.zero_mem _
-    | add a b _ _ ha hb => rw [map_add]; exact Submodule.add_mem _ ha hb
+    | add a b _ _ ha hb => rw [map_add (f := _)]; exact Submodule.add_mem _ ha hb
     | smul c a _ ha => rw [map_smul]; exact Submodule.smul_mem _ c ha
 
 theorem twShift : TwShift := by

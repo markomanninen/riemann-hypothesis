@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
-import Formalism.HarderNarasimhan.ShiftInvariance
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LamXEquivariant
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NearTrivialPointwise
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FgOfHtNeZero
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PackingGeometricMeanSeparated
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OrthogonalCanonicalFiltrationStepsAutPointStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LayerProd
+public import Formalism.HarderNarasimhan.ShiftInvariance
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LamXEquivariant
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NearTrivialPointwise
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FgOfHtNeZero
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.PackingGeometricMeanSeparated
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.OrthogonalCanonicalFiltrationStepsAutPointStatement
+
+@[expose] public section
 
 open GlobalTheory.Count Formalism.MainNotions.S Formalism.HN Formalism.REAL Matrix NumberField MeasureTheory Finset
 
@@ -27,7 +31,7 @@ theorem norm_op_conj_le {n : ℕ} (g : Matrix (Fin n) (Fin n) ℂ) :
     congr 1
     refine Finset.sum_congr rfl fun i _ => ?_
     have : op (g.map (starRingEnd ℂ)) u i = starRingEnd ℂ (op g u' i) := by
-      simp [op, u', Matrix.toEuclideanLin_apply, Matrix.mulVec, dotProduct]
+      simp [op, u', Matrix.toLpLin_apply, Matrix.mulVec, dotProduct]
     rw [this, RCLike.norm_conj]
   rw [h2, ← h1]
   exact (op g).le_opNorm u'
@@ -111,7 +115,7 @@ theorem mulVec_mem (x y a : I.GA) (γ : GL (Fin I.n) I.E)
 
 theorem lamX_ne_bot (hn : 1 ≤ I.n) (x : I.GA) : lamX I x ≠ ⊥ := by
   intro h0
-  have h1 := (GlobalTheory.NearLowerCompare.lamX_isLattice I x).span_eq_top
+  have h1 := (GlobalTheory.T.autPointLatticeIntersection_selfDual_properties I x).2.2.1
   rw [h0] at h1
   have : Nonempty (Fin I.n) := ⟨⟨0, hn⟩⟩
   simp at h1
@@ -147,7 +151,7 @@ theorem separated (hn : 1 ≤ I.n) (x y a b : I.GA) (ha : a ∈ I.GFset) (hb : b
       apply hne
       apply Matrix.toLin'.injective
       rw [map_zero]
-      refine LinearMap.ext_on hy.span_eq_top fun z hz => ?_
+      refine LinearMap.ext_on (GlobalTheory.T.autPointLatticeIntersection_selfDual_properties I y).2.2.1 fun z hz => ?_
       exact (Submodule.eq_bot_iff _).1 h0 _ ⟨z, hz, rfl⟩)
   rw [(GlobalTheory.T.orthogonal_canonicalFiltration_steps_autPoint I y).2.1 hn, div_inv_eq_mul] at h
   have e1 : (nPl I.E : ℝ) = Fintype.card (InfinitePlace I.F) := by

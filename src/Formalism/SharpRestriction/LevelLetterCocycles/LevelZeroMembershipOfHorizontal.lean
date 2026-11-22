@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusPowerZeroEqQ
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusPowerZeroEqQ
+
+@[expose] public section
 
 noncomputable section
 

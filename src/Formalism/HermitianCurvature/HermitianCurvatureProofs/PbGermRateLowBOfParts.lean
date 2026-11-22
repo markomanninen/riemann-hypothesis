@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PtSizePtG
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PtSizeToStd
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormSumLeOfForm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermRateSplit
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PtSizePtG
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PtSizeToStd
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormSumLeOfForm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermRateSplit
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.FormNormSumIdentities
 
@@ -70,7 +74,7 @@ theorem gN_setC_zero (S : C.HidaSetting E Wp Wq) (p : ∀ v, KB.Pl (D.parOf S v)
   unfold KB.gN C.HidaSetting.gramLoc PBL.setC KB.withRR
   simp only
   unfold PBL.rrC KB.Pl.RR D.RRplace
-  rw [dif_neg (fun h => hP ((isLocPt_toStdD S.G.r hg 1 P i).1 h.1))]
+  rw [dite_eq_right (fun h => hP ((isLocPt_toStdD S.G.r hg 1 P i).1 h.1))]
   simp
 
 end cut
@@ -483,8 +487,3 @@ end final
 end
 
 end Formalism.FourierDecayAlt.P.FormNormSumIdentities
-
-theorem Formalism.FourierDecayAlt.P.pb_germRateLowB_of_parts :
-    Formalism.FourierDecayAlt.P.FormNormSumIdentities.GermPlace → Formalism.FourierDecayAlt.P.FormNormSumIdentities.GNSetC → Formalism.FourierDecayAlt.P.FormNormSumIdentities.GermConst →
-      Formalism.FourierDecayAlt.P.GermRateSplit.GermRateLowB :=
-  Formalism.FourierDecayAlt.P.FormNormSumIdentities.germRateLowB_of

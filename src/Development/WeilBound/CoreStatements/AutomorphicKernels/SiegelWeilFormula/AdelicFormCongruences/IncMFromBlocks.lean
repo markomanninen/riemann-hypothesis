@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LowerRankDatum
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FourierCompactness.SigmaSigmaOfGood
-import Development.WeilBound.ThetaLifts.LatticeBasics.IsCompactIntV
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LowerRankDatum
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.FourierCompactness.SigmaSigmaOfGood
+public import Development.WeilBound.ThetaLifts.LatticeBasics.IsCompactIntV
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -199,8 +203,8 @@ theorem rat_blocks {b : GL (Fin n ⊕ Fin n) E} (g : G2 σ Y) (hg : g ∈ rat2 �
     rw [Matrix.toBlocks_fromBlocks₂₂] at this
     exact this
 
-variable (σ Y) in
 
+variable (σ Y) in
 def cNA (b : GL (Fin n ⊕ Fin n) E) (P Q P' Q' : Matrix (Fin n) (Fin n) (AE F E))
     (h : ∀ β : nA σ Y b, P * β.1 * Q ∈ nA σ Y b) (h' : ∀ β : nA σ Y b, P' * β.1 * Q' ∈ nA σ Y b)
     (e1 : P' * P = 1) (e2 : Q * Q' = 1) (e3 : P * P' = 1) (e4 : Q' * Q = 1) : nA σ Y b ≃ₜ+ nA σ Y b where
@@ -222,7 +226,8 @@ def cNA (b : GL (Fin n ⊕ Fin n) E) (P Q P' Q' : Matrix (Fin n) (Fin n) (AE F E
 
 theorem trace_incM {p : Type} [Fintype p] (M : Matrix p p E) :
     (incM F M).trace = inclR (F := F) (AF F) M.trace := by
-  simp [Matrix.trace, incM, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [Matrix.trace, incM, map_sum]
 
 theorem psi_rat_trace {ψ : AddChar (AF F) ℂ} (hψ : ∀ x : F, ψ (algebraMap F (AF F) x) = 1) (M : Matrix (Fin n) (Fin n) E) :
     ψ (-(Algebra.trace (AF F) (AE F E) (incM F M).trace)) = 1 := by
@@ -242,7 +247,7 @@ theorem cNA_pres (hσ : ∀ a, σ (σ a) = a) {b : GL (Fin n ⊕ Fin n) E} (hb :
   have : (lam.map τ.symm).IsAddHaarMeasure := τ.symm.isAddHaarMeasure_map lam
   have e1 := Measure.isAddLeftInvariant_eq_smul (lam.map τ) lam
   have e2 := Measure.isAddLeftInvariant_eq_smul (lam.map τ.symm) lam
-  have hq : Measure.QuasiMeasurePreserving τ.symm lam lam := ⟨hm', by
+  have hq : Measure.QuasiMeasurePreserving τ.symm lam lam := ⟨hm'.aemeasurable, by
     rw [e2]
     exact Measure.AbsolutelyContinuous.rfl.smul_left _⟩
   let eF : nF σ Y b ≃ nF σ Y b :=
@@ -253,7 +258,7 @@ theorem cNA_pres (hσ : ∀ a, σ (σ a) = a) {b : GL (Fin n ⊕ Fin n) E} (hb :
   have hfd : IsAddFundamentalDomain (nF σ Y b) (τ '' 𝓖) lam :=
     h𝓖.image_of_equiv τ.toEquiv hq eF fun γ x => by
       show τ (τ.symm γ.1 + x) = γ.1 + τ x
-      rw [map_add, τ.apply_symm_apply]
+      rw [map_add (f := _), τ.apply_symm_apply]
   refine ⟨⟨hm, ?_⟩, hfd⟩
   have hmeas : lam (τ '' 𝓖) = 1 := (hfd.measure_eq h𝓖).trans h1
   let τm : nA σ Y b ≃ᵐ nA σ Y b := τ.toHomeomorph.toMeasurableEquiv
@@ -340,7 +345,7 @@ theorem fc_levi (hσ : ∀ a, σ (σ a) = a) {b : GL (Fin n ⊕ Fin n) E} (hb : 
     congr 1
     obtain ⟨S, hS⟩ := (mem_nF_iff γ.1).1 γ.2
     obtain ⟨T1', hT1'⟩ := (mem_nF_iff T₁.1).1 T₁.2
-    rw [Matrix.mul_add, Matrix.trace_add, map_add, neg_add, AddChar.map_add_eq_mul, hT1', hS, ← kfour.incM_mul',
+    rw [Matrix.mul_add, Matrix.trace_add, map_add (f := _), neg_add, AddChar.map_add_eq_mul, hT1', hS, ← kfour.incM_mul',
       psi_rat_trace hψ, one_mul]
   have := hc.2.1
   unfold fc

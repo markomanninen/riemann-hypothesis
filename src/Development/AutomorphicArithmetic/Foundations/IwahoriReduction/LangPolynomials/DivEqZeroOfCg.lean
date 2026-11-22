@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.CardUn
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.SplitPow
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.DivAlg
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.CardUn
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.SplitPow
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.DivAlg
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ GlobalTheory.Col UpperTheory.Kd.C7
 

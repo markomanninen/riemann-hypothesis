@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenDegAmple
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenericFibreVar
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsMultiDegreePositive
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenDegTwist
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PIntersectionRecursion
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenDegAmple
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsGenericFibreVar
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsMultiDegreePositive
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PGenDegTwist
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PIntersectionRecursion
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -83,9 +88,11 @@ theorem GenDegAmple.proof (hVar : GenericFibreVar.Statement) (hPos : MultiDegree
     simp [unitDeg, Finset.sum_apply, Pi.single_apply]
   have expand : ∀ b : K → ℤ,
       f (fun _ => b) = ∑ r : Fin D → K, (∏ j, b (r j)) * f (fun j => unitDeg (r j)) := fun b => by
-    rw [hsum b, f.map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsum b, f.map_sum]
     refine Finset.sum_congr rfl fun r _ => ?_
     rw [f.map_smul_univ (fun j => b (r j)) (fun j => unitDeg (r j)), smul_eq_mul]
+    simp only [RingHom.id_apply]
   rw [hg, expand d]
   have hH' := hH
   rw [expand (fun _ => (1 : ℤ))] at hH'
@@ -93,7 +100,7 @@ theorem GenDegAmple.proof (hVar : GenericFibreVar.Statement) (hPos : MultiDegree
   refine lt_of_lt_of_le hH' (Finset.sum_le_sum fun r _ => ?_)
   have hp : (1 : ℤ) ≤ ∏ j, d (r j) := by
     calc (1 : ℤ) = ∏ _j : Fin D, (1 : ℤ) := Finset.prod_const_one.symm
-      _ ≤ ∏ j, d (r j) := Finset.prod_le_prod (fun _ _ => zero_le_one) (fun j _ => hd (r j))
+      _ ≤ ∏ j, d (r j) := Finset.prod_le_prod₀ (fun _ _ => zero_le_one) (fun j _ => hd (r j))
   exact le_mul_of_one_le_left (hN r) hp
 
 end

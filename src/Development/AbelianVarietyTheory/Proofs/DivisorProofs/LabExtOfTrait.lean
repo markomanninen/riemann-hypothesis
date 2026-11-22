@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LabExt
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Definitions.Uniformization.SeriesFrame
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLabelsFinExt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFactorFieldPointThroughGenericPoint
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TorsionClause
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LabExt
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.SeriesFrame
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLabelsFinExt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFactorFieldPointThroughGenericPoint
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.TorsionClause
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -32,7 +37,8 @@ theorem Trait.exists_lift {C : LabCover D} {W : Type} [CommRing W] [IsDomain W] 
     rw [← Over.comp_left, Iso.hom_inv_id, Over.id_left]
   refine ⟨Over.homMk (g₂ ≫ T.U.gen.hom.left) (by
     show (g₂ ≫ T.U.gen.hom.left) ≫ T.A.A.hom = jFK (R := W) F
-    rw [Category.assoc, hs]; exact pullback.lift_snd _ _ _), ?_⟩
+    rw [Category.assoc, hs]
+    exact pullback.lift_snd _ _ _), ?_⟩
   show (g₂ ≫ T.U.gen.hom.left) ≫ T.U.gen.inv.left ≫ pullback.fst T.G.hom (jK W) ≫ T.β = z
   rw [Category.assoc, reassoc_of% hgi, pullback.lift_fst_assoc]
   exact T.cart.1.lift_fst _ _ _

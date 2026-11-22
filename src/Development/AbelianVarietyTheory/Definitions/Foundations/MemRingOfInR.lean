@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
-import Development.AbelianVarietyTheory.Definitions.Foundations.ExpUpper
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModJTau
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasQIff
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExpUpper
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.ModJTau
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,7 +71,5 @@ structure Frac (Ω : Type) [Field Ω] [Algebra ℚ Ω] (ε : Ω →+* ℂ) where
 attribute [instance] Frac.fld Frac.alg
 
 theorem mem_ring_of_inR {E : Subring ℂ} {f : ℍ → ℂ} (h : InR E f) : f ∈ ring E := Subring.subset_closure h
-
-theorem den_zero {Ω : Type} [Field Ω] : Den (0 : HahnSeries ℚ Ω) := ⟨1, one_pos, fun r h => (h (by simp)).elim⟩
 
 end GlobalTheory.FN

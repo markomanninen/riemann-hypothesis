@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.GelfandTransference.Statement
-import Lemmata.DetNormLeProdRows.DetNormLeProdRows
+module
+
+public import Mathlib
+public import Formalism.GelfandTransference.Statement
+public import Lemmata.DetNormLeProdRows.DetNormLeProdRows
+
+@[expose] public section
 
 open Matrix Finset
 open scoped ComplexOrder
@@ -19,7 +23,7 @@ theorem hadamard_maximum_holds : Formalism.HadamardInequality.HadamardMax := by
   unfold Formalism.HadamardInequality.Hadamard at hH
   refine (hH ρ A).trans ?_
   calc ∏ i, ∑ j, ‖A i j‖ ^ 2 ≤ ∏ _i : Fin ρ, ((ρ : ℝ) * M ^ 2) := by
-        refine Finset.prod_le_prod (fun i _ => Finset.sum_nonneg fun j _ => by positivity)
+        refine Finset.prod_le_prod₀ (fun i _ => Finset.sum_nonneg fun j _ => by positivity)
           fun i _ => ?_
         calc ∑ j, ‖A i j‖ ^ 2 ≤ ∑ _j : Fin ρ, M ^ 2 := by
               refine Finset.sum_le_sum fun j _ => ?_

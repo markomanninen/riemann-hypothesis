@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsFrameIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsFrameIff
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj BigOperators
@@ -82,16 +86,16 @@ theorem transport {X₀ : Type} [AddCommGroup X₀] {q₀ : X₀ → ℤ} {Q : X
   · have h1 := h.1 i (e z)
     have h2 := hQ (e.symm (cls i))
     have h3 := hQ (e.symm (cls i) + k • z)
-    rw [map_add, map_nsmul] at h3
+    rw [map_add (f := _), map_nsmul] at h3
     rw [e.apply_symm_apply] at h2 h3
     rw [h2, h3] at h1
     exact le_of_mul_le_mul_left h1 (by exact_mod_cast hw)
   · have h1 := congrArg e hz
-    simp only [map_add, map_nsmul, e.apply_symm_apply] at h1
+    simp only [map_add (f := _), map_nsmul, e.apply_symm_apply] at h1
     simp only [h.2.1 i i' ⟨_, h1⟩]
   · obtain ⟨i, z, hz⟩ := h.2.2.1 (e α)
     refine ⟨i, e.symm z, e.injective ?_⟩
-    simp only [map_add, map_nsmul, e.apply_symm_apply]
+    simp only [map_add (f := _), map_nsmul, e.apply_symm_apply]
     exact hz
   · rw [← h.2.2.2 i₀]
     simp only [e.symm.injective.eq_iff]

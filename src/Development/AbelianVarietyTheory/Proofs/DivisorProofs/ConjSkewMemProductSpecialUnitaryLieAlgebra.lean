@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemDomOfOrth
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemDomOfOrth
+
+@[expose] public section
+
 open NumberField Matrix ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up ReciprocityTheory.L2DbarEstimates GlobalTheory.SUVol GlobalTheory.RiemConst GlobalTheory.SUChartSection
 open scoped ComplexConjugate ContDiff
 
@@ -32,7 +37,8 @@ theorem conj_mem_realLie : ∀ {E : Type} [Field E] [NumberField E] [IsCMField E
     have hconj : ∀ v : Fin r → ℂ, (fun b => conj ((D *ᵥ v) b)) = D.map (starRingEnd ℂ) *ᵥ (fun b => conj (v b)) := by
       intro v
       funext b
-      simp only [mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply]
     set M : Matrix (Fin r) (Fin r) ℂ := Dᵀ * Gt + Gt * D.map (starRingEnd ℂ) with hMdef
     have hsum : hermC τ.1 X.Gm (D *ᵥ u) w + hermC τ.1 X.Gm u (D *ᵥ w) =
         u ⬝ᵥ (M *ᵥ (fun b => conj (w b))) := by

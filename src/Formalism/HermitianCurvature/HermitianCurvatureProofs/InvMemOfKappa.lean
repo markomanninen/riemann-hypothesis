@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ReflectionTransposeEntriesMem
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SignedCoordinateEqSignSmul
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DiagonalTransferAction
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasurableOfContinuousOnZero
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.QNFAsm
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ReflectionTransposeEntriesMem
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SignedCoordinateEqSignSmul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DiagonalTransferAction
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.MeasurableOfContinuousOnZero
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.QNFAsm
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate
@@ -21,7 +25,7 @@ theorem aeval_mem' (𝒜 : StarSubalgebra ℂ A) {x : A} (hx : x ∈ 𝒜) (p : 
     Polynomial.aeval x p ∈ 𝒜 := by
   refine Polynomial.induction_on p (fun a => ?_) (fun p q hp hq => ?_) (fun n a _ => ?_)
   · rw [Polynomial.aeval_C]; exact 𝒜.algebraMap_mem a
-  · rw [map_add]; exact 𝒜.add_mem hp hq
+  · rw [map_add (f := _)]; exact 𝒜.add_mem hp hq
   · rw [map_mul, map_pow, Polynomial.aeval_C, Polynomial.aeval_X]
     exact 𝒜.mul_mem (𝒜.algebraMap_mem a) (𝒜.pow_mem hx _)
 

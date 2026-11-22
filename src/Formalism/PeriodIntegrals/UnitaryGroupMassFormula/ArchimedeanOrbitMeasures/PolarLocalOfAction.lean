@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.SqChartCore
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.SqChartCore
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,7 @@ theorem polar_local_of_orbit (hK : KPos) (h2 : OrbCont) (h4 : JacOneC) : PolarLo
   · show ((c (TI X u' hT))⁻¹).toReal = KVal X u'
     rw [hc0, inv_inv, ENNReal.toReal_ofReal hK0.le]
   · have ht : (c (TI X u' hT))⁻¹ ≠ ⊤ := ENNReal.inv_ne_top.2 hne0
-    have hinv : ContinuousAt (fun T => (c T)⁻¹) (TI X u' hT) := ENNReal.tendsto_inv_iff.2 hcc
+    have hinv : ContinuousAt (fun T => (c T)⁻¹) (TI X u' hT) := tendsto_inv_iff.2 hcc
     exact ContinuousAt.comp (g := ENNReal.toReal) (f := fun T => (c T)⁻¹) (ENNReal.continuousAt_toReal ht) hinv
   · intro φ hφ S hS hSm
     rw [hc φ hφ S (hS.trans Set.inter_subset_left) hSm]

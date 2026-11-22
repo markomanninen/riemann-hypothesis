@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.GaloisPermutationReps.SubquotientEquivalence.IsTypeMap
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.GaloisPermutationReps.SubquotientEquivalence.IsTypeMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,7 +99,7 @@ theorem st8a : St4 → St5 → St6 → St7 → St8a := by
       · exact Or.inl (Subrepresentation.toSubmodule_injective h)
       · exact Or.inr (Subrepresentation.toSubmodule_injective h)
   let d : IrrRep (GL (Fin n) k) := ⟨ℂ, 1, fun v => by simp, hirr⟩
-  let F : 𝓀[k][X] → IrrGL k := fun P =>
+  let F : 𝓀[k][X] → IrrGL (k := k) := fun P =>
     if hP : P ∈ Lab 𝓀[k] n then ⟨n, Quotient.mk _ (π P hP)⟩ else ⟨n, Quotient.mk _ d⟩
   have hF : ∀ P (hP : P ∈ Lab 𝓀[k] n), F P = ⟨n, Quotient.mk _ (π P hP)⟩ := by
     intro P hP

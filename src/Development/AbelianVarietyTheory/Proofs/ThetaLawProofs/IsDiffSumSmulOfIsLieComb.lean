@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.ChartLawPf
-import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.ChartLawPf
+public import Development.AbelianVarietyTheory.Proofs.ToricGeometry.TangentBijectionOfValues
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj MeasureTheory NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -31,7 +35,7 @@ theorem snd_dualLift_sum {k : ℕ} (c : Fin k → R) (t : Fin k → Fin n → R)
       exact (congrArg TrivSqZeroExt.snd this).trans rfl
     simp only [h, mul_zero, Finset.sum_const_zero]
   | add p q hp hq =>
-    simp only [map_add, TrivSqZeroExt.snd_add, hp, hq, mul_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), TrivSqZeroExt.snd_add, hp, hq, mul_add, Finset.sum_add_distrib]
   | mul_X p j hp =>
     have h : ∀ s : Fin n → R,
         (dualLift s (Ideal.Quotient.mk _ (p * MvPolynomial.X j))).snd =
@@ -78,8 +82,8 @@ theorem evalPt_of_eq {X : Scheme.{0}} (x : Sp (JetR R (Fin n) 1) ⟶ X) (U : X.O
 
 end DiffLin
 
-open GlobalTheory.TangentOrigin DiffLin in
 
+open GlobalTheory.TangentOrigin DiffLin in
 theorem isDiff_sum_smul_of_isLieComb :
     ∀ (A : Over (Sp ℂ)) [GrpObj A], IsAbelianScheme A → ∀ (L : LB A.left) (g n : ℕ) (u : HolUnif A L g)
     (v : Fin n → (epsR ℂ ⟶ A)) (W : Fin n → Fin g → ℂ) (c : Fin n → ℂ) (w : epsR ℂ ⟶ A),
@@ -99,7 +103,8 @@ theorem isDiff_sum_smul_of_isLieComb :
   have hU : ⊤ ≤ (x 1).left ⁻¹ᵁ U := top_le_preimage_of_dualLift _ U _ (ew ▸ h)
   obtain ⟨h', e'⟩ := evalPt_of_eq (x 1).left U hU _ w.left ew f
   change (evalPt (R := DualNumber ℂ) w.left U h' f).snd = _
-  rw [e', snd_dualLift_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e', snd_dualLift_sum, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   obtain ⟨hi, ei⟩ := evalPt_of_eq (x 1).left U hU _ (v i).left (ev i) f
   rw [← ei, map_smul, smul_eq_mul]

@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Foundations.FinalTheorems
+
+@[expose] public section
 
 namespace GlobalTheory.BoundedScalarNorm
 

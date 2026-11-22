@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StSchurW
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StSchurW
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem bh_meas_inv : Measurable (invM (k := k) (r := r)) := by
     h1.smul h2.measurable
   convert h3 using 1
   funext g
-  simp only [invM]
+  change Matrix.of.symm ((Matrix.of g : Mat k r)⁻¹) = _
   rw [Matrix.inv_def, Ring.inverse_eq_inv']
   rfl
 

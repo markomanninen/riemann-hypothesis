@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.KernelNormConstantSpec
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.PeriodLatticeFinitelyGenerated
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.KernelNormConstantSpec
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.PeriodLatticeFinitelyGenerated
+
+@[expose] public section
 
 noncomputable section
 
@@ -610,8 +614,8 @@ theorem rank_grid_lt {i : ℕ} (hi : i + 1 ≤ D.R.m) :
   rw [rank_grid G (i := i) (by omega), rank_grid G hi, e]
   omega
 
-variable (sc) in
 
+variable (sc) in
 theorem step_top {j : ℕ} (hj : j + 1 ≤ D.R.m) (τ : D.what₂.Tau) (r : Fin (G.V (.top (j + 1))).rank) :
     (wt G (.top (j + 1)) τ).natW r = if h : r.1 < (G.V (.top j)).rank then
       (wt G (.top j) τ).natW ⟨r.1, h⟩ + (wt G (.top (j + 1)) τ).natW ⟨(G.V (.top j)).rank - 1, rank_top_lt G hj⟩ else 0 := by
@@ -636,8 +640,8 @@ theorem step_top {j : ℕ} (hj : j + 1 ≤ D.R.m) (τ : D.what₂.Tau) (r : Fin 
     rw [add_zero]
     exact weightX_above D sc.cGap τ hj hx hy
 
-variable (sc) in
 
+variable (sc) in
 theorem step_grid {i : ℕ} (hi : i + 1 ≤ D.R.m) (τ : D.what₂.Tau) (r : Fin (G.V (.grid (i + 1) D.R.m)).rank) :
     (wt G (.grid (i + 1) D.R.m) τ).natW r = if h : r.1 < (G.V (.grid i D.R.m)).rank then
       (wt G (.grid i D.R.m) τ).natW ⟨r.1, h⟩ + (wt G (.grid (i + 1) D.R.m) τ).natW ⟨(G.V (.grid i D.R.m)).rank - 1, rank_grid_lt G hi⟩ else 0 := by

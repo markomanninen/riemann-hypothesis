@@ -1,4 +1,8 @@
-import Formalism.FormalDegreeBessel.StatementBF
+module
+
+public import Formalism.FormalDegreeBessel.StatementBF
+
+@[expose] public section
 
 open MeasureTheory Matrix
 
@@ -10,9 +14,6 @@ def IsHaarOn {k r : ℕ} (S : Set (Matrix (Fin (2 * r + k + 1)) (Fin (2 * r + k 
     (μ : Measure (Formalism.QuantumDeterminants.Mt k r)) : Prop :=
   SigmaFinite μ ∧ μ ≠ 0 ∧ μ {x | Matrix.of x ∉ S} = 0 ∧
     ∀ s ∈ S, μ.map (Formalism.QuantumDeterminants.lmulM s) = μ
-
-def muS {k r : ℕ} (μW μN : Measure (Formalism.QuantumDeterminants.Mt k r)) : Measure (Formalism.QuantumDeterminants.Mt k r) :=
-  (μW.prod μN).map (fun p => fun i j => (Matrix.of p.1 * Matrix.of p.2) i j)
 
 def realifyFun {m : ℕ} (X : Matrix (Fin m) (Fin m) ℂ) : Fin m × Fin m × Bool → ℝ :=
   fun p => if p.2.2 then (X p.1 p.2.1).im else (X p.1 p.2.1).re

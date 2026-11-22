@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.RepApi
-import Mathlib.LinearAlgebra.Matrix.Charpoly.Univ
-import Mathlib.Topology.Algebra.MvPolynomial
-import Mathlib.Topology.Instances.Matrix
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.RepAlg
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.RepApi
+public import Mathlib.LinearAlgebra.Matrix.Charpoly.Univ
+public import Mathlib.Topology.Algebra.MvPolynomial
+public import Mathlib.Topology.Instances.Matrix
+
+@[expose] public section
 
 open Polynomial UpperTheory.V.W
 

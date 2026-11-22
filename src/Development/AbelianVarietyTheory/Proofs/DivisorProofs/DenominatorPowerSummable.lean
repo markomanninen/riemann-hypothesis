@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfSecAlgTop
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqOfSecAlgTop
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry Opposite
 open scoped TensorProduct
 
@@ -9,9 +14,9 @@ end GlobalTheory.AffGlue
 
 namespace GlobalTheory.AffGlue
 
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry Opposite in
 open scoped TensorProduct in
-
 theorem _root_.GlobalTheory.AffGlue.existsUnique_ringHom_of_affineOpens : ∀ (Z : Scheme.{0}) (R : Type) [CommRing R] (φ : ∀ U : Z.affineOpens, R →+* Γ(Z, U)), (∀ (U V : Z.affineOpens) (h : (U : Z.Opens) ≤ V), (Z.presheaf.map (homOfLE h).op).hom.comp (φ V) = φ U) → ∃! Φ : R →+* Γ(Z, ⊤), ∀ U : Z.affineOpens, (Z.presheaf.map (homOfLE (le_top : (U : Z.Opens) ≤ ⊤)).op).hom.comp Φ = φ U := by
   intro Z R _ φ hφ
   have hcomp : ∀ {A B C : Z.Opens} (f : A ⟶ B) (g : B ⟶ C) (s : Γ(Z, C)),
@@ -56,7 +61,7 @@ theorem _root_.GlobalTheory.AffGlue.existsUnique_ringHom_of_affineOpens : ∀ (Z
         rw [map_mul, hs a W, hs b W, map_mul]).symm
       map_zero' := (hu 0 0 fun W => by rw [map_zero, map_zero]).symm
       map_add' := fun a b => (hu (a + b) (s a + s b) fun W => by
-        rw [map_add, hs a W, hs b W, map_add]).symm }
+        rw [map_add (f := _), hs a W, hs b W, map_add (f := _)]).symm }
   refine ⟨Φ, fun W => RingHom.ext fun r => hs r W,
     fun Ψ hΨ => RingHom.ext fun r => hu r (Ψ r) fun W => ?_⟩
   exact RingHom.congr_fun (hΨ W) r

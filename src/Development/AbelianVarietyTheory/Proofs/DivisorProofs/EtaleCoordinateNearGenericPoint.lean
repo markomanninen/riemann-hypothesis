@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BcDensEqOfGram
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopologicalKrullDimEqSucc
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsBasisKaehlerOfAlgebraicIndependent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BcDensEqOfGram
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TopologicalKrullDimEqSucc
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsBasisKaehlerOfAlgebraicIndependent
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -69,8 +73,8 @@ theorem exists_away (k A : Type) [CommRing k] [IsDomain k] [CharZero k] [IsNoeth
 
 variable {k : Type} [CommRing k] {X : Scheme.{0}} {p : X ⟶ Sp k} {D : ℕ}
 
-attribute [local instance] Algebra.TensorProduct.rightAlgebra in
 
+attribute [local instance] Algebra.TensorProduct.rightAlgebra in
 theorem trdeg_chart (h : IsArithVar p D) {A : Type} [CommRing A] [Algebra k A]
     (i : Sp A ⟶ X) [IsOpenImmersion i] (hi : i ≫ p = spMap (algebraMap k A)) [Nontrivial A] :
     Algebra.trdeg k A = D := by
@@ -120,10 +124,5 @@ theorem exists_etale_coords [IsIntegral X] (h : IsArithVar p D) :
     rwa [zero_add] at this
   refine ModelCharts.exists_etale_coords_of_opens p D j.opensRange ?_
   exact ⟨genericPoint _, genericPoint_eq_of_isOpenImmersion j⟩
-
-theorem exists_etale_coord_surface : ∀ (k : Type) [CommRing k] (X : Scheme.{0}) (p : X ⟶ Sp k)
-    [IsIntegral X], IsArithVar p 1 → ∃ (U : X.Opens) (x : Fin 1 → Γ(X, U)), IsAffineOpen U ∧
-      genericPoint X ∈ U ∧ (MvPolynomial.eval₂Hom (algX p U) x).Etale :=
-  fun _ _ _ _ _ h => exists_etale_coords h
 
 end GlobalTheory.GenericEtale

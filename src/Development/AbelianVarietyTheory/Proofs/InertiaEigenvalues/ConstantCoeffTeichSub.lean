@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemEurOfTeichmullerSeries
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NilpotentOfNotIsUnit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.MemEurOfTeichmullerSeries
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NilpotentOfNotIsUnit
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations GlobalTheory.Cyc PowerSeries
 
@@ -46,7 +50,7 @@ theorem algHom_exists (y : A) (hc : GlobalTheory.Per.AinfComplete.Summ y)
       induction n with
       | zero => simp
       | succ n ih =>
-        rw [trunc_succ, map_add, ih, Finset.sum_range_succ, Polynomial.aeval_monomial, mul_comm]
+        rw [trunc_succ, map_add (f := _), ih, Finset.sum_range_succ, Polynomial.aeval_monomial, mul_comm]
     rw [e]
     exact Ideal.mem_span_singleton.1 (hL n)
   choose L hL using h1
@@ -69,7 +73,7 @@ theorem algHom_exists (y : A) (hc : GlobalTheory.Per.AinfComplete.Summ y)
     rw [← sub_eq_zero]
     refine hs _ fun n => ?_
     have := hL (a + b) n
-    rw [map_add, map_add] at this
+    rw [map_add (f := _), map_add (f := _)] at this
     convert dvd_sub (dvd_sub this (hL a n)) (hL b n) using 1
     ring
   have hmul : ∀ a b, L (a * b) = L a * L b := fun a b => by
@@ -110,7 +114,7 @@ theorem ne_zero_of_coeff {B : Type*} [CommRing B] [IsDomain B] [CharP B l] (ψ :
     intro a ha
     by_cases h : ((l : ℕ) : ℤ_[l]) ∣ constantCoeff a
     · obtain ⟨c, hc⟩ := h
-      rw [eq_X_mul_shift_add_const a, hc, map_add, map_mul, map_mul, map_mul, map_natCast,
+      rw [eq_X_mul_shift_add_const a, hc, map_add (f := _), map_mul, map_mul, map_mul, map_natCast,
         map_natCast, CharP.cast_eq_zero, zero_mul, add_zero]
       exact mul_ne_zero hX (ih _ (by simpa using ha))
     · exact h0 a h
@@ -169,7 +173,7 @@ theorem main : ∀ (l : ℕ) [Fact l.Prime], ∀ e : OCb l, ¬ IsUnit (e - 1) �
       exact isUnit_of_mul_isUnit_right h)
     have hio' : io X = WittVector.teichmuller l e - 1 := hio
     have e1 : (io.comp (phi l ℤ_[l])) X = WittVector.teichmuller l (e ^ l) - 1 := by
-      rw [AlgHom.comp_apply, phi_X, map_sub, map_pow, map_add, map_one, hio', map_pow]
+      rw [AlgHom.comp_apply, phi_X, map_sub, map_pow, map_add (f := _), map_one, hio', map_pow]
       ring
     have e2 : ((frobA l).comp io) X = WittVector.teichmuller l (e ^ l) - 1 := by
       rw [AlgHom.comp_apply, hio', map_sub, map_one]

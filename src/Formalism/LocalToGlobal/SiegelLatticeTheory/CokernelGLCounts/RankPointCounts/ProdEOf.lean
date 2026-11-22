@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ProdECut
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ProdECut
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,7 +81,80 @@ theorem mem_CZ_glob (hA : ∀ p, Agree δ M p) (L U : Formalism.L2.SG.PairVal.Ma
   have hLi := ZsVolGrp.isLoUni_inv hL
   have hUi := ZsVolGrp.isUpUni_inv hU
   have hLdet : IsUnit L.det := by rw [ZsVolGrp.det_lo (fun a => (hL a a).2 rfl) (fun a b h => (hL a b).1 h)]; exact isUnit_one
-  rw [ZsVolGrp.mem_CZ M δ u u' Zh L hLdet]
+  have hmem (a : Formalism.L2.SG.PairVal.GLR D) : a ∈ ZsVolCut.CZ M δ u u' Zh L ↔ a ∈ ZsVolCut.stZSet M δ u u' Zh L := by
+    let K : Subgroup (Formalism.L2.SG.PairVal.GLR D) := {
+      carrier := ZsVolCut.stZSet M δ u u' Zh L
+      one_mem' := by
+        refine ⟨1, ?_, ZsVolGrp.isLoUni_one, 1, ZsVolGrp.isUpUni_one, by simp, fun p => ⟨1, 1, ZsVolGrp.intLow_one _, ZsVolGrp.intUp_one _, fun Zh' => ?_⟩⟩
+        · simp [Matrix.nonsing_inv_mul L hLdet]
+        · simp [ZsVolGrp.zhatOM_zhatOM]
+      mul_mem' := by
+        rintro x y ⟨x', hx, hxl, bx, hbx, hxZ, hxp⟩ ⟨y', hy, hyl, by', hby, hyZ, hyp⟩
+        refine ⟨x' * y', ?_, ?_, by' * bx, ZsVolGrp.isUpUni_mul hby hbx, ?_, fun p => ?_⟩
+        · rw [Units.val_mul, hx, hy, Units.val_mul]
+          calc L⁻¹ * (x' : Formalism.L2.SG.PairVal.MatR D) * L * (L⁻¹ * (y' : Formalism.L2.SG.PairVal.MatR D) * L) =
+              L⁻¹ * (x' : Formalism.L2.SG.PairVal.MatR D) * (L * L⁻¹) * (y' : Formalism.L2.SG.PairVal.MatR D) * L := by
+                simp only [Matrix.mul_assoc]
+            _ = _ := by rw [Matrix.mul_nonsing_inv L hLdet, Matrix.mul_one]; simp only [Matrix.mul_assoc]
+        · rw [Units.val_mul]
+          exact ZsVolGrp.isLoUni_mul hxl hyl
+        · rw [Units.val_mul]
+          calc (x' : Formalism.L2.SG.PairVal.MatR D) * (y' : Formalism.L2.SG.PairVal.MatR D) * ZhatOM Zh * (by' * bx) =
+              (x' : Formalism.L2.SG.PairVal.MatR D) * ((y' : Formalism.L2.SG.PairVal.MatR D) * ZhatOM Zh * by') * bx := by
+                simp only [Matrix.mul_assoc]
+            _ = ZhatOM Zh := by rw [hyZ, hxZ]
+        · obtain ⟨l1, ρ1, hl1, hρ1, h1⟩ := hxp p
+          obtain ⟨l2, ρ2, hl2, hρ2, h2⟩ := hyp p
+          refine ⟨l1 * l2, ρ2 * ρ1, ZsVolGrp.intLow_mul _ hl1 hl2, ZsVolGrp.intUp_mul _ hρ2 hρ1, fun Zh' => ?_⟩
+          have e : ((x' * y' : Formalism.L2.SG.PairVal.GLR D) : Formalism.L2.SG.PairVal.MatR D) * ZhatOM Zh' * (by' * bx) =
+              (x' : Formalism.L2.SG.PairVal.MatR D) *
+                ZhatOM (ZhatOM ((y' : Formalism.L2.SG.PairVal.MatR D) * ZhatOM Zh' * by')) * bx := by
+            rw [ZsVolGrp.zhatOM_zhatOM, Units.val_mul]
+            simp only [Matrix.mul_assoc]
+          rw [e, h1, h2]
+          simp only [Matrix.mul_assoc]
+      inv_mem' := by
+        rintro x ⟨x', hx, hxl, bx, hbx, hxZ, hxp⟩
+        obtain ⟨hxi, hxi1, hxi2⟩ := ZsVolGrp.isLoUni_inv hxl
+        obtain ⟨hbi, hbi1, hbi2⟩ := ZsVolGrp.isUpUni_inv hbx
+        have hZ : ((x'⁻¹ : Formalism.L2.SG.PairVal.GLR D) : Formalism.L2.SG.PairVal.MatR D) * ZhatOM Zh * bx⁻¹ = ZhatOM Zh := by
+          rw [Matrix.coe_units_inv]
+          calc (x' : Formalism.L2.SG.PairVal.MatR D)⁻¹ * ZhatOM Zh * bx⁻¹ =
+              (x' : Formalism.L2.SG.PairVal.MatR D)⁻¹ * ((x' : Formalism.L2.SG.PairVal.MatR D) * ZhatOM Zh * bx) * bx⁻¹ := by rw [hxZ]
+            _ = ZhatOM Zh := by
+              simp only [← Matrix.mul_assoc]
+              rw [hxi1, Matrix.one_mul, Matrix.mul_assoc, hbi2, Matrix.mul_one]
+        refine ⟨x'⁻¹, ?_, by rw [Matrix.coe_units_inv]; exact hxi, bx⁻¹, hbi, hZ, fun p => ?_⟩
+        · rw [Matrix.coe_units_inv, Matrix.coe_units_inv, hx]
+          have hLi := Matrix.nonsing_inv_mul L hLdet
+          have hiL := Matrix.mul_nonsing_inv L hLdet
+          refine Matrix.inv_eq_left_inv ?_
+          calc L⁻¹ * (x' : Formalism.L2.SG.PairVal.MatR D)⁻¹ * L * (L⁻¹ * (x' : Formalism.L2.SG.PairVal.MatR D) * L) =
+              L⁻¹ * ((x' : Formalism.L2.SG.PairVal.MatR D)⁻¹ * (L * L⁻¹) * (x' : Formalism.L2.SG.PairVal.MatR D)) * L := by
+                simp only [Matrix.mul_assoc]
+            _ = 1 := by rw [hiL, Matrix.mul_one, hxi1, Matrix.mul_one, hLi]
+        · obtain ⟨l, ρ, hl, hρ, h⟩ := hxp p
+          obtain ⟨hli, hli1, hli2⟩ := ZsVolGrp.intLow_inv _ hl
+          obtain ⟨hρi, hρi1, hρi2⟩ := ZsVolGrp.intUp_inv _ hρ
+          refine ⟨l⁻¹, ρ⁻¹, hli, hρi, fun Zh' => ?_⟩
+          have h2 := h (ZhatOM (((x'⁻¹ : Formalism.L2.SG.PairVal.GLR D) : Formalism.L2.SG.PairVal.MatR D) * ZhatOM Zh' * bx⁻¹))
+          have e : (x' : Formalism.L2.SG.PairVal.MatR D) *
+              ZhatOM (ZhatOM (((x'⁻¹ : Formalism.L2.SG.PairVal.GLR D) : Formalism.L2.SG.PairVal.MatR D) * ZhatOM Zh' * bx⁻¹)) * bx =
+              ZhatOM Zh' := by
+            rw [ZsVolGrp.zhatOM_zhatOM, Matrix.coe_units_inv]
+            simp only [← Matrix.mul_assoc]
+            rw [hxi2, Matrix.one_mul, Matrix.mul_assoc, hbi1, Matrix.mul_one]
+          rw [e, ZsVolGrp.zhatOM_zhatOM] at h2
+          conv_rhs => rw [h2]
+          simp only [← Matrix.mul_assoc]
+          rw [hli1, Matrix.one_mul]
+          simp only [Matrix.mul_assoc, hρi2, Matrix.mul_one]
+    }
+    have hK : (K : Set _) = ZsVolCut.stZSet M δ u u' Zh L := rfl
+    change a ∈ Subgroup.closure (ZsVolCut.stZSet M δ u u' Zh L) ↔ _
+    rw [← hK, Subgroup.closure_eq]
+    exact Iff.rfl
+  rw [hmem]
   obtain ⟨ha, hb, hW⟩ := bOf_spec w g
   set gm : Formalism.L2.SG.PairVal.MatR D := ((g : Formalism.L2.SG.PairVal.GLR D) : Formalism.L2.SG.PairVal.MatR D) with hgm
   set b := VolPinAsm.bOf w (g : Formalism.L2.SG.PairVal.GLR D) with hb'
@@ -164,8 +241,9 @@ theorem cz_le (L U : Formalism.L2.SG.PairVal.MatR D) (hL : IsLoUni L) (hU : IsUp
   have hLi := ZsVolGrp.isLoUni_inv hL
   have hUi := ZsVolGrp.isUpUni_inv hU
   have hLdet : IsUnit L.det := by rw [ZsVolGrp.det_lo (fun a => (hL a a).2 rfl) (fun a b h => (hL a b).1 h)]; exact isUnit_one
+  change Subgroup.closure (ZsVolCut.stZSet M δ u u' Zh L) ≤ VolPinAsm.StG w
+  rw [Subgroup.closure_le]
   intro a ha
-  rw [ZsVolGrp.mem_CZ M δ u u' Zh L hLdet] at ha
   obtain ⟨a', ha'eq, ha'lo, b', hb'up, hZ', -⟩ := ha
   refine ⟨?_, U * b' * U⁻¹, ZsVolGrp.isUpUni_mul (ZsVolGrp.isUpUni_mul hU hb'up) hUi.1, ?_⟩
   · rw [ha'eq]; exact ZsVolGrp.isLoUni_mul (ZsVolGrp.isLoUni_mul hLi.1 ha'lo) hL

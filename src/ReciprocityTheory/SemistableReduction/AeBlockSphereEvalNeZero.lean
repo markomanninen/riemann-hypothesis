@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+module
+
+public import ReciprocityTheory.SemistableReduction.SphereLogIntegrableStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 
@@ -37,7 +41,7 @@ theorem ae_eval_ne_zero_of_ne_zero_fin : ∀ (m : ℕ) (f : MvPolynomial (Fin m)
       have hQ : Polynomial.map (MvPolynomial.eval s) P ≠ 0 := by
         intro h
         apply hs
-        have := congrArg (fun q => Polynomial.coeff q k) h
+        have := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q k) h
         simpa [Polynomial.coeff_map] using this
       have hfin : ({y : ℂ | Polynomial.eval y (Polynomial.map (MvPolynomial.eval s) P) = 0}).Finite :=
         Polynomial.finite_setOfPred_isRoot hQ
@@ -45,7 +49,7 @@ theorem ae_eval_ne_zero_of_ne_zero_fin : ∀ (m : ℕ) (f : MvPolynomial (Fin m)
       rw [measure_eq_zero_iff_ae_notMem] at hnull
       filter_upwards [hnull] with y hy
       have hc : (e.symm (y, s) : Fin (m + 1) → ℂ) = Fin.cons y s := by
-        simp [e, MeasurableEquiv.piFinSuccAbove_symm_apply]; rfl
+        simp [e, MeasurableEquiv.piFinSuccAbove_symm_apply]
       rw [hc, MvPolynomial.eval_eq_eval_mv_eval']
       exact hy
     have := he.quasiMeasurePreserving.ae key
@@ -178,7 +182,7 @@ theorem ae_toSphere (B n : ℕ) (a : Fin B → ℕ) (F : MvPolynomial (Fin B × 
       Measure.pi fun _ : Fin B => (volume : Measure E).restrict {0}ᶜ := by
     rw [Measure.pi_map_pi (hμ := hmSF) (fun _ => measurable_subtype_coe.aemeasurable)]
     exact congrArg _ (funext hmap)
-  have hGm : Measurable G := measurable_pi_lambda _ fun b => measurable_subtype_coe.comp
+  have hGm : Measurable G := Measurable.of_eval fun b => measurable_subtype_coe.comp
     (measurable_pi_apply b)
   have hzero : (Measure.pi fun _ : Fin B =>
       (volume : Measure E).comap (Subtype.val : ({0}ᶜ : Set E) → E))

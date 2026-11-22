@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
@@ -9,7 +14,8 @@ theorem res_mulVec_repr {R A β κ : Type} [CommRing R] [CommRing A] [Algebra R 
     [Fintype κ] (b : Module.Basis β R A) (g : Matrix κ κ A) (v : κ → A) :
     res b g *ᵥ (fun p : κ × β => b.repr (v p.1) p.2) = fun p : κ × β => b.repr ((g *ᵥ v) p.1) p.2 := by
   funext p
-  simp only [Matrix.mulVec, dotProduct, res, Matrix.of_apply, Fintype.sum_prod_type, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mulVec, dotProduct, res, Matrix.of_apply, Fintype.sum_prod_type, map_sum,
     Finsupp.coe_finsetSum, Finset.sum_apply]
   refine Finset.sum_congr rfl fun j _ => ?_
   have h := congrFun (Algebra.leftMulMatrix_mulVec_repr b (g p.1 j) (v j)) p.2
@@ -26,7 +32,8 @@ theorem res_one_mul_injective_isUnit :
     · simp [res, Matrix.one_apply, h]
   · intro g h
     ext ⟨i, k⟩ ⟨j, l⟩
-    simp only [res, Matrix.mul_apply, Matrix.of_apply, Fintype.sum_prod_type, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [res, Matrix.mul_apply, Matrix.of_apply, Fintype.sum_prod_type, map_sum, map_mul,
       Matrix.sum_apply]
   · intro g h hgh
     ext i j

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightedSupDriftOnOrthonormalFrames
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeightedSupDriftOnOrthonormalFrames
+
+@[expose] public section
 
 namespace GlobalTheory.MixedSignature
 
@@ -84,7 +88,8 @@ theorem traceGram_eq {y : X.Ψ → Matrix (Fin r) (Fin r) ℂ} (hy : Normal X G 
   simp only [traceGram, of_apply]
   rw [← ip_signInv X hy, ← frameBasis_apply X hy g j]
   conv_lhs => rw [← (frameBasis X hy g).sum_repr (signInv X p (frameBasis X hy g j))]
-  rw [← ipB_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← ipB_apply, map_sum]
   simp only [map_smul, smul_eq_mul, ipB_apply, Am, of_apply, LinearMap.toMatrix_apply, frameBasis_apply]
   refine Finset.sum_congr rfl fun k _ => ?_
   ring
@@ -174,7 +179,8 @@ theorem transfer_smul (h : basisType X G f = basisType X G f') (α : E) (v : Fin
   have hα : α = ∑ k, (integralBasis E).repr α k • (RingOfIntegers.basis E k : E) := by
     conv_lhs => rw [← (integralBasis E).sum_repr α]
     simp [integralBasis_apply]
-  rw [hα, Finset.sum_smul, Finset.sum_smul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hα, Finset.sum_smul, Finset.sum_smul, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [smul_assoc, smul_assoc, map_smul]
   congr 1
@@ -234,7 +240,8 @@ theorem exists_stab_of_basisType (h : basisType X G f = basisType X G f') :
   · change B *ᵥ v = _
     rw [hBv]
     conv_lhs => rw [← (RealPlaceEmbeddings.qb X f').sum_repr v]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, RealPlaceEmbeddings.qb_apply, phi_f]
 

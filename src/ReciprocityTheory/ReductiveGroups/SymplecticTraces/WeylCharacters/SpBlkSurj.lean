@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.Statement
-import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.SplitD
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Exists
+module
+
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.Statement
+public import ReciprocityTheory.ReductiveGroups.SymplecticTraces.WeylCharacters.SplitD
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.Exists
+
+@[expose] public section
 
 noncomputable section
 

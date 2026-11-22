@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.LeftTranslateMatrixPolyCompletelyReducibleStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsReynoldsOfCompletelyReducibleStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.LeftTranslateMatrixPolyCompletelyReducibleStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsReynoldsOfCompletelyReducibleStatement
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
@@ -9,22 +14,22 @@ namespace GlobalTheory.ClassFin.ReynoldsLtr
 
 variable {ι : Type} [Fintype ι] [DecidableEq ι]
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem evC_ltr (g y : Matrix ι ι ℂ) (f : MvPolynomial (ι × ι) ℂ) :
     evC (ltr g f) y = evC f (g * y) := by
   induction f using MvPolynomial.induction_on with
   | C a => simp [evC, ltr]
   | add p q hp hq =>
-    simp only [evC, map_add] at hp hq ⊢
+    simp only [evC, map_add (f := _)] at hp hq ⊢
     rw [hp, hq]
   | mul_X p i hp =>
     simp only [evC, map_mul] at hp ⊢
     rw [hp]
     simp [ltr, Matrix.mul_apply]
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 theorem isInv_iff (Γ : Set (Matrix ι ι ℂ)) (f : MvPolynomial (ι × ι) ℂ) :
     IsInv Γ f ↔ ∀ g ∈ Γ, ltr g f = f := by
   constructor

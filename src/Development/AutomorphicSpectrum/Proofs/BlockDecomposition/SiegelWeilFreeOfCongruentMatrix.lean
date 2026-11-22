@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HypOneZeroZero
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SiegelWeilMeasureOfCongruentTarget
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FibreFamilySmul
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.EqZeroOfSetIntegral
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.TensAll
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HypOneZeroZero
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.SiegelWeilMeasureOfCongruentTarget
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.FibreFamilySmul
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ArchimedeanOrbitMeasures.EqZeroOfSetIntegral
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.StabilizerOrbitVolume.TensAll
+
+@[expose] public section
 
 noncomputable section
 
@@ -118,7 +122,7 @@ theorem free_rmul (σ : E →ₐ[F] E) (hσ : IsCMExt F E σ) {M : ℕ} (J : Mat
     intro h
     refine continuous_pi fun b => continuous_pi fun i => ?_
     simp only [rmul]
-    refine continuous_finset_sum _ fun k _ => ?_
+    refine continuous_finsetSum _ fun k _ => ?_
     have h1 : Continuous fun Y : Fin n → Fin M → R ⊗[F] E => Y k i :=
       (continuous_apply i).comp (continuous_apply k)
     exact h1.mul continuous_const
@@ -221,8 +225,8 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [Algebra F E]
 def scaleB {d : ℕ} (b : Module.Basis (Fin d) F E) (c : F) (hc : c ≠ 0) : Module.Basis (Fin d) F E :=
   b.unitsSMul (fun _ => (Units.mk0 c hc)⁻¹)
 
-omit [NumberField F] in
 
+omit [NumberField F] in
 theorem repr_scaleB {d : ℕ} (b : Module.Basis (Fin d) F E) (c : F) (hc : c ≠ 0) (R : Type) [CommRing R]
     [Algebra F R] (y : R ⊗[F] E) (k : Fin d) :
     (Algebra.TensorProduct.basis R (scaleB b c hc)).repr y k =
@@ -235,7 +239,7 @@ theorem repr_scaleB {d : ℕ} (b : Module.Basis (Fin d) F E) (c : F) (hc : c ≠
     simp only [Algebra.TensorProduct.basis_repr_tmul, Finsupp.smul_apply, Finsupp.mapRange_apply, h,
       map_mul, smul_eq_mul]
     ring
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy, mul_add]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy, mul_add]
 
 theorem exists_den {d n : ℕ} (b : Module.Basis (Fin d) F E) (G : Matrix (Fin n) (Fin n) E) :
     ∃ c : F, c ≠ 0 ∧ ∀ (v : HeightOneSpectrum (𝓞 F)) (i j : Fin n) (k l : Fin d),
@@ -266,7 +270,8 @@ theorem rmul_mem_scaleB {d M n : ℕ} (b : Module.Basis (Fin d) F E) (c : F) (hc
     (rmul (Fv F v) X (G.map (inclR (Fv F v))) a i) l ∈ v.adicCompletionIntegers F
   rw [repr_scaleB]
   simp only [rmul, Matrix.map_apply]
-  rw [map_sum, Finsupp.finsetSum_apply, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finsupp.finsetSum_apply, Finset.mul_sum]
   refine sum_mem fun c' _ => ?_
   rw [LatRat.repr_mul, Finset.mul_sum]
   refine sum_mem fun k _ => ?_

@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.CentralCharts.ContDiffAtLogdet
-import Development.WeilBound.CoreStatements.CentralCharts.AnalyticAtDet
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.PeriodMatrixLocalTrivializationStatement
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+module
+
+public import Development.WeilBound.CoreStatements.CentralCharts.ContDiffAtLogdet
+public import Development.WeilBound.CoreStatements.CentralCharts.AnalyticAtDet
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.PeriodMatrixLocalTrivializationStatement
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+
+@[expose] public section
 
 noncomputable section
 

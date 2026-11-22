@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GapGeSubKapBase
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.GapGeSubKapBase
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace Limits NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj Formalism.BasicNotions
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -29,7 +34,7 @@ def liftStalk (σ : X.functionField →+* X.functionField) (h : ∀ f, RegAt x f
   map_zero' := IsFractionRing.injective (X.presheaf.stalk x) X.functionField (by
     rw [(h _ ⟨_, rfl⟩).choose_spec, map_zero, map_zero])
   map_add' s t := IsFractionRing.injective (X.presheaf.stalk x) X.functionField (by
-    rw [(h _ ⟨_, rfl⟩).choose_spec, map_add, map_add, map_add, (h _ ⟨s, rfl⟩).choose_spec,
+    rw [(h _ ⟨_, rfl⟩).choose_spec, map_add (f := _), map_add (f := _), map_add (f := _), (h _ ⟨s, rfl⟩).choose_spec,
       (h _ ⟨t, rfl⟩).choose_spec])
 
 theorem algebraMap_liftStalk (σ : X.functionField →+* X.functionField) (h : ∀ f, RegAt x f → RegAt x (σ f))
@@ -56,8 +61,8 @@ theorem residue_liftStalk_eq_iff (σ : X.functionField →+* X.functionField) (h
 
 end GlobalTheory.CharIndepAt
 
-open GlobalTheory.CharIndepAt in
 
+open GlobalTheory.CharIndepAt in
 theorem GlobalTheory.CharIndepAt.main : ∀ (X : Scheme.{0}) [IsIntegral X] (U : X.Opens), IsAffineOpen U → ∀ (x : X) (hx : x ∈ U)
     (ι : Type) [Fintype ι] (σ : ι → X.functionField →+* X.functionField) (u : ι → X.functionField),
     (∀ i f, RegAt x f → RegAt x (σ i f)) → (∀ i f, ZeroAt x f → ZeroAt x (σ i f)) →
@@ -101,14 +106,16 @@ theorem GlobalTheory.CharIndepAt.main : ∀ (X : Scheme.{0}) [IsIntegral X] (U :
     intro a
     by_contra hz
     refine hne a ⟨∑ i, liftStalk (σ i) (h1 i) (g a) * t i, ?_, ?_⟩
-    · rw [← IsLocalRing.residue_ne_zero_iff_isUnit, map_sum]
+    · set_option synthInstance.maxHeartbeats 100000 in
+      rw [← IsLocalRing.residue_ne_zero_iff_isUnit, map_sum]
       intro h
       apply hz
       rw [← h]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_mul, mul_comm]
       rfl
-    · rw [map_sum]
+    · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_mul, algebraMap_liftStalk, ht]
       congr 2

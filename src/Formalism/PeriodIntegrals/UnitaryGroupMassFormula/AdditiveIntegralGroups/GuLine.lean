@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.AddIntG
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.AddIntG
+
+@[expose] public section
 
 noncomputable section
 

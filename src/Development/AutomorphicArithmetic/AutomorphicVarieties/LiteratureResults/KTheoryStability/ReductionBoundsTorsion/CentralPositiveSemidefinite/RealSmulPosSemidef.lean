@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.CentralPositiveSemidefinite.TSpan
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.CentralPositiveSemidefinite.TSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,7 +72,8 @@ theorem tSimp : TSimp := by
   simp only [ContinuousAlternatingMap.compContinuousLinearMap_apply] at this
   rw [← this]
   have hs : ∀ k : Pos L N, (g • k).1 = actL g k.1 := fun k => rfl
-  simp only [hs, map_add, map_sum, map_smul, map_sub]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hs, map_add (f := _), map_sum, map_smul, map_sub]
   congr 1
   funext j
   simp [map_sub]

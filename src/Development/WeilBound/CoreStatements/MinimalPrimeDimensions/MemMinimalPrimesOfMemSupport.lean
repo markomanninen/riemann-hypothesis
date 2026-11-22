@@ -1,5 +1,9 @@
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Assembly
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeMeetNull
+module
+
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.Assembly
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.PConeMeetNull
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -116,7 +120,7 @@ theorem cone_side {K : Type} [Field K] [NumberField K] {e : ℕ} {I : Ideal (MvP
   refine ⟨?_, ?_, ?_, fun q hq => ?_⟩
   · have h1 := (hDim K n (e + 1) I f hI hf).ge.trans (ringKrullDim_quotient_le I)
     rw [MvPolynomial.ringKrullDim_of_isNoetherianRing, ringKrullDim_eq_zero_of_field] at h1
-    simp only [Nat.card_eq_fintype_card, Fintype.card_fin, zero_add] at h1
+    simp only [ENat.card_eq_coe_natCard, Nat.card_eq_fintype_card, Fintype.card_fin, zero_add] at h1
     exact_mod_cast h1
   · exact (integrableOn_finset_iUnion.2 hint).congr_set_ae hae
   · unfold cycleIntegral

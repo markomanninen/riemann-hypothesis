@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusInvariantHeatOperatorPreservesWeight
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AppEqZeroOfValR
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothRayQuotient
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.InvariantFunctionsDescend
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasRigidChart
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusInvariantHeatOperatorPreservesWeight
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AppEqZeroOfValR
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothRayQuotient
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.InvariantFunctionsDescend
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj Matrix TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -41,7 +46,7 @@ theorem lift_agree {R : Type} [CommRing R] {G : Over (Sp R)} {n : ℕ} {X : Sche
   have hi' : O ≤ h.W i' := hO.trans inf_le_right
   have hle : O ≤ m ⁻¹ᵁ (L.U (h.j i) ⊓ L.U (h.j i')) := fun p hp => ⟨h.le i (hi hp), h.le i' (hi' hp)⟩
   have hg : IsUnit (pbT m (L.g (h.j i) (h.j i')).val O) := by
-    rw [pbT, dif_pos hle]
+    rw [pbT, dite_eq_left hle]
     exact (Units.isUnit _).map _
   have e₁ := congrArg π (h.glue 1 i i' O hO f)
   have e₀ := congrArg π (h.glue 1 i i' O hO 1)
@@ -50,12 +55,13 @@ theorem lift_agree {R : Type} [CommRing R] {G : Over (Sp R)} {n : ℕ} {X : Sche
       π g * ∑ a, π (constFn G.hom O (h.u a)) * π (dd a O f) + π f * ∑ a, π (constFn G.hom O (h.u a)) * π (dd a O g) := by
     rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun a _ => ?_
-    rw [(hdd a).2.1 O le_top, map_add, map_mul, map_mul]
+    rw [(hdd a).2.1 O le_top, map_add (f := _), map_mul, map_mul]
     ring
-  simp only [op, pow_one, _root_.mul_one, Nat.cast_one, one_pow, map_add, map_sub, map_mul, map_sum, hΘ, zero_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [op, pow_one, _root_.mul_one, Nat.cast_one, one_pow, map_add (f := _), map_sub, map_mul, map_sum, hΘ, zero_mul,
     Finset.sum_const_zero, sub_zero, map_ofNat, isField_one (hdd _) le_top, isField_one (h.lift i').1 hi', map_zero,
     mul_zero, map_one] at e₁ e₀
-  rw [hs, (h.lift i).1.2.1 O hi, map_add, map_mul, map_mul] at e₁
+  rw [hs, (h.lift i).1.2.1 O hi, map_add (f := _), map_mul, map_mul] at e₁
   refine (h2.mul (hg.map π)).mul_left_cancel ?_
   linear_combination e₁ - π f * e₀
 
@@ -185,8 +191,8 @@ theorem exists_desc (V : Q.P.A.left.Opens) (d : Fld Y.H.left) (D : R → R) (hd 
       ((Over.w Y.q).trans ((Category.comp_id _).symm.trans (congrArg (Y.H.hom ≫ ·) (Spec.map_id _).symm))) V' r
   refine ⟨e, ⟨⟨fun W hW f f' => inj W ?_, fun W hW f f' => inj W ?_, fun W W' h hW f => inj W' ?_⟩,
     fun W hW r => inj W ?_⟩, fun V' hV f => he V' f hV⟩
-  · rw [map_add, he _ _ hW, he _ _ hW, he _ _ hW, map_add, hd.1.1 _ (pre_mono _ hW)]
-  · rw [map_add, map_mul, map_mul, he _ _ hW, he _ _ hW, he _ _ hW, map_mul, hd.1.2.1 _ (pre_mono _ hW)]
+  · rw [map_add (f := _), he _ _ hW, he _ _ hW, he _ _ hW, map_add (f := _), hd.1.1 _ (pre_mono _ hW)]
+  · rw [map_add (f := _), map_mul, map_mul, he _ _ hW, he _ _ hW, he _ _ hW, map_mul, hd.1.2.1 _ (pre_mono _ hW)]
   · rw [he _ _ (h.trans hW), ← res_app _ h (pre_mono _ h), ← res_app _ h (pre_mono _ h), he _ _ hW,
       hd.1.2.2 _ _ _ (pre_mono _ hW)]
   · rw [he _ _ hW, hc, hc, hd.2 _ (pre_mono _ hW)]
@@ -209,8 +215,8 @@ theorem exists_locDerK (hdd : ∀ a, IsField ⊤ (dd a)) (hB : IsBasic Y h) {K :
     rw [hV] at hi
     exact ⟨i, hx ▸ hi⟩
   · refine ⟨fun W hW f f' => ?_, fun W hW f f' => ?_, fun W W' h' hW f => ?_, fun W hW r => ?_⟩
-    · rw [(he i).1.1 W hW, map_add]
-    · rw [(he i).1.2.1 W hW, map_add, map_mul, map_mul]
+    · rw [(he i).1.1 W hW, map_add (f := _)]
+    · rw [(he i).1.2.1 W hW, map_add (f := _), map_mul, map_mul]
     · rw [(he i).1.2.2 W W' h' hW, rsT_eq (pre_mono m h'), res_app m h']
     · rw [(he i).2 W hW, app_const φ _ p m hm]
   · let a := pullback.fst Y.q.left m

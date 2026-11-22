@@ -1,13 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.Statements
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.IsIsoPullbackObjUnitToUnit
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.Statements
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.IsIsoPullbackObjUnitToUnit
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.Model
-
-theorem blowUpChart_eq_model {A K : Type} [CommRing A] [Field K] [Algebra A K] {n : ℕ}
-    (x : Fin n → A) (i : Fin n) :
-    _root_.GroundTheory.Heights₂.Heights.Model.blowUpChart K x i = blowUpChart A K x i := rfl
 
 theorem BlowUpChart.comap_eq_maximalIdeal {A K : Type} [CommRing A] [IsDomain A] [IsLocalRing A]
     [Field K] [Algebra A K] [IsFractionRing A K] {n : ℕ} {x : Fin n → A}

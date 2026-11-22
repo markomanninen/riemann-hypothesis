@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.RestNonneg
-import Development.AutomorphicArithmetic.OrbitLabellings.RowDefs
-import Formalism.LocalToGlobal.CharacterGerms.ValuationChoiceHypothesis
-import Formalism.LocalToGlobal.ProjectiveLattices.DepRun
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.DepthTie
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.RestNonneg
+public import Development.AutomorphicArithmetic.OrbitLabellings.RowDefs
+public import Formalism.LocalToGlobal.CharacterGerms.ValuationChoiceHypothesis
+public import Formalism.LocalToGlobal.ProjectiveLattices.DepRun
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.DepthTie
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -44,9 +48,6 @@ def Inert (N : NumDatum) (l : ℕ) : Prop := N.cls l = PrimeClass.inertClass ∨
 def PhiC (N : NumDatum) (l : ℕ) : Prop := N.cls l = PrimeClass.inertClass ∧ N.hP l = 0
 
 def ConjIn (N : NumDatum) (l : ℕ) : Prop := N.cls l = PrimeClass.inertClass ∧ Odd (addOrderOf (N.hP l))
-
-theorem PhiC.conjIn {N : NumDatum} {l : ℕ} (h : PhiC N l) : ConjIn N l :=
-  ⟨h.1, by rw [h.2, addOrderOf_zero]; exact odd_one⟩
 
 theorem even_ordP_of_not_conjIn {N : NumDatum} {l : ℕ} (hI : Inert N l) (hC : ¬ ConjIn N l) : Even (N.ordP l) := by
   unfold NumDatum.ordP
@@ -178,8 +179,8 @@ def NuGoodSt : Prop :=
           if N.sc.X'' N.R.n < (resCharOf la : ℝ) then N.R.k * w / (resCharOf la : ℝ) ^ 2 else 0) ∧
       (DF Dw a < resCharOf la → nuW Xo c la lv.M a nW = 0)
 
-open Formalism.L2.Indef Formalism.L2.Indef.Tree in
 
+open Formalism.L2.Indef Formalism.L2.Indef.Tree in
 structure NumTie {K : Type} [Field K] [NumberField K] [StarRing K] {Bs : DefBase K} {Df : DefSide Bs} {S : IndefData Df}
     {P : Type} [Group P] [Finite P] {oc : OnConst} (O : OnObj S P oc) (N : NumDatum) (ι : Bs.J → ℕ) (DL : Bs.J → ℕ) : Prop where
   k_eq : O.k = N.R.k
@@ -193,8 +194,8 @@ structure NumTie {K : Type} [Field K] [NumberField K] [StarRing K] {Bs : DefBase
   wt_b : ∀ j, O.b ≤ O.wt j
   DF_ge : ∀ j, (DL j : ℝ) ≤ O.DF
 
-open Formalism.L2.Indef Formalism.L2.Indef.Tree Formalism.L2.Indef.Tree.DepthCond in
 
+open Formalism.L2.Indef Formalism.L2.Indef.Tree Formalism.L2.Indef.Tree.DepthCond in
 def LeafGoodSt : Prop :=
   ∀ C1 : ℝ, 0 ≤ C1 → ∃ C0 : ℝ,
     ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (lv : Level H) (Dw : ℕ → Datum H)

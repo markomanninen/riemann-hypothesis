@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsMultiHomogIdealSpanSingleton
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsMultiHomogIdealSpanSingleton
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -60,7 +65,7 @@ theorem length_eq (J W : Ideal S) [W.IsPrime] (hW : Disjoint (M : Set S) W)
   let g : (S ⧸ J) →ₗ[S] N :=
     { toFun := fun x => LocalizedModule.mk (q x) 1
       map_add' := fun x y => by
-        rw [map_add, LocalizedModule.mk_add_mk, one_smul, one_smul, mul_one]
+        rw [map_add (f := _), LocalizedModule.mk_add_mk, one_smul, one_smul, mul_one]
       map_smul' := fun s x => by
         simp only [RingHom.id_apply]
         rw [LocalizedModule.smul'_mk, map_smul] }
@@ -81,8 +86,7 @@ theorem length_eq (J W : Ideal S) [W.IsPrime] (hW : Disjoint (M : Set S) W)
       rw [Module.End.isUnit_iff] at hu
       convert hu using 1
       funext n
-      simp only [Module.algebraMap_end_apply]
-      exact (algebraMap_smul T (s : S) n).symm
+      simpa only [Module.algebraMap_end_apply] using (algebraMap_smul T (s : S) n).symm
     · intro n
       induction n using LocalizedModule.induction_on with
       | h y t =>
@@ -155,8 +159,8 @@ end DVR
 
 end GenericCycleCorresp
 
-attribute [local instance] MvPolynomial.algebraMvPolynomial in
 
+attribute [local instance] MvPolynomial.algebraMvPolynomial in
 theorem GenericCycleCorresp.proof : GenericCycleCorresp.Statement.{u} := by
   intro O _ _ _ ϖ hϖ K _ _ ι _ P s _ _ _ n
   classical
@@ -204,8 +208,8 @@ theorem GenericCycleCorresp.proof : GenericCycleCorresp.Statement.{u} := by
         (GenericCycleCorresp.disjoint_nonZeroDivisors hϖ W hWϖ)
     unfold divCycle
     by_cases hr : IsRelevant W
-    · rw [dif_pos ⟨hWm, hr⟩, dif_pos ⟨hmin W hWm hWϖ, hrel.mpr hr⟩, hl]
-    · rw [dif_neg (fun h => hr h.2), dif_neg (fun h => hr (hrel.mp h.2))]
+    · rw [dite_eq_left ⟨hWm, hr⟩, dite_eq_left ⟨hmin W hWm hWϖ, hrel.mpr hr⟩, hl]
+    · rw [dite_eq_right (fun h => hr h.2), dite_eq_right (fun h => hr (hrel.mp h.2))]
   have hsupp : ∀ (Q : Ideal (MRing ι (FractionRing O))) (x) (W : Ideal (MRing ι (FractionRing O))),
       divCycle Q x W ≠ 0 → W ∈ (Q ⊔ Ideal.span {x}).minimalPrimes := by
     intro Q x W h

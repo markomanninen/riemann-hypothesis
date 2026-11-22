@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.IsSmoothL2OfCasimirEigen
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.ContDiffOnZeroOfContinuousOn
-import Formalism.RealPlaceAnalysis.QuotientSettingHolds
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.IsSmoothL2OfCasimirEigen
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.ContDiffOnZeroOfContinuousOn
+public import Formalism.RealPlaceAnalysis.QuotientSettingHolds
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.CartanInvolutionConjTransposeMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,32 +20,17 @@ section Spec
 
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
-local notation "JJ" => Formalism.REAL.Jm
-
 variable {ε : Fin n → Bool}
 
 theorem toL2_eq_toLp_of_memLp {F : Matrix (Fin n) (Fin n) ℂ → ℂ}
     (hF : MemLp (fun g : Formalism.REAL.UJ ε => F (Formalism.MainNotions.S.umat g)) 2 (Formalism.REAL.muG ε)) :
     toL2 ε F = hF.toLp _ := by
   unfold toL2
-  rw [dif_pos hF]
+  rw [dite_eq_left hF]
 
 theorem slm_exists_y {g : Matrix (Fin n) (Fin n) ℂ} (hg : Formalism.REAL.inUJ ε g) :
     ∃ y : Formalism.REAL.UJ ε, Formalism.MainNotions.S.umat y = g := by
-  have hJJ : Formalism.REAL.Jm ε * Formalism.REAL.Jm ε = 1 := by
-    rw [Formalism.REAL.Jm, Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-    congr 1
-    funext a
-    split_ifs <;> norm_num
-  have hg' : gᴴ * Formalism.REAL.Jm ε * g = Formalism.REAL.Jm ε := hg
-  have h2 : (Formalism.REAL.Jm ε * gᴴ * Formalism.REAL.Jm ε) * g = 1 := by
-    calc (Formalism.REAL.Jm ε * gᴴ * Formalism.REAL.Jm ε) * g = Formalism.REAL.Jm ε * (gᴴ * Formalism.REAL.Jm ε * g) := by
-          simp only [Matrix.mul_assoc]
-      _ = 1 := by rw [hg', hJJ]
-  have h1 : g * (Formalism.REAL.Jm ε * gᴴ * Formalism.REAL.Jm ε) = 1 := by
-    rw [← Matrix.inv_eq_left_inv h2]
-    exact Matrix.mul_nonsing_inv g (Matrix.isUnit_det_of_left_inverse h2)
-  exact ⟨⟨⟨g, _, h1, h2⟩, hg⟩, rfl⟩
+  exact exists_unitary_preimage ε hg
 
 theorem slm_memLp_tr {F : Matrix (Fin n) (Fin n) ℂ → ℂ}
     (hF : MemLp (fun x : Formalism.REAL.UJ ε => F (Formalism.MainNotions.S.umat x)) 2 (Formalism.REAL.muG ε))
@@ -68,14 +57,7 @@ theorem slm_Rd_sum {F : Matrix (Fin n) (Fin n) ℂ → ℂ} (hF : Formalism.REAL
     (hY : Formalism.REAL.inG ε Y) :
     Formalism.REAL.Rd Y F g = ∑ a, ∑ b, Y a b * Formalism.REAL.Eab ε a b F g := by
   have h := Formalism.REAL.ecSumV n ε ℂ F Y g hF hg
-  have h1 : Formalism.REAL.cpart1 ε Y = Y := skewAdjointPart_eq_self_of_isSkewAdjoint hY
-  have h2 : Formalism.REAL.cpart2 ε Y = 0 := by
-    have hY' := hY
-    unfold Formalism.REAL.inG at hY'
-    have e : Yᴴ * JJ ε = -(JJ ε * Y) := eq_neg_of_add_eq_zero_left hY'
-    have e2 : JJ ε * Yᴴ * JJ ε = -Y := by rw [Matrix.mul_assoc, e, Matrix.mul_neg, slm_JJ]
-    unfold Formalism.REAL.cpart2
-    rw [e2, add_neg_cancel, smul_zero]
+  obtain ⟨h1, h2⟩ := (Formalism.REAL.complex_parts_mem_lie_algebra_holds n ε Y).2.2.2 hY
   unfold Formalism.REAL.EcV at h
   rw [h1, h2] at h
   have h0 : Formalism.REAL.RdV (0 : Matrix (Fin n) (Fin n) ℂ) F g = 0 := slm_Rd_zero F g
@@ -183,6 +165,13 @@ theorem slmCl_eq {s : ℝ} (hs : s ∈ Icc (0:ℝ) 1) : slmCl s = s := by
   unfold slmCl
   rw [min_eq_left hs.2, max_eq_right hs.1]
 
+theorem slm_mc {V : Set (Matrix (Fin n) (Fin n) ℂ)}
+    {γ : Matrix (Fin n) (Fin n) ℂ → Matrix (Fin n) (Fin n) ℂ} (hγ : ContDiffOn ℝ ∞ γ V) :
+    ContDiffOn ℝ ∞ (fun q => slmJi ε (γ q)) V := by
+  unfold slmJi
+  have hJ : ContDiffOn ℝ ∞ (fun _ => Formalism.REAL.Jm ε) V := contDiffOn_const
+  exact slm_cd_mul (slm_cd_mul hJ (slm_cd_conjT hγ)) hJ
+
 theorem slm_hint {V : Set (Matrix (Fin n) (Fin n) ℂ)} (hV : IsOpen V)
     {γ : Matrix (Fin n) (Fin n) ℂ → Matrix (Fin n) (Fin n) ℂ} (hγ : ContDiffOn ℝ ∞ γ V)
     (hγU : ∀ q ∈ V, Formalism.REAL.inUJ ε (γ q)) {F : Matrix (Fin n) (Fin n) ℂ → ℂ} (hF : IsSmoothL2 ε F)
@@ -203,13 +192,10 @@ theorem slm_hint {V : Set (Matrix (Fin n) (Fin n) ℂ)} (hV : IsOpen V)
   have hp : Continuous (fun s : ℝ => q + slmCl s • W) :=
     continuous_const.add (slmCl_cont.smul continuous_const)
   have hγc : ContinuousOn γ V := hγ.continuousOn
-  have hmc : ContDiffOn ℝ ∞ (fun q => slmJi ε (γ q)) V := by
-    unfold slmJi
-    exact slm_cd_mul (slm_cd_mul contDiffOn_const (slm_cd_conjT hγ)) contDiffOn_const
   have hfdW : ContDiffOn ℝ ∞ (fun q => fderiv ℝ γ q W) V :=
     (hγ.fderiv_of_isOpen (m := ∞) hV (by simp)).clm_apply contDiffOn_const
   have hZe : ∀ a b, ContinuousOn (fun q => (slmJi ε (γ q) * fderiv ℝ γ q W) a b) V :=
-    fun a b => ((slm_cd_iff.mp (slm_cd_mul hmc hfdW)) a b).continuousOn
+    fun a b => ((slm_cd_iff.mp (slm_cd_mul (slm_mc hγ) hfdW)) a b).continuousOn
   have hcx : Continuous (fun p : ℝ × Formalism.REAL.UJ ε => Formalism.MainNotions.S.umat p.2) :=
     (Units.continuous_val.comp continuous_subtype_val).comp continuous_snd
   have hSc : Continuous (fun p : ℝ × Formalism.REAL.UJ ε =>
@@ -297,21 +283,6 @@ theorem slm_hint {V : Set (Matrix (Fin n) (Fin n) ℂ)} (hV : IsOpen V)
   rw [Lp.norm_def, eLpNorm_congr_ae hcoe]
   exact ENNReal.toReal_le_of_le_ofReal hB0 hLp
 
-theorem slm_mc {V : Set (Matrix (Fin n) (Fin n) ℂ)}
-    {γ : Matrix (Fin n) (Fin n) ℂ → Matrix (Fin n) (Fin n) ℂ} (hγ : ContDiffOn ℝ ∞ γ V) :
-    ContDiffOn ℝ ∞ (fun q => slmJi ε (γ q)) V := by
-  have hcont : Continuous (fun M : Matrix (Fin n) (Fin n) ℂ => JJ ε * Mᴴ * JJ ε) :=
-    (continuous_const.matrix_mul continuous_id.matrix_conjTranspose).matrix_mul continuous_const
-  let L : Matrix (Fin n) (Fin n) ℂ →L[ℝ] Matrix (Fin n) (Fin n) ℂ :=
-    { toFun := fun M => JJ ε * Mᴴ * JJ ε
-      map_add' := fun A B => by
-        simp only [Matrix.conjTranspose_add, Matrix.mul_add, Matrix.add_mul]
-      map_smul' := fun c A => by
-        simp only [Matrix.conjTranspose_smul, star_trivial, Matrix.mul_smul, Matrix.smul_mul,
-          RingHom.id_apply]
-      cont := hcont }
-  exact L.contDiff.comp_contDiffOn hγ
-
 theorem slm_smooth {F : Matrix (Fin n) (Fin n) ℂ → ℂ} (hF : IsSmoothL2 ε F) :
     S7.SmoothOnGV ε (fun g => rreg ε g (toL2 ε F)) := by
   intro g0 hg0
@@ -369,38 +340,6 @@ theorem slm_dS {F : Matrix (Fin n) (Fin n) ℂ → ℂ} (hF : IsSmoothL2 ε F) {
   unfold slmPhi
   rw [hγ1]
   simp only [Matrix.mul_one]
-
-theorem slm_mem_smD {F : Matrix (Fin n) (Fin n) ℂ → ℂ} (hF : IsSmoothL2 ε F) :
-    toL2 ε F ∈ smD ε (rreg ε) :=
-  ((exists_smoothDerived ε (rreg ε)).choose_spec.choose_spec.1 _).2 (slm_smooth hF)
-
-theorem slm_smE {F : Matrix (Fin n) (Fin n) ℂ → ℂ} (hF : IsSmoothL2 ε F) (a b : Fin n) :
-    ((smE ε (rreg ε) a b ⟨toL2 ε F, slm_mem_smD hF⟩ : smD ε (rreg ε)) : L2 ε) =
-      toL2 ε (Formalism.REAL.Eab ε a b F) := by
-  have hσ := rreg_isURepOn ε
-  obtain ⟨hc1, hc2, hdec, -⟩ := Formalism.REAL.complex_parts_mem_lie_algebra_holds n ε (Matrix.single a b 1)
-  rw [smE_apply hσ]
-  show dS (rreg ε) (S7.cpart1 ε (Matrix.single a b 1)) (toL2 ε F) +
-      Complex.I • dS (rreg ε) (S7.cpart2 ε (Matrix.single a b 1)) (toL2 ε F) =
-    toL2 ε (Formalism.REAL.Eab ε a b F)
-  rw [slm_dS (X := S7.cpart1 ε (Matrix.single a b 1)) hF hc1,
-    slm_dS (X := S7.cpart2 ε (Matrix.single a b 1)) hF hc2]
-  have hZ : S7.cpart1 ε (Matrix.single a b 1) + Complex.I • S7.cpart2 ε (Matrix.single a b 1) =
-      Matrix.single a b 1 := hdec.symm
-  calc ∑ c, ∑ d, S7.cpart1 ε (Matrix.single a b 1) c d • toL2 ε (Formalism.REAL.Eab ε c d F) +
-        Complex.I • ∑ c, ∑ d, S7.cpart2 ε (Matrix.single a b 1) c d • toL2 ε (Formalism.REAL.Eab ε c d F)
-      = ∑ c, ∑ d, (S7.cpart1 ε (Matrix.single a b 1) + Complex.I • S7.cpart2 ε (Matrix.single a b 1)) c d •
-          toL2 ε (Formalism.REAL.Eab ε c d F) := by
-        simp only [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, add_smul, Finset.sum_add_distrib,
-          Finset.smul_sum, smul_smul]
-    _ = ∑ c, ∑ d, (Matrix.single a b 1 : Matrix (Fin n) (Fin n) ℂ) c d • toL2 ε (Formalism.REAL.Eab ε c d F) := by
-        rw [hZ]
-    _ = toL2 ε (Formalism.REAL.Eab ε a b F) := by
-        rw [Finset.sum_eq_single a (fun c _ hc => Finset.sum_eq_zero fun d _ => by
-            simp [Ne.symm hc]) (fun h => absurd (Finset.mem_univ _) h),
-          Finset.sum_eq_single b (fun d _ hd => by simp [Ne.symm hd])
-            (fun h => absurd (Finset.mem_univ _) h)]
-        simp
 
 end Spec
 

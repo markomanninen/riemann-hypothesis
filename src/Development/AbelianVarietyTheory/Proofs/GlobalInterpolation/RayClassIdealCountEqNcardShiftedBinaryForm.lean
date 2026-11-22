@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LamIdealOfNotPrimePow
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PlaneLatticeShortBasisOfBoundPowTwo
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RayClassPartialZetaContinuation
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.RingOfIntegersSqrtNegThreeModFour
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.LamIdealOfNotPrimePow
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.PlaneLatticeShortBasisOfBoundPowTwo
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RayClassPartialZetaContinuation
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.RingOfIntegersSqrtNegThreeModFour
+
+@[expose] public section
 
 open Complex ArithmeticFunction MeasureTheory Filter Topology NumberField GlobalTheory.Hk GlobalTheory.Mem
 open scoped Classical
@@ -87,16 +91,16 @@ theorem exists_equiv (f₁ f₂ e₁ e₂ : ℂ) (hf : ((starRingEnd ℂ) f₁ *
       Set.range (fun v : ℤ × ℤ => (v.1 : ℂ) * e₁ + v.2 * e₂) := by
     rw [range_comb, range_comb, h]
   refine ⟨(Equiv.ofInjective _ (comb_injective f₁ f₂ hf)).trans
-    ((Equiv.setCongr hr).trans (Equiv.ofInjective _ (comb_injective e₁ e₂ he)).symm), fun v => ?_⟩
+    ((Set.equivOfEq hr).trans (Equiv.ofInjective _ (comb_injective e₁ e₂ he)).symm), fun v => ?_⟩
   have key := Equiv.apply_ofInjective_symm (comb_injective e₁ e₂ he)
-    (Equiv.setCongr hr (Equiv.ofInjective _ (comb_injective f₁ f₂ hf) v))
-  simp only [Equiv.setCongr_apply, Equiv.ofInjective_apply] at key
-  simp only [Equiv.trans_apply, Equiv.setCongr_apply, Equiv.ofInjective_apply]
+    (Set.equivOfEq hr (Equiv.ofInjective _ (comb_injective f₁ f₂ hf) v))
+  simp only [Set.equivOfEq_apply, Equiv.ofInjective_apply] at key
+  simp only [Equiv.trans_apply, Set.equivOfEq_apply, Equiv.ofInjective_apply]
   exact key.symm
 
 variable {K : Type} [Field K] [NumberField K]
 
-theorem unit_eq_one [IsTotallyComplex K] (h2 : Module.finrank ℚ K = 2) {M : ℕ} (hM : 3 ≤ M)
+theorem unit_eq_one [_root_.NumberField.IsTotallyComplex K] (h2 : Module.finrank ℚ K = 2) {M : ℕ} (hM : 3 ≤ M)
     (u : (𝓞 K)ˣ) (hu : (u : 𝓞 K) - 1 ∈ Ideal.span {(M : 𝓞 K)}) : u = 1 := by
   let φ : K →+* ℂ := (Classical.arbitrary (InfinitePlace K)).embedding
   by_contra hne
@@ -138,7 +142,7 @@ theorem exists_basis_im {d : ℕ} (hp : d.Prime) (hd : d % 4 = 3) {x : K} (hx : 
   have hφx : φ x ^ 2 = -(d : ℂ) := by rw [← map_pow, hx]; simp
   have hφw : φ (w : K) = (1 + φ x) / 2 := by
     have := congrArg φ hw
-    simp only [map_mul, map_add, map_one, map_ofNat] at this
+    simp only [map_mul, map_add (f := _), map_one, map_ofNat] at this
     linear_combination this / 2
   have hsd : (0 : ℝ) < √(d : ℝ) := Real.sqrt_pos.mpr (by exact_mod_cast hp.pos)
   have him : (φ (w : K)).im = √(d : ℝ) / 2 ∨ (φ (w : K)).im = -(√(d : ℝ) / 2) := by

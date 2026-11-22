@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PickVal
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PickVal
+
+@[expose] public section
 
 noncomputable section
 
@@ -113,6 +117,7 @@ theorem pick_core (p : ℕ) [hpF : Fact p.Prime] {n' r K m : ℕ} [NeZero n'] [N
         padicValRat.mul (mul_ne_zero (mul_ne_zero ha hb) hc) (hgpU bp0).1,
         padicValRat.mul (mul_ne_zero ha hb) hc, padicValRat.mul ha hb, (hgnU bn0).2, (hgpU bp0).2,
         padicValRat.of_nat, padicValRat.of_nat, padicValRat.of_nat, padicValRat.of_nat] at h
+      rw [← Nat.padicValNat_def, ← Nat.padicValNat_def, ← Nat.padicValNat_def, ← Nat.padicValNat_def] at h
       exact fact_arith _ _ _ _ h
     have hfactR : (padicValNat p (expFact mo0) : ℝ) = (padicValNat p (cstOf Fr p Dt.nL rho dPl dNo) : ℝ) +
         padicValNat p (expFact bp0) + padicValNat p (expFact bn0) := by exact_mod_cast hfactV

@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HalfData
-import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.SiegelWeilUnitaryConvergent
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.EqEvalOfDirDerivVanish
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HalfData
+public import Development.AbelianVarietyTheory.PublishedTheorems.SiegelWeil₂.SiegelWeilUnitaryConvergent
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.EqEvalOfDirDerivVanish
+
+@[expose] public section
+
 open scoped Matrix NNReal ComplexConjugate TensorProduct ContDiff
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel GlobalTheory.Core.Rk.SWLaw GlobalTheory.Core.Rk.SW GlobalTheory.StdUnn
 open GlobalTheory.IndefiniteRowSideFullHecke.ModerateGrowthSchwartz (schwartzA)
 open GlobalTheory.IndefiniteRowSideFullHecke.SphericalVolumeLift (RealMat IsFockVec)
-open GlobalTheory.IndefiniteRowSideFullHecke.SphericalZero (swSec sZero)
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 noncomputable section
@@ -64,7 +68,8 @@ theorem foldr_dirD_eq_zero {T : Type} [Fintype T] [DecidableEq T] {W : Type} [No
   rw [← List.ofFn_get L, foldr_ofFn_dirD hu]
   have hs : L.get = fun i => ∑ τ, Pi.single τ (L.get i τ) := funext fun i => (Finset.univ_sum_single (L.get i)).symm
   simp only [Pi.zero_apply]
-  rw [hs, ContinuousMultilinearMap.map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hs, ContinuousMultilinearMap.map_sum]
   refine Finset.sum_eq_zero fun r _ => ?_
   have e1 : List.ofFn (fun i => (Pi.single (r i) (L.get i (r i)) : T → W)) =
       (List.ofFn fun i => (r i, L.get i (r i))).map (fun q => (Pi.single q.1 q.2 : T → W)) := by
@@ -182,10 +187,12 @@ theorem foldr_annC (hM : ∀ τ, (gramAt D V τ * s τ)ᴴ = gramAt D V τ * s �
       ContDiff ℝ ∞ (L.foldr (fun q g => dirD (Pi.single q.1 (fun i j => q.2 i j) : D.what₂.Tau → Fin V.rank → Fin n → ℂ) g) u) ∧
       L.foldr (fun q g => annC V l s q.1 q.2 g) (fun z => gam V l s z * u z) =
         fun z => gam V l s z *
-          L.foldr (fun q g => dirD (Pi.single q.1 (fun i j => q.2 i j) : D.what₂.Tau → Fin V.rank → Fin n → ℂ) g) u z
-  | [] => ⟨hu, rfl⟩
-  | q :: L => by
-    obtain ⟨h1, h2⟩ := foldr_annC hM hu L
+          L.foldr (fun q g => dirD (Pi.single q.1 (fun i j => q.2 i j) : D.what₂.Tau → Fin V.rank → Fin n → ℂ) g) u z := by
+  intro L
+  induction L with
+  | nil => exact ⟨hu, rfl⟩
+  | cons q L ih =>
+    obtain ⟨h1, h2⟩ := ih
     refine ⟨contDiff_dirD h1 _, ?_⟩
     simp only [List.foldr_cons]
     rw [h2]
@@ -229,7 +236,7 @@ theorem exists_poly_mul_gauss_of_annC : ∀ (D : D7) (V : HSp D) (n : ℕ) (l : 
     | nil => rfl
     | cons y L ih =>
       funext x
-      simp only [List.foldr_cons, List.map_cons, ih, dirD, Function.comp, map_add, map_smul]
+      simp only [List.foldr_cons, List.map_cons, ih, dirD, Function.comp, map_add (f := _), map_smul]
   obtain ⟨p, hp⟩ := GlobalTheory.PolyOfDeriv.eq_eval_of_dirDeriv_vanish _ N (u ∘ eL) hv (fun L hlen => by
     have h := htr L
     rw [hall (L.map eL) (by simp [hlen])] at h
@@ -255,7 +262,7 @@ theorem exists_poly_mul_gauss_of_annC : ∀ (D : D7) (V : HSp D) (n : ℕ) (l : 
   funext k
   obtain ⟨τ, i, j, b⟩ := k
   cases b
-  · simp only [φ, r, Bool.false_eq_true, if_false, if_true, map_mul, map_add, MvPolynomial.aeval_C, MvPolynomial.aeval_X,
+  · simp only [φ, r, Bool.false_eq_true, if_false, if_true, map_mul, map_add (f := _), MvPolynomial.aeval_C, MvPolynomial.aeval_X,
       Matrix.of_apply, Algebra.algebraMap_self, RingHom.id_apply, Complex.re_eq_add_conj]
     ring
   · simp only [φ, r, Bool.false_eq_true, if_false, if_true, map_mul, map_sub, MvPolynomial.aeval_C, MvPolynomial.aeval_X,

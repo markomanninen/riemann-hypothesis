@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
-import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ModularCharacterEqOneOnExpHermitian
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffSetIntegralNat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsKTypeOfMap
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+public import Formalism.RealPlaceAnalysis.RealPlaceTaylor.ModularCharacterEqOneOnExpHermitian
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffSetIntegralNat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsKTypeOfMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ def distOne {n : ℕ} (x : Matrix (Fin n) (Fin n) ℂ) : ℝ := (trace ((x - 1)�
 
 theorem distOne_eq {n : ℕ} (x : Matrix (Fin n) (Fin n) ℂ) :
     distOne x = ∑ j, ∑ i, ‖(x - 1) i j‖ ^ 2 := by
-  simp only [distOne, trace, diag, mul_apply, conjTranspose_apply, Complex.re_sum]
+  simp only [distOne, trace, diag, Matrix.mul_apply, conjTranspose_apply, Complex.re_sum]
   refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_
   rw [Complex.star_def, Complex.conj_mul', ← Complex.ofReal_pow, Complex.ofReal_re]
 
@@ -94,7 +98,7 @@ def garding (hσ : IsURepOn (UJset ε) σ) (hφ : Continuous φ) (hφc : HasComp
   toFun w := ∫ g : Formalism.REAL.UJ ε, φ (umat g) • σ (umat g) w ∂(Formalism.REAL.muG ε)
   map_add' w w' := by
     rw [← integral_add (integrable_garding hσ hφ hφc w) (integrable_garding hσ hφ hφc w')]
-    simp only [map_add, smul_add]
+    simp only [map_add (f := _), smul_add]
   map_smul' c w := by
     rw [RingHom.id_apply, ← integral_smul]
     simp only [map_smul, smul_comm c]

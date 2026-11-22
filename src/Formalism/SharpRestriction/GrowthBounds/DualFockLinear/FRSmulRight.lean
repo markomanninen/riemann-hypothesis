@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.MemHdIff
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.MemHdIff
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -45,9 +49,9 @@ def RestRep2 : Prop :=
 def cForm (K : Type) [Field K] (m : ℕ) (vec : Bool) (d : ℕ) (β s : MvPolynomial (Fin (m + 1) × Fin (m + 1)) K) :
     VV K m d →ₗ[K] Module.Dual K (VV K m d) :=
   LinearMap.mk₂ K (fun P Q => fockR (thV K m vec d P * s) (thV K m vec d Q * β))
-    (fun P P' Q => by rw [map_add, add_mul, fR_add_left])
+    (fun P P' Q => by rw [map_add (f := _), add_mul, fR_add_left])
     (fun t P Q => by rw [map_smul, smul_mul_assoc, fR_smul_left, smul_eq_mul])
-    (fun P Q Q' => by rw [map_add, add_mul, fR_add_right])
+    (fun P Q Q' => by rw [map_add (f := _), add_mul, fR_add_right])
     (fun t P Q => by rw [map_smul, smul_mul_assoc, fR_smul_right, smul_eq_mul])
 
 theorem cForm_apply (K : Type) [Field K] (m : ℕ) (vec : Bool) (d : ℕ) (β s : MvPolynomial (Fin (m + 1) × Fin (m + 1)) K)

@@ -1,9 +1,13 @@
-import Formalism.WachLatticeTwists.RealClassMaps.RealClassMapProofs.ClsRowVOfMem
-import Formalism.WachLatticeTwists.RealClassMaps.RealClassMapProofs.RowChiReal
+module
+
+public import Formalism.WachLatticeTwists.RealClassMaps.RealClassMapProofs.ClsRowVOfMem
+public import Formalism.WachLatticeTwists.RealClassMaps.RealClassMapProofs.RowChiReal
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
-open Formalism.NG Formalism.RepresentationBoundsCohomology.BR Formalism.RepresentationBoundsCohomology.JT Formalism.RepresentationBoundsCohomology.JS Formalism.RepresentationBoundsCohomology.LocallyConstantCohomology
+open Formalism.NG Formalism.RepresentationBoundsCohomology.BR Formalism.RepresentationBoundsCohomology.JT Formalism.RepresentationBoundsCohomology.LocallyConstantCohomology
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.RepresentationBoundsCohomology.LOC
 open ReciprocityTheory.ChartRestriction.T2 (GK PadicCoeff FracTop IsCyc IsCycOn IsFGTop cupFG)
 
@@ -20,8 +24,12 @@ theorem ko_tors (O : Type) [CommRing O] [IsDomain O] (z : KO O) : ∃ c : O, c �
   rw [Algebra.smul_def, mul_comm]
   exact hq.symm
 
-theorem psiCont : StatPsiCont := by
-  intro p O _ _ _ _ _ _ _ A _ _ _ _ _ Y hO hA ψ
+theorem psiCont (p : ℕ) (O : Type) [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
+    [TopologicalSpace O] [TopologicalSpace (FractionRing O)]
+    [IsTopologicalAddGroup (FractionRing O)] [ContinuousSMul O (FractionRing O)]
+    (A : Type) [Ring A] [Algebra O A] [TopologicalSpace A] [IsTopologicalAddGroup A]
+    [ContinuousConstSMul O A] (Y : Submodule A A) (hO : PadicCoeff p O) (hA : IsFGTop O A)
+    (ψ : Y →ₗ[O] KO O) : Continuous ψ := by
   have hfg : IsFGTop O Y := by
     have := hA.fg
     have := hA.t2
@@ -40,7 +48,7 @@ theorem psiCont : StatPsiCont := by
       obtain ⟨c, hc⟩ := Finset.dvd_prod_of_mem f hx
       rw [hc, mul_comm, mul_smul, hf, smul_zero]
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add, smul_add, hx, hy, add_zero]
+    | add x y _ _ hx hy => rw [map_add (f := _), smul_add, hx, hy, add_zero]
     | smul c x _ hx => rw [map_smul, smul_comm, hx, smul_zero]
   have hopen := hfg.isOpen_mulSub hO ha
   refine continuous_of_continuousAt_zero ψ.toAddMonoidHom ?_

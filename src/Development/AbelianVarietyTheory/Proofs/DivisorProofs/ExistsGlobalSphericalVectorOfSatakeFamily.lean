@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.UnrOutside
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivOfRangeEq
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFixedOfMemISup
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsLocalTranslationCompCommutingOperator
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.UnrOutside
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NonemptyEquivOfRangeEq
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFixedOfMemISup
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsLocalTranslationCompCommutingOperator
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,13 +26,13 @@ theorem map_mem_twKer {G V W : Type} [Group G] [AddCommGroup V] [Module ℂ V] [
     exact Submodule.subset_span ⟨n, S u, by simp [hS]⟩
   exact h ⟨v, hv, rfl⟩
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem exists_fixed_mem (π : CuspSub E a) (w : HeightOneSpectrum (𝓞 E))
-    (hS : GlobalTheory.LGrp.IsSpherical (π.locRep w) (KGL w a)) (U : Submodule ℂ π.V)
+    (hS : GlobalTheory.LGrp.IsSpherical (π.locRep w) (KGL w (n := a))) (U : Submodule ℂ π.V)
     (hU : ∀ g, ∀ v ∈ U, π.locRep w g v ∈ U) {y : π.V} (hy : y ∈ U) (hy0 : y ≠ 0) :
-    ∃ x ∈ U, x ≠ 0 ∧ ∀ k ∈ KGL w a, π.locRep w k x = x := by
-  have hK : IsCompact ((KGL w a : Subgroup _) : Set (GL (Fin a) (w.adicCompletion E))) :=
+    ∃ x ∈ U, x ≠ 0 ∧ ∀ k ∈ KGL w (n := a), π.locRep w k x = x := by
+  have hK : IsCompact ((KGL w (n := a) : Subgroup _) : Set (GL (Fin a) (w.adicCompletion E))) :=
     (GlobalTheory.LFun.SatCompare.isOpen_isCompact_KGL w a).2
   have hsm : IsSmooth (π.locRep w) := π.isSmooth_locRep w
   have hsU : IsSmooth (GlobalTheory.PRep.sub (π.locRep w) U hU) := fun v => by
@@ -36,7 +40,7 @@ theorem exists_fixed_mem (π : CuspSub E a) (w : HeightOneSpectrum (𝓞 E))
     ext g
     exact Subtype.ext_iff
   by_contra hne
-  have hbot : fixed (GlobalTheory.PRep.sub (π.locRep w) U hU) (KGL w a) = ⊥ := by
+  have hbot : fixed (GlobalTheory.PRep.sub (π.locRep w) U hU) (KGL w (n := a)) = ⊥ := by
     rw [Submodule.eq_bot_iff]
     intro v hv
     by_contra h0
@@ -44,12 +48,12 @@ theorem exists_fixed_mem (π : CuspSub E a) (w : HeightOneSpectrum (𝓞 E))
       congrArg Subtype.val (GlobalTheory.LGrp.mem_fixed.1 hv k hk)⟩
   have htop := (GlobalTheory.LocGL.isCompl_fixed_twKer hsU hK).sup_eq_top
   rw [hbot, bot_sup_eq] at htop
-  have hall : ∀ g, π.locRep w g y ∈ twKer (π.locRep w) (KGL w a) 1 := fun g =>
+  have hall : ∀ g, π.locRep w g y ∈ twKer (π.locRep w) (KGL w (n := a)) 1 := fun g =>
     map_mem_twKer (ρ := GlobalTheory.PRep.sub (π.locRep w) U hU) U.subtype (fun _ _ => rfl)
       (v := ⟨_, hU g y hy⟩) (htop ▸ Submodule.mem_top)
   obtain ⟨x, hx, hx0⟩ := (Submodule.ne_bot_iff _).1 hS
-  let Wl : Submodule ℂ π.V := ⨅ g, (twKer (π.locRep w) (KGL w a) 1).comap (π.locRep w g)
-  have memWl : ∀ v, v ∈ Wl ↔ ∀ g, π.locRep w g v ∈ twKer (π.locRep w) (KGL w a) 1 := fun v => by
+  let Wl : Submodule ℂ π.V := ⨅ g, (twKer (π.locRep w) (KGL w (n := a)) 1).comap (π.locRep w g)
+  have memWl : ∀ v, v ∈ Wl ↔ ∀ g, π.locRep w g v ∈ twKer (π.locRep w) (KGL w (n := a)) 1 := fun v => by
     simp [Wl, Submodule.mem_iInf]
   have stab : GlobalTheory.CuspRep.IsStable (Wl.map π.V.subtype) := by
     rintro o _ ⟨v, hv, rfl⟩
@@ -80,16 +84,16 @@ theorem locRep_comm (π : CuspSub E a) {v w : HeightOneSpectrum (𝓞 E)} (h : w
     LocSph.comm_locGL w _ (pLoc_locGL_of_ne h k)]
 
 theorem exists_fixed_union (π : CuspSub E a) (T : Set (HeightOneSpectrum (𝓞 E))) {y : π.V} (hy0 : y ≠ 0)
-    (hy : ∀ v ∈ T, ∀ k ∈ KGL v a, π.locRep v k y = y) (F : Finset (HeightOneSpectrum (𝓞 E)))
-    (hF : ∀ w ∈ F, GlobalTheory.LGrp.IsSpherical (π.locRep w) (KGL w a)) :
-    ∃ x : π.V, x ≠ 0 ∧ ∀ v, v ∈ T ∨ v ∈ F → ∀ k ∈ KGL v a, π.locRep v k x = x := by
+    (hy : ∀ v ∈ T, ∀ k ∈ KGL v (n := a), π.locRep v k y = y) (F : Finset (HeightOneSpectrum (𝓞 E)))
+    (hF : ∀ w ∈ F, GlobalTheory.LGrp.IsSpherical (π.locRep w) (KGL w (n := a))) :
+    ∃ x : π.V, x ≠ 0 ∧ ∀ v, v ∈ T ∨ v ∈ F → ∀ k ∈ KGL v (n := a), π.locRep v k x = x := by
   classical
   induction F using Finset.induction_on with
   | empty => exact ⟨y, hy0, fun v hv => hy v (by simpa using hv)⟩
   | insert w F _ ih =>
     obtain ⟨x, hx0, hx⟩ := ih fun v hv => hF v (Finset.mem_insert_of_mem hv)
-    let U : Submodule ℂ π.V := ⨅ v : {v // (v ∈ T ∨ v ∈ F) ∧ w ≠ v}, fixed (π.locRep v.1) (KGL v.1 a)
-    have memU : ∀ z, z ∈ U ↔ ∀ v, (v ∈ T ∨ v ∈ F) → w ≠ v → ∀ k ∈ KGL v a, π.locRep v k z = z := fun z => by
+    let U : Submodule ℂ π.V := ⨅ v : {v // (v ∈ T ∨ v ∈ F) ∧ w ≠ v}, fixed (π.locRep v.1) (KGL v.1 (n := a))
+    have memU : ∀ z, z ∈ U ↔ ∀ v, (v ∈ T ∨ v ∈ F) → w ≠ v → ∀ k ∈ KGL v (n := a), π.locRep v k z = z := fun z => by
       simp only [U, Submodule.mem_iInf, GlobalTheory.LGrp.mem_fixed, Subtype.forall]
       exact ⟨fun h v h1 h2 => h v ⟨h1, h2⟩, fun h v h1 => h v h1.1 h1.2⟩
     obtain ⟨z, hz, hz0, hzw⟩ := exists_fixed_mem π w (hF w (Finset.mem_insert_self _ _)) U
@@ -103,8 +107,8 @@ theorem exists_fixed_union (π : CuspSub E a) (T : Set (HeightOneSpectrum (𝓞 
       exact (Finset.mem_insert.1 h).resolve_left fun e => hne e.symm
 
 theorem exists_sphVec_of_isSpherical (π : CuspSub E a) (S : Set (HeightOneSpectrum (𝓞 E)))
-    (hS : ∀ w ∉ S, GlobalTheory.LGrp.IsSpherical (π.locRep w) (KGL w a)) :
-    ∃ φ ∈ π.V, φ ≠ 0 ∧ ∀ w ∉ S, ∀ k ∈ KGL w a, act (.fin (locGL E a w k)) φ = φ := by
+    (hS : ∀ w ∉ S, GlobalTheory.LGrp.IsSpherical (π.locRep w) (KGL w (n := a))) :
+    ∃ φ ∈ π.V, φ ≠ 0 ∧ ∀ w ∉ S, ∀ k ∈ KGL w (n := a), act (.fin (locGL E a w k)) φ = φ := by
   classical
   obtain ⟨φ, hφ, h0⟩ := (Submodule.ne_bot_iff _).1 π.ne_bot
   have hev := LocSph.eventually_mem ((π.cusp φ hφ).1.level.mem_nhds (by simp))
@@ -120,13 +124,13 @@ theorem exists_sphVec_of_isSpherical (π : CuspSub E a) (S : Set (HeightOneSpect
 
 theorem exists_sphVec (π : CuspSub E a) (S : Finset (HeightOneSpectrum (𝓞 E)))
     (hS : ∀ w ∉ S, ∃ B, HasSatGL w (π.locRep w) B) :
-    ∃ φ ∈ π.V, φ ≠ 0 ∧ ∀ w ∉ S, ∀ k ∈ KGL w a, act (.fin (locGL E a w k)) φ = φ :=
+    ∃ φ ∈ π.V, φ ≠ 0 ∧ ∀ w ∉ S, ∀ k ∈ KGL w (n := a), act (.fin (locGL E a w k)) φ = φ :=
   exists_sphVec_of_isSpherical π S fun w hw => (hS w hw).elim fun _ h => h.1
 
-theorem exists_sphVec_of_hasSat (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (π : CuspSub E a)
+theorem exists_sphVec_of_hasSat (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (π : CuspSub E a)
     (S : Finset (HeightOneSpectrum (𝓞 E))) (B : HeightOneSpectrum (𝓞 E) → Multiset ℂˣ)
     (h : ∀ w ∉ S, HasSatGL w (π.locRep w) (B w)) :
-    ∃ φ ∈ π.V, φ ≠ 0 ∧ ∀ w ∉ S, ∀ k ∈ KGL w a, act (.fin (locGL E a w k)) φ = φ :=
+    ∃ φ ∈ π.V, φ ≠ 0 ∧ ∀ w ∉ S, ∀ k ∈ KGL w (n := a), act (.fin (locGL E a w k)) φ = φ :=
   exists_sphVec π S fun w hw => ⟨B w, h w hw⟩
 
 end GlobalTheory.JSW.SphVec

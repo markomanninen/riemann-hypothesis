@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubsingletonOfGiso
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubsingletonOfGiso
+
+@[expose] public section
 
 noncomputable section
 
@@ -71,7 +75,7 @@ theorem det_uin {n : ℕ} (u : MirUin k n) :
     rw [show ((u : Mir k n) : GL (Fin (n + 1)) k) = unip k n v from hv.symm]
     ext i j
     show (1 + colMat k n v.toAdd) (Fin.castSucc i) (Fin.castSucc j) = _
-    simp [colMat, one_apply, Fin.castSucc_ne_last]
+    simp [colMat, Matrix.one_apply, Fin.castSucc_ne_last]
   ext
   rw [Matrix.GeneralLinearGroup.val_det_apply, det_of_last _ ((mem_Mir_iff k _).1 (u : Mir k n).2), hb]
   simp

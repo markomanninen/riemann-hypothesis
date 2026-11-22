@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.LiftChartIdeal
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HasArcDataIff
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.LiftChartIdeal
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,9 +27,6 @@ theorem valF_eq_valR {F : Type} [Field F] (x : Sp F ⟶ X) (U : X.Opens) (f : Γ
     valF x U f = valR x U f := rfl
 
 theorem valAt'_eq_valR (x : Sp ℂ ⟶ X) (U : X.Opens) (f : Γ(X, U)) : valAt' x U f = valR x U f := rfl
-
-theorem valAt_eq_valR (x : Sp ℂ ⟶ X) (U : X.Opens) (h : ⊤ ≤ x ⁻¹ᵁ U) (f : Γ(X, U)) :
-    valAt x U h f = valR x U f := (valR_eq x U h f).symm
 
 theorem le_preimage_mono (x : Sp C ⟶ X) {U V : X.Opens} (e : V ≤ U) (h : ⊤ ≤ x ⁻¹ᵁ V) : ⊤ ≤ x ⁻¹ᵁ U :=
   fun _ hz => e (h hz)
@@ -52,7 +53,7 @@ theorem valR_comp (x : Sp C ⟶ X) (g : X ⟶ Y) (U : Y.Opens) (f : Γ(Y, U)) :
   by_cases h : ⊤ ≤ x ⁻¹ᵁ (g ⁻¹ᵁ U)
   · rw [← valR_appLE x g le_rfl h, Scheme.Hom.appLE_eq_app]
   · have h' : ¬ ⊤ ≤ (x ≫ g) ⁻¹ᵁ U := h
-    rw [valR, valR, dif_neg h, dif_neg h']
+    rw [valR, valR, dite_eq_right h, dite_eq_right h']
 
 theorem valR_res (x : Sp C ⟶ X) {U V : X.Opens} (e : V ≤ U) (h : ⊤ ≤ x ⁻¹ᵁ V) (f : Γ(X, U)) :
     valR x V ((X.presheaf.map (homOfLE e).op).hom f) = valR x U f := by
@@ -61,7 +62,7 @@ theorem valR_res (x : Sp C ⟶ X) {U V : X.Opens} (e : V ≤ U) (h : ⊤ ≤ x �
 
 theorem valR_add (x : Sp C ⟶ X) (U : X.Opens) (h : ⊤ ≤ x ⁻¹ᵁ U) (f g : Γ(X, U)) :
     valR x U (f + g) = valR x U f + valR x U g := by
-  simp only [valR_eq x U h, map_add]
+  simp only [valR_eq x U h, map_add (f := _)]
 
 theorem valR_mul (x : Sp C ⟶ X) (U : X.Opens) (h : ⊤ ≤ x ⁻¹ᵁ U) (f g : Γ(X, U)) :
     valR x U (f * g) = valR x U f * valR x U g := by
@@ -192,9 +193,6 @@ def PtsOver.map {S : Scheme.{0}} {p : X ⟶ S} {q : Y ⟶ S} (g : X ⟶ Y) (hg :
 @[simp] theorem PtsOver.map_val {S : Scheme.{0}} {p : X ⟶ S} {q : Y ⟶ S} (g : X ⟶ Y) (hg : g ≫ q = p)
     (s : Sp C ⟶ S) (x : PtsOver p s) : (PtsOver.map g hg s x).1 = x.1 ≫ g := rfl
 
-@[simp] theorem PtsOver.map_id {S : Scheme.{0}} (p : X ⟶ S) (s : Sp C ⟶ S) (x : PtsOver p s) :
-    PtsOver.map (𝟙 X) (Category.id_comp p) s x = x := Subtype.ext (Category.comp_id _)
-
 theorem PtsOver.map_map {S : Scheme.{0}} {p : X ⟶ S} {q : Y ⟶ S} {r : Z ⟶ S} (g : X ⟶ Y) (hg : g ≫ q = p)
     (k : Y ⟶ Z) (hk : k ≫ r = q) (s : Sp C ⟶ S) (x : PtsOver p s) :
     PtsOver.map k hk s (PtsOver.map g hg s x) =
@@ -205,16 +203,6 @@ variable [TopologicalSpace C]
 instance topology (C : Type) [CommRing C] [TopologicalSpace C] (X : Scheme.{0}) :
     TopologicalSpace (Sp C ⟶ X) :=
   generateFrom {S | ∃ (U : X.Opens) (f : Γ(X, U)) (O : Set C), IsOpen O ∧ S = basicSet U f O}
-
-theorem topology_complex (X : Scheme.{0}) : topology ℂ X =
-    generateFrom {S | ∃ (U : X.Opens) (f : Γ(X, U)) (O : Set ℂ), IsOpen O ∧
-      S = {x : Sp ℂ ⟶ X | ∃ h : ⊤ ≤ x ⁻¹ᵁ U, valAt x U h f ∈ O}} := by
-  have : ∀ (U : X.Opens) (f : Γ(X, U)) (O : Set ℂ),
-      basicSet U f O = {x : Sp ℂ ⟶ X | ∃ h : ⊤ ≤ x ⁻¹ᵁ U, valAt x U h f ∈ O} := by
-    intro U f O
-    ext x
-    simp only [basicSet, Set.mem_setOf_eq, valAt_eq_valR, exists_prop]
-  simp only [topology, this]
 
 theorem isOpen_basicSet (U : X.Opens) (f : Γ(X, U)) {O : Set C} (hO : IsOpen O) :
     IsOpen (basicSet U f O) :=
@@ -271,16 +259,6 @@ theorem PtsOver.continuous_map {S : Scheme.{0}} {p : X ⟶ S} {q : Y ⟶ S} (g :
     (s : Sp C ⟶ S) : Continuous (PtsOver.map g hg s) :=
   ((continuous_comp g).comp continuous_subtype_val).subtype_mk _
 
-def isoHomeomorph (g : X ≅ Y) : (Sp C ⟶ X) ≃ₜ (Sp C ⟶ Y) where
-  toFun x := x ≫ g.hom
-  invFun y := y ≫ g.inv
-  left_inv x := by simp
-  right_inv y := by simp
-  continuous_toFun := continuous_comp _
-  continuous_invFun := continuous_comp _
-
-@[simp] theorem isoHomeomorph_apply (g : X ≅ Y) (x : Sp C ⟶ X) : isoHomeomorph g x = x ≫ g.hom := rfl
-
 theorem isInducing_of_tendsto {α β : Type*} [TopologicalSpace α] [TopologicalSpace β] {f : α → β}
     (hf : Continuous f) (H : ∀ (x : α) (l : Filter α), Tendsto f l (𝓝 (f x)) → Tendsto id l (𝓝 x)) :
     IsInducing f :=
@@ -292,8 +270,8 @@ theorem PtsOver.isEmbedding_map {S : Scheme.{0}} {p : X ⟶ S} {q : Y ⟶ S} (g 
   IsEmbedding.of_comp (PtsOver.continuous_map g hg s) continuous_subtype_val
     (H.comp IsEmbedding.subtypeVal)
 
-omit [TopologicalSpace C] in
 
+omit [TopologicalSpace C] in
 theorem PtsOver.range_map {S : Scheme.{0}} {p : X ⟶ S} {q : Y ⟶ S} (g : X ⟶ Y) (hg : g ≫ q = p)
     (s : Sp C ⟶ S) : Set.range (PtsOver.map g hg s) =
       Subtype.val ⁻¹' Set.range fun x : Sp C ⟶ X => x ≫ g := by
@@ -305,8 +283,8 @@ theorem PtsOver.range_map {S : Scheme.{0}} {p : X ⟶ S} {q : Y ⟶ S} (g : X �
     have hx' : x ≫ g = y.1 := hx
     exact ⟨⟨x, by rw [← hg, ← Category.assoc, hx', y.2]⟩, Subtype.ext hx'⟩
 
-omit [TopologicalSpace C] in
 
+omit [TopologicalSpace C] in
 theorem range_comp_of_isOpenImmersion (j : X ⟶ Y) [IsOpenImmersion j] :
     Set.range (fun x : Sp C ⟶ X => x ≫ j) = {y | ⊤ ≤ y ⁻¹ᵁ j.opensRange} := by
   ext y
@@ -439,17 +417,6 @@ theorem PtsOver.tendsto_iff_of_generators {R : Type} [CommRing R] {p : X ⟶ Sp 
     exact ((valR_constFn p (e b).1 U hb a).trans (by rw [(e b).2])).symm
   · exact H f hf
 
-theorem continuous_iff_of_generators {B : Type*} [TopologicalSpace B] {e : B → (Sp C ⟶ X)} {ι : Sort*}
-    {U : ι → X.Opens} (hU : ∀ i, IsAffineOpen (U i)) (hcov : iSup U = ⊤) {s : ∀ i, Set Γ(X, U i)}
-    (hs : ∀ i, Subring.closure (s i) = ⊤) :
-    Continuous e ↔ ∀ i, IsOpen {b | ⊤ ≤ e b ⁻¹ᵁ U i} ∧
-      ∀ f ∈ s i, ContinuousOn (fun b => valR (e b) (U i) f) {b | ⊤ ≤ e b ⁻¹ᵁ U i} := by
-  refine ⟨fun H i => ⟨(continuous_iff.1 H _).1, fun f _ => (continuous_iff.1 H _).2 f⟩, fun H => ?_⟩
-  refine continuous_iff_continuousAt.2 fun b => ?_
-  obtain ⟨i, hi⟩ := exists_le_preimage_of_iSup_eq_top (e b) hcov
-  have h := (H i).1.mem_nhds hi
-  exact (tendsto_iff_of_generators (hU i) hi (hs i)).2 ⟨h, fun f hf => ((H i).2 f hf).continuousAt h⟩
-
 theorem PtsOver.continuous_iff_of_generators {R : Type} [CommRing R] {p : X ⟶ Sp R} {t : Sp C ⟶ Sp R}
     {B : Type*} [TopologicalSpace B] {e : B → PtsOver p t} {ι : Sort*}
     {U : ι → X.Opens} (hU : ∀ i, IsAffineOpen (U i)) (hcov : iSup U = ⊤) {s : ∀ i, Set Γ(X, U i)}
@@ -485,12 +452,6 @@ def specHomeomorph (C : Type) [CommRing C] [TopologicalSpace C] [IsTopologicalRi
     exact (continuous_valR_top (C := C) _).congr fun x => (preimage_apply x a).symm
   continuous_invFun := continuous_specMap A
 
-@[simp] theorem specHomeomorph_apply (A : CommRingCat.{0}) (x : Sp C ⟶ Spec A) :
-    specHomeomorph C A x = Spec.preimage x := rfl
-
-@[simp] theorem specHomeomorph_symm_apply (A : CommRingCat.{0}) (φ : A ⟶ CommRingCat.of C) :
-    (specHomeomorph C A).symm φ = Spec.map φ := rfl
-
 def affineHomeomorph {U : X.Opens} (hU : IsAffineOpen U) :
     {x : Sp C ⟶ X // ⊤ ≤ x ⁻¹ᵁ U} ≃ₜ (Γ(X, U) ⟶ CommRingCat.of C) where
   toFun x := valMap x.1 U x.2
@@ -502,12 +463,6 @@ def affineHomeomorph {U : X.Opens} (hU : IsAffineOpen U) :
     exact (continuousOn_iff_continuous_restrict.1 (continuousOn_valR (C := C) f)).congr
       fun x => valR_eq x.1 U x.2 f
   continuous_invFun := ((continuous_comp _).comp (continuous_specMap _)).subtype_mk _
-
-@[simp] theorem affineHomeomorph_apply {U : X.Opens} (hU : IsAffineOpen U) (x : {x : Sp C ⟶ X // ⊤ ≤ x ⁻¹ᵁ U}) :
-    affineHomeomorph hU x = valMap x.1 U x.2 := rfl
-
-@[simp] theorem affineHomeomorph_symm_val {U : X.Opens} (hU : IsAffineOpen U)
-    (φ : Γ(X, U) ⟶ CommRingCat.of C) : ((affineHomeomorph hU).symm φ).1 = Spec.map φ ≫ hU.fromSpec := rfl
 
 theorem continuous_spMap_comp {C₀ : Type} [CommRing C₀] [TopologicalSpace C₀] [IsLocalRing C₀]
     (σ : C₀ →+* C) (hσ : Continuous σ) : Continuous fun x : Sp C₀ ⟶ X => spMap σ ≫ x := by
@@ -531,8 +486,8 @@ theorem isEmbedding_comp_of_isClosedImmersion (i : X ⟶ Y) [IsClosedImmersion i
   simp only [valR_comp] at h3
   exact h3
 
-omit [TopologicalSpace C] [IsTopologicalRing C] [IsLocalRing C] [IsOpenUnits C] in
 
+omit [TopologicalSpace C] [IsTopologicalRing C] [IsLocalRing C] [IsOpenUnits C] in
 theorem mem_range_comp_iff_of_isClosedImmersion (i : X ⟶ Y) [IsClosedImmersion i] {V : Y.Opens}
     (hV : IsAffineOpen V) (y : Sp C ⟶ Y) (hy : ⊤ ≤ y ⁻¹ᵁ V) :
     y ∈ Set.range (fun x : Sp C ⟶ X => x ≫ i) ↔ ∀ f, (i.app V).hom f = 0 → valR y V f = 0 := by
@@ -568,22 +523,11 @@ theorem isClosedEmbedding_comp [T1Space C] (i : X ⟶ Y) [IsClosedImmersion i] :
   filter_upwards [(isOpen_basicSet V f (isOpen_compl_singleton (x := (0 : C)))).mem_nhds ⟨hyV, hne⟩]
     with z hz hz' using hz.2 ((mem_range_comp_iff_of_isClosedImmersion i hV z hz.1).1 hz' f hf)
 
-theorem isEmbedding_comp (i : X ⟶ Y) [IsImmersion i] : IsEmbedding fun x : Sp C ⟶ X => x ≫ i := by
-  have h := (isOpenEmbedding_comp (C := C) i.coborderRange.ι).isEmbedding.comp
-    (isEmbedding_comp_of_isClosedImmersion i.liftCoborder)
-  convert h using 1
-  ext1 x
-  simp only [Function.comp_apply, Category.assoc, Scheme.Hom.liftCoborder_ι]
-
 theorem PtsOver.isClosedEmbedding_map [T1Space C] {S : Scheme.{0}} {p : X ⟶ S} {q : Y ⟶ S} (i : X ⟶ Y)
     [IsClosedImmersion i] (hi : i ≫ q = p) (s : Sp C ⟶ S) : IsClosedEmbedding (PtsOver.map i hi s) :=
   ⟨PtsOver.isEmbedding_map i hi s (isClosedEmbedding_comp i).isEmbedding, by
     rw [PtsOver.range_map]
     exact (isClosedEmbedding_comp i).isClosed_range.preimage continuous_subtype_val⟩
-
-theorem PtsOver.isEmbedding_map_of_isImmersion {S : Scheme.{0}} {p : X ⟶ S} {q : Y ⟶ S} (i : X ⟶ Y)
-    [IsImmersion i] (hi : i ≫ q = p) (s : Sp C ⟶ S) : IsEmbedding (PtsOver.map i hi s) :=
-  PtsOver.isEmbedding_map i hi s (isEmbedding_comp i)
 
 theorem isEmbedding_of_isPullback {P S : Scheme.{0}} {fst : P ⟶ X} {snd : P ⟶ Y} {f : X ⟶ S} {g : Y ⟶ S}
     (hP : IsPullback fst snd f g) : IsEmbedding fun z : Sp C ⟶ P => (z ≫ fst, z ≫ snd) := by
@@ -653,22 +597,6 @@ theorem isEmbedding_of_isPullback {P S : Scheme.{0}} {fst : P ⟶ X} {snd : P �
   simp only [Function.comp_apply, id]
   rw [hψ y h1 h2, hdesc]
 
-def pullbackHomeomorph {P S : Scheme.{0}} {fst : P ⟶ X} {snd : P ⟶ Y} {f : X ⟶ S} {g : Y ⟶ S}
-    (hP : IsPullback fst snd f g) :
-    (Sp C ⟶ P) ≃ₜ {q : (Sp C ⟶ X) × (Sp C ⟶ Y) // q.1 ≫ f = q.2 ≫ g} where
-  toFun z := ⟨(z ≫ fst, z ≫ snd), (Category.assoc z fst f).trans
-    ((congrArg (z ≫ ·) hP.w).trans (Category.assoc z snd g).symm)⟩
-  invFun q := hP.lift q.1.1 q.1.2 q.2
-  left_inv z := hP.hom_ext (hP.lift_fst _ _ _) (hP.lift_snd _ _ _)
-  right_inv q := Subtype.ext (Prod.ext (hP.lift_fst _ _ q.2) (hP.lift_snd _ _ q.2))
-  continuous_toFun := (isEmbedding_of_isPullback (C := C) hP).continuous.subtype_mk _
-  continuous_invFun := by
-    refine (isEmbedding_of_isPullback (C := C) hP).continuous_iff.2 ?_
-    exact continuous_subtype_val.congr fun q => (Prod.ext (hP.lift_fst _ _ q.2) (hP.lift_snd _ _ q.2)).symm
-
-@[simp] theorem pullbackHomeomorph_val {P S : Scheme.{0}} {fst : P ⟶ X} {snd : P ⟶ Y} {f : X ⟶ S} {g : Y ⟶ S}
-    (hP : IsPullback fst snd f g) (z : Sp C ⟶ P) : (pullbackHomeomorph hP z).1 = (z ≫ fst, z ≫ snd) := rfl
-
 def PtsOver.prodHomeomorph {P S : Scheme.{0}} {fst : P ⟶ X} {snd : P ⟶ Y} {f : X ⟶ S} {g : Y ⟶ S}
     (hP : IsPullback fst snd f g) (s : Sp C ⟶ S) : PtsOver (fst ≫ f) s ≃ₜ PtsOver f s × PtsOver g s where
   toFun z := (PtsOver.map fst rfl s z, PtsOver.map snd hP.w.symm s z)
@@ -684,10 +612,6 @@ def PtsOver.prodHomeomorph {P S : Scheme.{0}} {fst : P ⟶ X} {snd : P ⟶ Y} {f
       Continuous (Prod.map Subtype.val Subtype.val : PtsOver f s × PtsOver g s → _)) using 1
     ext1 q
     exact Prod.ext (hP.lift_fst _ _ _) (hP.lift_snd _ _ _)
-
-@[simp] theorem PtsOver.prodHomeomorph_apply {P S : Scheme.{0}} {fst : P ⟶ X} {snd : P ⟶ Y} {f : X ⟶ S}
-    {g : Y ⟶ S} (hP : IsPullback fst snd f g) (s : Sp C ⟶ S) (z : PtsOver (fst ≫ f) s) :
-    PtsOver.prodHomeomorph hP s z = (PtsOver.map fst rfl s z, PtsOver.map snd hP.w.symm s z) := rfl
 
 end Local
 
@@ -716,11 +640,6 @@ def ptsOverEquivAlgHom {t : Sp C ⟶ Sp R} (ht : t = spMap (algebraMap R C)) :
     rw [Spec.preimage_map]
     rfl
 
-theorem ptsOverEquivAlgHom_apply {t : Sp C ⟶ Sp R} (ht : t = spMap (algebraMap R C))
-    (x : PtsOver (spMap (algebraMap R A)) t) (a : A) :
-    ptsOverEquivAlgHom A ht x a = valR x.1 ⊤ ((Scheme.ΓSpecIso (CommRingCat.of A)).inv.hom a) :=
-  preimage_apply (A := CommRingCat.of A) x.1 a
-
 @[simp] theorem ptsOverEquivAlgHom_symm_val {t : Sp C ⟶ Sp R} (ht : t = spMap (algebraMap R C))
     (φ : A →ₐ[R] C) : ((ptsOverEquivAlgHom A ht).symm φ).1 = spMap φ.toRingHom := rfl
 
@@ -731,8 +650,8 @@ abbrev ptsEquivAlgHom {C : Type} [CommRing C] (A : Type) [CommRing A] [Algebra C
     Pts (spMap (algebraMap C A)) ≃ (A →ₐ[C] C) :=
   ptsOverEquivAlgHom A (id_eq_spMap_algebraMap C)
 
-variable {A} in
 
+variable {A} in
 theorem range_coord {t : Sp C ⟶ Sp R} (ht : t = spMap (algebraMap R C)) {σ : Type*} (a : σ → A)
     (ha : Function.Surjective (MvPolynomial.aeval (R := R) a)) :
     Set.range (fun (x : PtsOver (spMap (algebraMap R A)) t) (i : σ) => ptsOverEquivAlgHom A ht x (a i)) =
@@ -750,15 +669,15 @@ theorem range_coord {t : Sp C ⟶ Sp R} (ht : t = spMap (algebraMap R C)) {σ : 
 
 variable [TopologicalSpace C] [IsTopologicalRing C] [IsLocalRing C] [IsOpenUnits C]
 
-open CommRingCat.HomTopology in
 
+open CommRingCat.HomTopology in
 theorem isEmbedding_ptsOverEquivAlgHom {t : Sp C ⟶ Sp R} (ht : t = spMap (algebraMap R C)) :
     IsEmbedding fun x : PtsOver (spMap (algebraMap R A)) t => (ptsOverEquivAlgHom A ht x : A → C) :=
   ((CommRingCat.HomTopology.isEmbedding_hom (CommRingCat.of C) (CommRingCat.of A)).comp
     (specHomeomorph C (CommRingCat.of A)).isEmbedding).comp IsEmbedding.subtypeVal
 
-variable {A} in
 
+variable {A} in
 theorem isEmbedding_coord {t : Sp C ⟶ Sp R} (ht : t = spMap (algebraMap R C)) {σ : Type*} (a : σ → A)
     (ha : Function.Surjective (MvPolynomial.aeval (R := R) a)) :
     IsEmbedding fun (x : PtsOver (spMap (algebraMap R A)) t) (i : σ) => ptsOverEquivAlgHom A ht x (a i) := by
@@ -773,8 +692,8 @@ theorem isEmbedding_coord {t : Sp C ⟶ Sp R} (ht : t = spMap (algebraMap R C)) 
     simp only [Function.comp_apply]
     rw [← MvPolynomial.comp_aeval, AlgHom.comp_apply, hq]
 
-variable {A} in
 
+variable {A} in
 theorem isClosedEmbedding_coord [T1Space C] {t : Sp C ⟶ Sp R} (ht : t = spMap (algebraMap R C)) {σ : Type*}
     (a : σ → A) (ha : Function.Surjective (MvPolynomial.aeval (R := R) a)) :
     IsClosedEmbedding
@@ -789,8 +708,8 @@ theorem isClosedEmbedding_coord [T1Space C] {t : Sp C ⟶ Sp R} (ht : t = spMap 
     fun_prop
   exact isClosed_singleton.preimage this
 
-omit [TopologicalSpace C] [IsTopologicalRing C] [IsLocalRing C] [IsOpenUnits C] in
 
+omit [TopologicalSpace C] [IsTopologicalRing C] [IsLocalRing C] [IsOpenUnits C] in
 theorem aeval_mk_X {σ : Type} (I : Ideal (MvPolynomial σ R)) (q : MvPolynomial σ R) :
     MvPolynomial.aeval (fun i => Ideal.Quotient.mk I (MvPolynomial.X i)) q = Ideal.Quotient.mk I q := by
   have : MvPolynomial.aeval (fun i => Ideal.Quotient.mk I (MvPolynomial.X i)) = Ideal.Quotient.mkₐ R I := by
@@ -811,16 +730,6 @@ def zeroSetHomeomorph {t : Sp C ⟶ Sp R} (ht : t = spMap (algebraMap R C)) {σ 
     rw [range_coord ht _ ha]
     simp only [aeval_mk_X, Ideal.Quotient.eq_zero_iff_mem]))
 
-theorem zeroSetHomeomorph_apply {t : Sp C ⟶ Sp R} (ht : t = spMap (algebraMap R C)) {σ : Type}
-    (I : Ideal (MvPolynomial σ R)) (x : PtsOver (spMap (algebraMap R (MvPolynomial σ R ⧸ I))) t) (i : σ) :
-    (zeroSetHomeomorph ht I x : σ → C) i =
-      ptsOverEquivAlgHom _ ht x (Ideal.Quotient.mk I (MvPolynomial.X i)) := rfl
-
-def zeroLocusHomeomorph {F : Type} [Field F] [TopologicalSpace F] [IsTopologicalDivisionRing F] [T1Space F]
-    {σ : Type} (I : Ideal (MvPolynomial σ F)) :
-    Pts (spMap (algebraMap F (MvPolynomial σ F ⧸ I))) ≃ₜ MvPolynomial.zeroLocus F I :=
-  zeroSetHomeomorph (id_eq_spMap_algebraMap F) I
-
 def affineSpaceHomeomorph {t : Sp C ⟶ Sp R} (ht : t = spMap (algebraMap R C)) (σ : Type) :
     PtsOver (spMap (algebraMap R (MvPolynomial σ R))) t ≃ₜ (σ → C) :=
   have ha : Function.Surjective (MvPolynomial.aeval (R := R) (MvPolynomial.X : σ → MvPolynomial σ R)) :=
@@ -831,10 +740,6 @@ def affineSpaceHomeomorph {t : Sp C ⟶ Sp R} (ht : t = spMap (algebraMap R C)) 
     rw [MvPolynomial.aeval_X_left_apply] at hq
     rw [hq, map_zero])
 
-theorem affineSpaceHomeomorph_apply {t : Sp C ⟶ Sp R} (ht : t = spMap (algebraMap R C)) (σ : Type)
-    (x : PtsOver (spMap (algebraMap R (MvPolynomial σ R))) t) (i : σ) :
-    affineSpaceHomeomorph ht σ x i = ptsOverEquivAlgHom _ ht x (MvPolynomial.X i) := rfl
-
 end Algebra
 
 section OverCat
@@ -843,12 +748,9 @@ open MonoidalCategory CartesianMonoidalCategory
 
 variable {C : Type} [CommRing C] [TopologicalSpace C]
 
+
 omit [TopologicalSpace C] in
-
 abbrev overPt {A : Over (Sp C)} (x : 𝟙_ (Over (Sp C)) ⟶ A) : Sp C ⟶ A.left := x.left
-
-instance unitLeftTopology (X : Scheme.{0}) : TopologicalSpace ((𝟙_ (Over (Sp C))).left ⟶ X) :=
-  topology C X
 
 instance overTopology (A : Over (Sp C)) : TopologicalSpace (𝟙_ (Over (Sp C)) ⟶ A) :=
   induced overPt (topology C A.left)
@@ -864,9 +766,6 @@ def overHomeomorph (A : Over (Sp C)) : (𝟙_ (Over (Sp C)) ⟶ A) ≃ₜ Pts A.
   right_inv _ := rfl
   continuous_toFun := (isEmbedding_left A).continuous.subtype_mk _
   continuous_invFun := (isEmbedding_left A).continuous_iff.2 continuous_subtype_val
-
-@[simp] theorem overHomeomorph_val (A : Over (Sp C)) (x : 𝟙_ (Over (Sp C)) ⟶ A) :
-    (overHomeomorph A x).1 = x.left := rfl
 
 @[fun_prop] theorem continuous_over_comp {A B : Over (Sp C)} (g : A ⟶ B) :
     Continuous fun x : 𝟙_ (Over (Sp C)) ⟶ A => x ≫ g :=
@@ -884,14 +783,6 @@ def tensorHomeomorph [IsTopologicalRing C] [IsLocalRing C] [IsOpenUnits C] (A B 
     refine (isEmbedding_of_isPullback (C := C) (IsPullback.of_hasPullback A.hom B.hom)).continuous_iff.2 ?_
     refine ((isEmbedding_left A).continuous.prodMap (isEmbedding_left B).continuous).congr fun q => ?_
     exact Prod.ext (congrArg (·.left) (lift_fst q.1 q.2)).symm (congrArg (·.left) (lift_snd q.1 q.2)).symm
-
-@[simp] theorem tensorHomeomorph_apply [IsTopologicalRing C] [IsLocalRing C] [IsOpenUnits C]
-    (A B : Over (Sp C)) (z : 𝟙_ (Over (Sp C)) ⟶ A ⊗ B) :
-    tensorHomeomorph A B z = (z ≫ fst A B, z ≫ snd A B) := rfl
-
-@[simp] theorem tensorHomeomorph_symm_apply [IsTopologicalRing C] [IsLocalRing C] [IsOpenUnits C]
-    (A B : Over (Sp C)) (q : (𝟙_ (Over (Sp C)) ⟶ A) × (𝟙_ (Over (Sp C)) ⟶ B)) :
-    (tensorHomeomorph A B).symm q = lift q.1 q.2 := rfl
 
 end OverCat
 
@@ -934,15 +825,6 @@ def PtsOver.conjHomeomorph {S : Scheme.{0}} (p : X ⟶ S) (s : Sp ℂ ⟶ S) :
     rw [conjHomeomorph_apply, Category.assoc]
     exact (Points.conjHomeomorph S).injective.eq_iff.symm
 
-def ptsEquivCPt (p : X ⟶ Sp ℂ) [LocallyOfFiniteType p] : Pts p ≃ CPt X :=
-  pointEquivClosedPoint p
-
-theorem ptsEquivCPt_val (p : X ⟶ Sp ℂ) [LocallyOfFiniteType p] (x : Pts p) :
-    (ptsEquivCPt p x).1 = x.1 (IsLocalRing.closedPoint ℂ) := rfl
-
-theorem ptsEquivCPt_mem_iff (p : X ⟶ Sp ℂ) [LocallyOfFiniteType p] (x : Pts p) (U : X.Opens) :
-    (ptsEquivCPt p x).1 ∈ U ↔ ⊤ ≤ x.1 ⁻¹ᵁ U := (le_preimage_iff x.1 U).symm
-
 theorem germ_stalkClosedPointTo_eq_valMap {C : Type} [CommRing C] [IsLocalRing C] (x : Sp C ⟶ X)
     (U : X.Opens) (h : ⊤ ≤ x ⁻¹ᵁ U) :
     X.presheaf.germ U (x (IsLocalRing.closedPoint C)) ((le_preimage_iff x U).1 h) ≫
@@ -950,108 +832,6 @@ theorem germ_stalkClosedPointTo_eq_valMap {C : Type} [CommRing C] [IsLocalRing C
   rw [Scheme.germ_stalkClosedPointTo (R := CommRingCat.of C)]
   rfl
 
-theorem valR_eq_val (p : X ⟶ Sp ℂ) [LocallyOfFiniteType p] (x : Pts p) (U : X.Opens)
-    (h : (ptsEquivCPt p x).1 ∈ U) (f : Γ(X, U)) : valR x.1 U f = val p f (ptsEquivCPt p x).1 h := by
-  let ψ : X.residueField (x.1 (IsLocalRing.closedPoint ℂ)) ⟶ CommRingCat.of ℂ :=
-    Scheme.descResidueField (Scheme.stalkClosedPointTo (R := CommRingCat.of ℂ) x.1)
-  have hψ : ∀ (V : X.Opens) (hV : x.1 (IsLocalRing.closedPoint ℂ) ∈ V) (g : Γ(X, V)),
-      ψ.hom ((X.evaluation V _ hV).hom g) = valR x.1 V g := by
-    intro V hV g
-    have hV' := (le_preimage_iff x.1 V).2 hV
-    rw [valR_eq x.1 V hV', ← germ_stalkClosedPointTo_eq_valMap, ← CommRingCat.comp_apply,
-      ← Scheme.germ_residue, Category.assoc, Scheme.residue_descResidueField]
-  have hc : IsClosed ({x.1 (IsLocalRing.closedPoint ℂ)} : Set X) := (ptsEquivCPt p x).2
-  have h1 := valHom_unique p _ hc ψ.hom (RingHom.ext fun c =>
-    (hψ ⊤ trivial _).trans (valR_constFn_of_section p x.1 x.2 ⊤ (le_preimage_top _) c))
-  have h2 := valHom_eq p _ hc
-  rw [← h1] at h2
-  rw [← hψ U h f]
-  exact (congrFun h2 _).symm
-
-theorem valAt_eq_val (p : X ⟶ Sp ℂ) [LocallyOfFiniteType p] (x : Pts p) (U : X.Opens)
-    (h : ⊤ ≤ x.1 ⁻¹ᵁ U) (f : Γ(X, U)) :
-    valAt x.1 U h f = val p f (ptsEquivCPt p x).1 ((ptsEquivCPt_mem_iff p x U).2 h) :=
-  (valAt_eq_valR x.1 U h f).trans (valR_eq_val p x U _ f)
-
-def resolutionHomeomorph {K : Type} [Fintype K] [Nonempty K] {ι : K → Type} [∀ k, Fintype (ι k)]
-    {P D : Ideal (MvPolynomial (Σ k, ι k) ℂ)} {hP : IsMultiHomogIdeal P} (w : WData P D hP) :
-    Pts (w.π ≫ toSpecC hP) ≃ₜ w.M :=
-  haveI := w.lft
-  let e : Pts (w.π ≫ toSpecC hP) ≃ w.M := ptsEquivCPt (w.π ≫ toSpecC hP)
-  have hmem : ∀ (c : w.Idx) (x : Pts (w.π ≫ toSpecC hP)),
-      e x ∈ w.src c ↔ ⊤ ≤ x.1 ⁻¹ᵁ (w.pres c.1 c.2).V := fun c x => ptsEquivCPt_mem_iff _ x _
-  have hval : ∀ (c : w.Idx) (x : Pts (w.π ≫ toSpecC hP)) (_ : e x ∈ w.src c) (q),
-      MvPolynomial.eval (w.coord c (e x)) q = valR x.1 _ ((w.pres c.1 c.2).secHom q) :=
-    fun c x hx q => (w.eval_coord_val c (e x) hx q).trans (valR_eq_val _ x _ hx _).symm
-  { e with
-    continuous_toFun := by
-      refine continuous_generateFrom_iff.2 ?_
-      rintro _ ⟨c, O, hO, rfl⟩
-      have h1 : IsOpen (e ⁻¹' w.src c) := by
-        rw [show e ⁻¹' w.src c = _ from Set.ext (hmem c)]
-        exact (isOpen_setOf_le_preimage _).preimage continuous_subtype_val
-      have h2 : ContinuousOn (fun x => w.coord c (e x)) (e ⁻¹' w.src c) := by
-        refine continuousOn_pi.2 fun l => ?_
-        refine (((continuousOn_valR ((w.pres c.1 c.2).secHom (MvPolynomial.X l))).comp
-          continuous_subtype_val.continuousOn fun x hx => (hmem c x).1 hx)).congr fun x hx => ?_
-        exact (MvPolynomial.eval_X l).symm.trans (hval c x hx _)
-      exact h2.isOpen_inter_preimage h1 hO
-    continuous_invFun := by
-      refine continuous_induced_rng.2 (continuous_iff_continuousAt.2 fun y => ?_)
-      obtain ⟨c, hc⟩ := w.cover y
-      have hm : ∀ z, z ∈ w.src c → e (e.symm z) ∈ w.src c := fun z hz => by rwa [e.apply_symm_apply]
-      have hn := (w.isOpen_alt_bis c).mem_nhds hc
-      refine tendsto_of_isAffineOpen (w.pres c.1 c.2).isAffineOpen_V' ((hmem c _).1 (hm y hc))
-        (mem_of_superset hn fun z hz => (hmem c _).1 (hm z hz)) fun f => ?_
-      obtain ⟨q, rfl⟩ := (w.pres c.1 c.2).secHom_surj f
-      have h3 : ContinuousOn (fun z => MvPolynomial.eval (w.coord c z) q) (w.src c) :=
-        (MvPolynomial.continuous_eval q).comp_continuousOn
-          (continuousOn_iff_continuous_restrict.2 (w.isEmbedding c).continuous)
-      have h4 : ContinuousOn (fun z => valR (e.symm z).1 _ ((w.pres c.1 c.2).secHom q)) (w.src c) :=
-        h3.congr fun z hz => by rw [← hval c _ (hm z hz), e.apply_symm_apply]
-      exact h4.continuousAt hn }
-
-theorem resolutionHomeomorph_val {K : Type} [Fintype K] [Nonempty K] {ι : K → Type} [∀ k, Fintype (ι k)]
-    {P D : Ideal (MvPolynomial (Σ k, ι k) ℂ)} {hP : IsMultiHomogIdeal P} (w : WData P D hP)
-    (x : Pts (w.π ≫ toSpecC hP)) : (resolutionHomeomorph w x).1 = x.1 (IsLocalRing.closedPoint ℂ) := rfl
-
 end Complex
-
-example : Nonempty (Pts (spMap (algebraMap ℂ (MvPolynomial (Fin 2) ℂ))) ≃ₜ (Fin 2 → ℂ)) :=
-  ⟨affineSpaceHomeomorph (id_eq_spMap_algebraMap ℂ) (Fin 2)⟩
-
-example : Nonempty (PtsOver (spMap (algebraMap ℤ (MvPolynomial Unit ℤ))) (spMap (algebraMap ℤ ℚ_[2])) ≃ₜ
-    (Unit → ℚ_[2])) :=
-  ⟨affineSpaceHomeomorph rfl Unit⟩
-
-example : let X := Pts (spMap (algebraMap ℂ (MvPolynomial Unit ℂ)))
-    ConnectedSpace X ∧ T2Space X ∧ Nontrivial X := by
-  let h := affineSpaceHomeomorph (id_eq_spMap_algebraMap ℂ) Unit
-  exact ⟨h.symm.surjective.connectedSpace h.symm.continuous, h.isEmbedding.t2Space,
-    h.toEquiv.nontrivial⟩
-
-example : valAt' (spMap (MvPolynomial.eval fun _ : Unit => 2 + Complex.I)) ⊤
-    ((Scheme.ΓSpecIso (CommRingCat.of (MvPolynomial Unit ℂ))).inv.hom (MvPolynomial.X () ^ 2 + 1)) =
-      4 + 4 * Complex.I := by
-  rw [valAt'_eq_valR, valR_specMap (A := CommRingCat.of (MvPolynomial Unit ℂ))]
-  simp only [CommRingCat.hom_ofHom, map_add, map_pow, MvPolynomial.eval_X, map_one]
-  linear_combination Complex.I_mul_I
-
-example : CompactSpace (Pts (spMap (algebraMap ℝ (MvPolynomial (Fin 2) ℝ ⧸
-    Ideal.span {(MvPolynomial.X 0 ^ 2 + MvPolynomial.X 1 ^ 2 - 1 : MvPolynomial (Fin 2) ℝ)})))) := by
-  set I := Ideal.span {(MvPolynomial.X 0 ^ 2 + MvPolynomial.X 1 ^ 2 - 1 : MvPolynomial (Fin 2) ℝ)}
-  have hc : IsCompact {z : Fin 2 → ℝ | ∀ q ∈ I, MvPolynomial.aeval z q = 0} := by
-    refine (isCompact_closedBall (0 : Fin 2 → ℝ) 1).of_isClosed_subset ?_ fun z hz => ?_
-    · simp only [Set.setOf_forall]
-      exact isClosed_iInter fun q => isClosed_iInter fun _ =>
-        isClosed_eq (MvPolynomial.continuous_eval q) continuous_const
-    · have h := hz _ (Ideal.subset_span rfl)
-      simp only [map_sub, map_add, map_pow, MvPolynomial.aeval_X, map_one] at h
-      rw [mem_closedBall_zero_iff, pi_norm_le_iff_of_nonneg zero_le_one]
-      intro i
-      rw [Real.norm_eq_abs, abs_le]
-      fin_cases i <;> constructor <;> simp only [Fin.zero_eta, Fin.mk_one] <;> nlinarith
-  have := isCompact_iff_compactSpace.1 hc
-  exact (zeroSetHomeomorph (id_eq_spMap_algebraMap ℝ) I).symm.compactSpace
 
 end GlobalTheory.Points

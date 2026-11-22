@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PLineBundleRestrict
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsMultiProjPrimeMIdealOverGraph
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PLineBundleRestrict
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.IsMultiProjPrimeMIdealOverGraph
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman.SectionsOverLocalization
@@ -44,11 +49,16 @@ def scaleBundle (P : Kleiman.LineBundle k y) (μ : K') (hμ : μ ≠ 0) : Kleima
 theorem restrictData_scale {Ω : Type w} [Field Ω] [Algebra k Ω] {x : Fin (N + 1) → Ω}
     {Q : Kleiman.SubSystem k x Ω} {hxy : ∀ i, y i ≠ 0 → x i ≠ 0} {P : Kleiman.LineBundle k y} {r : Ω → K'}
     (hr : Kleiman.RestrictData Q hxy P.toSubSystem r) (μ : K') (hμ : μ ≠ 0) :
-    Kleiman.RestrictData Q hxy (scaleBundle P μ hμ).toSubSystem (fun q => μ * r q) where
-  mem I q hq := Submodule.mem_span_singleton_mul.mpr ⟨r q, hr.mem I q hq, rfl⟩
-  add I q hq q' hq' := by simp only [hr.add I q hq q' hq', mul_add]
-  smul I q hq f s e hs hf hse := by simp only [hr.smul I q hq f s e hs hf hse]; ring
-  span I := by
+    Kleiman.RestrictData Q hxy (scaleBundle P μ hμ).toSubSystem (fun q => μ * r q) := by
+  constructor
+  · intro I q hq
+    exact Submodule.mem_span_singleton_mul.mpr ⟨r q, hr.mem I q hq, rfl⟩
+  · intro I q hq q' hq'
+    simp only [hr.add I q hq q' hq', mul_add]
+  · intro I q hq f s e hs hf hse
+    simp only [hr.smul I q hq f s e hs hf hse]
+    ring
+  · intro I
     change _ = Submodule.span _ {μ} * P.sub I
     rw [← hr.span I, Submodule.span_mul_span, Set.singleton_mul, Set.image_image]
 

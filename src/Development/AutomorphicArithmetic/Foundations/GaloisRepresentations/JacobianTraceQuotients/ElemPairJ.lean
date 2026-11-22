@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchCut
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.SgMemUnipB
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchCut
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LocalDoubleCosets.SgMemUnipB
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,17 +57,17 @@ structure IsNorm {k k' : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [
 
 def nT {A B : Type} [CommGroup A] [CommGroup B] (n : ℕ) (N : A →* B) : (Fin n → A) →* (Fin n → B) := N.compLeft (Fin n)
 
-def ForInert (p : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyComplex F]
-    [IsTotallyComplex E] (_ : E ≃ₐ[F] E) (_ : ℕ) (v : Pl F) (w : PlacesOver E v) (_ : w.1.adicCompletion E ≃+* w.1.adicCompletion E)
+def ForInert (p : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [_root_.NumberField.IsTotallyComplex F]
+    [_root_.NumberField.IsTotallyComplex E] (_ : E ≃ₐ[F] E) (_ : ℕ) (v : Pl F) (w : PlacesOver E v) (_ : w.1.adicCompletion E ≃+* w.1.adicCompletion E)
     (_ : (w.1.adicCompletion E)ˣ →* (v.adicCompletion F)ˣ), Prop) : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [IsTotallyComplex F]
-    [IsTotallyComplex E] (σ : E ≃ₐ[F] E), (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime → ∀ n : ℕ, 0 < n →
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [_root_.NumberField.IsTotallyComplex F]
+    [_root_.NumberField.IsTotallyComplex E] (σ : E ≃ₐ[F] E), (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime → ∀ n : ℕ, 0 < n →
     ∀ (v : Pl F) (w : PlacesOver E v), ¬ GM.Split E v → ∀ σw N, IsLocGal (n := n) σ w (Loc.sg σw) →
       IsNorm (completionMap v w.1) σw (Module.finrank F E) N → p F E σ n v w σw N
 
 def LocGal : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [IsTotallyComplex F]
-    [IsTotallyComplex E] (σ : E ≃ₐ[F] E), (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime →
+  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsGalois F E] [_root_.NumberField.IsTotallyComplex F]
+    [_root_.NumberField.IsTotallyComplex E] (σ : E ≃ₐ[F] E), (∀ τ, τ ∈ Subgroup.zpowers σ) → (Module.finrank F E).Prime →
     ∀ (v : Pl F) (w : PlacesOver E v), ¬ GM.Split E v → ∃ σw N, (∀ n, IsLocGal (n := n) σ w (Loc.sg σw)) ∧
       IsNorm (completionMap v w.1) σw (Module.finrank F E) N ∧
       ∀ x, (N x : v.adicCompletion F) = (letI := (completionMap v w.1).toAlgebra; Algebra.norm (v.adicCompletion F) (x : w.1.adicCompletion E))
@@ -96,10 +100,5 @@ def DescExp : Prop := ForLift fun _ E _ _ _ _ _ n _ w σw N τ τ' =>
 def LiftGood : Prop := ForLift fun F _ _ _ _ _ _ n v _ _ N τ τ' =>
   ∀ ω : Fin n → (v.adicCompletion F)ˣ →* ℂˣ, (∀ i, IsSmoothChar (ω i)) → IsSubquotient τ.ρ (prinSeries ω) →
     IsSubquotient τ'.ρ (prinSeries fun i => (ω i).comp N)
-
-def DescGood : Prop := ForLift fun F E _ _ _ _ _ n v w σw N τ τ' =>
-  ∀ ω' : Fin n → (w.1.adicCompletion E)ˣ →* ℂˣ, (∀ i, IsSmoothChar (ω' i)) → (∀ i, Inv σw (ω' i)) →
-    IsSubquotient τ'.ρ (prinSeries ω') → ∃ ω : Fin n → (v.adicCompletion F)ˣ →* ℂˣ, (∀ i, IsSmoothChar (ω i)) ∧
-      (∀ i, (ω i).comp N = ω' i) ∧ IsSubquotient τ.ρ (prinSeries ω)
 
 end UpperTheory.Gal.Join

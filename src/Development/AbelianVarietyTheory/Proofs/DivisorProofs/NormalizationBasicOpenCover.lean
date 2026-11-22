@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits Scheme.AffineZariskiSite
 
 set_option backward.isDefEq.respectTransparency false

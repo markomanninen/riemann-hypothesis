@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsReductionToProjectiveBlock
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockMetricChange
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockImageTop
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockImageGenDeg
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsReductionToProjectiveBlock
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockMetricChange
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockImageTop
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsBlockImageGenDeg
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel

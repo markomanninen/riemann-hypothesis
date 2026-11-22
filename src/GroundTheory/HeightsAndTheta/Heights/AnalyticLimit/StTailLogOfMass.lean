@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.UIObjects
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.EnergySum
-import ReciprocityTheory.AnalyticForms.PotentialTheory.ProjectiveLinePartitionContinuousCoe
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PLCurveA
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StTailShift
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.Objects
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.UIObjects
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.HessCIsHermitian
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.ProjectiveLinePartitionContinuousCoe
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PLCurveA
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StTailShift
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.AnalyticLimit
@@ -28,10 +33,6 @@ section Inhabitants
 open ReciprocityTheory.AnForm (fsDens fsDens_pos levi)
 open ReciprocityTheory.AnForm.M (p1 fsPot projLine_isSmoothPotential projLine_isPlurisubharmonic projectiveLine_fubiniStudy_mass_one)
 open ReciprocityTheory.AnForm.M.PLC (locDens_congr_phi mInt_congr_phi)
-
-theorem potForm_fsPot_zero_φ (i : Fin 1) (a b : OnePoint ℂ) :
-    ((fun _ : Fin 1 => potForm fsPot fun _ => (0 : ℝ)) i).φ a b = ((fun _ : Fin 1 => fsPot) i).φ a b :=
-  add_zero _
 
 end Inhabitants
 

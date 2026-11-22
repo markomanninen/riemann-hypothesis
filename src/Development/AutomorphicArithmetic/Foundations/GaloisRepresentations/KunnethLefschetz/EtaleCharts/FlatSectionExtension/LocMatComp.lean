@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.FlatSectionExtension.ChartRange
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtaleCharts.FlatSectionExtension.ChartRange
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC CrystallineSemistableComparison CrystallineSemistableComparison.Onto UpperTheory.Gal.KunnethLefschetz.G.PX
 
@@ -39,7 +43,8 @@ private lemma isTr_res (B : Blow q i π D d) (α β : B.ι) {N N₂ : Z.Opens} (
     (hG : IsTr B α β h₁ h₂ G) :
     IsTr B α β (hN.trans h₁) (hN.trans h₂) (G.map (Z.presheaf.map (homOfLE hN).op).hom) := by
   intro m
-  rw [tN_res B β h₂ hN, hG m, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [tN_res B β h₂ hN, hG m, map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [map_mul, tN_res B α h₁ hN]
   rfl

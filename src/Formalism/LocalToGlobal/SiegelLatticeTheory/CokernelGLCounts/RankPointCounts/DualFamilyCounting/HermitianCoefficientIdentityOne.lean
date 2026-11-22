@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.MemSpanSSelf
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.MemSpanSSelf
+
+@[expose] public section
 
 open Module
 
@@ -48,13 +52,13 @@ theorem spans_eq {κ ι : Type} [Fintype κ] [Fintype ι] {f : κ → V} {g : ι
 
 theorem form_pair (x y : V) (hxy : h x y = 0) (hyx : h y x = 0) (α β γ δ : K) :
     h (α • x + β • y) (γ • x + δ • y) = star α * γ * h x x + star β * δ * h y y := by
-  simp only [map_add, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, map_smul, hxy, hyx,
+  simp only [map_add (f := _), map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, map_smul, hxy, hyx,
     smul_eq_mul, starRingEnd_apply, RingHom.id_apply, mul_zero, add_zero, zero_add]
   ring
 
 theorem form_pair_orth (x y z : V) (hxz : h x z = 0) (hyz : h y z = 0) (α β : K) :
     h (α • x + β • y) z = 0 := by
-  simp only [map_add, map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, hxz, hyz,
+  simp only [map_add (f := _), map_smulₛₗ, LinearMap.add_apply, LinearMap.smul_apply, hxz, hyz,
     smul_eq_mul, mul_zero, add_zero]
 
 theorem hermitian_coefficient_identity_one {A B D α β : K} (hA : A ≠ 0) (hD : D ≠ 0)
@@ -162,11 +166,11 @@ theorem rot2 (hS : IsHermSemilocal S) (hπ : IsUnif S π) (hs : h.IsSymm) {ι : 
   have hkY : ∀ k, k ≠ i₀ → k ≠ j → h (b k) Y = 0 := by
     intro k h1 h2
     show h (b k) (α • b i₀ + β • b j) = 0
-    rw [map_add, map_smul, map_smul, ho k i₀ h1, ho k j h2, smul_zero, smul_zero, add_zero]
+    rw [map_add (f := _), map_smul, map_smul, ho k i₀ h1, ho k j h2, smul_zero, smul_zero, add_zero]
   have hkZ : ∀ k, k ≠ i₀ → k ≠ j → h (b k) Z = 0 := by
     intro k h1 h2
     show h (b k) ((-(star β * (B * A⁻¹))) • b i₀ + star α • b j) = 0
-    rw [map_add, map_smul, map_smul, ho k i₀ h1, ho k j h2, smul_zero, smul_zero, add_zero]
+    rw [map_add (f := _), map_smul, map_smul, ho k i₀ h1, ho k j h2, smul_zero, smul_zero, add_zero]
   have ortho : ∀ p q, p ≠ q → h (c p) (c q) = 0 := by
     intro p q hpq
     by_cases hp0 : p = i₀

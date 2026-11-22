@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.IoDScalLast
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.IoDScalLast
+
+@[expose] public section
 
 noncomputable section
 

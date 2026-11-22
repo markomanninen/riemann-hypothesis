@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.VacuumImageIntertwiner
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.VacuumImageIntertwiner
+
+@[expose] public section
 
 noncomputable section
 

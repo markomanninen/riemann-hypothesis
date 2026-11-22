@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CoordsAt
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CoordsAt
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj GlobalTheory.CompanionTheory.Ar
 
@@ -51,7 +55,7 @@ theorem exists_secVal_eq {U : X.Opens} (hU : IsAffineOpen U) (hg : genPt ξ ∈ 
     { carrier := {r | ∃ f, ρ f = ρ r * a}
       add_mem' := by
         rintro r s ⟨f, hf⟩ ⟨g, hg⟩
-        exact ⟨f + g, by rw [map_add, map_add, hf, hg, add_mul]⟩
+        exact ⟨f + g, by rw [map_add (f := _), map_add (f := _), hf, hg, add_mul]⟩
       zero_mem' := ⟨0, by simp⟩
       smul_mem' := by
         rintro r s ⟨f, hf⟩
@@ -95,8 +99,8 @@ end GlobalTheory.CompanionTheory.Ar.ChartPrimes
 
 namespace GlobalTheory.CompanionTheory.Ar
 
-open ChartPrimes in
 
+open ChartPrimes in
 theorem chart_point_of_prime : ∀ (X : Scheme.{0}) (Ω : Type) [Field Ω] (ξ : Spec (CommRingCat.of Ω) ⟶ X) (o : Type)
     [CommRing o] [Algebra o Ω] (κ : Type) (x : κ → Ω), CoordTie o ξ x → ∀ (c : κ), x c ≠ 0 →
     ∀ I : Ideal (Algebra.adjoin o (Set.range fun j => x j / x c)), I.IsPrime →

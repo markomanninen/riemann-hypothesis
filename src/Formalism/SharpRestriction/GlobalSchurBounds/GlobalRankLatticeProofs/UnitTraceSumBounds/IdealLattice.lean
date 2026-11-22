@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.IsDiscriminantTwelfthRootOfIdealLattice
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.IsDiscriminantTwelfthRootOfIdealLattice
+
+@[expose] public section
 
 open Formalism.MainNotions.TaylorLogMetric Formalism.BasicNotions NumberField
 
@@ -15,16 +19,6 @@ noncomputable def UG (A : ℝ) (x : T → I → J → ℂ) (G : (T → I → J �
   fun z => G (z + x) * Complex.exp (-(Real.pi : ℂ) * HfG A z x - (Real.pi : ℂ) * HfG A x x / 2)
 
 end Heis
-
-def HeisMul : Prop :=
-  ∀ (T I J : Type) [Fintype T] [Fintype I] [Fintype J] (A : ℝ) (x y : T → I → J → ℂ) (G : (T → I → J → ℂ) → ℂ),
-    UG A x (UG A y G) =
-      fun z => Complex.exp (-((Real.pi : ℂ) * Complex.I) * ((HfG A x y).im : ℂ)) * UG A (x + y) G z
-
-def HeisNorm : Prop :=
-  ∀ (T I J : Type) [Fintype T] [Fintype I] [Fintype J] (A : ℝ) (x z : T → I → J → ℂ) (G : (T → I → J → ℂ) → ℂ),
-    ‖UG A x G z‖ ^ 2 * Real.exp (-Real.pi * (HfG A z z).re) =
-      ‖G (z + x)‖ ^ 2 * Real.exp (-Real.pi * (HfG A (z + x) (z + x)).re)
 
 def IdealLattice : Prop :=
   ∀ (K : Type) [Field K] [NumberField K] (φ : K →+* ℂ), Module.finrank ℚ K = 2 → IsEmpty (K →+* ℝ) →

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SchwartzBilinear.LargePrimeDivisors
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.SchwartzBilinear.LargePrimeDivisors
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -63,7 +67,8 @@ theorem exists_exponent_ne_zero (F : Type) [Field F] [NumberField F] :
     have hub : u = (n : 𝓞 F) * b := RingOfIntegers.coe_injective (by simpa using hue)
     exact hub ▸ hu
   intro h0
-  rw [RingOfIntegers.exponent, Ideal.absNorm_eq_zero_iff] at h0
+  change Ideal.absNorm (Ideal.under ℤ (conductor ℤ θ)) = 0 at h0
+  rw [Ideal.absNorm_eq_zero_iff] at h0
   have hm : n ∈ Ideal.under ℤ (conductor ℤ θ) := by
     rw [Ideal.under_def, Ideal.mem_comap]
     simpa using hcond

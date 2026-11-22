@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FrobOrderSpec
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EvalRepsSurjective
-import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.DuCount
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.DeterminantTwistRowActionMem
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ClsRec
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.SelfDualAtColLevel
-import Formalism.LocalToGlobal.GroupLattices.TrivialTransfer.GramTotallyDefinite
-import Formalism.LocalToGlobal.GroupLattices.FockModels.WeylDim
-import Formalism.LocalToGlobal.GroupLattices.FockModels.Cartan
-import Formalism.LocalRingCardinality.SpanPowerMembership.NZLevB
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.WeylDimShift
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.TestSideCounting
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.FrobOrderSpec
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EvalRepsSurjective
+public import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.DuCount
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.DeterminantTwistRowActionMem
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ClsRec
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.SelfDualAtColLevel
+public import Formalism.LocalToGlobal.GroupLattices.TrivialTransfer.GramTotallyDefinite
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.WeylDim
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.Cartan
+public import Formalism.LocalRingCardinality.SpanPowerMembership.NZLevB
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.WeylDimShift
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.TestSideCounting
+
+@[expose] public section
 
 open MvPolynomial Formalism.MainNotions.G Formalism.GradedWeylDivisibility Formalism.L2.G.Model
 
@@ -246,8 +250,8 @@ open Formalism.BasicNotions Formalism.MainNotions Formalism.L2.G Formalism.L2.Fo
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar Formalism.BasicNotions.factResChar
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem locPack_d_eq (D : D7) (L0 : LevelData D) (u : D.what₂.Word) (T : Forms0 D u) (w : D.what₂.places.Pl)
     (hg : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) (X : LocPack D u (L0 u) (D.what₂.places.resChar w))
     (r e : ℕ) : (X.gat r e).d = Module.finrank ℂ (D.mem u).A.Mu0 := by

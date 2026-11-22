@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FramePairCoordinatesTransportInnerLattices
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.AtBase
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.FramePairCoordinatesTransportInnerLattices
+
+@[expose] public section
+
 open ValuativeRel Formalism.MainNotions.S Formalism.MainNotions.S.Loc Formalism.MainNotions.S.LocNG GlobalTheory.LocOver
 open scoped Classical
 
@@ -26,14 +31,16 @@ lemma smul_mem_lat (Λ : Submodule M.L.O V) {c : E} (hc : c ∈ M.L.O) {w : V} (
 lemma h_prF_left (Fr : FrameD H r) (p s : V) (h1 : ∀ a, H.h p (Fr.e a) = 0)
     (h2 : ∀ a, H.h p (Fr.es a) = 0) : H.h (Fr.prF s) p = H.h s p := by
   rw [← hl_apply, ← hl_apply]
-  simp only [FrameD.prF, map_sub, map_sum, map_smul, hl_apply, h_swap_zero (h1 _),
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [FrameD.prF, map_sub, map_sum, map_smul, hl_apply, h_swap_zero (h1 _),
     h_swap_zero (h2 _)]
   simp
 
 lemma decomp (Fr : FrameD H r) (v s : V) : H.h v s = H.h (Fr.prF v) s +
     ∑ a, H.h v (Fr.es a) * H.h (Fr.e a) s + ∑ a, H.h v (Fr.e a) * H.h (Fr.es a) s := by
   rw [← hl_apply, ← hl_apply]
-  simp only [FrameD.prF, map_sub, map_sum, map_smul, hl_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [FrameD.prF, map_sub, map_sum, map_smul, hl_apply, smul_eq_mul]
   ring
 
 end GlobalTheory.StdLatImg
@@ -74,10 +81,12 @@ lemma symm_mem_gen (Fr : FrameD H r) (Λ : Submodule M.L.O V) (hSD : H.IsSelfDua
     rw [mem_perpX]
     intro b
     rw [← hl_apply]
-    simp only [hv', map_sub, map_sum, map_smul, hl_apply, h_es_e, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hv', map_sub, map_sum, map_smul, hl_apply, h_es_e, smul_eq_mul]
     simp
   have hx : n v' = u - ∑ a, H.h v (Fr.e a) • n (Fr.es a) := by
-    simp [hv', map_sub, map_sum, hnv]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hv', map_sub, map_sum, hnv]
   have hxΛ : n v' ∈ Λ := by
     rw [hx]
     exact Λ.sub_mem hu (Λ.sum_mem fun a _ => smul_mem_lat Λ (hveO a) (hes a))

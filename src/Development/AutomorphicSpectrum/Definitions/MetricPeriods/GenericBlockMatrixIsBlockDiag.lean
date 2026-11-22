@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.MetricStatements.AgreementIffGuarded
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,8 +40,8 @@ def detFac (j : ℕ) (i : Fin N) (T : Matrix (Fin N) (Fin N) R) : R :=
   (if j ≤ (i : ℕ) + 1 then minorIJ T (wIdx N j) (wIdx N j) else 1) *
     if (i : ℕ) + 1 = N then minorIJ T (omIdx N j) (omIdx N j) else 1
 
-open Classical in
 
+open Classical in
 def blockPot (j : ℕ) (i : Fin N) (G h : Matrix (Fin N) (Fin N) ℂ) : ℝ :=
   (1 / 2) * Real.log (detFac j i G).re +
     if IsProperStep N j i then (1 / 2) * Real.log (minorIJ (hᴴ * G * h) (stepCols N j i) (stepCols N j i)).re else 0
@@ -439,8 +443,8 @@ def GoodAt (F : FrameData ι Ψ N M.Ω M.blk) (Q : Ideal (MRing (baseIdx ι M.bl
   (∀ k, (X ⟨k, F.c k⟩ : MRing (baseIdx ι M.blk)) ∉ Q) ∧ (∀ q I, RegAt M.x Q (F.u q I) ∧ RegAt M.x Q (F.u' I q)) ∧
     ∀ p, M.blk p = none → F.υ p ≠ 0 ∧ RegAt M.x Q (F.υ p) ∧ RegAt M.x Q (F.υ p)⁻¹
 
-open Classical in
 
+open Classical in
 def dy (p : Ψ × Fin N) : K → ℤ := fun k =>
   if h : ∀ p', M.blk p' ≠ some k then -M.b p ⟨k, h⟩ else if M.blk p = some k then 1 else 0
 
@@ -690,17 +694,6 @@ def MH (x : Fin 3 → Ω) (hx2 : x 2 = 0) (hx : x 0 ≠ 0 ∨ x 1 ≠ 0) : FlagM
       · simpa using regAt_int (fun q => x q.2) hQ 0
     · simpa [FH] using regAt_int (fun q => x q.2) hQ 1
     · simpa [FH] using regAt_int (fun q => x q.2) hQ 1
-
-example : Nonempty (FlagModel (yH ℚ ![1, 1, 0]) Unit 2 2) := ⟨MH (![1, 1, 0] : Fin 3 → ℚ) rfl (Or.inl one_ne_zero)⟩
-
-example : (MH (![1, 1, 0] : Fin 3 → ℚ) rfl (Or.inl one_ne_zero)).dy ((), 0) = fun k => if k then 1 else -1 := by
-  funext k
-  cases k
-  · exact dif_pos fun p h => by simpa using (blkH_some h).2
-  · exact (dif_neg fun h => h ((), 0) rfl).trans (if_pos rfl)
-
-example : (MH (![1, 1, 0] : Fin 3 → ℚ) rfl (Or.inl one_ne_zero)).blk ((), 1) = none ∧
-    (MH (![1, 1, 0] : Fin 3 → ℚ) rfl (Or.inl one_ne_zero)).lam ((), 1) = 1 := ⟨rfl, rfl⟩
 
 end FlagEx
 

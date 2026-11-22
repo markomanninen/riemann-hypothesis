@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EmbWInjective
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormEqZpowOfMemMaxUnramifiedSubfield
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSumRootsOfUnity
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EmbWInjective
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormEqZpowOfMemMaxUnramifiedSubfield
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IntegersCompleteDVR
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSumRootsOfUnity
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct GlobalTheory.HWL GlobalTheory.Prism GlobalTheory.PrismS
 
 noncomputable section
@@ -21,7 +26,8 @@ theorem isUnit_sub_of_pow_eq_one {O : Type} [CommRing O] [IsDomain O] [IsLocalRi
     rw [← sub_eq_zero, ← map_sub, IsLocalRing.residue_eq_zero_iff]
     exact hn
   have h4 := congrArg (IsLocalRing.residue O) h2
-  simp only [map_sum, map_mul, map_pow, h3, map_zero] at h4
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, map_pow, h3, map_zero] at h4
   rw [geom_sum₂_self] at h4
   have hbu : IsUnit b := IsUnit.of_pow_eq_one hb hm0.ne'
   have h5 : IsUnit ((m : IsLocalRing.ResidueField O) * IsLocalRing.residue O b ^ (m - 1)) := by
@@ -42,7 +48,7 @@ theorem existsUnique_of_separated {R W O ι : Type} [CommRing R] [Nontrivial R] 
       map_smul' := fun r c => by
         funext k; simp [Finset.smul_sum] }
   let Φ : O ⊗[R] W →ₐ[O] (ι → O) :=
-    Algebra.TensorProduct.lift (Algebra.ofId O (ι → O)) (Pi.algHom R _ φ)
+    Algebra.TensorProduct.lift (Algebra.ofId O (ι → O)) (AlgHom.pi φ)
       (fun _ _ => Commute.all _ _)
   have hΦ : ∀ (a : O) (w : W) (k : ι), Φ (a ⊗ₜ w) k = a * φ k w := by
     intro a w k
@@ -50,7 +56,6 @@ theorem existsUnique_of_separated {R W O ι : Type} [CommRing R] [Nontrivial R] 
   have h1 : ∀ t, Φ t ∈ LinearMap.range F := by
     intro t
     induction t with
-    | zero => simp
     | add s t hs ht => rw [map_add]; exact add_mem hs ht
     | tmul a w =>
       refine ⟨fun i => o.repr a i • w, ?_⟩
@@ -116,10 +121,11 @@ theorem exists_root_ne {l : ℕ} [Fact l.Prime] {K LL : FinExt l}
   have hx' : algebraMap ℚ_[l] ↥(K0 K) a⁻¹ * x =
       ∑ i, algebraMap ℚ_[l] ↥(K0 K) (z i : ℚ_[l]) * (⟨ω i, (hω i).1⟩ : ↥(K0 K)) := by
     apply Subtype.ext
-    rw [AddSubmonoidClass.coe_finset_sum]
+    rw [AddSubmonoidClass.coe_finsetSum]
     exact hx
   have : e (algebraMap ℚ_[l] ↥(K0 K) a⁻¹ * x) = e' (algebraMap ℚ_[l] ↥(K0 K) a⁻¹ * x) := by
-    rw [hx', map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hx', map_sum, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     obtain ⟨m, hm, hl, h1⟩ := (hω i).2
     rw [map_mul, map_mul, e.commutes, e'.commutes, hn _ m hm hl (Subtype.ext (by simpa using h1))]

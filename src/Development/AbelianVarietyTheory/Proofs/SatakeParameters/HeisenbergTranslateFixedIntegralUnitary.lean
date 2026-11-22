@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemIntMat
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LatticeModelVacuumTranslateClassesIndependentStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemIntMat
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LatticeModelVacuumTranslateClassesIndependentStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -222,7 +226,7 @@ theorem class_fixed_phase : ∀ (L : Type) [Field L] [CharZero L] [Valued L (Wit
   have hkd : k⁻¹ • d = QuotientAddGroup.mk x := by rw [← hk, inv_smul_smul]
   have ha' : π k⁻¹ a ∈ V (QuotientAddGroup.mk x) := hkd ▸ hπV k⁻¹ d a ha
   have hb' : π k⁻¹ b ∈ P (QuotientAddGroup.mk x) := hkd ▸ hπP k⁻¹ d b hb
-  have hwab' : w = π k⁻¹ a + π k⁻¹ b := by rw [← map_add, hab, hfixK]
+  have hwab' : w = π k⁻¹ a + π k⁻¹ b := by rw [← map_add (f := _), hab, hfixK]
   have ha'0 : π k⁻¹ a ≠ 0 := by
     intro e
     apply ha0
@@ -248,7 +252,7 @@ theorem class_fixed_phase : ∀ (L : Type) [Field L] [CharZero L] [Valued L (Wit
   have e1 : π kh (π k⁻¹ a) = π k⁻¹ a := by
     refine huniq (QuotientAddGroup.mk x) _ (π kh (π k⁻¹ b)) _ (π k⁻¹ b)
       (hcl ▸ hπV kh _ _ ha') (hcl ▸ hπP kh _ _ hb') ha' hb' ?_
-    rw [← map_add, ← hwab']
+    rw [← map_add (f := _), ← hwab']
     exact hfixK kh
   rw [← hα, map_smul] at e1
   have e2 : π kh (ρ x s) = ρ (((h : GL (Fin n') L) : Matrix (Fin n') (Fin n') L) * x) s := om_rho' hP hs h hh x

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.ZariskiEtaleLifting.SubThickRees
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.IsCompl
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry Polynomial DividedPowers GlobalTheory.LogCris GlobalTheory.PDA CrystallineSemistableComparison CrystallineSemistableComparison.CH CrystallineSemistableComparison.B
 
@@ -33,8 +38,6 @@ variable {B : Type} [CommRing B] (J : Ideal B)
 abbrev toBase (n : ℕ) : B ⧸ J ^ (n + 1) →+* B ⧸ J :=
   Ideal.Quotient.factor (Ideal.pow_le_self (Nat.succ_ne_zero n))
 
-theorem toBase_mk (n : ℕ) (x : B) : toBase J n (Ideal.Quotient.mk _ x) = Ideal.Quotient.mk J x := rfl
-
 theorem isNilpotent_ker_toBase (n : ℕ) : IsNilpotent (RingHom.ker (toBase J n)) := by
   refine ⟨n + 1, ?_⟩
   have hk : RingHom.ker (toBase J n) = J.map (Ideal.Quotient.mk (J ^ (n + 1))) := by
@@ -56,8 +59,8 @@ theorem iInf_pow_eq_bot (hJ : IsAdicComplete J B) : ⨅ i : ℕ, J ^ i = ⊥ := 
 
 end GlobalTheory.CompanionTheory.EtaleLift
 
-open GlobalTheory.CompanionTheory.EtaleLift in
 
+open GlobalTheory.CompanionTheory.EtaleLift in
 theorem GlobalTheory.CompanionTheory.EtaleLift.etLift_of_isAdicComplete :
     ∀ {B : Type} [CommRing B] (J : Ideal B), IsAdicComplete J B → EtLift J := by
   intro B _ J hJ P E _ _ ψ hψ f g h

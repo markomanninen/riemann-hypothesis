@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemBand
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemBand
+
+@[expose] public section
+
 open NumberField MeasureTheory GlobalTheory.CuspRep GlobalTheory.HCF Topology
 
 namespace GlobalTheory

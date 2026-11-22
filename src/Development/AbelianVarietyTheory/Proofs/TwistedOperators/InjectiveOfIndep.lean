@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.FWExist
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.GeometricConstantEquiv
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IpMSelfEqZero
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.FWExist
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.GeometricConstantEquiv
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IpMSelfEqZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,22 +67,6 @@ end Model
 
 variable (T : CoreJ D) [Algebra T.Q.c.F D.what₂.LL] (R : RealDat D A T.Q.c.F) (κ : ∀ i : Fin D.R.m, WeightFamilies.Wt D ((i : ℕ) + 1))
   (v₀ : ∀ (i : Fin D.R.m) (σ : D.what₂.LL →+* ℂ), (R.MW i σ).Vec)
-
-theorem cast_mul {V W : HSp D} (h : V = W) (x y : GA D V) :
-    cast (congrArg (GA D) h) (x * y) = cast (congrArg (GA D) h) x * cast (congrArg (GA D) h) y := by
-  subst h
-  rfl
-
-def ReadModel (i : Fin D.R.m) (ρ : G →* (Cu T κ i →ₗ[T.Q.c.F] Cu T κ i)) : Prop :=
-  ∀ σ g f, (R.HW i σ).e (jTop T R κ v₀ i σ (ρ g f)) =
-    σ ((chiTop R i g : D.what₂.LLˣ) : D.what₂.LL) • actW R i σ g ((R.HW i σ).e (jTop T R κ v₀ i σ f))
-
-structure Ties : Prop where
-  laws : LawsJ T
-  model : R.models_HW
-  act : R.models_gW
-  chi : R.grp_chiW
-  vec : ∀ i σ, IsChosenExtremalVector R i σ (v₀ i σ)
 
 variable {T R κ v₀}
 

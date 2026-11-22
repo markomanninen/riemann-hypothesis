@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContDiffOnInvConjDet
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ContDiffOnInvConjDet
+
+@[expose] public section
 
 open Matrix Filter Topology
 open scoped ComplexConjugate ContDiff
@@ -37,7 +41,7 @@ theorem EopZ_es (a b : Fin j) :
   unfold EopZ
   have ha := a.isLt
   have hb := b.isLt
-  rw [dif_neg (by simp [esI]; omega), dif_pos (by simp [esI]; omega), dif_pos (by simp [esI]; omega)]
+  rw [dite_eq_right (by simp [esI]; omega), dif_pos (by simp [esI]; omega), dif_pos (by simp [esI]; omega)]
   congr 1 <;> ext <;> simp [esI] <;> omega
 
 theorem eab_pull (hC : CurveLevi) (hH : HpartLevi) (p q : Fin (2 * r + k + 1)) (hpq : Good k r j p q)

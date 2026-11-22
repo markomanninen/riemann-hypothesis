@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsArchimedeanLiftUnitaryGroupProduct
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiscreteSeriesModelUnitaryIrreducibleOrthonormal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagDomainFramesEqGramFramesUnitary
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RationalPointsAdelicUnitaryEqUnitary
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryRealPointsStructureRealPlaces
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneAddSmulMemUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsSmoothVector
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsArchimedeanLiftUnitaryGroupProduct
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DiscreteSeriesModelUnitaryIrreducibleOrthonormal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FlagDomainFramesEqGramFramesUnitary
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.RationalPointsAdelicUnitaryEqUnitary
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.AdelicUnitaryRealPointsStructureRealPlaces
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneAddSmulMemUnitary
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.BasicNotions Formalism.MainNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Lev Formalism.IndefR.Datum Formalism.L2.Pj Formalism.IndefR.FWT Formalism.IndefR GlobalTheory.HolDict
 open scoped TensorProduct InnerProductSpace ContDiff
@@ -100,7 +104,7 @@ theorem conj_eq (hH : Hm.IsHermitian) (hd : Hm.det ≠ 0) (hP : P.det ≠ 0) (ha
       have := congrArg Complex.re h0
       simp at this
     let z : ℝ → ℂ := fun s => 2 * Complex.I * s / (1 - Complex.I * s * q)
-    have hz : Continuous z := Continuous.div (by fun_prop) (by fun_prop) hden
+    have hz : Continuous z := Continuous.div₀ (by fun_prop) (by fun_prop) hden
     have := conj_eq_of_path hd hP ha hS h (fun s => 1 + z s • (vecMulVec v (star v) * Hm))
       (continuous_const.add (hz.smul continuous_const)) (by simp [z]) fun s => refl_mem hH v _ (by
         have e : star (z s) = -(2 * Complex.I * s) / (1 + Complex.I * s * q) := by simp [z]
@@ -116,10 +120,11 @@ theorem conj_eq (hH : Hm.IsHermitian) (hd : Hm.det ≠ 0) (hP : P.det ≠ 0) (ha
     exact sub_eq_zero.2 (smul_right_injective _ hz1 this)
   have h2 : ∀ x y : Fin n → ℂ, L (vecMulVec x (star y)) = 0 := fun x y => by
     rw [polar]
-    simp only [map_smul, map_add, map_sub, h1, sub_zero, smul_zero, add_zero]
+    simp only [map_smul, map_add (f := _), map_sub, h1, sub_zero, smul_zero, add_zero]
   have h3 : ∀ W, L W = 0 := fun W => by
     rw [Matrix.matrix_eq_sum_single W]
-    simp only [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum]
     refine Finset.sum_eq_zero fun i _ => Finset.sum_eq_zero fun j _ => ?_
     have : Matrix.single i j (W i j) = vecMulVec (Pi.single i (W i j)) (star (Pi.single j (1 : ℂ))) := by
       ext k l

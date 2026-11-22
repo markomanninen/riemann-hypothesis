@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComapBcComp
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPullbackPbMap
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.BaseChangeKernels.Affine
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeModuleComplementSupportCompact
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveLinearCombinationOfRankAtStalkStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemSupportQuotientSpanIffOfIsPushoutStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SectionsFiniteFlatRankOfFiniteFlatStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ComapBcComp
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsPullbackPbMap
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.BaseChangeKernels.Affine
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeModuleComplementSupportCompact
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveLinearCombinationOfRankAtStalkStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemSupportQuotientSpanIffOfIsPushoutStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SectionsFiniteFlatRankOfFiniteFlatStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,12 +21,25 @@ variable {A B : Type} [CommRing A] [CommRing B] [Algebra A B] {r N : ℕ}
 
 theorem secs_props {T : Scheme.{0}} (y : (functor A B r).obj (op T)) (U : T.Opens)
     (hU : IsAffineOpen U) :
-    letI := ((proj y).app U).hom.toAlgebra
+    (letI := ((proj y).app U).hom.toAlgebra;
     Module.Finite Γ(T, U) Γ(y.2.1.subscheme, proj y ⁻¹ᵁ U) ∧
       Module.Flat Γ(T, U) Γ(y.2.1.subscheme, proj y ⁻¹ᵁ U) ∧
-      ∀ q : PrimeSpectrum Γ(T, U), Module.rankAtStalk Γ(y.2.1.subscheme, proj y ⁻¹ᵁ U) q = r := by
+      ∀ q : PrimeSpectrum Γ(T, U), Module.rankAtStalk Γ(y.2.1.subscheme, proj y ⁻¹ᵁ U) q = r) := by
   obtain ⟨h1, h2, h3⟩ := y.2.2
-  exact GlobalTheory.T.sections_finite_flat_rank_of_isFinite_flat _ _ (proj y) r h3 U hU
+  have hV : IsAffineOpen ((proj y) ⁻¹ᵁ U) := hU.preimage (proj y)
+  have hpb := GlobalTheory.isPullback_fromSpec_app_preimage_of_affine (proj y) hU hV
+  have hfin : IsFinite (Spec.map ((proj y).app U)) := MorphismProperty.of_isPullback hpb h1
+  have hflat : Flat (Spec.map ((proj y).app U)) := MorphismProperty.of_isPullback hpb h2
+  have h1' : ((proj y).app U).hom.Finite := (IsFinite.SpecMap_iff _).1 hfin
+  have h2' : ((proj y).app U).hom.Flat := Flat.SpecMap_iff.1 hflat
+  letI := ((proj y).app U).hom.toAlgebra
+  haveI : Module.Finite Γ(T, U) Γ(y.2.1.subscheme, proj y ⁻¹ᵁ U) := h1'
+  haveI : Module.Flat Γ(T, U) Γ(y.2.1.subscheme, proj y ⁻¹ᵁ U) := h2'
+  refine ⟨inferInstance, inferInstance, fun q => ?_⟩
+  have e := Scheme.Hom.finrank_of_isPullback _ _ _ _ hpb q
+  rw [h3] at e
+  rw [← Scheme.Hom.finrank_SpecMap_algebraMap]
+  exact e
 
 theorem isOpen_bad_compl (e : Module.Basis (Fin N) A B) (σ : Fin r ↪ Fin N) {T : Scheme.{0}}
     (y : (functor A B r).obj (op T)) (U : T.Opens) (hU : IsAffineOpen U) :
@@ -95,7 +112,7 @@ theorem bad_nat (e : Module.Basis (Fin N) A B) (σ : Fin r ↪ Fin N) {T T' : Sc
 
 theorem map_id_apply' {T : Scheme.{0}} (y : (functor A B r).obj (op T)) :
     (functor A B r).map (𝟙 T).op y = y := by
-  rw [op_id, FunctorToTypes.map_id_apply]
+  rw [op_id, CategoryTheory.Functor.map_id_apply]
 
 theorem bad_local (e : Module.Basis (Fin N) A B) (σ : Fin r ↪ Fin N) {T : Scheme.{0}}
     (y : (functor A B r).obj (op T)) (U₁ U₂ : T.Opens) (h₁ : IsAffineOpen U₁) (h₂ : IsAffineOpen U₂)

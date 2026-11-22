@@ -1,4 +1,8 @@
-import Formalism.EllipticTorsion.Statement
+module
+
+public import Formalism.EllipticTorsion.Statement
+
+@[expose] public section
 
 universe u
 

@@ -1,24 +1,28 @@
-import Mathlib
-import Formalism.HermitianCurvature.StatementJCT
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFamilySettingOfSetting
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CorollaryU1Plain
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SeminormCompletion
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComposeDifferentialOperators
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.Development
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.DegPderivMul
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.Expand
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CvRhoOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.DerivativeBoundInBanachSpace
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdditiveCharacterPsi
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactlySupportedBanachModel
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PhiBoundPartsOfRadicalParametrisation
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.WirtingerIntegrationByParts
+module
+
+public import Mathlib
+public import Formalism.HermitianCurvature.StatementJCT
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.UnipotentCoordinatesMeasurePreserving
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComponentFamilySettingOfSetting
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPIntegralOfPlaces
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CorollaryU1Plain
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SeminormCompletion
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RegularisedPairingViaPhase
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ComposeDifferentialOperators
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.Development
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.DegPderivMul
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.Expand
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CvRhoOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LevelFormSesquilinearFiniteClass
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.DerivativeBoundInBanachSpace
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AdditiveCharacterPsi
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CompactlySupportedBanachModel
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PhiBoundPartsOfRadicalParametrisation
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.WirtingerIntegrationByParts
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.JCTx6
 
@@ -554,7 +558,7 @@ theorem pos_levels (hL : LettersDD) (hP : PosCore) (hI : IntG) (hT : OrbitSliceI
     obtain ⟨-, hT2⟩ := Formalism.FourierDecayAlt.P.Dx2.SL.phi_transport (k := k) (ρ := ρ) hP _ _ hσ _ _ hd
       (D.castV (by omega) T.base.z) (D.castV (by omega) T.base.z') (D.castF (by omega) G) γ
     unfold D.sliceAt
-    rw [dif_pos (by omega), hT2]
+    rw [dite_eq_left (by omega), hT2]
     simp only [Formalism.FourierDecayAlt.P.Dx2.SL.castV_castV, Formalism.FourierDecayAlt.P.Dx2.SL.castF_castF]
   have e1 : r = ph + (n + 1) + ρ := hsum.symm
   have e2 : ph + (n + 1) + ρ = r := hsum
@@ -815,14 +819,14 @@ def linV (k r : ℕ) (e i : Fin (2 * r + k + 1)) : MvPolynomial (Vr (2 * r + k +
 
 theorem deg_linA (k r : ℕ) (e c : Fin (2 * r + k + 1)) : (linA k r e c).totalDegree ≤ 1 := by
   unfold linA
-  refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun x _ => ?_)
+  refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun x _ => ?_)
   refine (MvPolynomial.totalDegree_mul _ _).trans ?_
   simp only [MvPolynomial.totalDegree_C, MvPolynomial.totalDegree_X, zero_add, le_refl]
 
 theorem deg_linV (k r : ℕ) (e i : Fin (2 * r + k + 1)) : (linV k r e i).totalDegree ≤ 1 := by
   unfold linV
-  refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun x _ => ?_)
-  refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun y _ => ?_)
+  refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun x _ => ?_)
+  refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun y _ => ?_)
   refine (MvPolynomial.totalDegree_mul _ _).trans ?_
   simp only [MvPolynomial.totalDegree_C, MvPolynomial.totalDegree_X, zero_add, le_refl]
 
@@ -927,9 +931,9 @@ def qAV (k r m : ℕ) (hm : m ≤ r) (B : Fin m → Fin (2 * r + k + 1)) : MvPol
 private theorem det_totalDegree_le_of_entries_totalDegree_le_one {m N : ℕ} (M : Matrix (Fin m) (Fin m) (MvPolynomial (Vr N) ℂ))
     (h : ∀ a l, (M a l).totalDegree ≤ 1) : M.det.totalDegree ≤ m := by
   rw [Matrix.det_apply]
-  refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun σ _ => ?_)
+  refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun σ _ => ?_)
   have hb : (∏ i, M (σ i) i).totalDegree ≤ m := by
-    refine (MvPolynomial.totalDegree_finset_prod _ _).trans ?_
+    refine (MvPolynomial.totalDegree_finsetProd _ _).trans ?_
     calc ∑ i, (M (σ i) i).totalDegree ≤ ∑ _i : Fin m, 1 := Finset.sum_le_sum fun i _ => h _ _
       _ = m := by simp
   rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with hs | hs <;> rw [hs]
@@ -960,16 +964,16 @@ theorem eval_qAV (k r m : ℕ) (hm : m ≤ r) (B : Fin m → Fin (2 * r + k + 1)
   ext a l
   simp [eval_linV k r _ _ g hg]
 
-open Classical in
 
+open Classical in
 def aaFS (k j ρ m : ℕ) (hm : m ≤ j + ρ) (u : ℂ) (L : FS k (j + ρ)) : FS k (j + ρ) :=
   (Finset.univ : Finset (Fin m → Fin (2 * (j + ρ) + k + 1))).toList.flatMap fun c =>
     if StrictMono c then
       (qmFS k j ρ m u (C3.xR k (j + ρ) m hm) c L).map (fun e => (mulSC (qAA k (j + ρ) m hm c, 0, 0) e.1, e.2))
     else []
 
-open Classical in
 
+open Classical in
 def avFS (k j ρ m : ℕ) (hm : m ≤ j + ρ) (ell : ℂ) (L : FS k (j + ρ)) : FS k (j + ρ) :=
   (Finset.univ : Finset (Fin m → Fin (2 * (j + ρ) + k + 1))).toList.flatMap fun B =>
     if StrictMono (fun l => C3.keyS k (j + ρ) (B l)) then
@@ -1261,11 +1265,6 @@ namespace Formalism.FourierDecayAlt.P.JCTx6.Int
 
 open Formalism.FourierDecayAlt.P.Dx2.SL
 
-lemma cont_Zu (n : ℕ) (t : ℂ) : Continuous (Zu n t) := by
-  refine continuous_pi fun a => continuous_pi fun b => ?_
-  simp only [Zu_apply, G.upper, G.strictUpper, Matrix.add_apply, Matrix.of_apply]
-  split_ifs <;> fun_prop
-
 lemma continuous_slice_integrand {ph n : ℕ} (σ : Equiv.Perm (Fin ph)) (d : Fin ph → ℂ) (t : ℂ) :
     Continuous fun y : U.XiH ph (n + 1) σ × (G.UT (n + 1) → ℂ) => U.ZjH σ d y.1 (Zu n t y.2) := by
   have e : (fun y : U.XiH ph (n + 1) σ × (G.UT (n + 1) → ℂ) => U.ZjH σ d y.1 (Zu n t y.2)) =
@@ -1348,135 +1347,135 @@ lemma two_mul_card_UT_succ (n : ℕ) : 2 * Fintype.card (G.UT (n + 1)) = (n + 1)
   simpa using this
 
 theorem intG : IntG := by
-  intro k ph n ρ σ d t hd ht K hK hK0 Q A₁ hA z z' E _ _ F₁ B₁ hStar γ hγ
-  set R : ℝ := ((ph + (n + 1) + ρ : ℕ) : ℝ) with hR
-  set a : ℝ := A₁ / (8 * (2 * R + 1)) with ha_def
-  have hden : 0 < 8 * (2 * R + 1) := by positivity
-  have hR1 : (1 : ℝ) ≤ R := by rw [hR]; exact_mod_cast (by omega : 1 ≤ ph + (n + 1) + ρ)
-  have hnd : R ≤ ((2 * (ph + (n + 1) + ρ) + k + 1 : ℕ) : ℝ) := by
-    rw [hR]; exact_mod_cast (by omega : ph + (n + 1) + ρ ≤ 2 * (ph + (n + 1) + ρ) + k + 1)
-  have ha : 2 * R * ((2 * (ph + (n + 1) + ρ) + k + 1 : ℕ) : ℝ) < a := hA
-  have ha0 : 0 < a := lt_of_le_of_lt (by positivity) ha
-  have hA0 : 0 ≤ A₁ := by
-    have e : A₁ = a * (8 * (2 * R + 1)) := by rw [ha_def]; field_simp
-    rw [e]; positivity
-  obtain ⟨C₂, hC₂⟩ := Formalism.FourierDecayAlt.P.norm_decay_in_coordinates k ph (n + 1) ρ σ d hd (by omega) K hK hK0 A₁ hA0
-  have hI1 : Integrable (fun ξ : U.Xi k ph (n + 1) ρ σ => U.wt ξ ^ (-a)) (U.muXi k ph (n + 1) ρ σ) :=
-    Formalism.FourierDecayAlt.P.weight_integrability k ph (n + 1) ρ σ a (by omega) ha
-  have hfr : ((Module.finrank ℝ (G.UT (n + 1) → ℂ) : ℕ) : ℝ) < a := by
-    have e1 : Module.finrank ℝ (G.UT (n + 1) → ℂ) = Fintype.card (G.UT (n + 1)) * 2 := by
-      rw [Module.finrank_pi_fintype]
-      simp [Complex.finrank_real_complex]
-    have e2 := two_mul_card_UT_succ n
-    have hnR : ((n + 1 : ℕ) : ℝ) ≤ R := by rw [hR]; exact_mod_cast (by omega : n + 1 ≤ ph + (n + 1) + ρ)
-    have e3 : ((Module.finrank ℝ (G.UT (n + 1) → ℂ) : ℕ) : ℝ) = ((n + 1 : ℕ) : ℝ) * (n : ℝ) := by
-      rw [e1]; exact_mod_cast (by rw [mul_comm]; exact e2)
-    rw [e3]
-    have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg _
-    have hn1 : (n : ℝ) ≤ R := by
-      have : (n : ℝ) ≤ ((n + 1 : ℕ) : ℝ) := by push_cast; linarith
-      linarith
-    nlinarith
-  have hI2 : Integrable (fun u : G.UT (n + 1) → ℂ => (1 + ‖u‖) ^ (-a)) volume := integrable_one_add_norm hfr
-  have sR := sigma_RC k (ph + (n + 1)) ρ
-  have hxi : SFinite (volume : Measure (U.XiH ph (n + 1) σ)) := by
-    have c1 : SigmaFinite (volume : Measure (Fin (n + 1) → Fin ph → ℂ)) := inferInstance
-    have c2 : SigmaFinite (volume : Measure (Fin ph → Fin (n + 1) → ℂ)) := inferInstance
-    have c3 : SigmaFinite (volume : Measure (U.LW σ → ℂ)) := inferInstance
-    have c4 : SigmaFinite (volume : Measure (G.UT ph → ℂ)) := inferInstance
-    have c5 : SigmaFinite (volume : Measure ((Fin (n + 1) → Fin ph → ℂ) × (Fin ph → Fin (n + 1) → ℂ))) := by
+  set_option synthInstance.maxHeartbeats 200000 in
+    intro k ph n ρ σ d t hd ht K hK hK0 Q A₁ hA z z' E _ _ F₁ B₁ hStar γ hγ
+    set R : ℝ := ((ph + (n + 1) + ρ : ℕ) : ℝ) with hR
+    set a : ℝ := A₁ / (8 * (2 * R + 1)) with ha_def
+    have hden : 0 < 8 * (2 * R + 1) := by positivity
+    have hR1 : (1 : ℝ) ≤ R := by rw [hR]; exact_mod_cast (by omega : 1 ≤ ph + (n + 1) + ρ)
+    have hnd : R ≤ ((2 * (ph + (n + 1) + ρ) + k + 1 : ℕ) : ℝ) := by
+      rw [hR]; exact_mod_cast (by omega : ph + (n + 1) + ρ ≤ 2 * (ph + (n + 1) + ρ) + k + 1)
+    have ha : 2 * R * ((2 * (ph + (n + 1) + ρ) + k + 1 : ℕ) : ℝ) < a := hA
+    have ha0 : 0 < a := lt_of_le_of_lt (by positivity) ha
+    have hA0 : 0 ≤ A₁ := by
+      have e : A₁ = a * (8 * (2 * R + 1)) := by rw [ha_def]; field_simp
+      rw [e]; positivity
+    obtain ⟨C₂, hC₂⟩ := Formalism.FourierDecayAlt.P.norm_decay_in_coordinates k ph (n + 1) ρ σ d hd (by omega) K hK hK0 A₁ hA0
+    have hI1 : Integrable (fun ξ : U.Xi k ph (n + 1) ρ σ => U.wt ξ ^ (-a)) (U.muXi k ph (n + 1) ρ σ) :=
+      Formalism.FourierDecayAlt.P.weight_integrability k ph (n + 1) ρ σ a (by omega) ha
+    have hfr : ((Module.finrank ℝ (G.UT (n + 1) → ℂ) : ℕ) : ℝ) < a := by
+      have e1 : Module.finrank ℝ (G.UT (n + 1) → ℂ) = Fintype.card (G.UT (n + 1)) * 2 := by
+        rw [Module.finrank_pi_fintype]
+        simp [Complex.finrank_real_complex]
+      have e2 := two_mul_card_UT_succ n
+      have hnR : ((n + 1 : ℕ) : ℝ) ≤ R := by rw [hR]; exact_mod_cast (by omega : n + 1 ≤ ph + (n + 1) + ρ)
+      have e3 : ((Module.finrank ℝ (G.UT (n + 1) → ℂ) : ℕ) : ℝ) = ((n + 1 : ℕ) : ℝ) * (n : ℝ) := by
+        rw [e1]; exact_mod_cast (by rw [mul_comm]; exact e2)
+      rw [e3]
+      have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg _
+      have hn1 : (n : ℝ) ≤ R := by
+        have : (n : ℝ) ≤ ((n + 1 : ℕ) : ℝ) := by push_cast; linarith
+        linarith
+      nlinarith
+    have hI2 : Integrable (fun u : G.UT (n + 1) → ℂ => (1 + ‖u‖) ^ (-a)) volume := integrable_one_add_norm hfr
+    have sR := sigma_RC k (ph + (n + 1)) ρ
+    have hxi : SFinite (volume : Measure (U.XiH ph (n + 1) σ)) := by
+      have c1 : SigmaFinite (volume : Measure (Fin (n + 1) → Fin ph → ℂ)) := inferInstance
+      have c2 : SigmaFinite (volume : Measure (Fin ph → Fin (n + 1) → ℂ)) := inferInstance
+      have c3 : SigmaFinite (volume : Measure (U.LW σ → ℂ)) := inferInstance
+      have c4 : SigmaFinite (volume : Measure (G.UT ph → ℂ)) := inferInstance
+      have c5 : SigmaFinite (volume : Measure ((Fin (n + 1) → Fin ph → ℂ) × (Fin ph → Fin (n + 1) → ℂ))) := by
+        rw [Measure.volume_eq_prod]; infer_instance
+      have c6 : SigmaFinite (volume : Measure ((U.LW σ → ℂ) × (G.UT ph → ℂ))) := by
+        rw [Measure.volume_eq_prod]; infer_instance
       rw [Measure.volume_eq_prod]; infer_instance
-    have c6 : SigmaFinite (volume : Measure ((U.LW σ → ℂ) × (G.UT ph → ℂ))) := by
-      rw [Measure.volume_eq_prod]; infer_instance
-    rw [Measure.volume_eq_prod]; infer_instance
-  set μR := (U.muRC k (ph + (n + 1)) ρ).prod (U.muRC k (ph + (n + 1)) ρ) with hμR
-  have hP : Integrable (fun p : U.Xi k ph (n + 1) ρ σ × (G.UT (n + 1) → ℂ) => U.wt p.1 ^ (-a) * (1 + ‖p.2‖) ^ (-a))
-      ((U.muXi k ph (n + 1) ρ σ).prod volume) := hI1.mul_prod hI2
-  have hAs : MeasurePreserving (MeasurableEquiv.prodAssoc.symm :
-      (U.RC k (ph + (n + 1)) ρ × U.RC k (ph + (n + 1)) ρ) × (U.XiH ph (n + 1) σ × (G.UT (n + 1) → ℂ)) ≃ᵐ _)
-      (μR.prod (volume.prod volume)) ((μR.prod volume).prod volume) :=
-    (assoc_mp μR volume volume).symm _
-  have hD : Integrable (fun y : (U.RC k (ph + (n + 1)) ρ × U.RC k (ph + (n + 1)) ρ) ×
-      (U.XiH ph (n + 1) σ × (G.UT (n + 1) → ℂ)) => U.wt (y.1, y.2.1) ^ (-a) * (1 + ‖y.2.2‖) ^ (-a))
-      (muG k ph n ρ σ) :=
-    (hAs.integrable_comp_emb MeasurableEquiv.prodAssoc.symm.measurableEmbedding).mpr hP
-  have hB₁ : 0 ≤ B₁ := by
-    have := hStar.2.2 [] [] (by simp [U.unitP]) (by simp [U.unitP]) (by simp) 1 Formalism.FourierDecayAlt.P.BetaSesquilinearity.gv_one
-    exact le_trans (mul_nonneg (Real.rpow_nonneg (Real.sqrt_nonneg _) _) (norm_nonneg _)) this
-  have hγ1 : 1 ≤ B.gN γ := Formalism.FourierDecayAlt.P.BetaSesquilinearity.gN_ge_one hγ
-  set c : ℝ := max 1 ‖t‖⁻¹ with hc
-  have hc0 : 0 < c := lt_of_lt_of_le one_pos (le_max_left _ _)
-  set Cst : ℝ := B₁ * |C₂| * (c ^ a * B.gN γ ^ (-a)) with hCst
-  have hbound : ∀ y : (U.RC k (ph + (n + 1)) ρ × U.RC k (ph + (n + 1)) ρ) × (U.XiH ph (n + 1) σ × (G.UT (n + 1) → ℂ)),
-      ‖gInt k ph n ρ σ d t z z' F₁ γ y‖ ≤ Cst * (U.wt (y.1, y.2.1) ^ (-a) * (1 + ‖y.2.2‖) ^ (-a)) := by
-    intro y
-    have hZ : G.detM (Zu n t y.2.2) ≠ 0 := detM_Zu n ht _
-    have hg := Formalism.FourierDecayAlt.P.Ux10.gaXi_mem Formalism.FourierDecayAlt.P.slice_membership Formalism.FourierDecayAlt.P.radical_parametrisation σ d hd
-      (y.1, y.2.1) (Zu n t y.2.2) hZ hγ
-    have e : ‖gInt k ph n ρ σ d t z z' F₁ γ y‖ = ‖F₁ (U.gaXi k ρ σ d (y.1, y.2.1) (Zu n t y.2.2) γ)‖ := by
-      simp only [gInt, norm_smul, norm_psiU, Formalism.FourierDecayAlt.P.Ux10.norm_psiStar, one_mul]
-      rfl
-    rw [e]
-    have hw1 : 1 ≤ U.wt ((y.1, y.2.1) : U.Xi k ph (n + 1) ρ σ) := Formalism.FourierDecayAlt.P.Ux10.one_le_wt _
-    have hu1 : 1 ≤ 1 + ‖y.2.2‖ := by linarith [norm_nonneg y.2.2]
-    have hRHS : 0 ≤ Cst * (U.wt (y.1, y.2.1) ^ (-a) * (1 + ‖y.2.2‖) ^ (-a)) := by
-      rw [hCst]; positivity
-    by_cases h0 : F₁ (U.gaXi k ρ σ d (y.1, y.2.1) (Zu n t y.2.2) γ) = 0
-    · rw [h0, norm_zero]; exact hRHS
-    · have hK' := hStar.2.1 _ hg h0
-      have hs := hC₂ (y.1, y.2.1) (Zu n t y.2.2) γ hγ hK'
-      have hst := hStar.2.2 [] [] (by simp [U.unitP]) (by simp [U.unitP]) (by simp) _ hg
-      have hg1 : 1 ≤ B.gN (U.gaXi k ρ σ d (y.1, y.2.1) (Zu n t y.2.2) γ) := Formalism.FourierDecayAlt.P.BetaSesquilinearity.gN_ge_one hg
-      set gg := B.gN (U.gaXi k ρ σ d (y.1, y.2.1) (Zu n t y.2.2) γ) with hgg
-      set Fv := ‖F₁ (U.gaXi k ρ σ d (y.1, y.2.1) (Zu n t y.2.2) γ)‖ with hFv
-      have hst' : gg ^ A₁ * Fv ≤ B₁ := hst
-      have hF : Fv ≤ B₁ * gg ^ (-A₁) := by
-        have hpos : 0 < gg ^ A₁ := Real.rpow_pos_of_pos (by linarith) _
-        have e2 : gg ^ (-A₁) = (gg ^ A₁)⁻¹ := Real.rpow_neg (by linarith) _
-        rw [e2, ← div_eq_mul_inv, le_div_iff₀ hpos]
-        linarith [mul_comm (gg ^ A₁) Fv]
-      have hZb := one_add_u_le n ht y.2.2
-      have hZle : (1 + ‖Zu n t y.2.2‖) ^ (-a) ≤ c ^ a * (1 + ‖y.2.2‖) ^ (-a) :=
-        rpow_Z_le ha0.le hc0 (by linarith) (by linarith [norm_nonneg (Zu n t y.2.2)]) hZb
-      have hsplit : (U.wt ((y.1, y.2.1) : U.Xi k ph (n + 1) ρ σ) * (1 + ‖Zu n t y.2.2‖) * B.gN γ) ^ (-a) =
-          U.wt ((y.1, y.2.1) : U.Xi k ph (n + 1) ρ σ) ^ (-a) * (1 + ‖Zu n t y.2.2‖) ^ (-a) * B.gN γ ^ (-a) := by
-        rw [Real.mul_rpow (by positivity) (by positivity), Real.mul_rpow (by positivity) (by positivity)]
-      have hs' : gg ^ (-A₁) ≤ |C₂| * (U.wt ((y.1, y.2.1) : U.Xi k ph (n + 1) ρ σ) ^ (-a) *
-          (1 + ‖Zu n t y.2.2‖) ^ (-a) * B.gN γ ^ (-a)) := by
-        rw [← hsplit]
-        exact hs.trans (mul_le_mul_of_nonneg_right (le_abs_self _) (Real.rpow_nonneg (by positivity) _))
-      have hw0 : 0 ≤ U.wt ((y.1, y.2.1) : U.Xi k ph (n + 1) ρ σ) ^ (-a) := Real.rpow_nonneg (by linarith) _
-      have hγ0 : 0 ≤ B.gN γ ^ (-a) := Real.rpow_nonneg (by linarith) _
-      calc Fv ≤ B₁ * gg ^ (-A₁) := hF
-        _ ≤ B₁ * (|C₂| * (U.wt ((y.1, y.2.1) : U.Xi k ph (n + 1) ρ σ) ^ (-a) *
-            (1 + ‖Zu n t y.2.2‖) ^ (-a) * B.gN γ ^ (-a))) := mul_le_mul_of_nonneg_left hs' hB₁
-        _ ≤ B₁ * (|C₂| * (U.wt ((y.1, y.2.1) : U.Xi k ph (n + 1) ρ σ) ^ (-a) *
-            (c ^ a * (1 + ‖y.2.2‖) ^ (-a)) * B.gN γ ^ (-a))) := by
-          refine mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left ?_ (abs_nonneg _)) hB₁
-          exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hZle hw0) hγ0
-        _ = Cst * (U.wt (y.1, y.2.1) ^ (-a) * (1 + ‖y.2.2‖) ^ (-a)) := by rw [hCst]; ring
-  have : BorelSpace (U.XiH ph (n + 1) σ) := Prod.borelSpace
-  have : BorelSpace (U.RC k (ph + (n + 1)) ρ) := Prod.borelSpace
-  have : BorelSpace (U.RC k (ph + (n + 1)) ρ × U.RC k (ph + (n + 1)) ρ) := Prod.borelSpace
-  have : BorelSpace (U.XiH ph (n + 1) σ × (G.UT (n + 1) → ℂ)) := Prod.borelSpace
-  have : BorelSpace ((U.RC k (ph + (n + 1)) ρ × U.RC k (ph + (n + 1)) ρ) × (U.XiH ph (n + 1) σ × (G.UT (n + 1) → ℂ))) :=
-    Prod.borelSpace
-  have hcont1 : ContinuousOn F₁ (B.GV k (ph + (n + 1) + ρ)) :=
-    Formalism.FourierDecayAlt.P.BetaSesquilinearity.CkOn_cont subset_rfl (Formalism.FourierDecayAlt.P.BetaSesquilinearity.sCkOn_mono (by simp) hStar.1)
-  have hcF : Continuous fun y : (U.RC k (ph + (n + 1)) ρ × U.RC k (ph + (n + 1)) ρ) × (U.XiH ph (n + 1) σ × (G.UT (n + 1) → ℂ)) =>
-      F₁ (U.gaXi k ρ σ d (y.1, y.2.1) (Zu n t y.2.2) γ) :=
-    hcont1.comp_continuous (cont_gaXi2 σ d hd ht γ) fun y =>
-      Formalism.FourierDecayAlt.P.Ux10.gaXi_mem Formalism.FourierDecayAlt.P.slice_membership Formalism.FourierDecayAlt.P.radical_parametrisation σ d hd
-        (y.1, y.2.1) (Zu n t y.2.2) (detM_Zu n ht _) hγ
-  have hcg : Continuous (gInt k ph n ρ σ d t z z' F₁ γ) := by
-    have h1 := (cont_psiU n).comp (continuous_snd.comp continuous_snd :
-      Continuous fun y : (U.RC k (ph + (n + 1)) ρ × U.RC k (ph + (n + 1)) ρ) × (U.XiH ph (n + 1) σ × (G.UT (n + 1) → ℂ)) => y.2.2)
-    have h2 := (Formalism.FourierDecayAlt.P.Ux10.cont_psiStar k ρ σ z z').comp (continuous_fst.prodMk (continuous_fst.comp continuous_snd) :
-      Continuous fun y : (U.RC k (ph + (n + 1)) ρ × U.RC k (ph + (n + 1)) ρ) × (U.XiH ph (n + 1) σ × (G.UT (n + 1) → ℂ)) =>
-        ((y.1, y.2.1) : U.Xi k ph (n + 1) ρ σ))
-    exact h1.smul (h2.smul hcF)
-  exact (hD.const_mul Cst).mono' hcg.aestronglyMeasurable (Filter.Eventually.of_forall hbound)
-
+    set μR := (U.muRC k (ph + (n + 1)) ρ).prod (U.muRC k (ph + (n + 1)) ρ) with hμR
+    have hP : Integrable (fun p : U.Xi k ph (n + 1) ρ σ × (G.UT (n + 1) → ℂ) => U.wt p.1 ^ (-a) * (1 + ‖p.2‖) ^ (-a))
+        ((U.muXi k ph (n + 1) ρ σ).prod volume) := hI1.mul_prod hI2
+    have hAs : MeasurePreserving (MeasurableEquiv.prodAssoc.symm :
+        (U.RC k (ph + (n + 1)) ρ × U.RC k (ph + (n + 1)) ρ) × (U.XiH ph (n + 1) σ × (G.UT (n + 1) → ℂ)) ≃ᵐ _)
+        (μR.prod (volume.prod volume)) ((μR.prod volume).prod volume) :=
+      (assoc_mp μR volume volume).symm _
+    have hD : Integrable (fun y : (U.RC k (ph + (n + 1)) ρ × U.RC k (ph + (n + 1)) ρ) ×
+        (U.XiH ph (n + 1) σ × (G.UT (n + 1) → ℂ)) => U.wt (y.1, y.2.1) ^ (-a) * (1 + ‖y.2.2‖) ^ (-a))
+        (muG k ph n ρ σ) :=
+      (hAs.integrable_comp_emb MeasurableEquiv.prodAssoc.symm.measurableEmbedding).mpr hP
+    have hB₁ : 0 ≤ B₁ := by
+      have := hStar.2.2 [] [] (by simp [U.unitP]) (by simp [U.unitP]) (by simp) 1 Formalism.FourierDecayAlt.P.BetaSesquilinearity.gv_one
+      exact le_trans (mul_nonneg (Real.rpow_nonneg (Real.sqrt_nonneg _) _) (norm_nonneg _)) this
+    have hγ1 : 1 ≤ B.gN γ := Formalism.FourierDecayAlt.P.BetaSesquilinearity.gN_ge_one hγ
+    set c : ℝ := max 1 ‖t‖⁻¹ with hc
+    have hc0 : 0 < c := lt_of_lt_of_le one_pos (le_max_left _ _)
+    set Cst : ℝ := B₁ * |C₂| * (c ^ a * B.gN γ ^ (-a)) with hCst
+    have hbound : ∀ y : (U.RC k (ph + (n + 1)) ρ × U.RC k (ph + (n + 1)) ρ) × (U.XiH ph (n + 1) σ × (G.UT (n + 1) → ℂ)),
+        ‖gInt k ph n ρ σ d t z z' F₁ γ y‖ ≤ Cst * (U.wt (y.1, y.2.1) ^ (-a) * (1 + ‖y.2.2‖) ^ (-a)) := by
+      intro y
+      have hZ : G.detM (Zu n t y.2.2) ≠ 0 := detM_Zu n ht _
+      have hg := Formalism.FourierDecayAlt.P.Ux10.gaXi_mem Formalism.FourierDecayAlt.P.slice_membership Formalism.FourierDecayAlt.P.radical_parametrisation σ d hd
+        (y.1, y.2.1) (Zu n t y.2.2) hZ hγ
+      have e : ‖gInt k ph n ρ σ d t z z' F₁ γ y‖ = ‖F₁ (U.gaXi k ρ σ d (y.1, y.2.1) (Zu n t y.2.2) γ)‖ := by
+        simp only [gInt, norm_smul, norm_psiU, Formalism.FourierDecayAlt.P.Ux10.norm_psiStar, one_mul]
+        rfl
+      rw [e]
+      have hw1 : 1 ≤ U.wt ((y.1, y.2.1) : U.Xi k ph (n + 1) ρ σ) := Formalism.FourierDecayAlt.P.Ux10.one_le_wt _
+      have hu1 : 1 ≤ 1 + ‖y.2.2‖ := by linarith [norm_nonneg y.2.2]
+      have hRHS : 0 ≤ Cst * (U.wt (y.1, y.2.1) ^ (-a) * (1 + ‖y.2.2‖) ^ (-a)) := by
+        rw [hCst]; positivity
+      by_cases h0 : F₁ (U.gaXi k ρ σ d (y.1, y.2.1) (Zu n t y.2.2) γ) = 0
+      · rw [h0, norm_zero]; exact hRHS
+      · have hK' := hStar.2.1 _ hg h0
+        have hs := hC₂ (y.1, y.2.1) (Zu n t y.2.2) γ hγ hK'
+        have hst := hStar.2.2 [] [] (by simp [U.unitP]) (by simp [U.unitP]) (by simp) _ hg
+        have hg1 : 1 ≤ B.gN (U.gaXi k ρ σ d (y.1, y.2.1) (Zu n t y.2.2) γ) := Formalism.FourierDecayAlt.P.BetaSesquilinearity.gN_ge_one hg
+        set gg := B.gN (U.gaXi k ρ σ d (y.1, y.2.1) (Zu n t y.2.2) γ) with hgg
+        set Fv := ‖F₁ (U.gaXi k ρ σ d (y.1, y.2.1) (Zu n t y.2.2) γ)‖ with hFv
+        have hst' : gg ^ A₁ * Fv ≤ B₁ := hst
+        have hF : Fv ≤ B₁ * gg ^ (-A₁) := by
+          have hpos : 0 < gg ^ A₁ := Real.rpow_pos_of_pos (by linarith) _
+          have e2 : gg ^ (-A₁) = (gg ^ A₁)⁻¹ := Real.rpow_neg (by linarith) _
+          rw [e2, ← div_eq_mul_inv, le_div_iff₀ hpos]
+          linarith [mul_comm (gg ^ A₁) Fv]
+        have hZb := one_add_u_le n ht y.2.2
+        have hZle : (1 + ‖Zu n t y.2.2‖) ^ (-a) ≤ c ^ a * (1 + ‖y.2.2‖) ^ (-a) :=
+          rpow_Z_le ha0.le hc0 (by linarith) (by linarith [norm_nonneg (Zu n t y.2.2)]) hZb
+        have hsplit : (U.wt ((y.1, y.2.1) : U.Xi k ph (n + 1) ρ σ) * (1 + ‖Zu n t y.2.2‖) * B.gN γ) ^ (-a) =
+            U.wt ((y.1, y.2.1) : U.Xi k ph (n + 1) ρ σ) ^ (-a) * (1 + ‖Zu n t y.2.2‖) ^ (-a) * B.gN γ ^ (-a) := by
+          rw [Real.mul_rpow (by positivity) (by positivity), Real.mul_rpow (by positivity) (by positivity)]
+        have hs' : gg ^ (-A₁) ≤ |C₂| * (U.wt ((y.1, y.2.1) : U.Xi k ph (n + 1) ρ σ) ^ (-a) *
+            (1 + ‖Zu n t y.2.2‖) ^ (-a) * B.gN γ ^ (-a)) := by
+          rw [← hsplit]
+          exact hs.trans (mul_le_mul_of_nonneg_right (le_abs_self _) (Real.rpow_nonneg (by positivity) _))
+        have hw0 : 0 ≤ U.wt ((y.1, y.2.1) : U.Xi k ph (n + 1) ρ σ) ^ (-a) := Real.rpow_nonneg (by linarith) _
+        have hγ0 : 0 ≤ B.gN γ ^ (-a) := Real.rpow_nonneg (by linarith) _
+        calc Fv ≤ B₁ * gg ^ (-A₁) := hF
+          _ ≤ B₁ * (|C₂| * (U.wt ((y.1, y.2.1) : U.Xi k ph (n + 1) ρ σ) ^ (-a) *
+              (1 + ‖Zu n t y.2.2‖) ^ (-a) * B.gN γ ^ (-a))) := mul_le_mul_of_nonneg_left hs' hB₁
+          _ ≤ B₁ * (|C₂| * (U.wt ((y.1, y.2.1) : U.Xi k ph (n + 1) ρ σ) ^ (-a) *
+              (c ^ a * (1 + ‖y.2.2‖) ^ (-a)) * B.gN γ ^ (-a))) := by
+            refine mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left ?_ (abs_nonneg _)) hB₁
+            exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hZle hw0) hγ0
+          _ = Cst * (U.wt (y.1, y.2.1) ^ (-a) * (1 + ‖y.2.2‖) ^ (-a)) := by rw [hCst]; ring
+    have : BorelSpace (U.XiH ph (n + 1) σ) := Prod.borelSpace
+    have : BorelSpace (U.RC k (ph + (n + 1)) ρ) := Prod.borelSpace
+    have : BorelSpace (U.RC k (ph + (n + 1)) ρ × U.RC k (ph + (n + 1)) ρ) := Prod.borelSpace
+    have : BorelSpace (U.XiH ph (n + 1) σ × (G.UT (n + 1) → ℂ)) := Prod.borelSpace
+    have : BorelSpace ((U.RC k (ph + (n + 1)) ρ × U.RC k (ph + (n + 1)) ρ) × (U.XiH ph (n + 1) σ × (G.UT (n + 1) → ℂ))) :=
+      Prod.borelSpace
+    have hcont1 : ContinuousOn F₁ (B.GV k (ph + (n + 1) + ρ)) :=
+      Formalism.FourierDecayAlt.P.BetaSesquilinearity.CkOn_cont subset_rfl (Formalism.FourierDecayAlt.P.BetaSesquilinearity.sCkOn_mono (by simp) hStar.1)
+    have hcF : Continuous fun y : (U.RC k (ph + (n + 1)) ρ × U.RC k (ph + (n + 1)) ρ) × (U.XiH ph (n + 1) σ × (G.UT (n + 1) → ℂ)) =>
+        F₁ (U.gaXi k ρ σ d (y.1, y.2.1) (Zu n t y.2.2) γ) :=
+      hcont1.comp_continuous (cont_gaXi2 σ d hd ht γ) fun y =>
+        Formalism.FourierDecayAlt.P.Ux10.gaXi_mem Formalism.FourierDecayAlt.P.slice_membership Formalism.FourierDecayAlt.P.radical_parametrisation σ d hd
+          (y.1, y.2.1) (Zu n t y.2.2) (detM_Zu n ht _) hγ
+    have hcg : Continuous (gInt k ph n ρ σ d t z z' F₁ γ) := by
+      have h1 := (cont_psiU n).comp (continuous_snd.comp continuous_snd :
+        Continuous fun y : (U.RC k (ph + (n + 1)) ρ × U.RC k (ph + (n + 1)) ρ) × (U.XiH ph (n + 1) σ × (G.UT (n + 1) → ℂ)) => y.2.2)
+      have h2 := (Formalism.FourierDecayAlt.P.Ux10.cont_psiStar k ρ σ z z').comp (continuous_fst.prodMk (continuous_fst.comp continuous_snd) :
+        Continuous fun y : (U.RC k (ph + (n + 1)) ρ × U.RC k (ph + (n + 1)) ρ) × (U.XiH ph (n + 1) σ × (G.UT (n + 1) → ℂ)) =>
+          ((y.1, y.2.1) : U.Xi k ph (n + 1) ρ σ))
+      exact h1.smul (h2.smul hcF)
+    exact (hD.const_mul Cst).mono' hcg.aestronglyMeasurable (Filter.Eventually.of_forall hbound)
 end Formalism.FourierDecayAlt.P.JCTx6.Int
 
 open Matrix MeasureTheory Filter Topology

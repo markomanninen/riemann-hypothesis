@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LineLatAt
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LevAtZ
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSelfDualCHyperbolicExtensionLatticeConjStable
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LineLatAt
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.BaseMatrixGlApply
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsSelfDualCHyperbolicExtensionLatticeConjStable
+
+@[expose] public section
 
 noncomputable section
 
@@ -41,20 +45,38 @@ theorem mem_splitL (d : HypDec S S₀ ρ) (L₀ : Lat S₀) (𝔟 : ℕ → FI D
 
 variable (d : HypDec S S₀ ρ)
 
-theorem qX_e : d.qX * d.e = 1 := rat_injective (by rw [rat_mul, rat_one]; exact d.pX_jX)
-theorem qX_i₀ : d.qX * d.i₀ = 0 := rat_injective (by rw [rat_mul, rat_zero]; exact d.pX_j0)
-theorem qX_e' : d.qX * d.e' = 0 := rat_injective (by rw [rat_mul, rat_zero]; exact d.pX_jY)
-theorem qY_e : d.qY * d.e = 0 := rat_injective (by rw [rat_mul, rat_zero]; exact d.pY_jX)
-theorem qY_i₀ : d.qY * d.i₀ = 0 := rat_injective (by rw [rat_mul, rat_zero]; exact d.pY_j0)
-theorem qY_e' : d.qY * d.e' = 1 := rat_injective (by rw [rat_mul, rat_one]; exact d.pY_jY)
-theorem wittDecomposition_coreProj_mul_e_eq_zero : d.q0 * d.e = 0 := rat_injective (by rw [rat_mul, rat_zero]; exact d.p0_jX)
-theorem wittDecomposition_coreProj_mul_core_eq_one : d.q0 * d.i₀ = 1 := rat_injective (by rw [rat_mul, rat_one]; exact d.p0_j0)
-theorem wittZeroProjection_mul_dualBasis_eq_zero : d.q0 * d.e' = 0 := rat_injective (by rw [rat_mul, rat_zero]; exact d.p0_jY)
+theorem qX_e : d.qX * d.e = 1 := d.e'e
+theorem qX_i₀ : d.qX * d.i₀ = 0 := by
+  have h := congrArg Matrix.conjTranspose d.i₀e'
+  simpa only [Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose, gram_conjTranspose,
+    Matrix.conjTranspose_zero, HypDec.qX, HypDec.qY, Matrix.mul_assoc] using h
+theorem qX_e' : d.qX * d.e' = 0 := d.e'e'
+theorem qY_e : d.qY * d.e = 0 := d.ee
+theorem qY_i₀ : d.qY * d.i₀ = 0 := by
+  have h := congrArg Matrix.conjTranspose d.i₀e
+  simpa only [Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose, gram_conjTranspose,
+    Matrix.conjTranspose_zero, HypDec.qX, HypDec.qY, Matrix.mul_assoc] using h
+theorem qY_e' : d.qY * d.e' = 1 := by
+  have h := congrArg Matrix.conjTranspose d.e'e
+  simpa only [Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose, gram_conjTranspose,
+    Matrix.conjTranspose_one, HypDec.qY, Matrix.mul_assoc] using h
+theorem wittDecomposition_coreProj_mul_e_eq_zero : d.q0 * d.e = 0 := by
+  simp only [HypDec.q0, Matrix.mul_assoc, ← Matrix.mul_assoc d.i₀ᴴ, d.i₀e, Matrix.mul_zero]
+theorem wittDecomposition_coreProj_mul_core_eq_one : d.q0 * d.i₀ = 1 := by
+  rw [HypDec.q0, Matrix.mul_assoc, d.iso,
+    Matrix.nonsing_inv_mul _ (isUnit_iff_ne_zero.mpr (gram_det_ne S₀))]
+theorem wittZeroProjection_mul_dualBasis_eq_zero : d.q0 * d.e' = 0 := by
+  simp only [HypDec.q0, Matrix.mul_assoc, ← Matrix.mul_assoc d.i₀ᴴ, d.i₀e', Matrix.mul_zero]
 
 theorem gram_eq : S.gram = d.qYᴴ * d.qX + d.q0ᴴ * (S₀.gram * d.q0) + d.qXᴴ * d.qY := by
-  apply rat_injective
-  rw [rat_add, rat_add, rat_mul, rat_mul, rat_mul, rat_mul, rat_conjTranspose, rat_conjTranspose, rat_conjTranspose]
-  exact d.gA_eq
+  have h0 : d.q0ᴴ * S₀.gram = S.gram * d.i₀ := by
+    simp only [HypDec.q0, Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose,
+      gram_conjTranspose, Matrix.conjTranspose_nonsing_inv, Matrix.mul_assoc]
+    rw [Matrix.nonsing_inv_mul _ (isUnit_iff_ne_zero.mpr (gram_det_ne S₀)), Matrix.mul_one]
+  have hx : d.qXᴴ = S.gram * d.e' := by simp [HypDec.qX, gram_conjTranspose]
+  have hy : d.qYᴴ = S.gram * d.e := by simp [HypDec.qY, gram_conjTranspose]
+  rw [hy, hx, ← Matrix.mul_assoc d.q0ᴴ, h0]
+  simp only [Matrix.mul_assoc, ← Matrix.mul_add, d.sum_eq_one_rat, Matrix.mul_one]
 
 theorem rat_mulVec_gen {m n : ℕ} (M : Matrix (Fin m) (Fin n) D.host.E) (t : AF D.host.F) (x : Fin n → D.host.E) :
     rat M *ᵥ (fun l => t ⊗ₜ[D.host.F] (1 * x l)) = fun k => t ⊗ₜ[D.host.F] (1 * (M *ᵥ x) k) := by
@@ -156,7 +178,10 @@ theorem monoAt_splitL (v : Pl D) : MonoAt d (splitL d L₀ 𝔟) L₀ v := by
   · rintro ⟨h1, h3, h2⟩
     have e : y = d.jX *ᵥ (d.pX *ᵥ y) + d.j0 *ᵥ (d.p0 *ᵥ y) + d.jY *ᵥ (d.pY *ᵥ y) := by
       rw [Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, ← Matrix.add_mulVec, ← Matrix.add_mulVec,
-        d.sum_eq_one, Matrix.one_mulVec]
+        (show d.jX * d.pX + d.j0 * d.p0 + d.jY * d.pY = 1 from by
+          have h := congrArg rat d.sum_eq_one_rat
+          simpa only [rat, Matrix.map_add _ (map_add _), Matrix.map_mul, Matrix.map_one _ (map_zero _) (map_one _), HypDec.jX, HypDec.j0,
+            HypDec.jY, HypDec.pX, HypDec.p0, HypDec.pY] using h), Matrix.one_mulVec]
     rw [e, mulVec_eq_sum_colMul d.jX, mulVec_eq_sum_colMul d.jY]
     refine add_mem (add_mem (sum_mem fun i _ => h1 i) ?_) (sum_mem fun i _ => h3 i)
     exact rat_mulVec_mem_latV d.i₀ (fun x hx => i₀_mem hx) _ h2
@@ -181,7 +206,9 @@ theorem line_splitL (v : Pl D) (i : Fin ρ) (a : AE D) :
       | add z z' _ _ hz hz' => rw [Matrix.mulVec_add]; exact add_mem hz hz'
       | neg z _ hz => rw [Matrix.mulVec_neg]; exact neg_mem hz
     have h := key _ ha
-    rwa [colMul_eq_mulVec, Matrix.mulVec_mulVec, d.pX_jX, Matrix.one_mulVec, Pi.single_eq_same] at h
+    rwa [colMul_eq_mulVec, Matrix.mulVec_mulVec, (show d.pX * d.jX = 1 from by
+      have h := congrArg rat (qX_e d)
+      simpa only [rat, Matrix.map_mul, Matrix.map_one _ (map_zero _) (map_one _), HypDec.pX, HypDec.jX] using h), Matrix.one_mulVec, Pi.single_eq_same] at h
   · intro ha
     rw [idV] at ha
     induction ha using AddSubgroup.closure_induction with

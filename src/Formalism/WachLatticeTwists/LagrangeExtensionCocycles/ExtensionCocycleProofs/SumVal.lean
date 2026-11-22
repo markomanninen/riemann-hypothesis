@@ -1,4 +1,8 @@
-import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.Statement
+module
+
+public import Formalism.WachLatticeTwists.LagrangeExtensionCocycles.Statement
+
+@[expose] public section
 
 namespace Formalism.RepresentationBoundsCohomology.N2.SumVal
 
@@ -13,7 +17,7 @@ lemma sum_Ioc_add (n w : ℕ) :
   | zero => simp
   | succ w ih =>
     rw [← add_assoc, Finset.sum_Ioc_succ_top (by omega), Nat.factorial_succ,
-      padicValNat.mul (by omega) (Nat.factorial_ne_zero _), ← ih]
+      (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (by omega) (Nat.factorial_ne_zero _), ← ih]
     ring
 
 lemma sum_Ioc_eq (n w : ℕ) :
@@ -22,9 +26,9 @@ lemma sum_Ioc_eq (n w : ℕ) :
   have h1 := sum_Ioc_add ℓ n w
   have h2 := Nat.choose_mul_factorial_mul_factorial (Nat.le_add_left w n)
   rw [Nat.add_sub_cancel] at h2
-  rw [← h2, padicValNat.mul (Nat.mul_ne_zero (Nat.choose_pos (Nat.le_add_left w n)).ne'
+  rw [← h2, (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (Nat.mul_ne_zero (Nat.choose_pos (Nat.le_add_left w n)).ne'
       (Nat.factorial_ne_zero _)) (Nat.factorial_ne_zero _),
-    padicValNat.mul (Nat.choose_pos (Nat.le_add_left w n)).ne' (Nat.factorial_ne_zero _)] at h1
+    (show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (Nat.choose_pos (Nat.le_add_left w n)).ne' (Nat.factorial_ne_zero _)] at h1
   omega
 
 lemma one_lt_cast : (1 : ℝ) < (ℓ : ℝ) := by
@@ -32,7 +36,8 @@ lemma one_lt_cast : (1 : ℝ) < (ℓ : ℝ) := by
 
 lemma val_factorial_le (w : ℕ) :
     (padicValNat ℓ w.factorial : ℝ) ≤ (w : ℝ) / ((ℓ : ℝ) - 1) := by
-  have h := sub_one_mul_padicValNat_factorial (p := ℓ) w
+  have h := (Fact.out : ℓ.Prime).sub_one_mul_multiplicity_factorial (n := w)
+  rw [← Nat.padicValNat_def] at h
   have h' : (ℓ - 1) * padicValNat ℓ w.factorial ≤ w := by rw [h]; exact Nat.sub_le _ _
   have hl := one_lt_cast ℓ
   rw [le_div_iff₀ (by linarith)]
@@ -45,7 +50,7 @@ lemma val_factorial_le (w : ℕ) :
 lemma val_choose_le (N w : ℕ) :
     (padicValNat ℓ (N.choose w) : ℝ) ≤ Real.logb ℓ N := by
   have h1 : padicValNat ℓ (N.choose w) ≤ Nat.log ℓ N := by
-    rw [← Nat.factorization_def _ (Fact.out : ℓ.Prime)]
+    rw [Nat.padicValNat_def, ← Nat.factorization_def _ (Fact.out : ℓ.Prime)]
     exact Nat.factorization_choose_le_log
   calc (padicValNat ℓ (N.choose w) : ℝ) ≤ (Nat.log ℓ N : ℝ) := by exact_mod_cast h1
     _ ≤ Real.logb ℓ N := Real.natLog_le_logb N ℓ
@@ -130,7 +135,7 @@ private theorem sum_padicValInt_sub_le_of_lt_forall (ℓ : ℕ) [Fact ℓ.Prime]
     omega
   · intro b hb
     have h3 := hlt b hb
-    simp only [padicValInt]
+    simp only [padicValInt, Nat.padicValNat_def]
     congr 1
     omega
 
@@ -151,7 +156,7 @@ private theorem sum_padicValInt_sub_le_of_gt_forall (ℓ : ℕ) [Fact ℓ.Prime]
     omega
   · intro b hb
     have h3 := hgt b hb
-    simp only [padicValInt]
+    simp only [padicValInt, Nat.padicValNat_def]
     congr 1
     omega
 

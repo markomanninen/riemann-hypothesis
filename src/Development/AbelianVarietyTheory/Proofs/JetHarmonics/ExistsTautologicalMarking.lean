@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.JetGauges.UnitaryDetClass
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.JetGauges.UnitaryDetClass
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -103,7 +107,7 @@ theorem exists_tautological_marking :
     rw [← hd']
     have e2 : ((a ^ 2 * e + (2 * a * k * b + b ^ 2 * Q) * d' : 𝓞 E) : E) =
         (a : E) ^ 2 * (e : E) + (2 * (a : E) * k * b + (b : E) ^ 2 * Q) * (d' : E) := by
-      simp only [RingOfIntegers.coe_eq_algebraMap, map_add, map_mul, map_pow, map_natCast, map_ofNat]
+      simp only [RingOfIntegers.coe_eq_algebraMap, map_add (f := _), map_mul, map_pow, map_natCast, map_ofNat]
     rw [e2]
     linear_combination (a : E) ^ 2 * he - ((a : E) * k + b * Q + 1) * (d' : E) * habE
 

@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCost.LetterSize
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCost.LetterSize
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SymmetricScalarBlockMatrixMul
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BetaSesquilinearity
+
+@[expose] public section
 
 open Matrix Filter Topology
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.U Formalism.REAL
@@ -108,7 +112,7 @@ lemma sm_of {s : ℕ} (Z : G.Mat s) : ContDiffAt ℝ n (fun Z' : G.Mat s => Matr
   rw [sm_iff]
   intro i j
   simp only [Matrix.of_apply]
-  exact (contDiff_apply_apply ℝ ℂ i j).contDiffAt
+  exact (contDiff_apply_apply ℝ i j).contDiffAt
 
 lemma mMap_sm {k j ρ : ℕ} {M : X → Matrix (Fin j) (Fin j) ℂ} (hM : ContDiffAt ℝ n M x₀)
     (hdet : (M x₀).det ≠ 0) (γ : B.Mat k ρ) : ContDiffAt ℝ n (fun x => mMap k j ρ (M x) γ) x₀ := by
@@ -124,11 +128,6 @@ variable {k p s ρ : ℕ} {σ : Equiv.Perm (Fin p)} {d : Fin p → ℂ}
 lemma permutationMatrix_eq_permMatrix' (σ : Equiv.Perm (Fin p)) : wP σ = σ.permMatrix ℂ := by
   ext a b
   simp [wP, Equiv.Perm.permMatrix, PEquiv.toMatrix_apply]
-
-lemma det_hMat_ne (hd : ∀ i, d i ≠ 0) : (hMat σ d).det ≠ 0 := by
-  rw [hMat, Matrix.det_mul, permutationMatrix_eq_permMatrix', Matrix.det_permutation, Matrix.det_diagonal]
-  refine mul_ne_zero ?_ (Finset.prod_ne_zero_iff.2 fun i _ => hd i)
-  rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with h | h <;> simp [h]
 
 private lemma det_one_add_strictLower {q : ℕ} (M : Matrix (Fin q) (Fin q) ℂ) (h : ∀ a b, a ≤ b → M a b = 0) :
     (1 + M).det = 1 := by

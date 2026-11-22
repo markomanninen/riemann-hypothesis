@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.HeckeAlgebra
-import GroundTheory.AutomorphicForms.SmoothRepContragredient
-import GroundTheory.AutomorphicForms.SmoothRepSchur
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.HeckeAlgebra
+public import GroundTheory.AutomorphicForms.SmoothRepContragredient
+public import GroundTheory.AutomorphicForms.SmoothRepSchur
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,10 +32,6 @@ theorem coe_compHomeoL (e : X ≃ₜ X) (f : locallyConstantCompactSupport X ℂ
 
 theorem compHomeoL_symm_apply (e : X ≃ₜ X) (f : locallyConstantCompactSupport X ℂ ℂ) :
     compHomeoL e (compHomeoL e.symm f) = f :=
-  Subtype.ext (funext fun x => by simp)
-
-theorem compHomeoL_apply_symm (e : X ≃ₜ X) (f : locallyConstantCompactSupport X ℂ ℂ) :
-    compHomeoL e.symm (compHomeoL e f) = f :=
   Subtype.ext (funext fun x => by simp)
 
 variable {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
@@ -79,8 +79,8 @@ def BiEquivariantSigmaInvariant (H : Subgroup G) (χ : H → ℂ) (σ : G ≃ₜ
       D (biTranslL (h₁ : G) (h₂ : G) f) = χ h₁ * (χ h₂)⁻¹ * D f) →
     ∀ f, D (compHomeoL σ f) = D f
 
-omit [IsTopologicalGroup G] in
 
+omit [IsTopologicalGroup G] in
 theorem map_inv_of_antiHom (σ : G ≃ₜ G) (hσ : ∀ x y, σ (x * y) = σ y * σ x) (x : G) :
     σ x⁻¹ = (σ x)⁻¹ := by
   have h1 : σ 1 = 1 := by
@@ -88,32 +88,6 @@ theorem map_inv_of_antiHom (σ : G ≃ₜ G) (hσ : ∀ x y, σ (x * y) = σ y *
     rw [mul_one] at this
     exact (mul_eq_left.1 this.symm)
   rw [eq_inv_iff_mul_eq_one, ← hσ, mul_inv_cancel, h1]
-
-theorem BiEquivariantSigmaInvariant.inv {H : Subgroup G} {χ : H → ℂ} {σ : G ≃ₜ G}
-    (hσ : ∀ x y, σ (x * y) = σ y * σ x) (h : BiEquivariantSigmaInvariant H χ σ) :
-    BiEquivariantSigmaInvariant H (fun g => (χ g)⁻¹) σ := by
-  intro D hD f
-  set ι : G ≃ₜ G := Homeomorph.inv G
-  set D' : Module.Dual ℂ (locallyConstantCompactSupport G ℂ ℂ) := D ∘ₗ compHomeoL ι
-  have hD' : ∀ (f : locallyConstantCompactSupport G ℂ ℂ) (h₁ h₂ : H),
-      D' (biTranslL (h₁ : G) (h₂ : G) f) = χ h₁ * (χ h₂)⁻¹ * D' f := by
-    intro f h₁ h₂
-    have e : compHomeoL ι (biTranslL (h₁ : G) (h₂ : G) f) =
-        biTranslL (h₂ : G) (h₁ : G) (compHomeoL ι f) :=
-      Subtype.ext (funext fun x => by simp [ι, mul_assoc])
-    simp only [D', LinearMap.comp_apply, e, hD]
-    rw [inv_inv]
-    ring
-  have key := h D' hD'
-  have e : compHomeoL ι (compHomeoL σ f) = compHomeoL σ (compHomeoL ι f) :=
-    Subtype.ext (funext fun x => by simp [ι, map_inv_of_antiHom σ hσ])
-  have hιι : ∀ g : locallyConstantCompactSupport G ℂ ℂ, compHomeoL ι (compHomeoL ι g) = g :=
-    fun g => Subtype.ext (funext fun x => by simp [ι])
-  calc D (compHomeoL σ f) = D' (compHomeoL ι (compHomeoL σ f)) := by
-        simp only [D', LinearMap.comp_apply, hιι]
-    _ = D' (compHomeoL σ (compHomeoL ι f)) := by rw [e]
-    _ = D' (compHomeoL ι f) := key _
-    _ = D f := by simp only [D', LinearMap.comp_apply, hιι]
 
 end Distributions
 
@@ -124,15 +98,15 @@ variable {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [Loca
   (μ : Measure G) [μ.IsHaarMeasure]
   {V : Type*} [AddCommGroup V] [Module ℂ V] {ρ : Representation ℂ G V}
 
-omit [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G] in
 
+omit [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G] in
 theorem heckeAct_apply_act [μ.IsMulRightInvariant] {f : G → ℂ} (hf : f ∈ locallyConstantCompactSupport G ℂ ℂ) {v : V}
     (hv : v ∈ smoothVectors ρ) (g : G) :
     heckeAct μ ρ f (ρ g v) = heckeAct μ ρ (fun x => f (x * g⁻¹)) v := by
   have hf' : (fun x => f (x * g⁻¹)) ∈ locallyConstantCompactSupport G ℂ ℂ :=
     (rtransL g⁻¹ ⟨f, hf⟩).2
   refine eq_of_forall_dual fun φ => ?_
-  rw [dual_heckeAct μ hf (smooth_apply_mem ρ hv g), dual_heckeAct μ hf' hv,
+  rw [dual_heckeAct (μ := μ) hf (smooth_apply_mem ρ hv g) φ, dual_heckeAct (μ := μ) hf' hv φ,
     ← integral_mul_right_eq_self (fun x => f (x * g⁻¹) * φ (ρ x v)) g]
   simp only [mul_inv_cancel_right, map_mul, Module.End.mul_apply]
 
@@ -144,8 +118,8 @@ theorem normInd_mem {K : Subgroup G} (hKc : IsCompact (K : Set G)) (hKo : IsOpen
     normInd μ K ∈ locallyConstantCompactSupport G ℂ ℂ :=
   indicator_mem_locallyConstantCompactSupport hKc hKo _
 
-omit [LocallyCompactSpace G] [TotallyDisconnectedSpace G] in
 
+omit [LocallyCompactSpace G] [TotallyDisconnectedSpace G] in
 theorem heckeAct_normInd {K : Subgroup G} (hKc : IsCompact (K : Set G)) (hKo : IsOpen (K : Set G))
     {v : V} (hv : v ∈ fixedVectors ρ K) : heckeAct μ ρ (normInd μ K) v = v := by
   have hvs : v ∈ smoothVectors ρ := mem_smoothVectors_of_mem_fixedVectors hKo hv
@@ -153,7 +127,7 @@ theorem heckeAct_normInd {K : Subgroup G} (hKc : IsCompact (K : Set G)) (hKo : I
     rw [measureReal_ne_zero_iff hKc.measure_lt_top.ne]
     exact (hKo.measure_pos μ ⟨1, K.one_mem⟩).ne'
   refine eq_of_forall_dual fun φ => ?_
-  rw [dual_heckeAct μ (normInd_mem μ hKc hKo) hvs]
+  rw [dual_heckeAct (μ := μ) (normInd_mem μ hKc hKo) hvs φ]
   have hpt : ∀ g, normInd μ K g * φ (ρ g v) =
       (K : Set G).indicator (fun _ => ((μ.real (K : Set G))⁻¹ : ℂ) * φ v) g := by
     intro g
@@ -193,7 +167,7 @@ def coeffL [μ.IsMulRightInvariant] (ℓ : Module.Dual ℂ V) :
   toFun f := ⟨ℓ ∘ₗ heckeLin μ hρ f, comp_heckeLin_mem μ hρ ℓ f⟩
   map_add' f g := Subtype.ext <| LinearMap.ext fun v => by
     simp only [LinearMap.comp_apply, heckeLin_apply, Submodule.coe_add, LinearMap.add_apply]
-    rw [heckeAct_add_left f.2 g.2 (hρ v), map_add]
+    rw [heckeAct_add_left f.2 g.2 (hρ v), map_add (f := _)]
   map_smul' c f := Subtype.ext <| LinearMap.ext fun v => by
     simp only [LinearMap.comp_apply, heckeLin_apply, SetLike.val_smul, LinearMap.smul_apply,
       RingHom.id_apply]
@@ -207,10 +181,7 @@ theorem coeffL_rtransL [μ.IsMulRightInvariant] (ℓ : Module.Dual ℂ V) (g : G
     coeffL μ hρ ℓ (rtransL g f) = contragredient ρ g (coeffL μ hρ ℓ f) := by
   refine Subtype.ext (LinearMap.ext fun v => ?_)
   rw [coeffL_apply, contragredient_apply_apply, coeffL_apply,
-    heckeAct_apply_act μ f.2 (hρ v) g⁻¹]
-  congr 2
-  funext x
-  simp
+    heckeAct_apply_act μ f.2 (hρ v) g⁻¹, inv_inv, coe_rtransL]
 
 theorem coeffL_ltransL [μ.IsMulRightInvariant] (ℓ : Module.Dual ℂ V) (a : G) (f : locallyConstantCompactSupport G ℂ ℂ) :
     coeffL μ hρ ℓ (ltransL a f) = coeffL μ hρ (ℓ ∘ₗ ρ a) f := by
@@ -219,7 +190,7 @@ theorem coeffL_ltransL [μ.IsMulRightInvariant] (ℓ : Module.Dual ℂ V) (a : G
   rfl
 
 def convS (f₁ f₂ : locallyConstantCompactSupport G ℂ ℂ) : locallyConstantCompactSupport G ℂ ℂ :=
-  ⟨groupConv μ f₁ f₂, groupConv_mem μ f₁.2 f₂.2⟩
+  ⟨groupConv μ f₁ f₂, groupConv_mem (μ := μ) f₁.2 f₂.2⟩
 
 theorem coeffL_convS [μ.IsMulRightInvariant] (ℓ : Module.Dual ℂ V) (f₁ f₂ : locallyConstantCompactSupport G ℂ ℂ) :
     coeffL μ hρ ℓ (convS μ f₁ f₂) =
@@ -253,11 +224,6 @@ def equivariantFunctionals (ρ : Representation ℂ G V) {H : Subgroup G} (χ : 
     rw [hℓ h v]
     ring
 
-theorem mem_equivariantFunctionals {ρ : Representation ℂ G V} {H : Subgroup G} {χ : H → ℂ}
-    {ℓ : Module.Dual ℂ V} :
-    ℓ ∈ equivariantFunctionals ρ χ ↔ ∀ h : H, ∀ v, ℓ (ρ h v) = χ h * ℓ v :=
-  Iff.rfl
-
 end Equivariant
 
 section Sigma
@@ -266,8 +232,8 @@ variable {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [Loca
   [T2Space G] [TotallyDisconnectedSpace G] [MeasurableSpace G] [BorelSpace G]
   (μ : Measure G) [μ.IsHaarMeasure]
 
-omit [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G] [μ.IsHaarMeasure] in
 
+omit [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G] [μ.IsHaarMeasure] in
 theorem compHomeoL_convS [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G]
     [μ.IsMulLeftInvariant] [μ.IsInvInvariant] (σ : G ≃ₜ G)
     (hσ : ∀ x y, σ (x * y) = σ y * σ x) (hσμ : μ.map σ = μ)
@@ -290,8 +256,8 @@ theorem compHomeoL_convS [LocallyCompactSpace G] [T2Space G] [TotallyDisconnecte
       ← integral_mul_left_eq_self (fun y => (f₁ : G → ℂ) y * (f₂ : G → ℂ) (y⁻¹ * σ x)) (σ x)]
     congr 1
     funext y
-    simp only [inv_inv, mul_inv_rev, mul_assoc, inv_mul_cancel, mul_one]
-    ring
+    simp only [mul_inv_rev, inv_mul_cancel_right, inv_inv]
+    exact mul_comm _ _
   rw [eL, eR]
 
 end Sigma
@@ -342,15 +308,15 @@ variable {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [Loca
   [T2Space G] [TotallyDisconnectedSpace G]
   {V : Type*} [AddCommGroup V] [Module ℂ V] {ρ : Representation ℂ G V}
 
-omit [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G] in
 
+omit [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G] in
 def annihilatorSubrep (W : Subrepresentation (contragredient ρ)) : Subrepresentation ρ where
   toSubmodule :=
     { carrier := {v | ∀ ξ ∈ W, (ξ : Module.Dual ℂ V) v = 0}
       add_mem' := fun {a b} ha hb => by
         show ∀ ξ ∈ W, (ξ : Module.Dual ℂ V) (a + b) = 0
         intro ξ hξ
-        rw [map_add, ha ξ hξ, hb ξ hξ, add_zero]
+        rw [map_add (f := _), ha ξ hξ, hb ξ hξ, add_zero]
       zero_mem' := by
         show ∀ ξ ∈ W, (ξ : Module.Dual ℂ V) 0 = 0
         intro ξ _
@@ -365,10 +331,6 @@ def annihilatorSubrep (W : Subrepresentation (contragredient ρ)) : Subrepresent
     have := hv _ (W.apply_mem_toSubmodule g⁻¹ hξ)
     rwa [contragredient_apply_apply, inv_inv] at this
 
-omit [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G] in
-theorem mem_annihilatorSubrep {W : Subrepresentation (contragredient ρ)} {v : V} :
-    v ∈ annihilatorSubrep W ↔ ∀ ξ ∈ W, (ξ : Module.Dual ℂ V) v = 0 :=
-  Iff.rfl
 
 theorem exists_ne_zero_contragredient (h : IsAdmissible ρ) {v : V} (hv : v ≠ 0) :
     ∃ ξ : smoothVectors (Representation.dual ρ), (ξ : Module.Dual ℂ V) v ≠ 0 := by
@@ -381,8 +343,8 @@ theorem exists_ne_zero_contragredient (h : IsAdmissible ρ) {v : V} (hv : v ≠ 
   rw [← hξ, restrictFixed_apply]
   exact e
 
-omit [IsTopologicalGroup G] [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G] in
 
+omit [IsTopologicalGroup G] [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G] in
 theorem isSmooth_subrep (hρ : IsSmooth ρ) (W : Subrepresentation ρ) :
     IsSmooth (V := W.toSubmodule) W.toRepresentation := fun w => by
   have : (stabilizerOf (V := W.toSubmodule) W.toRepresentation w : Set G) =
@@ -529,8 +491,8 @@ variable {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [Loca
   (μ : Measure G) [μ.IsHaarMeasure] [μ.IsMulRightInvariant]
   {V : Type*} [AddCommGroup V] [Module ℂ V] {ρ : Representation ℂ G V}
 
-omit [LocallyCompactSpace G] [TotallyDisconnectedSpace G] [μ.IsMulRightInvariant] in
 
+omit [LocallyCompactSpace G] [TotallyDisconnectedSpace G] [μ.IsMulRightInvariant] in
 theorem apply_heckeAct_normInd (hρ : IsSmooth ρ) {K : Subgroup G} (hKc : IsCompact (K : Set G))
     (hKo : IsOpen (K : Set G)) {ξ : smoothVectors (Representation.dual ρ)}
     (hξ : ξ ∈ fixedVectors (contragredient ρ) K) (v : V) :
@@ -538,7 +500,7 @@ theorem apply_heckeAct_normInd (hρ : IsSmooth ρ) {K : Subgroup G} (hKc : IsCom
   have hK0 : μ.real (K : Set G) ≠ 0 := by
     rw [measureReal_ne_zero_iff hKc.measure_lt_top.ne]
     exact (hKo.measure_pos μ ⟨1, K.one_mem⟩).ne'
-  rw [dual_heckeAct μ (normInd_mem μ hKc hKo) (hρ v)]
+  rw [dual_heckeAct (μ := μ) (normInd_mem μ hKc hKo) (hρ v) (ξ : Module.Dual ℂ V)]
   have hpt : ∀ g, normInd μ K g * (ξ : Module.Dual ℂ V) (ρ g v) =
       (K : Set G).indicator
         (fun _ => ((μ.real (K : Set G))⁻¹ : ℂ) * (ξ : Module.Dual ℂ V) v) g := by
@@ -556,16 +518,10 @@ def coeffKer (hρ : IsSmooth ρ) (ℓt : Module.Dual ℂ (smoothVectors (Represe
   carrier := {k | ∀ ξ : smoothVectors (Representation.dual ρ),
     ℓt (coeffL μ hρ (ξ : Module.Dual ℂ V) k) = 0}
   add_mem' {a b} ha hb ξ := by
-    rw [map_add, map_add, ha ξ, hb ξ, add_zero]
+    rw [map_add (f := _), map_add (f := _), ha ξ, hb ξ, add_zero]
   zero_mem' ξ := by rw [map_zero, map_zero]
   smul_mem' c k hk ξ := by
     rw [map_smul, map_smul, hk ξ, smul_zero]
-
-theorem mem_coeffKer (hρ : IsSmooth ρ) {ℓt : Module.Dual ℂ (smoothVectors (Representation.dual ρ))}
-    {k : locallyConstantCompactSupport G ℂ ℂ} :
-    k ∈ coeffKer μ hρ ℓt ↔ ∀ ξ : smoothVectors (Representation.dual ρ),
-      ℓt (coeffL μ hρ (ξ : Module.Dual ℂ V) k) = 0 :=
-  Iff.rfl
 
 theorem ltransL_mem_coeffKer (hρ : IsSmooth ρ)
     {ℓt : Module.Dual ℂ (smoothVectors (Representation.dual ρ))} (a : G)
@@ -578,11 +534,6 @@ theorem ltransL_mem_coeffKer (hρ : IsSmooth ρ)
     LinearMap.ext fun v => by rw [contragredient_apply_apply, inv_inv]; rfl
   rw [e]
   exact hk _
-
-theorem mem_ker_coeffL (hρ : IsSmooth ρ) {ℓ : Module.Dual ℂ V}
-    {f : locallyConstantCompactSupport G ℂ ℂ} :
-    f ∈ LinearMap.ker (coeffL μ hρ ℓ) ↔ coeffL μ hρ ℓ f = 0 :=
-  LinearMap.mem_ker
 
 theorem ker_coeffL_eq (h : IsAdmissible ρ) [ρ.IsIrreducible] {ℓ : Module.Dual ℂ V}
     {L : Submodule ℂ (locallyConstantCompactSupport G ℂ ℂ)}
@@ -741,57 +692,6 @@ variable {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [Loca
   {V : Type*} [AddCommGroup V] [Module ℂ V] {ρ : Representation ℂ G V}
   {σ : G ≃ₜ G} {H : Subgroup G} {χ : H → ℂ}
 
-omit [IsTopologicalGroup G] [LocallyCompactSpace G] [T2Space G] [TotallyDisconnectedSpace G]
-  [TopologicalSpace.SeparableSpace G] [MeasurableSpace G] [BorelSpace G] in
-
-theorem exists_ne_zero_doubleContragredient [IsTopologicalGroup G] [LocallyCompactSpace G]
-    [T2Space G] [TotallyDisconnectedSpace G] (h : IsAdmissible ρ)
-    (hne : equivariantFunctionals ρ χ ≠ ⊥) :
-    equivariantFunctionals (contragredient (contragredient ρ)) (fun g => ((χ g)⁻¹)⁻¹) ≠ ⊥ := by
-  obtain ⟨ℓ, hℓ, hℓ0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hne
-  let Φ := LinearEquiv.ofBijective (toDoubleContragredient h.1).toLinearMap
-    (toDoubleContragredient_bijective h)
-  have hΦ : ∀ x, Φ x = toDoubleContragredient h.1 x := fun _ => rfl
-  let ℓ' : Module.Dual ℂ (smoothVectors (Representation.dual (contragredient ρ))) :=
-    ℓ ∘ₗ Φ.symm.toLinearMap
-  have hℓ'Φ : ∀ x, ℓ' (Φ x) = ℓ x := fun x => by
-    simp only [ℓ', LinearMap.comp_apply, LinearEquiv.coe_coe, LinearEquiv.symm_apply_apply]
-  intro hbot
-  have hmem : ℓ' ∈ equivariantFunctionals (contragredient (contragredient ρ))
-      (fun g => ((χ g)⁻¹)⁻¹) := by
-    intro g y
-    obtain ⟨x, rfl⟩ := Φ.surjective y
-    show ℓ' (contragredient (contragredient ρ) g (Φ x)) = ((χ g)⁻¹)⁻¹ * ℓ' (Φ x)
-    have e1 : contragredient (contragredient ρ) g (Φ x) = Φ (ρ g x) := by
-      rw [hΦ, hΦ, (toDoubleContragredient h.1).isIntertwining]
-    rw [inv_inv, e1, hℓ'Φ, hℓ'Φ]
-    exact hℓ g x
-  rw [hbot] at hmem
-  have h0 : ℓ' = 0 := (Submodule.mem_bot ℂ).1 hmem
-  apply hℓ0
-  refine LinearMap.ext fun x => ?_
-  rw [← hℓ'Φ, h0]
-  rfl
-
-theorem rank_mul_rank_le_one (hσ : ∀ x y, σ (x * y) = σ y * σ x) (hσμ : μ.map σ = μ)
-    (hGK : BiEquivariantSigmaInvariant H χ σ) (h : IsAdmissible ρ) [ρ.IsIrreducible] :
-    Module.rank ℂ (equivariantFunctionals ρ χ) *
-      Module.rank ℂ (equivariantFunctionals (contragredient ρ) (fun g => (χ g)⁻¹)) ≤ 1 := by
-  have := isMulRightInvariant_of_isInvInvariant μ
-  by_cases h₂ : equivariantFunctionals (contragredient ρ) (fun g => (χ g)⁻¹) = ⊥
-  · rw [h₂, rank_bot, mul_zero]
-    exact zero_le_one
-  by_cases h₁ : equivariantFunctionals ρ χ = ⊥
-  · rw [h₁, rank_bot, zero_mul]
-    exact zero_le_one
-  have := isIrreducible_contragredient h
-  have r₁ := rank_equivariantFunctionals_le_one μ hσ hσμ hGK h h₂
-  have r₂ := rank_equivariantFunctionals_le_one μ hσ hσμ (hGK.inv hσ)
-    (isAdmissible_contragredient h) (exists_ne_zero_doubleContragredient h h₁)
-  calc Module.rank ℂ (equivariantFunctionals ρ χ) *
-        Module.rank ℂ (equivariantFunctionals (contragredient ρ) (fun g => (χ g)⁻¹))
-      ≤ 1 * 1 := mul_le_mul' r₁ r₂
-    _ = 1 := one_mul 1
 
 theorem rank_le_one_of_ne_bot (hσ : ∀ x y, σ (x * y) = σ y * σ x) (hσμ : μ.map σ = μ)
     (hGK : BiEquivariantSigmaInvariant H χ σ) (h : IsAdmissible ρ) [ρ.IsIrreducible]

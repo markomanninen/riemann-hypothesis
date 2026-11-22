@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.OmSch
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.StepNM
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.OmSch
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.LocalWeilOperators.StepNM
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem _root_.PositivityTheory.SiegelWeilFormula.SD.T_lin (d : SD σ) (a : ℂ)
       funext x
       simp only [schr, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
       ring
-  simp only [SD.T, Darboux.rho, h, map_add, map_smul, Pi.add_apply, Pi.smul_apply]
+  simp only [SD.T, Darboux.rho, h, map_add (f := _), map_smul, Pi.add_apply, Pi.smul_apply]
 
 theorem isSw_lin {m n : ℕ} {f g : (Fin m → Fin n → ℂ) → ℂ} (a : ℂ) (hf : IsSw f) (hg : IsSw g) : IsSw (a • f + g) := by
   obtain ⟨φ, hφ⟩ := hf
@@ -44,13 +48,6 @@ theorem tens_cancel {Ψ : d.MF} (hΨ : d.IsAwayW w Ψ) (h0 : Ψ ≠ 0) {g g' : d
 
 theorem exists_adm (hT : TAll) {Ψ : d.MF} (hΨ : R.GoodAway w Ψ) {f : d.LF} (hf : IsSw f) :
     ∃ Φ ∈ d.sch, d.T Φ = R.tens w f Ψ := (hT.1 F E σ d).2.1 _ (hΨ.2.2 f hf)
-
-theorem locOp_unique (hT : TAll) (hG : GoodAwayEx) {L' : GR d.n → ((Fin d.m → Fin d.n → ℂ) → ℂ) → (Fin d.m → Fin d.n → ℂ) → ℂ}
-    (hL : R.IsLocOp w L) (hL' : R.IsLocOp w L') : ∀ y f, IsSw f → L y f = L' y f := by
-  intro y f hf
-  obtain ⟨Ψ, hΨ⟩ := hG F E σ d R w
-  obtain ⟨Φ, hΦ, hT'⟩ := R.exists_adm hT hΨ hf
-  exact R.tens_cancel hΨ.1 hΨ.2.1 (((hL y f hf).2 Ψ hΨ.1 Φ hΦ hT').symm.trans ((hL' y f hf).2 Ψ hΨ.1 Φ hΦ hT'))
 
 theorem locOp_one (hT : TAll) (hG : GoodAwayEx) (hL : R.IsLocOp w L) : ∀ f, IsSw f → L 1 f = f := by
   intro f hf
@@ -86,7 +83,7 @@ theorem locOp_lin (hT : TAll) (hG : GoodAwayEx) (hL : R.IsLocOp w L) :
   have e := (hL y (a • f + g) (isSw_lin a hf hg)).2 Ψ hΨ.1 _ hΦ hTΦ
   have ef := (hL y f hf).2 Ψ hΨ.1 Φf hΦf hTf
   have eg := (hL y g hg).2 Ψ hΨ.1 Φg hΦg hTg
-  rw [map_add, map_smul, d.T_lin, ef, eg] at e
+  rw [map_add (f := _), map_smul, d.T_lin, ef, eg] at e
   apply R.tens_cancel hΨ.1 hΨ.2.1
   rw [← e]
   funext X
@@ -117,7 +114,7 @@ theorem locOp_mM (hT : TAll) (hG : GoodAwayEx) (hL : R.IsLocOp w L) :
       rw [dif_pos h]
       exact (R.stepM w hT h.2.choose a h.1 h.2.choose_spec).choose_spec.1
     · dsimp only
-      rw [dif_neg h]
+      rw [dite_eq_right h]
       exact one_ne_zero
   · have h : IsUnit a.det ∧ ∃ y : GR d.n, mR y = mLoc a := ⟨ha, y, hy⟩
     have hy0 : h.2.choose = y := hinj _ _ (h.2.choose_spec.trans hy.symm)

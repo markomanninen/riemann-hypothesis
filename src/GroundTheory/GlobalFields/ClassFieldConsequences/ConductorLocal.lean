@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.ClassFieldConsequences.RayClassField
-import GroundTheory.GlobalFields.IdeleGroups.LocalConditionIndex
-import GroundTheory.GlobalFields.TateThesis.LocalConductor
-import GroundTheory.GlobalFields.TateThesis.ConductorIdeal
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ClassFieldConsequences.RayClassField
+public import GroundTheory.GlobalFields.IdeleGroups.LocalConditionIndex
+public import GroundTheory.GlobalFields.TateThesis.LocalConductor
+public import GroundTheory.GlobalFields.TateThesis.ConductorIdeal
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -14,14 +18,6 @@ variable {K : Type*} [Field K] [NumberField K]
 
 namespace Modulus
 
-omit [NumberField K] in
-
-theorem ext' {𝔪 𝔫 : Modulus K} (hi : 𝔪.ideal = 𝔫.ideal) (hr : 𝔪.real = 𝔫.real) : 𝔪 = 𝔫 := by
-  cases 𝔪
-  cases 𝔫
-  cases hi
-  cases hr
-  rfl
 
 instance : Dvd (Modulus K) :=
   ⟨fun 𝔪 𝔫 ↦ 𝔪.ideal ∣ 𝔫.ideal ∧ 𝔪.real ⊆ 𝔫.real⟩
@@ -36,8 +32,11 @@ theorem dvd_refl' (𝔪 : Modulus K) : 𝔪 ∣ 𝔪 :=
 
 theorem ideal_dvd_ideal_iff {𝔪 𝔫 : Modulus K} :
     𝔪.ideal ∣ 𝔫.ideal ↔ ∀ v, 𝔪.exponent v ≤ 𝔫.exponent v := by
-  rw [← Ideal.finprod_heightOneSpectrum_pow_multiplicity 𝔪.ideal_ne_bot]
-  exact finprod_asIdeal_pow_dvd_iff 𝔪.finite_support_exponent 𝔫.ideal_ne_bot
+  have he (𝔞 : Modulus K) (v : HeightOneSpectrum (𝓞 K)) :
+      𝔞.exponent v = multiplicity v.asIdeal 𝔞.ideal := by
+    simp [exponent, FiniteMultiplicity.of_prime_left v.prime 𝔞.ideal_ne_bot]
+  simpa only [he, Ideal.finprod_heightOneSpectrum_pow_multiplicity 𝔪.ideal_ne_bot] using
+    (finprod_asIdeal_pow_dvd_iff 𝔪.finite_support_exponent 𝔫.ideal_ne_bot)
 
 end Modulus
 

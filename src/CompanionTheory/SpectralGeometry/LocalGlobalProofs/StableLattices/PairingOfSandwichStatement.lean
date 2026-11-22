@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.UnitaryAdmissibility.ArchimedeanUnitaryDual.StSandwich
+
+@[expose] public section
 
 open CompanionTheory.Rg.FlB
 
@@ -35,8 +39,8 @@ theorem exists_smul_mem_of_isLat {Λ : AddSubgroup V} (hΛ : IsLat L Λ) (v : V)
         gcongr
     _ = 1 := by field_simp
 
-variable (L) in
 
+variable (L) in
 def adjoin [IsUltrametricDist L] (Λ : AddSubgroup V) (v : V) : AddSubgroup V where
   carrier := {z | ∃ l ∈ Λ, ∃ a : L, ‖a‖ ≤ 1 ∧ z = l + a • v}
   add_mem' := by
@@ -60,7 +64,7 @@ variable {L : Type} [NontriviallyNormedField L] {V : Type} [AddCommGroup V] [Mod
   {s : L →+* L} {h : V → V → L}
 
 theorem herm_add_left (hh : IsHerm s h) (x y z : V) : h (x + y) z = h x z + h y z := by
-  rw [hh.2.2.1 z (x + y), hh.1, map_add, ← hh.2.2.1, ← hh.2.2.1]
+  rw [hh.2.2.1 z (x + y), hh.1, map_add (f := _), ← hh.2.2.1, ← hh.2.2.1]
 
 theorem herm_smul_left (hh : IsHerm s h) (a : L) (x y : V) : h (a • x) y = s a * h x y := by
   rw [hh.2.2.1 y (a • x), hh.2.1, map_mul, ← hh.2.2.1]
@@ -97,7 +101,7 @@ theorem pairing_le (hδ : IsDelta s δ) (hh : IsHerm s h) {Λ : AddSubgroup V}
 theorem adjoin_integral (hs : IsInv s) (hδ : IsDelta s δ) (hh : IsHerm s h) {Λ : AddSubgroup V}
     (hint : ∀ x ∈ Λ, ‖h x x‖ ≤ 1) {p : L} (hp0 : p ≠ 0) {x : V}
     (hq : ‖h x x‖ ≤ ‖p‖ ^ 2) (hsmall : ∀ y ∈ Λ, ‖h x y‖ ≤ ‖p‖ * ‖δ‖) :
-    ∀ z ∈ adjoin L Λ (p⁻¹ • x), ‖h z z‖ ≤ 1 := by
+    ∀ z ∈ adjoin (L := L) Λ (p⁻¹ • x), ‖h z z‖ ≤ 1 := by
   rintro _ ⟨l, hl, a, ha, rfl⟩
   have hpn : 0 < ‖p‖ := norm_pos_iff.mpr hp0
   rw [herm_add_add hh]
@@ -153,8 +157,8 @@ theorem pairing_of_sandwich : StSandwich → StPairing := by
       have h3 := hunif _ h2
       rw [norm_div, div_le_iff₀ hδn] at h3
       exact h3
-    have hle : Λ ≤ adjoin L Λ (p⁻¹ • x) := fun l hl => ⟨l, hl, 0, by simp, by simp⟩
-    have hL' : IsLat L (adjoin L Λ (p⁻¹ • x)) := by
+    have hle : Λ ≤ adjoin (L := L) Λ (p⁻¹ • x) := fun l hl => ⟨l, hl, 0, by simp, by simp⟩
+    have hL' : IsLat L (adjoin (L := L) Λ (p⁻¹ • x)) := by
       refine hS L V Λ _ p hL hp0 ?_ ?_ ?_
       · rintro _ ⟨l, hl, a, ha, rfl⟩
         have e : p • (l + a • p⁻¹ • x) = p • l + a • x := by

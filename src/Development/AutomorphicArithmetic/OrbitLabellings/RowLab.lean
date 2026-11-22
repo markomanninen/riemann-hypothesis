@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.SelfConjugateRowData
-import Formalism.LocalToGlobal.CharacterGerms.RowTieLab
-import Formalism.LocalToGlobal.CharacterGerms.CartesianBoundOnCurves
-import Formalism.LocalToGlobal.CharacterGerms.RestNonneg
-import Formalism.LocalToGlobal.Divisibility.Numbers
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsMulInvolutionAddOneMemPow
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.SelfConjugateRowData
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieLab
+public import Formalism.LocalToGlobal.CharacterGerms.CartesianBoundOnCurves
+public import Formalism.LocalToGlobal.CharacterGerms.RestNonneg
+public import Formalism.LocalToGlobal.Divisibility.Numbers
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsMulInvolutionAddOneMemPow
+
+@[expose] public section
 
 open scoped BigOperators
 open Classical NumberField IsDedekindDomain Formalism.L2.FormalSeriesBounds Formalism.IncomingBounds Formalism.L2.Pj Formalism.L2.DIV Formalism.BasicNotions
@@ -111,7 +115,7 @@ variable {C : Type} [Field C] (V : VF C) {O : Type} [CommRing O] {A : Type}
 def depthIdeal (em : A → O →+* C) (hi : ∀ a x, V.Ge 0 (em a x)) (w : ℝ) : Ideal O where
   carrier := {x | ∀ a, V.Ge w (em a x)}
   zero_mem' := fun a => by simpa using VF.Ge.zero w
-  add_mem' := fun hx hy a => by rw [map_add]; exact (hx a).add (hy a)
+  add_mem' := fun hx hy a => by rw [map_add (f := _)]; exact (hx a).add (hy a)
   smul_mem' := fun c x hx a => by rw [smul_eq_mul, map_mul]; exact (hi a c).mul_int (hx a)
 
 def resIdeal (em : O →+* C) (hi : ∀ x, V.Ge 0 (em x)) : Ideal O where
@@ -120,13 +124,17 @@ def resIdeal (em : O →+* C) (hi : ∀ x, V.Ge 0 (em x)) : Ideal O where
   add_mem' := fun hx hy => by simpa using mm_add hx hy
   smul_mem' := fun c x hx => by simpa using mm_mul (hi c) hx
 
-theorem resIdeal_prime (em : O →+* C) (hi : ∀ x, V.Ge 0 (em x)) : (resIdeal V em hi).IsPrime where
-  ne_top' := by
-    rw [Ideal.ne_top_iff_one]
+theorem resIdeal_prime (em : O →+* C) (hi : ∀ x, V.Ge 0 (em x)) : (resIdeal V em hi).IsPrime := by
+  refine Ideal.isPrime_iff.mpr ⟨?_, ?_⟩
+  · rw [Ideal.ne_top_iff_one]
     intro h
-    have h' : V.MM (em 1) := h
-    exact not_mm_one (V := V) (by simpa using h')
-  mem_or_mem' := fun {x y} h => mm_or (hi x) (hi y) (by have h' : V.MM (em (x * y)) := h; simpa using h')
+    change V.MM (em 1) at h
+    rw [map_one] at h
+    exact not_mm_one h
+  · intro x y h
+    change V.MM (em (x * y)) at h
+    rw [map_mul] at h
+    exact mm_or (hi x) (hi y) h
 
 theorem depthIdeal_pow (em : A → O →+* C) (hi : ∀ a x, V.Ge 0 (em a x)) (n : ℕ) :
     depthIdeal V em hi 1 ^ n ≤ depthIdeal V em hi n := by
@@ -222,7 +230,7 @@ theorem exists_root {E : Type} [Field E] [NumberField E] {C : Type} [Field C] [C
     have := ((hζ a 0).mono (by simp)).add (hi a (z (e * 0)))
     simpa using this
   have h3 : V.Ge n (em a (z (e * n) * s (z (e * n)) + 1)) := he n (hz1 _) a
-  rw [map_add, map_mul, map_one, ← hconj] at h3
+  rw [map_add (f := _), map_mul, map_one, ← hconj] at h3
   have h4 := (h3.add (hint.mul_int (hζ (a + hd) n))).add ((hi (a + hd) (z (e * n))).mul_int (hζ a n))
   convert h4 using 1
   ring
@@ -402,7 +410,7 @@ def ker (V : VF C) {R : Type} [CommRing R] (f : R →+* C) (hf : ∀ x, V.Ge 0 (
   carrier := {x | V.MM (f x)}
   add_mem' := fun {a b} ha hb => by
     show V.MM (f (a + b))
-    rw [map_add]; exact mm_add ha hb
+    rw [map_add (f := _)]; exact mm_add ha hb
   zero_mem' := by
     show V.MM (f 0)
     simp [VF.MM]

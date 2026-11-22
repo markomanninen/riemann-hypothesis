@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TamagawaSpecialUnitary
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentHaarRealSUOfMap
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.TamagawaSpecialUnitary
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TangentHaarRealSUOfMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -319,7 +323,8 @@ theorem riemLie_eq_smul_formLie (E : Type) [Field E] [NumberField E] [IsCMField 
       simp only [Y, Matrix.mul_assoc]
       rw [Matrix.mul_nonsing_inv_cancel_left _ _ (hx τ).isUnit]
     rw [Matrix.of_apply, h1, htr]
-    simp [Matrix.trace, map_sum, Matrix.mul_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Matrix.trace, map_sum, Matrix.mul_apply]
   have hcF : Continuous fun Z : (realLie X.Ψ G).comap (fromFrame x) => fromFrame x Z.1 :=
     (fromFrame x).continuous_of_finiteDimensional.comp continuous_subtype_val
   have hcf : Continuous f := f.toLinearMap.continuous_of_finiteDimensional
@@ -331,6 +336,7 @@ theorem riemLie_eq_smul_formLie (E : Type) [Field E] [NumberField E] [IsCMField 
     rw [hdetτ, abs_det_re_trace D hD hDc (Y τ) (hYli τ) (hYsk τ)]
   · funext c
     exact hf0 c
+  · exact hcF.measurable.aemeasurable
 
 end Main
 

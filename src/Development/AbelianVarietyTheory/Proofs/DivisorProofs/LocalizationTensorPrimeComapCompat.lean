@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KaehlerFibreEquivPushoutFormallyEtale
-import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordConstruction
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KaehlerFibreEquivPushoutFormallyEtale
+public import Development.AbelianVarietyTheory.Definitions.Divisors.QuasiCompact
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -11,8 +16,8 @@ open GlobalTheory.Mum
 
 namespace GlobalTheory.Mum
 
-open KaehlerDifferential TensorProduct in
 
+open KaehlerDifferential TensorProduct in
 theorem mapBaseChange_residueField_bijective_of_etale_fibre :
     ∀ (A C B Ω : Type) [CommRing A] [CommRing C] [CommRing B] [Algebra A C] [Algebra A B] [Algebra C B] [IsScalarTower A C B] [Field Ω] [Algebra A Ω] (Q : Ideal B) [Q.IsPrime] (Q' : Ideal (TensorProduct A Ω B)) [Q'.IsPrime] (f : TensorProduct A Ω B), Q'.comap (Algebra.TensorProduct.includeRight : B →ₐ[A] TensorProduct A Ω B) = Q → f ∉ Q' → ((algebraMap (TensorProduct A Ω B) (Localization.Away f)).comp (Algebra.TensorProduct.map (AlgHom.id A Ω) (IsScalarTower.toAlgHom A C B)).toRingHom).Etale → Function.Bijective ((KaehlerDifferential.mapBaseChange A C B).lTensor Q.ResidueField) := by
   intro A C B Ω _ _ _ _ _ _ _ _ _ Q _ Q' _ f hQ hf het
@@ -67,7 +72,7 @@ theorem mapBaseChange_residueField_bijective_of_etale_fibre :
     induction hω using Submodule.span_induction with
     | mem x hx => obtain ⟨c, rfl⟩ := hx; rw [hE, KaehlerDifferential.map_D]
     | zero => simp
-    | add x y _ _ hx hy => rw [TensorProduct.tmul_add, map_add, hx, hy, map_add, TensorProduct.tmul_add]
+    | add x y _ _ hx hy => rw [TensorProduct.tmul_add, map_add (f := _), hx, hy, map_add (f := _), TensorProduct.tmul_add]
     | smul c x _ hx =>
       have h1 : (1 : K) ⊗ₜ[C] (c • x) = algebraMap C K c • ((1 : K) ⊗ₜ[C] x) := by
         rw [TensorProduct.tmul_smul]; exact (algebraMap_smul K c _).symm
@@ -94,15 +99,15 @@ theorem mapBaseChange_residueField_bijective_of_etale_fibre :
     rw [LinearEquiv.eq_symm_apply]
     induction z using TensorProduct.induction_on with
     | zero => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
     | tmul k y =>
       induction y using TensorProduct.induction_on with
       | zero => simp
-      | add y₁ y₂ h₁ h₂ => simp only [TensorProduct.tmul_add, map_add, h₁, h₂]
+      | add y₁ y₂ h₁ h₂ => simp only [TensorProduct.tmul_add, map_add (f := _), h₁, h₂]
       | tmul l m =>
         induction m using TensorProduct.induction_on with
         | zero => simp
-        | add m₁ m₂ h₁ h₂ => simp only [TensorProduct.tmul_add, map_add, h₁, h₂]
+        | add m₁ m₂ h₁ h₂ => simp only [TensorProduct.tmul_add, map_add (f := _), h₁, h₂]
         | tmul b ω =>
           simp only [cM, cN, cC, LinearMap.lTensor_tmul, LinearMap.baseChange_tmul,
             TensorProduct.AlgebraTensorModule.cancelBaseChange_tmul,

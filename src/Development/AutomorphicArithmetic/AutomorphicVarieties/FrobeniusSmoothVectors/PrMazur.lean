@@ -1,12 +1,16 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.TanFinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrDualb
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ObsPres
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PresDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.TanFinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.PrDualb
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebra.ObsPres
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
 theorem UpperTheory.V.Fr.pr_mazur :
-    ∀ (O : Type) [CommRing O] [IsLocalRing O] [IsNoetherianRing O] [IsAdicComplete (maximalIdeal O) O] [Finite (ResidueField O)] (R : Type) [CommRing R] [Algebra O R] [IsCO O R] (H : Type) [AddCommGroup H] [Module (ResidueField O) H] [Module.Finite (ResidueField O) H], HasObs O R H → ∃ (p : MvPowerSeries (Fin (Module.finrank (ResidueField O) (Tan O R))) O →ₐ[O] R) (f : Fin (Module.finrank (ResidueField O) H) → MvPowerSeries (Fin (Module.finrank (ResidueField O) (Tan O R))) O), Function.Surjective p ∧ RingHom.ker p = Ideal.span (Set.range f) := by
+    ∀ (O : Type) [CommRing O] [IsLocalRing O] [IsNoetherianRing O] [IsAdicComplete (maximalIdeal O) O] [Finite (ResidueField O)] (R : Type) [CommRing R] [Algebra O R] [IsCO O R] (H : Type) [AddCommGroup H] [Module (ResidueField O) H] [Module.Finite (ResidueField O) H], HasObs (O := O) R H → ∃ (p : MvPowerSeries (Fin (Module.finrank (ResidueField O) (Tan O R))) O →ₐ[O] R) (f : Fin (Module.finrank (ResidueField O) H) → MvPowerSeries (Fin (Module.finrank (ResidueField O) (Tan O R))) O), Function.Surjective p ∧ RingHom.ker p = Ideal.span (Set.range f) := by
   intro O _ _ _ _ _ R _ _ _ H _ _ _ hob
   obtain ⟨a, π, f, hπ, hker, hcard⟩ := obs_pres O R H (by
     intro A _ _ _ p hp hK κ _ ε hspan hmin
@@ -15,17 +19,20 @@ theorem UpperTheory.V.Fr.pr_mazur :
     refine ⟨fun u => ob (co u), ?_⟩
     intro c hc A' _ _ _ p' p'' η hp' hcomp hη hη0 hε
     have hw0 : ob (∑ u, residue O (c u) • co u) = 0 := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [map_smul]
       exact hc
     refine hob' _ hw0 A' p' p'' hcomp hp' ?_
     intro y hy
     obtain ⟨b, hb, hy'⟩ := hco y
-    rw [hy', map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hy', map_sum]
     simp only [map_smul, hε, smul_smul]
     rw [← Finset.sum_smul]
     have hm : ∑ u, b u * c u ∈ maximalIdeal O := by
-      rw [← residue_eq_zero_iff, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← residue_eq_zero_iff, map_sum]
       simp only [map_mul, hb]
       simp only [LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul] at hy
       rw [← hy]

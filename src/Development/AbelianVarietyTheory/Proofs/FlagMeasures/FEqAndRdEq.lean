@@ -1,7 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.HidaSetting
-import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
-import Formalism.SharpRestriction.CuspSpanNormBounds.StandingHypothesesHoldFamily
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.HidaSetting
+public import Formalism.FrobeniusOrbits.RealSubfieldLeCompositum
+public import Formalism.SharpRestriction.CuspSpanNormBounds.StandingHypothesesHoldFamily
+
+@[expose] public section
+
 open MeasureTheory NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.L2.SG.HidaSetting
 
 namespace GlobalTheory.DegreeRankEquations

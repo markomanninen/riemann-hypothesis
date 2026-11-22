@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RationalHermitianMeasures.IncMScalarMul
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.RationalHermitianMeasures.IncMScalarMul
+
+@[expose] public section
 
 noncomputable section
 
@@ -69,7 +73,7 @@ theorem meas_hOf {d : SD σ} {R : RD d} {x : d.G} {t u : GL (Fin d.n) (AE F E)} 
       (ratE hR.ne hR.hof hR.herm) ?_
     intro S β
     show e (e.symm S.1 + β) = S.1 + e β
-    rw [map_add, ContinuousAddEquiv.apply_symm_apply]
+    rw [map_add (f := _), ContinuousAddEquiv.apply_symm_apply]
   · rw [hemb.map_apply, Set.preimage_image_eq _ hemb.injective, h1]
 
 end PositivityTheory.SiegelWeilFormula.MeasD

@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RelCOfOcc
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.GflagSwap
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CorankRelation
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StepNormOneOfLeaves
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.RelCOfOcc
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.GflagSwap
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CorankRelation
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StepNormOneOfLeaves
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 theorem leadingMinor_eq_pointMinor {D : D7} {n : ℕ} (w : Point D.host.E n) (l : ℕ) (hl : l ≤ n) :
     Formalism.HermitianLatticeCounting.ExpansionTerms.leadingPrincipalMinor (ptMat w) l = Formalism.MainNotions.S.LocalSplitGroups.Dmin w l := by
   unfold Formalism.HermitianLatticeCounting.ExpansionTerms.leadingPrincipalMinor Formalism.MainNotions.S.LocalSplitGroups.Dmin
-  rw [dif_pos hl]
+  rw [dite_eq_left hl]
   let e : Fin l ≃ {i : Fin n // (i : ℕ) < l} :=
     { toFun := fun j => ⟨Fin.castLE hl j, by simp⟩
       invFun := fun i => ⟨i.1, i.2⟩
@@ -68,7 +72,7 @@ theorem gval_occ (t : TauC Y u u')
     apply hne
     show GPt _ (toPts (Formalism.L2.SG.PairVal.ptOf t.toTerm)) = 0
     unfold Formalism.L2.SG.PairVal.ptOf
-    rw [dif_neg h]
+    rw [dite_eq_right h]
     exact GPt_junk D u u'
 
 end Formalism.L2.SG.NGCut.NormalVectorPairings

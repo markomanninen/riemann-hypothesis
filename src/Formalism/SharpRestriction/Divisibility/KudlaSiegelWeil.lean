@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.DataTheta
-import Formalism.SharpRestriction.ParConsts
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Decomp
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscriminantRealSubfield
-import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscrB
-import Lemmata.GeneralBFactRightVariant.Imports
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.DataTheta
+public import Formalism.SharpRestriction.ParConsts
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.Decomp
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscriminantRealSubfield
+public import Formalism.FrobeniusOrbits.FrobeniusOrbitsProofs.DiscrB
+public import Lemmata.GeneralBFactRightVariant.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,13 +66,6 @@ theorem pow_two_pow_add_inv_succ (ζ : L) (hζ : ζ ≠ 0) (m : ℕ) : thP ζ (m
   rw [pow_succ 2 m, pow_mul]
   field_simp
   ring
-
-theorem pow_two_pow_add_inv_mem_adjoin [Algebra ℚ L] (ζ : L) (hζ : ζ ≠ 0) (m : ℕ) : thP ζ m ∈ F1 ζ := by
-  induction m with
-  | zero => simpa [thP, F1] using IntermediateField.mem_adjoin_simple_self ℚ (ζ + ζ⁻¹)
-  | succ m ih =>
-    rw [pow_two_pow_add_inv_succ ζ hζ]
-    exact sub_mem (pow_mem ih 2) (by exact_mod_cast (F1 ζ).natCast_mem 2)
 
 theorem pow_two_pow_add_inv_sq_eq_two [CharZero L] (ζ : L) (e : ℕ) (he : 1 ≤ e) (h : IsPrimitiveRoot ζ (2 ^ (e + 2))) :
     thP ζ (e - 1) ^ 2 = 2 := by
@@ -155,7 +152,7 @@ private theorem exists_sqrt_two_E {φ : Formalism.HC.Frame} (H : Formalism.HC.Ho
     have h3 : τ (H.cycZeta ^ k) = H.cycZeta ^ k ∨ τ (H.cycZeta ^ k) = (H.cycZeta ^ k)⁻¹ :=
       fix_or_inv H (τ.restrictScalars ℚ) (fun x => τ.commutes x) _ hζ.pow_eq_one
     generalize H.cycZeta ^ k = z at h3 ⊢
-    rw [thP, map_add, map_inv₀, map_pow]
+    rw [thP, map_add (f := _), map_inv₀, map_pow]
     rcases h3 with h | h
     · rw [h]
     · rw [h, inv_pow, inv_inv, add_comm])
@@ -238,9 +235,9 @@ theorem algFE_inj (D : D7) : Function.Injective (algebraMap (𝓞 (FF D)) (𝓞 
 
 theorem exists_over (D : D7) (v : FinF D) : ∃ w : FinE D, Over D w v := by
   obtain ⟨Q, -, hQp, hQ⟩ := Ideal.exists_ideal_over_prime_of_isIntegral v.asIdeal
-    (⊥ : Ideal (𝓞 D.host.E)) (by rw [Ideal.comap_bot_of_injective _ (algFE_inj D)]; exact bot_le)
+    (⊥ : Ideal (𝓞 D.host.E)) (by rw [(show Ideal.under _ ⊥ = ⊥ from Ideal.comap_bot_of_injective _ (algFE_inj D))]; exact bot_le)
   have hQne : Q ≠ ⊥ := by
-    intro h; rw [h, Ideal.comap_bot_of_injective _ (algFE_inj D)] at hQ; exact v.ne_bot hQ.symm
+    intro h; rw [h, (show Ideal.under _ ⊥ = ⊥ from Ideal.comap_bot_of_injective _ (algFE_inj D))] at hQ; exact v.ne_bot hQ.symm
   exact ⟨⟨Q, hQp, hQne⟩, hQ⟩
 
 theorem fixed_of_not_split (D : D7) (v : FinF D) (hv : ¬ Split D v) (w : FinE D) (hw : Over D w v) :
@@ -343,7 +340,7 @@ theorem not_fixed_splitK (D : D7) (w : FinE D) (p : ℕ) (hpp : p.Prime) (hp2 : 
   have hswap : ∀ y, y ∈ w.asIdeal → sgO D y ∈ w.asIdeal := by
     intro y hy; rw [← hfix] at hy; exact hy
   have hσ1 : sgO D ((x : 𝓞 D.host.E) + β) = (x : 𝓞 D.host.E) - β := by
-    rw [map_add, map_intCast, hσβ]; ring
+    rw [map_add (f := _), map_intCast, hσβ]; ring
   have hσ2 : sgO D ((x : 𝓞 D.host.E) - β) = (x : 𝓞 D.host.E) + β := by
     rw [map_sub, map_intCast, hσβ]; ring
   have hboth : (x : 𝓞 D.host.E) + β ∈ w.asIdeal ∧ (x : 𝓞 D.host.E) - β ∈ w.asIdeal := by
@@ -378,8 +375,8 @@ theorem val_eq_one (D : D7) (w : FinE D) (x : 𝓞 D.host.E) (hx : x ∉ w.asIde
 
 end InertConditionsOfHost
 
-open InertConditionsOfHost Formalism.FrobeniusOrbits in
 
+open InertConditionsOfHost Formalism.FrobeniusOrbits in
 theorem inert_conditions_hold (D : D7) : InertPlaceConditions D := by
   intro v hv
   obtain ⟨w0, hw0⟩ := exists_over D v
@@ -458,8 +455,8 @@ def RepIso {Gp M N : Type} [Monoid Gp] [AddCommGroup M] [Module ℂ M] [AddCommG
     (σ : Representation ℂ Gp M) (π : Representation ℂ Gp N) : Prop :=
   ∃ e : M ≃ₗ[ℂ] N, ∀ g x, e (σ g x) = π g (e x)
 
-open Classical in
 
+open Classical in
 structure LocW (D : D7) (T : ThetaX D) where
 
   sR : Bool
@@ -566,18 +563,6 @@ attribute [instance] LocW.chrFG LocW.gG LocW.gM LocW.hL LocW.schLA LocW.schLM
 
 variable {D : D7} {T : ThetaX D}
 
-def Lpart (X : LocW D T) (S0 : Finset (FinF D)) (ν : T.Chr) (s : ℤ) : ℂ :=
-  ∏' w : {w : FinE D // ∀ v ∈ S0, ¬ Over D w v},
-    (1 - X.val ν w.1 * ((Ideal.absNorm w.1.asIdeal : ℕ) : ℂ) ^ (-s))⁻¹
-
-def th (X : LocW D T) (V W : HS D) (χ₁ χ₂ : T.Chr) (Φ : T.Sch V W) (g : X.G V) (h : X.G W) : ℂ :=
-  X.thF V W (X.om V W χ₁ χ₂ (g, h) Φ)
-
-def Ith (X : LocW D T) (V W : HS D) (χ₁ χ₂ : T.Chr) (Φ : T.Sch V W) (h : X.G W) : ℂ :=
-  ∫ g in X.Fd V, th X V W χ₁ χ₂ Φ g h ∂(X.μG V)
-
-def htq (X : LocW D T) (V : HS D) (g : X.G V) : ℝ := ⨅ γ : X.GF V, X.ht V ((γ : X.G V) * g)
-
 def IsThetaMap (X : LocW D T) (V W : HS D) (χ₁ χ₂ : T.Chr) (v : Pl D) {N : Type} [AddCommGroup N]
     [Module ℂ N] (σ : Representation ℂ (X.Hloc W v) N) (f : X.SchL V W v →ₗ[ℂ] N) : Prop :=
   ∀ g h φ, f (X.omL V W χ₁ χ₂ v (g, h) φ) = X.aug V v g • σ h (f φ)
@@ -591,14 +576,11 @@ def HasSmallTheta (X : LocW D T) (V W : HS D) (χ₁ χ₂ : T.Chr) (v : Pl D) :
   ∃ (M : Type) (_ : AddCommGroup M) (_ : Module ℂ M) (π : Representation ℂ (X.Hloc W v) M),
     SmallTheta X V W χ₁ χ₂ v π
 
-def KudlaOK (X : LocW D T) (V W : HS D) (χ₁ χ₂ : T.Chr) : Prop :=
-  X.res χ₁ = X.eta ^ V.rank ∧ X.res χ₂ = X.eta ^ W.rank
-
 def ePlus (X : LocW D T) (τ : D.what₂.Tau) : Prop :=
   0 < ((tauE D τ) D.host.xi0).im ↔ X.sR = true
 
-open Classical in
 
+open Classical in
 structure LocP {D : D7} {T : ThetaX D} (X : LocW D T) where
   PiT : HS D → HS D → HS D → T.Chr → T.Chr → Pl D → Type
   [piA : ∀ V V' W α β v, AddCommGroup (PiT V V' W α β v)]
@@ -655,54 +637,6 @@ structure Loc (D : D7) (T : ThetaX D) where
 
 def IntV (v : FinF D) (c : ℕ) (x : v.adicCompletion (FF D)) : Prop :=
   Valued.v x ≤ WithZero.exp (-(c : ℤ))
-
-def GLO {n : ℕ} (v : FinF D) (A : Matrix (Fin n) (Fin n) (v.adicCompletion (FF D))) : Prop :=
-  (∀ i j, IntV v 0 (A i j)) ∧ Valued.v A.det = 1
-
-def condExp (X : LocW D T) (χ : T.Chr) (w : FinE D) : ℕ :=
-  sInf {n : ℕ | ∀ u : (w.adicCompletion D.host.E)ˣ,
-    Valued.v ((u : w.adicCompletion D.host.E) - 1) ≤ WithZero.exp (-(n : ℤ)) → X.locChr χ w u = 1}
-
-def IsStd (X : LocW D T) (V W : HS D) (χ₁ χ₂ : T.Chr) (v : FinF D) (w : FinE D) (hw : Over D w v)
-    (blk : Fin V.rank → Fin W.rank) (c : ℕ) (φ : X.SchL V W (Sum.inl v)) : Prop :=
-  (∀ Xm, X.linM V W v w hw φ Xm ≠ 0 →
-    GLO v (Xm.submatrix id blk) ∧ ∀ i j, j ∉ Set.range blk → IntV v c (Xm i j)) ∧
-  (∀ Xm, Xm.submatrix id blk = 1 → (∀ i j, j ∉ Set.range blk → IntV v c (Xm i j)) →
-    X.linM V W v w hw φ Xm = X.linM V W v w hw (X.vac V W (Sum.inl v)) 0) ∧
-  (∀ g : X.Hloc V (Sum.inl v), GLO v (Units.val (X.glL V v w hw g)) →
-    X.omL V W χ₁ χ₂ (Sum.inl v) (g, 1) φ = φ)
-
-def Pin (D : D7) (T : ThetaX D) (Lc : Loc D T) : Prop :=
-  (∃ (wv : FinF D → FinE D) (hwv : ∀ v, Split D v → Over D (wv v) v),
-    (∀ (V : HS D) (v : FinF D) (hv : Split D v) (w' : FinE D) (hw' : Over D w' v), w' ≠ wv v →
-      ∀ g, Units.val (Lc.w.glL V v w' hw' g) =
-        (Units.val (Lc.w.glL V v (wv v) (hwv v hv) g)⁻¹).transpose) ∧
-    (∀ (V V' W : HS D) (α β : T.Chr) (v : FinF D) (hv : Split D v) (w' : FinE D) (hw' : Over D w' v)
-      (hs : V.rank + V'.rank = W.rank), w' ≠ wv v → V'.rank < V.rank →
-      Lc.w.cc α = α⁻¹ → Lc.w.cc β = β⁻¹ →
-      Lc.w.res α = Lc.w.eta ^ V'.rank → Lc.w.res β = Lc.w.eta ^ V.rank →
-      ¬ Lc.w.unr (α / β) (wv v) →
-      (∃ φ, IsStd Lc.w V W β (β / α) v (wv v) (hwv v hv) (fun j => Fin.cast hs (Fin.castAdd V'.rank j))
-        (condExp Lc.w (α / β) (wv v)) φ) ∧
-      (∃ φ', IsStd Lc.w V' W α (α / β) v w' hw' (fun j => Fin.cast hs (Fin.natAdd V.rank j))
-        (condExp Lc.w (α / β) (wv v)) φ') ∧
-      ∀ φ φ',
-        IsStd Lc.w V W β (β / α) v (wv v) (hwv v hv) (fun j => Fin.cast hs (Fin.castAdd V'.rank j))
-          (condExp Lc.w (α / β) (wv v)) φ →
-        IsStd Lc.w V' W α (α / β) v w' hw' (fun j => Fin.cast hs (Fin.natAdd V.rank j))
-          (condExp Lc.w (α / β) (wv v)) φ' →
-        (∃ f, IsThetaMap Lc.w V' W α (α / β) (Sum.inl v) (Lc.p.piRep V V' W α β (Sum.inl v)) f ∧
-          f φ' = Lc.p.pL V V' W α β (Sum.inl v) φ) →
-        Lc.p.pL' V V' W α β (Sum.inl v) φ' = Lc.p.pL V V' W α β (Sum.inl v) φ)) ∧
-  (∀ (V V' W : HS D) (α β α₂ β₂ : T.Chr) (τ : D.what₂.Tau),
-    V.rank + V'.rank = W.rank →
-    Lc.w.cc α = α⁻¹ → Lc.w.cc β = β⁻¹ → Lc.w.cc α₂ = α₂⁻¹ → Lc.w.cc β₂ = β₂⁻¹ →
-    Lc.w.res α = Lc.w.eta ^ V'.rank → Lc.w.res β = Lc.w.eta ^ V.rank →
-    Lc.w.res α₂ = Lc.w.eta ^ V'.rank → Lc.w.res β₂ = Lc.w.eta ^ V.rank →
-    T.infTy α τ = T.infTy α₂ τ → T.infTy β τ = T.infTy β₂ τ →
-    ∃ e : Lc.p.PiT V V' W α β (Sum.inr τ) ≃ₗ[ℂ] Lc.p.PiT V V' W α₂ β₂ (Sum.inr τ),
-      (∀ φ, e (Lc.p.pL V V' W α β (Sum.inr τ) φ) = Lc.p.pL V V' W α₂ β₂ (Sum.inr τ) φ) ∧
-      (∀ φ, e (Lc.p.pL' V V' W α β (Sum.inr τ) φ) = Lc.p.pL' V V' W α₂ β₂ (Sum.inr τ) φ))
 
 structure Sett (D : D7) (T : ThetaX D) (Lc : Loc D T) where
 
@@ -766,214 +700,13 @@ namespace Sett
 
 variable {Lc : Loc D T} (S : Sett D T Lc)
 
-def ν : T.Chr := S.α / S.β
-
-def Sz (i j : ℕ) : Submodule ℂ (T.Sch (S.V't j) (S.Wt (i + j))) :=
-  Submodule.span ℂ {Φ | ∃ φ, Restr (Lc.w.vac (S.V't j) (S.Wt (i + j))) φ ∧
-    Φ = Lc.w.pure (S.V't j) (S.Wt (i + j)) φ ∧
-    ∀ Xm, Lc.w.linM (S.V't j) (S.Wt (i + j)) S.v1 S.w1 S.hw1 (φ (Sum.inl S.v1)) Xm ≠ 0 →
-      Xm.rank = (S.V't j).rank}
-
-def IA (i j : ℕ) (Φ : T.Sch (S.Vt i) (S.Wt (i + j))) : Lc.w.G (S.Wt (i + j)) → ℂ :=
-  Ith Lc.w (S.Vt i) (S.Wt (i + j)) S.β (S.β / S.α) Φ
-
-def IB (i j : ℕ) (Φ : T.Sch (S.V't j) (S.Wt (i + j))) : Lc.w.G (S.Wt (i + j)) → ℂ :=
-  Ith Lc.w (S.V't j) (S.Wt (i + j)) S.α (S.α / S.β) Φ
-
-def LM (i j : ℕ) : Prop := ∀ v : Pl D,
-  SmallTheta Lc.w (S.Vt i) (S.Wt (i + j)) S.β (S.β / S.α) v
-      (Lc.p.piRep (S.Vt i) (S.V't j) (S.Wt (i + j)) S.α S.β v) ∧
-    SmallTheta Lc.w (S.V't j) (S.Wt (i + j)) S.α (S.α / S.β) v
-      (Lc.p.piRep (S.Vt i) (S.V't j) (S.Wt (i + j)) S.α S.β v) ∧
-    Function.Surjective (Lc.p.pL (S.Vt i) (S.V't j) (S.Wt (i + j)) S.α S.β v) ∧
-    Function.Surjective (Lc.p.pL' (S.Vt i) (S.V't j) (S.Wt (i + j)) S.α S.β v)
-
-def RD (i j : ℕ) : Prop := ∀ Φ' ∈ S.Sz i j,
-  (∀ h, IntegrableOn (fun g => th Lc.w (S.V't j) (S.Wt (i + j)) S.α (S.α / S.β) Φ' g h)
-      (Lc.w.Fd (S.V't j)) (Lc.w.μG (S.V't j))) ∧
-  ∀ N : ℕ, ∃ C M : ℝ, ∀ g h, ‖th Lc.w (S.V't j) (S.Wt (i + j)) S.α (S.α / S.β) Φ' g h‖ ≤
-    C * htq Lc.w (S.V't j) g ^ (-(N : ℝ)) * Lc.w.ht (S.Wt (i + j)) h ^ M
-
-def NZ (i j : ℕ) : Prop := ∃ Φ' ∈ S.Sz i j, S.IB i j Φ' ≠ 0
-
-def Prop2 (i j : ℕ) (c : ℂ) : Prop := ∀ Φ ∈ T.kfin (S.Vt i) (S.Wt (i + j)), ∀ Φ' ∈ S.Sz i j,
-  Lc.p.pG (S.Vt i) (S.V't j) (S.Wt (i + j)) S.α S.β Φ =
-    Lc.p.pG' (S.Vt i) (S.V't j) (S.Wt (i + j)) S.α S.β Φ' →
-  S.IA i j Φ = c • S.IB i j Φ'
-
 end Sett
-
-def LWW {D : D7} (W : HS D) : Submodule (𝓞 D.host.E) W.V :=
-  Submodule.span (𝓞 D.host.E) {x | ∃ a ∈ D.host.AA, ∃ l ∈ W.L0, x = a • l}
-
-structure Key (D : D7) where
-  tag : Bool
-  rk : Fin 7 → ℕ
-  V : HS D
-  V' : HS D
-  W : HS D
-  V1 : HS D
-  V1' : HS D
-  W1 : HS D
-  Vc : HS D
-  x0 : Vc.V
-  w0 : W.V
-  S0 : Finset (FinF D)
-  inf : D.what₂.Tau → ℚ × ℚ
-  localCharactersAtS0 : (w : FinE D) → Option (((w.adicCompletion D.host.E)ˣ →* ℂˣ) × ((w.adicCompletion D.host.E)ˣ →* ℂˣ))
 
 namespace Sett
 
 variable {Lc : Loc D T} (S : Sett D T Lc)
 
-def cone (i j : ℕ) (tag : Bool) : HS D := bif tag then S.V't j else S.Vt i
-
-def rk (i j : ℕ) : Fin 7 → ℕ := ![S.a, S.a', S.d, S.p, S.q, i, j]
-
-open Classical in
-
-def key (i j : ℕ) (tag : Bool) (x0 : (S.cone i j tag).V) (w0 : (S.Wt (i + j)).V) : Key D where
-  tag := tag
-  rk := S.rk i j
-  V := S.Vt i
-  V' := S.V't j
-  W := S.Wt (i + j)
-  V1 := bif tag then S.Vt i else S.Vt (i + 1)
-  V1' := bif tag then S.V't (j + 1) else S.V't j
-  W1 := S.Wt (i + j + 1)
-  Vc := S.cone i j tag
-  x0 := x0
-  w0 := w0
-  S0 := S.S0
-  inf := fun τ => (T.infTy S.α τ, T.infTy S.β τ)
-  localCharactersAtS0 := fun w => if ∃ v ∈ S.S0, Over D w v then some (Lc.w.locChr S.α w, Lc.w.locChr S.β w) else none
-
-def SUnitQ (x : ℂ) : Prop :=
-  x ≠ 0 ∧ ∃ M n : ℕ, 0 < M ∧ (∀ ℓ : ℕ, ℓ.Prime → ℓ ∣ M → ∃ v ∈ S.Q, ((ℓ : ℤ) : 𝓞 (FF D)) ∈ v.asIdeal) ∧
-    IsIntegral ℤ ((M : ℂ) ^ n * x) ∧ IsIntegral ℤ ((M : ℂ) ^ n * x⁻¹)
-
-def IsoVec (i j : ℕ) (tag : Bool) (x0 : (S.cone i j tag).V) (w0 : (S.Wt (i + j)).V) (bb cc : FI D) : Prop :=
-  x0 ≠ 0 ∧ (S.cone i j tag).hT x0 x0 = 0 ∧ w0 ≠ 0 ∧ (S.Wt (i + j)).hT w0 w0 = 0 ∧
-    (∀ t : D.host.E, t ∈ bb ↔ t • x0 ∈ (S.cone i j tag).L0) ∧
-    (∀ t : D.host.E, t ∈ cc ↔ t • w0 ∈ LWW (S.Wt (i + j))) ∧
-    (∀ w : FinE D, (∃ v ∈ S.S0 ∪ S.Q, Over D w v) →
-      FractionalIdeal.count D.host.E w bb = 0 ∧ FractionalIdeal.count D.host.E w cc = 0)
-
-def IsU (uLoc : Key D → ℂ) (kExp : Bool → (Fin 7 → ℕ) → ℚ × ℚ × ℚ) (sb sc : Bool → ℤ)
-    (i j : ℕ) (tag : Bool) (u : ℂ) : Prop :=
-  ∀ (x0 : (S.cone i j tag).V) (w0 : (S.Wt (i + j)).V) (bb cc : FI D), S.IsoVec i j tag x0 w0 bb cc →
-    ∃ x : ℂ, S.SUnitQ x ∧
-      u = uLoc (S.key i j tag x0 w0) *
-        (((((NumberField.discr D.host.E).natAbs : ℝ) ^ ((kExp tag (S.rk i j)).1 : ℝ)) *
-          ((FractionalIdeal.absNorm bb : ℚ) : ℝ) ^ ((kExp tag (S.rk i j)).2.1 : ℝ) *
-          ((FractionalIdeal.absNorm cc : ℚ) : ℝ) ^ ((kExp tag (S.rk i j)).2.2 : ℝ) : ℝ) : ℂ) *
-        Lc.w.valI S.ν (bb ^ sb tag * cc ^ sc tag) * x
-
-def key0 (i j : ℕ) (tag : Bool) (x0 : (S.cone i j tag).V) (w0 : (S.Wt (i + j)).V) : Key D :=
-  { S.key i j tag x0 w0 with localCharactersAtS0 := fun _ => none }
-
-def SUnitSQ (x : ℂ) : Prop :=
-  x ≠ 0 ∧ ∃ M n : ℕ, 0 < M ∧
-    (∀ ℓ : ℕ, ℓ.Prime → ℓ ∣ M → ∃ v ∈ S.S0 ∪ S.Q, ((ℓ : ℤ) : 𝓞 (FF D)) ∈ v.asIdeal) ∧
-    IsIntegral ℤ ((M : ℂ) ^ n * x) ∧ IsIntegral ℤ ((M : ℂ) ^ n * x⁻¹)
-
-def IsUStd (uInf : Key D → ℂ) (kExp : Bool → (Fin 7 → ℕ) → ℚ × ℚ × ℚ) (sb sc : Bool → ℤ)
-    (i j : ℕ) (tag : Bool) (u : ℂ) : Prop :=
-  ∀ (x0 : (S.cone i j tag).V) (w0 : (S.Wt (i + j)).V) (bb cc : FI D), S.IsoVec i j tag x0 w0 bb cc →
-    ∃ x : ℂ, S.SUnitSQ x ∧
-      u = uInf (S.key0 i j tag x0 w0) *
-        (((((NumberField.discr D.host.E).natAbs : ℝ) ^ ((kExp tag (S.rk i j)).1 : ℝ)) *
-          ((FractionalIdeal.absNorm bb : ℚ) : ℝ) ^ ((kExp tag (S.rk i j)).2.1 : ℝ) *
-          ((FractionalIdeal.absNorm cc : ℚ) : ℝ) ^ ((kExp tag (S.rk i j)).2.2 : ℝ) : ℝ) : ℂ) *
-        Lc.w.valI S.ν (bb ^ sb tag * cc ^ sc tag) * x
 
 end Sett
-
-def aux₃ (D : D7) (T : ThetaX D) (Lc : Loc D T) : Prop :=
-  ∃ (uLoc : Key D → ℂ) (kExp : Bool → (Fin 7 → ℕ) → ℚ × ℚ × ℚ) (sb sc : Bool → ℤ),
-    (∀ k, uLoc k ≠ 0) ∧ (∀ t, (sb t = 1 ∨ sb t = -1) ∧ (sc t = 1 ∨ sc t = -1)) ∧
-    ∀ S : Sett D T Lc,
-      (∀ i ≤ S.p, ∀ j ≤ S.q, S.LM i j ∧ S.RD i j ∧ S.NZ i j) ∧
-      ∃ c : ℕ → ℕ → ℂ, (∀ i ≤ S.p, ∀ j ≤ S.q, S.Prop2 i j (c i j)) ∧
-        (∀ i ≤ S.p, ∀ j < S.q, ∃ u, S.IsU uLoc kExp sb sc i j true u ∧
-          c i j * Lpart Lc.w S.S0 S.ν ((S.e : ℤ) - i + j + 1) = u * c i (j + 1)) ∧
-        (∀ i < S.p, ∃ u, S.IsU uLoc kExp sb sc i S.q false u ∧
-          c i S.q = u * Lpart Lc.w S.S0 S.ν ((S.e : ℤ) - i + S.q) * c (i + 1) S.q)
-
-def KudlaConstantNonzero (D : D7) (T : ThetaX D) (Lc : Loc D T) : Prop :=
-  ∀ S : Sett D T Lc, ∀ i ≤ S.p, ∀ j ≤ S.q, ∀ c : ℂ, S.Prop2 i j c → c ≠ 0
-
-def KudlaStandardNormalisation (D : D7) (T : ThetaX D) (Lc : Loc D T) : Prop :=
-  ∃ (uInf : Key D → ℂ) (kExp : Bool → (Fin 7 → ℕ) → ℚ × ℚ × ℚ) (sb sc : Bool → ℤ),
-    (∀ k, uInf k ≠ 0) ∧ (∀ t, (sb t = 1 ∨ sb t = -1) ∧ (sc t = 1 ∨ sc t = -1)) ∧
-    ∀ S : Sett D T Lc, ∀ c : ℕ → ℕ → ℂ, (∀ i ≤ S.p, ∀ j ≤ S.q, S.Prop2 i j (c i j)) →
-      (∀ i ≤ S.p, ∀ j < S.q, ∃ u, S.IsUStd uInf kExp sb sc i j true u ∧
-        c i j * Lpart Lc.w S.S0 S.ν ((S.e : ℤ) - i + j + 1) = u * c i (j + 1)) ∧
-      (∀ i < S.p, ∃ u, S.IsUStd uInf kExp sb sc i S.q false u ∧
-        c i S.q = u * Lpart Lc.w S.S0 S.ν ((S.e : ℤ) - i + S.q) * c (i + 1) S.q)
-
-def adm1 (D : D7) (T : ThetaX D) (Lc : Loc D T) : Prop :=
-  ∀ (V W : HS D) (χ₁ χ₂ : T.Chr) (r : ℕ), KudlaOK Lc.w V W χ₁ χ₂ → WittIdx V r →
-    (r = 0 ∨ W.rank < 2 * (V.rank - r)) → ∀ Φ h,
-      IntegrableOn (fun g => th Lc.w V W χ₁ χ₂ Φ g h) (Lc.w.Fd V) (Lc.w.μG V)
-
-def adm2 (D : D7) (T : ThetaX D) (Lc : Loc D T) : Prop :=
-  ∀ (V W : HS D) (χ₁ χ₂ : T.Chr) (v : Pl D), KudlaOK Lc.w V W χ₁ χ₂ →
-    (∀ (N N' : Type) [AddCommGroup N] [Module ℂ N] [AddCommGroup N'] [Module ℂ N']
-        (σ : Representation ℂ (Lc.w.Hloc W v) N) (σ' : Representation ℂ (Lc.w.Hloc W v) N'),
-        IsIrr σ → IsIrr σ' →
-        (∃ f : Lc.w.SchL V W v →ₗ[ℂ] N, f ≠ 0 ∧ IsThetaMap Lc.w V W χ₁ χ₂ v σ f) →
-        (∃ f : Lc.w.SchL V W v →ₗ[ℂ] N', f ≠ 0 ∧ IsThetaMap Lc.w V W χ₁ χ₂ v σ' f) → RepIso σ σ') ∧
-    (∀ (N : Type) [AddCommGroup N] [Module ℂ N] (σ : Representation ℂ (Lc.w.Hloc W v) N), IsIrr σ →
-        ∀ f f' : Lc.w.SchL V W v →ₗ[ℂ] N, IsThetaMap Lc.w V W χ₁ χ₂ v σ f →
-          IsThetaMap Lc.w V W χ₁ χ₂ v σ f' → f ≠ 0 → ∃ c : ℂ, f' = c • f)
-
-def adm3 (D : D7) (T : ThetaX D) (Lc : Loc D T) : Prop :=
-  ∀ (V V' W : HS D) (α β : T.Chr) (v : FinF D), ¬ Split D v →
-    (∀ w, Over D w v → Lc.w.unr α w ∧ Lc.w.unr β w) → Lc.w.cc α = α⁻¹ → Lc.w.cc β = β⁻¹ →
-    Lc.w.res α = Lc.w.eta ^ V'.rank → Lc.w.res β = Lc.w.eta ^ V.rank → V.rank + V'.rank = W.rank →
-    V.rank % 2 = V'.rank % 2 →
-    ∃ (M : Type) (_ : AddCommGroup M) (_ : Module ℂ M)
-      (π : Representation ℂ (Lc.w.Hloc W (Sum.inl v)) M),
-      SmallTheta Lc.w V W β (β / α) (Sum.inl v) π ∧ SmallTheta Lc.w V' W α (α / β) (Sum.inl v) π
-
-def ArchimedeanSignatureMatching (D : D7) (T : ThetaX D) (Lc : Loc D T) : Prop :=
-  ∀ (V W : HS D) (χ₁ χ₂ : T.Chr) (τ : D.what₂.Tau) (εV εW : Bool), KudlaOK Lc.w V W χ₁ χ₂ →
-    V.SigOK → W.SigOK →
-    V.sig (tauE D τ) = (if εV = true then (V.rank, 0) else (0, V.rank)) →
-    W.sig (tauE D τ) = (if εW = true then (W.rank, 0) else (0, W.rank)) →
-    (∀ (N : Type) [AddCommGroup N] [Module ℂ N] (σ : Representation ℂ (Lc.w.Hloc W (Sum.inr τ)) N)
-        (f : Lc.w.SchL V W (Sum.inr τ) →ₗ[ℂ] N), IsThetaMap Lc.w V W χ₁ χ₂ (Sum.inr τ) σ f →
-        Function.Surjective f → Nontrivial N → IsIrr σ) ∧
-    (V.rank ≤ W.rank →
-      (((εV = εW) ↔ ePlus Lc.w τ) → 2 * T.infTy χ₂ τ + (W.rank : ℚ) ≤ 0) →
-      (¬ ((εV = εW) ↔ ePlus Lc.w τ) → (W.rank : ℚ) ≤ 2 * T.infTy χ₂ τ) →
-      ∃ (N : Type) (_ : AddCommGroup N) (_ : Module ℂ N)
-        (σ : Representation ℂ (Lc.w.Hloc W (Sum.inr τ)) N) (f : Lc.w.SchL V W (Sum.inr τ) →ₗ[ℂ] N),
-        f ≠ 0 ∧ IsThetaMap Lc.w V W χ₁ χ₂ (Sum.inr τ) σ f)
-
-def admitted (D : D7) (T : ThetaX D) (Lc : Loc D T) : Prop :=
-  adm1 D T Lc ∧ adm2 D T Lc ∧ adm3 D T Lc ∧ ArchimedeanSignatureMatching D T Lc
-
-def Stmt (D : D7) (T : ThetaX D) (Lc : Loc D T) : Prop :=
-  Pin D T Lc → admitted D T Lc → aux₃ D T Lc ∧ KudlaConstantNonzero D T Lc ∧ KudlaStandardNormalisation D T Lc
-
-def PinF {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps)
-    (LF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), Loc (Fm.D x i) (Fm.ex x hx i).th) : Prop :=
-  ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), Pin (Fm.D x i) (Fm.ex x hx i).th (LF x hx i)
-
-def AdmF {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps)
-    (LF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), Loc (Fm.D x i) (Fm.ex x hx i).th) : Prop :=
-  ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), admitted (Fm.D x i) (Fm.ex x hx i).th (LF x hx i)
-
-def OrbitValuationBound {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps)
-    (LF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), Loc (Fm.D x i) (Fm.ex x hx i).th) : Prop :=
-  ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x),
-    aux₃ (Fm.D x i) (Fm.ex x hx i).th (LF x hx i) ∧ KudlaConstantNonzero (Fm.D x i) (Fm.ex x hx i).th (LF x hx i) ∧
-      KudlaStandardNormalisation (Fm.D x i) (Fm.ex x hx i).th (LF x hx i)
-
-def KudlaFamilyStatement {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps)
-    (LF : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), Loc (Fm.D x i) (Fm.ex x hx i).th) : Prop :=
-  PinF Fm LF → AdmF Fm LF → OrbitValuationBound Fm LF
 
 end Formalism.MainNotions.KudlaSiegelWeil

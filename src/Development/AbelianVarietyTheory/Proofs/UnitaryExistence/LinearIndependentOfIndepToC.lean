@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.TieUpA
-import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.BaseChangeTensorProduct
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.SiegelSpaceAlgebraHolds
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.TieUpA
+public import Development.AbelianVarietyTheory.BlockTheory.ExistenceTori.BaseChangeTensorProduct
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.SiegelSpaceAlgebraHolds
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 400000
 
@@ -72,7 +76,7 @@ theorem indepToC_bcMap_iff (hσ : ∀ a, σ' (algebraMap K L a) = σ a) (f : C �
         simp only [φ, F, TensorProduct.AlgebraTensorModule.cancelBaseChange_tmul, LinearMap.liftBaseChange_tmul]
         show (σ' t * 1) • f x = _
         rw [mul_one]
-      | add x y hx hy => rw [TensorProduct.tmul_add, map_add, map_add, hx, hy, map_add]
+      | add x y hx hy => rw [TensorProduct.tmul_add, map_add (f := _), map_add (f := _), hx, hy, map_add (f := _)]
     have e2 : (fun i => BaseChangeTensorProduct.bcMap hσ f (b i)) = (F ∘ₗ φ.toLinearMap) ∘ fun i => (1 : ℂ) ⊗ₜ[L] b i :=
       funext fun i => (key (b i)).symm
     rw [e2]; exact h2

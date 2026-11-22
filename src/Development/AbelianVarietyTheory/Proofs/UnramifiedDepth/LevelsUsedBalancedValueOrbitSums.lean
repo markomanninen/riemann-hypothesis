@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.ValuationChoiceHypothesis
-import Formalism.LocalRingCardinality.DataForced
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CyclicSolvable
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.ValuationChoiceHypothesis
+public import Formalism.LocalRingCardinality.DataForced
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.CyclicSolvable
+
+@[expose] public section
 
 open Formalism.L2.FormalSeriesBounds Formalism.L2.DIV Formalism.BasicNotions Formalism.UnitaryBoundIntegral
 

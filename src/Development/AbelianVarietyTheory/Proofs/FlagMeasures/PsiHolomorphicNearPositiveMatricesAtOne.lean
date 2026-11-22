@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InnerRepK
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FderivIntegralApplyOfHolomorphicOfDominated
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.DiscreteSpectrumKFiniteDecomposition
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InnerRepK
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.FderivIntegralApplyOfHolomorphicOfDominated
+
+@[expose] public section
 
 open MeasureTheory Matrix Finset Formalism.MainNotions.S Formalism.REAL Formalism.QuantumDeterminants GlobalTheory.Count GlobalTheory.Dec GlobalTheory.Dec.FormF
 open scoped InnerProductSpace ComplexOrder
@@ -94,7 +98,7 @@ theorem IsTau.isURepOn {ε : Fin n → Bool} {abelian₂ : Fin n → ℝ} {W : T
     have heq : (fun g => τ g v) = fun g => ∑ i, ⟪bs i, τ g v⟫_ℂ • bs i := by
       funext g; exact (bs.sum_repr' (τ g v)).symm
     rw [heq]
-    exact continuousOn_finset_sum _ fun i _ => (hco (bs i)).smul continuousOn_const
+    exact continuousOn_finsetSum _ fun i _ => (hco (bs i)).smul continuousOn_const
 
 theorem psBasic : PsBasic := by
   intro n ε lam W _ _ τ w _hlam htau
@@ -126,7 +130,7 @@ theorem psBasic : PsBasic := by
           Phi lam ((toMK q.1)⁻¹ * Matrix.of q.2 * toMK q.1))
           (Set.univ ×ˢ {z : Fin n → Fin n → ℂ | Matrix.of z ∈ U1 ε}) := by
         unfold Phi
-        exact continuousOn_finset_prod _ fun i _ =>
+        exact continuousOn_finsetProd _ fun i _ =>
           (continuous_leadMinor_conj ε (i.val + 1) i.isLt).continuousOn.zpow₀ _
             fun q hq => Or.inl (hmem q.1 q.2 hq.2 i)
       have hB : ContinuousOn (fun q : KG ε × (Fin n → Fin n → ℂ) =>
@@ -180,7 +184,7 @@ theorem psBasic : PsBasic := by
         simp only [show ∀ a b : W, (innerSL ℂ a) b = ⟪a, b⟫_ℂ from fun _ _ => rfl, hbi, mul_one] at this
         exact this
       have e2 : ∑ i, ∫ k : KG ε, ⟪τ (toMK k) w, b i⟫_ℂ * ⟪b i, τ (toMK k) w⟫_ℂ ∂(muK ε) = 1 := by
-        rw [← integral_finset_sum _ fun i _ => hI (fun k : KG ε => ⟪τ (toMK k) w, b i⟫_ℂ * ⟪b i, τ (toMK k) w⟫_ℂ)
+        rw [← MeasureTheory.integral_finsetSum _ fun i _ => hI (fun k : KG ε => ⟪τ (toMK k) w, b i⟫_ℂ * ⟪b i, τ (toMK k) w⟫_ℂ)
           ((hτc.inner continuous_const).mul (continuous_const.inner hτc))]
         simp_rw [b.sum_inner_mul_inner]
         have hone : ∀ k : KG ε, ⟪τ (toMK k) w, τ (toMK k) w⟫_ℂ = 1 := fun k => by

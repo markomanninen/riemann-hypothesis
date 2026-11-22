@@ -1,5 +1,9 @@
-import Formalism.TruncatedSeriesCounting.LengthQuotientLeOfPowSMul
-import Formalism.TruncatedSeriesCounting.TruncatedSeriesProofs.SubGen
+module
+
+public import Formalism.TruncatedSeriesCounting.LengthQuotientLeOfPowSMul
+public import Formalism.TruncatedSeriesCounting.TruncatedSeriesProofs.SubGen
+
+@[expose] public section
 
 noncomputable section
 

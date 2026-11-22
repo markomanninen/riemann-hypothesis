@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.HermExpand
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TailIntegrals.HermExpand
+
+@[expose] public section
 
 noncomputable section
 open Matrix MeasureTheory
@@ -20,7 +24,7 @@ theorem cont_ite {β : Type} [TopologicalSpace β] [Zero β] (c : Prop) [Decidab
 
 theorem cont_Lsq (l : Fin (p + 1)) : Continuous (fun x : Xp p m => Lsq x l) := by
   unfold Lsq
-  exact continuous_const.add (continuous_finsetSum _ fun j _ =>
+  exact continuous_const.fun_add (continuous_finsetSum _ fun j _ =>
     cont_ite _ (((continuous_apply j).comp continuous_fst).norm.pow 2))
 
 theorem cont_rhoSq (l : Fin (p + 1)) : Continuous (fun x : Xp p m => rhoSq x l) := by
@@ -31,7 +35,7 @@ theorem cont_rhoSq (l : Fin (p + 1)) : Continuous (fun x : Xp p m => rhoSq x l) 
 
 theorem cont_bco (l : Fin (p + 1)) : Continuous (fun x : Xp p m => bco x l) := by
   unfold bco
-  refine ((Complex.continuous_ofReal.comp ((continuous_finsetSum _ fun i _ => ?_).neg.div_const 2)).add
+  refine ((Complex.continuous_ofReal.comp ((continuous_finsetSum _ fun i _ => ?_).fun_neg.div_const 2)).add
     ((Complex.continuous_ofReal.comp (continuous_snd.comp (continuous_snd.comp continuous_snd))).mul
       continuous_const)).sub (continuous_finsetSum _ fun j _ => ?_)
   · exact ((continuous_apply i).comp (continuous_fst.comp (continuous_snd.comp continuous_snd))).norm.pow 2

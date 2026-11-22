@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.InstAddCommGroup
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.InstAddCommGroup
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -29,7 +33,8 @@ theorem Cos.d_apply (K : Cos.{w} R) (n : ℕ) (x : K.X n) : K.d n x = ∑ i : Fi
 
 theorem Cos.dd (K : Cos.{w} R) (n : ℕ) (x : K.X n) : K.d (n + 1) (K.d n x) = 0 := by
   rw [Cos.d_apply, Cos.d_apply]
-  simp only [map_sum, map_zsmul, Finset.smul_sum, smul_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_zsmul, Finset.smul_sum, smul_smul]
   rw [← Fintype.sum_prod_type']
   refine Finset.sum_involution (fun p _ => (p.1.succAbove p.2, p.2.predAbove p.1)) ?_ ?_ ?_ ?_
   · rintro ⟨j, i⟩ _
@@ -235,7 +240,8 @@ abbrev CosCx.dcx (S : CosCx.{w} R) : DCx.{w} R where
   hh p q := (S.cos q).dd p
   vv p q := (S.K p).dd q
   hv p q x := by
-    rw [Cos.d_apply, Cos.d_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Cos.d_apply, Cos.d_apply, map_sum]
     exact Finset.sum_congr rfl fun i _ => by rw [map_zsmul]; exact congrArg _ ((S.δ p i).comm q x).symm
 
 structure CxPairing (K : Cx.{w} R) (L : Cx.{w'} R) (M : Cx.{w''} R) where
@@ -248,12 +254,5 @@ def CxPairing.cup {K : Cx.{w} R} {L : Cx.{w'} R} {M : Cx.{w''} R} (P : CxPairing
   M.cls (P.μ h (Quotient.out x).1 (Quotient.out y).1) (by
     rw [P.leib, show K.d p (Quotient.out x).1 = 0 from (Quotient.out x).2,
       show L.d q (Quotient.out y).1 = 0 from (Quotient.out y).2]; simp)
-
-structure DPairing (K : DCx.{w} R) (L : DCx.{w'} R) (M : DCx.{w''} R) where
-  μ : ∀ {p q p' q' a b : ℕ}, p + p' = a → q + q' = b → (K.X p q →ₗ[R] L.X p' q' →ₗ[R] M.X a b)
-  lh : ∀ {p q p' q' a b : ℕ} (h : p + p' = a) (h' : q + q' = b) x y, M.dh a b (μ h h' x y) =
-    μ (p := p + 1) (p' := p') (by omega) h' (K.dh p q x) y + (-1 : ℤ) ^ p • μ (p := p) (p' := p' + 1) (by omega) h' x (L.dh p' q' y)
-  lv : ∀ {p q p' q' a b : ℕ} (h : p + p' = a) (h' : q + q' = b) x y, M.dv a b (μ h h' x y) =
-    μ (q := q + 1) (q' := q') h (by omega) (K.dv p q x) y + (-1 : ℤ) ^ q • μ (q := q) (q' := q' + 1) h (by omega) x (L.dv p' q' y)
 
 end CrystallineSemistableComparison

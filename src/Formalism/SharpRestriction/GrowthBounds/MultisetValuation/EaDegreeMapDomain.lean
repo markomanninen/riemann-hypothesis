@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.GainOfCapacityLoss
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.GainOfCapacityLoss
+
+@[expose] public section
 
 noncomputable section
 
@@ -152,7 +156,8 @@ theorem ea_res_sSA (K' : Type) [Field K'] (v : X.Pl) (j : ℕ) (s : Fin (X.G.P.n
 theorem ea_res_hhA (K' : Type) [Field K'] (v : X.Pl) (j : ℕ) (u : Fin (X.G.P.n' v) → K') :
     resV (ea_eps X v j) (X.hhA K' j v u) = Formalism.InvariantFactorPaths.G7.hhS p fun s => u ((ea_e X v).symm s) := by
   rw [← ea_resHom_apply (ea_eps_inj X v j)]
-  simp only [Sys.hhA, map_sum, map_mul, map_pow, ea_resHom_apply, ea_resV_C (ea_eps_inj X v j),
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Sys.hhA, map_sum, map_mul, map_pow, ea_resHom_apply, ea_resV_C (ea_eps_inj X v j),
     ea_res_sSA]
   simp only [Formalism.InvariantFactorPaths.G7.hhS, Fintype.sum_prod_type]
   refine Fintype.sum_equiv (ea_e X v) _ _ (fun s => ?_)

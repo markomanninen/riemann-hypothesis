@@ -1,6 +1,10 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Statements
-import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupIsoOffCenter
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Statements
+public import Development.ResolutionOfSingularities.Foundations.Blowup.BlowupIsoOffCenter
+
+@[expose] public section
 
 noncomputable section
 

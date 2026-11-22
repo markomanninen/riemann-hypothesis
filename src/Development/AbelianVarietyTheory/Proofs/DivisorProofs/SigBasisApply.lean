@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+
+@[expose] public section
 
 namespace GlobalTheory.ScalarSigmaBasis
 
@@ -12,7 +16,8 @@ theorem sig_smul (r : K.E) (x : B.A) : B.σ (r • x) = K.c r • B.σ x := by
 
 theorem sig_sum {ι : Type} (s : Finset ι) (f : ι → K.E) (v : ι → B.A) :
     B.σ (∑ i ∈ s, f i • v i) = ∑ i ∈ s, K.c (f i) • B.σ (v i) := by
-  rw [map_sum]; simp only [sig_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]; simp only [sig_smul]
 
 noncomputable def sigBasis {n : ℕ} (b : Module.Basis (Fin n) K.E B.A) : Module.Basis (Fin n) K.E B.A :=
   Module.Basis.mk (v := fun i => B.σ (b i))
@@ -48,7 +53,8 @@ theorem sigBasis_repr {n : ℕ} (b : Module.Basis (Fin n) K.E B.A) (z : B.A) (k 
 theorem trace_sig (y : B.A) : Algebra.trace K.E B.A (B.σ y) = K.c (Algebra.trace K.E B.A y) := by
   let b := Module.finBasis K.E B.A
   rw [Algebra.trace_eq_matrix_trace (sigBasis B b), Algebra.trace_eq_matrix_trace b]
-  simp only [Matrix.trace, Matrix.diag, Algebra.leftMulMatrix_eq_repr_mul, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.trace, Matrix.diag, Algebra.leftMulMatrix_eq_repr_mul, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [sigBasis_apply, ← map_mul, sigBasis_repr]
 
@@ -67,7 +73,8 @@ theorem core (a : ℕ) (β : B.A) (hβ : B.σ β = β * ((-1 : B.A) ^ (a - 1) * 
     rw [Finset.mul_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [mul_smul_comm, smul_mul_assoc]
-  rw [InvAlg.herm, ← trace_sig, e1, e2, ← Algebra.smul_def, LinearMap.map_smul, map_sum, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [InvAlg.herm, ← trace_sig, e1, e2, ← Algebra.smul_def, LinearMap.map_smul, map_sum, smul_eq_mul]
   congr 1
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [LinearMap.map_smul, smul_eq_mul, LinearMap.toMatrix_apply, LinearMap.mulLeft_apply, mul_comm]
@@ -79,6 +86,7 @@ theorem main : ∀ {K : GlobalTheory.UnitLemma.UQ} (B : GlobalTheory.UnitLemma.I
   simp only [Matrix.map_apply, Matrix.of_apply, Matrix.smul_apply, Matrix.mul_apply, Matrix.transpose_apply,
     smul_eq_mul]
   rw [← hc, core B a β hβ b i j]
-  simp only [map_mul, map_sum, map_pow, map_neg, map_one]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_mul, map_sum, map_pow, map_neg, map_one]
 
 end GlobalTheory.ScalarSigmaBasis

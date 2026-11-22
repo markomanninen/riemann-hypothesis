@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameA
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameL
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelicHeckeBlocks.Imports
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameA
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameL
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.AdelicHeckeBlocks.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem pt_ok {a b : ℕ} {l₁ : InfinitePlace E → DomWeight a} {l₂ : Infin
     (BlockFiniteConvolution.rtAlg' E (A.blk κ) 1 1).2.2 ψ hψ
   have hs : PositivityTheory.Rg.BcB.F.sizeOf ψ = hex.choose := by
     unfold PositivityTheory.Rg.BcB.F.sizeOf
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
   refine ⟨A.T_nonneg, ?_, fun v => ?_, fun v => ?_, hψ, ?_⟩
   · show 0 ≤ PositivityTheory.Rg.BcB.F.sizeOf ψ
     rw [hs]; exact hex.choose_spec.1

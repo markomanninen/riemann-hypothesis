@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SubClosed
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.SubClosed
+
+@[expose] public section
+
 open GlobalTheory.SeqCx Matrix
 
 namespace GlobalTheory.SeqCx.BdBd
@@ -16,7 +21,8 @@ theorem bd_single_cons (V : Type) (x : V) (l : List V) :
     bd V (Finsupp.single (x :: l) 1) =
       Finsupp.single l 1 - consMap V x (bd V (Finsupp.single l 1)) := by
   rw [bd_single, bd_single, one_smul, one_smul, List.length_cons, Finset.sum_range_succ']
-  simp only [consMap, map_sum, map_zsmul, Finsupp.lmapDomain_apply, Finsupp.mapDomain_single,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [consMap, map_sum, map_zsmul, Finsupp.lmapDomain_apply, Finsupp.mapDomain_single,
     List.eraseIdx_cons_zero, List.eraseIdx_cons_succ, pow_zero, one_smul, pow_succ, mul_neg_one,
     neg_smul, Finset.sum_neg_distrib]
   abel

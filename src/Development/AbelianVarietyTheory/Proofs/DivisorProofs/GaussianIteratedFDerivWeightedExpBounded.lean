@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowForm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolyMulGaussianBounded
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowForm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PolyMulGaussianBounded
+
+@[expose] public section
+
 open MeasureTheory Filter Topology
 
 noncomputable section

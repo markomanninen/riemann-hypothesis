@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalizationAtPrimeIsDiscreteValuationRingOfHeig
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LocalizationAtPrimeIsDiscreteValuationRingOfHeig
+
+@[expose] public section
+
 open IsLocalRing
 
 namespace GlobalTheory.Mum
@@ -81,7 +86,7 @@ theorem exists_mul_eq_mul_sq_of_faithfullyFlat_of_map_isPrime : ∀ (O C : Type)
     rw [isField_iff_maximalIdeal_eq, hmax, Ideal.span_singleton_eq_bot] at hf
     exact hπR hf
   have hdvr : IsDiscreteValuationRing R :=
-    ((IsDiscreteValuationRing.TFAE R hnf).out 4 0).1 (show (maximalIdeal R).IsPrincipal from ⟨⟨φ π, hmax⟩⟩)
+    ((IsDiscreteValuationRing.TFAE R hnf).out 5 1).1 (show (maximalIdeal R).IsPrincipal from ⟨⟨φ π, hmax⟩⟩)
   have hirr : Irreducible (φ π) := (IsDiscreteValuationRing.irreducible_iff_uniformizer _).2 hmax
   have hhR : φ h = algebraMap C R u * algebraMap C R g ^ 2 := by
     show algebraMap C R (algebraMap O C h) = _

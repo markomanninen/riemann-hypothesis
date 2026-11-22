@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.GroupLattices.CloudFilling.FillInstRecEqWj
-import Formalism.LocalToGlobal.GroupLattices.PerfectRings.ExtWRec
-import Formalism.LocalRingCardinality.SpanPowerMembership.GatTies
-import Formalism.LocalRingCardinality.HostCls
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.GroupLattices.CloudFilling.FillInstRecEqWj
+public import Formalism.LocalToGlobal.GroupLattices.PerfectRings.ExtWRec
+public import Formalism.LocalRingCardinality.SpanPowerMembership.GatTies
+public import Formalism.LocalRingCardinality.HostCls
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,12 +63,35 @@ def pack : LocPack D u Lc (D.what₂.places.resChar w) where
     (jO (D.what₂.places.resChar w) (frobOrder D (D.what₂.places.resChar w)))
   w := (extRec D w (frobOrder D (D.what₂.places.resChar w))).φ
     (wU (D.what₂.places.resChar w) (frobOrder D (D.what₂.places.resChar w)))
-  hS := setting_ext (settingStd (D.what₂.places.resChar w) (frobOrder D (D.what₂.places.resChar w)) h5 h2 he)
-    (extRec D w (frobOrder D (D.what₂.places.resChar w)))
+  hS := by
+    let p := D.what₂.places.resChar w
+    let n := frobOrder D p
+    have h := (settingStd p n h5 h2 he).1
+    let X := extRec D w n
+    exact
+      { prime := h.prime
+        five_le := h.five_le
+        two_le := h.two_le
+        even := h.even
+        frac_alt := h.frac_alt
+        frac_O := X.frac
+        p_unif := h.p_unif
+        res_card := h.res_card
+        eq_sum_herm_smul_frame_of_inW := h.eq_sum_herm_smul_frame_of_inW
+        frob := h.frob
+        period := h.period
+        ι_comp := by
+          intro x
+          change X.φK (iota p n (algebraMap (WQ p n) (QQ p n) x)) = _
+          rw [h.ι_comp, X.comm]
+          rfl
+        finite := X.fin.comp h.finite
+        complete_O := X.complete
+        w_sq := by
+          change X.φ (wU p n) ^ 2 = (p : ORec D w n)
+          rw [← map_pow, h.w_sq, map_natCast] }
   I := I
   ψ := ψ
-
-theorem pack_ψ : (pack D u Lc w h5 h2 he I ψ).ψ = ψ := rfl
 
 end Pack
 
@@ -88,19 +115,6 @@ variable (hd : ∀ u w h, ((packAll D Lc I ψ u w h).gat (rSc sc D.R.k (D.what�
 
 abbrev record : D7 := recG D sc Ce Lc (packAll D Lc I ψ) hd
 
-abbrev recordTies : GatTies (record D sc Ce Lc I ψ hd) := gatTiesG D sc Ce Lc (packAll D Lc I ψ) hd
-
-example : (record D sc Ce Lc I ψ hd).host = D.host := rfl
-
-example : (record D sc Ce Lc I ψ hd).R = D.R := rfl
-
-example (u : D.what₂.Word) (w : D.what₂.places.Pl) (h : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) :
-    ((record D sc Ce Lc I ψ hd).gat u w h).O = ORec D w (frobOrder D (D.what₂.places.resChar w)) := rfl
-
 end Record
-
-example (D : D7) {T p : ℕ} (hg : GIdx D.host T p) : frobOrder D p ≠ 1 ∧ frobOrder D p ≠ 3 := by
-  obtain ⟨h2, k, hk⟩ := frobOrder_spec D hg
-  omega
 
 end GlobalTheory.Mem.LocalPack

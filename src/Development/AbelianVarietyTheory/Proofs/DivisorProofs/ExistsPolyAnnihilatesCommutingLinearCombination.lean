@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,11 @@ theorem exists_poly_annihilates_linear_combination : ∀ {M : Type} [AddCommGrou
         Polynomial.aeval (∑ i, c i • A i) p v = 0 := by
   intro M _ _ ι _ A hc c P hP
   classical
-  letI : CommRing (Algebra.adjoin ℂ (Set.range A)) := Algebra.adjoinCommRingOfComm ℂ
-    (by rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩; exact hc i j)
+  letI : IsMulCommutative (Algebra.adjoin ℂ (Set.range A)) :=
+    Algebra.isMulCommutative_adjoin ℂ (by
+      rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩ _
+      exact hc i j)
+  open scoped IsMulCommutative in
   let S := Algebra.adjoin ℂ (Set.range A)
   let I : Ideal S :=
     { carrier := {a | ∀ v : M, (∀ i, Polynomial.aeval (A i) (P i) v = 0) → (a : Module.End ℂ M) v = 0}
@@ -40,7 +47,8 @@ theorem exists_poly_annihilates_linear_combination : ∀ {M : Type} [AddCommGrou
     rw [aeval_subalgebra_coe]
     exact hv i
   have hs : IsIntegral ℂ (q (∑ i, c i • t i)) := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact IsIntegral.sum _ (fun i _ => by rw [map_smul]; exact (hint i).smul _)
   obtain ⟨p, hpm, hp⟩ := hs
   refine ⟨p, hpm.ne_zero, fun v hv => ?_⟩
@@ -51,7 +59,8 @@ theorem exists_poly_annihilates_linear_combination : ∀ {M : Type} [AddCommGrou
   have h := (hI _).mp hmem v hv
   rw [aeval_subalgebra_coe] at h
   have hsum : ((∑ i, c i • t i : S) : Module.End ℂ M) = ∑ i, c i • A i := by
-    rw [show ((∑ i, c i • t i : S) : Module.End ℂ M) = S.val (∑ i, c i • t i) from rfl, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [show ((∑ i, c i • t i : S) : Module.End ℂ M) = S.val (∑ i, c i • t i) from rfl, map_sum]
     simp [t]
   rw [hsum] at h
   exact h

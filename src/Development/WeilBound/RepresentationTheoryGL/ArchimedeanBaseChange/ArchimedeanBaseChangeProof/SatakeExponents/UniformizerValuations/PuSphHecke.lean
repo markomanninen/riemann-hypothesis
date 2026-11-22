@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ExistsEigv
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.ExistsEigv
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,11 +28,11 @@ theorem pu_sph_inr (w0 : Pl E) (h : UL n w0 → ℂ) (l : List (UGen E n)) (w : 
 
 theorem pu_sph_self (w0 : Pl E) (h : UL n w0 → ℂ) (l : List (UGen E n)) :
     UGen.sph (Sum.inr ⟨w0, h⟩ :: l) w0 = lconv h (UGen.sph l w0) := by
-  rw [pu_sph_inr, dif_pos rfl]
+  rw [pu_sph_inr, dite_eq_left rfl]
 
 theorem pu_sph_ne (w0 : Pl E) (h : UL n w0 → ℂ) (l : List (UGen E n)) (w : Pl E) (hw : w0 ≠ w) :
     UGen.sph (Sum.inr ⟨w0, h⟩ :: l) w = UGen.sph l w := by
-  rw [pu_sph_inr, dif_neg hw]
+  rw [pu_sph_inr, dite_eq_right hw]
 
 def pu_pls (l : List (UGen E n)) : Finset (Pl E) :=
   (l.filterMap fun x => Sum.elim (fun _ => none) (fun y : Σ w : Pl E, UL n w → ℂ => some y.1) x).toFinset

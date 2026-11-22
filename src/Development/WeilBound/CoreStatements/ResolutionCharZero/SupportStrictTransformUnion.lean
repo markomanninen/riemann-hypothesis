@@ -1,7 +1,11 @@
-import Mathlib
-import Development.ResolutionOfSingularities.Statements
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.TransformedBoundaryComponents
-import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.MarkedBlowupSequenceBoundary
+module
+
+public import Mathlib
+public import Development.ResolutionOfSingularities.Statements
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.MonomialCase.TransformedBoundaryComponents
+public import Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.MarkedBlowupSequenceBoundary
+
+@[expose] public section
 
 noncomputable section
 

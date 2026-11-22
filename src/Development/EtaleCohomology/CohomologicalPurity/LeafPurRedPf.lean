@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.CohomologicalPurity.LeafPurPf
+module
+
+public import Development.EtaleCohomology.CohomologicalPurity.LeafPurPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC CochainComplex.HomComplex
@@ -62,7 +66,7 @@ theorem purT_eq {d : ℕ} (T : ∀ P : SP d, Tube P) (q : ℕ) [NeZero q] (P : S
         (pull _ (pullback.snd (T P).π (sch.map P.ι)) (tw q i) n a))
         (Hs.pull q (abvMap P.U (T P).π) _ _ (fcl d q P))) := by
   unfold purT
-  rw [dif_pos ⟨NeZero.ne q, hq⟩]
+  rw [dite_eq_left ⟨NeZero.ne q, hq⟩]
   rfl
 
 theorem act_fcl (hH : Hyp) (hCl : LeafCl) {d : ℕ} (T : ∀ P : SP d, Tube P) (q : ℕ) [NeZero q] (P : SP d)

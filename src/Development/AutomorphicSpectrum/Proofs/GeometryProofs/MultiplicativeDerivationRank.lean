@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open scoped TensorProduct
 
 namespace GlobalTheory.CompanionTheory.PowerDerivation
@@ -9,8 +14,8 @@ theorem exists_natCast_of_pow_eq (k : Type) [Field k] (p : ℕ) [hp : Fact p.Pri
     (μ : k) (h : μ ^ p = μ) : ∃ i < p, μ = (i : k) := by
   classical
   have hone : 1 < p := hp.out.one_lt
-  have hP : (X ^ p - X : k[X]) ≠ 0 := FiniteField.X_pow_card_sub_X_ne_zero k hone
-  have hdeg : (X ^ p - X : k[X]).natDegree = p := FiniteField.X_pow_card_sub_X_natDegree_eq k hone
+  have hP : (X ^ p - X : k[X]) ≠ 0 := Polynomial.X_pow_sub_X_ne_zero (R := k) hone
+  have hdeg : (X ^ p - X : k[X]).natDegree = p := Polynomial.natDegree_X_pow_sub_X (R := k) hone
   haveI : ExpChar k p := ExpChar.prime hp.out
   set S : Finset k := (Finset.range p).image (fun i : ℕ => (i : k)) with hS
   have hcard : S.card = p := by
@@ -105,7 +110,7 @@ theorem mem_eigenspace_of_mem_ker (D : Derivation k R R) {z : R} (hz : D z = z)
 
 theorem powerSum_injective (p : ℕ) [CharP k p] (D : Derivation k R R) {z w : R}
     (hz : D z = z) (hw : z * w = 1) : Function.Injective (powerSum D z p) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   have hinj : Function.Injective (fun i : Fin p => ((i : ℕ) : k)) := fun i j hij =>
     Fin.ext (CharP.natCast_injOn_Iio k p i.2 j.2 hij)
@@ -169,7 +174,8 @@ theorem map_powerSum_eq_zero (D : Derivation k R R) (ε : R →ₐ[k] k) {z : R}
     induction n with
     | zero => simpa using hk 1 (by simp)
     | succ n ih => rw [pow_succ, hu, ih, huz]; simp
-  rw [powerSum_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [powerSum_apply, map_sum]
   refine Finset.sum_eq_zero fun i _ => ?_
   rw [hu, hpow, hk _ (a i).2]
   simp

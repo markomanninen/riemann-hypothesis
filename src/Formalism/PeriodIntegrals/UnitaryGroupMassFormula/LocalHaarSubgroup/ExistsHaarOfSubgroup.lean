@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,11 +111,11 @@ theorem integral_of_memO {y : K} (h : y ∈ 𝒪[K]) : IsIntegral 𝒪[K] y := b
 
 theorem memO_of_integral_V [Nontrivial V] {y : K} (h : IsIntegral 𝒪[K] (algebraMap K V y)) :
     y ∈ 𝒪[K] :=
-  memO_of_integral ((isIntegral_algebraMap_iff (algebraMap K V).injective).1 h)
+  memO_of_integral ((isIntegral_algebraMap_iff ).1 h)
 
 theorem integral_V_of_memO [Nontrivial V] {y : K} (h : y ∈ 𝒪[K]) :
     IsIntegral 𝒪[K] (algebraMap K V y) :=
-  (isIntegral_algebraMap_iff (algebraMap K V).injective).2 (integral_of_memO h)
+  (isIntegral_algebraMap_iff ).2 (integral_of_memO h)
 
 theorem pair_indep [Nontrivial V] {θ : V} (hθ : θ ∉ (algebraMap K V).range) (s t : K)
     (h : s • (1 : V) + t • θ = 0) : s = 0 ∧ t = 0 := by
@@ -159,13 +163,13 @@ theorem exists_sq [Module.Free K V] (hr : Module.finrank K V = 2) [IsReduced V] 
     rw [← map_ofNat ι 2, ← map_mul]; congr 1; field_simp
   set θ1 := θ0 - ι (β / 2) with hθ1def
   have hθ1 : θ1 * θ1 = ι (α + (β / 2) ^ 2) := by
-    rw [hθ1def, map_add, map_pow]
+    rw [hθ1def, map_add (f := _), map_pow]
     linear_combination hsq + θ0 * h2
   have hθ1r : θ1 ∉ ι.range := by
     rintro ⟨c, hc⟩
     apply hθ0
     refine ⟨c + β / 2, ?_⟩
-    rw [map_add, hc, hθ1def]; ring
+    rw [map_add (f := _), hc, hθ1def]; ring
   have hd1 : α + (β / 2) ^ 2 ≠ 0 := by
     intro h0
     rw [h0, map_zero] at hθ1

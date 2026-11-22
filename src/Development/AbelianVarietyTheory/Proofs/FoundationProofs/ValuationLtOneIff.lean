@@ -1,7 +1,20 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.SelmerRankVanishing
-open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.BlochKatoReduction GlobalTheory.IndefiniteRowSideFullHecke.LengthValuationTwists
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.BlochKatoPhases
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataN
+public import Formalism.SharpRestriction.LevelLetterCocycles.DataNLoc
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.GaloisCohomology.Statement
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Formalism.WeaklyAdmissibleFiltrations.Statement
+public import ReciprocityTheory.GaloisValuations.ContinuousConstSMulQuotient
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.MainNotions.BlochKatoReduction
 
 noncomputable section
 
@@ -40,7 +53,7 @@ theorem norm_algHom (K L : FinExt l) (τ : ↥K.1 →ₐ[ℚ_[l]] ↥L.1) (x : �
   exact congrArg spectralValue (h1.trans h2.symm)
 
 variable {E Ω : Type} [Field E] [Field Ω] [Algebra E Ω] {Gw : Subgroup (Ω ≃ₐ[E] Ω)} {O : Type}
-  [CommRing O] [Algebra ℤ_[l] O] [TopologicalSpace O] (B : LocBridge l E Ω Gw O)
+  [CommRing O] [Algebra ℤ_[l] O] [TopologicalSpace O] (B : _root_.Formalism.BasicNotions.LocBridge l E Ω Gw O)
 
 theorem norm_le_one_iff (y : ↥B.LL.1) : ‖(y : Om l)‖ ≤ 1 ↔ ∃ n : O, y = B.toLL n := by
   rw [← mem_OL_iff]
@@ -92,13 +105,5 @@ theorem algHom_ext (τ τ' : ↥B.Kw.1 →ₐ[ℚ_[l]] ↥B.LL.1)
   linarith
 
 end Local
-
-theorem valuation_lt_one_iff {Ω : Type} [Field Ω] (A : ValuationSubring Ω) (x : Ω) :
-    A.valuation x < 1 ↔ x = 0 ∨ x⁻¹ ∉ A := by
-  by_cases hx : x = 0
-  · simp [hx]
-  · have : A.valuation x ≠ 0 := by simpa using hx
-    rw [← A.valuation_le_one_iff, map_inv₀, inv_le_one₀ (zero_lt_iff.2 this)]
-    simp [hx]
 
 end GlobalTheory.EmbInj

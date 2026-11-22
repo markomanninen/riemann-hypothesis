@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.UnipotentAdelicQuotients.SWXSDefs
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+module
+
+public import Mathlib
+public import Formalism.UnipotentAdelicQuotients.SWXSDefs
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+
+@[expose] public section
+
 open MeasureTheory Topology Matrix
 open scoped ENNReal NNReal
 
@@ -70,9 +75,9 @@ theorem map_toMatrix_mulVec (K : Type) [CommRing K] [TopologicalSpace K] [IsTopo
   let P : Measure (ι → K) := Measure.pi fun _ : ι => ν
   haveI : P.IsAddHaarMeasure := Measure.pi.isAddHaarMeasure _
   have hμ : μ = Measure.addHaarScalarFactor μ P • P := Measure.isAddLeftInvariant_eq_smul μ P
-  have hP : P.map (fun x => t.toMatrix *ᵥ x) = P := (measurePreserving_pi ν t).map_eq
+  have hP : MeasurePreserving (fun x => t.toMatrix *ᵥ x) P P := measurePreserving_pi ν t
   generalize Measure.addHaarScalarFactor μ P = c at hμ
-  rw [hμ, Measure.map_smul, hP]
+  rw [hμ, Measure.map_smul c hP.measurable.aemeasurable, hP.map_eq]
 
 end GlobalTheory.CompanionTheory.SW.Transv
 

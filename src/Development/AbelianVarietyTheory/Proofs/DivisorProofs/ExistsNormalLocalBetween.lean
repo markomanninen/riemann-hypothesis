@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosureFiniteEtale
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PointAtZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemRangeOfMonic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorsorsTrivial
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClosureFiniteEtale
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PointAtZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemRangeOfMonic
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 
 noncomputable section
@@ -106,7 +111,11 @@ theorem exists_normal_local_between : ∀ (T : Type) [CommRing T] [IsDomain T] [
     (IsFractionRing.injective T (FractionRing T)).comp hi
   let φ : FractionRing A →+* FractionRing T := IsFractionRing.lift hgi
   letI : Algebra (FractionRing A) (FractionRing T) := φ.toAlgebra
-  let σ : L →ₐ[FractionRing A] FractionRing T := IsAlgClosed.lift
+  let σ : L →ₐ[FractionRing A] FractionRing T := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   letI : Algebra A L := ((algebraMap (FractionRing A) L).comp (algebraMap A (FractionRing A))).toAlgebra
   haveI : IsScalarTower A (FractionRing A) L := IsScalarTower.of_algebraMap_eq (fun _ => rfl)
   have hAL : Function.Injective (algebraMap A L) :=
@@ -138,7 +147,7 @@ theorem exists_normal_local_between : ∀ (T : Type) [CommRing T] [IsDomain T] [
       map_one' := hinjT (by rw [hct]; simp)
       map_mul' := fun x y => hinjT (by rw [hct, map_mul, hct, hct]; simp)
       map_zero' := hinjT (by rw [hct]; simp)
-      map_add' := fun x y => hinjT (by rw [hct, map_add, hct, hct]; simp) }
+      map_add' := fun x y => hinjT (by rw [hct, map_add (f := _), hct, hct]; simp) }
   have hc : ∀ x, algebraMap T (FractionRing T) (c x) = σ (x : L) := hct
   have hcinj : Function.Injective c := by
     intro x y h

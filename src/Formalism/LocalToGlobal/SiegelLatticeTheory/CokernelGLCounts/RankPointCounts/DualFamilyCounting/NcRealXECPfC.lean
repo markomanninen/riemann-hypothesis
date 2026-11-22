@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcRealXECPfB
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcRealXECPfB
+
+@[expose] public section
 
 noncomputable section
 
@@ -298,5 +302,6 @@ theorem constant_change_holds : ConstStep := by
   rw [← h1.map_eq, e1, ← Measure.map_map hTc.measurable hdc.measurable,
     Measure.map_linearMap_addHaar_eq_smul_addHaar _ hdet, Measure.map_smul, inv_det_dL,
     abs_of_pos (by positivity)]
+  exact hTc.aemeasurable
 
 end Formalism.L2.SG.Pf.NcReal.JX.EC

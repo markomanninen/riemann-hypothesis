@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSympLevel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSympLevel
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -23,7 +27,7 @@ theorem mem_of_dvd {M : ℕ} (hM : M ≠ 0) {x : D.La} (h : ∀ y, (M : ℤ) ∣
     { toFun := f
       map_add' := fun a b => by
         apply mul_left_cancel₀ hM'
-        rw [mul_add, ← hf, ← hf, ← hf, map_add]
+        rw [mul_add, ← hf, ← hf, ← hf, map_add (f := _)]
       map_smul' := fun c a => by
         apply mul_left_cancel₀ hM'
         rw [← hf, map_smul, hf]
@@ -122,7 +126,7 @@ theorem isSympLevel_unique {E : Type} [Field E] [NumberField E] [IsCMField E] {H
     obtain ⟨b, hb⟩ := h2 (H.bar n) (Ideal.mem_map_of_mem (H.bar : 𝓞 E →+* 𝓞 E) hn) y
     have h6 := h3 a (H.bar n • y)
     rw [sub_eq_iff_eq_add] at hb
-    rw [hb, map_add, map_nsmul, nsmul_eq_mul, add_sub_assoc, dvd_add_right (dvd_mul_right _ _)] at h6
+    rw [hb, map_add (f := _), map_nsmul, nsmul_eq_mul, add_sub_assoc, dvd_add_right (dvd_mul_right _ _)] at h6
     rw [D.adj, map_sub, LinearMap.sub_apply]
     exact h6
   obtain ⟨u, hu⟩ := h4

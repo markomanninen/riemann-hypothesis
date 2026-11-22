@@ -1,13 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.SlopeE
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.SpreadComposition
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumPairingGramMatrixValuesAndDefinite
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OrthogonalSumCoefficientLatticeIsLatticeAndDual
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DualLatticeIsLatticeAndHermitianDual
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NablaDeltaOperatorLatticePreserved
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeExtensionAlongFieldEmbeddingDuals
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TransportedWeylLatticeHermitianDuality
-import Formalism.LocalToGlobal.Columns.CoefModB
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspidalUnitaryTwists.SlopeE
+public import Formalism.LocalToGlobal.Divisibility.CoefMod
+public import Formalism.HarderNarasimhan.QuotRealize
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.RealCubicMeans.LeafBounds.MeanMaxLeaf.LeafMMFree
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumPairingGramMatrixValuesAndDefinite
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.OrthogonalSumCoefficientLatticeIsLatticeAndDual
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DualLatticeIsLatticeAndHermitianDual
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NablaDeltaOperatorLatticePreserved
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeExtensionAlongFieldEmbeddingDuals
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TransportedWeylLatticeHermitianDuality
+public import Formalism.LocalToGlobal.Columns.CoefModB
+
+@[expose] public section
 
 open NumberField
 open Formalism.BasicNotions Formalism.L2.DIV Formalism.L2.Indef.Tree.ArchimedeanLeafBounds.Cuts
@@ -16,9 +22,6 @@ open scoped Matrix ComplexOrder
 noncomputable section
 
 namespace GlobalTheory.TestLat.Compare
-
-def conjHom (E : Type) [Field E] [NumberField E] [IsCMField E] : E →+* E :=
-  (IsCMField.complexConj E : E →+* E)
 
 section Space
 
@@ -42,10 +45,6 @@ section Nabla
 
 variable {K : Type} [Field K] [NumberField K] {ι C : Type} [Fintype ι] {n N : ℕ}
 
-open Classical in
-
-def blk {F I : Type} [Zero F] (e : Fin N ≃ C × I) (M : Matrix I I F) : Matrix (Fin N) (Fin N) F :=
-  Matrix.of fun a b => if (e a).1 = (e b).1 then M (e a).2 (e b).2 else 0
 
 omit [NumberField K] in
 theorem pairK_basis [StarRing K] (lam : ι → DomWeight n) (g : ι → GL (Fin n) K) (i j : VVIdx lam) :
@@ -81,52 +80,6 @@ variable {E K : Type} [Field E] [NumberField E] [Field K] [NumberField K] [StarR
   (emb : ι → E →+* K) (lam : ι → DomWeight n) (R : ℝ) (J : Matrix (Fin n) (Fin n) E)
   (L : C → Submodule (𝓞 E) (Fin n → E)) (e : Fin N ≃ C × VVIdx lam) (X : InfinitePlace K → Matrix (Fin N) (Fin N) ℂ)
 
-def WeylClause : Prop :=
-  IsMetric ((sumGram lam e (gramK emb J))⁻¹)ᵀ X →
-    TestLatticeCondition N X (dualFr (sumLat lam e fun c => delAt emb lam (L c))) (bound (Fintype.card ι) n R)
-
-def WeylClauseDual : Prop :=
-  IsMetric ((sumGram lam e (gramKd emb J))⁻¹)ᵀ X →
-    TestLatticeCondition N X (dualFr (sumLat lam e fun c => delAtr emb lam (L c))) (bound (Fintype.card ι) n R)
-
-def NablaClause : Prop :=
-  IsMetric (sumGram lam e (gramK emb J)) X →
-    TestLatticeCondition N X (sumLat lam e fun c => nabAt emb lam (L c)) (bound (Fintype.card ι) n R)
-
-def NablaClauseDual : Prop :=
-  IsMetric (sumGram lam e (gramKd emb J)) X →
-    TestLatticeCondition N X (sumLat lam e fun c => nabAtr emb lam (L c)) (bound (Fintype.card ι) n R)
-
 end Clauses
-
-def Under (P : ∀ (E K : Type) [Field E] [NumberField E] [Field K] [NumberField K] [StarRing K] (_ : E →+* E)
-    (ι : Type) [Fintype ι] (_ : ι → E →+* K) (n : ℕ) (lam : ι → DomWeight n) (_ : ℝ) (_ : Matrix (Fin n) (Fin n) E)
-    (C : Type) (_ : C → Submodule (𝓞 E) (Fin n → E)) (N : ℕ) (_ : Fin N ≃ C × VVIdx lam)
-    (_ : InfinitePlace K → Matrix (Fin N) (Fin N) ℂ), Prop) : Prop :=
-  ∀ (E K : Type) [Field E] [NumberField E] [Field K] [NumberField K] [StarRing K] [IsTotallyComplex K]
-    (v₀ : InfinitePlace K), Formalism.DivisionValues.IsConjAt v₀ →
-  ∀ (cE : E →+* E), (∀ (φ : E →+* ℂ) (x : E), φ (cE x) = starRingEnd ℂ (φ x)) →
-  ∀ (ι : Type) [Fintype ι] (emb : ι → E →+* K), (∀ τ x, star (emb τ x) = emb τ (cE x)) →
-  ∀ (n : ℕ) (lam : ι → DomWeight n) (R : ℝ), 1 ≤ R → SpreadLe lam R →
-  ∀ (J : Matrix (Fin n) (Fin n) E), (∀ φ : E →+* ℂ, (J.map φ).PosDef) →
-  ∀ (C : Type) [Nonempty C] (L : C → Submodule (𝓞 E) (Fin n → E)), (∀ c, IsSelfDualE cE J (L c)) →
-  ∀ (N : ℕ) (e : Fin N ≃ C × VVIdx lam) (X : InfinitePlace K → Matrix (Fin N) (Fin N) ℂ),
-    P E K cE ι emb n lam R J C L N e X
-
-theorem slopeE_eq : SlopeE = Under fun _ _ _ _ _ _ _ _ _ _ emb _ lam R J _ L _ e X =>
-    WeylClause emb lam R J L e X ∧ NablaClause emb lam R J L e X ∧
-      WeylClauseDual emb lam R J L e X ∧ NablaClauseDual emb lam R J L e X := rfl
-
-def FirstCM : Prop := Under fun E _ _ _ _ _ _ cE _ _ emb n lam R J _ L _ e X =>
-  cE ≠ RingHom.id E → 1 ≤ n → WeylClause emb lam R J L e X
-
-def First : Prop := Under fun _ _ _ _ _ _ _ _ _ _ emb _ lam R J _ L _ e X => WeylClause emb lam R J L e X
-
-def FirstDegenerate : Prop := Under fun E _ _ _ _ _ _ cE _ _ emb n lam R J _ L _ e X =>
-  cE = RingHom.id E ∨ n = 0 → WeylClause emb lam R J L e X
-
-def SlopeCM : Prop := Under fun E _ _ _ _ _ _ cE _ _ emb n lam R J _ L _ e X =>
-  cE ≠ RingHom.id E → 1 ≤ n → WeylClause emb lam R J L e X ∧ NablaClause emb lam R J L e X ∧
-      WeylClauseDual emb lam R J L e X ∧ NablaClauseDual emb lam R J L e X
 
 end GlobalTheory.TestLat.Compare

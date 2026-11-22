@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualUnramifiedPlaces
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualLatticeActions
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsSelfDualLatticeIff
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualUnramifiedPlaces
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualLatticeActions
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsSelfDualLatticeIff
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+
+@[expose] public section
 
 open scoped TensorProduct
 open NumberField IsDedekindDomain MeasureTheory Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -30,7 +34,7 @@ theorem algebraMap_inj : Function.Injective (algebraMap (Fv F v) (Fv F v ⊗[F] 
 
 theorem algebraMap_mem_iff (a : Fv F v) :
     algebraMap (Fv F v) (Fv F v ⊗[F] E) a ∈ SelfDualLatticeActions.OEv E v ↔ a ∈ v.adicCompletionIntegers F := by
-  rw [mem_integralClosure_iff, isIntegral_algebraMap_iff (algebraMap_inj v)]
+  rw [mem_integralClosure_iff, isIntegral_algebraMap_iff]
   constructor
   · intro h
     obtain ⟨y, hy⟩ := IsIntegrallyClosed.isIntegral_iff.1 h
@@ -75,11 +79,11 @@ theorem exists_dual (hσ : IsCMExt F E σ) {w : Fv F v ⊗[F] E} {t n : v.adicCo
       map_sub, sigR_sigR _ hσ, sigR_algebraMap]
     linear_combination (-z) * hd'
   · apply algebraMap_inj (E := E) v
-    simp only [trace_tensor _ hσ, Matrix.cons_val_zero, map_mul, map_neg, map_add,
+    simp only [trace_tensor _ hσ, Matrix.cons_val_zero, map_mul, map_neg, map_add (f := _),
       map_sub, sigR_sigR _ hσ, sigR_algebraMap]
     linear_combination (algebraMap (Fv F v) (Fv F v ⊗[F] E) a) * hd'
   · apply algebraMap_inj (E := E) v
-    simp only [trace_tensor _ hσ, Matrix.cons_val_zero, Matrix.cons_val_one, map_mul, map_add,
+    simp only [trace_tensor _ hσ, Matrix.cons_val_zero, Matrix.cons_val_one, map_mul, map_add (f := _),
       map_sub, sigR_sigR _ hσ, sigR_algebraMap]
     linear_combination (algebraMap (Fv F v) (Fv F v ⊗[F] E) b) * hd'
 
@@ -93,7 +97,8 @@ theorem hR_eq (x y : Fin M → Fv F v ⊗[F] E) : hR (Fv F v) σ J x y =
 theorem hR_sum_right (x : Fin M → Fv F v ⊗[F] E) (z : Fin M → Fv F v ⊗[F] E)
     (b : Fin M → Fin M → Fv F v ⊗[F] E) :
     hR (Fv F v) σ J x (∑ i, z i • b i) = ∑ i, z i * hR (Fv F v) σ J x (b i) := by
-  simp only [hR_eq, map_sum, map_smul, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hR_eq, map_sum, map_smul, smul_eq_mul]
 
 theorem hR_sum_left (y : Fin M → Fv F v ⊗[F] E) (z : Fin M → Fv F v ⊗[F] E)
     (b : Fin M → Fin M → Fv F v ⊗[F] E) :
@@ -102,7 +107,8 @@ theorem hR_sum_left (y : Fin M → Fv F v ⊗[F] E) (z : Fin M → Fv F v ⊗[F]
       ∑ i, sigR (Fv F v) σ (z i) • fun j => sigR (Fv F v) σ (b i j) := by
     funext j
     simp [Finset.sum_apply]
-  simp only [hR_eq, this, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hR_eq, this, map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul]
 
 theorem hR_smul_left (x y : Fin M → Fv F v ⊗[F] E) (c : Fv F v ⊗[F] E) :
     hR (Fv F v) σ J (c • x) y = sigR (Fv F v) σ c * hR (Fv F v) σ J x y := by
@@ -111,7 +117,7 @@ theorem hR_smul_left (x y : Fin M → Fv F v ⊗[F] E) (c : Fv F v ⊗[F] E) :
 
 theorem hR_add_left (x x' y : Fin M → Fv F v ⊗[F] E) :
     hR (Fv F v) σ J (x + x') y = hR (Fv F v) σ J x y + hR (Fv F v) σ J x' y := by
-  simp only [hR, Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hR, Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem exists_frame {L : Submodule (SelfDualLatticeActions.OEv E v) (SelfDualLatticeActions.Wv E v M)}
     (hL : SelfDualLatticeActions.IsSelfDualLat v σ J L) (hb : SelfDualLatticeActions.HasOrthonormalBasis v σ J L) :
@@ -193,7 +199,8 @@ theorem exists_norm (hσ : IsCMExt F E σ) {w : Fv F v ⊗[F] E} {t n : v.adicCo
     ⟨⟨w, hw⟩, isUnit_of_mul_isUnit_left (y := ⟨w, hw⟩ - c ⟨w, hw⟩) (by
       convert hD.map (algebraMap _ (SelfDualLatticeActions.OEv E v))
       apply Subtype.ext
-      simp only [map_sub, map_mul, map_pow, map_ofNat]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sub, map_mul, map_pow, map_ofNat]
       push_cast
       change _ = algebraMap (Fv F v) (Fv F v ⊗[F] E) (t : Fv F v) ^ 2 -
         4 * algebraMap (Fv F v) (Fv F v ⊗[F] E) (n : Fv F v)
@@ -268,18 +275,20 @@ theorem exists_coords (hσ : IsCMExt F E σ) (hJ : IsHermND σ J)
       exact add_mem ((algebraMap_mem_iff v _).2 (h _))
         (mul_mem ((algebraMap_mem_iff v _).2 (h _)) hw)
   · apply algebraMap_inj (E := E) v
-    rw [← hR_self _ hσ hJ, hh, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hR_self _ hσ hJ, hh, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     change _ = algebraMap (Fv F v) _
       (e X (i, 0) ^ 2 + t * e X (i, 0) * e X (i, 1) + n * e X (i, 1) ^ 2)
     rw [hg']
-    simp only [map_add, map_mul, map_pow, sigR_algebraMap, ← ht, ← hn]
+    simp only [map_add (f := _), map_mul, map_pow, sigR_algebraMap, ← ht, ← hn]
     ring
   · change (∀ i, Valued.v (e Y i) ≤ WithZero.exp m) ↔ _
     have hB : ∀ X : Fin 1 → Fin M → Fv F v ⊗[F] E, BR (Fv F v) σ J X Y =
         ∑ i, Algebra.trace (Fv F v) (Fv F v ⊗[F] E) (sigR (Fv F v) σ (g (X 0) i) * g (Y 0) i) := by
       intro X
-      rw [BR, Fin.sum_univ_one, hh, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [BR, Fin.sum_univ_one, hh, map_sum]
     constructor
     · intro h X hX
       have hX' := fun i => SelfDualLatticeActions.sigR_mem v σ ((hg _).1 hX i)

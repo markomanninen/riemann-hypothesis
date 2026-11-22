@@ -1,39 +1,43 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ParamsEx
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.GaussianBinomialClosedForm
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TransferOn
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsPairingSingleNe
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnramifiedHeckeVacuumLargerEqSmallerStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeckeOperatorMoveAcrossInvariantBilinear
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilDatumInertPlaceStandardCayleyPairStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.InertUnitaryCosetSymmetryHeckeEvenStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitarySatakeTransformEqOfBaseChangeSatakeParame
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SetIntegralFundamentalDomainRightTranslateInvari
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHyperspecialSubgroupAtPlaceIffLocalStabilizer
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BaseChangeThetaLiftSatakeParameterEqAddSegmentStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SatakeTransformEqAtThetaLiftOfVacuumEqStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnramifiedLocalDualPairSwapHermitianAdjoint
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HyperspecialFixesAllChainVacuaAtInertPrime
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaLiftGoodProjectorIntertwinesMatchedHecke
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplittingCharactersUnramifiedOffLevels
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalLabelOperatorsOnHyperspecialFixedVector
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BcParamEqOfSatUEq
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsParamFunVIffIsSysParamDOfLevel
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ValuationOfMemNotMemSq
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DeterminedByLowTypes
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsParamDefinite
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaIntegralConjCuspFormParameterTransfer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MultiplicitySpaceEqZeroOfLowestKTypes
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsInertPlOfInertOff
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalHeckeConjPlaceEqDualLabel
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeckeCharValueInertPlaceAndSegment
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ParamsEx
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.GaussianBinomialClosedForm
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.TransferOn
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsPairingSingleNe
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnramifiedHeckeVacuumLargerEqSmallerStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeckeOperatorMoveAcrossInvariantBilinear
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilDatumInertPlaceStandardCayleyPairStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.InertUnitaryCosetSymmetryHeckeEvenStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitarySatakeTransformEqOfBaseChangeSatakeParame
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SetIntegralFundamentalDomainRightTranslateInvari
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHyperspecialSubgroupAtPlaceIffLocalStabilizer
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BaseChangeThetaLiftSatakeParameterEqAddSegmentStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SatakeTransformEqAtThetaLiftOfVacuumEqStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.UnramifiedLocalDualPairSwapHermitianAdjoint
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HyperspecialFixesAllChainVacuaAtInertPrime
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaLiftGoodProjectorIntertwinesMatchedHecke
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SplittingCharactersUnramifiedOffLevels
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalLabelOperatorsOnHyperspecialFixedVector
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.BcParamEqOfSatUEq
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasSatakeGLOfIsSatVecGL
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsParamFunVIffIsSysParamDOfLevel
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RamificationIdxEqOneOfIsSquare
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ValuationOfMemNotMemSq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DeterminedByLowTypes
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsParamDefinite
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaIntegralConjCuspFormParameterTransfer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MultiplicitySpaceEqZeroOfLowestKTypes
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.IsInertPlOfInertOff
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalHeckeConjPlaceEqDualLabel
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeckeCharValueInertPlaceAndSegment
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef
@@ -164,8 +168,8 @@ theorem map_piRep_proj {G U : Type} [Group G] [AddCommGroup U] [Module ℂ U] {�
     heckeVec (piRep ι π) K φ F j = heckeVec π K φ (F j) :=
   map_heckeVec hK hφ (LinearMap.proj j) (fun _ _ => rfl) F
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem param_down (hH : GlobalTheory.Hk3.HoweUnram) {ψ : AddChar (AF D.host.F) ℂ} {S T : HSp D} {χS χT : (AE D)ˣ →* Circle}
     {om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)} (hW : IsWeilDatumO ψ S T χS χT om) (hle : T.rank ≤ S.rank)
     {v : HeightOneSpectrum (𝓞 D.host.F)} {w : HeightOneSpectrum (𝓞 D.host.E)} (h : w.under (𝓞 D.host.F) = v)
@@ -185,8 +189,43 @@ theorem param_down (hH : GlobalTheory.Hk3.HoweUnram) {ψ : AddChar (AF D.host.F)
   · exact absurd hs (not_isSplit_of_isInertAt hin)
   have hH' := (GlobalTheory.Mem.Vol.cmData_isCMExt_and_gram_isHermND _ _ D.sp.cm).2 S
   have hL := GlobalTheory.HeckeDual.isLattice_frameLat S
+  have hspan : Submodule.span D.host.E (frameLat S : Set (Fin S.rank → D.host.E)) = ⊤ := by
+    have hfull : Submodule.span D.host.E (S.L0 : Set S.V) = ⊤ := by
+      let W := Submodule.span D.host.E (S.L0 : Set S.V)
+      change W = ⊤
+      by_contra h
+      let e : S.V ≃ₗ⋆[D.host.E] S.V :=
+        (S.frame.equivFun.trans (starLinearEquiv D.host.E)).trans S.frame.equivFun.symm
+      let g : S.V →ₗ[D.host.E] Module.Dual D.host.E W :=
+        (LinearMap.domRestrict' W).comp (S.hT.comp e.toLinearMap)
+      have hdim : Module.finrank D.host.E (Module.Dual D.host.E W) < Module.finrank D.host.E S.V := by
+        rw [Subspace.dual_finrank_eq]
+        exact Submodule.finrank_lt h
+      obtain ⟨x, hx, hx₀⟩ :=
+        Submodule.exists_mem_ne_zero_of_ne_bot (LinearMap.ker_ne_bot_of_finrank_lt (f := g) hdim)
+      have hsmul (a : D.host.E) : a • e x ∈ S.L0 := by
+        rw [← S.baseLattice_isUnimodular]
+        rw [Formalism.HermitianLatticesTheory.dualBasic_mem_dual]
+        intro y hy
+        have hxy : S.hT (e x) y = 0 :=
+          congrArg (fun f : Module.Dual D.host.E W => f ⟨y, Submodule.subset_span hy⟩) (LinearMap.mem_ker.mp hx)
+        have hyx : S.hT y (e x) = 0 := by
+          rw [(S.herm.eq (e x) y).symm, hxy, map_zero]
+        simp [hyx]
+      let i : D.host.E →ₗ[𝓞 D.host.E] S.L0 :=
+        ((LinearMap.toSpanSingleton D.host.E _ (e x)).restrictScalars (𝓞 D.host.E)).codRestrict S.L0 hsmul
+      let : Module.Finite (𝓞 D.host.E) S.L0 := Module.Finite.iff_fg.mpr S.standardTuple_isLattice.fg
+      let : Module.Finite (𝓞 D.host.E) D.host.E := Module.Finite.of_injective i fun a b hab =>
+        smul_left_injective D.host.E (fun hzero => hx₀ (e.map_eq_zero_iff.mp hzero)) (congrArg Subtype.val hab)
+      exact RingOfIntegers.not_isField D.host.E
+        (isField_of_isIntegral_of_isField (R := 𝓞 D.host.E) (S := D.host.E)
+          (FaithfulSMul.algebraMap_injective _ _) (Field.toIsField _))
+    have heq : (frameLat S : Set (Fin S.rank → D.host.E)) =
+        S.frame.equivFun.toLinearMap '' (S.L0 : Set S.V) :=
+      (S.frame.equivFun.toEquiv.image_eq_preimage_symm _).symm
+    rw [heq, ← Submodule.map_span, hfull, Submodule.map_top, LinearEquiv.range]
   obtain ⟨eS, heS, -⟩ := (((exists_isInertChart _ (isCMExt_host D) v).2 w h hin).2.2.2.2 c heT.1).2 S.rank S.gram
-    (frameLat S) hH' hL.fg hL.span_eq_top (GlobalTheory.AdelicU.SelfDual.isSelfDualAt_frameLat D S v)
+    (frameLat S) hH' hL.fg hspan (GlobalTheory.AdelicU.SelfDual.isSelfDualAt_frameLat D S v)
 
   obtain ⟨j0, hj0⟩ : ∃ j, b (f j) (x j) ≠ 0 := by
     by_contra hc
@@ -265,7 +304,8 @@ theorem param_down (hH : GlobalTheory.Hk3.HoweUnram) {ψ : AddChar (AF D.host.F)
         map_add' := fun F G => by simp [Finset.sum_add_distrib]
         map_smul' := fun a F => by simp [Finset.smul_sum] }
     have hΦ : ∀ g F, Φ (piRep ι πT g F) = ρT g (Φ F) := fun g F => by
-      simp only [Φ, LinearMap.coe_mk, AddHom.coe_mk, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Φ, LinearMap.coe_mk, AddHom.coe_mk, map_sum]
       exact Finset.sum_congr rfl fun j _ => hbT g (F j) (x j)
     have m := map_heckeVec hcT.1 hφ' Φ hΦ f
     have lhs : Φ (heckeVec (piRep ι πT) (KU c T.rank) φ' f) =
@@ -392,13 +432,13 @@ section Coord
 
 variable {D : D7}
 
+
 open GlobalTheory.DownLift.Params in
 set_option maxHeartbeats 1000000 in
-
 theorem paramFun_definite {V : HSp D} (c : CoefA V) (hc : c.Is)
     {β : GL (Fin V.rank) (Formalism.IndefR.Lev.EAf D)} {Λ : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)} (hβ : IsSDFrame V β Λ 1)
     {L : LevDat D.host.E ℂ V.rank} {S : Finset (HeightOneSpectrum (𝓞 D.host.F))}
-    (hS : ∀ PP, PP ∈ L.Pg ∨ PP ∈ L.Q → PP.under (𝓞 D.host.F) ∈ S) {f : Formalism.IndefR.Bridge.Gf V → c.W}
+    (hS : ∀ PP, PP ∈ L.Pg ∨ PP ∈ L.Q → (_root_.IsDedekindDomain.HeightOneSpectrum.under (𝓞 D.host.F) PP) ∈ S) {f : Formalism.IndefR.Bridge.Gf V → c.W}
     (hf : f ∈ Formalism.IndefR.Bridge.AdForms (Formalism.IndefR.Bridge.ratF V) c.coef.ρ (levEnv V β L).J (levEnv V β L).χ) (s : GlobalTheory.DownLift.Sys D)
     (he : ∀ P d, P.under (𝓞 D.host.F) ∉ S → GlobalTheory.Hk3.IsLab V P d → GlobalTheory.Hk3.hkF V P (Finsupp.single d 1) f = s P d • f)
     (B : GlobalTheory.LFun.Fam D.host.E) (hB : GlobalTheory.LFun.IsSysParamD D S V.rank s B)
@@ -431,15 +471,16 @@ theorem paramFun_definite {V : HSp D} (c : CoefA V) (hc : c.Is)
     rw [GlobalTheory.Hk3.opOf, Finsupp.sum_single_index (by exact zero_smul _ _), one_smul, Finset.sum_apply, LinearMap.sum_apply,
       Finset.sum_apply] at h3
     have h5 := congrArg ℓ h4
-    rw [map_sum, Pi.smul_apply, map_smul] at h5
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Pi.smul_apply, map_smul] at h5
     exact h3.trans h5.symm
   exact (GlobalTheory.LFun.isParamFunV_iff_isSysParamD_of_level hsph hℓ hlev heig B).2 hB
 
 variable {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m}
   {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]
 
-open GlobalTheory.DownLift.Params in
 
+open GlobalTheory.DownLift.Params in
 theorem paramV_coord (R : RealDat D A Ks) {F : Face D A} (hC : GlobalTheory.Hk3.Core R F) (i : Fin D.R.m) (t : T) (h)
     (hh : GlobalTheory.Hk3.IsOpsV R i t h) (s : GlobalTheory.DownLift.Sys D) (y : (R.HV i t).H) (hy : GlobalTheory.DownLift.IsEigV R i t h s y)
     (B : GlobalTheory.LFun.Fam D.host.E) (hB : GlobalTheory.LFun.IsSysParamD D (GlobalTheory.IndefiniteRowSideFullHecke.LabelSettingScalars.badPl R t) (Vc D i).rank s B)
@@ -464,11 +505,12 @@ theorem seg_coe {K : Type} [Field K] [NumberField K] (w : HeightOneSpectrum (�
 theorem thetaKO_sum {S T : HSp D} (om : GA D S × GA D T →* Module.End ℂ (WO S T → ℂ)) (h : GA D S) (g : GA D T)
     {ι : Type} (s : Finset ι) (u : ι → WO S T → ℂ) :
     thetaKO om h g (∑ k ∈ s, u k) = ∑ k ∈ s, thetaKO om h g (u k) := by
-  simp [thetaKO, map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [thetaKO, map_sum, Finset.sum_apply]
+
 
 open GlobalTheory.DownLift.Params in
 set_option maxHeartbeats 4000000 in
-
 theorem unrCorr_inert : GlobalTheory.Hk3.HoweUnram → ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T : Type)
     (A : FamIn D.what₂.LL G Pl0 T D.R.m) (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]
     (R : RealDat D A Ks) (F : Face D A), GlobalTheory.LiftRows.Given R F → R.FullP →
@@ -526,12 +568,13 @@ theorem unrCorr_inert : GlobalTheory.Hk3.HoweUnram → ∀ (D : D7) (G : Type) [
         ∑ k, thetaKO (R.ωP i t) h g (L0 (b0 k)) * b0.coord k (R.extV i t y h) := fun h => by
       rw [hL0]
       conv_lhs => rw [← b0.sum_repr ((R.cV i).ext ((R.HV i t).e y) h)]
-      rw [map_sum, thetaKO_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, thetaKO_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [map_smul, thetaKO_smul, mul_comm]
       rfl
     simp_rw [e1]
-    exact integral_finset_sum _ fun k _ => integrable_contAut hW hpos hν.1.1 hν.2 (hvac _).1 (hxk k) g
+    exact integral_finsetSum _ fun k _ => integrable_contAut hW hpos hν.1.1 hν.2 (hvac _).1 (hxk k) g
 
   have : IsTopologicalGroup (GA D (Vc D i)) := Formalism.L2.GlobalTheoryTheory.GenusMassVolumes.Unfold.topGroupHA _ _
   let X := contAut (Vc D i)
@@ -540,7 +583,7 @@ theorem unrCorr_inert : GlobalTheory.Hk3.HoweUnram → ∀ (D : D7) (G : Type) [
   have hρ0 : ∀ a (z : GA D (Vc D i) → ℂ) g, ρ0 a z g = z (g * embV (Vc D i) (w.under (𝓞 D.host.F)) a) :=
     fun _ _ _ => rfl
   have hXs : ∀ a, ∀ z ∈ X, ρ0 a z ∈ X := fun a z hz =>
-    ⟨hz.1.comp (continuous_mul_right _), fun γ hγ g => by rw [hρ0, hρ0, mul_assoc, hz.2 γ hγ]⟩
+    ⟨hz.1.comp (continuous_mul_const _), fun γ hγ g => by rw [hρ0, hρ0, mul_assoc, hz.2 γ hγ]⟩
   let ρX : Representation ℂ (Gv (Vc D i) (w.under (𝓞 D.host.F))) X := GlobalTheory.PRep.sub ρ0 X hXs
   let U := GlobalTheory.FinWeilO.thetaSub R.ψ (Vc D i) (Wc D i)
   have hint : ∀ (u : U) (z : X) x, IntegrableOn (fun h => thetaKO (R.ωP i t) h x (u : WO (Vc D i) (Wc D i) → ℂ) *
@@ -627,7 +670,7 @@ theorem unrCorr_inert : GlobalTheory.Hk3.HoweUnram → ∀ (D : D7) (G : Type) [
       (GlobalTheory.LFun.val (Formalism.IndefR.Lift.chrTh (R.toLevCh.mu t) R.eta ((i : ℕ) + 1)).2 w : ℂ) D.R.t
   rw [hvS, hvT, hstr]
   have E2 := congrArg (fun M : Multiset ℂˣ => (M.map (((-1 : ℂˣ) ^ (Wc D i).rank) * ·)).map (fun a : ℂˣ => (a : ℂ))) E1
-  simp only [Multiset.map_add, Multiset.map_map, Function.comp_def] at E2
+  simp only [Multiset.map_add (f := _), Multiset.map_map, Function.comp_def] at E2
   rw [Multiset.map_map]
   refine (Multiset.map_congr rfl fun a _ => ?_).trans (E2.trans (congrArg₂ _ (Multiset.map_congr rfl fun a _ => ?_) rfl))
   · simp only [mul_inv_cancel_left]

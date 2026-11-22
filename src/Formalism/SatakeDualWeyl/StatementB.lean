@@ -1,5 +1,9 @@
-import Formalism.SatakeDualWeyl.Statement
-import Formalism.HermitianLattices.StatementLat
+module
+
+public import Formalism.SatakeDualWeyl.Statement
+public import Formalism.HermitianLattices.StatementLat
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,10 +36,5 @@ def HermBridge : Prop :=
 def HermBridgeSurj : Prop :=
   ∀ (K : Type) [Field K] [StarRing K] (n : Type) [Fintype n] [DecidableEq n]
     (h : (n → K) →ₗ⋆[K] (n → K) →ₗ[K] K), ∀ u ∈ Formalism.HermitianLatticesTheory.isom h, ∃ g : GL n K, glEquiv g = u
-
-def StabGmap : Prop :=
-  ∀ (K : Type) [Field K] (R : Type) [CommRing R] [Algebra R K] (n : Type) [Fintype n] [DecidableEq n]
-    (Λ : Submodule R (n → K)) (g : GL n K),
-    g ∈ stabGL Λ ↔ Formalism.HermitianLatticesTheory.gmap (glEquiv g) Λ = Λ
 
 end Formalism.UG

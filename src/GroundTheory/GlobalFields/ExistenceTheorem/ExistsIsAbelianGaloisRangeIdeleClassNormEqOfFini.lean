@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.ExistenceTheorem.Kummer
-import GroundTheory.GlobalFields.ExistenceTheorem.NormLimitation
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ExistenceTheorem.Kummer
+public import GroundTheory.GlobalFields.ExistenceTheorem.NormLimitation
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -177,19 +181,23 @@ theorem exists_intermediateField_range_ideleClassNorm_eq_of_finiteIndex
     ∃ (L : IntermediateField K Ω) (_ : FiniteDimensional K L) (_ : IsAbelianGalois K L),
       (ideleClassNorm K L).range = N := by
   obtain ⟨L, _, _, _, _, hL⟩ := exists_isAbelianGalois_range_ideleClassNorm_eq_of_finiteIndex N hN
-  let f : L →ₐ[K] Ω := IsAlgClosed.lift
+  let f : L →ₐ[K] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   let τ := AlgEquiv.ofInjectiveField f
   have : FiniteDimensional K f.fieldRange := LinearEquiv.finiteDimensional τ.toLinearEquiv
   have : IsAbelianGalois K f.fieldRange := IsAbelianGalois.of_algHom τ.symm.toAlgHom
   exact ⟨f.fieldRange, inferInstance, inferInstance, (range_ideleClassNorm_congr τ).trans hL⟩
 
-variable (K Ω) in
 
+variable (K Ω) in
 abbrev FiniteAbelianSubfield : Type u :=
   {L : IntermediateField K Ω // FiniteDimensional K L ∧ IsAbelianGalois K L}
 
-variable (K) in
 
+variable (K) in
 abbrev OpenFiniteIndexSubgroup : Type u :=
   {N : Subgroup (IdeleClassGroup K) // IsOpen (N : Set (IdeleClassGroup K)) ∧ N.FiniteIndex}
 
@@ -215,8 +223,8 @@ theorem normGroup_surjective : Function.Surjective (normGroup (K := K) (Ω := Ω
     N.1 N.2.1
   exact ⟨⟨L, h1, h2⟩, Subtype.ext hL⟩
 
-variable (K Ω) in
 
+variable (K Ω) in
 def normGroupOrderIso : FiniteAbelianSubfield K Ω ≃o (OpenFiniteIndexSubgroup K)ᵒᵈ where
   toEquiv := (Equiv.ofBijective normGroup ⟨normGroup_injective, normGroup_surjective⟩).trans
     OrderDual.toDual

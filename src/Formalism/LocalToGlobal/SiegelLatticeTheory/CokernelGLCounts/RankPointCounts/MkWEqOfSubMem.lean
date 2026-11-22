@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumACorr
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LsDatumACorr
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ variable {E : Type} [CommRing E] [Algebra F E] [TopologicalSpace E] [MeasurableS
 theorem Dl_succ {M : Model F E} {V : Type} [AddCommGroup V] [Module E V] (H : HermSp M V) {r : ℕ}
     (f f' : Fin (r + 1) → V) : H.Dl f f' (r + 1) = (H.Zhat f f').det := by
   unfold HermSp.Dl
-  rw [dif_pos le_rfl]
+  rw [dite_eq_left le_rfl]
   congr 1
 
 theorem mkW_eq_of_sub_mem {M : Model F E} {V : Type} [AddCommGroup V] [Module E V] (H : HermSp M V) {r : ℕ}
@@ -72,7 +76,7 @@ theorem corrIso_holds (M : Model F E) (r n : ℕ) : CorrIso M r n := by
         ⟨a, mem_perp_isotropicSpan_of_mem_framePerp H a.2⟩ + ⟨b, mem_perp_isotropicSpan_of_mem_framePerp H b.2⟩ := Subtype.ext rfl
     have e2 : (⟨((ψf a + ψf b : ↥(H.W0 f₂ f₂')) : V), mem_perp_isotropicSpan_of_mem_framePerp H (ψf a + ψf b).2⟩ : ↥(H.perp (H.X f₂))) =
         ⟨ψf a, mem_perp_isotropicSpan_of_mem_framePerp H (ψf a).2⟩ + ⟨ψf b, mem_perp_isotropicSpan_of_mem_framePerp H (ψf b).2⟩ := Subtype.ext rfl
-    rw [e, e2, map_add, map_add, map_add, (hψf a).1, (hψf b).1]
+    rw [e, e2, map_add (f := _), map_add (f := _), map_add (f := _), (hψf a).1, (hψf b).1]
   have hψsmul : ∀ (c : E) a, ψf (c • a) = c • ψf a := by
     intro c a
     apply Subtype.ext
@@ -136,7 +140,7 @@ theorem corrIso_holds (M : Model F E) (r n : ℕ) : CorrIso M r n := by
     have hq₂ : H.mkW f₂ ⟨w₂, mem_perp_isotropicSpan_of_mem_framePerp H w₂.2⟩ =
         H.mkW f₂ (β • zP₂ + (γ * (Ring.inverse D₂ * D₁)) • oP₂ + vP) := by
       rw [← hy', hq₁]
-      simp only [map_add, map_smul, hz1, ho1, hw1, smul_smul]
+      simp only [map_add (f := _), map_smul, hz1, ho1, hw1, smul_smul]
     have hd := sub_mem_X_of_mkW_eq H hq₂
     have hU2mem : (w₂ : V) - (ψf ⟨w, hw⟩ : V) ∈ Submodule.span E (Set.range (Sum.elim f₂ f₂')) := by
       have e : (w₂ : V) - (ψf ⟨w, hw⟩ : V) =

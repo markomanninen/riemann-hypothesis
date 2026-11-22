@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.NilCard
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.TwSingle
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.NilCard
+
+@[expose] public section
 
 open UpperTheory.V.FW
 
@@ -17,7 +21,7 @@ private theorem gen2 {G Q W : Type} [Group G] [Finite Q] [AddCommGroup W] (h2 : 
     change ψ x ∈ (LinearMap.range φ).toAddSubgroup
     induction x using MonoidAlgebra.induction_linear with
     | zero => simp
-    | add a b ha hb => rw [map_add]; exact add_mem ha hb
+    | add a b ha hb => rw [map_add ψ]; exact add_mem ha hb
     | single g n =>
       have : (MonoidAlgebra.single g n : MonoidAlgebra ℤ G) = n • MonoidAlgebra.single g 1 := by simp
       rw [this, map_zsmul]
@@ -66,7 +70,7 @@ theorem UpperTheory.V.FW.sgnAlg :
   intro G _ _ J γ θ N S hJ hJ1 hS hθ hN
   have hdbl : ∀ y, kap J (y + y) ∈ S := fun y => by
     have : kap J (y + y) = 0 := by
-      rw [map_add]; ext g; simp [CharTwo.add_self_eq_zero]
+      rw [map_add (f := _)]; ext g; simp [CharTwo.add_self_eq_zero]
     rw [this]; exact zero_mem _
   let I : Ideal (MonoidAlgebra ℤ G) :=
     { (S.comap (kap J)).toAddSubmonoid with
@@ -74,7 +78,7 @@ theorem UpperTheory.V.FW.sgnAlg :
         change kap J (r * x) ∈ S
         induction r using MonoidAlgebra.induction_linear with
         | zero => simp
-        | add a b ha hb => rw [add_mul, map_add]; exact add_mem ha hb
+        | add a b ha hb => rw [add_mul, map_add (f := _)]; exact add_mem ha hb
         | single g n =>
           have : (MonoidAlgebra.single g n : MonoidAlgebra ℤ G) = n • MonoidAlgebra.single g 1 := by simp
           rw [this, smul_mul_assoc, map_zsmul, kap_single_mul hJ]
@@ -100,7 +104,7 @@ theorem UpperTheory.V.FW.sgnAlg :
     rfl
   have h2 : ∀ w : MonoidAlgebra ℤ G ⧸ I, 2 • w = 0 := fun w => by
     obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective w
-    rw [two_nsmul, ← map_add, Ideal.Quotient.eq_zero_iff_mem]
+    rw [two_nsmul, ← map_add (f := _), Ideal.Quotient.eq_zero_iff_mem]
     exact hdbl x
   haveI hfin : Finite (MonoidAlgebra ℤ G ⧸ I) :=
     (gen2 h2 (Ideal.Quotient.mk I).toAddMonoidHom Ideal.Quotient.mk_surjective id

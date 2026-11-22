@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HomologyRank.RankHomology
-import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.HomologyRank.RankHomology
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.HermiteNormalForms.SmulNeZeroLat
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,8 +39,8 @@ def pmap {X Y : Type} [MulAction Γ X] [MulAction Γ Y] (f : X → Y) (hf : ∀ 
     (pmap f hf).hom (Finsupp.single x c) = Finsupp.single (f x) c :=
   Finsupp.mapDomain_single
 
-variable (Γ) in
 
+variable (Γ) in
 def augC (X : Type) [MulAction Γ X] : PC Γ X ⟶ Rep.trivial ℂ Γ ℂ :=
   Rep.ofHom ⟨Finsupp.linearCombination ℂ (fun _ : X => (1 : ℂ)), fun g => by ext x; simp⟩
 
@@ -50,8 +54,8 @@ theorem PC_ext {X : Type} [MulAction Γ X] {A : Rep.{0} ℂ Γ} {φ ψ : PC Γ X
   ext x
   exact h x
 
-variable (Γ) in
 
+variable (Γ) in
 def FinOrb (X : Type) [MulAction Γ X] : Prop := ∃ R : Set X, R.Finite ∧ ∀ x : X, ∃ g : Γ, g • x ∈ R
 
 end Perm
@@ -60,9 +64,6 @@ structure Cx (Γ I : Type) [Group Γ] [MulAction Γ I] where
   S : ∀ n, Set (Fin n → I)
   comp : ∀ {m n : ℕ} (f : Fin m → Fin n) (t : Fin n → I), t ∈ S n → t ∘ f ∈ S m
   smul : ∀ {n : ℕ} (g : Γ) (t : Fin n → I), t ∈ S n → (fun j => g • t j) ∈ S n
-
-instance (Γ I : Type) [Group Γ] [MulAction Γ I] : Inhabited (Cx Γ I) :=
-  ⟨⟨fun _ => Set.univ, fun _ _ _ => trivial, fun _ _ _ => trivial⟩⟩
 
 namespace Cx
 
@@ -74,8 +75,6 @@ instance (p : ℕ) : MulAction Γ (K.Tup p) where
   smul g t := ⟨fun j => g • t.1 j, K.smul g t.1 t.2⟩
   one_smul t := Subtype.ext (funext fun j => one_smul _ (t.1 j))
   mul_smul g k t := Subtype.ext (funext fun j => mul_smul g k (t.1 j))
-
-theorem smul_val {p : ℕ} (g : Γ) (t : K.Tup p) (j : Fin (p + 1)) : (g • t).1 j = g • t.1 j := rfl
 
 def re {p q : ℕ} (f : Fin (p + 1) → Fin (q + 1)) (t : K.Tup q) : K.Tup p := ⟨t.1 ∘ f, K.comp f t.1 t.2⟩
 
@@ -180,7 +179,7 @@ def BddOver : Prop := ∀ (G : Type) [Group G] (S : Subgroup G), S.FiniteIndex �
 
 def BddComm : Prop := ∀ (G : Type) [Group G] (Γ Λ : Subgroup G), Subgroup.Commensurable Γ Λ → Bdd ↥Λ → Bdd ↥Γ
 
-def BddComplex : Prop := ∀ (L : Type) [Field L] [NumberField L] [IsTotallyComplex L] (N : ℕ), Bdd (KT.Gm L N)
+def BddComplex : Prop := ∀ (L : Type) [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] (N : ℕ), Bdd (KT.Gm L N)
 
 def FixOrb : Prop :=
   ∀ (G Z : Type) [Group G] [MulAction G Z] (σ : G →* G) (s : Z → Z), (∀ (g : G) z, s (g • z) = σ g • s z) →
@@ -214,12 +213,12 @@ variable {L N}
 
 def sLat (σ : 𝓞 L →+* 𝓞 L) (y : Lat L N) : Lat L N := fun a => σ (y a)
 
-variable (N) in
 
+variable (N) in
 def sGm (σ : 𝓞 L →+* 𝓞 L) : Gm L N →* Gm L N := Matrix.GeneralLinearGroup.map σ
 
-variable (N) in
 
+variable (N) in
 def Fix (σ : 𝓞 L →+* 𝓞 L) : Subgroup (Gm L N) := (sGm N σ).eqLocus (MonoidHom.id _)
 
 theorem mem_Fix {σ : 𝓞 L →+* 𝓞 L} {g : Gm L N} : g ∈ Fix N σ ↔ sGm N σ g = g := Iff.rfl
@@ -242,7 +241,7 @@ def ReInv : Prop :=
     ∀ h ∈ HR L N, (∀ y, q h (sLat σ y) = q h y) ∧ ∀ g ∈ Fix N σ, g • h ∈ HR L N
 
 def GoodRe : Prop :=
-  ∀ (L : Type) [Field L] [NumberField L] [IsTotallyComplex L] (N : ℕ) (σ : 𝓞 L →+* 𝓞 L), IsConj L σ →
+  ∀ (L : Type) [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] (N : ℕ) (σ : 𝓞 L →+* 𝓞 L), IsConj L σ →
     ConeExtensionAcyclic.Good (qr L N) (Tr L N)
 
 def ActRe : Prop :=
@@ -253,29 +252,29 @@ def ActRe : Prop :=
         (fun j => g • t j) ∈ ConeExtensionAcyclic.simp (qr L N) (Tr L N) n
 
 def SpanRe : Prop :=
-  ∀ (L : Type) [Field L] [NumberField L] [IsTotallyComplex L] (N : ℕ) (σ : 𝓞 L →+* 𝓞 L), IsConj L σ →
+  ∀ (L : Type) [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] (N : ℕ) (σ : 𝓞 L →+* 𝓞 L), IsConj L σ →
     ∀ (p : ℕ), ∀ t ∈ ConeExtensionAcyclic.simp (qr L N) (Tr L N) (p + 1), Spans {y : Lat L N | ∀ j, q (t j).1.1 y = 1}
 
-open Pointwise in
 
+open Pointwise in
 def MinOrb : Prop :=
-  ∀ (L : Type) [Field L] [NumberField L] [IsTotallyComplex L] (N p : ℕ), ∃ R : Set (Fin (p + 1) → Set (Lat L N)), R.Finite ∧
+  ∀ (L : Type) [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] (N p : ℕ), ∃ R : Set (Fin (p + 1) → Set (Lat L N)), R.Finite ∧
     ∀ h : Fin (p + 1) → HS L N, (∀ j, h j ∈ Ry L N) → Spans {y : Lat L N | ∀ j, q (h j) y = 1} →
       ∃ g : Gm L N, g • (fun j => minVec (h j)) ∈ R
 
-open Pointwise in
 
+open Pointwise in
 def MinStab : Prop :=
-  ∀ (L : Type) [Field L] [NumberField L] [IsTotallyComplex L] (N : ℕ), ∀ h ∈ Ry L N, Spans (minVec h) →
+  ∀ (L : Type) [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] (N : ℕ), ∀ h ∈ Ry L N, Spans (minVec h) →
     Finite (MulAction.stabilizer (Gm L N) (minVec h))
 
 def OrbRe : Prop :=
-  ∀ (L : Type) [Field L] [NumberField L] [IsTotallyComplex L] (N : ℕ) (σ : 𝓞 L →+* 𝓞 L), IsConj L σ → ∀ p : ℕ,
+  ∀ (L : Type) [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] (N : ℕ) (σ : 𝓞 L →+* 𝓞 L), IsConj L σ → ∀ p : ℕ,
     ∃ R : Set (Fin (p + 1) → HS L N), R.Finite ∧ ∀ t ∈ ConeExtensionAcyclic.simp (qr L N) (Tr L N) (p + 1),
       ∃ g ∈ Fix N σ, (fun j => g • (t j).1.1) ∈ R
 
 def BddFix : Prop :=
-  ∀ (L : Type) [Field L] [NumberField L] [IsTotallyComplex L] (N : ℕ) (σ : 𝓞 L →+* 𝓞 L), IsConj L σ → Bdd ↥(Fix N σ)
+  ∀ (L : Type) [Field L] [NumberField L] [_root_.NumberField.IsTotallyComplex L] (N : ℕ) (σ : 𝓞 L →+* 𝓞 L), IsConj L σ → Bdd ↥(Fix N σ)
 
 def ExCM : Prop :=
   ∀ (F : Type) [Field F] [NumberField F] [IsTotallyReal F], ∃ (L : Type) (_ : Field L) (_ : NumberField L)

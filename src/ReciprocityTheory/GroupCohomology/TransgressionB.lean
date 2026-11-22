@@ -1,7 +1,11 @@
-import ReciprocityTheory.GroupCohomology.CupConnRightStatement
-import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
-import ReciprocityTheory.GroupCohomology.InfRes
-import ReciprocityTheory.GroupCohomology.TransgressionA
+module
+
+public import ReciprocityTheory.GroupCohomology.CupConnRightStatement
+public import ReciprocityTheory.GroupCohomology.DEqZeroOfMemB
+public import ReciprocityTheory.GroupCohomology.InfRes
+public import ReciprocityTheory.GroupCohomology.TransgressionA
+
+@[expose] public section
 
 namespace ReciprocityTheory.Coh.InflationTransgression
 

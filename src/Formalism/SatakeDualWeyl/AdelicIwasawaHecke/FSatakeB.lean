@@ -1,4 +1,8 @@
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FSatakeA
+module
+
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.FSatakeA
+
+@[expose] public section
 
 open Formalism.UG
 

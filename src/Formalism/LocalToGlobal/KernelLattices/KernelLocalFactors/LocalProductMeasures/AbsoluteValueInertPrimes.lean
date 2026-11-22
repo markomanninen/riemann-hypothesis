@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.MuProd
-import Formalism.LocalToGlobal.Columns.RecLevelHost
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.MuProd
+public import Formalism.LocalToGlobal.Columns.RecLevelHost
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -17,11 +21,6 @@ variable {E : Type} [Field E] [NumberField E]
 theorem ab_one_val {P : HeightOneSpectrum (𝓞 E)} {a : E} (h : OneAt P a) : P.valuation E a = 1 := by
   have := Valuation.map_one_add_of_lt (v := P.valuation E) h
   rwa [add_sub_cancel] at this
-
-theorem ab_one_one (P : HeightOneSpectrum (𝓞 E)) : OneAt P (1 : E) := by
-  unfold OneAt
-  rw [sub_self, map_zero]
-  exact zero_lt_one
 
 theorem ab_one_mul {P : HeightOneSpectrum (𝓞 E)} {a b : E} (ha : OneAt P a) (hb : OneAt P b) : OneAt P (a * b) := by
   unfold OneAt
@@ -210,7 +209,7 @@ theorem ab_norm_int (hX : X.Ok) (a : 𝓞 X.E) : ∃ k : 𝓞 X.F, algebraMap (�
     have h2 : IsIntegral ℤ (algebraMap X.F X.E k) := by
       rw [hk]
       exact RingOfIntegers.isIntegral_coe _
-    exact (isIntegral_algebraMap_iff (algebraMap X.F X.E).injective).1 h2
+    exact (isIntegral_algebraMap_iff ).1 h2
   refine ⟨⟨k, hint⟩, ?_⟩
   apply RingOfIntegers.ext
   exact hk

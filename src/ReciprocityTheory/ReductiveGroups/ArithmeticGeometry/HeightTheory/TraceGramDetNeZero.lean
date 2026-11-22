@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscBDefs
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.KTFiniteDimensional
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HDiscBDefs
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.KTFiniteDimensional
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -20,7 +24,8 @@ theorem trace_gram_det_ne_zero {F : Type} [Field F] [CharZero F] {κ : Type} [Fi
     have h1 := congrFun hv k
     have h2 : ∑ c, Algebra.trace F (E c) (b k c * y c) =
         ∑ l, (∑ c, Algebra.trace F (E c) (b k c * b l c)) * v l := by
-      simp only [hy, Finset.mul_sum, map_sum, mul_smul_comm, map_smul, smul_eq_mul, Finset.sum_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hy, Finset.mul_sum, map_sum, mul_smul_comm, map_smul, smul_eq_mul, Finset.sum_mul]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun l _ => Finset.sum_congr rfl fun c _ => ?_
       ring
@@ -33,7 +38,8 @@ theorem trace_gram_det_ne_zero {F : Type} [Field F] [CharZero F] {κ : Type} [Fi
       intro c
       rw [hμ c, Finset.sum_mul]
       simp [smul_mul_assoc]
-    simp only [hx, map_sum, map_smul, smul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hx, map_sum, map_smul, smul_eq_mul]
     rw [Finset.sum_comm]
     simp [← Finset.mul_sum, hk]
   have hy0 : y = 0 := by

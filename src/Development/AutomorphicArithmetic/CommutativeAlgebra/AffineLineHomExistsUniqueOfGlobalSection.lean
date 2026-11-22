@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
+module
+
+public import Development.AutomorphicArithmetic.CupPullbacks.ConstCompSingle
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite GlobalTheory.EtC UpperTheory.Pbf
 

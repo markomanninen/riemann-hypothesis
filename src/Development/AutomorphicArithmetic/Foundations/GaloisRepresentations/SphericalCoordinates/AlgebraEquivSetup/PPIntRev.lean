@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.VecCoord
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.IsDelNeZeroCoprimeDenominatorsDifferentGenerator
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormLeOneOfIsIntegralInt
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.AlgebraEquivSetup.VecCoord
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.IsDelNeZeroCoprimeDenominatorsDifferentGenerator
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NormLeOneOfIsIntegralInt
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix GlobalTheory.UPel.HT GlobalTheory.LKTrip GlobalTheory.LKGeo GlobalTheory.LKMid GlobalTheory.LKDef GlobalTheory.CuspRep GlobalTheory.UnitaryBC Formalism.UG UpperTheory.Gal.W2.Seed
 open UpperTheory.Gal.CertificateRingHomMap (GUf Gam0 AfQ Plc sim mat comp rat lev ZU)
 open scoped TensorProduct Classical
@@ -39,7 +44,7 @@ private theorem norm_le (τ : E →+* PadicAlgCl p) (x : E)
 
 variable [IsCMField E] {n : ℕ}
 
-private theorem entry_le (y : Gam0 E n) (hy : ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w (rat y) ∈ GlobalTheory.LFun.KGL w n)
+private theorem entry_le (y : Gam0 E n) (hy : ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w (rat y) ∈ GlobalTheory.LFun.KGL w (n := n))
     (τ : E →+* PadicAlgCl p) (i j : Fin n) : ‖τ (y.1.1.val i j)‖ ≤ 1 := by
   refine norm_le τ _ fun w hw => ?_
   have h1 : (comp w (rat y)).val i j ∈ w.adicCompletionIntegers E := (GlobalTheory.AdelicU.mem_GLint_iff.1 (hy w hw)).1 i j
@@ -47,17 +52,18 @@ private theorem entry_le (y : Gam0 E n) (hy : ∀ w : Plc E, (p : 𝓞 E) ∈ w.
   rw [h2, HeightOneSpectrum.mem_adicCompletionIntegers, HeightOneSpectrum.valuedAdicCompletion_eq_valuation'] at h1
   exact h1
 
-private theorem hyp_inv (y : Gam0 E n) (hy : ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w (rat y) ∈ GlobalTheory.LFun.KGL w n) :
-    ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w (rat y⁻¹) ∈ GlobalTheory.LFun.KGL w n := fun w hw => by
+private theorem hyp_inv (y : Gam0 E n) (hy : ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w (rat y) ∈ GlobalTheory.LFun.KGL w (n := n)) :
+    ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w (rat y⁻¹) ∈ GlobalTheory.LFun.KGL w (n := n) := fun w hw => by
   rw [map_inv, map_inv]; exact inv_mem (hy w hw)
 
 private theorem mult_le (hn : 0 < n) (τ : E →+* PadicAlgCl p) (y : Gam0 E n)
-    (hy : ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w (rat y) ∈ GlobalTheory.LFun.KGL w n) :
+    (hy : ∀ w : Plc E, (p : 𝓞 E) ∈ w.asIdeal → comp w (rat y) ∈ GlobalTheory.LFun.KGL w (n := n)) :
     algebraMap ℚ_[p] (PadicAlgCl p) (algebraMap ℚ ℚ_[p] (y.1.2 : ℚ)) ∈ ReciprocityTheory.DiscreteGroups.LocalClassField.Obar p := by
   have h : (y.1.1.val.map (GlobalTheory.SplitPts.conjE E).toRingHom)ᵀ * y.1.1.val =
       algebraMap ℚ E y.1.2 • (1 : Matrix (Fin n) (Fin n) E) := y.2.1
   have h0 := congrArg τ (congrFun (congrFun h ⟨0, hn⟩) ⟨0, hn⟩)
-  rw [Matrix.mul_apply, map_sum, Matrix.smul_apply, Matrix.one_apply_eq, smul_eq_mul, mul_one] at h0
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.mul_apply, map_sum, Matrix.smul_apply, Matrix.one_apply_eq, smul_eq_mul, mul_one] at h0
   have e : algebraMap ℚ_[p] (PadicAlgCl p) (algebraMap ℚ ℚ_[p] (y.1.2 : ℚ)) = τ (algebraMap ℚ E y.1.2) := by
     simp only [eq_ratCast, map_ratCast]
   rw [e, ← h0]

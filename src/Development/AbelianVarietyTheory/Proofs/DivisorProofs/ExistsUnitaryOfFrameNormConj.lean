@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasBoundedPolesGlobalData
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsConjFsBasisOfUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasBoundedPolesGlobalData
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsConjFsBasisOfUnitary
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -24,17 +28,6 @@ theorem CxPts.mem_ptsIn_conj {y : CxPts p σ} {y' : CxPts p σ'} (h : y'.1 = spM
   exact fun x _ => hy (Set.mem_univ _)
 
 end Points
-
-def CxPts.conjEquiv {E : Type} [Field E] {S : Scheme.{0}} (q : S ⟶ Sp E) (τ : E →+* ℂ) :
-    CxPts q τ ≃ CxPts q (ComplexEmbedding.conjugate τ) :=
-  (Points.conjHomeomorph S).toEquiv.subtypeEquiv fun y => by
-    have e : spMap (ComplexEmbedding.conjugate τ) = spMap (starRingEnd ℂ) ≫ spMap τ := by
-      rw [spMap, spMap, spMap, ← Spec.map_comp]
-      rfl
-    have : IsIso (spMap (starRingEnd ℂ)) :=
-      inferInstanceAs (IsIso (Spec.map (starRingAut (R := ℂ)).toCommRingCatIso.hom))
-    change y ≫ q = _ ↔ (spMap (starRingEnd ℂ) ≫ y) ≫ q = _
-    rw [e, Category.assoc, cancel_epi]
 
 theorem mem_unitaryGroup_of_norm_mulVec {α : Type*} [Fintype α] [DecidableEq α] {V : Matrix α α ℂ}
     (h : ∀ w : α → ℂ, √(∑ i, ‖V.mulVec w i‖ ^ 2) = √(∑ i, ‖w i‖ ^ 2)) : V ∈ Matrix.unitaryGroup α ℂ := by
@@ -75,14 +68,8 @@ namespace HilbertSamuel.Geo
 
 variable (G : Geo F)
 
-theorem isConj_φ (σ : F →+* ℂ) : (G.φ σ).IsConj (G.φ (ComplexEmbedding.conjugate σ)) :=
-  G.isConj_weight _ _ G.conj σ
-
 theorem isConj_φ₂ (σ : F →+* ℂ) : (G.φ₂ σ).IsConj (G.φ₂ (ComplexEmbedding.conjugate σ)) :=
   G.second.isConj_weight _ _ G.conj₂ σ
-
-theorem isConj_φTw (m : ℤ) (σ : F →+* ℂ) : (G.φTw m σ).IsConj (G.φTw m (ComplexEmbedding.conjugate σ)) :=
-  (G.isConj_φ₂ σ).tens ((G.isConj_φ σ).zpow m)
 
 variable {G}
 

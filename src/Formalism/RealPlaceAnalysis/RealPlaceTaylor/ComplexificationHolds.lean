@@ -1,4 +1,8 @@
-import Formalism.RealPlaceAnalysis.Complexify
+module
+
+public import Formalism.RealPlaceAnalysis.Complexify
+
+@[expose] public section
 
 open Matrix
 
@@ -28,7 +32,7 @@ lemma f1auxiliary_hs_eq {n : ℕ} (g : Matrix (Fin n) (Fin n) ℂ) : hs g = (tra
 
 lemma continuous_hs_real_place_taylor {n : ℕ} : Continuous (hs : Matrix (Fin n) (Fin n) ℂ → ℝ) := by
   unfold hs
-  exact continuous_finset_sum _ fun i _ => continuous_finset_sum _ fun j _ =>
+  exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
     ((continuous_apply j).comp (continuous_apply i)).norm.pow 2
 
 lemma f1auxiliary_hs_one (n : ℕ) : hs (1 : Matrix (Fin n) (Fin n) ℂ) = n := by

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.ProjectorCoeffSuccIndex
-import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.CommPow
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.ProjectorCoeffSuccIndex
+public import Formalism.SharpRestriction.GrowthBounds.TruncatedChains.CommPow
+
+@[expose] public section
 
 noncomputable section
 

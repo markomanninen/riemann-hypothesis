@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,9 +25,7 @@ theorem extForm_ev (hp : Par F) (l : Glob1 F →ₗ[R] R) (T : C) (v : Glob1 F) 
 
 theorem extended_form_naturality (hp : Par F) (l : Glob1 F →ₗ[R] R) {T T' : C} (φ : T ⟶ T') (α : Ω[F.obj T⁄R]) :
     extForm F hp l T' (p1 F φ α) = mp F φ (extForm F hp l T α) := by
-  refine (hp T).inductionOn α (fun α => GlobalTheory.CompanionTheory.OneFormCoh.extForm F hp l T' (GlobalTheory.CechDR.p1 F φ α) =
-    GlobalTheory.CatCoh.mp F φ (GlobalTheory.CompanionTheory.OneFormCoh.extForm F hp l T α)) ?_ ?_ ?_ ?_
-  · simp only [map_zero]
+  refine (hp T).inductionOn α ?_ ?_ ?_
   · intro v
     change GlobalTheory.CompanionTheory.OneFormCoh.extForm F hp l T' (GlobalTheory.CechDR.p1 F φ (v.1 T)) =
       GlobalTheory.CatCoh.mp F φ (GlobalTheory.CompanionTheory.OneFormCoh.extForm F hp l T (v.1 T))
@@ -37,18 +39,18 @@ theorem extended_form_naturality (hp : Par F) (l : Glob1 F →ₗ[R] R) {T T' : 
   · intro s n hn
     rw [GlobalTheory.CechDR.oneFormsMapOfFunctorMorphism_smul, map_smul, map_smul, hn, smul_eq_mul, smul_eq_mul, map_mul]
   · intro n₁ n₂ h₁ h₂
-    rw [map_add, map_add, h₁, h₂, map_add, map_add]
+    rw [map_add (f := _), map_add (f := _), h₁, h₂, map_add (f := _), map_add (f := _)]
 
 theorem extForm_sum (hp : Par F) {n : ℕ} (w : Fin n → Glob1 F) (l : Fin n → Glob1 F →ₗ[R] R)
     (hw : ∀ v, ∑ i, l i v • w i = v) (T : C) (α : Ω[F.obj T⁄R]) :
     ∑ i, extForm F hp (l i) T α • (w i).1 T = α := by
-  refine (hp T).inductionOn α (fun α => ∑ i, GlobalTheory.CompanionTheory.OneFormCoh.extForm F hp (l i) T α • (w i).1 T = α) ?_ ?_ ?_ ?_
-  · simp only [map_zero, zero_smul, Finset.sum_const_zero]
+  refine (hp T).inductionOn α ?_ ?_ ?_
   · intro v
     change ∑ i, GlobalTheory.CompanionTheory.OneFormCoh.extForm F hp (l i) T (v.1 T) • (w i).1 T = v.1 T
     simp only [GlobalTheory.CompanionTheory.OneFormCoh.extForm_ev, algebraMap_smul]
     have h := congrArg (MainStatements.Hodge.evForm F T) (hw v)
-    rw [map_sum] at h
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at h
     simp only [map_smul] at h
     exact h
   · intro s m hm
@@ -60,7 +62,7 @@ theorem extForm_sum (hp : Par F) {n : ℕ} (w : Fin n → Glob1 F) (l : Fin n �
     conv_rhs => rw [← h₁, ← h₂]
     rw [← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [map_add, add_smul]
+    rw [map_add (f := _), add_smul]
 
 def muMap : Z1 F ⊗[R] Glob1 F →ₗ[R] A1 F :=
   TensorProduct.lift (LinearMap.mk₂ R (fun (f : Z1 F) (v : Glob1 F) T T' φ ↦ f.1 T T' φ • v.1 T')
@@ -86,7 +88,7 @@ theorem extForm_muMap (hp : Par F) (l : Glob1 F →ₗ[R] R) (t : Z1 F ⊗[R] Gl
     rw [map_zero, map_zero]
     exact map_zero _
   | add x y hx hy =>
-    simp only [map_add, Pi.add_apply, Submodule.coe_add, hx, hy]
+    simp only [map_add (f := _), Pi.add_apply, Submodule.coe_add, hx, hy]
   | tmul f v =>
     simp only [GlobalTheory.CompanionTheory.OneFormCoh.muMap_tmul, GlobalTheory.CompanionTheory.OneFormCoh.contr_tmul, map_smul, GlobalTheory.CompanionTheory.OneFormCoh.extForm_ev,
       Submodule.coe_smul, Pi.smul_apply, smul_eq_mul, Algebra.smul_def]
@@ -98,7 +100,7 @@ theorem sum_contr {n : ℕ} (w : Fin n → Glob1 F) (l : Fin n → Glob1 F →�
   induction t using TensorProduct.induction_on with
   | zero => simp only [map_zero, TensorProduct.zero_tmul, Finset.sum_const_zero]
   | add x y hx hy =>
-    simp only [map_add, TensorProduct.add_tmul, Finset.sum_add_distrib, hx, hy]
+    simp only [map_add (f := _), TensorProduct.add_tmul, Finset.sum_add_distrib, hx, hy]
   | tmul f v =>
     simp_rw [GlobalTheory.CompanionTheory.OneFormCoh.contr_tmul, TensorProduct.smul_tmul]
     rw [← TensorProduct.tmul_sum, hw]
@@ -109,7 +111,7 @@ def pushZ (hp : Par F) (l : Glob1 F →ₗ[R] R) (a : A1 F)
   ⟨fun T T' φ ↦ extForm F hp l T' (a T T' φ), fun T T' T'' φ ψ ↦ by
     change extForm F hp l T'' (a T T'' (φ ≫ ψ)) =
       mp F ψ (extForm F hp l T' (a T T' φ)) + extForm F hp l T'' (a T' T'' ψ)
-    rw [ha, map_add, extended_form_naturality]⟩
+    rw [ha, map_add (f := _), extended_form_naturality]⟩
 
 theorem main (hF : Framed F) :
     ∃ mu : Z1 F ⊗[R] Glob1 F →ₗ[R] A1 F, (∀ f ω T T' φ, mu (f ⊗ₜ ω) T T' φ = f.1 T T' φ • ω.1 T') ∧
@@ -127,7 +129,8 @@ theorem main (hF : Framed F) :
       simp [Pi.single_apply]
     calc ∑ i, (LinearMap.proj i ∘ₗ g) v • f (Pi.single i 1)
         = f (∑ i, g v i • (Pi.single i 1 : Fin n → R)) := by
-          rw [map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum]
           simp only [map_smul, LinearMap.comp_apply, LinearMap.proj_apply]
       _ = v := by
           rw [hsum]
@@ -136,7 +139,8 @@ theorem main (hF : Framed F) :
   · intro a ha
     refine ⟨∑ i, GlobalTheory.CompanionTheory.OneFormCoh.pushZ F hp (l i) a ha ⊗ₜ w i, ?_⟩
     funext T T' φ
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [Finset.sum_apply, GlobalTheory.CompanionTheory.OneFormCoh.muMap_tmul]
     exact GlobalTheory.CompanionTheory.OneFormCoh.extForm_sum F hp w l hw T' (a T T' φ)
   · intro t β hβ
@@ -148,7 +152,8 @@ theorem main (hF : Framed F) :
       funext T T' φ
       rw [GlobalTheory.CatCoh.amitsur_d0_apply, ← GlobalTheory.CompanionTheory.OneFormCoh.extForm_muMap F hp, hβ, map_sub,
         GlobalTheory.CompanionTheory.OneFormCoh.extended_form_naturality]
-    rw [← GlobalTheory.CompanionTheory.OneFormCoh.sum_contr F w l hw t, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← GlobalTheory.CompanionTheory.OneFormCoh.sum_contr F w l hw t, map_sum]
     refine Finset.sum_eq_zero fun i _ => ?_
     rw [LinearMap.rTensor_tmul, hzero, TensorProduct.zero_tmul]
 

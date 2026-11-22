@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GeneratorNeZeroOfHeight
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ScaleMultiHomogeneous
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GeneratorNeZeroOfHeight
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.ScaleMultiHomogeneous
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -46,7 +50,8 @@ theorem psiS_chiImg (j₀ : Fin (N + 1)) (x : Fin N → Ω) (v : TVar D N)
       exact (Fin.insertNth_apply_same (α := fun _ => MvPolynomial (SVar D N) Ω) j₀ _ _).trans
         (if_neg hi)
     rw [h1, h2]
-    simp [psiS, map_neg, map_sum, map_mul, MvPolynomial.rename_X, MvPolynomial.rename_C]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [psiS, map_neg, map_sum, map_mul, MvPolynomial.rename_X, MvPolynomial.rename_C]
   · obtain ⟨k, hk⟩ := Fin.exists_succAbove_eq hj
     rw [← hk]
     have h1 : chiImg j₀ x (i, j₀.succAbove k) = X (i, k) :=
@@ -66,7 +71,8 @@ theorem psiS_chiImg_base (j₀ : Fin (N + 1)) (x : Fin N → Ω) :
   have h1 : chiImg j₀ x ((0 : Fin (D + 1)), j₀) = -∑ k, X ((0 : Fin (D + 1)), k) * C (x k) :=
     Fin.insertNth_apply_same (α := fun _ => MvPolynomial (Fin (D + 1) × Fin N) Ω) j₀ _ _
   rw [h1]
-  simp [psiS, map_neg, map_sum, map_mul, MvPolynomial.rename_X, MvPolynomial.rename_C]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [psiS, map_neg, map_sum, map_mul, MvPolynomial.rename_X, MvPolynomial.rename_C]
 
 theorem sImg_base (j₀ : Fin (N + 1)) (x : Fin N → Ω) :
     sImg (Ω := Ω) j₀ x ((0 : Fin (D + 1)), j₀) =
@@ -146,11 +152,12 @@ theorem w0rat_eq_base (hd : d.AxH 𝒜) (c : ι) :
   have hr1 : ratio (Ω := Ω c) (d.w (d.jc c) c) (d.w (d.jc c) c) = 1 := by
     have hex : ∃ a : Ω c, d.w (d.jc c) c = a • d.w (d.jc c) c := ⟨1, (one_smul _ _).symm⟩
     unfold ratio
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
     exact (key _ _ _ hb ((one_smul _ _).trans hex.choose_spec)).symm
   unfold Data.rationalBaseRow
   rw [Fin.sum_univ_succAbove _ (d.jc c), hr1, map_one, mul_one]
-  simp only [sH_X, sImg_succAbove, sImg_base, map_add, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [sH_X, sImg_succAbove, sImg_base, map_add (f := _), map_sum, map_mul]
   congr 1
 
 theorem ker_eval_le_of_place (hd : d.AxH 𝒜) (c : ι) {p : Ideal (KTp K d.D d.N)}
@@ -209,7 +216,7 @@ theorem ker_eval_le_of_place (hd : d.AxH 𝒜) (c : ι) {p : Ideal (KTp K d.D d.
       rw [← hC k, sub_self, AddValuation.map_zero]
       exact ⟨(hw2 _).1, by simp⟩
     · rename_i p q hp hq
-      simp only [map_add]
+      simp only [map_add (f := _)]
       refine ⟨le_trans (le_min hp.1 hq.1) (AddValuation.map_add _ _ _), ?_⟩
       have e : d.sH c p + d.sH c q - (psiS (chiP (K := K) (D := d.D) (d.jc c) (d.x c) p) + psiS (chiP (K := K) (D := d.D) (d.jc c) (d.x c) q)) =
           (d.sH c p - psiS (chiP (K := K) (D := d.D) (d.jc c) (d.x c) p)) + (d.sH c q - psiS (chiP (K := K) (D := d.D) (d.jc c) (d.x c) q)) := by ring
@@ -248,7 +255,7 @@ theorem ker_eval_eq_of_place (hd : d.AxH 𝒜) (c : ι) {p : Ideal (KTp K d.D d.
   have h2 := (Ideal.height_le_iff.mp h1) _ hprime hlt
   have h3 : ¬ (kerP (K := K) (D := d.D) (d.jc c) (d.x c)).height ≤ ((0 : ℕ) : ℕ∞) := by
     intro h0
-    have h4 := (Ideal.height_le_iff.mp h0) ⊥ Ideal.bot_prime (bot_lt_iff_ne_bot.mpr hne)
+    have h4 := (Ideal.height_le_iff.mp h0) ⊥ Ideal.isPrime_bot (bot_lt_iff_ne_bot.mpr hne)
     simp at h4
   apply h3
   have h5 : (kerP (K := K) (D := d.D) (d.jc c) (d.x c)).height = 0 :=

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WittMatrixCoeffMemOfFrobenius
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffZeroEqZeroIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WittMatrixCoeffMemOfFrobenius
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CoeffZeroEqZeroIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,14 +29,14 @@ theorem coordT_map (f : S →ₐ[R] T) (k : d) (x : O ⊗[R] S) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul o s => rw [Algebra.TensorProduct.map_tmul, coordT_tmul, coordT_tmul, AlgHom.id_apply, map_smul]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem coordT_mul_tmul (k : d) (z : O ⊗[R] S) (s : S) :
     coordT b k (z * ((1 : O) ⊗ₜ[R] s)) = coordT b k z * s := by
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul o s' => rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, coordT_tmul, coordT_tmul, smul_mul_assoc]
-  | add x y hx hy => simp only [add_mul, map_add, hx, hy]
+  | add x y hx hy => simp only [add_mul, map_add (f := _), hx, hy]
 
 theorem sum_coordT [Fintype d] (x : O ⊗[R] S) : ∑ k, b k ⊗ₜ[R] coordT b k x = x := by
   induction x using TensorProduct.induction_on with
@@ -42,7 +46,7 @@ theorem sum_coordT [Fintype d] (x : O ⊗[R] S) : ∑ k, b k ⊗ₜ[R] coordT b 
     rw [TensorProduct.sum_tmul]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [coordT_tmul, TensorProduct.smul_tmul]
-  | add x y hx hy => simp only [map_add, TensorProduct.tmul_add, Finset.sum_add_distrib, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), TensorProduct.tmul_add, Finset.sum_add_distrib, hx, hy]
 
 end Coord
 
@@ -59,8 +63,8 @@ def valSub : ValuationSubring (Cb l) where
     · obtain ⟨y, hy⟩ := h
       exact Or.inr ⟨y, hy⟩
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def toValSub : OCb l →+* valSub l :=
   (algebraMap (OCb l) (Cb l)).codRestrict (valSub l) fun x => ⟨x, rfl⟩
 
@@ -111,11 +115,13 @@ theorem mem_range_inclO : ∀ (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [
   have hY : ∀ p, frobW l (v' p) = ∑ q, inclW l (Yt p q) * v' q := by
     rintro ⟨i', k⟩
     have e1 : frobW l (v' (i', k)) = coordT b k (frobOW l O (v i')) := (coordT_map b (frobW l) k (v i')).symm
-    rw [e1, h i', Matrix.mulVec, dotProduct, map_sum, Fintype.sum_prod_type]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e1, h i', Matrix.mulVec, dotProduct, map_sum, Fintype.sum_prod_type]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [Matrix.map_apply]
     conv_lhs => rw [hv j]
-    rw [Finset.mul_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.mul_sum, map_sum]
     refine Finset.sum_congr rfl fun m _ => ?_
     have e2 : inclO l O (Y i' j) * (b m ⊗ₜ[ℤ_[l]] (1 : WCb l)) =
         inclO l O (Y i' j * (b m ⊗ₜ[ℤ_[l]] (1 : Ainf l))) := by
@@ -123,7 +129,8 @@ theorem mem_range_inclO : ∀ (l : ℕ) [Fact l.Prime] (O : Type) [CommRing O] [
     rw [← mul_assoc, e2, coordT_mul_tmul, coordT_inclO]
   have hr : ∀ p, v' p ∈ (inclW l).range := mem_range_inclW l v' Yt hY
   refine ⟨∑ k, b k ⊗ₜ[ℤ_[l]] Classical.choose (hr (i, k)), ?_⟩
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   conv_rhs => rw [← sum_coordT b (v i)]
   refine Finset.sum_congr rfl fun k _ => ?_
   exact (inclO_tmul _ _).trans (congrArg (fun w => b k ⊗ₜ[ℤ_[l]] w) (Classical.choose_spec (hr (i, k))))

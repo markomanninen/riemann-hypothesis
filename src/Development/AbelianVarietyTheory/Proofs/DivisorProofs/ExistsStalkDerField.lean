@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
-import Development.AbelianVarietyTheory.Definitions.Divisors.RigidForFan
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsConnK
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianPartConst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsRaynaudTorusWeightFunctionInvariantField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusInvariantLiftAddInvariantCombination
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LogDerivativePrincipalPolarisationIndependent
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasDefect
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RigidForFan
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.ToroidalCompactificationBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsConnK
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianPartConst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsRaynaudTorusWeightFunctionInvariantField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TorusInvariantLiftAddInvariantCombination
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LogDerivativePrincipalPolarisationIndependent
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField IsLocalRing
 open scoped CategoryTheory.Obj Matrix TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
@@ -142,7 +147,8 @@ theorem isField_dE (hdd : ∀ a, IsField ⊤ (dd a)) (i : h.J) : IsField (h.W i)
       rw [(hdd a).2.1 W le_top]; ring
     simp only [dE, h₀.2.1 W hW, e]
     ring
-  · simp only [dE, h₀.2.2 W W' hWW hW, fun a => (hdd a).2.2 W W' hWW le_top, map_add, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    · simp only [dE, h₀.2.2 W W' hWW hW, fun a => (hdd a).2.2 W W' hWW le_top, map_add (f := _), map_sum, map_mul,
       GlobalTheory.KS.GlueDer.res_const]
 
 theorem map_op (e : ℕ) (hν : ν * e = 1) (i : h.J) (O : G.left.Opens) (hO : O ≤ h.W i) {A : Type} [CommRing A]
@@ -155,7 +161,8 @@ theorem map_op (e : ℕ) (hν : ν * e = 1) (i : h.J) (O : G.left.Opens) (hO : O
       rw [← map_natCast (G.hom.appLE ⊤ O (fun _ _ => trivial)).hom,
         ← map_natCast (Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom, ← map_mul, ← map_mul, hν, map_one, map_one]
     simpa using congrArg π this
-  simp only [op, dE, pE, GlobalTheory.KS.GlueDer.rsT_eq hO, map_add, map_sub, map_mul, map_sum, hΘ, zero_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [op, dE, pE, GlobalTheory.KS.GlueDer.rsT_eq hO, map_add (f := _), map_sub, map_mul, map_sum, hΘ, zero_mul,
     Finset.sum_const_zero, sub_zero, map_ofNat, map_natCast, map_pow, GlobalTheory.KS.GlueDer.res_const]
   linear_combination (-2 * ∑ a, π (constFn G.hom O (h.u a)) * π (dd a O f) -
     2 * (e : A) * π (resG G.left hO (h.p' i)) * π f) * h1
@@ -208,8 +215,8 @@ def IsDesc : Prop :=
   ∀ (Z : Scheme.{0}) (a : Z ⟶ Y.H.left) (b : Z ⟶ A₀.left), a ≫ Y.q.left = b ≫ m₀ → ∀ (z : Z) (i : h.J),
     (b ≫ m₀) z ∈ V i → gs b z (m₀ ⁻¹ᵁ V i) (pb i) = gs a z (h.W i) (pE h ν i)
 
-variable (Q) in
 
+variable (Q) in
 def Commutes : Prop :=
   ∀ (α : Q.X) (j : Fin 4) (T : A₀.left ⟶ A₀.left), T ≫ m₀ = m₀ ≫ Q.famφB α j → T ≫ A₀.hom = A₀.hom →
     ∀ (W : Q.P.A.left.Opens) (f : Γ(Q.P.A.left, W)) (Z : Scheme.{0}) (b : Z ⟶ A₀.left) (z : Z),
@@ -271,7 +278,7 @@ theorem IsFibre.dE_agree [CharZero K] {Z : Scheme.{0}} {a : Z ⟶ Y.H.left} {b :
   have := AbConst.lift_agree h hF.field i i' U hU (gsH a z U hz)
     (by simpa only [map_ofNat] using (two_ne_zero (α := K)).isUnit.map (cstH (b ≫ A₀.hom) z))
     (fun a' b' => by rw [← gs_eq_gsH, hF.gs_const w z U hz, hF.symb, cst_eq_cstH, map_zero]) f
-  simp only [gs_eq_gsH a z U hz, dE, map_add, this]
+  simp only [gs_eq_gsH a z U hz, dE, map_add (f := _), this]
 
 theorem IsFibre.T_zero {α : Q.X} {T : A₀.left ⟶ A₀.left} (h₁ : T ≫ m₀ = m₀ ≫ Q.famφB α 0) (h₂ : T ≫ A₀.hom = A₀.hom) :
     T = 𝟙 _ :=

@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.BallVolDefs
-import Development.WeilBound.CoreStatements.VolumeEquality.LocInj
-import Development.WeilBound.CoreStatements.EqualVolumeCompactOpens.RmulScalOne
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.BallVolDefs
+public import Development.WeilBound.CoreStatements.VolumeEquality.LocInj
+public import Development.WeilBound.CoreStatements.EqualVolumeCompactOpens.RmulScalOne
+
+@[expose] public section
 
 noncomputable section
 

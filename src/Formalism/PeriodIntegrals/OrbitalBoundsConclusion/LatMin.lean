@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.LatMin
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MinimalLatticeNorm.NormTwoEqOne
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.LatMin
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MinimalLatticeNorm.NormTwoEqOne
+
+@[expose] public section
 
 namespace PI
 

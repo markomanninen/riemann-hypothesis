@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EndValuedForm11Coeffs
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPolarisedTopChernCoeff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EndValuedForm11Coeffs
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousAtPolarisedTopChernCoeff
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,10 +25,10 @@ private lemma continuousAt_dbar_ofReal_of_contDiffAt_one {n : ℕ} {ρ : _root_.
   simp only [_root_.GlobalTheory.dbar_apply]
   fun_prop
 
+
 set_option autoImplicit false in
 open MeasureTheory Filter Topology in
 open scoped ContDiff Matrix in
-
 theorem _root_.GlobalTheory.GoodTop.continuousAt_corrC :
     ∀ {n : ℕ} {r : Type} [Fintype r] [DecidableEq r] {ρ : _root_.ReciprocityTheory.L2DbarEstimates.V n → ℝ}
       {G₀ G₁ : _root_.ReciprocityTheory.L2DbarEstimates.V n → Matrix r r ℂ} {v : _root_.ReciprocityTheory.L2DbarEstimates.V n},
@@ -61,6 +65,6 @@ theorem _root_.GlobalTheory.GoodTop.continuousAt_corrC :
     funext x
     rfl
   rw [heq]
-  exact tendsto_finset_sum _ fun j _ => hposition j
+  exact tendsto_finsetSum _ fun j _ => hposition j
 
 end GlobalTheory.GoodTop

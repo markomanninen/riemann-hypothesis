@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SetupEig
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SplitDictionaryHoldsStatement
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.SetupEig
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SplitDictionaryHoldsStatement
+
+@[expose] public section
 
 namespace PositivityTheory.Rg.BcB.F.Eig.CSD
 

@@ -1,11 +1,16 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BddCrisToOD
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLPowIHatToHatSSubDvd
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvdOfForallNearOD
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IdealPowerMembershipDivisible
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLastMaxOfMem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FrobeniusPeriodRingInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPotential
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BddCrisToOD
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLPowIHatToHatSSubDvd
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DvdOfForallNearOD
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IdealPowerMembershipDivisible
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsLastMaxOfMem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FrobeniusPeriodRingInjective
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BK GlobalTheory.BKReal GlobalTheory.BKGal GlobalTheory.Per Matrix
 open scoped Formalism.Per
 
@@ -17,14 +22,14 @@ variable {l : ℕ} [hl : Fact l.Prime] {a e : ℕ} [NeZero a] [NeZero e] {O K : 
   [Algebra ℤ_[l] O] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [NormedField K] [IsUltrametricDist K]
   [Algebra O K] [IsUnitBall O K] [NormedAlgebra ℚ_[l] K] [CompleteSpace K]
 
-omit [NeZero a] [NeZero e] [Module.Finite ℤ_[l] O] [CompleteSpace K] in
 
+omit [NeZero a] [NeZero e] [Module.Finite ℤ_[l] O] [CompleteSpace K] in
 theorem toOB_injective : Function.Injective (toOB l O) :=
   Module.Flat.lTensor_preserves_injective_linearMap (M := O) (acrisToBcris l).toLinearMap
     (GlobalTheory.MemLoc.PhiInj.algebraMap_acris_bcris_injective l)
 
-omit [NeZero a] in
 
+omit [NeZero a] in
 theorem iSD_eq_of_mem_invL_A (ϖ : PiSys l e) (f : invL l (S O K e)) (hf : (f : K⟦X⟧) ∈ invL l (A O K)) :
     ϖ.iSD O K f = ϖ.iHat O K (toHatS O K l e f) := by
   obtain ⟨n, hn⟩ := hf
@@ -42,8 +47,8 @@ theorem iSD_eq_of_mem_invL_A (ϖ : PiSys l e) (f : invL l (S O K e)) (hf : (f : 
   refine (ϖ.iSD_of_mem O K hg _).trans ?_
   rw [ϖ.iS_of_mem O K hn, crisToOD_toOCr]
 
-omit [NeZero a] in
 
+omit [NeZero a] in
 theorem crisToOD_iS (ϖ : PiSys l e) (s : S O K e) : crisToOD l O (ϖ.iS O K s) =
     ϖ.iHat O K (toHatS O K l e (algebraMap (S O K e) (invL l (S O K e)) s)) := by
   have hlu : IsUnit (l : OD l O) := isUnit_l_OD
@@ -54,7 +59,7 @@ theorem crisToOD_iS (ϖ : PiSys l e) (s : S O K e) : crisToOD l O (ϖ.iS O K s) 
   set D : S O K e → OD l O := fun s => crisToOD l O (ϖ.iS O K s) -
     ϖ.iHat O K (toHatS O K l e (algebraMap (S O K e) (invL l (S O K e)) s)) with hD
   have hDadd : ∀ p q : S O K e, D (p + q) = D p + D q := fun p q => by
-    simp only [hD, map_add]; ring
+    simp only [hD, map_add (f := _)]; ring
   have hDmul : ∀ (k : ℕ) (q : S O K e), D ((l : S O K e) ^ k * q) = (l : OD l O) ^ k * D q := fun k q => by
     simp only [hD, map_mul, map_pow, map_natCast]; ring
   have hdiv : ∀ m : ℕ, ξ ^ m ∣ D s := by
@@ -100,8 +105,8 @@ theorem crisToOD_iS (ϖ : PiSys l e) (s : S O K e) : crisToOD l O (ϖ.iS O K s) 
     simp only [Ideal.span_singleton_pow, smul_eq_mul, Ideal.mul_top, SModEq.zero]
     exact Ideal.mem_span_singleton.2 (hdiv n)
 
-omit [Algebra ℤ_[l] O] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [NeZero e] [CompleteSpace K] in
 
+omit [Algebra ℤ_[l] O] [Module.Free ℤ_[l] O] [Module.Finite ℤ_[l] O] [NeZero e] [CompleteSpace K] in
 theorem eq_zero_of_forall_dvd (x : Ahat O K l e) (h : ∀ n : ℕ, ∃ y, x = Ehat O K l e ^ n * y) : x = 0 := by
   refine AdicCompletion.ext_evalₐ fun n => ?_
   obtain ⟨y, rfl⟩ := h n

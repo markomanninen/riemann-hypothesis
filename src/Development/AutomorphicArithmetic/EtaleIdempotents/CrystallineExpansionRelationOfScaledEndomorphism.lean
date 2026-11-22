@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.VecZero
-import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SplitOnOfDisj
+module
+
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.VecZero
+public import Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SplitOnOfDisj
+
+@[expose] public section
 
 set_option synthInstance.maxHeartbeats 200000
 set_option backward.isDefEq.respectTransparency false
@@ -55,7 +59,7 @@ private theorem core {F R C : Type} {V : Type*} [Field F] [AddCommGroup V] [Modu
       induction y using TensorProduct.induction_on with
       | zero => simp
       | tmul a b => simp [← mul_assoc, hu']
-      | add a b ha hb => simp only [map_add, ha, hb]
+      | add a b ha hb => simp only [map_add (f := _), ha, hb]
     rw [← hl x, hx, map_zero]
   have hsc : ∀ (i : Fin (n + 1)) (x : R),
       u * (⇑φ)^[f * (n - i + N)] (c x * τ ^ r) =
@@ -95,9 +99,11 @@ private theorem core {F R C : Type} {V : Type*} [Field F] [AddCommGroup V] [Modu
     have e3 : a ⊗ₜ[F] (σ i • y) = σ i • (a ⊗ₜ[F] y) := map_zsmul (TensorProduct.mk F V C a) _ y
     rw [e1, e2, e3, smul_comm]
   apply hinj
-  rw [← hvec, Fintype.sum_prod_type, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hvec, Fintype.sum_prod_type, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [map_zsmul, map_sum, map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_zsmul, map_sum, map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [TensorProduct.map_tmul, LinearMap.lTensor_tmul, LinearMap.mulLeft_apply, hpow, hterm i k]
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.IsCompactSpanRange
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.IsCompactSpanRange
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,14 +57,14 @@ theorem hR_add_left (x x' y : Fin n → R ⊗[F] E) :
     hR R σ J (x + x') y = hR R σ J x y + hR R σ J x' y := by
   unfold hR
   simp only [Formalism.UG.hform]
-  simp [Finset.sum_add_distrib, add_mul, mul_add, map_add, Pi.add_apply, Matrix.mulVec_add,
+  simp [Finset.sum_add_distrib, add_mul, mul_add, map_add (f := _), Pi.add_apply, Matrix.mulVec_add,
     Matrix.add_mulVec, dotProduct_add, add_dotProduct]
 
 theorem hR_add_right (x y y' : Fin n → R ⊗[F] E) :
     hR R σ J x (y + y') = hR R σ J x y + hR R σ J x y' := by
   unfold hR
   simp only [Formalism.UG.hform]
-  simp [Finset.sum_add_distrib, add_mul, mul_add, map_add, Pi.add_apply, Matrix.mulVec_add,
+  simp [Finset.sum_add_distrib, add_mul, mul_add, map_add (f := _), Pi.add_apply, Matrix.mulVec_add,
     Matrix.add_mulVec, dotProduct_add, add_dotProduct]
 
 theorem gramR_add {a : ℕ} (x W : Fin a → Fin n → R ⊗[F] E) :

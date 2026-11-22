@@ -1,10 +1,14 @@
-import Formalism.HermitianCurvature.BlockKernelPropertiesOfSteps
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CharacterOrthogonalityDual
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelQuotientFinite
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelNonzeroModulusDeterminantEq
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstKernelPropertiesOfHypotheses
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.AddedBlockKernelSupport
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstKernelExplicitFormula
+module
+
+public import Formalism.HermitianCurvature.BlockKernelPropertiesOfSteps
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CharacterOrthogonalityDual
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelQuotientFinite
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.KernelNonzeroModulusDeterminantEq
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstKernelPropertiesOfHypotheses
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.AddedBlockKernelSupport
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FirstKernelExplicitFormula
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 
@@ -26,11 +30,6 @@ theorem first_kernel_gram_property : Formalism.FourierDecayAlt.A5.SingleBlockPos
 theorem first_kernel_parseval : Formalism.FourierDecayAlt.A5.SingleBlockParseval := FirstKernelProperties.first_kernel_periodic_gram_parseval.2.2
 
 namespace FirstKernelProperties
-
-theorem th1All : Formalism.FourierDecayAlt.A5.Th1Eq ∧ Formalism.FourierDecayAlt.A5.SingleBlockThetaProps := ⟨A5x6.first_theta_eq_of_equality (A5x6.first_theta_equality_of_kernel_facts first_kernel_periodic first_kernel_gram_property first_kernel_parseval
-    added_block_kernel_support added_block_kernel_block_diagonal),
-    A5x6.first_theta_equality_of_kernel_facts first_kernel_periodic first_kernel_gram_property first_kernel_parseval
-      added_block_kernel_support added_block_kernel_block_diagonal⟩
 
 end FirstKernelProperties
 

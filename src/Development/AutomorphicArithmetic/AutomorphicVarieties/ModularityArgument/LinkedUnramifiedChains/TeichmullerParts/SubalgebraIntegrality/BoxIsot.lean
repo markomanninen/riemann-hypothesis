@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.TeichmullerParts.UnramifiedTrivialInertialType
+
+@[expose] public section
+
 open UpperTheory.V.Z.J.D
 open scoped TensorProduct
 
@@ -30,7 +35,7 @@ private lemma isot_factor {G H W W' X Y : Type} [Group G] [Group H] [AddCommGrou
     obtain ⟨t, rfl⟩ := f.surjective x
     induction t using TensorProduct.induction_on with
     | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | tmul w y =>
       have := hf (1, h) (w ⊗ₜ[ℂ] y)
       simp only [LinearEquiv.coe_coe] at this
@@ -67,7 +72,7 @@ private lemma isot_tensor {G H W W' X Y : Type} [Group G] [Group H] [AddCommGrou
     obtain ⟨a, b⟩ := ab
     induction t using TensorProduct.induction_on with
     | zero => simp
-    | add s t hs ht => simp only [map_add, hs, ht]
+    | add s t hs ht => simp only [map_add (f := _), hs, ht]
     | tmul w v =>
       have := hf (a, b) (w ⊗ₜ[ℂ] g v)
       simp only [LinearEquiv.coe_coe] at this
@@ -89,7 +94,7 @@ private lemma isot_tensor {G H W W' X Y : Type} [Group G] [Group H] [AddCommGrou
   induction t using TensorProduct.induction_on with
   | zero => simp
   | add s t hs ht =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact T.add_mem (hs (Submodule.mem_top)) (ht (Submodule.mem_top))
   | tmul w y => exact hw w y
 

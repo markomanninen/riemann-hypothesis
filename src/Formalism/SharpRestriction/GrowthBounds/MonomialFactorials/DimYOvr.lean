@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.LettersExt
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.LettersExt
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,8 +14,8 @@ section Fibre
 
 variable (C0 CE1 CE2 : ℝ) (X : flipOneThree.Inst)
 
-open Classical in
 
+open Classical in
 def Wl (dl : DCl X) (l : Fin X.s) : Finset ℕ :=
   X.winA.filter fun x => ∑ c, dl.2 l c ≤ x ∧ (X.S C0 CE1 CE2).P X.p l ∣ x - ∑ c, dl.2 l c
 

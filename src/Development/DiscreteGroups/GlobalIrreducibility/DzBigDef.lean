@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroInertia
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTypeGroupBlockLift
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.DepthZeroInertia
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsTypeGroupBlockLift
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,9 +15,9 @@ namespace DiscreteGroups.sglob.DzType
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
 def DepthZeroInertiaBig : Prop :=
-  ∀ (E Ω : Type) [Field E] [NumberField E] [IsTotallyComplex E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (g : ℕ)
+  ∀ (E Ω : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] (g : ℕ)
     [Fact g.Prime] (A : ValuationSubring Ω) (w : HeightOneSpectrum (𝓞 E)) (h : IsPlaceOver A w)
-    (rc : IrrGL (w.adicCompletion E) → WD h), IsRec h rc →
+    (rc : IrrGL (k := w.adicCompletion E) → WD h), IsRec h rc →
     ∀ (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i →
     ∀ (κ : IsLocalRing.ResidueField A ≃+* Formalism.CyclotomicNorms.Fbar g) (L : LabelDatum g) (t : G E Ω), t ∈ Ine (F := E) A →
     Formalism.L2.NT.TameCoupled A κ t L.gen →
@@ -21,9 +25,6 @@ def DepthZeroInertiaBig : Prop :=
     ∀ (τ : FDRep ℂ (Gn g n)) (P : (ZMod g)[X]), IsCuspOf L P τ.character →
     GlobalTheory.SerSys.TameGen.Inflates (σ.ρ.comp (Matrix.GeneralLinearGroup.map i.toRingHom)) τ →
     (rc (cls σ)).inePol t = GlobalTheory.SerSys.TameGen.liftPoly L.teich P
-
-theorem depthZeroInertiaBig_of (H : GlobalTheory.Published.DepthZeroInertia) : DepthZeroInertiaBig :=
-  fun E Ω _ _ _ _ _ _ g _ A w h rc hrc i hi κ L t ht hT n _ => H E Ω g A w h rc hrc i hi κ L t ht hT n
 
 theorem big_of_le_nV (D : Formalism.BasicNotions.D7) (k : Fin 2) {n : ℕ} (hn : n ≤ D.R.nV) : 16 * n ^ 2 < D.host.g k := by
   have hg : D.host.g k % (D.host.QS * D.host.q * D.host.d) = 1 := D.ntypes.g_cond k

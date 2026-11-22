@@ -1,11 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.TraceFormulas.LatDefs
-import Formalism.GaloisCohomology.LocalTateDualityK
-import Formalism.CharacterColumnKernels.StatementRho
-import ReciprocityTheory.Hypotheses.GalCohDefs
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LevRepZApply
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.H2BoundedTwist
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsGaloisPowMovesPadicRootOfUnity
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.TraceFormulas.LatDefs
+public import Formalism.GaloisCohomology.LocalTateDualityK
+public import Formalism.CharacterColumnKernels.StatementRho
+public import ReciprocityTheory.Hypotheses.GalCohDefs
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LevRepZApply
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.H2BoundedTwist
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsGaloisPowMovesPadicRootOfUnity
+
+@[expose] public section
 
 open ReciprocityTheory.Gal
 
@@ -160,8 +164,7 @@ theorem h2_bounded_of_trivial_action : Formalism.GaloisCohomology.LocalTateDuali
       (⟨φ.1 (q.out • x₀), hkill φ _⟩ : {z : ZMod (p ^ n) // ((p ^ N : ℕ) : ZMod (p ^ n)) * z = 0})) := by
     intro φ ψ hφψ
     apply Subtype.ext
-    apply TDual.ext
-    intro m
+    refine DFunLike.ext _ _ fun m => ?_
     obtain ⟨t, rfl⟩ := hx₀ m
     rw [hval φ t, hval ψ t]
     exact congrArg Subtype.val (congrFun hφψ (Ideal.Quotient.mk _ t))
@@ -175,8 +178,7 @@ theorem h2_bounded_of_trivial_action : Formalism.GaloisCohomology.LocalTateDuali
   have hsmul0 : ∀ φ : H0 ((twDual (Formalism.GaloisCohomology.cycK p K n) (levRepZ p n h ρ)).comp (MonoidHom.id (Formalism.GaloisCohomology.GK p K))), ((p ^ N : ℕ) : ZMod (p ^ n)) • φ = 0 := by
     intro φ
     apply Subtype.ext
-    apply TDual.ext
-    intro m
+    refine DFunLike.ext _ _ fun m => ?_
     rw [Submodule.coe_smul, TDual.smul_apply, hkill φ m]
     rfl
   have hΨ : Function.Injective (fun (x : H2 ((levRepZ p n h ρ).comp (MonoidHom.id (Formalism.GaloisCohomology.GK p K))))

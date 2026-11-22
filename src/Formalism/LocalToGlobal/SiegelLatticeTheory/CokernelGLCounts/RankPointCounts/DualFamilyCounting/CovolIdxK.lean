@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -143,7 +147,8 @@ theorem card_quot_le (𝔭 : Ideal (𝓞 K)) [h𝔭 : 𝔭.IsMaximal] (n : ℕ)
     exact (smul_eq_zero.mp h1).resolve_left hj
   have h2 : ∑ i, (Ideal.Quotient.mk 𝔭 (o i)) • v i = 0 := by
     have h3 := congrArg (Submodule.mkQ (𝔭 • (⊤ : Submodule (𝓞 K) M))) hsum0
-    rw [map_sum, map_zero] at h3
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero] at h3
     rw [← h3]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [← hy i, Submodule.mkQ_apply, Submodule.Quotient.mk_smul]

@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.TaylorSpanGeneratorsAlt
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HasseJidPow
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BaseLengthBound.TaylorSpanGeneratorsAlt
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HasseJidPow
+
+@[expose] public section
 
 noncomputable section
 

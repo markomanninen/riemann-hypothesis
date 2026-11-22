@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousDistribHaarCharUnits
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNiceLocalFieldProductRingInfiniteAdelesComplet
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HermitianFormFiniteZerosOnLineCmExt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.T2SpaceNumberFieldInfiniteAdeles
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousDistribHaarCharUnits
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsNiceLocalFieldProductRingInfiniteAdelesComplet
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.HermitianFormFiniteZerosOnLineCmExt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.GaugeEx
 open scoped TensorProduct NNReal ENNReal
@@ -64,9 +68,9 @@ variable {V : Type} [AddCommGroup V] [Module R V] [TopologicalSpace V] [IsTopolo
   [ContinuousSMul R V] [LocallyCompactSpace V] [SecondCountableTopology V] [T2Space V]
   [MeasurableSpace V] [BorelSpace V]
 
+
 omit [IsTopologicalRing R] [T2Space R] [LocallyCompactSpace R] [SecondCountableTopology R]
   [MeasurableSpace R] [BorelSpace R] [T2Space V] in
-
 theorem exists_map_smul (μ : Measure V) [μ.IsAddHaarMeasure] {c : R} (hc : IsUnit c) :
     ∃ d : ℝ≥0, d ≠ 0 ∧ μ.map (fun x : V => c • x) = d • μ := by
   let e : V ≃ₜ+ V :=
@@ -81,10 +85,10 @@ theorem exists_map_smul (μ : Measure V) [μ.IsAddHaarMeasure] {c : R} (hc : IsU
   exact ⟨_, (Measure.addHaarScalarFactor_pos_of_isAddHaarMeasure _ μ).ne',
     Measure.isAddLeftInvariant_eq_smul _ μ⟩
 
+
 omit [IsTopologicalRing R] [T2Space R] [LocallyCompactSpace R] [SecondCountableTopology R]
   [MeasurableSpace R] [BorelSpace R] [IsTopologicalAddGroup V] [LocallyCompactSpace V]
   [SecondCountableTopology V] [T2Space V] [MeasurableSpace V] [BorelSpace V] in
-
 theorem exists_compact_pull (ho : IsOpenUnits R) {S : Set R} (hS : IsCompact S) {s : R → R}
     (hs : ContinuousOn s S) (hu : ∀ u ∈ S, IsUnit (s u)) {K : Set V} (hK : IsCompact K) :
     ∃ K' : Set V, IsCompact K' ∧ ∀ u ∈ S, ∀ x, s u • x ∈ K → x ∈ K' := by
@@ -94,8 +98,8 @@ theorem exists_compact_pull (ho : IsOpenUnits R) {S : Set R} (hS : IsCompact S) 
   show Ring.inverse (s u) • s u • x = x
   rw [smul_smul, Ring.inverse_mul_cancel _ (hu u hu'), one_smul]
 
-omit [IsTopologicalRing R] [LocallyCompactSpace R] in
 
+omit [IsTopologicalRing R] [LocallyCompactSpace R] in
 theorem exists_avg_const (ho : IsOpenUnits R) (μ : Measure V) [μ.IsAddHaarMeasure]
     (ν : Measure R) [ν.IsOpenPosMeasure] [IsFiniteMeasureOnCompacts ν]
     {S : Set R} (hS : IsCompact S) {s : R → R} (hsm : Measurable s)
@@ -298,9 +302,9 @@ theorem exists_fibreFamily (hR : Nice R) (μ : Measure V) [μ.IsAddHaarMeasure]
             exact (Function.mem_support.1 hu) (by simp [h])
         exact (hcu.comp (continuous_id.mul continuous_const)).continuousAt
 
+
 omit [TopologicalSpace R] [IsTopologicalRing R] [T2Space R] [LocallyCompactSpace R]
   [SecondCountableTopology R] [MeasurableSpace R] [BorelSpace R] [ContinuousSMul R V] [T2Space V] in
-
 theorem null_of_finite_curve (μ : Measure V) [μ.IsAddHaarMeasure] {Z : Set V} (hZ : MeasurableSet Z)
     {L : ℝ → V} (hL : Continuous L) (h : ∀ x : V, {t : ℝ | x + L t ∈ Z}.Finite) : μ Z = 0 := by
   have hc : Continuous (fun p : V × ℝ => p.1 + L p.2) := by fun_prop
@@ -349,7 +353,8 @@ theorem exists_line [Nontrivial R] (h : IsCMExt F E σ) (hM : 1 ≤ M) (hJ : IsH
   have hs : ∀ e : E, sigR R σ (inclR R e) = inclR R (σ e) := fun e => rfl
   have hyy : hR R σ J y y = algebraMap R (R ⊗[F] E) (algebraMap F R a) := by
     have : hR R σ J y y = inclR R (hE σ J y0 y0) := by
-      simp only [hR, hE, Formalism.UG.hform, map_sum, map_mul, y, hs, JR, Matrix.map_apply,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [hR, hE, Formalism.UG.hform, map_sum, map_mul, y, hs, JR, Matrix.map_apply,
         RingHom.coe_coe]
     rw [this, hy0, ← IsScalarTower.algebraMap_apply]
     exact (Algebra.TensorProduct.includeRight : E →ₐ[F] R ⊗[F] E).commutes a
@@ -374,7 +379,7 @@ theorem exists_line [Nontrivial R] (h : IsCMExt F E σ) (hM : 1 ≤ M) (hJ : IsH
   unfold qR hR
   generalize algebraMap F R (1 / 2) = u
   rw [e, GlobalTheory.HermLineZeros.hform_expand, hst, mul_assoc (algebraMap R (R ⊗[F] E) t)]
-  simp only [← Algebra.smul_def, map_add, map_smul, smul_eq_mul]
+  simp only [← Algebra.smul_def, map_add (f := _), map_smul, smul_eq_mul]
   ring
 
 end Herm
@@ -384,7 +389,7 @@ theorem finite_quadratic_zeros {K : Type} [Field K] {a : K} (ha : a ≠ 0) (c d 
   have hne : (Polynomial.C a * Polynomial.X ^ 2 + Polynomial.C c * Polynomial.X
       + Polynomial.C d : Polynomial K) ≠ 0 := by
     intro h0
-    have := congrArg (fun p => Polynomial.coeff p 2) h0
+    have := congrArg (fun p => _root_.AddMonoidAlgebra.coeff (M := ℕ) p 2) h0
     simp [Polynomial.coeff_X, Polynomial.coeff_C] at this
     exact ha this
   refine (Polynomial.finite_setOf_isRoot hne).subset fun t ht => ?_

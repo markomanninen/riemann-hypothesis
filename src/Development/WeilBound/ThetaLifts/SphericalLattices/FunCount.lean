@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.FunDefs
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.FunDefs
+
+@[expose] public section
 
 noncomputable section
 

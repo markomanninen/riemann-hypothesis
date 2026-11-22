@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsSMulRegularCokerDualMapOfExactFibres
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsRegularRingOfSmooth
-import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.RingKrullDimOfEtaleMvPolynomial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsSMulRegularCokerDualMapOfExactFibres
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsRegularRingOfSmooth
+public import Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.RingKrullDimOfEtaleMvPolynomial
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits CategoryTheory.Abelian IsLocalRing TensorProduct Function
 
@@ -18,7 +22,8 @@ theorem extZero_hom (M : Type) [AddCommGroup M] [Module R M] (n : ℕ) (h : ExtZ
       (ModuleCat.ofHom (LinearMap.applyₗ (b i)) : ModuleCat.of R (F →ₗ[R] M) ⟶ ModuleCat.of R M) ≫
       (ModuleCat.ofHom (LinearMap.smulRightₗ (b.coord i)) : ModuleCat.of R M ⟶ ModuleCat.of R (F →ₗ[R] M)) := by
     ext f x
-    simp only [ModuleCat.hom_sum, ModuleCat.hom_id, LinearMap.id_apply, ModuleCat.hom_comp, ModuleCat.hom_ofHom,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [ModuleCat.hom_sum, ModuleCat.hom_id, LinearMap.id_apply, ModuleCat.hom_comp, ModuleCat.hom_ofHom,
       LinearMap.sum_apply, LinearMap.comp_apply, LinearMap.applyₗ_apply_apply, LinearMap.smulRightₗ_apply, LinearMap.smulRight_apply,
       Module.Basis.coord_apply, ← map_smul, ← map_sum, b.sum_repr x]
   refine subsingleton_of_forall_eq 0 fun x => ?_
@@ -79,7 +84,7 @@ theorem exact_hom_one [IsNoetherianRing R] (N : Ideal R) (hN : N ≤ maximalIdea
       refine ⟨t, ht, fun f hf => ⟨f ∘ₗ k₁, LinearMap.ext fun x => ?_⟩⟩
       have h1 : f ((C.d (i - 1) i).hom (k₀ x)) = 0 := LinearMap.congr_fun hf (k₀ x)
       have h2 := congrArg f (hk x)
-      rw [map_add, h1, zero_add, map_smul] at h2
+      rw [map_add (f := _), h1, zero_add, map_smul] at h2
       exact h2
     · obtain ⟨s, hs, hsp⟩ := Set.not_subset.mp hNp
       exact ⟨s, hsp, fun f _ => ⟨0, by ext x; simp [hM s hs]⟩⟩
@@ -131,16 +136,16 @@ theorem exact_hom_one [IsNoetherianRing R] (N : Ideal R) (hN : N ≤ maximalIdea
           (h2 _ (by omega)) (hDext i j (by omega))⟩
   exact (key g 0 (zero_add g)).1
 
-omit [IsLocalRing R] in
 
+omit [IsLocalRing R] in
 theorem mem_smul_top_of_forall_mem (N : Ideal R) {F : Type} [AddCommGroup F] [Module R F] [Module.Free R F]
     [Module.Finite R F] (f : Module.Dual R F) (hf : ∀ x, f x ∈ N) : f ∈ N • (⊤ : Submodule R (Module.Dual R F)) := by
   classical
   rw [← (Module.Free.chooseBasis R F).sum_dual_apply_smul_coord f]
   exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem_smul (hf _) trivial
 
-omit [IsLocalRing R] in
 
+omit [IsLocalRing R] in
 theorem injective_of_exact {A : Type} [CommRing A] [IsLocalRing A] [IsNoetherianRing A] [Algebra A R] [Module.Flat A R]
     {F₀ F₁ F₂ : Type} [AddCommGroup F₀] [Module R F₀] [AddCommGroup F₁] [Module R F₁] [AddCommGroup F₂] [Module R F₂]
     [Module.Free R F₀] [Module.Finite R F₀] [Module.Free R F₁] [Module.Finite R F₁] [Module.Free R F₂]
@@ -153,7 +158,7 @@ theorem injective_of_exact {A : Type} [CommRing A] [IsLocalRing A] [IsNoetherian
   let Z := LinearMap.range a.dualMap
   have flat : Module.Flat A (Module.Dual R F₀) := Module.Flat.trans A R _
   have hinj : Injective ((Z.subtype.restrictScalars A).rTensor (A ⧸ maximalIdeal A)) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro t ht
     obtain ⟨z, hz⟩ := TensorProduct.mk_surjective A Z (A ⧸ maximalIdeal A) Ideal.Quotient.mk_surjective
       (TensorProduct.comm A _ _ t)
@@ -186,7 +191,7 @@ theorem injective_of_exact {A : Type} [CommRing A] [IsLocalRing A] [IsNoetherian
         fun u v hu hv => ?_
     · rw [LinearMap.map_smul_of_tower, smul_tmul, ← Algebra.algebraMap_eq_smul_one, Ideal.Quotient.algebraMap_eq,
         Ideal.Quotient.eq_zero_iff_mem.2 hr, tmul_zero]
-    · rw [map_add, add_tmul, hu, hv, add_zero]
+    · rw [map_add (f := _), add_tmul, hu, hv, add_zero]
   have h6 := lTensor_injective_of_exact_of_exact_of_rTensor_injective
     (f₁ := Z.subtype.restrictScalars A) (f₂ := (e.toLinearMap ∘ₗ Z.mkQ).restrictScalars A)
     (g₁ := (maximalIdeal A).subtype) (g₂ := (maximalIdeal A).mkQ)
@@ -202,8 +207,8 @@ theorem injective_of_exact {A : Type} [CommRing A] [IsLocalRing A] [IsNoetherian
   have : Nontrivial (R ⧸ I) := Ideal.Quotient.nontrivial_iff.2 hI
   exact FaithfulSMul.algebraMap_injective A (R ⧸ I)
 
-omit [IsLocalRing R] in
 
+omit [IsLocalRing R] in
 theorem regular_fibre {A T : Type} [CommRing A] [IsLocalRing A] [CommRing T] [Algebra A T] (g : ℕ)
     [Algebra.IsStandardSmoothOfRelativeDimension g A T] (q : Ideal T) [hq : q.IsMaximal]
     (hm : (maximalIdeal A).map (algebraMap A T) ≤ q) [Algebra T R] [IsLocalization.AtPrime R q] [Algebra A R]
@@ -257,9 +262,9 @@ theorem regular_fibre {A T : Type} [CommRing A] [IsLocalRing A] [CommRing T] [Al
   rw [← h1]
   exact WithBot.coe_le_coe.mpr h2
 
+
 omit [IsLocalRing R] in
 open AlgebraicGeometry in
-
 theorem exists_localRing {A : Type} [CommRing A] [IsLocalRing A] [IsNoetherianRing A] {X : Scheme.{0}}
     (f : X ⟶ Spec (CommRingCat.of A)) (g : ℕ) (hf : SmoothOfRelativeDimension g f) {K : Type} [Field K]
     (p : Spec (CommRingCat.of K) ⟶ X) (hp : IsClosed {p (closedPoint K)}) (hc : f (p (closedPoint K)) = closedPoint A) :

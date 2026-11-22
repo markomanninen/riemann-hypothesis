@@ -1,11 +1,16 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PPtsAddFirst
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PDeLeSemiPos
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PRFormula
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.IsMultiHomogPlaneCoordinate
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PoincareLelongLimit
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.LelongSectionLimit
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSt
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PPtsAddFirst
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PDeLeSemiPos
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PRFormula
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.IsMultiHomogPlaneCoordinate
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PoincareLelongLimit
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.LelongSectionLimit
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section

@@ -1,11 +1,15 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecFun
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecCrit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BfFun
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ThBasic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.DenseCc
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.SpectralOperatorNorms.KillExempt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecFun
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.SecCrit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BfFun
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.ThBasic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.HpSpec
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.BlkInvVal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.UnipotentBlockMatrices.ClosedKernelMinors.DenseCc
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter Topology
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -14,7 +18,7 @@ open PositivityTheory.Rg.Tf.Core PositivityTheory.Rg.Tf.Adel PositivityTheory.Rg
 
 private theorem reps_const {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (G1 K n)) [μ.IsHaarMeasure]
     {v : L2 μ} {φ : G1 K n → ℂ} (c : ℂ) (h : Reps μ v φ) : Reps μ (c • v) (fun y => c * φ y) := by
-  filter_upwards [(quasiMeasurePreserving_mk (Gam K n) μ).ae (Lp.coeFn_smul c v), h] with y e1 e2
+  filter_upwards [MeasureTheory.QuasiMeasurePreserving.ae (quasiMeasurePreserving_mk (Gam K n) μ) (Lp.coeFn_smul c v), h] with y e1 e2
   rw [e1, Pi.smul_apply, e2, smul_eq_mul]
 
 private theorem reps_finsum {K : Type} [Field K] [NumberField K] {n : ℕ} (μ : Measure (G1 K n)) [μ.IsHaarMeasure]
@@ -23,11 +27,12 @@ private theorem reps_finsum {K : Type} [Field K] [NumberField K] {n : ℕ} (μ :
   classical
   induction s using Finset.induction_on with
   | empty =>
-    filter_upwards [(quasiMeasurePreserving_mk (Gam K n) μ).ae (Lp.coeFn_zero ℂ 2 (quotientMeasure (Gam K n) μ))] with y e
-    simpa using e
+    filter_upwards [MeasureTheory.QuasiMeasurePreserving.ae (quasiMeasurePreserving_mk (Gam K n) μ) (Lp.coeFn_zero ℂ 2 (quotientMeasure (Gam K n) μ))] with y e
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa using e
   | insert i s hi ih =>
     rw [Finset.sum_insert hi]
-    filter_upwards [(quasiMeasurePreserving_mk (Gam K n) μ).ae (Lp.coeFn_add (v i) (∑ j ∈ s, v j)), ih, h i] with y e1 e2 e3
+    filter_upwards [MeasureTheory.QuasiMeasurePreserving.ae (quasiMeasurePreserving_mk (Gam K n) μ) (Lp.coeFn_add (v i) (∑ j ∈ s, v j)), ih, h i] with y e1 e2 e3
     rw [e1, Pi.add_apply, e2, e3, Finset.sum_insert hi]
 
 private theorem coe_lsum {d : ℕ} {ι : Type} (s : Finset ι) (W : ι → L (Eu d)) :
@@ -43,7 +48,7 @@ private theorem coe_lsum {d : ℕ} {ι : Type} (s : Finset ι) (W : ι → L (Eu
     rw [e1, Pi.add_apply, e2, Finset.sum_insert hi]
 
 theorem UpperTheory.pseudoEisenstein_section_pfun_inBand_slices_reps :
-    ∀ {K : Type} [Field K] [NumberField K] [IsTotallyComplex K] (μ : Measure (G1 K (2 + 2))) [μ.IsHaarMeasure] (μ₂ : Measure (G1 K 2)) [μ₂.IsHaarMeasure] (τ₁ τ₂ : Submodule ℂ (L2 μ₂)) (D : TypeDat K (2 + 2)) {d : ℕ} (A : Line μ τ₁ τ₂ D d), CuspIrr μ₂ τ₁ → CuspIrr μ₂ τ₂ →
+    ∀ {K : Type} [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (μ : Measure (G1 K (2 + 2))) [μ.IsHaarMeasure] (μ₂ : Measure (G1 K 2)) [μ₂.IsHaarMeasure] (τ₁ τ₂ : Submodule ℂ (L2 μ₂)) (D : TypeDat K (2 + 2)) {d : ℕ} (A : Line μ τ₁ τ₂ D d), CuspIrr μ₂ τ₁ → CuspIrr μ₂ τ₂ →
           ∀ (u : ℝ → Eu d) (F : G1 K (2 + 2) → ℂ), Continuous u → HasCompactSupport u → (∀ g, F g = Complex.exp (2 * (HH g : ℂ)) * A.sec (u (HH g)) g) →
             PFun F ∧ InBand F ∧ Slices τ₁ τ₂ F ∧ ∀ U : L (Eu d), (∀ᵐ x : ℝ, U x = u x) → Reps μ (A.J U) (th F) := by
   intro K _ _ _ μ _ μ₂ _ τ₁ τ₂ D d A h₁ h₂ u F hu hcs hF
@@ -70,7 +75,8 @@ theorem UpperTheory.pseudoEisenstein_section_pfun_inBand_slices_reps :
     ext j
     simp [hβ, he, Finset.sum_apply, Pi.single_apply]
   have hFs : ∀ g, F g = ∑ i, bf (β i) (A.sec (e i)) g := fun g => by
-    rw [hF, hexp (HH g), map_sum, Finset.sum_apply, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hF, hexp (HH g), map_sum, Finset.sum_apply, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, Pi.smul_apply, smul_eq_mul, bf]
     have : ((((2 + 2 : ℕ) : ℝ) / 2 * HP 2 2 g : ℝ) : ℂ) = 2 * (HH g : ℂ) := by
@@ -81,7 +87,7 @@ theorem UpperTheory.pseudoEisenstein_section_pfun_inBand_slices_reps :
   have hB := fun i => bfFun (A.sec (e i)) (β i) (hS _) (hβc i) (hβs i)
   refine ⟨⟨?_, ?_, ?_, ?_, ?_, ?_⟩, ?_, ?_, ?_⟩
   · rw [show F = fun g => ∑ i, bf (β i) (A.sec (e i)) g from funext hFs]
-    exact continuous_finset_sum _ fun i _ => (hB i).1.cont
+    exact continuous_finsetSum _ fun i _ => (hB i).1.cont
   · choose C hC using fun i => (hB i).1.bdd
     refine ⟨∑ i, C i, fun g => ?_⟩
     rw [hFs]
@@ -125,5 +131,6 @@ theorem UpperTheory.pseudoEisenstein_section_pfun_inBand_slices_reps :
       refine finsum_sum_comm _ _ fun i _ => ?_
       have hfin := (thBasic μ _ (hB i).1.cont (hB i).1.rat (hB i).2.1).1 {y} isCompact_singleton
       exact hfin.subset fun q hq => ⟨y, rfl, hq⟩
-    rw [hUW, map_sum, hth]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hUW, map_sum, hth]
     exact reps_finsum μ _ _ _ fun i => A.spec (β i) (e i) (W i) (hβc i) (hβs i) (hW i)

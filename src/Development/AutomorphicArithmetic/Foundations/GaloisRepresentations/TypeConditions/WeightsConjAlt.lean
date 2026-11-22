@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.WeightsConj
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TypeConditions.WeightsConj
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ open UpperTheory.GalN (SplW)
 
 abbrev RecNotion : Type 1 :=
   ∀ {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] {A : ValuationSubring Ω}
-    {w : HeightOneSpectrum (𝓞 E)} (h : IsPlaceOver A w), (IrrGL (w.adicCompletion E) → WD h) → Prop
+    {w : HeightOneSpectrum (𝓞 E)} (h : IsPlaceOver A w), (IrrGL (k := w.adicCompletion E) → WD h) → Prop
 
 def IsQp {E : Type} [Field E] [NumberField E] (w : HeightOneSpectrum (𝓞 E)) : Prop :=
   ∃ (g : ℕ) (_ : Fact g.Prime) (i : ℚ_[g] ≃+* w.adicCompletion E), Continuous i
@@ -61,14 +65,15 @@ structure Above (π : CuspSub E a) (ι : Qbar l ≃+* ℂ) (r : G E Ω →* GL (
     IsdRAt P Bw (r.comp (Dec (F := E) A).subtype) ∧ IsPstAt P Bw (r.comp (Dec (F := E) A).subtype) ∧
     (∀ (τ : E →+* Qbar l) (LL' : FinExt l) (τ' : ↥Bw.Kw.1 →ₐ[ℚ_[l]] ↥LL'.1), IsInduced Bw τ τ' →
       IsJumpsAt P Bw (r.comp (Dec (F := E) A).subtype) τ (HT τ)) ∧
-    Away (wdAt P ι Bw h hj (r.comp (Dec (F := E) A).subtype)) (rc (algNorm σ))
+    Away (GlobalTheory.Pst.wdAt P ι Bw h hj (r.comp (Dec (F := E) A).subtype)) (rc (algNorm σ))
 
 structure Props (π : CuspSub E a) (ι : Qbar l ≃+* ℂ)
     (r : G E Ω →* GL (Fin a) (Qbar l)) (wt : ℤ) (HT : (E →+* Qbar l) → Multiset ℤ) : Prop where
   cont : Continuous r
   ss : IsSSRep r
   away : ∀ (w : HeightOneSpectrum (𝓞 E)) (hl : ((l : ℕ) : 𝓞 E) ∉ w.asIdeal) (A : ValuationSubring Ω) (h : IsPlaceOver A w)
-    (rc : IrrGL (w.adicCompletion E) → WD h), Rc h rc → ∀ σ, π.IsLocComp w σ → Away (wdOf h hl ι r) (rc (algNorm σ))
+    (rc : IrrGL (k := w.adicCompletion E) → WD h), Rc h rc → ∀ σ, π.IsLocComp w σ →
+      Away (GlobalTheory.WeilDeligne.wdOf h hl ι r) (rc (algNorm σ))
   weights : ∀ τ : E →+* Qbar l, (HT τ).map (fun n : ℤ => (n : ℂ)) =
     ((CG.mk π).infChar (ι.toRingHom.comp τ)).map fun z => ((a : ℂ) - 1) / 2 - z
   weights_conj : ∀ τ : E →+* Qbar l,
@@ -80,24 +85,13 @@ structure Props (π : CuspSub E a) (ι : Qbar l ≃+* ℂ)
 
 def TameN (π : CuspSub E a) (ι : Qbar l ≃+* ℂ) (r : G E Ω →* GL (Fin a) (Qbar l)) : Prop :=
   ∀ (w : HeightOneSpectrum (𝓞 E)) (hl : ((l : ℕ) : 𝓞 E) ∉ w.asIdeal) (A : ValuationSubring Ω) (h : IsPlaceOver A w)
-    (rc : IrrGL (w.adicCompletion E) → WD h), Rc h rc → ∀ σ, π.IsLocComp w σ → AwayN (wdOf h hl ι r) (rc (algNorm σ))
+    (rc : IrrGL (k := w.adicCompletion E) → WD h), Rc h rc → ∀ σ, π.IsLocComp w σ →
+      AwayN (GlobalTheory.WeilDeligne.wdOf h hl ι r) (rc (algNorm σ))
 
 def Row0 : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [IsCMField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
     (l : ℕ) [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (a : ℕ), 1 ≤ a →
     ∀ (π : CuspSub E a) (χ : HChar (maximalRealSubfield E)), (CG.mk π).IsRegAlg → GlobalTheory.ContraPair.PolarizedPair π χ →
       ∃ (r : G E Ω →* GL (Fin a) (Qbar l)) (wt : ℤ) (HT : (E →+* Qbar l) → Multiset ℤ), Props Rc π ι r wt HT
-
-def Row1 : Prop :=
-  ∀ (E Ω : Type) [Field E] [NumberField E] [IsCMField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]
-    (l : ℕ) [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (a : ℕ), 1 ≤ a →
-    ∀ (π : CuspSub E a) (χ : HChar (maximalRealSubfield E)), (CG.mk π).IsRegAlg → GlobalTheory.ContraPair.PolarizedPair π χ →
-      ∃ (r : G E Ω →* GL (Fin a) (Qbar l)) (wt : ℤ) (HT : (E →+* Qbar l) → Multiset ℤ), Props Rc π ι r wt HT ∧ TameN Rc π ι r
-
-theorem Row1.row0 (H : Row1 Rc) : Row0 Rc := fun E Ω _ _ _ _ _ _ l _ ι a ha π χ hr hp => by
-  obtain ⟨r, wt, HT, k, -⟩ := H E Ω l ι a ha π χ hr hp
-  exact ⟨r, wt, HT, k⟩
-
-def recFull : RecNotion := fun h rc => IsRec h rc
 
 end UpperTheory.GalStar

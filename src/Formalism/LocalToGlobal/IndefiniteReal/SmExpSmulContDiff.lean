@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.IndefiniteReal.PeterssonHilbertSpace
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.KFiniteSmoothVectors.Garding
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.KFiniteSmoothVectors.DenseWeakVectors
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BesselDerivatives.ExpSup
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ChainRuleSmooth.ExpIntertwine
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.PeterssonHilbertSpace
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.KFiniteSmoothVectors.Garding
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.KFiniteSmoothVectors.DenseWeakVectors
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BesselDerivatives.ExpSup
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ChainRuleSmooth.ExpIntertwine
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,10 +32,10 @@ lemma sm_prod_exp_contDiff : ∀ (k : ℕ) (Xs : Fin k → Matrix (Fin n) (Fin n
   | k + 1, Xs => by
     have ih := sm_prod_exp_contDiff k (fun i => Xs i.succ)
     have h1 : ContDiff ℝ ∞ (fun t : Fin (k + 1) → ℝ => NormedSpace.exp (t 0 • Xs 0)) :=
-      (sm_exp_smul_contDiff (Xs 0)).comp (contDiff_apply ℝ ℝ (0 : Fin (k + 1)))
+      (sm_exp_smul_contDiff (Xs 0)).comp (contDiff_apply ℝ (fun _ => ℝ) (0 : Fin (k + 1)))
     have h2 : ContDiff ℝ ∞ (fun t : Fin (k + 1) → ℝ =>
         (List.ofFn fun i : Fin k => NormedSpace.exp (t i.succ • Xs i.succ)).prod) :=
-      ih.comp (contDiff_pi.2 fun i => contDiff_apply ℝ ℝ i.succ)
+      ih.comp (contDiff_pi.2 fun i => contDiff_apply ℝ (fun _ => ℝ) i.succ)
     simp only [List.ofFn_succ, List.prod_cons]
     exact PI.KFinSmoothW.Gard.contDiff_mat_mul h1 h2
 
@@ -84,19 +88,6 @@ lemma sm_transfer {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H] (�
     exact hEq _ ht (hmem t)
   exact ((hF.contDiffAt (hU.mem_nhds h0)).comp t0 hc.contDiffAt).congr_of_eventuallyEq hev
 
-lemma sm_exists_smoothJ_ne (ε : Fin n → Bool) {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
-    [CompleteSpace H] [Nontrivial H] (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H))
-    (hσ : PI.UpqRep.IsURepOn (PI.UpqRep.UJset ε) σ) :
-    ∃ w : H, w ≠ 0 ∧ PI.KFinSmoothW.SmoothJ ε σ w := by
-  obtain ⟨x, hx⟩ := exists_ne (0 : H)
-  obtain ⟨Φ, hΦ, hΦc, -, hle⟩ := PI.KFinSmoothW.dense_weak_vectors n ε H σ hσ (ℂ ∙ x) inferInstance
-  refine ⟨PI.KFinSmoothW.gv ε σ Φ x, ?_, PI.KFinSmoothW.garding_vectors_smooth n ε H σ hσ Φ hΦ hΦc x⟩
-  intro h0
-  have h1 := hle x (Submodule.mem_span_singleton_self x)
-  rw [h0, zero_sub, norm_neg] at h1
-  have hpos : 0 < ‖x‖ := norm_pos_iff.2 hx
-  linarith
-
 lemma sm_isURepOn_bridge (ε : Fin n → Bool) {H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     (σ : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)) (h : Formalism.MainNotions.S.IsURepOn (Formalism.MainNotions.S.UJset ε) σ) :
     PI.UpqRep.IsURepOn (PI.UpqRep.UJset ε) σ :=
@@ -112,18 +103,6 @@ open Formalism.L2.Theta Formalism.IndefR.Mult
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar}
-
-theorem smNonzero (M : DSModel V S) : SmNonzero M := by
-  intro τ
-  obtain ⟨hc, hnt, hU, -⟩ := M.ds τ
-  have := hc
-  have := hnt
-  obtain ⟨w, hw0, hws⟩ := sm_exists_smoothJ_ne (M.ε τ) (M.σ τ) (sm_isURepOn_bridge (M.ε τ) (M.σ τ) hU)
-  have hsv : SmoothVec (lieAt V τ) (M.rep τ) w :=
-    sm_transfer (M.ε τ) (M.σ τ) (M.fr τ) _ (M.fr_unit τ) (M.fr_gram τ) (lieAt V τ) (fun X hX => hX) w hws
-  refine ⟨⟨w, Submodule.subset_span hsv⟩, ?_⟩
-  intro h
-  exact hw0 (congrArg Subtype.val h)
 
 end MultSec
 

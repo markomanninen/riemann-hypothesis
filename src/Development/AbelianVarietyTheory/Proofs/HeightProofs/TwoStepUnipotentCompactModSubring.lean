@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory
 
 namespace GlobalTheory.TwoStepUnipotent
@@ -17,7 +22,7 @@ theorem st_one (hm : ∀ x y, st (x * y) = st y * st x) (hi : ∀ x, st (st x) =
 
 theorem st_half (hm : ∀ x y, st (x * y) = st y * st x) (hi : ∀ x, st (st x) = x)
     (hh : h + h = 1) (hc : ∀ x, h * x = x * h) : st h = h := by
-  have h2 : st h + st h = 1 := by rw [← map_add, hh, st_one hm hi]
+  have h2 : st h + st h = 1 := by rw [← map_add (f := _), hh, st_one hm hi]
   have hd : (h - st h) + (h - st h) = 0 := by
     calc (h - st h) + (h - st h) = (h + h) - (st h + st h) := by abel
       _ = 0 := by rw [hh, h2, sub_self]
@@ -84,13 +89,13 @@ theorem elt_mul (hm : ∀ x y, st (x * y) = st y * st x) (hi : ∀ x, st (st x) 
   simp only [elt]
   rw [hprod]
   conv_lhs => rw [e (st b * b')]
-  simp only [map_add, add_mul, mul_add, mul_sub]
+  simp only [map_add (f := _), add_mul, mul_add, mul_sub]
   abel
 
 theorem st_elt (hm : ∀ x y, st (x * y) = st y * st x) (hi : ∀ x, st (st x) = x)
     (hh : h + h = 1) (hc : ∀ x, h * x = x * h) (b : S) {w : S} (hw : st w = -w) :
     st (elt st h b w) = elt st h (-b) (-w) := by
-  simp only [elt, map_add, map_sub, map_neg, st_one hm hi, hi, hm, hw, st_half hm hi hh hc, neg_mul,
+  simp only [elt, map_add (f := _), map_sub, map_neg, st_one hm hi, hi, hm, hw, st_half hm hi hh hc, neg_mul,
     mul_neg, neg_neg]
   rw [hc (st b * b)]
   abel
@@ -155,7 +160,7 @@ theorem exists_elt (hm : ∀ x y, st (x * y) = st y * st x) (hi : ∀ x, st (st 
   have hX1 : X * e₁ = 0 := by rwa [add_sub_cancel_left] at h2
   have h3' : (1 - e₁) * X * (1 - e₃) = 0 := by rwa [add_sub_cancel_left] at h3
   have hU : st X + X + st X * X = 0 := by
-    rw [map_add, st_one hm hi] at h1
+    rw [map_add (f := _), st_one hm hi] at h1
     have e : (1 + st X) * (1 + X) = 1 + (st X + X + st X * X) := by noncomm_ring
     rw [e] at h1
     exact add_left_cancel (h1.trans (add_zero 1).symm)
@@ -186,7 +191,7 @@ theorem exists_elt (hm : ∀ x y, st (x * y) = st y * st x) (hi : ∀ x, st (st 
   have sb3 : st b * e₃ = 0 := by rw [← hs, ← hm, hb1, map_zero]
   have hsX : st X = st b + st X * e₃ := by
     conv_lhs => rw [hXb]
-    rw [map_add, hm, hs]
+    rw [map_add (f := _), hm, hs]
   have hXX : st X * X = st b * b := by
     calc st X * X = st X * (b + e₁ * X) := by rw [← hXb]
       _ = st X * b + st X * e₁ * X := by rw [mul_add, mul_assoc]
@@ -211,7 +216,7 @@ theorem exists_elt (hm : ∀ x y, st (x * y) = st y * st x) (hi : ∀ x, st (st 
   · rw [mul_add, mul_add, ← mul_assoc, h11, sb1, ← mul_assoc, ← hc e₁, mul_assoc, ← mul_assoc e₁, sb1]
   · rw [add_mul, add_mul, hYe, sb3, add_zero, mul_assoc h, mul_assoc (st b), hb3']
   · have e : st (e₁ * X + st b + h * (st b * b)) + (e₁ * X + st b + h * (st b * b)) = 0 := by
-      simp only [map_add, hm, hs, hi, st_half hm hi hh hc]
+      simp only [map_add (f := _), hm, hs, hi, st_half hm hi hh hc]
       rw [← hc (st b * b)]
       calc st X * e₃ + b + h * (st b * b) + (e₁ * X + st b + h * (st b * b))
           = st b + st X * e₃ + b + e₁ * X + (h * (st b * b) + h * (st b * b)) := by abel
@@ -324,7 +329,7 @@ theorem compact_mod_subring (S : Type) [Ring S] [TopologicalSpace S] [IsTopologi
     have hw3 : (w + h * (st b * -pb y₁ - st (-pb y₁) * b)) * e₃ = w + h * (st b * -pb y₁ - st (-pb y₁) * b) := by
       rw [add_mul, hw.2.1, mul_assoc, q3]
     have hws : st (w + h * (st b * -pb y₁ - st (-pb y₁) * b)) = -(w + h * (st b * -pb y₁ - st (-pb y₁) * b)) := by
-      rw [map_add, hm, st_half hm hi hh hc, hw.2.2, qs, ← hc, mul_neg, neg_add]
+      rw [map_add (f := _), hm, st_half hm hi hh hc, hw.2.2, qs, ← hc, mul_neg, neg_add]
     obtain ⟨y₂, hy₂, hk₂⟩ := hcov (w + h * (st b * -pb y₁ - st (-pb y₁) * b))
     have hb0 := hbx y₁
     have hw0 := hwx y₂

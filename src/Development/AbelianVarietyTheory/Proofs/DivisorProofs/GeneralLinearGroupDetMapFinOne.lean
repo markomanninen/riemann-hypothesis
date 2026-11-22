@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCochainEvalOnSimplexBasicPropertiesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCochainEvEqOfNaturalStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCochainEvalOnSimplexDifferentialValuesStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCochainEvalOnSimplexBasicPropertiesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCochainEvEqOfNaturalStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCochainEvalOnSimplexDifferentialValuesStatement
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
 set_option backward.isDefEq.respectTransparency false
@@ -52,7 +57,7 @@ theorem generalLinearGroup_det_map_fin_one {A B : Type} [CommRing A] [CommRing B
     Matrix.GeneralLinearGroup.det (Matrix.GeneralLinearGroup.map f M) =
       Units.map f.toMonoidHom (Matrix.GeneralLinearGroup.det M) := by
   ext
-  simp [RingHom.map_det]
+  simp
 
 theorem glMat_δ1 {U : Scheme.{0}} (y : Sx (ofCat (glCat 1)) 2 U) :
     glMat (((ofCat (glCat 1)).δ 1).app (op U) y) =
@@ -112,23 +117,27 @@ theorem sec_map_add {R : Type} [CommRing R] {F G : Shv R} (φ : F ⟶ G) {U : Sc
     Sec.map φ (a + b) = Sec.map φ a + Sec.map φ b := map_add _ _ _
 
 theorem ev_zero_cochain {E : Spc} {I : Cx ℤ} {n : ℤ} (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0})
-    (x : Sx E p U) : ev (0 : Cochain ((chains ℤ).obj E) I n) p s h U x = 0 :=
-  ((GlobalTheory.T.etaleCochainEvalOnSimplex_basic_properties ℤ).1 0 0 p s h U x).2.2.1
+    (x : Sx E p U) : ev (0 : Cochain ((chains ℤ).obj E) I n) p s h U x = 0 := by
+  have hZero := CupSpec.ev_zero (I := I) p s h U x
+  exact hZero
 
 theorem fam_cocycle {E : Spc} (L : E ⟶ ofCat (glCat 1)) (α : Cochain ((chains ℤ).obj E) (res ℤ Gm) 1)
     (hα : ∀ p s h U x, ev α p s h U x = fam L p s h U x) : δ 1 2 α = 0 := by
-  apply (GlobalTheory.T.etaleCochainEvalOnSimplex_basic_properties ℤ).2.2.1
+  have hExt := CupSpec.ev_ext (δ 1 2 α) 0
+  apply hExt
   intro p t ht U x
   rw [ev_zero_cochain]
+  have hDeltaSucc := CupSpec.ev_δ_succ (m := 2) (by norm_num) α U
   match p with
   | 0 =>
     obtain rfl : t = 2 := by omega
-    rw [(GlobalTheory.T.etaleCochainEvalOnSimplex_differential_values ℤ (by norm_num) α U).1 x, hα, fam_zero, sec_map_zero]
+    have hDeltaZero := CupSpec.ev_δ_zero (m := 2) (by norm_num) α U 1 2 (by simp) ht x
+    rw [hDeltaZero, hα, fam_zero, sec_map_zero]
   | 1 =>
     obtain rfl : t = 1 := by omega
     have key : ev (δ 1 2 α) 1 1 ht U x = Sec.map ((res ℤ Gm).d 0 1) (ev α 1 0 (by simp) U x) +
         (2 : ℤ).negOnePow • ∑ i : Fin 2, (-1 : ℤ) ^ (i : ℕ) • ev α 0 1 (by simp) U (x.face i) :=
-      (GlobalTheory.T.etaleCochainEvalOnSimplex_differential_values ℤ (by norm_num) α U).2 0 0 1 (by simp) ht x
+      hDeltaSucc 0 0 1 (by simp) ht x
     rw [key]
     simp only [hα, fam_zero, fam_one, smul_zero, Finset.sum_const_zero, add_zero, sec_map_comp, resι_d]
     rfl
@@ -136,7 +145,7 @@ theorem fam_cocycle {E : Spc} (L : E ⟶ ofCat (glCat 1)) (α : Cochain ((chains
     obtain rfl : t = 0 := by omega
     have key : ev (δ 1 2 α) 2 0 ht U x = Sec.map ((res ℤ Gm).d (-1) 0) (ev α 2 (-1) (by simp) U x) +
         (2 : ℤ).negOnePow • ∑ i : Fin 3, (-1 : ℤ) ^ (i : ℕ) • ev α 1 0 (by simp) U (x.face i) :=
-      (GlobalTheory.T.etaleCochainEvalOnSimplex_differential_values ℤ (by norm_num) α U).2 1 (-1) 0 (by simp) ht x
+      hDeltaSucc 1 (-1) 0 (by simp) ht x
     rw [key]
     simp only [hα, fam_one]
     rw [show fam L 2 (-1) (by simp) U x = 0 from rfl, sec_map_zero, zero_add, Fin.sum_univ_three, lineUnit_face,
@@ -144,14 +153,15 @@ theorem fam_cocycle {E : Spc} (L : E ⟶ ofCat (glCat 1)) (α : Cochain ((chains
     simp only [Fin.val_zero, Fin.val_one, Fin.val_two]
     simp
   | p + 3 =>
-    have key := (GlobalTheory.T.etaleCochainEvalOnSimplex_differential_values ℤ (by norm_num) α U).2 (p + 2) (t - 1) t (by omega) ht x
+    have key := hDeltaSucc (p + 2) (t - 1) t (by omega) ht x
     rw [key]
     simp only [hα, fam_add_two, sec_map_zero, zero_add, smul_zero, Finset.sum_const_zero]
 
 theorem exists_cocycle {E : Spc} (L : E ⟶ ofCat (glCat 1)) :
     ∃ γ : Cocycle ((chains ℤ).obj E) (res ℤ Gm) 1, (∀ (U : Scheme.{0}) (x : Sx E 0 U), ev γ.1 0 1 (by simp) U x = 0) ∧
       ∀ (U : Scheme.{0}) (x : Sx E 1 U), ev γ.1 1 0 (by simp) U x = Sec.map (resι ℤ Gm) (unitSec (lineUnit L x)) := by
-  obtain ⟨α, hα⟩ := GlobalTheory.T.exists_cochain_ev_eq_of_natural' ℤ (fam L) (fam_nat L)
+  have hExists := GlobalTheory.EtC.exists_cochain_ev_eq_of_natural ℤ (fam L) (fam_nat L)
+  obtain ⟨α, hα⟩ := hExists
   refine ⟨Cocycle.mk α 2 (by norm_num) (fam_cocycle L α hα), fun U x => ?_, fun U x => ?_⟩
   · exact (hα 0 1 _ U x).trans (fam_zero L 1 _ U x)
   · exact (hα 1 0 _ U x).trans (fam_one L _ U x)
@@ -169,7 +179,8 @@ theorem spec {E : Spc} (L : E ⟶ ofCat (glCat 1)) :
 theorem cocycle_ext {E : Spc} (γ γ' : Cocycle ((chains ℤ).obj E) (res ℤ Gm) 1)
     (h0 : ∀ (U : Scheme.{0}) (x : Sx E 0 U), ev γ.1 0 1 (by simp) U x = ev γ'.1 0 1 (by simp) U x)
     (h1 : ∀ (U : Scheme.{0}) (x : Sx E 1 U), ev γ.1 1 0 (by simp) U x = ev γ'.1 1 0 (by simp) U x) : γ = γ' := by
-  refine Cocycle.ext ((GlobalTheory.T.etaleCochainEvalOnSimplex_basic_properties ℤ).2.2.1 _ _ fun p s h U x => ?_)
+  have hExt := CupSpec.ev_ext γ.1 γ'.1
+  refine Cocycle.ext (hExt fun p s h U x => ?_)
   match p with
   | 0 =>
     obtain rfl : s = 1 := by omega

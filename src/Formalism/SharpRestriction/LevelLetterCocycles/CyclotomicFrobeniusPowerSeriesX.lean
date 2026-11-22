@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RingStepsOf
-import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.ExpRescaleCoeff
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RingStepsOf
+public import Formalism.SharpRestriction.LevelLetterCocycles.CyclotomicPowerSeries.ExpRescaleCoeff
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,21 +23,13 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
 theorem cyclotomicFrobeniusPowerSeries_X (W : LocWach PD LL O v n) : W.φ₀ X = (1 + X) ^ PD.p - 1 := by
   rw [W.φ₀_X, W.q₀_def]
 
-theorem glue1 (hR : Ring9 W) :
-    ∃ w : (PowerSeries O)ˣ, (baseIdOf hR).ι X = (w : PowerSeries O) * X ^ (PD.p - 1) := by
-  obtain ⟨w, hw⟩ := hR.2.2.1
-  refine ⟨Units.map (Pi.evalMonoidHom (fun _ : ZMod n => PowerSeries O) 0) w, ?_⟩
-  have h0 := congrFun hw 0
-  rw [(baseIdOf hR).ι_X]
-  simpa [LocWach.π₀, letπ] using h0
-
 theorem cyclo_comp_mul_X {R : Type} [CommRing R] (p : ℕ) [hp : Fact p.Prime] :
     (Polynomial.cyclotomic p R).comp (Polynomial.X + 1) * Polynomial.X =
       (Polynomial.X + 1) ^ p - 1 := by
   rw [Polynomial.cyclotomic_prime]
   have hc : (∑ i ∈ Finset.range p, (Polynomial.X : Polynomial R) ^ i).comp (Polynomial.X + 1) =
       ∑ i ∈ Finset.range p, (Polynomial.X + 1) ^ i := by
-    simp [Polynomial.comp, Polynomial.eval₂_finset_sum]
+    simp [Polynomial.comp, Polynomial.eval₂_finsetSum]
   have h := geom_sum_mul (Polynomial.X + 1 : Polynomial R) p
   rw [add_sub_cancel_right] at h
   rw [hc, h]
@@ -45,7 +41,7 @@ theorem glue2 [IsDomain O] (hR : Ring9 W) :
   have h0 := congrFun hw 0
   have hq : (baseIdOf hR).ι (baseIdOf hR).Bs.q = W.π₀₁ + PowerSeries.C ((PD.p : ℕ) : O) := by
     change (baseIdOf hR).ι (PowerSeries.X + PowerSeries.C ((PD.p : ℕ) : O)) = _
-    rw [map_add, (baseIdOf hR).ι_X]
+    rw [map_add (f := _), (baseIdOf hR).ι_X]
     congr 1
     exact (baseIdOf hR).ι.commutes _
   have hcyc : (W.q₀ : PowerSeries O) =

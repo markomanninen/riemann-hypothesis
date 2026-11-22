@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial
 
@@ -48,7 +52,7 @@ private theorem UpperTheory.Reformulated.B.SplittingFieldConstruction.factor {A 
   have hφ : Function.Injective φ := by
     rw [RingHom.injective_iff_ker_eq_bot]
     apply Ideal.eq_bot_of_comap_eq_bot (R := A)
-    rw [RingHom.comap_ker]
+    rw [Ideal.under_def, RingHom.comap_ker]
     exact (RingHom.injective_iff_ker_eq_bot _).1 hinj
   have hzA : ∀ a : A, z (algebraMap A B a) = φ (algebraMap A C a) := fun a =>
     DFunLike.congr_fun hz a
@@ -78,7 +82,7 @@ private theorem UpperTheory.Reformulated.B.SplittingFieldConstruction.factor {A 
       map_one' := hφ (by rw [hg, map_one, map_one])
       map_mul' := fun x y => hφ (by rw [map_mul φ, hg, hg, hg, map_mul])
       map_zero' := hφ (by rw [hg, map_zero, map_zero])
-      map_add' := fun x y => hφ (by rw [map_add φ, hg, hg, hg, map_add])
+      map_add' := fun x y => hφ (by rw [map_add φ, hg, hg, hg, map_add (f := _)])
       commutes' := fun a => hφ (by rw [hg, hzA]) }
   refine ⟨σ, RingHom.ext fun b => hg b, fun τ hτ => AlgHom.ext fun b => hφ ?_⟩
   exact (DFunLike.congr_fun hτ b).trans (hg b).symm

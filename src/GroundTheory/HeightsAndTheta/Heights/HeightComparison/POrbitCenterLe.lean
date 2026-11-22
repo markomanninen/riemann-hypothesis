@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitCenterLe
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FinitePlaceSumLe
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightComparison.HeightOrbitCenterLe
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.FinitePlaceSumLe
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -27,7 +32,8 @@ theorem OrbitCenterLe.proof : OrbitCenterLe.Statement := by
   have hw : ∀ k, ∑ i, m ⟨k, i⟩ = d k := fun k ↦ by
     rw [← weight_coordDeg_apply, hW (mem_support_iff.mp hm)]
   have hc : v ((Int.castRingHom (coordField x)) (F.coeff m)) ≤ 1 := by
-    simpa using IsNonarchimedean.apply_intCast_le_one (f := v) hna (n := F.coeff m)
+    simpa using hna.apply_intCast_le_one (map_zero_le v 1) (map_one v)
+      (map_neg_eq_map v) (n := F.coeff m)
   rw [map_mul, map_prod]
   calc v ((Int.castRingHom (coordField x)) (F.coeff m)) * ∏ p, v (coordVec x p.1 p.2 ^ m p)
       ≤ 1 * ∏ p : Coord n, (⨆ j, v (coordVec x p.1 j)) ^ m p := by

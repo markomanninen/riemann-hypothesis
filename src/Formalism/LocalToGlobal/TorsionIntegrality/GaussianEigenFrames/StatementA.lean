@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.StatementK
-import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.StatementV
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementN
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.StatementK
+public import Formalism.LocalToGlobal.TorsionIntegrality.RamifiedCurveKernels.StatementV
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.StatementN
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -29,7 +33,7 @@ def GramSeries : Prop :=
 
 def ShapeLin : Prop :=
   ∀ (K : Type) [NormedField K] [IsUltrametricDist K] [CharZero K] (l linv ph : PowerSeries K) (d : ℕ),
-    IsLogPair l linv → IsOneUnit (unitBall K) (PowerSeries.derivative K l) →
+    IsLogPair l linv → IsOneUnit (unitBall K) (PowerSeries.derivative (R := K) l) →
     PowerSeries.constantCoeff ph = 0 → ShapeAt l linv ph d → (d : K) ≠ 0 → ‖(2 : K)‖ = 1 →
     ∀ (n : Type) [Fintype n] (T : MvPowerSeries n K) (γ : Fin 4 × n → Fin 4 × n → K)
       (G : MvPowerSeries (Fin 4 × n) K), IntMv (unitBall K) G →
@@ -50,7 +54,7 @@ def ShapeLin : Prop :=
 
 def JetsLin : Prop :=
   ∀ (K : Type) [NormedField K] [IsUltrametricDist K] [CharZero K] (l linv ph : PowerSeries K),
-    IsLogPair l linv → IsOneUnit (unitBall K) (PowerSeries.derivative K l) →
+    IsLogPair l linv → IsOneUnit (unitBall K) (PowerSeries.derivative (R := K) l) →
     PowerSeries.constantCoeff ph = 0 → (∀ i : ℕ, 1 ≤ i → ‖jet l ph i‖ ≤ 1) → ‖(2 : K)‖ = 1 →
     ∀ (n : Type) [Fintype n] (T : MvPowerSeries n K) (γ : Fin 4 × n → Fin 4 × n → K)
       (G : MvPowerSeries (Fin 4 × n) K), IntMv (unitBall K) G →

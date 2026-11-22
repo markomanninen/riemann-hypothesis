@@ -1,5 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.InclStd
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.InclStd
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb
 
@@ -53,22 +58,22 @@ theorem hasDP_of_mem {R : Type} [CommRing R] {I : Ideal R} (γ : DividedPowers I
 
 variable (J : Ideal B) (h : ∀ x ∈ J, HasDP J x)
 
-open Classical in
 
+open Classical in
 def dpOf (n : ℕ) (x : B) : B := if hx : x ∈ J then (h x hx).choose n else 0
 
 variable {J h}
 
 theorem dpOf_zero {x : B} (hx : x ∈ J) : dpOf J h 0 x = 1 := by
-  rw [dpOf, dif_pos hx]
+  rw [dpOf, dite_eq_left hx]
   exact (h x hx).choose_spec.1
 
 theorem dpOf_mem {n : ℕ} {x : B} (hn : n ≠ 0) (hx : x ∈ J) : dpOf J h n x ∈ J := by
-  rw [dpOf, dif_pos hx]
+  rw [dpOf, dite_eq_left hx]
   exact (h x hx).choose_spec.2.1 n hn
 
 theorem dpOf_spec (n : ℕ) {x : B} (hx : x ∈ J) : (n.factorial : B) * dpOf J h n x = x ^ n := by
-  rw [dpOf, dif_pos hx]
+  rw [dpOf, dite_eq_left hx]
   exact (h x hx).choose_spec.2.2 n
 
 theorem cancel (hn : ∀ n : ℕ, n ≠ 0 → ∀ x : B, (n : B) * x = 0 → x = 0) {m : ℕ} (hm : m ≠ 0) {a b : B}
@@ -79,11 +84,11 @@ theorem dpOf_eq (hn : ∀ n : ℕ, n ≠ 0 → ∀ x : B, (n : B) * x = 0 → x 
     (e : (n.factorial : B) * z = x ^ n) : dpOf J h n x = z :=
   cancel hn n.factorial_ne_zero ((dpOf_spec n hx).trans e.symm)
 
-variable (J h) in
 
+variable (J h) in
 def dpExt (hn : ∀ n : ℕ, n ≠ 0 → ∀ x : B, (n : B) * x = 0 → x = 0) : DividedPowers J where
   dpow := dpOf J h
-  dpow_null {n x} hx := by rw [dpOf, dif_neg hx]
+  dpow_null {n x} hx := by rw [dpOf, dite_eq_right hx]
   dpow_zero hx := dpOf_zero hx
   dpow_one {x} hx := by
     have := dpOf_spec (h := h) 1 hx
@@ -247,7 +252,7 @@ theorem tf_tensor [Module.Flat O G] (P : Ideal R) (l : ℕ) (hl : ∀ x, (l : R)
   rw [RingHom.mem_ker] at hx ⊢
   have inj : Function.Injective (((l : O) • LinearMap.id : (R ⧸ P) →ₗ[O] (R ⧸ P)).rTensor G) := by
     refine Module.Flat.rTensor_preserves_injective_linearMap _ ?_
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro z hz
     obtain ⟨z, rfl⟩ := Ideal.Quotient.mk_surjective z
     have hz' : Ideal.Quotient.mk P ((l : R) * z) = 0 := by
@@ -425,14 +430,14 @@ theorem rep_tensor (hstr : algebraMap O Γ(X, V) = strV q V)
       refine evalAt_specMap hV (φ₂.comp g) y'.1.2 ?_ hy'
       rw [← b, h2, ← Category.assoc, ← Spec.map_comp, ← CommRingCat.ofHom_comp]
     refine Ideal.Quotient.ringHom_ext (RingHom.ext fun x => ?_)
-    refine TensorProduct.induction_on x (by simp) (fun r f => ?_) (fun u v hu hv => ?_)
+    refine TensorProduct.inductionOn x (fun r f => ?_) (fun u v hu hv => ?_)
     · have t : r ⊗ₜ[O] f = (r ⊗ₜ[O] (1 : Γ(X, V))) * ((1 : R) ⊗ₜ[O] f) := by
         simp
       change φ₂ (Ideal.Quotient.mk _ (r ⊗ₜ[O] f)) = φ (Ideal.Quotient.mk _ (r ⊗ₜ[O] f))
       rw [hφ, t, map_mul, map_mul, ← hg, ← h1]
       change (φ₂.comp y.1.1) _ * (φ₂.comp g) f = _
       rw [a, ← e]
-    · simp only [RingHom.comp_apply, map_add] at hu hv ⊢
+    · simp only [RingHom.comp_apply, map_add (f := _)] at hu hv ⊢
       rw [hu, hv]
 
 end Rep

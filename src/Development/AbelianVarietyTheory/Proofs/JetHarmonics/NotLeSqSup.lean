@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.NotLeSqSup
 
@@ -50,7 +54,7 @@ theorem main : ∀ {k A : Type} [inst : Field k] [inst_1 : CommRing A] [inst_2 :
       rw [map_mul, Algebra.smul_def, Algebra.smul_def, map_mul]; ring
     have h0 : g ((a - algebraMap k A (aug a)) * (b - algebraMap k A (aug b))) = 0 :=
       hgN _ (Ideal.mem_sup_left (by rw [pow_two]; exact Ideal.mul_mem_mul (hsub a) (hsub b)))
-    rw [hD, hD, hD, e, map_add, map_add, h0, map_smul, map_smul, smul_eq_mul, smul_eq_mul, zero_add]
+    rw [hD, hD, hD, e, map_add (f := _), map_add (f := _), h0, map_smul, map_smul, smul_eq_mul, smul_eq_mul, zero_add]
   let L : A →ₗ[k] DualNumber k :=
     (Algebra.linearMap k (DualNumber k)).comp aug.toLinearMap + (TrivSqZeroExt.inrHom k k).comp D
   have hLfst : ∀ a, (L a).fst = aug a := by intro a; simp [L, TrivSqZeroExt.algebraMap_eq_inl]

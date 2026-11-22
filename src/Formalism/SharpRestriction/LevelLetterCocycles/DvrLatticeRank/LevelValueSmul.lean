@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DownSlotProposition
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfLoc
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfPt
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DownSlotProposition
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfLoc
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.FramePfPt
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,9 +23,11 @@ theorem expwd_core {O A E L X Y : Type*} [CommRing O] [AddCommGroup A] [Module O
     Module.Flat.rTensor_preserves_injective_linearMap j hj
   have h2 : (j.rTensor X) (∑ i, a i ⊗ₜ[O] g (s i)) = (j.rTensor X) (∑ k, b k ⊗ₜ[O] g (t k)) := by
     have h' := congrArg (g.lTensor E) h
-    simpa only [map_sum, LinearMap.lTensor_tmul, LinearMap.rTensor_tmul] using h'
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [map_sum, LinearMap.lTensor_tmul, LinearMap.rTensor_tmul] using h'
   have h3 := congrArg μ (hinj h2)
-  simpa only [map_sum] using h3
+  set_option synthInstance.maxHeartbeats 100000 in
+    simpa only [map_sum] using h3
 
 theorem flat_compHom {O LL X : Type*} [CommRing O] [IsDedekindDomain O] [Field LL]
     [Algebra O LL] (hinj : Function.Injective (algebraMap O LL)) [AddCommGroup X] [Module LL X] :
@@ -75,7 +81,7 @@ def val1 (c : ZMod n) (x : ↥(W.N T)) : T.V ⊗[Qp] BdR :=
   ιV PD (LL := LL) (V := T.V) (φVB PD (LL := LL) (V := T.V) (Ct.levB T (c - 1) 1 x 0))
 
 theorem level_value_add (c : ZMod n) (x y : ↥(W.N T)) : val1 Ct T c (x + y) = val1 Ct T c x + val1 Ct T c y := by
-  simp only [val1, map_add, Pi.add_apply]
+  simp only [val1, map_add (f := _), Pi.add_apply]
 
 theorem level_value_smul (c : ZMod n) (o : O) (x : ↥(W.N T)) :
     val1 Ct T c ((algebraMap O (LetA O n) o) • x) = algebraMap O LL o • val1 Ct T c x := by
@@ -155,15 +161,11 @@ def valQ {c : ZMod n} {ζ : LL} (hP : PtHyp (W := W) T c ζ) (π' : LetA O n)
     (hπ : PowerSeries.constantCoeff (W.lev (c - 1) 1 π') = 0) : LcQ W T π' c →ₗ[O] XO BdR T :=
   Submodule.liftQ _ (valL Ct T hP) (valL_ker Ct T hP π' hπ)
 
-theorem valQ_mkL {c : ZMod n} {ζ : LL} (hP : PtHyp (W := W) T c ζ) (π' : LetA O n)
-    (hπ : PowerSeries.constantCoeff (W.lev (c - 1) 1 π') = 0) (x : W.DD T) (hx : x ∈ NcS W T (c - 1)) :
-    valQ Ct T hP π' hπ (mkL W T π' c x hx) = valAt W T c ζ x := rfl
-
 def muL (c : ZMod n) (ζ : LL) : LetA O n ⊗[O] XO BdR T →ₗ[O] (ℤ → XO BdR T) :=
   TensorProduct.lift (LinearMap.mk₂ O (fun a d => serC (W.lev c ζ a) d)
     (fun a a' d => by
       funext i
-      simp only [serC, map_add, Pi.add_apply]
+      simp only [serC, map_add (f := _), Pi.add_apply]
       split_ifs <;> simp [add_smul])
     (fun o a d => by
       funext i
@@ -185,8 +187,8 @@ def muL (c : ZMod n) (ζ : LL) : LetA O n ⊗[O] XO BdR T →ₗ[O] (ℤ → XO 
 theorem muL_tmul (c : ZMod n) (ζ : LL) (a : LetA O n) (d : XO BdR T) :
     muL (W := W) T c ζ (a ⊗ₜ d) = serC (W.lev c ζ a) d := rfl
 
-include Ct in
 
+include Ct in
 theorem expS_wd [IsDedekindDomain O] (hinj : Function.Injective (algebraMap O LL))
     {c : ZMod n} {ζ : LL} (hP : PtHyp (W := W) T c ζ) (π' : LetA O n)
     (hπ : PowerSeries.constantCoeff (W.lev (c - 1) 1 π') = 0)

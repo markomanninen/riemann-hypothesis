@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAStarOp2
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAStarOp2
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.MA MeasureTheory
 open scoped ComplexConjugate
@@ -104,7 +108,7 @@ theorem fund0 (h : SmQ r TT) (hh : ∀ V ∈ Test r TT, ip0 h V = 0) : h = 0 := 
   linarith
 
 theorem inner_product_sub_left {f g V : SmQ r TT} (hV : V ∈ Test r TT) : ip0 (f - g) V = ip0 f V - ip0 g V := by
-  rw [inner_conj_symm_alt, sub_eq_add_neg, inner_add_right_alt hV, inner_neg_right_alt, map_add, map_neg, ← inner_conj_symm_alt, ← inner_conj_symm_alt,
+  rw [inner_conj_symm_alt, sub_eq_add_neg, inner_add_right_alt hV, inner_neg_right_alt, map_add (f := _), map_neg, ← inner_conj_symm_alt, ← inner_conj_symm_alt,
     ← sub_eq_add_neg]
 
 end fund

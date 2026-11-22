@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreFlagCutForms
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSegreFlagCutTools
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagBundleSectionFormsTools
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsSegreFlagCutForms
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PSegreFlagCutTools
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagBundleSectionFormsTools
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -197,7 +202,8 @@ theorem genVal_flag (w w' e : Module.Basis (Fin N) Ω E) (hsame : ∀ i j : Fin 
   by_cases hj : (j : ℕ) < k + 1
   · have hχ : χ (w j) = w'.repr (w j) ⟨k, hk⟩ := by
       conv_lhs => rw [← w'.sum_repr (w j)]
-      rw [map_sum, Finset.sum_eq_single ⟨k, hk⟩]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_eq_single ⟨k, hk⟩]
       · rw [map_smul, htop, smul_eq_mul, mul_one]
       · intro m _ hm
         rcases lt_or_gt_of_ne hm with hlt | hgt
@@ -317,7 +323,8 @@ theorem chart_pair (y : (Σ k, ι k) → Ω) (B' : ChartBundle O (segreVec y) N 
         (∑ l, X ⟨none, l⟩ * G l : MRing (bundleIdx (bundleIdx ι M) M') O) =
         ∑ l, aeval (pairProjCoord y w φ φ' (flagCoord w e t (k + 1))) (G l) *
           genVal w (flagCoord w e t (k + 1)) (φ' l) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       exact Finset.sum_congr rfl fun l _ => by rw [map_mul, aeval_X, mul_comm]; rfl
     rw [hpt, map_mul, hs, ← hval, hm, map_mul]
     ring
@@ -326,8 +333,8 @@ end Chart
 
 end SegreFlagCutForms
 
-open SegreFlagCutForms in
 
+open SegreFlagCutForms in
 theorem SegreFlagCutForms.proof : SegreFlagCutForms.Statement := by
   intro O _ _ _ ϖ hϖ Ω _ _ K _ _ ι _ y d hV N E _ _ B B' hB w w' x x' f g hfl M M' a₀ a₀' φ φ' hφ hφ'
     Φ _ _ _ _ e t ht k hk S hS
@@ -364,7 +371,7 @@ theorem SegreFlagCutForms.proof : SegreFlagCutForms.Statement := by
         ((mem_weightedHomogeneousSubmodule _ _ _ _).mpr hp.2.1)
         (Submodule.smul_mem _ r ((mem_weightedHomogeneousSubmodule _ _ _ _).mpr hq.2.1)))
     · show aeval pt (p.1 + r • q.1) = τ * aeval pt (p.2 + r • q.2)
-      rw [map_add, map_add, map_smul, map_smul, hp.2.2, hq.2.2, mul_add, mul_smul_comm]
+      rw [map_add (f := _), map_add (f := _), map_smul, map_smul, hp.2.2, hq.2.2, mul_add, mul_smul_comm]
 
   have hpair : ∀ (Q : Ideal (MRing (bundleIdx (bundleIdx ι M) M') O)) (c : ∀ j, ι j),
       segreVec y c ≠ 0 → chartMonoZ O M M' c β ∉ Q → ∃ p ∈ G, p.2 ∉ Q := by

@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HeckeFormNSOfHeckeForm
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DoubledThetaEqSumSchrodingerFunctionPeriodisatioStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DoubledPairSchrodingerFunctionContinuousIntegrabStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RationalSourceActsOnOrientedThetaBySubstitution
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaRestrictionInvariantRationalLeviGL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.HeckeFormNSOfHeckeForm
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DoubledThetaEqSumSchrodingerFunctionPeriodisatioStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.DoubledPairSchrodingerFunctionContinuousIntegrabStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RationalSourceActsOnOrientedThetaBySubstitution
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaRestrictionInvariantRationalLeviGL
+
+@[expose] public section
+
 open scoped ComplexConjugate Matrix NNReal ENNReal
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField
 open GlobalTheory.AutomorphicL2Unitary GlobalTheory.Cusp GlobalTheory.AdelicU GlobalTheory.Doubling GlobalTheory.Cont GlobalTheory.MixModel
@@ -78,11 +83,31 @@ theorem swSec_weyl : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ) (A B : HSp D)
     have h := hf.quasi δ ((dblDec A).extX B a)
     rw [show ratW B (dblSp A) δ = (dblDec A).extX B γ from hδ, HypDec.symplOH_extX_extX, neg_zero,
       AddChar.map_zero_eq_one, one_mul] at h
-    rw [map_add, h]
+    rw [map_add (f := _), h]
   unfold swSec GlobalTheory.IndefiniteRowSideFullHecke.SphericalZero.evZero
   simp only [h1]
-  refine (GlobalTheory.LeviGLRes.covolOne_integral_mul_right hν (lowC A w) n (mul_eq_one_comm.1 hmn) hmn hm hn
-    (fun a => f ((dblDec A).extX B a)) hper).trans ?_
+  have hchange : ∫ a in 𝓨, f ((dblDec A).extX B (a * lowC A w)) ∂ν =
+      ∫ a in 𝓨, f ((dblDec A).extX B a) ∂ν := by
+    obtain ⟨i1, i2, i3, i4, i5, -⟩ := lattice_Mx D B.rank A.rank
+    let e : Mx D B.rank A.rank ≃+ Mx D B.rank A.rank :=
+      { toFun := fun a => a * lowC A w
+        invFun := fun a => a * n
+        left_inv := fun a => by simp only [Matrix.mul_assoc, hmn, Matrix.mul_one]
+        right_inv := fun a => by simp only [Matrix.mul_assoc, mul_eq_one_comm.1 hmn, Matrix.mul_one]
+        map_add' := fun a b => Matrix.add_mul _ _ _ }
+    have he : Continuous e := continuous_id.matrix_mul continuous_const
+    have he' : Continuous e.symm := continuous_id.matrix_mul continuous_const
+    have hr : ∀ x, e x ∈ ratMx D B.rank A.rank ↔ x ∈ ratMx D B.rank A.rank := fun x =>
+      ⟨fun h => by
+        have h2 := ratMx_mul h hn
+        have h3 : e x * n = x := e.symm_apply_apply x
+        rwa [h3] at h2,
+       fun h => ratMx_mul h hm⟩
+    obtain ⟨h1, hemb⟩ := GlobalTheory.Unf.ParCont.isCovolOne_map hν e he he' hr
+    rw [← covolOne_integral_eq hν h1 (fun a => f ((dblDec A).extX B a)) hper,
+      hemb.setIntegral_map, Set.preimage_image_eq _ e.injective]
+    rfl
+  refine hchange.trans ?_
   exact integral_periodise hν _ _ (GlobalTheory.T.doubledPairSchrodingerFunction_continuous_integrable D ψ hω.std A B ν 𝓨 hν f hf).2
     fun x => (GlobalTheory.T.doubledTheta_eq_sum_schrodingerFunction_periodisation D ψ hω.std A B ν 𝓨 hν f hf x).2
 

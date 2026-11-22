@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.KerIsTerm
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExtUHInjective
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LevelChainSharpColumnValuationOfPointKernelLiftL
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.InvSmulMemOfRedL
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.KerIsTerm
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExtUHInjective
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LevelChainSharpColumnValuationOfPointKernelLiftL
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.InvSmulMemOfRedL
+
+@[expose] public section
 
 noncomputable section
 
@@ -149,7 +153,7 @@ theorem exists_split : ∀ (X : Fields) (Pr : Primes X) (R : Ranks) (W : Wts X P
     show (PtY.mv p (DecoSet.dia1 P a p.1.1.deco)).1.1.deco.1.f P' = p.1.1.deco.1.f P'
     rw [PtY.mv_dia]
     funext x
-    show ((Pi.mulSingle P a : DiaG X.E (Pr.vT u)) P').1 * _ = _
+    show ((Pi.mulSingle P a : DiaG (E := X.E) (ST := Pr.vT u)) P').1 * _ = _
     rw [Pi.mulSingle_eq_of_ne hne, Units.val_one, one_mul]
   · intro b γ h
     obtain ⟨g, hg⟩ := exists_ufGL γ h

@@ -1,10 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TameParahoricRepSplitsAsProduct
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwDomSum
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwDomCard
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwDomMul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwMemIwC
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HeckePairTop
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.TameParahoricRepSplitsAsProduct
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwDomSum
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwDomCard
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwDomMul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.IwMemIwC
+
+@[expose] public section
 
 open ValuativeRel Matrix GlobalTheory.SmGL GlobalTheory.SplitWeil UpperTheory.V.Hi UpperTheory.V.AlgebraTools GlobalTheory.PRep
 
@@ -123,7 +127,8 @@ private theorem jq_dom (C : Subgroup 𝓀[k]ˣ) {V : Type} [AddCommGroup V] [Mod
     apply Submodule.subset_span
     refine ⟨⟨u, (Subgroup.mem_inf.mp (hsU u hu)).1⟩, π (diagT k (Fin n) t) (v : V), ?_⟩
     simp
-  rw [hsum C ℂ V π v, ← hcard, jacBU_mk, ← Submodule.mkQ_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hsum C ℂ V π v, ← hcard, jacBU_mk, ← Submodule.mkQ_apply, map_sum]
   simp only [Submodule.mkQ_apply]
   rw [Finset.sum_congr rfl hu, Finset.sum_const, Nat.cast_smul_eq_nsmul]
 

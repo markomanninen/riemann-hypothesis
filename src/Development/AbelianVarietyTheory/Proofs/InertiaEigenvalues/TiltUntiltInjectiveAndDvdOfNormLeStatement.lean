@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltUntiltInjectiveAndDvdOfNormLe
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ImportsAlt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TiltUntiltInjectiveAndDvdOfNormLe
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ImportsAlt
+
+@[expose] public section
+
 open Formalism.Per GlobalTheory.PSer
 open scoped Formalism.Per
 set_option maxHeartbeats 1000000 in

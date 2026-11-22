@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.FormulaStep
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.TrivKtype
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.FormulaStep
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.WeylFormulaCompact.TrivKtype
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ private theorem diagonal_exp_mem_Kset {N : ℕ} (ε : Fin N → Bool) (θ : Fin 
   · rw [Matrix.mem_unitaryGroup_iff, Matrix.star_eq_conjTranspose, Matrix.diagonal_conjTranspose,
       Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
     congr 1
-    funext a
-    simp only [Pi.star_apply]
+    funext i
+    change Complex.exp ((θ i : ℂ) * Complex.I) * star (Complex.exp ((θ i : ℂ) * Complex.I)) = 1
     rw [Complex.star_def, Complex.mul_conj, Complex.normSq_eq_norm_sq, Complex.norm_exp_ofReal_mul_I]
     norm_num
   · show diagonal (fun a => Complex.exp ((θ a : ℂ) * Complex.I)) * Jm ε = Jm ε * diagonal (fun a => Complex.exp ((θ a : ℂ) * Complex.I))
@@ -64,7 +68,7 @@ theorem typePl_of (hB : Blocks) (hD : BlockDiag) (hT : TorusWt) (hW : WtUniq) (h
     { carrier := {u | u ∈ S ∧ ∀ θ : Fin (nPl ε) → ℝ, diagonal (fun a => Complex.exp ((θ a : ℂ) * Complex.I)) ∈ Kset (allPos (nPl ε)) →
           sPl ε σ (diagonal (fun a => Complex.exp ((θ a : ℂ) * Complex.I))) u = Complex.exp (((∑ a, μ a * θ a : ℝ) : ℂ) * Complex.I) • u}
       add_mem' := fun hx hy => ⟨S.add_mem hx.1 hy.1, fun θ hθ => by
-        rw [map_add, hx.2 θ hθ, hy.2 θ hθ, smul_add]⟩
+        rw [map_add (f := _), hx.2 θ hθ, hy.2 θ hθ, smul_add]⟩
       zero_mem' := ⟨S.zero_mem, fun θ _ => by rw [map_zero, smul_zero]⟩
       smul_mem' := fun c x hx => ⟨S.smul_mem c hx.1, fun θ hθ => by
         rw [map_smul, hx.2 θ hθ, smul_comm]⟩ }
@@ -119,7 +123,7 @@ theorem typeMi_of (hB : Blocks) (hD : BlockDiag) (hT : TorusWt) (hW : WtUniq) (h
     { carrier := {u | u ∈ S ∧ ∀ θ : Fin (nMi ε) → ℝ, diagonal (fun a => Complex.exp ((θ a : ℂ) * Complex.I)) ∈ Kset (allPos (nMi ε)) →
           sMi ε σ (diagonal (fun a => Complex.exp ((θ a : ℂ) * Complex.I))) u = Complex.exp (((∑ a, μ a * θ a : ℝ) : ℂ) * Complex.I) • u}
       add_mem' := fun hx hy => ⟨S.add_mem hx.1 hy.1, fun θ hθ => by
-        rw [map_add, hx.2 θ hθ, hy.2 θ hθ, smul_add]⟩
+        rw [map_add (f := _), hx.2 θ hθ, hy.2 θ hθ, smul_add]⟩
       zero_mem' := ⟨S.zero_mem, fun θ _ => by rw [map_zero, smul_zero]⟩
       smul_mem' := fun c x hx => ⟨S.smul_mem c hx.1, fun θ hθ => by
         rw [map_smul, hx.2 θ hθ, smul_comm]⟩ }

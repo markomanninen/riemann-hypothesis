@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsLocalCoeffLocal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemDivSuppOfDivCycleNeZero
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MemMinimalPrimesIff
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsLocalCoeffLocal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemDivSuppOfDivCycleNeZero
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MemMinimalPrimesIff
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -28,7 +33,7 @@ theorem LocCycleSpanMul.proof : LocCycleSpanMul.Statement := by
           (LocCycleSpanMul.mem_minimalPrimes_iff hz W).mpr ⟨hp, h1, hzW⟩
         refine ⟨?_, locLen_ne_top hm⟩
         unfold locCycle
-        rw [dif_pos hm]
+        rw [dite_eq_left hm]
         rfl
       · have hm : W ∉ (Ideal.span {z}).minimalPrimes := fun h =>
           hzW ((LocCycleSpanMul.mem_minimalPrimes_iff hz W).mp h).2.2
@@ -37,7 +42,7 @@ theorem LocCycleSpanMul.proof : LocCycleSpanMul.Statement := by
           rwa [bot_sup_eq] at this
         refine ⟨?_, by rw [h0]; exact ENat.zero_ne_top⟩
         unfold locCycle
-        rw [dif_neg hm, h0]
+        rw [dite_eq_right hm, h0]
         simp
     obtain ⟨ex, fx⟩ := key x hx
     obtain ⟨ey, fy⟩ := key y hy
@@ -51,7 +56,7 @@ theorem LocCycleSpanMul.proof : LocCycleSpanMul.Statement := by
   · have hz : ∀ z : A, z ≠ 0 → locCycle (Ideal.span {z}) W = 0 := by
       intro z hz
       unfold locCycle
-      rw [dif_neg]
+      rw [dite_eq_right]
       intro hm
       have h := (LocCycleSpanMul.mem_minimalPrimes_iff hz W).mp hm
       exact hP ⟨h.1, h.2.1⟩

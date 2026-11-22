@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.EtaleSpreading.EtSpreads
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.EtaleSpreading.EtSpreads
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits LateralTheory.E.t_E3Cut

@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.TermTieOf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.NeatTies
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LatSpanLeSpan
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.ConcreteLevelAdelicSubset
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AutLzFinite
-import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.DifferentIdealMapNeBot
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.TermTieOf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.NeatTies
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LatSpanLeSpan
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.ConcreteLevelAdelicSubset
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AutLzFinite
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CayleyDegreeNondegeneracy.DifferentIdealMapNeBot
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ theorem lin_lam (s : TT Y u u') : Formalism.HermitianLatticesTheory.gmap s.lin s
 theorem frame_eq (s : TT Y u u') :
     s.frame = Formalism.L2.SG.Saturated.mapL s.lin (lin_isom s) (lf D (X.Fu u')) := by
   unfold GTerm.frame mapLF
-  rw [dif_pos (lin_isom s)]
+  rw [dite_eq_left (lin_isom s)]
   rfl
 
 theorem frame_apply (s : TT Y u u') (a : Fin (D.R.rS + 1)) :
@@ -75,7 +79,7 @@ theorem fix_X {T : D.host.E} (F0 : FlagG (VS D) D.R.rS T) (c : (VS D).V ≃ₗ[D
   induction hx using Submodule.span_induction with
   | mem y hy => obtain ⟨a, rfl⟩ := hy; exact he a
   | zero => simp
-  | add y w _ _ hy hw => rw [map_add, hy, hw]
+  | add y w _ _ hy hw => rw [map_add (f := _), hy, hw]
   | smul k y _ hy => rw [map_smul, hy]
 
 end Reps
@@ -201,8 +205,8 @@ theorem fib_data (t : RT Y u u') (s₀ s : fib Y t) : ∃ c : (VS D).V ≃ₗ[D.
   rw [hs]
   group
 
-variable (Y) in
 
+variable (Y) in
 def cOf (t : RT Y u u') (s₀ s : fib Y t) : (VS D).V ≃ₗ[D.host.E] (VS D).V := Classical.choose (fib_data Y t s₀ s)
 
 theorem cOf_spec (t : RT Y u u') (s₀ s : fib Y t) :
@@ -213,8 +217,8 @@ theorem cOf_spec (t : RT Y u u') (s₀ s : fib Y t) :
         s.1.lin = n * s₀.1.lin * μ * cOf Y t s₀ s :=
   Classical.choose_spec (fib_data Y t s₀ s)
 
-variable (Y) in
 
+variable (Y) in
 def phi (t : RT Y u u') (s₀ : fib Y t) (s : fib Y t) : autLz D (X.Fu u') s₀.1.lam' :=
   ⟨⇑(indW (X.Fu u') (cOf Y t s₀ s) (cOf_spec t s₀ s).1 (fix_X _ _ (cOf_spec t s₀ s).2.2.1)),
     indW_mem _ _ _ (cOf_spec t s₀ s).2.2.1 (cOf_spec t s₀ s).2.2.2.1 _ (cOf_spec t s₀ s).2.1⟩
@@ -455,7 +459,7 @@ theorem xplus_nlam {Λ : Submodule (𝓞 E) S.V} {G : LFlag S r T'} {n : S.V ≃
   have hxX : n x ∈ Xsp G := nlam_presX hn x hx
   refine Submodule.mem_sup.2 ⟨n x + c • (n G.fl.z - G.fl.z), add_mem hxX (Submodule.smul_mem _ c hz), c • G.fl.z,
     Submodule.mem_span_singleton.2 ⟨c, rfl⟩, ?_⟩
-  rw [map_add, map_smul]
+  rw [map_add (f := _), map_smul]
   module
 
 theorem map_X_of_e {G K : LFlag S r T'} {φ : S.V ≃ₗ[E] S.V} (he : ∀ a, φ (G.fl.e a) = K.fl.e a) {x : S.V}
@@ -464,7 +468,7 @@ theorem map_X_of_e {G K : LFlag S r T'} {φ : S.V ≃ₗ[E] S.V} (he : ∀ a, φ
   induction hx using Submodule.span_induction with
   | mem y hy => obtain ⟨a, rfl⟩ := hy; rw [he]; exact Submodule.subset_span ⟨a, rfl⟩
   | zero => simp
-  | add y w _ _ hy hw => rw [map_add]; exact add_mem hy hw
+  | add y w _ _ hy hw => rw [map_add (f := _)]; exact add_mem hy hw
   | smul k y _ hy => rw [map_smul]; exact Submodule.smul_mem _ k hy
 
 theorem xplus_frame {G K : LFlag S r T'} {φ : S.V ≃ₗ[E] S.V} (hf : ∀ a, frame K a = φ (frame G a))
@@ -479,7 +483,7 @@ theorem xplus_frame {G K : LFlag S r T'} {φ : S.V ≃ₗ[E] S.V} (hf : ∀ a, f
     have := hf (Fin.last _)
     rw [frame_last_sat, frame_last_sat] at this; exact this.symm
   have hxK : φ x ∈ K.fl.X := map_X_of_e he hx
-  rw [map_add, map_smul, hz]
+  rw [map_add (f := _), map_smul, hz]
   exact add_mem (Submodule.mem_sup_left hxK) (Submodule.mem_sup_right (Submodule.mem_span_singleton.2 ⟨c, rfl⟩))
 
 theorem orth_pull {U : Submodule E S.V} {φ : S.V ≃ₗ[E] S.V} (hφ : φ ∈ Formalism.HermitianLatticesTheory.isom S.hT) (W : Submodule E S.V)
@@ -505,13 +509,13 @@ theorem sg_move {Λ : Submodule (𝓞 E) S.V} {F : LFlag S r T} {G K : LFlag S r
       exact add_mem (Submodule.smul_mem _ _ h1) h2
     · have e : y - y' = n.symm (n y - n y') := by rw [map_sub, n.symm_apply_apply, n.symm_apply_apply]
       rw [e, h]
-      simp only [map_add, map_smul, map_sub, n.symm_apply_apply]
+      simp only [map_add (f := _), map_smul, map_sub, n.symm_apply_apply]
       module
   · rintro ⟨x, hx, x', hx', h⟩
     refine ⟨al • (n F.zt - F.zt) + n x, add_mem (Submodule.smul_mem _ _ hzF) (nlam_presX hn x hx),
       n x' - al' • (K.zt - n G.zt), sub_mem (hX ▸ Submodule.mem_map_of_mem hx') (Submodule.smul_mem _ _ hz), ?_⟩
     rw [← map_sub, h]
-    simp only [map_add, map_smul]
+    simp only [map_add (f := _), map_smul]
     module
 
 theorem scal_move {Λ : Submodule (𝓞 E) S.V} {F : LFlag S r T} {G₁ G₂ K₁ K₂ : LFlag S r T'}
@@ -641,8 +645,8 @@ theorem conj_triv {U : Submodule D.host.E (VS D).V} {l φ : (VS D).V ≃ₗ[D.ho
     rw [mem_map_iff, happ, map_sub, l.symm_apply_apply]
     exact hφ.2 _ hx
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem pair_step (hK : IotaKer) {s₁ s₂ t₁ t₂ : TT Y u u'} (h1 : s₁.toTerm = t₁.toTerm) (h2 : s₂.toTerm = t₂.toTerm)
     (hr : rowOf Y.TR (Y.cs u) (Y.cs u') s₁ = rowOf Y.TR (Y.cs u) (Y.cs u') s₂)
     (hr' : rowOf Y.TR (Y.cs u) (Y.cs u') t₁ = rowOf Y.TR (Y.cs u) (Y.cs u') t₂) :

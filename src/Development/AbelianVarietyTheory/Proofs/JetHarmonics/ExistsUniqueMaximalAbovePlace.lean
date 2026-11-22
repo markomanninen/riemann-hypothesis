@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.JetGauges.SplitUnramifiedPlaces
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteMaximalSpectrumOfFiniteOfIsLocalRing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.JetGauges.SplitUnramifiedPlaces
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteMaximalSpectrumOfFiniteOfIsLocalRing
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,7 +85,7 @@ theorem exists_eq_add (w : Place p R) (s : w.Ow) :
   obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective s
   obtain ⟨r, t, h⟩ := exists_eq_one_tmul_add_mul x
   refine ⟨r, Ideal.Quotient.mk _ t, ?_⟩
-  rw [h, map_add, map_mul, map_natCast]
+  rw [h, map_add (f := _), map_mul, map_natCast]
   rfl
 
 theorem exists_prime_under (p : ℕ) [Fact p.Prime] (R : Type) [CommRing R] [IsDedekindDomain R]

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -28,7 +32,8 @@ theorem index_smul_cocycle_eq_coboundary (R G X : Type) [CommRing R] [Group G] [
   have hs : ∑ q : G ⧸ H, f' (g • q).out = ∑ q : G ⧸ H, f' q.out :=
     Equiv.sum_comp (MulAction.toPerm g) (fun q : G ⧸ H => f' q.out)
   simp only [hq, Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ] at hs
-  rw [← map_sum, ← Nat.card_eq_fintype_card, ← Subgroup.index_eq_card] at hs
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, ← Nat.card_eq_fintype_card, ← Subgroup.index_eq_card] at hs
   have hfg : f g = f' g + (ρ g x₀ - x₀) := by simp [hf']
   have hs' : H.index • f' g = ∑ q : G ⧸ H, f' q.out - ρ g (∑ q : G ⧸ H, f' q.out) :=
     eq_sub_of_add_eq hs

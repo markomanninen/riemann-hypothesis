@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.FiniteLengthLattice
-import GroundTheory.AutomorphicForms.JacquetAdmissible
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.FiniteLengthLattice
+public import GroundTheory.AutomorphicForms.JacquetAdmissible
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -185,8 +190,8 @@ section Coinvariants
 variable {G : Type*} [Group G] [TopologicalSpace G] {V W : Type*} [AddCommGroup V] [Module ℂ V]
   [AddCommGroup W] [Module ℂ W] {ρ : Representation ℂ G V}
 
-omit [TopologicalSpace G] in
 
+omit [TopologicalSpace G] in
 theorem map_mem_coinvariantsKer {π : Representation ℂ G W} (p : Representation.IntertwiningMap ρ π)
     (N : Subgroup G) {x : V} (hx : x ∈ Representation.Coinvariants.ker (ρ.comp N.subtype)) :
     p x ∈ Representation.Coinvariants.ker (π.comp N.subtype) := by

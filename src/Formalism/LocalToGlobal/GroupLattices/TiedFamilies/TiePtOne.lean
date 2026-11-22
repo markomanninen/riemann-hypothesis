@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.EqOneOfPh
-import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ClsLat
-import Formalism.LocalToGlobal.HermitianForms.RankEqFirstLevel
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.EqOneOfPh
+public import Formalism.LocalToGlobal.GroupLattices.ComparisonMaps.ClsLat
+public import Formalism.LocalToGlobal.HermitianForms.RankEqFirstLevel
+
+@[expose] public section
 
 noncomputable section
 

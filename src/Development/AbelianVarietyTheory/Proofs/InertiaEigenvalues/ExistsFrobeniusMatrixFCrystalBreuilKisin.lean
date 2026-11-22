@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct PowerSeries GlobalTheory.Prism GlobalTheory.BKReal GlobalTheory.Per GlobalTheory.BSP
 open scoped Formalism.Per NNReal
 
@@ -42,7 +47,8 @@ theorem span_eq_top_of_semiBC {A B M N : Type} [CommRing A] [CommRing B] [AddCom
   let S := Submodule.span B (Set.range fun i => u (e i))
   have hu : ∀ x, u x ∈ S := by
     intro x
-    rw [← e.sum_repr x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← e.sum_repr x, map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [u.map_smulₛₗ]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -87,7 +93,8 @@ theorem frob_matrix_general {R Mo : Type} [CommRing R] [IsDomain R] [AddCommGrou
     intro k'
     have hr : LocalizedModule.mk (∑ j, A' (j, k') • m' j) (1 : Submonoid.powers x) =
         ∑ j, A' (j, k') • LocalizedModule.mk (m' j) (1 : Submonoid.powers x) := by
-      rw [← LocalizedModule.mkLinearMap_apply, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← LocalizedModule.mkLinearMap_apply, map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       rw [map_smul, LocalizedModule.mkLinearMap_apply]
     rw [hr, ← LocalizedModule.smul'_mk, ← hc k', pow_add, mul_smul, Finset.smul_sum, Finset.smul_sum]
@@ -101,7 +108,8 @@ theorem frob_matrix_general {R Mo : Type} [CommRing R] [IsDomain R] [AddCommGrou
     exact smul_right_injective _ (pow_ne_zero r hx) hr
   ext i k'
   have h3 := congrArg (fun y => e.repr y i) (key2 k')
-  simp only [map_smul, e.repr_self, map_sum, Finsupp.smul_apply, Finsupp.coe_finsetSum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_smul, e.repr_self, map_sum, Finsupp.smul_apply, Finsupp.coe_finsetSum,
     Finset.sum_apply, Finsupp.single_apply, smul_eq_mul] at h3
   rw [Matrix.mul_apply, Matrix.smul_apply, Matrix.one_apply, smul_eq_mul]
   rw [eq_comm] at h3

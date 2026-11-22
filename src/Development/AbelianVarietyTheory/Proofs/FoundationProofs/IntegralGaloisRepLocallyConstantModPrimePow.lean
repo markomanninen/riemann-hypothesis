@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ResPlaneSmulEqZero
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormLePowIffDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ResPlaneSmulEqZero
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NormLePowIffDvd
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2
 open scoped Matrix
 

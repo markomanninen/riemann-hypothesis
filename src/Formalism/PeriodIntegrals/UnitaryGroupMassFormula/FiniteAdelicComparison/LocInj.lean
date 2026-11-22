@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FiniteAdelicComparison.MemLocFrom
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FiniteAdelicComparison.MemLocFrom
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,8 @@ theorem psiV_tmul (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) (x : I.E) (a 
     psiV I v (x ⊗ₜ[I.F] a) = Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV I.F v a ⊗ₜ[I.F] x := by
   simp [psiV]
 
-open Classical in
 
+open Classical in
 theorem coeff_psiV (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) (z : I.E ⊗[I.F] Formalism.MainNotions.S.Af I.F)
     (j : Module.Basis.ofVectorSpaceIndex I.F I.E) :
     TensorProduct.equivFinsuppOfBasisRight (Module.Basis.ofVectorSpace I.F I.E) (psiV I v z) j =
@@ -25,7 +29,7 @@ theorem coeff_psiV (I : AutInst) (v : HeightOneSpectrum (𝓞 I.F)) (z : I.E ⊗
   | tmul x a =>
     rw [psiV_tmul, TensorProduct.equivFinsuppOfBasisRight_apply_tmul_apply,
       TensorProduct.equivFinsuppOfBasisLeft_apply_tmul_apply, map_smul]
-  | add z w hz hw => simp only [map_add, Finsupp.add_apply, hz, hw]
+  | add z w hz hw => simp only [map_add (f := _), Finsupp.add_apply, hz, hw]
 
 theorem local_vector_injective : InjV := by
   classical

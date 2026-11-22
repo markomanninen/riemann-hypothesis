@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.InvariantLetterIdempotentOfFixed
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.InvariantLetterIdempotentOfFixed
+
+@[expose] public section
 
 noncomputable section
 
@@ -64,12 +68,12 @@ theorem exists_linear_lift_of_free [NeZero n] [IsDomain O] [IsPrincipalIdealRing
     simp [e0]
   · rintro x y ⟨hx1, hx2, ⟨px, hpx, ex⟩, tx, htx, qx, hqx, fx⟩ ⟨hy1, hy2, ⟨py, hpy, ey⟩, ty, hty, qy, hqy, fy⟩
     have hsum : ζL (x : FF) + ζL (y : FF) = ζL ((x + y : ↥F₁) : FF) := by
-      rw [Submodule.coe_add, map_add]
+      rw [Submodule.coe_add, map_add (f := _)]
     obtain ⟨txy, htxy⟩ := Zex (ζL ((x + y : ↥F₁) : FF)) (hζ _).1 (hζ _).2
     obtain ⟨r1, hr1, e1⟩ := Zlin 1 1 _ _ tx ty txy (hζ x).1 (hζ x).2 (hζ y).1 (hζ y).2 htx hty
       (by rw [one_smul, one_smul, hsum]; exact htxy)
-    refine ⟨by rw [map_add]; exact Submodule.add_mem _ hx1 hy1,
-      by rw [map_add]; exact Formalism.MainNotions.RamifiedCoefficientChains.S9.dl_add W T hx2 hy2,
+    refine ⟨by rw [map_add (f := _)]; exact Submodule.add_mem _ hx1 hy1,
+      by rw [map_add (f := _)]; exact Formalism.MainNotions.RamifiedCoefficientChains.S9.dl_add W T hx2 hy2,
       ⟨px + py, Submodule.add_mem _ hpx hpy, ?_⟩, txy, htxy, qx + qy - r1,
       Submodule.sub_mem _ (Submodule.add_mem _ hqx hqy) hr1, ?_⟩
     · rw [smul_add, ← ex, ← ey, Submodule.coe_add, map_add ζL, map_add (W.φD T), smul_add,

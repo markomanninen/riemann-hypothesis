@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsHolPeriods
+
+@[expose] public section
 
 open Complex NumberField Module
 open scoped nonZeroDivisors
@@ -48,7 +52,7 @@ theorem exists_ideal (σ : K →+* ℂ) (hσ : ¬ ComplexEmbedding.IsReal σ) (L
     obtain ⟨p', q', hpq⟩ := PeriodPair.mem_lattice.1 (hL r _ hmem)
     refine ⟨p', q', σ.injective ?_⟩
     apply mul_right_cancel₀ hω
-    simp only [map_mul, map_add, map_intCast]
+    simp only [map_mul, map_add (f := _), map_intCast]
     rw [← hσt] at hpq
     linear_combination (-1 : ℂ) * hpq
   obtain ⟨u, v, hv, htuv⟩ := IsFractionRing.div_surjective (A := 𝓞 K) t
@@ -62,7 +66,7 @@ theorem exists_ideal (σ : K →+* ℂ) (hσ : ¬ ComplexEmbedding.IsReal σ) (L
       add_mem' := by
         rintro x y ⟨p, q, hx⟩ ⟨p', q', hy⟩
         exact ⟨p + p', q + q', by
-          rw [RingOfIntegers.coe_eq_algebraMap, map_add, ← RingOfIntegers.coe_eq_algebraMap,
+          rw [RingOfIntegers.coe_eq_algebraMap, map_add (f := _), ← RingOfIntegers.coe_eq_algebraMap,
             ← RingOfIntegers.coe_eq_algebraMap, hx, hy]
           push_cast; ring⟩
       zero_mem' := ⟨0, 0, by simp⟩
@@ -85,17 +89,17 @@ theorem exists_ideal (σ : K →+* ℂ) (hσ : ¬ ComplexEmbedding.IsReal σ) (L
       obtain ⟨p, q, rfl⟩ := PeriodPair.mem_lattice.1 hz
       refine ⟨v * p + q * u, (hmem𝔞 _).2 ⟨p, q, ?_⟩, ?_⟩
       · rw [RingOfIntegers.coe_eq_algebraMap]
-        simp only [map_add, map_mul, map_intCast, ← RingOfIntegers.coe_eq_algebraMap, hu]
+        simp only [map_add (f := _), map_mul, map_intCast, ← RingOfIntegers.coe_eq_algebraMap, hu]
         ring
       · rw [RingOfIntegers.coe_eq_algebraMap]
-        simp only [map_add, map_mul, map_intCast, ← RingOfIntegers.coe_eq_algebraMap, hu]
+        simp only [map_add (f := _), map_mul, map_intCast, ← RingOfIntegers.coe_eq_algebraMap, hu]
         rw [← hσt]
         field_simp
     · rintro ⟨x, hx, rfl⟩
       obtain ⟨p, q, hpq⟩ := (hmem𝔞 x).1 hx
       refine PeriodPair.mem_lattice.2 ⟨p, q, ?_⟩
       rw [hpq, ← hσt]
-      simp only [map_mul, map_add, map_intCast]
+      simp only [map_mul, map_add (f := _), map_intCast]
       field_simp
 
 theorem im_mul_conj_eq_det (σ : K →+* ℂ) (b : Basis (Fin 2) ℚ K) (v : Fin 2 → K) :
@@ -106,7 +110,7 @@ theorem im_mul_conj_eq_det (σ : K →+* ℂ) (b : Basis (Fin 2) ℚ K) (v : Fin
     conv_lhs => rw [← b.sum_toMatrix_smul_self v j]
     simp [Rat.smul_def, map_mul, map_ratCast]
   rw [hv 0, hv 1, Basis.det_apply, Matrix.det_fin_two]
-  simp only [Fin.sum_univ_two, map_add, map_mul, map_ratCast, Complex.mul_im, Complex.mul_re,
+  simp only [Fin.sum_univ_two, map_add (f := _), map_mul, map_ratCast, Complex.mul_im, Complex.mul_re,
     Complex.add_re, Complex.add_im, Complex.conj_re, Complex.conj_im, Complex.ratCast_re,
     Complex.ratCast_im]
   push_cast
@@ -129,7 +133,7 @@ theorem covol_eq (σ : K →+* ℂ) (b : Basis (Fin 2) ℤ (𝓞 K)) (L : Period
     have h' : (s : ℝ) • L.ω₁ + (t : ℝ) • L.ω₂ = 0 := by
       rw [e0, e1, Complex.real_smul, Complex.real_smul]
       have := congrArg (fun y => c * σ y) hK
-      simp only [map_add, map_mul, map_intCast, map_zero, mul_zero] at this
+      simp only [map_add (f := _), map_mul, map_intCast, map_zero, mul_zero] at this
       push_cast
       linear_combination this
     have := LinearIndependent.pair_iff.1 L.indep s t h'
@@ -140,7 +144,7 @@ theorem covol_eq (σ : K →+* ℂ) (b : Basis (Fin 2) ℤ (𝓞 K)) (L : Period
     have hxK : x = p * u0 + q * u1 := by
       apply σ.injective
       apply mul_left_cancel₀ hc
-      rw [map_add, map_mul, map_mul, map_intCast, map_intCast, ← hpq, e0, e1]
+      rw [map_add (f := _), map_mul, map_mul, map_intCast, map_intCast, ← hpq, e0, e1]
       ring
     have hx' : (⟨x, hx⟩ : (I : Submodule (𝓞 K) K)) = p • w 0 + q • w 1 := by
       ext
@@ -197,14 +201,14 @@ theorem mem_iff (σ : K →+* ℂ) (L L' : PeriodPair) (𝔟 : Ideal (𝓞 K)) (
         exact hmem
       · intro x y hx hy
         show σ (x + y) * z ∈ L'.lattice
-        rw [map_add, add_mul]
+        rw [map_add (f := _), add_mul]
         exact add_mem hx hy
     simpa using key
 
 end CMLattice
 
-open CMLattice in
 
+open CMLattice in
 theorem lattice_cm_eq_ideal_and_covolume :
     ∀ (K : Type) [Field K] [NumberField K], Module.finrank ℚ K = 2 → ∀ (σ : K →+* ℂ), ¬ NumberField.ComplexEmbedding.IsReal σ →
   ∀ (L L' : PeriodPair), (∀ (a : 𝓞 K), ∀ z ∈ L.lattice, σ (a : K) * z ∈ L.lattice) →
@@ -254,7 +258,7 @@ theorem lattice_cm_eq_ideal_and_covolume :
                 rw [RingOfIntegers.coe_eq_algebraMap]; field_simp
             _ = β * c * (σ x * σ a) := by rw [hae]; ring
         · rintro x y ⟨x1, hx1, e1⟩ ⟨y1, hy1, e2⟩
-          exact ⟨x1 + y1, Submodule.add_mem (↑(Bb⁻¹ * A0) : Submodule (𝓞 K) K) hx1 hy1, by rw [map_add, add_mul, e1, e2, map_add]; ring⟩
+          exact ⟨x1 + y1, Submodule.add_mem (↑(Bb⁻¹ * A0) : Submodule (𝓞 K) K) hx1 hy1, by rw [map_add (f := _), add_mul, e1, e2, map_add (f := _)]; ring⟩
       simpa using key
     · rintro ⟨x, hx, rfl⟩
       rw [hmem]

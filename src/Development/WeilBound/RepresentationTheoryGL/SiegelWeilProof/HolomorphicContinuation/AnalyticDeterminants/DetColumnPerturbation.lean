@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.DetDFin
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.AnalyticDeterminants.DetDFin
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,7 +42,6 @@ def piL (N : ℕ) : Matrix (Fin N) (Fin (N + 1)) ℂ →L[ℂ] Matrix (Fin N) (F
       map_add' := fun X Y => by ext k l; simp [piF]
       map_smul' := fun a X => by ext k l; simp [piF] }
 
-@[simp] theorem phiL_apply (X : Matrix (Fin N) (Fin (N + 1)) ℂ) : phiL N X = phiF X := rfl
 @[simp] theorem piL_apply (X : Matrix (Fin N) (Fin (N + 1)) ℂ) : piL N X = piF X := rfl
 
 theorem phiF_single (k : Fin N) (j : Fin (N + 1)) :

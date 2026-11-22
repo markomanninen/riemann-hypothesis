@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NoTowerQ
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NoTowerQ
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,7 +50,7 @@ theorem coboundary_int_additive_mod : ∀ (K L : Type) [Field K] [ValuativeRel K
   have hmul : (σ * τ) x - x = σ (τ x - x) + (σ x - x) := by
     rw [AlgEquiv.mul_apply, map_sub]; ring
   have hστ : σ (τ x - x) = (a τ : L) + (p : L) ^ r * σ zτ := by
-    rw [eτ, map_add, map_mul, map_pow, map_intCast, map_natCast]
+    rw [eτ, map_add (f := _), map_mul, map_pow, map_intCast, map_natCast]
   have key : (((a (σ * τ) - a σ - a τ : ℤ)) : 𝒪[L]) = (p : 𝒪[L]) ^ r * w := by
     apply Subtype.ext
     simp only [w, Subring.coe_mul, Subring.coe_pow, Subring.coe_natCast, Subring.coe_intCast]

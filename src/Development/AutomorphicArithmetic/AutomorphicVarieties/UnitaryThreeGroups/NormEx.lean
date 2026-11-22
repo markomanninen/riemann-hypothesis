@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.MatGstar
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.BaseRepGL3NormalisedOfPsiEqOne
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.MatGstar
+
+@[expose] public section
 
 open Matrix UpperTheory.V.U3
 
@@ -107,32 +111,32 @@ private theorem anti_norm [IsLocalRing R] [IsAdicComplete (maximalIdeal R) R] (h
   · simp [Matrix.mul_apply, Fin.sum_univ_three, Jmat, Fin.rev]; grind
   · simp [Matrix.mul_apply, Fin.sum_univ_three, Jmat, Fin.rev]; grind
 
-private theorem conj_left {G : Type} [Group G] {m : ℕ} (h : GL (Fin m) R) (r : G →* GG m R) (g : G) :
+private theorem conj_left {G : Type} [Group G] {m : ℕ} (h : GL (Fin m) R) (r : G →* GG (m := m) (R := R)) (g : G) :
     (conjBy h r g).left = h * (r g).left * sgnAct m R (r g).right h⁻¹ := by
   simp [conjBy, SemidirectProduct.mul_left, SemidirectProduct.inv_left]
 
-private theorem conj_right {G : Type} [Group G] {m : ℕ} (h : GL (Fin m) R) (r : G →* GG m R) (g : G) :
+private theorem conj_right {G : Type} [Group G] {m : ℕ} (h : GL (Fin m) R) (r : G →* GG (m := m) (R := R)) (g : G) :
     (conjBy h r g).right = (r g).right := by
   simp [conjBy]
 
-private theorem conj_mat_one {G : Type} [Group G] {m : ℕ} (h : GL (Fin m) R) (r : G →* GG m R) (g : G)
+private theorem conj_mat_one {G : Type} [Group G] {m : ℕ} (h : GL (Fin m) R) (r : G →* GG (m := m) (R := R)) (g : G)
     (hg : (r g).right = 1) :
     (conjBy h r g).mat = (h : Matrix _ _ R) * (r g).mat * ((h⁻¹ : GL (Fin m) R) : Matrix _ _ R) := by
   simp only [GG.mat, conj_left, hg, sgnAct_one, Units.val_mul]
 
-private theorem conj_mat_neg {G : Type} [Group G] {m : ℕ} (h : GL (Fin m) R) (r : G →* GG m R) (g : G)
+private theorem conj_mat_neg {G : Type} [Group G] {m : ℕ} (h : GL (Fin m) R) (r : G →* GG (m := m) (R := R)) (g : G)
     (hg : (r g).right = -1) :
     (conjBy h r g).mat = (h : Matrix _ _ R) * (r g).mat *
       (Jmat R m * (h : Matrix (Fin m) (Fin m) R)ᵀ * Jmat R m) := by
   simp only [GG.mat, conj_left, hg, sgnAct_neg_one, Units.val_mul, theta_val, inv_inv]
 
-private theorem conj_conj {G : Type} [Group G] {m : ℕ} (h h' : GL (Fin m) R) (r : G →* GG m R) :
+private theorem conj_conj {G : Type} [Group G] {m : ℕ} (h h' : GL (Fin m) R) (r : G →* GG (m := m) (R := R)) :
     conjBy (h * h') r = conjBy h (conjBy h' r) := by
   ext1 g
   simp only [conjBy, MonoidHom.comp_apply, MulEquiv.coe_toMonoidHom, MulAut.conj_apply, map_mul,
     _root_.mul_inv_rev, mul_assoc, MulAut.mul_apply]
 
-private theorem sym_of_sq {m : ℕ} (x : GG m R) (hx : x * x = 1) (hr : x.right = -1) :
+private theorem sym_of_sq {m : ℕ} (x : GG (m := m) (R := R)) (hx : x * x = 1) (hr : x.right = -1) :
     (x.mat * Jmat R m)ᵀ = x.mat * Jmat R m := by
   have h1 : x.left * theta x.left = 1 := by
     have := congrArg SemidirectProduct.left hx
@@ -154,7 +158,7 @@ end SlopeTestRemainingChoices
 
 theorem UpperTheory.V.U3.exists_normalised :
     ∀ {G R : Type} [Group G] [CommRing R] [IsLocalRing R] [IsAdicComplete (IsLocalRing.maximalIdeal R) R]
-      (η : G →* ℤˣ) (Ψ : G →* (IsLocalRing.ResidueField R)ˣ) (c g₁ : G) (r : G →* GG 3 R), IsUnit (2 : R) → Marks η Ψ c g₁ →
+      (η : G →* ℤˣ) (Ψ : G →* (IsLocalRing.ResidueField R)ˣ) (c g₁ : G) (r : G →* GG (m := 3) (R := R)), IsUnit (2 : R) → Marks η Ψ c g₁ →
       (GG.map (IsLocalRing.residue R)).comp r = r0 η Ψ →
     ∃ h : GL (Fin 3) R, CongOne (IsLocalRing.maximalIdeal R) h ∧ Normalised c g₁ (conjBy h r) := by
   intro G R _ _ _ _ η Ψ c g₁ r h2 hM hr

@@ -1,4 +1,8 @@
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.Kloc
+module
+
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.LocalFieldAutomorphisms.Kloc
+
+@[expose] public section
 
 noncomputable section
 
@@ -77,9 +81,9 @@ theorem mem_comap_ball (ι : Ω →+* PadicAlgCl p) (x : Ω) :
   show ‖ι x‖₊ ≤ 1 ↔ ‖ι x‖ ≤ 1
   rw [← NNReal.coe_le_coe, coe_nnnorm, NNReal.coe_one]
 
+
 variable (F) in
 include F in
-
 theorem exists_compat (A : ValuationSubring Ω) (hp : A.valuation (p : Ω) < 1) :
     ∃ ι : Ω →+* PadicAlgCl p, Compat p A ι := by
   have : CharZero Ω := charZero_of_injective_algebraMap (algebraMap F Ω).injective

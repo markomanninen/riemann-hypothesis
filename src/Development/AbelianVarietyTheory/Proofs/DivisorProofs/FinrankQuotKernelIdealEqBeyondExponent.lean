@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RedSurjective
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KerEqRangeOfRangeEqKer
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrobKerIdealLeAugIdeal
+
+@[expose] public section
+
 open CategoryTheory TensorProduct Coalgebra Bialgebra GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Dieu
 
 namespace GlobalTheory.Dieu
@@ -11,7 +16,7 @@ theorem finrank_quot_kerIdeal_succ (p : ℕ) [Fact p.Prime] (k : Type) [Field k]
       Module.finrank k (G.A n ⧸ kerIdeal (q.app n)) := by
   have h1 : Hom.app (q ≫ q') (n + 1) = mulBy k (G.A (n + 1)) (p ^ m) := by
     rw [h, ← Nat.cast_pow, natCast_smul_id_app]
-  have h2 : torsionIdeal k (G.A (n + 1)) (p ^ m) ≤ kerIdeal (q.app (n + 1)) := by
+  have h2 : torsionIdeal (R := k) (A := G.A (n + 1)) (p ^ m) ≤ kerIdeal (q.app (n + 1)) := by
     rw [torsionIdeal, ← h1, comp_app, kerIdeal_comp]
     refine Ideal.map_mono ((kerIdeal_le_ker_iff _ (counitAlgHom k _)).2 fun c => ?_)
     simp

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.PoincarePairs
-import GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.PoincarePairs
+public import GroundTheory.ProfiniteCohomology.CohomologicalDimension.SubsingletonCohomologyOfPrimaryOfFinite
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -29,10 +34,6 @@ variable (D Dq : Rep.{u} (ULift.{u} ℤ) G) (j : Dq ⟶ D) (M : Rep.{u} (ULift.{
 def dualRepPost : dualRep Dq M ⟶ dualRep D M :=
   (Rep.ihom M).map j
 
-theorem dualRepPost_hom_apply (f : M →ₗ[ULift.{u} ℤ] Dq) (m : M) :
-    ((dualRepPost D Dq j M).hom f : M →ₗ[ULift.{u} ℤ] D) m = j.hom (f m) :=
-  rfl
-
 theorem tensorHom_dualRepPost_dualEvalPairing :
     (dualRepPost D Dq j M ⊗ₘ 𝟙 M) ≫ dualEvalPairing D M =
       (𝟙 (dualRep Dq M) ⊗ₘ 𝟙 M) ≫ (dualEvalPairing Dq M ≫ j) := by
@@ -40,7 +41,7 @@ theorem tensorHom_dualRepPost_dualEvalPairing :
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul a b => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem bijective_dualRepPost {N q : ℕ} [NeZero N] [NeZero q] (hD : Nonempty (D ≃+ ZMod N))
     (hDq : Nonempty (Dq ≃+ ZMod q)) (hj : Function.Injective j.hom) [Finite M]

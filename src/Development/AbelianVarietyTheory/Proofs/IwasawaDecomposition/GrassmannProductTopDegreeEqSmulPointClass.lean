@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RootToFlag
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdmissibleFormEqMulPointClassValueStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RootToFlag
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdmissibleFormEqMulPointClassValueStatement
+
+@[expose] public section
+
 open MvPolynomial NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.GoodMetric GlobalTheory.LieBase GlobalTheory.GrassTop
 open Classical
 
@@ -96,7 +101,7 @@ theorem top_eq_smul_point : ∀ {E : Type} [Field E] [NumberField E] [IsCMField 
       rw [← h]
       exact Finsupp.sum_congr fun x _ => by rw [smul_eq_mul, mul_comm]
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
+    | add x y _ _ hx hy => rw [map_add (f := _), hx, hy, add_zero]
     | smul c x _ hx => rw [map_smul, hx, smul_zero]
   have hhom : IsWeightedHomogeneous Prod.snd (Q - C β * pointPoly H Dw) D := by
     have h1 : Q ∈ weightedHomogeneousSubmodule ℝ Prod.snd D := (mem_weightedHomogeneousSubmodule _ _ _ _).2 hQ
@@ -105,7 +110,7 @@ theorem top_eq_smul_point : ∀ {E : Type} [Field E] [NumberField E] [IsCMField 
     rw [← mem_weightedHomogeneousSubmodule, C_mul']
     exact sub_mem h1 (Submodule.smul_mem _ β h2)
   refine ⟨β, ?_⟩
-  rw [← hhom.weightedHomogeneousComponent_same, ← hrn, map_add, hn0 n hn, add_zero]
+  rw [← hhom.weightedHomogeneousComponent_same, ← hrn, map_add (f := _), hn0 n hn, add_zero]
   exact weightedHomogeneousComponent_mem_of_mem ℝ Prod.snd (relIdeal_isHomogeneous H Dw) (by simpa using hr) D
 
 end GlobalTheory.GrassTopDim

@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.Smooth
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
-import GroundTheory.AutomorphicForms.StrongApproximationSLDense
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.Smooth
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+public import GroundTheory.AutomorphicForms.StrongApproximationSLDense
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,9 +46,9 @@ def dL {v : P K} (a d : (Kv v)ˣ) : GL (Fin 2) (Kv v) :=
   ⟨!![(a : Kv v), 0; 0, (d : Kv v)], !![((a⁻¹ : (Kv v)ˣ) : Kv v), 0; 0, ((d⁻¹ : (Kv v)ˣ) : Kv v)],
     by ext i j; fin_cases i <;> fin_cases j <;> simp, by ext i j; fin_cases i <;> fin_cases j <;> simp⟩
 
-def KAt (v : P K) (g : GL (Fin 2) (A K)) : Prop := Matrix.GeneralLinearGroup.map (cp v) g ∈ GlobalTheory.LFun.KGL v 2
+def KAt (v : P K) (g : GL (Fin 2) (A K)) : Prop := Matrix.GeneralLinearGroup.map (cp v) g ∈ GlobalTheory.LFun.KGL v (n := 2)
 
-def Fix (v : P K) (f : GL (Fin 2) (A K) → ℂ) : Prop := ∀ g, ∀ k ∈ GlobalTheory.LFun.KGL v 2, f (g * lc v k) = f g
+def Fix (v : P K) (f : GL (Fin 2) (A K) → ℂ) : Prop := ∀ g, ∀ k ∈ GlobalTheory.LFun.KGL v (n := 2), f (g * lc v k) = f g
 
 def Good {v : P K} (χ : Kv v → ℂ) : Prop :=
   (∀ x y, χ (x + y) = χ x * χ y) ∧ (∀ x, IsInt x → χ x = 1) ∧ ∀ x, (∀ c, IsInt c → χ (c * x) = 1) → IsInt x

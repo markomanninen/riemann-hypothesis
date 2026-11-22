@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StMixedTwistShift
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StRestrLenEuler
-import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StSubsetDiffConst
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistAlg
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSnapper
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSnapperSection
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StMixedTwistShift
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StRestrLenEuler
+public import GroundTheory.HeightsAndTheta.Heights.ElementarySymmetric.StSubsetDiffConst
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.TwistAlg
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSnapper
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PSnapperSection
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -53,8 +58,8 @@ theorem twistPows_snoc_sub {n : ℕ} (L : Fin n → LineBundle k x) (M : LineBun
 
 end MixedTwistShiftAlt
 
-open MixedTwistShiftAlt in
 
+open MixedTwistShiftAlt in
 theorem MixedTwistShift.proof (hH : SnapperHyperplane.Statement.{u, w}) (hS : SnapperSection.Statement.{u, w})
     (hP : SnapperDiffPoly.Statement) (hR : RestrLenEuler.Statement.{u, w}) (hD : SubsetDiffConst.Statement) :
     MixedTwistShift.Statement.{u, w} := by

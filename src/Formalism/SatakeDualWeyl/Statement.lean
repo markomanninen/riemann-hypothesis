@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,17 +101,9 @@ def UPts (σ : E →ₐ[F] E) (J : Matrix n n E) (R : Type) [CommRing R] [Algebr
 def ratPts (σ : E →ₐ[F] E) (J : Matrix n n E) (R : Type) [CommRing R] [Algebra F R] :
     Subgroup (GL n (E ⊗[F] R)) := (UJ (σ : E →+* E) J).map (bc (inclE (F := F) R))
 
-def IsTotPosDef (σ : E →ₐ[F] E) (J : Matrix n n E) : Prop :=
-  ∀ ι : F →+* ℝ, ∀ x : n → E, x ≠ 0 →
-    ∃ a : F, algebraMap F E a = hform (σ : E →+* E) J x x ∧ 0 < ι a
-
 def Jpq (p q : ℕ) : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ := Matrix.fromBlocks 1 0 0 (-1)
 
 def Upq (p q : ℕ) : Subgroup (GL (Fin p ⊕ Fin q) ℂ) := UJ (starRingEnd ℂ) (Jpq p q)
-
-def blockDiag (p q : ℕ) : Set (GL (Fin p ⊕ Fin q) ℂ) :=
-  {g | ∀ i j, (g : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) (Sum.inl i) (Sum.inr j) = 0 ∧
-    (g : Matrix (Fin p ⊕ Fin q) (Fin p ⊕ Fin q) ℂ) (Sum.inr j) (Sum.inl i) = 0}
 
 end Points
 
@@ -159,12 +155,13 @@ def IsBiInv {k : Type} (K : Subgroup G) (f : G → k) : Prop :=
 def FinDosetSupp {k : Type} [Zero k] (K : Subgroup G) (f : G → k) : Prop :=
   ∃ S : Finset G, ∀ g : G, f g ≠ 0 → ∃ s ∈ S, ∃ a b : K, g = (a : G) * s * b
 
-open Classical in
 
+open Classical in
 def Hecke (k : Type) [CommRing k] (K : Subgroup G) : Submodule k (G → k) where
   carrier := {f | IsBiInv K f ∧ FinDosetSupp K f}
   zero_mem' := ⟨fun _ _ _ => rfl, ⟨∅, fun g h => (h rfl).elim⟩⟩
   add_mem' := by
+    classical
     rintro f f' ⟨hf, S, hS⟩ ⟨hf', S', hS'⟩
     refine ⟨fun a b g => by simp [hf a b g, hf' a b g], S ∪ S', fun g hg => ?_⟩
     by_cases h : f g = 0
@@ -210,11 +207,6 @@ section Coeff
 
 variable (O : Type) [CommRing O] (n : Type) [Fintype n] [DecidableEq n]
 
-def stdAct (g : GL n O) : (n → O) →ₗ[O] (n → O) := Matrix.mulVecLin (g : Matrix n n O)
-
-def tensAct (k : ℕ) (g : GL n O) : (⨂[O]^k (n → O)) →ₗ[O] (⨂[O]^k (n → O)) :=
-  PiTensorProduct.map (fun _ => stdAct O n g)
-
 def linSubst (M : Matrix n n O) : MvPolynomial n O →ₐ[O] MvPolynomial n O :=
   MvPolynomial.aeval (fun i => ∑ j, MvPolynomial.C (M i j) * MvPolynomial.X j)
 
@@ -223,12 +215,6 @@ def polyAct (g : GL n O) : MvPolynomial n O →ₐ[O] MvPolynomial n O :=
 
 def nabla (k : ℕ) : Submodule O (MvPolynomial n O) := MvPolynomial.homogeneousSubmodule n O k
 
-def weylSub (k : ℕ) : Submodule O (MvPolynomial n O) :=
-  Submodule.span O {p | ∃ α : n →₀ ℕ, α.degree = k ∧ p = MvPolynomial.monomial α (α.multinomial : O)}
-
-def viaEmb {A B : Type} [CommRing A] [CommRing B] {W : Type} [AddCommGroup W] [Module O W]
-    (τ : A →+* B) (act : GL n B → W →ₗ[O] W) (g : GL n A) : W →ₗ[O] W := act (bc τ g)
-
 end Coeff
 
 def BCMem : Prop :=
@@ -236,29 +222,12 @@ def BCMem : Prop :=
     (σ : A →+* A) (σ' : B →+* B) (φ : A →+* B), φ.comp σ = σ'.comp φ →
     ∀ (J : Matrix n n A) (g : GL n A), g ∈ UJ σ J → bc φ g ∈ UJ σ' (J.map φ)
 
-def UJUnitary : Prop :=
-  ∀ (n : Type) [Fintype n] [DecidableEq n] (g : GL n ℂ),
-    g ∈ UJ (starRingEnd ℂ) (1 : Matrix n n ℂ) ↔ (g : Matrix n n ℂ) ∈ Matrix.unitaryGroup n ℂ
-
 def UpqCompact : Prop := ∀ p : ℕ, IsCompact (Upq p 0 : Set (GL (Fin p ⊕ Fin 0) ℂ))
-
-def UpqNoncompact : Prop :=
-  ∀ p q : ℕ, 1 ≤ p → 1 ≤ q → ¬ IsCompact (Upq p q : Set (GL (Fin p ⊕ Fin q) ℂ))
-
-def KpqSubgroupCompact : Prop :=
-  ∀ p q : ℕ, ∃ H : Subgroup (GL (Fin p ⊕ Fin q) ℂ),
-    (H : Set (GL (Fin p ⊕ Fin q) ℂ)) = (Upq p q : Set (GL (Fin p ⊕ Fin q) ℂ)) ∩ blockDiag p q ∧
-      IsCompact (H : Set (GL (Fin p ⊕ Fin q) ℂ))
 
 def StabStd : Prop :=
   ∀ (A R : Type) [CommRing A] [CommRing R] [Algebra R A] (n : Type) [Fintype n] [DecidableEq n],
     Function.Injective (algebraMap R A) →
     stabGL (stdLat (n := n) (A := A) R) = (bc (n := n) (algebraMap R A)).range
-
-def PrincFiniteIndex : Prop :=
-  ∀ (A R : Type) [CommRing A] [CommRing R] (n : Type) [Fintype n] [DecidableEq n]
-    (ι : R →+* A) (I : Ideal R), Finite (R ⧸ I) →
-    (princ (n := n) ι I).relIndex (bc (n := n) ι).range ≠ 0
 
 def RatPtsLe : Prop :=
   ∀ (F E : Type) [Field F] [CommRing E] [Algebra F E] (n : Type) [Fintype n] [DecidableEq n]
@@ -269,15 +238,6 @@ def InclInj : Prop :=
   ∀ (F E : Type) [Field F] [CommRing E] [Algebra F E] (n : Type) [Fintype n] [DecidableEq n]
     (R : Type) [CommRing R] [Algebra F R], Nontrivial R →
     Function.Injective (bc (n := n) (inclE (F := F) (E := E) R))
-
-def UPtsSelf : Prop :=
-  ∀ (F E : Type) [Field F] [CommRing E] [Algebra F E] (n : Type) [Fintype n] [DecidableEq n]
-    (σ : E →ₐ[F] E) (J : Matrix n n E), ratPts σ J F = UPts σ J F
-
-def DefiniteEx : Prop :=
-  ∀ (n : Type) [Fintype n] [DecidableEq n],
-    IsTotPosDef (F := ℚ) (E := ℚ) (AlgHom.id ℚ ℚ) (1 : Matrix n n ℚ) ∧
-    (Nonempty n → ¬ IsTotPosDef (F := ℚ) (E := ℚ) (AlgHom.id ℚ ℚ) (-1 : Matrix n n ℚ))
 
 def SplitIso : Prop :=
   ∀ (R : Type) [CommRing R] (n : Type) [Fintype n] [DecidableEq n] (J₁ : Matrix n n R),
@@ -290,11 +250,6 @@ def AMFDecomp : Prop :=
     (∀ c, DoubleCoset.mk Γ K (s c) = c) →
     ∃ e : AMF k Γ K ρ ≃ₗ[k] ((c : ClassSet Γ K) → invSub ρ (stabAt Γ K (s c))),
       ∀ f c, (e f c : W) = (f : G → W) (s c)
-
-def AMFFinite : Prop :=
-  ∀ (G : Type) [Group G] (Γ K : Subgroup G) (k : Type) [CommRing k] [IsNoetherianRing k]
-    (W : Type) [AddCommGroup W] [Module k W] [Module.Finite k W] (ρ : Representation k Γ W),
-    Finite (ClassSet Γ K) → Module.Finite k (AMF k Γ K ρ)
 
 def AMFKFinite : Prop :=
   ∀ (G : Type) [Group G] (Γ K : Subgroup G) (k : Type) [CommRing k] [IsNoetherianRing k]
@@ -351,60 +306,13 @@ def GLintComm : Prop :=
   ∀ (F : Type) [Field F] [NumberField F] (v : IsDedekindDomain.HeightOneSpectrum (NumberField.RingOfIntegers F))
     (n : ℕ), IsCommensurated (GLint (Fin n) (v.adicCompletionIntegers F).toSubring)
 
-def StdActMul : Prop :=
-  ∀ (O : Type) [CommRing O] (n : Type) [Fintype n] [DecidableEq n] (g h : GL n O),
-    stdAct O n (g * h) = stdAct O n g ∘ₗ stdAct O n h ∧ stdAct O n 1 = LinearMap.id
-
-def TensActMul : Prop :=
-  ∀ (O : Type) [CommRing O] (n : Type) [Fintype n] [DecidableEq n] (k : ℕ) (g h : GL n O),
-    tensAct O n k (g * h) = tensAct O n k g ∘ₗ tensAct O n k h ∧ tensAct O n k 1 = LinearMap.id
-
 def PolyActMul : Prop :=
   ∀ (O : Type) [CommRing O] (n : Type) [Fintype n] [DecidableEq n] (g h : GL n O),
     polyAct O n (g * h) = (polyAct O n g).comp (polyAct O n h) ∧ polyAct O n 1 = AlgHom.id O _
 
-def PolyEval : Prop :=
-  ∀ (O : Type) [CommRing O] (n : Type) [Fintype n] [DecidableEq n] (M : Matrix n n O)
-    (P : MvPolynomial n O) (x : n → O),
-    MvPolynomial.eval x (linSubst O n M P) = MvPolynomial.eval (M *ᵥ x) P
-
 def NablaStable : Prop :=
   ∀ (O : Type) [CommRing O] (n : Type) [Fintype n] [DecidableEq n] (k : ℕ) (g : GL n O),
     ∀ P ∈ nabla O n k, polyAct O n g P ∈ nabla O n k
-
-def WeylStable : Prop :=
-  ∀ (O : Type) [CommRing O] (n : Type) [Fintype n] [DecidableEq n] (k : ℕ) (g : GL n O),
-    ∀ P ∈ weylSub O n k, polyAct O n g P ∈ weylSub O n k
-
-def WeylBetween : Prop :=
-  ∀ (O : Type) [CommRing O] (n : Type) [Fintype n] [DecidableEq n] (k : ℕ),
-    weylSub O n k ≤ nabla O n k ∧ ∀ P ∈ nabla O n k, ((Nat.factorial k : ℕ) : O) • P ∈ weylSub O n k
-
-def WeylEqOfUnit : Prop :=
-  ∀ (O : Type) [CommRing O] (n : Type) [Fintype n] [DecidableEq n] (k : ℕ),
-    IsUnit ((Nat.factorial k : ℕ) : O) → weylSub O n k = nabla O n k
-
-def Nabla1Dual : Prop :=
-  ∀ (O : Type) [CommRing O] (n : Type) [Fintype n] [DecidableEq n],
-    ∃ e : nabla O n 1 ≃ₗ[O] Module.Dual O (n → O),
-      ∀ P x, e P x = MvPolynomial.eval x (P : MvPolynomial n O)
-
-def NablaFree : Prop :=
-  ∀ (O : Type) [CommRing O] [Nontrivial O] (n : Type) [Fintype n] [DecidableEq n] (k : ℕ),
-    Module.Free O (nabla O n k) ∧ Module.finrank O (nabla O n k) = (Fintype.card n + k - 1).choose k
-
-def ipAMF {G : Type} [Group G] {Γ K : Subgroup G} {k : Type} [Field k] {W : Type} [AddCommGroup W]
-    [Module k W] [Fintype (ClassSet Γ K)] (B : W →ₗ[k] W →ₗ[k] k) (s : ClassSet Γ K → G)
-    (f f' : G → W) : k :=
-  ∑ c, (Nat.card (stabAt Γ K (s c)) : k)⁻¹ * B (f (s c)) (f' (s c))
-
-def IpIndep : Prop :=
-  ∀ (G : Type) [Group G] (Γ K : Subgroup G) (k : Type) [Field k] [CharZero k] (W : Type)
-    [AddCommGroup W] [Module k W] (ρ : Representation k Γ W) [Fintype (ClassSet Γ K)]
-    (B : W →ₗ[k] W →ₗ[k] k), (∀ γ w w', B (ρ γ w) (ρ γ w') = B w w') →
-    ∀ s s' : ClassSet Γ K → G, (∀ c, DoubleCoset.mk Γ K (s c) = c) → (∀ c, DoubleCoset.mk Γ K (s' c) = c) →
-    (∀ g : G, Finite (stabAt Γ K g)) →
-    ∀ f ∈ AMF k Γ K ρ, ∀ f' ∈ AMF k Γ K ρ, ipAMF B s f f' = ipAMF B s' f f'
 
 section More
 
@@ -501,11 +409,6 @@ def SplitPts : Prop :=
     ∃ e : UPts σ J R ≃* UJ (swapR R) (J.map ((φ : E ⊗[F] R →+* R × R).comp (inclE (F := F) R))),
       ∀ g, (e g : GL n (R × R)) = bc (φ : E ⊗[F] R →+* R × R) g
 
-def IsTotDefEx : Prop :=
-  ∀ (n : Type) [Fintype n] [DecidableEq n],
-    IsTotDef (F := ℚ) (E := ℚ) (AlgHom.id ℚ ℚ) (1 : Matrix n n ℚ) ∧
-    IsTotDef (F := ℚ) (E := ℚ) (AlgHom.id ℚ ℚ) (-1 : Matrix n n ℚ)
-
 def StabFinite : Prop :=
   ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
     (n : Type) [Fintype n] [DecidableEq n] (σ : E →ₐ[F] E) (J : Matrix n n E),
@@ -531,45 +434,6 @@ def ClassSetFinite : Prop :=
     Finite (ClassSet ((ratPts σ J (FiniteAdeleRing (𝓞 F) F)).subgroupOf (UPts σ J (FiniteAdeleRing (𝓞 F) F)))
         ((levelAf σ J).subgroupOf (UPts σ J (FiniteAdeleRing (𝓞 F) F))))
 
-def LevelVComm : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-    (n : Type) [Fintype n] [DecidableEq n] (σ : E →ₐ[F] E) (J : Matrix n n E)
-    (v : IsDedekindDomain.HeightOneSpectrum (𝓞 F)),
-    IsCommensurated ((levelV σ J v).subgroupOf (UPts σ J (v.adicCompletion F)))
-
-def LevelAfComm : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-    (n : Type) [Fintype n] [DecidableEq n] (σ : E →ₐ[F] E) (J : Matrix n n E),
-    IsCommensurated ((levelAf σ J).subgroupOf (UPts σ J (FiniteAdeleRing (𝓞 F) F)))
-
-def IpIndepK : Prop :=
-  ∀ (G : Type) [Group G] (Γ K : Subgroup G) (k : Type) [Field k] [CharZero k] (W : Type)
-    [AddCommGroup W] [Module k W] (ρK : Representation k K W) [Fintype (ClassSet Γ K)]
-    (B : W →ₗ[k] W →ₗ[k] k), (∀ κ w w', B (ρK κ w) (ρK κ w') = B w w') →
-    ∀ s s' : ClassSet Γ K → G, (∀ c, DoubleCoset.mk Γ K (s c) = c) →
-    (∀ c, DoubleCoset.mk Γ K (s' c) = c) → (∀ g : G, Finite (stabAt Γ K g)) →
-    ∀ f ∈ AMFK k Γ K ρK, ∀ f' ∈ AMFK k Γ K ρK, ipAMF B s f f' = ipAMF B s' f f'
-
-def HeckeActKMem : Prop :=
-  ∀ (G₁ G₂ : Type) [Group G₁] [Group G₂] (Γ : Subgroup (G₁ × G₂)) (K₁ : Subgroup G₁)
-    (K₂ : Subgroup G₂) (k : Type) [CommRing k] (W : Type) [AddCommGroup W] [Module k W]
-    (ρK : Representation k (K₁.prod K₂) W), (∀ κ : K₁.prod K₂, (κ : G₁ × G₂).2 = 1 → ρK κ = 1) →
-    IsCommensurated K₁ → ∀ f ∈ Hecke k K₁, ∀ φ ∈ AMFK k Γ (K₁.prod K₂) ρK,
-      hActK K₁ f φ ∈ AMFK k Γ (K₁.prod K₂) ρK
-
-def HeckeActKMul : Prop :=
-  ∀ (G₁ G₂ : Type) [Group G₁] [Group G₂] (Γ : Subgroup (G₁ × G₂)) (K₁ : Subgroup G₁)
-    (K₂ : Subgroup G₂) (k : Type) [CommRing k] (W : Type) [AddCommGroup W] [Module k W]
-    (ρK : Representation k (K₁.prod K₂) W), (∀ κ : K₁.prod K₂, (κ : G₁ × G₂).2 = 1 → ρK κ = 1) →
-    IsCommensurated K₁ → ∀ f₁ ∈ Hecke k K₁, ∀ f₂ ∈ Hecke k K₁, ∀ φ ∈ AMFK k Γ (K₁.prod K₂) ρK,
-      hActK K₁ (conv K₁ f₁ f₂) φ = hActK K₁ f₁ (hActK K₁ f₂ φ)
-
-def HeckeActKOne : Prop :=
-  ∀ (G₁ G₂ : Type) [Group G₁] [Group G₂] (Γ : Subgroup (G₁ × G₂)) (K₁ : Subgroup G₁)
-    (K₂ : Subgroup G₂) (k : Type) [CommRing k] (W : Type) [AddCommGroup W] [Module k W]
-    (ρK : Representation k (K₁.prod K₂) W), (∀ κ : K₁.prod K₂, (κ : G₁ × G₂).2 = 1 → ρK κ = 1) →
-    ∀ φ ∈ AMFK k Γ (K₁.prod K₂) ρK, hActK K₁ (dosetInd k K₁ 1) φ = φ
-
 def TjEq : Prop :=
   ∀ (L : Type) [Field L] (O : Subring L) (ϖ : L) (k : Type) [CommRing k] (n j : ℕ)
     (d : GL (Fin n) L), (d : Matrix (Fin n) (Fin n) L) = diagJ n ϖ j →
@@ -594,11 +458,5 @@ def SigExists : Prop :=
 def SigUnique : Prop :=
   ∀ (n : Type) [Fintype n] [DecidableEq n] (J : Matrix n n ℂ) (p q p' q' : ℕ),
     HasSignature J p q → HasSignature J p' q' → p = p' ∧ q = q'
-
-def NeatDecomp : Prop :=
-  ∀ (G : Type) [Group G] (Γ K : Subgroup G) (k : Type) [CommRing k] (W : Type) [AddCommGroup W]
-    [Module k W] (ρ : Representation k Γ W) (s : ClassSet Γ K → G),
-    (∀ c, DoubleCoset.mk Γ K (s c) = c) → IsNeat Γ K →
-    ∃ e : AMF k Γ K ρ ≃ₗ[k] (ClassSet Γ K → W), ∀ f c, e f c = (f : G → W) (s c)
 
 end Formalism.UG

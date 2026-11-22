@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+
+@[expose] public section
 
 open MvPowerSeries GlobalTheory GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup GlobalTheory.Sandwich GlobalTheory.IndefiniteRowSideFullHecke.EpsilonPairingZeta GlobalTheory.PDivLat
 
@@ -23,7 +27,7 @@ theorem exists_split (n m : ℕ) (f : MvPowerSeries (Fin d) O) :
     ∃ (P : MvPolynomial (Fin d) O) (a : G.A n),
       c.ev n f = MvPolynomial.aeval (c.x n) P + (p : G.A n) ^ m * a ∧
       MvPolynomial.constantCoeff P = constantCoeff f ∧
-      ∀ i, MvPolynomial.coeff (Finsupp.single i 1) P = lin f i := by
+      ∀ i, AddMonoidAlgebra.coeff P (Finsupp.single i 1) = lin f i := by
   obtain ⟨N, hN⟩ := (c.isEval n).2 m
   set P := trunc' O (Finsupp.equivFunOnFinite.symm fun _ => max N 2) f with hP
   have hle : ∀ α : Fin d →₀ ℕ, α.degree < max N 2 →
@@ -35,7 +39,7 @@ theorem exists_split (n m : ℕ) (f : MvPowerSeries (Fin d) O) :
     rw [map_sub, MvPolynomial.coeff_coe, hP, coeff_trunc',
       if_pos (hle α (lt_of_lt_of_le hα (le_max_left _ _))), sub_self]
   refine ⟨P, a, ?_, ?_, fun i => ?_⟩
-  · rw [← ev_coe, ← ha, ← map_add, add_sub_cancel]
+  · rw [← ev_coe, ← ha, ← map_add (f := _), add_sub_cancel]
   · rw [MvPolynomial.constantCoeff_eq, hP, coeff_trunc',
       if_pos (hle 0 (by simp)), coeff_zero_eq_constantCoeff_apply]
   · rw [hP, coeff_trunc', if_pos (hle _ (lt_of_lt_of_le (by simp) (le_max_right N 2))), lin]
@@ -61,12 +65,12 @@ theorem counit_ev [IsAdicComplete (Ideal.span {(p : O)}) O] (n : ℕ)
     Bialgebra.counitAlgHom O (G.A n) (c.ev n f) = constantCoeff f := by
   refine sub_eq_zero.1 (eq_zero_of_dvd (p := p) _ fun m => ?_)
   obtain ⟨P, a, h1, h2, -⟩ := (exists_split c) n m f
-  rw [h1, map_add, counit_aeval, h2, map_mul, map_pow, map_natCast, add_sub_cancel_left]
+  rw [h1, map_add (f := _), counit_aeval, h2, map_mul, map_pow, map_natCast, add_sub_cancel_left]
   exact dvd_mul_right _ _
 
 theorem d_aeval (n : ℕ) (P : MvPolynomial (Fin d) O) :
-    PDiv.dUnit O (MvPolynomial.aeval (c.x n) P) =
-      ∑ i, MvPolynomial.coeff (Finsupp.single i 1) P • PDiv.dUnit O (c.x n i) := by
+    PDiv.dUnit (R := O) (MvPolynomial.aeval (c.x n) P) =
+      ∑ i, AddMonoidAlgebra.coeff P (Finsupp.single i 1) • PDiv.dUnit (R := O) (c.x n i) := by
   classical
   induction P using MvPolynomial.induction_on with
   | C a =>
@@ -76,10 +80,10 @@ theorem d_aeval (n : ℕ) (P : MvPolynomial (Fin d) O) :
     simp [MvPolynomial.coeff_C, PDiv.dUnit, h0]
   | add P Q hP hQ =>
     unfold PDiv.dUnit at *
-    rw [map_add, map_add, hP, hQ, ← Finset.sum_add_distrib]
+    rw [map_add (f := _), map_add (f := _), hP, hQ, ← Finset.sum_add_distrib]
     simp [add_smul]
   | mul_X P j h =>
-    have hc : ∀ i, MvPolynomial.coeff (Finsupp.single i 1) (P * MvPolynomial.X j) =
+    have hc : ∀ i, AddMonoidAlgebra.coeff (P * MvPolynomial.X j) (Finsupp.single i 1) =
         if j = i then MvPolynomial.constantCoeff P else 0 := by
       intro i
       rw [MvPolynomial.coeff_mul_X']
@@ -92,13 +96,13 @@ theorem d_aeval (n : ℕ) (P : MvPolynomial (Fin d) O) :
       add_zero]
 
 theorem d_ev (n : ℕ) (f : MvPowerSeries (Fin d) O) :
-    PDiv.dUnit O (c.ev n f) = ∑ i, lin f i • PDiv.dUnit O (c.x n i) := by
+    PDiv.dUnit (R := O) (c.ev n f) = ∑ i, lin f i • PDiv.dUnit (R := O) (c.x n i) := by
   obtain ⟨P, a, h1, -, h3⟩ := (exists_split c) n n f
   have h4 : AugCot.d (Bialgebra.counitAlgHom O (G.A n)) ((p : G.A n) ^ n * a) = 0 := by
     rw [show (p : G.A n) ^ n * a = ((p : O) ^ n) • a by
       rw [Algebra.smul_def, map_pow, map_natCast], map_smul]
     exact G.pow_smul_cot n _
-  rw [h1, PDiv.dUnit, map_add, h4, add_zero, ← PDiv.dUnit, (d_aeval c)]
+  rw [h1, PDiv.dUnit, map_add (f := _), h4, add_zero, ← PDiv.dUnit, (d_aeval c)]
   simp only [h3]
 
 theorem coeff_single_of_mem_sq {h : MvPowerSeries (Fin d) O}
@@ -110,19 +114,19 @@ theorem coeff_single_of_mem_sq {h : MvPowerSeries (Fin d) O}
     refine Finset.sum_eq_zero fun q hq => ?_
     rw [Finset.HasAntidiagonal.mem_antidiagonal] at hq
     have hdeg := congrArg Finsupp.degree hq
-    rw [map_add, Finsupp.degree_single] at hdeg
+    rw [map_add (f := _), Finsupp.degree_single] at hdeg
     rcases (show q.1.degree = 0 ∨ q.2.degree = 0 by omega) with h0 | h0
     · rw [(Finsupp.degree_eq_zero_iff _).1 h0, coeff_zero_eq_constantCoeff_apply,
         RingHom.mem_ker.1 hf, zero_mul]
     · rw [(Finsupp.degree_eq_zero_iff _).1 h0, coeff_zero_eq_constantCoeff_apply,
         RingHom.mem_ker.1 hg, mul_zero]
-  · rw [map_add, hf, hg, add_zero]
+  · rw [map_add (f := _), hf, hg, add_zero]
 
 def lvl (n : ℕ) : (Fin d → O) →ₗ[O] PDiv.Cot O (G.A n) :=
-  Fintype.linearCombination O fun i => PDiv.dUnit O (c.x n i)
+  Fintype.linearCombination O fun i => PDiv.dUnit (R := O) (c.x n i)
 
 theorem lvl_apply (n : ℕ) (a : Fin d → O) :
-    lvl c n a = ∑ i, a i • PDiv.dUnit O (c.x n i) := Fintype.linearCombination_apply ..
+    lvl c n a = ∑ i, a i • PDiv.dUnit (R := O) (c.x n i) := Fintype.linearCombination_apply ..
 
 theorem val_comb (a : Fin d → O) (n : ℕ) :
     (Fintype.linearCombination O c.form a).1 n = lvl c n a := by
@@ -131,7 +135,8 @@ theorem val_comb (a : Fin d → O) (n : ℕ) :
 
 theorem res_lvl (n : ℕ) (a : Fin d → O) :
     PDiv.cotMap (G.res n) (lvl c (n + 1) a) = lvl c n a := by
-  simp [lvl_apply, map_sum, map_smul, PDiv.cotMap_d, c.res]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [lvl_apply, map_sum, map_smul, PDiv.cotMap_d, c.res]
 
 theorem lvl_le (w : G.omega) (a : Fin d → O) {n k : ℕ} (h : n ≤ k)
     (hk : lvl c k a = w.1 k) : lvl c n a = w.1 n := by
@@ -148,9 +153,11 @@ theorem exists_level_dvd [IsAdicComplete (Ideal.span {(p : O)}) O] (m : ℕ) :
   have hx : ∀ j, Bialgebra.counitAlgHom O (G.A n) (c.x n j) = 0 := fun j => by
     simpa using c.aug n j
   have hεy : Bialgebra.counitAlgHom O (G.A n) y = 0 := by
-    simp [hy0, map_sum, map_smul, hx]
-  have hy : PDiv.dUnit O y = 0 := by
-    rw [hy0, PDiv.dUnit, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [hy0, map_sum, map_smul, hx]
+  have hy : PDiv.dUnit (R := O) y = 0 := by
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hy0, PDiv.dUnit, map_sum]
     simpa [map_smul, lvl_apply] using ha
   rw [PDiv.dUnit, AugCot.d_eq_zero_iff, hεy, map_zero, sub_zero] at hy
   have hI : RingHom.ker (Bialgebra.counitAlgHom O (G.A n)) ≤
@@ -166,7 +173,8 @@ theorem exists_level_dvd [IsAdicComplete (Ideal.span {(p : O)}) O] (m : ℕ) :
     exact Ideal.pow_right_mono hI 2 hy
   obtain ⟨h, hh, hev⟩ := (Ideal.mem_map_iff_of_surjective _ (c.surj n)).1 hy2
   have hz : c.ev n ((∑ j, a j • X j) - h) = 0 := by
-    rw [map_sub, hev, map_sum, hy0]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sub, hev, map_sum, hy0]
     simp [map_smul, (c.isEval n).1]
   have := hn _ hz (Finsupp.single i 1) (by simp)
   rw [map_sub, coeff_single_of_mem_sq hh, sub_zero] at this
@@ -228,6 +236,6 @@ theorem comb_bijective [IsAdicComplete (Ideal.span {(p : O)}) O] :
 
 end GlobalTheory.ChartForm
 
-theorem GlobalTheory.chart_form_basis : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (O : Type) [CommRing O] [Algebra O C] [Fact ¬IsUnit (p : O)] [IsAdicComplete (Ideal.span {(p : O)}) O] [IsDomain O], v.Integers O → ∀ (G : PDivGroup p O) (d : ℕ) (c : QLog.Chart G d), Function.Bijective (Fintype.linearCombination O c.form) ∧ ∀ (n : ℕ) (f : MvPowerSeries (Fin d) O), constantCoeff f = 0 → PDiv.dUnit O (c.ev n f) = ∑ i, lin f i • PDiv.dUnit O (c.x n i) := by
+theorem GlobalTheory.chart_form_basis : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClosed C] [CharZero C] (v : Valuation C NNReal) (O : Type) [CommRing O] [Algebra O C] [Fact ¬IsUnit (p : O)] [IsAdicComplete (Ideal.span {(p : O)}) O] [IsDomain O], v.Integers O → ∀ (G : PDivGroup p O) (d : ℕ) (c : QLog.Chart G d), Function.Bijective (Fintype.linearCombination O c.form) ∧ ∀ (n : ℕ) (f : MvPowerSeries (Fin d) O), constantCoeff f = 0 → PDiv.dUnit (R := O) (c.ev n f) = ∑ i, lin f i • PDiv.dUnit (R := O) (c.x n i) := by
   intro p _ C _ _ _ v O _ _ _ _ _ _ G d c
   exact ⟨ChartForm.comb_bijective c, fun n f _ => ChartForm.d_ev c n f⟩

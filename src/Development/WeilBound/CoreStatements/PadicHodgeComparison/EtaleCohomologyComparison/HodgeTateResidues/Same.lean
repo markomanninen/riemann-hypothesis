@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -37,7 +41,7 @@ theorem ACo.hom {W' : Type 1} [AddCommGroup W'] [Module B' W'] {θ : B →+* E} 
       rw [h'.same a (ha'.trans hr), h.same a ha', ← hθ, ho]; rfl
     · rw [h'.diff a a' e, h.diff a a' e]; simp
   | zero => simp
-  | add x y _ _ hx hy => simp only [map_add, Pi.add_apply, AddMonoidHom.add_apply, hx, hy, mul_add]
+  | add x y _ _ hx hy => simp only [map_add (f := _), Pi.add_apply, AddMonoidHom.add_apply, hx, hy, mul_add]
   | smul b x _ hx => rw [map_smulₛₗ, h'.smul, h.smul, hx, hθ, map_mul]; ring
 
 theorem ACo.cup {W' W'' : Type 1} [AddCommGroup W'] [Module B W'] [AddCommGroup W''] [Module B W''] {θ : B →+* E}
@@ -57,7 +61,7 @@ theorem ACo.cup {W' W'' : Type 1} [AddCommGroup W'] [Module B W'] [AddCommGroup 
   induction hw using Submodule.span_induction with
   | zero => simp
   | add x y _ _ hx hy =>
-    simp only [map_add, LinearMap.add_apply, Pi.add_apply, AddMonoidHom.add_apply, hx, hy, add_mul, Finset.sum_add_distrib]
+    simp only [map_add (f := _), LinearMap.add_apply, Pi.add_apply, AddMonoidHom.add_apply, hx, hy, add_mul, Finset.sum_add_distrib]
   | smul d x _ hx =>
     rw [map_smul, LinearMap.smul_apply, h''.smul, hx]
     simp only [h.smul, Finset.mul_sum, mul_assoc]
@@ -67,7 +71,7 @@ theorem ACo.cup {W' W'' : Type 1} [AddCommGroup W'] [Module B W'] [AddCommGroup 
   induction hw' using Submodule.span_induction with
   | zero => simp
   | add x y _ _ hx hy =>
-    simp only [map_add, Pi.add_apply, AddMonoidHom.add_apply, hx, hy, add_mul, mul_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), Pi.add_apply, AddMonoidHom.add_apply, hx, hy, add_mul, mul_add, Finset.sum_add_distrib]
   | smul d x _ hx =>
     rw [map_smul, h''.smul, hx]
     simp only [h'.smul, Finset.mul_sum]
@@ -87,10 +91,12 @@ theorem ACo.cup {W' W'' : Type 1} [AddCommGroup W'] [Module B W'] [AddCommGroup 
       Finset.sum_eq_single ⟨(a, a'), Finset.HasAntidiagonal.mem_antidiagonal.2 e⟩ (fun p _ hp => hz p fun e => hp (Subtype.ext e))
         (fun hh => absurd (Finset.mem_univ _) hh)]
     obtain ⟨β, hβ⟩ := hV e
-    simp only [h.same a ha, h'.same a' ha', ho, ← hβ, ← map_mul, ← map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [h.same a ha, h'.same a' ha', ho, ← hβ, ← map_mul, ← map_sum]
     congr 1
     conv_lhs => rw [← (b a).sum_repr y, ← (b' a').sum_repr y']
-    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, Basis.coord_apply, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, Basis.coord_apply, Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
   · rw [hμ rfl ha ha', h''.diff c _ (Ne.symm e), AddMonoidHom.zero_apply]

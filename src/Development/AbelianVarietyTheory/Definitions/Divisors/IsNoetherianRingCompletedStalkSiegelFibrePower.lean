@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSeparatedOfIsQProjOver
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.ExistsPelRepIsPEL
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegelObjectPullbackExistsAndPrincipal
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsSymplecticOfTranslFixed
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueFactorCompletedStalkOfMap
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothProjectiveStalkFactorial
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsRegularLocalRingAdicCompletion
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RegularLocalRingNormalDomain
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GeomRegFibAdicCompletionOfEssFiniteTypeInt
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsRegularRingOfIsDiscreteValuationRing
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsRegularRingOfSmooth
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricallyIntegralIffGeometricallyConnectedOf
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegProd
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.SiegelPullbackTransfer.ExistsGenTransfer
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StalkGenerizationGermCompat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsSeparatedOfIsQProjOver
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.ExistsPelRepIsPEL
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegelObjectPullbackExistsAndPrincipal
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsSymplecticOfTranslFixed
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsUniqueFactorCompletedStalkOfMap
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SmoothProjectiveStalkFactorial
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsRegularLocalRingAdicCompletion
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RegularLocalRingNormalDomain
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GeomRegFibAdicCompletionOfEssFiniteTypeInt
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsRegularRingOfIsDiscreteValuationRing
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsRegularRingOfSmooth
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricallyIntegralIffGeometricallyConnectedOf
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegProd
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.SiegelPullbackTransfer.ExistsGenTransfer
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.StalkGenerizationGermCompat
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -106,12 +110,10 @@ def lift {T : Scheme.{0}} (u : T ⟶ F.X) {r : ℕ} (p : Fin r → (T ⟶ F.univ
     (hp : ∀ i, p i ≫ F.univ.A.hom = u) : T ⟶ (powA F r).left :=
   ((powIsLimit F.univ.A r).lift (Fan.mk (Over.mk u) fun i => Over.homMk (p i) (hp i))).left
 
-@[reassoc]
 theorem lift_hom {T : Scheme.{0}} (u : T ⟶ F.X) {r : ℕ} (p : Fin r → (T ⟶ F.univ.A.left))
     (hp : ∀ i, p i ≫ F.univ.A.hom = u) : lift u p hp ≫ (powA F r).hom = u :=
   Over.w ((powIsLimit F.univ.A r).lift (Fan.mk (Over.mk u) fun i => Over.homMk (p i) (hp i)))
 
-@[reassoc]
 theorem lift_coord {T : Scheme.{0}} (u : T ⟶ F.X) {r : ℕ} (p : Fin r → (T ⟶ F.univ.A.left))
     (hp : ∀ i, p i ≫ F.univ.A.hom = u) (i : Fin r) : lift u p hp ≫ (coord F i).left = p i :=
   congrArg (fun q => q.left) ((powIsLimit F.univ.A r).fac (Fan.mk (Over.mk u) fun i => Over.homMk (p i) (hp i)) ⟨i⟩)
@@ -141,17 +143,6 @@ theorem ptAt_left {T : Scheme.{0}} {r : ℕ} (f : T ⟶ (powA F r).left) (s' : T
 def cAt {T : Scheme.{0}} {r : ℕ} (f : T ⟶ (powA F r).left) (s' : T ⟶ Sp o) (hs : f ≫ toO F r = s')
     (a : Fin r → ℤ) : 𝟙_ (Over T) ⟶ (siegAt F f s' hs).A :=
   ∏ i, ptAt F f s' hs i ^ a i
-
-theorem cAt_add {T : Scheme.{0}} {r : ℕ} (f : T ⟶ (powA F r).left) (s' : T ⟶ Sp o) (hs : f ≫ toO F r = s')
-    (a b : Fin r → ℤ) : cAt F f s' hs (a + b) = cAt F f s' hs a * cAt F f s' hs b := by
-  simp only [cAt, Pi.add_apply, zpow_add, Finset.prod_mul_distrib]
-
-theorem cAt_single {T : Scheme.{0}} {r : ℕ} (f : T ⟶ (powA F r).left) (s' : T ⟶ Sp o) (hs : f ≫ toO F r = s')
-    (i : Fin r) : cAt F f s' hs (Pi.single i 1) = ptAt F f s' hs i := by
-  classical
-  show ∏ j, ptAt F f s' hs j ^ (Pi.single i 1 : Fin r → ℤ) j = _
-  rw [Finset.prod_eq_single i (fun j _ hj => by rw [Pi.single_eq_of_ne hj, zpow_zero]) (by simp),
-    Pi.single_eq_same, zpow_one]
 
 end Pow
 
@@ -189,32 +180,8 @@ theorem spMap_base : spMap (base F y) = toPow F y ≫ toO F r := by
 
 abbrev sieg : SiegPre h n ζ (spMap (base F y)) := siegAt F (toPow F y) _ (spMap_base F y).symm
 
-abbrev pt (i : Fin r) : 𝟙_ (Over (Sp (W F y))) ⟶ (sieg F y).A := ptAt F (toPow F y) _ (spMap_base F y).symm i
-
-abbrev c₀ (a : Fin r → ℤ) : 𝟙_ (Over (Sp (W F y))) ⟶ (sieg F y).A := cAt F (toPow F y) _ (spMap_base F y).symm a
-
 theorem principal_sieg : (sieg F y).Principal :=
   principal_siegPull _ _ _ _ F.princ
-
-abbrev cLev (a : Fin r → ℤ) : 𝟙_ (Over (Sp (W F y))) ⟶ (sieg F y).A := c₀ F y ((n : ℤ) • a)
-
-theorem c₀_add (a b : Fin r → ℤ) : c₀ F y (a + b) = c₀ F y a * c₀ F y b := cAt_add _ _ _ _ a b
-
-theorem c₀_single (i : Fin r) : c₀ F y (Pi.single i 1) = pt F y i := cAt_single _ _ _ _ i
-
-theorem pt_left (i : Fin r) :
-    (pt F y i).left ≫ Pdiv.PullbackComparison.pφ (toPow F y ≫ (powA F r).hom) F.univ.A = toPow F y ≫ (coord F i).left :=
-  ptAt_left _ _ _ _ i
-
-theorem toPow_closedPoint : toPow F y (closedPoint (W F y)) = y := by
-  rw [toPow, GlobalTheory.fromSpecCompletedStalk]
-  erw [Scheme.Hom.comp_apply]
-  have hc : spMap (algebraMap ((powA F r).left.presheaf.stalk y) (W F y)) (closedPoint (W F y)) = closedPoint _ :=
-    @IsLocalRing.comap_closedPoint _ _ _ _ _ _ _ (by
-      show IsLocalHom (algebraMap ((powA F r).left.presheaf.stalk y) (W F y))
-      infer_instance)
-  erw [hc]
-  exact Scheme.fromSpecStalk_closedPoint
 
 end Base
 
@@ -285,12 +252,6 @@ instance : IsRegularRing (cycAway n) := by
   have := GlobalTheory.CycAwayReg.isDedekindDomain_cycAway n
   infer_instance
 
-def primeUnder {r : ℕ} (y : (powA (zeroFam n hn) r).left) : PrimeSpectrum (cycAway n) := toO (zeroFam n hn) r y
-
-example (r : ℕ) (y : (powA (zeroFam n hn) r).left) : IsDomain (W (zeroFam n hn) y) := isDomain_W_of_isRegularRing _ y
-example (r : ℕ) (y : (powA (zeroFam n hn) r).left) : IsRegularLocalRing (W (zeroFam n hn) y) := isRegularLocalRing_W_of_isRegularRing _ y
-example (r : ℕ) (y : (powA (zeroFam n hn) r).left) : (sieg (zeroFam n hn) y).Principal := principal_sieg _ y
-
 end Zero
 
 end GlobalTheory.LowChart
@@ -313,7 +274,7 @@ theorem flat_spMap_base : Flat (spMap (base F y)) := by
 theorem flat_base : (base F y).Flat := (HasRingHomProperty.Spec_iff (P := @Flat)).1 (flat_spMap_base F y)
 
 theorem injective_base [IsDomain o] : Function.Injective (base F y) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro a ha
   by_contra h0
   algebraize [base F y]
@@ -326,9 +287,6 @@ theorem injective_base [IsDomain o] : Function.Injective (base F y) := by
 
 theorem charZero_W_of_charZero [IsDomain o] [CharZero o] : CharZero (W F y) :=
   charZero_of_injective_ringHom (injective_base F y)
-
-example (n : ℕ) (hn : 3 ≤ n) (r : ℕ) (y : (powA (zeroFam n hn) r).left) : CharZero (W (zeroFam n hn) y) :=
-  charZero_W_of_charZero _ y
 
 end Flat
 

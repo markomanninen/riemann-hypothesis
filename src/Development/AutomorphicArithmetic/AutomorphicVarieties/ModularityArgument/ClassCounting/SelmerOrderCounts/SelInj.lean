@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SelmerOrderCounts.TwoLe
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SelmerOrderCounts.TwoLe
+
+@[expose] public section
 
 open NumberField IsDedekindDomain UpperTheory.V UpperTheory.V.ZK UpperTheory.V.ZK.Ct
 
@@ -86,7 +90,7 @@ theorem UpperTheory.V.ZK.Ct.selInj :
     · obtain ⟨i, hi⟩ := (u w).2
       refine ⟨i, ?_⟩
       have e := congrArg D.d (hyt w)
-      rw [map_zsmul, map_add, hdt _ (ht w), add_zero, hdd, ← hi] at e
+      rw [map_zsmul, map_add (f := _), hdt _ (ht w), add_zero, hdd, ← hi] at e
       rw [← sub_eq_zero]
       apply selInj_delI_inj D
       rw [map_sub, map_zsmul, ← e, sub_self]
@@ -101,7 +105,7 @@ theorem UpperTheory.V.ZK.Ct.selInj :
   rw [← hu w, ← hu w', Submodule.Quotient.eq]
   show ((u w : Y) - (u w' : Y)) ∈ LinearMap.range D.del ⊔ Submodule.torsion ℤ Y
   have e2 : D.del (y w) - D.del (y w') = (l : ℤ) • D.del z + D.del t0 := by
-    rw [← map_sub, ← hz, map_add, map_zsmul]
+    rw [← map_sub, ← hz, map_add (f := _), map_zsmul]
   have hs : (u w : Y) - u w' - D.del z ∈ Submodule.torsion ℤ Y := by
     refine htor (l : ℤ) (by exact_mod_cast hl0.ne') ?_
     have e : (l : ℤ) • ((u w : Y) - u w' - D.del z) = D.del t0 + (t w - t w') := by

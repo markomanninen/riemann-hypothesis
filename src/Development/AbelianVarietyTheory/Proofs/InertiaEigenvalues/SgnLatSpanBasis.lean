@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LinearDescent
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+
+@[expose] public section
 
 open GlobalTheory.UnitLemma Matrix MeasureTheory
 
@@ -66,7 +70,8 @@ private theorem eta_det_trace_matrix_eq_of_span_eq (K : UQ) (B : InvAlg K)
     ext k l
     simp only [Matrix.of_apply, Matrix.mul_apply, Matrix.map_apply, Matrix.transpose_apply]
     rw [← hP l]
-    simp only [Finset.mul_sum, mul_smul_comm, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Finset.mul_sum, mul_smul_comm, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [← algebraMap_smul K.E (P l j), map_smul, smul_eq_mul, mul_comm]
   have hdet : ((Matrix.of P).transpose.map (algebraMap K.O K.E)).det =

@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LevChiEqOne
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteOrderChartsMiddleSteps
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsStepPointOfChartBasePoint
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ChartLevelCharacterRepsOnAdelicUnitaryPointsStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsAdelicUnitaryLiftOfChartBasePointStatement
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIsDetRoot
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsPointOfDecoratedLatticeUnique
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemberRepresentativeMovedAtTwistEqTupleFrames
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LevChiEqOne
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsFiniteOrderChartsMiddleSteps
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsStepPointOfChartBasePoint
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ChartLevelCharacterRepsOnAdelicUnitaryPointsStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsAdelicUnitaryLiftOfChartBasePointStatement
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsIsDetRoot
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsPointOfDecoratedLatticeUnique
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.MemberRepresentativeMovedAtTwistEqTupleFrames
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.Forms Formalism.UG
 open NumberField IsDedekindDomain Matrix MeasureTheory GlobalTheory.Mem GlobalTheory.Mem.Col2 GlobalTheory.MixPer GlobalTheory.AdForm
 open scoped TensorProduct Classical
@@ -77,32 +82,27 @@ theorem reads_rename {B : Base} {X : PreX B.toPre} {I : TC B X} {u : B.Word} {a 
     {st : ∀ c, (I.stp u a i).Stab c → GL (Fin (B.R.N i)) B.host.E} {k : C₀ → TC.GA B (B.R.N i)}
     (h : I.Reads u a i chOf₀ Lb U chi y st k) (chOf : (I.stp u a i).Cl → C) (φ : C → C₀) (hφ : ∀ c, chOf₀ c = φ (chOf c))
     (hinj : Function.Injective φ) (hon : Function.Surjective chOf) :
-    I.Reads u a i chOf (fun β => Lb (φ β)) (fun β => U (φ β)) (fun β => chi (φ β)) y st (fun β => k (φ β)) where
-  key c c' := by rw [← h.key, hφ, hφ, hinj.eq_iff]
-  onto := hon
-  lb β := h.lb (φ β)
-  k_std β := h.k_std (φ β)
-  k_off β := h.k_off (φ β)
-  k_T β := h.k_T (φ β)
-  pt c := by
-    have := h.pt c
-    rwa [hφ] at this
-  lev c x q := by
-    have := h.lev c x q
-    rwa [hφ] at this
-  chr c := by
+    I.Reads u a i chOf (fun β => Lb (φ β)) (fun β => U (φ β)) (fun β => chi (φ β)) y st (fun β => k (φ β)) := by
+  refine ⟨?_, hon, fun β => h.lb (φ β), fun β => h.k_std (φ β), fun β => h.k_off (φ β),
+    fun β => h.k_T (φ β), ?_, ?_, ?_, h.stab⟩
+  · intro c c'
+    simpa only [hφ, hinj.eq_iff] using h.key c c'
+  · intro c
+    simpa only [hφ] using h.pt c
+  · intro c x q
+    simpa only [hφ] using h.lev c x q
+  · intro c
     have key : ∀ γ, chOf₀ c = γ → ∀ (x : U γ) (κ : (I.stp u a i).G c.1), (I.stp u a i).gam c.1 κ = 1 →
         TC.PtOf (y c * x.1 * k γ) ((I.stp u a i).act c.1 κ ((I.stp u a i).rep c)).1.1 →
         ((chi γ x : ℂˣ) : ℂ) = B.embLL (((I.stp u a i).chr c.1 κ : B.LLˣ) : B.LL) := by
       rintro _ rfl
       exact h.chr c
     exact key _ (hφ c)
-  stab := h.stab
 
 variable {B : Base} {X : PreX B.toPre}
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem exists_charts (I : TC B X) (hI : I.Ok) (hP : TC.Pins B X) (l : I.Laws) (Z : TC.Later B (I.cols l)) (u : B.Word) (a : I.ι)
     (i : ℕ) (hi : i ≤ B.R.m) (h1 : 1 ≤ i) (h2 : i < B.R.m) {C : Type} (chOf : (I.stp u a i).Cl → C)
     (key : ∀ c c', chOf c = chOf c' ↔ c.1 = c'.1 ∧ cosetIn ((I.stp u a i).rep c) = cosetIn ((I.stp u a i).rep c'))
@@ -169,8 +169,8 @@ def StepOk {I : TC B X} {l : I.Laws} {Z : TC.Later B (I.cols l)} {u : B.Word} {a
 
 attribute [local instance] GlobalTheory.Mem.Col2.starE
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem exists_step {I : TC B X} (hI : I.Ok) (hP : TC.Pins B X) {l : I.Laws} {Z : TC.Later B (I.cols l)} {u : B.Word} {a : I.ι}
     {Ch : ℕ → Type} (A : TwDat I l Z u a Ch) (hA : A.Is) (i : ℕ) (hm : i + 1 = B.R.m)
     (q : Ch i → Formalism.L2.Col.ChPt (Pr := B.primes X) (R := B.R) I.sel (I.tup a) u i) (κ : Ch i → TC.GA B (B.R.N i))
@@ -204,7 +204,7 @@ theorem exists_step {I : TC B X} (hI : I.Ok) (hP : TC.Pins B X) {l : I.Laws} {Z 
     have hPG : P ∉ (B.primes X).vGs := Finset.disjoint_right.1 (LevTwist.levOk_twists B X I hI).2.1 hP'
     have hfr : ptFr (q β) P = 1 := by
       unfold ptFr
-      rw [dif_neg hPG, dif_neg hPQ, hN]
+      rw [dite_eq_right hPG, dite_eq_right hPQ, hN]
       unfold GlobalTheory.Mem.Col2.latFr
       exact if_pos rfl
     refine Matrix.ext fun r s => ?_
@@ -222,8 +222,8 @@ theorem exists_step {I : TC B X} (hI : I.Ok) (hP : TC.Pins B X) {l : I.Laws} {Z 
     fun c => (hp3 _ c rfl).2, hU, hchi, hh, hfin, hbad⟩, fun β => ?_⟩
   exact GlobalTheory.Mem.Col2.PtUniq.isPtOf_unique _ _ _ _ (IsPtOf.of_extTo (I.Q_subset_SQ a) hd (hp1 β)) (hq β)
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem exists_moved {I : TC B X} (hI : I.Ok) (hP : TC.Pins B X) {l : I.Laws} {Z : TC.Later B (I.cols l)} {u : B.Word} {a : I.ι}
     {Ch : ℕ → Type} (A : TwDat I l Z u a Ch) (hA : A.Is)
     (q : ∀ i, Ch i → Formalism.L2.Col.ChPt (Pr := B.primes X) (R := B.R) I.sel (I.tup a) u i) (κ : ∀ i, Ch i → TC.GA B (B.R.N i))
@@ -255,8 +255,8 @@ theorem exists_moved {I : TC B X} (hI : I.Ok) (hP : TC.Pins B X) {l : I.Laws} {Z
     obtain ⟨c, rfl⟩ := (hA.reads i hi).onto β
     exact ((hS i hi).2.2.2.1 c).symm.trans (hA.rep i hi c).2
 
-open Formalism.L2.Col in
 
+open Formalism.L2.Col in
 theorem exists_frames {I : TC B X} (hI : I.Ok) {u : B.Word} {a : I.ι} {i : ℕ}
     (p : ChPt (Pr := B.primes X) (R := B.R) I.sel (I.tup a) u i) (k : TC.GA B (B.R.N i)) (hk : TC.PtOf k (extTo I.SQ p))
     (hN : p.deco.1.N = Formalism.L2.Col.stdLat B.fields.E (B.R.N i))
@@ -275,8 +275,8 @@ theorem exists_frames {I : TC B X} (hI : I.Ok) {u : B.Word} {a : I.ι} {i : ℕ}
     (fun P hP hv => GlobalTheory.Mem.Col2.ZeroMove.not_underQ I hI u a hP ((hQ _).1 hv)) k g1 hk hg1
   exact ⟨q, κ, rfl, fun _ => rfl, fun v hv => h1 v fun h => hv ((hQ v).1 h), h2⟩
 
-open Formalism.L2.Col in
 
+open Formalism.L2.Col in
 theorem repY_cong {X : Fields} {Pr : Primes X} {R : Ranks} {sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)} {S : Set ℕ}
     {mu : Formalism.L2.DIV.Tup X.F X.E X.K S} {cst : LocCst X (rowSG Pr sel mu)} {u : Pr.Word} {j : ℕ} (h : j + 1 = R.m)
     (p p' : PtAt R sel mu cst u j) (hc : cosetIn p' = cosetIn p) (P : rowSG Pr sel mu) :

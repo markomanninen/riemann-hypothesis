@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.RankDefs
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.KeptFin
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ChainDim
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.RankDefs
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SegmentStatementHolds
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.KeptFin
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.ChainDim
+
+@[expose] public section
 
 noncomputable section
 

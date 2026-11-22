@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.CongSubgroup
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ComboNotMemSpan
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.SiegelKlingenDeligneRibet
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.AbelContinuation
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.CongSubgroup
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ComboNotMemSpan
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -21,7 +25,8 @@ theorem signConst_of_nonneg (l : V →ₗ[ℚ] ℚ) (s : Finset V) (h : ∀ v �
     intro x hx
     simp only [coneOn, Set.mem_setOf_eq] at hx
     obtain ⟨t, -, rfl⟩ := hx
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_eq_zero (fun i hi => by rw [map_smul, hz i hi, smul_zero])
   · refine Or.inr (Or.inl ?_)
     push_neg at hz
@@ -29,7 +34,8 @@ theorem signConst_of_nonneg (l : V →ₗ[ℚ] ℚ) (s : Finset V) (h : ∀ v �
     intro x hx
     simp only [coneOn, Set.mem_setOf_eq] at hx
     obtain ⟨t, ht, rfl⟩ := hx
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     have hnn : ∀ i ∈ s, 0 ≤ l (t i • i) := fun i hi => by
       rw [map_smul, smul_eq_mul]; exact mul_nonneg (ht i hi).le (h i hi)
     have hpos : 0 < l (t w • w) := by
@@ -43,7 +49,8 @@ theorem signConst_of_nonpos (l : V →ₗ[ℚ] ℚ) (s : Finset V) (h : ∀ v �
     intro x hx
     simp only [coneOn, Set.mem_setOf_eq] at hx
     obtain ⟨t, -, rfl⟩ := hx
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_eq_zero (fun i hi => by rw [map_smul, hz i hi, smul_zero])
   · refine Or.inr (Or.inr ?_)
     push_neg at hz
@@ -51,7 +58,8 @@ theorem signConst_of_nonpos (l : V →ₗ[ℚ] ℚ) (s : Finset V) (h : ∀ v �
     intro x hx
     simp only [coneOn, Set.mem_setOf_eq] at hx
     obtain ⟨t, ht, rfl⟩ := hx
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     have hnp : ∀ i ∈ s, 0 ≤ -l (t i • i) := fun i hi => by
       rw [map_smul, smul_eq_mul]; nlinarith [(ht i hi).le, h i hi]
     have hneg : l (t w • w) < 0 := by
@@ -239,7 +247,7 @@ theorem tile_of_card_lt [DecidableEq V] (P : ConvexCone ℚ V) (l : V →ₗ[ℚ
       hP (Finset.mem_coe.mpr (Finset.mem_insert_of_mem (Finset.mem_insert_of_mem hx)))
     have hcP : (-l w) • u + (l u) • w ∈ P := P.add_mem (P.smul_mem ha hPu) (P.smul_mem hb hPw)
     have hlc : l ((-l w) • u + (l u) • w) = 0 := by
-      simp only [map_add, map_smul, smul_eq_mul]; ring
+      simp only [map_add (f := _), map_smul, smul_eq_mul]; ring
     obtain ⟨hcr, hcu, hcw, hli1, hli2, hli3⟩ := StellarLI.main u w r (-l w) (l u) ha hb huw hur hwr hli
     generalize hcdef : (-l w) • u + (l u) • w = c at hcP hlc hcr hcu hcw hli1 hli2 hli3
     have hc' : c = (-l w) • u + (l u) • w := hcdef.symm

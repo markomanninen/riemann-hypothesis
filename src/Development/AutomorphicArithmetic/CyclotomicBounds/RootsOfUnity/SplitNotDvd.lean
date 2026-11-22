@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.PrimeDiscriminants.ExistsPrimitiveRootTorsionOrder
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.PrimeDiscriminants.ExistsPrimitiveRootTorsionOrder
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.HC
 

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.BockCut
+module
+
+public import Development.EtaleCohomology.KummerTheory.BockCut
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -23,7 +27,6 @@ theorem single_key (R S : Type) [CommRing R] [CommRing S] (φ : R →+* S) (F : 
     (restr φ).map (HomologicalComplex.singleObjXSelf (ComplexShape.up ℤ) 0 F).inv := by
   rw [HomologicalComplex.singleMapHomologicalComplex_inv_app_self]
   simp
-  rfl
 
 theorem RestrRes_of (hex : LateralTheory.EtaleFoundations.EtaleSheafShortComplexExactIffLocallyLifts) (hres : LateralTheory.EtaleFoundations.EtaleInjectiveResolutionBasicProperties) :
     LateralTheory.KummerTheory.BockCut.RestrRes := by

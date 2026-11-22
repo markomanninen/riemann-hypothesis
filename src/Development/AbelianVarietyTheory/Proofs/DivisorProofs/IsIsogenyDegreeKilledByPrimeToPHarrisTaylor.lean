@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.ChainOfKernelsUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KilledByIdealFiniteEtale
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsogenyDegreeOfPointCount
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorCardKilledByIdealEqAbsNormPowStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.ChainOfKernelsUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KilledByIdealFiniteEtale
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsogenyDegreeOfPointCount
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorCardKilledByIdealEqAbsNormPowStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 

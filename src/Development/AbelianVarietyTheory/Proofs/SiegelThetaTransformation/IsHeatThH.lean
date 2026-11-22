@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianThetaSummableAndDeterminesTestFn
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustStatementPfA
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IsHeatZero
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.HermitianThetaSummableAndDeterminesTestFn
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.ExhaustStatementPfA
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+
+@[expose] public section
+
 open Matrix Complex NumberField GlobalTheory.SW Filter Topology
 open ReciprocityTheory.ChartRestriction.G.FD (cc herm)
 open scoped ComplexConjugate ComplexOrder Real
@@ -14,8 +19,8 @@ section General
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V] [FiniteDimensional ℂ V]
   {ι : Type*} {U : Set V}
 
-omit [FiniteDimensional ℂ V] in
 
+omit [FiniteDimensional ℂ V] in
 theorem convexOn_norm_term (c : ℂ) (L : V →L[ℂ] ℂ) :
     ConvexOn ℝ Set.univ fun p => ‖c * cexp (L p)‖ := by
   have h : ConvexOn ℝ Set.univ fun p => Real.exp ((L p).re) := by
@@ -124,13 +129,13 @@ noncomputable def form (x : Matrix (Fin n) (Fin N) E) :
 theorem form_apply (x : Matrix (Fin n) (Fin N) E) (p : CF Ψ N N × CF Ψ n N × CF Ψ n N) :
     form Ψ x p = 2 * π * I * expo Ψ x p.1 p.2.1 p.2.2 := rfl
 
-open Classical in
 
+open Classical in
 noncomputable def dir {m : ℕ} (τ : Ψ) (k : Fin m) (a : Fin N) : CF Ψ m N :=
   fun σ i j => if σ = τ then if i = k then if j = a then 1 else 0 else 0 else 0
 
-open Classical in
 
+open Classical in
 theorem add_smul_dir {m : ℕ} (x : CM Ψ m N) (τ : Ψ) (k : Fin m) (a : Fin N) (s : ℂ) :
     (fun σ => x σ + if σ = τ then Matrix.single k a s else 0 : CM Ψ m N) =
       (HAdd.hAdd (α := CF Ψ m N) (β := CF Ψ m N) x (s • dir Ψ τ k a) : CF Ψ m N) := by
@@ -167,8 +172,8 @@ theorem form_dir₃ (x : Matrix (Fin n) (Fin N) E) (τ : Ψ) (k : Fin n) (a : Fi
     simp [dir, h]
   · simp
 
-open Classical in
 
+open Classical in
 theorem line₁ (Z : CF Ψ N N) (z z' : CF Ψ n N) (τ : Ψ) (a b : Fin N) (s : ℂ) :
     (Z, z, z') + s • ((dir Ψ τ a b, 0, 0) : CF Ψ N N × CF Ψ n N × CF Ψ n N) =
       (Z + s • dir Ψ τ a b, z, z') := by simp
@@ -204,8 +209,8 @@ theorem heat_dir (φ : Matrix (Fin n) (Fin N) E → ℂ)
 
 end GlobalTheory.SW.ExpSum
 
-open GlobalTheory.SW.ExpSum in
 
+open GlobalTheory.SW.ExpSum in
 theorem GlobalTheory.SW.isHeat_thH : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (Ψ : Finset (E →+* ℂ)), IsType Ψ → ∀ (n N : ℕ) (φ : Matrix (Fin n) (Fin N) E → ℂ), IsSB φ → IsHeat Ψ (thH Ψ φ) := by
   intro E _ _ _ Ψ hΨ n N φ hφ
   have hs : ∀ p ∈ {p : CF Ψ N N × CF Ψ n N × CF Ψ n N | (p.1 : CM Ψ N N) ∈ Hn Ψ N},

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.HwFixedLine
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HwIrred
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.HwFixedLine
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.HwIrred
+
+@[expose] public section
 
 noncomputable section
 

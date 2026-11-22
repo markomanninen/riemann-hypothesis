@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.RealTangentSpace
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.DiscriminantTraceBounds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermEqZeroOfTraceFormVanish
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.RealTangentSpace
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.DiscriminantTraceBounds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.HermEqZeroOfTraceFormVanish
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.FD
 
@@ -65,7 +69,7 @@ theorem mem_Lat_of_int (hD3 : IntegerApproximationCount (E := E)) (y : VT (X := 
       obtain ⟨m1, hm1⟩ := hy _ ((mem_Lat z ξ hξ).mpr ⟨ν, rfl⟩)
       obtain ⟨m2, hm2⟩ := hy _ ((mem_Lat z ξ hξ).mpr ⟨ν', rfl⟩)
       show round _ = round _ + round _
-      rw [map_add, map_add, inner_add_right, hm1, hm2, ← Int.cast_add, round_intCast, round_intCast,
+      rw [map_add (f := _), map_add (f := _), inner_add_right, hm1, hm2, ← Int.cast_add, round_intCast, round_intCast,
         round_intCast])
   have hψ : ∀ ν, (ψ ν : ℝ) = inner ℝ y (Bmap z ξ (phi z ξ hξ ν)) := fun ν => (hval ν).symm
   have hvan : ∀ ν : Y.Λp ξ, (∃ e : E, (ν : Fin r → E) = e • ξ) → ψ ν = 0 := by
@@ -104,7 +108,7 @@ theorem mem_Lat_of_int (hD3 : IntegerApproximationCount (E := E)) (y : VT (X := 
     exact inner_self_eq_zero.mp this
   have hy0 : y + phi z ξ hξ μ = 0 := by
     apply Bmap_injective z ξ
-    rw [map_add, ← hw, hw0, map_zero]
+    rw [map_add (f := _), ← hw, hw0, map_zero]
   have : y = phi z ξ hξ (-μ) := by
     rw [map_neg]
     exact eq_neg_of_add_eq_zero_left hy0
@@ -230,7 +234,7 @@ theorem short_basis (hD3 : IntegerApproximationCount (E := E)) (hep : 0 < ep0) :
     | add a b _ _ iha ihb =>
       obtain ⟨m1, h1⟩ := iha
       obtain ⟨m2, h2⟩ := ihb
-      exact ⟨m1 + m2, by rw [map_add, inner_add_right, h1, h2, Int.cast_add]⟩
+      exact ⟨m1 + m2, by rw [map_add (f := _), inner_add_right, h1, h2, Int.cast_add]⟩
     | smul c a _ iha =>
       obtain ⟨m, h⟩ := iha
       refine ⟨c * m, ?_⟩
@@ -239,8 +243,8 @@ theorem short_basis (hD3 : IntegerApproximationCount (E := E)) (hep : 0 < ep0) :
     rw [LinearIsometryEquiv.norm_map]
     exact hnorm i
 
-include hns in
 
+include hns in
 theorem covering (hD3 : IntegerApproximationCount (E := E)) (hep : 0 < ep0) (d : VT (X := Y.toData) z ξ) :
     ∃ μ : Y.Λp ξ, ‖d - phi z ξ hξ μ‖ ≤ (finrank ℝ (VT (X := Y.toData) z ξ) : ℝ) ^ 3 * Y.NA /
       (2 * Y.k0 * Real.sqrt ep0) := by

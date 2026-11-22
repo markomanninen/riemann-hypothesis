@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ZeroMemUnrHom
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.PullOnto
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ArtConj
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ClKill
-import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.FixField
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ZeroMemUnrHom
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.PullOnto
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.KummerTheory.ArtConj
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.ClKill
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.OddResidueBounds.FixField
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology UpperTheory.V UpperTheory.V.LDataCardLeFinrank UpperTheory.V.Base UpperTheory.V.Kum UpperTheory.V.Bern UpperTheory.V.B4 UpperTheory.V.B5 UpperTheory.V.Odd
 
@@ -46,4 +50,5 @@ theorem UpperTheory.V.Odd.homKill :
         Finset.sum_congr rfl (fun b _ => by rw [key b])
     _ = 0 := by
       simp_rw [← map_zsmul ψ']
-      rw [← map_sum, hsum, map_zero]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_sum, hsum, map_zero]

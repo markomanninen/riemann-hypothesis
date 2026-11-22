@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.ConeHypotheses.PolDense
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
-import Development.WeilBound.ThetaLifts.ConeHypotheses.IsLocallyConstantFinprodEvalV
+module
+
+public import Development.WeilBound.ThetaLifts.ConeHypotheses.PolDense
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsNatMulIntegralOfIsCompact
+public import Development.WeilBound.ThetaLifts.ConeHypotheses.IsLocallyConstantFinprodEvalV
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem I_add {M : Model σ Y W} {o : Rep σ Y W} {χ χ' : Chr F E} (hw : M.IsW
     (hc : ∀ Φ ∈ schA F _, M.Conv o Φ) {Φ Ψ : Fn F n d} (hΦ : Φ ∈ schA F _) (hΨ : Ψ ∈ schA F _) (h : UA σ W.J) :
     M.I o (Φ + Ψ) h = M.I o Φ h + M.I o Ψ h := by
   have e : ∀ g, theta o (Φ + Ψ) g h = theta o Φ g h + theta o Ψ g h := fun g => by
-    simp only [theta, map_add]
+    simp only [theta, map_add (f := _)]
     exact thetaSum_add F (hw.isUSplitting.pres _ _ hΦ) (hw.isUSplitting.pres _ _ hΨ)
   simp only [Model.I, e]
   exact integral_add (hc _ hΦ h) (hc _ hΨ h)

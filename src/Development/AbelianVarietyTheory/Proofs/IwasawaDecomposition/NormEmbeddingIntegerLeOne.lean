@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Neutral.B1 ReciprocityTheory.Neutral.Bridge.HCFR Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2.Host GlobalTheory.HeckeGal
 
 namespace GlobalTheory.LadicPlace
@@ -45,7 +50,7 @@ theorem exists_place_of_embedding :
       add_mem' := by
         intro a b ha hb
         simp only [Set.mem_setOf_eq] at ha hb ⊢
-        rw [RingOfIntegers.coe_eq_algebraMap, map_add, map_add]
+        rw [RingOfIntegers.coe_eq_algebraMap, map_add (f := _), map_add (f := _)]
         exact lt_of_le_of_lt (IsUltrametricDist.norm_add_le_max _ _) (max_lt ha hb)
       smul_mem' := by
         intro c a ha

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.BoxFinV
-import Development.WeilBound.ThetaLifts.LatticeBasics.SecondFromFirstStatement
-import Development.WeilBound.ThetaLifts.LatticeBasics.ThetaBox
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.BoxFinV
+public import Development.WeilBound.ThetaLifts.LatticeBasics.SecondFromFirstStatement
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ThetaBox
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ theorem at_e {W : Type} [AddCommGroup W] [Module (AF F) W] {ι : Type} (e : W �
 
 theorem imp (hs : IsSplitting (adeleClass F) B.ψ dd (actB (cA σ)) om) (k : G2 σ Y) :
     Imp B.ψ (om k) fun w => dd.e (actB (cA σ) k (dd.e.symm w)) :=
-  ⟨hs.pres k, hs.adm k, fun w w' => by simp only [actB, map_add, Matrix.add_mul],
+  ⟨hs.pres k, hs.adm k, fun w w' => by simp only [actB, map_add (f := _), Matrix.add_mul],
     fun c w => by simp only [actB, map_smul, Matrix.smul_mul], fun w φ hφ => by
       have := hs.impl k (dd.e.symm w) φ hφ
       rwa [Darboux.rho, LinearEquiv.apply_symm_apply] at this⟩
@@ -41,8 +45,8 @@ theorem actB_inv (k : G2 σ Y) (u : Matrix (Fin m) (Fin n ⊕ Fin n) (AE F E)) :
   rw [actB, actB, Matrix.mul_assoc, ← Matrix.transpose_mul, ← Units.val_mul, ← Subgroup.coe_mul, mul_inv_cancel]
   simp
 
-variable (om K) in
 
+variable (om K) in
 def kfin : Submodule ℂ ((κ ⊕ κ → AF F) → ℂ) where
   carrier := {Φ | ∃ N : Submodule ℂ ((κ ⊕ κ → AF F) → ℂ), FiniteDimensional ℂ N ∧ N ≤ schA F _ ∧ Φ ∈ N ∧ ∀ k ∈ K, ∀ Ψ ∈ N, om k Ψ ∈ N}
   zero_mem' := ⟨⊥, inferInstance, bot_le, zero_mem _, fun k _ g hg => by rw [(Submodule.mem_bot ℂ).1 hg, map_zero]; exact zero_mem _⟩
@@ -50,7 +54,7 @@ def kfin : Submodule ℂ ((κ ⊕ κ → AF F) → ℂ) where
     rintro f g ⟨N, _, h0, h1, h2⟩ ⟨N', _, h0', h1', h2'⟩
     refine ⟨N ⊔ N', inferInstance, sup_le h0 h0', Submodule.add_mem_sup h1 h1', fun k hk g hg => ?_⟩
     obtain ⟨x, hx, y, hy, rfl⟩ := Submodule.mem_sup.1 hg
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (h2 k hk x hx) (h2' k hk y hy)
   smul_mem' := fun c _ ⟨N, h, h0, h1, h2⟩ => ⟨N, h, h0, N.smul_mem c h1, h2⟩
 
@@ -70,7 +74,7 @@ theorem D_kfin (hψ : IsStd B.ψ) (hs : IsSplitting (adeleClass F) B.ψ dd (actB
       obtain ⟨v, hv, x, hx, rfl⟩ := hz
       exact Submodule.subset_span ⟨_, at_actB k hv, _, h2 k hk x hx, om_D hψ hs k hv (h0 hx)⟩
     | zero => rw [map_zero]; exact zero_mem _
-    | add _ _ _ _ i j => rw [map_add]; exact add_mem i j
+    | add _ _ _ _ i j => rw [map_add (f := _)]; exact add_mem i j
     | smul c _ _ i => rw [map_smul]; exact Submodule.smul_mem _ _ i
 
 abbrev th2 (Y : Spc F E n) (w : InfinitePlace F) := Matrix.fromBlocks (Y.θ w) 0 0 (-Y.θ w)

@@ -1,5 +1,10 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL6.AdmissibleStabilisersOfCompatibleForms
-import Formalism.LocalToGlobal.GlobalTheory.GL6.PUpNat
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.AdmissibleStabilisersOfCompatibleForms
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.RndLinkAdmTOf
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.PSplitT
+
+@[expose] public section
 
 noncomputable section
 
@@ -49,8 +54,8 @@ theorem translate_mem_span_adelic (S : StepLevel F E σ J T f bad) (emb : ι →
       funext y; simp only [Pi.smul_apply, smul_eq_mul]; ring
     rw [e]; exact Submodule.smul_mem _ r ha
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem adelic_function_extends_from_classes (S : StepLevel F E σ J T f bad) (emb : ι → E →+* ℂ)
     (hc : ∀ τ x, emb τ (σ x) = starRingEnd ℂ (emb τ x)) (lam : ι → DomWeight n)
     {C : Type} [Fintype C] (y : C → UPts σ J (FiniteAdeleRing (𝓞 F) F)) (hs : ∀ c, RndStabTriv S (y c))
@@ -74,11 +79,11 @@ theorem adelic_function_extends_from_classes (S : StepLevel F E σ J T f bad) (e
         x.1 = bc (inclE (F := F) (FiniteAdeleRing (𝓞 F) F)) p.1.1 * (y c).1 * p.2.1
     · have e : rndFillG S emb hc (y c) (Fc c) x = fun yy => (S.chi (Classical.choose hx).2 : ℂ) *
           Fc c (frameTranslate emb hc (Classical.choose hx).1.1⁻¹ ((UJ (σ : E →+* E) J).inv_mem (Classical.choose hx).1.2) yy) := by
-        funext yy; unfold rndFillG; rw [dif_pos hx]
+        funext yy; unfold rndFillG; rw [dite_eq_left hx]
       rw [e]
       exact hspan (translate_mem_span_adelic S emb hc hgA _ (Classical.choose hx).1.2 _ (hF c))
     · have e : rndFillG S emb hc (y c) (Fc c) x = 0 := by
-        funext yy; unfold rndFillG; rw [dif_neg hx]; rfl
+        funext yy; unfold rndFillG; rw [dite_eq_right hx]; rfl
       rw [e]; exact zero_mem _
   · intro c
     show (∑ c', rndFillG S emb hc (y c') (Fc c')) (y c) = Fc c
@@ -87,7 +92,7 @@ theorem adelic_function_extends_from_classes (S : StepLevel F E σ J T f bad) (e
     · intro c' _ hne
       funext yy
       unfold rndFillG
-      rw [dif_neg]
+      rw [dite_eq_right]
       · rfl
       rintro ⟨p, hp⟩
       apply hne
@@ -101,106 +106,7 @@ section Tied
 
 variable {D : D7} {u : D.what₂.Word}
 
-theorem trivial_stabiliser_level_zero (Tf : FormsTied D u) (x0 : UPts (sigD D) (gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) :
-    RndStabTriv (Tf.cls 0 (Nat.zero_le _)).lev x0 := by
-  intro δ hδ κ h
-  apply adms_core Tf x0 δ hδ
-  have e : x0.1⁻¹ * bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) δ * x0.1 = κ.1 := by
-    rw [mul_assoc, h]; group
-  rw [e]; exact κ.2
 
-theorem class_rep_unique_of_translate (Tf : FormsTied D u) (i : ℕ) (hi : i ≤ D.R.m) (c c' : (D.mem u).C.cls i) (γ : GL (Fin (D.R.N i)) D.host.E)
-    (hγ : γ ∈ UJ (sigD D : D.host.E →+* D.host.E) (gramN D i hi)) (κ : (Tf.cls i hi).lev.U)
-    (h : bc (inclE (F := D.host.F) (FiniteAdeleRing (𝓞 D.host.F) D.host.F)) γ * ((Tf.cls i hi).y c).1 =
-      ((Tf.cls i hi).y c').1 * κ.1) : c = c' :=
-  (Tf.cls i hi).y_bij.1 (rnd_cls _ γ hγ _ _ κ h)
-
-set_option maxHeartbeats 4000000 in
-
-theorem U_op_preserves_forms_level_zero (Tf : FormsTied D u) (v : (D.mem u).A.vT) (φ : (D.mem u).C.cls 0 → (D.mem u).C.Y 0 → ℂ)
-    (hφ : φ ∈ (D.fm u).Fi 0) : Formalism.MainNotions.product_first_zeroth_parts.Uop D u 0 v φ ∈ (D.fm u).Fi 0 := by
-  classical
-  obtain ⟨g, hg, hgφ⟩ := forms_from_adelic_function Tf 0 (Nat.zero_le _) φ hφ
-  have hgA := (Submodule.mem_inf.1 hg).1
-  have key : ∀ c (x : (D.fm u).lv 0 v c), (D.fm u).fv 0 v c x = 1 →
-      ∃ p : UPts (sigD D) (gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F),
-        (D.fm u).upT 0 v c x (φ ((D.fm u).up 0 v c x)) = fun s => g p ((Tf.val 0 (Nat.zero_le _)).eY s) := by
-    intro c x hx
-    obtain ⟨z, rfl⟩ := (Tf.lv 0 (Nat.zero_le _)).pr_surj v c x
-    obtain ⟨γ, η, κ, -, hrel, -, -, -, htr⟩ := upNat_of_tied Tf 0 (Nat.zero_le _) v c z hx
-    refine ⟨(Tf.cls 0 (Nat.zero_le _)).y c * η, ?_⟩
-    rw [htr, hgφ]
-    exact natTr_adFun Tf 0 (Nat.zero_le _) hgA _ _ η γ κ hrel
-  choose pp hpp using key
-  let Fc : (D.mem u).C.cls 0 → Fr D 0 (Nat.zero_le _) → ℂ := fun c =>
-    ∑ x ∈ Finset.univ.filter (fun x : (D.fm u).lv 0 v c => (D.fm u).fv 0 v c x = 1),
-      if hx : (D.fm u).fv 0 v c x = 1 then g (pp c x hx) else 0
-  have hU : ∀ c, Formalism.MainNotions.product_first_zeroth_parts.Uop D u 0 v φ c = fun s => Fc c ((Tf.val 0 (Nat.zero_le _)).eY s) := by
-    intro c
-    funext s
-    simp only [Formalism.MainNotions.product_first_zeroth_parts.Uop, Formalism.BasicNotions.LT.Uop, LinearMap.pi_apply, LinearMap.sum_apply, Finset.sum_apply, Fc]
-    refine Finset.sum_congr rfl fun x hx => ?_
-    have hx1 := (Finset.mem_filter.1 hx).2
-    rw [dif_pos hx1]
-    exact congrFun (hpp c x hx1) s
-  have hF : ∀ c, Fc c ∈ Submodule.span ℂ (Set.range g) := by
-    intro c
-    refine Submodule.sum_mem _ fun x _ => ?_
-    split_ifs
-    · exact Submodule.subset_span ⟨_, rfl⟩
-    · exact zero_mem _
-  obtain ⟨G, hG, hGc⟩ := adelic_function_extends_from_classes (Tf.cls 0 (Nat.zero_le _)).lev (embT D) (fun τ x => embedding_conj_compat D τ x) (lamT u 0)
-    (Tf.cls 0 (Nat.zero_le _)).y (fun c => trivial_stabiliser_level_zero Tf _) (fun c c' γ hγ κ h => class_rep_unique_of_translate Tf 0 (Nat.zero_le _) c c' γ hγ κ h)
-    hg Fc hF
-  refine ((Tf.val 0 (Nat.zero_le _)).Fi _).2 ⟨G, hG, ?_⟩
-  funext c z
-  show G ((Tf.cls 0 (Nat.zero_le _)).y c) z = _
-  rw [hGc, hU]
-  simp
-
-set_option maxHeartbeats 4000000 in
-
-theorem D_op_preserves_forms_level_zero (Tf : FormsTied D u) (v : (D.mem u).A.vT) (φ : (D.mem u).C.cls 0 → (D.mem u).C.Y 0 → ℂ)
-    (hφ : φ ∈ (D.fm u).Fi 0) : Formalism.MainNotions.product_first_zeroth_parts.Dop D u 0 v φ ∈ (D.fm u).Fi 0 := by
-  classical
-  obtain ⟨g, hg, hgφ⟩ := forms_from_adelic_function Tf 0 (Nat.zero_le _) φ hφ
-  have hgA := (Submodule.mem_inf.1 hg).1
-  have key : ∀ c (x : Module.Dual ((D.mem u).A.Fv v) ((D.fm u).lk 0 v c)), x ((D.fm u).te 0 v c) = 1 →
-      ∃ p : UPts (sigD D) (gramN D 0 (Nat.zero_le _)) (FiniteAdeleRing (𝓞 D.host.F) D.host.F),
-        (D.fm u).dnT 0 v c x (φ ((D.fm u).dn 0 v c x)) = fun s => g p ((Tf.val 0 (Nat.zero_le _)).eY s) := by
-    intro c x hx
-    have hx0 : x ≠ 0 := by
-      intro h0; rw [h0, LinearMap.zero_apply] at hx; exact zero_ne_one hx
-    obtain ⟨γ, η, κ, -, hrel, -, -, htr⟩ := dnNat_of_tied Tf 0 (Nat.zero_le _) v c x hx0
-    refine ⟨(Tf.cls 0 (Nat.zero_le _)).y c * η, ?_⟩
-    rw [htr, hgφ]
-    exact natTr_adFun Tf 0 (Nat.zero_le _) hgA _ _ η γ κ hrel
-  choose pp hpp using key
-  let Fc : (D.mem u).C.cls 0 → Fr D 0 (Nat.zero_le _) → ℂ := fun c =>
-    ∑ x ∈ Finset.univ.filter (fun x : Module.Dual ((D.mem u).A.Fv v) ((D.fm u).lk 0 v c) => x ((D.fm u).te 0 v c) = 1),
-      if hx : x ((D.fm u).te 0 v c) = 1 then g (pp c x hx) else 0
-  have hU : ∀ c, Formalism.MainNotions.product_first_zeroth_parts.Dop D u 0 v φ c = fun s => Fc c ((Tf.val 0 (Nat.zero_le _)).eY s) := by
-    intro c
-    funext s
-    simp only [Formalism.MainNotions.product_first_zeroth_parts.Dop, LinearMap.pi_apply, LinearMap.sum_apply, Finset.sum_apply, Fc]
-    refine Finset.sum_congr rfl fun x hx => ?_
-    have hx1 := (Finset.mem_filter.1 hx).2
-    rw [dif_pos hx1]
-    exact congrFun (hpp c x hx1) s
-  have hF : ∀ c, Fc c ∈ Submodule.span ℂ (Set.range g) := by
-    intro c
-    refine Submodule.sum_mem _ fun x _ => ?_
-    split_ifs
-    · exact Submodule.subset_span ⟨_, rfl⟩
-    · exact zero_mem _
-  obtain ⟨G, hG, hGc⟩ := adelic_function_extends_from_classes (Tf.cls 0 (Nat.zero_le _)).lev (embT D) (fun τ x => embedding_conj_compat D τ x) (lamT u 0)
-    (Tf.cls 0 (Nat.zero_le _)).y (fun c => trivial_stabiliser_level_zero Tf _) (fun c c' γ hγ κ h => class_rep_unique_of_translate Tf 0 (Nat.zero_le _) c c' γ hγ κ h)
-    hg Fc hF
-  refine ((Tf.val 0 (Nat.zero_le _)).Fi _).2 ⟨G, hG, ?_⟩
-  funext c z
-  show G ((Tf.cls 0 (Nat.zero_le _)).y c) z = _
-  rw [hGc, hU]
-  simp
 
 end Tied
 

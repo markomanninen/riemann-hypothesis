@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.SkodaWeights.SkodaWeightStatement
+module
+
+public import ReciprocityTheory.L2DbarEstimates.SkodaWeights.SkodaWeightStatement
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.H
 
@@ -29,24 +33,27 @@ lemma weightedIntegral_eq_lintegral (n : ℕ) {M : Type*} [MeasurableSpace M] (z
 
 lemma eLpNorm_two_weighted_eq (n : ℕ) {M : Type*} [MeasurableSpace M] (z : M → V n) {ψ : M → ℝ}
     (hψ : Measurable ψ) (f : M → ℂ) :
-    eLpNorm f 2 (wvol n z ψ) = wint n z f ψ ^ (1 / (2 : ℝ)) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm (by norm_num) (by norm_num), ENNReal.toReal_ofNat,
-    ← weightedIntegral_eq_lintegral n z hψ f]
+    eLpNorm' f 2 (wvol n z ψ) = wint n z f ψ ^ (1 / (2 : ℝ)) := by
+  rw [eLpNorm'_eq_lintegral_eNorm, ← weightedIntegral_eq_lintegral n z hψ f]
 
 theorem l2w (n : ℕ) (M : Type*) [MeasurableSpace M] : WeightedL2Properties n M := by
   intro z ψ hψ
   refine ⟨fun P => ae_weighted_iff_ae n z hψ P, fun F => ?_, fun f hf hfin => ?_⟩
   · have hlt := Lp.eLpNorm_lt_top F
     have hw : wint n z F ψ = eLpNorm F 2 (wvol n z ψ) ^ (2 : ℝ) := by
-      rw [eLpNorm_two_weighted_eq n z hψ, ← ENNReal.rpow_mul]
+      rw [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) (Lp.aestronglyMeasurable F),
+        ENNReal.toReal_ofNat, eLpNorm_two_weighted_eq n z hψ, ← ENNReal.rpow_mul]
       norm_num
     refine ⟨?_, ?_⟩
     · rw [hw]
       exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hlt.ne
     · rw [hw, Lp.norm_def, ← ENNReal.toReal_rpow, Real.rpow_two]
   · have hmem : MemLp f 2 (wvol n z ψ) := by
-      refine ⟨hf.mono_ac (withDensity_absolutelyContinuous _ _), ?_⟩
-      rw [eLpNorm_two_weighted_eq n z hψ f]
+      change eLpNorm f 2 (wvol n z ψ) < ⊤
+      have hfw : AEStronglyMeasurable f (wvol n z ψ) :=
+        hf.mono_ac (withDensity_absolutelyContinuous _ _)
+      rw [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) hfw, ENNReal.toReal_ofNat,
+        eLpNorm_two_weighted_eq n z hψ f]
       exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hfin.ne
     exact ⟨hmem.toLp f, (ae_weighted_iff_ae n z hψ (fun x => (hmem.toLp f : M → ℂ) x = f x)).mp
       (MemLp.coeFn_toLp hmem)⟩

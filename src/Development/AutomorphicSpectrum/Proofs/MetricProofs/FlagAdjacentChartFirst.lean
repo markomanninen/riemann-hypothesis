@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsBaseChart
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsBaseChart
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexOrder Classical
 open GlobalTheory.CompanionTheory.Ar.PB.WSq GlobalTheory.CompanionTheory.Ar.PB.WMan
@@ -19,7 +24,7 @@ theorem analytic_minorIJ (g : (Fin e → ℂ) → Matrix (Fin N) (Fin N) ℂ)
   · have hfun : (fun w => minorIJ (g w) I J) = fun w => ∑ σ : Equiv.Perm (Fin J.card),
         ((Equiv.Perm.sign σ : ℤ) : ℂ) * ∏ i, g w (I.orderEmbOfFin e' (σ i)) (J.orderEmbOfFin rfl i) := by
       funext w
-      rw [minorIJ, dif_pos e', Matrix.det_apply']
+      rw [minorIJ, dite_eq_left e', Matrix.det_apply']
       rfl
     rw [hfun]
     have H := Finset.analyticOnNhd_sum (𝕜 := ℂ) (s := s) (Finset.univ : Finset (Equiv.Perm (Fin J.card)))
@@ -35,7 +40,7 @@ theorem analytic_minorIJ (g : (Fin e → ℂ) → Matrix (Fin N) (Fin N) ℂ)
     rw [Finset.sum_apply]
   · have hfun : (fun w => minorIJ (g w) I J) = fun _ => 0 := by
       funext w
-      rw [minorIJ, dif_neg e']
+      rw [minorIJ, dite_eq_right e']
     rw [hfun]
     exact analyticOnNhd_const
 
@@ -66,14 +71,14 @@ theorem analytic_lowMat (s : Set (Fin e → ℂ)) (ε : Fin n ⊕ LowIdx Ψ N j 
   · have hfun : (fun w => lowMat (wL ε w) τ' a b) = fun w => w (ε (Sum.inr (Sum.inl ⟨(τ', a, b), hc⟩))) := by
       funext w
       simp only [lowMat]
-      rw [dif_pos hc]
+      rw [dite_eq_left hc]
       rfl
     rw [hfun]
     exact analytic_coord _
   · have hfun : (fun w => lowMat (wL ε w) τ' a b) = fun _ => if a = b then (1 : ℂ) else 0 := by
       funext w
       simp only [lowMat]
-      rw [dif_neg hc]
+      rw [dite_eq_right hc]
     rw [hfun]
     exact analyticOnNhd_const
 
@@ -115,7 +120,7 @@ theorem analytic_flagZ (M : FlagModel y Ψ N j) (F : FrameData ι Ψ N M.Ω M.bl
         ∑ I, valAt M.x (F.u q I) (zb w) * minorIJ (H w e'.choose.1) I (stepCols N j e'.choose.2) := by
       funext w
       simp only [flagZ]
-      rw [dif_pos e']
+      rw [dite_eq_left e']
     rw [hfun]
     have S := Finset.analyticOnNhd_sum (𝕜 := ℂ) (s := s) Finset.univ
       (f := fun I w => valAt M.x (F.u q I) (zb w) * minorIJ (H w e'.choose.1) I (stepCols N j e'.choose.2))
@@ -126,7 +131,7 @@ theorem analytic_flagZ (M : FlagModel y Ψ N j) (F : FrameData ι Ψ N M.Ω M.bl
   · have hfun : (fun w => flagZ M F (zb w) (H w) q) = fun w => zb w ⟨⟨q.1, fun p hp => e' ⟨p, hp⟩⟩, q.2⟩ := by
       funext w
       simp only [flagZ]
-      rw [dif_neg e']
+      rw [dite_eq_right e']
     rw [hfun]
     exact hzb _
 

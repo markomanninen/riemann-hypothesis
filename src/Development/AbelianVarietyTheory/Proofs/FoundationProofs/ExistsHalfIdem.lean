@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RationalPointsIntegralPointsMembership
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPoint
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmFiniteAdeleIntegralSeparatedCompleteStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCmIdempotentsSelectConjugatePrimesStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmFiniteAdeleStrongApproxModAdelicIdealStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.RationalPointsIntegralPointsMembership
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPoint
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmFiniteAdeleIntegralSeparatedCompleteStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCmIdempotentsSelectConjugatePrimesStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CmFiniteAdeleStrongApproxModAdelicIdealStatement
+
+@[expose] public section
 
 open NumberField Classical Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3 GlobalTheory.NormSum
 open scoped BigOperators Pointwise
@@ -21,13 +25,13 @@ theorem sgA_sgA (D : D7) (y : AE D) : sgA D (sgA D y) = y := by
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp [sgA, Formalism.UG.sigR, conj_conj]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem sgA_mem (D : D7) {s : AE D} (hs : s ∈ OhE D) : sgA D s ∈ OhE D :=
   Formalism.UG.P.csDual_sig_mem _ hs
 
 theorem inc_int (D : D7) (b : 𝓞 D.host.E) : inc D (b : D.host.E) ∈ OhE D :=
-  (GlobalTheory.NormSum.AdLattice.incl_mem_iff (F := ℚ) _).2 ⟨b, rfl⟩
+  Formalism.UG.P.adelstab_incl_int (F := ℚ) b
 
 theorem inc_dvd (D : D7) {N : ℕ} {b : 𝓞 D.host.E} (h : (N : 𝓞 D.host.E) ∣ b) :
     ∃ w ∈ OhE D, inc D (b : D.host.E) = (N : AE D) * w := by
@@ -81,13 +85,13 @@ theorem exists_half_idem (D : D7) : ∃ ε ∈ OhE D, ε * ε = ε ∧ ε * sgA 
     refine ⟨v + (inc D (e N : D.host.E) * sgA D w + w * sgA D (inc D (e N : D.host.E)) + N * w * sgA D w), ?_, ?_⟩
     · exact add_mem hv (add_mem (add_mem (mul_mem (inc_int D _) (sgA_mem D hw))
         (mul_mem hw (sgA_mem D (inc_int D _)))) (mul_mem (mul_mem (natCast_mem _ _) hw) (sgA_mem D hw)))
-    · rw [hh, map_add, map_mul, map_natCast]; linear_combination hh''
+    · rw [hh, map_add (f := _), map_mul, map_natCast]; linear_combination hh''
   · obtain ⟨w, hw, hh⟩ := h (q ^ k) (pow_pos hq.pos k)
     obtain ⟨v, hv, hh'⟩ := inc_dvd D ((h3 q k hq).1 hi)
     have hh'' : inc D (e (q ^ k) : D.host.E) + sgA D (inc D (e (q ^ k) : D.host.E)) = (q ^ k : ℕ) * v := by
       rw [← hh', ← hc]; simp
     refine ⟨1, one_pos, by simp, v + (w + sgA D w), add_mem hv (add_mem hw (sgA_mem D hw)), ?_⟩
-    rw [hh, map_add, map_mul, map_natCast]
+    rw [hh, map_add (f := _), map_mul, map_natCast]
     push_cast at hh'' ⊢
     linear_combination hh''
   · obtain ⟨w, hw, hh⟩ := h (q ^ k) (pow_pos hq.pos k)
@@ -95,7 +99,7 @@ theorem exists_half_idem (D : D7) : ∃ ε ∈ OhE D, ε * ε = ε ∧ ε * sgA 
     have hh'' : 1 - (inc D (e (q ^ k) : D.host.E) + sgA D (inc D (e (q ^ k) : D.host.E))) = (q ^ k : ℕ) * v := by
       rw [← hh', ← hc]; simp
     refine ⟨1, one_pos, by simp, v - (w + sgA D w), sub_mem hv (add_mem hw (sgA_mem D hw)), ?_⟩
-    rw [hh, map_add, map_mul, map_natCast]
+    rw [hh, map_add (f := _), map_mul, map_natCast]
     push_cast at hh'' ⊢
     linear_combination hh''
 
@@ -117,7 +121,7 @@ theorem exists_splitComp (D : D7) (u : (AE D)ˣ) (hu : (u : AE D) * sgA D u = 1)
     simp only; ring
   · ext
     change (1 - η) + η * u = ((1 - (ε + η)) + (ε + η) * u) * sgA D ((1 - η) + η * u)
-    rw [map_add, map_mul, map_sub, map_one, hη, sgA_sgA, ← hη, ← hv]
+    rw [map_add (f := _), map_mul, map_sub, map_one, hη, sgA_sgA, ← hη, ← hv]
     linear_combination (-(1 - u - v + u * v)) * (h1 + h2) - ε * hu
   · exact add_mem (sub_mem (one_mem _) (sgA_mem D hε)) (mul_mem (sgA_mem D hε) hO)
   · exact add_mem (sub_mem (one_mem _) (sgA_mem D hε)) (mul_mem (sgA_mem D hε) (sgA_mem D hO))

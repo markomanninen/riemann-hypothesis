@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.GammaOnLevels
-import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusPowUniformizerFactorisation
-import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
-import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ContentStep
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.GammaOnLevels
+public import Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusPowUniformizerFactorisation
+public import Formalism.SharpRestriction.LevelLetterCocycles.BaseChangePreservesUnitaryOf
+public import Formalism.SharpRestriction.LevelLetterCocycles.RepresentationCongruences.ContentStep
+
+@[expose] public section
 
 noncomputable section
 
@@ -220,7 +224,7 @@ theorem gamma_q_expansion_of_points [IsDomain O] [IsDiscreteValuationRing O] [Ch
   set θ : LetA O n := 1 + W.π₀ * κ with hθdef
   have hγq : W.γA W.gam (qA W) = qA W * θ := by
     have e1 : W.γA W.gam (qA W) = W.γA W.gam W.π₀ + ((PD.p : ℕ) : LetA O n) := by
-      simp only [qA, lA, map_add, map_natCast]
+      simp only [qA, lA, map_add (f := _), map_natCast]
     rw [e1, hγπ, hθdef]
     simp only [qA, lA]
     ring
@@ -233,7 +237,7 @@ theorem gamma_q_expansion_of_points [IsDomain O] [IsDiscreteValuationRing O] [Ch
     have : CharP (PowerSeries (IsLocalRing.ResidueField O)) PD.p :=
       charP_of_injective_algebraMap
         (algebraMap (IsLocalRing.ResidueField O) (PowerSeries (IsLocalRing.ResidueField O))).injective PD.p
-    simp only [map_mul, map_X, map_sub, map_pow, map_add, map_one] at h1
+    simp only [map_mul, map_X, map_sub, map_pow, map_add (f := _), map_one] at h1
     rw [add_pow_char, one_pow, add_sub_cancel_left] at h1
     have h2 : (X : PowerSeries (IsLocalRing.ResidueField O)) ^ PD.p = X * X ^ (PD.p - 1) := by
       rw [← pow_succ']; congr 1; have := PD.hp.two_le; omega

@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.PAdicHodge.PerfectoidField
-import GroundTheory.PAdicHodge.TiltValuation
-import GroundTheory.PAdicHodge.TiltField
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.PerfectoidField
+public import GroundTheory.PAdicHodge.TiltValuation
+public import GroundTheory.PAdicHodge.TiltField
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -144,12 +149,12 @@ variable {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K]
 variable {p : ℕ} [Fact p.Prime] [IsPerfectoidField K p]
 
 local notation "𝒪♭" => PreTilt (normInteger K) p
-local notation "K♭" => Tilt K NormedField.valuation (normInteger K) normInteger_integers p
-local notation "♮" x:max => ((PreTilt.untilt x : normInteger K) : K)
+local notation "K♭" => FractionRing 𝒪♭
+local notation "♮" x:arg => ((PreTilt.untilt x : normInteger K) : K)
 
 theorem exists_tilt_norm_pow_eq [IsAlgClosed K] (z : K♭) (hz : z ≠ 0) (n : ℕ) (hn : 0 < n) :
     ∃ c : K♭, ‖c‖ ^ n = ‖z‖ := by
-  obtain ⟨w, hw⟩ := IsAlgClosed.exists_pow_nat_eq (tiltSharp K p z) hn
+  obtain ⟨w, hw⟩ := IsAlgClosed.exists_pow_nat_eq (tiltSharp (K := K) (p := p) z) hn
   have hw0 : w ≠ 0 := by
     rintro rfl
     rw [zero_pow hn.ne', eq_comm, tiltSharp_eq_zero_iff] at hw

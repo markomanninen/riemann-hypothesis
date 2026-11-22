@@ -1,16 +1,21 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped NNReal
 open Finset
 
 namespace GlobalTheory.DworkGhost
 
-open Classical in
 
+open scoped Classical in
+open Classical in
 noncomputable def coeff {A : Type} [CommRing A] (l : ℕ) (φ : A →+* A) (a : A) : ℕ → A
   | n => if h : ((l : A) ^ n ∣ φ^[n] a - ∑ i : Fin n, (l : A) ^ (i : ℕ) * coeff l φ a i ^ l ^ (n - i))
       then h.choose else 0
-decreasing_by all_goals exact i.isLt
+decreasing_by exact i.isLt
 
 theorem coeff_spec {A : Type} [CommRing A] (l : ℕ) (φ : A →+* A) (a : A) (n : ℕ)
     (h : (l : A) ^ n ∣ φ^[n] a - ∑ i ∈ range n, (l : A) ^ i * coeff l φ a i ^ l ^ (n - i)) :
@@ -18,7 +23,7 @@ theorem coeff_spec {A : Type} [CommRing A] (l : ℕ) (φ : A →+* A) (a : A) (n
   have h' : (l : A) ^ n ∣ φ^[n] a - ∑ i : Fin n, (l : A) ^ (i : ℕ) * coeff l φ a i ^ l ^ (n - i) := by
     rwa [Fin.sum_univ_eq_sum_range (fun i => (l : A) ^ i * coeff l φ a i ^ l ^ (n - i)) n]
   have e : coeff l φ a n = h'.choose := by
-    rw [coeff, dif_pos h']
+    rw [coeff, dite_eq_left h']
   have hc := h'.choose_spec
   rw [← e, Fin.sum_univ_eq_sum_range (fun i => (l : A) ^ i * coeff l φ a i ^ l ^ (n - i)) n] at hc
   rw [sum_range_succ, Nat.sub_self, pow_zero, pow_one, ← hc]
@@ -31,7 +36,8 @@ theorem ghost_eq {A : Type} [CommRing A] (l : ℕ) (φ : A →+* A)
   | zero => exact coeff_spec l φ a 0 (by simp)
   | succ n ih =>
     apply coeff_spec
-    rw [Function.iterate_succ_apply', ih, map_sum, ← sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Function.iterate_succ_apply', ih, map_sum, ← sum_sub_distrib]
     apply dvd_sum
     intro i hi
     have hin : i ≤ n := Nat.lt_succ_iff.mp (mem_range.mp hi)
@@ -49,6 +55,5 @@ theorem exists_witt_ghost_iterate : ∀ (l : ℕ) [Fact l.Prime] (A : Type) [Com
   intro l _ A _ φ hφ a
   refine ⟨WittVector.mk l (coeff l φ a), fun n => ?_⟩
   rw [WittVector.ghostComponent_apply, aeval_wittPolynomial, ghost_eq l φ hφ a n]
-  rfl
 
 end GlobalTheory.DworkGhost

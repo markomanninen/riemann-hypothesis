@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataSpaces
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataSpaces
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.EmbeddingTypeJumps.crd :
     {E : Type} →
@@ -18,33 +22,33 @@ private theorem UpperTheory.Reformulated.B.EmbeddingTypeJumps.integral_smul_mem 
 
 private theorem UpperTheory.Reformulated.B.EmbeddingTypeJumps.exists_int_smul_mem {E : Type} [Field E] [NumberField E] [StarRing E]
     (W : Formalism.BasicNotions.HSpace E) (v : W.V) : ∃ n : ℤ, n ≠ 0 ∧ (n : E) • v ∈ W.L0 := by
-  have hv : v ∈ Submodule.span E (W.L0 : Set W.V) := by
-    rw [W.standardTuple_isLattice.span_eq_top]; exact Submodule.mem_top
-  induction hv using Submodule.span_induction with
-  | mem x hx => exact ⟨1, one_ne_zero, by simpa using hx⟩
-  | zero => exact ⟨1, one_ne_zero, by simp⟩
-  | add x y _ _ hx hy =>
-    obtain ⟨m, hm, hx⟩ := hx
-    obtain ⟨n, hn, hy⟩ := hy
-    refine ⟨m * n, mul_ne_zero hm hn, ?_⟩
-    have h : ((m * n : ℤ) : E) • (x + y) = n • ((m : E) • x) + m • ((n : E) • y) := by
-      rw [← Int.cast_smul_eq_zsmul E n, ← Int.cast_smul_eq_zsmul E m, smul_smul, smul_smul,
-        smul_add, Int.cast_mul, mul_comm (n : E)]
-    rw [h]
-    exact W.L0.add_mem (zsmul_mem hx n) (zsmul_mem hy m)
-  | smul a x _ hx =>
-    obtain ⟨n, hn, hx⟩ := hx
-    have ha : IsAlgebraic ℤ a :=
-      (IsFractionRing.isAlgebraic_iff ℤ ℚ E).2 (Algebra.IsAlgebraic.isAlgebraic a)
-    obtain ⟨m, hm, hint⟩ := ha.exists_integral_multiple
-    refine ⟨m * n, mul_ne_zero hm hn, ?_⟩
-    have hmem := UpperTheory.Reformulated.B.EmbeddingTypeJumps.integral_smul_mem W hint hx
-    have h : ((m * n : ℤ) : E) • a • x = (m • a) • ((n : E) • x) := by
-      rw [smul_smul, smul_smul, zsmul_eq_mul, Int.cast_mul]
-      congr 1
-      ring
-    rw [h]
-    exact hmem
+  classical
+  have := W.standardTuple_isLattice
+  obtain ⟨s, hs⟩ := Submodule.IsLattice.fg E W.L0
+  obtain ⟨n, hn, hgen⟩ := exists_integral_multiples ℤ ℚ (s.image (W.hT v))
+  refine ⟨n, hn, ?_⟩
+  rw [Int.cast_smul_eq_zsmul E]
+  let f := (W.hT (n • v)).restrictScalars (NumberField.RingOfIntegers E)
+  have hpair : W.L0 ≤ (1 : Submodule (NumberField.RingOfIntegers E) E).comap f := by
+    rw [← hs, Submodule.span_le]
+    intro y hy
+    have hint := hgen (W.hT v y) (Finset.mem_image_of_mem (W.hT v) hy)
+    apply Submodule.mem_one.mpr
+    refine ⟨⟨n • W.hT v y, hint⟩, ?_⟩
+    change n • W.hT v y = W.hT (n • v) y
+    rw [map_zsmul]
+    exact (map_zsmul (LinearMap.evalAddMonoidHom y) n (W.hT v)).symm
+  have hself : Formalism.HermitianLatticesTheory.dual W.hT W.L0 = W.L0 :=
+    W.baseLattice_isUnimodular
+  rw [← hself]
+  simp only [Formalism.HermitianLatticesTheory.dual, Formalism.E.hdual, Submodule.mem_iInf,
+    Submodule.mem_comap, LinearMap.restrictScalars_apply, Submodule.mem_one]
+  intro y hy
+  obtain ⟨a, ha⟩ := Submodule.mem_one.mp (hpair hy)
+  have hint : IsIntegral ℤ (W.hT (n • v) y) := ha ▸ a.property
+  have hstar := hint.map_of_comp_eq (RingHom.id ℤ) (starRingEnd E) (by ext <;> simp)
+  rw [W.herm.eq (n • v) y] at hstar
+  exact ⟨⟨_, hstar⟩, rfl⟩
 
 theorem UpperTheory.Reformulated.B.EmbeddingTypeJumps.crd_low :
     ∀ {F E : Type} [inst : Field F] [NumberField F] [inst_2 : Field E] [inst_3 : NumberField E] [inst_4 : Algebra F E]

@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.Divisibility.DivisibilityConstruction.RBLam
+module
+
+public import Formalism.LocalToGlobal.Divisibility.DivisibilityConstruction.RBLam
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.MainNotions
 

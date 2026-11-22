@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Module Submodule
 
@@ -10,10 +14,11 @@ section Defs
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
 
-open Classical in
 
-def covol (L : Submodule ℤ E) : ℝ :=
-  if h : DiscreteTopology L then
+open Classical in
+def covol (L : Submodule ℤ E) : ℝ := by
+  classical
+  exact if h : DiscreteTopology L then
     haveI := h
     Real.sqrt (Matrix.gram ℝ (fun i => ((Module.finBasis ℤ L i : L) : E))).det
   else 0
@@ -66,11 +71,6 @@ def GramDetLe : Prop :=
 def SlopeLeMuMax : Prop :=
   ∀ (E : Type*) [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
     (L N : Submodule ℤ E), DiscreteTopology L → N ≤ L → N ≠ ⊥ → slope N ≤ muMax L
-
-def MuMaxAttained : Prop :=
-  ∀ (E : Type*) [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
-    (L : Submodule ℤ E), DiscreteTopology L → L ≠ ⊥ →
-    ∃ N : Submodule ℤ E, IsSaturated L N ∧ N ≠ ⊥ ∧ slope N = muMax L
 
 def SlopeInequality : Prop :=
   ∀ (E F : Type*) [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]

@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.AuxiliaryPrimeNeTypePrime
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumCompLeSumOfInjOn
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRatios
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StepRatioAbsVwProd
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.LocalArcIntegralityOfCmNormalisedTrivialisation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.AuxiliaryPrimeNeTypePrime
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumCompLeSumOfInjOn
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRatios
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StepRatioAbsVwProd
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.LocalArcIntegralityOfCmNormalisedTrivialisation
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Finset
 open Formalism.DivisionValues (vw)

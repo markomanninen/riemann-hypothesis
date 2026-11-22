@@ -1,8 +1,13 @@
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.SubquotientNontrivial
-import Development.WeilBound.HeckeVectors.SmoothVectors.SobolevApproximation.SobApproxHolds
-import Formalism.LocalToGlobal.IndefiniteReal.SmExpSmulContDiff
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.AdmissibleCasimirScalars.CasScalar
-import CompanionTheory.AutomorphicTheory.HarishChandraMultiplicity.HCMult
+module
+
+public import Development.WeilBound.HeckeVectors.SmoothVectors.SobolevApproximation.SobApproxHolds
+public import Formalism.LocalToGlobal.IndefiniteReal.SmExpSmulContDiff
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirReductionTheory.OneParameterDerivatives.AdmissibleCasimirScalars.CasScalar
+public import CompanionTheory.AutomorphicTheory.HarishChandraMultiplicity.HCMult
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.Smooth
+
+@[expose] public section
 
 open Matrix Topology Filter
 open scoped InnerProductSpace ComplexOrder
@@ -43,7 +48,7 @@ theorem cartan_A : Formalism.IndefR.Datum.IsCartanInv (Formalism.REAL.Jm ε) (Fo
   have h2 : Formalism.REAL.Jm ε * Formalism.REAL.Jm ε = 1 := by
     rw [Formalism.REAL.Jm, Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
     congr 1; funext a; split_ifs <;> norm_num
-  have hh : (Formalism.REAL.Jm ε)ᴴ = Formalism.REAL.Jm ε := Jm_conjTranspose_self
+  have hh := Formalism.REAL.Jm_conjTranspose ε
   refine ⟨h2, ?_, ?_⟩
   · rw [hh, h2, Matrix.one_mul]
   · rw [h2]; exact Matrix.PosDef.one
@@ -51,7 +56,8 @@ theorem cartan_A : Formalism.IndefR.Datum.IsCartanInv (Formalism.REAL.Jm ε) (Fo
 theorem kfin_of_kfinG_A {a : H}
     (h : Formalism.IndefR.Tow.SobPf.KFinG (Formalism.REAL.Jm ε) (Formalism.REAL.Jm ε) σ a) : Formalism.MainNotions.S.IsKFin ε σ a := by
   obtain ⟨W, hW, haW, hst⟩ := h
-  refine ⟨W, hW, haW, fun g hg x hx => hst g ⟨mem_UJset_of_mem_kset hg, hg.2⟩ x hx⟩
+  exact ⟨W, hW, haW, fun g hg x hx =>
+    hst g ⟨CompanionTheory.D.gk.admitted.Kset_sub hg, hg.2⟩ x hx⟩
 
 theorem exists_kfin_near_A [CompleteSpace H] (hσ : Formalism.MainNotions.S.IsURepOn (Formalism.MainNotions.S.UJset ε) σ) {w : H}
     (hw : w ∈ smD ε σ) {δ : ℝ} (hδ : 0 < δ) : ∃ a : H, Formalism.MainNotions.S.IsKFin ε σ a ∧ ‖a - w‖ < δ := by

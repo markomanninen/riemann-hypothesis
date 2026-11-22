@@ -1,6 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FrameDeterminant.FrameB
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FrameDeterminant.DetOfFrame
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LatticeIndexAndWeightTheory
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,7 +11,7 @@ open NumberField
 
 namespace PI.TripleFrameDeterminant.W
 
-open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat PI.IsoDetDefs PI.FlagFrameDeterminants
+open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 

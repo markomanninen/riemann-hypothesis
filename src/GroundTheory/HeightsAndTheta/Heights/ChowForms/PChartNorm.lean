@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsChartFirstGroupDvd
-import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsNormOfDividedForm
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsChartFirstGroupDvd
+public import GroundTheory.HeightsAndTheta.Heights.ChowForms.StatementsNormOfDividedForm
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -34,7 +39,8 @@ theorem chartLin_eq_sum (u : Fin n → F) :
     algebraMap (ChartInc I t e) (ChartLoc I t e p) (chartLin I t e u) =
       ∑ m, algebraMap F (Localization.AtPrime p) (u m) •
         algebraMap (ChartInc I t e) (ChartLoc I t e p) (chartX I t e (X m)) := by
-  simp only [chartLin, linForm, map_sum, map_mul, Algebra.smul_def]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [chartLin, linForm, map_sum, map_mul, Algebra.smul_def]
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [← algebraMap_localization_C p, chartLoc_algebraMap_tower, chartX_C]
 
@@ -68,7 +74,7 @@ theorem chartLoc_adjoin_eq_top :
       rw [h]
       exact hS _
     | add a b ha hb =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact add_mem ha hb
     | mul_X a v ha =>
       rw [map_mul, map_mul]
@@ -116,7 +122,7 @@ theorem eval_map_firstGroup {F : Type} [Field F] {n e : ℕ} (p : Ideal (MvPolyn
   | C a =>
     rw [aeval_C, bind₁_C_right, MvPolynomial.algebraMap_apply, eval₂_C, MvPolynomial.algebraMap_eq]
   | add a b ha hb =>
-    rw [map_add, map_add, eval₂_add, ha, hb, map_add]
+    rw [map_add (f := _), map_add (f := _), eval₂_add, ha, hb, map_add (f := _)]
   | mul_X a ij ha =>
     rw [map_mul, map_mul, eval₂_mul, ha, map_mul, aeval_X, bind₁_X_right]
     congr 1
@@ -162,7 +168,8 @@ theorem ChartNorm.proof (h₁ : IncIdealBelow.Statement) (h₂ : SpecFirstMemInc
     RingHom.ext fun x => (chartLoc_algebraMap_tower I t p x).symm
   have hdvd := map_dvd (MvPolynomial.map (algebraMap (ChartInc I t e) (ChartLoc I t e p)))
     (h₇ F n e I f t hI hf htI)
-  simp only [map_sum, map_mul, map_X, map_C, map_map, hcomp] at hdvd
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, map_X, map_C, map_map, hcomp] at hdvd
   rw [← map_map] at hdvd
   have key := h₈ (Localization.AtPrime p) (ChartLoc I t e p) n _ _ _ (chartLoc_adjoin_eq_top I t p) hsum
     (h₆ F n e I f p hI hf) hdvd (fun m => algebraMap F (Localization.AtPrime p) (u m))

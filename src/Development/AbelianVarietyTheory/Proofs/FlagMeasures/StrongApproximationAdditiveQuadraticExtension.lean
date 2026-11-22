@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GFrames
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsIntegralOfQuad
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Formalism.SharpRestriction.CuspSpanNormBounds.PsiEDef
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.GFrames
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsIntegralOfQuad
+
+@[expose] public section
+
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL NumberField IsDedekindDomain
 open scoped Pointwise ENNReal Classical
 
@@ -220,7 +225,7 @@ theorem sig_ne (A : Places F E sig) : ∃ e : E, sig e ≠ e := by
     induction hz using Submodule.span_induction with
     | mem z hz => obtain ⟨y, rfl⟩ := hz; rw [(A.loc p).cj_ιE, hne]
     | zero => simp
-    | add a b _ _ ha hb => rw [map_add, ha, hb]
+    | add a b _ _ ha hb => rw [map_add (f := _), ha, hb]
     | smul c a _ ha => rw [map_smul, ha]
   have h3 : Function.Surjective (Algebra.linearMap (A.loc p).Fp (A.loc p).Ep) := by
     intro z
@@ -282,7 +287,7 @@ theorem decomp (A : Places F E sig) (d : E) (hd : sig d = -d) (hd0 : d ≠ 0) (p
         a ∈ 𝒪[(A.loc p).Fp] ∧ b ∈ 𝒪[(A.loc p).Fp]) := by
   have cjE : ∀ x, (A.L p).cj ((A.loc p).ιE x) = (A.loc p).ιE (sig x) := by
     intro x; rw [A.L_cj]; exact (A.loc p).cj_ιE x
-  obtain ⟨u, hu⟩ := ((A.L p).cj_fix (y + (A.L p).cj y)).1 (by rw [map_add, (A.L p).cj_cj, add_comm])
+  obtain ⟨u, hu⟩ := ((A.L p).cj_fix (y + (A.L p).cj y)).1 (by rw [map_add (f := _), (A.L p).cj_cj, add_comm])
   obtain ⟨w, hw⟩ := ((A.L p).cj_fix ((y - (A.L p).cj y) * (A.loc p).ιE d⁻¹)).1 (by
     rw [map_mul, map_sub, (A.L p).cj_cj, cjE, map_inv₀, hd, inv_neg, map_neg]; ring)
   have hh : algebraMap (A.loc p).Fp (A.loc p).Ep ((A.loc p).ιF 2⁻¹) = (A.loc p).ιE (algebraMap F E 2⁻¹) :=
@@ -334,7 +339,7 @@ theorem approxE (A : Places F E sig) (c : ∀ p, ((A.loc p).Fp)ˣ)
   have e1 := congrArg (algebraMap (A.loc p).Fp (A.loc p).Ep) ho1
   have e2 := congrArg (algebraMap (A.loc p).Fp (A.loc p).Ep) ho2
   rw [map_sub, map_mul] at e1 e2
-  rw [map_add, map_mul, (A.loc p).compat, (A.loc p).compat]
+  rw [map_add (f := _), map_mul, (A.loc p).compat, (A.loc p).compat]
   linear_combination e1 + (A.loc p).ιE d * e2 - hab p
 
 theorem approxTr (A : Places F E sig) (c : ∀ p, ((A.loc p).Fp)ˣ)
@@ -350,7 +355,7 @@ theorem approxTr (A : Places F E sig) (c : ∀ p, ((A.loc p).Fp)ˣ)
     obtain ⟨p⟩ := exists_place F
     haveI := PlacesInt.nontrivial_Ep (A.loc p)
     apply (A.loc p).ιE.injective
-    rw [← (A.loc p).cj_ιE, ← A.L_cj, ← hyt p, map_add, (A.L p).cj_cj, add_comm]
+    rw [← (A.loc p).cj_ιE, ← A.L_cj, ← hyt p, map_add (f := _), (A.L p).cj_cj, add_comm]
   choose a b hab hA hint using fun p => decomp A d hd hd0 p (y p)
   have hbad : ∀ p, p ∉ {p | y p ∉ (A.L p).O} ∪ {p | (A.loc p).ιE (d : E)⁻¹ ∉ (A.L p).O} ∪
       {p : HeightOneSpectrum (𝓞 F) | (A.loc p).ιF 2⁻¹ ∉ 𝒪[(A.loc p).Fp]} →
@@ -361,14 +366,14 @@ theorem approxTr (A : Places F E sig) (c : ∀ p, ((A.loc p).Fp)ˣ)
   have hfin := (hy.union hdi).union (fin_two A)
   obtain ⟨β, hβ⟩ := approxF A c hc b (hfin.subset fun p hp => by_contra fun h => hp (hbad p h).2)
   refine ⟨algebraMap F E 2⁻¹ * t + algebraMap F E β * d, ?_, fun p => ?_⟩
-  · rw [map_add, map_mul, map_mul, AlgHom.commutes, AlgHom.commutes, ht, hd, map_inv₀, map_ofNat]
+  · rw [map_add (f := _), map_mul, map_mul, AlgHom.commutes, AlgHom.commutes, ht, hd, map_inv₀, map_ofNat]
     field_simp
     ring
   obtain ⟨o2, ho2⟩ := hβ p
   refine ⟨algebraMap _ _ (o2 : (A.loc p).Fp) * (A.loc p).ιE d, mul_mem (O_of_int A p o2) (hdO p), ?_⟩
   have e2 := congrArg (algebraMap (A.loc p).Fp (A.loc p).Ep) ho2
-  rw [map_sub, map_mul] at e2
-  rw [map_add, map_mul, map_mul, (A.loc p).compat β]
+  rw [RingHom.map_sub, map_mul] at e2
+  rw [map_add (f := _), map_mul, map_mul, (A.loc p).compat β]
   linear_combination (A.loc p).ιE d * e2 - hab p - hA p - (A.loc p).ιE (algebraMap F E 2⁻¹) * hyt p
 
 theorem strong_approx_additive : ∀ {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {sig : E →ₐ[F] E} (A : Places F E sig), ∀ c : ∀ p, ((A.loc p).Fp)ˣ, {p | ¬ ∃ u : (𝒪[(A.loc p).Fp])ˣ, ((u : 𝒪[(A.loc p).Fp]) : (A.loc p).Fp) = c p}.Finite → (∀ y : ∀ p, (A.loc p).Fp, {p | y p ∉ 𝒪[(A.loc p).Fp]}.Finite → ∃ x : F, ∀ p, ∃ o : 𝒪[(A.loc p).Fp], (A.loc p).ιF x - y p = c p * o) ∧ (∀ y : ∀ p, (A.loc p).Ep, {p | y p ∉ (A.L p).O}.Finite → ∃ x : E, ∀ p, ∃ o ∈ (A.L p).O, (A.loc p).ιE x - y p = algebraMap (A.loc p).Fp (A.loc p).Ep (c p) * o) ∧ ∀ (t : E) (y : ∀ p, (A.loc p).Ep), {p | y p ∉ (A.L p).O}.Finite → (∀ p, y p + (A.L p).cj (y p) = (A.loc p).ιE t) → ∃ x : E, x + sig x = t ∧ ∀ p, ∃ o ∈ (A.L p).O, (A.loc p).ιE x - y p = algebraMap (A.loc p).Fp (A.loc p).Ep (c p) * o := by

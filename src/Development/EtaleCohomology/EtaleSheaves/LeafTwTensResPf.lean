@@ -1,6 +1,10 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafTwPairExistsPf
-import Development.EtaleCohomology.TateTwists.EtaleTensorPairTwistResolutionMul
-import Mathlib.CategoryTheory.Abelian.Injective.Extend
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafTwPairExistsPf
+public import Development.EtaleCohomology.TateTwists.EtaleTensorPairTwistResolutionMul
+public import Mathlib.CategoryTheory.Abelian.Injective.Extend
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsNormalFormStabilizerMeasure
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormDetInnerLeOfDetEqOne
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GramSchmidtLengths
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MajorantFlagLengthsInvarianceTorusPositivity
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsNormalFormStabilizerMeasure
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.NormDetInnerLeOfDetEqOne
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GramSchmidtLengths
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MajorantFlagLengthsInvarianceTorusPositivity
+
+@[expose] public section
 
 open MeasureTheory Matrix Formalism.QuantumDeterminants Formalism.MainNotions.S GlobalTheory.SgInf GlobalTheory.Amp
 open scoped InnerProductSpace ENNReal
@@ -22,7 +26,7 @@ theorem norm_det_inner_le_pow {E : Type} [NormedAddCommGroup E] [InnerProductSpa
     simp [Matrix.mul_apply, sum_inner, inner_smul_left, mul_comm]
   rw [e, Matrix.det_mul, Matrix.det_conjTranspose, hs, star_one, one_mul] at h
   have h1 : ∀ {f : Fin l → E} {S : ℝ}, (∀ a, ‖f a‖ ≤ S) → ∏ a, ‖f a‖ ≤ S ^ l := fun {f S} hf => by
-    have := Finset.prod_le_prod (s := Finset.univ) (fun a _ => norm_nonneg (f a)) (fun a _ => hf a)
+    have := Finset.prod_le_prod₀ (s := Finset.univ) (fun a _ => norm_nonneg (f a)) (fun a _ => hf a)
     simpa using this
   have h0 : ∀ f : Fin l → E, 0 ≤ ∏ a, ‖f a‖ := fun f => Finset.prod_nonneg fun a _ => norm_nonneg _
   exact h.trans (mul_le_mul (h1 hu) (h1 hv) (h0 _) ((h0 _).trans (h1 hu)))
@@ -97,7 +101,7 @@ theorem norm_Dmin_le (k r : ℕ) (z z' : Fin (2 * r + k + 1) → ℂ) {γ x : Ma
     have hb : b.val < r := lt_of_lt_of_le b.isLt hl
     rw [Matrix.of_apply, EuclideanSpace.inner_toLp_toLp, dotProduct_comm, Matrix.submatrix_apply, Zhat,
       ← herm_mulVec (hinv _ hγx).2, Matrix.mulVec_mulVec, Matrix.mul_inv_rev, Matrix.mul_assoc,
-      Matrix.nonsing_inv_mul _ (hinv _ hγ).1, Matrix.mul_one, fvec, fvec, dif_pos (by exact hb), dif_pos (by exact ha)]
+      Matrix.nonsing_inv_mul _ (hinv _ hγ).1, Matrix.mul_one, fvec, fvec, dite_eq_left (by exact hb), dite_eq_left (by exact ha)]
     rfl
   rw [e]
   refine h.trans ?_
@@ -113,7 +117,8 @@ theorem gramProj_le (k r : ℕ) {j : ℕ} (hj : j ≤ r) (z : Fin (2 * r + k + 1
     have := hs' a
     rw [eucl_eq, WithLp.toLp_sum] at this
     refine le_trans (le_of_eq ?_) ((P.norm_starProjection_apply_le _).trans this)
-    simp only [map_sum, WithLp.toLp_smul, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, WithLp.toLp_smul, map_smul]
   have h := norm_det_inner_le_pow _ _ s s hs hs h1 h1
   have h0 := one_le_Sg k r z x
   refine le_trans ?_ (pow_le_pow_right₀ h0 hj)

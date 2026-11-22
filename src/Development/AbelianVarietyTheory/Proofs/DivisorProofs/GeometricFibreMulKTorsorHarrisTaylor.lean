@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompEqOneOfTransl
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeSubFiniteFree
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CompEqOneOfTransl
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeSubFiniteFree
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT
 
@@ -40,7 +45,7 @@ theorem fibre_mulK : ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (R : Type) [Comm
   have hdk : d ^ k = 1 := by rw [hd, mul_pow, inv_pow, hpow, inv_mul_cancel]
   have hβ : x ≫ s = spMap (Spec.preimage (x ≫ s)).hom := (Spec.map_preimage _).symm
   obtain ⟨I, hI⟩ := o.geom K x _ hβ
-  have hcop : (N * k * k).Coprime p := Nat.Coprime.mul (Nat.Coprime.mul hNp hkp) hkp
+  have hcop : (N * k * k).Coprime p := Nat.Coprime.mul_left (Nat.Coprime.mul_left hNp hkp) hkp
   have hpos : 0 < N * k * k := Nat.mul_pos (Nat.mul_pos hN hk) hk
   obtain ⟨z, hz⟩ := (I.onto (N * k * k) hpos hcop d).1 (by
     rw [pow_mul, pow_right_comm, hdk, one_pow])
@@ -79,7 +84,7 @@ theorem fibre_mulK : ∀ (p : ℕ) [Fact p.Prime] (D : Datum p) (R : Type) [Comm
         rw [← h2, ← comp_mul, inv_mul_cancel, comp_one]
       rw [comp_mul, h1, hi, mul_inv_cancel]
     have h4 := (heckeSub_finite_free p D R b LinearMap.id k (N * k) hk (Nat.mul_pos hN hk) hkp
-      (Nat.Coprime.mul hNp hkp) S s o).2 K x _ hm h3
+      (Nat.Coprime.mul_left hNp hkp) S s o).2 K x _ hm h3
     exact Subtype.ext (mul_inv_eq_one.mp h4)
 
 end GlobalTheory.UPel.HT.Hecke.FibreMulK

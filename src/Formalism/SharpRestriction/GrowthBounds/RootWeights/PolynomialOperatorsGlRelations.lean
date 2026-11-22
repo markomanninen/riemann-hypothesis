@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.V2conSumApply
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.V2conSumApply
+
+@[expose] public section
 
 noncomputable section
 

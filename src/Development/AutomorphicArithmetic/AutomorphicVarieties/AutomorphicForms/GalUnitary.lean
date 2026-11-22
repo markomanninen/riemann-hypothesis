@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.CuspSemisimpleReal
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Hypotheses2
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SemisimpleLevels.CsdSsOfFull
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.CycCOfCyclic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.Down2
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.DescWeak
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.CuspSemisimpleReal
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.Hypotheses2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SemisimpleLevels.CsdSsOfFull
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.CycCOfCyclic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.Down2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.DescWeak
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,7 +33,7 @@ def AutBridge : Prop :=
   ∀ (F Ω : Type) [Field F] [NumberField F] [Field Ω] [Algebra F Ω] (l : ℕ) [Fact l.Prime] (ι : Qbar l ≃+* ℂ) (n : ℕ)
     (r : G F Ω →* GL (Fin n) (Qbar l)),
     (∀ [IsTotallyReal F], IsAut ι r ↔ IsAutR ι r) ∧
-    (∀ [IsTotallyComplex F], IsAut ι r ↔ ∃ π : CuspSub F n, (CG.mk π).IsRegAlg ∧ AttC ι r π) ∧
+    (∀ [_root_.NumberField.IsTotallyComplex F], IsAut ι r ↔ ∃ π : CuspSub F n, (CG.mk π).IsRegAlg ∧ AttC ι r π) ∧
     ∀ [IsCMField F], IsAutCsd ι r → IsAut ι r
 
 def Twi : Prop :=
@@ -102,29 +106,13 @@ def VerEq (κ : G L Ω →* C) (ν : G F Ω →* C) : Prop :=
 
 end Ver
 
-def LemTW : Prop :=
-  ∀ (F L Ω : Type) [Field F] [NumberField F] [Field L] [NumberField L] [IsCMField L] [Field Ω] [Algebra F L] [Algebra F Ω]
-    [Algebra L Ω] [IsScalarTower F L Ω] [IsAlgClosure F Ω] [IsAlgClosure L Ω], IsTotallyReal F → Module.finrank F L = 2 →
-    ∀ (l : ℕ) [Fact l.Prime], l ≠ 2 → ∀ (Φ : Set (HeightOneSpectrum (𝓞 L))),
-      (∀ w : HeightOneSpectrum (𝓞 L), ((l : ℕ) : 𝓞 L) ∈ w.asIdeal →
-        ∃ w' : HeightOneSpectrum (𝓞 L), w' ≠ w ∧ w'.under (𝓞 F) = w.under (𝓞 F) ∧ (w ∈ Φ ↔ w' ∉ Φ)) →
-    ∀ (ν : G F Ω →* (Qbar l)ˣ) (m : ℤ), Continuous ν → (∀ c, IsConjEl c → ν c = 1) →
-      (∀ (v : HeightOneSpectrum (𝓞 F)) (A : ValuationSubring Ω), IsPlaceOver A v →
-        (((l : ℕ) : 𝓞 F) ∉ v.asIdeal → ∀ s ∈ Ine (F := F) A, ν s = 1) ∧
-        (((l : ℕ) : 𝓞 F) ∈ v.asIdeal → ∃ k : ℕ, k.Coprime l ∧ ∀ s ∈ Ine (F := F) A, (ν s * cycBar F Ω l s ^ (-m)) ^ k = 1)) →
-      ∃ κ : G L Ω →* (Qbar l)ˣ, Continuous κ ∧ VerEq κ ν ∧ ∃ k : ℕ, 0 < k ∧ ((¬ ∃ ζ : L, IsPrimitiveRoot ζ l) → k.Coprime l) ∧
-        ∀ (w : HeightOneSpectrum (𝓞 L)) (A : ValuationSubring Ω), IsPlaceOver A w →
-          (((l : ℕ) : 𝓞 L) ∉ w.asIdeal → ∀ s ∈ Ine (F := L) A, κ s = 1) ∧
-          (((l : ℕ) : 𝓞 L) ∈ w.asIdeal → ∀ s ∈ Ine (F := L) A,
-            (w ∈ Φ → (κ s * cycBar L Ω l s ^ (-m)) ^ k = 1) ∧ (w ∉ Φ → κ s ^ k = 1))
-
 section Compat
 
 variable {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Algebra F Ω] [IsAlgClosure F Ω] {l : ℕ} [Fact l.Prime] {n : ℕ}
 
 def LocGlob (ι : Qbar l ≃+* ℂ) (r : G F Ω →* GL (Fin n) (Qbar l)) (w : HeightOneSpectrum (𝓞 F))
     (σ : SmIrr (GL (Fin n) (w.adicCompletion F))) : Prop :=
-  ∀ (A : ValuationSubring Ω) (h : IsPlaceOver A w) (rc : IrrGL (w.adicCompletion F) → WD h), IsRec h rc →
+  ∀ (A : ValuationSubring Ω) (h : IsPlaceOver A w) (rc : IrrGL (k := w.adicCompletion F) → WD h), IsRec h rc →
     (((l : ℕ) : 𝓞 F) ∉ w.asIdeal → Lev.WO ι r (rc (algNorm σ))) ∧
     ∀ (O : Type) [CommRing O] [Algebra ℤ_[l] O] [TopologicalSpace O] (Bw : LocBridge l F Ω (Dec (F := F) A) O) (hj : Induces Bw),
       IsPstAt (Loc.PP l) Bw (r.comp (Dec (F := F) A).subtype) ∧

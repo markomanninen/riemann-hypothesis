@@ -1,5 +1,9 @@
-import Development.DiscreteGroups.GlobalIrreducibility.LConvCut
-import Development.DiscreteGroups.GlobalIrreducibility.LConvKMCore
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvCut
+public import Development.DiscreteGroups.GlobalIrreducibility.LConvKMCore
+
+@[expose] public section
 
 namespace DiscreteGroups.sglob.LConv
 

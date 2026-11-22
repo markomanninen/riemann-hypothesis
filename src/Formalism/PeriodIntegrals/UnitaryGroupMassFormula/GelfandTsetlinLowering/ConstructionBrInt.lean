@@ -1,7 +1,11 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ZScalarVanish
-import Formalism.PeriodIntegrals.HwIrred
-import Formalism.GradedWeylDivisibility.FinalB
-import Formalism.GradedWeylDivisibility.FinalD
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.ZScalarVanish
+public import Formalism.PeriodIntegrals.HwIrred
+public import Formalism.GradedWeylDivisibility.FinalB
+public import Formalism.GradedWeylDivisibility.FinalD
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,7 +92,8 @@ theorem rat_of_pairings {ι : Type*} [Fintype ι] (β : ι → MvPolynomial σ �
   have hrq : ∀ j, r j = ∑ i, fockQ (β j) (β i) * π (star (c i)) := by
     intro j
     have h1 := congrArg π (hrj j)
-    rw [hπq, map_sum] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hπq, map_sum] at h1
     rw [h1]
     refine Finset.sum_congr rfl fun i _ => ?_
     have : star (c i) * ((fockQ (β j) (β i) : ℚ) : ℂ) = (fockQ (β j) (β i)) • star (c i) := by
@@ -96,7 +101,8 @@ theorem rat_of_pairings {ι : Type*} [Fintype ι] (β : ι → MvPolynomial σ �
     rw [this, LinearMap.map_smul, smul_eq_mul]
   set G0 : MvPolynomial σ ℚ := ∑ i, π (star (c i)) • β i with hG0
   have hG0m : map (algebraMap ℚ ℂ) G0 = ∑ i, ((π (star (c i)) : ℚ) : ℂ) • g i := by
-    rw [hG0, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hG0, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_ratSmul]
   set D : MvPolynomial σ ℂ := ∑ i, (c i - ((π (star (c i)) : ℚ) : ℂ)) • g i with hD

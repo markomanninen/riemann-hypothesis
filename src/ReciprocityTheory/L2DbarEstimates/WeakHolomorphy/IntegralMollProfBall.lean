@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.MeasurableEmbeddingRotAbout
-import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.IntegralBumpProfOnePos
+module
+
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.MeasurableEmbeddingRotAbout
+public import ReciprocityTheory.L2DbarEstimates.WeakHolomorphy.IntegralBumpProfOnePos
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.C
 
@@ -85,22 +89,14 @@ private theorem integral_moll_mul_eq_of_differentiableOn_ball {n : ℕ} {a : ℝ
     ∫ w, (moll n a (x - w) : ℂ) * h w = h x := by
   have hA : ∫ w, (moll n a (x - w) : ℂ) * h w = ∫ z, (moll n a z : ℂ) * h (x + z) := by
     have e1 := integral_add_left_eq_self (μ := volume) (fun w => (moll n a (x - w) : ℂ) * h w) x
-    try beta_reduce at e1
-    rw [← e1]
-    congr 1
-    funext z
-    simp only [sub_add_cancel_left, moll, norm_neg]
+    simpa only [moll, sub_add_eq_sub_sub, sub_self, zero_sub, norm_neg] using e1.symm
   rw [hA]
   have hB : ∀ θ : ℝ, ∫ z, (moll n a z : ℂ) * h (x + circleMap 0 1 θ • z)
       = ∫ z, (moll n a z : ℂ) * h (x + z) := by
     intro θ
     have hc : ‖circleMap 0 1 θ‖ = 1 := by simp
     have e2 := integral_comp_smul_of_norm_eq_one (circleMap 0 1 θ) hc (fun z => (moll n a z : ℂ) * h (x + z))
-    try beta_reduce at e2
-    rw [← e2]
-    congr 1
-    funext z
-    simp only [moll, norm_smul, hc, one_mul]
+    simpa only [moll, norm_smul, hc, one_mul] using e2
   obtain ⟨C, hC⟩ := (isCompact_closedBall x (a / 2)).exists_bound_of_continuousOn
     (hh.continuousOn.mono (closedBall_subset_ball (by linarith)))
   have hcont : Continuous (fun p : ℝ × V n => (moll n a p.2 : ℂ) * h (x + circleMap 0 1 p.1 • p.2)) := by

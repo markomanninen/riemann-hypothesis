@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ContinuousMapPFin
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ theorem gl_ext_evGL {a b : GL (Fin n) (Cinf E)} (h : ∀ w, evGL w a = evGL w b)
   ext i j w
   exact congrArg (fun x : GL (Fin n) ℂ => x i j) (h w)
 
-open Classical in
 
+open Classical in
 def atPlace (v : InfinitePlace E) : Cinf E →ₙ+* Cinf E where
   toFun x := Pi.single v (x v)
   map_mul' x y := Pi.single_mul (α := fun _ : InfinitePlace E => ℂ) v (x v) (y v)

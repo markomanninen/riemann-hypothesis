@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordProportionality
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AntisymmEqChernRootsMulRootDiscr
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SelfInterLwInterPoly
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsGoodBase
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordProportionality
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AntisymmEqChernRootsMulRootDiscr
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SelfInterLwInterPoly
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsGoodBase
+
+@[expose] public section
 
 noncomputable section
 

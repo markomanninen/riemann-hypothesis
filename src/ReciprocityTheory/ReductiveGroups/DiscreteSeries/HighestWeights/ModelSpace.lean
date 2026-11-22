@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelFun
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.KFacts
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.InhabA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelFun
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.KFacts
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.InhabA
+
+@[expose] public section
 
 noncomputable section
 
@@ -56,7 +60,7 @@ theorem evalK_apply (ε : Fin n → Bool) (Q : MvPolynomial (Fin n × Fin n) ℂ
     evalK ε Q x = MvPolynomial.aeval (fun p : Fin n × Fin n => toMK x p.1 p.2) Q := by
   induction Q using MvPolynomial.induction_on
   next a => simp [evalK]
-  next p q hp hq => rw [map_add, map_add, Pi.add_apply, hp, hq]
+  next p q hp hq => rw [map_add (f := _), map_add (f := _), Pi.add_apply, hp, hq]
   next p i hp =>
     rw [map_mul, map_mul, Pi.mul_apply, hp]
     simp [evalK]
@@ -78,7 +82,7 @@ theorem rtr_evalK (ε : Fin n → Bool) (k : KG ε) (Q : MvPolynomial (Fin n × 
 theorem totalDegree_rsub (ε : Fin n → Bool) (k : KG ε) (p : Fin n × Fin n) :
     (rsub ε k p).totalDegree ≤ 1 := by
   simp only [rsub]
-  refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun l _ => ?_)
+  refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun l _ => ?_)
   refine (MvPolynomial.totalDegree_mul _ _).trans ?_
   simp [MvPolynomial.totalDegree_X, MvPolynomial.totalDegree_C]
 
@@ -86,12 +90,13 @@ theorem totalDegree_bind₁_le {σ τ : Type*} (g : σ → MvPolynomial τ ℂ) 
     (Q : MvPolynomial σ ℂ) : (MvPolynomial.bind₁ g Q).totalDegree ≤ Q.totalDegree := by
   classical
   conv_lhs => rw [Q.as_sum]
-  rw [map_sum]
-  refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun d hd => ?_)
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
+  refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun d hd => ?_)
   rw [MvPolynomial.bind₁_monomial]
   refine (MvPolynomial.totalDegree_mul _ _).trans ?_
   rw [MvPolynomial.totalDegree_C, zero_add]
-  refine (MvPolynomial.totalDegree_finset_prod _ _).trans ?_
+  refine (MvPolynomial.totalDegree_finsetProd _ _).trans ?_
   refine le_trans ?_ (MvPolynomial.le_totalDegree hd)
   rw [Finsupp.sum]
   refine Finset.sum_le_sum fun i _ => ?_
@@ -142,7 +147,7 @@ theorem differentiable_aeval_entries (Q : MvPolynomial (Fin n × Fin n) ℂ) :
   induction Q using MvPolynomial.induction_on
   next a => simp
   next p q hp hq =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     exact hp.add hq
   next p i hp =>
     have hX : Differentiable ℂ (fun M : Matrix (Fin n) (Fin n) ℂ => M i.1 i.2) := by
@@ -173,7 +178,7 @@ theorem hasDerivAt_of_mem_Vsp (ε : Fin n → Bool) (m : Fin n → ℤ) {f : KG 
   have hc : HasDerivAt (fun t : ℝ => toMK (kcurve ε X t)) X 0 := by
     have hk : ∀ t : ℝ, toMK (kcurve ε X t) = NormedSpace.exp ((t : ℝ) • X) := fun t => by
        unfold kcurve
-       rw [dif_pos hX, Classical.choose_spec (exists_curve ε hX) t, Complex.coe_smul]
+       rw [dite_eq_left hX, Classical.choose_spec (exists_curve ε hX) t, Complex.coe_smul]
     simp only [hk]
     letI iR : NormedRing (Matrix (Fin n) (Fin n) ℂ) := Matrix.linftyOpNormedRing
     letI : NormedAlgebra ℂ (Matrix (Fin n) (Fin n) ℂ) := Matrix.linftyOpNormedAlgebra
@@ -190,7 +195,7 @@ theorem hasDerivAt_of_mem_Vsp (ε : Fin n → Bool) (m : Fin n → ℤ) {f : KG 
     L.hasFDerivAt.comp_hasDerivAt 0 hc
   have h0 : toMK (kcurve ε X 0) = 1 := by
     unfold kcurve
-    rw [dif_pos hX, Classical.choose_spec (exists_curve ε hX) 0]
+    rw [dite_eq_left hX, Classical.choose_spec (exists_curve ε hX) 0]
     simp
   have hLx : L (toMK (kcurve ε X 0)) = toMK x := by
     rw [h0]

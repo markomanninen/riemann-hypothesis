@@ -1,4 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.HodgeTateFromSandwich
+
+@[expose] public section
+
 open UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc UpperTheory.V.Z.Sym.Glob Matrix
 
 section SlopeTestRemainingChoices
@@ -9,9 +14,6 @@ private theorem sigL_mul' (x y : EL Δ τ) : sigL (x * y) = sigL x * sigL y := b
   ext <;> simp [sigL]
 
 private theorem sigL_sigL' (x : EL Δ τ) : sigL (sigL x) = x := by
-  ext <;> simp [sigL]
-
-private theorem sigL_star' (x : EL Δ τ) : sigL (star x) = star (sigL x) := by
   ext <;> simp [sigL]
 
 private theorem sigL_one' : sigL (1 : EL Δ τ) = 1 := by

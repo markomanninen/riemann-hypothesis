@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSliceMatricesOpen
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PGeneralProjection
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StSliceMatricesOpen
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PGeneralProjection
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

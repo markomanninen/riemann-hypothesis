@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.ReadLimit
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.FrameReading.ReadLimit
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,20 +19,29 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
 abbrev chComm {B : Block E} {Γ : Type} (g : Γ → BGen B) (X : B.Hb →L[ℂ] B.Hb)
     (hg : ∀ x y, Commute (g x).op (g y).op ∧ Commute (g x).op (star (g y).op))
-    (hX : ∀ x, Commute X (g x).op ∧ Commute X (star (g x).op)) (hXs : IsSelfAdjoint X) : CommRing (ChAlg g X) :=
-  StarAlgebra.adjoinCommRingOfComm ℂ
+    (hX : ∀ x, Commute X (g x).op ∧ Commute X (star (g x).op)) (hXs : IsSelfAdjoint X) : CommRing (ChAlg g X) := by
+  haveI : IsMulCommutative (ChAlg g X) := StarAlgebra.isMulCommutative_adjoin ℂ
+    (s := gOps g ∪ {X})
     (by
-      rintro u (⟨x, rfl⟩ | rfl) v (⟨y, rfl⟩ | rfl)
+      rintro u (⟨x, rfl⟩ | rfl)
+      · exact ⟨((hg x x).2).symm⟩
+      · exact ⟨by
+          rw [hXs.star_eq]
+          rfl⟩)
+    (by
+      rintro u (⟨x, rfl⟩ | rfl) v (⟨y, rfl⟩ | rfl) _
       · exact (hg x y).1
       · exact ((hX x).1).symm
       · exact (hX y).1
       · rfl)
     (by
-      rintro u (⟨x, rfl⟩ | rfl) v (⟨y, rfl⟩ | rfl)
+      rintro u (⟨x, rfl⟩ | rfl) v (⟨y, rfl⟩ | rfl) _
       · exact (hg x y).2
-      · rw [hXs.star_eq]; exact ((hX x).1).symm
+      · rw [hXs.star_eq]
+        exact ((hX x).1).symm
       · exact (hX y).2
-      · rw [hXs.star_eq])
+      · contradiction)
+  exact { (inferInstance : Ring (ChAlg g X)) with mul_comm := mul_comm' }
 
 def genO {B : Block E} {Γ : Type} (g : Γ → BGen B) (X : B.Hb →L[ℂ] B.Hb) : Option Γ → (B.Hb →L[ℂ] B.Hb) :=
   fun o => o.elim X fun x => (g x).op

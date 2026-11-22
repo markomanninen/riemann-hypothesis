@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.LAbove
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IntegralCompression.LAbove
+
+@[expose] public section
 
 open MeasureTheory NumberField Filter Topology Matrix
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace GroundTheory.Automorphic.AutomorphicForm
@@ -59,8 +63,8 @@ private theorem dg_mem (θ : Fin (2 + 2) → ℝ) :
   rw [← diagonal_one]
   congr 1
   funext i
-  simp only [Pi.star_apply, RCLike.star_def]
-  rw [← Complex.exp_conj, ← Complex.exp_add]
+  change Complex.exp (Complex.I * θ i) * star (Complex.exp (Complex.I * θ i)) = 1
+  rw [Complex.star_def, ← Complex.exp_conj, ← Complex.exp_add]
   simp
 
 private theorem dg_val (θ : Fin (2 + 2) → ℝ) :
@@ -170,7 +174,7 @@ private theorem hm_haar : Haar4 hm ∧ hm.IsOpenPosMeasure := by
     refine ⟨fun g => ?_⟩
     haveI : (Measure.map (· * g) hm).IsHaarMeasure := Measure.isHaarMeasure_map_mul_right hm g
     haveI : IsProbabilityMeasure (Measure.map (· * g) hm) :=
-      Measure.isProbabilityMeasure_map (continuous_mul_right g).measurable.aemeasurable
+      inferInstance
     exact Measure.isHaarMeasure_eq_of_isProbabilityMeasure _ _
   haveI : hm.IsInvInvariant := by
     refine ⟨?_⟩
@@ -180,7 +184,7 @@ private theorem hm_haar : Haar4 hm ∧ hm.IsOpenPosMeasure := by
         toIsOpenPosMeasure := ⟨fun U hU hne => by
           rw [Measure.inv_apply]; exact hU.inv.measure_ne_zero hm (by simpa using hne)⟩ }
     haveI : IsProbabilityMeasure hm.inv := by
-      rw [Measure.inv]; exact Measure.isProbabilityMeasure_map measurable_inv.aemeasurable
+      rw [Measure.inv]; infer_instance
     exact Measure.isHaarMeasure_eq_of_isProbabilityMeasure _ _
   exact ⟨⟨inferInstance, fun k => measurePreserving_mul_left hm k,
     fun k => measurePreserving_mul_right hm k, Measure.measurePreserving_inv hm⟩, inferInstance⟩

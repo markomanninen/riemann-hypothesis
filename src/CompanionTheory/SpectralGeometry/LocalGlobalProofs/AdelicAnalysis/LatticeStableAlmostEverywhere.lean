@@ -1,5 +1,9 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,8 @@ theorem repr_mul {d : ℕ} (b : Module.Basis (Fin d) F E) (v : HeightOneSpectrum
       ∑ k, (Algebra.TensorProduct.basis (Fv F v) b).repr y k *
         algebraMap F (Fv F v) (b.repr (b k * e) l) := by
   conv_lhs => rw [← (Algebra.TensorProduct.basis (Fv F v) b).sum_repr y]
-  rw [Finset.sum_mul, map_sum, Finsupp.finsetSum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Finset.sum_mul, map_sum, Finsupp.finsetSum_apply]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [smul_mul_assoc, map_smul, Finsupp.smul_apply, smul_eq_mul]
   congr 1
@@ -49,7 +54,8 @@ theorem mul_mem_latR {d : ℕ} {b : Module.Basis (Fin d) F E} {v : HeightOneSpec
 theorem sum_mem_latR {d : ℕ} {b : Module.Basis (Fin d) F E} {v : HeightOneSpectrum (𝓞 F)} {ι : Type}
     (s : Finset ι) (f : ι → Fv F v ⊗[F] E) (h : ∀ c ∈ s, f c ∈ latR b v) : ∑ c ∈ s, f c ∈ latR b v := by
   intro k
-  rw [map_sum, Finsupp.finsetSum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finsupp.finsetSum_apply]
   exact sum_mem fun c hc => h c hc k
 
 theorem eventually_good {d : ℕ} (b : Module.Basis (Fin d) F E) (e : E) :

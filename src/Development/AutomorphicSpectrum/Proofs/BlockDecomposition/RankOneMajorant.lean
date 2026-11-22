@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FockTranslateSchwartzMajorant
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousLeviBlock
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CoeLatFrameOfEq
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FockTranslateSchwartzMajorant
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ContinuousLeviBlock
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.CoeLatFrameOfEq
+
+@[expose] public section
 
 noncomputable section
 open scoped Matrix NNReal ENNReal ComplexConjugate TensorProduct Topology
@@ -49,7 +53,8 @@ theorem exists_eval_points {X : Type*} (W : Submodule ℂ (X → ℂ)) [FiniteDi
   have h2 : T ⟨w, hw⟩ = ∑ i, w (x i) • (Pi.single i (1 : ℂ) : Fin s.card → ℂ) := by
     ext j
     simp [T, ev, Finset.sum_apply, Pi.single_apply]
-  rw [h2, map_sum] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [h2, map_sum] at h1
   have h3 := congrArg (fun v : W => v.1 y) h1
   simp only [map_smul] at h3
   simpa [Submodule.coe_sum, Finset.sum_apply] using h3.symm

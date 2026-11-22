@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubPairRight
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsHomLocBijectiveGrSum
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFinsetSum
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmulEqZeroOfMem
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SubPairRight
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsHomLocBijectiveGrSum
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsFinsetSum
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmulEqZeroOfMem
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.AbLaw PositivityTheory.FormalThickening
 open GlobalTheory.ProjSpace GlobalTheory.QCoh.Qcqs GlobalTheory.Cartier GlobalTheory.CompanionTheory.FormalAlg GlobalTheory.CompanionTheory.FormalAlg.Lift
 
@@ -95,7 +100,7 @@ def unitIdeal (H : TowerAx ρ res p mm) (one : ∀ e (i : ι), T e 0 {i}) (i : �
     refine ⟨h, ?_⟩
     have e1 : (⟨(a + b) • one (e + 1) i, h⟩ : Ks p e 0 {i}) =
         ⟨a • one (e + 1) i, ha⟩ + ⟨b • one (e + 1) i, hb⟩ := Subtype.ext (add_smul a b _)
-    rw [e1, map_add]
+    rw [e1, map_add (f := _)]
     exact add_mem ma mb
   zero_mem' := by
     have h : (0 : R) • one (e + 1) i ∈ Ks p e 0 {i} := by
@@ -204,7 +209,7 @@ theorem exists_pow_smul_mem (H : TowerAx ρ res p mm) (one : ∀ e (i : ι), T e
       obtain ⟨k, q, t', w, hw, e1⟩ := hform (e + 1) t y
       obtain ⟨Φ, hΦ1, hΦ2⟩ := exists_mulMap hc H hr hS
       have e2 := congrArg Φ e1
-      rw [hΦ2, map_add, hΦ2, hΦ1, hΦ1, hΦ1, map_pow, MvPolynomial.map_X] at e2
+      rw [hΦ2, map_add (f := _), hΦ2, hΦ1, hΦ1, hΦ1, map_pow, MvPolynomial.map_X] at e2
       have hz : r • w = 0 := H.smul_eq_zero_of_mem (e := e + 1) hS (m := e + 1) (n := 1) rfl hr
         (by simpa using hw)
       have e3 : (⟨r • w, smul_mem_Ks H hS hr w⟩ : Ks p e t' {i}) = 0 := Subtype.ext hz
@@ -216,7 +221,7 @@ theorem exists_pow_smul_mem (H : TowerAx ρ res p mm) (one : ∀ e (i : ι), T e
       intro h
       have e1 : (⟨a + b, h⟩ : Ks p e t {i}) =
           ⟨a, (hker e t a).2 ha⟩ + ⟨b, (hker e t b).2 hb⟩ := rfl
-      rw [e1, map_add]
+      rw [e1, map_add (f := _)]
       exact pow_smul_add_mem Q _ (iha _) (ihb _)
 
 end Tower

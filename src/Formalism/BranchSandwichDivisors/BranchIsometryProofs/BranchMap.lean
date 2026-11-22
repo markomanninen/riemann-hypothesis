@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.GradedWeylDivisibility.FinalC
-import Formalism.BranchSandwichDivisors.StatementW
-import Formalism.BranchSandwichDivisors.BranchIsometryProofs.MemBranchRangeOfDefectEq
+module
+
+public import Mathlib
+public import Formalism.GradedWeylDivisibility.FinalC
+public import Formalism.BranchSandwichDivisors.StatementW
+public import Formalism.BranchSandwichDivisors.BranchIsometryProofs.MemBranchRangeOfDefectEq
+
+@[expose] public section
 
 open MvPolynomial Formalism.GradedWeylDivisibility
 
@@ -108,7 +112,7 @@ private theorem bm_whcNe_lemma_2 {R σ B : Type*} [CommRing R] [AddCommMonoid B]
     weightedHomogeneousComponent w k φ = 0 := by
   classical
   ext d
-  rw [coeff_weightedHomogeneousComponent, coeff_zero]
+  rw [coeff_weightedHomogeneousComponent, AddMonoidAlgebra.coeff_zero]
   split_ifs with hd
   · by_contra hc
     exact hk (hd.symm.trans (h hc))
@@ -142,7 +146,7 @@ theorem bm_whc_shift {R σ B : Type*} [CommRing R] [AddCommMonoid B] [IsRightCan
       rw [bm_whcSame_lemma hDa, bm_whcSame_lemma hma]
     · rw [bm_whcNe_lemma_2 hDa (fun h' => h (add_right_cancel h').symm), bm_whcNe_lemma_2 hma (Ne.symm h),
         map_zero]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
 
 theorem bm_isWH_of_comm {R σ B : Type*} [CommRing R] [AddCommMonoid B] (w : σ → B) (β : B)
     (x : Module.End R (MvPolynomial σ R))
@@ -166,7 +170,7 @@ theorem bm_deriv_monomial_WH {R σ B : Type*} [CommRing R] [AddCommMonoid B] (w 
     simp [Finsupp.weight_apply]
   have e : Finsupp.weight w m + δ = Finsupp.weight w (m - Finsupp.single i 1) + (w i + δ) := by
     conv_lhs => rw [hsplit]
-    rw [map_add, hw1, add_assoc]
+    rw [map_add (f := _), hw1, add_assoc]
   rw [e, smul_eq_mul]
   exact (isWeightedHomogeneous_monomial _ _ _ rfl).mul (hf i)
 
@@ -213,7 +217,7 @@ theorem commute_weightedComponent_of_monomial {R σ B : Type*} [CommRing R] [Add
     · subst h
       rw [bm_whcSame_lemma hDa, bm_whcSame_lemma hma]
     · rw [bm_whcNe_lemma_2 hDa (Ne.symm h), bm_whcNe_lemma_2 hma (Ne.symm h), map_zero]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
 
 theorem elemDeriv_monomial_weighted (R : Type*) [CommRing R] (n : ℕ) {B : Type*} [AddCommMonoid B]
     (w : Fin (n + 1) × Fin n → B) (hw : ∀ (a : Fin (n + 1)) (s t : Fin n), a ≠ Fin.last n → w (a, s) = w (a, t))
@@ -359,7 +363,8 @@ theorem rowAction_X_sum (R : Type*) [CommRing R] {r n : ℕ} (g : Matrix (Fin r)
 theorem rowAction_ext_elemDeriv_X (R : Type*) [CommRing R] (n : ℕ) (g : Matrix (Fin n) (Fin n) R) (s t : Fin n)
     (v : Fin (n + 1) × Fin n) :
     rowAct R (extM R g) (bmE R n s t (X v)) = bmE R n s t (rowAct R (extM R g) (X v)) := by
-  rw [elemDeriv_X, rowAction_X_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [elemDeriv_X, rowAction_X_sum, map_sum]
   obtain ⟨a, c⟩ := v
   by_cases hc : c = t
   · subst hc
@@ -392,8 +397,8 @@ theorem bm_rowAct_comm_bmEL (R : Type*) [CommRing R] (n : ℕ) (g : Matrix (Fin 
   show rowAct R (extM R g) (bmE R n s t F) = bmE R n s t (rowAct R (extM R g) F)
   induction F using MvPolynomial.induction_on
   next a => simp [rowAct, MvPolynomial.derivation_C]
-  next p q hp hq => simp only [map_add, hp, hq]
-  next p v hp => simp only [Derivation.leibniz, map_mul, map_add, smul_eq_mul, hp, rowAction_ext_elemDeriv_X]
+  next p q hp hq => simp only [map_add (f := _), hp, hq]
+  next p v hp => simp only [Derivation.leibniz, map_mul, map_add (f := _), smul_eq_mul, hp, rowAction_ext_elemDeriv_X]
 
 theorem lastRowDeriv_eq_X_mul_pderiv (R : Type*) [CommRing R] (n : ℕ) (s t : Fin n) (F : BP R n) :
     bmZ R n s t F = X (Fin.last n, s) * pderiv (Fin.last n, t) F := by
@@ -406,7 +411,7 @@ theorem lastRowDeriv_eq_X_mul_pderiv (R : Type*) [CommRing R] (n : ℕ) (s t : F
 
 theorem lastRowDiagDeriv_coeff (R : Type*) [CommRing R] (n : ℕ) (s : Fin n) (F : BP R n)
     (m : Fin (n + 1) × Fin n →₀ ℕ) :
-    coeff m (bmZ R n s s F) = (m (Fin.last n, s) : R) * coeff m F := by
+    AddMonoidAlgebra.coeff (bmZ R n s s F) m = (m (Fin.last n, s) : R) * AddMonoidAlgebra.coeff F m := by
   classical
   rw [lastRowDeriv_eq_X_mul_pderiv, coeff_X_mul']
   split_ifs with h
@@ -430,7 +435,7 @@ theorem bmZ_euler (R : Type*) [CommRing R] (n : ℕ) (β : Fin n → ℤ) (s : F
     (hF : IsWeightedHomogeneous (zW n) F β) : bmZ R n s s F = ((β s : ℤ) : R) • F := by
   ext m
   rw [lastRowDiagDeriv_coeff, coeff_smul, smul_eq_mul]
-  by_cases hc : coeff m F = 0
+  by_cases hc : AddMonoidAlgebra.coeff F m = 0
   · rw [hc, mul_zero, mul_zero]
   · have h1 := hF hc
     have h2 := bm_weight_zW m s
@@ -489,12 +494,12 @@ theorem elemDeriv_embed_comm (R : Type*) [CommRing R] (n : ℕ) (s t : Fin n) (f
     bmE R n s t (emb R n f) = emb R n (ndE R n n s t f) := by
   induction f using MvPolynomial.induction_on
   next a => simp [emb, MvPolynomial.derivation_C]
-  next p q hp hq => simp only [map_add, hp, hq]
+  next p q hp hq => simp only [map_add (f := _), hp, hq]
   next p v hp =>
     have hX : bmE R n s t (emb R n (X v)) = emb R n (ndE R n n s t (X v)) := by
       simp only [emb, rename_X, elemDeriv_X, ndE, mkDerivation_X]
       by_cases h : v.2 = t <;> simp [h, Fin.castSucc_ne_last]
-    simp only [map_mul, Derivation.leibniz, smul_eq_mul, map_add, hp, hX]
+    simp only [map_mul, Derivation.leibniz, smul_eq_mul, map_add (f := _), hp, hX]
 
 theorem bmE_lead (R : Type*) [CommRing R] (n : ℕ) (s t : Fin n) (b : Fin n → ℕ)
     (f : MvPolynomial (Fin n × Fin n) R) :
@@ -524,20 +529,25 @@ theorem bmA_prod_update_succ {n : ℕ} (g : Fin (n + 1) → A) (k : Fin n) (w : 
 
 theorem bmA_comm_prod (x : A) : ∀ {n : ℕ} (g : Fin n → A),
     x * (List.ofFn g).prod - (List.ofFn g).prod * x =
-      ∑ k, (List.ofFn (Function.update g k (x * g k - g k * x))).prod
-  | 0, g => by simp
-  | n + 1, g => by
-    have ih := bmA_comm_prod x (fun i : Fin n => g i.succ)
+      ∑ k, (List.ofFn (Function.update g k (x * g k - g k * x))).prod := by
+  intro n
+  induction n with
+  | zero => intro g; simp
+  | succ n ih =>
+    intro g
     rw [Fin.sum_univ_succ, bmA_prod_update_zero]
     simp only [bmA_prod_update_succ]
-    rw [← Finset.mul_sum, ← ih, List.ofFn_succ, List.prod_cons]
+    rw [← Finset.mul_sum, ← ih (fun i => g i.succ), List.ofFn_succ, List.prod_cons]
     noncomm_ring
 
 theorem bmA_adj : ∀ {n : ℕ} (g : Fin n → A) (p p' : Fin n), p'.val = p.val + 1 →
     ∃ L Rr : A, ∀ a b : A,
-      (List.ofFn (Function.update (Function.update g p a) p' b)).prod = L * (a * b) * Rr
-  | 0, _, p, _, _ => p.elim0
-  | n + 1, g, p, p', h => by
+      (List.ofFn (Function.update (Function.update g p a) p' b)).prod = L * (a * b) * Rr := by
+  intro n
+  induction n with
+  | zero => intro _ p; exact p.elim0
+  | succ n ih =>
+    intro g p p' h
     obtain ⟨q', rfl⟩ : ∃ q' : Fin n, p' = q'.succ := by
       refine ⟨⟨p'.val - 1, by omega⟩, ?_⟩
       ext; simp; omega
@@ -556,7 +566,7 @@ theorem bmA_adj : ∀ {n : ℕ} (g : Fin n → A) (p p' : Fin n), p'.val = p.val
       noncomm_ring
     | succ q =>
       have hq : q'.val = q.val + 1 := by simpa using h
-      obtain ⟨L, Rr, hL⟩ := bmA_adj (fun i : Fin n => g i.succ) q q' hq
+      obtain ⟨L, Rr, hL⟩ := ih (fun i => g i.succ) q q' hq
       refine ⟨g 0 * L, Rr, fun a b => ?_⟩
       rw [bmA_prod_update_succ, Function.update_of_ne (Fin.succ_ne_zero q).symm]
       have : (fun i : Fin n => Function.update g q.succ a i.succ) =
@@ -858,11 +868,15 @@ theorem capDet_central {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M] 
 
 theorem bmA_tri (v : M) : ∀ {m : ℕ} (g : Fin m → Module.End R M) (c : Fin m → R) (F : Fin m → Prop),
     (∀ k, F k → g k v = c k • v) → (∀ k, ¬ F k → (∀ j, k < j → F j) → g k v = 0) →
-    ((∀ k, F k) → (List.ofFn g).prod v = (∏ k, c k) • v) ∧ ((¬ ∀ k, F k) → (List.ofFn g).prod v = 0)
-  | 0, g, c, F, _, _ => by
+    ((∀ k, F k) → (List.ofFn g).prod v = (∏ k, c k) • v) ∧ ((¬ ∀ k, F k) → (List.ofFn g).prod v = 0) := by
+  intro m
+  induction m with
+  | zero =>
+    intro g c F _ _
     refine ⟨fun _ => by simp, fun h => absurd (fun k : Fin 0 => k.elim0) h⟩
-  | m + 1, g, c, F, h1, h2 => by
-    obtain ⟨ih1, ih2⟩ := bmA_tri v (fun i : Fin m => g i.succ) (fun i => c i.succ) (fun i => F i.succ)
+  | succ m ih =>
+    intro g c F h1 h2
+    obtain ⟨ih1, ih2⟩ := ih (fun i => g i.succ) (fun i => c i.succ) (fun i => F i.succ)
       (fun k hk => h1 _ hk)
       (fun k hk hj => h2 _ hk (fun j hkj => by
         obtain ⟨j', rfl⟩ : ∃ j' : Fin m, j = j'.succ :=
@@ -929,8 +943,8 @@ theorem bmC_pderiv_colAddGen {R : Type*} [CommRing R] {r n : ℕ} {l j : Fin n} 
     pderiv none (colAddGen R l j g) = colAddGen R l j (ndE R r n l j g) := by
   induction g using MvPolynomial.induction_on
   next a => simp [colAddGen, MvPolynomial.derivation_C]
-  next p q hp hq => simp only [map_add, hp, hq]
-  next p v hp => simp only [map_mul, Derivation.leibniz, smul_eq_mul, map_add, hp, bmC_pderiv_colAddGen_X hlj]
+  next p q hp hq => simp only [map_add (f := _), hp, hq]
+  next p v hp => simp only [map_mul, Derivation.leibniz, smul_eq_mul, map_add (f := _), hp, bmC_pderiv_colAddGen_X hlj]
 
 theorem bmC_ndEv_rename {R : Type*} [CommRing R] {r n : ℕ} (q : MvPolynomial (Fin r × Fin n) R) :
     ndEv R r n (rename some q) = q := by
@@ -948,8 +962,8 @@ theorem bmC_eq_rename_of_pderiv {R : Type*} [CommRing R] [IsDomain R] [CharZero 
     have hle : Finsupp.single none 1 ≤ m := by
       rw [Finsupp.single_le_iff]; exact Nat.one_le_iff_ne_zero.2 hne
     have hm' : m = (m - Finsupp.single none 1) + Finsupp.single none 1 := (tsub_add_cancel_of_le hle).symm
-    have h1 := congrArg (coeff (m - Finsupp.single none 1)) h
-    rw [coeff_pderiv, ← hm', coeff_zero] at h1
+    have h1 := congrArg (AddMonoidAlgebra.coeff · (m - Finsupp.single none 1)) h
+    rw [coeff_pderiv, ← hm', AddMonoidAlgebra.coeff_zero] at h1
     rcases mul_eq_zero.1 h1 with h2 | h2
     · exact (mem_support_iff.1 hm) h2
     · exact absurd h2 (Nat.cast_add_one_ne_zero _)
@@ -975,7 +989,7 @@ theorem bm_mem_dualWeyl_iff {R : Type} [CommRing R] [IsDomain R] [CharZero R] {r
     refine ⟨?_, fun l j hlj => ?_⟩
     · intro m hm
       funext s
-      have h1 := congrArg (coeff m) (heul s)
+      have h1 := congrArg (AddMonoidAlgebra.coeff · m) (heul s)
       rw [ndEul_coeff, coeff_smul, smul_eq_mul] at h1
       have h2 := mul_right_cancel₀ hm h1
       rw [← nd_weight_apply]
@@ -1077,9 +1091,9 @@ theorem bmE_eq_zero_of_comp {R σ B : Type*} [CommRing R] [AddCommMonoid B] (w :
     (G : MvPolynomial σ R) (h : ∀ β, weightedHomogeneousComponent w β G = 0) : G = 0 := by
   classical
   ext d
-  have := congrArg (coeff d) (h (Finsupp.weight w d))
-  rw [coeff_weightedHomogeneousComponent, if_pos rfl, coeff_zero] at this
-  rw [this, coeff_zero]
+  have := congrArg (AddMonoidAlgebra.coeff · d) (h (Finsupp.weight w d))
+  rw [coeff_weightedHomogeneousComponent, if_pos rfl, AddMonoidAlgebra.coeff_zero] at this
+  rw [this, AddMonoidAlgebra.coeff_zero]
 
 theorem bmE_comp_ne_iff {R σ B : Type*} [CommRing R] [AddCommMonoid B] [DecidableEq B] (w : σ → B)
     (G : MvPolynomial σ R) (β : B) :
@@ -1095,8 +1109,8 @@ theorem bmE_comp_ne_iff {R σ B : Type*} [CommRing R] [AddCommMonoid B] [Decidab
   · intro h
     obtain ⟨d, hd, hw⟩ := Finset.mem_image.mp h
     intro h0
-    have := congrArg (coeff d) h0
-    rw [coeff_weightedHomogeneousComponent, if_pos hw, coeff_zero] at this
+    have := congrArg (AddMonoidAlgebra.coeff · d) h0
+    rw [coeff_weightedHomogeneousComponent, if_pos hw, AddMonoidAlgebra.coeff_zero] at this
     exact mem_support_iff.mp hd this
 
 theorem bmE_sep_op {R σ B : Type*} [CommRing R] [AddCommMonoid B] (w : σ → B) (ω : B → ℤ)
@@ -1413,7 +1427,7 @@ theorem bmD_raise {R : Type} [CommRing R] [IsDomain R] [CharZero R] {n : ℕ} (l
   have hG' := (bm_mem_dualWeyl_iff.mp hG).2 l j hlj
   rw [bm_ndE_eq, Derivation.add_apply] at hG'
   have h1 := congrArg (zcomp R n β) hG'
-  rw [map_add, bmD_zcomp_bmE, bmD_zcomp_bmZ, map_zero] at h1
+  rw [map_add (f := _), bmD_zcomp_bmE, bmD_zcomp_bmZ, map_zero] at h1
   have h0 : zcomp R n (β - (Pi.single l 1 - Pi.single j 1)) G = 0 := by
     apply bmD_zero_of_gt G β hmax
     rw [bmD_omg_sub, bmD_omg_sub, bmD_omg_single, bmD_omg_single]
@@ -1428,7 +1442,7 @@ theorem bmD_weight {R : Type} [CommRing R] [IsDomain R] [CharZero R] {n : ℕ} (
   have hG' := (bm_mem_dualWeyl_iff.mp hG).1 s
   rw [bm_ndEul_eq, Derivation.add_apply] at hG'
   have h1 := congrArg (zcomp R n β) hG'
-  rw [map_add, bmD_zcomp_bmE, map_smul] at h1
+  rw [map_add (f := _), bmD_zcomp_bmE, map_smul] at h1
   have h2 : zcomp R n β (bmZ R n s s G) = ((β s : ℤ) : R) • zcomp R n β G := by
     rw [bmD_zcomp_bmZ, sub_self, sub_zero]
     exact bmZ_euler R n β s _ (bmD_zcomp_isWH β G)
@@ -1495,7 +1509,7 @@ theorem bmD_top {R : Type} [CommRing R] {n : ℕ} (G : BP R n) (β : Fin n → �
           bmZ R n j l (zcomp R n (β' - (Pi.single j 1 - Pi.single l 1))
             ((ndF R (n + 1) n l j)^[k] G)) := by
       intro β'
-      rw [Function.iterate_succ_apply', bm_ndF_eq, Derivation.add_apply, map_add, bmD_zcomp_bmE,
+      rw [Function.iterate_succ_apply', bm_ndF_eq, Derivation.add_apply, map_add (f := _), bmD_zcomp_bmE,
         bmD_zcomp_bmZ]
     have h2 : omg (β + (k + 1) • (Pi.single j 1 - Pi.single l 1)) = omg β + ((k + 1 : ℕ) : ℤ) := by
       rw [succ_nsmul, ← add_assoc, bmD_omg_add, ih2, hδ]
@@ -1515,13 +1529,13 @@ theorem bm_eig {R : Type} [CommRing R] [IsDomain R] [CharZero R] {n : ℕ} (lam 
   classical
   constructor
   ·
-    obtain ⟨m, hm⟩ : ∃ m, coeff m (zcomp R n β G) ≠ 0 := by
+    obtain ⟨m, hm⟩ : ∃ m, AddMonoidAlgebra.coeff (zcomp R n β G) m ≠ 0 := by
       by_contra hcon
       refine hβ (MvPolynomial.ext _ _ fun m => ?_)
-      rw [coeff_zero]
+      rw [AddMonoidAlgebra.coeff_zero]
       by_contra hm0
       exact hcon ⟨m, hm0⟩
-    have hm' : Finsupp.weight (zW n) m = β ∧ coeff m G ≠ 0 := by
+    have hm' : Finsupp.weight (zW n) m = β ∧ AddMonoidAlgebra.coeff G m ≠ 0 := by
       unfold zcomp at hm
       rw [coeff_weightedHomogeneousComponent] at hm
       by_cases hw : Finsupp.weight (zW n) m = β
@@ -1543,7 +1557,7 @@ theorem bm_eig {R : Type} [CommRing R] [IsDomain R] [CharZero R] {n : ℕ} (lam 
       exact Finset.sum_congr rfl fun s _ => hβs s
     · have : lamZ lam i.castSucc = (lam i : ℤ) := by
         unfold lamZ
-        rw [dif_pos (by simp : (i.castSucc : Fin (n + 1)).val < n)]
+        rw [dite_eq_left (by simp : (i.castSucc : Fin (n + 1)).val < n)]
         rfl
       rw [this]
       have := hpos i
@@ -1551,7 +1565,7 @@ theorem bm_eig {R : Type} [CommRing R] [IsDomain R] [CharZero R] {n : ℕ} (lam 
     · by_cases hi : i.val + 1 < n
       · have hz : lamZ lam i.succ = (lam ⟨i.val + 1, hi⟩ : ℤ) := by
           unfold lamZ
-          rw [dif_pos (by simpa using hi : (i.succ : Fin (n + 1)).val < n)]
+          rw [dite_eq_left (by simpa using hi : (i.succ : Fin (n + 1)).val < n)]
           rfl
         rw [hz]
         by_contra hcon
@@ -1567,7 +1581,7 @@ theorem bm_eig {R : Type} [CommRing R] [IsDomain R] [CharZero R] {n : ℕ} (lam 
           htop.symm)
       · have hz : lamZ lam i.succ = 0 := by
           unfold lamZ
-          rw [dif_neg (by simpa using hi : ¬ (i.succ : Fin (n + 1)).val < n)]
+          rw [dite_eq_right (by simpa using hi : ¬ (i.succ : Fin (n + 1)).val < n)]
         rw [hz]
         show (0 : ℤ) ≤ (lam i : ℤ) - β i
         rw [hβs, ← hcol i]
@@ -1591,7 +1605,7 @@ theorem bm_isLow_iff {R : Type*} [CommRing R] {n : ℕ} (D : ℤ) (L : BP R n) :
   constructor
   · intro h β hβ
     ext m
-    rw [zcomp, coeff_weightedHomogeneousComponent, coeff_zero]
+    rw [zcomp, coeff_weightedHomogeneousComponent, AddMonoidAlgebra.coeff_zero]
     split_ifs with hm
     · by_contra hc
       have := h m (mem_support_iff.mpr hc)
@@ -1601,8 +1615,8 @@ theorem bm_isLow_iff {R : Type*} [CommRing R] {n : ℕ} (D : ℤ) (L : BP R n) :
   · intro h m hm
     by_contra hc
     have h0 := h _ (not_lt.mp hc)
-    have := congrArg (coeff m) h0
-    rw [zcomp, coeff_weightedHomogeneousComponent, if_pos rfl, coeff_zero] at this
+    have := congrArg (AddMonoidAlgebra.coeff · m) h0
+    rw [zcomp, coeff_weightedHomogeneousComponent, if_pos rfl, AddMonoidAlgebra.coeff_zero] at this
     exact mem_support_iff.mp hm this
 
 theorem bmF_low_zero {R : Type*} [CommRing R] {n : ℕ} (D : ℤ) : IsLow D (0 : BP R n) := by
@@ -1651,7 +1665,7 @@ theorem bmF_fil_mul_low {R : Type*} [CommRing R] {n : ℕ} {D D' : ℤ} {F L : B
     (hL : IsLow D' L) : IsLow (D + D') (F * L) := by
   intro m hm
   obtain ⟨a, ha, b, hb, rfl⟩ := Finset.mem_add.mp (support_mul F L hm)
-  rw [map_add, bmD_omg_add]
+  rw [map_add (f := _), bmD_omg_add]
   exact add_lt_add_of_le_of_lt (hF a ha) (hL b hb)
 
 theorem bmF_zmon_WH (R : Type*) [CommRing R] (n : ℕ) (b : Fin n → ℕ) :
@@ -1672,7 +1686,7 @@ theorem bmF_emb_WH {R : Type*} [CommRing R] {n : ℕ} {B : Type*} [AddCommMonoid
     rw [emb, rename_C]
     apply isWeightedHomogeneous_C
   next p q hp hq =>
-    rw [map_add]
+    rw [map_add (f := _)]
     exact hp.add hq
   next p v hp =>
     rw [map_mul]
@@ -1699,7 +1713,7 @@ theorem bmLift_add {R : Type*} [CommRing R] {n : ℕ} {lam b : Fin n → ℕ} {f
   refine ⟨Submodule.add_mem _ h1 h1', h2.add h2', ?_⟩
   have e : G + G' - zmon R n b * emb R n (f + f') =
       (G - zmon R n b * emb R n f) + (G' - zmon R n b * emb R n f') := by
-    rw [map_add]
+    rw [map_add (f := _)]
     ring
   rw [e]
   exact bmF_low_add h3 h3'
@@ -1952,19 +1966,21 @@ theorem bmF_rowAct_WH (R : Type*) [CommRing R] {n : ℕ} {B : Type*} [AddCommMon
     (w : Fin (n + 1) × Fin n → B) (hw : ∀ a b s : Fin n, w (a.castSucc, s) = w (b.castSucc, s))
     (g : Matrix (Fin n) (Fin n) R) (F : BP R n) (β : B) (hF : IsWeightedHomogeneous w F β) :
     IsWeightedHomogeneous w (rowAct R (extM R g) F) β := by
-  rw [F.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [F.as_sum, map_sum]
   refine IsWeightedHomogeneous.sum _ _ _ fun d hd => ?_
-  have := bmF_rowAct_monomial_WH R w hw g d (coeff d F)
+  have := bmF_rowAct_monomial_WH R w hw g d (AddMonoidAlgebra.coeff F d)
   rwa [hF (mem_support_iff.mp hd)] at this
 
 theorem bmF_rowAct_low (R : Type*) [CommRing R] {n : ℕ} (g : Matrix (Fin n) (Fin n) R) (D : ℤ) (L : BP R n)
     (hL : IsLow D L) : IsLow D (rowAct R (extM R g) L) := by
   classical
   intro m' hm'
-  rw [L.as_sum, map_sum] at hm'
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [L.as_sum, map_sum] at hm'
   obtain ⟨d, hd, hmd⟩ := Finset.mem_biUnion.mp (MvPolynomial.support_sum hm')
   have hW := bmF_rowAct_monomial_WH R (zW n)
-    (fun a b s => by rw [bmF_zW_castSucc, bmF_zW_castSucc]) g d (coeff d L)
+    (fun a b s => by rw [bmF_zW_castSucc, bmF_zW_castSucc]) g d (AddMonoidAlgebra.coeff L d)
   rw [hW (mem_support_iff.mp hmd)]
   exact hL d hd
 
@@ -2026,13 +2042,13 @@ theorem bmG_nuNext_of_succ {n : ℕ} (ν : Fin n → ℕ) (i j : Fin n) (h : j.v
     have := j.isLt
     omega
   unfold nuNext
-  rw [dif_pos hc]
+  rw [dite_eq_left hc]
   congr 1
   exact Fin.ext h.symm
 
 theorem bmG_nuNext_last {n : ℕ} (ν : Fin n → ℕ) (i : Fin n) (h : ¬ i.val + 1 < n) : nuNext ν i = 0 := by
   unfold nuNext
-  rw [dif_neg h]
+  rw [dite_eq_right h]
 
 theorem bmG_minor_empty (R : Type*) [CommRing R] {r n : ℕ} (I : Fin 0 → Fin r) (hs : 0 ≤ n) :
     initMinor R I hs = 1 := by
@@ -2241,9 +2257,9 @@ theorem bmG_rowsB {n : ℕ} (i : Fin n) :
   funext p
   simp only [rowsB]
   by_cases h : p.val < i.val
-  · rw [if_pos h, dif_pos h]
+  · rw [if_pos h, dite_eq_left h]
     rfl
-  · rw [if_neg h, dif_neg h]
+  · rw [if_neg h, dite_eq_right h]
 
 def bmG_D (R : Type*) [CommRing R] (n : ℕ) (s : ℕ) : MvPolynomial (Fin n × Fin n) R :=
   if h : s ≤ n then lpMinor R s h h else 1
@@ -2253,7 +2269,7 @@ theorem bmG_D_zero (R : Type*) [CommRing R] (n : ℕ) : bmG_D R n 0 = 1 := by
 
 theorem bmG_D_eq (R : Type*) [CommRing R] (n : ℕ) (s : ℕ) (h : s ≤ n) :
     bmG_D R n s = initMinor R (Fin.castLE h) h := by
-  rw [bmG_D, dif_pos h]
+  rw [bmG_D, dite_eq_left h]
   rfl
 
 theorem bmG_hw (R : Type*) [CommRing R] {n : ℕ} (lam sg : Fin n → ℕ) (hIL : bmIL lam sg) :
@@ -2266,7 +2282,7 @@ theorem bmG_hw (R : Type*) [CommRing R] {n : ℕ} (lam sg : Fin n → ℕ) (hIL 
   rw [← pow_add]
   have h1 : bmG_D R n (i.val + 1) = lpMinor R (i.val + 1) (by omega) (by omega) := by
     unfold bmG_D
-    rw [dif_pos (by omega)]
+    rw [dite_eq_left (by omega)]
   rw [h1]
   congr 1
   by_cases hi : i.val + 1 < n
@@ -2354,7 +2370,7 @@ theorem bm_xi_row {R : Type} [CommRing R] {n : ℕ} (lam sg : Fin n → ℕ) (hI
   funext a
   simp only [bmRho, Finset.sum_apply, Pi.add_apply, Pi.smul_apply, smul_eq_mul, initW, Pi.single_apply]
   by_cases ha : a.val < n
-  · rw [dif_pos ha]
+  · rw [dite_eq_left ha]
     have hne : a ≠ Fin.last n := fun h => by rw [h] at ha; simp at ha
     have h2 := congrFun (hw_weight_eq lam hanti) ⟨a.val, ha⟩
     simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul, initW] at h2
@@ -2382,7 +2398,7 @@ theorem bm_xi_row {R : Type} [CommRing R] {n : ℕ} (lam sg : Fin n → ℕ) (hI
           omega
     have h9 := (hIL ⟨a.val, ha⟩).1
     omega
-  · rw [dif_neg ha]
+  · rw [dite_eq_right ha]
     have hl : a = Fin.last n := Fin.ext (by have := a.isLt; simp; omega)
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [if_pos hl, if_neg (by have := i.isLt; omega), if_neg (by have := i.isLt; omega)]
@@ -2418,10 +2434,10 @@ theorem bmK_mem {R : Type} [CommRing R] [IsDomain R] [CharZero R] {n : ℕ} (lam
   obtain ⟨h1, h2⟩ := hG
   refine ⟨fun s => ?_, fun l j hlj => ?_⟩
   · have e : ndEul R (n + 1) n s (bmCap R n u G) = bmCap R n u (ndEul R (n + 1) n s G) := by
-      rw [bm_ndEul_eq, Derivation.add_apply, Derivation.add_apply, bmK_bmE, bmK_bmZ, map_add]
+      rw [bm_ndEul_eq, Derivation.add_apply, Derivation.add_apply, bmK_bmE, bmK_bmZ, map_add (f := _)]
     rw [e, h1 s, map_smul]
   · have e : ndE R (n + 1) n l j (bmCap R n u G) = bmCap R n u (ndE R (n + 1) n l j G) := by
-      rw [bm_ndE_eq, Derivation.add_apply, Derivation.add_apply, bmK_bmE, bmK_bmZ, map_add]
+      rw [bm_ndE_eq, Derivation.add_apply, Derivation.add_apply, bmK_bmE, bmK_bmZ, map_add (f := _)]
     rw [e, h2 l j hlj, map_zero]
 
 theorem bmK_list_comm {A : Type*} [Ring A] (C : ℤ → A) (x : A) (hx : ∀ u, Commute x (C u)) (ℓ : List ℤ) :
@@ -2582,7 +2598,7 @@ theorem bmK_lin {R M N P : Type*} [CommRing R] [AddCommGroup M] [Module R M] [Ad
   refine ⟨{ toFun := fun f => Z (g f), map_add' := ?_, map_smul' := ?_ }, ?_⟩
   · intro f f'
     show Z (g (f + f')) = Z (g f) + Z (g f')
-    rw [hkey (f + f') (g (f + f')) (g f + g f') (hg _) (hadd _ _ _ _ (hg f) (hg f')), map_add]
+    rw [hkey (f + f') (g (f + f')) (g f + g f') (hg _) (hadd _ _ _ _ (hg f) (hg f')), map_add (f := _)]
   · intro c f
     show Z (g (c • f)) = (RingHom.id R) c • Z (g f)
     rw [hkey (c • f) (g (c • f)) (c • g f) (hg _) (hsmul c f _ (hg f)), map_smul, RingHom.id_apply]

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocSecZero
-import Development.AbelianVarietyTheory.Definitions.Divisors.SymTupOne
-import Development.AbelianVarietyTheory.Statements.TorsionEndomorphisms.EndDeterminedOnTorsion
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.MinSt2
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocSecZero
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SymTupOne
+public import Development.AbelianVarietyTheory.Statements.TorsionEndomorphisms.EndDeterminedOnTorsion
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory GlobalTheory.ZM GlobalTheory.ZH GlobalTheory.UMin GlobalTheory.UPoinc GlobalTheory.Ex.OneGen
@@ -118,8 +123,8 @@ theorem cross_ratio_sections : ∀ (k Ω : Type) [CommRing k] [Field Ω] [Algebr
     have : Subsingleton Γ(G.left, L.U i ⊓ G.hom ⁻¹ᵁ (h ⁻¹ᵁ (chart k n a ⊓ chart k n b))) := by
       rw [hbot]; infer_instance
     exact Subsingleton.elim _ _
-  obtain ⟨ha1, ha2⟩ := ha (hne.mono fun _ hx => hx.1)
-  obtain ⟨hb1, hb2⟩ := hb (hne.mono fun _ hx => hx.2)
+  obtain ⟨ha1, ha2⟩ := ha (hne.mono (show (h ⁻¹ᵁ (chart k n a ⊓ chart k n b) : M.Z.Opens) ≤ h ⁻¹ᵁ chart k n a from fun _ hx => hx.1))
+  obtain ⟨hb1, hb2⟩ := hb (hne.mono (show (h ⁻¹ᵁ (chart k n a ⊓ chart k n b) : M.Z.Opens) ≤ h ⁻¹ᵁ chart k n b from fun _ hx => hx.2))
   have htop := M.top_le_preimage_pt hne
   have hr : Set.range M.pt ⊆ (h ⁻¹ᵁ (chart k n a ⊓ chart k n b) : M.Z.Opens) :=
     (top_le_preimage_iff _ _).1 htop

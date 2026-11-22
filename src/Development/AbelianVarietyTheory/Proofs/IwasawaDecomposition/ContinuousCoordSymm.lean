@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
-import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SumEqTraceOriented
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Formalism.LocalToGlobal.IndefiniteReal.DatumVec
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.AdelicDataRowMeasureScaleTrivialTuple
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnitaryOnTheta
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SumEqTraceOriented
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,7 +77,7 @@ theorem symplOH_eq (S T : HSp D) (hr : S.rank ≤ T.rank) (x y : WO S T) :
 theorem heisO_coord (S T : HSp D) (hr : S.rank ≤ T.rank) (ψ : AddChar (AF D.host.F) ℂ) (w : WO S T) (f : WA S T → ℂ) :
     heisO ψ S T w (fun x => f (coord S T x)) = fun x => Heisenberg₂ ψ S T (coord S T w) f (coord S T x) := by
   funext x
-  simp only [heisO, Formalism.L2.Theta.Heisenberg₂, map_add, symplOH_eq S T hr]
+  simp only [heisO, Formalism.L2.Theta.Heisenberg₂, map_add (f := _), symplOH_eq S T hr]
 
 theorem isThetaFunO_coord (S T : HSp D) (hr : S.rank ≤ T.rank) (ψ : AddChar (AF D.host.F) ℂ) (f : WA S T → ℂ) :
     IsThetaFunO ψ S T (fun x => f (coord S T x)) ↔ IsThetaFun ψ S T f := by
@@ -83,7 +87,7 @@ theorem isThetaFunO_coord (S T : HSp D) (hr : S.rank ≤ T.rank) (ψ : AddChar (
     fun hf => ⟨fun γ w => ?_, ?_, hf.cont.comp c1, fun k L hL h0 w => ?_⟩⟩
   · have := hf.quasi (γᵀ * S.gram) ((coord S T).symm w)
     rw [← coord_symm_ratW, symplOH_eq S T hr] at this
-    simpa only [map_add, AddEquiv.apply_symm_apply] using this
+    simpa only [map_add (f := _), AddEquiv.apply_symm_apply] using this
   · obtain ⟨U, hU, hfix⟩ := hf.level
     refine ⟨U.comap (coord S T).symm.toAddMonoidHom, hU.preimage c2, fun u hu h0 => ?_⟩
     have := hfix ((coord S T).symm u) hu (coord_symm_map_zero S T _ u h0)
@@ -93,17 +97,17 @@ theorem isThetaFunO_coord (S T : HSp D) (hr : S.rank ≤ T.rank) (ψ : AddChar (
   · simpa only [Function.comp_def, AddEquiv.apply_symm_apply] using hf.cont.comp c2
   · have := hf.smooth k ((coord S T).symm.toAddMonoidHom.comp L) (c2.comp hL)
       (fun t => coord_symm_map_zero S T _ _ (h0 t)) ((coord S T).symm w)
-    simpa only [map_add, AddMonoidHom.comp_apply, AddEquiv.coe_toAddMonoidHom, AddEquiv.toAddMonoidHom_eq_coe,
+    simpa only [map_add (f := _), AddMonoidHom.comp_apply, AddEquiv.coe_toAddMonoidHom, AddEquiv.toAddMonoidHom_eq_coe,
       AddMonoidHom.coe_coe, AddEquiv.apply_symm_apply] using this
   · have := hf.quasi (γ * S.gram⁻¹)ᵀ (coord S T w)
     rw [← coord_ratW, ← symplOH_eq S T hr] at this
-    simpa only [map_add] using this
+    simpa only [map_add (f := _)] using this
   · obtain ⟨U, hU, hfix⟩ := hf.level
     refine ⟨U.comap (coord S T).toAddMonoidHom, hU.preimage c1, fun u hu h0 => ?_⟩
     rw [heisO_coord S T hr, hfix (coord S T u) hu (coord_map_zero S T _ u h0)]
   · have := hf.smooth k ((coord S T).toAddMonoidHom.comp L) (c1.comp hL)
       (fun t => coord_map_zero S T _ _ (h0 t)) (coord S T w)
-    simpa only [map_add, AddMonoidHom.comp_apply, AddEquiv.coe_toAddMonoidHom, AddEquiv.toAddMonoidHom_eq_coe,
+    simpa only [map_add (f := _), AddMonoidHom.comp_apply, AddEquiv.coe_toAddMonoidHom, AddEquiv.toAddMonoidHom_eq_coe,
       AddMonoidHom.coe_coe] using this
 
 theorem coord_gen (S T : HSp D) (β : AF D.host.F) (a : D.host.E) (s : Fin S.rank → D.host.E) (t : Fin T.rank → D.host.E) :

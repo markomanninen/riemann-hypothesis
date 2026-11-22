@@ -1,8 +1,12 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.WCoreG
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.MemSecondProjectionIff
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.SaturatedSplitLattice
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.IdxStep
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.IsClosedCongruenceSubgroup
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.WCoreG
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.MemSecondProjectionIff
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.SaturatedSplitLattice
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.IdxStep
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalMassType.IsClosedCongruenceSubgroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -60,12 +64,16 @@ theorem congruence_lift_of_basis {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin
       exact ⟨Qi *ᵥ y, hy, by rw [mulVec_mulVec, hQQi, one_mulVec]⟩
   set X0r := ratTup (F := F) (Fv F v) (F0 P) with hX0r
   set Y0 := locF v X0r with hY0
-  have hYdef : locF v (k • X0r) = k • Y0 := locF_smul σ J v k X0r
+  have hloc (a : HA (Fv F v) σ J) : locF v (a • X0r) = a • locF v X0r := by
+    funext b
+    exact locF_act a X0r b
+  have hYdef : locF v (k • X0r) = k • Y0 := hloc k
 
   have hPrk : IsPrim v Λ (k • Y0) := by
     refine ⟨fun a => kv_lat hkK (hPr.1 a), fun c hc => hPr.2 c ?_⟩
     have e : ∑ a, c a • (k • Y0) a = lin (Fv F v) σ J k (∑ a, c a • Y0 a) := by
-      rw [map_sum]; simp only [map_smul, smul_tup]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]; simp only [map_smul, smul_tup]
     rw [e] at hc
     have := kv_lat (kv_inv hkK) hc
     rwa [lin_inv_lin] at this
@@ -84,7 +92,8 @@ theorem congruence_lift_of_basis {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin
     rw [memΛ]
     have : Qi *ᵥ (∑ a, c a • W a) = ∑ a, c a • (Qi *ᵥ W a) := by
       show Matrix.mulVecLin Qi (∑ a, c a • W a) = _
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       simp only [map_smul, Matrix.mulVecLin_apply]
     rwa [this]
   set Z0 : Fin (r + 1) → Fin n → Fv F v ⊗[F] E := fun a => Qi *ᵥ Y0 a with hZ0def
@@ -142,12 +151,12 @@ theorem congruence_lift_of_basis {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin
     refine Matrix.ext fun i a => Subtype.ext ?_
     simp only [A1, A0, A', Matrix.of_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul]
     push_cast
-    rw [hZW a, Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add, map_mul, (D.hsc _).1]
+    rw [hZW a, Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add (f := _), map_mul, (D.hsc _).1]
   have hB1 : B1 = B0 + (g : v.adicCompletionIntegers F) • B' := by
     refine Matrix.ext fun i a => Subtype.ext ?_
     simp only [B1, B0, B', Matrix.of_apply, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul]
     push_cast
-    rw [hZW a, Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add, map_mul, (D.hsc _).2]
+    rw [hZW a, Pi.add_apply, Pi.smul_apply, smul_eq_mul, map_add (f := _), map_mul, (D.hsc _).2]
   obtain ⟨k1, K', hk1u, hk1A, hk1B, hk1e⟩ := wCoreG (v.adicCompletionIntegers F)
     (g : v.adicCompletionIntegers F) (natCast_mem_max v hgv) A0 A1 B0 B1 A' B' L0 M1 hL0 hM1
     hgram hA1 hB1
@@ -188,7 +197,8 @@ theorem congruence_lift_of_basis {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin
     · intro i
       rw [hkstd, SD.fst_proj_split_matrix_mulVec]
       have := congrArg (fun M => f (M i a)) hk1A
-      simp only [Matrix.mul_apply, map_sum, map_mul] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.mul_apply, map_sum, map_mul] at this
       simp only [mulVec, dotProduct, Matrix.map_apply]
       exact this
     · intro i
@@ -196,7 +206,8 @@ theorem congruence_lift_of_basis {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin
         rw [← hk1B, ← Matrix.mul_assoc, e3, Matrix.one_mul]
       rw [hkstd, SD.snd_proj_split_matrix_mulVec]
       have := congrArg (fun M => f (M i a)) hB
-      simp only [Matrix.mul_apply, map_sum, map_mul] at this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.mul_apply, map_sum, map_mul] at this
       simp only [mulVec, dotProduct, Matrix.map_apply]
       exact this
 
@@ -256,7 +267,7 @@ theorem congruence_lift_of_basis {σ : E →ₐ[F] E} {n : ℕ} {J : Matrix (Fin
     rw [memΛ, memΛ, hkx, mulVec_mulVec, hQiQ, one_mulVec, hkI]
   have hkHX : kH • X0r = k • X0r := by
     apply locF_injective v
-    rw [locF_smul σ J v kH X0r, hYdef]
+    rw [hloc kH, hYdef]
     funext a
     show kM *ᵥ Y0 a = (k • Y0) a
     rw [hkx]
@@ -292,7 +303,7 @@ theorem congruence_lift_of_split (hS : SplitR) : CongruenceSubgroupLift := by
   intro F E _ _ _ _ _ σ n J ψ v r g P Λ T μS0 hyp k hk
   obtain ⟨hStd, -, hSD, hUn, -, hgv, -, hEta, hPr, hLat, -⟩ := hyp
   obtain ⟨D⟩ := exists_SD hS σ J ψ v hStd hUn hEta
-  obtain ⟨Q, hQΛ, hQh⟩ := latStd_SD D hStd.2.1 hSD hLat
+  obtain ⟨Q, hQΛ, hQh⟩ := latStd_SD (D := D) hStd.2.1 hSD hLat
   exact congruence_lift_of_basis D Q hQΛ hQh saturated_split_lattice hPr hgv k hk
 
 end PI.LocMassTypL

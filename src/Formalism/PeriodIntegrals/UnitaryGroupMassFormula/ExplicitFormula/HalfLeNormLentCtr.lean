@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.LStructC
-import Formalism.PeriodIntegrals.ZerosWindowIn
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ExplicitFormula.LStructC
+public import Formalism.PeriodIntegrals.ZerosWindowIn
+
+@[expose] public section
 
 noncomputable section
 

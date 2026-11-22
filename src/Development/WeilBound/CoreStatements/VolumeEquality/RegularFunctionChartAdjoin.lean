@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.PrimeIdealOfFromSpec
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.PrimeIdealOfFromSpec
+
+@[expose] public section
 
 noncomputable section
 

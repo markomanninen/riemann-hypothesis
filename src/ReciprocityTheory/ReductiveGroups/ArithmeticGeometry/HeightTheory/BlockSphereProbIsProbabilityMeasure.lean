@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GeneratorNeZeroOfHeight
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.GeneratorNeZeroOfHeight
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -45,7 +49,7 @@ theorem height_const_eq_zero {K : Type} [Field K] [NumberField K] {B n : ℕ} (h
   rw [div_eq_zero_iff]
   left
   have hfin : (Function.mulSupport fun w : FinitePlace K => w a).Finite :=
-    NumberField.FinitePlace.mulSupport_finite ha
+    NumberField.FinitePlace.hasFiniteMulSupport ha
   have hsub : (Function.support fun w : FinitePlace K => Real.log (w a)) ⊆ hfin.toFinset := by
     intro w hw
     rw [Set.Finite.coe_toFinset, Function.mem_mulSupport]
@@ -111,7 +115,7 @@ theorem height_one_prime_eq_span_gen (p : Ideal (KTp K d.D d.N)) (hp : p ∈ d.H
     obtain ⟨g, _, hg⟩ := ValUFD.heightOne_principal p hp.2
     exact ⟨⟨g, hg⟩⟩
   unfold Data.gen
-  rw [dif_pos hpr]
+  rw [dite_eq_left hpr]
   exact (Ideal.span_singleton_generator p).symm
 
 theorem fZ_factor_positive_places (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (F : KTp K d.D d.N)
@@ -123,7 +127,8 @@ theorem fZ_factor_positive_places (hd : d.AxH 𝒜) (h : d.S1) (c : ι) (F : KTp
         0 < w (d.rationalBaseRow c) := by
   classical
   have hy : d.rationalBaseRow c ≠ 0 := d.lineRatio_ne_zero hd c
-  obtain ⟨hOfin, hrest⟩ := d.norm_by_places hd h c
+  have hplaces := d.norm_by_places hd h c
+  obtain ⟨hOfin, hrest⟩ := hplaces
   obtain ⟨hP0fin, κ, hκ, hnorm⟩ := hrest (d.rationalBaseRow c) hy
   obtain ⟨E, hE⟩ : ∃ E : Ideal (KTp K d.D d.N) → ℤ, ∀ p, E p =
       ∑ᶠ (w : AddValuation (OmS (Ω c) d.D d.N) (WithTop ℤ)) (_ : w ∈ d.OverP c p),

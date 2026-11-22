@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.AlWellDefSt
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.PowObjGeometricallyConnected
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomBaseChangeBijectiveOfLeNilradical
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LocallyOfFinitePresentationDiagMap
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToBidualDualMapEigenImageInclusion
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabPull
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PlaceDivisors.AlWellDefSt
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.PowObjGeometricallyConnected
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.HomBaseChangeBijectiveOfLeNilradical
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.LocallyOfFinitePresentationDiagMap
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToBidualDualMapEigenImageInclusion
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -107,8 +111,6 @@ variable (G : Over S) [GrpObj G]
 
 abbrev unitSec : S ⟶ G.left := sec η[G]
 
-theorem unitSec_eq_eSec : unitSec G = eSec G := rfl
-
 def omega : S.Modules := conormal (unitSec G)
 
 abbrev Lie : S.Modules := dual (omega G)
@@ -133,8 +135,8 @@ theorem dUnit_mul (h : V ≤ unitSec G ⁻¹ᵁ W) (f g : Γ(G.left, W)) : dUnit
 theorem dUnit_base (h : V ≤ unitSec G ⁻¹ᵁ W) (k : W ≤ G.hom ⁻¹ᵁ U) (a : Γ(S, U)) :
     dUnit G h (G.hom.appLE U W k a) = 0 := d_base _ h k a
 
-variable {G} in
 
+variable {G} in
 theorem omega_hom_ext {F : S.Modules} {φ ψ : omega G ⟶ F}
     (H : ∀ (W : G.left.Opens) (f : Γ(G.left, W)),
       φ.app _ (dUnit G (le_refl (unitSec G ⁻¹ᵁ W)) f) = ψ.app _ (dUnit G le_rfl f)) : φ = ψ :=
@@ -161,26 +163,10 @@ variable [QuasiSeparated G.hom]
 
 instance isQuasicoherent_omega : (omega G).IsQuasicoherent := isQuasicoherent_conormal _
 
-open scoped TensorProduct in
 
-def omegaKaehlerEquiv {U : S.Opens} {W : G.left.Opens} (c : IsChart G.hom (unitSec G) U W) :
-    letI := c.algebra; letI := QCoh.appLEAlgebra (unitSec G) c.le
-    Γ(omega G, U) ≃ₗ[Γ(S, U)] Γ(S, U) ⊗[Γ(G.left, W)] Ω[Γ(G.left, W)⁄Γ(S, U)] :=
-  c.kaehlerEquiv (sec_hom η[G])
-
-open scoped TensorProduct in
-
-theorem omegaKaehlerEquiv_dUnit {U : S.Opens} {W : G.left.Opens}
-    (c : IsChart G.hom (unitSec G) U W) (a : Γ(G.left, W)) :
-    letI := c.algebra; letI := QCoh.appLEAlgebra (unitSec G) c.le
-    omegaKaehlerEquiv G c (dUnit G c.le a) = 1 ⊗ₜ KaehlerDifferential.D _ _ a :=
-  c.kaehlerEquiv_d (sec_hom η[G]) a
 
 theorem isVB_omega (g : ℕ) [SmoothOfRelativeDimension g G.hom] : IsVB (omega G) g :=
   isVB_conormal (sec_hom η[G]) g
-
-theorem isVB_Lie (g : ℕ) [SmoothOfRelativeDimension g G.hom] : IsVB (Lie G) g :=
-  (isVB_omega G g).dual
 
 theorem exists_isFrame_omega [Smooth G.hom] (x : S) :
     ∃ (U : S.Opens) (n : ℕ) (s : Fin n → Γ(omega G, U)), x ∈ U ∧ IsFrame s :=
@@ -190,18 +176,13 @@ theorem exists_isVB [Smooth G.hom] [PreconnectedSpace S] :
     ∃ g, IsVB (omega G) g ∧ IsVB (Lie G) g :=
   (exists_isVB_conormal (sec_hom η[G])).imp fun _ h => ⟨h, h.dual⟩
 
-omit [QuasiSeparated G.hom] in
 
+omit [QuasiSeparated G.hom] in
 theorem exists_isVB_of_isSemiAbelian [h : IsSemiAbelian G] [PreconnectedSpace S] :
     ∃ g, IsVB (omega G) g ∧ IsVB (Lie G) g :=
   have := h.smooth
   exists_isVB G
 
-omit [QuasiSeparated G.hom] in
-variable {G} in
-
-def omegaIsoDualLie {g : ℕ} (h : IsVB (omega G) g) : omega G ≅ dual (Lie G) :=
-  @asIso _ _ _ _ (cartierDualToBidual (omega G)) h.isIso_toBidual_of_local_frames
 
 end Def
 
@@ -222,8 +203,6 @@ theorem omegaMap_congr {φ ψ : G ⟶ H} [IsMonHom φ] [IsMonHom ψ] (h : φ = �
     omegaMap φ = omegaMap ψ := by
   subst h; rfl
 
-@[simp] theorem omegaMap_id : omegaMap (𝟙 G) = 𝟙 _ := cotMap_id rfl _
-
 theorem omegaMap_comp (φ : G ⟶ H) (ψ : H ⟶ K) [IsMonHom φ] [IsMonHom ψ] :
     omegaMap (φ ≫ ψ) = omegaMap ψ ≫ omegaMap φ := (cotMap_comp _ _ rfl _).symm
 
@@ -231,26 +210,6 @@ theorem omegaMap_one [IsMonHom (1 : G ⟶ H)] : omegaMap (1 : G ⟶ H) = 0 := co
 
 theorem omegaMap_mul [QuasiSeparated H.hom] (φ ψ : G ⟶ H) [IsMonHom φ] [IsMonHom ψ]
     [IsMonHom (φ * ψ)] : omegaMap (φ * ψ) = omegaMap φ + omegaMap ψ := cotMap_mul _ _ _
-
-@[simp] theorem lieMap_id : lieMap (𝟙 G) = 𝟙 _ := by rw [lieMap, omegaMap_id]; exact dualMap_id
-
-theorem lieMap_comp (φ : G ⟶ H) (ψ : H ⟶ K) [IsMonHom φ] [IsMonHom ψ] :
-    lieMap (φ ≫ ψ) = lieMap φ ≫ lieMap ψ := by rw [lieMap, omegaMap_comp]; exact dualMap_comp _ _
-
-theorem lieMap_one [IsMonHom (1 : G ⟶ H)] : lieMap (1 : G ⟶ H) = 0 := by
-  rw [lieMap, omegaMap_one]; exact dualMap_zero
-
-theorem lieMap_mul [QuasiSeparated H.hom] (φ ψ : G ⟶ H) [IsMonHom φ] [IsMonHom ψ]
-    [IsMonHom (φ * ψ)] : lieMap (φ * ψ) = lieMap φ + lieMap ψ := by
-  rw [lieMap, omegaMap_mul]; exact dualMap_add _ _
-
-@[simps] def omegaIso (φ : G ≅ H) [IsMonHom φ.hom] : omega H ≅ omega G where
-  hom := omegaMap φ.hom
-  inv := omegaMap φ.inv
-  hom_inv_id := by rw [← omegaMap_comp, omegaMap_congr φ.inv_hom_id, omegaMap_id]
-  inv_hom_id := by rw [← omegaMap_comp, omegaMap_congr φ.hom_inv_id, omegaMap_id]
-
-def lieIso (φ : G ≅ H) [IsMonHom φ.hom] : Lie G ≅ Lie H := dualIso (omegaIso φ)
 
 end Map
 
@@ -312,18 +271,6 @@ theorem isIso_lieBase (h : IsGrpPullback G' G f φ) {g : ℕ} (hg : IsVB (omega 
   have := DualPull.isIso_theta f hg
   inferInstanceAs (IsIso (theta f (omega G) ≫ (dualIso (asIso (omegaBase h)).symm).hom))
 
-theorem lieBase_naturality (h : IsGrpPullback G' G f φ) (h' : IsGrpPullback H' H f ψ)
-    (a : G ⟶ H) (a' : G' ⟶ H') [IsMonHom a] [IsMonHom a'] (w : a'.left ≫ ψ = φ ≫ a.left) :
-    (Scheme.Modules.pullback f).map (lieMap a) ≫ lieBase h' = lieBase h ≫ lieMap a' := by
-  have e : inv (omegaBase h') ≫ (Scheme.Modules.pullback f).map (omegaMap a) =
-      omegaMap a' ≫ inv (omegaBase h) := by
-    rw [IsIso.inv_comp_eq, ← Category.assoc, ← omegaBase_naturality h h' a a' w, Category.assoc,
-      IsIso.hom_inv_id, Category.comp_id]
-  have := congrArg (theta f (omega G) ≫ dualMap ·) e
-  simp only [dualMap_comp] at this
-  rw [← Category.assoc, ← DualPull.theta_naturality] at this
-  exact this
-
 theorem isVB_omega_of_isGrpPullback (h : IsGrpPullback G' G f φ) {g : ℕ} (hg : IsVB (omega G) g) :
     IsVB (omega G') g := (hg.pullback f).of_iso (asIso (omegaBase h))
 
@@ -333,240 +280,51 @@ section DualIm
 
 variable {O : Type} [CommRing O] {F : S.Modules} (ρ : O →+* End F) (σ : O →+* Γ(S, ⊤)) {g r : ℕ}
 
-def dualImι : eigenIm (dualAct ρ) σ ⟶ dual (eigen ρ σ) :=
-  eigenImι (dualAct ρ) σ ≫ dualMap (eigenMap σ (isEquivariant_toBidual ρ))
-
-@[reassoc] theorem eigenImπ_dualImι :
-    eigenImπ (dualAct ρ) σ ≫ dualImι ρ σ = dualMap (eigenι ρ σ) := by
-  rw [dualImι, eigenImπ_ι_assoc, eigenEval, Category.assoc, ← dualMap_comp, eigenMap_ι,
-    dualMap_comp, toBidual_dual_comp_dualMap_assoc]
-
-theorem mono_dualImι (h : IsVB F g) : Mono (dualImι ρ σ) :=
-  have := h.isIso_toBidual_of_local_frames
-  inferInstanceAs (Mono (eigenImι (dualAct ρ) σ ≫ (dualIso (eigenIso σ
-    (φ := asIso (cartierDualToBidual F)) (isEquivariant_toBidual ρ))).hom))
-
-theorem isIso_dualImι (h : IsVB F g) (h' : IsVB (eigenIm (dualAct ρ) σ) r) :
-    IsIso (dualImι ρ σ) :=
-  have := h.isIso_toBidual_of_local_frames
-  have := isIso_eigenImι _ _ h'
-  inferInstanceAs (IsIso (eigenImι (dualAct ρ) σ ≫ (dualIso (eigenIso σ
-    (φ := asIso (cartierDualToBidual F)) (isEquivariant_toBidual ρ))).hom))
-
 end DualIm
-
-theorem comp_eigenImMap_app_eq_zero_iff {O : Type} [CommRing O] {E F F' : S.Modules}
-    {ρ : O →+* End F} {ρ' : O →+* End F'} {σ : O →+* Γ(S, ⊤)} (k : E ⟶ eigenIm ρ σ) {φ : F ⟶ F'}
-    [IsIso φ] (h : IsEquivariant ρ ρ' φ) {V : S.Opens} {s : Γ(E, V)} :
-    (k ≫ eigenImMap σ h).app V s = 0 ↔ k.app V s = 0 :=
-  map_eq_zero_iff _ (QCoh.injective_app_of_mono (eigenImIso σ (φ := asIso φ) h).hom V)
 
 section Act
 
 variable {O : Type} [CommRing O] {G H : Over S} [GrpObj G] [GrpObj H] [QuasiSeparated G.hom]
   [QuasiSeparated H.hom] (i : OAct O G) (σ : O →+* Γ(S, ⊤))
 
-def omegaAct : O →+* End (omega G) :=
-  RingHom.mk' (α := O) (β := End (omega G))
-    { toFun a := @omegaMap _ _ _ _ _ (i.act a) (i.hom a)
-      map_one' := cotMap_id i.one _
-      map_mul' a b := (cotMap_comp _ _ (i.mul a b).symm _).symm }
-    fun a b => by
-      have := i.hom a
-      have := i.hom b
-      have : IsMonHom (i.act a * i.act b) := i.add a b ▸ i.hom _
-      exact (@omegaMap_congr _ _ _ _ _ _ _ (i.hom _) _ (i.add a b)).trans (omegaMap_mul _ _)
-
-theorem act_omegaAct (a : O) : act (omegaAct i) a = @omegaMap _ _ _ _ _ (i.act a) (i.hom a) := rfl
+def omegaAct : O →+* End (omega G) := by
+  have unit_hom (a : O) : η ≫ i.act a = η :=
+    letI := i.hom a
+    IsMonHom.one_hom (i.act a)
+  refine RingHom.mk'
+    { toFun a := End.of (@omegaMap _ _ _ _ _ (i.act a) (i.hom a))
+      map_one' := ?_
+      map_mul' := ?_ } ?_
+  · apply End.ext
+    exact cotMap_id i.one (unit_hom 1)
+  · intro a b
+    apply End.ext
+    exact (cotMap_comp (unit_hom b) (unit_hom a) (i.mul a b).symm (unit_hom (a * b))).symm
+  · intro a b
+    apply End.ext
+    have := i.hom a
+    have := i.hom b
+    have : IsMonHom (i.act a * i.act b) := i.add a b ▸ i.hom _
+    exact (@omegaMap_congr _ _ _ _ _ _ _ (i.hom _) _ (i.add a b)).trans (omegaMap_mul _ _)
 
 def lieAct : O →+* End (Lie G) := dualAct (omegaAct i)
 
-theorem act_lieAct (a : O) : act (lieAct i) a = @lieMap _ _ _ _ _ (i.act a) (i.hom a) := rfl
-
 def omegaConjAct (c : O →+* O) : O →+* End (omega G) := (omegaAct i).comp c
-
-theorem act_omegaConjAct (c : O →+* O) (a : O) :
-    act (omegaConjAct i c) a = @omegaMap _ _ _ _ _ (i.act (c a)) (i.hom _) := rfl
 
 abbrev lieSub : S.Modules := eigen (lieAct i) σ
 
-abbrev lieQuot : S.Modules := eigenQuot (lieAct i) σ
-
-abbrev omegaSub : S.Modules := eigen (omegaAct i) σ
-
 abbrev omegaQuot : S.Modules := eigenQuot (omegaAct i) σ
-
-def dualOmegaQuotIso : dual (omegaQuot i σ) ≅ lieSub i σ := dualQuotIso (omegaAct i) σ
-
-theorem isEquivariant_omegaIsoDualLie {g : ℕ} (h : IsVB (omega G) g) :
-    IsEquivariant (omegaAct i) (dualAct (lieAct i)) (omegaIsoDualLie h).hom :=
-  isEquivariant_toBidual _
-
-def omegaSubIso {g : ℕ} (h : IsVB (omega G) g) : omegaSub i σ ≅ dual (lieQuot i σ) :=
-  eigenIso σ (isEquivariant_omegaIsoDualLie i h) ≪≫ (dualQuotIso (lieAct i) σ).symm
-
-def omegaSubIsoDualLieSub {g : ℕ} (h : IsVB (omega G) g)
-    [IsIso (eigenι (lieAct i) σ ≫ eigenπ (lieAct i) σ)] : omegaSub i σ ≅ dual (lieSub i σ) :=
-  omegaSubIso i σ h ≪≫ dualIso (asIso (eigenι (lieAct i) σ ≫ eigenπ (lieAct i) σ))
-
-theorem omegaSubIsoDualLieSub_hom {g : ℕ} (h : IsVB (omega G) g)
-    [IsIso (eigenι (lieAct i) σ ≫ eigenπ (lieAct i) σ)] : (omegaSubIsoDualLieSub i σ h).hom =
-      eigenι (omegaAct i) σ ≫ (omegaIsoDualLie h).hom ≫ dualMap (eigenι (lieAct i) σ) := by
-  rw [omegaSubIsoDualLieSub, omegaSubIso, Iso.trans_hom, Iso.trans_hom, dualIso_hom, asIso_hom,
-    dualMap_comp, ← dualQuotIso_hom_ι, Iso.symm_hom, Category.assoc, Category.assoc,
-    Iso.inv_hom_id_assoc, eigenIso_hom, eigenMap_ι_assoc]
-
-def omegaConjSubIso {c : O →+* O} (hc : Function.Involutive c) :
-    eigen (omegaConjAct i c) σ ≅ omegaSub i (σ.comp c) := eigenConjIso (omegaAct i) σ hc
-
-def omegaConjQuotIso {c : O →+* O} (hc : Function.Involutive c) :
-    eigenQuot (omegaConjAct i c) σ ≅ omegaQuot i (σ.comp c) := eigenQuotConjIso (omegaAct i) σ hc
-
-def omegaSubIsoOfSplit {k κ : Type} [Field k] [Algebra k Γ(S, ⊤)] [Fintype κ]
-    {τ : κ → (O →+* k)} (hτ : IsSplitBy τ) {g : ℕ} (h : IsVB (omega G) g) (j : κ) :
-    omegaSub i (scal S (τ j)) ≅ dual (lieSub i (scal S (τ j))) :=
-  @omegaSubIsoDualLieSub _ _ _ _ _ _ i _ _ h (by classical exact hτ.isIso_eigenι_eigenπ (lieAct i) j)
-
-def omegaConjSubIsoOfSplit {k κ : Type} [Field k] [Algebra k Γ(S, ⊤)] [Fintype κ]
-    {τ : κ → (O →+* k)} (hτ : IsSplitBy τ) {g : ℕ} (h : IsVB (omega G) g) {c : O →+* O}
-    (hc : Function.Involutive c) (j : κ) :
-    eigen (omegaConjAct i c) (scal S (τ j)) ≅ dual (lieSub i (scal S ((τ j).comp c))) :=
-  omegaConjSubIso i _ hc ≪≫ @omegaSubIsoDualLieSub _ _ _ _ _ _ i _ _ h (by
-    classical
-    obtain ⟨j', e⟩ := hτ.exists_eq ((τ j).comp c)
-    have := hτ.isIso_eigenι_eigenπ (lieAct i) j'
-    rwa [e] at this)
 
 abbrev lieIm : S.Modules := eigenIm (lieAct i) σ
 
 abbrev omegaIm : S.Modules := eigenIm (omegaAct i) σ
 
-def omegaImι : omegaIm i σ ⟶ dual (lieSub i σ) := eigenImι (omegaAct i) σ
-
-instance mono_omegaImι : Mono (omegaImι i σ) := mono_eigenImι _ _
-
-@[reassoc] theorem eigenImπ_omegaImι : eigenImπ (omegaAct i) σ ≫ omegaImι i σ =
-    cartierDualToBidual (omega G) ≫ dualMap (eigenι (lieAct i) σ) := by
-  have h := eigenImπ_ι (omegaAct i) σ
-  rw [eigenEval] at h
-  exact eq_of_heq (.trans (heq_comp (by rfl) (by rfl) (by rfl) (by rfl) (by rfl))
-    (.trans (heq_of_eq h) (heq_comp (by rfl) (by rfl) (by rfl) (by rfl) (by rfl))))
-
-def omegaImIso {r : ℕ} (h : IsVB (omegaIm i σ) r) : omegaIm i σ ≅ dual (lieSub i σ) :=
-  @asIso _ _ _ _ (omegaImι i σ) (isIso_eigenImι _ _ h)
-
-theorem isIso_omegaImι_of_epi {g : ℕ} (h : IsVB (omega G) g)
-    [e : Epi (dualMap (eigenι (lieAct i) σ))] : IsIso (omegaImι i σ) :=
-  @isIso_eigenImι_of_epi _ _ _ _ _ _ _ h e
-
-def dualOmegaImIso : dual (omegaIm i σ) ≅ lieSub i σ := dualImIso (omegaAct i) σ
-
-@[reassoc] theorem dualOmegaImIso_hom_ι :
-    (dualOmegaImIso i σ).hom ≫ eigenι (lieAct i) σ = dualMap (eigenImπ (omegaAct i) σ) :=
-  dualImIso_hom_ι (omegaAct i) σ
-
-theorem isVB_lieSub {r : ℕ} (h : IsVB (omegaIm i σ) r) : IsVB (lieSub i σ) r :=
-  isVB_eigen_dualAct _ _ h
-
-def omegaSubIsoDualLieIm {g : ℕ} (h : IsVB (omega G) g) : omegaSub i σ ≅ dual (lieIm i σ) :=
-  eigenIso σ (isEquivariant_omegaIsoDualLie i h) ≪≫ (dualImIso (lieAct i) σ).symm
-
-def lieImι : lieIm i σ ⟶ dual (omegaSub i σ) := dualImι (omegaAct i) σ
-
-@[reassoc] theorem eigenImπ_lieImι :
-    eigenImπ (lieAct i) σ ≫ lieImι i σ = dualMap (eigenι (omegaAct i) σ) :=
-  eigenImπ_dualImι (omegaAct i) σ
-
-theorem mono_lieImι {g : ℕ} (h : IsVB (omega G) g) : Mono (lieImι i σ) :=
-  mono_dualImι _ _ h
-
-theorem isIso_lieImι {g r : ℕ} (h : IsVB (omega G) g) (h' : IsVB (lieIm i σ) r) :
-    IsIso (lieImι i σ) := isIso_dualImι _ _ h h'
-
-def omegaConjImIso {c : O →+* O} (hc : Function.Involutive c) :
-    eigenIm (omegaConjAct i c) σ ≅ omegaIm i (σ.comp c) := eigenImConjIso (omegaAct i) σ hc
-
-def omegaConjImIsoDualLieSub {c : O →+* O} (hc : Function.Involutive c) {r : ℕ}
-    (h : IsVB (eigenIm (omegaConjAct i c) σ) r) :
-    eigenIm (omegaConjAct i c) σ ≅ dual (lieSub i (σ.comp c)) :=
-  omegaConjImIso i σ hc ≪≫ omegaImIso i _ (h.of_iso (omegaConjImIso i σ hc))
-
-def dualOmegaConjImIso {c : O →+* O} (hc : Function.Involutive c) :
-    dual (eigenIm (omegaConjAct i c) σ) ≅ lieSub i (σ.comp c) :=
-  dualIso (omegaConjImIso i σ hc).symm ≪≫ dualOmegaImIso i _
-
-theorem isIso_quotToIm_omega_lie_of_split {k κ : Type} [Field k] [Algebra k Γ(S, ⊤)] [Fintype κ]
-    {τ : κ → (O →+* k)} (hτ : IsSplitBy τ) {g : ℕ} (h : IsVB (omega G) g) (j : κ) :
-    IsIso (quotToIm (omegaAct i) (scal S (τ j))) ∧ IsIso (quotToIm (lieAct i) (scal S (τ j))) :=
-  have := mono_toBidual_of_isVectorBundle h
-  ⟨isIso_quotToIm_of_split _ hτ j, isIso_quotToIm_of_split _ hτ j⟩
-
 variable {i}
-
-theorem isEquivariant_omegaMap {i' : OAct O H} (φ : G ⟶ H) [IsMonHom φ]
-    (h : ∀ a, i.act a ≫ φ = φ ≫ i'.act a) : IsEquivariant (omegaAct i') (omegaAct i) (omegaMap φ) :=
-  fun a => by
-    have := i.hom a
-    have := i'.hom a
-    rw [act_omegaAct, act_omegaAct, ← omegaMap_comp, ← omegaMap_comp, omegaMap_congr (h a)]
-
-theorem isEquivariant_omegaMap_conj {i' : OAct O H} (c : O →+* O) (φ : G ⟶ H) [IsMonHom φ]
-    (h : ∀ a, i.act (c a) ≫ φ = φ ≫ i'.act a) :
-    IsEquivariant (omegaAct i') (omegaConjAct i c) (omegaMap φ) :=
-  isEquivariant_omegaMap (i := Serre.comapAct i c) φ h
-
-theorem isEquivariant_lieMap {i' : OAct O H} (φ : G ⟶ H) [IsMonHom φ]
-    (h : ∀ a, i.act a ≫ φ = φ ≫ i'.act a) : IsEquivariant (lieAct i) (lieAct i') (lieMap φ) :=
-  (isEquivariant_omegaMap φ h).dual
 
 variable {G' : Over S'} [GrpObj G'] [QuasiSeparated G'.hom] {i' : OAct O G'} {f : S' ⟶ S}
   {φ : G'.left ⟶ G.left} (h : IsGrpPullback G' G f φ)
   (w : ∀ a, (i'.act a).left ≫ φ = φ ≫ (i.act a).left)
 include w
-
-theorem isEquivariant_omegaBase :
-    IsEquivariant (pullAct (omegaAct i) f) (omegaAct i') (omegaBase h) := fun a =>
-  have := i.hom a
-  have := i'.hom a
-  omegaBase_naturality h h _ _ (w a)
-
-theorem isEquivariant_lieBase : IsEquivariant (pullAct (lieAct i) f) (lieAct i') (lieBase h) :=
-  fun a =>
-  have := i.hom a
-  have := i'.hom a
-  lieBase_naturality h h _ _ (w a)
-
-def omegaQuotBaseIso : (Scheme.Modules.pullback f).obj (omegaQuot i σ) ≅
-    omegaQuot i' (f.appTop.hom.comp σ) :=
-  (pullbackQuotIso (omegaAct i) σ f).symm ≪≫
-    eigenQuotIso _ (φ := asIso (omegaBase h)) (isEquivariant_omegaBase h w)
-
-def lieQuotBaseIso {g : ℕ} (hg : IsVB (omega G) g) :
-    (Scheme.Modules.pullback f).obj (lieQuot i σ) ≅ lieQuot i' (f.appTop.hom.comp σ) :=
-  (pullbackQuotIso (lieAct i) σ f).symm ≪≫ eigenQuotIso _
-    (φ := @asIso _ _ _ _ (lieBase h) (isIso_lieBase h hg)) (isEquivariant_lieBase h w)
-
-def omegaSubBase : (Scheme.Modules.pullback f).obj (omegaSub i σ) ⟶
-    omegaSub i' (f.appTop.hom.comp σ) :=
-  pullbackEigenHom (omegaAct i) σ f ≫ eigenMap _ (isEquivariant_omegaBase h w)
-
-def lieSubBase : (Scheme.Modules.pullback f).obj (lieSub i σ) ⟶ lieSub i' (f.appTop.hom.comp σ) :=
-  pullbackEigenHom (lieAct i) σ f ≫ eigenMap _ (isEquivariant_lieBase h w)
-
-theorem isIso_omegaSubBase {k κ : Type} [Field k] [Algebra k Γ(S, ⊤)] [Fintype κ]
-    {τ : κ → (O →+* k)} (hτ : IsSplitBy τ) (j : κ) : IsIso (omegaSubBase (scal S (τ j)) h w) := by
-  classical
-  have := hτ.isIso_pullbackEigenHom (omegaAct i) f j
-  exact inferInstanceAs (IsIso (pullbackEigenHom _ _ f ≫
-    (eigenIso _ (φ := asIso (omegaBase h)) (isEquivariant_omegaBase h w)).hom))
-
-theorem isIso_lieSubBase {k κ : Type} [Field k] [Algebra k Γ(S, ⊤)] [Fintype κ]
-    {τ : κ → (O →+* k)} (hτ : IsSplitBy τ) {g : ℕ} (hg : IsVB (omega G) g) (j : κ) :
-    IsIso (lieSubBase (scal S (τ j)) h w) := by
-  classical
-  have := hτ.isIso_pullbackEigenHom (lieAct i) f j
-  exact inferInstanceAs (IsIso (pullbackEigenHom _ _ f ≫ (eigenIso _
-    (φ := @asIso _ _ _ _ (lieBase h) (isIso_lieBase h hg)) (isEquivariant_lieBase h w)).hom))
 
 section ImBase
 
@@ -576,54 +334,6 @@ section
 
 variable {ε : omega G ⟶ omega G} (hε : IsEigenProj (omegaAct i) σ ε D)
 
-def omegaImBase : (Scheme.Modules.pullback f).obj (omegaIm i σ) ⟶
-    omegaIm i' (f.appTop.hom.comp σ) :=
-  haveI := mono_toBidual_of_isVectorBundle hg
-  hε.pullbackImHom f hf ≫ eigenImMap _ (isEquivariant_omegaBase h w)
-
-@[reassoc] theorem map_eigenImπ_omegaImBase :
-    (Scheme.Modules.pullback f).map (eigenImπ _ σ) ≫ omegaImBase h w hg hf hε =
-      omegaBase h ≫ eigenImπ _ _ := by
-  simp [omegaImBase]
-
-instance epi_omegaImBase : Epi (omegaImBase h w hg hf hε) :=
-  epi_of_epi_fac (map_eigenImπ_omegaImBase h w hg hf hε)
-
-theorem omegaImBase_app_eq_zero_iff {V : S'.Opens}
-    {s : Γ((Scheme.Modules.pullback f).obj (omegaIm i σ), V)} :
-    (omegaImBase h w hg hf hε).app V s = 0 ↔ resG S' (le_top : V ≤ ⊤) (f.appTop D) • s = 0 :=
-  have := mono_toBidual_of_isVectorBundle hg
-  have := mono_toBidual_of_isVectorBundle (hg.pullback f)
-  (comp_eigenImMap_app_eq_zero_iff (hε.pullbackImHom f hf) (isEquivariant_omegaBase h w)).trans
-    (hε.pullbackImHom_app_eq_zero_iff f hf)
-
-theorem isIso_omegaImBase {r : ℕ} (hr : IsVB (omegaIm i σ) r) :
-    IsIso (omegaImBase h w hg hf hε) :=
-  have := mono_toBidual_of_isVectorBundle hg
-  have := mono_toBidual_of_isVectorBundle (hg.pullback f)
-  have := hε.isIso_pullbackImHom f hf hr
-  inferInstanceAs (IsIso (hε.pullbackImHom f hf ≫
-    (eigenImIso _ (φ := asIso (omegaBase h)) (isEquivariant_omegaBase h w)).hom))
-
-include hg hf hε in
-
-theorem isIso_lieSubBase_of_isVB {r : ℕ} (hr : IsVB (omegaIm i σ) r) :
-    IsIso (lieSubBase σ h w) := by
-  have := isIso_omegaImBase h w hg hf hε hr
-  have := DualPull.isIso_theta f hr
-  have e : eigenImπ _ _ ≫ inv (omegaImBase h w hg hf hε) =
-      inv (omegaBase h) ≫ (Scheme.Modules.pullback f).map (eigenImπ _ σ) := by
-    rw [IsIso.comp_inv_eq, Category.assoc, map_eigenImπ_omegaImBase, IsIso.inv_hom_id_assoc]
-  have e' : (Scheme.Modules.pullback f).map (dualOmegaImIso i σ).hom ≫ lieSubBase σ h w =
-      theta f _ ≫ (dualIso (asIso (omegaImBase h w hg hf hε)).symm).hom ≫
-        (dualOmegaImIso i' _).hom := by
-    rw [← cancel_mono (eigenι _ _), lieSubBase]
-    simp only [Category.assoc, eigenMap_ι, dualOmegaImIso_hom_ι, dualIso_hom, Iso.symm_hom,
-      asIso_inv]
-    rw [← dualMap_comp, e, dualMap_comp, ← Category.assoc (pullbackEigenHom _ _ _),
-      pullbackEigenHom_ι, ← Functor.map_comp_assoc, dualOmegaImIso_hom_ι, lieBase,
-      ← Category.assoc, DualPull.theta_naturality, Category.assoc]
-  exact IsIso.of_isIso_fac_left e'
 
 end
 
@@ -631,34 +341,7 @@ section
 
 variable {ε : Lie G ⟶ Lie G} (hε : IsEigenProj (lieAct i) σ ε D)
 
-def lieImBase : (Scheme.Modules.pullback f).obj (lieIm i σ) ⟶ lieIm i' (f.appTop.hom.comp σ) :=
-  hε.pullbackImHom f hf ≫ eigenImMap _ (isEquivariant_lieBase h w)
-
-@[reassoc] theorem map_eigenImπ_lieImBase :
-    (Scheme.Modules.pullback f).map (eigenImπ _ σ) ≫ lieImBase h w hf hε =
-      lieBase h ≫ eigenImπ _ _ := by
-  simp [lieImBase]
-
 include hg
-
-theorem epi_lieImBase : Epi (lieImBase h w hf hε) :=
-  have := isIso_lieBase h hg
-  epi_of_epi_fac (map_eigenImπ_lieImBase h w hf hε)
-
-theorem lieImBase_app_eq_zero_iff {V : S'.Opens}
-    {s : Γ((Scheme.Modules.pullback f).obj (lieIm i σ), V)} :
-    (lieImBase h w hf hε).app V s = 0 ↔ resG S' (le_top : V ≤ ⊤) (f.appTop D) • s = 0 :=
-  have := isIso_lieBase h hg
-  have := mono_toBidual_of_isVectorBundle (hg.dual.pullback f)
-  (comp_eigenImMap_app_eq_zero_iff (hε.pullbackImHom f hf) (isEquivariant_lieBase h w)).trans
-    (hε.pullbackImHom_app_eq_zero_iff f hf)
-
-theorem isIso_lieImBase {r : ℕ} (hr : IsVB (lieIm i σ) r) : IsIso (lieImBase h w hf hε) :=
-  have := isIso_lieBase h hg
-  have := mono_toBidual_of_isVectorBundle (hg.dual.pullback f)
-  have := hε.isIso_pullbackImHom f hf hr
-  inferInstanceAs (IsIso (hε.pullbackImHom f hf ≫
-    (eigenImIso _ (φ := asIso (lieBase h)) (isEquivariant_lieBase h w)).hom))
 
 end
 
@@ -747,10 +430,6 @@ theorem epsZero_comp (x : LieG G) : epsZero O ≫ x.1 = η := by
 def tangent (x : LieG G) : Γ(Lie G, ⊤) :=
   (homGlobalEquiv _ _).symm (cotMap x.1 (epsZero_comp x) ≫ (epsIso O).hom)
 
-theorem dualApp_tangent (x : LieG G) {V : (Sp O).Opens} (w : Γ(omega G, V)) :
-    dualApp (tangent x) le_top w = (epsIso O).hom.app V ((cotMap x.1 (epsZero_comp x)).app V w) :=
-  rfl
-
 theorem dualApp_tangent_dUnit (x : LieG G) {V : (Sp O).Opens} {W : G.left.Opens}
     (h : V ≤ unitSec G ⁻¹ᵁ W) (f : Γ(G.left, W)) {T : (specO O (DualNumber O)).left.Opens}
     (hV : V ≤ sec (epsZero O) ⁻¹ᵁ T) (hT : T ≤ (specO O (DualNumber O)).hom ⁻¹ᵁ V)
@@ -759,7 +438,7 @@ theorem dualApp_tangent_dUnit (x : LieG G) {V : (Sp O).Opens} {W : G.left.Opens}
       (specO O (DualNumber O)).hom.appLE V T hT b * resG _ le_top (epsFn O)) :
     dualApp (tangent x) le_top (dUnit G h f) = b := by
   refine (congrArg ((epsIso O).hom.app V) (cotMap_d x.1 (epsZero_comp x) h hV k f)).trans ?_
-  rw [e, map_add, d_base, zero_add, d_mul, d_base,
+  rw [e, map_add (f := _), d_base, zero_add, d_mul, d_base,
     smul_zero, add_zero, appLE_base (sec_hom _) _ _ le_rfl, resG_self, d_resG,
     ← resM_d _ (le_preimage_top _ ⊤) le_top, Scheme.Modules.Hom.app_smul, app_resM, epsIso_d]
   exact (congrArg (b * ·) (map_one (resG (Sp O) (le_top : V ≤ ⊤)))).trans (_root_.mul_one b)
@@ -777,29 +456,6 @@ theorem tangent_scale (a : O) (x : LieG G) (h) :
   refine dual_ext fun W _ s => ?_
   exact (congr((epsIso O).hom.app W (($e).app W s))).symm.trans ((epsIso O).hom.app_smul _ _)
 
-theorem tangent_comp (φ : G ⟶ H) [IsMonHom φ] (x : LieG G) (h) :
-    tangent ⟨x.1 ≫ φ, h⟩ = (lieMap φ).app ⊤ (tangent x) := by
-  have e := cotMap_comp (IsMonHom.one_hom φ) (epsZero_comp x) rfl (epsZero_comp ⟨_, h⟩)
-  refine dual_ext fun W _ s => ?_
-  exact (congr((epsIso O).hom.app W (($e).app W s))).symm
-
-variable (G) in
-
-def toOmega [QuasiSeparated G.hom] : Γ(omega G, ⊤) →+ Pdiv.omega G :=
-  AddMonoidHom.mk' (fun w => ⟨fun x => (Scheme.ΓSpecIso (.of O)).hom (dualApp (tangent x) le_top w),
-    fun x y h => by simp only [tangent_mul, dualApp_add, LinearMap.add_apply, map_add],
-    fun a x h => by
-      simp only [tangent_scale, dualApp_smul, LinearMap.smul_apply, smul_eq_mul, map_mul, resG_self,
-        Iso.inv_hom_id_apply]⟩)
-    fun _ _ => Subtype.ext (funext fun x => by simp only [map_add]; rfl)
-
-theorem toOmega_apply [QuasiSeparated G.hom] (w : Γ(omega G, ⊤)) (x : LieG G) :
-    (toOmega G w).1 x = (Scheme.ΓSpecIso (.of O)).hom (dualApp (tangent x) le_top w) := rfl
-
-theorem toOmega_smul [QuasiSeparated G.hom] (a : O) (w : Γ(omega G, ⊤)) :
-    toOmega G (cst O a • w) = a • toOmega G w := Subtype.ext (funext fun x => by
-  rw [toOmega_apply, map_smul, smul_eq_mul, map_mul, Iso.inv_hom_id_apply]
-  rfl)
 
 end Affine
 
@@ -817,10 +473,8 @@ def dlogChar : X →+ Γ(omega (splitTorus S X), ⊤) :=
     rw [← SplitTorus.val_id, SplitTorus.val_add, SplitTorus.val_id, SplitTorus.val_id, dUnit_mul,
       h, h, one_smul, one_smul, add_comm]
 
-theorem dlogChar_apply (a : X) : dlogChar S X a = dUnit _ (le_preimage_top _ _) (Rosenlicht.chi X a) := rfl
 
 variable {X Y} in
-
 theorem omegaMap_dlogChar (u : Y →+ X) (b : Y) :
     (omegaMap (SplitTorus.torusMap S u)).app ⊤ (dlogChar S Y b) = dlogChar S X (u b) :=
   (omegaMap_dUnit _ (le_preimage_top _ _) (le_preimage_top _ _) (le_preimage_top _ _) _).trans
@@ -859,7 +513,8 @@ theorem exists_basis_augCot (R : Type) [CommRing R] :
     rw [map_smul]
     refine Submodule.smul_mem _ _ ?_
     change δ x ∈ _
-    rw [← b.sum_repr x, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr x, map_sum]
     exact Submodule.sum_mem _ fun i _ => by
       rw [map_zsmul]
       exact zsmul_mem (Submodule.subset_span (Set.mem_range_self i)) _
@@ -880,17 +535,10 @@ theorem isFrame_dlogChar : IsFrame fun i => dlogChar S X (b i) := by
   have := (IsFrame.pullback (F := omega (splitTorusAff ZU X)) h₀ (toZ S)).map_iso (omegaBase h)
   exact (funext e) ▸ this
 
-def omegaTorusIso : omega (splitTorus S X) ≅ QCoh.freeModule S κ :=
-  (isFrame_dlogChar S b).iso (isFrame_freeFrame S κ)
-
 theorem isFrame_Gm : IsFrame fun _ : Fin 1 => dlogChar S (ULift ℤ) (ULift.up 1) := by
   convert isFrame_dlogChar S ((Module.Basis.singleton (Fin 1) ℤ).map ULift.moduleEquiv.symm)
     using 3 with i
   simp
-
-def omegaGmIso : omega (Gm S) ≅ structureModule S := (isFrame_Gm S).iso (isFrame_one ⊤)
-
-def lieGmIso : Lie (Gm S) ≅ structureModule S := (isFrame_Gm S).dual.iso (isFrame_one ⊤)
 
 theorem isVB_Gm : IsSemiAbelian (Gm S) ∧ IsVB (omega (Gm S)) 1 ∧ IsVB (Lie (Gm S)) 1 :=
   ⟨inferInstance, (isFrame_Gm S).isVB, (isFrame_Gm S).isVB.dual⟩
@@ -902,54 +550,10 @@ section Examples
 variable {G : Over S} [GrpObj G] [QuasiSeparated G.hom]
 
 theorem actsThrough_omegaAct_int (i : OAct ℤ G) : ActsThrough (omegaAct i) (Int.castRingHom _) :=
-  fun a => congr($(RingHom.ext_int (omegaAct i) (scalarAct _ (Int.castRingHom _))) a)
+  fun a => congr(($(RingHom.ext_int (omegaAct i) (scalarAct _ (Int.castRingHom _))) a).asHom)
 
 theorem actsThrough_lieAct_int (i : OAct ℤ G) : ActsThrough (lieAct i) (Int.castRingHom _) :=
   (actsThrough_omegaAct_int i).dual
-
-example : (omegaMap (SplitTorus.torusMap S (-AddMonoidHom.id (ULift ℤ)))).app ⊤
-    (dlogChar S _ (ULift.up 1)) = -dlogChar S _ (ULift.up 1) :=
-  (omegaMap_dlogChar S _ _).trans (map_neg _ _)
-
-example : let i := Serre.comapAct (Serre.intAct (Gm S)) (RingHom.fst ℤ ℤ)
-    IsVB (lieSub i ((Int.castRingHom _).comp (RingHom.fst ℤ ℤ))) 1 ∧
-      IsVB (eigen (omegaConjAct i (RingEquiv.prodComm (R := ℤ) (S := ℤ)))
-        ((Int.castRingHom _).comp (RingHom.snd ℤ ℤ))) 1 := by
-  intro i
-  have h₁ : ActsThrough (lieAct i) ((Int.castRingHom _).comp (RingHom.fst ℤ ℤ)) := fun a =>
-    actsThrough_lieAct_int (Serre.intAct (Gm S)) a.1
-  have h₂ : ActsThrough (omegaConjAct i (RingEquiv.prodComm (R := ℤ) (S := ℤ)))
-      ((Int.castRingHom _).comp (RingHom.snd ℤ ℤ)) := fun a =>
-    actsThrough_omegaAct_int (Serre.intAct (Gm S)) a.2
-  have := h₁.isIso_eigenι
-  have := h₂.isIso_eigenι
-  exact ⟨(isVB_Gm S).2.2.of_iso (asIso (eigenι _ _)).symm,
-    (isVB_Gm S).2.1.of_iso (asIso (eigenι _ _)).symm⟩
-
-example [Nonempty S] : ¬IsZero (omega (Gm S)) := fun h =>
-  one_ne_zero ((isVB_Gm S).2.1.rank_unique (isVB_zero_iff.2 h))
-
-example : IsVB (omegaIm (Serre.intAct (Gm S)) (Int.castRingHom _)) 1 ∧
-    IsVB (lieIm (Serre.intAct (Gm S)) (Int.castRingHom _)) 1 :=
-  have := mono_toBidual_of_isVectorBundle (isVB_Gm S).2.1
-  have := isIso_eigenImπ_of_actsThrough (actsThrough_omegaAct_int (Serre.intAct (Gm S)))
-  have := isIso_eigenImπ_of_actsThrough (actsThrough_lieAct_int (Serre.intAct (Gm S)))
-  ⟨(isVB_Gm S).2.1.of_iso (asIso (eigenImπ _ _)), (isVB_Gm S).2.2.of_iso (asIso (eigenImπ _ _))⟩
-
-example (h : IsRegularFn (2 : Γ(S, ⊤))) (f : S' ⟶ S) [Nonempty S'] (h' : (2 : Γ(S', ⊤)) = 0) :
-    let i := Serre.comapAct (Serre.intAct (Gm S)) (Polynomial.evalRingHom 2)
-    IsZero (omegaIm i (zeroChar S)) ∧ ¬IsZero (omegaQuot i (zeroChar S)) := by
-  intro i
-  have h₁ : ActsThrough (omegaAct i) ((Int.castRingHom _).comp (Polynomial.evalRingHom 2)) :=
-    fun a => actsThrough_omegaAct_int (Serre.intAct (Gm S)) (a.eval 2)
-  refine ⟨isZero_eigenIm_of_actsThrough h₁ (a := .X) (by simpa [zeroChar] using h), fun h₀ => ?_⟩
-  have h₂ := h₁.pullback f
-  rw [show f.appTop.hom.comp ((Int.castRingHom _).comp (Polynomial.evalRingHom 2)) =
-    f.appTop.hom.comp (zeroChar S) from Polynomial.ringHom_ext' (RingHom.ext_int _ _)
-      (by simpa [zeroChar, map_ofNat] using h')] at h₂
-  have := isIso_eigenπ_of_actsThrough h₂
-  exact one_ne_zero (((isVB_Gm S).2.1.pullback f).rank_unique (((isVB_zero_iff.2 h₀).pullback f).of_iso
-    (asIso (eigenπ _ _) ≪≫ pullbackQuotIso _ _ f).symm))
 
 end Examples
 

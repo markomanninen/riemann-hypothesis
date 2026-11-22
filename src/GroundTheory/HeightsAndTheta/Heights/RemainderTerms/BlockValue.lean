@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Expand
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Expand
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -96,7 +101,8 @@ theorem restrict_gmfOut (f r a : ℕ) (c : SmallBlock) (κ : ℚ) (q : Fin f →
       ((Nat.multinomial Finset.univ (mstar f r a q e τ) : ℚ) *
           ∏ σ ∈ Finset.univ.erase τ, (blockCoeff (q σ) (r * a - q σ) (rectangle r a) * κ)) •
         toN (r + a) (blockOut r a c κ (q τ) (mstar f r a q e τ τ)) := by
-  rw [gmfOut, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [gmfOut, map_sum]
   rw [Finset.sum_eq_single (mstar f r a q e τ)]
   · rw [map_smul, map_prod, ← Finset.mul_prod_erase _ _ (Finset.mem_univ τ)]
     rw [restrictToBlock_blockEmb, if_pos rfl]
@@ -132,7 +138,8 @@ theorem toN_blockOut (r a : ℕ) (c : SmallBlock) (κ : ℚ) (q m k : ℕ) (hk :
     toN (r + a) (blockOut r a c κ q m) =
       C κ * ∑ nu ∈ partitionsOf r k, C (blockCoeff q m (fun i => a + nu i)) *
         aeval (fun i : Fin (r + a) => C c.sign * X i) (schur (Fin (r + a)) nu) := by
-  rw [blockOut, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [blockOut, map_sum, Finset.mul_sum]
   have hterm : ∀ lam ∈ partitionsOf r (q + m),
       toN (r + a) (blockCoeff q m lam • pushOut r a c κ lam) =
         if ∀ i, a ≤ lam i then C κ * (C (blockCoeff q m lam) *

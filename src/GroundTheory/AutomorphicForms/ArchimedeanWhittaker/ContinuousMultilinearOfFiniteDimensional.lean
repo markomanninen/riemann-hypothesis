@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GKModules.GKModule
-import GroundTheory.AutomorphicForms.GKModules.Garding
-import GroundTheory.AutomorphicForms.GKModules.Casimir
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GKModules.GKModule
+public import GroundTheory.AutomorphicForms.GKModules.Garding
+public import GroundTheory.AutomorphicForms.GKModules.Casimir
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -20,8 +24,6 @@ noncomputable def wordOp : {k : ℕ} → (Fin k → 𝔤) → E → E
   | 0, _, v => v
   | _ + 1, Y, v => h.derivOp π (Y 0) (wordOp (Fin.tail Y) v)
 
-@[simp] theorem wordOp_zero' (Y : Fin 0 → 𝔤) (v : E) : h.wordOp π Y v = v := rfl
-
 theorem wordOp_succ {k : ℕ} (Y : Fin (k + 1) → 𝔤) (v : E) :
     h.wordOp π Y v = h.derivOp π (Y 0) (h.wordOp π (Fin.tail Y) v) := rfl
 
@@ -30,33 +32,7 @@ theorem isSmoothVector_wordOp {v : E} (hv : h.IsSmoothVector π v) :
   | 0, _ => hv
   | _ + 1, Y => h.isSmoothVector_derivOp π (isSmoothVector_wordOp hv (Fin.tail Y)) (Y 0)
 
-theorem wordOp_add {v w : E} (hv : h.IsSmoothVector π v) (hw : h.IsSmoothVector π w) :
-    ∀ {k : ℕ} (Y : Fin k → 𝔤), h.wordOp π Y (v + w) = h.wordOp π Y v + h.wordOp π Y w
-  | 0, _ => rfl
-  | _ + 1, Y => by
-    rw [wordOp_succ, wordOp_add hv hw (Fin.tail Y),
-      h.derivOp_add π (h.isSmoothVector_wordOp π hv _) (h.isSmoothVector_wordOp π hw _)]
-    rfl
-
-theorem wordOp_smul {v : E} (hv : h.IsSmoothVector π v) (c : ℂ) :
-    ∀ {k : ℕ} (Y : Fin k → 𝔤), h.wordOp π Y (c • v) = c • h.wordOp π Y v
-  | 0, _ => rfl
-  | _ + 1, Y => by
-    rw [wordOp_succ, wordOp_smul hv c (Fin.tail Y),
-      h.derivOp_smul π (h.isSmoothVector_wordOp π hv _)]
-    rfl
-
 theorem isSmoothVector_zero : h.IsSmoothVector π (0 : E) := (h.smoothVectors π).zero_mem
-
-theorem wordOp_neg {v : E} (hv : h.IsSmoothVector π v) {k : ℕ} (Y : Fin k → 𝔤) :
-    h.wordOp π Y (-v) = -h.wordOp π Y v := by
-  have := h.wordOp_smul π hv (-1) Y
-  simpa using this
-
-theorem wordOp_sub {v w : E} (hv : h.IsSmoothVector π v) (hw : h.IsSmoothVector π w)
-    {k : ℕ} (Y : Fin k → 𝔤) : h.wordOp π Y (v - w) = h.wordOp π Y v - h.wordOp π Y w := by
-  have hw' : h.IsSmoothVector π (-w) := (h.smoothVectors π).neg_mem hw
-  rw [sub_eq_add_neg, h.wordOp_add π hv hw', h.wordOp_neg π hw, ← sub_eq_add_neg]
 
 theorem Ad_Ad_inv (g : G) (X : 𝔤) : h.Ad g (h.Ad g⁻¹ X) = X := by
   have := h.Ad_inv_Ad g⁻¹ X
@@ -68,10 +44,10 @@ theorem wordOp_map {v : E} (hv : h.IsSmoothVector π v) (g : G) :
   | 0, _ => rfl
   | k + 1, Y => by
     rw [wordOp_succ, wordOp_map hv g (Fin.tail Y), wordOp_succ]
-    have := h.derivOp_map π (h.isSmoothVector_wordOp π hv (fun i => h.Ad g⁻¹ (Fin.tail Y i)))
-      g (h.Ad g⁻¹ (Y 0))
-    rw [Ad_Ad_inv] at this
-    rw [this]
+    have hu := h.isSmoothVector_wordOp π hv (fun i : Fin k => h.Ad g⁻¹ (Fin.tail Y i))
+    have hmap := h.derivOp_map π hu g (h.Ad g⁻¹ (Y 0))
+    rw [Ad_Ad_inv] at hmap
+    rw [hmap]
     rfl
 
 end IsExpLieAlgebra
@@ -89,12 +65,12 @@ variable {𝔸 : Type*} [NormedRing 𝔸] [NormedAlgebra ℝ 𝔸] [CompleteSpac
 variable {G : Subgroup 𝔸ˣ} {𝔤 : Submodule ℝ 𝔸} (h : IsExpLieAlgebra G 𝔤)
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] (π : BanachRep G E)
 
-omit [NormedRing 𝔸] [NormedAlgebra ℝ 𝔸] [CompleteSpace 𝔸] [FiniteDimensional ℝ 𝔸] in
 
+omit [NormedRing 𝔸] [NormedAlgebra ℝ 𝔸] [CompleteSpace 𝔸] [FiniteDimensional ℝ 𝔸] in
 theorem _root_.GroundTheory.Automorphic.continuous_multilinear_of_finiteDimensional {ι : Type*} [Fintype ι]
     [DecidableEq ι] {M : Type*} [NormedAddCommGroup M] [NormedSpace ℝ M] [FiniteDimensional ℝ M]
     {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
-    (f : MultilinearMap ℝ (fun _ : ι => M) F) : Continuous f := by
+    (f : (ι → M) →ₘₗ[ℝ] F) : Continuous f := by
   let b := Module.finBasis ℝ M
   have key : ∀ Y : ι → M, f Y = ∑ r ∈ Fintype.piFinset (fun _ : ι => (Finset.univ : Finset (Fin (Module.finrank ℝ M)))),
       (∏ i, b.repr (Y i) (r i)) • f (fun i => b (r i)) := by
@@ -112,8 +88,8 @@ theorem _root_.GroundTheory.Automorphic.continuous_multilinear_of_finiteDimensio
   exact ((b.coord (r i)).continuous_of_finiteDimensional).comp (continuous_apply i)
 
 noncomputable def wordML {v : E} (hv : h.IsSmoothVector π v) :
-    (k : ℕ) → MultilinearMap ℝ (fun _ : Fin k => 𝔤) (h.smoothVectors π)
-  | 0 => MultilinearMap.constOfIsEmpty ℝ _ ⟨v, hv⟩
+    (k : ℕ) → (Fin k → 𝔤) →ₘₗ[ℝ] (h.smoothVectors π)
+  | 0 => MultilinearMap.constOfIsEmpty (RingHom.id ℝ) _ ⟨v, hv⟩
   | k + 1 => LinearMap.uncurryLeft
       { toFun := fun X => ((h.derivEnd π X).restrictScalars ℝ).compMultilinearMap (wordML hv k)
         map_add' := fun X Y => by
@@ -135,7 +111,7 @@ theorem coe_wordML {v : E} (hv : h.IsSmoothVector π v) :
 
 theorem exists_wordOp_cml {v : E} (hv : h.IsSmoothVector π v) (k : ℕ) :
     ∃ Φ : ContinuousMultilinearMap ℝ (fun _ : Fin k => 𝔤) E, ∀ Y, Φ Y = h.wordOp π Y v := by
-  let M : MultilinearMap ℝ (fun _ : Fin k => 𝔤) E :=
+  let M : (Fin k → 𝔤) →ₘₗ[ℝ] E :=
     ((h.smoothVectors π).subtype.restrictScalars ℝ).compMultilinearMap (h.wordML π hv k)
   refine ⟨⟨M, continuous_multilinear_of_finiteDimensional M⟩, fun Y => ?_⟩
   show ((h.wordML π hv k Y : h.smoothVectors π) : E) = _
@@ -171,7 +147,7 @@ theorem isSmoothVector_brSum {v : E} (hv : h.IsSmoothVector π v) (X : 𝔤) :
 theorem derivOp_wordOp {v : E} (hv : h.IsSmoothVector π v) (X : 𝔤) :
     ∀ {k : ℕ} (Y : Fin k → 𝔤),
       h.derivOp π X (h.wordOp π Y v) = h.brSum π X Y v + h.wordOp π Y (h.derivOp π X v)
-  | 0, _ => by simp [brSum]
+  | 0, _ => by simp [brSum, wordOp]
   | k + 1, Y => by
     have hu := h.isSmoothVector_wordOp π hv (Fin.tail Y)
     have hb := h.derivOp_bracket π hu X (Y 0)
@@ -303,20 +279,6 @@ theorem hasDerivAt_wordOp_expG (hπ : ∀ g, ‖π g‖ ≤ 1) {v : E} (hv : h.I
   rw [hsum, hc0, hΦ, h.derivOp_wordOp π hv X Y]
   abel
 
-theorem hasDerivAt_wordOp_map_expG (hπ : ∀ g, ‖π g‖ ≤ 1) {v : E} (hv : h.IsSmoothVector π v)
-    (X : 𝔤) (g : G) {k : ℕ} (Y : Fin k → 𝔤) :
-    HasDerivAt (fun t : ℝ => h.wordOp π Y (π g (π (h.expG (t • X)) v)))
-      (h.wordOp π Y (π g (h.derivOp π X v))) 0 := by
-  have e : (fun t : ℝ => h.wordOp π Y (π g (π (h.expG (t • X)) v))) =
-      fun t => ((π g).restrictScalars ℝ)
-        (h.wordOp π (fun i => h.Ad g⁻¹ (Y i)) (π (h.expG (t • X)) v)) := by
-    funext t
-    rw [h.wordOp_map π (h.isSmoothVector_map π hv _)]
-    rfl
-  rw [e, h.wordOp_map π (h.isSmoothVector_derivOp π hv X)]
-  exact ((π g).restrictScalars ℝ).hasFDerivAt.comp_hasDerivAt (0 : ℝ)
-    (h.hasDerivAt_wordOp_expG π hπ hv X _)
-
 theorem continuous_Ad_apply (X : 𝔤) : Continuous fun g : G => h.Ad g X := by
   refine Continuous.subtype_mk ?_ _
   have h1 : Continuous fun g : G => ((g : 𝔸ˣ) : 𝔸) := continuous_val_val G
@@ -353,23 +315,6 @@ theorem continuous_wordOp_map (hπ : ∀ g, ‖π g‖ ≤ 1) {v : E} (hv : h.Is
   rw [e]
   refine continuous_apply_apply π hπ continuous_id (Φ.cont.comp ?_)
   exact continuous_pi fun i => (h.continuous_Ad_apply (Y i)).comp continuous_inv
-
-theorem exists_norm_wordOp_map_le (hπ : ∀ g, ‖π g‖ ≤ 1) {v : E} (hv : h.IsSmoothVector π v)
-    {k : ℕ} (Y : Fin k → 𝔤) : ∃ C, ∀ g : G, ‖h.wordOp π Y (π g v)‖ ≤ C * ‖h.AdL g⁻¹‖ ^ k := by
-  obtain ⟨Φ, hΦ⟩ := h.exists_wordOp_cml π hv k
-  refine ⟨‖Φ‖ * ∏ i, ‖Y i‖, fun g => ?_⟩
-  rw [h.wordOp_map π hv, ← hΦ]
-  calc ‖π g (Φ (fun i => h.Ad g⁻¹ (Y i)))‖ ≤ ‖π g‖ * ‖Φ (fun i => h.Ad g⁻¹ (Y i))‖ :=
-        ContinuousLinearMap.le_opNorm _ _
-    _ ≤ 1 * ‖Φ (fun i => h.Ad g⁻¹ (Y i))‖ := by gcongr; exact hπ _
-    _ = ‖Φ (fun i => h.Ad g⁻¹ (Y i))‖ := one_mul _
-    _ ≤ ‖Φ‖ * ∏ i, ‖h.Ad g⁻¹ (Y i)‖ := Φ.le_opNorm _
-    _ ≤ ‖Φ‖ * ∏ i, (‖h.AdL g⁻¹‖ * ‖Y i‖) := by
-        gcongr with i
-        exact (h.AdL g⁻¹).le_opNorm (Y i)
-    _ = (‖Φ‖ * ∏ i, ‖Y i‖) * ‖h.AdL g⁻¹‖ ^ k := by
-        rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
-        ring
 
 end IsExpLieAlgebra
 

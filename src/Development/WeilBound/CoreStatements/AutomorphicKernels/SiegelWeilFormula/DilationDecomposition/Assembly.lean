@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.DilationDecomposition.FirstCountableGR
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.DilationDecomposition.FirstCountableGR
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,8 +23,8 @@ theorem iteratedDeriv_mul_const' (f : ℂ → ℂ) (c : ℂ) :
     funext z
     exact deriv_mul_const_field _
 
-set_option maxHeartbeats 400000 in
 
+set_option maxHeartbeats 400000 in
 theorem gIdil_of (hT : TAll) (hAux : AuxiliaryPrimeFunction) (hLE : LocOpEx) (hTP : ThetaPt) (hFP : FPSw) (hMC : MatCount)
     (hSD : SplitDom) (hTB : ThetaBdd) (hLF : LocFamG) (hBD : BigDense) (hHM : HolMean)
     (hDC : DerCont) (hSO : StripOK) : GIdil := by

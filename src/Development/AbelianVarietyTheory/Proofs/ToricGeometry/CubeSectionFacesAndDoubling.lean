@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EntireApplyEqOfPeriodicOfSpanReal
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.EntireApplyEqOfPeriodicOfSpanReal
+
+@[expose] public section
 
 open Complex Matrix Filter Topology
 open scoped BigOperators Real
@@ -177,8 +181,8 @@ variable {g : ℕ} {ι : Type} (W : ι → Set (Fin g → ℂ)) (c : ι → ι �
   (hTp : ∀ j x (l : Fin 3 → Fin g → ℂ), (∀ a, l a ∈ Λ) → T j (x + l) = T j x)
   (i₀ : ι) (h0 : (0 : Fin g → ℂ) ∈ W i₀)
 
-include hW hcov hc0 hT hTT hΛ hWp hTp h0 in
 
+include hW hcov hc0 hT hTT hΛ hWp hTp h0 in
 theorem face (a : Fin 3) (x : Fin 3 → Fin g → ℂ)
     (hx : ∀ I : Finset (Fin 3), ∑ b ∈ I, x b ∈ W i₀) (hxa : x a = 0) :
     T (fun _ => i₀) x = T (fun _ => i₀) 0 := by
@@ -233,8 +237,8 @@ theorem face (a : Fin 3) (x : Fin 3 → Fin g → ℂ)
   have : Function.update x a 0 = x := by rw [← hxa]; simp
   simpa [this] using key
 
-include hW hcov hc0 hcc hT hT0 hTT hΛ hWp hTp h0 in
 
+include hW hcov hc0 hcc hT hT0 hTT hΛ hWp hTp h0 in
 theorem doubling (x : Fin 3 → Fin g → ℂ)
     (hx : ∀ I : Finset (Fin 3), ∑ b ∈ I, x b ∈ W i₀)
     (hx' : ∀ I : Finset (Fin 3), ∑ b ∈ I, (-x) b ∈ W i₀)

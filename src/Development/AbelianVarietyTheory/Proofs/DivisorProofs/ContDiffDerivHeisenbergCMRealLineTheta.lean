@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTransportF
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwoMulInvOf
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.SymplecticRealPartVanish
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsTransportF
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TwoMulInvOf
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.SymplecticRealPartVanish
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -22,12 +27,12 @@ variable (σ : E →ₐ[F] E) {nS nT : ℕ} (JS : Matrix (Fin nS) (Fin nS) E) (J
 theorem symplOHF_add_left (x x' y : WOF F E nS nT) :
     symplOHF σ JS JT ξ (x + x') y = symplOHF σ JS JT ξ x y + symplOHF σ JS JT ξ x' y := by
   unfold symplOHF symplOF hOF
-  simp only [Matrix.add_apply, mul_add, Finset.sum_add_distrib, map_add]
+  simp only [Matrix.add_apply, mul_add, Finset.sum_add_distrib, map_add (f := _)]
 
 theorem symplOHF_add_right (x y y' : WOF F E nS nT) :
     symplOHF σ JS JT ξ x (y + y') = symplOHF σ JS JT ξ x y + symplOHF σ JS JT ξ x y' := by
   unfold symplOHF symplOF hOF
-  simp only [Matrix.add_apply, mul_add, add_mul, Finset.sum_add_distrib, map_add]
+  simp only [Matrix.add_apply, mul_add, add_mul, Finset.sum_add_distrib, map_add (f := _)]
 
 theorem symplOHF_zero_right (y : WOF F E nS nT) : symplOHF σ JS JT ξ y 0 = 0 := by
   have := symplOHF_add_right σ JS JT ξ y 0 0
@@ -79,8 +84,8 @@ theorem continuous_symplOHF {X : Type} [TopologicalSpace X] {x y : X → WOF F E
   have hx' : ∀ i j, Continuous fun t => x t i j := fun i j =>
     (continuous_apply j).comp ((continuous_apply i).comp hx)
   have hh : Continuous fun t => hOF σ JS JT (x t) (y t) :=
-    continuous_finset_sum _ fun _ _ => continuous_finset_sum _ fun _ _ => continuous_finset_sum _ fun _ _ =>
-      continuous_finset_sum _ fun _ _ => ((continuous_const.mul (hy' _ _)).mul continuous_const).mul (hx' _ _)
+    continuous_finsetSum _ fun _ _ => continuous_finsetSum _ fun _ _ => continuous_finsetSum _ fun _ _ =>
+      continuous_finsetSum _ fun _ _ => ((continuous_const.mul (hy' _ _)).mul continuous_const).mul (hx' _ _)
   have ht : Continuous (Algebra.trace (AF F) (AEF F E)) := IsModuleTopology.continuous_of_linearMap _
   exact continuous_const.mul (ht.comp (continuous_const.mul hh))
 
@@ -94,9 +99,9 @@ theorem exists_log {ψ : AddChar (AF F) ℂ} {Tau : Type} [Fintype Tau] {tauE : 
     { toFun := fun a => 2 * Real.pi * Complex.I * ((-1 : ℤ) : ℂ) * ∑ ρ, θ ρ (fstA F a ⊗ₜ[F] (1 : E))
       map_zero' := by simp only [map_zero, TensorProduct.zero_tmul, Finset.sum_const_zero, mul_zero]
       map_add' := fun a b => by
-        simp only [map_add, TensorProduct.add_tmul, Finset.sum_add_distrib, mul_add] }
+        simp only [map_add (f := _), TensorProduct.add_tmul, Finset.sum_add_distrib, mul_add] }
   refine ⟨lam, ?_, fun a ha => ?_⟩
-  · exact continuous_const.mul (continuous_finset_sum _ fun ρ _ => (hθ ρ).2.comp continuous_fst)
+  · exact continuous_const.mul (continuous_finsetSum _ fun ρ _ => (hθ ρ).2.comp continuous_fst)
   · have hc := hψ.2.2 θ hθ (fstA F a)
     have e : pairA F (fstA F a) 0 = a := Prod.ext rfl ha.symm
     rw [psiInf, e] at hc
@@ -119,7 +124,7 @@ theorem contDiff_deriv_heisOF_line : ∀ (F E : Type) [Field F] [NumberField F] 
         rw [show Fin.init (0 : Fin (k + 1) → ℝ) = (0 : Fin k → ℝ) from rfl, Pi.zero_apply, map_zero, map_zero, add_zero]
       map_add' := fun u v => by
         show L' (Fin.init (u + v)) + L (u (Fin.last k) + v (Fin.last k)) = _
-        rw [show Fin.init (u + v) = Fin.init u + Fin.init v from rfl, map_add, map_add]
+        rw [show Fin.init (u + v) = Fin.init u + Fin.init v from rfl, map_add (f := _), map_add (f := _)]
         abel }
   haveI : IsModuleTopology (AF F) (AF F ⊗[F] E) := ⟨rfl⟩
   haveI : IsTopologicalRing (AF F ⊗[F] E) := IsModuleTopology.isTopologicalRing (AF F) _
@@ -133,7 +138,7 @@ theorem contDiff_deriv_heisOF_line : ∀ (F E : Type) [Field F] [NumberField F] 
     refine contDiff_pi.2 fun i => ?_
     induction i using Fin.lastCases with
     | last => simp only [Fin.snoc_last]; exact contDiff_snd
-    | cast j => simp only [Fin.snoc_castSucc]; exact (contDiff_apply ℝ ℝ j).comp contDiff_fst
+    | cast j => simp only [Fin.snoc_castSucc]; exact (contDiff_apply ℝ (fun _ => ℝ) j).comp contDiff_fst
   let h : (Fin k → ℝ) × ℝ → ℂ := fun p => f (w + M (Fin.snoc (α := fun _ => ℝ) p.1 p.2))
   have hh : ContDiff ℝ ∞ h := hg.comp hsnoc
   have hfe : ∀ x t, f (w + L' x + L t) = h (x, t) := by
@@ -148,7 +153,7 @@ theorem contDiff_deriv_heisOF_line : ∀ (F E : Type) [Field F] [NumberField F] 
     let φ : ℝ →+ ℂ :=
       { toFun := fun t => lam (symplOHF σ JS JT ξ₀ y (L t))
         map_zero' := by rw [map_zero L, symplOHF_zero_right, map_zero]
-        map_add' := fun a b => by rw [map_add L, symplOHF_add_right, map_add] }
+        map_add' := fun a b => by rw [map_add L, symplOHF_add_right, map_add (f := _)] }
     have hφ : Continuous φ := hl.comp (continuous_symplOHF σ JS JT ξ₀ continuous_const hL)
     have := (φ.toRealLinearMap hφ).map_smul t 1
     rw [smul_eq_mul, mul_one, Complex.real_smul] at this
@@ -180,13 +185,13 @@ theorem contDiff_deriv_heisOF_line : ∀ (F E : Type) [Field F] [NumberField F] 
   let φ' : (Fin k → ℝ) →+ ℂ :=
     { toFun := fun x => lam (symplOHF σ JS JT ξ₀ (L' x) (L 1))
       map_zero' := by rw [map_zero L', symplOHF_zero_left, map_zero]
-      map_add' := fun a b => by rw [map_add L', symplOHF_add_left, map_add] }
+      map_add' := fun a b => by rw [map_add L', symplOHF_add_left, map_add (f := _)] }
   have hφ' : ContDiff ℝ ∞ φ' :=
     (φ'.toRealLinearMap (hl.comp (continuous_symplOHF σ JS JT ξ₀ hL' continuous_const))).contDiff
   have e : (fun x => deriv (fun t : ℝ => heisOF σ JS JT ξ₀ B.ψ (L t) f (w + L' x)) 0) = fun x =>
       (lam (symplOHF σ JS JT ξ₀ w (L 1)) + φ' x) * h (x, 0) + fderiv ℝ h (x, 0) (0, 1) := by
     funext x
-    rw [(hd x).deriv, symplOHF_add_left, map_add]
+    rw [(hd x).deriv, symplOHF_add_left, map_add (f := _)]
     rfl
   rw [e]
   have hin : ContDiff ℝ ∞ (fun x : Fin k → ℝ => (x, (0 : ℝ))) := contDiff_id.prodMk contDiff_const

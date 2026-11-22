@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LengthCommensurableOfIsLatIn
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LenRBaseChangeSubquotient
-import Formalism.SharpRestriction.LevelLetterCocycles.IntegralHeckeForms
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthCommensurableSpanSpanOfDetNeZero
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DvdTraceOfBalancedTensor
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsPlaceOverMoveValCc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.GaloisSideTwistedSelmerAuxiliaryPrimes
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LengthCommensurableOfIsLatIn
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LenRBaseChangeSubquotient
+public import Formalism.SharpRestriction.LevelLetterCocycles.IntegralHeckeForms
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.LengthCommensurableSpanSpanOfDetNeZero
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.DvdTraceOfBalancedTensor
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsPlaceOverMoveValCc
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,8 @@ theorem nonempty_monomialOrder (σ : Type) [Finite σ] : Nonempty (MonomialOrder
   let : LinearOrder σ := WellOrderingRel.isWellOrder.linearOrder
   exact ⟨MonomialOrder.degLex⟩
 
-open MvPolynomial MonomialOrder in
 
+open MvPolynomial MonomialOrder in
 theorem mem_span_of_aeval_eq_zero {O O' : Type} [CommRing O] [CommRing O'] [IsDomain O'] [Algebra O O']
     (hinj : Function.Injective (algebraMap O O')) {n R : ℕ} (hn : 0 < n) {ζ : O'} (hζ : IsPrimitiveRoot ζ n)
     (h : MvPolynomial (Fin R ⊕ Fin R) O)
@@ -87,15 +91,16 @@ theorem mem_span_of_aeval_eq_zero {O O' : Type} [CommRing O] [CommRing O'] [IsDo
     have hu : (fun q => (u q : O') - 1) = x := by ext q; simp [u]
     have h0 := hh u (fun q => Units.ext (by simpa [u] using hx1 q))
       (fun a => Units.ext (by simpa [u] using Finset.mem_singleton.1 (hx (.inr a))))
-    rw [hu, hf, map_add, Finsupp.linearCombination_apply, Finsupp.sum, map_sum, Finset.sum_eq_zero, zero_add] at h0
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hu, hf, map_add (f := _), Finsupp.linearCombination_apply, Finsupp.sum, map_sum, Finset.sum_eq_zero, zero_add] at h0
     · rw [eval_map, ← aeval_def, h0]
     · rintro (i | i) _
       · have := hx1 (.inl i)
         simp [b, add_comm (1 : O'), this]
       · simp [b, Finset.mem_singleton.1 (hx (.inr i))]
 
-open Polynomial in
 
+open Polynomial in
 theorem det_eq_mul_X_pow {k ι : Type} [Field k] (n r e : ℕ) (t : ℕ → Matrix (Fin n) (Fin n) k) (q : ι)
     (he : (e : k) ≠ 0) :
     ∃ (w : MvPolynomial ι k) (ν : ℕ), w.coeff 0 ≠ 0 ∧ ν ≤ r * n ∧
@@ -152,8 +157,8 @@ theorem det_eq_mul_X_pow {k ι : Type} [Field k] (n r e : ℕ) (t : ℕ → Matr
     rw [← this, hp, map_mul, map_pow, map_sub, aeval_X, aeval_C, map_one, hs]
     ring
 
-open Module in
 
+open Module in
 private theorem index_span_matrix_eq_val_det (O : Type) [CommRing O] [IsDomain O]
     [IsDiscreteValuationRing O] (W : Type) [AddCommGroup W] [Module O W] (l n : ℕ)
     (bs : Fin n → W) (m : Matrix (Fin n) (Fin n) O) (hbs : LinearIndependent O bs)
@@ -314,8 +319,8 @@ theorem sIdx_le_of_coords {O O' : Type} [CommRing O] [IsDomain O] [IsDiscreteVal
   rw [baseChange_span_range]
   linarith
 
-open IsLocalRing in
 
+open IsLocalRing in
 theorem isUnit_det_of_eigen {O : Type} [CommRing O] [IsLocalRing O] [IsAlgClosed (ResidueField O)] {W : Type}
     [AddCommGroup W] [Module O W] {n : ℕ} {bs : Fin n → W} (hbs : LinearIndependent O bs) {κ : Type}
     (good : ℕ → κ → Prop) (T : ℕ → κ → Module.End O W) (t : ℕ → κ → Matrix (Fin n) (Fin n) O)
@@ -332,7 +337,8 @@ theorem isUnit_det_of_eigen {O : Type} [CommRing O] [IsLocalRing O] [IsAlgClosed
   have hφr : LinearMap.range φ = Submodule.span O (Set.range bs) := Fintype.range_linearCombination O bs
   have hφT : ∀ k p, good k p → ∀ v, T k p (φ v) = φ ((t k p).mulVec v) := by
     intro k p hg v
-    simp only [φ, Fintype.linearCombination_apply, map_sum, map_smul, ht k p hg, Matrix.mulVec, dotProduct,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [φ, Fintype.linearCombination_apply, map_sum, map_smul, ht k p hg, Matrix.mulVec, dotProduct,
       Finset.sum_smul, Finset.smul_sum, smul_smul]
     rw [Finset.sum_comm]
     simp only [mul_comm]
@@ -411,7 +417,8 @@ theorem isUnit_det_of_eigen {O : Type} [CommRing O] [IsLocalRing O] [IsAlgClosed
       simp only [Pi.sub_apply, Pi.smul_apply, smul_eq_mul, map_sub, map_mul, sub_eq_zero]
       exact this)
   have h2 : Pm.mulVec v = ρ (1 + ∑ k ∈ s, c k * ev k p₀) • v := by
-    simp only [Pm, Matrix.add_mulVec, Matrix.one_mulVec, Matrix.sum_mulVec, Matrix.smul_mulVec, map_add, map_one,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Pm, Matrix.add_mulVec, Matrix.one_mulVec, Matrix.sum_mulVec, Matrix.smul_mulVec, map_add (f := _), map_one,
       map_sum, map_mul, add_smul, one_smul, Finset.sum_smul, mul_smul]
     congr 1
     exact Finset.sum_congr rfl fun k hk => by rw [hev k p₀ (hs k hk)]
@@ -442,8 +449,8 @@ theorem exists_basis_fin {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuati
   subst h3
   exact ⟨_, h1, h2⟩
 
-open Classical in
 
+open Classical in
 def IsChi {V ι A : Type} [Fintype ι] [CommGroup A] {n : ℕ} (P : ι → V) (Q : Finset V) (u : ι → A)
     (χ : Multiplicative (↥Q → ZMod n) →* A) : Prop :=
   ∀ x : ↥Q → ZMod n, χ (Multiplicative.ofAdd x) = ∏ q, if h : P q ∈ Q then u q ^ (x ⟨P q, h⟩).val else 1
@@ -463,8 +470,8 @@ theorem IsChi.unique {V ι A : Type} [Fintype ι] [CommGroup A] {n : ℕ} {P : �
     {χ χ' : Multiplicative (↥Q → ZMod n) →* A} (h : IsChi P Q u χ) (h' : IsChi P Q u χ') : χ = χ' :=
   MonoidHom.ext fun x => (h x.toAdd).trans (h' x.toAdd).symm
 
-open MvPolynomial in
 
+open MvPolynomial in
 theorem exists_coords {O W V ι : Type} [CommRing O] [AddCommGroup W] [Module O W] [Fintype ι] {N n : ℕ}
     (bs : Fin n → W) (P : ι → V) (Q : Finset V) (w : W ⊗[O] AddMonoidAlgebra O (↥Q → ZMod N))
     (hw : w ∈ LinearMap.range ((Submodule.span O (Set.range bs)).subtype.rTensor _)) :
@@ -476,12 +483,11 @@ theorem exists_coords {O W V ι : Type} [CommRing O] [AddCommGroup W] [Module O 
   classical
   obtain ⟨w, rfl⟩ := hw
   induction w with
-  | zero => exact ⟨0, fun _ _ _ _ _ _ => by simp⟩
   | add x y hx hy =>
     obtain ⟨m, hm⟩ := hx
     obtain ⟨m', hm'⟩ := hy
     refine ⟨m + m', fun O' _ _ u χ h => ?_⟩
-    simp only [map_add, hm O' u χ h, hm' O' u χ h, Pi.add_apply, add_smul, Finset.sum_add_distrib]
+    simp only [map_add (f := _), hm O' u χ h, hm' O' u χ h, Pi.add_apply, add_smul, Finset.sum_add_distrib]
   | tmul x g =>
     obtain ⟨v, hv⟩ := (Submodule.mem_span_range_iff_exists_fun O).1 x.2
     have hg : ∃ p : MvPolynomial ι O, ∀ (O' : Type) [CommRing O'] [Algebra O O'] (u : ι → O'ˣ)
@@ -497,7 +503,7 @@ theorem exists_coords {O W V ι : Type} [CommRing O] [AddCommGroup W] [Module O 
       | add f g hf hg =>
         obtain ⟨p, hp⟩ := hf
         obtain ⟨p', hp'⟩ := hg
-        exact ⟨p + p', fun O' _ _ u χ h => by rw [map_add, map_add, hp O' u χ h, hp' O' u χ h]⟩
+        exact ⟨p + p', fun O' _ _ u χ h => by rw [map_add (f := _), map_add (f := _), hp O' u χ h, hp' O' u χ h]⟩
       | smul r f hf =>
         obtain ⟨p, hp⟩ := hf
         exact ⟨r • p, fun O' _ _ u χ h => by rw [map_smul, map_smul, hp O' u χ h]⟩

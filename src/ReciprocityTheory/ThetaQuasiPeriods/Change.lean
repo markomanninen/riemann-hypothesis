@@ -1,4 +1,8 @@
-import ReciprocityTheory.ThetaQuasiPeriods.Transl
+module
+
+public import ReciprocityTheory.ThetaQuasiPeriods.Transl
+
+@[expose] public section
 
 noncomputable section
 

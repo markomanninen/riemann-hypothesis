@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SRelOneOneIff
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegelPullbackIdCompCancel
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegelObjectPullbackExistsAndPrincipal
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.DenseGenericOfFlat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCycAwayHomComplex
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrincipalSiegelObjectOddLevelRigid
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSiegelObjectLoweredLevelStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegelLevelChangeBySymplecticSimilitudeStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegelObjectPullbackLevelPowerCalculusStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticSimilitudeInvertibleModNStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowSection
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SRelOneOneIff
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.IsGaloisCover
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegelPullbackIdCompCancel
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SiegelObjectPullbackExistsAndPrincipal
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.DenseGenericOfFlat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCycAwayHomComplex
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrincipalSiegelObjectOddLevelRigid
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSiegelObjectLoweredLevelStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegelLevelChangeBySymplecticSimilitudeStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegelObjectPullbackLevelPowerCalculusStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SymplecticSimilitudeInvertibleModNStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowSection
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -27,38 +31,38 @@ variable {h n N : ℕ} {F : SFam h N (zetaAway N)} {j : cycAway n →+* cycAway 
 theorem zeta_pow (hN : N ≠ 0) : zetaAway N ^ N = 1 :=
   Subtype.ext (Complex.isPrimitiveRoot_exp N hN).pow_eq_one
 
-theorem twist_one : Twist F j LinearMap.id 1 (RingHom.id _) (𝟙 _) where
-  cop := Nat.coprime_one_left N
-  root := (pow_one _).symm
-  fix := RingHom.id_comp j
-  symp x y := by simp [Int.ModEq]
-  low x := rfl
-  comm := by rw [spMap_id', Category.id_comp, Category.comp_id]
-  map := by
-    obtain ⟨φ, φ₂, a, b, c, d⟩ := GlobalTheory.SiegelPullComp.pb_id F.univ
-    exact ⟨φ, a, ⟨φ₂, b, c⟩, d⟩
+theorem twist_one : Twist F j LinearMap.id 1 (RingHom.id _) (𝟙 _) :=
+  { cop := Nat.coprime_one_left N
+    root := (pow_one _).symm
+    fix := RingHom.id_comp j
+    symp x y := by simp [Int.ModEq]
+    low x := rfl
+    comm := by rw [spMap_id', Category.id_comp, Category.comp_id]
+    map := by
+      obtain ⟨φ, φ₂, a, b, c, d⟩ := GlobalTheory.SiegelPullComp.pb_id F.univ
+      exact ⟨φ, a, ⟨φ₂, b, c⟩, d⟩ }
 
 theorem Twist.mul {T T' : (Fin h ⊕ Fin h → ℤ) →ₗ[ℤ] (Fin h ⊕ Fin h → ℤ)} {m m' : ℕ}
     {σ σ' : cycAway N →+* cycAway N} {f f' : F.X ⟶ F.X} (t : Twist F j T m σ f) (t' : Twist F j T' m' σ' f') :
-    Twist F j (T ∘ₗ T') (m * m') (σ.comp σ') (f ≫ f') where
-  cop := Nat.Coprime.mul t.cop t'.cop
-  root := by rw [RingHom.comp_apply, t'.root, map_pow, t.root, ← pow_mul, mul_comm]
-  fix := by rw [RingHom.comp_assoc, t'.fix, t.fix]
-  symp x y := by
-    have h1 := t.symp (T' x) (T' y)
-    have h2 := (t'.symp x y).mul_left m
-    simp only [LinearMap.comp_apply]
-    calc _ ≡ m * omegaStd (T' x) (T' y) [ZMOD N] := h1
-      _ ≡ m * (m' * omegaStd x y) [ZMOD N] := h2
-      _ = ((m * m' : ℕ) : ℤ) * omegaStd x y := by push_cast; ring
-  low x := by simp only [LinearMap.comp_apply]; rw [t.low, t'.low]
-  comm := by rw [Category.assoc, t'.comm, ← Category.assoc, t.comm, Category.assoc, spMap_comp']
-  map := by
-    obtain ⟨ν, a, b, c⟩ := t.map
-    obtain ⟨ν', a', b', c'⟩ := t'.map
-    refine ⟨ν ≫ ν', a.comp a', Sq.comp b' b, fun x => ?_⟩
-    simp only [LinearMap.comp_apply]
-    rw [← Category.assoc, c, Category.assoc, c', ← Category.assoc]
+    Twist F j (T ∘ₗ T') (m * m') (σ.comp σ') (f ≫ f') :=
+  { cop := Nat.Coprime.mul_left t.cop t'.cop
+    root := by rw [RingHom.comp_apply, t'.root, map_pow, t.root, ← pow_mul, mul_comm]
+    fix := by rw [RingHom.comp_assoc, t'.fix, t.fix]
+    symp x y := by
+      have h1 := t.symp (T' x) (T' y)
+      have h2 := (t'.symp x y).mul_left m
+      simp only [LinearMap.comp_apply]
+      calc _ ≡ m * omegaStd (T' x) (T' y) [ZMOD N] := h1
+        _ ≡ m * (m' * omegaStd x y) [ZMOD N] := h2
+        _ = ((m * m' : ℕ) : ℤ) * omegaStd x y := by push_cast; ring
+    low x := by simp only [LinearMap.comp_apply]; rw [t.low, t'.low]
+    comm := by rw [Category.assoc, t'.comm, ← Category.assoc, t.comm, Category.assoc, spMap_comp']
+    map := by
+      obtain ⟨ν, a, b, c⟩ := t.map
+      obtain ⟨ν', a', b', c'⟩ := t'.map
+      refine ⟨ν ≫ ν', a.comp a', Sq.comp b' b, fun x => ?_⟩
+      simp only [LinearMap.comp_apply]
+      rw [← Category.assoc, c, Category.assoc, c', ← Category.assoc] }
 
 theorem Twist.siegPB {T : (Fin h ⊕ Fin h → ℤ) →ₗ[ℤ] (Fin h ⊕ Fin h → ℤ)} {m : ℕ} {σ : cycAway N →+* cycAway N}
     {f : F.X ⟶ F.X} (t : Twist F j T m σ f) (hN : N ≠ 0) (hinj : ∀ a, (∃ b, T a = N • b) → ∃ b, a = N • b)
@@ -322,8 +326,8 @@ theorem Twist.exists_inv (hN : N ≠ 0) (hN1 : 1 < N) (hn0 : n ≠ 0) (hj : j (z
     rw [RingHom.comp_apply, RingEquiv.toRingHom_eq_coe, RingEquiv.coe_toRingHom, hσ', map_pow, t.root, ← pow_mul, hz1,
       RingHom.id_apply])
 
-variable (F j) in
 
+variable (F j) in
 def Grp : Type := {f : F.X ⟶ F.X // ∃ T m σ, Twist F j T m σ f}
 
 instance : One (Grp F j) := ⟨⟨𝟙 _, _, _, _, twist_one⟩⟩

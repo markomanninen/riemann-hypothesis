@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GL2.GJStandardLDefs
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GL2.GJStandardLDefs
+
+@[expose] public section
 
 open MeasureTheory Filter Set Topology IsDedekindDomain NumberField NumberField.mixedEmbedding
 open scoped NumberField.AdeleRing RestrictedProduct SchwartzMap Classical nonZeroDivisors

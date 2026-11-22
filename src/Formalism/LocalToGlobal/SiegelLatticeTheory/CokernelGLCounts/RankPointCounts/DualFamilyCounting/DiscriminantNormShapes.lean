@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DiscOnto
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.DiscOnto
+
+@[expose] public section
 
 open NumberField Module Matrix
 
@@ -63,7 +67,8 @@ theorem linearIndependent_of_jordan {h : V →ₗ⋆[K] V →ₗ[K] K} {L : Subm
   rw [linearIndependent_iff']
   intro s g hg i hi
   have h1 : h (b i) (∑ j ∈ s, g j • b j) = 0 := by rw [hg, map_zero]
-  rw [map_sum, Finset.sum_eq_single i] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_eq_single i] at h1
   · rw [map_smul, smul_eq_mul, hdiag] at h1
     rcases mul_eq_zero.mp h1 with h2 | h2
     · exact h2

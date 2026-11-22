@@ -1,7 +1,13 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAmbOfIsArithVar
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PairingMulFirstChern
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DimClosureOfCoheightField
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAmbOfIsArithVar
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.NontrivialIsomClassInt
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsTypeIsRealConst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DimClosureOfCoheightField
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry TopologicalSpace MvPolynomial
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open ReciprocityTheory.ChartRestriction.G.Out (nonzeroLocus)
@@ -26,7 +32,7 @@ theorem log_card_eq (κ : Type) [Field κ] [Finite κ] (V : Type) [AddCommGroup 
     simp [Nat.card_eq_zero_of_infinite]
 
 theorem log_card_residueField {κ : Type} [Field κ] [Finite κ] {Y : Scheme.{0}} [IsIntegral Y] [Algebra κ Γ(Y, ⊤)]
-    [LocallyOfFiniteType (strHom κ Y)] (hd : topologicalKrullDim Y = (0 + 1 : ℕ)) {z : Y}
+    [LocallyOfFiniteType (strHom κ (X := Y))] (hd : topologicalKrullDim Y = (0 + 1 : ℕ)) {z : Y}
     (hz : Order.coheight z = 1) :
     Real.log (Nat.card (Y.residueField z)) =
       (interNumRed κ (⟨closure {z}, isClosed_closure⟩ : Closeds Y) (Fin.elim0 : Fin 0 → LB Y) : ℝ) *
@@ -76,16 +82,16 @@ theorem finsum_ord_mul_log_card_eq_zero : ∀ (k : Type) [CommRing k] (Y : Schem
   have : AlgebraicGeometry.IsNoetherian Y := hA.isNoetherian
   have : NeZero l := ⟨(Fact.out : l.Prime).ne_zero⟩
   obtain ⟨hpr, H, hH⟩ := isProper_and_exists_isAmpleLB_of_isProjOver hA.isProjOver
-  have hp : IsProjOver (strHom (ZMod l) Y) := by
+  have hp : IsProjOver (strHom (ZMod l) (X := Y)) := by
     have : IsFinite (spMap (Int.castRingHom k)) := by
       rw [spMap, IsFinite.SpecMap_iff]
       exact (RingHom.finite_algebraMap (A := ℤ) (B := k)).2 inferInstance
     have e : strHom (ZMod l) Y ≫ spMap (Int.castRingHom (ZMod l)) = q ≫ spMap (Int.castRingHom k) :=
       specZIsTerminal.hom_ext _ _
     have : IsProper (strHom (ZMod l) Y ≫ spMap (Int.castRingHom (ZMod l))) := by rw [e]; infer_instance
-    have : IsProper (strHom (ZMod l) Y) := IsProper.of_comp _ (spMap (Int.castRingHom (ZMod l)))
+    have : IsProper (strHom (ZMod l) (X := Y)) := IsProper.of_comp _ (spMap (Int.castRingHom (ZMod l)))
     exact (isProjOver_iff_isProper_and_exists_isAmpleLB _).2 ⟨this, H, hH⟩
-  have : IsProper (strHom (ZMod l) Y) := (isProper_and_exists_isAmpleLB_of_isProjOver hp).1
+  have : IsProper (strHom (ZMod l) (X := Y)) := (isProper_and_exists_isAmpleLB_of_isProjOver hp).1
   have hd' : topologicalKrullDim Y = (0 + 1 : ℕ) := hd
   let r : (LB.triv Y).ι → Y.functionFieldˣ := fun _ => Units.mk0 f hf
   have hr : IsRatSec (LB.triv Y) r := fun _ _ h => by simp [r]

@@ -1,8 +1,12 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.InFrameForm
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.HeightLattices.VolImageMulVec
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.HeightLattices.FinIndex
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.HeightLattices.EvLatLatO
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DetSqNormEqHermitianBlockFormulaStatement
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.WhittakerCovolume.InFrameForm
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.HeightLattices.VolImageMulVec
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.HeightLattices.FinIndex
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.HeightLattices.EvLatLatO
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DetSqNormEqHermitianBlockFormulaStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,7 +39,7 @@ theorem compFin_smul (v : HeightOneSpectrum (𝓞 F)) (a : AF F) (z : AE F E) :
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul b e => simp [compFin, TensorProduct.smul_tmul', Algebra.TensorProduct.map_tmul, map_mul]
-  | add x y hx hy => rw [smul_add, map_add, map_add, hx, hy, smul_add]
+  | add x y hx hy => rw [smul_add, map_add (f := _), map_add (f := _), hx, hy, smul_add]
 
 theorem compFin_inclR (v : HeightOneSpectrum (𝓞 F)) (e : E) :
     compFin F E v (inclR (F := F) (AF F) e) = inclR (F := F) (v.adicCompletion F) e := by
@@ -45,14 +49,14 @@ theorem compFin_cA (v : HeightOneSpectrum (𝓞 F)) (z : AE F E) : compFin F E v
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul b e => simp [compFin, cA, HeckeCharacterZeroLocus.SiegelWeilU.sigR, Algebra.TensorProduct.map_tmul]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem compFin_sigR (v : HeightOneSpectrum (𝓞 F)) (z : AF F ⊗[F] E) :
     compFin F E v (HeckeCharacterZeroLocus.SiegelWeilU.sigR (AF F) σ z) = sgv σ v (compFin F E v z) := by
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul b e => simp [compFin, HeckeCharacterZeroLocus.SiegelWeilU.sigR, Algebra.TensorProduct.map_tmul]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem evFin_finOne (v : HeightOneSpectrum (𝓞 F)) : evFin F v (finOne F) = 1 := by
   simp only [evFin, finOne, Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sndA, LinearMap.inr_apply]
@@ -89,7 +93,7 @@ theorem compInf_cA (w : InfinitePlace F) (z : AE F E) :
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul b e => simp [compInf, cA, Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR, Algebra.TensorProduct.map_tmul]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem piInf_cA (d : SD σ) (w : InfinitePlace F) (z : AE F E) :
     piInf (d.B.emb w) (cA σ z) = star (piInf (d.B.emb w) z) := by
@@ -100,7 +104,7 @@ theorem sigR_eq_cA' (z : AF F ⊗[F] E) : HeckeCharacterZeroLocus.SiegelWeilU.si
   induction z using TensorProduct.induction_on with
   | zero => simp
   | tmul a e => simp [HeckeCharacterZeroLocus.SiegelWeilU.sigR, cA, Algebra.TensorProduct.map_tmul]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
 
 theorem piInf_inclR (d : SD σ) (w : InfinitePlace F) (e : E) :
     piInf (d.B.emb w) (inclR (F := F) (AF F) e) = (d.B.emb w).1 e := by
@@ -281,7 +285,55 @@ theorem absE_split (d : SD σ) (x : (AE F E)ˣ) :
 theorem heightDict : HeightDict := by
   intro F E _ _ _ _ _ σ d R x t u T η T₀ hOf θ fr g hR nb lam 𝓖 hc ε w hw
   choose lv hlv using fun v : HeightOneSpectrum (𝓞 F) => exists_haar_tup (E := E) v d.n
-  obtain ⟨hCO, hstd⟩ := PositivityTheory.SiegelWeilFormula.HeightDict.fin_std (σ := σ) d d.n t u η hR.ne
+  have hfin :
+        (∀ v : HeightOneSpectrum (𝓞 F),
+          Gen.IsCO (latM v ((t.1.map (GlobalTheory.AdelicU.compFin F E v)).map (HeckeCharacterZeroLocus.SiegelWeilU.sigR (v.adicCompletion F) σ))) ∧
+          Gen.IsCO (latM v (((inclR (F := F) (v.adicCompletion F) η) • u.1.map (GlobalTheory.AdelicU.compFin F E v)).map
+            (HeckeCharacterZeroLocus.SiegelWeilU.sigR (v.adicCompletion F) σ)))) ∧
+        ∀ᶠ v : HeightOneSpectrum (𝓞 F) in cofinite,
+          ((latM v ((t.1.map (GlobalTheory.AdelicU.compFin F E v)).map (HeckeCharacterZeroLocus.SiegelWeilU.sigR (v.adicCompletion F) σ)) :
+            Set (Fin d.n → v.adicCompletion F ⊗[F] E)) = PositivityTheory.PfSWUS.Loc.latO d.bs v) ∧
+          ((latM v (((inclR (F := F) (v.adicCompletion F) η) • u.1.map (GlobalTheory.AdelicU.compFin F E v)).map
+            (HeckeCharacterZeroLocus.SiegelWeilU.sigR (v.adicCompletion F) σ)) : Set (Fin d.n → v.adicCompletion F ⊗[F] E)) =
+              PositivityTheory.PfSWUS.Loc.latO d.bs v)
+    := by
+    open PositivityTheory.SiegelWeilFormula.HeightDict in
+      classical
+      have hinv1 : ∀ v : HeightOneSpectrum (𝓞 F),
+          (t.1.map (compFin F E v)).map (HeckeCharacterZeroLocus.SiegelWeilU.sigR (v.adicCompletion F) σ) *
+            ((t⁻¹ : GL (Fin d.n) (AE F E)).1.map (compFin F E v)).map (HeckeCharacterZeroLocus.SiegelWeilU.sigR (v.adicCompletion F) σ) = 1 := by
+        intro v
+        have h := congrArg (fun M => (HeckeCharacterZeroLocus.SiegelWeilU.sigR (v.adicCompletion F) σ).mapMatrix
+          ((compFin F E v).mapMatrix M)) (Units.mul_inv t)
+        simpa only [map_mul, map_one, RingHom.mapMatrix_apply] using h
+      have hinv2 : ∀ v : HeightOneSpectrum (𝓞 F),
+          ((inclR (F := F) (v.adicCompletion F) η) • u.1.map (compFin F E v)).map
+              (HeckeCharacterZeroLocus.SiegelWeilU.sigR (v.adicCompletion F) σ) *
+            ((inclR (F := F) (v.adicCompletion F) η⁻¹) • (u⁻¹ : GL (Fin d.n) (AE F E)).1.map (compFin F E v)).map
+              (HeckeCharacterZeroLocus.SiegelWeilU.sigR (v.adicCompletion F) σ) = 1 := by
+        intro v
+        have hu : u.1.map (compFin F E v) * (u⁻¹ : GL (Fin d.n) (AE F E)).1.map (compFin F E v) = 1 := by
+          have h := congrArg (fun M => (compFin F E v).mapMatrix M) (Units.mul_inv u)
+          simpa only [map_mul, map_one, RingHom.mapMatrix_apply] using h
+        have hc : inclR (F := F) (v.adicCompletion F) η * inclR (F := F) (v.adicCompletion F) η⁻¹ = 1 := by
+          rw [← map_mul, mul_inv_cancel₀ hR.ne, map_one]
+        have h2 : (inclR (F := F) (v.adicCompletion F) η • u.1.map (compFin F E v)) *
+            (inclR (F := F) (v.adicCompletion F) η⁻¹ • (u⁻¹ : GL (Fin d.n) (AE F E)).1.map (compFin F E v)) = 1 := by
+          rw [Matrix.smul_mul, Matrix.mul_smul, hu, smul_smul, hc, one_smul]
+        have h := congrArg (fun M => (HeckeCharacterZeroLocus.SiegelWeilU.sigR (v.adicCompletion F) σ).mapMatrix M) h2
+        simpa only [map_mul, map_one, RingHom.mapMatrix_apply] using h
+      refine ⟨fun v => ⟨latM_isCO v _ (Matrix.isUnit_det_of_right_inverse (hinv1 v)),
+        latM_isCO v _ (Matrix.isUnit_det_of_right_inverse (hinv2 v))⟩, ?_⟩
+      have ent : ∀ M : Matrix (Fin d.n) (Fin d.n) (AE F E), ∀ᶠ v : HeightOneSpectrum (𝓞 F) in cofinite,
+          ∀ i j, compFin F E v (M i j) ∈ OE E v := fun M =>
+        Filter.eventually_all.2 fun i => Filter.eventually_all.2 fun j => ev_OE (M i j)
+      filter_upwards [ent t.1, ent (t⁻¹ : GL (Fin d.n) (AE F E)).1, ent u.1, ent (u⁻¹ : GL (Fin d.n) (AE F E)).1,
+        ev_inclR (F := F) η, ev_inclR (F := F) η⁻¹, ev_lat_latO d.bs d.n] with v ht ht' hu hu' he he' hl
+      refine ⟨?_, ?_⟩
+      · rw [latM_eq_lat v _ _ (hinv1 v) (fun i j => OE_sig v (ht i j)) (fun i j => OE_sig v (ht' i j)), hl]
+      · rw [latM_eq_lat v _ _ (hinv2 v) (fun i j => OE_sig v (OE_mul v he (hu i j)))
+          (fun i j => OE_sig v (OE_mul v he' (hu' i j))), hl]
+  obtain ⟨hCO, hstd⟩ := hfin
   have hat : (0 : ℝ) < ((GlobalTheory.Doubling.absE F E (Matrix.GeneralLinearGroup.det t) : ℝ≥0) : ℝ) :=
     absE_pos _
   refine ⟨lv, L1 σ t, L2 σ u η, ((GlobalTheory.Doubling.absE F E (Matrix.GeneralLinearGroup.det t) : ℝ≥0) : ℝ)⁻¹,

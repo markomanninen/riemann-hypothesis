@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.ComplSmulMapE
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.ComplSmulMapE
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,11 +29,11 @@ theorem iE_mul_ne {w w' : HeightOneSpectrum (𝓞 F)} (h : w ≠ w') (x : E ⊗[
     (y : E ⊗[F] w'.adicCompletion F) : iE F E w x * iE F E w' y = 0 := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x₁ x₂ h₁ h₂ => rw [map_add, add_mul, h₁, h₂, add_zero]
+  | add x₁ x₂ h₁ h₂ => rw [map_add (f := _), add_mul, h₁, h₂, add_zero]
   | tmul e a =>
     induction y using TensorProduct.induction_on with
     | zero => simp
-    | add y₁ y₂ h₁ h₂ => rw [map_add, mul_add, h₁, h₂, add_zero]
+    | add y₁ y₂ h₁ h₂ => rw [map_add (f := _), mul_add, h₁, h₂, add_zero]
     | tmul e' a' =>
       rw [iE_tmul, iE_tmul, Algebra.TensorProduct.tmul_mul_tmul, sgl_mul_ne F h, TensorProduct.tmul_zero]
 

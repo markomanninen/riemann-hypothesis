@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsKSValueOneOfRetraction
+
+@[expose] public section
 
 open CategoryTheory AlgebraicGeometry DividedPowers ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.DeRham
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -11,8 +15,8 @@ namespace GlobalTheory.DPLoc
 variable {B S : Type} [CommRing B] [CommRing S] [Algebra B S] (M : Submonoid B)
   [IsLocalization M S] {J : Ideal B} (δ : DividedPowers J)
 
-include M in
 
+include M in
 theorem wellDef {u v : S} {j j' : B} (hj : j ∈ J) (hj' : j' ∈ J)
     (h : u * algebraMap B S j = v * algebraMap B S j') (n : ℕ) :
     u ^ n * algebraMap B S (δ.dpow n j) = v ^ n * algebraMap B S (δ.dpow n j') := by
@@ -35,8 +39,8 @@ theorem wellDef {u v : S} {j j' : B} (hj : j ∈ J) (hj' : j' ∈ J)
   apply hu.mul_left_cancel
   linear_combination h3
 
-include M in
 
+include M in
 theorem rep₂ {x y : S} (hx : x ∈ J.map (algebraMap B S)) (hy : y ∈ J.map (algebraMap B S)) :
     ∃ (u : S) (j j' : B), j ∈ J ∧ j' ∈ J ∧ x = u * algebraMap B S j ∧
       y = u * algebraMap B S j' := by
@@ -49,32 +53,32 @@ theorem rep₂ {x y : S} (hx : x ∈ J.map (algebraMap B S)) (hy : y ∈ J.map (
   · rw [map_mul, ← hj]; linear_combination (-x) * hu
   · rw [map_mul, ← hj']; linear_combination (-y) * hu
 
-include M in
 
+include M in
 theorem rep {x : S} (hx : x ∈ J.map (algebraMap B S)) :
     ∃ (u : S) (j : B), j ∈ J ∧ x = u * algebraMap B S j := by
   obtain ⟨u, j, _, hj, _, e, _⟩ := rep₂ M hx hx
   exact ⟨u, j, hj, e⟩
 
-open Classical in
 
+open Classical in
 def ext (n : ℕ) (x : S) : S :=
   if h : ∃ p : S × B, p.2 ∈ J ∧ x = p.1 * algebraMap B S p.2 then
     h.choose.1 ^ n * algebraMap B S (δ.dpow n h.choose.2) else 0
 
-include M in
 
+include M in
 theorem ext_eq (n : ℕ) (u : S) {j : B} (hj : j ∈ J) :
     ext δ n (u * algebraMap B S j) = u ^ n * algebraMap B S (δ.dpow n j) := by
   have h : ∃ p : S × B, p.2 ∈ J ∧ u * algebraMap B S j = p.1 * algebraMap B S p.2 :=
     ⟨(u, j), hj, rfl⟩
-  rw [ext, dif_pos h]
+  rw [ext, dite_eq_left h]
   exact (wellDef M δ hj h.choose_spec.1 h.choose_spec.2 n).symm
 
 def dp : DividedPowers (J.map (algebraMap B S)) where
   dpow := ext δ
   dpow_null {n x} hx := by
-    rw [ext, dif_neg]
+    rw [ext, dite_eq_right]
     rintro ⟨p, hp, rfl⟩
     exact hx (Ideal.mul_mem_left _ _ (Ideal.mem_map_of_mem _ hp))
   dpow_zero hx := by
@@ -89,7 +93,8 @@ def dp : DividedPowers (J.map (algebraMap B S)) where
     exact Ideal.mul_mem_left _ _ (Ideal.mem_map_of_mem _ (δ.dpow_mem hn hj))
   dpow_add hx hy := by
     obtain ⟨u, j, j', hj, hj', rfl, rfl⟩ := rep₂ M hx hy
-    rw [← mul_add, ← map_add, ext_eq M δ _ _ (J.add_mem hj hj'), δ.dpow_add hj hj', map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← mul_add, ← map_add (f := _), ext_eq M δ _ _ (J.add_mem hj hj'), δ.dpow_add hj hj', map_sum,
       Finset.mul_sum]
     refine Finset.sum_congr rfl fun k hk ↦ ?_
     rw [ext_eq M δ _ _ hj, ext_eq M δ _ _ hj', ← (Finset.HasAntidiagonal.mem_antidiagonal.1 hk : k.1 + k.2 = _), map_mul]

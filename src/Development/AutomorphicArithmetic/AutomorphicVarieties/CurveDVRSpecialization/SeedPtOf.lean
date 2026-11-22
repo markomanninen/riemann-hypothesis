@@ -1,14 +1,18 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.EveryPointSatisfiesFrameCondition
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.LocCFTAll
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ExistsDeterminantPairOverAlgebraicIntegers
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ScNorm
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.ShapeFacts
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.UniversalMapsPointOfPolarizedFlaggedRep
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.ExistsFrameFactorizationOfTrivialOnInertia
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.DiagonalCharactersRegularAlgebraicOfInertiaWeigh
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EqOneOfNear
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.EveryPointSatisfiesFrameCondition
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.LocCFTAll
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.ExistsDeterminantPairOverAlgebraicIntegers
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.ScNorm
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.SelmerTransport.Places
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.ShapeFacts
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.UniversalMapsPointOfPolarizedFlaggedRep
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.ExistsFrameFactorizationOfTrivialOnInertia
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.DiagonalCharactersRegularAlgebraicOfInertiaWeigh
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.EqOneOfNear
+
+@[expose] public section
 
 open NumberField Formalism.ConjugateSelfDual ReciprocityTheory.Gal GlobalTheory.GalOfCusp IsLocalRing UpperTheory.V UpperTheory.V.HV UpperTheory.V.U3 UpperTheory.V.Base UpperTheory.V.Af UpperTheory.V.Pr
 open Polynomial
@@ -74,7 +78,7 @@ private theorem flag_cont {Γ : Type} [Group Γ] [TopologicalSpace Γ] {n : ℕ}
     rw [← (hP g).2 i]
     simp only [Units.val_mul, Matrix.mul_apply]
   simp only [this]
-  exact continuous_finset_sum _ fun b _ => (continuous_finset_sum _ fun a _ =>
+  exact continuous_finsetSum _ fun b _ => (continuous_finsetSum _ fun a _ =>
     continuous_const.mul (hr a b)).mul continuous_const
 
 private theorem comm_one {Γ : Type} [Group Γ] [TopologicalSpace Γ] [IsTopologicalGroup Γ] {κ : Γ →* (Qbar l)ˣ}
@@ -94,6 +98,15 @@ private theorem pt_ex {c : Coef l} [Fr.IsCoef l c.O] {F : Fr.Frame l (ResidueFie
     (h2 : ∀ u, ∀ g ∈ T.r.Ip u, ρ g = 1)
     (h3 : ∀ v i g, ∃ b : c.O, residue c.O b = T.r.chib i (T.G.φ v g) ∧ ‖(ψ v i g).val - b.1‖ < 1) :
     ∃ x : T.B.B →ₐ[c.O] Qbar l, T.B.u.Maps (x : T.B.B →+* Qbar l) (W.GDet.ofRep (W.mat ρ)) ψ := by
+  have chi_single : ∀ {A G : Type} [CommRing A] [Group G] (ρ : G →* Matrix (Fin n) (Fin n) A) (g : G),
+      (W.GDet.ofRep ρ).chi (MonoidAlgebra.single g 1) = (ρ g).charpoly := by
+    intro A G _ _ ρ g
+    change (W.GDet.repAlg ρ A[X] _).det = _
+    rw [map_sub]
+    rw [Matrix.charpoly]
+    congr 1
+    ext i j
+    by_cases h : i = j <;> simp [W.GDet.repAlg, h, Matrix.charmatrix_apply, Matrix.one_apply]
   refine (W.exists_determinantPair_over_algebraicIntegers l T.G c.O n T.r T.B ρ ψ hc ⟨P, fun g => ?_⟩ (fun i g a ha => ?_) h2 (fun v i g a ha => ?_)
     (fun v i g => ?_) hf).exists
   · have h := congrArg (fun u : c.Oˣ => algebraMap c.O (Qbar l) u) (T.K.κ_conj g)
@@ -107,12 +120,12 @@ private theorem pt_ex {c : Coef l} [Fr.IsCoef l c.O] {F : Fr.Frame l (ResidueFie
     rfl
   · obtain ⟨b, hb, hk⟩ := h1 g
     have e : residue c.O ((-1) ^ i * (∏ j, (X - C (b j))).coeff (n - i)) = residue c.O a := by
-      rw [ha, W.Resid.Dbar, W.GDet.lam, (AlgebraTools.Det.repApi _).2.1, map_mul, ← coeff_map, Polynomial.map_prod]
+      rw [ha, W.Resid.Dbar, W.GDet.lam, chi_single _ _, map_mul, ← coeff_map, Polynomial.map_prod]
       change _ = _ * (Matrix.diagonal _).charpoly.coeff _
       rw [Matrix.charpoly_diagonal]
       simp only [map_pow, map_neg, map_one, Polynomial.map_sub, map_X, map_C, hb]
     refine tri ?_ (near_of_res e)
-    rw [W.GDet.lam, (AlgebraTools.Det.repApi _).2.1]
+    rw [W.GDet.lam, chi_single _ _]
     have e' : ((-1) ^ i * (∏ j, (X - C (b j))).coeff (n - i) : c.O).1 =
         (-1) ^ i * (∏ j, (X - C (b j).1)).coeff (n - i) := by
       have e0 : ∀ y : c.O, y.1 = algebraMap c.O (Qbar l) y := fun _ => rfl
@@ -140,7 +153,7 @@ private theorem pr_surj {L Ω : Type} [Field L] [NumberField L] [IsCMField L] [F
 
 private theorem val_iff {L Ω : Type} [Field L] [NumberField L] [Field Ω] [Algebra L Ω] {A : ValuationSubring Ω} {v : W.Plc L}
     (h : IsPlaceOver A v) : A.valuation (l : Ω) < 1 ↔ ((l : ℕ) : 𝓞 L) ∈ v.asIdeal := by
-  simpa using h (l : ℕ)
+  convert h (l : 𝓞 L) using 1 <;> simp only [map_natCast]
 
 variable {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {c : Coef l}
   {η : G ℚ Ω →* ℤˣ} {Ψ : G ℚ Ω →* c.Oˣ} {σ g₁ : G ℚ Ω} {B : ValuationSubring Ω} {M : ℕ}
@@ -248,7 +261,16 @@ private theorem main (H : GlobalTheory.Published.GlobalArtinReciprocity) (ι : Q
     refine hJ x wt (tw r ka) (by have := R.n23; omega) (by have := R.n23; omega) ⟨hwt1, fun v i => hψ v i ▸ hwt2 v i⟩
       ?_ htw hr.aut (fun s hs => htame _ ?_ s hs fun i => ?_)
       fun v => ⟨?_, fun a b => ?_⟩
-    · refine (congrArg (W.GDet.comap · (prT R)) hx.1).trans (((AlgebraTools.Det.repApi _).2.2.2.2.2.2.1 _).trans ?_)
+    · have hcomap : (W.GDet.ofRep (W.mat ρ)).comap (prT R) = W.GDet.ofRep ((W.mat ρ).comp (prT R)) := by
+        refine W.GDet.ext fun B _ _ x => ?_
+        change (W.GDet.repAlg (W.mat ρ) B (MonoidAlgebra.mapDomainRingHom B (prT R) x)).det =
+          (W.GDet.repAlg ((W.mat ρ).comp (prT R)) B x).det
+        congr 1
+        induction x using MonoidAlgebra.induction_linear with
+        | zero => simp
+        | add a b ha hb => simp only [map_add (f := _), ha, hb]
+        | single g r => simp [W.GDet.repAlg]
+      refine (congrArg (W.GDet.comap · (prT R)) hx.1).trans (hcomap.trans ?_)
       exact congrArg _ (MonoidHom.ext fun s => congrArg Units.val (hρr s))
     · obtain ⟨d, rfl⟩ := hM
       refine fun h => R.v0M ?_
@@ -275,8 +297,3 @@ private theorem main (H : GlobalTheory.Published.GlobalArtinReciprocity) (ι : Q
     exact near_mul (a' := (ka g.1).val) (tri (hκc v i g) (hX i g.1)) (by simp) (hzn _ _) (hkn _)
 
 end SlopeTestRemainingChoices
-
-theorem UpperTheory.V.Pr.seedPtOf :
-    GlobalTheory.Published.GlobalArtinReciprocity → UpperTheory.V.Pr.SeedPtOf := by
-  intro H Ω _ _ _ l _ ι c _ N _ e ψ η σ g₁ B M hL L _ _ _ _ _ Φ k c₁ _ f n ka R hka χ' j hχ hc m hm r hr J hJ
-  exact main H ι ((Dvd.intro _ rfl).trans hL.dvd) R hka χ' j hχ hc m hm r hr J hJ

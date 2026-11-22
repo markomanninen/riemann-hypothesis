@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDictZSt
-import Formalism.HermitianLattices.HermitianLatticesProofs.LocBasic
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDictZSt
+public import Formalism.HermitianLattices.HermitianLatticesProofs.LocBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,7 +84,8 @@ theorem cT_gl (σ : R →+* R) {s : Finset ι} {e : ι → R} (hσ : ∀ i ∈ s
     Formalism.UG.cT σ (gl s e M A) = gl s e (Formalism.UG.cT σ M) (fun i => Formalism.UG.cT σ (A i)) := by
   unfold gl Formalism.UG.cT
   ext i j
-  simp only [Matrix.transpose_apply, Matrix.map_apply, Matrix.add_apply, Matrix.sum_apply, Matrix.smul_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.transpose_apply, Matrix.map_apply, Matrix.add_apply, Matrix.sum_apply, Matrix.smul_apply,
     Matrix.sub_apply, map_add, map_sum, map_mul, map_sub, smul_eq_mul]
   congr 1
   exact Finset.sum_congr rfl fun k hk => by rw [hσ k hk]
@@ -112,11 +117,9 @@ def ev (v : HeightOneSpectrum (𝓞 F)) : Af F →+* v.adicCompletion F where
 
 theorem comp_mul (a b : Af F) (v : HeightOneSpectrum (𝓞 F)) : (a * b) v = a v * b v := rfl
 theorem comp_add (a b : Af F) (v : HeightOneSpectrum (𝓞 F)) : (a + b) v = a v + b v := rfl
-theorem comp_one (v : HeightOneSpectrum (𝓞 F)) : (1 : Af F) v = 1 := rfl
-theorem comp_zero (v : HeightOneSpectrum (𝓞 F)) : (0 : Af F) v = 0 := rfl
+
 
 open Classical in
-
 def eT (T : Set (HeightOneSpectrum (𝓞 F))) : Af F :=
   mkI (fun v => if v ∈ T then 1 else 0) (fun v => by split_ifs; exacts [one_mem _, zero_mem _])
 
@@ -310,7 +313,7 @@ theorem glue (T : Set (HeightOneSpectrum (𝓞 I.F))) (w : Fin I.n → I.E)
     { carrier := {a | algebraMap (𝓞 I.F) (𝓞 I.E) a • w ∈ I.L}
       add_mem' := fun {a b} ha hb => by
         show algebraMap (𝓞 I.F) (𝓞 I.E) (a + b) • w ∈ I.L
-        rw [map_add, add_smul]; exact I.L.add_mem ha hb
+        rw [map_add (f := _), add_smul]; exact I.L.add_mem ha hb
       zero_mem' := by
         show algebraMap (𝓞 I.F) (𝓞 I.E) 0 • w ∈ I.L
         rw [map_zero, zero_smul]; exact I.L.zero_mem
@@ -348,7 +351,7 @@ theorem glue (T : Set (HeightOneSpectrum (𝓞 I.F))) (w : Fin I.n → I.E)
           inv_mul_cancel₀ (ne0 (hav' v hvT hvm))]
       · rw [if_pos ⟨hvT, hvm⟩, if_neg (fun h => hvm h.2), zero_mul, add_zero, inv_mul_cancel₀ (ne0 hvm)]
     · rw [eT_of_not hvT, if_neg (fun h => hvT h.1), if_neg (fun h => hvT h.1), zero_mul, zero_mul, add_zero]
-  rw [hid, map_add, map_mul, map_mul, add_smul, mul_smul, mul_smul, ← iv_OF, ← iv_OF]
+  rw [hid, map_add (f := _), map_mul, map_mul, add_smul, mul_smul, mul_smul, ← iv_OF, ← iv_OF]
   exact add_mem (DictLat.Lf_smul I (iA_mem I hu0) (DictLat.iv_mem I hmw))
     (DictLat.Lf_smul I (iA_mem I hu1) (DictLat.iv_mem I haw))
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.ZetaCharacterDivisibility.PhiOfDivOf
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceUnitaryLocalPointsEquivGL
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.ZetaCharacterDivisibility.PhiOfDivOf
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SplitPlaceUnitaryLocalPointsEquivGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,6 @@ open GlobalTheory.CuspRep GlobalTheory.WeilDeligne GlobalTheory.Pst GlobalTheory
 open Formalism.MainNotions.SumRepresentations.At (sumRep)
 open GlobalTheory.TripleGal (rk1)
 open UpperTheory.V.Af (FrobEig algSat RepIso)
-open UpperTheory.Gal.TP.Sub (Cl Above unrPol)
 open UpperTheory.Gal.crystallineComparison (GenericMul rootPol)
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -21,8 +24,8 @@ variable {E : Type} [Field E] [NumberField E] [IsCMField E]
 
 abbrev cpl (w : HeightOneSpectrum (𝓞 E)) : HeightOneSpectrum (𝓞 E) := conjSrc (GlobalTheory.SplitPts.conjE E) w
 
-omit [NumberField E] [IsCMField E] in
 
+omit [NumberField E] [IsCMField E] in
 def SameK (x : E) (w w' : HeightOneSpectrum (𝓞 E)) : Prop :=
   ∀ y : 𝓞 E, (y : E) ∈ IntermediateField.adjoin ℚ {x} → (y ∈ w.asIdeal ↔ y ∈ w'.asIdeal)
 
@@ -38,13 +41,14 @@ def LocIso : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (a : ℕ) (w : HeightOneSpectrum (𝓞 E)), IsSplitAt w →
     locU (E := E) a (cpl w) = locU a w ∧
     ∃ β : GL (Fin a) ((cpl w).adicCompletion E) ≃ₜ* GL (Fin a) (w.adicCompletion E),
-      (∀ x : UA E a, β (cLoc (cpl w) x) = cLoc w x) ∧ (∀ g, g ∈ GlobalTheory.LFun.KGL (cpl w) a → β g ∈ GlobalTheory.LFun.KGL w a) ∧
+      (∀ x : UA E a, β (cLoc (cpl w) x) = cLoc w x) ∧ (∀ g, g ∈ GlobalTheory.LFun.KGL (cpl w) (n := a) → β g ∈ GlobalTheory.LFun.KGL w (n := a)) ∧
       ∀ (V : Type) [AddCommGroup V] [Module ℂ V] (σ : Representation ℂ (GL (Fin a) (w.adicCompletion E)) V),
         GlobalTheory.SmGL.IsCuspidal σ → GlobalTheory.SmGL.IsCuspidal (σ.comp β.toMulEquiv.toMonoidHom)
 
 def SatConj : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (a : ℕ) (U : Submodule ℂ (UA E a → ℂ)), IsAutRepU U →
-    ∀ w : HeightOneSpectrum (𝓞 E), IsSplitAt w → (∃ B, SatU U w B) → ∃ B, SatU U (cpl w) B
+    ∀ w : HeightOneSpectrum (𝓞 E), IsSplitAt w →
+      (∃ B, UpperTheory.Gal.TP.Sub.SatU U w B) → ∃ B, UpperTheory.Gal.TP.Sub.SatU U (cpl w) B
 
 def TyConj : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (l a : ℕ) (U : Submodule ℂ (UA E a → ℂ))

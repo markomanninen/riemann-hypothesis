@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.CharacterGerms.Interface
-import Formalism.LocalToGlobal.CharacterGerms.ScaledSecondIntegral
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.RowDataAdaptedChainData
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.CharacterGerms.Interface
+public import Formalism.LocalToGlobal.CharacterGerms.ScaledSecondIntegral
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.RowDataAdaptedChainData
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Uniformization.AllDV
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.AllDV
+
+@[expose] public section
+
 open GlobalTheory.UT
 
 namespace GlobalTheory.TestFibre

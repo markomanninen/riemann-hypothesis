@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.KernelLattices.FirstKernelLawReading
-import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.DualWeylPoint
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.TensorBasis
-import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ProdFinEqProdCastLE
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.KernelLattices.FirstKernelLawReading
+public import Formalism.LocalToGlobal.KernelLattices.KernelLocalFactors.ThDistC
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.DualWeylPoint
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.TensorBasis
+public import Formalism.LocalRingCardinality.CoeNeZeroOfNotMem
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ProdFinEqProdCastLE
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -67,7 +71,7 @@ theorem jetLin_inl_mul (J : (DVar ι a b →₀ ℕ) → K) (f : Pol K ι b) (q 
     rw [rename_monomial, rename_monomial, monomial_mul, jetLin_mixed, smul_monomial, smul_eq_mul]
     congr 1
     ring
-  | add f g hf hg => rw [map_add, add_mul, map_add, hf, hg, smul_add]
+  | add f g hf hg => rw [map_add (f := _), add_mul, map_add (f := _), hf, hg, smul_add]
 
 theorem jetLin_liftL (J : (DVar ι a b →₀ ℕ) → K) (φ : Pol K ι b →ₐ[K] Pol K ι b)
     (R : MvPolynomial ((ι × Fin b × Fin b) ⊕ DVar ι a b) K) : jetLin J (liftL φ R) = φ (jetLin J R) := by
@@ -80,7 +84,7 @@ theorem jetLin_liftL (J : (DVar ι a b →₀ ℕ) → K) (φ : Pol K ι b →�
         rename Sum.inl (monomial p 1) * rename Sum.inr (monomial q c) := by
       rw [rename_monomial, rename_monomial, monomial_mul, one_mul]
     rw [h, map_mul, liftL_inl, liftL_inr, jetLin_inl_mul, jetLin_inl_mul, map_smul]
-  | add f g hf hg => rw [map_add, map_add, map_add, map_add, hf, hg]
+  | add f g hf hg => rw [map_add (f := _), map_add (f := _), map_add (f := _), map_add (f := _), hf, hg]
 
 def resB (h : a ≤ b) (β : ι → Matrix (Fin b) (Fin b) K) : ι → Matrix (Fin a) (Fin a) K :=
   fun τ r s => β τ (Fin.castLE h r) (Fin.castLE h s)
@@ -94,7 +98,8 @@ theorem liftL_subD (h : a ≤ b) {β : ι → Matrix (Fin b) (Fin b) K} (hβ : I
     apply MvPolynomial.algHom_ext
     rintro ⟨τ, α, s⟩
     have hs : s.1 < b := lt_of_lt_of_le s.2 h
-    simp only [AlgHom.comp_apply, subD, colSub, aeval_X, dif_pos hs, map_sum, map_mul, liftL, Sum.elim_inl, Sum.elim_inr, rename_X,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AlgHom.comp_apply, subD, colSub, aeval_X, dif_pos hs, map_sum, map_mul, liftL, Sum.elim_inl, Sum.elim_inr, rename_X,
       algHom_C, algebraMap_eq]
     have h1 : ∀ r : Fin a, (r : ℕ) < b := fun r => lt_of_lt_of_le r.2 h
     simp only [dif_pos (h1 _)]
@@ -126,7 +131,7 @@ theorem jet_weight : JetWt := by
     rfl
   · intro r hr
     simp only [extNu]
-    rw [dif_neg (not_lt.2 hr), pow_zero]
+    rw [dite_eq_right (not_lt.2 hr), pow_zero]
 
 end Wt
 
@@ -140,7 +145,7 @@ theorem map_jetLin (σ : K →+* L) (J : (DVar ι a b →₀ ℕ) → K) (R : Mv
     map σ (jetLin J R) = jetLin (fun m => σ (J m)) (map σ R) := by
   induction R using MvPolynomial.induction_on' with
   | monomial m c => rw [jetLin_monomial, map_monomial, map_monomial, jetLin_monomial, map_mul]
-  | add f g hf hg => simp only [map_add, hf, hg]
+  | add f g hf hg => simp only [map_add (f := _), hf, hg]
 
 theorem map_subD (σ : K →+* L) (P : Pol K ι a) : map σ (subD K ι a b P) = subD L ι a b (map σ P) := by
   have e : (map σ).comp (subD K ι a b).toRingHom = ((subD L ι a b).toRingHom).comp (map σ) := by
@@ -198,40 +203,6 @@ theorem eval_frDet (v : ι × Fin a × Fin a → ℂ) (τ : ι) : eval v (frDet 
   ext α k
   simp
 
-theorem frPolyG_inj (fr : Y → ι → Matrix (Fin a) (Fin a) ℂ)
-    (hr : ∀ f : ι → Matrix (Fin a) (Fin a) ℂ, (∀ τ, (f τ).det ≠ 0) → ∃ y, fr y = f) : Function.Injective (frPolyG fr) := by
-  rw [injective_iff_map_eq_zero]
-  intro Q hQ
-  have h0 : Q * ∏ τ, frDet ℂ a τ = 0 := by
-    apply MvPolynomial.funext
-    intro v
-    rw [map_mul, map_zero, map_prod]
-    simp only [eval_frDet]
-    by_cases h : ∀ τ, (Matrix.of fun α k => v (τ, α, k) : Matrix (Fin a) (Fin a) ℂ).det ≠ 0
-    · obtain ⟨y, hy⟩ := hr (fun τ => Matrix.of fun α k => v (τ, α, k)) h
-      have h1 := congrFun hQ y
-      have h2 : eval v Q = 0 := by
-        have : frPolyG fr Q y = eval v Q := by
-          show eval (fun k : ι × Fin a × Fin a => fr y k.1 k.2.1 k.2.2) Q = _
-          rw [hy]; rfl
-        rw [← this, h1]; rfl
-      rw [h2, zero_mul]
-    · push Not at h
-      obtain ⟨τ, hτ⟩ := h
-      rw [Finset.prod_eq_zero (Finset.mem_univ τ) hτ, mul_zero]
-  rcases mul_eq_zero.1 h0 with h | h
-  · exact h
-  · exfalso
-    have h1 := congrArg (eval fun k : ι × Fin a × Fin a => if k.2.1 = k.2.2 then (1 : ℂ) else 0) h
-    rw [map_prod, map_zero] at h1
-    simp only [eval_frDet] at h1
-    have h2 : ∀ τ : ι, (Matrix.of fun α k : Fin a => (if α = k then (1 : ℂ) else 0)).det = 1 := by
-      intro τ
-      have : (Matrix.of fun α k : Fin a => (if α = k then (1 : ℂ) else 0)) = 1 := by
-        ext α k; simp [Matrix.one_apply]
-      rw [this, Matrix.det_one]
-    exact one_ne_zero ((Finset.prod_eq_one fun τ _ => h2 τ).symm.trans h1)
-
 theorem frInvG_spec {fr : Y → ι → Matrix (Fin a) (Fin a) ℂ} (hinj : Function.Injective (frPolyG fr)) :
     frInvG fr ∘ₗ frPolyG fr = LinearMap.id :=
   Classical.epsilon_spec (p := fun g => g ∘ₗ frPolyG fr = LinearMap.id)
@@ -275,86 +246,6 @@ theorem unfolding_gl_eval : UnfGEv := by
   simp only [zpow_neg]
   ring
 
-theorem frPolyG_colSub (fr : Y → ι → Matrix (Fin a) (Fin a) ℂ) (β : ι → Matrix (Fin a) (Fin a) ℂ) (Q : Pol ℂ ι a) (y : Y) :
-    frPolyG fr (colSub β Q) y = eval (fun k : ι × Fin a × Fin a => (fr y k.1 * β k.1) k.2.1 k.2.2) Q := by
-  have e : (eval fun k : ι × Fin a × Fin a => fr y k.1 k.2.1 k.2.2).comp (colSub β).toRingHom =
-      eval fun k : ι × Fin a × Fin a => (fr y k.1 * β k.1) k.2.1 k.2.2 := by
-    apply MvPolynomial.ringHom_ext
-    · intro c
-      simp [colSub]
-    · intro v
-      simp only [RingHom.comp_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, colSub, aeval_X, map_sum, map_mul, eval_C, eval_X,
-        Matrix.mul_apply]
-      exact Finset.sum_congr rfl fun r _ => mul_comm _ _
-  exact RingHom.congr_fun e Q
-
-theorem det_bor {β : ι → Matrix (Fin a) (Fin a) ℂ} (hβ : IsBor β) (τ : ι) : (β τ).det = ∏ r, β τ r r :=
-  Matrix.det_of_isUpperTriangular fun r s h => (hβ τ).1 r s h
-
-theorem bor_id {β : ι → Matrix (Fin a) (Fin a) ℂ} (hβ : IsBor β) (d : ι → ℂ) (lam : ι → Fin a → ℤ) (sS : ι → ℤ) (ν : ι → Fin a → ℕ)
-    (hν : ∀ τ r, lam τ r + sS τ = ν τ r) :
-    (∏ τ, (d τ * (β τ).det) ^ sS τ) * ∏ τ, ∏ r, β τ r r ^ lam τ r = (∏ τ, ∏ r, β τ r r ^ ν τ r) * ∏ τ, d τ ^ sS τ := by
-  simp only [mul_zpow, Finset.prod_mul_distrib]
-  rw [mul_assoc, mul_comm]
-  congr 1
-  rw [← Finset.prod_mul_distrib]
-  refine Finset.prod_congr rfl fun τ _ => ?_
-  rw [det_bor hβ, ← Finset.prod_zpow, ← Finset.prod_mul_distrib]
-  refine Finset.prod_congr rfl fun r _ => ?_
-  rw [← zpow_add₀ ((hβ τ).2 r), add_comm, hν, zpow_natCast]
-
-theorem sharp_vector_formula : SharpVIs := by
-  intro ι _ a Y fr hr lam sS ν hν F
-  have hdet : ∀ y τ, (fr y τ).det ≠ 0 := fun y => (hr (fr y)).1 ⟨y, rfl⟩
-  have hinj : Function.Injective (frPolyG fr) := frPolyG_inj fr fun f hf => (hr f).2 hf
-  have hP : ∀ y, (∏ τ, (fr y τ).det ^ sS τ) ≠ 0 := fun y => Finset.prod_ne_zero_iff.2 fun τ _ => zpow_ne_zero _ (hdet y τ)
-  constructor
-  · rintro ⟨Q, hQ, rfl⟩
-    refine ⟨⟨fun y => (∏ τ, (fr y τ).det ^ sS τ)⁻¹ * frPolyG fr Q y, ⟨⟨Q * ∏ τ, frDet ℂ a τ ^ (-sS τ).toNat, fun τ => (sS τ).toNat, ?_⟩, ?_⟩, ?_⟩, Q, rfl⟩
-    · intro y
-      show (∏ τ, (fr y τ).det ^ sS τ)⁻¹ * eval (fun k : ι × Fin a × Fin a => fr y k.1 k.2.1 k.2.2) Q * ∏ τ, (fr y τ).det ^ (sS τ).toNat =
-        eval (fun k : ι × Fin a × Fin a => fr y k.1 k.2.1 k.2.2) (Q * ∏ τ, frDet ℂ a τ ^ (-sS τ).toNat)
-      rw [map_mul, map_prod, mul_comm (∏ τ, (fr y τ).det ^ sS τ)⁻¹, mul_assoc, ← Finset.prod_inv_distrib, ← Finset.prod_mul_distrib]
-      congr 1
-      refine Finset.prod_congr rfl fun τ _ => ?_
-      rw [map_pow, eval_frDet, ← zpow_neg, ← zpow_natCast, ← zpow_natCast, ← zpow_add₀ (hdet y τ)]
-      congr 1
-      have := Int.toNat_sub_toNat_neg (sS τ)
-      omega
-    · intro y y₂ β hβ h2
-      have e1 : frPolyG fr Q y₂ = (∏ τ, ∏ r, β τ r r ^ ν τ r) * frPolyG fr Q y := by
-        have := frPolyG_colSub fr β Q y
-        rw [hQ β hβ] at this
-        show eval (fun k : ι × Fin a × Fin a => fr y₂ k.1 k.2.1 k.2.2) Q = _
-        simp only [h2]
-        rw [← this]
-        simp
-      have e2 := bor_id hβ (fun τ => (fr y τ).det) lam sS ν hν
-      have e3 : (∏ τ, (fr y₂ τ).det ^ sS τ) = ∏ τ, ((fr y τ).det * (β τ).det) ^ sS τ :=
-        Finset.prod_congr rfl fun τ _ => by rw [h2, Matrix.det_mul]
-      show (∏ τ, (fr y₂ τ).det ^ sS τ)⁻¹ * frPolyG fr Q y₂ = _ * ((∏ τ, (fr y τ).det ^ sS τ)⁻¹ * frPolyG fr Q y)
-      rw [e1, inv_mul_eq_iff_eq_mul₀ (hP y₂), e3, ← mul_assoc, ← mul_assoc, e2, mul_assoc (∏ τ, ∏ r, β τ r r ^ ν τ r), mul_assoc,
-        mul_inv_cancel₀ (hP y), one_mul]
-    · funext y
-      show _ = (∏ τ, (fr y τ).det ^ sS τ) * ((∏ τ, (fr y τ).det ^ sS τ)⁻¹ * frPolyG fr Q y)
-      rw [mul_inv_cancel_left₀ (hP y)]
-  · rintro ⟨⟨f, ⟨-, hw⟩, hF⟩, Q, hQ⟩
-    refine ⟨Q, fun β hβ => hinj ?_, hQ⟩
-    funext y
-    obtain ⟨y₂, h2⟩ := (hr fun τ => fr y τ * β τ).2 fun τ => by
-      rw [Matrix.det_mul, det_bor hβ]
-      exact mul_ne_zero (hdet y τ) (Finset.prod_ne_zero_iff.2 fun r _ => (hβ τ).2 r)
-    have h2' : ∀ τ, fr y₂ τ = fr y τ * β τ := fun τ => congrFun h2 τ
-    have e0 : ∀ y, frPolyG fr Q y = (∏ τ, (fr y τ).det ^ sS τ) * f y := fun y => by rw [← hQ, hF]; rfl
-    have e1 : frPolyG fr (colSub β Q) y = frPolyG fr Q y₂ := by
-      rw [frPolyG_colSub]
-      show _ = eval (fun k : ι × Fin a × Fin a => fr y₂ k.1 k.2.1 k.2.2) Q
-      simp only [h2']
-    have e2 := bor_id hβ (fun τ => (fr y τ).det) lam sS ν hν
-    have e3 : (∏ τ, (fr y₂ τ).det ^ sS τ) = ∏ τ, ((fr y τ).det * (β τ).det) ^ sS τ :=
-      Finset.prod_congr rfl fun τ _ => by rw [h2', Matrix.det_mul]
-    rw [e1, map_smul, Pi.smul_apply, smul_eq_mul, e0, e0, hw y y₂ β hβ h2', e3, ← mul_assoc, e2, mul_assoc]
-
 end UnfG
 
 section VVWt
@@ -386,7 +277,7 @@ theorem colAddS_insert (t l : Fin n) (hl : l ≠ t) (S : Finset (Fin n)) (hS : l
   intro v
   simp only [colAddS, colAdd, AlgHom.comp_apply, aeval_X]
   split_ifs with h
-  · rw [map_add, map_mul, aeval_X, aeval_X, algHom_C, if_pos h, if_neg hl, Finset.sum_insert hS]
+  · rw [map_add (f := _), map_mul, aeval_X, aeval_X, algHom_C, if_pos h, if_neg hl, Finset.sum_insert hS]
     simp only [algebraMap_eq]
     ring
   · rw [aeval_X, if_neg h]
@@ -429,7 +320,8 @@ theorem colSc_hom {ν : Fin n → ℕ} {F : MvPolynomial (Fin r × Fin n) K} (hF
   classical
   conv_lhs => rw [F.as_sum]
   conv_rhs => rw [F.as_sum]
-  rw [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum]
   refine Finset.sum_congr rfl fun m hm => ?_
   rw [colSc_monomial]
   congr 2
@@ -465,7 +357,8 @@ theorem colOne_eq (β : Matrix (Fin n) (Fin n) K) (hβ : ∀ w s, s < w → β w
   simp only [colOne, colSc, colAddS, AlgHom.comp_apply, aeval_X]
   split_ifs with h
   · rw [sum_split t _ fun w hw => by rw [hβ w t hw, C_0, zero_mul]]
-    rw [map_add, aeval_X, if_pos h, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), aeval_X, if_pos h, map_sum]
     congr 1
     · obtain ⟨a, s⟩ := v
       simp only at h
@@ -480,8 +373,8 @@ theorem colOne_good {ν : Fin n → ℕ} {F : MvPolynomial (Fin r × Fin n) K} (
     (hβ : ∀ w s, s < w → β w s = 0) (t : Fin n) : colOne β t F = (β t t ^ ν t) • F := by
   rw [colOne_eq β hβ, AlgHom.comp_apply, colAddS_inv hF t _ _ (fun l hl => (Finset.mem_filter.1 hl).2), colSc_hom (lsat_mem_dualWeyl.1 hF).1]
 
-open Classical in
 
+open Classical in
 def cutCol (β : Matrix (Fin n) (Fin n) K) (t : Fin n) : Matrix (Fin n) (Fin n) K :=
   fun w s => if s = t then (if w = t then 1 else 0) else β w s
 
@@ -493,7 +386,8 @@ theorem colSub1_cut (β : Matrix (Fin n) (Fin n) K) (t : Fin n) (hid : ∀ s, s 
   simp only [colSub1, colOne, AlgHom.comp_apply, aeval_X]
   split_ifs with h
   · subst h
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun w _ => ?_
     rw [map_mul, algHom_C, aeval_X]
     by_cases hw : s < w
@@ -625,7 +519,7 @@ open MvPolynomial Formalism.L2.DIV Formalism.GradedWeylDivisibility
 variable {K : Type} [Field K] {r n : ℕ}
 
 theorem coeff_colSc (t : Fin n) (d : K) (F : MvPolynomial (Fin r × Fin n) K) (m : Fin r × Fin n →₀ ℕ) :
-    coeff m (colSc t d F) = d ^ (∑ a : Fin r, m (a, t)) * coeff m F := by
+    AddMonoidAlgebra.coeff (colSc t d F) m = d ^ (∑ a : Fin r, m (a, t)) * AddMonoidAlgebra.coeff F m := by
   classical
   induction F using MvPolynomial.induction_on' with
   | monomial m' c =>
@@ -633,7 +527,7 @@ theorem coeff_colSc (t : Fin n) (d : K) (F : MvPolynomial (Fin r × Fin n) K) (m
     split_ifs with h
     · rw [h]
     · simp
-  | add f g hf hg => rw [map_add, coeff_add, coeff_add, hf, hg, mul_add]
+  | add f g hf hg => rw [map_add (f := _), AddMonoidAlgebra.coeff_add, AddMonoidAlgebra.coeff_add, Finsupp.add_apply, Finsupp.add_apply, hf, hg, mul_add]
 
 theorem pow_inj_of_infinite [Infinite K] {a b : ℕ} (h : ∀ x : K, x ≠ 0 → x ^ a = x ^ b) : a = b := by
   have h0 : (Polynomial.X ^ a - Polynomial.X ^ b : Polynomial K) = 0 := by
@@ -673,9 +567,9 @@ theorem colSub1_trans (l j : Fin n) (hlj : l ≠ j) (c : K) :
       · have h2' : s ≠ l := fun h => h2 (h1.trans h)
         simp [h1, h2']
     · by_cases h2 : w = l
-      · by_cases h3 : s = j <;> simp [h1, h2, h3, hlj]
+      · by_cases h3 : s = j <;> simp [h2, h3, hlj]
       · simp [h1, h2]
-  simp only [e, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [e, Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   split_ifs <;> simp
 
 theorem mem_dualWeyl_of_bor [Infinite K] {ν : Fin n → ℕ} {F : MvPolynomial (Fin r × Fin n) K}
@@ -690,11 +584,11 @@ theorem mem_dualWeyl_of_bor [Infinite K] {ν : Fin n → ℕ} {F : MvPolynomial 
       have h2 := h (Matrix.diagonal fun s => if s = t then x else 1) (fun w s hws => Matrix.diagonal_apply_ne _ hws.ne')
         (fun w => by rw [Matrix.diagonal_apply_eq]; split_ifs; exacts [hx, one_ne_zero])
       rw [colSub1_diag] at h2
-      have h3 := congrArg (coeff m) h2
+      have h3 := congrArg (AddMonoidAlgebra.coeff · m) h2
       rw [coeff_colSc, coeff_smul, smul_eq_mul] at h3
       have h4 : (∏ y, (Matrix.diagonal (fun s => if s = t then x else 1) : Matrix (Fin n) (Fin n) K) y y ^ ν y) = x ^ ν t := by
         rw [Finset.prod_eq_single t]
-        · rw [Matrix.diagonal_apply_eq, if_pos rfl]
+        · rw [Matrix.diagonal_apply_eq, ite_eq_left rfl]
         · intro y _ hy
           rw [Matrix.diagonal_apply_eq, if_neg hy, one_pow]
         · intro h; exact absurd (Finset.mem_univ _) h
@@ -729,8 +623,8 @@ variable {K : Type} [Field K] {n : ℕ} {ι : Type}
 
 abbrev Off (ι : Type) (n : ℕ) (τ : ι) : Type := {v : ι × Fin n × Fin n // v.1 ≠ τ}
 
-open Classical in
 
+open Classical in
 def psi (τ : ι) : Pol K ι n →ₐ[K] MvPolynomial (Off ι n τ) (MvPolynomial (Fin n × Fin n) K) :=
   aeval fun v => if h : v.1 = τ then C (X v.2) else X ⟨v, h⟩
 
@@ -752,7 +646,7 @@ theorem psi'_psi (τ : ι) (Q : Pol K ι n) : psi' τ (psi τ Q) = Q := by
 theorem psi_blockEmb (τ : ι) (G : MvPolynomial (Fin n × Fin n) K) : psi τ (blockEmb K τ G) = C G := by
   induction G using MvPolynomial.induction_on with
   | C a => simp [blockEmb, MvPolynomial.algebraMap_apply]
-  | add p q hp hq => rw [map_add, map_add, hp, hq, map_add]
+  | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq, map_add (f := _)]
   | mul_X p v hp =>
     rw [map_mul, map_mul, hp, map_mul]
     simp [blockEmb, psi]
@@ -783,7 +677,7 @@ theorem psi_colSub [Fintype ι] (τ : ι) (β : Matrix (Fin n) (Fin n) K) (Q : P
   exact RingHom.congr_fun e Q
 
 theorem coeff_psi_mem [Fintype ι] [Infinite K] {ν : ι → Fin n → ℕ} {Q : Pol K ι n} (hQ : Q ∈ WtPol K ν) (τ : ι) (r : Off ι n τ →₀ ℕ) :
-    coeff r (psi τ Q) ∈ dualWeyl K n n (ν τ) := by
+    AddMonoidAlgebra.coeff (psi τ Q) r ∈ dualWeyl K n n (ν τ) := by
   classical
   apply mem_dualWeyl_of_bor
   intro β h1 h2
@@ -795,7 +689,7 @@ theorem coeff_psi_mem [Fintype ι] [Infinite K] {ν : ι → Fin n → ℕ} {Q :
       exact ⟨h1, h2⟩
     · rw [Function.update_of_ne h]
       exact ⟨fun w s hws => Matrix.one_apply_ne hws.ne', fun w => by simp⟩
-  have h3 := congrArg (fun x => coeff r (psi τ x)) (hQ _ hB)
+  have h3 := congrArg (fun x => AddMonoidAlgebra.coeff (psi τ x) r) (hQ _ hB)
   simp only [psi_colSub, coeff_map, map_smul, coeff_smul] at h3
   have h4 : (∏ σ, ∏ x, (Function.update (1 : ι → Matrix (Fin n) (Fin n) K) τ β) σ x x ^ ν σ x) = ∏ x, β x x ^ ν τ x := by
     rw [Finset.prod_eq_single τ]
@@ -816,12 +710,12 @@ theorem split_pos (τ : ι) (m : ι × Fin n × Fin n →₀ ℕ) :
   ext ⟨t, v⟩
   by_cases h : t = τ
   · subst h
-    rw [Finsupp.add_apply, Finsupp.mapDomain_apply (Prod.mk_right_injective t), Finsupp.mapDomain_of_notMem_range, add_zero]
+    rw [Finsupp.add_apply, Finsupp.mapDomain_apply_of_injective (Prod.mk_right_injective t), Finsupp.mapDomain_of_notMem_range, add_zero]
     · rfl
     · rintro ⟨w, hw⟩
       exact w.2 (congrArg Prod.fst hw)
   · rw [Finsupp.add_apply, Finsupp.mapDomain_of_notMem_range, zero_add]
-    · exact (Finsupp.mapDomain_apply Subtype.val_injective (rOf τ m) (⟨(t, v), h⟩ : Off ι n τ)).symm
+    · exact (Finsupp.mapDomain_apply_of_injective Subtype.val_injective (rOf τ m) (⟨(t, v), h⟩ : Off ι n τ)).symm
     · rintro ⟨w, hw⟩
       exact h (congrArg Prod.fst hw).symm
 
@@ -842,7 +736,7 @@ def atPos (τ : ι) (π : MvPolynomial (Fin n × Fin n) K →ₗ[K] MvPolynomial
   (basisMonomials _ K).constr K fun m => psi' τ (monomial (rOf τ m) (π (monomial (gOf τ m) 1)))
 
 theorem coeff_psi_atPos (τ : ι) (π : MvPolynomial (Fin n × Fin n) K →ₗ[K] MvPolynomial (Fin n × Fin n) K) (Q : Pol K ι n)
-    (r : Off ι n τ →₀ ℕ) : coeff r (psi τ (atPos τ π Q)) = π (coeff r (psi τ Q)) := by
+    (r : Off ι n τ →₀ ℕ) : AddMonoidAlgebra.coeff (psi τ (atPos τ π Q)) r = π (AddMonoidAlgebra.coeff (psi τ Q) r) := by
   classical
   induction Q using MvPolynomial.induction_on' with
   | monomial m c =>
@@ -854,10 +748,10 @@ theorem coeff_psi_atPos (τ : ι) (π : MvPolynomial (Fin n × Fin n) K →ₗ[K
     split_ifs
     · rw [map_smul]
     · rw [smul_zero, map_zero]
-  | add f g hf hg => simp only [map_add, coeff_add, hf, hg]
+  | add f g hf hg => simp only [map_add (f := _), AddMonoidAlgebra.coeff_add, Finsupp.add_apply, hf, hg]
 
 theorem atPos_fixed (τ : ι) (π : MvPolynomial (Fin n × Fin n) K →ₗ[K] MvPolynomial (Fin n × Fin n) K) (Q : Pol K ι n)
-    (h : ∀ r, π (coeff r (psi τ Q)) = coeff r (psi τ Q)) : atPos τ π Q = Q := by
+    (h : ∀ r, π (AddMonoidAlgebra.coeff (psi τ Q) r) = AddMonoidAlgebra.coeff (psi τ Q) r) : atPos τ π Q = Q := by
   have e : psi τ (atPos τ π Q) = psi τ Q := MvPolynomial.ext _ _ fun r => by rw [coeff_psi_atPos, h r]
   rw [← psi'_psi τ (atPos τ π Q), e, psi'_psi]
 
@@ -874,7 +768,7 @@ theorem psi_blockEmb_ne (τ σ : ι) (h : σ ≠ τ) (F : MvPolynomial (Fin n ×
     psi τ (blockEmb K σ F) = map C (rename (fun v => (⟨(σ, v), h⟩ : Off ι n τ)) F) := by
   induction F using MvPolynomial.induction_on with
   | C a => simp [blockEmb, MvPolynomial.algebraMap_apply]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     simp only [map_mul, hp]
     simp [blockEmb, psi, h]
@@ -890,7 +784,7 @@ theorem atPos_prod [Fintype ι] (τ : ι) (π : MvPolynomial (Fin n × Fin n) K 
   refine atPos_mul τ π (F τ) _ (∏ σ ∈ Finset.univ.erase τ, if h : σ = τ then 1 else rename (fun v => (⟨(σ, v), h⟩ : Off ι n τ)) (F σ)) ?_
   rw [map_prod, map_prod]
   refine Finset.prod_congr rfl fun σ hσ => ?_
-  rw [dif_neg (Finset.ne_of_mem_erase hσ), psi_blockEmb_ne τ σ (Finset.ne_of_mem_erase hσ)]
+  rw [dite_eq_right (Finset.ne_of_mem_erase hσ), psi_blockEmb_ne τ σ (Finset.ne_of_mem_erase hσ)]
 
 def TS [Fintype ι] (W : ι → Submodule K (MvPolynomial (Fin n × Fin n) K)) (S : Finset ι) : Submodule K (Pol K ι n) :=
   Submodule.span K {P | ∃ F : ι → MvPolynomial (Fin n × Fin n) K, (∀ σ ∈ S, F σ ∈ W σ) ∧ P = ∏ σ, blockEmb K σ (F σ)}
@@ -902,13 +796,13 @@ theorem mem_TS_empty [Fintype ι] (W : ι → Submodule K (MvPolynomial (Fin n �
   have hm : m = ∑ t, (gOf t m).mapDomain (Prod.mk t) := by
     ext ⟨t, v⟩
     rw [Finsupp.finsetSum_apply, Finset.sum_eq_single t]
-    · exact (Finsupp.mapDomain_apply (Prod.mk_right_injective t) (gOf t m) v).symm
+    · exact (Finsupp.mapDomain_apply_of_injective (Prod.mk_right_injective t) (gOf t m) v).symm
     · intro σ _ hσ
       refine Finsupp.mapDomain_of_notMem_range _ _ ?_
       rintro ⟨w, hw⟩
       exact hσ (congrArg Prod.fst hw)
     · intro h; exact absurd (Finset.mem_univ _) h
-  have h : (monomial m (coeff m Q) : Pol K ι n) = coeff m Q • ∏ σ, blockEmb K σ (monomial (gOf σ m) (1 : K)) := by
+  have h : (monomial m (AddMonoidAlgebra.coeff Q m) : Pol K ι n) = AddMonoidAlgebra.coeff Q m • ∏ σ, blockEmb K σ (monomial (gOf σ m) (1 : K)) := by
     rw [ldtensor_prod_monomial, smul_monomial, smul_eq_mul, mul_one, ← hm]
   rw [h]
   exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, fun σ hσ => absurd hσ (Finset.notMem_empty σ), rfl⟩)
@@ -927,8 +821,8 @@ theorem wtPol_le_tensor [Fintype ι] [Infinite K] (ν : ι → Fin n → ℕ) :
         (dualWeyl K n n (ν τ)).subtype ∘ₗ Submodule.projectionOnto _ T hT with hπ
       have hfix : atPos τ π Q = Q := by
         refine atPos_fixed τ π Q fun r => ?_
-        have h := Submodule.projectionOnto_apply_left hT (⟨coeff r (psi τ Q), coeff_psi_mem hQ τ r⟩ : dualWeyl K n n (ν τ))
-        have h' : Submodule.projectionOnto _ T hT (coeff r (psi τ Q)) = ⟨coeff r (psi τ Q), coeff_psi_mem hQ τ r⟩ := h
+        have h := Submodule.projectionOnto_apply_left hT (⟨AddMonoidAlgebra.coeff (psi τ Q) r, coeff_psi_mem hQ τ r⟩ : dualWeyl K n n (ν τ))
+        have h' : Submodule.projectionOnto _ T hT (AddMonoidAlgebra.coeff (psi τ Q) r) = ⟨AddMonoidAlgebra.coeff (psi τ Q) r, coeff_psi_mem hQ τ r⟩ := h
         rw [hπ, LinearMap.comp_apply, h']
         rfl
       have hle : TS (fun τ => dualWeyl K n n (ν τ)) S ≤ (TS (fun τ => dualWeyl K n n (ν τ)) (insert τ S)).comap (atPos τ π) := by
@@ -982,7 +876,7 @@ open MvPolynomial
 
 theorem frobenius_poly_injective : FrPolyInj := by
   intro D u C O i hi
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro Q hQ
   set Dt : MvPolynomial (GL3Theta.FrV D (D.R.N i)) ℂ := ∏ τ, frDet ℂ (D.R.N i) τ with hDt
   have hev : ∀ v : GL3Theta.FrV D (D.R.N i) → ℂ, eval v Dt = ∏ τ, (Matrix.of fun α k => v (τ, α, k)).det := by
@@ -1063,21 +957,6 @@ theorem nu_t_identity : NuTIs := by
   · simp
   · exact_mod_cast hz0
 
-theorem UnfIsAll.unfIs {D : D7} {u : D.what₂.Word} {C : ColumnChain D.R D.what₂.Tau (D.hcW u)} {O : GL3Theta.LiftObj D C} {i : ℕ} (h : UnfIsAll O i)
-    (ν : D.what₂.Tau → Fin (D.R.N i) → ℕ) : UnfIs O i ν := fun c c' Q _ => h c c' Q
-
-theorem forms_sharp_description : FormsSharp := by
-  intro hSP D u C O i hi ν f hf
-  have e1 : C.sharp i f = mulFun (fun y => ∏ τ, (O.frm i y τ).det ^ C.sSharp i τ) f := by
-    have e : (fun y => ∏ τ, (O.frm i y τ).det ^ C.sSharp i τ) = fun y => ∏ τ, (C.de i y τ) ^ (C.sSharp i τ) := by
-      funext y; simp only [O.frm_de i hi]
-    rw [e]
-    rfl
-  obtain ⟨Q, hQ⟩ := hSP D.what₂.Tau (D.R.N i) (C.Y i) (O.frm i) (O.frm_range i hi) _ (C.sSharp i) ν (fun τ r => sub_add_cancel _ _) f hf
-  obtain ⟨Q', hQ', h⟩ := (sharp_vector_formula D.what₂.Tau (D.R.N i) (C.Y i) (O.frm i) (O.frm_range i hi) _ (C.sSharp i) ν (fun τ r => sub_add_cancel _ _)
-    (mulFun (fun y => ∏ τ, (O.frm i y τ).det ^ C.sSharp i τ) f)).2 ⟨⟨f, hf, rfl⟩, Q, hQ⟩
-  exact ⟨Q', hQ', e1.trans h⟩
-
 theorem chain_char_eval : ChainCEv := by
   intro D u C O i hi K _ σ c c' J z hJ sh n hn P
   have h := unfolding_gl_eval K D.what₂.Tau (D.R.N i) (D.R.N (i + 1)) (C.Y i) (C.Y (i + 1)) (O.frm i) (O.frm (i + 1)) (frobenius_poly_injective D u C O i hi.le)
@@ -1101,7 +980,7 @@ theorem map_mem_VV {K L : Type} [Field K] [Field L] {ι : Type} [Fintype ι] {n 
     refine Finset.prod_congr rfl fun τ _ => ?_
     rw [Formalism.GradedWeylDivisibility.blockEmb, Formalism.GradedWeylDivisibility.blockEmb, MvPolynomial.map_rename]
   | zero => rw [map_zero]; exact zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact add_mem hx hy
+  | add x y _ _ hx hy => rw [map_add (f := MvPolynomial.map σ)]; exact add_mem hx hy
   | smul c x _ hx =>
     rw [MvPolynomial.smul_eq_C_mul, map_mul, MvPolynomial.map_C, ← MvPolynomial.smul_eq_C_mul]
     exact Submodule.smul_mem _ _ hx

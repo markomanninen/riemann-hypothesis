@@ -1,20 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsPrimesOk
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsMoveRight
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationLeOneOfMemZmu
-import Formalism.LocalToGlobal.Columns.RecLevelLocP
-import Formalism.LocalToGlobal.Columns.RecLevelStep
-import Formalism.LocalToGlobal.Columns.RecLevelCls
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemIdSOfResSEqZero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPtOfIffUnitaryDecoration
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GloRhoZeroOfCompat
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PrimesOverPlaces
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SymmetricLevelBoundLe
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SymmetricFlagBasisVectorEqSingleOfNoExtra
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ChrLast
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.BaseFieldsPrimesOk
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.TrueColumnSpacesStandardInFrameCoords
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsMoveRight
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ValuationLeOneOfMemZmu
+public import Formalism.LocalToGlobal.Columns.RecLevelLocP
+public import Formalism.LocalToGlobal.Columns.RecLevelStep
+public import Formalism.LocalToGlobal.Columns.RecLevelCls
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemIdSOfResSEqZero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsPtOfIffUnitaryDecoration
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GloRhoZeroOfCompat
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PrimesOverPlaces
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SymmetricLevelBoundLe
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.SymmetricFlagBasisVectorEqSingleOfNoExtra
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ChrLast
+
+@[expose] public section
 
 noncomputable section
 
@@ -150,7 +154,7 @@ theorem pt_exists {x : GL (Fin n) (AfE F E)} (hx : x ∈ UAd hc n) : ∃ q : Dec
   exact ⟨⟨(⟨_, decorated_lattice_exists hc n ST SG _ hu⟩, fun _ => 1), fun P => (Finset.eq_empty_iff_forall_notMem.1 hQ P.1 P.2).elim⟩,
     (_root_.GlobalTheory.Mem.Col2.PtDeco.isPtOf_iff_decoRaw F E hc n ST SG Q _ _ hQ).2 ⟨hu, rfl⟩⟩
 
-theorem pt_read {x : GL (Fin n) (AfE F E)} (h : GLG E n SG) (θ : GLQ E n Q)
+theorem pt_read {x : GL (Fin n) (AfE F E)} (h : GLG (E := E) (n := n) (SG := SG)) (θ : GLQ E n Q)
     (hq : IsPtOf hc (y * x * k) (((1 : UF E n), h, θ) • p)) :
     ∃ hx : x ∈ J0 hc n ST, (redG hc n ST SG ⟨x, hx⟩)⁻¹ = h := by
   obtain ⟨hu, hd⟩ := (_root_.GlobalTheory.Mem.Col2.PtDeco.isPtOf_iff_decoRaw F E hc n ST SG Q _ p hQ).1 hp
@@ -193,8 +197,8 @@ section Coset
 variable {X : Fields} {Pr : Primes X} {R : Ranks} {sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)} {S : Set ℕ}
   {mu : Tup X.F X.E X.K S} {cst : LocCst X (rowSG Pr sel mu)} {u : Pr.Word} {j : ℕ}
 
-open Classical in
 
+open Classical in
 theorem cosetIn_of_zero_mem (h : j + 1 = R.m) (p : PtAt R sel mu cst u j) (h0 : (0 : Sp X.E (R.N j)) ∈ p.1.2) :
     cosetIn p = fun P => {z | ((qOf P.1 : X.E) ^ (if P.1 ∈ Pr.vGs then 0 else cst.M))⁻¹ • z ∈ stdAt X.E (R.N j) P.1} := by
   obtain ⟨y0, -, hY⟩ := p.mem_ybSet h
@@ -236,8 +240,8 @@ theorem reads_base (β : Ch) : BasePt B.sp.cm ((B.primes X).vT u) (B.primes X).v
 theorem reads_pt (c : (I.stp u I.mu0 j).Cl) : IsPtOf B.sp.cm (y c * k (chOf c)) ((I.stp u I.mu0 j).rep c).1.1 :=
   IsPtOf.of_extTo (I.Q_subset_SQ _) (Finset.disjoint_right.2 fun P hP => (Finset.eq_empty_iff_forall_notMem.1 I.twistPrimes_reference_tuple_eq_empty P hP).elim) (H.pt c)
 
-set_option maxHeartbeats 2000000 in
 
+set_option maxHeartbeats 2000000 in
 theorem read_of_mem (c : (I.stp u I.mu0 j).Cl) (x : U (chOf c)) (hx : x.1 ∈ UAd B.sp.cm (B.R.N j)) :
     ∃ (hJ : x.1 ∈ J0 B.sp.cm (B.R.N j) ((B.primes X).vT u))
       (hm : (redG B.sp.cm (B.R.N j) ((B.primes X).vT u) (B.primes X).vGs ⟨x.1, hJ⟩)⁻¹ ∈
@@ -273,8 +277,8 @@ variable {X : Fields} {Pr : Primes X} {R : Ranks} {Ch : Chars X Pr R.m}
   {sel : HeightOneSpectrum (𝓞 X.F) → HeightOneSpectrum (𝓞 X.E)} {S : Set ℕ} {mu : Tup X.F X.E X.K S} {cst : LocCst X (rowSG Pr sel mu)}
   {L : ChIdx X Pr R (QE sel (mu : Chr X.F X.E X.K))} {Gc : ChGlob X R.m} {m2 : ℕ}
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem exists_gLevH (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel) (hL : L.Ok Ch sel mu cst Gc m2) (hsh : cst.sharp = true)
     (hc : Formalism.BasicNotions.CMData X.F X.E) {j : ℕ} (hj : j + 1 = R.m) [NeZero (R.N j)] (b : L.β j) (u : Pr.Word) (σ : X.K →+* ℂ)
     {Jm : Matrix (Fin (R.N j)) (Fin (R.N j)) X.E} {T f : ℕ} {bad : Set (HeightOneSpectrum (𝓞 X.F))}
@@ -364,8 +368,8 @@ theorem exists_gLevH (hX : X.Ok) (hPr : Pr.Ok) (hsel : IsSel X sel) (hL : L.Ok C
 
 end Level
 
-set_option maxHeartbeats 8000000 in
 
+set_option maxHeartbeats 8000000 in
 theorem stepBefore_oneLevel : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.Ok → TC.Pins B X → ∀ (l : I.Laws) (Z : TC.Later B (I.cols l)), ∀ (u : B.Word) (G : GLoc (I.rec7 l Z).host.F (I.rec7 l Z).host.E (sigD (I.rec7 l Z)) (I.rec7 l Z).host.g) (Ch : Type) (chOf : (I.stp u I.mu0 (B.R.m - 1)).Cl → Ch) (K : ∀ β : Ch, LevelChart (I.rec7 l Z) (B.T u) (badG (I.rec7 l Z)) (B.R.m - 1) (Nat.sub_le _ _) (fun c : {c // chOf c = β} => (I.chain l u I.mu0).stab (B.R.m - 1) c.1) (fun c => latCrd (I.rec7 l Z) (B.R.m - 1) (Nat.sub_le _ _) (I.latAt u I.mu0 (B.R.m - 1) c.1))), I.IdG l Z G → I.ReadsK l Z u I.mu0 (B.R.m - 1) (Nat.sub_le _ _) chOf K → ∃ (J : StepLevel (I.rec7 l Z).host.F (I.rec7 l Z).host.E (sigD (I.rec7 l Z)) (gramN (I.rec7 l Z) (B.R.m - 1) (Nat.sub_le _ _)) (B.T u) B.R.f (badG (I.rec7 l Z))) (lamJ : ∀ (j : Fin 2) (v : HeightOneSpectrum (𝓞 (I.rec7 l Z).host.F)), ((I.rec7 l Z).host.g j : 𝓞 (I.rec7 l Z).host.F) ∈ v.asIdeal → HSym (I.rec7 l Z) (B.R.N (B.R.m - 1)) false v →* ℂˣ) (V : GLevH J G (fun _ v _ => HSym (I.rec7 l Z) (B.R.N (B.R.m - 1)) false v) lamJ) (Yb : Type) (_ : Finite Yb) (_ : MulAction J.U Yb) (yb : Ch → Yb), (∀ j v h, V.fr j v h = 1) ∧ (∀ j v h M, ((lamJ j v h M : ℂˣ) : ℂ) = lamSym (G.psi0 j v h) (G.chiB j v h) B.R.k (rSD B.R) B.R.t (B.R.m - 1) M.1.1) ∧ (∀ y : Yb, ∃! β, ∃ κ : J.U, κ • yb β = y) ∧ ∀ β, (K β).lev.Lb = J.Lb ∧ (K β).lev.U ≤ J.U ∧ (∀ κ : J.U, κ.1 ∈ (K β).lev.U ↔ κ • yb β = yb β) ∧ ∀ (κ : (K β).lev.U) (κ' : J.U), κ.1 = κ'.1 → (K β).lev.chi κ = J.chi κ' := by
   intro B X I hOk hPins l Z u G Ch chOf K hG hR
   classical
@@ -419,7 +423,7 @@ theorem stepBefore_oneLevel : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.
   have hJ0 : ∀ x ∈ J.U, x ∈ J0 B.sp.cm (B.R.N (B.R.m - 1)) ((B.primes X).vT u) := fun x hx =>
     (read_of_mem H c0 ⟨x, hx⟩ (hUA _ _ hx)).1
   have key : ∀ (b b' : Idx I.sel (I.tup I.mu0) (I.idx I.mu0) (B.R.m - 1)) (_ : b = b')
-      (z z' : GLG B.fields.E (B.R.N (B.R.m - 1)) (B.primes X).vGs)
+      (z z' : GLG (E := B.fields.E) (n := B.R.N (B.R.m - 1)) (SG := (B.primes X).vGs))
       (hz : z ∈ (levGAt I.sel (I.tup I.mu0) (I.idx I.mu0) (I.Tp I.mu0) (B.R.m - 1) b).grp)
       (hz' : z' ∈ (levGAt I.sel (I.tup I.mu0) (I.idx I.mu0) (I.Tp I.mu0) (B.R.m - 1) b').grp), z = z' →
       (levGAt I.sel (I.tup I.mu0) (I.idx I.mu0) (I.Tp I.mu0) (B.R.m - 1) b).chr ⟨z, hz⟩ =
@@ -452,7 +456,7 @@ theorem stepBefore_oneLevel : ∀ {B : Base} {X : PreX B.toPre} (I : TC B X), I.
     haveI : Finite (I.stp u I.mu0 (B.R.m - 1)).Cl := @Finite.instSigma _ _ inferInstance hfin
     exact Finite.of_surjective chOf H.onto
   haveI : ∀ w : (B.primes X).vGs, Finite (𝓞 B.fields.E ⧸ w.1.asIdeal) := fun w => Ideal.finiteQuotientOfFreeOfNeBot _ w.1.ne_bot
-  let f : J.U →* GLG B.fields.E (B.R.N (B.R.m - 1)) (B.primes X).vGs :=
+  let f : J.U →* GLG (E := B.fields.E) (n := B.R.N (B.R.m - 1)) (SG := (B.primes X).vGs) :=
     { toFun := fun x => redG B.sp.cm (B.R.N (B.R.m - 1)) ((B.primes X).vT u) (B.primes X).vGs ⟨x.1, hJ0 x.1 x.2⟩
       map_one' := by rw [← map_one (redG B.sp.cm (B.R.N (B.R.m - 1)) ((B.primes X).vT u) (B.primes X).vGs)]; rfl
       map_mul' := fun x y => by rw [← map_mul]; rfl }

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
-import Development.WeilBound.CoreStatements.HodgeTatePoints.GeCanon
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BtOrderValueEval
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SemiabelianAdicTorsionOneStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueTangentDualNumber
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.GeCanon
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BtOrderValueEval
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SemiabelianAdicTorsionOneStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ExistsUniqueTangentDualNumber
+
+@[expose] public section
 
 noncomputable section
 
@@ -418,10 +422,10 @@ theorem der_all {R : Type} [CommRing R] [IsDomain R] {T : Type} [CommGroup T] [F
       Der Γ N i M (f + g) (w + w') ∧ Der Γ N i M (f * g) (f 1 • w' + g 1 • w)) ∧
     (∀ r : R, Der Γ N i M (fun _ => r) 0) ∧
     ∀ f : augIdeal (Γ.btOrder ⊤), Der Γ N i M f.1.1 0 → (f : Γ.btOrder ⊤) ∈ augIdeal (Γ.btOrder ⊤) ^ 2 := by
-  have hex : ∀ e : L, ∃ v, IsTanPt Γ N i M e v := fun e =>
-    (TanLift.tangent_mod_torsion R T Γ S G x N i ht L M e).exists
-  have hu : ∀ (e : L) (v v'), IsTanPt Γ N i M e v → IsTanPt Γ N i M e v' → v = v' := fun e _ _ h h' =>
-    (TanLift.tangent_mod_torsion R T Γ S G x N i ht L M e).unique h h'
+  have hex : ∀ e : L, ∃ v, IsTanPt Γ N i M e v := fun e => by
+    simpa only [IsTanPt] using (TanLift.tangent_mod_torsion R T Γ S G x N i ht L M e).exists
+  have hu : ∀ (e : L) (v v'), IsTanPt Γ N i M e v → IsTanPt Γ N i M e v' → v = v' := fun e _ _ h h' => by
+    exact (TanLift.tangent_mod_torsion R T Γ S G x N i ht L M e).unique (by simpa only [IsTanPt] using h) (by simpa only [IsTanPt] using h')
   obtain ⟨θ, hsurj, -, hpin⟩ := omega_open Γ ht M hj U hU
   have hsec : ∀ f : Γ.btOrder ⊤, ∃ s, Γ.HasValues s (f : T → R) := fun f =>
     ⟨j.appTop.hom ((Scheme.ΓSpecIso (CommRingCat.of (Γ.btOrder ⊤))).inv.hom f), fun t =>
@@ -492,6 +496,6 @@ theorem der_main : ∀ (p : ℕ) [Fact p.Prime] (C : Type) [Field C] [IsAlgClose
   obtain ⟨U, H, hfin, -⟩ := GlobalTheory.T.semiabelian_adic_torsion_one p C v O hv hp hO S G hG y La X
   obtain ⟨j, hj, -⟩ := GlobalTheory.T.existsUnique_btOrder_embedding O _ (X.Γ n)
   haveI := (EmbSub.openImmersion_translatesCover O _ (X.Γ n) (U n) (hfin n) j hj).1
-  exact der_all (X.Γ n) (X.tors n) M hj (U n) (hfin n).one
+  simpa only [TorsTower.IsDer, Der] using der_all (X.Γ n) (X.tors n) M hj (U n) (hfin n).one
 
 end PositivityTheory.HtPt.Ge.TwDer

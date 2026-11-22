@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsGrowthSobNeTopOfIsAutFunSm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.SqNormIntegralFundamentalDomainEqL2NormSq
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.ExistsGrowthSobNeTopOfIsAutFunSm
+
+@[expose] public section
 
 noncomputable section
 
@@ -84,22 +88,23 @@ def LiftPropsRapid (D : D7) : Prop := LiftPropsOn D fun θ W F => RapidDecSm θ 
 theorem LiftLaws.mono {θ : InfFam D} {ψ : AddChar (AF D.host.F) ℂ} {V W : HSp D}
     {ω : GA D V × GA D W →* Module.End ℂ (WO V W → ℂ)} {ν : Measure (GA D W)} {𝓕 : Set (GA D W)}
     {cls cls' : (GA D W → ℂ) → Prop} (h : LiftLaws θ ψ ω ν 𝓕 cls) (hc : ∀ F, cls' F → cls F) :
-    LiftLaws θ ψ ω ν 𝓕 cls' where
-  integ f F hf hF := h.integ f F hf (hc F hF)
-  integ_der f F hf hF := h.integ_der f F hf (hc F hF)
-  aut f F hf hF := h.aut f F hf (hc F hF)
-  equiv f F hf hF := h.equiv f F hf (hc F hF)
-  smooth f F hf hF := h.smooth f F hf (hc F hF)
-  dS := h.dS
-  dT := h.dT
-  derS f F hf hF := h.derS f F hf (hc F hF)
-  derT f F hf hF := h.derT f F hf (hc F hF)
-  growth f F hf hF := h.growth f F hf (hc F hF)
-  decay_ne_top F hF := h.decay_ne_top F (hc F hF)
-  bound := by
-    obtain ⟨A, hA⟩ := h.bound
-    refine ⟨A, fun k => (hA k).imp fun d hd μ 𝓓 h1 h2 U hU => ?_⟩
-    exact (hd μ 𝓓 h1 h2 U hU).imp fun C hC f hf F hF => hC f hf F (hc F hF)
+    LiftLaws θ ψ ω ν 𝓕 cls' := by
+  refine
+    { integ := fun f F hf hF => h.integ f F hf (hc F hF)
+      integ_der := fun f F hf hF => h.integ_der f F hf (hc F hF)
+      aut := fun f F hf hF => h.aut f F hf (hc F hF)
+      equiv := fun f F hf hF => h.equiv f F hf (hc F hF)
+      smooth := fun f F hf hF => h.smooth f F hf (hc F hF)
+      dS := h.dS
+      dT := h.dT
+      derS := fun f F hf hF => h.derS f F hf (hc F hF)
+      derT := fun f F hf hF => h.derT f F hf (hc F hF)
+      growth := fun f F hf hF => h.growth f F hf (hc F hF)
+      decay_ne_top := fun F hF => h.decay_ne_top F (hc F hF)
+      bound := ?_ }
+  obtain ⟨A, hA⟩ := h.bound
+  refine ⟨A, fun k => (hA k).imp fun d hd μ 𝓓 h1 h2 U hU => ?_⟩
+  exact (hd μ 𝓓 h1 h2 U hU).imp fun C hC f hf F hF => hC f hf F (hc F hF)
 
 theorem liftProps_of_rapid (hP : GlobalTheory.Published.CuspRapidDecay) (h : LiftPropsRapid D) : LiftProps D :=
   fun V W θ ψ χS χT ω hθ hω ν 𝓕 hν h𝓕 => (h V W θ ψ χS χT ω hθ hω ν 𝓕 hν h𝓕).mono fun _ hF =>

@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.SphDict
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.MemIffLocal
-import GroundTheory.AutomorphicForms.MacdonaldHecke
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.SplitAt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.SphDict
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.MemIffLocal
+public import GroundTheory.AutomorphicForms.MacdonaldHecke
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -29,7 +33,7 @@ private theorem coset_sum {K : Type} [Field K] [NumberField K] (v : P K) (n : �
   have hKp : (μ.real (integralGL (Kv v) n : Set (GL (Fin n) (Kv v))) : ℂ) ≠ 0 :=
     Complex.ofReal_ne_zero.2
       (measureReal_compactOpen_pos μ (isCompact_integralGL _ n) (isOpen_integralGL _ n)).ne'
-  have h1 := integral_minusculeHecke_mul (μ := μ) hf g r
+  have h1 := integral_minusculeHecke_mul (F := Kv v) (n := n) (μ := μ) hf g r
   have hcs : HasCompactSupport fun x => (minusculeHecke μ r : HeckeAlgebra μ) x * W (g * x) := by
     refine HasCompactSupport.intro (isCompact_minusculeSet r) fun x hx => ?_
     simp only [minusculeHecke_apply, Set.indicator_of_notMem hx, zero_mul]
@@ -40,10 +44,12 @@ private theorem coset_sum {K : Type} [Field K] [NumberField K] (v : P K) (n : �
         GlobalTheory.LFun.satEig (Formalism.UG.qV K v) n B r * W g := by
     rw [hK, ← UpperTheory.V.Af.Smo.tjSet UpperTheory.V.Af.Smo.sphDict K n v r hr]
     exact hE.eig _ hu r hr g
-  rw [Complex.real_smul] at h2
-  refine mul_left_cancel₀ hKp ?_
-  rw [← h1, h2, ← h3]
-  rfl
+  refine mul_left_cancel₀ hKp (h1.symm.trans (h2.trans ?_))
+  change μ.real (integralGL (Kv v) n : Set _) •
+    (∑ᶠ c : GL (Fin n) (Kv v) ⧸ integralGL (Kv v) n,
+      (minusculeHecke μ r : HeckeAlgebra μ) c.out * W (g * c.out)) = _
+  rw [Complex.real_smul]
+  simp only [minusculeHecke_apply, h3]
 
 end Cosets
 
@@ -60,7 +66,7 @@ private theorem dL_mul {v : P K} (a a' d d' : (Kv v)ˣ) : dL a d * dL a' d' = dL
   Units.ext (by ext i j; fin_cases i <;> fin_cases j <;> simp [dL])
 
 private theorem dL_mem {v : P K} {a d : (Kv v)ˣ} (ha : Valued.v (a : Kv v) = 1) (hd : Valued.v (d : Kv v) = 1) :
-    dL a d ∈ GlobalTheory.LFun.KGL v 2 := by
+    dL a d ∈ GlobalTheory.LFun.KGL v (n := 2) := by
   obtain ⟨hK, -, -, -⟩ := UpperTheory.V.Af.Smo.sphDict K 2 v
   have e : ∀ x : Kv v, Valued.v x ≤ 1 → x ∈ (ValuativeRel.valuation (Kv v)).integer :=
     fun x hx => (GroundTheory.Global.mem_valuationInteger_iff v x).2 hx
@@ -105,20 +111,35 @@ private instance : IsEmpty (Pairs (Finset.univ : Finset (Fin 2))) where
 private theorem gMat_zero (v : P K) (c : Pairs ({0} : Finset (Fin 2)) → 𝓀[Kv v]) :
     gMat {0} c = nL (lf v (c default)) * dL (pi0 v) 1 := by
   refine Units.ext (Matrix.ext fun i j => ?_)
-  rw [gMat_apply]
+  have hg (S : Finset (Fin 2)) (c : Pairs S → 𝓀[Kv v]) (i j : Fin 2) :
+      (gMat S c : GL (Fin 2) (Kv v)) i j = ((1 : Matrix (Fin 2) (Fin 2) (Kv v)) i j + cMat S c i j) *
+        GLnLocal.uniformizer (Kv v) ^ lamS S j := by
+    change (((unipC S c : GL (Fin 2) (Kv v)) * (torusPow (Kv v) 2 (lamS S) : GL (Fin 2) (Kv v))) : Matrix (Fin 2) (Fin 2) (Kv v)) i j = _
+    rw [coe_torusPow, mul_diagonal, coe_unipC, Matrix.add_apply]
+  rw [hg]
   fin_cases i <;> fin_cases j <;> simp [cMat, lamS, nL, dL, pi0, lf]
   rfl
 
 private theorem gMat_one (v : P K) (c : Pairs ({1} : Finset (Fin 2)) → 𝓀[Kv v]) :
     gMat {1} c = dL 1 (pi0 v) := by
   refine Units.ext (Matrix.ext fun i j => ?_)
-  rw [gMat_apply]
+  have hg (S : Finset (Fin 2)) (c : Pairs S → 𝓀[Kv v]) (i j : Fin 2) :
+      (gMat S c : GL (Fin 2) (Kv v)) i j = ((1 : Matrix (Fin 2) (Fin 2) (Kv v)) i j + cMat S c i j) *
+        GLnLocal.uniformizer (Kv v) ^ lamS S j := by
+    change (((unipC S c : GL (Fin 2) (Kv v)) * (torusPow (Kv v) 2 (lamS S) : GL (Fin 2) (Kv v))) : Matrix (Fin 2) (Fin 2) (Kv v)) i j = _
+    rw [coe_torusPow, mul_diagonal, coe_unipC, Matrix.add_apply]
+  rw [hg]
   fin_cases i <;> fin_cases j <;> simp [cMat, lamS, dL, pi0]
 
 private theorem gMat_top (v : P K) (c : Pairs (Finset.univ : Finset (Fin 2)) → 𝓀[Kv v]) :
     gMat Finset.univ c = dL (pi0 v) (pi0 v) := by
   refine Units.ext (Matrix.ext fun i j => ?_)
-  rw [gMat_apply]
+  have hg (S : Finset (Fin 2)) (c : Pairs S → 𝓀[Kv v]) (i j : Fin 2) :
+      (gMat S c : GL (Fin 2) (Kv v)) i j = ((1 : Matrix (Fin 2) (Fin 2) (Kv v)) i j + cMat S c i j) *
+        GLnLocal.uniformizer (Kv v) ^ lamS S j := by
+    change (((unipC S c : GL (Fin 2) (Kv v)) * (torusPow (Kv v) 2 (lamS S) : GL (Fin 2) (Kv v))) : Matrix (Fin 2) (Fin 2) (Kv v)) i j = _
+    rw [coe_torusPow, mul_diagonal, coe_unipC, Matrix.add_apply]
+  rw [hg]
   fin_cases i <;> fin_cases j <;> simp [cMat, lamS, dL, pi0]
 
 private theorem sum_one (v : P K) (f : GL (Fin 2) (Kv v) → ℂ) :

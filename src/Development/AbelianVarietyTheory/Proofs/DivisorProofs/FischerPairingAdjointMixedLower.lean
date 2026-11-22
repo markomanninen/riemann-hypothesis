@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetSNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DetSNeZero
+
+@[expose] public section
+
 open MvPolynomial Formalism.BasicNotions.TH GlobalTheory.CharPair
 
 namespace GlobalTheory.CharPair.SDown
@@ -8,9 +13,9 @@ theorem pderiv_aeval_sum {σ δ : Type} [Fintype σ] [DecidableEq σ] (f : σ �
     (G : MvPolynomial σ ℂ) : pderiv i (aeval f G) = ∑ u, pderiv i (f u) * aeval f (pderiv u G) := by
   induction G using MvPolynomial.induction_on with
   | C c => simp
-  | add p q hp hq => simp only [map_add, hp, hq, mul_add, Finset.sum_add_distrib]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq, mul_add, Finset.sum_add_distrib]
   | mul_X p k hp =>
-    simp only [map_mul, Derivation.leibniz, smul_eq_mul, map_add, aeval_X, hp, mul_add, Finset.sum_add_distrib]
+    simp only [map_mul, Derivation.leibniz, smul_eq_mul, map_add (f := _), aeval_X, hp, mul_add, Finset.sum_add_distrib]
     congr 1
     · rw [Finset.sum_eq_single k]
       · simp [mul_comm]
@@ -46,7 +51,8 @@ theorem derivation_det {R A : Type*} [CommRing R] [CommRing A] [Algebra R A] {n 
     intro B
     rw [← Matrix.det_transpose, Matrix.det_apply]
     rfl
-  rw [key, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [key, map_sum]
   simp_rw [key]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun σ _ => ?_
@@ -73,13 +79,15 @@ theorem pderiv_u_mS (a : Fin P) (c : Fin S) (a0 : Fin P) (b0 : Fin Q) :
     pderiv ((Sum.inl a, Sum.inr c) : Ln P Q 0 S) (mS P Q S a0 b0) =
       if a0 = a then X (Sum.inr b0, Sum.inr c) else 0 := by
   classical
-  simp [mS, map_sum, Derivation.leibniz, pderiv_X, Pi.single_apply, ite_and, Finset.sum_ite_eq, Finset.sum_ite_eq']
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [mS, map_sum, Derivation.leibniz, pderiv_X, Pi.single_apply, ite_and, Finset.sum_ite_eq, Finset.sum_ite_eq']
 
 theorem pderiv_t_mS (b : Fin Q) (c : Fin S) (a0 : Fin P) (b0 : Fin Q) :
     pderiv ((Sum.inr b, Sum.inr c) : Ln P Q 0 S) (mS P Q S a0 b0) =
       if b0 = b then X (Sum.inl a0, Sum.inr c) else 0 := by
   classical
-  simp [mS, map_sum, Derivation.leibniz, pderiv_X, Pi.single_apply, ite_and, Finset.sum_ite_eq, Finset.sum_ite_eq']
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [mS, map_sum, Derivation.leibniz, pderiv_X, Pi.single_apply, ite_and, Finset.sum_ite_eq, Finset.sum_ite_eq']
 
 theorem pderiv_u_detS (h : Q ≤ S) (a : Fin P) (c : Fin S) :
     pderiv ((Sum.inl a, Sum.inr c) : Ln P Q 0 S) (detS P Q S h) = 0 := by
@@ -158,7 +166,8 @@ theorem rhs_eq (h : Q ≤ S) (k' : ℕ) (a : Fin P) (b : Fin Q) (G : Mdl P Q) :
           aeval (fun ab : Fin P × Fin Q => mS P Q S ab.1 ab.2) (pderiv (a0, b) (pderiv (a, b0) G)) +
         ((S + k' : ℕ) : ℂ) • aeval (fun ab : Fin P × Fin Q => mS P Q S ab.1 ab.2) (pderiv (a, b) G)) *
         detS P Q S h ^ k' := by
-  simp [embS, opS, mulM, derM, LinearMap.sum_apply, map_sum, Module.End.mul_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [embS, opS, mulM, derM, LinearMap.sum_apply, map_sum, Module.End.mul_apply]
 
 theorem key (h : Q ≤ S) (k' : ℕ) (a : Fin P) (b : Fin Q) (G : Mdl P Q) :
     ∑ c : Fin S, pderiv ((Sum.inr b, Sum.inr c) : Ln P Q 0 S) (pderiv (Sum.inl a, Sum.inr c) (embS P Q S h k' G)) =
@@ -214,7 +223,8 @@ theorem key (h : Q ≤ S) (k' : ℕ) (a : Fin P) (b : Fin Q) (G : Mdl P Q) :
   have hT0 : ∑ c : Fin S, ∑ b0 : Fin Q, (if b0 = b then aeval m (pderiv (a, b) G) * D ^ k' else 0) =
       (S : Pol P Q 0 S) * aeval m (pderiv (a, b) G) * D ^ k' := by
     simp [Finset.sum_ite_eq', mul_assoc]
-  simp_rw [step1, map_sum, step2, Finset.sum_add_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp_rw [step1, map_sum, step2, Finset.sum_add_distrib]
   rw [hT0, hT1, hT3, Nat.cast_smul_eq_nsmul ℂ, nsmul_eq_mul, add_mul, Finset.sum_mul]
   simp only [Finset.sum_mul]
   push_cast
@@ -223,20 +233,5 @@ theorem key (h : Q ≤ S) (k' : ℕ) (a : Fin P) (b : Fin Q) (G : Mdl P Q) :
 end GlobalTheory.CharPair.SDown
 
 namespace GlobalTheory.CharPair
-
-theorem fockAct1_Eab_inr_inl_embS_pair : ∀ (P Q S : ℕ) (h : Q ≤ S) (k' : ℕ) (a : Fin P) (b : Fin Q) (G : Mdl P Q)
-    (f : Pol P Q 0 S), GlobalTheory.DefLift.BilFischer.pair (fockAct1 P Q 0 S (Eab (Sum.inr b) (Sum.inl a)) f)
-      (embS P Q S h k' G) = GlobalTheory.DefLift.BilFischer.pair f (embS P Q S h k' (opS P Q S k' (Sum.inr b) (Sum.inl a) G)) := by
-  intro P Q S h k' a b G f
-  rw [fockAct1_Eab, LinearMap.sum_apply, Fintype.sum_sum_type]
-  simp only [Finset.univ_eq_empty, Finset.sum_empty, zero_add]
-  have hterm : ∀ c : Fin S, omE ((Sum.inr b : Ix P Q), (Sum.inr c : Ix 0 S)) (Sum.inl a, Sum.inr c) f =
-      (f * X (Sum.inr b, Sum.inr c)) * X (Sum.inl a, Sum.inr c) := by
-    intro c
-    simp [omE, raiB, lowB, linePos]
-    ring
-  simp only [hterm, map_sum, LinearMap.sum_apply, GlobalTheory.DefLift.BilFischer.pair_mul_X]
-  rw [← map_sum]
-  exact congrArg _ (SDown.key h k' a b G)
 
 end GlobalTheory.CharPair

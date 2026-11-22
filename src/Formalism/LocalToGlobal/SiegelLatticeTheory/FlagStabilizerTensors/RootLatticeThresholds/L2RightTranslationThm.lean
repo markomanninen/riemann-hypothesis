@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuBesselLoc
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QuotInv
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QuotSetU
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.WuBesselLoc
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QuotInv
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.QuotSetU
+
+@[expose] public section
 
 noncomputable section
 

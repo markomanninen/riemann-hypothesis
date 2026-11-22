@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpUniqJet
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.DualLiftInjective
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.ChartLawPf
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpUniqJet
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.DualLiftInjective
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.ChartLawPf
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -31,7 +35,7 @@ def diag (M : ℕ) : Jet R (Fin 2 × Fin d) M →ₐ[R] Jet R (Fin 1 × Fin d) M
 theorem sumJ_alt (M : ℕ) (p : Fin 1 × Fin d) :
     sumJ (R := R) d M (zz M p) = zz M ((0 : Fin 2), p.2) + zz M ((1 : Fin 2), p.2) := by
   rw [sumJ, jetSubstP, jetMap_alt_alt]
-  simp only [map_add, MvPolynomial.constantCoeff_X, add_zero, map_zero, sub_zero]
+  simp only [map_add (f := _), MvPolynomial.constantCoeff_X, add_zero, map_zero, sub_zero]
 
 theorem diag_alt_alt (M : ℕ) (q : Fin 2 × Fin d) : diag (R := R) d M (zz M q) = zz M ((0 : Fin 1), q.2) := by
   rw [diag, jetMap_alt_alt]
@@ -48,11 +52,11 @@ theorem diag_cpy_apply (M : ℕ) (i : Fin 2) (a : Jet R (Fin 1 × Fin d) M) : di
 
 theorem diag_sum_apply (M : ℕ) (a : Jet R (Fin 1 × Fin d) M) : diag d M (sumJ d M a) = sc M 2 a := by
   have : (diag (R := R) d M).comp (sumJ d M) = sc M 2 :=
-    jet_ext' fun p => by rw [AlgHom.comp_apply, sumJ_alt, map_add, diag_alt_alt, diag_alt_alt, scale_jet_variable, fin_one_pair_eq_local, two_smul]
+    jet_ext' fun p => by rw [AlgHom.comp_apply, sumJ_alt, map_add (f := _), diag_alt_alt, diag_alt_alt, scale_jet_variable, fin_one_pair_eq_local, two_smul]
   exact DFunLike.congr_fun this a
 
 theorem aug_comp_sum (M : ℕ) : (jetAug : Jet R (Fin 2 × Fin d) M →ₐ[R] R).comp (sumJ d M) = jetAug :=
-  jet_ext' fun p => by rw [AlgHom.comp_apply, sumJ_alt, map_add, augmentation_jet_variable, augmentation_jet_variable, augmentation_jet_variable, add_zero]
+  jet_ext' fun p => by rw [AlgHom.comp_apply, sumJ_alt, map_add (f := _), augmentation_jet_variable, augmentation_jet_variable, augmentation_jet_variable, add_zero]
 
 theorem aug_comp_cpy (M : ℕ) (i : Fin 2) : (jetAug : Jet R (Fin 2 × Fin d) M →ₐ[R] R).comp (cpy d M i) = jetAug :=
   jet_ext' fun p => by rw [AlgHom.comp_apply, copy_jet_variable, augmentation_jet_variable, augmentation_jet_variable]
@@ -223,7 +227,7 @@ theorem top_step [Algebra ℚ R] {d M : ℕ} (hM : 2 ≤ M) (ψ : JetR R (Fin n)
       rw [map_sub, map_sub]; abel
     rw [e1, e2, hevE, zero_add, hev, hev]
   have h2 : sc M 2 (ψ (zR M j)) = (2 : R) • ψ (zR M j) := by
-    rw [← diag_sum_apply, hadd, map_add, diag_cpy_apply, diag_cpy_apply, two_smul]
+    rw [← diag_sum_apply, hadd, map_add (f := _), diag_cpy_apply, diag_cpy_apply, two_smul]
   have h3 : sc M 2 (ψ (zR M j)) = (2 : R) ^ M • ψ (zR M j) :=
     sub_eq_zero.1 (eq_zero_of_mem_pow le_rfl (sc_pow_mem (R := R) (κ := Fin 1 × Fin d) M 2 M (hψ j)))
   have h4 : ((2 : R) ^ M - 2) • ψ (zR M j) = 0 := by rw [sub_smul, ← h3, ← h2, sub_self]

@@ -1,9 +1,13 @@
-import Mathlib
-import GroundTheory.LocalFields.Interface
-import GroundTheory.LocalFields.Integers
-import GroundTheory.LocalFields.IntermediateField
-import GroundTheory.LocalFields.UnramifiedDefs
-import GroundTheory.LocalFields.UnitsPowers
+module
+
+public import Mathlib
+public import GroundTheory.LocalFields.Interface
+public import GroundTheory.LocalFields.Integers
+public import GroundTheory.LocalFields.IntermediateField
+public import GroundTheory.LocalFields.UnramifiedDefs
+public import GroundTheory.LocalFields.UnitsPowers
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,7 @@ variable (K L : Type*) [Field K] [ValuativeRel K] [TopologicalSpace K] [IsNonarc
 
 theorem exists_lift_primitive :
     ∃ (β : 𝒪[L]) (P : 𝒪[K][X]), P.Monic ∧ aeval β P = 0 ∧
-      P.natDegree = residueDegree K L ∧ (P.map (residue 𝒪[K])).Separable ∧
+      P.natDegree = ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) ∧ (P.map (residue 𝒪[K])).Separable ∧
       IntermediateField.adjoin 𝓀[K] {residue 𝒪[L] β} = ⊤ := by
   obtain ⟨b, hb⟩ := Field.exists_primitive_element 𝓀[K] 𝓀[L]
   have hbi : IsIntegral 𝓀[K] b := .of_finite _ _
@@ -97,7 +101,7 @@ theorem exists_lift_primitive :
 theorem residueDegree_eq_one_iff_surjective (F : Type*) [Field F] [ValuativeRel F]
     [TopologicalSpace F] [IsNonarchimedeanLocalField F] [Algebra F L] [ValuativeExtension F L]
     [FiniteDimensional F L] :
-    residueDegree F L = 1 ↔ Function.Surjective (algebraMap 𝓀[F] 𝓀[L]) := by
+    ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[F])) = 1 ↔ Function.Surjective (algebraMap 𝓀[F] 𝓀[L]) := by
   rw [residueDegree_eq_finrank, ← Subalgebra.bot_eq_top_iff_finrank_eq_one]
   constructor
   · intro h y
@@ -108,15 +112,15 @@ theorem residueDegree_eq_one_iff_surjective (F : Type*) [Field F] [ValuativeRel 
 
 theorem exists_unramified_adjoin :
     ∃ (β : 𝒪[L]) (P : 𝒪[K][X]), P.Monic ∧ aeval β P = 0 ∧ (P.map (residue 𝒪[K])).Separable ∧
-      IsUnramified K K⟮(β : L)⟯ ∧ Module.finrank K K⟮(β : L)⟯ = residueDegree K L ∧
-      residueDegree K⟮(β : L)⟯ L = 1 := by
+      IsUnramified K K⟮(β : L)⟯ ∧ Module.finrank K K⟮(β : L)⟯ = ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) ∧
+      ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K⟮(β : L)⟯])) = 1 := by
   obtain ⟨β, P, hPm, hβ, hdeg, hsep, hgen⟩ := exists_lift_primitive K L
   set T := K⟮(β : L)⟯ with hT
   have hβL : aeval (β : L) P = 0 := by
     have := aeval_algHom_apply (IsScalarTower.toAlgHom 𝒪[K] 𝒪[L] L) β P
     rw [hβ, map_zero] at this
     exact this
-  have hle : Module.finrank K T ≤ residueDegree K L := by
+  have hle : Module.finrank K T ≤ ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[K])) := by
     have hi : IsIntegral K (β : L) := .of_finite K _
     rw [hT, IntermediateField.adjoin.finrank hi, ← hdeg]
     have hne : P.map (algebraMap 𝒪[K] K) ≠ 0 := (hPm.map _).ne_zero
@@ -139,17 +143,17 @@ theorem exists_unramified_adjoin :
     intro y
     obtain ⟨z, hz⟩ := (hr ▸ Algebra.mem_top : y ∈ (IsScalarTower.toAlgHom 𝓀[K] 𝓀[T] 𝓀[L]).range)
     exact ⟨z, hz⟩
-  have h1 : residueDegree T L = 1 := (residueDegree_eq_one_iff_surjective L T).2 hsurj
+  have h1 : ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[T])) = 1 := (residueDegree_eq_one_iff_surjective L T).2 hsurj
   have htower := residueDegree_tower K T L
   rw [h1, mul_one] at htower
-  have hfe : residueDegree K T ≤ Module.finrank K T := by
+  have hfe : ((IsLocalRing.maximalIdeal 𝒪[T]).inertiaDeg (𝒪[K])) ≤ Module.finrank K T := by
     rw [← ramificationIndex_mul_residueDegree K T]
     exact Nat.le_mul_of_pos_left _ (ramificationIndex_pos K T)
-  have heq : Module.finrank K T = residueDegree K T := by omega
+  have heq : Module.finrank K T = ((IsLocalRing.maximalIdeal 𝒪[T]).inertiaDeg (𝒪[K])) := by omega
   exact ⟨β, P, hPm, hβ, hsep, (isUnramified_iff_residueDegree_eq_finrank K T).2 heq.symm,
     heq.trans htower.symm, h1⟩
 
-theorem mem_of_residueDegree_eq_one (F : IntermediateField K L) (hF : residueDegree F L = 1)
+theorem mem_of_residueDegree_eq_one (F : IntermediateField K L) (hF : ((IsLocalRing.maximalIdeal 𝒪[L]).inertiaDeg (𝒪[F])) = 1)
     (P : 𝒪[K][X]) (hP : P.Monic) (γ : 𝒪[L]) (hγ : aeval γ P = 0)
     (hd : IsUnit (aeval γ (derivative P))) : (γ : L) ∈ F := by
   have hsurj := (residueDegree_eq_one_iff_surjective L F).1 hF

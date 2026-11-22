@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.IsAlgClosureField
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.IsAlgClosureField
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LocalPublishedTheorems
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,9 +26,6 @@ def IsTan (ρ : H →* GL (Fin n) K) (y : H → Matrix (Fin n) (Fin n) K) (ρ' :
 theorem IsTan.comp {ρ : H →* GL (Fin n) K} {y : H → Matrix (Fin n) (Fin n) K} {ρ' : H →* GL (Fin n) (DualNumber K)}
     (h : IsTan ρ y ρ') {H' : Type} [Group H'] (φ : H' →* H) : IsTan (ρ.comp φ) (fun g => y (φ g)) (ρ'.comp φ) :=
   fun g => h (φ g)
-
-theorem isTan_zero (ρ : H →* GL (Fin n) K) : IsTan ρ 0 (W.pushRep (algebraMap K (DualNumber K)) ρ) := fun g i j =>
-  TrivSqZeroExt.ext rfl (by simp; rfl)
 
 end
 

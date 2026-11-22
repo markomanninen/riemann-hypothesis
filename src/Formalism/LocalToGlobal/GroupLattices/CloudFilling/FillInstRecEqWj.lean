@@ -1,8 +1,12 @@
-import Formalism.LocalToGlobal.GroupLattices.CloudFilling.TauTopPlacesIff
-import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.PosCompatOfBase
-import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.RepTie
-import Formalism.LocalRingCardinality.DataExtra
-import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.CloudFilling.TauTopPlacesIff
+public import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.PosCompatOfBase
+public import Formalism.LocalToGlobal.GroupLattices.LevelGatherings.RepTie
+public import Formalism.LocalRingCardinality.DataExtra
+public import Formalism.SharpRestriction.GrowthBounds.FormalGroupSystem
+
+@[expose] public section
 
 noncomputable section
 
@@ -96,61 +100,25 @@ def fillsG (u : D.what₂.Word) (w : D.what₂.places.Pl) (h : GIdx D.host (D.me
   fillsRec D u _ (X u w h).hS (rSc sc D.R.k (D.what₂.places.resChar w)) (Lc u) (X u w h).I (X u w h).ψ
     (repP (Lc u) _) (epSc D.R sc Ce (D.what₂.places.resChar w)) (cRec L) ⟨(cloudBound L P u).top, (cloudBound L P u).off, (cloudBound L P u).fill⟩
 
-def latInstG (Lv : ∀ u w h, Levels (fillsG D sc Ce Lc X hd L P u w h)) (Ch : ∀ u w h, Chain (Lv u w h))
-    (Vram : ∀ u w h, Submodule ((recG D sc Ce Lc X hd).gat u w h).O ((recG D sc Ce Lc X hd).gat u w h).Fn) :
-    LatInst (recG D sc Ce Lc X hd) where
-  vOf := fun _ w _ => vOfH D.R.toFrame (hP D (D.what₂.places.resChar w))
-  Fl := fillsG D sc Ce Lc X hd L P
-  Lv := Lv
-  Ch := Ch
-  Vram := Vram
-
-set_option maxHeartbeats 4000000 in
-
-theorem latTiedG (hsc : L.sc = sc) (K : Consts) (Lv : ∀ u w h, Levels (fillsG D sc Ce Lc X hd L P u w h))
-    (Ch : ∀ u w h, Chain (Lv u w h))
-    (Vram : ∀ u w h, Submodule ((recG D sc Ce Lc X hd).gat u w h).O ((recG D sc Ce Lc X hd).gat u w h).Fn) :
-    LatTied (gatTiesG D sc Ce Lc X hd) (instRec L K Ce) (latInstG D sc Ce Lc X hd L P Lv Ch Vram) := by
-  rw [latTied_iff]
-  intro (u : D.what₂.Word) (w : D.what₂.places.Pl) (h : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w))
-  exact latTiedAt_rec L P K Ce u h.2.2.1 (X u w h).hS _ (by rw [rRec_eq, hsc]; rfl) (Lc u) (X u w h).I (X u w h).ψ
-    (repP (Lc u) _) _
-
-theorem fill_instRec_eq_wj (K : Consts) :
-    ∀ j ∈ SizeData₂.lifts (recG D sc Ce Lc X hd), ∀ (τ : D.what₂.Tau) (z : Bool × HH D),
-      (D.eTau τ : D.R.GG) = plGG D z → fill (instRec L K Ce) (bL L) j z = wj D j τ :=
-  instRec_fill L K Ce
 
 def levTieG (u : D.what₂.Word) (w : D.what₂.places.Pl) (h : GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)) :
     Formalism.L2.Herm.GLevTie (Lc u) ((recG D sc Ce Lc X hd).gat u w h) :=
   gatRecP_lev D u _ (X u w h).hS _ (Lc u) (X u w h).I (X u w h).ψ _
 
-theorem epTieG (hsc : L.sc = sc) (K : Consts) : EpTie (instRec L K Ce) := by
-  intro u w h
-  show epSc D.R sc Ce (D.what₂.places.resChar w) =
-    ⌈Ce * (D.R.f : ℝ) * (D.R.k : ℝ) ^ 2 * Real.logb (D.what₂.places.resChar w) L.sc.a⌉₊
-  rw [hsc]
-  rfl
-
-theorem fillsAllG (Lv : ∀ u w h, Levels (fillsG D sc Ce Lc X hd L P u w h)) (Ch : ∀ u w h, Chain (Lv u w h))
-    (Vram : ∀ u w h, Submodule ((recG D sc Ce Lc X hd).gat u w h).O ((recG D sc Ce Lc X hd).gat u w h).Fn) :
-    FillsAll (gatTiesG D sc Ce Lc X hd) (latInstG D sc Ce Lc X hd L P Lv Ch Vram) :=
-  fun u _ _ _ _ j hj => wRec_eq D u _ j hj
-
 theorem std_of_fills {p : ℕ} (G : GAtP p) (Fl : Fills G) (v : Fin G.P.nV) (hr : 1 ≤ G.P.r) (h2r : 2 * G.P.r ≤ G.P.m + 1)
     (hm : 1 ≤ Fl.mm) :
-    Formalism.MainNotions.FormalGroupSystem.Std p (G.P.n' v) G.P.m Fl.t Fl.mm Fl.c G.P.r (Fl.TT v) (Fl.a v) (Fl.b v) (G.P.lam0 v) (Fl.w v) where
-  prime := (G.P.setting v).prime
-  five_le := (G.P.setting v).five_le
-  two_le := (G.P.setting v).two_le
-  even := (G.P.setting v).even
-  r_pos := hr
-  two_r := h2r
-  m_pos := hm
-  base := Fl.base v
-  dom := G.P.dom v
-  w_low := fun s => ⟨le_trans (le_max_left _ _) (Fl.w_ge v s), le_trans (le_max_right _ _) (Fl.w_ge v s)⟩
-  w_mono := fun s l h1 _ => Fl.w_mono v s l h1
+    Formalism.MainNotions.FormalGroupSystem.Std p (G.P.n' v) G.P.m Fl.t Fl.mm Fl.c G.P.r (Fl.TT v) (Fl.a v) (Fl.b v) (G.P.lam0 v) (Fl.w v) :=
+  { prime := (G.P.setting v).prime
+    five_le := (G.P.setting v).five_le
+    two_le := (G.P.setting v).two_le
+    even := (G.P.setting v).even
+    r_pos := hr
+    two_r := h2r
+    m_pos := hm
+    base := Fl.base v
+    dom := G.P.dom v
+    w_low := fun s => ⟨le_trans (le_max_left _ _) (Fl.w_ge v s), le_trans (le_max_right _ _) (Fl.w_ge v s)⟩
+    w_mono := fun s l h1 _ => Fl.w_mono v s l h1 }
 
 theorem one_le_rSc (k p : ℕ) : 1 ≤ rSc sc k p := by
   unfold rSc rG

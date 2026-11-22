@@ -1,18 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIsScalar
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VacuumVectorDropAuxiliaryPlaces
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentMulAddOneSubInverse
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CardInversePrimeRepsIntegralRightMulHecke
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaVacuumHeckeIdentitySplitPlace
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumHeckeIndicatorIntegralEqPrimitiveStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPlaceChartFiniteAdeleTensorLevelsStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumUniversalDeterminantDatumCoeffEqPrimitiveStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ArtinMapSplitPlaceUniformiserEqFrobeniusInvStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ModulusUnramifiedCharDetHeckeDoubleCosetSplitStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryGroupCharacterOfHeckeChar
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergCombinationCommFockPolynomialVectors
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VacuumVectorDropAuxiliaryPlacesStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InvNatPowRpowNegHalfEvenEqPow
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIsScalar
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VacuumVectorDropAuxiliaryPlaces
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IdempotentMulAddOneSubInverse
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CardInversePrimeRepsIntegralRightMulHecke
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaVacuumHeckeIdentitySplitPlace
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumHeckeIndicatorIntegralEqPrimitiveStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SplitPlaceChartFiniteAdeleTensorLevelsStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SumUniversalDeterminantDatumCoeffEqPrimitiveStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ArtinMapSplitPlaceUniformiserEqFrobeniusInvStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ModulusUnramifiedCharDetHeckeDoubleCosetSplitStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitaryGroupCharacterOfHeckeChar
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergCombinationCommFockPolynomialVectors
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.VacuumVectorDropAuxiliaryPlacesStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.InvNatPowRpowNegHalfEvenEqPow
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum IsDedekindDomain NumberField Matrix GlobalTheory.ExportSeries
 open Formalism.L2.NTheta (IsIdemAt IsHeckeElt)
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -39,7 +44,7 @@ theorem isDetRoot_of_detAt {e : AE D} (he : IsSplitIdem D e) {V : HSp D} {g : GA
   have e3 : cA D e * cA D e = cA D e := by rw [← map_mul, e1]
   unfold IsDetRoot
   have hcx : cA D (x : AE D) = cA D e * cA D (Formalism.L2.Theta.mt V g).det + (1 - cA D e) := by
-    rw [hx, map_add, map_mul, map_sub, map_one]
+    rw [hx, map_add (f := _), map_mul, map_sub, map_one]
   rw [hcx, hx]
   change e * (Formalism.L2.Theta.mt V g).det + (1 - e) = (Formalism.L2.Theta.mt V g).det * (cA D e * cA D (Formalism.L2.Theta.mt V g).det + (1 - cA D e))
   set d := (Formalism.L2.Theta.mt V g).det
@@ -55,16 +60,17 @@ theorem unram_at_gen {A : Type} [CommGroup A] {χ : (AE D)ˣ →* A} {Q S' : Fin
   have key : ∀ z : AE D, (1 - idemAt P) * z = 1 - idemAt P → finPart D (idemAt P * z) ∈ intAE D → finPart D z ∈ intAE D :=
     fun z a b => by
       have : z = idemAt P * z + 1 - idemAt P := by linear_combination a
-      rw [this, RingHom.map_sub, RingHom.map_add, RingHom.map_one]
+      rw [this, RingHom.map_sub, RingHom.map_add (f := _), RingHom.map_one]
       exact sub_mem (add_mem b (GlobalTheory.SplitDivisors.one_mem_int D)) (finPart_idem_mem he)
   have hinf : infPart D (y : AE D) = 1 := by
     have h0 : infPart D (idemAt P) = 0 := GlobalTheory.StepVec.infPart_idemAt he
     have : (y : AE D) = idemAt P * (y : AE D) + (1 - idemAt P) := by linear_combination h1
-    rw [this, RingHom.map_add, RingHom.map_mul, RingHom.map_sub, RingHom.map_one, h0]
+    rw [this, RingHom.map_add (f := _), RingHom.map_mul, RingHom.map_sub, RingHom.map_one, h0]
     ring
   refine hχ y hinf (key _ h1 h2) (key _ h1' h3) ?_
   have h0 : idemAt P * (idem Q + cA D (idem Q)) = 0 := by
-    rw [mul_add, idem, map_sum, Finset.mul_sum, Finset.mul_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [mul_add, idem, map_sum, Finset.mul_sum, Finset.mul_sum,
       Finset.sum_eq_zero fun j hj => hS.mul_eq_zero hP (hQ hj) fun e => hn (e ▸ hj),
       Finset.sum_eq_zero fun j hj => hS.mul_conj hP (hQ hj), add_zero]
   linear_combination (idem Q + cA D (idem Q)) * h1 + ((y : AE D) - 1) * h0
@@ -97,7 +103,8 @@ theorem fock_sum {F : Frame S T} (hF : F.Good) {ι : Type} (s : Finset ι) (f : 
 theorem series_sum {F : Frame S T} (hF : F.Good) (ω : PairRep S T) {ι : Type} (s : Finset ι) (f : ι → WO S T → ℂ)
     (hf : ∀ i, IsThetaFunO F.ψ S T (f i)) (h : GA D S) (Pol : PolF D T.rank S.rank) (g : GA D T) :
     series F ω (∑ i ∈ s, f i) h Pol g = ∑ i ∈ s, series F ω (f i) h Pol g := by
-  simp only [series_apply, (fock_sum hF s f hf Pol).2, map_sum, Finset.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [series_apply, (fock_sum hF s f hf Pol).2, map_sum, Finset.sum_apply]
 
 theorem series_smul (F : Frame S T) (ω : PairRep S T) (c : ℂ) (f : WO S T → ℂ) (h : GA D S) (Pol : PolF D T.rank S.rank)
     (g : GA D T) : series F ω (c • f) h Pol g = c * series F ω f h Pol g := by
@@ -107,11 +114,13 @@ theorem series_translate {F : Frame S T} (hF : F.Good) {ω : PairRep S T} {χS �
     (hω : IsWeilDatumO F.ψ S T χS χT ω) {f : WO S T → ℂ} (hf : IsThetaFunO F.ψ S T f) {γ : GA D T} (hγ : γ ∈ GfC T)
     (h : GA D S) (Pol : PolF D T.rank S.rank) (g : GA D T) :
     series F ω f h Pol (g * γ) = series F ω (ω (1, γ) f) h Pol g := by
+  have compAt_one (τ : D.what₂.Tau) {n : ℕ} : compAt F.θ τ (1 : Mx D n n) = 1 :=
+    Matrix.map_one _ (map_zero ((F.θ τ).comp (infPart D))) (map_one ((F.θ τ).comp (infPart D)))
   have k := (GlobalTheory.OrientedHeis.om_pureTensorO D F.ψ F.θ S T χS χT ω hω hF.vac.2.inf (fun _ => 1) (fun _ => 1)
     (fun τ => (F.BS τ).val) (fun τ => (F.BS τ).val) F.sT F.sT F.BT F.BT 1 γ
-    (fun τ => by simp [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ (one_mem _)])
+    (fun τ => by simp [compAt_one])
     (fun τ => by simp [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ hγ])
-    (fun τ => by simp [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ (one_mem _)])
+    (fun τ => by simp [compAt_one])
     (fun τ => by simp [GlobalTheory.FiniteFock.compAt_mt_of_finite _ τ hγ]) f hf Pol).2
   have e2 : ((h, g * γ) : GA D S × GA D T) = (h, g) * (1, γ) := by simp
   rw [series_apply, series_apply, e2, map_mul, Module.End.mul_apply]
@@ -148,7 +157,8 @@ theorem vecAt_sum (B : Base S T) {Q : Finset (Pl D.host.E)} {P : Pl D.host.E} (h
       B.vecAt Q (fun PP y => if PP.1 = P then ∑ c, Φ PP.1 c y else Φ PP.1 (b PP) y) := by
   have e1 : ∀ φ : ∀ PP : ↥Q, Matrix (Fin T.rank) (Fin S.rank) (kP PP.1) → ℂ,
       B.vecAt Q φ = B.F.vecL B.G (B.de.Q ∪ Q) (B.locFn Q φ) := fun φ => rfl
-  simp only [e1, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [e1, ← map_sum]
   congr 1
   funext y
   rw [Finset.sum_apply]

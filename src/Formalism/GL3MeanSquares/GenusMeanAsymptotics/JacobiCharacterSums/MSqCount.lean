@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.MeanSquareHypWIff
-import Formalism.LandauZeroFreeBounds.LogDerivRegionChiOf
+module
+
+public import Mathlib
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.MeanSquareHypWIff
+public import Formalism.LandauZeroFreeBounds.LogDerivRegionChiOf
+
+@[expose] public section
 
 open Finset Classical
 

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.FibreParseval
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SquareIntegrability.FibreParseval
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.I2
 
@@ -103,7 +107,8 @@ theorem span_Bf (hI : IsSplit P I) (hP : Ext.PackingCount) :
     have hzIp : z ∈ Ip X I := (Ip X I).sub_mem hyIp ((Ip X I).sum_mem fun l _ =>
       (Ip X I).smul_mem _ (cpp_mem hI hP l))
     have hwz : wmap (IR I) z = 0 := by
-      rw [hz, map_sub, map_sum, ← hk]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hz, map_sub, map_sum, ← hk]
       simp only [map_zsmul, cpp_wmap, sub_self]
     have hp2 : p2 (IR I) z = 0 := by
       rw [← norm_eq_zero, ← norm_wmap hK, hwz, norm_zero]

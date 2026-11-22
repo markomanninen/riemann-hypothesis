@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SymmetricPowerSymbols.SymExOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SymmetricPowerSymbols.CycSpec
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemModularUnitsOfRootMemKummerAdjoin
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SymmetricPowerSymbols.SymExOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SymmetricPowerSymbols.CycSpec
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.MemModularUnitsOfRootMemKummerAdjoin
+
+@[expose] public section
 
 open scoped MatrixGroups Matrix
 open GlobalTheory.KZ GlobalTheory.K4 UpperTheory.V.Z.Kato.Sym
@@ -51,7 +55,7 @@ private theorem exists_limit {K L : Type} [Field K] [Field L] [Algebra K L] [Alg
         fun T h => by rw [← h.1, ← h.2.1, ← h.2.2, map_mul])
       map_zero' := ev _ ((hψ0 0).mono fun T h => by rw [← h, map_zero])
       map_add' := fun x y => ev _ (((hψ0 x).and ((hψ0 y).and (hψ0 (x + y)))).mono
-        fun T h => by rw [← h.1, ← h.2.1, ← h.2.2, map_add])
+        fun T h => by rw [← h.1, ← h.2.1, ← h.2.2, map_add (f := _)])
       commutes' := fun t => ev _ (((hψ0 (algebraMap K L t)).and (hfix t)).mono
         fun T h => by rw [← h.1, h.2]) }
   refine ⟨AlgEquiv.ofBijective ψ1 (Algebra.IsAlgebraic.algHom_bijective ψ1), fun z => ?_⟩
@@ -143,7 +147,7 @@ theorem UpperTheory.V.Z.Kato.Sym.kumUn :
       refine Polynomial.induction_on p (fun a => ?_) (fun p q hp hq => ?_) (fun n a ih => ?_)
       · rw [Polynomial.aeval_C]
         exact hW.1 a
-      · rw [map_add]
+      · rw [map_add (f := _)]
         exact W.add_mem _ _ hp hq
       · rw [pow_succ, ← mul_assoc, map_mul, Polynomial.aeval_X]
         exact W.mul_mem _ _ ih hW.2

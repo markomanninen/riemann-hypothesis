@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsPFStep
-import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsPFSecRed
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsPFStep
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.StatementsPFSecRed
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Inter
@@ -21,8 +26,6 @@ def PFVert.Statement : Prop :=
     geoNum (d + r) W (fun j => (Fin.append L' N j).a) = 0
 
 section Inhabitants
-
-def fibreAtTwo : Ideal (MRing PointLineBlocks) := Ideal.span {C 2}
 
 end Inhabitants
 

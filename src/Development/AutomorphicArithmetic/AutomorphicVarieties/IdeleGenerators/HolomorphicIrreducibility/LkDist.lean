@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.ConstSmall
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ private lemma lk_deriv (k : ℕ) (x : ℂ) (hx : x ≠ 1) :
   have e : numL (k + 2) = X * (derivative (numL (k + 1)) * (1 - X) + C ((k : ℤ) + 1) * numL (k + 1)) := numL.eq_3 k
   unfold Lk
   rw [e]
-  simp only [map_mul, map_add, map_sub, map_one, aeval_X, aeval_C]
+  simp only [map_mul, map_add (f := _), map_sub, map_one, aeval_X, aeval_C]
   field_simp
   push_cast
   ring

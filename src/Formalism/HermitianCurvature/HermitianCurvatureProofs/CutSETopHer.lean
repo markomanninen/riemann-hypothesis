@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSETop
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEDecayAsm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEWaveOutJ
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSESiteOpsC
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPCompactOfStepSquare
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSETop
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEDecayAsm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSEWaveOutJ
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSESiteOpsC
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TheoremPCompactOfStepSquare
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutSE
 

@@ -1,7 +1,12 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.AlgebraicCharacters.EmbOrbit
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeilDeligneParamAboveLIndependentLocalEmbedding
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LocalGaloisRepDecompositionInduced
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.ConclusionFinite
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.AlgebraicCharacters.EmbOrbit
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.WeilDeligneParamAboveLIndependentLocalEmbedding
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LocalGaloisRepDecompositionInduced
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.ConclusionFinite
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.WeilDeligne
 open GlobalTheory.Pst GlobalTheory.TripleGal Module TensorProduct Polynomial Formalism.MainNotions.N
 open UpperTheory.Lit.CharWD GlobalTheory.Published
@@ -26,7 +31,7 @@ private theorem letter_lift {L U D M : Type} [Field L] [Field U] [AddCommGroup D
   | tmul a x =>
     rw [LinearMap.sub_apply, LinearMap.baseChange_tmul, LinearMap.smul_apply, LinearMap.id_apply, map_sub,
       map_smul, e, e, h2, smul_comm, sub_self]
-  | add x y hx hy => rw [map_add, map_add, hx, hy, add_zero]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, add_zero]
 
 private theorem line_smul {W : Type} [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W] (hd : finrank ℂ W = 1)
     (f : End ℂ W) (c : ℂ) (hc : c ∈ f.charpoly.roots) (v : W) : f v = c • v := by
@@ -51,10 +56,10 @@ private theorem dQ_inv {ρ₁ : Representation ↥L₁.1 ↥(GK K) V₁} {ρ₂ 
   induction (y : V₂ ⊗[ℚ_[l]] Bst P) using TensorProduct.induction_on with
   | zero => simp
   | tmul v b => rw [tensQ_tmul, tensQ_tmul, e]
-  | add x y hx hy => rw [map_add, map_add, hx, hy]
+  | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy]
+
 
 open EnlargeCoeff in
-
 private theorem dQ_bij {ρ₁ : Representation ↥L₁.1 ↥(GK K) V₁} {ρ₂ : Representation ↥L₂.1 ↥(GK K) V₂}
     (f : V₁ ≃ₗ[ℚ_[l]] V₂) (hf : ∀ g v, f.toLinearMap (ρ₁ g v) = ρ₂ g (f.toLinearMap v)) :
     Function.Bijective (dQ P hf) := by
@@ -101,7 +106,9 @@ private theorem exists_semi {K L₁ L₂ : FinExt l}
     (fun a x => by
       obtain ⟨a', e1, e2⟩ := h1 a
       show wdMk P ι ρ₂ (S (a • x)) = θ (ι a) • wdMk P ι ρ₂ (S x)
-      rw [e2, wdMk_smul, hθ, e1])
+      rw [e2]
+      change wdMk P ι ρ₂ ((Dpst P ρ₂).module.toSMul.smul a' (S x)) = _
+      rw [wdMk_smul, hθ, e1])
     (fun c x => by
       obtain ⟨c', e1, e2⟩ := h2 c
       show wdMk P ι ρ₂ (S (mulD P ρ₁ c x)) = θ (ι c) • wdMk P ι ρ₂ (S x)
@@ -110,8 +117,8 @@ private theorem exists_semi {K L₁ L₂ : FinExt l}
   rw [← hθ]
   exact @LinearMap.map_smul _ _ _ _ _ _ _ (Module.compHom _ θ) Φ _ _
 
-open EnlargeCoeff in
 
+open EnlargeCoeff in
 private theorem eig_conj {L₁ L₂ : FinExt l}
     {V₁ V₂ : Type} [AddCommGroup V₁] [Module ↥L₁.1 V₁] [Module ℚ_[l] V₁] [IsScalarTower ℚ_[l] ↥L₁.1 V₁]
     [AddCommGroup V₂] [Module ↥L₂.1 V₂] [Module ℚ_[l] V₂] [IsScalarTower ℚ_[l] ↥L₂.1 V₂]

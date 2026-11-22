@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.SupportG
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.SupportLoc
-import Formalism.LocalToGlobal.UnitaryNorms.CharRat
-import Formalism.SharpRestriction.CuspSpanNormBounds.LocalModelPeriodLattices
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.SupportG
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.SupportLoc
+public import Formalism.LocalToGlobal.UnitaryNorms.CharRat
+public import Formalism.SharpRestriction.CuspSpanNormBounds.LocalModelPeriodLattices
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem posSemidef_of_hasSum {ι J : Type*} [Fintype ι] (f : J → ι → ℂ) 
     refine h1.unique ?_
     convert h2 using 1
     funext j
-    simp only [star_mul', star_star, Complex.star_def, Complex.conj_ofReal, Complex.conj_conj]
+    simp only [star_mul, Complex.star_def, Complex.conj_ofReal, Complex.conj_conj]
     ring
   refine ⟨hherm, fun v => ?_⟩
   simp only [Finsupp.sum]
@@ -45,8 +49,8 @@ variable {P : Type*} {C : P → Type*}
 
 def OffS (θ0 : ∀ p, C p) (S : Finset P) : Type _ := {θ : ∀ p, C p // ∀ p ∉ S, θ p = θ0 p}
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem hasSum_prod_offS [DecidableEq P] (θ0 : ∀ p, C p) (f : ∀ p, C p → ℂ) (a : P → ℂ) (S : Finset P)
     (hf : ∀ p ∈ S, HasSum (f p) (a p)) (hn : ∀ p ∈ S, Summable fun c => ‖f p c‖) :
     HasSum (fun θ : OffS θ0 S => ∏ p ∈ S, f p (θ.1 p)) (∏ p ∈ S, a p) ∧
@@ -297,7 +301,7 @@ theorem ktopG_hasSum {θ0 : ∀ p, Option ((M p).Cls D.R.rS)} {S : Finset (PlF D
   rw [← hg.hasSum_iff hz]
   convert hsum using 1
   funext θ
-  simp only [Function.comp_apply, g]
+  simp only [Function.comp_apply]
   rw [bbG_eq_prod hu θ.2 rfl, bbG_eq_prod hu' θ.2 hk.symm, autG_eq_prodS hu θ.2, map_prod,
     ← Finset.prod_mul_distrib, ← Finset.prod_div_distrib]
   rfl
@@ -507,15 +511,6 @@ end Vec
 section PropSix
 
 variable {D : Formalism.BasicNotions.D7}
-
-def TopLocal {Y : TermTie D} {δ : ∀ p : PlF D, (D.s.atP p).Fp}
-    {M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep} {u u' : D.what₂.Word} (X : TermLoc D Y δ M u u') : Prop :=
-  ∃ θ0 : ∀ p, Option ((M p).Cls D.R.rS),
-    (∀ w : Point D.host.E (D.R.rS + 1), Gpt (D.mem u).A.T (D.mem u').A.T w ≠ 0 →
-      (∃ S : Finset (PlF D), UnramOff M δ (D.mem u).A.T (D.mem u').A.T θ0 S w) ∧
-        ∀ p, BBsq M δ (D.mem u).A.T (D.mem u').A.T p w) ∧
-    ∀ γ : D.s.Term u u', D.s.generic γ → Gpt (D.mem u).A.T (D.mem u').A.T (D.s.ptOf γ) ≠ 0 →
-      Restricted θ0 (thCls X γ)
 
 theorem n0_pos {c : ℝ} (hc : 0 < c) {T T' : ℕ} {w : Point D.host.E (D.R.rS + 1)} (hG : Gpt T T' w ≠ 0) :
     0 < n0 c T T' w := by

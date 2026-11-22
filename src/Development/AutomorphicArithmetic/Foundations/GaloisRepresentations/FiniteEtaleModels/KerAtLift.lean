@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.SecInjG
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.IdealSplit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGluedCommGroupSchemeArtinFibreProduct
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.SecInjG
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.IdealSplit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsGluedCommGroupSchemeArtinFibreProduct
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -53,17 +57,16 @@ private theorem ker_read {C₁ : X₁.site.Cl (T.M M₁).univ c₁ a₁} {C₂ :
     {Ω : Type} [Field Ω] (z : Sp Ω ⟶ (T.M M₁).X) (e : 𝟙_ (Over (T.M M₁).X) ⟶ (T.M M₁).univ.A) :
     KerAt Tj (z ≫ P.y) (z ≫ e.left ≫ C₁.m.φ ≫ mf.φ) ↔ toUnit (Over.mk z) ≫ e ≫ W.ψ = 1 := by
   let a' : Over.mk (z ≫ P.y) ⟶ Tj.o.A := Over.homMk (z ≫ e.left ≫ P.fa) (by
-    have h1 : e.left ≫ (T.M M₁).univ.A.hom = 𝟙 _ := Over.w e
     simp only [Over.mk_hom, Category.assoc]
-    rw [P.ca.1.w, reassoc_of% h1])
+    rw [P.ca.1.w, ← Category.assoc e.left, Over.w e, Over.tensorUnit_hom]
+    exact congrArg (z ≫ ·) (Category.id_comp P.y))
   have h1 := kerAt_lift Tj (z ≫ P.y) a'
   have h2 : a'.left ≫ Tj.ms.φ = z ≫ e.left ≫ C₁.m.φ ≫ mf.φ := by
     simp only [a', Over.homMk_left, Category.assoc, P.ms]
   rw [h2] at h1
   rw [h1]
   refine (pt_one_iff P.cb (toUnit (Over.mk z) ≫ e ≫ W.ψ) (a' ≫ Tj.ψ) ?_).symm
-  simp only [a', Over.comp_left, Over.homMk_left, Category.assoc, P.sq]
-  simp
+  simp only [a', Over.comp_left, Over.homMk_left, Over.toUnit_left, Over.mk_hom, Category.assoc, P.sq]
 
 end
 
@@ -95,9 +98,11 @@ end UpperTheory.Gal.FiniteEtaleModels
 
 theorem UpperTheory.Gal.FiniteEtaleModels.bKer_of :
     SecInjG → TrEtaPt → BKer := by
-  intro hS hT p _ D G L hSc E _ _ gb w q _ r 𝔴 𝔫 S k T N₀ 𝔟₁ 𝔟₂ X₁ X₂ 𝔴' i hmax hu hb hi h hint htj M₁ M₂ c₁ c₂ a₁ a₂ hn₁ hn₂ C₁ C₂ W f mf hf
+  intro hS hT
+  unfold BKer
+  intro p _ D G L hSc E _ _ gb w q _ r 𝔴 𝔫 S k T N₀ 𝔟₁ 𝔟₂ X₁ X₂ 𝔴' i hmax hu hb hi h hint htj M₁ M₂ c₁ c₂ a₁ a₂ hn₁ hn₂ C₁ C₂ W f mf hf
     e he hpos Tj P Ω _ _ x x' hxx'
-  haveI : CharZero Ω :=
+  have : CharZero Ω :=
     charZero_of_injective_ringHom (Spec.preimage (x ≫ (T.M M₁).s)).hom.injective
   have hb' : 𝔟₁ ≤ 𝔴' := hb.trans Ideal.mul_le_right
   refine hS q (datAt S.atq S.sp) (Ow w) S.b N₀ X₂.lev.1 X₂.lev.2.1 hSc.m1 r 𝔴' i e hmax hu hi hpos X₂.M Tj Ω ((x ≫ C₁.j) ≫ f)

@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFDefs
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.BlockInj
-import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SymInt
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.BFDefs
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.BlockInj
+public import Formalism.SharpRestriction.GrowthBounds.BinomialRatio.SymInt
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,7 +51,7 @@ theorem gi_be_tau (P : MvPolynomial (BVar N r D.T.t) (KK O)) :
     rintro (a | ⟨i, _ | _⟩)
     · simp [tau, tauF, beF, giF]
     · simp [tau, tauF, beF, giF]
-    · simp only [AlgHom.comp_apply, tau, aeval_X, tauF, map_add, map_mul, beF, one_mul, giF, map_one]
+    · simp only [AlgHom.comp_apply, tau, aeval_X, tauF, map_add (f := _), map_mul, beF, one_mul, giF, map_one]
       rw [qq_fix D (beF D) (fun _ => rfl), qq_fix D (giF D) (fun _ => rfl)]
       ring
   exact DFunLike.congr_fun h P
@@ -63,7 +67,7 @@ theorem ppi_be (P : MvPolynomial (BVar N r D.T.t) (KK O)) :
   exact DFunLike.congr_fun h P
 
 theorem ppi_int (q : MvPolynomial (BVar N r D.T.t) O) (e : (Fin (D.T.t + 1) ⊕ Fin r) →₀ ℕ) :
-    coeff e (ppi (O := O) (r := r) D (map (algebraMap O (KK O)) q)) ∈ IntAlg O (Fin N × Fin r) := by
+    AddMonoidAlgebra.coeff (ppi (O := O) (r := r) D (map (algebraMap O (KK O)) q)) e ∈ IntAlg O (Fin N × Fin r) := by
   classical
   induction q using MvPolynomial.induction_on generalizing e with
   | C a =>
@@ -75,7 +79,7 @@ theorem ppi_int (q : MvPolynomial (BVar N r D.T.t) O) (e : (Fin (D.T.t + 1) ⊕ 
     · exact ⟨C a, by simp⟩
     · exact (IntAlg O _).zero_mem
   | add p q hp hq =>
-    rw [map_add, map_add, coeff_add]
+    rw [map_add (f := _), map_add (f := _), MvPolynomial.coeff_add]
     exact (IntAlg O _).add_mem (hp e) (hq e)
   | mul_X p v hp =>
     rw [map_mul, map_mul, map_X]
@@ -108,7 +112,8 @@ theorem sat_block (x : MvPolynomial (BVar N r D.T.t) (KK O))
   have hv := Ltot_apply D v
   set B := ∑ i : ↥(IF (r := r) D), base D i.1.1 i.1.2 (v i : MvPolynomial (Fin N × Fin r) (KK O)) with hB
   have hT : Ltot D v = tau D B := by
-    rw [hv, hB, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hv, hB, map_sum]
     exact Finset.sum_congr rfl fun i _ => ell_eq_tau D _ _ _
   have h1 : aeval (beF (O := O) (r := r) D) B ∈ IntAlg O (BVar N r D.T.t) := by
     rw [← gi_be_tau D B, ← hT]
@@ -126,7 +131,8 @@ theorem sat_block (x : MvPolynomial (BVar N r D.T.t) (KK O))
   have hint : ∀ i0 : ↥(IF (r := r) D), (v i0 : MvPolynomial (Fin N × Fin r) (KK O)) ∈ IntAlg O (Fin N × Fin r) := by
     intro i0
     have h2 := ppi_int D q (eExp D i0.1.1 i0.1.2)
-    rw [hq', ppi_be, hB, map_sum] at h2
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hq', ppi_be, hB, map_sum] at h2
     simp only [ppi_base] at h2
     rw [coeff_sum, Finset.sum_eq_single i0] at h2
     · rwa [coeff_monomial, if_pos rfl] at h2

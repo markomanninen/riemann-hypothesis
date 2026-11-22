@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -261,8 +265,9 @@ theorem eval {d : ℕ} {g : Module.End ℂ (TV n M P)} (hg : Deg E d g) (J : P �
         · intro q _ hq; simp [Function.update_of_ne hq]
         · simp
       linarith
-    · rw [Module.End.mul_apply, Om_single, map_sum, Finset.sum_apply, LinearMap.sum_apply]
-      exact Finset.sum_congr rfl fun c _ => by rw [hAv]; rfl
+    set_option synthInstance.maxHeartbeats 100000 in
+      · rw [Module.End.mul_apply, Om_single, map_sum, Finset.sum_apply, LinearMap.sum_apply]
+        exact Finset.sum_congr rfl fun c _ => by rw [hAv]; rfl
   | perm σ _ ih =>
     intro I
     obtain ⟨A, hA, hAv⟩ := ih (I ∘ σ.symm)
@@ -326,7 +331,8 @@ theorem prod_exact {ℓ : M →ₗ[ℂ] ℂ} {ψ : Fin n → Fin n → ℂ} (hE 
       rw [Module.algebraMap_end_apply, Pi.smul_apply, hBv, map_smul, ← LinearMap.comp_apply,
         vanish E hE hψ2 hψ L.length _ B hB (by simp [H]; omega)]
       simp
-    rw [h2, sub_zero, Om_apply, map_sum, hu]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h2, sub_zero, Om_apply, map_sum, hu]
     rw [Finset.sum_eq_single_of_mem a (Finset.mem_univ _) ?_]
     · rw [hl a i _ (Fin.lt_def.2 (by simp only [a]; omega)), hcv]; ring
     · intro a' _ ha'

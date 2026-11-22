@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CoordEquivApply
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyAlgebraMapMemIntegers
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CoordEquivApply
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyAlgebraMapMemIntegers
+
+@[expose] public section
+
 open MeasureTheory Set Filter Polynomial NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open GlobalTheory.IndefiniteRowSideFullHecke.PlusPolynomialRoots GlobalTheory.TrEll
@@ -38,7 +43,8 @@ theorem eventually_mem_intLoc_iff_coordEquiv_mem :
     rw [coordF_tmul]
     have e : (powB P).repr (x : Fld P) i = ∑ j, b.repr x j • (powB P).repr (b j : Fld P) i := by
       conv_lhs => rw [← b.sum_repr x]
-      simp only [map_sum, map_zsmul, Finsupp.coe_finset_sum, Finset.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_zsmul, Finsupp.coe_finsetSum, Finset.sum_apply]
       refine Finset.sum_congr rfl fun j _ => ?_
       simp [← zsmul_eq_mul, map_zsmul]
     rw [e, TensorProduct.tmul_sum]

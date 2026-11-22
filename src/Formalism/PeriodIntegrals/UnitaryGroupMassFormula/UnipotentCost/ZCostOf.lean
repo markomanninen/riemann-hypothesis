@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCost.LetterSize
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCost.ZIterC
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCost.LetterSize
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentCost.ZIterC
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.U
 

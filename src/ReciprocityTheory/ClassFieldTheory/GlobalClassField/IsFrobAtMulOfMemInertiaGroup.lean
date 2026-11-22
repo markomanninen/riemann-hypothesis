@@ -1,5 +1,9 @@
-import ReciprocityTheory.NeutralLocalFields.Reciprocity
-import ReciprocityTheory.ClassFieldTheory.GlobalClassField.SUnitGalois.GalSmulAsIdeal
+module
+
+public import ReciprocityTheory.NeutralLocalFields.Reciprocity
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 

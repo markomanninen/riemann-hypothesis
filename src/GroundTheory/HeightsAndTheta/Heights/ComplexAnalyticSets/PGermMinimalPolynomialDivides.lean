@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.AnalyticGerm
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGermMinimalPolynomialDivides
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFiniteFibreGermIntegral
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StHolGermsIntegrallyClosed
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.AnalyticGerm
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StGermMinimalPolynomialDivides
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StFiniteFibreGermIntegral
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StHolGermsIntegrallyClosed
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -126,7 +131,7 @@ theorem proof (hF : FiniteFibreGermIntegral.Statement) (hH : HolGermsIntegrallyC
 
   let _ : Algebra (holGerms (A w)) (germsAlong X w) := (alongPull X w A).toAlgebra
   have hα : Function.Injective (algebraMap (holGerms (A w)) (germsAlong X w)) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro φ hφ
     obtain ⟨h, hh, hφh⟩ := φ.2
     have h1 : ((h ∘ A : (σ → ℂ) → ℂ) : Germ (𝓝[X] w) ℂ) = ((0 : (σ → ℂ) → ℂ) : Germ (𝓝[X] w) ℂ) := by
@@ -169,7 +174,8 @@ theorem proof (hF : FiniteFibreGermIntegral.Statement) (hH : HolGermsIntegrallyC
     have h1 := hmon.as_sum
     rw [← Fin.sum_univ_eq_sum_range (fun i => C (m.coeff i) * Polynomial.X ^ i)] at h1
     conv_rhs => rw [h1]
-    simp only [P, bt, Polynomial.map_add, Polynomial.map_pow, Polynomial.map_X, Polynomial.map_sum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [P, bt, Polynomial.map_add (f := _), Polynomial.map_pow, Polynomial.map_X, Polynomial.map_sum,
       Polynomial.map_mul, Polynomial.map_C, germOf_germRep]
   have hPz : ∀ z, eval₂ (preLinear w A) g P z = g z ^ m.natDegree + ∑ j, (bt j).1 (A z) * g z ^ (j : ℕ) :=
     fun z => eval₂_monic_apply w A g bt z
@@ -222,7 +228,8 @@ theorem proof (hF : FiniteFibreGermIntegral.Statement) (hH : HolGermsIntegrallyC
       rw [← map_toSubring E (analyticAtRing (A w)) hcoeffs, Polynomial.map_map]
     have hP' : P.map ev =
         Polynomial.X ^ m.natDegree + ∑ j, C ((bt j).1 y) * Polynomial.X ^ (j : ℕ) := by
-      simp [P, ev, Polynomial.map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [P, ev, Polynomial.map_sum]
     refine ⟨Q.map ev, ?_⟩
     rw [← hE', ← hP', ← Polynomial.map_mul, ← sub_eq_zero, ← Polynomial.map_sub]
     exact hD0

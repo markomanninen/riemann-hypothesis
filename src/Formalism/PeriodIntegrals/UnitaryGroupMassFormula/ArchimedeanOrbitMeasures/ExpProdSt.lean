@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.SGauge
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.SGauge
+
+@[expose] public section
 
 noncomputable section
 

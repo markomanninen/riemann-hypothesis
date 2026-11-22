@@ -1,12 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.CuspOnto
-import Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsValuationSubringComplexPrimeMemNonunits
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsDatumSumAndAllSignatures
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsLevelGoodAtAllPrimesAndIdx
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUnfFamily
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsVanBdOfMemExtVanZ
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecondCountableTopologyOfIsProjOver
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.MulCMemSec
+public import Formalism.LocalToGlobal.ProjectiveLattices.FreeBridge
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsDatumSumAndAllSignatures
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsLevelGoodAtAllPrimesAndIdx
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.ExistsUnfFamily
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsVanBdOfMemExtVanZ
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecondCountableTopologyOfIsProjOver
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,10 +31,5 @@ def OffZero (V : Unf Xo c σ r) (T : TorFlag Xo c) {e : Ix D → ℤ} (k : V.Com
     (h : (T.X.LL e).ι → GlobalTheory.CxPts (flagStr T.X) σ → ℂ) : Prop :=
   ∀ i (y : GlobalTheory.CxPts (flagStr T.X) σ), (∀ (x : Frame (V.X k).Ψ r) (hx : x ∈ (V.X k).dom),
     T.X.ptY (V.un k ⟨x, hx⟩) ≠ y.1) → h i y = 0
-
-example (V : Unf Xo c σ r) (T : TorFlag Xo c) (e : Ix D → ℤ) (k : V.Comp) :
-    Reads V T e k 0 (0 : (T.X.LL e).ι → GlobalTheory.CxPts (flagStr T.X) σ → ℂ) ∧ OffZero V T k
-      (0 : (T.X.LL e).ι → GlobalTheory.CxPts (flagStr T.X) σ → ℂ) :=
-  ⟨fun _ _ _ _ _ _ _ _ _ _ => (mul_zero _).symm, fun _ _ _ => rfl⟩
 
 end GlobalTheory.CompanionTheory.Ar.HolExt

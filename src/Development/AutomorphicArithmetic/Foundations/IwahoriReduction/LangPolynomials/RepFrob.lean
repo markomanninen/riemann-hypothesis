@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.RepSmul
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.RepUniq
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.RepSmul
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.RepUniq
+
+@[expose] public section
 
 noncomputable section
 

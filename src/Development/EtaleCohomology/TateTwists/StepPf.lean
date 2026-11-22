@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.TensorVanishing
+module
+
+public import Development.EtaleCohomology.TateTwists.TensorVanishing
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex GlobalTheory.EtC
 open scoped TensorProduct DirectSum
@@ -16,7 +20,7 @@ theorem tens_res_comp {W V U : Scheme.{0}} (k : W ⟶ V) (g : V ⟶ U) (w : ℤ)
   induction v using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul a b => simp [TensorProduct.map_tmul]
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
 
 theorem ix_eq {w : ℤ} (p : Ix w) (a b : ℤ) (h : p.1.2 = b) (ha : a + b = w) : p = ⟨(a, b), ha⟩ :=
   Subtype.ext (Prod.ext (show p.1.1 = a by have := p.2; omega) h)
@@ -37,7 +41,7 @@ theorem Dm_comp (U : Scheme.{0}) (n t0 : ℤ) (y : Tens C J U n) :
   induction y using DirectSum.induction_on with
   | zero => simp
   | add a b ha hb =>
-    simp only [map_add, DirectSum.add_apply] at ha hb ⊢
+    simp only [map_add (f := _), DirectSum.add_apply] at ha hb ⊢
     rw [ha, hb]; abel
   | of p v =>
     rw [← DirectSum.lof_eq_of (ULift.{1} R)]

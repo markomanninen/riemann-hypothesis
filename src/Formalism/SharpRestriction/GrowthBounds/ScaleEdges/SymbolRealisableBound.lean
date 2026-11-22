@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.GainBoundAt
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.FlatSrc
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.GainBoundAt
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.FlatSrc
+
+@[expose] public section
 
 noncomputable section
 

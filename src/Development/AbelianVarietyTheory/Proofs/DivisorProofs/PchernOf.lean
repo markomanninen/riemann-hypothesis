@@ -1,22 +1,26 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GaussManinPeriods
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
-import Development.AbelianVarietyTheory.Definitions.Divisors.AnalyticChartsRealizationCompPointEq
-import Development.AbelianVarietyTheory.Definitions.Divisors.FstTszeSec
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsPeriodHom
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DpExpEqSumRangeOfVanish
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedPowerFiltration
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianSchemeIsSeparatedOfAffineBaseStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTranslationClosedChartsSubordinateToCoverStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCrystallineChernOnAnalyticThickeningsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFrameFactorOfAutomorphyLogStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitsComparingLiftedTransitionsFactorStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogCocycleCohomologousStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupPeriodClassesSumConstStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstBiadditiveCoboundarySymmetricStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianDotProductMulVecStarSwap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DegZeroCocycleExistsCoboundaryOfRichBasedStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHolomorphicParamOfDegZeroCompatibleStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.GaussManinPeriods
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.CrysToDRBijective
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AnalyticChartsRealizationCompPointEq
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FstTszeSec
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsPeriodHom
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DpExpEqSumRangeOfVanish
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DividedPowerFiltration
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianSchemeIsSeparatedOfAffineBaseStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTranslationClosedChartsSubordinateToCoverStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCrystallineChernOnAnalyticThickeningsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFrameFactorOfAutomorphyLogStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUnitsComparingLiftedTransitionsFactorStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogCocycleCohomologousStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CupPeriodClassesSumConstStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConstBiadditiveCoboundarySymmetricStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HermitianDotProductMulVecStarSwap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DegZeroCocycleExistsCoboundaryOfRichBasedStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHolomorphicParamOfDegZeroCompatibleStatement
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -53,32 +57,34 @@ theorem pchern_of (hsep : ∀ {R : Type} [CommRing R] (A : Over (Sp R)) [GrpObj 
   let pr : primDR A → (u.Λ →+ Hol (fibFam u).V) := fun c ↦
     { toFun x := algebraMap ℂ (Hol (fibFam u).V) (P x c)
       map_zero' := by rw [map_zero, LinearMap.zero_apply, map_zero]
-      map_add' x y := by rw [map_add, LinearMap.add_apply, map_add] }
+      map_add' x y := by rw [map_add (f := _), LinearMap.add_apply, (algebraMap ℂ (Hol (fibFam u).V)).map_add] }
   have hpr : ∀ c : primDR A, r.coef.pull1 c.1 = K.perCl (pr c) := fun c ↦ hP c K r hF
   obtain ⟨c', hc'⟩ := hcup K (fun k ↦ pr (a k)) (fun k ↦ pr (b k)) ℓ c
     (fun l m ↦ algebraMap ℂ (Hol (fibFam u).V) (β l m)) (by
-      rw [← hz, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hz, map_sum]
       exact Finset.sum_congr rfl fun k _ ↦ by rw [GlobalTheory.CatCoh.CoefMap.pullCohomologyTwo_cup, hpr, hpr]) hcc
   let δ : u.Λ → u.Λ → ℂ := fun l m ↦ ∑ k, P l (a k) * P m (b k) - β l m
   have d1 : ∀ l l' m, δ (l + l') m = δ l m + δ l' m := fun l l' m ↦ by
-    simp only [δ, β, map_add, LinearMap.add_apply, Submodule.coe_add, star_add, Matrix.mulVec_add, dotProduct_add,
+    simp only [δ, β, map_add (f := _), LinearMap.add_apply, Submodule.coe_add, star_add, Matrix.mulVec_add, dotProduct_add,
       add_mul, Finset.sum_add_distrib]
     ring
   have d2 : ∀ l m m', δ l (m + m') = δ l m + δ l m' := fun l m m' ↦ by
-    simp only [δ, β, map_add, LinearMap.add_apply, Submodule.coe_add, add_dotProduct,
+    simp only [δ, β, map_add (f := _), LinearMap.add_apply, Submodule.coe_add, add_dotProduct,
       mul_add, Finset.sum_add_distrib]
     ring
   let β' : u.Λ →+ u.Λ →+ Hol (fibFam u).V := AddMonoidHom.mk'
-    (fun l ↦ AddMonoidHom.mk' (fun m ↦ algebraMap ℂ (Hol (fibFam u).V) (δ l m)) fun m m' ↦ by rw [d2, map_add])
+    (fun l ↦ AddMonoidHom.mk' (fun m ↦ algebraMap ℂ (Hol (fibFam u).V) (δ l m)) fun m m' ↦ by rw [d2, (algebraMap ℂ (Hol (fibFam u).V)).map_add])
     fun l l' ↦ AddMonoidHom.ext fun m ↦ by
       change algebraMap ℂ (Hol (fibFam u).V) (δ (l + l') m) = algebraMap ℂ (Hol (fibFam u).V) (δ l m) + algebraMap ℂ (Hol (fibFam u).V) (δ l' m)
-      rw [d1, map_add]
+      rw [d1, (algebraMap ℂ (Hol (fibFam u).V)).map_add]
   have hs := hsym K (fun c hc ↦ h1 K hR hB c hc) (fun G hG ↦ h0 K hR G fun T T' φ h ↦ (hG T T' φ h).symm) hS hR β' c'
     (fun T T' T'' φ ψ ↦ by
       rw [hc']
       congr 1
       change _ = algebraMap ℂ (Hol (fibFam u).V) (δ φ.deg ψ.deg)
-      simp only [δ, map_sub, map_sum, map_mul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [δ, map_sub, map_sum, map_mul]
       rfl) x x'
   have hs' : δ x x' = δ x' x := by
     have := congrArg (Hol.ev (W := (fibFam u).V) 0 trivial) hs

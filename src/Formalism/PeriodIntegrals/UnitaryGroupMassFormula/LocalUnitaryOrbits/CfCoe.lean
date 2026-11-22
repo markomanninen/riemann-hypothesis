@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.HRAddRight
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LocalUnitaryOrbits.HRAddRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,7 @@ def phi (hSD : IsSDLoc σ J v Λ) {e : Fin n → Fin n → Fv F v ⊗[F] E} (he 
       apply Subtype.ext
       simp only [cf_coe, AddSubgroup.coe_add, Pi.add_apply, Subring.coe_add]
       exact hR_add_right σ J v _ _ _
-    simp only [h, map_add, Pi.add_apply]
+    simp only [h, map_add (f := _), Pi.add_apply]
 
 theorem phi_apply (hSD : IsSDLoc σ J v Λ) {e : Fin n → Fin n → Fv F v ⊗[F] E} (he : Orb.IsOBas v Λ e) {K : Type}
     [CommRing K] (π : OR (E := E) v →+* K) {a : ℕ} (X : lamA v Λ a) (i : Fin a) (p : Fin n) :

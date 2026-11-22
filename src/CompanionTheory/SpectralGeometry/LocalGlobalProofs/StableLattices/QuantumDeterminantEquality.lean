@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.RealPlaceAnalysis.StatementE
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.CapelliIdentity.CapelliCentralStatement
+module
+
+public import Mathlib
+public import Formalism.RealPlaceAnalysis.StatementE
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.CapelliIdentity.CapelliCentralStatement
+
+@[expose] public section
 
 open Formalism.REAL ReciprocityTheory.ChartRestriction.DS.Lap.Capelli
 

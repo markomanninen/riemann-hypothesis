@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MemRangeOfForallHeightEqOneOfIsReflexive
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MapSpanBaseChangeEquivSubmoduleOf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SubsetSpanBy
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MemRangeOfForallHeightEqOneOfIsReflexive
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.MapSpanBaseChangeEquivSubmoduleOf
+
+@[expose] public section
+
 open GlobalTheory.Desc
 
 open TensorProduct
@@ -33,7 +38,7 @@ theorem smul_injective_tensor (hc₀ : Function.Injective (algebraMap R F)) {d :
     | tmul r f =>
       rw [← TensorProduct.tmul_smul, LinearMap.lTensor_tmul, LinearMap.mulLeft_apply, Algebra.smul_def,
         ← mul_assoc, hu, one_mul]
-    | add a b ha hb => rw [smul_add, map_add, ha, hb]
+    | add a b ha hb => rw [smul_add, map_add (f := _), ha, hb]
   rw [← key x, hx, map_zero]
 
 theorem free_injective (θ : F →ₐ[R] F₁)
@@ -53,7 +58,8 @@ theorem free_injective (θ : F →ₐ[R] F₁)
       ((Submodule.span R (Set.range v)).subtype.baseChange R₁)) y =
         ∑ j, algebraMap R₁ F₁ (bb.repr y j) * θ (v j) := by
     conv_lhs => rw [← bb.sum_repr y]
-    simp only [map_sum, map_smul, hval, Algebra.smul_def]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, hval, Algebra.smul_def]
   rw [hy] at e1
   set e := (Fintype.equivFin ι).symm
   have h0 := hLD _ (v ∘ e) (by
@@ -97,7 +103,8 @@ theorem liftBaseChange_injective (hc₀ : Function.Injective (algebraMap R F)) (
   set y : R₁ ⊗[R] B := ∑ i : S, (i : R₁ × F).1 ⊗ₜ ⟨d • g i, hdg i⟩
   have hy : B.subtype.baseChange R₁ y = d • ∑ i ∈ S, i.1 ⊗ₜ i.2 := by
     rw [Finset.smul_sum, ← Finset.sum_coe_sort S]
-    simp only [y, map_sum, LinearMap.baseChange_tmul, Submodule.subtype_apply, TensorProduct.tmul_smul, g]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [y, map_sum, LinearMap.baseChange_tmul, Submodule.subtype_apply, TensorProduct.tmul_smul, g]
   have hz : ((LinearMap.liftBaseChange R₁ θ.toLinearMap) ∘ₗ (B.subtype.baseChange R₁)) y = 0 := by
     rw [LinearMap.comp_apply, hy, LinearMap.map_smul_of_tower, hx, smul_zero]
   have hy0 : y = 0 := free_injective θ hLD (fun j : s => g j) hli (by rw [hz, map_zero])

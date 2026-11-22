@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnimodMod
+
+@[expose] public section
 
 open IsLocalRing GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.Poinc
 
@@ -18,7 +22,8 @@ theorem isPosDef_toReal_of_pos {X : Type} [AddCommGroup X] [Module.Free ℤ X] [
   let G : Matrix (Module.Free.ChooseBasisIndex ℤ X) (Module.Free.ChooseBasisIndex ℤ X) ℝ := GZ.map (Int.cast : ℤ → ℝ)
   have hval : ∀ v : Module.Free.ChooseBasisIndex ℤ X → ℤ,
       β (∑ i, v i • b i) (∑ i, v i • b i) = v ⬝ᵥ (GZ *ᵥ v) := fun v => by
-    simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, dotProduct, mulVec, GZ,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_zsmul, LinearMap.sum_apply, LinearMap.smul_apply, smul_eq_mul, dotProduct, mulVec, GZ,
       Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
@@ -63,7 +68,7 @@ theorem isPosDef_toReal_of_pos {X : Type} [AddCommGroup X] [Module.Free ℤ X] [
     rw [star_trivial] at h0
     refine h0.lt_of_ne fun h1 => ?_
     have h2 : G *ᵥ c = 0 := by
-      have := (hpsd.dotProduct_mulVec_zero_iff c).1
+      have := (hpsd.dotProduct_mulVec_zero_iff (x := c)).1
       rw [star_trivial] at this
       exact this h1.symm
     have h3 : G.det = 0 := Matrix.exists_mulVec_eq_zero_iff.1 ⟨c, hc, h2⟩
@@ -117,7 +122,7 @@ theorem exists_cone : ∀ (O : Type) [CommRing O] (bar : O → O) (φ : InvFun O
       (c : Fin r → ℕ), IsCone bar φ γ ∧ 0 < k ∧ (∀ j, 0 < c j) ∧ k • β = ∑ j, c j • γ j := by
   intro O _ bar φ X _ _ _ _ _ _ hF β hβ hp
   classical
-  have hB : toReal β ∈ psdCone bar X :=
+  have hB : toReal β ∈ psdCone (bar := bar) (X := X) :=
     (isPosDef_toReal_of_pos hβ.1 hp).mem_psdCone (toReal_mem hβ)
   obtain ⟨m, γ, c, hγ, hc, hsum⟩ := hF.cover _ hB
   obtain ⟨nZ, hnZ⟩ := coeff_int hγ.mem hγ.basis hβ hsum

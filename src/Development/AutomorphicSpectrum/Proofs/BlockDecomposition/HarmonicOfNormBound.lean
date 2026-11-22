@@ -1,7 +1,12 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.HighestVectorsRegularLine
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WtRInjective
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DominantEqOfNormGe
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RealLeviDescent.HighestVectorsRegularLine
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WtRInjective
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.DominantEqOfNormGe
+
+@[expose] public section
+
 open Matrix Finset
 open scoped InnerProductSpace
 open PositivityTheory.RgBcC PositivityTheory.RgBcC.Real PositivityTheory.RgBcC.RealD GlobalTheory.CompanionTheory.RealCount GlobalTheory.CompanionTheory.RealCountG
@@ -711,8 +716,8 @@ end GlobalTheory.CompanionTheory.RealCountG.LemmaHG
 
 namespace GlobalTheory.CompanionTheory.RealCountG
 
-open GlobalTheory.CompanionTheory.RealCount.LemmaH GlobalTheory.CompanionTheory.RealCountG.LemmaHG in
 
+open GlobalTheory.CompanionTheory.RealCount.LemmaH GlobalTheory.CompanionTheory.RealCountG.LemmaHG in
 theorem mem_harmZ_of_norm_ge {n : ℕ} (lam : Fin n → ℤ) (hl : Antitone lam) (ν : Fin n → ℤ)
     (hν : Antitone ν) (hD : DomLE (wtR ν) (m0 lam)) (w : Equiv.Perm (Fin n))
     (hw : Antitone (fun a => wtR ν (w a) - rhoV n (w a)))

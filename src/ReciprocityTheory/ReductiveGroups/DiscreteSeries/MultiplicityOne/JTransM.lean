@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JTransMA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JTransMB
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JTransMA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JTransMB
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.CoeffRowActDiagA
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.StepACleared
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.CoeffRowActDiagA
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinBranching.StepACleared
+
+@[expose] public section
 
 noncomputable section
 
@@ -88,7 +92,7 @@ theorem eval_D_A (kap : Fin n → ℕ) (ν : Fin (n + 1) → ℕ) (g : MvPolynom
     (hcol : IsWeightedHomogeneous (colW (n + 1) (n + 1)) g ν)
     (hrow : ∀ m ∈ g.support, ∀ a : Fin n, ∑ s, m (Fin.castSucc a, s) = kap a)
     (x : Fin (n + 1) × Fin (n + 1) → ℂ) (hx : IsDPtA x) :
-    eval x g = coeff (mStarA kap ν) g * ∏ v, x v ^ (mStarA kap ν) v := by
+    eval x g = AddMonoidAlgebra.coeff g (mStarA kap ν) * ∏ v, x v ^ (mStarA kap ν) v := by
   rw [MvPolynomial.eval_eq']
   by_cases hs : mStarA kap ν ∈ g.support
   · rw [Finset.sum_eq_single (mStarA kap ν)]
@@ -98,7 +102,7 @@ theorem eval_D_A (kap : Fin n → ℕ) (ν : Fin (n + 1) → ℕ) (g : MvPolynom
       exact hne (mono_eq_A kap ν g hcol hrow x hx m hm hprod)
     · intro h
       exact absurd hs h
-  · have hc : coeff (mStarA kap ν) g = 0 := by
+  · have hc : AddMonoidAlgebra.coeff g (mStarA kap ν) = 0 := by
       by_contra h
       exact hs (MvPolynomial.mem_support_iff.mpr h)
     rw [hc, zero_mul]

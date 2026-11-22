@@ -1,26 +1,31 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FiniteDimensionalOfSlices
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.InjectiveOfIsBlockEmb
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBlockEmb
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockEmbNormalises
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MaxCompactBlockLeviSecond
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspFormBlockEmbLeftInvariant
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousOfIsBlockEmb
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KinfFinite
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspBlockConstantTermVanishing
-import Development.WeilBound.RepresentationTheoryGL.ConstantTermFiniteness.CuspidalConstantTerms.IsCuspidalCompBlockEmb
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulVecInv
-import Development.WeilBound.RepresentationTheoryGL.ConstantTermFiniteness.CuspidalConstantTerms.EnvRepAllInjective
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsMaxCompactRealPointsOfOrthonormalFramesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryLieOneParameterIsRealOneParamSubgroupAdelStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FrameFamilyCompactRepresentation
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InvariantOfLieOneLEqZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CofiniteOfCapelliMonicStatement
-import Development.WeilBound.HeckeVectors.SmoothVectors.ContinuousUnits.LocInCompT
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsBlockPointStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.UnitaryAdelicUnipotentLiftStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerEndMemLeftInv
-import GroundTheory.PAdicHodge.NormalizedTrace
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FiniteDimensionalOfSlices
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.LeviBlockCentreFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBlockEmb
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBlockEmb
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockEmbNormalises
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MaxCompactBlockLeviSecond
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspFormBlockEmbLeftInvariant
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousOfIsBlockEmb
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KinfFinite
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CuspBlockConstantTermVanishing
+public import Development.WeilBound.RepresentationTheoryGL.ConstantTermFiniteness.CuspidalConstantTerms.IsCuspidalCompBlockEmb
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MulVecInv
+public import Development.WeilBound.RepresentationTheoryGL.ConstantTermFiniteness.CuspidalConstantTerms.EnvRepAllInjective
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsMaxCompactRealPointsOfOrthonormalFramesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryLieOneParameterIsRealOneParamSubgroupAdelStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FrameFamilyCompactRepresentation
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InvariantOfLieOneLEqZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CofiniteOfCapelliMonicStatement
+public import Development.WeilBound.HeckeVectors.SmoothVectors.ContinuousUnits.LocInCompT
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.IsBlockPointStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.UnitaryAdelicUnipotentLiftStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.DerEndMemLeftInv
+public import GroundTheory.PAdicHodge.NormalizedTrace
+
+@[expose] public section
 
 open NumberField Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Matrix
 open scoped TensorProduct
@@ -105,7 +110,8 @@ theorem isContRep_repOf [TopologicalSpace G] [TopologicalSpace K] [ContinuousMul
     have h2 : ev f = ∑ p : P, f.1 p.1 • (Pi.single p 1 : P → ℂ) := by
       funext p
       simp [ev, Finset.sum_apply, Pi.single_apply]
-    conv_lhs => rw [h1, h2, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_lhs => rw [h1, h2, map_sum, map_sum]
     refine Finset.sum_congr rfl fun p _ => ?_
     rw [map_smul, map_smul, smul_eq_mul, mul_comm]
   have : (fun g => ℓ (repOf S hS α g w)) = fun g => ∑ p : P, ℓ (Lf (Pi.single p 1)) * w.1 (p.1 * α g) := by
@@ -113,7 +119,7 @@ theorem isContRep_repOf [TopologicalSpace G] [TopologicalSpace K] [ContinuousMul
     rw [e]
     rfl
   rw [this]
-  exact continuous_finset_sum _ fun p _ => continuous_const.mul
+  exact continuous_finsetSum _ fun p _ => continuous_const.mul
     ((hc w.1 w.2).comp (continuous_const.mul hα))
 
 theorem kfin_of_space {S : Submodule ℂ (K → ℂ)} [FiniteDimensional ℂ S] {H : Type} [Mul H] {i : K → H} {φ : H → ℂ}
@@ -141,7 +147,7 @@ section Centre
 
 open PositivityTheory.Affgl GlobalTheory.CuspRep
 
-theorem zfin_of_cofin {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ} {J : Set (Module.End ℂ (Sm E a))}
+theorem zfin_of_cofin {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ} {J : Set (Module.End ℂ (Sm E a))}
     (hJ : Cofin J) {f : Sm E a} (hf : ∀ z ∈ J, z f = 0) :
     FiniteDimensional ℂ (Submodule.span ℂ ((fun z : Module.End ℂ (Sm E a) => z f) '' Zalg E a)) := by
   obtain ⟨-, V, hV, h⟩ := hJ
@@ -187,8 +193,8 @@ end Gelf
 
 section Main
 
-open GlobalTheory.CuspRep in
 
+open GlobalTheory.CuspRep in
 theorem finite_slices_glPart : ∀ (D : D7) (θ : D.what₂.Tau → (Ainf D.host.F ⊗[D.host.F] D.host.E →+* ℂ)), IsInfFam θ → ∀ (V : HSp D) (U : Subgroup (GA D V)), IsOpen (U : Set (GA D V)) → ∀ (ε : D.what₂.Tau → Fin V.rank → Bool) (fr : D.what₂.Tau → Matrix (Fin V.rank) (Fin V.rank) ℂ), IsFrameFam V ε fr → ∀ (W : D.what₂.Tau → Type) [∀ τ, AddCommGroup (W τ)] [∀ τ, Module ℂ (W τ)] [∀ τ, FiniteDimensional ℂ (W τ)] (ρ : ∀ τ, Representation ℂ (Formalism.REAL.KG (ε τ)) (W τ)), (∀ τ, IsContRep (ρ τ)) → ∀ (c : D.what₂.Tau → ℕ → ℂ) (m : ℕ) (X Y : Matrix (Fin V.rank) (Fin m) D.host.E), GlobalTheory.SiegelSet.IsWittFrame D.sp.cm.sig V.gram X Y → ∀ T : Finset (Fin m), T.Nonempty → ∀ k ∈ T, ∀ b : GA D V, FiniteDimensional ℂ (Submodule.span ℂ (sliceSet (cuspOn θ V X Y T U ε fr ρ c) (glPart D.sp.cm.sig V.gram X Y T k) (levi D.sp.cm.sig V.gram X Y T) b)) := by
   intro D θ hθ V U hU ε fr hfr W _ _ _ ρ hρ c m X Y hW T hT k hk b
   classical

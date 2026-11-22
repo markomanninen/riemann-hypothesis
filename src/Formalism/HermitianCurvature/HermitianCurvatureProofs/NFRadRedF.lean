@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedLocSec
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadicalReductionOperator
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NFRadRedLocSec
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadicalReductionOperator
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P
 

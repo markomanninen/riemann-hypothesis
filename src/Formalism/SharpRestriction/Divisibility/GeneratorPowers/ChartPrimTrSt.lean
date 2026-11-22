@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartTransportSt
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartTransportSt
+
+@[expose] public section
 
 set_option autoImplicit false
 

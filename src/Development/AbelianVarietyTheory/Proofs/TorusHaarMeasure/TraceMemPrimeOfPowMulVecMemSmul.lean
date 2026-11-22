@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open NumberField
 
 namespace GlobalTheory
@@ -32,8 +37,8 @@ private lemma charpoly_dvd_pow_card_of_aeval_eq_zero {K : Type} [Field K] {r : �
     _ = (φ.map (algebraMap K Ω)) ^ r := by
         rw [Multiset.map_const', Multiset.prod_replicate, hcard]
 
-open NumberField Polynomial Matrix in
 
+open NumberField Polynomial Matrix in
 theorem _root_.GlobalTheory.trace_mem_prime_of_pow_mulVec_mem_smul : ∀ (K : Type) [Field K] [NumberField K] (r : ℕ) (L : Submodule (𝓞 K) (Fin r → K))
       (N : Matrix (Fin r) (Fin r) K) (P : Ideal (𝓞 K)) (n : ℕ), L.FG →
       Submodule.span K (L : Set (Fin r → K)) = ⊤ → P.IsPrime → (∀ x ∈ L, N.mulVec x ∈ L) →
@@ -65,7 +70,7 @@ theorem _root_.GlobalTheory.trace_mem_prime_of_pow_mulVec_mem_smul : ∀ (K : Ty
     rintro _ ⟨y, rfl⟩
     rw [Submodule.mem_smul_top_iff, hf]
     exact hNm _ y.2
-  obtain ⟨q, hqm, -, hqc, hq0⟩ := LinearMap.exists_monic_and_coeff_mem_pow_and_aeval_eq_zero_of_range_le_smul (𝓞 K) f P hrange
+  obtain ⟨q, hqm, -, hqc, hq0⟩ := LinearMap.exists_monic_and_natDegree_eq_and_coeff_mem_pow_and_aeval_eq_zero (𝓞 K) f P hrange
   have hzero : aeval (N ^ m) q = 0 := by
     have hon : ∀ x ∈ L, (aeval (N ^ m) q) *ᵥ x = 0 := by
       intro x hx

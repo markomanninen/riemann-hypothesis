@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KFacDifferentiable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeEisensteinConstantTermPartDifferentiableOn
-import ReciprocityTheory.Chebotarev.EulerSum
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IrreducibleXSqAddOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.OmegaFactorization
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.PartialZetaFunctionalEquation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.KFacDifferentiable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeEisensteinConstantTermPartDifferentiableOn
+public import ReciprocityTheory.Chebotarev.EulerSum
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IrreducibleXSqAddOne
+
+@[expose] public section
+
 open NumberField Complex Polynomial
 open scoped nonZeroDivisors ContDiff
 open GlobalTheory.IndefiniteRowSideFullHecke.OmegaFactorization GlobalTheory.HeckeTwo
@@ -26,13 +31,13 @@ theorem eq_zero_of_add_mul_ii {x y : F}
       rw [map_div₀, map_neg, eq_div_iff hy']
       linear_combination h
     have h2 : algebraMap F (Ext F) ((-x / y) ^ 2 + 1) = 0 := by
-      rw [map_add, map_pow, ← hi, ii_sq, map_one]; ring
+      rw [map_add (f := _), map_pow, ← hi, ii_sq, map_one]; ring
     have h3 : (-x / y) ^ 2 + 1 = 0 := (map_eq_zero _).1 h2
     obtain ⟨τ⟩ : Nonempty (F →+* ℝ) := by
       obtain ⟨φ⟩ := (inferInstance : Nonempty (F →+* ℂ))
       exact ⟨(IsTotallyReal.complexEmbedding_isReal φ).embedding⟩
     have h4 := congrArg τ h3
-    rw [map_add, map_pow, map_one, map_zero] at h4
+    rw [map_add (f := _), map_pow, map_one, map_zero] at h4
     nlinarith [sq_nonneg (τ (-x / y))]
   refine ⟨?_, hy⟩
   rw [hy, map_zero, zero_mul, add_zero] at h
@@ -41,8 +46,8 @@ theorem eq_zero_of_add_mul_ii {x y : F}
 theorem isIntegral_ii : IsIntegral ℤ (ii F) :=
   ⟨X ^ 2 + 1, by monicity!, by simp [ii_sq]⟩
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem summable_norm_rpow (𝔞 𝔟 : Frac F) {t : ℝ} (ht : 1 < t)
     (hQ : Finite ((𝓞 (Ext F))ˣ ⧸ (Units.map (algebraMap (𝓞 F) (𝓞 (Ext F))).toMonoidHom).range)) :
     Summable (fun c : Quotient (latRel 𝔞 𝔟) => |((Algebra.norm ℚ (gEmb F c.out.1) : ℚ) : ℝ)| ^ (-t)) := by

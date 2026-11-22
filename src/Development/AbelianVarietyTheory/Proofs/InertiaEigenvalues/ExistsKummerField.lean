@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChevalleyUnits
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowDescentCyclotomic
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsFrobFixesRootOfOneModPlace
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SUnitsNumberFieldFg
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.UnitaryNorms.IsUnitaryNormOf
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChevalleyUnits
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPowDescentCyclotomic
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsFrobFixesRootOfOneModPlace
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SUnitsNumberFieldFg
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,9 @@ theorem exists_kummer_field (E F Ω : Type) [Field E] [NumberField E] [Field F] 
     apply Finset.prod_eq_zero hg
     simp [hw, ← IsScalarTower.algebraMap_apply]
   intro u
-  have hu : u ∈ Subgroup.closure (s : Set Γ) := hs ▸ Subgroup.mem_top u
+  have hu : u ∈ Subgroup.closure (s : Set Γ) := by
+    have hu' : u ∈ Subsemigroup.closure (s : Set Γ) := hs ▸ Subsemigroup.mem_top u
+    exact (Subsemigroup.closure_le.mpr Subgroup.subset_closure) hu'
   induction hu using Subgroup.closure_induction with
   | mem g hg => exact hgen g hg
   | one =>

@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
-import Formalism.HermitianCurvature.StatementJF
-import Formalism.HermitianCurvature.StatementU
+module
+
+public import Formalism.HermitianCurvature.RealInputsClosedAdmissibleSettings
+public import Formalism.HermitianCurvature.StatementJF
+public import Formalism.HermitianCurvature.StatementU
+
+@[expose] public section
 
 open Matrix MeasureTheory
 open scoped ComplexConjugate

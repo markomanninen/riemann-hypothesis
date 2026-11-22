@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.InertKernelTheory.DefsMM
-import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
+module
+
+public import Formalism.LocalToGlobal.InertKernelTheory.DefsMM
+public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
+
+@[expose] public section
 
 noncomputable section
 

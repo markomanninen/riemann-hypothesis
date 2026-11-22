@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.AlmostEverywhereEigen.OneStepOf
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.EigenvalueSeparation.AlmostEverywhereEigen.OneStepOf
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal ComplexConjugate
@@ -13,7 +17,8 @@ variable {Y S : Type} [MeasurableSpace Y] [MeasurableSpace S]
 
 theorem lint_slice (ν : Measure S) [IsFiniteMeasure ν] (F : Lp ℂ 2 ν) (f : S → ℂ) (hf : f =ᵐ[ν] F) :
     ∫⁻ s, ‖f s‖ₑ ∂ν ≤ ‖F‖ₑ * ν Set.univ ^ (1 / 2 : ℝ) := by
-  rw [← eLpNorm_one_eq_lintegral_enorm, eLpNorm_congr_ae hf, Lp.enorm_def]
+  rw [← eLpNorm_one_eq_lintegral_eNorm ((Lp.aestronglyMeasurable F).congr hf.symm),
+    eLpNorm_congr_ae hf, Lp.enorm_def]
   have := eLpNorm_le_eLpNorm_mul_rpow_measure_univ (p := 1) (q := 2) (μ := ν) (f := (F : S → ℂ))
     (by norm_num) (Lp.aestronglyMeasurable F)
   convert this using 3

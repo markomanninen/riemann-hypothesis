@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.GoodTwo
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DyadicStableLattices.ChainPA
+module
+
+public import Formalism.PeriodIntegrals.GoodTwo
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.MulStableIntegral
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DyadicStableLattices.ChainPA
+
+@[expose] public section
 
 noncomputable section
 open scoped ComplexConjugate
@@ -28,7 +32,7 @@ theorem omega_sq (d : ℕ) (hd : d % 4 = 3) :
 
 theorem conj_omega (d : ℕ) : conj (omegaK d) = 1 - omegaK d := by
   unfold omegaK
-  simp [map_div₀, map_add, map_mul, Complex.conj_I, Complex.conj_ofReal, map_ofNat]
+  simp [map_div₀, map_add (f := _), map_mul, Complex.conj_I, Complex.conj_ofReal, map_ofNat]
   ring
 
 theorem int_mul_mem (L : PeriodPair) (n : ℤ) {z : ℂ} (hz : z ∈ L.lattice) :
@@ -51,7 +55,7 @@ theorem not_half (d : ℕ) (L : PeriodPair) (m n : ℤ) (hn : Odd n) :
     ¬ MulStable L (((m : ℂ) + n * omegaK d) / 2) := by
   intro hS
   obtain ⟨t, N, ht, -, -⟩ := Formalism.L2.Th1.F.mulStableIntegral L _ hS
-  simp only [map_div₀, map_add, map_mul, map_intCast, map_ofNat, conj_omega] at ht
+  simp only [map_div₀, map_add (f := _), map_mul, map_intCast, map_ofNat, conj_omega] at ht
   have h2 : ((2 * m + n : ℤ) : ℂ) = ((2 * t : ℤ) : ℂ) := by
     push_cast
     linear_combination 2 * ht

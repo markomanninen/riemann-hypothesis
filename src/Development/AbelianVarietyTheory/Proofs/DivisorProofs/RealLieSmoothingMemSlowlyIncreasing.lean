@@ -1,4 +1,8 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfMemSpanK
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SelfMemSpanK
+
+@[expose] public section
 
 noncomputable section
 
@@ -34,7 +38,7 @@ theorem continuousOn_toL_inv : ContinuousOn (fun x : Lie E a => toL (Matrix.of x
 
 end SlopeTestRemainingChoices
 
-theorem smoothing_mem_growth : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ)
+theorem smoothing_mem_growth : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ)
     (ν : Measure (Lie E a)) [ν.IsAddHaarMeasure] (α : Lie E a → ℂ), IsTest (invSet E a) α →
     ∀ f ∈ growth E a, smoothing ν α f ∈ growth E a := by
   intro E _ _ _ a ν _ α hα f hf g

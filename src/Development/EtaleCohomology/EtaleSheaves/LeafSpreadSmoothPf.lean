@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.PropertyDescent.LeafPropsDescendOf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.PropertyDescent.LeafPropsDescendOf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite LateralTheory.E.E4 LateralTheory.E.LeafDescendVCut LateralTheory.E.LeafDescendChainPf
@@ -92,7 +96,14 @@ def LeafSpreadRelDim : Prop := ∀ (k : Type) [Field k] (Ω : Type) [Field Ω] [
 theorem LeafSpreadSmoothAffAt_of (hA : LeafSpreadSmoothAffSm) (hB : LeafSpreadRelDim) : LeafSpreadSmoothAffAt := by
   intro k _ Ω _ _ R hR C D c q v hD hlfp hs hv
   obtain ⟨S1, h1, f1, hsm1⟩ := hA k Ω R hR c q v hD hlfp hs hv
-  have sq1 := LateralTheory.E.LeafPropsDescendPf.BaseChange.sq h1 hv
+  have ht : toR S1 ≫ incl h1 = toR R := by
+    rw [← Spec.map_comp]; rfl
+  have hw1 : v ≫ q = (c ≫ toR S1) ≫ incl h1 := by
+    rw [Category.assoc, ht]; exact hv.w
+  have sq1 : IsPullback (pullback.lift v (c ≫ toR S1) hw1) c
+      (pullback.snd q (incl h1)) (toR S1) := by
+    refine IsPullback.of_right ?_ (pullback.lift_snd _ _ _) (IsPullback.of_hasPullback q (incl h1))
+    rw [pullback.lift_fst, ht]; exact hv
   obtain ⟨S2, h12, f2, H⟩ := hB k Ω S1 f1 c (pullback.snd q (incl h1)) _ inferInstance inferInstance hsm1 hs sq1
   refine ⟨S2, h1.trans h12, f2, ?_⟩
   have hw : pullback.fst q (incl (h1.trans h12)) ≫ q = (pullback.snd q (incl (h1.trans h12)) ≫ incl h12) ≫ incl h1 := by

@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ValuationDetOfMemKO
+module
+
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ThetaMod
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ValuationDetOfMemKO
+
+@[expose] public section
 
 namespace GlobalTheory.ExistsEigenvector
 
@@ -69,7 +73,8 @@ theorem exists_eigenvector {G V W ι : Type} [Group G] [TopologicalSpace G] [IsT
     by_contra hc
     have hc' : ∀ i, ∑ q, F q i = 0 := fun i => not_not.1 fun h => hc ⟨i, h⟩
     have h0 : ∑ i, T i (∑ q, F q i) = 0 := by simp [hc']
-    simp only [map_sum] at h0
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum] at h0
     rw [Finset.sum_comm] at h0
     simp only [hT] at h0
     rw [Finset.sum_const, ← Nat.cast_smul_eq_nsmul ℂ, smul_eq_zero] at h0
@@ -78,7 +83,8 @@ theorem exists_eigenvector {G V W ι : Type} [Group G] [TopologicalSpace G] [IsT
     · exact hne h0
   obtain ⟨i, hi⟩ := hex
   refine ⟨_, hi, fun h hh => ?_⟩
-  rw [map_sum, Finset.smul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.smul_sum]
   rw [Finset.sum_congr rfl fun q _ => hF ⟨h, hh⟩ q i]
   exact Equiv.sum_comp (MulAction.toPerm (⟨h, hh⟩ : K)) (fun q : K ⧸ H => θ h • F q i)
 

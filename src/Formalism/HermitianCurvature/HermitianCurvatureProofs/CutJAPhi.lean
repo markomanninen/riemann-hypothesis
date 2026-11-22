@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJA
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutCutTr
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutRegFF
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJA
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutCutTr
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutRegFF
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 open scoped ContDiff
@@ -77,7 +81,7 @@ theorem phi_operator_transfer_holds : JAPhiOp := by
     have h := (Formalism.FourierDecayAlt.P.BigCellHermitian.gqDom (T v).base hq).2
     exact ⟨h.2, fun a => h.1 _ (by simp)⟩
   have hJ' : J ∈ Q.FFl S.G.k S.G.r (T v).base.z (T v).base.z' (T v).base.π (T v).base.π' 0 (OmP S T v) := hJ
-  refine ⟨phi_mem_FFl (T v).base hφ (fun g hg => hg.1) hJ', ?_⟩
+  refine ⟨phi_mem_FFl (T v).base hφ (fun g (hg : g ∈ OmP S T v) => hg.1) hJ', ?_⟩
   funext ρ
   set u : MA.Qp (D.parOf S v).r (D.parOf S v).TT → ℂ := fun q =>
     ((Real.sqrt (MA.wq S.G.k q.1 (D.parOf S v).TT) : ℝ) : ℂ) *
@@ -127,21 +131,20 @@ theorem phi_operator_transfer_holds : JAPhiOp := by
     unfold trJ
     congr 1
     funext q
-    simp only [mulG, GfP]
-    rw [Formalism.FourierDecayAlt.P.JCTx2.hsVec_smul', inner_smul_right,
+    rw [mulG, Formalism.FourierDecayAlt.P.JCTx2.hsVec_smul', inner_smul_right, GfP,
       cutTr_Gf_gq (T v).base q.2.1 (hTT ▸ q.2.2)]
     simp only [hu_def, hp_def, MA.Gq, hTT]
     ring
   have hR : (trJ S T v e J ρ) = ⟨u, hu⟩ := by
     unfold trJ MA.toSm
-    rw [dif_pos hu]
+    rw [dite_eq_left hu]
   have hP : MA.toSm (D.parOf S v) p = ⟨p, hp⟩ := by
     unfold MA.toSm
-    rw [dif_pos hp]
+    rw [dite_eq_left hp]
   rw [hL, hR, hP]
   have hm : (fun q => p q * u q) ∈ MA.smSub (D.parOf S v).r (D.parOf S v).TT := Subalgebra.mul_mem _ hp hu
   unfold MA.toSm
-  rw [dif_pos hm]
+  rw [dite_eq_left hm]
   rfl
 
 end Formalism.FourierDecayAlt.P.CutMP.JA

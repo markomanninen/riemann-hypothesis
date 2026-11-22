@@ -1,16 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.IsNormalSchemeSp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LinCombTrivG
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.MemPadicAlgClValuationSubringIffNormLeOne
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsClassicalLiftOfSmooth
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsIntegralOfSmoothFieldOfConnectedSpace
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsAbelianSchemeThick
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsAbelianSchemeAndExtendOfGenericHoms
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsCompleteDvrFiniteSubalgebra
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ValueAtUnitSection
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.IsNormalSchemeSp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.SabComp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.BCTools
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.LinCombTrivG
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.MemPadicAlgClValuationSubringIffNormLeOne
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsClassicalLiftOfSmooth
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsIntegralOfSmoothFieldOfConnectedSpace
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsAbelianSchemeThick
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsAbelianSchemeAndExtendOfGenericHoms
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsCompleteDvrFiniteSubalgebra
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ValueAtUnitSection
+
+@[expose] public section
 
 noncomputable section
 
@@ -68,44 +72,6 @@ theorem isGt_splitExtOfAbelian {S : Scheme.{0}} (B : Over S) [GrpObj B] (h : IsA
       (_root_.mul_one _)).symm
   · intro χ a y _
     exact (congrArg₂ (· * ·) (map_one _) (map_one _)).trans (_root_.mul_one _)
-
-def Core.ofAbelian (Z : Scheme.{0}) [IsIntegral Z] (π : Z ⟶ Sp ℤ) [Flat π] [LocallyOfFiniteType π] [QuasiCompact π]
-    [IsSeparated π] (hZ : ReciprocityTheory.ChartRestriction.G.Geo.Tor.IsNormalScheme Z) (A : Over Z) [GrpObj A] (g : ℕ) (hA : IsAbelianScheme A)
-    (hg : SmoothOfRelativeDimension g A.hom) : Core where
-  Z := Z
-  π := π
-  flat := inferInstance
-  lft := inferInstance
-  qc := inferInstance
-  sep := inferInstance
-  normal := hZ
-  U := ⊤
-  ne := Set.univ_nonempty
-  g := g
-  A := (Over.pullback (⊤ : Z.Opens).ι).obj A
-  comm := (isAbelianScheme_pullback_obj _ A hA).comm
-  ab := isAbelianScheme_pullback_obj _ A hA
-  dim := (smoothOfRelativeDimension_isStableUnderBaseChange g).of_isPullback (IsPullback.of_hasPullback _ _) hg
-  P := A
-  intP := by
-    have := hA.smooth
-    have := hA.geomConnected
-    have := grpObj_geometricallyIntegral_of_smooth Z A
-    have := LocallyOfFiniteType.isLocallyNoetherian π
-    exact GeometricallyIntegral.isIntegral_of_isLocallyNoetherian A.hom
-  proper := hA.proper
-  G := ⊤
-  a := pullback.fst A.hom (⊤ : Z.Opens).ι ≫ A.left.topIso.inv
-  cart := by
-    rw [Category.assoc, Scheme.toIso_inv_ι, Category.comp_id]
-    exact IsPullback.of_hasPullback _ _
-  e := eSec A ≫ A.left.topIso.inv
-  e_sec := by
-    rw [Category.assoc, Scheme.toIso_inv_ι_assoc]
-    exact Over.w η[A]
-  e_zero := by
-    rw [← Category.assoc, ← Category.assoc]
-    exact congrArg (· ≫ A.left.topIso.inv) (UnitValue.eSec_pullback_fst _ A).symm
 
 section
 

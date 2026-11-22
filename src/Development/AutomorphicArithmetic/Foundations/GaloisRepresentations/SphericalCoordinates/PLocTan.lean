@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.DetOfCharpoly
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.DetOfCharpoly
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory GlobalTheory.PELU Filter Topology
@@ -55,7 +59,7 @@ theorem UpperTheory.Gal.W2.locTan_of :
       map_add' := by
         intro a b
         funext j
-        simp only [map_add, Matrix.add_mulVec, Pi.add_apply, neg_add]
+        simp only [map_add (f := _), Matrix.add_mulVec, Pi.add_apply, neg_add]
       map_smul' := by
         intro c b
         funext j

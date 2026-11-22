@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.BasisOne
-import Mathlib
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.BasisOne
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.EtaleTrace
@@ -40,7 +44,8 @@ theorem injL_holds : InjL := by
       (IsLocalRing.closedPoint (Y.residueField (genericPoint Y))) : ℤ) : ℚ_[l]) ≠ 0 := by
     norm_cast
     omega
-  apply smul_right_injective _ hne
+  set_option synthInstance.maxHeartbeats 200000 in
+    apply smul_right_injective _ hne
   simp only [key, hab]
 
 end UpperTheory.Gal.KunnethLefschetz

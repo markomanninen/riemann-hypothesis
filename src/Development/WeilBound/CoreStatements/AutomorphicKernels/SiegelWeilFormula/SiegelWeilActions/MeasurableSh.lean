@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.IsFirstChernFamily
+module
+
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilActions.IsFirstChernFamily
+
+@[expose] public section
 
 noncomputable section
 
@@ -61,7 +65,7 @@ theorem unf_lint {Γ : AddSubgroup V} {Δ : AddSubgroup A} [Countable Γ] [Count
             s + (Q (b, u) + Z r (Λ (b, u)).1)))).symm
       _ = _ := lintegral_add_right_eq_self (fun s => ψ ((r : V) + (Λ (b, u)).2, s)) _
   set H : V × V → ℝ≥0∞ := fun w => ∑' r : Γ, ∫⁻ s, ψ ((r : V) + w.2, s) ∂lam with hH
-  have hHm : Measurable H := Measurable.ennreal_tsum fun r => hFm.comp (measurable_snd.const_add _)
+  have hHm : Measurable H := Measurable.tsum fun r => hFm.comp (measurable_snd.const_add _)
   have hHinv : ∀ (g : Γ.prod Γ) (x : V × V), H (g +ᵥ x) = H x := by
     intro g x
     have hg2 : (g : V × V).2 ∈ Γ := (AddSubgroup.mem_prod.1 g.2).2
@@ -86,10 +90,10 @@ theorem unf_lint {Γ : AddSubgroup V} {Δ : AddSubgroup A} [Countable Γ] [Count
     · intro h
       exact ⟨⟨Λ.symm h, (hΛ _).2 (by simp [h.2])⟩, Subtype.ext (by simp)⟩
     · intro g x
-      simp [AddSubgroup.vadd_def, vadd_eq_add, map_add]
+      simp [AddSubgroup.vadd_def, vadd_eq_add, map_add (f := _)]
   have hM : Measurable fun p : V × (V × A) =>
       ∑' c : Γ × Δ, ψ (sh Λ Q Z ((c.1 : V), (c.2 : A)) p) :=
-    Measurable.ennreal_tsum fun c => hψ.comp (hsh _)
+    Measurable.tsum fun c => hψ.comp (hsh _)
   calc ∫⁻ p, ∑' c : Γ × Δ, ψ (sh Λ Q Z ((c.1 : V), (c.2 : A)) p)
         ∂((ν.restrict 𝓤).prod ((ν.restrict 𝓤).prod (lam.restrict 𝓐)))
       = ∫⁻ u in 𝓤, ∫⁻ b in 𝓤, H (Λ (b, u)) ∂ν ∂ν := by

@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.RationalEmbedding
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.MeasBrg
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.LevelADef
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.RationalEmbedding
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.MeasBrg
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.LevelADef
+
+@[expose] public section
 
 noncomputable section
 

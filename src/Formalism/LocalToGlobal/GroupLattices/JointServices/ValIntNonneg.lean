@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GroupLattices.JointServices
-import Formalism.LocalToGlobal.GroupLattices.JointServices.VAddEqVw
-import Formalism.LocalToGlobal.GroupLattices.JointServices.LevelOperatorFixesImage
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.JointServices
+public import Formalism.LocalToGlobal.GroupLattices.JointServices.VAddEqVw
+public import Formalism.LocalToGlobal.GroupLattices.JointServices.LevelOperatorFixesImage
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open Formalism.BasicNotions Formalism.BasicNotions.DV Formalism.MainNotions.G Formalism.MainNotions.WeilJacquetShalikaLaw Formalism.L2.DIV Formalism.L2.Indef
@@ -21,11 +25,6 @@ theorem perCol_lin (D : D7) (u : D.what₂.Word) (μ : D.what₂.Tup) (φ : D.wh
       ((D.chTw u μ).col (D.e0Tw u μ ↑(D.eMu u φ)))))).comp (D.eMtTw u μ).symm.toLinearMap, fun F => ?_⟩
     rw [D.perCol_tie u μ h]
     rfl
-
-theorem cutUpOfOTie : CutUpOfOTie := by
-  intro D hO μ hU x hx hV
-  obtain ⟨ι, hι, hιO⟩ := hO.int
-  exact (cut_tensorUp_row (RowSide.sharp D) hO.ded ι hι hιO hO.aint μ (hO.form μ hU) x).2 ⟨hx, hV⟩
 
 theorem perToVal2 : PerToVal2 := by
   intro D B hB u t hcut z s N h φ hφ F hF
@@ -54,7 +53,8 @@ theorem perToVal2 : PerToVal2 := by
         apply D.what₂.embLL.injective
         rw [hB.dcPt u t x F, hf]
         refine (congrArg f hx0).trans ?_
-        rw [map_sum, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum, map_sum]
         refine Finset.sum_congr rfl fun y hy => ?_
         rw [map_smul, smul_eq_mul, map_mul, (ha y hy).1, hf]
       rw [heq]
@@ -63,7 +63,7 @@ theorem perToVal2 : PerToVal2 := by
       rw [map_zero, LinearMap.zero_apply]
       exact VGeq.zero z s
     | add x y _ _ hx hy =>
-      rw [map_add, LinearMap.add_apply]
+      rw [map_add (f := _), LinearMap.add_apply]
       exact hx.add hy
     | smul a x _ hx =>
       rw [← algebraMap_smul D.what₂.LL a x, map_smul, LinearMap.smul_apply, smul_eq_mul]

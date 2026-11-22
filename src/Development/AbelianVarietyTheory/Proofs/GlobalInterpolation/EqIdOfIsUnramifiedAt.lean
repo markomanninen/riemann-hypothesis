@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualUnramifiedPlaces
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualUnramifiedPlaces
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DisjointSpanPerpLat
+
+@[expose] public section
 
 open scoped TensorProduct
 open NumberField IsDedekindDomain MeasureTheory Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -47,16 +51,16 @@ private lemma isCMExt_mem_range_of_conj_fixed (h : _root_.Formalism.MainNotions.
     have hmem : y ∈ AlgHom.equalizer σ (AlgHom.id F E) := h1 ▸ Algebra.mem_top
     exact hmem
 
+
 open scoped TensorProduct in
 open NumberField IsDedekindDomain MeasureTheory Topology in
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
   {σ : E →ₐ[F] E} in
-
 theorem _root_.GlobalTheory.UnramifiedDiscriminant.exists_int_of_conj_eq (h : _root_.Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.IsCMExt F E σ) (a : 𝓞 E) (ha : σ a = a) :
     ∃ t : 𝓞 F, algebraMap (𝓞 F) (𝓞 E) t = a := by
   obtain ⟨f, hf⟩ := isCMExt_mem_range_of_conj_fixed h ha
   have hint : IsIntegral ℤ f := by
-    rw [← isIntegral_algebraMap_iff (algebraMap F E).injective, hf]
+    rw [← isIntegral_algebraMap_iff (B := E), hf]
     exact RingOfIntegers.isIntegral_coe a
   refine ⟨⟨f, hint⟩, ?_⟩
   ext
@@ -83,11 +87,11 @@ theorem _root_.GlobalTheory.UnramifiedDiscriminant.exists_discr_notMem (F E : Ty
       t ^ 2 - 4 * n ∉ v.asIdeal := by
   have hinj : Function.Injective (algebraMap (𝓞 F) (𝓞 E)) := FaithfulSMul.algebraMap_injective _ _
   obtain ⟨P, -, hPp, hPv⟩ := Ideal.exists_ideal_over_prime_of_isIntegral v.asIdeal (⊥ : Ideal (𝓞 E))
-    (by rw [Ideal.comap_bot_of_injective _ hinj]; exact bot_le)
+    (by rw [(show Ideal.under _ ⊥ = ⊥ from Ideal.comap_bot_of_injective _ hinj)]; exact bot_le)
   have hPne : P ≠ ⊥ := by
     rintro rfl
     apply v.ne_bot
-    rw [← hPv, Ideal.comap_bot_of_injective _ hinj]
+    rw [← hPv, (show Ideal.under _ ⊥ = ⊥ from Ideal.comap_bot_of_injective _ hinj)]
   haveI : P.LiesOver v.asIdeal := ⟨hPv.symm⟩
   haveI : Algebra.IsUnramifiedAt (𝓞 F) P := hv ⟨P, hPp, hPne⟩ ⟨hPv.symm⟩
   let σ' : E ≃ₐ[F] E := AlgEquiv.ofBijective σ (Function.Involutive.bijective (isCMExt_conj_conj h))
@@ -112,7 +116,7 @@ theorem _root_.GlobalTheory.UnramifiedDiscriminant.exists_discr_notMem (F E : Ty
   have hy : (y : E) = σ x := rfl
   obtain ⟨t, ht⟩ := _root_.GlobalTheory.UnramifiedDiscriminant.exists_int_of_conj_eq h (x + y) (by
     show σ ((x : E) + σ x) = (x : E) + σ x
-    rw [map_add, isCMExt_conj_conj h, add_comm])
+    rw [map_add (f := _), isCMExt_conj_conj h, add_comm])
   obtain ⟨n, hn⟩ := _root_.GlobalTheory.UnramifiedDiscriminant.exists_int_of_conj_eq h (x * y) (by
     show σ ((x : E) * σ x) = (x : E) * σ x
     rw [map_mul, isCMExt_conj_conj h, mul_comm])

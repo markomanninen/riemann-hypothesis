@@ -1,13 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
-import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsUniqueSamePt
-import Development.AbelianVarietyTheory.Definitions.Uniformization.SmulOneSecEqZeroIff
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPowEqOfBaseChange
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsProjectiveRep
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ChainVal
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.CubeVal
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.IsNsmul
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.QkToAkU
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.ExistsUniqueSamePt
+public import Development.AbelianVarietyTheory.Definitions.Uniformization.SmulOneSecEqZeroIff
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsPowEqOfBaseChange
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsProjectiveRep
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ChainVal
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -57,11 +61,12 @@ theorem phiRaw_smul (hG : GlobalFnsSt) {k : ℕ} {g : GtPtF D F} (hg : GtTors D 
     {s s' t t' : ∀ α, CompMod D F k α} (h : PhiRaw D F k 0 g w (fun α => (s α).sec) fun α => (s' α).sec)
     (h' : PhiRaw D F k 0 g w (fun α => (t α).sec) fun α => (t' α).sec) (α : D.X) (c : F) (e : s α = c • t α) :
     s' α = c • t' α := by
-  refine SecMod.ext_coord (sec_ext_val D.P.isLB fun y J hJ => ?_)
+  refine SecOps.sec_ext (sec_ext_val D.P.isLB fun y J hJ => ?_)
   have a := phiRaw_val hG hg hw h α y J hJ
   have b := phiRaw_val hG hg hw h' α y J hJ
   have t₁ : (DegPre.trPt D F g.b).left ≫ (fst (TF (R := R) F) D.P.A).left = 𝟙 _ ≫ (fst (TF (R := R) F) D.P.A).left :=
     (congrArg (fun q => q.left) (tr_fst D F g.b)).trans (Category.id_comp _).symm
+  change sval (s' α).sec (𝟙 _) y J = sval (c • t' α).sec (𝟙 _) y J
   rw [SecMod.value_smul hJ, a, b, e, SecMod.value_smul hJ, gs_scal, gs_scal, _root_.mul_assoc]
   exact congrArg (fun q => gs q y ⊤ _ * _) t₁
 
@@ -84,7 +89,7 @@ theorem phiRaw_torus (hG : GlobalFnsSt) {k : ℕ} (τ : Multiplicative D.X →* 
     rw [Fin.prod_univ_two, Fintype.prod_empty]
     show h (1 : TF (R := R) F ⟶ D.P.A).left ^ (k : ℤ) * h g.b.left ^ (-(k : ℤ)) = 1
     rw [hb, zpow_neg, mul_inv_cancel]
-  refine ⟨c, fun s s' h α => SecMod.ext_coord (sec_ext_val D.P.isLB fun y J hJ => ?_)⟩
+  refine ⟨c, fun s s' h α => SecOps.sec_ext (sec_ext_val D.P.isLB fun y J hJ => ?_)⟩
   have cr : LB.Gen.Corr D.P.L _ _ _ _ (LB.mulGen D.P.L _ _ _ _ (g.s α) w)
       (GlobalTheory.UU.scaleGen (unitOn (c * τ (Multiplicative.ofAdd α))) (LB.oneGen D.P.L (Y := (TF (R := R) F).left))) :=
     corr_of_val D.P.isLB fun y J hJ => by
@@ -102,6 +107,7 @@ theorem phiRaw_torus (hG : GlobalFnsSt) {k : ℕ} (τ : Multiplicative D.X →* 
     · rw [tr_pr, hb, MonObj.comp_one, _root_.mul_one, Category.id_comp]
   have a := phiRaw_val hG hg hw h α y J hJ
   rw [u₁, _root_.one_mul, t₁, Over.id_left, (val_corr hJ cr _).trans (vv _ _ _ _ hJ)] at a
+  change sval (s' α).sec (𝟙 _) y J = sval (((c * τ (Multiplicative.ofAdd α) : Fˣ) : F) • s α).sec (𝟙 _) y J
   rw [SecMod.value_smul hJ, gs_scal, Category.id_comp, mul_comm]
   exact a.trans (congrArg _ (gs_unit _ y ⊤ trivial _).symm)
 

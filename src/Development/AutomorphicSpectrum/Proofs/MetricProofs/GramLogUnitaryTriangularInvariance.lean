@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.InFlagDomainOne
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsOpenFlagDomainNondegenerateMinorsStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.InFlagDomainOne
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsOpenFlagDomainNondegenerateMinorsStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,8 @@ theorem posDef_eventually_of_continuous {X n : Type*} [TopologicalSpace X] [Fint
   rw [e, Complex.re_ofReal_mul] at h1
   have him : (star y ⬝ᵥ (A x *ᵥ y)).im = 0 := by
     rw [← Complex.conj_eq_iff_im]
-    simp only [dotProduct, mulVec, map_sum, map_mul, Pi.star_apply, Complex.star_def,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [dotProduct, mulVec, map_sum, map_mul, Pi.star_apply, Complex.star_def,
       Complex.conj_conj, Finset.mul_sum]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -100,7 +105,7 @@ theorem gramHead_of_triangular {N : ℕ} (hd : Fin N → ℝ) (k : ℕ) (b : Mat
       b.submatrix Subtype.val Subtype.val := by
   ext i j
   simp only [gramHead, gramOf, submatrix_apply]
-  rw [mul_apply, mul_apply]
+  rw [Matrix.mul_apply, Matrix.mul_apply]
   simp only [mul_diagonal, conjTranspose_apply, submatrix_apply]
   rw [← Finset.sum_subtype (Finset.univ.filter fun a : Fin N => (a : ℕ) < k) (by simp)
     (fun l => star (b l i.1) * ((hd l : ℝ) : ℂ) * b l j.1)]

@@ -1,18 +1,23 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnivChar
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NoFormsOff
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SubsetTwistExceptionalPlaces
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrameEquivApply
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonzeroMatrixIntertwinerDescendsToSubfieldStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraicWeightDominantIsoExistsStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsotypicFactorOfIsIrreduciblePiFiniteGroups
-import Formalism.LocalToGlobal.Columns.MtAdWt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsAlgWeightOfContragredientHighestWeightStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIrreducibleAlgebraicWeightSubrepStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContragredientPolynomialWeightUniqueHighestWeighStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousCoeffBlockAct
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsGaloisConjDefiniteFormsSemilinearEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnivChar
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NoFormsOff
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SubsetTwistExceptionalPlaces
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FrameEquivApply
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NonzeroMatrixIntertwinerDescendsToSubfieldStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AlgebraicWeightDominantIsoExistsStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsotypicFactorOfIsIrreduciblePiFiniteGroups
+public import Formalism.LocalToGlobal.Columns.MtAdWt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsAlgWeightOfContragredientHighestWeightStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsIrreducibleAlgebraicWeightSubrepStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ContragredientPolynomialWeightUniqueHighestWeighStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousCoeffBlockAct
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsGaloisConjDefiniteFormsSemilinearEquiv
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.N Formalism.MainNotions.StandardLattice Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.L2 Formalism.L2.Host Formalism.L2.DIV Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.NX GlobalTheory.HeightCounting GlobalTheory.TwInputs GlobalTheory.SeriesTie GlobalTheory.ExportSeries NumberField IsDedekindDomain
 open Formalism.MainNotions.IntegralHeckeForms (TwOK)
 open Formalism.AUTREP (GAf)
@@ -55,7 +60,7 @@ theorem weight_descends : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L]
   obtain ⟨lam, Tc, hTc⟩ := GlobalTheory.T.algebraic_weight_dominant_iso_exists L n ι (fun t => e.comp (emb t)) hinj hcm hcov a
   have hmatch : ∀ γ : ReciprocityTheory.Aut.GQ L n, (((γ : GAf L n) : GL (Fin n) (ReciprocityTheory.Aut.AL L)) :
       Matrix (Fin n) (Fin n) (ReciprocityTheory.Aut.AL L)) =
-      ((mtwRat γ : GL (Fin n) L) : Matrix (Fin n) (Fin n) L).map Algebra.TensorProduct.includeLeftRingHom := by
+      ((mtwRat (L := L) (n := n) γ : GL (Fin n) L) : Matrix (Fin n) (Fin n) L).map Algebra.TensorProduct.includeLeftRingHom := by
     intro γ
     exact (congrArg (fun g : GL (Fin n) (ReciprocityTheory.Aut.AL L) => (g : Matrix (Fin n) (Fin n) (ReciprocityTheory.Aut.AL L)))
       (mtwInc_mtwRatFun γ)).symm
@@ -68,24 +73,25 @@ theorem weight_descends : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L]
     have hx : mapVV e lam x = bC.equivFun.symm (fun i => e (bK.repr x i)) := by
       rw [Module.Basis.equivFun_symm_apply]
       conv_lhs => rw [← bK.sum_repr x]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun k _ => ?_
       rw [LinearMap.map_smulₛₗ, hbC]
     rw [hx, ← Module.Basis.equivFun_apply, LinearEquiv.apply_symm_apply]
   let B : ReciprocityTheory.Aut.GQ L n → Matrix (VVIdx lam) (VVIdx lam) K :=
-    fun γ => LinearMap.toMatrix bK bK (rhoVr emb lam (mtwRat γ))
-  have hB : ∀ γ, LinearMap.toMatrix bC bC (rhoVr (fun t => e.comp (emb t)) lam (mtwRat γ)) = (B γ).map e := by
+    fun γ => LinearMap.toMatrix bK bK (rhoVr emb lam (mtwRat (L := L) (n := n) γ))
+  have hB : ∀ γ, LinearMap.toMatrix bC bC (rhoVr (fun t => e.comp (emb t)) lam (mtwRat (L := L) (n := n) γ)) = (B γ).map e := by
     intro γ
     ext i k
     rw [LinearMap.toMatrix_apply, Matrix.map_apply]
-    show _ = e (LinearMap.toMatrix bK bK (rhoVr emb lam (mtwRat γ)) i k)
+    show _ = e (LinearMap.toMatrix bK bK (rhoVr emb lam (mtwRat (L := L) (n := n) γ)) i k)
     rw [LinearMap.toMatrix_apply, hbC, ← GlobalTheory.ConjTwist.mapVV_rhoVr, hrepr]
   let M : VV ℂ lam →ₗ[ℂ] (Fin N → ℂ) := j ∘ₗ Tc.symm.toLinearMap
-  have hM : ∀ γ y, M (rhoVr (fun t => e.comp (emb t)) lam (mtwRat γ) y) = ρC γ (M y) := by
+  have hM : ∀ γ y, M (rhoVr (fun t => e.comp (emb t)) lam (mtwRat (L := L) (n := n) γ) y) = ρC γ (M y) := by
     intro γ y
-    have h1 : Tc.symm (rhoVr (fun t => e.comp (emb t)) lam (mtwRat γ) y) = a.ρ γ (Tc.symm y) := by
+    have h1 : Tc.symm (rhoVr (fun t => e.comp (emb t)) lam (mtwRat (L := L) (n := n) γ) y) = a.ρ γ (Tc.symm y) := by
       apply Tc.injective
-      rw [hTc γ (mtwRat γ) (hmatch γ), LinearEquiv.apply_symm_apply, LinearEquiv.apply_symm_apply]
+      rw [hTc γ (mtwRat (L := L) (n := n) γ) (hmatch γ), LinearEquiv.apply_symm_apply, LinearEquiv.apply_symm_apply]
     simp only [M, LinearMap.comp_apply, LinearEquiv.coe_coe, h1, hjρ]
   let X : Matrix (Fin N) (VVIdx lam) ℂ := LinearMap.toMatrix bC (Pi.basisFun ℂ (Fin N)) M
   have hX0 : X ≠ 0 := by
@@ -107,9 +113,9 @@ theorem weight_descends : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L]
     exact LinearMap.ext fun y => hM γ y
   obtain ⟨XK, hXK0, hXK⟩ := GlobalTheory.T.nonzero_matrix_intertwiner_descends_to_subfield K e (ReciprocityTheory.Aut.GQ L n) (VVIdx lam) (Fin N) B A ⟨X, hX0, hXrel⟩
   let Φ : VV K lam →ₗ[K] W := Matrix.toLin bK b XK
-  have hΦ : ∀ γ x, Φ (rhoVr emb lam (mtwRat γ) x) = ρ γ (Φ x) := by
+  have hΦ : ∀ γ x, Φ (rhoVr emb lam (mtwRat (L := L) (n := n) γ) x) = ρ γ (Φ x) := by
     intro γ x
-    have h : Φ ∘ₗ rhoVr emb lam (mtwRat γ) = ρ γ ∘ₗ Φ := by
+    have h : Φ ∘ₗ rhoVr emb lam (mtwRat (L := L) (n := n) γ) = ρ γ ∘ₗ Φ := by
       apply (LinearMap.toMatrix bK b).injective
       rw [LinearMap.toMatrix_comp bK bK b, LinearMap.toMatrix_comp bK b b, LinearMap.toMatrix_toLin]
       exact hXK γ
@@ -144,15 +150,15 @@ theorem weight_descends : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L]
   have hinjΦ : Function.Injective Φ := (LinearMap.injective_iff_surjective_of_finrank_eq_finrank heq).2 hsurj
   let Φb : VV K lam ≃ₗ[K] W := LinearEquiv.ofBijective Φ ⟨hinjΦ, hsurj⟩
   have h1 : ∀ y, Φb y = Φ y := fun y => rfl
-  have hT : ∀ γ x, Φb.symm (ρ γ x) = rhoVr emb lam (mtwRat γ) (Φb.symm x) := by
+  have hT : ∀ γ x, Φb.symm (ρ γ x) = rhoVr emb lam (mtwRat (L := L) (n := n) γ) (Φb.symm x) := by
     intro γ x
     apply Φb.injective
     rw [Φb.apply_symm_apply, h1, hΦ, ← h1, Φb.apply_symm_apply]
   have hten : Formalism.L2.Col.TenIrr (fun t => e.comp (emb t)) lam := by
     refine GlobalTheory.PiIsotypic.isIrreducible_of_linearEquiv a.ρ _ Tc (fun γ v => ?_) a.irr
-    rw [hTc γ (mtwRat γ) (hmatch γ)]
+    rw [hTc γ (mtwRat (L := L) (n := n) γ) (hmatch γ)]
     rfl
-  refine ⟨lam, fun t => (GlobalTheory.T.contragredient_polynomialWeight_unique_highestWeight L n ι K e emb hinj hcm c hc lam hten W ρ Φb.symm hT t (lam0 t) (hw t)).symm,
+  refine ⟨lam, fun t => (GlobalTheory.mtRatDual_hw L n ι K e emb hinj hcm c hc lam hten W ρ Φb.symm hT t (lam0 t) (hw t)).symm,
     Φb.symm, fun γ γ₀ hm x => ?_⟩
   obtain rfl := mtwRat_eq_of_match γ γ₀ hm
   exact hT γ x

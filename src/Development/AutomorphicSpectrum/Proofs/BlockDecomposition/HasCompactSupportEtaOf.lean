@@ -1,11 +1,15 @@
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LastRowMulRowGLInv
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteAdelicLatticeOpenCompactStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AnnihilatorAdelicLatticeCompactStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BoxFourierIntegralBoundStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdelicVectorIntegralProductStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InfiniteVectorMeasureIsAddHaarStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ArchimedeanCharacterRealPairingStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothCutoffTranslateContDiffStatement
+module
+
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LastRowMulRowGLInv
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteAdelicLatticeOpenCompactStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AnnihilatorAdelicLatticeCompactStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BoxFourierIntegralBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.AdelicVectorIntegralProductStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.InfiniteVectorMeasureIsAddHaarStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ArchimedeanCharacterRealPairingStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmoothCutoffTranslateContDiffStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ theorem eventually_rowGL [TopologicalSpace R] [IsTopologicalRing R]
     {W : Set (GL (Fin k) R)} (hW : W ∈ 𝓝 (1 : GL (Fin k) R)) :
     ∀ᶠ r in 𝓝 (eRow R k), IsUnit (lastEnt r) ∧ rowGL r ∈ W := by
   have hl : Continuous (lastEnt : (Fin k → R) → R) := by
-    refine continuous_finset_sum _ fun c _ => ?_
+    refine continuous_finsetSum _ fun c _ => ?_
     split_ifs
     · exact continuous_apply c
     · exact continuous_const
@@ -70,7 +74,7 @@ theorem eventually_rowGL [TopologicalSpace R] [IsTopologicalRing R]
 
 end Gen
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {k : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {k : ℕ}
 
 theorem exists_openSub (w : Pl E) {N : Set (w.adicCompletion E)} (hN : N ∈ 𝓝 (0 : w.adicCompletion E)) :
     ∃ B : AddSubgroup (w.adicCompletion E), IsOpen (B : Set (w.adicCompletion E)) ∧
@@ -235,11 +239,12 @@ end GlobalTheory.CompanionTheory.CutOff
 
 namespace GlobalTheory.CompanionTheory.CutOff
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {k : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {k : ℕ}
 
 theorem lastRowM_map {R T : Type} [CommRing R] [CommRing T] (p : R →+* T) (A : GL (Fin k) R) (c : Fin k) :
     p (lastRowM A.val c) = lastRowM (GeneralLinearGroup.map p A).val c := by
-  simp only [lastRowM, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [lastRowM, map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   split_ifs
   · rfl
@@ -475,9 +480,11 @@ theorem cut_of (h0 : PositivityTheory.jumpWindows.G0) (h4 : S4) (h8 : S8) (hk : 
       refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
       have hψs : ψ (∑ i, y i * z i) = ψ (sInf E (∑ i, pInf E (y i) * zi i)) * ψ (sFin E (∑ i, pFin E (y i) * zf i)) := by
         have e1 : pInf E (∑ i, y i * z i) = ∑ i, pInf E (y i) * zi i := by
-          rw [map_sum]; exact Finset.sum_congr rfl fun i _ => map_mul _ _ _
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum]; exact Finset.sum_congr rfl fun i _ => map_mul _ _ _
         have e2 : pFin E (∑ i, y i * z i) = ∑ i, pFin E (y i) * zf i := by
-          rw [map_sum]; exact Finset.sum_congr rfl fun i _ => map_mul _ _ _
+          set_option synthInstance.maxHeartbeats 100000 in
+            rw [map_sum]; exact Finset.sum_congr rfl fun i _ => map_mul _ _ _
         rw [← e1, ← e2, ← AddChar.map_add_eq_mul, ← ad_split]
       have hφ' : (etaOf b (latS S B : Set (Af E)) y : ℂ) * φ (g * (sOf S y)⁻¹) =
           (etaOf b (latS S B : Set (Af E)) y : ℂ) * φ (g * (infGL E k (rowGL fun i => pInf E (y i)))⁻¹) := by
@@ -542,7 +549,9 @@ theorem exists_cut : S4 → S8 → PositivityTheory.jumpWindows.G0 → LastRowCu
     have hT' : ∀ᶠ v in 𝓝 (0 : Fin k → w.adicCompletion E),
         IsUnit (lastEnt (v + eRow _ k)) ∧ rowGL (v + eRow _ k) ∈ N w ∩ {u | repW k w u φ = φ} := by
       have hc : Tendsto (fun v : Fin k → w.adicCompletion E => v + eRow _ k) (𝓝 0) (𝓝 (eRow _ k)) := by
-        simpa using (continuous_add_right (eRow (w.adicCompletion E) k)).tendsto 0
+        have hc : Continuous (fun v : Fin k → w.adicCompletion E => v + eRow _ k) :=
+          continuous_id.add continuous_const
+        simpa using hc.tendsto 0
       exact hc.eventually hT
     rw [nhds_pi, Filter.eventually_iff, Filter.mem_pi'] at hT'
     obtain ⟨I, t, ht, hts⟩ := hT'

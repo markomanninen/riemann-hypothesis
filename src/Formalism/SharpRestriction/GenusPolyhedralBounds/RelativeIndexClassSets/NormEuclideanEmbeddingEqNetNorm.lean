@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.WeightedPrimeSumBound
-import Formalism.LocalToGlobal.ProjectiveLattices.ExtendedPointBaseChange
+module
+
+public import Formalism.SharpRestriction.GenusPolyhedralBounds.RelativeIndexClassSets.WeightedPrimeSumBound
+public import Formalism.LocalToGlobal.ProjectiveLattices.ExtendedPointBaseChange
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,13 +32,13 @@ def netN (σ : B.KO →+* ℂ) (F : B.Cusp j ka) : ℝ :=
 
 def cf (σ : B.KO →+* ℂ) : ℝ := (Real.sqrt (Fintype.card (Nt.NN σ) : ℝ))⁻¹
 
-open Classical in
 
+open Classical in
 def e0 (σ : B.KO →+* ℂ) : B.Cusp j ka →ₛₗ[σ] EuclideanSpace ℂ (Σ τ : B.KO →+* ℂ, Nt.NN τ) where
   toFun F := WithLp.toLp 2 (fun p => if p.1 = σ then ((Nt.cf p.1 : ℝ) : ℂ) * Nt.ev p.1 p.2 F else 0)
   map_add' F G := by
     ext p
-    simp only [map_add, PiLp.add_apply]
+    simp only [map_add (f := _), PiLp.add_apply]
     split_ifs <;> ring
   map_smul' a F := by
     ext ⟨τ, y⟩
@@ -74,8 +78,6 @@ theorem cf_sq (σ : B.KO →+* ℂ) : Nt.cf σ * Nt.cf σ = (Fintype.card (Nt.NN
   unfold cf
   rw [← mul_inv, Real.mul_self_sqrt (Nat.cast_nonneg _)]
 
-theorem cf_nonneg (σ : B.KO →+* ℂ) : 0 ≤ Nt.cf σ := inv_nonneg.mpr (Real.sqrt_nonneg _)
-
 theorem norm_euclideanEmbedding_eq_netNorm (σ : B.KO →+* ℂ) (F : B.Cusp j ka) : ‖Nt.e0 σ F‖ = Nt.netN σ F := by
   classical
   rw [EuclideanSpace.norm_eq, netN]
@@ -98,7 +100,7 @@ theorem netN_smul (σ : B.KO →+* ℂ) (a : B.KO) (F : B.Cusp j ka) : Nt.netN �
   rw [← Nt.norm_euclideanEmbedding_eq_netNorm, ← Nt.norm_euclideanEmbedding_eq_netNorm, map_smulₛₗ, norm_smul]
 
 theorem netN_add (σ : B.KO →+* ℂ) (F G : B.Cusp j ka) : Nt.netN σ (F + G) ≤ Nt.netN σ F + Nt.netN σ G := by
-  rw [← Nt.norm_euclideanEmbedding_eq_netNorm, ← Nt.norm_euclideanEmbedding_eq_netNorm, ← Nt.norm_euclideanEmbedding_eq_netNorm, map_add]
+  rw [← Nt.norm_euclideanEmbedding_eq_netNorm, ← Nt.norm_euclideanEmbedding_eq_netNorm, ← Nt.norm_euclideanEmbedding_eq_netNorm, map_add (f := _)]
   exact norm_add_le _ _
 
 theorem netN_eq_zero (hM : NetMax Nt) (σ : B.KO →+* ℂ) (F : B.Cusp j ka) : Nt.netN σ F = 0 ↔ F = 0 := by
@@ -156,8 +158,8 @@ namespace NetData
 
 variable (Nt : NetData B j ka)
 
-open Classical in
 
+open Classical in
 def runN : ∀ j' (ka' : WeightFamilies.Wt D j'), (B.KO →+* ℂ) → B.Cusp j' ka' → ℝ :=
   fun j' ka' => if h : (⟨j', ka'⟩ : Σ i, WeightFamilies.Wt D i) = ⟨j, ka⟩ then
       cast (congrArg (fun p : (Σ i, WeightFamilies.Wt D i) => (B.KO →+* ℂ) → B.Cusp p.1 p.2 → ℝ) h.symm) Nt.netN
@@ -201,8 +203,6 @@ abbrev Bp (hM : NetMax Nt) (hL : NetLeSup Nt) : WeightFamilies.Prov D :=
 theorem Bp_L2N_run (hM : NetMax Nt) (hL : NetLeSup Nt) : (Nt.Bp hM hL).l2NormAlt j ka = Nt.netN := by
   funext σ F
   simp [Bp, Formalism.L2.Pj.withNormOnWeights, Formalism.L2.Pj.l2nOn, covRun, Nt.runN_run]
-
-theorem Bp_supN (hM : NetMax Nt) (hL : NetLeSup Nt) : (Nt.Bp hM hL).supN = B.supN := rfl
 
 end NetData
 

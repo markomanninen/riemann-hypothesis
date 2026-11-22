@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.FacDefs
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.PlaceAe
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.CharacterNorms.FacDefs
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.PlaceAe
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
 open UpperTheory.ConvolutionTheory.R2 UpperTheory.ConvolutionTheory.RankTwoDescent
@@ -7,10 +12,6 @@ open scoped Classical
 open UpperTheory.ConvolutionTheory.R2.G (FS2 Rw nE row)
 open UpperTheory.V.Af.Smo (EigAt)
 open scoped ComplexOrder
-
-open private UpperTheory.ConvolutionTheory.R2.H.nearSquareValuations.inert_of UpperTheory.ConvolutionTheory.R2.H.nearSquareValuations.split_of UpperTheory.ConvolutionTheory.R2.H.nearSquareValuations.notSq
-  UpperTheory.ConvolutionTheory.R2.H.nearSquareValuations.sq_of_near UpperTheory.ConvolutionTheory.R2.H.nearSquareValuations.finrank_two UpperTheory.ConvolutionTheory.R2.H.nearSquareValuations.iota_delta
-  from Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnramifiedSplitting.PlaceAe
 
 namespace UpperTheory.PlacesAboveInertOrSplit
 
@@ -29,10 +30,12 @@ private theorem pow1 {x : WithZero (Multiplicative ℤ)} {n : ℕ} (hn : n ≠ 0
   · exact absurd h (one_lt_pow' h1 hn).ne'
 
 private theorem e_ne : w.asIdeal.ramificationIdx (𝓞 F) ≠ 0 :=
-  (Ideal.ramificationIdx_pos w.asIdeal (𝓞 F)).ne'
+  (Ideal.ramificationIdx_pos (R := 𝓞 F) w.asIdeal).ne'
 
 private theorem theta_unit (hd : Valued.v (algebraMap F (Kv v) D.δ) = 1) : Valued.v θw = 1 := by
-  have h := congrArg Valued.v (UpperTheory.ConvolutionTheory.R2.H.nearSquareValuations.iota_delta D v w)
+  have hδ : ι (algebraMap F (Kv v) D.δ) = θw ^ 2 := by
+    rw [completionMap_algebraMap, IsScalarTower.algebraMap_apply F E (Kv w), ← D.sq, map_pow]
+  have h := congrArg Valued.v hδ
   rw [valued_completionMap, hd, one_pow, map_pow] at h
   exact pow1 two_ne_zero h.symm
 
@@ -50,15 +53,68 @@ private theorem c_add (h2 : Valued.v (2 : Kv v) = 1)
   have hc2 : Valued.v c = 1 := by
     rw [valued_completionMap] at hc1
     exact pow1 (e_ne (F := F) w) hc1
-  refine UpperTheory.ConvolutionTheory.R2.H.nearSquareValuations.notSq D v w hu (UpperTheory.ConvolutionTheory.R2.H.nearSquareValuations.sq_of_near v _ c h2 hc2 ?_)
-  have h3 : Valued.v (ι (algebraMap F (Kv v) D.δ - c ^ 2)) < 1 := by
-    rw [map_sub, UpperTheory.ConvolutionTheory.R2.H.nearSquareValuations.iota_delta, map_pow,
-      show θw ^ 2 - ι c ^ 2 = (ι c + θw) * (θw - ι c) by ring, map_mul]
-    refine mul_lt_one_of_lt_of_le hlt ?_
-    exact (Valuation.map_sub _ _ _).trans (max_le hθ.le hc)
-  rw [valued_completionMap] at h3
-  by_contra hn
-  exact absurd h3 (not_lt.2 (one_le_pow_of_one_le' (not_lt.1 hn) _))
+  let δ := algebraMap F (Kv v) D.δ
+  have hδ : ι δ = θw ^ 2 := by
+    dsimp [δ]
+    rw [completionMap_algebraMap, IsScalarTower.algebraMap_apply F E (Kv w), ← D.sq, map_pow]
+  have hnear : Valued.v (δ - c ^ 2) < 1 := by
+    have h3 : Valued.v (ι (δ - c ^ 2)) < 1 := by
+      rw [map_sub, hδ, map_pow,
+        show θw ^ 2 - ι c ^ 2 = (ι c + θw) * (θw - ι c) by ring, map_mul]
+      exact mul_lt_one_of_lt_of_le hlt ((Valuation.map_sub _ _ _).trans (max_le hθ.le hc))
+    rw [valued_completionMap] at h3
+    by_contra hn
+    exact absurd h3 (not_lt.2 (one_le_pow_of_one_le' (not_lt.1 hn) _))
+  have hsquare : IsSquare δ := by
+    haveI := GlobalTheory.HenselSquare.isAdicComplete_integers F v
+    have h20 : (2 : Kv v) ≠ 0 := fun h => by simp [h] at h2
+    have hc0 : c ≠ 0 := fun h => by simp [h] at hc2
+    let z : Kv v := (δ - c ^ 2) / (4 * c ^ 2)
+    have h4 : Valued.v (4 * c ^ 2 : Kv v) = 1 := by
+      rw [show (4 : Kv v) = 2 * 2 by norm_num, map_mul, map_mul, map_pow, h2, hc2]
+      simp
+    have hz : Valued.v z < 1 := by
+      dsimp [z]
+      rwa [map_div₀, h4, div_one]
+    let zo : v.adicCompletionIntegers F :=
+      ⟨z, (HeightOneSpectrum.mem_adicCompletionIntegers (𝓞 F) F v).2 hz.le⟩
+    have hzm : zo ∈ IsLocalRing.maximalIdeal (v.adicCompletionIntegers F) := by
+      rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff,
+        HeightOneSpectrum.adicCompletionIntegers.isUnit_iff_valued_eq_one]
+      exact hz.ne
+    obtain ⟨s, hs⟩ := GlobalTheory.HenselSquare.exists_sq_add_eq _ _ hzm
+    have hs' : (s : Kv v) ^ 2 + s = z := congrArg Subtype.val hs
+    refine ⟨c * (1 + 2 * s), ?_⟩
+    have hdz : δ = c ^ 2 + z * (4 * c ^ 2) := by
+      dsimp [z]
+      field_simp
+      ring
+    rw [hdz, ← hs']
+    ring
+  have hquad : GlobalTheory.QNorm.IsQuad D.δ D.θ D.σ := by
+    refine ⟨?_, D.sq, D.conj, ?_⟩
+    · rintro ⟨s, hs⟩
+      have hprod : (D.θ - algebraMap F E s) * (D.θ + algebraMap F E s) = 0 := by
+        have hsq := D.sq
+        rw [hs, map_mul] at hsq
+        linear_combination hsq
+      have hind := D.b.linearIndependent
+      rw [Fintype.linearIndependent_iff] at hind
+      rcases mul_eq_zero.1 hprod with h | h
+      · have := hind ![-s, 1] (by
+          simp [Fin.sum_univ_two, D.b0, D.b1, Algebra.smul_def]
+          linear_combination h) 1
+        simp at this
+      · have := hind ![s, 1] (by
+          simp [Fin.sum_univ_two, D.b0, D.b1, Algebra.smul_def]
+          linear_combination h) 1
+        simp at this
+    · intro x
+      refine ⟨D.b.repr x 0, D.b.repr x 1, ?_⟩
+      conv_lhs => rw [← D.b.sum_repr x]
+      simp [Fin.sum_univ_two, D.b0, D.b1, Algebra.smul_def]
+  obtain ⟨a, b, hab, ha, hb⟩ := GlobalTheory.QNorm.two_places_of_isSquare F E D.δ D.θ D.σ hquad v hsquare
+  exact hab ((hu a ((below_eq_iff a v).1 ha)).trans (hu b ((below_eq_iff b v).1 hb)).symm)
 
 private theorem coord (h2 : Valued.v (2 : Kv v) = 1)
     (hθ : Valued.v θw = 1) (hu : ∀ w' : P E, w'.asIdeal.LiesOver v.asIdeal → w' = w)
@@ -87,7 +143,7 @@ private theorem e_one (h2 : Valued.v (2 : Kv v) = 1)
   haveI : Module.Finite (Kv v) (Kv w) := Module.finite_of_finrank_pos (by omega)
   let L : (Kv v × Kv v) →ₗ[Kv v] Kv w :=
     { toFun := fun p => ι p.1 + ι p.2 * θw
-      map_add' := fun p q => by simp only [Prod.fst_add, Prod.snd_add, map_add]; ring
+      map_add' := fun p q => by simp only [Prod.fst_add, Prod.snd_add, map_add (f := _)]; ring
       map_smul' := fun c p => by
         change ι (c * p.1) + ι (c * p.2) * θw = c • (ι p.1 + ι p.2 * θw)
         rw [Algebra.smul_def, algebraMap_completion_eq, map_mul, map_mul]
@@ -130,8 +186,19 @@ private theorem main (hg : Gd D.δ v) :
     (∃ w : P E, w.under (𝓞 F) = v ∧ Inert D v w) ∨
       (∃ w w' : P E, w ≠ w' ∧ w.under (𝓞 F) = v ∧ w'.under (𝓞 F) = v ∧ SplitAt v w ∧ SplitAt v w' ∧
         ∀ w'' : P E, w''.under (𝓞 F) = v → w'' = w ∨ w'' = w') := by
+  have hdegree : Module.finrank F E = 2 := by
+    rw [Module.finrank_eq_card_basis D.b, Fintype.card_fin]
+  have hnorm (w : P E) [hw : w.asIdeal.LiesOver v.asIdeal] :
+      normV w = normV v ^ w.asIdeal.inertiaDeg (𝓞 F) := by
+    have e : v = below F w := ((below_eq_iff w v).2 hw).symm
+    subst e
+    have := w.isMaximal
+    have := (below F w).isMaximal
+    simp only [normV, ← Submodule.cardQuot_apply, ← Ideal.absNorm_apply]
+    rw [← Ideal.absNorm_relNorm (𝓞 F) (𝓞 E) w.asIdeal,
+      Ideal.relNorm_eq_pow_of_isMaximal w.asIdeal (below F w).asIdeal, map_pow]
   have hs := sum_ramificationIdx_mul_inertiaDeg E v
-  rw [UpperTheory.ConvolutionTheory.R2.H.nearSquareValuations.finrank_two D] at hs
+  rw [hdegree] at hs
   set g : PlacesOver E v → ℕ := fun x => x.1.asIdeal.ramificationIdx (𝓞 F) * x.1.asIdeal.inertiaDeg (𝓞 F) with hg'
   have hs' : ∑ x, g x = 2 := hs
   have hpos : ∀ x, 1 ≤ g x := fun x =>
@@ -151,7 +218,89 @@ private theorem main (hg : Gd D.δ v) :
     have hθ := theta_unit D v a.1 hg.del
     have he := e_one D v a.1 hg.two hθ hu' h2
     have hf : a.1.asIdeal.inertiaDeg (𝓞 F) = 2 := by simpa only [hg', he, one_mul] using h2
-    exact ⟨a.1, (under_iff v a.1).2 a.2, UpperTheory.ConvolutionTheory.R2.H.nearSquareValuations.inert_of D v a.1 he hg.two hθ hu' hf⟩
+    refine ⟨a.1, (under_iff v a.1).2 a.2, ?_⟩
+    let i := completionMap v a.1
+    let θ := algebraMap E (Kv a.1) D.θ
+    have hv (x : Kv v) : Valued.v (i x) = Valued.v x := by
+      dsimp [i]
+      rw [valued_completionMap, he, pow_one]
+    have hval (u t : Kv v) : Valued.v (i u + i t * θ) = max (Valued.v u) (Valued.v t) := by
+      have h := coord D v a.1 hg.two hθ hu' u t
+      change Valued.v (i u + i t * θ) = max (Valued.v (i u)) (Valued.v (i t)) at h
+      rwa [hv, hv] at h
+    have hδ : i (algebraMap F (Kv v) D.δ) = θ ^ 2 := by
+      dsimp [i, θ]
+      rw [completionMap_algebraMap, IsScalarTower.algebraMap_apply F E (Kv a.1), ← D.sq, map_pow]
+    have haniso : Aniso D.δ v := by
+      intro u t
+      rw [← hv, map_sub, map_pow, map_mul, hδ, map_pow,
+        show i u ^ 2 - θ ^ 2 * i t ^ 2 = (i u + i t * θ) * (i u + i (-t) * θ) by
+          rw [map_neg]
+          ring,
+        map_mul, hval, hval, Valuation.map_neg, sq]
+    obtain ⟨hadd, hmul, hcp, hidl, -, -, -, hsg, -, -⟩ := sgLaws E a.1
+    obtain ⟨-, -, hcp', hidl', -, -, -, hsg', -, -⟩ := sgLaws F v
+    have hmap (x : Kv v) : adeleMap F E (sg v x) = sg a.1 (i x) := by
+      refine Prod.ext ?_ (FiniteAdeleRing.ext E fun w' => ?_)
+      · change InfinitePlace.infiniteAdeleRingMap (sg v x).1 = (sg a.1 _).1
+        rw [(hsg' x).1, (hsg _).1, map_zero]
+      · change completionMap (below F w') w' ((sg v x).2 (below F w')) = (sg a.1 _).2 w'
+        by_cases h : w' = a.1
+        · subst w'
+          have hb : below F a.1 = v := (below_eq_iff _ _).2 a.2
+          rw [completionMap_congr hb a.1 (sg v x).2]
+          exact (congrArg i (hcp' x)).trans (hcp _).symm
+        · have hb : below F w' ≠ v := fun hb => h (hu' w' ((below_eq_iff _ _).1 hb))
+          rw [(hsg' x).2 _ hb, map_zero, (hsg _).2 _ h]
+    have hr : Module.finrank (Kv v) (Kv a.1) = 2 := by
+      rw [finrank_eq_ramificationIdx_mul_inertiaDeg, he, hf, one_mul]
+    haveI : Module.Finite (Kv v) (Kv a.1) := Module.finite_of_finrank_pos (by omega)
+    let L : (Kv v × Kv v) →ₗ[Kv v] Kv a.1 :=
+      { toFun := fun p => i p.1 + i p.2 * θ
+        map_add' := fun p q => by
+          simp only [Prod.fst_add, Prod.snd_add, map_add (f := i)]
+          ring
+        map_smul' := fun c p => by
+          change i (c * p.1) + i (c * p.2) * θ = c • (i p.1 + i p.2 * θ)
+          rw [Algebra.smul_def, algebraMap_completion_eq, map_mul, map_mul]
+          change i c * i p.1 + i c * i p.2 * θ = i c * (i p.1 + i p.2 * θ)
+          ring }
+    have hinj : Function.Injective L := by
+      refine (injective_iff_map_eq_zero L).2 fun p hp => ?_
+      have h := hval p.1 p.2
+      rw [show i p.1 + i p.2 * θ = 0 from hp, map_zero] at h
+      have h1 : Valued.v p.1 = 0 := le_antisymm (h ▸ le_max_left _ _) zero_le
+      have h2 : Valued.v p.2 = 0 := le_antisymm (h ▸ le_max_right _ _) zero_le
+      exact Prod.ext ((Valuation.zero_iff _).1 h1) ((Valuation.zero_iff _).1 h2)
+    have hsurj : Function.Surjective L :=
+      (LinearMap.injective_iff_surjective_of_finrank_eq_finrank (by
+        rw [Module.finrank_prod, Module.finrank_self, hr])).1 hinj
+    have hmk (u t : A F) : D.mkE u t = adeleMap F E u + adeleMap F E t * rt D.θ := rfl
+    refine ⟨by rw [hnorm a.1, hf], haniso,
+      ⟨AddEquiv.ofBijective L.toAddMonoidHom ⟨hinj, hsurj⟩, ?_, ?_, ?_, ?_⟩, ?_⟩
+    · intro u t
+      change sg a.1 (i u + i t * θ) = _
+      rw [hmk, hmap, hmap, hadd, mul_comm (sg a.1 (i t)), hmul, mul_comm]
+      rfl
+    · exact hval
+    · intro c u t
+      change (i c + i 0 * θ) * (i u + i t * θ) = i (c * u) + i (c * t) * θ
+      simp only [map_zero, zero_mul, add_zero, map_mul]
+      ring
+    · change i 1 + i 0 * θ = 1
+      simp
+    · intro ϖ hϖ
+      let ϖ' : (Kv a.1)ˣ := Units.map (i : Kv v →* Kv a.1) ϖ
+      have hco : ((idl a.1 ϖ' : (A E)ˣ) : A E) = adeleMap F E (idl v ϖ : (A F)ˣ).val := by
+        rw [hidl, hidl', map_add (f := _), map_one, hmap, map_sub, map_one]
+        rfl
+      refine ⟨ϖ', ?_, ?_, ?_⟩
+      · change Valued.v (i (ϖ : Kv v)) = _
+        rw [hv]
+        exact hϖ
+      · rw [hco, hmk, map_zero, zero_mul, add_zero]
+      · have h : idl a.1 ϖ' = ideleEmbedding F E (idl v ϖ) := Units.ext hco
+        rw [h, ideleNorm_ideleEmbedding, hdegree]
   · right
     obtain ⟨b, hb⟩ := not_forall.1 hu
     have h1 : g b + g a ≤ 2 := by
@@ -161,7 +310,21 @@ private theorem main (hg : Gd D.δ v) :
     have hb1 := hpos b
     have hsp : ∀ x : PlacesOver E v, g x = 1 → SplitAt v x.1 := fun x hx => by
       haveI := x.2
-      exact UpperTheory.ConvolutionTheory.R2.H.nearSquareValuations.split_of v x.1 (Nat.eq_one_of_mul_eq_one_right hx) (Nat.eq_one_of_mul_eq_one_left hx)
+      have he := Nat.eq_one_of_mul_eq_one_right hx
+      have hf := Nat.eq_one_of_mul_eq_one_left hx
+      have hr : Module.finrank (Kv v) (Kv x.1) = 1 := by
+        rw [finrank_eq_ramificationIdx_mul_inertiaDeg]
+        exact hx
+      let i := completionMap v x.1
+      have hsurj : Function.Surjective i := fun y => by
+        obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_ne_zero' (1 : Kv x.1) one_ne_zero).1 hr y
+        exact ⟨c, by rw [← hc, Algebra.smul_def, mul_one]; rfl⟩
+      refine ⟨by rw [hnorm x.1, hf, pow_one], RingEquiv.ofBijective i ⟨i.injective, hsurj⟩,
+        continuous_completionMap v x.1, fun y => ?_, fun y => ?_⟩
+      · change completionMap v x.1 _ = _
+        rw [completionMap_algebraMap, IsScalarTower.algebraMap_apply F E (Kv x.1)]
+      · change Valued.v (completionMap v x.1 y) = Valued.v y
+        rw [valued_completionMap, he, pow_one]
     refine ⟨b.1, a.1, fun h => hb (Subtype.ext h), (under_iff v b.1).2 b.2, (under_iff v a.1).2 a.2,
       hsp b (by omega), hsp a (by omega), fun w'' hw => ?_⟩
     by_contra hn

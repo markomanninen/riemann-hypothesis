@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SquarePairLocal.PowerSeriesExpansionImageDenseWithDenominator
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SquarePairLocal.PowerSeriesExpansionImageDenseWithDenominator
+
+@[expose] public section
 
 noncomputable section
 open NumberField IsDedekindDomain HeightOneSpectrum WithZero IsLocalRing Topology Filter
@@ -28,7 +32,10 @@ theorem coe_j (r : 𝓞 E) :
 theorem v_j (r : 𝓞 E) :
     Valued.v ((algebraMap (𝓞 E) (v.adicCompletionIntegers E) r : v.adicCompletionIntegers E) :
       v.adicCompletion E) = v.intValuation r := by
-  rw [coe_j, adicCompl_val_algebraMap, valuation_of_algebraMap]
+  rw [coe_j]
+  have h := v.valuedAdicCompletion_eq_valuation' (algebraMap (𝓞 E) E r)
+  rw [v.valuation_of_algebraMap] at h
+  exact h
 
 theorem detect_ideal {Q : Ideal (𝓞 E)} [Q.IsPrime] {ϖ : 𝓞 E} (h1 : ϖ ∈ Q) (h2 : ϖ ∉ Q ^ 2)
     (x : 𝓞 E) (K : ℕ) (hx : x ∈ Q ^ K) : ∃ s : 𝓞 E, s ∉ Q ∧ ∃ w : 𝓞 E, s * x = ϖ ^ K * w := by

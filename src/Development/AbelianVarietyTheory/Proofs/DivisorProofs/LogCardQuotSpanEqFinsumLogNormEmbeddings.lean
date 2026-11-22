@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped nonZeroDivisors
 
@@ -23,7 +27,7 @@ theorem card_quot_span_eq (B : Type) [CommRing B] [IsDomain B] [Module.Free ℤ 
 
 theorem injective_of_ringHom (B : Type) [CommRing B] [IsDomain B] [Module.Finite ℤ B]
     (τ : B →+* ℂ) : Function.Injective τ := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   have h : (RingHom.ker τ).comap (algebraMap ℤ B) = ⊥ := by
     ext n

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CMLattices.LamLetters
-import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.RingActIffOAct
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.PointsSumsEqProducts
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.RosatiAdjIffLamEq
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.CommutatorPairingsEqOfCubeLBPairingIsoStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.LamLetters
+public import Development.AbelianVarietyTheory.Definitions.CMLattices.ExistsIsThetaDegOfIsLocalModel
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.RingActIffOAct
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.PointsSumsEqProducts
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.RosatiAdjIffLamEq
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.CommutatorPairingsEqOfCubeLBPairingIsoStatement
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.GeometryOfNumbersTheory Formalism.L2.LamCM
@@ -26,8 +30,13 @@ theorem exists_oAct_rosatiConj : Out.Laws → ∀ (E : Type) [Field E] [NumberFi
   refine ⟨⟨ra, fun a => (GlobalTheory.RosLam.rosatiAdj_iff_lamEq hL.globalFns _ T.pol _ _ (ra.hom a) (ra.hom _)).2 (hlam a)⟩,
     hra, ?_⟩
   intro a Tb k x z c hk hx hz
-  have hp := points_sums_eq_products.1 (Sp (𝓞 K)) T.pol.A Tb
-  rw [hp.2.2.1, hp.1] at hx hz
+  have hp : ∀ (n : ℕ) (p : Tb ⟶ T.pol.A), pnsmulPt n p = p ^ n := by
+    intro n p
+    induction n with
+    | zero => rw [pow_zero]; rfl
+    | succ n ih => rw [pow_succ, ← ih]; rfl
+  have hu : toUnit Tb ≫ η[T.pol.A] = (1 : Tb ⟶ T.pol.A) := rfl
+  rw [hp, hu] at hx hz
   have := GlobalTheory.T.commutatorPairings_eq_of_cubeLBPairingIso hL (𝓞 K) T.pol T.pol T.pol T.pol (ra.act a) (𝟙 _) (𝟙 _) (ra.act (star a)) (ra.hom a)
     inferInstance inferInstance (ra.hom _) (hlam a) Tb k x z c hk hx hz
   simpa using this

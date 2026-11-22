@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.AdicLimPf
+module
+
+public import Development.EtaleCohomology.KummerTheory.AdicLimPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Opposite GlobalTheory.EtC LateralTheory.KummerTheory

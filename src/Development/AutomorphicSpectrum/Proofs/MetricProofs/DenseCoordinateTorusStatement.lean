@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.DenseCoordinateTorus
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntegralAngMeas
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.DenseCoordinateTorus
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntegralAngMeas
+
+@[expose] public section
+
 open MeasureTheory Filter Topology GlobalTheory.CompanionTheory.Ar.PB.Flat
 open scoped ContDiff
 set_option maxHeartbeats 1000000 in

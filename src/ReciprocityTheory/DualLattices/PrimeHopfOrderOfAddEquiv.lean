@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.PrimeHopfOrderStatement
+module
+
+public import ReciprocityTheory.DualLattices.PrimeHopfOrderStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,7 +84,7 @@ def hopfPull (e : X ≃+ Y) (A : HopfOrder (C := C) R Y) : HopfOrder (C := C) R 
     have h1 : addPull R X f = pb2 (addPull R Y g) := by
       funext q
       rw [hfg]
-      simp only [addPull, pb2, LinearMap.funLeft_apply, pbE_apply, map_add]
+      simp only [addPull, pb2, LinearMap.funLeft_apply, pbE_apply, map_add (f := _)]
     rw [h1]
     have h2 := A.comul g hf
     have h3 : (tensorSpan R A.carrier).map pb2 ≤ tensorSpan R (A.carrier.map (pbE (C := C) (R := R) e : (Y → C) →ₗ[R] (X → C))) := by
@@ -165,7 +169,7 @@ theorem primeHopfOrder_of_addEquiv (hU3 : PrimeHopfOrderStatement) (p : ℕ) [Fa
         obtain ⟨r2, h2⟩ := hb
         refine ⟨r1 + r2, ?_⟩
         convert add_mem h1 h2 using 1
-        rw [map_add, add_smul]
+        rw [map_add (f := _), add_smul]
         abel
       | smul c a _ ha =>
         obtain ⟨r1, h1⟩ := ha

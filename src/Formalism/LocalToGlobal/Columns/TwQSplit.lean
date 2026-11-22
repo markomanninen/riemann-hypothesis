@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.TiedGlSplit
-import Formalism.LocalToGlobal.Columns.TwQDefs
+module
+
+public import Formalism.LocalToGlobal.Columns.TiedGlSplit
+public import Formalism.LocalToGlobal.Columns.TwQDefs
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix
 open scoped TensorProduct
@@ -18,15 +22,15 @@ theorem qsp_exists_pi (P : Pl E) (hP : conjPrime₂ P ≠ P) : ∃ ϖ : 𝓞 E, 
   obtain ⟨s, hs, hns⟩ := exists_mem_notMem (Ne.symm hP)
   exact ⟨s, hs, fun h => hns ((mem_conjP P s).2 h)⟩
 
-include hc in
 
+include hc in
 theorem qsp_norm_mem (a : 𝓞 E) : ∃ b : 𝓞 F, algebraMap (𝓞 F) (𝓞 E) b = a * cO E a := by
   have h1 : star (algebraMap (𝓞 E) E (a * cO E a)) = algebraMap (𝓞 E) E (a * cO E a) := by
     rw [map_mul, algebraMap_cO, star_mul', star_star, mul_comm]
   obtain ⟨x, hx⟩ := (hc.fixed _).1 h1
   have hi : IsIntegral ℤ x := by
     have h2 : IsIntegral ℤ (algebraMap F E x) := by rw [hx]; exact RingOfIntegers.isIntegral_coe _
-    exact (isIntegral_algebraMap_iff (algebraMap F E).injective).1 h2
+    exact (isIntegral_algebraMap_iff ).1 h2
   obtain ⟨b, hb⟩ : ∃ b : 𝓞 F, algebraMap (𝓞 F) F b = x := ⟨⟨x, hi⟩, rfl⟩
   refine ⟨b, ?_⟩
   apply RingOfIntegers.ext
@@ -35,8 +39,8 @@ theorem qsp_norm_mem (a : 𝓞 E) : ∃ b : 𝓞 F, algebraMap (𝓞 F) (𝓞 E)
 
 theorem qsp_isOver (P : Pl E) : IsOver (underPl F P) P := rfl
 
-include hc in
 
+include hc in
 theorem qsp_exists (P : Pl E) (hP : conjPrime₂ P ≠ P) :
     ∃ ϖ : 𝓞 E, ϖ ∈ P.asIdeal ∧ cO E ϖ ∉ P.asIdeal ∧ Nonempty (Formalism.MainNotions.Gaps.LG.SplitAt hc.sig (underPl F P) (ϖ : E)) := by
   obtain ⟨ϖ, hϖ, hcϖ⟩ := qsp_exists_pi P hP
@@ -50,7 +54,7 @@ theorem qsp_exists (P : Pl E) (hP : conjPrime₂ P ≠ P) :
     rw [hsig0]; exact this
   have ht' : algebraMap F E (t : F) = (ϖ : E) + hc.sig (ϖ : E) := by
     have := congrArg (algebraMap (𝓞 E) E) ht
-    rw [map_add, ← IsScalarTower.algebraMap_apply, IsScalarTower.algebraMap_apply (𝓞 F) F E] at this
+    rw [map_add (f := _), ← IsScalarTower.algebraMap_apply, IsScalarTower.algebraMap_apply (𝓞 F) F E] at this
     rw [hsig0]; exact this
   have hNv : N ∈ (underPl F P).asIdeal := by
     show algebraMap (𝓞 F) (𝓞 E) N ∈ P.asIdeal

@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.NMeasInv
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureInverseContraction.MeasureContractionFormula
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.NMeasInv
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MeasureInverseContraction.MeasureContractionFormula
+
+@[expose] public section
 
 namespace PI
 

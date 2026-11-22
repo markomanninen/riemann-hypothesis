@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PowerSums
-import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsFlag
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.Statements
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.PowerSums
+public import GroundTheory.HeightsAndTheta.Heights.RemainderTerms.StatementsFlag
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -26,10 +31,11 @@ theorem FlagPowerSumPreimage.proof : FlagPowerSumPreimage.Statement := by
   intro N T hT
   choose Sf hSf using fun l => Flag.exists_powerSumHom_eq (hT l)
   refine ⟨∑ i : Fin N, X i * Sf (i.val + 1), ?_, ?_⟩
-  · rw [sum_Icc_one_eq_sum_fin N (fun l => psum (Fin N) ℚ l * T l), map_sum]
-    refine Finset.sum_congr rfl (fun i _ => ?_)
-    rw [map_mul, hSf]
-    simp [powerSumHom]
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [sum_Icc_one_eq_sum_fin N (fun l => psum (Fin N) ℚ l * T l), map_sum]
+      refine Finset.sum_congr rfl (fun i _ => ?_)
+      rw [map_mul, hSf]
+      simp [powerSumHom]
   · intro k hk1 hkN
     set j : Fin N := ⟨k - 1, by omega⟩ with hj
     rw [coeff_sum, Finset.sum_eq_single j]

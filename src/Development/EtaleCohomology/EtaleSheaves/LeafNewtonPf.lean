@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.InstCommRingR
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.InstCommRingR
+
+@[expose] public section
 
 noncomputable section
 open PowerSeries
@@ -6,22 +10,22 @@ open PowerSeries
 namespace LateralTheory.E.LeafNewtonPf
 
 def nser {A : Type 1} [CommRing A] (c : ℕ → A) : PowerSeries A :=
-  -(X * derivative A (mk c)) * (mk c).invOfUnit 1
+  -(X * PowerSeries.derivative (mk c)) * (mk c).invOfUnit 1
 
 lemma uniq {A : Type 1} [CommRing A] {f g s : PowerSeries A} (hf : constantCoeff f = 1) (h : s * f = g) :
     g * f.invOfUnit 1 = s := by
   rw [← h, mul_assoc, mul_invOfUnit f 1 (by simp [hf]), mul_one]
 
 lemma nser_eq {A : Type 1} [CommRing A] (c : ℕ → A) {s : PowerSeries A} (h0 : constantCoeff (mk c) = 1)
-    (h : s * mk c = -(X * derivative A (mk c))) : nser c = s := uniq h0 h
+    (h : s * mk c = -(X * PowerSeries.derivative (mk c))) : nser c = s := uniq h0 h
 
 lemma nser_spec {A : Type 1} [CommRing A] (c : ℕ → A) (h0 : c 0 = 1) :
-    nser c * mk c = -(X * derivative A (mk c)) := by
+    nser c * mk c = -(X * PowerSeries.derivative (mk c)) := by
   unfold nser
   rw [mul_assoc, invOfUnit_mul (mk c) 1 (by simp [h0]), mul_one]
 
 lemma map_deriv {A B : Type 1} [CommRing A] [CommRing B] (φ : A →+* B) (f : PowerSeries A) :
-    map φ (derivative A f) = derivative B (map φ f) := by
+    map φ (PowerSeries.derivative f) = PowerSeries.derivative (map φ f) := by
   ext n
   simp [coeff_derivative, coeff_map, map_mul, map_natCast]
 
@@ -48,7 +52,7 @@ lemma part2 {A : Type 1} [CommRing A] (c d e : ℕ → A) (hc : c 0 = 1) (hd : d
     have h2 := nser_spec d hd
     linear_combination (mk d) * h1 + (mk c) * h2
   show coeff k (nser e) = coeff k (nser c) + coeff k (nser d)
-  rw [key, map_add]
+  rw [key, map_add (f := _)]
 
 lemma geom {A : Type 1} [CommRing A] (x : A) : mk (fun k => x ^ k) * (1 - C x * X) = 1 := by
   ext n

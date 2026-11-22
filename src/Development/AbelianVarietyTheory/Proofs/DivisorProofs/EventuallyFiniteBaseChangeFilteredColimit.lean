@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZModTorsorIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsZModTorsorIff
+
+@[expose] public section
+
 open CategoryTheory Limits TensorProduct
 
 noncomputable section
@@ -49,7 +54,8 @@ theorem finite_of_relations {n : ℕ} {L : Type} [Fintype L] (φ : MvPolynomial 
   have hint : ∀ i, IsIntegral S (bcPres (S := S) φ (X i)) := by
     intro i
     refine ⟨q i, hq i, ?_⟩
-    rw [← Polynomial.aeval_def, Polynomial.aeval_algHom_apply, hG i, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← Polynomial.aeval_def, Polynomial.aeval_algHom_apply, hG i, map_sum]
     refine Finset.sum_eq_zero (fun l _ => ?_)
     rw [map_mul, bcPres_map, hrel, TensorProduct.tmul_zero, mul_zero]
   haveI : Algebra.IsIntegral S (S ⊗[R] A) := by
@@ -78,7 +84,7 @@ theorem exists_comb_of_bcPres_eq_zero {n : ℕ} {L : Type} [Fintype L]
       simp only [e, T, MvPolynomial.algebraTensorAlgEquiv_tmul, map_smul, bcPres_map,
         Algebra.TensorProduct.map_tmul, AlgHom.id_apply]
       rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one]
-    | add x y hx hy => rw [map_add, map_add, hx, hy, map_add]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, map_add (f := _)]
   have hmem : e.symm P ∈ RingHom.ker T := by
     rw [RingHom.mem_ker, ← hT, AlgEquiv.apply_symm_apply, hP]
   rw [Algebra.TensorProduct.lTensor_ker _ hφ, hker, Ideal.map_span] at hmem
@@ -161,8 +167,8 @@ theorem eventually_finite_baseChange : ∀ (J : Type) [SmallCategory J] [IsFilte
     (letI : Algebra (F.obj j) c.pt := (c.ι.app j).hom.toAlgebra;
       Module.Finite c.pt (c.pt ⊗[F.obj j] A)) →
     ∃ (k₀ : J) (f₀ : j ⟶ k₀), ∀ (k : J) (f : k₀ ⟶ k),
-      letI : Algebra (F.obj j) (F.obj k) := (F.map (f₀ ≫ f)).hom.toAlgebra;
-      Module.Finite (F.obj k) (F.obj k ⊗[F.obj j] A) := by
+      (letI : Algebra (F.obj j) (F.obj k) := (F.map (f₀ ≫ f)).hom.toAlgebra;
+        Module.Finite (F.obj k) (F.obj k ⊗[F.obj j] A)) := by
   intro J _ _ F c hc j A _ _ hfp hfin
   classical
   obtain ⟨n, φ, hφ, hfg⟩ := hfp.out
@@ -214,7 +220,8 @@ theorem eventually_finite_baseChange : ∀ (J : Type) [SmallCategory J] [IsFilte
     Polynomial.aeval (X i) (q i) - ∑ l, H i l * MvPolynomial.map (F.map f₁).hom (rel l)
   have hE : ∀ i, MvPolynomial.map (c.ι.app k₁).hom (E i) = 0 := by
     intro i
-    simp only [E, map_sub, map_sum, map_mul, map_aeval_X, hq, hH, MvPolynomial.map_map]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [E, map_sub, map_sum, map_mul, map_aeval_X, hq, hH, MvPolynomial.map_map]
     rw [← CommRingCat.hom_comp, c.w f₁, sub_eq_zero, ← hG i]
     rfl
   let U : Finset (F.obj k₁) := Finset.univ.biUnion (fun i => (E i).coeffs)
@@ -222,12 +229,12 @@ theorem eventually_finite_baseChange : ∀ (J : Type) [SmallCategory J] [IsFilte
     intro x hx
     obtain ⟨i, -, hx⟩ := Finset.mem_biUnion.1 hx
     obtain ⟨m, -, rfl⟩ := MvPolynomial.mem_coeffs_iff.1 hx
-    have := congrArg (MvPolynomial.coeff m) (hE i)
-    rwa [MvPolynomial.coeff_map, MvPolynomial.coeff_zero] at this)
+    have := congrArg (AddMonoidAlgebra.coeff · m) (hE i)
+    rwa [MvPolynomial.coeff_map, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at this)
   have hE2 : ∀ i, MvPolynomial.map (F.map g₂).hom (E i) = 0 := by
     intro i
     ext m
-    rw [MvPolynomial.coeff_map, MvPolynomial.coeff_zero]
+    rw [MvPolynomial.coeff_map, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
     by_cases hm : m ∈ (E i).support
     · exact hg₂ _ (Finset.mem_biUnion.2 ⟨i, Finset.mem_univ _,
         MvPolynomial.coeff_mem_coeffs _ (MvPolynomial.mem_support_iff.1 hm)⟩)
@@ -243,7 +250,8 @@ theorem eventually_finite_baseChange : ∀ (J : Type) [SmallCategory J] [IsFilte
     rw [Category.assoc, Functor.map_comp, CommRingCat.hom_comp]
   have h3 : MvPolynomial.map (F.map (g₂ ≫ f)).hom (E i) = 0 := by
     rw [Functor.map_comp, CommRingCat.hom_comp, ← MvPolynomial.map_map, hE2, map_zero]
-  simp only [E, map_sub, map_sum, map_mul, map_aeval_X, MvPolynomial.map_map, sub_eq_zero] at h3
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [E, map_sub, map_sum, map_mul, map_aeval_X, MvPolynomial.map_map, sub_eq_zero] at h3
   rw [halg]
   exact h3
 

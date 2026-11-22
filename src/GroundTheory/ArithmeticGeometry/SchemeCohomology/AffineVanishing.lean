@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.LocalizingCech
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechToDerived
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.LocalizingCech
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.CechToDerived
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
@@ -52,7 +57,8 @@ lemma exists_cover_eq (g : R) {ι : Type*} [Fintype ι] (h : ι → R) (N : ℕ)
   exact ⟨L, c, hc.symm⟩
 
 noncomputable def tildeAction :
-    LocalizingAction (X := (Spec R).toTopCat) (tildeAb M).obj (fun r : R => basicOpen r) where
+    LocalizingAction (X := (Spec R).toTopCat) (P := (tildeAb M).obj)
+      (fun r : R => basicOpen r) where
   act r W := DistribSMul.toAddMonoidHom ((tildeAb M).obj.obj (op W)) r
   res_act r V W h x := res_smul M h r x
   act_mul a b W x := mul_smul a b x

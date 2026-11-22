@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SimpleSum
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx
 
@@ -12,8 +16,8 @@ variable {k : Type} [AddCommGroup k] [TopologicalSpace k] [IsTopologicalAddGroup
   [SecondCountableTopology k] [LocallyCompactSpace k] [MeasurableSpace k] [BorelSpace k]
   (ν : Measure k) [ν.IsAddHaarMeasure]
 
-omit [T2Space k] in
 
+omit [T2Space k] in
 theorem integral_shear {I : Type} [Fintype I] (J : I → Prop) (S : (I → k) → (I → k))
     (hS : Continuous S) (h0 : ∀ e i, ¬ J i → S e i = 0)
     (h1 : ∀ e e' : I → k, (∀ i, ¬ J i → e i = e' i) → S e = S e')
@@ -25,7 +29,7 @@ theorem integral_shear {I : Type} [Fintype I] (J : I → Prop) (S : (I → k) �
   let g : ({i // ¬ J i} → k) → ({i // ¬ ¬ J i} → k) → ({i // ¬ ¬ J i} → k) :=
     fun a b => b + fun i => S (E.symm (a, 0)) i.1
   have hgm : Measurable (Function.uncurry g) := by
-    refine measurable_snd.add (measurable_pi_lambda _ fun i => ?_)
+    refine measurable_snd.add (Measurable.of_eval fun i => ?_)
     exact (measurable_pi_apply i.1).comp (hS.measurable.comp
       (E.symm.measurable.comp (measurable_fst.prodMk measurable_const)))
   have hT := (MeasurePreserving.id (Measure.pi fun _ : {i // ¬ J i} => ν)).skew_product
@@ -47,10 +51,12 @@ theorem integral_shear {I : Type} [Fintype I] (J : I → Prop) (S : (I → k) �
   conv_rhs => rw [← hall.map_eq]
   rw [integral_map hall.measurable.aemeasurable hf.aestronglyMeasurable]
 
-open Classical in
 
+open Classical in
 def ext0 {I : Type} (P : I → Prop) (e : {i // P i} → k) : I → k :=
-  fun i => if h : P i then e ⟨i, h⟩ else 0
+  by
+    classical
+    exact fun i => if h : P i then e ⟨i, h⟩ else 0
 
 omit [IsTopologicalAddGroup k] [T2Space k]
   [SecondCountableTopology k] [LocallyCompactSpace k] [MeasurableSpace k] [BorelSpace k] in
@@ -61,8 +67,8 @@ theorem continuous_wittExtendByZero {I : Type} (P : I → Prop) : Continuous (ex
   · simp only [h, dite_true]; exact continuous_apply _
   · simp only [h, dite_false]; exact continuous_const
 
-omit [T2Space k] in
 
+omit [T2Space k] in
 theorem integral_glue {I B : Type} [Fintype B] (P Q : I → Prop) [Fintype {i // P i}] [Fintype {i // Q i}]
     (j : B → I) (hj : Function.Injective j) (hPj : ∀ b, ¬ P (j b)) (hQ : ∀ i, Q i ↔ P i ∨ ∃ b, j b = i)
     (g : (B → k) → I → k) (hg1 : ∀ u b, g u (j b) = u b) (hg2 : ∀ u i, (∀ b, j b ≠ i) → g u i = 0)
@@ -259,7 +265,7 @@ theorem continuous_big {ψ : AddChar k Circle} (hψ : Continuous ψ) (q : Fin c)
   unfold big ch
   refine ((hχ.comp (continuous_pi fun s => continuous_id.matrix_elem _ _)).mul hΦ).mul
     (continuous_subtype_val.comp (hψ.comp (Continuous.neg ?_)))
-  exact continuous_finset_sum _ fun i _ => continuous_id.matrix_elem _ _
+  exact continuous_finsetSum _ fun i _ => continuous_id.matrix_elem _ _
 
 omit [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] in
 theorem hasCompactSupport_big (ψ : AddChar k Circle) (q : Fin c) (χ : (n' → k) → ℂ)
@@ -372,9 +378,10 @@ theorem opE_colE {ψ : AddChar k Circle} (hψ : Continuous ψ) (ν : Measure k) 
 
 end Main
 
-open Classical in
 
+open Classical in
 theorem opE_exchange : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] [MeasurableSpace k] [BorelSpace k] (n n' : Type) [Fintype n] [DecidableEq n] [Fintype n'] [DecidableEq n'] (c p : ℕ) (_ : 1 ≤ p) (_ : p < c) (ψ : AddChar k Circle) (_ : Continuous ψ) (ν : Measure k) [ν.IsAddHaarMeasure] (μ : kˣ →* ℂˣ), ∀ Φ ∈ SB (Matrix (n ⊕ Fin c) (n' ⊕ Fin (c + 1)) k), ∀ x₀ : Matrix n n' k, (∀ χ : (n' → k) → ℂ, IsLocallyConstant χ → HasCompactSupport (fun u : n' → k => opE ψ ν p (om μ (rowE (c + 1) p u) 1 Φ) x₀) ∧ HasCompactSupport (fun β : n → k => opE ψ ν (p + 1) (om μ 1 (colE c (p + 1) β) Φ) x₀) ∧ ∫ u : n' → k, χ u * opE ψ ν p (om μ (rowE (c + 1) p u) 1 Φ) x₀ ∂(Measure.pi fun _ => ν) = ∫ β : n → k, opE ψ ν (p + 1) (fun x => (∑ l : Fin c, if l.val + 1 = p then χ (fun s => x (Sum.inr l) (Sum.inl s)) else 0) * om μ 1 (colE c (p + 1) β) Φ x) x₀ ∂(Measure.pi fun _ => ν)) := by
+  classical
   intro k _ _ _ _ _ _ n n' _ _ _ _ c p hp hpc ψ hψ ν _ μ Φ hΦ x₀ χ hχ
   haveI := t2Space k
   haveI := secondCountable k

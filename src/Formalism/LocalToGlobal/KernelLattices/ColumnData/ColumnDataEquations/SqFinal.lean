@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqFacts
-import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SecondConstantHolds
+module
+
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SqFacts
+public import Formalism.LocalToGlobal.KernelLattices.ColumnData.ColumnDataEquations.SecondConstantHolds
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.BasicNotions Classical
@@ -21,8 +25,28 @@ theorem sqP_of {B : Cd.Base D cc δ} (hL : B.LatAll) (hS : SqSplit B) : SqP D B.
     simp [TaylorLogMetric.Iop, TaylorLogMetric.U]
   have hF : ∃ F ∈ fixedBy (Ker.formV (TaylorLogMetric.area (TaylorLogMetric.lamOf D cc δ)) D.what₂.Tau N N') (TaylorLogMetric.al D B.tor)
       (TaylorLogMetric.La D B.tor L L'), F ≠ 0 := ⟨G, fun x hx z => hG.2 x hx z, hG0⟩
-  have hT1 := tripleData_of hL (admissible_of_integral_conj_le hN hN' h1 h3) (admissible_of_integral_conj_le hN hN' h2 h3) (admissible_of_integral_conj_le hN hN' h2 h4)
-  have hT2 := tripleData_of hL (admissible_of_integral_conj_le hN hN' h1 h3) (admissible_of_integral_conj_le hN hN' h1 h4) (admissible_of_integral_conj_le hN hN' h2 h4)
+  have tripleData_of {N N' : ℕ}
+      {L₁ L₂ L₃ : Submodule (𝓞 D.host.E) (Fin N → D.host.E)}
+      {L₁' L₂' L₃' : Submodule (𝓞 D.host.E) (Fin N' → D.host.E)}
+      (a1 : TaylorLogMetric.admitted D N N' L₁ L₁') (a2 : TaylorLogMetric.admitted D N N' L₂ L₂')
+      (a3 : TaylorLogMetric.admitted D N N' L₃ L₃') :
+      TripleData (Ker.formV (TaylorLogMetric.area (TaylorLogMetric.lamOf D cc δ)) D.what₂.Tau N N') (TaylorLogMetric.al D B.tor)
+        (TaylorLogMetric.La D B.tor L₁ L₁') (TaylorLogMetric.La D B.tor L₂ L₂') (TaylorLogMetric.La D B.tor L₃ L₃') :=
+    { herm := formV_herm' _ _ _ _
+      sd₁ := (hL.1 N N' _ _ a1).1
+      sd₂ := (hL.1 N N' _ _ a2).1
+      sd₃ := (hL.1 N N' _ _ a3).1
+      sc₁ := (hL.1 N N' _ _ a1).2
+      sc₂ := (hL.1 N N' _ _ a2).2
+      sc₃ := (hL.1 N N' _ _ a3).2
+      i₁₂ := (hL.2 N N' _ _ _ _ a1 a2).1
+      i₂₁ := (hL.2 N N' _ _ _ _ a1 a2).2
+      i₁₃ := (hL.2 N N' _ _ _ _ a1 a3).1
+      i₃₁ := (hL.2 N N' _ _ _ _ a1 a3).2
+      i₂₃ := (hL.2 N N' _ _ _ _ a2 a3).1
+      i₃₂ := (hL.2 N N' _ _ _ _ a2 a3).2 }
+  have hT1 := tripleData_of (admissible_of_integral_conj_le hN hN' h1 h3) (admissible_of_integral_conj_le hN hN' h2 h3) (admissible_of_integral_conj_le hN hN' h2 h4)
+  have hT2 := tripleData_of (admissible_of_integral_conj_le hN hN' h1 h3) (admissible_of_integral_conj_le hN hN' h1 h4) (admissible_of_integral_conj_le hN hN' h2 h4)
   obtain ⟨S₂, S₃, hS₂, hS₃, hμ⟩ :=
     mu_one_of_split hT1 (splitTri_of hP (false, false) (true, false) (true, true) hT1) hF
   obtain ⟨T₂, T₃, hT₂, hT₃, hν⟩ :=

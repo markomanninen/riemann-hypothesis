@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.EqZeroOfLocW
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaSumTensorProduct
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.DblCoordUnique
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductFunctionOnSumCoordsMemAdelicSchwartzSpace
+module
+
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.EqZeroOfLocW
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaSumTensorProduct
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.DblCoordUnique
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProductFunctionOnSumCoordsMemAdelicSchwartzSpace
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -88,8 +92,8 @@ theorem acts_formula (hM : ModelEx) (hC : Cyc) (hA : AdSt) (hψ : IsStd ψ) (h :
   have hga : At (evFin F v) (((gd : GL (β ⊕ β) (AE F E)) : Matrix (β ⊕ β) (β ⊕ β) (AE F E)) - 1) := by
     rw [hgd, kd_at_matrix]
     rintro (i | i) (k | k) u hu
-    · simpa [one_apply] using kd_at_matrix.1 ha i k u hu
-    all_goals simp [one_apply]
+    · simpa [Matrix.one_apply, Sum.inl.injEq] using kd_at_matrix.1 ha i k u hu
+    all_goals simp [Matrix.one_apply]
   have hxp : x * p = gd * x := h.ug_ext hG2.uB (atm hxa hpa) (atm hga hxa) (by
     simp only [Subgroup.coe_mul, Units.val_mul, Matrix.map_mul, hx, hp, hgd, fromBlocks_map, hg,
       Matrix.map_zero _ (map_zero (piW t)), Matrix.map_one _ (map_zero (piW t)) (map_one _), X₀, P₀]

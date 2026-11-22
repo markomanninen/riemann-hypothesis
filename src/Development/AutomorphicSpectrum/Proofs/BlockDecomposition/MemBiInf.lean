@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmulMPull
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChartLiftTensorCompatStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SmulMPull
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ChartLiftTensorCompatStatement
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 open CategoryTheory AlgebraicGeometry TensorProduct GlobalTheory.LogCris DividedPowers CrystallineSemistableComparison CrystallineSemistableComparison.Pb CrystallineSemistableComparison.Pb.Diso GlobalTheory.CompanionTheory.DisoHm
 
@@ -14,7 +19,7 @@ theorem dividedPowerFiltration_bot {B : Type} [CommRing B] {J : Ideal B} (δ : D
   rintro _ ⟨L, hL, hr', rfl⟩
   have : ∃ q ∈ L, q.1 ≠ 0 := by
     by_contra hc
-    push_neg at hc
+    push Not at hc
     have h0 : (L.map Prod.fst).sum = 0 := List.sum_eq_zero (by
       intro x hx
       obtain ⟨q, hq, rfl⟩ := List.mem_map.1 hx
@@ -35,9 +40,9 @@ theorem dividedPowerFiltration_bot {B : Type} [CommRing B] {J : Ideal B} (δ : D
 section Loc
 variable {l : ℕ} [Fact l.Prime] {O : Type} [CommRing O] {X : Scheme.{0}} {q : X ⟶ Spec (CommRingCat.of O)}
 
-theorem tfBase_ol (h : OL l O) {s : ℕ} (hs : 1 ≤ s) : TFBase (dividedPowersBot O) l s where
-  nil := dividedPowerFiltration_bot _ rfl hs
-  tf r x hx := by
+theorem tfBase_ol (h : OL l O) {s : ℕ} (hs : 1 ≤ s) : TFBase (dividedPowersBot O) l s := by
+  refine ⟨dividedPowerFiltration_bot _ rfl hs, ?_, ?_⟩
+  · intro r x hx
     cases r with
     | zero =>
       have h1 : (1 : O) ∈ pdP (dividedPowersBot O) 0 := Ideal.subset_span ⟨[], by simp, by simp, by simp⟩
@@ -46,7 +51,7 @@ theorem tfBase_ol (h : OL l O) {s : ℕ} (hs : 1 ≤ s) : TFBase (dividedPowersB
       rw [dividedPowerFiltration_bot _ rfl (by omega)] at hx ⊢
       have hl : (l : O) ∈ nonZeroDivisors O := h.tf l (Fact.out : l.Prime).ne_zero
       exact (mul_left_mem_nonZeroDivisors_eq_zero_iff hl).1 hx
-  dv n hn := by
+  · intro n hn
     obtain ⟨v, u, hlu, e⟩ := Nat.exists_eq_pow_mul_and_not_dvd hn l (Fact.out : l.Prime).ne_one
     obtain ⟨w, hw⟩ := (h.unit u hlu).exists_right_inv
     refine ⟨v, w, ?_⟩

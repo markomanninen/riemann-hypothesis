@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSchur
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BridgeCSchur
+
+@[expose] public section
 
 open MeasureTheory Filter Topology
 open scoped InnerProductSpace ENNReal
@@ -16,7 +20,7 @@ def graph (μ : Measure G) (ρ : G → (H →L[ℂ] H)) (w₀ : H) : Submodule �
     intro p q hp hq
     simp only [Set.mem_ofPred_eq, WithLp.add_fst, WithLp.add_snd] at *
     filter_upwards [Lp.coeFn_add p.snd q.snd, hp, hq] with g h1 h2 h3
-    rw [h1, Pi.add_apply, h2, h3, map_add, inner_add_right]
+    rw [h1, Pi.add_apply, h2, h3, map_add (f := _), inner_add_right]
   zero_mem' := by
     simp only [Set.mem_ofPred_eq, WithLp.zero_fst, WithLp.zero_snd, map_zero, inner_zero_right]
     exact Lp.coeFn_zero _ _ _
@@ -141,8 +145,8 @@ theorem star_eq (hone : ρ 1 = 1) (hmul : ∀ a b, ρ (a * b) = (ρ a).comp (ρ 
     ({ toLinearMap := (ρ h : H →ₗ[ℂ] H), norm_map' := hiso h } : H →ₗᵢ[ℂ] H).inner_map_map _ _
   rw [← hI, hinv]
 
-include hR in
 
+include hR in
 theorem memLp_of_ne (hone : ρ 1 = 1) (hmul : ∀ a b, ρ (a * b) = (ρ a).comp (ρ b)) (hiso : ∀ g v, ‖ρ g v‖ = ‖v‖)
     (hirr : ∀ S : Submodule ℂ H, IsClosed (S : Set H) → (∀ g, ∀ v ∈ S, ρ g v ∈ S) → S = ⊥ ∨ S = ⊤)
     (w₀ x₀ : H) (hx₀ : x₀ ≠ 0) (h0 : MemLp (fun g => ⟪w₀, ρ g x₀⟫_ℂ) 2 μ) (x : H) :

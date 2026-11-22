@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCombIn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsCombIn
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry ReciprocityTheory.ChartRestriction.G.Geo.Tor
 
 noncomputable section
@@ -19,7 +24,7 @@ def sqZeroInterp {R B S : Type} [CommRing R] [CommRing B] [CommRing S] [Algebra 
     simp only [map_mul]
     linear_combination (c - c ^ 2) * hxy
   map_zero' := by simp
-  map_add' x y := by simp only [map_add]; ring
+  map_add' x y := by simp only [map_add (f := _)]; ring
   commutes' r := by simp
 
 @[simp] theorem sqZeroInterp_apply {R B S : Type} [CommRing R] [CommRing B] [CommRing S]
@@ -131,7 +136,7 @@ theorem exists_sqZero_extend_base (R' A S : Type) [CommRing R'] [CommRing A] [Co
     obtain ⟨p, rfl⟩ := hπ x
     rw [hχ₀, hθ, sqZeroInterp_apply]
     have : φ (π p) = α₀ p := rfl
-    rw [this, map_add, map_mul, map_sub, hloc, map_pow, pow_add]
+    rw [this, map_add (f := _), map_mul, map_sub, hloc, map_pow, pow_add]
     ring
 
 theorem exists_sqZero_extend_pow : ∀ (R' A S : Type) [CommRing R'] [CommRing A] [CommRing S] [Algebra R' A] [Algebra R' S]
@@ -148,7 +153,7 @@ theorem exists_sqZero_extend_pow : ∀ (R' A S : Type) [CommRing R'] [CommRing A
     rw [sqZeroInterp_apply, add_sub_cancel_left]
     exact J.mul_mem_left _ (h1 x)
   · intro x
-    rw [sqZeroInterp_apply, map_add, map_mul, map_sub, h2, map_pow, add_sub_cancel_left,
+    rw [sqZeroInterp_apply, map_add (f := _), map_mul, map_sub, h2, map_pow, add_sub_cancel_left,
       ← mul_assoc, ← pow_add, Nat.sub_add_cancel hN]
 
 end GlobalTheory.SecGlue

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CSandwichStE
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.CSandwichStE
+
+@[expose] public section
 
 noncomputable section
 
@@ -44,7 +48,8 @@ theorem alphaMat_ker {x : Ix κ → Ω} {e : Fin (D + 1) → Ix κ} (hfr : IsPro
     refine ⟨∑ i, (u (finProdFinEquiv (l, i))) • monoZ (adtEnum D N i), ?_, ?_⟩
     · exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _
         ((MvPolynomial.mem_homogeneousSubmodule _ _).2 (monoZ_isHomogeneous (adtEnum_sum D N i)))
-    · simp [P, map_sum, aeval_monoZ, zsmul_eq_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp [P, map_sum, aeval_monoZ, zsmul_eq_mul]
   have hPz := alpha_injective x e hfr.isRatProjFrame (fun l => aeval x (H l)) hli P hP h0
   funext p
   obtain ⟨⟨l, i⟩, rfl⟩ := finProdFinEquiv.surjective p

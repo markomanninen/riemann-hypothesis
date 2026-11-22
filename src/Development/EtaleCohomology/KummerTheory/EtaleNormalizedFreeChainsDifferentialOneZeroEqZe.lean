@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.KummerTheory.OneExPf
+module
+
+public import Development.EtaleCohomology.KummerTheory.OneExPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -33,11 +37,7 @@ theorem gmap_app (s : Sec F X) (U : Scheme.{0}) (x : U ⟶ X) :
 theorem etale_normalized_free_chains_differential_one_zero_eq_zero : ((chainsN R).obj (sch.obj X)).d 1 0 = 0 := by
   simp [chainsN, AlgebraicTopology.alternatingFaceMapComplex_obj_d, AlgebraicTopology.AlternatingFaceMapComplex.objD,
     Fin.sum_univ_two, SimplicialObject.δ, sch]
-  first
-    | (erw [one_zsmul, neg_one_zsmul, add_neg_cancel])
-    | (erw [one_smul, neg_one_smul, add_neg_cancel])
-    | (erw [← add_smul]; norm_num)
-  all_goals rfl
+  rfl
 
 theorem d10 : ((chains R).obj (sch.obj X)).d (-1) 0 ≫ (chainsXIso R (sch.obj X) 0).hom = 0 := by
   dsimp only [chainsXIso, chains, Functor.comp_obj]

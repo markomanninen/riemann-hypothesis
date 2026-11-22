@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.FrobeniusUniformizerPowDvd
-import Formalism.SharpRestriction.LevelLetterCocycles.SaturationPullbackOfRingCondition
-import Formalism.SharpRestriction.LevelLetterCocycles.RelayGeneralCaseOfAdmissible
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.FrobeniusUniformizerPowDvd
+public import Formalism.SharpRestriction.LevelLetterCocycles.SaturationPullbackOfRingCondition
+public import Formalism.SharpRestriction.LevelLetterCocycles.RelayGeneralCaseOfAdmissible
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -152,7 +156,7 @@ theorem cmp_of_mem_X [IsDomain O] (hs : W.s = 1) (hR : Formalism.MainNotions.Unu
         (Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T (c - 1)).add_mem hy₁ hy₂, ?_⟩
       have hy₁' : y₁ ∈ W.N T ∧ Formalism.MainNotions.CrystallineLiftingInputs.DL W T (c - 1) y₁ := hy₁
       have hy₂' : y₂ ∈ W.N T ∧ Formalism.MainNotions.CrystallineLiftingInputs.DL W T (c - 1) y₂ := hy₂
-      rw [smul_add, cmpD_add W T hN₁ hN₂, e₁, e₂, cmpD_add W T hy₁'.1 hy₂'.1, map_add, smul_add]
+      rw [smul_add, cmpD_add W T hN₁ hN₂, e₁, e₂, cmpD_add W T hy₁'.1 hy₂'.1, map_add (f := _), smul_add]
     | smul o z _ h =>
       obtain ⟨hN, y, hy, e⟩ := h
       have hy' : y ∈ W.N T ∧ Formalism.MainNotions.CrystallineLiftingInputs.DL W T (c - 1) y := hy
@@ -204,7 +208,7 @@ theorem cmp_up [IsDomain O] (hs : W.s = 1) (h3 : Formalism.MainNotions.DeltaInva
       have hy₂' : y₂ ∈ W.N T ∧ Formalism.MainNotions.CrystallineLiftingInputs.DL W T (c - 1 - 1) y₂ := hy₂
       refine ⟨by rw [smul_add, hl₁, hl₂], by rw [smul_add]; exact (W.N T).add_mem hN₁ hN₂, y₁ + y₂,
         (Formalism.MainNotions.RamifiedCoefficientChains.S9.NDl W T (c - 1 - 1)).add_mem hy₁ hy₂, ?_⟩
-      rw [smul_add, cmpD_add W T hN₁ hN₂, e₁, e₂, cmpD_add W T hy₁'.1 hy₂'.1, map_add, smul_add]
+      rw [smul_add, cmpD_add W T hN₁ hN₂, e₁, e₂, cmpD_add W T hy₁'.1 hy₂'.1, map_add (f := _), smul_add]
     | smul a z _ h =>
       obtain ⟨hl, hN, y₂, hy₂, e⟩ := h
       have hy₂' : y₂ ∈ W.N T ∧ Formalism.MainNotions.CrystallineLiftingInputs.DL W T (c - 1 - 1) y₂ := hy₂

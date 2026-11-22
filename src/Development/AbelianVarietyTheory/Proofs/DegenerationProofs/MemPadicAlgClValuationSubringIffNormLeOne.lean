@@ -1,10 +1,15 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosurePadicInt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsDiscreteValuationRingIntegralClosurePadicInt
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
+
 local notation "OO" p:max => (Valuation.valuationSubring (Valued.v : Valuation (PadicAlgCl p) NNReal))
 local notation "cPt" p:max => (IsLocalRing.closedPoint (OO p) : Sp (OO p))
 local notation "gPt" p:max => spMap (ValuationSubring.subtype (OO p))
@@ -25,11 +30,6 @@ noncomputable def integralClosureToPadicAlgClIntegers
   (K.val.toRingHom.comp (integralClosure ℤ_[p] K).val.toRingHom).codRestrict (OO p) fun x =>
     (mem_padicAlgCl_valuationSubring_iff_norm_le_one _).mpr
       ((mem_integralClosure_padicInt_iff K _).mp x.2)
-
-theorem coe_integralClosureToPadicAlgClIntegers (K : IntermediateField ℚ_[p] (PadicAlgCl p))
-    (x : integralClosure ℤ_[p] K) :
-    ((integralClosureToPadicAlgClIntegers K x : OO p) : PadicAlgCl p) =
-      ((x : K) : PadicAlgCl p) := rfl
 
 theorem isLocalHom_integralClosureToPadicAlgClIntegers
     (K : IntermediateField ℚ_[p] (PadicAlgCl p)) :
@@ -67,7 +67,7 @@ theorem exists_factor_integralClosure_of_finiteType {A : Type*} [CommRing A]
     | mem x hx =>
       exact hK (IntermediateField.subset_adjoin _ _ (by simpa using ⟨x, hx, rfl⟩))
     | algebraMap r => simp
-    | add x y _ _ hx hy => rw [map_add]; exact K.add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact K.add_mem hx hy
     | mul x y _ _ hx hy => rw [map_mul]; exact K.mul_mem hx hy
   let ψ₁ : A →+* K := φ'.codRestrict K hmem
   refine ⟨ψ₁.codRestrict (integralClosure ℤ_[p] K) fun a =>

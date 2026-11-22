@@ -1,9 +1,13 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.OneAddMulDerivLogSubst
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.EvalSecondZeroAtVariableZero
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.WeierstrassReducedEquations
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.RestrictSecondZeroInVarOne
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.PderivZeroZeroWeierstrassDifference
-import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.ConstantCoeffSig1S
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.OneAddMulDerivLogSubst
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.EvalSecondZeroAtVariableZero
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.WeierstrassReducedEquations
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.RestrictSecondZeroInVarOne
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.PderivZeroZeroWeierstrassDifference
+public import Formalism.LocalToGlobal.TorsionIntegrality.FrobeniusFibreCurves.LogarithmicSubstitution.ConstantCoeffSig1S
+
+@[expose] public section
 
 namespace Formalism.L2.Th1.B
 
@@ -26,11 +30,7 @@ theorem parCauchy : ParCauchy := parallelogram_cauchy_equation
 theorem dqRule : DqRule := difference_quotient_rule_holds
 theorem wpReduced : WpReduced := weierstrassReducedEquations
 theorem wSecond : WSecond := invertedSecondDeriv
-theorem wEven : WEven := invertedEven
 theorem wOfWp : WOfWp := shiftedReciprocalInverted
-theorem addSigma1Log : AddSigma1Log :=
-  Add1.AddSigma1Log_of expLogRules expLogDeriv expLogSubst primRules waveUnique waveKills parCauchy
-    wSecond
 theorem addSigmaLog : AddSigmaLog :=
   AddSigmaLog_of expLogDeriv expLogSubst primRules waveUnique waveKills parCauchy wpReduced dqRule
 theorem addSigma : AddSigma := AddSigma_of addSigmaLog expLogRules expLogSubst dqRule

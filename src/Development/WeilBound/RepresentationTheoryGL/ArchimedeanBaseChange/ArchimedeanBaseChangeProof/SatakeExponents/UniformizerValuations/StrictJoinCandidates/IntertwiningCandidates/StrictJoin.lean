@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.StrictJoinCandidates.CandSt
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LemDCand
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.StrictJoinCandidates.CandSt
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.LemDCand
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,7 @@ def IsoInv : Prop := ∀ (G V V' : Type) [Group G] [AddCommGroup V] [Module ℂ 
     (FiniteDimensional ℂ (fixed ρ K) ↔ FiniteDimensional ℂ (fixed ρ' K))
 
 def AdmProd : Prop := ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ) (P : Pre E n) (w : Pl E)
-  (K : Subgroup (GLw n w)), IsOpen (K : Set (GLw n w)) → K ≤ GlobalTheory.LFun.KGL w n → FiniteDimensional ℂ (fixed (prodAt P w) K)
+  (K : Subgroup (GLw n w)), IsOpen (K : Set (GLw n w)) → K ≤ GlobalTheory.LFun.KGL w (n := n) → FiniteDimensional ℂ (fixed (prodAt P w) K)
 
 def CandFinOf : Prop :=
   JEigFin → FinStrict → StrictEqv → StrictPre → StrictProd → StrictJoin → CandParts → LevOpen → IsoInv → AdmProd → FX.CandFin

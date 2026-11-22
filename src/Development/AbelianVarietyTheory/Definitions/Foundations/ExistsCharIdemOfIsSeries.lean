@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.StandardFiveNontrivial
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.CharIdem
-import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.StandardFiveNontrivial
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.CharIdem
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArithmeticCylinders
+
+@[expose] public section
 
 noncomputable section
 open Polynomial Classical
@@ -14,8 +18,8 @@ end Central
 
 variable {g : ℕ} [Fact g.Prime] {N : ℕ}
 
-open Formalism.MainNotions.ArithmeticCylinders in
 
+open Formalism.MainNotions.ArithmeticCylinders in
 theorem isUp_iff_isUniUp (u : GG g N) : IsUp g N u ↔ IsUniUp u.val := by
   unfold IsUp IsUniUp
   constructor
@@ -26,8 +30,8 @@ theorem isUp_iff_isUniUp (u : GG g N) : IsUp g N u ↔ IsUniUp u.val := by
   · intro h
     exact ⟨fun a => (h a a).2 rfl, fun a b hab => (h a b).1 hab⟩
 
-open Formalism.MainNotions.ArithmeticCylinders in
 
+open Formalism.MainNotions.ArithmeticCylinders in
 theorem coeff_eDat (P : Matrix (Fin N) (Fin N) (ZMod g) → Prop) (φ : Matrix (Fin N) (Fin N) (ZMod g) → ZMod g)
     (ψ : AddChar (ZMod g) ℂ) (x : GG g N) :
     (eDat g N P φ ψ).coeff x = eps (fun u : GG g N => P u.val) (fun u => ψ (φ u.val)) x := by
@@ -41,8 +45,8 @@ theorem coeff_eDat (P : Matrix (Fin N) (Fin N) (ZMod g) → Prop) (φ : Matrix (
   · rw [Nat.card_eq_fintype_card, Fintype.card_subtype, div_eq_inv_mul]
   · simp
 
-open Formalism.MainNotions.ArithmeticCylinders in
 
+open Formalism.MainNotions.ArithmeticCylinders in
 theorem sum_ite_entN (M : Matrix (Fin N) (Fin N) (ZMod g)) (a : Fin N) (c : ℕ) :
     (∑ b : Fin N, if (b : ℕ) = c then M a b else 0) = entN M a c := by
   unfold entN
@@ -67,10 +71,10 @@ private theorem sum_superdiag_eq_sum_entN (M : Matrix (Fin N) (Fin N) (ZMod g)) 
   rw [Fin.sum_univ_eq_sum_range (fun i => Formalism.MainNotions.ArithmeticCylinders.entN M i (i + 1)) N]
   obtain ⟨n, rfl⟩ : ∃ n, N = n + 1 := ⟨N - 1, by omega⟩
   rw [Finset.sum_range_succ, Nat.add_sub_cancel,
-    show Formalism.MainNotions.ArithmeticCylinders.entN M n (n + 1) = 0 by unfold Formalism.MainNotions.ArithmeticCylinders.entN; rw [dif_neg (by omega)], add_zero]
+    show Formalism.MainNotions.ArithmeticCylinders.entN M n (n + 1) = 0 by unfold Formalism.MainNotions.ArithmeticCylinders.entN; rw [dite_eq_right (by omega)], add_zero]
+
 
 open Formalism.MainNotions.ArithmeticCylinders in
-
 theorem coeff_eU (ψ : AddChar (ZMod g) ℂ) (hψ : ψ ≠ 1) (s k : ℕ) (h : s + k < N) (x : GG g N) :
     (eU g N ψ).coeff x = (levOfChar ψ hψ N false s k h).e x := by
   have hN : 0 < N := by omega
@@ -126,8 +130,8 @@ private theorem sum_range_eq_sum_split_of_last_eq_zero {R : Type} [AddCommMonoid
     rw [e1, e2, e3]
     abel_nf
 
-open Formalism.MainNotions.ArithmeticCylinders in
 
+open Formalism.MainNotions.ArithmeticCylinders in
 theorem sum_edge_eq_phiJ (ψ : AddChar (ZMod g) ℂ) (hψ : ψ ≠ 1) (s k : ℕ) (hN : N = k + 2 * s + 1) (h : s + k < N)
     (M : Matrix (Fin N) (Fin N) (ZMod g)) :
     (∑ a, ∑ b, if (levOfChar ψ hψ N true s k h).Edge a b then M a b else 0) = phiJ k s M := by
@@ -151,7 +155,7 @@ theorem sum_edge_eq_phiJ (ψ : AddChar (ZMod g) ℂ) (hψ : ψ ≠ 1) (s k : ℕ
     Fin.sum_univ_eq_sum_range (fun i => if i + 1 ≠ s ∧ ¬(0 < k ∧ i + 1 = s + k) then entN M i (i + 1) else 0) N,
     Fin.sum_univ_eq_sum_range (fun i => if i + 1 = s then entN M i (s + k) else 0) N,
     sum_range_eq_sum_split_of_last_eq_zero (fun i => entN M i (i + 1)) (fun i => if i + 1 ≠ s ∧ ¬(0 < k ∧ i + 1 = s + k) then entN M i (i + 1) else 0)
-      s k N hN (fun i => rfl) (by unfold entN; rw [dif_neg (by omega)])]
+      s k N hN (fun i => rfl) (by unfold entN; rw [dite_eq_right (by omega)])]
   have e2 : ∑ i ∈ Finset.range N, (if i + 1 = s then entN M i (s + k) else 0) =
       if 1 ≤ s then entN M (s - 1) (s + k) else 0 := by
     rcases s with _ | t
@@ -171,8 +175,8 @@ theorem sum_edge_eq_phiJ (ψ : AddChar (ZMod g) ℂ) (hψ : ψ ≠ 1) (s k : ℕ
   · simp only [if_neg hs]
     abel
 
-open Formalism.MainNotions.ArithmeticCylinders in
 
+open Formalism.MainNotions.ArithmeticCylinders in
 theorem coeff_eJ (ψ : AddChar (ZMod g) ℂ) (hψ : ψ ≠ 1) (s k : ℕ) (hN : N = k + 2 * s + 1) (h : s + k < N) (x : GG g N) :
     (eJ g N k s ψ).coeff x = (levOfChar ψ hψ N true s k h).e x := by
   rw [eJ, coeff_eDat]
@@ -189,11 +193,11 @@ theorem coeff_eJ (ψ : AddChar (ZMod g) ℂ) (hψ : ψ ≠ 1) (s k : ℕ) (hN : 
       rw [show b = ⟨s + k, by omega⟩ from Fin.ext h3]
       have := H a h1 h2
       unfold entN at this
-      rw [dif_pos ⟨a.isLt, by omega⟩] at this
+      rw [dite_eq_left ⟨a.isLt, by omega⟩] at this
       exact this
     · intro H a h1 h2
       unfold entN
-      rw [dif_pos ⟨by omega, by omega⟩]
+      rw [dite_eq_left ⟨by omega, by omega⟩]
       exact H ⟨a, by omega⟩ ⟨s + k, by omega⟩ h1 h2 rfl
   · funext u
     have hE := sum_edge_eq_phiJ ψ hψ s k hN h (u : Matrix (Fin N) (Fin N) (ZMod g))

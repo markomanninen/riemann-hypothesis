@@ -1,8 +1,12 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.TracePiReal
-import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.SliceAn
-import Development.WeilBound.ThetaLifts.SmallCones.ExpAlg
-import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.PlaneAd
-import Development.WeilBound.ThetaLifts.CartanFactorisation.TensOfEval
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.TracePiReal
+public import Development.WeilBound.ThetaLifts.LocalTheory.ArchimedeanBumps.SliceAn
+public import Development.WeilBound.ThetaLifts.SmallCones.ExpAlg
+public import Development.WeilBound.ThetaLifts.LeviDeterminants.MixedModels.PlaneAd
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.TensOfEval
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ theorem acts_pureA {S : ((κ → AF F) → ℂ) → (κ → AF F) → ℂ} {f f�
 theorem opI_eq (hU : ArchUniq) {S : ((κ → AF F) → ℂ) → (κ → AF F) → ℂ} {f f₁ : SInf F κ} (h : Acts (evI F) S f f₁) :
     opI S f = f₁ := by
   have e : ∃ f₁ : SInf F κ, Acts (evI F) S f f₁ := ⟨f₁, h⟩
-  rw [opI, dif_pos e]
+  rw [opI, dite_eq_left e]
   exact (hU F κ f _ _).1 S e.choose_spec h
 
 def ptA (y : κ → mixedEmbedding.mixedSpace F) (a : κ → Af F) : κ → AF F :=
@@ -114,7 +118,7 @@ theorem exists_dual (hB : B.IsGood σ) (I : Set (Matrix (Fin n) (Fin d) (AE F E)
   have hY : ∀ a, ∑ j, Y j a • inclR (F := F) (AF F) (b j) = a := fun a => by
     induction a using TensorProduct.induction_on with
     | zero => simp
-    | add p q hp hq => simp only [map_add, add_smul, Finset.sum_add_distrib, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), add_smul, Finset.sum_add_distrib, hp, hq]
     | tmul r x =>
       have e : (r ⊗ₜ[F] x : AE F E) = r • inclR (F := F) (AF F) x := by
         change _ = r • ((1 : AF F) ⊗ₜ[F] x); rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one]
@@ -128,13 +132,15 @@ theorem exists_dual (hB : B.IsGood σ) (I : Set (Matrix (Fin n) (Fin d) (AE F E)
           rw [this, Algebra.traceForm_apply, mul_comm, mul_assoc]
         have h3 : σ (t⁻¹ * (t * σ x)) = x := by rw [inv_mul_cancel_left₀ t0, PositivityTheory.Mix.conj_conj hB]
         conv_rhs => rw [← h3, ← h1]
-        simp only [h2, Finset.mul_sum, map_sum, mul_smul_comm, b]
+        set_option synthInstance.maxHeartbeats 100000 in
+          simp only [h2, Finset.mul_sum, map_sum, mul_smul_comm, b]
         exact Finset.sum_congr rfl fun j _ => (σ.toLinearMap.map_smul _ _).symm
       rw [e]
       simp only [map_smul, smul_eq_mul, mul_smul, ← Finset.smul_sum, e1]
       congr 1
       conv_rhs => rw [← e2]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun j _ => ?_
       change _ = (1 : AF F) ⊗ₜ[F] (_ • b j)
       rw [TensorProduct.tmul_smul, algebraMap_smul]; rfl
@@ -207,14 +213,15 @@ theorem line_ex (hS : Slice) (hH : ArchHeis) (hU : ArchUniq) (hc : Cfg B M M₁ 
   obtain ⟨k, φ₁, C, A, -, -, hcont, hid, -, hdec⟩ := hS F E σ B n d n₁ d₁ X W X₁ W₁ M M₁ hB hc.good hc.good₁ _ _ I e hI m uu z hD ψ hψ
   have hlc : Continuous lift := by
     have : lift = lft hB.cm B.emb := funext fun c => by
-      have h2 := (isLift_lft B hB).inv _ (hL.supp c)
-      rw [← h2]; congr 1; funext w; exact hL.pi c w
+      apply ext_at hB.cm B.emb
+      · intro v; rw [fin_of_at (hL.supp c), fin_lft]
+      · intro w; rw [hL.pi, pi_lft]
     rw [this]; exact cont_lft _ _
   have hYc : Continuous fun c j => Y j (lift c) :=
     continuous_pi fun j => (IsModuleTopology.continuous_of_linearMap (Y j)).comp hlc
   refine ⟨fun c => ∑ i, (φ₁ i a / ψ₁ a) • A i fun j => Y j (lift c), fun f => ?_, fun c f => ?_, fun q N hq => ?_⟩
   · simp only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply]
-    exact continuous_finset_sum _ fun i _ => ((hcont i f).comp hYc).const_smul (φ₁ i a / ψ₁ a)
+    exact continuous_finsetSum _ fun i _ => ((hcont i f).comp hYc).const_smul (φ₁ i a / ψ₁ a)
   · have h1 := hid (fun j => Y j (lift c)) f
     rw [hlin, ev_op hH hU hB hl hψ hc.good hp hp₁ (at_smul (hL.supp c) _)] at h1
     refine SchwartzMap.ext fun y => ?_
@@ -232,7 +239,8 @@ theorem line_ex (hS : Slice) (hH : ArchHeis) (hU : ArchUniq) (hc : Cfg B M M₁ 
     have S0 : 0 ≤ Sg := Finset.sum_nonneg fun j _ => Finset.sum_nonneg fun w _ => mixedEmbedding.normAtPlace_nonneg _ _
     have hn : ‖c‖ ≤ K * Sg := by
       refine (pi_norm_le_iff_of_nonneg (by positivity)).2 fun w => ?_
-      rw [← hL.pi c w, ← hY (lift c), map_sum, hSg, Finset.mul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← hL.pi c w, ← hY (lift c), map_sum, hSg, Finset.mul_sum]
       refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun j _ => ?_)
       have e1 : Y j (lift c) • inclR (F := F) (AF F) (b j) = (Y j (lift c) ⊗ₜ[F] b j : AE F E) := by
         change _ • ((1 : AF F) ⊗ₜ[F] b j) = _; rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one]

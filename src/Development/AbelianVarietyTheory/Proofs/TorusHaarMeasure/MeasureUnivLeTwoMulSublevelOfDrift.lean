@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Topology Matrix
 open scoped ComplexOrder ENNReal Pointwise
@@ -74,7 +78,7 @@ theorem measure_univ_le_two_mul_sublevel_of_drift :
       have hms : ∀ s, Measurable fun y => ENNReal.ofReal (g n (t s y)) :=
         fun s => hm.comp (ht s)
       rw [lintegral_const_mul _ (Finset.measurable_sum _ fun s _ => hms s),
-        lintegral_finset_sum _ fun s _ => hms s]
+        MeasureTheory.lintegral_finsetSum _ fun s _ => hms s]
       have : ∀ s, ∫⁻ y, ENNReal.ofReal (g n (t s y)) ∂μ = μ {y | f y ≤ M} := fun s => by
         rw [← ih]
         exact hinv (fun y => ENNReal.ofReal (g n y)) hm

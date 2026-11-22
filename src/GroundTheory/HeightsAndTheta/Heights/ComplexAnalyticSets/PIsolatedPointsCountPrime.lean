@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StIsolatedPointsCountPrime
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StIsolatedFibreOpenPoly
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDominantFibreBound
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StImageDimLe
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Assembly
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StIsolatedPointsCountPrime
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StIsolatedFibreOpenPoly
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StDominantFibreBound
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StImageDimLe
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Assembly
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -16,7 +21,7 @@ theorem IsolatedPointsCountPrime.exists_dim_eq {n : ℕ} (J : Ideal (MvPolynomia
     ∃ d : ℕ, ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) = d := by
   have h0 : 0 ≤ ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) := ringKrullDim_nonneg_of_nontrivial
   have h1 := ringKrullDim_quotient_le J
-  rw [MvPolynomial.ringKrullDim_of_isNoetherianRing, ringKrullDim_eq_zero_of_field,
+  rw [MvPolynomial.ringKrullDim_of_isNoetherianRing_of_finite, ringKrullDim_eq_zero_of_field,
     Nat.card_eq_fintype_card, Fintype.card_fin, zero_add] at h1
   generalize ringKrullDim (MvPolynomial (Fin n) ℂ ⧸ J) = x at h0 h1 ⊢
   induction x using WithBot.recBotCoe with
@@ -34,7 +39,7 @@ theorem IsolatedPointsCountPrime.eval_aeval {n m : ℕ} (Q : Fin m → MvPolynom
     eval x (aeval Q f) = eval (fun i => eval x (Q i)) f := by
   induction f using MvPolynomial.induction_on with
   | C a => simp
-  | add p p' hp hp' => rw [map_add, map_add, hp, hp', map_add]
+  | add p p' hp hp' => rw [map_add (f := _), map_add (f := _), hp, hp', map_add (f := _)]
   | mul_X p i hp => rw [map_mul, map_mul, hp, aeval_X, map_mul, eval_X]
 
 theorem IsolatedPointsCountPrime.exists_eval_ne_zero {d : ℕ} {Δ : MvPolynomial (Fin d) ℂ} (hΔ : Δ ≠ 0)
@@ -81,7 +86,8 @@ theorem IsolatedPointsCountPrime.proof (hOpen : IsolatedFibreOpenPoly.Statement)
   have hqe : ∀ x, (fun i => eval x (q i)) = B.mulVec (Qm x) := by
     intro x
     funext i
-    simp only [hq, IsolatedPointsCountPrime.eval_aeval, linPoly, map_sum, map_mul, eval_C, eval_X,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hq, IsolatedPointsCountPrime.eval_aeval, linPoly, map_sum, map_mul, eval_C, eval_X,
       Matrix.mulVec, dotProduct, hQm]
 
   have step1 : ∀ z x, x ∈ isolatedFibrePts P Q z →

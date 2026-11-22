@@ -1,4 +1,8 @@
-import Formalism.AdmissibleDesigns.FiniteClassesContinuousLattice
+module
+
+public import Formalism.AdmissibleDesigns.FiniteClassesContinuousLattice
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 

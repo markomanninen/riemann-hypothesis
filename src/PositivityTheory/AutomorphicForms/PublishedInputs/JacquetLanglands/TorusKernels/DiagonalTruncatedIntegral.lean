@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MultivariableReproducingFormula
+
+@[expose] public section
 
 noncomputable section
 
@@ -204,7 +208,7 @@ theorem UpperTheory.Esk.diagonal_truncated_integral_zero : UpperTheory.Esk.B1a �
     have : N = fun z => (∏ v, |(z v).1.im|) ^ ((Fintype.card I : ℝ)⁻¹) := funext hNdef
     rw [this]
     apply Continuous.rpow_const
-    · exact continuous_finset_prod _ fun w _ =>
+    · exact continuous_finsetProd _ fun w _ =>
         (Complex.continuous_im.comp (continuous_subtype_val.comp (continuous_apply w))).abs
     · intro z; left; exact (Finset.prod_pos fun w _ => abs_pos.2 (z w).2).ne'
   have hpc : Continuous p := by

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsMultiHomogIdealSpanSingleton
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.IsMultiHomogIdealSpanSingleton
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.Statements
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -26,7 +31,7 @@ private lemma eventualValue_of_eventually_zero {K : Type*} (f : (K → ℤ) → 
     (hf : ∀ᶠ m in Filter.atTop, f m = 0) : eventualValue f = 0 := by
   classical
   have hex : ∃ c, ∀ᶠ m in Filter.atTop, f m = c := ⟨0, hf⟩
-  rw [eventualValue, dif_pos hex]
+  rw [eventualValue, dite_eq_left hex]
   obtain ⟨m, h1, h2⟩ := (hex.choose_spec.and hf).exists
   rw [← h1, h2]
 

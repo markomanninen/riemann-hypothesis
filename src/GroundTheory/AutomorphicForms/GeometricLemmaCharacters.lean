@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GeometricLemmaJacquetCell
-import GroundTheory.AutomorphicForms.CuspidalAdmissible
-import GroundTheory.AutomorphicForms.JacquetAdmissible
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GeometricLemmaJacquetCell
+public import GroundTheory.AutomorphicForms.CuspidalAdmissible
+public import GroundTheory.AutomorphicForms.JacquetAdmissible
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -141,8 +146,8 @@ theorem cellRepA_apply_eq (a : cellUnipotent F β γ w) (v : W) :
     exact sqrtModular_leviIncl_of_mem _ (leviProj_permConj_mem_unipotentRadical a)
   rw [h1, one_smul]
 
-variable (β γ w) in
 
+variable (β γ w) in
 abbrev innerJacquetSpace : Type _ :=
   Representation.Coinvariants (σ.comp (leviUnipotent F n β (γ ∘ ⇑w⁻¹)).subtype)
 
@@ -170,8 +175,8 @@ theorem exists_cellUnipotent_of_leviUnipotent (x : leviUnipotent F n β (γ ∘ 
     Subtype.ext this
   rw [hp, leviProj_of_mem_levi (x : levi F n β).2]
 
-variable (β γ w) in
 
+variable (β γ w) in
 def cellCoinvEquiv : Representation.Coinvariants (cellRepA β γ w σ) ≃ₗ[ℂ]
     innerJacquetSpace β γ w σ where
   toFun := Representation.Coinvariants.lift _ (Representation.Coinvariants.mk _) fun a => by
@@ -208,8 +213,8 @@ section InnerAction
 variable {β : Fin n → ℕ} {W : Type*} [AddCommGroup W] [Module ℂ W]
   (σ : Representation ℂ (levi F n β) W)
 
-variable (β) in
 
+variable (β) in
 def leviInfIncl (δ : Fin n → ℕ) : (levi F n β ⊓ blockUpper F n δ : Subgroup (GL (Fin n) F)) →* levi F n β where
   toFun x := ⟨x, x.2.1⟩
   map_one' := rfl
@@ -222,8 +227,8 @@ theorem leviInfIncl_conj_mem {δ : Fin n → ℕ} (x : (levi F n β ⊓ blockUpp
   show (x : GL (Fin n) F) * (((u : levi F n β)) : GL (Fin n) F) * (x : GL (Fin n) F)⁻¹ ∈ _
   exact conj_mem_unipotentRadical x.2.2 (Subgroup.mem_subgroupOf.1 u.2)
 
-variable (β) in
 
+variable (β) in
 def levJacquetAction (δ : Fin n → ℕ) :
     Representation ℂ (levi F n β ⊓ blockUpper F n δ : Subgroup (GL (Fin n) F))
       (Representation.Coinvariants (σ.comp (leviUnipotent F n β δ).subtype)) where
@@ -268,8 +273,8 @@ theorem leviProj_permConj_mem (b : cellLeviParabolic F β γ w) :
     exact (mem_levi.1 b.2.1) _ _ fun e => (ne_of_lt hij) (by simpa using e.symm)
   · rfl
 
-variable (β γ w) in
 
+variable (β γ w) in
 def cellInnerHom : cellLeviParabolic F β γ w →*
     (levi F n β ⊓ blockUpper F n (γ ∘ ⇑w⁻¹) : Subgroup (GL (Fin n) F)) where
   toFun b := ⟨_, leviProj_permConj_mem b⟩

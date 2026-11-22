@@ -1,4 +1,8 @@
-import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroLeviEigenvectorExists
+module
+
+public import PositivityTheory.AutomorphicForms.PublishedInputs.NonzeroTypes.NonzeroLeviEigenvectorExists
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,8 +16,8 @@ variable {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchim
 
 namespace P_nonint
 
-omit [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem mem_KO_of {n : ℕ} (g : GL (Fin n) k)
     (hint : ∀ i j, valuation k ((g : Matrix (Fin n) (Fin n) k) i j) ≤ 1)
     (hdet : valuation k (g : Matrix (Fin n) (Fin n) k).det = 1) : g ∈ KO k (Fin n) := by
@@ -136,8 +140,8 @@ theorem select {n : ℕ} (G : Grp k n) {Y : GL (Fin n) k} (hY : Y ∈ unipRad k 
       rw [heq] at this
       exact absurd this (not_le.mpr hgt)
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem det_submatrix_one_add {n : ℕ} (P : Fin n → Prop) [DecidablePred P] (u w : Fin n → k) :
     ((1 + vecMulVec u w : Matrix (Fin n) (Fin n) k).submatrix (Subtype.val : {i // P i} → Fin n)
         Subtype.val).det = 1 + ∑ i : {i // P i}, w i * u i := by
@@ -239,8 +243,8 @@ theorem lam_of {n : ℕ} (G : Grp k n) (g : GL (Fin n) k) (U : kˣ) (b : Fin G.s
     simp only [hh, if_pos (le_of_lt b.2), ν, dif_neg (lt_irrefl _)]
   rw [h0, hs, hνb, div_one]
 
-omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 
+omit [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k] in
 theorem conj_mat {n : ℕ} (y : GL (Fin n) k) (p q : Fin n) (t : k) :
     ((y⁻¹ : GL (Fin n) k) : Matrix (Fin n) (Fin n) k) *
         (1 + vecMulVec (Pi.single q t) fun i => ((y⁻¹ : GL (Fin n) k) : Matrix (Fin n) (Fin n) k) p i) *
@@ -378,8 +382,8 @@ theorem memJ_right {n : ℕ} (G : Grp k n) (g : GL (Fin n) k) (p : Fin n) (c : �
 
 end P_nonint
 
-open P_nonint in
 
+open P_nonint in
 theorem step_nonint {n : ℕ} (G : Grp k n) : G.NonIntegralProp := by
   intro _ _ y hy hyK
   have hy' : y⁻¹ ∈ unipRad k G.e := Subgroup.inv_mem _ hy

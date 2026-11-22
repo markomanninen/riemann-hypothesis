@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgeFamOf
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgePlane
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.RankMulConductorDivLeOne
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ScaleZpowMono
-import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.NumericProductInequality
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgeFamOf
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.EdgePlane
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.RankMulConductorDivLeOne
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.ScaleZpowMono
+public import Formalism.SharpRestriction.GrowthBounds.ScaleEdges.NumericProductInequality
+
+@[expose] public section
 
 noncomputable section
 
@@ -94,7 +98,8 @@ theorem edgeStep_of (D : Formalism.BasicNotions.D7) (CLa Ck Crk Cdeg : ℝ) (hA 
       _ B hBgen hBli hBc e he htgt hm g hhm hg hbasis (fun i => ∑ o ∈ Finset.range (⌊X⌋₊ + 1), Fs i o)
       (by
         intro i
-        rw [← hFs2 i, Submodule.coe_sum, map_sum])
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← hFs2 i, Submodule.coe_sum, map_sum])
   choose Fv hv1 hv2 hv3 using fun (i : Fin (Module.finrank O Sg)) (o : ℕ) =>
     flatSrc edgePlane p n' W Qq O Kf ι σ j w hSet.1 φ hφ m r (dT F.TT lam0) hm hhm Θ hΘ g hg e hbasis
       (cPrime n' r F.TT.card c0 cpp cStar) o _ (Fs i o) (hFs1 i o).1 rfl (hFs1 i o).2.2
@@ -123,14 +128,16 @@ theorem edgeStep_of (D : Formalism.BasicNotions.D7) (CLa Ck Crk Cdeg : ℝ) (hA 
       exact scale_neg_mono w hw (Nat.lt_succ_iff.1 (Finset.mem_range.1 ho)) _ (hv1 i o))
     (by
       intro i
-      rw [map_sum, ← Finset.sum_sub_distrib]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, ← Finset.sum_sub_distrib]
       exact Submodule.sum_mem _ fun o _ => hv2 i o)
     (by
       intro i e' he' hs' hne
       exact Submodule.sum_mem _ fun o _ => hv3 i o e' he' (hs'.trans hsrc) hne)
     (by
       intro i
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Submodule.sum_mem _ fun o _ => ?_
       exact scale_pos_le w 0 _ ((hΘ.2 g hg e hbasis (Fs i o) 0).1 (hFs1 i o).2.1))
     hsh

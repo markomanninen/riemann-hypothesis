@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.SmoothSeminormAndSobolevBounds
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.HarishChandraModulesIndefiniteUnitaryGroup
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.CasselmanWallach.SmoothSeminormAndSobolevBounds
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AnalyticIntertwiners.HarishChandraModulesIndefiniteUnitaryGroup
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.AnalyticVectors.Unitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,10 +32,10 @@ theorem incl_inj (hK : ∀ v : H, IsKFin ε σ v → v ∈ ReciprocityTheory.Cha
 
 def Eop (hK : ∀ v : H, IsKFin ε σ v → v ∈ ReciprocityTheory.ChartRestriction.DS.smD ε σ)
     (h2 : ∀ a b, ∀ v ∈ CompanionTheory.D.gk.HC.KF ε σ, ReciprocityTheory.ChartRestriction.DS.smE ε σ a b v ∈ CompanionTheory.D.gk.HC.KF ε σ)
-    (a b : Fin n) : Module.End ℂ (kfin ε σ) where
-  toFun v := ⟨(ReciprocityTheory.ChartRestriction.DS.smE ε σ a b (incl hK v) : H), h2 a b (incl hK v) v.2⟩
-  map_add' x y := Subtype.ext (by simp only [map_add, Submodule.coe_add])
-  map_smul' c x := Subtype.ext (by simp only [map_smul, Submodule.coe_smul, RingHom.id_apply])
+    (a b : Fin n) : Module.End ℂ (kfin ε σ) :=
+  let op := (ReciprocityTheory.ChartRestriction.DS.smE ε σ a b).comp (incl hK)
+  ((ReciprocityTheory.ChartRestriction.DS.smD ε σ).subtype.comp op).codRestrict (kfin ε σ)
+    fun v => h2 a b (incl hK v) v.2
 
 variable (hK : ∀ v : H, IsKFin ε σ v → v ∈ ReciprocityTheory.ChartRestriction.DS.smD ε σ)
     (h2 : ∀ a b, ∀ v ∈ CompanionTheory.D.gk.HC.KF ε σ, ReciprocityTheory.ChartRestriction.DS.smE ε σ a b v ∈ CompanionTheory.D.gk.HC.KF ε σ)
@@ -41,7 +45,8 @@ theorem incl_E (a b : Fin n) (v : kfin ε σ) :
 
 theorem incl_actM (X : Mx n) (v : kfin ε σ) :
     incl hK (ReciprocityTheory.ChartRestriction.DS.actM (Eop hK h2) X v) = ReciprocityTheory.ChartRestriction.DS.actM (ReciprocityTheory.ChartRestriction.DS.smE ε σ) X (incl hK v) := by
-  simp only [ReciprocityTheory.ChartRestriction.DS.actM, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, incl_E]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ReciprocityTheory.ChartRestriction.DS.actM, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, incl_E]
 
 end PositivityTheory.CW.KFiniteInclusion
 
@@ -66,7 +71,7 @@ theorem c1 : C1 := by
   · intro a b c d
     refine LinearMap.ext fun v => incl_inj hK ?_
     have h := LinearMap.congr_fun (hD.glRep a b c d) (incl hK v)
-    simp only [LinearMap.sub_apply, Module.End.mul_apply, map_sub, incl_E] at h ⊢
+    simp only [LinearMap.sub_apply, mul_apply_eq_comp, map_sub, incl_E] at h ⊢
     rw [h]
     split_ifs <;> simp [incl_E]
   · intro a b x y

@@ -1,4 +1,8 @@
-import Formalism.IncomingBounds.StatementThmP
+module
+
+public import Formalism.IncomingBounds.StatementThmP
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -34,7 +38,8 @@ theorem der_det {n : Type*} [Fintype n] [DecidableEq n] (N : Matrix n n A) :
     rfl
   rw [Finset.sum_congr rfl fun i _ => hcol i]
   simp only [det_apply']
-  rw [map_sum, Finset.sum_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_comm]
   refine Finset.sum_congr rfl fun σ _ => ?_
   rw [Derivation.leibniz, Derivation.map_intCast, smul_zero, add_zero, smul_eq_mul,
     der_prod, Finset.mul_sum]
@@ -49,7 +54,8 @@ theorem der_det {n : Type*} [Fintype n] [DecidableEq n] (N : Matrix n n A) :
 theorem map_mul_der {n : Type*} [Fintype n] (X Y : Matrix n n A) :
     (X * Y).map D = X.map D * Y + X * Y.map D := by
   ext i j
-  simp only [Matrix.map_apply, Matrix.mul_apply, Matrix.add_apply, map_sum, Derivation.leibniz,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.map_apply, Matrix.mul_apply, Matrix.add_apply, map_sum, Derivation.leibniz,
     smul_eq_mul]
   rw [← Finset.sum_add_distrib]
   exact Finset.sum_congr rfl fun k _ => by ring
@@ -134,30 +140,30 @@ section SupSum
 variable {σ M : Type} [AddCommMonoid M] (f : (σ →₀ ℕ) → K → M)
 
 theorem supp_sum_superset (h0 : ∀ a, f a 0 = 0) (p : MvPolynomial σ K) (S : Finset (σ →₀ ℕ))
-    (hS : p.support ⊆ S) : ∑ a ∈ p.support, f a (coeff a p) = ∑ a ∈ S, f a (coeff a p) := by
+    (hS : p.support ⊆ S) : ∑ a ∈ p.support, f a (AddMonoidAlgebra.coeff p a) = ∑ a ∈ S, f a (AddMonoidAlgebra.coeff p a) := by
   refine Finset.sum_subset hS fun a _ ha => ?_
   rw [MvPolynomial.notMem_support_iff.mp ha, h0]
 
 theorem supp_sum_add (h0 : ∀ a, f a 0 = 0) (hadd : ∀ a x y, f a (x + y) = f a x + f a y)
     (p q : MvPolynomial σ K) :
-    ∑ a ∈ (p + q).support, f a (coeff a (p + q)) =
-      ∑ a ∈ p.support, f a (coeff a p) + ∑ a ∈ q.support, f a (coeff a q) := by
+    ∑ a ∈ (p + q).support, f a (AddMonoidAlgebra.coeff (p + q) a) =
+      ∑ a ∈ p.support, f a (AddMonoidAlgebra.coeff p a) + ∑ a ∈ q.support, f a (AddMonoidAlgebra.coeff q a) := by
   classical
   have hpq : (p + q).support ⊆ p.support ∪ q.support := fun a ha => by
     rw [Finset.mem_union]
     by_contra hn
     rw [not_or] at hn
-    rw [MvPolynomial.mem_support_iff, coeff_add, MvPolynomial.notMem_support_iff.mp hn.1,
+    rw [MvPolynomial.mem_support_iff, MvPolynomial.coeff_add, MvPolynomial.notMem_support_iff.mp hn.1,
       MvPolynomial.notMem_support_iff.mp hn.2, add_zero] at ha
     exact ha rfl
   rw [supp_sum_superset f h0 (p + q) (p.support ∪ q.support) hpq,
     supp_sum_superset f h0 p (p.support ∪ q.support) (fun _ h => Finset.mem_union_left _ h),
     supp_sum_superset f h0 q (p.support ∪ q.support) (fun _ h => Finset.mem_union_right _ h),
     ← Finset.sum_add_distrib]
-  exact Finset.sum_congr rfl fun a _ => by rw [coeff_add, hadd]
+  exact Finset.sum_congr rfl fun a _ => by rw [MvPolynomial.coeff_add, hadd]
 
 theorem supp_sum_monomial (h0 : ∀ a, f a 0 = 0) (s : σ →₀ ℕ) (c : K) :
-    ∑ a ∈ (monomial s c).support, f a (coeff a (monomial s c)) = f s c := by
+    ∑ a ∈ (monomial s c).support, f a (AddMonoidAlgebra.coeff (monomial s c) a) = f s c := by
   classical
   rw [supp_sum_superset f h0 _ {s} MvPolynomial.support_monomial_subset, Finset.sum_singleton,
     coeff_monomial, if_pos rfl]
@@ -166,10 +172,10 @@ end SupSum
 
 def dm {σ : Type} (m : σ →₀ ℕ) (Q : MvPolynomial σ K) : MvPolynomial σ K :=
   ∑ a ∈ Q.support,
-    if m ≤ a then monomial (a - m) (coeff a Q * ((mfact a : K) / (mfact (a - m) : K))) else 0
+    if m ≤ a then monomial (a - m) (AddMonoidAlgebra.coeff Q a * ((mfact a : K) / (mfact (a - m) : K))) else 0
 
 theorem diffOp_eq {σ : Type} (P Q : MvPolynomial σ K) :
-    diffOp P Q = ∑ m ∈ P.support, coeff m P • dm m Q := by
+    diffOp P Q = ∑ m ∈ P.support, AddMonoidAlgebra.coeff P m • dm m Q := by
   unfold Formalism.IncomingBounds.diffOp dm
   refine Finset.sum_congr rfl fun m _ => ?_
   rw [Finset.smul_sum]
@@ -279,7 +285,7 @@ theorem dm_succ {σ : Type} (x : σ) (m : σ →₀ ℕ) (Q : MvPolynomial σ K)
           | field_simp
     · have hn : ¬ (Finsupp.single x 1 + m ≤ a) := fun h => hma (le_trans le_add_self h)
       rw [if_neg hma, if_neg hn, map_zero]
-  | add p q hp hq => rw [dm_add, dm_add, hp, hq, map_add]
+  | add p q hp hq => rw [dm_add, dm_add, hp, hq, map_add (f := _)]
 
 theorem diffOp_X_mul {σ : Type} (x : σ) (P Q : MvPolynomial σ K) :
     diffOp (X x * P) Q = pderiv x (diffOp P Q) := by
@@ -288,7 +294,7 @@ theorem diffOp_X_mul {σ : Type} (x : σ) (P Q : MvPolynomial σ K) :
     have hX : (X x : MvPolynomial σ K) * monomial u a = monomial (Finsupp.single x 1 + u) a := by
       rw [X, monomial_mul, one_mul]
     rw [hX, diffOp_monomial, diffOp_monomial, dm_succ, Derivation.map_smul]
-  | add p q hp hq => rw [mul_add, diffOp_add, diffOp_add, hp, hq, map_add]
+  | add p q hp hq => rw [mul_add, diffOp_add, diffOp_add, hp, hq, map_add (f := _)]
 
 theorem diffOp_C_mul {σ : Type} (c : K) (P Q : MvPolynomial σ K) :
     diffOp (MvPolynomial.C c * P) Q = c • diffOp P Q := by
@@ -401,11 +407,12 @@ theorem gen (n s : ℕ) : ∀ (k : ℕ) (r c : Fin (k+1) → Fin n),
   | 0, r, c => by
     rw [pow_zero, one_mul, det_fin_one, det_fin_one]
     have hx : ((Mg K n).submatrix r c) 0 0 = X (Sum.inl (r 0, c 0)) := rfl
-    rw [hx, ← mul_one (X _), diffOp_X_mul, diffOp_one, Derivation.leibniz_pow, ddet]
-    simp only [submatrix_apply, Finset.prod_range_succ, Finset.prod_range_zero, one_mul, Nat.cast_zero, add_zero, map_add, map_natCast,
-      map_one, nsmul_eq_mul, smul_eq_mul, Nat.add_sub_cancel]
-    push_cast
-    ring
+    have hX : diffOp (X (Sum.inl (r 0, c 0))) ((Mg K n).det ^ (s+1)) =
+        pderiv (Sum.inl (r 0, c 0)) ((Mg K n).det ^ (s+1)) := by
+      simpa only [mul_one, diffOp_one] using
+        diffOp_X_mul (Sum.inl (r 0, c 0)) 1 ((Mg K n).det ^ (s+1))
+    rw [hx, hX, pderiv_pow, ddet]
+    simp [mul_assoc]
   | k+1, r, c => by
     rw [omega_step, Finset.mul_sum]
     have hsum : ∀ j : Fin (k+2),
@@ -439,7 +446,7 @@ theorem gen (n s : ℕ) : ∀ (k : ℕ) (r c : Fin (k+1) → Fin n),
         have : ∀ i, ∑ p : Fin (k+1), adjugate N i p * N p i = N.det := by
           intro i
           have := congrFun (congrFun h i) i
-          rw [mul_apply] at this
+          rw [Matrix.mul_apply] at this
           rw [this]; simp
         simp only [this, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
         push_cast; ring
@@ -465,7 +472,7 @@ theorem gen (n s : ℕ) : ∀ (k : ℕ) (r c : Fin (k+1) → Fin n),
     rw [Finset.sum_congr rfl fun j _ => hsum j, ← Finset.mul_sum, Finset.sum_add_distrib,
       ← Finset.mul_sum, ← det_succ_column_zero, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
       nsmul_eq_mul, Finset.prod_range_succ _ (k+1), map_mul]
-    simp only [map_add, map_natCast, map_one]
+    simp only [map_add (f := _), map_natCast, map_one]
     push_cast
     ring
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsTrDataGaussianIntOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NotIsTrDataGaussianIntOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -117,8 +121,9 @@ theorem trExtDer_swap (h : IsTrData B C tr a b e) (hD : IsDerOn B D) {x y : S} (
   simp_rw [smul_smul, smul_eq_mul, mul_assoc]
 
 theorem trExtDer_isDerOn (h : IsTrData B C tr a b e) (hD : IsDerOn B D) :
-    IsDerOn C (trExtDer tr a b e D) where
-  add x hx y hy := by
+    IsDerOn C (trExtDer tr a b e D) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro x hx y hy
     unfold trExtDer
     rw [← smul_add, ← Finset.sum_add_distrib]
     congr 1
@@ -128,7 +133,7 @@ theorem trExtDer_isDerOn (h : IsTrData B C tr a b e) (hD : IsDerOn B D) :
       add_smul]
     congr 1
     abel
-  mul x hx y hy := by
+  · intro x hx y hy
     have e1 : trExtDer tr a b e D (x * y) =
         e • ∑ j, b j • trTwistDefect tr a b D x (y * a j) + x • trExtDer tr a b e D y := by
       unfold trExtDer
@@ -137,7 +142,7 @@ theorem trExtDer_isDerOn (h : IsTrData B C tr a b e) (hD : IsDerOn B D) :
       rw [Finset.smul_sum, Finset.smul_sum, Finset.smul_sum]
       exact Finset.sum_congr rfl fun j _ => by rw [smul_comm (b j) x, smul_comm e x]
     rw [e1, ← trExtDer_swap h hD hx hy, add_comm]
-  alg c := by
+  · intro c
     unfold trExtDer
     have hc : algebraMap A S c ∈ B := B.algebraMap_mem c
     have : ∀ j, b j • trTwistDefect tr a b D (algebraMap A S c) (a j) =

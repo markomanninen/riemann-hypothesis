@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CommAlgFunctorCoboundaryZeroMemCocyclesOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CommAlgFunctorCoboundaryZeroMemCocyclesOne
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -155,7 +159,7 @@ theorem qa1 (F : C ⥤ CommAlgCat.{0} R) (G : C' ⥤ C) (h : ∀ T, Acyc R (Cost
     obtain ⟨a⟩ := (h T).1
     let c : G.obj a.left ⟶ T := a.hom
     rw [amitsur_d0_apply, ← hm T _ c, ← hm T' _ (c ≫ φ)]
-    simp only [Z1.comp f, mp_comp, map_add]; ring
+    simp only [Z1.comp f, mp_comp, map_add (f := _)]; ring
   · intro c
     obtain ⟨f, rfl⟩ := H1.mk_surjective _ c
     let f' : ∀ S S', (S ⟶ S') → F.obj (G.obj S') := f.1
@@ -164,7 +168,7 @@ theorem qa1 (F : C ⥤ CommAlgCat.{0} R) (G : C' ⥤ C) (h : ∀ T, Acyc R (Cost
     have ex : ∀ T, ∃ v : ∀ S, (G.obj S ⟶ T) → F.obj T, ∀ S S' (ψ : S ⟶ S') (c : G.obj S' ⟶ T),
         -mp F c (f' S S' ψ) = v S' c - v S (G.map ψ ≫ c) := fun T ↦
       (h T).one _ (fun S S' ψ c ↦ -mp F c (f' S S' ψ)) fun S S' S'' φ ψ c ↦ by
-        simp only [hf, mp_comp, map_add]; ring
+        simp only [hf, mp_comp, map_add (f := _)]; ring
     choose v hv using ex
     have ex : ∀ T T' (φ : T ⟶ T'), ∃ m : F.obj T', ∀ S (c : G.obj S ⟶ T),
         v T' S (c ≫ φ) - mp F φ (v T S c) = m := fun T T' φ ↦
@@ -205,7 +209,7 @@ theorem qa2 (F : C ⥤ CommAlgCat.{0} R) (G : C' ⥤ C) (h : ∀ T, Acyc R (Cost
         z.1 _ _ _ (G.map ψ) c - mp F c (f S S' ψ) = v S' c - v S (G.map ψ ≫ c) := fun T ↦
       (h T).one _ (fun S S' ψ c ↦ z.1 _ _ _ (G.map ψ) c - mp F c (f S S' ψ)) fun S S' S'' φ ψ c ↦ by
         have e := z.2 (G.map φ) (G.map ψ) c
-        simp only [hf, mp_comp, map_add, map_sub, Functor.map_comp] at e ⊢
+        simp only [hf, mp_comp, map_add (f := _), map_sub, Functor.map_comp] at e ⊢
         linear_combination e
     choose v hv using ex
     have ex : ∀ T T' (φ : T ⟶ T'), ∃ m : F.obj T', ∀ S (c : G.obj S ⟶ T),
@@ -223,7 +227,7 @@ theorem qa2 (F : C ⥤ CommAlgCat.{0} R) (G : C' ⥤ C) (h : ∀ T, Acyc R (Cost
     let c : G.obj a.left ⟶ T := a.hom
     have e := z.2 c φ ψ
     rw [d1_apply, ← hm T T'' _ _ c, ← hm T T' _ _ c, ← hm T' T'' _ _ (c ≫ φ)]
-    simp only [mp_comp, map_sub, map_add, Category.assoc]
+    simp only [mp_comp, map_sub, map_add (f := _), Category.assoc]
     linear_combination e
   · intro c
     obtain ⟨z, rfl⟩ := H2.mk_surjective _ c
@@ -235,14 +239,14 @@ theorem qa2 (F : C ⥤ CommAlgCat.{0} R) (G : C' ⥤ C) (h : ∀ T, Acyc R (Cost
         ∀ S S' S'' (φ : S ⟶ S') (ψ : S' ⟶ S'') (c : G.obj S'' ⟶ T),
           mp F c (y _ _ _ φ ψ) = w S S' φ (G.map ψ ≫ c) - w S S'' (φ ≫ ψ) c + w S' S'' ψ c := fun T ↦
       (h T).two _ (fun S S' S'' φ ψ c ↦ mp F c (y _ _ _ φ ψ)) fun S S' S'' S''' φ ψ χ c ↦ by
-        simp only [mp_comp, ← map_add, hy]
+        simp only [mp_comp, ← map_add (f := _), hy]
     choose w hw using ex
     have ex : ∀ T T' (φ : T ⟶ T'), ∃ x : ∀ S, (G.obj S ⟶ T) → F.obj T', ∀ S S' (ψ : S ⟶ S') (c : G.obj S' ⟶ T),
         mp F φ (w T S S' ψ c) - w T' S S' ψ (c ≫ φ) = x S' c - x S (G.map ψ ≫ c) := fun T T' φ ↦
       (h T).one _ (fun S S' ψ c ↦ mp F φ (w T S S' ψ c) - w T' S S' ψ (c ≫ φ)) fun S S' S'' ψ χ c ↦ by
         have e1 := hw T' S S' S'' ψ χ (c ≫ φ)
         have e2 := congrArg (mp F φ) (hw T S S' S'' ψ χ c)
-        simp only [mp_comp, map_sub, map_add, Category.assoc] at e1 e2 ⊢
+        simp only [mp_comp, map_sub, map_add (f := _), Category.assoc] at e1 e2 ⊢
         linear_combination e2 - e1
     choose x hx using ex
     have ex : ∀ T T' T'' (φ : T ⟶ T') (φ' : T' ⟶ T''), ∃ m : F.obj T'', ∀ S (c : G.obj S ⟶ T),
@@ -258,7 +262,7 @@ theorem qa2 (F : C ⥤ CommAlgCat.{0} R) (G : C' ⥤ C) (h : ∀ T, Acyc R (Cost
     · obtain ⟨a⟩ := (h T).1
       let c : G.obj a.left ⟶ T := a.hom
       rw [← hm T T' T'' _ _ _ c, ← hm T T'' T''' _ _ _ c, ← hm T T' T''' _ _ _ c, ← hm T' T'' T''' _ _ _ (c ≫ φ)]
-      simp only [mp_comp, map_sub, map_add, Category.assoc]; ring
+      simp only [mp_comp, map_sub, map_add (f := _), Category.assoc]; ring
     · rw [CoefMap.pullCohomologyTwo_class, H2.mk_eq_mk]
       refine ⟨fun S S' ψ ↦ x _ _ (G.map ψ) S (𝟙 _) - w _ S S' ψ (𝟙 _), ?_⟩
       funext S S' S'' φ ψ

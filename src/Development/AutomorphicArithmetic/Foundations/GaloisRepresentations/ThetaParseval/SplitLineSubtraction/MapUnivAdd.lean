@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SplitLineSubtraction.TwoUpOKOf
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SplitLineSubtraction.TwoUpOKOf
+
+@[expose] public section
 
 namespace UpperTheory.Gal.TP.Sub
 
@@ -36,7 +40,7 @@ theorem wtId_holds : WtId := by
       have h1 := hL (Fin.natAdd n i)
       have h2 := hp i.rev
       simp only [Fin.coe_natAdd, Fin.val_rev] at h1 h2 ⊢
-      rw [dif_neg (by omega)] at h1
+      rw [dite_eq_right (by omega)] at h1
       have hi := i.2
       push_cast at h1
       omega
@@ -58,7 +62,7 @@ theorem wtId_holds : WtId := by
       have h1 := hL (Fin.natAdd n i)
       have h2 := hp i
       simp only [Fin.coe_natAdd] at h1 h2 ⊢
-      rw [dif_neg (by omega)] at h1
+      rw [dite_eq_right (by omega)] at h1
       have hi := i.2
       have hc : ((n + t - (n + (i : ℕ) + 1) : ℕ) : ℤ) = (t : ℤ) - 1 - (i : ℕ) := by
         rw [Nat.cast_sub (by omega)]

@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.NumberFieldFamilies.NPartCNd
-import Formalism.LocalToGlobal.GaloisLevelStructure.TiedHecke
-import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocI
-import Formalism.LocalToGlobal.GroupLattices.PerfectRings.IsLocalRingOfComplete
+module
+
+public import Formalism.LocalToGlobal.NumberFieldFamilies.NPartCNd
+public import Formalism.LocalToGlobal.GaloisLevelStructure.TiedHecke
+public import Formalism.LocalRingCardinality.SpanPowerMembership.NDLocI
+public import Formalism.LocalToGlobal.GroupLattices.PerfectRings.IsLocalRingOfComplete
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Formalism.RealPlaceAnalysis.Complexify
+module
+
+public import Formalism.RealPlaceAnalysis.Complexify
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,16 +16,17 @@ theorem slm_sq_lintegral_le {f : ℝ → ENNReal} (hf : AEMeasurable f (volume.r
   have hH := ENNReal.lintegral_mul_le_Lp_mul_Lq (volume.restrict (Ioc (0:ℝ) 1))
     Real.HolderConjugate.two_two hf (aemeasurable_const (b := (1 : ENNReal)))
   simp only [Pi.mul_apply, mul_one, ENNReal.one_rpow, lintegral_const, Measure.restrict_apply_univ,
-    Real.volume_Ioc, sub_zero, ENNReal.ofReal_one, one_mul] at hH
+    Real.volume_Ioc, sub_zero, ENNReal.ofReal_one] at hH
   calc (∫⁻ s in Ioc (0:ℝ) 1, f s) ^ (2:ℝ)
       ≤ ((∫⁻ s in Ioc (0:ℝ) 1, f s ^ (2:ℝ)) ^ (1 / (2:ℝ))) ^ (2:ℝ) :=
         ENNReal.rpow_le_rpow hH (by norm_num)
     _ = ∫⁻ s in Ioc (0:ℝ) 1, f s ^ (2:ℝ) := by
         rw [← ENNReal.rpow_mul]; norm_num
 
-private lemma eLpNorm_two_rpow_two_eq_lintegral {Y : Type*} [MeasurableSpace Y] {ν : Measure Y} (f : Y → ℂ) :
+private lemma eLpNorm_two_rpow_two_eq_lintegral {Y : Type*} [MeasurableSpace Y] {ν : Measure Y}
+    (f : Y → ℂ) (hf : AEStronglyMeasurable f ν) :
     eLpNorm f 2 ν ^ (2:ℝ) = ∫⁻ x, ‖f x‖ₑ ^ (2:ℝ) ∂ν := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm (by norm_num) (by norm_num), ← ENNReal.rpow_mul]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf, ← ENNReal.rpow_mul]
   norm_num
 
 theorem slm_eLpNorm_le {X : Type*} [MeasurableSpace X] {μ : Measure X} [SFinite μ]
@@ -29,21 +34,25 @@ theorem slm_eLpNorm_le {X : Type*} [MeasurableSpace X] {μ : Measure X} [SFinite
     (hr : ∀ x, r x = ∫ s in (0:ℝ)..1, D s x) (B : ENNReal)
     (hB : ∀ s ∈ Ioc (0:ℝ) 1, eLpNorm (D s) 2 μ ≤ B) : eLpNorm r 2 μ ≤ B := by
   have hmeas : ∀ x, Measurable fun s => D s x := fun x => hD.of_uncurry_right
+  have hrmeas : AEStronglyMeasurable r μ := by
+    rw [funext hr]
+    simp only [intervalIntegral.integral_of_le zero_le_one]
+    exact (hD.stronglyMeasurable.integral_prod_left (μ := volume.restrict (Ioc (0 : ℝ) 1))).aestronglyMeasurable
   have hpt : ∀ x, ‖r x‖ₑ ≤ ∫⁻ s in Ioc (0:ℝ) 1, ‖D s x‖ₑ := fun x => by
     rw [hr x, intervalIntegral.integral_of_le zero_le_one]
-    exact enorm_integral_le_lintegral_enorm _
+    exact eNorm_integral_le_lintegral_eNorm _
   have hsq : ∀ s ∈ Ioc (0:ℝ) 1, ∫⁻ x, ‖D s x‖ₑ ^ (2:ℝ) ∂μ ≤ B ^ (2:ℝ) := fun s hs => by
-    rw [← eLpNorm_two_rpow_two_eq_lintegral]
+    rw [← eLpNorm_two_rpow_two_eq_lintegral (D s) (hD.of_uncurry_left (x := s)).aestronglyMeasurable]
     exact ENNReal.rpow_le_rpow (hB s hs) (by norm_num)
   have hmain : eLpNorm r 2 μ ^ (2:ℝ) ≤ B ^ (2:ℝ) := by
-    rw [eLpNorm_two_rpow_two_eq_lintegral]
+    rw [eLpNorm_two_rpow_two_eq_lintegral r hrmeas]
     calc ∫⁻ x, ‖r x‖ₑ ^ (2:ℝ) ∂μ
         ≤ ∫⁻ x, (∫⁻ s in Ioc (0:ℝ) 1, ‖D s x‖ₑ) ^ (2:ℝ) ∂μ :=
           lintegral_mono fun x => ENNReal.rpow_le_rpow (hpt x) (by norm_num)
       _ ≤ ∫⁻ x, (∫⁻ s in Ioc (0:ℝ) 1, ‖D s x‖ₑ ^ (2:ℝ)) ∂μ :=
-          lintegral_mono fun x => slm_sq_lintegral_le (hmeas x).enorm.aemeasurable
+          lintegral_mono fun x => slm_sq_lintegral_le (hmeas x).eNorm.aemeasurable
       _ = ∫⁻ s in Ioc (0:ℝ) 1, ∫⁻ x, ‖D s x‖ₑ ^ (2:ℝ) ∂μ :=
-          lintegral_lintegral_swap (((hD.comp measurable_swap).enorm.pow_const (2:ℝ)).aemeasurable)
+          lintegral_lintegral_swap (((hD.comp measurable_swap).eNorm.pow_const (2:ℝ)).aemeasurable)
       _ ≤ ∫⁻ s in Ioc (0:ℝ) 1, B ^ (2:ℝ) := setLIntegral_mono' measurableSet_Ioc hsq
       _ = B ^ (2:ℝ) := by simp [Real.volume_Ioc]
   exact (ENNReal.rpow_le_rpow_iff (by norm_num : (0:ℝ) < 2)).mp hmain
@@ -110,17 +119,9 @@ attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {n : ℕ} {ε : Fin n → Bool}
 
-local notation "JJ" => Formalism.REAL.Jm
-
-theorem slm_JJ (ε : Fin n → Bool) (X : Matrix (Fin n) (Fin n) ℂ) : JJ ε * (JJ ε * X) = X := by
-  rw [← Matrix.mul_assoc]
-  have h : Formalism.REAL.Jm ε * Formalism.REAL.Jm ε = 1 := by
-    unfold Formalism.REAL.Jm
-    rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-    congr 1
-    funext a
-    split_ifs <;> norm_num
-  rw [h, Matrix.one_mul]
+theorem slm_JJ (ε : Fin n → Bool) (X : Matrix (Fin n) (Fin n) ℂ) :
+    Formalism.REAL.Jm ε * (Formalism.REAL.Jm ε * X) = X := by
+  rw [← Matrix.mul_assoc, Formalism.REAL.Jm_mul_self, Matrix.one_mul]
 
 theorem slm_inUJ_mul {a b : Matrix (Fin n) (Fin n) ℂ} (ha : Formalism.REAL.inUJ ε a)
     (hb : Formalism.REAL.inUJ ε b) : Formalism.REAL.inUJ ε (a * b) := by
@@ -130,23 +131,13 @@ theorem slm_inUJ_mul {a b : Matrix (Fin n) (Fin n) ℂ} (ha : Formalism.REAL.inU
     _ = Formalism.REAL.Jm ε := by rw [ha, hb]
 
 def slmJi (ε : Fin n → Bool) (g : Matrix (Fin n) (Fin n) ℂ) : Matrix (Fin n) (Fin n) ℂ :=
-  JJ ε * gᴴ * JJ ε
-
-private lemma Jm_mul_Jm_self_eq_one (ε : Fin n → Bool) : Formalism.REAL.Jm ε * Formalism.REAL.Jm ε = 1 := by
-  simpa using slm_JJ ε 1
-
-private lemma Jm_conjTranspose_eq_Jm (ε : Fin n → Bool) : (Formalism.REAL.Jm ε)ᴴ = Formalism.REAL.Jm ε := by
-  unfold Formalism.REAL.Jm
-  rw [Matrix.diagonal_conjTranspose]
-  congr 1
-  funext a
-  by_cases h : ε a <;> simp [h]
+  Formalism.REAL.Jm ε * gᴴ * Formalism.REAL.Jm ε
 
 theorem slm_Ji_mul {g : Matrix (Fin n) (Fin n) ℂ} (hg : Formalism.REAL.inUJ ε g) : slmJi ε g * g = 1 := by
   unfold slmJi
   unfold Formalism.REAL.inUJ at hg
   calc Formalism.REAL.Jm ε * gᴴ * Formalism.REAL.Jm ε * g = Formalism.REAL.Jm ε * (gᴴ * Formalism.REAL.Jm ε * g) := by simp only [Matrix.mul_assoc]
-    _ = 1 := by rw [hg, Jm_mul_Jm_self_eq_one]
+    _ = 1 := by rw [hg, Formalism.REAL.Jm_mul_self]
 
 theorem slm_mul_Ji {g : Matrix (Fin n) (Fin n) ℂ} (hg : Formalism.REAL.inUJ ε g) : g * slmJi ε g = 1 := by
   rw [← Matrix.inv_eq_left_inv (slm_Ji_mul hg)]
@@ -159,18 +150,19 @@ theorem slm_Ji_inUJ {g : Matrix (Fin n) (Fin n) ℂ} (hg : Formalism.REAL.inUJ �
     unfold slmJi at this
     simpa only [Matrix.mul_assoc] using this
   unfold Formalism.REAL.inUJ slmJi
-  simp only [Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose, Jm_conjTranspose_eq_Jm, Matrix.mul_assoc,
-    slm_JJ, h1, Matrix.mul_one]
+  simp only [Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose, Formalism.REAL.Jm_conjTranspose,
+    Matrix.mul_assoc, slm_JJ, h1, Matrix.mul_one]
 
 def slmP (ε : Fin n → Bool) (Y : Matrix (Fin n) (Fin n) ℂ) : Matrix (Fin n) (Fin n) ℂ :=
-  (1 / 2 : ℂ) • (Y - JJ ε * Yᴴ * JJ ε)
+  (1 / 2 : ℂ) • (Y - Formalism.REAL.Jm ε * Yᴴ * Formalism.REAL.Jm ε)
 
 theorem skewAdjointPart_isSkewAdjoint (ε : Fin n → Bool) (Y : Matrix (Fin n) (Fin n) ℂ) : Formalism.REAL.inG ε (slmP ε Y) := by
   have hs : (star (1 / 2 : ℂ)) = 1 / 2 := by simp
   unfold Formalism.REAL.inG slmP
   rw [Matrix.conjTranspose_smul, hs, Matrix.conjTranspose_sub]
-  simp only [Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose, Jm_conjTranspose_eq_Jm, Matrix.smul_mul,
-    Matrix.mul_smul, Matrix.sub_mul, Matrix.mul_sub, Matrix.mul_assoc, slm_JJ, Jm_mul_Jm_self_eq_one, Matrix.mul_one]
+  simp only [Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose, Formalism.REAL.Jm_conjTranspose,
+    Matrix.smul_mul, Matrix.mul_smul, Matrix.sub_mul, Matrix.mul_sub, Matrix.mul_assoc, slm_JJ,
+    Formalism.REAL.Jm_mul_self, Matrix.mul_one]
   rw [← smul_add]
   simp
 
@@ -258,8 +250,8 @@ theorem slm_X_cd (ε : Fin n → Bool) (g0 : Matrix (Fin n) (Fin n) ℂ) :
   have hA : ContDiffOn ℝ ∞ (fun g => slmJi ε g0 * g - 1) (cayleyChartDomain ε g0) := h1.sub contDiffOn_const
   have hB : ContDiffOn ℝ ∞ (fun g => slmJi ε g0 * g + 1) (cayleyChartDomain ε g0) := h1.add contDiffOn_const
   have hY := slm_cd_mul hA (slm_cd_inv hB fun g hg => hg)
-  have hJYJ := slm_cd_mul (slm_cd_mul (contDiffOn_const (c := JJ ε)) (slm_cd_conjT hY))
-    (contDiffOn_const (c := JJ ε))
+  have hJYJ := slm_cd_mul (slm_cd_mul (contDiffOn_const (c := Formalism.REAL.Jm ε)) (slm_cd_conjT hY))
+    (contDiffOn_const (c := Formalism.REAL.Jm ε))
   exact (hY.sub hJYJ).const_smul (1 / 2 : ℂ)
 
 theorem cayleyChartDomain_isOpen (ε : Fin n → Bool) (g0 : Matrix (Fin n) (Fin n) ℂ) : IsOpen (cayleyChartDomain ε g0) := by
@@ -274,7 +266,7 @@ theorem slm_V_open (ε : Fin n → Bool) (g0 : Matrix (Fin n) (Fin n) ℂ) : IsO
 
 theorem slm_ret_cd (ε : Fin n → Bool) (g0 : Matrix (Fin n) (Fin n) ℂ) :
     ContDiffOn ℝ ∞ (slmRet ε g0) (slmV ε g0) := by
-  have hX : ContDiffOn ℝ ∞ (slmX ε g0) (slmV ε g0) := (slm_X_cd ε g0).mono fun g hg => hg.1
+  have hX : ContDiffOn ℝ ∞ (slmX ε g0) (slmV ε g0) := (slm_X_cd ε g0).mono fun _ hg => hg.1
   have hM : ContDiffOn ℝ ∞ (fun g => 1 - slmX ε g0 g) (slmV ε g0) := contDiffOn_const.sub hX
   have hP : ContDiffOn ℝ ∞ (fun g => 1 + slmX ε g0 g) (slmV ε g0) := contDiffOn_const.add hX
   have hI := slm_cd_inv hM fun g hg => hg.2

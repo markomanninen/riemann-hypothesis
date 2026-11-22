@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ScaledExample
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStdBaseChange
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassLinesProj
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.ScaledExample
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsDualStdBaseChange
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsGrassLinesProj
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

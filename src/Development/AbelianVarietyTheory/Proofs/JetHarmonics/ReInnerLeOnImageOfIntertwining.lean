@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Finset
 open scoped InnerProductSpace
@@ -26,7 +30,8 @@ theorem re_inner_sum_eigen_le {N ι : Type} [NormedAddCommGroup N] [InnerProduct
       rw [h4, mul_zero, mul_zero]
   have hsum : (C : ℂ) * ⟪∑ i, v i, ∑ i, v i⟫_ℂ - ⟪∑ i, v i, B (∑ i, v i)⟫_ℂ =
       ⟪∑ i, ((√(C - l i) : ℝ) : ℂ) • v i, ∑ i, ((√(C - l i) : ℝ) : ℂ) • v i⟫_ℂ := by
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp only [sum_inner, inner_sum, ← key, hv, Finset.mul_sum, ← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     rw [inner_smul_right, sub_mul]
@@ -52,7 +57,8 @@ theorem re_inner_le_on_image_of_intertwining :
     rw [hAb, inner_smul_right, inner_self_eq_norm_sq_to_K, b.orthonormal.1 i] at h
     simpa using h
   have hx : Φ x = ∑ i, Φ (b.repr x i • b i) := by
-    rw [← map_sum, b.sum_repr]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, b.sum_repr]
   rw [hx]
   refine re_inner_sum_eigen_le B hB C _ l (fun i => ?_) hle
   rw [← hΦ, map_smul A, hAb, smul_comm, map_smul]

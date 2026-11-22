@@ -1,5 +1,9 @@
-import Formalism.GradedWeylDivisibility.StatementA
-import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LRowdivLemmas
+module
+
+public import Formalism.GradedWeylDivisibility.StatementA
+public import Formalism.GradedWeylDivisibility.FockSpaceTableaux.LRowdivLemmas
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -95,10 +99,11 @@ theorem rowDiv_homog (R : Type*) [CommRing R] {r n : ℕ} (ν : Fin n → ℕ) (
     (f : MvPolynomial (Fin r × Fin n) R) (hf : IsWeightedHomogeneous (colW r n) f ν) :
     IsWeightedHomogeneous (colW r n) (rowDiv R a b k f) ν := by
   unfold rowDiv
-  conv => enter [2, 1, 2]; rw [f.as_sum]
-  rw [map_sum, Polynomial.finsetSum_coeff]
+  conv => pattern f; rw [f.as_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Polynomial.finsetSum_coeff]
   refine IsWeightedHomogeneous.sum _ _ _ fun d hd => ?_
-  have := CoeffHom.rowGen_monomial R a b d (coeff d f) k
+  have := CoeffHom.rowGen_monomial R a b d (AddMonoidAlgebra.coeff f d) k
   rwa [hf (mem_support_iff.mp hd)] at this
 
 def rowGenO (R : Type*) [CommRing R] {r n : ℕ} (a b : Fin r) :
@@ -115,7 +120,7 @@ theorem rowGenO_comp_colAddGen (R : Type*) [CommRing R] {r n : ℕ} (a b : Fin r
   intro v
   simp only [AlgHom.comp_apply, colAddGen, rowGen, rowGenO, aeval_X, Polynomial.coe_mapAlgHom]
   by_cases h2 : v.2 = j <;> by_cases h1 : v.1 = b <;>
-    simp [h1, h2, Polynomial.map_add, Polynomial.map_mul, Polynomial.map_X, Polynomial.map_C,
+    simp [h1, h2, Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_X, Polynomial.map_C,
       aeval_X] <;> ring
 
 theorem rowGenO_comp_rename (R : Type*) [CommRing R] {r n : ℕ} (a b : Fin r) :
@@ -126,7 +131,7 @@ theorem rowGenO_comp_rename (R : Type*) [CommRing R] {r n : ℕ} (a b : Fin r) :
   intro v
   simp only [AlgHom.comp_apply, rename_X, rowGen, rowGenO, aeval_X, Polynomial.coe_mapAlgHom]
   by_cases h1 : v.1 = b <;>
-    simp [h1, Polynomial.map_add, Polynomial.map_mul, Polynomial.map_X, Polynomial.map_C]
+    simp [h1, Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_X, Polynomial.map_C]
 
 theorem rowDiv_colAddGen (R : Type*) [CommRing R] {r n : ℕ} (a b : Fin r) (k : ℕ) (l j : Fin n)
     (f : MvPolynomial (Fin r × Fin n) R) (hf : colAddGen R l j f = rename some f) :
@@ -135,7 +140,7 @@ theorem rowDiv_colAddGen (R : Type*) [CommRing R] {r n : ℕ} (a b : Fin r) (k :
   have hB := congrArg (fun φ => φ f) (rowGenO_comp_rename R (n := n) a b)
   simp only [AlgHom.comp_apply, Polynomial.coe_mapAlgHom] at hA hB
   rw [hf, hB] at hA
-  have hk := congrArg (fun P => Polynomial.coeff P k) hA
+  have hk := congrArg (fun P => _root_.AddMonoidAlgebra.coeff (M := ℕ) P k) hA
   simp only [Polynomial.coeff_map] at hk
   unfold rowDiv
   exact hk.symm

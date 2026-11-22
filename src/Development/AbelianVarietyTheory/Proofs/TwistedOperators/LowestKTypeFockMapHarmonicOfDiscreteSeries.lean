@@ -1,19 +1,24 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LieActionFockOperatorsScalarsTraceStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeilMaximalCompactFockSubstitutionCharacterStatement
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsWeilDatumGeneratorRealOneParamGroup
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MixedLaplacianKillsProductOfMinors
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HolomorphicDiscreteSeriesLowestKTypeSmoothIrredu
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LowestKTypeSmoothModelsOnThetaTargets
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockPolynomialVectorsInjectiveNonzeroVacuum
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LowestKTypeCoefficientWeightEqMinorWeights
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAutomorphicFunctionTranslateAtRealPlace
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LowestKTypeValuesKilledByLoweringPart
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PtYAndItYOfPair
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsArchimedeanLiftUnitaryGroupProduct
-import Development.AbelianVarietyTheory.Counterexamples.RotationExamples.OneLeAPlLast
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CompAtMtEqInfMat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.L2UnitaryRepresentationData
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LieActionFockOperatorsScalarsTraceStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.WeilMaximalCompactFockSubstitutionCharacterStatement
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsWeilDatumGeneratorRealOneParamGroup
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MixedLaplacianKillsProductOfMinors
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HolomorphicDiscreteSeriesLowestKTypeSmoothIrredu
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LowestKTypeSmoothModelsOnThetaTargets
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FockPolynomialVectorsInjectiveNonzeroVacuum
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LowestKTypeCoefficientWeightEqMinorWeights
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSmoothAutomorphicFunctionTranslateAtRealPlace
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LowestKTypeValuesKilledByLoweringPart
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PtYAndItYOfPair
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsArchimedeanLiftUnitaryGroupProduct
+public import Development.AbelianVarietyTheory.Counterexamples.RotationExamples.OneLeAPlLast
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CompAtMtEqInfMat
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.S Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Datum
 open Formalism.IndefR.Mult (DSModel dualPar parA parB)
 open Formalism.MainNotions.SchurIrreducible (AdmGK ARi ARiiiUp ARiiiDown ARiiiLine DiscreteSeriesBlattner admQ5)
@@ -238,9 +243,9 @@ theorem polDer_add {τ : D.what₂.Tau} {X : Matrix (Fin W.rank) (Fin W.rank) �
   have e : (fun t : ℝ => actTgt θ ω τ (NormedSpace.exp (t • X)) (pt (P + Q)) z) = fun t =>
       actTgt θ ω τ (NormedSpace.exp (t • X)) (pt P) z + actTgt θ ω τ (NormedSpace.exp (t • X)) (pt Q) z := by
     funext t
-    rw [actTgt_eq, actTgt_eq, actTgt_eq, map_add, map_add]
+    rw [actTgt_eq, actTgt_eq, actTgt_eq, map_add (f := _), map_add (f := _)]
     rfl
-  rw [e, map_add]
+  rw [e, map_add (f := _)]
   exact (hP z).add (hQ z)
 
 theorem polDer_smul {τ : D.what₂.Tau} {X : Matrix (Fin W.rank) (Fin W.rank) ℂ} {P P₁ : PolF D W.rank V.rank}
@@ -253,8 +258,8 @@ theorem polDer_smul {τ : D.what₂.Tau} {X : Matrix (Fin W.rank) (Fin W.rank) �
   rw [e, map_smul]
   exact (hP z).const_mul c
 
-variable (θ ω pt) in
 
+variable (θ ω pt) in
 def harmSub (d : ℕ) : Submodule ℂ (PolF D W.rank V.rank) where
   carrier := {P | ∀ τ, IsHarm M' τ (actTgt θ ω τ) pt d P}
   add_mem' := by
@@ -333,7 +338,35 @@ theorem ioHarm_holds (D : D7) : IoHarm D := by
     rw [Matrix.mul_one, ← gram_eq (hBu τ) (hBS τ)]
     exact Matrix.PosDef.conjTranspose_mul_self _
       (Matrix.mulVec_injective_of_isUnit ((Matrix.isUnit_nonsing_inv_iff).2 (hBu τ)))
-  obtain ⟨x₁, x₂, x₃, hx⟩ := wts i (funext fun τ => (GlobalTheory.ThetaFiresProbe.parAt_fixed _ τ).symm) M' hord
+  have hpar : ∀ ρ, parAt (Wc D i) D.what₂.embLL ρ = Formalism.L2.NTheta.holPar _ _ (Formalism.L2.NTheta.wtOf D (Wc D i) ρ) := by
+    intro ρ
+    have hlabE : ∀ τ, labE D.what₂.embLL τ = tauE D τ := by
+      intro τ
+      ext x
+      exact DFunLike.congr_fun D.embE_φ₀ (D.host.sigmaOf (D.eTau τ).1 x)
+    have hlab : lab D.what₂.embLL ρ = ρ := by
+      have h : ∃ τ, labE D.what₂.embLL τ = tauE D ρ ∨ labE D.what₂.embLL τ = (starRingEnd ℂ).comp (tauE D ρ) := ⟨ρ, Or.inl (hlabE ρ)⟩
+      unfold lab
+      rw [dite_eq_left h]
+      have hs := h.choose_spec
+      generalize h.choose = τ at hs
+      rw [hlabE] at hs
+      rcases hs with hs | hs
+      · have h1 : D.host.sigmaOf (D.eTau τ).1 = D.host.sigmaOf (D.eTau ρ).1 := by
+          exact AlgEquiv.ext fun x => D.host.φ₀.injective (DFunLike.congr_fun hs x)
+        apply D.eTau.injective
+        apply Subtype.ext
+        exact (by unfold Host.sigmaOf at h1; exact (EquivLike.injective _) h1)
+      · exfalso
+        have a := xi_zero_im_pos D τ
+        have b := xi_zero_im_pos D ρ
+        rw [hs] at a
+        simp at a
+        linarith
+    unfold parAt kapAt
+    rw [hlab, if_pos (hlabE ρ)]
+    rfl
+  obtain ⟨x₁, x₂, x₃, hx⟩ := wts i (funext fun τ => (hpar τ).symm) M' hord
   have hact := GlobalTheory.T.weil_maximalCompact_fock_substitution_character D ψ θ (Vc D i) (Wc D i) _ _ ω _ M' BV hω hθ
     (D.sp.V_sig _) (D.sp.W_sig _) hBS _ _ hpq hord _ _ (fun τ => (hχ τ).1)
     (fun τ => (hχ τ).2) x₁ x₂ x₃ (fun τ => (hx τ).1) (fun τ => (hx τ).2.1)
@@ -416,7 +449,7 @@ theorem ioHarm_holds (D : D7) : IoHarm D := by
 
   have hall : ∀ w (v : ∀ ρ, lowT M' ρ), io (PiTensorProduct.tprod ℂ v) w ∈ N := by
     intro w
-    let Bf : MultilinearMap ℂ (fun τ => lowT M' τ) (PolF D (Wc D i).rank (Vc D i).rank) :=
+    let Bf : MultilinearMap (RingHom.id ℂ) (fun τ => lowT M' τ) (PolF D (Wc D i).rank (Vc D i).rank) :=
       (io.flip w).compMultilinearMap (PiTensorProduct.tprod ℂ)
     have hK' : ∀ τ, ∀ k ∈ Formalism.REAL.Kset (M'.ε τ), ∀ (v : ∀ ρ, lowT M' ρ) (u : lowT M' τ),
         ((u : M'.sm τ) : M'.H τ) = M'.σ τ k ((v τ : M'.sm τ) : M'.H τ) → Bf v ∈ N →
@@ -468,10 +501,22 @@ theorem ioHarm_holds (D : D7) : IoHarm D := by
       · simp only [Prod.mk_mul_mk, one_mul, mul_one]
         rw [oneP_mul hθ hh hX t]
     intro v
-    exact GlobalTheory.DefLift.mem_of_translates hLS hLI Bf N v₀ (fun ρ h0 => by
+    have hv : ∀ ρ, v₀ ρ ≠ 0 := fun ρ h0 => by
       have := hv₀ ρ
       rw [h0] at this
-      simp at this) (step1 w) hK' v
+      simp at this
+    have key : ∀ s : Finset D.what₂.Tau, Bf (s.piecewise v v₀) ∈ N := by
+      intro s
+      induction s using Finset.induction_on with
+      | empty => simpa [Bf] using step1 w
+      | insert τ s hτ ih =>
+        have e0 : s.piecewise v v₀ τ = v₀ τ := Finset.piecewise_eq_of_notMem _ _ _ hτ
+        have ht := GlobalTheory.DefLift.eq_top_of_translates hLS hLI τ
+          (N.comap (Bf.toLinearMap (s.piecewise v v₀) τ)) (v₀ τ) (hv τ)
+          (fun k hk u hu => hK' τ k hk _ u (by rw [e0]; exact hu) ih)
+        rw [Finset.piecewise_insert]
+        exact (ht.ge Submodule.mem_top : v τ ∈ N.comap (Bf.toLinearMap (s.piecewise v v₀) τ))
+    simpa [Bf] using key Finset.univ
   have hmem : ∀ x w, io x w ∈ N := by
     intro x w
     induction x using PiTensorProduct.induction_on with
@@ -479,7 +524,7 @@ theorem ioHarm_holds (D : D7) : IoHarm D := by
       rw [map_smul, LinearMap.smul_apply]
       exact N.smul_mem r (hall w v)
     | add x y hx hy =>
-      rw [map_add, LinearMap.add_apply]
+      rw [map_add (f := _), LinearMap.add_apply]
       exact N.add_mem hx hy
   exact ⟨d, fun x w τ => hmem x w τ⟩
 

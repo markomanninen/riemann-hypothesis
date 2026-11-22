@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.ProjectiveBaseChange.AdicTopOf
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.ProjectiveBaseChange.AdicTopOf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC LateralTheory.EtaleTrace CrystallineSemistableComparison ReciprocityTheory.ChartRestriction.G.Geo.Tor UpperTheory.Gal.KunnethLefschetz
@@ -20,7 +24,7 @@ theorem UpperTheory.Gal.KunnethLefschetz.piBC_holds :
       simp [g, e]
       rfl
     | add x y hx hy =>
-      rw [map_add, ← hx, ← hy]
+      rw [map_add (f := _), ← hx, ← hy]
       funext s
       simp
   rw [key]

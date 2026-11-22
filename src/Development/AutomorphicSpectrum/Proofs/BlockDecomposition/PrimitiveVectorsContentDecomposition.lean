@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsContent
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EventuallyMeasurableSetPrimV
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LatticeGramScalarAlmostAll
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteAlgebrasOverHenselianAndComplete
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HyperbolicPairUnitaryTransitiveStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SplitQuadraticOrderPrincipalStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnramifiedQuadraticOrderPrincipalStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalOrderQuadraticAlmostAllStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsContent
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.EventuallyMeasurableSetPrimV
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LatticeGramScalarAlmostAll
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.FiniteResidueFieldAdicCompletionIntegers
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FiniteAlgebrasOverHenselianAndComplete
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.HyperbolicPairUnitaryTransitiveStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SplitQuadraticOrderPrincipalStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.UnramifiedQuadraticOrderPrincipalStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LocalOrderQuadraticAlmostAllStatement
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
 open GlobalTheory.CompanionTheory.WeilSiegel.Frame GlobalTheory.CompanionTheory.WeilSiegel.Free GlobalTheory.CompanionTheory.WeilSiegel.HypStep GlobalTheory.CompanionTheory.WeilSiegel.HypMass
@@ -44,7 +49,7 @@ theorem exists_content {T : Type} [CommRing T] [IsArtinianRing T] (O : Subring T
   refine ⟨x, x.2, hu, fun k => t k, fun k => a k, fun k => (t k).2, fun k => (a k).2, hyk, ?_⟩
   have h1 : (x : T) * ∑ k, (a k : T) * (t k : T) = x * 1 := by
     have := congrArg Subtype.val ha
-    simp only [Subring.coe_mul, AddSubmonoidClass.coe_finset_sum, yO] at this
+    simp only [Subring.coe_mul, AddSubmonoidClass.coe_finsetSum, yO] at this
     rw [mul_one, Finset.mul_sum]
     conv_rhs => rw [← this]
     exact Finset.sum_congr rfl fun k _ => by rw [hyk k]; ring
@@ -129,7 +134,7 @@ theorem mem_primV_of (O : Subring (Fv F v ⊗[F] E))
     refine Matrix.ext fun i j => Subtype.ext ?_
     have := congrFun (congrFun hmul i) j
     rw [Matrix.mul_apply] at this
-    rw [Matrix.mul_apply, AddSubmonoidClass.coe_finset_sum]
+    rw [Matrix.mul_apply, AddSubmonoidClass.coe_finsetSum]
     simp only [Subring.coe_mul, HO, HiO]
     rw [this]
     by_cases h : i = j <;> simp [Matrix.one_apply, h]
@@ -214,7 +219,7 @@ theorem eventually_primV_decomposition : ∀ (F E : Type) [Field F] [NumberField
     | tmul a e =>
       show a ⊗ₜ[F] σ (σ e) = a ⊗ₜ[F] e
       rw [hinv]
-    | add p q hp hq => rw [map_add, map_add, hp, hq]
+    | add p q hp hq => rw [map_add (f := _), map_add (f := _), hp, hq]
   have hint : ∀ x, x ∈ intK b v ↔ x ∈ O := fun x => (hO x).symm
   set Hi : Matrix (Fin (M + 2)) (Fin (M + 2)) (Fv F v ⊗[F] E) := JR (Fv F v) (hypOne J)⁻¹ with hHidef
   have hHO : ∀ i j, JR (Fv F v) (hypOne J) i j ∈ O := fun i j => (hO _).2 (hH i j)

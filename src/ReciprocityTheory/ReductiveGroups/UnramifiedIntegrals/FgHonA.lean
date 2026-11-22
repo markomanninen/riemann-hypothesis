@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgBasic
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.FgBasic
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,8 @@ private theorem mvPowerSeries_norm_coeff_pow_sub_pow_le {ι : Type} {A B : MvPow
   classical
   have hs : ∀ e, ‖MvPowerSeries.coeff e (∑ i ∈ Finset.range m, A ^ i * B ^ (m - 1 - i))‖ ≤ 1 := by
     intro e
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one fun i _ => ?_
     simpa using mvPowerSeries_norm_coeff_mul_le_mul zero_le_one zero_le_one (mvPowerSeries_norm_coeff_pow_le_one hA i) (mvPowerSeries_norm_coeff_pow_le_one hB (m - 1 - i)) e
   rw [← geom_sum₂_mul]
@@ -71,7 +76,8 @@ private theorem mvPowerSeries_norm_coeff_pow_prime_sub_le_mul_norm {ι : Type} (
   rw [add_pow, Finset.sum_range_succ']
   simp only [pow_zero, one_mul, Nat.sub_zero, Nat.choose_zero_right, Nat.cast_one, mul_one,
     add_sub_cancel_right]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg (mul_nonneg hc (norm_nonneg _))
     fun i hi => ?_
   have hi' : i < l := Finset.mem_range.mp hi
@@ -135,7 +141,7 @@ private theorem norm_natCast_eq_one_of_not_prime_dvd (hl : l.Prime) (hl1 : ‖(l
   simp at h4
 
 theorem qls {ι : Type} (hl : l.Prime) (hl1 : ‖(l : K)‖ < 1) (z : PowerSeries K)
-    (hz0 : constantCoeff z = 0) (hz : IntegralPS (derivative K z)) (P Q : MvPowerSeries ι K)
+    (hz0 : constantCoeff z = 0) (hz : IntegralPS (derivative z)) (P Q : MvPowerSeries ι K)
     (hP0 : MvPowerSeries.constantCoeff P = 0) (hQ0 : MvPowerSeries.constantCoeff Q = 0)
     (hP : IntegralMv P) (hQ : IntegralMv Q) (hPQ : DivByMv (l : K) (P - Q)) :
     DivByMv (l : K) (z.subst P - z.subst Q) := by
@@ -151,7 +157,7 @@ theorem qls {ι : Type} (hl : l.Prime) (hl1 : ‖(l : K)‖ < 1) (z : PowerSerie
   have hPQi : ∀ e, ‖MvPowerSeries.coeff e (P - Q)‖ ≤ ‖(l : K)‖ := by
     unfold DivByMv at hPQ
     exact hPQ
-  have hzi : ∀ n, ‖PowerSeries.coeff n (derivative K z)‖ ≤ 1 := by
+  have hzi : ∀ n, ‖PowerSeries.coeff n (derivative z)‖ ≤ 1 := by
     unfold IntegralPS at hz
     exact hz
   have hpow := mvPowerSeries_norm_coeff_pow_prime_pow_sub_le hl hl1 hQi hPQi
@@ -191,7 +197,7 @@ theorem qls {ι : Type} (hl : l.Prime) (hl1 : ‖(l : K)‖ < 1) (z : PowerSerie
   exact norm_finsum_le_of_forall_norm_le_univ_sort _ (norm_nonneg _) fun d => hterm d e
 
 theorem qls1 (hl : l.Prime) (hl1 : ‖(l : K)‖ < 1) (z : PowerSeries K)
-    (hz0 : constantCoeff z = 0) (hz : IntegralPS (derivative K z)) (P Q : PowerSeries K)
+    (hz0 : constantCoeff z = 0) (hz : IntegralPS (derivative z)) (P Q : PowerSeries K)
     (hP0 : constantCoeff P = 0) (hQ0 : constantCoeff Q = 0)
     (hP : IntegralPS P) (hQ : IntegralPS Q) (hPQ : DivBy (l : K) (P - Q)) :
     DivBy (l : K) (z.subst P - z.subst Q) := by

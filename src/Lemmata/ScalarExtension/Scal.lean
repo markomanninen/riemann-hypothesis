@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Polynomial
 
@@ -13,7 +17,7 @@ private lemma scal {K A : Type} [Field K] [IsAlgClosed K] [Ring A] [Algebra K A]
   obtain ⟨v, hv⟩ := hc.exists_hasEigenvector
   let h : S0 →ₗ[A] S0 :=
     { toFun := fun w => g w - c • w
-      map_add' := fun x y => by simp only [map_add, smul_add]; abel
+      map_add' := fun x y => by simp only [map_add (f := _), smul_add]; abel
       map_smul' := fun a w => by
         simp only [map_smul, RingHom.id_apply, smul_sub]
         rw [smul_comm c a w] }

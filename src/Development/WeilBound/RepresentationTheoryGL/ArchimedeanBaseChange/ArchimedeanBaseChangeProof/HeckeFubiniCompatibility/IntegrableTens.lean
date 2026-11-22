@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.CompatFub
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.MultHasCompactSupport
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PSplit
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.EntryLeOfLg
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.CompatFub
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.MultHasCompactSupport
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PSplit
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.EntryLeOfLg
+
+@[expose] public section
 
 noncomputable section
 
@@ -126,6 +130,7 @@ theorem tens_cs [MeasurableSpace (G a)] [MeasurableSpace (G b)] {μa : Measure (
   have hcont : Continuous (tens ka kb ψ i j) :=
     (((continuous_entA ha _ _).comp continuous_fst).mul ((continuous_entA hb _ _).comp continuous_snd)).mul
       ((hψ i.2 j.2).1.comp hh)
+  set_option synthInstance.maxHeartbeats 200000 in
   have hQ := cs_prod3 (cs_pi fun v => (mult_ent (ha v) (i.1.1 v) (j.1.1 v)).2)
     (cs_pi fun v => (mult_ent (hb v) (i.1.2 v) (j.1.2 v)).2) (hψ i.2 j.2).2
   have hpt : ∀ z, tens ka kb ψ i j (splitH a b z) =
@@ -160,8 +165,8 @@ theorem integrable_tens (D : Dom E a b) [MeasurableSpace (G a)] [MeasurableSpace
 
 end prime_not_mem_section_base_place
 
-open prime_not_mem_section_base_place in
 
+open prime_not_mem_section_base_place in
 theorem typeOf : TypeOf := by
   intro E _ _ _ a b Ma Mb
   refine ⟨Wsp Ma, Wsp Mb, fd_Wsp Ma, fd_Wsp Mb, ?_⟩

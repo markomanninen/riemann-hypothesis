@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGroupAdjCut
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocToolsAgree
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableGerm
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveOrbitOpen
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocToolsTheta
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAGroupAdjCut
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocToolsAgree
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAFFStableGerm
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PositiveOrbitOpen
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJALocToolsTheta
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt
 

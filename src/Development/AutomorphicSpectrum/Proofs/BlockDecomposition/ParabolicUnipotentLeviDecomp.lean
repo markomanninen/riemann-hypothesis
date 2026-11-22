@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUMOfMem
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicDoubleCosetDecomposition
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsUMOfMem
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.MirabolicDoubleCosetDecomposition
+
+@[expose] public section
+
 open Matrix GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.BZMir GlobalTheory.BZMir.Leib GlobalTheory.RgGu.Leib GlobalTheory.CompanionTheory.Rodier GlobalTheory.CompanionTheory.BZPsiPG
 open scoped TensorProduct
 
@@ -64,9 +69,25 @@ theorem main : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k] [I
     | right b => rw [GlobalTheory.CompanionTheory.BZPsiPG.topV, Fin.append_right, Pi.zero_apply]; exact hlast b
   refine ⟨x, ⟨_, hq⟩, ?_⟩
   apply Subtype.ext
-  refine (GlobalTheory.CompanionTheory.BZPhiPG.Cells.eq_unip_glEmb (h : GlobalTheory.BZMir.Mir k (i + t))).trans ?_
-  exact congrArg (· * GlobalTheory.BZMir.glEmb k (i + t)
-      (GlobalTheory.BZMir.mirabolicProjection k (i + t) (h : GlobalTheory.BZMir.Mir k (i + t))))
-    (congrArg (fun w => GlobalTheory.BZMir.unip k (i + t) (Multiplicative.ofAdd w)) hv)
+  have hd : ((h : Mir k (i + t)) : GL (Fin (i + t + 1)) k) =
+      unip k (i + t) (Multiplicative.ofAdd fun r => M (Fin.castSucc r) (Fin.last (i + t))) *
+        glEmb k (i + t) (mirabolicProjection k (i + t) (h : Mir k (i + t))) := by
+    have hh := (mem_Mir_iff k ((h : Mir k (i + t)) : GL (Fin (i + t + 1)) k)).1 (h : Mir k (i + t)).2
+    ext1
+    rw [Units.val_mul]
+    show _ = (1 + colMat k (i + t) _) * glEmbMat k (i + t) (blockMat k (i + t) _)
+    rw [add_mul, one_mul, colMat_mul_glEmbMat]
+    ext a b
+    induction a using Fin.lastCases with
+    | last =>
+      rw [hh]
+      induction b using Fin.lastCases <;>
+        simp [glEmbMat, colMat, eLast, Fin.castSucc_ne_last, Pi.single_apply]
+    | cast a =>
+      induction b using Fin.lastCases <;>
+        simp [glEmbMat, colMat, blockMat, Fin.castSucc_ne_last, M]
+  refine hd.trans ?_
+  exact congrArg (· * glEmb k (i + t) (mirabolicProjection k (i + t) (h : Mir k (i + t))))
+    (congrArg (fun w => unip k (i + t) (Multiplicative.ofAdd w)) hv)
 
 end GlobalTheory.CompanionTheory.BZPsiPG.HpgMem

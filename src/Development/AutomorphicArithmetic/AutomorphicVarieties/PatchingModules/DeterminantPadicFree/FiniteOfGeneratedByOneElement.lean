@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
-import Mathlib.RingTheory.PowerSeries.Expand
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DeterminantPadicFree.FrameWith
+public import Mathlib.RingTheory.PowerSeries.Expand
+
+@[expose] public section
 
 open Matrix IsLocalRing UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 
@@ -27,7 +31,7 @@ theorem UpperTheory.V.Pa.Det.sqExt :
         PowerSeries.expand 2 two_ne_zero (PowerSeries.mk fun m => PowerSeries.coeff (2 * m + 1) f) *
           PowerSeries.X = f
       ext n
-      rw [mul_one, map_add, ← pow_one (PowerSeries.X (R := K)), PowerSeries.coeff_mul_X_pow',
+      rw [mul_one, map_add (f := _), ← pow_one (PowerSeries.X (R := K)), PowerSeries.coeff_mul_X_pow',
         PowerSeries.coeff_expand, PowerSeries.coeff_expand]
       simp only [PowerSeries.coeff_mk]
       split_ifs <;> first | omega | (simp only [add_zero, zero_add]; congr; omega)

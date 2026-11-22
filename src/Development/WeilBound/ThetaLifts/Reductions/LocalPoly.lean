@@ -1,4 +1,8 @@
-import Development.WeilBound.ThetaLifts.CartanFactorisation.ExistsGreatestProperInvariantSubmoduleOfSide
+module
+
+public import Development.WeilBound.ThetaLifts.CartanFactorisation.ExistsGreatestProperInvariantSubmoduleOfSide
+
+@[expose] public section
 
 noncomputable section
 
@@ -191,7 +195,7 @@ theorem two_of {p q r s : ℕ} {c : ℂ} (τ : ℚ) {La : Ix r s → ℚ} (h : S
   have sj : Function.Surjective (thMkC p q r s c) := Submodule.mkQ_surjective _
   have ak : ∀ W x, thMkC p q r s c (fockAct2 p q r s W x) =
       thAct p q r s c τ W (thMkC p q r s c x) - ((τ : ℂ) * W.trace) • thMkC p q r s c x := fun W x => by
-    rw [thAct_mk, twAct_apply, map_add, map_smul, add_sub_cancel_right]
+    rw [thAct_mk, twAct_apply, map_add (f := _), map_smul, add_sub_cancel_right]
   obtain ⟨v, rfl⟩ := sj v
   refine ⟨K.comap (thMkC p q r s c), fun e => h1 (eq_top_iff.2 fun y _ => ?_), fun W x hx => ?_, fun N hN hs => ?_,
     v, fun t ht y => ?_⟩

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
+
+@[expose] public section
 
 open MvPolynomial ReciprocityTheory.ChartRestriction.G.Geo NumberField GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Top GlobalTheory.CompanionTheory.Ar.Small GlobalTheory.CompanionTheory.Ar.Cmp GlobalTheory.CompanionTheory.Ar.Ht
 
@@ -29,7 +33,7 @@ theorem log_metrics_bounded (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fin
   let n : K → ((Σ k, ι k) → ℂ) → ℝ := fun k z => ∑ i, ‖z ⟨k, i⟩‖
   let S : Set ((Σ k, ι k) → ℂ) := {z | ∀ k, n k z = 1}
   have hcn : ∀ k, Continuous (n k) := fun k =>
-    continuous_finset_sum _ fun i _ => (continuous_apply _).norm
+    continuous_finsetSum _ fun i _ => (continuous_apply _).norm
   have hnpos : ∀ z : (Σ k, ι k) → ℂ, (∀ k, ∃ i, z ⟨k, i⟩ ≠ 0) → ∀ k, 0 < n k z := by
     intro z hz k
     obtain ⟨i, hi⟩ := hz k
@@ -37,7 +41,7 @@ theorem log_metrics_bounded (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fin
   have hSU : S ⊆ {z | ∀ k, ∃ i, z ⟨k, i⟩ ≠ 0} := by
     intro z hz k
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have h0 : n k z = 0 := Finset.sum_eq_zero fun i _ => by simp [hcon i]
     have h1 : n k z = 1 := hz k
     rw [h0] at h1
@@ -60,7 +64,7 @@ theorem log_metrics_bounded (K : Type) [Fintype K] (ι : K → Type) [∀ k, Fin
   have hfc : ContinuousOn f S := by
     refine ContinuousOn.mono ?_ hSU
     exact (continuousOn_log_h A hA).add
-      (continuousOn_finset_sum _ fun j _ => continuousOn_log_h (B j) (hB j))
+      (continuousOn_finsetSum _ fun j _ => continuousOn_log_h (B j) (hB j))
   obtain ⟨C, hC⟩ := hScpt.exists_bound_of_continuousOn hfc
   refine ⟨C, fun z hz => ?_⟩
   let c : K → ℂ := fun k => (((n k z)⁻¹ : ℝ) : ℂ)

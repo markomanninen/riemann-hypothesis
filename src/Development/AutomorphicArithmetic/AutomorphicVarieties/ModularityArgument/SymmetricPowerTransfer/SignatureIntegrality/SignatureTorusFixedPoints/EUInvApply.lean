@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.HodgeTateFromSandwich
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.SignatureIntegrality.HodgeTateFromSandwich
+
+@[expose] public section
 
 noncomputable section
 
@@ -200,9 +204,9 @@ private theorem int_of_val (hO : IsInts k O) (h2 : (2 : k) ≠ 0) (h0 : s ≠ 0)
     Polynomial.eval₂_C, Polynomial.eval₂_X]
   rw [IsScalarTower.algebraMap_apply O k (Lsq k Δ) p, IsScalarTower.algebraMap_apply O k (Lsq k Δ) q, hp, hq]
   apply proj_ext h2 h0 hs
-  · simp only [map_add, map_sub, map_mul, map_pow, proj_alg, map_zero]
+  · simp only [map_add (f := _), map_sub, map_mul, map_pow, proj_alg, map_zero]
     ring
-  · simp only [map_add, map_sub, map_mul, map_pow, proj_alg, map_zero]
+  · simp only [map_add (f := _), map_sub, map_mul, map_pow, proj_alg, map_zero]
     ring
 
 private theorem comap_KO (hO : IsInts k O) (h2 : (2 : k) ≠ 0) (h0 : s ≠ 0) (hs : s * s = Δ) :

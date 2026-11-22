@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,28 +18,6 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m}
   {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL]
 
-abbrev EigSys (D : D7) : Type := HeightOneSpectrum (𝓞 D.host.E) → List ℤ → ℂ
-
-open Classical in
-
-def badPlaces (R : RealDat D A Ks) (t : T) : Finset (HeightOneSpectrum (𝓞 D.host.F)) :=
-  (R.Pg ∪ R.Q t).image fun P : HeightOneSpectrum (𝓞 D.host.E) => P.under (𝓞 D.host.F)
-
-def goodPartOff (R : RealDat D A Ks) (i : Fin D.R.m) (S : Finset (HeightOneSpectrum (𝓞 D.host.F))) (c : EigSys D) :
-    Submodule ℂ (R.HW i (sg0 D A)).H :=
-  (partFull R.θ (R.MW i (sg0 D A)) (levS _ (R.βW i) (R.datWp i R.triv)) (levChi _ (R.βW i) (R.datWp i R.triv)) S c ⊓
-    R.Wat i (sg0 D A) R.triv).comap (R.HW i (sg0 D A)).e
-
-def IsScalarOnParts (R : RealDat D A Ks) (lam : Fin D.R.m → T → EigSys D → ℝ) : Prop :=
-  ∀ i t, Lift.IsLamP (R.thG i t) (LinearMap.adjoint (R.thG i t)) (goodPartOff R i (badPlaces R t)) (lam i t)
-
-def ScalarAt (R : RealDat D A Ks) (F : Face D A) : Prop :=
-  R.toLevCh.Is A.μ0 → R.IsGrp F → R.IsFam → R.IsModels → R.IsThP →
-    ∃ lam : Fin D.R.m → T → EigSys D → ℝ, IsScalarOnParts R lam
-
-def ThetaThetaAdjScalar : Prop :=
-  ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T : Type) (A : FamIn D.what₂.LL G Pl0 T D.R.m)
-    (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A), ScalarAt R F
 
 theorem gap {Rk : Ranks} (h : HCParam Rk) (j : Fin Rk.m) {n : ℕ} (hn : n < Rk.r) :
     ((Rk.t : ℚ) + 3) / 2 ≤ |Formalism.L2.NTheta.lamAt h n + h.e j| := by
@@ -51,7 +33,7 @@ theorem gap {Rk : Ranks} (h : HCParam Rk) (j : Fin Rk.m) {n : ℕ} (hn : n < Rk.
   have val : ∀ (c : ℕ) (hc : c < Rk.m), Formalism.L2.NTheta.lamAt h (Rk.k - 1 + c) = -h.b ⟨c, hc⟩ := by
     intro c hc
     unfold Formalism.L2.NTheta.lamAt
-    rw [dif_neg (by omega), dif_pos (by omega)]
+    rw [dite_eq_right (by omega), dite_eq_left (by omega)]
     simp
   unfold Ranks.r at hn mono
   by_cases hle : n ≤ Rk.k - 1 + j
@@ -64,11 +46,6 @@ theorem gap {Rk : Ranks} (h : HCParam Rk) (j : Fin Rk.m) {n : ℕ} (hn : n < Rk.
     rw [show Rk.k - 1 + (j + 1) + (n - (Rk.k - 1 + (j + 1))) = n by omega, val _ hj1] at h1
     have h2 := h.gap_eb j hj1
     exact le_trans (by linarith) (neg_le_abs _)
-
-theorem IsScalarOnParts.mem {R : RealDat D A Ks} {lam : Fin D.R.m → T → EigSys D → ℝ} (h : IsScalarOnParts R lam)
-    (i : Fin D.R.m) (t : T) (c : EigSys D) {x} (hx : x ∈ goodPartOff R i (badPlaces R t) c) :
-    R.thG i t (LinearMap.adjoint (R.thG i t) x) ∈ goodPartOff R i (badPlaces R t) c := by
-  rw [h i t c x hx]; exact Submodule.smul_mem _ _ hx
 
 theorem offS_iff (S : Finset (HeightOneSpectrum (𝓞 D.host.F))) (P : HeightOneSpectrum (𝓞 D.host.E)) :
     OffS D S P ↔ P.under (𝓞 D.host.F) ∉ S := by

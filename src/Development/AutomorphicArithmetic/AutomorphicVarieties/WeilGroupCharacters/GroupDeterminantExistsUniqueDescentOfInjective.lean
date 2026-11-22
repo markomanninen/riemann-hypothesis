@@ -1,9 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.Inertia
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DCoefMem
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGext
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DPoly
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DToDet
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.Inertia
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DCoefMem
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGext
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DGmap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DPoly
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CommutativeAlgebraHeight.DToDet
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V.Alg UpperTheory.V.W
 
@@ -14,10 +18,10 @@ private theorem exists_poly {n : ℕ} {A' A G : Type} [CommRing A'] [CommRing A]
       x.coeff.support ⊆ S → D.D B x = MvPolynomial.eval₂ ((algebraMap A B).comp f) x.coeff P := by
   classical
   let z : S → MonoidAlgebra A G := fun g => MonoidAlgebra.single g 1
-  have h1 : ∀ α, MvPolynomial.coeff α (D.toDet.poly z) ∈ f.range := by
+  have h1 : ∀ α, AddMonoidAlgebra.coeff (D.toDet.poly z) α ∈ f.range := by
     refine d_coef_mem D.toDet (MonoidHom.mrange (MonoidAlgebra.of A G)) f.range ?_ z (fun a => ⟨a, rfl⟩)
     rintro x ⟨g, rfl⟩ i - -
-    rw [(d_toDet D _).2.1]
+    rw [MonoidAlgebra.of_apply, (d_toDet D (MonoidAlgebra.single g 1)).2.1]
     exact h i g
   obtain ⟨Q, hQ⟩ : D.toDet.poly z ∈ Set.range (MvPolynomial.map f) := by
     rw [MvPolynomial.mem_range_map_iff_coeffs_subset]
@@ -30,7 +34,8 @@ private theorem exists_poly {n : ℕ} {A' A G : Type} [CommRing A'] [CommRing A]
   refine Eq.trans ?_ h2
   change _ = D.D B (ofT A G B _)
   congr 1
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [z, ofT_tmul, MonoidAlgebra.mapRingHom_single, map_one, MonoidAlgebra.smul_single, smul_eq_mul, mul_one]
   rw [Finset.sum_coe_sort S (fun g => MonoidAlgebra.single g (x.coeff g))]
   conv_lhs => rw [← MonoidAlgebra.sum_coeff_single x]

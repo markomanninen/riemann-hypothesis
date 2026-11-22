@@ -1,10 +1,42 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.FormalIdealMul
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.FormalLimit
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.CohFinite
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.FormalIdealMul
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.FormalLimit
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.ProperCohomology.CohFinite
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Arith.SchemeCoh
+
+section
+
+open AlgebraicGeometry CategoryTheory TopologicalSpace
+
+universe c236Ext c236Scheme
+
+private noncomputable def H.linearMapV436 {X : Scheme.{c236Scheme}}
+    [HasExt.{c236Ext} (Sheaf (Opens.grothendieckTopology X.toTopCat) AddCommGrpCat.{c236Scheme})]
+    (A : Type*) [CommRing A] [Algebra A Γ(X, ⊤)]
+    {F G : X.Modules} (φ : F ⟶ G) (n : ℕ) :
+    Sheaf.H.{c236Ext} (modulesAb F) n →ₗ[A] Sheaf.H.{c236Ext} (modulesAb G) n where
+  toFun := Sheaf.H.map.{c236Ext} (modulesAbMap φ) n
+  map_add' := map_add _
+  map_smul' a x := by
+    change Sheaf.H.map.{c236Ext} (modulesAbMap φ) n (a • x) =
+      a • Sheaf.H.map.{c236Ext} (modulesAbMap φ) n x
+    rw [H.smul_def, H.smul_def, ← Sheaf.H.map_comp_apply, ← Sheaf.H.map_comp_apply,
+      ← modulesAbMap_comp, ← modulesAbMap_comp, smulHom_comp]
+
+private lemma H.linearMapV436_apply {X : Scheme.{c236Scheme}}
+    [HasExt.{c236Ext} (Sheaf (Opens.grothendieckTopology X.toTopCat) AddCommGrpCat.{c236Scheme})]
+    (A : Type*) [CommRing A] [Algebra A Γ(X, ⊤)]
+    {F G : X.Modules} (φ : F ⟶ G) (n : ℕ) (x : Sheaf.H.{c236Ext} (modulesAb F) n) :
+    H.linearMapV436 A φ n x = Sheaf.H.map.{c236Ext} (modulesAbMap φ) n x := rfl
+
+end
 
 open AlgebraicGeometry CategoryTheory Opposite TopologicalSpace Limits
 
@@ -27,7 +59,7 @@ def formalK (n : ℕ) : Submodule A (Sheaf.H.{u} (modulesAb F) q) :=
 lemma formalK_antitone : Antitone (formalK I F q) := by
   refine antitone_nat_of_succ_le fun n => ?_
   rintro _ ⟨x, rfl⟩
-  refine ⟨H.linearMap A (idealPowSucc I F (n + 1)) q x, ?_⟩
+  refine ⟨H.linearMapV436 A (idealPowSucc I F (n + 1)) q x, ?_⟩
   change Sheaf.H.map.{u} (modulesAbMap (idealPowι I F (n + 1))) q
       (Sheaf.H.map.{u} (modulesAbMap (idealPowSucc I F (n + 1))) q x) =
     Sheaf.H.map.{u} (modulesAbMap (idealPowι I F (n + 1 + 1))) q x
@@ -62,9 +94,6 @@ def formalQ (n : ℕ) : Submodule A (Sheaf.H.{u} (modulesAb (idealPow I F (n + 1
 def formalι (n : ℕ) : (Sheaf.H.{u} (modulesAb F) q ⧸ formalK I F q n) →ₗ[A]
     Sheaf.H.{u} (modulesAb (quotPow I F n)) q :=
   (formalK I F q n).liftQ (formalβ I F q n) (ker_formalβ I F q n).ge
-
-lemma formalι_mk (n : ℕ) (h : Sheaf.H.{u} (modulesAb F) q) :
-    formalι I F q n (Submodule.Quotient.mk h) = formalβ I F q n h := rfl
 
 lemma formalι_injective (n : ℕ) : Function.Injective (formalι I F q n) := by
   rw [← LinearMap.ker_eq_bot, formalι, Submodule.ker_liftQ, ker_formalβ, Submodule.mkQ_map_self]

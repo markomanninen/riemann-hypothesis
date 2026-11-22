@@ -1,6 +1,10 @@
-import CompanionTheory.AutomorphicTheory.UniformLocalFormulas.UniformRestrictionOfEnergy
-import CompanionTheory.AutomorphicTheory.UniformLocalFormulas.CovarianceFormula
-import CompanionTheory.AutomorphicTheory.UniformLocalFormulas.RankOneTermInvariant
+module
+
+public import CompanionTheory.AutomorphicTheory.UniformLocalFormulas.UniformRestrictionOfEnergy
+public import CompanionTheory.AutomorphicTheory.UniformLocalFormulas.CovarianceFormula
+public import CompanionTheory.AutomorphicTheory.UniformLocalFormulas.RankOneTermInvariant
+
+@[expose] public section
 
 namespace Formalism.MainStatements.RowRest
 

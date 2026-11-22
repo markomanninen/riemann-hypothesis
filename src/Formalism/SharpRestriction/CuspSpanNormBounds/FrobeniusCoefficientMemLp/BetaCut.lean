@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.AmpNZCut
-import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Transported
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FrobeniusCoefficientMemLp.AmpNZCut
+public import Formalism.HermitianCurvature.WeylElementCommutesLevelOne
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Transported
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal InnerProductSpace

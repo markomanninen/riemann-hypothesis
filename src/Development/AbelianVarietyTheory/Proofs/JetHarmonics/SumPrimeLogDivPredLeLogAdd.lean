@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.PrimeLogSum
 open Finset
@@ -126,8 +130,8 @@ private lemma log_factorial_le_stirling_bound (n : ℕ) (hn : 1 ≤ n) :
     Real.log_exp] at h1
   linarith [h1]
 
-open Finset in
 
+open Finset in
 theorem _root_.GlobalTheory.PrimeLogSum.sum_log_div_pred_le : ∀ N : ℕ,
     ∑ p ∈ (Finset.range (N + 1)).filter Nat.Prime, Real.log p / ((p : ℝ) - 1)
       ≤ Real.log N + 2.2 := by

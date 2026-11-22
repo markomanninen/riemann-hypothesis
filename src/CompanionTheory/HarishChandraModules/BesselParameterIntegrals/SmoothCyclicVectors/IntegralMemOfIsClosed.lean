@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SecondCountableQuotients.ModExists
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothVec
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SecondCountableQuotients.ModExists
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothVec
+
+@[expose] public section
 
 open Matrix Filter Topology Set MeasureTheory MeasureTheory.Measure
 open scoped ContDiff
@@ -240,7 +244,7 @@ theorem integral_dsW (h : RepOn G σ) {v : H} (hv : IsSm G σ v) {φ : Mat n →
   | [], _ => rfl
   | X :: W, hXW => by
     have hW : LieW G W := fun Y hY => hXW Y (List.mem_cons_of_mem _ hY)
-    have hX := hXW X List.mem_cons_self
+    have hX : ∀ t, ex X t ∈ G := hXW X List.mem_cons_self
     have h1 := hasDerivAt_B (hG := hG) h hv hX hW hφ.continuous hc
     rw [integral_dsW h hv hφ hc hW] at h1
     exact h1.unique (hasDerivAt_A h hv hX (contDiff_LW hφ W) (hasCompactSupport_LW hc W))
@@ -283,20 +287,41 @@ theorem exists_approx (hG : IsMatGroup G) (h : RepOn G σ) (hiso : ∀ g ∈ G, 
     {w : H} (hw : IsSm G σ w) (hd : Dense (orbSpan G σ w : Set H)) {x : H} (hx : IsSm G σ x)
     {ι : Type} [Fintype ι] {W : ι → List (Mat n)} (hW : ∀ i, LieW G (W i)) {δ : ℝ} (hδ : 0 < δ) :
     ∃ y ∈ orbSpan G σ w, ∀ i, ‖dsW σ (W i) (x - y)‖ < δ := by
+  have hAdd {a b : H} (ha : IsSm G σ a) (hb : IsSm G σ b) (L : List (Mat n)) :
+      LieW G L → dsW σ L (a + b) = dsW σ L a + dsW σ L b := by
+    induction L with
+    | nil => intro _; rfl
+    | cons X L ih =>
+      intro hL
+      have hTail : LieW G L := fun Y hY => hL Y (List.mem_cons_of_mem _ hY)
+      have hX : ∀ t, ex X t ∈ G := hL X List.mem_cons_self
+      simp only [dsW_cons, ih hTail, ds, map_add]
+      exact deriv_fun_add ((ha.dsW h hTail).differentiableAt h hX)
+        ((hb.dsW h hTail).differentiableAt h hX)
+  have hSmul {v : H} (hv : IsSm G σ v) (c : ℂ) (L : List (Mat n)) :
+      LieW G L → dsW σ L (c • v) = c • dsW σ L v := by
+    induction L with
+    | nil => intro _; rfl
+    | cons X L ih =>
+      intro hL
+      have hTail : LieW G L := fun Y hY => hL Y (List.mem_cons_of_mem _ hY)
+      have hX : ∀ t, ex X t ∈ G := hL X List.mem_cons_self
+      simp only [dsW_cons, ih hTail, ds, map_smul]
+      exact deriv_fun_const_smul c ((hv.dsW h hTail).differentiableAt h hX)
   let J : H → ι → H := fun v i => dsW σ (W i) v
   let S₀ : Submodule ℂ (ι → H) :=
     { carrier := J '' orbSpan G σ w
       add_mem' := by
         rintro _ _ ⟨a, ha, rfl⟩ ⟨b, hb, rfl⟩
-        exact ⟨a + b, add_mem ha hb, funext fun i => dsW_add h (isSm_of_mem_orbSpan h hw ha)
-          (isSm_of_mem_orbSpan h hw hb) (hW i)⟩
+        exact ⟨a + b, add_mem ha hb, funext fun i => hAdd (isSm_of_mem_orbSpan h hw ha)
+          (isSm_of_mem_orbSpan h hw hb) (W i) (hW i)⟩
       zero_mem' := ⟨0, zero_mem _, funext fun i => by
-        have := dsW_smul h (IsSm.zero (G := G) (σ := σ)) 0 (hW i)
+        have := hSmul IsSm.zero 0 (W i) (hW i)
         simpa using this⟩
       smul_mem' := by
         rintro c _ ⟨a, ha, rfl⟩
         exact ⟨c • a, Submodule.smul_mem _ c ha, funext fun i =>
-          dsW_smul h (isSm_of_mem_orbSpan h hw ha) c (hW i)⟩ }
+          hSmul (isSm_of_mem_orbSpan h hw ha) c (W i) (hW i)⟩ }
   let S := S₀.topologicalClosure
   have hS : IsClosed (S : Set (ι → H)) := S₀.isClosed_topologicalClosure
   have hJc : ∀ v, IsSm G σ v → Continuous fun g : MG G hG => J (σ g.mat v) := fun v hv =>

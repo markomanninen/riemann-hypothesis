@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.Pieces
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.Pieces
+
+@[expose] public section
 
 noncomputable section
 

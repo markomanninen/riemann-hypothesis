@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.DetPaHadApply
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.ShcAdC
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.DetPPos
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.DetPaHadApply
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.ShcAdC
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.FormalDegree.DetPPos
+
+@[expose] public section
 
 noncomputable section
 

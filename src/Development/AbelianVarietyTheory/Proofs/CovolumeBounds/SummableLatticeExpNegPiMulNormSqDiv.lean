@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsLinearIndependentNormLeSuccMin
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.LatticeFourierOfContDiffFiniteDimensional
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ThetaMetrics.ExistsLinearIndependentNormLeSuccMin
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.LatticeFourierOfContDiffFiniteDimensional
+
+@[expose] public section
 
 open MeasureTheory Module Set
 open scoped RealInnerProductSpace Real FourierTransform
@@ -8,6 +12,12 @@ open scoped RealInnerProductSpace Real FourierTransform
 noncomputable section
 
 namespace GlobalTheory
+
+local notation "e[" t "]" => Complex.exp (2 * (π : ℂ) * Complex.I * ((t : ℝ) : ℂ))
+
+private theorem norm_latticeFourier_phase (t : ℝ) : ‖e[t]‖ = 1 := by
+  rw [Complex.norm_exp]
+  simp
 
 section Summable
 
@@ -29,8 +39,8 @@ theorem summable_lattice_exp_neg_mul_norm_sq {a : ℝ} (ha : 0 < a) :
   rw [mul_pow, ← pow_mul, inv_pow]
   field_simp
 
-omit [NormedSpace ℝ E] [FiniteDimensional ℝ E] in
 
+omit [NormedSpace ℝ E] [FiniteDimensional ℝ E] in
 theorem exp_neg_mul_norm_add_sq_le {a R : ℝ} (ha : 0 ≤ a) (x : E) {u : E} (hu : ‖u‖ ≤ R) :
     Real.exp (-a * ‖x + u‖ ^ 2) ≤ Real.exp (a * R ^ 2) * Real.exp (-(a / 2) * ‖x‖ ^ 2) := by
   rw [← Real.exp_add, Real.exp_le_exp]
@@ -55,11 +65,9 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDim
   {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
   (L : Submodule ℤ E) [DiscreteTopology L] [IsZLattice ℝ L]
 
-local notation "e[" t "]" => Complex.exp (2 * (π : ℂ) * Complex.I * ((t : ℝ) : ℂ))
 
 omit [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E]
   [NormedSpace ℂ V] [DiscreteTopology L] [IsZLattice ℝ L] in
-
 theorem continuous_tsum_lattice_translate [CompleteSpace V] {f : E → V} (hc : Continuous f)
     (hdom : ∀ R : ℝ, ∃ g : L → ℝ, Summable g ∧ ∀ (x : L) (u : E), ‖u‖ ≤ R → ‖f (x + u)‖ ≤ g x) :
     Continuous fun u : E ↦ ∑' x : L, f (x + u) := by
@@ -70,9 +78,9 @@ theorem continuous_tsum_lattice_translate [CompleteSpace V] {f : E → V} (hc : 
       fun x v hv ↦ h x v (mem_ball_zero_iff.1 hv).le
   exact this.continuousAt (Metric.isOpen_ball.mem_nhds (by simp))
 
+
 omit [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E]
   [NormedSpace ℂ V] [DiscreteTopology L] [IsZLattice ℝ L] in
-
 theorem periodic_tsum_lattice_translate (f : E → V) {z : E} (hz : z ∈ L) :
     Function.Periodic (fun u : E ↦ ∑' x : L, f (x + u)) z := fun u ↦ by
   beta_reduce
@@ -82,8 +90,8 @@ theorem periodic_tsum_lattice_translate (f : E → V) {z : E} (hz : z ∈ L) :
   congr 1
   abel
 
-omit [NormedSpace ℂ V] in
 
+omit [NormedSpace ℂ V] in
 theorem integrable_of_lattice_translate_dominated {f : E → V} (hc : Continuous f)
     (hdom : ∀ R : ℝ, ∃ g : L → ℝ, Summable g ∧ ∀ (x : L) (u : E), ‖u‖ ≤ R → ‖f (x + u)‖ ≤ g x) :
     Integrable f := by
@@ -114,10 +122,11 @@ theorem latticeFourierCoeff_tsum_translate [CompleteSpace V] {f : E → V} (hc :
   have : MeasurableVAdd L E := (inferInstance : MeasurableVAdd L.toAddSubgroup E)
   have : VAddInvariantMeasure L E volume :=
     (inferInstance : VAddInvariantMeasure L.toAddSubgroup E volume)
+  have hcontinuous : Continuous (fun v : E ↦ e[-⟪y, v⟫] • f v) := by fun_prop
   have hint : Integrable fun v : E ↦ e[-⟪y, v⟫] • f v :=
     (integrable_of_lattice_translate_dominated L hc hdom).norm.mono'
-      (continuous_cexp_neg_inner_smul hc y).aestronglyMeasurable
-      (.of_forall fun v ↦ by rw [norm_smul, norm_cexp_two_pi_I, one_mul])
+      hcontinuous.aestronglyMeasurable
+      (.of_forall fun v ↦ by rw [norm_smul, norm_latticeFourier_phase, one_mul])
   have hF : 𝓕 f y = ∫ v, e[-⟪y, v⟫] • f v := by
     rw [Real.fourier_eq']
     refine integral_congr_ae (.of_forall fun v ↦ ?_)
@@ -138,7 +147,7 @@ theorem latticeFourierCoeff_tsum_translate [CompleteSpace V] {f : E → V} (hc :
     integrableOn_latticeCell_of_continuous L (by fun_prop)) ?_).tsum_eq.symm
   refine .of_norm_bounded (hg.mul_right (volume.real (latticeCell L))) fun x ↦ ?_
   refine norm_setIntegral_le_of_norm_le_const (volume_latticeCell_lt_top L) fun u hu ↦ ?_
-  rw [norm_norm, norm_smul, norm_cexp_two_pi_I, one_mul]
+  rw [norm_norm, norm_smul, norm_latticeFourier_phase, one_mul]
   exact h x u (hR u hu)
 
 theorem hasSum_poisson_lattice [CompleteSpace V] {f : E → V} (hc : Continuous f)
@@ -164,8 +173,8 @@ theorem tsum_poisson_lattice [CompleteSpace V] {f : E → V} (hc : Continuous f)
       (ZLattice.covolume L)⁻¹ • ∑' y : dualLattice L, e[⟪(y : E), u⟫] • 𝓕 f y := by
   rw [← (hasSum_poisson_lattice L hc hdom hs u).tsum_eq, tsum_const_smul'']
 
-omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] in
 
+omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] in
 theorem norm_cexp_neg_pi_mul_norm_sq_add (b : ℂ) (w v : E) :
     ‖Complex.exp (-π * b * ‖v‖ ^ 2 + 2 * π * Complex.I * ⟪w, v⟫)‖ =
       Real.exp (-(π * b.re) * ‖v‖ ^ 2) := by
@@ -173,8 +182,8 @@ theorem norm_cexp_neg_pi_mul_norm_sq_add (b : ℂ) (w v : E) :
   congr 1
   simp [← Complex.ofReal_pow]
 
-omit [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] in
 
+omit [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] in
 theorem norm_cexp_neg_pi_mul_norm_sq_div (b : ℂ) (v : E) :
     ‖Complex.exp (-π * ‖v‖ ^ 2 / b)‖ = Real.exp (-(π * b⁻¹.re) * ‖v‖ ^ 2) := by
   rw [Complex.norm_exp, div_eq_mul_inv]
@@ -199,16 +208,16 @@ theorem fourier_cexp_neg_pi_mul_norm_sq_add {b : ℂ} (hb : 0 < b.re) (w y : E) 
   · congr 1
     field_simp
 
-omit [MeasurableSpace E] [BorelSpace E] [IsZLattice ℝ L] in
 
+omit [MeasurableSpace E] [BorelSpace E] [IsZLattice ℝ L] in
 theorem summable_norm_lattice_cexp_gaussian {b : ℂ} (hb : 0 < b.re) (w u : E) :
     Summable fun x : L ↦ ‖Complex.exp (-π * b * ‖(x : E) + u‖ ^ 2 +
       2 * π * Complex.I * ⟪w, (x : E) + u⟫)‖ := by
   simp only [norm_cexp_neg_pi_mul_norm_sq_add]
   exact summable_lattice_exp_neg_mul_norm_add_sq L (mul_pos Real.pi_pos hb) u
 
-omit [MeasurableSpace E] [BorelSpace E] [IsZLattice ℝ L] in
 
+omit [MeasurableSpace E] [BorelSpace E] [IsZLattice ℝ L] in
 theorem summable_norm_lattice_cexp_gaussian_div {b : ℂ} (hb : 0 < b.re) (w : E) :
     Summable fun y : L ↦ ‖Complex.exp (-π * ‖(y : E) - w‖ ^ 2 / b)‖ := by
   have hb0 : b ≠ 0 := by rintro rfl; simp at hb
@@ -226,9 +235,14 @@ theorem poisson_cexp_gaussian_lattice {b : ℂ} (hb : 0 < b.re) (w u : E) :
       (ZLattice.covolume L : ℂ)⁻¹ * b ^ (-(finrank ℝ E / 2 : ℂ)) *
         ∑' y : dualLattice L, Complex.exp (-π * ‖(y : E) - w‖ ^ 2 / b) *
           Complex.exp (2 * π * Complex.I * ⟪(y : E), u⟫) := by
+  letI : IsZLattice ℝ (dualLattice L) := by
+    classical
+    constructor
+    rw [dualLattice_eq_span L (Free.chooseBasis ℤ L)]
+    exact ZSpan.span_top _
   have hs := summable_norm_lattice_cexp_gaussian_div (dualLattice L) hb w
   refine ⟨summable_norm_lattice_cexp_gaussian L hb w u, ?_, ?_⟩
-  · simpa only [norm_mul, norm_cexp_two_pi_I, mul_one] using hs
+  · simpa only [norm_mul, norm_latticeFourier_phase, mul_one] using hs
   have ha : 0 < π * b.re := mul_pos Real.pi_pos hb
   refine (tsum_poisson_lattice L
     (f := fun v : E ↦ Complex.exp (-π * b * ‖v‖ ^ 2 + 2 * π * Complex.I * ⟪w, v⟫)) (by fun_prop)
@@ -264,13 +278,6 @@ theorem poisson_gaussian_lattice {t : ℝ} (ht : 0 < t) (u : E) :
     push_cast
     exact h3
 
-omit [MeasurableSpace E] [BorelSpace E] [IsZLattice ℝ L] in
-
-theorem summable_lattice_exp_neg_pi_mul_norm_sq_div {t : ℝ} (ht : 0 < t) :
-    Summable fun y : L ↦ Real.exp (-π * ‖(y : E)‖ ^ 2 / t) := by
-  refine (summable_lattice_exp_neg_mul_norm_sq L (div_pos Real.pi_pos ht)).congr fun y ↦ ?_
-  congr 1
-  ring
 
 theorem poisson_gaussian_lattice_cos {t : ℝ} (ht : 0 < t) (u : E) :
     (Summable fun y : dualLattice L ↦
@@ -298,15 +305,5 @@ theorem tsum_gaussian_lattice_eq_dualLattice {t : ℝ} (ht : 0 < t) :
         ∑' y : dualLattice L, Real.exp (-π * ‖(y : E)‖ ^ 2 / t) := by
   simpa only [add_zero, inner_zero_right, mul_zero, Real.cos_zero, mul_one] using
     (poisson_gaussian_lattice_cos L ht 0).2
-
-theorem tsum_gaussian_lattice_add_le {t : ℝ} (ht : 0 < t) (u : E) :
-    ∑' x : L, Real.exp (-π * t * ‖(x : E) + u‖ ^ 2) ≤
-      ∑' x : L, Real.exp (-π * t * ‖(x : E)‖ ^ 2) := by
-  obtain ⟨h1, h2⟩ := poisson_gaussian_lattice_cos L ht u
-  have hpos := ZLattice.covolume_pos L volume
-  rw [h2, tsum_gaussian_lattice_eq_dualLattice L ht]
-  refine mul_le_mul_of_nonneg_left (h1.tsum_le_tsum (fun y ↦ ?_)
-    (summable_lattice_exp_neg_pi_mul_norm_sq_div _ ht)) (by positivity)
-  exact mul_le_of_le_one_right (Real.exp_pos _).le (Real.cos_le_one _)
 
 end GlobalTheory

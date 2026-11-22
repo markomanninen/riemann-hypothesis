@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.IsSelfOf
-import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.GapParts
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ProdDetMemHaO
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.IsSelfOf
+public import Development.AbelianVarietyTheory.Definitions.Jets.TwoPlaces
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.GapParts
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ProdDetMemHaO
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -122,8 +126,8 @@ section Image
 variable {C : Type} [Field C] {Ty : Type} {r : Ty → ℕ} {Orb : Type} [Fintype Orb] (tau : Orb → ZMod 2 → Ty)
   {N n : ℕ} (pl : Fin N × Fin 2 ↪ Fin n)
 
-variable (r) in
 
+variable (r) in
 abbrev Var : Type := WVO fun (o : Orb) (_ : Fin 2) => Σ s : ZMod 2, Fin (r (tau o s))
 
 def lt (ρ : Fin N) (w : Var r tau) (col : Fin 2) : Letter Ty r n := ⟨tau w.1 w.2.2.1, w.2.2.2, pl (ρ, col)⟩
@@ -218,7 +222,8 @@ theorem isImgS_sub (hinj : Function.Injective fun x : Orb × ZMod 2 => tau x.1 x
         · intro ρ _ h
           exact Finset.sum_eq_zero fun w _ => by rw [co_ne tau pl hinj gi _ _ _ h, map_zero, zero_mul]
         · simp
-      simp only [AlgHom.comp_apply, MvPolynomial.aeval_X, sub, map_sum, map_mul, MvPolynomial.aeval_C,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [AlgHom.comp_apply, MvPolynomial.aeval_X, sub, map_sum, map_mul, MvPolynomial.aeval_C,
         MvPolynomial.algebraMap_eq, h1, AlgHom.id_apply]
       simp only [← MvPolynomial.smul_eq_C_mul, Finset.smul_sum, smul_smul]
       rw [Finset.sum_comm]
@@ -319,8 +324,8 @@ variable {C : Type} [Field C] {V : VF C} {Ty : Type} {r : Ty → ℕ} {Orb : Typ
   {J : Orb → Fin 2 → Type} [∀ o g, Fintype (J o g)]
   (X : ∀ o, RowData C V 2 (fun _ => Σ s : ZMod 2, Fin (r (tau o s))) (J o)) (F : ∀ o, RF.Flag (X o))
 
-omit [Fintype Orb] in
 
+omit [Fintype Orb] in
 theorem sub_minor (hty : ∀ o g c, ((X o).G g).ty (Sum.inl c) = c.1 + sh g)
     (hen : ∀ o g a q, (((F o).en g a q).2 : ℕ) = q) (o : Orb) {what₂ : ℕ} (pr : Fin what₂ → Fin N) (g : Fin 2)
     (s : ZMod 2) (k : ℕ) (hk : k ≤ r (tau o s)) (hr : k ≤ what₂) :
@@ -338,7 +343,8 @@ theorem sub_minor (hty : ∀ o g c, ((X o).G g).ty (Sum.inl c) = c.1 + sh g)
     RF.Flag.letter]
   rw [en_eq (X o) (F o) (hty o) (hen o) g s _ (Fin.castLE hk i) rfl]
   have hρ : (ρ : ℕ) < what₂ := lt_of_lt_of_le ρ.2 hr
-  simp only [cf, dif_pos hρ, map_sum, Finset.sum_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [cf, dif_pos hρ, map_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   unfold sub
   refine Finset.sum_congr rfl fun col _ => ?_

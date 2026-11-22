@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LinksExist
-import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemOrth
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksExist
+public import Formalism.LocalToGlobal.IndefiniteReal.FinitePlaces.IdemOrth
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 
-open Classical in
 
+open Classical in
 theorem idemSum_of_noConj (S : Finset (Formalism.L2.DIV.Pl D.host.E))
     (hnc : ∀ P ∈ S, ∀ P' ∈ S, ¬ Lev.IsConjPl (D := D) P P') :
     ∃ e : AE D, Formalism.IndefR.Datum.IsIdemSum e S := by
@@ -24,7 +28,8 @@ theorem idemSum_of_noConj (S : Finset (Formalism.L2.DIV.Pl D.host.E))
     simp only [es, dif_pos h]
     exact (idem_exists_at PP h).choose_spec.1
   refine ⟨∑ PP ∈ S, es PP, ⟨es, hes, rfl⟩, ?_⟩
-  rw [map_sum, Finset.sum_mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.sum_mul_sum]
   apply Finset.sum_eq_zero
   intro PP hPP
   apply Finset.sum_eq_zero
@@ -37,9 +42,6 @@ theorem g_mem_of_div (C : Formalism.L2.Host.CharFrame D) {k : Fin 2} {PP : Forma
   rw [← h] at h1
   have h2 : ((D.host.g k : ℕ) : 𝓞 D.host.K) ∈ PP.asIdeal.comap (algebraMap (𝓞 D.host.K) (𝓞 D.host.E)) := h1
   simpa [Ideal.mem_comap] using h2
-
-def PbNotConj (C : Formalism.L2.Host.CharFrame D) : Prop :=
-  ∀ (k : Fin 2) (PP PP' : Formalism.L2.DIV.Pl D.host.E), C.P.Div k PP → C.P.Div k PP' → ¬ Lev.IsConjPl (D := D) PP PP'
 
 section Links
 

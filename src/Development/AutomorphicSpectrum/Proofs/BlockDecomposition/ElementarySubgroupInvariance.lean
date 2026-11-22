@@ -1,6 +1,10 @@
-import Mathlib
-import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.AdelicGaussians.UpperRightUnipotentInvariance
-import GroundTheory.AutomorphicForms.CompactAbelianCharacters
+module
+
+public import Mathlib
+public import PositivityTheory.AutomorphicForms.PublishedInputs.CuspidalContinuity.ArchimedeanCuspidal.AdelicGaussians.UpperRightUnipotentInvariance
+public import GroundTheory.AutomorphicForms.CompactAbelianCharacters
+
+@[expose] public section
 
 noncomputable section
 

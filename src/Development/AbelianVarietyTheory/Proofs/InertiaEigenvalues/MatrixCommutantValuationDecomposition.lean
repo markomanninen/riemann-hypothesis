@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CommOfBezout
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CommOfBezout
+
+@[expose] public section
+
 open GlobalTheory.UnitDiscAlg
 
 namespace GlobalTheory.ValDecomp
@@ -57,7 +62,7 @@ private theorem norm_det_le_one_of_entries_norm_le_one' {x : Matrix (Fin n) (Fin
   refine IsUltrametricDist.norm_sum_le_of_forall_le_of_nonneg zero_le_one fun σ _ => ?_
   rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with h | h <;>
     simp only [h, one_smul, Units.neg_smul, norm_neg, norm_prod] <;>
-    exact Finset.prod_le_one (fun _ _ => norm_nonneg _) fun i _ => hx _ _
+    exact Finset.prod_le_one₀ (fun _ _ => norm_nonneg _) fun i _ => hx _ _
 
 variable {E : Type} [NontriviallyNormedField E] [IsUltrametricDist E] {n : ℕ} in
 private theorem inv_entries_norm_le_one_of_norm_det_one {x : Matrix (Fin n) (Fin n) E}

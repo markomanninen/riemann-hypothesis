@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ExistsUnitFormLocalizationEtaleNbhd
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.BT
 
@@ -87,7 +91,7 @@ theorem QFGroup.exists_eq_comp_pt : ∀ (R : Type) [CommRing R] [IsDomain R] (T 
   rename_i pt _ pt_onto _
   dsimp only
   intro Ω _ k y hy
-  let a0 : Spec (CommRingCat.of Ω) := (⟨⊥, Ideal.bot_prime⟩ : PrimeSpectrum Ω)
+  let a0 : Spec (CommRingCat.of Ω) := (⟨⊥, Ideal.isPrime_bot⟩ : PrimeSpectrum Ω)
   obtain ⟨t, x, hx⟩ := pt_onto (y a0) (by
     rw [← Scheme.Hom.comp_apply y _ a0, hy, Spec.map_apply]
     change Ideal.comap (k.comp (algebraMap R (FractionRing R))) (⊥ : Ideal Ω) = ⊥

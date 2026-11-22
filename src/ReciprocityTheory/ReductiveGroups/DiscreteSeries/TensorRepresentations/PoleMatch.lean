@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.PoleMatchA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.PoleMatchA
+
+@[expose] public section
 
 noncomputable section
 
@@ -66,10 +70,10 @@ theorem pole_zero (dual : Bool) {lam : Fin n → ℝ} {H : Type*} [NormedAddComm
           hno _ (hPM b f hf) (by rw [hPz b f hf, h])
         have h2 : c b • x₀ = 0 := by
           rw [← hcb b x₀ hx₀, ptr_apply]
-          exact sum_eq_zero fun i _ => by rw [hz _ (pm_single_mem _ hx₀ _)]; rfl
+          exact sum_eq_zero fun i _ => congrFun (hz _ (pm_single_mem _ hx₀ i)) i
         exact (smul_eq_zero.1 h2).resolve_right hx₀0
       · rfl
     rw [hsum] at h1
-    exact_mod_cast h1.symm
+    simpa only [Complex.ofReal_re, Complex.zero_re] using congrArg Complex.re h1.symm
 
 end ReciprocityTheory.ChartRestriction.DS

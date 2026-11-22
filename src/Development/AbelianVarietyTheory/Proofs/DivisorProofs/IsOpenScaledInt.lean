@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SiegelWeilAnisotropicHermitian
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+
+@[expose] public section
 
 open scoped TensorProduct NNReal Matrix
 open NumberField IsDedekindDomain MeasureTheory Filter Topology Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
@@ -17,8 +21,9 @@ def scaledInt (a : F) : AddSubgroup (κ → FiniteAdeleRing (𝓞 F) F) where
   carrier := {z | ∀ i (v : HeightOneSpectrum (𝓞 F)),
     (algebraMap F (v.adicCompletion F) a)⁻¹ * (z i) v ∈ v.adicCompletionIntegers F}
   zero_mem' := fun i v => by
-    show (algebraMap F (v.adicCompletion F) a)⁻¹ * (0 : FiniteAdeleRing (𝓞 F) F) v ∈ _
-    simp
+    change (algebraMap F (v.adicCompletion F) a)⁻¹ * 0 ∈ v.adicCompletionIntegers F
+    rw [mul_zero]
+    exact zero_mem _
   add_mem' := fun {z w} hz hw i v => by
     show (algebraMap F (v.adicCompletion F) a)⁻¹ * ((z i + w i) v) ∈ _
     have e : (z i + w i) v = (z i) v + (w i) v := rfl
@@ -43,7 +48,7 @@ theorem isOpen_scaledInt [Finite κ] (a : F) : IsOpen (scaledInt F κ a : Set (�
       algebraMap F (FiniteAdeleRing (𝓞 F) F) a⁻¹ * z i) ⁻¹'
       {x : FiniteAdeleRing (𝓞 F) F | ∀ v : HeightOneSpectrum (𝓞 F), x v ∈ v.adicCompletionIntegers F} := by
     ext z
-    simp only [SetLike.mem_coe, mem_scaledInt, Set.mem_iInter, Set.mem_preimage, Set.mem_setOf_eq]
+    simp only [SetLike.mem_coe, mem_scaledInt, Set.mem_iInter, Set.mem_preimage, Set.mem_ofPred_eq]
     refine forall_congr' fun i => forall_congr' fun v => ?_
     have h : (algebraMap F (FiniteAdeleRing (𝓞 F) F) a⁻¹ * z i) v =
         (algebraMap F (v.adicCompletion F) a)⁻¹ * (z i) v := by

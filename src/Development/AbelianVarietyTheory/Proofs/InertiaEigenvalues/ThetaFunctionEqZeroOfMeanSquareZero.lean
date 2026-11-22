@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
-import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurLemmaThetaFunctionsOrientedPair
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDescendPeriodicTrig
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LengthPosOfPosDef
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdjFormula
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksStage
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchurLemmaThetaFunctionsOrientedPair
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsDescendPeriodicTrig
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ theorem psi_ne_zero (hψ : IsStdChar D ψ (-1)) (a : AF D.host.F) : ψ a ≠ 0 :
 
 theorem isTheta_star_mul_mul (hψ : IsStdChar D ψ (-1)) {g h f : WO S T → ℂ} (hg : IsThetaFunO ψ S T g)
     (hh : IsThetaFunO ψ S T h) (hf : IsThetaFunO ψ S T f) :
-    IsThetaFunO ψ S T (fun x => star (g x) * h x * f x) where
+    IsThetaFunO ψ S T (fun x => star (g x) * h x * f x) := {
   quasi γ w := by
     rw [hg.quasi, hh.quasi, hf.quasi, star_mul']
     linear_combination (star (g w) * h w * f w * ψ (-(symplOH S T (ratW T S γ) w))) *
@@ -50,7 +54,7 @@ theorem isTheta_star_mul_mul (hψ : IsStdChar D ψ (-1)) {g h f : WO S T → ℂ
   smooth k L hL hL0 w := by
     have hs : ContDiff ℝ ∞ (fun t => star (g (w + L t))) :=
       Complex.conjCLE.contDiff.comp (hg.smooth k L hL hL0 w)
-    exact ContDiff.mul (ContDiff.mul hs (hh.smooth k L hL hL0 w)) (hf.smooth k L hL hL0 w)
+    exact ContDiff.mul (ContDiff.mul hs (hh.smooth k L hL hL0 w)) (hf.smooth k L hL hL0 w) }
 
 theorem exists_bound (hψ : IsStdChar D ψ (-1)) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) :
     ∃ C : ℝ, ∀ x, ‖f x‖ ≤ C := by
@@ -134,12 +138,6 @@ theorem trig_approx (hψ : IsStdChar D ψ (-1)) {q : WO S T → ℂ} (hq : Conti
       rw [← GlobalTheory.RatAnnih.ratL_annihilator D ψ hψ S T x]
       exact ⟨fun h γ hγ => h ⟨γ, hγ⟩, fun h γ => h γ γ.2⟩)
     q hq hqp δ hδ
-
-def thetaSub (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) : Submodule ℂ (WO S T → ℂ) where
-  carrier := {f | IsThetaFunO ψ S T f}
-  add_mem' := GlobalTheory.WeilVacMove.isTheta_add
-  zero_mem' := GlobalTheory.WeilVacMove.isTheta_zero
-  smul_mem' := fun c _ h => GlobalTheory.WeilVacMove.isTheta_smul c h
 
 theorem trig_mul_eq (s : Finset (ratL T S)) (c : ratL T S → ℂ) {f : WO S T → ℂ} (hf : IsThetaFunO ψ S T f) :
     (fun x => (∑ a ∈ s, c a * ψ (symplO S T x a)) * f x) = ∑ a ∈ s, c a • heisO ψ S T a f := by

@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.FourierWhittaker.AdelicCharPairTorusPtSingle
-import GroundTheory.AutomorphicForms.FourierWhittaker.UMatColXEqFromBlocks
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.FourierWhittaker.AdelicCharPairTorusPtSingle
+public import GroundTheory.AutomorphicForms.FourierWhittaker.UMatColXEqFromBlocks
+
+@[expose] public section
 
 open NumberField MeasureTheory Topology Set Filter IsDedekindDomain Matrix
 open scoped NumberField.AdeleRing
@@ -80,9 +84,10 @@ instance firstCountableTopology_adelicGL : FirstCountableTopology (AdelicGLn.Ade
   have h1 : SecondCountableTopology (Matrix (Fin n) (Fin n) 𝔸[K]) := inferInstance
   have h2 : SecondCountableTopology (Matrix (Fin n) (Fin n) 𝔸[K])ᵐᵒᵖ :=
     (MulOpposite.opHomeomorph (M := Matrix (Fin n) (Fin n) 𝔸[K])).symm.isEmbedding.secondCountableTopology
-  have : SecondCountableTopology (AdelicGLn.AdelicGL K n) :=
+  have hGL : SecondCountableTopology (AdelicGLn.AdelicGL K n) :=
     Units.isEmbedding_embedProduct.secondCountableTopology
-  infer_instance
+  exact @TopologicalSpace.SecondCountableTopology.to_firstCountableTopology
+    (AdelicGLn.AdelicGL K n) _ hGL
 
 theorem continuous_stepCoeff (k : ℕ) {F : AdelicGLn.AdelicGL K n → ℂ} (hF : Continuous F) :
     Continuous (stepCoeff k F) := by
@@ -102,7 +107,8 @@ theorem continuous_partialCoeff {ϕ : AdelicGLn.AdelicGL K n → ℂ} (hϕ : Con
 
 theorem pair_matVec [DecidableEq ι] (ξ : ι → K) (M : Matrix ι ι K) (x : ι → 𝔸[K]) :
     pair ξ (matVec M x) = pair (Matrix.vecMul ξ M) x := by
-  simp only [pair, matVec_apply, Finset.mul_sum, Matrix.vecMul, dotProduct, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [pair, matVec_apply, Finset.mul_sum, Matrix.vecMul, dotProduct, map_sum, map_mul,
     Finset.sum_mul, mul_assoc]
   exact Finset.sum_comm
 
@@ -141,7 +147,7 @@ theorem isLastRowUnit_colX {j : ℕ} (ξ : Fin j → K) :
 
 theorem blockMat_self (h : Matrix (Fin n) (Fin n) K) : blockMat (le_refl n) h = h := by
   ext a b
-  rw [blockMat_apply, dif_pos a.2, dif_pos b.2]
+  rw [blockMat_apply, dite_eq_left a.2, dite_eq_left b.2]
 
 theorem diagonal_blockGL {j : ℕ} (hj : j ≤ n) (h : GL (Fin j) K) :
     AdelicGLn.diagonal K n (blockGL hj h) =
@@ -198,8 +204,8 @@ theorem stepCoeff_diagonal_blockGL {j : ℕ} (hj : j < n) (h : GL (Fin j) K)
   rw [this]
   simp only [H, pair_matVec]
 
-open AutomorphicForm in
 
+open AutomorphicForm in
 theorem partialCoeff_diagonal_blockGL {ϕ : AdelicGLn.AdelicGL K n → ℂ} (hϕ : IsLeftInvariant ϕ) :
     ∀ (m j : ℕ), n - j = m → ∀ (hj : j ≤ n) (h : GL (Fin j) K),
       (IsLastRowUnit (h : Matrix (Fin j) (Fin j) K) ∨ j = n) → ∀ g,
@@ -230,16 +236,16 @@ theorem partialCoeff_diagonal_blockGL {ϕ : AdelicGLn.AdelicGL K n → ℂ} (hϕ
     rw [stepCoeff_diagonal_blockGL hjn h hB hC g, hlast]
     rfl
 
-open AutomorphicForm in
 
+open AutomorphicForm in
 theorem partialCoeff_succ_diagonal_colGL {ϕ : AdelicGLn.AdelicGL K n → ℂ} (hϕ : IsLeftInvariant ϕ)
     {k : ℕ} (hk : k < n) (ξ : Fin k → K) (g : AdelicGLn.AdelicGL K n) :
     partialCoeff ϕ (k + 1) (AdelicGLn.diagonal K n (colGL k ξ) * g) = partialCoeff ϕ (k + 1) g := by
   rw [colGL_eq_blockGL (Nat.lt_succ_self k) hk]
   exact partialCoeff_diagonal_blockGL hϕ _ (k + 1) rfl hk _ (Or.inl (isLastRowUnit_colX _)) g
 
-open AutomorphicForm in
 
+open AutomorphicForm in
 theorem partialCoeff_succ_diagonal_blockGL {ϕ : AdelicGLn.AdelicGL K n → ℂ}
     (hϕ : IsLeftInvariant ϕ) {k : ℕ} (hk : k < n) (γ : GL (Fin k) K) (g : AdelicGLn.AdelicGL K n) :
     partialCoeff ϕ (k + 1) (AdelicGLn.diagonal K n (blockGL hk.le γ) * g) =
@@ -247,8 +253,8 @@ theorem partialCoeff_succ_diagonal_blockGL {ϕ : AdelicGLn.AdelicGL K n → ℂ}
   rw [← blockGL_blockGL (Nat.le_succ k) hk]
   exact partialCoeff_diagonal_blockGL hϕ _ (k + 1) rfl hk _ (Or.inl (isLastRowUnit_blockMat _)) g
 
-open AutomorphicForm in
 
+open AutomorphicForm in
 theorem partialCoeff_diagonal_blockGL_eq_vecCoeff {ϕ : AdelicGLn.AdelicGL K n → ℂ}
     (hϕ : IsLeftInvariant ϕ) {k : ℕ} (hk : k < n) (γ : GL (Fin k) K) (g : AdelicGLn.AdelicGL K n) :
     partialCoeff ϕ k (AdelicGLn.diagonal K n (blockGL hk.le γ) * g) =

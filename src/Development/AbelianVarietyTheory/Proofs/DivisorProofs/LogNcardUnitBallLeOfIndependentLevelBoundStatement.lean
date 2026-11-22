@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogNcardUnitBallLeOfIndependentLevelBound
-import Development.AbelianVarietyTheory.Definitions.Divisors.CharZeroFunctionField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogNcardUnitBallLeOfIndependentLevelBound
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CharZeroFunctionField
+
+@[expose] public section
+
 open Filter Topology
 open GlobalTheory GlobalTheory.VolBr
 set_option maxHeartbeats 1000000 in

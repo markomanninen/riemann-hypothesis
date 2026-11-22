@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SlTwoInvariantHolomorphicMemAdjoinJInvariantStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SlTwoInvariantHolomorphicMemAdjoinJInvariantStatement
+
+@[expose] public section
+
 open scoped MatrixGroups TensorProduct
 open Matrix GlobalTheory.KZ
 
@@ -63,7 +68,7 @@ def holR (X : Tower Ω ε) : Subring X.K where
   one_mem' := ⟨fun _ => 1, differentiableOn_const 1, by rw [map_one]; rfl⟩
   add_mem' := by
     rintro a b ⟨φ, hφ, ha⟩ ⟨ψ, hψ, hb⟩
-    exact ⟨φ + ψ, hφ.add hψ, by rw [map_add, ha, hb]; rfl⟩
+    exact ⟨φ + ψ, hφ.add hψ, by rw [map_add (f := _), ha, hb]; rfl⟩
   zero_mem' := ⟨fun _ => 0, differentiableOn_const 0, by rw [map_zero]; rfl⟩
   neg_mem' := by
     rintro a ⟨φ, hφ, ha⟩
@@ -73,8 +78,8 @@ end GlobalTheory.KZ.JInt
 
 namespace GlobalTheory.KZ.JInt
 
-open Polynomial in
 
+open Polynomial in
 theorem jK_sl_isIntegral : ∀ {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAlgClosure ℚ Ω] (ε : Ω →+* ℂ) (X : Tower Ω ε),
     Function.Injective ε → (∃ φ : ℂ → ℂ, DifferentiableOn ℂ φ Hs ∧ X.an X.jK = (φ : Mero)) →
     ∀ g : GQ, IsIntegral (Algebra.adjoin Ω {X.jK}) (X.sl g X.jK) := by

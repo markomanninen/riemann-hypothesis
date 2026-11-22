@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsSectionLengthSum
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsLocalSectionLengthSum
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsSectionLengthSum
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsLocalSectionLengthSum
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -88,7 +93,7 @@ theorem proof (hLoc : LocalSectionLengthSum.Statement) : SectionLengthSum.Statem
   have hlm : ∀ I : Ideal A, localMult (I ⊔ Ideal.span {f}) W =
       (Module.length B (B ⧸ (I.map φ ⊔ Ideal.span {φ f}))).toNat := fun I => by
     unfold localMult
-    rw [dif_pos hWp, hsup]
+    rw [dite_eq_left hWp, hsup]
   have hfW : φ f ∈ IsLocalRing.maximalIdeal B := by
     rw [← IsLocalization.AtPrime.map_eq_maximalIdeal W B]
     exact Ideal.mem_map_of_mem φ (hW.1.2 (Ideal.mem_sup_right (Ideal.mem_span_singleton_self f)))

@@ -1,9 +1,13 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
-open Module in
 
+open Module in
 theorem eq_zero_of_sum_mul_embeddings_eq_zero (F Ω L : Type) [Field F] [CharZero F] [Field Ω]
     [IsAlgClosed Ω] [Algebra F Ω] [Field L] [Algebra F L] [FiniteDimensional F L] (m : ℕ)
     (e : Fin m → Ω) (he : LinearIndependent F e) (_halg : ∀ t, IsAlgebraic F (e t))
@@ -32,7 +36,8 @@ theorem eq_zero_of_sum_mul_embeddings_eq_zero (F Ω L : Type) [Field F] [CharZer
     simp_rw [Finset.sum_mul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl (fun t _ => ?_)
-    conv_rhs => rw [← b.sum_repr (a t), map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [← b.sum_repr (a t), map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl (fun i _ => ?_)
     rw [map_smul, Algebra.smul_def, Algebra.smul_def]
     ring

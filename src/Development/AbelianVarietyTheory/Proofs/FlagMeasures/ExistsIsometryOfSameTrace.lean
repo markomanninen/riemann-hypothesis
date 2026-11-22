@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EichlerIsometry
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DualInterSelfDualHermitianLatticeSubspaceStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AlgebraMapMemO
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EichlerIsometry
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DualInterSelfDualHermitianLatticeSubspaceStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.AlgebraMapMemO
+
+@[expose] public section
+
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
 open scoped Pointwise ENNReal Classical
 
@@ -32,16 +37,6 @@ theorem hf_sum_r {ι : Type} (s : Finset ι) (a : ι → Fin n → E) (y : Fin n
   induction s using Finset.induction_on with
   | empty => simp [hf_zero_r]
   | insert i s hi ih => rw [Finset.sum_insert hi, Finset.sum_insert hi, hf_add_r, ih]
-
-theorem exists_mul_mem [IsNonarchimedeanLocalField F] (c : E) :
-    ∃ t : 𝒪[F], t ≠ 0 ∧ algebraMap F E t * c ∈ L.O := by
-  have : Module.Finite F E := Module.finite_of_finrank_pos (by rw [L.rank]; omega)
-  have h1 : IsAlgebraic F c := Algebra.IsAlgebraic.isAlgebraic c
-  have h2 : IsAlgebraic 𝒪[F] c := (IsFractionRing.isAlgebraic_iff 𝒪[F] F E).2 h1
-  obtain ⟨t, ht, h⟩ := h2.exists_integral_multiple
-  refine ⟨t, ht, (L.O_def _).2 ?_⟩
-  convert h using 1
-  rw [Algebra.smul_def]; rfl
 
 theorem exists_smul_mem [IsNonarchimedeanLocalField F] {Λ : Submodule L.O (Fin n → E)}
     (hΛ : IsLat L Λ) (x : Fin n → E) : ∃ t : 𝒪[F], t ≠ 0 ∧ algebraMap F E t • x ∈ Λ := by
@@ -78,7 +73,8 @@ theorem shear_mem_isomG {Hm : Matrix (Fin n) (Fin n) E} (h : IsHerm L Hm) {m : �
   intro v w
   have hw : ∀ k, hf L Hm (d k) w = ∑ j, L.cj (hf L Hm w (b j)) * hf L Hm (d k) (c j) := by
     intro k
-    rw [← hf_cj L h, hv, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hf_cj L h, hv, map_sum]
     simp only [map_mul, hf_cj L h]
   simp only [shear_apply, hf_add_l, hf_add_r, hf_sum_l, hf_sum_r, hf_smul_l, hf_smul_r, hdd,
     mul_zero, Finset.sum_const_zero, add_zero]
@@ -155,7 +151,7 @@ theorem exists_isometry_of_same_trace : ∀ {F : Type} [Field F] [ValuativeRel F
     rw [h1]
     exact L.O.sub_mem (hint hLb _ (hc'b j) _ (hc'b k)) (hint hLa _ (hc j) _ (hc k))
   have hHc : ∀ j k, L.cj (H k j) = H j k := fun j k => by
-    simp only [H, map_add, hcj]; ring
+    simp only [H, map_add (f := _), hcj]; ring
   let d : Fin m → Fin n → E := fun j => d₀ j - ∑ l, (τ * H j l) • b l
   have hd : ∀ j, d j ∈ X := fun j =>
     X.sub_mem (hd₀ j) (X.sum_mem fun l _ => X.smul_mem _ (hbm l).2)

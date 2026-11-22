@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open TensorProduct
 
 namespace PositivityTheory.Xgn.TensorDomain
@@ -68,7 +73,11 @@ theorem exists_point (k A : Type) [Field k] [IsAlgClosed k] [CommRing A] [IsDoma
   obtain ⟨m, hm⟩ := Ideal.exists_maximal S
   letI : Field (S ⧸ m) := Ideal.Quotient.field m
   haveI : Module.Finite k (S ⧸ m) := finite_of_finite_type_of_isJacobsonRing k (S ⧸ m)
-  let ψ : (S ⧸ m) →ₐ[k] k := IsAlgClosed.lift
+  let ψ : (S ⧸ m) →ₐ[k] k := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   refine ⟨(ψ.comp (Ideal.Quotient.mkₐ k m)).comp (IsScalarTower.toAlgHom k A S), ?_⟩
   have hu : IsUnit (algebraMap A S a) := IsLocalization.Away.algebraMap_isUnit a
   exact (hu.map (ψ.comp (Ideal.Quotient.mkₐ k m))).ne_zero
@@ -99,7 +108,7 @@ theorem isDomain_tensor_of_isAlgClosed (k A : Type) [Field k] [IsAlgClosed k] [C
       intro z i
       induction z using TensorProduct.induction_on with
       | zero => simp
-      | add u v hu hv => simp only [map_add, Finsupp.add_apply, hu, hv]
+      | add u v hu hv => simp only [map_add (f := _), Finsupp.add_apply, hu, hv]
       | tmul a f =>
         have h1 : Φ (a ⊗ₜ f) = φ a • f := by simp [Φ, Algebra.smul_def]
         rw [h1, map_smul]
@@ -115,7 +124,11 @@ theorem isDomain_tensor_of_closure (k Ω S : Type) [Field k] [Field Ω] [IsAlgCl
     [Algebra.IsAlgebraic k Ω] [CommRing S] [Algebra k S] [Algebra.FiniteType k S]
     [IsDomain (Ω ⊗[k] S)] (F : Type) [Field F] [Algebra k F] : IsDomain (F ⊗[k] S) := by
   let L := AlgebraicClosure F
-  let j : Ω →ₐ[k] L := IsAlgClosed.lift
+  let j : Ω →ₐ[k] L := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   letI : Algebra Ω L := j.toRingHom.toAlgebra
   haveI : IsScalarTower k Ω L := IsScalarTower.of_algebraMap_eq fun x => (j.commutes x).symm
   haveI := isDomain_tensor_of_isAlgClosed Ω (Ω ⊗[k] S) L

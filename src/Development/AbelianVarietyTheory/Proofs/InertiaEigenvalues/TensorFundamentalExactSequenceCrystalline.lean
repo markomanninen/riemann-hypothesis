@@ -1,10 +1,15 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsTmulOneOfFrobFixedOfMemFilZero
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PeriodRingsRegularPhiSurjectiveFil
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsTmulOneOfFrobFixedOfMemFilZero
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PeriodRingsRegularPhiSurjectiveFil
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct Module
 
 namespace GlobalTheory.FundSeq
@@ -27,7 +32,7 @@ theorem tensor_fundamental_sequence :
       obtain ⟨x, hx⟩ := hu
       obtain ⟨x', hx'⟩ := hu'
       refine ⟨x + x', ?_⟩
-      rw [map_add, ← hx, ← hx']
+      rw [map_add (f := _), ← hx, ← hx']
       abel
   have hB : ∀ w : V ⊗[ℚ_[l]] P.R.BdR, ∃ x : V ⊗[ℚ_[l]] P.R.B,
       φVB (P.PD K) (LL := LL) (V := V) x = x ∧
@@ -46,9 +51,9 @@ theorem tensor_fundamental_sequence :
     | add w w' hw hw' =>
       obtain ⟨x, hx, hy⟩ := hw
       obtain ⟨x', hx', hy'⟩ := hw'
-      refine ⟨x + x', by rw [map_add, hx, hx'], ?_⟩
+      refine ⟨x + x', by rw [map_add (f := _), hx, hx'], ?_⟩
       have := Submodule.add_mem _ hy hy'
-      rw [map_add]
+      rw [map_add (f := _)]
       convert this using 1
       abel
   refine ⟨fun u w => ?_, fun x hx hF =>
@@ -56,9 +61,9 @@ theorem tensor_fundamental_sequence :
   obtain ⟨x₀, hx₀⟩ := hA u
   obtain ⟨x₁, hx₁, hy⟩ := hB (w - ιV (P.PD K) (LL := LL) (V := V) x₀)
   refine ⟨x₀ + x₁, _, hy, ?_, ?_⟩
-  · rw [map_add, hx₁, ← hx₀]
+  · rw [map_add (f := _), hx₁, ← hx₀]
     abel
-  · rw [map_add]
+  · rw [map_add (f := _)]
     abel
 
 end GlobalTheory.FundSeq

@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
-import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
-import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
-import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.FirstCohomologyVanishesSpecOfIsLocalRing
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.OfDerivationFnOn
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.PlOrdSomeOfAssociated
+public import Development.AbelianVarietyTheory.Statements.SemistableTorsion.SemistableFin
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -33,7 +38,8 @@ theorem aeval_intertwine (f g L : Module.End 𝕜 V) (K : Submodule 𝕜 V)
       intro x hx
       rw [pow_succ, pow_succ, Module.End.mul_apply, Module.End.mul_apply, hL x hx, ih _ (hK x hx)]
   intro x hx
-  simp only [aeval_eq_sum_range, LinearMap.sum_apply, LinearMap.smul_apply, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [aeval_eq_sum_range, LinearMap.sum_apply, LinearMap.smul_apply, map_sum,
     LinearMap.map_smul_of_tower, hp _ x hx]
 
 theorem aeval_adjoint (B : LinearMap.BilinForm 𝕜 V) (f g : Module.End 𝕜 V)
@@ -46,7 +52,8 @@ theorem aeval_adjoint (B : LinearMap.BilinForm 𝕜 V) (f g : Module.End 𝕜 V)
     | succ n ih =>
       intro x y
       rw [pow_succ', pow_succ, Module.End.mul_apply, Module.End.mul_apply, h, ih]
-  simp only [aeval_eq_sum_range, LinearMap.sum_apply, LinearMap.smul_apply, map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [aeval_eq_sum_range, LinearMap.sum_apply, LinearMap.smul_apply, map_sum,
     LinearMap.map_smul_of_tower, hp]
 
 end
@@ -59,7 +66,8 @@ theorem aeval_rev {A : Type} [Ring A] [Algebra ℚ A] (u v : A) (h : u * v = 1) 
     induction i with
     | zero => simp
     | succ i ih => rw [pow_succ, pow_succ', _root_.mul_assoc, ← _root_.mul_assoc u, h, _root_.one_mul, ih]
-  rw [aeval_eq_sum_range v, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [aeval_eq_sum_range v, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i hi => ?_
   have hi' : i ≤ R.natDegree := Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)
   have : u ^ R.natDegree = u ^ (R.natDegree - i) * u ^ i := by
@@ -79,7 +87,8 @@ theorem exists_rev {A : Type} [Ring A] [Algebra ℚ A] (u v : A) (h : u * v = 1)
   by_cases hb : β = 0
   · exfalso
     subst hb
-    rw [map_sum, Finset.sum_eq_single R.natDegree] at hβ
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.sum_eq_single R.natDegree] at hβ
     · simp [hR0] at hβ
     · intro i hi hne
       have hi' : i ≤ R.natDegree := Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)
@@ -102,7 +111,7 @@ theorem exists_binom (q : ℕ) : ∃ v : ℚ[X], (X + 1) ^ q = 1 + X * (C (q : �
     obtain ⟨v, hv⟩ := ih
     refine ⟨C (q : ℚ) + v + X * v, ?_⟩
     rw [pow_succ, hv]
-    simp only [Nat.cast_add, Nat.cast_one, map_add, map_one]
+    simp only [Nat.cast_add, Nat.cast_one, map_add (f := _), map_one]
     ring
 
 section
@@ -117,7 +126,7 @@ theorem graded_comm (T Φ : Module.End 𝕜 V) (q : ℕ) (hq : q ≠ 0) (hT : Is
   set u : ℚ[X] := C (q : ℚ) + X * v with hu
   have h1 : Φ * T = aeval T (X * u) * Φ := by
     have h2 := congrArg (aeval T) hv
-    rw [map_pow, map_add, map_add, map_one, aeval_X] at h2
+    rw [map_pow, map_add (f := _), map_add (f := _), map_one, aeval_X] at h2
     rw [h2, mul_add, add_mul, _root_.mul_one, _root_.one_mul, add_comm Φ] at h
     exact add_right_cancel h
   have h2 : ∀ k : ℕ, Φ * T ^ k = aeval T ((X * u) ^ k) * Φ := by
@@ -148,7 +157,7 @@ theorem graded_comm (T Φ : Module.End 𝕜 V) (q : ℕ) (hq : q ≠ 0) (hT : Is
     rw [mul_pow, map_pow]
     linear_combination X ^ i * hw
   have := congrArg (fun f : Module.End 𝕜 V => f x) (h2 i)
-  simp only [Module.End.mul_apply, h4, map_add, map_mul, map_pow (aeval T) X, aeval_X, aeval_C,
+  simp only [Module.End.mul_apply, h4, map_add (f := _), map_mul, map_pow (aeval T) X, aeval_X, aeval_C,
     LinearMap.add_apply, h3, map_zero, add_zero] at this
   rw [this, LinearMap.smul_apply, LinearMap.map_smul_of_tower, Algebra.algebraMap_eq_smul_one]
   simp
@@ -191,7 +200,7 @@ theorem finrank_le_of_injective [FiniteDimensional 𝕜 V] (T f : Module.End �
       rintro ⟨_, x, rfl⟩
       exact h1 x)
   have hL : Function.Injective L := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     rintro ⟨_, x, rfl⟩ hx
     exact Subtype.ext (h2 x (congrArg Subtype.val hx))
   have h5 := LinearMap.finrank_le_finrank_of_injective hL

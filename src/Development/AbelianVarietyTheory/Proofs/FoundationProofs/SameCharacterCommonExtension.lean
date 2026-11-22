@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.LatticeConditions
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CrystallineCocycleTransportConjugation
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.LatticeConditions
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CrystallineCocycleTransportConjugation
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions Formalism.MainNotions.N GlobalTheory.IndefiniteRowSideFullHecke.LatticeConditions
 
 namespace GlobalTheory.Proof.dvr_of_reflects_facts
@@ -11,12 +16,12 @@ theorem dvr_of_reflects {O A : Type} [CommRing O] [IsDomain O] [CommRing A] [IsD
     IsDiscreteValuationRing O := by
   haveI : ValuationRing O := ValuationRing.iff_dvd_total.2
     ⟨fun x y => (ValuationRing.dvd_total (g x) (g y)).imp (hd x y) (hd y x)⟩
-  haveI : WfDvdMonoid O := ⟨by
+  haveI : WfDvdMonoid O := by
     refine Subrelation.wf (r := InvImage DvdNotUnit g) ?_ (InvImage.wf g wellFounded_dvdNotUnit)
     rintro x y ⟨hx, c, hc, rfl⟩
     refine ⟨fun h => hx (hg (by simpa using h)), g c, fun h => hc ?_, by simp⟩
-    exact isUnit_of_dvd_one (hd c 1 (by simpa using h.dvd))⟩
-  haveI : IsPrincipalIdealRing O := ((IsBezout.TFAE (R := O)).out 3 1).1 ‹WfDvdMonoid O›
+    exact isUnit_of_dvd_one (hd c 1 (by simpa using h.dvd))
+  haveI : IsPrincipalIdealRing O := ((IsBezout.tfae (R := O)).out 4 2).1 ‹WfDvdMonoid O›
   refine { not_a_field' := fun h => ht0 ?_ }
   have : t ∈ IsLocalRing.maximalIdeal O := ht
   rw [h] at this
@@ -123,7 +128,7 @@ theorem common : ∀ (Γ O₀ A B : Type) [Group Γ] [CommRing O₀] [IsDomain O
     (hker F).1 (congrArg Subtype.val (RingHom.mem_ker.1 hF))⟩
   have hφ : ∀ F, φ (q F) = αB F := fun F => RingHom.liftOfRightInverse_comp_apply _ _ _ _ F
   have φi : Function.Injective φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro r hr
     obtain ⟨F, rfl⟩ := hq r
     exact Subtype.ext ((hker F).2 (by rw [← hφ, hr]))

@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.AxesVanishingStructureSheafDegOne
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CardNonempty
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AxesVanishingStructureSheafDegOne
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CardNonempty
+
+@[expose] public section
+
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry KaehlerDifferential MonoidalCategory CartesianMonoidalCategory MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.CechDR GlobalTheory.AbCoh
 attribute [local instance] Over.cartesianMonoidalCategory
@@ -25,15 +30,15 @@ theorem hom_eq {a b : (NE κ)ᵒᵖ} (f g : a ⟶ b) : f = g := Subsingleton.eli
 
 theorem triVal_eq (c : CC F 2) (X : (NE κ)ᵒᵖ) {s : Finset κ} (hs : s.card = 2 + 1) (h : s ⊆ sub X) :
     mp F (homOf (a := ne s (card_nonempty ⟨s, hs⟩)) (b := X) h) (c ⟨s, hs⟩) = triVal F c X s := by
-  unfold triVal; rw [dif_pos ⟨hs, h⟩]
+  unfold triVal; rw [dite_eq_left ⟨hs, h⟩]
 
 theorem triVal_map (c : CC F 2) {X Y : (NE κ)ᵒᵖ} (f : X ⟶ Y) {s : Finset κ} (h : s ⊆ sub X) :
     mp F f (triVal F c X s) = triVal F c Y s := by
   unfold triVal
   by_cases hs : s.card = 2 + 1
-  · rw [dif_pos ⟨hs, h⟩, dif_pos ⟨hs, h.trans (sub_subset f)⟩, ← mp_comp]
+  · rw [dite_eq_left ⟨hs, h⟩, dite_eq_left ⟨hs, h.trans (sub_subset f)⟩, ← mp_comp]
     congr 1
-  · rw [dif_neg (fun h' => hs h'.1), dif_neg (fun h' => hs h'.1), map_zero]
+  · rw [dite_eq_right (fun h' => hs h'.1), dite_eq_right (fun h' => hs h'.1), map_zero]
 
 theorem alternatingToOrderedCechDegreeTwo_apply_triple (c : CC F 2) {a b d : (NE κ)ᵒᵖ} (f : a ⟶ b) (g : b ⟶ d) :
     e2 F c a b d f g = if mn d < mn b ∧ mn b < mn a then -triVal F c d {mn d, mn b, mn a} else 0 := by
@@ -63,7 +68,8 @@ theorem triVal_rel (c : CC F 2) (hc : δ F 2 c = 0) (X : (NE κ)ᵒᵖ) {w x y z
       Finset.card_insert_of_notMem (by simp [h2.ne, (h2.trans h3).ne]), Finset.card_pair h3.ne]
   have e := congrArg (mp F (homOf (a := ne _ (card_nonempty ⟨_, ht⟩)) (b := X) hs))
     (congrFun hc ⟨_, ht⟩)
-  rw [δ_apply, map_sum, Pi.zero_apply, map_zero] at e
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [δ_apply, map_sum, Pi.zero_apply, map_zero] at e
   have e' : ∑ i ∈ ({w, x, y, z} : Finset κ), GlobalTheory.cubeSign ({w, x, y, z} : Finset κ) i •
       triVal F c X (({w, x, y, z} : Finset κ).erase i) = 0 := by
     rw [← e, ← Finset.sum_coe_sort]

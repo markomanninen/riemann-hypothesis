@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SchurStep
-import Mathlib.RingTheory.SimpleModule.Isotypic
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.SchurStep
+public import Mathlib.RingTheory.SimpleModule.Isotypic
+
+@[expose] public section
 
 namespace UpperTheory.TP
 
@@ -72,7 +76,7 @@ theorem absIso : AbsIso := by
     let q0 : I' →ₗ[ℂ] T :=
       { toFun := fun v => τ.asModuleEquiv (Q ⟨ρH.asModuleEquiv.symm v.1, v.2⟩)
         map_add' := fun a b => by
-          rw [← map_add]; congr 1; rw [← map_add]; congr 1
+          rw [← map_add (f := _)]; congr 1; rw [← map_add (f := _)]; congr 1
         map_smul' := fun c a => by
           rw [RingHom.id_apply, ← map_smul, ← LinearMap.map_smul_of_tower]; congr 2 }
     obtain ⟨p, hp⟩ := LinearMap.exists_extend q0

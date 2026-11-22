@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.FiniteEtaleModels.LiftUnit
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -40,7 +44,7 @@ private theorem sup_range_pow {A M : Type} [CommRing A] [AddCommGroup M] [Module
       have hx : x ∈ R ⊔ (𝔪 • ⊤ : Submodule A M) := by rw [h 𝔪 hm hum]; trivial
       obtain ⟨r, hr, z, hz, rfl⟩ := Submodule.mem_sup.1 hx
       have h1 : R.mkQ (r + z) = R.mkQ z := by
-        rw [map_add, show R.mkQ r = 0 from (Submodule.Quotient.mk_eq_zero R).2 hr, zero_add]
+        rw [map_add (f := _), show R.mkQ r = 0 from (Submodule.Quotient.mk_eq_zero R).2 hr, zero_add]
       rw [h1]
       have h2 := Submodule.mem_map_of_mem (f := R.mkQ) hz
       rw [Submodule.map_smul''] at h2

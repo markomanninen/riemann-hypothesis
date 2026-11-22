@@ -1,4 +1,8 @@
-import Formalism.DoubleCosetMeasures.StatementV
+module
+
+public import Formalism.DoubleCosetMeasures.StatementV
+
+@[expose] public section
 
 set_option maxHeartbeats 400000
 
@@ -167,18 +171,18 @@ theorem meas_ii (O : Subring F) (hO : IsOpen (O : Set F)) (ϖ : F) (hϖ0 : ϖ �
     simp
   rw [e]
   refine MeasurableSet.iInter fun i => MeasurableSet.iInter fun j => ?_
-  exact ((continuous_mul_left ϖ⁻¹).measurable.comp
+  exact ((continuous_const_mul ϖ⁻¹).measurable.comp
     ((measurable_pi_apply j).comp (measurable_pi_apply i))) hOm
 
 theorem meas_add (n a : ℕ) (x : Matrix (Fin n) (Fin a) F) :
     Measurable (fun y : Matrix (Fin n) (Fin a) F => x + y) := by
-  exact measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j =>
+  exact Measurable.of_eval fun i => Measurable.of_eval fun j =>
     ((continuous_const.add continuous_id).measurable (f := fun t : F => x i j + t)).comp
       ((measurable_pi_apply j).comp (measurable_pi_apply i))
 
 theorem measurableAdd_mat (n a : ℕ) : MeasurableAdd (Matrix (Fin n) (Fin a) F) := by
   refine ⟨fun x => meas_add n a x, fun x => ?_⟩
-  exact measurable_pi_lambda _ fun i => measurable_pi_lambda _ fun j =>
+  exact Measurable.of_eval fun i => Measurable.of_eval fun j =>
     ((continuous_id.add continuous_const).measurable (f := fun t : F => t + x i j)).comp
       ((measurable_pi_apply j).comp (measurable_pi_apply i))
 

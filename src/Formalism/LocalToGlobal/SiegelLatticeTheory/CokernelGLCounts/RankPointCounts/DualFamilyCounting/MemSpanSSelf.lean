@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.MemSpanIffSpanS
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.MemSpanIffSpanS
+
+@[expose] public section
 
 open Module
 
@@ -67,7 +71,8 @@ private theorem span_ne_eq_cutW_of_orthogonal {ι : Type} [Fintype ι] [Decidabl
     obtain ⟨hv1, hv2⟩ := Submodule.mem_inf.1 hv'
     obtain ⟨a, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun K).1 hv1
     have ha0 : a i₀ = 0 := by
-      rw [LinearMap.mem_ker, map_sum, Finset.sum_eq_single i₀] at hv2
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [LinearMap.mem_ker, map_sum, Finset.sum_eq_single i₀] at hv2
       · rw [map_smul, smul_eq_mul] at hv2
         exact (mul_eq_zero.1 hv2).resolve_right hf0
       · intro i _ hi
@@ -96,10 +101,10 @@ private theorem mem_spanS_iff_smul_add_mem_spanS_ne {ι : Type} [Fintype ι] [De
       · exact hd _
     · rw [Fintype.sum_eq_add_sum_subtype_ne _ i₀]
       dsimp only
-      rw [dif_pos rfl]
+      rw [dite_eq_left rfl]
       congr 1
       refine Finset.sum_congr rfl fun i _ => ?_
-      rw [dif_neg i.2]
+      rw [dite_eq_right i.2]
 
 theorem core_of_split (hs : h.IsSymm) (hd : ∀ x, h x x = 0 → x = 0) (hsp : SplitAt S π h) :
     ∀ (n : ℕ) (ι : Type) [Fintype ι] [DecidableEq ι], Fintype.card ι ≤ n →
@@ -151,7 +156,8 @@ theorem core_of_split (hs : h.IsSymm) (hd : ∀ x, h x x = 0 → x = 0) (hsp : S
         h w (b i₀) = 0 := by
       intro w hw
       obtain ⟨a, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun K).1 hw
-      rw [map_sum, LinearMap.sum_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, LinearMap.sum_apply]
       exact Finset.sum_eq_zero fun i _ => by
         rw [map_smulₛₗ, LinearMap.smul_apply, ho i i₀ i.2, smul_zero]
     have hg0 : g (b i₀) = c i₀ := by rw [hgagree _ hperp, hφ'0]
@@ -163,11 +169,11 @@ theorem core_of_split (hs : h.IsSymm) (hd : ∀ x, h x x = 0 → x = 0) (hsp : S
       constructor
       · rintro ⟨a, ha, w, hw, rfl⟩
         refine ⟨a, ha, g w, (hgiff w).1 hw, ?_⟩
-        rw [map_add, map_smul, hg0]
+        rw [map_add (f := _), map_smul, hg0]
       · rintro ⟨a, ha, u, hu2, huv⟩
         refine ⟨a, ha, g.symm u, (hgiff _).2 (by rw [LinearEquiv.apply_symm_apply]; exact hu2), ?_⟩
         apply g.injective
-        rw [huv, map_add, map_smul, hg0, LinearEquiv.apply_symm_apply]
+        rw [huv, map_add (f := _), map_smul, hg0, LinearEquiv.apply_symm_apply]
 
 end
 

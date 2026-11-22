@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GaloisModules.Discrete
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.UnitsInflationCochainsFHomApply
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.MaxUnramifiedOutside
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GaloisModules.Discrete
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.UnitsInflationCochainsFHomApply
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.MaxUnramifiedOutside
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -70,18 +75,8 @@ def galSUnitsHom : Gal(E/F) →* Monoid.End (sUnitsOf S E) where
     ext x
     rfl
 
-@[simp]
-theorem coe_galSUnitsHom_apply (σ : Gal(E/F)) (x : sUnitsOf S E) :
-    (((galSUnitsHom S E σ x : Eˣ)) : E) = σ (x : Eˣ) :=
-  rfl
-
 abbrev galSUnits : Rep.{u} (ULift.{u} ℤ) Gal(E/F) :=
   Rep.of (intRepOfMonoidEnd.{u} (galSUnitsHom S E))
-
-@[simp]
-theorem galSUnits_ρ_apply (σ : Gal(E/F)) (x : Additive (sUnitsOf S E)) :
-    (galSUnits S E).ρ σ x = Additive.ofMul (galSUnitsHom S E σ x.toMul) :=
-  rfl
 
 def sUnitsToUnits : galSUnits S E ⟶ galUnits.{u} F E :=
   Rep.ofHom ⟨uliftIntLinearMap (MonoidHom.toAdditive (sUnitsOf S E).subtype), fun σ => by
@@ -111,12 +106,6 @@ def rootsOfUnityToSUnits : galRootsOfUnity.{u} F E n ⟶ galSUnits S E :=
     ext x
     rfl⟩
 
-@[simp]
-theorem rootsOfUnityToSUnits_hom_apply (x : Additive (rootsOfUnity n E)) :
-    ((((Additive.toMul ((rootsOfUnityToSUnits S E n).hom x) : sUnitsOf S E)) : Eˣ) : E) =
-      (((Additive.toMul x : rootsOfUnity n E) : Eˣ) : E) :=
-  rfl
-
 noncomputable def sUnitsKummerSequence : ShortComplex (Rep.{u} (ULift.{u} ℤ) Gal(E/F)) :=
   ShortComplex.mk (rootsOfUnityToSUnits S E n) (n • 𝟙 (galSUnits S E)) (by
     apply Rep.hom_ext
@@ -139,13 +128,11 @@ section Max
 variable (F : Type u) [Field F] [NumberField F] (Ω : Type u) [Field Ω] [Algebra F Ω]
 variable (S : Set (HeightOneSpectrum (𝓞 F)))
 
-noncomputable abbrev sUnitsMax : Subgroup (maxUnramifiedOutside F Ω S)ˣ :=
-  sUnitsOf S (maxUnramifiedOutside F Ω S)
+noncomputable abbrev sUnitsMax : Subgroup (maxUnramifiedOutside (F := F) (Ω := Ω) S)ˣ :=
+  sUnitsOf S (maxUnramifiedOutside (F := F) (Ω := Ω) S)
 
-noncomputable abbrev galSUnitsMax : Rep.{u} (ULift.{u} ℤ) (galUnramifiedOutside F Ω S) :=
-  galSUnits S (maxUnramifiedOutside F Ω S)
-
-example [Algebra.IsIntegral F Ω] : IsDiscreteRep (galSUnitsMax F Ω S) := inferInstance
+noncomputable abbrev galSUnitsMax : Rep.{u} (ULift.{u} ℤ) (galUnramifiedOutside (F := F) (Ω := Ω) S) :=
+  galSUnits S (maxUnramifiedOutside (F := F) (Ω := Ω) S)
 
 end Max
 

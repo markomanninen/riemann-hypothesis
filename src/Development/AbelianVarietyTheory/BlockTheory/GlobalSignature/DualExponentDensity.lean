@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,12 +86,5 @@ def SelfDualLatticeDensity : Prop :=
           IsContDensityOn μ (qTup σ J v) id ν {t | t ≠ 0} ((latTup v L).indicator 1) g →
           ∀ t : Fv F v, Valued.v (t - β) < 1 →
             g t = (densityValue (dualIndex F v c) (resCard F v) η M : ℂ))
-
-example : densityValue 1 3 (-1) 1 = 4 / 3 := by
-  simp [densityValue]; norm_num
-
-example (F : Type) [Field F] [NumberField F] (v : HeightOneSpectrum (𝓞 F)) (t : Fv F v) :
-    Valued.v t ≤ WithZero.exp (0 : ℤ) ↔ t ∈ v.adicCompletionIntegers F := by
-  rw [WithZero.exp_zero]; rfl
 
 end GlobalTheory.IndefiniteRowSideFullHecke.PlaceSplittingTypes

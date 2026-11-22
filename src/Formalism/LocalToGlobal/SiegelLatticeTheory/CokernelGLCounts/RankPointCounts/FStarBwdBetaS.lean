@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdBetaK
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarOmLocPf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarGlob
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.GramNondeg
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarBwdBetaK
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarOmLocPf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FStarGlob
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaUniqueness.GramNondeg
+
+@[expose] public section
 
 noncomputable section
 
@@ -33,7 +37,8 @@ theorem dec {TA TB : E} (A : FlagG S r TA) (B : FlagG S r TB) (hdet : (Zhat A B)
   set yB := ∑ b, κ (Sum.inr b) • B.fvec b with hyB
   have hA : ∀ c, S.hT (A.fvec c) yA = if c = Fin.last r then -TA * κ (Sum.inl (Fin.last r)) else 0 := by
     intro c
-    rw [hyA, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hyA, map_sum]
     simp only [map_smul, smul_eq_mul, hT_fvec_self]
     rw [Finset.sum_eq_single (Fin.last r)]
     · split_ifs with h1 h2 h2 <;> simp_all [mul_comm]
@@ -42,7 +47,7 @@ theorem dec {TA TB : E} (A : FlagG S r TA) (B : FlagG S r TB) (hdet : (Zhat A B)
   have hB : ∀ c, S.hT (A.fvec c) yB = - S.hT (A.fvec c) yA := by
     intro c
     have := h c
-    rw [map_add] at this
+    rw [map_add (f := _)] at this
     exact eq_neg_of_add_eq_zero_right this
   have hcB : ∀ i : Fin r, S.hT (A.e i) (∑ b, κ (Sum.inr b) • B.fvec b) = 0 := by
     intro i
@@ -138,7 +143,7 @@ variable {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpace E} {r : �
 theorem inv_last (A : Matrix (Fin (r + 1)) (Fin (r + 1)) E) :
     A⁻¹ (Fin.last r) (Fin.last r) = leadMinorE A r / A.det := by
   rw [Matrix.inv_def, Matrix.smul_apply, PI.UnitaryGroupMassFormula.BetaLUniq.GN.adj_last, smul_eq_mul, Ring.inverse_eq_inv',
-    leadMinorE, dif_pos (Nat.le_succ r)]
+    leadMinorE, dite_eq_left (Nat.le_succ r)]
   have ecs : (Fin.castLE (Nat.le_succ r) : Fin r → Fin (r + 1)) = Fin.castSucc := funext fun i => Fin.ext rfl
   rw [ecs, div_eq_inv_mul]
 
@@ -187,7 +192,7 @@ theorem ab'_of {TA T' : E} (A : FlagG S r TA) (B₁ B₂ : FlagG S r T') (β : S
     (h2 : (x₂'' + b' • (B₂.z + T' • Ω'₂)) - β (x₁' + a' • (B₁.z + T' • Ω'₁)) ∈ B₂.X)
     (hli : LinearIndependent E (Sum.elim B₂.fvec A.fvec)) : a' = b' := by
   have e : β (x₁' + a' • (B₁.z + T' • Ω'₁)) = β x₁' + a' • (B₂.z + T' • β Ω'₁) := by
-    rw [map_add, map_smul, map_add, map_smul, hβz]
+    rw [map_add (f := _), map_smul, map_add (f := _), map_smul, hβz]
   rw [e] at h2
   have key : (b' - a') • B₂.z + ((b' - a') * T' * σ) • A.z =
       ((x₂'' + b' • (B₂.z + T' • Ω'₂)) - (β x₁' + a' • (B₂.z + T' • β Ω'₁)) - (x₂'' - β x₁') +
@@ -225,8 +230,8 @@ variable {D : Formalism.BasicNotions.D7} (Zd : LocDat D) {u u' : D.what₂.Word}
 
 namespace BwdBetaS
 
-theorem UUE_le_span (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T)
-    (F' : LFlag (VS D) D.R.rS T') (hz : F.zt = F.fl.z) (hz' : F'.zt = F'.fl.z) :
+theorem UUE_le_span (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T)
+    (F' : LFlag (D.sp.Y 0) D.R.rS T') (hz : F.zt = F.fl.z) (hz' : F'.zt = F'.fl.z) :
     UUE Λ F F' ≤ Submodule.span D.host.E (Set.range (Sum.elim F.fl.fvec F'.fl.fvec)) := by
   set W := Submodule.span D.host.E (Set.range (Sum.elim F.fl.fvec F'.fl.fvec))
   have hz1 : F.zt ∈ W := by
@@ -242,8 +247,8 @@ theorem UUE_le_span (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} 
     · rw [Submodule.span_le]; rintro _ rfl; exact hz2
   exact Submodule.span_le.2 fun v hv => hUU hv
 
-theorem ylift_dec (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T)
-    (F' : LFlag (VS D) D.R.rS T') (hz : F.zt = F.fl.z) (hz' : F'.zt = F'.fl.z) (hdet : (Zhat F.fl F'.fl).det ≠ 0)
+theorem ylift_dec (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T)
+    (F' : LFlag (D.sp.Y 0) D.R.rS T') (hz : F.zt = F.fl.z) (hz' : F'.zt = F'.fl.z) (hdet : (Zhat F.fl F'.fl).det ≠ 0)
     {Ω : (VS D).V} (hΩ : OmV F.fl F'.fl Ω) {y : (VS D).V} (hy : y ∈ Ylift Λ F F') :
     ∃ x ∈ F.fl.X, ∃ c : D.host.E, y = x + c • (F.fl.z + T • Ω) := by
   obtain ⟨hy1, hy2⟩ := Submodule.mem_inf.1 hy
@@ -251,8 +256,8 @@ theorem ylift_dec (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F
   rw [Formalism.L2.SG.Pf.mem_orth_iff_sat 1 (Subgroup.one_mem _)] at hy2
   exact hy2 _ (fvec_mem_Xplus F.fl a)
 
-theorem ylift'_dec (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T)
-    (F' : LFlag (VS D) D.R.rS T') (hz : F.zt = F.fl.z) (hz' : F'.zt = F'.fl.z) (hdet : (Zhat F'.fl F.fl).det ≠ 0)
+theorem ylift'_dec (Λ : Submodule (𝓞 D.host.E) (VS D).V) {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T)
+    (F' : LFlag (D.sp.Y 0) D.R.rS T') (hz : F.zt = F.fl.z) (hz' : F'.zt = F'.fl.z) (hdet : (Zhat F'.fl F.fl).det ≠ 0)
     {Ω : (VS D).V} (hΩ : OmV F'.fl F.fl Ω) {y : (VS D).V} (hy : y ∈ Ylift' Λ F F') :
     ∃ x ∈ F'.fl.X, ∃ c : D.host.E, y = x + c • (F'.fl.z + T' • Ω) := by
   obtain ⟨hy1, hy2⟩ := Submodule.mem_inf.1 hy
@@ -266,7 +271,7 @@ end BwdBetaS
 
 namespace BwdBetaS
 
-theorem om'_eq {T' : D.host.E} (F' : LFlag (VS D) D.R.rS T')
+theorem om'_eq {T' : D.host.E} (F' : LFlag (D.sp.Y 0) D.R.rS T')
     (hdet : (Zhat F0 F'.fl).det ≠ 0) {Ω' : (VS D).V} (hΩ' : OmV F'.fl F0 Ω') :
     Ω' = (star (GDl (frame (lf D F0)) (frame F') (D.R.rS + 1)))⁻¹ • Gom (frame (lf D F0)) (frame F') := by
   have hD : GDl (frame (lf D F0)) (frame F') (D.R.rS + 1) = (Zhat F0 F'.fl).det := by

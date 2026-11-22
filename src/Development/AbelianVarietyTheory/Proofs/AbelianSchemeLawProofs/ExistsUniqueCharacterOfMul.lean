@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegExp
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.WeightedChartPullback.TorusInj
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.Torus2GammaBijective
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.DegExp
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.WeightedChartPullback.TorusInj
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.SemiabelianSchemes.PrecompleteBases.Torus2GammaBijective
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out
@@ -32,11 +36,11 @@ lemma coeff_inl_mul_inr (u v : AddMonoidAlgebra A X) (x y : X) :
   classical
   induction u using AddMonoidAlgebra.induction_linear with
   | zero => simp
-  | add a b ha hb => rw [map_add, add_mul]; simp only [AddMonoidAlgebra.coeff_add, Finsupp.add_apply, ha, hb, add_mul]
+  | add a b ha hb => rw [map_add (f := _), add_mul]; simp only [AddMonoidAlgebra.coeff_add, Finsupp.add_apply, ha, hb, add_mul]
   | single a r =>
     induction v using AddMonoidAlgebra.induction_linear with
     | zero => simp
-    | add c d hc hd => rw [map_add, mul_add]; simp only [AddMonoidAlgebra.coeff_add, Finsupp.add_apply, hc, hd, mul_add]
+    | add c d hc hd => rw [map_add (f := _), mul_add]; simp only [AddMonoidAlgebra.coeff_add, Finsupp.add_apply, hc, hd, mul_add]
     | single b s =>
       simp only [AddMonoidAlgebra.mapDomainRingHom_apply, AddMonoidAlgebra.mapDomain_single,
         AddMonoidAlgebra.single_mul_single, AddMonoidAlgebra.coeff_single, Finsupp.single_apply]
@@ -49,7 +53,7 @@ lemma coeff_diag (u : AddMonoidAlgebra A X) (x y : X) [Decidable (x = y)] :
   induction u using AddMonoidAlgebra.induction_linear with
   | zero => simp
   | add a b ha hb =>
-    rw [map_add]; simp only [AddMonoidAlgebra.coeff_add, Finsupp.add_apply, ha, hb]
+    rw [map_add (f := _)]; simp only [AddMonoidAlgebra.coeff_add, Finsupp.add_apply, ha, hb]
     split_ifs <;> simp
   | single a r =>
     simp only [AddMonoidAlgebra.mapDomainRingHom_apply, AddMonoidAlgebra.mapDomain_single,
@@ -107,8 +111,7 @@ lemma torus_hom_ext {Z : Over S} {g g' : Z ⟶ splitTorus S X}
 lemma pullback_map_fst {A B : Over (Spec ZU.{0})} (f : A ⟶ B) :
     ((Over.pullback (toZ S)).map f).left ≫ pullback.fst B.hom (toZ S) =
       pullback.fst A.hom (toZ S) ≫ f.left := by
-  simp only [Over.pullback_map_left]
-  exact pullback.lift_fst _ _ _
+  simp only [Over.pullback_map_left, pullback.lift_fst]
 
 set_option backward.isDefEq.respectTransparency false in
 lemma torusPoint_mul {R : CommRingCat.{0}} (φ φ' ψ : torusRing ZU X ⟶ R) (s : Spec R ⟶ S)
@@ -240,16 +243,13 @@ lemma IsMulLeft.value_mul {ρ : Γ((splitTorus S X ⊗ Y).left, ⊤)} (hρ : IsM
 attribute [local instance] TorusInj.zuAlg
 
 variable (X) in
-
 abbrev grpAlg (R : CommRingCat.{0}) : CommRingCat.{0} := CommRingCat.of (AddMonoidAlgebra R X)
 
 variable (X) in
-
 def fromInt (R : CommRingCat.{0}) : torusRing ZU X ⟶ grpAlg X R :=
   CommRingCat.ofHom (algebraMap (AddMonoidAlgebra ZU.{0} X) (AddMonoidAlgebra R X))
 
 variable (X) in
-
 def const (R : CommRingCat.{0}) : R ⟶ grpAlg X R :=
   CommRingCat.ofHom (algebraMap R (AddMonoidAlgebra R X))
 
@@ -391,7 +391,6 @@ lemma IsMulLeft.exists_isCharNear {ρ : Γ((splitTorus S X ⊗ Y).left, ⊤)} (h
 end TorusUnit
 
 open TorusUnit in
-
 theorem existsUnique_character_of_mul (S : Scheme.{0}) (X : Type) [AddCommGroup X] (Y : Over S)
     [ConnectedSpace Y.left] (ρ : Γ((splitTorus S X ⊗ Y).left, ⊤)ˣ)
     (hρ : ∀ (Z : Over S) (t t' : Z ⟶ splitTorus S X) (y : Z ⟶ Y),

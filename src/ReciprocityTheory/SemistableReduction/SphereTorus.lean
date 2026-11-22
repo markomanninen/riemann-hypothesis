@@ -1,5 +1,9 @@
-import ReciprocityTheory.SemistableReduction.SphereTorusB
-import ReciprocityTheory.SemistableReduction.SphereTorusC
+module
+
+public import ReciprocityTheory.SemistableReduction.SphereTorusB
+public import ReciprocityTheory.SemistableReduction.SphereTorusC
+
+@[expose] public section
 
 namespace ReciprocityTheory.MultiplicativeHeights
 

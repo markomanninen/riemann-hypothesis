@@ -1,10 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifBaseChangeSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
-import Development.AbelianVarietyTheory.BlockTheory.UniformisationCharts.RigidPullbackIdentification
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsPullFOfGenRel
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsNsmulIffEq
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsScalarFormTraceForm
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifBaseChangeSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsMonHomOfMul
+public import Development.AbelianVarietyTheory.BlockTheory.UniformisationCharts.RigidPullbackIdentification
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsPullFOfGenRel
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsNsmulIffEq
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsScalarFormTraceForm
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -70,18 +74,6 @@ theorem exists_mapsAt_iff (w : LB.Iso L' (L.pull F)) (p' : Y ⟶ X') (p : Y ⟶ 
     exact hb (fun _ => j) j'
   · intro h
     exact ⟨c, fun jN jL => h (jN PUnit.unit) jL, (corr_iff_eq L _ n c c).2 rfl⟩
-
-theorem carriesAt_congr (hL : L.IsLB) {w : LB.Iso L' (L.pull F)} {p' : Y ⟶ X'} {p q : Y ⟶ X} (hp : p' ≫ F = p)
-    (hq : p' ≫ F = q) {n : ℤ} {a : LB.Gen (LB.LinComb L' (K := PUnit) (fun _ => p') (fun _ => n))}
-    {b : LB.Gen (LB.LinComb L (K := PUnit) (fun _ => p) (fun _ => n))}
-    {c : LB.Gen (LB.LinComb L (K := PUnit) (fun _ => q) (fun _ => n))}
-    (h : CarriesAt L L' F w p' p hp n a b) (hb : b.IsGen) (hc : c.IsGen)
-    (hv : ∀ (y : Y) (J : (Y ⟶ X) → L.ι), Good L y J → val b (𝟙 Y) y J = val c (𝟙 Y) y J) :
-    CarriesAt L L' F w p' q hq n a c := by
-  subst hp
-  subst hq
-  obtain rfl := TorusExt.gen_ext_val hL hb hc hv
-  exact h
 
 end Bundle
 
@@ -184,11 +176,6 @@ def toIdent (h : IsPullDeg φ D D') : PullIdent φ D D' where
   c_eq := h.c_pr
   w_psi := ⟨h.W, h.psiW, h.g, h.g_comm, psi_pr_carries h⟩
 
-@[simp] theorem toIdent_F (h : IsPullDeg φ D D') :
-    (toIdent h).F = h.e.hom.left ≫ pullback.fst D.P.A.hom (specOf φ) := rfl
-@[simp] theorem toIdent_w (h : IsPullDeg φ D D') : (toIdent h).w = h.w := rfl
-@[simp] theorem toIdent_xe (h : IsPullDeg φ D D') : (toIdent h).xe = h.xe := rfl
-
 theorem exists_toIdent_eq (p : PullIdent φ D D') (o : OpenChoice φ D) (H : PsiCarried p o) :
     ∃ h : IsPullDeg φ D D', toIdent h = p ∧ toOpenChoice h = o := by
   obtain ⟨e, me, he⟩ := grpPullback_iso ((isGrpPullback_iff p.cart).2 p.F_mul)
@@ -199,47 +186,6 @@ theorem exists_toIdent_eq (p : PullIdent φ D D') (o : OpenChoice φ D) (H : Psi
   exact ⟨⟨e, me, w, wg, F₁, (rig_iff _ _ F₁ _ _ w D.rig D'.rig).2 wr, xe, ce, o.1, o.2.1, o.2.2.1, o.2.2.2,
     fun χ => (exists_mapsAt_iff D.P.L D'.P.L _ w _ _ _ (-1) _ _).2 (H χ)⟩, rfl, rfl⟩
 
-theorem iso_eq_of_comp_eq {e e' : D'.P.A ≅ (Over.pullback (specOf φ)).obj D.P.A}
-    (h : e.hom.left ≫ pullback.fst D.P.A.hom (specOf φ) = e'.hom.left ≫ pullback.fst D.P.A.hom (specOf φ)) :
-    e = e' :=
-  Iso.ext (Over.OverMorphism.ext (pullback.hom_ext h ((Over.w e.hom).trans (Over.w e'.hom).symm)))
-
-theorem toIdent_eq_iff (h h' : IsPullDeg φ D D') :
-    toIdent h = toIdent h' ↔ h.e = h'.e ∧ HEq h.w h'.w ∧ h.xe = h'.xe := by
-  constructor
-  · intro H
-    refine ⟨iso_eq_of_comp_eq (congrArg PullIdent.F H), ?_, congrArg PullIdent.xe H⟩
-    show HEq (toIdent h).w (toIdent h').w
-    rw [H]
-  · obtain ⟨e', m', w', wg', he', wr', xe', cp', W', pW', g', gc', pp'⟩ := h'
-    obtain ⟨e, m, w, wg, he₀, wr, xe, cp, W, pW, g, gc, pp⟩ := h
-    rintro ⟨he, hw, hx⟩
-    dsimp only at he hw hx
-    subst he
-    subst hx
-    obtain rfl := eq_of_heq hw
-    rfl
-
-theorem eq_of_toIdent_eq {h h' : IsPullDeg φ D D'} (H : toIdent h = toIdent h')
-    (H' : toOpenChoice h = toOpenChoice h') : h = h' := by
-  obtain ⟨he, hw, hx⟩ := (toIdent_eq_iff h h').1 H
-  obtain ⟨e', m', w', wg', he', wr', xe', cp', W', pW', g', gc', pp'⟩ := h'
-  obtain ⟨e, m, w, wg, he₀, wr, xe, cp, W, pW, g, gc, pp⟩ := h
-  dsimp only at he hw hx
-  subst he
-  subst hx
-  obtain rfl := eq_of_heq hw
-  cases H'
-  rfl
-
-theorem psiCarried_all (p : PullIdent φ D D') (o : OpenChoice φ D) : PsiCarried p o := by
-  obtain ⟨W, ψW, g, hg, H⟩ := p.w_psi
-  intro χ
-  refine carriesAt_congr _ _ _ D.P.isLB _ _ (H χ) (DVR.pullGen_isGen _ _ _ _ (ψW.psi_gen _) _)
-    (DVR.pullGen_isGen _ _ _ _ (o.2.1.psi_gen _) _) fun y J hJ => ?_
-  exact (val_pull hJ _ _ _).trans ((ArcSpecialise.psiOn_agree ψW o.2.1 (p.xe χ) (𝟙 _ ≫ g) (𝟙 _ ≫ o.2.2.1)
-    (by rw [Category.assoc, Category.assoc, hg, o.2.2.2]) hJ).trans (val_pull hJ _ _ _).symm)
-
 theorem toIdent_surjective : Function.Surjective (toIdent : IsPullDeg φ D D' → PullIdent φ D D') := fun p => by
   obtain ⟨W, ψW, g, hg, H⟩ := p.w_psi
   obtain ⟨h, e, -⟩ := exists_toIdent_eq p ⟨W, ψW, g, hg⟩ H
@@ -247,15 +193,6 @@ theorem toIdent_surjective : Function.Surjective (toIdent : IsPullDeg φ D D' �
 
 theorem nonempty_iff : Nonempty (IsPullDeg φ D D') ↔ Nonempty (PullIdent φ D D') :=
   ⟨fun ⟨h⟩ => ⟨toIdent h⟩, fun ⟨p⟩ => let ⟨h, _⟩ := toIdent_surjective p; ⟨h⟩⟩
-
-def isPullDegEquiv (φ : R →+* R') (D : DegPre R) (D' : DegPre R') :
-    IsPullDeg φ D D' ≃ PullIdent φ D D' × OpenChoice φ D :=
-  Equiv.ofBijective (fun h => (toIdent h, toOpenChoice h))
-    ⟨fun _ _ H => eq_of_toIdent_eq (congrArg Prod.fst H) (congrArg Prod.snd H),
-     fun q => let ⟨h, e, e'⟩ := exists_toIdent_eq q.1 q.2 (psiCarried_all q.1 q.2); ⟨h, Prod.ext e e'⟩⟩
-
-@[simp] theorem isPullDegEquiv_apply (h : IsPullDeg φ D D') :
-    isPullDegEquiv φ D D' h = (toIdent h, toOpenChoice h) := rfl
 
 end Main
 

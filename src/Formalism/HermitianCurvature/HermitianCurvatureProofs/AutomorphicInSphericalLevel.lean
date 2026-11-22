@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FlagStabilizerFixesFrame
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsSmoothExt
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DensityLemma.PFibreBoundX
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FlagStabilizerFixesFrame
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ExistsSmoothExt
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.DensityLemma.PFibreBoundX
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.SmoothExtensionClosedSet
 
@@ -177,9 +181,10 @@ theorem fR_loc (Bs : B.RealPlaceData k r Wp Wq) (μ0 μ0' : Measure (Mt k r))
   have hc2 : Continuous fun p : B.SS k r => (Matrix.of (hinvM p.2.1) : B.Mat k r) :=
     (cd_hinvM (n := 0) (by fun_prop : ContDiff ℝ 0 fun p : B.SS k r => p.2.1)).continuous
   have hpair : ContinuousOn (fun p : B.SS k r => (Bs.π (Matrix.of p.1.1), Bs.π' (Matrix.of (hinvM p.2.1))))
-      {p | automorphic_in_spherical_level Bs p} :=
-    (Bs.π_cont.comp hc1.continuousOn fun p hp => hp.1).prodMk
-      (Bs.π'_cont.comp hc2.continuousOn fun p hp => hinv_mem Bs hp)
+      {p | automorphic_in_spherical_level Bs p} := by
+    refine ContinuousOn.prodMk (Bs.π_cont.comp' hc1.continuousOn ?_) ?_
+    · exact fun p hp => hp.1
+    · exact Bs.π'_cont.comp' hc2.continuousOn fun p hp => hinv_mem Bs hp
   have h2 := sand_cont.comp_continuousOn hpair
   have hcont : ContinuousOn (fR Bs) {p | automorphic_in_spherical_level Bs p} := by
     unfold fR

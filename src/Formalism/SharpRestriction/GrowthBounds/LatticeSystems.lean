@@ -1,6 +1,10 @@
-import Formalism.SubspaceCounting.ChoiceOfTopsRefined
-import Formalism.GradedWeylDivisibility.FinalD
-import Formalism.SharpRestriction.GrowthBounds.SelectionLemmas
+module
+
+public import Formalism.SubspaceCounting.ChoiceOfTopsRefined
+public import Formalism.GradedWeylDivisibility.FinalD
+public import Formalism.SharpRestriction.GrowthBounds.SelectionLemmas
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ theorem inj_clause {O X : Type} [CommRing O] [AddCommGroup X] [Module O X]
     (Nst M M' : Submodule O X) (h : M' ≤ M) :
     Function.Injective (Submodule.mapQ (Submodule.comap M'.subtype Nst) (Submodule.comap M.subtype Nst)
       (Submodule.inclusion h) (fun _ hx => hx)) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x
   induction x using Submodule.Quotient.induction_on with
   | H x =>
@@ -72,8 +76,8 @@ theorem pr_iter (v : Fin G.P.nV) (m : ℕ) (x : G.Fn) : (y v ^ m) x = (G.yv v)^[
   | succ n ih =>
     rw [pow_succ, Module.End.mul_apply, ih, hy, Function.iterate_succ_apply]
 
-include hy in
 
+include hy in
 theorem pr_list {V : ℕ} (e : Fin V → Fin G.P.nV) (m : ℕ) (Sv : Fin G.P.nV → ℕ) (π : G.O) (c : ℕ)
     (hπ : π ^ c = (p : G.O)) (ε : Fin V → Bool) (l : List (Fin V)) (x : G.Fn) :
     ((l.map fun i => if ε i then y (e i) ^ m else (π ^ (c * Sv (e i))) • (1 : Module.End G.O G.Fn)).prod) x =
@@ -93,8 +97,8 @@ theorem pr_list {V : ℕ} (e : Fin V → Fin G.P.nV) (m : ℕ) (Sv : Fin G.P.nV 
         List.map_cons, List.sum_cons, LinearMap.smul_apply, Module.End.one_apply]
       rw [pow_mul, hπ, smul_smul, pow_add]
 
-include hy in
 
+include hy in
 theorem pr_le {V : ℕ} (e : Fin V ↪ Fin G.P.nV)
     (hcomm : ∀ (u v : Fin G.P.nV) (F : G.Fn), G.yv u (G.yv v F) = G.yv v (G.yv u F))
     (m : ℕ) (Sv : Fin G.P.nV → ℕ) (π : G.O) (c : ℕ) (hπ : π ^ c = (p : G.O)) (M : Submodule G.O G.Fn) :
@@ -340,7 +344,8 @@ theorem kp_indep {O Kf V : Type*} [CommRing O] [Field Kf] [Algebra O Kf] [AddCom
   rw [Fintype.linearIndependent_iff]
   intro c hc k
   have h1 := congrArg (fun z => ((u (Pi.single k 1) : A) : Module.Dual Kf V) z) hc
-  simp only [map_sum, map_smul, smul_eq_mul, map_zero] at h1
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, smul_eq_mul, map_zero] at h1
   have h2 : ∀ j, ∑ i, algebraMap O Kf (M j i) * ((u (Pi.single k 1) : A) : Module.Dual Kf V) (y i) =
       algebraMap O Kf (π ^ D * (Pi.single k 1 : Fin n → O) j) := fun j => hu _ j
   simp only [h2] at h1
@@ -496,10 +501,9 @@ theorem ef_edges_finite_gen {W Qq : Type} [CommRing W] [Field Qq] [Algebra W Qq]
     rw [Submodule.map_comap_subtype, Submodule.map_comap_subtype, inf_eq_right.mpr hA.2.2.1,
       inf_eq_right.mpr hB.2.2.1] at h3
     exact h3
-  · convert Set.finite_empty
-    ext A
-    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
-    exact fun h => hL h.2.1
+  · apply Set.Finite.subset Set.finite_empty
+    intro A hA
+    exact (hL hA.2.1).elim
 
 section PlacesLevel
 
@@ -570,10 +574,6 @@ end PlacesLevel
 
 variable {p : ℕ}
 
-theorem edges_finite (G : GAtP p) (v : Fin G.P.nV) (L : Submodule (G.P.W v) (Fin (G.P.m + 1) → G.P.Qq v)) :
-    {L'' : Submodule (G.P.W v) (Fin (G.P.m + 1) → G.P.Qq v) | IsEdge p (G.P.n' v) G.P.r ⟨L'', L⟩}.Finite :=
-  ef_places_finite G.P v L
-
 def yEnd (G : GAtP p) (v : Fin G.P.nV) : Module.End G.O G.Fn where
   toFun := G.yv v
   map_add' F F' := by
@@ -582,8 +582,6 @@ def yEnd (G : GAtP p) (v : Fin G.P.nV) : Module.End G.O G.Fn where
   map_smul' c F := by
     funext i
     exact ef_yv_smul G.P v c (F i)
-
-@[simp] theorem yEnd_apply (G : GAtP p) (v : Fin G.P.nV) (F : G.Fn) : yEnd G v F = G.yv v F := rfl
 
 theorem yEnd_pow_apply (G : GAtP p) (v : Fin G.P.nV) (m : ℕ) (F : G.Fn) :
     (yEnd G v ^ m) F = (G.yv v)^[m] F := by
@@ -1222,7 +1220,8 @@ theorem nt_equiv (G : GAtP p) (v : Fin G.P.nV) : RestEquiv G v := by
         congrArg (fun s => ((p : G.Kf) ^ G.P.ArV v) • s) hsum.symm
     _ = ((G.lev i).χ γ : G.O) • (G.lev i).actX γ (((p : G.Kf) ^ G.P.ArV v) •
           ∑ A ∈ ef_E G.P v (L v), F (Function.update (β := fun v => Submodule (G.P.W v) (Fin (G.P.m + 1) → G.P.Qq v)) L v A)) := by
-        rw [map_smul, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_smul, map_sum]
         simp only [Finset.smul_sum]
         apply Finset.sum_congr rfl
         intro A _
@@ -1551,18 +1550,6 @@ theorem la_reflexive (G : GAtP p) (v : Fin G.P.nV)
   have := (G.P.setting v).frac_O
   exact la_reflexive_of G (la_indep (IsFractionRing.injective G.O G.Kf)) v Lv hLv
 
-def RestLocEdge (G : GAtP p) (v : Fin G.P.nV) : Prop :=
-  ∀ Lv : Submodule (G.P.W v) (Fin (G.P.m + 1) → G.P.Qq v), IsLattice (G.P.W v) Lv →
-    (∀ e : Edge (G.P.W v) (G.P.Qq v) (G.P.m + 1), IsEdge p (G.P.n' v) G.P.r e → e.src = Lv →
-      HL (O := G.O) (G.P.ι v) (G.P.σ v) (G.P.lam0 v) Lv ≤
-        Re p (G.P.ι v) (G.P.σ v) G.P.w G.P.r (G.P.lam0 v) e) ∧
-    (∀ e : Edge (G.P.W v) (G.P.Qq v) (G.P.m + 1), IsEdge p (G.P.n' v) G.P.r e → e.tgt = Lv →
-      dualLat G.O G.Kf (HL (O := G.O) (G.P.ι v) (G.P.σ v) (G.P.lam0 v) Lv) ≤
-        Re' p (G.P.ι v) (G.P.σ v) G.P.w G.P.r (G.P.lam0 v) e)
-
-theorem la_locD_of_edge (G : GAtP p) (v : Fin G.P.nV) (h : RestLocEdge G v) : RestLocD G v :=
-  fun Lv hLv => ⟨la_H_le_V G v Lv hLv, (h Lv hLv).1, (h Lv hLv).2, la_reflexive G v Lv hLv⟩
-
 end Formalism.MainNotions.G.LatticeSystems
 
 namespace Formalism.MainNotions.G.LatticeSystems
@@ -1580,7 +1567,7 @@ theorem lb_basis (R : Type) [CommRing R] [IsDomain R] (k n : ℕ) (ν : Fin n �
   have hmem : m.1 ∈ (bideterminant R sz hsz I).support := by
     rw [← hbm, MvPolynomial.mem_support_iff]
     have h3 : (colLex k n).leadingCoeff (b m) =
-        MvPolynomial.coeff ((colLex k n).degree (b m)) (b m) := rfl
+        AddMonoidAlgebra.coeff (b m) ((colLex k n).degree (b m)) := rfl
     rw [hdeg] at h3
     rw [← h3, hlc]
     exact one_ne_zero
@@ -2024,10 +2011,12 @@ theorem smith_normal_form_card {W : Type} [CommRing W] [IsDomain W] [IsPrincipal
     have hmem := hpN (bT i)
     have h1 : (p : W) • bT i = ∑ j, (bB.repr ⟨_, hmem⟩ j) • (a j • bT j) := by
       have h2 := congrArg N.subtype (bB.sum_repr ⟨_, hmem⟩)
-      simp only [map_sum, map_smul, Submodule.subtype_apply, hsnf] at h2
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, Submodule.subtype_apply, hsnf] at h2
       exact h2.symm
     have h3 := congrArg (fun z => bT.repr z i) h1
-    simp only [map_smul, map_sum, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.single_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_smul, map_sum, Module.Basis.repr_self, Finsupp.smul_apply, Finsupp.single_apply,
       Finsupp.coe_finsetSum, Finset.sum_apply, smul_eq_mul, if_true, mul_ite, mul_one, mul_zero,
       Finset.sum_ite_eq', Finset.mem_univ] at h3
     exact ⟨bB.repr ⟨_, hmem⟩ i, h3.trans (mul_comm _ _)⟩
@@ -2047,7 +2036,7 @@ theorem lc_snf {W Qq : Type} [CommRing W] [IsDomain W] [IsPrincipalIdealRing W] 
   have hφr : LinearMap.range φ = e.tgt := by
     rw [hL, hφ]; exact Fintype.range_linearCombination W _
   have hφi : Function.Injective φ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     have h1 : gL.mulVec (fun c => algebraMap W Qq (x c)) = 0 := by
       funext i
@@ -2076,7 +2065,7 @@ theorem lc_snf {W Qq : Type} [CommRing W] [IsDomain W] [IsPrincipalIdealRing W] 
     rw [h1, hNs, Submodule.map_span, ← Set.range_comp]
     congr 2
     funext i
-    simp only [Function.comp_apply, map_smul]
+    exact map_smul φ (a i) (bT i)
   · obtain ⟨φ', hφ'⟩ : ∃ φ' : (Fin k → W) ≃ₗ[W] e.tgt, ∀ x, ((φ' x : e.tgt) : Fin k → Qq) = φ x :=
       ⟨(LinearEquiv.ofInjective φ hφi).trans (LinearEquiv.ofEq _ _ hφr), fun x => rfl⟩
     have hmap : N.map (φ' : (Fin k → W) →ₗ[W] e.tgt) = Submodule.comap e.tgt.subtype e.src := by
@@ -2328,7 +2317,7 @@ theorem mna_finite_of (G : GAtP p) (hH : RestHfin G) (h2 : G.FinClasses) : Modul
   have : ∀ x : (Σ i : G.comp, ↥(R i)), IsNoetherian G.O ↥(Submodule.span G.O (↑(S x) : Set G.P.Xsp)) :=
     fun x => isNoetherian_of_fg_of_noetherian _ (Submodule.fg_span (Finset.finite_toSet _))
   apply Module.Finite.of_injective f
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro F hF0
   apply Subtype.ext
   funext i L
@@ -2447,20 +2436,9 @@ theorem open_part_of_local_and_lemma_J (G : GAtP p) (hD : ∀ v, RestLocD G v) (
   fun h1 h2 VV t Dd cStar κ hne hLP =>
     restWalk_of_local_J G VV t Dd κ (fun v _ => hD v) (hJ h1 h2 VV t Dd cStar κ hne hLP)
 
-theorem open_part_of_edge_inclusions (G : GAtP p) (hE : ∀ v, RestLocEdge G v) (hJ : RestJAll G) : RemainingCountingStatement G :=
-  open_part_of_local_and_lemma_J G (fun v => la_locD_of_edge G v (hE v)) hJ
-
 theorem instance_of_open_part (D : Formalism.BasicNotions.D7) (G : GAtP p) (hA : admitted D G) (hR : RemainingCountingStatement G) : Conclusion1 D G :=
   have hfin : Module.Finite G.O G.Mna := mna_finite G hA.2.1
   counting_statement_of_block_form D G hA hR hfin (fun v => mna_free G v)
-
-theorem instance_of_edges_and_lemma_J (D : Formalism.BasicNotions.D7) (G : GAtP p) (hA : admitted D G) (hE : ∀ v, RestLocEdge G v)
-    (hJ : RestJAll G) : Conclusion1 D G :=
-  instance_of_open_part D G hA (open_part_of_edge_inclusions G hE hJ)
-
-theorem instance_of_edge_bases_and_lemma_J (D : Formalism.BasicNotions.D7) (G : GAtP p) (hA : admitted D G) (hB : ∀ v, RestEdgeBasis G v)
-    (hJ : RestJAll G) : Conclusion1 D G :=
-  instance_of_open_part D G hA (open_part_of_local_and_lemma_J G (fun v => restLocD_of_edgeBasis G v (hB v)) hJ)
 
 theorem restLocD (G : GAtP p) (v : Fin G.P.nV) : RestLocD G v :=
   restLocD_of_edgeBasis G v (restEdgeBasis G v)
@@ -2488,9 +2466,6 @@ def upd (G : GAtP p) (L : G.P.Tup) (v : Fin G.P.nV) (A : Lat G v) : G.P.Tup :=
 
 def sysOf (G : GAtP p) (t : Fin G.P.nV → ℕ) (σ : Fin G.P.nV → Slot) : G.P.Tup → Submodule G.O G.P.Xsp :=
   G.P.sys fun v => piLattice₂ G v (t v) (σ v)
-
-theorem latSys_eq (G : GAtP p) (t : Fin G.P.nV → ℕ) (σ : Fin G.P.nV → Slot) :
-    latSys G t σ = G.funMod (sysOf G t σ) := rfl
 
 def EquivSys (G : GAtP p) (Hv : G.P.Tup → Submodule G.O G.P.Xsp) : Prop :=
   ∀ (i : G.comp) (γ : (G.lev i).Γ) (L : G.P.Tup), G.P.IsLatTup L → ∀ ξ ∈ Hv L,
@@ -2608,7 +2583,8 @@ theorem jd_subst_comp (M N : ∀ v, Fin (P.n' v) → Matrix (Fin (P.m + 1)) (Fin
   apply MvPolynomial.algHom_ext
   intro x
   unfold Places.subst
-  simp only [AlgHom.comp_apply, aeval_X, map_sum, map_mul, algHom_C, Matrix.mul_apply, Finset.sum_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [AlgHom.comp_apply, aeval_X, map_sum, map_mul, algHom_C, Matrix.mul_apply, Finset.sum_mul,
     Finset.mul_sum]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl
@@ -2703,7 +2679,7 @@ theorem jd_zero (G : GAtP p) (i : G.comp) (L0 : G.P.Tup) (ξ : G.P.Xsp) (i' : G.
   simp only [delta]
   rcases h with h | h
   · split_ifs <;> rfl
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
 
 theorem jd_uniq (G : GAtP p) (h1 : G.TrivStab) (i : G.comp) (L0 : G.P.Tup) (hL0 : G.P.IsLatTup L0)
     (γ γ' : (G.lev i).Γ) (h : (G.lev i).smul γ L0 = (G.lev i).smul γ' L0) : γ = γ' := by
@@ -2717,7 +2693,7 @@ theorem jd_apply (G : GAtP p) (h1 : G.TrivStab) (i : G.comp) (L0 : G.P.Tup) (γ 
   have hex : ∃ γ' : (G.lev i).Γ, (G.lev i).smul γ L0 = (G.lev i).smul γ' L0 := ⟨γ, rfl⟩
   have hc : hex.choose = γ := (jd_uniq G h1 i L0 hL0 _ _ hex.choose_spec).symm
   simp only [delta]
-  rw [dif_pos hex, if_pos trivial, hc]
+  rw [dite_eq_left hex, if_pos trivial, hc]
 
 theorem jd_self (G : GAtP p) (h1 : G.TrivStab) (i : G.comp) (L0 : G.P.Tup) (ξ : G.P.Xsp)
     (hL0 : G.P.IsLatTup L0) : delta G i L0 ξ i L0 = ξ := by
@@ -2954,7 +2930,7 @@ theorem je_Hten {O Kf : Type} [CommRing O] [Field Kf] [Algebra O Kf] (hI : H0Ind
     simp only [(blockActTensor Kf Kf (Fin n') (m + 1) (m + 1) (fun s => (g s)⁻¹)).1, map_smul]
     exact je_prod_smul _ _
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx => rw [LinearMap.map_smul_of_tower]; exact Submodule.smul_mem _ a hx
 
 theorem je_Hten' {O Kf : Type} [CommRing O] [Field Kf] [Algebra O Kf] (hI : H0IndepOfBasis O Kf) {n' m : ℕ}
@@ -3005,7 +2981,8 @@ theorem je_twist (G : GAtP p) (v : Fin G.P.nV) (A : GL (Fin (G.P.m + 1)) (G.P.Qq
     twistVec (G.P.ι v) (G.P.σ v) s.val (nt_phi (G.P.W v) A x) =
       (je_g G v A s).mulVec (twistVec (G.P.ι v) (G.P.σ v) s.val x) := by
   funext i
-  simp [twistVec, nt_phi, Matrix.mulVec, dotProduct, je_g, Places.gPos, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [twistVec, nt_phi, Matrix.mulVec, dotProduct, je_g, Places.gPos, map_sum, map_mul]
 
 theorem je_extO (G : GAtP p) (v : Fin G.P.nV) (A : GL (Fin (G.P.m + 1)) (G.P.Qq v)) (s : Fin (G.P.n' v))
     (Lv : Lat G v) :
@@ -3142,7 +3119,8 @@ theorem je_subst_vEmb (G : GAtP p)
   have h : (G.P.subst Gm).comp (G.P.vEmb v) = (G.P.vEmb v).comp (blockAct G.Kf (Gm v)) := by
     apply MvPolynomial.algHom_ext
     intro x
-    simp [Places.subst, Places.vEmb, blockAct, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [Places.subst, Places.vEmb, blockAct, map_sum]
   exact congrArg (fun f => f F) h
 
 theorem je_gPos_inv (G : GAtP p) (v : Fin G.P.nV) (A : GL (Fin (G.P.m + 1)) (G.P.Qq v)) (s : Fin (G.P.n' v)) :
@@ -3159,7 +3137,8 @@ theorem je_gPos_inv (G : GAtP p) (v : Fin G.P.nV) (A : GL (Fin (G.P.m + 1)) (G.P
       G.P.ι v ((G.P.σ v ^ s.val) ((((A⁻¹ : GL (Fin (G.P.m + 1)) (G.P.Qq v)) :
         Matrix (Fin (G.P.m + 1)) (Fin (G.P.m + 1)) (G.P.Qq v)) *
         (A : Matrix (Fin (G.P.m + 1)) (Fin (G.P.m + 1)) (G.P.Qq v))) a b)) := by
-    simp only [Places.gPos, je_g, Matrix.mul_apply, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Places.gPos, je_g, Matrix.mul_apply, map_sum, map_mul]
   rw [h2, h1]
   by_cases hab : a = b
   · subst hab; simp
@@ -3201,7 +3180,7 @@ theorem jEquiv (G : GAtP p) : JEquiv G := by
     exact ⟨fun v => je_loc G v ((G.lev i).act v γ) (F v),
       fun v => mapsTo_je_loc G v (t v) (σ v) _ (L v) (hL v) (F v) (hF v), je_natAct_prod G _ F⟩
   | zero => rw [map_zero, smul_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add, smul_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _), smul_add]; exact Submodule.add_mem _ hx hy
   | smul a x _ hx => rw [LinearMap.map_smul_of_tower, smul_comm]; exact Submodule.smul_mem _ a hx
 
 end Formalism.MainNotions.G.LatticeSystems
@@ -3516,7 +3495,7 @@ theorem jm_count {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O
   let ψ : (Fin n → O) →ₗ[O] ({i : Fin nS // a i ∣ q} → O) :=
     (Matrix.of fun (i : {i : Fin nS // a i ∣ q}) (k : Fin n) => X i.1 k).mulVecLin
   have hψ : Function.Injective ψ := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     have hx' : ∀ i : Fin nS, a i ∣ q → ∑ k, X i k * x k = 0 := by
       intro i hi
@@ -3584,7 +3563,7 @@ theorem jm_basis {I : Type} [Finite I] (b0 : Module.Basis I Kf V) (c : O) (hc : 
       (fun x => hHP x x.2)
   have h2 : Module.finrank O (Submodule.span O (Set.range b0)) ≤ Module.finrank O P := by
     refine LinearMap.finrank_le_finrank_of_injective (f := φ) ?_
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro x hx
     have : c • (x : V) = 0 := congrArg Subtype.val hx
     exact Subtype.ext (jm_tors (Kf := Kf) c hc _ this)
@@ -3628,12 +3607,15 @@ theorem jm_core {I : Type} [Finite I] (b0 : Module.Basis I Kf V) (c : O) (hc : c
     have e1 := hu (Pi.single k 1) j
     have e2 : ∑ i, algebraMap O Kf (M j i) * (u (Pi.single k 1) : Module.Dual Kf V) (f i) =
         (u (Pi.single k 1) : Module.Dual Kf V) (∑ i, M j i • f i) := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       apply Finset.sum_congr rfl
       intro i _
       rw [LinearMap.map_smul_of_tower, Algebra.smul_def]
-    rw [e2, hcc, map_sum] at e1
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [e2, hcc, map_sum] at e1
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     have e3 : algebraMap O Kf (q * (Pi.single k (1 : O) : Fin n → O) j) =
         algebraMap O Kf (if j = k then q else 0) := by
       congr 1
@@ -3923,7 +3905,7 @@ theorem jl_good (G : GAtP p) (t : Fin G.P.nV → ℕ) (B : Finset (Fin G.P.nV)) 
     rw [map_zero, zero_mul, jl_delta_zero G hD]
     exact Submodule.zero_mem _
   | add x y _ _ hx hy =>
-    rw [map_add, add_mul, dadd]
+    rw [map_add (f := _), add_mul, dadd]
     exact Submodule.add_mem _ hx hy
   | smul c x _ hx =>
     rw [jl_emb_smul, smul_mul_assoc, dsmul]
@@ -4017,7 +3999,7 @@ theorem jLocal (G : GAtP p) (t : Fin G.P.nV → ℕ) (B : Finset (Fin G.P.nV)) (
           push_cast
           rfl
       _ ≤ ∏ v, ((if v ∈ B then κ v else 1) * (dimV G.Kf (G.P.lam0 v) : ℝ)) := by
-          refine Finset.prod_le_prod (fun v _ => Nat.cast_nonneg _) (fun v _ => ?_)
+          refine Finset.prod_le_prod₀ (fun v _ => Nat.cast_nonneg _) (fun v _ => ?_)
           by_cases hv : v ∈ B
           · simp only [hv, if_true]
             exact (hbad v hv).1
@@ -4422,30 +4404,5 @@ end Formalism.MainNotions.G.LatticeSystems
 namespace Formalism.MainNotions.G.LatticeSystems
 
 open Formalism.MainNotions.G Formalism.MainNotions.SelectionLemmas
-
-theorem stmt1Loc_of_rest1 (D : Formalism.BasicNotions.D7) (h : ∀ (p : ℕ) (G : GAtP p), RemainingCountingStatement G) : RationalPlaneProblemLocal D :=
-  fun p G hA => instance_of_open_part D G hA (h p G)
-
-theorem problem_of_open_part_everywhere (D : Formalism.BasicNotions.D7)
-    (h : ∀ (u : D.what₂.Word) (w : D.what₂.places.Pl)
-      (hh : Formalism.BasicNotions.GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)), RemainingCountingStatement (D.gat u w hh)) : IntegralityFromMetric D :=
-  fun u w hh hA => instance_of_open_part D _ hA (h u w hh)
-
-theorem admissibleModule_iff_lattice_quotients (D : Formalism.BasicNotions.D7) {p : ℕ} (G : GAtP p) : admitted D G ↔ adm1 D G ∧ adm2 D G :=
-  ⟨fun h => ⟨h.1, h.2.1⟩, fun h => ⟨h.1, h.2, exponent_condition_holds D G⟩⟩
-
-theorem stmt1Loc_of_J (D : Formalism.BasicNotions.D7) (h : ∀ (p : ℕ) (G : GAtP p), RestJAll G) : RationalPlaneProblemLocal D :=
-  fun p G hA => instance_of_lemma_J D G hA (h p G)
-
-theorem problem_of_lemma_J_everywhere (D : Formalism.BasicNotions.D7)
-    (h : ∀ (u : D.what₂.Word) (w : D.what₂.places.Pl)
-      (hh : Formalism.BasicNotions.GIdx D.host (D.mem u).A.T (D.what₂.places.resChar w)), RestJAll (D.gat u w hh)) : IntegralityFromMetric D :=
-  fun u w hh hA => instance_of_lemma_J D _ hA (h u w hh)
-
-theorem stmt1Loc_proved (D : Formalism.BasicNotions.D7) : RationalPlaneProblemLocal D := fun _ G hA => theta_kernel_expansion D G hA
-
-theorem problem_holds (D : Formalism.BasicNotions.D7) : IntegralityFromMetric D := fun _ _ _ hA => theta_kernel_expansion D _ hA
-
-theorem problem_holds_family {eps : ℝ} (Fm : Formalism.MainNotions.FamP eps) : FamilyGlobalDerivation Fm := fun _ _ => problem_holds _
 
 end Formalism.MainNotions.G.LatticeSystems

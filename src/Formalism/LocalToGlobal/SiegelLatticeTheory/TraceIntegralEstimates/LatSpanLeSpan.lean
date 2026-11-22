@@ -1,7 +1,11 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.FrameTop
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SplitRow
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IdentityCellTrace.TraceOneHolds
-import Formalism.SharpRestriction.CuspSpanNormBounds.CntPartners
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TermsFiniteAtPoint.FrameTop
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.SplitRow
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.IdentityCellTrace.TraceOneHolds
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CntPartners
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,7 +43,8 @@ theorem coef_of_span (e f : Fin r → S.V) (hfe : ∀ a b, S.hT (f a) (e b) = if
   obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun E).mp hx
   refine Finset.sum_congr rfl (fun a _ => ?_)
   congr 1
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp [hfe]
 
 variable (Λ : Submodule (𝓞 E) S.V) (aa : Fin r → FractionalIdeal (nonZeroDivisors (𝓞 E)) E) (e f : Fin r → S.V)
@@ -79,7 +84,7 @@ theorem mem_L_of_dual (hU : Formalism.HermitianLatticesTheory.IsUnimodular S.hT 
     have h2 : S.hT y2 x = 0 := orth_span f hxf y2 (latSpan_le_span _ f hy2)
     obtain ⟨o, ho⟩ := hxL yL hyL
     refine ⟨o, ?_⟩
-    rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply, h1, h2, ← ho]
+    rw [map_add (f := _), map_add (f := _), LinearMap.add_apply, LinearMap.add_apply, h1, h2, ← ho]
     simp
   have hxΛ : x ∈ Λ := by
     unfold Formalism.HermitianLatticesTheory.IsUnimodular at hU
@@ -93,12 +98,12 @@ theorem mem_L_of_dual (hU : Formalism.HermitianLatticesTheory.IsUnimodular S.hT 
   have hf1 : ∀ a, S.hT (f a) x1 = 0 := by
     intro a
     have h := hxf a
-    rw [← hxeq, map_add, map_add, (hL xL hxL' a).2, horth2 (f a) f (hff a) x2 hx2'] at h
+    rw [← hxeq, map_add (f := _), map_add (f := _), (hL xL hxL' a).2, horth2 (f a) f (hff a) x2 hx2'] at h
     simpa using h
   have he2 : ∀ a, S.hT (e a) x2 = 0 := by
     intro a
     have h := hxe a
-    rw [← hxeq, map_add, map_add, (hL xL hxL' a).1, horth2 (e a) e (hee a) x1 hx1'] at h
+    rw [← hxeq, map_add (f := _), map_add (f := _), (hL xL hxL' a).1, horth2 (e a) e (hee a) x1 hx1'] at h
     simpa using h
   have h10 : x1 = 0 := by
     rw [coef_of_span e f hfe hx1']

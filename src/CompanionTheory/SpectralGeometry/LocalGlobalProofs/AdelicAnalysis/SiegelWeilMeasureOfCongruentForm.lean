@@ -1,19 +1,23 @@
-import Mathlib
-import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.UnitaryIsomOfIsometry
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHaarMeasure
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LatticeStableAlmostEverywhere
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdelesLocalRingTotallyReal
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRing
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountable
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.EulerProductMeasureTransportStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ExistsGramFiberMeasuresStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GramFiberMeasuresContinuityStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GramFiberMeasuresChangeOfFormStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicTupleProjectionsStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.UnitaryActionEulerProductStatement
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicUnitaryGroupLocallyCompactStatement
+module
+
+public import Mathlib
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.AdelicEulerProducts.IsEulerProd
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.UnitaryIsomOfIsometry
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CoordinateHaarMeasure
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.LatticeStableAlmostEverywhere
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.InfiniteAdelesLocalRingTotallyReal
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.CompletionIsLocalRing
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelesLocallyCompactSecondCountable
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.TensorLocallyCompactRing
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.EulerProductMeasureTransportStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.ExistsGramFiberMeasuresStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GramFiberMeasuresContinuityStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.GramFiberMeasuresChangeOfFormStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicTupleProjectionsStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.UnitaryActionEulerProductStatement
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.AdelicUnitaryGroupLocallyCompactStatement
+
+@[expose] public section
 
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology
 open scoped TensorProduct ENNReal NNReal Matrix
@@ -35,7 +39,8 @@ theorem hform_conj {A : Type} [CommRing A] {M : ℕ} (s : A →+* A) (J G : Matr
     simp only [hform, dotProduct, Matrix.mulVec, Function.comp, Finset.mul_sum, mul_assoc]
   have hs : s ∘ (G.mulVec x) = Matrix.vecMul (s ∘ x) (cT s G) := by
     ext i
-    simp only [Function.comp, Matrix.mulVec, Matrix.vecMul, dotProduct, cT, map_sum, map_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Function.comp, Matrix.mulVec, Matrix.vecMul, dotProduct, cT, map_sum, map_mul,
       Matrix.transpose_apply, Matrix.map_apply]
     exact Finset.sum_congr rfl fun j _ => mul_comm _ _
   rw [key, key, hs, ← Matrix.dotProduct_mulVec]
@@ -67,7 +72,8 @@ theorem ratTup_ratAct (R : Type) [CommRing R] [Algebra F R] {M n : ℕ} (g : GL 
   ext a i
   have hG : ((bc (inclR R) g : GL (Fin M) (R ⊗[F] E)) : Matrix (Fin M) (Fin M) (R ⊗[F] E)) =
       (g : Matrix (Fin M) (Fin M) E).map (inclR R) := rfl
-  simp only [ratTup, ratAct, actTup, hG, Matrix.mulVec, dotProduct, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [ratTup, ratAct, actTup, hG, Matrix.mulVec, dotProduct, map_sum, map_mul,
     Matrix.map_apply]
 
 theorem actTup_mul (R : Type) [CommRing R] [Algebra F R] {M n : ℕ}
@@ -90,7 +96,8 @@ theorem map_actTup {R R' : Type} [CommRing R] [Algebra F R] [CommRing R'] [Algeb
   have hG : ∀ (S : Type) [CommRing S] [Algebra F S],
       ((bc (inclR S) g : GL (Fin M) (S ⊗[F] E)) : Matrix (Fin M) (Fin M) (S ⊗[F] E)) =
       (g : Matrix (Fin M) (Fin M) E).map (inclR S) := fun _ _ _ => rfl
-  simp only [actTup, hG, Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [actTup, hG, Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply]
   refine Finset.sum_congr rfl fun j _ => ?_
   congr 1
   simp [inclR]
@@ -140,7 +147,7 @@ theorem continuous_actTup (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) (R : Type)
   haveI : IsTopologicalRing (R ⊗[F] E) := (GlobalTheory.CompanionTheory.SW.TopK.topTens_props F E σ hCM R).1
   refine continuous_pi fun a => continuous_pi fun i => ?_
   simp only [actTup, Matrix.mulVec, dotProduct]
-  exact continuous_finset_sum _ fun j _ => continuous_const.mul
+  exact continuous_finsetSum _ fun j _ => continuous_const.mul
     ((continuous_apply j).comp (continuous_apply a))
 
 theorem measurable_actTup (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) (R : Type) [CommRing R] [Algebra F R]
@@ -162,8 +169,8 @@ theorem mat_inv (R : Type) [CommRing R] [Algebra F R] (σ : E →ₐ[F] E) {M : 
     (J : Matrix (Fin M) (Fin M) E) (h : HA R σ J) :
     HA.mat R σ J h⁻¹ = (HA.mat R σ J h)⁻¹ := rfl
 
-omit [NumberField F] [NumberField E] in
 
+omit [NumberField F] [NumberField E] in
 theorem act_conj (R : Type) [CommRing R] [Algebra F R] (σ : E →ₐ[F] E) {M n : ℕ}
     {J J' : Matrix (Fin M) (Fin M) E} (G : GL (Fin M) (R ⊗[F] E)) (e : HA R σ J' → HA R σ J)
     (hmat : ∀ u, HA.mat R σ J (e u) = G * HA.mat R σ J' u * G⁻¹) (u : HA R σ J')
@@ -241,9 +248,10 @@ theorem theta_map (σ : E →ₐ[F] E) (hCM : IsCMExt F E σ) {M n : ℕ} (J : M
     rw [← He.restrict_map, Measure.map_map He.measurable He.symm.measurable]
     simp
   unfold thetaMeas
-  rw [Measure.map_smul, hmass]
+  rw [Measure.map_smul, hmass] <;> try exact hmG.aemeasurable
   congr 1
-  rw [Measure.map_sum hmG.aemeasurable, ← sum_reindex (gramEquiv σ J g T)]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Measure.map_sum hmG.aemeasurable, ← sum_reindex (gramEquiv σ J g T)]
   congr 1
   funext X
   rw [Measure.map_map hmG (hmf' _)]
@@ -262,8 +270,8 @@ section Main
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-omit [NumberField E] in
 
+omit [NumberField E] in
 theorem isFD_pull (σ : E →ₐ[F] E) {M : ℕ} {J J' : Matrix (Fin M) (Fin M) E}
     (e : HA (AF F) σ J' ≃* HA (AF F) σ J)
     (hrat : ∀ u, HA.mat (AF F) σ J (e u) ∈ HFin (AF F) σ J ↔ HA.mat (AF F) σ J' u ∈ HFin (AF F) σ J')

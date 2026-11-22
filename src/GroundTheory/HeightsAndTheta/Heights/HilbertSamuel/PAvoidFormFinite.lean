@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsAvoidFormFinite
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreRepresentatives
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsAvoidFormFinite
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PFibreRepresentatives
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -20,7 +25,7 @@ theorem bdeg_add (m n : (Σ k, ι k) →₀ ℕ) : bdeg (m + n) = bdeg m + bdeg 
   simp [bdeg, Finset.sum_add_distrib]
 
 theorem isMultiHomog_iff {s : MRingOver ℂ ι} {a : K → ℕ} :
-    IsMultiHomog s a ↔ ∀ m, coeff m s ≠ 0 → bdeg m = a := by
+    IsMultiHomog s a ↔ ∀ m, AddMonoidAlgebra.coeff s m ≠ 0 → bdeg m = a := by
   constructor
   · intro h m hm
     funext k
@@ -76,8 +81,8 @@ theorem isMultiHomog_add {f g : MRingOver ℂ ι} {a : K → ℕ} (hf : IsMultiH
     (hg : IsMultiHomog g a) : IsMultiHomog (f + g) a := by
   rw [isMultiHomog_iff] at hf hg ⊢
   intro m hm
-  rw [coeff_add] at hm
-  by_cases h0 : coeff m f = 0
+  rw [MvPolynomial.coeff_add] at hm
+  by_cases h0 : AddMonoidAlgebra.coeff f m = 0
   · rw [h0, zero_add] at hm
     exact hg m hm
   · exact hf m h0
@@ -113,8 +118,8 @@ theorem isMultiHomog_prod {α : Type} (s : Finset α) (f : α → MRingOver ℂ 
     exact isMultiHomog_mul (h j (Finset.mem_insert_self _ _))
       (ih fun x hx => h x (Finset.mem_insert_of_mem hx))
 
-open Classical in
 
+open Classical in
 def wt (p : Σ k, ι k) : K → ℕ := fun k => if p.1 = k then 1 else 0
 
 theorem weight_wt (m : (Σ k, ι k) →₀ ℕ) : Finsupp.weight wt m = bdeg m := by
@@ -128,7 +133,7 @@ theorem weight_wt (m : (Σ k, ι k) →₀ ℕ) : Finsupp.weight wt m = bdeg m :
 def cmp (D : K → ℕ) : MRingOver ℂ ι →ₗ[ℂ] MRingOver ℂ ι := weightedHomogeneousComponent wt D
 
 theorem coeff_cmp (D : K → ℕ) (p : MRingOver ℂ ι) (m : (Σ k, ι k) →₀ ℕ) :
-    coeff m (cmp D p) = if bdeg m = D then coeff m p else 0 := by
+    AddMonoidAlgebra.coeff (cmp D p) m = if bdeg m = D then AddMonoidAlgebra.coeff p m else 0 := by
   classical
   rw [cmp, coeff_weightedHomogeneousComponent, weight_wt]
 
@@ -144,15 +149,16 @@ theorem cmp_of_homog {h : MRingOver ℂ ι} {b : K → ℕ} (hh : IsMultiHomog h
   rw [isMultiHomog_iff] at hh
   ext m
   rw [coeff_cmp]
-  by_cases hm : coeff m h = 0
+  by_cases hm : AddMonoidAlgebra.coeff h m = 0
   · split_ifs <;> simp [hm]
   · by_cases hb : b = D
     · subst hb
       simp [hh m hm]
-    · rw [if_neg hb, coeff_zero, if_neg (by rw [hh m hm]; exact hb)]
+    · rw [if_neg hb, AddMonoidAlgebra.coeff_zero, if_neg (by rw [hh m hm]; exact hb)]
+      rfl
+
 
 open Classical in
-
 theorem cmp_mul {q : MRingOver ℂ ι} {d : K → ℕ} (hq : IsMultiHomog q d) (D : K → ℕ)
     (p : MRingOver ℂ ι) : cmp D (p * q) = if d ≤ D then cmp (D - d) p * q else 0 := by
   classical
@@ -163,7 +169,7 @@ theorem cmp_mul {q : MRingOver ℂ ι} {d : K → ℕ} (hq : IsMultiHomog q d) (
   · rw [coeff_mul, coeff_mul]
     refine Finset.sum_congr rfl fun x hx => ?_
     rw [coeff_cmp]
-    by_cases hq0 : coeff x.2 q = 0
+    by_cases hq0 : AddMonoidAlgebra.coeff q x.2 = 0
     · simp [hq0]
     · rw [Finset.HasAntidiagonal.mem_antidiagonal] at hx
       have h2 := hq x.2 hq0
@@ -179,7 +185,7 @@ theorem cmp_mul {q : MRingOver ℂ ι} {d : K → ℕ} (hq : IsMultiHomog q d) (
     symm
     refine Finset.sum_eq_zero fun x hx => ?_
     rw [coeff_cmp]
-    by_cases hq0 : coeff x.2 q = 0
+    by_cases hq0 : AddMonoidAlgebra.coeff q x.2 = 0
     · simp [hq0]
     · rw [Finset.HasAntidiagonal.mem_antidiagonal] at hx
       have h2 := hq x.2 hq0
@@ -193,9 +199,9 @@ theorem cmp_mul {q : MRingOver ℂ ι} {d : K → ℕ} (hq : IsMultiHomog q d) (
       simp only [Pi.add_apply, Pi.sub_apply] at h3 ⊢
       rw [h3]
       exact Nat.sub_add_cancel h4
-  · rw [coeff_zero, coeff_mul]
+  · rw [AddMonoidAlgebra.coeff_zero, coeff_mul]
     refine Finset.sum_eq_zero fun x hx => ?_
-    by_cases hq0 : coeff x.2 q = 0
+    by_cases hq0 : AddMonoidAlgebra.coeff q x.2 = 0
     · simp [hq0]
     · exfalso
       rw [Finset.HasAntidiagonal.mem_antidiagonal] at hx
@@ -207,7 +213,8 @@ theorem cmp_mul {q : MRingOver ℂ ι} {d : K → ℕ} (hq : IsMultiHomog q d) (
       simp only [Pi.add_apply] at h3
       rw [← h3]
       exact Nat.le_add_left _ _
-  · rw [coeff_zero]
+  · rw [AddMonoidAlgebra.coeff_zero]
+    rfl
 
 theorem eval_cmp_eq_zero {S : Set (MRingOver ℂ ι)} (hS : ∀ s ∈ S, ∃ a, IsMultiHomog s a)
     {z : (Σ k, ι k) → ℂ} (hz : ∀ s ∈ S, eval z s = 0) {x : MRingOver ℂ ι} (hx : x ∈ Ideal.span S) :
@@ -221,18 +228,19 @@ theorem eval_cmp_eq_zero {S : Set (MRingOver ℂ ι)} (hS : ∀ s ∈ S, ∃ a, 
     · exact hz x hx
     · simp
   | zero => intro D; simp
-  | add x y _ _ hx hy => intro D; rw [map_add, map_add, hx, hy, add_zero]
+  | add x y _ _ hx hy => intro D; rw [map_add (f := _), map_add (f := _), hx, hy, add_zero]
   | smul a x _ hx =>
     intro D
-    rw [smul_eq_mul, as_sum a, Finset.sum_mul, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [smul_eq_mul, as_sum a, Finset.sum_mul, map_sum, map_sum]
     refine Finset.sum_eq_zero fun ν _ => ?_
     rw [mul_comm, cmp_mul (isMultiHomog_monomial ν _)]
     split_ifs
     · rw [map_mul, hx, zero_mul]
     · simp
 
-open Classical in
 
+open Classical in
 def spike (j : ∀ k, ι k) (f : K → ℕ) : (Σ k, ι k) →₀ ℕ :=
   Finsupp.equivFunOnFinite.symm (fun p => if p.2 = j p.1 then f p.1 else 0)
 
@@ -343,8 +351,8 @@ theorem rel_one {S : Set (MRingOver ℂ ι)} {G : MRingOver ℂ ι} {e : K → �
     rw [add_mul, one_mul, Nat.add_sub_cancel]
   refine ⟨cmp (M • e) a, isMultiHomog_cmp _ _, fun z hz => ?_⟩
   have h1 : monomial μ (1 : ℂ) = cmp ((M + 1) • e) (a * G) + cmp ((M + 1) • e) s := by
-    rw [← map_add, ← hμa, cmp_of_homog (isMultiHomog_monomial μ 1), if_pos hμ]
-  rw [h1, map_add, cmp_mul hG, if_pos heD, hDe, map_mul, eval_cmp_eq_zero hS hz hs, add_zero]
+    rw [← map_add (f := _), ← hμa, cmp_of_homog (isMultiHomog_monomial μ 1), if_pos hμ]
+  rw [h1, map_add (f := _), cmp_mul hG, if_pos heD, hDe, map_mul, eval_cmp_eq_zero hS hz hs, add_zero]
 
 theorem rel_direct {S : Set (MRingOver ℂ ι)} {G : MRingOver ℂ ι} {e : K → ℕ} (hG : IsMultiHomog G e)
     {N₀ M : ℕ} (hM : M ≤ N₀) (μ : (Σ k, ι k) →₀ ℕ) (hμ : bdeg μ = M • e) :
@@ -359,9 +367,10 @@ theorem rel_direct {S : Set (MRingOver ℂ ι)} {G : MRingOver ℂ ι} {e : K �
     ring
 
 theorem eval_eq_sum_support (p : MRingOver ℂ ι) (z : (Σ k, ι k) → ℂ) :
-    eval z p = ∑ ν ∈ p.support, coeff ν p * eval z (monomial ν 1) := by
+    eval z p = ∑ ν ∈ p.support, AddMonoidAlgebra.coeff p ν * eval z (monomial ν 1) := by
   conv_lhs => rw [as_sum p]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun ν _ => ?_
   rw [eval_monomial, eval_monomial]
   ring
@@ -381,15 +390,16 @@ theorem rel_all {S : Set (MRingOver ℂ ι)} {G : MRingOver ℂ ι} {e : K → �
     · exact rel_direct hG hM μ hμ
     · obtain ⟨h₁, hh₁, hev⟩ := hN₀ M (by omega) μ hμ
       choose! H hH hHev using ih
-      refine ⟨∑ ν ∈ h₁.support, C (coeff ν h₁) * H ν,
+      refine ⟨∑ ν ∈ h₁.support, C (AddMonoidAlgebra.coeff h₁ ν) * H ν,
         isMultiHomog_sum _ _ fun ν hν => isMultiHomog_C_mul (hH ν (bdeg_of_mem hh₁ hν)) _, fun z hz => ?_⟩
-      rw [hev z hz, eval_eq_sum_support h₁ z, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hev z hz, eval_eq_sum_support h₁ z, map_sum]
       simp only [map_mul, eval_C]
       rw [Finset.sum_mul, Finset.sum_mul, Finset.sum_mul]
       refine Finset.sum_congr rfl fun ν hν => ?_
       have := hHev ν (bdeg_of_mem hh₁ hν) z hz
-      calc coeff ν h₁ * eval z (monomial ν 1) * eval z G * eval z G ^ N₀
-          = coeff ν h₁ * (eval z (monomial ν 1) * eval z G ^ N₀) * eval z G := by ring
+      calc AddMonoidAlgebra.coeff h₁ ν * eval z (monomial ν 1) * eval z G * eval z G ^ N₀
+          = AddMonoidAlgebra.coeff h₁ ν * (eval z (monomial ν 1) * eval z G ^ N₀) * eval z G := by ring
         _ = _ := by rw [this]; ring
 
 def Mon (D : K → ℕ) : Set ((Σ k, ι k) →₀ ℕ) := {ν | bdeg ν = D}
@@ -411,10 +421,10 @@ instance (D : K → ℕ) : Finite (Mon (ι := ι) D) := (mon_finite D).to_subtyp
 noncomputable instance (D : K → ℕ) : Fintype (Mon (ι := ι) D) := Fintype.ofFinite _
 
 theorem eval_eq_sum_mon {h : MRingOver ℂ ι} {D : K → ℕ} (hh : IsMultiHomog h D) (z : (Σ k, ι k) → ℂ) :
-    eval z h = ∑ ν : Mon (ι := ι) D, coeff ν.1 h * eval z (monomial ν.1 1) := by
+    eval z h = ∑ ν : Mon (ι := ι) D, AddMonoidAlgebra.coeff h ν.1 * eval z (monomial ν.1 1) := by
   classical
   rw [eval_eq_sum_support, ← Finset.sum_subtype (mon_finite D).toFinset (fun x => Set.Finite.mem_toFinset _)
-    (fun ν => coeff ν h * eval z (monomial ν 1))]
+    (fun ν => AddMonoidAlgebra.coeff h ν * eval z (monomial ν 1))]
   apply Finset.sum_subset
   · intro ν hν
     rw [Set.Finite.mem_toFinset]
@@ -436,7 +446,7 @@ theorem exists_rep {S : Set (MRingOver ℂ ι)} {G : MRingOver ℂ ι} {e : K �
   refine ⟨N₀, fun M F hF => ?_⟩
   have hrel := rel_all hG N₀ hN₀ M
   choose! H hH hHev using hrel
-  refine ⟨fun ν => ∑ μ ∈ F.support, coeff μ F * coeff ν.1 (H μ), fun z hz hGz => ?_⟩
+  refine ⟨fun ν => ∑ μ ∈ F.support, AddMonoidAlgebra.coeff F μ * AddMonoidAlgebra.coeff (H μ) ν.1, fun z hz hGz => ?_⟩
   have hGM : eval z G ^ M ≠ 0 := pow_ne_zero _ hGz
   have hGN : eval z G ^ N₀ ≠ 0 := pow_ne_zero _ hGz
   rw [eval_eq_sum_support F, Finset.sum_div]
@@ -466,8 +476,8 @@ theorem phi_smul {G : MRingOver ℂ ι} {e : K → ℕ} (hG : IsMultiHomog G e) 
     rw [Pi.smul_apply, smul_eq_mul, mul_comm, pow_mul]
   rw [hpow, mul_pow, mul_div_mul_left _ _ (pow_ne_zero _ hP)]
 
-open Classical in
 
+open Classical in
 theorem isMultiHomog_X (k : K) (a : ι k) :
     IsMultiHomog (X ⟨k, a⟩ : MRingOver ℂ ι) (fun k' => if k' = k then 1 else 0) := by
   classical
@@ -523,11 +533,11 @@ theorem exists_sep {e : K → ℕ} (he : ∀ k, 1 ≤ e k) {z w : (Σ k, ι k) �
     split_ifs <;> omega
   · rw [map_mul]
     apply mul_eq_zero_of_left
-    simp only [L, map_add, map_mul, eval_C, eval_X]
+    simp only [L, map_add (f := _), map_mul, eval_C, eval_X]
     ring
   · rw [map_mul]
     refine mul_ne_zero ?_ ?_
-    · simp only [L, map_add, map_mul, eval_C, eval_X]
+    · simp only [L, map_add (f := _), map_mul, eval_C, eval_X]
       intro h
       apply hab
       linear_combination h
@@ -536,8 +546,8 @@ theorem exists_sep {e : K → ℕ} (he : ∀ k, 1 ≤ e k) {z w : (Σ k, ι k) �
 
 end AvoidFormFinite
 
-open AvoidFormFinite in
 
+open AvoidFormFinite in
 theorem AvoidFormFinite.proof : AvoidFormFinite.Statement := by
   intro K _ ι _ S G e he hG hS hcone
   classical

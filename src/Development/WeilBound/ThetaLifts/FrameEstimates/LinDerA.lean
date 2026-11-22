@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -190,7 +194,8 @@ theorem coords (ha : ∀ x y, a (x * y) = a y * a x) (h1 : a 1 = 1) {m : ℕ} (Y
     have h2 := (c.comp (pr a)).hasStrictFDerivAt.comp 0 hΦd
     refine HasStrictFDerivAt.congr_fderiv h2 (ContinuousLinearMap.ext fun s => ?_)
     have h3 : pr a (∑ i, s i • Y i) = ∑ i, s i • Y i := by
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [map_smul, pr_apply, hY, sub_neg_eq_add, ← two_smul ℝ (Y i), smul_smul (1 / 2 : ℝ)]
       norm_num
@@ -237,7 +242,7 @@ theorem gr_exp [CompleteSpace A] (ha : ∀ x y, a (x * y) = a y * a x) (h1 : a 1
       map_one' := by rw [h1]; rfl
       map_mul' := fun x y => by rw [ha]; rfl
       map_zero' := by rw [map_zero]; rfl
-      map_add' := fun x y => by rw [map_add]; rfl }
+      map_add' := fun x y => by rw [map_add (f := _)]; rfl }
   have h2 := NormedSpace.map_exp φ (MulOpposite.continuous_op.comp a.continuous) Y
   have h3 : a (NormedSpace.exp Y) = NormedSpace.exp (-Y) := by
     apply MulOpposite.op_injective

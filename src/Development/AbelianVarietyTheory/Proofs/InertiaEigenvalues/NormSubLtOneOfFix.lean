@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsMemWpNormSubLtOne
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Development.AbelianVarietyTheory.Definitions.Foundations.HTBasis
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExpStar
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsMemWpNormSubLtOne
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingIface
+
+@[expose] public section
 
 open Formalism.WeaklyAdmissibleFiltrations Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions.N Formalism.MainNotions.LocalSituation GlobalTheory.Cyc
 open scoped TensorProduct Topology
@@ -70,7 +74,7 @@ theorem exists_coboundary
     (fun m : {m : ℕ // 0 < m} => (fixer ρ p m.1 : Set G))
     (fun m => Subgroup.isClosed_of_isOpen _ (isOpen_fixer ρ hopen m.2))
     (by
-      rw [← Set.disjoint_iff_inter_eq_empty, Set.disjoint_left]
+      rw [Set.disjoint_left]
       intro g hg hg'
       exact hg (hJU fun m hm => Set.mem_iInter.1 hg' ⟨m, hm⟩))
     (by
@@ -82,7 +86,7 @@ theorem exists_coboundary
   set N := fixer ρ p m with hN
   have heN : ∀ g ∈ N, e g = 0 := fun g hg => hUe (by
     by_contra hc
-    exact Set.disjoint_left.1 (Set.disjoint_iff_inter_eq_empty.2 hmU) hc hg)
+    exact Set.disjoint_left.1 hmU hc hg)
   haveI : Finite (G ⧸ N) := Subgroup.quotient_finite_of_isOpen N (isOpen_fixer ρ hopen hm)
   letI : Fintype (G ⧸ N) := Fintype.ofFinite _
   let χ : G ⧸ N → (fixedPow p R m →* R) := fun x =>
@@ -121,7 +125,8 @@ theorem exists_coboundary
   have hθN : ∀ g, ∀ n ∈ N, ρ (g * n) θ = ρ g θ := fun g n hn => by
     rw [map_mul, RingAut.mul_apply, hn θ hθm]
   have htg : ∀ g, ρ g t = t := fun g => by
-    rw [ht, map_sum, ← hsum (fun g => ρ g θ) hθN g]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ht, map_sum, ← hsum (fun g => ρ g θ) hθN g]
     simp only [map_mul, RingAut.mul_apply]
   have htq : t ^ p ^ m = t := by
     rw [ht, sum_pow_char_pow]
@@ -137,7 +142,8 @@ theorem exists_coboundary
   have h3 : ρ g (∑ x : G ⧸ N, e x.out * ρ x.out θ) =
       ∑ x : G ⧸ N, e x.out * ρ x.out θ - e g * t := by
     conv_rhs => rw [← h2, ← htg g, ht]
-    rw [map_sum, map_sum, Finset.mul_sum, ← Finset.sum_sub_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_sum, Finset.mul_sum, ← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun x _ => ?_
     simp only [he, map_mul, RingAut.mul_apply]
     ring
@@ -178,7 +184,7 @@ theorem approx_step
     apply mul_left_cancel₀ hp0
     have h1 := congrArg (WittVector.map (ρ g).toRingHom) (hd h)
     rw [map_mul, map_pow, map_natCast, map_sub, map_sub, map_zlW, ← wittMap_mul] at h1
-    rw [mul_add, ← hd, ← hd, ← h1, hadd, map_add]
+    rw [mul_add, ← hd, ← hd, ← h1, hadd, map_add (f := _)]
     ring
   have hsmall : ∀ᶠ g in 𝓝ˢ {g : G | ∀ m, 0 < m → g ∈ fixer ρ p m},
       (p : ℤ_[p]) ^ (n + 1) ∣ c g := by
@@ -203,7 +209,7 @@ theorem approx_step
     exact ⟨_, h4⟩
   obtain ⟨β, hβ⟩ := exists_coboundary ρ hopen (fun g => (d g).coeff 0) (fun g h => by
     have := congrArg WittVector.constantCoeff (hdc g h)
-    rw [map_add] at this
+    rw [map_add (f := _)] at this
     simpa [WittVector.map_coeff] using this) he0
   refine ⟨b - (p : WittVector p R) ^ n * WittVector.teichmuller p β, ⟨_, sub_sub_cancel _ _⟩, ?_,
     fun g => ?_⟩
@@ -394,8 +400,8 @@ section Main
 
 variable {l : ℕ} [hl : Fact l.Prime] {P : LocPrime l} (AI : LocAinf l P)
 
-open scoped Formalism.Per in
 
+open scoped Formalism.Per in
 theorem ιA_zlW (T : LocTied l P AI) (z : ℤ_[l]) :
     AI.ιA (zlW l (OCb l) z) = algebraMap ℚ_[l] P.R.B (z : ℚ_[l]) := by
   apply T.eB.injective
@@ -460,10 +466,11 @@ theorem unramified_mem_Z1f : ∀ (D : Formalism.BasicNotions.D7) (l : ℕ) [Fact
       (D.loc l).actQ g b - b = algebraMap ℚ_[l] _ (v.coord i (c g)) := fun i =>
     exists_rat (D.locA l) (D.locT l) K (fun g => v.coord i (c g))
       ((v.coord i).continuous_of_finiteDimensional.comp hcont)
-      (fun g h => by rw [hadd, map_add]; rfl) (fun g hg => by rw [hI g hg, map_zero])
+      (fun g h => by rw [hadd, map_add (f := _)]; rfl) (fun g hg => by rw [hI g hg, map_zero])
   choose b hb using hex
   refine ⟨∑ i, v i ⊗ₜ[ℚ_[l]] b i, fun g => ?_⟩
-  rw [map_sum, ← Finset.sum_sub_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, ← Finset.sum_sub_distrib]
   conv_lhs => rw [← v.sum_repr (c g), TensorProduct.sum_tmul]
   refine Finset.sum_congr rfl fun i _ => ?_
   have h1 : actVB ((D.loc l).PD K) (1 : Representation ↥LL.1 ↥(GK K) ↥LL.1) g (v i ⊗ₜ[ℚ_[l]] b i) =

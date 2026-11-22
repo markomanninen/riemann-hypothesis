@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.MemPolKIff
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MapCastMono
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.MemPolKIff
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.MapCastMono
+
+@[expose] public section
 
 noncomputable section
 
@@ -114,7 +118,7 @@ theorem fock_add_left (F F' G : MvPolynomial σ K) : fock (F + F') G = fock F G 
   rw [fock_eq_sum (F + F') G G.support (Or.inr (Finset.Subset.refl _)),
     fock_eq_sum F G G.support (Or.inr (Finset.Subset.refl _)),
     fock_eq_sum F' G G.support (Or.inr (Finset.Subset.refl _)), ← Finset.sum_add_distrib]
-  exact Finset.sum_congr rfl fun α _ => by rw [coeff_add]; ring
+  exact Finset.sum_congr rfl fun α _ => by rw [MvPolynomial.coeff_add]; ring
 
 theorem fock_add_right (F G G' : MvPolynomial σ K) : fock F (G + G') = fock F G + fock F G' := by
   rw [fock_comm, fock_add_left, fock_comm G, fock_comm G']
@@ -134,14 +138,8 @@ theorem fock_neg_left (F G : MvPolynomial σ K) : fock (-F) G = -fock F G := by
   have := fock_smul_left (-1 : K) F G
   simpa using this
 
-theorem fock_neg_right (F G : MvPolynomial σ K) : fock F (-G) = -fock F G := by
-  rw [fock_comm, fock_neg_left, fock_comm]
-
 theorem fock_sub_left (F F' G : MvPolynomial σ K) : fock (F - F') G = fock F G - fock F' G := by
   rw [sub_eq_add_neg, fock_add_left, fock_neg_left, ← sub_eq_add_neg]
-
-theorem fock_sub_right (F G G' : MvPolynomial σ K) : fock F (G - G') = fock F G - fock F G' := by
-  rw [sub_eq_add_neg, fock_add_right, fock_neg_right, ← sub_eq_add_neg]
 
 theorem fock_sum_left {ι : Type} (s : Finset ι) (f : ι → MvPolynomial σ K) (G : MvPolynomial σ K) :
     fock (∑ i ∈ s, f i) G = ∑ i ∈ s, fock (f i) G := by
@@ -168,7 +166,8 @@ theorem fock_eq_sum_right (F G : MvPolynomial σ K) :
 theorem dg_eq_sum_f (f : (σ →₀ ℕ) → K) (F : MvPolynomial σ K) :
     dg f F = ∑ α ∈ F.support, monomial α (f α * F.coeff α) := by
   conv_lhs => rw [← support_sum_monomial_coeff F]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun α _ => dg_monomial f α _
 
 theorem support_dg_subset (f : (σ →₀ ℕ) → K) (F : MvPolynomial σ K) :

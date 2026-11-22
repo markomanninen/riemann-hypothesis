@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.LocalAtPlaces
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ConstantsMonomialApproximation
-import Development.WeilBound.CoreStatements.IdealCycleValues.LengthLocQuot
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.LocalAtPlaces
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.ConstantsMonomialApproximation
+public import Development.WeilBound.CoreStatements.IdealCycleValues.LengthLocQuot
+
+@[expose] public section
+
 open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.CompanionTheory.Ar.Num GlobalTheory.CompanionTheory.Ar.Top GroundTheory.Heights₂.Heights.ModelLeaves
 open ReciprocityTheory.ChartRestriction.G.Geo (HermLine IsSmoothHerm IsArithVar IsHorizontal mcPts mCoordIdeal IsIntersectionFamily IsIntersectionSystem IntersectionSystem ptsIntegral geoNum charOf recR arInt ChartBundle chartRing)
 
@@ -17,7 +22,7 @@ theorem pointConeMap_map_intCast (y : (Σ k, ι k) → Ω) (g : MRing ι ℤ) :
     pointConeMap A y (MvPolynomial.map (Int.castRingHom A) g) = ReciprocityTheory.ChartRestriction.G.Geo.mConeMap y g := by
   induction g using MvPolynomial.induction_on with
   | C a => simp [pointConeMap, ReciprocityTheory.ChartRestriction.G.Geo.mConeMap]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p i hp =>
     simp only [map_mul, hp, map_X]
     simp [pointConeMap, ReciprocityTheory.ChartRestriction.G.Geo.mConeMap]
@@ -51,7 +56,7 @@ theorem exists_pow_chartMonomial_mul_sub_map_mem {y : (Σ k, ι k) → Ω} (hA :
     have h := (pointIdeal A y).add_mem ((pointIdeal A y).mul_mem_left (s ^ m) hg)
       ((pointIdeal A y).mul_mem_left (s ^ n) hk)
     convert h using 1
-    simp only [map_add, map_mul, map_pow, hs, ← hsdef]
+    simp only [map_add (f := _), map_mul, map_pow, hs, ← hsdef]
     ring
   | mul_X p i hp =>
     obtain ⟨n, g, hg⟩ := hp
@@ -127,8 +132,8 @@ theorem pl_corr : ∀ (K : Type) [Fintype K] [DecidableEq K] (ι : K → Type) [
       exact hlen
     unfold divCycle
     by_cases hm : W'.comap φ ∈ J.minimalPrimes
-    · rw [dif_pos ⟨hmin'.2 hm, hr⟩, dif_pos ⟨hm, hrel⟩]
+    · rw [dite_eq_left ⟨hmin'.2 hm, hr⟩, dite_eq_left ⟨hm, hrel⟩]
       exact congrArg (fun t : ℕ∞ => ((ENat.toNat t : ℕ) : ℤ)) hlen'
-    · rw [dif_neg (fun hh => hm (hmin'.1 hh.1)), dif_neg (fun hh => hm hh.1)]
+    · rw [dite_eq_right (fun hh => hm (hmin'.1 hh.1)), dite_eq_right (fun hh => hm hh.1)]
 
 end GlobalTheory.CompanionTheory.Ar.Num

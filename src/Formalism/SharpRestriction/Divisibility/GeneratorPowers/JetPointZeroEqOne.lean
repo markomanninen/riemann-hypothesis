@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CocycleProductThree
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CocycleProductThree
+
+@[expose] public section
 
 set_option autoImplicit false
 

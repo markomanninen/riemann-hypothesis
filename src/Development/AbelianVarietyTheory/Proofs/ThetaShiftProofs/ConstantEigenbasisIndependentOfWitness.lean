@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.FinLocalCutAt
-import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.LiePush
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsConstantLieBasisArcGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.FinLocalCutAt
+public import Development.AbelianVarietyTheory.Definitions.RegularCharts.ModelAt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.UnifUniqSt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.LiePush
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsConstantLieBasisArcGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,6 +16,19 @@ namespace GlobalTheory.ArcBasisIndep
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.ConstLie GlobalTheory.ArcQ
 open scoped CategoryTheory.Obj
+
+-- Kept definitionally equal to ArcQ.LetBC so this proof can also be checked
+-- against dependency interfaces that omit that declaration.
+def LetBC {A A' : Type} [CommRing A] [IsDomain A] [CommRing A'] [IsDomain A']
+    {D₀ : Out.DegPre A} {D₁ : Out.DegPre A'} {f : A →+* A'}
+    (p : Out.IsPullDeg f D₀ D₁) (ν : Out.GtPt D₀ (epsR A)) (ν₁ : Out.GtPt D₁ (epsR A')) : Prop :=
+  ν₁.b.left ≫ prj p = spMap (Formalism.L2.Pj.dualMap f) ≫ ν.b.left ∧
+    ∀ χ : D₁.X, ∃ hψ : ∀ i : Fin 4,
+        Out.DegPre.gtφT D₁ (epsR A') ν₁.b χ i ≫ prj p =
+          spMap (Formalism.L2.Pj.dualMap f) ≫ Out.DegPre.gtφT D₀ (epsR A) ν.b (p.xe χ) i,
+      LB.Gen.Maps (LB.linCombIso p.w _ Out.DegPre.gtε) (ν₁.s χ)
+        (Out.GeneratorPullback.pullAlong D₀.P.L (prj p) (spMap (Formalism.L2.Pj.dualMap f)) _
+          Out.DegPre.gtε _ hψ (ν.s (p.xe χ)))
 
 section Transport
 
@@ -133,17 +150,20 @@ theorem over_id : 𝟙 (epsR A).left ≫ (epsR A).hom = (epsR A).hom ≫ spMap (
 variable {p}
 
 theorem cor_of_letBC {ν' : GtPt D₁ (epsR A)} {ν : GtPt D₀ (epsR A)} (h : LetBC p ν ν') : Cor p ν' ν := by
+  have hd : Formalism.L2.Pj.dualMap (RingHom.id A) = RingHom.id (DualNumber A) :=
+    RingHom.ext TrivSqZeroExt.inl_fst_add_inr_snd_eq
   have e : spMap (dualMap (RingHom.id A)) = 𝟙 (epsR A).left := by
-    refine Eq.trans (congrArg spMap (RingHom.ext fun x => ?_)) (Spec.map_id _)
-    ext <;> simp [dualMap]
+    exact (congrArg spMap hd).trans (Spec.map_id _)
+  unfold LetBC at h
   unfold Cor
   rw [← e]
   intro x
   obtain ⟨χ, rfl⟩ := p.xe.surjective x
   rw [p.xe.symm_apply_apply]
-  obtain ⟨hψ, H⟩ := h.2 χ
-  exact ⟨hψ, fun Z r z J J' hJ hJ' =>
-    CubTransport.val_pmaps hψ ((maps_iff _ _ _ _ _ _ _ _ _ (fun _ => rfl)).1 H) r hJ hJ'⟩
+  obtain ⟨hψ, hm⟩ := h.2 χ
+  have hMaps := (maps_iff p.w _ _ _ (ν'.s χ) (ν.s (p.xe χ)) _ _
+    (GeneratorPullback.pullAlong_le _ _ _ _ _ hψ) (fun _ => rfl)).1 hm
+  exact ⟨hψ, fun _ r _ _ _ hJ hJ' => CubTransport.val_pmaps hψ hMaps r hJ hJ'⟩
 
 variable (p) in
 theorem exists_cor_left (hG : GlobalFnsSt) (ν : GtPt D₀ (epsR A)) : ∃ ν', Cor p ν' ν :=
@@ -231,13 +251,15 @@ theorem comb_iff_coeff (U : Fin m → Fin g → A) (cf : Fin m → PowerSeries A
 theorem eig_const_iff (N : Matrix (Fin g) (Fin g) A) (r : A) (z : Fin g → A) :
     (fun j => PowerSeries.C (R := A) (z j)) ᵥ* N.map (PowerSeries.C (R := A)) =
       PowerSeries.C (R := A) r • (fun j => PowerSeries.C (R := A) (z j)) ↔ z ᵥ* N = r • z := by
-  simp only [funext_iff, vecMul, dotProduct, map_apply, Pi.smul_apply, smul_eq_mul, ← map_mul, ← map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [funext_iff, vecMul, dotProduct, map_apply, Pi.smul_apply, smul_eq_mul, ← map_mul, ← map_sum,
     PowerSeries.C_injective.eq_iff]
 
 theorem comb_const_iff (U : Fin m → Fin g → A) (cf : Fin m → A) (z : Fin g → A) :
     ((fun j => PowerSeries.C (R := A) (z j)) =
       ∑ k, PowerSeries.C (R := A) (cf k) • fun j => PowerSeries.C (R := A) (U k j)) ↔ z = ∑ k, cf k • U k := by
-  simp only [funext_iff, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, ← map_mul, ← map_sum,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [funext_iff, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, ← map_mul, ← map_sum,
     PowerSeries.C_injective.eq_iff]
 
 theorem eigBasis_powerSeries_iff {I : Type} (M : I → Matrix (Fin g) (Fin g) A) (r : I → A) (U : Fin m → Fin g → A) :
@@ -412,8 +434,8 @@ theorem arcBasis_iff (ρ : (E →+* ℂ) → (𝓞 E →+* A)) (e : ∀ τ : E �
   choose v hv using fun ν => (GlobalTheory.T.exists_unique_constant_tangent_vectors_along_arc hG E H Dw l Xo c O β Y A b a χ W ν).1.exists
   exact ⟨fun τ k => v (e τ k), fun τ k => hv _, fun τ => (isEigBasis_iff hG W _ fun k => hv _).1 (h τ)⟩
 
-include W in
 
+include W in
 theorem IsEigBasis.of_cor {O' : Type} [CommRing O'] {β' : O' →+* c.F} {Y' : Model Xo c β'} {b' : O' →+* A}
     {a' : ArcIn Dw l β' A b'} {χ' : Sp (PowerSeries A) ⟶ Y'.X} (W' : Wit Y' a' χ')
     {p : IsPullDeg (RingHom.id A) a.D₀ a'.D₀} (hl : ∀ (x : 𝓞 E) y, p.xe (x • y) = x • p.xe y)

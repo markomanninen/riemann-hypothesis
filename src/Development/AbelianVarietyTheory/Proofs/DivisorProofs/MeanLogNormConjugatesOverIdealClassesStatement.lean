@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeanLogNormConjugatesOverIdealClasses
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LatticeNormTransport
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MeanLogNormConjugatesOverIdealClasses
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.LatticeNormTransport
+
+@[expose] public section
+
 open NumberField
 open scoped nonZeroDivisors
 set_option maxHeartbeats 1000000 in

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrysActApply
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QActMSubAlgebraMap
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSimpleRingOfIsSemisimpleRing
-import GroundTheory.Brauer.BaseChangeCSA
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrysActApply
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QActMSubAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSimpleRingOfIsSemisimpleRing
+public import GroundTheory.Brauer.BaseChangeCSA
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -16,8 +20,9 @@ namespace GlobalTheory.UPel.HT.MoritaChar0
 variable {p : ℕ} [Fact p.Prime] (D : Datum p)
 
 theorem actF_mem_algO (x : D.F) : ((D.actF x : D.endO) : Module.End ℚ D.VQ) ∈ D.algO := by
-  rw [← (integralBasis D.F).sum_repr x, map_sum]
-  rw [AddSubmonoidClass.coe_finset_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← (integralBasis D.F).sum_repr x, map_sum]
+  rw [AddSubmonoidClass.coe_finsetSum]
   refine Subalgebra.sum_mem _ fun i _ => ?_
   rw [map_smul, Subalgebra.coe_smul, integralBasis_apply, D.actF_coe, D.coe_actInt]
   exact Subalgebra.smul_mem _ (D.actQ_mem_algO _) _
@@ -53,13 +58,13 @@ theorem finrank_F_algO : Module.finrank D.F D.algO = D.m ^ 2 := by
 
 theorem algebraMap_injective_of_charZero (K : Type) [Field K] [NumberField K] (k : Type) [Field k]
     [CharZero k] [Algebra (𝓞 K) k] : Function.Injective (algebraMap (𝓞 K) k) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro c hc
   by_contra h0
   have hne := Ideal.comap_ne_bot_of_integral_mem (R := ℤ) (I := RingHom.ker (algebraMap (𝓞 K) k)) h0
     (RingHom.mem_ker.2 hc) (Algebra.IsIntegral.isIntegral c)
   apply hne
-  rw [RingHom.comap_ker]
+  rw [Ideal.under_def, RingHom.comap_ker]
   exact (RingHom.injective_iff_ker_eq_bot _).1 (RingHom.injective_int _)
 
 end GlobalTheory.UPel.HT.MoritaChar0

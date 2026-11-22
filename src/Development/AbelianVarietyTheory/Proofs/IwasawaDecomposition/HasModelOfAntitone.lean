@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.CdScaleTieIff
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.RhoCompactTwiceEqOfSignBlockOrdered
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.CdScaleTieIff
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.RhoCompactTwiceEqOfSignBlockOrdered
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,7 @@ theorem exists_type (T : Matrix (Fin N) (Fin N) ℂ → (E →L[ℂ] E))
   · right
     refine Submodule.eq_of_le_of_finrank_le hle' (hmin _ ⟨hle'.trans hle, hst', v₁, h₁, h0, fun θ hθ => ?_⟩)
     have h := hw θ hθ
-    rw [map_add, smul_add] at h
+    rw [map_add (f := _), smul_add] at h
     rw [← sub_eq_zero]
     refine (Submodule.disjoint_def.1 S'.orthogonal_disjoint) _
       (S'.sub_mem (hst' _ hθ _ h₁) (S'.smul_mem _ h₁)) ?_
@@ -380,7 +384,7 @@ theorem HasModel.exists_rep {Λ : Fin N → ℝ} (h : HasModel Λ) :
       exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).1 h'
     · refine (PiLp.continuous_toLp 2 fun _ : ι => ℂ).comp_continuousOn
         (f := fun g => ρ g *ᵥ x.ofLp) (continuousOn_pi.2 fun i => ?_)
-      exact continuousOn_finset_sum _ fun j _ => (h4 i j).mul continuousOn_const
+      exact continuousOn_finsetSum _ fun j _ => (h4 i j).mul continuousOn_const
   let v₀ : EuclideanSpace ℂ ι := WithLp.toLp 2 v
   let W : Submodule ℂ (EuclideanSpace ℂ ι) := Submodule.span ℂ (Set.range fun g => T g v₀)
   have hW : IsKStableOn (allPos N) T W := by
@@ -445,12 +449,5 @@ theorem exists_isHCTypeU (N : ℕ) (lam : Fin N → ℝ) (h : Formalism.QuantumD
   have := (hasModel_of_antitone _ hL).exists_rep
   rw [← e] at this
   exact this
-
-theorem exists_isDS_const : ∀ (N : ℕ) (b : Bool) (lam : Fin N → ℝ), Formalism.QuantumDeterminants.IsHCParam lam →
-    ∃ (H : Type) (_ : NormedAddCommGroup H) (_ : InnerProductSpace ℂ H)
-      (σ : Matrix (Fin N) (Fin N) ℂ → (H →L[ℂ] H)), IsDS (fun _ => b) lam σ := by
-  intro N b lam h
-  obtain ⟨H, _, _, σ, hσ⟩ := exists_isHCTypeU N lam h
-  exact ⟨H, _, _, σ, (GlobalTheory.RealPar.isDS_const_iff b lam σ).2 hσ⟩
 
 end GlobalTheory.CompactDS

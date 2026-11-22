@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
-import Formalism.PadicSubsetSums.StableGradedCounts.IRRCentralIdempotent
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.FiniteTypeHarishChandra.SupportExistsAll
+public import Formalism.PadicSubsetSums.StableGradedCounts.IRRCentralIdempotent
+
+@[expose] public section
 
 open ReciprocityTheory.Ty.Fin
 
@@ -11,7 +15,8 @@ theorem asAlgebraHom_centralIdem {Γ V W : Type} [Group Γ] [Fintype Γ] [AddCom
     σ.asAlgebraHom (centralIdem ρ) =
       ∑ g, ((Module.finrank ℂ V : ℂ) / Fintype.card Γ * LinearMap.trace ℂ V (ρ g⁻¹)) • σ g := by
   unfold centralIdem
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun g _ => Representation.asAlgebraHom_single _ _ _
 
 theorem centralIdemAct : ReciprocityTheory.Ty.Fin.St.CentralIdemAct := by
@@ -41,7 +46,8 @@ theorem centralIdemAct : ReciprocityTheory.Ty.Fin.St.CentralIdemAct := by
   have htr : μ * (Module.finrank ℂ W : ℂ) = (Module.finrank ℂ V : ℂ) *
       ((Nat.card Γ : ℂ)⁻¹ * ∑ g, σ.character g * ρ.character g⁻¹) := by
     have h1 := congrArg (LinearMap.trace ℂ W) hμ
-    simp only [map_sum, map_smul, smul_eq_mul, LinearMap.trace_one] at h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_smul, smul_eq_mul, LinearMap.trace_one] at h1
     rw [← h1, Finset.mul_sum, Finset.mul_sum, Nat.card_eq_fintype_card]
     refine Finset.sum_congr rfl fun g _ => ?_
     simp only [Representation.character]

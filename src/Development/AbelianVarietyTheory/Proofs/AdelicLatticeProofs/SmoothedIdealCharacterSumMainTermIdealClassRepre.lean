@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.TsumIdealEqSumClassGroup
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IdealSumPeriodicDilate
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsSmoothHomogeneousHasSumUnitSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.TsumIdealEqSumClassGroup
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IdealSumPeriodicDilate
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsSmoothHomogeneousHasSumUnitSmul
+
+@[expose] public section
 
 open NumberField IsDedekindDomain NumberField.mixedEmbedding MeasureTheory Complex Classical
 open scoped ContDiff nonZeroDivisors
@@ -131,7 +135,7 @@ private theorem contDiffAt_mixedEmbedding_norm_of_ne_zero {K : Type} [Field K] [
     have hx' : x.1 ⟨w, hr⟩ ≠ 0 := by
       intro h0; apply hw; rw [normAtPlace_apply_of_isReal hr, h0, norm_zero]
     exact (contDiffAt_norm ℝ hx').comp x
-      ((contDiff_apply ℝ ℝ (⟨w, hr⟩ : {w : InfinitePlace K // w.IsReal})).comp contDiff_fst).contDiffAt
+      ((contDiff_apply ℝ (fun _ => ℝ) (⟨w, hr⟩ : {w : InfinitePlace K // w.IsReal})).comp contDiff_fst).contDiffAt
   · have hc : w.IsComplex := InfinitePlace.not_isReal_iff_isComplex.1 hr
     have e : (⇑(normAtPlace w) : mixedSpace K → ℝ) = fun y => ‖y.2 ⟨w, hc⟩‖ := by
       funext y; exact normAtPlace_apply_of_isComplex hc y
@@ -139,7 +143,7 @@ private theorem contDiffAt_mixedEmbedding_norm_of_ne_zero {K : Type} [Field K] [
     have hx' : x.2 ⟨w, hc⟩ ≠ 0 := by
       intro h0; apply hw; rw [normAtPlace_apply_of_isComplex hc, h0, norm_zero]
     exact (contDiffAt_norm ℝ hx').comp x
-      ((contDiff_apply ℝ ℂ (⟨w, hc⟩ : {w : InfinitePlace K // w.IsComplex})).comp contDiff_snd).contDiffAt
+      ((contDiff_apply ℝ (fun _ => ℂ) (⟨w, hc⟩ : {w : InfinitePlace K // w.IsComplex})).comp contDiff_snd).contDiffAt
 
 open NumberField IsDedekindDomain NumberField.mixedEmbedding MeasureTheory Complex Classical in
 open scoped ContDiff nonZeroDivisors in
@@ -185,7 +189,7 @@ private theorem finite_setOf_ringOfIntegers_mixedEmbedding_mem_compact {K : Type
     (inferInstance : DiscreteTopology (mixedEmbedding.integerLattice K))
   have hcl : IsClosed ((mixedEmbedding.integerLattice K : Submodule ℤ (mixedSpace K)) :
       Set (mixedSpace K)) :=
-    AddSubgroup.isClosed_of_discrete (H := (mixedEmbedding.integerLattice K).toAddSubgroup)
+    ((mixedEmbedding.integerLattice K).toAddSubgroup).isClosed_of_discreteTopology
   have hc : IsCompact (((↑) : mixedEmbedding.integerLattice K → mixedSpace K) ⁻¹' C) :=
     hcl.isClosedEmbedding_subtypeVal.isCompact_preimage hC
   have hfin2 := hc.finite_of_discrete.image Subtype.val
@@ -216,7 +220,7 @@ private theorem tsum_principal_le_eq_tsum_mul_cutoff_span {K : Type} [Field K] [
       ∑' β : B, (h (mixedEmbedding K ((β : 𝓞 K) : K)) : ℂ) * G (Ideal.span {(β : 𝓞 K)}) := by
   set g : B → ℂ := fun β =>
     (h (mixedEmbedding K ((β : 𝓞 K) : K)) : ℂ) * G (Ideal.span {(β : 𝓞 K)}) with hg
-  have hgsum : Summable g := summable_of_finite_support hfin
+  have hgsum : Summable g := summable_of_hasFiniteSupport hfin
 
   let gen : {J : Ideal (𝓞 K) // J ≠ ⊥ ∧ J.IsPrincipal ∧ J ≤ B} → 𝓞 K := fun J =>
     @Submodule.IsPrincipal.generator _ _ _ _ _ J.1 J.2.2.1
@@ -257,7 +261,7 @@ private theorem tsum_principal_le_eq_tsum_mul_cutoff_span {K : Type} [Field K] [
       show (u : 𝓞 K) * gen J = β
       rw [mul_comm]; exact hu
   have hsub : ∑' β : B, g β = ∑' β : {β : B // (β : 𝓞 K) ≠ 0}, g β := by
-    refine (tsum_subtype_eq_of_support_subset ?_).symm
+    refine (tsum_subtype_eq_of_support_subset (f := g) (s := {β : B | (β : 𝓞 K) ≠ 0}) ?_).symm
     intro β hβ h0
     apply hβ
     simp only [hg]
@@ -320,7 +324,7 @@ private theorem tsum_ideal_eq_sum_classGroup_tsum_mul_isPrincipal {K : Type} [Fi
   have hsum := hasSum_sum (s := Finset.univ) (L := SummationFilter.unconditional _)
     (f := fun (c : ClassGroup (𝓞 K)) (I : Ideal (𝓞 K)) =>
       ({I : Ideal (𝓞 K) | I ≠ ⊥ ∧ (I * (b c : Ideal (𝓞 K))).IsPrincipal}).indicator F I)
-    (fun c _ => (summable_of_finite_support
+    (fun c _ => (summable_of_hasFiniteSupport
       (hfin.subset fun I hI h0 => hI (Set.indicator_apply_eq_zero.2 fun _ => h0))).hasSum)
   rw [← hsum.tsum_eq]
   refine tsum_congr fun I => ?_
@@ -335,9 +339,9 @@ private theorem tsum_ideal_eq_sum_classGroup_tsum_mul_isPrincipal {K : Type} [Fi
       exact hc' (huniq c' h)
     · simp
 
+
 open NumberField IsDedekindDomain NumberField.mixedEmbedding MeasureTheory Complex Classical in
 open scoped ContDiff nonZeroDivisors in
-
 theorem _root_.GlobalTheory.smoothedSum_main_term_representatives : ∀ (K : Type) [Field K] [NumberField K] (m : Ideal (𝓞 K)) (X : Ideal (𝓞 K) → ℂ) (φ : mixedSpace K → ℂ), m ≠ ⊥ → X ⊥ = 0 → (∀ I J, X (I * J) = X I * X J) → (∀ I, I ≠ ⊥ → I ⊔ m = ⊤ → ‖X I‖ = 1) → (∀ I, I ⊔ m ≠ ⊤ → X I = 0) → (∀ x y, φ (x * y) = φ x * φ y) → (∀ (t : ℝ) x, 0 < t → φ (t • x) = φ x) → ContDiffOn ℝ ∞ φ {x | mixedEmbedding.norm x ≠ 0} → (∀ x, mixedEmbedding.norm x ≠ 0 → ‖φ x‖ = 1) → (∀ β : 𝓞 K, β ≠ 0 → β - 1 ∈ m → X (Ideal.span {β}) = φ (mixedEmbedding K β)) → ∀ (wt : ℝ → ℂ), ContDiff ℝ ∞ wt → (∃ a b : ℝ, 0 < a ∧ ∀ y, wt y ≠ 0 → a ≤ y ∧ y ≤ b) → ∃ κ : ℂ, ∀ b : ClassGroup (𝓞 K) → (Ideal (𝓞 K))⁰, Function.Bijective (fun c => ClassGroup.mk0 (b c)) → (∀ c, (b c : Ideal (𝓞 K)) ⊔ m = ⊤) → ∀ A : ℕ, ∃ C : ℝ, ∀ t : ℝ, 0 < t → t ≤ 1 → ‖∑' I, X I * wt (t * (Ideal.absNorm I : ℝ)) - (κ * ∑ c, (X (b c))⁻¹) / (t : ℂ)‖ ≤ C * t ^ A := by
   intro K _ _ m X φ hm hX0 hXmul hXnorm hXcop hφmul hφhom hφsm hφnorm hXφ wt hwt hwtsupp
   obtain ⟨a, b', ha, hab⟩ := hwtsupp

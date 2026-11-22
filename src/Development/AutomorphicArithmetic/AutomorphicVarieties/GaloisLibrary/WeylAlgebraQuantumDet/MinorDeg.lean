@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylAlgebraQuantumDet.IsTop
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.WeylAlgebraQuantumDet.IsTop
+
+@[expose] public section
 
 open Matrix UpperTheory.V.Weyl
 
@@ -15,8 +19,8 @@ theorem UpperTheory.V.Weyl.minorDeg :
     · ext i j
       simp [Matrix.one_apply, Fin.castLE_inj]
   · rw [minor, Matrix.det_apply]
-    refine (MvPolynomial.totalDegree_finset_sum _ _).trans (Finset.sup_le fun σ _ => ?_)
+    refine (MvPolynomial.totalDegree_finsetSum _ _).trans (Finset.sup_le fun σ _ => ?_)
     rw [Units.smul_def, ← Int.cast_smul_eq_zsmul ℂ]
     refine (MvPolynomial.totalDegree_smul_le _ _).trans ?_
-    refine (MvPolynomial.totalDegree_finset_prod _ _).trans ?_
+    refine (MvPolynomial.totalDegree_finsetProd _ _).trans ?_
     simp [MvPolynomial.totalDegree_X]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+
+@[expose] public section
 
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
@@ -16,7 +20,7 @@ theorem evC_ltr (g y : Matrix ι ι ℂ) (f : MvPolynomial (ι × ι) ℂ) :
   unfold evC ltr
   induction f using MvPolynomial.induction_on with
   | C a => simp
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p n hp =>
     simp only [map_mul, hp]
     simp [Matrix.mul_apply]
@@ -48,7 +52,8 @@ theorem ltr_comp (g : Matrix ι ι ℂ) (f : MvPolynomial (ι × ι) ℂ) (n : �
     ltr g (homogeneousComponent n f) = homogeneousComponent n (ltr g f) := by
   conv_lhs => rw [← sum_homogeneousComponent f]
   conv_rhs => rw [← sum_homogeneousComponent f]
-  simp only [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   have h1 := homogeneousComponent_isHomogeneous i f
   rw [homogeneousComponent_of_mem h1, homogeneousComponent_of_mem (ltr_homog g h1)]
@@ -75,7 +80,7 @@ theorem hilbert_finiteness : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (Γ :
     | _ n ih =>
       intro f hf hn
       rcases Nat.eq_zero_or_pos n with rfl | hpos
-      · have : f = C (coeff 0 f) := by
+      · have : f = C (AddMonoidAlgebra.coeff f 0) := by
           rw [← homogeneousComponent_zero, homogeneousComponent_of_mem hn, if_pos rfl]
         rw [this]
         exact Subalgebra.algebraMap_mem _ _
@@ -84,15 +89,18 @@ theorem hilbert_finiteness : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (Γ :
           exact Submodule.subset_span ⟨hf, n, hpos, hn⟩
         obtain ⟨c, -, hc⟩ := Submodule.mem_span_finset.1 hmem
         have h1 : f = ∑ F ∈ s, F * Rey (c F) := by
-          conv_lhs => rw [← hR.fix f hf, ← hc, map_sum]
+          set_option synthInstance.maxHeartbeats 100000 in
+            conv_lhs => rw [← hR.fix f hf, ← hc, map_sum]
           refine Finset.sum_congr rfl fun F hF => ?_
           rw [smul_eq_mul, mul_comm, hR.mul _ _ (hsS hF).1]
         have h2 : f = homogeneousComponent n f := by
           rw [homogeneousComponent_of_mem hn, if_pos rfl]
-        rw [h2, h1, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [h2, h1, map_sum]
         refine Subalgebra.sum_mem _ fun F hF => ?_
         obtain ⟨-, d, hd, hFd⟩ := hsS hF
-        rw [← sum_homogeneousComponent (Rey (c F)), Finset.mul_sum, map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← sum_homogeneousComponent (Rey (c F)), Finset.mul_sum, map_sum]
         refine Subalgebra.sum_mem _ fun i _ => ?_
         have h3 := homogeneousComponent_isHomogeneous i (Rey (c F))
         rw [homogeneousComponent_of_mem (hFd.mul h3)]

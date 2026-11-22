@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.IsolateSpec
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.IsolateSpec
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC UpperTheory.Gal.TranscendenceTraces
 
@@ -36,4 +40,5 @@ theorem UpperTheory.Gal.TranscendenceTraces.corrEqQ_of :
     rfl
   simp only [e, Int.cast_smul_eq_zsmul]
   simp_rw [← map_zsmul]
-  rw [← map_sum, h, map_zero]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← map_sum, h, map_zero]

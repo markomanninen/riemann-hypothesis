@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.IsFixMapIff
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.LocalHermitianForms.IsFixMapIff
+
+@[expose] public section
 
 open QuadraticAlgebra UpperTheory.V.Z.Sym UpperTheory.V.Z.Sym.Loc
 
@@ -7,7 +11,7 @@ theorem UpperTheory.V.Z.Sym.Loc.datIso : UpperTheory.V.Z.Sym.Loc.DatIso := by
   constructor
   · unfold lcount
     letI := torAct Δ τ
-    refine wTrans _ _ _ (Cint O τ) _ _ (fun S S' => S = ⇑(mulE O y) '' S') ?_ ?_ ?_ ?_ ?_ ?_
+    refine wTrans _ _ _ (Cint O τ) _ _ (fun S S' => S = ⇑(mulE (O := O) y) '' S') ?_ ?_ ?_ ?_ ?_ ?_
     · intro t S
       split_ifs with h1 h2 h3
       · rfl
@@ -21,7 +25,7 @@ theorem UpperTheory.V.Z.Sym.Loc.datIso : UpperTheory.V.Z.Sym.Loc.DatIso := by
       · exact absurd ((isFix_tor (O := O) c _ _ t S).mpr h3) h1
       · rfl
     · intro t S S' h
-      show tor Δ t '' S = ⇑(mulE O y) '' (tor Δ t '' S')
+      show tor Δ t '' S = ⇑(mulE (O := O) y) '' (tor Δ t '' S')
       subst h
       rw [Set.image_image, Set.image_image]
       congr 1
@@ -37,15 +41,15 @@ theorem UpperTheory.V.Z.Sym.Loc.datIso : UpperTheory.V.Z.Sym.Loc.DatIso := by
       · exact absurd ((isFix_mulE (O := O) c d m y S').mpr h3) h1
       · rfl
     · intro S _
-      refine ⟨(mulE O y).symm '' S, ?_, fun S' h => ?_⟩
-      · show S = ⇑(mulE O y) '' ((mulE O y).symm '' S)
+      refine ⟨(mulE (O := O) y).symm '' S, ?_, fun S' h => ?_⟩
+      · show S = ⇑(mulE (O := O) y) '' ((mulE (O := O) y).symm '' S)
         rw [Set.image_image]
         simp
       · subst h
         rw [Set.image_image]
         simp
     · intro S' _
-      exact ⟨⇑(mulE O y) '' S', rfl, fun S h => h⟩
+      exact ⟨⇑(mulE (O := O) y) '' S', rfl, fun S h => h⟩
   · intro h
     obtain ⟨hreg, hc, hd, hmu, hms, hmsig⟩ := h
     have e1 : (↑y : EL Δ τ) * ↑y⁻¹ = 1 := Units.mul_inv y

@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.TateTwists.TwpairTensUnivPf
+module
+
+public import Development.EtaleCohomology.TateTwists.TwpairTensUnivPf
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 
@@ -123,10 +127,10 @@ theorem glue_add {I J K I' J' K' : Cx R} (τ : Pair I J K) (hτ : τ.IsTensor) (
   apply etale_sheaf_sections_separated_holds R (K'.X w) U
   refine TensLocbij.loc_mono (TensLocbij.loc_and (sv_loc τ hτ w y₁) (sv_loc τ hτ w y₂)) ?_
   rintro V k ⟨⟨x₁, hx₁⟩, ⟨x₂, hx₂⟩⟩
-  rw [glue_spec τ hτ ν f g w _ k (x₁ + x₂) (by rw [map_add, hx₁, hx₂]; exact (map_add _ _ _).symm)]
+  rw [glue_spec τ hτ ν f g w _ k (x₁ + x₂) (by rw [map_add (f := _), hx₁, hx₂]; exact (map_add _ _ _).symm)]
   have e : Sec.res k (glue τ hτ ν f g w y₁ + glue τ hτ ν f g w y₂) =
       Sec.res k (glue τ hτ ν f g w y₁) + Sec.res k (glue τ hτ ν f g w y₂) := map_add _ _ _
-  rw [e, glue_spec τ hτ ν f g w _ k x₁ hx₁, glue_spec τ hτ ν f g w _ k x₂ hx₂, map_add, map_add]
+  rw [e, glue_spec τ hτ ν f g w _ k x₁ hx₁, glue_spec τ hτ ν f g w _ k x₂ hx₂, map_add (f := _), map_add (f := _)]
 
 theorem glue_smul {I J K I' J' K' : Cx R} (τ : Pair I J K) (hτ : τ.IsTensor) (ν : Pair I' J' K')
     (f : I ⟶ I') (g : J ⟶ J') {U : Scheme.{0}} (w : ℤ) (c : ULift.{1} R) (y : Sec (K.X w) U) :

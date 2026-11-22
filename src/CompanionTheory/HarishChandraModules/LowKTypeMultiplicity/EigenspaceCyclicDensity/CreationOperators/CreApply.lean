@@ -1,4 +1,8 @@
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
+module
+
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
+
+@[expose] public section
 
 open Finset
 
@@ -119,7 +123,5 @@ theorem ann_cre (i j : Pos n) :
     ← add_smul]
   have : sg i A * (-tw i j * sg j A) + sg j A * (tw i j * sg i A) = 0 := by ring
   rw [this, zero_smul]
-
-theorem car : CARp := fun _ _ _ _ i j => ⟨ann_ann i j, cre_cre i j, ann_cre i j⟩
 
 end CompanionTheory.D.LK.Car

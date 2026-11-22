@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqMulProdOfPartial
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsLocalFockIntertwinerRealPlaceOfCoverContra
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.EqMulProdOfPartial
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsLocalFockIntertwinerRealPlaceOfCoverContra
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,13 +42,14 @@ private theorem barMat_map_conj_eq_reindex {p q n : ℕ} (e : Ix p q ≃ Fin n) 
 
 private theorem trace_map_conj' {p q : ℕ} (Z : Mat p q) :
     (Z.map (starRingEnd ℂ)).trace = (starRingEnd ℂ) Z.trace := by
-  rw [Matrix.trace, Matrix.trace, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.trace, Matrix.trace, map_sum]
   rfl
 
 private theorem norm_apply_sub_I_smul_apply (U : E ≃ₗᵢ⋆[ℂ] F) (x y : E) :
     ‖U y - Complex.I • U x‖ = ‖x - Complex.I • y‖ := by
   have hU : U y - Complex.I • U x = U (y + Complex.I • x) := by
-    rw [map_add, LinearIsometryEquiv.map_smulₛₗ, Complex.conj_I, neg_smul, sub_eq_add_neg]
+    rw [map_add (f := _), LinearIsometryEquiv.map_smulₛₗ, Complex.conj_I, neg_smul, sub_eq_add_neg]
   have hv : x - Complex.I • y = (-Complex.I) • (y + Complex.I • x) := by
     rw [smul_add, smul_smul, neg_mul, Complex.I_mul_I, neg_neg, one_smul, neg_smul]
     abel
@@ -60,19 +65,11 @@ private theorem norm_apply_add_I_smul_apply (U : E ≃ₗᵢ⋆[ℂ] F) (x y : E
   rw [hU, U.norm_map, hv, norm_smul, Complex.norm_I, one_mul]
 
 theorem inner_conjIso (U : E ≃ₗᵢ⋆[ℂ] F) (x y : E) : ⟪U y, U x⟫_ℂ = ⟪x, y⟫_ℂ := by
-  have h1 : ‖U y + U x‖ = ‖x + y‖ := by rw [← map_add, U.norm_map, add_comm]
+  have h1 : ‖U y + U x‖ = ‖x + y‖ := by rw [← map_add (f := _), U.norm_map, add_comm]
   have h2 : ‖U y - U x‖ = ‖x - y‖ := by rw [← map_sub, U.norm_map, norm_sub_rev]
   rw [inner_eq_sum_norm_sq_div_four (U y) (U x), inner_eq_sum_norm_sq_div_four x y]
   simp only [RCLike.I_to_complex]
   rw [h1, h2, norm_apply_sub_I_smul_apply, norm_apply_add_I_smul_apply]
-
-def realOf (U : E ≃ₗᵢ⋆[ℂ] F) : E →L[ℝ] F where
-  toFun := U
-  map_add' := map_add U
-  map_smul' r x := by
-    rw [← Complex.coe_smul, LinearIsometryEquiv.map_smulₛₗ, Complex.conj_ofReal, Complex.coe_smul]
-    rfl
-  cont := U.continuous
 
 end General
 
@@ -89,7 +86,7 @@ theorem exists_coverW : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPa
     intro x x'
     apply Subtype.ext
     show U'.symm (R₂.ι (x + x')) = U'.symm (R₂.ι x) + U'.symm (R₂.ι x')
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
   have hw_smul : ∀ (c : ℂ) x, w (c • x) = (starRingEnd ℂ) c • w x := by
     intro c x
     apply Subtype.ext
@@ -107,7 +104,7 @@ theorem exists_coverW : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPa
         intro x x'
         apply hinj₁
         show R₁.ι (Bf P (x + x')) = R₁.ι (Bf P x + Bf P x')
-        rw [map_add, key, key, key, hw_add, map_add, map_add]
+        rw [map_add (f := _), key, key, key, hw_add, map_add (f := _), map_add (f := _)]
       map_smul' := by
         intro c x
         apply hinj₁
@@ -120,7 +117,7 @@ theorem exists_coverW : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPa
         ext x
         apply hinj₁
         show R₁.ι (Bf (P + P') x) = R₁.ι (Bf P x + Bf P' x)
-        rw [map_add, key, key, key, map_add, map_add, LinearMap.add_apply, map_add]
+        rw [map_add (f := _), key, key, key, map_add (f := _), map_add (f := _), LinearMap.add_apply, map_add (f := _)]
       map_smul' := by
         intro c P
         ext x
@@ -166,14 +163,14 @@ theorem exists_coverW : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPa
     have hc : ((m : ℂ) / 2 * Z.trace) = (aT : ℂ) * Z.trace := by
       have h2 : (m : ℂ) = 2 * (aT : ℂ) := by exact_mod_cast hm
       rw [h2]; ring
-    simp only [map_sub, map_smul, LinearMap.sub_apply, LinearMap.smul_apply, map_add, hc, hB] at hder
+    simp only [map_sub, map_smul, LinearMap.sub_apply, LinearMap.smul_apply, map_add (f := _), hc, hB] at hder
     rw [hB, hloc]
     rw [mul_neg, neg_smul, sub_neg_eq_add] at hder
     exact add_right_cancel hder
   ·
     intro Z hZ P y
     apply hinj₁
-    rw [map_add, map_zero, hB, hB]
+    rw [map_add (f := _), map_zero, hB, hB]
     have hp : plainMat e' Z = Matrix.reindex e' e' Z := rfl
     have hloc : κ.symm (fockAct2 p q r s Z P) =
         locT (M.ε τ) (M'.ε τ) (plainMat e' Z) (κ.symm P) := by
@@ -196,11 +193,11 @@ theorem exists_coverW : ∀ (D : D7) (V W : HSp D) (S S' : D.what₂.Tau → SPa
     have hw2 : w (R₂.HK.act Z y) = ⟨_, hsm'⟩ + ((aS : ℂ) * Z.trace) • w y := by
       apply Subtype.ext
       apply U'.injective
-      rw [Submodule.coe_add, Submodule.coe_smul, map_add, LinearIsometryEquiv.map_smulₛₗ, hder, hUw, hUw,
+      rw [Submodule.coe_add, Submodule.coe_smul, map_add (f := _), LinearIsometryEquiv.map_smulₛₗ, hder, hUw, hUw,
         map_add, map_smul, add_assoc, ← add_smul, hcs, zero_smul, add_zero]
-    rw [hloc, hw2, map_add, map_smul, ← map_add, ← map_zero U]
+    rw [hloc, hw2, map_add (f := _), map_smul, ← map_add (f := _), ← map_zero U]
     congr 1
-    simp only [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply] at ht
+    simp only [map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply] at ht
     rw [← ht]
     abel
   ·

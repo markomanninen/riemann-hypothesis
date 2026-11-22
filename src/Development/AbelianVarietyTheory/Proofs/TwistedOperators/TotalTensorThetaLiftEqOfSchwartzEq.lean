@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PathArgsOfNotMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PathArgsOfNotMem
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim GlobalTheory.FlipRun
 attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
@@ -15,7 +20,8 @@ theorem kerA_sum_of_grid {t : T} {a : Arrow T} (ha : IsGridArrow D.R.m t a) {ι 
     (gs : ι → Sch G a) (g₀ : GA D (G.V a.src)) (h : GA D (G.V a.tgt)) :
     W.kerA a (∑ l ∈ L, w l • gs l) g₀ h = ∑ l ∈ L, w l * W.kerA a (gs l) g₀ h := by
   rcases ha with ⟨i, j, -, -, rfl⟩ | ⟨i, j, -, -, rfl⟩ <;>
-    simp [GridData.Weil.kerA, GridData.Weil.ker, thetaKO, map_sum, map_smul, Finset.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [GridData.Weil.kerA, GridData.Weil.ker, thetaKO, map_sum, map_smul, Finset.sum_apply]
 
 theorem liftA_sum_datum (M : Vol G) {t : T} {a : Arrow T} (ha : IsGridArrow D.R.m t a) {ι : Type} (L : Finset ι)
     (w : ι → ℂ) (gs : ι → Sch G a) (F : Fn G a.src) (hc : ∀ l ∈ L, LiftConv W M a (gs l) F) :
@@ -65,13 +71,15 @@ theorem sum_liftP_eq_zero {μ₀ : T} (hL : L.Is μ₀) (M : Vol G) (ρ : RealMa
     rw [← Finset.sum_smul, h0, zero_smul]
   | _, .snoc a p, hg, ι, s, c, φ, d, hv, hsum, P, F, hF => by
     classical
-    obtain ⟨Tm, h1, -, h3⟩ := exists_arrowModel ρ hL he hg.last
+    have ha : IsGridArrow D.R.m t a := hg.last
+    have hmodel := GlobalTheory.FlipRun.exists_arrowModel (G := G) (t := t) ρ hL he ha
+    rcases hmodel with ⟨Tm, h1, -, h3⟩
     have hmem : ∀ k ∈ s, (φ k).2 ∈ LocTensor.sbSpace e (latA G a) := fun k hk => ((h1 _ _).1 (hv k hk).2).1
     have hd2 : ∀ k ∈ s, (d k).2 = Tm (φ k).2 := fun k hk => ((h1 _ _).1 (hv k hk).2).2
     let b := Module.Basis.ofVectorSpace ℂ (LocTensor.sbSpace e (latA G a))
     let v : ι → LocTensor.sbSpace e (latA G a) := fun k => if h : (φ k).2 ∈ LocTensor.sbSpace e (latA G a) then ⟨_, h⟩ else 0
     have hv' : ∀ k ∈ s, ((v k : LocTensor.sbSpace e (latA G a)) : Sch G a) = (φ k).2 := fun k hk => by
-      simp only [v, dif_pos (hmem k hk)]
+      simp only [v, dite_eq_left (hmem k hk)]
     let r : ι → Module.Basis.ofVectorSpaceIndex ℂ (LocTensor.sbSpace e (latA G a)) → ℂ := fun k l => b.repr (v k) l
     let Ls := s.biUnion fun k => (b.repr (v k)).support
     have hexp : ∀ k ∈ s, (φ k).2 = ∑ l ∈ Ls, r k l • ((b l : LocTensor.sbSpace e (latA G a)) : Sch G a) := by
@@ -83,15 +91,28 @@ theorem sum_liftP_eq_zero {μ₀ : T} (hL : L.Is μ₀) (M : Vol G) (ρ : RealMa
           (fun i (x : ℂ) => x • b i) (fun _ _ => zero_smul _ _), Submodule.coe_sum]
       rfl
     let Fk : ι → Fn G a.src := fun k => liftP W M p (Path.Fam.zip (fun a (f : Sch G a) Q => W.fock a.pair f Q) (d k).1 P.1) F
+    have cusp_zip : ∀ {Y : Node} (q : Path T X Y), OnGrid D.R.m t q →
+        ∀ (φq dq : PureT G q), VecAll ρ e q φq dq → ∀ Q : PolT G q,
+          IsCuspListed W.θ Y
+            (liftP W M q (Path.Fam.zip (fun a (f : Sch G a) Q => W.fock a.pair f Q) dq Q) F) := by
+      intro Y q
+      induction q with
+      | nil =>
+        intro _ _ _ _ _
+        exact hF
+      | snoc b q ih =>
+        intro hq φq dq hvq Q
+        exact (hC b hq.last e he φq.2 dq.2 hvq.2 Q.2 _ (ih hq.init φq.1 dq.1 hvq.1 Q.1)).2
     have hFk : ∀ k ∈ s, IsCuspListed W.θ a.src (Fk k) := fun k hk =>
-      (pathConv_zip_fock M ρ t he hC p hg.init (φ k).1 (d k).1 (hv k hk).1 P.1 F hF).2
+      cusp_zip p hg.init (φ k).1 (d k).1 (hv k hk).1 P.1
     let g : Module.Basis.ofVectorSpaceIndex ℂ (LocTensor.sbSpace e (latA G a)) → Sch G a :=
       fun l => W.fock a.pair (Tm (b l)) P.2
     have hconv : ∀ l, ∀ k ∈ s, LiftConv W M a (g l) (Fk k) := fun l k hk =>
       (hC a hg.last e he (b l) (Tm (b l)) ((h1 _ _).2 ⟨(b l).2, rfl⟩) P.2 (Fk k) (hFk k hk)).1
     have hstep : ∀ k ∈ s, W.fock a.pair (d k).2 P.2 = ∑ l ∈ Ls, r k l • g l := by
       intro k hk
-      rw [hd2 k hk, hexp k hk, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hd2 k hk, hexp k hk, map_sum]
       simp only [map_smul]
       exact GlobalTheory.SpecFac.pureTensorO_sum W.ψ_std W.θ_is _ _ _ _ Ls (r k) (fun l => Tm (b l))
         (fun l _ => h3 _ (b l).2) P.2
@@ -118,25 +139,25 @@ theorem sum_liftP_eq_zero {μ₀ : T} (hL : L.Is μ₀) (M : Vol G) (ρ : RealMa
             exact hy ((hmem k hk).1 y h0)
           rw [this, mul_zero]
       have := congrArg (fun z => b.repr z l) hV
-      simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply, smul_eq_mul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.smul_apply, smul_eq_mul,
         map_zero, Finsupp.coe_zero, Pi.zero_apply] at this
       rw [← this]
       refine Finset.sum_congr rfl fun k _ => ?_
       simp only [r]
       ring
+    have hsum_lift :
+        (∑ k ∈ s, c k • liftA W M a (W.fock a.pair (d k).2 P.2) (Fk k)) =
+          ∑ k ∈ s, ∑ l ∈ Ls, (c k * r k l) • liftA W M a (g l) (Fk k) := by
+      refine Finset.sum_congr rfl fun k hk => ?_
+      rw [hstep k hk, liftA_sum_datum M ha Ls (r k) g (Fk k) (fun l _ => hconv l k hk),
+        Finset.smul_sum]
+      simp only [smul_smul]
     show ∑ k ∈ s, c k • liftA W M a (W.fock a.pair (d k).2 P.2) (Fk k) = 0
-    calc ∑ k ∈ s, c k • liftA W M a (W.fock a.pair (d k).2 P.2) (Fk k)
-        = ∑ k ∈ s, ∑ l ∈ Ls, (c k * r k l) • liftA W M a (g l) (Fk k) := by
-          refine Finset.sum_congr rfl fun k hk => ?_
-          rw [hstep k hk, liftA_sum_datum M hg.last Ls (r k) g (Fk k) fun l _ => hconv l k hk, Finset.smul_sum]
-          simp only [smul_smul]
-      _ = ∑ l ∈ Ls, liftA W M a (g l) (∑ k ∈ s, (c k * r k l) • Fk k) := by
-          rw [Finset.sum_comm]
-          refine Finset.sum_congr rfl fun l _ => ?_
-          rw [liftA_sum_form M a (g l) s _ Fk fun k hk => hconv l k hk]
-      _ = 0 := by
-          refine Finset.sum_eq_zero fun l _ => ?_
-          rw [hIH l, liftA_zero_form]
+    rw [hsum_lift, Finset.sum_comm]
+    refine Finset.sum_eq_zero fun l _ => ?_
+    rw [← liftA_sum_form M a (g l) s (fun k => c k * r k l) Fk (fun k hk => hconv l k hk),
+      hIH l, liftA_zero_form]
 
 theorem liftT_tensE_expand (M : Vol G) {X Y : Node} (p : Path T X Y) (Q : PolE G →₀ ℂ) (τ : TotT G p) (F : Fn G X) :
     liftT W M p (tensE W p Q τ) F =

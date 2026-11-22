@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsAdelicOne
-import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementG
-import Formalism.PolynomialDimension.WeylDim
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsOrthonormalOfLinearIndependent
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsAdelicOne
+public import Formalism.LocalToGlobal.CMDeterminantIdeals.StatementG
+public import Formalism.PolynomialDimension.WeylDim
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.ExistsOrthonormalOfLinearIndependent
+
+@[expose] public section
 
 open scoped Matrix
 
@@ -24,7 +28,7 @@ theorem norm_det_submatrix_le_one (n s : ℕ) (u : Matrix.unitaryGroup (Fin n) �
   by_cases hI : Function.Injective I
   · have h : ‖(u.1.submatrix I J).det‖ ^ 2 ≤ 1 := by
       refine (GlobalTheory.Hadamard.norm_det_sq_le_prod_col (u.1.submatrix I J)).trans ?_
-      refine Finset.prod_le_one (fun j _ => Finset.sum_nonneg fun _ _ => by positivity)
+      refine Finset.prod_le_one₀ (fun j _ => Finset.sum_nonneg fun _ _ => by positivity)
         fun j _ => ?_
       rw [← sum_norm_sq_col u (J j)]
       simp only [Matrix.submatrix_apply]

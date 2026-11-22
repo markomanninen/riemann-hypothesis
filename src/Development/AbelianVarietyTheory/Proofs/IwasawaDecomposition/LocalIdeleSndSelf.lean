@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalToGlobal.Divisibility.Tuples
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalToGlobal.Divisibility.Tuples
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsUniqueIdeleOfLinearEquivQuotientLocal
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,7 +63,7 @@ theorem infDiag_parts (k : Fˣ) : infPart F (infDiag k) = infPart F (diagUnits F
   constructor
   · apply Units.ext
     funext w
-    rw [infDiag, MonoidHom.finset_prod_apply, map_prod, Units.coe_prod]
+    rw [infDiag, MonoidHom.finsetProd_apply, map_prod, Units.coe_prod]
     have e : (∏ u : InfinitePlace F, ((infPart F (((infIdele F u).comp (atInf u)) k) : (InfiniteAdeleRing F)ˣ) :
         InfiniteAdeleRing F)) w = ∏ u : InfinitePlace F, ((infPart F (((infIdele F u).comp (atInf u)) k) :
           (InfiniteAdeleRing F)ˣ) : InfiniteAdeleRing F) w := Finset.prod_apply _ _ _
@@ -68,7 +72,7 @@ theorem infDiag_parts (k : Fˣ) : infPart F (infDiag k) = infPart F (diagUnits F
     · intro u _ hu
       exact infIdele_fst_ne F u w (Ne.symm hu) _
     · simp
-  · rw [infDiag, MonoidHom.finset_prod_apply, map_prod]
+  · rw [infDiag, MonoidHom.finsetProd_apply, map_prod]
     exact Finset.prod_eq_one fun u _ => Units.ext rfl
 
 end Parts
@@ -77,8 +81,8 @@ section Product
 
 variable {F : Type} [Field F] [NumberField F]
 
-open Classical in
 
+open Classical in
 def cut (a : FiniteAdeleRing (𝓞 F) F) (T : Finset (HeightOneSpectrum (𝓞 F))) : FiniteAdeleRing (𝓞 F) F :=
   ⟨fun v => if v ∈ T then a v else 1, by
     refine Filter.eventually_cofinite.mpr (T.finite_toSet.subset fun w hw => ?_)

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSide
-import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FormCoreSK
+module
+
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TestSide
+public import Formalism.LocalToGlobal.GroupLattices.FockModels.TransposeWords.FormCoreSK
+
+@[expose] public section
 
 namespace Formalism.L2.G.Model
 

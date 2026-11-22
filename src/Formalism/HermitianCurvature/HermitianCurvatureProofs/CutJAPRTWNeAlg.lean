@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRTWNeAlgSt
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IrreducibleCapelliModules
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreKLExistsOfAlg
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRTWNeAlgSt
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IrreducibleCapelliModules
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreKLExistsOfAlg
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -74,7 +78,8 @@ theorem z_main (n : ℕ) (E : Fin (n + 1) → Fin (n + 1) → Module.End ℂ V) 
   have hqy : ∀ x, qdet (subA E) (-p i) (yK E x v) =
       cpol (Function.update p i (p i - 1)) (-p i) • Φ i x := by
     intro x
-    rw [← hsum x, map_sum, Finset.sum_congr rfl (fun j _ => hΦq j x), Finset.sum_ite_eq']
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hsum x, map_sum, Finset.sum_congr rfl (fun j _ => hΦq j x), Finset.sum_ite_eq']
     simp
   refine ⟨fun x => ?_, ?_⟩
   · rw [hqy x]
@@ -84,7 +89,8 @@ theorem z_main (n : ℕ) (E : Fin (n + 1) → Fin (n + 1) → Module.End ℂ V) 
         qminor (subA E) (skip1 w) (skip1 x) (-p i - 1) (yK E x v) = P • Φ i w := by
       intro w
       have e1 : ∀ x, yK E x v = ∑ j, Φ j x := fun x => (hsum x).symm
-      simp only [e1, map_sum, Finset.smul_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [e1, map_sum, Finset.smul_sum]
       rw [Finset.sum_comm]
       simp only [hrelΦ]
       rw [Finset.sum_eq_single i]
@@ -100,7 +106,8 @@ theorem z_main (n : ℕ) (E : Fin (n + 1) → Fin (n + 1) → Module.End ℂ V) 
         Module.End.mul_apply]
       rw [Finset.smul_sum]
       refine Finset.sum_congr rfl fun w _ => ?_
-      rw [← map_smul (etaK E w) P (Φ i w), ← hpart w, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [← map_smul (etaK E w) P (Φ i w), ← hpart w, map_sum]
       simp only [map_smul]
 
     have hBF := congrArg (fun T : Module.End ℂ V => T v)

@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelCext
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.OneParam
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.ModelCext
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.HighestWeights.OneParam
+
+@[expose] public section
 
 noncomputable section
 
@@ -22,15 +26,15 @@ end ExpL
 
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
-open Classical in
 
+open Classical in
 def kcurve (ε : Fin n → Bool) (X : Matrix (Fin n) (Fin n) ℂ) : ℝ → KG ε :=
   if h : inK ε X then Classical.choose (exists_curve ε h) else fun _ => 1
 
 lemma kcurve_eq (ε : Fin n → Bool) {X : Matrix (Fin n) (Fin n) ℂ} (hX : inK ε X) :
     kcurve ε X = onepCurve ε hX := by
   unfold kcurve
-  rw [dif_pos hX]
+  rw [dite_eq_left hX]
   funext t
   apply onep_KG_ext
   rw [Classical.choose_spec (exists_curve ε hX) t, toMK_onepCurve]

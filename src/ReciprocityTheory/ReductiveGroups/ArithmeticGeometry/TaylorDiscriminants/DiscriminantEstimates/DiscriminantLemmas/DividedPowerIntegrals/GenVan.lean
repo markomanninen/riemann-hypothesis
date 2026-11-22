@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.DiscriminantEstimates.DiscriminantLemmas.DividedPowerIntegrals.GenDefs
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.DiscriminantEstimates.DiscriminantLemmas.DividedPowerIntegrals.GenDefs
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -26,7 +30,8 @@ theorem eq_zero_of_mem_lowDeg_zero {f : ι → σ} {R : MvPolynomial σ K}
 theorem pderiv_mem_lowDeg {f : ι → σ} {t : ℕ} (k : σ) {R : MvPolynomial σ K}
     (h : R ∈ lowDeg f t) : pderiv k R ∈ lowDeg f t := by
   rw [mem_lowDeg] at h
-  rw [R.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [R.as_sum, map_sum]
   refine Submodule.sum_mem _ (fun m hm => ?_)
   rw [pderiv_monomial, mem_lowDeg]
   intro m' hm'
@@ -38,7 +43,8 @@ theorem pderiv_mem_lowDeg {f : ι → σ} {t : ℕ} (k : σ) {R : MvPolynomial �
 theorem pderiv_mem_lowDeg_of_succ {f : ι → σ} {t : ℕ} (i : ι) {R : MvPolynomial σ K}
     (h : R ∈ lowDeg f (t + 1)) : pderiv (f i) R ∈ lowDeg f t := by
   rw [mem_lowDeg] at h
-  rw [R.as_sum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [R.as_sum, map_sum]
   refine Submodule.sum_mem _ (fun m hm => ?_)
   rw [pderiv_monomial]
   by_cases h0 : m (f i) = 0

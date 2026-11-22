@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.IndexDefs
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeCountingBound.IndexDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,11 +23,6 @@ theorem hform_dot (J : Matrix (Fin n) (Fin n) E) (w z : Fin n → E) :
   simp only [dotProduct, vecMul, sv, Finset.sum_mul]
   exact Finset.sum_comm
 
-theorem sv_sum {k : ℕ} (s : Fin k → E) (b : Fin k → Fin n → E) :
-    sv (∑ a, starRingEnd E (s a) • b a) = ∑ a, s a • sv (b a) := by
-  funext i
-  simp [sv, Finset.sum_apply, map_sum, map_mul]
-
 theorem hform_herm (J : Matrix (Fin n) (Fin n) E) (hJ : Formalism.UG.IsHerm (starRingEnd E) J) (w z : Fin n → E) :
     starRingEnd E (Formalism.UG.hform (starRingEnd E) J w z) = Formalism.UG.hform (starRingEnd E) J z w := by
   have hJ' : ∀ i j, starRingEnd E (J i j) = J j i := by
@@ -31,7 +30,8 @@ theorem hform_herm (J : Matrix (Fin n) (Fin n) E) (hJ : Formalism.UG.IsHerm (sta
     have := congrFun (congrFun hJ j) i
     simpa [Formalism.UG.cT] using this
   unfold Formalism.UG.hform
-  simp only [map_sum, map_mul, starRingEnd_self_apply, hJ']
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, starRingEnd_self_apply, hJ']
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_
   ring
@@ -80,7 +80,8 @@ theorem dualL_oLat (k : ℕ) : dualL (oLat E k) = oLat E k := by
     obtain ⟨x, rfl⟩ := (mem_oLat t).mp ht
     obtain ⟨y, rfl⟩ := (mem_oLat s).mp hs
     refine RingHom.mem_range.mpr ⟨∑ c, y c * x c, ?_⟩
-    simp [dotProduct, map_sum, map_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [dotProduct, map_sum, map_mul]
 
 theorem card_quot_relIndex {M : Type*} [AddCommGroup M] [Module (𝓞 E) M] (S B : Submodule (𝓞 E) M) :
     Nat.card (B ⧸ S.comap B.subtype) = S.toAddSubgroup.relIndex B.toAddSubgroup := rfl
@@ -122,7 +123,7 @@ theorem lattice_indexOf : IndexOf := by
       map_smul' := fun o t => by simp only [Pi.smul_apply, smul_assoc, RingHom.id_apply, Finset.smul_sum] }
   let β : (Fin k → I.E) →+ (Fin I.n → I.E) :=
     AddMonoidHom.mk' (fun s => ∑ a, starRingEnd I.E (s a) • b' a) (fun s t => by
-      simp only [Pi.add_apply, map_add, add_smul, Finset.sum_add_distrib])
+      simp only [Pi.add_apply, map_add (f := _), add_smul, Finset.sum_add_distrib])
   have hι : ∀ t, ιL t = ∑ c, t c • v c := fun t => rfl
   have hβ : ∀ s, β s = ∑ a, starRingEnd I.E (s a) • b' a := fun s => rfl
   have hint_v : ∀ t : Fin k → I.E, ιL t ∈ Submodule.span (𝓞 I.E) (Set.range v) ↔ t ∈ oLat I.E k := by
@@ -215,7 +216,7 @@ theorem lattice_indexOf : IndexOf := by
 
   have hadd : ∀ x y z, hf I (x + y) z = hf I x z + hf I y z := by
     intro x y z
-    simp only [hf, Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+    simp only [hf, Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
   have hsmul : ∀ (a : I.E) x z, hf I (a • x) z = starRingEnd I.E a * hf I x z := by
     intro a x z
     simp only [hf, Formalism.UG.hform, Pi.smul_apply, smul_eq_mul, map_mul, mul_assoc]

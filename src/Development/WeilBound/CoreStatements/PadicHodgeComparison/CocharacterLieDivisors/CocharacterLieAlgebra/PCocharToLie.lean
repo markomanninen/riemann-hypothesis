@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.CocharacterLieDivisors.CocharacterLieAlgebra.StCochar
+module
+
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.CocharacterLieDivisors.CocharacterLieAlgebra.StCochar
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,7 +22,7 @@ theorem eval₂_dual {R K σ : Type} [CommRing R] [Field K] [Fintype σ] (φ : R
   next a =>
     simp [MvPolynomial.eval₂_C, MvPolynomial.pderiv_C]
   next p q hp hq =>
-    simp only [MvPolynomial.eval₂_add, hp, hq, map_add, add_mul, Finset.sum_add_distrib]
+    simp only [MvPolynomial.eval₂_add, hp, hq, map_add (f := _), add_mul, Finset.sum_add_distrib]
     ring
   next p n hp =>
     have hterm : ∀ i, MvPolynomial.eval₂ φ x (MvPolynomial.pderiv i (p * MvPolynomial.X n)) * v i =
@@ -34,7 +38,7 @@ theorem eval₂_dual {R K σ : Type} [CommRing R] [Field K] [Fintype σ] (φ : R
         try ring
     rw [MvPolynomial.eval₂_mul, hp, Finset.sum_congr rfl fun i _ => hterm i, Finset.sum_add_distrib,
       ← Finset.mul_sum, Finset.sum_ite_eq']
-    simp only [MvPolynomial.eval₂_X, MvPolynomial.eval₂_mul, Finset.mem_univ, if_true, map_add, map_mul]
+    simp only [MvPolynomial.eval₂_X, MvPolynomial.eval₂_mul, Finset.mem_univ, if_true, map_add (f := _), map_mul]
     linear_combination (algebraMap K (DualNumber K) (∑ i, MvPolynomial.eval₂ φ x (MvPolynomial.pderiv i p) * v i) *
       algebraMap K (DualNumber K) (v n)) * DualNumber.eps_mul_eps (R := K)
 
@@ -51,7 +55,7 @@ theorem epsUnit_zpow (K : Type) [Field K] (m : ℤ) :
       (1 + DualNumber.eps * algebraMap K (DualNumber K) b) =
       1 + DualNumber.eps * algebraMap K (DualNumber K) (a + b) := by
     intro a b
-    rw [map_add]
+    rw [map_add (f := _)]
     linear_combination (algebraMap K (DualNumber K) a * algebraMap K (DualNumber K) b) *
       DualNumber.eps_mul_eps (R := K)
   have hv : ((epsUnit K : (DualNumber K)ˣ) : DualNumber K) =
@@ -123,7 +127,8 @@ theorem inLie_of_cochar {K K' ι : Type} [Field K] [Field K'] [Algebra K K'] [Is
     have h2 : (⇑(LaurentPolynomial.eval₂ ψ u) ∘ ent) =
         fun p => ∑ j, ψ (P p.1 j) * ((u ^ (k j) : Sˣ) : S) * ψ (P⁻¹ j p.2) := by
       funext p
-      simp [ent, map_sum, map_mul, LaurentPolynomial.eval₂_C, LaurentPolynomial.eval₂_T]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [ent, map_sum, map_mul, LaurentPolynomial.eval₂_C, LaurentPolynomial.eval₂_T]
     rw [MvPolynomial.eval₂_comp_left, h1, h2]
   have hL0 : Lp = 0 := by
     apply laurent_eq_zero
@@ -150,7 +155,8 @@ theorem inLie_of_cochar {K K' ι : Type} [Field K] [Field K'] [Algebra K K'] [Is
       rw [← Matrix.mul_apply, Matrix.mul_nonsing_inv P hP]
     simp only [epsUnit_zpow]
     rw [h1, hX, conj_apply]
-    simp only [map_sum, map_mul, Finset.mul_sum, ← Finset.sum_add_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, Finset.mul_sum, ← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl fun j _ => by ring
   simp only [hent] at hd
   have hd2 := eval₂_dual (algebraMap K K') (fun p : ι × ι => (1 : Matrix ι ι K') p.1 p.2)

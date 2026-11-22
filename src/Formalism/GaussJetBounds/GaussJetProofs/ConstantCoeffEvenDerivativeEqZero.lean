@@ -1,4 +1,8 @@
-import Formalism.GaussJetBounds.GaussJetProofs.LogarithmWeightComparison
+module
+
+public import Formalism.GaussJetBounds.GaussJetProofs.LogarithmWeightComparison
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

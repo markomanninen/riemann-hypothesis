@@ -1,5 +1,9 @@
-import Development.DiscreteGroups.GlobalIrreducibility.ExistsAvgNotMem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LongElementConjUnipotentRadical
+module
+
+public import Development.DiscreteGroups.GlobalIrreducibility.ExistsAvgNotMem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.LongElementConjUnipotentRadical
+
+@[expose] public section
 
 noncomputable section
 
@@ -24,7 +28,7 @@ theorem colM_apply (j : ℕ) (c : Fin n → k) (i l : Fin n) :
 
 theorem colM_mul (j : ℕ) (c d : Fin n → k) : colM j c * colM j d = 0 := by
   ext i l
-  simp only [mul_apply, colM_apply, Matrix.zero_apply]
+  simp only [Matrix.mul_apply, colM_apply, Matrix.zero_apply]
   refine Finset.sum_eq_zero fun a _ => ?_
   by_cases h1 : i.val < j ∧ a.val = j
   · by_cases h2 : a.val < j ∧ l.val = j
@@ -60,7 +64,7 @@ theorem colU_inv (j : ℕ) (c : Fin n → k) : (colU j c)⁻¹ = colU j (-c) := 
 
 theorem colU_mul_apply (j : ℕ) (hj : j < n) (c : Fin n → k) (M : Matrix (Fin n) (Fin n) k) (i l : Fin n) :
     ((colU j c : Matrix (Fin n) (Fin n) k) * M) i l = M i l + (if i.val < j then c i * M ⟨j, hj⟩ l else 0) := by
-  rw [val_colU, add_mul, one_mul, Matrix.add_apply, mul_apply]
+  rw [val_colU, add_mul, one_mul, Matrix.add_apply, Matrix.mul_apply]
   congr 1
   rw [Finset.sum_eq_single (⟨j, hj⟩ : Fin n)]
   · simp only [colM_apply, and_true]

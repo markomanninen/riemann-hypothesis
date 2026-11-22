@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ThetaSeriesTies
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TwistTrivialOnRational
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevelGroupLatticeCongruence
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ThetaSeriesTies
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.TwistTrivialOnRational
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LevelGroupLatticeCongruence
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -38,8 +42,8 @@ open GlobalTheory.AdLat
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-variable (F E) in
 
+variable (F E) in
 def swapF : RA F E →+* E ⊗[F] Formalism.L2.Herm.Af F :=
   (Algebra.TensorProduct.comm F (FiniteAdeleRing (𝓞 F) F) E).toAlgHom.toRingHom
 
@@ -58,7 +62,7 @@ theorem exists_res_eq_zero {I : Ideal (𝓞 E)} {PP : Pl E} (hI : I ≤ PP.asIde
   | add x y _ _ hx hy =>
     obtain ⟨s, hs, hs'⟩ := hx
     obtain ⟨t, ht, ht'⟩ := hy
-    exact ⟨s + t, by rw [RingHom.map_add, ← hs, ← ht]; rfl, by rw [RingHom.map_add, hs', ht', add_zero]⟩
+    exact ⟨s + t, by rw [RingHom.map_add (f := _), ← hs, ← ht]; rfl, by rw [RingHom.map_add (f := _), hs', ht', add_zero]⟩
   | neg x _ hx =>
     obtain ⟨s, hs, hs'⟩ := hx
     exact ⟨-s, by rw [RingHom.map_neg, ← hs]; rfl, by rw [RingHom.map_neg, hs', neg_zero]⟩
@@ -92,7 +96,7 @@ theorem det_eq_one_of_lift {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) (hfg
         AddSubgroup.subset_closure ⟨1, fun v => one_mem _, _, hr ▸ LinearMap.mem_range_self ι _, rfl⟩
       rw [map_smul, hfv, hfv, Matrix.mulVec_smul, ← Nat.cast_smul_eq_nsmul (RA F E), ← map_natCast ρ] at e
       have e' : (ρ c • k) *ᵥ fv F (ι a) - fv F (ι (f a)) = -(ρ m • fv F (ι (f a))) - ρ (N : 𝓞 E) • w := by
-        have : ρ m = 1 - ρ c := by rw [← map_one ρ, ← hmc, map_add, add_sub_cancel_right]
+        have : ρ m = 1 - ρ c := by rw [← map_one ρ, ← hmc, map_add (f := _), add_sub_cancel_right]
         rw [← e, this, Matrix.smul_mulVec, sub_smul, one_smul]
         abel
       rw [e']
@@ -109,7 +113,7 @@ theorem det_eq_one_of_lift {n : ℕ} (L : Submodule (𝓞 E) (Fin n → E)) (hfg
     rw [ht, Matrix.det_smul, RingHom.map_sub, RingHom.map_mul, RingHom.map_pow, hρ, hs, Fintype.card_fin]
     rfl
   have h4 : Ideal.Quotient.mk PP.asIdeal c = 1 := by
-    rw [← map_one (Ideal.Quotient.mk PP.asIdeal), ← hmc, map_add, Ideal.Quotient.eq_zero_iff_mem.2 (hle hm), zero_add]
+    rw [← map_one (Ideal.Quotient.mk PP.asIdeal), ← hmc, map_add (f := _), Ideal.Quotient.eq_zero_iff_mem.2 (hle hm), zero_add]
   rw [e, RingHom.map_sub, RingHom.map_mul, RingHom.map_pow, resS_oToS, resS_oToS, hdet PP hP, h4, one_pow, one_mul,
     sub_eq_zero] at ht0
   rw [← Ideal.Quotient.eq, ← ht0, map_one]

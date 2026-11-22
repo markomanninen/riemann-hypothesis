@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartSheetCompare
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreSheetFormCompare
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreSheetFormCompare
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreChartSheetCompare
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.StSegreSheetFormCompare
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PSegreSheetFormCompare
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -40,8 +45,8 @@ theorem eq_segre_chartLift {P : Ideal (MRing ι)} {m : ℕ} {σ : Fin m ≃ ((k 
 
 end SegreChartSheetComparison
 
-open SegreChartSheetComparison in
 
+open SegreChartSheetComparison in
 theorem SegreChartSheetCompare.of_segreSheetFormCompare (hF : SegreSheetFormCompare.Statement) :
     SegreChartSheetCompare.Statement := by
   intro K _ _ ι _ P e m σ i L hL

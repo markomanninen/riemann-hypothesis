@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.TwiceValuationFactorialProduct
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.TwiceValuationFactorialProduct
+
+@[expose] public section
 
 noncomputable section
 
@@ -35,11 +39,5 @@ def ValComp : Prop :=
   ∀ (R : Type) [CommRing R] [IsDomain R] (ι : Type) (n : ℕ) [NeZero n] (LL : Letters ι) (S : Set ι)
     (F : MvPolynomial (ι × Fin n) R) (δ : ι → ℕ),
     valS LL S F ≤ valS LL S (homComp δ F) ∧ lam1S LL S (homComp δ F) ≤ lam1S LL S F
-
-def ValRen : Prop :=
-  ∀ (R : Type) [CommRing R] [IsDomain R] (ι κ : Type) (f : ι → κ) (n : ℕ) [NeZero n] (LL : Letters κ) (S : Set κ)
-    (A : MvPolynomial (ι × Fin n) R),
-    valS (⟨fun i => LL.vec (f i)⟩ : Letters ι) (f ⁻¹' S) A ≤ valS LL S (rename (fun v : ι × Fin n => (f v.1, v.2)) A) ∧
-    lam1S LL S (rename (fun v : ι × Fin n => (f v.1, v.2)) A) ≤ lam1S (⟨fun i => LL.vec (f i)⟩ : Letters ι) (f ⁻¹' S) A
 
 end Formalism.MainNotions.Proposition5Numerics

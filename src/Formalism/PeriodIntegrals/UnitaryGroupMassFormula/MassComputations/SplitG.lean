@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.ProdFirstProjectionSmul
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.MassComputations.ProdFirstProjectionSmul
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +41,8 @@ def mix (M1 : Matrix (Fin n) (Fin n) (R1 ⊗[F] E)) (M2 : Matrix (Fin n) (Fin n)
 theorem mix_mul (M1 N1 : Matrix (Fin n) (Fin n) (R1 ⊗[F] E)) (M2 N2 : Matrix (Fin n) (Fin n) (R2 ⊗[F] E)) :
     mix R1 R2 M1 M2 * mix R1 R2 N1 N2 = mix R1 R2 (M1 * N1) (M2 * N2) := by
   ext i j
-  simp only [mix, Matrix.mul_apply, Matrix.of_apply, ← map_mul, Prod.mk_mul_mk, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mix, Matrix.mul_apply, Matrix.of_apply, ← map_mul, Prod.mk_mul_mk, ← map_sum]
   congr 1
   ext
   · simp only [Prod.fst_sum]
@@ -91,7 +96,7 @@ theorem unitary_map {R R' : Type} [CommRing R] [Algebra F R] [CommRing R'] [Alge
     induction x using TensorProduct.induction_on with
     | zero => simp
     | tmul r e => simp [tensMap, sigR, Algebra.TensorProduct.map_tmul]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   rw [Matrix.map_mul, Matrix.map_mul]
   congr 2
   ext i j

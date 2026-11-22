@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CobOneEqZeroOfConnecting
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualEqSmulOfForallDvdStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueIsLieStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualLieExistsAdditiveEvalModPrimePowStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdditiveModPrimeEqQuasiLogarithmDefectStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CobOneEqZeroOfConnecting
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualEqSmulOfForallDvdStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsUniqueIsLieStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualLieExistsAdditiveEvalModPrimePowStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdditiveModPrimeEqQuasiLogarithmDefectStatement
+
+@[expose] public section
+
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.Katz GlobalTheory.QLog GlobalTheory.PDivGroup
 
 namespace GlobalTheory.QLog
@@ -24,7 +29,7 @@ theorem lie_surj_mod_p : ∀ (p : ℕ) [Fact p.Prime] (O E : Type) [CommRing O] 
     have h1 := hl w φ hφ
     have h2 := hl'.2 1 w φ s hφ (by rw [pow_one]; exact hs)
     rw [pow_one] at h1 h2
-    rw [hy, map_add, map_smul, smul_eq_mul] at h2
+    rw [hy, map_add (f := _), map_smul, smul_eq_mul] at h2
     have h3 : (p : O) ∣ l' w - φ b := by
       have := dvd_add h2 (dvd_mul_right (p : O) (φ y))
       rwa [show l' w - (φ b + (p : O) * φ y) + (p : O) * φ y = l' w - φ b by ring] at this

@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LemmaKOfSteps
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LeftMultiplication.Lmul
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GeneratorCountTuples.TupleChainBoundaryFormula
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GeneratorCountTuples.ConeHomotopyBoundaryFormula
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GeneratorCountTuples.LeftMulChainChainHomotopic
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LemmaKOfSteps
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.LeftMultiplication.Lmul
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GeneratorCountTuples.TupleChainBoundaryFormula
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GeneratorCountTuples.ConeHomotopyBoundaryFormula
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GeneratorCountTuples.LeftMulChainChainHomotopic
+
+@[expose] public section
 
 open NumberField IsDedekindDomain UpperTheory.V UpperTheory.V.KL UpperTheory.V.ZK
 
@@ -23,7 +27,7 @@ private theorem ext_cone {m : ℕ} {B : Type} [AddCommGroup B] [Module A B] (f g
 private theorem hbd_cone_zero (a : G) (y : Ch A G 0) : hbd A G 0 (cone A a 0 y) = y := by
   induction y using Finsupp.induction_linear with
   | zero => simp
-  | add y1 y2 h1 h2 => rw [map_add, map_add, h1, h2]
+  | add y1 y2 h1 h2 => rw [map_add (f := _), map_add (f := _), h1, h2]
   | single x b =>
     rw [← Finsupp.smul_single_one, map_smul, map_smul]
     congr 1
@@ -36,7 +40,7 @@ private theorem hbd_cone (a : G) (m : ℕ) (y : Ch A G (m + 1)) :
     hbd.eq_2 A G m
   induction y using Finsupp.induction_linear with
   | zero => simp
-  | add y1 y2 h1 h2 => simp only [map_add, h1, h2] <;> abel
+  | add y1 y2 h1 h2 => simp only [map_add (f := _), h1, h2] <;> abel
   | single x b =>
     rw [← Finsupp.smul_single_one]
     simp only [map_smul, ← smul_sub]
@@ -51,7 +55,7 @@ private theorem hp_cone (k a : G) (m : ℕ) (y : Ch A G m) :
     hp.eq_2 A k m
   induction y using Finsupp.induction_linear with
   | zero => simp
-  | add y1 y2 h1 h2 => simp only [map_add, map_sub, h1, h2] <;> abel
+  | add y1 y2 h1 h2 => simp only [map_add (f := _), map_sub, h1, h2] <;> abel
   | single x b =>
     rw [← Finsupp.smul_single_one]
     simp only [map_smul, ← smul_sub]
@@ -69,7 +73,7 @@ private theorem hd_cone (k k' a : G) (m : ℕ) (y : Ch A G m) :
     hd.eq_2 A k k' m
   induction y using Finsupp.induction_linear with
   | zero => simp
-  | add y1 y2 h1 h2 => simp only [map_add, h1, h2] <;> abel
+  | add y1 y2 h1 h2 => simp only [map_add (f := _), h1, h2] <;> abel
   | single x b =>
     rw [← Finsupp.smul_single_one]
     simp only [map_smul, ← smul_add]
@@ -82,7 +86,7 @@ private theorem rmul_cone (k a : G) (m : ℕ) (y : Ch A G m) :
     rmul A k (m + 1) (cone A a m y) = cone A (a * k) m (rmul A k m y) := by
   induction y using Finsupp.induction_linear with
   | zero => simp
-  | add y1 y2 h1 h2 => simp only [map_add, h1, h2]
+  | add y1 y2 h1 h2 => simp only [map_add (f := _), h1, h2]
   | single x b =>
     simp only [rmul, cone, Finsupp.lmapDomain_apply, Finsupp.mapDomain_single]
     congr 1
@@ -93,7 +97,7 @@ private theorem rmul_rmul (k k' : G) (m : ℕ) (y : Ch A G m) :
     rmul A k' m (rmul A k m y) = rmul A (k * k') m y := by
   induction y using Finsupp.induction_linear with
   | zero => simp
-  | add y1 y2 h1 h2 => simp only [map_add, h1, h2]
+  | add y1 y2 h1 h2 => simp only [map_add (f := _), h1, h2]
   | single x b => simp [rmul, Finsupp.mapDomain_single, mul_assoc]
 
 private theorem hbd_rmul (k : G) (m : ℕ) (y : Ch A G (m + 1)) :
@@ -140,7 +144,7 @@ private theorem hbd_hd (k k' : G) (m : ℕ) (y : Ch A G (m + 1)) :
       ((hd A k k' 0).comp (hbd A G 0) - (hp A (k * k') (0 + 1) - hp A k (0 + 1) - (hp A k' (0 + 1)).comp (rmul A k (0 + 1))))
       fun a w => ?_) y
     simp only [LinearMap.comp_apply, LinearMap.sub_apply]
-    simp only [hd_cone, hbd_cone, map_add, map_sub, hbd_hp, rmul_rmul, hbd_rmul, hbd_cone_zero, hd.eq_1, hp.eq_1,
+    simp only [hd_cone, hbd_cone, map_add (f := _), map_sub, hbd_hp, rmul_rmul, hbd_rmul, hbd_cone_zero, hd.eq_1, hp.eq_1,
       LinearMap.zero_apply, hp_cone, sub_zero, map_zero, add_zero]
     abel
   | succ m ih =>
@@ -148,14 +152,14 @@ private theorem hbd_hd (k k' : G) (m : ℕ) (y : Ch A G (m + 1)) :
       ((hd A k k' (m + 1)).comp (hbd A G (m + 1)) - (hp A (k * k') (m + 1 + 1) - hp A k (m + 1 + 1) -
         (hp A k' (m + 1 + 1)).comp (rmul A k (m + 1 + 1)))) fun a w => ?_) y
     simp only [LinearMap.comp_apply, LinearMap.sub_apply]
-    simp only [hd_cone, hbd_cone, map_add, map_sub, hbd_hp, rmul_rmul, hbd_rmul, ih, hp_cone]
+    simp only [hd_cone, hbd_cone, map_add (f := _), map_sub, hbd_hp, rmul_rmul, hbd_rmul, ih, hp_cone]
     abel
 
 private theorem pr_rmul (k : G) (m : ℕ) (y : Ch A G (m + 1)) :
     pr A G m (rmul A k (m + 1) y) = cm A (MulAut.conj k⁻¹).toMonoidHom m (pr A G m y) := by
   induction y using Finsupp.induction_linear with
   | zero => simp
-  | add y1 y2 h1 h2 => simp only [map_add, h1, h2]
+  | add y1 y2 h1 h2 => simp only [map_add (f := _), h1, h2]
   | single x b =>
     simp only [pr, rmul, cm, Finsupp.lmapDomain_apply, Finsupp.mapDomain_single]
     congr 1
@@ -168,7 +172,7 @@ private noncomputable def sec (G : Type) [Group G] (m : ℕ) : Ch A G m →ₗ[A
 private theorem pr_sec (m : ℕ) (z : Ch A G m) : pr A G m (sec A G m z) = z := by
   induction z using Finsupp.induction_linear with
   | zero => simp
-  | add y1 y2 h1 h2 => simp only [map_add, h1, h2]
+  | add y1 y2 h1 h2 => simp only [map_add (f := _), h1, h2]
   | single x b =>
     simp only [pr, sec, Finsupp.lmapDomain_apply, Finsupp.mapDomain_single, Fin.partialProd_right_inv]
 
@@ -176,7 +180,7 @@ private theorem hd_sec_pr (k k' : G) (m : ℕ) (y : Ch A G (m + 1)) :
     pr A G (m + 2) (hd A k k' (m + 1) (sec A G m (pr A G m y))) = pr A G (m + 2) (hd A k k' (m + 1) y) := by
   induction y using Finsupp.induction_linear with
   | zero => simp
-  | add y1 y2 h1 h2 => simp only [map_add, h1, h2]
+  | add y1 y2 h1 h2 => simp only [map_add (f := _), h1, h2]
   | single x b =>
     have hs : sec A G m (pr A G m (Finsupp.single x b)) = lmul A (x 0)⁻¹ (m + 1) (Finsupp.single x b) := by
       simp only [pr, sec, lmul, Finsupp.lmapDomain_apply, Finsupp.mapDomain_single]

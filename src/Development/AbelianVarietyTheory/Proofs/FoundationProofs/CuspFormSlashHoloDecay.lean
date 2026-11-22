@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsDCReps
+
+@[expose] public section
 
 open GlobalTheory.HeckeFamilyMatrices Polynomial UpperHalfPlane Filter Matrix.SpecialLinearGroup
 open scoped MatrixGroups ModularForm
@@ -13,7 +17,7 @@ theorem cuspForm_norm_le_exp_of_one_le_im (G : Subgroup (GL (Fin 2) ℝ)) [G.IsA
   obtain ⟨c, hc, hd⟩ := CuspFormClass.exp_decay_atImInfty' (Γ := G) (k := k) g
   obtain ⟨C₀, hC₀⟩ := CuspFormClass.petersson_bounded_left k G g g
   obtain ⟨D, hD, h⟩ := hd.exists_pos
-  rw [Asymptotics.IsBigOWith, atImInfty, eventually_comap, eventually_atTop] at h
+  rw [Asymptotics.isBigOWith_iff, atImInfty, eventually_comap, eventually_atTop] at h
   obtain ⟨y, hy⟩ := h
   have hC₀0 : 0 ≤ C₀ := le_trans (norm_nonneg _) (hC₀ UpperHalfPlane.I)
   set M : ℝ := 1 + C₀ * |y| ^ k.natAbs with hM

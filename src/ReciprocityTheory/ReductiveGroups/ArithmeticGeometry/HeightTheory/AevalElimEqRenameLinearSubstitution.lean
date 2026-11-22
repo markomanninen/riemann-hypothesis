@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtDefs
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.HtDefs
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.T0
 
@@ -32,7 +36,8 @@ theorem aeval_elim_mul_of_xhom (f : P → S) (g : I → S) (t : S) (n : ℕ) (Q 
       t ^ n * MvPolynomial.aeval (Sum.elim f g) Q := by
   conv_lhs => rw [Q.as_sum]
   conv_rhs => rw [Q.as_sum]
-  simp only [map_sum, MvPolynomial.aeval_monomial, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, MvPolynomial.aeval_monomial, Finset.mul_sum]
   refine Finset.sum_congr rfl fun s hs => ?_
   rw [Finsupp.prod_fintype _ _ (by simp), Finsupp.prod_fintype _ _ (by simp), Fintype.prod_sum_type,
     Fintype.prod_sum_type]
@@ -82,7 +87,7 @@ theorem aeval_elim_eq_rename_linearSubstitution (c : ι)
       MvPolynomial.rename some (d.linearSubstitution c Q) := by
   induction Q using MvPolynomial.induction_on with
   | C a => simp [linearSubstitution, MvPolynomial.algebraMap_eq]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     cases v <;> simp [linearSubstitution, map_mul, hp, map_sum]
 
@@ -97,7 +102,7 @@ theorem eq_zero_of_xhom_zero (c : ι)
     (hQ : ∀ s ∈ Q.support, ∑ i, s (Sum.inr i) = 0) (h : d.linearSubstitution c Q = 0) : Q = 0 := by
   have hvars : (↑Q.vars : Set ((Fin (d.D + 2) × Fin (d.N + 1)) ⊕ Fin (d.D + 2))) ⊆ Set.range Sum.inl := by
     intro x hx
-    rw [Finset.mem_coe, MvPolynomial.mem_vars] at hx
+    rw [Finset.mem_coe, MvPolynomial.mem_vars_iff_mem_support] at hx
     obtain ⟨s, hs, hxs⟩ := hx
     cases x with
     | inl p => exact ⟨p, rfl⟩
@@ -112,7 +117,7 @@ theorem eq_zero_of_xhom_zero (c : ι)
     intro q
     induction q using MvPolynomial.induction_on with
     | C a => simp [MvPolynomial.algebraMap_eq]
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
     | mul_X p v hp => simp [map_mul, hp]
   have e : d.linearSubstitution c (MvPolynomial.rename Sum.inl Q0) = MvPolynomial.map (algebraMap K (Ω c)) Q0 := by
     rw [← hmap, linearSubstitution, MvPolynomial.aeval_rename]

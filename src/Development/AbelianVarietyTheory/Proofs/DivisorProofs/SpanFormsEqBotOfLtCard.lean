@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsEulerContraction
+
+@[expose] public section
+
 open GlobalTheory GlobalTheory.LogDR
 
 namespace GlobalTheory.LogDR

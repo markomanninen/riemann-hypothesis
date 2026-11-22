@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UupEqOneOfLeOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UupEqOneOfLeOne
+
+@[expose] public section
+
 open GlobalTheory.MeetsGen
 
 noncomputable section
@@ -19,7 +24,8 @@ theorem proj_eigen {K G V : Type} [Field K] [Group G] [AddCommGroup V] [Module K
       = ((ψ u' : Kˣ) : K) • MonoidAlgebra.lift K (Module.End K V) G φ (pU U (fun u => (((ψ u)⁻¹ : Kˣ) : K))) y := by
   have hφ : ∀ u : U, φ u' (φ u y) = φ ((u' * u : U) : G) y := by
     intro u; rw [Subgroup.coe_mul, map_mul, Module.End.mul_apply]
-  simp only [pU, map_sum, MonoidAlgebra.lift_single, LinearMap.sum_apply, LinearMap.smul_apply, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [pU, map_sum, MonoidAlgebra.lift_single, LinearMap.sum_apply, LinearMap.smul_apply, map_smul,
     Finset.smul_sum, hφ]
   refine Fintype.sum_equiv (Equiv.mulLeft u') _ _ fun u => ?_
   simp only [Equiv.coe_mulLeft, smul_smul]
@@ -37,7 +43,8 @@ theorem meets : ∀ {K G V : Type} [Field K] [Group G] [Fintype G] [AddCommGroup
   have hsum : x = ∑ g : G, φ g (MonoidAlgebra.lift K (Module.End K V) G φ (pU U (fun u => (((ψ u)⁻¹ : Kˣ) : K)))
       (MonoidAlgebra.lift K (Module.End K V) G φ (b g) x)) := by
     conv_lhs => rw [← hWe x hxW, he]
-    simp only [map_sum, map_mul, MonoidAlgebra.lift_single, one_smul, LinearMap.sum_apply, Module.End.mul_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_mul, MonoidAlgebra.lift_single, one_smul, LinearMap.sum_apply, Module.End.mul_apply]
   intro hbot
   apply hx0
   rw [hsum]

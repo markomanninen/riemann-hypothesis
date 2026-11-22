@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTiltRootOfUnity
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ImportsBisAlt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AcrisTorsionFreeComplete
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsTiltRootOfUnity
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ImportsBisAlt
+
+@[expose] public section
+
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.MemLoc
 open scoped Formalism.Per
 
@@ -43,7 +48,11 @@ theorem nonempty_algClosure_zmod_to_tilt :
     (algebraMap (FractionRing (Per.Fl l)) Ω).injective.comp (IsFractionRing.injective _ _)
   haveI : CharP Ω l := charP_of_injective_ringHom hj l
   letI : Algebra (ZMod l) Ω := ZMod.algebra Ω l
-  let f₀ : AlgebraicClosure (ZMod l) →ₐ[ZMod l] Ω := IsAlgClosed.lift
+  let f₀ : AlgebraicClosure (ZMod l) →ₐ[ZMod l] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hr : ∀ a, (f₀ : AlgebraicClosure (ZMod l) →+* Ω) a ∈ j.range := by
     intro a
     by_cases ha : a = 0

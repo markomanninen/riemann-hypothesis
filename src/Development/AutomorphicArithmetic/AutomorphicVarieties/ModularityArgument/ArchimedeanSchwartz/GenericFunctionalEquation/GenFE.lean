@@ -1,4 +1,8 @@
-import GroundTheory.AutomorphicForms.GL2.GJStandardL
+module
+
+public import GroundTheory.AutomorphicForms.GL2.GJStandardL
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,7 @@ namespace UpperTheory.V.Z.Inf
 
 variable {K : Type} [Field K] [NumberField K] {n : ℕ}
 
-theorem genFE (hn : 2 ≤ n) (μ : Measure (Reduction.normOneGL K n))
+theorem genFE (hn : 2 ≤ n) (μ : Measure (Reduction.normOneGL (K := K) (n := n)))
     [μ.IsHaarMeasure] {φ₁ φ₂ : AdelicGLn.AdelicGL K n → ℂ} (h₁ : φ₁ ∈ AutomorphicForm.cuspForms K n)
     (h₂ : φ₂ ∈ AutomorphicForm.cuspForms K n)
     (hA : ∀ (t : {r : ℝ // 0 < r}) (x : AdelicGLn.AdelicGL K n),

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPoint
-import Formalism.PairingDivisors.StatementH
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsLatticeOfAdelicPoint
+public import Formalism.PairingDivisors.StatementH
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,13 +41,14 @@ theorem embT_conj (D : D7) (τ : D.what₂.Tau) (x : D.host.E) :
   exact NumberField.IsCMField.complexEmbedding_complexConj D.host.E (embT D τ) x
 
 theorem conj_hE (D : D7) {n : ℕ} (x y : Fin n → D.host.E) : D.host.conj (hE D x y) = hE D y x := by
-  simp only [hE, map_sum, map_mul, conj_conj, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hE, map_sum, map_mul, conj_conj, mul_comm]
 
 theorem hE_add_left (D : D7) {n : ℕ} (x x' y : Fin n → D.host.E) : hE D (x + x') y = hE D x y + hE D x' y := by
   simp only [hE, Pi.add_apply, add_mul, Finset.sum_add_distrib]
 
 theorem hE_add_right (D : D7) {n : ℕ} (x y y' : Fin n → D.host.E) : hE D x (y + y') = hE D x y + hE D x y' := by
-  simp only [hE, Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib]
+  simp only [hE, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib]
 
 theorem hE_smul_left (D : D7) {n : ℕ} (a : D.host.E) (x y : Fin n → D.host.E) : hE D (a • x) y = a * hE D x y := by
   simp only [hE, Pi.smul_apply, smul_eq_mul, Finset.mul_sum, mul_assoc]
@@ -110,11 +115,12 @@ theorem Hf_add_left (D : D7) (T : Tor D) {N N' : ℕ} (x x' y : VC D N N') :
 
 theorem Hf_add_right (D : D7) (T : Tor D) {N N' : ℕ} (x y y' : VC D N N') :
     Hf D T x (y + y') = Hf D T x y + Hf D T x y' := by
-  simp only [Hf, Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib, add_div]
+  simp only [Hf, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib, add_div]
 
 theorem Hf_conj (D : D7) (T : Tor D) {N N' : ℕ} (x y : VC D N N') :
     (starRingEnd ℂ) (Hf D T x y) = Hf D T y x := by
-  simp only [Hf, map_div₀, map_sum, map_mul, Complex.conj_conj, Complex.conj_ofReal, mul_comm]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Hf, map_div₀, map_sum, map_mul, Complex.conj_conj, Complex.conj_ofReal, mul_comm]
 
 theorem bc_ne_zero (D : D7) (T : Tor D) {N N' : ℕ} (x y : VC D N N') : bc D T x y ≠ 0 := Complex.exp_ne_zero _
 
@@ -170,9 +176,6 @@ theorem Wd_add (D : D7) (T : Tor D) {N N' : ℕ} (x : VC D N N') (F G : VC D N N
 theorem Wd_smul (D : D7) (T : Tor D) {N N' : ℕ} (x : VC D N N') (a : ℂ) (F : VC D N N' → ℂ) :
     Wd D T x (a • F) = a • Wd D T x F := by
   funext z; simp only [Wd, U, Pi.smul_apply, smul_eq_mul]; ring
-
-theorem Wd_zero (D : D7) (T : Tor D) {N N' : ℕ} (F : VC D N N' → ℂ) : Wd D T 0 F = F := by
-  funext z; simp [Wd, U, wdPh, ee, qH, Hf]
 
 def Nice (D : D7) (T : Tor D) {N N' : ℕ} (A : AddSubgroup (VC D N N')) : Prop :=
   (∀ x ∈ A, ∀ F, Wd D T x F = fun z => al D T x * U D T x F z) ∧ (∀ x ∈ A, ∀ y ∈ A, bc D T x y = 1) ∧

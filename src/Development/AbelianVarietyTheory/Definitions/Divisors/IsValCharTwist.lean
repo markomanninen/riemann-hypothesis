@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FinitePrimesUnder
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterIdeleCharacterMatchUnique
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntValuationEqOfMem
-import Formalism.LocalToGlobal.UnitaryNorms.CharUniq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FinitePrimesUnder
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeCharacterIdeleCharacterMatchUnique
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IntValuationEqOfMem
+public import Formalism.LocalToGlobal.UnitaryNorms.CharUniq
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,23 +86,30 @@ theorem kap_add (C : ℝ) (i j : Fin D.R.m) (τ : D.what₂.Tau) {s : ℕ} (hs :
 
 variable {D} {T : Type} {L : LevCh D T} {sc : Consts}
 
-open Classical in
 
+open Classical in
 theorem expIn_condF (P : Places L) (v : HeightOneSpectrum (𝓞 D.host.F)) :
     GlobalTheory.CMVal.expIn (condF P) v = if v ∈ P.S0 then condExp P v else 0 := by
   have key : ∀ S : Finset (HeightOneSpectrum (𝓞 D.host.F)), v ∉ S →
       ¬ v.asIdeal ∣ ∏ u ∈ S, u.asIdeal ^ condExp P u := fun S hS h => by
-    obtain ⟨u, hu, h⟩ := (v.prime.dvd_finset_prod_iff _).1 h
-    have h2 := v.prime.dvd_of_dvd_pow h
-    have : v = u := HeightOneSpectrum.ext (associated_iff_eq.1 (v.irreducible.associated_of_dvd u.irreducible h2))
-    exact hS (this ▸ hu)
+    induction S using Finset.induction_on with
+    | empty =>
+      simp only [Finset.prod_empty] at h
+      exact v.prime.2.1 (isUnit_iff_dvd_one.2 h)
+    | @insert u S hu ih =>
+      rw [Finset.prod_insert hu] at h
+      rcases v.prime.2.2 _ _ h with h | h
+      · have h2 := v.prime.dvd_of_dvd_pow h
+        have : v = u := HeightOneSpectrum.ext (associated_iff_eq.1 (v.irreducible.associated_of_dvd u.irreducible h2))
+        exact hS (this ▸ Finset.mem_insert_self _ _)
+      · exact ih (fun hv => hS (Finset.mem_insert_of_mem hv)) h
   show multiplicity v.asIdeal (∏ u ∈ P.S0, u.asIdeal ^ condExp P u) = _
   split_ifs with h
   · rw [← Finset.mul_prod_erase _ _ h]
     refine multiplicity_eq_of_dvd_of_not_dvd (dvd_mul_right _ _) fun h' => ?_
     rw [pow_succ, mul_dvd_mul_iff_left (pow_ne_zero _ v.ne_bot)] at h'
     exact key _ (Finset.notMem_erase _ _) h'
-  · exact multiplicity_eq_zero.2 (key _ h)
+  · exact multiplicity_eq_zero_of_not_dvd (key _ h)
 
 theorem levelLe_mono {χ : HChar D.host.E} {v : HeightOneSpectrum (𝓞 D.host.E)} {m n : ℕ} (h : χ.LevelLe v m)
     (hmn : m ≤ n) : χ.LevelLe v n := fun x hx hx' =>
@@ -203,19 +214,6 @@ theorem isValChar_nu {μ₀ : T} (hL : L.Is μ₀) (G : GridData L sc) (i j : Fi
     · have h := L.C.isDel'
       exact isValChar_twist hL G i j hs h.fin h.triv h.tame fun Q hQ => h.unr Q fun o =>
         hQ ((S1_mem_OmF D).2 (Or.inr (Or.inr (Or.inr (up _ Q o)))))
-
-theorem gauge_unique {G : GridData L sc} {t : T} {i j : Fin D.R.m} {s : ℕ} {zd zd' g g'} (h : IsTorVal G t i j s zd g)
-    (h' : IsTorVal G t i j s zd' g') : g = g' := by
-  obtain ⟨x, h1, -, -, Λ, p, hΛ, hp, hg⟩ := h
-  obtain ⟨x', h1', -, -, Λ', p', hΛ', hp', hg'⟩ := h'
-  obtain rfl := h1.2.unique h1'.2
-  have e : Λ.lattice = Λ'.lattice := Submodule.ext fun y => (hΛ y).trans (hΛ' y).symm
-  have e2 : GlobalTheory.CMVal.latDisc Λ = GlobalTheory.CMVal.latDisc Λ' := by
-    simp only [GlobalTheory.CMVal.latDisc, PeriodPair.g₂, PeriodPair.g₃, PeriodPair.G]
-    rw [e]
-  have e3 : p = p' := by
-    rw [hp.eq_minpoly, hp'.eq_minpoly, GlobalTheory.CMVal.beta, GlobalTheory.CMVal.beta, e2]
-  exact funext fun w => by rw [hg, hg', e3]
 
 theorem bot_ranks (i j : Fin D.R.m) : 2 ≤ botSmall D i j ∧ botSmall D i j < botBig D i j ∧
     Even (botBig D i j + botSmall D i j) ∧ botBig D i j + botSmall D i j ≤ 2 * bigN D := by

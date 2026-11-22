@@ -1,10 +1,14 @@
-import Formalism.LocalToGlobal.Columns.Inputs
-import Formalism.LocalToGlobal.Columns.GSetLemmas
-import Formalism.LocalToGlobal.Columns.ColFormsLemmas
-import Formalism.LocalToGlobal.Columns.CoefColLemmas
-import Formalism.LocalToGlobal.Columns.CoefModAt
-import Formalism.LocalToGlobal.Columns.BtExistsSmulLeOfFg
-import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.Minkowski
+module
+
+public import Formalism.LocalToGlobal.Columns.Inputs
+public import Formalism.LocalToGlobal.Columns.GSetLemmas
+public import Formalism.LocalToGlobal.Columns.ColFormsLemmas
+public import Formalism.LocalToGlobal.Columns.CoefColLemmas
+public import Formalism.LocalToGlobal.Columns.CoefModAt
+public import Formalism.LocalToGlobal.Columns.BtExistsSmulLeOfFg
+public import Formalism.PeriodIntegrals.OrbitalBoundsConclusion.Minkowski
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,7 +21,7 @@ theorem minkowskiBound_holds : MinkowskiBound := card_dvd_minkowskiNumber
 section Stab
 
 variable {X : Fields} {n : ℕ} {ST SG : Finset (HeightOneSpectrum (𝓞 X.E))}
-  (C : CoefPk X n (DecoSet X.E n ST SG)) (Λ : LevFam X.E X.K n SG)
+  (C : CoefPk X n (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG))) (Λ : LevFam X.E X.K n SG)
 
 end Stab
 

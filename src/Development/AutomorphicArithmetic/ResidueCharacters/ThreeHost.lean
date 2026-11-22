@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataParams
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataParams
+
+@[expose] public section
 
 open NumberField Formalism Formalism.BasicNotions
 

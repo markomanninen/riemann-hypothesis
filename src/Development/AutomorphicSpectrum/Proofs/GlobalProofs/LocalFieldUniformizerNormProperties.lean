@@ -1,4 +1,9 @@
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.InstBorelGL
+module
+
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.InstBorelGL
+
+@[expose] public section
+
 open MeasureTheory Matrix GlobalTheory.CompanionTheory.QL
 open scoped ComplexConjugate ValuativeRel
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -16,7 +20,7 @@ variable {B : Type} [CommRing B] {τ : Type}
 def coeffIdeal (J : Ideal B) (τ : Type) : Ideal (MvPowerSeries τ B) where
   carrier := {f | ∀ α, coeff α f ∈ J}
   add_mem' {a b} ha hb α := by
-    rw [map_add]
+    rw [map_add (f := _)]
     exact J.add_mem (ha α) (hb α)
   zero_mem' α := by simp
   smul_mem' c f hf α := by
@@ -93,7 +97,8 @@ theorem pow_prime_eq (hp : p.Prime) (hJ : ∀ x ∈ J, ∃ y ∈ J, x ^ p = p * 
     set w' : MvPowerSeries τ B := ∑ α ∈ Finset.Iic β, monomial α (coeff α w) with hw'
     have hagree : ∀ α ≤ β, coeff α w = coeff α w' := by
       intro α hα
-      rw [hw', map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hw', map_sum]
       simp_rw [coeff_monomial]
       rw [Finset.sum_ite_eq]
       simp [Finset.mem_Iic.mpr hα]

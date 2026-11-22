@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPfG
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.PoinStatementPfG
+
+@[expose] public section
 
 namespace ReciprocityTheory.ChartRestriction.G.AR.Up.PoinPf
 
@@ -76,9 +80,9 @@ theorem nmat_entry (X : Data E r) (w : V (nd X)) (τ : X.Ψ) (a b : Fin r) :
     ‖mat (nmat X w) τ a b - (1 : Matrix (Fin r) (Fin r) ℂ) a b‖ ≤ ‖w‖ := by
   simp only [mat, nmat, Matrix.of_apply, Matrix.one_apply]
   by_cases h : b < a
-  · rw [dif_pos h, if_neg (ne_of_lt h).symm, sub_zero]
+  · rw [dite_eq_left h, if_neg (ne_of_lt h).symm, sub_zero]
     exact PiLp.norm_apply_le w _
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
     split_ifs <;> simp
 
 theorem Mq_cpt (X : Data E r) (x0 x : Frame X.Ψ r) (w : V (nd X)) (τ : X.Ψ) :

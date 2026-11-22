@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualMapCompDualMap
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsAffineOpenInfOfIsSeparated
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualMapCompDualMap
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsAffineOpenInfOfIsSeparated
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.GlobalFnsHolds
+
+@[expose] public section
+
 open CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor Formalism.L2.Pj
 open GlobalTheory.CatCoh GlobalTheory.Cris GlobalTheory.DeRham GlobalTheory.CechKS
@@ -60,7 +65,8 @@ def transSnd (P : GPt A) (v : epsR K ⟶ A) : transSrc P ⟶ A :=
     change (spMap _ ≫ v.left) ≫ A.hom = spMap _
     rw [Category.assoc, Over.w v]
     change spMap _ ≫ spMap _ = spMap _
-    rw [← Cris.spMap_comp, dualMap_comp_algebraMap])
+    rw [← Cris.spMap_comp]
+    exact congrArg spMap (dualMap_comp_algebraMap (algebraMap K P.B)))
 
 def transPair (P : GPt A) (v : epsR K ⟶ A) : Sp (DualNumber P.B) ⟶ (A ⊗ A).left :=
   (lift (transFst P) (transSnd P v)).left
@@ -84,7 +90,9 @@ theorem transPair_map {P Q : GPt A} (φ : P.Hom Q) (v : epsR K ⟶ A) :
     spMap (dualMap (φ.ρ : P.B →+* Q.B)) ≫ transPair P v = transPair Q v := by
   let j : transSrc Q ⟶ transSrc P := Over.homMk (spMap (dualMap (φ.ρ : P.B →+* Q.B))) (by
     change spMap _ ≫ spMap _ = spMap _
-    rw [← Cris.spMap_comp, ← RingHom.comp_assoc, dualMap_comp_algebraMap, RingHom.comp_assoc,
+    rw [← Cris.spMap_comp]
+    apply congrArg spMap
+    rw [← RingHom.comp_assoc, dualMap_comp_algebraMap, RingHom.comp_assoc,
       φ.ρ.comp_algebraMap])
   have h1 : j ≫ transFst P = transFst Q := by
     apply Over.OverMorphism.ext
@@ -197,8 +205,8 @@ theorem pairCocycle_cocycle (V : J → A.left.Opens) (φ : ∀ a b, Γ(A.left, V
     (fun _ h ↦ (ha h).2) (fun _ h ↦ (hb h).2) (fun _ h ↦ (hd h).2)
   linear_combination e1 - e2 - e3
 
-omit [GrpObj A] in
 
+omit [GrpObj A] in
 theorem axis_coboundary {I : Type} (V : J → A.left.Opens) (φ : ∀ a b, Γ(A.left, V a ⊓ V b))
     (hφ : ∀ (a b c : J) (P : GPt A), P.In (V a) → P.In (V b) → P.In (V c) →
       valR P.x _ (φ a b) + valR P.x _ (φ b c) = valR P.x _ (φ a c))
@@ -220,9 +228,6 @@ theorem axis_coboundary {I : Type} (V : J → A.left.Opens) (φ : ∀ a b, Γ(A.
   have e3 := cocycle_at hφ (x ≫ e) (GlobalTheory.Points.le_preimage_comp x e (hr t) ht)
     (GlobalTheory.Points.le_preimage_comp x e (hr t') ht') (GlobalTheory.Points.le_preimage_comp x e he (GlobalTheory.Points.le_preimage_top x))
   linear_combination e1 - e2 - e3
-
-theorem exists_one_in (V : J → A.left.Opens) (hV : ⨆ a, V a = ⊤) : ∃ c, ⊤ ≤ η[A].left ⁻¹ᵁ V c :=
-  GlobalTheory.Points.exists_le_preimage_of_iSup_eq_top (C := K) η[A].left hV
 
 theorem pairCocycle_left (V : J → A.left.Opens) (φ : ∀ a b, Γ(A.left, V a ⊓ V b))
     (hφ : ∀ (a b c : J) (P : GPt A), P.In (V a) → P.In (V b) → P.In (V c) →

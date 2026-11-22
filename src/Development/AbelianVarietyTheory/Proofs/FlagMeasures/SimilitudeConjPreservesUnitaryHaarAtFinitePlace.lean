@@ -1,11 +1,15 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.Measures
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LocalUnitaryGroupStabilizersUnimodularFinitePlac
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalUnitaryGroupTuplesTopologicalFacts
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardFrameGramDetNeZero
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianFlagDualBasis
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsHaarFrameStabiliserCompatibleFibreStatement
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GramMapFibreMeasureUnitriangularInvariantStatement
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.Measures
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LocalUnitaryGroupStabilizersUnimodularFinitePlac
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalUnitaryGroupTuplesTopologicalFacts
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.StandardFrameGramDetNeZero
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HermitianFlagDualBasis
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsHaarFrameStabiliserCompatibleFibreStatement
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.GramMapFibreMeasureUnitriangularInvariantStatement
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.SG.Sub Formalism.L2.SG.Measures
 open scoped TensorProduct ENNReal
@@ -187,7 +191,7 @@ theorem mv_one (X : Fin a → Fin n → A) : mv 1 X = X := by
 
 theorem continuous_mv [TopologicalSpace A] [IsTopologicalRing A] (u : Matrix (Fin a) (Fin a) A) :
     Continuous (mv (n := n) u) :=
-  continuous_pi fun b => continuous_finset_sum _ fun c _ => (continuous_apply c).const_smul (u c b)
+  continuous_pi fun b => continuous_finsetSum _ fun c _ => (continuous_apply c).const_smul (u c b)
 
 theorem det_unitriangular (u : Matrix (Fin a) (Fin a) A) (h1 : ∀ i, u i i = 1)
     (h2 : ∀ i j, j < i → u i j = 0) : u.det = 1 := by
@@ -214,7 +218,8 @@ theorem smul_mv [TopologicalSpace R] (g : HA R σ J) (u : Matrix (Fin a) (Fin a)
     (X : Fin a → Fin n → R ⊗[F] E) : g • mv u X = mv u (g • X) := by
   funext b
   show lin R σ J g (∑ c, u c b • X c) = ∑ c, u c b • lin R σ J g (X c)
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   simp only [map_smul]
 
 theorem hR_sum_left {ι : Type} (t : Finset ι) (x : ι → Fin n → R ⊗[F] E) (y : Fin n → R ⊗[F] E) :

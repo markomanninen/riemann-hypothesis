@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.AwayLiftCompFromZeroRingHom
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ShimuraVarieties.AwayLiftCompFromZeroRingHom
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory HomogeneousLocalization HomogeneousIdeal Limits
 
@@ -84,23 +88,6 @@ theorem IsUnimodularSol.smul {V : WeierstrassCurve A} {P : Fin 3 → A} (h : IsU
   rw [this]
   exact Ideal.mul_mem_left _ _ (Ideal.subset_span ⟨i, rfl⟩)
 
-example : IsUnimodularSol (⟨0, 0, 1, -1, 0⟩ : WeierstrassCurve ℤ) ![2, -5, 8] := by
-  refine ⟨by rw [WeierstrassCurve.Projective.equation_iff]; simp, ?_⟩
-  rw [Ideal.eq_top_iff_one]
-  have : (1 : ℤ) = (-2) * ![2, -5, 8] 0 + (-1) * ![2, -5, 8] 1 := by simp
-  rw [this]
-  exact add_mem (Ideal.mul_mem_left _ _ (Ideal.subset_span ⟨0, rfl⟩))
-    (Ideal.mul_mem_left _ _ (Ideal.subset_span ⟨1, rfl⟩))
-
-example (V : WeierstrassCurve ℤ) : ¬ IsUnimodularSol V ![0, 2, 0] := by
-  intro h
-  have h2 : Ideal.span (Set.range ![(0 : ℤ), 2, 0]) ≤ Ideal.span {2} := by
-    rw [Ideal.span_le]
-    rintro _ ⟨i, rfl⟩
-    fin_cases i <;> simp
-  rw [h.span_eq_top, top_le_iff, Ideal.span_singleton_eq_top, Int.isUnit_iff] at h2
-  omega
-
 end Unimodular
 
 variable {R : Type u} [CommRing R] (W : WeierstrassCurve R)
@@ -131,10 +118,6 @@ def grading : ℕ → Submodule R (HomRing W) :=
 
 instance gradedAlgebra : GradedAlgebra (grading W) :=
   quotGradedAlgebra _ (isHomogeneous_cubicIdeal W)
-
-theorem mem_grading_iff {n : ℕ} {a : HomRing W} :
-    a ∈ grading W n ↔ ∃ p : MvPolynomial (Fin 3) R, p.IsHomogeneous n ∧
-      Ideal.Quotient.mk _ p = a := Iff.rfl
 
 def coord (i : Fin 3) : HomRing W := Ideal.Quotient.mk _ (MvPolynomial.X i)
 
@@ -210,8 +193,8 @@ theorem evalHom_smul (c : A) (h' : (W.map ρ).toProjective.Equation (c • P)) {
   obtain ⟨p, hp, rfl⟩ := ha
   exact eval₂_smul_of_isHomogeneous ρ hp c P
 
-variable {ρ P} in
 
+variable {ρ P} in
 theorem map_irrelevant_evalHom (h : IsUnimodularSol (W.map ρ) P) :
     (irrelevant (grading W)).toIdeal.map (evalHom W ρ P h.equation) = ⊤ := by
   rw [irrelevant_eq_span_coord, Ideal.map_span, ← Set.range_comp, ← h.span_eq_top]
@@ -236,10 +219,6 @@ def scheme : Scheme.{u} := Proj (grading W)
 
 def toSpec : scheme W ⟶ Spec (.of R) :=
   Proj.toSpecZero (grading W) ≫ Spec.map (CommRingCat.ofHom (algebraMap R (grading W 0)))
-
-instance : (scheme W).Over (Spec (.of R)) := ⟨toSpec W⟩
-
-theorem over_eq_toSpec : scheme W ↘ Spec (.of R) = toSpec W := rfl
 
 abbrev schemeOver : Over (Spec (.of R)) := Over.mk (toSpec W)
 
@@ -280,7 +259,6 @@ section
 
 variable (ρ : R →+* A) (P : Fin 3 → A) (h : IsUnimodularSol (W.map ρ) P)
 
-@[reassoc (attr := simp)]
 theorem ptHom_toSpec : ptHom W ρ P h ≫ toSpec W = Spec.map (CommRingCat.ofHom ρ) := by
   refine (ProjPoint.ofHom_toSpecZero_assoc (grading W) _ _ _).trans ?_
   rw [← Spec.map_comp, ← CommRingCat.ofHom_comp]
@@ -288,7 +266,6 @@ theorem ptHom_toSpec : ptHom W ρ P h ≫ toSpec W = Spec.map (CommRingCat.ofHom
   ext r
   exact evalHom_algebraMap W ρ P h.equation r
 
-@[reassoc]
 theorem SpecMap_ptHom (g : A →+* B) :
     Spec.map (CommRingCat.ofHom g) ≫ ptHom W ρ P h =
       ptHom W (g.comp ρ) (g ∘ P) (h.map_comp g) := by
@@ -320,11 +297,9 @@ variable (P : Fin 3 → A) (h : IsUnimodularSol (W.baseChange A) P)
 
 theorem pt_eq_ptHom : pt W P h = ptHom W (algebraMap R A) P h.of_baseChange := rfl
 
-@[reassoc (attr := simp)]
 theorem pt_toSpec : pt W P h ≫ toSpec W = Spec.map (CommRingCat.ofHom (algebraMap R A)) :=
   ptHom_toSpec ..
 
-@[reassoc]
 theorem SpecMap_pt (g : A →ₐ[R] B) :
     Spec.map (CommRingCat.ofHom (g : A →+* B)) ≫ pt W P h = pt W (g ∘ P) (h.baseChange g) :=
   (SpecMap_ptHom W (algebraMap R A) P h (g : A →+* B)).trans
@@ -340,8 +315,6 @@ theorem pt_preimage_coordOpen (i : Fin 3) :
 def ptOver : Over.mk (Spec.map (CommRingCat.ofHom (algebraMap R A))) ⟶ schemeOver W :=
   Over.homMk (pt W P h) (pt_toSpec W P h)
 
-@[simp] theorem ptOver_left : (ptOver W P h).left = pt W P h := rfl
-
 theorem pt_congr {P' : Fin 3 → A} (hP : P = P') (h' : IsUnimodularSol (W.baseChange A) P') :
     pt W P h = pt W P' h' := by
   subst hP
@@ -351,19 +324,16 @@ end Points
 
 def zero : Spec (.of R) ⟶ scheme W := pt W (A := R) ![0, 1, 0] (isUnimodularSol_zero _)
 
-@[reassoc (attr := simp)]
 theorem zero_toSpec : zero W ≫ toSpec W = 𝟙 _ := by
   rw [zero, pt_toSpec]
   exact Spec.map_id _
 
-@[reassoc]
 theorem SpecMap_zero {A : Type u} [CommRing A] (ρ : R →+* A) :
     Spec.map (CommRingCat.ofHom ρ) ≫ zero W =
       ptHom W ρ ![0, 1, 0] (isUnimodularSol_zero _) :=
   (SpecMap_ptHom W (algebraMap R R) ![0, 1, 0] (isUnimodularSol_zero _) ρ).trans
     (ptHom_congr W _ _ _ (RingHom.comp_id ρ) (by ext i; fin_cases i <;> simp) _)
 
-@[reassoc]
 theorem SpecMap_algebraMap_zero (A : Type u) [CommRing A] [Algebra R A] :
     Spec.map (CommRingCat.ofHom (algebraMap R A)) ≫ zero W =
       pt W (A := A) ![0, 1, 0] (isUnimodularSol_zero _) :=
@@ -507,13 +477,11 @@ theorem awayChart_eq_ptHom :
   rw [ptHom_eq_awayChart W i _ _ _ hi, this]
   simp
 
-@[reassoc]
 theorem SpecMap_awayChart (g : AwayRing W i →+* A) :
     Spec.map (CommRingCat.ofHom g) ≫ awayChart W i = ptHom W (g.comp (awayConst W i))
       (g ∘ awayCoord W i) ((isUnimodularSol_awayCoord W i).map_comp g) := by
   rw [awayChart_eq_ptHom, SpecMap_ptHom]
 
-@[reassoc (attr := simp)]
 theorem awayChart_toSpec :
     awayChart W i ≫ toSpec W = Spec.map (CommRingCat.ofHom (awayConst W i)) := by
   rw [awayChart_eq_ptHom, ptHom_toSpec]
@@ -594,16 +562,6 @@ theorem affine_hom_ext {f g : W.toAffine.CoordinateRing →+* A}
     (hx : f (affineX W) = g (affineX W)) (hy : f (affineY W) = g (affineY W)) : f = g :=
   AdjoinRoot.ringHom_ext (Polynomial.ringHom_ext h₀ hx) hy
 
-def affineAeval [Algebra R A] (a b : A) (h : (W.baseChange A).toAffine.Equation a b) :
-    W.toAffine.CoordinateRing →ₐ[R] A where
-  toRingHom := affineEval W (algebraMap R A) a b h
-  commutes' := affineEval_algebraMap W _ a b h
-
-@[simp] theorem coe_affineAeval [Algebra R A] (a b : A)
-    (h : (W.baseChange A).toAffine.Equation a b) :
-    (affineAeval W a b h : W.toAffine.CoordinateRing →+* A) =
-      affineEval W (algebraMap R A) a b h := rfl
-
 def chartZ : Spec (.of W.toAffine.CoordinateRing) ⟶ scheme W :=
   pt W ![affineX W, affineY W, 1] (isUnimodularSol_some (equation_affineX_affineY W))
 
@@ -640,7 +598,6 @@ theorem chartZ_toSpec : chartZ W ≫ toSpec W =
     Spec.map (CommRingCat.ofHom (algebraMap R W.toAffine.CoordinateRing)) :=
   pt_toSpec ..
 
-@[reassoc]
 theorem SpecMap_affineEval_chartZ {A : Type u} [CommRing A] (ρ : R →+* A) (a b : A)
     (h : (W.map ρ).toAffine.Equation a b) :
     Spec.map (CommRingCat.ofHom (affineEval W ρ a b h)) ≫ chartZ W =
@@ -649,19 +606,8 @@ theorem SpecMap_affineEval_chartZ {A : Type u} [CommRing A] (ρ : R →+* A) (a 
     (ptHom_congr W _ _ _ (RingHom.ext (affineEval_algebraMap W ρ a b h))
       (by ext i; fin_cases i <;> simp) _)
 
-@[reassoc]
-theorem SpecMap_affineAeval_chartZ {A : Type u} [CommRing A] [Algebra R A] (a b : A)
-    (h : (W.baseChange A).toAffine.Equation a b) :
-    Spec.map (CommRingCat.ofHom (affineAeval W a b h : W.toAffine.CoordinateRing →+* A)) ≫
-      chartZ W = pt W ![a, b, 1] (isUnimodularSol_some h) :=
-  SpecMap_affineEval_chartZ W (algebraMap R A) a b h
-
 def awayEquivAffine : AwayRing W 2 ≃+* W.toAffine.CoordinateRing :=
   RingEquiv.ofBijective _ (bijective_awayEval_affine W)
-
-theorem chartZ_eq : chartZ W = Spec.map (CommRingCat.ofHom
-    (awayEquivAffine W : AwayRing W 2 →+* W.toAffine.CoordinateRing)) ≫ awayChart W 2 :=
-  ptHom_eq_awayChart W 2 _ _ (isUnimodularSol_some (equation_affineX_affineY W)) isUnit_one
 
 end ChartZ
 
@@ -678,15 +624,9 @@ theorem monic_originPolynomial : (originPolynomial W).Monic := by
   unfold originPolynomial
   monicity!
 
-theorem natDegree_originPolynomial [Nontrivial R] : (originPolynomial W).natDegree = 3 := by
-  unfold originPolynomial
-  compute_degree!
-
 abbrev OriginRing : Type u := AdjoinRoot (originPolynomial W)
 
 instance : Module.Free R[X] (OriginRing W) := (monic_originPolynomial W).free_adjoinRoot
-
-instance : Module.Finite R[X] (OriginRing W) := (monic_originPolynomial W).finite_adjoinRoot
 
 instance : Module.Free R (OriginRing W) := .trans (S := R[X])
 
@@ -747,10 +687,6 @@ def originAeval [Algebra R A] (z w : A)
   toRingHom := originEval W (algebraMap R A) z w h
   commutes' := originEval_algebraMap W _ z w h
 
-@[simp] theorem coe_originAeval [Algebra R A] (z w : A)
-    (h : (W.baseChange A).toProjective.Equation ![z, -1, w]) :
-    (originAeval W z w h : OriginRing W →+* A) = originEval W (algebraMap R A) z w h := rfl
-
 def chartY : Spec (.of (OriginRing W)) ⟶ scheme W :=
   pt W ![originZ W, -1, originW W] (isUnimodularSol_origin (equation_originZ_originW W))
 
@@ -788,7 +724,6 @@ theorem chartY_toSpec : chartY W ≫ toSpec W =
     Spec.map (CommRingCat.ofHom (algebraMap R (OriginRing W))) :=
   pt_toSpec ..
 
-@[reassoc]
 theorem SpecMap_originEval_chartY {A : Type u} [CommRing A] (ρ : R →+* A) (z w : A)
     (h : (W.map ρ).toProjective.Equation ![z, -1, w]) :
     Spec.map (CommRingCat.ofHom (originEval W ρ z w h)) ≫ chartY W =
@@ -797,19 +732,8 @@ theorem SpecMap_originEval_chartY {A : Type u} [CommRing A] (ρ : R →+* A) (z 
     (ptHom_congr W _ _ _ (RingHom.ext (originEval_algebraMap W ρ z w h))
       (by ext i; fin_cases i <;> simp) _)
 
-@[reassoc]
-theorem SpecMap_originAeval_chartY {A : Type u} [CommRing A] [Algebra R A] (z w : A)
-    (h : (W.baseChange A).toProjective.Equation ![z, -1, w]) :
-    Spec.map (CommRingCat.ofHom (originAeval W z w h : OriginRing W →+* A)) ≫ chartY W =
-      pt W ![z, -1, w] (isUnimodularSol_origin h) :=
-  SpecMap_originEval_chartY W (algebraMap R A) z w h
-
 def awayEquivOrigin : AwayRing W 1 ≃+* OriginRing W :=
   RingEquiv.ofBijective _ (bijective_awayEval_origin W)
-
-theorem chartY_eq : chartY W = Spec.map (CommRingCat.ofHom
-    (awayEquivOrigin W : AwayRing W 1 →+* OriginRing W)) ≫ awayChart W 1 :=
-  ptHom_eq_awayChart W 1 _ _ (isUnimodularSol_origin (equation_originZ_originW W)) isUnit_one.neg
 
 def originAug : OriginRing W →ₐ[R] R :=
   originAeval W 0 0 ((equation_origin_iff _ _ _).mpr (by simp))
@@ -820,7 +744,6 @@ def originAug : OriginRing W →ₐ[R] R :=
 @[simp] theorem originAug_originW : originAug W (originW W) = 0 :=
   originEval_originW W (algebraMap R R) 0 0 ((equation_origin_iff _ _ _).mpr (by simp))
 
-@[reassoc]
 theorem SpecMap_originAug_chartY :
     Spec.map (CommRingCat.ofHom (originAug W : OriginRing W →+* R)) ≫ chartY W = zero W := by
   refine (SpecMap_originEval_chartY W (algebraMap R R) 0 0
@@ -836,10 +759,6 @@ theorem opensRange_chartY_sup_opensRange_chartZ :
 
 theorem chartY_preimage_coordOpen_two :
     chartY W ⁻¹ᵁ coordOpen W 2 = PrimeSpectrum.basicOpen (originW W) :=
-  pt_preimage_coordOpen ..
-
-theorem chartZ_preimage_coordOpen_one :
-    chartZ W ⁻¹ᵁ coordOpen W 1 = PrimeSpectrum.basicOpen (affineY W) :=
   pt_preimage_coordOpen ..
 
 theorem exists_chartY_or_chartZ (x : scheme W) :
@@ -889,15 +808,15 @@ section BaseChange
 variable {R' R'' : Type u} [CommRing R'] [CommRing R''] {W' : WeierstrassCurve R'}
   {W'' : WeierstrassCurve R''}
 
-variable {W} in
 
+variable {W} in
 theorem map_comp_eq {A : Type*} [CommRing A] {f : R →+* R'} (h : W.map f = W') (ρ : R' →+* A) :
     W.map (ρ.comp f) = W'.map ρ := by
   subst h
   rfl
 
-variable {W} in
 
+variable {W} in
 theorem IsUnimodularSol.comp_of_map_eq {A : Type*} [CommRing A] {f : R →+* R'}
     (h : W.map f = W') {ρ : R' →+* A} {P : Fin 3 → A} (hP : IsUnimodularSol (W'.map ρ) P) :
     IsUnimodularSol (W.map (ρ.comp f)) P :=
@@ -959,7 +878,6 @@ theorem mapHom_preimage_coordOpen (i : Fin 3) :
   (Proj.map_preimage_basicOpen (gradedMap W f h) (irrelevant_le_map_gradedMap W f h) _).trans
     (congrArg (Proj.basicOpen (grading W')) (homRingMap_coord W f h i))
 
-@[reassoc]
 theorem mapHom_toSpec :
     mapHom W f h ≫ toSpec W = toSpec W' ≫ Spec.map (CommRingCat.ofHom f) := by
   apply scheme_hom_ext
@@ -968,27 +886,10 @@ theorem mapHom_toSpec :
   · rw [chartZ_toSpec_assoc, chartZ, pt_eq_ptHom, ptHom_mapHom_assoc, ptHom_toSpec,
       ← Spec.map_comp, CommRingCat.ofHom_comp]
 
-@[reassoc]
 theorem zero_mapHom : zero W' ≫ mapHom W f h = Spec.map (CommRingCat.ofHom f) ≫ zero W := by
   rw [SpecMap_zero]
   exact ptHom_mapHom W f h (RingHom.id R') ![0, 1, 0] (isUnimodularSol_zero _)
 
-theorem mapHom_id : mapHom W (RingHom.id R) W.map_id = 𝟙 _ := by
-  apply scheme_hom_ext
-  · rw [chartY, pt_eq_ptHom, ptHom_mapHom, Category.comp_id]
-    rfl
-  · rw [chartZ, pt_eq_ptHom, ptHom_mapHom, Category.comp_id]
-    rfl
-
-@[reassoc]
-theorem pt_mapHom {A : Type u} [CommRing A] [Algebra R R'] [Algebra R' A] [Algebra R A]
-    [IsScalarTower R R' A] (h : W.map (algebraMap R R') = W') (P : Fin 3 → A)
-    (hP' : IsUnimodularSol (W'.baseChange A) P) (hP : IsUnimodularSol (W.baseChange A) P) :
-    pt W' P hP' ≫ mapHom W (algebraMap R R') h = pt W P hP := by
-  rw [pt_eq_ptHom, ptHom_mapHom, pt_eq_ptHom]
-  exact ptHom_congr W _ _ _ (IsScalarTower.algebraMap_eq R R' A).symm rfl _
-
-@[reassoc]
 theorem mapHom_comp (g : R' →+* R'') (h' : W'.map g = W'') :
     mapHom W' g h' ≫ mapHom W f h = mapHom W (g.comp f) ((map_comp_eq h g).trans h') := by
   apply scheme_hom_ext
@@ -1013,7 +914,6 @@ def awayRingMap (i : Fin 3) : AwayRing W i →+* AwayRing W' i :=
   simp only [awayCoord_self, mul_one] at this
   exact this
 
-@[reassoc]
 theorem awayChart_mapHom (i : Fin 3) : awayChart W' i ≫ mapHom W f h =
     Spec.map (CommRingCat.ofHom (awayRingMap W f h i)) ≫ awayChart W i := by
   rw [awayChart_eq_ptHom W', ptHom_mapHom]
@@ -1084,26 +984,6 @@ def originMap : OriginRing W →+* OriginRing W' :=
   originEval W ((algebraMap R' _).comp f) (originZ W') (originW W')
     ((map_comp_eq h (algebraMap R' (OriginRing W'))).symm ▸ equation_originZ_originW W')
 
-@[simp] theorem affineMap_affineX : affineMap W f h (affineX W) = affineX W' := by
-  simp [affineMap]
-
-@[simp] theorem affineMap_affineY : affineMap W f h (affineY W) = affineY W' := by
-  simp [affineMap]
-
-@[simp] theorem affineMap_algebraMap (r : R) :
-    affineMap W f h (algebraMap R _ r) = algebraMap R' _ (f r) := by
-  rw [affineMap, affineEval_algebraMap, RingHom.comp_apply]
-
-@[simp] theorem originMap_originZ : originMap W f h (originZ W) = originZ W' := by
-  simp [originMap]
-
-@[simp] theorem originMap_originW : originMap W f h (originW W) = originW W' := by
-  simp [originMap]
-
-@[simp] theorem originMap_algebraMap (r : R) :
-    originMap W f h (algebraMap R _ r) = algebraMap R' _ (f r) := by
-  rw [originMap, originEval_algebraMap, RingHom.comp_apply]
-
 theorem isPullback_chartZ : IsPullback (Spec.map (CommRingCat.ofHom (affineMap W f h)))
     (chartZ W') (chartZ W) (mapHom W f h) :=
   IsOpenImmersion.isPullback _ _ _ _
@@ -1116,31 +996,6 @@ theorem isPullback_chartY : IsPullback (Spec.map (CommRingCat.ofHom (originMap W
     (by rw [originMap, SpecMap_originEval_chartY, chartY, pt_eq_ptHom, ptHom_mapHom])
     (by rw [opensRange_chartY, opensRange_chartY, mapHom_preimage_coordOpen])
 
-def pullbackIso : pullback (toSpec W) (Spec.map (CommRingCat.ofHom f)) ≅ scheme W' :=
-  (isPullback_mapHom W f h).isoPullback.symm
-
-@[reassoc (attr := simp)]
-theorem pullbackIso_hom_mapHom :
-    (pullbackIso W f h).hom ≫ mapHom W f h = pullback.fst _ _ :=
-  (isPullback_mapHom W f h).isoPullback_inv_fst
-
-@[reassoc (attr := simp)]
-theorem pullbackIso_hom_toSpec :
-    (pullbackIso W f h).hom ≫ toSpec W' = pullback.snd _ _ :=
-  (isPullback_mapHom W f h).isoPullback_inv_snd
-
-@[reassoc (attr := simp)]
-theorem pullbackIso_inv_fst : (pullbackIso W f h).inv ≫ pullback.fst _ _ = mapHom W f h :=
-  (isPullback_mapHom W f h).isoPullback_hom_fst
-
-@[reassoc (attr := simp)]
-theorem pullbackIso_inv_snd : (pullbackIso W f h).inv ≫ pullback.snd _ _ = toSpec W' :=
-  (isPullback_mapHom W f h).isoPullback_hom_snd
-
-abbrev baseChangeIso (f : R →+* R') :
-    pullback (toSpec W) (Spec.map (CommRingCat.ofHom f)) ≅ scheme (W.map f) :=
-  pullbackIso W f rfl
-
 end BaseChange
 
 theorem pt_some_ne_zero [Nontrivial R] {a b : R} (h : W.toAffine.Equation a b) :
@@ -1151,26 +1006,6 @@ theorem pt_some_ne_zero [Nontrivial R] {a b : R} (h : W.toAffine.Equation a b) :
   have h₂ : PrimeSpectrum.basicOpen (1 : R) = ⊥ := h₁.symm
   rw [PrimeSpectrum.basicOpen_eq_bot_iff] at h₂
   exact not_isNilpotent_one h₂
-
-instance [Nontrivial R] : Nonempty (scheme W) :=
-  ⟨zero W (Classical.arbitrary (PrimeSpectrum R))⟩
-
-example : pt (⟨0, 0, 1, -1, 0⟩ : WeierstrassCurve ℤ) (A := ℤ) ![0, 0, 1]
-    (isUnimodularSol_some (by simp [WeierstrassCurve.baseChange])) ≠ zero _ :=
-  pt_some_ne_zero _ (by simp)
-
-example : pt W (A := R) ((-1 : R) • ![0, 1, 0]) ((isUnimodularSol_zero _).smul isUnit_one.neg) =
-    zero W :=
-  pt_smul W _ _ isUnit_one.neg
-
-example (t : R) : (⟨0, 0, 0, 0, 0⟩ : WeierstrassCurve R).toProjective.Equation ![t, -1, t ^ 3] := by
-  rw [equation_origin_iff]
-  simp
-
-example : originW W = originZ W ^ 3 + algebraMap R _ W.a₁ * originZ W * originW W
-    + algebraMap R _ W.a₂ * originZ W ^ 2 * originW W + algebraMap R _ W.a₃ * originW W ^ 2
-    + algebraMap R _ W.a₄ * originZ W * originW W ^ 2 + algebraMap R _ W.a₆ * originW W ^ 3 :=
-  (equation_origin_iff _ _ _).mp (equation_originZ_originW W)
 
 end WeierstrassCurve
 

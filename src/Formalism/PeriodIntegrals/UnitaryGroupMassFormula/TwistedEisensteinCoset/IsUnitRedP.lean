@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.IaDivDown
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.IntegralApproximationByInteger
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedCharacterOne.IsIntegralAtSuperdiagonalSum
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.IaDivDown
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedEisensteinCoset.IntegralApproximationByInteger
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.TwistedCharacterOne.IsIntegralAtSuperdiagonalSum
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module
 
@@ -26,7 +30,7 @@ private lemma mk_mul_reduction_eq_mk {a : E} {r s : 𝓞 E} (hs : s ∉ P.asIdea
     ⟨Ideal.Quotient.mk P.asIdeal r * (Ideal.Quotient.mk P.asIdeal s)⁻¹, r, s, hs, h, by
       field_simp⟩
   unfold redP
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   obtain ⟨r', s', hs', h', hc'⟩ := hex.choose_spec
   have hs'0 : Ideal.Quotient.mk P.asIdeal s' ≠ 0 :=
     fun h0 => hs' (Ideal.Quotient.eq_zero_iff_mem.1 h0)
@@ -86,7 +90,7 @@ theorem muNe_of (hN : NTAll) : MuNeP := by
   unfold locChar
   refine mul_ne_zero (zpow_ne_zero _ hcq) ?_
   unfold unitV
-  rw [dif_pos hspec]
+  rw [dite_eq_left hspec]
   exact Units.ne_zero _
 
 theorem omStep_of (hJ : JLawP) (hM : MuNeP) : OmStepP := by

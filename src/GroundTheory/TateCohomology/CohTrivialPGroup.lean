@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.TateCohomology.PGroupCohTrivialInt
-import GroundTheory.TateCohomology.Annihilation
+module
+
+public import Mathlib
+public import GroundTheory.TateCohomology.PGroupCohTrivialInt
+public import GroundTheory.TateCohomology.Annihilation
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.GroupCoh

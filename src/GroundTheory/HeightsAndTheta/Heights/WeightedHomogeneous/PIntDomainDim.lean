@@ -1,6 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.StatementsIntDim
-import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.IntDimBounds
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.StatementsIntDim
+public import GroundTheory.HeightsAndTheta.Heights.WeightedHomogeneous.IntDimBounds
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights
 

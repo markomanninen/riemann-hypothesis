@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 universe u_1 u_2
 
@@ -27,7 +31,7 @@ theorem exists_unit_denominator {E : Type u_1} {Ω : Type u_2} [inst : Field E] 
   let P : Submodule (𝓞 E) E :=
     { carrier := {u | A.valuation (ι u) < 1}
       add_mem' := fun {u v} hu hv => by
-        simp only [Set.mem_ofPred_eq, map_add] at hu hv ⊢
+        simp only [Set.mem_ofPred_eq, map_add (f := _)] at hu hv ⊢
         exact lt_of_le_of_lt (Valuation.map_add _ _ _) (max_lt hu hv)
       zero_mem' := by simp
       smul_mem' := fun r u hu => by
@@ -52,7 +56,7 @@ theorem exists_unit_denominator {E : Type u_1} {Ω : Type u_2} [inst : Field E] 
     obtain ⟨a, ha, b, hb, rfl⟩ := hz
     obtain ⟨a', rfl⟩ := (FractionalIdeal.mem_one_iff _).mp ha
     obtain ⟨b', rfl⟩ := (FractionalIdeal.mem_spanSingleton _).mp hb
-    rw [map_add]
+    rw [map_add (f := _)]
     refine le_trans (Valuation.map_add _ _ _) (max_le (valuation_integer_le_one ι A a') ?_)
     rw [Algebra.smul_def, map_mul, map_mul]
     calc A.valuation (ι (algebraMap (𝓞 E) E b')) * A.valuation (ι x) ≤ 1 * 1 :=

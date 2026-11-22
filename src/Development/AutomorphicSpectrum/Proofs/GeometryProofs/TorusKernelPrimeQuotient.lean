@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCocharLie
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CharValMultiplicativeStatement
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.CompactCentralizerTranslate
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsSurjectiveZmodOfNeZero
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.EigLat
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsCocharLie
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.IsGrpPullback
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.CharValMultiplicativeStatement
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.CompactCentralizerTranslate
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ExistsSurjectiveZmodOfNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,8 +56,8 @@ theorem exists_ideal_eq_iff {S : Scheme.{0}} {Y : Over S} [IsSeparated Y.hom] {R
     rw [h1]
     simp only [Category.assoc, hcond]
 
-open AddMonoidAlgebra in
 
+open AddMonoidAlgebra in
 theorem exists_span_of_coideal (k X : Type) [Field k] [AddCommGroup X] (J : Ideal (AddMonoidAlgebra k X))
     (h1 : ∀ f ∈ J, Coalgebra.counit (R := k) f = 0)
     (h2 : ∀ f ∈ J, TensorProduct.map (J.restrictScalars k).mkQ (J.restrictScalars k).mkQ
@@ -126,8 +130,8 @@ theorem exists_killing_ideal [IsSeparated G.hom] (u : splitTorus S X ⟶ G) [IsM
     ext1
     exact h'
 
-open TensorProduct in
 
+open TensorProduct in
 theorem killing_ideal_coideal (b : Sp k ⟶ S) (u : splitTorus S X ⟶ G) [IsMonHom u]
     (J : Ideal (AddMonoidAlgebra k X))
     (hJ : ∀ (A : Type) [CommRing A] (ρ : AddMonoidAlgebra k X →+* A)

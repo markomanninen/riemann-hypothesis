@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.KerIsTerm
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LevelChainSharpColumnValuationOfPointKernelLiftL
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.InvSmulMemOfRedL
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TilLatticesOfLevel
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ClassSumPosHerm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.KerIsTerm
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LevelChainSharpColumnValuationOfPointKernelLiftL
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.InvSmulMemOfRedL
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TilLatticesOfLevel
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ClassSumPosHerm
+
+@[expose] public section
 
 noncomputable section
 

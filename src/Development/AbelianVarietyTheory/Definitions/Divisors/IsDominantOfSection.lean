@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.InterPolyProdSum
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CoBear
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsValuationSubringDominatingSubring
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.InterPolyProdSum
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CoBear
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsValuationSubringDominatingSubring
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverCompOfIsClosedImmersion
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -123,14 +127,6 @@ theorem Dbl.prod_ne (Y : Var F) (h : 0 < Y.dim) : (Dbl.prod Y).p₁ ≠ (Dbl.pro
   have : Y.dim + Y.dim = Y.dim := by exact_mod_cast h3
   omega
 
-example : (Dbl.prod (proj F 1)).Small ∧ (Dbl.prod (proj F 1)).p₁ ≠ (Dbl.prod (proj F 1)).p₂ :=
-  ⟨Dbl.prod_small _ le_rfl, Dbl.prod_ne _ one_pos⟩
-
-example : ¬ (Dbl.prod (proj F 2)).Small := fun h => by
-  unfold Dbl.Small at h
-  rw [Dbl.prod_dim, proj_dim] at h
-  norm_cast at h
-
 end Square
 
 def GenPair (Y : Var F) {K : Type} [Field K] (ψ₁ ψ₂ : Y.Fn →+* K) : Prop :=
@@ -146,24 +142,12 @@ def AlmostLow (τ : ι) (a b : Fin (m τ)) {K : Type} [Field K] (C : Mat m K) : 
   (∀ σ, (C σ).det ≠ 0) ∧ C τ a b ≠ 0 ∧
     ∀ σ (i j : Fin (m σ)), i < j → ¬ ((⟨σ, i⟩ : Root m) = ⟨τ, a⟩ ∧ (⟨σ, j⟩ : Root m) = ⟨τ, b⟩) → C σ i j = 0
 
-open Classical in
 
+open Classical in
 def shear (τ : ι) (a b : Fin (m τ)) {K : Type} [CommRing K] (t : K) : Mat m K := fun σ =>
   1 + Matrix.of fun i j => if (⟨σ, i⟩ : Root m) = ⟨τ, a⟩ ∧ (⟨σ, j⟩ : Root m) = ⟨τ, b⟩ then t else 0
 
 def minor (τ : ι) (a b : Fin (m τ)) {K : Type} [CommRing K] (C : Mat m K) : K :=
   C τ a a * C τ b b - C τ a b * C τ b a
-
-example {K : Type} [Field K] (t : K) (ht : t ≠ 0) :
-    AlmostLow (m := fun _ : Unit => 2) () 0 1 (shear () 0 1 t) ∧
-      minor (m := fun _ : Unit => 2) () 0 1 (shear () 0 1 t) = 1 := by
-  have e : ∀ σ : Unit, shear (m := fun _ : Unit => 2) () 0 1 t σ = !![1, t; 0, 1] := fun σ => by
-    ext i j
-    fin_cases i <;> fin_cases j <;> simp [shear]
-  refine ⟨⟨fun σ => ?_, ?_, fun σ i j hij h => ?_⟩, ?_⟩
-  · rw [e]; simp
-  · rw [e]; simpa using ht
-  · rw [e]; fin_cases i <;> fin_cases j <;> simp_all
-  · rw [minor, e]; simp
 
 end GlobalTheory.FlagPush

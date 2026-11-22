@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PathArgsOfNotMem
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.PathArgsOfNotMem
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField MeasureTheory GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.StdFrames GlobalTheory.RowClaim GlobalTheory.FlipRun
 attribute [local instance] Formalism.BasicNotions.Host.cmStar GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField borelKw borelSpaceKw
@@ -24,13 +29,13 @@ theorem locArg_eq_locM (B : Frames G) {t : T} {a : Arrow T} (ha : IsGridArrow D.
   · refine ⟨B.β i j, B.β (i + 1) j, fun w => ⟨Fin.cast (rank_vertex G t w (X := (i + 1, j)) ⟨hi, hj⟩),
       Fin.cast (rank_vertex G t w (X := (i, j)) ⟨hi.le, hj⟩), sur _, sur _, fun x r c => ?_⟩⟩
     have e : locArg B t w (.right i j) x = B.coord t w (X := (i, j)) (Y := (i + 1, j)) ⟨hi.le, hj⟩ ⟨hi, hj⟩
-        (x.map fun c => cpt w (toEAf D c)) := dif_pos ⟨hi, hj⟩
+        (x.map fun c => cpt w (toEAf D c)) := dite_eq_left ⟨hi, hj⟩
     rw [e]
     rfl
   · refine ⟨B.β i (j + 1), B.β i j, fun w => ⟨Fin.cast (rank_vertex G t w (X := (i, j)) ⟨hi, hj.le⟩),
       Fin.cast (rank_vertex G t w (X := (i, j + 1)) ⟨hi, hj⟩), sur _, sur _, fun x r c => ?_⟩⟩
     have e : locArg B t w (.down t i j) x = B.coord t w (X := (i, j + 1)) (Y := (i, j)) ⟨hi, hj⟩ ⟨hi, hj.le⟩
-        (x.map fun c => cpt w (toEAf D c)) := dif_pos ⟨hi, hj⟩
+        (x.map fun c => cpt w (toEAf D c)) := dite_eq_left ⟨hi, hj⟩
     rw [e]
     rfl
 
@@ -50,7 +55,9 @@ theorem arrow_sb {W : G.Weil} (B : Frames G) (ρ : RealMatch W) {μ₀ : T} (hL 
       (∀ i ∈ s, IsSBHalf e (latA G a) (φ i)) ∧ ∀ x y, IsHalf e x → F x y = ∑ i ∈ s, φ i x * F (r i) y := by
   obtain ⟨hS, hT, -⟩ := arrow_data ρ hL ha
   obtain ⟨β, β', hβ⟩ := locArg_eq_locM B ha
-  obtain ⟨k, hk, k1, k2⟩ := exists_mult hS.1 hT.1 he β β' n
+  obtain ⟨k, hk, k1, k2⟩ := exists_mult
+    (GlobalTheory.PlaceVec.selfDual_isFullLattice _ _ hS)
+    (GlobalTheory.PlaceVec.selfDual_isFullLattice _ _ hT) he β β' n
   exact exists_sb hS.1.fg hT.1.fg (GlobalTheory.PlaceVec.idemSum_mul_self he) F hk
     (fun u hu x y => h1 x (k • u) y fun w hw r c => by
       obtain ⟨f, g, -, -, h⟩ := hβ w
@@ -72,58 +79,89 @@ theorem exists_classSum_schwartzProducts_pathInduction {μ₀ : T} (hL : L.Is μ
       x w b ∈ GlobalTheory.SplitFlip.matLat _ (GlobalTheory.SplitFlip.stdLat (Kw w) _)) →
     ∃ (ι : Type) (s : Finset ι) (φ d : ι → PureT G p) (r : ι → ArgT G p), (∀ κ ∈ s, VecAll ρ e p (φ κ) (d κ)) ∧
       ∀ (x : ArgT G p) (y : U), HalfAll e p x →
-        K (fun w => pathArgs B t w p x) y = ∑ κ ∈ s, famProd p (φ κ) x * K (fun w => pathArgs B t w p (r κ)) y
-  | _, .nil, _, _, U, K, _, _ => ⟨Unit, {()}, fun _ => (), fun _ => (), fun _ => (), fun _ _ => trivial, fun x y _ => by
-      rw [Finset.sum_singleton]
-      exact (one_mul _).symm⟩
-  | _, .snoc a p, hg, hnd, U, K, hK1, hK2 => by
-    rw [edges_snoc] at hnd
-    obtain ⟨hnd1, -, hdis⟩ := List.nodup_append.1 hnd
-    have hnot : edgeOf a ∉ edges p := fun h => hdis _ h _ (List.mem_singleton_self _) rfl
-    have ha := hg.last
-    obtain ⟨ι₁, s₁, φa, r₁, hφa, hexp⟩ := arrow_sb B ρ hL he n ha
-      (fun x (z : ArgT G p × U) => K (fun w => Function.update (pathArgs B t w p z.1) (edgeOf a) (locArg B t w a x)) z.2)
-      (fun x u (z : ArgT G p × U) hu => by
-        have e1 : (fun w => Function.update (pathArgs B t w p z.1) (edgeOf a) (locArg B t w a (x + u))) =
-            (fun w => Function.update (pathArgs B t w p z.1) (edgeOf a) (locArg B t w a x)) +
-              fun w => Function.update (0 : (locGrid G t w).Args) (edgeOf a) (locArg B t w a u) := by
-          funext w b
-          rcases eq_or_ne b (edgeOf a) with rfl | hb
-          · simp only [Pi.add_apply, Function.update_self, locArg_add B ha]
-          · simp only [Pi.add_apply, Function.update_of_ne hb, Pi.zero_apply, add_zero]
-        show K _ z.2 = K _ z.2
-        rw [e1]
-        refine hK1 _ _ _ fun w hw b => ?_
+        K (fun w => pathArgs B t w p x) y = ∑ κ ∈ s, famProd p (φ κ) x * K (fun w => pathArgs B t w p (r κ)) y := by
+  intro Y p
+  induction p with
+  | nil =>
+    intro _ _ U K _ _
+    refine ⟨Unit, {()}, fun _ => (), fun _ => (), fun _ => (), fun _ _ => trivial, fun x y _ => ?_⟩
+    rw [Finset.sum_singleton]
+    exact (one_mul _).symm
+  | snoc a p ih =>
+    intro hg hnd U K hK1 hK2
+    have hnd' : (edges p ++ [edgeOf a]).Nodup :=
+      edges_snoc a p ▸ (hnd : (edges (.snoc a p)).Nodup)
+    have hnd1 : (edges p).Nodup := hnd'.of_append_left
+    have hne : edgeOf a ∉ edges p :=
+      List.disjoint_right.mp hnd'.disjoint (List.mem_singleton_self _)
+    have ha : IsGridArrow D.R.m t a := hg.last
+    let F (x : WO (G.pS a.pair) (G.pT a.pair)) (z : ArgT G p × U) : ℂ :=
+      K (fun w => Function.update (pathArgs B t w p z.1) (edgeOf a) (locArg B t w a x)) z.2
+    have hF1 : ∀ x u z, (∀ w ∈ locPl G t, GivenAdm.CongM (unifAt w ^ n w) (locArg B t w a u)) →
+        F (x + u) z = F x z := by
+      intro x u z hu
+      have e1 : (fun w => Function.update (pathArgs B t w p z.1) (edgeOf a) (locArg B t w a (x + u))) =
+          (fun w => Function.update (pathArgs B t w p z.1) (edgeOf a) (locArg B t w a x)) +
+            fun w => Function.update (0 : (locGrid G t w).Args) (edgeOf a) (locArg B t w a u) := by
+        funext w b
         rcases eq_or_ne b (edgeOf a) with rfl | hb
-        · rw [Function.update_self]
-          exact GivenAdm.mem_matLat_smul.2 (hu w hw)
-        · rw [Function.update_of_ne hb]
-          exact zero_mem _)
-      (fun x (z : ArgT G p × U) h0 w hw r c => by
-        have h := hK2 _ z.2 h0 w hw (edgeOf a) (by rw [edges_snoc]; exact List.mem_append_right _ (List.mem_singleton_self _))
-        rw [Function.update_self] at h
-        exact GlobalTheory.SplitFlip.mem_matLat_stdLat.1 h r c)
-    obtain ⟨ι₂, s₂, φ₂, d₂, r₂, hv, hexp₂⟩ := exists_classSum_schwartzProducts_pathInduction hL B ρ t he n p hg.init hnd1 (U := ι₁ × U)
-      (fun Xa (z : ι₁ × U) => K (fun w => Function.update (Xa w) (edgeOf a) (locArg B t w a (r₁ z.1))) z.2)
-      (fun x z y hz => by
-        have e1 : (fun w => Function.update ((x + z) w) (edgeOf a) (locArg B t w a (r₁ y.1))) =
-            (fun w => Function.update (x w) (edgeOf a) (locArg B t w a (r₁ y.1))) +
-              fun w => Function.update (z w) (edgeOf a) 0 := by
-          funext w b
-          rcases eq_or_ne b (edgeOf a) with rfl | hb
-          · simp only [Pi.add_apply, Function.update_self, add_zero]
-          · simp only [Pi.add_apply, Function.update_of_ne hb]
-        show K _ y.2 = K _ y.2
-        rw [e1]
-        refine hK1 _ _ _ fun w hw b => ?_
+        · simp only [Pi.add_apply, Function.update_self, locArg_add B ha]
+        · simp only [Pi.add_apply, Function.update_of_ne hb, Pi.zero_apply, add_zero]
+      dsimp only [F]
+      rw [e1]
+      refine hK1 _ _ _ fun w hw b => ?_
+      rcases eq_or_ne b (edgeOf a) with rfl | hb
+      · rw [Function.update_self]
+        exact GivenAdm.mem_matLat_smul.2 (hu w hw)
+      · rw [Function.update_of_ne hb]
+        exact zero_mem _
+    have hF2 : ∀ x z, F x z ≠ 0 → ∀ w ∈ locPl G t, ∀ r c, locArg B t w a x r c ∈ 𝒪[Kw w] := by
+      intro x z h0 w hw r c
+      have hm : edgeOf a ∈ edges (.snoc a p) := by
+        rw [edges_snoc]
+        exact List.mem_append_right _ (List.mem_singleton_self _)
+      have h := hK2 (fun w => Function.update (pathArgs B t w p z.1) (edgeOf a) (locArg B t w a x))
+        z.2 h0 w hw (edgeOf a) hm
+      rw [Function.update_self] at h
+      exact GlobalTheory.SplitFlip.mem_matLat_stdLat.1 h r c
+    have hArrowExpansion :
+        ∃ (ι : Type) (s : Finset ι) (φ : ι → Sch G a) (r : ι → WO (G.pS a.pair) (G.pT a.pair)),
+          (∀ i ∈ s, IsSBHalf e (latA G a) (φ i)) ∧
+            ∀ x y, IsHalf e x → F x y = ∑ i ∈ s, φ i x * F (r i) y := by
+      exact arrow_sb (W := W) B ρ (μ₀ := μ₀) hL (t := t) (e := e) he n (a := a) ha
+        (Y := ArgT G p × U) F hF1 hF2
+    obtain ⟨ι₁, s₁, φa, r₁, hφa, hexp⟩ := hArrowExpansion
+    let K' (x : ∀ w, (locGrid G t w).Args) (y : ι₁ × U) : ℂ :=
+      K (fun w => Function.update (x w) (edgeOf a) (locArg B t w a (r₁ y.1))) y.2
+    have hK'1 : ∀ x z y, (∀ w ∈ locPl G t, ∀ b,
+        z w b ∈ GlobalTheory.SplitFlip.matLat _ (unifAt w ^ n w • GlobalTheory.SplitFlip.stdLat (Kw w) _)) →
+        K' (x + z) y = K' x y := by
+      intro x z y hz
+      have e1 : (fun w => Function.update ((x + z) w) (edgeOf a) (locArg B t w a (r₁ y.1))) =
+          (fun w => Function.update (x w) (edgeOf a) (locArg B t w a (r₁ y.1))) +
+            fun w => Function.update (z w) (edgeOf a) 0 := by
+        funext w b
         rcases eq_or_ne b (edgeOf a) with rfl | hb
-        · rw [Function.update_self]
-          exact zero_mem _
-        · rw [Function.update_of_ne hb]
-          exact hz w hw b)
-      (fun x y h0 w hw b hb => by
-        have h := hK2 _ y.2 h0 w hw b (by rw [edges_snoc]; exact List.mem_append_left _ hb)
-        rwa [Function.update_of_ne (ne_of_mem_of_not_mem hb hnot)] at h)
+        · simp only [Pi.add_apply, Function.update_self, add_zero]
+        · simp only [Pi.add_apply, Function.update_of_ne hb]
+      dsimp only [K']
+      rw [e1]
+      refine hK1 _ _ _ fun w hw b => ?_
+      rcases eq_or_ne b (edgeOf a) with rfl | hb
+      · rw [Function.update_self]
+        exact zero_mem _
+      · rw [Function.update_of_ne hb]
+        exact hz w hw b
+    have hK'2 : ∀ x y, K' x y ≠ 0 → ∀ w ∈ locPl G t, ∀ b ∈ edges p,
+        x w b ∈ GlobalTheory.SplitFlip.matLat _ (GlobalTheory.SplitFlip.stdLat (Kw w) _) := by
+      intro x y h0 w hw b hb
+      have hm : b ∈ edges (.snoc a p) := by
+        rw [edges_snoc]
+        exact List.mem_append_left _ hb
+      have h := hK2 (fun w => Function.update (x w) (edgeOf a) (locArg B t w a (r₁ y.1))) y.2 h0 w hw b hm
+      have hba : b ≠ edgeOf a := fun hEq => hne (hEq ▸ hb)
+      rwa [Function.update_of_ne hba] at h
+    obtain ⟨ι₂, s₂, φ₂, d₂, r₂, hv, hexp₂⟩ := ih hg.init hnd1 (U := ι₁ × U) K' hK'1 hK'2
     obtain ⟨Tm, hTm, -, -⟩ := exists_arrowModel ρ hL he ha
     refine ⟨ι₂ × ι₁, s₂ ×ˢ s₁, fun κ => (φ₂ κ.1, φa κ.2), fun κ => (d₂ κ.1, Tm (φa κ.2)), fun κ => (r₂ κ.1, r₁ κ.2),
       fun κ hκ => ?_, fun x y hx => ?_⟩

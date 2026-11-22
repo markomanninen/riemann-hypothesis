@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable def UpperTheory.Reformulated.B.CovariantDegrees.jE :
     {l : Nat} →
@@ -624,7 +628,8 @@ private theorem UpperTheory.Reformulated.B.CovariantDegrees.j_resQ {l : ℕ} [Fa
 private theorem UpperTheory.Reformulated.B.CovariantDegrees.jE_mem {l : ℕ} [Fact l.Prime] {E Ω : Type} [Field E] [NumberField E]
     [Field Ω] [Algebra E Ω] (j : Ω →+* PadicAlgCl l) (x : E) :
     UpperTheory.Reformulated.B.CovariantDegrees.jE j x ∈ UpperTheory.Reformulated.B.CovariantDegrees.KwF (E := E) j := by
-  rw [← (Module.finBasis ℚ E).sum_repr x, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← (Module.finBasis ℚ E).sum_repr x, map_sum]
   refine sum_mem fun i _ => ?_
   rw [Rat.smul_def, map_mul, map_ratCast]
   exact mul_mem (SubfieldClass.ratCast_mem _ _) (IntermediateField.subset_adjoin _ _ ⟨i, rfl⟩)

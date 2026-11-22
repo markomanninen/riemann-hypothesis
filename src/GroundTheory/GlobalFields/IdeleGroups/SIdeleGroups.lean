@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.ClassGroup
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.ClassGroup
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -137,14 +141,6 @@ theorem sUnits_sIdeles_exact (h : (diagonal K).range ⊔ sIdeles S = ⊤) :
       Function.Surjective (sIdelesToIdeleClassGroup S) :=
   ⟨sUnitsToSIdeles_injective S, range_sUnitsToSIdeles S,
     (sIdelesToIdeleClassGroup_surjective_iff S).2 h⟩
-
-instance : (sUnitsToSIdeles S).range.Normal :=
-  ⟨fun n hn g ↦ by rwa [mul_comm g n, mul_inv_cancel_right]⟩
-
-def sIdelesQuotientEquiv (h : (diagonal K).range ⊔ sIdeles S = ⊤) :
-    sIdeles S ⧸ (sUnitsToSIdeles S).range ≃* IdeleClassGroup K :=
-  (QuotientGroup.quotientMulEquivOfEq (range_sUnitsToSIdeles S)).trans
-    (QuotientGroup.quotientKerEquivOfSurjective _ ((sIdelesToIdeleClassGroup_surjective_iff S).2 h))
 
 end IdeleGroup
 

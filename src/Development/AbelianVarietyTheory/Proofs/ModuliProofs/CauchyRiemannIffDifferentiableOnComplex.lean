@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.DifferentiableOnOfTendstoLocallyUniformlyOn
+
+@[expose] public section
+
 open Complex Matrix
 open scoped ContDiff BigOperators Real
 
@@ -23,14 +28,15 @@ theorem map_I_smul_of_cauchyRiemann {g : ℕ} (L : (Fin g → ℂ) →L[ℝ] ℂ
     linear_combination (-I) * h a + L (I • (Pi.single a 1 : Fin g → ℂ)) * I_sq
   have hline : ∀ a (w : ℂ), L (Pi.single a w : Fin g → ℂ) = w * L (Pi.single a 1) := by
     intro a w
-    rw [pi_single_eq_re_smul_add_im_smul a w, map_add, map_smul, map_smul, hI a]
+    rw [pi_single_eq_re_smul_add_im_smul a w, map_add (f := _), map_smul, map_smul, hI a]
     conv_rhs => rw [← Complex.re_add_im w]
     simp only [Complex.real_smul]
     ring
   have hsum : ∀ u : Fin g → ℂ, L u = ∑ a, u a * L (Pi.single a 1) := by
     intro u
     conv_lhs => rw [← Finset.univ_sum_single u]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl (fun a _ => hline a (u a))
   rw [hsum, hsum v, smul_eq_mul, Finset.mul_sum]
   refine Finset.sum_congr rfl (fun a _ => ?_)

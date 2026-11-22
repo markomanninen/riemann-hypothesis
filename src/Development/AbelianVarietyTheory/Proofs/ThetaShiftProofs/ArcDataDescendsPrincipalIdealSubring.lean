@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsIsPullQk
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsTauCanonicalIffOfIsPullDegTauBimult
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.PsiUnitOnNearOfTauCan
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsCountableModel
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.PsiEvenTauBimultDescendOfInjective
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.PsiRelationDescendsFieldExtension
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsArcLiftExtensionLargerClosedField
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SeesawRigidifiedLineBundleDenseFibres
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.InjectiveOfIsAlgebraic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsIsPullQk
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.IsTauCanonicalIffOfIsPullDegTauBimult
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.PsiUnitOnNearOfTauCan
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsCountableModel
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.PsiEvenTauBimultDescendOfInjective
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.PsiRelationDescendsFieldExtension
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsArcLiftExtensionLargerClosedField
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SeesawRigidifiedLineBundleDenseFibres
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.InjectiveOfIsAlgebraic
+
+@[expose] public section
 
 noncomputable section
 
@@ -80,8 +84,8 @@ theorem exists_oAct_down (hG : GlobalFnsSt) (hφ : Function.Injective i) (oB : D
   simp only [ofMul_mul, ofMul_inv, c₀, c₁] at e' ⊢
   linear_combination (norm := abel) e'
 
-omit [IsDomain R] in
 
+omit [IsDomain R] in
 theorem dense_range_spMap (hφ : Function.Injective i) : Dense (Set.range (spMap i)) :=
   (PrimeSpectrum.denseRange_comap_iff_ker_le_nilRadical i).2 (by
     rw [(RingHom.injective_iff_ker_eq_bot i).1 hφ]; exact bot_le)
@@ -169,8 +173,8 @@ theorem weil_of_ext (k : ℕ) (hk : 1 ≤ k) (p p' : QkPt D₀ F k) (z : F)
   rwa [f.injective (QkPairing.weil_unique globalFns_holds abelianSchemeLaws_all.2.secTwist hB hk _ _ h
     (ArcInputCompare.weil_ext hB f hf k hk p p' _ h₁))]
 
-include hB hf in
 
+include hB hf in
 theorem exists_subTate (hL : Laws) {E : Type} [Field E] [NumberField E] [IsCMField E] {H : Host E} {D : Datum H}
     [IsAlgClosed F] [CharZero F] [IsAlgClosed F'] [Module (𝓞 E) D₀.X] {oa : letI := H.starRing; D₀.OAct (𝓞 E)}
     (I' : TateIsoQ D D₀ oa F') :
@@ -246,8 +250,8 @@ theorem exists_common_closed {k A B : Type} [Field k] [Field A] [Field B] (i : k
   simp only [RingHom.comp_assoc]
   exact congrArg _ (congrArg _ (Algebra.TensorProduct.includeLeftRingHom_comp_algebraMap (R := k) (A := A) (B := B)))
 
-open Classical in
 
+open Classical in
 theorem geom_down (hL : Laws) (hφ : Function.Injective f) (a' : ArcIn Dw l β K (f.comp b)) {D₀ : DegPre R}
     (p : IsPullDeg f D₀ a'.D₀) [Module (𝓞 E) D₀.X] (oa : letI := H.starRing; D₀.OAct (𝓞 E)) (hB : D₀.TauBimult)
     (hx : ∀ (a : 𝓞 E) y, p.xe (a • y) = a • p.xe y)

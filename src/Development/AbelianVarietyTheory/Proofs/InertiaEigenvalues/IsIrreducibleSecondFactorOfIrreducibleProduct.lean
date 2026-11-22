@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSplitAtOfIsSplitPl
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsComplementaryProductOfIsCuspidal
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CentralExponentBoundOver
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsSplitAtOfIsSplitPl
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsIrreducibleFixed
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.IsComplementaryProductOfIsCuspidal
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CentralExponentBoundOver
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsIrreducibleIffOfLinearEquiv
+
+@[expose] public section
+
 open NumberField ReciprocityTheory.Gal Formalism.ConjugateSelfDual IsDedekindDomain GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.WeilDeligne GlobalTheory.LocLanglands GlobalTheory.CuspRep GlobalTheory.DefiniteBC
 
 open Topology
@@ -136,9 +141,12 @@ theorem isIrreducible_of_prod₂ : ∀ (k : Type) [Field k] [ValuativeRel k] [To
   have hW : Nontrivial W := by
     by_contra hW
     rw [not_nontrivial_iff_subsingleton] at hW
-    have h0 : ∀ z : V ⊗[ℂ] W, z = 0 := fun z => z.induction_on rfl
-      (fun x w => by rw [Subsingleton.elim w 0, TensorProduct.tmul_zero])
-      (fun a b ha hb => by rw [ha, hb, add_zero])
+    have h0 : ∀ z : V ⊗[ℂ] W, z = 0 := by
+      intro z
+      induction z using TensorProduct.induction_on with
+      | zero => rfl
+      | tmul x w => rw [Subsingleton.elim w 0, TensorProduct.tmul_zero]
+      | add a b ha hb => rw [ha, hb, add_zero]
     obtain ⟨f₁, f₂, hne⟩ := hX
     exact hne (Subtype.ext (Subtype.ext (funext fun x => (h0 _).trans (h0 _).symm)))
   rw [isIrreducible_iff]
@@ -156,13 +164,13 @@ theorem isIrreducible_of_prod₂ : ∀ (k : Type) [Field k] [ValuativeRel k] [To
       exact ⟨σ₀ ((leviTwo k (Fin r) (Fin t)).symm l).1 x ⊗ₜ
         ⟨τ ((leviTwo k (Fin r) (Fin t)).symm l).2 w, hS _ _ w.2⟩, by simp [ρ']⟩
     | add a b ha hb =>
-      rw [map_add, map_add]; exact add_mem ha hb
+      rw [map_add (f := _), map_add (f := _)]; exact add_mem ha hb
   have hLR : ∀ y ∈ R, L y ∈ S := by
     rintro _ ⟨z, rfl⟩
     induction z using TensorProduct.induction_on with
     | zero => simp
     | tmul x w => rw [LinearMap.lTensor_tmul, hL]; exact S.smul_mem _ w.2
-    | add a b ha hb => rw [map_add, map_add]; exact add_mem ha hb
+    | add a b ha hb => rw [map_add (f := _), map_add (f := _)]; exact add_mem ha hb
   let Y : Submodule ℂ (IndSp (two (stdSum (rfl : r + t = r + t))) ρ') :=
     { carrier := {f | ∀ g, f.1.1 g ∈ R}
       add_mem' := fun ha hb g => add_mem (ha g) (hb g)

@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.SphericalLattices.RelIndexTransport
-import Development.WeilBound.ThetaLifts.SphericalLattices.LocMod
-import Development.WeilBound.ThetaLifts.SphericalLattices.ExistsFrameLag
+module
+
+public import Development.WeilBound.ThetaLifts.SphericalLattices.RelIndexTransport
+public import Development.WeilBound.ThetaLifts.SphericalLattices.LocMod
+public import Development.WeilBound.ThetaLifts.SphericalLattices.ExistsFrameLag
+
+@[expose] public section
 
 namespace PositivityTheory.Sph
 

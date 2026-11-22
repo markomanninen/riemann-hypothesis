@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PickDefs
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.Proposition5OfThreeParts
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PickDefs
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.Proposition5OfThreeParts
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ theorem coeff_planeCoeff (nu : τ →₀ ℕ) (F : MvPolynomial σ (MvPolynomial
   rw [Finset.sum_ite_eq']
   split_ifs with h
   · rfl
-  · rw [notMem_support_iff.1 h, coeff_zero]
+  · simp [notMem_support_iff.1 h]
 
 theorem coeff_oneT (e : Module.End Kf (MvPolynomial τ Kf)) (F : MvPolynomial σ (MvPolynomial τ Kf)) (bp : σ →₀ ℕ) :
     (oneT e F).coeff bp = e (F.coeff bp) := by
@@ -143,7 +147,7 @@ theorem vK_w_pow (hp : p.Prime) (S : UniformizedDVR p O) (w : O) (hw : w ^ 2 = (
     have h2 : (algebraMap O (KK O) w) * (algebraMap O (KK O) w) = ((p : ℕ) : KK O) := by
       rw [← map_mul, ← pow_two, hw, map_natCast]
     have h3 := congrArg (vK p) h2
-    rw [valuation_mul_alt, valuation_natCast_padicVal hp S p hp.ne_zero, padicValNat.self hp.one_lt] at h3
+    rw [valuation_mul_alt, valuation_natCast_padicVal hp S p hp.ne_zero, Nat.padicValNat_def, Nat.multiplicity_self hp.one_lt] at h3
     obtain ⟨a, b, ha, hb, hab⟩ := WithTop.add_eq_coe.1 h3
     have hab' : a = b := by
       have : (a : WithTop ℚ) = (b : WithTop ℚ) := by rw [ha, hb]

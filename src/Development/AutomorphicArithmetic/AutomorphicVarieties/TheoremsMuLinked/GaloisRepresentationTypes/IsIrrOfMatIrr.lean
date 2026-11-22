@@ -1,22 +1,26 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.GaloisRepresentationTypes.LinkedRig
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.GaloisRepresentationTypes.AdDown
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.ExistsNrep3
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.OrthogonalPairingFromIntertwiner
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.MatrixIrreducibility.IrrOfMatIrr
-import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.LkMarks
-import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.NormEx
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.SolCOfSolDescent
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.SolDescent
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.CsdOf
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.AlgOfCyc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PartsSign
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.KatoBkMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ConnectedPrimeFields.CplFinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IntegralityOfNormCoefficients
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ContinuousHom
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LocallyConstantOfKernel
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.StationaryPhaseModel
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.GaloisRepresentationTypes.LinkedRig
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.GaloisRepresentationTypes.AdDown
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.ExistsNrep3
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.OrthogonalPairingFromIntertwiner
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.MatrixIrreducibility.IrrOfMatIrr
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.CurveDVRSpecialization.LkMarks
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.UnitaryThreeGroups.NormEx
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.SolCOfSolDescent
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.SolDescent
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.CsdOf
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TemperedLocalComponents.AlgOfCyc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PartsSign
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.KatoBkMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.ConnectedPrimeFields.CplFinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.dvrFinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.IntegralityOfNormCoefficients
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ContinuousHom
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.LocallyConstantOfKernel
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.StationaryPhaseModel
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal IsLocalRing Polynomial UpperTheory.V UpperTheory.V.HV GlobalTheory.GalOfCusp UpperTheory.V.Th
 
@@ -105,7 +109,7 @@ theorem h1fZero_equiv {l : ℕ} [Fact l.Prime] {F Ω : Type} [Field F] [NumberFi
   intro c hz hbk
   obtain ⟨hcc, hcoc⟩ := (mem_Z1_iff_cocycle _ _).1 hz
   have hcont : Continuous (fun g => f (c g)) := hc.comp hcc
-  have hz' : (fun g => f (c g)) ∈ Z1 ρ' := (mem_Z1_iff_cocycle _ _).2 ⟨hcont, fun g g' => by rw [hcoc, map_add, hf]⟩
+  have hz' : (fun g => f (c g)) ∈ Z1 ρ' := (mem_Z1_iff_cocycle _ _).2 ⟨hcont, fun g g' => by rw [hcoc, map_add (f := _), hf]⟩
   obtain ⟨m, hm⟩ := (mem_coboundaries1 _ _).1 (h _ hz'
     (X.Kato.bkMap l F Ω _ _ _ _ ρ ρ' (f.toLinearMap.restrictScalars ℚ_[l]) hf c hcont hbk))
   obtain ⟨m', rfl⟩ := f.surjective m
@@ -114,7 +118,8 @@ theorem h1fZero_equiv {l : ℕ} [Fact l.Prime] {F Ω : Type} [Field F] [NumberFi
   exact hm g
 
 theorem h1fZero_conjBy {l : ℕ} [Fact l.Prime] {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Algebra F Ω] {m : ℕ}
-    (r : G F Ω →* GG m (PadicAlgCl l)) (h : GL (Fin m) (PadicAlgCl l)) (H : Af.BlochKatoSelmerVanishes l (adRep (conjBy h r))) :
+    (r : G F Ω →* GG (m := m) (R := PadicAlgCl l)) (h : GL (Fin m) (PadicAlgCl l))
+    (H : Af.BlochKatoSelmerVanishes l (adRep (conjBy h r))) :
     Af.BlochKatoSelmerVanishes l (adRep r) := by
   let f : Matrix (Fin m) (Fin m) (PadicAlgCl l) ≃ₗ[PadicAlgCl l] Matrix (Fin m) (Fin m) (PadicAlgCl l) :=
     LinearMap.GeneralLinearGroup.toLinearEquiv ((GG.ad m (PadicAlgCl l)).toHomUnits (GG.ofGL h))
@@ -126,7 +131,7 @@ theorem h1fZero_conjBy {l : ℕ} [Fact l.Prime] {F Ω : Type} [Field F] [NumberF
     rw [this]
     fun_prop
   · rw [hf, hf]
-    show _ = GG.ad m _ (GG.ofGL h * r g * (GG.ofGL h)⁻¹) _
+    show _ = GG.ad m (PadicAlgCl l) (GG.ofGL h * r g * (GG.ofGL h)⁻¹) _
     rw [GG.ad_apply, GG.ad_apply, GG.ad_apply, ← GG.adFun_mul, inv_mul_cancel_right, GG.adFun_mul]
     rfl
 
@@ -144,21 +149,24 @@ private theorem congOne_iff {C : Type} [CommRing C] (I : Ideal C) (h : GL (Fin 3
     by_cases hab : a = b <;> simp [Matrix.one_apply, hab]
 
 theorem map_conjBy {G R S : Type} [Group G] [CommRing R] [CommRing S] {m : ℕ} (f : R →+* S) (h : GL (Fin m) R)
-    (r : G →* GG m R) :
+    (r : G →* GG (m := m) (R := R)) :
     (GG.map f).comp (conjBy h r) = conjBy (Matrix.GeneralLinearGroup.map f h) ((GG.map f).comp r) := by
   have e : GG.map f (GG.ofGL h) = GG.ofGL (Matrix.GeneralLinearGroup.map f h) := rfl
   refine MonoidHom.ext fun g => ?_
   simp only [conjBy, MonoidHom.comp_apply, MulEquiv.coe_toMonoidHom, MulAut.conj_apply, map_mul, map_inv, e]
 
-theorem conjBy_left {G R : Type} [Group G] [CommRing R] {m : ℕ} (h : GL (Fin m) R) (r : G →* GG m R) (g : G) :
+theorem conjBy_left {G R : Type} [Group G] [CommRing R] {m : ℕ} (h : GL (Fin m) R)
+    (r : G →* GG (m := m) (R := R)) (g : G) :
     (conjBy h r g).left = h * (r g).left * sgnAct m R (r g).right h⁻¹ := by
   simp [conjBy]
 
-theorem conjBy_right {G R : Type} [Group G] [CommRing R] {m : ℕ} (h : GL (Fin m) R) (r : G →* GG m R) (g : G) :
+theorem conjBy_right {G R : Type} [Group G] [CommRing R] {m : ℕ} (h : GL (Fin m) R)
+    (r : G →* GG (m := m) (R := R)) (g : G) :
     (conjBy h r g).right = (r g).right := by
   simp [conjBy]
 
-private theorem conjBy_conjBy {C D : Type} [CommRing C] [Group D] (h h' : GL (Fin 3) C) (r : D →* GG 3 C) :
+private theorem conjBy_conjBy {C D : Type} [CommRing C] [Group D] (h h' : GL (Fin 3) C)
+    (r : D →* GG (m := 3) (R := C)) :
     conjBy (h * h')⁻¹ (conjBy h r) = conjBy h'⁻¹ r := by
   refine MonoidHom.ext fun g => ?_
   show GG.ofGL _ * (GG.ofGL h * r g * (GG.ofGL h)⁻¹) * (GG.ofGL _)⁻¹ = GG.ofGL _ * r g * (GG.ofGL _)⁻¹
@@ -166,7 +174,8 @@ private theorem conjBy_conjBy {C D : Type} [CommRing C] [Group D] (h h' : GL (Fi
 
 theorem ordPt_conj {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} {O : Type} [CommRing O] [IsLocalRing O]
     {η : G ℚ Ω →* ℤˣ} {Ψ : G ℚ Ω →* Oˣ} {σ g₁ g₂ : G ℚ Ω} {B : ValuationSubring Ω} {A : Type} [CommRing A] [IsLocalRing A]
-    [Algebra O A] {r : G ℚ Ω →* GG 3 A} (hr : Pr.OrdPt l η Ψ σ g₁ B r) (hη : IsLocallyConstant η) (h : GL (Fin 3) A)
+    [Algebra O A] {r : G ℚ Ω →* GG (m := 3) (R := A)} (hr : Pr.OrdPt l η Ψ σ g₁ B r)
+    (hη : IsLocallyConstant η) (h : GL (Fin 3) A)
     (hh : CongOne (maximalIdeal A) h) (hN : Normalised σ g₂ (conjBy h r)) : Pr.OrdPt l η Ψ σ g₂ B (conjBy h r) := by
   refine ⟨⟨fun g => (conjBy_right h r g).trans (hr.red.mult g), fun g a b => ?_⟩, fun n => ?_, hN,
     fun B' h1 s h2 h3 h4 => ?_, ?_⟩
@@ -206,8 +215,8 @@ private theorem map_tor {A B : Type} [CommRing A] [CommRing B] (f : A →+* B) (
 
 theorem ordPt_renorm {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} {O : Type} [CommRing O] [IsLocalRing O]
     {η : G ℚ Ω →* ℤˣ} {Ψ : G ℚ Ω →* Oˣ} {σ g₁ g₂ : G ℚ Ω} {B : ValuationSubring Ω} {A : Type} [CommRing A] [IsLocalRing A]
-    [Algebra O A] [IsAdicComplete (maximalIdeal A) A] {r : G ℚ Ω →* GG 3 A} (hr : Pr.OrdPt l η Ψ σ g₁ B r)
-    (hη : IsLocallyConstant η) (h2 : IsUnit (2 : O)) (hM : Marks η Ψ σ g₂) :
+    [Algebra O A] [IsAdicComplete (maximalIdeal A) A] {r : G ℚ Ω →* GG (m := 3) (R := A)}
+    (hr : Pr.OrdPt l η Ψ σ g₁ B r) (hη : IsLocallyConstant η) (h2 : IsUnit (2 : O)) (hM : Marks η Ψ σ g₂) :
     ∃ h : GL (Fin 3) A, CongOne (maximalIdeal A) h ∧ Pr.OrdPt l η Ψ σ g₂ B (conjBy h r) := by
   obtain ⟨h, hh, hN⟩ := exists_normalised η ((Units.map ((residue A).comp (algebraMap O A)).toMonoidHom).comp Ψ) σ g₂ r
     (by simpa [map_ofNat] using h2.map (algebraMap O A))
@@ -242,7 +251,7 @@ private theorem charpoly_pow {K : Type} [Field K] {n : ℕ} (M : Matrix (Fin n) 
   have hmon : (∏ i, (X - C ((a i : K) ^ d))).Monic :=
     Polynomial.monic_prod_of_monic _ _ (fun i _ => Polynomial.monic_X_sub_C _)
   apply Polynomial.eq_of_monic_of_dvd_of_natDegree_le hmon (Matrix.charpoly_monic _) hdvd
-  rw [Matrix.charpoly_natDegree_eq_dim, Polynomial.natDegree_finset_prod_X_sub_C_eq_card, Finset.card_univ]
+  rw [Matrix.charpoly_natDegree_eq_dim, Polynomial.natDegree_finsetProd_X_sub_C_eq_card, Finset.card_univ]
 
 theorem freeAt_res {F L Ω : Type} [Field F] [NumberField F] [Field L] [NumberField L] [Field Ω] [Algebra F L] [Algebra F Ω]
     [Algebra L Ω] [IsScalarTower F L Ω] [IsAlgClosure F Ω] [IsAlgClosure L Ω] {l : ℕ} [Fact l.Prime] {n : ℕ}
@@ -279,7 +288,7 @@ theorem matIrr_conj {Γ k : Type} [Group Γ] [Field k] {n : ℕ} {U : Subgroup �
     (H : MatIrr U a) (h : GL (Fin n) k) (e : ∀ g ∈ U, a' g = h.val * a g * (h⁻¹).val) : MatIrr U a' :=
   _root_.UpperTheory.Reformulated.B.StationaryPhaseModel.matIrr_conj H h e
 
-private theorem left_conj {R : Type} [CommRing R] {m : ℕ} (x y : GG m R) (h1 : x.mat = 1) (h2 : x.right = -1)
+private theorem left_conj {R : Type} [CommRing R] {m : ℕ} (x y : GG (m := m) (R := R)) (h1 : x.mat = 1) (h2 : x.right = -1)
     (h3 : y.right = 1) : (x * y * x⁻¹).left = theta y.left := by
   have hl : x.left = 1 := Units.ext h1
   simp only [SemidirectProduct.mul_left, SemidirectProduct.mul_right, SemidirectProduct.inv_left,
@@ -314,7 +323,7 @@ section Abs
 
 variable {Ω : Type} [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] {l : ℕ} [Fact l.Prime] {K L : Type} [Field K] [NumberField K]
   [IsCMField K] [Algebra K Ω] [Field L] [NumberField L] [IsCMField L] [Algebra L Ω] [Algebra K L] [IsScalarTower K L Ω]
-  {σ : G ℚ Ω} {R : G ℚ Ω →* GG 3 (PadicAlgCl l)} {ρ : G K Ω →* GL (Fin 3) (Qbar l)}
+  {σ : G ℚ Ω} {R : G ℚ Ω →* GG (m := 3) (R := PadicAlgCl l)} {ρ : G K Ω →* GL (Fin 3) (Qbar l)}
 
 omit [IsAlgClosure ℚ Ω] [IsCMField K] in
 private theorem pair_of (hρ : ∀ s, ρ s = (R (galEmb ℚ K Ω s)).left) (hK : ∀ s, (R (galEmb ℚ K Ω s)).right = 1)
@@ -339,7 +348,7 @@ private theorem aut_up (hH : Af.HypothesesH) (hab : IsAbelianGalois ℚ L) (ι :
   have hiT := isIrr_of_matIrr _ (matIrr_tw _ (cycBar L Ω l)⁻¹ hiL)
   rw [et] at hiT ⊢
   refine upCsd hH K L Ω l ι 3 (by norm_num) (Af.tw ρ (cycBar K Ω l)⁻¹) σ hσ
-    (Af.Bc.irrBasic.2 _ _ _ _ _ hρc (cyc_cont K Ω l).inv) (Jgl _ 3) (fun s s' hs => ?_) hiT
+    (Af.Bc.irrBasic.2 _ _ _ _ _ hρc (cyc_cont K Ω l).inv) (Jgl (R := Qbar l) 3) (fun s s' hs => ?_) hiT
     (isAut_iso ((Af.autBridge hH K Ω l ι 3 _).2.2 haut) ⟨h', fun s => Units.ext ?_⟩
       ((Af.Bc.irrBasic.1 _ _ _ 3 _).1 _ hiT))
   · have h1 : cycBar K Ω l s' = cycBar K Ω l s := by
@@ -359,7 +368,8 @@ private theorem ad_down [IsAlgClosure L Ω] (hK2 : Module.finrank ℚ K = 2) (h�
     (h : RigOver (ρ.comp (galEmb K L Ω)) ka) : Af.BlochKatoSelmerVanishes l (adRep R) := by
   obtain ⟨s, V, τ, t1, t2, t3⟩ := h
   refine adDown Ω l K L hK2 (galOf_le ℚ K Ω L) s V 3 ρ 1 _ hρc
-    ⟨σ, Jgl _ 3, hσ, fun s s' hs => ?_, fun s X => ?_, fun X => ?_⟩ τ ka (fun g t ht => ?_) (fun g g' t hg _ => ?_) t3
+    ⟨σ, Jgl (R := Qbar l) 3, hσ, fun s s' hs => ?_, fun s X => ?_, fun X => ?_⟩ τ ka
+    (fun g t ht => ?_) (fun g g' t hg _ => ?_) t3
   · rw [MonoidHom.one_apply, Units.val_one, one_smul]
     exact pair_of hρ hK hc hatc s s' hs
   · show (R (galEmb ℚ K Ω s)).adFun X = _

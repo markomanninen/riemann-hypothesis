@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.GKModules.GKModule
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.GKModules.GKModule
+
+@[expose] public section
 
 noncomputable section
 
@@ -46,10 +50,6 @@ theorem GKModule.apply_σ_mem (M : h.GKModule K V) (Y : Subrepresentation M.rep)
     (hy : y ∈ Y.toSubmodule) : M.σ k y ∈ Y.toSubmodule :=
   Y.apply_mem_toSubmodule (FreeMonoid.of (Sum.inr k)) hy
 
-theorem GKModule.apply_ρ_mem (M : h.GKModule K V) (Y : Subrepresentation M.rep)
-    (X : h.lieSubalgebra) {y : V} (hy : y ∈ Y.toSubmodule) : M.ρ X y ∈ Y.toSubmodule :=
-  Y.apply_mem_toSubmodule (FreeMonoid.of (Sum.inl X)) hy
-
 section SubQuot
 
 variable (M : h.GKModule K V) (U : Subrepresentation M.rep) (U₀ : Submodule ℂ U.toSubmodule)
@@ -80,7 +80,7 @@ def subQuotρ : h.lieSubalgebra →ₗ⁅ℝ⁆ Module.End ℂ (U.toSubmodule �
       ← Submodule.Quotient.mk_add]
     congr 1
     refine Subtype.ext ?_
-    simp only [Submodule.coe_add, coe_toRepresentation_apply, GKModule.rep_of_inl, map_add,
+    simp only [Submodule.coe_add, coe_toRepresentation_apply, GKModule.rep_of_inl, map_add (f := _),
       LinearMap.add_apply]
   map_smul' r X := by
     refine Submodule.linearMap_qext _ (LinearMap.ext fun u => ?_)

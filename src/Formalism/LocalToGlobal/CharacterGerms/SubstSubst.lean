@@ -1,7 +1,11 @@
-import Formalism.LocalToGlobal.CharacterGerms.LeafHolds
-import Formalism.LocalToGlobal.CharacterGerms.RowTieCartAdd
-import Formalism.LocalToGlobal.CharacterGerms.LemmaMJet
-import Formalism.DropLevelBounds.ConstantCoeffVanishing.UbintConstantCoeffEqZero
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.LeafHolds
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieCartAdd
+public import Formalism.LocalToGlobal.CharacterGerms.LemmaMJet
+public import Formalism.DropLevelBounds.ConstantCoeffVanishing.UbintConstantCoeffEqZero
+
+@[expose] public section
 
 noncomputable section
 

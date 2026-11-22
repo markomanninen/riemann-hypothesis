@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsSympl
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HeightKernels.StatementsSympl
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -32,8 +37,8 @@ theorem entry {l : Type*} [Fintype l] (E H : Matrix l l ℝ) (x y : l) :
 
 end PSymplReduceConj
 
-open PSymplReduceConj in
 
+open PSymplReduceConj in
 theorem SymplReduceConj.proof : SymplReduceConj.Statement := by
   intro n H Q
   have kee : (symplExt (1 : ℝ) 0 0 1 Q * H * (symplExt (1 : ℝ) 0 0 1 Q)ᵀ) (Sum.inl 0) (Sum.inl 0) =

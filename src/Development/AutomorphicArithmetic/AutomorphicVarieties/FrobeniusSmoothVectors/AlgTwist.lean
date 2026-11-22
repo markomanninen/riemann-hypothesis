@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AlgDefs
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -8,7 +12,7 @@ private theorem w_rev (n : ℕ) (i : Fin n) : w n i.rev = - w n i := by
   split_ifs <;> omega
 
 private theorem J_apply {K : Type} [CommRing K] {n : ℕ} (X : Matrix (Fin n) (Fin n) K) (i j : Fin n) :
-    (Jmat K n * Xᵀ * Jmat K n) i j = X j.rev i.rev := by
+    (Jmat (R := K) n * Xᵀ * Jmat (R := K) n) i j = X j.rev i.rev := by
   simp only [Matrix.mul_apply, Jmat, Matrix.transpose_apply, ite_mul, one_mul, zero_mul,
     mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
   have key : ∀ k : Fin n, (j = k.rev) ↔ (k = j.rev) := by
@@ -49,7 +53,7 @@ private theorem ordProd_tw {H K : Type} [CommRing K] {n : ℕ} (u : Kˣ)
   rw [map_list_prod, List.map_ofFn]
   congr 2
   funext i
-  simp only [Function.comp_apply, map_sub, map_smul, map_one]
+  simp
 
 theorem UpperTheory.V.Fr.alg_twist :
     ∀ {l : ℕ} [Fact l.Prime] {k : Type} [Field k] {F : Frame l k} {n : ℕ} {K : Type} [CommRing K] (u : Kˣ) (ρ : NRep F n K), ∃ ρ' : NRep F n K, (∀ g i j, ρ'.r g i j = ((u ^ (w n i - w n j) : Kˣ) : K) * ρ.r g i j) ∧ ρ'.ψ = ρ.ψ := by

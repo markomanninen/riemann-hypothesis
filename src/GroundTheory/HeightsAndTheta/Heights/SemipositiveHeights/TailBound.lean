@@ -1,34 +1,39 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.OfListTailLog
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PLemmaETailLog
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PTailLogOfMass
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PListMono
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PListMonoRaise
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PListMonoDens
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PLocDensContOnOpen
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PMIntegrableOfDensLe
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PMIntMonoOfDensLe
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PRegSection
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PRegYoDense
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PRegRCont
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PChartCont
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBdEqHolo
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PHyperplaneDivisible
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PCoordDivDivisible
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBdDivides
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBdTransition
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBdCocycle
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PLogNormHolo
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBdPartition
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PIndicatorSmooth
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PNormSqSmooth
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBdWeight
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBdMetric
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBdSectionProps
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBdNormCont
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBddOnInner
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBdComparison
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PTailShift
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.OfListTailLog
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PLemmaETailLog
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PTailLogOfMass
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PListMono
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PListMonoRaise
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PListMonoDens
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PLocDensContOnOpen
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PMIntegrableOfDensLe
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PMIntMonoOfDensLe
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PRegSection
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PRegYoDense
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PRegRCont
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PChartCont
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBdEqHolo
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PHyperplaneDivisible
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PCoordDivDivisible
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBdDivides
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBdTransition
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBdCocycle
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PLogNormHolo
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBdPartition
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PIndicatorSmooth
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PNormSqSmooth
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBdWeight
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBdMetric
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBdSectionProps
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBdNormCont
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBddOnInner
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PBdComparison
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.PTailShift
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.ForSecondHalf
@@ -59,8 +64,5 @@ theorem LemmaETailLog.of_lemmaETailMass (h : LemmaETailMass.Statement) : LemmaET
 theorem ListTailLog.of_lemmaETailMass (h : LemmaETailMass.Statement) : ListTailLog.Statement :=
   ListTailLog.of_lemmaE (LemmaETailLog.of_lemmaETailMass h) ListMono.full RegSection.full
     TailShift.full
-
-theorem TailBound.of_lemmaETailMass (h : LemmaETailMass.Statement) : TailBound.Statement :=
-  TailBound.of_listTailLog (ListTailLog.of_lemmaETailMass h)
 
 end GroundTheory.Heights₂.Heights.ForSecondHalf

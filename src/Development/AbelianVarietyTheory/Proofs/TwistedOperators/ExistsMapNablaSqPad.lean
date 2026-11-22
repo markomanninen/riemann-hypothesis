@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IrreducibleDistinctUnitary
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GenericDetPowMulHw
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.IrreducibleDistinctUnitary
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GenericDetPowMulHw
+
+@[expose] public section
+
 open MvPolynomial Formalism.BasicNotions Formalism.GradedWeylDivisibility GlobalTheory.Branching GlobalTheory.GLDuality
 open scoped Matrix
 
@@ -62,7 +67,7 @@ theorem pad_natW_add {m : ℕ} (r : ℕ) (a : Part m) (i : Fin r) :
   have h0 := pad_detShift_nonneg r a
   have h1 : (pad r a).detShift ≤ (pad r a).w i := by
     unfold DomWeight.detShift
-    rw [dif_pos i.pos]
+    rw [dite_eq_left i.pos]
     apply (pad r a).anti
     rw [Fin.le_def]
     have := i.2

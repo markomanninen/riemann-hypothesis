@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OneMemGoodCT
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimCoefficientsFiniteDetermining
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CommuteCapOfCommuteEop
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OneMemGoodCT
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.FiniteDimCoefficientsFiniteDetermining
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CapCommuteRtInfGL
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CommuteCapOfCommuteEop
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,14 +15,24 @@ open scoped ContDiff
 
 namespace GlobalTheory.CompanionTheory.CTFin.Slice2
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {r s : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {r s : ℕ}
 
 theorem map_lev {R S : Type} [CommRing R] [CommRing S] (f : R →+* S) (g : GL (Fin r) R × GL (Fin s) R) :
     Matrix.GeneralLinearGroup.map f (lev R r s g) =
       lev S r s (Matrix.GeneralLinearGroup.map f g.1, Matrix.GeneralLinearGroup.map f g.2) := by
+  have val_emb₂ (T : Type) [CommRing T] (g : GL (Fin r) T × GL (Fin s) T) :
+      (GlobalTheory.SmGL.emb₂ T (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)) g).val =
+        Matrix.reindex (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)) (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s))
+          (Matrix.fromBlocks g.1.val 0 0 g.2.val) := by
+    ext i j
+    simp [GlobalTheory.SmGL.emb₂, GlobalTheory.SmGL.leviEmb, GlobalTheory.SmGL.leviTwo,
+      GlobalTheory.SmGL.two, Matrix.reindex_apply, Matrix.blockDiagonal']
+    rcases (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).symm i with a | a <;>
+      rcases (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).symm j with b | b <;> simp
   apply Units.ext
   change (lev R r s g).val.map f = (lev S r s _).val
-  rw [GlobalTheory.SmGL.val_emb₂, GlobalTheory.SmGL.val_emb₂]
+  unfold lev
+  rw [val_emb₂, val_emb₂]
   ext i j
   simp only [Matrix.reindex_apply, Matrix.submatrix_apply, Matrix.map_apply]
   rcases (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).symm i with a | a <;>
@@ -48,15 +62,25 @@ theorem lev_mul_right (R : Type) [CommRing R] (a : GL (Fin r) R) (b c : GL (Fin 
 
 theorem star_lev (k : Kinf E s) :
     star (lev (Cinf E) r s (1, Unitary.toUnits k)).val = (lev (Cinf E) r s (1, (Unitary.toUnits k)⁻¹)).val := by
-  rw [GlobalTheory.SmGL.val_emb₂, GlobalTheory.SmGL.val_emb₂]
+  have val_emb₂ (T : Type) [CommRing T] (g : GL (Fin r) T × GL (Fin s) T) :
+      (GlobalTheory.SmGL.emb₂ T (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)) g).val =
+        Matrix.reindex (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)) (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s))
+          (Matrix.fromBlocks g.1.val 0 0 g.2.val) := by
+    ext i j
+    simp [GlobalTheory.SmGL.emb₂, GlobalTheory.SmGL.leviEmb, GlobalTheory.SmGL.leviTwo,
+      GlobalTheory.SmGL.two, Matrix.reindex_apply, Matrix.blockDiagonal']
+    rcases (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).symm i with a | a <;>
+      rcases (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).symm j with b | b <;> simp
+  unfold lev
+  rw [val_emb₂, val_emb₂]
   have e : ((Unitary.toUnits k)⁻¹).val = star (Unitary.toUnits k).val := rfl
   ext i j
   simp only [Matrix.star_apply, Matrix.reindex_apply, Matrix.submatrix_apply]
   rcases (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).symm i with a | a <;>
     rcases (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).symm j with b | b <;> simp [e, Matrix.one_apply, eq_comm] <;> split_ifs <;> simp
 
-variable (E r s) in
 
+variable (E r s) in
 def levK : Kinf E s →* Kinf E (r + s) where
   toFun k := ⟨(lev (Cinf E) r s (1, Unitary.toUnits k)).val, by
     refine Matrix.mem_unitaryGroup_iff.2 ?_
@@ -72,9 +96,18 @@ theorem toUnits_levK (k : Kinf E s) : Unitary.toUnits (levK E r s k) = lev (Cinf
   Units.ext rfl
 
 theorem continuous_levK : Continuous (levK E r s) := by
+  have val_emb₂ (T : Type) [CommRing T] (g : GL (Fin r) T × GL (Fin s) T) :
+      (GlobalTheory.SmGL.emb₂ T (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)) g).val =
+        Matrix.reindex (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)) (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s))
+          (Matrix.fromBlocks g.1.val 0 0 g.2.val) := by
+    ext i j
+    simp [GlobalTheory.SmGL.emb₂, GlobalTheory.SmGL.leviEmb, GlobalTheory.SmGL.leviTwo,
+      GlobalTheory.SmGL.two, Matrix.reindex_apply, Matrix.blockDiagonal']
+    rcases (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).symm i with a | a <;>
+      rcases (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).symm j with b | b <;> simp
   refine Continuous.subtype_mk ?_ _
   refine continuous_pi fun i => continuous_pi fun j => ?_
-  simp only [GlobalTheory.SmGL.val_emb₂, Matrix.reindex_apply, Matrix.submatrix_apply]
+  simp only [lev, val_emb₂, Matrix.reindex_apply, Matrix.submatrix_apply]
   rcases (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).symm i with a | a <;>
     rcases (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).symm j with b | b
   · exact continuous_const
@@ -115,8 +148,18 @@ theorem contDiff_blkL : ContDiff ℝ ∞ (blkL (E := E) (r := r) (s := s)) := by
   · exact (contDiff_apply ℝ _ b).comp (contDiff_apply ℝ _ a)
 
 theorem blkL_val (y : GL (Fin s) (Cinf E)) : blkL (r := r) (toL y.val) = toL (lev (Cinf E) r s (1, y)).val := by
+  have val_emb₂ (T : Type) [CommRing T] (g : GL (Fin r) T × GL (Fin s) T) :
+      (GlobalTheory.SmGL.emb₂ T (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)) g).val =
+        Matrix.reindex (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)) (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s))
+          (Matrix.fromBlocks g.1.val 0 0 g.2.val) := by
+    ext i j
+    simp [GlobalTheory.SmGL.emb₂, GlobalTheory.SmGL.leviEmb, GlobalTheory.SmGL.leviTwo,
+      GlobalTheory.SmGL.two, Matrix.reindex_apply, Matrix.blockDiagonal']
+    rcases (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).symm i with a | a <;>
+      rcases (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).symm j with b | b <;> simp
   simp only [blkL]
-  rw [GlobalTheory.SmGL.val_emb₂]
+  unfold lev
+  rw [val_emb₂]
   rfl
 
 theorem res_mem_Sm (F : Sm E (r + s)) : (fun m : GA E s => F.1 (lev (Ad E) r s (1, m))) ∈ Sm E s := by
@@ -160,7 +203,8 @@ theorem exists_interp {K : Type} (A : Submodule ℂ (K → ℂ)) [FiniteDimensio
     funext κ'
     simp [Finset.sum_apply, Pi.single_apply, ev]
   have h3 := congrArg (fun x : A => x.1 k) h1
-  simp only [h2, map_sum, map_smul] at h3
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [h2, map_sum, map_smul] at h3
   rw [← h3]
   simp [mul_comm]
 
@@ -178,7 +222,7 @@ theorem kfin_of_coeff {a : ℕ} {W : Type} [AddCommGroup W] [Module ℂ W] [Fini
     have e : cptRep E a k φ = ∑ κ : S, lam k κ • cptRep E a κ.1 φ := by
       refine Subtype.ext (funext fun g => ?_)
       have h1 := key _ (h g) k
-      rw [AddSubmonoidClass.coe_finset_sum, Finset.sum_apply]
+      rw [AddSubmonoidClass.coe_finsetSum, Finset.sum_apply]
       exact h1
     beta_reduce
     rw [e]
@@ -206,11 +250,21 @@ theorem zfin_of_cofin {a : ℕ} {J : Set (Module.End ℂ (Sm E a))} (hJ : Cofin 
 
 theorem norm_toL_lev (y : GL (Fin s) (Cinf E)) :
     ‖toL (lev (Cinf E) r s (1, y)).val‖ ≤ 1 + ‖toL y.val‖ := by
+  have val_emb₂ (T : Type) [CommRing T] (g : GL (Fin r) T × GL (Fin s) T) :
+      (GlobalTheory.SmGL.emb₂ T (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)) g).val =
+        Matrix.reindex (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)) (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s))
+          (Matrix.fromBlocks g.1.val 0 0 g.2.val) := by
+    ext i j
+    simp [GlobalTheory.SmGL.emb₂, GlobalTheory.SmGL.leviEmb, GlobalTheory.SmGL.leviTwo,
+      GlobalTheory.SmGL.two, Matrix.reindex_apply, Matrix.blockDiagonal']
+    rcases (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).symm i with a | a <;>
+      rcases (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).symm j with b | b <;> simp
   have n0 := norm_nonneg (toL y.val)
   have h1 : ‖(1 : Cinf E)‖ ≤ 1 := (pi_norm_le_iff_of_nonneg zero_le_one).2 fun _ => by simp
   refine (pi_norm_le_iff_of_nonneg (by positivity)).2 fun i => (pi_norm_le_iff_of_nonneg (by positivity)).2 fun j => ?_
   change ‖(lev (Cinf E) r s (1, y)).val i j‖ ≤ _
-  rw [GlobalTheory.SmGL.val_emb₂]
+  unfold lev
+  rw [val_emb₂]
   simp only [Matrix.reindex_apply, Matrix.submatrix_apply]
   rcases (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).symm i with a | a <;>
     rcases (GlobalTheory.SmGL.stdSum (rfl : r + s = r + s)).symm j with b | b
@@ -296,8 +350,8 @@ theorem sl_left (F : Sm E (r + s))
   simp only [mul_assoc]
   exact a2 (1, γ) _
 
-variable (r) in
 
+variable (r) in
 def L₂ (L : Subgroup (GL (Fin (r + s)) (Af E))) (t : GL (Fin (r + s)) (Af E)) : Subgroup (GL (Fin s) (Af E)) :=
   L.comap ((MulAut.conj t⁻¹).toMonoidHom.comp (lev2 (Af E) r s))
 
@@ -365,7 +419,7 @@ theorem sl_growth (F : Sm E (r + s))
   rw [mul_assoc, ← mul_pow]
   exact mul_le_mul_of_nonneg_left (pow_le_pow_left₀ h0 h1 N) (abs_nonneg C)
 
-theorem slice2 : ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (r s : ℕ)
+theorem slice2 : ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (r s : ℕ)
     (L : Subgroup (GL (Fin (r + s)) (Af E))), IsOpen (L : Set (GL (Fin (r + s)) (Af E))) →
     ∀ (W : Type) [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W] (ρ : Representation ℂ (Kinf E (r + s)) W),
     GlobalTheory.Published.AutFin.IsContRep ρ → ∀ J : Set (Module.End ℂ (Sm E (r + s))), Cofin J →

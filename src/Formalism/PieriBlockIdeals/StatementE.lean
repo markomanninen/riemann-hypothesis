@@ -1,5 +1,9 @@
-import Formalism.PieriBlockIdeals.StatementTop
-import Formalism.PieriBlockIdeals.StatementJoint
+module
+
+public import Formalism.PieriBlockIdeals.StatementTop
+public import Formalism.PieriBlockIdeals.StatementJoint
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder

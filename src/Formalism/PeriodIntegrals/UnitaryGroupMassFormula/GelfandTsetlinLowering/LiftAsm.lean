@@ -1,6 +1,10 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftDefs
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Wlocal
-import Formalism.GradedWeylDivisibility.FinalC
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftDefs
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Wlocal
+public import Formalism.GradedWeylDivisibility.FinalC
+
+@[expose] public section
 
 noncomputable section
 
@@ -97,7 +101,7 @@ theorem lm_last_of_row {N : ℕ} (hN : 0 < N) (f : MvPolynomial (Fin N × Fin N)
 theorem lm_liftWt_last {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (mu : DomWeight n) (ω : Fin n → ℕ) :
     liftWt h lam mu ω ⟨N - 1, by omega⟩ = dLast lam mu := by
   unfold liftWt
-  rw [dif_neg (by simp; omega)]
+  rw [dite_eq_right (by simp; omega)]
 
 theorem lm_liftWt_inj {n N : ℕ} (h : n + 1 = N) (lam : DomWeight N) (mu : DomWeight n) {ω ω' : Fin n → ℕ}
     (he : liftWt h lam mu ω = liftWt h lam mu ω') : ω = ω' := by
@@ -252,12 +256,14 @@ theorem liftMod_asm (hZ : CapelliZ) (hV : ZScalarVanish) (hN : Numbers) (hX : Xi
       rw [← hΔu]
       have e1 : applyWord ℂ (liftWord h w) (Z (map (Int.castRingHom ℂ) (M I))) =
           d.sum fun J k => k • Z (map (Int.castRingHom ℂ) (M J)) := by
-        rw [← (hZW w hw _ (hMm I)).2, ← Formalism.UG.P.wlocal_map_applyWord, hd2, Finsupp.sum, Finsupp.sum,
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← (hZW w hw _ (hMm I)).2, ← Formalism.UG.P.wlocal_map_applyWord, hd2, Finsupp.sum, Finsupp.sum,
           map_sum, map_sum]
         simp only [map_zsmul]
       have e2 : applyWord ℂ (liftWord h w) (io0 (map (Int.castRingHom ℂ) (bideterminant ℤ sz hsz I))) =
           d.sum fun J k => k • io0 (map (Int.castRingHom ℂ) (bideterminant ℤ sz hsz J)) := by
-        rw [← (hIoW w hw _ (hbm I)).2, ← Formalism.UG.P.wlocal_map_applyWord, hd1, Finsupp.sum, Finsupp.sum,
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [← (hIoW w hw _ (hbm I)).2, ← Formalism.UG.P.wlocal_map_applyWord, hd1, Finsupp.sum, Finsupp.sum,
           map_sum, map_sum]
         simp only [map_zsmul]
       have e3 : applyWord ℂ (liftWord h w) (Δ I) = ∑ J ∈ d.support, d J • Δ J := by
@@ -288,7 +294,7 @@ theorem liftMod_asm (hZ : CapelliZ) (hV : ZScalarVanish) (hN : Numbers) (hX : Xi
     obtain ⟨m1, hm1, h1⟩ := hx
     obtain ⟨m2, hm2, h2⟩ := hy
     refine ⟨m1 + m2, Submodule.add_mem _ hm1 hm2, ?_⟩
-    rw [map_add, map_add, map_add]
+    rw [map_add (f := _), map_add (f := _), map_add (f := _)]
     convert Submodule.add_mem _ h1 h2 using 1
     abel
   | smul a x _ hx =>

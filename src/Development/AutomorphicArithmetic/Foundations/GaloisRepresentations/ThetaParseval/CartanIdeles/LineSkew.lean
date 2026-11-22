@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.CartanIdeles.SpacesExOf
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.CartanIdeles.SpacesExOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,23 +27,34 @@ theorem lineSkew : LineSkew := by
     intro v
     exact absurd v.2 (by simp [hP])
   case lat =>
-    have hl' := hl.lat
-    refine ⟨Submodule.fg_pi (fun _ => hl'.fg), ?_⟩
-    rw [eq_top_iff]
-    intro v _
-    rw [← Finset.univ_sum_single v]
-    refine Submodule.sum_mem _ (fun i _ => ?_)
-    have hv : v i ∈ Submodule.span E (𝔞 : Set E) := by rw [hl'.span_eq_top]; trivial
-    have hm : Pi.single i (v i) ∈ (Submodule.span E (𝔞 : Set E)).map (LinearMap.single E (fun _ : Fin d => E) i) := ⟨v i, hv, rfl⟩
-    rw [Submodule.map_span] at hm
-    refine Submodule.span_mono ?_ hm
-    rintro _ ⟨a, ha, rfl⟩
-    show _ ∈ Submodule.pi Set.univ (fun _ : Fin d => 𝔞)
-    rw [Submodule.mem_pi]
-    intro j _
-    by_cases h : j = i
-    · subst h; simpa using ha
-    · simp [h]
+    have hfg := Submodule.fg_pi (ι := Fin d) (p := fun _ => 𝔞) (fun _ => hl.lat.fg)
+    haveI : Submodule.IsLattice E (skewSpc F δ 𝔞 d).L := Submodule.IsLattice.of_fg E hfg
+    have ha : ∃ a : E, a ∈ 𝔞 ∧ a ≠ 0 := by
+      by_contra h
+      have hz : ∀ x ∈ 𝔞, x = 0 := by
+        intro x hx
+        by_contra hx0
+        exact h ⟨x, hx, hx0⟩
+      have h1 : (1 : E) ∈ 𝔞 := (hl.dual 1).2 (by
+        intro x hx o
+        simpa [hz x hx] using (isIntegral_zero : IsIntegral ℤ (0 : ℚ)))
+      exact h ⟨1, h1, one_ne_zero⟩
+    obtain ⟨a, ha, ha0⟩ := ha
+    refine ⟨?_⟩
+    apply top_unique
+    intro x _
+    rw [← Finset.univ_sum_single x]
+    apply Submodule.sum_mem
+    intro i _
+    have hs : Pi.single i a ∈ (skewSpc F δ 𝔞 d).L := by
+      change Pi.single i a ∈ Submodule.pi Set.univ (fun _ : Fin d => 𝔞)
+      simp only [Submodule.mem_pi, Set.mem_univ, true_implies]
+      intro j
+      by_cases h : j = i
+      · subst j; simpa using ha
+      · simp [h]
+    have hm := (Submodule.span E ((skewSpc F δ 𝔞 d).L : Set (Fin d → E))).smul_mem (x i / a) (Submodule.subset_span hs)
+    simpa [← Pi.single_smul, smul_eq_mul, div_mul_cancel₀ _ ha0] using hm
   case dual =>
     intro y
     have hform : ∀ x : Fin d → E, form σ (skewSpc F δ 𝔞 d).J y x = ∑ i, y i * (δ * σ (x i)) := by
@@ -53,7 +68,8 @@ theorem lineSkew : LineSkew := by
     constructor
     · intro hy x hx o
       rw [hmem] at hx
-      rw [hform, Finset.mul_sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hform, Finset.mul_sum, map_sum]
       exact IsIntegral.sum _ (fun i _ => (hl.dual (y i)).1 (hy i) (x i) (hx i) o)
     · intro h i
       rw [hl.dual]
@@ -98,7 +114,7 @@ theorem lineSkew : LineSkew := by
     refine ⟨by simp, Matrix.of fun (k : Fin d) (p : Fin d ⊕ Fin 0) => Sum.elim (fun i => if k = i then (((Real.sqrt c)⁻¹ : ℝ) : ℂ) else 0) (fun z => z.elim0) p, ?_⟩
     rw [Matrix.mul_smul, Matrix.mul_one, Matrix.smul_mul]
     ext (i | i) (j | j)
-    · simp [Matrix.mul_apply, Matrix.one_apply]
+    · simp [Matrix.mul_apply, Matrix.one_apply, Function.swap_def, Sum.elim]
       split_ifs with h
       · rw [map_inv₀, Complex.conj_ofReal, ← mul_inv]
         have hs : ((√c : ℝ) : ℂ) * (√c : ℂ) = c := by rw [← Complex.ofReal_mul, Real.mul_self_sqrt hc.le]

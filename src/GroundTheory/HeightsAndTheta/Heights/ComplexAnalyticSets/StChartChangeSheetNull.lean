@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StatementsCurrent
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StatementsCurrent
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -26,8 +31,6 @@ def ChartChangeSheetNull.Statement : Prop :=
           ¬ (linEval u x ≠ 0 ∧ ∃ s', IsSheetAt J' A' (Ψ x) s')}) = 0
 
 namespace ChartChange
-
-def inv1 (x : Fin 1 → ℂ) : Fin 1 → ℂ := fun _ => (x 0)⁻¹
 
 end ChartChange
 

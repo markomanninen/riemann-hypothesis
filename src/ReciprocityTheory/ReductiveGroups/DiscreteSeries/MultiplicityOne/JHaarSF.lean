@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StSchurW
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JHaarSFA
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.StSchurW
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.UnitaryGroupStructuralFacts
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JHaarSFA
+
+@[expose] public section
 
 open MeasureTheory
 open scoped NNReal
@@ -32,6 +36,7 @@ theorem haarUniqueSF' : HaarUniqueSF := by
   refine ⟨c, hc0, ?_⟩
   rw [← HaarSigmaFiniteUniqueness.map_comap_val (U := U) μ hcμ, hc, Measure.map_smul,
     HaarSigmaFiniteUniqueness.map_comap_val (U := U) μ₀ hcν]
+  exact (HaarSigmaFiniteUniqueness.mEmb (U := U)).measurable.aemeasurable
 
 theorem haarUniqueSF (_h : UnitaryGroupStructuralFacts) : HaarUniqueSF := haarUniqueSF'
 

@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.PieceGood
-import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.FrobeniusReciprocity.SupportedInIffOfFrob
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.TwistedPieces.FiniteDimensionalDescent.PieceGood
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.BernsteinUnitaryProducts.BernsteinTheoremA.FrobeniusReciprocity.SupportedInIffOfFrob
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,8 +25,8 @@ def re {d r : ℕ} (γ : Fin d → Fin r → k) (s : Fin r → Matrix (Fin N) (F
     Matrix (Fin N) (Fin N) k :=
   ∑ l, ∑ j, γ l j • (s j * ε ^ (l : ℕ))
 
-open Classical in
 
+open Classical in
 structure SData (Z : Subalgebra k (Matrix (Fin N) (Fin N) k)) (χ : k[X]) (q : ℕ) where
   r : ℕ
   d : ℕ
@@ -81,10 +85,6 @@ def PieceTop : Prop :=
 def Dich : Prop :=
   ∀ (N q : ℕ) (Z : Subalgebra k (Matrix (Fin N) (Fin N) k)), CR Z → ∀ (χ : k[X]) (D : SData Z χ q) τ,
     ∀ x₀ ∈ piece D τ, mu (Sx D x₀) < mu Z ∨ ∃ c ∈ Z, IsNilpotent (x₀ - c)
-
-def MuConst : Prop :=
-  ∀ (N q : ℕ) (Z : Subalgebra k (Matrix (Fin N) (Fin N) k)), CR Z → ∀ (χ : k[X]) (D : SData Z χ q) τ,
-    ∀ x ∈ piece D τ, ∀ x' ∈ piece D τ, mu (Sx D x) = mu (Sx D x')
 
 def Transfer : Prop :=
   PositivityTheory.PfBern.Frob.FrobeniusReciprocity → ∀ (p : ℕ) [Fact p.Prime] [CharP k p], PositivityTheory.RgUd.T.Desc.SLF.Unimod (k := k) →

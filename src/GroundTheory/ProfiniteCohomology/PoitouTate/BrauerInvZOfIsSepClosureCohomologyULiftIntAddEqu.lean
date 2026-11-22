@@ -1,10 +1,15 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.PoitouTate.PtCompactDualMapEqZeroOfPtCompactToGlobalEqZero
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseDefs
-import GroundTheory.ProfiniteCohomology.LocalTateDuality.TensorHomDualRepRootsOfUnityIsoCartierPairing
-import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality.Naturality
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbolBridge
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbolSep
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.PoitouTate.PtCompactDualMapEqZeroOfPtCompactToGlobalEqZero
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.BaseDefs
+public import GroundTheory.ProfiniteCohomology.LocalTateDuality.TensorHomDualRepRootsOfUnityIsoCartierPairing
+public import GroundTheory.ProfiniteCohomology.CohomologyFunctoriality.Naturality
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbolBridge
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.CupSymbolSep
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -12,8 +17,6 @@ noncomputable section
 namespace GroundTheory.ProfCoh
 
 open IsDedekindDomain NumberField CategoryTheory MonoidalCategory GroundTheory.Global GroundTheory.LocalField
-
-local notation "ℚ̄" => AlgebraicClosure ℚ
 
 attribute [local instance 2000] Rep.hV2
 
@@ -83,10 +86,6 @@ abbrev resEvalPairing :
     Rep.res ψ.toMonoidHom M ⊗ Rep.res ψ.toMonoidHom (dualRep D M) ⟶ Rep.res ψ.toMonoidHom D :=
   (Rep.resFunctor ψ.toMonoidHom).map (evalPairing D M)
 
-instance finite_res_toMonoidHom (M : Rep.{0} (ULift.{0} ℤ) G) [Finite M] :
-    Finite (Rep.res ψ.toMonoidHom M) :=
-  inferInstanceAs (Finite M)
-
 instance isDiscreteRep_cartierDual_res : IsDiscreteRep (cartierDual F Fsep (Rep.res ψ.toMonoidHom M)) :=
   isDiscreteRep_cartierDual _
 
@@ -94,11 +93,6 @@ def dualToCartierDual :
     Rep.res ψ.toMonoidHom (dualRep D M) ⟶ cartierDual F Fsep (Rep.res ψ.toMonoidHom M) :=
   resDualPost ψ.toMonoidHom D M _ ρ
 
-omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] [IsSepClosure F Fsep]
-  [IsTopologicalGroup G] [IsDiscreteRep D] [IsDiscreteRep M] [Finite M] in
-theorem dualToCartierDual_hom_apply (f : M →ₗ[ULift.{0} ℤ] D) (m : M) :
-    ((dualToCartierDual ψ D ρ M).hom f : M →ₗ[ULift.{0} ℤ] galUnits.{0} F Fsep) m = ρ.hom (f m) :=
-  rfl
 
 omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] [IsTopologicalGroup G]
   [IsDiscreteRep D] [IsDiscreteRep M] in
@@ -126,9 +120,9 @@ theorem bijective_dualToCartierDual {n : ℕ} [NeZero n] (hn : (n : F) ≠ 0)
           Nat.card_le_card_of_injective _ (bijective_toDualDual hD hM).1
       _ ≤ Nat.card (dualRep D M) := card_dualRep_le hD
 
+
 omit [ValuativeRel F] [TopologicalSpace F] [IsNonarchimedeanLocalField F] [IsSepClosure F Fsep]
   [IsTopologicalGroup G] [IsDiscreteRep D] [IsDiscreteRep M] [Finite M] in
-
 theorem tensorHom_dualToCartierDual_cartierPairing :
     (𝟙 (Rep.res ψ.toMonoidHom M) ⊗ₘ dualToCartierDual ψ D ρ M) ≫
         cartierPairing F Fsep (Rep.res ψ.toMonoidHom M) =
@@ -137,10 +131,10 @@ theorem tensorHom_dualToCartierDual_cartierPairing :
   induction x using TensorProduct.induction_on with
   | zero => simp only [map_zero]
   | tmul a f => rfl
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
+
 
 omit [Finite M] in
-
 theorem localDualityPairing_dualToCartierDual [Finite M] {r s : ℕ} (h : r + s = 2)
     (ξ : cohomology (Rep.res ψ.toMonoidHom M) r)
     (η : cohomology (Rep.res ψ.toMonoidHom (dualRep D M)) s) :
@@ -182,6 +176,8 @@ end Abstract
 
 section GS
 
+local notation "ℚ̄" => AlgebraicClosure ℚ
+
 variable {K : FiniteSubfield} (S : Set (HeightOneSpectrum (𝓞 K.1)))
   (ιs : ∀ v : S, ℚ̄ →ₐ[K.1] AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1))
   (n : ℕ)
@@ -200,14 +196,6 @@ def gsRootsToLocalUnits (v : S) :
         (Units.ext (gsFinFamily_apply S ιs v σ
           (((Additive.toMul ζ : rootsOfUnity n _) : (maxUnramifiedOutside K.1 ℚ̄ S)ˣ) :
             maxUnramifiedOutside K.1 ℚ̄ S)))⟩
-
-theorem gsRootsToLocalUnits_hom_apply (v : S)
-    (ζ : Additive (rootsOfUnity n (maxUnramifiedOutside K.1 ℚ̄ S))) :
-    ((Additive.toMul ((gsRootsToLocalUnits S ιs n v).hom ζ) :
-        (AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1))ˣ) :
-      AlgebraicClosure ((v : HeightOneSpectrum (𝓞 K.1)).adicCompletion K.1)) =
-      ιs v (((Additive.toMul ζ : rootsOfUnity n _) : (maxUnramifiedOutside K.1 ℚ̄ S)ˣ) : ℚ̄) :=
-  rfl
 
 theorem gsRootsToLocalUnits_injective (v : S) :
     Function.Injective (gsRootsToLocalUnits S ιs n v).hom := by

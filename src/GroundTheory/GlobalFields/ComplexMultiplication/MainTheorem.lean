@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremLevel
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremLevel
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Global
@@ -12,11 +17,11 @@ open GroundTheory.LocalField (maximalAbelianExtension)
 open scoped nonZeroDivisors
 
 variable {K : Type} [Field K] [NumberField K] [Algebra K ℂ] (hK : finrank ℚ K = 2)
-  [IsTotallyComplex K]
+  [_root_.NumberField.IsTotallyComplex K]
+
 
 omit [Algebra K ℂ] in
 include hK in
-
 theorem finite_units : Finite (𝓞 K)ˣ := by
   have h1 := InfinitePlace.card_add_two_mul_card_eq_rank K
   rw [IsTotallyComplex.nrRealPlaces_eq_zero, hK] at h1
@@ -33,8 +38,8 @@ theorem finite_units : Finite (𝓞 K)ˣ := by
   exact Finite.of_injective (fun x ↦ (⟨x, htors x⟩ : Units.torsion K)) fun a b h ↦
     congrArg Subtype.val h
 
-omit [Algebra K ℂ] [IsTotallyComplex K] in
 
+omit [Algebra K ℂ] [_root_.NumberField.IsTotallyComplex K] in
 theorem exists_nat_mul_mem (𝔞 : (FractionalIdeal (𝓞 K)⁰ K)ˣ) (t : K) :
     ∃ k : ℕ, 0 < k ∧ (k : K) * t ∈ (𝔞 : FractionalIdeal (𝓞 K)⁰ K) := by
   obtain ⟨a, ha, ha0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot
@@ -61,8 +66,8 @@ theorem exists_nat_mul_mem (𝔞 : (FractionalIdeal (𝓞 K)⁰ K)ˣ) (t : K) :
   rw [this, ← Algebra.smul_def]
   exact (𝔞 : Submodule (𝓞 K) K).smul_mem b ha
 
-include hK in
 
+include hK in
 theorem main_theorem_complexMultiplication (σ : ℂ ≃ₐ[K] ℂ) (s : IdeleGroup K)
     (hs : ∀ x : maximalAbelianExtension K (algebraicClosure K ℂ),
       ((artinMap K (algebraicClosure K ℂ) (IdeleClassGroup.mk K s) x : algebraicClosure K ℂ) : ℂ) =

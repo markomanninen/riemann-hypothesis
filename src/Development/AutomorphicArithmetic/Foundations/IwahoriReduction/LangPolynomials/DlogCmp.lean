@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,7 +17,7 @@ theorem pDlogCmp : SDlogCmp := by
   have hkn : k ≤ n := by omega
   have hkj : k ≤ j := by omega
   have hkN : k ≤ N := by omega
-  set D := PowerSeries.derivative R with hD
+  set D := PowerSeries.derivative (R := R) with hD
   set W := w ^ p ^ n with hW
   let J : Ideal (PowerSeries R) := Ideal.span {(p : PowerSeries R) ^ k, cyc R p (j + 1)}
   have hpow : ∀ i, k ≤ i → ∀ y : PowerSeries R, (p : PowerSeries R) ^ i * y ∈ J := by
@@ -61,15 +65,16 @@ theorem pDlogCmp : SDlogCmp := by
   have hDcyc : D (cyc R p (j + 1)) ∈ J := by
     have hc : cyc R p (j + 1) = ∑ i ∈ Finset.range p, (1 + PowerSeries.X) ^ (p ^ j * i) := by
       unfold cyc
-      rw [Polynomial.cyclotomic_prime_pow_eq_geom_sum hp.out, Polynomial.eval₂_finset_sum]
+      rw [Polynomial.cyclotomic_prime_pow_eq_geom_sum hp.out, Polynomial.eval₂_finsetSum]
       simp only [Polynomial.eval₂_pow, Polynomial.eval₂_X, pow_mul]
-    rw [hc, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hc, map_sum]
     refine Ideal.sum_mem _ fun i _ => ?_
-    rw [Derivation.leibniz_pow, map_add, Derivation.map_one_eq_zero, PowerSeries.derivative_X,
+    rw [Derivation.leibniz_pow, map_add (f := _), Derivation.map_one_eq_zero, PowerSeries.derivative_X,
       zero_add, smul_eq_mul, mul_one, nsmul_eq_mul, Nat.cast_mul, Nat.cast_pow, mul_assoc]
     exact hpow j hkj _
   have hDE : D (F - g * W) ∈ J := by
-    rw [hab, map_add, Derivation.leibniz, Derivation.leibniz, Derivation.leibniz_pow,
+    rw [hab, map_add (f := _), Derivation.leibniz, Derivation.leibniz, Derivation.leibniz_pow,
       Derivation.map_natCast]
     simp only [smul_zero, mul_zero, add_zero, smul_eq_mul]
     exact J.add_mem (hpow N hkN _) (J.add_mem (hcyc _) (J.mul_mem_left _ hDcyc))

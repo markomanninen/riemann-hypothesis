@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualWeylEqSpanColProd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StandardWeylLatticesFockDual
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DualWeylEqSpanColProd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.StandardWeylLatticesFockDual
+
+@[expose] public section
+
 open MvPolynomial
 
 noncomputable section
@@ -12,7 +17,8 @@ open Formalism.BasicNotions Formalism.L2.DIV
 theorem fockQ_sum_zsmul {σ κ : Type} [Fintype κ] (c : κ → ℤ) (f : κ → MvPolynomial σ ℚ)
     (g : MvPolynomial σ ℚ) :
     Formalism.GradedWeylDivisibility.fockQ (∑ i, c i • f i) g = ∑ i, (c i : ℚ) * Formalism.GradedWeylDivisibility.fockQ (f i) g := by
-  rw [← ps_fockL_rat, map_sum, LinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← ps_fockL_rat, map_sum, LinearMap.sum_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [← Int.cast_smul_eq_zsmul ℚ, LinearMap.map_smulₛₗ, LinearMap.smul_apply, ps_fockL_rat, smul_eq_mul]
   simp
@@ -87,19 +93,22 @@ theorem dual_data : ∀ (N : ℕ) (Y : YoungDiagram) (hY : Y.colLen 0 ≤ N),
     fun k => ∑ J, B J k • GlobalTheory.WeylMinorDual.colProd ℤ N Y hY J, B, Cm, ?_, fun _ => rfl, fun _ => rfl, ?_⟩
   · have hbZ : ∀ i, Formalism.GradedWeylDivisibility.intQ N N (∑ J, Cm i J • GlobalTheory.WeylMinorDual.colProd ℤ N Y hY J) = b i := by
       intro i
-      rw [map_sum, ← hCm i]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, ← hCm i]
       refine Finset.sum_congr rfl fun J _ => ?_
       rw [map_zsmul, hcol]
     intro J
     apply hinj
-    rw [hcol, map_sum, ← hB J]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hcol, map_sum, ← hB J]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_zsmul, hbZ]
   · intro k
     obtain ⟨w, hw, hwe⟩ := hdW k
     have : (∑ J, B J k • GlobalTheory.WeylMinorDual.colProd ℤ N Y hY J) = w := by
       apply hinj
-      rw [hwe, ← hkey k, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [hwe, ← hkey k, map_sum]
       refine Finset.sum_congr rfl fun J _ => ?_
       rw [map_zsmul, hcol]
     show (∑ J, B J k • GlobalTheory.WeylMinorDual.colProd ℤ N Y hY J) ∈ _

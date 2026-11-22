@@ -1,5 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSuppA
-import Lemmata.GeneralBFactTerForm.Imports
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterDivSuppA
+public import Lemmata.GeneralBFactTerForm.Imports
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.WithBotEqOfAddOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -37,7 +42,7 @@ theorem dim_quot_minimal_add_one (P W : Ideal (MvPolynomial σ ℤ)) [P.IsPrime]
   rw [hh] at key
   exact_mod_cast key
 
-theorem withBot_eq_of_add_one {x : WithBot ℕ∞} {m : ℕ} (h : x + 1 = ((m + 1 : ℕ) : WithBot ℕ∞)) :
+theorem withBot_eq_of_add_one_by_cancellation {x : WithBot ℕ∞} {m : ℕ} (h : x + 1 = ((m + 1 : ℕ) : WithBot ℕ∞)) :
     x = (m : WithBot ℕ∞) := by
   first | exact Bl.general_b_fact_ter_form.goal1 .. | (apply Bl.general_b_fact_ter_form.goal1 <;> assumption) | (intros; apply Bl.general_b_fact_ter_form.goal1 <;> assumption)
 
@@ -90,7 +95,7 @@ theorem isHomogeneous_of_mem_minimalPrimes {A : Type*} [CommRing A] (𝒜 : ℕ 
 theorem exists_blockComponent [DecidableEq K] {W : Ideal (MRing ι)}
     (hW : ∀ k, W.IsHomogeneous (weightedHomogeneousSubmodule ℤ (blockWeight (ι := ι) k)))
     (a : K → ℕ) (T : Finset K) {f : MRing ι} (hf : f ∈ W) :
-    ∃ g ∈ W, ∀ m, coeff m g = if (∀ k ∈ T, ∑ i, m ⟨k, i⟩ = a k) then coeff m f else 0 := by
+    ∃ g ∈ W, ∀ m, AddMonoidAlgebra.coeff g m = if (∀ k ∈ T, ∑ i, m ⟨k, i⟩ = a k) then AddMonoidAlgebra.coeff f m else 0 := by
   induction T using Finset.induction_on with
   | empty => exact ⟨f, hf, fun m => by simp⟩
   | @insert k T hk ih =>
@@ -111,7 +116,7 @@ theorem isMultiHomogIdeal_of_isHomogeneous [DecidableEq K] {W : Ideal (MRing ι)
     ext m
     rw [coeff_sum]
     have e : ∀ a : K → ℕ,
-        coeff m (g a) = if (fun k => ∑ i, m ⟨k, i⟩) = a then coeff m f else 0 := by
+        AddMonoidAlgebra.coeff (g a) m = if (fun k => ∑ i, m ⟨k, i⟩) = a then AddMonoidAlgebra.coeff f m else 0 := by
       intro a
       rw [hg a]
       by_cases h : (fun k => ∑ i, m ⟨k, i⟩) = a

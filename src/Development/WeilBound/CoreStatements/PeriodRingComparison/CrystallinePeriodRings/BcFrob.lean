@@ -1,11 +1,15 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.GammaEqDpow
-import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.AcrisNAlgebraMapAinf
-import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.BcrisPlusHomAlgebraMap
-import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Period
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.ExistsMapEqOfPowMul
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.FrobAinfMapFrobenius
-import Development.WeilBound.CoreStatements.CrystallinePeriodRings.AinfMapSurjective
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.GammaEqDpow
+public import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.AcrisNAlgebraMapAinf
+public import Development.WeilBound.CoreStatements.PeriodRingComparison.CrystallinePeriodRings.BcrisPlusHomAlgebraMap
+public import Development.AutomorphicArithmetic.IntegralCasts.CrystallinePeriods.Period
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.ExistsMapEqOfPowMul
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.FrobAinfMapFrobenius
+public import Development.WeilBound.CoreStatements.CrystallinePeriodRings.AinfMapSurjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,15 +33,16 @@ theorem bcris_hom_ext_acris {B : Type} [CommRing B] {f g : Reformulated.AutPerF.
   exact RingHom.congr_fun h2 z
 
 theorem cBc_frob_of
-    (hφ : ∀ x, cA l (Reformulated.AutPerF.Acris.frob l (OC l) x) = ACris.phi ℂ_[l] l (cA l x))
+    (hφ : ∀ x, cA l (Reformulated.AutPerF.Acris.frob l (OC l) x) =
+      ACris.phi (K := ℂ_[l]) (p := l) (cA l x))
     (b : Reformulated.AutPerF.Bcris l (OC l)) :
     cBc l (Reformulated.AutPerF.Bcris.frob l (OC l) b) = Formalism.Per6.φB l (cBc l b) := by
   have h : (cBc l).toRingHom.comp (Reformulated.AutPerF.Bcris.frob l (OC l)) =
       (Formalism.Per6.φB l).comp (cBc l).toRingHom :=
     bcris_hom_ext_acris l fun x => by
       change cBc l (Reformulated.AutPerF.Bcris.frob l (OC l) _) = Formalism.Per6.φB l (cBc l _)
-      rw [Reformulated.AutPerF.Bcris.frob_algebraMap_acris, cBc_algebraMap, cBc_algebraMap, hφ,
-        PositivityTheory.LocInh.φB_cB]
+      rw [Reformulated.AutPerF.Bcris.frob_algebraMap_acris, cBc_algebraMap, cBc_algebraMap, hφ]
+      exact (PositivityTheory.LocInh.φB_cB (cA l x)).symm
   exact RingHom.congr_fun h b
 
 theorem cBc_aB (a : Reformulated.AutPerF.Ainf l (OC l)) :

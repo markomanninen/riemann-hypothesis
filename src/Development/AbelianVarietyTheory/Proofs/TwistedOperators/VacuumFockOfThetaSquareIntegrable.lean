@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.VacuumFockVectors
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HermitianSymplecticScalars
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaSquareIntegrable
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PureTensorOInjective
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.VacuumFockVectors
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.HermitianSymplecticScalars
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaSquareIntegrable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PureTensorOInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,7 +108,7 @@ theorem fock_of_ccr {ι X : Type} (M : Submodule ℂ (X → ℂ)) (A : ι → (X
     intro k v
     rw [hPdef, hPdef]
     have hp : ((Finsupp.toMultiset (k + Finsupp.single v 1)).toList).Perm (v :: (Finsupp.toMultiset k).toList) := by
-      rw [← Multiset.coe_eq_coe, Multiset.coe_toList, ← Multiset.cons_coe, Multiset.coe_toList, map_add,
+      rw [← Multiset.coe_eq_coe, Multiset.coe_toList, ← Multiset.cons_coe, Multiset.coe_toList, map_add (f := _),
         Finsupp.toMultiset_single, one_nsmul, add_comm, Multiset.singleton_add]
     rw [foldr_eq_of_perm_of_comm (fun i h => a i h) (fun i j y => haa i j y) hp]
     rfl
@@ -149,7 +153,7 @@ theorem fock_of_ccr {ι X : Type} (M : Submodule ℂ (X → ℂ)) (A : ι → (X
       rw [hmono]
       exact M.smul_mem c (P u).2
     · rename_i p q hp hq
-      rw [map_add]
+      rw [map_add (f := _)]
       exact M.add_mem hp hq
   refine ⟨hmem, ?_⟩
   intro ip hadd hsmul hzero hadj1 hadj2 β Q
@@ -208,7 +212,7 @@ theorem fock_of_ccr {ι X : Type} (M : Submodule ℂ (X → ℂ)) (A : ι → (X
       simp
     · simp [h]
   · rename_i p q hp hq
-    rw [map_add, MvPolynomial.coeff_add, add_mul, ← hp, ← hq]
+    rw [map_add (f := _), MvPolynomial.coeff_add, add_mul, ← hp, ← hq]
     exact hadd ⟨_, hmem p⟩ ⟨_, hmem q⟩ (P β)
 
 variable {D : D7} {V W : HSp D} {S S' : D.what₂.Tau → SPar}
@@ -328,8 +332,8 @@ theorem fockScale_ne (τ : D.what₂.Tau) : (fockScale D τ : ℂ) ≠ 0 := by
   have h3 : (8 * Real.pi * (tauE D τ D.host.xi0).im : ℝ) = 0 := by exact_mod_cast h2.symm
   exact hp.ne' h3
 
-variable (V W) in
 
+variable (V W) in
 def thetaSub (ψ : AddChar (AF D.host.F) ℂ) : Submodule ℂ (WO V W → ℂ) where
   carrier := {g | IsThetaFunO ψ V W g}
   add_mem' := GlobalTheory.OrientedHeis.theta_add

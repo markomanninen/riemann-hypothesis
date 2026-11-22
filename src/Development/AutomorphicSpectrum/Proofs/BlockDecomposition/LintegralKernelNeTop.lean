@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.QuotIntegralZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LintegralTsumEnormNeTop
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.QuotientVanishing.QuotIntegralZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LintegralTsumEnormNeTop
+
+@[expose] public section
 
 noncomputable section
 
@@ -257,7 +261,8 @@ theorem unfold_abs [TopologicalSpace G] [IsTopologicalGroup G] [T2Space G] [Seco
       simp only
       rw [twConj_out ι θ θR hθ, ← map_repR ι q, ← map_inv, hχi]
     simp_rw [e1]
-    exact ENNReal.tsum_comp_le_tsum_of_injective (orbPt_injective (hH c)) _
+    exact ENNReal.tsum_comp_le_tsum_of_injective (orbPt_injective (hH c))
+      (fun d => ‖χ x * φ (twConj θ x (ι d))‖ₑ)
   have hterm : ∀ c, (quotIntegral μ (H c) Measure.count fun x => χ x * φ (twConj θ x (ι (rep c)))) =
       ∫ x in Fd, ∑' q : ι.range ⧸ (H c).subgroupOf ι.range,
         χ ((q.out : G)⁻¹ * x) * φ (twConj θ ((q.out : G)⁻¹ * x) (ι (rep c))) ∂μ := fun c => by
@@ -284,7 +289,7 @@ theorem unfold_abs [TopologicalSpace G] [IsTopologicalGroup G] [T2Space G] [Seco
       χ ((q.out : G)⁻¹ * x) * φ (twConj θ ((q.out : G)⁻¹ * x) (ι (rep c))) := fun x =>
     kernel_decomp hι hθ hcls hH hχi x (hsing x) T (hT x)
   simp_rw [hdec]
-  rw [integral_finset_sum]
+  rw [integral_finsetSum]
   · exact Finset.sum_congr rfl fun c _ => (hterm c).symm
   · intro c _
     haveI := hdisc c

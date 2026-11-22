@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
-import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.AbByPOfComm
+public import Development.AbelianVarietyTheory.Definitions.CommutativeAlgebra.InvariantSubspaceMobiusInverseRecEqOfFinrankLt
+
+@[expose] public section
+
 open Polynomial GlobalTheory.CuspGL GlobalTheory.BI
 
 namespace GlobalTheory
@@ -19,7 +24,8 @@ private theorem sum_antidiagonal_filter_ioo_eq_sum_ioo (k : ℕ) (g : ℕ → �
 private theorem aeval_psum_eq_sum_map_pow (s : Multiset ℂ) (n : ℕ) :
     MvPolynomial.aeval (fun x : s => (x : ℂ)) (MvPolynomial.psum s ℂ n) = (s.map (· ^ n)).sum := by
   classical
-  rw [MvPolynomial.psum, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [MvPolynomial.psum, map_sum]
   simp only [map_pow, MvPolynomial.aeval_X]
   conv_rhs => rw [← Multiset.map_univ_coe s]
   rw [Multiset.map_map]
@@ -31,7 +37,8 @@ theorem multiset_newton_psum (s : Multiset ℂ) (r : ℕ) (hr : 0 < r) :
   classical
   have key := congrArg (MvPolynomial.aeval (fun x : s => (x : ℂ)))
     (MvPolynomial.psum_eq_mul_esymm_sub_sum s ℂ r hr)
-  simp only [map_sub, map_mul, map_sum, map_pow, map_neg, map_one, map_natCast,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sub, map_mul, map_sum, map_pow, map_neg, map_one, map_natCast,
     MvPolynomial.aeval_esymm_eq_multiset_esymm, Multiset.map_univ_coe,
     aeval_psum_eq_sum_map_pow] at key
   rw [key, sum_antidiagonal_filter_ioo_eq_sum_ioo r (fun i j => (-1) ^ i * s.esymm i * (s.map (· ^ j)).sum)]

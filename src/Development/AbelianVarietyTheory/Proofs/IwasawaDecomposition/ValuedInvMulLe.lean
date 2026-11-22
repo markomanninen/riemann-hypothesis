@@ -1,5 +1,10 @@
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
+module
+
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.LatAtLattice
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ValuedLtOfMem
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC Matrix
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
 
@@ -9,8 +14,8 @@ namespace GlobalTheory.Mem.Col2.Splice
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [StarRing E]
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem hasRes_of_mul {P : HeightOneSpectrum (𝓞 E)} {s : 𝓞 E} (hs : s ∉ P.asIdeal) {z : P.adicCompletion E}
     {c : 𝓞 E ⧸ P.asIdeal}
     (h : HasRes P (algebraMap E _ (algebraMap (𝓞 E) E s) * z) (Ideal.Quotient.mk P.asIdeal s * c)) : HasRes P z c := by
@@ -36,7 +41,7 @@ theorem hasRes_of_mul {P : HeightOneSpectrum (𝓞 E)} {s : 𝓞 E} (hs : s ∉ 
   have e2 : algebraMap E (P.adicCompletion E) (algebraMap (𝓞 E) E t) *
       algebraMap E (P.adicCompletion E) (algebraMap (𝓞 E) E s) +
       algebraMap E (P.adicCompletion E) (algebraMap (𝓞 E) E a) = 1 := by
-    simp only [← map_mul, ← map_add, e, map_one]
+    simp only [← map_mul, ← map_add (f := _), e, map_one]
   have e3 : z - algebraMap E (P.adicCompletion E) (algebraMap (𝓞 E) E (t * r)) =
       algebraMap E (P.adicCompletion E) (algebraMap (𝓞 E) E t) *
         (algebraMap E _ (algebraMap (𝓞 E) E s) * z - algebraMap E (P.adicCompletion E) (algebraMap (𝓞 E) E r)) +
@@ -62,14 +67,14 @@ theorem adAt_pullV_osmul {n : ℕ} (g : GL (Fin n) (AfE F E)) (w : HeightOneSpec
   have e' : pullV g (s • x) i = Formalism.UG.inclE (F := F) (FiniteAdeleRing (𝓞 F) F) (algebraMap (𝓞 E) E s) * pullV g x i := e
   rw [e', map_mul, adAt_inclE]
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem mat_ext {n : ℕ} {M N : Matrix (Fin n) (Fin n) (AfE F E)} (h : ∀ w, M.map (adAt F w) = N.map (adAt F w)) : M = N := by
   ext i j
   exact PtExist.ad_ext fun w => congrFun (congrFun (h w) i) j
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem adAt_pullV_congr {n : ℕ} {g k : GL (Fin n) (AfE F E)} {w : HeightOneSpectrum (𝓞 E)}
     (hw : ((g⁻¹ : GL (Fin n) (AfE F E)) : Matrix (Fin n) (Fin n) (AfE F E)).map (adAt F w) =
       ((k⁻¹ : GL (Fin n) (AfE F E)) : Matrix (Fin n) (Fin n) (AfE F E)).map (adAt F w)) (x : Sp E n) (i : Fin n) :
@@ -100,7 +105,7 @@ theorem valued_inv_mul_le {n : ℕ} {w : HeightOneSpectrum (𝓞 E)} {a b : GL (
       simp
     | add x y _ _ hx hy =>
       intro i
-      rw [Matrix.mulVec_add, Pi.add_apply, map_add]
+      rw [Matrix.mulVec_add, Pi.add_apply, map_add (f := _)]
       exact Valuation.map_add_le _ (hx i) (hy i)
     | smul c x _ hx =>
       intro i
@@ -121,21 +126,21 @@ section Splice
 
 variable (hc : CMData F E)
 
-local notation "σ" => Formalism.UG.sigR (CMData.sig hc) (FiniteAdeleRing (𝓞 F) F)
+local notation "σ" => Formalism.UG.sigR hc.sig (FiniteAdeleRing (𝓞 F) F)
 
 def splice {n : ℕ} (P : HeightOneSpectrum (𝓞 E)) (A B : Matrix (Fin n) (Fin n) (AfE F E)) :
     Matrix (Fin n) (Fin n) (AfE F E) :=
   Matrix.of fun i j => (1 - PtExist.idem F P - σ (PtExist.idem F P)) * A i j +
     (PtExist.idem F P + σ (PtExist.idem F P)) * B i j
 
-open Classical in
 
+open Classical in
 theorem map_splice {n : ℕ} {P : HeightOneSpectrum (𝓞 E)} (hP : conjPrime₂ P ≠ P) (A B : Matrix (Fin n) (Fin n) (AfE F E))
     (w : HeightOneSpectrum (𝓞 E)) :
     (splice hc P A B).map (adAt F w) = if w = P ∨ conjPrime₂ w = P then B.map (adAt F w) else A.map (adAt F w) := by
   ext i j
   rw [Matrix.map_apply]
-  simp only [splice, Matrix.of_apply, map_add, map_mul, map_sub, map_one, PtExist.adAt_idem, PtExist.adAt_sig_idem]
+  simp only [splice, Matrix.of_apply, map_add (f := _), map_mul, map_sub, map_one, PtExist.adAt_idem, PtExist.adAt_sig_idem]
   by_cases h1 : w = P
   · subst h1
     simp [hP]
@@ -170,7 +175,7 @@ theorem exists_splice : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [Nu
     congr 1
     ext i j
     show Formalism.UG.sigR (CMData.sig hc) (FiniteAdeleRing (𝓞 F) F) (G j i) = G' i j
-    simp only [G, G', splice, Matrix.of_apply, map_add, map_mul, map_sub, map_one, PtExist.sig_sig,
+    simp only [G, G', splice, Matrix.of_apply, map_add (f := _), map_mul, map_sub, map_one, PtExist.sig_sig,
       PtExist.inv_apply hh.uni, PtExist.inv_apply hh0.uni]
     ring
   have hGw : ∀ w, (g : Matrix (Fin n) (Fin n) (AfE F E)).map (adAt F w) = if w = P.1 ∨ conjPrime₂ w = P.1 then

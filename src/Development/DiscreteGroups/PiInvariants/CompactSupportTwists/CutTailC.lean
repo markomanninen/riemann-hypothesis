@@ -1,5 +1,9 @@
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.UncutHalf
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RGrowthPiJ
+module
+
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.UncutHalf
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.RGrowthPiJ
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointMemSp4
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeakShimuraTheory.AdjointMemSp4
+
+@[expose] public section
 
 open IsLocalRing UpperTheory.V UpperTheory.V.Alg UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws
 
@@ -12,9 +16,11 @@ private theorem exists_strictHenselian_absolutely_closed_local_ring {k A : Type}
   have h3 : ∀ (a : A) c, m (π a * c) = a * m c := h2
   refine ⟨m.mapMatrix, fun Y => rfl, fun M Y => ?_, fun M Y => ?_, fun Y => ?_, fun Y hY i j h => ?_⟩
   · ext a b
-    simp only [AddMonoidHom.mapMatrix_apply, Matrix.map_apply, Matrix.mul_apply, map_sum, h3]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AddMonoidHom.mapMatrix_apply, Matrix.map_apply, Matrix.mul_apply, map_sum, h3]
   · ext a b
-    simp only [AddMonoidHom.mapMatrix_apply, Matrix.map_apply, Matrix.mul_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [AddMonoidHom.mapMatrix_apply, Matrix.map_apply, Matrix.mul_apply, map_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [mul_comm (Y a c), h3, mul_comm]
   · ext a b
@@ -76,14 +82,14 @@ theorem UpperTheory.V.Ws.X1.obCor :
   have Tres : ∀ Y, (T Y).map (res Λ A) = 0 := fun Y => by
     rw [← T0]; ext a b
     show res Λ A (μ _) = 0
-    rw [← res_map p, m3, map_zero]
+    rw [← UpperTheory.V.Alg.res_map p, m3, map_zero]
   have TT : ∀ Y Y', T Y * T Y' = 0 := fun Y Y' => by rw [Tl, Tres, zero_mul, map_zero]
   have rtres : ∀ s, (D.rt s).map (res Λ A) = rb s := fun s => by
     ext a b
-    rw [Matrix.map_apply, ← res_map p, ← hr, ← D.rt_map, Matrix.map_apply, Matrix.map_apply]
+    rw [Matrix.map_apply, ← UpperTheory.V.Alg.res_map p, ← hr, ← D.rt_map, Matrix.map_apply, Matrix.map_apply]
   have ntres : ∀ v, (D.nt v).map (res Λ A) = nb v := fun s => by
     ext a b
-    rw [Matrix.map_apply, ← res_map p, ← hn, ← D.nt_map, Matrix.map_apply, Matrix.map_apply]
+    rw [Matrix.map_apply, ← UpperTheory.V.Alg.res_map p, ← hn, ← D.nt_map, Matrix.map_apply, Matrix.map_apply]
   have pert : ∀ (c : A) (g : M4 A) (Y : M4 (ResidueField Λ)), IsGSp c g → Y ∈ sp4 (ResidueField Λ) →
       IsGSp c (g + T (Y * g.map (res Λ A))) := fun c g Y hg hY => by
     have hY' : adj Y = -Y := hY
@@ -108,7 +114,7 @@ theorem UpperTheory.V.Ws.X1.obCor :
       simp only [mul_assoc]
     rw [hf]
     simp only
-    rw [sub_mul, mul_sub, mul_sub, TT, Tl, Tr, rtres, rtres, e, e', map_sub, map_add]
+    rw [sub_mul, mul_sub, mul_sub, TT, Tl, Tr, rtres, rtres, e, e', map_sub, map_add (f := _)]
     abel
   have fone : f 1 = 1 := by
     have hu : adj (f 1) * f 1 = 1 := by
@@ -125,7 +131,7 @@ theorem UpperTheory.V.Ws.X1.obCor :
     rw [Matrix.map_sub _ (map_sub p), Tp, D.rt_map, sub_zero]
   have fres : ∀ s, (f s).map (res Λ A) = rb s := fun s => by
     ext a b
-    rw [Matrix.map_apply, ← res_map p, ← hr, ← fp, Matrix.map_apply, Matrix.map_apply]
+    rw [Matrix.map_apply, ← UpperTheory.V.Alg.res_map p, ← hr, ← fp, Matrix.map_apply, Matrix.map_apply]
   refine ⟨{ toFun := f, map_one' := fone, map_mul' := fmul }, fun v => D.nt v + T ((y v).1 * nb v),
     ⟨fH, fun v => ?_, fun v s => ?_⟩, fun a b N => ?_, fp, fun v => ?_⟩
   · have := pert _ _ _ (D.nt_sp v) (y v).2

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InstPreorder
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PointedEtaleNeighbourhoodLocalRingIsDirectedStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleNbhdLocalRingTransitionMapIsLocalHomInjectiStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PointedEtaleNbhdTransitionMapDirectedSystemStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InstPreorder
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PointedEtaleNeighbourhoodLocalRingIsDirectedStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleNbhdLocalRingTransitionMapIsLocalHomInjectiStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PointedEtaleNbhdTransitionMapDirectedSystemStatement
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -15,9 +19,10 @@ namespace LocalLimit
 variable {R : Type} [CommRing R] [IsLocalRing R]
 
 theorem directedSystem_trans :
-    DirectedSystem (fun i : EtNbhd R => i.B) (fun i j h => ⇑(EtNbhd.trans h : i.B →+* j.B)) where
-  map_self := fun i x => (GlobalTheory.T.pointedEtaleNbhd_transitionMap_directedSystem R).1 i x
-  map_map := fun {k j i} hij hjk x => (GlobalTheory.T.pointedEtaleNbhd_transitionMap_directedSystem R).2 i j k hij hjk x
+    DirectedSystem (fun i : EtNbhd R => i.B) (fun i j h => ⇑(EtNbhd.trans h : i.B →+* j.B)) :=
+  ⟨fun {i} x => (GlobalTheory.T.pointedEtaleNbhd_transitionMap_directedSystem R).1 i x,
+    fun {k j i} hij hjk x =>
+      (GlobalTheory.T.pointedEtaleNbhd_transitionMap_directedSystem R).2 i j k hij hjk x⟩
 
 theorem directed : IsDirected (EtNbhd R) (· ≤ ·) := GlobalTheory.T.pointedEtaleNeighbourhoodLocalRing_isDirected R
 
@@ -48,7 +53,7 @@ theorem isUnit_or_isUnit_of_add_one {a b : Hens R} (hab : a + b = 1) : IsUnit a 
   obtain ⟨k, hik, hjk⟩ := directed_of (· ≤ ·) i j
   have h1 : EtNbhd.trans hik x + EtNbhd.trans hjk y = 1 := by
     apply of_injective k
-    rw [map_add, of_trans, of_trans, map_one, hab]
+    rw [(Hens.of k).map_add, of_trans, of_trans, map_one, hab]
   rcases IsLocalRing.isUnit_or_isUnit_of_add_one h1 with h | h
   · left
     rw [← of_trans hik]

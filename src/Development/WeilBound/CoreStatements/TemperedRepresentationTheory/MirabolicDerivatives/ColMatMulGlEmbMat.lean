@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.UnipApplyCastSuccLast
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.UnipApplyCastSuccLast
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,14 +30,14 @@ theorem blockMat_mul {n : ℕ} (g h : Mir k n) :
   ext i j
   have e : ((h : GL (Fin (n + 1)) k) : Matrix (Fin (n + 1)) (Fin (n + 1)) k) (Fin.last n) (Fin.castSucc j) = 0 := by
     rw [hh]; simp [eLast, Pi.single_apply, Fin.castSucc_ne_last]
-  simp [blockMat, Units.val_mul, mul_apply, Fin.sum_univ_castSucc, e]
+  simp [blockMat, Units.val_mul, Matrix.mul_apply, Fin.sum_univ_castSucc, e]
 
 def mirabolicProjection (n : ℕ) : Mir k n →* GL (Fin n) k :=
   MonoidHom.toHomUnits
     { toFun := fun g => blockMat k n (g : GL (Fin (n + 1)) k)
       map_one' := by
         ext i j
-        simp [blockMat, one_apply]
+        simp [blockMat, Matrix.one_apply]
       map_mul' := fun g h => blockMat_mul k g h }
 
 def levi (n : ℕ) : GL (Fin n) k →* Mir k n := (glEmb k n).codRestrict _ (glEmb_mem_Mir k n)
@@ -54,13 +58,13 @@ theorem glEmbMat_mul_colMat (n : ℕ) (A : Matrix (Fin n) (Fin n) k) (v : Fin n 
   ext i j
   by_cases hj : j = Fin.last n
   · subst hj
-    induction i using Fin.lastCases <;> simp [glEmbMat, colMat, mul_apply, Fin.sum_univ_castSucc, mulVec, dotProduct]
-  · simp [glEmbMat, colMat, mul_apply, hj]
+    induction i using Fin.lastCases <;> simp [glEmbMat, colMat, Matrix.mul_apply, Fin.sum_univ_castSucc, mulVec, dotProduct]
+  · simp [glEmbMat, colMat, Matrix.mul_apply, hj]
 
 theorem colMat_mul_glEmbMat (n : ℕ) (A : Matrix (Fin n) (Fin n) k) (w : Fin n → k) :
     colMat k n w * glEmbMat k n A = colMat k n w := by
   ext i j
-  induction j using Fin.lastCases <;> simp [colMat, glEmbMat, mul_apply, Fin.sum_univ_castSucc, Fin.castSucc_ne_last]
+  induction j using Fin.lastCases <;> simp [colMat, glEmbMat, Matrix.mul_apply, Fin.sum_univ_castSucc, Fin.castSucc_ne_last]
 
 theorem glEmb_mul_unip' (n : ℕ) (g : GL (Fin n) k) (v : Multiplicative (Fin n → k)) :
     glEmb k n g * unip k n v =
@@ -107,7 +111,7 @@ theorem qEntry_mul (n : ℕ) (a b : Mir k (n + 1)) (ha : mirabolicProjection k (
   have hb : ((b : GL (Fin (n + 2)) k) : Matrix (Fin (n + 2)) (Fin (n + 2)) k) (Fin.last (n + 1)) (Fin.last (n + 1)) = 1 := by
     have := congrFun ((mem_Mir_iff k _).1 b.2) (Fin.last (n + 1))
     simpa [eLast] using this
-  simp only [qEntry, Units.val_mul, mul_apply, Fin.sum_univ_castSucc (n := n + 1), ha', hb, mul_one]
+  simp only [qEntry, Units.val_mul, Matrix.mul_apply, Fin.sum_univ_castSucc (n := n + 1), ha', hb, mul_one]
   simp [eLast, Pi.single_apply, add_comm]
 
 def qChar (ψ : AddChar k Circle) (n : ℕ) : Q k n →* ℂˣ where
@@ -133,17 +137,12 @@ theorem levi_normalises (n : ℕ) (m : GL (Fin n) k) (u : MirUin k n) :
   rw [hv', glEmb_mul_unip', mul_inv_cancel_right]
   exact ⟨_, rfl⟩
 
-variable (k) in
 
+variable (k) in
 def psiMinus {n : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (τ : Representation ℂ (Mir k n) V) :
     Representation ℂ (GL (Fin n) k) (TwJacquet τ (MirUin k n) 1) :=
   twAct τ (MirUin k n) 1 (levi k n) (levi_normalises n)
 
-variable (k) in
-
-def psiPlus {n : ℕ} {W : Type} [AddCommGroup W] [Module ℂ W] (σ : Representation ℂ (GL (Fin n) k) W) :
-    Representation ℂ (Mir k n) W :=
-  σ.comp (mirabolicProjection k n)
 
 theorem levi_stab (ψ : AddChar k Circle) (n : ℕ) (m : Mir k n) (u : MirUin k (n + 1)) :
     ∃ h : ((levi k (n + 1)).comp (Mir k n).subtype) m * (u : Mir k (n + 1)) *
@@ -162,15 +161,15 @@ theorem levi_stab (ψ : AddChar k Circle) (n : ℕ) (m : Mir k n) (u : MirUin k 
   simp only [toAdd_ofAdd]
   rw [mulVec_last_of_mem k _ m.2]
 
-variable (k) in
 
+variable (k) in
 def phiMinus (ψ : AddChar k Circle) {n : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V]
     (τ : Representation ℂ (Mir k (n + 1)) V) :
     Representation ℂ (Mir k n) (TwJacquet τ (MirUin k (n + 1)) (mirChar k ψ n)) :=
   twAct τ (MirUin k (n + 1)) (mirChar k ψ n) ((levi k (n + 1)).comp (Mir k n).subtype) (levi_stab ψ n)
 
-variable (k) in
 
+variable (k) in
 def qRep (ψ : AddChar k Circle) {n : ℕ} {W : Type} [AddCommGroup W] [Module ℂ W] (σ : Representation ℂ (Mir k n) W) :
     Representation ℂ (Q k n) W where
   toFun q := ((qChar k ψ n q : ℂˣ) : ℂ) • σ (qProj k n q)
@@ -180,20 +179,10 @@ def qRep (ψ : AddChar k Circle) {n : ℕ} {W : Type} [AddCommGroup W] [Module �
     simp only [map_mul, Units.val_mul, Module.End.mul_apply, map_smul, smul_smul, LinearMap.smul_apply]
     rw [mul_comm]
 
-variable (k) in
 
-def phiPlus (ψ : AddChar k Circle) {n : ℕ} {W : Type} [AddCommGroup W] [Module ℂ W] (σ : Representation ℂ (Mir k n) W) :
-    Representation ℂ (Mir k (n + 1)) (cIndSpace (Q k n) (qRep k ψ σ)) :=
-  cInd (Q k n) (qRep k ψ σ)
+
 
 variable (k) in
-
-def phiHat (ψ : AddChar k Circle) {n : ℕ} {W : Type} [AddCommGroup W] [Module ℂ W] (σ : Representation ℂ (Mir k n) W) :
-    Representation ℂ (Mir k (n + 1)) (smoothPart (ind (Q k n) (qRep k ψ σ))) :=
-  smInd (Q k n) (qRep k ψ σ)
-
-variable (k) in
-
 structure MRep (n : ℕ) where
   V : Type
   [acg : AddCommGroup V]
@@ -202,30 +191,30 @@ structure MRep (n : ℕ) where
 
 attribute [instance] MRep.acg MRep.mod
 
-variable (k) in
 
+variable (k) in
 def MRep.phiM (ψ : AddChar k Circle) {n : ℕ} (τ : MRep k (n + 1)) : MRep k n :=
   ⟨_, phiMinus k ψ τ.ρ⟩
 
-variable (k) in
 
+variable (k) in
 def iterPhi (ψ : AddChar k Circle) {n : ℕ} : (j : ℕ) → MRep k (n + j) → MRep k n
   | 0, τ => τ
   | j + 1, τ => iterPhi ψ j (MRep.phiM k ψ τ)
 
-variable (k) in
 
+variable (k) in
 def derivM (ψ : AddChar k Circle) {n : ℕ} (j : ℕ) (τ : MRep k (n + j)) :
     Representation ℂ (GL (Fin n) k) (TwJacquet (iterPhi k ψ j τ).ρ (MirUin k n) 1) :=
   psiMinus k (iterPhi k ψ j τ).ρ
 
-variable (k) in
 
+variable (k) in
 def resM {n : ℕ} {V : Type} [AddCommGroup V] [Module ℂ V] (π : Representation ℂ (GL (Fin (n + 1)) k) V) : MRep k n :=
   ⟨V, π.comp (Mir k n).subtype⟩
 
-variable (k) in
 
+variable (k) in
 def deriv (ψ : AddChar k Circle) {n : ℕ} (j : ℕ) {V : Type} [AddCommGroup V] [Module ℂ V]
     (π : Representation ℂ (GL (Fin (n + j + 1)) k) V) :
     Representation ℂ (GL (Fin n) k) (TwJacquet (iterPhi k ψ j (resM k π)).ρ (MirUin k n) 1) :=

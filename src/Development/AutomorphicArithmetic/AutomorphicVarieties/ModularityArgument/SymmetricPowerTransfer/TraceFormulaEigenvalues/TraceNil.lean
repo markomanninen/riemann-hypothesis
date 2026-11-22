@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Module
 
@@ -38,11 +42,14 @@ private theorem exists_prod_range_iterate_eq_zero_of_commute_of_isNilpotent (n :
     (hn : ∀ a, IsNilpotent (n a)) (a : Λ) :
     ∃ m : ℕ, ((List.range m).map (fun i => n (σ^[i] a))).prod = 0 := by
   let A := Algebra.adjoin ℂ (Set.range n)
-  letI : CommRing A := Algebra.adjoinCommRingOfComm ℂ (by
-    rintro _ ⟨x, rfl⟩ _ ⟨y, rfl⟩
+  letI : IsMulCommutative A := Algebra.isMulCommutative_adjoin ℂ (by
+    rintro _ ⟨x, rfl⟩ _ ⟨y, rfl⟩ _
     exact hc x y)
+  letI : CommRing A := by
+    open scoped IsMulCommutative in
+    exact inferInstance
   haveI : IsArtinianRing A := IsArtinianRing.of_finite ℂ A
-  obtain ⟨m, hm⟩ := IsArtinianRing.isNilpotent_nilradical (R := A)
+  obtain ⟨m, hm⟩ := IsArtinianRing.isNilpotent_nilradical A
   let g : ℕ → A := fun i => ⟨n (σ^[i] a), Algebra.subset_adjoin ⟨σ^[i] a, rfl⟩⟩
   have hmem : ∀ i, g i ∈ nilradical A := by
     intro i
@@ -126,6 +133,6 @@ theorem trace_Vg {u : Λ → End ℂ M} (hc : ∀ a b, Commute (u a) (u b)) (χ 
       Submodule.coe_add, Submodule.coe_smul, key, LinearMap.sub_apply,
       Module.algebraMap_end_apply]
     abel
-  rw [hsplit, map_add, map_smul, trace_nil N T σ hNc hNn hTN a, zero_add, smul_eq_mul, mul_comm]
+  rw [hsplit, map_add (f := _), map_smul, trace_nil N T σ hNc hNn hTN a, zero_add, smul_eq_mul, mul_comm]
 
 end UpperTheory.V.Z.Sym.Tf

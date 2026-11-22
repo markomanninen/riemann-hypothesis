@@ -1,4 +1,8 @@
-import Formalism.GradedWeylDivisibility.StatementC
+module
+
+public import Formalism.GradedWeylDivisibility.StatementC
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -20,7 +24,7 @@ theorem lcdeg_degreeOf_aeval_le {σ τ R : Type*} [CommRing R] (f : σ → MvPol
     degreeOf c (aeval f p) ≤ d := by
   classical
   rw [aeval_def, eval₂_eq]
-  have key : ∀ m ∈ p.support, degreeOf c (algebraMap R (MvPolynomial τ R) (coeff m p) *
+  have key : ∀ m ∈ p.support, degreeOf c (algebraMap R (MvPolynomial τ R) (AddMonoidAlgebra.coeff p m) *
       ∏ v ∈ m.support, f v ^ m v) ≤ d := by
     intro m hm
     rw [algebraMap_eq]

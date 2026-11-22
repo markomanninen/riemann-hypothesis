@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoDefs
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LengthEqLengthInvariantsOfTorsionLevels
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LevelCohomology.SoDefs
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LengthEqLengthInvariantsOfTorsionLevels
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology IsLocalRing UpperTheory.V UpperTheory.V.Base UpperTheory.V.X
 
@@ -28,7 +32,7 @@ private theorem card_linearMap_zmod_eq_card (n : ℕ) [NeZero n] (N : Type) [Add
       simp [φ, smul_add, AddChar.map_add_eq_mul]
     let g : AddChar N ℂ → (N →ₗ[ZMod n] ZMod n) := fun ψ =>
       AddMonoidHom.toZModLinearMap n (AddMonoidHom.mk' (fun x => AddChar.zmodAddEquiv.symm (φ ψ x))
-        (fun x y => by rw [hφ, map_add]))
+        (fun x y => by rw [hφ, map_add (f := _)]))
     have hg : Function.Injective g := by
       intro ψ ψ' h
       ext x
@@ -47,7 +51,9 @@ theorem UpperTheory.V.X.So.locCard :
   obtain ⟨⟨e⟩, -, -, -, hb⟩ := hdual k Ω l r M A ρ v hr hA hcont
   refine ⟨h1, h2, ?_⟩
   have hτ' : τ = twDual ((cycMod k Ω l r).comp (Dec (F := k) A).subtype) ρ := by
-    ext g φ m
+    ext g φ
+    apply DFunLike.ext
+    intro m
     rw [hτ]
     rfl
   subst hτ'

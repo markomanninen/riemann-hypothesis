@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.CrdLBwLe
-import Formalism.SharpRestriction.GlobalSchurBounds.LinkTied
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.CoordinateLengths.CrdLBwLe
+public import Formalism.SharpRestriction.GlobalSchurBounds.LinkTied
+
+@[expose] public section
 
 noncomputable section
 

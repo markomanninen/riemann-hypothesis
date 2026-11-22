@@ -1,5 +1,10 @@
-import Development.AutomorphicSpectrum.Definitions.AdelicLattices.FactPrimes
-import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+module
+
+public import Development.AutomorphicSpectrum.Definitions.AdelicLattices.FactPrimes
+public import Development.AutomorphicSpectrum.Definitions.CommutativeAlgebra.LatNormGrLatNeZeroOfSpan
+
+@[expose] public section
+
 open NumberField GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl
 
 namespace PositivityTheory.Xgf
@@ -43,7 +48,7 @@ theorem padic_logIdeal_max_element : ∀ (E : Type) [Field E] [NumberField E] (p
     | mem x hx => exact hmax x hx
     | zero => simp
     | add x y _ _ hx hy =>
-      rw [map_add]
+      rw [map_add (f := _)]
       exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
     | smul r x _ hx =>
       rw [smul_eq_mul, map_mul, norm_mul]
@@ -69,7 +74,7 @@ theorem log_ideal_mul_span_map : ∀ (E : Type) [Field E] [NumberField E] (p : N
       refine Submodule.mul_induction_on (C := fun c => ‖j c‖ ≤ ‖j a‖ * ‖j b‖) hc (fun m hm n hn => ?_) (fun x y hx hy => ?_)
       · rw [map_mul, norm_mul]
         exact mul_le_mul (hla m hm) (hlb n hn) (norm_nonneg _) (norm_nonneg _)
-      · rw [map_add]
+      · rw [map_add (f := _)]
         exact (IsUltrametricDist.norm_add_le_max _ _).trans (max_le hx hy)
     rw [NI.logIdeal_eq j (I * J) (Ideal.mul_mem_mul haI hbJ) hle, ea, eb, map_mul, norm_mul,
       Real.log_mul (norm_ne_zero_iff.2 fun h => ha0 (hj (by rw [h, map_zero])))

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EmbGLMemRealSU
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EmbGLMemRealSU
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.Signature
+
+@[expose] public section
+
 open NumberField Matrix GlobalTheory.SUVol ReciprocityTheory.ChartRestriction.G.FD
 
 namespace GlobalTheory
@@ -32,7 +37,7 @@ theorem suLie_finrank_ge : ∀ {E : Type} [Field E] [NumberField E] [IsCMField E
       map_smul' := fun c X => by ext a b; simp [cc_F] }
   let φ : Matrix (Fin r) (Fin r) E →ₗ[F] Matrix (Fin r) (Fin r) E :=
     { toFun := fun X => Xᵀ * G + G * conjL X
-      map_add' := fun X Y => by simp only [map_add, transpose_add, Matrix.add_mul, Matrix.mul_add]; abel
+      map_add' := fun X Y => by simp only [map_add (f := _), transpose_add, Matrix.add_mul, Matrix.mul_add]; abel
       map_smul' := fun c X => by
         simp only [map_smul, transpose_smul, Matrix.smul_mul, Matrix.mul_smul, RingHom.id_apply, smul_add] }
 

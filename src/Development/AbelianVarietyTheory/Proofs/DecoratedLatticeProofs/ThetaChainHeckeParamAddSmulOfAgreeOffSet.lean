@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitarySatakeTransformEqOfBaseChangeSatakeParameStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.ChainParSucc
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeVecMemFixed
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.UnitarySatakeTransformEqOfBaseChangeSatakeParameStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -110,8 +114,8 @@ namespace GlobalTheory.ChainOnto
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-open GlobalTheory.LFun.ParLin in
 
+open GlobalTheory.LFun.ParLin in
 theorem isPar_add_smul : ∀ (D : D7) (c : Com D) (s : PiLocalization₂ D), (∀ (u u' : s.CC c) B B' (a : ℂ), IsPar u B → IsPar u' B' →
     (∀ w ∉ (GlobalTheory.LFun.above D.host.E (c.S : Set (HeightOneSpectrum (𝓞 D.host.F)))), B w = B' w) →
     u + a • u' ≠ 0 → IsPar (u + a • u') B) ∧ ∀ (u : s.CC c) B (a : ℂ), IsPar u B → a ≠ 0 → IsPar (a • u) B := by
@@ -154,5 +158,3 @@ theorem isPar_add_smul : ∀ (D : D7) (c : Com D) (s : PiLocalization₂ D), (�
     exact paramFun_smul (hu.2 v hu0) (by simpa using ha)
 
 end GlobalTheory.ChainOnto
-
-example : ∀ (D : D7) (c : GlobalTheory.ChainOnto.Com D) (s : GlobalTheory.ChainOnto.PiLocalization₂ D), (∀ (u u' : s.CC c) B B' (a : ℂ), GlobalTheory.ChainOnto.IsPar u B → GlobalTheory.ChainOnto.IsPar u' B' → (∀ w ∉ (GlobalTheory.LFun.above D.host.E (c.S : Set (HeightOneSpectrum (𝓞 D.host.F)))), B w = B' w) → u + a • u' ≠ 0 → GlobalTheory.ChainOnto.IsPar (u + a • u') B) ∧ ∀ (u : s.CC c) B (a : ℂ), GlobalTheory.ChainOnto.IsPar u B → a ≠ 0 → GlobalTheory.ChainOnto.IsPar (a • u) B := GlobalTheory.ChainOnto.isPar_add_smul

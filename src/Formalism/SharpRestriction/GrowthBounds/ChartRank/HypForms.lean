@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypInvLe
-import Formalism.LocalToGlobal.GlobalTheory.GL6.ValuationClassTranslateMem
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ChartRank.HypInvLe
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.ValuationClassTranslateMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,8 +54,8 @@ theorem law_wd (S : StepLevel F E σ J T f bad) (emb : ι → E →+* ℂ) (hc :
     map_mul, map_inv, Units.val_mul, ← mul_assoc, ← mul_assoc, mul_comm (S.chi κ1 : ℂ), mul_assoc (S.chi κ2 : ℂ), mul_comm ((S.chi κ1 : ℂˣ) : ℂ),
     Units.inv_mul, mul_one]
 
-open Classical in
 
+open Classical in
 theorem exists_form_of_law (S : StepLevel F E σ J T f bad) (emb : ι → E →+* ℂ) (hc : ∀ τ x, emb τ (σ x) = starRingEnd ℂ (emb τ x))
     (lam : ι → DomWeight n) (y0 : UPts σ J (FiniteAdeleRing (𝓞 F) F)) (v : Formalism.L2.Forms.Frames (gramC J emb) → ℂ)
     (hV : v ∈ ValC (gramC J emb) lam) (hv : LawAt S emb y0 v) : ∃ g ∈ AdForms S emb lam, g y0 = v := by
@@ -65,12 +69,12 @@ theorem exists_form_of_law (S : StepLevel F E σ J T f bad) (emb : ι → E →+
     intro x γ hγ κ e y
     have h : Pd x := ⟨(⟨γ, hγ⟩, κ), e⟩
     show (if h : Pd x then (S.chi h.choose.2 : ℂ) * v (frameTranslate emb hc h.choose.1.1⁻¹ ((UJ _ _).inv_mem h.choose.1.2) y) else 0) = _
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     exact law_wd S emb hc y0 v hv _ _ h.choose.1.2 hγ _ _ (h.choose_spec.symm.trans e) y
   have gzero : ∀ x, ¬ Pd x → ∀ y, g x y = 0 := by
     intro x h y
     show (if h : Pd x then (S.chi h.choose.2 : ℂ) * v (frameTranslate emb hc h.choose.1.1⁻¹ ((UJ _ _).inv_mem h.choose.1.2) y) else 0) = _
-    rw [dif_neg h]
+    rw [dite_eq_right h]
   refine ⟨g, Submodule.mem_inf.2 ⟨?_, ?_⟩, ?_⟩
   · intro γ' hγ' x x' κ' hx' y y' hy
     by_cases hP : Pd x

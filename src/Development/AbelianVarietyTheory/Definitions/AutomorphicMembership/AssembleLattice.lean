@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NuInRange
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SCuIsom
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NStageTrivialCharacterCoeffEq
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ResCharThetaJetPlaceDegOne
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NuInRange
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.SCuIsom
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.NStageTrivialCharacterCoeffEq
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ResCharThetaJetPlaceDegOne
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,7 +67,8 @@ def assemble (B : Base) (C : Cols B) (W : RowsRest B C) (V : DivStage B C W) (S 
   T_ne_pde := fun u => by rw [C.A_T]; exact B.T_ne_pde u
   Dstar_eq := C.A_Dstar
   clsLat := C.clsLat
-  clsLat_lat := C.clsLat_lat
+  clsLat_lat u i c :=
+    show Submodule.IsFullLattice B.host.E (C.clsLat u i c) from C.clsLat_lat u i c
   eMu := W.eMu
   eMt := W.eMt0
   perCol_base_eq_PtilCol := W.perCol_base_eq_PtilCol
@@ -159,29 +164,6 @@ def assemble (B : Base) (C : Cols B) (W : RowsRest B C) (V : DivStage B C W) (S 
 section
 variable (B : Base) (C : Cols B) (W : RowsRest B C) (V : DivStage B C W) (S : SStage B C W) (N : NStage B C W)
     (G : GJStage B C)
-
-theorem assemble_R : (assemble B C W V S N G).R = B.R := rfl
-theorem assemble_host : (assemble B C W V S N G).host = B.host := rfl
-theorem assemble_sp : (assemble B C W V S N G).sp = B.sp := rfl
-theorem assemble_rows : (assemble B C W V S N G).what₂ = W.what₂ := rfl
-theorem assemble_hc : (assemble B C W V S N G).hc = B.hc := rfl
-theorem assemble_hcW : (assemble B C W V S N G).hcW = B.hcW := rfl
-theorem assemble_u₀ : (assemble B C W V S N G).u₀ = B.u₀ := rfl
-theorem assemble_mem : (assemble B C W V S N G).mem = C.mem := rfl
-theorem assemble_div : (assemble B C W V S N G).div = V.div := rfl
-theorem assemble_embE : (assemble B C W V S N G).embE = B.embE := rfl
-theorem assemble_lattice : (assemble B C W V S N G).LL0 = B.LL0 := rfl
-theorem assemble_s : (assemble B C W V S N G).s = S.s := rfl
-theorem assemble_nd : (assemble B C W V S N G).nd = N.nd := rfl
-theorem assemble_loc : (assemble B C W V S N G).loc = N.loc := rfl
-theorem assemble_fm : (assemble B C W V S N G).fm = C.fm := rfl
-theorem assemble_jet : (assemble B C W V S N G).jet = G.jet := rfl
-theorem assemble_gx : (assemble B C W V S N G).gx = G.gx := rfl
-theorem assemble_vol : (assemble B C W V S N G).vol = G.vol := rfl
-theorem assemble_cd : (assemble B C W V S N G).cd = G.cd := rfl
-theorem assemble_dsig : (assemble B C W V S N G).dsig = S.dsig := rfl
-theorem assemble_chTw : (assemble B C W V S N G).chTw = C.chTw := rfl
-theorem assemble_cOf : (assemble B C W V S N G).cOf = B.cOf := rfl
 
 end
 

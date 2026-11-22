@@ -1,14 +1,19 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.ExistsCoprimeSmulCohomologyTwoGsKernel
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.ExistsCoprimeSmulCohomologyTwoGsKernel
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
 
 open CategoryTheory Limits NumberField IsDedekindDomain IntermediateField GroundTheory.Global
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
+
+local notation "ℚ̄" => AlgebraicClosure ℚ
 
 variable (K : FiniteSubfield) (S : Set (HeightOneSpectrum (𝓞 K.1)))
 
@@ -62,8 +67,11 @@ theorem mem_maxUnramifiedOutside_of_mem_invariantsGsKernel (a : unitsInvariantsG
       intro y hy
       exact (IntermediateField.mem_fixingSubgroup_iff _ _).1 hg _
         ((maxUnramifiedOutside K.1 ℚ̄ S).algebraMap_mem (⟨y, hy⟩ : K.1))
-    have hN : (⟨g, hK⟩ : K.1.fixingSubgroup) ∈ gsKernel K S :=
-      (mem_gsKernel_iff K S _).2 fun y hy => (IntermediateField.mem_fixingSubgroup_iff _ _).1 hg y hy
+    have hN : (⟨g, hK⟩ : K.1.fixingSubgroup) ∈ gsKernel K S := by
+      rw [MonoidHom.mem_ker]
+      refine AlgEquiv.ext fun y => Subtype.ext ?_
+      rw [gsRestrict_apply]
+      exact (IntermediateField.mem_fixingSubgroup_iff _ _).1 hg y y.2
     have := a.2 ⟨⟨g, hK⟩, hN⟩
     exact congrArg (fun z : Additive ℚ̄ˣ => ((Additive.toMul z : ℚ̄ˣ) : ℚ̄)) this
   rw [InfiniteGalois.fixedField_fixingSubgroup KS'] at h
@@ -93,8 +101,11 @@ theorem invariantsGsKernelFun_bijective : Function.Bijective (invariantsGsKernel
       (Additive.toMul y)), fun σ => ?_⟩, ?_⟩
     · apply Additive.toMul.injective
       apply Units.ext
-      have hσ := (mem_gsKernel_iff K S σ.1).1 σ.2 _ (Additive.toMul y : (maxUnramifiedOutside K.1 ℚ̄ S)ˣ).1.2
-      exact hσ
+      have hσ : gsRestrict K S σ.1 = 1 := MonoidHom.mem_ker.mp σ.2
+      have hy := congrArg (fun τ : galUnramifiedOutside K.1 ℚ̄ S =>
+        (τ (Additive.toMul y).val : ℚ̄)) hσ
+      rw [gsRestrict_apply] at hy
+      exact hy
     · apply Additive.toMul.injective
       apply Units.ext
       apply Subtype.ext
@@ -143,8 +154,8 @@ theorem cohomologyMapAlong_invariantsGsKernelMor_comp_gsBrauerInfl (n : ℕ) :
   apply Units.ext
   exact coe_invariantsGsKernelFun K S a
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem eq_zero_of_h3_gsUnits (ℓ : ℕ) (hℓ : ℓ.Prime)
     (hS : ∀ v : HeightOneSpectrum (𝓞 K.1), ((ℓ : ℕ) : 𝓞 K.1) ∈ v.asIdeal → v ∈ S)
     (x : cohomology (galUnits K.1 (maxUnramifiedOutside K.1 ℚ̄ S)) 3) (k : ℕ) (hx : ℓ ^ k • x = 0) :

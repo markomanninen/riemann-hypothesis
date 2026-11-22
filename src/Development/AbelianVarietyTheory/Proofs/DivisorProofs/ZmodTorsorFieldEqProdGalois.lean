@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalPairSplitSum
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OriginIdeal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalPairSplitSum
+
+@[expose] public section
+
 open IsLocalRing Polynomial
 open scoped TensorProduct
 
@@ -94,7 +99,11 @@ theorem factor_isGalois_dvd [NeZero q] {L : Type} [Field L] [Algebra K L] [Finit
     IsGalois K L ∧ Module.finrank K L ∣ q := by
   classical
   let Ω := AlgebraicClosure K
-  let σ0 : L →ₐ[K] Ω := IsAlgClosed.lift
+  let σ0 : L →ₐ[K] Ω := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have hσ0inj : Function.Injective σ0 := σ0.toRingHom.injective
   let P : Multiplicative (ZMod q) → Prop := fun g => ∀ a, π a = 0 → π (act g a) = 0
   have hPmul : ∀ g h, P g → P h → P (g * h) := by
@@ -167,8 +176,8 @@ theorem factor_isGalois_dvd [NeZero q] {L : Type} [Field L] [Algebra K L] [Finit
 
 end GlobalTheory.KeyOriginCut.TorsorField
 
-open GlobalTheory.KeyOriginCut.TorsorField in
 
+open GlobalTheory.KeyOriginCut.TorsorField in
 theorem GlobalTheory.KeyOriginCut.torsor_field_eq_prod_galois :
     ∀ (K M : Type) [Field K] [CommRing M] [Algebra K M] (q : ℕ)
     (act : Multiplicative (ZMod q) →* (M ≃ₐ[K] M)), 0 < q →

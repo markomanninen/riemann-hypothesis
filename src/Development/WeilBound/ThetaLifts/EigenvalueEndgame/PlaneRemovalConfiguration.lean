@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.CTSmallCone
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ section Space
 
 variable {d d₁ : ℕ}
 
-variable (σ) in
 
+variable (σ) in
 structure IsPlane (H : Plane E d d₁) (Y : Spc F E d) (Y₁ : Spc F E d₁) : Prop where
   rank : d = d₁ + 2
   xx : form σ Y.J H.x H.x = 0
@@ -27,14 +31,14 @@ structure IsPlane (H : Plane E d d₁) (Y : Spc F E d) (Y₁ : Spc F E d₁) : P
   gram : H.ιᵀ * Y.J * H.ι.map σ = Y₁.J
   nondeg : Y₁.J.det ≠ 0
 
-variable (σ) in
 
+variable (σ) in
 def FinK (B : Base F E) (W : Spc F E d) : Set (UA σ W.J) := {k | ∀ w, Commute ((mat k).map (piInf (B.emb w))) (W.θ w)}
 
 def IsAut {W : Spc F E d} (f : UA σ W.J → ℂ) : Prop := Continuous f ∧ ∀ γ ∈ ratU σ W.J, ∀ h, f (γ * h) = f h
 
-variable (σ) in
 
+variable (σ) in
 def unipU (W : Spc F E d) (U : Submodule E (Fin d → E)) : Subgroup (UA σ W.J) :=
   Subgroup.closure {m | (∀ u ∈ U, mat m *ᵥ incV F u = incV F u) ∧ ∀ z : Fin d → E, (∀ u ∈ U, form σ W.J z u = 0) →
     mat m *ᵥ incV F z - incV F z ∈ Submodule.span (AE F E) (incV F '' (U : Set (Fin d → E)))}

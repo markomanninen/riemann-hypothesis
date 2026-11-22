@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspRapidDecaySiegelGL
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.ColumnConjugationMeasure
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.CuspDiscreteDecompositionGL
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CuspRapidDecaySiegelGL
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,7 +19,7 @@ namespace PositivityTheory.AdelicQuotientData
 
 namespace PRSPole
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E]
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E]
 
 theorem bnd (hJS : GlobalTheory.Published.JacquetShalikaBound) {m : ℕ} (π : CuspSub E m) (hπ : IsNormalised π)
     (S : Finset (HeightOneSpectrum (𝓞 E))) (α : Off E S → Fin m → ℂˣ) (hα : SatOff (CG.mk π) S α) :
@@ -46,7 +50,9 @@ theorem rspole_of : GlobalTheory.Published.JacquetShalikaBound → jumpWindows.G
   obtain ⟨φ₀', hφ₀', h', φ', hφ'e, hsec⟩ := hsec β hβ
   have hαb := PRSPole.bnd hJS π hπ S α hα
   have hβb := PRSPole.bnd hJS π' hπ' S β hβ
-  let μ : Measure (GA E k) := Measure.haar
+  let μ : Measure (GA E k) := by
+    set_option synthInstance.maxHeartbeats 400000 in
+      exact Measure.haar
   obtain ⟨⟨b, hb⟩, -⟩ := hW0 E k μ hk
   rcases hkm.lt_or_eq with hlt | heq
   · obtain ⟨ι, hι⟩ := ((hK5e E m k hkm).1 (Ad E))

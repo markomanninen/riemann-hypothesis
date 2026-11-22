@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.CentralCharts.IsCoeffAtOfSmul
-import Development.WeilBound.CoreStatements.CentralCharts.ChartAnalytic
-import Development.WeilBound.CoreStatements.CentralCharts.OneLeDimFl
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptFlagXdegStatement
+module
+
+public import Development.WeilBound.CoreStatements.CentralCharts.IsCoeffAtOfSmul
+public import Development.WeilBound.CoreStatements.CentralCharts.ChartAnalytic
+public import Development.WeilBound.CoreStatements.CentralCharts.OneLeDimFl
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeCptFlagXdegStatement
+
+@[expose] public section
 
 noncomputable section
 

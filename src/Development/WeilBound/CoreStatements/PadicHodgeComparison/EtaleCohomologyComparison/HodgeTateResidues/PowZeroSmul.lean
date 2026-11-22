@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.FirstChernHodgeTateCompatAlt
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.RedSubVal
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.FirstChernHodgeTateCompatAlt
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.HodgeTateResidues.RedSubVal
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -99,11 +103,12 @@ end Rat
 end Mul
 
 variable (l K) in
-theorem mulRho : MulRho l K where
-  sh L M _ _ _ k h x w hr := rho_sh L M k h x w hr
-  sh_μ L M _ _ _ k h a ha y := mu_sh L.γB M.q (L.QB M) L.tB_mem k h a ha y
-  cup L M _ _ _ _ _ h x y w w' hr hr' := rho_cup L M h x y w w' hr hr'
-  cup_μ L M _ _ _ _ _ _ _ _ h ha h1 h2 y y' := mu_cup L.γB M.q (L.QB M) L.tB_mem h ha h1 h2 y y'
-  one L M := rho_one L M
+theorem mulRho : MulRho l K :=
+  ⟨fun {_ _} L M {_ _ _} k h x w hr => rho_sh L M k h x w hr,
+   fun {_ _} L M {_ _ _} k h a ha y => mu_sh L.γB M.q (L.QB M) L.tB_mem k h a ha y,
+   fun {_ _} L M {_ _ _ _ _} h x y w w' hr hr' => rho_cup L M h x y w w' hr hr',
+   fun {_ _} L M {_ _ _ _ _ _ _ _} h ha h1 h2 y y' =>
+     mu_cup L.γB M.q (L.QB M) L.tB_mem h ha h1 h2 y y',
+   fun {_ _} L M => rho_one L M⟩
 
 end CrystallineSemistableComparison.HT

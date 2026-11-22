@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CommuteCenterRtInfGL
-import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.AbsKill
-import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.ExistsFinMap
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CoeffProdOneAdd
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.SliceShift
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CommuteCenterRtInfGL
+public import Development.AutomorphicArithmetic.Foundations.Convolution.BlockHeckeSlices.CuspidalNormBounds.AbsKill
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PolynomialCoefficientBounds.ExistsFinMap
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CoeffProdOneAdd
+
+@[expose] public section
 
 open NumberField
 
@@ -56,7 +60,8 @@ variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {S : Set (Pl 
 private theorem ev_hEP (d : Dat S n) (z : Fin d.len → ℂ) (k : Pl E × Fin n) :
     ev z (d.hEP k) = d.ptH (fun l => z l + d.rho l) k := by
   have hq : qc k.1 ≠ 0 := Nat.cast_ne_zero.2 (GlobalTheory.LFun.qV_ne_zero k.1)
-  rw [Dat.hEP, map_sum, Dat.ptH, Dat.ptS, esymm_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Dat.hEP, map_sum, Dat.ptH, Dat.ptS, esymm_sum]
   refine Finset.sum_congr rfl fun a _ => ?_
   have e : ∀ (v : Fin d.len → ℝ) (c : ℂ), ev z (AddMonoidAlgebra.single v (MvPolynomial.C c)) =
       c * Complex.exp (∑ l, (v l : ℂ) * z l) := fun v c => by
@@ -83,7 +88,7 @@ private theorem supp_good {F : KF ((E →+* ℂ) × Fin n) (Pl E × Fin n)}
   intro x hx
   refine hF x ((MvPolynomial.mem_vars_iff_mem_support x).2 ⟨β, ?_, hx⟩)
   by_contra hn
-  have h := congrArg (MvPolynomial.coeff β) (hG k)
+  have h := congrArg (AddMonoidAlgebra.coeff · β) (hG k)
   rw [MvPolynomial.coeff_map, pieceK, MvPolynomial.coeff_sum, Finset.sum_eq_zero fun γ hγ => by
     rw [MvPolynomial.coeff_monomial, if_neg fun e : γ = β => hn (e ▸ hγ)]] at h
   exact MvPolynomial.mem_support_iff.1 hβ (UpperTheory.ConvolutionTheory.FX.blockE_inj (E →+* ℂ) n (h.trans (map_zero _).symm))

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsMultOfFintype
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveKernelCompositionStatement
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ActEqSumOfKernel
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralConvApplyEq
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KRegConv
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConvRightEquivariant
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveSt
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsMultOfFintype
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.WaveKernelCompositionStatement
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ActEqSumOfKernel
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IntegralConvApplyEq
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KRegConv
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConvRightEquivariant
+
+@[expose] public section
 
 noncomputable section
 

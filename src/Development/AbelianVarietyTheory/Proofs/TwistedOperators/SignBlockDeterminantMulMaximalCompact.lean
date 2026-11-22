@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsVacFOfIsVacVec
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsVacFOfIsVacVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -54,7 +58,8 @@ theorem subst_one_mul {k₁ k₂ : Matrix (Fin b) (Fin b) ℂ} (h₁ : k₁ ∈ 
   obtain ⟨ρ, i, j⟩ := v
   by_cases hρ : ρ = τ
   · subst hρ
-    rw [AlgHom.comp_apply, subst_one_X, subst_one_X, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [AlgHom.comp_apply, subst_one_X, subst_one_X, map_sum]
     simp only [map_smul, subst_one_X, Finset.smul_sum, smul_smul]
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun l' _ => ?_

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.Statements
-import GroundTheory.HeightsAndTheta.Heights.IntegralModels.IsIsoPullbackObjUnitToUnit
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.Statements
+public import GroundTheory.HeightsAndTheta.Heights.IntegralModels.IsIsoPullbackObjUnitToUnit
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.Model
@@ -38,9 +43,9 @@ theorem FiniteIntegralClosure.scheme_of_alg
     ∀ (X : Scheme.{0}) [IsIntegral X], IsFiniteTypeOverZ X →
       ∀ (L : Type) [Field L] [Algebra X.functionField L] [FiniteDimensional X.functionField L]
         (U : X.Opens), IsAffineOpen U → ∀ hU : Nonempty U,
+        letI := hU
         let : Algebra Γ(X, U) L :=
-          ((algebraMap X.functionField L).comp (@algebraMap Γ(X, U) X.functionField _ _ (by
-            haveI := hU; infer_instance))).toAlgebra
+          ((algebraMap X.functionField L).comp (algebraMap Γ(X, U) X.functionField)).toAlgebra
         Module.Finite Γ(X, U) (integralClosure Γ(X, U) L) := by
   intro X _ hX L _ _ _ U hUa hU
   have := hU
@@ -78,9 +83,9 @@ theorem FiniteIntegralClosure.normalization_of_scheme
     (h : ∀ (X : Scheme.{0}) [IsIntegral X], IsFiniteTypeOverZ X →
       ∀ (L : Type) [Field L] [Algebra X.functionField L] [FiniteDimensional X.functionField L]
         (U : X.Opens), IsAffineOpen U → ∀ hU : Nonempty U,
+        letI := hU
         let : Algebra Γ(X, U) L :=
-          ((algebraMap X.functionField L).comp (@algebraMap Γ(X, U) X.functionField _ _ (by
-            haveI := hU; infer_instance))).toAlgebra
+          ((algebraMap X.functionField L).comp (algebraMap Γ(X, U) X.functionField)).toAlgebra
         Module.Finite Γ(X, U) (integralClosure Γ(X, U) L)) :
     _root_.GroundTheory.Heights₂.Heights.Model.FiniteNormalization.Statement := by
   intro Z _ f _ _ L _ _ _

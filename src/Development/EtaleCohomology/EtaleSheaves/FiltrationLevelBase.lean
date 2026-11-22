@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.ArchimedeanCokernel
-import Development.EtaleCohomology.EtaleSheaves.ArchimedeanRelations
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.ArchimedeanCokernel
+public import Development.EtaleCohomology.EtaleSheaves.ArchimedeanRelations
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite Simplicial CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -55,7 +59,7 @@ theorem Filt_of (h0 : Step0) : LateralTheory.E.FiltrationLevelInjectivity.Filt :
       have e : (-((((m + 1 : ℕ) : ℤ)) + 1)) = -((m : ℤ) + 1) - 1 := by push_cast; ring
       rw [e, δ_add, ← sub_sub]
       exact hc'
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro x hx
   obtain ⟨z, rfl⟩ := CohomologyClass.mk_surjective x
   obtain ⟨c, hc1, hc2⟩ := claim (n.toNat + 1) z hx
@@ -79,8 +83,5 @@ theorem Filt_of (h0 : Step0) : LateralTheory.E.FiltrationLevelInjectivity.Filt :
       · exact (LateralTheory.E.CechFiltPf.res_isZero R F q (by omega)).eq_of_tgt _ _
   rw [sub_eq_zero] at hz0
   exact hz0.symm
-
-theorem goal_of (h0 : Step0) : LateralTheory.E.RelDescPf.LevelInj :=
-  LateralTheory.E.FiltrationLevelInjectivity.LevelInj_of (Filt_of h0) LateralTheory.E.TruncationCokernelLevelRelations.LvlRel_of
 
 end LateralTheory.E.FiltrationLevelBase

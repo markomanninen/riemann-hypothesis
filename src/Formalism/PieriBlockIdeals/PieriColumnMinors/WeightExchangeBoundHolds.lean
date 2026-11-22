@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PieriBlockIdeals.Statement
+module
+
+public import Mathlib
+public import Formalism.PieriBlockIdeals.Statement
+
+@[expose] public section
 
 noncomputable section
 
@@ -152,7 +156,7 @@ theorem shiftSumBound_holds : KapSum := by
     rw [hF]
     conv_lhs => rw [← Multiset.filter_add_not (p := fun u => u ∈ Finset.Icc b (b + (t : ℤ) - 1))
       (s := Multiset.filter (fun u => g u ≤ hi) U.val)]
-    rw [Multiset.map_add, hfirst, Multiset.map_map]
+    rw [Multiset.map_add (f := _), hfirst, Multiset.map_map]
     congr 1
     exact Multiset.map_congr rfl fun s _ => by
       have hs := s.isLt

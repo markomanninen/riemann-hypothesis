@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -151,7 +155,7 @@ theorem exists_sub_mul_mem (hp : p.Prime) (h0 : (p : S) ∈ maximalIdeal S)
       map_zero' := by rw [map_zero, zero_pow hq]
       map_add' := fun x y => by
         obtain ⟨r, hr⟩ := exists_add_pow_prime_pow_eq hp (π x) (π y) n
-        rw [map_add, hr, hp0]
+        rw [map_add (f := _), hr, hp0]
         simp }
   have hρ : Function.Surjective ρ := fun x => by
     obtain ⟨x, rfl⟩ := residue_surjective x
@@ -187,7 +191,7 @@ theorem exists_sub_mul_mem (hp : p.Prime) (h0 : (p : S) ∈ maximalIdeal S)
         exact ((hπ _ 0 (by simpa using hx)).trans (map_zero π)).symm
     | zero => rw [map_zero, map_zero]; exact (map_zero π).symm
     | one => rw [map_one, map_one]; exact (map_one π).symm
-    | add x y hx hy ihx ihy => rw [map_add, map_add, ihx, ihy, ← map_add]; rfl
+    | add x y hx hy ihx ihy => rw [map_add (f := _), map_add (f := _), ihx, ihy, ← map_add (f := _)]; rfl
     | neg x hx ihx => rw [map_neg, map_neg, ihx, ← map_neg]; rfl
     | mul x y hx hy ihx ihy => rw [map_mul, map_mul, ihx, ihy, ← map_mul]; rfl
   have h3 := key a ha

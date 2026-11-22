@@ -1,8 +1,12 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.JumpsInLetterOfEvenIndex
-import Formalism.SharpRestriction.LevelLetterCocycles.DvOZeroHigh
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExistsXPowMul
-import Formalism.SharpRestriction.LevelLetterCocycles.EvaluationAtUniformizerPower
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.JumpsInLetterOfEvenIndex
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvOZeroHigh
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.RkMultVNonneg
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.ExistsXPowMul
+public import Formalism.SharpRestriction.LevelLetterCocycles.EvaluationAtUniformizerPower
+
+@[expose] public section
 
 noncomputable section
 
@@ -156,7 +160,7 @@ theorem gE_mem (hE : Formalism.MainNotions.RamifiedCoefficientChains.DcrisExactS
   have hanti : Antitone Fil := filLev_anti W T₂ i
   have hLBf : Formalism.MainNotions.N.Pv.LocalLengthBound.Ser.LB 0 df := by
     intro t ht
-    rw [hZ t (by omega), if_neg (by omega)]
+    rw [hZ t (by omega), ite_eq_right (by omega)]
   set Ff := Formalism.MainNotions.N.Pv.LocalLengthBound.Ser.smulS (U ^ h) df with hFf
   set E := Formalism.MainNotions.N.Pv.LocalLengthBound.Ser.smulS (U ^ c) dg with hEdef
   have hF_mem : ∀ s : ℤ, s < ((h + η : ℕ) : ℤ) → Ff s ∈ Fil (u j) := by
@@ -190,7 +194,7 @@ theorem gE_mem (hE : Formalism.MainNotions.RamifiedCoefficientChains.DcrisExactS
     refine ιDi_le_fil W hCA.1 T₂ i h (fun τ hτ a' ha' => ?_) a ha
     have hw2 := Formalism.MainNotions.N.Pv.LocalLengthBound.rk_jumps₂ W hE hC hQ hS i τ hτ a' ha'
     unfold JumpWinS at hw2
-    rw [if_pos hie] at hw2
+    rw [ite_eq_left hie] at hw2
     simp only [Set.mem_union, Set.mem_Icc] at hw2
     rw [hhdef]; push_cast at hw2 ⊢
     omega

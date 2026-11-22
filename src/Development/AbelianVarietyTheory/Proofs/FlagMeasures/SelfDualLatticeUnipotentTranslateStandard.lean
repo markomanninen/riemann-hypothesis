@@ -1,11 +1,16 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EichlerIsometry
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DualInterSelfDualHermitianLatticeSubspace
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToLePerp
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.FractionFieldToGenericStalkAlgebraMapEq
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsHermND
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.ComplementReferenceCompactSubgroup
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.EichlerIsometry
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.DualInterSelfDualHermitianLatticeSubspace
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IsPrincipalIdealRingOfHenselian
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.SpanToLePerp
+
+@[expose] public section
+
 open ValuativeRel Formalism.MainNotions.S.Loc GlobalTheory.HL MeasureTheory
 open scoped Pointwise ENNReal Classical
 
@@ -69,8 +74,8 @@ theorem expand {x : S.V} (hx : x ∈ S.spanTo g r) :
   simp only [hf_sum_l, hf_smul_l, dual]
   simp [Fin.sum_univ_castSucc, h0]
 
-include gram dual iso in
 
+include gram dual iso in
 theorem exists_move [IsNonarchimedeanLocalField F] [CharZero F] (y : Fin r → S.V)
     (dy : ∀ a j, hf L S.Hm (g a) (y j) = if a = j.castSucc then 1 else 0)
     (iy : ∀ i j, hf L S.Hm (y i) (y j) = 0) (m : ℕ) :
@@ -138,8 +143,8 @@ theorem exists_move [IsNonarchimedeanLocalField F] [CharZero F] (y : Fin r → S
           simp
     · exact ⟨n, hn, hg, fun j _ => h j (by have := j.2; omega)⟩
 
-include gram dual iso in
 
+include gram dual iso in
 theorem core [IsNoetherianRing L.O] (Λ : Submodule L.O S.V) (hfg : Λ.FG)
     (hsd : ∀ y, (∀ x ∈ Λ, hf L S.Hm x y ∈ L.O) ↔ y ∈ Λ) (hg : ∀ b, g b ∈ Λ) (hgs : ∀ j, gs j ∈ Λ)
     (c : S.V) (hc : c ∈ Λ) (hc' : ∀ b, hf L S.Hm (g b) c = if b = Fin.last r then 1 else 0) :
@@ -281,7 +286,8 @@ theorem lift_of_frame [IsNonarchimedeanLocalField F] [CharZero F] (Λ : Submodul
     rw [e1, e2]
     linear_combination (-hf L S.Hm (c i.castSucc) (c j.castSucc)) * hσ2
   have hyΛ : ∀ j, n (y j) ∈ Λ := fun j => by
-    simp only [hy, map_sub, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [hy, map_sub, map_sum, map_smul]
     refine sub_mem (hcΛ _) (sum_mem_O S _ _ (fun i => mul_mem hσ ?_) fun i => (hng _).1)
     rw [← hni]; exact hint _ (hcΛ _) _ (hcΛ _)
   obtain ⟨m, hm, hmg, hmy⟩ := exists_move S g gs T gram dual iso y dy iy r
@@ -300,7 +306,10 @@ theorem lift_of_frame [IsNonarchimedeanLocalField F] [CharZero F] (Λ : Submodul
     (fun z => by
       rw [hmem, ← hΛ.2]
       refine ⟨fun h x hx => ?_, fun h x hx => ?_⟩
-      · have := h ((n * m).symm x) ((hmem _).2 (by simpa using hx))
+      · have := h ((n * m).symm x) ((hmem _).2 (by
+          change (n * m) ((n * m).symm x) ∈ Λ
+          rw [LinearEquiv.apply_symm_apply]
+          exact hx))
         rwa [← hNi, LinearEquiv.apply_symm_apply] at this
       · rw [← hNi]; exact h _ ((hmem _).1 hx))
     (fun b => (hmem _).2 (by change n (m (g b)) ∈ Λ; rw [hmg]; exact (hng b).1))

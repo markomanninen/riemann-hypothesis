@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsDiscreteValuationRingOfMaximalIdealEqSpa
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GlobalSectionsRankAlgClosed
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsIsDiscreteValuationRingOfMaximalIdealEqSpa
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -27,7 +31,8 @@ private lemma mem_smul_top_iff_of_linearEquiv_pi {V M ι : Type*} [CommRing V] [
   · intro hx
     have hsum : x = ∑ i, e x i • e.symm (fun j => if i = j then 1 else 0) := by
       apply e.injective
-      simp only [map_sum, map_smul, LinearEquiv.apply_symm_apply]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul, LinearEquiv.apply_symm_apply]
       exact pi_eq_sum_univ (e x)
     rw [hsum]
     exact Submodule.sum_mem _ fun i _ => Submodule.smul_mem_smul (hx i) Submodule.mem_top
@@ -58,8 +63,8 @@ private lemma isAdicComplete_of_linearEquiv_pi {V M ι : Type*} [CommRing V] [Ad
     refine ⟨e.symm L, fun n => (key n _ _).2 fun i => ?_⟩
     simpa using hL i n
 
-open Polynomial IsLocalRing in
 
+open Polynomial IsLocalRing in
 theorem _root_.GlobalTheory.unramExt : _root_.ReciprocityTheory.ChartRestriction.G.Out.UnramExtSt := by
   unfold _root_.ReciprocityTheory.ChartRestriction.G.Out.UnramExtSt
   intro V _ _ _ _ k' _ _ _ _
@@ -98,7 +103,7 @@ theorem _root_.GlobalTheory.unramExt : _root_.ReciprocityTheory.ChartRestriction
     exact hw (_root_.GlobalTheory.isUnit_adjoinRoot_mk_of_aeval_ne_zero hint hμ hμmap hne)
   haveI : IsLocalRing (AdjoinRoot μ) := IsLocalRing.of_nonunits_add fun a b ha hb => by
     rw [hnon] at ha hb ⊢
-    rw [map_add, ha, hb, add_zero]
+    rw [map_add (f := _), ha, hb, add_zero]
   have hmax : maximalIdeal (AdjoinRoot μ) = RingHom.ker φ := by
     ext w
     rw [mem_maximalIdeal, hnon, RingHom.mem_ker]
@@ -134,7 +139,7 @@ theorem _root_.GlobalTheory.unramExt : _root_.ReciprocityTheory.ChartRestriction
   haveI : Module.Free V (AdjoinRoot μ) := Module.Free.of_basis pb.basis
   haveI : IsNoetherianRing (AdjoinRoot μ) := inferInstance
   have hinj : Function.Injective (algebraMap V (AdjoinRoot μ)) := by
-    rw [injective_iff_map_eq_zero]
+    set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
     intro v hv
     rw [← hCm, RingHom.comp_apply, AdjoinRoot.mk_eq_zero] at hv
     by_contra hne

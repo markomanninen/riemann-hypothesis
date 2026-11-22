@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirVolumeRatios.VolumeClassRepresentatives.ZsCovMeas
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RowDictPf
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.DstarIdxPf
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.UnimodInst
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FiniteLevelVolumeOfMeasure
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CasimirVolumeRatios.VolumeClassRepresentatives.ZsCovMeas
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.RowDictPf
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.DstarIdxPf
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.UnimodInst
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.FiniteLevelVolumeOfMeasure
+
+@[expose] public section
 
 noncomputable section
 
@@ -151,13 +155,14 @@ theorem covol_gen (hVM : VolMeasOf D) (hVol : VolTie D) (I : Formalism.MainNotio
   have hμA : (IV D).muA μ' = c⁻¹ • (IV D).muA μf := by
     show (Measure.pi fun v => Formalism.REAL.muG ((IV D).ε v)).prod (c⁻¹ • μf) = c⁻¹ • (Measure.pi fun v => Formalism.REAL.muG ((IV D).ε v)).prod μf
     exact Measure.prod_smul_right _
+  haveI : BorelSpace (HAd (IV D)) := ⟨rfl⟩
   have hν : muVI D μ' ≪ ((IV D).muA μf).map (toHA (IV D) hb) := by
     unfold muVI
     rw [hbrg, hμA, Measure.map_smul]
-    exact (Measure.smul_absolutelyContinuous).trans Measure.smul_absolutelyContinuous
+    · exact (Measure.smul_absolutelyContinuous).trans Measure.smul_absolutelyContinuous
+    · exact (toHA (IV D) hb).continuous.measurable.aemeasurable
   have hFD := isFD_image hb μf fund hf (muVI D μ') hν
   have key : muVI D μ' (toHA (IV D) hb '' fund) = ENNReal.ofReal (D.vol (VS D)) := hfd _ hFD
-  haveI : BorelSpace (HAd (IV D)) := ⟨rfl⟩
   let e := (toHA (IV D) hb).toHomeomorph.toMeasurableEquiv
   have hmeas : Measurable (toHA (IV D) hb) := (toHA (IV D) hb).continuous.measurable
   have hS : MeasurableSet (toHA (IV D) hb '' fund) := (e.measurableSet_image).2 hf.1
@@ -167,8 +172,10 @@ theorem covol_gen (hVM : VolMeasOf D) (hVol : VolTie D) (I : Formalism.MainNotio
     congr 1
     erw [Measure.map_apply hmeas hS]
     rw [Set.preimage_image_eq _ (toHA (IV D) hb).injective, Measure.smul_apply, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 200000 in
   have hA0 : (IV D).muA μf fund ≠ 0 := by
     haveI : ((IV D).muA μf).IsHaarMeasure := Formalism.L2.SG.PoincareInHH.Cut.muA_isHaar' (IV D) μf
+    haveI : ((IV D).muA μf).IsMulLeftInvariant := inferInstance
     have hfd0 : IsFundamentalDomain (Formalism.MainNotions.LeviCoordinates.rr_GF (IV D)) fund ((IV D).muA μf) :=
       Formalism.MainNotions.LeviCoordinates.rr_isFD ⟨hf.1, hf.2.1, hf.2.2⟩
     exact hfd0.measure_ne_zero (NeZero.ne _)

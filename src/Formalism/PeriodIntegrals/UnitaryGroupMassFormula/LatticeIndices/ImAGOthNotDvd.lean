@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.ImAGNonunit
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.ImAGNonunit
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,8 +13,8 @@ open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.SG.S
 
 variable {D : D7} (X : HidaSetting D)
 
-open Classical in
 
+open Classical in
 def gOth (p : TypX X) : ℕ := if ((D.host.g 0 : ℕ) : 𝓞 X.B.I.F) ∈ p.1.asIdeal then D.host.g 1 else D.host.g 0
 
 theorem imA_g_eq_mul (p : TypX X) : X.B.g = gOf p * gOth X p := by
@@ -26,17 +30,6 @@ private theorem gOf_coprime_gOth (p : TypX X) : Nat.Coprime (gOf p) (gOth X p) :
   split_ifs
   · exact (Nat.coprime_primes h0 h1).2 hne
   · exact (Nat.coprime_primes h1 h0).2 hne.symm
-
-theorem imA_gOth_not_dvd (p : TypX X) : ¬ gOf p ∣ gOth X p := by
-  have h0 := D.host.g_prime 0
-  have h1 := D.host.g_prime 1
-  have hne := D.host.g_ne
-  unfold gOth gOf
-  split_ifs
-  · intro h
-    exact hne ((Nat.prime_dvd_prime_iff_eq h0 h1).1 h)
-  · intro h
-    exact hne ((Nat.prime_dvd_prime_iff_eq h1 h0).1 h).symm
 
 private theorem le_exp_sub_one_of_lt_exp' (y : WithZero (Multiplicative ℤ)) (k : ℤ) (h : y < WithZero.exp k) :
     y ≤ WithZero.exp (k - 1) := by
@@ -58,12 +51,26 @@ private theorem exp_add_one_le_of_exp_lt (y : WithZero (Multiplicative ℤ)) (k 
 theorem imA_span_g_max (p : TypX X) :
     Ideal.span {((gOf p : ℕ) : p.1.adicCompletionIntegers X.B.I.F)} =
       IsLocalRing.maximalIdeal (p.1.adicCompletionIntegers X.B.I.F) := by
-  obtain ⟨-, hmem, hnot⟩ := resArith_holds X p
+  have hmem : ((gOf p : ℕ) : 𝓞 X.B.I.F) ∈ p.1.asIdeal := by
+    have hty := (mem_typSet X.B.I.F (D.host.g 0) (D.host.g 1) (D.host.g_prime 0).ne_zero
+      (D.host.g_prime 1).ne_zero p.1).1 p.2
+    unfold gOf
+    split_ifs with h
+    · exact h
+    · exact hty.resolve_left h
+  have hgp : Fact (gOf p).Prime := ⟨gOf_prime X p⟩
+  have hsplit : {w : IsDedekindDomain.HeightOneSpectrum (𝓞 X.B.I.E) |
+      ((gOf p : ℕ) : 𝓞 X.B.I.E) ∈ w.asIdeal}.ncard = Module.finrank ℚ X.B.I.E := by
+    unfold gOf
+    split_ifs
+    · exact MassDataIdxRes.split_transport X.ιE _ (D.nd.g_split 0)
+    · exact MassDataIdxRes.split_transport X.ιE _ (D.nd.g_split 1)
+  obtain ⟨he, hf⟩ := MassDataIdxRes.locDeg_one_below (F := X.B.I.F) (E := X.B.I.E) (gOf p) hsplit p.1 hmem
+  obtain ⟨_, hnot⟩ := MassDataIdxRes.arith_of_loc (gOf p) p.1 hmem he hf
   have hvg : Valued.v (((gOf p : ℕ) : p.1.adicCompletionIntegers X.B.I.F) : p.1.adicCompletion X.B.I.F) =
       p.1.intValuation ((gOf p : ℕ) : 𝓞 X.B.I.F) := by
     have e : (((gOf p : ℕ) : p.1.adicCompletionIntegers X.B.I.F) : p.1.adicCompletion X.B.I.F) =
         (((gOf p : ℕ) : X.B.I.F) : p.1.adicCompletion X.B.I.F) := by
-      simp only [map_natCast]
       first
         | rfl
         | exact (map_natCast (algebraMap X.B.I.F (p.1.adicCompletion X.B.I.F)) (gOf p)).symm

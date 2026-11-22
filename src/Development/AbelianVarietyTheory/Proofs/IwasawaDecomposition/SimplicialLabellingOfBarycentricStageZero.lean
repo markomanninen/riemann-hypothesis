@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBaryStageStart
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsBaryStageStart
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,8 +63,8 @@ theorem eq_zero_of_label_nonpos {ψ lab : InvFun O} (hlab : IsCarrierDim bar q �
   simp [hz, LinearMap.sum_apply] at this
   simpa using this
 
-variable (O bar q) in
 
+variable (O bar q) in
 theorem simpLab_of_isBaryStage_zero (ψ lab φ : InvFun O) (hlab : IsCarrierDim bar q ψ lab)
     (hφ : IsBaryStage bar q ψ lab φ 0) : SimpLab bar q φ lab := by
   refine ⟨fun X _ _ _ _ hX β hβ hp k hk => ?_, fun X _ _ _ _ hX m γ hγ => ?_⟩
@@ -91,8 +95,5 @@ theorem simpLab_of_isBaryStage_zero (ψ lab φ : InvFun O) (hlab : IsCarrierDim 
     refine ⟨fun i => c (Fin.natAdd b i), fun i => hc0 _, ?_⟩
     rw [h, Fin.sum_univ_add]
     simp [hv0, toReal_zero']
-
-example : ∀ (O : Type) [CommRing O] (bar : O → O) (q : ℕ) (ψ lab φ : InvFun O), IsCarrierDim bar q ψ lab →
-    IsBaryStage bar q ψ lab φ 0 → SimpLab bar q φ lab := fun O _ bar q => simpLab_of_isBaryStage_zero O bar q
 
 end GlobalTheory.PolFan.BaryFin

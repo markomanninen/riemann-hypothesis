@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpOfPf
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpChartJet
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpAct
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpOfPf
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpChartJet
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ExpAct
+
+@[expose] public section
 
 set_option autoImplicit false
 

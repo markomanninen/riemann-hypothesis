@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.IdentityEvaluationGenericMatrix
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.IdentityEvaluationGenericMatrix
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,6 +21,7 @@ private theorem sDegs_eq_support_mul_Phi_twistSub {R : Type*} [CommRing R] {ι :
   · rintro ⟨m, -, hk⟩ h0
     apply hk
     rw [← mul_Phi_coeff, h0, MvPolynomial.coeff_zero]
+    rfl
   · intro hk
     obtain ⟨m, hm⟩ := MvPolynomial.ne_zero_iff.mp hk
     rw [mul_Phi_coeff] at hm
@@ -36,14 +41,14 @@ theorem mul_lam1S_eq {R : Type*} [CommRing R] {ι : Type*} {n : ℕ} [NeZero n] 
 
 theorem mul_valS_add {R : Type*} [CommRing R] {ι : Type*} {n : ℕ} [NeZero n] (LL : Letters ι) (S : Set ι)
     (F G : MvPolynomial (ι × Fin n) R) : min (valS LL S F) (valS LL S G) ≤ valS LL S (F + G) := by
-  rw [mul_valS_eq LL S F, mul_valS_eq LL S G, mul_valS_eq LL S (F + G), map_add, map_add]
+  rw [mul_valS_eq LL S F, mul_valS_eq LL S G, mul_valS_eq LL S (F + G), map_add (f := _), map_add (f := _)]
   refine le_trans ?_ (Finset.inf_mono Finsupp.support_add)
   rw [Finset.inf_union]
   exact le_rfl
 
 theorem mul_lam1S_add {R : Type*} [CommRing R] {ι : Type*} {n : ℕ} [NeZero n] (LL : Letters ι) (S : Set ι)
     (F G : MvPolynomial (ι × Fin n) R) : lam1S LL S (F + G) ≤ max (lam1S LL S F) (lam1S LL S G) := by
-  rw [mul_lam1S_eq LL S F, mul_lam1S_eq LL S G, mul_lam1S_eq LL S (F + G), map_add, map_add]
+  rw [mul_lam1S_eq LL S F, mul_lam1S_eq LL S G, mul_lam1S_eq LL S (F + G), map_add (f := _), map_add (f := _)]
   refine le_trans (Finset.sup_mono Finsupp.support_add) ?_
   rw [Finset.sup_union]
   exact le_rfl

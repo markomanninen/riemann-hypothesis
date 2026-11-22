@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
-import Mathlib.Algebra.QuadraticAlgebra.Basic
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.TupleActions.InstMulActionTup
+public import Mathlib.Algebra.QuadraticAlgebra.Basic
+
+@[expose] public section
 
 open NumberField QuadraticAlgebra
 
@@ -77,7 +81,7 @@ theorem UpperTheory.exists_CM_extension :
       fun y => real_val (φ.comp (algebraMap F (QuadraticAlgebra F (-1) 0))) y
     rw [hsx]
     conv_rhs => rw [hx]
-    simp only [map_add, map_sub, map_mul, hreal, hφω]
+    simp only [map_add (f := _), map_sub, map_mul, hreal, hφω]
     ring
   · intro x
     rw [RingHom.mem_range]

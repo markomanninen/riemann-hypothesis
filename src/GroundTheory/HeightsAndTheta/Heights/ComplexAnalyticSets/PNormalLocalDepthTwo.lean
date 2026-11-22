@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalLocalDepthTwo
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalLocalDepthTwo
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -68,7 +73,7 @@ theorem NormalLocalDepthTwo.proof : NormalLocalDepthTwo.Statement := by
   have hxreg : IsSMulRegular B x := fun a b h => mul_left_cancel₀ hx0 h
   by_cases hp : (maximalIdeal B).IsPrincipal
   ·
-    have : IsDiscreteValuationRing B := ((IsDiscreteValuationRing.TFAE B hfield).out 4 0).mp hp
+    have : IsDiscreteValuationRing B := ((IsDiscreteValuationRing.TFAE B hfield).out 5 1).mp hp
     refine ⟨[x], by simpa using hxm,
       (isWeaklyRegular_cons_iff _ _ _).mpr ⟨hxreg, IsWeaklyRegular.nil _ _⟩, ?_⟩
     rw [IsDiscreteValuationRing.ringKrullDim_eq_one]

@@ -1,11 +1,16 @@
-import Mathlib
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
-import ReciprocityTheory.AnalyticForms.PotentialTheory.HessCIsHermitian
-import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
-import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StTubeFormCompare
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.LogIntegrableOnOfLogIntegrable
+module
+
+public import Mathlib
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.LintegralImageEqLintegralNormSqDetMul
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.HessCIsHermitian
+public import ReciprocityTheory.AnalyticForms.PotentialTheory.PshShiftA
+public import ReciprocityTheory.AnalyticForms.AnalyticCharts.Osgood
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StTubeFormCompare
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.LogIntegrableOnOfLogIntegrable
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -220,7 +225,15 @@ theorem abs_maDens_cons_le {n d : ℕ} (g : (Fin n → ℂ) → ℝ) (φ : Fin d
   have hmain := ReciprocityTheory.AnForm.A.norm_mdisc_le_of_abs_le Av Bv hle hge
   have hscale : mdisc Bv =
       (c : ℂ) ^ d * mdisc (fun k => hessC (vecCons g (fun _ => euclPot) k ∘ s) y) := by
-    obtain ⟨L, hL⟩ := ReciprocityTheory.AnForm.A.exists_multilinearMap_eq_mdisc (D := d + 1)
+    obtain ⟨L, hL⟩ := (by
+      show ∃ F : MultilinearMap (RingHom.id ℂ)
+          (fun _ : Fin (d + 1) => Matrix (Fin (d + 1)) (Fin (d + 1)) ℂ) ℂ,
+          ⇑F = _root_.ReciprocityTheory.AnForm.mdisc
+      refine ⟨MultilinearMap.mk' _root_.ReciprocityTheory.AnForm.mdisc
+        _root_.ReciprocityTheory.AnForm.A.mdisc_update_add ?_, rfl⟩
+      intro A k c B
+      simpa only [RingHom.id_apply, smul_eq_mul] using
+        (_root_.ReciprocityTheory.AnForm.A.mdisc_update_smul A k c B))
     have e : Bv = fun k => (Fin.cons (1 : ℂ) (fun _ => (c : ℂ)) : Fin (d + 1) → ℂ) k •
         hessC (vecCons g (fun _ => euclPot) k ∘ s) y := by
       funext k
@@ -254,8 +267,8 @@ theorem isClosed_zeroSet {n : ℕ} (J : Ideal (MvPolynomial (Fin n) ℂ)) : IsCl
 
 end TubeFormComparison
 
-open TubeFormComparison in
 
+open TubeFormComparison in
 theorem TubeFormCompare.proof : TubeFormCompare.Statement := by
   intro n d J A P R φ _hJ _hdim hA hφ
   set K := zeroSet J ∩ Metric.closedBall (0 : Fin n → ℂ) R with hKdef

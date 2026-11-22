@@ -1,19 +1,24 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbBound
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SncChartLocalNormalForm
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPullbackEquivalence
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSabCancel
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PrincipalNearBoundaryStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocalRingPointsExistsUniqueStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointsIffCentresStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbelianBoundConjugateStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GoodPointOrConjugateStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteGeneratingValuesStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BoundaryChartLieModelExistsStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BoundaryChartLieMetricBoundStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeComponentHolomorphicCoverStatement
-import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeComponentFiniteChartsStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbBound
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.SncChartLocalNormalForm
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelPullbackEquivalence
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsSabCancel
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.PrincipalNearBoundaryStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LocalRingPointsExistsUniqueStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.ComplexPointsIffCentresStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbelianBoundConjugateStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.GoodPointOrConjugateStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.LieModelFiniteGeneratingValuesStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BoundaryChartLieModelExistsStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.BoundaryChartLieMetricBoundStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeComponentHolomorphicCoverStatement
+public import Development.AutomorphicSpectrum.Proofs.GeometryProofs.HodgeComponentFiniteChartsStatement
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField TensorProduct Filter Topology Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
 
@@ -161,7 +166,7 @@ theorem local_bound (𝔐 : HodgeCpt Y S y) (h : LieMetric 𝔐.M y) (hpq : 1 �
     obtain ⟨mK, hmK⟩ := GlobalTheory.ObjMaps.exists_sab_cancel m P.m
     let P' : AbPart C.t (spMap (C.ψ u)) := ⟨P.tK, mK, P.τ, P.tB, P.e, P.e_hom, P.act, P.pp⟩
     obtain ⟨Mz, hMz⟩ := GlobalTheory.T.boundary_chart_lie_model_exists E H D l Xo _ n a₀ C u
-    have hsingle : ∀ i, C.M.Lifts (C.ψ u) (𝟙 _) (Pi.single i 1) (Mz.pt (Pi.single i 1)) := fun i => by
+    have hsingle : ∀ i, (Mz.pt (Pi.single i 1)).left ≫ (𝟙 _) = spMap (GlobalTheory.CompanionTheory.Ar.dualMap (C.ψ u)) ≫ (C.M.pt (Pi.single i 1)).left := fun i => by
       have := hMz (Pi.single i 1)
       have e : (fun j => C.ψ u ((Pi.single i 1 : Fin C.g → C.R) j)) = Pi.single i 1 := by
         funext j
@@ -204,8 +209,8 @@ theorem local_bound (𝔐 : HodgeCpt Y S y) (h : LieMetric 𝔐.M y) (hpq : 1 �
 
 end GlobalTheory.CompanionTheory.Ar.QuotUnif
 
-open GlobalTheory.CompanionTheory.Ar.QuotUnif in
 
+open GlobalTheory.CompanionTheory.Ar.QuotUnif in
 theorem GlobalTheory.CompanionTheory.Ar.QuotUnif.main : Geo.ResK.ResKStatement → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (Xo : Moduli D l) (c : Coeff l) (Y : Model Xo c (algebraMap (𝓞 c.F) c.F)) (S : Finset ℕ) (Ω : Type) [Field Ω] (K : Type) [Fintype K] (J : K → Type) [∀ k, Fintype (J k)] (y : (Σ k, J k) → Ω) (𝔐 : HodgeCpt Y S y) (h : LieMetric 𝔐.M y), 1 ≤ D.p + D.q → ∃ K : ℝ, 1 ≤ K ∧ ∀ (z : Sp ℂ ⟶ 𝔐.X) (P : AbPart 𝔐.t z), IsPrincipal P.tB ∧ ∀ (v : epsAt (𝟙 (Sp ℂ)) ⟶ P.tK.G) (v₀ : epsAt z ⟶ 𝔐.t.G) (c : ℂ), IsTanAt _ _ v → v.left ≫ P.m.φ = v₀.left → HodgeIP P.tB.G P.tB.PP.L (𝟙 _) (v ≫ P.τ.q ≫ P.e.hom) (v ≫ P.τ.q ≫ P.e.hom) c → c.re ≤ K * (h.ip z v₀ v₀).re := by
   intro hR E _ _ _ H D l Xo c Y S Ω _ K _ J _ y 𝔐 h hpq
   obtain ⟨n, nc, w, a, -, hw, hm, hi, hcov⟩ := GlobalTheory.T.hodge_component_finite_charts hR E H D l Xo c Y S Ω K J y 𝔐

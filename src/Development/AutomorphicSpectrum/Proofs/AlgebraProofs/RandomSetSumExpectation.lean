@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IsScaleStable
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.AlgebraProofs.IsScaleStable
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 open GroundTheory.Heights₂.Heights MeasureTheory MvPolynomial Matrix GlobalTheory.CompanionTheory.Ar.Short.Crofton
 open scoped ENNReal
@@ -178,7 +183,7 @@ theorem measurable_lintegral_tsum_of_level_counts
   have hGm : ∀ k, Measurable fun ω => ∑' y : L ω, dy k (φ y) := by
     intro k
     simp_rw [hG]
-    exact Measurable.ennreal_tsum fun l => (hN _).const_mul _
+    exact Measurable.tsum fun l => (hN _).const_mul _
   have hGi : ∀ k, ∫⁻ ω, ∑' y : L ω, dy k (φ y) ∂P = c * ∫⁻ y, dy k (φ y) ∂ν := by
     intro k
     have hlev : ∀ s : ℝ≥0∞, Measurable fun y => if s < φ y then (1 : ℝ≥0∞) else 0 := fun s =>
@@ -204,7 +209,7 @@ theorem measurable_lintegral_tsum_of_level_counts
   have hdm : ∀ k, Measurable fun y => dy k (φ y) := by
     intro k
     simp_rw [dy_eq_tsum]
-    exact Measurable.ennreal_tsum fun l => (Measurable.ite
+    exact Measurable.tsum fun l => (Measurable.ite
       (measurableSet_lt measurable_const hφ) measurable_const measurable_const).const_mul _
   refine ⟨?_, ?_⟩
   · rw [hS]

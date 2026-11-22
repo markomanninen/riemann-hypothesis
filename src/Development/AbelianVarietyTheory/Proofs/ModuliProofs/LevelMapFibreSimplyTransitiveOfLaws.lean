@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.WeilIsGrpPullbackOfCommute
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PushEquivSymmLeft
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FixTorsionOfForallGeometric
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelMapFibreSimplyTransitive
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.WeilIsGrpPullbackOfCommute
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PushEquivSymmLeft
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.FixTorsionOfForallGeometric
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelMapFibreSimplyTransitive
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,77 +17,16 @@ open scoped CategoryTheory.Obj TensorProduct
 namespace GlobalTheory.ObjPull
 
 theorem objPull_of_lie_of_ample : (∀ (O : Type) [CommRing O] (S S' : Scheme.{0}) (G : Over S) (G' : Over S') [GrpObj G] [GrpObj G'] (f : S' ⟶ S) (φ : G'.left ⟶ G.left) (a : OAct O G) (a' : OAct O G'), IsGrpPullback G' G f φ → (∀ c, (a'.act c).left ≫ φ = φ ≫ (a.act c).left) → ∀ (k : Type) [Field k] (x : Sp k ⟶ S') (τ : O →+* k) (n : ℕ), LieMult a' x τ n ↔ LieMult a (x ≫ f) τ n) → (∀ (S S' : Scheme.{0}) (G : Over S) (G' : Over S') [GrpObj G] [GrpObj G'] (f : S' ⟶ S) (φ : G'.left ⟶ G.left) (L : LB G.left) (L' : LB G'.left), L.IsLB → L'.IsLB → IsAbelianScheme G → IsGrpPullback G' G f φ → LBIso L' (L.pull φ) → IsAbelianScheme G' ∧ (Out.RelAmple G L → Out.RelAmple G' L') ∧ (Out.KTriv G L → Out.KTriv G' L')) → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (B B' : Type) [CommRing B] [CommRing B'] (b : Base l B) (b' : Base l B') (j : B →+* B') (S S' : Scheme.{0}) (s : S ⟶ Sp B) (s' : S' ⟶ Sp B') (f : S' ⟶ S), j b.ρ = b'.ρ → j b.ζ = b'.ζ → f ≫ s = s' ≫ spMap j → ∀ o : Obj D l b s, ∃ o' : Obj D l b' s', Nonempty (ObjMap o' o f) := by
-  intro hLie hAb E _ _ _ H D l B B' _ _ b b' j S S' s s' f hρ hζ hs o
-  obtain ⟨t', ⟨m⟩⟩ : ∃ t' : SAB H S', Nonempty (SABMap t' o.t f) := by
-    obtain ⟨_, _, _, _, _, m, -⟩ := sabPull Out.CubePf.cubePull f o.t
-    exact ⟨_, ⟨m⟩⟩
-  have hL : LBIso t'.PP.L (o.t.PP.L.pull m.cm.F) := by
-    obtain ⟨w, hw, -⟩ := m.lin
-    exact ⟨w, hw⟩
-  have hpr := o.proper
-  obtain ⟨-, hamp, hk⟩ := hAb S S' o.t.G t'.G f m.cm.F o.t.PP.L t'.PP.L o.t.PP.isLB t'.PP.isLB
-    (AbelianSchemeGerms.isAbelianScheme_of_proper o.t.G o.t.semi) m.cart hL
-  refine ⟨{ t := t'
-            proper := MorphismProperty.of_isPullback (P := @IsProper) m.cart.1 hpr
-            ample := hamp o.ample
-            ktriv := hk o.ktriv
-            eta := fun a => secPull m.cart (o.eta a)
-            eta_add := fun a c => by rw [o.eta_add, map_mul]
-            eta_ker := fun a ha => by rw [o.eta_ker a ha, map_one]
-            etaA := fun a => secPull m.cart (o.etaA a)
-            etaA_add := fun a c => by rw [o.etaA_add, map_mul]
-            etaA_ker := fun a => by rw [o.etaA_ker a, map_one]
-            geom := fun k _ _ x β hx => ?_ },
-    ⟨⟨m, fun a => secPull_left m.cart _, fun a => secPull_left m.cart _⟩⟩⟩
-  obtain ⟨hdet, I, hI, hA, hM⟩ := o.geom k (x ≫ f) (β.comp j)
-    (by rw [Category.assoc, hs, ← Category.assoc, hx, spMap_comp])
-  rw [RingHom.comp_apply, hρ] at hdet
-  rw [RingHom.comp_apply, hζ] at hI
-  refine ⟨fun τ => ?_, tateMove (pushEquiv m.cart (Over.mk x)) (fun c g => ?_) (fun n g g' c hc => ?_) I,
-    hI, fun a => ?_, fun a ha => ?_⟩
-  · rw [hLie _ S S' o.t.G t'.G f m.cm.F o.t.act t'.act m.cart m.act k x τ,
-      hLie _ S S' o.t.G t'.G f m.cm.F o.t.act t'.act m.cart m.act k x τ]
-    exact hdet τ
-  · apply Over.OverMorphism.ext
-    show (g.left ≫ _) ≫ _ = (g.left ≫ _) ≫ _
-    rw [Category.assoc, m.act, Category.assoc]
-  · exact (weilIs_grpPullback_of_comm S S' o.t.G t'.G f m.cm.F o.t.PP.L t'.PP.L o.t.PP.isLB t'.PP.isLB m.cart hL (Over.mk x) n g g'
-      _ _ _ rfl rfl).2 hc
-  · exact (MulEquiv.eq_symm_apply _).2 ((pushEquiv_secPull m.cart _ _).trans (hA a))
-  · exact (MulEquiv.eq_symm_apply _).2 ((pushEquiv_secPull m.cart _ _).trans (hM a ha))
+  intro _ hAb
+  exact objPull_of_pol hAb
 
 end GlobalTheory.ObjPull
 
 namespace GlobalTheory
 
 theorem obj_rigid_of_laws : Out.Laws → (∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (B : Type) [CommRing B] (b : Base l B) (S : Scheme.{0}) (s : S ⟶ Sp B) (o : Obj D l b s), IsAbelianScheme o.t.G ∧ SmoothOfRelativeDimension (Module.finrank ℚ E / 2 * (D.p + D.q)) o.t.G.hom ∧ Out.Rigidified o.t.G o.t.PP.L ∧ Out.Sym o.t.G o.t.PP.L) → ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : Host E) (D : Datum H) (l : Level H) (B B' : Type) [CommRing B] [CommRing B'] (b : Base l B) (b' : Base l B') (S S' : Scheme.{0}) (s : S ⟶ Sp B) (s' : S' ⟶ Sp B') (o : Obj D l b s) (o' : Obj D l b' s') (f : S' ⟶ S), (IsReduced S' ∨ IsLocallyNoetherian S') → ∀ m m' : SABMap o'.t o.t f, (∀ a, ∃ σ, (o'.eta a).left ≫ m.φ = σ ∧ (o'.eta a).left ≫ m'.φ = σ) → m.φ = m'.φ := by
-  intro hL hpol E _ _ _ H D l B B' _ _ b b' S S' s s' o o' f _ m m' heta
-  obtain ⟨hA, hd, hr, hs⟩ := hpol E H D l B' b' S' s' o'
-  obtain ⟨θ, hθ, hφ, hact, -, w, hw, -⟩ := sabMap_iso m m' rfl rfl
-  have hη : ∀ a, o'.eta a ≫ θ.hom = o'.eta a := fun a => by
-    obtain ⟨σ, h₁, h₂⟩ := heta a
-    apply Over.OverMorphism.ext
-    apply m'.cart.1.hom_ext
-    · rw [Over.comp_left, Category.assoc]
-      exact (congrArg _ hφ).trans (h₁.trans h₂.symm)
-    · rw [Over.w, Over.w]
-  let P : Out.PolAV S' :=
-    { A := o'.t.G, g := _, smoothDim := hd, L := o'.t.PP.L, isLB := o'.t.PP.isLB,
-      ample := o'.ample, ktriv := o'.ktriv, isAb := hA, rigid := hr, sym := hs }
-  have hM : 0 < l.M := lt_of_lt_of_le (by norm_num) l.three_le
-  have hMu : IsUnit (l.M : Γ(S', ⊤)) := by
-    simpa using (b'.unit _ hM).map ((Scheme.ΓSpecIso (CommRingCat.of B')).inv ≫ s'.appTop).hom
-  have := hA.smooth
-  have : Etale (Out.mulA o'.t.G l.M).left := GrpTangent.etale_id_pow o'.t.G hMu
-  have h : θ.hom = 𝟙 _ := by
-    refine serre_any_base hL P l.M l.three_le θ hθ (fun _ => ⟨⊤, trivial, ?_⟩)
-      (fix_torsion_of_forall_geometric o'.t.G l.M θ.hom
-        (obj_aut_fix_geometric_torsion o' θ hact ⟨w, hw⟩ hη))
-    obtain ⟨t, ht⟩ := gen_of_iso ((isGen_iff w).1 hw) (o'.t.G.hom ⁻¹ᵁ ⊤).ι
-    refine gen_chartPull (chartPullOut o'.t.PP.L _ _ _ _ fun n => ?_) t ht
-    fin_cases n
-    exacts [rfl, (Category.comp_id _).symm]
-  rw [← hφ, h, Over.id_left, Category.id_comp]
+  intro hL hpol E _ _ _ H D l B B' _ _ b b' S S' s s' o o' f _
+  exact obj_rigid_of_pol hL hpol E H D l B B' b b' S S' s s' o o' f
 
 end GlobalTheory
 
@@ -101,13 +44,7 @@ theorem exists_tate_push_comm
       (fun n g g' c => Out.WeilIs t'.G t'.PP.L n g g' (unitOn c))) :
     ∃ J : TateIso D k (Over.mk z ⟶ t.G) (fun a g => g ≫ t.act.act a)
       (fun n g g' c => Out.WeilIs t.G t.PP.L n g g' (unitOn c)), J.ζ = I.ζ ∧ ∀ n a, J.ev n a = e (I.ev n a) := by
-  subst hz
-  refine ⟨tateTransport I e (fun c p => Over.OverMorphism.ext ?_) (fun n p q c h => ?_), rfl, fun _ _ => rfl⟩
-  · rw [he, Over.comp_left, Over.comp_left, he, Category.assoc, Category.assoc]
-    exact congrArg _ (m.act c)
-  · obtain ⟨w, hw, -⟩ := (isPullCubical_iff m.cm t.cub t'.cub).1 m.lin
-    exact (weilIs_grpPullback_of_comm _ _ _ _ f m.φ _ _ t.PP.isLB t'.PP.isLB m.cart ⟨w, (isGen_iff w).2 hw⟩ (Over.mk x) n p q (e p) (e q) _
-      (he p) (he q)).1 h
+  exact exists_tate_push m x z hz e he I
 
 variable {l l₂ : Level H} {Xo : Moduli D l} {Xo₂ : Moduli D l₂}
 

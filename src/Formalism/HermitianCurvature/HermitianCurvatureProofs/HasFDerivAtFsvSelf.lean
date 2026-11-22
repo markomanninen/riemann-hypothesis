@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.TopEntryWaveEquation
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FsvMulFsvNeg
+module
+
+public import Formalism.HermitianCurvature.TopEntryWaveEquation
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FsvMulFsvNeg
+
+@[expose] public section
 
 open scoped ComplexConjugate ContDiff
 

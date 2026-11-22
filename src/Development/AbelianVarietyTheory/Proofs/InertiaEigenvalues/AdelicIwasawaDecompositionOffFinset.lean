@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicUnitriangularMulMemUnipotentTimesIntegral
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IwasawaCellDecomposition
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeDEqSumOfAgree
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyDefiniteUnitaryLocalPointMemMaxCompact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicUnitriangularMulMemUnipotentTimesIntegral
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IwasawaCellDecomposition
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeDEqSumOfAgree
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsFixedIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EventuallyDefiniteUnitaryLocalPointMemMaxCompact
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.UG GlobalTheory.CuspRep MeasureTheory
 open scoped ENNReal
 
@@ -43,10 +48,10 @@ theorem finGL_locGL_mem_NA (v : HeightOneSpectrum (𝓞 E)) {y : GL (Fin n) (v.a
   cornerGL_mem_unipB _ (cornerGL_mem_unipB _ hy)
 
 theorem mem_US {S : Finset (HeightOneSpectrum (𝓞 E))} {g : GA E n} :
-    g ∈ US E n S ↔ ∀ v, v ∉ S → compV E n v g ∈ GlobalTheory.LFun.KGL v n := by
+    g ∈ US E n S ↔ ∀ v, v ∉ S → compV E n v g ∈ GlobalTheory.LFun.KGL v (n := n) := by
   simp [US, Subgroup.mem_iInf]
 
-theorem eventually_compV_mem (g : GA E n) : ∀ᶠ w in cofinite, compV E n w g ∈ GlobalTheory.LFun.KGL w n := by
+theorem eventually_compV_mem (g : GA E n) : ∀ᶠ w in cofinite, compV E n w g ∈ GlobalTheory.LFun.KGL w (n := n) := by
   have h : ∀ x : GA E n, ∀ᶠ w : HeightOneSpectrum (𝓞 E) in cofinite, ∀ i j,
       (compV E n w x).val i j ∈ w.adicCompletionIntegers E := fun x => by
     simp only [Filter.eventually_all]
@@ -160,7 +165,7 @@ theorem tl_inv_conj_mem (ϖ : ∀ v : HeightOneSpectrum (𝓞 E), (v.adicComplet
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField in
 theorem exists_of_finset (S : Finset (HeightOneSpectrum (𝓞 E))) (ϖ : ∀ v : HeightOneSpectrum (𝓞 E), (v.adicCompletion E)ˣ)
     (hϖ : ∀ v, IsUnifV E v (ϖ v : v.adicCompletion E)) (T : Finset (HeightOneSpectrum (𝓞 E))) :
-    ∀ g : GA E n, (∀ w, w ∉ S → w ∉ T → compV E n w g ∈ GlobalTheory.LFun.KGL w n) →
+    ∀ g : GA E n, (∀ w, w ∉ S → w ∉ T → compV E n w g ∈ GlobalTheory.LFun.KGL w (n := n)) →
       ∃ l : HeightOneSpectrum (𝓞 E) →₀ (Fin n → ℤ), (∀ v ∈ S, l v = 0) ∧ (tl n ϖ l)⁻¹ * g ∈ C0 E n S := by
   classical
   induction T using Finset.induction_on with
@@ -179,7 +184,7 @@ theorem exists_of_finset (S : Finset (HeightOneSpectrum (𝓞 E))) (ϖ : ∀ v :
       rw [GlobalTheory.HeckeEigConj.KO_eq_KGL] at hκ
       set x := finGL E n (locGL E n v u) with hx
       set t := tl n ϖ (Finsupp.single v a) with ht
-      have hg' : ∀ w, w ∉ S → w ∉ T → compV E n w ((x * t)⁻¹ * g) ∈ GlobalTheory.LFun.KGL w n := by
+      have hg' : ∀ w, w ∉ S → w ∉ T → compV E n w ((x * t)⁻¹ * g) ∈ GlobalTheory.LFun.KGL w (n := n) := by
         intro w hwS hwT
         rw [map_mul, map_inv, map_mul, hx, ht, tl_single]
         by_cases hw : w = v
@@ -205,7 +210,7 @@ theorem adelic_iwasawa_decomposition_off_finset : ∀ (E : Type) [Field E] [Numb
     ∀ g : GA E n, ∃ l : HeightOneSpectrum (𝓞 E) →₀ (Fin n → ℤ), (∀ v ∈ S, l v = 0) ∧
       (GlobalTheory.CellDec.tl n ϖ l)⁻¹ * g ∈ GlobalTheory.CellDec.C0 E n S := by
   intro E _ _ n S ϖ hϖ g
-  have hfin : {w | compV E n w g ∉ GlobalTheory.LFun.KGL w n}.Finite :=
+  have hfin : {w | compV E n w g ∉ GlobalTheory.LFun.KGL w (n := n)}.Finite :=
     Filter.eventually_cofinite.1 (eventually_compV_mem g)
   refine exists_of_finset S ϖ hϖ hfin.toFinset g fun w _ hw => ?_
   by_contra h

@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.FreeFlag
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.KatoTwoOfUseN
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.FreeFlag
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.KatoTwoOfUseN
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,17 +11,8 @@ open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.
 
 namespace UpperTheory.V.Th
 
-structure InpU : Prop extends U3.CohInp where
-  lemM : LemmaM
-  lemM' : LemmaM'
-  lemP : LemmaP
-  kato : Z.Kato.KatoTwo
-  rigI : RigI
-  rigII : RigII
-  number : Af.CongruenceNumberRankThree
 
 open UpperTheory.V.GradeZeroInterpolatingElement UpperTheory.V.Ws in
-
 def SpPt : Prop :=
   ∀ (Ω : Type) [Field Ω] [CharZero Ω] [IsAlgClosure ℚ Ω] (l : ℕ) [Fact l.Prime] (c : Coef l) (D : Raw Ω c), Ctx2 D ∨ Ctx3 D →
     ∀ r, D.EPt r → Irr r → ∃ T : Tower D, T.Fit ∧ T.Deep ∧ ∀ c₁ : Coef l,

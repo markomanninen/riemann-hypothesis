@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.NumFieldHosCountable
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.HfinExistsMat
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.FdomExistsAll
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.NumFieldHosCountable
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.HfinExistsMat
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.FdomExistsAll
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,10 +33,6 @@ theorem gQ_countable (V : HSp D) : Countable (GQ V) := G5.hfin_countable D.sp.cm
 
 theorem measurableMul_GA (V : HSp D) : MeasurableMul (GA D V) := by
   obtain ⟨h1, -, -, -, h5⟩ := ga_facts D V
-  infer_instance
-
-theorem measurableMul₂_GA (V : HSp D) : MeasurableMul₂ (GA D V) := by
-  obtain ⟨h1, -, -, h4, h5⟩ := ga_facts D V
   infer_instance
 
 theorem gfC_secondCountable (V : HSp D) : SecondCountableTopology (GfC V) := by

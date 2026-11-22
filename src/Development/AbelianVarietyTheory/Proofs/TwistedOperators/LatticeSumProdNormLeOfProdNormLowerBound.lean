@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Metric Set Finset Filter Topology
 
@@ -182,7 +186,7 @@ lemma sum_prod_inv_one_add_norm_pow_le (ι : Type) [Fintype ι] (n : ℕ) (hn : 
       rw [inv_mul_le_iff₀ (by norm_num)]
       linarith
     calc ∏ τ, h (w τ) ≤ ∏ τ, (c * h (u τ)) :=
-          Finset.prod_le_prod (fun τ _ => hh0 _) fun τ _ => this τ
+          Finset.prod_le_prod₀ (fun τ _ => hh0 _) fun τ _ => this τ
       _ = c ^ d * G u := by rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ]
   have hbox : ∀ w, (∏ τ, h (w τ)) * vb ^ d ≤ ∫ u in B w, c ^ d * G u := by
     intro w
@@ -240,7 +244,7 @@ theorem lattice_sum_le : ∀ (ι : Type) [Fintype ι] [Nonempty ι] (n : ℕ)
     have hne0 : w - w' ≠ 0 := sub_ne_zero.2 hne
     have h1 := hΛ _ hmem hne0
     have h2 : ∏ τ, ‖(w - w') τ‖ ≤ 1 :=
-      Finset.prod_le_one (fun τ _ => norm_nonneg _) fun τ _ => (hcon τ).le
+      Finset.prod_le_one₀ (fun τ _ => norm_nonneg _) fun τ _ => (hcon τ).le
     linarith
   have hP := sum_prod_inv_one_add_norm_pow_le ι n hn s hsep
   set d := Fintype.card ι with hd
@@ -261,7 +265,7 @@ theorem lattice_sum_le : ∀ (ι : Type) [Fintype ι] [Nonempty ι] (n : ℕ)
     rw [Finset.prod_inv_distrib]
     have h1 := hΛ w (hs w hw).1 (hs w hw).2
     have h2 : ∏ τ, ‖w τ‖ ≤ ∏ τ, (1 + ‖w τ‖) :=
-      Finset.prod_le_prod (fun τ _ => norm_nonneg _) fun τ _ => by linarith
+      Finset.prod_le_prod₀ (fun τ _ => norm_nonneg _) fun τ _ => by linarith
     exact inv_anti₀ hR0 (h1.trans h2)
   calc ∑ w ∈ s, ∏ τ, (((1 + ‖w τ‖) / 3) ^ (2 * n + 5))⁻¹
       ≤ ∑ w ∈ s, K ^ d * (∏ τ, ((1 + ‖w τ‖) ^ (2 * n + 4))⁻¹) * R⁻¹ := Finset.sum_le_sum hterm

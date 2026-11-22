@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.Entire
-import Development.AutomorphicArithmetic.WhittakerHecke.SummableTsumInvOneAddHeightPowLe
-import Development.AutomorphicArithmetic.WhittakerHecke.SchwartzBruhatTranslateDecayBound
-import Development.AutomorphicArithmetic.WhittakerHecke.ExistsCommonDenomOfIsCompactUnipotentTranslates
-import Development.AutomorphicArithmetic.WhittakerHecke.ExistsRatMulIdeleFinitePartMemCompactOfLeNorm
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.Entire
+public import Development.AutomorphicArithmetic.WhittakerHecke.SummableTsumInvOneAddHeightPowLe
+public import Development.AutomorphicArithmetic.WhittakerHecke.SchwartzBruhatTranslateDecayBound
+public import Development.AutomorphicArithmetic.WhittakerHecke.ExistsCommonDenomOfIsCompactUnipotentTranslates
+public import Development.AutomorphicArithmetic.WhittakerHecke.ExistsRatMulIdeleFinitePartMemCompactOfLeNorm
+
+@[expose] public section
+
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
 open UpperTheory.ConvolutionTheory.R2 UpperTheory.ConvolutionTheory.RankTwoDescent
@@ -76,10 +81,10 @@ private theorem Yv_swap (q : ℚ) (hq : q ≠ 0) (b : A ℚ) (a a' : (A ℚ)ˣ) 
 private theorem re_mul (x y : A ℚ) : re (x * y) = re x * re y := by
   simp [re, map_mul]
 private theorem re_add (x y : A ℚ) : re (x + y) = re x + re y := by
-  simp [re, map_add]
+  simp [re, map_add (f := _)]
 private theorem re_rat (q : ℚ) : re (rt q) = (q : ℝ) := by
-  refine (InfinitePlace.Completion.extensionEmbeddingOfIsReal_coe (IsTotallyReal.isReal Rat.infinitePlace) (WithAbs.toAbs _ q)).trans ?_
-  simp
+  exact eq_ratCast (((Pi.evalRingHom (fun _ : InfinitePlace ℚ => ℝ) Rat.infinitePlace).comp
+    (TR.pInf ℚ)).comp (algebraMap ℚ (A ℚ))) q
 private theorem re_inv (a : (A ℚ)ˣ) : re ((a⁻¹ : (A ℚ)ˣ) : A ℚ) = (re (a : A ℚ))⁻¹ := by
   have h : re (a : A ℚ) * re ((a⁻¹ : (A ℚ)ˣ) : A ℚ) = 1 := by
     rw [← re_mul, Units.mul_inv]
@@ -90,7 +95,7 @@ end UpperTheory.QuaternionSwap
 
 open UpperTheory.QuaternionSwap in
 theorem UpperTheory.norm_thetaSeries_siegelSet_le_exp :
-    ∀ (Φ : (Fin 2 → A ℚ) → ℂ), Φ ∈ schwartzBruhatPi ℚ (Fin 2) → ∀ (C : Set (GL (Fin 2) (A ℚ))), IsCompact C → ∀ (c : ℝ), 0 < c → ∀ n : ℕ,
+    ∀ (Φ : (Fin 2 → A ℚ) → ℂ), Φ ∈ schwartzBruhatPi (K := ℚ) (ι := Fin 2) → ∀ (C : Set (GL (Fin 2) (A ℚ))), IsCompact C → ∀ (c : ℝ), 0 < c → ∀ n : ℕ,
         ∃ (r : ℕ) (B : ℝ), ∀ t : ℝ, 0 ≤ t → ∀ (b : A ℚ) (a : (A ℚ)ˣ), ∀ k ∈ C, c ≤ ab a →
           ‖ThR Φ t (gl (nU b * mD a) * k)‖ ≤ B * Real.exp (-((n : ℝ) * t)) * ab a ^ r := by
   intro Φ hΦ C hC c hc n

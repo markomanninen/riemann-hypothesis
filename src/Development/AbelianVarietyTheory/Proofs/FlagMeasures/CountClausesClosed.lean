@@ -1,8 +1,13 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.StandingHypothesesHoldFamily
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.CountT
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ResidEvFree
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CountParameterConditionsOfSizeHypothesesStatement
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.StandingHypothesesHoldFamily
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.CountT
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ResidEvFree
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.CountParameterConditionsOfSizeHypothesesStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.S
 
 noncomputable section

@@ -1,8 +1,12 @@
-import Formalism.LocalRingCardinality.MinkMEqMinkowskiNumber
-import Formalism.SharpRestriction.SmoothDesignExistence.DGamSmooth
-import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
-import Formalism.SharpRestriction.CuspSpanNormBounds.NonGenericAndKTwoTheorems
-import Formalism.SharpRestriction.Divisibility.ZetaProductPairs
+module
+
+public import Formalism.LocalRingCardinality.MinkMEqMinkowskiNumber
+public import Formalism.SharpRestriction.SmoothDesignExistence.DGamSmooth
+public import Formalism.SharpRestriction.CuspSpanNormBounds.CongruenceAtSplitFrobeniusHolds
+public import Formalism.SharpRestriction.CuspSpanNormBounds.NonGenericAndKTwoTheorems
+public import Formalism.SharpRestriction.Divisibility.ZetaProductPairs
+
+@[expose] public section
 
 namespace Formalism.MainNotions.J
 
@@ -10,7 +14,7 @@ open Formalism.BasicNotions
 
 private lemma prime_le_succ_of_dvd_minkM' {n p : ℕ} (hp : p.Prime) (h : p ∣ minkM n) : p ≤ n + 1 := by
   have h' : p ∣ ∏ q ∈ (Finset.range (n + 2)).filter Nat.Prime, q ^ Formalism.HermitianLatticeCounting.S6.minkowskiExp n q := h
-  rcases (Prime.dvd_finset_prod_iff hp.prime _).1 h' with ⟨q, hq, hdvd⟩
+  rcases (Prime.dvd_finsetProd_iff hp.prime _).1 h' with ⟨q, hq, hdvd⟩
   rw [Finset.mem_filter, Finset.mem_range] at hq
   have hpq := (Nat.prime_dvd_prime_iff_eq hp hq.2).1 (hp.dvd_of_dvd_pow hdvd)
   omega

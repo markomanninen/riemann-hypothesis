@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -67,7 +71,7 @@ theorem integrable_of_count {G : Type} [MeasurableSpace G] (μ : Measure G) {f :
           ← Real.mul_rpow (by positivity) (by positivity)]
         exact ENNReal.ofReal_le_ofReal (Real.rpow_le_rpow (h0 g).le hg.2 t0)
       · rw [setLIntegral_const]
-        refine (mul_le_mul_right ((measure_mono fun g hg => hg.1).trans (h j)) _).trans_eq ?_
+        refine (mul_le_mul_right ((measure_mono fun g (hg : g ∈ P j) => hg.1).trans (h j)) _).trans_eq ?_
         simp only [ρ, mul_pow]; ring
     _ < ⊤ := by
       rw [ENNReal.tsum_mul_left, ENNReal.tsum_geometric]

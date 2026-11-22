@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.BesselCompatibility
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsRatDatum
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RestrictedBlockUnipotentSymmetric
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsUnitaryMatchingFramesAtNonconjugatePlaces
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsTransportAdelicCorrection
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.CombAtSingleZero
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsCombAt
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsRatDatum
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.RestrictedBlockUnipotentSymmetric
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.LevelHyperspecialTrivialCharacterSplitsOffPlaces
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsUnitaryMatchingFramesAtNonconjugatePlaces
+
+@[expose] public section
 
 noncomputable section
 
@@ -63,12 +67,13 @@ theorem red_conj_eq_one (S : Subring A) {k : Type} [CommRing k] (ρ : S →+* k)
     rw [Matrix.map_apply, Matrix.mul_apply] at this
     simp only [Matrix.mul_apply, Matrix.map_apply, Subring.subtype_apply] at this
     rw [Subring.coe_mul, this]
-    simp only [AddSubmonoidClass.coe_finset_sum, Subring.coe_mul, Finset.mul_sum, Finset.sum_mul]
+    simp only [AddSubmonoidClass.coe_finsetSum, Subring.coe_mul, Finset.mul_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
     ring
   have e4 := congrArg ρ e3
   rw [map_mul, hρ, one_mul] at e4
-  simp only [map_sum, map_mul, e2, mul_zero, Finset.sum_const_zero] at e4
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, e2, mul_zero, Finset.sum_const_zero] at e4
   exact e4
 
 theorem transv_entry (S : Subring A) (p : S) (β β₀ : GL (Fin n) A) (i j : Fin n) (z : Matrix (Fin n) (Fin n) S)
@@ -116,16 +121,19 @@ namespace GlobalTheory.PrinFrame
 
 variable {D : D7}
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem redFn_eq_one_of_le (V : HSp D) (β β₀ : GL (Fin V.rank) (Lev.EAf D))
     (h₀ : Formalism.L2.DIV.IsFrame β₀ (Formalism.L2.Herm.crdLat V V.L0))
     (hle : ∀ κ ∈ GfC V, finE V κ ∈ Formalism.L2.DIV.St β₀ → finE V κ ∈ Formalism.L2.DIV.St β)
     (P : Formalism.L2.DIV.Pl D.host.E) (hP : ¬ Formalism.IndefR.Lev.IsConjPl P P) (x : GL (Fin V.rank) (Lev.EAf D))
     (hx : x ∈ Formalism.L2.DIV.St β) (hx₀ : x ∈ Formalism.L2.DIV.St β₀) (h1 : redFn β P x = 1) : redFn β₀ P x = 1 := by
-  obtain ⟨β₁, h₁⟩ := GlobalTheory.StdFrames.exists_base V
-  obtain ⟨c, hc⟩ := GlobalTheory.StdFrames.isSD_one h₁
-  have hB : IsBaseFrame V β₀ (Formalism.L2.Herm.crdLat V V.L0) (1 ^ c) := ⟨h₀, hc.2⟩
+  have hB : IsBaseFrame V β₀ (Formalism.L2.Herm.crdLat V V.L0) (1 ^ 0) := by
+    refine ⟨h₀, GlobalTheory.LevelChoices.dualL_crdLat V, one_pos, fun x hx => ?_, fun x hx => ?_⟩
+    · rw [pow_zero, Nat.cast_one, one_smul]
+      rwa [← GlobalTheory.LevelChoices.coe_crdLat] at hx
+    · rw [pow_zero, Nat.cast_one, one_smul, ← GlobalTheory.LevelChoices.coe_crdLat]
+      exact hx
   obtain ⟨e, he⟩ := GlobalTheory.ParahoricLift.exists_isIdemAt hP
   obtain ⟨p, hp, hpp, hres⟩ := GlobalTheory.ParahoricLift.exists_idem_int he
   have hoff : ∀ i j, i ≠ j → ∀ a b, (p : Lev.EAf D) * (((β₀⁻¹ * β)⁻¹).1 a i * (β₀⁻¹ * β).1 j b) ∈
@@ -141,7 +149,7 @@ theorem redFn_eq_one_of_le (V : HSp D) (β β₀ : GL (Fin V.rank) (Lev.EAf D))
     have hsf := GlobalTheory.LevSplit.supp_fin V (f := e + cA D e) hs
     rw [← hp] at hκ
     have hf : GlobalTheory.LevSplit.finSw D (e + cA D e) = p + Formalism.UG.sigR D.sp.cm.sig (Formalism.L2.Herm.Af D.host.F) p := by
-      rw [RingHom.map_add, GlobalTheory.LevSplit.finSw_cA, hp]
+      rw [RingHom.map_add (f := _), GlobalTheory.LevSplit.finSw_cA, hp]
     have hSt : finE V κ ∈ Formalism.L2.DIV.St β₀ :=
       GlobalTheory.ParahoricLift.mem_St_of_part D.sp.cm.sig V.gram _ β₀ hB.1 (GlobalTheory.ParahoricLift.hatL_selfDual hB) p p hpp
         (GlobalTheory.LevSplit.sigR_int p.2) _ hu' (finE V κ) (GlobalTheory.LevSplit.finE_mem_UA V κ) _ hf hsf hκ

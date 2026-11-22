@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemDivSuppOfDivCycleNeZero
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsMonomialNotMem
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.MemDivSuppOfDivCycleNeZero
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArithmeticIntersection.MultihomogeneousIdeals.ExistsMonomialNotMem
+
+@[expose] public section
 
 noncomputable section
 
@@ -73,11 +77,11 @@ theorem exists_homog_chart (V : Ideal (MRingOver F ι)) (j : ∀ k, ι k) (b : M
       _ = m.sum fun _ n => n := by rw [Finsupp.sum_fintype _ _ (fun _ => rfl), Fintype.sum_sigma]
       _ ≤ b.totalDegree := MvPolynomial.le_totalDegree hm
       _ ≤ e k := he k
-  refine ⟨∑ m ∈ b.support, monomial m (coeff m b) * ∏ k, X ⟨k, j k⟩ ^ (e k - ∑ i, m ⟨k, i⟩),
+  refine ⟨∑ m ∈ b.support, monomial m (AddMonoidAlgebra.coeff b m) * ∏ k, X ⟨k, j k⟩ ^ (e k - ∑ i, m ⟨k, i⟩),
     ?_, ?_⟩
   · refine Submodule.sum_mem _ fun m hm => ?_
     rw [mem_weightedHomogeneousSubmodule]
-    have h1 : IsWeightedHomogeneous (mw (ι := ι)) (monomial m (coeff m b))
+    have h1 : IsWeightedHomogeneous (mw (ι := ι)) (monomial m (AddMonoidAlgebra.coeff b m))
         (fun k => ∑ i, m ⟨k, i⟩) :=
       isWeightedHomogeneous_monomial _ _ _ (weight_mw m)
     have h2 : IsWeightedHomogeneous (mw (ι := ι))
@@ -94,8 +98,10 @@ theorem exists_homog_chart (V : Ideal (MRingOver F ι)) (j : ∀ k, ι k) (b : M
         mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
       omega
     rwa [hsum] at h3
-  · rw [map_sum]
-    conv_rhs => rw [MvPolynomial.as_sum b, map_sum]
+  ·
+    set_option synthInstance.maxHeartbeats 100000 in rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      conv_rhs => rw [MvPolynomial.as_sum b, map_sum]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [map_mul, map_prod]
     simp only [map_pow, hX1, one_pow, Finset.prod_const_one, mul_one]
@@ -140,7 +146,8 @@ private theorem aeval_mul_const_of_isMultiHomog {A : Type*} [CommRing A] [Algebr
   classical
   conv_lhs => rw [MvPolynomial.as_sum f]
   conv_rhs => rw [MvPolynomial.as_sum f]
-  rw [map_sum, map_sum, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, Finset.mul_sum]
   refine Finset.sum_congr rfl fun m hm => ?_
   have hw := (mem_weightedHomogeneousSubmodule _ _ _ _).mp (mem_weighted_of_isMultiHomog hf)
     (MvPolynomial.mem_support_iff.mp hm)
@@ -186,24 +193,6 @@ theorem chartRho_chartIdeal (hW : IsMultiHomogIdeal W) {j : ∀ k, ι k} (hj : I
     rintro _ ⟨k, rfl⟩
     exact RingHom.mem_ker.mpr (hX k)
   exact RingHom.mem_ker.mp (hker hg)
-
-theorem chartRho_form [DecidableEq K] {j : ∀ k, ι k} (hj : IsChart W j) {e : K → ℕ} {a : MRingOver F ι}
-    (ha : a ∈ weightedHomogeneousSubmodule F (mw (ι := ι)) e) (h0 : chartRho W j a = 0) : a ∈ W := by
-  have h1 := aeval_mul_const_of_isMultiHomog (chartC W j) (fun p => chartTheta W (X p))
-    (isMultiHomog_of_mem_weighted ha)
-  have h2 : aeval (fun p => chartTheta W (X p)) a = chartTheta W a :=
-    (DFunLike.congr_fun (MvPolynomial.aeval_unique (chartTheta W)) a).symm
-  have h3 : chartRho W j a = (∏ k, chartC W j k ^ e k) * chartTheta W a := by
-    rw [← h2, ← h1]
-    rfl
-  rw [h3] at h0
-  have hne : (∏ k, chartC W j k ^ e k) ≠ 0 :=
-    Finset.prod_ne_zero_iff.mpr fun k _ => pow_ne_zero _ (inv_ne_zero (chartTheta_X_ne_zero hj k))
-  exact chartTheta_eq_zero_iff.mp ((mul_eq_zero.mp h0).resolve_left hne)
-
-theorem mem_of_mem_chartIdeal [DecidableEq K] (hW : IsMultiHomogIdeal W) {j : ∀ k, ι k}
-    (hj : IsChart W j) {e : K → ℕ} {a : MRingOver F ι}
-    (ha : a ∈ weightedHomogeneousSubmodule F (mw (ι := ι)) e) (haW : a ∈ chartIdeal W j) : a ∈ W := chartRho_form hj ha (chartRho_chartIdeal hW hj haW)
 
 theorem chartIdeal_ne_top (hW : IsMultiHomogIdeal W) {j : ∀ k, ι k} (hj : IsChart W j) :
     chartIdeal W j ≠ ⊤ := by
@@ -351,63 +340,6 @@ instance finiteDimensional_weighted [DecidableEq K] (e : K → ℕ) :
     exact Finset.single_le_sum (f := fun i => m ⟨p.1, i⟩) (fun _ _ => Nat.zero_le _)
       (Finset.mem_univ p.2)
   exact hfin.image _
-
-theorem point_hilb [DecidableEq K] (hW : IsProjVarF W 0) {j : ∀ k, ι k} (hj : IsChart W j) :
-    ∃ e₀ : K → ℕ, ∀ e, e₀ ≤ e →
-      Module.finrank F ↥(weightedHomogeneousSubmodule F (mw (ι := ι)) e ⊓ W.restrictScalars F) +
-        ptDeg W j = Module.finrank F ↥(weightedHomogeneousSubmodule F (mw (ι := ι)) e) := by
-  haveI := chart_finite hW hj
-  haveI := hW.1.1
-  let bs := Module.finBasis F (MRingOver F ι ⧸ chartIdeal W j)
-  choose lift hlift using fun i => Ideal.Quotient.mk_surjective (bs i)
-  choose e0 he0 using fun i => exists_homog_chart W j (lift i)
-  refine ⟨Finset.univ.sup e0, fun e he => ?_⟩
-  let π : weightedHomogeneousSubmodule F (mw (ι := ι)) e →ₗ[F] MRingOver F ι ⧸ chartIdeal W j :=
-    (Ideal.Quotient.mkₐ F (chartIdeal W j)).toLinearMap ∘ₗ Submodule.subtype _
-  have hsurj : Function.Surjective π := by
-    rw [← LinearMap.range_eq_top, eq_top_iff, ← bs.span_eq, Submodule.span_le]
-    rintro _ ⟨i, rfl⟩
-    obtain ⟨b', hb', eb⟩ := he0 i e ((Finset.le_sup (Finset.mem_univ i)).trans he)
-    exact ⟨⟨b', hb'⟩, by simp [π, eb, hlift]⟩
-  have hker : LinearMap.ker π = (W.restrictScalars F).comap (Submodule.subtype _) := by
-    ext x
-    simp only [LinearMap.mem_ker, Submodule.mem_comap, Submodule.restrictScalars_mem,
-      Submodule.coe_subtype]
-    constructor
-    · intro h
-      exact mem_of_mem_chartIdeal hW.1.2.1 hj x.2 (Ideal.Quotient.eq_zero_iff_mem.mp h)
-    · intro h
-      exact Ideal.Quotient.eq_zero_iff_mem.mpr (Ideal.mem_sup_left h)
-  have h1 := LinearMap.finrank_range_add_finrank_ker π
-  rw [LinearMap.range_eq_top.mpr hsurj, finrank_top, hker, ← Submodule.finrank_map_subtype_eq,
-    Submodule.map_comap_subtype] at h1
-  rw [ptDeg]
-  omega
-
-theorem eq_of_point_le {P : Ideal (MRingOver F ι)} (hW : IsProjVarF W 0) (hP : P.IsPrime)
-    (hPh : IsMultiHomogIdeal P) {j : ∀ k, ι k} (hj : IsChart P j) (hWP : W ≤ P) : P = W := by
-  classical
-  refine le_antisymm ?_ hWP
-  intro x hxP
-  by_contra hxW
-  obtain ⟨S, hS, hPS⟩ := hPh
-  have hex : ∃ s ∈ S, s ∉ W := by
-    by_contra! h
-    exact hxW ((hPS ▸ Ideal.span_le.mpr h : P ≤ W) hxP)
-  obtain ⟨s, hsS, hsW⟩ := hex
-  obtain ⟨a, ha⟩ := hS s hsS
-  have hsP : s ∈ P := hPS ▸ Ideal.subset_span hsS
-  obtain ⟨t, ht⟩ := (isUnit_mk_chartIdeal_form hW j ha hsW).exists_right_inv
-  obtain ⟨t, rfl⟩ := Ideal.Quotient.mk_surjective t
-  have h1 : s * t - 1 ∈ chartIdeal W j := by
-    rw [← Ideal.Quotient.eq, map_mul, ht, map_one]
-  have h2 : chartIdeal W j ≤ chartIdeal P j := sup_le_sup_right hWP _
-  have h3 : s * t ∈ chartIdeal P j := Ideal.mem_sup_left (P.mul_mem_right t hsP)
-  have h4 : (1 : MRingOver F ι) ∈ chartIdeal P j := by
-    have := Ideal.sub_mem _ h3 (h2 h1)
-    simpa using this
-  haveI := hP
-  exact chartIdeal_ne_top (W := P) ⟨S, hS, hPS⟩ hj ((Ideal.eq_top_iff_one _).mpr h4)
 
 end Point
 

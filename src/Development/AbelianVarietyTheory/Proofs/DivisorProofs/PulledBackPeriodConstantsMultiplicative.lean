@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PeriodRel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MumfordBundleIsoNormalisedRespectsLaws
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RefinesPolarisedDataBaseChangeSymmetric
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsAbelianSchemeOfIsGrpPullback
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PeriodRel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MumfordBundleIsoNormalisedRespectsLaws
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RefinesPolarisedDataBaseChangeSymmetric
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsAbelianSchemeOfIsGrpPullback
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.Toroidal GlobalTheory.LocM GlobalTheory.PolFan GlobalTheory.ZM GlobalTheory.SiegelTor GlobalTheory.TorRef GlobalTheory.PolDeg GlobalTheory.SiegJoin GlobalTheory.TChart
@@ -158,7 +163,21 @@ theorem isoVal_law {S S₁ S' : Scheme.{0}} {B : Over S} {B₁ : Over S₁} {B' 
   have o : toBase hβ.1.w (1 : T ⟶ B') = 1 := map_one (pushHom hβ T)
   have o' : toBase hβ'.1.w (1 : T ⟶ B') = 1 := map_one (pushHom hβ' T)
   have k₁ := key 1 1 1
-  rw [o, o', (isCub_cubV c (T := Over.mk (T.hom ≫ f)) hJ').face, (isCub_cubV c₁ (T := Over.mk (T.hom ≫ f₁)) hJ).face,
+  rw [o] at k₁
+  rw [o'] at k₁
+  have face₁ : cubV c (T := Over.mk (T.hom ≫ f)) z J' 1 1 1 = 1 := by
+    have h := val_corr hJ' (c.face 0) (lift (1 : Over.mk (T.hom ≫ f) ⟶ B) 1).left
+    rw [val_one] at h
+    refine Eq.trans ?_ h
+    refine Eq.trans ?_ (val_cub c (lift (1 : Over.mk (T.hom ≫ f) ⟶ B) 1) hJ' (pzero B _) (x2 B 0) (x2 B 1)).symm
+    congr 1 <;> simp [x2, pzero, Hom.one_def]
+  have face₂ : cubV c₁ (T := Over.mk (T.hom ≫ f₁)) z J 1 1 1 = 1 := by
+    have h := val_corr hJ (c₁.face 0) (lift (1 : Over.mk (T.hom ≫ f₁) ⟶ B₁) 1).left
+    rw [val_one] at h
+    refine Eq.trans ?_ h
+    refine Eq.trans ?_ (val_cub c₁ (lift (1 : Over.mk (T.hom ≫ f₁) ⟶ B₁) 1) hJ (pzero B₁ _) (x2 B₁ 0) (x2 B₁ 1)).symm
+    congr 1 <;> simp [x2, pzero, Hom.one_def]
+  rw [face₁, face₂,
     _root_.mul_one (1 : T ⟶ B')] at k₁
   have k₂ := Units.ext ((key x x' y).trans k₁.symm)
   simp only [id] at k₂ ⊢
@@ -184,7 +203,18 @@ theorem val_τ₀_add {o W : Type} [CommRing o] [CommRing W] [IsLocalRing W] (T 
 
 theorem period_add : ∀ (n : ℕ) (V : Type) [CommRing V] [IsDomain V] [IsLocalRing V] (D : DegData V (maximalIdeal V)) (r : ℕ) (e₀ : (Fin r → ℤ) ≃+ D.toPre.X) (L : LowBase (zetaAway n) n) (V₁ : Type) [CommRing V₁] [IsDomain V₁] [IsLocalRing V₁] (f₁ : V →+* V₁) (κ₁ : L.W →+* V₁) (e : (Fin L.T.r → ℤ) ≃+ (Fin r → ℤ)) (B' : Over (Sp V₁)) [GrpObj B'] (β' : B'.left ⟶ D.toPre.P.A.left) (β'' : B'.left ⟶ L.T.B.left) (β₂ : (G2 B').left ⟶ (G2 D.toPre.P.A).left) (β₂' : (G2 B').left ⟶ (G2 L.T.B).left), IsCN V → IsDiscreteValuationRing V → IsCN V₁ → IsDiscreteValuationRing V₁ → Function.Injective f₁ → f₁.Finite → IsLocalHom f₁ → IsLocalHom κ₁ → IsGrpPullback B' D.toPre.P.A (spMap f₁) β' → IsGrpPullback B' L.T.B (spMap κ₁) β'' → IsSquare β' β₂ → IsSquare β'' β₂' → ∀ (x : (Fin L.T.r → ℤ) → (𝟙_ (Over (Sp V₁)) ⟶ B')), (∀ a, (x a).left ≫ β' = spMap f₁ ≫ (D.toPre.c (e₀ (e a))).left ∧ (x a).left ≫ β'' = spMap κ₁ ≫ (L.T.c₀ ((n : ℤ) • a)).left) → ∀ (w₁ : LB.Iso ((abelian₂ D.toPre.P.A D.toPre.P.L).pull β₂) ((abelian₂ L.T.B L.T.M.L).pull β₂')) (q : (Fin L.T.r → ℤ) → (Fin L.T.r → ℤ) → (FractionRing V₁)ˣ), w₁.IsGen → PeriodRel D.toPre L.T f₁ κ₁ w₁ (e.trans e₀) x n q → IsNormIso w₁ → ∀ a a' b, q (a + a') b = q a b * q a' b := by
   intro n V _ _ _ D r e₀ L V₁ _ _ _ f₁ κ₁ e B' _ β' β'' β₂ β₂' _ _ _ _ hf _ _ _ hβ' hβ'' sq' sq'' x hx w₁ q hw hP hN a a' b
-  have hB : IsAbelianScheme B' := GlobalTheory.PolPull.isAbelianScheme_of_isGrpPullback L.T.isAb hβ''
+  have hB : IsAbelianScheme B' := by
+   refine { comm := ?_, smooth := ?_, proper := ?_, geomConnected := ?_ }
+   ·
+      have := L.T.isAb.comm
+      rw [isCommMonObj_iff_isMulCommutative]
+      intro T
+      refine ⟨⟨fun x y => Over.OverMorphism.ext (hβ''.1.hom_ext ?_ (by rw [Over.w, Over.w]))⟩⟩
+      rw [← hβ''.2 T x y (pushPt hβ''.1.w x) (pushPt hβ''.1.w y) rfl rfl,
+        ← hβ''.2 T y x (pushPt hβ''.1.w y) (pushPt hβ''.1.w x) rfl rfl, _root_.mul_comm]
+   · exact MorphismProperty.of_isPullback (P := @Smooth) hβ''.1 L.T.isAb.smooth
+   · exact MorphismProperty.of_isPullback (P := @IsProper) hβ''.1 L.T.isAb.proper
+   · exact MorphismProperty.of_isPullback (P := @GeometricallyConnected) hβ''.1 L.T.isAb.geomConnected
   obtain ⟨κK, hκ, -⟩ := GlobalTheory.HalfBC.exists_kappa f₁ (RingHom.id V₁) (RingHom.id _) (fun _ => rfl) hf
   let z : (TK V₁).left := IsLocalRing.closedPoint (FractionRing V₁)
   obtain ⟨J, hJ⟩ := GlobalTheory.UU.exists_good_pt L.T.M.isLB z
@@ -211,7 +241,7 @@ theorem period_add : ∀ (n : ℕ) (V : Type) [CommRing V] [IsDomain V] [IsLocal
     ((e.trans e₀) a) ((e.trans e₀) a') ((e.trans e₀) b)
   have hT := val_τ₀_add L.T T'' (z := z) (J := J) hJ ((n : ℤ) • a) ((n : ℤ) • a') ((n : ℤ) • b)
   rw [← smul_add] at hT
-  rw [← map_add] at hD
+  rw [← map_add (f := _)] at hD
   have r₁ := hP κK hκ (a + a') b z J J' hJ hJ'
   have r₂ := hP κK hκ a b z J J' hJ hJ'
   have r₃ := hP κK hκ a' b z J J' hJ hJ'

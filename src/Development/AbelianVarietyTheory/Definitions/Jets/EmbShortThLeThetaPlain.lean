@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.ExampleSatisfiesConditionsAtFive
-import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
-import Formalism.LocalToGlobal.ProjectiveLattices.LiftLaSpec
-import Formalism.LocalToGlobal.ProjectiveLattices.ThClassPins
-import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.OEOsInjective
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteForms.IndefiniteTree.ExampleSatisfiesConditionsAtFive
+public import Formalism.LocalToGlobal.ProjectiveLattices.RecPJThAllNeBot
+public import Formalism.LocalToGlobal.ProjectiveLattices.LiftLaSpec
+public import Formalism.LocalToGlobal.ProjectiveLattices.ThClassPins
+public import Formalism.SharpRestriction.Divisibility.AbelianOpenPart.OEOsInjective
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -98,7 +102,7 @@ theorem spanK_fg_of_fg [Module (𝓞 F) C] [IsScalarTower (𝓞 F) F C] {N : Sub
     induction hf using Submodule.span_induction with
     | mem x hx => exact mem_spanK z hx
     | zero => simp
-    | add x y _ _ hx hy => rw [TensorProduct.tmul_add, map_add]; exact add_mem hx hy
+    | add x y _ _ hx hy => rw [TensorProduct.tmul_add, map_add (f := _)]; exact add_mem hx hy
     | smul r x _ hx =>
       have e : (1 : K) ⊗ₜ[F] (r • x) = (algebraMap F K (r : F)) • ((1 : K) ⊗ₜ[F] x) := by
         have h1 : r • x = (r : F) • x := (algebraMap_smul F r x).symm
@@ -107,10 +111,6 @@ theorem spanK_fg_of_fg [Module (𝓞 F) C] [IsScalarTower (𝓞 F) F C] {N : Sub
       exact (spanK z (t : Set C)).smul_mem (algebraMap (𝓞 F) (𝓞 K) r) hx
   rw [key]
   exact Submodule.fg_span (t.finite_toSet.image _)
-
-example : spanK z (∅ : Set C) = ⊥ := by simp [spanK]
-
-example : spanK z ({0} : Set C) = ⊥ := by simp [spanK]
 
 end Span
 
@@ -231,9 +231,5 @@ theorem OneCover.eq_withCoeff {T : Top D} {j : ℕ} (h : OneCover T j) (n n' : �
   obtain ⟨φ', e'⟩ := h n'
   rw [e, e']
   exact ⟨φ', rfl⟩
-
-def topOfCover (T : Top D) {m : ℕ → ℕ} (d : ∀ j, DeltaDat (T.Q.Xo j) T.Q.c (m j))
-    (φ : ∀ j n, (Fin n → LevQ (T.Q.Dw j) (d j).l₂) → T.Q.c.F) : Top D :=
-  { T with dδ := fun j n => withCoeff (d j) (φ j n) }
 
 end GlobalTheory.FormTies

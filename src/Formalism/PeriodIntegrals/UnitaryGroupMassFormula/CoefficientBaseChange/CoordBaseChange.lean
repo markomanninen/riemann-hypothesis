@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CoefficientBaseChange.InvBaseChange
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CoefficientBaseChange.InvBaseChange
+
+@[expose] public section
 
 open TensorProduct
 
@@ -19,7 +23,7 @@ theorem coord_baseChange {ι : Type} [DecidableEq ι] (b : Module.Basis ι K L) 
     ext i
     simp
   | add x y hx hy =>
-    simp only [map_add, hx, hy]
+    simp only [map_add (f := _), hx, hy]
     ext i
     simp
 
@@ -71,7 +75,7 @@ theorem invBaseChange : InvBaseChange := by
       | tmul a v =>
         have hv := (memV v).1 v.2 g
         simp [hv]
-      | add x y hx hy => simp only [map_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]
   rw [hrange, LinearMap.finrank_range_of_inj hinj, Module.finrank_baseChange]
 
 end PI.CoefExt

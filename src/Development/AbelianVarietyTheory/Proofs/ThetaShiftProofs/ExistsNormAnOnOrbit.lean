@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
-import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.PrimAn
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HolArcEqFlowOrbit
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.RiemannFormFramePeriodsEqMajorant
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CmFieldHostElementAddConjEqOne
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowDomainCriterionHolds
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajPos
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ModelsAt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.PrimAn
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.HolArcEqFlowOrbit
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.RiemannFormFramePeriodsEqMajorant
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.CmFieldHostElementAddConjEqOne
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.FlowDomainCriterionHolds
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.MajPos
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.FreeQuotientRank
@@ -23,10 +27,10 @@ variable {O : Type} [CommRing O] [StarRing O] (A : AnArc O)
 def normT (w : O) : A.X →+ A.X →+ ℂ :=
   AddMonoidHom.mk' (fun y => AddMonoidHom.mk'
     (fun y' => -(A.H (A.ct y) (A.ct y') / (2 * Complex.I)) + ((A.H (A.F w (A.ct y)) (A.ct y')).im : ℂ))
-    (fun _ _ => by simp only [map_add, A.H_add_right, Complex.add_im]; push_cast; ring))
+    (fun _ _ => by simp only [map_add (f := _), A.H_add_right, Complex.add_im]; push_cast; ring))
     (fun _ _ => by
       ext
-      simp only [map_add, A.H_add_left, Complex.add_im, AddMonoidHom.mk'_apply, AddMonoidHom.add_apply]
+      simp only [map_add (f := _), A.H_add_left, Complex.add_im, AddMonoidHom.mk'_apply, AddMonoidHom.add_apply]
       push_cast; ring)
 
 lemma normT_apply (w : O) (y y' : A.X) : normT A w y y' =
@@ -40,7 +44,7 @@ lemma normT_adj (w a : O) (y x : A.X) : normT A w (a • y) x = normT A w y (sta
 lemma normT_symm {w : O} (hw : w + star w = 1) (x y : A.X) : normT A w x y = normT A w y x := by
   have h1 : A.H (A.ct x) (A.ct y) = A.H (A.F w (A.ct x)) (A.ct y) + A.H (A.ct x) (A.F w (A.ct y)) := by
     have : A.H (A.ct x) (A.F w (A.ct y)) = A.H (A.F (star w) (A.ct x)) (A.ct y) := by rw [A.H_F, star_star]
-    rw [this, ← A.H_add_left, ← LinearMap.add_apply, ← map_add, hw, map_one, Module.End.one_apply]
+    rw [this, ← A.H_add_left, ← LinearMap.add_apply, ← map_add (f := _), hw, map_one, Module.End.one_apply]
   have h2 := congrArg Complex.im h1
   rw [Complex.add_im] at h2
   rw [normT_apply, normT_apply, ← A.H_conj (A.ct x) (A.ct y), ← A.H_conj (A.ct x) (A.F w (A.ct y)), Complex.conj_im]
@@ -60,10 +64,10 @@ def normArc {w : O} (hw : w + star w = 1) : AnArc O :=
     psi_neg := fun x => Units.ext (by simp)
     psi_add := fun x y => by
       have h : normT A w y (w • x) + normT A w x (w • y) = normT A w x y := by
-        rw [normT_symm A hw y, normT_adj, ← map_add, ← add_smul, add_comm, hw, one_smul]
+        rw [normT_symm A hw y, normT_adj, ← map_add (f := _), ← add_smul, add_comm, hw, one_smul]
       simp only [Units.val_mk0, ← AnArc.e_add]
       congr 1
-      simp only [smul_add, map_add, AddMonoidHom.add_apply]
+      simp only [smul_add, map_add (f := _), AddMonoidHom.add_apply]
       rw [← h]; ring }
 
 lemma normT_norm (w : O) (n : ℕ) (hn : ∀ y, n • A.ct y ∈ A.abelian₂) (y y' : A.X) :
@@ -157,8 +161,8 @@ variable {La Y : Type} [AddCommGroup La] [Module (𝓞 E) La] [AddCommGroup Y] [
   (iso : ∀ a b, ((EF a b : ℤ) : ℚ) = Algebra.trace ℚ E (-X.ξ0 * herm X.Gm (φ a : Fin r → E) (φ b)))
   (y : La →ₗ[𝓞 E] Y)
 
-include iso in
 
+include iso in
 theorem rank_one_form [Module.Finite ℤ Y] (hY : Module.finrank (𝓞 E) Y = 1)
     (hy : Function.Surjective y) (be : LinearMap.BilinForm ℤ Y) (hsym : ∀ a b, be a b = be b a)
     (nn : La →ₗ[𝓞 E] La) (hnn : ∀ v v', -EF (nn v) v' = be (y v) (y v'))
@@ -337,10 +341,14 @@ lemma shift_periods [Algebra (FractionRing ℂ) ℂ] (hσ : GoodEmb c σ) (hU : 
       Finset.sum_neg_distrib, _root_.mul_assoc]
     ring
   rw [e0, e1]
-  simp only [map_add, map_smul, map_sum, hP, hh]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_add (f := _), map_smul, map_sum, hP, hh]
   refine Prod.ext (AddMonoidHom.ext fun z => ?_) ?_
-  · simp only [Prod.fst_add, Prod.smul_fst, Prod.fst_sum, AddMonoidHom.add_apply, AddMonoidHom.smul_apply,
-      AddMonoidHom.finset_sum_apply, (Pw_nnB A _ _ _ _).1, smul_eq_mul, hSB]
+  · let ev : (A.X →+ ℂ) →+ ℂ := { toFun := fun f => f z, map_zero' := rfl, map_add' := fun _ _ => rfl }
+    have hsum (f : Fin n → A.X →+ ℂ) : (∑ i, f i) z = ∑ i, f i z :=
+      map_sum ev f Finset.univ
+    simp only [Prod.fst_add, Prod.smul_fst, Prod.fst_sum, AddMonoidHom.add_apply, AddMonoidHom.smul_apply,
+      hsum, (Pw_nnB A _ _ _ _).1, smul_eq_mul, hSB]
     simp only [AnArc.Pw_fst_apply]
     ring
   · simp only [Prod.snd_add, Prod.smul_snd, Prod.snd_sum, (Pw_nnB A _ _ _ _).2, smul_zero, Finset.sum_const_zero,

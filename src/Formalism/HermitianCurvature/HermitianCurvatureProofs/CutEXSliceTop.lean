@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEX2
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.Side0PosOf
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceTopZero
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEX2
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.Side0PosOf
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SliceTopZero
+
+@[expose] public section
 
 open Matrix MeasureTheory
 
@@ -86,7 +90,7 @@ theorem slice_gen (P : M.Par) (p : KB.Pl P Wp Wq) (G : B.Mat P.k P.r → (Wq →
   · simp only [PBQ.ellH, ContinuousLinearMap.smul_apply, ContinuousLinearMap.id_apply]
     simp only [SliceIntegralLemmas.psiH] at H1i
     exact H1i
-  · rw [hcf, D.sliceAt, dif_pos hjr]
+  · rw [hcf, D.sliceAt, dite_eq_left hjr]
     simp only [PBQ.ellH, ContinuousLinearMap.smul_apply, ContinuousLinearMap.id_apply]
     exact H1e
 

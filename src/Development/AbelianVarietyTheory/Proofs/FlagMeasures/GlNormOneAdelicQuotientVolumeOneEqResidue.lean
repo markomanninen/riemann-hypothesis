@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
+
+@[expose] public section
+
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas
 
 namespace GlobalTheory.NormOneVol
@@ -161,7 +166,7 @@ theorem exists_gl_one {c : E} (hc : c ≠ 0) : ∃ γ : GL (Fin 1) E, (γ : Matr
 theorem eq_const (y : Fin 1 → E) : y = fun _ => y 0 := by
   ext i; rw [Subsingleton.elim i 0]
 
-theorem exists_ideal (Λ : Submodule (𝓞 E) (Fin 1 → E)) (h : Submodule.IsLattice E Λ) :
+theorem exists_ideal (Λ : Submodule (𝓞 E) (Fin 1 → E)) (h : Submodule.IsLattice E Λ) (hΛ : Λ ≠ ⊥) :
     ∃ I : (FractionalIdeal (𝓞 E)⁰ E)ˣ, ∀ y, y ∈ Λ ↔ y 0 ∈ (I : FractionalIdeal (𝓞 E)⁰ E) := by
   let I : FractionalIdeal (𝓞 E)⁰ E :=
     ⟨Λ.map (LinearMap.proj 0), FractionalIdeal.isFractional_of_fg (h.fg.map _)⟩
@@ -173,18 +178,16 @@ theorem exists_ideal (Λ : Submodule (𝓞 E) (Fin 1 → E)) (h : Submodule.IsLa
     rwa [this]
   have h0 : I ≠ 0 := by
     intro h0
-    have h1 : (Λ : Set (Fin 1 → E)) ⊆ (⊥ : Submodule E (Fin 1 → E)) := by
-      intro y hy
-      have := (hI y).1 hy
-      rw [h0, FractionalIdeal.mem_zero_iff] at this
-      rw [eq_const y, this]; exact Submodule.zero_mem _
-    have h2 := Submodule.span_le.2 h1
-    rw [h.span_eq_top] at h2
-    exact absurd (top_le_iff.1 h2) bot_ne_top
+    apply hΛ (le_bot_iff.mp ?_)
+    intro y hy
+    have hy0 := (hI y).1 hy
+    rw [h0, FractionalIdeal.mem_zero_iff] at hy0
+    rw [eq_const y, hy0]
+    exact Submodule.zero_mem _
   exact ⟨Units.mk0 I h0, hI⟩
 
 theorem exists_lattice (I : (FractionalIdeal (𝓞 E)⁰ E)ˣ) :
-    ∃ Λ : Submodule (𝓞 E) (Fin 1 → E), Submodule.IsLattice E Λ ∧
+    ∃ Λ : Submodule (𝓞 E) (Fin 1 → E), Submodule.IsLattice E Λ ∧ Λ ≠ ⊥ ∧
       ∀ y, y ∈ Λ ↔ y 0 ∈ (I : FractionalIdeal (𝓞 E)⁰ E) := by
   let e : E →ₗ[𝓞 E] (Fin 1 → E) := LinearMap.pi fun _ => LinearMap.id
   have hm : ∀ y, y ∈ ((I : FractionalIdeal (𝓞 E)⁰ E) : Submodule (𝓞 E) E).map e ↔
@@ -193,15 +196,13 @@ theorem exists_lattice (I : (FractionalIdeal (𝓞 E)⁰ E)ˣ) :
     refine ⟨?_, fun hy => ⟨y 0, hy, (eq_const y).symm⟩⟩
     rintro ⟨z, hz, rfl⟩
     exact hz
-  refine ⟨_, ⟨(FractionalIdeal.fg_unit I).map e, ?_⟩, hm⟩
+  refine ⟨_, Submodule.IsLattice.of_fg E ((FractionalIdeal.fg_unit I).map e), ?_, hm⟩
   obtain ⟨x, hx0, hx⟩ := FractionalIdeal.exists_ne_zero_mem_isInteger I.ne_zero
   have hx0' : algebraMap (𝓞 E) E x ≠ 0 := by simpa using hx0
-  rw [eq_top_iff]
-  intro y _
-  have : y = (y 0 / algebraMap (𝓞 E) E x) • fun _ : Fin 1 => algebraMap (𝓞 E) E x := by
-    ext i; rw [Subsingleton.elim i 0]; simp only [Pi.smul_apply, smul_eq_mul]; field_simp
-  rw [this]
-  exact Submodule.smul_mem _ _ (Submodule.subset_span ((hm _).2 hx))
+  intro hbot
+  have hy := (hm (fun _ => algebraMap (𝓞 E) E x)).2 hx
+  rw [hbot, Submodule.mem_bot] at hy
+  exact hx0' (congrFun hy 0)
 
 theorem mul_principal_eq_iff (I J : (FractionalIdeal (𝓞 E)⁰ E)ˣ) (c : Eˣ) :
     I * toPrincipalIdeal (𝓞 E) E c = J ↔
@@ -221,43 +222,75 @@ theorem mul_principal_eq_iff (I J : (FractionalIdeal (𝓞 E)⁰ E)ˣ) (c : Eˣ)
     rintro ⟨y, hy, rfl⟩
     exact (h y).2 hy
 
-theorem nonempty_equiv_classGroup :
-    Nonempty (Quot (fun Λ Λ' : {Λ : Submodule (𝓞 E) (Fin 1 → E) // Submodule.IsLattice E Λ} =>
-      ∃ γ : GL (Fin 1) E, ∀ y, (γ : Matrix (Fin 1) (Fin 1) E) *ᵥ y ∈ Λ'.1 ↔ y ∈ Λ.1) ≃ ClassGroup (𝓞 E)) := by
-  choose ψ hψ using fun Λ : {Λ : Submodule (𝓞 E) (Fin 1 → E) // Submodule.IsLattice E Λ} =>
-    exists_ideal Λ.1 Λ.2
+private abbrev RankOneLattice (E : Type) [Field E] [NumberField E] :=
+  {Λ : Submodule (𝓞 E) (Fin 1 → E) // Submodule.IsFullLattice E Λ}
+
+private abbrev carries (Λ Λ' : RankOneLattice E) : Prop :=
+  ∃ γ : GL (Fin 1) E, ∀ y, (γ : Matrix (Fin 1) (Fin 1) E) *ᵥ y ∈ Λ'.1 ↔ y ∈ Λ.1
+
+private theorem rankOne_ne_bot (Λ : RankOneLattice E) : Λ.1 ≠ ⊥ := by
+  intro h
+  have hspan : Submodule.span E (Λ.1 : Set (Fin 1 → E)) = ⊥ := by
+    refine Submodule.span_eq_bot.mpr fun x hx => ?_
+    change x ∈ Λ.1 at hx
+    simpa only [h, Submodule.mem_bot] using hx
+  rw [Λ.2.span_eq_top] at hspan
+  exact top_ne_bot hspan
+
+private theorem rankOne_full (Λ : Submodule (𝓞 E) (Fin 1 → E))
+    (hΛ : Submodule.IsLattice E Λ) (hne : Λ ≠ ⊥) : Submodule.IsFullLattice E Λ := by
+  obtain ⟨x, hx, hxne⟩ := Λ.ne_bot_iff.mp hne
+  have hx₀ : x 0 ≠ 0 := by
+    intro h
+    apply hxne
+    funext i
+    fin_cases i
+    exact h
+  refine { toIsLattice := hΛ, span_eq_top := eq_top_iff.mpr fun y _ => ?_ }
+  have hy : y = (y 0 / x 0) • x := by
+    funext i
+    fin_cases i
+    exact (div_mul_cancel₀ (y 0) hx₀).symm
+  rw [hy]
+  exact (Submodule.span E _).smul_mem _ (Submodule.subset_span hx)
+
+private theorem exists_classGroupEquiv : Nonempty (Quot (carries (E := E)) ≃ ClassGroup (𝓞 E)) := by
+  classical
+  choose ψ hψ using fun Λ : RankOneLattice E => exists_ideal Λ.1 Λ.2.toIsLattice (rankOne_ne_bot Λ)
   let q := QuotientGroup.mk' (toPrincipalIdeal (𝓞 E) E).range
-  have key : ∀ Λ Λ', (∃ γ : GL (Fin 1) E, ∀ y, (γ : Matrix (Fin 1) (Fin 1) E) *ᵥ y ∈ Λ'.1 ↔ y ∈ Λ.1) ↔
-      q (ψ Λ) = q (ψ Λ') := by
+  have key : ∀ Λ Λ', carries Λ Λ' ↔ q (ψ Λ) = q (ψ Λ') := by
     intro Λ Λ'
     rw [QuotientGroup.mk'_eq_mk']
     constructor
     · rintro ⟨γ, hγ⟩
       refine ⟨_, ⟨Units.mk0 _ (gl_one_ne_zero γ), rfl⟩, (mul_principal_eq_iff _ _ _).2 fun t => ?_⟩
       have := hγ (fun _ => t)
-      rw [mulVec_one, hψ, hψ] at this
+      rw [mulVec_one, hψ Λ' _, hψ Λ _] at this
       exact this
     · rintro ⟨_, ⟨c, rfl⟩, h⟩
       obtain ⟨γ, hγ⟩ := exists_gl_one c.ne_zero
       refine ⟨γ, fun y => ?_⟩
-      rw [mulVec_one, hψ, hψ, hγ]
+      rw [mulVec_one, hψ Λ' _, hψ Λ _, hγ]
       exact (mul_principal_eq_iff _ _ _).1 h _
-  refine ⟨(Equiv.ofBijective (Quot.lift (fun Λ => q (ψ Λ)) fun a b h => (key a b).1 h) ⟨?_, ?_⟩).trans
-    (ClassGroup.equiv E).symm.toEquiv⟩
-  · rintro ⟨a⟩ ⟨b⟩ h
-    exact Quot.sound ((key a b).2 h)
-  · intro x
-    obtain ⟨I, rfl⟩ := QuotientGroup.mk'_surjective _ x
-    obtain ⟨Λ, hΛ, h⟩ := exists_lattice I
-    refine ⟨Quot.mk _ ⟨Λ, hΛ⟩, ?_⟩
-    show q (ψ ⟨Λ, hΛ⟩) = q I
-    congr 1
-    ext t
-    exact (hψ ⟨Λ, hΛ⟩ fun _ => t).symm.trans (h fun _ => t)
+  let F := Quot.lift (q ∘ ψ) (fun a b h => (key a b).1 h)
+  have hF : Function.Bijective F := by
+    constructor
+    · rintro ⟨a⟩ ⟨b⟩ h
+      exact Quot.sound ((key a b).2 h)
+    · intro x
+      obtain ⟨I, rfl⟩ := QuotientGroup.mk'_surjective _ x
+      obtain ⟨Λ, hΛ, hne, h⟩ := exists_lattice I
+      let L : RankOneLattice E := ⟨Λ, rankOne_full Λ hΛ hne⟩
+      have hI : ψ L = I := by
+        ext t
+        exact (hψ L fun _ => t).symm.trans (h fun _ => t)
+      exact ⟨Quot.mk _ L, congrArg q hI⟩
+  exact ⟨(Equiv.ofBijective F hF).trans (ClassGroup.equiv E).symm.toEquiv⟩
 
-theorem mem_autGL_iff (Λ : Submodule (𝓞 E) (Fin 1 → E)) (h : Submodule.IsLattice E Λ) (x : MatInf E 1) :
+theorem mem_autGL_iff (Λ : Submodule (𝓞 E) (Fin 1 → E)) (h : Submodule.IsLattice E Λ)
+    (hΛ : Λ ≠ ⊥) (x : MatInf E 1) :
     x ∈ autGL E 1 Λ ↔ ∃ u : (𝓞 E)ˣ, ∀ w a b, x w a b = w.embedding ((u : 𝓞 E) : E) := by
-  obtain ⟨I, hI⟩ := exists_ideal Λ h
+  obtain ⟨I, hI⟩ := exists_ideal Λ h hΛ
   constructor
   · rintro ⟨γ, hγ, hx⟩
     have h1 : I * toPrincipalIdeal (𝓞 E) E (Units.mk0 _ (gl_one_ne_zero γ)) = I :=
@@ -362,7 +395,7 @@ theorem measurePreserving_act (hE : IsTotallyComplex E) (u : (𝓞 E)ˣ) :
 
 open scoped Classical in
 theorem torsion_mul_covol (hE : IsTotallyComplex E) (Λ : Submodule (𝓞 E) (Fin 1 → E))
-    (h : Submodule.IsLattice E Λ) :
+    (h : Submodule.IsLattice E Λ) (hΛ : Λ ≠ ⊥) :
     (Units.torsionOrder E : ENNReal) *
       covol (autGL E 1 Λ) (haarGL E 1) {x | 1 ≤ detNorm E 1 x ∧ detNorm E 1 x < Real.exp 1} =
       volume (fundamentalCone.normLeOne E) := by
@@ -419,10 +452,10 @@ theorem torsion_mul_covol (hE : IsTotallyComplex E) (Λ : Submodule (𝓞 E) (Fi
       simp [Matrix.mul_apply, hγ]
     constructor
     · rintro ⟨γ, hγ, hx⟩
-      obtain ⟨u, hu⟩ := (mem_autGL_iff Λ h γ).1 hγ
+      obtain ⟨u, hu⟩ := (mem_autGL_iff Λ h hΛ γ).1 hγ
       exact ⟨u, by rwa [← hm u γ hu]⟩
     · rintro ⟨u, hu⟩
-      refine ⟨fun w _ _ => w.embedding ((u : 𝓞 E) : E), (mem_autGL_iff Λ h _).2 ⟨u, fun _ _ _ => rfl⟩, ?_⟩
+      refine ⟨fun w _ _ => w.embedding ((u : 𝓞 E) : E), (mem_autGL_iff Λ h hΛ _).2 ⟨u, fun _ _ _ => rfl⟩, ?_⟩
       rwa [hm u _ fun _ _ _ => rfl]
   have hc : covol (autGL E 1 Λ) (haarGL E 1) {x | 1 ≤ detNorm E 1 x ∧ detNorm E 1 x < Real.exp 1} = μ F := by
     apply le_antisymm
@@ -437,34 +470,156 @@ theorem torsion_mul_covol (hE : IsTotallyComplex E) (Λ : Submodule (𝓞 E) (Fi
 
 end Transport
 
+open InfinitePlace in
+private theorem denseRange_embeddings {E : Type} [Field E] [NumberField E]
+    (hE : IsTotallyComplex E) : DenseRange (fun (a : E) (w : InfinitePlace E) => w.embedding a) := by
+  let f := Pi.map (fun w : InfinitePlace E => (Completion.extensionEmbedding w : w.Completion → ℂ))
+  have hf : DenseRange f :=
+    DenseRange.piMap fun w => (Completion.surjective_extensionEmbedding_of_isComplex (hE.isComplex w)).denseRange
+  have hc : Continuous f :=
+    continuous_pi fun w => (Completion.isometry_extensionEmbedding w).continuous.comp (continuous_apply w)
+  have he : (fun (a : E) (w : InfinitePlace E) => w.embedding a) =
+      f ∘ algebraMap E (InfiniteAdeleRing E) := by
+    funext a w
+    change w.embedding a = Completion.extensionEmbedding w (algebraMap E (InfiniteAdeleRing E) a w)
+    rw [InfiniteAdeleRing.algebraMap_apply, Completion.extensionEmbedding_coe]
+    rfl
+  rw [he]
+  exact hf.comp (InfiniteAdeleRing.denseRange_algebraMap E) hc
+
+-- The zero lattice has the whole rational general linear group as its stabilizer.
+private theorem covol_bot {E : Type} [Field E] [NumberField E] (hE : IsTotallyComplex E) :
+    covol (autGL E 1 ⊥) (haarGL E 1) {x | 1 ≤ detNorm E 1 x ∧ detNorm E 1 x < Real.exp 1} = 0 := by
+  classical
+  let V := InfinitePlace E → Fin 1 → Fin 1 → ℂ
+  let oneMat : V := fun _ _ _ => 1
+  have hdet : Continuous (fun x : V => detNorm E 1 x) := by
+    simp only [detNorm, Matrix.det_unique]
+    exact continuous_finsetProd _ fun w _ => (show Continuous (fun x : V => x w 0 0) by fun_prop).norm.pow 2
+  have hdet_one : detNorm E 1 oneMat = 1 := by simp [detNorm, Matrix.det_unique, oneMat]
+  obtain ⟨w₀⟩ : Nonempty (InfinitePlace E) := inferInstance
+  have hdet_zero : detNorm E 1 (0 : V) = 0 := by
+    refine Finset.prod_eq_zero (i := w₀) (Finset.mem_univ _) ?_
+    change ‖(Matrix.of (fun _ _ : Fin 1 => (0 : ℂ))).det‖ ^ 2 = 0
+    simp [Matrix.det_unique]
+  have : (volume : Measure (Fin 1 → ℂ)).IsAddHaarMeasure := Measure.pi.isAddHaarMeasure _
+  have : (volume : Measure (Fin 1 → Fin 1 → ℂ)).IsAddHaarMeasure := Measure.pi.isAddHaarMeasure _
+  have : (volume : Measure V).IsAddHaarMeasure := Measure.pi.isAddHaarMeasure _
+  have hsingleton : (volume : Measure V) {oneMat} = 0 := by
+    rw [volume_pi, Measure.pi_singleton]
+    apply Finset.prod_eq_zero (Finset.mem_univ w₀)
+    rw [volume_pi, Measure.pi_singleton]
+    apply Finset.prod_eq_zero (Finset.mem_univ (0 : Fin 1))
+    rw [volume_pi, Measure.pi_singleton]
+    exact Finset.prod_eq_zero (Finset.mem_univ (0 : Fin 1)) (measure_singleton _)
+  apply le_antisymm _ bot_le
+  apply le_of_forall_gt
+  intro ε hε
+  obtain ⟨U, hU, hUo, hUμ⟩ := ({oneMat} : Set V).exists_isOpen_lt_of_lt (μ := volume) (ε / 2) (by
+    rw [hsingleton]
+    exact ENNReal.div_pos hε.ne' ENNReal.ofNat_ne_top)
+  let D : Set V := U ∩ {x | (1 / 2 : ℝ) < detNorm E 1 x}
+  have hDo : IsOpen D := hUo.inter (isOpen_lt continuous_const hdet)
+  have hD1 : oneMat ∈ D := ⟨hU (Set.mem_singleton _), by
+    change (1 / 2 : ℝ) < detNorm E 1 oneMat
+    rw [hdet_one]
+    norm_num⟩
+  have hcov : ∀ x : MatInf E 1, x ∈ {x | 1 ≤ detNorm E 1 x ∧ detNorm E 1 x < Real.exp 1} →
+      ∃ γ ∈ autGL E 1 ⊥, γ * x ∈ D := by
+    intro x hx
+    have hx0 (w : InfinitePlace E) : x w 0 0 ≠ 0 := by
+      intro hw
+      have hz : detNorm E 1 x = 0 :=
+        Finset.prod_eq_zero (i := w) (Finset.mem_univ _) (by simp [Matrix.det_unique, hw])
+      exact zero_lt_one.not_ge (hz ▸ hx.1)
+    let g (z : InfinitePlace E → ℂ) : V := fun w a b => z w * x w a b
+    have hg : Continuous g := by unfold g; fun_prop
+    have h1 : g (fun w => (x w 0 0)⁻¹) = oneMat := by
+      funext w a b
+      rw [Subsingleton.elim a 0, Subsingleton.elim b 0]
+      exact inv_mul_cancel₀ (hx0 w)
+    obtain ⟨a, ha⟩ := (denseRange_embeddings hE).exists_mem_open (hDo.preimage hg)
+      ⟨_, by show g _ ∈ D; rwa [h1]⟩
+    change g (fun w => w.embedding a) ∈ D at ha
+    have ha0 : a ≠ 0 := by
+      rintro rfl
+      have h : g (fun w => w.embedding 0) = 0 := by
+        funext w i j
+        change w.embedding 0 * x w i j = 0
+        rw [map_zero, zero_mul]
+      rw [h] at ha
+      have hpos : (1 / 2 : ℝ) < detNorm E 1 (0 : V) := ha.2
+      rw [hdet_zero] at hpos
+      norm_num at hpos
+    obtain ⟨γ, hγ⟩ := exists_gl_one ha0
+    let aInf : MatInf E 1 := fun w _ _ => w.embedding a
+    refine ⟨aInf, ⟨γ, fun y => ?_, fun w i j => ?_⟩, ?_⟩
+    · rw [mulVec_one, hγ, Submodule.mem_bot, Submodule.mem_bot]
+      exact ⟨fun h => (smul_eq_zero.mp h).resolve_left ha0, fun h => by simp [h]⟩
+    · rw [Subsingleton.elim i 0, Subsingleton.elim j 0, hγ]
+    · have hmul : aInf * x = g (fun w => w.embedding a) := by
+        funext w i j
+        change (Matrix.of (fun _ _ : Fin 1 => w.embedding a) * Matrix.of (x w)) i j = _
+        rw [Subsingleton.elim i 0]
+        simp [Matrix.mul_apply, g]
+      rwa [hmul]
+  calc
+    _ ≤ haarGL E 1 D := iInf_le_of_le D (iInf_le_of_le hDo.measurableSet (iInf_le _ hcov))
+    _ = ∫⁻ x in D, ENNReal.ofReal (detNorm E 1 x)⁻¹ ∂(volume : Measure V) := by
+      change (volume : Measure V).withDensity (fun x : V => ENNReal.ofReal ((detNorm E 1 x)⁻¹ ^ 1)) D = _
+      simp only [pow_one, withDensity_apply _ hDo.measurableSet]
+    _ ≤ ∫⁻ _ in D, (2 : ENNReal) ∂(volume : Measure V) := by
+      apply setLIntegral_mono measurable_const
+      intro x hx
+      rw [← ENNReal.ofReal_ofNat 2]
+      apply ENNReal.ofReal_le_ofReal
+      have hd : (1 / 2 : ℝ) < detNorm E 1 x := hx.2
+      exact (inv_le_comm₀ ((by norm_num : (0 : ℝ) < 1 / 2).trans hd) (by norm_num)).2
+        (by simpa only [one_div] using hd.le)
+    _ < ε := by
+      rw [setLIntegral_const]
+      exact ENNReal.mul_lt_of_lt_div' ((measure_mono (Set.inter_subset_left : D ⊆ U)).trans_lt hUμ)
+
 theorem glVol_one : ∀ (E : Type) [Field E] [NumberField E], IsTotallyComplex E →
     glVol E 1 = ENNReal.ofReal (dedekindZeta_residue E * Formalism.HermitianLatticesTheory.vInv E ^ Formalism.HermitianLatticesTheory.fDeg E) := by
   intro E _ _ hE
   classical
-  obtain ⟨e⟩ := nonempty_equiv_classGroup (E := E)
+  obtain ⟨e⟩ := exists_classGroupEquiv (E := E)
   have hw : (Units.torsionOrder E : ENNReal) ≠ 0 := by exact_mod_cast (Units.torsionOrder_pos E).ne'
   have hw' : (0 : ℝ) < Units.torsionOrder E := by exact_mod_cast (Units.torsionOrder_pos E)
-  rw [← ENNReal.mul_right_inj hw (ENNReal.natCast_ne_top _), glVol, ← ENNReal.tsum_mul_left,
-    tsum_congr fun c => torsion_mul_covol hE _ (Quot.out c).2, ← e.symm.tsum_eq, tsum_fintype,
-    Finset.sum_const, Finset.card_univ, mixedEmbedding.fundamentalCone.volume_normLeOne]
-  have hr : InfinitePlace.nrRealPlaces E = 0 := IsTotallyComplex.nrRealPlaces_eq_zero E
-  have hf : Formalism.HermitianLatticesTheory.fDeg E = InfinitePlace.nrComplexPlaces E := by
-    rw [Formalism.HermitianLatticesTheory.fDeg, InfinitePlace.card_eq_nrRealPlaces_add_nrComplexPlaces, hr, zero_add]
-  have hf0 : (Formalism.HermitianLatticesTheory.fDeg E : ℝ) ≠ 0 := by
-    rw [Formalism.HermitianLatticesTheory.fDeg]; exact_mod_cast Fintype.card_ne_zero
-  have hd : 0 < |(discr E : ℝ)| := abs_pos.mpr (Int.cast_ne_zero.mpr (discr_ne_zero E))
-  have hv : Formalism.HermitianLatticesTheory.vInv E ^ Formalism.HermitianLatticesTheory.fDeg E = Real.sqrt |(discr E : ℝ)| / 2 ^ Formalism.HermitianLatticesTheory.fDeg E := by
-    rw [Formalism.HermitianLatticesTheory.vInv, div_pow, ← Real.rpow_natCast, ← Real.rpow_mul hd.le, Real.sqrt_eq_rpow]
-    congr 2
-    field_simp
-  have hs := Real.sqrt_pos.2 hd
-  have key : (Units.torsionOrder E : ℝ) * (dedekindZeta_residue E * Formalism.HermitianLatticesTheory.vInv E ^ Formalism.HermitianLatticesTheory.fDeg E) =
-      classNumber E * (Real.pi ^ InfinitePlace.nrComplexPlaces E * Units.regulator E) := by
-    rw [hv, dedekindZeta_residue_def, hr, hf, mul_pow]
-    field_simp
-  rw [← ENNReal.ofReal_natCast (Units.torsionOrder E), ← ENNReal.ofReal_mul hw'.le, key,
-    ENNReal.ofReal_mul (Nat.cast_nonneg _), ENNReal.ofReal_mul (by positivity), ENNReal.ofReal_natCast,
-    ENNReal.ofReal_pow Real.pi_pos.le, hr, pow_zero, one_mul, nsmul_eq_mul, classNumber,
-    ← NNReal.coe_real_pi, ENNReal.ofReal_coe_nnreal]
+  let F (c : Quot (carries (E := E))) :=
+    (Units.torsionOrder E : ENNReal) *
+      covol (autGL E 1 (Quot.out c).1) (haarGL E 1)
+        {x | 1 ≤ detNorm E 1 x ∧ detNorm E 1 x < Real.exp 1}
+  have hsum : (∑' c, F c) = (Units.torsionOrder E : ENNReal) *
+      ENNReal.ofReal (dedekindZeta_residue E *
+        Formalism.HermitianLatticesTheory.vInv E ^ Formalism.HermitianLatticesTheory.fDeg E) := by
+    have hF (c : ClassGroup (𝓞 E)) :
+        F (e.symm c) = volume (mixedEmbedding.fundamentalCone.normLeOne E) :=
+      torsion_mul_covol hE _ (Quot.out (e.symm c)).2.toIsLattice (rankOne_ne_bot (Quot.out (e.symm c)))
+    rw [← e.symm.tsum_eq, tsum_fintype]
+    simp_rw [hF]
+    rw [Finset.sum_const, Finset.card_univ, mixedEmbedding.fundamentalCone.volume_normLeOne]
+    have hr : InfinitePlace.nrRealPlaces E = 0 := IsTotallyComplex.nrRealPlaces_eq_zero E
+    have hf : Formalism.HermitianLatticesTheory.fDeg E = InfinitePlace.nrComplexPlaces E := by
+      rw [Formalism.HermitianLatticesTheory.fDeg, InfinitePlace.card_eq_nrRealPlaces_add_nrComplexPlaces, hr, zero_add]
+    have hf0 : (Formalism.HermitianLatticesTheory.fDeg E : ℝ) ≠ 0 := by
+      rw [Formalism.HermitianLatticesTheory.fDeg]; exact_mod_cast Fintype.card_ne_zero
+    have hd : 0 < |(discr E : ℝ)| := abs_pos.mpr (Int.cast_ne_zero.mpr (discr_ne_zero E))
+    have hv : Formalism.HermitianLatticesTheory.vInv E ^ Formalism.HermitianLatticesTheory.fDeg E = Real.sqrt |(discr E : ℝ)| / 2 ^ Formalism.HermitianLatticesTheory.fDeg E := by
+      rw [Formalism.HermitianLatticesTheory.vInv, div_pow, ← Real.rpow_natCast, ← Real.rpow_mul hd.le, Real.sqrt_eq_rpow]
+      congr 2
+      field_simp
+    have hs := Real.sqrt_pos.2 hd
+    have key : (Units.torsionOrder E : ℝ) * (dedekindZeta_residue E * Formalism.HermitianLatticesTheory.vInv E ^ Formalism.HermitianLatticesTheory.fDeg E) =
+        classNumber E * (Real.pi ^ InfinitePlace.nrComplexPlaces E * Units.regulator E) := by
+      rw [hv, dedekindZeta_residue_def, hr, hf, mul_pow]
+      field_simp
+    rw [← ENNReal.ofReal_natCast (Units.torsionOrder E), ← ENNReal.ofReal_mul hw'.le, key,
+      ENNReal.ofReal_mul (Nat.cast_nonneg _), ENNReal.ofReal_mul (by positivity), ENNReal.ofReal_natCast,
+      ENNReal.ofReal_pow Real.pi_pos.le, hr, pow_zero, one_mul, nsmul_eq_mul, classNumber,
+      ← NNReal.coe_real_pi, ENNReal.ofReal_coe_nnreal]
+  rw [← ENNReal.mul_right_inj hw (ENNReal.natCast_ne_top _), glVol, ← ENNReal.tsum_mul_left]
+  exact hsum
 
 end GlobalTheory.NormOneVol

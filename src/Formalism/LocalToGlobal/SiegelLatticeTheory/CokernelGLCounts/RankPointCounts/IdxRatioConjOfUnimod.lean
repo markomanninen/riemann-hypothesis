@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ConjSecondFactor
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ConjSecondFactor
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,21 +19,11 @@ theorem idxRatio_conj_of_unimod {G : Type} [Group G] (A B : Subgroup G) (s : G) 
     (hU : IdxRatio A (cj s A) = 1) : IdxRatio A (cj s B) = (B.relIndex A : ℝ) := by
   rw [idxCocycle G A (cj s B) (cj s A) (cj_le hBA) (by rw [relIndex_cj]; exact hf), hU, relIndex_cj, mul_one]
 
-theorem unimod_of_sub {G : Type} [Group G] (A B' : Subgroup G) (s : G) (hAB' : A ≤ B') (hs : s ∈ B')
-    (hf : A.relIndex B' ≠ 0) : IdxRatio A (cj s A) = 1 := by
-  have h := idxRatio_conj_sub A A B' s le_rfl hAB' hs hf
-  rw [h, Subgroup.relIndex_self, Nat.cast_one]
-
 variable {D : D7} (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
   (δ : ∀ p : PlF D, (D.s.atP p).Fp) (u u' : D.what₂.Word) {p : PlF D}
 
 def UnimodAt (w : Point D.host.E (D.R.rS + 1)) : Prop :=
   ∀ s ∈ StP M δ u u' w p, IdxRatio (Ag M δ u u' (p := p) w) (cj s (Ag M δ u u' (p := p) w)) = 1
-
-theorem unimod_of_over (w : Point D.host.E (D.R.rS + 1)) (h : OverAt M δ u u' (p := p) w) : UnimodAt M δ u u' (p := p) w := by
-  intro s hs
-  obtain ⟨B', hAB', hsB', hf⟩ := h s hs
-  exact unimod_of_sub _ B' s hAB' hsB' hf
 
 theorem locIdx_at' (w : Point D.host.E (D.R.rS + 1)) (hA : Agree δ M p) (L U : Formalism.L2.SG.PairVal.MatR D)
     (hL : IsLoUni L) (hU : IsUpUni U) (v : ℝ) (hN : CountAt M δ u u' w hA L U hL hU v)
@@ -49,7 +43,7 @@ variable (F0 : FlagG (VS D) D.R.rS (Formalism.L2.SG.CntLocal.Tn u)) (what₂ : F
 
 def StepsU : Prop :=
   ∀ (γ : Formalism.L2.SG.TermDef.Term D u u' F0 what₂) (w : Point D.host.E (D.R.rS + 1))
-    (F' : LFlag (VS D) D.R.rS ((Tu D u' : ℕ) : D.host.E)) (L U : Formalism.L2.SG.PairVal.MatR D)
+    (F' : LFlag (D.sp.Y 0) D.R.rS (((D.mem u').A.T : ℕ) : D.host.E)) (L U : Formalism.L2.SG.PairVal.MatR D)
     (hE : Formalism.L2.SG.Pf.ZsVolCut.HypE M δ u u' F0 what₂ γ w F' L U) (p : PlF D),
     CountAt M δ u u' w (hE.1 p) L U hE.2.2.2.2.2.2.2.1 hE.2.2.2.2.2.2.2.2.1
       (Formalism.L2.SG.LsDatumB.wtL M δ (D.mem u).A.T (D.mem u').A.T p w

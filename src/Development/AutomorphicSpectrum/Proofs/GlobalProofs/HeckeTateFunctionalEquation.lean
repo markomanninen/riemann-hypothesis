@@ -1,17 +1,21 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HeckeTateFunctionalEquationCM
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsCMTypeEmbedding
-import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
-import GroundTheory.GlobalFields.AnalyticClassNumber.HeckeContinued
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ContinuousIdeleCircle
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HeckeCharacterConductorExponentStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.CmHeckeCharacterInfinityTypeStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.CmHeckeCharacterNotNormPowerStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HeckeLFunctionEulerProductStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LocalAdditiveCharacterEqAdelicStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FiniteEpsilonFactorDependenceOnSStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HaarIntegralIntegersFiniteSumStatement
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HeckeGaussSumLocalTermStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.HeckeTateFunctionalEquationCM
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.IsCMTypeEmbedding
+public import GroundTheory.GlobalFields.TateThesis.RootNumberLocalFinite
+public import GroundTheory.GlobalFields.AnalyticClassNumber.HeckeContinued
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.ContinuousIdeleCircle
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HeckeCharacterConductorExponentStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.CmHeckeCharacterInfinityTypeStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.CmHeckeCharacterNotNormPowerStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HeckeLFunctionEulerProductStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.LocalAdditiveCharacterEqAdelicStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.FiniteEpsilonFactorDependenceOnSStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HaarIntegralIntegersFiniteSumStatement
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.HeckeGaussSumLocalTermStatement
+
+@[expose] public section
 
 noncomputable section
 open NumberField IsDedekindDomain GlobalTheory.CMVal GlobalTheory.IndefiniteRowSideFullHecke.CompletedLStripBounds GlobalTheory.HeckeEps GlobalTheory.CompanionTheory.HeckeBridge
@@ -25,13 +29,13 @@ variable {E : Type} [Field E] [NumberField E]
 theorem L_cond (χ : HChar E) (hu : IsUnitary χ) (v : HeightOneSpectrum (𝓞 E)) (m : ℕ) (h : ExpAt χ v m) :
     multiplicity v.asIdeal (toHecke χ hu).conductor = m := GlobalTheory.T.hecke_character_conductor_exponent E χ hu v m h
 
-theorem L_inf {I : Type} [Fintype I] (φ : I → E →+* ℂ) (hφ : IsCMType φ) [IsTotallyComplex E] (χ : HChar E) (hu : IsUnitary χ)
+theorem L_inf {I : Type} [Fintype I] (φ : I → E →+* ℂ) (hφ : IsCMType φ) [_root_.NumberField.IsTotallyComplex E] (χ : HChar E) (hu : IsUnitary χ)
     (n : I → ℤ) (hi : Formalism.L2.Host.HChar.HasInf χ φ n) (i : I) :
     (toHecke χ hu).infiniteTau (InfinitePlace.mk (φ i)) = 0 ∧
       ((toHecke χ hu).infiniteWeight (InfinitePlace.mk (φ i))).natAbs = (n i).natAbs :=
   GlobalTheory.T.cm_hecke_character_infinity_type E I φ hφ χ hu n hi i
 
-theorem L_notPow {I : Type} [Fintype I] (φ : I → E →+* ℂ) (hφ : IsCMType φ) [IsTotallyComplex E] (χ : HChar E) (hu : IsUnitary χ)
+theorem L_notPow {I : Type} [Fintype I] (φ : I → E →+* ℂ) (hφ : IsCMType φ) [_root_.NumberField.IsTotallyComplex E] (χ : HChar E) (hu : IsUnitary χ)
     (n : I → ℤ) (hi : Formalism.L2.Host.HChar.HasInf χ φ n) (hn : ∃ i, n i ≠ 0) :
     ¬ ∃ τ : ℝ, ∀ x : IdeleGroup E,
       ((toHecke χ hu).toIdele x : ℂ) = ((ideleModule E x : ℝ) : ℂ) ^ ((τ : ℂ) * Complex.I) :=
@@ -86,7 +90,7 @@ theorem L_ramInt (χ : HChar E) (hu : IsUnitary χ) (v : HeightOneSpectrum (𝓞
 theorem L_locUnr (χ : HChar E) (hu : IsUnitary χ) (v : HeightOneSpectrum (𝓞 E)) (h : ExpAt χ v 0) :
     localEpsilon (localChar (toHecke χ hu) v) (localAdelicChar E v) (1 / 2) = locEps χ v 0 (1 / 2) := by
   have hv : ¬ v.asIdeal ∣ (toHecke χ hu).conductor := fun hd =>
-    (multiplicity_pos_of_dvd hd).ne' (L_cond χ hu v 0 h)
+    (multiplicity_pos_of_dvd hd (Ideal.finiteMultiplicity v.isPrime.ne_top (toHecke χ hu).conductor_ne_bot)).ne' (L_cond χ hu v 0 h)
   have hN : ((Ideal.absNorm v.asIdeal : ℕ) : ℂ) ≠ 0 := by
     rw [Nat.cast_ne_zero, Ne, Ideal.absNorm_eq_zero_iff]
     exact v.ne_bot
@@ -104,7 +108,7 @@ theorem L_locRam (χ : HChar E) (hu : IsUnitary χ) (v : HeightOneSpectrum (𝓞
   have hc := L_cond χ hu v m h
   have hv : v.asIdeal ∣ (toHecke χ hu).conductor := by
     by_contra hd
-    exact hm (hc ▸ multiplicity_eq_zero.2 hd)
+    exact hm (hc ▸ multiplicity_eq_zero_of_not_dvd hd)
   have hN : ((Ideal.absNorm v.asIdeal : ℕ) : ℂ) ≠ 0 := by
     rw [Nat.cast_ne_zero, Ne, Ideal.absNorm_eq_zero_iff]
     exact v.ne_bot
@@ -158,7 +162,7 @@ theorem bijective_mk {I : Type} {φ : I → E →+* ℂ} (hφ : IsCMType φ) :
       rw [← InfinitePlace.mk_conjugate_eq, ← e, InfinitePlace.mk_embedding]
 
 section
-variable {I : Type} [Fintype I] {φ : I → E →+* ℂ} [IsTotallyComplex E] {χ : HChar E} {n : I → ℤ}
+variable {I : Type} [Fintype I] {φ : I → E →+* ℂ} [_root_.NumberField.IsTotallyComplex E] {χ : HChar E} {n : I → ℤ}
 
 theorem gammaFactor_toHecke (hφ : IsCMType φ) (hu : IsUnitary χ) (hi : Formalism.L2.Host.HChar.HasInf χ φ n) (s : ℂ) :
     (toHecke χ hu).gammaFactor s = archFactor n s := by
@@ -217,10 +221,10 @@ theorem absNorm_conductor_toHecke (hu : IsUnitary χ) {a : HeightOneSpectrum (�
     rw [HeckeCharacter.mem_conductorPrimes, Finsupp.mem_support_iff, ← hm v]
     constructor
     · intro h
-      exact (multiplicity_pos_of_dvd h).ne'
+      exact (multiplicity_pos_of_dvd h (Ideal.finiteMultiplicity v.isPrime.ne_top (toHecke χ hu).conductor_ne_bot)).ne'
     · intro h
       by_contra h'
-      exact h (multiplicity_eq_zero.2 h')
+      exact h (multiplicity_eq_zero_of_not_dvd h')
   rw [HeckeCharacter.absNorm_conductor, Finsupp.prod, h]
   exact Finset.prod_congr rfl fun v _ => by rw [hm v]
 

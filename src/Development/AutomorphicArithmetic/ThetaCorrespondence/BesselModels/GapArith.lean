@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LevelModelsOfFunctoriality
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LevelModelsOfFunctoriality
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HighestWeightBelow
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CartFrSgn
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,13 +31,6 @@ theorem e_spec {a : ℕ} (ha : a < D.R.m) : (D.hc τ).e ⟨a, ha⟩ = ((num D C 
 
 theorem v_spec {a : ℕ} (ha : a < D.R.k - 1) : (D.hc τ).v ⟨a, ha⟩ = ((num D C τ).v (a + 2) : ℚ) :=
   (GlobalTheory.SignedHC.GridData.ofHCParam_spec (D.hc τ) (sLen D) (gap D C) (cen D C τ)).1 ⟨a, ha⟩
-
-theorem b_add_le_e {l : ℕ} (h1 : 1 ≤ l) (h2 : l ≤ D.R.m) :
-    ((num D C τ).b l : ℚ) + ((D.R.t : ℚ) + 3) / 2 ≤ (num D C τ).e l := by
-  obtain ⟨a, rfl⟩ : ∃ a, l = a + 1 := ⟨l - 1, by omega⟩
-  have h := (D.hc τ).gap_be ⟨a, by omega⟩
-  rw [e_spec D C τ (by omega), b_spec D C τ (by omega)] at h
-  linarith
 
 theorem e_add_le_b {l : ℕ} (h1 : 1 ≤ l) (h2 : l + 1 ≤ D.R.m) :
     ((num D C τ).e l : ℚ) + ((D.R.t : ℚ) + 3) / 2 ≤ (num D C τ).b (l + 1) := by
@@ -77,8 +74,8 @@ theorem blockM_bound {a : ℕ} {x : ℚ} (h : x ∈ (num D C τ).blockM a) :
   have := abs_le.1 (abs_sub_le_of_mem_block (c := -((num D C τ).e a : ℚ)) (t := D.R.t) h)
   constructor <;> linarith [this.1, this.2]
 
-variable {D} in
 
+variable {D} in
 theorem blockC_gt {a : ℕ} (h1 : 1 ≤ a) (h2 : a ≤ D.R.m) {x : ℚ} (h : x ∈ (num D C τ).blockC a) :
     -((num D C τ).b 1 : ℚ) < x := by
   have hb := abs_le.1 (abs_sub_le_of_mem_block (c := ((num D C τ).cen a : ℚ)) (t := sLen D) h)

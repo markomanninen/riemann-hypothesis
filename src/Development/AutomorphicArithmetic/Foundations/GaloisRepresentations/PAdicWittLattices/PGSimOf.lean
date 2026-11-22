@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.TransCancel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntIntCast
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.TransCancel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntIntCast
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.UPel.HT GlobalTheory.UPel.HT.Gen GlobalTheory.LKTrip GlobalTheory.LKGeo UpperTheory.Gal.G3
@@ -34,7 +38,7 @@ private theorem mn_of_dvd {n m : ℕ} {a b : G.La} (hd : n ∣ m) (h : MN m a b)
 
 private theorem mn_map (f : G.La →+ G.La) {n : ℕ} {a b : G.La} (h : MN n a b) : MN n (f a) (f b) := by
   obtain ⟨c, hc⟩ := h
-  exact ⟨f c, by rw [hc, map_add, map_nsmul]⟩
+  exact ⟨f c, by rw [hc, map_add (f := _), map_nsmul]⟩
 
 private theorem mn_glue {a b : ℕ} {x y : G.La} (hab : a.Coprime b) (h : MN a x y) (h' : MN b x y) :
     MN (a * b) x y := by
@@ -58,7 +62,7 @@ private theorem mn_form {n : ℕ} {a b c d : G.La} (h : MN n a b) (h' : MN n c d
   obtain ⟨x, rfl⟩ := h
   obtain ⟨y, rfl⟩ := h'
   refine ⟨G.EF x d + G.EF b y + n * G.EF x y, ?_⟩
-  simp only [map_add, map_nsmul, LinearMap.add_apply, LinearMap.smul_apply, nsmul_eq_mul]
+  simp only [map_add (f := _), map_nsmul, LinearMap.add_apply, LinearMap.smul_apply, nsmul_eq_mul]
   ring
 
 private structure Sys (G : GDatum) (p : ℕ) (h : ℕ → G.La →+ G.La) (w : ℕ → ℤ) : Prop where
@@ -138,7 +142,7 @@ private theorem glue {p : ℕ} (hp : p.Prime) {h : ℕ → G.La →+ G.La} {w : 
     refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
     · intro x y
       refine ⟨0, ?_⟩
-      simp only [map_add, smul_add, smul_zero, add_zero]
+      simp only [map_add (f := _), smul_add, smul_zero, add_zero]
       abel
     · intro c x
       refine gl n hn _ _ ?_ ?_
@@ -279,7 +283,7 @@ private theorem UpperTheory.Gal.G3.GSimGlue.sys_of {p : ℕ} [Fact p.Prime] (hMB
     obtain ⟨v, hv, e1⟩ := hh a ha hc (c • x)
     obtain ⟨v', hv', e2⟩ := hh a ha hc x
     have e3 : L.actG u (inAf D (c • x)) = inAf D (c • h a x) + a • actAf D c v' := by
-      rw [← actAf_inAf, actG_actAf, e2, map_add, map_nsmul, actAf_inAf]
+      rw [← actAf_inAf, actG_actAf, e2, map_add (f := _), map_nsmul, actAf_inAf]
     rw [e1] at e3
     obtain ⟨z, hz⟩ := div a ha hc (h a (c • x) - c • h a x) (actAf D c v' - v)
       (sub_mem (actAf_mem_laHat D c hv') hv) (by
@@ -302,7 +306,7 @@ private theorem UpperTheory.Gal.G3.GSimGlue.sys_of {p : ℕ} [Fact p.Prime] (hMB
     have hf := T.harrisTaylor_action_form_eq_similitude_mul p D G L u (inAf D x) (inAf D y)
     change fAf D (L.actG u (inAf D x)) (L.actG u (inAf D y)) = mul u * fAf D (inAf D x) (inAf D y) at hf
     rw [e1, e2, form_inAf, hmuw] at hf
-    simp only [map_add, map_nsmul, LinearMap.add_apply, LinearMap.smul_apply, form_inAf, nsmul_eq_mul] at hf
+    simp only [map_add (f := _), map_nsmul, LinearMap.add_apply, LinearMap.smul_apply, form_inAf, nsmul_eq_mul] at hf
     refine IntDvdAdele.dvd_of_eq_mul_int p a ha hc _
       (β * ((D.EF x y : ℤ) : AfP p) - (fAf D (inAf D (h a x)) v' + fAf D v (inAf D (h a y)) + (a : AfP p) * fAf D v v'))
       ?_ ?_
@@ -322,7 +326,7 @@ private theorem UpperTheory.Gal.G3.GSimGlue.sys_of {p : ℕ} [Fact p.Prime] (hMB
     obtain ⟨x, w', hw', e1⟩ := exists_inAf_add_nsmul_of_mem_laHat p D a ha hc _ (hmem' _ (inAf_mem D y))
     obtain ⟨v, hv, e2⟩ := hh a ha hc x
     have e3 : L.actG u (inAf D x) = inAf D y - a • L.actG u w' := by
-      rw [eq_sub_iff_add_eq, ← map_nsmul, ← map_add, ← e1, hinv']
+      rw [eq_sub_iff_add_eq, ← map_nsmul, ← map_add (f := _), ← e1, hinv']
     rw [e2] at e3
     obtain ⟨z, hz⟩ := div a ha hc (h a x - y) (-(L.actG u w') - v)
       (sub_mem (neg_mem (hmem _ hw')) hv) (by

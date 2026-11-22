@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.SumExpSt
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinIndMapRangeField
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TotalDegreeLeOfColW
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuesMemOfLocal
-import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SumExpSt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasBlockOfOccurs
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeCrystallineLattices
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinIndMapRangeField
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TotalDegreeLeOfColW
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ValuesMemOfLocal
+public import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -23,7 +27,7 @@ private theorem latD_of {l : ℕ} [Fact l.Prime] {ι : Type} [Fintype ι] [Decid
     exact AddSubgroup.subset_closure ⟨r, fun τ => GlobalTheory.LatBC.dwMap F.emb N _ (m τ),
       fun τ => ⟨((m τ : Formalism.GradedWeylDivisibility.dualWeyl F.O N N (res N (lam τ))) : MvPolynomial (Fin N × Fin N) F.O), (m τ).2, rfl⟩, rfl⟩
   | add a b ha hb =>
-    rw [map_add, map_add]
+    rw [map_add (f := _), map_add (f := _)]
     exact add_mem ha hb
 
 end GlobalTheory.ExpCover
@@ -87,7 +91,7 @@ private theorem isForm_of_span {l : ℕ} [Fact l.Prime] {ι : Type} [DecidableEq
   | zero => exact ⟨fun _ _ _ => rfl, fun κ g => by rw [Pi.zero_apply, Pi.zero_apply, map_zero, smul_zero]⟩
   | add f f' _ _ h h' =>
     refine ⟨fun γ hγ g => by rw [Pi.add_apply, Pi.add_apply, h.1 γ hγ, h'.1 γ hγ], fun κ g => ?_⟩
-    rw [Pi.add_apply, Pi.add_apply, map_add, smul_add, h.2, h'.2]
+    rw [Pi.add_apply, Pi.add_apply, map_add (f := _), smul_add, h.2, h'.2]
   | smul a f _ h =>
     refine ⟨fun γ hγ g => by rw [Pi.smul_apply, Pi.smul_apply, h.1 γ hγ], fun κ g => ?_⟩
     rw [Pi.smul_apply, Pi.smul_apply, map_smul, smul_comm, h.2]
@@ -103,7 +107,7 @@ private theorem span_stable {l : ℕ} [Fact l.Prime] {ι : Type} [DecidableEq ι
     obtain ⟨f, hf, rfl⟩ := hu
     exact Submodule.subset_span ⟨B.op (R.ix i) f, hZ (R.ix i) hf, funext fun g => R.hecke i f g⟩
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add _ _ _ _ h h' => rw [map_add]; exact Submodule.add_mem _ h h'
+  | add _ _ _ _ h h' => rw [map_add (f := _)]; exact Submodule.add_mem _ h h'
   | smul a _ _ h => rw [map_smul]; exact Submodule.smul_mem _ a h
 
 private theorem forms_fin : ∀ (l : ℕ) [Fact l.Prime] (ι : Type) [Fintype ι] [DecidableEq ι] (N : ℕ) (F : Frame l ι N) (lam : ι → ℕ → ℕ)
@@ -117,8 +121,8 @@ private theorem forms_fin : ∀ (l : ℕ) [Fact l.Prime] (ι : Type) [Fintype ι
     obtain ⟨γ, hγ, s, hs, κ, hκ, e⟩ := hS (Quotient.out c)
     refine ⟨⟨s, hs⟩, ?_⟩
     show DoubleCoset.mk F.Γ F.K s = c
-    rw [← DoubleCoset.out_eq' F.Γ F.K c]
-    exact (DoubleCoset.eq F.Γ F.K s _).2 ⟨γ, hγ, κ, hκ, e⟩
+    rw [← DoubleCoset.out_eq' c]
+    exact (@DoubleCoset.eq _ _ F.Γ F.K s _).2 ⟨γ, hγ, κ, hκ, e⟩
   exact Formalism.UG.P.automorphic_forms_level_finite_holds F.G F.Γ F.K F.O (NablaT F.O N lam) _ ‹_›
 
 private theorem emb_norm : ∀ (l : ℕ) [Fact l.Prime] (ι : Type) (N : ℕ) (F : Frame l ι N), F.Ok →
@@ -158,9 +162,9 @@ private theorem form_lift : ∀ (l : ℕ) [Fact l.Prime] (ι : Type) [Fintype ι
 
 end GlobalTheory.ExpCover
 
+
 open GlobalTheory.ExpCover in
 set_option maxHeartbeats 600000 in
-
 theorem _root_.GlobalTheory.T.maximalIdeals_meeting_subspace_cover : ∀ (K : Type) [Field K] [NumberField K] [StarRing K] (G0 : Type) [Group G0] [Fintype G0] (Pl0 : Type) (B : BlockDat K G0 Pl0) (w : HeightOneSpectrum (𝓞 K)) [Fact (Formalism.EigenvalueLevelCeiling.plc w).Prime] (ι : Type) [Fintype ι] [DecidableEq ι] (N : ℕ) (F : Frame (Formalism.EigenvalueLevelCeiling.plc w) ι N) (lam : ι → ℕ → ℕ) (jK : F.K →* alg F.O N lam) [hm : Module F.T (Forms F.O (A := alg F.O N lam) F.Γ jK (NablaT F.O N lam))] [@IsScalarTower F.O F.T (Forms F.O (A := alg F.O N lam) F.Γ jK (NablaT F.O N lam)) _ hm.toSMul _], F.Ok → F.IsJ lam jK → F.IsHecke lam jK (NablaT F.O N lam) → ∀ (R : Reads F lam B w) (ℓ : Lvl K G0) (Z : Submodule K B.S.Forms), (∀ i, Z ≤ Z.comap (B.op i)) → Covers B ℓ Z w fun m : {m : MaximalSpectrum F.T // ∃ θ, R.Occurs Z θ ∧ F.Over θ m.asIdeal} => haveI := m.1.isMaximal.isPrime; F.setting lam jK m.1.asIdeal := by
   intro K _ _ _ G0 _ _ Pl0 B w _ ι _ _ N F lam jK hm hst hOk hJ hH R ℓ Z hZ J hInc z hz
   have hfZ : B.toF ℓ Z z ∈ Z := toF_mem B ℓ Z z

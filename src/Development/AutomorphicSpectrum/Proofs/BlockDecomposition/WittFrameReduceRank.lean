@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RatVInjective
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.RatVInjective
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 
@@ -591,12 +595,12 @@ theorem Fr.nice_mem {X' : Matrix (Fin m) (Fin r) E} (hX : adMat F P * adMat F X'
   rw [← hX, ← Matrix.mul_assoc, e2, Matrix.add_mul, Matrix.mul_one, Matrix.mul_assoc (adMat F (hd X))]
   exact add_comm _ _
 
-variable (F E) in
 
+variable (F E) in
 def dd {k : ℕ} (t : Fin k → ℝ) : Fin k → AF F ⊗[F] E := fun i => algebraMap (AF F) (AF F ⊗[F] E) (rId F (t i)) - 1
 
-variable (σ J) in
 
+variable (σ J) in
 def tM {k : ℕ} (U V : Matrix (Fin n) (Fin k) E) (t : Fin k → ℝ) : Matrix (Fin n) (Fin n) (AF F ⊗[F] E) :=
   1 + adMat F U * diagonal (dd F E t) * (cT (sigR (AF F) σ) (adMat F V) * JR (F := F) (AF F) J) +
     adMat F V * diagonal (dd F E (-t)) * (cT (sigR (AF F) σ) (adMat F U) * JR (F := F) (AF F) J)
@@ -653,8 +657,8 @@ variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algeb
   {J : Matrix (Fin n) (Fin n) E} {J' : Matrix (Fin m) (Fin m) E} {P : Matrix (Fin n) (Fin m) E}
   {Q : Matrix (Fin m) (Fin n) E} {X Y : Matrix (Fin n) (Fin (r + 1)) E}
 
-variable (F E) in
 
+variable (F E) in
 def d1 (c : ℝ) : AF F ⊗[F] E := algebraMap (AF F) (AF F ⊗[F] E) (rId F c) - 1
 
 theorem diffOne_zero : d1 F E 0 = 0 := by rw [d1, rId_zero', map_one, sub_self]

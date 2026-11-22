@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.PAdicHodge.PerfectoidField
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.PerfectoidField
+
+@[expose] public section
 
 namespace GroundTheory.Variant₂.N1
 

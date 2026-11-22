@@ -1,64 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.SameFns
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.SameFns
+
+@[expose] public section
 
 open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.R Formalism.FourierDecayAlt.Wd Formalism.FourierDecayAlt.Fr Formalism.REAL Formalism.QuantumDeterminants MeasureTheory GlobalTheory.HatNF
 
 namespace GlobalTheory.HatNF.StartForm
 
-theorem prod_mul_prod_eq_one {A : Type} [Ring A] : ∀ (n : ℕ) (f g : Fin n → A),
-    (∀ i j, Commute (f i) (g j)) → (∀ i, f i * g i = 1) → (List.ofFn f).prod * (List.ofFn g).prod = 1
-  | 0, _, _, _, _ => by simp
-  | n + 1, f, g, hc, h1 => by
-    have ih := prod_mul_prod_eq_one n (fun i => f i.succ) (fun i => g i.succ) (fun i j => hc _ _) (fun i => h1 _)
-    have hcm : Commute (List.ofFn fun i : Fin n => f i.succ).prod (g 0) := by
-      refine Commute.list_prod_left _ _ fun x hx => ?_
-      obtain ⟨i, rfl⟩ := (List.mem_ofFn' _ _).1 hx
-      exact hc _ _
-    rw [List.ofFn_succ, List.ofFn_succ, List.prod_cons, List.prod_cons, mul_assoc, ← mul_assoc _ (g 0), hcm.eq,
-      mul_assoc, ih, mul_one, h1]
-
 variable {A : Type} [Ring A] [Algebra ℂ A] {r : ℕ}
-
-theorem comm_of_closure (L : LevelData A r) {x y : A} (hx : x ∈ Submonoid.closure L.fns)
-    (hy : y ∈ Submonoid.closure L.fns) : Commute x y := by
-  induction hx using Submonoid.closure_induction with
-  | mem x hx =>
-    induction hy using Submonoid.closure_induction with
-    | mem y hy => exact L.fns_comm x hx y hy
-    | one => exact Commute.one_right _
-    | mul a b _ _ ha hb => exact ha.mul_right hb
-  | one => exact Commute.one_left _
-  | mul a b _ _ ha hb => exact ha.mul_left hb
-
-theorem prod_mem (L : LevelData A r) (f : Fin r → A) (hf : ∀ i, f i ∈ L.fns) :
-    (List.ofFn f).prod ∈ Submonoid.closure L.fns := by
-  refine Submonoid.list_prod_mem _ fun x hx => ?_
-  obtain ⟨i, rfl⟩ := (List.mem_ofFn' _ _).1 hx
-  exact Submonoid.subset_closure (hf i)
-
-theorem phase (L : LevelData A r) : L.ζb * L.ζi * L.GGi * (L.D * L.Dbi) * (L.Drb * L.Dri) = L.GGi := by
-  have mc : ∀ i, L.c i ∈ L.fns := fun i => by simp [LevelData.fns]
-  have mci : ∀ i, L.ci i ∈ L.fns := fun i => by simp [LevelData.fns]
-  have mcb : ∀ i, L.cb i ∈ L.fns := fun i => by simp [LevelData.fns]
-  have mcbi : ∀ i, L.cbi i ∈ L.fns := fun i => by simp [LevelData.fns]
-  have h1 : L.Dr * L.Dri = 1 :=
-    prod_mul_prod_eq_one r _ _ (fun i j => L.fns_comm _ (mc i) _ (mci j)) L.c_ci
-  have h2 : L.Drbi * L.Drb = 1 :=
-    prod_mul_prod_eq_one r _ _ (fun i j => L.fns_comm _ (mcbi i) _ (mcb j)) L.cbi_cb
-  have mDr : L.Dr ∈ Submonoid.closure L.fns := prod_mem L _ mc
-  have mζ : L.ζ ∈ Submonoid.closure L.fns := Submonoid.subset_closure (by simp [LevelData.fns])
-  have mζi : L.ζi ∈ Submonoid.closure L.fns := Submonoid.subset_closure (by simp [LevelData.fns])
-  have mζb : L.ζb ∈ Submonoid.closure L.fns := Submonoid.subset_closure (by simp [LevelData.fns])
-  have mζbi : L.ζbi ∈ Submonoid.closure L.fns := Submonoid.subset_closure (by simp [LevelData.fns])
-  have mGGi : L.GGi ∈ Submonoid.closure L.fns := Submonoid.subset_closure (by simp [LevelData.fns])
-  have e1 : L.D * L.Dbi * (L.Drb * L.Dri) = L.ζ * L.ζbi := by
-    calc L.D * L.Dbi * (L.Drb * L.Dri) = L.Dr * (L.ζ * L.ζbi) * (L.Drbi * L.Drb) * L.Dri := by
-          simp only [LevelData.D, LevelData.Dbi, mul_assoc]
-      _ = L.ζ * L.ζbi := by
-          rw [h2, mul_one, (comm_of_closure L mDr (mul_mem mζ mζbi)).eq, mul_assoc, h1, mul_one]
-  rw [mul_assoc _ (L.D * L.Dbi), e1, (comm_of_closure L (mul_mem mζb mζi) mGGi).eq]
-  calc L.GGi * (L.ζb * L.ζi) * (L.ζ * L.ζbi) = L.GGi * (L.ζb * (L.ζi * L.ζ) * L.ζbi) := by simp only [mul_assoc]
-    _ = L.GGi := by rw [L.ζi_ζ, mul_one, L.ζb_ζbi, mul_one]
 
 end GlobalTheory.HatNF.StartForm
 
@@ -76,18 +27,10 @@ private lemma prod_ofFn_mul_prod_ofFn_eq_one {A : Type} [Ring A] :
     have hrest : (List.ofFn fun i : Fin n => f i.succ).prod *
         (List.ofFn fun i : Fin n => g i.succ).prod = 1 :=
       prod_ofFn_mul_prod_ofFn_eq_one _ _ (fun i => h i.succ) (fun i j => hc i.succ j.succ)
-    have hcomm : Commute (List.ofFn fun i : Fin n => f i.succ).prod (g 0) := by
-      refine Commute.list_prod_left _ _ ?_
-      intro b hb
-      obtain ⟨i, rfl⟩ := List.mem_ofFn.mp hb
-      exact hc i.succ 0
-    calc f 0 * (List.ofFn fun i : Fin n => f i.succ).prod *
-          (g 0 * (List.ofFn fun i : Fin n => g i.succ).prod)
-        = f 0 * ((List.ofFn fun i : Fin n => f i.succ).prod * g 0) *
-            (List.ofFn fun i : Fin n => g i.succ).prod := by simp only [mul_assoc]
-      _ = f 0 * g 0 * ((List.ofFn fun i : Fin n => f i.succ).prod *
-            (List.ofFn fun i : Fin n => g i.succ).prod) := by rw [hcomm.eq]; simp only [mul_assoc]
-      _ = 1 := by rw [h 0, hrest, one_mul]
+    have hcomm : Commute (List.ofFn fun i : Fin n => f i.succ).prod (g 0) :=
+      Commute.list_prod_left _ _ (List.forall_mem_ofFn_iff.mpr fun i => hc i.succ 0)
+    simp only [mul_assoc]
+    rw [hcomm.left_comm, ← mul_assoc (f 0), h 0, hrest, one_mul]
 
 open MeasureTheory in
 private lemma levelConstants_commute {A : Type} [Ring A] [Algebra ℂ A] {r : ℕ} (L : _root_.Formalism.FourierDecayAlt.R.LevelData A r)
@@ -100,14 +43,10 @@ private lemma levelConstants_commute {A : Type} [Ring A] [Algebra ℂ A] {r : �
 
 open MeasureTheory in
 private lemma commute_prod_ofFn {A : Type} [Ring A] {n : ℕ} (a : A) (f : Fin n → A)
-    (h : ∀ i, Commute a (f i)) : Commute a (List.ofFn f).prod := by
-  refine Commute.list_prod_right _ _ ?_
-  intro b hb
-  obtain ⟨i, rfl⟩ := List.mem_ofFn.mp hb
-  exact h i
+    (h : ∀ i, Commute a (f i)) : Commute a (List.ofFn f).prod :=
+  Commute.list_prod_right _ _ (List.forall_mem_ofFn_iff.mpr h)
 
 open MeasureTheory in
-
 theorem _root_.GlobalTheory.HatNF.start_normalForm : ∀ (P : _root_.Formalism.FourierDecayAlt.M.Par) (A : Type) [Ring A] [StarRing A] [Algebra ℂ A] [StarModule ℂ A] (d : _root_.Formalism.FourierDecayAlt.Q.NFData P A), _root_.GlobalTheory.HatNF.HatHyp d → ∀ (L : _root_.Formalism.FourierDecayAlt.R.LevelData A P.r) (st : _root_.Formalism.FourierDecayAlt.Fr.Start A) (s : ℂ), _root_.GlobalTheory.HatNF.Comparison₂ d L st s → (∀ x ∈ _root_.Formalism.FourierDecayAlt.TL.kAlg st, x ∈ Set.range d.κ) ∧ ∀ Y ∈ st.inv, ∃ E ∈ _root_.GlobalTheory.HatNF.nfSpan d ∅ 0 0 0, L.l0 Y + L.ζb * L.ζi * L.GGi * st.ee Y = d.L.l0 Y + d.L.ζb * d.L.ζi * d.L.GGi * E := by
   intro P A _ _ _ _ d hHyp L st s hTie
   obtain ⟨hA, hSame, hs, hQ, hinv⟩ := hTie

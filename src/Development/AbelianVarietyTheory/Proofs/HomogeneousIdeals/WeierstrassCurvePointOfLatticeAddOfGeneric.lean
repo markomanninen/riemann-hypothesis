@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsVariableChangeEqLatticeCurve
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.WeierstrassPAddOfNeOfDerivNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsVariableChangeEqLatticeCurve
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.WeierstrassPAddOfNeOfDerivNeZero
+
+@[expose] public section
 
 open Filter PeriodPair WeierstrassCurve
 open scoped Topology
@@ -21,17 +25,18 @@ theorem _root_.GlobalTheory.latticeCurve_nonsingular {z : ℂ} (hz : z ∉ L.lat
   simp only [_root_.GlobalTheory.latticeCurve]
   linear_combination h / 4
 
-open Classical in
 
-def latticePoint (z : ℂ) : (latticeCurve L).toAffine.Point :=
-  if hz : z ∈ L.lattice then 0 else .some _ _ (latticeCurve_nonsingular L hz)
+open Classical in
+def latticePoint (z : ℂ) : (latticeCurve L).toAffine.Point := by
+  classical
+  exact if hz : z ∈ L.lattice then 0 else .some _ _ (latticeCurve_nonsingular L hz)
 
 open Filter PeriodPair WeierstrassCurve in
 open scoped Topology in
 variable (L : PeriodPair) in
 theorem _root_.GlobalTheory.latticePoint_of_mem {z : ℂ} (hz : z ∈ L.lattice) :
     _root_.GlobalTheory.latticePoint L z = 0 := by
-  rw [_root_.GlobalTheory.latticePoint, dif_pos hz]
+  rw [_root_.GlobalTheory.latticePoint, dite_eq_left hz]
 
 open Filter PeriodPair WeierstrassCurve in
 open scoped Topology in
@@ -39,7 +44,7 @@ variable (L : PeriodPair) in
 theorem _root_.GlobalTheory.latticePoint_of_notMem {z : ℂ} (hz : z ∉ L.lattice) :
     _root_.GlobalTheory.latticePoint L z =
       .some (℘[L] z) (℘'[L] z / 2) (_root_.GlobalTheory.latticeCurve_nonsingular L hz) := by
-  rw [_root_.GlobalTheory.latticePoint, dif_neg hz]
+  rw [_root_.GlobalTheory.latticePoint, dite_eq_right hz]
 
 open Filter PeriodPair WeierstrassCurve in
 open scoped Topology in
@@ -205,10 +210,10 @@ private theorem latticePoint_add_of_not_mem {z w : ℂ} (hz : z ∉ L.lattice)
     field_simp
     ring
 
+
 open Filter PeriodPair WeierstrassCurve in
 open scoped Topology in
 variable (L : PeriodPair) in
-
 theorem _root_.GlobalTheory.latticePoint_add (z w : ℂ) :
     _root_.GlobalTheory.latticePoint L (z + w) =
       _root_.GlobalTheory.latticePoint L z + _root_.GlobalTheory.latticePoint L w := by
@@ -289,10 +294,10 @@ theorem _root_.GlobalTheory.latticePoint_eq_iff {z w : ℂ} :
   rw [← _root_.GlobalTheory.latticePoint_eq_zero_iff, sub_eq_add_neg, _root_.GlobalTheory.latticePoint_add,
     _root_.GlobalTheory.latticePoint_neg, ← sub_eq_add_neg, sub_eq_zero]
 
+
 open Filter PeriodPair WeierstrassCurve in
 open scoped Topology in
 variable (L : PeriodPair) in
-
 theorem _root_.GlobalTheory.weierstrassP_add {z w : ℂ} (hz : z ∉ L.lattice)
     (hw : w ∉ L.lattice) (hne : ℘[L] z ≠ ℘[L] w) :
     ℘[L] (z + w) = ((℘'[L] z - ℘'[L] w) / (℘[L] z - ℘[L] w)) ^ 2 / 4 - ℘[L] z - ℘[L] w ∧
@@ -300,10 +305,10 @@ theorem _root_.GlobalTheory.weierstrassP_add {z w : ℂ} (hz : z ∉ L.lattice)
       ℘'[L] z) :=
   weierstrassP_add_and_deriv_add_of_ne L hz hw hne
 
+
 open Filter PeriodPair WeierstrassCurve in
 open scoped Topology in
 variable (L : PeriodPair) in
-
 theorem _root_.GlobalTheory.weierstrassP_add_add_sub {z w : ℂ} (hz : z ∉ L.lattice)
     (hw : w ∉ L.lattice) (hne : ℘[L] z ≠ ℘[L] w) :
     ℘[L] (z + w) + ℘[L] (z - w) - 2 * ℘[L] w =
@@ -323,10 +328,10 @@ theorem _root_.GlobalTheory.weierstrassP_add_add_sub {z w : ℂ} (hz : z ∉ L.l
   field_simp
   linear_combination 4 * hy
 
+
 open Filter PeriodPair WeierstrassCurve in
 open scoped Topology in
 variable (L : PeriodPair) in
-
 theorem _root_.GlobalTheory.weierstrassP_second_ne_zero {w : ℂ} (hw : w ∉ L.lattice)
     (h : ℘'[L] w = 0) : 6 * ℘[L] w ^ 2 - L.g₂ / 2 ≠ 0 := by
   intro h6

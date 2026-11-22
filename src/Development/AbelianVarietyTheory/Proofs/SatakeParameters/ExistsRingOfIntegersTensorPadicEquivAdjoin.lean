@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentreCompat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CentreCompat
+
+@[expose] public section
+
 open NumberField GlobalTheory.LKInvGood
 open scoped TensorProduct
 
@@ -31,10 +36,9 @@ theorem toLocal_injective (F : Type) [Field F] [NumberField F] (ℓ : ℕ) [Fact
         ((algebraMap (𝓞 F) F).toIntAlgHom.toLinearMap.rTensor ℚ_[ℓ]) ∘
         ((algebraMap ℤ_[ℓ] ℚ_[ℓ]).toIntAlgHom.toLinearMap.lTensor (𝓞 F)) := by
       funext w
-      induction w using TensorProduct.induction_on with
-      | zero => simp
+      induction w using TensorProduct.inductionOn with
       | tmul a b => rfl
-      | add a b ha hb => simp only [map_add, Function.comp_apply] at ha hb ⊢; rw [ha, hb]
+      | add a b ha hb => simp only [map_add (f := _), Function.comp_apply] at ha hb ⊢; rw [ha, hb]
     rw [this]; exact h2.comp h1
   intro x y hxy
   apply hmap
@@ -43,8 +47,7 @@ theorem toLocal_injective (F : Type) [Field F] [NumberField F] (ℓ : ℕ) [Fact
 
 theorem toLocal_mem (F : Type) [Field F] [NumberField F] (ℓ : ℕ) [Fact ℓ.Prime] (x : 𝓞 F ⊗[ℤ] ℤ_[ℓ]) :
     toLocal F ℓ x ∈ cenOrder ℓ F := by
-  induction x using TensorProduct.induction_on with
-  | zero => rw [map_zero]; exact zero_mem _
+  induction x using TensorProduct.inductionOn with
   | tmul c a =>
     rw [toLocal_tmul]
     have hc : (1 : ℚ_[ℓ]) ⊗ₜ[ℚ] (c : F) ∈ cenOrder ℓ F :=

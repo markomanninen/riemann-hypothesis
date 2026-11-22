@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsRename
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FieldsOfNumbers.StatementsRename
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.FieldNumbers
@@ -21,7 +26,7 @@ theorem weight_mapDomain (hσ : ∀ v, (σ v).1 = E v.1) (d : (Σ s, κ s) →�
   induction d using Finsupp.induction_linear with
   | zero => funext k; simp
   | add f g hf hg =>
-    rw [Finsupp.mapDomain_add, map_add, map_add, hf, hg]
+    rw [Finsupp.mapDomain_add, map_add (f := _), map_add (f := _), hf, hg]
     rfl
   | single v n =>
     rw [Finsupp.mapDomain_single, Finsupp.weight_single, Finsupp.weight_single]

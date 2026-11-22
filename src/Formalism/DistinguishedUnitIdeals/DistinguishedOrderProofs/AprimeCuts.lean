@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.DistinguishedUnitIdeals.AprimeCuts
-import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.CutPlace
-import Formalism.TruncatedSeriesCounting.TruncatedSeriesProofs.AprimeArith
+module
+
+public import Mathlib
+public import Formalism.DistinguishedUnitIdeals.AprimeCuts
+public import Formalism.DistinguishedUnitIdeals.DistinguishedOrderProofs.CutPlace
+public import Formalism.TruncatedSeriesCounting.TruncatedSeriesProofs.AprimeArith
+
+@[expose] public section
 
 namespace Formalism.ExponentWindows
 

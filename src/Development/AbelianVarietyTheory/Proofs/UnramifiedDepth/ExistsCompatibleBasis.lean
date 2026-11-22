@@ -1,27 +1,31 @@
-import Mathlib
-import ReciprocityTheory.DualLattices.TowerZeroSurjective
-import ReciprocityTheory.DualLattices.LinPairStatement
-import ReciprocityTheory.DualLattices.SubMemOfCompat
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
-import ReciprocityTheory.DualLattices.SurjectiveAinfTowerZero
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.TeichmullerQuot
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ModPToValuationResidueFieldSurjective
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.DualTowerMapExists
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.TateBasisMatrix
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.TateBasisGram
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsEndDifferentialRingHom
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.PadicEndApply
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsTateMatricesLink
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsLiftOfNil
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.NilpotentCoordinates
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsSeriesOfNaturalOnNilpotent
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.GroupLawPowerSeries
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsFormalChart
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FiniteAlgebraSplitLocal
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FinEtaleFormallyUnramified
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FinRepExistsIsPullbackSpec
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FinOfLocalAlgebraMap
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EvBasicNEvalSubCoeffMem
+module
+
+public import Mathlib
+public import ReciprocityTheory.DualLattices.TowerZeroSurjective
+public import ReciprocityTheory.DualLattices.LinPairStatement
+public import ReciprocityTheory.DualLattices.SubMemOfCompat
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.ChartPullbacks.UniversalCharts.LePreimageOfNil
+public import ReciprocityTheory.DualLattices.SurjectiveAinfTowerZero
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.TeichmullerQuot
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ModPToValuationResidueFieldSurjective
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.DualTowerMapExists
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.TateBasisMatrix
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.TateBasisGram
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsEndDifferentialRingHom
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.PadicEndApply
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsTateMatricesLink
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsLiftOfNil
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.NilpotentCoordinates
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsSeriesOfNaturalOnNilpotent
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.GroupLawPowerSeries
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ExistsFormalChart
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FiniteAlgebraSplitLocal
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FinEtaleFormallyUnramified
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FinRepExistsIsPullbackSpec
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.FinOfLocalAlgebraMap
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.EvBasicNEvalSubCoeffMem
+
+@[expose] public section
 
 open TensorProduct IsLocalRing Matrix CategoryTheory AlgebraicGeometry MonoidalCategory CartesianMonoidalCategory MonObj ReciprocityTheory.PGsh ReciprocityTheory.PGsh.Up ReciprocityTheory.PGsh.L2 ReciprocityTheory.PGsh.Be2 ReciprocityTheory.ChartRestriction.G.Chart
 open scoped CategoryTheory.Obj CategoryTheory.MonObj
@@ -68,7 +72,7 @@ theorem exists_compatible_basis (p : ℕ) [hp : Fact p.Prime] (g : ℕ) (Γ : Ty
     simp only [τ, Function.iterate_succ_apply', hd]
   have hsum : ∀ t : Ix g → ZMod p, ((∑ j, (t j).val • b j : V) : Γ) = ∑ j, (t j).val • τ j 0 :=
     fun t => by
-      rw [AddSubmonoidClass.coe_finset_sum]
+      rw [AddSubmonoidClass.coe_finsetSum]
       rfl
   refine ⟨τ, fun i n => ?_, hτp, fun x hx => ?_⟩
   · induction n with

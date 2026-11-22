@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.ClsBoundAlt
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.MollifiedIntegrability.ClsBoundAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -82,7 +86,7 @@ theorem good_sum {ι : Type} (s : Finset ι) (c : ι → ℂ) (F : ι → E n �
   · rw [FD_sum s c F (fun i hi => (hF i hi).1) L]
     have : ∀ i ∈ s, ∃ h : E n → ℝ, Integrable h ∧ ∀ y, ‖FD L (F i) y‖ ≤ h y := fun i hi => (hF i hi).2 L
     choose! h hint hb using this
-    refine ⟨fun y => ∑ i ∈ s, ‖c i‖ * h i y, integrable_finset_sum s fun i hi => (hint i hi).const_mul _, fun y => ?_⟩
+    refine ⟨fun y => ∑ i ∈ s, ‖c i‖ * h i y, MeasureTheory.integrable_finsetSum s fun i hi => (hint i hi).const_mul _, fun y => ?_⟩
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun i hi => ?_)
     rw [norm_mul]
     exact mul_le_mul_of_nonneg_left (hb i hi y) (norm_nonneg _)

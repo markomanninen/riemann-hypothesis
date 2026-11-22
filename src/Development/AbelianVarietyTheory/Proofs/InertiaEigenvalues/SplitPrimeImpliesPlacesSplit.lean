@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.SplitPlaceTypes
-import Development.AbelianVarietyTheory.Counterexamples.NonGaloisSurvey.SplitRowIffOfIsEmpty
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FinrankMaxUnramifiedSubfieldPadicFinExtPos
-import Formalism.LocalRingCardinality.HostCls
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ConjSqrt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.SplitPlaceTypes
+public import Development.AbelianVarietyTheory.Counterexamples.NonGaloisSurvey.SplitRowIffOfIsEmpty
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FinrankMaxUnramifiedSubfieldPadicFinExtPos
+public import Formalism.LocalRingCardinality.HostCls
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ConjSqrt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.FrobeniusOrbits GlobalTheory.IndefiniteRowSideFullHecke.SplitPlaceTypes
 
@@ -56,7 +60,7 @@ theorem not_isConjPl_self {l : ℕ} (hl : l.Prime) (hl2 : l ≠ 2) (hld : l ≠ 
   have hiff : b - n ∈ w.asIdeal ↔ b + n ∈ w.asIdeal := by
     rw [h (b - n) (-(b + n)) ?_, neg_mem_iff]
     have e : ((b : 𝓞 H.E) : H.E) = H.sqd := rfl
-    simp only [map_neg, map_add, map_sub, map_intCast, e, conj_sqrt]
+    simp only [map_neg, map_add (f := _), map_sub, map_intCast, e, conj_sqrt]
     ring
   have hprod : (b - n) * (b + n) ∈ w.asIdeal := by
     obtain ⟨k, hk⟩ := hdvd

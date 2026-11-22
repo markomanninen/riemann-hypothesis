@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.DixmierMalliavinHaarCoord
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.DixmierMalliavinHaarCoord
+
+@[expose] public section
 
 namespace GroundTheory.Automorphic
 
@@ -24,8 +28,8 @@ theorem exists_haar_density_prodExp {d : ℕ} (b : Module.Basis (Fin d) ℝ 𝔤
         tsupport ψ₀ ⊆ h.prodExp (⇑b) '' ball 0 r →
         ∫ y, ψ₀ y ∂μ = ∫ z in ball (0 : Fin d → ℝ) r, ψ₀ (h.prodExp (⇑b) z) * (ρ z : ℂ) := by
   classical
-  have : SecondCountableTopology G := h.secondCountableTopology
-  have : LocallyCompactSpace G := h.locallyCompactSpace
+  have : SecondCountableTopology G := secondCountableTopology h
+  have : LocallyCompactSpace G := locallyCompactSpace h
   obtain ⟨S, T, Ψ, hSo, hTo, h0S, hST, hTS, hleft, hright, hΨ, hSN⟩ := h.exists_prodExp_coord b
   set p : (Fin d → ℝ) → 𝔸 := prodExpVal (fun i => (b i : 𝔸)) with hp_def
   set P : (Fin d → ℝ) → G := h.prodExp ⇑b with hP_def
@@ -348,7 +352,7 @@ theorem exists_haar_density_prodExp {d : ℕ} (b : Module.Basis (Fin d) ℝ 𝔤
             by_contra hne; exact hnot (hχ0 _ hne)
           show 0 = ψ₀ (P z) * (((θ z * χ (p z * a)) • (β (Λ (a, z)) * J (a, z)) : ℝ) : ℂ)
           rw [hχ]; simp
-      · rw [indicator_of_notMem hzb, indicator_of_notMem (fun h' => hzb h'.1)]
+      · rw [indicator_of_notMem hzb, indicator_of_notMem (fun (h' : z ∈ U) => hzb h'.1)]
     rw [← hL, hcov, hR]
   have hβint : 0 < ∫ s, β s := β.integral_pos
   refine ⟨r, fun z => D z / ∫ s, β s, c, Wc, hr, hDs.div_const _,

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,8 +42,6 @@ variable (m : ℕ) [Fact (∀ r : ℚ, r ^ 2 ≠ -(m : ℚ) + 1 * r)]
 
 instance : NumberField (Kq m) := {}
 
-example : Fintype (ClassGroup (𝓞 (Kq m))) := inferInstance
-
 theorem isIntegral_omega : IsIntegral ℤ (ω : Kq m) := by
   refine ⟨Polynomial.X ^ 2 + (Polynomial.C (m : ℤ) - Polynomial.X), Polynomial.monic_X_pow_add ?_, ?_⟩
   · exact lt_of_le_of_lt (Polynomial.degree_le_of_natDegree_le (by compute_degree!)) (by norm_num)
@@ -61,16 +63,16 @@ theorem repr_int (d : ℕ) (hd : Squarefree d) (hdm : d + 1 = 4 * m) (z : Kq m)
     have e : (⟨a, b⟩ : Kq m) + star ⟨a, b⟩ = algebraMap ℚ (Kq m) (2 * a + b) := by
       ext <;> simp [QuadraticAlgebra.star_mk] <;> ring_nf
     rw [e] at h
-    exact (isIntegral_algebraMap_iff hinj).1 h
+    exact (isIntegral_algebraMap_iff ).1 h
   have hn : IsIntegral ℤ (a ^ 2 + a * b + m * b ^ 2) := by
     have h := hz.mul hstar
     have e : (⟨a, b⟩ : Kq m) * star ⟨a, b⟩ = algebraMap ℚ (Kq m) (a ^ 2 + a * b + m * b ^ 2) := by
       rw [QuadraticAlgebra.mul_star]
-      simp only [← map_mul, ← map_add, ← map_sub]
+      simp only [← map_mul, ← map_add (f := _), ← map_sub]
       congr 1
       ring
     rw [e] at h
-    exact (isIntegral_algebraMap_iff hinj).1 h
+    exact (isIntegral_algebraMap_iff ).1 h
   obtain ⟨T, hT⟩ := rat_int_of_integral _ ht
   obtain ⟨N, hN⟩ := rat_int_of_integral _ hn
   have hd' : (d : ℚ) = 4 * m - 1 := by

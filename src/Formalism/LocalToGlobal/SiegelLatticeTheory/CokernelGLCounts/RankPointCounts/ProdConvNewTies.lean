@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.AbsNormGeTwo
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.UnramifiedFactorEqOne
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocalFactorsPosTypicalGeneral
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.AbsNormGeTwo
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.UnramifiedFactorEqOne
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.LocalFactorsPosTypicalGeneral
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ def ProdConvNew : Prop :=
 
 private theorem multipliable_and_tprod_pos_of_finite_mulSupport {ι : Type*} (f : ι → ℝ) (hpos : ∀ i, 0 < f i) (hfin : (Function.mulSupport f).Finite) :
     Multipliable f ∧ 0 < ∏' i, f i := by
-  refine ⟨multipliable_of_finite_mulSupport hfin, ?_⟩
+  refine ⟨multipliable_of_hasFiniteMulSupport hfin, ?_⟩
   rw [tprod_eq_prod' (s := hfin.toFinset) (by simp)]
   exact Finset.prod_pos fun i _ => hpos i
 
@@ -62,11 +66,5 @@ theorem prodConvNew_gen (hb : Formalism.L2.SG.AdBridge.AdBridgeIso X.B.I) (hψ :
   by_cases h : TypAt X v
   · exact (local_factors_pos_typical_general X hb ψ hψ hs hloc u u' v h).2
   · exact (hpos v).1 h
-
-theorem prodConvNew_ties (T : Formalism.L2.SG.SpectralTiesReal.STies D) (u u' : D.what₂.Word)
-    (hpos : ∀ v, (¬ TypAt T.X v → 0 < localVolumeUnit T.X T.ψ v) ∧ 0 < ZZX T.X u u' T.ψ v ∧ (∀ l, 0 < PPX T.X u u' T.ψ l v) ∧
-      0 < jacX T.X v) :
-    ProdConvNew T.X u u' T.ψ := by
-  exact prodConvNew_gen T.X u u' T.ψ T.hb T.ψ_char T.ψ_std T.locCompat hpos
 
 end Formalism.L2.SG.Pf.ProdConvCut2

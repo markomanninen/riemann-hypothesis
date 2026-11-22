@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfEqZero
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.FiniteFaithfullyFlatKer
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfEqZero
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.FiniteFaithfullyFlatKer
+
+@[expose] public section
 
 open TensorProduct Coalgebra Bialgebra CategoryTheory WithConv GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup
 
@@ -18,9 +22,8 @@ theorem ev_mulRight_comul_of_primitive (l : Λ →ₗ[R] R)
       ev Λ l w * b + ev Λ (l ∘ₗ LinearMap.mulRight R b) w := by
     intro w
     induction w with
-    | zero => simp
     | add u v hu hv =>
-      simp only [add_mul, map_add, hu, hv]
+      simp only [add_mul, map_add (f := _), hu, hv]
       ring
     | tmul u v => simp [mul_add]
   have h2 := hl (u * b)
@@ -41,22 +44,19 @@ theorem coact_ev_mulRight_of_primitive (ρ : B →ₐ[R] B ⊗[R] Λ)
       F (TensorProduct.assoc R B Λ Λ (ρ.toLinearMap.rTensor Λ w)) := by
     intro w
     induction w with
-    | zero => simp
-    | add a b ha hb => simp only [map_add, ha, hb]
+    | add a b ha hb => simp only [map_add (f := _), ha, hb]
     | tmul a b =>
       rw [ev_tmul, map_smul, LinearMap.rTensor_tmul, AlgHom.toLinearMap_apply]
       generalize ρ a = w
       induction w with
-      | zero => simp
-      | add u v hu hv => simp only [map_add, smul_add, add_tmul, hu, hv]
+      | add u v hu hv => simp only [map_add (f := _), smul_add, add_tmul, hu, hv]
       | tmul u v => simp [F]
   have h2 : ∀ w : B ⊗[R] Λ, F ((Coalgebra.comul (R := R)).lTensor B w) =
       ev B l' w ⊗ₜ 1 - ev B l w ⊗ₜ b := by
     intro w
     induction w with
-    | zero => simp
     | add a c ha hc =>
-      simp only [map_add, add_tmul, ha, hc]
+      simp only [map_add (f := _), add_tmul, ha, hc]
       abel
     | tmul a c =>
       have := ev_mulRight_comul_of_primitive l hl b hb c
@@ -80,7 +80,7 @@ theorem exists_coact_eq_add_of_primitive : ∀ {R Λ B : Type} [CommRing R] [Com
       add_mem' := by
         rintro y z ⟨x, hx⟩ ⟨x', hx'⟩
         refine ⟨x + x', ?_⟩
-        rw [map_add, hx, hx', Subalgebra.coe_add, add_tmul, add_tmul]
+        rw [map_add (f := _), hx, hx', Subalgebra.coe_add, add_tmul, add_tmul]
         abel
       zero_mem' := ⟨0, by simp⟩
       smul_mem' := by
@@ -101,9 +101,8 @@ theorem exists_coact_eq_add_of_primitive : ∀ {R Λ B : Type} [CommRing R] [Com
     intro k z
     obtain ⟨w, rfl⟩ := hsurj z
     induction w with
-    | zero => simp
     | add u v hu hv =>
-      rw [map_add, map_add]
+      rw [map_add (f := _), map_add (f := _)]
       exact add_mem hu hv
     | tmul u v =>
       have : (Algebra.TensorProduct.includeLeft : B →ₐ[R] B ⊗[R] Λ) u * ρ v = u • ρ v := by

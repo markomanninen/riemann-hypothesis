@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafExtTensPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafExtTensPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex GlobalTheory.EtC

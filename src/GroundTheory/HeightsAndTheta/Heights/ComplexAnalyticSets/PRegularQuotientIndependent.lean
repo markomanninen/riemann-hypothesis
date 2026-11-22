@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularLocalDomain
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegularQuotientIndependent
+module
+
+public import Mathlib
+public import GroundTheory.ArithmeticGeometry.SchemeCohomology.RegularLocalDomain
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StRegularQuotientIndependent
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -38,7 +43,8 @@ theorem RegularQuotientIndependent.proof : RegularQuotientIndependent.Statement 
       intro b hb i
       choose a ha using fun i ↦ Ideal.Quotient.mk_surjective (I := span {x 0}) (b i)
       have hsum : ∑ i, b i * y i = f (∑ i, a i * x i.succ) := by
-        rw [map_sum]
+        set_option synthInstance.maxHeartbeats 100000 in
+          rw [map_sum]
         exact Finset.sum_congr rfl fun i _ ↦ by simp only [map_mul, ← ha i, hf, y]
       rw [hsum, ← hmax, ← Ideal.map_pow, hf, Ideal.mem_quotient_iff_mem_sup] at hb
       obtain ⟨z, hz, w, hw, hzw⟩ := Submodule.mem_sup.mp hb

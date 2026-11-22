@@ -1,6 +1,11 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocClosed
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocClosed
+
+@[expose] public section
+
 open scoped Classical ENNReal
 open NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.MainNotions.S.LocalSplitGroups Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full Formalism.L2.SG.RowsConc Formalism.L2.SG.NGData Formalism.L2.SG.TermLoc GlobalTheory.Unfold
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -9,16 +14,16 @@ namespace GlobalTheory.NRatInv
 
 variable {D : D7}
 
-theorem xflag_mono {T : D.host.E} (F : LFlag (VS D) D.R.rS T) {j k : ℕ} (h : j ≤ k) :
+theorem xflag_mono {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) {j k : ℕ} (h : j ≤ k) :
     Xflag F j ≤ Xflag F k :=
   Submodule.span_mono (Set.image_mono fun i (hi : i.1 < j) => lt_of_lt_of_le hi h)
 
-theorem xsp_eq {T : D.host.E} (F : LFlag (VS D) D.R.rS T) : Xsp F = Xflag F D.R.rS := by
+theorem xsp_eq {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) : Xsp F = Xflag F D.R.rS := by
   show Submodule.span _ _ = Submodule.span _ _
   congr 1
   ext x; simp
 
-theorem mem_orth_iff {T : D.host.E} (F : LFlag (VS D) D.R.rS T) (y : (VS D).V) :
+theorem mem_orth_iff {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (y : (VS D).V) :
     y ∈ orth (VS D) (Xsp F) ↔ ∀ x ∈ Xsp F, (VS D).hT x y = 0 := by
   simp [orth, Submodule.mem_iInf, LinearMap.mem_ker]
 
@@ -40,11 +45,11 @@ namespace GlobalTheory.NRatInv
 
 variable {D : D7}
 
-theorem xflag_fd {T : D.host.E} (F : LFlag (VS D) D.R.rS T) (j : ℕ) :
+theorem xflag_fd {T : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (j : ℕ) :
     FiniteDimensional D.host.E (Xflag F j) :=
   FiniteDimensional.span_of_finite _ (Set.toFinite _)
 
-theorem map_xflag {T : D.host.E} {F : LFlag (VS D) D.R.rS T} {n : GV D} (hn : n ∈ NRat F) (k : ℕ) :
+theorem map_xflag {T : D.host.E} {F : LFlag (D.sp.Y 0) D.R.rS T} {n : GV D} (hn : n ∈ NRat F) (k : ℕ) :
     ∀ x ∈ Xflag F k, n x ∈ Xflag F k := by
   intro x hx
   cases k with
@@ -59,7 +64,7 @@ theorem map_xflag {T : D.host.E} {F : LFlag (VS D) D.R.rS T} {n : GV D} (hn : n 
     have h2 := xflag_mono F (Nat.le_succ j) h1
     simpa using add_mem h2 hx
 
-theorem adapt_and_inv_mem : ∀ (D : D7) (T : D.host.E) (F : LFlag (VS D) D.R.rS T) (n : GV D),
+theorem adapt_and_inv_mem : ∀ (D : D7) (T : D.host.E) (F : LFlag (D.sp.Y 0) D.R.rS T) (n : GV D),
     n ∈ NRat F → Adapt n F F ∧ n⁻¹ ∈ NRat F := by
   intro D T F n hn
   obtain ⟨hiso, hfl, hor⟩ := hn

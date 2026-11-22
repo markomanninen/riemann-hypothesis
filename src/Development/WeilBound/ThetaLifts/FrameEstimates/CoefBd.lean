@@ -1,8 +1,12 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.FrameEstimates.ContinuousMixedSymm
-import Development.WeilBound.ThetaLifts.FrameEstimates.FinBound
-import Development.WeilBound.ThetaLifts.FrameEstimates.LatCpt
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenNsmulAdelicCompletionOfVectorSet
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.FrameEstimates.ContinuousMixedSymm
+public import Development.WeilBound.ThetaLifts.FrameEstimates.FinBound
+public import Development.WeilBound.ThetaLifts.FrameEstimates.LatCpt
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.IsOpenNsmulAdelicCompletionOfVectorSet
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU Filter Topology
 open GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.ThK NumberField.mixedEmbedding
@@ -30,7 +34,8 @@ theorem trace_nondeg (l : κ → mixedSpace F) (h : ∀ y, Algebra.trace ℝ (mi
   refine (latticeBasis F).ext_elem fun j => ?_
   have := h (Pi.single i (mixedEmbedding F ((integralBasis F).traceDual j)))
   rw [dotProduct_single, ← (latticeBasis F).sum_repr (l i)] at this
-  simp only [Finset.sum_mul, smul_mul_assoc, map_sum, map_smul, latticeBasis_apply, ← map_mul, trace_emb,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_mul, smul_mul_assoc, map_sum, map_smul, latticeBasis_apply, ← map_mul, trace_emb,
     Module.Basis.trace_mul_traceDual] at this
   simpa [apply_ite] using this
 
@@ -38,9 +43,9 @@ theorem dual_one [IsTotallyReal F] {ψ : AddChar (AF F) ℂ} (hψ : IsCharAF F �
     ∀ y, (∀ a : Af F, (∀ v, a v ∈ v.adicCompletionIntegers F) → ψ (fi F (a * y)) = 1) → y ∈ C := by
   obtain ⟨h1, h2, -⟩ := GlobalTheory.GaugeEx.CharLoc.char_local F ψ hψ
   choose b hb using h1
-  have hO : ∀ v : Pl F, IsCompact (v.adicCompletionIntegers F : Set (Fv F v)) := fun v => isCompact_iff_compactSpace.2
+  have hO : ∀ v : Pl (F := F), IsCompact (v.adicCompletionIntegers F : Set (Fv F v)) := fun v => isCompact_iff_compactSpace.2
     (GlobalTheory.AdelicUnitaryTop.compactSpace_adicCompletionIntegers F v)
-  let P : Pl F → Prop := fun v => ∀ y : Fv F v,
+  let P : Pl (F := F) → Prop := fun v => ∀ y : Fv F v,
     (∀ t ∈ v.adicCompletionIntegers F, psiV F ψ v (y * t) = 1) ↔ y ∈ v.adicCompletionIntegers F
   refine ⟨_, isCompact_box (fun v => if P v then (v.adicCompletionIntegers F : Set (Fv F v)) else
     (b v * ·) '' (v.adicCompletionIntegers F : Set (Fv F v))) (fun v => ?_) ?_, fun y hy v => ?_⟩
@@ -82,14 +87,14 @@ theorem dual_cpt [IsTotallyReal F] {ψ : AddChar (AF F) ℂ} (hψ : IsCharAF F �
     simp only
     rw [nsmul_eq_mul, ← mul_assoc, ← map_natCast (algebraMap F (Af F)), ← map_mul, inv_mul_cancel₀ this, map_one, one_mul]
 
-variable (F κ) in
 
+variable (F κ) in
 def spl : ((κ → mixedSpace F) × (κ → Af F)) ≃+ (κ → AF F) where
   toFun p i := re F (p.1 i) + fi F (p.2 i)
   invFun x := (fun i => evI F (x i), fun i => (x i).2)
   left_inv p := Prod.ext (funext fun i => by simp only [evI_add, evI_re, evI_fi, add_zero]) (funext fun i => zero_add _)
   right_inv x := funext fun i => re_add_fi _
-  map_add' p q := funext fun i => by simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, map_add]; abel
+  map_add' p q := funext fun i => by simp only [Prod.fst_add, Prod.snd_add, Pi.add_apply, map_add (f := _)]; abel
 
 theorem spl_cont : Continuous (spl F κ) := by
   show Continuous (fun p : (κ → mixedSpace F) × (κ → Af F) => fun i => re F (p.1 i) + fi F (p.2 i))
@@ -120,7 +125,8 @@ theorem pureA_spl (f : (κ → mixedSpace F) → ℂ) (φ : (κ → Af F) → �
 theorem spl_dot (p q : (κ → mixedSpace F) × (κ → Af F)) :
     spl F κ p ⬝ᵥ spl F κ q = re F (p.1 ⬝ᵥ q.1) + fi F (p.2 ⬝ᵥ q.2) := by
   simp only [dotProduct]
-  rw [map_sum, map_sum, ← Finset.sum_add_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_sum, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun i _ => ?_
   show (re F (p.1 i) + fi F (p.2 i)) * (re F (q.1 i) + fi F (q.2 i)) =
     re F (p.1 i * q.1 i) + fi F (p.2 i * q.2 i)
@@ -145,15 +151,15 @@ theorem coef_split [IsTotallyReal F] (hR : CoefReal) {ψ : AddChar (AF F) ℂ} (
   haveI : BorelSpace (κ → mixedSpace F) := ⟨rfl⟩
   let β : (κ → mixedSpace F) →ₗ[ℝ] (κ → mixedSpace F) →ₗ[ℝ] ℝ :=
     LinearMap.mk₂ ℝ (fun y u => -Algebra.trace ℝ (mixedSpace F) (u ⬝ᵥ y))
-      (fun _ _ _ => by rw [dotProduct_add, map_add, neg_add]) (fun _ _ _ => by rw [dotProduct_smul, map_smul, smul_neg])
-      (fun _ _ _ => by rw [add_dotProduct, map_add, neg_add]) (fun _ _ _ => by rw [smul_dotProduct, map_smul, smul_neg])
+      (fun _ _ _ => by rw [dotProduct_add, map_add (f := _), neg_add]) (fun _ _ _ => by rw [dotProduct_smul, map_smul, smul_neg])
+      (fun _ _ _ => by rw [add_dotProduct, map_add (f := _), neg_add]) (fun _ _ _ => by rw [smul_dotProduct, map_smul, smul_neg])
   obtain ⟨ν, hν, hb⟩ := real_bound hR _ β fun y hy => trace_nondeg y fun u => by
     rw [dotProduct_comm, ← neg_eq_zero]
     exact LinearMap.congr_fun hy u
   obtain ⟨p, hp, hb⟩ := hb N
   let ν' : Measure (κ → Af F) := Measure.addHaar
   obtain ⟨C, K, hK, hC⟩ := fin_bound ν' (fun y u : κ → Af F => ψ (fi F (u ⬝ᵥ y))) (fun _ _ => hψ.2.1 _)
-    (fun _ _ _ => by rw [add_dotProduct, map_add, AddChar.map_add_eq_mul]) (dual_cpt hψ) h₁ h₂
+    (fun _ _ _ => by rw [add_dotProduct, map_add (f := _), AddChar.map_add_eq_mul]) (dual_cpt hψ) h₁ h₂
   haveI : (ν.prod ν').IsAddHaarMeasure := Measure.prod.instIsAddHaarMeasure _ _
   haveI : (Measure.map (spl F κ) (ν.prod ν')).IsAddHaarMeasure :=
     (spl F κ).isAddHaarMeasure_map (ν.prod ν') spl_cont spl_symm_cont
@@ -171,7 +177,7 @@ theorem coef_split [IsTotallyReal F] (hR : CoefReal) {ψ : AddChar (AF F) ℂ} (
     refine integral_congr_ae (.of_forall fun u => ?_)
     show ψ (spl F κ u ⬝ᵥ spl F κ y + _) * pureA F f₁ φ₁ (spl F κ u + spl F κ x) *
       (starRingEnd ℂ) (pureA F f₂ φ₂ (spl F κ u)) = _
-    rw [← map_add, pureA_spl, pureA_spl, spl_dot u y, AddChar.map_add_eq_mul, AddChar.map_add_eq_mul, psi_re hstd,
+    rw [← map_add (f := _), pureA_spl, pureA_spl, spl_dot u y, AddChar.map_add_eq_mul, AddChar.map_add_eq_mul, psi_re hstd,
       map_mul (starRingEnd ℂ)]
     simp only [β, LinearMap.mk₂_apply, Prod.fst_add, Prod.snd_add, Complex.ofReal_neg, mul_neg, neg_mul]
     ring
@@ -198,23 +204,24 @@ theorem lin_cont (m : ((κ → AF F) × (κ → AF F)) →ₗ[AF F] Ten F E n d)
         ∑ i, x.2 i • ((0 : κ → AF F), (Pi.single i 1 : κ → AF F)) := by
       ext j <;> simp [Prod.fst_sum, Prod.snd_sum, Finset.sum_apply, Pi.single_apply]
     conv_lhs => rw [hx]
-    simp only [map_add, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_sum, map_smul]
   have hc : Continuous fun x : (κ → AF F) × (κ → AF F) =>
-      (∑ i, x.1 i • m (Pi.single i 1, 0) + ∑ i, x.2 i • m (0, Pi.single i 1) : Matrix (Fin n) (Fin d) (AE F E)) := by
+      (∑ i, x.1 i • m (Pi.single i 1, 0) + ∑ i, x.2 i • m (0, Pi.single i 1) : Matrix (Fin n) (Fin d) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))) := by
     fun_prop
   have he : (⇑m : (κ → AF F) × (κ → AF F) → Ten F E n d) = fun x =>
-      (∑ i, x.1 i • m (Pi.single i 1, 0) + ∑ i, x.2 i • m (0, Pi.single i 1) : Matrix (Fin n) (Fin d) (AE F E)) :=
+      (∑ i, x.1 i • m (Pi.single i 1, 0) + ∑ i, x.2 i • m (0, Pi.single i 1) : Matrix (Fin n) (Fin d) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E))) :=
     funext hm
   rw [he]
   exact hc
 
-theorem piInf_fi {w : InfinitePlace F} (τ : EmbOver E w) (z : AE F E) : piInf τ (fi F 1 • z) = 0 := by
+theorem piInf_fi {w : InfinitePlace F} (τ : EmbOver E w) (z : _root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) : piInf τ (fi F 1 • z) = 0 := by
   rw [Algebra.smul_def, map_mul]
   have h0 : GlobalTheory.AdelicU.evInf F w (fi F 1) = 0 := by
     show GlobalTheory.AutFunCompare.evW w (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.fstA F (fi F 1)) = 0
     have h : Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.fstA F (fi F 1) = 0 := rfl
     rw [h, map_zero]
-  have h1 : piInf τ (algebraMap (AF F) (AE F E) (fi F 1)) = 0 := by
+  have h1 : piInf τ (algebraMap (AF F) (_root_.GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.AE (F := F) (E := E)) (fi F 1)) = 0 := by
     show GlobalTheory.AdelicU.infEmb τ (GlobalTheory.AdelicU.compInf F E w (fi F 1 ⊗ₜ[F] (1 : E))) = 0
     have h2 : GlobalTheory.AdelicU.compInf F E w (fi F 1 ⊗ₜ[F] (1 : E)) = 0 := by
       show Algebra.TensorProduct.map (GlobalTheory.AdelicU.evInf F w) (AlgHom.id F E) (fi F 1 ⊗ₜ[F] (1 : E)) = 0
@@ -232,8 +239,8 @@ theorem sz_le (τ : ∀ w : InfinitePlace F, EmbOver E w) (m : ((κ → AF F) ×
           Prod.mk_zero_zero, Matrix.zero_apply]
       map_add' := fun p q => by
         have e : ∀ a b : κ → mixedSpace F, spl F κ (a + b, 0) = spl F κ (a, 0) + spl F κ (b, 0) := fun a b => by
-          rw [← map_add, Prod.mk_add_mk, add_zero]
-        rw [Prod.fst_add, Prod.snd_add, e, e, ← Prod.mk_add_mk, map_add, Matrix.add_apply, map_add] }
+          rw [← map_add (f := _), Prod.mk_add_mk, add_zero]
+        rw [Prod.fst_add, Prod.snd_add, e, e, ← Prod.mk_add_mk, map_add (f := _), Matrix.add_apply, map_add (f := _)] }
   have hL : ∀ w i j, Continuous (L w i j) := fun w i j =>
     (LatticeQuotientCompactness.continuous_piInf (τ w)).comp ((continuous_apply j).comp ((continuous_apply i).comp ((lin_cont m).comp
       ((spl_cont.comp (continuous_fst.prodMk continuous_const)).prodMk
@@ -249,7 +256,7 @@ theorem sz_le (τ : ∀ w : InfinitePlace F, EmbOver E w) (m : ((κ → AF F) ×
   have h1 : sz τ (m (spl F κ x, spl F κ y)) ≤ K * (‖x.1‖ + ‖y.1‖) := by
     simp only [sz, K, Finset.sum_mul]
     refine Finset.sum_le_sum fun w _ => Finset.sum_le_sum fun i _ => Finset.sum_le_sum fun j _ => ?_
-    rw [e, map_add, map_smul, Matrix.add_apply, Matrix.smul_apply, map_add, piInf_fi, add_zero]
+    rw [e, map_add (f := _), map_smul, Matrix.add_apply, Matrix.smul_apply, map_add (f := _), piInf_fi, add_zero]
     refine (((L w i j).toRealLinearMap (hL w i j)).le_opNorm (x.1, y.1)).trans ?_
     gcongr
     exact max_le (le_add_of_nonneg_right (norm_nonneg _)) (le_add_of_nonneg_left (norm_nonneg _))

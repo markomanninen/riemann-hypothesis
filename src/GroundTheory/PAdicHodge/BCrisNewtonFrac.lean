@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.PAdicHodge.BCrisNewtonKey
+module
+
+public import Mathlib
+public import GroundTheory.PAdicHodge.BCrisNewtonKey
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -11,9 +16,6 @@ namespace ACris
 open _root_.WittVector Polynomial
 
 variable {p : ℕ} [hp : Fact p.Prime]
-
-local notation "𝔹" => BDeRhamPlus (normInteger ℂ_[p]) p
-local notation "𝔹dR" => BDeRham (normInteger ℂ_[p]) p
 
 theorem exists_mul_pow_eq_of_away {R B : Type*} [CommRing R] [CommRing B] {r : R} (g : R →+* B)
     (f : Localization.Away r →+* B) (hfg : ∀ a, f (algebraMap R _ a) = g a)
@@ -54,7 +56,8 @@ theorem IsACrisFraction.sub {y z : PadicAlgCl p} (hy : IsACrisFraction y) (hz : 
   obtain ⟨a, b, hb, h⟩ := hy
   obtain ⟨a', b', hb', h'⟩ := hz
   refine ⟨a * b' - a' * b, b * b', mul_ne_zero_aCris hb hb', ?_⟩
-  rw [map_sub, map_mul, map_mul, map_mul, map_sub, h, h']
+  set_option synthInstance.maxHeartbeats 200000 in
+    rw [map_sub, map_mul, map_mul, map_mul, map_sub, h, h']
   ring
 
 theorem IsACrisFraction.pow {y : PadicAlgCl p} (hy : IsACrisFraction y) (n : ℕ) :
@@ -70,9 +73,9 @@ theorem isACrisFraction_of_mem {u : PadicAlgCl p} (hu : u ∈ unramifiedClosure 
     (fun a => iotaPlus_algebraMap a) x
   refine ⟨w, (p : ACris ℂ_[p] p) ^ n, fun h0 => ?_, ?_⟩
   · have := congrArg (iota ℂ_[p] p) h0
-    rw [map_pow, map_natCast, map_zero, ← map_natCast (algebraMap ℚ_[p] 𝔹) p, ← map_pow] at this
+    rw [map_pow, map_natCast, map_zero, ← map_natCast (algebraMap ℚ_[p] (BDeRhamPlus (normInteger ℂ_[p]) p)) p, ← map_pow] at this
     exact pow_ne_zero n (Nat.cast_ne_zero.2 hp.out.ne_zero : (p : ℚ_[p]) ≠ 0)
-      ((algebraMap ℚ_[p] 𝔹).injective (by rw [this, map_zero]))
+      ((algebraMap ℚ_[p] (BDeRhamPlus (normInteger ℂ_[p]) p)).injective (by rw [this, map_zero]))
   · rw [← hw, hx, map_pow]
 
 theorem IsACrisFraction.exists_norm_eq_zpow {y : PadicAlgCl p} (hy : IsACrisFraction y)

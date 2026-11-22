@@ -1,5 +1,9 @@
-import ReciprocityTheory.L2DbarEstimates.Localization.UnweightBackStatement
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
+module
+
+public import ReciprocityTheory.L2DbarEstimates.Localization.UnweightBackStatement
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.Imports
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates.F
 
@@ -47,8 +51,8 @@ theorem chartTransport_indicator_memLp_two {E : Type*} [NormedAddCommGroup E] [T
     (hsub : tsupport f ⊆ e.source) :
     MemLp (e.target.indicator (f ∘ e.symm)) 2 volume := by
   have hae := chT_aesm hz he f hf.1
-  refine ⟨hae, ?_⟩
-  rw [eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top two_ne_zero ENNReal.ofNat_ne_top]
+  apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    two_ne_zero ENNReal.ofNat_ne_top hae).2
   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
   have hz0 : ∀ x, x ∉ tsupport f → f x = 0 := fun x hx => image_eq_zero_of_notMem_tsupport hx
   have hs : ∀ x, x ∉ e.source → ‖f x‖ₑ ^ 2 = 0 := by

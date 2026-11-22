@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.ClassFieldGSUnram
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.ClassFieldGSUnram
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -38,8 +43,8 @@ theorem placesIdele_apply [Finite S] (a : ∀ w : S, (w.1.adicCompletion K)ˣ) :
     placesIdele S a = ∏ w : S, finiteEmbedding w.1 (a w) :=
   rfl
 
-open Classical in
 
+open Classical in
 theorem finiteProj_placesIdele [Finite S] (a : ∀ w : S, (w.1.adicCompletion K)ˣ)
     (v : HeightOneSpectrum (𝓞 K)) :
     finiteProj v (placesIdele S a) = if h : v ∈ S then a ⟨v, h⟩ else 1 := by
@@ -54,8 +59,8 @@ theorem finiteProj_placesIdele [Finite S] (a : ∀ w : S, (w.1.adicCompletion K)
     rw [e] at h
     exact h w.2
 
-open Classical in
 
+open Classical in
 def divisorExponent (D : sDivisor S) (v : HeightOneSpectrum (𝓞 K)) : ℤ :=
   if h : v ∈ S then 0 else D ⟨v, h⟩
 
@@ -81,7 +86,7 @@ theorem finiteProj_divisorIdele (D : sDivisor S) (v : HeightOneSpectrum (𝓞 K)
   classical
   induction D using Finsupp.induction_linear with
   | zero => simp [divisorExponent]
-  | add D₁ D₂ h₁ h₂ => rw [map_add, toMul_add, map_mul, h₁, h₂, divisorExponent_add, zpow_add]
+  | add D₁ D₂ h₁ h₂ => rw [map_add (f := _), toMul_add, map_mul, h₁, h₂, divisorExponent_add, zpow_add]
   | single w k =>
     rw [divisorIdele_single, map_zpow]
     by_cases h : v = w.1

@@ -1,14 +1,18 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.DenseRangeUnitsR
-import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.AlgCyc
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AdTransfer
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.FrobeniusEigenvaluesTwist
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsQuadraticSignCharacter
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.FrobeniusSignCompatibility
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.GaloisRepIrreducibilityCriterion
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSSRepTraceNondegenerate
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FrobeniusRestrictScalarsPowModInertia
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.WeightChange
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.DenseRangeUnitsR
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.AlgCyc
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.AdTransfer
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.RTwist
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.FrobeniusEigenvaluesTwist
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.ExistsQuadraticSignCharacter
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.FrobeniusSignCompatibility
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.GaloisRepIrreducibilityCriterion
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsSSRepTraceNondegenerate
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FrobeniusRestrictScalarsPowModInertia
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N Polynomial GlobalTheory.CuspRep GlobalTheory.HeckeGal
 open GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Af.Bc UpperTheory.V.Published UpperTheory.V.Sd UpperTheory.V.Base
@@ -135,9 +139,12 @@ private theorem normV_sq (h2 : Module.finrank F E = 2) (w : HeightOneSpectrum (�
   have : w.asIdeal.LiesOver (w.under (𝓞 F)).asIdeal := ⟨rfl⟩
   have := w.isMaximal
   have := (w.under (𝓞 F)).isMaximal
-  have e : normV w = normV (w.under (𝓞 F)) ^ w.asIdeal.inertiaDeg (𝓞 F) :=
-    (Ideal.absNorm_pow_inertiaDeg (w.under (𝓞 F)).asIdeal w.asIdeal).symm
-  have h1 : 1 < normV w := NumberField.HeightOneSpectrum.one_lt_absNorm w
+  have e : normV w = normV (w.under (𝓞 F)) ^ w.asIdeal.inertiaDeg (𝓞 F) := by
+    simpa [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply] using
+      (Ideal.absNorm_pow_inertiaDeg (w.under (𝓞 F)).asIdeal w.asIdeal).symm
+  have h1 : 1 < normV w := by
+    simpa [normV, Ideal.absNorm_apply, Submodule.cardQuot_apply] using
+      NumberField.HeightOneSpectrum.one_lt_absNorm w
   have h3 : w.asIdeal.inertiaDeg (𝓞 F) ≤ 2 := by
     haveI : NoZeroSMulDivisors (𝓞 F) (𝓞 E) := ⟨fun {c x} h => by
       rwa [Algebra.smul_def, mul_eq_zero, map_eq_zero_iff _ (FaithfulSMul.algebraMap_injective _ _)] at h⟩
@@ -207,7 +214,7 @@ private theorem prod_inert (q : ℕ) (B : Multiset ℂˣ) :
   have e : ((q ^ 2 : ℕ) : ℝ) ^ ((((2 : ℕ) : ℝ) - 1) / 2) = ((q : ℝ) ^ ((((2 : ℕ) : ℝ) - 1) / 2)) ^ 2 := by
     rw [Nat.cast_pow, ← Real.rpow_natCast, ← Real.rpow_natCast, ← Real.rpow_mul (Nat.cast_nonneg q),
       ← Real.rpow_mul (Nat.cast_nonneg q), mul_comm]
-  simp only [algSat_eq, e, Multiset.map_add, Multiset.map_map, Multiset.prod_add, ← Multiset.prod_map_mul, multiset_prod_comp]
+  simp only [algSat_eq, e, Multiset.map_add (f := _), Multiset.map_map, Multiset.prod_add, ← Multiset.prod_map_mul, multiset_prod_comp]
   refine congrArg _ (Multiset.map_congr rfl fun b _ => ?_)
   generalize (q : ℝ) ^ ((((2 : ℕ) : ℝ) - 1) / 2) = c
   simp only [Function.comp_apply, sub_comp, mul_comp, pow_comp, X_comp, C_comp, Complex.ofReal_pow, Units.val_pow_eq_pow_val, Units.val_neg, map_mul,
@@ -271,7 +278,7 @@ private theorem loc {F E Ω : Type} [Field F] [NumberField F] [Field E] [NumberF
     have e1 := (hE A hw).2 g (hq ▸ frob_emb (F := F) hσ)
     have e2 := (hE' _ hw').2 g' (hq' ▸ frob_emb (F := F) (hg' ▸ frob_conj hσ t))
     rw [← map_inv (galEmb F E Ω), (H t ht).1 g⁻¹ g'⁻¹ (by rw [map_inv, map_inv, hg']; group), Polynomial.map_mul, e1, e2, hq, hq']
-    simp only [algSat_eq, Multiset.map_add, Multiset.prod_add]
+    simp only [algSat_eq, Multiset.map_add (f := _), Multiset.prod_add]
   · have hq := normV_sq h2 w fun h => hs ((hsg w rfl).2 h)
     obtain ⟨_, B', k1, rfl, k3⟩ := (hc w rfl).2 hq
     obtain rfl := hu _ _ _ k1 hB
@@ -311,39 +318,3 @@ private theorem infOf_add {m m' : Fin 2 → ℤ} (h : Function.Injective ![m 0, 
   refine ⟨Finset.univ.nodup.map fun i j hij => h (Int.cast_injective (add_left_cancel hij)), fun z hz => ?_⟩
   obtain ⟨i, -, rfl⟩ := Multiset.mem_map.1 hz
   exact ⟨![m 0, m 1, m' 0, m' 1] i - 1, by push_cast; ring⟩
-
-theorem UpperTheory.V.Sd.indAut :
-    UpperTheory.V.Af.Hypotheses₂ → UpperTheory.V.Published.QuadInduction → UpperTheory.V.Sd.IndAut := by
-  intro hP hQ E Ω _ _ _ _ _ _ _ h2 l _ ι π r m m' hatt ⟨v, v', hvv, hv, hv'⟩ hinj R hR H
-  haveI : IsAlgClosure E Ω := ⟨IsAlgClosure.isAlgClosed ℚ, Algebra.IsAlgebraic.tower_top (K := ℚ) E⟩
-  obtain ⟨hnd, hint⟩ := infOf_add hinj
-  rcases hQ ℚ E h2 2 one_le_two π with ⟨h, -⟩ | ⟨P, hinf, hfin⟩
-  · have e := (h v v' _ (Subsingleton.elim _ _) hv).unique hv'
-    rw [← e, Multiset.nodup_add] at hnd
-    exact (Multiset.disjoint_left.1 hnd.2.2 (show 1 / 2 + (m 0 : ℂ) ∈ _ by simp [infOf_two]) (by simp [infOf_two])).elim
-  obtain ⟨δ, -, hδ1, hδ, hδu⟩ := UpperTheory.exists_quadratic_sign_character ℚ E Ω l h2
-  obtain ⟨t, ht⟩ : ∃ t, t ∉ (galEmb ℚ E Ω).range := by
-    by_contra h
-    exact hδ1 (MonoidHom.ext fun s => (hδ.1 s).2 (not_not.1 fun hs => h ⟨s, hs⟩))
-  obtain ⟨x, y, hne, hxy⟩ := exists_moved h2 (range_galEmb ℚ E Ω ▸ ht)
-  have H' : IndCh (galEmb ℚ E Ω) r R := fun u hu => H u (range_galEmb ℚ E Ω ▸ hu)
-  have key : IsAutR ι (tw R (cycBar ℚ Ω l)⁻¹) := by
-    refine ⟨P, fun u => ⟨_, ?_, hnd, hint⟩, (UpperTheory.galoisRep_irreducibility_criterion.1 _ (G ℚ Ω) _ 4 R).2.2 _ hR, ?_⟩
-    · rw [Subsingleton.elim u (v.comap (algebraMap ℚ E))]
-      exact hinf v v' _ _ hvv (Subsingleton.elim _ _) hv hv'
-    · filter_upwards [hδu, ev_over (F := ℚ) hatt.2, ev_over (F := ℚ) hfin, ev_over (F := ℚ) (ev_notMem hne),
-        ev_notMem (E := ℚ) (a := (l : 𝓞 ℚ)) (Nat.cast_ne_zero.2 (Fact.out : l.Prime).ne_zero)] with u ha hb hc hd hl
-      have h3 := loc ι h2 hδ ht hxy hR H' (sat := π.HasSat) (fun _ _ _ => TR.CuspSub.HasSat.unique) (satP := P.HasSat) ha hb hc hd
-      obtain ⟨A₀, hA₀⟩ := exists_isPlaceOver Ω u
-      obtain ⟨σ₀, hσ₀⟩ := ReciprocityTheory.Gal.exists_isFrob hA₀
-      obtain ⟨B, hB, -⟩ := (h3 A₀ hA₀).2 σ₀ hσ₀
-      refine ⟨B, hB, ?_⟩
-      rw [algSat_four]
-      refine UpperTheory.frobenius_eigenvalues_twist ℚ Ω l ι 4 _ _ u _ _ (fun A hA => ⟨(h3 A hA).1, fun σ hσ => ?_⟩) (charEig_cyc_inv ι u hl)
-      obtain ⟨B', hB', e⟩ := (h3 A hA).2 σ hσ
-      rw [hB.unique hB', e]
-  have h4 := UpperTheory.V.Sd.twR hP ℚ Ω l ι 4 _ _ ((UpperTheory.V.Sd.algCyc hP ℚ Ω l ι).1 1 1 (by simp)) key
-  convert h4 using 1
-  refine MonoidHom.ext fun s => Units.ext ?_
-  rw [tw_val, tw_val, smul_smul, ← Units.val_mul]
-  simp

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.OnesRepresent
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemLevelIffSymmetricPositionEntryPatternStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.OnesRepresent
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemLevelIffSymmetricPositionEntryPatternStatement
+
+@[expose] public section
 
 open MeasureTheory ValuativeRel Matrix GlobalTheory.SplitWeil GlobalTheory.RootEx GlobalTheory.StepData GlobalTheory.SymChain
 
@@ -21,7 +25,8 @@ theorem symm_mem_KO_iff {a b : Type*} [Fintype a] [DecidableEq a] [Fintype b] [D
   rw [mem_KO, mem_KO, ← map_inv (reGL e).symm g, reGL_symm_val, reGL_symm_val,
     intM_submatrix_iff, intM_submatrix_iff]
 
-theorem mem_reindex_J {a b : Type*} [Fintype a] [DecidableEq a] [Fintype b] [DecidableEq b] (P : TypeDatum k a)
+theorem mem_reindex_J {a b : Type*} [Fintype a] [DecidableEq a] [Fintype b] [DecidableEq b]
+    (P : GlobalTheory.StepData.TypeDatum k a)
     (e : a ≃ b) (g : GL b k) : g ∈ (P.reindex e).J ↔ (reGL e).symm g ∈ P.J := Iff.rfl
 
 variable {ρ κ l j : ℕ} {t : Type}
@@ -45,7 +50,7 @@ theorem free_rr (s s' : t) : FreeIx ρ (ixSucc (Fin κ ⊕ Fin l) t j (.inr s)) 
 
 variable [Fintype t] [DecidableEq t]
 
-theorem base_iff (P : TypeDatum k (Fin κ ⊕ Fin l))
+theorem base_iff (P : GlobalTheory.StepData.TypeDatum k (Fin κ ⊕ Fin l))
     (hP : ∀ g : GL (Fin κ ⊕ Fin l) k, g ∈ P.J ↔
       g ∈ KO k _ ∧ ∀ a b, ¬ FreeTop ρ a b → valuation k (g.val a b - (1 : Matrix _ _ k) a b) < 1)
     (g : GL (Ix (Fin κ ⊕ Fin l) t 0) k) :
@@ -62,7 +67,8 @@ theorem base_iff (P : TypeDatum k (Fin κ ⊕ Fin l))
   · have := h _ _ (fun hf => hab ((hz a b).1 hf))
     simpa [Matrix.one_apply] using this
 
-theorem step_iff (Q : TypeDatum k (Ix (Fin κ ⊕ Fin l) t j)) (μ : kˣ →* ℂˣ) (hμ : IsTame μ)
+theorem step_iff (Q : GlobalTheory.StepData.TypeDatum k (Ix (Fin κ ⊕ Fin l) t j))
+    (μ : kˣ →* ℂˣ) (hμ : IsTame μ)
     (hQ : ∀ g : GL (Ix (Fin κ ⊕ Fin l) t j) k, g ∈ Q.J ↔
       g ∈ KO k _ ∧ ∀ a b, ¬ FreeIx ρ a b → valuation k (g.val a b - (1 : Matrix _ _ k) a b) < 1)
     (g : GL (Ix (Fin κ ⊕ Fin l) t (j + 1)) k) :
@@ -102,7 +108,8 @@ theorem step_iff (Q : TypeDatum k (Ix (Fin κ ⊕ Fin l) t j)) (μ : kˣ →* �
     rw [hentry]
     simpa [Matrix.one_apply] using hnf
 
-theorem iter_iff (P : TypeDatum k (Fin κ ⊕ Fin l)) (μ : ℕ → kˣ →* ℂˣ) (hμ : ∀ j, IsTame (μ j))
+theorem iter_iff (P : GlobalTheory.StepData.TypeDatum k (Fin κ ⊕ Fin l))
+    (μ : ℕ → kˣ →* ℂˣ) (hμ : ∀ j, IsTame (μ j))
     (hP : ∀ g : GL (Fin κ ⊕ Fin l) k, g ∈ P.J ↔
       g ∈ KO k _ ∧ ∀ a b, ¬ FreeTop ρ a b → valuation k (g.val a b - (1 : Matrix _ _ k) a b) < 1)
     (j : ℕ) (g : GL (Ix (Fin κ ⊕ Fin l) t j) k) :
@@ -119,7 +126,24 @@ theorem iter_iff (P : TypeDatum k (Fin κ ⊕ Fin l)) (μ : ℕ → kˣ →* ℂ
 end GlobalTheory.SymChain.IterPattern
 
 theorem GlobalTheory.SymChain.pattern_iter (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k]
-    [IsNonarchimedeanLocalField k] (s κ : ℕ) (S : SymData k s κ) (t : Type) [Fintype t] [DecidableEq t] :
+    [IsNonarchimedeanLocalField k] (s κ : ℕ) (S : GlobalTheory.SymChain.SymData k s κ)
+    (t : Type) [Fintype t] [DecidableEq t] :
     S.Pattern t := by
   intro j g
-  exact IterPattern.iter_iff S.P S.μ S.tame (GlobalTheory.T.mem_level_iff_symmetricPosition_entry_pattern k s κ S) j g
+  have hP : ∀ x : GL (Fin κ ⊕ Fin (s + 1)) k, x ∈ S.P.J ↔
+      x ∈ KO k _ ∧ ∀ a b, ¬ FreeTop S.ρ a b →
+        valuation k (x.val a b - (1 : Matrix _ _ k) a b) < 1 := by
+    intro x
+    rw [S.sym.1 x]
+    constructor
+    · rintro ⟨u, hu, γ, hγ, x₀, hx₀, hxb⟩
+      refine ⟨⟨x₀, hx₀⟩, fun a b hab => ?_⟩
+      rw [← hx₀, GlobalTheory.SymPattern.entry_lt_iff, hxb]
+      exact GlobalTheory.SymPattern.pat_of_mul S.ρ u ((Radical.mem_N_iff u).mp hu) γ hγ a b hab
+    · rintro ⟨⟨x₀, hx₀⟩, hpat⟩
+      obtain ⟨u, hu, γ, hγ, he⟩ := GlobalTheory.SymPattern.exists_of_pat S.ρ
+        (Matrix.GeneralLinearGroup.map (IsLocalRing.residue 𝒪[k]) x₀) (fun a b hab => by
+          rw [← GlobalTheory.SymPattern.entry_lt_iff, hx₀]
+          exact hpat a b hab)
+      exact ⟨u, (Radical.mem_N_iff u).mpr hu, γ, hγ, x₀, hx₀, he⟩
+  exact IterPattern.iter_iff S.P S.μ S.tame hP j g

@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.IntegralBallPow
-import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.EvaluationGenEqZero
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ConeBall
-import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.AApproxE
+module
+
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.IntegralBallPow
+public import Development.WeilBound.CoreStatements.MinimalPrimeDimensions.EvaluationGenEqZero
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.ConeBall
+public import ReciprocityTheory.L2DbarEstimates.PlurisubharmonicCharts.AApproxE
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -50,8 +54,8 @@ theorem continuous_euc (h : HermNorm m) : Continuous (euc h) := by
 
 variable {Z : Scheme.{0}} {B : LB Z} {p : Z ⟶ Sp R} {s : Fin m → B.Sec} {σ : R →+* ℂ}
 
-variable (s) in
 
+variable (s) in
 def sheet (h : HermNorm m) (c : AlgChart p σ e) (i : B.ι) (x : Fin e → ℂ) : Fin m → ℂ :=
   (h.matᵀ)⁻¹ *ᵥ loc p s σ i (c.e.symm (WithLp.toLp 2 x))
 
@@ -158,7 +162,7 @@ theorem measurable_coords {β : Type} [MeasurableSpace β] (hB : B.IsLB) {F : Eu
   have hloc : ∀ i, Measurable fun y => F (euc h (loc p s σ i y)) := by
     intro i
     refine hm.comp ((continuous_euc h).measurable.comp ?_)
-    exact measurable_pi_lambda _ fun k => measurable_ev (B.U i) ((s k).f i)
+    exact Measurable.of_eval fun k => measurable_ev (B.U i) ((s k).f i)
   have heq : ∀ i, ∀ y ∈ ptsIn p σ (B.U i),
       F (euc h (coords p σ hB s y)) = F (euc h (loc p s σ i y)) := by
     intro i y hy
@@ -185,7 +189,7 @@ private theorem aemeasurable_ofReal_fsDens {e n : ℕ} {v : (Fin e → ℂ) → 
     AEMeasurable (fun x => ENNReal.ofReal (fsDens v x)) (volume.restrict D) := by
   have h1 : AEMeasurable v (volume.restrict D) := hv.aemeasurable hD
   have h2 : Measurable fun x => fun j : Fin e => fderiv ℂ v x (Pi.single j 1) :=
-    measurable_pi_lambda _ fun j => measurable_fderiv_apply_const ℂ v _
+    Measurable.of_eval fun j => measurable_fderiv_apply_const ℂ v _
   have hpair : AEMeasurable (fun x => (v x, fun j : Fin e => fderiv ℂ v x (Pi.single j 1)))
       (volume.restrict D) := h1.prodMk h2.aemeasurable
   have hcons : Continuous fun q : (Fin n → ℂ) × (Fin e → Fin n → ℂ) =>
@@ -201,7 +205,7 @@ private theorem aemeasurable_ofReal_fsDens {e n : ℕ} {v : (Fin e → ℂ) → 
     refine Complex.continuous_re.comp (Continuous.matrix_det ?_)
     refine continuous_pi fun a => continuous_pi fun b => ?_
     simp only [Matrix.of_apply]
-    exact continuous_finset_sum _ fun i _ =>
+    exact continuous_finsetSum _ fun i _ =>
       ((continuous_apply i).comp (hw a)).star.mul ((continuous_apply i).comp (hw b))
   have hψ : Measurable fun q : (Fin n → ℂ) × (Fin e → Fin n → ℂ) =>
       ENNReal.ofReal ((e.factorial : ℝ) / Real.pi ^ e *

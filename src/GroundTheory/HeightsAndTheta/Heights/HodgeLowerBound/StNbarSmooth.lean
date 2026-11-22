@@ -1,5 +1,10 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.ChartVel
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.ChartVel
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -22,16 +27,6 @@ variable {K : Type} [Fintype K] {ι : K → Type} [∀ k, Fintype (ι k)]
   {II : IntersectionSystem} {Ψ : Type} [Fintype Ψ] {Ω : Type} [Field Ω] [Algebra ℚ Ω]
   {E : Ψ → Type} [∀ τ, AddCommGroup (E τ)] [∀ τ, Module Ω (E τ)]
   {D : ComponentData II Ψ K ι Ω E} {O Lt : Type} [CommRing O] [AddCommGroup Lt] [Module O Lt]
-
-theorem NbarSmooth.hyps_of_setting (X : ComponentSetting D O Lt) :
-    ∃ t : ℝ, 0 < t ∧ X.M.atlas.Smooth (X.S.regWeight t) := by
-  obtain ⟨t, -, ht, hs, -⟩ := NbarChartSemipos.hyps_of_setting X one_pos
-  exact ⟨t, ht, hs⟩
-
-theorem Line.NbarSmooth.hyps_inhabited :
-    ∃ t : ℝ, 0 < t ∧ (Line.projLineComponentSetting Line.zeroSystem Line.zero_hII).M.atlas.Smooth
-      ((Line.projLineComponentSetting Line.zeroSystem Line.zero_hII).S.regWeight t) :=
-  LowerBoundFree.NbarSmooth.hyps_of_setting _
 
 end Inhabitants
 

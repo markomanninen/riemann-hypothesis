@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
-import Formalism.LocalToGlobal.Columns.RecLevelAsm
+module
+
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+public import Formalism.LocalToGlobal.Columns.RecLevelAsm
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix
 open scoped TensorProduct
@@ -15,13 +19,13 @@ section QDict
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [StarRing E] [Algebra F E]
 variable (hc : Formalism.BasicNotions.CMData F E) (n : ℕ) [NeZero n] (ST SG Q : Finset (Pl E))
 
-variable (F) in
 
+variable (F) in
 abbrev qv (P : Pl E) : HeightOneSpectrum (𝓞 F) := underPl F P
 
 abbrev qGL (g : Sp E n ≃ₗ[E] Sp E n) : GL (Fin n) E := toGLm E n g
 
-instance qdAct {K : Type} [Field K] (H : Subgroup (GLG E n SG)) (Θ : LevQFam E K n Q) :
+instance qdAct {K : Type} [Field K] (H : Subgroup (GLG (E := E) (n := n) (SG := SG))) (Θ : LevQFam E K n Q) :
     MulAction (UF E n × H × Θ.grp) (DecoF E n ST SG Q) :=
   MulAction.compHom _ (MonoidHom.prodMap (MonoidHom.id _) (MonoidHom.prodMap H.subtype Θ.grp.subtype))
 
@@ -54,17 +58,17 @@ structure QLoc {K : Type} [Field K] (Θ : LevQFam E K n Q) where
 
 variable {K : Type} [Field K] {Θ : LevQFam E K n Q}
 
-variable {hc n Q} in
 
+variable {hc n Q} in
 abbrev QLoc.phi (q : QLoc hc n Q Θ) (P : Q) : E →+* (qv F P.1).adicCompletion F :=
   (RingHom.fst _ _).comp ((q.sp P).toRingHom.comp (Formalism.UG.inclE (F := F) ((qv F P.1).adicCompletion F)))
 
-variable {hc n Q} in
 
+variable {hc n Q} in
 abbrev QLoc.at (q : QLoc hc n Q Θ) (P : Q) (x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) : GL (Fin n) ((qv F P.1).adicCompletion F) :=
   Formalism.UG.bc ((RingHom.fst _ _).comp (q.sp P).toRingHom) (Formalism.UG.bc (Formalism.UG.prV (E := E) (qv F P.1)) x)
 
-def levUQ (H : Subgroup (GLG E n SG)) (q : QLoc hc n Q Θ) : Subgroup (GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) :=
+def levUQ (H : Subgroup (GLG (E := E) (n := n) (SG := SG))) (q : QLoc hc n Q Θ) : Subgroup (GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F)) :=
   levU hc n ST SG H ⊓ ⨅ P : Q, (q.U P).comap ((Formalism.UG.bc ((RingHom.fst _ _).comp (q.sp P).toRingHom)).comp
     (Formalism.UG.bc (Formalism.UG.prV (E := E) (qv F P.1))))
 
@@ -75,15 +79,10 @@ def FrOver (q : QLoc hc n Q Θ) (x : GL (Fin n) (E ⊗[F] Formalism.L2.Herm.Af F
 
 variable (hc n ST SG Q)
 
-def DecoPtSurjF (q : QLoc hc n Q Θ) : Prop := ∀ p : DecoF E n ST SG Q, ∃ x : UAd hc n, FrOver q x.1 p
-
-def ptOfF (q : QLoc hc n Q Θ) (p : DecoF E n ST SG Q) : UAd hc n :=
-  open Classical in if h : ∃ x : UAd hc n, FrOver q x.1 p then h.choose else 1
-
-abbrev DecoFCl (H : Subgroup (GLG E n SG)) (Θ' : LevQFam E K n Q) : Type :=
+abbrev DecoFCl (H : Subgroup (GLG (E := E) (n := n) (SG := SG))) (Θ' : LevQFam E K n Q) : Type :=
   MulAction.orbitRel.Quotient (UF E n × H × Θ'.grp) (DecoF E n ST SG Q)
 
-abbrev RecClsF (H : Subgroup (GLG E n SG)) (q : QLoc hc n Q Θ) (s : DecoFCl (K := K) n ST SG Q H Θ → DecoF E n ST SG Q) : Type :=
+abbrev RecClsF (H : Subgroup (GLG (E := E) (n := n) (SG := SG))) (q : QLoc hc n Q Θ) (s : DecoFCl (K := K) n ST SG Q H Θ → DecoF E n ST SG Q) : Type :=
   RecCls hc (1 : Matrix (Fin n) (Fin n) E) (baseLb E n ST) (levUQ hc n ST SG Q H q)
     (fun c => MulAction.stabilizer (UF E n × H × Θ.grp) (s c)) (fun c => (s c).deco.1.L)
 

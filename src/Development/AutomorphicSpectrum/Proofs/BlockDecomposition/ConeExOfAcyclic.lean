@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.HodgeWedgeFields.H1CommutesBaseChange
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -155,7 +159,7 @@ theorem cone_ex_of_acyclic {A B : Cx R} (f : Hm A B) (hA : ∀ k, A.Ex (k + 1)) 
     refine (cone_ex_one f).2 fun a b ha hb ↦ ?_
     obtain ⟨y, rfl⟩ := Cx.ex_succ_iff.1 (hA 0) a ha
     obtain ⟨y', h2, h3⟩ := h1 (b - f.f 0 y) (by rw [map_sub, ← hb, f.f_d, sub_self])
-    exact ⟨y + y', by rw [map_add, h2, add_zero], by rw [map_add, h3, add_sub_cancel]⟩
+    exact ⟨y + y', by rw [map_add (f := _), h2, add_zero], by rw [map_add (f := _), h3, add_sub_cancel]⟩
   | k + 2 =>
     refine (cone_ex_succ f k).2 fun a b ha hb ↦ ?_
     obtain ⟨y, rfl⟩ := Cx.ex_succ_iff.1 (hA (k + 1)) a ha
@@ -214,10 +218,6 @@ def gp (F : C ⥤ ModuleCat.{0} R) {m n : ℕ} (θ : Fin (m + 1) →o Fin (n + 1
   LinearMap.pi fun c ↦ (F.map (c.map (homOfLE (Fin.le_last (θ (Fin.last m)))))).hom ∘ₗ
     LinearMap.proj (R := R) (φ := fun c : Fin (m + 1) ⥤ C ↦ (F.obj (c.obj (Fin.last m)) : Type))
       (θ.monotone.functor ⋙ c)
-
-theorem gp_apply (F : C ⥤ ModuleCat.{0} R) {m n : ℕ} (θ : Fin (m + 1) →o Fin (n + 1)) (f : MCn F m)
-    (c : Fin (n + 1) ⥤ C) : gp F θ f c =
-      F.map (c.map (homOfLE (Fin.le_last (θ (Fin.last m))))) (f (θ.monotone.functor ⋙ c)) := rfl
 
 theorem gp_id (F : C ⥤ ModuleCat.{0} R) (n : ℕ) (f : MCn F n) : gp F OrderHom.id f = f := by
   funext c
@@ -278,9 +278,6 @@ def pb (Φ : C' ⥤ C) {F : C ⥤ ModuleCat.{0} R} {G : C' ⥤ ModuleCat.{0} R} 
   LinearMap.pi fun c ↦ (α.app (c.obj (Fin.last n))).hom ∘ₗ
     LinearMap.proj (R := R) (φ := fun c : Fin (n + 1) ⥤ C ↦ (F.obj (c.obj (Fin.last n)) : Type)) (c ⋙ Φ)
 
-theorem pb_apply (Φ : C' ⥤ C) {F : C ⥤ ModuleCat.{0} R} {G : C' ⥤ ModuleCat.{0} R} (α : Φ ⋙ F ⟶ G) (n : ℕ)
-    (f : MCn F n) (c : Fin (n + 1) ⥤ C') : pb Φ α n f c = (α.app (c.obj (Fin.last n))).hom (f (c ⋙ Φ)) := rfl
-
 theorem pb_gp (Φ : C' ⥤ C) {F : C ⥤ ModuleCat.{0} R} {G : C' ⥤ ModuleCat.{0} R} (α : Φ ⋙ F ⟶ G) {m n : ℕ}
     (θ : Fin (m + 1) →o Fin (n + 1)) (f : MCn F m) : pb Φ α n (gp F θ f) = gp G θ (pb Φ α m f) := by
   funext c
@@ -290,7 +287,8 @@ theorem pb_gp (Φ : C' ⥤ C) {F : C ⥤ ModuleCat.{0} R} {G : C' ⥤ ModuleCat.
 
 theorem pb_mdn (Φ : C' ⥤ C) {F : C ⥤ ModuleCat.{0} R} {G : C' ⥤ ModuleCat.{0} R} (α : Φ ⋙ F ⟶ G) (n : ℕ)
     (f : MCn F n) : pb Φ α (n + 1) (mdn F n f) = mdn G n (pb Φ α n f) := by
-  simp only [mdn, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, pb_gp]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [mdn, LinearMap.sum_apply, LinearMap.smul_apply, map_sum, map_smul, pb_gp]
 
 def pbH (Φ : C' ⥤ C) {F : C ⥤ ModuleCat.{0} R} {G : C' ⥤ ModuleCat.{0} R} (α : Φ ⋙ F ⟶ G) : Hm (cn F) (cn G) where
   f n := pb Φ α n
@@ -336,13 +334,9 @@ def cokerπ {F F' : C ⥤ ModuleCat.{0} R} (φ : F ⟶ F') : F' ⟶ coker φ whe
   naturality x y g := ModuleCat.hom_ext (LinearMap.ext fun v ↦ rfl)
 
 theorem ptSES_coker {F F' : C ⥤ ModuleCat.{0} R} {φ : F ⟶ F'} (h : ∀ x, Function.Injective (φ.app x).hom) :
-    PtSES φ (cokerπ φ) where
-  inj := h
-  ex x v := by
-    show Submodule.mkQ _ v = 0 ↔ _
-    rw [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
-    rfl
-  surj x := Submodule.mkQ_surjective _
+    PtSES φ (cokerπ φ) :=
+  ⟨h, fun x ↦ LinearMap.exact_map_mkQ_range (φ.app x).hom,
+    fun x ↦ Submodule.mkQ_surjective (LinearMap.range (φ.app x).hom)⟩
 
 end Maps
 
@@ -447,7 +441,8 @@ theorem CoD.ev_congr (A : CoD H B) {n : ℕ} (φ : MCn H n) {c c' : Fin (n + 1) 
 theorem CoD.ev_mdn (A : CoD H B) {n : ℕ} (f : MCn H n) (c : Fin (n + 2) ⥤ E) {y : E}
     (g : c.obj (Fin.last _) ⟶ y) : A.ev g (mdn H n f c) = ∑ i : Fin (n + 2), ((-1 : R) ^ (i : ℕ)) •
       A.ev (c.map (homOfLE (Fin.le_last (i.succAbove (Fin.last n)))) ≫ g) (f (fc i c)) := by
-  rw [mdn_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [mdn_apply, map_sum]
   refine Finset.sum_congr rfl fun i _ ↦ ?_
   rw [map_smul]
   congr 1
@@ -558,8 +553,8 @@ theorem coindη_inj {E : Type} [Category.{0} E] (G : E ⥤ ModuleCat.{0} R) (x :
   have h2 : (G.map (𝟙 x)).hom v = (G.map (𝟙 x)).hom w := congrFun h ⟨x, 𝟙 x⟩
   simpa using h2
 
-variable (R) in
 
+variable (R) in
 structure Tr (C D : Type) [Category.{0} C] [Category.{0} D] where
 
   F : C ⥤ ModuleCat.{0} R
@@ -730,7 +725,7 @@ namespace Tr
 variable (τ : Tr R C D)
 
 theorem ηF_inj (h : ∀ T, Function.Injective (τ.fib T)) (T : C) : Function.Injective (τ.ηF.app T).hom := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro v hv
   apply (injective_iff_map_eq_zero _).1 (h T)
   funext c
@@ -750,10 +745,8 @@ def coneSES (h : ∀ T, Function.Injective (τ.fib T)) :
     (fun n f ↦ funext fun c ↦ τ.comm _ _) (fun n f ↦ rfl)
 
 theorem ptFib (T : C) : PtSES (Functor.whiskerLeft (CategoryTheory.Prod.sectR T D) τ.ηG)
-    (Functor.whiskerLeft (CategoryTheory.Prod.sectR T D) (cokerπ τ.ηG)) where
-  inj x := τ.ηG_pt.inj _
-  ex x := τ.ηG_pt.ex _
-  surj x := τ.ηG_pt.surj _
+    (Functor.whiskerLeft (CategoryTheory.Prod.sectR T D) (cokerπ τ.ηG)) :=
+  ⟨fun x ↦ τ.ηG_pt.inj (T, x), fun x ↦ τ.ηG_pt.ex (T, x), fun x ↦ τ.ηG_pt.surj (T, x)⟩
 
 def augSES (h : ∀ T, Function.Injective (τ.fib T)) (T : C) : SES (τ.aug T) (τ.up.aug T) (τ.quo.aug T) where
   i :=
@@ -808,8 +801,6 @@ def modOf (F : C ⥤ CommAlgCat.{0} R) : C ⥤ ModuleCat.{0} R where
   map_id T := ModuleCat.hom_ext (LinearMap.ext fun b ↦ mp_id F T b)
   map_comp φ ψ := ModuleCat.hom_ext (LinearMap.ext fun b ↦ mp_comp F φ ψ b)
 
-theorem mdn_modOf (F : C ⥤ CommAlgCat.{0} R) (n : ℕ) (f : Cn F n) : mdn (modOf F) n f = dn F n f := rfl
-
 def trOf {F : C ⥤ CommAlgCat.{0} R} {G : C × D ⥤ CommAlgCat.{0} R} (m : Proj F G) : Tr R C D where
   F := modOf F
   G := modOf G
@@ -838,8 +829,8 @@ theorem qiso_of_cone {A B : Cx R} (f : Hm A B) (h : ∀ k, (cone f).Ex k) :
   · obtain ⟨y, w, h1, h2⟩ := (cone_ex_succ f n).1 (h (n + 2)) 0 z (map_zero _) (by rw [map_zero, hz])
     exact ⟨y, w, h1, by rw [← h2]; abel⟩
 
-open MainStatements.Hodge in
 
+open MainStatements.Hodge in
 theorem fubiniSt : CxSt → FubiniSt := by
   intro _ R _ C _ F D _ _ _ G m h
   have hτ : ∀ T j, ((trOf m).aug T).Ex j := by

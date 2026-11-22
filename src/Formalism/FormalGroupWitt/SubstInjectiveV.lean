@@ -1,4 +1,8 @@
-import Formalism.FormalGroupWitt.Statement
+module
+
+public import Formalism.FormalGroupWitt.Statement
+
+@[expose] public section
 
 noncomputable section
 

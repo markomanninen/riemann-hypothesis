@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open Polynomial
 
 namespace GlobalTheory
@@ -52,7 +57,7 @@ theorem exists_surjective_pi_adjoinRoot_ker_eq_range (F : Type) [Field F] (V : T
     intro p
     induction p using Polynomial.induction_on with
     | C a => intro v; simp [Module.algebraMap_end_apply]
-    | add p q hp hq => intro v; simp only [map_add, LinearMap.add_apply, hp, hq]
+    | add p q hp hq => intro v; simp only [map_add (f := _), LinearMap.add_apply, hp, hq]
     | monomial n a ih =>
       intro v
       rw [pow_succ, ← mul_assoc, map_mul, map_mul (aeval g), aeval_X, aeval_X,

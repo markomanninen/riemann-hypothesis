@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.KFacts
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.IsClosedKset
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.KFacts
+
+@[expose] public section
 
 noncomputable section
 
@@ -51,8 +55,8 @@ theorem kByParts {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] [Complete
     obtain ⟨C, hC⟩ := (isCompact_range hD.norm).bddAbove
     exact ⟨C, fun k => hC ⟨k, rfl⟩⟩
   have hFm : ∀ t, Continuous fun k : KG ε => F (k * γ t) := fun t =>
-    hF.comp (continuous_mul_right _)
-  have hDm : Continuous fun k : KG ε => D (k * γ 0) := hD.comp (continuous_mul_right _)
+    hF.comp (continuous_mul_const _)
+  have hDm : Continuous fun k : KG ε => D (k * γ 0) := hD.comp (continuous_mul_const _)
   have key := hasDerivAt_integral_of_dominated_loc_of_deriv_le (μ := muK ε)
     (F := fun t k => F (k * γ t)) (F' := fun t k => D (k * γ t)) (x₀ := (0 : ℝ))
     (bound := fun _ => C) (s := Set.univ) Filter.univ_mem

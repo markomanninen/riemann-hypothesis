@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.LetterShift
-import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.CoeffSubstLgFOfDegreeOne
-import Formalism.GaussJetBounds.GaussJetProofs.NormNatCastEqPowPadicValNat
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.GaussSumParity.LetterShift
+public import Formalism.ThetaLogCoordinates.UniformThetaSubstitution.FrobeniusLiftNorms.CoeffSubstLgFOfDegreeOne
+public import Formalism.GaussJetBounds.GaussJetProofs.NormNatCastEqPowPadicValNat
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -25,7 +29,7 @@ theorem isUnit_coeff_one (l : ℕ) (hl : 2 ≤ l) : IsUnit (PowerSeries.coeff 1 
 theorem expF_eq (l : ℕ) (hl : 2 ≤ l) :
     expF K l = PowerSeries.substInvOfIsUnit (lgF K l) (isUnit_coeff_one l hl) := by
   unfold expF
-  rw [dif_pos (isUnit_coeff_one l hl)]
+  rw [dite_eq_left (isUnit_coeff_one l hl)]
 
 theorem inj (l : ℕ) (hl : 2 ≤ l) (a b : PowerSeries K) (ha : PowerSeries.constantCoeff a = 0)
     (hb : PowerSeries.constantCoeff b = 0)

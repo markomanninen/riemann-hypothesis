@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.BasicOpenSections.PlaceData
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.AllHolds
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.BasicOpenSections.PlaceData
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.TranscendenceTraces.AllHolds
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC GlobalTheory.Et NumberField IsDedekindDomain TensorProduct
 open GlobalTheory.GalV (HTower Htot hop galV Splits IsCorrOp IsGalois pullTot)
@@ -83,7 +87,8 @@ theorem UpperTheory.Gal.Mod.hopOp :
     refine DirectSum.linearMap_ext _ fun n => LinearMap.ext fun y => ?_
     have h1 := LinearMap.congr_fun (hsplit n) (pullHQ l (sch.map (H.tΩ Ω g)) n 0 y)
     simp only [LinearMap.comp_apply, LinearMap.sum_apply] at h1 ⊢
-    simp only [T, pullTot, DirectSum.lmap_lof, LinearMap.comp_apply, h1, map_sum, Functor.map_comp, pullQ_comp,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [T, pullTot, DirectSum.lmap_lof, LinearMap.comp_apply, h1, map_sum, Functor.map_comp, pullQ_comp,
       LinearMap.sum_apply]
   have hT : IsCorrOp l (H.sΩ Ω g) (H.tΩ Ω g) T :=
     ⟨W, c, G, iG, fG, a, Fin d, inferInstance, σ, hG, hs, fun x => by
@@ -94,6 +99,6 @@ theorem UpperTheory.Gal.Mod.hopOp :
   have hex : ∃ T, IsCorrOp l (H.sΩ Ω g) (H.tΩ Ω g) T := ⟨T, hT⟩
   have e1 := hOp l cc rfl hlZ T hT
   have e2 := hOp l cc rfl hlZ _ hex.choose_spec
-  have hh : hop l H Ω g = hex.choose := by unfold hop; rw [dif_pos hex]
+  have hh : hop l H Ω g = hex.choose := by unfold hop; rw [dite_eq_left hex]
   rw [hh, e2]
   exact e1.symm

@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualLatticeIndex
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SelfDualLatticeLevel
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LocalLevelRelIndexAtLevelPrimeSelfDual
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OverLatticeIffSelfDualOverBase
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemLocLatOverLat
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SelfDualLatticeIndex
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.SelfDualLatticeLevel
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LocalLevelRelIndexAtLevelPrimeSelfDual
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OverLatticeIffSelfDualOverBase
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemLocLatOverLat
+
+@[expose] public section
 
 namespace GlobalTheory.LevelIndex
 

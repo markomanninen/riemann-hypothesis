@@ -1,5 +1,9 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafUnitPairGPf
-import Development.EtaleCohomology.EtaleSheaves.LeafTwPairExistsPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafUnitPairGPf
+public import Development.EtaleCohomology.EtaleSheaves.LeafTwPairExistsPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -35,7 +39,6 @@ theorem actPair_pos (L : ∀ (U : Scheme.{0}) (t : ℤ), Sec (tw q 0) U →ₗ[U
     actPair L U 0 t t (zero_add t) a b =
       L U t (Sec.map (HomologicalComplex.singleObjXIsoOfEq (ComplexShape.up ℤ) 0 (tw q 0) 0 rfl).hom a) b := by
   simp [actPair, HomologicalComplex.XIsoOfEq_rfl]
-  rfl
 
 theorem actPair_neg (L : ∀ (U : Scheme.{0}) (t : ℤ), Sec (tw q 0) U →ₗ[ULift.{1} (ZMod q)]
     Sec ((res _ (tw q i)).X t) U →ₗ[ULift.{1} (ZMod q)] Sec ((res _ (tw q i)).X t) U) (U : Scheme.{0}) (s t w : ℤ)

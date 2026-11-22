@@ -1,5 +1,9 @@
-import Formalism.LagrangeIdealLifts.Statement
-import Formalism.WindowSums.AnnihilatorPolynomials.ZpowVal
+module
+
+public import Formalism.LagrangeIdealLifts.Statement
+public import Formalism.WindowSums.AnnihilatorPolynomials.ZpowVal
+
+@[expose] public section
 
 noncomputable section
 
@@ -47,11 +51,15 @@ private theorem exponent_bound (ℓ : ℕ) [Fact ℓ.Prime] (s a a' : ℕ) (ha :
       (2 * a).factorial := by
     rw [← prod_pow_eq_pow_sum]
     refine (prod_dvd_prod_of_dvd (fun m : ℕ => ℓ ^ padicValInt ℓ ((a' : ℤ) - m)) (fun m : ℕ => ((a' : ℤ) - m).natAbs)
-      fun m _ => pow_padicValNat_dvd).trans ?_
+      fun m _ => ?_).trans ?_
+    · rw [padicValInt, ← Nat.padicValNat_def]
+      exact _root_.Dvd.intro_left
+        (Nat.divMaxPow (((a' : ℤ) - m).natAbs) ℓ)
+        (Nat.divMaxPow_mul_pow_padicValNat ℓ ((a' : ℤ) - m).natAbs)
     rw [prod_natAbs_sub_erase (2 * a) a' (by omega)]
     exact (Nat.factorial_mul_factorial_dvd_factorial_add _ _).trans
       (Nat.factorial_dvd_factorial (by omega))
-  have h1 := (padicValNat_dvd_iff_le (Nat.factorial_ne_zero _)).1 hdvd
+  have h1 := ((by simpa only [_root_.Nat.padicValNat_def] using @_root_.multiplicity_dvd_iff_le : ∀ {p : _root_.Nat} [hp : _root_.Fact (_root_.Nat.Prime p)] {a n : _root_.Nat} (ha : a ≠ 0), p ^ n ∣ a ↔ n ≤ _root_.padicValNat p a) (Nat.factorial_ne_zero _)).1 hdvd
   have h2 : (2 * a - 1) * s ≤ 2 * a * s := Nat.mul_le_mul_right _ (by omega)
   omega
 

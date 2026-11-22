@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicIndexEquality.Commensurated
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.AdelicIndexEquality.Commensurated
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,8 +66,8 @@ theorem hermitian_map_snd (J : Matrix n n R) (hJ : Formalism.UG.cT σ J = J) : J
   rw [hJ] at h
   rw [h, Matrix.transpose_transpose]
 
-omit hπ in
 
+omit hπ in
 def proj (J : Matrix n n R) : Formalism.UG.UJ σ J →* GL n k :=
   (Units.map ((p1 π).mapMatrix : Matrix n n R →+* Matrix n n k).toMonoidHom).comp (Formalism.UG.UJ σ J).subtype
 

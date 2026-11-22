@@ -1,8 +1,12 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSOpR
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialSideRaising
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialRaisingTopOfParts
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumDualVectorEqZeta
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSERDSOpR
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialSideRaising
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RadialRaisingTopOfParts
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RestrictionIrrelevantDoubleLevelOperator
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SumDualVectorEqZeta
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -19,11 +23,6 @@ section pair
 variable {V : Type} [AddCommGroup V] [Module ℂ V]
 
 theorem fst_mul_apply (p q : Pr V) (v : V) : (p * q).1 v = p.1 (q.1 v) := rfl
-theorem fst_add_apply (p q : Pr V) (v : V) : (p + q).1 v = p.1 v + q.1 v := rfl
-theorem fst_sub_apply (p q : Pr V) (v : V) : (p - q).1 v = p.1 v - q.1 v := rfl
-theorem fst_neg_apply (p : Pr V) (v : V) : (-p).1 v = -(p.1 v) := rfl
-theorem fst_zero_apply (v : V) : (0 : Pr V).1 v = 0 := rfl
-theorem fst_algebraMap_apply (w : ℂ) (v : V) : (algebraMap ℂ (Pr V) w).1 v = w • v := rfl
 theorem fst_mkP (a a' : Module.End ℂ V) : (mkP a a').1 = a := rfl
 
 end pair

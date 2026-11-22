@@ -1,13 +1,17 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.GuDefs
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecProdRecSatakeLL
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecOfRecLiteralStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChebotarevDegreeOne
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChebotarevDegreeOneIffCheb
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.FrobeniusEigenvaluesTwist
-import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.GaloisRepIrreducibilityCriterion
-import Formalism.SharpRestriction.LevelLetterCocycles.LinearIndependentSmulOfNeZero
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CyclotomicCharacterFourth
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.GuDefs
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecProdRecSatakeLL
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecOfRecLiteralStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChebotarevDegreeOne
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.ChebotarevDegreeOneIffCheb
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.FrobeniusEigenvaluesTwist
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.BuildingsResidueChars.GaloisRepIrreducibilityCriterion
+public import Formalism.SharpRestriction.LevelLetterCocycles.LinearIndependentSmulOfNeZero
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.CyclotomicCharacterFourth
+
+@[expose] public section
 
 noncomputable section
 
@@ -21,7 +25,7 @@ namespace UpperTheory.V.Af.Es
 variable {E Ω : Type} [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω] {l : ℕ} [Fact l.Prime]
 
 theorem exists_rec (P : Hypotheses₂) {A : ValuationSubring Ω} {w : HeightOneSpectrum (𝓞 E)} (h : IsPlaceOver A w) :
-    ∃ rc : IrrGL (w.adicCompletion E) → WD h, IsRec h rc := by
+    ∃ rc : IrrGL (k := w.adicCompletion E) → WD h, IsRec h rc := by
   have L := P.litN.loc
   obtain ⟨rc, hrc⟩ := L.llc E Ω A w h
   exact ⟨rc, GlobalTheory.T.rec_of_rec_literal L.dzc L.dzi L.exh L.multi L.cos L.zel L.geo L.bz E Ω A w h rc hrc⟩
@@ -87,7 +91,7 @@ private theorem contProd {K T I : Type} [CommRing K] [TopologicalSpace K] [IsTop
   | empty => simpa using continuous_const
   | insert i s hi ih =>
     simp only [Finset.prod_insert hi, Polynomial.coeff_mul]
-    exact continuous_finset_sum _ fun p _ => (hf i p.1).mul (ih p.2)
+    exact continuous_finsetSum _ fun p _ => (hf i p.1).mul (ih p.2)
 
 theorem charpoly_eq_prod (ι : Qbar l ≃+* ℂ) {I : Type} [Fintype I] {n : ℕ} {a : I → ℕ} (ρ : G E Ω →* GL (Fin n) (Qbar l))
     (r : ∀ i, G E Ω →* GL (Fin (a i)) (Qbar l)) (hρ : Continuous ρ) (hr : ∀ i, Continuous (r i))

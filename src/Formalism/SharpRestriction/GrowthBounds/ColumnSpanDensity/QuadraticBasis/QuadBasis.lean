@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.QuadraticBasis.StatementO
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.QuadraticBasis.StatementO
+
+@[expose] public section
 
 namespace Formalism.MainNotions.flipOneThree.Pf.QuadraticBasis
 
@@ -49,7 +53,7 @@ theorem qb_S {p n' : ℕ} (hp : p.Prime) (j : W →+* O) (w θ : O) (hpW : Irred
   have hg : ∀ a b : W, g (Ideal.Quotient.mk _ a, Ideal.Quotient.mk _ b)
       = Ideal.Quotient.mk _ (j a + j b * θ) := by
     intro a b
-    simp only [g, ι, Ideal.quotientMap_mk, map_add, map_mul]
+    simp only [g, ι, Ideal.quotientMap_mk, map_add (f := _), map_mul]
   have hinj : Function.Injective g := by
     rintro ⟨a, b⟩ ⟨a', b'⟩ h
     obtain ⟨a, rfl⟩ := Ideal.Quotient.mk_surjective a
@@ -133,7 +137,7 @@ theorem qb_span {p n' : ℕ} (hp : p.Prime) (j : W →+* O) (w θ : O) (hpW : Ir
     { carrier := {y | ∃ a b c d : W, y = j a + j b * θ + j c * w + j d * θ * w}
       add_mem' := by
         rintro _ _ ⟨a, b, c, d, rfl⟩ ⟨a', b', c', d', rfl⟩
-        exact ⟨a + a', b + b', c + c', d + d', by simp only [map_add]; ring⟩
+        exact ⟨a + a', b + b', c + c', d + d', by simp only [map_add (f := _)]; ring⟩
       zero_mem' := ⟨0, 0, 0, 0, by simp⟩
       smul_mem' := by
         rintro r _ ⟨a, b, c, d, rfl⟩

@@ -1,17 +1,21 @@
-import CompanionTheory.AutomorphicTheory.BesselOrbitBounds.BesselMapUniqueness.ContinuousOnOrbit
-import CompanionTheory.AutomorphicTheory.RankOneEstimates.DecSender
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.ThmMOfXi
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.FrameBlockWMem
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JDiagExists
-import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.DiscreteSeriesUnitarySmoothBasicImports
-import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.AdmissibleOfIwasawa
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothCyc
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.PhiIntegrable
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.WeightedL1OfL2
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.SigIntIntegrable
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JSchurG
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
-import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+module
+
+public import CompanionTheory.AutomorphicTheory.BesselOrbitBounds.BesselMapUniqueness.ContinuousOnOrbit
+public import CompanionTheory.AutomorphicTheory.RankOneEstimates.DecSender
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.ThmMOfXi
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.FrameBlockWMem
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JDiagExists
+public import CompanionTheory.AutomorphicTheory.PieriRules.PieriDegreeBounds.DiscreteSeriesUnitarySmoothBasicImports
+public import CompanionTheory.HarishChandraModules.KFiniteAnalyticVectors.AdmissibleSmoothVectors.AdmissibleOfIwasawa
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothCyc
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.PhiIntegrable
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.WeightedL1OfL2
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.SigIntIntegrable
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.MultiplicityOne.JSchurG
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.UnitaryWeylNormalHolds
+public import Formalism.FormalDegreeBessel.FormalDegreeRatio.GBasic
+
+@[expose] public section
 
 open Matrix MeasureTheory Formalism.FourierDecayAlt Formalism.QuantumDeterminants ReciprocityTheory.ChartRestriction.DS ReciprocityTheory.ChartRestriction.DS.Mult1 CompanionTheory.D.Upq.Sm
 open scoped InnerProductSpace ComplexConjugate
@@ -37,14 +41,16 @@ theorem orbit_mult (hCL : CutLim) (hAd : DsAd) (hF : Factor) {k r : ℕ} {Wp : T
     have h1 : (1 : ℝ) ≤ r + 1 := by have := Nat.cast_nonneg (α := ℝ) r; linarith
     have h2 : (0 : ℝ) ≤ k := Nat.cast_nonneg k
     have h3 : (0 : ℝ) ≤ r := Nat.cast_nonneg r
-    have hn : (1 : ℝ) ≤ nR k r := by unfold nR; exact_mod_cast (by omega : 1 ≤ 2 * r + k + 1)
+    have hn : (1 : ℝ) ≤ nR k r := by
+      delta nR
+      exact_mod_cast (by omega : 1 ≤ 2 * r + k + 1)
     have h4 : B.AB k r ≤ nR k r ^ 2 + 1 := by
-      unfold B.AB nR
+      delta B.AB nR
       push_cast
       nlinarith [sq_nonneg ((k : ℝ) + r - (r + 1))]
     have h5 : nR k r ^ 2 ≤ nR k r ^ 3 := pow_le_pow_right₀ hn (by norm_num)
     have h6 := one_le_pow₀ (n := 3) hn
-    unfold aM
+    delta aM
     linarith
   have hGN := TopH.gN_integrable D (SquareIntegrabilityOnOrbit.gnInt_of multiplicity_one_hypotheses_hold) hAB
   have hcont := hB.continuousOn_orbit hF hU hw
@@ -59,7 +65,7 @@ theorem orbit_mult (hCL : CutLim) (hAd : DsAd) (hF : Factor) {k r : ℕ} {Wp : T
         rw [← Matrix.mul_assoc, ← Matrix.mul_assoc, Matrix.mul_nonsing_inv _ hu, Matrix.one_mul]
       show Bm (X.σ (m * h * x) X.w) = psi k r D.z cStd m • D.π h (Bm (X.σ x X.w))
       rw [e, hU.rep.apply_mul (hU.rep.mul_mem _ hh.1 _ hn.1) hx, heq h hh _ hn _ (hw.apply hU.rep hx)]
-      unfold psi
+      delta psi
       rw [he])
     (fun x hx => by
       have hxi : x⁻¹ ∈ B.GV k r := (hU.grp.2.2.2 x hx).1
@@ -99,7 +105,8 @@ theorem orbit_mult (hCL : CutLim) (hAd : DsAd) (hF : Factor) {k r : ℕ} {Wp : T
     rw [inner_self_eq_norm_sq_to_K, X.w_norm] at h
     simp only [inner_smul_right]
     refine Eq.trans (integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)) (h.trans ?_)
-    · simp only [mc, Complex.star_def]
+    · delta mc
+      simp only [Complex.star_def]
       ring
     · simp [div_eq_inv_mul]
   refine ⟨c, fun x hx => ?_⟩
@@ -145,7 +152,7 @@ theorem uniq_of (hBd : Bounded) (hCL : CutLim) (hTC : TorConj) (hAd : DsAd) (hF 
       ∃ C : ℝ, ∀ x ∈ B.GV k r, ‖⟪v, σ x w⟫_ℂ‖ ≤ C * B.gN x ^ (-aM k r) := by
     intro w hw v hv
     obtain ⟨C, Ws, -, h2⟩ := CompanionTheory.FamilyDerivativeExpansion.DecS.decayM hl hσ hg _ hm v hv
-    exact ⟨_, fun x hx => h2 (aM k r) (by unfold aM nR; push_cast; rfl) w hw x hx⟩
+    exact ⟨_, fun x hx => h2 (aM k r) (by delta aM nR; push_cast; rfl) w hw x hx⟩
   obtain ⟨-, -, -, -, hsm, -, hKT, ⟨w0, hw0, hw0K, -⟩, -⟩ :=
     GlobalTheory.T.discreteSeries_unitary_smooth_basic CompanionTheory.D.gk.admitted.k_finite_smooth k r ε lam ⟨H, σ⟩ ⟨hl, hσ⟩
   have hw0s := hsm w0 (hKT w0 hw0K)

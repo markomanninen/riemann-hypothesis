@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace ReciprocityTheory.Gal
 
@@ -43,7 +47,7 @@ def Z1 : Submodule R (G → M) where
   carrier := {f | Continuous f ∧ ∀ g h, f (g * h) = f g + rho g (f h)}
   zero_mem' := ⟨continuous_const, fun g h => by simp⟩
   add_mem' := fun {f f'} hf hf' => ⟨hf.1.add hf'.1, fun g h => by
-    simp only [Pi.add_apply, hf.2, hf'.2, map_add]; abel⟩
+    simp only [Pi.add_apply, hf.2, hf'.2, map_add (f := _)]; abel⟩
   smul_mem' c f hf := ⟨hf.1.const_smul c, fun g h => by
     simp only [Pi.smul_apply, hf.2, map_smul, smul_add]⟩
 
@@ -71,7 +75,7 @@ def Z2 : Submodule R (G × G → M) where
   zero_mem' := ⟨continuous_const, fun g h k => by simp⟩
   add_mem' := fun {f f'} hf hf' => ⟨hf.1.add hf'.1, fun g h k => by
     have e1 := hf.2 g h k; have e2 := hf'.2 g h k
-    simp only [Pi.add_apply, map_add]
+    simp only [Pi.add_apply, map_add (f := _)]
     calc _ = (rho g (f (h, k)) - f (g * h, k) + f (g, h * k) - f (g, h)) +
           (rho g (f' (h, k)) - f' (g * h, k) + f' (g, h * k) - f' (g, h)) := by abel
       _ = 0 := by rw [e1, e2, add_zero]⟩
@@ -87,7 +91,7 @@ theorem mem_cocycles2 (f : G × G → M) :
 def d1 : (G → M) →ₗ[R] (G × G → M) where
   toFun c p := rho p.1 (c p.2) - c (p.1 * p.2) + c p.1
   map_add' c c' := by
-    funext p; simp only [Pi.add_apply, map_add]; abel
+    funext p; simp only [Pi.add_apply, map_add (f := _)]; abel
   map_smul' r c := by
     funext p; simp only [Pi.smul_apply, map_smul, RingHom.id_apply, smul_sub, smul_add]
 
@@ -182,7 +186,7 @@ include hu hequiv
 
 def cocycles1MapOfEquivariant : Z1 rho →ₗ[R] Z1 rho' where
   toFun f := ⟨u ∘ f.1, hu.comp f.2.1, fun g h => by
-    simp only [Function.comp_apply, f.2.2 g h, map_add, hequiv]⟩
+    simp only [Function.comp_apply, f.2.2 g h, map_add (f := _), hequiv]⟩
   map_add' f f' := Subtype.ext (funext fun g => map_add u _ _)
   map_smul' r f := Subtype.ext (funext fun g => map_smul u _ _)
 
@@ -197,7 +201,7 @@ def mapH1 : H1 rho →ₗ[R] H1 rho' :=
 
 def cocycles2Map : Z2 rho →ₗ[R] Z2 rho' where
   toFun f := ⟨u ∘ f.1, hu.comp f.2.1, fun g h k => by
-    simp only [Function.comp_apply, ← hequiv, ← map_sub, ← map_add, f.2.2 g h k, map_zero]⟩
+    simp only [Function.comp_apply, ← hequiv, ← map_sub, ← map_add (f := _), f.2.2 g h k, map_zero]⟩
   map_add' f f' := Subtype.ext (funext fun g => map_add u _ _)
   map_smul' r f := Subtype.ext (funext fun g => map_smul u _ _)
 
@@ -225,12 +229,9 @@ include hphi hu hcompat
 
 def compatiblePairCocycles1 : Z1 rho →ₗ[R] Z1 rho' where
   toFun f := ⟨fun g => u (f.1 (phi g)), hu.comp (f.2.1.comp hphi), fun g h => by
-    simp only [map_mul, f.2.2, map_add, hcompat]⟩
+    simp only [map_mul, f.2.2, map_add (f := _), hcompat]⟩
   map_add' f f' := Subtype.ext (funext fun g => map_add u _ _)
   map_smul' r f := Subtype.ext (funext fun g => map_smul u _ _)
-
-@[simp] theorem compatiblePairCocycles1_apply (f : Z1 rho) (g : G') :
-    (compatiblePairCocycles1 rho rho' phi hphi u hu hcompat f).1 g = u (f.1 (phi g)) := rfl
 
 def pairH1DecompositionMap : H1 rho →ₗ[R] H1 rho' :=
   Submodule.mapQ _ _ (compatiblePairCocycles1 rho rho' phi hphi u hu hcompat) fun f hf => by
@@ -245,13 +246,10 @@ def compatiblePairCocycles2 : Z2 rho →ₗ[R] Z2 rho' where
   toFun f := ⟨fun p => u (f.1 (phi p.1, phi p.2)), hu.comp (f.2.1.comp (hphi.prodMap hphi)),
     fun g h k => by
       have e := congrArg u (f.2.2 (phi g) (phi h) (phi k))
-      simp only [map_sub, map_add, map_zero, hcompat] at e
+      simp only [map_sub, map_add (f := _), map_zero, hcompat] at e
       simpa only [map_mul] using e⟩
   map_add' f f' := Subtype.ext (funext fun g => map_add u _ _)
   map_smul' r f := Subtype.ext (funext fun g => map_smul u _ _)
-
-@[simp] theorem compatiblePairCocycles2_apply (f : Z2 rho) (g h : G') :
-    (compatiblePairCocycles2 rho rho' phi hphi u hu hcompat f).1 (g, h) = u (f.1 (phi g, phi h)) := rfl
 
 def compatiblePairH2 : H2 rho →ₗ[R] H2 rho' :=
   Submodule.mapQ _ _ (compatiblePairCocycles2 rho rho' phi hphi u hu hcompat) fun f hf => by
@@ -292,7 +290,7 @@ theorem coboundaries2_le_cocycles2 [ContinuousMul G] (h : ContAction rho) : B2 r
     have h2 : Continuous fun p : G × G => c (p.1 * p.2) := hc.comp continuous_mul
     have h3 : Continuous fun p : G × G => c p.1 := hc.comp continuous_fst
     exact (h1.sub h2).add h3
-  · simp only [d1_apply, map_mul, Module.End.mul_apply, map_sub, map_add, mul_assoc]
+  · simp only [d1_apply, map_mul, Module.End.mul_apply, map_sub, map_add (f := _), mul_assoc]
     abel
 
 end

@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLelongLimit
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLelongLimitOffZero
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLelongLimitOnZero
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StVarIntAdd
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.LocalLimitGlue
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLelongLimit
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLelongLimitOffZero
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLelongLimitOnZero
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StVarIntAdd
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.LocalLimitGlue
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -23,12 +28,12 @@ theorem varInt_eq_zero_of_vanish {n k : ℕ} (W : Ideal (MvPolynomial (Fin n) �
       refine finsum_eq_zero_of_forall_eq_zero fun x => ?_
       rw [finsum_eq_dif]
       by_cases hx : x ∈ fibre W h.choose y
-      · rw [dif_pos hx]
+      · rw [dite_eq_left hx]
         split_ifs
         · show f x * _ = 0
           rw [hf x hx.1, zero_mul]
         · rfl
-      · rw [dif_neg hx]
+      · rw [dite_eq_right hx]
     simp [chartInt, h0]
   · rfl
 
@@ -76,10 +81,10 @@ theorem LelongLimit.proof (hOff : LelongLimitOffZero.Statement) (hOn : LelongLim
         refine finsum_eq_zero_of_forall_eq_zero fun W => ?_
         rw [finsum_eq_dif]
         by_cases hWm : W ∈ S
-        · rw [dif_pos hWm, varInt_eq_zero_of_vanish W g φ fun x hx =>
+        · rw [dite_eq_left hWm, varInt_eq_zero_of_vanish W g φ fun x hx =>
             image_eq_zero_of_notMem_tsupport fun hxs =>
               hgN hxs ⟨(hW W hWm).2.1 hx, (hW W hWm).2.2 x hx⟩, mul_zero]
-        · rw [dif_neg hWm]
+        · rw [dite_eq_right hWm]
       simp only [h0]
       exact hOff n d J u g φ hJ hdim hu hg hgc hφ (Set.disjoint_left.2 fun x hx hx' => hgN hx hx')
 

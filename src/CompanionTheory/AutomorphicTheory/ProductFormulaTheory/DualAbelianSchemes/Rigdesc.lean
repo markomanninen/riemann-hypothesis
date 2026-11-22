@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.ObstructionLifting.H1StructureDimLe
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.RigDescent
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.AppTopCompApply
+module
+
+public import Mathlib
+public import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.ObstructionLifting.H1StructureDimLe
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.RigDescent
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.AppTopCompApply
+
+@[expose] public section
 
 set_option autoImplicit false
 

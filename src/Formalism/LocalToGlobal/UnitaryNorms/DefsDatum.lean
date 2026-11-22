@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.UnitaryNorms.CharHost
+module
+
+public import Formalism.LocalToGlobal.UnitaryNorms.CharHost
+
+@[expose] public section
 
 noncomputable section
 

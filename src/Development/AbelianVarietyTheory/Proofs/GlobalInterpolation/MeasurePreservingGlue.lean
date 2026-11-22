@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataCD
-import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.ActionCoordinates
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.PerpendicularEmbedding
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.HaarUpqIsMulRightInvariant
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpqLocallyCompactGroup
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NonemptyCompactDualHaar
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LintegralComplexEqLintegralSqrtMulExpStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsFibreFamilyEqAtContinuityPointStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsBorelSectionUnitaryOrbitQuadricStatement
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FourierInversionHaarSymmFormStatement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataCD
+public import Formalism.SharpRestriction.GlobalSchurBounds.GeneralLinearActions.GenusMassVolumes
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.ActionCoordinates
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.PerpendicularEmbedding
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.HaarUpqIsMulRightInvariant
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpqLocallyCompactGroup
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NonemptyCompactDualHaar
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LintegralComplexEqLintegralSqrtMulExpStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.IsFibreFamilyEqAtContinuityPointStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsBorelSectionUnitaryOrbitQuadricStatement
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FourierInversionHaarSymmFormStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -253,13 +257,13 @@ theorem exists_isDxDq (P Q : ℕ) : ∃ fib : ℝ → Measure (PerpendicularEmbe
   have hk : ((2 : ℝ≥0∞) ^ (P + Q)) ≠ ⊤ := by simp
   refine ⟨fun t => ((2 : ℝ≥0∞) ^ (P + Q)) • ∑ j, F j t, fun t => ?_, fun φ hφ => ?_,
     fun φ hφ hs ht => ⟨fun t _ => ?_, ?_⟩⟩
-  · rw [Measure.smul_apply, Measure.finset_sum_apply, id, Finset.sum_eq_zero fun j _ => h1 j t,
+  · rw [Measure.smul_apply, Measure.finsetSum_apply, id, Finset.sum_eq_zero fun j _ => h1 j t,
       smul_zero]
   · simp only [PerpendicularEmbedding.dx, Measure.restrict_smul, lintegral_smul_measure, smul_eq_mul,
-      lintegral_finset_sum_measure]
-    rw [lintegral_const_mul' _ _ hk, lintegral_finset_sum _ fun j _ => (h2 j φ hφ).1,
+      lintegral_finsetSum_measure]
+    rw [lintegral_const_mul' _ _ hk, lintegral_finsetSum _ fun j _ => (h2 j φ hφ).1,
       ← Finset.sum_congr rfl fun j _ => (h2 j φ hφ).2,
-      ← lintegral_finset_sum _ (f := fun j x => ENNReal.ofReal (rho j x) * φ x)
+      ← lintegral_finsetSum _ (f := fun j x => ENNReal.ofReal (rho j x) * φ x)
         fun j _ => (measurable_rho j).ennreal_ofReal.mul hφ,
       ← lintegral_indicator isOpen_ne.measurableSet]
     congr 1
@@ -269,11 +273,11 @@ theorem exists_isDxDq (P Q : ℕ) : ∃ fib : ℝ → Measure (PerpendicularEmbe
     · rw [Set.indicator_of_mem (by exact hx), ← Finset.sum_mul,
         ← ENNReal.ofReal_sum_of_nonneg fun j _ => rho_nonneg j x, sum_rho hx]
       simp
-  · exact (integrable_finset_sum_measure.2 fun j _ => (h3 j φ hφ hs ht).1 t).smul_measure hk
+  · exact (integrable_finsetSum_measure.2 fun j _ => (h3 j φ hφ hs ht).1 t).smul_measure hk
   · simp only [integral_smul_measure,
-      integral_finset_sum_measure fun j _ => (h3 j φ hφ hs ht).1 _]
+      integral_finsetSum_measure fun j _ => (h3 j φ hφ hs ht).1 _]
     exact (continuous_const.mul
-      (continuous_finset_sum _ fun j _ => (h3 j φ hφ hs ht).2)).continuousOn
+      (continuous_finsetSum _ fun j _ => (h3 j φ hφ hs ht).2)).continuousOn
 
 theorem isDxDq_local {fib : ℝ → Measure (PerpendicularEmbedding.Sp P Q)} (h : PerpendicularEmbedding.IsDxDq fib) (β : ℝ) :
     ActionCoordinates.IsDxDq β fib :=
@@ -442,6 +446,7 @@ theorem isInvInvariant_cd (c : CDHaar) (P Q : ℕ) : (c.cd P Q).IsInvInvariant :
   have e2 : μ = (k * k) • μ := by
     conv_lhs => rw [← Measure.inv_inv μ, e]
     rw [Measure.inv, Measure.map_smul, ← Measure.inv, e, smul_smul]
+    exact measurable_inv.aemeasurable
   obtain ⟨K, hK, hK1⟩ := exists_compact_mem_nhds (1 : UpqT P Q)
   have hpos : μ K ≠ 0 := (Measure.measure_pos_of_mem_nhds μ hK1).ne'
   have hfin : μ K ≠ ⊤ := hK.measure_lt_top.ne

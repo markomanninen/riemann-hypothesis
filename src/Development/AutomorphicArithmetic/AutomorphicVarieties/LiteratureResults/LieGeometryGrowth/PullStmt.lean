@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.PullDefs
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.PullDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,54 +93,54 @@ def OmGood : Prop :=
     ∀ w : G.Om (q + 1), Good G w → Good G (homOm G W w)
 
 def LevD : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (U : Subgroup (GL (Fin a) (Af E))) (Ξ : AlgRep E a)
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (U : Subgroup (GL (Fin a) (Af E))) (Ξ : AlgRep E a)
     (q : ℕ) (α : Co Ξ q), IsLev U Ξ α → IsLev U Ξ (dCo (smLie Ξ) α) ∧ ∀ β : Co Ξ q, IsLev U Ξ β → IsLev U Ξ (α - β)
 
 def LevGood : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (ho : IsOpen (cone E a))
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (ho : IsOpen (cone E a))
     (U : Subgroup (GL (Fin a) (Af E))) (Ξ : AlgRep E a) (q : ℕ),
     (∀ α : Co Ξ q, IsLev U Ξ α → ∃ w : (geo ho U Ξ).Om q, Corr U Ξ α w.1 ∧ Good (geo ho U Ξ) w) ∧
     ∀ w : (geo ho U Ξ).Om q, Good (geo ho U Ξ) w → ∃ α : Co Ξ q, Corr U Ξ α w.1 ∧ IsLev U Ξ α
 
 def FieldDef : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (U : Subgroup (GL (Fin a) (Af E)))
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (U : Subgroup (GL (Fin a) (Af E)))
     (Y : GA E a → Herm E a) (C : ℝ), IsFld U Y C → ∃ W, FCorr U Y W
 
 def FieldSm : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (U : Subgroup (GL (Fin a) (Af E)))
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (U : Subgroup (GL (Fin a) (Af E)))
     (Y : GA E a → Herm E a) (C : ℝ), IsFld U Y C → ∀ W, FCorr U Y W → ∀ s, ContDiffOn ℝ ∞ (W s) (cone E a)
 
 def FieldFlow : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (ho : IsOpen (cone E a))
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (ho : IsOpen (cone E a))
     (U : Subgroup (GL (Fin a) (Af E))) (Ξ : AlgRep E a) (Y : GA E a → Herm E a) (C : ℝ), IsFld U Y C → ∀ W, FCorr U Y W →
     IsFlow (geo ho U Ξ) W ∧ ∀ (g h : GL (Fin a) (Cinf E)) (x : GL (Fin a) (Af E)) (t : ℝ),
       h.val * star h.val = 1 + t • (Y (infGL E a g * finGL E a x)).1 →
       flow (W (x : GL (Fin a) (Af E) ⧸ U)) t (sand g (hOne E a)) = sand (g * h) (hOne E a)
 
 def FieldDer : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (U : Subgroup (GL (Fin a) (Af E)))
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (U : Subgroup (GL (Fin a) (Af E)))
     (Y : GA E a → Herm E a) (C : ℝ), IsFld U Y C → ∃ B : ℝ, 0 ≤ B ∧ ∀ g : GA E a, ‖hv (Y g)‖ ≤ B ∧
       ∀ (c : ℝ → GL (Fin a) (Cinf E)) (X : Lie E a), c 0 = 1 → HasDerivAt (fun t => toL (c t).val) X 0 →
         ∃ Z : HV E a, ‖Z‖ ≤ B * ‖X‖ ∧ HasDerivAt (fun t => hv (Y (g * infGL E a (c t)))) Z 0
 
 def FieldBd : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (U : Subgroup (GL (Fin a) (Af E)))
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (U : Subgroup (GL (Fin a) (Af E)))
     (Y : GA E a → Herm E a) (C : ℝ), IsFld U Y C → ∀ W, FCorr U Y W → ∃ B : ℝ, 0 ≤ B ∧
       ∀ (g : GL (Fin a) (Cinf E)) (x : GL (Fin a) (Af E)) (t : ℝ), |t| ≤ 1 → ∀ v : HV E a, ∃ v' : HV E a, ‖v'‖ ≤ B * ‖v‖ ∧
         fderiv ℝ (flow (W (x : GL (Fin a) (Af E) ⧸ U)) t) (sand g (hOne E a)) (sand g v) = sand g v'
 
 def MatBd : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (Ξ : AlgRep E a) (C : ℝ), ∃ B : ℝ, 0 ≤ B ∧
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (Ξ : AlgRep E a) (C : ℝ), ∃ B : ℝ, 0 ≤ B ∧
     ∀ h : GL (Fin a) (Cinf E), ‖toL h.val‖ ≤ C → ‖toL (h⁻¹).val‖ ≤ C →
       (∀ y, ‖Ξ.mat h *ᵥ y‖ ≤ B * ‖y‖) ∧ (∀ v, ‖sand h v‖ ≤ B * ‖v‖) ∧ ∀ v, ‖sand h⁻¹ v‖ ≤ B * ‖v‖
 
 def CentreVal : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (U : Subgroup (GL (Fin a) (Af E))) (Ξ : AlgRep E a)
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (U : Subgroup (GL (Fin a) (Af E))) (Ξ : AlgRep E a)
     (r : ℝ), HasOne Ξ r → ∀ (q : ℕ) (α : Co Ξ q), IsLev U Ξ α → ∀ X (γ : GL (Fin a) E) (t : ℝ) (g : GA E a),
       ev (α X) (ratGL E a γ * splitCentre E a t * g) = Complex.exp (-(r * t)) • ev (α X) g
 
 def RetrFacts : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ),
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ),
     (∀ g : GA E a, ∃ t : ℝ, (GroundTheory.Automorphic.CuspidalSpectrum.retractOne g : KernelIndexFullLattice.G1 E a).1 = splitCentre E a t * g) ∧
     (∀ (γ : GL (Fin a) E) (t : ℝ) (g : GA E a),
       (GroundTheory.Automorphic.CuspidalSpectrum.retractOne (ratGL E a γ * splitCentre E a t * g) : KernelIndexFullLattice.G1 E a).1 =
@@ -146,7 +150,7 @@ def RetrFacts : Prop :=
         splitCentre E a t * (GroundTheory.Automorphic.CuspidalSpectrum.retractOne (g * infGL E a h) : KernelIndexFullLattice.G1 E a).1
 
 def CorrBd : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (U : Subgroup (GL (Fin a) (Af E))) (Ξ : AlgRep E a)
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (U : Subgroup (GL (Fin a) (Af E))) (Ξ : AlgRep E a)
     (C : ℝ) (q : ℕ), ∃ B : ℝ, 0 ≤ B ∧ ∀ (α : Co Ξ q) w, IsLev U Ξ α → Corr U Ξ α w →
       ∀ (g : GA E a) (y h : GL (Fin a) (Cinf E)) (x : GL (Fin a) (Af E)) (M : ℝ),
         (GroundTheory.Automorphic.CuspidalSpectrum.retractOne g : KernelIndexFullLattice.G1 E a).1 = infGL E a y * finGL E a x →
@@ -154,14 +158,14 @@ def CorrBd : Prop :=
           ‖Ξ.mat y⁻¹ *ᵥ w (x : GL (Fin a) (Af E) ⧸ U) (sand (y * h) (hOne E a)) fun i => sand y (v i)‖ ≤ B * M * ∏ i, ‖v i‖
 
 def PbBd : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (ho : IsOpen (cone E a))
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (ho : IsOpen (cone E a))
     (U : Subgroup (GL (Fin a) (Af E))) (Ξ : AlgRep E a) (Y : GA E a → Herm E a) (C : ℝ), IsFld U Y C → ∀ W, FCorr U Y W →
     ∀ q : ℕ, ∃ B : ℝ, 0 ≤ B ∧ ∀ (α α' : Co Ξ q) (w : (geo ho U Ξ).Om q), IsLev U Ξ α → Corr U Ξ α w.1 →
       Corr U Ξ α' (pbOm (geo ho U Ξ) W w).1 → ∀ (g : GA E a) (M : ℝ), 0 ≤ M →
       (∀ h : GL (Fin a) (Cinf E), h.val * star h.val = 1 + (Y g).1 → Bd α (g * infGL E a h) M) → Bd α' g (B * M)
 
 def HomBd : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (ho : IsOpen (cone E a))
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (ho : IsOpen (cone E a))
     (U : Subgroup (GL (Fin a) (Af E))) (Ξ : AlgRep E a) (Y : GA E a → Herm E a) (C : ℝ), IsFld U Y C → ∀ W, FCorr U Y W →
     ∀ q : ℕ, ∃ B : ℝ, 0 ≤ B ∧ ∀ (α : Co Ξ (q + 1)) (α' : Co Ξ q) (w : (geo ho U Ξ).Om (q + 1)), IsLev U Ξ α → Corr U Ξ α w.1 →
       Corr U Ξ α' (homOm (geo ho U Ξ) W w).1 → ∀ (g : GA E a) (M : ℝ), 0 ≤ M →
@@ -169,7 +173,7 @@ def HomBd : Prop :=
       Bd α' g (B * M)
 
 def StepCut : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (U : Subgroup (GL (Fin a) (Af E)))
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (U : Subgroup (GL (Fin a) (Af E)))
     (f : GA E a → ℝ) (Y : GA E a → Herm E a) (C c f₀ : ℝ), IsStep U f Y C c f₀ → ∃ B : ℝ, 0 ≤ B ∧ ∀ R : ℝ, ∃ u : Sm E a,
       IsCut U u ∧ ∀ g, (∀ X, ‖(lie E a X u).1 g‖ ≤ B * ‖X‖) ∧ (f g ≤ R → u.1 g = 1 ∧ ∀ X, (lie E a X u).1 g = 0) ∧
         (R + 1 ≤ f g → u.1 g = 0 ∧ ∀ X, (lie E a X u).1 g = 0)

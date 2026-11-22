@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RangeShape
+
+@[expose] public section
 
 open MeasureTheory MvPolynomial GlobalTheory.PsCo.Pc1
 

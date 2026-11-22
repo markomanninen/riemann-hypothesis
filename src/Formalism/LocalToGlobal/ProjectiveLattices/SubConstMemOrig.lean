@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -53,9 +57,6 @@ theorem X_mem_orig {ι' : Type} (i : ι') : (X i : MvPolynomial ι' R) ∈ orig 
 def jetIn {K : Type} (k : K) : Jet R ι m →ₐ[R] Jet R (K × ι) m :=
   jetMap (fun i => X (k, i)) fun i => X_mem_orig (k, i)
 
-def jetSum {K : Type} (I : Finset K) : Jet R ι m →ₐ[R] Jet R (K × ι) m :=
-  jetMap (fun i => ∑ k ∈ I, X (k, i)) fun i => Ideal.sum_mem _ fun k _ => X_mem_orig (k, i)
-
 def jetScale (c : ι → R) : Jet R ι m →ₐ[R] Jet R ι m :=
   jetMap (fun i => C (c i) * X i) fun i => Ideal.mul_mem_left _ _ (X_mem_orig i)
 
@@ -91,7 +92,7 @@ theorem sub_const_mem_orig (P : MvPolynomial ι R) :
   next p q hp hq =>
     have h : p + q - C (MvPolynomial.constantCoeff (p + q)) =
         (p - C (MvPolynomial.constantCoeff p)) + (q - C (MvPolynomial.constantCoeff q)) := by
-      simp only [map_add]
+      simp only [map_add (f := _)]
       ring
     rw [h]
     exact Ideal.add_mem _ hp hq

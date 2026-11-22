@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OverLatticeIffSelfDualOverBase
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.OverLatticeIffSelfDualOverBase
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.CsGlob
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Afsplit
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.UG Formalism.BasicNotions GlobalTheory.IndefiniteRowSideFullHecke.SplittingProjection
 open scoped TensorProduct
 
@@ -43,7 +48,7 @@ theorem mem_iff (hs : IsSplitting σ v s)
     apply s.injective
     have e1 : (s (a i)).1 = (s (x i)).1 := congrFun ha' i
     have e2 : (s (b i)).2 = (s (x i)).2 := congrFun hb' i
-    rw [map_add, map_mul, map_mul, s.apply_symm_apply, s.apply_symm_apply]
+    rw [map_add (f := _), map_mul, map_mul, s.apply_symm_apply, s.apply_symm_apply]
     refine Prod.ext ?_ ?_
     · rw [Prod.fst_add, Prod.fst_mul, Prod.fst_mul, one_mul, zero_mul, add_zero, e1]
     · rw [Prod.snd_add, Prod.snd_mul, Prod.snd_mul, one_mul, zero_mul, zero_add, e2]

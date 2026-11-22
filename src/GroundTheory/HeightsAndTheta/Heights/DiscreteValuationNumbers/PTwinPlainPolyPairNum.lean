@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.InhabitMore
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PTwinPlainPairNum
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagIndependenceAlgebra
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.InhabitMore
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PTwinPlainPairNum
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PFlagIndependenceAlgebra
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -23,7 +28,7 @@ theorem rename_divDiff_add {r : ℕ} (l : Fin r) (A B : MvPolynomial (Fin r) ℤ
     rename_divDiff_eq_sum l A Finset.subset_union_left,
     rename_divDiff_eq_sum l B Finset.subset_union_right, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun μ _ => ?_
-  rw [coeff_add, map_add, add_mul]
+  rw [MvPolynomial.coeff_add, map_add (f := _), add_mul]
 
 theorem term_tail {N q : ℕ} (i : Fin N) (μ : Fin N →₀ ℕ) (t : Fin q →₀ ℕ) (ν : Fin (N + q) →₀ ℕ)
     (hc : ∀ j, ν (Fin.castAdd q j) = μ j) (hn : ∀ j, ν (Fin.natAdd N j) = t j) :
@@ -54,7 +59,8 @@ theorem term_tail {N q : ℕ} (i : Fin N) (μ : Fin N →₀ ℕ) (t : Fin q →
     simp only [hgt, if_true, hcc, hc, hn]
   unfold term
   rw [h1, h3, hc i]
-  simp only [map_mul, map_prod, map_pow, map_sum, rename_X, Sum.map_inl, Sum.map_inr]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_mul, map_prod, map_pow, map_sum, rename_X, Sum.map_inl, Sum.map_inr]
   ring
 
 theorem rename_monomial_tail {N q : ℕ} (t : Fin q →₀ ℕ) (c : ℤ) :
@@ -87,7 +93,8 @@ theorem rename_divDiff_castAdd_monomial {N q : ℕ} (i : Fin N) (G : MvPolynomia
       obtain ⟨μ, hμ, he⟩ := hmem
       exact Finset.mem_image.mpr ⟨μ, hμ, by rw [he, tsub_add_cancel_of_le hle]⟩
     · exact absurd rfl hν
-  rw [rename_monomial, ← hT, rename_divDiff_eq_sum (Fin.castAdd q i) _ hsub,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [rename_monomial, ← hT, rename_divDiff_eq_sum (Fin.castAdd q i) _ hsub,
     Finset.sum_image fun a _ b _ h => hinj h, rename_divDiff_eq_sum i G subset_rfl, map_sum,
     Finset.sum_mul, rename_monomial_tail]
   refine Finset.sum_congr rfl fun μ _ => ?_
@@ -98,7 +105,7 @@ theorem rename_divDiff_castAdd_monomial {N q : ℕ} (i : Fin N) (G : MvPolynomia
       have := congrArg Fin.val hk
       simp only [Fin.val_natAdd, Fin.val_castAdd] at this
       omega
-    rw [Finsupp.add_apply, Finsupp.mapDomain_apply (Fin.castAdd_injective _ _), hT,
+    rw [Finsupp.add_apply, Finsupp.mapDomain_apply_of_injective (Fin.castAdd_injective _ _), hT,
       Finsupp.mapDomain_of_notMem_range _ _ hj, add_zero]
   have hn : ∀ j, (Finsupp.mapDomain (Fin.castAdd q) μ + T) (Fin.natAdd N j) = t j := by
     intro j
@@ -108,7 +115,7 @@ theorem rename_divDiff_castAdd_monomial {N q : ℕ} (i : Fin N) (G : MvPolynomia
       simp only [Fin.val_natAdd, Fin.val_castAdd] at this
       omega
     rw [Finsupp.add_apply, Finsupp.mapDomain_of_notMem_range _ _ hj, hT,
-      Finsupp.mapDomain_apply (Fin.natAdd_injective _ _), zero_add]
+      Finsupp.mapDomain_apply_of_injective (Fin.natAdd_injective _ _), zero_add]
   rw [coeff_mul_monomial, coeff_rename_mapDomain _ (Fin.castAdd_injective _ _),
     term_tail i μ t _ hc hn, C_mul]
   simp only [map_mul, rename_C]
@@ -123,7 +130,7 @@ theorem rename_divDiff_castAdd_mul {N q : ℕ} (i : Fin N) (G : MvPolynomial (Fi
         rename (fun j : Fin q => (Sum.inl (Fin.natAdd N j) : Fin (N + q) ⊕ Fin (N + q))) Q := by
   induction Q using MvPolynomial.induction_on' with
   | monomial t c => exact rename_divDiff_castAdd_monomial i G t c
-  | add A B hA hB => rw [map_add, mul_add, rename_divDiff_add, hA, hB, map_add, mul_add]
+  | add A B hA hB => rw [map_add (f := _), mul_add, rename_divDiff_add, hA, hB, map_add (f := _), mul_add]
 
 variable {K : Type} [DecidableEq K] {ι : K → Type}
 variable {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
@@ -134,7 +141,8 @@ theorem classNum_mul_tail {σ : Type*} [DecidableEq σ] {q : ℕ} (cls : σ → 
     classNum cls (A * rename z Q) [] W = ∑ μ ∈ Q.support, Q.coeff μ * classNum cls A (classList L μ) W := by
   have hadd : ∀ H : MvPolynomial σ ℤ, classNum cls H [] W = classNumAddHom cls [] W H := fun _ => rfl
   conv_lhs => rw [Q.as_sum]
-  rw [map_sum, Finset.mul_sum, hadd, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, Finset.mul_sum, hadd, map_sum]
   refine Finset.sum_congr rfl fun μ _ => ?_
   rw [rename_monomial, show monomial (μ.mapDomain z) (Q.coeff μ) =
       Q.coeff μ • monomial (μ.mapDomain z) (1 : ℤ) by rw [smul_monomial, smul_eq_mul, mul_one],

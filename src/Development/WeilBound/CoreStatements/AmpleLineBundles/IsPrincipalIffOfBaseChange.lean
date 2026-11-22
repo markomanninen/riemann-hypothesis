@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.SlopeBoundSt
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
-import Development.AbelianVarietyTheory.PublishedTheorems.SemiabelianTori.GeometricallyConnectedSplitTorusAff
-import Development.WeilBound.CoreStatements.AmpleLineBundles.ExistsSecOfFlatPull
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsAffineOpenNonzeroLocusOfUniversallyClosed
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsAffineHomOfFlatQuotientOfAffineKernel
-import Development.AbelianVarietyTheory.PublishedTheorems.RelativeAmpleness.RelAmpleAndKTrivIff
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.SlopeBoundSt
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.ArchBetween
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.BdryChart
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.ClopenCondOnto
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.BlowupProjections.BlowupProjStatement
+public import Development.AbelianVarietyTheory.PublishedTheorems.SemiabelianTori.GeometricallyConnectedSplitTorusAff
+public import Development.WeilBound.CoreStatements.AmpleLineBundles.ExistsSecOfFlatPull
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.IsProjOverIffIsProperAndExistsIsAmpleLB
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsAffineOpenNonzeroLocusOfUniversallyClosed
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.IsAffineHomOfFlatQuotientOfAffineKernel
+public import Development.AbelianVarietyTheory.PublishedTheorems.RelativeAmpleness.RelAmpleAndKTrivIff
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField TensorProduct Filter Topology Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor ReciprocityTheory.ChartRestriction.G.Semi GlobalTheory.CompanionTheory.Ar
 
@@ -37,9 +42,10 @@ theorem isAmpleLB_desc {K K' : Type} [Field K] [Field K'] (e : K →+* K') {X X'
   obtain ⟨s₁, e₁⟩ := GlobalTheory.exists_sec_nonzeroLocus_eq_of_lbIso hP hM' iso.symm s'
   obtain ⟨σ, hσ⟩ := exists_sec_of_flat_pull p p' φ H (fun U W hU hW => hU.inf hW) _ hM s₁ y (e₁.ge hs')
   refine ⟨n, hn, σ, hσ, ?_⟩
-  obtain ⟨s₂, e₂⟩ := GlobalTheory.exists_sec_nonzeroLocus_eq_of_lbIso hM' hP iso (GlobalTheory.secPull σ φ)
+  obtain ⟨s₂, e₂⟩ := GlobalTheory.exists_sec_nonzeroLocus_eq_of_lbIso hM' hP iso
+    (GlobalTheory.Cartier.secPull σ φ)
   have ha := h.isAffineOpen_nonzeroLocus p' hn s₂
-  rw [e₂, GlobalTheory.nonzeroLocus_secPull] at ha
+  rw [e₂, GlobalTheory.Cartier.nonzeroLocus_secPull] at ha
   have : IsAffine (φ ⁻¹ᵁ Out.nonzeroLocus σ) := ha
   exact GlobalTheory.isAffine_of_isPullback_of_flat_surjective
     ((isPullback_morphismRestrict φ (Out.nonzeroLocus σ)).paste_vert H)

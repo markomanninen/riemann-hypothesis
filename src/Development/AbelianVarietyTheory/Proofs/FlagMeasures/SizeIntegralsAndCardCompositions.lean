@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Finset
 
@@ -71,7 +75,7 @@ theorem sizeIntegrals_and_card_compositions :
     exact Finset.prod_congr rfl fun i _ => setIntegral_Icc_const_div (c i) lo h0 h1
   · refine (setIntegral_cube_prod a (Set.Ioo (0 : ℝ) (1 / 2))
       (fun i t => t ^ (c i * m) * ((c i : ℝ) / t))).trans_le ?_
-    exact Finset.prod_le_one (fun i _ => (setIntegral_Ioo_pow_mul_div (c i) m hm (hc i)).1)
+    exact Finset.prod_le_one₀ (fun i _ => (setIntegral_Ioo_pow_mul_div (c i) m hm (hc i)).1)
       fun i _ => (setIntegral_Ioo_pow_mul_div (c i) m hm (hc i)).2
 
 end GlobalTheory

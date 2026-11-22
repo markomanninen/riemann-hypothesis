@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothReal
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemUJsetOfKset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothReal
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.MemUJsetOfKset
+
+@[expose] public section
 
 open Matrix Finset Formalism.MainNotions.S
 open scoped InnerProductSpace

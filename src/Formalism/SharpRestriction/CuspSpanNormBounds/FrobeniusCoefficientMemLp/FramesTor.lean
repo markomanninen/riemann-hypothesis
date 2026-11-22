@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.RootMeasBig
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.RootMeasBig
+
+@[expose] public section
 
 noncomputable section
 
@@ -105,7 +109,7 @@ theorem conjT_tT (k r : ℕ) : (tT k r)ᴴ = tTi k r := by
 theorem conjT_tTi (k r : ℕ) : (tTi k r)ᴴ = tT k r := by
   rw [tT, tTi, Matrix.diagonal_conjTranspose]
   congr 1
-  funext i
+  ext i
   simp
 
 theorem tT_mem_UH (k r : ℕ) : tT k r ∈ UH (Hpk k r) := by

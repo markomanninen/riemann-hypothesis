@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.UnipotentDerivatives.DerUnipLeUnipB
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.TemperedRepresentationTheory.MirabolicDerivatives.UnipotentDerivatives.DerUnipLeUnipB
+
+@[expose] public section
 
 open Matrix GlobalTheory.PRep GlobalTheory.SmGL GlobalTheory.LocGL GlobalTheory.BZMir
 
@@ -17,13 +21,13 @@ theorem mem_MirUin_iff_mem_derUnipM (k : Type) [Field k] (n : ℕ) (g : Mir k n)
     · have hj : j ≠ Fin.last n := fun h => by
         subst h; exact absurd hji (not_lt.2 (Fin.le_last i))
       have hij : i ≠ j := (ne_of_lt hji).symm
-      simp [unip, colMat, one_apply, hj, hij]
+      simp [unip, colMat, Matrix.one_apply, hj, hij]
     · by_cases hi : i = Fin.last n
       · subst hi; simp [unip, colMat]
       · simp [unip, colMat, hi]
     · have hi' : i ≠ Fin.last n := fun h => by subst h; simp at hi
       ext l
-      simp [unip, colMat, hi', Matrix.col, one_apply, Pi.single_apply, eq_comm]
+      simp [unip, colMat, hi', Matrix.col, Matrix.one_apply, Pi.single_apply, eq_comm]
   · rintro ⟨hB, hC⟩
     refine ⟨Multiplicative.ofAdd (fun i => (g : GL (Fin (n + 1)) k).val (Fin.castSucc i) (Fin.last n)), ?_⟩
     ext i j
@@ -32,13 +36,13 @@ theorem mem_MirUin_iff_mem_derUnipM (k : Type) [Field k] (n : ℕ) (g : Mir k n)
     | last =>
       induction i using Fin.lastCases with
       | last => simp [colMat, ((mem_unipB k).1 hB).2]
-      | cast i => simp [colMat, one_apply, Fin.castSucc_ne_last]
+      | cast i => simp [colMat, Matrix.one_apply, Fin.castSucc_ne_last]
     | cast j =>
       have h := congrFun (hC (Fin.castSucc j) (by simp)) i
       rw [mulVec_single_one] at h
       simp only [Matrix.col_apply] at h
       rw [h]
-      simp [colMat, Fin.castSucc_ne_last, one_apply, Pi.single_apply]
+      simp [colMat, Fin.castSucc_ne_last, Matrix.one_apply, Pi.single_apply]
 
 theorem derCharM_self_apply {k : Type} [Field k] [ValuativeRel k] [TopologicalSpace k] [IsNonarchimedeanLocalField k]
     (ψ : AddChar k Circle) (n : ℕ) (x : derUnipM k n n) : derCharM k ψ n n x = 1 := by

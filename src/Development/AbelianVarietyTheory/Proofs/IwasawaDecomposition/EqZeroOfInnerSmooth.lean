@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmoothVecLowKSub
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ScalarOnPartsFull
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsSmoothVecLowKSub
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffDerivSnoc
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContinuousOnAtTau
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ def word (π : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)) (l : List (Matrix
 
 def smSub (G : Matrix (Fin n) (Fin n) ℂ) (π : Matrix (Fin n) (Fin n) ℂ → (H →L[ℂ] H)) : Submodule ℂ H where
   carrier := {w | SmoothVec (lieG G) π w}
-  add_mem' := fun h h' k Xs hX => by simpa only [map_add] using (h k Xs hX).add (h' k Xs hX)
+  add_mem' := fun h h' k Xs hX => by simpa only [map_add (f := _)] using (h k Xs hX).add (h' k Xs hX)
   zero_mem' := fun k Xs _ => by simpa only [map_zero] using contDiff_const
   smul_mem' := fun c _ h k Xs hX => by simpa only [map_smul] using (h k Xs hX).const_smul c
 
@@ -317,8 +321,8 @@ theorem sigma_mem (hP : IsUnit P) (h : Pᴴ * Formalism.REAL.Jm ε * P = G) (hσ
   rw [← trRep_conj (σ := σ) hP g]
   exact rep_mem (gram_unit hP h) (isURepOn_trRep hP h hσ) hw (conj_mem_UH hP h hg)
 
-attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra in
 
+attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra in
 theorem garding_mem [CompleteSpace H] (hP : IsUnit P) (h : Pᴴ * Formalism.REAL.Jm ε * P = G) (hσ : IsURepOn (UJset ε) σ)
     {φ : Matrix (Fin n) (Fin n) ℂ → ℝ} (hφ : ContDiff ℝ ∞ φ) (hφc : HasCompactSupport φ) (w : H) :
     GlobalTheory.LowTypeRestriction.garding hσ hφ.continuous hφc w ∈ smSub G (trRep σ P) := fun k Xs hX =>
@@ -326,8 +330,8 @@ theorem garding_mem [CompleteSpace H] (hP : IsUnit P) (h : Pᴴ * Formalism.REAL
     ((contDiff_const.mul (GlobalTheory.GardingVec.contDiff_expProd Xs)).mul contDiff_const) fun t =>
     conj_mem_UJ hP h (expProd_mem_UH (gram_unit hP h) hX t)
 
-attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra in
 
+attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra in
 def IsTest (φ : Matrix (Fin n) (Fin n) ℂ → ℝ) : Prop := ContDiff ℝ ∞ φ ∧ HasCompactSupport φ
 
 attribute [local instance] Matrix.linftyOpNormedRing Matrix.linftyOpNormedAlgebra in
@@ -363,8 +367,8 @@ theorem norm_gard_le (hσ : IsURepOn (UJset ε) σ) (φ : Matrix (Fin n) (Fin n)
   funext g
   rw [norm_smul, hσ.2.1 _ g.2, Real.norm_eq_abs]
 
-open MeasureTheory in
 
+open MeasureTheory in
 theorem eq_zero_of_forall_test {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
     {F : Formalism.REAL.UJ ε → E} (hF : Continuous F)
     (h : ∀ φ, IsTest φ → ∫ g : Formalism.REAL.UJ ε, φ (umat g) • F g ∂(Formalism.REAL.muG ε) = 0) : F 1 = 0 := by
@@ -430,8 +434,8 @@ theorem ext_inner_smooth [CompleteSpace H] (hP : IsUnit P) (h : Pᴴ * Formalism
 
 end Frame
 
-open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.IndefR.Mult in
 
+open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.IndefR.Mult in
 theorem sm_eq {D : D7} {V : HSp D} {S : D.what₂.Tau → SPar} (M : DSModel V S) (τ : D.what₂.Tau) :
     M.sm τ = smSub (gramAt D V τ) (trRep (M.σ τ) (M.fr τ)) :=
   Submodule.span_eq (smSub (gramAt D V τ) (trRep (M.σ τ) (M.fr τ)))

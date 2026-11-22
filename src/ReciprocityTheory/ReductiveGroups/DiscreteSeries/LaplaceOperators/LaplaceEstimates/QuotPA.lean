@@ -1,6 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.ToL2CongrOnUnitaryBis
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.ThreeAddLeGapBound
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.ExistsCommutingProjectionImage
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.PsiDatumStatement
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.ExistsCommutingProjectionImage
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.K2V
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.ProdShiftEqAevalProd
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +25,7 @@ def tL (ε : Fin (2 * r + k + 1) → Bool) (σ : Mat k r → (H →L[ℂ] H)) (x
   toFun f := tMap ε σ x₁ x₀ w (fun c => ((f c : D) : H))
   map_add' f f' := by
     funext g
-    simp only [tMap, coefX, Pi.add_apply, Submodule.coe_add, map_add, inner_add_right, mul_add,
+    simp only [tMap, coefX, Pi.add_apply, Submodule.coe_add, map_add (f := _), inner_add_right, mul_add,
       Finset.sum_add_distrib]
   map_smul' a f := by
     funext g
@@ -28,10 +33,6 @@ def tL (ε : Fin (2 * r + k + 1) → Bool) (σ : Mat k r → (H →L[ℂ] H)) (x
       RingHom.id_apply, Finset.mul_sum]
     refine Finset.sum_congr rfl fun c _ => ?_
     ring
-
-theorem tL_apply (ε : Fin (2 * r + k + 1) → Bool) (σ : Mat k r → (H →L[ℂ] H)) (x₁ : Fin (2 * r + k + 1) → ℂ)
-    (x₀ : Mat k r) (w : H) (f : Fin (2 * r + k + 1) → D) :
-    tL ε σ x₁ x₀ w f = tMap ε σ x₁ x₀ w (fun c => ((f c : D) : H)) := rfl
 
 end Map
 

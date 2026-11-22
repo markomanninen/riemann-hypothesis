@@ -1,7 +1,11 @@
-import Development.WeilBound.ThetaLifts.LatticeBasics.RegOfBound
-import Development.WeilBound.ThetaLifts.LatticeBasics.ContinuousFlat
-import Development.WeilBound.ThetaLifts.LatticeBasics.HypothesesE
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+module
+
+public import Development.WeilBound.ThetaLifts.LatticeBasics.RegOfBound
+public import Development.WeilBound.ThetaLifts.LatticeBasics.ContinuousFlat
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HypothesesE
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,7 @@ theorem eisCont_of_reg {f Ê : ℂ → G2 σ Y → ℂ} {t : ℝ} (h1 : ∀ s : 
   have disc : ∀ s : ℂ, ∀ᶠ z in 𝓝[≠] s, z ∈ {s | An.Reg (fun x : G2 σ Y => (ht2 x : ℝ)) Ê s} := fun s =>
     let ⟨_, _, a, e⟩ := h3 s
     a.punct one_le_height_GL2 e
-  refine ⟨_, ⟨isOpen_iff_mem_nhds.2 fun s hs => hs.eventually, An.preconn disc, disc, ⟨t, fun s hs => ⟨?_, h1 s hs⟩⟩,
+  refine ⟨{s | An.Reg (fun x : G2 σ Y => (ht2 x : ℝ)) Ê s}, ⟨isOpen_iff_mem_nhds.2 fun s hs => hs.eventually, An.preconn disc, disc, ⟨t, fun s hs => ⟨?_, h1 s hs⟩⟩,
     fun x s hs => ?_, fun y hy => (An.Reg.contAt hy.1 y.2).continuousWithinAt, fun s hs => ?_⟩, fun s => ?_⟩
   · obtain ⟨_, _, a, e⟩ := h3 s
     exact a.remove one_le_height_GL2 e ((isOpen_lt continuous_const Complex.continuous_re).mem_nhds hs) h2

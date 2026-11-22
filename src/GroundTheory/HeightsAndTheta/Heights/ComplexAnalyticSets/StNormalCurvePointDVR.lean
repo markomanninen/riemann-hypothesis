@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalModelPlace
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StBranchLift
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StNormalModelPlace
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StBranchLift
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

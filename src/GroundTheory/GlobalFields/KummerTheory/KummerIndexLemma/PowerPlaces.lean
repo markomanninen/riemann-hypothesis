@@ -1,8 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.KummerTheory.KummerIndexLemma.HasEnoughRootsOfUnityOfRingHom
-import GroundTheory.GlobalFields.KummerTheory.SplittingKummer
-import GroundTheory.GlobalFields.SplittingFromInequality
-import GroundTheory.GlobalFields.IdeleGroups.LocalNorms
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.KummerTheory.KummerIndexLemma.HasEnoughRootsOfUnityOfRingHom
+public import GroundTheory.GlobalFields.KummerTheory.SplittingKummer
+public import GroundTheory.GlobalFields.SplittingFromInequality
+public import GroundTheory.GlobalFields.IdeleGroups.LocalNorms
+
+@[expose] public section
 
 noncomputable section
 

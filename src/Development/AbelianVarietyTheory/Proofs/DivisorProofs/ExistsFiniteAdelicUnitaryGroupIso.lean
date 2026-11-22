@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
-import Formalism.LocalToGlobal.IndefiniteReal.CutTuples2
-import Formalism.LocalToGlobal.Divisibility.LiftLatLemmas
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinRepApply
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.ConcretePkgSpec
+public import Formalism.LocalToGlobal.IndefiniteReal.CutTuples2
+public import Formalism.LocalToGlobal.Divisibility.LiftLatLemmas
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinRepApply
+
+@[expose] public section
 
 noncomputable section
 
@@ -197,7 +201,7 @@ theorem prod_decomp (x : (A × B) ⊗[F] E) :
   | zero => simp
   | tmul a b => simp [← TensorProduct.add_tmul]
   | add x y hx hy =>
-    simp only [map_add]
+    simp only [map_add (f := _)]
     rw [add_add_add_comm, hx, hy]
 
 theorem prod_surj (y : B ⊗[F] E) : ∃ x : (A × B) ⊗[F] E,
@@ -209,7 +213,7 @@ theorem prod_surj (y : B ⊗[F] E) : ∃ x : (A × B) ⊗[F] E,
   | add x y hx hy =>
     obtain ⟨x', h1, h2⟩ := hx
     obtain ⟨y', h3, h4⟩ := hy
-    exact ⟨x' + y', by rw [map_add, h1, h3, add_zero], by rw [map_add, h2, h4]⟩
+    exact ⟨x' + y', by rw [map_add (f := _), h1, h3, add_zero], by rw [map_add (f := _), h2, h4]⟩
 
 theorem map_sig (f : A →ₐ[F] B) (σ : E →ₐ[F] E) (x : A ⊗[F] E) :
     Algebra.TensorProduct.map f (AlgHom.id F E) (Algebra.TensorProduct.map (AlgHom.id F A) σ x) =
@@ -217,7 +221,7 @@ theorem map_sig (f : A →ₐ[F] B) (σ : E →ₐ[F] E) (x : A ⊗[F] E) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem comm_sig (σ : E →ₐ[F] E) (x : A ⊗[F] E) :
     Algebra.TensorProduct.comm F A E (Algebra.TensorProduct.map (AlgHom.id F A) σ x) =
@@ -225,7 +229,7 @@ theorem comm_sig (σ : E →ₐ[F] E) (x : A ⊗[F] E) :
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul a b => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 end Prod
 

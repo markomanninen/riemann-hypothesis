@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.ThetaConstantWeber
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.ThetaLine
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DifferentiableOddTheta
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.ThetaConstantWeber
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.ThetaLine
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DifferentiableOddTheta
+
+@[expose] public section
+
 open Complex
 
 open Polynomial
@@ -65,7 +70,7 @@ lemma cubic_eq (j F0 F1 F2 : ℂ)
   obtain ⟨s1, s2, s3⟩ := h
   have e : ((X - C F0) * (X - C (-F1)) * (X - C (-F2)) : ℂ[X]) =
       X ^ 3 - C (F0 - F1 - F2) * X ^ 2 + C (-(F0 * F1) - F0 * F2 + F1 * F2) * X - C (F0 * F1 * F2) := by
-    simp only [map_sub, map_neg, map_mul, map_add]
+    simp only [map_sub, map_neg, map_mul, map_add (f := _)]
     ring
   rw [e, s1, s2, s3]
   simp only [map_sub, map_ofNat]
@@ -75,8 +80,8 @@ end GlobalTheory.WeberCubicAlgebra
 
 namespace GlobalTheory.WeberCubicAlgebra
 
-open GlobalTheory.IndefiniteRowSideFullHecke.ThetaConstantWeber in
 
+open GlobalTheory.IndefiniteRowSideFullHecke.ThetaConstantWeber in
 theorem weberCubic_of_halfPeriodDiff : ∀ τ : UpperHalfPlane, GlobalTheory.IndefiniteRowSideFullHecke.ThetaConstantWeber.HalfPeriodDiff τ →
     GlobalTheory.IndefiniteRowSideFullHecke.ThetaConstantWeber.JacobiProduct τ → GlobalTheory.IndefiniteRowSideFullHecke.ThetaConstantWeber.ThetaWeber τ → GlobalTheory.IndefiniteRowSideFullHecke.ThetaConstantWeber.WeberCubic τ := by
   intro τ hd hj hw

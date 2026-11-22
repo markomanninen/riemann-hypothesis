@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PActPi
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PActLoc
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PActEq
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PActPi
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PActLoc
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PActEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -184,13 +188,16 @@ theorem actVal (hMA : MultAlg) (hCF : CompatFub) (hTT : TensTest) : ActVal := by
   have hQc : Continuous Q := hFc.comp ((splitH a b).continuous.comp (by fun_prop))
   have hQs : HasCompactSupport Q :=
     hFs.comp_homeomorph ((Homeomorph.prodAssoc _ _ _).trans (splitH a b).toHomeomorph)
-  have hQi : Integrable Q ((A.prod B).prod ν') := hQc.integrable_of_hasCompactSupport hQs
+  have hQi : Integrable Q ((A.prod B).prod ν') := by
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact hQc.integrable_of_hasCompactSupport hQs
   have hQh : ∀ h, Integrable (fun p => Q (p, h)) (A.prod B) := fun h =>
     (hQc.comp (continuous_id.prodMk continuous_const)).integrable_of_hasCompactSupport (actHcsSlice hQs h)
   have step1 : ∫ ya, ∫ yb, ∫ h, F (splitH a b (ya, yb, h)) ∂ν' ∂B ∂A =
       ∫ h, ∫ ya, ∫ yb, Q ((ya, yb), h) ∂B ∂A ∂ν' := by
-    rw [← integral_prod (fun p => ∫ h, Q (p, h) ∂ν') hQi.integral_prod_left,
-      integral_integral_swap (f := fun p h => Q (p, h)) hQi]
+    set_option synthInstance.maxHeartbeats 200000 in
+      rw [← integral_prod (fun p => ∫ h, Q (p, h) ∂ν') hQi.integral_prod_left,
+        integral_integral_swap (f := fun p h => Q (p, h)) hQi]
     exact integral_congr_ae (Filter.Eventually.of_forall fun h => integral_prod _ (hQh h))
   rw [step1]
   have hpt : ∀ (h : Hf E a b) ya yb, x * splitH a b (ya, yb, h) = x * finH h * (infP a ya, 1) * (1, infP b yb) := by

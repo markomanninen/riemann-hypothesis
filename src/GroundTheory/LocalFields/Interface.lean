@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,12 +31,6 @@ theorem algebraMap_integer_injective : Function.Injective (algebraMap 𝒪[K] �
 theorem algebraMap_mem_integer_iff (x : K) : algebraMap K L x ∈ 𝒪[L] ↔ x ∈ 𝒪[K] := by
   simp only [Valuation.mem_integer_iff]
   exact Valuation.HasExtension.val_map_le_one_iff (valuation K) (valuation L) x
-
-example : IsScalarTower 𝒪[K] 𝒪[L] L := inferInstance
-example : IsScalarTower 𝒪[K] K L := inferInstance
-example : IsLocalHom (algebraMap 𝒪[K] 𝒪[L]) := inferInstance
-example : Algebra 𝓀[K] 𝓀[L] := inferInstance
-example : FaithfulSMul 𝒪[K] 𝒪[L] := inferInstance
 
 end Algebraic
 

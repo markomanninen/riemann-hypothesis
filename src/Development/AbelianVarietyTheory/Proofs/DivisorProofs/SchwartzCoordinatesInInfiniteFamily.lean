@@ -1,7 +1,11 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.WeilThetaConvergence
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.WeilEisensteinSiegelConvergence
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.WeilSiegelFormula
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemSchwartzAOfIsSchwartzBruhat
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.WeilThetaConvergence
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.WeilEisensteinSiegelConvergence
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.WeilSiegelFormula
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemSchwartzAOfIsSchwartzBruhat
+
+@[expose] public section
 
 open scoped TensorProduct ENNReal Matrix Classical
 open MeasureTheory NumberField IsDedekindDomain Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.L2.Theta Formalism.L2.Pj Formalism.IndefR.Datum
@@ -22,7 +26,7 @@ theorem repr_map {R : Type} [CommRing R] [Algebra D.host.F R] (π : AF D.host.F 
   | zero => simp
   | tmul a e =>
     simp [Algebra.TensorProduct.basis_repr_tmul, Algebra.TensorProduct.map_tmul, Finsupp.mapRange_apply]
-  | add x y hx hy => simp only [map_add, Finsupp.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Finsupp.add_apply, hx, hy]
 
 end GlobalTheory.SchwartzCoord
 
@@ -109,7 +113,7 @@ def realCoord (σ : (D.what₂.Tau → ℂ) →+ AE D) {m n d : ℕ} (ε : Modul
       σ.map_add _ _
     show InfiniteAdeleRing.ringEquiv_mixedSpace D.host.F (fstA D.host.F
       ((Algebra.TensorProduct.basis (AF D.host.F) ε).repr (σ fun τ => (c + c') τ p.1 p.2.1) p.2.2)) = _
-    rw [this, map_add, Finsupp.add_apply, map_add, map_add]
+    rw [this, map_add (f := _), Finsupp.add_apply, map_add (f := _), map_add (f := _)]
     rfl
 
 theorem continuous_realCoord {σ : (D.what₂.Tau → ℂ) →+ AE D} (hσ : Continuous σ) {m n d : ℕ}
@@ -153,7 +157,7 @@ theorem realCoord_compAt {θ : InfFam D} {σ : (D.what₂.Tau → ℂ) →+ AE D
     InfiniteAdeleRing.ringEquiv_mixedSpace D.host.F
       (fstA D.host.F ((Algebra.TensorProduct.basis (AF D.host.F) ε).repr (σ fun τ => compAt θ τ x p.1 p.2.1) p.2.2))
   conv_lhs => rw [hx]
-  rw [map_add, Finsupp.add_apply, map_add (fstA D.host.F), h0, zero_add]
+  rw [map_add (f := _), Finsupp.add_apply, map_add (fstA D.host.F), h0, zero_add]
 
 end GlobalTheory.SchwartzCoord
 
@@ -163,7 +167,7 @@ variable {D : D7}
 
 theorem injective_realCoord {θ : InfFam D} {σ : (D.what₂.Tau → ℂ) →+ AE D} (hσ : GlobalTheory.FockCompare.Chart θ σ) {m n d : ℕ}
     (ε : Module.Basis (Fin d) D.host.F D.host.E) : Function.Injective (realCoord σ (m := m) (n := n) ε) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro c hc
   funext τ i j
   have h0 : infPart D (σ fun τ => c τ i j) = 0 := by

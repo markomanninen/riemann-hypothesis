@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BisimplicialActionSecondFactor
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CechNerveFaceOneZero
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PullbackZeroCochainsAlgebraMap
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.BisimplicialActionSecondFactor
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CechNerveFaceOneZero
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.PullbackZeroCochainsAlgebraMap
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -18,8 +22,8 @@ section Slant
 variable {ι : Type} [Fintype ι] {M : ι → Type} [∀ i, CommRing (M i)] [∀ i, Algebra R (M i)]
   {V : Type} [CommRing V] [Algebra R V]
 
-open Classical in
 
+open Classical in
 def slv (Λ : (∀ i, M i) →ₗ[R] R) : (∀ i, M i ⊗[R] V) →ₗ[R] V :=
   ∑ i, (TensorProduct.lid R V).toLinearMap ∘ₗ LinearMap.rTensor V (Λ ∘ₗ LinearMap.single R M i) ∘ₗ
     LinearMap.proj (φ := fun i ↦ M i ⊗[R] V) i
@@ -29,7 +33,8 @@ theorem slv_pure (Λ : (∀ i, M i) →ₗ[R] R) (f : ∀ i, M i) (v : V) :
   classical
   simp only [slv, LinearMap.sum_apply, LinearMap.comp_apply, LinearMap.proj_apply, LinearMap.rTensor_tmul,
     LinearEquiv.coe_coe, TensorProduct.lid_tmul]
-  rw [← Finset.sum_smul, ← map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← Finset.sum_smul, ← map_sum]
   congr 2
   ext j
   simp [Finset.sum_apply, Pi.single_apply]
@@ -247,7 +252,8 @@ theorem S_cup_R (q : ℕ) (x : Cn F 1) (hx : dn F 1 x = 0) (w : Cn (box F) (q + 
     simp
   have hS : a2 F (back q) (S F q w) =
       ∑ i : Fin (q + 1), ((-1 : R) ^ (i : ℕ)) • bi F (th q i) ((back q).comp (sg q i)) w := by
-    simp only [S_apply, map_sum, map_smul, bisimplicial_action_second_factor]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [S_apply, map_sum, map_smul, bisimplicial_action_second_factor]
   rw [h0, zero_mul, smul_zero, zero_add, hS, Finset.sum_apply, Finset.sum_apply, Finset.sum_apply,
     Finset.sum_apply, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ ↦ ?_
@@ -306,7 +312,7 @@ theorem T_base [Fintype (Fin 2 ⥤ C)] (Λ : Cn F 1 →ₗ[R] R) (x : Cn F 1) (h
   have h : ∀ c : Fin 2 ⥤ C, S F 0 (pulln (boxL F) 1 x + pulln (boxR F) 1 x) c b =
       x c ⊗ₜ[R] (1 : F.obj (b.obj (Fin.last 0))) := fun c ↦ by
     rw [S_apply, Fin.sum_univ_one]
-    simp only [Fin.val_zero, pow_zero, one_smul, map_add, Pi.add_apply, bi_boxL, bi_boxR, e1, act_id]
+    simp only [Fin.val_zero, pow_zero, one_smul, map_add (f := _), Pi.add_apply, bi_boxL, bi_boxR, e1, act_id]
     rw [act_const F x hx (sg 0 0) (Subsingleton.elim (α := Fin 1) _ _)]
     simp
   simp only [h]
@@ -363,8 +369,7 @@ theorem tau_L (T₀ : C) (ε : F.obj T₀ →ₐ[R] R) (x : Cn F 1) (hx : dn F 1
 theorem lid_evL (T₀ T : C) (ε : F.obj T₀ →ₐ[R] R) (t : F.obj T₀ ⊗[R] F.obj T) :
     TensorProduct.lid R (F.obj T) (LinearMap.rTensor (F.obj T) ε.toLinearMap t) = evL F T₀ T ε t := by
   induction t with
-  | zero => simp
-  | add a b ha hb => simp only [map_add, ha, hb]
+  | add a b ha hb => simp only [map_add (f := _), ha, hb]
   | tmul a b => simp [evL, Algebra.ofId_apply, Algebra.smul_def]
 
 theorem U_evz [Fintype (Fin 1 ⥤ C)] (T₀ : C) (ε : F.obj T₀ →ₐ[R] R) (q : ℕ) (w : Cn (box F) q) :

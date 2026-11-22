@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.SmulUpdate
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MultisetValuation.SmulUpdate
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,12 +43,5 @@ theorem Tt_smul (X : Sys p) (v : X.Pl) (i J : ℕ) (a : X.G.Kf) (F : X.Fm J) :
   split_ifs
   · rfl
   · rw [Tm_smul, smul_comm]
-
-def TtLinF (X : Sys p) (v : X.Pl) (i J : ℕ) : X.Fm J →ₗ[X.G.Kf] X.Fm J where
-  toFun := X.Tt v i J
-  map_add' := Tt_add X v i J
-  map_smul' := Tt_smul X v i J
-
-@[simp] theorem TtLinF_apply (X : Sys p) (v : X.Pl) (i J : ℕ) (F : X.Fm J) : TtLinF X v i J F = X.Tt v i J F := rfl
 
 end Formalism.MainNotions.FormalGroupSystem.Pf

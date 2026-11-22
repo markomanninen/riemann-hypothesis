@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.DetMemSubring
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsNonzeroXbOfLeftInverse
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.DetMemSubring
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ExistsNonzeroXbOfLeftInverse
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory NumberField Matrix
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.PB GlobalTheory.CompanionTheory.Ar.PB.FMX GlobalTheory.CompanionTheory.Ar.FlagBun GlobalTheory.CompanionTheory.Ar.PB.FMX.Frm
@@ -11,7 +16,7 @@ namespace GlobalTheory.CompanionTheory.Ar.PB.FMX.Frm
 
 variable {Ψ : Type} {p q : ℕ} {Ω : Type} [Field Ω] {n : Ψ ⊕ Ψ → ℕ} {K₀ : Type} {J₀ : K₀ → Type}
 
-theorem eq_baseFull (k' : NonPluckerBlocks (blkF Ψ p q K₀)) {s : Ψ ⊕ Ψ} {a : Fin (rk Ψ p q s)}
+theorem eq_baseFull (k' : NonPluckerBlocks (blkF (Ψ := Ψ) (p := p) (q := q) K₀)) {s : Ψ ⊕ Ψ} {a : Fin (rk Ψ p q s)}
     (hk : k'.1 = .inr ⟨s, a⟩) (h : 0 < rk Ψ p q s) : k' = baseFull K₀ s h := by
   have hfull : (a : ℕ) + 1 = rk Ψ p q s :=
     BasePt.step_full K₀ ⟨s, a⟩ (by rw [← hk]; exact k'.2)
@@ -23,26 +28,26 @@ theorem eq_baseFull (k' : NonPluckerBlocks (blkF Ψ p q K₀)) {s : Ψ ⊕ Ψ} {
 
 theorem xb_of_step [Fintype Ψ] [Fintype K₀] [∀ k, Fintype (J₀ k)]
     (A : ∀ s, Matrix (Fin (n s)) (Fin (rk Ψ p q s)) Ω) (x₀ : (Σ k, J₀ k) → Ω)
-    (c : ∀ k : NonPluckerBlocks (blkF Ψ p q K₀), baseIdx (idx (p := p) (q := q) J₀ n) (blkF Ψ p q K₀) k)
-    (k' : NonPluckerBlocks (blkF Ψ p q K₀)) {s : Ψ ⊕ Ψ} {a : Fin (rk Ψ p q s)} (hk : k'.1 = .inr ⟨s, a⟩) :
+    (c : ∀ k : NonPluckerBlocks (blkF (Ψ := Ψ) (p := p) (q := q) K₀), baseIdx (idx (p := p) (q := q) J₀ n) (blkF (Ψ := Ψ) (p := p) (q := q) K₀) k)
+    (k' : NonPluckerBlocks (blkF (Ψ := Ψ) (p := p) (q := q) K₀)) {s : Ψ ⊕ Ψ} {a : Fin (rk Ψ p q s)} (hk : k'.1 = .inr ⟨s, a⟩) :
     xb A x₀ ⟨k', c k'⟩ = zOf A c s := by
   have h : 0 < rk Ψ p q s := by have := a.2; omega
   obtain rfl := eq_baseFull k' hk h
   exact xb_rowsOf A x₀ c s h
 
 theorem zOf_of_rk_eq_zero (A : ∀ s, Matrix (Fin (n s)) (Fin (rk Ψ p q s)) Ω)
-    (c : ∀ k : NonPluckerBlocks (blkF Ψ p q K₀), baseIdx (idx (p := p) (q := q) J₀ n) (blkF Ψ p q K₀) k)
+    (c : ∀ k : NonPluckerBlocks (blkF (Ψ := Ψ) (p := p) (q := q) K₀), baseIdx (idx (p := p) (q := q) J₀ n) (blkF (Ψ := Ψ) (p := p) (q := q) K₀) k)
     {s : Ψ ⊕ Ψ} (h : rk Ψ p q s = 0) : zOf A c s = 1 := by
   haveI : IsEmpty (Fin (rk Ψ p q s)) := by rw [h]; infer_instance
   exact Matrix.det_isEmpty
 
-open Classical in
 
+open Classical in
 def stepFac (z : Ω) (s : Ψ ⊕ Ψ) : K₀ ⊕ StepIx Ψ p q → Ω :=
   Sum.elim (fun _ => 1) fun t => if t.1 = s then z else 1
 
 theorem prod_stepFac [Fintype Ψ] [Fintype K₀] (z : Ω) (s : Ψ ⊕ Ψ) (hz : rk Ψ p q s = 0 → z = 1) :
-    ∏ k' : NonPluckerBlocks (blkF Ψ p q K₀), stepFac z s k'.1 = z := by
+    ∏ k' : NonPluckerBlocks (blkF (Ψ := Ψ) (p := p) (q := q) K₀), stepFac z s k'.1 = z := by
   classical
   by_cases h : 0 < rk Ψ p q s
   · rw [Finset.prod_eq_single (baseFull K₀ s h)]
@@ -67,7 +72,7 @@ theorem prod_stepFac [Fintype Ψ] [Fintype K₀] (z : Ω) (s : Ψ ⊕ Ψ) (hz : 
 theorem prod_xb_zpow_bF {Ψ : Type} [Fintype Ψ] {p q : ℕ} {Ω : Type} [Field Ω] {n : Ψ ⊕ Ψ → ℕ}
     (A : ∀ s, Matrix (Fin (n s)) (Fin (rk Ψ p q s)) Ω) {K₀ : Type} [Fintype K₀] {J₀ : K₀ → Type}
     [∀ k, Fintype (J₀ k)] (x₀ : (Σ k, J₀ k) → Ω) (m : Ψ ⊕ Ψ → ℕ)
-    (c : ∀ k : NonPluckerBlocks (blkF Ψ p q K₀), baseIdx (idx (p := p) (q := q) J₀ n) (blkF Ψ p q K₀) k)
+    (c : ∀ k : NonPluckerBlocks (blkF (Ψ := Ψ) (p := p) (q := q) K₀), baseIdx (idx (p := p) (q := q) J₀ n) (blkF (Ψ := Ψ) (p := p) (q := q) K₀) k)
     (r : Ψ × Fin (p + q)) :
     ∏ k', xb A x₀ ⟨k', c k'⟩ ^ bF m r k' =
       xcOf x₀ c ^ (rkW r.2 * m (.inl r.1) + rkO r.2 * m (.inr r.1)) *
@@ -83,7 +88,7 @@ theorem prod_xb_zpow_bF {Ψ : Type} [Fintype Ψ] {p q : ℕ} {Ω : Type} [Field 
   have hO : rk Ψ p q (.inr r.1) = 0 → zO = 1 := fun h => by
     rw [hzO, zOf_of_rk_eq_zero A c h]
     simp
-  let g : NonPluckerBlocks (blkF Ψ p q K₀) → Ω := fun k' =>
+  let g : NonPluckerBlocks (blkF (Ψ := Ψ) (p := p) (q := q) K₀) → Ω := fun k' =>
     Sum.elim (fun _ => xb A x₀ ⟨k', c k'⟩ ^ N) (fun _ => 1) k'.1
   have hg : ∏ k', g k' = xcOf x₀ c ^ N := by
     rw [xcOf, ← Finset.prod_pow]
@@ -98,7 +103,7 @@ theorem prod_xb_zpow_bF {Ψ : Type} [Fintype Ψ] {p q : ℕ} {Ω : Type} [Field 
   have hpt : ∀ k', xb A x₀ ⟨k', c k'⟩ ^ bF m r k' =
       g k' * stepFac zW (.inl r.1) k'.1 * stepFac zO (.inr r.1) k'.1 := by
     rintro ⟨k | ⟨s, a⟩, hk⟩
-    · have e : bF m r (⟨.inl k, hk⟩ : NonPluckerBlocks (blkF Ψ p q K₀)) = (N : ℤ) := rfl
+    · have e : bF m r (⟨.inl k, hk⟩ : NonPluckerBlocks (blkF (Ψ := Ψ) (p := p) (q := q) K₀)) = (N : ℤ) := rfl
       rw [e, zpow_natCast]
       simp [g, stepFac]
     · have hx := xb_of_step A x₀ c ⟨.inr ⟨s, a⟩, hk⟩ (s := s) (a := a) rfl

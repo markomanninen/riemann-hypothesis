@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.CornerUnits
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AbEval
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.CornerUnits
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.AbEval
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -18,7 +22,8 @@ private theorem exists_prime_power_pow_eq_one {l : ℕ} [Fact l.Prime] {D : Type
       have := (residue_eq_zero_iff _).2 hx
       rwa [map_sub, map_one, sub_eq_zero] at this
     have h4 := congrArg (residue D) h2
-    simp only [map_sum, map_pow, h3, one_pow, Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, map_pow, h3, one_pow, Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one,
       map_zero] at h4
     have h5 : (l : ResidueField D) = 0 := by
       rw [← map_natCast (residue D), CharP.cast_eq_zero, map_zero]

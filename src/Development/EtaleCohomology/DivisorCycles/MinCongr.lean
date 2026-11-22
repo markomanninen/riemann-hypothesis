@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.DivisorCycles.CycleCount
+module
+
+public import Development.EtaleCohomology.DivisorCycles.CycleCount
+
+@[expose] public section
 
 open Matrix PositivityTheory.AutomorphicGaloisHodgeTate.Div
 
@@ -15,7 +19,7 @@ noncomputable def coef (a : Mat C N) (i j : Fin n) : C := by
 
 lemma coef_zero {a : Mat C N} {i j : Fin n} (h : E i j = 0) : coef p E a i j = 0 := by
   unfold coef
-  rw [dif_neg]
+  rw [dite_eq_right]
   rintro ⟨c, hc, -⟩
   exact hc h
 
@@ -28,7 +32,7 @@ lemma coef_spec {R : Subalgebra C (Mat C N)} (hM : MUnits R p E) {a : Mat C N} (
   · rw [hc, hE, smul_zero, smul_zero]
   · have h : ∃ c : C, E i j ≠ 0 ∧ p i * a * p j = c • E i j := ⟨c, hE, hc⟩
     unfold coef
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     exact h.choose_spec.2
 
 lemma E_left {R : Subalgebra C (Mat C N)} (hp : Sys p) (hM : MUnits R p E) (i j : Fin n) :
@@ -98,14 +102,14 @@ end
 section
 variable {p : Fin n → Mat C N} {E : Fin n → Fin n → Mat C N}
 
-variable (E) in
 
+variable (E) in
 noncomputable def blk (j : Fin n) : Finset (Fin n) := by
   classical
   exact Finset.univ.filter fun i => E i j ≠ 0
 
-variable (E) in
 
+variable (E) in
 noncomputable def bb (j : Fin n) : Fin n :=
   if h : (blk E j).Nonempty then (blk E j).min' h else j
 
@@ -123,7 +127,7 @@ lemma bb_spec {R : Subalgebra C (Mat C N)} (hp : Sys p) (hM : MUnits R p E) (j :
   have hne : (blk E j).Nonempty := ⟨j, mem_blk.2 (by rw [hM.2.1 j]; exact hp.2 j)⟩
   refine ⟨hne, ?_⟩
   unfold bb
-  rw [dif_pos hne]
+  rw [dite_eq_left hne]
   exact mem_blk.1 (Finset.min'_mem _ hne)
 
 lemma bb_ne {R : Subalgebra C (Mat C N)} (hp : Sys p) (hM : MUnits R p E) (j : Fin n) :
@@ -138,7 +142,7 @@ lemma bb_congr {R : Subalgebra C (Mat C N)} (hp : Sys p) (hM : MUnits R p E) {i 
     · intro hki; exact (hM.2.2.2.2.1 k i j hki hij).2
     · intro hkj; exact (hM.2.2.2.2.1 k j i hkj (hM.2.2.2.1 i j hij)).2
   unfold bb
-  rw [dif_pos (bb_spec hp hM i).1, dif_pos (bb_spec hp hM j).1]
+  rw [dite_eq_left (bb_spec hp hM i).1, dite_eq_left (bb_spec hp hM j).1]
   exact min'_congr _ _ e
 
 lemma mul_E {R : Subalgebra C (Mat C N)} (hp : Sys p) (hM : MUnits R p E) {a : Mat C N}
@@ -153,8 +157,8 @@ lemma mul_E {R : Subalgebra C (Mat C N)} (hp : Sys p) (hM : MUnits R p E) {a : M
   · simp [hij, coef_zero p E hij]
   rw [(hM.2.2.2.2.1 i j (bb E j) hij (bb_ne hp hM j)).1, bb_congr hp hM hij]
 
-variable (E) in
 
+variable (E) in
 noncomputable def T (w : Fin N → C) : Matrix (Fin N) (Fin n) C := Matrix.of fun x j => (E j (bb E j) *ᵥ w) x
 
 lemma mul_T (M : Mat C N) (w : Fin N → C) (x : Fin N) (j : Fin n) :
@@ -162,8 +166,8 @@ lemma mul_T (M : Mat C N) (w : Fin N → C) (x : Fin N) (j : Fin n) :
   rw [← Matrix.mulVec_mulVec]
   simp [T, Matrix.mul_apply, Matrix.mulVec, dotProduct]
 
-variable (p E) in
 
+variable (p E) in
 noncomputable def rmat (a : Mat C N) : Matrix (Fin n) (Fin n) C := Matrix.of fun i j => coef p E a i j
 
 lemma T_mul (w : Fin N → C) (a : Mat C N) (x : Fin N) (j : Fin n) :

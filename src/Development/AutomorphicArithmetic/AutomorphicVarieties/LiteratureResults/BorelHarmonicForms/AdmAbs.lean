@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.AvgPos
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.DerivativeRightTranslateL2
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.BorelHarmonicForms.AvgPos
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.GKCoh UpperTheory.V.Af UpperTheory.V.AlgRepEndIrreducible UpperTheory.V.Lit UpperTheory.V.Lit.Bor
 open scoped TensorProduct
@@ -15,7 +19,7 @@ private theorem compactSpace_unitary_matrix_pi_complex (T : Type) [Fintype T] (a
     continuous_id
   refine (hK.image hof).of_isClosed_subset isClosed_unitary ?_
   intro U hU
-  refine ⟨Matrix.of.symm U, ?_, by simp⟩
+  refine ⟨Matrix.of.symm U, ?_, by ext i j; rfl⟩
   simp only [Set.mem_pi, Set.mem_univ, true_implies]
   intro i j t
   have hM : U.map (fun f => f t) ∈ Matrix.unitaryGroup (Fin a) ℂ := by
@@ -148,7 +152,7 @@ theorem UpperTheory.V.Lit.Bor.admissible_abs_bound :
     eq_neg_of_add_eq_zero_left (conjTranspose_D_mul_add_mul_D_eq_zero_of_skew hR G hinv V hV)
   have hDZ : D Z = D X + Complex.I • D V := by
     conv_lhs => rw [hZ]
-    rw [map_add, map_smul]
-  rw [hDZ, hsZ, map_add, map_neg, map_smul, Matrix.conjTranspose_add, Matrix.conjTranspose_smul,
+    rw [map_add (f := _), map_smul]
+  rw [hDZ, hsZ, map_add (f := _), map_neg, map_smul, Matrix.conjTranspose_add, Matrix.conjTranspose_smul,
     Matrix.add_mul, Matrix.smul_mul, eX, eV, Matrix.mul_add, Matrix.mul_neg, Matrix.mul_smul]
   simp [Complex.star_def]

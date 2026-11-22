@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelL2RowsColumns
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaCellCovers.KernelL2RowsColumns
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal
@@ -59,7 +63,7 @@ theorem opMul : KerBasic → KerLin → RowInt → KernelL2RowsColumns → Schur
           ∫ y, ker X.Γ (Φ₂ k j) z y * (f j : X.G → ℂ) y ∂X.ν := by
       filter_upwards [o₂ f k] with z hz
       rw [hz, Finset.mul_sum]
-    rw [integral_congr_ae e, integral_finset_sum _ fun j _ =>
+    rw [integral_congr_ae e, MeasureTheory.integral_finsetSum _ fun j _ =>
       (comp_key hB hR hL hS hM X _ _ (h₁ i k) (h₂ k j) x _ (hfj j)).1]
     exact Finset.sum_congr rfl fun j _ =>
       (comp_key hB hR hL hS hM X _ _ (h₁ i k) (h₂ k j) x _ (hfj j)).2
@@ -69,6 +73,6 @@ theorem opMul : KerBasic → KerLin → RowInt → KernelL2RowsColumns → Schur
   have hi : ∀ k, Integrable
       (fun y => ker X.Γ (cv X.μ (Φ₁ i k) (Φ₂ k j)) x y * (f j : X.G → ℂ) y) X.ν :=
     fun k => MemLp.integrable_mul ((hL X _ (tcv i j k)).2 x) (hfj j)
-  exact (integral_finset_sum _ fun k _ => hi k).symm
+  exact (MeasureTheory.integral_finsetSum _ fun k _ => hi k).symm
 
 end GlobalTheory.CompanionTheory.KernelOperators

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CosieveRes
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.CosieveRes
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.CechPairings.Imports
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -122,7 +126,8 @@ abbrev dcx : DCx.{w} R where
     funext t
     rw [cech_d_apply]
     change _ = (A.K (ent t)).d q ((A.term q).cech.d p x t)
-    rw [cech_d_apply, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [cech_d_apply, map_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_zsmul]
     exact congrArg _ ((A.res _).comm q _).symm

@@ -1,23 +1,28 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LineLatAt
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FractionalIdealCompletionPropertiesAtPlaceStatement
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LevAtZ
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryLatticeSelfDualTraceForm
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsLatticeDualZIdealMul
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsHermitianAuxiliaryVectorSystemBesselVectors
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SingleMemIdAt
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergOperatorDisjointSupportSmulAdd
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsSelfDualLatticeAtPlaceLatticeCompletion
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.NotLineLatAtZero
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FractionalIdealCompletionLocallyPrincipal
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualLatticeAtPlaceSmulIntegralMem
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsAdeleSupportedAtPlaceNotIntegralStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.LineLatAt
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FractionalIdealCompletionPropertiesAtPlaceStatement
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.MemHomLatticeCompletionIffSupportedMaps
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.BaseMatrixGlApply
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.AdmissibleDiscreteSeriesOfHasParam
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HarishChandraModulesOn
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.HasDRepIffHasDerivAt
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.WeilRepresentationUnitaryPair
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.AdelicUnitaryLatticeSelfDualTraceForm
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.IsLatticeDualZIdealMul
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsHermitianAuxiliaryVectorSystemBesselVectors
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.SingleMemIdAt
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergOperatorDisjointSupportSmulAdd
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IsSelfDualLatticeAtPlaceLatticeCompletion
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.NotLineLatAtZero
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.FractionalIdealCompletionLocallyPrincipal
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SelfDualLatticeAtPlaceSmulIntegralMem
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ExistsAdeleSupportedAtPlaceNotIntegralStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Unf GlobalTheory.SplitWeil GlobalTheory.LatPair GlobalTheory.SeeSaw GlobalTheory.FinPl ValuativeRel
 open scoped TensorProduct nonZeroDivisors
@@ -61,23 +66,25 @@ def valSub (S : HSp D) (M : Lat S) (z : Fin S.rank → D.host.E) : Submodule (�
 
 theorem valSub_isFractional (S : HSp D) (M : Lat S) (hM : IsSelfDualC S M) (z : Fin S.rank → D.host.E) :
     IsFractional (𝓞 D.host.E)⁰ (valSub S M z) := by
-  have hsp : Submodule.span D.host.E (M : Set (Fin S.rank → D.host.E)) = ⊤ := hM.1.span_eq_top
-  have hz : z ∈ Submodule.span D.host.E (M : Set (Fin S.rank → D.host.E)) := by rw [hsp]; trivial
-  obtain ⟨d, hd⟩ := multiple_mem_span_of_mem_localization_span (𝓞 D.host.E)⁰ D.host.E (M : Set _) z hz
-  rw [Submodule.span_eq] at hd
-  refine ⟨d, d.2, ?_⟩
-  rintro _ ⟨x, hx, rfl⟩
-  obtain ⟨b, hb⟩ := (hM.2 _).1 hd x hx
-  refine ⟨b, ?_⟩
-  change (b : D.host.E) = (d : 𝓞 D.host.E) • pz S z x
-  rw [hb, Algebra.smul_def]
-  simp only [pz, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
-  have e : (d • z) j = algebraMap (𝓞 D.host.E) D.host.E d * z j := by
-    change ((d : 𝓞 D.host.E) • z) j = _
-    rw [Pi.smul_apply, Algebra.smul_def]
-  rw [e]
-  ring
+  obtain ⟨s, hs⟩ := hM.1.fg
+  apply FractionalIdeal.isFractional_of_fg
+  let N : Submodule (𝓞 D.host.E) D.host.E := Submodule.span _ (pz S z '' (s : Set _))
+  have hle : valSub S M z ≤ N := by
+    rintro a ⟨x, hx, rfl⟩
+    have hx' : x ∈ Submodule.span (𝓞 D.host.E) (s : Set _) := by rw [hs]; exact hx
+    clear hx
+    induction hx' using Submodule.span_induction with
+    | mem x hx => exact Submodule.subset_span ⟨x, hx, rfl⟩
+    | zero => simpa [pz] using N.zero_mem
+    | add x y hx hy ihx ihy => simpa only [pz_add] using N.add_mem ihx ihy
+    | smul c x hx ih =>
+      obtain ⟨c', hc'⟩ := GlobalTheory.FinPl.LatMem.star_int c
+      have e : (c • x : Fin S.rank → D.host.E) = (c : D.host.E) • x := by
+        funext i; exact (algebraMap_smul D.host.E c (x i)).symm
+      have hc : star (c : D.host.E) = (c' : D.host.E) := hc'.symm
+      rw [e, pz_smul, hc, ← Algebra.smul_def]
+      exact N.smul_mem c' ih
+  exact (Submodule.fg_span (s.finite_toSet.image (pz S z))).of_le hle
 
 def valIdl (S : HSp D) (M : Lat S) (hM : IsSelfDualC S M) (z : Fin S.rank → D.host.E) : FI D :=
   ⟨valSub S M z, valSub_isFractional S M hM z⟩
@@ -95,7 +102,7 @@ theorem hermAt_gen (S : HSp D) (z x : Fin S.rank → D.host.E) (α : Af D.host.F
   rw [Algebra.TensorProduct.tmul_mul_tmul, Algebra.TensorProduct.tmul_mul_tmul, mul_one, mul_one, one_mul]
 
 theorem hermAt_add (S : HSp D) (w x y : Fin S.rank → AE D) : hermAt S w (x + y) = hermAt S w x + hermAt S w y := by
-  simp only [hermAt, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hermAt, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hermAt_zero (S : HSp D) (w : Fin S.rank → AE D) : hermAt S w 0 = 0 := by
   simp [hermAt]
@@ -106,7 +113,8 @@ theorem hermAt_neg (S : HSp D) (w x : Fin S.rank → AE D) : hermAt S w (-x) = -
 theorem cA_sum_eq (S : HSp D) (Z y : Fin S.rank → AE D) :
     cA D (∑ l, (∑ m, cA D (Z m) * gA S m l) * y l) = hermAt S Z y := by
   have hg : ∀ m l, cA D (gA S m l) = gA S l m := fun m l => congrFun (congrFun (adj_gA S) l) m
-  simp only [map_sum, map_mul, cA_cA, hermAt, Finset.sum_mul, hg]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, cA_cA, hermAt, Finset.sum_mul, hg]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring
 

@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HasCapOneFn
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CmBridge
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.FormsFinite
-import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Satake
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HasCapOneFn
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CmBridge
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.FormsFinite
+public import Formalism.SatakeDualWeyl.AdelicIwasawaHecke.Satake
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,7 @@ def hkOp {G V : Type} [Group G] [AddCommGroup V] [Module ℂ V] (ρ : Representa
     (hK : IsCommensurated K) {h : G → ℂ} (hh : h ∈ Hecke ℂ K) : Module.End ℂ V where
   toFun := heckeVec ρ K h
   map_add' x y := by
-    simp only [heckeVec, map_add, smul_add]
+    simp only [heckeVec, map_add (f := _), smul_add]
     exact finsum_add_distrib (finite_heckeVec hK hh ρ x) (finite_heckeVec hK hh ρ y)
   map_smul' c x := (map_heckeVec hK hh (ρ' := ρ) (c • LinearMap.id) (fun g y => (map_smul (ρ g) c y).symm) x).symm
 
@@ -50,14 +54,14 @@ def res {r s : ℕ} (F : GA E (r + s) → ℂ) (x : GA E r) (y : GA E s) : ℂ :
 
 def NI (r : ℕ) {n : ℕ} (F : GA E n → ℂ) : Prop := ∀ (X : UPos n r → Ad E) (g : GA E n), F (unipGL X * g) = F g
 
-variable [IsTotallyComplex E]
+variable [_root_.NumberField.IsTotallyComplex E]
+
 
 variable (a) in
-
 abbrev fL (w : Pl E) : Representation ℂ (GL (Fin a) (w.adicCompletion E)) (Sm E a) := locOf (finRep E a) w
 
-variable (a) in
 
+variable (a) in
 def tOp (w : Pl E) {ϖ : w.adicCompletion E} (hu : IsUnifV E w ϖ) (j : ℕ) : Module.End ℂ (Sm E a) :=
   hkOp (fL a w) (Final.GLintComm E w a) (Tj_mem_hecke hu j)
 
@@ -67,17 +71,17 @@ structure Eig (φ : Sm E a) (m : (E →+* ℂ) → Multiset ℂ) (B : Pl E → M
   cap : HasCap φ m
   sat : ∀ᶠ w in Filter.cofinite, IsSatVecGL w (fL a w) φ (B w)
 
-variable (E a) in
 
+variable (E a) in
 def Supp (k : ℕ) (m : (E →+* ℂ) → Multiset ℂ) (B : Pl E → Multiset ℂˣ) : Prop :=
   ∃ (ι : Type) (_ : Fintype ι) (n : ι → ℕ) (π : ∀ i, CG E (n i)) (μ : ι → (E →+* ℂ) → Multiset ℂ),
     k ≤ Fintype.card ι ∧ (∀ i, 1 ≤ n i) ∧ ∑ i, n i = a ∧ (∀ i t, (π i).HasInfChar t (μ i t)) ∧ (∀ t, ∑ i, μ i t = m t) ∧
     ∀ᶠ w in Filter.cofinite, ∃ C : ι → Multiset ℂˣ, (∀ i, (π i).HasSat w (C i)) ∧ ∑ i, C i = B w
 
-variable (a) in
 
+variable (a) in
 abbrev Ix (T : Set (Pl E)) : Type :=
-  ((E →+* ℂ) × ℂ) ⊕ (Σ w : {w : Pl E // w ∉ T}, {h : GL (Fin a) (w.1.adicCompletion E) → ℂ // h ∈ Hecke ℂ (KGL w.1 a)})
+  ((E →+* ℂ) × ℂ) ⊕ (Σ w : {w : Pl E // w ∉ T}, {h : GL (Fin a) (w.1.adicCompletion E) → ℂ // h ∈ Hecke ℂ (KGL w.1 (n := a))})
 
 def opIx {T : Set (Pl E)} : Ix a T → Module.End ℂ (Sm E a)
   | .inl p => cap p.1 p.2
@@ -85,8 +89,8 @@ def opIx {T : Set (Pl E)} : Ix a T → Module.End ℂ (Sm E a)
 
 abbrev BddS (S : Submodule ℂ (Sm E a)) : Prop := Bdd (S.map (Cm.smEq E a).toLinearMap)
 
-variable (E a) in
 
+variable (E a) in
 def Comm : Set (Module.End ℂ (Sm E a)) :=
   {T | (∀ k, Commute T (cptRep E a k)) ∧ (∀ z ∈ (isExpLieAlgebra E a).centerU, Commute T (Cm.uTC E a z)) ∧
     ∀ φ, IsAutForm φ → IsAutForm (T φ)}
@@ -96,8 +100,8 @@ def hull (S : Submodule ℂ (Sm E a)) : Submodule ℂ (Sm E a) := Submodule.span
 def capB {n : ℕ} (e : Fin a ↪ Fin n) (t : E →+* ℂ) (u : ℂ) : Module.End ℂ (Sm E n) :=
   Formalism.REAL.qdet (fun i j => Eop t (e i) (e j)) (u + ((a : ℂ) - 1) / 2)
 
-variable (a) in
 
+variable (a) in
 def CI (m : (E →+* ℂ) → Multiset ℂ) : Submodule ℂ (Sm E a) :=
   LinearMap.range (Cm.ofCusp E a) ⊓ ⨅ (t) (u), Module.End.eigenspace (cap t u) ((m t).map (u + ·)).prod
 
@@ -151,8 +155,8 @@ def MatBlock : Prop :=
 def HkSum : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] (w : Pl E) (n : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V]
     (ρ : Representation ℂ (GL (Fin n) (w.adicCompletion E)) V) (ϖ : w.adicCompletion E) (hϖ : ϖ ∈ Ov E w)
-    (hu : IsUnifV E w ϖ) [Fintype (satakeRes (Ov E w) ⟨ϖ, hϖ⟩)] (j : ℕ), j ≤ n → ∀ x ∈ fixed ρ (KGL w n),
-    heckeVec ρ (KGL w n) (Tj ℂ n (Ov E w) ϖ j) x = ∑ i : SatakeIdx w hϖ (n := n) j, ρ (satakeB w hϖ hu i) x
+    (hu : IsUnifV E w ϖ) [Fintype (satakeRes (Ov E w) ⟨ϖ, hϖ⟩)] (j : ℕ), j ≤ n → ∀ x ∈ fixed ρ (KGL w (n := n)),
+    heckeVec ρ (KGL w (n := n)) (Tj ℂ n (Ov E w) ϖ j) x = ∑ i : SatakeIdx w hϖ (n := n) j, ρ (satakeB w hϖ hu i) x
 
 def HkLocal : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] (w : Pl E) (r s : ℕ) (ϖ : w.adicCompletion E) (hϖ : ϖ ∈ Ov E w)
@@ -166,8 +170,8 @@ def HkLocal : Prop :=
 
 def SatOfEig : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] (w : Pl E) (n : ℕ) (V : Type) [AddCommGroup V] [Module ℂ V]
-    (ρ : Representation ℂ (GL (Fin n) (w.adicCompletion E)) V) (x : V), x ≠ 0 → x ∈ fixed ρ (KGL w n) →
-    (∀ h ∈ Hecke ℂ (KGL w n), ∃ c : ℂ, heckeVec ρ (KGL w n) h x = c • x) → ∃ B, IsSatVecGL w ρ x B
+    (ρ : Representation ℂ (GL (Fin n) (w.adicCompletion E)) V) (x : V), x ≠ 0 → x ∈ fixed ρ (KGL w (n := n)) →
+    (∀ h ∈ Hecke ℂ (KGL w (n := n)), ∃ c : ℂ, heckeVec ρ (KGL w (n := n)) h x = c • x) → ∃ B, IsSatVecGL w ρ x B
 
 def HeckeLocalBlock : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] (w : Pl E) (r s : ℕ),
@@ -177,97 +181,97 @@ def HeckeLocalBlock : Prop :=
       finGL E (r + s) (locGL E (r + s) w (unipGL X)) = unipGL Y) ∧
     (∀ (x : GA E r) (y : GA E s) (Y : UPos (r + s) r → Ad E), ∃ Y' : UPos (r + s) r → Ad E,
       blk x y * unipGL Y = unipGL Y' * blk x y) ∧
-    ∀ k₁ ∈ KGL w r, ∀ k₂ ∈ KGL w s, blk k₁ k₂ ∈ KGL w (r + s)
+    ∀ k₁ ∈ KGL w (n := r), ∀ k₂ ∈ KGL w (n := s), blk k₁ k₂ ∈ KGL w (n := (r + s))
 
 def TauSat : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (τ : SmIrr (GL (Fin a) (Af E))) (v : τ.V), v ≠ 0 →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (τ : SmIrr (GL (Fin a) (Af E))) (v : τ.V), v ≠ 0 →
     ∀ᶠ w : Pl E in Filter.cofinite, ∃ B, HasSatGL w (locOf τ.ρ w) B ∧ IsSatVecGL w (locOf τ.ρ w) v B
 
 def LevelSplit : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] (a : ℕ) (L : Subgroup (GL (Fin a) (Af E))), IsOpen (L : Set (GL (Fin a) (Af E))) →
     ∃ L' : Subgroup (GL (Fin a) (Af E)), IsOpen (L' : Set (GL (Fin a) (Af E))) ∧ L' ≤ L ∧ ∃ T : Set (Pl E), T.Finite ∧
-      ∀ w ∉ T, (∀ k ∈ KGL w a, locGL E a w k ∈ L') ∧
-        ∀ u ∈ L', ∃ k ∈ KGL w a, ∃ u' ∈ L', GeneralLinearGroup.map (pLoc E w) u' = 1 ∧ u = locGL E a w k * u'
+      ∀ w ∉ T, (∀ k ∈ KGL w (n := a), locGL E a w k ∈ L') ∧
+        ∀ u ∈ L', ∃ k ∈ KGL w (n := a), ∃ u' ∈ L', GeneralLinearGroup.map (pLoc E w) u' = 1 ∧ u = locGL E a w k * u'
 
 def CapAct : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (t : E →+* ℂ) (u : ℂ),
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (t : E →+* ℂ) (u : ℂ),
     (∀ g, Commute (cap (a := a) t u) (rt E a g)) ∧ (∀ o : Op E a, Commute (cap t u) (act o)) ∧
       (∀ z, Commute (cap t u) (Cm.uTC E a z)) ∧ ∀ t' u', Commute (cap (a := a) t u) (cap t' u')
 
 def CapOfEig : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (φ : Sm E a), φ ≠ 0 →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (φ : Sm E a), φ ≠ 0 →
     (∀ t u, ∃ c : ℂ, cap t u φ = c • φ) → ∃ m, HasCap φ m
 
 def TypesComm : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (V : Submodule ℂ (archCompact E a → ℂ)),
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (V : Submodule ℂ (archCompact E a → ℂ)),
     FiniteDimensional ℂ V → ∀ T : Module.End ℂ (Sm E a), (∀ k, Commute T (cptRep E a k)) → ∀ φ : Sm E a,
     (∀ g, (fun k : archCompact E a => φ.1 (g * infEmb E a k.1)) ∈ V) →
     ∀ g, (fun k : archCompact E a => (T φ).1 (g * infEmb E a k.1)) ∈ V
 
 def HullBdd : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (S : Submodule ℂ (Sm E a)), BddS S →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (S : Submodule ℂ (Sm E a)), BddS S →
     ∀ L : Subgroup (GL (Fin a) (Af E)), IsOpen (L : Set (GL (Fin a) (Af E))) → BddS (hull S ⊓ fixed (finRep E a) L)
 
 def HullOps : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (S : Submodule ℂ (Sm E a)),
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (S : Submodule ℂ (Sm E a)),
     S ≤ hull S ∧ (∀ t u, ∀ φ ∈ hull S, cap t u φ ∈ hull S) ∧ ∀ g, ∀ φ ∈ hull S, finRep E a g φ ∈ hull S
 
 def StabSp : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (S : Submodule ℂ (Sm E a)), BddS S →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (S : Submodule ℂ (Sm E a)), BddS S →
     ∃ T : Set (Pl E), T.Finite ∧ ∃ V : Submodule ℂ (Sm E a), S ≤ V ∧ FiniteDimensional ℂ V ∧ (∀ φ ∈ V, IsAutForm φ) ∧
-      (∀ w ∉ T, V ≤ fixed (fL a w) (KGL w a)) ∧ ∀ i : Ix a T, ∀ φ ∈ V, opIx i φ ∈ V
+      (∀ w ∉ T, V ≤ fixed (fL a w) (KGL w (n := a))) ∧ ∀ i : Ix a T, ∀ φ ∈ V, opIx i φ ∈ V
 
 def OpComm : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (T : Set (Pl E)) (i i' : Ix a T) (φ : Sm E a),
-    (∀ w ∉ T, φ ∈ fixed (fL a w) (KGL w a)) → opIx i (opIx i' φ) = opIx i' (opIx i φ)
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (T : Set (Pl E)) (i i' : Ix a T) (φ : Sm E a),
+    (∀ w ∉ T, φ ∈ fixed (fL a w) (KGL w (n := a))) → opIx i (opIx i' φ) = opIx i' (opIx i φ)
 
 def SingleBdd : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (φ : Sm E a), IsAutForm φ →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (φ : Sm E a), IsAutForm φ →
     BddS (Submodule.span ℂ {φ})
 
 def SliceBdd : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (r s : ℕ) (φ : Sm E (r + s)), IsAutForm φ →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (r s : ℕ) (φ : Sm E (r + s)), IsAutForm φ →
     ∃ (S₁ : Submodule ℂ (Sm E r)) (S₂ : Submodule ℂ (Sm E s)), BddS S₁ ∧ BddS S₂ ∧
       (∀ y, ∃ f ∈ S₁, f.1 = fun x => res (constantTerm r φ.1) x y) ∧ ∀ x, ∃ f ∈ S₂, f.1 = res (constantTerm r φ.1) x
 
 def RtK : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (φ : Sm E a) (m) (B), Eig φ m B →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (φ : Sm E a) (m) (B), Eig φ m B →
     ∀ k ∈ GroundTheory.Automorphic.Reduction.maxCompact (K := E) (n := a), Eig (rt E a k φ) m B
 
 def Iwa : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (r s : ℕ) (φ : Sm E (r + s)) (m) (B), Eig φ m B →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (r s : ℕ) (φ : Sm E (r + s)) (m) (B), Eig φ m B →
     (∃ g, constantTerm r φ.1 g ≠ 0) → ∃ φ' : Sm E (r + s), Eig φ' m B ∧ ∃ x y, res (constantTerm r φ'.1) x y ≠ 0
 
 def CtCap : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n r : ℕ) (φ : Sm E n), IsAutForm φ →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n r : ℕ) (φ : Sm E n), IsAutForm φ →
     ∃ ψ : Sm E n, ψ.1 = constantTerm r φ.1 ∧ NI r ψ.1 ∧ ∀ t u, (cap t u ψ).1 = constantTerm r (cap t u φ).1
 
 def CtSat : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (n r : ℕ) (φ ψ : Sm E n), IsAutForm φ →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (n r : ℕ) (φ ψ : Sm E n), IsAutForm φ →
     ψ.1 = constantTerm r φ.1 → ψ ≠ 0 → ∀ w B, IsSatVecGL w (fL n w) φ B → IsSatVecGL w (fL n w) ψ B
 
 def Slice : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a n : ℕ) (e : Fin a ↪ Fin n) (g : GA E n),
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a n : ℕ) (e : Fin a ↪ Fin n) (g : GA E n),
     ∃ f : Sm E n →ₗ[ℂ] Sm E a, (∀ ψ x, (f ψ).1 x = ψ.1 (g * emb e x)) ∧
       ∀ t i j ψ, f (Eop t (e i) (e j) ψ) = Eop t i j (f ψ)
 
 def CapBlock : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (r s : ℕ) (ψ : Sm E (r + s)), NI r ψ.1 → ∀ t u x y,
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (r s : ℕ) (ψ : Sm E (r + s)), NI r ψ.1 → ∀ t u x y,
     res (cap t u ψ).1 x y = res (capB (e2 r s) t (u + (r : ℂ) / 2) (capB (e1 r s) t (u - (s : ℂ) / 2) ψ)).1 x y
 
 def CapRel : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (r s : ℕ) (ψ : Sm E (r + s)), NI r ψ.1 → ∀ t u,
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (r s : ℕ) (ψ : Sm E (r + s)), NI r ψ.1 → ∀ t u,
     Act2 (cap (a := r) t (u - (s : ℂ) / 2)) (cap (a := s) t (u + (r : ℂ) / 2)) (res ψ.1) (res (cap t u ψ).1)
 
 def HkRel : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (r s : ℕ) (ψ : Sm E (r + s)), NI r ψ.1 →
-    ∀ w : Pl E, ψ ∈ fixed (fL (r + s) w) (KGL w (r + s)) → ∀ (ϖ : w.adicCompletion E) (hu : IsUnifV E w ϖ), ∀ j ≤ r + s,
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (r s : ℕ) (ψ : Sm E (r + s)), NI r ψ.1 →
+    ∀ w : Pl E, ψ ∈ fixed (fL (r + s) w) (KGL w (n := (r + s))) → ∀ (ϖ : w.adicCompletion E) (hu : IsUnifV E w ϖ), ∀ j ≤ r + s,
     ∃ G : Fin (r + 1) × Fin (s + 1) → GA E r → GA E s → ℂ,
       (∀ p, Act2 (tOp r w hu p.1) (tOp s w hu p.2) (res ψ.1) (G p)) ∧
       ∀ x y, ∑ p, coef (qV E w) r s j p * G p x y = res (tOp (r + s) w hu j ψ).1 x y
 
 def PairEig : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (r s : ℕ) (F : GA E r → GA E s → ℂ)
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (r s : ℕ) (F : GA E r → GA E s → ℂ)
     (S₁ : Submodule ℂ (Sm E r)) (S₂ : Submodule ℂ (Sm E s)), BddS S₁ → BddS S₂ → (∃ x y, F x y ≠ 0) →
     (∀ y, ∃ f ∈ S₁, f.1 = fun x => F x y) → (∀ x, ∃ f ∈ S₂, f.1 = F x) →
     ∃ (φ₁ : Sm E r) (φ₂ : Sm E s) (m₁ m₂ : (E →+* ℂ) → Multiset ℂ) (B₁ B₂ : Pl E → Multiset ℂˣ),
@@ -280,7 +284,7 @@ def PairEig : Prop :=
         ∑ p, c p * satEig (qV E w) r (B₁ w) p.1 * satEig (qV E w) s (B₂ w) p.2 = e
 
 def Step : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (r s : ℕ) (φ : Sm E (r + s)) (m) (B), Eig φ m B →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (r s : ℕ) (φ : Sm E (r + s)) (m) (B), Eig φ m B →
     (∃ g, constantTerm r φ.1 g ≠ 0) →
     ∃ (φ₁ : Sm E r) (φ₂ : Sm E s) (m₁ m₂ : (E →+* ℂ) → Multiset ℂ) (B₁ B₂ : Pl E → Multiset ℂˣ),
       Eig φ₁ m₁ B₁ ∧ Eig φ₂ m₂ B₂ ∧
@@ -289,29 +293,29 @@ def Step : Prop :=
         ∀ᶠ w in Filter.cofinite, B w = (B₁ w).map (· * ν.val w) + (B₂ w).map (· * ν'.val w)
 
 def CiBasic : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) (m : (E →+* ℂ) → Multiset ℂ),
-    IsStable (CI a m) ∧ ∃ c : ℂ, ∀ φ ∈ CI a m, lie E a (oneL E a) φ = c • φ
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) (m : (E →+* ℂ) → Multiset ℂ),
+    _root_.GlobalTheory.CuspRep.IsStable (CI a m) ∧ ∃ c : ℂ, ∀ φ ∈ CI a m, lie E a (oneL E a) φ = c • φ
 
 def CiCompl : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), 1 ≤ a → ∀ (m : (E →+* ℂ) → Multiset ℂ),
-    ∀ U ≤ CI a m, IsStable U → ∃ D ≤ CI a m, IsStable D ∧ U ⊓ D = ⊥ ∧ U ⊔ D = CI a m
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), 1 ≤ a → ∀ (m : (E →+* ℂ) → Multiset ℂ),
+    ∀ U ≤ CI a m, _root_.GlobalTheory.CuspRep.IsStable U → ∃ D ≤ CI a m, _root_.GlobalTheory.CuspRep.IsStable D ∧ U ⊓ D = ⊥ ∧ U ⊔ D = CI a m
 
 def CuspProj : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), 1 ≤ a → ∀ (m : (E →+* ℂ) → Multiset ℂ),
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), 1 ≤ a → ∀ (m : (E →+* ℂ) → Multiset ℂ),
     (∀ t, Multiset.card (m t) = a) → ∀ φ : CI a m, φ ≠ 0 →
     ∃ π : CuspSub E a, (∀ t, π.HasInfChar t (m t)) ∧ ∃ p : CI a m →ₗ[ℂ] π.V, p φ ≠ 0 ∧
       ∀ g (x y : CI a m), y.1 = finRep E a g x.1 → p y = π.finPart g (p x)
 
 def SuppCusp : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ), 1 ≤ a → ∀ (φ : Sm E a) (m) (B), Eig φ m B →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ), 1 ≤ a → ∀ (φ : Sm E a) (m) (B), Eig φ m B →
     IsCuspForm φ → Supp E a 1 m B
 
 def SuppTwist : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a k : ℕ) (m) (B), Supp E a k m B →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a k : ℕ) (m) (B), Supp E a k m B →
     ∀ (x : ℝ) (ν : HChar E), ν.IsAbsPow x → Supp E a k (fun t => (m t).map (· + (x : ℂ))) fun w => (B w).map (· * ν.val w)
 
 def SuppAdd : Prop :=
-  ∀ (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (r s k l : ℕ) (m₁ m₂) (B₁ B₂), Supp E r k m₁ B₁ →
+  ∀ (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (r s k l : ℕ) (m₁ m₂) (B₁ B₂), Supp E r k m₁ B₁ →
     Supp E s l m₂ B₂ → Supp E (r + s) (k + l) (fun t => m₁ t + m₂ t) fun w => B₁ w + B₂ w
 
 end UpperTheory.V.Cj.S

@@ -1,15 +1,24 @@
-import Mathlib
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.ChainRows
-import Development.AutomorphicSpectrum.Definitions.NonGaloisLines.TopLine
-import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.TateLocalDualityTopDegree
-import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.ExistsPerfectCharacterQuotient
-import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.GoodOAdicCompleteCompactBasis
-import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.CyclotomicTwistFiniteModuleCocycle
-import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.CyclotomicTwistFiniteModuleCoboundaryStatement
-import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.CyclotomicCupTwoCochainLocallyConstant
-import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.LatticeOpenCompactNhdsBasisStatement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.WachCoordinates
+public import Formalism.SharpRestriction.LevelLetterCocycles.PairedCharacterCondition
+public import Formalism.SharpRestriction.LevelLetterCocycles.EmbeddingTypes
+public import Formalism.SharpRestriction.LevelLetterCocycles.InvariantsGenerators
+public import Formalism.SharpRestriction.LevelLetterCocycles.JointConditionsZpowers.CrysOnCond
+public import Development.AutomorphicSpectrum.Definitions.NonGaloisLines.TopLine
+public import Development.AbelianVarietyTheory.BlockTheory.TorsionBlocks.TateLocalDualityTopDegree
+public import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.ExistsPerfectCharacterQuotient
+public import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.GoodOAdicCompleteCompactBasis
+public import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.CyclotomicTwistFiniteModuleCocycle
+public import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.CyclotomicTwistFiniteModuleCoboundary
+public import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.CyclotomicCupTwoCochainLocallyConstant
+public import Development.AutomorphicSpectrum.Proofs.NonGaloisProofs.LatticeOpenCompactNhdsBasis
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism Formalism.ConjugateSelfDual Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.MainNotions Formalism.MainNotions.N Formalism.WeaklyAdmissibleFiltrations Module GlobalTheory.CompanionTheory.LocDual
 
 noncomputable section
@@ -59,10 +68,10 @@ theorem pairing_exists : ∀ (LL O V V' : Type) [Field LL] [CommRing O] [IsDomai
   have hsm : ∀ (c : O) (v : V), c • v = algebraMap O LL c • v := fun c v => (algebraMap_smul LL c v).symm
   have hsm' : ∀ (c : O) (v : V'), c • v = algebraMap O LL c • v := fun c v => (algebraMap_smul LL c v).symm
   let B : ↥T →ₗ[O] ↥T' →ₗ[O] O := LinearMap.mk₂ O pa
-    (fun x x' y => inj (by simp only [map_add, ← hpa, Submodule.coe_add, LinearMap.add_apply]))
+    (fun x x' y => inj (by simp only [map_add (f := _), ← hpa, Submodule.coe_add, LinearMap.add_apply]))
     (fun c x y => inj (by
       simp only [map_mul, ← hpa, Submodule.coe_smul, smul_eq_mul, hsm, map_smul, LinearMap.smul_apply]))
-    (fun x y y' => inj (by simp only [map_add, ← hpa, Submodule.coe_add]))
+    (fun x y y' => inj (by simp only [map_add (f := _), ← hpa, Submodule.coe_add]))
     (fun c x y => inj (by
       simp only [map_mul, ← hpa, Submodule.coe_smul, smul_eq_mul, hsm', map_smul]))
   have hB : ∀ x y, B x y = pa x y := fun _ _ => rfl
@@ -184,9 +193,9 @@ theorem cobO_iff : ∀ (G : Type) [Group G] [TopologicalSpace G] (Qp K₀ K : Ty
       have hb' : algebraMap O LL b =
           ((cycLL PD LL g : LLˣ) : LL) * f h - f (g * h) + f g - z (g, h) := hb
       have h1 : u g * o h - o (g * h) + o g - a = ϖ ^ r * b := inj (by
-        simp only [map_sub, map_add, map_mul, map_pow, ho, ha, hu, hb']
+        simp only [map_sub, map_add (f := _), map_mul, map_pow, ho, ha, hu, hb']
         ring)
-      rw [hza, ← map_mul, ← map_sub, ← map_add]
+      rw [hza, ← map_mul, ← map_sub, ← map_add (f := _)]
       refine Ideal.Quotient.eq.2 ?_
       rw [h1]
       exact Ideal.mul_mem_right _ _ (Ideal.mem_span_singleton_self _)
@@ -208,13 +217,13 @@ theorem cobO_iff : ∀ (G : Type) [Group G] [TopologicalSpace G] (Qp K₀ K : Ty
       obtain ⟨g, h⟩ := x
       obtain ⟨a, ha, hza⟩ := hz (g, h)
       have h1 := hf2 g h
-      rw [hza, ← ho, ← ho, ← ho, ← map_mul, ← map_sub, ← map_add] at h1
+      rw [hza, ← ho, ← ho, ← ho, ← map_mul, ← map_sub, ← map_add (f := _)] at h1
       obtain ⟨b, hb⟩ := Ideal.mem_span_singleton.1 (Ideal.Quotient.eq.1 h1)
       have hb2 : algebraMap O LL b = ((cycLL PD LL g : LLˣ) : LL) * ((algebraMap O LL ϖ)⁻¹ ^ r * algebraMap O LL (o h)) -
           (algebraMap O LL ϖ)⁻¹ ^ r * algebraMap O LL (o (g * h)) +
           (algebraMap O LL ϖ)⁻¹ ^ r * algebraMap O LL (o g) - z (g, h) := by
         have h2 := congrArg (algebraMap O LL) hb
-        simp only [map_sub, map_add, map_mul, map_pow, ha, hu] at h2
+        simp only [map_sub, map_add (f := _), map_mul, map_pow, ha, hu] at h2
         rw [inv_pow]
         field_simp
         linear_combination -h2
@@ -387,15 +396,6 @@ theorem act_lc {G Qp LL O : Type} [Group G] [TopologicalSpace G] [Field Qp] [Fie
   rw [sub_eq_add_neg]
   exact he.symm
 
-theorem act_locConst (D : D7) (l : ℕ) [Fact l.Prime] (K : FinExt l)
-    (LL : Type) [Field LL] [Algebra ℚ_[l] LL] [TopologicalSpace LL] (O : Type) [CommRing O]
-    [Algebra O LL] (hG : GoodO (Qp := ℚ_[l]) LL O)
-    (A : GRep ↥(GK K) ℚ_[l] LL O) (LA : Lattice (O := O) A.ρ) (ϖ : O) (hϖ : Irreducible ϖ) (r : ℕ)
-    (hI : StableSub LA (Ideal.span {ϖ ^ r} • ⊤ : Submodule O ↥LA.T))
-    (m : ↥LA.T ⧸ (Ideal.span {ϖ ^ r} • ⊤ : Submodule O ↥LA.T)) :
-    IsLocallyConstant fun g => actQ LA _ hI g m :=
-  act_lc A LA ϖ r hI (GlobalTheory.T.lattice_open_compact_nhds_basis D l K LL O hG A LA ϖ hϖ).2.1 m
-
 section Core
 variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp] [Field K₀] [Field K]
     [Algebra Qp K₀] [Algebra Qp K] [Algebra K₀ K] [IsScalarTower Qp K₀ K]
@@ -403,8 +403,8 @@ variable {G : Type} [Group G] [TopologicalSpace G] {Qp K₀ K : Type} [Field Qp]
     [Algebra Qp BdR] [Algebra K₀ BdR] [Algebra K BdR] [IsScalarTower Qp K BdR]
     [IsScalarTower K₀ K BdR] [IsScalarTower Qp K₀ BdR] [TopologicalSpace Qp]
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem dual_core (PD : PeriodData G Qp K₀ K B BdR) (hTop : TopInj PD)
     {LL : Type} [Field LL] [Algebra Qp LL] [TopologicalSpace LL] {O : Type} [CommRing O] [IsDomain O]
     [Algebra O LL] [IsFractionRing O LL] (hG : GoodO (Qp := Qp) LL O)
@@ -497,7 +497,7 @@ theorem dual_core (PD : PeriodData G Qp K₀ K B BdR) (hTop : TopInj PD)
       refine ⟨fun g => ψ₀ (Ideal.Quotient.mk _ o * f g), hf.comp (fun y => ψ₀ (Ideal.Quotient.mk _ o * y)), fun g h => ?_⟩
       have h1 := hf2 g h
       simp only at h1
-      rw [← h1, ← hψu, ← map_sub, ← map_add]
+      rw [← h1, ← hψu, ← map_sub, ← map_add (f := _)]
       congr 1
       ring
     · intro hall
@@ -511,7 +511,7 @@ theorem dual_core (PD : PeriodData G Qp K₀ K B BdR) (hTop : TopInj PD)
         simp only [a1, a3, a2]
       · intro g h k
         simp only
-        rw [← heq, actQ_mul, hc.2 g h, hc'.2 h k, map_add, map_add, map_add, LinearMap.add_apply]
+        rw [← heq, actQ_mul, hc.2 g h, hc'.2 h k, map_add (f := _), map_add (f := _), map_add (f := _), LinearMap.add_apply]
         ring
       · intro ψ
         obtain ⟨o, ho⟩ := hψ2 ψ
@@ -565,40 +565,5 @@ theorem dual_core (PD : PeriodData G Qp K₀ K B BdR) (hTop : TopInj PD)
 
 end Core
 
-set_option maxHeartbeats 1000000 in
-
-theorem dualQ_of_topInj : Formalism.GaloisCohomology.LocalTateDualityK → ∀ (D : D7) (l : ℕ) [Fact l.Prime] (K : FinExt l),
-    TopInj ((D.loc l).PD K) → DualQ ((D.loc l).PD K) := by
-  intro hT D l _ K hTop LL _ _ _ O _ _ hG L1 hL1 A A' LA LA' P hdual ϖ hϖ r hI hI'
-  have hG0 : ∃ hO : IsDomain O, @IsDiscreteValuationRing O _ hO ∧ IsFractionRing O LL := hG.1
-  haveI hDom : IsDomain O := hG0.choose
-  haveI hDVR : IsDiscreteValuationRing O := hG0.choose_spec.1
-  haveI hFrac : IsFractionRing O LL := hG0.choose_spec.2
-  have h50 := GlobalTheory.CompanionTheory.GoodCoeff.goodO_structure l LL O hG ϖ hϖ
-  have hFin := h50.2.1
-  have hle : (l : O) ∈ Ideal.span {ϖ} := h50.2.2.2.1.choose_spec.1
-  have hInt := h50.2.2.2.2.2
-  have hdual' := (GlobalTheory.T.lattice_open_compact_nhds_basis D l K LL O hG A LA ϖ hϖ).2.2.2.2 A' LA' P hdual
-  have hF1 := finite_quot O A.V LA.T ϖ r hFin LA.fg
-  have hF2 := finite_quot O A'.V LA'.T ϖ r hFin LA'.fg
-  have hlp : l.Prime := Fact.out
-  have hn : 0 < r + 1 := Nat.succ_pos r
-  have hlO : ((l ^ (r + 1) : ℕ) : O) ∈ Ideal.span {ϖ ^ r} := by
-    refine (Ideal.mem_span_singleton.1 hle).elim fun b hb => Ideal.mem_span_singleton.2 ?_
-    rw [Nat.cast_pow, hb, mul_pow, pow_succ ϖ r]
-    exact ⟨ϖ * b ^ (r + 1), by ring⟩
-  let w : ↥(GK K) →* ℤ_[l] := GlobalTheory.IndefiniteRowSideFullHecke.TateLocalDualityDegreeTwo.chiInt (D.loc l) K
-  let χ : ↥(GK K) →* (ZMod (l ^ (r + 1)))ˣ := ((PadicInt.toZModPow (r + 1)).toMonoidHom.comp w).toHomUnits
-  have hcomp : ∀ g, ∃ u : ℤ_[l], (u : ℚ_[l]) = ((((D.loc l).PD K).χ g : ℚ_[l]ˣ) : ℚ_[l]) ∧
-      PadicInt.toZModPow (r + 1) u = (χ g : ZMod (l ^ (r + 1))) := fun g => ⟨w g, rfl, rfl⟩
-  have hu0 : ∀ g, ∃ o : O, algebraMap O LL o = algebraMap ℚ_[l] LL (w g : ℚ_[l]) := fun g => hInt (w g)
-  refine (GlobalTheory.CompanionTheory.LocDual.GenChar.exists_generating_character O ϖ hϖ r (l ^ (r + 1)) (pow_pos hlp.pos _) hF1.1 hlO).elim fun ψ₀ hψ => ?_
-  exact dual_core ((D.loc l).PD K) hTop hG L1 hL1 A A' LA LA' P hdual (fun x => hdual'.2 x) ϖ hϖ r hI hI'
-    hF1.1 hF1.2 hF2.2 (l ^ (r + 1)) hlO χ ψ₀ hψ.1 hψ.2 (fun g => (hu0 g).choose)
-    (fun g => (hu0 g).choose_spec)
-    (fun g => exists_nat_rep (IsFractionRing.injective O LL) hInt _ (r + 1) hlO (w g) _ (hu0 g).choose_spec)
-    (act_locConst D l K LL O hG A LA ϖ hϖ r hI) (act_locConst D l K LL O hG A' LA' ϖ hϖ r hI')
-    (GlobalTheory.CompanionTheory.LocDual.TopCoh.coboundary_of_characters_GK hT D l K (r + 1) χ hn hcomp) (GlobalTheory.CompanionTheory.LocDual.Pair.double_annihilator hT D l K (r + 1) χ hn hcomp)
-    (GlobalTheory.T.cyclotomic_twist_finite_module_coboundary hT D l K (r + 1) χ hn hcomp)
 
 end GlobalTheory.CompanionTheory.LocDual.Q

@@ -1,5 +1,9 @@
-import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.AdelicInclusionMapPlaceSection
-import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.IdeleInt
+module
+
+public import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.AdelicInclusionMapPlaceSection
+public import Development.WeilBound.ThetaLifts.LocalTheory.StandardValuations.IdeleInt
+
+@[expose] public section
 
 noncomputable section
 

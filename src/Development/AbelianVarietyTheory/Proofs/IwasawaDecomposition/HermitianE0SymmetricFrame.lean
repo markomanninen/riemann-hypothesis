@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OtherInstanceCharacterEqPsiSymmetricArgument
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelSubgroupCharacterUnitary
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.OtherInstanceCharacterEqPsiSymmetricArgument
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelSubgroupCharacterUnitary
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.IndefR.Mult Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.AutomorphicEvaluation Formalism.L2.DIV Formalism.L2.SG.RowDict Formalism.L2.SG.RowsJoinPinned Formalism.L2.SG.RowLevelMatch Formalism.L2.SG.HidaSetting Formalism.L2.SG.PoincareInHH.PoincareSetting Formalism.L2.SG.ConcreteSettingExists MeasureTheory NumberField IsDedekindDomain GlobalTheory.Mem GlobalTheory.Mem.SRe
 open scoped TensorProduct Matrix
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -19,23 +24,23 @@ theorem hA_e0_symVec : ∀ (D : D7) (X : HidaSetting D) (kv : Σ k : Fin 2, D.nd
   have hb := b.2
   unfold GlobalTheory.Mem.SymFrame.symVec GlobalTheory.SeeConjRead.flagV
   by_cases h1 : j.1 < D.R.rS
-  · rw [dif_pos h1, if_neg (by omega), sub_zero]; exact (X.gramIntegral _ _).1
-  rw [dif_neg h1]
+  · rw [dite_eq_left h1, if_neg (by omega), sub_zero]; exact (X.gramIntegral _ _).1
+  rw [dite_eq_right h1]
   by_cases h2 : j.1 < D.R.rS + D.R.k
-  · rw [dif_pos h2, if_neg (by omega), sub_zero]; exact hW _
-  rw [dif_neg h2]
+  · rw [dite_eq_left h2, if_neg (by omega), sub_zero]; exact hW _
+  rw [dite_eq_right h2]
   by_cases h4 : j.1 = D.R.rS + D.R.k
-  · rw [dif_pos h4, if_neg (by omega), sub_zero]; exact (X.formsAtZero.2 b).1
-  rw [dif_neg h4]
+  · rw [dite_eq_left h4, if_neg (by omega), sub_zero]; exact (X.formsAtZero.2 b).1
+  rw [dite_eq_right h4]
   by_cases h3 : j.1 < 2 * D.R.rS + D.R.k + 1
-  · rw [dif_pos h3]
+  · rw [dite_eq_left h3]
     have h := (X.gramIntegral b ⟨2 * D.R.rS + D.R.k - j.1, by omega⟩).2.2
     by_cases e : j.1 = 2 * D.R.rS + D.R.k - b.1
     · rw [if_pos e]
       rwa [if_pos (Fin.ext (by simp only; omega))] at h
     · rw [if_neg e]
       rwa [if_neg (fun h' => e (by have := congrArg Fin.val h'; simp only at this; omega))] at h
-  · rw [dif_neg h3, if_neg (by omega), sub_zero, hA_zero_right']
+  · rw [dite_eq_right h3, if_neg (by omega), sub_zero, hA_zero_right']
     exact ⟨0, zero_mem _, by simp⟩
 
 end GlobalTheory.Mem.SymChar

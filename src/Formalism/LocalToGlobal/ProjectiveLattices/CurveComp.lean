@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveInstSt
-import Formalism.LocalToGlobal.ProjectiveLattices.CurveFr
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveInstSt
+public import Formalism.LocalToGlobal.ProjectiveLattices.CurveFr
+
+@[expose] public section
 
 noncomputable section
 
@@ -81,7 +85,7 @@ def formsEvR : AddMonoidAlgebra (T.R j) (Deg D j) →ₐ[T.Q.c.F] Om Z :=
 
 lemma formsEvR_single (d : Deg D j) (f : T.R j) :
     formsEvR j hG hT Z (AddMonoidAlgebra.single d f) = evC hG Z f := by
-  show AddMonoidAlgebra.liftNC (((evCAlg hG hT Z : T.R j →+* Om Z)) : T.R j →+ Om Z)
+  show AddMonoidAlgebra.liftNC (evCAlg hG hT Z).toRingHom.toAddMonoidHom
       ((1 : Multiplicative (Deg D j) →* Om Z) : Multiplicative (Deg D j) → Om Z) (AddMonoidAlgebra.single d f) = _
   rw [AddMonoidAlgebra.liftNC_single]
   simp [evCAlg_apply]

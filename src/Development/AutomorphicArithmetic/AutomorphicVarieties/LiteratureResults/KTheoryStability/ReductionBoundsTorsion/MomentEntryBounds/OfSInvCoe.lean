@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.InstLCSL
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.SubLeSumAbsConsecutiveDiff
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.OneLeAbsNorm
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.InstLCSL
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.SubLeSumAbsConsecutiveDiff
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.MomentEntryBounds.OneLeAbsNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,8 @@ namespace PositivityTheory.KB.MomentRationality.Ht
 
 variable {L : Type} [Field L] [NumberField L] {N : ℕ}
 
-theorem mt_mul (x y : Sp L N) (w : InfinitePlace L) : mt (x * y) w = mt x w * mt y w := rfl
+theorem mt_mul (x y : Sp L N) (w : InfinitePlace L) :
+    mt (x * y) w = mt x w * mt y w := rfl
 
 theorem mt_one (w : InfinitePlace L) : mt (1 : Sp L N) w = 1 := rfl
 
@@ -36,7 +41,8 @@ theorem q_actL (x : Sp L N) (y : Lat L N) :
   rw [hm, re_quad]
 
 theorem q_dual (x : Sp L N) (y : Lat L N) :
-    q (dualH (actL (ofS L N x) (one L N).1)) y = ∑ w, ∑ i, ‖((mt x w)ᵀ *ᵥ toR y w) i‖ ^ 2 := by
+    q (dualH (actL (ofS L N x) (one L N).1)) y =
+      ∑ w, ∑ i, ‖((mt x w)ᵀ *ᵥ toR y w) i‖ ^ 2 := by
   simp only [q, qR]
   refine Finset.sum_congr rfl fun w _ => ?_
   have hBM : mt x⁻¹ w * mt x w = 1 := mt_inv_mul x w
@@ -51,7 +57,8 @@ theorem q_dual (x : Sp L N) (y : Lat L N) :
           rw [Matrix.conjTranspose_mul]
           simp only [Matrix.mul_assoc]
       _ = 1 := by rw [hBM, Matrix.conjTranspose_one, Matrix.mul_one, hMB]
-  have hd : mat (dualH (actL (ofS L N x) (one L N).1)) w = ((mt x w)ᵀ)ᴴ * (mt x w)ᵀ := by
+  have hd : mat (dualH (actL (ofS L N x) (one L N).1)) w =
+      ((mt x w)ᵀ)ᴴ * (mt x w)ᵀ := by
     simp only [dualH, mat_mkHS]
     rw [hinv, Matrix.transpose_mul]
     rfl

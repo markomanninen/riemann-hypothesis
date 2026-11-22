@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrismHomMapIdealEqStatement
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeltaAddSubMemPow
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsStablePrismHomComp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.AdIPowLe
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.BhattScholzeIntegral
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PrismHomMapIdealEqStatement
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeltaAddSubMemPow
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.IsStablePrismHomComp
+
+@[expose] public section
 
 open GlobalTheory.Prism GlobalTheory.BSP CategoryTheory
 
@@ -28,7 +32,8 @@ def deltaLocus {A B : Type} [CommRing A] [CommRing B] (D : Delta l A) (D' : Delt
     have e2 := D'.δ_add (c a) (-c a)
     rw [add_neg_cancel, D.δ_zero] at e1
     rw [add_neg_cancel, D'.δ_zero] at e2
-    simp only [map_zero, map_sub, map_add, map_sum, map_mul, map_pow, map_natCast, map_neg, ha] at e1 ⊢
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_zero, map_sub, map_add (f := _), map_sum, map_mul, map_pow, map_natCast, map_neg, ha] at e1 ⊢
     linear_combination e2 - e1
 
 open CategoryTheory in
@@ -102,8 +107,8 @@ private lemma mem_subring_of_isPushout_of_maps_mem {A X Y P : Type} [CommRing A]
   rw [← hp]
   exact (r p).2
 
-open CategoryTheory in
 
+open CategoryTheory in
 theorem _root_.GlobalTheory.BSP.PoUniv.isPO_univ (l : ℕ) [Fact l.Prime] (R : Type) [CommRing R]
     (B C B' C' : _root_.GlobalTheory.Prism.Obj l R) (h : _root_.GlobalTheory.Prism.Hom B C)
     (k : _root_.GlobalTheory.Prism.Hom B B') (k' : _root_.GlobalTheory.Prism.Hom C C') (h' : _root_.GlobalTheory.Prism.Hom B' C')
@@ -195,7 +200,7 @@ theorem _root_.GlobalTheory.BSP.PoUniv.isPO_univ (l : ℕ) [Fact l.Prime] (R : T
     have h2 := _root_.GlobalTheory.BSP.delta_add_sub_mem_pow l Q.A Q.D _ hlQ n (c0 s)
       (c0 (x - s)) (hmap _ _ hxs)
     rw [add_sub_cancel] at h1
-    rw [← map_add, add_sub_cancel] at h2
+    rw [← map_add (f := _), add_sub_cancel] at h2
     have h3 := hmap n _ h1
     rw [map_sub, hs'] at h3
     have h4 := Ideal.sub_mem _ h3 h2

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelParam
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BorelParam
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.PadicIsNonarchimedeanLocalField
+
+@[expose] public section
+
 open MeasureTheory ValuativeRel Matrix GlobalTheory.PRep GlobalTheory.SplitWeil GlobalTheory.SmGL GlobalTheory.Doubling GlobalTheory.GLDoubling GlobalTheory.IndefiniteRowSideFullHecke.VolumeFlatSection GlobalTheory.ZonalCellDecomposition GlobalTheory.SatakeBound
 open scoped NNReal ENNReal
 
@@ -44,8 +49,10 @@ theorem volM_box : ∀ (k : Type) [Field k] [ValuativeRel k] [TopologicalSpace k
   congr 1
   have hz : ∏ i, ∏ j, d ^ c i j = d ^ (∑ i, ∑ j, c i j) := by
     simp_rw [prod_zpow_nnreal d hd0]
-  simp_rw [← ENNReal.coe_finset_prod]
-  rw [hz, ← ENNReal.ofReal_coe_nnreal]
+  have hz' : (∏ i, ∏ j, ((d ^ c i j : ℝ≥0) : ℝ≥0∞)) =
+      ((d ^ (∑ i, ∑ j, c i j) : ℝ≥0) : ℝ≥0∞) := by
+    exact_mod_cast hz
+  rw [hz', ← ENNReal.ofReal_coe_nnreal]
   congr 1
   rw [NNReal.coe_zpow, hdq, _root_.inv_zpow']
 

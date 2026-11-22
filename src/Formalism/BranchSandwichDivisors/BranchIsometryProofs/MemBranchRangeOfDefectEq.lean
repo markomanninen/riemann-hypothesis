@@ -1,4 +1,8 @@
-import Formalism.BranchSandwichDivisors.StatementR
+module
+
+public import Formalism.BranchSandwichDivisors.StatementR
+
+@[expose] public section
 
 open Finset
 

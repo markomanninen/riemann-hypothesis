@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPullHermPullLine
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedA
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
-import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.IsSmoothHermConstLine
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsPullHermPullLine
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.EqOfIsometricTrivShift
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRedA
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
+public import GroundTheory.HeightsAndTheta.Heights.HeightsOfSets.IsSmoothHermConstLine
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -62,19 +66,6 @@ theorem exists_glue {ι : Type} (V : ι → X.Opens) (hc : ⨆ i, V i = ⊤) (W 
 theorem ofMem {V U : X.Opens} (h : ∀ x, x ∈ V → x ∈ U) : V ≤ U := by
   intro x hx
   exact h x hx
-
-def wu {B C : LB X} (w : LB.Iso B C) (a : C.ι) (b : B.ι) : Γ(X, C.U a ⊓ B.U b)ˣ := w.s (a, b)
-
-theorem cg₁ {G : Type*} [CommGroup G] {x y g p q : G} (h : x * g = y) (h' : q = g * p) :
-    x⁻¹ * p = y⁻¹ * q := by
-  subst h
-  subst h'
-  rw [mul_inv, mul_assoc, inv_mul_cancel_left]
-
-theorem cg₂ {G : Type*} [CommGroup G] {x y g p : G} (h : x = g * y) :
-    y⁻¹ * p = g * (x⁻¹ * p) := by
-  subst h
-  rw [mul_inv, mul_assoc g⁻¹, mul_inv_cancel_left]
 
 end GlobalTheory.CompanionTheory.MPDict.IsomT
 

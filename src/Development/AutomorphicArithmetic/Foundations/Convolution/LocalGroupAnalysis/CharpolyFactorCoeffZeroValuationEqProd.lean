@@ -1,6 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
-import Mathlib.RingTheory.Valuation.LocalSubring
-import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.TwistedFactors.SelmerRankBounds.EllipticityFromProductFormula
+public import Mathlib.RingTheory.Valuation.LocalSubring
+public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
+
+@[expose] public section
+
 open PositivityTheory.Rg.Tf.Geo
 
 open Polynomial

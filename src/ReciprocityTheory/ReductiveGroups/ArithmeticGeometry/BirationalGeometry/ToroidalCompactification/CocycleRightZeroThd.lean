@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -24,8 +28,8 @@ def comp1 {n : ℕ} (φ : Pt R 1 d) (a : Pt R n d) : Pt R n d := fun i => ev ![a
 def addOf {n : ℕ} (F : Fin d → PS R 2 d) (a b : Pt R n d) : Pt R n d := fun i => ev ![a, b] (F i)
 
 def Dof (F : Fin d → PS R 2 d) (u : Fin d → R) (f : PS R 1 d) : PS R 1 d :=
-  ∑ j : Fin d, (∑ i : Fin d, C (u i) * ev (n := 1) ![pt R d 0, 0] (pderiv R ((1 : Fin 2), i) (F j))) *
-    pderiv R ((0 : Fin 1), j) f
+  ∑ j : Fin d, (∑ i : Fin d, C (u i) * ev (n := 1) ![pt R d 0, 0] (pderiv (R := R) ((1 : Fin 2), i) (F j))) *
+    pderiv (R := R) ((0 : Fin 1), j) f
 
 def DmonOf (F : Fin d → PS R 2 d) {ι : Type} [Fintype ι] (u : ι → Fin d → R) (m : ι →₀ ℕ)
     (f : PS R 1 d) : PS R 1 d :=

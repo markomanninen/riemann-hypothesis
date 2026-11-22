@@ -1,4 +1,8 @@
-import Formalism.GaussJetBounds.Statement
+module
+
+public import Formalism.GaussJetBounds.Statement
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -17,9 +21,6 @@ def genLog {K : Type u} [Field K] {τ : Type v} [DecidableEq τ] (l : ℕ) (p : 
 def WtGeLe {K : Type u} [NormedField K] {ι : Type v} (pi : ℝ) (r : ι → ℝ) (w : ℝ) (κ : ι →₀ ℕ)
     (f : MvPowerSeries ι K) : Prop :=
   ∀ n : ι →₀ ℕ, n ≤ κ → MonoWtGe pi r w n (MvPowerSeries.coeff n f)
-
-def torus2 {K : Type u} [Field K] {d : ℕ} (l : ℕ) (ζ : K) : V2 d → MvPowerSeries (V2 d) K :=
-  fun x => MvPowerSeries.C (ζ ^ lw l x.2) * MvPowerSeries.X x
 
 def GenLogWeight : Prop :=
   ∀ (K : Type u) [NormedField K] [IsUltrametricDist K] [CharZero K] (l : ℕ), l.Prime →

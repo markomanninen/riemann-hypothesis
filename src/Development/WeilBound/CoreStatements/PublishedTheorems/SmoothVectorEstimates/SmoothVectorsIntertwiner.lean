@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.MirabolicColumnBlock
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.SmoothVectorEstimates.MirabolicColumnBlock
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,9 @@ theorem isOpen_U : IsOpen {M : LieI ι a | IsUnit (Matrix.of M)} := by
 
 omit [Fintype ι] in
 theorem one_mem_U : oneI ι a ∈ {M : LieI ι a | IsUnit (Matrix.of M)} := by
-  simp [oneI]
+  change IsUnit (Matrix.of (Matrix.of.symm 1))
+  rw [Equiv.apply_symm_apply]
+  exact isUnit_one
 
 theorem orb_rmul (ρ : GL (Fin a) (ι → ℂ) →* (X →L[ℂ] X)) (g : GL (Fin a) (ι → ℂ)) (v : X)
     (M : LieI ι a) : orb ρ (ρ g v) M = orb ρ v (rmulL g.val M) := by
@@ -66,8 +72,8 @@ theorem orb_rmul (ρ : GL (Fin a) (ι → ℂ) →* (X →L[ℂ] X)) (g : GL (Fi
   · rw [dif_pos hM, dif_pos (hiff.mpr hM), ← ContinuousLinearMap.mul_apply, ← map_mul]
     congr 2
     ext1
-    simp
-  · rw [dif_neg hM, dif_neg (mt hiff.mp hM)]
+    simp only [IsUnit.unit_spec, Units.val_mul, Equiv.apply_symm_apply]
+  · rw [dite_eq_right hM, dite_eq_right (mt hiff.mp hM)]
 
 theorem orb_lmul (ρ : GL (Fin a) (ι → ℂ) →* (X →L[ℂ] X)) (v : X) (M : LieI ι a)
     (hM : IsUnit (Matrix.of M)) (N : LieI ι a) :
@@ -82,8 +88,8 @@ theorem orb_lmul (ρ : GL (Fin a) (ι → ℂ) →* (X →L[ℂ] X)) (v : X) (M 
   · rw [dif_pos hN, dif_pos (hiff.mpr hN), ← ContinuousLinearMap.mul_apply, ← map_mul ρ]
     congr 2
     ext1
-    simp
-  · rw [dif_neg hN, dif_neg (mt hiff.mp hN), map_zero]
+    simp only [IsUnit.unit_spec, Units.val_mul, Equiv.apply_symm_apply]
+  · rw [dite_eq_right hN, dite_eq_right (mt hiff.mp hN), map_zero]
 
 omit [Fintype ι] in
 theorem orbit_map_intertwiner_comm (ρ : GL (Fin a) (ι → ℂ) →* (X →L[ℂ] X)) (T : X →L[ℂ] X)
@@ -144,7 +150,7 @@ theorem smooth_vectors_stable_intertwiner : S2 := by
           fderiv ℝ (orb ρ v) N (rmulL (Matrix.of Z) N) := by
       intro N hN
       have hL : lmulL (Matrix.of N) (oneI ι a) = N := by
-        simp [lmulL_apply, oneI]
+        rw [lmulL_apply, oneI, Equiv.apply_symm_apply, mul_one, Equiv.symm_apply_apply]
       have h0 : HasFDerivAt (orb ρ v) (fderiv ℝ (orb ρ v) N) (lmulL (Matrix.of N) (oneI ι a)) := by
         rw [hL]
         exact (hd N hN).hasFDerivAt

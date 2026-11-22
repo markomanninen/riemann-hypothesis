@@ -1,20 +1,24 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.FWTie
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FibExtMarked
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsConjugateModelSameThetaFunctionsStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilDatumSplitPlaceReadsThetaClassically
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationSplitSupportProjectsVacuum
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MapFinNeg
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaKernelOrthonormalFrameInDomainPeriodLinear
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CompletedTensorLatticeStrongApproxOpenCompact
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SymplecticCharacterRealFinitePointsMatch
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AdelicZakThetaExistsUnique
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaKernelTestFunctionMapLinearInjectiveEquivar
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SelfDualLatticesAtLevel
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.IsLatticeVacuumIffSignedRationalFixed
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LatticeVacuaTensorCorrespondLine
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LatOEqHatA
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CompletedTensorLatticeLatticeVacuumTransport
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.FWTie
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FibExtMarked
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsConjugateModelSameThetaFunctionsStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilDatumSplitPlaceReadsThetaClassically
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilRepresentationSplitSupportProjectsVacuum
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.MapFinNeg
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaKernelOrthonormalFrameInDomainPeriodLinear
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CompletedTensorLatticeStrongApproxOpenCompact
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SymplecticCharacterRealFinitePointsMatch
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.AdelicZakThetaExistsUnique
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ThetaKernelTestFunctionMapLinearInjectiveEquivar
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.SelfDualLatticesAtLevel
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.IsLatticeVacuumIffSignedRationalFixed
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LatticeVacuaTensorCorrespondLine
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.LatOEqHatA
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.CompletedTensorLatticeLatticeVacuumTransport
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.FWT Formalism.L2.Pj
 open MeasureTheory IsDedekindDomain NumberField Matrix
@@ -60,13 +64,8 @@ theorem exists_selfDualC (hS : S.gram = 1) {Λ : Lt D.host.E S.rank} (h : Λ ∈
     · intro H w hw
       have := H (star w) ((h1' _).2 (by rwa [star_star]))
       rwa [star_star] at this
-  refine ⟨ΛS, ⟨⟨hfg, ?_⟩, key⟩, fun v => by rw [h1', star_star]⟩
-  rw [eq_top_iff]
-  intro x _
-  obtain ⟨a, ha, h2⟩ := GlobalTheory.AdLat.cap_exists_denom Λ (span_of_vset h) (star x)
-  have h3 : a • x ∈ ΛS := (h1' _).2 (by rwa [star_nsmul])
-  rw [← Nat.cast_smul_eq_nsmul D.host.E] at h3
-  exact (Submodule.smul_mem_iff _ (Nat.cast_ne_zero.2 ha.ne')).1 (Submodule.subset_span h3)
+  exact ⟨ΛS, ⟨Submodule.IsLattice.of_fg D.host.E hfg, key⟩,
+    fun v => by rw [h1', star_star]⟩
 
 open scoped ComplexOrder in
 theorem cartan_one (hS : S.gram = 1) (τ : D.what₂.Tau) : IsCartanInv (gramAt D S τ) 1 := by
@@ -208,8 +207,8 @@ theorem step (C : Ctx S T) {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA D
   congr 1
   field_simp
 
-open GlobalTheory.AdLat in
 
+open GlobalTheory.AdLat in
 theorem mov_split {V : HSp D} {e : AE D} (he : IsSplitIdem D e) {h h' : GA D V}
     (h1 : (e + cA D e) • Formalism.L2.Theta.mt V h' = (e + cA D e) • 1)
     (h2 : (1 - (e + cA D e)) • Formalism.L2.Theta.mt V h' = (1 - (e + cA D e)) • Formalism.L2.Theta.mt V h)
@@ -217,7 +216,7 @@ theorem mov_split {V : HSp D} {e : AE D} (he : IsSplitIdem D e) {h h' : GA D V}
     (v1 : Λ₁ ∈ Vset D.host.E V.rank 1) (m' : IsMov (fmtC V h') Λ₀ Λ') (m : IsMov (fmtC V h) Λ₀ Λ₁) :
     ∀ v ∈ Λ', ∃ x, x ∈ Λ₀ ∧ x ∈ Λ' ∧ v - x ∈ Λ₁ := by
   intro v hv
-  have hc : cA D (e + cA D e) = e + cA D e := by rw [RingHom.map_add, cA_cA, add_comm]
+  have hc : cA D (e + cA D e) = e + cA D e := by rw [RingHom.map_add (f := _), cA_cA, add_comm]
   obtain ⟨-, -, p, ε, ⟨α, rfl, a1, a0⟩, h3⟩ := he
   have hα : ∀ q, α q ∈ q.adicCompletionIntegers D.host.F := fun q => by
     by_cases hq : q = p
@@ -240,7 +239,10 @@ theorem mov_split {V : HSp D} {e : AE D} (he : IsSplitIdem D e) {h h' : GA D V}
     have := congrArg (fun a => finPart D (cA D a)) (congrFun (congrFun hM i) j)
     simp only [Matrix.smul_apply, smul_eq_mul, map_mul, hs] at this
     exact this
-  refine exists_split (F := D.host.F) ⟨v0.1, span_of_vset v0⟩ ⟨v'.1, span_of_vset v'⟩ ⟨v1.1, span_of_vset v1⟩
+  refine exists_split (F := D.host.F)
+    { toIsLattice := Submodule.IsLattice.of_fg D.host.E v0.1, span_eq_top := span_of_vset v0 }
+    { toIsLattice := Submodule.IsLattice.of_fg D.host.E v'.1, span_eq_top := span_of_vset v' }
+    { toIsLattice := Submodule.IsLattice.of_fg D.host.E v1.1, span_eq_top := span_of_vset v1 }
     (z := finPart D t • toAf v) ?_ (hst _ _ hv') ?_
   · rw [e0, key t h' 1 hc (by rw [h1, AdelicLatMove.mt_one]), fmtC_one, Matrix.one_mulVec]
     exact hst _ _ hu
@@ -304,7 +306,7 @@ theorem om_th (C : Ctx S T) {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA 
     have o2 : cA D a * cA D a = cA D a := by rw [← RingHom.map_mul, o1]
     have o5 : cA D a' * cA D a' = cA D a' := by rw [← RingHom.map_mul, o4]
     have o8 : cA D a * cA D a' = 0 := by rw [← RingHom.map_mul, o7, RingHom.map_zero]
-    rw [RingHom.map_add] at h3
+    rw [RingHom.map_add (f := _)] at h3
     have o9 : a * cA D a' = 0 := by
       linear_combination (a * cA D a') * h3 - (cA D a' * (cA D a + cA D a')) * o1 -
         (cA D a' * (cA D a + cA D a')) * o7 - a * o8 - a * o5
@@ -313,12 +315,12 @@ theorem om_th (C : Ctx S T) {χS χT : (AE D)ˣ →* Circle} {om : GA D S × GA 
       rwa [RingHom.map_mul, cA_cA, RingHom.map_zero] at this
     have o6 : a' * cA D a' = 0 := by linear_combination h3 - o3 - o9 - o10
     have hε : (a + cA D a) * (a + cA D a) = a + cA D a := by linear_combination o1 + o2 + 2 * o3
-    have hcε : cA D (a + cA D a) = a + cA D a := by rw [RingHom.map_add, cA_cA, add_comm]
+    have hcε : cA D (a + cA D a) = a + cA D a := by rw [RingHom.map_add (f := _), cA_cA, add_comm]
     obtain ⟨h₀, e₀⟩ := exists_part S hε hcε h
     obtain ⟨h', e'⟩ := exists_part S (ε := 1 - (a + cA D a)) (by linear_combination hε)
       (by rw [RingHom.map_sub, RingHom.map_one, hcε]) h
     have hsupp' := (suppAt_iff _ _ _).1 hsupp
-    rw [RingHom.map_add] at hsupp'
+    rw [RingHom.map_add (f := _)] at hsupp'
     obtain ⟨b1, b2, b3, b4, b5, b6⟩ := alg_parts o1 o2 o3 o4 o5 o6 o7 o8 o9 o10 hsupp' e₀ e'
     obtain ⟨y₀, hy₀⟩ := exists_detAt S o1 h₀
     obtain ⟨y', hy'⟩ := exists_detAt S o4 h'

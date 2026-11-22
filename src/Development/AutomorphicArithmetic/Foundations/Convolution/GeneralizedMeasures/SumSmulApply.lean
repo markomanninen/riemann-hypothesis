@@ -1,6 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.DecayTraceClassAlt
-import Development.AutomorphicArithmetic.AdelicQuotients.ExistsCompactFundamentalSetOfHeightLe
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.HeckeFinAlt
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.DecayTraceClassAlt
+public import Development.AutomorphicArithmetic.AdelicQuotients.ExistsCompactFundamentalSetOfHeightLe
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain MvPolynomial Filter
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -12,9 +16,9 @@ namespace UpperTheory.ConvolutionTheory.GM
 
 section
 
-variable {K : Type} [Field K] [NumberField K] {n : ℕ} {μ : Measure (normOneGL K n)} [μ.IsHaarMeasure]
+variable {K : Type} [Field K] [NumberField K] {n : ℕ} {μ : Measure (normOneGL (K := K) (n := n))} [μ.IsHaarMeasure]
 
-private theorem sum_smul_apply {ι : Type} (s : Finset ι) (c : ι → ℂ) (f : ι → TG K n) (g : normOneGL K n) :
+private theorem sum_smul_apply {ι : Type} (s : Finset ι) (c : ι → ℂ) (f : ι → TG K n) (g : normOneGL (K := K) (n := n)) :
     (∑ i ∈ s, c i • f i) g = ∑ i ∈ s, c i * f i g := by
   classical
   induction s using Finset.induction_on with
@@ -52,12 +56,12 @@ private theorem rop_sum {ι : Type} (s : Finset ι) (c : ι → ℂ) (f : ι →
   | insert a s ha ih =>
     rw [Finset.sum_insert ha, Finset.sum_insert ha, rop_add, rop_smul, ih]
 
-private theorem twK_fin (θ : Twist μ) (f : TG K n) (x : normOneGL K n) :
+private theorem twK_fin (θ : Twist μ) (f : TG K n) (x : normOneGL (K := K) (n := n)) :
     (Function.support fun γ : Gam K n => f (x⁻¹ * (γ : G1 K n) * θ.e x)).Finite :=
   finite_support_automorphicKernel (Gam K n) f (x, θ.e x)
 
 private theorem twK_sum (θ : Twist μ) {ι : Type} (s : Finset ι) (c : ι → ℂ) (f : ι → TG K n)
-    (x : normOneGL K n) : twK θ (∑ i ∈ s, c i • f i) x = ∑ i ∈ s, c i * twK θ (f i) x := by
+    (x : normOneGL (K := K) (n := n)) : twK θ (∑ i ∈ s, c i • f i) x = ∑ i ∈ s, c i * twK θ (f i) x := by
   unfold twK
   simp only [sum_smul_apply]
   rw [finsum_sum_comm]
@@ -69,12 +73,12 @@ private theorem twK_sum (θ : Twist μ) {ι : Type} (s : Finset ι) (c : ι → 
     rw [h0, mul_zero]
 
 private theorem twK_cont (θ : Twist μ) (f : TG K n) : Continuous (twK θ f) := by
-  have h : Continuous fun x : normOneGL K n => automorphicKernel (Gam K n) f (x, θ.e x) :=
+  have h : Continuous fun x : normOneGL (K := K) (n := n) => automorphicKernel (Gam K n) f (x, θ.e x) :=
     (continuous_automorphicKernel (Gam K n) f).comp (continuous_id.prodMk θ.e.continuous)
   exact h
 
-private theorem twK_left (θ : Twist μ) (f : TG K n) {δ : normOneGL K n} (hδ : δ ∈ Gam K n)
-    (x : normOneGL K n) : twK θ f (δ * x) = twK θ f x := by
+private theorem twK_left (θ : Twist μ) (f : TG K n) {δ : normOneGL (K := K) (n := n)} (hδ : δ ∈ Gam K n)
+    (x : normOneGL (K := K) (n := n)) : twK θ f (δ * x) = twK θ f x := by
   have h1 := automorphicKernel_smul_left (Gam K n) f ⟨δ, hδ⟩ x (θ.e (δ * x))
   have h2 := automorphicKernel_smul_right (Gam K n) f ⟨θ.e δ, (θ.mem_gam δ).2 hδ⟩ x (θ.e x)
   have e1 : twK θ f (δ * x) =
@@ -85,7 +89,7 @@ private theorem twK_left (θ : Twist μ) (f : TG K n) {δ : normOneGL K n} (hδ 
   rw [e1, h1, e2, h2]
   rfl
 
-private theorem twKQ_mk (θ : Twist μ) (f : TG K n) (x : normOneGL K n) :
+private theorem twKQ_mk (θ : Twist μ) (f : TG K n) (x : normOneGL (K := K) (n := n)) :
     twKQ θ f (mk (Gam K n) x) = twK θ f x := by
   obtain ⟨γ, hγ⟩ := mk_eq_mk_iff.1
     (show mk (Gam K n) (Quotient.out (mk (Gam K n) x)) = mk (Gam K n) x from Quotient.out_eq _)
@@ -101,7 +105,10 @@ private theorem twKQ_int (θ : Twist μ) (f : TG K n) (Z : ℝ) (h : ∀ x, Z < 
       ((twK_cont θ f).congr fun x => (twKQ_mk θ f x).symm)
   obtain ⟨C, hC, hcov⟩ := UpperTheory.exists_compact_fundamental_set_of_height_le K n Z
   obtain ⟨M, hM⟩ := hC.exists_bound_of_continuousOn (twK_cont θ f).continuousOn
-  refine Integrable.of_bound hc.aestronglyMeasurable (max M 0) (Eventually.of_forall fun y => ?_)
+  have hm : AEStronglyMeasurable (twKQ θ f) (quotientMeasure (Gam K n) μ) := by
+    set_option synthInstance.maxHeartbeats 200000 in
+      exact hc.aestronglyMeasurable
+  refine Integrable.of_bound hm (max M 0) (Eventually.of_forall fun y => ?_)
   change ‖twK θ f (Quotient.out y)‖ ≤ _
   by_cases hz : Z < qht (Quotient.out y)
   · rw [h _ hz, norm_zero]
@@ -124,5 +131,5 @@ theorem UpperTheory.ConvolutionTheory.GM.twLin :
       fun y => twK_sum θ s c f _
     unfold twInt
     simp only [e]
-    rw [integral_finset_sum _ fun i hi => (twKQ_int θ (f i) Z (h i hi)).const_mul _]
+    rw [integral_finsetSum _ fun i hi => (twKQ_int θ (f i) Z (h i hi)).const_mul _]
     simp only [integral_const_mul]

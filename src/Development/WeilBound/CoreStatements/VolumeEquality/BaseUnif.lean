@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifAsm
-import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifConj
-import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifCoord
-import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifVec
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifAsm
+public import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifConj
+public import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifCoord
+public import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifVec
+
+@[expose] public section
 
 namespace SheetDecomposition
 

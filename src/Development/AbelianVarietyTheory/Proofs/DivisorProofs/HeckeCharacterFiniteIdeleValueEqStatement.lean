@@ -1,7 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeCharacterFiniteIdeleValueEq
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsApprox
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeCharacterFiniteIdeleValueEq
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsApprox
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 open scoped Classical Pointwise

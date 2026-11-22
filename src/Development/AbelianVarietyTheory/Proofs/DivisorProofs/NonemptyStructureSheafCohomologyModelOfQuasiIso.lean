@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.AxesVanishingStructureSheafDegOne
-import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
-import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
-import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsFiniteProjectiveComplexQuasiIso
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.AxesVanishingStructureSheafDegOne
+public import Development.AbelianVarietyTheory.Definitions.AbelianSchemeLaws.IsScalarTowerOfAlgebraMapEq
+public import Development.AbelianVarietyTheory.PublishedTheorems.Divisors₂.AbelianHodgeDeRham
+public import Development.AbelianVarietyTheory.Proofs.CoherentCohomologyProofs.ExistsFiniteProjectiveComplexQuasiIso
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -55,7 +59,7 @@ theorem ext_comm {R'' : Type} [CommRing R''] [Algebra R R''] (α : R' →ₐ[R] 
   induction y using TensorProduct.induction_on with
   | zero => simp
   | tmul a m => simp [ext]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 theorem exact_comp {H : Type} [AddCommGroup H] [Module R' H] (i j k : ℕ)
     (θ : LinearMap.ker (dB C R' j k) →ₗ[R'] H) (hs : Function.Surjective θ)
@@ -73,7 +77,7 @@ theorem exact_comp {H : Type} [AddCommGroup H] [Module R' H] (i j k : ℕ)
     have hz : z = cycMap φ R' j k ⟨k', hk'⟩ + ⟨_, hm⟩ := Subtype.ext (by
       rw [Submodule.coe_add, cycMap_val, ← hsum, add_comm])
     refine ⟨⟨k', hk'⟩, ?_⟩
-    rw [LinearMap.comp_apply, hz, map_add, (hk ⟨_, hm⟩).2 ⟨c', rfl⟩, add_zero]
+    rw [LinearMap.comp_apply, hz, map_add (f := _), (hk ⟨_, hm⟩).2 ⟨c', rfl⟩, add_zero]
   · rw [LinearMap.comp_apply, hk, cycMap_val]
     constructor
     · rintro ⟨c, hc⟩

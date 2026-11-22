@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GNConjTranspose
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CornerMatrixLeviBlockThree
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GNConjTranspose
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CornerMatrixLeviBlockThree
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter Topology
 

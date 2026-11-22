@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StParametricCircleIntegralAnalytic
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRiemannExtensionAnalytic
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StParametricCircleIntegralAnalytic
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.PRiemannExtensionAnalytic
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.IndefiniteRowSideFullHecke.ComplexSets
@@ -29,8 +34,8 @@ theorem analyticOnNhd_of_differentiableOn_fd {E : Type*} [NormedAddCommGroup E] 
 
 end ParametricCircleIntegralAnalytic
 
-open ParametricCircleIntegralAnalytic in
 
+open ParametricCircleIntegralAnalytic in
 theorem ParametricCircleIntegralAnalytic.proof : ParametricCircleIntegralAnalytic.Statement := by
   intro ι _ Φ O U c r hr hO hU hΦ hUO x₀ hx₀
   have hcd : ContinuousOn (fderiv ℂ Φ) O :=

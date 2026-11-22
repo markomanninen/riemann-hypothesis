@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.JetPointZeroEqOne
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.JetPointZeroEqOne
+
+@[expose] public section
 
 set_option autoImplicit false
 

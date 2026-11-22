@@ -1,8 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterOsgood
-import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterSheet
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterFib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterOsgood
+public import ReciprocityTheory.AnalyticForms.PlurisubharmonicFunctions.MdiscSt
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -158,8 +163,8 @@ theorem ptsIntegral_pencil {e : ℕ} {Q : Ideal (MRing ι)} (hQ : IsArithVar Q (
     exact Finset.sum_congr rfl fun i _ => integral_const_mul _ _
   · simp
 
-open Matrix in
 
+open Matrix in
 theorem integrable_of_nodes {Y : Type*} [MeasurableSpace Y] {μ : Measure Y} {N : ℕ} (M : ℕ → Y → ℝ)
     (h : ∀ j : Fin N, Integrable (fun y => ∑ i ∈ Finset.range N,
       (1 / (((j : ℕ) + 1 : ℕ) : ℝ)) ^ i * M i y) μ) :
@@ -187,7 +192,7 @@ theorem integrable_of_nodes {Y : Type*} [MeasurableSpace Y] {μ : Measure Y} {N 
     have := congrFun (hinv y) ⟨i, hi⟩
     simpa only [Matrix.mulVec, dotProduct] using this
   rw [hM]
-  exact integrable_finset_sum _ fun j _ => (h j).const_mul _
+  exact integrable_finsetSum _ fun j _ => (h j).const_mul _
 
 end PtsPencil
 

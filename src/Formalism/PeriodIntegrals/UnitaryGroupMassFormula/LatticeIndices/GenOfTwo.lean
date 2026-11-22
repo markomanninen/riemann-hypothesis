@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.QuadRoot
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.QuadRoot
+
+@[expose] public section
 
 noncomputable section
 
@@ -48,7 +52,7 @@ theorem gen_of_two (h2 : Module.finrank F E = 2) (p : HeightOneSpectrum (𝓞 F)
     have hX := (minpoly.monic hint_r).eq_X_add_C h1
     have hev := minpoly.aeval (𝓞 F) a
     rw [hX] at hev
-    simp only [map_add, aeval_X, aeval_C] at hev
+    simp only [map_add (f := _), aeval_X, aeval_C] at hev
     apply hnot (-(minpoly (𝓞 F) a).coeff 0)
     rw [map_neg]
     linear_combination -hev
@@ -62,7 +66,7 @@ theorem gen_of_two (h2 : Module.finrank F E = 2) (p : HeightOneSpectrum (𝓞 F)
     ring
   have hev := minpoly.aeval (𝓞 F) a
   rw [hP] at hev
-  simp only [map_add, map_mul, map_pow, aeval_X, aeval_C] at hev
+  simp only [map_add (f := _), map_mul, map_pow, aeval_X, aeval_C] at hev
   have heq : a * a + algebraMap (𝓞 F) (𝓞 E) ((minpoly (𝓞 F) a).coeff 1) * a +
       algebraMap (𝓞 F) (𝓞 E) ((minpoly (𝓞 F) a).coeff 0) = 0 := by
     linear_combination hev
@@ -116,7 +120,7 @@ theorem emb_of_two (h2 : Module.finrank F E = 2) (p : HeightOneSpectrum (𝓞 F)
     (norm_algebraMap_adicCompletion_eq_one_of_not_mem p c1 hc1) (norm_algebraMap_adicCompletion_lt_one_of_mem p c0 hc0)
   have hroot : aeval x (minpoly F (algebraMap (𝓞 E) E a)) = 0 := by
     rw [hfield, aeval_map_algebraMap F, hP]
-    simp only [map_add, map_mul, map_pow, aeval_X, aeval_C]
+    simp only [map_add (f := _), map_mul, map_pow, aeval_X, aeval_C]
     linear_combination hx
   have hpb : aeval x (minpoly F (IntermediateField.adjoin.powerBasis hbint).gen) = 0 := by
     rw [IntermediateField.adjoin.powerBasis_gen, IntermediateField.minpoly_gen]

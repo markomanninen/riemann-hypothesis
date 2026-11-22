@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Integral
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -17,7 +21,8 @@ theorem UpperTheory.V.Fr.oddm :
     rw [← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, hM]
     simpa using hlin (Sum.inr j)
   · ext n
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     simp_rw [MvPowerSeries.X_def, MvPowerSeries.coeff_mul_monomial, mul_one, hM]
     by_cases hex : ∃ j : Fin g, n (Sum.inr j) ≠ 0
     · let S := Finset.univ.filter (fun j : Fin g => n (Sum.inr j) ≠ 0)

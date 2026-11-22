@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.PlurisubharmonicCones.ExistsSmulMemEig
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogIndexOfOrthogonalFamily
-import GroundTheory.HeightsAndTheta.Heights.ArithDegreeIdeal
-import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.PLocalChange
+module
+
+public import Development.WeilBound.CoreStatements.PlurisubharmonicCones.ExistsSmulMemEig
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LogIndexOfOrthogonalFamily
+public import GroundTheory.HeightsAndTheta.Heights.ArithDegreeIdeal
+public import GroundTheory.HeightsAndTheta.Heights.LatticeLemmas.PLocalChange
+
+@[expose] public section
 
 noncomputable section
 
@@ -170,7 +174,8 @@ theorem index_quot {R N N' : Type} [CommRing R] [AddCommGroup N] [Module R N] [A
       rw [e]
       exact M.sub_mem hxM' (sum_mem fun j _ => M.smul_mem _ (hq j)))
     rw [e, map_sub, sub_eq_zero] at h1
-    simpa only [map_sum, map_smul] using h1
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa only [map_sum, map_smul] using h1
   change (x : N) ∈ T ⊔ Submodule.span R (Set.range fun c => (q c : N)) ↔ f x ∈ _
   constructor
   · intro hx

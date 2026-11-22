@@ -1,4 +1,8 @@
-import CompanionTheory.RealGroups.GeneralUnitaryRepresentations.ArchimedeanJacquetSegments.Complementary
+module
+
+public import CompanionTheory.RealGroups.GeneralUnitaryRepresentations.ArchimedeanJacquetSegments.Complementary
+
+@[expose] public section
 
 noncomputable section
 
@@ -38,12 +42,12 @@ def gram (B : Sq W) : Fin (finrank ℂ W) → Fin (finrank ℂ W) → ℂ :=
 
 def mk (M : Fin (finrank ℂ W) → Fin (finrank ℂ W) → ℂ) : Sq W :=
   LinearMap.mk₂'ₛₗ (RingHom.id ℂ) (starRingEnd ℂ) (fun v w => qf M (ef W v) (ef W w))
-    (fun v v' w => by simp only [qf, map_add, Pi.add_apply, add_mul, Finset.sum_add_distrib])
+    (fun v v' w => by simp only [qf, map_add (f := _), Pi.add_apply, add_mul, Finset.sum_add_distrib])
     (fun c v w => by
       simp only [qf, map_smul, Pi.smul_apply, smul_eq_mul, Finset.mul_sum, RingHom.id_apply]
       exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring)
     (fun v w w' => by
-      simp only [qf, map_add, Pi.add_apply, star_add, add_mul, mul_add, Finset.sum_add_distrib])
+      simp only [qf, map_add (f := _), Pi.add_apply, star_add, add_mul, mul_add, Finset.sum_add_distrib])
     (fun c v w => by
       simp only [qf, map_smul, Pi.smul_apply, smul_eq_mul, star_mul', Finset.mul_sum, starRingEnd_apply]
       exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring)
@@ -53,7 +57,8 @@ theorem mk_apply (M : Fin (finrank ℂ W) → Fin (finrank ℂ W) → ℂ) (v w 
 
 theorem expand (B : Sq W) (v w : W) : B v w = qf (gram B) (ef W v) (ef W w) := by
   conv_lhs => rw [← (Module.finBasis ℂ W).sum_equivFun v, ← (Module.finBasis ℂ W).sum_equivFun w]
-  simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.map_smulₛₗ, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.map_smulₛₗ, smul_eq_mul,
     qf, gram, starRingEnd_apply, Finset.mul_sum, ef]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
@@ -179,7 +184,7 @@ theorem pos_of (B : Sq W) (hh : Herm B) (hk : LinearMap.ker B = ⊥) (hsd : ∀ 
       have := hsd (v + a • w)
       have e0 : B (v + a • w) (v + a • w) =
           starRingEnd ℂ a * B v w + a * starRingEnd ℂ (B v w) + a * starRingEnd ℂ a * B w w := by
-        simp only [map_add, map_smul, LinearMap.add_apply, LinearMap.smul_apply, LinearMap.map_smulₛₗ, smul_eq_mul,
+        simp only [map_add (f := _), map_smul, LinearMap.add_apply, LinearMap.smul_apply, LinearMap.map_smulₛₗ, smul_eq_mul,
           hvv, hwv]
         ring
       have e : (B (v + a • w) (v + a • w)).re =

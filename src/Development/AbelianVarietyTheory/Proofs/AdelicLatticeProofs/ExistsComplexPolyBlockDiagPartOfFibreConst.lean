@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EvalComplexPolyEqZeroOnRatZariskiClosureStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RatZariskiClosurePointsIsGroupStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsAutStableSLMatrixGroupImageBlockDiagPart
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.BlockDiagPartOfRatIdempotentOneAndMulOfTriangula
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsMultiplierDescendBlockDiagPartOfRatIdempotStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.EvalComplexPolyEqZeroOnRatZariskiClosureStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.RatZariskiClosurePointsIsGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsAutStableSLMatrixGroupImageBlockDiagPart
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.BlockDiagPartOfRatIdempotentOneAndMulOfTriangula
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsMultiplierDescendBlockDiagPartOfRatIdempotStatement
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 
@@ -31,7 +36,7 @@ omit [DecidableEq ι] in
 lemma evC_rtr (g y : Matrix ι ι ℂ) (f : MvPolynomial (ι × ι) ℂ) : evC (rtr g f) y = evC f (y * g) := by
   induction f using MvPolynomial.induction_on with
   | C a => simp [evC, rtr]
-  | add p q hp hq => rw [map_add, evC_add, evC_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), evC_add, evC_add, hp, hq]
   | mul_X p ij hp =>
     rw [map_mul, evC_mul, evC_mul, hp]
     congr 1
@@ -41,7 +46,7 @@ omit [DecidableEq ι] in
 lemma evC_ltr (g y : Matrix ι ι ℂ) (f : MvPolynomial (ι × ι) ℂ) : evC (ltr g f) y = evC f (g * y) := by
   induction f using MvPolynomial.induction_on with
   | C a => simp [evC, ltr]
-  | add p q hp hq => rw [map_add, evC_add, evC_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), evC_add, evC_add, hp, hq]
   | mul_X p ij hp =>
     rw [map_mul, evC_mul, evC_mul, hp]
     congr 1
@@ -52,8 +57,8 @@ lemma evC_map (p : MvPolynomial (ι × ι) ℚ) (y : Matrix ι ι ℂ) :
     evC (MvPolynomial.map (algebraMap ℚ ℂ) p) y = ev p y := by
   rw [evC, ev, MvPolynomial.eval_map, MvPolynomial.aeval_def]
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 lemma exists_fg_rtr (f : MvPolynomial (ι × ι) ℂ) :
     ∃ V : Submodule ℂ (MvPolynomial (ι × ι) ℂ), V.FG ∧ ∀ g, rtr g f ∈ V := by
   induction f using MvPolynomial.induction_on with
@@ -65,7 +70,7 @@ lemma exists_fg_rtr (f : MvPolynomial (ι × ι) ℂ) :
     obtain ⟨V, hV, h⟩ := hp
     obtain ⟨V', hV', h'⟩ := hq
     refine ⟨V ⊔ V', hV.sup hV', fun g => ?_⟩
-    rw [map_add]
+    rw [map_add (f := _)]
     exact Submodule.add_mem_sup (h g) (h' g)
   | mul_X p ij hp =>
     obtain ⟨V, hV, h⟩ := hp
@@ -76,8 +81,8 @@ lemma exists_fg_rtr (f : MvPolynomial (ι × ι) ℂ) :
     rw [rtr, MvPolynomial.aeval_X]
     exact Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, rfl⟩)
 
-omit [DecidableEq ι] in
 
+omit [DecidableEq ι] in
 lemma exists_finset_rtr (Γ : Set (Matrix ι ι ℂ)) (f : MvPolynomial (ι × ι) ℂ) :
     ∃ s : Finset (MvPolynomial (ι × ι) ℂ), (∀ p ∈ s, ∃ g ∈ Γ, p = rtr g f) ∧
       ∀ g ∈ Γ, rtr g f ∈ Submodule.span ℂ (s : Set (MvPolynomial (ι × ι) ℂ)) := by
@@ -122,8 +127,8 @@ lemma exists_common_zero (D : Ideal (MvPolynomial (ι × ι) ℂ)) (hD : D ≠ �
 
 end GlobalTheory.ClassFin.FibreDescent
 
-open GlobalTheory.ClassFin.FibreDescent in
 
+open GlobalTheory.ClassFin.FibreDescent in
 theorem GlobalTheory.ClassFin.exists_evC_blk_of_fibre_const : ∀ (ι : Type) [Fintype ι] [DecidableEq ι] (Γ : Set (Matrix ι ι ℂ)) (e : Matrix ι ι ℚ), IsQGroup Γ → e * e = e → (∀ g ∈ Γ, (1 - e.map (algebraMap ℚ ℂ)) * g * e.map (algebraMap ℚ ℂ) = 0) → ∀ f : MvPolynomial (ι × ι) ℂ, (∀ x ∈ Γ, ∀ x' ∈ Γ, blk e x = blk e x' → evC f x = evC f x') → ∃ b : MvPolynomial (ι × ι) ℂ, ∀ x ∈ Γ, evC f x = evC b (blk e x) := by
   intro ι _ _ Γ e hΓ he htri f hf
   have hmul : ∀ x ∈ Γ, ∀ y ∈ Γ, blk e (x * y) = blk e x * blk e y := fun x hx y hy =>

@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.DimOfMinimal
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovGeometry.DimOfMinimal
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,7 +47,7 @@ theorem multAt_eq_count {J : Ideal (MRing ι)} {N : ℕ} {F : Fin (N + 1) → Id
   have := length_loc_chain W' N F f q hlast hj hmin
   rw [h0] at this
   unfold multAt
-  rw [dif_pos hp, this]
+  rw [dite_eq_left hp, this]
   simp
 
 theorem block_step {L : ℝ} {m p : ℕ} (hp : p.Prime) {W : Ideal (MRing ι)} (hW : IsMultiProjPrime W)

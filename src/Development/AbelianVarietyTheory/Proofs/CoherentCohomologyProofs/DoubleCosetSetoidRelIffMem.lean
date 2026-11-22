@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.DoubleCosetSetoid
 
@@ -20,9 +24,6 @@ def repStabilizer (ρ : Representation k G V) (v : V) : Subgroup G where
       _ = v := by rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one,
         Module.End.one_apply]
 
-@[simp] theorem mem_repStabilizer (ρ : Representation k G V) (v : V) (g : G) :
-    g ∈ repStabilizer ρ v ↔ ρ g v = v := Iff.rfl
-
 end Rep
 
 section Cont
@@ -43,9 +44,6 @@ def clmStabilizer (π : G →* (E →L[𝕜] E)) (v : E) : Subgroup G where
     calc π a⁻¹ v = π a⁻¹ (π a v) := by rw [ha]
       _ = v := by rw [← ContinuousLinearMap.mul_apply, ← map_mul, inv_mul_cancel, map_one,
         ContinuousLinearMap.one_apply]
-
-@[simp] theorem mem_clmStabilizer (π : G →* (E →L[𝕜] E)) (v : E) (g : G) :
-    g ∈ clmStabilizer π v ↔ π g v = v := Iff.rfl
 
 end Cont
 

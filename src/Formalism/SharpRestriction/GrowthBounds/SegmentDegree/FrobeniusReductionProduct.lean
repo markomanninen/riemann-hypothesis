@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ColumnWordReductionOfFour
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.ColumnWordReductionOfFour
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ theorem expand_pow_zmod (p : ℕ) [Fact p.Prime] {σ : Type} (f : MvPolynomial �
     expand (p ^ n) f = f ^ (p ^ n) := by
   induction f using MvPolynomial.induction_on with
   | C a => rw [expand_C, ← map_pow, ZMod.pow_card_pow]
-  | add u v hu hv => rw [map_add, hu, hv, add_pow_char_pow]
+  | add u v hu hv => rw [map_add (f := _), hu, hv, add_pow_char_pow]
   | mul_X q v h => rw [map_mul, h, expand_X, mul_pow]
 
 theorem charP_FF {p : ℕ} [Fact p.Prime] {O : Type} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]

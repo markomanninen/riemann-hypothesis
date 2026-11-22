@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.DividedWeightUnique
-import Formalism.MeanHeightDescent.CovolumeFullAssemblyWeighted
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumLogDivPredLeReal
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumPadicValNatMulLogLeLog
-import Development.AutomorphicArithmetic.PrimeDiscriminants.BadCount
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DividedWeightUnique
+public import Formalism.MeanHeightDescent.DivisionInequalityWithCovolume
+public import Formalism.MeanHeightDescent.AverageDegreeBounds.GlobalBoundRefinements
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumLogDivPredLeReal
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumPadicValNatMulLogLeLog
+public import Development.AutomorphicArithmetic.PrimeDiscriminants.BadCount
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.DV Formalism.MainNotions Formalism.L2.Indef.Tree NumberField GlobalTheory.MeanTop
 

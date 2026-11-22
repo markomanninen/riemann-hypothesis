@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.InstIsAdicCompleteOCSpanSingletonSetCast
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.InstIsAdicCompleteOCSpanSingletonSetCast
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsCrisP
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,8 +22,8 @@ def IsGauss (ρ : ℝ) (N : Formalism.Per.Acris l → ℝ) : Prop :=
     (∀ x y, N (x * y) = N x * N y) ∧
     ∀ a : Formalism.Per.Ainf l, N (algebraMap (Formalism.Per.Ainf l) (Formalism.Per.Acris l) a) = gA l ρ a
 
-open Classical in
 
+open Classical in
 def gC (ρ : ℝ) (x : Formalism.Per.Acris l) : ℝ :=
   if h : ∃ N, IsGauss l ρ N then Classical.choose h x else 0
 

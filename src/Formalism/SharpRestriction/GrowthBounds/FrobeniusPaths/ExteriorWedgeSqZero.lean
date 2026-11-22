@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.StatementOfDegreeAndBound
-import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.DividedPowerZeroOfGlActionZero
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StatementOfDegreeAndBound
+public import Formalism.SharpRestriction.GrowthBounds.FrobeniusPaths.DividedPowerZeroOfGlActionZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -93,7 +97,7 @@ termination_by I.card
 decreasing_by exact Finset.card_erase_lt_of_mem (Finset.max'_mem _ _)
 
 lemma img_empty (m : Matrix (Fin k) (Fin k) A) : img m ∅ = extOne := by
-  rw [img, dif_neg Finset.not_nonempty_empty]
+  rw [img, dite_eq_right Finset.not_nonempty_empty]
 
 lemma img_insert_max (m : Matrix (Fin k) (Fin k) A) (b : Fin k) (I : Finset (Fin k)) (hb : ∀ x ∈ I, x < b) :
     img m (insert b I) = wedgeR (m b) (img m I) := by
@@ -106,7 +110,7 @@ lemma img_insert_max (m : Matrix (Fin k) (Fin k) A) (b : Fin k) (I : Finset (Fin
       · exact le_rfl
       · exact (hb y hy).le
     · exact Finset.le_max' _ _ (Finset.mem_insert_self b I)
-  rw [img, dif_pos (Finset.insert_nonempty b I)]
+  rw [img, dite_eq_left (Finset.insert_nonempty b I)]
   simp only [hmax, Finset.erase_insert hbI]
 
 lemma sg_top (a : Fin k) (I : Finset (Fin k)) (hb : ∀ x ∈ I, x < a) : exteriorSign A (insert a I) a = 1 := by
@@ -211,7 +215,8 @@ lemma LamL_Wop (m : Matrix (Fin k) (Fin k) A) (x : Fin k → A) :
   intro I c
   simp only [Module.End.mul_apply]
   have e : Wop x (Pi.single I c) = ∑ a, x a • exteriorWedge A a (Pi.single I c) := by simp [Wop]
-  rw [e, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e, map_sum]
   simp only [map_smul, LamL_w_single]
   rw [LamL_single, map_smul, Wop_vecMul]
   simp only [LinearMap.sum_apply, LinearMap.smul_apply, Finset.smul_sum]
@@ -300,40 +305,12 @@ theorem Lam_contr (m m' : Matrix (Fin k) (Fin k) A) (h : m * m' = 1) (y : Fin k 
   rw [vecMul_Lam, vecMul_Lam, ← Iop_apply, ← Iop_apply]
   have hK : K = ∑ I, Pi.single I (K I) := (Finset.univ_sum_single K).symm
   rw [hK]
-  simp only [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum]
   exact Finset.sum_congr rfl fun I _ => LamL_Iop_single m m' h y I (K I)
 
 theorem Lam_empty (m : Matrix (Fin k) (Fin k) A) (J : Finset (Fin k)) (hJ : J ≠ ∅) : abelian₂ m ∅ J = 0 := by
   simp [abelian₂, img_empty, extOne, hJ]
-
-theorem Lam_empty_self (m : Matrix (Fin k) (Fin k) A) : abelian₂ m ∅ ∅ = 1 := by
-  simp [abelian₂, img_empty, extOne]
-
-theorem Lam_card (m : Matrix (Fin k) (Fin k) A) (I J : Finset (Fin k)) (h : I.card ≠ J.card) : abelian₂ m I J = 0 := by
-  have key : ∀ (I J : Finset (Fin k)), J.card ≠ I.card → img m I J = 0 := by
-    intro I
-    induction I using Finset.induction_on_max with
-    | empty =>
-      intro J hJ
-      rw [img_empty]
-      simp only [extOne]
-      rw [if_neg]
-      intro h
-      apply hJ
-      simp [h]
-    | insert b s hb ih =>
-      intro J hJ
-      have hbs : b ∉ s := fun h => lt_irrefl b (hb b h)
-      rw [img_insert_max m b s hb]
-      simp only [wedgeR]
-      apply Finset.sum_eq_zero
-      intro a ha
-      rw [ih (J.erase a) ?_, mul_zero]
-      rw [Finset.card_erase_of_mem ha]
-      rw [Finset.card_insert_eq_ite, if_neg hbs] at hJ
-      have := Finset.card_pos.2 ⟨a, ha⟩
-      omega
-  exact key I J (Ne.symm h)
 
 theorem Lam_map {A' : Type*} [CommRing A'] (φ : A →+* A') (m : Matrix (Fin k) (Fin k) A) :
     (abelian₂ m).map φ = abelian₂ (m.map φ) := by
@@ -346,7 +323,8 @@ theorem Lam_map {A' : Type*} [CommRing A'] (φ : A →+* A') (m : Matrix (Fin k)
       split_ifs <;> simp
     | insert b s hb ih =>
       intro J
-      simp only [img_insert_max m b s hb, img_insert_max (m.map φ) b s hb, wedgeR, map_sum, map_mul,
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [img_insert_max m b s hb, img_insert_max (m.map φ) b s hb, wedgeR, map_sum, map_mul,
         map_pow, map_neg, map_one, ih, Matrix.map_apply]
   ext I J
   simp [Matrix.map_apply, abelian₂, key]

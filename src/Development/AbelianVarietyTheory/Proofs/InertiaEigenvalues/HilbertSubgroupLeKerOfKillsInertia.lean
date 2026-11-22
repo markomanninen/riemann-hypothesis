@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.GaloisValuations.Global
-import ReciprocityTheory.GaloisValuations.ArithOfA
-import ReciprocityTheory.NeutralLocalFields.HilbertClassField
-import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.HilbertClassFieldA
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InertiaElementEqOneOrLiesAboveFinitePlace
+module
+
+public import Mathlib
+public import ReciprocityTheory.GaloisValuations.Global
+public import ReciprocityTheory.GaloisValuations.ArithOfA
+public import ReciprocityTheory.NeutralLocalFields.HilbertClassField
+public import ReciprocityTheory.NeutralLocalFields.LocalFieldComparison.HilbertClassFieldA
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InertiaElementEqOneOrLiesAboveFinitePlace
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Neutral.HilbertClassField
 open Pointwise

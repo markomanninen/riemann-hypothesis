@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
-import Formalism.SharpRestriction.GrowthBounds.DataG
+module
+
+public import Formalism.LocalToGlobal.HermitianForms.IsLocBasis
+public import Formalism.SharpRestriction.GrowthBounds.DataG
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,10 +44,11 @@ theorem map_substR [CommRing R] [CommRing S] (f : R →+* S)
     MvPolynomial.map f (substR P R G Q) = substR P S (fun v s => (G v s).map f) (MvPolynomial.map f Q) := by
   induction Q using MvPolynomial.induction_on with
   | C a => simp [substR]
-  | add p q hp hq => simp only [map_add, hp, hq]
+  | add p q hp hq => simp only [map_add (f := _), hp, hq]
   | mul_X p v hp =>
     rw [map_mul, map_mul, map_mul, hp]
-    simp [substR, map_sum, Matrix.map_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [substR, map_sum, Matrix.map_apply]
 
 theorem map_natActR [Field R] [Field S] (f : R →+* S) (g : ∀ v, Fin (P.n' v) → GL (Fin (P.m + 1)) R) (Q : XR P R) :
     MvPolynomial.map f (natActR P R g Q) =
@@ -136,11 +141,12 @@ theorem evC_natAct (h : P.m + 1 = n) (pos : (Σ v : Fin P.nV, Fin (P.n' v)) ≃ 
     intro Q
     induction Q using MvPolynomial.induction_on with
     | C a => simp [substR]
-    | add p q hp hq => simp only [map_add, hp, hq]
+    | add p q hp hq => simp only [map_add (f := _), hp, hq]
     | mul_X p x hp =>
       rw [map_mul, map_mul, map_mul, hp]
       congr 1
-      simp only [substR, MvPolynomial.aeval_X, map_sum, map_mul, MvPolynomial.eval_C, MvPolynomial.eval_X]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [substR, MvPolynomial.aeval_X, map_sum, map_mul, MvPolynomial.eval_C, MvPolynomial.eval_X]
       rw [← hz x.1 x.2.1, Matrix.mul_apply]
   have hdet : ∀ v s, (hAt P h pos M g v s : Matrix (Fin (P.m + 1)) (Fin (P.m + 1)) ℂ).det ≠ 0 := fun v s =>
     ((Matrix.isUnit_iff_isUnit_det _).1 (Units.isUnit _)).ne_zero
@@ -163,14 +169,8 @@ def VtupR (R : Type) [Field R] : Submodule R (XR P R) :=
   Submodule.span R {Z | ∃ F : ∀ v, MvPolynomial (Fin (P.n' v) × (Fin (P.m + 1) × Fin (P.m + 1))) R,
     (∀ v, F v ∈ Vsp R (P.lam0 v)) ∧ Z = ∏ v, rename (fun x => (⟨v, x⟩ : Var P)) (F v)}
 
-theorem VtupR_Kf : VtupR P Kf = P.Vtup := rfl
-
 def WtTie (h : P.m + 1 = n) (pos : (Σ v : Fin P.nV, Fin (P.n' v)) ≃ Tau) (lam : Tau → Formalism.BasicNotions.DomWeight n) : Prop :=
   ∀ v (s : Fin (P.n' v)) (i : Fin (P.m + 1)), P.lam0 v s i = (lam (pos ⟨v, s⟩)).w (finCongr h i)
-
-def EvValC (h : P.m + 1 = n) (pos : (Σ v : Fin P.nV, Fin (P.n' v)) ≃ Tau) (G : Tau → Matrix (Fin n) (Fin n) ℂ)
-    (M : Tau → GL (Fin n) ℂ) (lam : Tau → Formalism.BasicNotions.DomWeight n) : Prop :=
-  WtTie P h pos lam → (VtupR P ℂ).map (evC P h pos G (fun τ => (M τ : Matrix (Fin n) (Fin n) ℂ))) = ValC G lam
 
 end Formalism.L2.G.Cmp
 

@@ -1,4 +1,8 @@
-import Formalism.MahlerMeasure.QuotientUpperBoundsOfPowerBounds
+module
+
+public import Formalism.MahlerMeasure.QuotientUpperBoundsOfPowerBounds
+
+@[expose] public section
 
 namespace Formalism.GM
 
@@ -104,8 +108,8 @@ lemma vmin_le (h : ℕ) (x : K) :
       · rw [if_neg h1]
         split_ifs <;> norm_num
 
-omit [NormedAlgebra ℚ_[p] K] in
 
+omit [NormedAlgebra ℚ_[p] K] in
 lemma dvd_cancel {d : ℤ} (hd : IsCoprime d (p : ℤ)) (i : ℕ) {m : ℤ} (hm : (p : ℤ) ^ i ∣ d * m) :
     (p : ℤ) ^ i ∣ m := (IsCoprime.pow_left hd.symm).dvd_of_dvd_mul_left hm
 

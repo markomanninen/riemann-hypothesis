@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.WorkEndn
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.WorkSplit
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.WorkKilledB
-import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.RatioEqOneOfCyclic
+module
+
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.WorkEndx
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.WorkSplit
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.WorkKilledB
+public import Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.RatioEqOneOfCyclic
+
+@[expose] public section
 
 open NumberField IsDedekindDomain CategoryTheory GroundTheory.ProfCoh GroundTheory.Global
 
@@ -30,18 +34,12 @@ theorem ratio_eq_one_of_coprime_cyclic' (ℓ : ℕ) [Fact ℓ.Prime] (K : Finite
   W_killed_c.ratio_eq_one_of_cyclic ℓ K S hS hSℓ ιr L hL hN M hℓ htriv
     (fun L' _ hL' hle hcyc => W_killed_b.ratio_coind_cyclic ℓ K S hS hSℓ ιr L hL hN M hℓ htriv hK L' hL' hle hcyc)
 
-theorem ratioOneKilled_two (h : RatioOne 2 (fun K => NumberField.IsTotallyComplex K.1)) :
-    RatioOneKilled 2 (fun _ => True) := by
-  intro K S hS hS2 _ ιr M _ _ h2
-  obtain ⟨L, hKL, hL, hN, -, hc, htriv⟩ := W_split.exists_split 2 K S hS hS2 M
-  have htc : NumberField.IsTotallyComplex L.1 := hc.resolve_left (by simp)
-  exact ratio_eq_one_of_coprime_cyclic' 2 K S hS hS2 ιr L hL hN M h2 htriv
-    (W_endn.ending_narrow h K S hS hS2 ιr L hL hN M h2 htriv htc)
-
 theorem ratioOneKilled_of_lemmaX (ℓ : ℕ) [Fact ℓ.Prime] (hX : GlobalEulerCharCoprime) :
     RatioOneKilled ℓ (fun _ => True) := by
   intro K S hS hSℓ _ ιr M _ _ hℓ
-  obtain ⟨L, hKL, hL, hN, hζ, hc, htriv⟩ := W_split.exists_split ℓ K S hS hSℓ M
+  obtain ⟨L, hKL, hsplit⟩ := W_split.exists_split ℓ K S hS hSℓ M
+  letI := hKL
+  obtain ⟨hL, hN, hζ, hc, htriv⟩ := hsplit
   exact ratio_eq_one_of_coprime_cyclic' ℓ K S hS hSℓ ιr L hL hN M hℓ htriv
     (W_endx.ending_lemmaX hX ℓ K S hS hSℓ ιr L hL hN M hℓ htriv hζ hc)
 

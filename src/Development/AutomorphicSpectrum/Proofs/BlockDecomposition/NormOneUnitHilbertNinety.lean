@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmFieldStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsConjMulEq
-import Formalism.LocalRingCardinality.SpanPowerMembership.Adelic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsUnifAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PlaceConjugationPropertiesCmFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IwahoriProjSurjective
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ExistsConjMulEq
+public import Formalism.LocalRingCardinality.SpanPowerMembership.Adelic
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix Polynomial GlobalTheory.BCT GlobalTheory.UnitaryBC Formalism.UG
 open scoped Classical
@@ -80,7 +84,7 @@ theorem exists_conj_mul_eq_of_residue_one {R : Type} [CommRing R] [HenselianLoca
     linear_combination (-a * ui ^ 2) * hroot + (a * (ui * u + 1) - a * ui) * huui
   refine ⟨1 + e * (a * ui), ?_⟩
   have hσt : σ (a * ui) = a * ui := by rw [map_mul, hfix, hσui]
-  rw [map_add, map_one, map_mul σ e, hσt, ← hf]
+  rw [map_add (f := _), map_one, map_mul σ e, hσt, ← hf]
   linear_combination (a * ui) * hef + h2 - (a * ui) ^ 2 * hn
 
 theorem exists_isUnit_conj_mul_eq {R : Type} [CommRing R] [HenselianLocalRing R]
@@ -131,7 +135,122 @@ theorem exists_unit_norm_eq : ∀ (E : Type) [Field E] [NumberField E] [IsCMFiel
   obtain ⟨-, hinv, hval, hns, -⟩ := GlobalTheory.T.placeConjugation_properties_cmField E hU w
   obtain ⟨-, ⟨ϖ, q, hI, -⟩, -, -⟩ := hns hw
   obtain ⟨-, -, -, -, ⟨x₀, hx₀, hx⟩, hq, hcard⟩ := hI
-  haveI := Formalism.BasicNotions.Examples₂.adicInt_henselian (K := E) w
+  haveI : HenselianLocalRing (w.adicCompletionIntegers E) := by
+    open HeightOneSpectrum WithZero Filter Topology in
+    let Ov := w.adicCompletionIntegers E
+    let Kv := w.adicCompletion E
+    have adicInt_dvd_iff (x y : Ov) :
+        x ∣ y ↔ Valued.v (y : Kv) ≤ Valued.v (x : Kv) := by
+      first
+      | exact (Formalism.BasicNotions.Examples₂.adicInt_integers (K := E) w ).dvd_iff_le
+      | exact Valuation.Integers.dvd_iff_le (Formalism.BasicNotions.Examples₂.adicInt_integers (K := E) w )
+
+    have adicInt_max_eq_span (π : Ov) (hπ : Valued.v (π : Kv) = exp (-1 : ℤ)) :
+        maximalIdeal Ov = Ideal.span {π} := by
+      ext x
+      rw [Formalism.BasicNotions.Examples₂.adicInt_mem_max_iff w x, Ideal.mem_span_singleton, adicInt_dvd_iff π x, hπ, Formalism.BasicNotions.Examples₂.wz_lt_one_iff]
+
+    have adicInt_mem_pow_iff (n : ℕ) (x : Ov) :
+        x ∈ (maximalIdeal Ov) ^ n ↔ Valued.v (x : Kv) ≤ exp (-(n : ℤ)) := by
+      obtain ⟨π, hπ⟩ := Formalism.BasicNotions.Examples₂.adicInt_exists_unif (K := E) w 
+      have h1 : ((π ^ n : Ov) : Kv) = (π : Kv) ^ n := by
+        first
+        | rfl
+        | push_cast; rfl
+        | simp
+      have hpow : Valued.v ((π ^ n : Ov) : Kv) = exp (-(n : ℤ)) := by
+        rw [h1, map_pow, hπ]
+        first
+        | (rw [← WithZero.exp_nsmul]; congr 1; simp)
+        | (rw [← WithZero.exp_nsmul]; simp)
+        | simp [WithZero.exp, ← ofAdd_nsmul]
+      rw [adicInt_max_eq_span π hπ, Ideal.span_singleton_pow, Ideal.mem_span_singleton,
+        adicInt_dvd_iff, hpow]
+
+    have wz_exists_nat_lt (γ : ℤᵐ⁰) (h : γ ≠ 0) : ∃ N : ℕ, exp (-(N : ℤ)) < γ := by
+      obtain ⟨m, rfl⟩ : ∃ m : ℤ, exp m = γ := ⟨_, WithZero.exp_log h⟩
+      exact ⟨m.natAbs + 1, by rw [WithZero.exp_lt_exp]; omega⟩
+
+    have adicInt_eq_zero_of_forall (x : Kv) (h : ∀ n : ℕ, Valued.v x ≤ exp (-(n : ℤ))) : x = 0 := by
+      by_contra hx
+      have h0 : Valued.v x ≠ 0 := by
+        first
+        | exact (Valuation.ne_zero_iff _).mpr hx
+        | exact (map_ne_zero _).mpr hx
+        | simpa using hx
+      obtain ⟨N, hN⟩ := wz_exists_nat_lt (Valued.v x) h0
+      exact absurd (h N) (not_le.mpr hN)
+
+    have adicCompl_isClosed_le (r : ℤᵐ⁰) : IsClosed {x : Kv | Valued.v x ≤ r} := by
+      rw [← isOpen_compl_iff, isOpen_iff_mem_nhds]
+      intro x hx
+      have hx' : r < Valued.v x := not_le.mp hx
+      have hx0 : Valued.v x ≠ 0 := (lt_of_le_of_lt zero_le' hx').ne'
+      have hmem : {y : Kv | Valued.v y = Valued.v x} ∈ 𝓝 x := by
+        first
+        | exact Valuation.loc_const hx0
+        | exact Valued.locally_const hx0
+        | exact (Valued.isOpen_sphere Kv hx0).mem_nhds rfl
+        | exact (Valued.isClopen_sphere Kv hx0).isOpen.mem_nhds rfl
+        | exact (Valued.isOpen_sphere (R := Kv) hx0).mem_nhds rfl
+      filter_upwards [hmem] with y hy
+      show ¬ Valued.v y ≤ r
+      rw [show Valued.v y = Valued.v x from hy]
+      exact not_le.mpr hx'
+
+    have adicInt_isAdicComplete : IsAdicComplete (maximalIdeal Ov) Ov := by
+      have key : ∀ (n : ℕ) (x y : Ov), x ≡ y [SMOD (maximalIdeal Ov ^ n • ⊤ : Submodule Ov Ov)] ↔
+          Valued.v ((x : Kv) - y) ≤ exp (-(n : ℤ)) := by
+        intro n x y
+        rw [smul_eq_mul, Ideal.mul_top, SModEq.sub_mem, adicInt_mem_pow_iff]
+        rfl
+      have h1 : IsHausdorff (maximalIdeal Ov) Ov := by
+        refine ⟨fun x hx => ?_⟩
+        have h0 : (x : Kv) = 0 := adicInt_eq_zero_of_forall _ (fun n => by
+          simpa using (key n x 0).1 (hx n))
+        exact Subtype.ext h0
+      have h2 : IsPrecomplete (maximalIdeal Ov) Ov := by
+        refine ⟨fun f hf => ?_⟩
+        set g : ℕ → Kv := fun n => (f n : Kv)
+        have hg : ∀ m n, m ≤ n → Valued.v (g n - g m) ≤ exp (-(m : ℤ)) := by
+          intro m n hmn
+          have := (key m (f m) (f n)).1 (hf hmn)
+          rwa [← Valuation.map_neg, neg_sub] at this
+        have hc : CauchySeq g := by
+          rw [(Valued.hasBasis_uniformity Kv ℤᵐ⁰).cauchySeq_iff]
+          intro γ _
+          have hne : MonoidWithZeroHom.ValueGroup₀.embedding γ.1 ≠ 0 := fun h =>
+            γ.ne_zero (MonoidWithZeroHom.ValueGroup₀.embedding_injective (h.trans (map_zero _).symm))
+          obtain ⟨N, hN⟩ := wz_exists_nat_lt _ hne
+          refine ⟨N, fun m hm n hn => ?_⟩
+          simp only [Set.mem_ofPred_eq, Valuation.restrict_lt_iff_lt_embedding]
+          have hle : ∀ a b, N ≤ a → a ≤ b →
+              Valued.v (g b - g a) < MonoidWithZeroHom.ValueGroup₀.embedding γ.1 := fun a b ha hab =>
+            lt_of_le_of_lt ((hg a b hab).trans (exp_le_exp.2 (by omega))) hN
+          rcases le_total m n with h | h
+          · exact hle m n hm h
+          · rw [← Valuation.map_neg, neg_sub]; exact hle n m hn h
+        obtain ⟨L, hL⟩ := cauchySeq_tendsto_of_complete hc
+        have hLmem : L ∈ Ov := by
+          refine (Valued.isClosed_valuationSubring Kv).mem_of_tendsto hL (Eventually.of_forall ?_)
+          intro n; exact (f n).2
+        refine ⟨⟨L, hLmem⟩, fun n => ?_⟩
+        rw [key]
+        have hcl : IsClosed {y : Kv | Valued.v (g n - y) ≤ exp (-(n : ℤ))} :=
+          (adicCompl_isClosed_le _).preimage (continuous_const.sub continuous_id)
+        refine hcl.mem_of_tendsto hL ?_
+        filter_upwards [eventually_ge_atTop n] with k hk
+        show Valued.v (g n - g k) ≤ _
+        rw [← Valuation.map_neg, neg_sub]; exact hg n k hk
+      exact { toIsHausdorff := h1, toIsPrecomplete := h2 }
+
+    haveI : HenselianLocalRing Ov := by
+      have := adicInt_isAdicComplete 
+      have : HenselianRing Ov (maximalIdeal Ov) := inferInstance
+      refine ⟨fun f hf a₀ h₁ h₂ => ?_⟩
+      refine HenselianRing.is_henselian f hf a₀ h₁ ?_
+      exact h₂.map _
+    exact inferInstance
   have hfin : Finite (IsLocalRing.ResidueField (w.adicCompletionIntegers E)) := by
     refine Nat.finite_of_card_ne_zero ?_
     have h := hcard

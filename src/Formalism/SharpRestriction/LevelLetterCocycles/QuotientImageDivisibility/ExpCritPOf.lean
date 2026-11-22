@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.IndepPhiCmp
-import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.IndepOfSpan
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.IndepPhiCmp
+public import Formalism.SharpRestriction.LevelLetterCocycles.QuotientImageDivisibility.IndepOfSpan
+
+@[expose] public section
 
 noncomputable section
 open Classical
@@ -54,7 +58,7 @@ theorem expCritP_of [NeZero n] (hA : Formalism.MainNotions.LiftingTheory.CaseA W
     have hi1 : i - 1 + ((1 : ℕ) : ZMod n) = i := by push_cast; ring
     have hqΔ : ∀ δ ∈ W.DelF, W.γA δ (Formalism.MainNotions.LiftingTheory.qp W) = Formalism.MainNotions.LiftingTheory.qp W := by
       intro δ hδ
-      simp only [Formalism.MainNotions.LiftingTheory.qp, map_add, map_natCast, hring.1 δ hδ]
+      simp only [Formalism.MainNotions.LiftingTheory.qp, map_add (f := _), map_natCast, hring.1 δ hδ]
     have hDLy : Formalism.MainNotions.CrystallineLiftingInputs.DL W T (i - 1 + ((1 : ℕ) : ZMod n)) (Formalism.MainNotions.LiftingTheory.qp W ^ k • x) := by
       rw [hi1]
       refine ⟨by rw [smul_comm, hDL.1], fun δ hδ => ?_⟩
@@ -138,7 +142,7 @@ theorem expCritP_of [NeZero n] (hA : Formalism.MainNotions.LiftingTheory.CaseA W
     have hqpe : W.π₀ + algebraMap O (LetA O n) ((PD.p : ℕ) : O) = Formalism.MainNotions.LiftingTheory.qp W := by
       rw [map_natCast]; rfl
     have hψ : ψ (PowerSeries.X + PowerSeries.C ((PD.p : ℕ) : O)) = PowerSeries.X * u := by
-      rw [hψa, ← at0Hom_apply W hring, map_add, at0Hom_apply, at0Hom_apply, evalZero_X_eq_pi0 W hring, evalZero_C,
+      rw [hψa, ← at0Hom_apply W hring, map_add (f := _), at0Hom_apply, at0Hom_apply, evalZero_X_eq_pi0 W hring, evalZero_C,
         hqpe, hlq, mul_comm]
     have hdiv : ∀ m, (PowerSeries.X + PowerSeries.C ((PD.p : ℕ) : O)) ^ k ∣ a m := fun m =>
       Wd.dvd_of_dvd_image hinj ((PD.p : ℕ) : O) ψ hψC u hu hψ hlm k (a m)

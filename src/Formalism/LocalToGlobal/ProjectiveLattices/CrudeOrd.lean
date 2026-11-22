@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.CrudeBase
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.CrudeBase
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -41,7 +45,7 @@ theorem OrdGe.mul {a b : ℕ} {f g : PS k n d} (hf : OrdGe a f) (hg : OrdGe b g)
     rw [← hp]
     first
       | exact (map_add _ _ _).symm
-      | (simp only [Finsupp.degree_eq_weight_one, map_add])
+      | (simp only [Finsupp.degree_eq_weight_one, map_add (f := _)])
       | (rw [Finsupp.degree_eq_sum, Finsupp.degree_eq_sum, Finsupp.degree_eq_sum, ← Finset.sum_add_distrib]; rfl)
       | (simp only [Finsupp.degree_eq_sum, Finsupp.coe_add, Pi.add_apply, Finset.sum_add_distrib])
       | (unfold Finsupp.degree
@@ -56,7 +60,7 @@ theorem cro_ordGe_zero (f : PS k n d) : OrdGe 0 f := by
 
 theorem cro_ordGe_add {t : ℕ} {f g : PS k n d} (hf : OrdGe t f) (hg : OrdGe t g) : OrdGe t (f + g) := by
   intro m hm
-  rw [map_add, hf m hm, hg m hm, add_zero]
+  rw [map_add (f := _), hf m hm, hg m hm, add_zero]
 
 theorem cro_ordGe_zero' (t : ℕ) : OrdGe t (0 : PS k n d) := by
   intro m _
@@ -65,7 +69,8 @@ theorem cro_ordGe_zero' (t : ℕ) : OrdGe t (0 : PS k n d) := by
 theorem cro_ordGe_sum {t : ℕ} {ι : Type} (s : Finset ι) (f : ι → PS k n d) (hf : ∀ i ∈ s, OrdGe t (f i)) :
     OrdGe t (∑ i ∈ s, f i) := by
   intro m hm
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_eq_zero fun i hi => hf i hi m hm
 
 theorem cro_ordGe_mul_left {t : ℕ} (g : PS k n d) {f : PS k n d} (hf : OrdGe t f) : OrdGe t (g * f) := by
@@ -73,20 +78,12 @@ theorem cro_ordGe_mul_left {t : ℕ} (g : PS k n d) {f : PS k n d} (hf : OrdGe t
   rwa [zero_add] at h
 
 theorem cro_ordGe_pderiv {t : ℕ} {f : PS k n d} (hf : OrdGe (t + 1) f) (i : Fin n × Fin d) :
-    OrdGe t (pderiv k i f) := by
+    OrdGe t (pderiv i f) := by
   intro m hm
-  unfold pderiv
-  show coeff m (pderivFun i f) = 0
-  unfold pderivFun
+  rw [MvPowerSeries.coeff_pderiv]
   have hz : coeff (m + Finsupp.single i 1) f = 0 := hf _ (by
-    have e : (m + Finsupp.single i 1).degree = m.degree + 1 := by
-      first
-        | (rw [map_add, Finsupp.degree_single])
-        | simp [Finsupp.degree_single]
-        | (rw [Finsupp.degree_eq_sum, Finsupp.degree_eq_sum]
-           simp [Finset.sum_add_distrib, Finsupp.single_apply])
+    rw [map_add, Finsupp.degree_single]
     omega)
-  show coeff (m + Finsupp.single i 1) f * ((m i : k) + 1) = 0
   rw [hz, zero_mul]
 
 theorem cro_ordGe_lin {t : ℕ} {f : PS k n d} (hf : OrdGe (t + 1) f) (b : Fin n) (v : Fin d → k) :
@@ -202,7 +199,7 @@ theorem cro_coeff_lin (G : FGLaw k d) (i j : Fin d) :
       apply hD
       ext ⟨s1, s2⟩
       have hev := congrArg (fun D' : Fin 1 × Fin d →₀ ℕ => D' ((0 : Fin 1), s2)) heq
-      simp only [Finsupp.finset_sum_apply, Finsupp.single_apply, Prod.mk.injEq, true_and] at hev
+      simp only [Finsupp.finsetSum_apply, Finsupp.single_apply, Prod.mk.injEq, true_and] at hev
       rw [Finset.sum_eq_single ((1 : Fin 2), s2)] at hev
       · fin_cases s1
         · have h0 : D ((0 : Fin 2), s2) = 0 := by
@@ -334,29 +331,23 @@ theorem cro_dofN_lin (F : Fin d → PS k 2 d)
   beta_reduce
   rw [← sub_mul]
   have key : ∀ A : PS k n d, constantCoeff A = v j →
-      OrdGe (t + 1) ((A - C (v j)) * pderiv k (b, j) X) := by
+      OrdGe (t + 1) ((A - C (v j)) * pderiv (b, j) X) := by
     intro A hA
     have h1 : OrdGe 1 (A - C (v j)) := by
       rw [ordGe_one_iff, map_sub, hA, MvPowerSeries.constantCoeff_C, sub_self]
     have h3 := OrdGe.mul h1 (cro_ordGe_pderiv hX (b, j))
     rwa [add_comm] at h3
   apply key
-  have hc : ∀ i, constantCoeff (ev ![pt k d b, 0] ((pderiv k ((1 : Fin 2), i)) (F j))) =
+  have hc : ∀ i, constantCoeff (ev ![pt k d b, 0] (pderiv ((1 : Fin 2), i) (F j))) =
       if i = j then 1 else 0 := by
     intro i
     rw [cro_constCoeff_ev]
-    · rw [← hF i j]
-      first
-        | (show coeff (0 + Finsupp.single ((1 : Fin 2), i) 1) (F j) *
-              (((0 : Fin 2 × Fin d →₀ ℕ) ((1 : Fin 2), i) : k) + 1) = _
-           simp)
-        | (unfold pderiv
-           show coeff 0 (pderivFun ((1 : Fin 2), i) (F j)) = _
-           unfold pderivFun
-           simp)
+    · rw [← MvPowerSeries.coeff_zero_eq_constantCoeff_apply, MvPowerSeries.coeff_pderiv]
+      simpa using hF i j
     · intro p l
       fin_cases p <;> simp [pt]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   first
     | (simp only [map_mul, MvPowerSeries.constantCoeff_C, hc]
        simp)
@@ -391,7 +382,8 @@ theorem nabValN_eq_lin [Algebra ℚ k] {O : Type} [CommRing O] [StarRing O] (B :
   set g := FB.expS k ((m : k) • ∑ b : Fin n, ev (n := n) ![pt k d b] (B.hL k h w0)) with hg_def
   have hg1 : constantCoeff g = 1 := by
     apply cro_constCoeff_expS
-    rw [smul_eq_C_mul, map_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [smul_eq_C_mul, map_mul, map_sum]
     have : ∀ b : Fin n, constantCoeff (ev (n := n) ![pt k d b] (B.hL k h w0)) = 0 := by
       intro b
       rw [cro_constCoeff_ev, hL0]
@@ -401,7 +393,8 @@ theorem nabValN_eq_lin [Algebra ℚ k] {O : Type} [CommRing O] [StarRing O] (B :
     intro i j
     simp only [FB.FK, FGLaw.mapF, coeff_map, cro_coeff_lin, Algebra.algebraMap_self, RingHom.id_apply]
   unfold nabValN DpolyN
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun a ha => ?_
   rw [map_mul, constantCoeff_C]
   congr 1

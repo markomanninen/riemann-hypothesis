@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.EigenOfTwoStep
+
+@[expose] public section
 
 open scoped MatrixGroups TensorProduct
 open Matrix GlobalTheory.KZ
@@ -55,7 +59,7 @@ def fixField (X : Tower Ω ε) : IntermediateField Ω X.K where
     classical
     rintro a b ⟨E, hE⟩ ⟨F, hF⟩
     refine ⟨E ∪ F, fun s hs => ?_⟩
-    rw [map_add, hE s (fun x hx => hs x (Finset.mem_union_left _ hx)),
+    rw [map_add (f := _), hE s (fun x hx => hs x (Finset.mem_union_left _ hx)),
       hF s (fun x hx => hs x (Finset.mem_union_right _ hx))]
   algebraMap_mem' c := ⟨{c}, fun s hs => gal_algebraMap X s c (hs c (Finset.mem_singleton_self c))⟩
   inv_mem' := by
@@ -103,7 +107,7 @@ theorem fix_fin (X : Tower Ω ε) (f : X.K) :
     simpa [hqf] using this
   by_contra hne
   have hmem : (X.exp f).coeff (rr _ hne) ∈ E2 :=
-    Finset.mem_image.2 ⟨X.gal s f, Multiset.mem_toFinset.2 hroot, by rw [dif_neg hne]⟩
+    Finset.mem_image.2 ⟨X.gal s f, Multiset.mem_toFinset.2 hroot, by rw [dite_eq_right hne]⟩
   apply hrr _ hne
   rw [X.gal_exp]
   exact hs _ (Finset.mem_union_right _ hmem)
@@ -158,7 +162,7 @@ theorem kmap_sub_mem_A (X : Tower Ω ε) (l : ℕ) [Fact l.Prime] (c : X.Khat l)
     refine ⟨E ∪ F, fun s hs => ?_⟩
     have := Submodule.add_mem _ (hE s fun x hx => hs x (Finset.mem_union_left _ hx))
       (hF s fun x hx => hs x (Finset.mem_union_right _ hx))
-    rw [map_add]
+    rw [map_add (f := _)]
     convert this using 1
     abel
   | smul r a _ ha =>
@@ -182,7 +186,8 @@ theorem galB_sub_mem_of_Pol [IsAlgClosure ℚ Ω] (X : Tower Ω ε) (l w : ℕ) 
       (Finset.mem_biUnion.2 ⟨i, Finset.mem_univ _, hx⟩)))
   set χ := (cyclotomicCharacter Ω l s.toRingEquiv : ℤ_[l]) with hχdef
   have hgal : X.galB l s b u = X.kmap l (X.gal s) (b ![u 0, χ * u 1]) := rfl
-  rw [Pi.sub_apply, hgal, hbc, hbc, map_sum, ← Finset.sum_sub_distrib]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Pi.sub_apply, hgal, hbc, hbc, map_sum, ← Finset.sum_sub_distrib]
   refine Submodule.sum_mem _ fun i _ => ?_
   simp only [map_smul, Matrix.cons_val_zero, Matrix.cons_val_one]
   have hpow : χ ^ (w - (i : ℕ)) - 1 ∈ (idl l) ^ n := by
@@ -216,7 +221,7 @@ theorem galB_cont : ∀ {Ω : Type} [Field Ω] [Algebra ℚ Ω] [IsAlgClosure �
     refine ⟨E ∪ F, fun s hs u => ?_⟩
     have := Submodule.add_mem _ (hE s (fun x hx => hs x (Finset.mem_union_left _ hx)) u)
       (hF s (fun x hx => hs x (Finset.mem_union_right _ hx)) u)
-    rw [map_add]
+    rw [map_add (f := _)]
     convert this using 1
     simp only [LinearMap.sub_apply, Pi.add_apply, Pi.sub_apply]
     abel

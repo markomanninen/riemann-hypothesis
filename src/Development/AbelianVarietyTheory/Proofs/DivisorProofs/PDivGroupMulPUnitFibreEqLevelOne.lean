@@ -1,4 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfEqZero
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigOfOmegaInjectiveOfEqZero
+
+@[expose] public section
+
 open scoped TensorProduct
 
 set_option autoImplicit false
@@ -20,7 +25,7 @@ variable {p : ℕ} {R : Type} [CommRing R] (G : _root_.GlobalTheory.PDivGroup p 
 theorem _root_.GlobalTheory.PDivGroup.ker_resOne (n : ℕ) :
     RingHom.ker (G.resOne n :
       G.A (n + 1) →ₐ[R] G.A 1) =
-      _root_.GlobalTheory.PDiv.torsionIdeal R (G.A (n + 1)) p := by
+      _root_.GlobalTheory.PDiv.torsionIdeal (R := R) (A := G.A (n + 1)) p := by
   induction n with
   | zero =>
     have hid : (G.resOne 0 :
@@ -60,7 +65,7 @@ theorem _root_.GlobalTheory.PDivGroup.ker_resOne (n : ℕ) :
     refine sup_eq_left.mpr ?_
     have h0 : Ideal.comap (G.res (n + 1) :
         G.A (n + 2) →ₐ[R] G.A (n + 1)) ⊥ =
-        _root_.GlobalTheory.PDiv.torsionIdeal R (G.A (n + 2)) (p ^ (n + 1)) := by
+        _root_.GlobalTheory.PDiv.torsionIdeal (R := R) (A := G.A (n + 2)) (p ^ (n + 1)) := by
       rw [← G.ker_res (n + 1)]
       ext a; exact Iff.rfl
     rw [h0]
@@ -72,7 +77,7 @@ open TensorProduct Coalgebra Bialgebra in
 variable {p : ℕ} {R : Type} [CommRing R] (G : _root_.GlobalTheory.PDivGroup p R) in
 theorem _root_.GlobalTheory.PDivGroup.kerIdeal_mulP (n : ℕ) :
     _root_.GlobalTheory.PDiv.kerIdeal (G.mulP n) =
-      _root_.GlobalTheory.PDiv.torsionIdeal R (G.A (n + 1)) p := by
+      _root_.GlobalTheory.PDiv.torsionIdeal (R := R) (A := G.A (n + 1)) p := by
   unfold _root_.GlobalTheory.PDiv.torsionIdeal
   rw [← G.mulP_comp_res n,
     _root_.GlobalTheory.PDiv.kerIdeal_comp_of_surjective _ (G.res_surjective n)]

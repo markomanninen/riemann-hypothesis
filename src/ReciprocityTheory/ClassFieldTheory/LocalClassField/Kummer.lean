@@ -1,5 +1,9 @@
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.KummerA
-import ReciprocityTheory.ClassFieldTheory.LocalClassField.RestrictedMultiplicativeH1Subsingleton
+module
+
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.KummerA
+public import ReciprocityTheory.ClassFieldTheory.LocalClassField.RestrictedMultiplicativeH1Subsingleton
+
+@[expose] public section
 
 namespace ReciprocityTheory.DiscreteGroups.LocalClassField
 
@@ -34,8 +38,8 @@ def muT : TRep ℤ (GK p K) where
   rho := muRep p K n
   cont := contAction_muRep p K n
 
-variable {p n} in
 
+variable {p n} in
 def iP {ζ : (PadicAlgCl p)ˣ} (hζ : IsPrimitiveRoot ζ n) : Pair (muT p K n) (kT p K) :=
   Pair.ofMap (M := muT p K n) (M' := kT p K) (muMap ζ hζ.pow_eq_one)
     (continuous_of_discreteTopology : Continuous (muMap ζ hζ.pow_eq_one : ZMod n → KbarMult p))

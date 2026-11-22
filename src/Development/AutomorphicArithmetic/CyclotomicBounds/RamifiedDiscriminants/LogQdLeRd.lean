@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AutomorphicArithmetic.PrimeDiscriminants.SlopeTestRemainingChoices
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.RadBounds2
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.RamEq
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.LogRdSum
-import Development.AutomorphicArithmetic.FrobeniusLocalisation.VdTwo
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.PrimeDiscriminants.SlopeTestRemainingChoices
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.RadBounds2
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.RamEq
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.LogRdSum
+public import Development.AutomorphicArithmetic.FrobeniusLocalisation.VdTwo
+
+@[expose] public section
 
 open UpperTheory.HF
 open NumberField Formalism.HC

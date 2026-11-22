@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPlaceModelPlaceMap
-import Formalism.SharpRestriction.LevelLetterCocycles.IntegralHeckeForms
-import Formalism.SharpRestriction.LevelLetterCocycles.TWSet
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UniversalAnticyclotomicCharacterLaws
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCmAdeleUnitCharacterReadingHeckeChar
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.IsPlaceModelPlaceMap
+public import Formalism.SharpRestriction.LevelLetterCocycles.IntegralHeckeForms
+public import Formalism.SharpRestriction.LevelLetterCocycles.TWSet
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsUniqueHcharOfFiniteOrder
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UniversalAnticyclotomicCharacterLaws
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsCmAdeleUnitCharacterReadingHeckeChar
+
+@[expose] public section
 
 noncomputable section
 
@@ -42,22 +46,16 @@ structure Recip.Good (a : Recip D Ω) : Prop where
         AdeleRing (𝓞 D.host.E) D.host.E)
   artin : IsGlobalArtin a.art
 
-theorem exists_recip_good (h : GlobalTheory.Published.GlobalArtinReciprocity) (D : D7) (Ω : Type) [Field Ω] [Algebra D.host.E Ω]
-    [IsAlgClosure D.host.E Ω] : ∃ a : Recip D Ω, a.Good := by
-  obtain ⟨art, ha⟩ := h D.host.E Ω
-  obtain ⟨κ, h1, h2, h3⟩ := GlobalTheory.CharTransport.exists_hom D
-  exact ⟨⟨κ, art⟩, h1, h2, h3, ha⟩
-
 def Recip.sym (a : Recip D Ω) : (AE D)ˣ →* Gab D.host.E Ω := a.art.comp (Units.map a.κ.toMonoidHom)
 
-open Classical in
 
+open Classical in
 def descend (φ : G D.host.E Ω →* A) : Gab D.host.E Ω →* A :=
   if h : (commutator (G D.host.E Ω)).topologicalClosure ≤ φ.ker then QuotientGroup.lift _ φ h else 1
 
 theorem descend_toAb {φ : G D.host.E Ω →* A} (h : IsOpen (φ.ker : Set (G D.host.E Ω))) (σ : G D.host.E Ω) :
     descend φ (toAb D.host.E Ω σ) = φ σ := by
-  rw [descend, dif_pos (Subgroup.topologicalClosure_minimal _ (Abelianization.commutator_subset_ker φ)
+  rw [descend, dite_eq_left (Subgroup.topologicalClosure_minimal _ (Abelianization.commutator_subset_ker φ)
     (Subgroup.isClosed_of_isOpen _ h))]
   rfl
 
@@ -108,8 +106,8 @@ structure IsChoice (ch : Set (Pl D.host.E)) : Prop where
   one : ∀ P ∈ ch, ∀ P' ∈ ch, (∃ p : ℕ, p.Prime ∧ (p : 𝓞 D.host.E) ∈ P.asIdeal ∧ (p : 𝓞 D.host.E) ∈ P'.asIdeal) →
     P.asIdeal.comap (algebraMap (𝓞 D.host.K) (𝓞 D.host.E)) = P'.asIdeal.comap (algebraMap (𝓞 D.host.K) (𝓞 D.host.E))
 
-open Classical in
 
+open Classical in
 def half (ch : Set (Pl D.host.E)) (Q : Finset (Pl D.host.E)) : Finset (Pl D.host.E) := Q.filter (· ∈ ch)
 
 theorem mem_half {ch : Set (Pl D.host.E)} {Q : Finset (Pl D.host.E)} {P : Pl D.host.E} : P ∈ half ch Q ↔ P ∈ Q ∧ P ∈ ch := by
@@ -144,9 +142,9 @@ variable {N : NData D.R D.host D.what₂} {X : NTw D.R D.host D.what₂ D.LL0 N}
 
 instance (i : X.Tw) (M : ℕ) : NeZero (X.l i ^ M) := ⟨pow_ne_zero _ (X.lPrime i).out.ne_zero⟩
 
+
 variable (X) in
 open Classical in
-
 def admissibleConjugatePairPlaces (i : X.Tw) (Q : Finset (Pl D.host.E)) (M : ℕ) : Finset (Pl D.host.E) :=
   Q.filter fun P => ∃ P' ∈ Q, IsConjPl D.host P P' ∧ Formalism.MainNotions.NAdm.AdmQ X i {P, P'} M
 
@@ -177,8 +175,8 @@ theorem isSplit_of_mem_admissibleConjugatePairPlaces {i : X.Tw} {Q : Finset (Pl 
 
 variable (Y : NExp D.R D.host D.what₂ D.LL0 N X) (i : X.Tw) (Q : Finset (Pl D.host.E)) (M : ℕ)
 
-open Classical in
 
+open Classical in
 def coord (P : Pl D.host.E) : G D.host.E N.Om →* Multiplicative (ZMod (X.l i ^ M)) :=
   if h : P ∈ Q then
     (AddMonoidHom.toMultiplicative (Pi.evalAddMonoidHom (fun _ : ↥Q => ZMod (X.l i ^ M)) ⟨P, h⟩)).comp (Y.delU i Q M)
@@ -186,14 +184,14 @@ def coord (P : Pl D.host.E) : G D.host.E N.Om →* Multiplicative (ZMod (X.l i ^
 
 theorem coord_apply {P : Pl D.host.E} (h : P ∈ Q) (σ : G D.host.E N.Om) :
     Multiplicative.toAdd (coord Y i Q M P σ) = Multiplicative.toAdd (Y.delU i Q M σ) ⟨P, h⟩ := by
-  rw [coord, dif_pos h]
+  rw [coord, dite_eq_left h]
   rfl
 
 def univOf (a : Recip D N.Om) : UnivTwist D (ZMod (X.l i ^ M)) :=
   ⟨fun P => a.pull (coord Y i Q M P), fun P => resOf (a.pull (coord Y i Q M P)) P⟩
 
-open Classical in
 
+open Classical in
 def weight (P : ↥Q) (v : Pl D.host.E) : ZMod (X.l i ^ M) :=
   if v = P.1 then 1
   else if h : v ∈ Q ∧ IsConjPl D.host P.1 v then (((Y.delU_conj i Q M P.1 P.2 v h.1 h.2).choose : ℤ) : ZMod (X.l i ^ M)) else 0
@@ -211,7 +209,7 @@ theorem spread_apply (x : ↥(half ch (admissibleConjugatePairPlaces X i Q M)) �
 theorem spread_of_not_mem (x : ↥(half ch (admissibleConjugatePairPlaces X i Q M)) → ZMod (X.l i ^ M)) (v : ↥Q) (hv : v.1 ∉ admissibleConjugatePairPlaces X i Q M) :
     spread Y i Q M ch x v = 0 := by
   refine Finset.sum_eq_zero fun P _ => ?_
-  rw [weight, if_neg fun e : v.1 = P.1 => hv (e ▸ (mem_half.1 P.2).1), dif_neg fun h => hv h.1, zero_mul]
+  rw [weight, if_neg fun e : v.1 = P.1 => hv (e ▸ (mem_half.1 P.2).1), dite_eq_right fun h => hv h.1, zero_mul]
 
 variable {ch}
 
@@ -220,7 +218,7 @@ theorem spread_of_mem (hch : IsChoice ch) (x : ↥(half ch (admissibleConjugateP
   rw [spread_apply, Finset.sum_eq_single ⟨v.1, hv⟩, weight, if_pos rfl, one_mul]
   · intro P _ hP
     have hne : v.1 ≠ P.1 := fun e => hP (Subtype.ext e.symm)
-    rw [weight, if_neg hne, dif_neg fun h => (hch.pair _ _ h.2 hne.symm).1 (mem_half.1 P.2).2 (mem_half.1 hv).2, zero_mul]
+    rw [weight, if_neg hne, dite_eq_right fun h => (hch.pair _ _ h.2 hne.symm).1 (mem_half.1 P.2).2 (mem_half.1 hv).2, zero_mul]
   · exact fun h => absurd (Finset.mem_univ _) h
 
 theorem spread_coord (hch : IsChoice ch) (σ : G D.host.E N.Om) (v : ↥Q) :
@@ -236,19 +234,17 @@ theorem spread_coord (hch : IsChoice ch) (σ : G D.host.E N.Om) (v : ↥Q) :
         exact hc ((hch.pair _ _ hP hne).2 h)
       have hPa := conj_mem_admissibleConjugatePairPlaces hv hP
       have hP' := GlobalTheory.GalChar.isConjPl_symm hP
-      rw [spread_apply, Finset.sum_eq_single ⟨P, mem_half.2 ⟨hPa, hPc⟩⟩, weight, if_neg hne, dif_pos ⟨hv, hP'⟩,
+      rw [spread_apply, Finset.sum_eq_single ⟨P, mem_half.2 ⟨hPa, hPc⟩⟩, weight, if_neg hne, dite_eq_left ⟨hv, hP'⟩,
         coord_apply _ _ _ _ hv, coord_apply _ _ _ _ hPa]
       · exact ((Y.delU_conj i _ M P hPa v.1 hv hP').choose_spec σ).symm
       · intro P' _ h'
-        rw [weight, if_neg fun e : v.1 = P'.1 => hc (e ▸ (mem_half.1 P'.2).2), dif_neg fun h => h' (Subtype.ext
+        rw [weight, if_neg fun e : v.1 = P'.1 => hc (e ▸ (mem_half.1 P'.2).2), dite_eq_right fun h => h' (Subtype.ext
           (GlobalTheory.GalChar.isConjPl_unique (GlobalTheory.GalChar.isConjPl_symm h.2) hP)), zero_mul]
       · exact fun h => absurd (Finset.mem_univ _) h
-  · rw [spread_of_not_mem Y i Q M ch _ v hv, coord, dif_neg hv]
+  · rw [spread_of_not_mem Y i Q M ch _ v hv, coord, dite_eq_right hv]
     rfl
 
 end Univ
-
-example : ((unitPart (-1) : Circle) : ℂ) = -1 := unitPart_of_pow two_ne_zero (by simp)
 
 end GlobalTheory.SeriesTie
 

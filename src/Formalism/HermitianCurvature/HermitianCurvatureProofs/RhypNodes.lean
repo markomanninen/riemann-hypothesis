@@ -1,6 +1,10 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.OfFnSplit
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LoeSubStates
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SizeAtMinusW
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.OfFnSplit
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LoeSubStates
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SizeAtMinusW
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBL
 

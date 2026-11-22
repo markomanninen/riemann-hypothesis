@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.CharacterGerms.GermEvalOneStandardPointSelf
-import Formalism.LocalToGlobal.CharacterGerms.MaximalOfValuationGeOne
+module
+
+public import Formalism.LocalToGlobal.CharacterGerms.GermEvalOneStandardPointSelf
+public import Formalism.LocalToGlobal.CharacterGerms.MaximalOfValuationGeOne
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -37,7 +41,7 @@ theorem lift_eval_zero (j : Fin dd) : ev ![(P0 : Pt C 2 dd)] ((0 : Pt C 1 dd) j)
 def J2 (G : FGLaw C dd) (k i : Fin dd) : PS C 2 dd := ev ![(P0 : Pt C 2 dd)] (JF G k i)
 
 theorem group_law_jacobian_eq (G : FGLaw C dd) (k i : Fin dd) :
-    J2 G k i = ev (n := 2) ![P0, 0] (pderiv C ((1 : Fin 2), i) (G.F k)) := by
+    J2 G k i = ev (n := 2) ![P0, 0] (pderiv (R := C) ((1 : Fin 2), i) (G.F k)) := by
   unfold J2 JF
   rw [lift_eval_two_points constant_zero_first_then_zero]
   congr 1
@@ -75,14 +79,14 @@ theorem jacobian_mul_log_jacobian {V : VF C} {O : Type} [CommRing O] [StarRing O
 
 variable {V : VF C} {O : Type} [CommRing O] [StarRing O]
 
-def gk (Y : FBChart C V O dd) (k : Fin dd) : PS C 2 dd := pderiv C ((0 : Fin 2), k) Y.h
+def gk (Y : FBChart C V O dd) (k : Fin dd) : PS C 2 dd := pderiv (R := C) ((0 : Fin 2), k) Y.h
 
 def Dh (Y : FBChart C V O dd) (m : Fin dd) : PS C 2 dd := ∑ k, gk Y k * J2 Y.B.G k m
 
 def Az (Y : FBChart C V O dd) (m : Fin dd) : PS C 2 dd := ev (n := 2) ![0, P1] (gk Y m)
 
 def Pm (Y : FBChart C V O dd) (m : Fin dd) : PS C 2 dd :=
-  ev (n := 2) ![P0, 0, P1] (pderiv C ((1 : Fin 3), m) Y.B.ph1)
+  ev (n := 2) ![P0, 0, P1] (pderiv (R := C) ((1 : Fin 3), m) Y.B.ph1)
 
 theorem constant_zero_point_third (P : Pt C 3 dd) (hP : ∀ j, constantCoeff (P j) = 0) :
     Z0 (![P, pt C (n := 3) dd 2] : Fin 2 → Pt C 3 dd) := fun k j => by
@@ -97,11 +101,11 @@ theorem constant_zero_lift_triple : Z0 (![P0, 0, P1] : Fin 3 → Pt C 2 dd) := f
   · exact z0P1 j
 
 theorem pderiv_pt_ne {n : ℕ} (q : Fin n × Fin dd) (k : Fin n) (j : Fin dd) (h : k ≠ q.1) :
-    pderiv C q (pt C dd k j) = 0 := by
+    pderiv (R := C) q (pt C dd k j) = 0 := by
   rw [pderiv_pt, if_neg (fun h' => h (congrArg Prod.fst h'))]
 
 theorem pderiv_pt_same {n : ℕ} (k : Fin n) (j i : Fin dd) :
-    pderiv C (k, i) (pt C dd k j) = if j = i then 1 else 0 := by
+    pderiv (R := C) (k, i) (pt C dd k j) = if j = i then 1 else 0 := by
   rw [pderiv_pt]
   by_cases h : j = i
   · subst h; simp
@@ -122,51 +126,51 @@ theorem dh_eq (Y : FBChart C V O dd) (m : Fin dd) : Dh Y m = Az Y m - Pm Y m := 
     constant_zero_point_third _ hadd
   have hE0 : constantCoeff (ev (n := 3) ![pt C dd 0, pt C dd 2] Y.h + ev (n := 3) ![pt C dd 1, pt C dd 2] Y.h -
       ev (n := 3) ![addOf Y.B.G.F (pt C dd 0) (pt C dd 1), pt C dd 2] Y.h) = 0 := by
-    rw [map_sub, map_add, const_ev hA (h_const Y), const_ev hB (h_const Y), const_ev hC (h_const Y)]
+    rw [map_sub, map_add (f := _), const_ev hA (h_const Y), const_ev hB (h_const Y), const_ev hC (h_const Y)]
     simp
-  have dA : pderiv C ((1 : Fin 3), m) (ev (n := 3) ![pt C dd 0, pt C dd 2] Y.h) = 0 := by
+  have dA : pderiv (R := C) ((1 : Fin 3), m) (ev (n := 3) ![pt C dd 0, pt C dd 2] Y.h) = 0 := by
     rw [pderiv_eval_pair hA]
     refine (congrArg₂ (· + ·) (Finset.sum_eq_zero fun j _ => ?_) (Finset.sum_eq_zero fun j _ => ?_)).trans
       (add_zero 0)
-    · show _ * pderiv C _ (pt C (n := 3) dd 0 j) = 0
+    · show _ * pderiv (R := C) _ (pt C (n := 3) dd 0 j) = 0
       rw [pderiv_pt_ne _ _ _ (by decide : (0 : Fin 3) ≠ 1), mul_zero]
-    · show _ * pderiv C _ (pt C (n := 3) dd 2 j) = 0
+    · show _ * pderiv (R := C) _ (pt C (n := 3) dd 2 j) = 0
       rw [pderiv_pt_ne _ _ _ (by decide : (2 : Fin 3) ≠ 1), mul_zero]
-  have dB : pderiv C ((1 : Fin 3), m) (ev (n := 3) ![pt C dd 1, pt C dd 2] Y.h) =
+  have dB : pderiv (R := C) ((1 : Fin 3), m) (ev (n := 3) ![pt C dd 1, pt C dd 2] Y.h) =
       ev (n := 3) ![pt C dd 1, pt C dd 2] (gk Y m) := by
     rw [pderiv_eval_pair hB]
     refine (congrArg₂ (· + ·) ?_ (Finset.sum_eq_zero fun j _ => ?_)).trans (add_zero _)
     · rw [Finset.sum_eq_single m (fun j _ hj => by
-          show _ * pderiv C _ (pt C (n := 3) dd 1 j) = 0
+          show _ * pderiv (R := C) _ (pt C (n := 3) dd 1 j) = 0
           rw [pderiv_pt_same, if_neg hj, mul_zero]) (fun h => absurd (Finset.mem_univ m) h)]
-      show _ * pderiv C _ (pt C (n := 3) dd 1 m) = _
+      show _ * pderiv (R := C) _ (pt C (n := 3) dd 1 m) = _
       rw [pderiv_pt_same, if_pos rfl, mul_one]
       rfl
-    · show _ * pderiv C _ (pt C (n := 3) dd 2 j) = 0
+    · show _ * pderiv (R := C) _ (pt C (n := 3) dd 2 j) = 0
       rw [pderiv_pt_ne _ _ _ (by decide : (2 : Fin 3) ≠ 1), mul_zero]
-  have dQ : ∀ k, pderiv C ((1 : Fin 3), m) (addOf Y.B.G.F (pt C (n := 3) dd 0) (pt C dd 1) k) =
-      ev (n := 3) ![pt C dd 0, pt C dd 1] (pderiv C ((1 : Fin 2), m) (Y.B.G.F k)) := by
+  have dQ : ∀ k, pderiv (R := C) ((1 : Fin 3), m) (addOf Y.B.G.F (pt C (n := 3) dd 0) (pt C dd 1) k) =
+      ev (n := 3) ![pt C dd 0, pt C dd 1] (pderiv (R := C) ((1 : Fin 2), m) (Y.B.G.F k)) := by
     intro k
-    show pderiv C ((1 : Fin 3), m) (ev (n := 3) ![pt C dd 0, pt C dd 1] (Y.B.G.F k)) = _
+    show pderiv (R := C) ((1 : Fin 3), m) (ev (n := 3) ![pt C dd 0, pt C dd 1] (Y.B.G.F k)) = _
     rw [pderiv_eval_pair hPP]
     refine (congrArg₂ (· + ·) (Finset.sum_eq_zero fun j _ => ?_) ?_).trans (zero_add _)
-    · show _ * pderiv C _ (pt C (n := 3) dd 0 j) = 0
+    · show _ * pderiv (R := C) _ (pt C (n := 3) dd 0 j) = 0
       rw [pderiv_pt_ne _ _ _ (by decide : (0 : Fin 3) ≠ 1), mul_zero]
     · rw [Finset.sum_eq_single m (fun j _ hj => by
-          show _ * pderiv C _ (pt C (n := 3) dd 1 j) = 0
+          show _ * pderiv (R := C) _ (pt C (n := 3) dd 1 j) = 0
           rw [pderiv_pt_same, if_neg hj, mul_zero]) (fun h => absurd (Finset.mem_univ m) h)]
-      show _ * pderiv C _ (pt C (n := 3) dd 1 m) = _
+      show _ * pderiv (R := C) _ (pt C (n := 3) dd 1 m) = _
       rw [pderiv_pt_same, if_pos rfl, mul_one]
-  have dC : pderiv C ((1 : Fin 3), m) (ev (n := 3) ![addOf Y.B.G.F (pt C dd 0) (pt C dd 1), pt C dd 2] Y.h) =
+  have dC : pderiv (R := C) ((1 : Fin 3), m) (ev (n := 3) ![addOf Y.B.G.F (pt C dd 0) (pt C dd 1), pt C dd 2] Y.h) =
       ∑ k, ev (n := 3) ![addOf Y.B.G.F (pt C dd 0) (pt C dd 1), pt C dd 2] (gk Y k) *
-        ev (n := 3) ![pt C dd 0, pt C dd 1] (pderiv C ((1 : Fin 2), m) (Y.B.G.F k)) := by
+        ev (n := 3) ![pt C dd 0, pt C dd 1] (pderiv (R := C) ((1 : Fin 2), m) (Y.B.G.F k)) := by
     rw [pderiv_eval_pair hC]
     refine (congrArg₂ (· + ·) (Finset.sum_congr rfl fun k _ => ?_) (Finset.sum_eq_zero fun j _ => ?_)).trans
       (add_zero _)
-    · show _ * pderiv C _ (addOf Y.B.G.F (pt C (n := 3) dd 0) (pt C dd 1) k) = _
+    · show _ * pderiv (R := C) _ (addOf Y.B.G.F (pt C (n := 3) dd 0) (pt C dd 1) k) = _
       rw [dQ k]
       rfl
-    · show _ * pderiv C _ (pt C (n := 3) dd 2 j) = 0
+    · show _ * pderiv (R := C) _ (pt C (n := 3) dd 2 j) = 0
       rw [pderiv_pt_ne _ _ _ (by decide : (2 : Fin 3) ≠ 1), mul_zero]
 
   have hS := constant_zero_lift_triple (C := C) (dd := dd)
@@ -204,7 +208,7 @@ theorem dh_eq (Y : FBChart C V O dd) (m : Fin dd) : Dh Y m = Az Y m - Pm Y m := 
     exact PartialDerivEval.eval_points_two f
   have hPm : Pm Y m = ev (n := 2) ![0, P1] (gk Y m) - ∑ k, gk Y k * J2 Y.B.G k m := by
     unfold Pm
-    rw [hph, pderiv_expS hE0, ← hph, ev_mul hS, Y.B.cocycleLeft_zero_snd, one_mul, map_sub, map_add, dA, dB, dC, zero_add,
+    rw [hph, pderiv_expS hE0, ← hph, ev_mul hS, Y.B.cocycleLeft_zero_snd, one_mul, map_sub, map_add (f := _), dA, dB, dC, zero_add,
       ev_sub hS, sB, ev_sum hS]
     congr 1
     refine Finset.sum_congr rfl fun k _ => ?_
@@ -248,17 +252,17 @@ theorem evl_Az (Y : FBChart C V O dd) (n : ℕ) (m : Fin dd) : evl Y n (Az Y m) 
   · exact ev_X (constant_zero_double_multiplication Y n) 1 j
 
 theorem pderiv_double_multiplication_jacobian (Y : FBChart C V O dd) (n : ℕ) (k i : Fin dd) :
-    pderiv C ((0 : Fin 2), i) (mm2 Y.B.G n k) = ev ![(P0 : Pt C 2 dd)] (Jac (mulL Y.B.G.F n) k i) := by
-  show pderiv C ((0 : Fin 2), i) (ev ![(P0 : Pt C 2 dd)] (mulL Y.B.G.F n k)) = _
+    pderiv (R := C) ((0 : Fin 2), i) (mm2 Y.B.G n k) = ev ![(P0 : Pt C 2 dd)] (Jac (mulL Y.B.G.F n) k i) := by
+  show pderiv (R := C) ((0 : Fin 2), i) (ev ![(P0 : Pt C 2 dd)] (mulL Y.B.G.F n k)) = _
   rw [pderiv_eval_single (P := (P0 : Pt C 2 dd)) z0P0, Finset.sum_eq_single i (fun j _ hj => by
-      show _ * pderiv C _ (pt C (n := 2) dd 0 j) = 0
+      show _ * pderiv (R := C) _ (pt C (n := 2) dd 0 j) = 0
       rw [pderiv_pt_same, if_neg hj, mul_zero]) (fun h => absurd (Finset.mem_univ i) h)]
-  show _ * pderiv C _ (pt C (n := 2) dd 0 i) = _
+  show _ * pderiv (R := C) _ (pt C (n := 2) dd 0 i) = _
   rw [pderiv_pt_same, if_pos rfl, mul_one]
   rfl
 
 theorem pderiv_double_multiplication (Y : FBChart C V O dd) (n : ℕ) (k i : Fin dd) :
-    pderiv C ((0 : Fin 2), i) (mm2 Y.B.G n k) = (n : PS C 2 dd) * ∑ m, evl Y n (J2 Y.B.G k m) * logJacobianTwoPoints Y m i := by
+    pderiv (R := C) ((0 : Fin 2), i) (mm2 Y.B.G n k) = (n : PS C 2 dd) * ∑ m, evl Y n (J2 Y.B.G k m) * logJacobianTwoPoints Y m i := by
   rw [pderiv_double_multiplication_jacobian, jac_l, Matrix.smul_apply, Matrix.mul_apply, ev_eq_alg (z0_1 _ z0P0), map_nsmul,
     ← ev_eq_alg (z0_1 _ z0P0), ev_sum (z0_1 _ z0P0), nsmul_eq_mul]
   congr 1
@@ -276,22 +280,22 @@ theorem gk_eq (Y : FBChart C V O dd) (i : Fin dd) : gk Y i = ∑ m, Dh Y m * log
     if_pos rfl, mul_one]
 
 theorem dE (Y : FBChart C V O dd) (i : Fin dd) :
-    pderiv C ((0 : Fin 2), i) (evl Y V.l Y.h - (V.l : C) • Y.h) =
+    pderiv (R := C) ((0 : Fin 2), i) (evl Y V.l Y.h - (V.l : C) • Y.h) =
       (V.l : PS C 2 dd) * ∑ m, (Pm Y m - evl Y V.l (Pm Y m)) * logJacobianTwoPoints Y m i := by
-  have h1 : pderiv C ((0 : Fin 2), i) (evl Y V.l Y.h) =
+  have h1 : pderiv (R := C) ((0 : Fin 2), i) (evl Y V.l Y.h) =
       (V.l : PS C 2 dd) * ∑ m, evl Y V.l (Dh Y m) * logJacobianTwoPoints Y m i := by
     unfold evl
     rw [pderiv_eval_pair (constant_zero_double_multiplication Y V.l)]
     rw [(Finset.sum_eq_zero fun k _ => by
-        show _ * pderiv C _ (pt C (n := 2) dd 1 k) = 0
+        show _ * pderiv (R := C) _ (pt C (n := 2) dd 1 k) = 0
         rw [pderiv_pt_ne _ _ _ (by decide : (1 : Fin 2) ≠ 0), mul_zero] :
-      ∑ k, ev (n := 2) ![mm2 Y.B.G V.l, P1] (pderiv C ((1 : Fin 2), k) Y.h) *
-        pderiv C ((0 : Fin 2), i) ((![mm2 Y.B.G V.l, P1] : Fin 2 → Pt C 2 dd) 1 k) = 0), add_zero]
-    have e : ∀ k, ev (n := 2) ![mm2 Y.B.G V.l, P1] (pderiv C ((0 : Fin 2), k) Y.h) *
-        pderiv C ((0 : Fin 2), i) ((![mm2 Y.B.G V.l, P1] : Fin 2 → Pt C 2 dd) 0 k) =
+      ∑ k, ev (n := 2) ![mm2 Y.B.G V.l, P1] (pderiv (R := C) ((1 : Fin 2), k) Y.h) *
+        pderiv (R := C) ((0 : Fin 2), i) ((![mm2 Y.B.G V.l, P1] : Fin 2 → Pt C 2 dd) 1 k) = 0), add_zero]
+    have e : ∀ k, ev (n := 2) ![mm2 Y.B.G V.l, P1] (pderiv (R := C) ((0 : Fin 2), k) Y.h) *
+        pderiv (R := C) ((0 : Fin 2), i) ((![mm2 Y.B.G V.l, P1] : Fin 2 → Pt C 2 dd) 0 k) =
         (V.l : PS C 2 dd) * ∑ m, evl Y V.l (gk Y k) * evl Y V.l (J2 Y.B.G k m) * logJacobianTwoPoints Y m i := by
       intro k
-      show _ * pderiv C ((0 : Fin 2), i) (mm2 Y.B.G V.l k) = _
+      show _ * pderiv (R := C) ((0 : Fin 2), i) (mm2 Y.B.G V.l k) = _
       rw [pderiv_double_multiplication, Finset.mul_sum, Finset.mul_sum, Finset.mul_sum]
       refine Finset.sum_congr rfl fun m _ => ?_
       unfold gk evl
@@ -303,7 +307,7 @@ theorem dE (Y : FBChart C V O dd) (i : Fin dd) :
     rw [ev_sum (constant_zero_double_multiplication Y V.l), Finset.sum_mul]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [ev_mul (constant_zero_double_multiplication Y V.l)]
-  have h2 : pderiv C ((0 : Fin 2), i) ((V.l : C) • Y.h) = (V.l : PS C 2 dd) * ∑ m, Dh Y m * logJacobianTwoPoints Y m i := by
+  have h2 : pderiv (R := C) ((0 : Fin 2), i) ((V.l : C) • Y.h) = (V.l : PS C 2 dd) * ∑ m, Dh Y m * logJacobianTwoPoints Y m i := by
     rw [Nat.cast_smul_eq_nsmul, map_nsmul, nsmul_eq_mul, ← gk_eq]
     rfl
   rw [map_sub, h1, h2, ← mul_sub, ← Finset.sum_sub_distrib]
@@ -326,7 +330,7 @@ theorem first_unit_series_frobenius : FirstUnitSeriesFrobenius := by
     rw [map_sub, show (V.l : C) • Y.h = ((V.l : ℕ) : PS C 2 dd) * Y.h by
       rw [Nat.cast_smul_eq_nsmul, nsmul_eq_mul], map_mul, PartialDerivEval.h_const, mul_zero, sub_zero]
     exact FirstUnitSeriesIntegrality.height_multiple_constantCoeff Y V.l
-  have hd : pderiv C ((0 : Fin 2), i) Y.u1 =
+  have hd : pderiv (R := C) ((0 : Fin 2), i) Y.u1 =
       (V.l : PS C 2 dd) * (Y.u1 * ∑ m, (Pm Y m - evl Y V.l (Pm Y m)) * logJacobianTwoPoints Y m i) := by
     rw [hu, PartialDerivEval.pderiv_expS hE0, dE, ← hu]; ring
   have hint : IntS V (Y.u1 * ∑ m, (Pm Y m - evl Y V.l (Pm Y m)) * logJacobianTwoPoints Y m i) := by
@@ -348,7 +352,7 @@ theorem first_unit_series_frobenius : FirstUnitSeriesFrobenius := by
     · refine PartialDerivEval.intS_ev (PartialDerivEval.z0_1 _ z0P0) (fun k j => ?_) (MulLFrob.JL_int Y m i)
       fin_cases k
       exact PartialDerivEval.intS_X _
-  have hmms : MaximalIdealCongruence.MMS V (pderiv C ((0 : Fin 2), i) Y.u1) := by
+  have hmms : MaximalIdealCongruence.MMS V (pderiv (R := C) ((0 : Fin 2), i) Y.u1) := by
     rw [hd]; exact MaximalIdealCongruence.mms_l_mul hint
   have hm0 : μ ((0 : Fin 2), i) ≠ 0 := fun h => hi (h ▸ dvd_zero _)
   set ν := μ - Finsupp.single ((0 : Fin 2), i) 1 with hν

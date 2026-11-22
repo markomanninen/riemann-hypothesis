@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.TensorRelationsGL.LiftCommEAt
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,17 +29,20 @@ theorem mAt_apply (p : P) (A : Matrix (Fin n) (Fin n) ℂ) (f : TV n M P) (I : P
 theorem actT_eq {ι Γ : Type} (lab : P → ι) (κ : ι → Γ → Matrix (Fin n) (Fin n) ℂ) (ρ : Γ → Module.End ℂ M)
     (γ : Γ) : actT lab κ ρ γ = lift (ρ γ) * Aop (fun q => κ (lab q) γ) := by
   refine LinearMap.ext fun f => funext fun I => ?_
-  rw [actT_apply, Module.End.mul_apply, lift_apply, Aop_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [actT_apply, Module.End.mul_apply, lift_apply, Aop_apply, map_sum]
   simp only [map_smul]
 
 theorem lift_comm_Aop (B : Module.End ℂ M) (K : P → Matrix (Fin n) (Fin n) ℂ) : Commute (lift B) (Aop K) := by
   refine LinearMap.ext fun f => funext fun I => ?_
-  simp only [Module.End.mul_apply, lift_apply, Aop_apply, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Module.End.mul_apply, lift_apply, Aop_apply, map_sum, map_smul]
 
 theorem lift_comm_mAt (B : Module.End ℂ M) (p : P) (A : Matrix (Fin n) (Fin n) ℂ) :
     Commute (lift B) (mAt p A : Module.End ℂ (TV n M P)) := by
   refine LinearMap.ext fun f => funext fun I => ?_
-  simp only [Module.End.mul_apply, lift_apply, mAt_apply, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Module.End.mul_apply, lift_apply, mAt_apply, map_sum, map_smul]
 
 theorem prod_one_apply (I J : P → Fin n) :
     ∏ q, (1 : Matrix (Fin n) (Fin n) ℂ) (I q) (J q) = if I = J then 1 else 0 := by
@@ -196,7 +203,8 @@ theorem tE_sum (S : Finset P) (E : Fin n → Fin n → Module.End ℂ M) (k : Fi
   · have : ∀ p, (mAt p (∑ c, ∑ d, k c d • Matrix.single c d (1 : ℂ)) : Module.End ℂ (TV n M P)) =
         ∑ c, ∑ d, k c d • mAt p (Matrix.single c d 1) := fun p => by
       rw [show (mAt p : _ → Module.End ℂ (TV n M P)) = mAtL p from rfl]
-      simp only [map_sum, map_smul]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [map_sum, map_smul]
     simp only [this]
     conv_lhs => arg 2; ext c; rw [Finset.sum_comm]
     rw [Finset.sum_comm]

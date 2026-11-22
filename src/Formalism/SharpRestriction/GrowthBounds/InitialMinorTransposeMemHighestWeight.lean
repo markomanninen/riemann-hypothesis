@@ -1,21 +1,25 @@
-import Formalism.SharpRestriction.GrowthBounds.TableLineDegreeFive
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.DescendingProdEqFactorialChoose
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.ExponentFactorialAddSingleOne
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicProjectorLatticeScaling
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.ValuationNonnegIffIntegral
-import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightConditionFromIntegralForm
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.PolynomialMemWeightSpaceIff
-import Formalism.GrowthSums.FactorialBaseGrowth.Coarse
-import Formalism.GrowthSums.FactorialBaseGrowth.Harmonic
-import Formalism.GrowthSums.FactorialBaseGrowth.LogCoef
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.MahPadicGeOfDvd
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.BinomialExpansionCoeffZeroOfDeg
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.MemBoundedDegreeExponentsIff
-import Formalism.SharpRestriction.GrowthBounds.CountingStatementReduction
-import Formalism.GradedWeylDivisibility.FinalC
-import Formalism.GradedWeylDivisibility.FinalD
-import Lemmata.MiscLemmasE.Imports
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.TableLineDegreeFive
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.DescendingProdEqFactorialChoose
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.ExponentFactorialAddSingleOne
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.IsotypicProjectorLatticeScaling
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.ValuationNonnegIffIntegral
+public import Formalism.SharpRestriction.GrowthBounds.ProjectionOfIsotypicDecomposition
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightConditionFromIntegralForm
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.PolynomialMemWeightSpaceIff
+public import Formalism.GrowthSums.FactorialBaseGrowth.Coarse
+public import Formalism.GrowthSums.FactorialBaseGrowth.Harmonic
+public import Formalism.GrowthSums.FactorialBaseGrowth.LogCoef
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.MahPadicGeOfDvd
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.BinomialExpansionCoeffZeroOfDeg
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.MemBoundedDegreeExponentsIff
+public import Formalism.SharpRestriction.GrowthBounds.CountingStatementReduction
+public import Formalism.GradedWeylDivisibility.FinalC
+public import Formalism.GradedWeylDivisibility.FinalD
+public import Lemmata.MiscLemmasE.Imports
+
+@[expose] public section
 
 noncomputable section
 
@@ -119,7 +123,8 @@ theorem decSys_congr {W : I → Submodule K V} {e e' : I → Module.End K V} (h 
   obtain ⟨T, hT⟩ := h.cover x
   have a : e' mu x = ∑ nu ∈ T, e' mu (e nu x) := by
     conv_lhs => rw [hT]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
   rw [a]
   by_cases hmu : mu ∈ T
   · rw [Finset.sum_eq_single_of_mem mu hmu fun nu _ hne => h2 mu nu hne _ (h.mem nu x)]
@@ -130,31 +135,38 @@ theorem decSys_congr {W : I → Submodule K V} {e e' : I → Module.End K V} (h 
 theorem joint_top : ∀ {N : ℕ} (W : Fin N → I → Submodule K V) (e : Fin N → I → Module.End K V)
     (_ : ∀ i, DecSys (W i) (e i))
     (_ : ∀ i j, i ≠ j → ∀ mu nu, ∀ x ∈ W j nu, e i mu x ∈ W j nu),
-    (⨆ t : Fin N → I, ⨅ i, W i (t i)) = ⊤
-  | 0, W, e, h, hc => by
+    (⨆ t : Fin N → I, ⨅ i, W i (t i)) = ⊤ := by
+  intro N
+  induction N with
+  | zero =>
+    intro W e h hc
     refine eq_top_iff.2 ?_
     refine le_trans ?_ (le_iSup _ (fun i => i.elim0))
     simp
-  | N + 1, W, e, h, hc => by
-    have ih := joint_top (fun i => W i.succ) (fun i => e i.succ) (fun i => h i.succ)
-      (fun i j hij => hc i.succ j.succ (by simpa using hij))
-    refine eq_top_iff.2 fun x hx0 => ?_
-    clear hx0
-    have hx : x ∈ (⨆ t : Fin N → I, ⨅ i, W i.succ (t i)) := by rw [ih]; trivial
-    induction hx using Submodule.iSup_induction' with
-    | mem t y hy =>
-      obtain ⟨T, hT⟩ := (h 0).cover y
+  | succ N ih =>
+    intro W e h hc
+    let tail (t : Fin N → I) : Submodule K V := ⨅ i, W i.succ (t i)
+    let joint (t : Fin (N + 1) → I) : Submodule K V := ⨅ i, W i (t i)
+    have htail : (⨆ t, tail t) = ⊤ :=
+      ih (fun i => W i.succ) (fun i => e i.succ) (fun i => h i.succ)
+        (fun i j hij => hc i.succ j.succ (by simpa using hij))
+    have hle (t : Fin N → I) : tail t ≤ ⨆ s, joint s := by
+      intro y hy
+      have hy' : ∀ j : Fin N, y ∈ W j.succ (t j) := (Submodule.mem_iInf _).1 hy
+      obtain ⟨T, hT⟩ := DecSys.cover (h 0) y
       rw [hT]
       refine Submodule.sum_mem _ fun mu _ => ?_
-      refine Submodule.mem_iSup_of_mem (Fin.cons mu t) ?_
+      refine Submodule.mem_iSup_of_mem (p := joint) (Fin.cons mu t) ?_
+      change e 0 mu y ∈ ⨅ i, W i ((Fin.cons mu t : Fin (N + 1) → I) i)
       rw [Submodule.mem_iInf]
       intro i
-      refine Fin.cases ?_ (fun j => ?_) i
-      · simpa using (h 0).mem mu y
-      · simp only [Fin.cons_succ]
-        exact hc 0 j.succ (Fin.succ_ne_zero j).symm mu (t j) y ((Submodule.mem_iInf _).1 hy j)
-    | zero => exact Submodule.zero_mem _
-    | add a b _ _ ha hb => exact Submodule.add_mem _ ha hb
+      cases i using Fin.cases with
+      | zero => simpa only [Fin.cons_zero] using (h 0).mem mu y
+      | succ j =>
+        rw [Fin.cons_succ]
+        exact hc 0 j.succ (Fin.succ_ne_zero j).symm mu (t j) y (hy' j)
+    change (⨆ t, joint t) = ⊤
+    exact eq_top_iff.2 (htail.ge.trans (iSup_le hle))
 
 theorem list_fix (l : List (Module.End K V)) (x : V) (h : ∀ A ∈ l, A x = x) : l.prod x = x := by
   induction l with
@@ -190,8 +202,9 @@ theorem proj_eq_sum {N : ℕ} (W : Fin N → I → Submodule K V) (e : Fin N →
     E = ∑ t ∈ T, (List.ofFn fun i => e i (t i)).prod := by
   refine LinearMap.ext fun x => ?_
   have hx : x ∈ (⨆ t : Fin N → I, ⨅ i, W i (t i)) := by rw [joint_top W e h hc]; trivial
-  induction hx using Submodule.iSup_induction' with
-  | mem t y hy =>
+  refine Submodule.iSup_induction (fun t : Fin N → I => ⨅ i, W i (t i))
+    (motive := fun y => E y = (∑ t ∈ T, (List.ofFn fun i => e i (t i)).prod) y) (x := x) hx ?_ ?_ ?_
+  · intro t y hy
     have hy' : ∀ i, y ∈ W i (t i) := (Submodule.mem_iInf _).1 hy
     have hsame : (List.ofFn fun i => e i (t i)).prod y = y := by
       refine list_fix _ y fun A hA => ?_
@@ -211,8 +224,9 @@ theorem proj_eq_sum {N : ℕ} (W : Fin N → I → Submodule K V) (e : Fin N →
     · rw [h1 t ht y hy, Finset.sum_eq_single_of_mem t ht fun t' _ hne => hdiff t' hne, hsame]
     · rw [h0 t ht y hy]
       exact (Finset.sum_eq_zero fun t' ht' => hdiff t' (fun hh => ht (hh ▸ ht'))).symm
-  | zero => simp
-  | add a b _ _ ha hb => rw [map_add, map_add, ha, hb]
+  · simp
+  · intro a b ha hb
+    rw [map_add (f := _), map_add (f := _), ha, hb]
 
 end Abstract
 
@@ -222,7 +236,10 @@ variable {K : Type} [Field K] [CharZero K] {ι : Type} [Fintype ι] {n : ℕ} [N
 
 theorem sys_of (D : Formalism.BasicNotions.D7) (S : Set ι) (e : (Fin n → ℤ) → Module.End K (MvPolynomial (ι × Fin n) K))
     (he : ∀ lam, IsIsoProj (glOps K n LL S) lam (e lam)) : DecSys (isoSub (glOps K n LL S)) e := by
-  obtain ⟨e0, s⟩ := isoDecomp (glOps K n LL S) D (weight_condition_from_integral_form D) (isGLRep_glOps K ι LL n S)
+  have hweights : Formalism.MainNotions.CovariantDegrees.adm2 D := by
+    intro K' V' _ _ _ _ _ n' E hE W hW
+    exact cr_compl E hE.1 hE.2.2 W hW
+  obtain ⟨e0, s⟩ := isoDecomp (glOps K n LL S) D hweights (isGLRep_glOps K ι LL n S)
   have : e = e0 := decSys_congr s (fun mu => (he mu).1) (fun mu nu hne => (he mu).2 nu hne)
   rw [this]; exact s
 
@@ -281,7 +298,7 @@ theorem ellWt_le (D : Formalism.BasicNotions.D7) (S : Set ι) (e : (Fin n → �
         obtain ⟨u, hu, v, hv, rfl⟩ := hy
         rw [umon_comm _ (polProj K d) hcomm u hu v, hcon v hv, map_zero]
       | zero => rw [map_zero]
-      | add y z _ _ hy hz => rw [map_add, hy, hz, add_zero]
+      | add y z _ _ hy hz => rw [map_add (f := _), hy, hz, add_zero]
       | smul c y _ hy => rw [map_smul, hy, smul_zero]
     exact hne (by rw [← polProj_of_mem d _ hy1]; exact hz _ hy2)
   obtain ⟨v, hv, hw0⟩ := hex
@@ -363,7 +380,7 @@ noncomputable def L (u : ℚ_[p]) : ℚ_[p] := ∑' k : ℕ, (-1 : ℚ_[p]) ^ k 
 lemma inv_norm_le (n : ℕ) (hn : n ≠ 0) : ‖(n : ℚ_[p])‖⁻¹ ≤ (n : ℝ) := by
   have h0 : (n : ℚ_[p]) ≠ 0 := by exact_mod_cast hn
   rw [Padic.norm_eq_zpow_neg_valuation h0, Padic.valuation_natCast, zpow_neg, inv_inv, zpow_natCast]
-  exact_mod_cast Nat.le_of_dvd (Nat.pos_of_ne_zero hn) pow_padicValNat_dvd
+  exact_mod_cast Nat.le_of_dvd (Nat.pos_of_ne_zero hn) (pow_multiplicity_dvd p n)
 
 lemma choose_tendsto (n : ℕ → ℕ) (hn : Tendsto (fun m => ((n m : ℚ_[p]) + 1)) atTop (𝓝 0)) (k : ℕ) :
     Tendsto (fun m => ((n m).choose k : ℚ_[p])) atTop (𝓝 ((-1) ^ k)) := by
@@ -509,15 +526,8 @@ theorem coarse_unit_product_prime_power (p : ℕ) [hp : Fact p.Prime] (t : ℕ) 
       ∏ i ∈ Finset.range n, ∏ y ∈ Finset.Ico 1 (p ^ (t + 1)), (1 + ((p ^ (t + 1) : ℕ) : ℚ) * i / y) :=
   Formalism.GrowthSums.blockFactorialQuotientProd (p ^ (t + 1)) n (Nat.one_le_pow _ _ hp.1.pos)
 
-theorem inv_norm_nat_le (p : ℕ) [hp : Fact p.Prime] (m : ℕ) (hm : m ≠ 0) : ‖(m : ℚ_[p])‖⁻¹ ≤ (m : ℝ) := by
-  have h0 : ((m : ℚ)) ≠ 0 := by exact_mod_cast hm
-  have h1 : ‖(m : ℚ_[p])‖ = ((p : ℝ) ^ (padicValNat p m))⁻¹ := by
-    rw [show (m : ℚ_[p]) = ((m : ℚ) : ℚ_[p]) by norm_cast, Padic.eq_padicNorm,
-      padicNorm.eq_zpow_of_nonzero h0, padicValRat.of_nat, zpow_neg, zpow_natCast, Rat.cast_inv, Rat.cast_pow,
-      Rat.cast_natCast]
-  rw [h1, inv_inv]
-  have : p ^ padicValNat p m ≤ m := Nat.le_of_dvd (Nat.pos_of_ne_zero hm) pow_padicValNat_dvd
-  exact_mod_cast this
+theorem inv_norm_nat_le (p : ℕ) [hp : Fact p.Prime] (m : ℕ) (hm : m ≠ 0) : ‖(m : ℚ_[p])‖⁻¹ ≤ (m : ℝ) :=
+  F1.inv_norm_le p m hm
 
 theorem summable_log (p : ℕ) [hp : Fact p.Prime] (u : ℚ_[p]) (hu : ‖u‖ < 1) :
     Summable fun k : ℕ => (-1 : ℚ_[p]) ^ k * u ^ (k + 1) / ((k : ℚ_[p]) + 1) := by
@@ -802,31 +812,9 @@ section GlobalTheory
 
 variable {A A' : Type} [CommRing A] [CommRing A'] {n : ℕ}
 
-def kr_blk (W : Fin n → A) (Dm : Matrix (Fin n) (Fin n) A) : Matrix (Fin (n + 1)) (Fin (n + 1)) A :=
-  fun i j => Fin.cases (motive := fun _ => A) (Fin.cases (motive := fun _ => A) 1 W j)
-    (fun i' => Fin.cases (motive := fun _ => A) 0 (fun j' => Dm i' j') j) i
-
-def kr_lowM (γ : A) (v : Fin n → A) (b' : Matrix (Fin n) (Fin n) A) : Matrix (Fin (n + 1)) (Fin (n + 1)) A :=
-  fun i j => Fin.cases (motive := fun _ => A) (Fin.cases (motive := fun _ => A) γ (fun _ => 0) j)
-    (fun i' => Fin.cases (motive := fun _ => A) (v i') (fun j' => b' i' j') j) i
-
 variable (W : Fin n → A) (Dm : Matrix (Fin n) (Fin n) A) (γ : A) (v : Fin n → A) (b' : Matrix (Fin n) (Fin n) A)
 
-@[simp] theorem blk_00 : kr_blk W Dm 0 0 = 1 := rfl
-@[simp] theorem blk_0s (j : Fin n) : kr_blk W Dm 0 j.succ = W j := rfl
-@[simp] theorem cornerScalarBlockMatrix_apply_succ_zero (i : Fin n) : kr_blk W Dm i.succ 0 = 0 := rfl
-@[simp] theorem blk_ss (i j : Fin n) : kr_blk W Dm i.succ j.succ = Dm i j := rfl
-@[simp] theorem lowM_00 : kr_lowM γ v b' 0 0 = γ := rfl
-@[simp] theorem lowM_0s (j : Fin n) : kr_lowM γ v b' 0 j.succ = 0 := rfl
-@[simp] theorem lowerMatrix_succ_zero (i : Fin n) : kr_lowM γ v b' i.succ 0 = v i := rfl
-@[simp] theorem lowM_ss (i j : Fin n) : kr_lowM γ v b' i.succ j.succ = b' i j := rfl
-
 end GlobalTheory
-
-def kr_genD (O : Type) [CommRing O] (r : ℕ) :
-    Matrix (Fin (r + 1)) (Fin (r + 1)) (MvPolynomial (Fin (r + 1)) (GLCoord O (r + 1))) :=
-  (genMat O (r + 1)).map ((C : GLCoord O (r + 1) →+* MvPolynomial (Fin (r + 1)) (GLCoord O (r + 1))).comp
-    (algebraMap (MvPolynomial (Fin (r + 1) × Fin (r + 1)) O) (GLCoord O (r + 1))))
 
 section Eval
 
@@ -839,19 +827,8 @@ theorem kr_evalG_algebraMap {n : ℕ} (g : Matrix (Fin n) (Fin n) A)
 
 variable {r : ℕ}
 
-def kr_resEv (W : Fin (r + 1) → A) (Dm : Matrix (Fin (r + 1)) (Fin (r + 1)) A)
-    (hD : IsUnit (aeval (fun x : Fin (r + 1) × Fin (r + 1) => Dm x.1 x.2) (genMat O (r + 1)).det)) :
-    MvPolynomial (Fin (r + 1)) (GLCoord O (r + 1)) →ₐ[O] A :=
-  { eval₂Hom (evalG (R := O) Dm hD) W with
-    commutes' := fun c => by
-      show eval₂Hom (evalG (R := O) Dm hD) W (algebraMap O _ c) = algebraMap O A c
-      rw [MvPolynomial.algebraMap_apply, eval₂Hom_C, kr_evalG_algebraMap] }
-
 def kr_cellW {n : ℕ} (g : Matrix (Fin (n + 1)) (Fin (n + 1)) A) (γ : Aˣ) : Fin n → A :=
   fun j => ((γ⁻¹ : Aˣ) : A) * g 0 j.succ
-
-def kr_cellD {n : ℕ} (g : Matrix (Fin (n + 1)) (Fin (n + 1)) A) (γ : Aˣ) : Matrix (Fin n) (Fin n) A :=
-  fun i j => g i.succ j.succ - g i.succ 0 * kr_cellW g γ j
 
 end Eval
 
@@ -866,29 +843,6 @@ instance kr_instDomGL : IsDomain (GLCoord O n) :=
 
 theorem kr_GL_inj : Function.Injective (algebraMap (MvPolynomial (Fin n × Fin n) O) (GLCoord O n)) :=
   IsLocalization.injective _ (powers_le_nonZeroDivisors_of_noZeroDivisors (kr_genMat_det_ne O n))
-
-def kr_genG : Matrix (Fin n) (Fin n) (GLCoord O n) :=
-  (genMat O n).map (algebraMap (MvPolynomial (Fin n × Fin n) O) (GLCoord O n))
-
-def topLeftCoordinate : GLCoord O (n + 1) := algebraMap (MvPolynomial (Fin (n + 1) × Fin (n + 1)) O) (GLCoord O (n + 1)) (X (0, 0))
-
-theorem corner_entry_ne_zero_alt : topLeftCoordinate O n ≠ 0 := by
-  intro h
-  exact X_ne_zero (R := O) _ (kr_GL_inj O (n + 1) (h.trans (map_zero _).symm))
-
-abbrev kr_CA := Localization.Away (topLeftCoordinate O n)
-
-instance kr_instDomCA : IsDomain (kr_CA O n) :=
-  IsLocalization.isDomain_localization (powers_le_nonZeroDivisors_of_noZeroDivisors (corner_entry_ne_zero_alt O n))
-
-def kr_iotaA : GLCoord O (n + 1) →ₐ[O] kr_CA O n := IsScalarTower.toAlgHom O (GLCoord O (n + 1)) (kr_CA O n)
-
-def kr_genA : Matrix (Fin (n + 1)) (Fin (n + 1)) (kr_CA O n) := (kr_genG O (n + 1)).map (kr_iotaA O n)
-
-def kr_gam : (kr_CA O n)ˣ := (IsLocalization.Away.algebraMap_isUnit (S := kr_CA O n) (topLeftCoordinate O n)).unit
-
-def kr_cW : Fin n → kr_CA O n := kr_cellW (kr_genA O n) (kr_gam O n)
-def kr_cD : Matrix (Fin n) (Fin n) (kr_CA O n) := kr_cellD (kr_genA O n) (kr_gam O n)
 
 end Generic
 
@@ -974,9 +928,6 @@ end Primes
 section Coeff
 
 variable {O : Type} [CommRing O] {A : Type} [CommRing A] [Algebra O A] {r : ℕ}
-
-def kr_cAlg (O : Type) [CommRing O] (A : Type) [CommRing A] [Algebra O A] (σ : Type) : A →ₐ[O] MvPolynomial σ A :=
-  IsScalarTower.toAlgHom O A (MvPolynomial σ A)
 
 end Coeff
 
@@ -1259,13 +1210,13 @@ theorem isWeightedHomogeneous_of_column_scaling {R : Type} [CommRing R] {m n : �
     d.mapDomain Sum.inl + d.mapDomain (Sum.inr ∘ Prod.snd)
   have hEl : ∀ d v, E d (Sum.inl v) = d v := by
     intro d v
-    simp only [E, Finsupp.add_apply, Finsupp.mapDomain_apply Sum.inl_injective]
+    simp only [E, Finsupp.add_apply, Finsupp.mapDomain_apply_of_injective Sum.inl_injective]
     rw [Finsupp.mapDomain_of_notMem_range _ _ (by simp), add_zero]
   have hEr : ∀ d s, E d (Sum.inr s) = d.mapDomain Prod.snd s := by
     intro d s
     simp only [E, Finsupp.add_apply]
     rw [Finsupp.mapDomain_of_notMem_range _ _ (by simp), Finsupp.mapDomain_comp,
-      Finsupp.mapDomain_apply Sum.inr_injective, zero_add]
+      Finsupp.mapDomain_apply_of_injective Sum.inr_injective, zero_add]
   have hmono : ∀ d (a : R), aeval (fun v : Fin m × Fin n =>
         (X (Sum.inr v.2) * X (Sum.inl v) : MvPolynomial ((Fin m × Fin n) ⊕ Fin n) R)) (monomial d a) =
       monomial (E d) a := by
@@ -1281,10 +1232,11 @@ theorem isWeightedHomogeneous_of_column_scaling {R : Type} [CommRing R] {m n : �
       rw [mul_pow, mul_comm]
       rfl
     rw [hp, algebraMap_eq, C_mul_monomial, mul_one]
-  have hL : coeff (E d0) (aeval (fun v : Fin m × Fin n =>
-        (X (Sum.inr v.2) * X (Sum.inl v) : MvPolynomial ((Fin m × Fin n) ⊕ Fin n) R)) Q) = coeff d0 Q := by
+  have hL : AddMonoidAlgebra.coeff (aeval (fun v : Fin m × Fin n =>
+        (X (Sum.inr v.2) * X (Sum.inl v) : MvPolynomial ((Fin m × Fin n) ⊕ Fin n) R)) Q) (E d0) = AddMonoidAlgebra.coeff Q d0 := by
     conv_lhs => rw [Q.as_sum]
-    rw [map_sum, coeff_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, coeff_sum]
     simp_rw [hmono, coeff_monomial]
     rw [Finset.sum_eq_single d0]
     · simp
@@ -1300,8 +1252,8 @@ theorem isWeightedHomogeneous_of_column_scaling {R : Type} [CommRing R] {m n : �
       monomial ((Finsupp.equivFunOnFinite.symm ν).mapDomain Sum.inr) 1 := by
     rw [monomial_mapDomain_eq_prod, Finsupp.prod_fintype _ _ (fun _ => pow_zero _)]
     simp
-  have hR : coeff (E d0) ((∏ s, X (Sum.inr s) ^ ν s) * rename Sum.inl Q :
-      MvPolynomial ((Fin m × Fin n) ⊕ Fin n) R) ≠ 0 := by
+  have hR : AddMonoidAlgebra.coeff ((∏ s, X (Sum.inr s) ^ ν s) * rename Sum.inl Q :
+      MvPolynomial ((Fin m × Fin n) ⊕ Fin n) R) (E d0) ≠ 0 := by
     rw [← key, hL]; exact hd0
   rw [hprod, coeff_monomial_mul'] at hR
   split_ifs at hR with hle
@@ -1312,8 +1264,8 @@ theorem isWeightedHomogeneous_of_column_scaling {R : Type} [CommRing R] {m n : �
     have h1 := DFunLike.congr_fun hu (Sum.inr t)
     have h2 := hle (Sum.inr t)
     rw [Finsupp.mapDomain_of_notMem_range _ _ (by simp), Finsupp.tsub_apply,
-      Finsupp.mapDomain_apply Sum.inr_injective] at h1
-    rw [Finsupp.mapDomain_apply Sum.inr_injective] at h2
+      Finsupp.mapDomain_apply_of_injective Sum.inr_injective] at h1
+    rw [Finsupp.mapDomain_apply_of_injective Sum.inr_injective] at h2
     have hν : (Finsupp.equivFunOnFinite.symm ν) t = ν t := rfl
     rw [hν] at h1 h2
     omega
@@ -1457,7 +1409,7 @@ theorem hbLin : HBLin := by
   · intro A _ _ b g u hg hbg _ _
     simp
   · intro f hf f' hf' A _ _ b g u hg hbg h1 h2
-    rw [map_add, map_add, hf A b g u hg hbg h1 h2, hf' A b g u hg hbg h1 h2, mul_add]
+    rw [map_add (f := _), map_add (f := _), hf A b g u hg hbg h1 h2, hf' A b g u hg hbg h1 h2, mul_add]
   · intro a f hf A _ _ b g u hg hbg h1 h2
     rw [map_mul, map_mul, hf A b g u hg hbg h1 h2, evaluation_algebraMap_eq, evaluation_algebraMap_eq]
     ring
@@ -1625,8 +1577,8 @@ theorem redKer : RedKer := by
   have h3 : (C w : MvPolynomial (Fin n × Fin n) O) ∣ P := by
     rw [C_dvd_iff_dvd_coeff]
     intro m
-    have h4 : IsLocalRing.residue O (coeff m P) = 0 := by
-      rw [← coeff_map, h2, coeff_zero]
+    have h4 : IsLocalRing.residue O (AddMonoidAlgebra.coeff P m) = 0 := by
+      rw [← coeff_map, h2] <;> rfl
     rw [IsLocalRing.residue_eq_zero_iff, (IsDiscreteValuationRing.irreducible_iff_uniformizer w).1 hw,
       Ideal.mem_span_singleton] at h4
     exact h4
@@ -1802,8 +1754,8 @@ theorem residue_span_lift_bideterminant (hB1 : BideterminantInHighestWeight) (hB
   | add x y _ _ hx hy =>
     obtain ⟨x', hx1, hx2⟩ := hx
     obtain ⟨y', hy1, hy2⟩ := hy
-    refine ⟨x' + y', ?_, by rw [map_add, hx2, hy2]⟩
-    rw [map_add, map_add]
+    refine ⟨x' + y', ?_, by rw [map_add (f := _), hx2, hy2]⟩
+    rw [map_add (f := _), map_add (f := _)]
     exact (hB2 O r _ _).2.1 _ hx1 _ hy1
   | smul a x _ hx =>
     obtain ⟨x', hx1, hx2⟩ := hx

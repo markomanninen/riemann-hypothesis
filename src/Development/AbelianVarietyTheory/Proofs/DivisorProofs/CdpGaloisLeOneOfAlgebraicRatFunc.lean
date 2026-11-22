@@ -1,14 +1,19 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
-import GroundTheory.ProfiniteCohomology.GaloisCohomology.Brauer
-import GroundTheory.ProfiniteCohomology.RestrictedRamification.DimensionSylow
-import GroundTheory.ProfiniteCohomology.LocalClassFormationAlt
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.KummerOpen
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.Vanishing
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.OrderScalars
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.Scalars
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.COneH2UnitsSubsingleton
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TsenAlgebraicExtensionRatFunc
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.Kummer
+public import GroundTheory.ProfiniteCohomology.GaloisCohomology.Brauer
+public import GroundTheory.ProfiniteCohomology.RestrictedRamification.DimensionSylow
+public import GroundTheory.ProfiniteCohomology.LocalClassFormationAlt
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.KummerOpen
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.Vanishing
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.OrderScalars
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.Scalars
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.COneH2UnitsSubsingleton
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.TsenAlgebraicExtensionRatFunc
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 open CategoryTheory IntermediateField GroundTheory.ProfCoh
@@ -66,7 +71,7 @@ theorem exists_zmod_cast_eq_of_pow_sub_self {p : ℕ} [hp : Fact p.Prime] {Ω : 
   push_neg at hne
   set f := ZMod.castHom (dvd_refl p) Ω
   set P : Polynomial Ω := X ^ p - X
-  have hP : P ≠ 0 := FiniteField.X_pow_card_sub_X_ne_zero Ω hp.out.one_lt
+  have hP : P ≠ 0 := Polynomial.X_pow_sub_X_ne_zero hp.out.one_lt
   have hroot : ∀ z : Ω, z ^ p - z = 0 → z ∈ P.roots.toFinset := fun z hz => by
     rw [Multiset.mem_toFinset, mem_roots hP]
     simp [P, hz]
@@ -86,7 +91,7 @@ theorem exists_zmod_cast_eq_of_pow_sub_self {p : ℕ} [hp : Fact p.Prime] {Ω : 
   have h1 := Finset.card_le_card hT
   have h2 : P.roots.toFinset.card ≤ p :=
     (Multiset.toFinset_card_le _).trans ((card_roots' P).trans
-      (FiniteField.X_pow_card_sub_X_natDegree_eq Ω hp.out.one_lt).le)
+      (Polynomial.natDegree_X_pow_sub_X (R := Ω) hp.out.one_lt).le)
   omega
 
 theorem exists_pow_sub_self_eq {p : ℕ} [hp : Fact p.Prime] {Ω : Type} [Field Ω] [CharP Ω p]
@@ -137,13 +142,14 @@ noncomputable def artinSchreierSequence : ShortComplex (Rep (ULift.{0} ℤ) (Ω 
     rw [← map_pow, ZMod.pow_card, sub_self])
 
 theorem artinSchreierSequence_shortExact [IsSepClosed Ω] :
-    (artinSchreierSequence E Ω p).ShortExact where
-  exact := shortComplex_exact_of_forall_exists _ fun y hy => by
+    (artinSchreierSequence E Ω p).ShortExact := by
+  refine ShortComplex.ShortExact.mk' ?_ ?_ ?_
+  · refine shortComplex_exact_of_forall_exists _ fun y hy => ?_
     obtain ⟨a, ha⟩ := exists_zmod_cast_eq_of_pow_sub_self (p := p) (Ω := Ω) y hy
     exact ⟨ULift.up a, ha⟩
-  mono_f := (Rep.mono_iff_injective _).2 fun x y h =>
-    ULift.ext _ _ ((ZMod.castHom (dvd_refl p) Ω).injective h)
-  epi_g := (Rep.epi_iff_surjective _).2 fun a => by
+  · exact (Rep.mono_iff_injective _).2 fun x y h =>
+      ULift.ext ((ZMod.castHom (dvd_refl p) Ω).injective h)
+  · refine (Rep.epi_iff_surjective _).2 fun a => ?_
     obtain ⟨x, hx⟩ := exists_pow_sub_self_eq (p := p) (Ω := Ω) a
     exact ⟨x, hx⟩
 
@@ -159,8 +165,8 @@ instance isDiscreteRep_artinSchreierSequence_X₃ :
     IsDiscreteRep (artinSchreierSequence E Ω p).X₃ :=
   inferInstanceAs (IsDiscreteRep (galAddInt.{0} E Ω))
 
-omit [Fact p.Prime] [CharP Ω p] in
 
+omit [Fact p.Prime] [CharP Ω p] in
 theorem subsingleton_cohomology_galAddInt {n : ℕ} (hn : n ≠ 0) :
     Subsingleton (cohomology (galAddInt.{0} E Ω) n) := by
   have := subsingleton_cohomology_galAdd (K := E) (L := Ω) hn

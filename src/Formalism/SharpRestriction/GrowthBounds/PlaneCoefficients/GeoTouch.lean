@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.NoOpStep
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PosTLSurj
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.FrMemLetters
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembDd
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients.NoOpStep
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PosTLSurj
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.FrMemLetters
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembDd
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NatCastNeZeroPs
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NatCastNeZeroPs
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,7 +36,7 @@ theorem frobS_eis_mem : ∀ (l : ℕ) [Fact l.Prime] (a e : ℕ) [NeZero a] [NeZ
     simp only [show n ≠ 0 by omega, show n ≠ l * e by omega, if_false]
     exact dvd_zero _
   · intro τ n
-    rw [map_add, coeff_one, coeff_C_mul, coeff_X_pow]
+    rw [map_add (f := _), coeff_one, coeff_C_mul, coeff_X_pow]
     by_cases h0 : n = 0
     · subst h0
       simp [hle.symm]

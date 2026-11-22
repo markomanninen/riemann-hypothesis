@@ -1,8 +1,13 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalLimits.IsScalarTowerFiniteSubfieldAlgebraicClosure
-import GroundTheory.GlobalFields.SemilocalAlgebras.Infinite
-import GroundTheory.GlobalFields.IdeleGroups.LocalHerbrandInfinite
-import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Places
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.LocalLimits.IsScalarTowerFiniteSubfieldAlgebraicClosure
+public import GroundTheory.GlobalFields.SemilocalAlgebras.Infinite
+public import GroundTheory.GlobalFields.IdeleGroups.LocalHerbrandInfinite
+public import GroundTheory.GlobalFields.IdeleGroups.GaloisOnAdeles.Places
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -12,17 +17,15 @@ open CategoryTheory NumberField IntermediateField GroundTheory.Global FiniteSubf
 
 open scoped TensorProduct Pointwise NumberField.LiesOver
 
-local notation "ℚ̄" => AlgebraicClosure ℚ
-
 noncomputable section
 
 variable {K : FiniteSubfield} {v : NumberField.InfinitePlace K.1}
-  (ι : ℚ̄ →ₐ[K.1] AlgebraicClosure v.Completion)
+  (ι : AlgebraicClosure ℚ →ₐ[K.1] AlgebraicClosure v.Completion)
 
 variable (F : FiniteSubfield) [Fact (K ≤ F)]
 
 def infEmbedLevel : F.1 →ₐ[K.1] AlgebraicClosure v.Completion :=
-  ι.comp (IsScalarTower.toAlgHom K.1 F.1 ℚ̄)
+  ι.comp { F.1.val.toRingHom with commutes' := fun _ ↦ rfl }
 
 @[simp]
 theorem infEmbedLevel_apply (x : F.1) : infEmbedLevel ι F x = ι x :=
@@ -56,8 +59,9 @@ theorem infTensorLift_algebraMap (x : F.1) :
       GroundTheory.Global.InfinitePlace.tensorPiEquiv (L := F.1) v (1 ⊗ₜ x) := by
     funext w
     rw [GroundTheory.Global.InfinitePlace.tensorPiEquiv_apply,
-      GroundTheory.Global.InfinitePlace.tensorPiHom_tmul, map_one, one_mul]
-    rfl
+      GroundTheory.Global.InfinitePlace.tensorPiHom_tmul, map_one, one_mul, Pi.algebraMap_apply,
+      AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+      Algebra.algebraMap_self_apply]
   rw [this, infTensorLift_tensorPiEquiv, map_one, one_mul]
 
 open Classical in
@@ -90,8 +94,8 @@ theorem pi_single_algebraMap_eq_infinite {w : v.placesOver F.1} [DecidableEq (v.
     simp
   · simp [hu]
 
-open Classical in
 
+open Classical in
 def infCompletionEmbedding :
     (infPlaceOfEmbedding ι F : NumberField.InfinitePlace F.1).Completion →ₐ[v.Completion]
       AlgebraicClosure v.Completion where
@@ -137,7 +141,8 @@ theorem algHom_ext_infCompletion {B : Type*} [Semiring B] [Algebra K.1 B]
       GroundTheory.Global.InfinitePlace.tensorPiHom_tmul, map_mul, map_mul]
     congr 1
     · rw [AlgHom.commutes, AlgHom.commutes]
-    · exact h x
+    · simpa only [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+        Algebra.algebraMap_self_apply] using h x
   ext y
   classical
   obtain ⟨t, ht⟩ := (GroundTheory.Global.InfinitePlace.tensorPiEquiv (L := F.1) v).surjective
@@ -166,7 +171,9 @@ theorem eq_infPlaceOfEmbedding {w : v.placesOver F.1}
       rw [infTensorLift_tensorPiEquiv, GroundTheory.Global.InfinitePlace.tensorPiEquiv_apply,
         GroundTheory.Global.InfinitePlace.tensorPiHom_tmul, map_mul, ← hj x]
       congr 1
-      exact (j.commutes a).symm
+      · exact (j.commutes a).symm
+      · rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+          Algebra.algebraMap_self_apply]
     ext y
     obtain ⟨t, rfl⟩ := (GroundTheory.Global.InfinitePlace.tensorPiEquiv (L := F.1) v).surjective y
     exact DFunLike.congr_fun this t
@@ -182,18 +189,22 @@ theorem infiniteCompletionMap_algebraMap_completion (τ : F.1 ≃ₐ[K.1] F.1)
     AdeleBaseChange.infiniteCompletionMap (τ : F.1 ≃+* F.1) w'
       (algebraMap v.Completion (w'.comap ((τ : F.1 ≃+* F.1) : F.1 →+* F.1)).Completion c) =
       algebraMap v.Completion w'.Completion c := by
-  have h := (denseRange_coe v).equalizer
+  have h := (AbsoluteValue.Completion.denseRange_coe v.1).equalizer
     ((continuous_infiniteCompletionMap _ w').comp (continuous_algebraMap v.Completion
       (w'.comap ((τ : F.1 ≃+* F.1) : F.1 →+* F.1)).Completion))
     (continuous_algebraMap v.Completion w'.Completion) (funext fun a ↦ ?_)
   · exact congrFun h c
   · simp only [Function.comp_apply]
+    have ha : (a : v.Completion) = algebraMap K.1 v.Completion a.ofAbs := by
+      rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+        Algebra.algebraMap_self_apply, WithAbs.toAbs_ofAbs]
+    rw [ha]
     change AdeleBaseChange.infiniteCompletionMap (τ : F.1 ≃+* F.1) w'
       (algebraMap v.Completion _ (algebraMap K.1 v.Completion (WithAbs.ofAbs a))) =
       algebraMap v.Completion w'.Completion (algebraMap K.1 v.Completion (WithAbs.ofAbs a))
     rw [← IsScalarTower.algebraMap_apply, ← IsScalarTower.algebraMap_apply,
       IsScalarTower.algebraMap_apply K.1 F.1, AdeleBaseChange.infiniteCompletionMap_algebraMap,
-      AlgEquiv.coe_ringEquiv, AlgEquiv.commutes, ← IsScalarTower.algebraMap_apply]
+      AlgEquiv.coe_toRingEquiv, AlgEquiv.commutes, ← IsScalarTower.algebraMap_apply]
 
 variable [F.1.fixingSubgroup.Normal]
 
@@ -224,7 +235,7 @@ theorem decompHom_smul_infPlaceOfEmbedding (σ : Gal(AlgebraicClosure v.Completi
     rw [AdeleBaseChange.infiniteCompletionMap_algebraMap, infCompletionEmbedding_algebraMap]
     have h := decompHom_apply (Kv := v.Completion) (infEmbedLevel ι F) σ x
     rw [infEmbedLevel_apply, infEmbedLevel_apply] at h
-    rw [AlgEquiv.coe_ringEquiv, h, AlgEquiv.symm_apply_apply]
+    rw [AlgEquiv.coe_toRingEquiv, h, AlgEquiv.symm_apply_apply]
   have h := congrArg Subtype.val (eq_infPlaceOfEmbedding ι F j hj)
   change (w₀ : NumberField.InfinitePlace F.1).comap ((τ : F.1 ≃+* F.1) : F.1 →+* F.1) =
     (w₀ : NumberField.InfinitePlace F.1) at h
@@ -263,8 +274,11 @@ theorem infCompletionEmbedding_smul (σ : Gal(AlgebraicClosure v.Completion/v.Co
     have e : infLocalDecompHom ι F σ • algebraMap F.1
         (infPlaceOfEmbedding ι F : NumberField.InfinitePlace F.1).Completion x =
         algebraMap F.1 (infPlaceOfEmbedding ι F : NumberField.InfinitePlace F.1).Completion
-          ((infLocalDecompHom ι F σ : Gal(F.1/K.1)) x) :=
-      infiniteDecomposition_smul_coe (infLocalDecompHom ι F σ) (WithAbs.toAbs _ x)
+          ((infLocalDecompHom ι F σ : Gal(F.1/K.1)) x) := by
+      simp only [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+        Algebra.algebraMap_self_apply]
+      rw [infiniteDecomposition_smul_coe, withAbsMapOf, WithAbs.map_apply, WithAbs.ofAbs_toAbs]
+      rfl
     rw [e, infCompletionEmbedding_algebraMap, infCompletionEmbedding_algebraMap,
       ι_infLocalDecompHom_apply]
   exact DFunLike.congr_fun this y

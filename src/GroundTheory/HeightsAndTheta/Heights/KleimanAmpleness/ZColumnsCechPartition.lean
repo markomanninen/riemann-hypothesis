@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PCechCone
-import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.VeryAmpleCechObj
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.PCechCone
+public import GroundTheory.HeightsAndTheta.Heights.KleimanAmpleness.VeryAmpleCechObj
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.Kleiman
@@ -22,7 +27,7 @@ def onSet {i : ℕ} (s : Cech.Cochain (fun _ : Cell U => V) i) (A : Finset (Fin 
 theorem onSet_idx {i : ℕ} (s : Cech.Cochain (fun _ : Cell U => V) i) (I : Cech.Idx U i) :
     onSet s I.1.1 = s I := by
   unfold onSet
-  rw [dif_pos ⟨I.2, I.1.2.2⟩]
+  rw [dite_eq_left ⟨I.2, I.1.2.2⟩]
 
 theorem d_eq {i : ℕ} (s : Cech.Cochain (fun _ : Cell U => V) i) (K : Cech.Idx U (i + 1)) :
     Cech.d (fun _ : Cell U => V) (Cech.idRes R V U) i s K =
@@ -92,7 +97,7 @@ theorem exact_of_partition {A : Type w} [Semiring A] [Module A V] (M : Cell U �
           ∑ k ∈ U, a k • coneY k z (K.1.1.erase j) := by
       intro j hj
       unfold onSet
-      rw [dif_pos ⟨by rw [Finset.card_erase_of_mem hj, K.2]; rfl,
+      rw [dite_eq_left ⟨by rw [Finset.card_erase_of_mem hj, K.2]; rfl,
         (Finset.erase_subset _ _).trans K.1.2.2⟩]
     rw [Finset.sum_congr rfl fun j hj => by rw [hY j hj]]
     calc ∑ j ∈ K.1.1, Cech.sgn K.1.1 j • ∑ k ∈ U, a k • coneY k z (K.1.1.erase j)

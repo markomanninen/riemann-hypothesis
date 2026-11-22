@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermRealisation
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.LastBlockDecay
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormOfMemRootSetOne
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.TendstoIntegralPsiMoving
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.GermRealisation
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.LastBlockDecay
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.NormOfMemRootSetOne
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.TendstoIntegralPsiMoving
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBK
 

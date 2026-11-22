@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.NotTrivialAndTwist
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.BlockOrderedSquareIntegrable
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.HaarUpqEqOfOmegaDensity
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.NotTrivialAndTwist
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.BlockOrderedSquareIntegrable
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.HaarUpqEqOfOmegaDensity
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta MeasureTheory Matrix
 open scoped NNReal
@@ -105,13 +109,13 @@ instance measurable_cover : MeasurableSpace (cover p q) := borel _
 
 instance borel_cover : BorelSpace (cover p q) := ⟨rfl⟩
 
-open Classical in
 
+open Classical in
 def expLift (X : Mat p q) : cover p q :=
   if h : X ∈ upq p q then ⟨(expGL X, expHalf X), expGL_mem h, expHalf_sq X⟩ else 1
 
 theorem expLift_val {X : Mat p q} (h : X ∈ upq p q) : (expLift X).1 = (expGL X, expHalf X) := by
-  rw [expLift, dif_pos h]
+  rw [expLift, dite_eq_left h]
 
 def grpOf (p q : ℕ) (ν : Measure (cover p q)) [ν.IsHaarMeasure] : GrpData p q where
   G := cover p q
@@ -195,7 +199,8 @@ theorem exists_grpData_map_haar : ∀ (p q : ℕ) (μ : Measure (UpqT p q)), μ.
   haveI : (t • (Measure.haar : Measure (cover p q))).IsHaarMeasure := Measure.IsHaarMeasure.nnreal_smul _ h0
   refine ⟨grpOf p q (t • Measure.haar), ?_⟩
   rw [ht]
-  exact Measure.map_smul _ _ _
+  haveI : BorelSpace (UpqT p q) := ⟨rfl⟩
+  exact Measure.map_smul _ (continuous_covU _).aemeasurable
 
 end GlobalTheory.DetSqrtCover
 

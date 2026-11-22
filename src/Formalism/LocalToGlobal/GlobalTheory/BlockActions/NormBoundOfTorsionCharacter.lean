@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.GlobalTheory.BlockActions.IsUnitBZMap
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.BlockActions.IsUnitBZMap
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,8 +11,8 @@ namespace Formalism.L2.GlobalTheoryTheory.Br
 open MvPolynomial Formalism.BasicNotions Formalism.MainNotions.product_first_zeroth_parts Formalism.L2.Forms Matrix NumberField
 open scoped ComplexOrder
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem normClsAt_of_tors (hT : ChiTors) : NormClsAt := by
   intro D u Ch chOf Tf hL hBe h s x Pc hPc Qc hQc o ho o' ho' c
   classical
@@ -71,8 +75,5 @@ theorem normClsAt_of_tors (hT : ChiTors) : NormClsAt := by
             (subP (fun τ => (AL Tf c τ).map s * dOT u (o'.1 τ)) (MvPolynomial.map s (Pc ((D.fm u).til c))))).re))) :=
         mul_le_mul hsa (mul_le_mul_of_nonneg_left hchain hKA) (mul_nonneg hKA (mul_nonneg hK2 hnW)) zero_le_one
     _ = _ := by ring
-
-theorem norm_bound_of_torsion_character (h1 : ClassMapInjective) (h2 : StabiliserMapBijective) (hT : ChiTors) : NormBoundAtInfinity :=
-  norm_bound_of_classes h1 h2 (normClsAt_of_tors hT)
 
 end Formalism.L2.GlobalTheoryTheory.Br

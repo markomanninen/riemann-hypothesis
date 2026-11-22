@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.RestSegCore
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.RecursionWithDensities
-import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.LatticeLeSpanPsiImage
-import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.DivDerZero
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.RestSegCore
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.RecursionWithDensities
+public import Formalism.SharpRestriction.GrowthBounds.StandardPolynomials.LatticeLeSpanPsiImage
+public import Formalism.SharpRestriction.GrowthBounds.CoarseMultiplicity.DivDerZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -132,7 +136,7 @@ theorem xi_mono_mem (N t b : ℕ) (γ : Fin r → ℕ) (hb : ∑ c, γ c = b) :
     simpa [xiVar] using h
   have hval : ∀ c', m (xiVar N r t c') = γ c' := by
     intro c'
-    rw [hm, Finsupp.finset_sum_apply]
+    rw [hm, Finsupp.finsetSum_apply]
     simp [Finsupp.single_apply, hinj.eq_iff]
   rw [hmono]
   refine Submodule.mem_inf.mpr ⟨?_, ?_⟩
@@ -143,7 +147,7 @@ theorem xi_mono_mem (N t b : ℕ) (γ : Fin r → ℕ) (hb : ∑ c, γ c = b) :
     subst hm''
     refine ⟨fun v hv => ?_, ?_⟩
     · rw [hm] at hv
-      obtain ⟨c, -, hc⟩ := Finset.mem_biUnion.mp (Finsupp.support_finset_sum hv)
+      obtain ⟨c, -, hc⟩ := Finsupp.mem_support_finsetSum v hv
       exact ⟨c, Finset.mem_singleton.mp (Finsupp.support_single_subset hc)⟩
     · simp only [hval]
       exact hb
@@ -161,10 +165,6 @@ def EpS (r : ℕ) (S : SegData s) : MvPolynomial (BVar (2 * s + 1) r S.t) (KK O)
   X (scalZ (2 * s + 1) r S.t (Fin.last S.t)) * X (scalS (2 * s + 1) r S.t (Fin.last S.t)) +
     ∑ c, X (Sum.inl (Fin.castSucc (⟨2 * s, by omega⟩ : Fin (2 * s + 1)), c)) * X (xiVar (2 * s + 1) r S.t c)
 
-theorem Ehat_rfl (l : Fin S.t) : (blockData p S aTop aPlus mu b').Ehat O (r := r) l = EhS O r S l := rfl
-
-theorem Eplus_rfl : (blockData p S aTop aPlus mu b').Eplus O (r := r) = EpS O r S := rfl
-
 theorem EhS_eq (l : Fin S.t) :
     EhS O r S l =
       X (scalZ (2 * s + 1) r S.t (Fin.castSucc l)) * X (scalS (2 * s + 1) r S.t (Fin.castSucc l)) +
@@ -179,7 +179,8 @@ theorem EhS_eq (l : Fin S.t) :
     ext
     simp only [finPos, chE, uTop, Fin.val_castSucc, Fin.val_mk]
     omega
-  simp only [EhS, pairU, tcPairP, map_sum, map_mul, rename_X, chainEmb, h1, h2]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [EhS, pairU, tcPairP, map_sum, map_mul, rename_X, chainEmb, h1, h2]
 
 def uTot (r : ℕ) (S : SegData s) (ju : Fin S.t → ℕ) (jp : ℕ) (G : MvPolynomial (Fin (2 * s + 1) × Fin r) (KK O))
     (zU sU : Fin S.t → ℕ) (xf : ℕ) (γ : Fin r → ℕ) : MvPolynomial (BVar (2 * s + 1) r S.t) (KK O) :=
@@ -188,34 +189,6 @@ def uTot (r : ℕ) (S : SegData s) (ju : Fin S.t → ℕ) (jp : ℕ) (G : MvPoly
     X (scalZ (2 * s + 1) r S.t (Fin.last S.t)) ^ xf * ∏ c, X (xiVar (2 * s + 1) r S.t c) ^ γ c
 
 variable {O p S aTop aPlus mu b'}
-
-private theorem jE_apply_sigma_add (S : SegData s) (f : Fin S.t → ℕ) (i : Fin S.t) (x : ℕ) (hx : x = S.sigma + i.val) :
-    jE S f x = f i := by
-  subst hx
-  have hi := i.2
-  unfold SegData.t at hi
-  unfold jE
-  rw [dif_pos (show S.sigma ≤ S.sigma + i.val ∧ S.sigma + i.val < s from ⟨by omega, by omega⟩)]
-  congr 1
-  ext
-  simp
-
-private theorem jE_add' (S : SegData s) (f g : Fin S.t → ℕ) (x : ℕ) :
-    jE S (fun l => f l + g l) x = jE S f x + jE S g x := by
-  unfold jE
-  split_ifs <;> simp
-
-private theorem jE_sub_eq_sub_jE (S : SegData s) (f g : Fin S.t → ℕ) (x : ℕ) :
-    jE S (fun l => f l - g l) x = jE S f x - jE S g x := by
-  unfold jE
-  split_ifs <;> simp
-
-private theorem jE_mono' (S : SegData s) (f g : Fin S.t → ℕ) (h : ∀ l, g l ≤ f l) (x : ℕ) :
-    jE S g x ≤ jE S f x := by
-  unfold jE
-  split_ifs
-  · exact h _
-  · exact le_refl 0
 
 theorem uTot_mem {ju : Fin S.t → ℕ} {jp : ℕ} {G : MvPolynomial (Fin (2 * s + 1) × Fin r) (KK O)} {zU sU : Fin S.t → ℕ}
     {xf : ℕ} {γ : Fin r → ℕ} (hs : ∀ l, sU l ≤ zU l)

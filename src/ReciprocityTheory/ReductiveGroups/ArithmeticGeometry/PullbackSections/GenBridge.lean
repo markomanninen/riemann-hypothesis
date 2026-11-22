@@ -1,5 +1,9 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.GenBridgeA
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.BcField
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.GenBridgeA
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.BcField
+
+@[expose] public section
 
 noncomputable section
 
@@ -143,12 +147,6 @@ theorem bcU_bcPm : bcU ψ x ≫ bcPm ψ x = pullback.fst _ _ ≫ gxU x := by
   apply gx_ext x
   · rw [Category.assoc, hbf, ← Category.assoc, bcU_fst, Category.assoc, gxU_fst, pullback.condition]
   · rw [Category.assoc, hbs, bcU_snd, Category.assoc, gxU_snd]
-
-theorem bcU_bcV : bcU ψ x ≫ bcV ψ x = 𝟙 _ := by
-  apply pullback.hom_ext
-  · rw [Category.assoc, bcV_fst, ← Category.assoc, bcU_bcPm, Category.assoc, gxU_gxV,
-      Category.comp_id, Category.id_comp]
-  · rw [Category.assoc, bcV_snd, bcU_fst, Category.id_comp]
 
 theorem bcV_gxU : bcV ψ x ≫ pullback.fst _ _ ≫ gxU x = bcPm ψ x := by
   rw [← Category.assoc, bcV_fst, Category.assoc, gxV_gxU, Category.comp_id]

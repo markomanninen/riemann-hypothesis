@@ -1,7 +1,11 @@
-import Formalism.PolynomialDimension.MultinomialDepth.PairingAdjointLaplacianHolds
-import Formalism.PolynomialDimension.MultinomialDepth.HarmonicDecompositionHolds
-import Formalism.PolynomialDimension.MultinomialDepth.DiagLaplacianDivPowMemSqrtFockLattice
-import Formalism.PolynomialDimension.MultinomialDepth.SqrtFockGaussLatticeComparisonHolds
+module
+
+public import Formalism.PolynomialDimension.MultinomialDepth.PairingAdjointLaplacianHolds
+public import Formalism.PolynomialDimension.MultinomialDepth.HarmonicDecompositionHolds
+public import Formalism.PolynomialDimension.MultinomialDepth.DiagLaplacianDivPowMemSqrtFockLattice
+public import Formalism.PolynomialDimension.MultinomialDepth.SqrtFockGaussLatticeComparisonHolds
+
+@[expose] public section
 
 namespace Formalism.CountingSumsFrames.Top
 

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
-import Formalism.PairingDivisors.StatementH
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FiniteClassesSelfDualOfSelfDual
-import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsFinsetSelfDualClassesHerm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+public import Formalism.PairingDivisors.StatementH
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.FiniteClassesSelfDualOfSelfDual
+public import Development.AbelianVarietyTheory.Proofs.CuspFormEvaluations.ExistsFinsetSelfDualClassesHerm
+
+@[expose] public section
 
 open NumberField Module Submodule
 open ReciprocityTheory.ChartRestriction.G.FD (herm cc fdeg rdE)
@@ -87,8 +91,8 @@ theorem bound_le (f n : ℕ) {r : ℝ} (hf : 0 < f) (hr : 1 ≤ r) :
 
 end RootClassCount
 
-open RootClassCount in
 
+open RootClassCount in
 theorem exists_finset_selfDual_classes_rootDiscr :
     ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (n : ℕ),
     ∃ R : Finset (Submodule (𝓞 E) (Fin n → E)),

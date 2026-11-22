@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace LevelStatements.Ln03
 
@@ -64,8 +68,10 @@ theorem factV (hl2 : l ≠ 2) (u : ℤ_[l]) (hu : (u - 1).valuation = 1) (m : �
     rintro rfl
     exact hm' (dvd_zero l)
   have hval : padicValNat l (l ^ e * m') = e := by
-    rw [padicValNat.mul (pow_ne_zero _ hl.ne_zero) hm'0, padicValNat.prime_pow,
-      padicValNat.eq_zero_of_not_dvd hm', add_zero]
+    rw [(show ∀ {p a b : ℕ} [_root_.Fact (_root_.Nat.Prime p)], a ≠ 0 → b ≠ 0 → _root_.padicValNat p (a * b) = _root_.padicValNat p a + _root_.padicValNat p b from by simpa only [← _root_.Nat.padicValNat_def] using @_root_.Nat.multiplicity_mul) (pow_ne_zero _ hl.ne_zero) hm'0, (show padicValNat l (l ^ e) = e from by
+        simpa only [← Nat.padicValNat_def] using (Nat.multiplicity_prime_pow e)),
+      (show padicValNat l m' = 0 from by
+        simpa only [← Nat.padicValNat_def] using (multiplicity_eq_zero_of_not_dvd hm')), add_zero]
   rw [hval]
   have hE1 : emultiplicity (l : ℤ_[l]) (u ^ (l ^ e) - 1) =
       emultiplicity (l : ℤ_[l]) (u - 1) + e := by
@@ -111,7 +117,8 @@ theorem orderOf_u (hl2 : l ≠ 2) (u : ℤ_[l]) (hu : (u - 1).valuation = 1) (s 
   have key : ∀ j : ℕ, (PadicInt.toZModPow (s + 1) u) ^ (l ^ j) = 1 ↔ s ≤ j := by
     intro j
     have hv := factV hl2 u hu (l ^ j) (pow_ne_zero _ hl.ne_zero)
-    rw [padicValNat.prime_pow] at hv
+    rw [(show padicValNat l (l ^ j) = j from by
+      simpa only [← Nat.padicValNat_def] using (Nat.multiplicity_prime_pow j))] at hv
     have hne : u ^ (l ^ j) - 1 ≠ 0 := by
       intro h
       rw [h, PadicInt.valuation_zero] at hv
@@ -142,15 +149,6 @@ theorem isPrimitiveRoot_pow_eq_pow_iff_zmod_eq {N : ℕ} [NeZero N] {ξ : LL} (h
     | (rw [ZMod.natCast_eq_natCast_iff]; rfl)
   rw [hz, hmod a, hmod b]
   exact ⟨fun h => hξ.pow_inj (Nat.mod_lt _ hN) (Nat.mod_lt _ hN) h, fun h => by rw [h]⟩
-
-theorem card_Rs {n : ℕ} {ζ : LL} (hζ : IsPrimitiveRoot ζ (l ^ n)) (s : ℕ) (hs : s < n) :
-    (primitiveRoots (l ^ (s + 1)) LL).card = (l - 1) * l ^ s := by
-  have hl := (Fact.out : l.Prime)
-  have hpos : 0 < l ^ n := pow_pos hl.pos n
-  have hprod : l ^ n = l ^ (n - (s + 1)) * l ^ (s + 1) := by
-    rw [← pow_add, Nat.sub_add_cancel (by omega)]
-  have h := hζ.pow hpos hprod
-  rw [h.card_primitiveRoots, Nat.totient_prime_pow_succ hl, mul_comm]
 
 private theorem mem_primitiveRoots_iff_isPrimitiveRoot {k : ℕ} (h0 : 0 < k) {ζ : LL} :
     ζ ∈ primitiveRoots k LL ↔ IsPrimitiveRoot ζ k := by

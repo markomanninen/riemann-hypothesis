@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PPrAdm
-import GroundTheory.PAdicHodge.NormalizedTrace
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ResidualSpectrum.SliceTensors.PPrAdm
+public import GroundTheory.PAdicHodge.NormalizedTrace
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,9 +12,9 @@ open NumberField MeasureTheory GlobalTheory.AutomorphicL2Unitary GlobalTheory.Cu
 
 namespace PositivityTheory.Rg.Rs.PrIrr
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {N : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {N : ℕ}
 
-theorem isStable_sInf (S : Set (Submodule ℂ (Sm E N))) (hS : ∀ U ∈ S, IsStable U) : IsStable (sInf S) := by
+theorem isStable_sInf (S : Set (Submodule ℂ (Sm E N))) (hS : ∀ U ∈ S, _root_.GlobalTheory.CuspRep.IsStable U) : _root_.GlobalTheory.CuspRep.IsStable (sInf S) := by
   intro o φ hφ
   rw [Submodule.mem_sInf] at hφ ⊢
   exact fun U hU => hS U hU o φ (hφ U hU)
@@ -27,12 +31,12 @@ def orthIn (V U : Submodule ℂ (Sm E N)) (hV : V ≤ W) : Submodule ℂ (Sm E N
   smul_mem' := fun c x hx => ⟨V.smul_mem c hx.1, fun u hu => by
     rw [cls_smul h c (hV hx.1), inner_smul_left, hx.2 u hu, mul_zero]⟩
 
-theorem exists_irr (hW : IsStable W) (hA : ∀ φ ∈ W, IsAutForm φ) (hinj : ∀ x ∈ W, cls h x = 0 → x = 0)
-    (hadj : ∀ o : Op E N, ∃ B : Module.End ℂ (Sm E N), (∀ U : Submodule ℂ (Sm E N), IsStable U → ∀ u ∈ U, B u ∈ U) ∧
+theorem exists_irr (hW : _root_.GlobalTheory.CuspRep.IsStable W) (hA : ∀ φ ∈ W, IsAutForm φ) (hinj : ∀ x ∈ W, cls h x = 0 → x = 0)
+    (hadj : ∀ o : Op E N, ∃ B : Module.End ℂ (Sm E N), (∀ U : Submodule ℂ (Sm E N), _root_.GlobalTheory.CuspRep.IsStable U → ∀ u ∈ U, B u ∈ U) ∧
       ∀ φ ∈ W, ∀ ψ ∈ W, inner ℂ (cls h (act o φ)) (cls h ψ) = inner ℂ (cls h φ) (cls h (B ψ)))
     {ψ : Sm E N} (hψW : ψ ∈ W) (hψ0 : ψ ≠ 0) :
-    ∃ V : Submodule ℂ (Sm E N), IsStable V ∧ V ≤ SupSpansPsiPart W ψ ∧ V ≠ ⊥ ∧
-      (∀ U ≤ V, IsStable U → U = ⊥ ∨ U = V) ∧ ∃ v ∈ V, inner ℂ (cls h ψ) (cls h v) ≠ 0 := by
+    ∃ V : Submodule ℂ (Sm E N), _root_.GlobalTheory.CuspRep.IsStable V ∧ V ≤ SupSpansPsiPart W ψ ∧ V ≠ ⊥ ∧
+      (∀ U ≤ V, _root_.GlobalTheory.CuspRep.IsStable U → U = ⊥ ∨ U = V) ∧ ∃ v ∈ V, inner ℂ (cls h ψ) (cls h v) ≠ 0 := by
   classical
   obtain ⟨L, hLo, hLc, hψT⟩ := exists_type (hA ψ hψW)
   have : FiniteDimensional ℂ (orbSpan ψ) := (hA ψ hψW).kfin
@@ -40,23 +44,23 @@ theorem exists_irr (hW : IsStable W) (hA : ∀ φ ∈ W, IsAutForm φ) (hinj : �
   set ρ := sub (cptRep E N) (orbSpan ψ) (orbSpan_stable ψ)
   set T := typePart L ρ
   set A := SupSpansPsiPart W ψ
-  have hAst : IsStable A := isStable_admissible_span hW ψ
+  have hAst : _root_.GlobalTheory.CuspRep.IsStable A := isStable_admissible_span hW ψ
   have hAW : A ≤ W := admissible_span_le W ψ
   have hfd : ∀ V' ≤ A, FiniteDimensional ℂ (V' ⊓ T : Submodule ℂ (Sm E N)) := fun V' h' =>
     haveI := finiteDimensional_admissible_isotypic hA (hA ψ hψW) hLo ρ hρ
     Submodule.finiteDimensional_of_le (inf_le_inf_right T h')
   let Cand : Submodule ℂ (Sm E N) → Prop := fun V' =>
-    IsStable V' ∧ V' ≤ A ∧ ∃ v ∈ V' ⊓ T, inner ℂ (cls h ψ) (cls h v) ≠ 0
+    _root_.GlobalTheory.CuspRep.IsStable V' ∧ V' ≤ A ∧ ∃ v ∈ V' ⊓ T, inner ℂ (cls h ψ) (cls h v) ≠ 0
   have hψψ : inner ℂ (cls h ψ) (cls h ψ) ≠ 0 := fun e => hψ0 (hinj ψ hψW (inner_self_eq_zero.1 e))
   have hex : ∃ n, ∃ V', Cand V' ∧ Module.finrank ℂ (V' ⊓ T : Submodule ℂ (Sm E N)) = n :=
     ⟨_, A, ⟨hAst, le_rfl, ψ, ⟨mem_admissible_span_self hψW, hψT⟩, hψψ⟩, rfl⟩
   obtain ⟨V1, hV1, hV1n⟩ := Nat.find_spec hex
   have hmin : ∀ V', Cand V' → Nat.find hex ≤ Module.finrank ℂ (V' ⊓ T : Submodule ℂ (Sm E N)) :=
     fun V' hV' => Nat.find_min' hex ⟨V', hV', rfl⟩
-  let V0 := sInf {U : Submodule ℂ (Sm E N) | IsStable U ∧ V1 ⊓ T ≤ U}
-  have hV0st : IsStable V0 := isStable_sInf _ fun U hU => hU.1
+  let V0 := sInf {U : Submodule ℂ (Sm E N) | _root_.GlobalTheory.CuspRep.IsStable U ∧ V1 ⊓ T ≤ U}
+  have hV0st : _root_.GlobalTheory.CuspRep.IsStable V0 := isStable_sInf _ fun U hU => hU.1
   have hV0le : V0 ≤ V1 := sInf_le ⟨hV1.1, inf_le_left⟩
-  have hgen : ∀ U, IsStable U → V1 ⊓ T ≤ U → V0 ≤ U := fun U hU hle => sInf_le ⟨hU, hle⟩
+  have hgen : ∀ U, _root_.GlobalTheory.CuspRep.IsStable U → V1 ⊓ T ≤ U → V0 ≤ U := fun U hU hle => sInf_le ⟨hU, hle⟩
   have hTV0 : V1 ⊓ T ≤ V0 := le_sInf fun U hU => hU.2
   have hV0T : V0 ⊓ T = V1 ⊓ T := le_antisymm (inf_le_inf_right T hV0le) (le_inf hTV0 inf_le_right)
   have hV0A : V0 ≤ A := hV0le.trans hV1.2.1
@@ -77,7 +81,7 @@ theorem exists_irr (hW : IsStable W) (hA : ∀ φ ∈ W, IsAutForm φ) (hinj : �
     exact hvψ (by rw [show (0 : Sm E N) = (0 : ℂ) • (0 : Sm E N) by simp, cls_smul h 0 W.zero_mem, zero_smul,
       inner_zero_right])
   · let C := orthIn h V0 U (hV0A.trans hAW)
-    have hCst : IsStable C := fun o x hx => ⟨hV0st o x hx.1, fun u hu => by
+    have hCst : _root_.GlobalTheory.CuspRep.IsStable C := fun o x hx => ⟨hV0st o x hx.1, fun u hu => by
       obtain ⟨B, hB, hadjB⟩ := hadj o
       rw [hadjB x (hAW (hV0A hx.1)) u (hAW (hV0A (hU hu)))]
       exact hx.2 _ (hB U hUst u hu)⟩

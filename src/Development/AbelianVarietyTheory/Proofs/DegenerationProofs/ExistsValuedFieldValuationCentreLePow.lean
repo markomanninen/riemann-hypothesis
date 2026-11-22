@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsCompleteAlgClosedFieldCentredAtPrimeStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsCompleteAlgClosedFieldCentredAtPrimeStatement
+
+@[expose] public section
 
 namespace GlobalTheory
 
@@ -113,8 +117,9 @@ theorem exists_valuedField_centre_le_pow : ∀ (R K : Type) [CommRing R] [IsDoma
         simpa using this
       obtain ⟨a, ha, hxa⟩ := hinv x x.2
       obtain ⟨M, hM, hqM⟩ := Ideal.exists_le_maximal q hqp.ne_top
-      have hMc : (M.comap (algebraMap R R₁)).IsMaximal :=
-        Ideal.isMaximal_comap_of_isIntegral_of_isMaximal M
+      have hMc : (M.comap (algebraMap R R₁)).IsMaximal := by
+        letI : M.IsMaximal := hM
+        exact Ideal.isMaximal_under_of_isIntegral_of_isMaximal M
       have huM : algebraMap R R₁ u ∈ M := by
         rw [← Ideal.mem_comap, IsLocalRing.eq_maximalIdeal hMc]; exact hum
       have h1 : (1 - algebraMap R R₁ u * ⟨a, ha⟩ : R₁) ∈ q := by

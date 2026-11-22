@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.IsGaugeAll
+
+@[expose] public section
+
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas
 
 namespace GlobalTheory.TwoSidedJac
@@ -82,7 +87,7 @@ theorem span_skew
       T ∈ Submodule.span ℂ (Set.range fun i => (e i : Matrix (Fin a) (Fin a) ℂ)) := by
     intro T hT
     have h := congrArg Subtype.val (e.sum_repr ⟨T, skewAdjoint.mem_iff.mpr hT⟩)
-    simp only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul] at h
+    simp only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul] at h
     rw [← h]
     refine Submodule.sum_mem _ fun i _ => ?_
     exact Submodule.smul_of_tower_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -113,7 +118,7 @@ theorem det_skew_eq
     have h1 : (L (e j) : Matrix (Fin a) (Fin a) ℂ) =
         ∑ k, ((e.repr (L (e j)) k : ℝ) : ℂ) • e' k := by
       have h := congrArg Subtype.val (e.sum_repr (L (e j)))
-      simp only [AddSubmonoidClass.coe_finset_sum, SetLike.val_smul] at h
+      simp only [AddSubmonoidClass.coe_finsetSum, SetLike.val_smul] at h
       rw [← h]
       simp only [he, Complex.coe_smul]
     rw [h1, e'.repr_sum_self]

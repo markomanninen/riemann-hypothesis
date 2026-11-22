@@ -1,7 +1,11 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.SegDefs
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.DigitPartMonomial
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.AddMemSupportOfMemSupportCoefOut
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.ExistsMonomialOrder
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.SegDefs
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.DigitPartMonomial
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.AddMemSupportOfMemSupportCoefOut
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.ExistsMonomialOrder
+
+@[expose] public section
 
 noncomputable section
 

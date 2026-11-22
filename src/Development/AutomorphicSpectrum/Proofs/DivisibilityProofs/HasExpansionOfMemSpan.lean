@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyBundles
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.AssemblyBundles
+
+@[expose] public section
 
 open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.CompanionTheory.Ar.Num
 
@@ -15,7 +19,8 @@ def negReal (N : ℕ) : MvPolynomial (Fin N) ℤ →ₐ[ℤ] MvPolynomial (Fin N
 theorem negReal_hsymm (N a : ℕ) :
     negReal N (hsymm (Fin N) ℤ a) =
       aeval (fun i => (-X i : MvPolynomial (Fin N) ℝ)) (hsymm (Fin N) ℝ a) := by
-  simp only [negReal, hsymm, map_sum, map_multiset_prod, Multiset.map_map, Function.comp_def, aeval_X]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [negReal, hsymm, map_sum, map_multiset_prod, Multiset.map_map, Function.comp_def, aeval_X]
 
 theorem negReal_isHomogeneous {N n : ℕ} {P : MvPolynomial (Fin N) ℤ} (hP : P.IsHomogeneous n) :
     (negReal N P).IsHomogeneous n := by
@@ -25,7 +30,8 @@ theorem negReal_isHomogeneous {N n : ℕ} {P : MvPolynomial (Fin N) ℤ} (hP : P
 
 theorem negReal_psum (N k : ℕ) :
     negReal N (psum (Fin N) ℤ k) = (-1) ^ k * ∑ i, (X i ^ k : MvPolynomial (Fin N) ℝ) := by
-  simp only [negReal, psum, map_sum, map_pow, aeval_X, Finset.mul_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [negReal, psum, map_sum, map_pow, aeval_X, Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [neg_pow]
 
@@ -75,7 +81,7 @@ theorem hasExpansion_of_mem_span {N k : ℕ} (hk : 1 ≤ k) {G : MvPolynomial (F
     obtain ⟨R, hR, e⟩ := hx
     obtain ⟨S, hS, f⟩ := hy
     refine ⟨R + S, fun a => (hR a).add (hS a), ?_⟩
-    simp only [map_add, e, f, Pi.add_apply, mul_add, Finset.sum_add_distrib]
+    simp only [map_add (f := _), e, f, Pi.add_apply, mul_add, Finset.sum_add_distrib]
   | smul c x _ hx =>
     obtain ⟨R, hR, e⟩ := hx
     refine ⟨fun a => C (c : ℝ) * R a, fun a => ?_, ?_⟩

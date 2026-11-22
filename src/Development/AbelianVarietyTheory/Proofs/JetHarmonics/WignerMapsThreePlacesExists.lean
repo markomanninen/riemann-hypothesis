@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.DiscreteSeriesShifts.AmapsShExists
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ContractionMapsAtRepresentatives
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UnitaryMeasureDatumProductMeasureEqOfSameVectors
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NormAdjointCompIsometryEquiv
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.DiscreteSeriesShifts.AmapsShExists
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ContractionMapsAtRepresentatives
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UnitaryMeasureDatumProductMeasureEqOfSameVectors
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.NormAdjointCompIsometryEquiv
+
+@[expose] public section
 
 open Matrix Formalism.QuantumDeterminants Formalism.FourierDecayAlt Formalism.FourierDecayAlt.P.CutBP2
 

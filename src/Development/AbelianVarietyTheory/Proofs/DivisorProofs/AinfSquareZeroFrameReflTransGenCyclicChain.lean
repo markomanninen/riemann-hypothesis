@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FontaineAinfLocalDomainXiAdicOrder
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.EqZeroOfForallPowDvd
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FontaineAinfLocalDomainXiAdicOrder
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -38,23 +42,23 @@ include hker in
 theorem theta_mu : fontaineTheta O p (mu ε) = 0 := by
   rw [← xi_mul_nu, map_mul, theta_xi hker, zero_mul]
 
-include hker in
 
+include hker in
 theorem theta_nu_dvd : fontaineTheta O p (nu ε) ∣ (p : O) := by
   obtain ⟨c, hc⟩ := nu_dvd_xi_sub ε
   have h := congrArg (fontaineTheta O p) hc
   rw [map_sub, map_natCast, map_mul, theta_xi hker] at h
   exact ⟨-fontaineTheta O p c, by linear_combination -h⟩
 
-include hker hsurj in
 
+include hker hsurj in
 theorem mem_X (x : Ainf p O) :
     x ∈ span {(p : Ainf p O), xi ε} ↔ (p : O) ∣ fontaineTheta O p x := by
   constructor
   · intro hx
     obtain ⟨c, d, rfl⟩ := mem_span_pair.1 hx
     refine ⟨fontaineTheta O p c, ?_⟩
-    rw [map_add, map_mul, map_mul, map_natCast, theta_xi hker]
+    rw [map_add (f := _), map_mul, map_mul, map_natCast, theta_xi hker]
     ring
   · rintro ⟨o, ho⟩
     obtain ⟨z, rfl⟩ := hsurj o
@@ -64,8 +68,8 @@ theorem mem_X (x : Ainf p O) :
     obtain ⟨w, hw⟩ := h
     exact mem_span_pair.2 ⟨z, w, by linear_combination hw⟩
 
-include hker hsurj hnzd hsat in
 
+include hker hsurj hnzd hsat in
 theorem mul_xi_mem (x : Ainf p O) :
     x * xi ε ∈ span {(p : Ainf p O), mu ε} ↔
       fontaineTheta O p (nu ε) ∣ fontaineTheta O p x := by
@@ -75,7 +79,7 @@ theorem mul_xi_mem (x : Ainf p O) :
   · intro hx
     obtain ⟨c, d, hcd⟩ := mem_span_pair.1 hx
     have h1 := congrArg (fontaineTheta O p) hcd
-    rw [map_add, map_mul, map_mul, map_mul, map_natCast, theta_xi hker, theta_mu hker] at h1
+    rw [map_add (f := _), map_mul, map_mul, map_mul, map_natCast, theta_xi hker, theta_mu hker] at h1
     have hc : fontaineTheta O p c = 0 := hsat _ (by linear_combination h1)
     rw [← RingHom.mem_ker, hker, mem_span_singleton'] at hc
     obtain ⟨c', hc'⟩ := hc
@@ -84,7 +88,7 @@ theorem mul_xi_mem (x : Ainf p O) :
     rw [map_sub, map_natCast, map_mul, theta_xi hker] at h3
     refine ⟨fontaineTheta O p d - fontaineTheta O p c0 * fontaineTheta O p c', ?_⟩
     have hx' : x = nu ε * d + p * c' := by linear_combination h2
-    rw [hx', map_add, map_mul, map_mul, map_natCast]
+    rw [hx', map_add (f := _), map_mul, map_mul, map_natCast]
     linear_combination (-fontaineTheta O p c') * h3
   · rintro ⟨o, ho⟩
     obtain ⟨z, rfl⟩ := hsurj o
@@ -105,14 +109,14 @@ def lay (I J : Ideal (Ainf p O)) (h : I ≤ J) : Ideal F.B where
   carrier := {b | ∃ x ∈ I, ∃ y ∈ J, b = F.a x + F.τ * F.a y}
   add_mem' := by
     rintro _ _ ⟨x, hx, y, hy, rfl⟩ ⟨x', hx', y', hy', rfl⟩
-    exact ⟨x + x', I.add_mem hx hx', y + y', J.add_mem hy hy', by rw [map_add, map_add]; ring⟩
+    exact ⟨x + x', I.add_mem hx hx', y + y', J.add_mem hy hy', by rw [map_add (f := _), map_add (f := _)]; ring⟩
   zero_mem' := ⟨0, I.zero_mem, 0, J.zero_mem, by simp⟩
   smul_mem' := by
     rintro c _ ⟨x, hx, y, hy, rfl⟩
     obtain ⟨u, w, rfl⟩ := F.gen c
     refine ⟨u * x, I.mul_mem_left u hx, u * y + w * x,
       J.add_mem (J.mul_mem_left u hy) (h (I.mul_mem_left w hx)), ?_⟩
-    simp only [smul_eq_mul, map_mul, map_add]
+    simp only [smul_eq_mul, map_mul, map_add (f := _)]
     linear_combination (F.a w * F.a y) * F.τ_sq
 
 theorem eq_rep {x y x' y' : Ainf p O} (h : F.a x + F.τ * F.a y = F.a x' + F.τ * F.a y') :
@@ -162,7 +166,7 @@ theorem theta_tau : F.θ F.τ = 0 :=
 
 include hμ in
 theorem theta_rep (x y : Ainf p O) : F.θ (F.a x + F.τ * F.a y) = fontaineTheta O p x := by
-  rw [map_add, map_mul, theta_tau F hμ, zero_mul, add_zero, F.θ_a]
+  rw [map_add (f := _), map_mul, theta_tau F hμ, zero_mul, add_zero, F.θ_a]
 
 include F hμ in
 theorem theta_surj : Function.Surjective (fontaineTheta O p) := fun o => by
@@ -184,7 +188,7 @@ theorem lay_P_P : lay F (span {(p : Ainf p O), mu ε}) _ le_rfl = span {(p : F.B
     have h0 := (F.τ_mul (d' * mu ε)).2 (dvd_mul_left _ _)
     have h1 := F.p_τ
     refine mem_span_singleton.2 ⟨F.a c + F.τ * F.a d + F.τ * F.a c', ?_⟩
-    simp only [map_add, map_mul, map_natCast] at h0 ⊢
+    simp only [map_add (f := _), map_mul, map_natCast] at h0 ⊢
     linear_combination h0 - F.a d * h1
   · rintro _ rfl
     exact ⟨p, subset_span (Set.mem_insert _ _), 0, zero_mem _, by simp⟩
@@ -213,7 +217,7 @@ theorem chain : Relation.ReflTransGen (fun N N' : Ideal F.B => IsStep p F.θ N' 
       obtain ⟨c, d, rfl⟩ := mem_span_pair.1 hx
       have e : F.a (c * p + d * xi ε) + F.τ * F.a y =
           (F.a (c * p) + F.τ * F.a y) + F.a d * F.a (xi ε) := by
-        simp only [map_add, map_mul]; ring
+        simp only [map_add (f := _), map_mul]; ring
       rw [e]
       refine add_mem (mem_sup_left ⟨c * p, ?_, y, trivial, rfl⟩)
         (mem_sup_right (mem_span_singleton.2 (dvd_mul_left _ _)))
@@ -250,7 +254,7 @@ theorem chain : Relation.ReflTransGen (fun N N' : Ideal F.B => IsStep p F.θ N' 
       obtain ⟨c, d, rfl⟩ := mem_span_pair.1 hy
       have e : F.a x + F.τ * F.a (c * p + d * xi ε) =
           (F.a x + F.τ * F.a (c * p)) + F.a d * (F.τ * F.a (xi ε)) := by
-        simp only [map_add, map_mul]; ring
+        simp only [map_add (f := _), map_mul]; ring
       rw [e]
       refine add_mem (mem_sup_left ⟨x, hx, c * p, ?_, rfl⟩)
         (mem_sup_right (mem_span_singleton.2 (dvd_mul_left _ _)))

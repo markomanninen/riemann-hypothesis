@@ -1,5 +1,9 @@
-import Mathlib
-import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.IsSaturatedChain
+module
+
+public import Mathlib
+public import ReciprocityTheory.CommutativeAlgebra.SaturatedChains.IsSaturatedChain
+
+@[expose] public section
 
 open IsLocalRing
 

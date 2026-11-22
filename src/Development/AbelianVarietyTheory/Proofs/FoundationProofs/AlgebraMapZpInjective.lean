@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
-import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EvalSeriesAndDerivUniqueOfCoefficients
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CompletedLaurentIsDVRStatement
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnramifiedIntegersAdicComplete
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ApplyEqOfMemAdjoin
+public import Development.AbelianVarietyTheory.Definitions.Foundations.IsTopWTopWOfExists
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EvalSeriesAndDerivUniqueOfCoefficients
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.CompletedLaurentIsDVRStatement
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.UnramifiedIntegersAdicComplete
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,30 +18,32 @@ namespace GlobalTheory.GeoFix
 variable {p : ℕ} [hp : Fact p.Prime] {Ω : Type} [Field Ω] [Algebra (O0 p) Ω]
 
 def InR (ψ : O0 p →+* Ω) (y : Ω) : Prop :=
-  ∃ (d : ℕ) (e : Fin d → Ω) (b : Fin d → O0 p), (∀ t, IsInt p (e t) ∧ IsAlgZp p (e t)) ∧
+  ∃ (d : ℕ) (e : Fin d → Ω) (b : Fin d → O0 p),
+    (∀ t, IsInt (p := p) (e t) ∧ IsAlgZp (p := p) (e t)) ∧
     y = ∑ t, e t * ψ (b t)
 
 variable (p Ω) in
-
 abbrev zpAlg : Algebra ℤ_[p] Ω := ((algebraMap (O0 p) Ω).comp (algebraMap ℤ_[p] (O0 p))).toAlgebra
 
-theorem isAlgZp_iff (x : Ω) : IsAlgZp p x ↔ @IsAlgebraic ℤ_[p] Ω _ _ (zpAlg p Ω) x := by
+theorem isAlgZp_iff (x : Ω) : IsAlgZp (p := p) x ↔ @IsAlgebraic ℤ_[p] Ω _ _ (zpAlg p Ω) x := by
   letI := zpAlg p Ω
   haveI : IsScalarTower ℤ_[p] (O0 p) Ω := IsScalarTower.of_algebraMap_eq fun _ => rfl
   unfold IsAlgZp IsAlgebraic
   simp only [Polynomial.aeval_map_algebraMap]
 
-theorem isAlgZp_mul {x y : Ω} (hx : IsAlgZp p x) (hy : IsAlgZp p y) : IsAlgZp p (x * y) := by
+theorem isAlgZp_mul {x y : Ω} (hx : IsAlgZp (p := p) x) (hy : IsAlgZp (p := p) y) :
+    IsAlgZp (p := p) (x * y) := by
   letI := zpAlg p Ω
   rw [isAlgZp_iff] at hx hy ⊢
   exact hx.mul hy
 
-theorem isAlgZp_one : IsAlgZp p (1 : Ω) := by
+theorem isAlgZp_one : IsAlgZp (p := p) (1 : Ω) := by
   letI := zpAlg p Ω
   rw [isAlgZp_iff]
   exact isAlgebraic_one
 
-theorem isInt_psi {T : Tower p Ω} {n : ℕ} {ψ : O0 p →+* Ω} (h : IsReb T n ψ) (b : O0 p) : IsInt p (ψ b) := by
+theorem isInt_psi {T : Tower p Ω} {n : ℕ} {ψ : O0 p →+* Ω} (h : IsReb T n ψ) (b : O0 p) :
+    IsInt (p := p) (ψ b) := by
   have hq : IsIntegral (O0 p) (T.qq n) := by
     refine ⟨Polynomial.X ^ (p ^ n) - Polynomial.C (qO p),
       Polynomial.monic_X_pow_sub_C _ (pow_ne_zero _ hp.out.ne_zero), ?_⟩
@@ -85,12 +91,13 @@ theorem inR_neg {ψ : O0 p →+* Ω} {x : Ω} (hx : InR ψ x) : InR ψ (-x) := b
   have := inR_mul (inR_psi ψ (-1)) hx
   simpa using this
 
-theorem InR.isInt {T : Tower p Ω} {n : ℕ} {ψ : O0 p →+* Ω} (h : IsReb T n ψ) {x : Ω} (hx : InR ψ x) : IsInt p x := by
+theorem InR.isInt {T : Tower p Ω} {n : ℕ} {ψ : O0 p →+* Ω} (h : IsReb T n ψ) {x : Ω} (hx : InR ψ x) :
+    IsInt (p := p) x := by
   obtain ⟨d, e, b, he, rfl⟩ := hx
   exact IsIntegral.sum _ fun t _ => IsIntegral.mul (he t).1 (isInt_psi h (b t))
 
 theorem algebraMap_zp_injective : Function.Injective (algebraMap ℤ_[p] (O0 p)) := by
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro m hm
   by_contra h0
   rw [PadicInt.unitCoeff_spec h0, map_mul, map_pow, map_natCast] at hm
@@ -100,7 +107,7 @@ theorem algebraMap_zp_injective : Function.Injective (algebraMap ℤ_[p] (O0 p))
   exact mul_ne_zero hu hp0 hm
 
 theorem exists_inR_of_isAlgZp (hc : IsClo p Ω) {T : Tower p Ω} {n : ℕ} {ψ : O0 p →+* Ω} (h : IsReb T n ψ) {x : Ω}
-    (hx : IsAlgZp p x) : ∃ D : O0 p, D ≠ 0 ∧ InR ψ (x * ψ D) := by
+    (hx : IsAlgZp (p := p) x) : ∃ D : O0 p, D ≠ 0 ∧ InR ψ (x * ψ D) := by
   letI := zpAlg p Ω
   haveI : IsScalarTower ℤ_[p] (O0 p) Ω := IsScalarTower.of_algebraMap_eq fun _ => rfl
   have hx' := (isAlgZp_iff x).1 hx
@@ -132,15 +139,16 @@ theorem algebraMap_zp_eq (m : ℤ_[p]) :
   have hm : m = (m.appr K : ℤ_[p]) + (p : ℤ_[p]) ^ K * u := by rw [← hu]; ring
   refine ⟨algebraMap ℤ_[p] (O0 p) u - algebraMap (Lau p) (O0 p) (HahnSeries.C u), ?_⟩
   conv_lhs => rw [hm]
-  simp only [map_add, map_mul, map_pow, map_natCast]
+  simp only [map_add (f := _), map_mul, map_pow, map_natCast]
   ring
 
-theorem isAlgZp_zp (m : ℤ_[p]) : IsAlgZp p (zp Ω m) := by
+theorem isAlgZp_zp (m : ℤ_[p]) : IsAlgZp (p := p) (zp Ω m) := by
   refine ⟨Polynomial.X - Polynomial.C m, Polynomial.X_sub_C_ne_zero m, ?_⟩
   rw [Polynomial.map_sub, Polynomial.map_X, Polynomial.map_C, map_sub, Polynomial.aeval_X, Polynomial.aeval_C,
     zp, algebraMap_zp_eq, HahnSeries.C_apply, sub_self]
 
-theorem isAlgZp_add {x y : Ω} (hx : IsAlgZp p x) (hy : IsAlgZp p y) : IsAlgZp p (x + y) := by
+theorem isAlgZp_add {x y : Ω} (hx : IsAlgZp (p := p) x) (hy : IsAlgZp (p := p) y) :
+    IsAlgZp (p := p) (x + y) := by
   letI := zpAlg p Ω
   rw [isAlgZp_iff] at hx hy ⊢
   exact hx.add hy

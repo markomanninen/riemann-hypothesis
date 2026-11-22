@@ -1,13 +1,17 @@
-import Mathlib
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsExpansionIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumOKEx
-import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.FormulaAtOfSubsingleton
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneCosetOfIsTensor
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemCompletedGridArrowLatticeIffIntegralFrameMatr
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HostIdealUnitAtPlacesPrimeToLevel
-import Development.AutomorphicArithmetic.LocalEmbeddings.StairDepth
-import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsExpansionIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SumOKEx
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.FormulaAtOfSubsingleton
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneCosetOfIsTensor
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MemCompletedGridArrowLatticeIffIntegralFrameMatr
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HostIdealUnitAtPlacesPrimeToLevel
+public import Development.AutomorphicArithmetic.LocalEmbeddings.StairDepth
+public import Formalism.MirabolicMackeyTheory.MirabolicMackeyProofs.RamBasic
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR Formalism.IndefR.Datum Formalism.IndefR.Links Formalism.L2.DIV
 open IsDedekindDomain NumberField GlobalTheory.ChiGrid GlobalTheory.FunObj GlobalTheory.RowTest GlobalTheory.DepthUnf GlobalTheory.SumSize GlobalTheory.RowClaim
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
@@ -39,7 +43,7 @@ private theorem exists_depth (P : Finset (Pl D.host.E)) (n : Pl D.host.E → ℕ
   · have hN : N l ≤ B := Finset.sup_le fun w hw => by
       obtain ⟨h1, h2⟩ := Finset.mem_filter.1 hw
       exact hB w h1 (h2 ▸ Formalism.EigenvalueLevelCeiling.plc_mem w)
-    rw [← Nat.factorization_def _ hl, Nat.factorization_prod fun p hp => pow_ne_zero _ (hpr p hp).ne_zero,
+    rw [Nat.padicValNat_def, ← Nat.factorization_def _ hl, Nat.factorization_prod fun p hp => pow_ne_zero _ (hpr p hp).ne_zero,
       Finset.sum_congr rfl fun p hp => (hpr p hp).factorization_pow, Finset.sum_apply']
     simp only [Finsupp.single_apply, Finset.sum_ite_eq']
     split_ifs

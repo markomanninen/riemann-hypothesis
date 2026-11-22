@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.StrYMap
-import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Imports
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.StrYMap
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.FrobeniusSmoothVectors.Imports
+
+@[expose] public section
 
 open IsLocalRing Matrix UpperTheory.V.Alg UpperTheory.V.U3 UpperTheory.V.Fr
 
@@ -16,7 +20,9 @@ theorem UpperTheory.V.Fr.framePoint_fiber_nonempty :
     simpa [w] using h
   have hup : ∀ g : F.G0, ρ.r g 0 1 = 0 := by
     intro g
-    have h : ρ.r g 0 1 ∈ ρ.triM := Ideal.subset_span ⟨g, 0, 1, by decide, rfl⟩
+    have h : ρ.r g 0 1 ∈ ρ.triM := by
+      apply Ideal.subset_span (s := {x | ∃ g i j, i < j ∧ x = ρ.r g i j})
+      exact ⟨g, 0, 1, by decide, rfl⟩
     rw [htri, Ideal.mem_bot] at h
     exact h
   have hψ0 : ∀ v (s : F.Gv v), ((ρ.ψ v 0 s : Qˣ) : Q) = algebraMap k Q ((F.Ψ (F.loc v s) : k)) := by

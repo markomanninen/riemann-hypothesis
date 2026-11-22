@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.SHTensorPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.SHTensorPf
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits

@@ -1,6 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.CasimirResolventProjection
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.ConeCpt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.PullMatBd
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.CasimirResolventProjection
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.LocalLimitConjugates.ConeCpt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.LieGeometryGrowth.PullMatBd
+
+@[expose] public section
+
 open NumberField Matrix MeasureTheory Filter Topology Formalism.L2.Host GlobalTheory.CuspRep GlobalTheory.GKCoh GlobalTheory.UnitaryBC UpperTheory.V.Af UpperTheory.V.AlgRepEndIrreducible
 open UpperTheory.V.Lit UpperTheory.V.Lit.Geo UpperTheory.V.Lit.Bor UpperTheory.V.Lit.Dr
 open scoped TensorProduct GlobalTheory.CuspRep.CuspidalL2GL
@@ -15,22 +20,23 @@ private theorem basis_bd {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V] [
   have e : m v = ∑ I : Fin q → Fin n, (∏ i, b.repr (v i) (I i)) • m fun i => b (I i) := by
     have e1 : v = fun i => ∑ j, b.repr (v i) j • b j := funext fun i => (b.sum_repr (v i)).symm
     conv_lhs => rw [e1]
-    rw [ContinuousAlternatingMap.map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [ContinuousAlternatingMap.map_sum]
     exact Finset.sum_congr rfl fun I _ => m.map_smul_univ _ _
   rw [e, mul_assoc, Finset.sum_mul]
   refine norm_sum_le_of_le _ fun I _ => ?_
   rw [norm_smul, norm_prod, mul_comm δ, ← mul_assoc, ← Finset.prod_mul_distrib]
-  refine mul_le_mul (Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun i _ => ?_) (h I) (norm_nonneg _) (by positivity)
+  refine mul_le_mul (Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun i _ => ?_) (h I) (norm_nonneg _) (by positivity)
   exact (LinearMap.toContinuousLinearMap (b.coord (I i))).le_opNorm (v i)
 
-private theorem ev_cmp {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a d : ℕ}
+private theorem ev_cmp {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a d : ℕ}
     (m : Sm E a ⊗[ℂ] (Fin d → ℂ)) (g : GA E a) (j : Fin d) : ev m g j = (cmp j m).1 g := by
   induction m using TensorProduct.induction_on with
   | zero => rw [map_zero, map_zero]; rfl
   | tmul φ v => simp [mul_comm]
-  | add x y hx hy => simp only [map_add, Pi.add_apply, Submodule.coe_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Pi.add_apply, Submodule.coe_add, hx, hy]
 
-private theorem cont_inf (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) :
+private theorem cont_inf (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) :
     Continuous (infGL E a) := by
   have hs : Continuous (sInf E : Cinf E → Ad E) := (GlobalTheory.CuspRep.continuous_infEq E).prodMk continuous_const
   exact Continuous.units_map _ (continuous_const.add (continuous_id.matrix_map hs))
@@ -77,7 +83,7 @@ theorem UpperTheory.V.Cj.H.corrLim :
       have : B ^ q * ∏ i, ‖v i‖ = ∏ i, B * ‖v i‖ := by
         rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
       rw [this]
-      refine Finset.prod_le_prod (fun i _ => norm_nonneg _) fun i _ => ?_
+      refine Finset.prod_le_prod₀ (fun i _ => norm_nonneg _) fun i _ => ?_
       rw [norm_smul]
       have h3 := m3 (v i)
       have h4 := norm_nonneg (sand g⁻¹ (v i))

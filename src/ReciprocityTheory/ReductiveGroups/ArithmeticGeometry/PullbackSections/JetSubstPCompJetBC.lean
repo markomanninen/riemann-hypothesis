@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndBC
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndBC
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -67,6 +71,10 @@ theorem jetSubstP_comp_jetBC {κ κ' : Type} (m : ℕ) (φ : κ → MvPolynomial
 
 theorem jetBC_psJet {κ : Type} [Fintype κ] [DecidableEq κ] (m : ℕ) (f : MvPowerSeries κ S) :
     jetBC ψ κ m (psJet m f) = psJet m (MvPowerSeries.map ψ f) := by
-  simp [jetBC, psJet, psTrunc, MvPolynomial.map_monomial, MvPowerSeries.coeff_map]
+  unfold psJet
+  rw [jetBC_mk]
+  congr 1
+  unfold psTrunc
+  simp only [map_sum (MvPolynomial.map ψ), MvPolynomial.map_monomial, MvPowerSeries.coeff_map]
 
 end ReciprocityTheory.ChartRestriction.G.PullbackSections

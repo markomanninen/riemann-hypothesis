@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.GlobalTheory.GL6.AdmissibleOfSplitAndRoundTrips
-import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
-import Formalism.LocalRingCardinality.IntCastDvdOfDvdIntegers
+module
+
+public import Formalism.LocalToGlobal.GlobalTheory.GL6.AdmissibleOfSplitAndRoundTrips
+public import Formalism.LocalRingCardinality.RankBoundMonotoneInDimension
+public import Formalism.LocalRingCardinality.IntCastDvdOfDvdIntegers
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,7 @@ theorem completion_integers_precomplete {ϖ : v.adicCompletionIntegers K} (hϖ :
     intro y _
     obtain ⟨N, hN⟩ := exists_pow_lt₀ hlt
       (Units.map (MonoidWithZeroHom.ValueGroup₀.embedding
-        (f := (.ofClass (Valued.v : Valuation (v.adicCompletion K) (WithZero (Multiplicative ℤ)))))) y)
+        (f := (.ofClass (Valued.v : Valuation (v.adicCompletion K) (WithZero (Multiplicative ℤ)))))).toMonoidHom y)
     refine ⟨N, fun m hm n hn => ?_⟩
     show Valued.v.restrict (g n - g m) < y.1
     rw [Valuation.restrict_lt_iff_lt_embedding]
@@ -192,7 +196,7 @@ theorem split_idempotent_of_square_root (σ : E →ₐ[F] E) (v : HeightOneSpect
   · have h1 : (1 : v.adicCompletion F) = H + H := by linear_combination -hH2
     have hs1 : sigR σ (v.adicCompletion F) ((1 : E) ⊗ₜ[F] H + (α : E) ⊗ₜ[F] Y) =
         (1 : E) ⊗ₜ[F] H - (α : E) ⊗ₜ[F] Y := by
-      simp only [sigR, RingHom.coe_coe, AlgHom.toRingHom_eq_coe, map_add, Algebra.TensorProduct.map_tmul,
+      simp only [sigR, RingHom.coe_coe, AlgHom.toRingHom_eq_coe, map_add (f := _), Algebra.TensorProduct.map_tmul,
         map_one, AlgHom.id_apply, hσ, TensorProduct.neg_tmul, sub_eq_add_neg]
     rw [hs1, Algebra.TensorProduct.one_def]
     conv_rhs => rw [h1]
@@ -212,8 +216,8 @@ theorem forms_involution_eq_host_conj (x : D.host.E) : sigD D x = D.host.conj x 
 theorem host_conj_involutive (x : D.host.E) : D.host.conj (D.host.conj x) = x := by
   exact D.host.conj_conj x
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem splitAtT_of_tied (A : AtTTied u) : SplitAtT A := by
   intro v
   obtain ⟨pb, hpb⟩ : ∃ pb : 𝓞 D.host.E, (pb : D.host.E) = D.host.conj (A.piU : D.host.E) :=
@@ -276,29 +280,6 @@ theorem local_diamonds_exist_all (Tf : FormsTied D u) : LocalDiamondElementsExis
 theorem diamond_elements_exist_all (Tf : FormsTied D u) : DiamondElementsExist Tf := by
   exact diamond_elements_of_local Tf (local_diamonds_exist_all Tf)
 
-theorem DiaMul_tied (Tf : FormsTied D u) : Formalism.MainNotions.product_first_zeroth_parts.DiaMul D u := by
-  exact diamond_mul_of_local_diamonds Tf (local_diamonds_exist_all Tf)
-
-theorem TrIso_tied (Tf : FormsTied D u) : Formalism.MainNotions.product_first_zeroth_parts.TrIso D u := by
-  exact transport_iso_of_diamond_elements Tf (diamond_elements_exist_all Tf)
-
 end Tied
-
-theorem admissible_of_round_trips
-    (hR : ∀ (D : D7) (u : D.what₂.Word), FormsCompatible D u → Formalism.MainNotions.product_first_zeroth_parts.RoundUp D u ∧ Formalism.MainNotions.product_first_zeroth_parts.RoundDn D u) :
-    LinkAdmT := by
-  exact admissible_of_diamonds_and_round_trips (fun _ _ Tf _ => diamond_elements_exist_all Tf) hR
-
-theorem hecke_identities_no_kernel_of_split
-    (h : ∀ (D : D7) (u : D.what₂.Word), FormsCompatible D u → Formalism.MainNotions.product_first_zeroth_parts.HidaSetting D u →
-      (∀ i, i ≤ D.R.m → ∀ v, ∀ φ ∈ Formalism.MainNotions.product_first_zeroth_parts.MramI D u i,
-        Formalism.MainNotions.product_first_zeroth_parts.FFop D u i v φ = Formalism.MainNotions.product_first_zeroth_parts.Dop D u i v (Formalism.MainNotions.product_first_zeroth_parts.Gs D u i v φ)) ∧
-      (∀ i, i ≤ D.R.m → ∀ v, ∀ φ ∈ Formalism.MainNotions.product_first_zeroth_parts.MramI D u i,
-        Formalism.MainNotions.product_first_zeroth_parts.FFop D u i v φ ∈ Formalism.MainNotions.product_first_zeroth_parts.MramI D u i) ∧
-      (∀ i, i ≤ D.R.m → ∀ v, ∀ φ ∈ Formalism.MainNotions.product_first_zeroth_parts.MramI D u i, ∀ ψ ∈ Formalism.MainNotions.product_first_zeroth_parts.MramI D u i,
-        (D.fm u).ipC i (Formalism.MainNotions.product_first_zeroth_parts.FFop D u i v φ) (Formalism.MainNotions.product_first_zeroth_parts.FFop D u i v ψ) =
-          ((D.mem u).A.T : ℂ) ^ D.R.N i * (D.fm u).ipC i φ ψ)) :
-    FrobeniusNoKernelFamily := by
-  exact frobenius_no_kernel_of_frobenius_similitude (fun _ _ Tf _ => diamond_elements_exist_all Tf) h
 
 end Formalism.L2.GlobalTheoryTheory.LocalLatticeBases

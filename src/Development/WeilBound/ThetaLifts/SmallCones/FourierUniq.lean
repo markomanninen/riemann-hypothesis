@@ -1,6 +1,10 @@
-import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.AdelicCharacterRationalDual
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.HeisenbergCommutingOperatorScalar
+module
+
+public import Development.WeilBound.ThetaLifts.SmallCones.ThetaUniq
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.AdelicCharacterRationalDual
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.HeisenbergCommutingOperatorScalar
+
+@[expose] public section
 
 noncomputable section
 
@@ -89,7 +93,7 @@ theorem fourier_uniq {κ : Type} [Fintype κ] {ψ : AddChar (AF F) ℂ} (h : IsS
         rw [← AddChar.map_add_eq_mul, ← add_dotProduct]
         congr 2
         funext i
-        simp [map_add, map_neg]
+        simp [map_add (f := _), map_neg]
       rw [hsplit]
       ring
     simp_rw [key]

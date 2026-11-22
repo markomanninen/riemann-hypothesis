@@ -1,11 +1,16 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.FacAlg
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalEnd
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordConstruction
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMumfordBundlePullbackGrpPullback
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsIsoOfSurjectivePrincipalPairing
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FacAlg
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalEnd
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsMumfordBundlePullbackGrpPullback
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsIsoOfSurjectivePrincipalPairing
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.PolBaseChangeOfRelAmpleLocal
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -20,12 +25,12 @@ theorem lbIso_pull_pull_comp {X Y Z : Scheme.{0}} {M : LB X} (hM : M.IsLB) (F : 
     LBIso ((M.pull F).pull g) (M.pull (g ≫ F)) :=
   Geo.Tor.LBIso.chartPull (h := g) (Geo.Tor.chartPullPull (M.pull F) g g rfl)
     (Geo.Tor.chartPullSame M (fun _ => g ≫ F) (fun _ => F) (fun _ => 1) g (fun _ => rfl))
-    (GlobalTheory.PolBaseChange.lbIso_refl (Geo.Tor.pull_isLB hM F))
+    (GlobalTheory.PolBaseChange.lbIso_refl (LB.isLB_pull hM F))
 
 theorem exists_gen_pull_pull_iff {X Y Z : Scheme.{0}} {M : LB X} (hM : M.IsLB) (F : Y ⟶ X) (g : Z ⟶ Y) :
     (∃ t : LB.Gen ((M.pull F).pull g), t.IsGen) ↔ ∃ t : LB.Gen (M.pull (g ≫ F)), t.IsGen := by
-  have h₁ := Geo.Tor.pull_isLB (Geo.Tor.pull_isLB hM F) g
-  have h₂ := Geo.Tor.pull_isLB hM (g ≫ F)
+  have h₁ := LB.isLB_pull (LB.isLB_pull hM F) g
+  have h₂ := LB.isLB_pull hM (g ≫ F)
   exact ⟨GlobalTheory.CM.PairingIso.exists_gen_of_lbIso h₁ h₂ (lbIso_pull_pull_comp hM F g),
     GlobalTheory.CM.PairingIso.exists_gen_of_lbIso h₂ h₁ (Geo.Tor.LBIso.symm (lbIso_pull_pull_comp hM F g))⟩
 
@@ -46,17 +51,17 @@ theorem pull_gen_lam_generic : ∀ (R : Type) [CommRing R] [IsDomain R] [IsLocal
   obtain ⟨β₂, hβ₂, Hβ⟩ := lbIso_lam_pull_of_isGrpPullback _ _ (jK R) G' ((Over.pullback (jK R)).obj G')
     (pullback.fst G'.hom (jK R)) (Geo.Tor.isGrpPullback_pullback G' (jK R))
   have E₁ := Hβ U'.LG.L (U'.LG.L.pull (pullback.fst G'.hom (jK R))) _ (abelian₂ G' U'.LG.L) (𝟙 _) hL'
-    (Geo.Tor.pull_isLB hL' _) hQ (GlobalTheory.PolBaseChange.lbIso_refl (Geo.Tor.pull_isLB hL' _))
+    (LB.isLB_pull hL' _) hQ (GlobalTheory.PolBaseChange.lbIso_refl (LB.isLB_pull hL' _))
     (Geo.Tor.LBIso.chartPull (Geo.Tor.chartPullId _) (Geo.Tor.chartPullPull _ (𝟙 _) (𝟙 _) rfl)
       (GlobalTheory.PolBaseChange.lbIso_refl hQ))
   obtain ⟨γ₂, hγ₂, Hγ⟩ := lbIso_lam_pull_of_isGrpPullback _ _ (𝟙 _) A'.A ((Over.pullback (jK R)).obj G')
     U'.gen.hom.left (Geo.Tor.isGrpPullback_of_iso U'.gen)
   have E₂ := Hγ A'.L (U'.LG.L.pull (pullback.fst G'.hom (jK R))) _ (abelian₂ A'.A A'.L) (𝟙 _) hA
-    (Geo.Tor.pull_isLB hL' _) hQA (Geo.Tor.LBIso.symm U'.ext)
+    (LB.isLB_pull hL' _) hQA (Geo.Tor.LBIso.symm U'.ext)
     (Geo.Tor.LBIso.chartPull (Geo.Tor.chartPullId _) (Geo.Tor.chartPullPull _ (𝟙 _) (𝟙 _) rfl)
       (GlobalTheory.PolBaseChange.lbIso_refl hQA))
-  have E₃ := Geo.Tor.LBIso.trans (Geo.Tor.pull_isLB hQ _) (DVR.linComb_isLB _ (Geo.Tor.pull_isLB hL' _) _ _)
-    (Geo.Tor.pull_isLB hQA _) (Geo.Tor.LBIso.symm E₁) E₂
+  have E₃ := Geo.Tor.LBIso.trans (LB.isLB_pull hQ _) (DVR.linComb_isLB _ (LB.isLB_pull hL' _) _ _)
+    (LB.isLB_pull hQA _) (Geo.Tor.LBIso.symm E₁) E₂
   let m := (lift (snd ((Over.pullback (jK R)).obj G) T ≫ x ≫ (Over.pullback (jK R)).map inc)
     (fst ((Over.pullback (jK R)).obj G) T ≫ (Over.pullback (jK R)).map inc ≫ (Over.pullback (jK R)).map (oG.act F.f))).left
   have E₄ := Geo.Tor.LBIso.chartPull (Geo.Tor.chartPullPull _ m m rfl) (Geo.Tor.chartPullPull _ m m rfl) E₃
@@ -112,16 +117,16 @@ theorem pull_gen_lam_generic : ∀ (R : Type) [CommRing R] [IsDomain R] [IsLocal
     · simp only [Category.assoc, Category.comp_id]
       rw [hγ₂.2]
       rw [reassoc_of% hm2, hχ2, hgen]
-  have hP1 := Geo.Tor.pull_isLB (Geo.Tor.pull_isLB (Geo.Tor.pull_isLB hQ φl) κ₀) ψl
-  have hP2 := Geo.Tor.pull_isLB (Geo.Tor.pull_isLB hQ (κ₀ ≫ φl)) ψl
+  have hP1 := LB.isLB_pull (LB.isLB_pull (LB.isLB_pull hQ φl) κ₀) ψl
+  have hP2 := LB.isLB_pull (LB.isLB_pull hQ (κ₀ ≫ φl)) ψl
   have g₀ := GlobalTheory.CM.PairingIso.exists_gen_of_lbIso hP1 hP2
     (Geo.Tor.LBIso.chartPull (Geo.Tor.chartPullPull _ ψl ψl rfl) (Geo.Tor.chartPullPull _ ψl ψl rfl)
       (lbIso_pull_pull_comp hQ φl κ₀)) ⟨t, ht⟩
   have g₁ := (exists_gen_pull_pull_iff hQ (κ₀ ≫ φl) ψl).1 g₀
   rw [eq1] at g₁
   have g₂ := (exists_gen_pull_pull_iff hQ (β₂ ≫ 𝟙 _) m).2 g₁
-  have g₃ := GlobalTheory.CM.PairingIso.exists_gen_of_lbIso (Geo.Tor.pull_isLB (Geo.Tor.pull_isLB hQ _) _)
-    (Geo.Tor.pull_isLB (Geo.Tor.pull_isLB hQA _) _) E₄ g₂
+  have g₃ := GlobalTheory.CM.PairingIso.exists_gen_of_lbIso (LB.isLB_pull (LB.isLB_pull hQ _) _)
+    (LB.isLB_pull (LB.isLB_pull hQA _) _) E₄ g₂
   have g₄ := (exists_gen_pull_pull_iff hQA (γ₂ ≫ 𝟙 _) m).1 g₃
   rw [eq2] at g₄
   exact g₄

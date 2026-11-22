@@ -1,5 +1,9 @@
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.SplitCentreMulTor
-import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.CuspPairD
+module
+
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.SplitCentreMulTor
+public import Development.DiscreteGroups.PiInvariants.CompactSupportTwists.CuspPairD
+
+@[expose] public section
 
 set_option linter.all false
 
@@ -48,7 +52,7 @@ theorem piVecEx_holds : PiVecEx := by
   refine ⟨?_, fun M => ?_⟩
   · obtain ⟨C, hC⟩ := cp_decay_wt ψ hψc hA R 0
     haveI : IsFiniteMeasure (D.ν.restrict S) := isFiniteMeasure_restrict.2 hS.ne
-    rw [← hfind, memLp_indicator_iff_restrict hSm]
+    rw [← hfind, memLp_indicator_iff_restrict hSm.nullMeasurableSet]
     refine MemLp.of_bound hfc.aestronglyMeasurable (C * U) ((ae_restrict_iff' hSm).2 (Eventually.of_forall fun x hx => ?_))
     have h1 := hC x hx
     rw [pow_zero, mul_one] at h1

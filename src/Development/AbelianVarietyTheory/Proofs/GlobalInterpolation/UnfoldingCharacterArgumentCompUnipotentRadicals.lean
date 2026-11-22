@@ -1,10 +1,14 @@
-import Mathlib
-import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SandwichNormalForm
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SourceLatticeInvariance
-import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.LatticeNormalFormUnipotent
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormalFormAtPrime
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnipotentCharacterArgumentMulStabilizer
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.Columns.FiniteSumNonzeroLargeDepth
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SandwichNormalForm
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.SourceLatticeInvariance
+public import Development.AbelianVarietyTheory.BlockTheory.GlobalSignature.LatticeNormalFormUnipotent
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.NormalFormAtPrime
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnipotentCharacterArgumentMulStabilizer
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.HermitianLatticesTheory Formalism.L2.DIV Formalism.L2.Col GlobalTheory.QNormal
 
@@ -52,7 +56,7 @@ theorem sub_atN_mem {i : ℕ} {v : Fin (n + c) → F} (hv : v ∈ Loc.Ufl F n c 
       exact l.2
     have ha : Loc.atN v (n + i) = v l := by
       unfold Loc.atN
-      rw [dif_pos hlt]
+      rw [dite_eq_left hlt]
       congr 1
       exact Fin.ext he.symm
     rw [ha]
@@ -89,14 +93,14 @@ theorem map_mem_Ufl {xj : (Fin n' → F) →ₗ[F] (Fin n → F)} {x : (Fin (n' 
     apply mem_Ufl_iff_forall_not_lt_eq_zero.2
     intro l hl
     simp only [Loc.inX, LinearMap.pi_apply]
-    rw [dif_neg (by omega)]
+    rw [dite_eq_right (by omega)]
     rfl
   | succ s ih =>
     intro v hv
     have hd := sub_atN_mem hv
     have e : v = (v - Loc.atN v (n' + s) • Loc.eN F (n' + c') (n' + s)) +
         Loc.atN v (n' + s) • Loc.eN F (n' + c') (n' + s) := by abel
-    rw [e, map_add, map_smul]
+    rw [e, map_add (f := _), map_smul]
     refine Submodule.add_mem _ (Ufl_mem_succ_of_mem (ih _ hd)) (Submodule.smul_mem _ _ ?_)
     have e2 : x (Loc.eN F (n' + c') (n' + s)) = Loc.eN F (n + c) (n + s) +
         (x (Loc.eN F (n' + c') (n' + s)) - Loc.eN F (n + c) (n + s)) := by abel
@@ -118,7 +122,7 @@ private theorem atN_apply_eq_atN_of_mem_Ufl_succ {N' C' N C : ℕ} (y : (Fin (N'
   have hy : y v = y (v - Loc.atN v (N' + s) • Loc.eN F (N' + C') (N' + s)) +
       Loc.atN v (N' + s) • (Loc.eN F (N + C) (N + s) +
         (y (Loc.eN F (N' + C') (N' + s)) - Loc.eN F (N + C) (N + s))) := by
-    rw [hsm, ← map_add, sub_add_cancel]
+    rw [hsm, ← map_add (f := _), sub_add_cancel]
   rw [hy, atN_add', atN_smul', atN_add', atN_eq_zero_of_mem_Ufl (hU s _ hd),
     atN_eN_self (by omega), atN_eq_zero_of_mem_Ufl (h3 s)]
   ring

@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsVariableChangeEqLatticeCurve
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.WeierstrassCurvePointOfLatticeAddOfGeneric
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsNumeratorOfInvolution
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsMulEqPolynomialWeierstrassP
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsVariableChangeEqLatticeCurve
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.WeierstrassCurvePointOfLatticeAddOfGeneric
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsNumeratorOfInvolution
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.ExistsMulEqPolynomialWeierstrassP
+
+@[expose] public section
 
 open Filter PeriodPair Polynomial WeierstrassCurve UpperHalfPlane
 open scoped Topology
@@ -94,7 +98,7 @@ lemma addMonoidHom_eq_zero_of_eventually {G : Type*} [AddCommGroup G] (χ : ℂ 
   have h1 : Tendsto (fun n : ℕ ↦ z₀ + z / n) atTop (𝓝 z₀) := by
     simpa using (tendsto_const_div_atTop_nhds_zero_nat z).const_add z₀
   obtain ⟨n, hn, hn0⟩ := ((h1.eventually h).and (eventually_gt_atTop 0)).exists
-  rw [map_add, h.self_of_nhds, zero_add] at hn
+  rw [map_add (f := _), h.self_of_nhds, zero_add] at hn
   have : z = n • (z / n) := by
     have : (n : ℂ) ≠ 0 := by exact_mod_cast hn0.ne'
     rw [nsmul_eq_mul]; field_simp
@@ -155,7 +159,7 @@ theorem exists_eq_latticePoint_mul (ψ : ℂ →+ (latticeCurve L').toAffine.Poi
       ev (f := fun t ↦ -H t + -H (-t) - (w + w)) ((hc.neg.add hc'.neg).sub continuousAt_const)
         (fun hh ↦ hw4 (by convert neg_mem hh using 1; simp [hH0]; ring))] with t a b c d
     have key : ψ (z₁ + t) + ψ (z₁ + -t) = latticePoint L' (w + w) := by
-      rw [latticePoint_add, hw, ← map_add, ← map_add]; congr 1; ring
+      rw [latticePoint_add, hw, ← map_add (f := _), ← map_add (f := _)]; congr 1; ring
     rcases a with a | a
     · rw [← latticePointHom_apply, map_sub, latticePointHom_apply, latticePointHom_apply, ← a, hw,
         map_add, add_sub_cancel_left]
@@ -173,7 +177,7 @@ theorem exists_eq_latticePoint_mul (ψ : ℂ →+ (latticeCurve L').toAffine.Poi
       simpa using (tu.comp t3).sub ((tu.comp t1).add (tu.comp t2))
     filter_upwards [t1.eventually s2, t2.eventually s2, t3.eventually s2,
       t4.eventually (L'.compl_lattice_sdiff_singleton_mem_nhds 0)] with p a b c d
-    rw [map_add, a, b, ← latticePoint_add, eq_comm, latticePoint_eq_iff] at c
+    rw [map_add (f := _), a, b, ← latticePoint_add, eq_comm, latticePoint_eq_iff] at c
     by_contra hne
     exact d ⟨c, fun e ↦ hne (sub_eq_zero.mp e)⟩
   have s4 : ∀ᶠ s in 𝓝 0, deriv (fun t ↦ u t - deriv u 0 * t) s = 0 := by

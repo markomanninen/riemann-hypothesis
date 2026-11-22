@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MembershipCriteria.GoodChar
-import Development.AutomorphicSpectrum.Proofs.MembershipProofs.SchrodingerModelSelfDualLatticeStatement
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MembershipCriteria.GoodChar
+public import Development.AutomorphicSpectrum.Proofs.MembershipProofs.SchrodingerModelSelfDualLatticeStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -228,7 +232,7 @@ theorem exists_std : ∀ {R : Type} [CommRing R] [TopologicalSpace R] [IsTopolog
           -(2 * ⅟2 * ((d.e x).1 ⬝ᵥ (d.e y).2)) := by
         simp only [Prod.fst_add, Prod.snd_add, add_dotProduct, dotProduct_add]
         ring
-      rw [hc, d.form, map_add, hX, AddChar.map_add_eq_mul, h0, mul_one, AddChar.map_add_eq_mul,
+      rw [hc, d.form, map_add (f := _), hX, AddChar.map_add_eq_mul, h0, mul_one, AddChar.map_add_eq_mul,
         AddChar.map_add_eq_mul]
   · intro γ hγ
     obtain ⟨ha, hb⟩ := (hΓ γ).1 hγ

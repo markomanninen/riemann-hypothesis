@@ -1,6 +1,10 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.ExistsKhwGenSubOfKType
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.PropsLowK
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.MeasurePreservingMulRight
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.ExistsKhwGenSubOfKType
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.PropsLowK
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.MeasurePreservingMulRight
+
+@[expose] public section
 
 noncomputable section
 
@@ -105,7 +109,7 @@ theorem map_E (hD₁ : IsDerivedOn ε σ₁ D₁ E₁) (hD₂ : IsDerivedOn ε �
     (x : D₁) (hx : (x : H₁) ∈ C₁) (y : D₂) (hxy : Φ (x : H₁) = (y : H₂)) (a b : Fin n) :
     Φ ((E₁ a b x : D₁) : H₁) = ((E₂ a b y : D₂) : H₂) := by
   rw [E_eq_actM ε E₁ a b, E_eq_actM ε E₂ a b]
-  simp only [LinearMap.add_apply, LinearMap.smul_apply, Submodule.coe_add, Submodule.coe_smul, map_add, map_smul]
+  simp only [LinearMap.add_apply, LinearMap.smul_apply, Submodule.coe_add, Submodule.coe_smul, map_add (f := _), map_smul]
   rw [map_actM hD₁ hD₂ Φ C₁ hint (hermPart_mem_lieAlgebra ε _) x hx y hxy,
     map_actM hD₁ hD₂ Φ C₁ hint (hermPart_mem_lieAlgebra_var ε _) x hx y hxy]
 

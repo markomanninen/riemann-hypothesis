@@ -1,7 +1,11 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Archimedean
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.LeftTranslate
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Height
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Archimedean
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.LeftTranslate
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Height
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Topology Filter Set
 open scoped NumberField.AdeleRing
@@ -14,8 +18,8 @@ namespace AutomorphicForm
 
 variable {K : Type*} [Field K] [NumberField K] {n : ℕ}
 
-variable (K n) in
 
+variable (K n) in
 abbrev UEnv : Type _ := UniversalEnvelopingAlgebra ℝ (isExpLieAlgebra K n).lieSubalgebra
 
 def archSlice (φ : AdelicGLn.AdelicGL K n → ℂ) (g : AdelicGLn.AdelicGL K n) :
@@ -28,13 +32,13 @@ def archSlice (φ : AdelicGLn.AdelicGL K n → ℂ) (g : AdelicGLn.AdelicGL K n)
 theorem archSlice_mul (φ : AdelicGLn.AdelicGL K n → ℂ) (g : AdelicGLn.AdelicGL K n)
     (x : archGroup K n) : archSlice φ (g * infEmb K n x) = leftTranslate x (archSlice φ g) := by
   funext y
-  simp [mul_assoc]
+  simp [leftTranslate, mul_assoc]
 
 def IsArchSmooth (φ : AdelicGLn.AdelicGL K n → ℂ) : Prop :=
   ∀ g, (isExpLieAlgebra K n).IsSmoothFun (archSlice φ g)
 
-variable (K n) in
 
+variable (K n) in
 def archSmooth : Submodule ℂ (AdelicGLn.AdelicGL K n → ℂ) where
   carrier := {φ | IsArchSmooth φ}
   zero_mem' _ := ((isExpLieAlgebra K n).smoothFuns (F := ℂ)).zero_mem
@@ -78,7 +82,7 @@ def uAction : UEnv K n →ₐ[ℝ] Module.End ℂ (archSmooth K n) where
     { toFun := fun φ => ⟨uActFun u φ, uActFun_mem u φ⟩
       map_add' := fun φ ψ => by
         ext g
-        simp only [uActFun, map_add, Submodule.coe_add, Pi.add_apply]
+        simp only [uActFun, map_add (f := _), Submodule.coe_add, Pi.add_apply]
       map_smul' := fun c φ => by
         ext g
         simp only [uActFun, map_smul, Submodule.coe_smul, Pi.smul_apply, RingHom.id_apply] }

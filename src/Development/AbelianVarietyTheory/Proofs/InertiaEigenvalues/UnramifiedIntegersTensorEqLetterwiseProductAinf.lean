@@ -1,9 +1,13 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RootOfUnityPrimeToTeichmullerLift
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSumRootsOfUnity
-import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsOfLayers
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.RootOfUnityPrimeToTeichmullerLift
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsSumRootsOfUnity
+public import Development.AbelianVarietyTheory.CrystallinePeriods.RingBasics
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations TensorProduct GlobalTheory.HWL Polynomial
 open scoped Formalism.Per
@@ -53,7 +57,8 @@ theorem aeval_surjective {a : ι → O} (h : ∀ i j, i ≠ j → IsUnit (a i - 
   choose p hp using h1
   intro x
   refine ⟨∑ i, x i • p i, ?_⟩
-  simp only [map_sum, map_smul, hp]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, hp]
   funext k
   simp [Finset.sum_apply, Pi.single_apply]
 
@@ -102,7 +107,7 @@ theorem ringHom_eq (ψ : ℤ_[l] →+* OC l) (z : ℤ_[l]) :
     have e : ((ψ z : OC l) : ℂ_[l]) - algebraMap ℚ_[l] ℂ_[l] (z : ℚ_[l]) =
         (l : ℂ_[l]) ^ n * (((ψ y : OC l) : ℂ_[l]) - algebraMap ℚ_[l] ℂ_[l] (y : ℚ_[l])) := by
       conv_lhs => rw [hz]
-      simp only [map_add, map_mul, map_pow, map_natCast, PadicInt.coe_add, PadicInt.coe_mul,
+      simp only [map_add (f := _), map_mul, map_pow, map_natCast, PadicInt.coe_add, PadicInt.coe_mul,
         PadicInt.coe_pow, PadicInt.coe_natCast]
       push_cast
       ring
@@ -190,7 +195,8 @@ theorem emb_ext (K : FinExt l) {L : Type} [Field L] [Algebra ℚ_[l] L] (σ τ :
       rw [hsum]
       push_cast
       rfl
-    rw [h2, map_sum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h2, map_sum, map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     obtain ⟨m, hm, hl, hx⟩ := (hω i).2
     rw [map_mul, map_mul, AlgHom.commutes, AlgHom.commutes, h _ m hm hl (Subtype.ext hx)]
@@ -261,8 +267,9 @@ theorem exists_hom (hcard : Module.finrank ℚ_[l] ↥(K0 K) ≤ Fintype.card ι
     rw [IsScalarTower.algebraMap_eq ℤ_[l] ℚ_[l] ↥(K0 K)]
     exact (algebraMap ℚ_[l] ↥(K0 K)).injective.comp (IsFractionRing.injective ℤ_[l] ℚ_[l]))
   have hmon := minpoly.monic hi
-  refine exists_lift hu ((minpoly ℤ_[l] c).map (algebraMap ℤ_[l] ↥(OL LL))) (hmon.map _) ?_
-    (fun i => ?_) _ ?_
+  set_option synthInstance.maxHeartbeats 200000 in
+    refine exists_lift hu ((minpoly ℤ_[l] c).map (algebraMap ℤ_[l] ↥(OL LL))) (hmon.map _) ?_
+      (fun i => ?_) _ ?_
   · rw [hmon.natDegree_map, ← hmon.natDegree_map (algebraMap ℤ_[l] ℚ_[l]),
       ← minpoly.isIntegrallyClosed_eq_field_fractions' ℚ_[l] hi]
     exact (minpoly.natDegree_le c).trans hcard

@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OfGroupPullbackDataBase
-import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyHomFixRepTrivial
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OfGroupPullbackDataBase
+public import Development.AbelianVarietyTheory.Definitions.Divisors.NonemptyHomFixRepTrivial
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section

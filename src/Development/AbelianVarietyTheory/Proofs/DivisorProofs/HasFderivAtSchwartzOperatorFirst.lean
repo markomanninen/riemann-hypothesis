@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTemperateGrowthProdMkConst
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzTranslateTaylorSecondOrderStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasTemperateGrowthProdMkConst
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzTranslateTaylorSecondOrderStatement
+
+@[expose] public section
+
 open scoped SchwartzMap ContDiff
 open GlobalTheory.SchwartzFstOp
 
@@ -56,7 +61,7 @@ theorem opFst_add_decomp (T : 𝓢(V, ℂ) →L[ℂ] 𝓢(W, E)) (f : 𝓢(V × 
   rw [opFst_apply, sliceCLM_add_eq]
   conv_lhs => rw [show SchwartzMap.compSubConstCLM ℂ (-((0 : V), v)) f
       = (SchwartzMap.compSubConstCLM ℂ (-((0 : V), v)) f - f - lineSnd v f) + f + lineSnd v f by abel]
-  simp only [map_add, SchwartzMap.add_apply]
+  simp only [map_add (f := _), SchwartzMap.add_apply]
 
 theorem hasFDerivAt_opFst [FiniteDimensional ℝ V'] (T : 𝓢(V, ℂ) →L[ℂ] 𝓢(W, E)) (f : 𝓢(V × V', ℂ))
     (y : W) (x' : V') :

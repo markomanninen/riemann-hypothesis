@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.SumDegF
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.DecSplit
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.CcAt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.ArPresAlt
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.EpsilonEtaMatrices.EpsilonEtaTensorDual
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.SumDegF
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.DecSplit
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.CcAt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.DegreeCountCohomology.ArPresAlt
+
+@[expose] public section
+
 open Matrix Filter NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal UpperTheory.V.Alg UpperTheory.V.W UpperTheory.V.Pa
 
 section SlopeTestRemainingChoices
@@ -13,7 +18,8 @@ private theorem l_not_mem_base_prime (s : HidaSetting l L Ω) : ((l : ℕ) : �
   intro h
   have h1 : ((s.p : ℕ) : 𝓞 (Lp L)) ∈ s.v0.asIdeal := by
     rw [← s.norm_v0_eq_one]
-    exact Ideal.absNorm_mem s.v0.asIdeal
+    simpa only [normV, ← Submodule.cardQuot_apply, ← Ideal.absNorm_apply] using
+      Ideal.absNorm_mem s.v0.asIdeal
   have hc : IsCoprime (s.p : 𝓞 (Lp L)) (l : 𝓞 (Lp L)) :=
     ((Nat.coprime_primes s.p_prime Fact.out).2 s.p_ne).cast
   obtain ⟨a, b, hab⟩ := hc
@@ -127,7 +133,7 @@ theorem UpperTheory.V.Pa.arPres :
       continuous_invFun := (Continuous.homeoOfEquivCompactToT2 ec).symm.continuous }
   let pl : ArData.W (locOf r) T.q ≃ (P.V N).S' :=
     (Equiv.ofInjective _ (plF_inj s (P.v N) (P.v_inj N) (P.v_not N))).trans
-      (Equiv.setCongr ((plF_range s _).trans (P.S_eq N).symm))
+      (Set.equivOfEq ((plF_range s _).trans (P.S_eq N).symm))
   refine ⟨a,
     { S := (P.V N).S'
       above := fun v hv => (P.V N).sub (Or.inl hv)

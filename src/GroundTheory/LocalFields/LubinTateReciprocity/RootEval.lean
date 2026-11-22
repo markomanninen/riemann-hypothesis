@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem powerSeries_ringHom_ext {J : Ideal S} (hJ : ∀ z : S, (∀ k : ℕ, z �
   set G : B⟦X⟧ := PowerSeries.mk fun i => coeff (i + k) F
   have hF : Φ₁ F - Φ₂ F = Φ₁ X ^ k * (Φ₁ G - Φ₂ G) := by
     conv_lhs => rw [F.eq_X_pow_mul_shift_add_trunc k]
-    rw [map_add, map_add, map_mul, map_mul, map_pow, map_pow, hp, ← hX]
+    rw [map_add (f := _), map_add (f := _), map_mul, map_mul, map_pow, map_pow, hp, ← hX]
     ring
   rw [hF]
   exact Ideal.mul_mem_right _ _ (Ideal.pow_mem_pow hXJ k)
@@ -115,7 +119,7 @@ theorem repr_mem_of_mem_map (hP : P.Monic) (J : Ideal B) {z : AdjoinRoot P}
   refine Submodule.smul_induction_on hz' (fun a ha m _ => ?_) (fun x y hx hy => ?_)
   · rw [map_smul, Finsupp.smul_apply, smul_eq_mul]
     exact J.mul_mem_right _ ha
-  · rw [map_add, Finsupp.add_apply]
+  · rw [map_add (f := _), Finsupp.add_apply]
     exact J.add_mem hx hy
 
 theorem eq_zero_of_forall_mem_span_root_pow [IsHausdorff I B] (hP : P.IsDistinguishedAt I)

@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.PhNormLimit
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.PhNormLimit
+
+@[expose] public section
 
 private theorem coeff_pow_eq_zero_of_lt_of_constantCoeff_eq_zero {K : Type*} [CommRing K] (a : MvPowerSeries Unit K)
     (ha : MvPowerSeries.constantCoeff a = 0) :
@@ -51,7 +55,7 @@ private theorem continuous_coeff_pow_of_continuous_coeff {K Y : Type*} [NormedFi
   | succ n ih =>
     intro e
     simp only [pow_succ, MvPowerSeries.coeff_mul]
-    exact continuous_finset_sum _ fun x _ => (ih x.1).mul (hF x.2)
+    exact continuous_finsetSum _ fun x _ => (ih x.1).mul (hF x.2)
 
 private theorem continuous_coeff_subst_of_continuous_coeff {K Y : Type*} [NormedField K] [TopologicalSpace Y]
     (f : PowerSeries K) (a : Y → MvPowerSeries Unit K)
@@ -64,7 +68,7 @@ private theorem continuous_coeff_subst_of_continuous_coeff {K Y : Type*} [Normed
         PowerSeries.coeff d f • MvPowerSeries.coeff e (a y ^ d) :=
     funext fun y => coeff_subst_eq_sum_range_coeff_mul_coeff_pow f (a y) (ha y) e
   rw [h]
-  exact continuous_finset_sum _ fun d _ =>
+  exact continuous_finsetSum _ fun d _ =>
     Continuous.smul (f := fun _ => PowerSeries.coeff d f) continuous_const (continuous_coeff_pow_of_continuous_coeff a hc d e)
 
 private theorem forall_mem_closure_of_isClosed_setOf {Y : Type*} [TopologicalSpace Y] (T : Set Y) (P : Y → Prop)
@@ -85,7 +89,7 @@ private theorem isClosed_setOf_coeff_exp_norm_le_one {K Y : Type*} [NormedField 
     simp only [Set.setOf_forall]
     refine isClosed_iInter fun n => isClosed_le ?_ continuous_const
     simp only [hG]
-    exact (continuous_finset_sum _ fun k _ => (continuous_coeff_pow_of_continuous_coeff F hF k n).div_const _).norm
+    exact (continuous_finsetSum _ fun k _ => (continuous_coeff_pow_of_continuous_coeff F hF k n).div_const _).norm
   simpa only [Set.setOf_and] using h1.inter h2
 
 private theorem continuous_coeff_subst_subst_C_mul_subst {K Y : Type*} [NormedField K] [TopologicalSpace Y]

@@ -1,12 +1,17 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsDiagonalSectionDifference
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionsDimZero
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSerreGraded
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PMultigradedHilbertPolynomial
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PEventualPolynomial
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PShiftDegreePolynomial
-import GroundTheory.HeightsAndTheta.Heights.Intersections.AvoidRing
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.GradedSpanProducts
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.StatementsDiagonalSectionDifference
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSectionsDimZero
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PSerreGraded
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PMultigradedHilbertPolynomial
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PEventualPolynomial
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.PShiftDegreePolynomial
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.AvoidRing
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.GradedSpanProducts
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.HilbertSamuel
@@ -215,13 +220,13 @@ theorem pow_sub_pow_le (t : ℚ) (ht : 1 ≤ t) (e : ℕ) : t ^ (e + 1) - (t - 1
 
 theorem poly_diff_bound {σ : Type} (p : MvPolynomial σ ℚ) (D : ℕ) (hp : p.totalDegree ≤ D) :
     ∃ C : ℚ, ∀ t : ℚ, 1 ≤ t → eval (fun _ => t) p - eval (fun _ => t - 1) p ≤ C * t ^ (D - 1) := by
-  have hev : ∀ t : ℚ, eval (fun _ => t) p = ∑ m ∈ p.support, coeff m p * t ^ (m.sum fun _ e => e) := by
+  have hev : ∀ t : ℚ, eval (fun _ => t) p = ∑ m ∈ p.support, AddMonoidAlgebra.coeff p m * t ^ (m.sum fun _ e => e) := by
     intro t
     rw [MvPolynomial.eval_eq]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [Finset.prod_pow_eq_pow_sum]
     rfl
-  refine ⟨∑ m ∈ p.support, |coeff m p| * (m.sum fun _ e => e : ℕ), fun t ht => ?_⟩
+  refine ⟨∑ m ∈ p.support, |AddMonoidAlgebra.coeff p m| * (m.sum fun _ e => e : ℕ), fun t ht => ?_⟩
   rw [hev, hev, ← Finset.sum_sub_distrib, Finset.sum_mul]
   refine Finset.sum_le_sum fun m hm => ?_
   have he : (m.sum fun _ e => e) ≤ D := (le_totalDegree hm).trans hp
@@ -237,10 +242,10 @@ theorem poly_diff_bound {σ : Type} (p : MvPolynomial σ ℚ) (D : ℕ) (hp : p.
       calc t ^ (e' + 1) - (t - 1) ^ (e' + 1) ≤ (e' + 1) * t ^ e' := h3
         _ ≤ (e' + 1) * t ^ (D - 1) := by gcongr
         _ = ((e' + 1 : ℕ) : ℚ) * t ^ (D - 1) := by push_cast; ring
-  calc coeff m p * t ^ e - coeff m p * (t - 1) ^ e = coeff m p * (t ^ e - (t - 1) ^ e) := by ring
-    _ ≤ |coeff m p| * (t ^ e - (t - 1) ^ e) := mul_le_mul_of_nonneg_right (le_abs_self _) (by linarith)
-    _ ≤ |coeff m p| * ((e : ℚ) * t ^ (D - 1)) := mul_le_mul_of_nonneg_left h2 (abs_nonneg _)
-    _ = |coeff m p| * (e : ℚ) * t ^ (D - 1) := by ring
+  calc AddMonoidAlgebra.coeff p m * t ^ e - AddMonoidAlgebra.coeff p m * (t - 1) ^ e = AddMonoidAlgebra.coeff p m * (t ^ e - (t - 1) ^ e) := by ring
+    _ ≤ |AddMonoidAlgebra.coeff p m| * (t ^ e - (t - 1) ^ e) := mul_le_mul_of_nonneg_right (le_abs_self _) (by linarith)
+    _ ≤ |AddMonoidAlgebra.coeff p m| * ((e : ℚ) * t ^ (D - 1)) := mul_le_mul_of_nonneg_left h2 (abs_nonneg _)
+    _ = |AddMonoidAlgebra.coeff p m| * (e : ℚ) * t ^ (D - 1) := by ring
 
 end DiagonalSectionDifference
 

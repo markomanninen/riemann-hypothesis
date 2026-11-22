@@ -1,9 +1,13 @@
-import Development.EtaleCohomology.TateTwists.EtaleSheafRestrictScalarsInjectiveResolutionHomE
-import Mathlib.Algebra.Homology.HomotopyCategory.KInjective
-import Mathlib.Algebra.Homology.HomotopyCategory.Acyclic
-import Mathlib.CategoryTheory.Triangulated.Orthogonal
-import Mathlib.Algebra.Homology.Localization
-import Mathlib.CategoryTheory.Abelian.Injective.Extend
+module
+
+public import Development.EtaleCohomology.TateTwists.EtaleSheafRestrictScalarsInjectiveResolutionHomE
+public import Mathlib.Algebra.Homology.HomotopyCategory.KInjective
+public import Mathlib.Algebra.Homology.HomotopyCategory.Acyclic
+public import Mathlib.CategoryTheory.Triangulated.Orthogonal
+public import Mathlib.Algebra.Homology.Localization
+public import Mathlib.CategoryTheory.Abelian.Injective.Extend
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
 

@@ -1,8 +1,13 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PublishedTheorems.KisinCrTrivial
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.nakayama
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PointFinitePower
-open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg UpperTheory.V.Published IsLocalRing Polynomial
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsInertiaInfiniteCyclotomic
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FiniteCohomology
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.LocalRingsCompletion.nakayama
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.PointFinitePower
+
+@[expose] public section
+
+open Formalism.BasicNotions Formalism.BasicNotions.Loc ReciprocityTheory.Gal Module UpperTheory.V.Loc UpperTheory.V.U3 UpperTheory.V.Alg IsLocalRing Polynomial
 
 private theorem ptFin_int {l : ℕ} [Fact l.Prime] (x : PadicAlgCl l) : IsIntegral ℤ_[l] x ↔ ‖x‖ ≤ 1 := by
   have hi : IsIntegral ℚ_[l] x := Algebra.IsIntegral.isIntegral x
@@ -39,8 +44,8 @@ private theorem ptFin_finite {O S : Type} [CommRing O] [IsLocalRing O] [IsAdicCo
     have h1 : maximalIdeal O ≤ P.comap (algebraMap O S) := Ideal.map_le_iff_le_comap.1 hJP
     have h2 : P.comap (algebraMap O S) = maximalIdeal O :=
       ((maximalIdeal.isMaximal O).eq_of_le (Ideal.comap_ne_top _ hP.ne_top) h1).symm
-    have h3 : P.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := O) P
-      (h2 ▸ maximalIdeal.isMaximal O)
+    have h3 : P.IsMaximal := Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := O) P
+      (by change (P.comap (algebraMap O S)).IsMaximal; rw [h2]; infer_instance)
     exact (eq_maximalIdeal h3).ge
   obtain ⟨n, hn⟩ := Ideal.exists_pow_le_of_le_radical_of_fg hrad (IsNoetherian.noetherian _)
   obtain ⟨N, hN, h⟩ := ptFin_pow (maximalIdeal S) hres n
@@ -107,7 +112,8 @@ theorem UpperTheory.V.Loc.ptFin :
     intro c
     have hc : c ∈ Submodule.span ℤ_[l] (Set.range o) := ho ▸ Submodule.mem_top
     obtain ⟨u, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun _).1 hc
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine sum_mem fun i _ => ?_
     rw [Algebra.smul_def, map_mul, ← IsScalarTower.algebraMap_apply,
       IsScalarTower.algebraMap_apply ℤ_[l] ℚ_[l] (PadicAlgCl l)]
@@ -123,7 +129,8 @@ theorem UpperTheory.V.Loc.ptFin :
     intro a
     obtain ⟨u, hu⟩ := hdec a
     rw [RingHom.mem_ker, map_sub, sub_eq_zero] at hu
-    rw [hu, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hu, map_sum]
     refine sum_mem fun i _ => ?_
     rw [map_smul, Algebra.smul_def]
     exact mul_mem (hOE _) (hTE (Or.inl (Or.inl (Or.inr ⟨i, rfl⟩))))
@@ -132,7 +139,7 @@ theorem UpperTheory.V.Loc.ptFin :
     induction ha using Submodule.span_induction with
     | mem z hz => exact hTE (Or.inr ⟨z, hz, rfl⟩)
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add, TrivSqZeroExt.snd_add]; exact add_mem hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _), TrivSqZeroExt.snd_add]; exact add_mem hx hy
     | smul c x hx0 hx =>
       have h0 : (F x).fst = 0 := by
         have : x ∈ RingHom.ker f := hP ▸ hx0
@@ -143,7 +150,8 @@ theorem UpperTheory.V.Loc.ptFin :
   obtain ⟨u, hu⟩ := hdec a
   have h3 := h2 _ (hP ▸ hu)
   have h4 : (F (∑ i, u i • b i)).snd ∈ E := by
-    rw [map_sum, TrivSqZeroExt.snd_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, TrivSqZeroExt.snd_sum]
     refine sum_mem fun i _ => ?_
     rw [map_smul, TrivSqZeroExt.snd_smul, Algebra.smul_def]
     exact mul_mem (hOE _) (hTE (Or.inl (Or.inr ⟨i, rfl⟩)))

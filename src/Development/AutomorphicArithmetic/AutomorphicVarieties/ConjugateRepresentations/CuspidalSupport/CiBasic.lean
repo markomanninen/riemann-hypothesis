@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Matrix GlobalTheory.CuspRep GlobalTheory.LFun Formalism.UG Formalism.UG.P Formalism.L2.Host UpperTheory.V.Cj.S
 open GroundTheory.Automorphic.AutomorphicForm (UPos unipGL constantTerm archCompact infEmb isExpLieAlgebra)
@@ -7,7 +11,7 @@ open GlobalTheory.PRep (fixed)
 open scoped TensorProduct
 
 attribute [local instance 100] LieRing.ofAssociativeRing in
-private theorem one_mem_centerU (E : Type) [Field E] [NumberField E] [IsTotallyComplex E] (a : ℕ) :
+private theorem one_mem_centerU (E : Type) [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] (a : ℕ) :
     UniversalEnvelopingAlgebra.ι ℝ (UpperTheory.V.Cm.lieEq E a (oneL E a)) ∈ (isExpLieAlgebra E a).centerU := by
   refine Subalgebra.mem_center_iff.2 fun u => ?_
   induction u using GroundTheory.Automorphic.AutomorphicForm.UEnv.induction with
@@ -21,7 +25,7 @@ private theorem one_mem_centerU (E : Type) [Field E] [NumberField E] [IsTotallyC
   | hmul x y hx hy => rw [mul_assoc, hy, ← mul_assoc, hx, mul_assoc]
   | hadd x y hx hy => rw [add_mul, mul_add, hx, hy]
 
-private theorem scalar_of_mem_Zalg {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+private theorem scalar_of_mem_Zalg {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
     (m : (E →+* ℂ) → Multiset ℂ) {z : Module.End ℂ (Sm E a)} (hz : z ∈ Zalg E a) :
     ∃ c : ℂ, ∀ φ ∈ CI a m, z φ = c • φ := by
   induction hz using Algebra.adjoin_induction with

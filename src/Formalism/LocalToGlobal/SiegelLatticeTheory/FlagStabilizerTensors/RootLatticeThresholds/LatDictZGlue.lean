@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDictZGlueA
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.RootLatticeThresholds.LatDictZGlueA
+
+@[expose] public section
 
 noncomputable section
 
@@ -62,7 +66,8 @@ theorem adelic_gluing : Z0.AdelGlue := by
     rw [← map_mul, eT_compl_mul (hQ.mem_toFinset.1 hi), map_zero]
   have hsum : φ + ∑ i ∈ Qs, ε i = 1 := by
     simp only [φ, ε]
-    rw [← map_sum, ← map_add, eT_sum hQ, map_one]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← map_sum, ← map_add (f := _), eT_sum hQ, map_one]
 
   let G : HeightOneSpectrum (𝓞 I.F) → Matrix (Fin I.n) (Fin I.n) (I.E ⊗[I.F] Af I.F) := fun q =>
     (g q : Matrix (Fin I.n) (Fin I.n) I.E).map (Formalism.UG.inclE (F := I.F) (Af I.F))

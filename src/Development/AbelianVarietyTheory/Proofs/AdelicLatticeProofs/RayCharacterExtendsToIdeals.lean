@@ -1,12 +1,17 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField IsDedekindDomain NumberField.mixedEmbedding MeasureTheory Complex Classical
+  UniqueFactorizationMonoid
 open scoped ContDiff nonZeroDivisors
 
 namespace GlobalTheory
 
-open UniqueFactorizationMonoid in
 
+open UniqueFactorizationMonoid in
 theorem exists_multiplicative_ideal_extension :
     ∀ (K : Type) [Field K] [NumberField K] (m : Ideal (𝓞 K)) (c : HeightOneSpectrum (𝓞 K) → ℂ), (∀ P, ¬ m ≤ P.asIdeal → ‖c P‖ = 1) → ∃ X : Ideal (𝓞 K) → ℂ, X ⊥ = 0 ∧ X ⊤ = 1 ∧ (∀ I J, X (I * J) = X I * X J) ∧ (∀ I, I ≠ ⊥ → I ⊔ m = ⊤ → ‖X I‖ = 1) ∧ (∀ I, I ⊔ m ≠ ⊤ → X I = 0) ∧ ∀ P, ¬ m ≤ P.asIdeal → X P.asIdeal = c P := by
   intro K _ _ m c hc
@@ -15,7 +20,7 @@ theorem exists_multiplicative_ideal_extension :
   have hd : ∀ P : HeightOneSpectrum (𝓞 K), ¬ m ≤ P.asIdeal → d P.asIdeal = c P := by
     intro P hP
     simp only [d]
-    rw [dif_pos ⟨P.isPrime, P.ne_bot⟩, if_neg hP]
+    rw [dite_eq_left ⟨P.isPrime, P.ne_bot⟩, if_neg hP]
   have hd0 : ∀ Q, m ≤ Q → d Q = 0 := by
     intro Q hQ
     simp only [d]
@@ -32,7 +37,7 @@ theorem exists_multiplicative_ideal_extension :
     · simp [hJ]
     have hIJ : I * J ≠ ⊥ := mul_ne_zero hI hJ
     simp only [if_neg hI, if_neg hJ, if_neg hIJ]
-    rw [normalizedFactors_mul hI hJ, Multiset.map_add, Multiset.prod_add]
+    rw [normalizedFactors_mul hI hJ, Multiset.map_add (f := _), Multiset.prod_add]
   · intro I hI hm
     simp only [if_neg hI]
     refine Multiset.prod_induction (fun z : ℂ => ‖z‖ = 1) _ ?_ (by simp) ?_

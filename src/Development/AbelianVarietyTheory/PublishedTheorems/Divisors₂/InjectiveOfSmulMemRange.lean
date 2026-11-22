@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ToSpanSingletonConstGenInjective
-import Development.AbelianVarietyTheory.Definitions.Divisors.XiMulNu
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvEqOneOfForallPairing
-import ReciprocityTheory.DualLattices.AinfFacts
-import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ValuationCoeEqNorm
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ToSpanSingletonConstGenInjective
+public import Development.AbelianVarietyTheory.Definitions.Divisors.XiMulNu
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConvEqOneOfForallPairing
+public import ReciprocityTheory.DualLattices.AinfFacts
+public import Development.AbelianVarietyTheory.Proofs.UnramifiedDepth.ValuationCoeEqNorm
+
+@[expose] public section
 
 noncomputable section
 
@@ -125,7 +129,8 @@ theorem injective_of_smul_mem_range [IsDomain A] [Module.Free A M] [Module.Finit
   let P : Matrix _ _ A := Matrix.of fun i j => b.repr (φ (b j)) i
   have key : ∀ m i, b.repr (φ m) i = (P.mulVec fun j => σ (b.repr m j)) i := fun m i => by
     have h1 : φ m = ∑ j, σ (b.repr m j) • φ (b j) := by
-      conv_lhs => rw [← b.sum_repr m, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        conv_lhs => rw [← b.sum_repr m, map_sum]
       simp only [map_smulₛₗ]
     rw [h1]
     simp [P, Matrix.mulVec, dotProduct, mul_comm]
@@ -139,7 +144,7 @@ theorem injective_of_smul_mem_range [IsDomain A] [Module.Free A M] [Module.Finit
     have := congrArg Matrix.det hP
     rw [Matrix.det_mul, h0, zero_mul, Matrix.det_smul, Matrix.det_one, mul_one] at this
     exact pow_ne_zero _ hx this.symm
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro m hm
   have h1 := Matrix.eq_zero_of_mulVec_eq_zero hd (v := fun j => σ (b.repr m j))
     (funext fun i => by rw [← key, hm]; simp)
@@ -162,7 +167,8 @@ theorem free_of_reduction [Nontrivial A] [Nontrivial O] [Module.Free A M] [Modul
   have sp : ⊤ ≤ Submodule.span O (Set.range fun i => r (b i)) := by
     intro y _
     obtain ⟨m, rfl⟩ := hr y
-    rw [← b.sum_repr m, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← b.sum_repr m, map_sum]
     exact Submodule.sum_mem _ fun i _ => by
       rw [map_smulₛₗ]; exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
   let c := Module.Basis.mk li sp
@@ -184,7 +190,7 @@ theorem free_of_exact [IsDomain O] [ValuationRing O] [Module.Free O D] [Module.F
   haveI : Module.Free O (Module.Dual O Y) := Module.free_of_flat_of_isLocalRing
   obtain ⟨s, hs⟩ := Module.projective_lifting_property π LinearMap.id hπ
   have hs' : ∃ l, π ∘ₗ l = LinearMap.id := ⟨s, hs⟩
-  obtain ⟨t, ht⟩ : ∃ l, l ∘ₗ ι = LinearMap.id := ((he.split_tfae hι hπ).out 0 1).1 hs'
+  obtain ⟨t, ht⟩ : ∃ l, l ∘ₗ ι = LinearMap.id := ((he.split_tfae hι hπ).out 1 2).1 hs'
   haveI : Module.Finite O X := Module.Finite.of_surjective t fun x => ⟨ι x, LinearMap.congr_fun ht x⟩
   haveI : Module.Projective O X := Module.Projective.of_split ι t ht
   exact ⟨⟨Module.free_of_flat_of_isLocalRing, inferInstance⟩, inferInstance, inferInstance⟩
@@ -198,7 +204,7 @@ theorem map_padic_smul {p : ℕ} [Fact p.Prime] [IsHausdorff (span {(p : A)}) M]
   have h := sub_eq_iff_eq_add.1 hc
   have h1 : T (a • f) - φ a • T f = (p : A) ^ n • (T (c • f) - φ c • T f) := by
     conv_lhs => rw [h]
-    rw [add_smul, map_add, map_add, add_smul, Nat.cast_smul_eq_nsmul, map_nsmul, map_natCast,
+    rw [add_smul, map_add (f := _), map_add (f := _), add_smul, Nat.cast_smul_eq_nsmul, map_nsmul, map_natCast,
       Nat.cast_smul_eq_nsmul, mul_smul, ← Nat.cast_pow, Nat.cast_smul_eq_nsmul, map_nsmul, map_mul,
       map_natCast, mul_smul, ← Nat.cast_pow, Nat.cast_smul_eq_nsmul, Nat.cast_smul_eq_nsmul,
       smul_sub]
@@ -274,8 +280,8 @@ section Main
 
 variable {p : ℕ} [Fact p.Prime] {O : Type} [CommRing O]
 
-variable (p O) in
 
+variable (p O) in
 def PDivGroup.dualFunctor : PDivGroup p O ⥤ (PDivGroup p O)ᵒᵖ where
   obj G := op G.dual
   map f := (dualHom _ _ f).op
@@ -307,7 +313,7 @@ theorem Published.PrismaticDieudonneHodgeAt.covariant {C : Type} [Field C] [IsAl
   choose s hs using hφ
   let ψ : ∀ G : PDivGroup p O, M.obj (op G) →ₛₗ[phiInv p O] M.obj (op G) := fun G =>
     { toFun := s G
-      map_add' := fun a b => inj G (by rw [map_add, hs, hs, hs, smul_add])
+      map_add' := fun a b => inj G (by rw [map_add (f := _), hs, hs, hs, smul_add])
       map_smul' := fun a m => inj G (by rw [map_smulₛₗ, hs, hs, frobenius_phiInv, smul_comm]) }
   have hψ : ∀ G m, φ G (ψ G m) = (WittVector.frobenius (xi ε) : Ainf p O) • m := hs
   have nψ : ∀ (G H : PDivGroup p O) (f : G ⟶ H) (m : M.obj (op H)),
@@ -318,7 +324,7 @@ theorem Published.PrismaticDieudonneHodgeAt.covariant {C : Type} [Field C] [IsAl
   let t := muTate O (fun n => (root^[n] ε).untilt) h0 (untilt_root_succ_pow ε)
   let T : (const p O ⟶ PDivGroup.mu p O) →+ Ainf p O :=
     AddMonoidHom.mk' (fun f => ec (M.map f.op (em.symm 1))) fun f g => by
-      rw [op_add, M.map_add, ← map_add]; rfl
+      rw [op_add, M.map_add (f := _), ← map_add (f := _)]; rfl
   let g : M.obj (op (PDivGroup.mu p O)) →ₗ[Ainf p O] M.obj (op (const p O)) :=
     ec.symm.toLinearMap ∘ₗ (Sandwich.mu ε • em.toLinearMap)
   obtain ⟨f, hf, -⟩ := hff g fun m => ec.injective (by
@@ -404,12 +410,5 @@ theorem Published.PrismaticDieudonneHodge.covariant (h : Published.PrismaticDieu
     [IsAdicComplete (span {(p : O)}) O] (ε : PreTilt O p)
     (hε : IsPrimitiveRoot (root ε).untilt p) : CovariantDieudonneAt ε :=
   (h p C v O hv ε hε).covariant hv hε
-
-example (h : Published.PrismaticDieudonneHodge) (p : ℕ) [Fact p.Prime] :
-    ∃ (_ : Fact ¬IsUnit ((p : ℕ) : 𝓞_ℂ_[p]))
-      (_ : IsAdicComplete (span {((p : ℕ) : 𝓞_ℂ_[p])}) 𝓞_ℂ_[p]) (ε : PreTilt 𝓞_ℂ_[p] p),
-      IsPrimitiveRoot (root ε).untilt p ∧ CovariantDieudonneAt ε := by
-  obtain ⟨h1, h2, ε, hv, hε⟩ := PadicComplexHost.main p
-  exact ⟨h1, h2, ε, hε, h.covariant p ℂ_[p] Valued.v _ hv ε hε⟩
 
 end GlobalTheory

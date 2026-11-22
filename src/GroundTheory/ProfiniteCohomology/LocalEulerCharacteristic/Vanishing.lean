@@ -1,9 +1,14 @@
-import Mathlib
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.VanishingCore
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.VanishingUnits
-import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.Cohomology
-import GroundTheory.LocalFields.SeparableClosure
-import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.Vanishing
+module
+
+public import Mathlib
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.VanishingCore
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.VanishingUnits
+public import GroundTheory.ProfiniteCohomology.LocalEulerCharacteristic.Cohomology
+public import GroundTheory.LocalFields.SeparableClosure
+public import GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.Vanishing
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -23,9 +28,9 @@ theorem isNonarchimedeanLocalField_fixedField (V : OpenSubgroup Gal(Ksep/K)) :
   rw [← hrel] at h1
   exact h1
 
+
 omit [ValuativeRel K] [TopologicalSpace K] [IsNonarchimedeanLocalField K] [IsSepClosure K Ksep]
   [ValuativeExtension K Ksep] in
-
 theorem valuation_le_valuation_iff_coe (E : IntermediateField K Ksep) (x y : E) :
     valuation E x ≤ valuation E y ↔ valuation Ksep (x : Ksep) ≤ valuation Ksep (y : Ksep) := by
   rw [← (valuation E).vle_iff_le, ← (valuation Ksep).vle_iff_le, IntermediateField.coe_vle_coe_iff]
@@ -58,8 +63,8 @@ theorem natCast_residueField_fixedField_ne_zero {l : ℕ} (hl : (l : 𝓀[K]) �
   have h := (algebraMap 𝓀[K] 𝓀[fixedField (V : Subgroup Gal(Ksep/K))]).injective.ne hl
   rwa [map_natCast, map_zero] at h
 
-omit [IsSepClosure K Ksep] in
 
+omit [IsSepClosure K Ksep] in
 theorem natCast_ne_zero_of_residueField {l : ℕ} (hl : (l : 𝓀[K]) ≠ 0) : (l : K) ≠ 0 := by
   intro h
   apply hl
@@ -118,7 +123,8 @@ theorem apply_eq_of_valuation_sub_lt_one (hl : (l : 𝓀[K]) ≠ 0)
   have hy : y ^ l = 1 := Subtype.ext (by simpa [y] using hb)
   have hres : residue 𝒪[fixedField (V : Subgroup Gal(Ksep/K))] y =
       residue 𝒪[fixedField (V : Subgroup Gal(Ksep/K))] x := by
-    rw [← sub_eq_zero, ← map_sub, residue_eq_zero_iff, IsLocalRing.mem_maximalIdeal,
+    rw [← sub_eq_zero, ← (residue 𝒪[fixedField (V : Subgroup Gal(Ksep/K))]).map_sub,
+      residue_eq_zero_iff, IsLocalRing.mem_maximalIdeal,
       mem_nonunits_iff]
     intro hu
     have h1 := valuation_unit hu.unit
@@ -136,8 +142,8 @@ theorem apply_eq_of_valuation_sub_lt_one (hl : (l : 𝓀[K]) ≠ 0)
 
 variable (h : V ≤ W) [((V : Subgroup Gal(Ksep/K)).subgroupOf (W : Subgroup Gal(Ksep/K))).Normal]
 
-include h in
 
+include h in
 theorem cohomologyConj_one_galRootsOfUnity_eq_id (hl : (l : 𝓀[K]) ≠ 0)
     (hind : ((V : Subgroup Gal(Ksep/K)).relIndex W).Coprime l) (g : (W : Subgroup Gal(Ksep/K)))
     (hg : ∀ x ∈ fixedField (V : Subgroup Gal(Ksep/K)), valuation Ksep x ≤ 1 →
@@ -198,8 +204,8 @@ theorem cohomologyConj_one_galRootsOfUnity_eq_id (hl : (l : 𝓀[K]) ≠ 0)
   apply Additive.toMul.injective
   rw [toMul_add, toMul_nsmul, toMul_ofMul, hsm, hy]
 
-include h in
 
+include h in
 theorem cohomologyConj_galRootsOfUnity_eq_id (hl : (l : 𝓀[K]) ≠ 0)
     (hμ : ∀ ζ : Ksep, ζ ^ l = 1 → ζ ∈ fixedField (V : Subgroup Gal(Ksep/K)))
     (hind : ((V : Subgroup Gal(Ksep/K)).relIndex W).Coprime l) (g : (W : Subgroup Gal(Ksep/K)))

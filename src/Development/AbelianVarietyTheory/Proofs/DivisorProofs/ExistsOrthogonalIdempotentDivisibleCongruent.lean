@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FinitePrimesUnder
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjSmulNeBot
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockUpperOfMulEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryCongruentOneDetSubOneMemIdealMulConj
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CongLevRelIndexLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FinitePrimesUnder
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ConjSmulNeBot
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BlockUpperOfMulEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryCongruentOneDetSubOneMemIdealMulConj
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CongLevRelIndexLe
+
+@[expose] public section
+
 open scoped Pointwise
 open Formalism.BasicNotions Formalism.IndefR.Links IsDedekindDomain NumberField
 open Formalism.MainNotions Formalism.MainNotions.TaylorLogMetric Formalism.MainNotions.StandardLatticesGL3
@@ -46,7 +51,7 @@ theorem exists_idem_of_limit : (∀ (D : D7) (x : 𝓞 D.host.E), ∃ e ∈ OhE 
   have h1X : 1 - X ∈ hatId D 𝔫 := by
     have e : 1 - X = inc D (t : D.host.E) + inc D (s : D.host.E) * (-(inc D ((δ * u : 𝓞 D.host.E) : D.host.E) - 1)) := by
       have e1 : inc D (s : D.host.E) + inc D (t : D.host.E) = 1 := by
-        rw [← map_add, show (s : D.host.E) + t = ((s + t : 𝓞 D.host.E) : D.host.E) from rfl, hst]; simp
+        rw [← map_add (f := _), show (s : D.host.E) + t = ((s + t : 𝓞 D.host.E) : D.host.E) from rfl, hst]; simp
       rw [hX, hx]
       push_cast
       simp only [map_mul]
@@ -106,7 +111,7 @@ theorem exists_idem_of_limit : (∀ (D : D7) (x : 𝓞 D.host.E), ∃ e ∈ OhE 
       exact GlobalTheory.CongIdx.mul_mem_hatId (sum_mem fun i _ => pow_mem hXO i) h1X
     · rw [hNinc]; exact gen hN𝔫 hwO
     · refine GlobalTheory.CongIdx.mul_mem_hatId heO ?_
-      rw [hē, hew, ← hX, map_add, map_pow, map_mul, pow_succ, map_natCast]
+      rw [hē, hew, ← hX, map_add (f := _), map_pow, map_mul, pow_succ, map_natCast]
       refine add_mem ?_ ?_
       · exact GlobalTheory.CongIdx.mul_mem_hatId (pow_mem hsXO m) hsX
       · rw [hNinc]; exact gen hN𝔫 (VacMove.sgA_mem D hwO)

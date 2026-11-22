@@ -1,6 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.IsFrameOverLine
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PlueckerCoordinates.MuLine
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FrameDefinitions.IsFrameOverLine
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.DataHodge
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.CoordinateIdeals
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 noncomputable section
@@ -21,7 +27,7 @@ def GramAtPosDef.Statement (D : ComponentData II Ψ K ι Ω E) : Prop :=
 
 namespace DefinitionOfMu.LineEx
 
-open GroundTheory.Heights₂.Heights.LowerBoundFree.Line IndefiniteRowSideFullHecke.LowerBoundFree IndefiniteRowSideFullHecke.LowerBoundFree.LineFlag
+open GroundTheory.Heights₂.Heights.LowerBoundFree.Line
 
 end DefinitionOfMu.LineEx
 

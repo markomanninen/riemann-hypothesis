@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.XiNeZeroOfIsStdGeneric
-import Formalism.LocalRingCardinality.ConjSqrtMinusD
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.XiNeZeroOfIsStdGeneric
+public import Formalism.LocalRingCardinality.ConjSqrtMinusD
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,7 +87,7 @@ theorem card_residue_of_split (g : ℕ) (hg : g.Prime) (w : HeightOneSpectrum (�
     intro q _
     have := q.2.1
     exact Nat.one_le_iff_ne_zero.mpr
-      (Nat.mul_ne_zero (Ideal.ramificationIdx_pos q.1 ℤ).ne' (Ideal.inertiaDeg_pos q.1 ℤ).ne')
+      (Nat.mul_ne_zero (Ideal.ramificationIdx_pos (R := ℤ) q.1).ne' (Ideal.inertiaDeg_pos q.1 ℤ).ne')
   have hones : ∑ q : p.primesOver (𝓞 E), (1 : ℕ) =
       ∑ q : p.primesOver (𝓞 E), q.1.ramificationIdx ℤ * q.1.inertiaDeg ℤ := by
     rw [hsum, Finset.sum_const, smul_eq_mul, mul_one, Finset.card_univ, hcard]
@@ -146,9 +150,6 @@ theorem isIntegral_sqrtMinusD : IsIntegral ℤ D.host.sqrtMinusD := by
   exact IsIntegral.of_pow (by norm_num : 0 < 2) (h ▸ RingOfIntegers.isIntegral_coe _)
 
 def sqrtO : 𝓞 D.host.E := ⟨D.host.sqrtMinusD, isIntegral_sqrtMinusD D⟩
-
-@[simp] theorem coe_sqrtO : ((sqrtO D : 𝓞 D.host.E) : D.host.E) = D.host.sqrtMinusD :=
-  rfl
 
 theorem sqrtMinusD_ne_zero : D.host.sqrtMinusD ≠ 0 := by
   intro h0
@@ -228,7 +229,7 @@ theorem xiRed_ne_zero (kv : Σ k : Fin 2, D.nd.PlG k) : xiRed D kv ≠ 0 := by
   have hP := xiRed_cond D kv
   have hx : xiRed D kv = hP.choose := by
     unfold Formalism.L2.NX.xiRed
-    rw [dif_pos hP]
+    rw [dite_eq_left hP]
   obtain ⟨a, c, hc, hac, hmem⟩ := hP.choose_spec
   rw [← hx, h0, ZMod.val_zero, Nat.cast_zero, zero_mul, zero_sub] at hmem
   have ha : a ∈ (pG D kv).asIdeal := by simpa using (pG D kv).asIdeal.neg_mem hmem
@@ -250,7 +251,7 @@ theorem xiRed_isXiRes (kv : Σ k : Fin 2, D.nd.PlG k) : IsXiRes D kv (xiRed D kv
   have hP := xiRed_cond D kv
   have hx : xiRed D kv = hP.choose := by
     unfold Formalism.L2.NX.xiRed
-    rw [dif_pos hP]
+    rw [dite_eq_left hP]
   rw [hx]
   exact hP.choose_spec
 

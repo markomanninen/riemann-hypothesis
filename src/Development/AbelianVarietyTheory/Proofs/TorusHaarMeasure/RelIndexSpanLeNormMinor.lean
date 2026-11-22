@@ -1,9 +1,14 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.LatDen
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.IndexRangeMulVecLinEqAbsNormDet
-import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.AbsNormEqProdCmTypeSq
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FundamentalDomains.CuspidalExponentialDecay
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ArakelovVolumes.UpperBounds.WeightFunctionOnFrames
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.LatDen
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.IndexRangeMulVecLinEqAbsNormDet
+public import Development.AbelianVarietyTheory.Proofs.TorusHaarMeasure.AbsNormEqProdCmTypeSq
+
+@[expose] public section
+
 open NumberField ReciprocityTheory.ChartRestriction.G.FD ReciprocityTheory.ChartRestriction.G.AR.Inst ReciprocityTheory.ChartRestriction.G.AR.Up MeasureTheory Topology
 open scoped ComplexOrder ENNReal Matrix
 variable {E : Type} [Field E] [NumberField E] [IsCMField E]
@@ -52,7 +57,8 @@ theorem relIndex_span_le_norm_minor :
     have hb : M *ᵥ (fun a => (c a : E)) = M *ᵥ b := by
       funext k
       have h := congrArg (algebraMap (𝓞 E) E) (congrFun hc k)
-      rw [Matrix.mulVecLin_apply, Matrix.mulVec, dotProduct, map_sum] at h
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Matrix.mulVecLin_apply, Matrix.mulVec, dotProduct, map_sum] at h
       apply mul_left_cancel₀ hn0
       have h2 : (algebraMap (𝓞 E) E) (φ ⟨∑ i, b i • w i, hvΛ, hv⟩ k) =
           (n : E) * (∑ i, b i • w i) (e k) := rfl
@@ -81,7 +87,7 @@ theorem relIndex_span_le_norm_minor :
   have hcard : Fintype.card ι ≤ r := by simpa using Fintype.card_le_of_injective e he
   refine (Nat.cast_le.2 h2).trans ?_
   rw [h3, ← Finset.prod_mul_distrib]
-  refine Finset.prod_le_prod (fun _ _ => by positivity) fun τ _ => ?_
+  refine Finset.prod_le_prod₀ (fun _ _ => by positivity) fun τ _ => ?_
   rw [hdetA, map_mul, map_pow, map_natCast, norm_mul, norm_pow, Complex.norm_natCast, mul_pow]
   gcongr
 

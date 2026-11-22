@@ -1,6 +1,10 @@
-import Mathlib
-import ReciprocityTheory.GaloisValuations.ArithOfA
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.ValNatCastOf
+module
+
+public import Mathlib
+public import ReciprocityTheory.GaloisValuations.ArithOfA
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.LatticeIndices.ValNatCastOf
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem locDeg_one (l : ℕ) [hl : Fact l.Prime]
   have hsum := ReciprocityTheory.Gal.sum_locDegree l T hT
   have hcard : T.card = Module.finrank ℚ K := by rw [← h, Set.ncard_eq_toFinset_card _ hfin]
   have hpos : ∀ v ∈ T, (fun _ => 1) v ≤ ReciprocityTheory.Gal.locDegree v := fun v _ =>
-    Nat.mul_pos (Ideal.ramificationIdx_pos v.asIdeal ℤ) (Ideal.inertiaDeg_pos v.asIdeal ℤ)
+    Nat.mul_pos (Ideal.ramificationIdx_pos (R := ℤ) v.asIdeal) (Ideal.inertiaDeg_pos v.asIdeal ℤ)
   have hall := (Finset.sum_eq_sum_iff_of_le hpos).1 (by
     simp only [Finset.sum_const, smul_eq_mul, mul_one]; rw [hsum, hcard])
   have hm : w.asIdeal.ramificationIdx ℤ * w.asIdeal.inertiaDeg ℤ = 1 := (hall w ((hT w).2 hw)).symm
@@ -52,7 +56,7 @@ theorem locDeg_one_below (l : ℕ) [hl : Fact l.Prime]
     Ideal.ramificationIdx_below_le (R := ℤ) (q := p.asIdeal) (r := Q)
   have h2 : p.asIdeal.inertiaDeg ℤ ≤ Q.inertiaDeg ℤ :=
     Ideal.inertiaDeg_below_le (R := ℤ) (q := p.asIdeal) (r := Q)
-  have h3 := Ideal.ramificationIdx_pos p.asIdeal ℤ
+  have h3 := Ideal.ramificationIdx_pos (R := ℤ) p.asIdeal
   have h4 := Ideal.inertiaDeg_pos p.asIdeal ℤ
   change Q.ramificationIdx ℤ = 1 at he
   change Q.inertiaDeg ℤ = 1 at hf

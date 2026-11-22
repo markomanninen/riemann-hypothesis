@@ -1,47 +1,59 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.PrimitivePackageFullHecke
-import Formalism.LocalToGlobal.IndefiniteReal.BaseLiftsPackageOfPrimitiveLinks
-import Formalism.LocalToGlobal.IndefiniteReal.LinksLemmas
-import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.SignsG
-import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.FramesOKg2
-import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.RatDatOfReal
-import Formalism.LocalToGlobal.IndefiniteReal.FWExist
-import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
-import Formalism.LocalToGlobal.IndefiniteReal.OneMapEq
-import Formalism.LocalToGlobal.IndefiniteReal.RhoGeo
-import Formalism.LocalToGlobal.IndefiniteReal.BridgeSeed
-import Formalism.LocalToGlobal.IndefiniteReal.IsFDiagIffDiagonal
-import Formalism.LocalToGlobal.Divisibility.DivisionCompatibleToSub2Indef2
-import Formalism.LocalToGlobal.Divisibility.PsiWeilOfAbsNorm
-import Formalism.LocalToGlobal.Divisibility.NumericScaleExponentEqExtended
-import Formalism.LocalToGlobal.Divisibility.NumbersLemmas
-import Formalism.LocalToGlobal.HilbertRowConditions.CenterIdempotentAction
-import Formalism.LocalToGlobal.UnitaryNorms.CharTied
-import Formalism.SharpRestriction.GlobalTheoremInputs
-import Formalism.SharpRestriction.ParamsHeightRankConstant
-import Formalism.SharpRestriction.PageFix
-import Formalism.LocalRingCardinality.MinkMEqMinkowskiNumber
-import Formalism.SharpRestriction.SmoothDesignExistence.DGamSmooth
-import Formalism.SharpRestriction.Divisibility.SmallFirstModulusBelowScale
-import Formalism.SharpRestriction.LevelLetterCocycles.AlignN
-import Formalism.SharpRestriction.LevelLetterCocycles.TwGood
-import Formalism.SharpRestriction.GlobalSchurBounds.MainIn
-import Formalism.SharpRestriction.GlobalSchurBounds.WeightVectorSmallSharesEight
-import Formalism.LocalRingCardinality.DataTies
+module
 
-import Formalism.LocalToGlobal.IndefiniteReal.RealTB
-import Formalism.LocalToGlobal.IndefiniteReal.RealRecPins
-import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.NMjT
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsDeltaDelAtOwnAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.BasePlaceNotMemChiGridBadPlaces
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotTeichTrivOfIsDelta
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIsScalar
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DisjointConductorPlacesExcludedSet
-import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.FamilyClassSevenDutiesAndStableLattices
-import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.RationalRayLevels
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DimPartsAtIffBadAndOff
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RayFieldTheta
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.PrimitivePackageFullHecke
+public import Formalism.LocalToGlobal.IndefiniteReal.BaseLiftsPackageOfPrimitiveLinks
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksLemmas
+public import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.SignsG
+public import Formalism.LocalToGlobal.IndefiniteReal.RealSeparation.FramesOKg2
+public import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.RatDatOfReal
+public import Formalism.LocalToGlobal.IndefiniteReal.FWExist
+public import Formalism.LocalToGlobal.IndefiniteReal.OneMapT
+public import Formalism.LocalToGlobal.IndefiniteReal.OneMapEq
+public import Formalism.LocalToGlobal.IndefiniteReal.RhoGeo
+public import Formalism.LocalToGlobal.IndefiniteReal.BridgeSeed
+public import Formalism.LocalToGlobal.IndefiniteReal.IsFDiagIffDiagonal
+public import Formalism.LocalToGlobal.Divisibility.DivisionCompatibleToSub2Indef2
+public import Formalism.LocalToGlobal.Divisibility.PsiWeilOfAbsNorm
+public import Formalism.LocalToGlobal.Divisibility.NumericScaleExponentEqExtended
+public import Formalism.LocalToGlobal.Divisibility.NumbersLemmas
+public import Formalism.LocalToGlobal.HilbertRowConditions.CenterIdempotentAction
+public import Formalism.LocalToGlobal.UnitaryNorms.CharTied
+public import Formalism.SharpRestriction.GlobalTheoremInputs
+public import Formalism.SharpRestriction.ParamsHeightRankConstant
+public import Formalism.SharpRestriction.PageFix
+public import Formalism.LocalRingCardinality.MinkMEqMinkowskiNumber
+public import Formalism.SharpRestriction.SmoothDesignExistence.DGamSmooth
+public import Formalism.SharpRestriction.Divisibility.SmallFirstModulusBelowScale
+public import Formalism.SharpRestriction.LevelLetterCocycles.AlignN
+public import Formalism.SharpRestriction.LevelLetterCocycles.TwGood
+public import Formalism.SharpRestriction.GlobalSchurBounds.MainIn
+public import Formalism.SharpRestriction.GlobalSchurBounds.WeightVectorSmallSharesEight
+public import Formalism.LocalRingCardinality.DataTies
+public import Formalism.LocalToGlobal.IndefiniteReal.RealTB
+public import Formalism.LocalToGlobal.IndefiniteReal.RealRecPins
+public import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.NMjT
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsDeltaDelAtOwnAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.BasePlaceNotMemChiGridBadPlaces
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.LabelDatum
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.NotTeichTrivOfIsDelta
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.ExistsIsScalar
+public import Formalism.LocalToGlobal.HermitianColumns.SymAll
+public import Formalism.LocalToGlobal.KernelLattices.LateralTheory
+public import Formalism.LocalToGlobal.BesselHermitianTheta.AllTied
+public import Formalism.LocalToGlobal.GlobalTheory.GL5.Statement
+public import Formalism.SharpRestriction.GlobalSchurBounds.TaylorLogMetric
+public import Formalism.SharpRestriction.GlobalSchurBounds.ProductFirstZerothParts
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.DisjointExceptional
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.ThinScalesIffHostBound
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsRationalUnitaryDeterminantMapRationalUnitaryTo
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.GoodPairSystems
+public import Development.AbelianVarietyTheory.Definitions.GlobalTwisting.FamilyClassSevenDutiesAndStableLattices
+public import Development.AbelianVarietyTheory.BlockTheory.NonGaloisCusps.RationalRayLevels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.DimPartsAtIffBadAndOff
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.RayFieldTheta
+
+@[expose] public section
 
 noncomputable section
 
@@ -55,9 +67,9 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 variable {D : D7} {L : SizeData₂ D} {hT : GatTies D} {Gi : Formalism.MainNotions.G.Inst D L} {Gl : Formalism.MainNotions.G.LatInst D} {Kc : Formalism.MainNotions.G.Consts}
   {Y : DivX D} {cX : ExtraC}
 
+
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure IndefiniteRowSideFullHecke (ex : Extra D L hT Gi Gl Kc Y cX) : Type 1 where
 
   Gp : Type
@@ -117,13 +129,6 @@ abbrev IndefiniteRowSideFullHecke.toRowSideFamily (P : IndefiniteRowSideFullHeck
     S0 := P.S0, S1 := P.S1, Dc := P.Dc, Sp := P.Sp, C := P.C, NuC := P.NuC, I := P.I, JA := P.JA, JM := P.JM,
     tied := ⟨P.div, P.amb0, P.mjH, P.cen0⟩ }
 
-abbrev IndefiniteRowSideFullHecke.ofTied (P : RowSideFamily ex) : IndefiniteRowSideFullHecke ex :=
-  { Gp := P.Gp, Pl0 := P.Pl0, I0 := P.I0, T := P.T, A3 := P.A3, P0 := P.P0, ψ0 := P.ψ0, Ps := P.Ps, ψs := P.ψs, Zs := P.Zs,
-    S0 := P.S0, S1 := P.S1, Dc := P.Dc, Sp := P.Sp, C := P.C, NuC := P.NuC, I := P.I, JA := P.JA, JM := P.JM,
-    div := P.tied.div, amb0 := P.tied.amb0, mjH := P.tied.mjH, cen0 := P.tied.cen0 }
-
-def IndefiniteRowSideFullHecke.indefiniteRowSideHeckeEquivFamily : IndefiniteRowSideFullHecke ex ≃ RowSideFamily ex := ⟨IndefiniteRowSideFullHecke.toRowSideFamily, IndefiniteRowSideFullHecke.ofTied, fun _ => rfl, fun _ => rfl⟩
-
 def IndefiniteRowSideFullHecke.zsc (P : IndefiniteRowSideFullHecke ex) (Del h0 : ℕ) (Csz : ℝ) : DefSub P.A3.fam3.amb3 → IndefScale P.A3.fam3.base3 :=
   fun Zs =>
     let z := ZscOfNum3 P.A3 P.P0 P.ψ0 (ofRecord D L Del h0) (Equiv.refl _) L.Nc Zs
@@ -135,13 +140,10 @@ def IndefiniteRowSideFullHecke.face (P : IndefiniteRowSideFullHecke ex) (Dcf : �
 
 export Formalism.IndefR (errCan phEff)
 
-theorem IndefiniteRowSideFullHecke.face_eq (P : IndefiniteRowSideFullHecke ex) (Dcf Spf) (Del h0 : ℕ) (Csz : ℝ) :
-    P.face Dcf Spf Del h0 Csz = faceT P.toRowSideFamily Dcf Spf (P.zsc Del h0 Csz) := rfl
 
 open Classical in
 set_option genInjectivity false in
 set_option genSizeOfSpec false in
-
 structure PtAt (ex : Extra D L hT Gi Gl Kc Y cX) (Csz : ℝ) : Type 1 where
 
   P : IndefiniteRowSideFullHecke ex
@@ -263,8 +265,8 @@ namespace PtAt
 
 variable {Csz : ℝ}
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 def ofReal (P : IndefiniteRowSideFullHecke ex) (Del h0 : ℕ) (hDel : D.s.Del = (Del : ℚ)) (hh0 : L.etaSz = (D.R.m : ℝ) * (h0 : ℝ))
     (Dcf : ∀ Zs : DefSub P.A3.fam3.amb3, DefCols (P.A3.side3 P.Ps P.ψs Zs)) (Spf : ∀ Zs : DefSub P.A3.fam3.amb3, SPer (Dcf Zs))
     (gamDvd : (∀ (t : P.T) (c : (P.A3.A.fam.R t).S.Cl), Fintype.card ((P.A3.A.fam.R t).S.Gam c) ∣ (D.mem D.u₀).C.DGam) ∧
@@ -293,8 +295,8 @@ abbrev Z : IndefScale p.P.A3.fam3.base3 := (p.F.fc (p.R.toCx3 p.F).zs).Z
 
 abbrev N (C CH : ℝ) : IndefNum p.P.A3.fam3.base3 := p.R.num p.F C CH
 
-set_option synthInstance.maxHeartbeats 400000 in
 
+set_option synthInstance.maxHeartbeats 400000 in
 def ExportRow : Prop :=
   ∃ jD : ∀ j, (Y.MjH j).V →ₗ[D.what₂.LL] p.Sx.WL j,
     (∀ (i : Fin D.R.m) (x : (Y.MjH ((i : ℕ) + 1)).V)
@@ -318,12 +320,6 @@ def DataTie (_p : PtAt ex Csz) : Prop :=
   ∀ (i : D.ntw.Tw) (j : Fin D.R.m) (b : Bool) (a : D.nexp.Dat i ((j : ℕ) + 1) b),
     (∀ u : D.nexp.U, D.nexp.actG i _ b u (D.nexp.th i _ b a) =
       ((D.nexp.psiU i b u : (FractionRing (D.ntw.O i))ˣ) : FractionRing (D.ntw.O i)) • D.nexp.th i _ b a) → a ∈ ex.xd.xd0 i _ b
-
-def ToricTie : Prop :=
-  ∃ (pl : GlobalTheory.ChiGrid.Places p.R.toRealDat.toLevCh) (ch : GlobalTheory.ChiGrid.Chars pl 1),
-    (∀ i, 1 ≤ i → i ≤ D.R.m → (ch.chiH i).ValuesIn 0 (Formalism.L2.Host.embLL0 D)) ∧
-      GlobalTheory.LamTie.IsLamTieFull D.ntw
-        ⟨p.R.C, GlobalTheory.ChiGrid.q0 D, pl.w pl.v0, fun a g => GlobalTheory.ChiGrid.cen D 1 (D.eTau.symm g) (a.1 + 1), fun a => ch.chiH (a.1 + 1)⟩
 
 structure Ties : Prop where
 
@@ -387,8 +383,6 @@ structure Rows : Prop where
 
   ties : p.Ties
 
-theorem nonempty_lift (p : PtAt ex Csz) : Nonempty (Fin D.R.m) := ⟨⟨0, p.hm⟩⟩
-
 theorem phEff_one (i : Fin D.R.m) : phEff p.R i = 1 := by
   unfold phEff
   rw [p.phsOne i, map_one]
@@ -415,27 +409,6 @@ variable {P : IndefiniteRowSideFullHecke ex} {Del h0 : ℕ} {hDel : D.s.Del = (D
   {Rc : RecT ex} {S : Formalism.L2.SG.SpectralTiesReal.STiesR Rc} {B : RealTB Rc P.toRowSideFamily Dcf Spf (P.zsc Del h0 Csz) S}
   {Qp : RealPins B.Q} {Qr : RealRec B.Q}
 
-theorem realised_ofReal (h : RealRecPins Qp Qr) : (ofReal P Del h0 hDel hh0 Dcf Spf gamDvd B Qp Qr).Realised :=
-  ⟨Rc, S, B, Qp, Qr, h, rfl⟩
-
-theorem ofReal_S (b : Bool) :
-    (ofReal P Del h0 hDel hh0 Dcf Spf gamDvd B Qp Qr).S b = (B.Q.Rl.toCx3 B.Q.F).data B.Q.F.cr b := rfl
-
-theorem ofReal_N (C CH : ℝ) : (ofReal P Del h0 hDel hh0 Dcf Spf gamDvd B Qp Qr).N C CH = B.Q.Rl.num B.Q.F C CH := rfl
-
-theorem exportRow_ofReal : (ofReal P Del h0 hDel hh0 Dcf Spf gamDvd B Qp Qr).ExportRow ↔
-    Formalism.IndefR.NX.NMjT B.Q B.Q.cG B.Q.Sx B.Q.nexp ex.nch := Iff.rfl
-
-set_option maxHeartbeats 1000000 in
-
-theorem rows_ofReal (hE : B.Q.Rl.toRealDat.ExAt) (hI : InB B) (hB : RowsB B) (hP : PrimRows3 B.Q.Rl B.Q.F)
-    (hs : P.A3.fam3.TypesSep3) (hk : P.A3.fam3.Ok3 1) (hf : B.Q.FramesEx)
-    (hd : DivRows3 D P.A3 P.P0 P.ψ0 P.Ps P.ψs P.Zs P.S0 P.S1 ex.p0 P.C P.NuC P.I) (hψ : PsiPPTie D P.P0 P.ψ0 P.Ps P.ψs P.I.eG)
-    (h0' : D.what₂.D0 = (P.A3.A.fam.R P.A3.A.fam.μ0).dZ (P.A3.A.fam.lvl P.P0 P.ψ0) (P.Zs.Z P.A3.A.fam.μ0))
-    (hN : Formalism.IndefR.NX.NMjT B.Q B.Q.cG B.Q.Sx B.Q.nexp ex.nch) (hG : Formalism.BasicNotions.GoodFTAll D)
-    (hw : ∀ w, (B.Q.Rl.toCx3 B.Q.F).W1 B.Q.F.cr (B.Q.Rl.num B.Q.F 0 0) w → w ∈ B.Q.Rl.twPl)
-    (ht : (ofReal P Del h0 hDel hh0 Dcf Spf gamDvd B Qp Qr).Ties) : (ofReal P Del h0 hDel hh0 Dcf Spf gamDvd B Qp Qr).Rows :=
-  ⟨hE, hI.jEvBar, hI.geoAct, hI.evInj, hB.ioExt, hB.oneMap, hP, hs, hk, B.Q.frames hf, hd, hψ, h0', hN, hG, hw, ht⟩
 
 end OfReal
 
@@ -444,57 +417,7 @@ namespace Realised
 variable {p} (h : p.Realised)
 include h
 
-theorem induction {Q : PtAt ex Csz → Prop}
-    (hQ : ∀ (Rc : RecT ex) (S : Formalism.L2.SG.SpectralTiesReal.STiesR Rc)
-      (B : RealTB Rc p.P.toRowSideFamily p.Dcf p.Spf (p.P.zsc p.Del p.h0 Csz) S) (Qp : RealPins B.Q) (Qr : RealRec B.Q),
-      RealRecPins Qp Qr → Q (ofReal p.P p.Del p.h0 p.hDel p.hh0 p.Dcf p.Spf p.gamDvd B Qp Qr)) : Q p :=
-  let ⟨Rc, S, B, Qp, Qr, a, e⟩ := h
-  Eq.subst (motive := Q) e (hQ Rc S B Qp Qr a)
-
-theorem tiedRec : TiedRec ex := let ⟨Rc, _⟩ := h; ⟨Rc⟩
-
-theorem sp : HEq (p.Spf p.P.Zs) p.P.Sp := let ⟨_, _, B, _⟩ := h; B.Q.sp
-
-theorem col : ∃ sEE : (p.R.toCx3 p.F).EE →ₗ⋆[ℂ] (p.F.fc (p.R.toCx3 p.F).zs).Sp.HH,
-    HEq ((p.R.toCx3 p.F).colOf p.F.cr
-      ((p.R.toCx3 p.F).colDef (fun u t => (zetaEps (p.R.toCx3 p.F) p.F.cr sEE u t)⁻¹) sEE)) p.P.C :=
-  h.induction (Q := fun p => ∃ sEE : (p.R.toCx3 p.F).EE →ₗ⋆[ℂ] (p.F.fc (p.R.toCx3 p.F).zs).Sp.HH,
-    HEq ((p.R.toCx3 p.F).colOf p.F.cr
-      ((p.R.toCx3 p.F).colDef (fun u t => (zetaEps (p.R.toCx3 p.F) p.F.cr sEE u t)⁻¹) sEE)) p.P.C)
-    fun _ _ B _ _ _ => ⟨B.Q.sEE, B.Q.col⟩
-
-theorem trSem : (∃ tr, p.R.TrISem p.F tr ∧ TrISepWith p.P.A3 tr) → p.R.TrISem p.F p.P.A3.trI ∧ p.P.A3.fam3.TrISep :=
-  h.induction (Q := fun p => (∃ tr, p.R.TrISem p.F tr ∧ TrISepWith p.P.A3 tr) → p.R.TrISem p.F p.P.A3.trI ∧ p.P.A3.fam3.TrISep)
-    fun _ _ B _ _ _ => B.Q.trSem
-
-theorem exists_frame : ∃ Rc : RecT ex, p.R.C = Rc.T.n.cf ∧ HEq p.Tp Rc.T.n.tp ∧ p.R.ψ = Rc.T.theta.W.ψ :=
-  h.induction (Q := fun p => ∃ Rc : RecT ex, p.R.C = Rc.T.n.cf ∧ HEq p.Tp Rc.T.n.tp ∧ p.R.ψ = Rc.T.theta.W.ψ)
-    fun Rc _ B Qp Qr _ => ⟨Rc, Qp.cfEq, Qr.tpEq, B.Q.psiPin⟩
-
-theorem valLL0 : Formalism.L2.Host.ValLL0 D p.R.C := by
-  obtain ⟨Rc, e, -⟩ := h.exists_frame
-  exact e ▸ Rc.T.chrVal
-
-theorem psiChoice : Formalism.L2.Host.PsiChoiceCompatible D p.R.C ex.nch p.Tp := by
-  obtain ⟨Rc, e, e', -⟩ := h.exists_frame
-  have := Rc.T.chrPsi
-  revert e'
-  generalize p.Tp = t
-  generalize p.R.C = c at e t ⊢
-  subst e
-  intro e'
-  exact eq_of_heq e' ▸ this
-
 end Realised
-
-theorem Ties.small {p : PtAt ex Csz} (h : p.Ties) : GlobalTheory.FinalJoin2.FieldSmall D L := h.core.small
-
-theorem Ties.eSer {p : PtAt ex Csz} (h : p.Ties) : GlobalTheory.GLq.ESerTie D := h.types.eSerTie
-
-theorem Ties.mem_xd_iff {p : PtAt ex Csz} (h : p.Ties) (i : D.ntw.Tw) (j : Fin D.R.m) (b : Bool)
-    (a : D.nexp.Dat i ((j : ℕ) + 1) b) : a ∈ ex.xd.xd0 i _ b ↔ ∀ u : D.nexp.U, D.nexp.actG i _ b u (D.nexp.th i _ b a) =
-      ((D.nexp.psiU i b u : (FractionRing (D.ntw.O i))ˣ) : FractionRing (D.ntw.O i)) • D.nexp.th i _ b a :=
-  ⟨ex.xd.thetaBase_invariant_action i _ b a, h.data i j b a⟩
 
 end PtAt
 
@@ -509,43 +432,14 @@ def FamHyp : FamClass := fun Fm =>
 def EvPt {eps : ℝ} (Fm : FamP eps) (Q : ∀ (x : ℝ) (hx : Fm.x1 < x) (i : Fm.Ix x), Pt Fm x hx i → Prop) : Prop :=
   ∃ x0 : ℝ, ∀ (x : ℝ) (hx : Fm.x1 < x), x0 ≤ x → ∀ (i : Fm.Ix x) (p : Pt Fm x hx i), p.Rows → Q x hx i p
 
-theorem EvPt.of_forall {eps : ℝ} {Fm : FamP eps} {Q : ∀ (x : ℝ) (hx : Fm.x1 < x) (i : Fm.Ix x), Pt Fm x hx i → Prop}
-    (h : ∀ x hx i p, p.Rows → Q x hx i p) : EvPt Fm Q := ⟨0, fun x hx _ => h x hx⟩
-
-theorem EvPt.and {eps : ℝ} {Fm : FamP eps} {Q Q' : ∀ (x : ℝ) (hx : Fm.x1 < x) (i : Fm.Ix x), Pt Fm x hx i → Prop}
-    (h : EvPt Fm Q) (h' : EvPt Fm Q') : EvPt Fm fun x hx i p => Q x hx i p ∧ Q' x hx i p :=
-  let ⟨a, h⟩ := h
-  let ⟨b, h'⟩ := h'
-  ⟨max a b, fun x hx hle i p hp => ⟨h x hx ((le_max_left _ _).trans hle) i p hp, h' x hx ((le_max_right _ _).trans hle) i p hp⟩⟩
-
-theorem not_evPt_false {eps : ℝ} {Fm : FamP eps}
-    (h : ∀ x0, ∃ (x : ℝ) (hx : Fm.x1 < x) (i : Fm.Ix x) (p : Pt Fm x hx i), x0 ≤ x ∧ p.Rows) : ¬ EvPt Fm fun _ _ _ _ => False :=
-  fun ⟨x0, g⟩ => let ⟨x, hx, i, p, a, b⟩ := h x0; g x hx a i p b
-
 def Covol : Prop := Closed FamHyp fun Fm CH =>
   ∃ C0 : ℝ, 0 ≤ C0 ∧ EvPt Fm fun _ _ _ p => ∀ C, C0 ≤ C → (p.S false).L3 (p.N C CH)
 
 def Onto : Prop := Closed FamHyp fun Fm CH => DIVinN Fm →
   ∃ C0 : ℝ, 0 ≤ C0 ∧ EvPt Fm fun _ _ _ p => ∀ C, C0 ≤ C → (p.S false).ON (p.N C CH)
 
-def LamLow : Prop := Closed FamHyp fun Fm CH => EvPt Fm fun _ _ _ p => ∀ C, (p.S true).L6 (p.N C CH)
-
-def ToricFunctorialityCondition : Prop := Closed FamHyp fun Fm CH => DIVinN Fm →
-  EvPt Fm fun _ _ _ p => p.ToricTie → ∀ C, (p.S false).FUN (p.N C CH)
-
 def Fun0 : Prop := Closed FamHyp fun Fm CH => DIVinN Fm →
   EvPt Fm fun _ _ _ p => ∀ C, (p.S false).FUN (p.N C CH)
-
-theorem Fun0.toric (h : Fun0) : ToricFunctorialityCondition :=
-  Closed.imp h fun _ _ _ a hN => let ⟨x0, b⟩ := a hN; ⟨x0, fun x hx hle i p hp _ => b x hx hle i p hp⟩
-
-example {K : Type} [Field K] [NumberField K] [StarRing K] {Bs : DefBase K} {Df : DefSide Bs} (S : IndefData Df)
-    (F0 : HeightOneSpectrum (𝓞 K) → Bs.J → ℝ) (w : HeightOneSpectrum (𝓞 K)) : 0 ≤ errCan S F0 w :=
-  div_nonneg (le_max_left _ _) (mul_nonneg (zero_le_one.trans (by exact_mod_cast (Formalism.EigenvalueLevelCeiling.ramified_basic_bound K w).2.1)) (Nat.cast_nonneg _))
-
-example {Csz : ℝ} (p : PtAt ex Csz) : p.Z.l6u = 0 := rfl
-
-example {Csz : ℝ} (p : PtAt ex Csz) : p.F.lv2.P0 = p.P.P0 ∧ p.F.lv2.P1 = p.P.Ps := ⟨rfl, rfl⟩
 
 end GlobalTheory.BigTop
 

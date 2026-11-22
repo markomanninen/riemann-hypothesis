@@ -1,7 +1,11 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SelmerOrderCounts.TwoLe
-import Mathlib.RingTheory.RootsOfUnity.Complex
-import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
-import Mathlib.LinearAlgebra.Matrix.Permutation
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.SelmerOrderCounts.TwoLe
+public import Mathlib.RingTheory.RootsOfUnity.Complex
+public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
+public import Mathlib.LinearAlgebra.Matrix.Permutation
+
+@[expose] public section
 
 open NumberField IsDedekindDomain UpperTheory.V UpperTheory.V.ZK UpperTheory.V.ZK.Ct
 

@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ZzPlusSecondProjection
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CoefLoc
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.NGCong
+module
+
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.ZzPlusSecondProjection
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CoefLoc
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.CountNonIntegrality.NGCong
+
+@[expose] public section
 
 noncomputable section
 
@@ -50,7 +54,8 @@ theorem qm_inv_entry {R : Type} [CommRing R] (φ : R →+* K) (hφ : ∀ x, φ x
     h2, one_mul] at e1
   have e2 : ξ⁻¹ k b = -∑ c ∈ Finset.univ.erase k, ξ k c * ξ⁻¹ c b := by
     linear_combination e1
-  rw [e2, map_neg, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [e2, map_neg, map_sum]
   refine qm_neg q (qm_sum q _ _ fun c hc' => ?_)
   rw [map_mul]
   rcases lt_or_gt_of_ne (Finset.ne_of_mem_erase hc') with hlt | hgt
@@ -64,8 +69,8 @@ section XiPf
 
 variable {D : Formalism.BasicNotions.D7}
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem xiTyped_of_ctx {Zd : LocDat D} {u u' : D.what₂.Word} {F0 : FlagG (VS D) D.R.rS (CntLocal.Tn u)}
     {what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)} (hctx : CtxP u u' F0 what₂) : XiTyped Zd u u' F0 what₂ := by
   intro γ w hγ p g hs k b hkb
@@ -74,14 +79,14 @@ theorem xiTyped_of_ctx {Zd : LocDat D} {u u' : D.what₂.Word} {F0 : FlagG (VS D
   have hex := Formalism.L2.SG.Pf.Coef.normRepElig_of hN γ w hγ
   have hrep : repF γ = hex.choose.2.1 := by
     unfold repF nrep
-    rw [dif_pos hex]
+    rw [dite_eq_left hex]
   have hA1 : AdmWit γ.lam (gS D) (lf D F0) (repF γ) 1 := by
     rw [hrep]
     exact hex.choose_spec.2.1
   have hadm : IsAdmissible γ.lam (gS D) (lf D F0) (repF γ) := ⟨1, hA1⟩
   have hW : AdmWit γ.lam (gS D) (lf D F0) (repF γ) (admXi D γ.lam (lf D F0) (repF γ)) := by
     unfold admXi
-    rw [dif_pos hadm]
+    rw [dite_eq_left hadm]
     exact hadm.choose_spec
   generalize admXi D γ.lam (lf D F0) (repF γ) = ξ at hW ⊢
 

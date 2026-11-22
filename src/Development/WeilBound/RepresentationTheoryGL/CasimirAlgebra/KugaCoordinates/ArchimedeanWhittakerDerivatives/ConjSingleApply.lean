@@ -1,5 +1,9 @@
-import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.ArchimedeanWhittakerDerivatives.ContinuousInfGL
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WhittakerLawUpperTriangularUnipotentAdelic
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.CasimirAlgebra.KugaCoordinates.ArchimedeanWhittakerDerivatives.ContinuousInfGL
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.WhittakerLawUpperTriangularUnipotentAdelic
+
+@[expose] public section
 
 noncomputable section
 
@@ -7,7 +11,7 @@ namespace PositivityTheory.Rg.Cz
 
 open NumberField Matrix GlobalTheory.CuspRep GlobalTheory.CuspGeneric
 
-variable {E : Type} [Field E] [NumberField E] [IsTotallyComplex E] {a : ℕ}
+variable {E : Type} [Field E] [NumberField E] [_root_.NumberField.IsTotallyComplex E] {a : ℕ}
 
 theorem law_inf (ψ : AddChar (Ad E) ℂ) (f : GA E a → ℂ)
     (hf : ∀ k, 0 < k → ∀ (y : UnipotentBlockColumnIndex a k k → Ad E) (g : GA E a), f (blkU y * g) = ψ (dot (eLast a k) y) * f g)
@@ -15,7 +19,8 @@ theorem law_inf (ψ : AddChar (Ad E) ℂ) (f : GA E a → ℂ)
     f (infGL E a u * g) = ψ (sInf E (sd u.val)) * f g := by
   rw [GlobalTheory.CuspGeneric.tri_law E a ψ f hf (infGL E a u) ?_ ?_ g]
   · congr 2
-    rw [sd, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [sd, map_sum]
     refine Finset.sum_congr rfl fun p hp => ?_
     have hp' : (p.2 : ℕ) = p.1 + 1 := (Finset.mem_filter.1 hp).2
     have hne : p.1 ≠ p.2 := fun h => by rw [h] at hp'; omega
@@ -27,7 +32,7 @@ theorem law_inf (ψ : AddChar (Ad E) ℂ) (f : GA E a → ℂ)
     rw [infGL_apply, hd, Matrix.one_apply_eq, Matrix.one_apply_eq]
     simp
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem inv_upper (b : GL (Fin a) (Cinf E)) (hb : ∀ i j : Fin a, j < i → b.val i j = 0) :
     ∀ i j : Fin a, j < i → (b⁻¹).val i j = 0 := by
   let _ : Invertible b.val := b.invertible
@@ -36,7 +41,7 @@ theorem inv_upper (b : GL (Fin a) (Cinf E)) (hb : ∀ i j : Fin a, j < i → b.v
   rw [Matrix.coe_units_inv]
   exact Matrix.blockTriangular_inv_of_blockTriangular h hij
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem diag_inv (b : GL (Fin a) (Cinf E)) (hb : ∀ i j : Fin a, j < i → b.val i j = 0) (i : Fin a) :
     b.val i i * (b⁻¹).val i i = 1 := by
   have h := congrFun (congrFun (Units.mul_inv b) i) i
@@ -48,16 +53,16 @@ theorem diag_inv (b : GL (Fin a) (Cinf E)) (hb : ∀ i j : Fin a, j < i → b.va
     · rw [inv_upper b hb k i h1, mul_zero]
   · intro hi; exact absurd (Finset.mem_univ i) hi
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem single_sq (p q : Fin a) (h : p ≠ q) (x : Cinf E) : Matrix.single p q x * Matrix.single p q x = 0 := by
   exact Matrix.single_mul_single_of_ne (h := h.symm) ..
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem conj_single_apply (b c : Matrix (Fin a) (Fin a) (Cinf E)) (p q : Fin a) (x : Cinf E) (i j : Fin a) :
     (b * Matrix.single p q x * c) i j = b i p * x * c q j := by
   simp [Matrix.mul_apply, Matrix.single_apply, ite_and, Finset.sum_ite_eq, mul_assoc]
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem conj_single_upper (b : GL (Fin a) (Cinf E)) (hb : ∀ i j : Fin a, j < i → b.val i j = 0) (p q : Fin a)
     (hpq : p < q) (x : Cinf E) : ∀ i j : Fin a, j ≤ i → (b.val * Matrix.single p q x * (b⁻¹).val) i j = 0 := by
   intro i j hji
@@ -68,7 +73,7 @@ theorem conj_single_upper (b : GL (Fin a) (Cinf E)) (hb : ∀ i j : Fin a, j < i
   · rw [inv_upper b hb q j h2]; simp
   · exact absurd (lt_of_le_of_lt h1 (lt_of_lt_of_le hpq h2)) (not_lt.2 hji)
 
-omit [NumberField E] [IsTotallyComplex E] in
+omit [NumberField E] [_root_.NumberField.IsTotallyComplex E] in
 theorem sd_conj_single (b : GL (Fin a) (Cinf E)) (hb : ∀ i j : Fin a, j < i → b.val i j = 0) (p q : Fin a)
     (hpq : p < q) (x : Cinf E) :
     sd (b.val * Matrix.single p q x * (b⁻¹).val) = if (p : ℕ) + 1 = q then b.val p p * x * (b⁻¹).val q q else 0 := by

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartTransportSt
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndBCNab
+module
+
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ChartTransportSt
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.CIndBCNab
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -150,13 +154,13 @@ section FB
 
 variable {O : Type} [CommRing O] [StarRing O] (B : FB R d O)
 
-local macro "fbm" : tactic => `(tactic| (simp only [map_mul, map_one, FGLaw.add, map_ev', mp_cons, mp_nil, mp_pt, mp_zero,
-    mp_add, mp_comp1, Fin.forall_fin_succ, IsEmpty.forall_iff, Matrix.cons_val_zero, Matrix.cons_val_succ, cz_pt,
-    cz_add _ B.G.const, cz_comp1 _ (B.A.const _), map_zero, Pi.zero_apply, implies_true, and_self, forall_const, true_and]
-    at *))
+local macro "fbm" : tactic => `(tactic|
+  (simp only [map_mul, map_one, FGLaw.add, map_ev', mp_cons, mp_nil, mp_pt, mp_zero,
+    mp_add, mp_comp1, Fin.forall_fin_succ, IsEmpty.forall_iff, Matrix.cons_val_zero,
+    Matrix.cons_val_succ, cz_pt, cz_add _ B.G.const, cz_comp1 _ (B.A.const _), map_zero,
+    Pi.zero_apply, implies_true, and_self, forall_const, true_and] at *))
 
 set_option maxHeartbeats 1000000 in
-
 def mapFB : FB R' d O where
   G := mapG ψ B.G
   A := mapA ψ B.A

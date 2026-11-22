@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EzpowMulEzpowNeg
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.EzpowMulEzpowNeg
+
+@[expose] public section
 
 noncomputable section
 
@@ -9,7 +13,7 @@ namespace GlobalTheory.BKGal.JumpDR.Horiz
 
 theorem const_mem_of_stable {R κ : Type} [CommRing R] (hR : ∀ n : ℕ, IsUnit ((n + 1 : ℕ) : R))
     (Λ : Submodule R⟦X⟧ (κ → R⟦X⟧)) (α : ℕ) (hα : ∀ h : κ → R⟦X⟧, (X : R⟦X⟧) ^ α • h ∈ Λ)
-    (hθ : ∀ v ∈ Λ, (fun k => X * PowerSeries.derivative R (v k)) ∈ Λ) {v : κ → R⟦X⟧} (hv : v ∈ Λ) :
+    (hθ : ∀ v ∈ Λ, (fun k => X * PowerSeries.derivative (R := R) (v k)) ∈ Λ) {v : κ → R⟦X⟧} (hv : v ∈ Λ) :
     (fun k => C (constantCoeff (v k))) ∈ Λ := by
   set c : κ → R⟦X⟧ := fun k => C (constantCoeff (v k))
   have key (m : ℕ) : ∃ h : κ → R⟦X⟧, c + (X : R⟦X⟧) ^ (m + 1) • h ∈ Λ := by
@@ -18,19 +22,18 @@ theorem const_mem_of_stable {R κ : Type} [CommRing R] (hR : ∀ n : ℕ, IsUnit
       refine ⟨fun k => PowerSeries.mk fun n => coeff (n + 1) (v k), ?_⟩
       convert hv using 1
       funext k
-      simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, zero_add, pow_one, c]
       rw [add_comm]
-      exact (PowerSeries.eq_X_mul_shift_add_const (v k)).symm
+      simpa [c, Pi.add_apply, Pi.smul_apply, smul_eq_mul] using (PowerSeries.eq_X_mul_shift_add_const (v k)).symm
     | succ m ih =>
       obtain ⟨h, hh⟩ := ih
       obtain ⟨u, hu⟩ := (hR m).exists_left_inv
-      refine ⟨fun k => -(C u * PowerSeries.derivative R (h k)), ?_⟩
+      refine ⟨fun k => -(C u * PowerSeries.derivative (R := R) (h k)), ?_⟩
       convert Λ.sub_mem hh (Λ.smul_mem (C u) (hθ _ hh)) using 1
       funext k
       have hu' : (C u : R⟦X⟧) * ((m : R⟦X⟧) + 1) = 1 := by
         have := congrArg (C (R := R)) hu
         simpa using this
-      simp only [Pi.add_apply, Pi.smul_apply, Pi.sub_apply, smul_eq_mul, c, map_add, derivative_C,
+      simp only [Pi.add_apply, Pi.smul_apply, Pi.sub_apply, smul_eq_mul, c, map_add (f := _), derivative_C,
         Derivation.leibniz, Derivation.leibniz_pow, derivative_X, nsmul_eq_mul, Nat.add_sub_cancel]
       push_cast
       linear_combination (X ^ (m + 1) * h k) * hu'
@@ -60,11 +63,11 @@ theorem isUnit_uhat : IsUnit (uhat O K l e) := by
     exact this
   rw [← h1]
   refine IsUnit.map _ ?_
-  rw [isUnit_iff_constantCoeff, map_add, constantCoeff_C, constantCoeff_X, add_zero]
+  rw [isUnit_iff_constantCoeff, map_add (f := _), constantCoeff_C, constantCoeff_X, add_zero]
   have h2 : (AdjoinRoot.root (Polynomial.X ^ e + Polynomial.C (l : K))) ^ e =
       algebraMap K _ (-(l : K)) := by
     have := AdjoinRoot.mk_self (f := Polynomial.X ^ e + Polynomial.C (l : K))
-    rw [map_add, map_pow, AdjoinRoot.mk_X, AdjoinRoot.mk_C] at this
+    rw [map_add (f := _), map_pow, AdjoinRoot.mk_X, AdjoinRoot.mk_C] at this
     rw [map_neg, eq_neg_iff_add_eq_zero]
     exact this
   refine (isUnit_pow_iff (NeZero.ne e)).1 ?_
@@ -72,7 +75,7 @@ theorem isUnit_uhat : IsUnit (uhat O K l e) := by
   exact IsUnit.map _ (IsUnit.mk0 _ (neg_ne_zero.2 (l_ne_zero l)))
 
 theorem equivAhat_derivative (x : (AdjoinRoot (Polynomial.X ^ e + Polynomial.C (l : K)))⟦X⟧) :
-    AhatEq.equivAhat O K l e (PowerSeries.derivative _ x) = dHat O K l e (AhatEq.equivAhat O K l e x) :=
+    AhatEq.equivAhat O K l e (PowerSeries.derivative x) = dHat O K l e (AhatEq.equivAhat O K l e x) :=
   AhatEq.toAhat_derivative O K l e x
 
 theorem NHatE_algebraMap (x : Ahat O K l e) :
@@ -117,7 +120,8 @@ theorem stable_EN {κ : Type} [Fintype κ] (Ξ : κ → ι → AhatE O K l e) (�
     have h2 : ∑ j, w j * Γ j i = ∑ k, φ (g k) * ∑ j, Ξ k j * Γ j i := by
       simp only [hw, Finset.sum_mul, Finset.mul_sum, mul_assoc]
       exact Finset.sum_comm
-    rw [h2, hw, map_sum, ← Finset.sum_add_distrib, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h2, hw, map_sum, ← Finset.sum_add_distrib, Finset.mul_sum]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [Derivation.leibniz, smul_eq_mul, smul_eq_mul, NHatE_algebraMap, map_mul]
     linear_combination (-(s * φ (g k))) * hΞ k i
@@ -131,14 +135,15 @@ theorem stable_EN {κ : Type} [Fintype κ] (Ξ : κ → ι → AhatE O K l e) (�
   have h5 := mul_derivation_pow (NHatE O K l e) s N
   rw [hν] at h4 h5
   have h6 : s ^ N * (s * ∑ j, w j * Γ j i) = s ^ p * φ (∑ j, x j * γ j i) := by
-    rw [map_sum, Finset.mul_sum, Finset.mul_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.mul_sum, Finset.mul_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul, hγ]
     linear_combination (-(s * Γ j i)) * hx' j
   refine ⟨Ehat O K l e * (uhat O K l e * dHat O K l e (x i)) + ((p : Ahat O K l e) - N) * ν * x i +
     ∑ j, x j * γ j i, ?_⟩
-  rw [h1, map_mul, map_pow, map_pow, map_add, map_add, map_mul, map_mul, map_mul φ _ (x i), map_mul φ _ ν, map_sub, map_natCast,
-    map_natCast, ← hs]
+  rw [h1, map_mul, map_pow, map_pow, φ.map_add, φ.map_add, map_mul, map_mul, map_mul φ _ (x i), map_mul φ _ ν, φ.map_sub, map_natCast φ p,
+    map_natCast φ N, ← hs]
   rw [map_mul] at h3
   linear_combination h3 - h6 - φ (x i) * h4 + w i * h5 - N * φ ν * hx' i
 
@@ -179,7 +184,8 @@ theorem grading [NeZero a] (P : PhiMod O K l e a ι) (hP : ∀ m ∈ P.M, P.EN m
         obtain ⟨x, hx⟩ := hv i
         obtain ⟨x', hx'⟩ := hv' i
         refine ⟨x + x', ?_⟩
-        simp only [mul_add, map_add, hx, hx', Pi.add_apply, add_mul, Finset.sum_add_distrib]
+        simp only [mul_add, φ.map_add, hx, hx', Pi.add_apply]
+        simp only [map_add ψ, φ.map_add, add_mul, Finset.sum_add_distrib, mul_add]
       zero_mem' := fun i => ⟨0, by simp⟩
       smul_mem' := fun c v hv i => by
         obtain ⟨x, hx⟩ := hv i
@@ -194,7 +200,8 @@ theorem grading [NeZero a] (P : PhiMod O K l e a ι) (hP : ∀ m ∈ P.M, P.EN m
     exact IsUnit.map (algebraMap K _) (IsUnit.mk0 _ (natCast_ne_zero' (K := K) l n.succ_ne_zero))
   · refine ⟨Ehat O K l e ^ N * ψ w ^ (α + p) * ∑ k, ψ (h k) * ξ (k, i), ?_⟩
     have hξ' (k) : φ (ξ (k, i)) = φ (Ehat O K l e) ^ α * Ξ k i := (hξ (k, i)).trans (by rw [map_pow])
-    simp only [Pi.smul_apply, smul_eq_mul, map_mul, map_sum, map_pow, Finset.mul_sum, hξ']
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Pi.smul_apply, smul_eq_mul, map_mul, map_sum, map_pow, Finset.mul_sum, hξ']
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [show ψ X = _ from hw, map_mul]
     ring
@@ -205,7 +212,7 @@ theorem grading [NeZero a] (P : PhiMod O K l e a ι) (hP : ∀ m ∈ P.M, P.EN m
     funext k
     apply ψ.injective
     simp only [Pi.smul_apply, smul_eq_mul, map_mul, AlgEquiv.apply_symm_apply]
-    rw [show ψ X = _ from hw, show ψ (PowerSeries.derivative _ (v k)) = _ from equivAhat_derivative (v k)]
+    rw [show ψ X = _ from hw, show ψ (PowerSeries.derivative (v k)) = _ from equivAhat_derivative (v k)]
     linear_combination (-(Ehat O K l e * ψ w * dHat O K l e (ψ (v k)))) * hu'
 
 theorem exists_eq_cterm_add (x : Ahat O K l e) :
@@ -213,7 +220,7 @@ theorem exists_eq_cterm_add (x : Ahat O K l e) :
   obtain ⟨w, hw⟩ := exists_Ehat_eq O K l e
   obtain ⟨v, rfl⟩ := (AhatEq.equivAhat O K l e).surjective x
   refine ⟨AhatEq.equivAhat O K l e (w * PowerSeries.mk fun n => coeff (n + 1) v), ?_⟩
-  rw [cterm, AlgEquiv.symm_apply_apply, map_mul, ← mul_assoc, ← hw, ← map_mul, ← map_add]
+  rw [cterm, AlgEquiv.symm_apply_apply, map_mul, ← mul_assoc, ← hw, ← map_mul, ← map_add (f := _)]
   exact congrArg _ ((PowerSeries.eq_X_mul_shift_add_const v).trans (add_comm _ _))
 
 theorem hat_mulVec {Y : Matrix ι ι K⟦X⟧} (hY : ∀ i j, Y i j ∈ RpiE O K l e) {m : ι → K⟦X⟧}
@@ -222,7 +229,8 @@ theorem hat_mulVec {Y : Matrix ι ι K⟦X⟧} (hY : ∀ i j, Y i j ∈ RpiE O K
       ∑ j, hat O l e (Y i j) * algebraMap _ _ (toHat O K l e ⟨m j, hm j⟩) := by
   have : (Y *ᵥ m) i = ((∑ j, ⟨Y i j, hY i j⟩ * ⟨m j, le_away _ _ (hm j)⟩ : RpiE O K l e) : K⟦X⟧) := by
     simp [Matrix.mulVec, dotProduct]
-  rw [this, hat_coe, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [this, hat_coe, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul, hat_of_mem l e (hY i j),
     toHatE_eq l e (f := ⟨m j, le_away _ _ (hm j)⟩) (g := ⟨m j, hm j⟩) rfl]
@@ -303,14 +311,15 @@ theorem not_next [NeZero a] (P : PhiMod O K l e a ι) (i : ℤ) {y : Vec K a ι}
   have h3 : P.hatTot y τ j = constPart P y τ j + φ (Ehat O K l e) *
       ∑ j', hat O l e (P.mx τ j j') * φ (∑ k, r k τ * toHat O K l e ⟨m k τ j', hm k τ j'⟩) := by
     rw [hatTot_eq_hsum P (xiExt_symm_mem P hy), constPart, hsum, hsum]
-    simp only [map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Finset.mul_sum]
     rw [Finset.sum_comm, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun k _ => ?_
     have h4 : P.hatTot (xiVec P k) τ j =
         ∑ j', hat O l e (P.mx τ j j') * φ (toHat O K l e ⟨m k τ j', hm k τ j'⟩) := by
       rw [← hat_mulVec (hX τ) (hm k τ), ← hv]
       rfl
-    conv_lhs => rw [hr k τ, map_add, add_mul]
+    conv_lhs => rw [hr k τ, φ.map_add, add_mul]
     congr 1
     rw [h4, Finset.mul_sum]
     refine Finset.sum_congr rfl fun j' _ => ?_
@@ -318,16 +327,17 @@ theorem not_next [NeZero a] (P : PhiMod O K l e a ι) (i : ℤ) {y : Vec K a ι}
     ring
   have h5 : ∑ j', hat O l e (P.mx τ j j') * φ (∑ k, r k τ * toHat O K l e ⟨m k τ j', hm k τ j'⟩) =
       hat O l e (z τ j) + φ (Ehat O K l e) ^ p * φ (∑ j', μ (τ, j, j') * s τ j') := by
-    rw [h2, map_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [h2, map_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun j' _ => ?_
     have h6 : φ (μ (τ, j, j')) = φ (Ehat O K l e) ^ α * hat O l e (P.mx τ j j') :=
       (hμ (τ, j, j')).trans (by rw [map_pow])
     have h7 : ∑ k, r k τ * toHat O K l e ⟨m k τ j', hm k τ j'⟩ =
       ofAl O K l e (ρ τ j') + Ehat O K l e ^ (α + p) * s τ j' := hρ τ j'
-    rw [h7, map_add, map_mul, map_mul, map_pow, h6]
+    rw [h7, φ.map_add, map_mul, map_mul, map_pow, h6]
     ring
   have h8 := hx τ j
-  rw [h1, h3, h5, mul_add, map_add, h8]
+  rw [h1, h3, h5, mul_add, φ.map_add, h8]
   simp only [map_mul, map_pow]
   ring
 

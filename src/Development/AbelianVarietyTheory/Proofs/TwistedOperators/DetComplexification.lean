@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.PolarU
 
@@ -17,7 +21,8 @@ theorem det_complexification (E W : Type) [AddCommGroup E] [Module ℝ E] [Finit
 
   have hsum : ∀ c : Fin (Module.finrank ℝ E) → ℝ, j (∑ i, c i • bE i) = ∑ i, (c i : ℂ) • v i := by
     intro c
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     exact Finset.sum_congr rfl (fun i _ => hj (c i) (bE i))
 
   have hli : LinearIndependent ℂ v := by

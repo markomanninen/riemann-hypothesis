@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.NonnegIffOfLiesTotal
-import Formalism.LocalToGlobal.ProjectiveLattices.LiesOverBaseChange
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.NonnegIffOfLiesTotal
+public import Formalism.LocalToGlobal.ProjectiveLattices.LiesOverBaseChange
+
+@[expose] public section
 
 noncomputable section
 

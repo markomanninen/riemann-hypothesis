@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockKWaveC
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ModuleFormPosCompactSupport
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.SizeStandardCompact
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.VectorIsomorphismCompactSupport
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.BlockKWaveC
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ModuleFormPosCompactSupport
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.SizeStandardCompact
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.VectorIsomorphismCompactSupport
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.PBL
 
@@ -35,8 +39,8 @@ def WaveLocBPCpt : Prop :=
 
 end Formalism.FourierDecayAlt.P.PBL
 
-open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.P.PBL in
 
+open Formalism.FourierDecayAlt Formalism.FourierDecayAlt.P.PBL in
 theorem Formalism.FourierDecayAlt.P.wave_local_compact_support_route : Formalism.FourierDecayAlt.P.PBL.WaveLocBC := by
   intro hA hPSC hDW hSS hVI hFP Cb Cc E _ _ _ Wp Wq _ _ _ _ _ _ S p f χ A₀ hCc hB
   refine ⟨fun i v => Xw S i v, thr_wave hCc hB, fun F hF v => ?_⟩

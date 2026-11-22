@@ -1,14 +1,21 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory
 
 open Filter Topology MvPowerSeries
 
+noncomputable abbrev NormValuationSubring (C : Type*) [NormedField C] [IsUltrametricDist C] :=
+  (NormedField.valuation (K := C)).valuationSubring
+
 section
 
 variable {C : Type*} [NormedField C] [IsUltrametricDist C] {σ : Type*}
 
-local notation "𝒪" => Valuation.valuationSubring (NormedField.valuation (K := C))
+local notation "𝒪" => NormValuationSubring C
 
 theorem mem_normValuationSubring_iff (x : C) : x ∈ 𝒪 ↔ ‖x‖ ≤ 1 := by
   rw [Valuation.mem_valuationSubring_iff, NormedField.valuation_apply]
@@ -26,7 +33,7 @@ theorem norm_finsuppProd_pow (t : σ →₀ ℕ) (z : σ → C) :
 
 theorem finsuppProd_pow_mono (t : σ →₀ ℕ) {c d : σ → ℝ} (h0 : ∀ i, 0 ≤ c i) (h : ∀ i, c i ≤ d i) :
     t.prod (c · ^ ·) ≤ t.prod (d · ^ ·) :=
-  Finset.prod_le_prod (fun i _ => pow_nonneg (h0 i) _) fun i _ => pow_le_pow_left₀ (h0 i) (h i) _
+  Finset.prod_le_prod₀ (fun i _ => pow_nonneg (h0 i) _) fun i _ => pow_le_pow_left₀ (h0 i) (h i) _
 
 theorem finsuppProd_const_pow (t : σ →₀ ℕ) (r : ℝ) : t.prod (fun _ n => r ^ n) = r ^ t.degree := by
   simp [Finsupp.prod, Finsupp.degree_apply, Finset.prod_pow_eq_pow_sum]
@@ -57,8 +64,11 @@ theorem exists_norm_sum_monomial_eq_one [Infinite (IsLocalRing.ResidueField 𝒪
     intro h
     have h1 : P.coeff t₀ = IsLocalRing.residue 𝒪 (b' t₀) := by
       simp [P, MvPolynomial.coeff_sum, MvPolynomial.coeff_monomial, h₀]
-    rw [h, MvPolynomial.coeff_zero, eq_comm, residue_normValuationSubring_eq_zero_iff] at h1
-    exact absurd hb₀ h1.ne
+    simp only [h, MvPolynomial.coeff_zero, Pi.zero_apply] at h1
+    rw [eq_comm] at h1
+    have hlt : ‖(b' t₀ : C)‖ < 1 :=
+      (residue_normValuationSubring_eq_zero_iff (b' t₀)).1 h1
+    exact absurd hb₀ (by simpa [b'] using hlt.ne)
   obtain ⟨x, hx⟩ : ∃ x, MvPolynomial.eval x P ≠ 0 := by
     by_contra! h
     exact hP (MvPolynomial.funext fun x => by simp [h x])
@@ -153,8 +163,8 @@ noncomputable def seriesValue {R : Type*} [CommSemiring R] [TopologicalSpace R]
     (g : MvPowerSeries σ R) (z : σ → R) : R :=
   ∑' t : σ →₀ ℕ, coeff t g * t.prod (z · ^ ·)
 
-omit [IsUltrametricDist C] in
 
+omit [IsUltrametricDist C] in
 theorem isRestricted_const_iff (g : MvPowerSeries σ C) (r : ℝ) :
     IsRestricted (fun _ => r) g ↔
       Tendsto (fun t : σ →₀ ℕ => ‖coeff t g‖ * r ^ t.degree) cofinite (𝓝 0) := by
@@ -173,16 +183,16 @@ theorem hasSum_seriesValue [CompleteSpace C] {g : MvPowerSeries σ C} {c : σ �
   refine (NonarchimedeanAddGroup.summable_of_tendsto_cofinite_zero ?_).hasSum
   exact squeeze_zero_norm (norm_term_le g hz) hg
 
-omit [IsUltrametricDist C] in
 
+omit [IsUltrametricDist C] in
 theorem isRestricted_of_summable {g : MvPowerSeries σ C} {w : σ → C}
     (h : Summable fun t : σ →₀ ℕ => coeff t g * t.prod (w · ^ ·)) :
     IsRestricted (fun i => ‖w i‖) g := by
   have := h.tendsto_cofinite_zero.norm
   simpa only [IsRestricted, norm_mul, norm_finsuppProd_pow, norm_zero] using this
 
-omit [IsUltrametricDist C] in
 
+omit [IsUltrametricDist C] in
 theorem exists_isGreatest_gaussNorm {g : MvPowerSeries σ C} {c : σ → ℝ} (hc : ∀ i, 0 ≤ c i)
     (hg : IsRestricted c g) :
     IsGreatest (Set.range fun t : σ →₀ ℕ => ‖coeff t g‖ * t.prod (c · ^ ·))
@@ -290,8 +300,8 @@ theorem exists_map_eq_iff_norm_coeff_le_one (g : MvPowerSeries σ C) :
     ext t
     rfl
 
-omit [IsUltrametricDist C] in
 
+omit [IsUltrametricDist C] in
 theorem isRestricted_of_norm_coeff_le [Finite σ] {g : MvPowerSeries σ C} {M : ℝ}
     (h : ∀ t, ‖coeff t g‖ ≤ M) {r : ℝ} (h0 : 0 ≤ r) (h1 : r < 1) :
     IsRestricted (fun _ => r) g := by
@@ -304,8 +314,8 @@ theorem isRestricted_of_norm_coeff_le [Finite σ] {g : MvPowerSeries σ C} {M : 
   exact squeeze_zero (fun t => by positivity)
     (fun t => mul_le_mul_of_nonneg_right (h t) (pow_nonneg h0 _)) this
 
-omit [IsUltrametricDist C] in
 
+omit [IsUltrametricDist C] in
 theorem exists_radius_lt_one [Finite σ] {z : σ → C} (hz : ∀ i, ‖z i‖ < 1) :
     ∃ r : ℝ, 0 ≤ r ∧ r < 1 ∧ ∀ i, ‖z i‖ ≤ r := by
   have := Fintype.ofFinite σ
@@ -353,11 +363,6 @@ theorem bounded_series_integral_of_dense [CompleteSpace C] [Infinite (IsLocalRin
 
 end
 
-theorem exists_lt_norm_lt_one_of_densely {C : Type*} [DenselyNormedField C] (r : ℝ) (hr : r < 1) :
-    ∃ x : C, r < ‖x‖ ∧ ‖x‖ < 1 := by
-  obtain ⟨x, h1, h2⟩ := NormedField.exists_lt_norm_lt C (le_max_right r 0) (max_lt hr one_pos)
-  exact ⟨x, (le_max_left r 0).trans_lt h1, h2⟩
-
 theorem exists_lt_norm_lt_one_of_isAlgClosed {C : Type*} [NontriviallyNormedField C]
     [IsAlgClosed C] (r : ℝ) (hr : r < 1) : ∃ x : C, r < ‖x‖ ∧ ‖x‖ < 1 := by
   obtain ⟨y, hy0, hy1⟩ := NormedField.exists_norm_lt_one C
@@ -384,21 +389,5 @@ theorem bounded_series_integral {C : Type*} [NontriviallyNormedField C] [IsUltra
         MvPowerSeries.map (NormedField.valuation (K := C)).valuationSubring.subtype g₀ = g) :=
   haveI := infinite_residueField_of_isAlgClosed (C := C)
   bounded_series_integral_of_dense exists_lt_norm_lt_one_of_isAlgClosed g hg
-
-theorem norm_coeff_le_of_hasSum_of_isAlgClosed {C : Type*} [NontriviallyNormedField C]
-    [IsUltrametricDist C] [IsAlgClosed C] {σ : Type*} {g : MvPowerSeries σ C} {f : (σ → C) → C}
-    (hf : ∀ z : σ → C, (∀ i, ‖z i‖ < 1) →
-      HasSum (fun t : σ →₀ ℕ => coeff t g * t.prod (z · ^ ·)) (f z)) {M : ℝ}
-    (h : ∀ z : σ → C, (∀ i, ‖z i‖ < 1) → ‖f z‖ ≤ M) (t : σ →₀ ℕ) : ‖coeff t g‖ ≤ M :=
-  haveI := infinite_residueField_of_isAlgClosed (C := C)
-  norm_coeff_le_of_hasSum exists_lt_norm_lt_one_of_isAlgClosed (fun _ hx z hz =>
-    ⟨_, hf z fun i => (hz i).trans_lt hx, h z fun i => (hz i).trans_lt hx⟩) t
-
-example (p : ℕ) [Fact p.Prime] (n : ℕ) (z : Fin n → ℂ_[p]) (hz : ∀ i, ‖z i‖ < 1) :
-    ‖seriesValue (fun _ => 1 : MvPowerSeries (Fin n) ℂ_[p]) z‖ ≤ 1 := by
-  have h : ∀ t, ‖coeff t (fun _ => 1 : MvPowerSeries (Fin n) ℂ_[p])‖ ≤ 1 := fun t =>
-    norm_one.le
-  exact ((bounded_series_integral _ fun r h0 h1 => (isRestricted_const_iff _ r).1
-    (isRestricted_of_norm_coeff_le h h0 h1)).2.2.1 1).2 h z hz
 
 end GlobalTheory

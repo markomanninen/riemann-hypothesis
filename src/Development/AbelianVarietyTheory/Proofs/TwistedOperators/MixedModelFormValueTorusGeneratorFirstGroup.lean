@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsPairingSingleNe
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumOpTransversal
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeisenbergQuotientOpSumVacuumCommensurableSelfDuStatement
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsHeisenbergInvariantLinearFormIsotropicVacuStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsPairingSingleNe
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.SumOpTransversal
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HeisenbergQuotientOpSumVacuumCommensurableSelfDuStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsHeisenbergInvariantLinearFormIsotropicVacuStatement
+
+@[expose] public section
+
 open Matrix Formalism.UG GlobalTheory.Hk3 GlobalTheory.FinWeil GlobalTheory.SphTheta ValuativeRel Classical
 open GlobalTheory.LFun (HasSatU IsSatVecU heckeVec)
 open GlobalTheory.LGrp (bcParam extProd)
@@ -33,10 +38,10 @@ theorem tMat_single (ϖ : L) (n : ℕ) (k : Fin (n / 2)) :
   unfold tMat
   congr 1
   funext i
-  simp only [dTor, Fin.ext_iff, lo, Fin.val_rev, Pi.single_apply]
   have hk := k.isLt
   have hi := i.isLt
-  split_ifs <;> first | rfl | (exfalso; omega) | simp_all | skip
+  simp only [dTor, Pi.single_apply, lo, Fin.ext_iff, Fin.val_rev]
+  split_ifs <;> simp_all <;> omega
 
 theorem dTor_mul {σ : L →+* L} {ϖ : L} (hσϖ : σ ϖ = ϖ) (hϖ : ϖ ≠ 0) {n : ℕ} (k : Fin (n / 2)) (j : Fin n) :
     dTor ϖ n k j * σ (dTor ϖ n k j.rev) = 1 := by
@@ -114,12 +119,12 @@ theorem mem_intL_iff_mul {ϖ : L} {σ : L →+* L} {q : ℕ} (hU : IsUnramInv ϖ
   · rw [← WithZero.exp_log hz, ← WithZero.exp_add, ← WithZero.exp_zero, WithZero.exp_le_exp, WithZero.exp_lt_exp]
     omega
 
-variable (L) in
 
+variable (L) in
 abbrev OV : ValuationSubring L := (Valued.v : Valuation L (WithZero (Multiplicative ℤ))).valuationSubring
 
-variable (L) in
 
+variable (L) in
 abbrev ResF : Type := OV L ⧸ IsLocalRing.maximalIdeal (OV L)
 
 theorem card_resF {ϖ : L} {σ : L →+* L} {q : ℕ} (hU : IsUnramInv ϖ σ q) : Nat.card (ResF L) = q ^ 2 :=
@@ -192,7 +197,7 @@ theorem ordL_of_val {x : L} (hx : Valued.v x = WithZero.exp (1 : ℤ)) : ordL x 
       -Multiplicative.toAdd (WithZero.unzero h) = -1 := by
     rintro _ h rfl; rfl
   unfold ordL
-  rw [dif_neg (by rw [hx]; exact WithZero.exp_ne_zero)]
+  rw [dite_eq_right (by rw [hx]; exact WithZero.exp_ne_zero)]
   exact key _ _ hx
 
 theorem cayley_dInv {ϖ : L} {σ : L →+* L} {q : ℕ} (hU : IsUnramInv ϖ σ q) (h2 : Valued.v (2 : L) = 1) {n : ℕ}
@@ -337,7 +342,8 @@ theorem value_torus_first : ∀ (L : Type) [Field L] [Valued L (WithZero (Multip
       have h3 := (sub_mem_iff hU hϖ0 (z := 0) (by rw [mul_zero]; exact zero_mem _) (y r)).1
         (by rw [zero_sub]; exact neg_mem h1)
       exact hyr (h3.trans ((Ideal.Quotient.eq_zero_iff_mem).2 ((Valuation.mem_maximalIdeal_iff _ _).2 (by simp))))
-  rw [hv, map_smul, hsum, map_sum, hev, smul_eq_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hv, map_smul, hsum, map_sum, hev, smul_eq_mul]
   simp_rw [hterm]
   have hc : (∑ y : Fin n' → ResF L, (if ∀ r : Fin n', n' / 2 ≤ r.val → y r = 0 then (1 : ℂ) else 0)) =
       ((Fintype.card (ResF L) : ℕ) : ℂ) ^ (n' / 2) := by

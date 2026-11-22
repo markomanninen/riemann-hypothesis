@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBTransport
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBTransport
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.DivCalc
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -52,7 +56,7 @@ theorem flat_ker_rank_one_r (δ : M →ₗ[R] N) (θ : M) (hker : ∀ m, δ m = 
     induction t using TensorProduct.induction_on with
     | zero => simp
     | tmul m s => simp
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have ht' : δ.lTensor S (TensorProduct.comm R M S t) = 0 := by rw [hcomm, ht, map_zero]
   obtain ⟨a, ha, hu⟩ := flat_ker_rank_one δ θ hker hfree _ ht'
   refine ⟨a, ?_, fun b hb => hu b ?_⟩
@@ -67,7 +71,7 @@ lemma piLeft_apply_eq {ι : Type*} [Fintype ι] [DecidableEq ι] (Mi : ι → Ty
   induction x using TensorProduct.induction_on with
   | zero => simp
   | tmul m s => simp
-  | add x y hx hy => simp only [map_add, Pi.add_apply, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), Pi.add_apply, hx, hy]
 
 section Cover
 
@@ -125,8 +129,8 @@ lemma gs_dfun {f : ∀ k, Γ(Y, V k)} (hf : dfun L V c hVc f = 0) (k l : Fin n) 
   rw [gs_res _ y _ hy, gs_mul _ y _ hy, gs_res _ y _ hy, gs_unit _ y _ hy, gm_res _ y _ hy] at e2
   exact e2
 
-open ReciprocityTheory.ChartRestriction.G.Geo.Tor in
 
+open ReciprocityTheory.ChartRestriction.G.Geo.Tor in
 theorem exists_glue (hL : L.IsLB) (hcov : ⨆ k, V k = ⊤) (f : ∀ k, Γ(Y, V k)) (hf : dfun L V c hVc f = 0) :
     ∃ σ : LB.Sec L, ev L V c hVc σ = f := by
   classical
@@ -174,8 +178,8 @@ lemma gs_sec (σ : LB.Sec L) (i j : L.ι) (y : Y) (hi : y ∈ L.U i) (hj : y ∈
   rw [gs_res _ y _ hy, gs_mul _ y _ hy, gs_res _ y _ hy, gs_unit _ y _ hy] at e
   exact e
 
-open ReciprocityTheory.ChartRestriction.G.Geo.Tor in
 
+open ReciprocityTheory.ChartRestriction.G.Geo.Tor in
 theorem ev_inj (hcov : ⨆ k, V k = ⊤) {σ τ : LB.Sec L} (h : ev L V c hVc σ = ev L V c hVc τ) : σ = τ := by
   have hf : σ.f = τ.f := by
     funext i
@@ -204,8 +208,8 @@ variable {R S : Type} [CommRing R] [CommRing S] [Algebra R S] {X X' : Scheme.{0}
 def algX (U : X.Opens) : R →+* Γ(X, U) :=
   (p.appLE ⊤ U (by simp)).hom.comp (Scheme.ΓSpecIso (CommRingCat.of R)).inv.hom
 
-include H in
 
+include H in
 theorem isPushout_sections (U : X.Opens) (hU : IsAffineOpen U) :
     IsPushout (CommRingCat.ofHom (algX p U)) (CommRingCat.ofHom (algebraMap R S))
       (φ.appLE U (φ ⁻¹ᵁ U ⊓ p' ⁻¹ᵁ ⊤) inf_le_left) (CommRingCat.ofHom (algX p' (φ ⁻¹ᵁ U ⊓ p' ⁻¹ᵁ ⊤))) := by
@@ -257,8 +261,8 @@ lemma eTens_tmul (U : X.Opens) (hU : IsAffineOpen U) (a : Γ(X, U)) (s : S) :
   rw [e, map_mul]
   exact congrArg₂ (· * ·) h1 h2
 
-omit [Algebra R S] in
 
+omit [Algebra R S] in
 def rsL (U U' : X.Opens) (h : U' ≤ U) :
     letI := (algX p U).toAlgebra; letI := (algX p U').toAlgebra
     Γ(X, U) →ₗ[R] Γ(X, U') :=
@@ -269,8 +273,8 @@ def rsL (U U' : X.Opens) (h : U' ≤ U) :
       simp only [Algebra.smul_def, RingHom.algebraMap_toAlgebra, RingHom.id_apply]
       rw [ReciprocityTheory.ChartRestriction.G.DVR.rs_mul, rs_algX] }
 
-omit [Algebra R S] in
 
+omit [Algebra R S] in
 def mulL (U : X.Opens) (u : Γ(X, U)) :
     letI := (algX p U).toAlgebra
     Γ(X, U) →ₗ[R] Γ(X, U) :=
@@ -297,7 +301,7 @@ lemma eTens_rs (U U' : X.Opens) (hU : IsAffineOpen U) (hU' : IsAffineOpen U') (h
     show (φ.appLE U' _ _).hom (ReciprocityTheory.ChartRestriction.G.DVR.rs h a) = ReciprocityTheory.ChartRestriction.G.DVR.rs _ ((φ.appLE U _ _).hom a)
     simp only [ReciprocityTheory.ChartRestriction.G.DVR.rs]
     rw [← CommRingCat.comp_apply, ← CommRingCat.comp_apply, Scheme.Hom.map_appLE, Scheme.Hom.appLE_map]
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 lemma eTens_mul (U : X.Opens) (hU : IsAffineOpen U) (u : Γ(X, U))
     (x : letI := (algX p U).toAlgebra; Γ(X, U) ⊗[R] S) :
@@ -310,7 +314,7 @@ lemma eTens_mul (U : X.Opens) (hU : IsAffineOpen U) (u : Γ(X, U))
     rw [LinearMap.rTensor_tmul, eTens_tmul, eTens_tmul]
     show (φ.appLE U _ _).hom (u * a) * _ = _
     rw [map_mul]; ring
-  | add x y hx hy => simp only [map_add, hx, hy, mul_add]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy, mul_add]
 
 end Pushout
 
@@ -322,8 +326,8 @@ variable {R S : Type} [CommRing R] [CommRing S] [Algebra R S] {X X' : Scheme.{0}
   (p : X ⟶ Spec (CommRingCat.of R)) (p' : X' ⟶ Spec (CommRingCat.of S)) (φ : X' ⟶ X)
   (H : IsPullback φ p' p (Spec.map (CommRingCat.ofHom (algebraMap R S))))
 
-omit [Algebra R S] in
 
+omit [Algebra R S] in
 def smulSec (L : LB X) (a : R) (θ : LB.Sec L) : LB.Sec L where
   f i := algX p (L.U i) a * θ.f i
   compat i j := by
@@ -339,8 +343,8 @@ lemma ev_smulSec (L : LB X) {n : ℕ} (V : Fin n → X.Opens) (c : Fin n → L.�
     ev L V c hVc (smulSec p L a θ) k = algX p (V k) a * ev L V c hVc θ k := by
   simp only [ev, smulSec, rs_mul, rs_algX]
 
-include H in
 
+include H in
 theorem flatBC_gen [Module.Flat R S] [CompactSpace X]
     (hinter : ∀ U W : X.Opens, IsAffineOpen U → IsAffineOpen W → IsAffineOpen (U ⊓ W))
     (L : LB X) (hL : L.IsLB) (θ : LB.Sec L)
@@ -356,7 +360,7 @@ theorem flatBC_gen [Module.Flat R S] [CompactSpace X]
     { toFun := fun f kl => dfun L V c hVc f kl.1 kl.2
       map_add' := fun f g => by
         funext kl
-        simp only [dfun, Pi.add_apply, map_add, mul_add]
+        simp only [dfun, Pi.add_apply, map_add (f := _), mul_add]
         abel
       map_smul' := fun r f => by
         funext kl
@@ -588,8 +592,8 @@ lemma isoRel_smul {L M : LB X} {w : LB.Iso L M} {s : LB.Sec L} {s' : LB.Sec M} (
   rw [e]
   exact mul_left_comm _ _ _
 
-include H in
 
+include H in
 theorem flatBC_iso [Module.Flat R S] [CompactSpace X]
     (hinter : ∀ U W : X.Opens, IsAffineOpen U → IsAffineOpen W → IsAffineOpen (U ⊓ W))
     (L : LB X) (hL : L.IsLB) (θ : LB.Sec L)

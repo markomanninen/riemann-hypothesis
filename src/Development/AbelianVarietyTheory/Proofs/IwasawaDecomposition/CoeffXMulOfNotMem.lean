@@ -1,8 +1,12 @@
-import Mathlib
-import Formalism.LocalRingCardinality.DataTheta
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.OscActMonomialOfUnique
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GaussianVectorAnnihilatorEquations
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsUnitDetOneSubConjTransposeMulContractions
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.DataTheta
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.OscActMonomialOfUnique
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.GaussianVectorAnnihilatorEquations
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsUnitDetOneSubConjTransposeMulContractions
+
+@[expose] public section
 
 noncomputable section
 
@@ -28,7 +32,7 @@ def dil (σ : Type) : Submodule ℂ (MvPowerSeries σ ℂ) where
   zero_mem' r _ _ := by simp
   add_mem' {E E'} h h' r h0 h1 := by
     refine .of_nonneg_of_le (fun α => by positivity) (fun α => ?_) (((h r h0 h1).add (h' r h0 h1)).mul_left 2)
-    rw [map_add, ← mul_add, ← mul_add, mul_left_comm 2, mul_left_comm 2]
+    rw [map_add (f := _), ← mul_add, ← mul_add, mul_left_comm 2, mul_left_comm 2]
     gcongr
     nlinarith [norm_add_le (coeff α E) (coeff α E'), norm_nonneg (coeff α E + coeff α E'),
       sq_nonneg (‖coeff α E‖ - ‖coeff α E'‖)]
@@ -49,7 +53,7 @@ theorem X_mul_mem {E : MvPowerSeries σ ℂ} (h : E ∈ dil σ) (l : σ) : X l *
   have h4 : r ^ (β.degree + 1) = √r ^ (β.degree + 1) * √r ^ (β.degree + 1) := by
     rw [← mul_pow, Real.mul_self_sqrt h0]
   have h5 : √r ^ (β.degree + 1) ≤ √r ^ β.degree := pow_le_pow_of_le_one hρ0 hρ1.le (Nat.le_succ _)
-  simp only [Function.comp, coeff_X_mul_add, map_add, Finsupp.degree_single, Oscillator.mfact_add_single, h4]
+  simp only [Function.comp, coeff_X_mul_add, map_add (f := _), Finsupp.degree_single, Oscillator.mfact_add_single, h4]
   push_cast at h2 ⊢
   calc _ = (((β l : ℝ) + 1) * √r ^ (β.degree + 1)) *
         (√r ^ (β.degree + 1) * ((mfact β : ℝ) * ‖coeff β E‖ ^ 2)) := by ring
@@ -64,8 +68,8 @@ def mulX (l : σ) : dil σ →ₗ[ℂ] dil σ := (LinearMap.mulLeft ℂ (X l)).r
 def term (t : ℝ) (E E' : MvPowerSeries σ ℂ) (α : σ →₀ ℕ) : ℂ :=
   (t : ℂ) ^ α.degree * ((mfact α : ℂ) * coeff α E * coeff α E')
 
-omit [DecidableEq σ] in
 
+omit [DecidableEq σ] in
 theorem norm_term_le {t : ℝ} (ht : 0 ≤ t) (E E' : MvPowerSeries σ ℂ) (α : σ →₀ ℕ) :
     ‖term t E E' α‖ ≤ t ^ α.degree * ((mfact α : ℝ) * ‖coeff α E‖ ^ 2) +
       t ^ α.degree * ((mfact α : ℝ) * ‖coeff α E'‖ ^ 2) := by
@@ -74,8 +78,8 @@ theorem norm_term_le {t : ℝ} (ht : 0 ≤ t) (E E' : MvPowerSeries σ ℂ) (α 
   gcongr
   nlinarith [sq_nonneg (‖coeff α E‖ - ‖coeff α E'‖), norm_nonneg (coeff α E), norm_nonneg (coeff α E')]
 
-omit [DecidableEq σ] in
 
+omit [DecidableEq σ] in
 theorem summable_norm_term {t : ℝ} (ht : t ∈ Set.Ioo (0 : ℝ) 1) (E E' : dil σ) :
     Summable fun α => ‖term t E.1 E'.1 α‖ :=
   .of_nonneg_of_le (fun _ => norm_nonneg _) (norm_term_le ht.1.le _ _)
@@ -85,25 +89,25 @@ def pr {t : ℝ} (ht : t ∈ Set.Ioo (0 : ℝ) 1) : dil σ →ₗ[ℂ] dil σ �
   LinearMap.mk₂ ℂ (fun E E' => ∑' α, term t E.1 E'.1 α)
     (fun E₁ E₂ E' => by
       rw [← (summable_norm_term ht E₁ E').of_norm.tsum_add (summable_norm_term ht E₂ E').of_norm]
-      exact tsum_congr fun α => by simp only [term, Submodule.coe_add, map_add]; ring)
+      exact tsum_congr fun α => by simp only [term, Submodule.coe_add, map_add (f := _)]; ring)
     (fun c E E' => by
       rw [smul_eq_mul, ← tsum_mul_left]
       exact tsum_congr fun α => by simp only [term, Submodule.coe_smul, coeff_smul]; ring)
     (fun E E₁ E₂ => by
       rw [← (summable_norm_term ht E E₁).of_norm.tsum_add (summable_norm_term ht E E₂).of_norm]
-      exact tsum_congr fun α => by simp only [term, Submodule.coe_add, map_add]; ring)
+      exact tsum_congr fun α => by simp only [term, Submodule.coe_add, map_add (f := _)]; ring)
     (fun c E E' => by
       rw [smul_eq_mul, ← tsum_mul_left]
       exact tsum_congr fun α => by simp only [term, Submodule.coe_smul, coeff_smul]; ring)
 
 variable {t : ℝ} (ht : t ∈ Set.Ioo (0 : ℝ) 1)
 
-omit [DecidableEq σ] in
 
+omit [DecidableEq σ] in
 theorem pr_apply (E E' : dil σ) : pr ht E E' = ∑' α, term t E.1 E'.1 α := rfl
 
-omit [DecidableEq σ] in
 
+omit [DecidableEq σ] in
 theorem pr_comm (E E' : dil σ) : pr ht E E' = pr ht E' E :=
   tsum_congr fun α => by simp only [term]; ring
 
@@ -117,7 +121,7 @@ theorem pr_mulX {l : σ} (E : dil σ) {E' D : dil σ} (h : IsPDer l E'.1 D.1) :
       by_contra h'
       exact hα (by simp [term, (coeff_X_mul_of_notMem l _ h').2])), ← tsum_mul_left]
   refine tsum_congr fun β => ?_
-  simp only [term, coe_mulX, coeff_X_mul_add, map_add, Finsupp.degree_single, Oscillator.mfact_add_single, ← h β]
+  simp only [term, coe_mulX, coeff_X_mul_add, map_add (f := _), Finsupp.degree_single, Oscillator.mfact_add_single, ← h β]
   push_cast
   ring
 
@@ -133,7 +137,7 @@ theorem IsPDer.X_mul {k : σ} {E D : MvPowerSeries σ ℂ} (h : IsPDer k E D) (m
   intro α
   by_cases hk : k = m
   · subst hk
-    rw [coeff_X_mul_add, map_add, h.coeff_X_mul]; simp; ring
+    rw [coeff_X_mul_add, map_add (f := _), h.coeff_X_mul]; simp; ring
   rw [if_neg hk, zero_smul, add_zero]
   by_cases hα : α ∈ Set.range fun β : σ →₀ ℕ => β + Finsupp.single m 1
   · obtain ⟨β, rfl⟩ := hα
@@ -232,7 +236,8 @@ theorem moments : ∀ (σ : Type) [Fintype σ] [DecidableEq σ] (S T : Matrix σ
     simp only [hf, mulVec, dotProduct, trace, Matrix.diag_apply, Matrix.mul_apply, transpose_apply, of_apply]
     rw [Finset.mul_sum, ← Finset.sum_add_distrib, ← Finset.sum_add_distrib, ← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun l _ => ?_
-    simp only [map_add, map_sum, map_smul, LinearMap.add_apply, LinearMap.sum_apply, LinearMap.smul_apply,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_add (f := _), map_sum, map_smul, LinearMap.add_apply, LinearMap.sum_apply, LinearMap.smul_apply,
       smul_eq_mul]
     have h1 : ∀ (g : σ → ℂ) (G : σ → σ → ℂ) (c : ℂ), ∑ m, T l m * (c * g m + ∑ k, S l k * G k m) =
         c * ∑ m, T l m * g m + ∑ m, (∑ k, S l k * G k m) * T l m := fun g G c => by

@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 noncomputable section
 
@@ -74,7 +78,7 @@ theorem adic_exists_approx (y : v.adicCompletion K) (hy : Valued.v y ≤ 1) :
     refine ⟨r, ?_⟩
     have hkz : algebraMap R K a / algebraMap R K b - algebraMap R K r =
         algebraMap R K z / algebraMap R K b := by
-      rw [← hyz, map_add, map_mul]
+      rw [← hyz, map_add (f := _), map_mul]
       field_simp
       ring
     rw [hkz, map_div₀, div_lt_one₀ hvb, valuation_of_algebraMap, valuation_of_algebraMap]

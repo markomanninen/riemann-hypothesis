@@ -1,7 +1,11 @@
-import Development.EtaleCohomology.EtaleSheaves.LeafUnitsPfD
-import Development.EtaleCohomology.EtaleSheaves.LeafUnitsPfF
-import Development.EtaleCohomology.EtaleSheaves.LeafFinInfPf
-import Development.EtaleCohomology.EtaleSheaves.LeafFinValPf
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.LeafUnitsPfD
+public import Development.EtaleCohomology.EtaleSheaves.LeafUnitsPfF
+public import Development.EtaleCohomology.EtaleSheaves.LeafFinInfPf
+public import Development.EtaleCohomology.EtaleSheaves.LeafFinValPf
+
+@[expose] public section
 
 open Polynomial IntermediateField.algebraAdjoinAdjoin
 

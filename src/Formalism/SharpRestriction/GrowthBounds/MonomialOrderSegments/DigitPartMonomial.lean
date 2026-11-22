@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.Monomial
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialOrderSegments.Monomial
+
+@[expose] public section
 
 noncomputable section
 
@@ -19,7 +23,8 @@ theorem lsup_monomial {σ τ : Type} (φ : (σ →₀ ℕ) → MvPolynomial τ K
 theorem lsup_apply {σ τ : Type} (φ : (σ →₀ ℕ) → MvPolynomial τ K) (F : MvPolynomial σ K) :
     lsup φ F = ∑ α ∈ F.support, F.coeff α • φ α := by
   conv_lhs => rw [F.as_sum]
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   exact Finset.sum_congr rfl fun α _ => lsup_monomial φ α _
 
 theorem dg_eq_lsup {σ : Type} (f : (σ →₀ ℕ) → K) : dg f = lsup fun α => monomial α (f α) := rfl
@@ -48,7 +53,7 @@ theorem ddiv_monomial {σ : Type} (M α : σ →₀ ℕ) (c : K) :
   · rw [smul_zero]
 
 theorem ddiv_add {σ : Type} (M : σ →₀ ℕ) (F G : MvPolynomial σ K) :
-    ddiv M (F + G) = ddiv M F + ddiv M G := by simp only [ddiv_eq, map_add]
+    ddiv M (F + G) = ddiv M F + ddiv M G := by simp only [ddiv_eq, map_add (f := _)]
 
 theorem ddiv_smul {σ : Type} (M : σ →₀ ℕ) (a : K) (F : MvPolynomial σ K) :
     ddiv M (a • F) = a • ddiv M F := by simp only [ddiv_eq, map_smul]
@@ -63,17 +68,18 @@ theorem coeff_ddiv {σ : Type} (M β : σ →₀ ℕ) (F : MvPolynomial σ K) :
   | monomial α c =>
     rw [ddiv_monomial, coeff_monomial]
     by_cases h : M ≤ α
-    · rw [if_pos h, coeff_monomial]
+    · rw [ite_eq_left h, coeff_monomial]
       by_cases h2 : α - M = β
       · have : α = β + M := by rw [← h2, tsub_add_cancel_of_le h]
-        rw [if_pos h2, if_pos this, this]
+        rw [ite_eq_left h2, ite_eq_left this, this]
       · have : ¬ α = β + M := by
           intro h3; apply h2; rw [h3, add_tsub_cancel_right]
-        rw [if_neg h2, if_neg this, zero_mul]
+        rw [ite_eq_right h2, ite_eq_right this, zero_mul]
     · have : ¬ α = β + M := by
         intro h3; apply h; rw [h3]; exact le_add_self
-      rw [if_neg h, if_neg this, coeff_zero, zero_mul]
-  | add p q hp hq => rw [ddiv_add, coeff_add, coeff_add, hp, hq, add_mul]
+      rw [ite_eq_right h, ite_eq_right this, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply, zero_mul]
+  | add p q hp hq =>
+    simp only [ddiv_add, AddMonoidAlgebra.coeff_add, Finsupp.add_apply, hp, hq, add_mul]
 
 namespace TwistData
 
@@ -100,7 +106,7 @@ theorem digitPart_monomial (p : ℕ) (ρ : D.Tau → Fin D.r → ℕ) (α : D.EA
 
 theorem digitPart_add (p : ℕ) (ρ : D.Tau → Fin D.r → ℕ) (F G : MvPolynomial (D.OL × Fin D.r) K) :
     D.digitPart p ρ (F + G) = D.digitPart p ρ F + D.digitPart p ρ G := by
-  simp only [digitPart_eq, map_add]
+  simp only [digitPart_eq, map_add (f := _)]
 
 theorem digitPart_smul (p : ℕ) (ρ : D.Tau → Fin D.r → ℕ) (a : K) (F : MvPolynomial (D.OL × Fin D.r) K) :
     D.digitPart p ρ (a • F) = a • D.digitPart p ρ F := by
@@ -109,7 +115,8 @@ theorem digitPart_smul (p : ℕ) (ρ : D.Tau → Fin D.r → ℕ) (a : K) (F : M
 theorem digitPart_sum {ι : Type} (p : ℕ) (ρ : D.Tau → Fin D.r → ℕ) (s : Finset ι)
     (f : ι → MvPolynomial (D.OL × Fin D.r) K) :
     D.digitPart p ρ (∑ i ∈ s, f i) = ∑ i ∈ s, D.digitPart p ρ (f i) := by
-  simp only [digitPart_eq, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [digitPart_eq, map_sum]
 
 theorem gaAct_eq (G : MvPolynomial (D.OL × Fin D.r) K) : D.gaAct G = dg D.ga G := by
   rw [dg_apply, gaAct]

@@ -1,18 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.ShortVectorBound.ScaledLatticesInSupLattices
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.HarmonicValuationLowerBoundHostFieldAllPlacesStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsExtAllModelsUniformised
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.HarmonicValueTranslatedProductValuationBoundStatement
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.SumSupportCMul
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsThetaValData
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.DvdOfCastDvd
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.SymmetricTranslatesMultiplicationPullbackDescrip
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ThetaRuleValueIntegralFramedPointExtensionFieldStatement
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.EmbEqOfInPsi
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HalfPrincipalAndSplit
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.StarRingExtOfStar
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.FFVMap
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.SumSingleEmbeddingExtendLe
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.ShortVectorBound.ScaledLatticesInSupLattices
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.HarmonicValuationLowerBoundHostFieldAllPlacesStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsExtAllModelsUniformised
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.HarmonicValueTranslatedProductValuationBoundStatement
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.SumSupportCMul
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsThetaValData
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.DvdOfCastDvd
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.SymmetricTranslatesMultiplicationPullbackDescrip
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ThetaRuleValueIntegralFramedPointExtensionFieldStatement
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.EmbEqOfInPsi
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.HalfPrincipalAndSplit
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.StarRingExtOfStar
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.FFVMap
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.PullbackSections.HolomorphicFamilies.SumSingleEmbeddingExtendLe
+
+@[expose] public section
 
 set_option autoImplicit false
 noncomputable section
@@ -147,8 +151,8 @@ theorem bound_of_chBound (Xo : Moduli Dw l) (c : Coeff l) (π : 𝓞 E) (hπ : �
     rw [EReal.coe_le_coe_iff]
     linarith
 
-open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.DIV.Cons GlobalTheory.PlaceTop in
 
+open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.DIV.Cons GlobalTheory.PlaceTop in
 theorem thBound : ThBoundSt := by
   intro D T h j hj hinj EX hO w g hg la y
   obtain ⟨inst, hnab⟩ := h.nabPin j hj

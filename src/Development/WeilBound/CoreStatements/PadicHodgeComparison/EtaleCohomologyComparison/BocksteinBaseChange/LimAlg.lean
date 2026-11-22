@@ -1,7 +1,11 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.ThetaSetupAlgebraMaps
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.GalOCOkToOC
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.IsFirstChernClassOfLineBundle
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.BocksteinBaseChange.ThetaSetupAlgebraMaps
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.GalOCOkToOC
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.KummerCupProducts.IsFirstChernClassOfLineBundle
+
+@[expose] public section
 
 set_option backward.isDefEq.respectTransparency false
 
@@ -35,7 +39,7 @@ def galS (M : Model l K) (j : ℕ) (σ : Gal(PadicAlgCl l/K)) : Sys.Hom (M.MS j)
     obtain ⟨z, rfl⟩ := Submodule.Quotient.mk_surjective _ x
     exact congrArg Submodule.Quotient.mk (Subtype.ext (funext fun s => (PAlg.pdOk_twId σ _).red_acr n.le_succ _))
 
-def phiS (M : Model l K) (j : ℕ) : Sys.Hom (M.MS j) (M.MS j) (ACris.phi ℂ_[l] l) where
+def phiS (M : Model l K) (j : ℕ) : Sys.Hom (M.MS j) (M.MS j) (ACris.phi (K := ℂ_[l]) (p := l)) where
   f n := M.phiMH n j
   comm n x := by
     obtain ⟨z, rfl⟩ := Submodule.Quotient.mk_surjective _ x

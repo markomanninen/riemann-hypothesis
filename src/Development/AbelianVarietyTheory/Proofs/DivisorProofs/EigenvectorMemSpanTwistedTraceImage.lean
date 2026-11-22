@@ -1,13 +1,17 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open scoped BigOperators Matrix
 open Polynomial
 
 namespace GlobalTheory
 
+
 open scoped BigOperators Matrix in
 open Polynomial in
-
 theorem _root_.GlobalTheory.eigenvector_mem_span_twistedTrace_image :
     ∀ (H K V : Type) [Group H] [Fintype H] [Field K] [CharZero K] [AddCommGroup V] [Module K V] (st : H → V →ₗ[K] V), (∀ h h' x, st (h * h') x = st h' (st h x)) → ∀ (χ : H →* Kˣ) (s : Set V), Submodule.span K s = ⊤ → ∀ x : V, (∀ h, st h x = ((χ h : Kˣ) : K) • x) → x ∈ Submodule.span K ((fun y => ∑ h, (((χ h)⁻¹ : Kˣ) : K) • st h y) '' s) := by
   intro H K V _ _ _ _ _ _ st _ χ s hs x hx

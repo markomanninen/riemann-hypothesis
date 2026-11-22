@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.SesquilinearFractions.SpMapMonoOfFraction
-import Development.WeilBound.CoreStatements.SesquilinearFractions.GModel
+module
+
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.SpMapMonoOfFraction
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.GModel
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor

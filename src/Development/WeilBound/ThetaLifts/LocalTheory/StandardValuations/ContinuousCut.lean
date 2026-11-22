@@ -1,6 +1,10 @@
-import Development.WeilBound.CoreStatements.LocalThetaKernels.EvlLoc
-import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
+module
+
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.EvlLoc
+public import Development.AbelianVarietyTheory.Definitions.Divisors.RankEqCardIffExistsFrameMatrixFirstColumnBlock
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.PairwiseDisjointCell
+
+@[expose] public section
 
 set_option linter.unusedSectionVars false
 

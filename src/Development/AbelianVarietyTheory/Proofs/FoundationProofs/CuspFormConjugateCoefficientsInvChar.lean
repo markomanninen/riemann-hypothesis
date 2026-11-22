@@ -1,6 +1,11 @@
-import Development.AbelianVarietyTheory.Definitions.Foundations.PetIPSmulRight
-import Development.AbelianVarietyTheory.Definitions.Foundations.RepL
-import CompanionTheory.EightfoldTheory.VariationTheory.AutomorphicForms.Newform
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Foundations.PetIPSmulRight
+public import Development.AbelianVarietyTheory.Definitions.Foundations.RepL
+public import CompanionTheory.EightfoldTheory.VariationTheory.AutomorphicForms.Newform
+
+@[expose] public section
+
 open UpperHalfPlane Complex MeasureTheory CongruenceSubgroup GlobalTheory.EisM UpperTheory.V.Af Filter Topology
 open scoped MatrixGroups Real ComplexConjugate Manifold ModularForm
 
@@ -32,11 +37,6 @@ def twist (γ : SL(2, ℤ)) : SL(2, ℤ) :=
     rw [Matrix.det_fin_two_of]
     linarith⟩
 
-@[simp] lemma twist_00 (γ : SL(2, ℤ)) : twist γ 0 0 = γ 0 0 := rfl
-@[simp] lemma twist_01 (γ : SL(2, ℤ)) : twist γ 0 1 = -γ 0 1 := rfl
-@[simp] lemma twist_10 (γ : SL(2, ℤ)) : twist γ 1 0 = -γ 1 0 := rfl
-@[simp] lemma twist_11 (γ : SL(2, ℤ)) : twist γ 1 1 = γ 1 1 := rfl
-
 lemma refl_smul (γ : SL(2, ℤ)) (τ : ℍ) : refl (γ • τ) = twist γ • refl τ := by
   apply UpperHalfPlane.ext
   have e := UpperHalfPlane.coe_specialLinearGroup_apply γ τ
@@ -49,9 +49,9 @@ lemma refl_smul (γ : SL(2, ℤ)) (τ : ℍ) : refl (γ • τ) = twist γ • r
   have hd' : conj (((γ 1 0 : ℤ) : ℂ) * (τ : ℂ) + ((γ 1 1 : ℤ) : ℂ)) ≠ 0 := (map_ne_zero _).2 hd
   have hd'' : ((twist γ 1 0 : ℤ) : ℂ) * (-conj (τ : ℂ)) + ((twist γ 1 1 : ℤ) : ℂ) =
       conj (((γ 1 0 : ℤ) : ℂ) * (τ : ℂ) + ((γ 1 1 : ℤ) : ℂ)) := by
-    simp [map_add, map_mul, map_intCast]
+    simp [twist, map_add (f := _), map_mul, map_intCast]
   rw [hd'', neg_div', div_left_inj' hd']
-  simp [map_add, map_mul, map_intCast]
+  simp [twist, map_add (f := _), map_mul, map_intCast]
   ring
 
 lemma conj_ch {N : ℕ} (χ : DirichletCharacter ℂ N) (d : ℤ) : conj (ch χ d) = ch χ⁻¹ d := by
@@ -69,10 +69,10 @@ lemma polyB_conj {g : ℕ → ℂ} (h : PolyB g) : PolyB (fun n => conj (g n)) :
 lemma inv_conj {k L : ℕ} {χ : DirichletCharacter ℂ L} {g : ℕ → ℂ} (h : Inv k L (ch χ) (qs g)) :
     Inv k L (ch χ⁻¹) (qs (fun n => conj (g n))) := by
   intro γ hc τ
-  have h1 := h (twist γ) (by simpa using hc) (refl τ)
+  have h1 := h (twist γ) (by simpa [twist] using hc) (refl τ)
   rw [qs_conj, qs_conj, refl_smul, h1, map_mul, map_mul, map_pow, conj_ch]
   congr 2
-  simp [map_add, map_mul, map_intCast]
+  simp [twist, map_add (f := _), map_mul, map_intCast]
 
 lemma cf_conj {k N : ℕ} {χ : DirichletCharacter ℂ N} {g : ℕ → ℂ} (h : CF k N (ch χ) g) :
     CF k N (ch χ⁻¹) (fun n => conj (g n)) := by
@@ -91,7 +91,7 @@ theorem conj_form : ∀ (k N : ℕ) (χ : DirichletCharacter ℂ N) (g : ℕ →
   funext n
   have e := congrFun (h.eig q hq hqN) n
   have e' := congrArg conj e
-  simp only [To, Vo, map_add, map_mul, map_pow, map_natCast, conj_ch] at e'
+  simp only [To, Vo, map_add (f := _), map_mul, map_pow, map_natCast, conj_ch] at e'
   simp only [To, Vo]
   rw [← e']
   congr 2

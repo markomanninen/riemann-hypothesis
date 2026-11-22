@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntegrallyClosedAdjoin
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntegrallyClosedAdjoin
+
+@[expose] public section
 
 open Polynomial
 open scoped IntermediateField.algebraAdjoinAdjoin
@@ -127,7 +131,7 @@ theorem exists_primitive_sep_certificate (k F : Type) [Field k] [Field F] [Algeb
   · apply Polynomial.map_injective
       (algebraMap (Algebra.adjoin k (s : Set F)) (IntermediateField.adjoin k (s : Set F)))
       (IsFractionRing.injective _ _)
-    simp only [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_C, ← Polynomial.derivative_map,
+    simp only [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_C, ← Polynomial.derivative_map,
       ← hmin, hu', hv', map_mul]
     linear_combination (C (algebraMap _ (IntermediateField.adjoin k (s : Set F)) b₁) *
       C (algebraMap _ (IntermediateField.adjoin k (s : Set F)) b₂) *

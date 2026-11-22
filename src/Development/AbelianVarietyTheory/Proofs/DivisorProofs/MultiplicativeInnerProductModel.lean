@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.IndefR.Mult Formalism.IndefR.Links MeasureTheory
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
@@ -57,7 +62,7 @@ theorem isMultiplicityInner_inner : ∀ {D : D7} {V : HSp D} {S : D.what₂.Tau 
     · by_contra hn
       have := hip z z
       unfold ipM at this
-      rw [dif_neg hn] at this
+      rw [dite_eq_right hn] at this
       exact hz (inner_self_eq_zero.1 this)
   rw [hip]
   apply ipM_spec
@@ -65,7 +70,7 @@ theorem isMultiplicityInner_inner : ∀ {D : D7} {V : HSp D} {S : D.what₂.Tau 
   obtain ⟨b, hb⟩ := hd y
   obtain ⟨s, hs⟩ := hd (x + y)
   obtain ⟨t, ht⟩ := hd (x + Complex.I • y)
-  rw [map_add] at hs ht
+  rw [map_add (f := _)] at hs ht
   rw [map_smul] at ht
   exact ⟨_, exists_of_diag M μ 𝓕 _ _ ha hb hs ht⟩
 

@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.ProjectiveLattices.IsExpChart
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PrimUniqPf
+module
+
+public import Formalism.LocalToGlobal.ProjectiveLattices.IsExpChart
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.PrimUniqPf
+
+@[expose] public section
 
 set_option autoImplicit false
 

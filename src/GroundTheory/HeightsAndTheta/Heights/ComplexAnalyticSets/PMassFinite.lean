@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Statements
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StatementsArea
-import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLocalGraphMass
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.Statements
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StatementsArea
+public import GroundTheory.HeightsAndTheta.Heights.ComplexAnalyticSets.StLocalGraphMass
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights
@@ -74,13 +79,13 @@ theorem ball_lt_top {ι : Type*} [Fintype ι] (R : ℝ) :
     rw [Set.image_image]
     simp
   have hb : Bornology.IsBounded (e.symm '' Metric.ball (0 : EuclideanSpace ℂ ι) R) :=
-    e.symm.lipschitz.isBounded_image Metric.isBounded_ball
+    e.symm.lipschitzWith.isBounded_image Metric.isBounded_ball
   rw [hcard]
   calc μH[((Fintype.card (ι × Fin 2) : ℕ) : ℝ)] (Metric.ball (0 : EuclideanSpace ℂ ι) R)
       ≤ μH[((Fintype.card (ι × Fin 2) : ℕ) : ℝ)] (e '' (e.symm '' Metric.ball 0 R)) := measure_mono hsub
-    _ ≤ _ := e.lipschitz.hausdorffMeasure_image_le (by positivity) _
+    _ ≤ _ := e.lipschitzWith.hausdorffMeasure_image_le (by positivity) _
     _ < ⊤ := by
-      refine ENNReal.mul_lt_top (ENNReal.rpow_lt_top_of_nonneg (by positivity) ENNReal.coe_ne_top) ?_
+      refine ENNReal.mul_lt_top (ENNReal.rpow_lt_top_of_nonneg (by exact Nat.cast_nonneg (Fintype.card (ι × Fin 2))) ENNReal.coe_ne_top) ?_
       rw [hausdorffMeasure_pi_real]
       exact hb.measure_lt_top
 

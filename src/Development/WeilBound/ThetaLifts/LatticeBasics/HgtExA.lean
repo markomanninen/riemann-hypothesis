@@ -1,9 +1,13 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.LatticeBasics.PairsStable
-import Development.WeilBound.ThetaLifts.LatticeBasics.HgtFin
-import Development.WeilBound.ThetaLifts.LatticeBasics.HgtArch
-import Development.WeilBound.CoreStatements.LocalThetaKernels.IwasAd
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSiegelHProjArchEq
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.LatticeBasics.PairsStable
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HgtFin
+public import Development.WeilBound.ThetaLifts.LatticeBasics.HgtArch
+public import Development.WeilBound.CoreStatements.LocalThetaKernels.IwasAd
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsSiegelHProjArchEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -16,8 +20,8 @@ open Formalism.UG (cT bc)
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] {σ : E →ₐ[F] E} {n : ℕ} {Y : Spc F E n}
 
-variable (F) in
 
+variable (F) in
 def eF : AF F := LinearMap.inr F (Ainf F) (Af F) 1
 
 omit [NumberField E] in
@@ -54,12 +58,12 @@ theorem mem_latHat (hL : Y.L.FG) (z : Fin n → AE F E) :
     have e1 : ∀ y, ι (π y) = eF F • y := fun y => by
       induction y using TensorProduct.induction_on with
       | zero => simp
-      | add x y hx hy => simp only [map_add, smul_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), smul_add, hx, hy]
       | tmul a x => exact congrArg (· ⊗ₜ[F] x) (Prod.ext (zero_mul _).symm (one_mul _).symm)
     have e2 : ∀ v y, Algebra.TensorProduct.map (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.evalV F v) (AlgHom.id F E) (π y) = compFin F E v y := fun v y => by
       induction y using TensorProduct.induction_on with
       | zero => simp
-      | add x y hx hy => simp only [map_add, hx, hy]
+      | add x y hx hy => simp only [map_add (f := _), hx, hy]
       | tmul a x => rfl
     have e3 : ∀ y ∈ Formalism.MainNotions.StandardLattice.latHat F E (Y.L : Set (Fin n → E)), ι ∘ y ∈ latHat Y := fun y hy => by
       induction hy using AddSubgroup.closure_induction with
@@ -85,7 +89,7 @@ omit [NumberField E] in
 theorem cA_eq : ⇑(cA (F := F) σ) = Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (AF F) σ := funext fun z => by
   induction z using TensorProduct.induction_on with
   | zero => simp
-  | add x y hx hy => simp only [map_add, hx, hy]
+  | add x y hx hy => simp only [map_add (f := _), hx, hy]
   | tmul a x => rfl
 
 omit [NumberField E] in
@@ -97,8 +101,8 @@ theorem mem_HR {ξ : E} (hξ : ξ ≠ 0) (x : GL (Fin (n + n)) (AE F E)) :
   rw [JR_dblGram, iso_iff, e, dbl_smul, Matrix.mul_smul, Matrix.smul_mul, (hξ.isUnit.map _).smul_left_cancel, cA_eq]
   rfl
 
-variable (σ Y) in
 
+variable (σ Y) in
 def back {ξ : E} (hξ : ξ ≠ 0) : GAd σ (dblGram finSumFinEquiv (ξ • Y.Jᵀ)) →* G2 σ Y :=
   MonoidHom.mk' (fun g => ⟨reGL finSumFinEquiv.symm (matHom _ σ _ g), (mem_HR hξ _).1 g.2⟩) fun _ _ =>
     Subtype.ext (Units.ext (Matrix.submatrix_mul_equiv _ _ _ finSumFinEquiv _).symm)
@@ -135,8 +139,8 @@ theorem keeps_back (hL : Y.L.FG) {ξ : E} (hξ : ξ ≠ 0) {k : GAd σ (dblGram 
   refine ⟨⟨funext fun i => congrFun e0 _, fun v => ?_⟩, funext fun i => congrFun e0 _, fun v => ?_⟩ <;> rw [e1]
   exacts [(e2 v).1, (e2 v).2]
 
-variable (σ Y) in
 
+variable (σ Y) in
 def stab2 (B : Base F E) : Subgroup (G2 σ Y) where
   carrier := {k | (∀ w, Commute ((mat2 k).map (piInf (B.emb w))) (Matrix.fromBlocks (Y.θ w) 0 0 (-Y.θ w))) ∧ Keeps k ∧ Keeps k⁻¹}
   one_mem' := by
@@ -237,7 +241,7 @@ theorem back_comm {ξ : E} (hξ : ξ ≠ 0) {k : GAd σ (dblGram finSumFinEquiv 
 
 theorem iwasawa2 {B : Base F E} (hB : B.IsGood σ) {r s : ℕ} (hY : Y.IsHerm σ B r s ∨ Y.IsSkew σ B r s) (x : G2 σ Y) :
     ∃ p : siegelOf (Equiv.refl (Fin n ⊕ Fin n)) (UG (cA σ) (dbl (incM F Y.J))).subtype, ∃ k ∈ stab2 σ Y B, x = p * k := by
-  have hL : Y.L.IsLattice E := hY.elim (·.lat) (·.lat)
+  haveI hL : Y.L.IsFullLattice E := hY.elim (·.lat) (·.lat)
   obtain ⟨ξ, hξ, hh, hw⟩ := exists_scal hB hY
   choose M r h1 h2 h3 h4 using hw
   choose b hb hb' using fun w => exists_arch hB.cm (B.emb w) (h1 w) (isUnit_of_cartan (h2 w)) (h2 w) (h3 w) (h4 w)
@@ -250,8 +254,8 @@ theorem iwasawa2 {B : Base F E} (hB : B.IsGood σ) {r s : ℕ} (hY : Y.IsHerm σ
   exact ⟨⟨_, back_mem_par hξ p.2⟩, back σ Y hξ k, ⟨fun w => back_comm hξ _ ((hb' w _).1 ((mem_KAd.1 hk).2 w)),
     keeps_back hL.fg hξ (mem_KAd.1 hk).1, k2⟩, map_mul _ _ _⟩
 
-variable (σ Y) in
 
+variable (σ Y) in
 def emb2 : UA σ Y.J × UA σ Y.J →* G2 σ Y :=
   ((blkGL (Equiv.refl (Fin n ⊕ Fin n))).comp ((Subgroup.subtype _).prodMap (Subgroup.subtype _))).codRestrict _ fun x => by
     change (Matrix.fromBlocks (mat x.1) 0 0 (mat x.2))ᵀ * _ * (Matrix.fromBlocks (mat x.1) 0 0 (mat x.2)).map _ = _

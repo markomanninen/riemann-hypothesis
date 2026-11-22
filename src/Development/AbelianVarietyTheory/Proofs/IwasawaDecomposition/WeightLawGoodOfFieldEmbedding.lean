@@ -1,13 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PredMemGamRanks
-import Formalism.LocalToGlobal.Divisibility.FramesLemmas
-import Formalism.LocalToGlobal.Columns.CoefficientsModP.PairingNondegenerateHolds
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HasRatBasisOfAct
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CoefActionReprMemSubfield
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NablaDeltaOperatorLatticePreserved
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DualLatticeIsLatticeAndHermitianDual
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeExtensionAlongFieldEmbeddingDuals
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNeZeroSmulMemAlt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.PredMemGamRanks
+public import Formalism.LocalToGlobal.Divisibility.FramesLemmas
+public import Formalism.LocalToGlobal.Columns.CoefficientsModP.PairingNondegenerateHolds
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.HasRatBasisOfAct
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CoefActionReprMemSubfield
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.NablaDeltaOperatorLatticePreserved
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.DualLatticeIsLatticeAndHermitianDual
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.LatticeExtensionAlongFieldEmbeddingDuals
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsNeZeroSmulMemAlt
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Forms GlobalTheory.Mem.Col2 Formalism.DivisionValues
 open scoped Matrix ComplexOrder
@@ -45,7 +49,8 @@ def valMat (c : C.Cl) : Matrix C.ιV (Fin C.dim) K :=
 theorem pair_eq (x y : C.V) :
     C.pair x y = ∑ i, ∑ j, star (C.bV.repr x i) * C.gramV i j * C.bV.repr y j := by
   conv_lhs => rw [← C.bV.sum_repr x, ← C.bV.sum_repr y]
-  simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, LinearMap.sum_apply, LinearMap.map_smulₛₗ, LinearMap.smul_apply, map_smul, smul_eq_mul,
     starRingEnd_apply, Finset.mul_sum, CSD.gramV, Matrix.of_apply]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
@@ -54,7 +59,8 @@ theorem pair_eq (x y : C.V) :
 theorem gram_map (hb : C.HasRatBasis) (φ : K →+* ℂ) :
     C.H.map φ = ∑ c, ((C.wt c : ℕ) : ℂ)⁻¹ • (((valMat C c).map φ)ᴴ * C.gramV.map φ * (valMat C c).map φ) := by
   ext a b
-  simp only [Matrix.map_apply, CSD.H, Matrix.of_apply, CSD.csum, map_sum, map_mul, map_inv₀, map_natCast,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.map_apply, CSD.H, Matrix.of_apply, CSD.csum, map_sum, map_mul, map_inv₀, map_natCast,
     Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul, pair_eq, Matrix.mul_apply, Matrix.conjTranspose_apply, valMat]
   refine Finset.sum_congr rfl fun c _ => ?_
   congr 1
@@ -78,7 +84,8 @@ theorem exists_val_ne (φ : K →+* ℂ) (x : Fin C.dim → ℂ) (hx : x ≠ 0) 
     ext i
     have h1 := congrFun huv (c, i)
     simp only [Matrix.mulVec, dotProduct, B, valMat, Matrix.of_apply] at h1
-    simp only [CSD.I_eq_sum, Finset.sum_apply, Pi.smul_apply, map_sum, map_smul, Finsupp.coe_finsetSum,
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [CSD.I_eq_sum, Finset.sum_apply, Pi.smul_apply, map_sum, map_smul, Finsupp.coe_finsetSum,
       Finsupp.smul_apply, smul_eq_mul]
     simpa only [mul_comm] using h1
   apply hx
@@ -106,19 +113,13 @@ theorem gram_posDef (hb : C.HasRatBasis) (φ : K →+* ℂ) (hp : (C.gramV.map �
   exact Finset.sum_pos' (fun c _ => mul_nonneg (hw c).le (hp.posSemidef.dotProduct_mulVec_nonneg _))
     ⟨c, Finset.mem_univ c, mul_pos (hw c) (hp.dotProduct_mulVec_pos hc)⟩
 
-omit [StarRing K] in
 
+omit [StarRing K] in
 theorem exists_smul_mem {V : Type} [AddCommGroup V] [Module K V] [Module (𝓞 K) V] [IsScalarTower (𝓞 K) K V]
     {M : Submodule (𝓞 K) V} {x : V} (hx : x ∈ Submodule.span K (M : Set V)) : ∃ d : 𝓞 K, d ≠ 0 ∧ d • x ∈ M := by
-  first
-  | exact @_root_.GlobalTheory.NonzeroSmulMemIntegralSpan.exists_ne_zero_smul_mem
-  | exact _root_.GlobalTheory.NonzeroSmulMemIntegralSpan.exists_ne_zero_smul_mem
-  | (apply _root_.GlobalTheory.NonzeroSmulMemIntegralSpan.exists_ne_zero_smul_mem <;> assumption)
-  | (intros; apply _root_.GlobalTheory.NonzeroSmulMemIntegralSpan.exists_ne_zero_smul_mem <;> assumption)
-  | (intros; apply @_root_.GlobalTheory.NonzeroSmulMemIntegralSpan.exists_ne_zero_smul_mem <;> first | assumption | infer_instance)
-  | (intros; exact _root_.GlobalTheory.NonzeroSmulMemIntegralSpan.exists_ne_zero_smul_mem ..)
+  exact _root_.GlobalTheory.NonzeroSmulMemIntegralSpan.exists_ne_zero_smul_mem hx
 
-theorem values_isLattice (M : C.Cl → Submodule (𝓞 K) C.V) (hM : ∀ c, Submodule.IsLattice K (M c))
+theorem values_isLattice (M : C.Cl → Submodule (𝓞 K) C.V) (hM : ∀ c, Submodule.IsFullLattice K (M c))
     (L : Submodule (𝓞 K) C.Forms) (hL : ∀ x, x ∈ L ↔ ∀ c, x.1 c ∈ M c) :
     L.FG ∧ Submodule.span K (L : Set C.Forms) = ⊤ := by
   classical
@@ -127,25 +128,24 @@ theorem values_isLattice (M : C.Cl → Submodule (𝓞 K) C.V) (hM : ∀ c, Subm
     refine Submodule.FG.of_le (Submodule.fg_pi fun c => (hM c).fg) ?_
     rintro _ ⟨x, hx, rfl⟩ c _
     exact (hL x).1 hx c
-  · rw [eq_top_iff]
+  · apply eq_top_iff.mpr
     intro x _
-    have h : ∀ c, ∃ d : 𝓞 K, d ≠ 0 ∧ d • x.1 c ∈ M c := fun c =>
+    have hx : ∀ c, ∃ d : 𝓞 K, d ≠ 0 ∧ d • x.1 c ∈ M c := fun c =>
       exists_smul_mem (by rw [(hM c).span_eq_top]; trivial)
-    choose d hd hdM using h
-    have hx : (∏ c, d c) • x ∈ L := by
-      rw [hL]
-      intro c
-      rw [← Finset.prod_erase_mul _ _ (Finset.mem_univ c)]
-      show ((∏ c' ∈ Finset.univ.erase c, d c') * d c) • x.1 c ∈ M c
-      rw [mul_smul]
-      exact (M c).smul_mem _ (hdM c)
-    have hd0 : (∏ c, d c) ≠ 0 := Finset.prod_ne_zero_iff.mpr fun c _ => hd c
-    have hd' : algebraMap (𝓞 K) K (∏ c, d c) ≠ 0 := by simpa only [ne_eq, FaithfulSMul.algebraMap_eq_zero_iff] using hd0
-    have : x = (algebraMap (𝓞 K) K (∏ c, d c))⁻¹ • ((∏ c, d c) • x) := by
-      rw [← algebraMap_smul K (∏ c, d c) x, smul_smul, inv_mul_cancel₀ hd', one_smul]
-    rw [this]
-    exact Submodule.smul_mem _ _ (Submodule.subset_span hx)
-
+    choose d hd hdx using hx
+    let a : 𝓞 K := ∏ c, d c
+    have ha : a ≠ 0 := Finset.prod_ne_zero_iff.mpr fun c _ => hd c
+    have hax : a • x ∈ L := (hL _).2 fun c => by
+      change a • x.1 c ∈ M c
+      dsimp [a]
+      rw [← Finset.prod_erase_mul _ _ (Finset.mem_univ c), mul_smul]
+      exact (M c).smul_mem _ (hdx c)
+    have haK : algebraMap (𝓞 K) K a ≠ 0 := fun h =>
+      ha ((IsFractionRing.injective (𝓞 K) K) (by simpa using h))
+    have h := (Submodule.span K (L : Set C.Forms)).smul_mem
+      (algebraMap (𝓞 K) K a)⁻¹ (Submodule.subset_span hax)
+    rw [← algebraMap_smul K a x, smul_smul, inv_mul_cancel₀ haK, one_smul] at h
+    exact h
 end Datum
 
 theorem root_mem_cmMax {K : Type} [Field K] [StarRing K] (σ : K →+* ℂ)
@@ -180,6 +180,7 @@ theorem rho_rat (hF : FOk emb σ) (hS : S.Ok) (b : S.β) (g : S.G b) (i j : VVId
 theorem hasRatBasis (hF : FOk emb σ) (hS : S.Ok) (h : (S.fam emb lam).Ok) : (S.csd emb lam h).HasRatBasis :=
   GlobalTheory.FormsDescent.hasRatBasis_of_act _ fun c γ i j => rho_rat S emb σ lam hF hS c.1 γ.1 i j
 
+omit [StarRing E] in
 theorem gramV_posDef (h : (S.fam emb lam).Ok) (φ : K →+* ℂ) : ((S.csd emb lam h).gramV.map φ).PosDef := by
   have h1 := pairingPositive_holds K ι n lam (gramKd emb (1 : Matrix (Fin n) (Fin n) E)) φ fun τ => by
     have : gramKd emb (1 : Matrix (Fin n) (Fin n) E) τ = 1 := by
@@ -192,18 +193,24 @@ theorem step_gram_posDef (hF : FOk emb σ) (hS : S.Ok) (h : (S.fam emb lam).Ok) 
     ((S.csd emb lam h).H.map φ).PosDef :=
   gram_posDef _ (hasRatBasis S emb σ lam hF hS h) φ (gramV_posDef S emb lam h φ)
 
+omit [StarRing K] in
+theorem dualFr_isFullLattice {n : ℕ} (M : Submodule (𝓞 K) (Fin n → K))
+    (hM : Submodule.IsFullLattice K M) : Submodule.IsFullLattice K (dualFr M) :=
+  GlobalTheory.DualLat.isLattice_dualFr M hM
+
 omit [StarRing E] [StarRing K] in
-theorem delAtr_isLattice (L : Submodule (𝓞 E) (Fin n → E)) (hL : Submodule.IsLattice E L) :
-    Submodule.IsLattice K (delAtr emb lam L) :=
+theorem delAtr_isLattice (L : Submodule (𝓞 E) (Fin n → E)) (hL : Submodule.IsFullLattice E L) :
+    Submodule.IsFullLattice K (delAtr emb lam L) :=
   (GlobalTheory.TransLattice.nabDelLattice K ι n lam _ fun τ =>
-    GlobalTheory.DualLat.isLattice_dualFr _ (GlobalTheory.TauLat.tauLatLattice E K ι n emb τ L hL)).2
+    dualFr_isFullLattice _ (GlobalTheory.TauLat.tauLatLattice E K ι n emb τ L hL)).2
 
-end Step
-
-theorem lawGood : ∀ {E K ι : Type} [Field E] [NumberField E] [StarRing E] [Field K] [NumberField K] [StarRing K] [Fintype ι] {n : ℕ} (S : GStep E K n) (emb : ι → E →+* K) (σ : K →+* ℂ) (lam : ι → DomWeight n), FOk emb σ → S.Ok → ∀ h, S.LawGood emb lam h := by
-  intro E K ι _ _ _ _ _ _ _ n S emb σ lam hF hS h
+theorem lawGood (hF : FOk emb σ) (hS : S.Ok)
+    (hLsh : ∀ b (d : S.D b), Submodule.IsFullLattice E (S.Lsh b d))
+    (h : (S.fam emb lam).Ok) : S.LawGood emb lam h := by
   exact ⟨fun v => (frameOfSpec _ _ (step_gram_posDef S emb σ lam hF hS h v.embedding)).1,
     values_isLattice (S.csd emb lam h) (fun c => delAtr emb lam (S.Lsh c.1 (S.rep c)))
-      (fun c => delAtr_isLattice emb lam _ (hS.lsh_lat c.1 _)) _ fun _ => Iff.rfl⟩
+      (fun c => delAtr_isLattice emb lam _ (hLsh c.1 (S.rep c))) _ fun _ => Iff.rfl⟩
+
+end Step
 
 end GlobalTheory.Mem.LatGood

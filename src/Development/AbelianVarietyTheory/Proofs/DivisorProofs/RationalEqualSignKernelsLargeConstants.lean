@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbLLMem
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TensorMapDescent
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.MemHalfCosetSelf
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EmbLLMem
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TensorMapDescent
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.MemHalfCosetSelf
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,8 @@ theorem exists_linearMap_of_repr_mem_range {K : Type} [Field K] (φ : K →+* �
     intro g hg i
     have h1 : ∑ i, φ (g i) • bS i = 0 := by
       have := congrArg mS hg
-      simpa [map_sum, LinearMap.map_smulₛₗ, hS] using this
+      set_option synthInstance.maxHeartbeats 100000 in
+        simpa [map_sum, LinearMap.map_smulₛₗ, hS] using this
     have h2 := Fintype.linearIndependent_iff.mp bS.linearIndependent _ h1 i
     exact φ.injective (by rw [h2, map_zero])
   have hsp : Submodule.span K (Set.range uS) = ⊤ :=
@@ -37,7 +42,8 @@ theorem exists_linearMap_of_repr_mem_range {K : Type} [Field K] (φ : K →+* �
   refine ⟨f, fun u => ?_⟩
   have e : (L.comp mS : VS →ₛₗ[φ] WT) = (mT.comp f : VS →ₛₗ[φ] WT) := by
     refine bS'.ext fun i => ?_
-    rw [LinearMap.comp_apply, LinearMap.comp_apply, Module.Basis.constr_basis, Module.Basis.mk_apply, hS, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [LinearMap.comp_apply, LinearMap.comp_apply, Module.Basis.constr_basis, Module.Basis.mk_apply, hS, map_sum]
     conv_lhs => rw [← bT.sum_repr (L (bS i))]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [LinearMap.map_smulₛₗ, hT, hm]

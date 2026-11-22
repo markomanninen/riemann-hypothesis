@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.ConjugateRepresentations.CuspidalSupport.HeckeLocalBlock
+
+@[expose] public section
 
 open Polynomial
 
@@ -21,7 +25,7 @@ private theorem eq_of_prod_eq (m n : Multiset ℂ) (h : ∀ u : ℂ, (m.map (u +
 theorem capArith : CapArith := by
   intro m m₁ m₂ α β h
   refine eq_of_prod_eq _ _ fun u => ?_
-  rw [← h u, Multiset.map_add, Multiset.prod_add, Multiset.map_map, Multiset.map_map]
+  rw [← h u, Multiset.map_add (f := _), Multiset.prod_add, Multiset.map_map, Multiset.map_map]
   congr 2
   · exact Multiset.map_congr rfl fun x _ => by simp only [Function.comp]; ring
   · exact Multiset.map_congr rfl fun x _ => by simp only [Function.comp]; ring

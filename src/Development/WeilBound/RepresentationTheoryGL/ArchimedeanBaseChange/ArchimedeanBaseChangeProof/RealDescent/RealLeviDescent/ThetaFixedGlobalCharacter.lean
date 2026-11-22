@@ -1,6 +1,10 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.PowerBoundFastDecay
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.ExtraTop
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.InfinitesimalCharacterGL.BridgeSt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.RealDescent.PowerBoundFastDecay
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.LeftEquivariantFunctions.ComplexMatrixCalculus.ExtraTop
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.InfinitesimalCharacterGL.BridgeSt
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,17 +18,17 @@ attribute [local instance] borelH
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
-variable (E n) in
 
+variable (E n) in
 def infAt (w : InfinitePlace E) : GA E n →* PositivityTheory.RgTw.G n :=
   Matrix.GeneralLinearGroup.map ((Pi.evalRingHom (fun _ : InfinitePlace E => ℂ) w).comp (pInf E))
 
-variable (E n) in
 
+variable (E n) in
 def finOf : GA E n →* GL (Fin n) (Af E) := Matrix.GeneralLinearGroup.map (pFin E)
 
-variable (E n) in
 
+variable (E n) in
 def thetaF (g : GL (Fin n) (Af E)) : GL (Fin n) (Af E) := finOf E n (thetaA E n (finGL E n g))
 
 def IsHeckeF (K : Subgroup (GL (Fin n) (Af E))) (h : GL (Fin n) (Af E) → ℂ) : Prop :=

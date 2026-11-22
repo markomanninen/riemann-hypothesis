@@ -1,15 +1,20 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPtsBddConv
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices
-import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLemmaETailMass
-import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PModelFibreSumAeSheet
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PModelFibreFinite
-import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.LintegralFibSum
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeI
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedDensityNonnegOffNullSet
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocDensDivJacN
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.StatementsPtsBddConv
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.FlagIndices
+public import GroundTheory.HeightsAndTheta.Heights.AnalyticLimit.StLemmaETailMass
+public import ReciprocityTheory.AnalyticForms.LeviForms.IsRegFamilyInhabitStatement
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterRes
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PModelFibreSumAeSheet
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.PModelFibreFinite
+public import GroundTheory.HeightsAndTheta.Heights.HodgeLowerBound.LintegralFibSum
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterBridgeI
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.MixedDensityNonnegOffNullSet
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.LocDensDivJacN
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.ChartRestriction.G.Geo GroundTheory.Heights₂.Heights.LowerBoundFree
 
 namespace GlobalTheory.CompanionTheory.Ar.Giv.Push
@@ -29,7 +34,7 @@ theorem integrable_mInt_fibreSum {e : ℕ} {X : Type} [TopologicalSpace X] [Comp
       mInt A Φ G = ∫ y, ∑ᶠ x ∈ q ⁻¹' {y} \ S, G x * pushDens A Φ q x := by
   classical
   have hne : Nonempty (ChartPartition A) := existsPartition A
-  have hm : mInt A Φ G = integralWith A hne.some Φ G := by unfold mInt; rw [dif_pos hne]
+  have hm : mInt A Φ G = integralWith A hne.some Φ G := by unfold mInt; rw [dite_eq_left hne]
   set Pt := hne.some with hPt
   set hj : Fin A.n → (Fin e → ℂ) → ℝ := fun j u =>
     Pt.χ j ((A.chart j).symm u) * G ((A.chart j).symm u) * locDens A Φ j u with hhj
@@ -53,7 +58,7 @@ theorem integrable_mInt_fibreSum {e : ℕ} {X : Type} [TopologicalSpace X] [Comp
     intro j
     refine setIntegral_congr_set (ae_eq_set.mpr ⟨?_, ?_⟩)
     · exact measure_mono_null (target_diff_goodT_subset A q S hq j) (hS j)
-    · rw [Set.sdiff_eq_empty.mpr fun u hu => hu.1]; exact measure_empty
+    · rw [Set.sdiff_eq_empty.mpr fun u (hu : u ∈ goodT A q j) => hu.1]; exact measure_empty
   have hterm : ∀ j x, x ∈ (A.chart j).source → x ∉ S →
       hj j (A.chart j x) / jacN (q ∘ (A.chart j).symm) (A.chart j x) =
         Pt.χ j x * (G x * pushDens A Φ q x) := by

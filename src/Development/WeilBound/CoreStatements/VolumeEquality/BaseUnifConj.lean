@@ -1,5 +1,9 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifConjA
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.ConjugateUniversalFamilyStatement
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.BaseUnifConjA
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.ConjugateUniversalFamilyStatement
+
+@[expose] public section
 
 noncomputable section
 

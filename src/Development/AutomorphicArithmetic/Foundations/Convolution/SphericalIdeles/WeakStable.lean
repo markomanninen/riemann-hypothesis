@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.RamDefs
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.JacobianTraceQuotients.ElemPairJ
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSatakeParameterOfIsSubquotientOfInjective
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.SphericalIdeles.RamDefs
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.JacobianTraceQuotients.ElemPairJ
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsSatakeParameterOfIsSubquotientOfInjective
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,7 +16,7 @@ open UpperTheory.ConvolutionTheory.C GlobalTheory.PRep GlobalTheory.CuspRep Glob
 namespace UpperTheory.ConvolutionTheory.Sph
 
 def SatDict : Prop :=
-  ∃ ε : ℤ, (ε = 1 ∨ ε = -1) ∧ ∀ (K : Type) [Field K] [NumberField K] [IsTotallyComplex K] (n : ℕ) (π : CuspSub K n) (v : Pl K)
+  ∃ ε : ℤ, (ε = 1 ∨ ε = -1) ∧ ∀ (K : Type) [Field K] [NumberField K] [_root_.NumberField.IsTotallyComplex K] (n : ℕ) (π : CuspSub K n) (v : Pl K)
     (τ : SmIrr (Gw n v)), (Cusp.cx π).locComp v τ →
       ((∃ B, (Cusp.cx π).sat v B) → IsSpherical τ.ρ) ∧
       (IsSpherical τ.ρ → ∃ α : Fin n → ℂˣ, IsSubquotient τ.ρ (prinSeries fun i => unrChar (v.adicCompletion K) (α i))) ∧
@@ -31,8 +35,8 @@ def UnrNorm : Prop :=
       (unrChar (v.adicCompletion F) a).comp N = unrChar (w.1.adicCompletion E) a
 
 def WeakStable : Prop :=
-  ∀ (K M : Type) [Field K] [NumberField K] [Field M] [NumberField M] [Algebra K M] [IsGalois K M] [IsTotallyComplex K]
-    [IsTotallyComplex M], (Module.finrank K M).Prime → ∀ n : ℕ, 1 ≤ n → ∀ (π : CuspSub K n) (P : CuspSub M n),
+  ∀ (K M : Type) [Field K] [NumberField K] [Field M] [NumberField M] [Algebra K M] [IsGalois K M] [_root_.NumberField.IsTotallyComplex K]
+    [_root_.NumberField.IsTotallyComplex M], (Module.finrank K M).Prime → ∀ n : ℕ, 1 ≤ n → ∀ (π : CuspSub K n) (P : CuspSub M n),
     UpperTheory.V.Published.WeakBC (Cusp.cx π).sat (Cusp.cx P).sat → (∀ g : M ≃ₐ[K] M, (Cusp.cx P).ConjIso g.toRingEquiv) ∧
       (∀ v, ∃ τ, (Cusp.cx π).locComp v τ) ∧ ∀ w, ∃ τ', (Cusp.cx P).locComp w τ'
 

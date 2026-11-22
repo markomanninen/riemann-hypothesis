@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FinIso
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecProdRecSatakeLL
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
-import Formalism.SharpRestriction.LevelLetterCocycles.SphericalInertData
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DefiniteUnitaryAutFormEqZeroOfFinitePoints
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FinIso
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RingSpecNormalisedCharacterEq
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RecProdRecSatakeLL
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.StandardCosocleGL
+public import Formalism.SharpRestriction.LevelLetterCocycles.SphericalInertData
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DefiniteUnitaryAutFormEqZeroOfFinitePoints
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.N Formalism.ConjugateSelfDual ReciprocityTheory.Gal ReciprocityTheory.Aut Formalism.AUTREP Formalism.L2 Formalism.L2.Host GlobalTheory.HeightCounting NumberField IsDedekindDomain GlobalTheory.CuspRep GlobalTheory.UnitaryBC GlobalTheory.FormDict GlobalTheory.DefiniteBC
 attribute [local instance] GlobalTheory.LocalData.complRel GlobalTheory.LocalData.isLocalField
 
@@ -16,7 +21,7 @@ namespace GlobalTheory.WeightRealExt
 
 variable {E : Type} [Field E] [NumberField E] [IsCMField E] {n : ℕ}
 
-theorem dense_rat_fin : Dense ((ratU E n : Set (UA E n)) * (finU E n : Set (UA E n))) := by
+theorem dense_rat_fin : Dense ((ratU E n : Set (UA E n)) * (finU (E := E) (n := n) : Set (UA E n))) := by
   intro g
   obtain ⟨k, hk, x, hx, rfl⟩ := GlobalTheory.DefU.exists_finU_mul_infU E n g
   rw [GlobalTheory.DefU.fin_mul_inf hk hx]
@@ -24,7 +29,7 @@ theorem dense_rat_fin : Dense ((ratU E n : Set (UA E n)) * (finU E n : Set (UA E
   refine closure_mono ?_
     (image_closure_subset_closure_image hc ⟨x, GlobalTheory.DefiniteDense.mem_closure_rat_fin x hx, rfl⟩)
   rintro _ ⟨_, ⟨γ, hγ, k', hk', rfl⟩, rfl⟩
-  exact ⟨γ, hγ, k' * k, (finU E n).mul_mem hk' hk, (mul_assoc _ _ _).symm⟩
+  exact ⟨γ, hγ, k' * k, (finU (E := E) (n := n)).mul_mem hk' hk, (mul_assoc _ _ _).symm⟩
 
 theorem mem_rationalGL_of_unitaryGroupGram_unitGram (γ : UA E n) (γ₀ : GL (Fin n) E) (h : γ.1 = ratGL E n γ₀) : γ₀ ∈ GQ0 E n := by
   have h0 : Formalism.UG.cT (conjAd E) (γ.1 : Matrix (Fin n) (Fin n) (Ad E)) * 1 * γ.1 = 1 := γ.2
@@ -78,8 +83,8 @@ theorem polyMat_rat {ι : Type} (P : ι → ι → MvPolynomial ((E →+* ℂ) �
   rw [h]
   rfl
 
-omit [NumberField E] [IsCMField E] in
 
+omit [NumberField E] [IsCMField E] in
 theorem continuous_coord' (τ : E →+* ℂ) : Continuous (coord τ) := by
   unfold coord
   split_ifs
@@ -109,7 +114,7 @@ theorem mul_of_dense {G M : Type} [Mul G] [TopologicalSpace G] [ContinuousMul G]
   have hcl : IsClosed {z : G × G | f (z.1 * z.2) = f z.1 * f z.2} :=
     isClosed_eq (hf.comp (continuous_fst.mul continuous_snd))
       ((hf.comp continuous_fst).mul (hf.comp continuous_snd))
-  exact hcl.closure_subset_iff.2 (fun z hz => h z.1 hz.1 z.2 hz.2) ((hD.prod hD) (x, y))
+  exact hcl.closure_subset_iff.2 (fun z (hz : z ∈ D ×ˢ D) => h z.1 hz.1 z.2 hz.2) ((hD.prod hD) (x, y))
 
 theorem mul_of_rat {M : Type} [Mul M] [TopologicalSpace M] [ContinuousMul M] [T2Space M] (f : UA E n → M)
     (hf : Continuous f) (hi : ∀ g h, cInf g = cInf h → f g = f h)
@@ -123,7 +128,7 @@ theorem mul_of_rat {M : Type} [Mul M] [TopologicalSpace M] [ContinuousMul M] [T2
   have e2 : cInf y = cInf δ := by rw [← hy, map_mul, hl', mul_one]
   rw [hi x γ e1, hi y δ e2, hi (x * y) (γ * δ) (by rw [map_mul, map_mul, e1, e2]), h γ hγ δ hδ]
 
-theorem exists_extension : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ) (a : NG.AlgWt L n), ∃ R : UA L n →* Module.End ℂ a.W, (∀ k ∈ finU L n, R k = 1) ∧ (∀ (γ : UA L n) (γQ : GQ L n) (γ₀ : GL (Fin n) L), γ.1 = ratGL L n γ₀ → (((γQ : GAf L n) : GL (Fin n) (AL L)) : Matrix (Fin n) (Fin n) (AL L)) = (γ₀ : Matrix (Fin n) (Fin n) L).map Algebra.TensorProduct.includeLeftRingHom → R γ = a.ρ γQ) ∧ ∀ (v : a.W) (μ : Module.Dual ℂ a.W), Continuous fun g : UA L n => μ (R g v) := by
+theorem exists_extension : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L] (n : ℕ) (a : NG.AlgWt L n), ∃ R : UA L n →* Module.End ℂ a.W, (∀ k ∈ finU (E := L) (n := n), R k = 1) ∧ (∀ (γ : UA L n) (γQ : GQ L n) (γ₀ : GL (Fin n) L), γ.1 = ratGL L n γ₀ → (((γQ : GAf L n) : GL (Fin n) (AL L)) : Matrix (Fin n) (Fin n) (AL L)) = (γ₀ : Matrix (Fin n) (Fin n) L).map Algebra.TensorProduct.includeLeftRingHom → R γ = a.ρ γQ) ∧ ∀ (v : a.W) (μ : Module.Dual ℂ a.W), Continuous fun g : UA L n => μ (R g v) := by
   intro L _ _ _ n a
   obtain ⟨_, ι, _, _, b, P, hP⟩ := a.alg
   have hrat : ∀ (γ : UA L n) (γQ : GQ L n) (γ₀ : GL (Fin n) L), γ.1 = ratGL L n γ₀ →
@@ -132,7 +137,7 @@ theorem exists_extension : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L
       polyMat P γ = LinearMap.toMatrix b b (a.ρ γQ) := fun γ γQ γ₀ h1 h2 =>
     (polyMat_rat P γ γ₀ h1).trans (hP γQ γ₀ h2).symm
   have hrat' : ∀ (γ : UA L n) (γ₀ : GQ0 L n), γ.1 = ratGL L n γ₀.1 →
-      polyMat P γ = LinearMap.toMatrix b b (a.ρ (ratPt γ₀)) := fun γ γ₀ h => hrat γ _ γ₀.1 h rfl
+      polyMat P γ = LinearMap.toMatrix b b (a.ρ (ratPt (E := L) (n := n) γ₀)) := fun γ γ₀ h => hrat γ _ γ₀.1 h rfl
   have hone : polyMat P 1 = 1 := by
     rw [hrat' 1 1 (map_one (ratGL L n)).symm, map_one, map_one, LinearMap.toMatrix_one]
   have hmul : ∀ g h : UA L n, polyMat P (g * h) = polyMat P g * polyMat P h := by
@@ -156,8 +161,9 @@ theorem exists_extension : ∀ (L : Type) [Field L] [NumberField L] [IsCMField L
     rw [hrat γ γQ γ₀ h1 h2, Matrix.toLin_toMatrix]
   · change Continuous fun g : UA L n => μ (Matrix.toLin b b (polyMat P g) v)
     have hc := continuous_polyMat P
-    simp only [Matrix.toLin_apply, map_sum, map_smul, smul_eq_mul]
-    refine continuous_finset_sum _ fun j _ => Continuous.mul ?_ continuous_const
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.toLin_apply, map_sum, map_smul, smul_eq_mul]
+    refine continuous_finsetSum _ fun j _ => Continuous.mul ?_ continuous_const
     exact (continuous_apply j).comp (hc.matrix_mulVec continuous_const)
 
 end GlobalTheory.WeightRealExt

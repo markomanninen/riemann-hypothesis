@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.PullChartIsLB
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUniqueIsRatio
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsPartPartSec
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.GroupAlgebraSingleOneMemOfSpan
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPowEqTorus
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.PullChartIsLB
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsUniqueIsRatio
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.IsPartPartSec
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.GroupAlgebraSingleOneMemOfSpan
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPowEqTorus
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -151,7 +155,7 @@ def satur {C C' : Type} [CommRing C] [CommRing C'] (σ : C →+* C') (F : C) (R 
     rintro a b ⟨n, r, hr, e⟩ ⟨m, s, hs, e'⟩
     refine ⟨n + m, F ^ m * r + F ^ n * s,
       R.add_mem (R.mul_mem (R.pow_mem hF _) hr) (R.mul_mem (R.pow_mem hF _) hs), ?_⟩
-    rw [map_add, map_mul, map_mul, map_pow, map_pow, ← e, ← e']
+    rw [map_add (f := _), map_mul, map_mul, map_pow, map_pow, ← e, ← e']
     ring
   mul_mem' := by
     rintro a b ⟨n, r, hr, e⟩ ⟨m, s, hs, e'⟩
@@ -173,7 +177,7 @@ theorem ratios_generate : (∀ (k : Type) [Field k] [IsAlgClosed k] (Φ : FibPre
         rw [map_zero, zero_mul]; exact R.zero_mem
       add_mem' := fun {a b} ha hb => by
         show _ ∈ R
-        rw [map_add, add_mul]; exact R.add_mem ha hb
+        rw [map_add (f := _), add_mul]; exact R.add_mem ha hb
       smul_mem' := fun c a ha => by
         show _ ∈ R
         rw [smul_eq_mul, map_mul, _root_.mul_assoc]; exact R.mul_mem (h0 c) ha }

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.BlowUpPushHypothesesExample
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleFiniteSupport
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.BlowUpPushHypothesesExample
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PDivCycleFiniteSupport
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -35,8 +40,8 @@ end Pullback
 
 section Sums
 
+open scoped Classical in
 open Classical in
-
 theorem finsum_sub_mul_eq_of_support {α : Type*} (Z₁ Z₂ n : α → ℤ) (p : α → Prop)
     (h₁ : (Function.support Z₁).Finite) (h₂ : (Function.support Z₂).Finite)
     (hv : ∀ W, Z₁ W - Z₂ W ≠ 0 → p W) :
@@ -47,7 +52,7 @@ theorem finsum_sub_mul_eq_of_support {α : Type*} (Z₁ Z₂ n : α → ℤ) (p 
     intro W
     by_cases h : Z₁ W - Z₂ W = 0
     · rw [h, zero_mul, sub_eq_zero.mp h, sub_self]
-    · rw [if_pos (hv W h), ← sub_mul]
+    · rw [ite_eq_left (hv W h), ← sub_mul]
   rw [finsum_congr e, finsum_sub_distrib]
   · exact h₁.subset fun W hW => left_ne_zero_of_mul hW
   · exact h₂.subset fun W hW => left_ne_zero_of_mul hW

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
-import Development.WeilBound.CoreStatements.IdealCycleValues.ProdMapToMultiset
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.BundleChernComparison
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsFlagIndependence
+public import Development.WeilBound.CoreStatements.IdealCycleValues.ProdMapToMultiset
+
+@[expose] public section
 
 open MvPolynomial GroundTheory.Heights₂.Heights.NumbersDVR GlobalTheory.CompanionTheory.Ar.Num
 
@@ -10,9 +14,9 @@ theorem BaseChangeColon.genNum_linear_in_polynomial : ∀ (F : Type) [Field F] (
   classical
   set g : (σ →₀ ℕ) → ℝ := fun μ => (intNumL F V (classList cls μ ++ Q) : ℝ) with hg
   have key : ∀ (H : MvPolynomial σ ℝ) (s : Finset (σ →₀ ℕ)), H.support ⊆ s →
-      genNum F V cls H Q = ∑ μ ∈ s, MvPolynomial.coeff μ H * g μ := by
+      genNum F V cls H Q = ∑ μ ∈ s, AddMonoidAlgebra.coeff H μ * g μ := by
     intro H s hs
-    show ∑ μ ∈ H.support, MvPolynomial.coeff μ H * g μ = _
+    show ∑ μ ∈ H.support, AddMonoidAlgebra.coeff H μ * g μ = _
     refine Finset.sum_subset hs (fun μ _ hμ => ?_)
     rw [MvPolynomial.notMem_support_iff.mp hμ, zero_mul]
   have hadd : ∀ H H' : MvPolynomial σ ℝ, genNum F V cls (H + H') Q = genNum F V cls H Q + genNum F V cls H' Q := by

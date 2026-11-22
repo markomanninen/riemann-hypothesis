@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.Hilbert90FiniteIdelesCongruenceStatement
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.PowClassNumberIntegral
-import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsXiOKNotTwistCond
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsGeneratingCharacters
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.IntUnit
-import Formalism.LocalToGlobal.ProjectiveLattices.FullXi
-import Development.AbelianVarietyTheory.Definitions.HeightFunctions.NormComparisonConstants
-import Formalism.LocalToGlobal.ProjectiveLattices.DepthTie
-import Development.AbelianVarietyTheory.Definitions.Jets.EmbShortThLeThetaPlain
-import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.Hilbert90FiniteIdelesCongruenceStatement
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.PowClassNumberIntegral
+public import Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsXiOKNotTwistCond
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.ExistsGeneratingCharacters
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.IntUnit
+public import Formalism.LocalToGlobal.ProjectiveLattices.FullXi
+public import Development.AbelianVarietyTheory.Definitions.HeightFunctions.NormComparisonConstants
+public import Formalism.LocalToGlobal.ProjectiveLattices.DepthTie
+public import Development.AbelianVarietyTheory.Definitions.Jets.EmbShortThLeThetaPlain
+public import Development.AbelianVarietyTheory.Definitions.ExistenceOfLattices.CoeSelfDualLatticeInFrameCoordinatesEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -65,7 +69,7 @@ theorem exists_rat {D : D7} (x : (AfE D)ˣ) (a : D.host.E) (h : (x : AfE D) = 1 
       rw [h] at this
       rw [h]
       exact this
-    rw [map_add, map_one, map_add, map_add, map_one, mul_add, h1, ← hx, mul_one, add_comm]
+    rw [map_add (f := _), map_one, map_add (f := _), map_add (f := _), map_one, mul_add, h1, ← hx, mul_one, add_comm]
 
 theorem cong_div {D : D7} (N : ℕ) (y : (AfE D)ˣ) (hu : IntUnit y) (hy : CongOne N y) :
     CongOne N (y / cjFin D y) ∧ NormOne (y / cjFin D y) := by

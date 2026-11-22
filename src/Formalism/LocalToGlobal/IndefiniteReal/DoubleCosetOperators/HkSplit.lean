@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.HeckeCommuteOfCompatibility
-import Formalism.LocalToGlobal.HeckeThetaElements.IsHeckeElt
-import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.DoubleCosetOperators.HeckeCommuteOfCompatibility
+public import Formalism.LocalToGlobal.HeckeThetaElements.IsHeckeElt
+public import Formalism.LocalToGlobal.BesselHermitianTheta.LemmasWeil
+
+@[expose] public section
 
 noncomputable section
 
@@ -27,9 +31,6 @@ theorem map_mul_nu (ι : S →ₙ+* R) (A B : Matrix n n S) : (A * B).map ι = A
 theorem compl_smul_map (ι : S →ₙ+* R) (A : Matrix n n S) : (1 - ι 1) • A.map ι = 0 := by
   ext i j; simp [compl_mul]
 
-theorem idem_smul_map (ι : S →ₙ+* R) (A : Matrix n n S) : ι 1 • A.map ι = A.map ι := by
-  ext i j; simp [idem_mul]
-
 theorem extM_one (ι : S →ₙ+* R) : extM ι (1 : Matrix n n S) = 1 := by
   ext i j
   by_cases h : i = j
@@ -49,8 +50,6 @@ def extHom (ι : S →ₙ+* R) : Matrix n n S →* Matrix n n R where
   map_mul' := extM_mul ι
 
 def extGL (ι : S →ₙ+* R) : GL n S →* GL n R := Units.map (extHom ι)
-
-theorem extGL_coe (ι : S →ₙ+* R) (g : GL n S) : ((extGL ι g : GL n R) : Matrix n n R) = extM ι g := rfl
 
 theorem extM_cT (ι : S →ₙ+* R) (σS : S →+* S) (σR : R →+* R) (hι : ∀ x, ι (σS x) = σR (ι x)) (A : Matrix n n S) :
     cT σR (extM ι A) = extM ι (cT σS A) := by
@@ -97,20 +96,6 @@ theorem extM_comm (ι : S →ₙ+* R) (ι' : S' →ₙ+* R) (h0 : ∀ x y, ι x 
     smul_map_of ι' _ h1, smul_map_of ι _ h2, hAB, hBA, add_zero, mul_comm (1 - ι 1)]
   abel
 
-theorem extM_comm_of_smul (ι : S →ₙ+* R) (M : Matrix n n R) (hM : ι 1 • M = ι 1 • (1 : Matrix n n R))
-    (A : Matrix n n S) : M * extM ι A = extM ι A * M := by
-  have hcomm : M * A.map ι = A.map ι * M := by
-    calc M * A.map ι = M * (ι 1 • A.map ι) := by rw [idem_smul_map]
-      _ = (ι 1 • M) * A.map ι := by rw [Matrix.mul_smul, Matrix.smul_mul]
-      _ = (ι 1 • (1 : Matrix n n R)) * A.map ι := by rw [hM]
-      _ = A.map ι * (ι 1 • (1 : Matrix n n R)) := by
-          rw [Matrix.smul_mul, Matrix.mul_smul, Matrix.one_mul, Matrix.mul_one]
-      _ = A.map ι * (ι 1 • M) := by rw [hM]
-      _ = (ι 1 • A.map ι) * M := by rw [Matrix.mul_smul, Matrix.smul_mul]
-      _ = A.map ι * M := by rw [idem_smul_map]
-  unfold extM
-  rw [mul_add, add_mul, Matrix.mul_smul, Matrix.mul_one, Matrix.smul_mul, Matrix.one_mul, hcomm]
-
 end Ext
 
 section Place
@@ -131,11 +116,11 @@ def inrT : Af F ⊗[F] E →ₙ+* AF F ⊗[F] E where
   map_mul' x y := by
     induction x using TensorProduct.induction_on with
     | zero => simp
-    | add x x' hx hx' => simp only [add_mul, map_add, hx, hx']
+    | add x x' hx hx' => simp only [add_mul, map_add (f := _), hx, hx']
     | tmul a b =>
       induction y using TensorProduct.induction_on with
       | zero => simp
-      | add y y' hy hy' => simp only [mul_add, map_add, hy, hy']
+      | add y y' hy hy' => simp only [mul_add, map_add (f := _), hy, hy']
       | tmul c d =>
         simp only [Algebra.TensorProduct.tmul_mul_tmul, LinearMap.rTensor_tmul, inrL_mul]
 
@@ -150,7 +135,7 @@ theorem jv_sig (σ : E →ₐ[F] E) (v : HeightOneSpectrum (𝓞 F)) (x : E ⊗[
     jv v (Formalism.UG.sigR σ (v.adicCompletion F) x) = Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (AF F) σ (jv v x) := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x x' hx hx' => simp only [map_add, hx, hx']
+  | add x x' hx hx' => simp only [map_add (f := _), hx, hx']
   | tmul a b => rfl
 
 theorem jv_inclE (v : HeightOneSpectrum (𝓞 F)) (e : E) :
@@ -162,7 +147,7 @@ theorem jv_fst (v : HeightOneSpectrum (𝓞 F)) (x : E ⊗[F] v.adicCompletion F
     Algebra.TensorProduct.map (fstA F) (AlgHom.id F E) (jv v x) = 0 := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x x' hx hx' => rw [map_add, map_add, hx, hx', add_zero]
+  | add x x' hx hx' => rw [map_add (f := _), map_add (f := _), hx, hx', add_zero]
   | tmul a b =>
     rw [jv_tmul, Algebra.TensorProduct.map_tmul]
     exact TensorProduct.zero_tmul _ _
@@ -175,7 +160,7 @@ theorem backT_jv (v : HeightOneSpectrum (𝓞 F)) (x : E ⊗[F] v.adicCompletion
     backT (jv v x) = Formalism.UG.P.afsplitIE v x := by
   induction x using TensorProduct.induction_on with
   | zero => simp
-  | add x x' hx hx' => simp only [map_add, hx, hx']
+  | add x x' hx hx' => simp only [map_add (f := _), hx, hx']
   | tmul a b => rfl
 
 theorem prV_backT_jv (v : HeightOneSpectrum (𝓞 F)) (x : E ⊗[F] v.adicCompletion F) :
@@ -193,18 +178,6 @@ theorem IE_orth {v v' : HeightOneSpectrum (𝓞 F)} (h : v ≠ v') (x : E ⊗[F]
   by_cases hw : w = v
   · subst hw; rw [Formalism.UG.P.afsplit_prV_IE_ne _ _ h, mul_zero]
   · rw [Formalism.UG.P.afsplit_prV_IE_ne _ _ hw, zero_mul]
-
-theorem jv_one_mul (v : HeightOneSpectrum (𝓞 F)) (z : AF F ⊗[F] E) :
-    jv v 1 * z = jv v (Formalism.UG.prV (E := E) v (backT z)) := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
-  | add x y hx hy => rw [mul_add, hx, hy, map_add, map_add, map_add]
-  | tmul x a =>
-    rw [Algebra.TensorProduct.one_def, jv_tmul, Algebra.TensorProduct.tmul_mul_tmul, one_mul]
-    show (inrL (Formalism.UG.P.afsplitI v 1) * x) ⊗ₜ[F] a = jv v (a ⊗ₜ[F] (sndA F x) v)
-    rw [jv_tmul, Formalism.UG.P.afsplitI_eval]
-    congr 1
-    exact Prod.ext (zero_mul _) rfl
 
 theorem jv_orth {v v' : HeightOneSpectrum (𝓞 F)} (h : v ≠ v') (x : E ⊗[F] v.adicCompletion F)
     (y : E ⊗[F] v'.adicCompletion F) : jv v x * jv v' y = 0 := by
@@ -372,8 +345,8 @@ theorem embV_comm (V : HSp D) {v v' : HeightOneSpectrum (𝓞 D.host.F)} (h : v 
   apply Units.ext
   exact extM_comm (jv v) (jv v') (jv_orth h) _ _
 
-open Classical in
 
+open Classical in
 def embOn (V : HSp D) (T : Set (HeightOneSpectrum (𝓞 D.host.F))) (s : ∀ v ∈ T, SplitD D v)
     (v : HeightOneSpectrum (𝓞 D.host.F)) : GL (Fin V.rank) (v.adicCompletion D.host.F) →* GA D V :=
   if hv : v ∈ T then embV V (s v hv) else 1
@@ -384,7 +357,7 @@ theorem embOn_mem (V : HSp D) {T : Set (HeightOneSpectrum (𝓞 D.host.F))} (s :
 theorem embOn_not (V : HSp D) {T : Set (HeightOneSpectrum (𝓞 D.host.F))} (s : ∀ v ∈ T, SplitD D v)
     {v : HeightOneSpectrum (𝓞 D.host.F)} (hv : v ∉ T) (a : GL (Fin V.rank) (v.adicCompletion D.host.F)) :
     embOn V T s v a = 1 := by
-  rw [embOn, dif_neg hv, MonoidHom.one_apply]
+  rw [embOn, dite_eq_right hv, MonoidHom.one_apply]
 
 def splitEmbOn (V : HSp D) (K : Set (GA D V)) (T : Set (HeightOneSpectrum (𝓞 D.host.F)))
     (s : ∀ v ∈ T, SplitD D v) (hK : ∀ v (hv : v ∈ T), ∀ a ∈ Kv v V.rank, embV V (s v hv) a ∈ K)
@@ -411,11 +384,6 @@ def splitEmbOn (V : HSp D) (K : Set (GA D V)) (T : Set (HeightOneSpectrum (𝓞 
     · rw [embOn_not V s hv a, mul_one, one_mul]
     · rw [embOn_not V s hv a, embOn_not V s hv' b]
 
-theorem splitEmbOn_emb (V : HSp D) (K : Set (GA D V)) (T : Set (HeightOneSpectrum (𝓞 D.host.F)))
-    (s : ∀ v ∈ T, SplitD D v) (hK : ∀ v (hv : v ∈ T), ∀ a ∈ Kv v V.rank, embV V (s v hv) a ∈ K)
-    (h1 : (1 : GA D V) ∈ K) {v : HeightOneSpectrum (𝓞 D.host.F)} (hv : v ∈ T) :
-    (splitEmbOn V K T s hK h1).emb v = embV V (s v hv) := embOn_mem V s hv
-
 end Emb
 
 section Level
@@ -426,58 +394,6 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7}
 
-def compVH (V : HSp D) (v : HeightOneSpectrum (𝓞 D.host.F)) :
-    GA D V →* GL (Fin V.rank) (D.host.E ⊗[D.host.F] v.adicCompletion D.host.F) :=
-  (Formalism.UG.bc (Formalism.UG.prV v)).comp (Formalism.IndefR.Lev.finE V)
-
-theorem compVH_apply (V : HSp D) (v : HeightOneSpectrum (𝓞 D.host.F)) (g : GA D V) : compVH V v g = compV V v g := rfl
-
-def Kaway (V : HSp D) (K : Subgroup (GA D V)) (v : HeightOneSpectrum (𝓞 D.host.F)) : Subgroup (GA D V) :=
-  K ⊓ (compVH V v).ker
-
-abbrev OEv (D : D7) (v : HeightOneSpectrum (𝓞 D.host.F)) : Subring (D.host.E ⊗[D.host.F] v.adicCompletion D.host.F) :=
-  Formalism.UG.tensInt (F := D.host.F) (v.adicCompletion D.host.F) (Formalism.UG.intOE D.host.E)
-    (v.adicCompletionIntegers D.host.F).toSubring
-
-def IntSplit {v : HeightOneSpectrum (𝓞 D.host.F)} (s : SplitD D v) : Prop :=
-  ∀ x, x ∈ OEv D v ↔ (s.sp x).1 ∈ v.adicCompletionIntegers D.host.F ∧ (s.sp x).2 ∈ v.adicCompletionIntegers D.host.F
-
-def LocStd (V : HSp D) (v : HeightOneSpectrum (𝓞 D.host.F)) : Prop :=
-  ∀ x : Fin V.rank → D.host.E ⊗[D.host.F] v.adicCompletion D.host.F,
-    (∃ y ∈ Formalism.L2.NTheta.LamHat V, ∀ i, Formalism.UG.prV v (Formalism.IndefR.Lev.swapAE D (y i)) = x i) ↔ ∀ i, x i ∈ OEv D v
-
-def LevSplitP (D : D7) : Prop :=
-  ∀ (V : HSp D) (N : ℕ) (v : HeightOneSpectrum (𝓞 D.host.F)) (s : SplitD D v),
-    IsUnit (N : v.adicCompletionIntegers D.host.F) → IntSplit s → LocStd V v →
-    ∃ K : Subgroup (GA D V), (K : Set (GA D V)) = Formalism.L2.NTheta.KpC V N ∧
-      (∀ a ∈ Kv v V.rank, embV V s a ∈ K) ∧
-      (∀ y, embV V s y ∈ K → y ∈ Kv v V.rank) ∧
-      (∀ κ ∈ K, ∃ a ∈ Kv v V.rank, ∃ c ∈ Kaway V K v, κ = embV V s a * c)
-
-theorem embV_comm_away (V : HSp D) {v : HeightOneSpectrum (𝓞 D.host.F)} (s : SplitD D v) (c : GA D V)
-    (hc : compV V v c = 1) (y : GL (Fin V.rank) (v.adicCompletion D.host.F)) :
-    c * embV V s y = embV V s y * c := by
-  apply Subtype.ext
-  apply Units.ext
-  show (matHom V c).val * extM (jv v) (locV V s y).val = extM (jv v) (locV V s y).val * (matHom V c).val
-  have hM : jv (E := D.host.E) v 1 • (matHom V c).val = jv (E := D.host.E) v 1 • (1 : Matrix (Fin V.rank) (Fin V.rank) _) := by
-    ext i j
-    have h := congrArg (fun g : GL (Fin V.rank) (D.host.E ⊗[D.host.F] v.adicCompletion D.host.F) => g.val i j) hc
-    simp only [compV_entry, Units.val_one] at h
-    simp only [Matrix.smul_apply, smul_eq_mul]
-    rw [jv_one_mul, h]
-    by_cases hij : i = j
-    · subst hij; simp
-    · simp [hij]
-  exact extM_comm_of_smul (jv v) _ hM _
-
-theorem embV_comm_Kaway (V : HSp D) {v : HeightOneSpectrum (𝓞 D.host.F)} (s : SplitD D v) (K : Subgroup (GA D V)) :
-    ∀ c ∈ Kaway V K v, ∀ y, c * embV V s y = embV V s y * c :=
-  fun c hc y => embV_comm_away V s c (by rw [← compVH_apply]; exact hc.2) y
-
-def GoodAt (V : HSp D) (N : ℕ) (T : Set (HeightOneSpectrum (𝓞 D.host.F))) (s : ∀ v ∈ T, SplitD D v) : Prop :=
-  ∀ v (hv : v ∈ T), IsUnit (N : v.adicCompletionIntegers D.host.F) ∧ IntSplit (s v hv) ∧ LocStd V v
-
 set_option synthInstance.maxHeartbeats 400000 in
 theorem one_mem_KpC (V : HSp D) (N : ℕ) : (1 : GA D V) ∈ Formalism.L2.NTheta.KpC V N := by
   have hf : finMat D.sp.cm.sig V.gram (1 : GA D V) = 1 := by
@@ -486,60 +402,12 @@ theorem one_mem_KpC (V : HSp D) (N : ℕ) : (1 : GA D V) ∈ Formalism.L2.NTheta
   refine ⟨⟨(GfC V).one_mem, fun y => by rw [hf, Matrix.one_mulVec], fun v hv => absurd hv (Finset.notMem_empty v)⟩,
     fun y _ => ⟨0, zero_mem _, by rw [hf, sub_self, Matrix.zero_mulVec, smul_zero]⟩⟩
 
-def splitEmbKpC (hP : LevSplitP D) (V : HSp D) (N : ℕ) (T : Set (HeightOneSpectrum (𝓞 D.host.F)))
-    (s : ∀ v ∈ T, SplitD D v) (hT : GoodAt V N T s) : SplitEmb V (Formalism.L2.NTheta.KpC V N) :=
-  splitEmbOn V _ T s
-    (fun v hv a ha => by
-      obtain ⟨K, hK, h1, -⟩ := hP V N v (s v hv) (hT v hv).1 (hT v hv).2.1 (hT v hv).2.2
-      rw [← hK]; exact h1 a ha)
-    (one_mem_KpC V N)
-
-open Classical in
-
-theorem hkGA_dosetInd_KpC (hP : LevSplitP D) (V : HSp D) (N : ℕ) (T : Set (HeightOneSpectrum (𝓞 D.host.F)))
-    (s : ∀ v ∈ T, SplitD D v) (hT : GoodAt V N T s) {v : HeightOneSpectrum (𝓞 D.host.F)} (hv : v ∈ T)
-    {α : GL (Fin V.rank) (v.adicCompletion D.host.F)} {R : Finset (GL (Fin V.rank) (v.adicCompletion D.host.F))}
-    (hR : IsDCSys (Kv v V.rank) α R) {φ : GA D V → ℂ} (hφ : RightInv (Formalism.L2.NTheta.KpC V N) φ) :
-    ∃ K : Subgroup (GA D V), (K : Set (GA D V)) = Formalism.L2.NTheta.KpC V N ∧
-      IsDCSys K (embV V (s v hv) α) (R.image (embV V (s v hv))) ∧
-      ∀ g, hkGA (splitEmbKpC hP V N T s hT) v (dosetInd ℂ (Kv v V.rank) α) φ g =
-        ∑ δ ∈ R.image (embV V (s v hv)), φ (g * δ) := by
-  obtain ⟨K, hK, h1, h2, h3⟩ := hP V N v (s v hv) (hT v hv).1 (hT v hv).2.1 (hT v hv).2.2
-  have h4 := embV_comm_Kaway V (s v hv) K
-  have hφ' : RightInv (K : Set (GA D V)) φ := by rw [hK]; exact hφ
-  refine ⟨K, hK, isDCSys_map h1 inf_le_left h3 h4 h2 hR, fun g => ?_⟩
-  have he : (splitEmbKpC hP V N T s hT).emb v = embV V (s v hv) := embOn_mem V s hv
-  unfold hkGA
-  rw [he]
-  exact (opAt_dosetInd_map (embV_inj V (s v hv)) h1 inf_le_left h3 h4 h2 hR hφ' g).2
-
-theorem hkGA_twist_KpC (hP : LevSplitP D) (V : HSp D) (N : ℕ) (T : Set (HeightOneSpectrum (𝓞 D.host.F)))
-    (s : ∀ v ∈ T, SplitD D v) (hT : GoodAt V N T s) {v : HeightOneSpectrum (𝓞 D.host.F)} (hv : v ∈ T)
-    {χ : GL (Fin V.rank) (v.adicCompletion D.host.F) →* ℂ} (hχ : ∀ κ ∈ Kv v V.rank, χ κ = 1)
-    {α : GL (Fin V.rank) (v.adicCompletion D.host.F)} {R : Finset (GL (Fin V.rank) (v.adicCompletion D.host.F))}
-    (hR : IsDCSys (Kv v V.rank) α R) {φ : GA D V → ℂ} (hφ : RightInv (Formalism.L2.NTheta.KpC V N) φ) (g : GA D V) :
-    hkGA (splitEmbKpC hP V N T s hT) v (twist χ (dosetInd ℂ (Kv v V.rank) α)) φ g =
-      χ α • ∑ γ ∈ R, φ (g * embV V (s v hv) γ) := by
-  have he : (splitEmbKpC hP V N T s hT).emb v = embV V (s v hv) := embOn_mem V s hv
-  unfold hkGA
-  rw [he]
-  exact opAt_twist_dosetInd hχ hR (fun g' x ⟨a, ha, e⟩ => e ▸ hφ g' _
-    (by rw [← he]; exact (splitEmbKpC hP V N T s hT).emb_K v a ha)) g
 
 end Level
 
 section Clauses
 
 variable {G : Type} [Group G]
-
-theorem isDCSys_clauses {K : Subgroup G} {α : G} {R : Finset G} (h : IsDCSys K α R) :
-    (∀ γ ∈ R, ∃ k₁ ∈ K, ∃ k₂ ∈ K, γ = k₁ * α * k₂) ∧
-    ∀ x : G, (∃ k₁ ∈ K, ∃ k₂ ∈ K, x = k₁ * α * k₂) ↔ ∃! γ, γ ∈ R ∧ γ⁻¹ * x ∈ K := by
-  refine ⟨fun γ hγ => DoubleCoset.mem_doubleCoset.1 (h.1 γ hγ), fun x => ⟨fun hx => h.2 x
-    (DoubleCoset.mem_doubleCoset.2 hx), fun ⟨γ, ⟨hγ, hx⟩, _⟩ => ?_⟩⟩
-  obtain ⟨k₁, hk₁, k₂, hk₂, e⟩ := DoubleCoset.mem_doubleCoset.1 (h.1 γ hγ)
-  refine ⟨k₁, hk₁, k₂ * (γ⁻¹ * x), K.mul_mem hk₂ hx, ?_⟩
-  rw [← mul_assoc, ← e, mul_inv_cancel_left]
 
 end Clauses
 
@@ -548,16 +416,6 @@ section Checks
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
-
-example {D : D7} (V : HSp D) (T : Set (HeightOneSpectrum (𝓞 D.host.F))) (s : ∀ v ∈ T, SplitD D v) :
-    SplitEmb V Set.univ :=
-  splitEmbOn V Set.univ T s (fun _ _ _ _ => trivial) trivial
-
-example {D : D7} (V : HSp D) {v : HeightOneSpectrum (𝓞 D.host.F)} (s : SplitD D v)
-    (a : GL (Fin V.rank) (v.adicCompletion D.host.F)) : embV V s a = 1 ↔ a = 1 :=
-  (map_eq_one_iff (embV V s) (embV_inj V s))
-
-example {D : D7} (V : HSp D) (N : ℕ) : (1 : GA D V) ∈ Formalism.L2.NTheta.KpC V N := one_mem_KpC V N
 
 end Checks
 

@@ -1,17 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.LamRange
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrPull
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformisedMemberDividingThetaConstantNeZero
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPointsFramesThetaSectionGenericFibreMember
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecScalOneVal
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.QkToAkDescendsAlongBaseChange
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.QkToAkUInvariantUnderFieldEmbedding
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SumFCalculus
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ThetaOperatorsProjectiveRepresentation
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniqueThickTorusLevelWeightExpansion
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsProjectiveRep
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.LinCombValueAct
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LamRange
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.FinalTheorems
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FrPull
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformisedMemberDividingThetaConstantNeZero
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPointsFramesThetaSectionGenericFibreMember
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecScalOneVal
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.QkToAkDescendsAlongBaseChange
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.QkToAkUInvariantUnderFieldEmbedding
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SumFCalculus
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ThetaOperatorsProjectiveRepresentation
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniqueThickTorusLevelWeightExpansion
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsProjectiveRep
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.LinCombValueAct
+
+@[expose] public section
+
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj IsLocalRing
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Geo.Tor
 open scoped CategoryTheory.Obj
@@ -290,7 +295,7 @@ theorem exists_ext (hG : GlobalFnsSt) (U : Unif I D A G) {w₀ : W0 U.toUnifPre}
     rw [show coef (0 : Fam D.toPre F k) _ wk' = fun _ => 0 from funext (coef_zero gen')]; exact sumF_zero⟩
   have Pl : ∀ (c : F) s s', P s → P s' → P (c • s + s') := by
     rintro c s s' ⟨a, h₁, h₂⟩ ⟨a', h₁', h₂'⟩
-    refine ⟨c * a + a', by rw [map_add, map_smul]; exact valAt_lin h₁ h₁' c, ?_⟩
+    refine ⟨c * a + a', by rw [map_add (f := _), map_smul]; exact valAt_lin h₁ h₁' c, ?_⟩
     rw [show coef (c • s + s') _ wk' = _ from funext (coef_lin gen' s s' c)]
     exact sumF_lin h₂ h₂' c
   have all : P s := by
@@ -381,14 +386,14 @@ variable {A : PolAV (Spec (CommRingCat.of (FractionRing R)))} {A' : PolAV (Spec 
   {Φ : A'.A.left ⟶ A.A.left} {v : LB.Iso A'.L (A.L.pull Φ)}
   {Ω : (TFK (R := R') F ⊗ A'.A).left ⟶ (TFK (R := R) F ⊗ A.A).left}
 
-variable (v Ω) in
 
+variable (v Ω) in
 def AbUp {k : ℕ} (t' : SecA A' F k) (t : SecA A F k) : Prop :=
   ∀ (Z : Scheme.{0}) (r : Z ⟶ (TFK (R := R') F ⊗ A'.A).left) (z : Z) J J', Good A.L z J → Good A'.L z J' →
     sA t (r ≫ Ω) z J = (om v z J J' (r ≫ (snd (TFK (R := R') F) A'.A).left) ^ (k : ℤ)).val * sA t' r z J'
 
-variable (v) in
 
+variable (v) in
 def FrUp {x' : TFK (R := R') F ⟶ A'.A} (e' : FrAt x') {x : TFK (R := R) F ⟶ A.A} (e : FrAt x) (ρ : F) : Prop :=
   ∀ (z : Sp F) J J', Good A.L z J → Good A'.L z J' →
     (om (Z := Sp F) v z J J' x'.left).val * (vS e' z J').val = constVal (𝟙 (Sp F)) z ρ * (vS e z J).val
@@ -477,8 +482,8 @@ theorem exists_point (hG : GlobalFnsSt) (hI : I.map φ ≤ I') (hF : Compat φ F
   simp only [add_zero] at S
   exact S
 
-set_option maxHeartbeats 1600000 in
 
+set_option maxHeartbeats 1600000 in
 theorem exists_expand (hG : GlobalFnsSt) {U : Unif I D A G} {U' : Unif I' D' A' G'}
     {bc : G' ≅ (Over.pullback (specOf φ)).obj G} (hbc : IsMonHom bc.hom) (hU : IsPullUnif φ hD bc U U') (hF : Compat φ F)
     {g : Spec (CommRingCat.of (FractionRing R')) ⟶ Spec (CommRingCat.of (FractionRing R))}

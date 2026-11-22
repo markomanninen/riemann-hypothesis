@@ -1,7 +1,11 @@
-import Mathlib
-import CompanionTheory.RealGroups.GeneralUnitaryRepresentations.WhittakerModels.WhitLeOneOfDict
-import CompanionTheory.RealGroups.GeneralUnitaryRepresentations.WhittakerModels.UnipBEqUnipotent
-import CompanionTheory.RealGroups.GeneralUnitaryRepresentations.WhittakerModels.RankDual
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.GeneralUnitaryRepresentations.WhittakerModels.WhitLeOneOfDict
+public import CompanionTheory.RealGroups.GeneralUnitaryRepresentations.WhittakerModels.UnipBEqUnipotent
+public import CompanionTheory.RealGroups.GeneralUnitaryRepresentations.WhittakerModels.RankDual
+
+@[expose] public section
 
 noncomputable section
 

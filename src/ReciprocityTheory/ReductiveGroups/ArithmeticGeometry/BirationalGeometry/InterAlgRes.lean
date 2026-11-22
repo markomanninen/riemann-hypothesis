@@ -1,7 +1,11 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterPC
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsAtlas
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.SNCstep
-import ReciprocityTheory.AnalyticForms.RegularLocalRings.Immersion
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.InterPC
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.ExistsAtlas
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.SNCstep
+public import ReciprocityTheory.AnalyticForms.RegularLocalRings.Immersion
+
+@[expose] public section
 
 noncomputable section
 

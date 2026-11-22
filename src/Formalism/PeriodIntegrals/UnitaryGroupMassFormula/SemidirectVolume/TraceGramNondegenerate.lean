@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.CjTDefs
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.ProjHA
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.CjTDefs
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.SemidirectVolume.ProjHA
+
+@[expose] public section
 
 noncomputable section
 
@@ -26,7 +30,7 @@ theorem trace_basis_holds : TraceBase := by
 theorem hE_add_left {F E : Type} [Field F] [Field E] [Algebra F E] (σ : E →ₐ[F] E) {M : ℕ}
     (J : Matrix (Fin M) (Fin M) E) (x x' y : Fin M → E) :
     hE σ J (x + x') y = hE σ J x y + hE σ J x' y := by
-  simp only [hE, Formalism.UG.hform, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib]
+  simp only [hE, Formalism.UG.hform, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib]
 
 theorem hE_add_right {F E : Type} [Field F] [Field E] [Algebra F E] (σ : E →ₐ[F] E) {M : ℕ}
     (J : Matrix (Fin M) (Fin M) E) (x y y' : Fin M → E) :
@@ -58,9 +62,9 @@ theorem hE_smul_right {F E : Type} [Field F] [Field E] [Algebra F E] (σ : E →
 def trForm {F E : Type} [Field F] [Field E] [Algebra F E] (σ : E →ₐ[F] E) {M : ℕ}
     (J : Matrix (Fin M) (Fin M) E) : LinearMap.BilinForm F (Fin M → E) :=
   LinearMap.mk₂ F (fun x y => Algebra.trace F E (hE σ J x y))
-    (fun x x' y => by simp only [hE_add_left, map_add])
+    (fun x x' y => by simp only [hE_add_left, map_add (f := _)])
     (fun c x y => by simp only [hE_smul_left, ← Algebra.smul_def, map_smul])
-    (fun x y y' => by simp only [hE_add_right, map_add])
+    (fun x y y' => by simp only [hE_add_right, map_add (f := _)])
     (fun c x y => by simp only [hE_smul_right, ← Algebra.smul_def, map_smul])
 
 theorem hE_single {F E : Type} [Field F] [Field E] [Algebra F E] (σ : E →ₐ[F] E) {M : ℕ}

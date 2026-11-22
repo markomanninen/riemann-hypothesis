@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.ArithmeticGapBounds.Arith
-import Mathlib
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.ArithmeticGapBounds.Arith
+public import Mathlib
+
+@[expose] public section
 
 namespace PositivityTheory.KB.SpectralGap
 
@@ -422,7 +426,8 @@ private theorem sl_mul_col_off_diag_zero_of_both {R : Type} [CommRing R] {F : Ty
     (hY : ∀ i, i ≠ k → q ((Y : Matrix (Fin N) (Fin N) R) i k) = 0) :
     ∀ i, i ≠ k → q (((X * Y : Matrix.SpecialLinearGroup (Fin N) R) : Matrix (Fin N) (Fin N) R) i k) = 0 := by
   intro i hi
-  rw [Matrix.SpecialLinearGroup.coe_mul, Matrix.mul_apply, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [Matrix.SpecialLinearGroup.coe_mul, Matrix.mul_apply, map_sum]
   rw [Finset.sum_eq_single k]
   · rw [map_mul, hX i hi, zero_mul]
   · intro j _ hj
@@ -450,7 +455,7 @@ private theorem exists_col_fixing_mul_entry_ne_zero {R : Type} [CommRing R] {F :
       rw [hε]
       simp [Matrix.transvection, Matrix.one_apply_ne hi, Matrix.single_apply, hki.symm, Ne.symm hki]
     · rw [Matrix.SpecialLinearGroup.coe_mul, hε]
-      simp only [Matrix.transvection_mul_apply_same, one_mul, map_add, hm, zero_add]
+      simp only [Matrix.transvection_mul_apply_same, one_mul, map_add (f := _), hm, zero_add]
       exact hp
   · refine ⟨1, ?_, ?_⟩
     · intro i hi
@@ -497,7 +502,7 @@ private theorem exists_col_fixing_mul_col_eq_smul_single {R : Type} [CommRing R]
     by_cases him : i = m
     · subst him
       simp [hc]
-    · simp only [hc, him, if_false, mul_zero, map_add, map_mul, map_neg, ht]
+    · simp only [hc, him, if_false, mul_zero, map_add (f := _), map_mul, map_neg, ht]
       field_simp
       ring
 

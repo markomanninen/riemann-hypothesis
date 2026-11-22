@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.NormCharSplit
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OpBasics
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.EigSummands
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.EigSplit
-import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.CuspidalMultiplicityOneTotallyComplex
-import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.SummandsSpan
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.EvExSub
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CompatEx
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.RrTens
-import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.PrjFix
-import GroundTheory.AutomorphicForms.CompactSelfAdjoint
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.Convolution.TraceSplitting.NormCharSplit
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.OpBasics
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.EigSummands
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.EigSplit
+public import Development.AutomorphicArithmetic.Foundations.Convolution.CentreSplitting.CuspidalMultiplicityOneTotallyComplex
+public import Development.AutomorphicArithmetic.Foundations.Convolution.PowerSumTraces.SummandsSpan
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.EvExSub
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.CompatEx
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.RrTens
+public import Development.AutomorphicArithmetic.Foundations.Convolution.ConvolutionKernels.KernelTransforms.PrjFix
+public import GroundTheory.AutomorphicForms.CompactSelfAdjoint
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -64,7 +68,7 @@ private theorem exists_pos_eig {H : Type} [NormedAddCommGroup H] [InnerProductSp
     exact V.smul_mem _ (hPV _)
   have hAw : A (b i) = ((l i : ℝ) : ℂ) • b i := by rw [← hBv _ hwV, hTb i]
   have hpos : 0 < l i := by
-    have h1 := ((ContinuousLinearMap.nonneg_iff_isPositive A).1 hA).re_inner_nonneg_right (b i)
+    have h1 := ((ContinuousLinearMap.nonneg_iff_isPositive).1 hA).re_inner_nonneg_right (b i)
     have hn : ⟪b i, b i⟫_ℂ = 1 := by
       rw [inner_self_eq_norm_sq_to_K, b.orthonormal.1 i]
       simp

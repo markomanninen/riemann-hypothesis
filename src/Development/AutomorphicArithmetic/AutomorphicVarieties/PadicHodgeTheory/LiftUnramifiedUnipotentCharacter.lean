@@ -1,23 +1,14 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsUniqueUnramifiedCocycleFrobeniusValue
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FrobDense
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IqBasic
-import Mathlib.RingTheory.Nilpotent.Exp
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.UnipotentExponentialSurjective
-open Formalism.BasicNotions Formalism.BasicNotions.Loc UpperTheory.V.Loc
+module
 
-private theorem ul_exp_two {A : Type} [CommRing A] [Algebra ℚ A] {a : A} (ha : IsNilpotent a) :
-    ∃ s, IsNilpotent.exp a = 1 + a + a ^ 2 * s := by
-  obtain ⟨k, hk⟩ := ha
-  have h2 : a ^ (k + 1 + 1) = 0 := pow_eq_zero_of_le (by omega) hk
-  refine ⟨∑ i ∈ Finset.range k, (((i + 1 + 1).factorial : ℚ))⁻¹ • a ^ i, ?_⟩
-  rw [IsNilpotent.exp_eq_sum h2, Finset.sum_range_succ', Finset.sum_range_succ', Finset.mul_sum]
-  have : ∀ i ∈ Finset.range k, (((i + 1 + 1).factorial : ℚ))⁻¹ • a ^ (i + 1 + 1)
-      = a ^ 2 * ((((i + 1 + 1).factorial : ℚ))⁻¹ • a ^ i) := fun i _ => by
-    rw [mul_smul_comm]; congr 1; ring
-  rw [Finset.sum_congr rfl this]
-  simp only [zero_add, Nat.factorial_one, Nat.factorial_zero, Nat.cast_one, inv_one, one_smul, pow_one,
-    pow_zero]
-  ring
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsUniqueUnramifiedCocycleFrobeniusValue
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.FrobDense
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IqBasic
+public import Mathlib.RingTheory.Nilpotent.Exp
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.UnipotentExponentialSurjective
+
+@[expose] public section
+
+open Formalism.BasicNotions Formalism.BasicNotions.Loc UpperTheory.V.Loc
 
 private theorem ul_exp_onto {A : Type} [CommRing A] [Algebra ℚ A] {n : A} (hn : IsNilpotent n) :
     ∃ x, IsNilpotent x ∧ IsNilpotent.exp x = 1 + n :=

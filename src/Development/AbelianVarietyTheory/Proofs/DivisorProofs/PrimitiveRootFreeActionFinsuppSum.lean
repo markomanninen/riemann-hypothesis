@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecEqZeroOfLoc
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimitiveRootPowUnitSubProdProperties
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SecEqZeroOfLoc
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimitiveRootPowUnitSubProdProperties
+
+@[expose] public section
+
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC GlobalTheory.EtC.KummerSplit
 
 noncomputable section
@@ -78,7 +83,8 @@ theorem free_act_sum : ∀ (q : ℕ) [NeZero q] (A : Type) [CommRing A] [Nontriv
   let T : (Aˣ →₀ ULift.{1} (ZMod q)) →+ ZMod q :=
     Finsupp.liftAddHom (fun u => (AddMonoidHom.mulRight (tau ζ u)).comp (AddEquiv.ulift.toAddMonoidHom))
   have hT := congrArg T hsum
-  rw [map_sum, map_zero] at hT
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero] at hT
   rw [← hT]
   refine Finset.sum_congr rfl (fun i hi => ?_)
   have hwu : w i = rootUnit ζ ^ a i * v i := by

@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntBTmulBasis
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsRootSelectionUnitaryRankOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntBTmulBasis
+
+@[expose] public section
+
 open Matrix NumberField GlobalTheory.LKTrip GlobalTheory.LKRes GlobalTheory.LKMid GlobalTheory.LKCount IsDedekindDomain GlobalTheory.AdicSpan
 open scoped TensorProduct Classical
 
@@ -23,7 +28,7 @@ theorem adicCompletion_tensor_matrixUnit_identity : ∀ (L : Type) [Field L] [Nu
   have hzero : P 0 := by simp [P]
   have hadd : ∀ β₁ β₂, P β₁ → P β₂ → P (β₁ + β₂) := by
     intro β₁ β₂ h₁ h₂
-    simp only [P, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib, mul_add] at h₁ h₂ ⊢
+    simp only [P, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib, mul_add] at h₁ h₂ ⊢
     rw [h₁, h₂]
   have hpure : ∀ (a : v.adicCompletion ℚ) (γ : Fin r → L), P (fun j => a ⊗ₜ[ℚ] γ j) := by
     intro a γ

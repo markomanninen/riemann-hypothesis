@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.CRSecB
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.CayleyCosetSums.CRSecB
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,8 +17,6 @@ attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
 variable {n : ℕ}
 
-theorem cT_apply {ι : Type} [Fintype ι] (M : Matrix ι ι ℂ) : cT M = Mᴴ := rfl
-
 theorem exists_mul_conjTranspose_eq_of_posDef (Y : Mn n) (hY : Y.PosDef) : ∃ a0 : Mn n, a0 * a0ᴴ = Y ∧ a0.det ≠ 0 := by
   have hA : Y.IsHermitian := hY.1
   set U : Mn n := (hA.eigenvectorUnitary : Mn n) with hU
@@ -26,7 +28,7 @@ theorem exists_mul_conjTranspose_eq_of_posDef (Y : Mn n) (hY : Y.PosDef) : ∃ a
     rw [hd, diagonal_conjTranspose, diagonal_mul_diagonal]
     congr 1
     funext i
-    simp only [Pi.star_apply, RCLike.star_def, Complex.conj_ofReal, Function.comp_apply]
+    simp only [Pi.star_apply, Complex.star_def, Complex.conj_ofReal, Function.comp_apply]
     rw [← Complex.ofReal_mul, Real.mul_self_sqrt (hY.eigenvalues_pos i).le]
     rfl
   have hprod : (U * d) * (U * d)ᴴ = Y := by

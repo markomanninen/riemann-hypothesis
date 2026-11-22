@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OfE
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.OfE
+
+@[expose] public section
+
 open HeckeCharacterZeroLocus.SiegelWeilU GlobalTheory.CompanionTheory.SW NumberField IsDedekindDomain MeasureTheory Topology Filter PositivityTheory.Rg.Base1 GroundTheory.Global GlobalTheory.CompanionTheory.SW.RankOneSiegelWeil
 open scoped TensorProduct ENNReal NNReal Matrix Classical
 
@@ -42,7 +47,7 @@ theorem ideleModule_bounded_on_compact : ∀ (K : Type) [Field K] [NumberField K
   rw [IdeleGroup.ideleModule_eq]
   have h1 : ∏ w : InfinitePlace K, ‖(a : AdeleRing (𝓞 K) K).1 w‖ ^ w.mult ≤
       ∏ w : InfinitePlace K, max (Bi w) 0 ^ w.mult :=
-    Finset.prod_le_prod (fun _ _ => by positivity) fun w _ =>
+    Finset.prod_le_prod₀ (fun _ _ => by positivity) fun w _ =>
       pow_le_pow_left₀ (norm_nonneg _) ((hBi w _ ha).trans (le_max_left _ _)) _
   have h2 : ∏ᶠ v : HeightOneSpectrum (𝓞 K), ‖(a : AdeleRing (𝓞 K) K).2 v‖ ≤
       ∏ v ∈ S, max (Bf v) 1 := by
@@ -54,7 +59,7 @@ theorem ideleModule_bounded_on_compact : ∀ (K : Type) [Field K] [NumberField K
     rw [finprod_eq_prod_of_mulSupport_subset _ hsub]
     calc ∏ v ∈ hfs.toFinset ∪ S, ‖(a : AdeleRing (𝓞 K) K).2 v‖
         ≤ ∏ v ∈ hfs.toFinset ∪ S, (if v ∈ S then max (Bf v) 1 else 1) := by
-          refine Finset.prod_le_prod (fun _ _ => norm_nonneg _) fun v _ => ?_
+          refine Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) fun v _ => ?_
           split_ifs with hv
           · exact (hBf v _ ha).trans (le_max_left _ _)
           · exact (Valued.toNormedField.norm_le_one_iff).2

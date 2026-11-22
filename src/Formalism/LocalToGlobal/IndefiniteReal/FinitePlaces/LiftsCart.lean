@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LinksDefs
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EHHre
-import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ColDictLReTr
-import Formalism.LocalToGlobal.IndefiniteReal.HeckeNonvanishing.Imports
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.EHHre
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ColDictLReTr
+public import Lean
+
+@[expose] public section
 
 noncomputable section
 
@@ -15,9 +19,9 @@ attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
 variable {D : D7} (Z : New D)
 
+
 set_option smartUnfolding false in
 set_option maxHeartbeats 4000000 in
-
 def reY {X : HidaSetting D} (Y : Full X) : Full (reX Z X) where
   hK := (Y.hK)
   TR := (reTR Z Y.TR)
@@ -36,26 +40,32 @@ def reY {X : HidaSetting D} (Y : Full X) : Full (reX Z X) where
   agree := (Y.agree)
   δ_pin := (Y.δ_pin)
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 def eRT {X : HidaSetting D} (Y : Full X) (u u' : D.what₂.Word) : RT Y u u' ≃ RT (reY Z Y) (wd Z u) (wd Z u') where
   toFun t := ⟨(t.lam), (t.mem), (t.cls)⟩
   invFun t := ⟨(t.lam), (t.mem), (t.cls)⟩
   left_inv t := (Eq.refl t)
   right_inv t := (Eq.refl t)
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 def eTT {X : HidaSetting D} (Y : Full X) (u u' : D.what₂.Word) : TT Y u u' ≃ TT (reY Z Y) (wd Z u) (wd Z u') where
   toFun t := ⟨(t.lam), (t.mem), (t.lam'), (t.mem'), (t.cls)⟩
   invFun t := ⟨(t.lam), (t.mem), (t.lam'), (t.mem'), (t.cls)⟩
   left_inv t := (Eq.refl t)
   right_inv t := (Eq.refl t)
 
-set_option maxHeartbeats 4000000 in
 
+set_option maxHeartbeats 4000000 in
 def eCure {X : HidaSetting D} {Y : Full X} (h : FinX Y) (h' : FinX (reY Z Y)) (u : D.what₂.Word) :
-    ColT (h.shInj u) ≃ₗᵢ[ℂ] ColT (h'.shInj (wd Z u)) := by kexactB LinearIsometryEquiv.refl ℂ (ColT (h.shInj u))
+    ColT (h.shInj u) ≃ₗᵢ[ℂ] ColT (h'.shInj (wd Z u)) := by
+  run_tac
+    let h := Lean.mkIdent `h
+    let u := Lean.mkIdent `u
+    let e ← Lean.Elab.Term.elabTerm (← `(LinearIsometryEquiv.refl ℂ (ColT (($h).shInj $u)))) none
+    (← Lean.Elab.Tactic.getMainGoal).assign e
+    Lean.Elab.Tactic.replaceMainGoal []
 
 end GlobalTheory.Mem.SRe
 

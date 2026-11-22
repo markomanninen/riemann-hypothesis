@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.SmoothRepresentationsGL.ExistsCombComb
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm
 open GroundTheory.Automorphic.FourierWhittaker (whittaker)
@@ -39,7 +43,7 @@ theorem UpperTheory.V.Af.Smo.chartCont :
       funext z
       have h : IsUnit (Matrix.of z.1.2) := z.2.2
       change chart f z.1.1 z.1.2 = _
-      rw [chart, dif_pos h]
+      rw [chart, dite_eq_left h]
     rw [e]
     exact hf.comp ((continuous_fst.comp continuous_subtype_val).mul ((cc_infGL E n).comp hu))
   refine ⟨h1, fun g => ?_⟩
@@ -52,4 +56,4 @@ theorem UpperTheory.V.Af.Smo.chartCont :
   funext x
   by_cases hx : x ∈ invSet E n
   · rw [Set.piecewise_eq_of_mem _ _ _ hx]
-  · rw [Set.piecewise_eq_of_notMem _ _ _ hx, chart, dif_neg (show ¬ IsUnit (Matrix.of x) from hx)]
+  · rw [Set.piecewise_eq_of_notMem _ _ _ hx, chart, dite_eq_right (show ¬ IsUnit (Matrix.of x) from hx)]

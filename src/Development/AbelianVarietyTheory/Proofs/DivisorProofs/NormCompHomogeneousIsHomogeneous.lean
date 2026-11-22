@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 open IsLocalRing
 
 namespace GlobalTheory
@@ -37,7 +42,7 @@ theorem norm_comp_homogeneous_isHomogeneous :
     simp [g]
     rfl
   let M : Matrix (Fin m) (Fin m) (MvPolynomial (Fin n × Fin m) K) :=
-    fun i j => ∑ s ∈ G.support, monomial s (Algebra.leftMulMatrix b (coeff s G) i j)
+    fun i j => ∑ s ∈ G.support, monomial s (Algebra.leftMulMatrix b (AddMonoidAlgebra.coeff G s) i j)
   have hM : ∀ i j, (M i j).IsHomogeneous d := by
     intro i j
     refine IsHomogeneous.sum _ _ _ (fun s hs => isHomogeneous_monomial _ ?_)
@@ -58,10 +63,12 @@ theorem norm_comp_homogeneous_isHomogeneous :
     congr 1
     ext i j
     show eval y (M i j) = _
-    simp only [M, map_sum, eval_monomial]
-    rw [eval_eq' _ G, map_sum, Matrix.sum_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [M, map_sum, eval_monomial]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [eval_eq' _ G, map_sum, Matrix.sum_apply]
     refine Finset.sum_congr rfl (fun s _ => ?_)
-    have : coeff s G * ∏ k, (algebraMap K L (y k)) ^ (s k) = (∏ k, y k ^ s k) • coeff s G := by
+    have : AddMonoidAlgebra.coeff G s * ∏ k, (algebraMap K L (y k)) ^ (s k) = (∏ k, y k ^ s k) • AddMonoidAlgebra.coeff G s := by
       rw [Algebra.smul_def, mul_comm]
       simp [map_prod, map_pow]
     rw [this, map_smul, Matrix.smul_apply, smul_eq_mul, mul_comm, Finsupp.prod_fintype]

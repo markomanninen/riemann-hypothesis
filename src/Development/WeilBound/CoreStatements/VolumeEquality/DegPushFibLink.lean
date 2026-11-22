@@ -1,4 +1,8 @@
-import Development.WeilBound.CoreStatements.VolumeEquality.DegPushFibLinkB
+module
+
+public import Development.WeilBound.CoreStatements.VolumeEquality.DegPushFibLinkB
+
+@[expose] public section
 
 noncomputable section
 

@@ -1,7 +1,15 @@
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DiscreteSpectrumResidualClassification
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfiniteClassBound
-import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.BernsteinUnitaryProductIrreducible
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfiniteClassBoundStatement
+module
+
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.DiscreteSpectrumResidualClassification
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.InfiniteClassBound
+public import Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.BernsteinUnitaryProductIrreducible
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.InfClassAt
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.DictAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NormSumPairRankZeroOfCurveCoordNorm
+
+@[expose] public section
 
 section
 noncomputable section
@@ -104,13 +112,13 @@ theorem archimedean_class_count_bound : _root_.GlobalTheory.FunPr.ThetaLocalInpu
     rw [GridChoice.Classes, Nat.card_prod, Nat.card_pi, Nat.card_pi]
     push_cast
     have hT : ∏ j : Fin D.R.m, (Nat.card (FinCl (ch.G.V (.top j)) (ch.S.levTop A.μ0 Φ β j j.2)) : ℝ) ≤ M ^ D.R.m := by
-      calc _ ≤ ∏ _j : Fin D.R.m, M := Finset.prod_le_prod (fun _ _ => Nat.cast_nonneg _) fun j _ =>
+      calc _ ≤ ∏ _j : Fin D.R.m, M := Finset.prod_le_prod₀ (fun _ _ => Nat.cast_nonneg _) fun j _ =>
             fin (.top j) (by simp [DefNode]) _
             (hTop Φ β hβ j)
         _ = _ := by simp
     have hR : ∏ i : Fin (D.R.m + 1), (Nat.card (FinCl (ch.G.V (.grid i D.R.m))
         (ch.S.levRow A.μ0 i (Nat.le_of_lt_succ i.2))) : ℝ) ≤ M ^ (D.R.m + 1) := by
-      calc _ ≤ ∏ _i : Fin (D.R.m + 1), M := Finset.prod_le_prod (fun _ _ => Nat.cast_nonneg _) fun i _ =>
+      calc _ ≤ ∏ _i : Fin (D.R.m + 1), M := Finset.prod_le_prod₀ (fun _ _ => Nat.cast_nonneg _) fun i _ =>
             fin (.grid i D.R.m) (by simp [DefNode]; omega) _
             (hRow i)
         _ = _ := by simp

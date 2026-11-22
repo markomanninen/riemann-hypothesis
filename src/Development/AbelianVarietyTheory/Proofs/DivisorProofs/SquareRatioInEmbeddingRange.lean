@@ -1,13 +1,22 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.SizeAt
-import Development.AbelianVarietyTheory.Definitions.Divisors.TieTest
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ToricSymbols
-import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
-import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfDefinite
-import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.AuxiliaryPrimeNeTypePrime
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BottomTriangleConstantRatioStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SlopeTestRemainingChoicesAlt
+public import Development.AbelianVarietyTheory.Statements.HeckeThetaIntegrals.FormulaAt
+public import Development.AbelianVarietyTheory.Definitions.Divisors.TieTest
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.NormSmall
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.ToricSymbols
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DiscreteSeriesHermitianUnique
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfDefinite
+public import Development.AbelianVarietyTheory.Statements.PlaceShiftStatements.AuxiliaryPrimeNeTypePrime
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RatInOfUnit
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BottomExistsIntegrable
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BottomTrianglePolynomialSurjection
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HypothesesAbsDet
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.BottomTriangleIntegralsNeZero
+
+@[expose] public section
 
 noncomputable section
 
@@ -86,35 +95,6 @@ theorem sqRatio_mem_of {D : D7} {T : Type} {Lc : LevCh D T} {sc : GlobalTheory.C
   exact div_mem (mul_mem (mul_mem (mul_mem (RingHom.mem_fieldRange.2 ⟨ζ, rfl⟩) hU) hl) (prod_mem hP2))
     (prod_mem fun k hk => (hP1 k hk).1)
 
-set_option maxHeartbeats 1600000 in
-
-theorem sqRatio_atPt : GlobalTheory.FunPr.Hypotheses₂ → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.ThetaIntegralsAgree → GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels.LocalMatching → SetAt → (Closed FamHyp fun Fm _ => EvPt Fm fun x _ i _ => |(Fm.L x i).logDerivativeAtOne| ≤ (Fm.L x i).sc.x ^ (Fm.L x i).sc.eps) → GlobalTheory.RowClaim.ConstK → LNe → TriEx → Tower → (AtPt fun {D} _ _ _ _ _ _ _ _ _ _ _ ch => ∀ i j t, GlobalTheory.RowTest.sqRatio ch i j t ∈ Set.range D.what₂.embLL) := by
-  intro hP hAg hMa hSet hdl hC hLN hTX hTW
-  have hBF := GlobalTheory.T.bottom_triangle_constant_ratio hP hAg hMa hLN
-  obtain ⟨c3, h3⟩ := hSet.atPt hC
-  obtain ⟨c5, h5⟩ := Model.gBig_and (Model.gBig_and hLN hTX) (Model.gBig_and hTW hBF)
-  refine ⟨max c3 c5, fun CF hCF => ?_⟩
-  have k3 : c3 ≤ CF := le_trans (by simp) hCF
-  have k5 : c5 ≤ CF := le_trans (by simp) hCF
-  obtain ⟨e0, he0, H⟩ := (h3 CF k3).and (hdl.and hSet)
-  refine ⟨e0, he0, fun eps he hle => ?_⟩
-  obtain ⟨K, hK⟩ := H eps he hle
-  obtain ⟨C0, x₀, hg⟩ := h5 eps CF k5
-  refine ⟨K, fun Fm CH hc hL => ?_⟩
-  obtain ⟨⟨y3, g3⟩, ⟨y5, g5⟩, ⟨y6, g6⟩⟩ := hK Fm CH hc hL
-  refine ⟨max (max y3 y5) (max y6 x₀), fun x hx hle i p hp G W n a ha => ?_⟩
-  have l3 : y3 ≤ x := le_trans (by simp) hle
-  have l5 : y5 ≤ x := le_trans (by simp) hle
-  have l6 : y6 ≤ x := le_trans (by simp) hle
-  have l7 : x₀ ≤ x := le_trans (by simp) hle
-  have hset := g6 x hx l6 i p hp ha.eser
-  have hrec : Rec (Fm.L x i) := ⟨hset.size, hset.host, hset.hF, g5 x hx l5 i p hp⟩
-  obtain ⟨⟨hLN', hTX'⟩, hTW', hBF'⟩ := hg C0 le_rfl _ (Fm.L x i) (Fm.L_eps x i)
-    (by rw [Fm.L_x x i hx]; exact l7) hrec _ _ _ hset.core.lev G
-  have hc := g3 x hx l3 i p hp G W n a ha
-  have hstd : IsStdChar (Fm.D x i) W.ψ (-1) := (ha.is.weil.ψ : a.ch.W.ψ = _) ▸ hset.std
-  exact fun i' j' t => sqRatio_mem_of G _ W a.S.toGridChoice a.rm a.c hstd ha.field hc ha.is.const
-    (fun i j => (hLN' i j).1) (hTX' W hstd) (hTW' W a.S.toGridChoice a.rm hstd ha.field) (hBF' W hstd) i' j' t
 
 end GlobalTheory.BigTop.Fun
 

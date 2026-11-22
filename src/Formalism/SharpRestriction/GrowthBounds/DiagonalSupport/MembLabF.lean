@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembTop
-import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PosTLSurj
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.MembTop
+public import Formalism.SharpRestriction.GrowthBounds.DiagonalSupport.PosTLSurj
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,11 +43,14 @@ private theorem fr_mono_of_valid (hV : Fr.Valid L₁ N₁) (j : ℤ) :
 private theorem fr_last_mono_in_index_of_valid (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (a : ℤ) :
     ∀ b : ℤ, a ≤ b → Fr.fr a (r - 1) ≤ Fr.fr b (r - 1) := by
   intro b hab
-  induction b, hab using Int.le_induction with
-  | base => exact le_rfl
-  | succ k _ ih =>
-    exact le_trans ih (le_trans (hV.2.2.2.1 k).le
-      (fr_mono_of_valid Fr hV (k + 1) 0 (r - 1) (Nat.zero_le _) (by omega)))
+  obtain ⟨n, rfl⟩ : ∃ n : ℕ, b = a + n := ⟨(b - a).toNat, by omega⟩
+  clear hab
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    have hstep := le_trans (hV.2.2.2.1 (a + n)).le
+      (fr_mono_of_valid Fr hV (a + n + 1) 0 (r - 1) (Nat.zero_le _) (by omega))
+    exact le_trans ih (by simpa [add_assoc] using hstep)
 
 theorem lf_dist_eq (hV : Fr.Valid L₁ N₁) (hr : 1 ≤ r) (j j' x y : ℤ) (hx1 : Fr.fr (j - 1) (r - 1) < x)
     (hx2 : x ≤ Fr.fr j (r - 1)) (hy1 : Fr.fr (j' - 1) (r - 1) < y) (hy2 : y ≤ Fr.fr j' (r - 1))
@@ -84,7 +91,7 @@ theorem labO_apply (hinj : Function.Injective fun x : TL J nL r => posOf n' (pos
     (rho : TL J nL r × Fin (r + K) → ℕ) (y : TL J nL r) (c : Fin (r + K)) :
     labO Fr K nL rho (posOf n' (posTL Fr y), c) = rho (y, c) := by
   classical
-  simp only [labO, Finsupp.finset_sum_apply, Finsupp.single_apply]
+  simp only [labO, Finsupp.finsetSum_apply, Finsupp.single_apply]
   rw [Finset.sum_eq_single y]
   · rw [Finset.sum_eq_single c]
     · simp
@@ -107,7 +114,7 @@ theorem labO_support (rho : TL J nL r × Fin (r + K) → ℕ) (v : Fin n' × Fin
   by_contra hne
   push_neg at hne
   apply Finsupp.mem_support_iff.mp hv
-  simp only [labO, Finsupp.finset_sum_apply, Finsupp.single_apply]
+  simp only [labO, Finsupp.finsetSum_apply, Finsupp.single_apply]
   apply Finset.sum_eq_zero
   intro x _
   apply Finset.sum_eq_zero

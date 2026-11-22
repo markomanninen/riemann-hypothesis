@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.StepOne
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnipotentComposition.StepOne
+
+@[expose] public section
 
 open Matrix MvPolynomial
 
@@ -21,14 +25,14 @@ theorem hasDerivAt_eval {σ : Type*} [Fintype σ] (v : ℝ → σ → ℂ) (v' :
       funext t; simp
     rw [hf]
     refine (hp.add hq).congr_deriv ?_
-    simp [map_add, add_mul, Finset.sum_add_distrib]
+    simp [map_add (f := _), add_mul, Finset.sum_add_distrib]
   | mul_X p i hp =>
     have hf : (fun t => eval (v t) (p * X i)) = fun t => eval (v t) p * v t i := by
       funext t; simp
     rw [hf]
     refine (hp.mul (hv i)).congr_deriv ?_
     symm
-    · simp only [Derivation.leibniz, smul_eq_mul, map_add, map_mul, eval_X, pderiv_X, add_mul,
+    · simp only [Derivation.leibniz, smul_eq_mul, map_add (f := _), map_mul, eval_X, pderiv_X, add_mul,
         Finset.sum_add_distrib]
       rw [show ∀ a b c d : ℂ, b = c → a = d → a + b = c + d from
         fun a b c d h1 h2 => by rw [h1, h2, add_comm]]
@@ -47,10 +51,12 @@ theorem crv_var {k r : ℕ} (X g : Mat k r) (i : Vr (2 * r + k + 1)) :
     simpa [dirv] using h2
   rcases i with ⟨a, b⟩ | ⟨a, b⟩
   · refine (hab a b).congr_deriv ?_
-    simp only [lin, map_sum, map_mul, eval_C, eval_X, vars, Sum.elim_inl, Matrix.mul_apply]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [lin, map_sum, map_mul, eval_C, eval_X, vars, Sum.elim_inl, Matrix.mul_apply]
     exact Finset.sum_congr rfl fun c _ => mul_comm _ _
   · refine (hab a b).star.congr_deriv ?_
-    simp only [lin, map_sum, map_mul, eval_C, eval_X, vars, Sum.elim_inr, Matrix.mul_apply, star_sum, star_mul']
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [lin, map_sum, map_mul, eval_C, eval_X, vars, Sum.elim_inr, Matrix.mul_apply, star_sum, star_mul']
     exact Finset.sum_congr rfl fun c _ => mul_comm _ _
 
 theorem hasDerivAt_poly {k r : ℕ} (X g : Mat k r) (q : MvPolynomial (Vr (2 * r + k + 1)) ℂ) :
@@ -60,7 +66,8 @@ theorem hasDerivAt_poly {k r : ℕ} (X g : Mat k r) (q : MvPolynomial (Vr (2 * r
   have h0 : crv (false, X) g 0 = g := by simp [crv]
   rw [h0] at h
   convert h using 1
-  simp only [dP, map_sum, map_mul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [dP, map_sum, map_mul]
 
 theorem eval_qD {k j ρ : ℕ} (g : Mat k (j + ρ)) : eval (vars g) (qD k j ρ) = DjU k j ρ g := by
   rw [qD, DjU, RingHom.map_det]

@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.NilpotentHypotheses.AevalProdLinearFactors
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.UnitaryDualProof.CompactOrbits.NilpotentOrbits.NilpotentHypotheses.AevalProdLinearFactors
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,13 +40,11 @@ theorem bez2 {M : Type*} [AddCommGroup M] [Module ℂ M] (K : Submodule ℂ M) (
     exact hab x hx y hy (by linarith)
   obtain ⟨u, v, huv⟩ := hcop
   have key := congrArg (fun p => (aeval (R : Module.End ℂ M) p) ζ) huv
-  simp only [map_add, map_mul, map_one, LinearMap.add_apply, Module.End.mul_apply, Module.End.one_apply] at key
+  simp only [map_add (f := _), map_mul, map_one, LinearMap.add_apply, Module.End.mul_apply, Module.End.one_apply] at key
   rw [← key]
   refine K.add_mem (aeval_mem K R hK u _ ?_) (aeval_mem K R hK v _ ?_)
   · rw [aeval_prod_lin R γ b]; exact h1
   · rw [aeval_prod_linear_factors R β γ a]
     convert hQ using 3
-    refine List.map_congr_left fun x _ => ?_
-    rfl
 
 end PositivityTheory.RgUd.TP.Nil.Asm

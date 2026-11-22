@@ -1,13 +1,18 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsTotallyImaginaryPadicSqrt
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsLocallyAlgebraicTransferOfPlaceIso
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LaHecke
-import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LaArtin
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.QuadraticTwists.ExBridge
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.QuadraticTwists.ExPlaceIso
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalAdjoinRange
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PlaceEqOfContEmbCompEq
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DeRhamAndJumpsRankOneLAdicCharacter
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOddPrimeGtTwoBounds
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.ExistsTotallyImaginaryPadicSqrt
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.IsLocallyAlgebraicTransferOfPlaceIso
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LaHecke
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.PadicHodgeTheory.LaArtin
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.QuadraticTwists.ExBridge
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.QuadraticTwists.ExPlaceIso
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.FiniteDimensionalAdjoinRange
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PlaceEqOfContEmbCompEq
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.DeRhamAndJumpsRankOneLAdicCharacter
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOddPrimeGtTwoBounds
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.BasicNotions Formalism.BasicNotions.Loc GlobalTheory.WeilDeligne GlobalTheory.GalOfCusp GlobalTheory.HeckeGal GlobalTheory.LocLanglands GlobalTheory.Published UpperTheory.V.W
 
 namespace UpperTheory.V.Loc
@@ -36,7 +41,7 @@ private theorem mem_of_norm {R : Type} [CommRing R] {l : ℕ} [Fact l.Prime] (f 
   by_contra hxw
   obtain ⟨a, b, hb, e⟩ := hI.exists_inv hxw
   have h3 := congrArg (fun y => ‖f y‖) e
-  simp only [map_add, map_mul, map_one, norm_one] at h3
+  simp only [map_add (f := _), map_mul, map_one, norm_one] at h3
   have h4 := IsUltrametricDist.norm_add_le_max (f a * f x) (f b)
   have h5 : ‖f a * f x‖ < 1 := by
     rw [norm_mul]
@@ -173,7 +178,7 @@ theorem laGlob (hG : GlobalArtinReciprocity) (hH : HeckeLAdicCharacter) {F Ω : 
       exact hc0 (neg_eq_self.1 a2)
     show m _ - m _ = _
     simp only [m]
-    rw [dif_pos H1, dif_neg H2, sub_zero, hR1 _ _ _ H1.choose_spec (e1.symm ▸ H)]
+    rw [dite_eq_left H1, dite_eq_right H2, sub_zero, hR1 _ _ _ H1.choose_spec (e1.symm ▸ H)]
   obtain ⟨χ, hχ, -⟩ := GlobalTheory.AlgCharUnr.exists_algChar_unr E l Fact.out n 0 (fun φ => by
     have : ComplexEmbedding.conjugate (ComplexEmbedding.conjugate φ) = φ := star_star φ
     simp only [n, this]

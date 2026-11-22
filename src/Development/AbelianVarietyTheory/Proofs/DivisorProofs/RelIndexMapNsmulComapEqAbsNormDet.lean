@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField Module
 
@@ -8,7 +12,7 @@ theorem exists_basis_closure_eq_of_fg_of_nsmul_mem {Γ : Type} [AddCommGroup Γ]
     (A : AddSubgroup Γ) (hA : A.FG) (hN : ∀ x : Γ, ∃ N : ℕ, 0 < N ∧ N • x ∈ A) :
     ∃ (n : ℕ) (b : Basis (Fin n) ℚ Γ), A = AddSubgroup.closure (Set.range b) := by
   classical
-  have : IsAddTorsionFree Γ := .of_module_rat Γ
+  have : HasUniqueDiv Γ := .of_module_rat Γ
   have : Module.Finite ℤ A :=
     Module.Finite.iff_addGroup_fg.mpr ((AddGroup.fg_iff_addSubgroup_fg A).mpr hA)
   let bA := Module.finBasis ℤ A

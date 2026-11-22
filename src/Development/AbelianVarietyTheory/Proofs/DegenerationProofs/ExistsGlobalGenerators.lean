@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.ArithBase
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsMulPowMemOOfIsAffineOpen
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SpanEqSpanMinor
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.ArithBase
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsMulPowMemOOfIsAffineOpen
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SpanEqSpanMinor
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj
@@ -70,7 +74,7 @@ theorem proj_mul_self {T : AddSubgroup S.Gam} (hT : S.IsoFree T) (c : T →+ ZMo
     refine Finset.sum_congr rfl fun s _ => ?_
     rw [Finset.mul_sum, ← Equiv.sum_comp (Equiv.addLeft s) fun t : T => chi S (c t) • S.ρ t]
     refine Finset.sum_congr rfl fun t _ => ?_
-    rw [smul_mul_smul_comm, ρ_mul_ρ hT, ← chi_add, ← map_add]
+    rw [smul_mul_smul_comm, ρ_mul_ρ hT, ← chi_add, ← map_add (f := _)]
     rfl
   rw [proj_eq, smul_mul_smul_comm, e, smul_smul, _root_.mul_assoc, Ring.inverse_mul_cancel _ (isUnit_card hT),
     _root_.mul_one]
@@ -111,7 +115,7 @@ theorem sum_proj [IsDomain o] {T : AddSubgroup S.Gam} (hT : S.IsoFree T) [Fintyp
     · simp [chi_zero]
     · intro c _ hc
       obtain ⟨t, ht⟩ := DFunLike.ne_iff.1 hc
-      exact sum_eq_zero_of_mul (fun t : T => chi S (c t)) (fun a b => by rw [map_add, chi_add]) (chi_ne_one S ht)
+      exact sum_eq_zero_of_mul (fun t : T => chi S (c t)) (fun a b => by rw [map_add (f := _), chi_add]) (chi_ne_one S ht)
     · simp
   simp only [e1]
   rw [← Finset.sum_smul, Finset.sum_comm, e2, smul_smul, Ring.inverse_mul_cancel _ (isUnit_card hT), one_smul]
@@ -264,8 +268,8 @@ theorem exists_global [IsNoetherianRing o] [Finite Γ] (R : Subalgebra o Ω) (hR
 
 end Bundle
 
-open DualLattice RatModel in
 
+open DualLattice RatModel in
 theorem exists_global_generators : ∀ (o Ω : Type) [CommRing o] [Field Ω] [Algebra o Ω] [ArithBase o Ω] (S : ThetaSys o Ω) (M : RatModel o Ω) (U₀ : M.Z.Opens) (EE : M.Lat S.J), S.admitted M U₀ → JacobsonSpace M.Z → ((∀ ξ : M.Z, S.IsoFree (S.TT M ξ) ∧ S.perp (S.TT M ξ) = S.HH M ξ) ∧ (∀ ξ z : M.Z, ξ ⤳ z → S.supI M z ⊆ S.supI M ξ) ∧ (∀ ξ ∈ U₀, S.TT M ξ = ⊥) ∧ (∀ (ξ : M.Z) (W : M.Z.Opens), ξ ∈ W → ∃ x ∈ W, IsClosed ({x} : Set M.Z) ∧ ξ ⤳ x ∧ S.supI M x = S.supI M ξ)) → (∀ (ξ : M.Z) (c : S.TT M ξ →+ ZMod S.N), S.FF (S.TT M ξ) c ≠ 0) → (∀ z : M.Z, IsClosed ({z} : Set M.Z) → EE.E z = Submodule.span (M.O z) {v | ∃ (c : S.TT M z →+ ZMod S.N) (k : _) (x₀ : S.Gam) (i : S.J), M.Div (S.FF (S.TT M z) c) k z ∧ x₀ ∈ S.supI M z ∧ v = fun j => S.th x₀ / S.FF _ c k * algebraMap o Ω (S.proj _ c j i)}) → (∀ (ξ : M.Z) (c : S.TT M ξ →+ ZMod S.N) (k : _) (i : S.J) (z : M.Z), S.supI M ξ ⊆ S.supI M z → ∀ x₀ ∈ S.supI M z, ∀ v ∈ EE.E z, S.FF _ c k / S.th x₀ * ((fun j => algebraMap o Ω (S.proj _ c i j)) ⬝ᵥ v) ∈ M.O z) → ∃ (n a : ℕ) (GG : Fin n → S.J → S.R), ∀ z : M.Z, ∀ x₀ ∈ S.supI M z, ∀ w : S.J → Ω, w ∈ Submodule.span (M.O z) (Set.range fun k j => (GG k j : Ω) / S.th x₀ ^ a) ↔ ∀ v ∈ EE.E z, w ⬝ᵥ v ∈ M.O z := by
   intro o Ω _ _ _ hB S M U₀ EE hAdm _ ⟨hiso, _, _, hcl⟩ hne hE hsec
   have := hB.ded
@@ -307,7 +311,8 @@ theorem exists_global_generators : ∀ (o Ω : Type) [CommRing o] [Field Ω] [Al
     intro w hw
     let P : (S.TT M z →+ ZMod S.N) → Matrix S.J S.J Ω := fun c => (algebraMap o Ω).mapMatrix (S.proj _ c)
     have hP : ∑ c, P c * P c = 1 := by
-      simp only [P, ← map_mul, proj_mul_self hT, ← map_sum, sum_proj hT, map_one]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [P, ← map_mul, proj_mul_self hT, ← map_sum, sum_proj hT, map_one]
     have e : w = ∑ c, ∑ i, (w ᵥ* P c) i • P c i := by
       simp only [← vecMul_eq_sum, vecMul_vecMul]
       rw [← vecMul_sum, hP, vecMul_one]

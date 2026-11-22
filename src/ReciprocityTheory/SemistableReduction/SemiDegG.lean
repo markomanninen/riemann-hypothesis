@@ -1,4 +1,8 @@
-import ReciprocityTheory.SemistableReduction.SemiDegF
+module
+
+public import ReciprocityTheory.SemistableReduction.SemiDegF
+
+@[expose] public section
 
 noncomputable section
 
@@ -10,7 +14,8 @@ open scoped ComplexOrder
 theorem herm_cGP {K : Type} [Field K] [NumberField K] {r : ℕ} (S : HermForm K r)
     (P : Matrix (Fin r) (Fin r) K) (a b : Fin r) :
     S.c (((P.map S.c)ᵀ * S.G * P) a b) = ((P.map S.c)ᵀ * S.G * P) b a := by
-  simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, map_sum, map_mul,
     S.c_invol, S.G_herm, Finset.sum_mul]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
@@ -124,7 +129,7 @@ theorem exists_adapted_majorant {K : Type} [Field K] [NumberField K] {r : ℕ} (
     rw [Matrix.diagonal_map (map_zero _)]
     congr 1
     funext i
-    simp
+    exact (Complex.conj_ofReal (adMet r m g dd σ i)).symm
   show ((P⁻¹).map ((starRingEnd ℂ).comp σ))ᴴ * diagMet (adMet r m g dd) ((starRingEnd ℂ).comp σ) *
       (P⁻¹).map ((starRingEnd ℂ).comp σ) =
     (((P⁻¹).map σ)ᴴ * diagMet (adMet r m g dd) σ * (P⁻¹).map σ).map (starRingEnd ℂ)

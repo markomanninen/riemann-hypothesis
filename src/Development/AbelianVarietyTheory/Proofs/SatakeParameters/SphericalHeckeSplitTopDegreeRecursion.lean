@@ -1,13 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalLabelOperatorsOnHyperspecialFixedVector
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PairMultMulRight
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalHeckeScalarLabelCompEqShiftDownSplit
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsSplitPrimeGLChartOfUnitaryGroupStatement
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CartanExponentsNonnegMinusculeTopProductStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalLabelOperatorsOnHyperspecialFixedVector
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PairMultMulRight
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SphericalHeckeScalarLabelCompEqShiftDownSplit
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsSplitPrimeGLChartOfUnitaryGroupStatement
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.CartanExponentsNonnegMinusculeTopProductStatement
+
+@[expose] public section
+
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.L2.Indef Formalism.DivisionValues Polynomial
 open Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Lev Formalism.IndefR.Mult Formalism.IndefR.Datum Formalism.IndefR.Cx
@@ -24,7 +29,7 @@ theorem opOf_sum_single {D : D7} {V : HSp D} {M : Type} [AddCommGroup M] [Module
     opOf π P (∑ i ∈ s, Finsupp.single (l i) (z i)) = ∑ i ∈ s, z i • ∑ γ ∈ rep V P (l i), π γ := by
   classical
   unfold opOf
-  rw [← Finsupp.sum_finset_sum_index (by simp) (by intros; simp [add_smul])]
+  rw [← Finsupp.sum_finsetSum_index (by simp) (by intros; simp [add_smul])]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Finsupp.sum_single_index (by simp)]
 
@@ -40,17 +45,12 @@ theorem pos_iff_lt : ∀ {n : ℕ} (d : Fin n → ℤ), Antitone d →
       · simp [h0]
       · simp [ih j]
     · have hnil : (List.ofFn fun j : Fin n => d j.succ).filter (fun x => 0 < x) = [] := by
-        rw [List.filter_eq_nil_iff]
-        intro x hx
-        obtain ⟨j, rfl⟩ := List.mem_ofFn.1 hx
-        have := hd (Fin.zero_le j.succ)
-        simp only [decide_eq_true_eq, not_lt]
-        omega
-      simp only [h0, decide_false, Bool.false_eq_true, if_false, hnil, List.length_nil]
-      have := hd (Fin.zero_le i)
-      constructor
-      · intro h; omega
-      · intro h; omega
+        rw [List.filter_eq_nil_iff, List.forall_mem_ofFn_iff]
+        intro j
+        simpa only [decide_eq_true_eq] using
+          (fun hj : 0 < d j.succ => h0 (lt_of_lt_of_le hj (hd (Fin.zero_le j.succ))))
+      have hi : ¬ 0 < d i := fun hi => h0 (lt_of_lt_of_le hi (hd (Fin.zero_le i)))
+      simp [h0, hnil, hi]
 
 theorem dualLab_splitLab (n k : ℕ) (hk : k ≤ n) :
     dualLab (splitLab n k) = List.ofFn fun i : Fin n => if (i : ℕ) < k then (1 : ℤ) else 0 := by
@@ -179,7 +179,7 @@ theorem top_step : ∀ {D : D7} (V : HSp D) (P : Pl D.host.E), conjPl P ≠ P �
     refine (hTi (g * h) hghT x hxT ⟨a, ha, b * (γ⁻¹ * x), K.mul_mem hb hγx, by rw [← mul_assoc, ← hγe]; group⟩).symm
   refine ⟨m (g * h), (hT _ hghT).1, ∑ x ∈ T.erase (g * h), Finsupp.single (List.ofFn (cx x)) (m x : ℂ), ?_, ?_⟩
   · intro d' hd'
-    obtain ⟨x, hxT, hd'x⟩ := Finset.mem_biUnion.1 (Finsupp.support_finset_sum hd')
+    obtain ⟨x, hxT, hd'x⟩ := Finset.mem_biUnion.1 (Finsupp.support_finsetSum hd')
     obtain ⟨hne, hxT⟩ := Finset.mem_erase.1 hxT
     rw [Finset.mem_singleton.1 (Finsupp.support_single_subset hd'x)]
     obtain ⟨c1, c2, c3⟩ := hineq x hxT hne
@@ -200,7 +200,8 @@ theorem top_step : ∀ {D : D7} (V : HSp D) (P : Pl D.host.E), conjPl P ≠ P �
     have lhs : ∑ γ ∈ rep V P (List.ofFn d₁), π γ (∑ γ' ∈ rep V P (List.ofFn aF), π γ' u) =
         ∑ γ ∈ rep V P (List.ofFn d₁), ∑ γ' ∈ rep V P (List.ofFn aF), π (γ * γ') u := by
       refine Finset.sum_congr rfl fun γ _ => ?_
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun γ' _ => ?_
       rw [map_mul, Module.End.mul_apply]
     rw [lhs, hsum', ← Finset.add_sum_erase _ _ hghT, if_pos rfl]

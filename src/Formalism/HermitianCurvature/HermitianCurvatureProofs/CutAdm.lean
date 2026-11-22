@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutMP2
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutMP2
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutMP
 

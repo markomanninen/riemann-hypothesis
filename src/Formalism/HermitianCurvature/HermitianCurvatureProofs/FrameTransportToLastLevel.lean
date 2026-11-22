@@ -1,4 +1,8 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.FnValLift
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.FnValLift
+
+@[expose] public section
 
 open Matrix MeasureTheory
 

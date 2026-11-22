@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
-import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.PointwiseKernelBound
-import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.FarTermsLatticeBound
-import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.CuspidalFrames
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.ConvolutionSmoothL2
+public import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.PointwiseKernelBound
+public import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.FarTermsLatticeBound
+public import Development.AbelianVarietyTheory.BlockTheory.SiegelWeilLocal.CuspidalFrames
+
+@[expose] public section
 
 open MeasureTheory NumberField Finset
 
@@ -35,12 +39,5 @@ def FarBound : Prop :=
       ∑' γ : GlobalTheory.IndefiniteRowSideFullHecke.FarTermsLatticeBound.farSet B d ep x, ‖phe B d (x⁻¹ * γ.1 * x)‖ ≤
         (∏ v, d v) * (B.e 1).re * GlobalTheory.IndefiniteRowSideFullHecke.FarTermsLatticeBound.latFactor B.I x *
           (2 * (B.I.f : ℝ) * 3 ^ B.I.f * Real.exp (-(h * ep ^ 2 / 16)))
-
-def CuspFrame : Prop :=
-  ∀ (B : RowsAut) (d : InfinitePlace B.I.F → ℝ) (h : ℝ),
-    IsDSData B d → 1 ≤ B.g → GlobalTheory.Dec.LocDec B h → GlobalTheory.Dec.HBig B 40 h →
-    ∃ Rφ : B.I.L2 B.μf B.fund →L[ℂ] B.I.L2 B.μf B.fund,
-      B.I.IsRConv B.μf B.fund B.R (phe B d) Rφ ∧
-        ∃ T : Fin B.D → (B.Hs →L[ℂ] B.I.L2 B.μf B.fund), GlobalTheory.IndefiniteRowSideFullHecke.CuspidalFrames.IsCuspidalFrame B Rφ T
 
 end GlobalTheory.Deep

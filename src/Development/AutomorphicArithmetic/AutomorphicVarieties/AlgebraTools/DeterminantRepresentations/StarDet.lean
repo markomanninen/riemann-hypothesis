@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.StarApi
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.WeilGroupCharacters.UniversalOrdinaryDeterminantRing
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.DeterminantRepresentations.StarApi
+
+@[expose] public section
 
 open Polynomial Matrix UpperTheory.V UpperTheory.V.W
 
@@ -13,7 +17,7 @@ private theorem star_mapRingHom_algHom_eq {l : ℕ} [Fact l.Prime] (F : GFrame l
     simp [GFrame.star, GFrame.starOp, MonoidAlgebra.lift_single, MonoidAlgebra.smul_single']
   induction x using MonoidAlgebra.induction_linear with
   | zero => simp [GFrame.star]
-  | add x y hx hy => simp only [map_add] at hx hy ⊢; simp [GFrame.star, map_add] at hx hy ⊢; rw [hx, hy]
+  | add x y hx hy => simp only [map_add (f := _)] at hx hy ⊢; simp [GFrame.star, map_add (f := _)] at hx hy ⊢; rw [hx, hy]
   | single g b =>
     rw [MonoidAlgebra.mapRingHom_single, hs, hs, MonoidAlgebra.mapRingHom_single, map_mul, ← he g, ← map_zpow]
     rfl

@@ -1,7 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyIsIntegralNoetherianCompact
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsUniqueDescendOfTorsionInvariant
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.ExistsDimEqOne
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianVarietyIsIntegralNoetherianCompact
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsUniqueDescendOfTorsionInvariant
+
+@[expose] public section
+
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open scoped CategoryTheory.Obj CategoryTheory.MonObj TensorProduct
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -43,12 +48,14 @@ theorem eq_zero_of_dim_eq_zero :
   intro K _ A B h f
   rcases h with h | h
   · have hi := isIso_hom_of_dim_eq_zero A h
-    refine hom_ext ?_
+    apply Subtype.ext
+    change f.hom = (0 : A ⟶ B).hom
     rw [zero_hom]
     have e1 : f.hom = (1 : A.X ⟶ A.X) ≫ f.hom := by
       rw [hom_eq_of_isIso hi (1 : A.X ⟶ A.X) (𝟙 A.X), Category.id_comp]
     rw [e1, CategoryTheory.Hom.one_def, CategoryTheory.Hom.one_def, Category.assoc, IsMonHom.one_hom]
   · have hi := isIso_hom_of_dim_eq_zero B h
-    exact hom_ext (hom_eq_of_isIso hi _ _)
+    apply Subtype.ext
+    exact hom_eq_of_isIso hi _ _
 
 end GlobalTheory.AV.AbVar

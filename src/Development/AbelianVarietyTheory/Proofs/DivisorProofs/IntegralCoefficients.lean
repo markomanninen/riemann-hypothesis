@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.NonzeroDeterminantIntegrality
 
@@ -13,7 +17,8 @@ theorem exists_det_ne_zero {K I Λ : Type} [Field K] [Fintype Λ] [DecidableEq �
     have hexp : ∀ x : Λ → K, φ x = ∑ l, φ (Pi.single l 1) * x l := by
       intro x
       conv_lhs => rw [pi_eq_sum_univ' x]
-      rw [map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum]
       refine Finset.sum_congr rfl fun l _ => ?_
       rw [map_smul, smul_eq_mul, mul_comm]
     have hc := h (fun l => φ (Pi.single l 1)) (fun i => by
@@ -61,14 +66,16 @@ theorem integral_coefficients : ∀ (W : Type) [CommRing W] [IsDomain W] (K₀ K
     funext a
     have h1 := congrArg i₀ (congrFun hM a)
     rw [hz] at h1
-    simp only [Matrix.mulVec, dotProduct, map_sum, map_mul] at h1 ⊢
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Matrix.mulVec, dotProduct, map_sum, map_mul] at h1 ⊢
     simp only [RingHom.mapMatrix_apply, Matrix.map_apply]
     rw [h1]
     refine Finset.sum_congr rfl fun l _ => ?_
     rw [mul_comm]
     rfl
   refine ⟨z₀, fun l => congrFun key l, fun i => hinj ?_⟩
-  rw [hz, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hz, map_sum]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [map_mul, ← congrFun key l]
 

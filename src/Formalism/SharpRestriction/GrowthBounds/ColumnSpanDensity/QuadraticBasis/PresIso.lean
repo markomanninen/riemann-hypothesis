@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.QuadraticBasis.StatementO
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.ColumnSpanDensity.QuadraticBasis.StatementO
+
+@[expose] public section
 
 namespace Formalism.MainNotions.flipOneThree.Pf.QuadraticBasis
 
@@ -19,7 +23,7 @@ def pbM (f0 f1 ϖ : W) (t s : W × W × W × W) : W × W × W × W :=
 theorem pbE_mul (j : W →+* O) (θ w : O) (f0 f1 ϖ : W) (hθ : θ ^ 2 + j f1 * θ + j f0 = 0)
     (hw : w ^ 2 = j ϖ) (t s : W × W × W × W) :
     pbE j θ w t * pbE j θ w s = pbE j θ w (pbM f0 f1 ϖ t s) := by
-  simp only [pbE, pbM, map_add, map_sub, map_mul]
+  simp only [pbE, pbM, map_add (f := _), map_sub, map_mul]
   linear_combination (j t.2.2.1 * j s.2.2.1 + (j t.2.2.1 * j s.2.2.2 + j t.2.2.2 * j s.2.2.1) * θ +
       j t.2.2.2 * j s.2.2.2 * θ ^ 2) * hw +
     (j t.2.1 * j s.2.1 + (j t.2.1 * j s.2.2.2 + j t.2.2.2 * j s.2.1) * w +
@@ -27,7 +31,7 @@ theorem pbE_mul (j : W →+* O) (θ w : O) (f0 f1 ϖ : W) (hθ : θ ^ 2 + j f1 *
 
 theorem pbE_add (j : W →+* O) (θ w : O) (t s : W × W × W × W) :
     pbE j θ w t + pbE j θ w s = pbE j θ w (t + s) := by
-  simp only [pbE, Prod.fst_add, Prod.snd_add, map_add]
+  simp only [pbE, Prod.fst_add, Prod.snd_add, map_add (f := _)]
   ring
 
 theorem pbE_bij {j : W →+* O} {θ w : O} (h : IsQuadBasis j θ w) : Function.Bijective (pbE j θ w) := by

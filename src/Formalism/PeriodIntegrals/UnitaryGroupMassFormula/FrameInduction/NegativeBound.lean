@@ -1,5 +1,9 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FrameInduction.NegBound
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FrameInduction.EqZeroOfNegMap
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FrameInduction.NegBound
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.FrameInduction.EqZeroOfNegMap
+
+@[expose] public section
 
 open Matrix Formalism.QuantumDeterminants
 

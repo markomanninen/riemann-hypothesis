@@ -1,12 +1,16 @@
-import Mathlib
-import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Height
-import GroundTheory.AutomorphicForms.TraceFormulaConvolution
-import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsAreCuspForms
-import GroundTheory.AutomorphicForms.MultiplicityOne.OpenSubgroupRep
-import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteLevelGroups
-import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteAdelicHaar
-import GroundTheory.AutomorphicForms.L2LocalComponents.CenterCommute
-import GroundTheory.AutomorphicForms.GKModules.KernelCalculus
+module
+
+public import Mathlib
+public import GroundTheory.AutomorphicForms.AutomorphicFormSpaces.Height
+public import GroundTheory.AutomorphicForms.TraceFormulaConvolution
+public import GroundTheory.AutomorphicForms.CuspidalDiscreteness.SummandsAreCuspForms
+public import GroundTheory.AutomorphicForms.MultiplicityOne.OpenSubgroupRep
+public import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteLevelGroups
+public import GroundTheory.AutomorphicForms.MultiplicityOne.FiniteAdelicHaar
+public import GroundTheory.AutomorphicForms.L2LocalComponents.CenterCommute
+public import GroundTheory.AutomorphicForms.GKModules.KernelCalculus
+
+@[expose] public section
 
 open MeasureTheory NumberField IsDedekindDomain
 open GroundTheory.Automorphic GroundTheory.Automorphic.Reduction GroundTheory.Automorphic.RightCosetSpace
@@ -55,7 +59,7 @@ private theorem UpperTheory.ConvolutionTheory.Tf.rightAction_integral_derivative
   | add a b ha hb =>
     obtain ⟨ha1, ha2⟩ := ha κ hκ
     obtain ⟨hb1, hb2⟩ := hb κ hκ
-    simp only [map_add, LinearMap.add_apply, Submodule.coe_add]
+    simp only [map_add (f := _), LinearMap.add_apply, Submodule.coe_add]
     refine ⟨ha1.add hb1, ?_⟩
     rw [ha2, hb2]
     funext g

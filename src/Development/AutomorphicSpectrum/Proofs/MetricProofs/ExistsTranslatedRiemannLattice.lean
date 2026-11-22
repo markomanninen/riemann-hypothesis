@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GroupDict
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSheetCover
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsProved
-import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.Assembly
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntEmbInjective
-import GroundTheory.HeightsAndTheta.Theta.CMDatum
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.GroupDict
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IsSheetCover
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StatementsProved
+public import GroundTheory.HeightsAndTheta.Heights.CountingLowerBound.Assembly
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IntEmbInjective
+public import GroundTheory.HeightsAndTheta.Theta.CMDatum
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,7 +99,8 @@ theorem emb_sesq (τ : Ψ) (w v : Fin (j + j') → E) :
     embOf (F.σ τ) (C.h.toSesq w v) =
       star (fun i => embOf (F.σ τ) (w i)) ⬝ᵥ (C.gr τ *ᵥ fun i => embOf (F.σ τ) (v i)) := by
   rw [sesq_eq_sum C.h.toSesq (Pi.basisFun E (Fin (j + j'))) w v]
-  simp only [map_sum, map_mul, dotProduct, mulVec, Finset.mul_sum, LatEmb.gr, Matrix.map_apply, Pi.star_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_mul, dotProduct, mulVec, Finset.mul_sum, LatEmb.gr, Matrix.map_apply, Pi.star_apply,
     Pi.basisFun_repr, GroundTheory.Heights₂.Theta.embedding_conj (maximalRealSubfield E) E, mul_assoc]
   rfl
 
@@ -160,11 +165,11 @@ def FmB : (Ψ → Fin (j + j') → ℂ) →ₗ[ℝ] (Ψ → Fin (j + j') → ℂ
 def HrB (R : RiemLat E g Λ) : (Ψ → Fin (j + j') → ℂ) →ₗ[ℝ] (Ψ → Fin (j + j') → ℂ) →ₗ[ℝ] ℝ :=
   LinearMap.mk₂ ℝ (fun y y' => (C.perExt R y ⬝ᵥ R.Hm *ᵥ star (C.perExt R y')).im)
     (fun y z w => by
-      simp only [map_add, add_dotProduct, Complex.add_im])
+      simp only [map_add (f := _), add_dotProduct, Complex.add_im])
     (fun r y w => by
       simp only [map_smul, smul_dotProduct, Complex.smul_im])
     (fun y z w => by
-      simp only [map_add, star_add, mulVec_add, dotProduct_add, Complex.add_im])
+      simp only [map_add (f := _), star_add, mulVec_add, dotProduct_add, Complex.add_im])
     (fun r y w => by
       simp only [map_smul, star_smul, star_trivial, mulVec_smul, dotProduct_smul, Complex.smul_im])
 
@@ -194,8 +199,8 @@ theorem Fm_rot (ai : Ψ → Matrix (Fin (j + j')) (Fin (j + j')) ℂ) (h : ∀ �
   show 2 * (_ * (star (ai τ *ᵥ y' τ) ⬝ᵥ (C.gr τ *ᵥ (ai τ *ᵥ y τ)))).re = _
   rw [h1]
 
-variable (F) in
 
+variable (F) in
 def scL (c : 𝓞 E) : (Ψ → Fin (j + j') → ℂ) →ₗ[ℝ] (Ψ → Fin (j + j') → ℂ) where
   toFun y τ := F.σ τ c • y τ
   map_add' y z := by

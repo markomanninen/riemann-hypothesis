@@ -1,5 +1,10 @@
-import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.UnitBallSubring
+module
+
+public import Development.AutomorphicArithmetic.Foundations.IwahoriReduction.LangPolynomials.FixedIntegersIsUnitOfNotMemPrimeSpan
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.UnitBallSubring
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.MainNotions.N GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.HV GlobalTheory.Ord2 GlobalTheory.KZ GlobalTheory.Col UpperTheory.Kd.C7
 
 private theorem term_le {R K : Type} [CommRing R] [NormedField K] (f : R →+* K) (hf : ∀ x, ‖f x‖ ≤ 1) (t : K)
@@ -22,14 +27,15 @@ private theorem exE {R K : Type} [CommRing R] [NormedField K] [CompleteSpace K] 
   · intro a b
     rw [tsum_mul_tsum_eq_tsum_sum_antidiagonal_of_summable_norm (summ f hf t ht a) (summ f hf t ht b)]
     refine tsum_congr fun n => ?_
-    rw [PowerSeries.coeff_mul, map_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [PowerSeries.coeff_mul, map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun p hp => ?_
     rw [← Finset.HasAntidiagonal.mem_antidiagonal.1 hp, map_mul, pow_add]; ring
   · simp
   · intro a b
     rw [← Summable.tsum_add (summ f hf t ht a).of_norm (summ f hf t ht b).of_norm]
     refine tsum_congr fun n => ?_
-    rw [map_add, map_add, add_mul]
+    rw [map_add (f := _), map_add (f := _), add_mul]
 
 private theorem tail {R K : Type} [CommRing R] [NormedField K] [CompleteSpace K] [IsUltrametricDist K]
     (f : R →+* K) (hf : ∀ x, ‖f x‖ ≤ 1) (t : K) (ht : ‖t‖ < 1) (h : PowerSeries R) (N : ℕ) :
@@ -60,7 +66,7 @@ theorem UpperTheory.Kd.C7.pEvHom :
     · simp
     · intro b hb; simp [PowerSeries.coeff_C, hb]
   have hX : E (1 + PowerSeries.X) = z := by
-    rw [map_add, map_one, hE, tsum_eq_single 1]
+    rw [map_add (f := _), map_one, hE, tsum_eq_single 1]
     · simp
     · intro b hb; simp [PowerSeries.coeff_X, hb]
   have hcyc : E (GlobalTheory.Col.cyc Φ.R l m) = 0 := by

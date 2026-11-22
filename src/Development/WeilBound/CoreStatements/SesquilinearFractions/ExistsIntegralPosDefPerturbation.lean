@@ -1,5 +1,9 @@
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ImportsRestMore
-import Development.WeilBound.CoreStatements.SesquilinearFractions.ExistsIntegerNearConjVector
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.SesquilinearFractions.ExistsIntegerNearConjVector
+
+@[expose] public section
 
 open NumberField Matrix GlobalTheory.CompanionTheory.Ar GlobalTheory.CompanionTheory.Ar.Fl
 open scoped ComplexOrder
@@ -82,7 +86,7 @@ theorem exists_integral_posDef_perturbation : ∀ (E : Type) [Field E] [NumberFi
     simp only [Matrix.map_apply, Matrix.add_apply, Matrix.smul_apply, Matrix.of_apply, D, c, f,
       if_pos hτ, smul_eq_mul]
     push_cast
-    simp only [map_add, map_nsmul, nsmul_eq_mul, map_mul, map_natCast]
+    simp only [map_add (f := _), map_nsmul, nsmul_eq_mul, map_mul, map_natCast]
     field_simp
     ring
   have hD : ∀ τ, Filter.Tendsto (fun k : ℕ => D k τ) Filter.atTop (nhds 0) := by

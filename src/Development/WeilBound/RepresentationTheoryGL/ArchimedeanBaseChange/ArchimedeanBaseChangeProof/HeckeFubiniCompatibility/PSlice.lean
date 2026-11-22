@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PSplit
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.MultHasCompactSupport
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.CompatFub
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SecondCountableG
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.PSplit
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.MultHasCompactSupport
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.HeckeFubiniCompatibility.CompatFub
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.SecondCountableG
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,41 +111,42 @@ theorem integral_split (hF : CompatFub) (D : Dom E a b) (hC : Compat D μa μb �
     (Q : H E a b → ℂ) (hQ : Continuous Q) (hQs : HasCompactSupport Q) :
     Integrable (fun q : G a × RA E a b v => Q (ιA v q.1 * σA v q.2)) (μa.prod (restA μa μb ν v)) ∧
       ∫ g, Q g ∂D.μ = ∫ t, ∫ r, Q (ιA v t * σA v r) ∂restA μa μb ν v ∂μa := by
-  haveI : SigmaFinite μa := inferInstance
-  haveI : SigmaFinite μb := inferInstance
-  haveI : SigmaFinite ν := inferInstance
-  haveI : SigmaFinite (Measure.pi fun _ : InfinitePlace E => μa) := inferInstance
-  haveI : SigmaFinite (Measure.pi fun _ : InfinitePlace E => μb) := inferInstance
-  haveI : SigmaFinite (Measure.pi fun _ : {w : InfinitePlace E // w ≠ v} => μa) := inferInstance
-  haveI : SigmaFinite ((Measure.pi fun _ : InfinitePlace E => μb).prod ν) := inferInstance
-  haveI : SigmaFinite (restA μa μb ν v) := by unfold restA; infer_instance
-  haveI : IsFiniteMeasureOnCompacts (Measure.pi fun _ : InfinitePlace E => μa) := inferInstance
-  haveI : IsFiniteMeasureOnCompacts (Measure.pi fun _ : InfinitePlace E => μb) := inferInstance
-  haveI : IsFiniteMeasureOnCompacts ((Measure.pi fun _ : InfinitePlace E => μb).prod ν) := inferInstance
-  set M := (Measure.pi fun _ : InfinitePlace E => μa).prod ((Measure.pi fun _ : InfinitePlace E => μb).prod ν) with hM
-  haveI : IsFiniteMeasureOnCompacts M := by rw [hM]; infer_instance
-  have hmp := measurePreserving_eqA (b := b) μa μb ν v
-  have hQ' : Continuous (fun z => Q (splitH a b z)) := hQ.comp (splitH a b).continuous
-  have hQs' : HasCompactSupport (fun z => Q (splitH a b z)) := hQs.comp_homeomorph (splitH a b).toHomeomorph
-  have hI : Integrable (fun z => Q (splitH a b z)) M := hQ'.integrable_of_hasCompactSupport hQs'
-  have hcomp : (fun z => Q (splitH a b z)) ∘ (eqA (b := b) v).symm = fun q => Q (ιA v q.1 * σA v q.2) := by
-    funext q
-    simp only [Function.comp_apply, splitH_eqA_symm]
-  have hI2 : Integrable (fun q : G a × RA E a b v => Q (ιA v q.1 * σA v q.2)) (μa.prod (restA μa μb ν v)) := by
-    rw [← hcomp]
-    exact ((hmp.symm _).integrable_comp_emb (eqA v).symm.measurableEmbedding).2 hI
-  refine ⟨hI2, ?_⟩
-  have e1 : ∫ z, Q (splitH a b z) ∂M =
-      ∫ ya, ∫ yb, ∫ h, Q (splitH a b (ya, (yb, h))) ∂ν ∂(Measure.pi fun _ => μb) ∂(Measure.pi fun _ => μa) := by
-    rw [integral_prod _ hI]
-    refine integral_congr_ae ?_
-    filter_upwards [hI.prod_right_ae] with ya hya
-    exact integral_prod _ hya
-  have e2 : ∫ z, Q (splitH a b z) ∂M = ∫ q, Q (ιA v q.1 * σA v q.2) ∂(μa.prod (restA μa μb ν v)) := by
-    rw [← (hmp.symm _).integral_comp' (g := fun z => Q (splitH a b z))]
-    simp only [splitH_eqA_symm]
-  rw [← integral_prod _ hI2, ← e2, e1]
-  exact hF E a b D μa μb ν hC Q hQ hQs
+  set_option synthInstance.maxHeartbeats 800000 in
+    haveI : SigmaFinite μa := inferInstance
+    haveI : SigmaFinite μb := inferInstance
+    haveI : SigmaFinite ν := inferInstance
+    haveI : SigmaFinite (Measure.pi fun _ : InfinitePlace E => μa) := inferInstance
+    haveI : SigmaFinite (Measure.pi fun _ : InfinitePlace E => μb) := inferInstance
+    haveI : SigmaFinite (Measure.pi fun _ : {w : InfinitePlace E // w ≠ v} => μa) := inferInstance
+    haveI : SigmaFinite ((Measure.pi fun _ : InfinitePlace E => μb).prod ν) := inferInstance
+    haveI : SigmaFinite (restA μa μb ν v) := by unfold restA; infer_instance
+    haveI : IsFiniteMeasureOnCompacts (Measure.pi fun _ : InfinitePlace E => μa) := inferInstance
+    haveI : IsFiniteMeasureOnCompacts (Measure.pi fun _ : InfinitePlace E => μb) := inferInstance
+    haveI : IsFiniteMeasureOnCompacts ((Measure.pi fun _ : InfinitePlace E => μb).prod ν) := inferInstance
+    set M := (Measure.pi fun _ : InfinitePlace E => μa).prod ((Measure.pi fun _ : InfinitePlace E => μb).prod ν) with hM
+    haveI : IsFiniteMeasureOnCompacts M := by rw [hM]; infer_instance
+    have hmp := measurePreserving_eqA (b := b) μa μb ν v
+    have hQ' : Continuous (fun z => Q (splitH a b z)) := hQ.comp (splitH a b).continuous
+    have hQs' : HasCompactSupport (fun z => Q (splitH a b z)) := hQs.comp_homeomorph (splitH a b).toHomeomorph
+    have hI : Integrable (fun z => Q (splitH a b z)) M := hQ'.integrable_of_hasCompactSupport hQs'
+    have hcomp : (fun z => Q (splitH a b z)) ∘ (eqA (b := b) v).symm = fun q => Q (ιA v q.1 * σA v q.2) := by
+      funext q
+      simp only [Function.comp_apply, splitH_eqA_symm]
+    have hI2 : Integrable (fun q : G a × RA E a b v => Q (ιA v q.1 * σA v q.2)) (μa.prod (restA μa μb ν v)) := by
+      rw [← hcomp]
+      exact ((hmp.symm _).integrable_comp_emb (eqA v).symm.measurableEmbedding).2 hI
+    refine ⟨hI2, ?_⟩
+    have e1 : ∫ z, Q (splitH a b z) ∂M =
+        ∫ ya, ∫ yb, ∫ h, Q (splitH a b (ya, (yb, h))) ∂ν ∂(Measure.pi fun _ => μb) ∂(Measure.pi fun _ => μa) := by
+      rw [integral_prod _ hI]
+      refine integral_congr_ae ?_
+      filter_upwards [hI.prod_right_ae] with ya hya
+      exact integral_prod _ hya
+    have e2 : ∫ z, Q (splitH a b z) ∂M = ∫ q, Q (ιA v q.1 * σA v q.2) ∂(μa.prod (restA μa μb ν v)) := by
+      rw [← (hmp.symm _).integral_comp' (g := fun z => Q (splitH a b z))]
+      simp only [splitH_eqA_symm]
+    rw [← integral_prod _ hI2, ← e2, e1]
+    exact hF E a b D μa μb ν hC Q hQ hQs
 
 theorem tens_ισ (v : InfinitePlace E) (ka : Kers Ma) (kb : Kers Mb) (ψ : Matrix κ κ (Hf E a b → ℂ)) (i j : Io Ma Mb κ)
     (t : G a) (r : RA E a b v) :
@@ -159,38 +164,40 @@ theorem conv_slice (hF : CompatFub) (D : Dom E a b) (hC : Compat D μa μb ν) (
     (hf : ∀ i, Continuous (f i)) (i : Io Ma Mb κ) (p : H E a b) :
     conv D.μ (tens ka kb ψ) f i p =
       ∫ t, ⟪eb Ma v (i.1.1 v), ka v t.val (Rv v μa μb ν ka kb ψ f i (p * ιA v t))⟫_ℂ ∂μa := by
-  haveI : SigmaFinite μa := inferInstance
-  haveI : SigmaFinite μb := inferInstance
-  haveI : SigmaFinite ν := inferInstance
-  haveI : SigmaFinite (restA μa μb ν v) := by unfold restA; infer_instance
-  have hQ : ∀ j, Continuous (fun g => tens ka kb ψ i j g * f j (p * g)) ∧
-      HasCompactSupport (fun g => tens ka kb ψ i j g * f j (p * g)) := fun j =>
-    ⟨(hT i j).1.mul ((hf j).comp (continuous_const.mul continuous_id)), (hT i j).2.mul_right⟩
-  have hs := fun j => integral_split hF D hC v _ (hQ j).1 (hQ j).2
-  have hpt : ∀ j t, ∫ r, tens ka kb ψ i j (ιA v t * σA v r) * f j (p * (ιA v t * σA v r)) ∂restA μa μb ν v =
-      ent (Ma v) (ka v t.val) (i.1.1 v) (j.1.1 v) *
-        ∫ r, cA v ka kb ψ i j r * f j (p * ιA v t * σA v r) ∂restA μa μb ν v := by
-    intro j t
-    rw [← integral_const_mul]
-    refine integral_congr_ae (ae_of_all _ fun r => ?_)
-    simp only [tens_ισ, mul_assoc]
-  have hsplit : ∀ j, ∫ g, tens ka kb ψ i j g * f j (p * g) ∂D.μ = ∫ t, ent (Ma v) (ka v t.val) (i.1.1 v) (j.1.1 v) *
-      ∫ r, cA v ka kb ψ i j r * f j (p * ιA v t * σA v r) ∂restA μa μb ν v ∂μa := fun j =>
-    (hs j).2.trans (integral_congr_ae (ae_of_all _ fun t => hpt j t))
-  have hint : ∀ j, Integrable (fun t => ent (Ma v) (ka v t.val) (i.1.1 v) (j.1.1 v) *
-      ∫ r, cA v ka kb ψ i j r * f j (p * ιA v t * σA v r) ∂restA μa μb ν v) μa := fun j =>
-    ((hs j).1.integral_prod_left).congr (ae_of_all _ fun t => hpt j t)
-  show ∑ j, ∫ g, tens ka kb ψ i j g * f j (p * g) ∂D.μ = _
-  rw [Finset.sum_congr rfl fun j _ => hsplit j, ← integral_finset_sum _ fun j _ => hint j]
-  refine integral_congr_ae (ae_of_all _ fun t => ?_)
-  simp only [Rv, map_sum, map_smul, inner_sum, inner_smul_right]
-  rw [← Finset.sum_fiberwise Finset.univ (fun j : Io Ma Mb κ => j.1.1 v)]
-  refine Finset.sum_congr rfl fun q _ => ?_
-  rw [Finset.sum_mul]
-  refine Finset.sum_congr rfl fun j hj => ?_
-  rw [(Finset.mem_filter.1 hj).2]
-  simp only [ent, eb]
-  ring
+  set_option synthInstance.maxHeartbeats 800000 in
+    haveI : SigmaFinite μa := inferInstance
+    haveI : SigmaFinite μb := inferInstance
+    haveI : SigmaFinite ν := inferInstance
+    haveI : SigmaFinite (restA μa μb ν v) := by unfold restA; infer_instance
+    have hQ : ∀ j, Continuous (fun g => tens ka kb ψ i j g * f j (p * g)) ∧
+        HasCompactSupport (fun g => tens ka kb ψ i j g * f j (p * g)) := fun j =>
+      ⟨(hT i j).1.mul ((hf j).comp (continuous_const.mul continuous_id)), (hT i j).2.mul_right⟩
+    have hs := fun j => integral_split hF D hC v _ (hQ j).1 (hQ j).2
+    have hpt : ∀ j t, ∫ r, tens ka kb ψ i j (ιA v t * σA v r) * f j (p * (ιA v t * σA v r)) ∂restA μa μb ν v =
+        ent (Ma v) (ka v t.val) (i.1.1 v) (j.1.1 v) *
+          ∫ r, cA v ka kb ψ i j r * f j (p * ιA v t * σA v r) ∂restA μa μb ν v := by
+      intro j t
+      rw [← integral_const_mul]
+      refine integral_congr_ae (ae_of_all _ fun r => ?_)
+      simp only [tens_ισ, mul_assoc]
+    have hsplit : ∀ j, ∫ g, tens ka kb ψ i j g * f j (p * g) ∂D.μ = ∫ t, ent (Ma v) (ka v t.val) (i.1.1 v) (j.1.1 v) *
+        ∫ r, cA v ka kb ψ i j r * f j (p * ιA v t * σA v r) ∂restA μa μb ν v ∂μa := fun j =>
+      (hs j).2.trans (integral_congr_ae (ae_of_all _ fun t => hpt j t))
+    have hint : ∀ j, Integrable (fun t => ent (Ma v) (ka v t.val) (i.1.1 v) (j.1.1 v) *
+        ∫ r, cA v ka kb ψ i j r * f j (p * ιA v t * σA v r) ∂restA μa μb ν v) μa := fun j =>
+      ((hs j).1.integral_prod_left).congr (ae_of_all _ fun t => hpt j t)
+    show ∑ j, ∫ g, tens ka kb ψ i j g * f j (p * g) ∂D.μ = _
+    rw [Finset.sum_congr rfl fun j _ => hsplit j, ← integral_finsetSum _ fun j _ => hint j]
+    refine integral_congr_ae (ae_of_all _ fun t => ?_)
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Rv, map_sum, map_smul, inner_sum, inner_smul_right]
+    rw [← Finset.sum_fiberwise Finset.univ (fun j : Io Ma Mb κ => j.1.1 v)]
+    refine Finset.sum_congr rfl fun q _ => ?_
+    rw [Finset.sum_mul]
+    refine Finset.sum_congr rfl fun j hj => ?_
+    rw [(Finset.mem_filter.1 hj).2]
+    simp only [ent, eb]
+    ring
 
 theorem along_eq (v : InfinitePlace E) (y : GA E a) (m₂ : GA E b) (φ : H E a b → ℂ) {x : Mat a} (hx : x ∈ GLs a) :
     along v y (fun z => φ (z, m₂)) x = φ ((y, m₂) * ιA v (GeneralLinearGroup.mkOfDetNeZero x hx)) := by
@@ -231,28 +238,29 @@ theorem cA_props (v : InfinitePlace E) {ka : Kers Ma} {kb : Kers Mb} {ψ : Matri
     (hkb : ∀ w, Continuous (fun t : G b => kb w t.val) ∧ HasCompactSupport (fun t : G b => kb w t.val))
     (hψ : IsFinM ψ) (i j : Io Ma Mb κ) :
     Continuous (cA v ka kb ψ i j) ∧ HasCompactSupport (cA v ka kb ψ i j) := by
-  refine ⟨?_, ?_⟩
-  · refine ((continuous_finset_prod _ fun w _ => ?_).mul (continuous_finset_prod _ fun w _ => ?_)).mul
-      ((hψ i.2 j.2).1.comp (continuous_snd.comp continuous_snd))
-    · exact continuous_ent ((hka w).1.comp ((continuous_apply w).comp continuous_fst)) _ _
-    · exact continuous_ent ((hkb w).1.comp ((continuous_apply w).comp (continuous_fst.comp continuous_snd))) _ _
-  · have hK : IsCompact ((Set.univ.pi fun w : {w : InfinitePlace E // w ≠ v} => tsupport (fun t : G a => ka w t.val)) ×ˢ
-        ((Set.univ.pi fun w : InfinitePlace E => tsupport (fun t : G b => kb w t.val)) ×ˢ tsupport (ψ i.2 j.2))) :=
-      (isCompact_univ_pi fun w : {w : InfinitePlace E // w ≠ v} => (hka w.1).2).prod
-        ((isCompact_univ_pi fun w => (hkb w).2).prod (hψ i.2 j.2).2)
-    refine HasCompactSupport.intro hK fun r hr => ?_
-    by_contra hne
-    apply hr
-    have h1 := left_ne_zero_of_mul (left_ne_zero_of_mul hne)
-    have h2 := right_ne_zero_of_mul (left_ne_zero_of_mul hne)
-    have h3 := right_ne_zero_of_mul hne
-    refine ⟨fun w _ => ?_, fun w _ => ?_, subset_tsupport _ h3⟩
-    · have h := Finset.prod_ne_zero_iff.1 h1 w (Finset.mem_univ _)
-      refine subset_tsupport _ (show ka w (r.1 w).val ≠ 0 from fun h0 => h ?_)
-      rw [h0, ent_zero]
-    · have h := Finset.prod_ne_zero_iff.1 h2 w (Finset.mem_univ _)
-      refine subset_tsupport _ (show kb w (r.2.1 w).val ≠ 0 from fun h0 => h ?_)
-      rw [h0, ent_zero]
+  set_option synthInstance.maxHeartbeats 800000 in
+    refine ⟨?_, ?_⟩
+    · refine ((continuous_finsetProd _ fun w _ => ?_).mul (continuous_finsetProd _ fun w _ => ?_)).mul
+        ((hψ i.2 j.2).1.comp (continuous_snd.comp continuous_snd))
+      · exact continuous_ent ((hka w).1.comp ((continuous_apply w).comp continuous_fst)) _ _
+      · exact continuous_ent ((hkb w).1.comp ((continuous_apply w).comp (continuous_fst.comp continuous_snd))) _ _
+    · have hK : IsCompact ((Set.univ.pi fun w : {w : InfinitePlace E // w ≠ v} => tsupport (fun t : G a => ka w t.val)) ×ˢ
+          ((Set.univ.pi fun w : InfinitePlace E => tsupport (fun t : G b => kb w t.val)) ×ˢ tsupport (ψ i.2 j.2))) :=
+        (isCompact_univ_pi fun w : {w : InfinitePlace E // w ≠ v} => (hka w.1).2).prod
+          ((isCompact_univ_pi fun w => (hkb w).2).prod (hψ i.2 j.2).2)
+      refine HasCompactSupport.intro hK fun r hr => ?_
+      by_contra hne
+      apply hr
+      have h1 := left_ne_zero_of_mul (left_ne_zero_of_mul hne)
+      have h2 := right_ne_zero_of_mul (left_ne_zero_of_mul hne)
+      have h3 := right_ne_zero_of_mul hne
+      refine ⟨fun w _ => ?_, fun w _ => ?_, subset_tsupport _ h3⟩
+      · have h := Finset.prod_ne_zero_iff.1 h1 w (Finset.mem_univ _)
+        refine subset_tsupport _ (show ka w (r.1 w).val ≠ 0 from fun h0 => h ?_)
+        rw [h0, ent_zero]
+      · have h := Finset.prod_ne_zero_iff.1 h2 w (Finset.mem_univ _)
+        refine subset_tsupport _ (show kb w (r.2.1 w).val ≠ 0 from fun h0 => h ?_)
+        rw [h0, ent_zero]
 
 theorem continuous_Rv_comp (v : InfinitePlace E) {ka : Kers Ma} {kb : Kers Mb} {ψ : Matrix κ κ (Hf E a b → ℂ)}
     {f : Io Ma Mb κ → H E a b → ℂ} (hf : ∀ i, Continuous (f i))
@@ -261,25 +269,26 @@ theorem continuous_Rv_comp (v : InfinitePlace E) {ka : Kers Ma} {kb : Kers Mb} {
     (hψ : IsFinM ψ) (i : Io Ma Mb κ) {X : Type} [TopologicalSpace X] [FirstCountableTopology X]
     [LocallyCompactSpace X] {φ : X → H E a b} (hφ : Continuous φ) :
     Continuous fun z : X => Rv v μa μb ν ka kb ψ f i (φ z) := by
-  haveI : SigmaFinite μa := inferInstance
-  haveI : SigmaFinite μb := inferInstance
-  haveI : SigmaFinite ν := inferInstance
-  haveI : IsLocallyFiniteMeasure (restA μa μb ν v) := by unfold restA; infer_instance
-  have hcont : ∀ j, Continuous (fun z : X =>
-      ∫ r, cA v ka kb ψ i j r * f j (φ z * σA v r) ∂restA μa μb ν v) := by
-    intro j
-    obtain ⟨hc, hcs⟩ := cA_props v hka hkb hψ i j
-    have e : (fun z : X => ∫ r, cA v ka kb ψ i j r * f j (φ z * σA v r) ∂restA μa μb ν v) =
-        fun z => ∫ r in tsupport (cA v ka kb ψ i j), cA v ka kb ψ i j r * f j (φ z * σA v r) ∂restA μa μb ν v :=
-      funext fun z => (setIntegral_eq_integral_of_forall_compl_eq_zero fun r hr => by
-        rw [image_eq_zero_of_notMem_tsupport hr, zero_mul]).symm
-    rw [e]
-    refine continuous_parametric_integral_of_continuous (f := fun z r => cA v ka kb ψ i j r * f j (φ z * σA v r))
-      ?_ hcs
-    exact (hc.comp continuous_snd).mul ((hf j).comp ((hφ.comp continuous_fst).mul
-      ((continuous_σA v).comp continuous_snd)))
-  simp only [Rv]
-  exact continuous_finset_sum _ fun q _ => (continuous_finset_sum _ fun j _ => hcont j).smul continuous_const
+  set_option synthInstance.maxHeartbeats 800000 in
+    haveI : SigmaFinite μa := inferInstance
+    haveI : SigmaFinite μb := inferInstance
+    haveI : SigmaFinite ν := inferInstance
+    haveI : IsLocallyFiniteMeasure (restA μa μb ν v) := by unfold restA; infer_instance
+    have hcont : ∀ j, Continuous (fun z : X =>
+        ∫ r, cA v ka kb ψ i j r * f j (φ z * σA v r) ∂restA μa μb ν v) := by
+      intro j
+      obtain ⟨hc, hcs⟩ := cA_props v hka hkb hψ i j
+      have e : (fun z : X => ∫ r, cA v ka kb ψ i j r * f j (φ z * σA v r) ∂restA μa μb ν v) =
+          fun z => ∫ r in tsupport (cA v ka kb ψ i j), cA v ka kb ψ i j r * f j (φ z * σA v r) ∂restA μa μb ν v :=
+        funext fun z => (setIntegral_eq_integral_of_forall_compl_eq_zero fun r hr => by
+          rw [image_eq_zero_of_notMem_tsupport hr, zero_mul]).symm
+      rw [e]
+      refine continuous_parametric_integral_of_continuous (f := fun z r => cA v ka kb ψ i j r * f j (φ z * σA v r))
+        ?_ hcs
+      exact (hc.comp continuous_snd).mul ((hf j).comp ((hφ.comp continuous_fst).mul
+        ((continuous_σA v).comp continuous_snd)))
+    simp only [Rv]
+    exact continuous_finsetSum _ fun q _ => (continuous_finsetSum _ fun j _ => hcont j).smul continuous_const
 
 theorem continuous_Rv (v : InfinitePlace E) {ka : Kers Ma} {kb : Kers Mb} {ψ : Matrix κ κ (Hf E a b → ℂ)}
     {f : Io Ma Mb κ → H E a b → ℂ} (hf : ∀ i, Continuous (f i))

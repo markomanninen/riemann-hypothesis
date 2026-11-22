@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.UnitaryNorms.CharProd
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.UnitaryNorms.CharProd
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 

@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
-import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.DivisorSupportCondition
+public import Development.AbelianVarietyTheory.Definitions.Divisors.SecClass
+
+@[expose] public section
 
 noncomputable section
 open CategoryTheory Limits AlgebraicGeometry Opposite CochainComplex CochainComplex.HomComplex GlobalTheory.EtC
@@ -39,14 +43,14 @@ theorem sec_map_res {F G : Shv R} (φ : F ⟶ G) {V U : Scheme.{0}} (g : V ⟶ U
 variable {E : Spc} {I : Cx R} {n : ℤ}
 
 theorem ev_eq (α : Cochain ((chains R).obj E) I n) (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx E p U) :
-    ev α p s h U x = Sec.map ((chainsXIso R E p).inv ≫ α.v _ _ h) (freeGen R _ U x) := rfl
+    ev (R := R) α p s h U x = Sec.map ((chainsXIso R E p).inv ≫ α.v _ _ h) (freeGen R _ U x) := rfl
 
 theorem ev_res (α : Cochain ((chains R).obj E) I n) (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) {V U : Scheme.{0}} (g : V ⟶ U)
-    (x : Sx E p U) : Sec.res g (ev α p s h U x) = ev α p s h V (x.res g) := by
+    (x : Sx E p U) : Sec.res g (ev (R := R) α p s h U x) = ev (R := R) α p s h V (x.res g) := by
   rw [ev_eq, ev_eq, sec_map_res, freeGen_res]; rfl
 
 theorem ev_add (α β : Cochain ((chains R).obj E) I n) (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0}) (x : Sx E p U) :
-    ev (α + β) p s h U x = ev α p s h U x + ev β p s h U x := by
+    ev (R := R) (α + β) p s h U x = ev (R := R) α p s h U x + ev (R := R) β p s h U x := by
   rw [ev_eq, Cochain.add_v, Preadditive.comp_add]; rfl
 
 theorem sec_map_add {F G : Shv R} (φ ψ : F ⟶ G) {U : Scheme.{0}} (x : Sec F U) :
@@ -61,7 +65,7 @@ theorem sec_map_sum {F G : Shv R} {ι : Type*} (s : Finset ι) (φ : ι → (F �
   map_sum (AddMonoidHom.mk' (fun φ : F ⟶ G => Sec.map φ x) (fun _ _ => rfl)) φ s
 
 theorem ev_units_smul (c : ℤˣ) (α : Cochain ((chains R).obj E) I n) (p : ℕ) (s : ℤ) (h : -(p : ℤ) + n = s) (U : Scheme.{0})
-    (x : Sx E p U) : ev (c • α) p s h U x = c • ev α p s h U x := by
+    (x : Sx E p U) : ev (R := R) (c • α) p s h U x = c • ev (R := R) α p s h U x := by
   rw [ev_eq, Cochain.units_smul_v, Linear.comp_units_smul, Units.smul_def, sec_map_zsmul]; rfl
 
 theorem isZero_pos (E : Spc) (i : ℤ) (hi : 0 < i) : IsZero (((chains R).obj E).X i) :=
@@ -70,7 +74,7 @@ theorem isZero_pos (E : Spc) (i : ℤ) (hi : 0 < i) : IsZero (((chains R).obj E)
     omega)
 
 theorem ev_ext (α β : Cochain ((chains R).obj E) I n)
-    (h : ∀ p s h U x, ev α p s h U x = ev β p s h U x) : α = β := by
+    (h : ∀ p s h U x, ev (R := R) α p s h U x = ev (R := R) β p s h U x) : α = β := by
   ext i j hij : 1
   by_cases hi : 0 < i
   · exact (isZero_pos E i hi).eq_of_src _ _
@@ -89,15 +93,15 @@ theorem chains_d (E : Spc) (p : ℕ) : (chainsXIso R E (p + 1)).inv ≫ ((chains
 
 theorem ev_delta_zero {m : ℤ} (hm : n + 1 = m) (α : Cochain ((chains R).obj E) I n) (s t : ℤ) (hs : -((0 : ℕ) : ℤ) + n = s)
     (ht : -((0 : ℕ) : ℤ) + m = t) (U : Scheme.{0}) (x : Sx E 0 U) :
-    ev (δ n m α) 0 t ht U x = Sec.map (I.d s t) (ev α 0 s hs U x) := by
+    ev (R := R) (δ n m α) 0 t ht U x = Sec.map (I.d s t) (ev (R := R) α 0 s hs U x) := by
   rw [ev_eq, δ_v n m hm α _ _ ht s 1 (by omega) (by simp), (isZero_pos E 1 one_pos).eq_of_tgt (((chains R).obj E).d _ 1) 0]
   simp only [zero_comp, smul_zero, add_zero]
   rfl
 
 theorem ev_delta_succ {m : ℤ} (hm : n + 1 = m) (α : Cochain ((chains R).obj E) I n) (p : ℕ) (s t : ℤ)
     (hs : -((p + 1 : ℕ) : ℤ) + n = s) (ht : -((p + 1 : ℕ) : ℤ) + m = t) (U : Scheme.{0}) (x : Sx E (p + 1) U) :
-    ev (δ n m α) (p + 1) t ht U x = Sec.map (I.d s t) (ev α (p + 1) s hs U x) +
-      m.negOnePow • ∑ i : Fin (p + 2), (-1 : ℤ) ^ (i : ℕ) • ev α p t (by omega) U (x.face i) := by
+    ev (R := R) (δ n m α) (p + 1) t ht U x = Sec.map (I.d s t) (ev (R := R) α (p + 1) s hs U x) +
+      m.negOnePow • ∑ i : Fin (p + 2), (-1 : ℤ) ^ (i : ℕ) • ev (R := R) α p t (by omega) U (x.face i) := by
   rw [ev_eq, δ_v n m hm α _ _ ht s (-(p : ℤ)) (by omega) (by omega), Preadditive.comp_add, Linear.comp_units_smul,
     reassoc_of% (chains_d (R := R) E p), Preadditive.sum_comp]
   refine (sec_map_add _ _ _).trans ?_

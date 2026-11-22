@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField IsDedekindDomain
 
@@ -15,8 +19,8 @@ def IsArithFrobenius (A : ValuationSubring Ω) (v : HeightOneSpectrum (𝓞 E)) 
 def IsComplexConjugation (c : Ω ≃ₐ[E] Ω) : Prop :=
   ∃ j : Ω →+* ℂ, ∀ x, j (c x) = starRingEnd ℂ (j x)
 
-variable (E Ω) in
 
+variable (E Ω) in
 def hilbertSubgroup : Subgroup (Ω ≃ₐ[E] Ω) :=
   (Subgroup.closure ((commutator (Ω ≃ₐ[E] Ω) : Set (Ω ≃ₐ[E] Ω)) ∪
     {σ | ∃ A : ValuationSubring Ω, σ ∈ (A.inertiaSubgroup E).map (A.decompositionSubgroup E).subtype} ∪
@@ -24,7 +28,8 @@ def hilbertSubgroup : Subgroup (Ω ≃ₐ[E] Ω) :=
 
 def Statement : Prop :=
   ∀ (E Ω : Type) [Field E] [NumberField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω],
-    ∃ art : (Ω ≃ₐ[E] Ω) →* ClassGroup (𝓞 E), Function.Surjective art ∧ art.ker = hilbertSubgroup E Ω ∧
+    ∃ art : (Ω ≃ₐ[E] Ω) →* ClassGroup (𝓞 E), Function.Surjective art ∧
+      art.ker = hilbertSubgroup (E := E) (Ω := Ω) ∧
       ∀ (v : HeightOneSpectrum (𝓞 E)) (A : ValuationSubring Ω) (φ : Ω ≃ₐ[E] Ω), LiesAbove A v → IsArithFrobenius A v φ →
         art φ = ClassGroup.mk0 ⟨v.asIdeal, mem_nonZeroDivisors_of_ne_zero v.ne_bot⟩
 

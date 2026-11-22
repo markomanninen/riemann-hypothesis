@@ -1,7 +1,11 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitKron
-import Formalism.PeriodIntegrals.PowBddInt
-import Formalism.PeriodIntegrals.AdCpctDen
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitKron
+public import Formalism.PeriodIntegrals.PowBddInt
+public import Formalism.PeriodIntegrals.AdCpctDen
+
+@[expose] public section
 
 noncomputable section
 
@@ -104,13 +108,5 @@ def TensCpctDen : Prop :=
   letI := tensTop (F := F) (E := E) (FiniteAdeleRing (𝓞 F) F)
   ∀ C : Set (E ⊗[F] FiniteAdeleRing (𝓞 F) F), IsCompact C →
     ∃ N : ℕ, 0 < N ∧ ∀ e : E, inclE (F := F) (E := E) (FiniteAdeleRing (𝓞 F) F) e ∈ C → IsIntegral ℤ ((N : E) * e)
-
-def CpctIntCharpoly : Prop :=
-  ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (k : ℕ),
-  letI := tensTop (F := F) (E := E) (FiniteAdeleRing (𝓞 F) F)
-  ∀ K : Subgroup (GL (Fin k) (E ⊗[F] FiniteAdeleRing (𝓞 F) F)),
-    IsCompact (K : Set (GL (Fin k) (E ⊗[F] FiniteAdeleRing (𝓞 F) F))) →
-  ∀ γ : GL (Fin k) E, bc (inclE (F := F) (E := E) (FiniteAdeleRing (𝓞 F) F)) γ ∈ K →
-    ∀ i, IsIntegral ℤ ((γ : Matrix (Fin k) (Fin k) E).charpoly.coeff i)
 
 end PI

@@ -1,11 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
-import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
-import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateNormComparison
-import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
-import Development.WeilBound.CoreStatements.HodgeTatePoints.Hcptgen
-import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatLev
-import Development.WeilBound.CoreStatements.HodgeTatePoints.FamprojAlg
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.GlobalGeometry.IntegralClosureHeightEqOneOfLiesOver
+public import Development.AutomorphicSpectrum.Statements.GeometryStatements.IsPolLatticePlane
+public import Development.AutomorphicSpectrum.Statements.AlgebraStatements.HodgeTateNormComparison
+public import Development.AutomorphicSpectrum.Definitions.DivisibilityTowers.Birational
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.Hcptgen
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.HtatLev
+public import Development.WeilBound.CoreStatements.HodgeTatePoints.FamprojAlg
+
+@[expose] public section
 
 noncomputable section
 

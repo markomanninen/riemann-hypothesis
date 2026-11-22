@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsLatIntVec
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.IsLatIntVec
+
+@[expose] public section
 
 noncomputable section
 
@@ -72,8 +76,8 @@ theorem den_algebraMap (F E : Type) [Field F] [NumberField F] [Field E] [NumberF
     have key : b = algebraMap (𝓞 F) (𝓞 E) a * b + algebraMap (𝓞 F) (𝓞 E) c * o := by
       apply FaithfulSMul.algebraMap_injective (𝓞 E) E
       have hac' := congrArg (algebraMap F E) hac
-      simp only [map_add, map_mul, map_one] at hac'
-      simp only [map_add, map_mul, tower, ho]
+      simp only [map_add (f := _), map_mul, map_one] at hac'
+      simp only [map_add (f := _), map_mul, tower, ho]
       linear_combination (-(algebraMap (𝓞 E) E b)) * hac'
     rw [key]
     exact Ideal.add_mem _ (Ideal.mul_mem_right _ _ (Ideal.mem_map_of_mem _ ha))

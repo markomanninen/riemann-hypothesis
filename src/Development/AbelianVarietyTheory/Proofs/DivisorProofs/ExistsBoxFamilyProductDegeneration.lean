@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBoxGenOfSection
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsBoxPullGen
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsBoxGenOfSection
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsBoxPullGen
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -44,7 +48,7 @@ theorem deltaφ_pr {D D₁ : DegPre R} {p : D.P.A ⟶ D₁.P.A} [IsMonHom p] {q 
     DegPre.deltaφ D F k α mu a ≫ p.left = (TF (R := R) F ◁ p).left ≫ DegPre.deltaφ D₁ F k (q α) (q mu) a := by
   rcases a with a | a
   · refine (GlobalTheory.ProdUnif.famφ_pr hc F (α + k • mu) a).trans ?_
-    rw [map_add, map_nsmul]; rfl
+    rw [map_add (f := _), map_nsmul]; rfl
   · show ((DegPre.trF D F mu).left ≫ DegPre.famφ D F α a) ≫ _ =
       _ ≫ (DegPre.trF D₁ F (q mu)).left ≫ DegPre.famφ D₁ F (q α) a
     rw [Category.assoc, GlobalTheory.ProdUnif.famφ_pr hc, ← Category.assoc, trF_pr F hc, Category.assoc]
@@ -98,7 +102,7 @@ theorem famMult_box₂ (hrig : IsBoxGen w (𝟙 _) (𝟙 _) D.rig D₁.rig D₂.
     rw [zpow_one, Category.assoc, a₂] at b₂
     exact eq_inv_mul_of_mul_eq b₂
   have c₃ := c₁ (mu + α)
-  rw [map_add, map_add] at c₃
+  rw [map_add (f := _), map_add (f := _)] at c₃
   rw [GlobalTheory.BoxFamily.prod_delta_zero F D k α mu (om w y J₁ J₂ J), GlobalTheory.BoxFamily.famMult_val F hJ,
     GlobalTheory.BoxFamily.famMult_val F hJ₁, GlobalTheory.BoxFamily.famMult_val F hJ₂, c₃, c₁ mu, c₁ α, c₂]
   apply Additive.ofMul.injective
@@ -124,7 +128,7 @@ theorem fe_along {D D₁ : DegPre R} {p : D.P.A ⟶ D₁.P.A} [IsMonHom p] {q : 
         (val u₁ (r ≫ (TF (R := R) F ◁ p).left) z J₁).val := by
   have h := (secRel_iff D₁.P.isLB _ _ _ _ _ _ _ _ _ u₁).1 (E₁.fe _ _ u₁ hu₁ hc₁) _
     (r ≫ (TF (R := R) F ◁ p).left) z J₁ hJ₁
-  rw [map_add, map_nsmul, h, Category.assoc, Category.assoc, trF_pr F hc]
+  rw [map_add (f := _), map_nsmul, h, Category.assoc, Category.assoc, trF_pr F hc]
 
 variable {D D₁ D₂ : DegPre R} {p₁ : D.P.A ⟶ D₁.P.A} {p₂ : D.P.A ⟶ D₂.P.A} {q₁ : D.X →+ D₁.X} {q₂ : D.X →+ D₂.X}
   {w : LB.Iso D.P.L (extLB D₁.P.L D₂.P.L p₁.left p₂.left)}

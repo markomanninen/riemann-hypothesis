@@ -1,12 +1,16 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.DatumEmbeddingMemHlam
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiExistsOfFormula
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Resolvent
-import Formalism.FormalDegreeBessel.StatementIO
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Gelfand
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.AntiEIsGlRep
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SmoothCore
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.DatumA
-import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.DatumEmbeddingMemHlam
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.CasimirCoefficients.PsiExistsOfFormula
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Resolvent
+public import Formalism.FormalDegreeBessel.StatementIO
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.Gelfand
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.TensorRepresentations.AntiEIsGlRep
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.SmoothCore
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.DiscreteSeriesExistence.DatumA
+public import Formalism.RealPlaceAnalysis.ThirdArithmeticHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,8 +56,7 @@ private theorem Jm_conjTransposeDiscreteSeriesExistence : (Jm ε)ᴴ = Jm ε := 
   rw [Matrix.diagonal_conjTranspose]
   congr 1
   funext a
-  simp only [Pi.star_apply]
-  split_ifs <;> simp
+  by_cases h : ε a = true <;> simp [h]
 
 private theorem Jm_mul_Jm_conj_conjTranspose (Z : Matrix (Fin n) (Fin n) ℂ) :
     Jm ε * (Jm ε * Zᴴ * Jm ε) = Zᴴ * Jm ε := by
@@ -125,7 +128,7 @@ theorem icx_eabV_clm (φ : E →L[ℂ] ℂ) {f : Matrix (Fin n) (Fin n) ℂ → 
   show S7.RdV (S7.cpart1 ε (Matrix.single a b 1)) (fun x => φ (f x)) g +
       Complex.I • S7.RdV (S7.cpart2 ε (Matrix.single a b 1)) (fun x => φ (f x)) g =
     φ (S7.RdV (S7.cpart1 ε (Matrix.single a b 1)) f g + Complex.I • S7.RdV (S7.cpart2 ε (Matrix.single a b 1)) f g)
-  rw [rdV_clm φ hf h1 hg, rdV_clm φ hf h2 hg, map_add, map_smul]
+  rw [rdV_clm φ hf h1 hg, rdV_clm φ hf h2 hg, map_add (f := _), map_smul]
 
 end Fun
 
@@ -272,14 +275,14 @@ theorem icxGood_add_smul {x y : smD ε (rreg ε)} {Φ Φ' : Matrix (Fin n) (Fin 
   unfold IcxGood
   refine ⟨smoothOnGV_add_smul h1 k1 c, ?_, ?_⟩
   · have := isSmoothL2_add_smul h2 k2 c
-    simpa [map_add, map_smul] using this
+    simpa [map_add (f := _), map_smul] using this
   · have m1 : MemLp (fun y : Formalism.REAL.UJ ε => φ (Φ (Formalism.MainNotions.S.umat y))) 2 (Formalism.REAL.muG ε) := h2.2 []
     have m2 : MemLp (fun y : Formalism.REAL.UJ ε => φ (Φ' (Formalism.MainNotions.S.umat y))) 2 (Formalism.REAL.muG ε) := k2.2 []
     rw [Submodule.coe_add, Submodule.coe_smul, h3, k3,
       ← toL2_add_mul_of_memLp (fun g => φ (Φ g)) (fun g => φ (Φ' g)) m1 m2 c]
     congr 1
     funext g
-    simp [map_add, map_smul]
+    simp [map_add (f := _), map_smul]
 
 theorem icxGood_neg {x : smD ε (rreg ε)} {Φ : Matrix (Fin n) (Fin n) ℂ → E} (hx : IcxGood ε φ x Φ) :
     IcxGood ε φ (-x) (fun g => -Φ g) := by
@@ -427,7 +430,7 @@ theorem icx_genSub_eigen (A : Fin n → Fin n → Module.End ℂ M) (S : Submodu
       add_mem' := by
         intro u v hu hv
         simp only [Set.mem_setOf_eq] at hu hv ⊢
-        rw [map_add, hu, hv, smul_add]
+        rw [map_add (f := _), hu, hv, smul_add]
       zero_mem' := by simp
       smul_mem' := by
         intro r u hu

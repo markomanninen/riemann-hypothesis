@@ -1,5 +1,9 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.PNTDensSt
-import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.LGrowth
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.JacobiCharacterSums.PNTDensSt
+public import Formalism.LandauZeroFreeBounds.ExceptionalZeroBounds.LGrowth
+
+@[expose] public section
 
 open Complex Finset
 

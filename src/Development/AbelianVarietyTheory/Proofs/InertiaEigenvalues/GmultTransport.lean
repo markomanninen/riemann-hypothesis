@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PowerSeriesOneAddConstMulXMulInv
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GenEigenMultiplicityQuotientAdditiveChain
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.PowerSeriesOneAddConstMulXMulInv
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.GenEigenMultiplicityQuotientAdditiveChain
+
+@[expose] public section
 
 open GlobalTheory.PhiGam
 open scoped LaurentSeries PowerSeries
@@ -86,8 +90,8 @@ section
 variable {k : Type} [Field k] {V : Type} [AddCommGroup V] [Module k⸨X⸩ V] [Module k⟦X⟧ V] [Module k V]
   [IsScalarTower k⟦X⟧ k⸨X⸩ V] [IsScalarTower k k⸨X⸩ V] [IsScalarTower k k⟦X⟧ V]
 
-omit [Module k V] [IsScalarTower k k⸨X⸩ V] [IsScalarTower k k⟦X⟧ V] in
 
+omit [Module k V] [IsScalarTower k k⸨X⸩ V] [IsScalarTower k k⟦X⟧ V] in
 theorem sh_one_le (N : Submodule k⟦X⟧ V) : sh 1 N ≤ N := by
   have := sh_le_sh_of_le (zero_le_one' ℤ) N
   rwa [sh_zero_eq] at this
@@ -109,8 +113,8 @@ theorem nab_mem_sh_one {l : ℕ} (R : RingPG k l) (g : V →ₗ[k] V) (hg : Semi
   rw [h4]
   exact Submodule.sub_mem _ h1 h3
 
-omit [IsScalarTower k k⸨X⸩ V] in
 
+omit [IsScalarTower k k⸨X⸩ V] in
 theorem finite_quot (N : Submodule k⟦X⟧ V) (hN : N.FG) :
     FiniteDimensional k (↥(N.restrictScalars k) ⧸
       ((sh 1 N).restrictScalars k).submoduleOf (N.restrictScalars k)) := by

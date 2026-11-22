@@ -1,11 +1,15 @@
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.QuotMA
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.ToL2CongrOnUnitaryBis
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.SmoothMatrixMaps.MemLpOfBound
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.SmoothMatrixMaps.IntOfBound
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.GapNeed
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.CasimirValueSubSingle
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.K2Vd
-import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.SmInfUnitary
+module
+
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.QuotMA
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.ToL2CongrOnUnitaryBis
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.SmoothMatrixMaps.MemLpOfBound
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.SmoothMatrixMaps.IntOfBound
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceEstimates.GapNeed
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.CasimirValueSubSingle
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.KTypeLemma.K2Vd
+public import ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.LaplaceFoundations.SmInfUnitary
+
+@[expose] public section
 
 noncomputable section
 
@@ -59,17 +63,17 @@ theorem quotM : QuotMStatement := by
       add_mem' := by
         rintro y₁ y₂ ⟨h1X, h1⟩ ⟨h2X, h2⟩
         refine ⟨X.add_mem h1X h2X, fun g hg => ?_⟩
-        rw [map_add, QuotA.per_add hP hB hp hq hsg (hcont _ (hXG h1X)) (hbd _ (hXG h1X)) (hcont _ (hXG h2X))
+        rw [L.map_add, QuotA.per_add hP hB hp hq hsg (hcont _ (hXG h1X)) (hbd _ (hXG h1X)) (hcont _ (hXG h2X))
           (hbd _ (hXG h2X)) ξ hg, h1 g hg, h2 g hg, add_zero]
       zero_mem' := by
         refine ⟨X.zero_mem, fun g hg => ?_⟩
         have := QuotA.per_smul P μW μN ψ π 0 0 ξ g
         rw [zero_smul, zero_smul] at this
-        rw [map_zero, this]
+        rw [L.map_zero, this]
       smul_mem' := by
         rintro a y ⟨hyX, hy⟩
         refine ⟨X.smul_mem a hyX, fun g hg => ?_⟩
-        rw [map_smul, QuotA.per_smul, hy g hg, smul_zero] }
+        rw [L.map_smul, QuotA.per_smul, hy g hg, smul_zero] }
   have hmemZ : ∀ y, y ∈ Z ↔ y ∈ X ∧ ∀ g ∈ Formalism.QuantumDeterminants.UH (Formalism.QuantumDeterminants.Hpk k r), per P μW μN ψ π (L y) ξ g = 0 :=
     fun y => Iff.rfl
   have hZX : Z ≤ X := fun y hy => ((hmemZ y).1 hy).1
@@ -129,7 +133,7 @@ theorem quotM : QuotMStatement := by
   · rintro F hF hF0
     obtain ⟨y, hy, rfl⟩ := Submodule.mem_map.1 hF
     have hyZ : y ∈ Z := (hmemZ y).2 ⟨hY'X hy, hF0⟩
-    rw [hY'Z y hy hyZ, map_zero]
+    rw [hY'Z y hy hyZ, L.map_zero]
     intro g _
     rfl
 

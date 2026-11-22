@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AutomorphicArithmetic.OrbitLabellings.RowDefs
-import Formalism.LocalToGlobal.CharacterGerms.RowTieMemCFin
-import Formalism.LocalToGlobal.CharacterGerms.RowTieFlagS
-import Formalism.LocalToGlobal.CharacterGerms.RowTieUpFBrFin
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsRestBis
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsRestTer
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.OrbitLabellings.RowDefs
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieMemCHarm
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieFlagS
+public import Formalism.LocalToGlobal.CharacterGerms.RowTieUpFBrFin
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsRestBis
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ImportsRestTer
+
+@[expose] public section
 
 open scoped BigOperators
 open Classical

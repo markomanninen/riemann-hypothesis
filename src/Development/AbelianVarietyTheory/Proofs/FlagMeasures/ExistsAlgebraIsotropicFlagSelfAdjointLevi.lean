@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Statements.CuspFrameWeights.SameKindIsometric
+
+@[expose] public section
 
 open scoped ComplexOrder
 open MeasureTheory NumberField Matrix Finset Formalism.MainNotions.S GlobalTheory.Count GlobalTheory.FlagMeas
@@ -55,7 +59,8 @@ theorem finrank_commutant {ι : Type} [Fintype ι] (e : ι → Matrix (Fin n) (F
         rw [hX k, ← mul_assoc, (he.idem k).eq]
       simp only [this]
       rw [← Finset.sum_mul, he.complete, one_mul]
-  rw [← hp.trace, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← hp.trace, map_sum]
   simp only [trace_mul_mul, sq]
 
 theorem trace_of_proj (P : Matrix (Fin n) (Fin n) ℂ) (W : Submodule ℂ (Fin n → ℂ))

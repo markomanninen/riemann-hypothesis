@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 namespace GlobalTheory.PeirceDecompositionCut
 
@@ -16,8 +20,5 @@ def peirceCut (e : R) (he : IsIdempotentElem e) : A →* A where
       zero_add, mul_one]
 
 variable {A}
-
-@[simp] theorem peirceProjection_apply (e : R) (he : IsIdempotentElem e) (x : A) :
-    peirceCut A e he x = e • x + (1 - e) • (1 : A) := rfl
 
 end GlobalTheory.PeirceDecompositionCut

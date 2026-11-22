@@ -1,20 +1,27 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
-import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.AuxiliaryInertOddPrime
-import Development.AbelianVarietyTheory.Statements.HeckeInFamilies.GenericMemChart
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricallyIntegralIffGeometricallyConnectedOf
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFiniteEtaleLatticeTorsionHom
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelMapFiniteEtaleSurjective
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjPull
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsIsoStalkMapOfFlatOfSurjectiveOnStalks
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.GenericPartDenseProOpen
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.MapToUniversalObjectUnique
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelDescentCoefficientField
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EtaleAndSurjectiveOfDensePartMonoFiniteEtale
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.HeckeKer
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.RigidSys
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.Splits
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.GtBaseChangeSt
+public import Development.AbelianVarietyTheory.Definitions.ModuliSpaces.AuxiliaryInertOddPrime
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissiblePadicIntMaximalIdeal
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.OneAddZeta21PowSevenAddPowFourteenEqZero
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.IsCoprimeTwoSubRtTwoAddRt
+public import Development.AbelianVarietyTheory.Definitions.ArchimedeanThetaValues.ToMatrixTrFormBaseChange
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.GeometricallyIntegralIffGeometricallyConnectedOf
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFiniteEtaleLatticeTorsionHom
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelMapFiniteEtaleSurjective
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ObjPull
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.IsIsoStalkMapOfFlatOfSurjectiveOnStalks
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.GenericPartDenseProOpen
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.MapToUniversalObjectUnique
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.LevelDescentCoefficientField
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.EtaleAndSurjectiveOfDensePartMonoFiniteEtale
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj NumberField
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Semi ReciprocityTheory.ChartRestriction.G.Geo.Tor
@@ -43,7 +50,7 @@ theorem mono_of_points {X S₀ S Z : Scheme.{0}} (i : X ⟶ Z) (p : Z ⟶ S) (e 
   have : FormallyUnramified i₀ := FormallyUnramified.of_comp i₀ (pullback.snd p j)
   have : LocallyOfFiniteType i₀ := locallyOfFiniteType_of_comp i₀ (pullback.snd p j)
   have hs : Surjective (pullback.diagonal i₀) :=
-    ((tfae_universallyInjective i₀).out 1 3).1 fun (k : Type) [Field k] y y' (e' : y ≫ i₀ = y' ≫ i₀) =>
+    ((tfae_universallyInjective i₀).out 2 4).1 fun (k : Type) [Field k] y y' (e' : y ≫ i₀ = y' ≫ i₀) =>
       h k y y' (by rw [← h₁, ← Category.assoc, e', Category.assoc])
   have : IsIso (pullback.diagonal i₀) := (isIso_iff_isOpenImmersion_and_surjective _).2 ⟨inferInstance, hs⟩
   have : Mono i₀ := (pullback.isIso_diagonal_iff i₀).1 this
@@ -76,9 +83,14 @@ theorem exists_torsion_cover {X S T : Scheme.{0}} (G : Over X) [GrpObj G] [IsCom
     (hσ : ∀ a c, σ (a + c) = σ a * σ c) (hσn : ∀ a, σ a ^ n = 1) :
     ∃ (Z : Scheme.{0}) (p : Z ⟶ S) (i : T ⟶ Z), IsFinite p ∧ Etale p ∧ i ≫ p = q ∧
       ∀ (W : Scheme.{0}) (y y' : W ⟶ T), y ≫ i = y' ≫ i → ∀ a, y ≫ (σ a).left ≫ φ = y' ≫ (σ a).left ≫ φ := by
-  have hS := IsSemiAbelian.pullback f G hG
-  have := hS.comm
-  have hA : IsAbelianScheme ((Over.pullback f).obj G) := ⟨hS.comm, hS.smooth, hp, hS.geomConnected⟩
+  have hc : IsCommMonObj ((Over.pullback f).obj G) := by infer_instance
+  have hs : Smooth (pullback.snd G.hom f) := by
+    have := hG.smooth
+    infer_instance
+  have hg : GeometricallyConnected (pullback.snd G.hom f) := by
+    have := hG.geomConnected
+    infer_instance
+  have hA : IsAbelianScheme ((Over.pullback f).obj G) := ⟨hc, hs, hp, hg⟩
   obtain ⟨Z, et, h₁, h₂, -, -, hu⟩ := exists_finiteEtale_latticeTorsionHom S _ n La hA hn
   have g := isGrpPullback_pullback G f
   let φ' : G'.left ⟶ ((Over.pullback f).obj G).left := g.1.lift φ (G'.hom ≫ q) (by rw [h.1.w, Category.assoc])

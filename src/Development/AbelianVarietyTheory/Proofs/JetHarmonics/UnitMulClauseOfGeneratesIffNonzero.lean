@@ -1,13 +1,17 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ThetaGen
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
-import Development.AbelianVarietyTheory.BlockTheory.JetGauges.ThetaSectionsClosedFibre
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsGeneratorOfBasis
-import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpansionIntegralSectionIntegralNoetherianLocal
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsSmulMemSpanOfExpandsAt
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsReducedAlgebraOfSmoothOfIsNoetherianRing
-import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsPrincipalIdealRingOfIsLocalization
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsSemiAbelianOfUniformisationOverDvr
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.ThetaGen
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.AmplePt
+public import Development.AbelianVarietyTheory.BlockTheory.JetGauges.ThetaSectionsClosedFibre
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExistsGeneratorOfBasis
+public import Development.AbelianVarietyTheory.Proofs.RingsOfIntegers.ExpansionIntegralSectionIntegralNoetherianLocal
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.ExistsSmulMemSpanOfExpandsAt
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsReducedAlgebraOfSmoothOfIsNoetherianRing
+public import Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsPrincipalIdealRingOfIsLocalization
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsSemiAbelianOfUniformisationOverDvr
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -221,8 +225,8 @@ theorem generates_iff_secBGenerates (hS : SecBaseChangeSt) [IsNoetherianRing R] 
   exact (secBGenerates_iff_smul g).2 (existsUnique_of_exists ((secBGenerates_iff_smul (D := D) b).1 hb)
     ((generates_iff_smul _ g).1 H))
 
-omit [IsDomain R] in
 
+omit [IsDomain R] in
 theorem exists_thick_pt {J : Ideal R} (hJ : J ≤ maximalIdeal R) (e : ℕ) (X : Over (Spec (CommRingCat.of R)))
     (x : X.left) (hx : X.hom x = closedPoint R) :
     ∃ y : (thickObj R J e X).left, pullback.fst X.hom (thick R J e) y = x := by
@@ -269,41 +273,12 @@ theorem secBGenerates_of_expandsAt (hS : SecBaseChangeSt) [IsNoetherianRing R] (
   exact (secBGenerates_iff_smul (g' 0)).2 (existsUnique_of_isUnit ((secBGenerates_iff_smul (f' 0)).1 hgen) hu
     ((secIsMul_iff _ _ (g' 0) (f' 0)).1 ha))
 
-def UnitMulClause (U : Unif I D A G) : Prop :=
-  ∀ ϑ : H0 U.LG.L 1, IsTheta U ϑ → ∀ σ : H0 U.LG.L 1,
-    (∃ u : Rˣ, SecIsMul G.hom (u : R) σ ϑ) ↔ NonzeroOnSpecial U σ
-
-def ThetaClause (U : Unif I D A G) : Prop := ∀ s : H0 U.LG.L 1, NonzeroOnSpecial U s → IsTheta U s
-
-def SpanClause (U : Unif I D A G) : Prop :=
-  (∃ ϑ : H0 U.LG.L 1, IsTheta U ϑ) ∧
-    ∀ ϑ : H0 U.LG.L 1, IsTheta U ϑ → ∀ s : H0 U.LG.L 1, ∃ a : R, SecIsMul G.hom a s ϑ
-
 variable (hS : SecBaseChangeSt) [IsNoetherianRing R] (hI : I ≤ maximalIdeal R) (U : Unif I D A G)
 include hS hI
 
 end Notions
 
 section Closed
-
-abbrev Clause : Type 1 :=
-  ∀ {R : Type} [CommRing R] [IsDomain R] [IsLocalRing R] {I : Ideal R} {D : DegData R I}
-    {A : PolAV (Spec (CommRingCat.of (FractionRing R)))} {G : Over (Spec (CommRingCat.of R))} [GrpObj G]
-    [IsCommMonObj G], Unif I D A G → Prop
-
-def ClauseValidOverLocalDomain (P : Clause) (R : Type) [CommRing R] [IsDomain R] [IsLocalRing R] (I : Ideal R) : Prop :=
-  ∀ (D : DegData R I) (A : PolAV (Spec (CommRingCat.of (FractionRing R))))
-    (G : Over (Spec (CommRingCat.of R))) [GrpObj G] [IsCommMonObj G], IsSemiAbelian G →
-    ∀ U : Unif I D A G, P U
-
-def ClauseValidDvr (P : Clause) : Prop :=
-  Laws → Laws4 → ∀ (V : Type) [CommRing V] [IsDomain V] [IsDiscreteValuationRing V]
-    [IsAdicComplete (maximalIdeal V) V], ClauseValidOverLocalDomain P V (maximalIdeal V)
-
-def ClauseValidArc (P : Clause) : Prop :=
-  Laws → Laws4 → ∀ (O' : Type) [CommRing O'] [IsDomain O'] [IsDiscreteValuationRing O']
-    [IsAdicComplete (maximalIdeal O') O'],
-    ClauseValidOverLocalDomain P (PowerSeries O') (Ideal.span {(PowerSeries.X : PowerSeries O')})
 
 theorem clnd_iff_of_dvr (V : Type) [CommRing V] [IsDomain V] [IsDiscreteValuationRing V] :
     CLND V ↔ IsAdicComplete (maximalIdeal V) V :=

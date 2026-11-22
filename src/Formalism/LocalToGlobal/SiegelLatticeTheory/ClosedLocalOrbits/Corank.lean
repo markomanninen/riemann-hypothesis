@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermDef
-import Formalism.LocalToGlobal.SiegelLatticeTheory.SiegelMassRatios.LemmaN
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermDef
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.SiegelMassRatios.LemmaN
+
+@[expose] public section
 
 noncomputable section
 
@@ -17,28 +21,19 @@ variable {E : Type} [Field E] [NumberField E] [StarRing E] {S : HSpace E} {r : �
 def ScalRel (Λ : Submodule (𝓞 E) S.V) (g k : ℕ) {T T' : E} (F : LFlag S r T) (F' F'' : LFlag S r T') : Prop :=
   ∃ β : S.V ≃ₗ[E] S.V, IsPair Λ F F' F'' β g ∧ s0 Λ F F' F'' β k = 1 ∧ IsScalar Λ F F' F'' β
 
-def s0T (Λ : Submodule (𝓞 E) S.V) (g k : ℕ) {T T' : E} (F : LFlag S r T) (F' F'' : LFlag S r T') : ℕ :=
-  if h : ∃ β : S.V ≃ₗ[E] S.V, IsPair Λ F F' F'' β g then s0 Λ F F' F'' (Classical.choose h) k else 0
-
-theorem isPair_refl (Λ : Submodule (𝓞 E) S.V) (g : ℕ) {T T' : E} (F : LFlag S r T) (F' : LFlag S r T') :
-    IsPair Λ F F' F' (LinearEquiv.refl E S.V) g := by
-  refine ⟨⟨fun x y => rfl, ?_⟩, fun j => ?_, rfl, fun x' _ l _ => Iff.rfl⟩
-  · simp [Formalism.HermitianLatticesTheory.gmap]
-  · simp
-
 end Gen
 
 def CorankPosG : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [StarRing E] (S : HSpace E) (r k : ℕ),
     finrank E S.V = k + 2 * r + 1 →
-    ∀ Λ : Submodule (𝓞 E) S.V, Submodule.IsLattice E Λ →
+    ∀ Λ : Submodule (𝓞 E) S.V, Submodule.IsFullLattice E Λ →
     ∀ (T T' : E) (F : LFlag S r T) (F' F'' : LFlag S r T') (β : S.V ≃ₗ[E] S.V),
       IsLift Λ F → IsLift Λ F' → Gval F F' ≠ 0 → 1 ≤ s0 Λ F F' F'' β k
 
 def ScalarEquivG : Prop :=
   ∀ (E : Type) [Field E] [NumberField E] [StarRing E] (S : HSpace E) (r k g : ℕ),
     finrank E S.V = k + 2 * r + 1 →
-    ∀ Λ : Submodule (𝓞 E) S.V, Submodule.IsLattice E Λ →
+    ∀ Λ : Submodule (𝓞 E) S.V, Submodule.IsFullLattice E Λ →
     ∀ (T T' : E), T ≠ 0 → T' ≠ 0 → ∀ F : LFlag S r T, IsLift Λ F →
       Equivalence (fun x y : {F' : LFlag S r T' // IsLift Λ F' ∧ Gval F F' ≠ 0} => ScalRel Λ g k F x.1 y.1)
 
@@ -85,21 +80,6 @@ def Pair.s0 (p : Pair D u u' F0 what₂) : ℕ := Lat.s0 p.lam (lf D F0) p.fst.1
 def Pair.scalarPair (p : Pair D u u' F0 what₂) : Prop :=
   p.s0 = 1 ∧ IsScalar p.lam (lf D F0) p.fst.1 p.snd.1 p.beta
 
-def Pair.isScalar (p : Pair D u u' F0 what₂) : Prop :=
-  IsScalar p.lam (lf D F0) p.fst.1 p.snd.1 p.beta
-
-theorem Pair.scalarPair_iff (p : Pair D u u' F0 what₂) : p.scalarPair ↔ p.s0 = 1 ∧ p.isScalar :=
-  Iff.rfl
-
-def reflPair (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hΛ : Λ ∈ what₂)
-    (x : Carrier (PD D Λ (lf D F0) u')) (hx : Gval (lf D F0) x.1 ≠ 0) : Pair D u u' F0 what₂ :=
-  ⟨Λ, hΛ, x, x, hx, hx, LinearEquiv.refl _ _, isPair_refl _ _ _ _⟩
-
-theorem reflPair_terms (Λ : Submodule (𝓞 D.host.E) (VS D).V) (hΛ : Λ ∈ what₂)
-    (x : Carrier (PD D Λ (lf D F0) u')) (hx : Gval (lf D F0) x.1 ≠ 0) :
-    (reflPair Λ hΛ x hx).pfst = ⟨Λ, hΛ, TermDef.mk _ _ _ x⟩ ∧ (reflPair Λ hΛ x hx).psnd = ⟨Λ, hΛ, TermDef.mk _ _ _ x⟩ :=
-  ⟨rfl, rfl⟩
-
 end PairAttr
 
 variable (D)
@@ -108,10 +88,6 @@ def ScalRelD {u : D.what₂.Word} (u' : D.what₂.Word) (F0 : FlagG (VS D) D.R.r
     (Λ : Submodule (𝓞 D.host.E) (VS D).V)
     (x y : {x : Carrier (PD D Λ (lf D F0) u') // Gval (lf D F0) x.1 ≠ 0}) : Prop :=
   ScalRel Λ (gS D) D.R.k (lf D F0) x.1.1 y.1.1
-
-def CorankPos (u u' : D.what₂.Word) : Prop :=
-  ∀ (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)) (what₂ : Finset (Submodule (𝓞 D.host.E) (VS D).V)),
-    IsRowReps D F0 what₂ → ∀ p : Pair D u u' F0 what₂, 1 ≤ p.s0
 
 def ScalarEquiv (u u' : D.what₂.Word) : Prop :=
   ∀ (F0 : FlagG (VS D) D.R.rS ((Tu D u : ℕ) : D.host.E)) (Λ : Submodule (𝓞 D.host.E) (VS D).V),
@@ -157,18 +133,12 @@ def ScalarDr (u u' : D.what₂.Word) : Prop :=
 
 variable {D}
 
-theorem corankPos_of_G (h : CorankPosG) (u u' : D.what₂.Word) : CorankPos D u u' := by
-  intro F0 what₂ hrows p
-  have hΛ := hrows.1 p.lam p.mem
-  exact h D.host.E (VS D) D.R.rS D.R.k (finrank_VS D) p.lam hΛ.2.1.1 _ _ (lf D F0) p.fst.1 p.snd.1 p.beta
-    hΛ.2.1.2.2.1 p.fst.2.1 p.G_fst
-
 theorem tu_ne_zero (u : D.what₂.Word) : ((Tu D u : ℕ) : D.host.E) ≠ 0 :=
   Nat.cast_ne_zero.2 (D.mem u).A.T_prime.ne_zero
 
 theorem scalarEquiv_of_G (h : ScalarEquivG) (u u' : D.what₂.Word) : ScalarEquiv D u u' := by
   intro F0 Λ hΛ
-  have hlat : Submodule.IsLattice D.host.E Λ := hΛ.2.1.1
+  have hlat : Submodule.IsFullLattice D.host.E Λ := hΛ.1.1
   have hlift : IsLift Λ (lf D F0) := hΛ.2.1.2.2.1
   have e := h D.host.E (VS D) D.R.rS D.R.k (gS D) (finrank_VS D) Λ hlat ((Tu D u : ℕ) : D.host.E)
     ((Tu D u' : ℕ) : D.host.E) (tu_ne_zero u) (tu_ne_zero u') (lf D F0) hlift

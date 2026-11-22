@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBlockParabolicSubgroupLeviProjectionStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.OrthSubrepresentation
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBlockParabolicSubgroupLeviProjectionStatement
+
+@[expose] public section
 
 noncomputable section
 
@@ -146,13 +150,13 @@ theorem stage_right [Fintype F] {a m n : ℕ} (hn : n = a + m) (k : ℂ) (φ Fm 
 theorem ent_tl {m n : ℕ} (M : Matrix (Fin n) (Fin n) F) {i j : ℕ} (hi : i < m) (hj : j < m) :
     ent (tl m M) i j = ent M i j := by
   unfold ent
-  rw [dif_pos ⟨hi, hj⟩]
+  rw [dite_eq_left ⟨hi, hj⟩]
   rfl
 
 theorem ent_br {a m n : ℕ} (M : Matrix (Fin n) (Fin n) F) {i j : ℕ} (hi : i < m) (hj : j < m) :
     ent (br a m M) i j = ent M (a + i) (a + j) := by
   unfold ent
-  rw [dif_pos ⟨hi, hj⟩]
+  rw [dite_eq_left ⟨hi, hj⟩]
   rfl
 
 theorem inParM_iff {a n : ℕ} (M : Matrix (Fin n) (Fin n) F) :
@@ -160,12 +164,12 @@ theorem inParM_iff {a n : ℕ} (M : Matrix (Fin n) (Fin n) F) :
   constructor
   · intro h i j hi hj ha
     unfold ent
-    rw [dif_pos ⟨hi, by omega⟩]
+    rw [dite_eq_left ⟨hi, by omega⟩]
     exact h _ _ hj ha
   · intro h i j hj ha
     have := h i j i.2 hj ha
     unfold ent at this
-    rw [dif_pos ⟨i.2, j.2⟩] at this
+    rw [dite_eq_left ⟨i.2, j.2⟩] at this
     exact this
 
 theorem par_par {a b c n : ℕ} (hn : n = a + b + c) (M : Matrix (Fin n) (Fin n) F) :

@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightComponentsMemInvariant
-import Formalism.SharpRestriction.GrowthBounds.RootWeights.HighestWeightDominantHolds
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.WeightComponentsMemInvariant
+public import Formalism.SharpRestriction.GrowthBounds.RootWeights.HighestWeightDominantHolds
+
+@[expose] public section
 
 noncomputable section
 
@@ -70,7 +74,7 @@ theorem isotypic_sum_stable {n : ℕ} {K V : Type*} [Field K] [AddCommGroup V] [
       apply Submodule.subset_span
       exact ⟨E a b * u, (Umon E).mul_mem (Submonoid.subset_closure ⟨(a, b), rfl⟩) hu, v, hv, rfl⟩
     | zero => simp
-    | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+    | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
     | smul c x _ hx => rw [map_smul]; exact Submodule.smul_mem _ c hx
   have hle : (⨆ mu : Fin n → ℤ, isoSub E mu) ≤ (⨆ mu : Fin n → ℤ, isoSub E mu).comap (E a b) :=
     iSup_le fun mu y hy => Submodule.mem_comap.2 (Submodule.mem_iSup_of_mem mu (key mu y hy))
@@ -153,7 +157,8 @@ private theorem weight_components_mem_of_sum_mem {n : ℕ} {K V : Type*} [Field 
       rw [hg]; exact Submodule.smul_mem _ _ (hw mu')
     have hgsum : (g.sum fun _ v => v) =
         (E a a - ((nu a : ℤ) : K) • (1 : Module.End K V)) (f.sum fun _ v => v) := by
-      rw [Finsupp.onFinset_sum _ (fun _ => rfl), Finsupp.sum, map_sum]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [Finsupp.onFinset_sum _ (fun _ => rfl), Finsupp.sum, map_sum]
       refine Finset.sum_congr rfl fun mu' _ => ?_
       have := (mem_weightSpace_iff_diagonal_rep E mu' (f mu')).1 (hw mu') a
       rw [LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply, this, sub_smul]

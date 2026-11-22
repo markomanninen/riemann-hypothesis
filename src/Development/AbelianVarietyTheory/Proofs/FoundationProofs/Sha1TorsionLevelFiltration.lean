@@ -1,5 +1,10 @@
-import Mathlib
-import Formalism.GaloisCohomology.LocalTateDualityK
+module
+
+public import Mathlib
+public import Formalism.GaloisCohomology.LocalTateDualityK
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Formalism.GaloisCohomology
 
 namespace GlobalTheory
@@ -38,7 +43,7 @@ theorem sha1_exhausted_by_torsion_levels : ∀ (l : ℕ) [Fact l.Prime] (Γ : Ty
           obtain ⟨b, hb, hb'⟩ := hw2 i
           refine ⟨a + b, by rw [smul_add, ha, hb, add_zero], fun g => ?_⟩
           change z.1 _ + w.1 _ = _
-          rw [ha', hb', map_add]; abel
+          rw [ha', hb', map_add (f := _)]; abel
       smul_mem' := by
         rintro c x ⟨z, hz, hz1, hz2⟩
         refine ⟨c • z, by rw [Submodule.Quotient.mk_smul, hz]; rfl, fun g => ?_, fun i => ?_⟩
@@ -70,7 +75,7 @@ theorem sha1_exhausted_by_torsion_levels : ∀ (l : ℕ) [Fact l.Prime] (Γ : Ty
   · intro r R _ N _ _ _ _ τ ι hinj hrange heq hloc
     let ιZ : Z1 τ →+ Z1 σ :=
       { toFun := fun z => ⟨fun g => ι (z.1 g), continuous_of_discreteTopology.comp z.2.1,
-          fun g h => by beta_reduce; rw [z.2.2, map_add, heq]⟩
+          fun g h => by beta_reduce; rw [z.2.2, map_add (f := _), heq]⟩
         map_zero' := Subtype.ext (funext fun g => map_zero ι)
         map_add' := fun z w => Subtype.ext (funext fun g => map_add ι _ _) }
     have hιZ : ∀ z g, (ιZ z).1 g = ι (z.1 g) := fun _ _ => rfl
@@ -131,7 +136,7 @@ theorem sha1_exhausted_by_torsion_levels : ∀ (l : ℕ) [Fact l.Prime] (Γ : Ty
           rw [Function.comp_apply, ← hw, Function.leftInverse_invFun hinj]
         rw [this]
         exact continuous_of_discreteTopology.comp z.2.1
-      let z' : Z1 τ := ⟨w, hwc, fun g h => hinj (by rw [map_add, heq, hw, hw, hw, z.2.2])⟩
+      let z' : Z1 τ := ⟨w, hwc, fun g h => hinj (by rw [map_add (f := _), heq, hw, hw, hw, z.2.2])⟩
       have hz' : ιZ z' = z := Subtype.ext (funext hw)
       refine ⟨⟨Submodule.Quotient.mk z', ?_⟩, ?_⟩
       · rw [mk_mem_sha1_iff_locally_coboundary]

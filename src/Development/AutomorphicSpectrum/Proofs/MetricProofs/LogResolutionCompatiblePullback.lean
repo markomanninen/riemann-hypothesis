@@ -1,10 +1,15 @@
-import Mathlib
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsImg
-import GroundTheory.HeightsAndTheta.Heights.Intersections.PtsOverPt
-import Development.AutomorphicSpectrum.Proofs.MetricProofs.HolomorphicDegreeOneBiholomorphism
-import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AssemblyBase
+module
+
+public import Mathlib
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.Pull1
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.IsPeriodOn
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.IsImg
+public import GroundTheory.HeightsAndTheta.Heights.Intersections.PtsOverPt
+public import Development.AutomorphicSpectrum.Proofs.MetricProofs.HolomorphicDegreeOneBiholomorphism
+public import GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AssemblyBase
+
+@[expose] public section
+
 open MvPolynomial MeasureTheory Filter Topology Matrix ReciprocityTheory.AnForm ReciprocityTheory.AnForm.M ReciprocityTheory.AnForm.P ReciprocityTheory.ChartRestriction.G.Geo ReciprocityTheory.ChartRestriction.G.AI.I1 ReciprocityTheory.ChartRestriction.G.AI.I2 ReciprocityTheory.ChartRestriction.G.AI.I4 GlobalTheory.CompanionTheory.Ar.PB GroundTheory.Heights₂.Heights GroundTheory.Heights₂.Heights.LowerBoundFree
 open scoped ComplexOrder Classical
 
@@ -241,7 +246,7 @@ theorem isDegreeOff_of_correspondence : ∀ (K : Type) [Fintype K] (ι : K → T
         exact ⟨R'.lift x x, R'.mem x x (R'.mem_U x), rfl, hgr x x₀ (by rw [hπs, hxs])⟩
     rw [himg] at hc
     rw [← hc]
-    refine (Set.ncard_image_of_injOn ?_).symm
+    refine (Set.InjOn.ncard_image ?_).symm
     intro x hx x' _ hxx
     have hxs : h x = s := hx
     have hxJ : R'.lift x x ∉ mcPts J' := fun hzJ =>

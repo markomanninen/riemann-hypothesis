@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.Joints
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.ShiftAnalyticW
-import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.Series
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.Joints
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.ShiftAnalyticW
+public import Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.Series
+
+@[expose] public section
 
 open PowerSeries
 
@@ -34,11 +38,5 @@ theorem oneUnit_fExp_neg {f : PowerSeries K} (h : Formalism.InvariantFactorPaths
   exact fExp_zero
 
 end Two
-
-theorem theta_from_phi_derivative : ThetaZeroFromPhiDerivative := by
-  intro l _ L ι W hU hW ω₀ hω hω2 hx hS s N hN hlN hs
-  refine shiftAnalyticW l L ι W hU hW ω₀ hω hω2 hx ?_ s N hN hlN hs
-  rw [even_theta_half_period_in_model l L ι W hU ω₀ hω hω2]
-  exact Two.oneUnit_fExp_neg hS
 
 end Formalism.L2.Th1.E

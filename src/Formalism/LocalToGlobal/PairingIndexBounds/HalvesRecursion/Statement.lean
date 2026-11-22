@@ -1,6 +1,10 @@
-import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
-import Formalism.LocalToGlobal.GlobalTheory.GL3.PIopNorm
-import Formalism.LocalToGlobal.PairingIndexBounds.ModelLatticeMoves.GenModelXi
+module
+
+public import Formalism.SharpRestriction.GlobalSchurBounds.GL3Theta
+public import Formalism.LocalToGlobal.GlobalTheory.GL3.PIopNorm
+public import Formalism.LocalToGlobal.PairingIndexBounds.ModelLatticeMoves.GenModelXi
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators
@@ -16,7 +20,7 @@ def HfS (T : Tor D) (N N' : ℕ) : Sesq (VC D N N') :=
     (by intro a b c; simp only [Hf, Pi.add_apply, add_mul, Finset.sum_add_distrib, add_div])
     (by intro c a b; simp only [Hf, Pi.smul_apply, smul_eq_mul, RingHom.id_apply]
         rw [mul_div_assoc', Finset.mul_sum]; simp only [Finset.mul_sum, mul_assoc])
-    (by intro a b c; simp only [Hf, Pi.add_apply, map_add, mul_add, Finset.sum_add_distrib, add_div])
+    (by intro a b c; simp only [Hf, Pi.add_apply, map_add (f := _), mul_add, Finset.sum_add_distrib, add_div])
     (by intro c a b; simp only [Hf, Pi.smul_apply, smul_eq_mul, map_mul]
         rw [mul_div_assoc', Finset.mul_sum]; simp only [Finset.mul_sum]
         congr 1; refine Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl

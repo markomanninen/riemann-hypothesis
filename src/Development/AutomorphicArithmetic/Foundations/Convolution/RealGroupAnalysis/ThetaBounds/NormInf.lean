@@ -1,8 +1,12 @@
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.EqAmOfBarEq
-import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.FiniteProjectionSingleSame
-import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.RationalGL2InfiniteFiniteFactor
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ConjOfSqNeg
+module
+
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.ThetaBounds.UnfoldedThetaIntegralConvergesSimilitudeOne
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.EqAmOfBarEq
+public import Development.AutomorphicArithmetic.Foundations.Convolution.RealGroupAnalysis.UnitaryActions.FiniteProjectionSingleSame
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.GaussSumFiltrations.RationalGL2InfiniteFiniteFactor
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.ConjOfSqNeg
+
+@[expose] public section
 
 open NumberField IsDedekindDomain MeasureTheory Matrix Topology Filter
 open Neutral.B1 Formalism.L2.Host Formalism.ConjugateSelfDual GlobalTheory.CuspRep GlobalTheory.GalOfCusp UpperTheory.V UpperTheory.V.Af UpperTheory.V.Published GroundTheory.Global GroundTheory.Automorphic.GJMatrix
@@ -11,7 +15,7 @@ open scoped Classical NumberField.LiesOver
 
 namespace UpperTheory.ConvolutionTheory.R2.Ff.NI
 
-variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E]
+variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 
 private theorem pInf_apply (x : A E) (w : InfinitePlace E) : GlobalTheory.CuspRep.pInf E x w =
     (InfinitePlace.Completion.ringEquivComplexOfIsComplex (IsTotallyComplex.isComplex w)) (x.1 w) := rfl
@@ -30,7 +34,7 @@ private theorem real_comp (w : InfinitePlace E) (s : ℝ) :
     (InfinitePlace.Completion.ringEquivRealOfIsReal (IsTotallyReal.isReal (w.comap (algebraMap F E)))).symm.toRingHom
   have hψ : Continuous ψ :=
     ((InfinitePlace.Completion.isometryEquivComplexOfIsComplex (IsTotallyComplex.isComplex w)).continuous.comp
-      (LiesOver.continuous_completionMap (v := w.comap (algebraMap F E)) (w := w))).comp
+      (continuous_algebraMap _ _)).comp
       (InfinitePlace.Completion.isometryEquivRealOfIsReal (IsTotallyReal.isReal (w.comap (algebraMap F E)))).symm.continuous
   have := map_real_smul ψ hψ s 1
   simpa [ψ] using this
@@ -66,7 +70,7 @@ private theorem pInf_bar (D : Dat F E) (x : A E) (w : InfinitePlace E) :
     GlobalTheory.CuspRep.pInf E (D.bar x) w = (starRingEnd ℂ) (GlobalTheory.CuspRep.pInf E x w) := by
   obtain ⟨u, t, rfl⟩ := D.exists_mkE x
   rw [Dat.bar_mkE, Dat.mkE_def, Dat.mkE_def]
-  simp only [map_add, map_mul, map_neg, Pi.add_apply, Pi.mul_apply, Pi.neg_apply, pInf_rt_conj, pInf_am,
+  simp only [map_add (f := _), map_mul, map_neg, Pi.add_apply, Pi.mul_apply, Pi.neg_apply, pInf_rt_conj, pInf_am,
     TR.pInf, Complex.conj_ofReal]
   simp
 
@@ -137,20 +141,20 @@ private theorem place_unique (D : Dat F E) {w w' : InfinitePlace E}
     obtain ⟨a, b, rfl⟩ := exists_repr D x
     have ha : ∀ c : F, w'.embedding (algebraMap F E c) = w.embedding (algebraMap F E c) := fun c =>
       (congrArg (fun f : F →+* ℂ => f c) he).symm
-    simp only [map_add, map_mul, ha, h1]
+    simp only [map_add (f := _), map_mul, ha, h1]
   · have : ComplexEmbedding.conjugate w.embedding = w'.embedding := by
       ext x
       obtain ⟨a, b, rfl⟩ := exists_repr D x
       have ha : ∀ c : F, w'.embedding (algebraMap F E c) = w.embedding (algebraMap F E c) := fun c =>
         (congrArg (fun f : F →+* ℂ => f c) he).symm
       rw [ComplexEmbedding.conjugate_coe_eq]
-      simp only [map_add, map_mul, ha, h1, hneg, hreal_val]
+      simp only [map_add (f := _), map_mul, ha, h1, hneg, hreal_val]
     rw [← this, InfinitePlace.mk_conjugate_eq]
 
 end UpperTheory.ConvolutionTheory.R2.Ff.NI
 
 theorem UpperTheory.ConvolutionTheory.R2.Ff.normInf :
-    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [IsTotallyComplex E] (_D : Dat F E), NormInf F E := by
+    ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E] (_D : Dat F E), NormInf F E := by
   intro F E _ _ _ _ _ _ _ D s
   haveI : Module.Finite F E := Module.Finite.of_basis D.b
   have hsurj : Function.Surjective fun w : InfinitePlace E => w.comap (algebraMap F E) :=

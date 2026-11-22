@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.CapelliAbs
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.HookLengthBound.CapelliAbs
+
+@[expose] public section
 
 noncomputable section
 

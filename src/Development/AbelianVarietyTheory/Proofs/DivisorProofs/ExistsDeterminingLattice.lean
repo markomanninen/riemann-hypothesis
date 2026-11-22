@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFinsetDecoSetLatticeReps
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CosetRefinement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFinsetDecoSetLatticeReps
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.DIV Formalism.L2.Col Formalism.L2.Ker GlobalTheory.IndefiniteRowSideFullHecke.PlaceLogThetaBounds GlobalTheory.ColNorms
 open scoped ComplexOrder
 
 namespace GlobalTheory.DecoClassCount
 
-open scoped TensorProduct in
 
+open scoped TensorProduct in
 theorem exists_span_quot {R N : Type} [CommRing R] [IsDomain R] [AddCommGroup N] [Module R N]
     [Module.Finite R N] [Module.Projective R N] (I : Ideal R) [Finite (R ⧸ I)] :
     ∃ v : Fin (Module.finrank R N) → N ⧸ (I • ⊤ : Submodule R N),
@@ -71,8 +75,8 @@ def IsLocForm (P : HeightOneSpectrum (𝓞 E)) (N : Submodule (𝓞 E) (Sp E n))
   (∀ x ∈ Formalism.HermitianLatticesTheory.localization₂ P.asIdeal N, ∀ y ∈ Formalism.HermitianLatticesTheory.localization₂ P.asIdeal N, φ (x + y) = φ x + φ y) ∧
   ∀ (a : 𝓞 E), ∀ x ∈ Formalism.HermitianLatticesTheory.localization₂ P.asIdeal N, φ (a • x) = Ideal.Quotient.mk P.asIdeal a * φ x
 
-omit [StarRing E] in
 
+omit [StarRing E] in
 theorem exists_determining_lattice (P : HeightOneSpectrum (𝓞 E)) (N : Submodule (𝓞 E) (Sp E n))
     (hN : Submodule.IsLattice E N) :
     ∃ v : Fin n → Sp E n, ∀ φ ψ, IsLocForm P N φ → IsLocForm P N ψ → (∀ i, φ (v i) = ψ (v i)) →
@@ -82,8 +86,10 @@ theorem exists_determining_lattice (P : HeightOneSpectrum (𝓞 E)) (N : Submodu
   have : Module.Flat (𝓞 E) N := inferInstance
   have : Module.Projective (𝓞 E) N := Module.Flat.projective_of_finitePresentation
   have : Finite (𝓞 E ⧸ P.asIdeal) := Ideal.finiteQuotientOfFreeOfNeBot _ P.ne_bot
-  have hr : Module.finrank (𝓞 E) N = n := by
-    simpa using finrank_of_span_top N hN.span_eq_top
+  have hr : Module.finrank (𝓞 E) N ≤ n := by
+    letI : Submodule.IsLattice E N := hN
+    rw [← Submodule.IsLattice.finrank_span_eq_finrank E N]
+    simpa using Submodule.finrank_le (Submodule.span E (N : Set (Sp E n)))
   obtain ⟨v, hv⟩ := exists_determining (R := 𝓞 E) (N := N) P.asIdeal
   have hle : N ≤ Formalism.HermitianLatticesTheory.localization₂ P.asIdeal N := fun x hx =>
     ⟨1, P.asIdeal.primeCompl.one_mem, by simpa using hx⟩
@@ -91,15 +97,19 @@ theorem exists_determining_lattice (P : HeightOneSpectrum (𝓞 E)) (N : Submodu
     { toFun := fun x => φ x
       map_add' := fun x y => hφ.1 x (hle x.2) y (hle y.2)
       map_smul' := fun a x => hφ.2 a x (hle x.2) }
-  refine ⟨fun i => v (Fin.cast hr.symm i), fun φ ψ hφ hψ h x hx => ?_⟩
-  have := hv (lin φ hφ) (lin ψ hψ) fun i => h (Fin.cast hr i)
+  classical
+  refine ⟨fun i => if hi : i.val < Module.finrank (𝓞 E) N then v ⟨i.val, hi⟩ else 0,
+    fun φ ψ hφ hψ h x hx => ?_⟩
+  have := hv (lin φ hφ) (lin ψ hψ) fun i => by
+    change φ (v i) = ψ (v i)
+    simpa using h ⟨i.val, lt_of_lt_of_le i.isLt hr⟩
   exact LinearMap.congr_fun this ⟨x, hx⟩
 
 theorem card_fibre_le (ST SG : Finset (HeightOneSpectrum (𝓞 E))) (N : Submodule (𝓞 E) (Sp E n)) :
-    {d : DecoSet E n ST SG | d.1.N = N}.Finite ∧ {d : DecoSet E n ST SG | d.1.N = N}.ncard ≤
+    {d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG) | d.1.N = N}.Finite ∧ {d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG) | d.1.N = N}.ncard ≤
       (∏ P ∈ ST, Ideal.absNorm P.asIdeal ^ n) * ∏ w ∈ SG, Ideal.absNorm w.asIdeal ^ (n ^ 2) := by
   classical
-  rcases Set.eq_empty_or_nonempty {d : DecoSet E n ST SG | d.1.N = N} with he | ⟨d0, hd0⟩
+  rcases Set.eq_empty_or_nonempty {d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG) | d.1.N = N} with he | ⟨d0, hd0⟩
   · rw [he]; simp
   have hlat : Submodule.IsLattice E N := by
     have := d0.2.lat
@@ -107,17 +117,17 @@ theorem card_fibre_le (ST SG : Finset (HeightOneSpectrum (𝓞 E))) (N : Submodu
   choose v hv using fun P => exists_determining_lattice P N hlat
   haveI hfin : ∀ P : HeightOneSpectrum (𝓞 E), Finite (𝓞 E ⧸ P.asIdeal) := fun P =>
     Ideal.finiteQuotientOfFreeOfNeBot _ P.ne_bot
-  let Φ : DecoSet E n ST SG →
+  let Φ : DecoSet (E := E) (n := n) (ST := ST) (SG := SG) →
       (∀ P : ST, Fin n → 𝓞 E ⧸ P.1.asIdeal) × (∀ w : SG, Fin n → Fin n → 𝓞 E ⧸ w.1.asIdeal) :=
     fun d => (fun P i => d.1.f P (v P.1 i), fun w i => d.1.be w (v w.1 i))
-  have hinj : Set.InjOn Φ {d : DecoSet E n ST SG | d.1.N = N} := by
+  have hinj : Set.InjOn Φ {d : DecoSet (E := E) (n := n) (ST := ST) (SG := SG) | d.1.N = N} := by
     intro d hd d' hd' hdd
     replace hd : d.1.N = N := hd
     replace hd' : d'.1.N = N := hd'
-    have hf : ∀ e : DecoSet E n ST SG, e.1.N = N → ∀ P : ST, IsLocForm P.1 N (e.1.f P) := by
+    have hf : ∀ e : DecoSet (E := E) (n := n) (ST := ST) (SG := SG), e.1.N = N → ∀ P : ST, IsLocForm P.1 N (e.1.f P) := by
       rintro e rfl P
       exact ⟨e.2.f_add P, e.2.f_smul P⟩
-    have hb : ∀ e : DecoSet E n ST SG, e.1.N = N → ∀ (w : SG) (j : Fin n),
+    have hb : ∀ e : DecoSet (E := E) (n := n) (ST := ST) (SG := SG), e.1.N = N → ∀ (w : SG) (j : Fin n),
         IsLocForm w.1 N fun x => e.1.be w x j := by
       rintro e rfl w j
       exact ⟨fun x hx y hy => congrFun (e.2.be_add w x hx y hy) j,
@@ -140,11 +150,12 @@ theorem card_fibre_le (ST SG : Finset (HeightOneSpectrum (𝓞 E))) (N : Submodu
   rw [Finset.prod_coe_sort ST (fun P => Ideal.absNorm P.asIdeal ^ n),
     Finset.prod_coe_sort SG (fun P => Ideal.absNorm P.asIdeal ^ (n ^ 2))]
 
-theorem card_classes_le : ∀ (X : Fields), X.Ok → ∀ (n : ℕ) (ST SG : Finset (HeightOneSpectrum (𝓞 X.E))), Finite (MulAction.orbitRel.Quotient ((⊤ : Subgroup (UF X.E n)).prod (⊥ : Subgroup (GLG X.E n SG))) (DecoSet X.E n ST SG)) ∧ (Nat.card (MulAction.orbitRel.Quotient ((⊤ : Subgroup (UF X.E n)).prod (⊥ : Subgroup (GLG X.E n SG))) (DecoSet X.E n ST SG)) : ℝ) ≤ (3 * ((Module.finrank ℚ X.E : ℝ) ^ 2 * (n : ℝ) ^ 4 * (|(discr X.E : ℝ)| ^ ((1 : ℝ) / (Module.finrank ℚ X.E : ℝ))) ^ 2)) ^ (3 * Module.finrank ℚ X.E * n ^ 2) * (∏ P ∈ ST, (Ideal.absNorm P.asIdeal : ℝ) ^ n) * ∏ w ∈ SG, (Ideal.absNorm w.asIdeal : ℝ) ^ (n ^ 2) := by
+set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in
+theorem card_classes_le : ∀ (X : Fields), X.Ok → ∀ (n : ℕ) (ST SG : Finset (HeightOneSpectrum (𝓞 X.E))), Finite (MulAction.orbitRel.Quotient ((⊤ : Subgroup (UF X.E n)).prod (⊥ : Subgroup (GLG (E := X.E) (n := n) (SG := SG)))) (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG))) ∧ (Nat.card (MulAction.orbitRel.Quotient ((⊤ : Subgroup (UF X.E n)).prod (⊥ : Subgroup (GLG (E := X.E) (n := n) (SG := SG)))) (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG))) : ℝ) ≤ (3 * ((Module.finrank ℚ X.E : ℝ) ^ 2 * (n : ℝ) ^ 4 * (|(discr X.E : ℝ)| ^ ((1 : ℝ) / (Module.finrank ℚ X.E : ℝ))) ^ 2)) ^ (3 * Module.finrank ℚ X.E * n ^ 2) * (∏ P ∈ ST, (Ideal.absNorm P.asIdeal : ℝ) ^ n) * ∏ w ∈ SG, (Ideal.absNorm w.asIdeal : ℝ) ^ (n ^ 2) := by
   intro X hX n ST SG
   classical
-  have hΓ : ∀ g : UF X.E n, (g, (1 : GLG X.E n SG)) ∈
-      (⊤ : Subgroup (UF X.E n)).prod (⊥ : Subgroup (GLG X.E n SG)) := fun g =>
+  have hΓ : ∀ g : UF X.E n, (g, (1 : GLG (E := X.E) (n := n) (SG := SG))) ∈
+      (⊤ : Subgroup (UF X.E n)).prod (⊥ : Subgroup (GLG (E := X.E) (n := n) (SG := SG))) := fun g =>
     ⟨Subgroup.mem_top _, Subgroup.one_mem _⟩
   refine ⟨DecoSet.finite_orbits (posStar_of_conj hX.conjE) _ hΓ, ?_⟩
   have := hX.realF
@@ -157,7 +168,7 @@ theorem card_classes_le : ∀ (X : Fields), X.Ok → ∀ (n : ℕ) (ST SG : Fins
     apply φ.injective
     rw [hX.conjE, IsCMField.complexEmbedding_complexConj]
   obtain ⟨Rs, hR, H⟩ := GlobalTheory.exists_finset_decoSet_lattice_reps X.E hs n
-  let fib : Submodule (𝓞 X.E) (Sp X.E n) → Finset (DecoSet X.E n ST SG) := fun N =>
+  let fib : Submodule (𝓞 X.E) (Sp X.E n) → Finset (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)) := fun N =>
     (card_fibre_le ST SG N).1.toFinset
   let B : ℕ := (∏ P ∈ ST, Ideal.absNorm P.asIdeal ^ n) * ∏ w ∈ SG, Ideal.absNorm w.asIdeal ^ (n ^ 2)
   have hfib : ∀ N, (fib N).card ≤ B := fun N => by
@@ -165,13 +176,13 @@ theorem card_classes_le : ∀ (X : Fields), X.Ok → ∀ (n : ℕ) (ST SG : Fins
     exact (card_fibre_le ST SG N).2
   have hS : (Rs.biUnion fib).card ≤ Rs.card * B := Finset.card_biUnion_le_card_mul _ _ _ fun N _ => hfib N
   have hsurj : Function.Surjective (fun d : ↥(Rs.biUnion fib) => (Quotient.mk'' d.1 :
-      MulAction.orbitRel.Quotient ((⊤ : Subgroup (UF X.E n)).prod (⊥ : Subgroup (GLG X.E n SG)))
-        (DecoSet X.E n ST SG))) := by
+      MulAction.orbitRel.Quotient ((⊤ : Subgroup (UF X.E n)).prod (⊥ : Subgroup (GLG (E := X.E) (n := n) (SG := SG))))
+        (DecoSet (E := X.E) (n := n) (ST := ST) (SG := SG)))) := by
     intro c
     induction c using Quotient.inductionOn' with
     | h d =>
       obtain ⟨g, hg⟩ := H ST SG d
-      refine ⟨⟨(g, (1 : GLG X.E n SG)) • d, Finset.mem_biUnion.2 ⟨_, hg, ?_⟩⟩, ?_⟩
+      refine ⟨⟨(g, (1 : GLG (E := X.E) (n := n) (SG := SG))) • d, Finset.mem_biUnion.2 ⟨_, hg, ?_⟩⟩, ?_⟩
       · exact (Set.Finite.mem_toFinset _).2 rfl
       · apply Quotient.sound'
         rw [MulAction.orbitRel_apply]

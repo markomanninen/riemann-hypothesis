@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ThFEquivOf
-import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.IoUniq
-import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.VanishKfLow
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.ThFEquivOf
+public import Formalism.LocalToGlobal.IndefiniteReal.LevelTypeEquivalence.IoUniq
+public import Development.AutomorphicArithmetic.IntegralCasts.CapelliIdentities.VanishKfLow
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,8 +29,8 @@ def KfLow (τ : D.what₂.Tau) : Submodule ℂ (M.sm τ) :=
   Submodule.span ℂ {w | ∃ g ∈ Formalism.QuantumDeterminants.UH (gramAt D V τ), ∃ w0 : lowT M τ,
     (w : M.H τ) = M.rep τ g ((w0 : M.sm τ) : M.H τ)}
 
-open Classical in
 
+open Classical in
 theorem mult_equiv {T : MMap M} (hT : T ∈ Mult θ M J χ) (τ : D.what₂.Tau) {g : Matrix (Fin V.rank) (Fin V.rank) ℂ}
     (hg : g ∈ Formalism.QuantumDeterminants.UH (gramAt D V τ)) (v : M.Vec) (w : M.sm τ) (hw : (w : M.H τ) = M.rep τ g (v τ)) :
     T (Function.update v τ w) = rTr V (atTau θ V τ g) (T v) := by
@@ -40,8 +44,8 @@ theorem mult_equiv {T : MMap M} (hT : T ∈ Mult θ M J χ) (τ : D.what₂.Tau)
     simp only [_root_.smul_apply, h]
     rfl
 
-open Classical in
 
+open Classical in
 theorem vanish_KfLow {T : MMap M} (hT : T ∈ Mult θ M J χ)
     (hlow : ∀ v : ∀ ρ, lowT M ρ, T (fun ρ => v ρ) = 0) :
     ∀ (s : Finset D.what₂.Tau) (v : M.Vec), (∀ τ ∈ s, v τ ∈ KfLow M τ) →
@@ -83,7 +87,7 @@ theorem spanP_of (h : DensLow R) : Formalism.IndefR.Eqv.Act.SpanP R := by
       rw [map_smul, PiTensorProduct.map_tprod, map_smul, PiTensorProduct.lift.tprod]
       simp only [Submodule.subtype_apply]
       rw [hvan0 v, smul_zero]
-    | add x y hx hy => rw [map_add, map_add, hx, hy, add_zero]
+    | add x y hx hy => rw [map_add (f := _), map_add (f := _), hx, hy, add_zero]
   have hspan : ∀ v : ∀ τ, M.sm τ, (∀ τ, v τ ∈ Kf τ) →
       PiTensorProduct.tprod ℂ v ∈ Submodule.span ℂ {x | ∃ φ w, Tm φ w = x} := by
     intro v hv

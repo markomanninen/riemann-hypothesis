@@ -1,4 +1,9 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.ComplexSets
@@ -37,11 +42,12 @@ theorem exists_linear_primitive {K L : Type*} [Field K] [Field L] [Algebra K L] 
     apply hne
     apply hx
     intro j
-    have hc := congrArg (fun q => Polynomial.coeff q (j : ℕ)) h
+    have hc := congrArg (fun q => _root_.AddMonoidAlgebra.coeff (M := ℕ) q (j : ℕ)) h
     simp only [p, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial, Polynomial.coeff_zero] at hc
     rw [Finset.sum_eq_single j] at hc
     · simpa [sub_eq_zero] using hc
-    · intro b _ hb; rw [if_neg]; exact fun h => hb (Fin.ext h)
+    · intro b _ hb
+      simp [Finsupp.single_apply, show (b : ℕ) ≠ (j : ℕ) from fun h => hb (Fin.ext h)]
     · simp
   have hev : ∀ φψ : (L →ₐ[K] A) × (L →ₐ[K] A), ∀ t : A,
       (p φψ).eval t = ∑ j : Fin n, (φψ.1 (x j) - φψ.2 (x j)) * t ^ (j : ℕ) := by
@@ -64,7 +70,8 @@ theorem exists_linear_primitive {K L : Type*} [Field K] [Field L] [Algebra K L] 
   have h1 : ∀ χ : L →ₐ[K] A, χ (∑ j : Fin n, algebraMap K L (ι (t ^ (j : ℕ))) * x j) =
       ∑ j : Fin n, ι' t ^ (j : ℕ) * χ (x j) := by
     intro χ
-    simp [map_sum, map_mul, AlgHom.commutes, ι', map_pow]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp [map_sum, map_mul, AlgHom.commutes, ι', map_pow]
   have h2 := congrArg id hφψ
   simp only [id] at h2
   rw [h1, h1] at h2
@@ -115,7 +122,8 @@ theorem exists_primitive_data {R B : Type*} [CommRing R] [IsDomain R] [IsIntegra
   refine ⟨c, ?_⟩
   set ℓ : B := ∑ j, algebraMap R B (ι (c j)) * x j with hℓ
   have hℓL : algebraMap B L ℓ = ∑ j, algebraMap K L (ιK (c j)) * algebraMap B L (x j) := by
-    rw [hℓ, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hℓ, map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_mul, ← IsScalarTower.algebraMap_apply R B L, IsScalarTower.algebraMap_apply R K L]
     rfl
@@ -145,7 +153,7 @@ theorem exists_primitive_data {R B : Type*} [CommRing R] [IsDomain R] [IsIntegra
       C α * IsLocalization.integerNormalization (nonZeroDivisors R) b * derivative (minpoly R ℓ) =
       C (α * β) := by
     apply hinjK
-    simp only [Polynomial.map_add, Polynomial.map_mul, Polynomial.map_C, hαa, hβb,
+    simp only [Polynomial.map_add (f := _), Polynomial.map_mul, Polynomial.map_C, hαa, hβb,
       Algebra.smul_def, Polynomial.algebraMap_apply, map_mul]
     linear_combination (C (algebraMap R K α) * C (algebraMap R K β)) * hab
 

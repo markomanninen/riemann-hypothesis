@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ThresholdsMonoNormalized
-import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.PlusAWICondition
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ThresholdsMonoNormalized
+public import Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.PlusAWICondition
+
+@[expose] public section
 
 noncomputable section
 

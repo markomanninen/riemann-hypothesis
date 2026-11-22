@@ -1,6 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNormalised
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CardH2GaussianField
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.PoitouTateNormalised
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisCohomology₂.CardH2GaussianField
+
+@[expose] public section
 
 noncomputable section
 open NumberField IsDedekindDomain Formalism.ConjugateSelfDual ReciprocityTheory.Gal Pointwise
@@ -12,7 +16,7 @@ variable {F Ω : Type} [Field F] [NumberField F] [Field Ω] [Algebra F Ω]
 def conjBack (σ : Ω ≃+* Ω) (τ : F ≃+* F) (hστ : ∀ x, σ (algebraMap F Ω x) = algebraMap F Ω (τ x)) :
     G F Ω →* G F Ω where
   toFun g := AlgEquiv.ofRingEquiv (f := (σ.trans g.toRingEquiv).trans σ.symm) (fun x => by
-    simp only [RingEquiv.trans_apply, hστ, AlgEquiv.toRingEquiv_eq_coe, AlgEquiv.coe_ringEquiv, AlgEquiv.commutes]
+    simp only [RingEquiv.trans_apply, hστ, AlgEquiv.coe_toRingEquiv, AlgEquiv.coe_ringEquiv, AlgEquiv.commutes]
     rw [← hστ, RingEquiv.symm_apply_apply])
   map_one' := by ext x; simp
   map_mul' g h := by ext x; simp
@@ -74,8 +78,8 @@ theorem cycMod_conjBack (l : ℕ) [Fact l.Prime] (r : ℕ) (g : G F Ω) :
   simp only [cycMod, cycZ, MonoidHom.comp_apply, e, map_mul, map_inv]
   rw [mul_comm, ← mul_assoc, mul_inv_cancel, one_mul]
 
-omit hA in
 
+omit hA in
 theorem continuous_conjBack [Algebra.IsAlgebraic F Ω] : Continuous (conjBack σ τ hστ) := by
   haveI : Algebra.IsIntegral F Ω := inferInstance
   refine continuous_of_continuousAt_one _ ?_
@@ -95,15 +99,17 @@ theorem continuous_conjBack [Algebra.IsAlgebraic F Ω] : Continuous (conjBack σ
     rw [conjBack_apply, this, RingEquiv.symm_apply_apply]
   have hx' : x = ∑ i, b.repr ⟨x, hx⟩ i • (b i : Ω) := by
     have := congrArg E.val (b.sum_repr ⟨x, hx⟩)
-    rw [map_sum] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum] at this
     simp only [map_smul] at this
     exact this.symm
-  rw [hx', map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hx', map_sum]
   exact Finset.sum_congr rfl fun i _ => by rw [map_smul, hb]
+
 
 omit hA in
 include hA hστ in
-
 theorem exists_place_map {v : HeightOneSpectrum (𝓞 F)} (hAv : IsPlaceOver A v) :
     ∃ v' : HeightOneSpectrum (𝓞 F), IsPlaceOver A' v' ∧ normV v' = normV v ∧
       ∀ ϖ : 𝓞 F, ϖ ∈ v.asIdeal → ϖ ∉ v.asIdeal ^ 2 → ∃ ϖ' : 𝓞 F, ϖ' ∈ v'.asIdeal ∧

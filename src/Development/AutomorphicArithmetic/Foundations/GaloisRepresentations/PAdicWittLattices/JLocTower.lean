@@ -1,15 +1,19 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.LocTower
-import Development.AutomorphicArithmetic.SimultaneousEigenspaces.ExistsAlgEquivRestrictHomOfAlgebraMapCompat
-import Development.AutomorphicArithmetic.SimultaneousEigenspaces.ExistsIsPullbackGeomFiberBaseChangeTower
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.SplitDesc
-import Development.AutomorphicArithmetic.SimultaneousEigenspaces.EtaleCohomologyCorrOpCommPullback
-import Development.AutomorphicArithmetic.SimultaneousEigenspaces.ExistsBasisSimultaneousEigenspaceOfEquivariantBi
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PIsoPts
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PSplitsPts
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PPtsOfSplits
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PSplitsBasic
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PBcSplits
-import Development.AbelianVarietyTheory.Counterexamples.ModuliSurvey.IsQProjOverOfIsProjOver
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.LocTower
+public import Development.AutomorphicArithmetic.SimultaneousEigenspaces.ExistsAlgEquivRestrictHomOfAlgebraMapCompat
+public import Development.AutomorphicArithmetic.SimultaneousEigenspaces.ExistsIsPullbackGeomFiberBaseChangeTower
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.SplitDesc
+public import Development.AutomorphicArithmetic.SimultaneousEigenspaces.EtaleCohomologyCorrOpCommPullback
+public import Development.AutomorphicArithmetic.SimultaneousEigenspaces.ExistsBasisSimultaneousEigenspaceOfEquivariantBi
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PIsoPts
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PSplitsPts
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PPtsOfSplits
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PSplitsBasic
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.PBcSplits
+public import Development.AbelianVarietyTheory.Counterexamples.ModuliSurvey.IsQProjOverOfIsProjOver
+
+@[expose] public section
 
 open CategoryTheory Limits AlgebraicGeometry GlobalTheory.EtC GlobalTheory.GalV UpperTheory.Gal.Int.Geo TensorProduct
 open UpperTheory.Gal.Seam
@@ -87,7 +91,8 @@ theorem UpperTheory.Gal.G3.locTower_of :
   · refine (congrArg (galV l (bcAlong H τ) Ω' L σ') (hb' i)).trans ?_
     refine (hgal (r σ') σ' (fun x => hr σ' x) _).trans ?_
     refine (congrArg ((pullTot l (sch.map u)).baseChange L) (hb (r σ') i)).trans ?_
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [LinearMap.map_smul]
     exact congrArg (((ρ₀ (r σ') : GL (Fin d) L) : Matrix (Fin d) (Fin d) L) m i • ·) (hb' m).symm

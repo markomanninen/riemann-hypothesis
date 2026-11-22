@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaModuloX.HQTracePos
+module
+
+public import Mathlib
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.BetaModuloX.HQTracePos
+
+@[expose] public section
 
 noncomputable section
 
@@ -95,10 +99,10 @@ theorem mem_Lb {T' : E} (F' : LFlag S r T') (Λ : Submodule (𝓞 E) S.V) {q : Q
     | (simp [Lb, ΛU]; done)
     | (constructor <;> rintro ⟨a, ha, rfl⟩ <;> exact ⟨a, ha, rfl⟩)
 
-theorem Lb_lattice {T' : E} (F' : LFlag S r T') (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsLattice E Λ) :
-    Submodule.IsLattice E (Lb F' Λ) := by
-  refine ⟨?_, ?_⟩
-  · have hfg : Λ.FG := hΛ.fg
+theorem Lb_lattice {T' : E} (F' : LFlag S r T') (Λ : Submodule (𝓞 E) S.V)
+    (hΛ : Submodule.IsFullLattice E Λ) : Submodule.IsFullLattice E (Lb F' Λ) := by
+  refine { toIsLattice := Submodule.IsLattice.of_fg E ?_, span_eq_top := ?_ }
+  · have hfg : Λ.FG := hΛ.toIsLattice.fg
     have hN : IsNoetherian (𝓞 E) Λ := isNoetherian_of_fg_of_noetherian Λ hfg
     have h1 : (ΛU F' Λ).FG := by
       apply Submodule.fg_of_fg_map_injective ((Uo F').subtype.restrictScalars (𝓞 E)) Subtype.val_injective
@@ -109,18 +113,17 @@ theorem Lb_lattice {T' : E} (F' : LFlag S r T') (Λ : Submodule (𝓞 E) S.V) (h
     exact h1.map _
   · rw [eq_top_iff]
     intro q _
-    induction q using Submodule.Quotient.induction_on with
-    | H a =>
-      obtain ⟨o, ho, hoa⟩ := PI.UnitaryGroupMassFormula.BetaLUniq.exists_smul_mem S Λ hΛ (a : S.V)
-      have hmem : (Submodule.Quotient.mk (p := Pk F') (o • a) : Qt F') ∈ Lb F' Λ :=
-        (mem_Lb F' Λ).2 ⟨o • a, by simpa using hoa, rfl⟩
-      have ho' : (algebraMap (𝓞 E) E o) ≠ 0 := by
-        rwa [ne_eq, map_eq_zero_iff _ (IsFractionRing.injective (𝓞 E) E)]
-      have : (Submodule.Quotient.mk (p := Pk F') a : Qt F') =
-          (algebraMap (𝓞 E) E o)⁻¹ • (Submodule.Quotient.mk (p := Pk F') (o • a) : Qt F') := by
-        rw [Submodule.Quotient.mk_smul, ← algebraMap_smul E o, smul_smul, inv_mul_cancel₀ ho', one_smul]
-      rw [this]
-      exact Submodule.smul_mem _ _ (Submodule.subset_span hmem)
+    obtain ⟨a, rfl⟩ := Submodule.Quotient.mk_surjective (Pk F') q
+    obtain ⟨o, ho, hoa⟩ := Bl.general_b_fact_third''''.goal1 S Λ hΛ (a : S.V)
+    have hmem : (Submodule.Quotient.mk (p := Pk F') (o • a) : Qt F') ∈ Lb F' Λ :=
+      (mem_Lb F' Λ).2 ⟨o • a, by simpa using hoa, rfl⟩
+    have ho' : algebraMap (𝓞 E) E o ≠ 0 :=
+      (map_ne_zero_iff _ (IsFractionRing.injective (𝓞 E) E)).2 ho
+    have ha : (Submodule.Quotient.mk (p := Pk F') a : Qt F') =
+        (algebraMap (𝓞 E) E o)⁻¹ • (Submodule.Quotient.mk (p := Pk F') (o • a) : Qt F') := by
+      rw [Submodule.Quotient.mk_smul, ← algebraMap_smul E o, smul_smul, inv_mul_cancel₀ ho', one_smul]
+    rw [ha]
+    exact Submodule.smul_mem _ _ (Submodule.subset_span hmem)
 
 theorem γQ_Lb {T' : E} (F' : LFlag S r T') (Λ : Submodule (𝓞 E) S.V) (γ : S.V ≃ₗ[E] S.V)
     (hU : ∀ v, γ v ∈ Uo F' ↔ v ∈ Uo F') (hX : ∀ v, γ v ∈ Xsp F' ↔ v ∈ Xsp F') (hA : IsAutLam S Λ γ) :
@@ -162,7 +165,7 @@ theorem gmap_mul' {T' : E} (F' : LFlag S r T') (a b : Qt F' ≃ₗ[E] Qt F') (L 
 theorem γQ_finOrd {T' : ℕ} (F' : LFlag S r ((T' : ℕ) : E)) (hT : 0 < T')
     (hτ : ∀ (τ : E →+* ℂ) (a : E), τ (star a) = starRingEnd ℂ (τ a))
     (hpos : ∀ τ : E →+* ℂ, ∀ w ∈ orth S (Xplus F'), w ∉ Xsp F' → 0 < (τ (S.hT w w)).re)
-    (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsLattice E Λ) (γ : S.V ≃ₗ[E] S.V) (hA : IsAutLam S Λ γ)
+    (Λ : Submodule (𝓞 E) S.V) (hΛ : Submodule.IsFullLattice E Λ) (γ : S.V ≃ₗ[E] S.V) (hA : IsAutLam S Λ γ)
     (hU : ∀ v, γ v ∈ Uo F' ↔ v ∈ Uo F') (hX : ∀ v, γ v ∈ Xsp F' ↔ v ∈ Xsp F')
     (hz : γ F'.fl.z = F'.fl.z) :
     ∃ n : ℕ, 0 < n ∧ γQ F' γ hU hX ^ n = 1 := by

@@ -1,15 +1,19 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MultiplicityInnerProductUnitTwistedRightTranslat
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MultValueLeftContLevel
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormLevChiFlagLEqOne
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsCompactParahoricLevelAndContainsLifts
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HaarMapMulRightOfMemCompactSubgroup
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BlockDetSingleBlockSecondEqOneOfLe
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LocallyCompactSecondCountableBorelCountable
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpqLocallyCompactGroup
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffSetIntegralNat
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MultiplicativeInnerProductModel
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.RealLowestKTypeCoeffSquareIntegrable
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MultiplicityInnerProductUnitTwistedRightTranslat
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.MultValueLeftContLevel
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.NormLevChiFlagLEqOne
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.IsCompactParahoricLevelAndContainsLifts
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HaarMapMulRightOfMemCompactSubgroup
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.BlockDetSingleBlockSecondEqOneOfLe
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LocallyCompactSecondCountableBorelCountable
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.UpqLocallyCompactGroup
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ContDiffSetIntegralNat
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MultiplicativeInnerProductModel
+
+@[expose] public section
 
 noncomputable section
 
@@ -90,8 +94,8 @@ theorem ip_sum (M : DSModel V S) {μ : Measure (GA D V)} {𝓕 : Set (GA D V)} {
     IsMultIP M μ 𝓕 U U' (∑ i, z i * a i) := by
   intro v v'
   simp only [hU]
-  refine ⟨integrable_finset_sum _ fun i _ => (h i v v').1.const_mul _, ?_⟩
-  rw [integral_finset_sum _ fun i _ => (h i v v').1.const_mul _, Finset.sum_mul]
+  refine ⟨integrable_finsetSum _ fun i _ => (h i v v').1.const_mul _, ?_⟩
+  rw [integral_finsetSum _ fun i _ => (h i v v').1.const_mul _, Finset.sum_mul]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [integral_const_mul, (h i v v').2, mul_assoc]
 
@@ -102,7 +106,7 @@ theorem levelGroupAction_apply_of_exists_lift {β : GL (Fin V.rank) (Lev.EAf D)}
 
 theorem levelGroupActionOnAdelicFunctions_eq_zero_of_no_lift {β : GL (Fin V.rank) (Lev.EAf D)} {L : LevDat D.host.E ℂ V.rank} {g : G0 L.Pg L.r}
     (hk : ¬ ∃ κ, IsLevelLift V β L g κ) (f : GA D V → ℂ) : actG0 V β L g f = 0 := by
-  rw [actG0, dif_neg hk]
+  rw [actG0, dite_eq_right hk]
 
 end General
 
@@ -143,8 +147,8 @@ section Real
 variable {D : D7} {G : Type} [Group G] [Fintype G] {Pl0 T : Type} {A : FamIn D.what₂.LL G Pl0 T D.R.m}
   {Ks : Type} [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] {R : RealDat D A Ks}
 
-variable (R) in
 
+variable (R) in
 abbrev Mult0 : Submodule ℂ (MMap (R.MY 0)) :=
   Mult R.θ (R.MY 0) (levS _ (R.βY 0) (R.dat0 R.triv)) (levChi _ (R.βY 0) (R.dat0 R.triv))
 
@@ -166,7 +170,8 @@ theorem sum_gE (hE : R.models_HE) (hg : R.models_gE) (x : R.HE.H) :
     ∑ g, RealDat.eC (A := A) D.what₂.embLL g • R.gE g x = x := by
   refine hE.1 (MultilinearMap.ext fun v => ?_)
   have h := ((mem_goodPart R.θ (R.MY 0) _ _ R.e0 _).1 (e_mem_EE hE x)).2 v
-  rw [← h, goodRowsProjector_apply_eq_sum, map_sum, MultilinearMap.sum_apply]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [← h, goodRowsProjector_apply_eq_sum, map_sum, MultilinearMap.sum_apply]
   refine Finset.sum_congr rfl fun g _ => ?_
   rw [map_smul, MultilinearMap.smul_apply, e_gE hg]
 
@@ -212,7 +217,8 @@ theorem schurConstant_goodRow_projector_invariant (hM : R.IsModels) (hS : Global
   have h1 : IsMultIP (R.MY 0) R.ν0 R.fd0 (R.HE.e x) U (∑ g, RealDat.eC (A := A) D.what₂.embLL g * b g) := by
     refine ip_sum _ _ _ hb fun v v' h => ?_
     conv_lhs => rw [← sum_adjoint_eq R.gE (norm_gE hM) _ (sum_gE hM.HE hM.gE) x]
-    rw [map_sum, MultilinearMap.sum_apply, Finset.sum_apply, star_sum, Finset.sum_mul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, MultilinearMap.sum_apply, Finset.sum_apply, star_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun g _ => ?_
     rw [map_smul, MultilinearMap.smul_apply, Pi.smul_apply, smul_eq_mul, star_mul', star_star, mul_assoc]
   rw [ip_unique _ ha h1]

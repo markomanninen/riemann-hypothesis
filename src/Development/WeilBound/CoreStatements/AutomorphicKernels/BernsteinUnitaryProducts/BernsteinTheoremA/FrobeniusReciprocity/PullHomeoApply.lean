@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MatrixMeasurableSpace
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,8 +47,8 @@ theorem transl_apply (g : G) (f : SB X) (x : X) :
     ((transl g f : SB X) : X → ℂ) x = (f : X → ℂ) (g⁻¹ • x) :=
   rfl
 
-variable (X) in
 
+variable (X) in
 def eqv (χ : G →* ℂˣ) : Submodule ℂ (Distr X) where
   carrier := {D | ∀ (g : G) (f : SB X), D (transl g f) = (χ g : ℂ) * D f}
   add_mem' {D E} hD hE g f := by
@@ -67,8 +71,8 @@ variable {G X : Type*} [Group G] [MulAction G X] [TopologicalSpace X]
 
 abbrev Fib (p : X → G ⧸ H) : Type _ := {x : X // p x = ((1 : G) : G ⧸ H)}
 
-omit [TopologicalSpace X] [ContinuousConstSMul G X] in
 
+omit [TopologicalSpace X] [ContinuousConstSMul G X] in
 theorem smul_mem_fib {p : X → G ⧸ H} (hp : ∀ (g : G) (x : X), p (g • x) = g • p x) (h : H)
     (z : Fib p) : p ((h : G) • z.1) = ((1 : G) : G ⧸ H) := by
   rw [hp, z.2, MulAction.Quotient.smul_mk, smul_eq_mul, mul_one, QuotientGroup.eq]
@@ -78,17 +82,16 @@ def fibSmul {p : X → G ⧸ H} (hp : ∀ (g : G) (x : X), p (g • x) = g • p
     Fib p :=
   ⟨(h : G) • z.1, smul_mem_fib hp h z⟩
 
-@[simp]
-theorem fibSmul_val {p : X → G ⧸ H} (hp : ∀ (g : G) (x : X), p (g • x) = g • p x) (h : H)
-    (z : Fib p) : (fibSmul hp h z).1 = (h : G) • z.1 :=
-  rfl
-
 def fibHomeo {p : X → G ⧸ H} (hp : ∀ (g : G) (x : X), p (g • x) = g • p x) (h : H) :
     Fib p ≃ₜ Fib p where
   toFun := fibSmul hp h
   invFun := fibSmul hp h⁻¹
-  left_inv z := Subtype.ext (by simp [smul_smul])
-  right_inv z := Subtype.ext (by simp [smul_smul])
+  left_inv z := Subtype.ext (by
+    change (h : G)⁻¹ • ((h : G) • z.1) = z.1
+    rw [smul_smul, inv_mul_cancel, one_smul])
+  right_inv z := Subtype.ext (by
+    change (h : G) • ((h : G)⁻¹ • z.1) = z.1
+    rw [smul_smul, mul_inv_cancel, one_smul])
   continuous_toFun := ((continuous_const_smul (h : G)).comp continuous_subtype_val).subtype_mk _
   continuous_invFun :=
     ((continuous_const_smul ((h⁻¹ : H) : G)).comp continuous_subtype_val).subtype_mk _

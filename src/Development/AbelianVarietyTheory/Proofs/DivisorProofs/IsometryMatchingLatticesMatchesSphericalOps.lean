@@ -1,14 +1,18 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinRepApply
-import Formalism.LocalToGlobal.IndefiniteReal.CutTuples2
-import Formalism.LocalToGlobal.Divisibility.ProjLemmas
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeCompatFiniteIsometry
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdempotentPreservesLatticeHat
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.IsStepWeil
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsNormLeHeightPow
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.FinRepApply
+public import Formalism.LocalToGlobal.IndefiniteReal.CutTuples2
+public import Formalism.LocalToGlobal.Divisibility.ProjLemmas
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HeckeCompatFiniteIsometry
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IdempotentPreservesLatticeHat
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.SupportedSubgroupSplitCommutePrimeIdempotents
+
+@[expose] public section
 
 noncomputable section
 
@@ -141,8 +145,8 @@ theorem suppF_iff (f : Formalism.L2.Theta.AE D) {V : HSp D} {α : GA D V} (hα :
   have hs4 := (supp_map_iff (infPart D) f (mt V α)).1 (by rw [inf_eq hα, sub_self, smul_zero])
   exact GlobalTheory.SplitScalar.adele_ext (hs4 i j) (hs i j)
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem lamHat_loc (V : HSp D) (β : GL (Fin V.rank) (Lev.EAf D)) (Λ : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)) (N : ℕ)
     {P : Pl D.host.E} {e f : Formalism.L2.Theta.AE D} (hB : IsBaseFrame V β Λ N) (hN : ((N : ℕ) : 𝓞 D.host.E) ∉ P.asIdeal)
     (hP : IsPrimeIdem P e f) (hff : f * f = f) (y : Fin V.rank → Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F ⊗[D.host.F] D.host.E) :
@@ -173,8 +177,8 @@ theorem lamHat_loc (V : HSp D) (β : GL (Fin V.rank) (Lev.EAf D)) (Λ : Submodul
     rw [hsw]
     exact ⟨GlobalTheory.LatLoc.loc_transfer _ _ N u _ hu' hε a01 _, GlobalTheory.LatLoc.loc_transfer _ _ N u _ hu' hε a10 _⟩
 
-set_option maxHeartbeats 800000 in
 
+set_option maxHeartbeats 800000 in
 theorem transfer {V V' : HSp D} (hr : V'.rank = V.rank) {P : Pl D.host.E}
     (J : Matrix (Fin V'.rank) (Fin V.rank) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F ⊗[D.host.F] D.host.E))
     (J' : Matrix (Fin V.rank) (Fin V'.rank) (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.Af D.host.F ⊗[D.host.F] D.host.E))
@@ -203,19 +207,21 @@ theorem transfer {V V' : HSp D} (hr : V'.rank = V.rank) {P : Pl D.host.E}
   · obtain ⟨g, e₃⟩ := Φ.surjective ⟨γ', hR' _ hγ'⟩
     obtain rfl : γ' = (Φ g : GA D V') := by rw [e₃]
     exact (hS g).1 (hR _ ((hRR g).2 hγ'))
-  · refine cosetRep_transfer Φ (fun k hk => hk.1.1) (fun k hk => hk.1.1) (fun k => ?_) hR' hRR ⟨α, hG α hα⟩ hC
-    constructor
-    · rintro ⟨⟨-, a, -⟩, b⟩
-      have b' := (hS k).1 b
-      exact ⟨⟨(Φ k).2, stab_iff_conj h1 h2 (hc k) (hL e f hP) (loc' e f hP) ((suppF_iff f (Φ k).2).1 b') a,
-        fun v hv => absurd hv (Finset.notMem_empty v)⟩, b'⟩
-    · rintro ⟨⟨-, a, -⟩, b⟩
-      have b' := (hS k).2 b
-      exact ⟨⟨k.2, stab_iff_conj h2 h1 (hc' k) (lat_inv h1 (hL e f hP)) (loc e f hP) ((suppF_iff f k.2).1 b') a,
-        fun v hv => absurd hv (Finset.notMem_empty v)⟩, b'⟩
+  · refine cosetRep_transfer Φ ?_ ?_ (fun k => ?_) hR' hRR ⟨α, hG α hα⟩ hC
+    · exact fun k hk => hk.1.1
+    · exact fun k hk => hk.1.1
+    · constructor
+      · rintro ⟨⟨-, a, -⟩, b⟩
+        have b' := (hS k).1 b
+        exact ⟨⟨(Φ k).2, stab_iff_conj h1 h2 (hc k) (hL e f hP) (loc' e f hP) ((suppF_iff f (Φ k).2).1 b') a,
+          fun v hv => absurd hv (Finset.notMem_empty v)⟩, b'⟩
+      · rintro ⟨⟨-, a, -⟩, b⟩
+        have b' := (hS k).2 b
+        exact ⟨⟨k.2, stab_iff_conj h2 h1 (hc' k) (lat_inv h1 (hL e f hP)) (loc e f hP) ((suppF_iff f k.2).1 b') a,
+          fun v hv => absurd hv (Finset.notMem_empty v)⟩, b'⟩
+
 
 set_option maxHeartbeats 800000 in
-
 theorem sphOp_iff : ∀ {D : D7} (V V' : HSp D) (β : GL (Fin V.rank) (Lev.EAf D)) (β' : GL (Fin V'.rank) (Lev.EAf D)) (Pg : Finset (Pl D.host.E)) (j : Matrix (Fin V'.rank) (Fin V.rank) (Lev.EAf D)) (Φ : GfC V ≃ₜ* GfC V') (Λ : Submodule (𝓞 D.host.E) (Fin V.rank → D.host.E)) (Λ' : Submodule (𝓞 D.host.E) (Fin V'.rank → D.host.E)) (N N' : ℕ), IsBaseFrame V β Λ N → IsBaseFrame V' β' Λ' N' → GlobalTheory.CuspMult.IsFinIso V V' β β' Pg j Φ → ∀ (P : Pl D.host.E), ((N : ℕ) : 𝓞 D.host.E) ∉ P.asIdeal → ((N' : ℕ) : 𝓞 D.host.E) ∉ P.asIdeal → ∀ (d : List ℤ) (B : Finset (GfC V)), GlobalTheory.Hk3.SphOp V P d (B.map ⟨Subtype.val, Subtype.val_injective⟩) ↔ GlobalTheory.Hk3.SphOp V' P d ((B.map Φ.toEquiv.toEmbedding).map ⟨Subtype.val, Subtype.val_injective⟩) := by
   intro D V V' β β' Pg j Φ Λ Λ' N N' hB hB' hI P hN hN' d B
   obtain ⟨hr, u, hu, -⟩ := hI.frame

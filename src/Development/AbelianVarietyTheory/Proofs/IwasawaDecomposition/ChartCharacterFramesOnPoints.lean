@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemCutQGrp
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.MemCutQGrp
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.L2.Col Formalism.L2.DIV Formalism.L2.Ker Formalism.UG Formalism.L2.Forms GlobalTheory.Mem GlobalTheory.Mem.Chr GlobalTheory.Mem.Col2 GlobalTheory.Mem.Col2.TC GlobalTheory.Mem.Col2.MemChart Matrix
 open scoped TensorProduct
 attribute [local instance] GlobalTheory.Mem.Col2.starE Formalism.BasicNotions.Host.cmStar
@@ -16,7 +21,7 @@ theorem chr_frames : ∀ {X : Fields} {n : ℕ} {ST SG Q : Finset (HeightOneSpec
 
   have hzU : z.1 ∈ levU hc n ST SG (chG Λ C) := levUQ_le q _ z.2
   have hx : g * z.1 ∈ UAd hc n := mul_mem hg (levU_le_UAd hc n ST SG _ hzU)
-  have hdeco : decoOf ST SG (g * z.1) = ((1, h.1) : UF X.E n × GLG X.E n SG) • decoOf ST SG g := by
+  have hdeco : decoOf ST SG (g * z.1) = ((1, h.1) : UF X.E n × GLG (E := X.E) (n := n) (SG := SG)) • decoOf ST SG g := by
     rw [hE'.1, hE.1]
     rfl
   have e2 : decoRaw ST SG (g * z.1) = (decoRaw ST SG g).act 1 h.1 := by

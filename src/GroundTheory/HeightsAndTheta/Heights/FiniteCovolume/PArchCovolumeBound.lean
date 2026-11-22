@@ -1,10 +1,14 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StArchCovolumeBound
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StCoordEmbedBasis
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StIntegralFormCovolume
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StTraceHermNondegenerate
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StDualLatticeMultiple
-import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StCoordLatticeFullRank
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StArchCovolumeBound
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StCoordEmbedBasis
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StIntegralFormCovolume
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StTraceHermNondegenerate
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StDualLatticeMultiple
+public import GroundTheory.HeightsAndTheta.Heights.FiniteCovolume.StCoordLatticeFullRank
+
+@[expose] public section
 
 namespace GroundTheory.Heights₂.Heights.FiniteCovolume
 
@@ -13,11 +17,11 @@ open NumberField GroundTheory.Automorphic Module MeasureTheory
 noncomputable section
 
 variable {F E : Type*} [Field F] [Field E] [NumberField F] [NumberField E] [Algebra F E]
-  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [IsTotallyComplex E]
+  [Algebra.IsQuadraticExtension F E] [IsTotallyReal F] [_root_.NumberField.IsTotallyComplex E]
 variable {W : Type*} [AddCommGroup W] [Module E W] {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-omit [NumberField F] [IsTotallyReal F] [DecidableEq ι] in
 
+omit [NumberField F] [IsTotallyReal F] [DecidableEq ι] in
 theorem ArchCovolumeBound.proof (h : HermitianForm F E W) (v : Basis ι E W)
     (h₁ : CoordEmbedBasis.Statement E ι)
     (h₂ : IntegralFormCovolume.Statement (ι → E) (InfinitePlace E → ι → ℂ)

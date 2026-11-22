@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsDedekindDomain IsDedekindDomain.HeightOneSpectrum NumberField Filter Topology
 open scoped WithZeroTopology WithZero

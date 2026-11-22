@@ -1,27 +1,31 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import Development.AbelianVarietyTheory.BlockTheory.CMModuli.ThetaTowerRecognition
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SummableEvTOfQMap
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsIsFib
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TorusTorsionPointsCorrespondValues
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DegenerationValuesIntOfAdmissibleBase
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AbelianPartValuesTorsionPairingSeparationIntegra
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsNumOf
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsIntegralGauge
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsNumDHomDegenerationValuesFieldExtension
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DegenerationDataTorsionStructureAlgClosed
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsSemiAbelianOfUniformisationOverDvr
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionMapsCompatibleInLevel
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
-import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.RelationsAreFunctions
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AbelianPartValuesOfExpansionLawsStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaConstantTermRepresentativeDependenceStatement
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TxCosetCriterionStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsUniqueDescentAutomorphismInvariantMorphismStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PolarisedIsoCommutesFieldAutomorphismOfTorsionStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIsoPolarisedAbelianSchemesDvrOfFieldExtensStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPullbackDegenerationOfValuesIsoDvrStatement
-import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsGeometricValuesIsoOfIdentificationDvrStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import Development.AbelianVarietyTheory.BlockTheory.CMModuli.ThetaTowerRecognition
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.SummableEvTOfQMap
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsIsFib
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TorusTorsionPointsCorrespondValues
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DegenerationValuesIntOfAdmissibleBase
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AbelianPartValuesTorsionPairingSeparationIntegra
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsNumOf
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsIntegralGauge
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsNumDHomDegenerationValuesFieldExtension
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.DegenerationDataTorsionStructureAlgClosed
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.IsSemiAbelianOfUniformisationOverDvr
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.UniformisationTorsionMapsCompatibleInLevel
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.AllUniformizationLawsHold
+public import Development.AbelianVarietyTheory.Proofs.ThetaShiftProofs.RelationsAreFunctions
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.AbelianPartValuesOfExpansionLawsStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ThetaConstantTermRepresentativeDependenceStatement
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.TxCosetCriterionStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsUniqueDescentAutomorphismInvariantMorphismStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.PolarisedIsoCommutesFieldAutomorphismOfTorsionStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsIsoPolarisedAbelianSchemesDvrOfFieldExtensStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsPullbackDegenerationOfValuesIsoDvrStatement
+public import Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsGeometricValuesIsoOfIdentificationDvrStatement
+
+@[expose] public section
 
 open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry NumberField
 open scoped CategoryTheory.Obj BigOperators
@@ -135,50 +139,14 @@ theorem exists_integral : ∃ (M : NumD C) (ν₀ : NumOf D.toPre C M) (q : Quad
   obtain ⟨I, h⟩ := exists_gaugeMap D.psi_even D.tau_bimult ν ν₀ hth
   exact ⟨M, ν₀, q, I, hI, hq, h⟩
 
-include ν in
 
+include ν in
 theorem summable_of_data [CompleteSpace C] {m : ℕ} (hm : Odd m) (p : N.QT (m ^ 2)) :
     Summable (N.txT m p) ∧ ∀ j, j ≠ 0 → ∀ r : N.QT j, Summable (N.evT m p r.1.2) := by
   obtain ⟨M, ν₀, q, I, -, hq, hl, -⟩ := exists_integral hV D hC ν
   exact ⟨⟨_, (hasSum_qMap I hl hm p _).1 (summable_txT hq hm.pos.ne' _).hasSum⟩,
     fun j hj r => summable_evT_of_qMap I hm p r (summable_evT hq hm.pos.ne' hj _ _)⟩
 end Integral
-
-theorem thetaSeries_iff : ThetaSeriesSt ↔ TXSt ∧ EVSt := by
-  constructor
-  · intro h
-    refine ⟨?_, ?_⟩
-    · rintro V _ _ _ I hV rfl D A G _ _ - U C _ _ _ _ _ _ hC N ν m hm Ix p q x hx hq
-      obtain ⟨v, hv, H⟩ := (h V hV D A G U C hC N ν m hm Ix p x hx).1
-      have e : ∀ i, N.tx m (q i) = v i := fun i => ((hv i).hasSum (hq i)).2
-      simpa only [e] using H
-    · rintro V _ _ _ I hV rfl D A G _ _ - U C _ _ _ _ _ _ hC N ν m hm Ix p q x hx hq j hj p₀ q₀ z hz hq₀
-      obtain ⟨v, hv, H⟩ := (h V hV D A G U C hC N ν m hm Ix p x hx).2 j (by omega) p₀ z hz
-      have e : ∀ i, N.ev m (q i) q₀.1.2 = v i := fun i => by
-        obtain ⟨q', g, h₁, h₂, h₃⟩ := hv i
-        rw [qPt_unique ν (hq i) h₁, ν.pt_unique hq₀.2 h₂]
-        exact h₃.tsum_eq
-      simpa only [e] using H
-  · rintro ⟨hT, hE⟩ V _ _ _ hV D A G _ _ U C _ _ _ _ _ hC N ν m hm Ix p x hx
-    letI : NontriviallyNormedField C := ⟨exists_one_lt_norm hV hC⟩
-    haveI : CharZero C := charZero_of hV
-    haveI := hV.1
-    haveI := hV.2.2
-    have hG : IsSemiAbelian G := isSemiAbelian_of_unifPre_dvr V D A G U.toUnifPre
-    choose q hq using fun i => exists_val D.psi_even D.tau_bimult ν (p i)
-    refine ⟨⟨fun i => N.tx m (q i), fun i => ⟨q i, hq i, (summable_of_data hV D hC ν hm _).1.hasSum⟩,
-      hT V _ hV rfl D A G hG U C hC N ν m hm Ix p q x hx hq⟩, fun j hj r z hz => ?_⟩
-    obtain ⟨s, hs⟩ := exists_val D.psi_even D.tau_bimult ν r
-    obtain ⟨r₄, hr₄⟩ := exists_pt D.psi_even D.tau_bimult ν (up (rfl : j * 4 = j * 4) s)
-    have e₁ : r₄.y = 4 • r.y := by
-      rw [← hr₄.1, ← hs.1, ← map_nsmul]; rfl
-    have e₂ : r₄.g = r.g :=
-      ((GtValues.points_correspond V _ D.psi_even D.tau_bimult C N ν).2.1 s.1.2).unique hr₄.2 hs.2
-    have hz₄ := ((LevelCompat.qkToAkU_level firstFiveLaws V _ (admissible_base_of_complete_dvr hV) D A G hG U C j 4 (j * 4) hj (by norm_num) rfl
-      r r₄ z).1 e₁ e₂).1 hz
-    have Q := hE V _ hV rfl D A G hG U C hC N ν m hm Ix p q x hx hq (j * 4) (by omega) r₄ _ z hz₄ hr₄
-    exact ⟨fun i => N.ev m (q i) s.1.2,
-      fun i => ⟨q i, s.1.2, hq i, hs.2, ((summable_of_data hV D hC ν hm _).2 j hj.ne' s).hasSum⟩, Q⟩
 
 section Conclusions
 variable {V : Type} [CommRing V] [IsDomain V] [IsLocalRing V] (hV : GlobalTheory.LN.CDvr V) {D D' : DegPre V} (he : D.PsiEven)
@@ -257,7 +225,18 @@ theorem inducedBy_of_onQ (hn : 2 ≤ n) (h : SameMatch mt w) {j : ℕ} (hj : 1 �
     revert q
     rw [← pow_mul]
     exact fun q => hQ _ _ _ rfl ((qMap_iff (TateInh.homOfIso J)).2 rfl).2
-  have E := N'.qEq_equivalence ((n ^ j) ^ 2)
+  have E : Equivalence (N'.QEq (k := (n ^ j) ^ 2)) := by
+    constructor
+    · intro p
+      exact ⟨0, by simp, by simp⟩
+    ·
+      rintro p p' ⟨z, hz, hz'⟩
+      exact ⟨-z, by rw [hz, smul_neg, add_neg_cancel_right],
+        by rw [hz', N'.io_neg, mul_inv_cancel_right]⟩
+    ·
+      rintro p p' p'' ⟨z, hz, hz'⟩ ⟨t, ht, ht'⟩
+      exact ⟨z + t, by rw [ht, hz, smul_add, add_assoc],
+        by rw [ht', hz', N'.io_add, _root_.mul_assoc]⟩
   obtain ⟨e, he⟩ := exists_pullDeg hV he hb he' hb' ν ν' J hJ (k := (n ^ j) ^ 2)
     (by
       have : 2 ≤ n ^ j := hn.trans (Nat.le_self_pow (by omega) n)
@@ -269,8 +248,8 @@ theorem inducedBy_of_onQ (hn : 2 ≤ n) (h : SameMatch mt w) {j : ℕ} (hj : 1 �
   obtain ⟨p', hp'⟩ := exists_pt he' hb' ν' (qMap (TateInh.homOfIso J) _ q)
   exact ⟨p, p', _, hp, hp', he _ p p' q hp hp', a i q⟩
 
-omit he hb he' hb' [IsAlgClosed C] in
 
+omit he hb he' hb' [IsAlgClosed C] in
 theorem onQ_of_inducedBy (hn : n ≠ 0) (h : SameMatch mt w)
     (H : ∃ e : IsPullDeg (RingHom.id V) D D', w.InducedBy ν ν' e) :
     ∃ J : NumD.Iso N N', mt.OnQ J ∧ GeoIso ν ν' J.toIso := by
@@ -365,13 +344,6 @@ theorem recognition_iff : RecognitionSt ↔ URecDvrSt := by
     obtain ⟨a', rfl⟩ := (hB' _).2 a'
     rw [hw₀, qEq_qMap I' (hB' _).1] at b₄
     exact ⟨p, p', a', (hP _ _ _).2 b₁, (hP' _ _ _).2 b₂, b₃, b₄⟩
-
-theorem typings_compare :
-    (ThetaSeriesSt ↔ TXSt ∧ EVSt) ∧ (RecognitionSt ↔ URecDvrSt) ∧ (URecSt → URecDvrSt) ∧
-      (SeriesAndRecognition ↔ TXSt ∧ EVSt ∧ URecDvrSt) ∧ (TXSt ∧ EVSt ∧ URecSt → SeriesAndRecognition) :=
-  ⟨thetaSeries_iff, recognition_iff, uRecDvr_of_uRec,
-    (and_congr thetaSeries_iff recognition_iff).trans and_assoc,
-    fun h => ⟨thetaSeries_iff.2 ⟨h.1, h.2.1⟩, recognition_iff.2 (uRecDvr_of_uRec h.2.2)⟩⟩
 
 end GlobalTheory.SeriesCompare
 end

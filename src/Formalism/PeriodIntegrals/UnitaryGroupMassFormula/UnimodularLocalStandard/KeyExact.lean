@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RepExact
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.UnimodularLocalStandard.RepExact
+
+@[expose] public section
 
 noncomputable section
 open scoped ComplexConjugate
@@ -22,7 +26,7 @@ private theorem H_affine_combination_eq_of_quadratic_relation {m : Type} [Fintyp
     (hff : H f f = κ * Q) (hww : H w w = κ * Q * (1 + ε)) (hX : N₁ * (H f w + H w f) = κ * γ)
     (hrc : conj rc = rc) (hrD : rc * (N₁ * (2 * Q + Q * ε) - γ) = N₁ * Q * ε) :
     H (w + rc • (f - w)) (w + rc • (f - w)) = κ * Q := by
-  simp only [map_add, map_sub, map_smul, LinearMap.add_apply, LinearMap.sub_apply,
+  simp only [map_add (f := _), map_sub, map_smul, LinearMap.add_apply, LinearMap.sub_apply,
     LinearMap.smul_apply, LinearMap.map_smulₛₗ, smul_eq_mul, hrc]
   apply mul_left_cancel₀ hN
   linear_combination (N₁ * (1 - 2 * rc + rc ^ 2)) * hww + (N₁ * rc ^ 2) * hff +

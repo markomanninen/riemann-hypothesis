@@ -1,10 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelValuesFourth
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRepsOfFiniteIndex
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ClassPresExtMemExtBijIsom
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OmegaLevelVPCore
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaKernelTensorValues
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.NormalFam
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OscillatorModelValuesFourth
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsRepsOfFiniteIndex
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ClassPresExtMemExtBijIsom
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OmegaLevelVPCore
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaKernelTensorValues
+
+@[expose] public section
 
 open NumberField Matrix IsDedekindDomain
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.FD
@@ -17,8 +21,8 @@ namespace GlobalTheory.KernelSpanCore
 
 open GlobalTheory.KernelSpan
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem kernel_mem_span_core : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl0 T0 : Type) (A : Formalism.L2.DIV.FamIn D.what₂.LL G Pl0 T0 D.R.m) (Ks : Type) [Field Ks] [NumberField Ks] [Algebra Ks D.what₂.LL] (R : RealDat D A Ks) (F : Face D A), GlobalTheory.Hk3.Core R F → ∀ (i : Fin D.R.m) (t : T0), VStd D i → ∀ h ∈ GfC (Vc D i), ∀ (w : (R.cV i).W) (u : ∀ ρ, lowT (R.MW i (sg0 D A)) ρ), (fun g : GA D (Wc D i) => thetaKO (R.ωP i t) h g (R.ptP i t (R.ioP i (PiTensorProduct.tprod ℂ u) w))) ∈ Submodule.span ℂ (Set.range fun x₀ : A.fam.amb.FL i t => (R.thF i t (jVx R i t x₀) (fun ρ => u ρ) : GA D (Wc D i) → ℂ)) := by
   intro D G _ _ Pl0 T0 A Ks _ _ _ R F hR i t hV h hh w u
   refine (hR.thP.thF i t).elim fun thP hPF => ?_
@@ -47,7 +51,7 @@ theorem kernel_mem_span_core : ∀ (D : D7) (G : Type) [Group G] [Fintype G] (Pl
     span_eq_top_of_model (R.HV i t).e (hR.models.HV i t).1 (jVx R i t) _ he (h0.2.trans hr.symm)
   let T : (R.HV i t).H →ₗ[ℂ] (GA D (Wc D i) → ℂ) :=
     { toFun := fun y => R.thF i t y (fun ρ => u ρ)
-      map_add' := fun y y' => by rw [map_add]; rfl
+      map_add' := fun y y' => by rw [map_add (f := _)]; rfl
       map_smul' := fun c y => by rw [map_smul]; rfl }
   refine mem_span_of_linear (jVx R i t) hsp T y a ha.1 _ (funext fun g => ?_)
   have h1 := congrFun (hPF.2 y u) g

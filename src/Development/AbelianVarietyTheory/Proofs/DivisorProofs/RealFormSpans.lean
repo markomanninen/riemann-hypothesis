@@ -1,6 +1,11 @@
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
-import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.DiscreteSeriesInfinitesimalCharacter
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HolomorphicDiscreteSeries
+module
+
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.EigenspaceCyclicDensity.LowKMultOneP
+public import CompanionTheory.HarishChandraModules.LowKTypeMultiplicity.DiscreteSeriesCharacters.DiscreteSeriesInfinitesimalCharacter
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.HolomorphicDiscreteSeries
+
+@[expose] public section
+
 open Matrix GlobalTheory.HolDS
 open Formalism.REAL (GlRel IsUnitary IsWeight KHighest root Jm inG)
 open Formalism.QuantumDeterminants (lowK IsHCParam)
@@ -77,6 +82,6 @@ theorem GlobalTheory.realForm_spans : ∀ (n : ℕ) (ε : Fin n → Bool) (W : T
     have e1 := h _ (inG_re n ε Z)
     have e2 := h _ (inG_im n ε Z)
     change f _ = 0 at e1 e2
-    rw [hZ Z, map_add, e1, map_smul, e2, smul_zero, add_zero]
+    rw [hZ Z, map_add (f := _), e1, map_smul, e2, smul_zero, add_zero]
   have := hf (Matrix.single a b 1)
   simpa [f, Matrix.single_apply, ite_and, Finset.sum_ite_eq, Finset.sum_ite_eq'] using this

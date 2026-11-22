@@ -1,4 +1,8 @@
-import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftDefs
+module
+
+public import Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GelfandTsetlinLowering.LiftDefs
+
+@[expose] public section
 
 noncomputable section
 
@@ -23,7 +27,7 @@ theorem degree_sub_det_shift_nonneg {n N : ℕ} (h : n + 1 = N) (lam : DomWeight
   have hsum := Finset.sum_le_sum (fun i (_ : i ∈ (Finset.univ : Finset (Fin n))) => hle i)
   have hl : lam.detShift = lam.w (Fin.last n) := by
     unfold DomWeight.detShift
-    rw [dif_pos (by omega)]
+    rw [dite_eq_left (by omega)]
     congr 1
   unfold degZ wsum
   rw [hl, Fin.sum_univ_castSucc]

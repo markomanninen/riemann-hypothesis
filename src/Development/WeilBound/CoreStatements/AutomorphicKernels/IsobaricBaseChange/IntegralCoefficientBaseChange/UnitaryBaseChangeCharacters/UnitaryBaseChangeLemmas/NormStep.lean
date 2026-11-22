@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLemmas.ExistsPolyOfCommute
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AutomorphicKernels.IsobaricBaseChange.IntegralCoefficientBaseChange.UnitaryBaseChangeCharacters.UnitaryBaseChangeLemmas.ExistsPolyOfCommute
+
+@[expose] public section
 
 open Polynomial Matrix Formalism.UG
 
@@ -96,7 +100,7 @@ theorem norm_step [CompleteSpace L] (σ : L →+* L) (ϖ : L) (q : ℕ) (h : IsU
       rw [this] at hdet
       exact isUnit_of_mul_isUnit_right hdet
     have e := congrArg (aeval tz) (X_mul_divX_add (ev tz).charpoly)
-    rw [h0, map_add, map_mul, aeval_X, aeval_C] at e
+    rw [h0, map_add (f := _), map_mul, aeval_X, aeval_C] at e
     have hu : IsUnit (tz * aeval tz (ev tz).charpoly.divX) := by
       rw [eq_neg_of_add_eq_zero_left e]
       exact (hc0.map _).neg
@@ -115,7 +119,7 @@ theorem norm_step [CompleteSpace L] (σ : L →+* L) (ϖ : L) (q : ℕ) (h : IsU
         Matrix.one_mul]
     have h2 := congrArg (JiO * ·) h1
     simpa only [← Matrix.mul_assoc, hJJO', Matrix.one_mul] using h2
-  have hT : T ∈ GlobalTheory.UTr.plus P := GlobalTheory.UTr.mem_plus.2 (by rw [IsUnit.unit_spec]; exact hconj)
+  have hT : T ∈ GlobalTheory.UTr.plus P := (GlobalTheory.UTr.mem_plus (P := P)).2 (by rw [IsUnit.unit_spec]; exact hconj)
   have hsepP : (P : (intL L)[X]).Separable := hsep
   obtain ⟨u, hu⟩ := GlobalTheory.NormEq.normU_surj L σ ϖ q h P hsepP T hT
   have hu' : (u : GlobalTheory.UTr.Alg P) * GlobalTheory.UTr.conj P u = tz := by

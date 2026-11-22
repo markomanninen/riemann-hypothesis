@@ -1,5 +1,9 @@
-import Mathlib
-import GroundTheory.GlobalFields.SplittingFromInequality.Decomposition
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.SplittingFromInequality.Decomposition
+
+@[expose] public section
 
 namespace GroundTheory.Global
 
@@ -28,9 +32,9 @@ theorem arithFrobAt_eq_of_isArithFrobAt (w : HeightOneSpectrum (𝓞 L))
 theorem ramificationIdx_smul (τ : Gal(L/F)) (w : HeightOneSpectrum (𝓞 L)) :
     (τ • w).asIdeal.ramificationIdx (𝓞 F) = w.asIdeal.ramificationIdx (𝓞 F) := by
   have : IsGaloisGroup Gal(L/F) (𝓞 F) (𝓞 L) := IsGaloisGroup.of_isFractionRing _ _ _ F L
-  have : (τ • w).asIdeal.LiesOver (AdeleBaseChange.below F w).asIdeal :=
+  have : (τ • w).asIdeal.LiesOver (AdeleBaseChange.below (K := F) w).asIdeal :=
     (AdeleBaseChange.below_eq_iff _ _).1 (below_smul τ w)
-  exact Ideal.ramificationIdx_eq_of_isGaloisGroup (AdeleBaseChange.below F w).asIdeal
+  exact Ideal.ramificationIdx_eq_of_isGaloisGroup (AdeleBaseChange.below (K := F) w).asIdeal
     (τ • w).asIdeal w.asIdeal Gal(L/F)
 
 theorem arithFrobAt_smul (τ : Gal(L/F)) (w : HeightOneSpectrum (𝓞 L))

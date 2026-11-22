@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
-import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
-import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CLTateInvariantsFiniteExtensionMem
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfTateTwistInvariantFiniteExtension
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonemptyThetaDeRhamFilZeroConcretePeriod
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinExt
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamDieudonneSpansTensorDeRhamPeriodsStatement
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.AdicCompletionLocal.LocTied
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocalSituation
+public import Formalism.SharpRestriction.LevelLetterCocycles.LocCoh
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CLTateInvariantsFiniteExtensionMem
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfTateTwistInvariantFiniteExtension
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.NonemptyThetaDeRhamFilZeroConcretePeriod
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsFinExt
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamDieudonneSpansTensorDeRhamPeriodsStatement
+
+@[expose] public section
 
 open Formalism Formalism.BasicNotions Formalism.BasicNotions.Loc Formalism.WeaklyAdmissibleFiltrations Formalism.MainNotions.N TensorProduct
 open scoped Formalism.Per
@@ -71,7 +75,8 @@ theorem graded_indep
         ih' (k i₀) (fun i => σ g (β * b i) - β * b i)
           (fun i hi => (F _).sub_mem (hFG _ _ _ (he i hi)) (he i hi)) (by
             convert (FM _).sub_mem (hMG g _ _ hz) hz using 1
-            simp only [map_add, map_sum, hρ, hd, sub_smul, Finset.sum_sub_distrib]
+            set_option synthInstance.maxHeartbeats 100000 in
+              simp only [map_add (f := _), map_sum, hρ, hd, sub_smul, Finset.sum_sub_distrib]
             abel)
       have hκ : ∀ i, ∃ κ ∈ F 0, (∀ g, σ g κ = κ) ∧ (k i₀ ≠ k i → κ = 0) ∧
           (i ∈ s → β * b i - κ ∈ F (k i₀ - k i + 1)) := fun i => by
@@ -140,7 +145,8 @@ theorem step
     rw [heq] at hsum ⊢
     refine Submodule.add_mem _ (Submodule.subset_span ⟨k i + 1, b i, _, fun g => ?_, hmem, ?_, rfl⟩)
       (ih _ (hn ▸ Finset.card_erase_lt_of_mem hi) _ rfl _ (fun j hj => ?_) ?_)
-    · simp only [map_add, map_sum, hρ, hd, (hκ _).2.1]
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [map_add (f := _), map_sum, hρ, hd, (hκ _).2.1]
     · rw [show c + 1 - (k i + 1) = c - k i by ring]
       exact hb i hi
     · refine (F _).sub_mem (hb j (Finset.mem_of_mem_erase hj)) ?_
@@ -176,7 +182,7 @@ theorem filtered
   have hle : min c₀ a ≤ a := min_le_right _ _
   have key : ∀ c, min c₀ a ≤ c → c ≤ a → y ∈ Submodule.span ℤ (gens ρ F FM c) := by
     intro c hc
-    induction c, hc using Int.le_induction with
+    induction c, hc using Int.leInduction with
     | base =>
       intro _
       rw [hsum]
@@ -352,7 +358,7 @@ theorem deRham_filtered : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : Lo
     induction z using TensorProduct.induction_on with
     | zero => rw [map_zero]; exact S.zero_mem
     | tmul v x => exact hS v x x.2
-    | add x y hx hy => rw [map_add]; exact S.add_mem hx hy
+    | add x y hx hy => rw [map_add (f := _)]; exact S.add_mem hx hy
   have hFa : Antitone fun a => ((P.PD K).Fil a).toAddSubgroup :=
     antitone_int_of_succ_le fun a => (P.PD K).Fil_anti a
   have hMa : Antitone fun a => (FilV (P.PD K) (LL := ↥LL.1) (V := V) a).toAddSubgroup :=
@@ -367,7 +373,7 @@ theorem deRham_filtered : ∀ (l : ℕ) [Fact l.Prime] (P : LocPrime l) (AI : Lo
       induction x using TensorProduct.induction_on with
       | zero => simp
       | tmul v x => simp [actVdR]
-      | add x y hx hy => simp only [map_add, hx, hy])
+      | add x y hx hy => simp only [map_add (f := _), hx, hy])
     (P.PD K).Fil_mul
     (fun a c x z hx hz => hind c
       ((FilV (P.PD K) (LL := ↥LL.1) (V := V) (a + c)).toAddSubgroup.comap (φ x).toAddMonoidHom)

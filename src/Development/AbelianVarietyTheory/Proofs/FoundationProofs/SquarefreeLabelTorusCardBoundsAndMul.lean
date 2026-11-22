@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Foundations.SamePartIffOfNeZero
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.SamePartIffOfNeZero
+
+@[expose] public section
 
 open Polynomial Classical GlobalTheory.BadShare
 namespace GlobalTheory.BadShare
@@ -48,10 +52,10 @@ theorem torusCard_bounds_mul : ∀ (g : ℕ) [Fact g.Prime], (∀ (N : ℕ), ∀
       exact prod_pow_sub_one_le g _
   · have hd : degType g (h * f) = degType g h + degType g f := by
       unfold degType
-      rw [UniqueFactorizationMonoid.normalizedFactors_mul hh hf, Multiset.map_add]
+      rw [UniqueFactorizationMonoid.normalizedFactors_mul hh hf, Multiset.map_add (f := _)]
     refine ⟨hd, ?_⟩
     unfold torusCard
-    rw [hd, Multiset.map_add, Multiset.prod_add]
+    rw [hd, Multiset.map_add (f := _), Multiset.prod_add]
   · have hd : degType g P = {P.natDegree} := by
       unfold degType
       rw [UniqueFactorizationMonoid.normalizedFactors_irreducible hP, Multiset.map_singleton]

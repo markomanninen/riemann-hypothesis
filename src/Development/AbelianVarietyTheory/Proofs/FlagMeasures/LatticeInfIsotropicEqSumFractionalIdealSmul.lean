@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.Ia
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.CuspSpanNormBounds.IsPrimitiveSub
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.Ia
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +40,7 @@ private lemma coefX_linearCombination_eq (F : FlagG S r T) (l : Fin r →₀ E) 
     rw [← Finsupp.range_linearCombination]
     exact LinearMap.mem_range_self _ l
   unfold FlagG.coefX
-  rw [dif_pos hmem, F.e_indep.repr_eq (l := l) rfl]
+  rw [dite_eq_left hmem, F.e_indep.repr_eq (l := l) rfl]
 
 private lemma exists_linearCombination_eq_of_mem_flagX (F : FlagG S r T) {y : S.V} (hy : y ∈ F.X) :
     ∃ l : Fin r →₀ E, Finsupp.linearCombination E F.e l = y := by
@@ -48,7 +52,7 @@ lemma coefX_add (F : FlagG S r T) (a : Fin r) {x y : S.V} (hx : x ∈ F.X) (hy :
     F.coefX (x + y) a = F.coefX x a + F.coefX y a := by
   obtain ⟨l, rfl⟩ := exists_linearCombination_eq_of_mem_flagX F hx
   obtain ⟨m, rfl⟩ := exists_linearCombination_eq_of_mem_flagX F hy
-  rw [← map_add, coefX_linearCombination_eq, coefX_linearCombination_eq, coefX_linearCombination_eq, Finsupp.add_apply]
+  rw [← map_add (f := _), coefX_linearCombination_eq, coefX_linearCombination_eq, coefX_linearCombination_eq, Finsupp.add_apply]
 
 lemma coefX_smul (F : FlagG S r T) (a : Fin r) (c : E) {x : S.V} (hx : x ∈ F.X) :
     F.coefX (c • x) a = c * F.coefX x a := by

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.OrdBasic
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AlgebraTools.HidaCompleteRings.OrdBasic
+
+@[expose] public section
 
 open UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite TensorProduct
 
@@ -104,7 +108,7 @@ private theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.common_ker_
     simpa using this
   have hφa : φ (a : Y) ≠ 0 := by
     have h2 := congrArg φ hab'
-    rw [map_add, hφb, add_zero] at h2
+    rw [map_add (f := _), hφb, add_zero] at h2
     rw [h2]
     exact hu
   have haker : (T i ^ (n + 1)) (a : Y) = 0 := by

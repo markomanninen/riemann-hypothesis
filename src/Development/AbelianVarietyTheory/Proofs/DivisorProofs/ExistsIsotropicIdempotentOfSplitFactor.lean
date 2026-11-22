@@ -1,10 +1,36 @@
-import Development.AbelianVarietyTheory.Definitions.Divisors.HasTypeVec
-import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.LabesseWaldspurger
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConstantTermVanishing
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ParabolicLeviDecomposition
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.StandardMaximalParabolic
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EllipticTraceFromModelStatement
+module
+
+public import Development.AbelianVarietyTheory.Definitions.Divisors.HasTypeVec
+public import Development.AbelianVarietyTheory.PublishedTheorems.TwistedTraceFormula.LabesseWaldspurger
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ConstantTermVanishing
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsAuxiliaryPlaceNotMemFinset
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.StandardMaximalParabolic
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CentralizerTensorForms
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.CuspidalNoRadicalFixed
+public import Development.AbelianVarietyTheory.Definitions.Foundations.ExistsUniqueIsProdMeasureFinAway
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.CentralizerRegularLeviCommutativeNoncompactStatement
+public import Development.AbelianVarietyTheory.Definitions.Foundations.MeasurePreservingRmulQuotMeas
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.HasOrbIntTensorOfHasOrbInt
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TypeHypothesisFormsAgreeStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LocalDecompositionNonsplitPlace
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.LocalDecompositionSplitPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOfValILeOne
+public import Development.AbelianVarietyTheory.Definitions.Foundations.NonemptyAlgHomOfNotIsField
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsUniqueIsConjAt
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.TendstoOneOfSummable
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.IwasawaDoubledHermitianSpaceRealPlace
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.IwasawaDecompositionUnitaryIsotropicFlag
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.EventuallyAlgebraMapMemIntegers
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.RegularCentralizerNoncompact
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.WeightedOrbitalIntegralTypeTestVanishStatement
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.SplitInclMemExtSubIff
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsMulCommutativeCentRealUJ
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsCyclicOfFiniteQuotient
+public import Development.AbelianVarietyTheory.Definitions.Foundations.WittIndexEqZeroIff
+
+@[expose] public section
+
 open MeasureTheory Set Filter NumberField IsDedekindDomain
 open GlobalTheory.AdelicU GlobalTheory.OpTrace GlobalTheory.Orb GlobalTheory.AutomorphicL2Unitary GlobalTheory.AutMult Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.L2.Theta Formalism.IndefR.Mult
@@ -54,7 +80,7 @@ theorem fixed_mem {σ : E →ₐ[F] E} (hq : IsQuadInvol F E σ) {x : E} (hx : �
   obtain ⟨e, he⟩ := hq.ne_id
   obtain ⟨u, v, rfl⟩ := exists_coord hq.finrank_eq hx' e
   apply he
-  rw [map_add, AlgHom.commutes, map_smul, hx]
+  rw [map_add (f := _), AlgHom.commutes, map_smul, hx]
 
 theorem exists_root (K : Type) [Field K] [Algebra F K] (h2 : Module.finrank F E = 2) {a : E}
     (ha : a ∉ Set.range (algebraMap F E)) (t s : F)
@@ -77,8 +103,7 @@ theorem exists_root (K : Type) [Field K] [Algebra F K] (h2 : Module.finrank F E 
     simp only [hι, A, Algebra.TensorProduct.tmul_mul_tmul, mul_one, ← TensorProduct.tmul_sub, hts]
   have hspan : ∀ x : K ⊗[F] E, ∃ u v : K, x = ι u + ι v * A := by
     intro x
-    induction x using TensorProduct.induction_on with
-    | zero => exact ⟨0, 0, by simp⟩
+    induction x using TensorProduct.inductionOn with
     | tmul k e =>
       obtain ⟨u, v, rfl⟩ := exists_coord h2 ha e
       refine ⟨u • k, v • k, ?_⟩
@@ -88,7 +113,7 @@ theorem exists_root (K : Type) [Field K] [Algebra F K] (h2 : Module.finrank F E 
     | add x y hx hy =>
       obtain ⟨u, v, rfl⟩ := hx
       obtain ⟨u', v', rfl⟩ := hy
-      exact ⟨u + u', v + v', by simp only [map_add]; ring⟩
+      exact ⟨u + u', v + v', by simp only [map_add (f := _)]; ring⟩
   refine ⟨exists_pair_ne _, fun x y => mul_comm x y, ?_⟩
   intro x hx
   obtain ⟨u, v, rfl⟩ := hspan x
@@ -108,7 +133,7 @@ theorem exists_root (K : Type) [Field K] [Algebra F K] (h2 : Module.finrank F E 
   have hinv : (ι u * ι u + ι T * ι u * ι v + ι S * ι v * ι v) * ι N⁻¹ = 1 := by
     rw [show ι u * ι u + ι T * ι u * ι v + ι S * ι v * ι v = ι N by simp [N]]
     rw [← map_mul, mul_inv_cancel₀ hN, map_one]
-  simp only [map_mul, map_add]
+  simp only [map_mul, map_add (f := _)]
   linear_combination (-(ι N⁻¹ * ι v * ι v)) * hA + hinv
 
 end Quad
@@ -158,7 +183,7 @@ theorem piece (σ : E →ₐ[F] E) (J γm : Matrix (Fin n) (Fin n) E) (t s : F)
   set AL := algebraMap E (genAlg γm) a
   set BL := algebraMap E (genAlg γm) (σ a)
   have RT : AL + BL = algebraMap F (genAlg γm) t := by
-    rw [IsScalarTower.algebraMap_apply F E (genAlg γm), hT, map_add]
+    rw [IsScalarTower.algebraMap_apply F E (genAlg γm), hT, map_add (f := _)]
   have RS : AL * BL = algebraMap F (genAlg γm) s := by
     rw [IsScalarTower.algebraMap_apply F E (genAlg γm), hS, map_mul]
   have RA : AL * AL = algebraMap F (genAlg γm) t * AL - algebraMap F (genAlg γm) s := by
@@ -191,7 +216,7 @@ theorem exists_isotropic_idempotent : ∀ {F E : Type} [Field F] [CharZero F] [F
   classical
   obtain ⟨e⟩ := he
   obtain ⟨α, hα⟩ := hR.quad.ne_id
-  obtain ⟨t, ht⟩ := fixed_mem hR.quad (x := α + σ α) (by rw [map_add, hR.quad.invol, add_comm])
+  obtain ⟨t, ht⟩ := fixed_mem hR.quad (x := α + σ α) (by rw [map_add (f := _), hR.quad.invol, add_comm])
   obtain ⟨s, hs⟩ := fixed_mem hR.quad (x := α * σ α) (by rw [map_mul, hR.quad.invol, mul_comm])
   have hαF : α ∉ Set.range (algebraMap F E) := by
     rintro ⟨c, rfl⟩; exact hα (σ.commutes c)
@@ -244,7 +269,7 @@ theorem exists_isotropic_idempotent : ∀ {F E : Type} [Field F] [CharZero F] [F
       Matrix (Fin n) (Fin n) E) := fun v => (e.symm v).2
   have R1 : φ y * φ y = φ y := by rw [← map_mul, Q1]
   have R2 : φ y * φ x = φ x := by rw [← map_mul, Q2]
-  have R3 : φ w + φ x = algebraMap F _ t * φ y := by rw [← map_add, Q3, map_mul, AlgHom.commutes]
+  have R3 : φ w + φ x = algebraMap F _ t * φ y := by rw [← map_add (f := _), Q3, map_mul, AlgHom.commutes]
   have R4 : φ w * φ x = algebraMap F _ s * φ y := by rw [← map_mul, Q4, map_mul, AlgHom.commutes]
   have R5 : φ z * (φ w - φ x) = φ y := by rw [← map_sub, ← map_mul, Q5]
   have P1 := piece σ J _ t s (φ y) (φ w) (φ x) (φ z) (hmem y) (hmem x) (hmem z) R1 R2 R3 R4 R5
@@ -253,7 +278,7 @@ theorem exists_isotropic_idempotent : ∀ {F E : Type} [Field F] [CharZero F] [F
     (σ α) (by rw [hR.quad.invol, ht, add_comm]) (by rw [hR.quad.invol, hs, mul_comm]) _ rfl
   have RT : algebraMap E (genAlg (γ : Matrix (Fin n) (Fin n) E)) α +
       algebraMap E (genAlg (γ : Matrix (Fin n) (Fin n) E)) (σ α) = algebraMap F _ t := by
-    rw [IsScalarTower.algebraMap_apply F E (genAlg (γ : Matrix (Fin n) (Fin n) E)), ht, map_add]
+    rw [IsScalarTower.algebraMap_apply F E (genAlg (γ : Matrix (Fin n) (Fin n) E)), ht, map_add (f := _)]
   have hsum : φ z * (φ y * algebraMap E _ α - φ x) + φ z * (φ y * algebraMap E _ (σ α) - φ x)
       = φ y := by
     linear_combination R5 + φ z * φ y * RT - φ z * R3

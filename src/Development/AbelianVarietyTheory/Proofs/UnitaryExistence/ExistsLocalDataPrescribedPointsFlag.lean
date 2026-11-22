@@ -1,12 +1,16 @@
-import Mathlib
-import Formalism.LocalToGlobal.ProjectiveLattices.HasDataCondition
-import Formalism.LocalToGlobal.ProjectiveLattices.LatPAddRight
-import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonalBis
-import Formalism.LocalToGlobal.ProjectiveLattices.ParCanon
-import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
-import Formalism.LocalToGlobal.ProjectiveLattices.DepLaws
-import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
-import Formalism.SharpRestriction.Divisibility.LocalNonemptiness.SubsingletonRankIndicatorIff
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.ProjectiveLattices.HasDataCondition
+public import Formalism.LocalToGlobal.ProjectiveLattices.LatPAddRight
+public import Formalism.LocalToGlobal.ProjectiveLattices.FamilyUniformisationBasePointOrthogonalBis
+public import Formalism.LocalToGlobal.ProjectiveLattices.ParCanon
+public import Formalism.LocalToGlobal.ProjectiveLattices.ExistsParameterConditions
+public import Formalism.LocalToGlobal.ProjectiveLattices.DepLaws
+public import Formalism.SharpRestriction.Divisibility.GeneratorPowers.ThExprUniqOfChartIndep2
+public import Formalism.SharpRestriction.Divisibility.LocalNonemptiness.SubsingletonRankIndicatorIff
+
+@[expose] public section
 
 noncomputable section
 
@@ -75,12 +79,12 @@ variable (D : D7) (r j p : ℕ) (M : MP D p) (Q : Type) (fl : Q → CF p) (Lt : 
   secAdd := fun _ => inferInstance
   H0 := fun _ => ⊤
   nrm := fun _ _ _ => 0
-  nrm_nonneg := by exists_prescribed_local_data
-  norm_le_one_of_mem_sections := by exists_prescribed_local_data
+  nrm_nonneg := fun _ _ _ => le_rfl
+  norm_le_one_of_mem_sections := fun _ _ _ _ => zero_le_one
   GIso := fun _ _ => Empty
   vrat := fun _ _ => 0
   Lb := fun _ => ()
-  Lb_inv := by exists_prescribed_local_data
+  Lb_inv := fun _ => trivial
   nrmRef := fun _ _ _ => 0
   DVP := M.Gn
   dvRho := fun _ => 0
@@ -94,7 +98,7 @@ variable (D : D7) (r j p : ℕ) (M : MP D p) (Q : Type) (fl : Q → CF p) (Lt : 
 
   PL := Unit
   phiAt := fun _ _ _ => 0
-  phiAt_zero := by exists_prescribed_local_data
+  phiAt_zero := fun _ {_} _ _ => rfl
   divGe := fun _ _ _ _ => True
   FJd := Unit
   Chr := fun _ => Unit
@@ -139,7 +143,7 @@ variable (D : D7) (r j p : ℕ) (M : MP D p) (Q : Type) (fl : Q → CF p) (Lt : 
   snAdd := fun _ _ _ => inferInstance
   snMod := fun _ _ _ => inferInstance
   act := fun _ _ _ => 1
-  act_scal := by exists_prescribed_local_data
+  act_scal := fun _ _ _ _ _ => Subsingleton.elim _ _
   vth := fun _ _ _ => 0
   Jet := fun _ _ _ _ => PUnit
   jAdd := fun _ _ _ _ => inferInstance
@@ -212,7 +216,9 @@ variable (D : D7) (r j p : ℕ) (M : MP D p) (Q : Type) (fl : Q → CF p) (Lt : 
   genFin := fun _ => M.fin
   genNe := fun _ => M.ne
   redK := fun _ y => y
-  dvRho_pos_iff := fun _ _ => by simp
+  dvRho_pos_iff := fun _ _ => by
+    show 0 < (0 : ℕ) ↔ ¬ True
+    simp
   genK := fun η => η
   redK_genK := fun _ => rfl
   imgM := fun χ => Empty.elim χ
@@ -226,12 +232,12 @@ variable (D : D7) (r j p : ℕ) (M : MP D p) (Q : Type) (fl : Q → CF p) (Lt : 
   ptK := fun _ _ => q₀
   ptK_good := fun _ _ => ⟨fun _ => rfl, fun _ => h₀⟩
   vpi := fun _ => 1
-  vpi_pos := by exists_prescribed_local_data
+  vpi_pos := fun _ => zero_lt_one
   ordGe := fun _ _ _ _ => True
   yEta := fun _ => q₀
   yEta_good := fun _ => ⟨fun _ => trivial, fun _ => h₀⟩
   homSh := fun _ _ => ()
-  homSh_inv := by exists_prescribed_local_data
+  homSh_inv := fun _ _ _ _ => trivial
   isoSec := fun _ => 0
   nrm_isoSec := fun φ => Empty.elim φ
   isoSymm := fun φ => Empty.elim φ
@@ -242,20 +248,20 @@ variable (D : D7) (r j p : ℕ) (M : MP D p) (Q : Type) (fl : Q → CF p) (Lt : 
   lieL := fun _ => ⊤
   eig := fun _ _ => ⊤
   Wst := fun _ _ _ => ⊤
-  Wst_le := by exists_prescribed_local_data
+  Wst_le := fun _ _ _ => le_rfl
   taut := fun _ _ _ => ⊤
-  taut_eq := by exists_prescribed_local_data
+  taut_eq := fun _ _ _ => by simp
   nrmIn := fun _ _ _ _ => 0
-  nrmRef_def := by exists_prescribed_local_data
-  nrm_Lb_def := by exists_prescribed_local_data
-  om_smul := by exists_prescribed_local_data
+  nrmRef_def := fun _ _ _ => rfl
+  nrm_Lb_def := fun _ _ _ => rfl
+  om_smul := fun _ _ _ _ _ => AddSubgroup.mem_top _
   TC := fun _ => PUnit
   tcAdd := fun _ => inferInstance
   tcMod := fun _ => inferInstance
   iT := fun _ => 0
-  iT_span := by exists_prescribed_local_data
+  iT_span := fun _ => Subsingleton.elim _ _
   htC := fun _ => 0
-  htC_iT := by exists_prescribed_local_data
+  htC_iT := fun _ _ => rfl
   psiC := fun _ => 0
   lieGt1 := fun _ => ⊤
   eT := fun _ _ => 0
@@ -341,8 +347,8 @@ open AlgebraicGeometry CategoryTheory Limits NumberField IsDedekindDomain IsLoca
 open scoped TensorProduct
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-open GlobalTheory.PrescribedPoints Formalism.MainNotions.DIV.Inh Formalism.MainNotions.DIV.Inh.LocalProvisionModel in
 
+open GlobalTheory.PrescribedPoints Formalism.MainNotions.DIV.Inh Formalism.MainNotions.DIV.Inh.LocalProvisionModel in
 theorem exists_prov_prescribed_points :
     ∀ (D : D7) (Pt : ℕ → ℕ → Type) (fld : ∀ j p, Pt j p → ModuliIntegralCharts.CF p) (L : ∀ j p, Pt j p → LatB D.host.E), (∀ j p y, (∀ a b, (L j p y).beta a b = (L j p y).beta b a) ∧ (∀ a a' b, (L j p y).beta (a + a') b = (L j p y).beta a b + (L j p y).beta a' b) ∧ (∀ (x x' : 𝓞 D.host.E), (x' : D.host.E) = D.host.conj (x : D.host.E) → ∀ a b, (L j p y).beta (x • a) b = (L j p y).beta a (x' • b)) ∧ (∃ (ι : Type) (_ : Fintype ι) (b : Module.Basis ι ℤ (L j p y).Y), ∀ x : ι → ℝ, x ≠ 0 → 0 < ∑ i, ∑ k, x i * x k * (L j p y).beta (b i) (b k)) ∧ ∃ ρ : ℕ, Module.finrank ℤ (L j p y).Y = 2 * D.R.f * ρ ∧ ρ ≤ (D.R.sigW j).1 ∧ ρ + (D.R.sigW j).1 ≤ D.R.r) → ∃ (P : ModuliIntegralCharts.Prov D) (dat : ℕ → P.Dat), ∀ j, 1 ≤ j → j < D.R.m → (P.rk (dat j) = D.R.r ∧ P.jj (dat j) = (D.R.sigW j).1) ∧ ∀ p y, ∃ η : (P.loc (dat j) p).Pt (P.loc (dat j) p).YY, (P.loc (dat j) p).fld η = fld j p y ∧ ∃ e : (P.loc (dat j) p).Ylat η ≃ₗ[𝓞 D.host.E] (L j p y).Y, ∀ a b, (L j p y).beta (e a) (e b) = (P.loc (dat j) p).be η a b := by
   intro D Pt fld L hL
@@ -362,7 +368,7 @@ theorem exists_prov_prescribed_points :
     (fun _ _ => none) (fun _ _ => zeroLattice_subsingleton D),
     fun j => if h : 1 ≤ j ∧ j < D.R.m then ⟨j, h⟩ else ⟨1, le_rfl, hm⟩, fun j h1 h2 => ?_⟩
   beta_reduce
-  rw [dif_pos (And.intro h1 h2)]
+  rw [dite_eq_left (And.intro h1 h2)]
   exact ⟨⟨rfl, rfl⟩, fun p y => ⟨some y, rfl, LinearEquiv.refl _ _, fun a b => rfl⟩⟩
 
 end GlobalTheory

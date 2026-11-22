@@ -1,7 +1,11 @@
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PTypesT
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommuteRtOfMemZalg
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermAuxiliaryStatementB
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermAuxiliaryStatementA
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.InfinitesimalCharacterLimits.LieSumDecompositions.PTypesT
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.CommuteRtOfMemZalg
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermAuxiliaryStatementB
+public import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.ConstantTermAuxiliaryStatementA
+
+@[expose] public section
 
 noncomputable section
 
@@ -58,8 +62,8 @@ theorem k_isOpen_iInf {G : Type} [Group G] [TopologicalSpace G] {ι : Sort*} [Fi
 
 end KAux
 
-open Classical in
 
+open Classical in
 def Tset (r s : ℕ) (L : Subgroup (GL (Fin (r + s)) (Af E))) : Finset (GL (Fin (r + s)) (Af E)) :=
   if r = 0 ∨ s = 0 then {1} else if h : IsOpen (L : Set (GL (Fin (r + s)) (Af E))) then
     Classical.choose (IwaAd.iwasawa_finite_cosets E r s L h) else ∅
@@ -78,7 +82,7 @@ theorem Tset_spec {r s : ℕ} {L : Subgroup (GL (Fin (r + s)) (Af E))} (hL : IsO
       rw [InducedTensorMap.unip_zero, levi_embed_left_zero, map_one, map_one, map_one]
       simp
   · have hT : Tset r s L = Classical.choose (IwaAd.iwasawa_finite_cosets E r s L hL) := by
-      rw [Tset, if_neg hr, dif_pos hL]
+      rw [Tset, if_neg hr, dite_eq_left hL]
     rw [hT]
     exact Classical.choose_spec (IwaAd.iwasawa_finite_cosets E r s L hL) g
 
@@ -119,7 +123,7 @@ theorem Kf_top : Kf N K N ≤ K := by
   rw [Kf] at hu
   have h := hu.1.1.1
   unfold topK at h
-  rw [dif_pos rfl] at h
+  rw [dite_eq_left rfl] at h
   exact h
 
 theorem Kf_left {r s : ℕ} (hN : r + s ≤ N) {t : GL (Fin (r + s)) (Af E)} (ht : t ∈ Tset r s (Kf N K (r + s)))

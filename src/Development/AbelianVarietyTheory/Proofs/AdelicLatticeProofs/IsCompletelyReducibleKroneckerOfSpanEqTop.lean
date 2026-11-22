@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsometryMatrixRange
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsLogKronecker
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsConjHarmOfSpanStatement
-import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SsTransfer
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.AdelicHermitianForms.AdelicPair
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsIsometryMatrixRange
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IsLogKronecker
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsConjHarmOfSpanStatement
+public import Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.SsTransfer
+
+@[expose] public section
+
 open Matrix GlobalTheory.ClassFin
 open scoped Kronecker ComplexOrder TensorProduct
 

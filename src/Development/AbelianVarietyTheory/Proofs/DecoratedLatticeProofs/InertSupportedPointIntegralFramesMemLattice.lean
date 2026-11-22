@@ -1,8 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SpanRhoTEqTop
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PiEqOfFinPart
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
-import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceAdeleRing
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SpanRhoTEqTop
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.PiEqOfFinPart
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsDualFamilyOfIsLattice
+public import Development.AbelianVarietyTheory.Definitions.Foundations.T2SpaceAdeleRing
+
+@[expose] public section
+
 noncomputable section
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.MainNotions.S MeasureTheory IsDedekindDomain NumberField Matrix
 open Formalism.L2.Theta Formalism.L2.DIV Formalism.IndefR Formalism.IndefR.Links Formalism.IndefR.Mult Formalism.IndefR.Datum
@@ -58,7 +63,7 @@ theorem secW_rank_one_mem (hw : IsInertAt D.host.F D.host.E v w) (h : w.under (�
     simp
   · convert add_mem h1 h2 using 1
     ext i j
-    simp only [Matrix.of_apply, Matrix.add_apply, map_add, add_mul]
+    simp only [Matrix.of_apply, Matrix.add_apply, map_add (f := _), add_mul]
   · convert neg_mem h1 using 1
     ext i j
     simp only [Matrix.of_apply, Matrix.neg_apply, map_neg, neg_mul]
@@ -80,7 +85,8 @@ theorem secW_span_mem (hw : IsInertAt D.host.F D.host.E v w) (h : w.under (𝓞 
       intro z hz
       convert secW_rank_one_mem hw h ha hs ht hz using 1
       ext i j
-      simp only [Matrix.of_apply, GlobalTheory.LFun.InertChart.conj_algebraMap hc, map_mul, map_sum, hst]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Matrix.of_apply, GlobalTheory.LFun.InertChart.conj_algebraMap hc, map_mul, map_sum, hst]
       ring_nf
     | zero =>
       intro z hz
@@ -91,7 +97,7 @@ theorem secW_span_mem (hw : IsInertAt D.host.F D.host.E v w) (h : w.under (𝓞 
       intro z hz
       convert add_mem (h1 z hz) (h2 z hz) using 1
       ext i j
-      simp only [Matrix.of_apply, Matrix.add_apply, Pi.add_apply, map_add, add_mul, Finset.sum_add_distrib, mul_add]
+      simp only [Matrix.of_apply, Matrix.add_apply, Pi.add_apply, map_add (f := _), add_mul, Finset.sum_add_distrib, mul_add]
     | smul o y _ h1 =>
       intro z hz
       convert h1 (z * c o) (mul_mem hz (GlobalTheory.LFun.InertChart.conj_mem hw hc o.2)) using 1
@@ -111,7 +117,7 @@ theorem secW_span_mem (hw : IsInertAt D.host.F D.host.E v w) (h : w.under (𝓞 
     intro z hz
     convert add_mem (h1 z hz) (h2 z hz) using 1
     ext i j
-    simp only [Matrix.of_apply, Matrix.add_apply, Pi.add_apply, map_add, add_mul, mul_add]
+    simp only [Matrix.of_apply, Matrix.add_apply, Pi.add_apply, map_add (f := _), add_mul, mul_add]
   | smul o p _ h1 =>
     intro z hz
     convert h1 (z * o) (mul_mem hz o.2) using 1
@@ -141,7 +147,8 @@ theorem uPt_mem_latO : ∀ (D : D7) (v : HeightOneSpectrum (𝓞 D.host.F)) (w :
     intro y hy
     have hu := (haS ((aS⁻¹).1 *ᵥ y)).2 (by rwa [Matrix.mulVec_mulVec, Units.mul_inv, Matrix.one_mulVec]) j
     have e : Formalism.UG.hform c (S.gram.map ι) y (fun l => c (N j l)) = c ((N *ᵥ (Gw *ᵥ y)) j) := by
-      simp only [Formalism.UG.hform, Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply, hG, hGw]
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp only [Formalism.UG.hform, Matrix.mulVec, dotProduct, map_sum, map_mul, Matrix.map_apply, hG, hGw]
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun l _ => ?_
       rw [Finset.mul_sum]
@@ -166,7 +173,8 @@ theorem uPt_mem_latO : ∀ (D : D7) (v : HeightOneSpectrum (𝓞 D.host.F)) (w :
       ∑ m, c (c (N j m)) * ι (S.gram m l)) : WO S T) := by
     ext r l
     simp only [uPt, Matrix.map_apply, Matrix.sum_apply, Matrix.of_apply, hcol]
-    rw [show ∀ f : Fin T.rank → Fin S.rank → w.adicCompletion D.host.E, ∑ i, ∑ j, secW hw h (f i j) =
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [show ∀ f : Fin T.rank → Fin S.rank → w.adicCompletion D.host.E, ∑ i, ∑ j, secW hw h (f i j) =
         secW hw h (∑ i, ∑ j, f i j) from fun f => by simp only [map_sum]]
     congr 1
     simp only [Matrix.smul_apply, smul_eq_mul, Matrix.mul_apply, Finset.mul_sum, Finset.sum_mul]

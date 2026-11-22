@@ -1,11 +1,15 @@
-import Mathlib
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.AbsoluteL2Bound
-import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.InfinitesimalCharacterPaths.TensDecomp
-import CompanionTheory.AutomorphicTheory.TemperedLocalSpectra.AffineGL.GenSpace
-import Development.AutomorphicSpectrum.Proofs.GlobalProofs.GlRelationsDerivativePreserved
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.QuantumDeterminantCoefficientsExpansion
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.JacquetBasis
-import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ConjQdet
+module
+
+public import Mathlib
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.HilbertSchmidtDecay.AbsoluteL2Bound
+public import CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.MatrixCoefficientDecay.InfinitesimalCharacterPaths.TensDecomp
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSpanFormsNeBot
+public import Development.AutomorphicSpectrum.Proofs.GlobalProofs.GlRelationsDerivativePreserved
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.QuantumDeterminantCoefficientsExpansion
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.JacquetBasis
+public import CompanionTheory.SpectralGeometry.LocalGlobalProofs.StableLattices.ConjQdet
+
+@[expose] public section
 
 noncomputable section
 
@@ -39,6 +43,7 @@ theorem apply_mem_upperImg (n : Fin c → ℕ) (h : ∑ i, n i = N) (Xf : Fin N 
   | add a b _ _ ha hb => simpa using Submodule.add_mem _ ha hb
   | smul r a _ ha => simpa using Submodule.smul_mem _ r ha
 
+open scoped IsMulCommutative in
 theorem exists_monic_trace (n : Fin c → ℕ) (h : ∑ i, n i = N) (Xf : Fin N → Fin N → Module.End ℂ V)
     (hX : GlRel Xf) (Pc : ℂ → ℂ)
     (hP : ∀ Y : ℂ, ∃ k : ℕ, (qdet Xf (Y + ((N : ℂ) - 1) / 2) - Pc Y • (1 : Module.End ℂ V)) ^ k = 0)
@@ -58,14 +63,14 @@ theorem exists_monic_trace (n : Fin c → ℕ) (h : ∑ i, n i = N) (Xf : Fin N 
   have hcm : ∀ i j, i ≠ j → ∀ p q r v, Commute (Xi i p q) (Xi j r v) := by
     intro i j hij p q r v
     have := hX (stdBlocks n h ⟨i, p⟩) (stdBlocks n h ⟨i, q⟩) (stdBlocks n h ⟨j, r⟩) (stdBlocks n h ⟨j, v⟩)
-    rw [if_neg (hne _ _ _ _ hij), if_neg (hne _ _ _ _ (Ne.symm hij)), sub_self] at this
+    rw [ite_eq_right (hne _ _ _ _ hij), ite_eq_right (hne _ _ _ _ (Ne.symm hij)), sub_self] at this
     exact sub_eq_zero.1 this
   obtain ⟨a, ha1, hform, htr, hcomm⟩ := GlobalTheory.CompanionTheory.RgCOBlock.capelli_coef_commute V c n Xi hglr hcm
   let s : Set (Module.End ℂ V) := Set.range fun p : Fin c × ℕ => a p.1 p.2
-  have hcs : ∀ x ∈ s, ∀ y ∈ s, x * y = y * x := by
-    rintro _ ⟨p, rfl⟩ _ ⟨q, rfl⟩
-    exact (hcomm _ _ _ _).eq
-  letI : CommRing (Algebra.adjoin ℂ s) := Algebra.adjoinCommRingOfComm ℂ hcs
+  have hcs : s.Pairwise Commute := by
+    rintro _ ⟨p, rfl⟩ _ ⟨q, rfl⟩ _
+    exact hcomm _ _ _ _
+  let : IsMulCommutative (Algebra.adjoin ℂ s) := Algebra.isMulCommutative_adjoin ℂ hcs
   let I := upperImg n h Xf
   let Yd : Ideal (Algebra.adjoin ℂ s) :=
     { carrier := {x | ∀ F, (x : Module.End ℂ V) F ∈ I}
@@ -74,7 +79,7 @@ theorem exists_monic_trace (n : Fin c → ℕ) (h : ∑ i, n i = N) (Xf : Fin N 
       zero_mem' := fun F => by simp
       smul_mem' := fun b x hx F => by
         show ((b * x : Algebra.adjoin ℂ s) : Module.End ℂ V) F ∈ I
-        rw [mul_comm, Subalgebra.coe_mul, Module.End.mul_apply]
+        rw [mul_comm, Subalgebra.coe_mul, mul_apply_eq_comp]
         exact hx _ }
   let π := Ideal.Quotient.mkₐ ℂ Yd
   have hamem : ∀ i k, a i k ∈ Algebra.adjoin ℂ s := fun i k => Algebra.subset_adjoin ⟨(i, k), rfl⟩
@@ -91,7 +96,8 @@ theorem exists_monic_trace (n : Fin c → ℕ) (h : ∑ i, n i = N) (Xf : Fin N 
     have : (⟨qdet (Xi i) t, hRmem i t⟩ : Algebra.adjoin ℂ s)
         = ∑ k ∈ Finset.range (n i + 1), t ^ k • (⟨a i k, hamem i k⟩ : Algebra.adjoin ℂ s) :=
       Subtype.ext (by simp [hform])
-    rw [this, map_sum, sumPoly_eval]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [this, map_sum, sumPoly_eval]
     refine Finset.sum_congr rfl fun k _ => ?_
     rw [map_smul, Algebra.smul_def, map_pow, mul_comm]
   let φ : Algebra.adjoin ℂ s →* Module.End ℂ V :=
@@ -136,7 +142,7 @@ theorem exists_monic_trace (n : Fin c → ℕ) (h : ∑ i, n i = N) (Xf : Fin N 
       rw [show Dz ^ k = 0 from hk, sub_zero] at e2
       rw [e1, ← e2]
       have e3 : Fb - Dz = -(D - (b : Module.End ℂ V)) := by simp [Fb, Dz]
-      rw [e3, Module.End.mul_apply, LinearMap.neg_apply]
+      rw [e3, mul_apply_eq_comp, LinearMap.neg_apply]
       exact I.neg_mem (apply_mem_upperImg n h Xf hspan' _)
     rw [hval]
     refine ⟨(X - C (Pc u)) ^ k, (monic_X_sub_C _).pow k, ?_⟩
@@ -159,11 +165,11 @@ theorem exists_monic_trace (n : Fin c → ℕ) (h : ∑ i, n i = N) (Xf : Fin N 
       have e2 : (⟨∑ p, Xi i p p, hm⟩ : Algebra.adjoin ℂ s) =
           ⟨a i (n i - 1), hamem _ _⟩ + algebraMap ℂ _ ((n i : ℂ) * ((n i : ℂ) - 1) / 2) :=
         Subtype.ext (by simp [e, Algebra.algebraMap_eq_smul_one])
-      rw [e2, map_add, AlgHom.commutes]
+      rw [e2, map_add (f := _), AlgHom.commutes]
       refine IsIntegral.add ?_ isIntegral_algebraMap
       have := hcoef i (Finset.mem_univ i) (n i - 1)
       simp only [Pp, sumPoly_coeff] at this
-      rwa [if_pos (by omega)] at this
+      rwa [ite_eq_left (by omega)] at this
     · have hz : n i = 0 := by omega
       have hE : IsEmpty (Fin (n i)) := by rw [hz]; infer_instance
       have e : ∑ p, Xi i p p = 0 := Finset.sum_of_isEmpty _
@@ -178,7 +184,8 @@ theorem exists_monic_trace (n : Fin c → ℕ) (h : ∑ i, n i = N) (Xf : Fin N 
       Xf (stdBlocks n h ⟨i, p⟩) (stdBlocks n h ⟨i, p⟩) := by
     simp [Tb, Xi]
   have hint : IsIntegral ℂ (π Tb) := by
-    simp only [Tb, map_sum, map_smul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [Tb, map_sum, map_smul]
     exact IsIntegral.sum _ fun i _ => (hI i).smul _
   obtain ⟨q, hqm, hq0⟩ := hint
   refine ⟨q, hqm, fun x => ?_⟩
@@ -192,8 +199,7 @@ end Abstract
 section Grading
 
 open CompanionTheory.RgExh CompanionTheory.RgExh.Dec.J
-
-local notation "aM" => ReciprocityTheory.ChartRestriction.DS.actM
+open ReciprocityTheory.ChartRestriction.DS renaming actM → aM
 
 section Act
 
@@ -301,7 +307,7 @@ theorem actM_grading (X : GMod n) {A : Matrix (Fin n) (Fin n) ℂ} (B : GradBasi
     by_cases h : a = b
     · subst h
       simp
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       symm
       refine Finset.sum_eq_zero fun c _ => ?_
       have : ¬(c = a ∧ c = b) := fun e => h (e.1.symm.trans e.2)
@@ -310,7 +316,8 @@ theorem actM_grading (X : GMod n) {A : Matrix (Fin n) (Fin n) ℂ} (B : GradBasi
     show aM X.E A = _
     rw [← actL_apply]
     conv_lhs => rw [A_eq B, hd]
-    rw [Finset.mul_sum, Finset.sum_mul, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Finset.mul_sum, Finset.sum_mul, map_sum]
     refine Finset.sum_congr rfl fun p _ => ?_
     rw [Matrix.mul_smul, Matrix.smul_mul, map_smul]
     rfl

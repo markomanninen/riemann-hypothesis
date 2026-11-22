@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.HarishChandraDescent.Descent
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.HolomorphicDiscreteSeries.HarishChandraDescent.Descent
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,7 +57,7 @@ theorem approximation_of_square_identity : SqId → Approx := by
       (2 • casimirK ε E u - (c : ℂ) • u) + (2 • casimirK ε E P - (c : ℂ) • P) := by
     have he : η = u + P := by simp [hu]
     conv_lhs => rw [he]
-    rw [map_add, smul_add, smul_add]
+    rw [map_add (f := _), smul_add, smul_add]
     abel
   have hkey : (∑ a, ∑ b, ‖E a b u‖ ^ 2) = (⟪2 • casimirK ε E η - (c : ℂ) • η, u⟫_ℂ).re := by
     rw [sum_sq_eq hSq hE hU u, hsplit, inner_add_left, horth _ hw, add_zero, inner_sub_left,

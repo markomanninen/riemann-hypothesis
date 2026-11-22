@@ -1,9 +1,14 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsFinMapsOfForall
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
-import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.XmApply
-open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels GlobalTheory.KFinLoc
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.DivisorBase.WeilTensorModels
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.OneMemKAt
+public import Development.AbelianVarietyTheory.PublishedTheorems.GaloisGeometry₂.HoweUnram
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.XmApply
+
+@[expose] public section
+
+open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes GlobalTheory.WeilM GlobalTheory.AdelicU GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
 open scoped TensorProduct Matrix
 
 noncomputable section
@@ -91,17 +96,16 @@ section Adelic
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
 variable (F E) in
-
-def genAt (v : Pl F) : Set (AE F E) := {z : AE F E | ∃ a : AF F, At (evFin F v) a ∧
+def genAt (v : Pl (F := F)) : Set (AE F E) := {z : AE F E | ∃ a : AF F, At (evFin F v) a ∧
   evFin F v a ∈ v.adicCompletionIntegers F ∧ ∃ o : 𝓞 E, z = a • inclR (F := F) (AF F) (o : E)}
 
-theorem at_mul {v : Pl F} {z : AE F E} (hz : At (evFin F v) z) (y : AE F E) : At (evFin F v) (z * y) :=
+theorem at_mul {v : Pl (F := F)} {z : AE F E} (hz : At (evFin F v) z) (y : AE F E) : At (evFin F v) (z * y) :=
   fun u hu => by rw [← smul_mul_assoc, hz u hu, zero_mul]
 
-theorem at_smul_one {v : Pl F} {a : AF F} (ha : At (evFin F v) a) : At (evFin F v) (a • (1 : AE F E)) :=
+theorem at_smul_one {v : Pl (F := F)} {a : AF F} (ha : At (evFin F v) a) : At (evFin F v) (a • (1 : AE F E)) :=
   fun u hu => by rw [smul_smul, ← smul_eq_mul, ha u hu, zero_smul]
 
-theorem mul_incl_mem {v : Pl F} {s : AE F E} (hs : s ∈ AddSubgroup.closure (genAt F E v)) (o : 𝓞 E) :
+theorem mul_incl_mem {v : Pl (F := F)} {s : AE F E} (hs : s ∈ AddSubgroup.closure (genAt F E v)) (o : 𝓞 E) :
     s * inclR (F := F) (AF F) (o : E) ∈ AddSubgroup.closure (genAt F E v) := by
   induction hs using AddSubgroup.closure_induction with
   | mem x hx =>
@@ -111,7 +115,7 @@ theorem mul_incl_mem {v : Pl F} {s : AE F E} (hs : s ∈ AddSubgroup.closure (ge
   | add x y _ _ hx hy => rw [add_mul]; exact add_mem hx hy
   | neg x _ hx => rw [neg_mul]; exact neg_mem hx
 
-theorem smul_latAt_mem {n : ℕ} (X : Spc F E n) {v : Pl F} {a : AF F} (ha : At (evFin F v) a)
+theorem smul_latAt_mem {n : ℕ} (X : Spc F E n) {v : Pl (F := F)} {a : AF F} (ha : At (evFin F v) a)
     (hev : evFin F v a ∈ v.adicCompletionIntegers F) {z : Fin n → AE F E} (hz : z ∈ GlobalTheory.InertSph.latAt X v) :
     a • z ∈ GlobalTheory.InertSph.latAt X v := by
   unfold GlobalTheory.InertSph.latAt at hz ⊢
@@ -126,7 +130,7 @@ theorem smul_latAt_mem {n : ℕ} (X : Spc F E n) {v : Pl F} {a : AF F} (ha : At 
   | add x y _ _ hx hy => rw [smul_add]; exact add_mem hx hy
   | neg x _ hx => rw [smul_neg]; exact neg_mem hx
 
-theorem mul_incl_latAt {n : ℕ} (X : Spc F E n) {v : Pl F} {s : AE F E}
+theorem mul_incl_latAt {n : ℕ} (X : Spc F E n) {v : Pl (F := F)} {s : AE F E}
     (hs : s ∈ AddSubgroup.closure (genAt F E v)) {y : Fin n → E} (hy : y ∈ X.L) :
     (fun i => s * inclR (F := F) (AF F) (y i)) ∈ GlobalTheory.InertSph.latAt X v := by
   induction hs using AddSubgroup.closure_induction with
@@ -140,7 +144,7 @@ theorem mul_incl_latAt {n : ℕ} (X : Spc F E n) {v : Pl F} {s : AE F E}
   | add x x' _ _ hx hx' => convert add_mem hx hx' using 1; funext i; simp [add_mul]
   | neg x _ hx => convert neg_mem hx using 1; funext i; simp
 
-theorem mul_latAt {n : ℕ} (X : Spc F E n) {v : Pl F} {s : AE F E}
+theorem mul_latAt {n : ℕ} (X : Spc F E n) {v : Pl (F := F)} {s : AE F E}
     (hs : s ∈ AddSubgroup.closure (genAt F E v)) {z : Fin n → AE F E} (hz : z ∈ GlobalTheory.InertSph.latAt X v) :
     (fun i => s * z i) ∈ GlobalTheory.InertSph.latAt X v := by
   unfold GlobalTheory.InertSph.latAt at hz
@@ -157,8 +161,8 @@ theorem mul_latAt {n : ℕ} (X : Spc F E n) {v : Pl F} {s : AE F E}
 
 end Adelic
 
-theorem exists_basis_at_inert : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (v : Pl F) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w →
-    ∀ (n : ℕ) (X : Spc F E n), X.L.IsLattice E →
+theorem exists_basis_at_inert : ∀ (F E : Type) [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E] (v : Pl (F := F)) (w : HeightOneSpectrum (𝓞 E)), Formalism.UG.IsInertAt F E v w →
+    ∀ (n : ℕ) (X : Spc F E n), X.L.IsFullLattice E →
     ∀ (L : Type) [Field L] [Valued L (WithZero (Multiplicative ℤ))] (ι : L →+ AE F E),
       Function.Injective ι → (∀ z : AE F E, At (evFin F v) z ↔ ∃ x, ι x = z) → (∀ x y, ι (x * y) = ι x * ι y) →
       (∀ x, x ∈ Formalism.UG.intL L ↔ ι x ∈ AddSubgroup.closure {z : AE F E | ∃ a : AF F, At (evFin F v) a ∧
@@ -166,7 +170,6 @@ theorem exists_basis_at_inert : ∀ (F E : Type) [Field F] [NumberField F] [Fiel
       ∃ P : GL (Fin n) L, (∀ x : Fin n → L, (∀ i, x i ∈ Formalism.UG.intL L) ↔
         (fun i => ι (((P : Matrix (Fin n) (Fin n) L) *ᵥ x) i)) ∈ GlobalTheory.InertSph.latAt X v) := by
   intro F E _ _ _ _ _ v w _ n X hlat L _ _ ι hinj himg hmul hint
-  haveI := hlat
   have hint' : ∀ x, x ∈ Formalism.UG.intL L ↔ ι x ∈ AddSubgroup.closure (genAt F E v) := hint
   have h11 : ι 1 * ι 1 = ι 1 := by rw [← hmul, one_mul]
   have hAt1 : At (evFin F v) (ι 1) := (himg _).2 ⟨1, rfl⟩
@@ -177,7 +180,7 @@ theorem exists_basis_at_inert : ∀ (F E : Type) [Field F] [NumberField F] [Fiel
   have h1mem : ι 1 ∈ AddSubgroup.closure (genAt F E v) := (hint' 1).1 (Formalism.UG.intL L).one_mem
   have hκR : ∀ o : 𝓞 E, κ (o : E) ∈ Formalism.UG.intL L := fun o =>
     (hint' _).2 (by rw [hκ]; exact mul_incl_mem h1mem o)
-  obtain ⟨s, hs⟩ := (Submodule.IsLattice.fg : X.L.FG)
+  obtain ⟨s, hs⟩ := Submodule.IsLattice.fg E X.L (self := hlat.toIsLattice)
   let M : Submodule (Formalism.UG.intL L) (Fin n → L) :=
     Submodule.span (Formalism.UG.intL L) ((fun t : Fin n → E => fun i => κ (t i)) '' (s : Set (Fin n → E)))
   have key1 : ∀ t ∈ X.L, ∃ y ∈ M, ∀ i, ι (y i) = ι 1 * inclR (F := F) (AF F) (t i) := by
@@ -242,7 +245,7 @@ theorem exists_basis_at_inert : ∀ (F E : Type) [Field F] [NumberField F] [Fiel
       obtain ⟨y', hy', e⟩ := key2 _ h
       have : y' = y := funext fun i => hinj (congrFun e i)
       rwa [← this]
-  have hκadd : ∀ c d, κ (c + d) = κ c + κ d := fun c d => hinj (by rw [map_add, hκ, hκ, hκ, map_add, mul_add])
+  have hκadd : ∀ c d, κ (c + d) = κ c + κ d := fun c d => hinj (by rw [map_add (f := _), hκ, hκ, hκ, map_add (f := _), mul_add])
   have hκmul : ∀ c d, κ (c * d) = κ c * κ d := fun c d => hinj (by
     rw [hmul, hκ, hκ, hκ, map_mul]
     linear_combination (-(inclR (F := F) (AF F) c * inclR (F := F) (AF F) d)) * h11)
@@ -255,7 +258,8 @@ theorem exists_basis_at_inert : ∀ (F E : Type) [Field F] [NumberField F] [Fiel
   have hQ : ∀ t : Fin n → E, (fun i => κ (t i)) ∈ Submodule.span L (M : Set (Fin n → L)) := by
     intro t
     have ht : t ∈ Submodule.span E (X.L : Set (Fin n → E)) := by
-      rw [Submodule.IsLattice.span_eq_top]; trivial
+      rw [hlat.span_eq_top]
+      exact Submodule.mem_top
     induction ht using Submodule.span_induction with
     | mem t ht => exact Submodule.subset_span (hκmem t ht)
     | zero => convert (Submodule.span L (M : Set (Fin n → L))).zero_mem using 1; funext i; simp [hκ0]
@@ -264,16 +268,17 @@ theorem exists_basis_at_inert : ∀ (F E : Type) [Field F] [NumberField F] [Fiel
       convert Submodule.smul_mem _ (κ c) h using 1
       funext i; simp [hκmul]
   have hsp : Submodule.span L (M : Set (Fin n → L)) = ⊤ := by
-    rw [eq_top_iff, ← (Pi.basisFun L (Fin n)).span_eq, Submodule.span_le]
+    rw [eq_top_iff, ← (Pi.basisFun L (Fin n)).span_eq]
+    refine Submodule.span_le.2 ?_
     rintro _ ⟨i, rfl⟩
-    rw [SetLike.mem_coe]
-    have := hQ (Pi.single i 1)
-    convert this using 1
-    funext j
-    rw [Pi.basisFun_apply]
-    by_cases hij : j = i
-    · subst hij; simp [hκ1]
-    · simp [Pi.single_apply, hij, hκ0]
+    have hb : Pi.basisFun L (Fin n) i = (fun j => κ (Pi.basisFun E (Fin n) i j)) := by
+      funext j
+      by_cases h : j = i
+      · subst j
+        simp [hκ1]
+      · simp [Pi.single_eq_of_ne h, hκ0]
+    rw [hb]
+    exact hQ _
   have hfg : M.FG := Submodule.fg_span ((s.finite_toSet).image _)
   obtain ⟨P, hP⟩ := exists_basis_of_fg M hfg hsp
   exact ⟨P, fun x => (hP x).trans (hMem _)⟩

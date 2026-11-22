@@ -1,21 +1,25 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SameOffRefl
-import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TiePtOne
-import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ToLEInvApply
-import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsMidLevIff
-import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemStabGLAdeleIff
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuotientHeightLowerBoundShortIsotropicVector
-import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.IsOrthCo
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ImportsFurther
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.SameOffRefl
+public import Formalism.LocalToGlobal.GroupLattices.TiedFamilies.TiePtOne
+public import Formalism.SharpRestriction.GrowthBounds.ChartedClasses.ToLEInvApply
+public import Development.AbelianVarietyTheory.Definitions.GaloisGeometry.ExistsMidLevIff
+public import Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MemStabGLAdeleIff
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.QuotientHeightLowerBoundShortIsotropicVector
+public import Formalism.LocalToGlobal.PairingIndexBounds.OrthogonalChartLevels.IsOrthCo
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.ImportsFurther
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Formalism.BasicNotions Formalism.MainNotions Formalism.MainNotions.G Formalism.L2.G Formalism.L2.G.Cmp Formalism.L2.Forms Formalism.UG Formalism.L2.DIV Formalism.L2.G.Pend Formalism.L2.PairingIndexBounds.F Formalism.MainNotions.G.KAat GlobalTheory.TwV GlobalTheory.TwV.Xc TensorProduct
+open scoped NumberField.AdeleRing
 
 noncomputable section
 
 namespace GlobalTheory.TwV.Xc
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-
-local notation "𝔸" => FiniteAdeleRing (𝓞 F) F
 
 theorem exists_nat_mul_isIntegral (e : E) : ∃ n : ℕ, 0 < n ∧ IsIntegral ℤ ((n : E) * e) := by
   obtain ⟨y, hy0, hy⟩ := exists_integral_multiples ℤ ℚ (L := E) {e}
@@ -38,28 +42,28 @@ theorem exists_common_nat {M : Type} [AddCommMonoid M] {ι : Type} [Fintype ι] 
   rw [← Finset.prod_erase_mul _ _ (Finset.mem_univ i), mul_smul]
   exact nsmul_mem (hx i) _
 
-theorem exists_nat_mul_mem_intAf (z : E ⊗[F] 𝔸) :
-    ∃ n : ℕ, 0 < n ∧ (n : E ⊗[F] 𝔸) * z ∈ Formalism.L2.Herm.intAf F E := by
+theorem exists_nat_mul_mem_intAf (z : E ⊗[F] 𝔸ᶠ[F]) :
+    ∃ n : ℕ, 0 < n ∧ (n : E ⊗[F] 𝔸ᶠ[F]) * z ∈ Formalism.L2.Herm.intAf F E := by
   induction z using TensorProduct.induction_on with
   | zero => exact ⟨1, one_pos, by rw [mul_zero]; exact zero_mem _⟩
   | tmul e a =>
     obtain ⟨n, hn, he⟩ := exists_nat_mul_isIntegral e
     obtain ⟨d, hd, ha⟩ := GlobalTheory.HolDict.ShortVec.exists_denom_adele (F := F) a
     refine ⟨n * d, Nat.mul_pos hn hd, ?_⟩
-    have e1 : ((n * d : ℕ) : E ⊗[F] 𝔸) * (e ⊗ₜ[F] a) =
-        (((n : E) * e) ⊗ₜ[F] (1 : 𝔸)) * ((1 : E) ⊗ₜ[F] ((d : 𝔸) * a)) := by
+    have e1 : ((n * d : ℕ) : E ⊗[F] 𝔸ᶠ[F]) * (e ⊗ₜ[F] a) =
+        (((n : E) * e) ⊗ₜ[F] (1 : 𝔸ᶠ[F])) * ((1 : E) ⊗ₜ[F] ((d : 𝔸ᶠ[F]) * a)) := by
       rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul, Nat.cast_mul,
         Algebra.TensorProduct.natCast_def, Algebra.TensorProduct.natCast_def',
         mul_assoc, Algebra.TensorProduct.tmul_mul_tmul, Algebra.TensorProduct.tmul_mul_tmul, one_mul, one_mul]
     rw [e1]
     refine mul_mem (Subring.subset_closure (Or.inl ⟨⟨(n : E) * e, ⟨⟨_, he⟩, rfl⟩⟩, rfl⟩))
-      (Subring.subset_closure (Or.inr ⟨⟨(d : 𝔸) * a, fun v => Subring.mem_iInf.1 ha v⟩, rfl⟩))
+      (Subring.subset_closure (Or.inr ⟨⟨(d : 𝔸ᶠ[F]) * a, fun v => Subring.mem_iInf.1 ha v⟩, rfl⟩))
   | add x y hx hy =>
     obtain ⟨n₁, h₁, hx⟩ := hx
     obtain ⟨n₂, h₂, hy⟩ := hy
     refine ⟨n₁ * n₂, Nat.mul_pos h₁ h₂, ?_⟩
-    have e1 : ((n₁ * n₂ : ℕ) : E ⊗[F] 𝔸) * (x + y) =
-        (n₂ : E ⊗[F] 𝔸) * ((n₁ : E ⊗[F] 𝔸) * x) + (n₁ : E ⊗[F] 𝔸) * ((n₂ : E ⊗[F] 𝔸) * y) := by
+    have e1 : ((n₁ * n₂ : ℕ) : E ⊗[F] 𝔸ᶠ[F]) * (x + y) =
+        (n₂ : E ⊗[F] 𝔸ᶠ[F]) * ((n₁ : E ⊗[F] 𝔸ᶠ[F]) * x) + (n₁ : E ⊗[F] 𝔸ᶠ[F]) * ((n₂ : E ⊗[F] 𝔸ᶠ[F]) * y) := by
       push_cast; ring
     rw [e1]
     exact add_mem (mul_mem (natCast_mem _ _) hx) (mul_mem (natCast_mem _ _) hy)
@@ -82,12 +86,10 @@ namespace GlobalTheory.TwV.Xc
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-local notation "𝔸" => FiniteAdeleRing (𝓞 F) F
-
 open Matrix
 
 theorem exists_nsmul_mem_hatL {N : ℕ} (Lb : Submodule (𝓞 E) (Fin N → E))
-    (hspan : Submodule.span E (Lb : Set (Fin N → E)) = ⊤) (z : Fin N → E ⊗[F] 𝔸) :
+    (hspan : Submodule.span E (Lb : Set (Fin N → E)) = ⊤) (z : Fin N → E ⊗[F] 𝔸ᶠ[F]) :
     ∃ n : ℕ, 0 < n ∧ n • z ∈ Formalism.L2.Herm.hatL (F := F) Lb := by
   classical
   obtain ⟨d₁, hd₁, h₁⟩ := exists_common_nat Lb.toAddSubmonoid (fun i : Fin N => (Pi.single i (1 : E) : Fin N → E))
@@ -98,29 +100,29 @@ theorem exists_nsmul_mem_hatL {N : ℕ} (Lb : Submodule (𝓞 E) (Fin N → E))
       exact ⟨n, hn, by rw [nsmul_eq_mul]; exact h⟩
   refine ⟨d₁ * d₂, Nat.mul_pos hd₁ hd₂, ?_⟩
   have e1 : (d₁ * d₂) • z = ∑ i, (⟨d₂ • z i, h₂ i⟩ : Formalism.L2.Herm.intAf F E) •
-      (fun j => inclE (F := F) 𝔸 ((d₁ • (Pi.single i (1 : E) : Fin N → E)) j)) := by
+      (fun j => inclE (F := F) 𝔸ᶠ[F] ((d₁ • (Pi.single i (1 : E) : Fin N → E)) j)) := by
     funext j
     rw [Finset.sum_apply, Finset.sum_eq_single j]
     · simp only [Submonoid.smul_def, Pi.smul_apply, smul_eq_mul, Pi.single_eq_same, nsmul_eq_mul, mul_one, map_natCast]
-      show _ = ((d₂ : E ⊗[F] 𝔸) * z j) * _
+      show _ = ((d₂ : E ⊗[F] 𝔸ᶠ[F]) * z j) * _
       rw [Nat.cast_mul]; ring
     · intro i _ hij
-      show (d₂ • z i) * inclE (F := F) 𝔸 ((d₁ • (Pi.single i (1 : E) : Fin N → E)) j) = 0
+      show (d₂ • z i) * inclE (F := F) 𝔸ᶠ[F] ((d₁ • (Pi.single i (1 : E) : Fin N → E)) j) = 0
       rw [Pi.smul_apply, Pi.single_eq_of_ne hij.symm, smul_zero, map_zero, mul_zero]
     · intro h; exact absurd (Finset.mem_univ j) h
   rw [e1]
   refine Submodule.sum_mem _ fun i _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨_, h₁ i, rfl⟩)
 
 theorem exists_nsmul_mulVec_mem_hatL {N : ℕ} (Lb : Submodule (𝓞 E) (Fin N → E)) (hfin : Module.Finite (𝓞 E) Lb)
-    (hspan : Submodule.span E (Lb : Set (Fin N → E)) = ⊤) (M : Matrix (Fin N) (Fin N) (E ⊗[F] 𝔸)) :
+    (hspan : Submodule.span E (Lb : Set (Fin N → E)) = ⊤) (M : Matrix (Fin N) (Fin N) (E ⊗[F] 𝔸ᶠ[F])) :
     ∃ D : ℕ, 0 < D ∧ ∀ u ∈ Formalism.L2.Herm.hatL (F := F) Lb, D • (M *ᵥ u) ∈ Formalism.L2.Herm.hatL (F := F) Lb := by
   haveI : Module.Finite ℤ Lb := Module.Finite.trans (𝓞 E) Lb
   obtain ⟨k, s, hs⟩ := Module.Finite.exists_fin (R := ℤ) (M := Lb)
   obtain ⟨D, hD, hDj⟩ := exists_common_nat (Formalism.L2.Herm.hatL (F := F) Lb).toAddSubmonoid
-    (fun j => M *ᵥ fun i => inclE (F := F) 𝔸 ((s j : Fin N → E) i))
+    (fun j => M *ᵥ fun i => inclE (F := F) 𝔸ᶠ[F] ((s j : Fin N → E) i))
     fun j => exists_nsmul_mem_hatL Lb hspan _
   refine ⟨D, hD, fun u hu => ?_⟩
-  let Q : Submodule (Formalism.L2.Herm.intAf F E) (Fin N → E ⊗[F] 𝔸) :=
+  let Q : Submodule (Formalism.L2.Herm.intAf F E) (Fin N → E ⊗[F] 𝔸ᶠ[F]) :=
     { carrier := {u | D • (M *ᵥ u) ∈ Formalism.L2.Herm.hatL (F := F) Lb}
       add_mem' := fun {a b} ha hb => by
         show D • (M *ᵥ (a + b)) ∈ Formalism.L2.Herm.hatL (F := F) Lb
@@ -142,13 +144,14 @@ theorem exists_nsmul_mulVec_mem_hatL {N : ℕ} (Lb : Submodule (𝓞 E) (Fin N �
     have hw' : (⟨w, hw⟩ : Lb) ∈ Submodule.span ℤ (Set.range s) := hs ▸ Submodule.mem_top
     obtain ⟨m, hm⟩ := (Submodule.mem_span_range_iff_exists_fun ℤ).1 hw'
     have e : w = ∑ j, m j • (s j : Fin N → E) := by simpa using (congrArg Subtype.val hm).symm
-    have e2 : (fun i => inclE (F := F) 𝔸 (w i)) = ∑ j, m j • fun i => inclE (F := F) 𝔸 ((s j : Fin N → E) i) := by
+    have e2 : (fun i => inclE (F := F) 𝔸ᶠ[F] (w i)) = ∑ j, m j • fun i => inclE (F := F) 𝔸ᶠ[F] ((s j : Fin N → E) i) := by
       funext i
       rw [e]
-      simp [Finset.sum_apply, map_sum, map_zsmul]
-    show (fun i => inclE (F := F) 𝔸 (w i)) ∈ Q
+      set_option synthInstance.maxHeartbeats 100000 in
+        simp [Finset.sum_apply, map_sum, map_zsmul]
+    show (fun i => inclE (F := F) 𝔸ᶠ[F] (w i)) ∈ Q
     rw [e2]
-    have hj : ∀ j, (fun i => inclE (F := F) 𝔸 ((s j : Fin N → E) i)) ∈ Q := fun j => hDj j
+    have hj : ∀ j, (fun i => inclE (F := F) 𝔸ᶠ[F] ((s j : Fin N → E) i)) ∈ Q := fun j => hDj j
     exact Submodule.sum_mem Q fun j _ => Q.toAddSubgroup.zsmul_mem (hj j) (m j)
   exact hle hu
 
@@ -157,8 +160,6 @@ end GlobalTheory.TwV.Xc
 namespace GlobalTheory.TwV.Xc
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
-
-local notation "𝔸" => FiniteAdeleRing (𝓞 F) F
 
 open Matrix
 
@@ -190,8 +191,6 @@ namespace GlobalTheory.TwV.Xc
 
 variable {F E : Type} [Field F] [NumberField F] [Field E] [NumberField E] [Algebra F E]
 
-local notation "𝔸" => FiniteAdeleRing (𝓞 F) F
-
 open Matrix
 
 theorem inclE_algebraMap (R : Type) [CommRing R] [Algebra F R] (a : F) :
@@ -200,16 +199,16 @@ theorem inclE_algebraMap (R : Type) [CommRing R] [Algebra F R] (a : F) :
   rw [← Algebra.TensorProduct.algebraMap_apply, Algebra.TensorProduct.algebraMap_apply']
 
 theorem prV_inclE (v : HeightOneSpectrum (𝓞 F)) (a : E) :
-    prV (E := E) v (inclE (F := F) 𝔸 a) = inclE (F := F) (v.adicCompletion F) a := by
-  show Algebra.TensorProduct.map (AlgHom.id F E) (evalV F v) (a ⊗ₜ[F] (1 : 𝔸)) = a ⊗ₜ[F] 1
+    prV (E := E) v (inclE (F := F) 𝔸ᶠ[F] a) = inclE (F := F) (v.adicCompletion F) a := by
+  show Algebra.TensorProduct.map (AlgHom.id F E) (evalV F v) (a ⊗ₜ[F] (1 : 𝔸ᶠ[F])) = a ⊗ₜ[F] 1
   rw [Algebra.TensorProduct.map_tmul, map_one]
   rfl
 
 theorem smul_mulVec_mem_hatL_of_oneOff {N : ℕ} (Lb : Submodule (𝓞 E) (Fin N → E)) (hfin : Module.Finite (𝓞 E) Lb)
     (hspan : Submodule.span E (Lb : Set (Fin N → E)) = ⊤) (w : HeightOneSpectrum (𝓞 F))
-    (K : Matrix (Fin N) (Fin N) (E ⊗[F] 𝔸)) (hK : ∀ w', w' ≠ w → K.map (prV (E := E) w') = 1) :
+    (K : Matrix (Fin N) (Fin N) (E ⊗[F] 𝔸ᶠ[F])) (hK : ∀ w', w' ≠ w → K.map (prV (E := E) w') = 1) :
     ∃ m : ℕ, ∀ c : 𝓞 F, c ∈ w.asIdeal ^ m → ∀ u ∈ Formalism.L2.Herm.hatL (F := F) Lb,
-      inclE (F := F) 𝔸 (algebraMap F E (c : F)) • (K *ᵥ u) ∈ Formalism.L2.Herm.hatL (F := F) Lb := by
+      inclE (F := F) 𝔸ᶠ[F] (algebraMap F E (c : F)) • (K *ᵥ u) ∈ Formalism.L2.Herm.hatL (F := F) Lb := by
   haveI := hfin
   obtain ⟨D, hD, hDK⟩ := exists_nsmul_mulVec_mem_hatL Lb hfin hspan K
   obtain ⟨m, hm⟩ := exists_pow_div_mem w hD
@@ -223,7 +222,7 @@ theorem smul_mulVec_mem_hatL_of_oneOff {N : ℕ} (Lb : Submodule (𝓞 E) (Fin N
     set t := algebraMap F (v.adicCompletion F) (c : F) / (D : v.adicCompletion F)
     have ht : t ∈ v.adicCompletionIntegers F := hm c hc
     have hDw : (D : v.adicCompletion F) ≠ 0 := Nat.cast_ne_zero.2 hD.ne'
-    have e1 : (fun i => prV (E := E) v ((inclE (F := F) 𝔸 (algebraMap F E (c : F)) • (K *ᵥ u)) i)) =
+    have e1 : (fun i => prV (E := E) v ((inclE (F := F) 𝔸ᶠ[F] (algebraMap F E (c : F)) • (K *ᵥ u)) i)) =
         (⟨(1 : E) ⊗ₜ[F] t, Subring.subset_closure (Or.inr ⟨⟨t, ht⟩, rfl⟩)⟩ :
           tensInt (F := F) (v.adicCompletion F) (intOE E) (v.adicCompletionIntegers F).toSubring) •
         (fun i => prV (E := E) v ((D • (K *ᵥ u)) i)) := by
@@ -235,7 +234,7 @@ theorem smul_mulVec_mem_hatL_of_oneOff {N : ℕ} (Lb : Submodule (𝓞 E) (Fin N
       rw [Algebra.TensorProduct.natCast_def', Algebra.TensorProduct.tmul_mul_tmul, one_mul, div_mul_cancel₀ _ hDw]
     rw [e1]
     exact Submodule.smul_mem _ _ (hy' v)
-  · have e1 : (fun i => prV (E := E) v ((inclE (F := F) 𝔸 (algebraMap F E (c : F)) • (K *ᵥ u)) i)) =
+  · have e1 : (fun i => prV (E := E) v ((inclE (F := F) 𝔸ᶠ[F] (algebraMap F E (c : F)) • (K *ᵥ u)) i)) =
         (⟨inclE (F := F) (v.adicCompletion F) (algebraMap F E (c : F)),
           Subring.subset_closure (Or.inl ⟨⟨_, ⟨⟨_, hcE⟩, rfl⟩⟩, rfl⟩)⟩ :
           tensInt (F := F) (v.adicCompletion F) (intOE E) (v.adicCompletionIntegers F).toSubring) •

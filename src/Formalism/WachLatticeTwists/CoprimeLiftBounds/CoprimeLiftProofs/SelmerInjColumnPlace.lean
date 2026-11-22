@@ -1,5 +1,9 @@
-import Formalism.WachLatticeTwists.CoprimeLiftBounds.SelmerInjColumnPlace
-import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.Imports
+module
+
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.SelmerInjColumnPlace
+public import Formalism.WachLatticeTwists.CoprimeLiftBounds.CoprimeLiftProofs.Imports
+
+@[expose] public section
 
 open Finset
 
@@ -15,7 +19,8 @@ theorem selmer_inj_tensor_form : SelmerInjTensorForm := by
   choose y hy using fun b => Submodule.Quotient.mk_surjective (1 : Submodule O (FractionRing O)) (x b)
   have hsum : ∀ g, q (∑ b, y b • i ((κ b : D → L) g)) = ρM g m - m := by
     intro g
-    rw [← hx g, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← hx g, map_sum]
     refine Finset.sum_congr rfl fun b _ => ?_
     rw [← hy b, htens]
   have key := c3 O D L V M ρL ρV ρM i q hi hq hker hsat hiρ hqρ Ff j κ hF1 hF2 hF3 hF4 y m hsum a

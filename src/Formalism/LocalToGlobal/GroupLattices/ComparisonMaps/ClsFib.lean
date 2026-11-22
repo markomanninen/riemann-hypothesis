@@ -1,4 +1,8 @@
-import Formalism.SatakeDualWeyl.Statement
+module
+
+public import Formalism.SatakeDualWeyl.Statement
+
+@[expose] public section
 
 namespace Formalism.L2.G.Cmp
 
@@ -15,12 +19,13 @@ namespace Fib
 
 variable {G Gp : Type} [Group G] [Group Gp] {K K' : Subgroup G} {Kp : Subgroup Gp} (X : Fib K K' Kp) (H : Subgroup G)
 
-def mkC (S : Subgroup G) (a : G) : ClassSet H S := DoubleCoset.mk H S a
+def mkC (S : Subgroup G) (a : G) : ClassSet H S :=
+  Quotient.mk'' a
 
 theorem mk_eq_iff (S : Subgroup G) (a b : G) :
     (mkC H S a = mkC H S b) ↔ ∃ h ∈ H, ∃ κ ∈ S, b = h * a * κ := by
   unfold mkC
-  exact DoubleCoset.eq _ _ a b
+  exact @DoubleCoset.eq _ _ _ _ a b
 
 theorem K'_split (x : G) (hx : x ∈ K') : (X.j (X.pr x))⁻¹ * x ∈ K := by
   rw [X.K_iff]
@@ -30,9 +35,10 @@ theorem K'_split (x : G) (hx : x ∈ K') : (X.j (X.pr x))⁻¹ * x ∈ K := by
 
 variable (y : ClassSet H K' → G) (hy : ∀ i, mkC H K' (y i) = i) (hp : ∀ i, X.pr (y i) = 1)
 
-include hy hp in
 
-theorem cls_iff (i i' : ClassSet H K') (g g' : Gp) :
+include hy hp in
+theorem cls_iff (i i' : ClassSet H K') (g g' : Gp)
+    (hy : ∀ i, mkC H K' (y i) = i) (hp : ∀ i, X.pr (y i) = 1) :
     mkC H K (y i * X.j g) = mkC H K (y i' * X.j g') ↔
       i = i' ∧ ∃ γ ∈ H, (y i)⁻¹ * γ * y i ∈ K' ∧ g'⁻¹ * (X.pr γ * g) ∈ Kp := by
   rw [mk_eq_iff]
@@ -67,18 +73,20 @@ theorem cls_iff (i i' : ClassSet H K') (g g' : Gp) :
     convert Kp.inv_mem hg using 1
     group
 
-include hy in
 
-theorem cls_surj (x : G) : ∃ i g, mkC H K (y i * X.j g) = mkC H K x := by
+include hy in
+theorem cls_surj (x : G) (hy : ∀ i, mkC H K' (y i) = i) :
+    ∃ i g, mkC H K (y i * X.j g) = mkC H K x := by
   obtain ⟨h, hh, κ, hκ, he⟩ := (mk_eq_iff H K' (y (mkC H K' x)) x).1 (hy _)
   refine ⟨mkC H K' x, X.pr κ, (mk_eq_iff H K _ _).2
     ⟨h, hh, (X.j (X.pr κ))⁻¹ * κ, X.K'_split κ hκ, ?_⟩⟩
   conv_lhs => rw [he]
   group
 
-include hp in
 
-theorem stab_iff (i : ClassSet H K') (g : Gp) (γ : G) :
+include hp in
+theorem stab_iff (i : ClassSet H K') (g : Gp) (γ : G)
+    (hp : ∀ i, X.pr (y i) = 1) :
     (y i * X.j g)⁻¹ * γ * (y i * X.j g) ∈ K ↔ (y i)⁻¹ * γ * y i ∈ K' ∧ g⁻¹ * (X.pr γ * g) ∈ Kp := by
   have hz : (y i * X.j g)⁻¹ * γ * (y i * X.j g) = (X.j g)⁻¹ * ((y i)⁻¹ * γ * y i) * X.j g := by
     group

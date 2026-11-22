@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicUnitriangularMulMemUnipotentTimesIntegral
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.AdelicUnitriangularMulMemUnipotentTimesIntegral
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Formalism.UG GlobalTheory.CuspRep MeasureTheory
 open scoped ENNReal
 
@@ -179,7 +184,7 @@ variable {R : Type} [CommRing R] [TopologicalSpace R] [IsTopologicalRing R] [Mea
   [SecondCountableTopology R] {n : ℕ} [MeasurableSpace (GL (Fin n) R)] [BorelSpace (GL (Fin n) R)]
 
 theorem measurable_rowG (x : Pos n → R) (ρ : ℕ) : Measurable (rowG x ρ) := by
-  refine measurable_pi_lambda _ fun q => ?_
+  refine Measurable.of_eval fun q => ?_
   refine Measurable.const_add (Finset.measurable_sum _ fun k _ => ?_) _
   by_cases h : q.1.1.1 < k ∧ k < q.1.1.2
   · simp only [dif_pos h]
@@ -301,8 +306,8 @@ instance (μR : Measure R) [μR.IsOpenPosMeasure] [SigmaFinite μR] :
 
 end GlobalTheory.UnipCoord
 
-open GlobalTheory.UnipCoord in
 
+open GlobalTheory.UnipCoord in
 theorem GlobalTheory.UnipCoord.map_coords_haar : ∀ (R : Type) [CommRing R] [TopologicalSpace R] [IsTopologicalRing R] [LocallyCompactSpace R]
     [SecondCountableTopology R] [T2Space R] [MeasurableSpace R] [BorelSpace R] (n : ℕ)
     [MeasurableSpace (GL (Fin n) R)] [BorelSpace (GL (Fin n) R)] (μR : Measure R) [μR.IsAddHaarMeasure]
@@ -319,6 +324,7 @@ theorem GlobalTheory.UnipCoord.map_coords_haar : ∀ (R : Type) [CommRing R] [To
     ⟨_, Measure.isMulLeftInvariant_eq_smul ν (coordMeasure μR)⟩
   refine ⟨c, ?_⟩
   change Measure.map coords ν = _
-  rw [hc, Measure.map_smul, coordMeasure, Measure.map_map measurable_coords measurable_ofCoords]
+  rw [hc, Measure.map_smul c measurable_coords.aemeasurable, coordMeasure,
+    Measure.map_map measurable_coords measurable_ofCoords]
   have : coords ∘ (ofCoords : (Pos n → R) → GlobalTheory.SmGL.unipB R (Fin n)) = id := funext coords_ofCoords
   rw [this, Measure.map_id]

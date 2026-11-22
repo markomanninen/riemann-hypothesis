@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRho
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightTypeAction
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRho
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.RightTypeAction
+
+@[expose] public section
 
 open Formalism.REAL Formalism.QuantumDeterminants Formalism.FourierDecayAlt NumberField
 open scoped ComplexConjugate Matrix

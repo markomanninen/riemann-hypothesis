@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EvalPullSemilinearOfIsTwInv
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfIsOrbFormConst
-import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EvalPullSemilinearOfIsTwInv
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.EqZeroOfIsOrbFormConst
+public import CompanionTheory.SpectralGeometry.CountingDefinitions.VoronoiMeans.VorFunEvalEqFineMean
+
+@[expose] public section
 
 noncomputable section
 
@@ -25,7 +29,7 @@ theorem eval_pull_semilinear_of_isTwG : ∀ (O : Type) [CommRing O] [IsDedekindD
         have hadd : twv τ.symm (a + b) = twv τ.symm a + twv τ.symm b := by
           funext i
           simp [twv_apply]
-        rw [hadd, map_add, map_add]
+        rw [hadd, map_add (f := _), map_add (f := _)]
       map_smul' := fun c a => by
         show f (πX (twv τ.symm (c • a))) = c • f (πX (twv τ.symm a))
         rw [twv_smul, map_smul, hsl, RingEquiv.apply_symm_apply] }

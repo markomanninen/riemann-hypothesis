@@ -1,6 +1,10 @@
-import Mathlib
-import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothCyc
-import CompanionTheory.AutomorphicTheory.ZuckermanCommutation.ZuckermanFunctors.IsSimpleFam
+module
+
+public import Mathlib
+public import CompanionTheory.HarishChandraModules.BesselParameterIntegrals.SmoothCyclicVectors.SmoothCyc
+public import CompanionTheory.AutomorphicTheory.ZuckermanCommutation.ZuckermanFunctors.IsSimpleFam
+
+@[expose] public section
 
 open CompanionTheory.Zuck BranchingSupport Matrix Finset
 open scoped InnerProductSpace Kronecker
@@ -53,15 +57,16 @@ theorem res_coe (U U' : URep k r) (e : U.R.H →L[ℂ] U'.R.H)
 
 theorem isHom_res (F : FRep k r) (U U' : URep k r) (e : U.R.H →L[ℂ] U'.R.H)
     (he : ∀ g ∈ GG k r, ∀ x, e (U.R.σ g x) = U'.R.σ g (e x)) (hn : ∀ x, ‖e x‖ = ‖x‖) :
-    IsHom (F, U) (F, U') (dOp F.ι (res U U' e he)) where
-  cont W hW := by
+    IsHom (F, U) (F, U') (dOp F.ι (res U U' e he)) := by
+  constructor
+  · intro W hW
     refine ⟨1, [W], by simpa using hW, fun x => le_of_eq ?_⟩
     simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero, one_mul, sn]
     refine Finset.sum_congr rfl fun c _ => ?_
     rw [dsigW_eq', dsigW_eq']
     change ‖dsW U'.R.σ W (e (x c : U.R.H))‖ = _
     rw [dsW_map U.repOn e he (v := (x c : U.R.H)) (x c).2 (fun X hX t => ex_mem_of_lie (hW X hX) t), hn]
-  equiv g hg := by
+  · intro g hg
     have h1 : res U U' e he ∘ₗ U.sig g = U'.sig g ∘ₗ res U U' e he := by
       ext v
       simp only [LinearMap.comp_apply, res_coe, URep.sig_coe _ hg, he g hg]

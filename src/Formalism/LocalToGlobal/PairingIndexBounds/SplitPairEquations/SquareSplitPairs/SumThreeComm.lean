@@ -1,4 +1,8 @@
-import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SquareSplitPairs.HomLMulPres
+module
+
+public import Formalism.LocalToGlobal.PairingIndexBounds.SplitPairEquations.SquareSplitPairs.HomLMulPres
+
+@[expose] public section
 
 noncomputable section
 open NumberField Formalism.BasicNotions Classical Matrix
@@ -22,7 +26,8 @@ theorem formV_phi {N N' : ℕ} (A : ℝ) (M : Matrix (Fin N') (Fin N') D.host.E)
   simp only [Ker.formV, LinearMap.mk₂'ₛₗ_apply, phi_apply]
   congr 1
   refine Finset.sum_congr rfl fun τ _ => ?_
-  simp only [Finset.sum_mul, map_sum, map_mul, Finset.mul_sum, conjTranspose_apply, embT_star']
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [Finset.sum_mul, map_sum, map_mul, Finset.mul_sum, conjTranspose_apply, embT_star']
   rw [sum_three_comm]
   refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_
   simp only [starRingEnd_apply, star_star]
@@ -45,25 +50,17 @@ variable {D cc δ N N'}
 
 theorem qq_add (x y : TaylorLogMetric.VC D N N') :
     qq D cc δ N N' (x + y) = qq D cc δ N N' x + qq D cc δ N N' y + cp D cc δ N N' x y := by
-  simp only [qq, cp, map_add, LinearMap.add_apply, Complex.add_re]
+  simp only [qq, cp, map_add (f := _), LinearMap.add_apply, Complex.add_re]
   ring
 
 theorem bet_add_left (x x' y : TaylorLogMetric.VC D N N') :
     bet D cc δ N N' (x + x') y = bet D cc δ N N' x y + bet D cc δ N N' x' y := by
-  simp only [bet, cp, map_add, LinearMap.add_apply, Complex.add_re, Complex.add_im]
+  simp only [bet, cp, map_add (f := _), LinearMap.add_apply, Complex.add_re, Complex.add_im]
   ring
 
 theorem bet_add_right (x y y' : TaylorLogMetric.VC D N N') :
     bet D cc δ N N' x (y + y') = bet D cc δ N N' x y + bet D cc δ N N' x y' := by
-  simp only [bet, cp, map_add, LinearMap.add_apply, Complex.add_re, Complex.add_im]
-  ring
-
-theorem good_add {a b : ℝ} (ha : ∃ k : ℤ, a = 2 * k) (hb : ∃ k : ℤ, b = 2 * k) : ∃ k : ℤ, a + b = 2 * k := by
-  obtain ⟨m, hm⟩ := ha
-  obtain ⟨m', hm'⟩ := hb
-  refine ⟨m + m', ?_⟩
-  rw [hm, hm']
-  push_cast
+  simp only [bet, cp, map_add (f := _), LinearMap.add_apply, Complex.add_re, Complex.add_im]
   ring
 
 theorem bet_phi (e : Matrix (Fin N') (Fin N') D.host.E) (x y : TaylorLogMetric.VC D N N') :

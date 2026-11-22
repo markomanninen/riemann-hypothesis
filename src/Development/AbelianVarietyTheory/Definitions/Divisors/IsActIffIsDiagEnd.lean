@@ -1,14 +1,20 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMemberP
-import Development.AbelianVarietyTheory.Definitions.Divisors.LabRange
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.NormVal
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.IsSiegPull
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagEndIsMonHom
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDegenerationEndomorphismOfAdmissibleBase
-import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SelfTorusExtensionCoordValuesEqOne
-import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPullbackDegPreStrictLineBundleIso
-import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.PsiCoordExistsUniqueUpToUnitLocal
-import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsAbelianSchemeAndExtendOfGenericHoms
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.IsChartMemberP
+public import Development.AbelianVarietyTheory.Definitions.Divisors.LabRange
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.NormVal
+public import Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.BlowPolSt
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.SiegelToroidalIntegral
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ToroidalChartsForFan
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDiagEndIsMonHom
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsDegenerationEndomorphismOfAdmissibleBase
+public import Development.AbelianVarietyTheory.Proofs.UniformizationProofs.SelfTorusExtensionCoordValuesEqOne
+public import Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsPullbackDegPreStrictLineBundleIso
+public import Development.AbelianVarietyTheory.Proofs.UnitaryExistence.PsiCoordExistsUniqueUpToUnitLocal
+public import Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.IsAbelianSchemeAndExtendOfGenericHoms
+
+@[expose] public section
 
 noncomputable section
 
@@ -29,17 +35,6 @@ variable {g n : ℕ} {F : SFam g n (zetaAway n)} {W : Matrix (Fin 8) (Fin 8) ℤ
 
 def IsAct (X₁ : Setup F W i) (act : Matrix (Fin 8) (Fin 8) ℤ → (X₁.ρ.P.A ⟶ X₁.ρ.P.A)) : Prop :=
   IsDiagEnd F W X₁.ρ.P X₁.u act
-
-theorem isAct_iff_isDiagEnd {X₁ : Setup F W i} {act : Matrix (Fin 8) (Fin 8) ℤ → (X₁.ρ.P.A ⟶ X₁.ρ.P.A)} :
-    IsAct X₁ act ↔ IsDiagEnd F W X₁.ρ.P X₁.u act := Iff.rfl
-
-theorem isAct_iff {X₁ : Setup F W i} {act : Matrix (Fin 8) (Fin 8) ℤ → (X₁.ρ.P.A ⟶ X₁.ρ.P.A)} : IsAct X₁ act ↔
-    ∃ c : SiegPre g n (zetaAway n) (X₁.u ≫ F.s), SiegPB c F.univ X₁.u ∧ ∃ pr : Fin 8 → (X₁.ρ.P.A ⟶ c.A), (∀ a, IsMonHom (pr a)) ∧
-      (∀ (T' : Over (Sp X₁.S.R)) (y : Fin 8 → (T' ⟶ c.A)), ∃! x : T' ⟶ X₁.ρ.P.A, ∀ a, x ≫ pr a = y a) ∧
-      LBIso X₁.ρ.P.L (LB.LinComb c.P (K := Fin 8 × Fin 8) (fun ab => (lift (pr ab.1) (pr ab.2)).left) (fun ab => W ab.1 ab.2)) ∧
-      ∀ a u, act a ≫ pr u = (List.ofFn fun v => pr v ^ a u v).prod := by
-  unfold IsAct IsDiagEnd
-  simp only [List.ofFn_eq_map]
 
 theorem IsAct.isMonHom {X₁ : Setup F W i} {act : Matrix (Fin 8) (Fin 8) ℤ → (X₁.ρ.P.A ⟶ X₁.ρ.P.A)} (h : IsAct X₁ act)
     (E : Matrix (Fin 8) (Fin 8) ℤ) : IsMonHom (act E) := by
@@ -142,14 +137,14 @@ variable {X₁ : Setup F W i} {z₁ : X₁.M.Z} {act : Matrix (Fin 8) (Fin 8) �
   {V : Type} [CommRing V] [IsDomain V] [IsLocalRing V] {ev : X₁.M.Z.presheaf.stalk z₁ →+* V}
   {X : Type} [AddCommGroup X] {m : ℕ} {t : Fin m → V} {δ : Fin m → LinearMap.BilinForm ℤ X} (𝔪 : UMem X₁ z₁ act V ev X t δ)
 
-include 𝔪 in
 
+include 𝔪 in
 theorem UMem.mono_ne_zero (mu : Fin 8 → X) : mono W t δ mu ≠ 0 :=
   let ⟨_, h⟩ := 𝔪.psi mu
   right_ne_zero_of_mul (PsiCoordLocal.ne_zero_of_coord h)
 
-include 𝔪 in
 
+include 𝔪 in
 theorem UMem.mono_mem {mu : Fin 8 → X} (h : mu ≠ 0) : mono W t δ mu ∈ maximalIdeal V := by
   haveI := 𝔪.cn.2.2.2
   obtain ⟨u, hu⟩ := 𝔪.psi mu
@@ -160,12 +155,6 @@ theorem UMem.mono_mem {mu : Fin 8 → X} (h : mu ≠ 0) : mono W t δ mu ∈ max
 
 end
 
-example {X₁ : Setup F W i} {z₁ : X₁.M.Z} {act : Matrix (Fin 8) (Fin 8) ℤ → (X₁.ρ.P.A ⟶ X₁.ρ.P.A)}
-    {V : Type} [CommRing V] [IsDomain V] [IsLocalRing V] {ev : X₁.M.Z.presheaf.stalk z₁ →+* V} :
-    IsEmpty (UMem X₁ z₁ act V ev ℤ (m := 0) Fin.elim0 Fin.elim0) :=
-  ⟨fun 𝔪 => (maximalIdeal.isMaximal V).ne_top ((Ideal.eq_top_iff_one _).2 (by
-    simpa [mono] using 𝔪.mono_mem (mu := 1) one_ne_zero))⟩
-
 theorem exists_unif_good {V : Type} [CommRing V] [IsDomain V] [IsLocalRing V] (hV : IsCN V) (P : PolAV (Sp V)) :
     letI := P.isAb.comm
     ∃ (D : DegData V (maximalIdeal V)) (A : PolAV (Sp (FractionRing V))) (U : Unif (maximalIdeal V) D A P.A)
@@ -174,7 +163,41 @@ theorem exists_unif_good {V : Type} [CommRing V] [IsDomain V] [IsLocalRing V] (h
   have hN := hV.1
   have hC := hV.2.2.1
   obtain ⟨D, rfl, hX⟩ := SelfUnif.exists_degData firstFiveLaws.1.cube (maximalIdeal V) P
-  let A := StrictPull.polPull D.toPre.P (jK V)
+  have semi_of_ab {S : Scheme.{0}} (B : Over S) [GrpObj B] (h : IsAbelianScheme B) : IsSemiAbelian B := by
+    have := h.proper
+    refine ⟨h.comm, h.smooth, inferInstance, inferInstance, h.geomConnected, ?_⟩
+    intro Ω _ _ p
+    have hab := TLinPf.isAb_pullback p B h
+    refine ⟨{ X := PUnit, B := _, isAbelian := hab, q := 𝟙 _, q_hom := inferInstance
+              q_flat := ?_, q_surjective := ?_, q_quasiCompact := ?_
+              i := toUnit _ ≫ η, i_hom := ?_, isKernel := ?_ }⟩
+    · rw [Over.id_left]; infer_instance
+    · rw [Over.id_left]; infer_instance
+    · rw [Over.id_left]; infer_instance
+    · have := hab.comm; infer_instance
+    · have hident : 𝟙 (splitTorus (Spec (CommRingCat.of Ω)) PUnit) = 1 := by
+        rw [← Diag.diagMap_id, ← Diag.diagMap_zero]
+        congr 1
+      have : IsIso (toUnit (splitTorus (Spec (CommRingCat.of Ω)) PUnit)) := ⟨η, hident.symm, toUnit_unique _ _⟩
+      exact IsPullback.of_vert_isIso ⟨Category.comp_id _⟩
+  let polPull {S S' : Scheme.{0}} (P : PolAV S) (f : S' ⟶ S) : PolAV S' := by
+    exact {
+      A := (Over.pullback f).obj P.A,
+      isAb := TLinPf.isAb_pullback f P.A P.isAb,
+      g := P.g,
+      smoothDim := (smoothOfRelativeDimension_isStableUnderBaseChange _).of_isPullback
+        (isGrpPullback_pullback P.A f).1 P.smoothDim,
+      L := P.L.pull (pullback.fst P.A.hom f),
+      isLB := LB.isLB_pull P.isLB _,
+      rigid := PolBaseChange.rigidified_pull (isGrpPullback_pullback P.A f) P.rigid,
+      sym := PolBaseChange.sym_pull (isGrpPullback_pullback P.A f) P.sym,
+      ample := by
+        haveI := P.isAb.proper
+        exact AmpleBaseChange.relAmple_of_isPullback P.isLB P.ample (IsPullback.of_hasPullback P.A.hom f)
+      ktriv := by
+        obtain ⟨w, hw⟩ := PolBaseChange.lbIso_refl (LB.isLB_pull P.isLB (pullback.fst P.A.hom f))
+        exact kTriv_pull (isGrpPullback_pullback P.A f) P.isLB (LB.isLB_pull P.isLB _) ((isGen_iff w).1 hw) P.ktriv } 
+  let A := polPull D.toPre.P (jK V)
   have r : LBIso A.L (D.toPre.P.L.pull (pullback.fst D.toPre.P.A.hom (jK V))) := PolBaseChange.lbIso_refl A.isLB
   have hm : IsMonHom (Iso.refl A.A).hom := inferInstanceAs (IsMonHom (𝟙 A.A))
   have hw : LBIso (A.L.pull (Iso.refl A.A).hom.left) (D.toPre.P.L.pull (pullback.fst D.toPre.P.A.hom (jK V))) := by
@@ -184,7 +207,7 @@ theorem exists_unif_good {V : Type} [CommRing V] [IsDomain V] [IsLocalRing V] (h
     SelfUnif.expBij D A (Iso.refl _) hm hw firstFiveLaws.1.globalFns (IsAdicComplete.le_jacobson_bot _) k⟩
   refine ⟨D, A, U, _, hX, isGrpPullback_pullback _ _, r, fun a ha => ?_⟩
   obtain ⟨E, -, hE⟩ := exists_degenerationEndomorphism_of_admissibleBase V _ ⟨hN, inferInstance, hV.2.1, hC⟩ D A _
-    (isSemiAbelian_of_isAbelianScheme _ D.toPre.P.isAb) U a ((Over.pullback (jK V)).map a) ha
+    (semi_of_ab _ D.toPre.P.isAb) U a ((Over.pullback (jK V)).map a) ha
     (inferInstanceAs (IsMonHom ((Over.pullback (jK V)).map a))) ((Category.comp_id _).trans (Category.id_comp _).symm)
   exact ⟨E, hE ▸ pullback.lift_fst _ _ _⟩
 
@@ -197,11 +220,45 @@ theorem UMem.nonempty_of_regular {X₁ : Setup F W i} {z₁ : X₁.M.Z} {act : M
     rwa [Scheme.range_fromSpecStalk] at this
   let yV : X₁.S.R →+* V := (RatModel.valLoc (spMap ev ≫ X₁.M.Z.fromSpecStalk z₁) z₁ (sp _)).comp
     (Subalgebra.inclusion hz).toRingHom
-  let P := StrictPull.polPull X₁.ρ.P (spMap yV)
+  have semi_of_ab {S : Scheme.{0}} (B : Over S) [GrpObj B] (h : IsAbelianScheme B) : IsSemiAbelian B := by
+    have := h.proper
+    refine ⟨h.comm, h.smooth, inferInstance, inferInstance, h.geomConnected, ?_⟩
+    intro Ω _ _ p
+    have hab := TLinPf.isAb_pullback p B h
+    refine ⟨{ X := PUnit, B := _, isAbelian := hab, q := 𝟙 _, q_hom := inferInstance
+              q_flat := ?_, q_surjective := ?_, q_quasiCompact := ?_
+              i := toUnit _ ≫ η, i_hom := ?_, isKernel := ?_ }⟩
+    · rw [Over.id_left]; infer_instance
+    · rw [Over.id_left]; infer_instance
+    · rw [Over.id_left]; infer_instance
+    · have := hab.comm; infer_instance
+    · have hident : 𝟙 (splitTorus (Spec (CommRingCat.of Ω)) PUnit) = 1 := by
+        rw [← Diag.diagMap_id, ← Diag.diagMap_zero]
+        congr 1
+      have : IsIso (toUnit (splitTorus (Spec (CommRingCat.of Ω)) PUnit)) := ⟨η, hident.symm, toUnit_unique _ _⟩
+      exact IsPullback.of_vert_isIso ⟨Category.comp_id _⟩
+  let polPull {S S' : Scheme.{0}} (P : PolAV S) (f : S' ⟶ S) : PolAV S' := by
+    exact {
+      A := (Over.pullback f).obj P.A,
+      isAb := TLinPf.isAb_pullback f P.A P.isAb,
+      g := P.g,
+      smoothDim := (smoothOfRelativeDimension_isStableUnderBaseChange _).of_isPullback
+        (isGrpPullback_pullback P.A f).1 P.smoothDim,
+      L := P.L.pull (pullback.fst P.A.hom f),
+      isLB := LB.isLB_pull P.isLB _,
+      rigid := PolBaseChange.rigidified_pull (isGrpPullback_pullback P.A f) P.rigid,
+      sym := PolBaseChange.sym_pull (isGrpPullback_pullback P.A f) P.sym,
+      ample := by
+        haveI := P.isAb.proper
+        exact AmpleBaseChange.relAmple_of_isPullback P.isLB P.ample (IsPullback.of_hasPullback P.A.hom f)
+      ktriv := by
+        obtain ⟨w, hw⟩ := PolBaseChange.lbIso_refl (LB.isLB_pull P.isLB (pullback.fst P.A.hom f))
+        exact kTriv_pull (isGrpPullback_pullback P.A f) P.isLB (LB.isLB_pull P.isLB _) ((isGen_iff w).1 hw) P.ktriv } 
+  let P := polPull X₁.ρ.P (spMap yV)
   letI := P.isAb.comm
   obtain ⟨D, A, U, ψ, hX, hψ, hL, hE⟩ := exists_unif_good hV P
   have r : LBIso P.L (X₁.ρ.P.L.pull (pullback.fst X₁.ρ.P.A.hom (spMap yV))) := PolBaseChange.lbIso_refl P.isLB
-  obtain ⟨wl, hwl⟩ := LBIso.trans A.isLB (pull_isLB P.isLB _) (pull_isLB X₁.ρ.P.isLB _) hL (lbIso_pull_comp r ψ)
+  obtain ⟨wl, hwl⟩ := LBIso.trans A.isLB (LB.isLB_pull P.isLB _) (LB.isLB_pull X₁.ρ.P.isLB _) hL (lbIso_pull_comp r ψ)
   haveI := hV.2.2.2
   obtain ⟨r₀, hr₀, -, -, hu⟩ := (PsiCoordLocal.main V D hV.2.1 0).1
   refine ⟨{
@@ -214,7 +271,7 @@ theorem UMem.nonempty_of_regular {X₁ : Setup F W i} {z₁ : X₁.M.Z} {act : M
     e₈ := ⟨⟨fun _ => 0, fun _ => 0, fun _ => Subsingleton.elim _ _, fun _ => Subsingleton.elim _ _⟩,
       fun _ _ => Subsingleton.elim _ _⟩
     G := P.A
-    semi := isSemiAbelian_of_isAbelianScheme _ P.isAb
+    semi := semi_of_ab _ P.isAb
     A := A
     U := U
     φ := ψ ≫ pullback.fst X₁.ρ.P.A.hom (spMap yV)

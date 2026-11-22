@@ -1,8 +1,12 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.DerivOne
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.ThetaIntegralCompWeil
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LocOpSt
-import Formalism.LocalToGlobal.IndefiniteReal.PublishedAut
-import Formalism.LocalToGlobal.IndefiniteReal.FockTheta.QuadraticOperatorPureTensor
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.DerivOne
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.ThetaIntegralCompWeil
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.GlobalGaussLaws.LocOpSt
+public import Formalism.LocalToGlobal.IndefiniteReal.PublishedAut
+public import Formalism.LocalToGlobal.IndefiniteReal.FockTheta.QuadraticOperatorPureTensor
+
+@[expose] public section
 
 noncomputable section
 

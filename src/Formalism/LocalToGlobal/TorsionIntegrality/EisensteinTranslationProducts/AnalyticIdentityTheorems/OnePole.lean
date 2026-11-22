@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.ThetaLine
-import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.AnalyticIdentityTheoremsZetaFacts
+module
+
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.ThetaLine
+public import Formalism.LocalToGlobal.TorsionIntegrality.EisensteinTranslationProducts.AnalyticIdentityTheorems.AnalyticIdentityTheoremsZetaFacts
+
+@[expose] public section
 
 noncomputable section
 open Filter Topology
@@ -16,7 +20,7 @@ lemma eq_of_eventuallyEq_nhdsNE {g₁ g₂ : ℂ → ℂ} {z : ℂ} (h₁ : Cont
 
 lemma tendsto_add_nhdsNE (z ω : ℂ) : Tendsto (fun w : ℂ => w + ω) (𝓝[≠] z) (𝓝[≠] (z + ω)) := by
   refine tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within _
-    ((continuous_add_right ω).continuousAt.tendsto.mono_left nhdsWithin_le_nhds) ?_
+    ((continuous_add_const ω).continuousAt.tendsto.mono_left nhdsWithin_le_nhds) ?_
   filter_upwards [self_mem_nhdsWithin] with w hw
   simpa using hw
 
@@ -160,7 +164,7 @@ theorem ellipticOnePole_of (hN : EllipticNoPole) (hE : EllipticEntire) (hq : Zet
   have hGq : ∀ ω ∈ L.lattice, ∀ w, G (w + ω) = G w - r * wEta L ω := by
     intro ω hω w
     refine eq_of_eventuallyEq_nhdsNE (g₁ := fun y => G (y + ω)) (g₂ := fun y => G y - r * wEta L ω)
-      (hGd.continuous.comp (continuous_add_right ω)).continuousAt
+      (hGd.continuous.comp (continuous_add_const ω)).continuousAt
       (hGd.continuous.sub continuous_const).continuousAt ?_
     filter_upwards [(tendsto_add_nhdsNE w ω).eventually (hgG (w + ω)), hgG w,
       eventually_notMem L p w] with y h1 h2 h3

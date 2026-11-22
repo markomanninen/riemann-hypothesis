@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open TensorProduct CategoryTheory AlgebraicGeometry Limits
 
@@ -38,7 +42,8 @@ theorem exists_primitive (t : F ⊗[K] A) (ht : t ≠ 0) :
     · exact ⟨0, fun h => (hi h).elim⟩
   choose g hg using hg
   refine ⟨x i₀, ∑ i ∈ x.support, g i ⊗ₜ[K] b i, ?_, ?_⟩
-  · rw [map_sum, Finset.mul_sum]
+  · set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.mul_sum]
     conv_lhs => rw [← bF.linearCombination_repr t, Finsupp.linearCombination_apply, Finsupp.sum]
     refine Finset.sum_congr rfl fun i hi => ?_
     simp only [Algebra.TensorProduct.map_tmul, IsScalarTower.coe_toAlgHom', hg i hi,
@@ -50,9 +55,10 @@ theorem exists_primitive (t : F ⊗[K] A) (ht : t ≠ 0) :
       apply IsFractionRing.injective O F
       rw [hg i₀ hi₀, div_self hc, map_one]
     have h2 := congrArg (fun z => bk.repr z i₀) h
-    simp only [map_sum, Algebra.TensorProduct.map_tmul, IsScalarTower.coe_toAlgHom',
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [map_sum, Algebra.TensorProduct.map_tmul, IsScalarTower.coe_toAlgHom',
       AlgHom.id_apply, map_zero, Finsupp.coe_zero, Pi.zero_apply, bk,
-      Algebra.TensorProduct.basis_repr_tmul, Module.Basis.repr_self, Finsupp.coe_finset_sum,
+      Algebra.TensorProduct.basis_repr_tmul, Module.Basis.repr_self, Finsupp.coe_finsetSum,
       Finset.sum_apply, Finsupp.coe_smul, Pi.smul_apply, Finsupp.mapRange_apply,
       Finsupp.single_apply] at h2
     rw [Finset.sum_eq_single i₀] at h2
@@ -118,7 +124,7 @@ theorem exists_unit_value [IsDomain (IsLocalRing.ResidueField O ⊗[K] A)]
     induction u' using TensorProduct.induction_on with
     | zero => simp
     | tmul a b => simp [m]
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
 
 end Gauss
 
@@ -212,7 +218,7 @@ theorem unit_eq_one {K A : Type} [Field K] [CommRing A] [Algebra K A] [IsDomain 
         simp [θ]
       rw [this, ← IsScalarTower.algebraMap_apply, hσ, Algebra.TensorProduct.lift_tmul]
       rfl
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have e₂ : ∀ t, Algebra.TensorProduct.lift (AlgHom.id K F)
       ((IsScalarTower.toAlgHom K Ω F).comp ((Algebra.ofId K Ω).comp ε))
         (fun _ _ => Commute.all _ _) (σ t) = j (p₂ t) := by
@@ -223,7 +229,7 @@ theorem unit_eq_one {K A : Type} [Field K] [CommRing A] [Algebra K A] [IsDomain 
       rw [hp₂, map_mul, j.commutes, mul_comm, hσ, Algebra.TensorProduct.lift_tmul,
         IsScalarTower.algebraMap_apply K Ω F]
       rfl
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   obtain ⟨c, hc⟩ := value_mem_range H ι ((Algebra.ofId K Ω).comp ε) (σ u) (hu.map σ)
     (by rw [e₂, h₂, map_one])
   rw [e₁] at hc
@@ -240,7 +246,7 @@ theorem unit_eq_one {K A : Type} [Field K] [CommRing A] [Algebra K A] [IsDomain 
     | tmul a b =>
       rw [hp₁, map_mul, ι.commutes]
       rfl
-    | add x y hx hy => simp only [map_add, hx, hy]
+    | add x y hx hy => simp only [map_add (f := _), hx, hy]
   have hc1 : c = 1 := by
     have := congrArg q hc'
     rwa [e₃, h₁, map_one, q.commutes] at this

@@ -1,7 +1,11 @@
-import Formalism.AdmissibleDesigns.MemImageOfTensorSum
-import Formalism.AdmissibleDesigns.CohomZeroEquivContinuous
-import Formalism.SharpRestriction.LevelLetterCocycles.IsobaricMultiplicityOne
-import Formalism.AdmissibleDesigns.EKSymmCont
+module
+
+public import Formalism.AdmissibleDesigns.MemImageOfTensorSum
+public import Formalism.AdmissibleDesigns.CohomZeroEquivContinuous
+public import Formalism.SharpRestriction.LevelLetterCocycles.IsobaricMultiplicityOne
+public import Formalism.AdmissibleDesigns.EKSymmCont
+
+@[expose] public section
 
 variable [hT2Core : Fact ReciprocityTheory.ChartRestriction.T2.Core]
 
@@ -40,8 +44,8 @@ def grepV (ρ : Representation O Γ V) (ι : G →* Γ) (hc : ∀ v : TrV e V, C
 
 variable {OL} (σ : O ≃+* OL) (hσ : ∀ c : O, algebraMap OL LL (σ c) = e (algebraMap O (FractionRing O) c))
 
-include hσ in
 
+include hσ in
 theorem smul_OL (c : O) (v : V) :
     @HSMul.hSMul OL (TrV e V) (TrV e V) (@instHSMul _ _ (modOL (V := V) e OL).toSMul) (σ c) (show TrV e V from v) =
       (c • v : V) := by
@@ -76,7 +80,8 @@ theorem iL_mem_latT (m : L) : letI := modOL (V := V) e OL
   have hm : tr e (iL m) = ∑ j, σ (bL.repr m j) • tr e (bV j) := by
     show iL m = ∑ j, e.symm (algebraMap OL LL (σ (bL.repr m j))) • bV j
     conv_lhs => rw [← bL.sum_repr m]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, hb, hσ, RingEquiv.symm_apply_apply, algebraMap_smul]
   rw [hm]
@@ -214,8 +219,8 @@ def transportToH1Lattice :
       show iL (c • ((p : coZ1s ρL) : Γ → L) (ι g)) = e.symm (algebraMap OL LL (σ c)) • iL (((p : coZ1s ρL) : Γ → L) (ι g))
       rw [hσ, RingEquiv.symm_apply_apply, algebraMap_smul, map_smul] }
 
-include hσ hb hiL in
 
+include hσ hb hiL in
 theorem finite_FfG (hι : Function.Surjective ι) (hinj : Function.Injective iL)
     (hfin : Module.Finite OL (LatticeCohomology (latV e σ hσ bV bL iL hb (Qp := Qp) ρ ι hc ρL hiL))) :
     Module.Finite O ↥(KFin.FfG ρL iL (finZ e PD ρ ι)) := by
@@ -343,8 +348,8 @@ theorem finite_H1V (LA : Lattice (O := OL) A.ρ) (hopen : IsOpen (LA.T : Set A.V
   have := Submodule.smul_mem _ (algebraMap OL LL a)⁻¹ hmem
   rwa [smul_smul, inv_mul_cancel₀ ha', one_smul] at this
 
-omit [CompactSpace G] in
 
+omit [CompactSpace G] in
 theorem finDim_H1fV {K₀ Kk B BdR : Type} [Field K₀] [Field Kk]
     [Algebra Qp K₀] [Algebra Qp Kk] [Algebra K₀ Kk] [IsScalarTower Qp K₀ Kk]
     [CommRing B] [CommRing BdR] [Algebra Qp B] [Algebra K₀ B] [IsScalarTower Qp K₀ B]
@@ -433,7 +438,7 @@ theorem Tst_stable (g : G) (x : A.V) (hx : x ∈ Tst A b) : A.ρ g x ∈ Tst A b
     rw [map_mul]
     rfl
   | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add x y _ _ hx hy => rw [map_add]; exact Submodule.add_mem _ hx hy
+  | add x y _ _ hx hy => rw [map_add (f := _)]; exact Submodule.add_mem _ hx hy
   | smul o x _ hx => rw [LinearMap.map_smul_of_tower]; exact Submodule.smul_mem _ _ hx
 
 theorem Tst_bound [CompactSpace G] (hopen : IsOpen ((T0 A b : Submodule OL A.V) : Set A.V))
@@ -446,7 +451,8 @@ theorem Tst_bound [CompactSpace G] (hopen : IsOpen ((T0 A b : Submodule OL A.V) 
   | mem x hx =>
     obtain ⟨g, y, hy, rfl⟩ := Set.mem_iUnion.1 hx
     obtain ⟨o, rfl⟩ := integral_span_coordinates A b y hy
-    rw [map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, Finset.smul_sum]
     refine Submodule.sum_mem _ fun j _ => ?_
     rw [LinearMap.map_smul_of_tower, smul_comm]
     exact Submodule.smul_mem _ _ (hb _ (Set.mem_iUnion.2 ⟨j, g, rfl⟩))
@@ -645,7 +651,7 @@ def bA : Basis n LL (grepV e OL (Qp := Qp) ρ ι hc).V :=
       map_add' := fun u v => funext fun j => by
         have h : bV.equivFun ((show V from u) + (show V from v)) j =
             bV.equivFun (show V from u) j + bV.equivFun (show V from v) j := by
-          rw [map_add]
+          rw [map_add (f := _)]
           rfl
         exact (congrArg e h).trans (map_add e _ _)
       map_smul' := fun c v => funext fun j => by
@@ -673,13 +679,14 @@ theorem coord_iL (m : L) (j : n) : bV.equivFun (iL m) j = algebraMap O (Fraction
   have h : iL m = bV.equivFun.symm (fun j => algebraMap O (FractionRing O) (bL.equivFun m j)) := by
     rw [Basis.equivFun_symm_apply]
     conv_lhs => rw [← bL.sum_equivFun m]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, hb, algebraMap_smul]
   rw [h, LinearEquiv.apply_symm_apply]
 
-include hσ hb in
 
+include hσ hb in
 theorem mem_integral_span_iff_image (x : TrV e V) :
     x ∈ T0 (grepV e OL (Qp := Qp) ρ ι hc) (bA e (OL := OL) (Qp := Qp) bV ρ ι hc) ↔ ∃ m : L, tr e (iL m) = x := by
   constructor
@@ -688,7 +695,8 @@ theorem mem_integral_span_iff_image (x : TrV e V) :
     refine ⟨∑ j, σ.symm (o j) • bL j, ?_⟩
     show iL (∑ j, σ.symm (o j) • bL j) = (x : V)
     conv_rhs => rw [← bV.sum_equivFun (x : V)]
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [map_smul, hb, ← algebraMap_smul (FractionRing O) (σ.symm (o j)) (bV j)]
     congr 1
@@ -703,22 +711,23 @@ theorem mem_integral_span_iff_image (x : TrV e V) :
 
 variable [IsTopologicalRing LL] [IsFractionRing OL LL]
 
-include hb in
 
+include hb in
 theorem div_L (v : V) : ∃ s : O, s ≠ 0 ∧ ∃ m : L, iL m = s • v := by
   obtain ⟨s, hs⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors O) Finset.univ
     (fun j => bV.equivFun v j)
   choose c hc using fun j => hs j (Finset.mem_univ j)
   refine ⟨s, nonZeroDivisors.ne_zero s.2, ∑ j, c j • bL j, ?_⟩
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   conv_rhs => rw [← bV.sum_equivFun v, Finset.smul_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_smul, hb, ← algebraMap_smul (FractionRing O) (c j), hc j, smul_assoc]
 
 variable [CompactSpace G]
 
-include hσ hb hc hiL in
 
+include hσ hb hc hiL in
 theorem bound_fin (hι : Function.Surjective ι) (hO : IsOpen (Set.range (algebraMap OL LL))) (c : ↥(finZ e PD ρ ι)) :
     ∃ s : O, s ≠ 0 ∧ ∃ p : Γ → L, ∀ γ, iL (p γ) = s • (c : Γ → V) γ := by
   have hcont : Continuous fun g => tr e ((c : Γ → V) (ι g)) := c.2.1.1
@@ -760,12 +769,13 @@ variable {O : Type} [CommRing O] [IsDomain O] {LL : Type} [Field LL] [Topologica
   (ρL : Representation O Γ L) (hiL : ∀ γ m, iL (ρL γ m) = ρ γ (iL m))
   [IsTopologicalRing LL] [IsFractionRing OL LL] [CompactSpace G]
 
-include hσ hb hc in
 
+include hσ hb hc in
 theorem thet_loc (hι : Function.Bijective ι) (hO : IsOpen (Set.range (algebraMap OL LL)))
     (hinj : Function.Injective iL) :
-    IsLocalizedModule (nonZeroDivisors O) (thet e PD iL ρ ι ρL hiL) where
-  map_units s := by
+    IsLocalizedModule (nonZeroDivisors O) (thet e PD iL ρ ι ρL hiL) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro s
     rw [Module.End.isUnit_iff]
     have hs : algebraMap O (FractionRing O) (s : O) ≠ 0 :=
       IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors s.2
@@ -778,7 +788,7 @@ theorem thet_loc (hι : Function.Bijective ι) (hO : IsOpen (Set.range (algebraM
       refine ⟨(algebraMap O (FractionRing O) (s : O))⁻¹ • q, ?_⟩
       rw [Module.algebraMap_end_apply, ← algebraMap_smul (FractionRing O) (s : O), smul_smul,
         mul_inv_cancel₀ hs, one_smul]
-  surj q := by
+  · intro q
     obtain ⟨c, rfl⟩ := Submodule.Quotient.mk_surjective _ q
     obtain ⟨s, hs, p, hp⟩ := bound_fin e PD σ hσ bV bL iL hb ρ ι hc ρL hiL (Qp := Qp) hι.2 hO c
     have hcoc : ∀ γ δ, (c : Γ → V) (γ * δ) = (c : Γ → V) γ + ρ γ ((c : Γ → V) δ) := by
@@ -788,7 +798,7 @@ theorem thet_loc (hι : Function.Bijective ι) (hO : IsOpen (Set.range (algebraM
       have h1 := c.2.1.2 g h
       rw [← map_mul]
       exact h1
-    have hpz : p ∈ coZ1s ρL := fun γ δ => hinj (by rw [map_add, hiL, hp, hp, hp, hcoc, smul_add, map_smul])
+    have hpz : p ∈ coZ1s ρL := fun γ δ => hinj (by rw [map_add (f := _), hiL, hp, hp, hp, hcoc, smul_add, map_smul])
     have hpf : p ∈ KFin.finPreG iL (finZ e PD ρ ι) := by
       show (fun γ => iL (p γ)) ∈ finZ e PD ρ ι
       have h1 : (fun γ => iL (p γ)) = s • (c : Γ → V) := funext hp
@@ -801,7 +811,7 @@ theorem thet_loc (hι : Function.Bijective ι) (hO : IsOpen (Set.range (algebraM
     rw [thet_mk, ← Submodule.Quotient.mk_smul]
     congr 1
     exact Subtype.ext (funext fun γ => (hp γ).symm)
-  exists_of_eq {z1 z2} h := by
+  · intro z1 z2 h
     have hz : ((z1 - z2 : ↥(KFin.FfG ρL iL (finZ e PD ρ ι))) : H1z ρL) ∈ LinearMap.range (hF e PD iL ρ ι ρL) := by
       rw [← F_eq e PD iL ρ ι ρL]
       exact (z1 - z2).2
@@ -827,8 +837,8 @@ theorem thet_loc (hι : Function.Bijective ι) (hO : IsOpen (Set.range (algebraM
     congr 1
     exact congrFun hv γ
 
-include hσ hb hc hiL in
 
+include hσ hb hc hiL in
 theorem finrank_Ff (hι : Function.Bijective ι) (hO : IsOpen (Set.range (algebraMap OL LL)))
     (hinj : Function.Injective iL) :
     Module.finrank O (↥(KFin.FfG ρL iL (finZ e PD ρ ι)) ⧸ Submodule.torsion O ↥(KFin.FfG ρL iL (finZ e PD ρ ι))) =
@@ -845,8 +855,8 @@ theorem finrank_Ff (hι : Function.Bijective ι) (hO : IsOpen (Set.range (algebr
     rw [KDim.rank_finQuot (e := e) (PD := PD) (ρ := ρ) (hι := hι)]
   rw [h1, ← h2, ← h3, h4]
 
-include hσ hb hc hiL in
 
+include hσ hb hc hiL in
 theorem finrank_Ff' (hι : Function.Bijective ι) (hO : IsOpen (Set.range (algebraMap OL LL)))
     (hinj : Function.Injective iL) (Zf : Submodule (FractionRing O) (Γ → V)) (hZ : Zf = finZ e PD ρ ι) :
     Module.finrank O (↥(KFin.FfG ρL iL Zf) ⧸ Submodule.torsion O ↥(KFin.FfG ρL iL Zf)) =
@@ -919,6 +929,7 @@ theorem compact_G {w : HeightOneSpectrum (𝓞 D.host.E)} (hw : w ∈ placesOver
     CompactSpace (Br.G D.nbr i w hw) :=
   isCompact_iff_compactSpace.1 (InfiniteGalois.fixingSubgroup_isClosed _).isCompact
 
+set_option synthInstance.maxHeartbeats 100000 in
 theorem jr_eq (l : K.Col i dc) :
     KFin.jr i dc ρ π (K.colIdx i dc l) =
       Module.finrank (Br.LL D.nbr i _ (KDim.col_over i dc l))
@@ -926,9 +937,10 @@ theorem jr_eq (l : K.Col i dc) :
           (KDim.repW i dc ρ π (K.colIdx i dc l) (KDim.col_over i dc l))) := by
   show KHf.jK i dc ρ π (K.colIdx i dc l) = _
   unfold KHf.jK
-  rw [dif_pos (KDim.col_over i dc l)]
+  rw [dite_eq_left (KDim.col_over i dc l)]
   rfl
 
+set_option synthInstance.maxHeartbeats 100000 in
 def DimV (l : K.Col i dc) : Prop :=
   Module.finrank (Br.LL D.nbr i _ (KDim.col_over i dc l))
       (FiniteCohomology (Br.PD D.loc D.nbr i _ (KDim.col_over i dc l))
@@ -937,8 +949,8 @@ def DimV (l : K.Col i dc) : Prop :=
       (FiniteCohomology (Br.PD D.loc D.nbr i _ (KDim.col_over i dc l))
         (KDim.repW i dc ρ π (K.colIdx i dc l) (KDim.col_over i dc l)))
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem rankFf_of (hO : Formalism.MainNotions.N.LitGoodO) (l : K.Col i dc) (hOrb : KHf.OrbC i dc (KFin.ρV i dc Dd l))
     (hdim : DimV i dc Dd ρ π l) : KFin.RankFf i dc Dd ρ π l := by
   have hn := KDim.col_over i dc l
@@ -1038,12 +1050,6 @@ theorem rankFf_rec
     (hD : Formalism.RepresentationBoundsCohomology.ringDataObjects.RingDef (D.nd.O i) (D.nd.T i) (RepresentationBoundsCohomology.repX D.nd r) π (chiU D.nd i 1) (epsU D.nd i) g0 eB e₁ s Dd)
     (hc : TruncatedSeriesCountingIdentities.FamilyContinuous (D := D) i r) (l : K.Col i dc) (hdim : DimV i dc Dd ρ π l) : KFin.RankFf i dc Dd ρ π l :=
   rankFf i dc Dd ρ π l (orbC_V i dc r π g0 eB e₁ s Dd hD hc l) hdim
-
-theorem finX_rec (hFin : LargeLevelLemmas.tateH1FinitenessAtPlacesOver i)
-    (hD : Formalism.RepresentationBoundsCohomology.ringDataObjects.RingDef (D.nd.O i) (D.nd.T i) (RepresentationBoundsCohomology.repX D.nd r) π (chiU D.nd i 1) (epsU D.nd i) g0 eB e₁ s Dd)
-    (hc : TruncatedSeriesCountingIdentities.FamilyContinuous (D := D) i r) (x' : Dd.X') (l : K.Col i dc) : KDim.FinX i dc Dd.r Dd.χ x' l :=
-  finX i dc Dd.r Dd.χ hFin x' l
-    (KDim.contX_of_orbC i dc Dd.r Dd.χ x' l (KOrb.orbC_repE i dc r π g0 eB e₁ s Dd hD hc x' (K.colIdx i dc l)))
 
 end RecOrb
 

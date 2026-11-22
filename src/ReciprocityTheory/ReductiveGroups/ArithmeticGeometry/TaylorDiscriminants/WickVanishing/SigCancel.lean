@@ -1,4 +1,8 @@
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CoeffActAdd
+module
+
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.CoeffActAdd
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -19,10 +23,10 @@ theorem dof_expS (F : Fin d → PS k 2 d) (u : Fin d → k) {f : PS k 1 d} (hf :
 
 theorem dof_Cmul (F : Fin d → PS k 2 d) (u : Fin d → k) (a : k) (g : PS k 1 d) :
     Dof F u (C a * g) = C a * Dof F u g := by
-  have hD : ∀ j, pderiv k ((0 : Fin 1), j) (C a * g) = C a * pderiv k ((0 : Fin 1), j) g := by
+  have hD : ∀ j, pderiv (R := k) ((0 : Fin 1), j) (C a * g) = C a * pderiv (R := k) ((0 : Fin 1), j) g := by
     intro j
     rw [Derivation.leibniz]
-    have h0 : pderiv k ((0 : Fin 1), j) (C a : PS k 1 d) = 0 := by
+    have h0 : pderiv (R := k) ((0 : Fin 1), j) (C a : PS k 1 d) = 0 := by
       rw [show (C a : PS k 1 d) = algebraMap k (PS k 1 d) a from rfl]
       exact Derivation.map_algebraMap _ _
     rw [h0, smul_zero, add_zero, smul_eq_mul]
@@ -54,9 +58,9 @@ theorem hL_eq (B : FB R d O) (h : PS k 2 d) (w0 : O) :
 theorem dof_hL (B : FB R d O) (h : PS k 2 d) (w0 : O) (u : Fin d → k) :
     Dof (B.FK k) u (ev (n := 1) ![pt k d 0, B.actK k w0] h) =
       ∑ b, C (u b) * ev (n := 1) ![pt k d 0, B.actK k w0]
-          (∑ c, pderiv k ((0 : Fin 2), c) h * ev (n := 2) ![pt k d 0] (Jac (lawK k B) c b)) +
+          (∑ c, pderiv (R := k) ((0 : Fin 2), c) h * ev (n := 2) ![pt k d 0] (Jac (lawK k B) c b)) +
         ∑ j, (∑ b, C (u b) * C (dAct k B w0 j b)) * ev (n := 1) ![pt k d 0, B.actK k w0]
-          (∑ c, pderiv k ((1 : Fin 2), c) h * ev (n := 2) ![pt k d 1] (Jac (lawK k B) c j)) := by
+          (∑ c, pderiv (R := k) ((1 : Fin 2), c) h * ev (n := 2) ![pt k d 1] (Jac (lawK k B) c j)) := by
   have cPA : CZ (![pt k (n := 1) d 0, B.actK k w0] : Fin 2 → Pt k 1 d) :=
     CZ.cons (cc_pt 0) (CZ.cons (const_actK' B w0) CZ.nil)
   have cAk : CZ (![B.actK k w0] : Fin 1 → Pt k 1 d) := CZ.cons (const_actK' B w0) CZ.nil
@@ -72,25 +76,25 @@ theorem dof_hL (B : FB R d O) (h : PS k 2 d) (w0 : O) (u : Fin d → k) :
     rw [ev_ev cPA czY]
     congr 1
     funext j c; fin_cases j; simp [pt_apply, ev_X cPA]
-  have dh : ∀ j, pderiv k ((0 : Fin 1), j) (ev (n := 1) ![pt k d 0, B.actK k w0] h) = ev (n := 1) ![pt k d 0, B.actK k w0] (pderiv k ((0 : Fin 2), j) h) +
-      ∑ c, ev (n := 1) ![pt k d 0, B.actK k w0] (pderiv k ((1 : Fin 2), c) h) * pderiv k ((0 : Fin 1), j) (B.actK k w0 c) := by
+  have dh : ∀ j, pderiv (R := k) ((0 : Fin 1), j) (ev (n := 1) ![pt k d 0, B.actK k w0] h) = ev (n := 1) ![pt k d 0, B.actK k w0] (pderiv (R := k) ((0 : Fin 2), j) h) +
+      ∑ c, ev (n := 1) ![pt k d 0, B.actK k w0] (pderiv (R := k) ((1 : Fin 2), c) h) * pderiv (R := k) ((0 : Fin 1), j) (B.actK k w0 c) := by
     intro j
     rw [d2 cPA]
     congr 1
     simp [pderiv_pt]
-  have hDof : ∀ g : PS k 1 d, Dof (B.FK k) u g = ∑ j, (∑ b, C (u b) * Jac (lawK k B) j b) * pderiv k ((0 : Fin 1), j) g :=
+  have hDof : ∀ g : PS k 1 d, Dof (B.FK k) u g = ∑ j, (∑ b, C (u b) * Jac (lawK k B) j b) * pderiv (R := k) ((0 : Fin 1), j) g :=
     fun g => rfl
-  have eD1 : ∀ b, ev (n := 1) ![pt k d 0, B.actK k w0] (∑ c, pderiv k ((0 : Fin 2), c) h * ev (n := 2) ![pt k d 0] (Jac (lawK k B) c b)) =
-      ∑ c, ev (n := 1) ![pt k d 0, B.actK k w0] (pderiv k ((0 : Fin 2), c) h) * Jac (lawK k B) c b := by
+  have eD1 : ∀ b, ev (n := 1) ![pt k d 0, B.actK k w0] (∑ c, pderiv (R := k) ((0 : Fin 2), c) h * ev (n := 2) ![pt k d 0] (Jac (lawK k B) c b)) =
+      ∑ c, ev (n := 1) ![pt k d 0, B.actK k w0] (pderiv (R := k) ((0 : Fin 2), c) h) * Jac (lawK k B) c b := by
     intro b; rw [ev_sum cPA]; simp only [ev_mul cPA, evx]
-  have eD2 : ∀ j, ev (n := 1) ![pt k d 0, B.actK k w0] (∑ c, pderiv k ((1 : Fin 2), c) h * ev (n := 2) ![pt k d 1] (Jac (lawK k B) c j)) =
-      ∑ c, ev (n := 1) ![pt k d 0, B.actK k w0] (pderiv k ((1 : Fin 2), c) h) * ev (n := 1) ![B.actK k w0] (Jac (lawK k B) c j) := by
+  have eD2 : ∀ j, ev (n := 1) ![pt k d 0, B.actK k w0] (∑ c, pderiv (R := k) ((1 : Fin 2), c) h * ev (n := 2) ![pt k d 1] (Jac (lawK k B) c j)) =
+      ∑ c, ev (n := 1) ![pt k d 0, B.actK k w0] (pderiv (R := k) ((1 : Fin 2), c) h) * ev (n := 1) ![B.actK k w0] (Jac (lawK k B) c j) := by
     intro j; rw [ev_sum cPA]; simp only [ev_mul cPA, evz]
-  have hm : ∀ c, ∑ j, (∑ b, C (u b) * Jac (lawK k B) j b) * pderiv k ((0 : Fin 1), j) (B.actK k w0 c) =
+  have hm : ∀ c, ∑ j, (∑ b, C (u b) * Jac (lawK k B) j b) * pderiv (R := k) ((0 : Fin 1), j) (B.actK k w0 c) =
       ∑ j, (∑ b, C (u b) * C (dAct k B w0 j b)) * ev (n := 1) ![B.actK k w0] (Jac (lawK k B) c j) := by
     intro c
-    calc ∑ j, (∑ b, C (u b) * Jac (lawK k B) j b) * pderiv k ((0 : Fin 1), j) (B.actK k w0 c)
-        = ∑ b, C (u b) * ∑ j, pderiv k ((0 : Fin 1), j) (B.actK k w0 c) * Jac (lawK k B) j b := by
+    calc ∑ j, (∑ b, C (u b) * Jac (lawK k B) j b) * pderiv (R := k) ((0 : Fin 1), j) (B.actK k w0 c)
+        = ∑ b, C (u b) * ∑ j, pderiv (R := k) ((0 : Fin 1), j) (B.actK k w0 c) * Jac (lawK k B) j b := by
           simp only [Finset.sum_mul, Finset.mul_sum]
           rw [Finset.sum_comm]
           exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
@@ -106,10 +110,10 @@ theorem dof_hL (B : FB R d O) (h : PS k 2 d) (w0 : O) (u : Fin d → k) :
   · simp only [Finset.sum_mul, Finset.mul_sum]
     rw [Finset.sum_comm]
     exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
-  · have e2 : ∑ j, (∑ b, C (u b) * Jac (lawK k B) j b) * ∑ c, ev (n := 1) ![pt k d 0, B.actK k w0] (pderiv k ((1 : Fin 2), c) h) *
-        pderiv k ((0 : Fin 1), j) (B.actK k w0 c) =
-        ∑ c, ev (n := 1) ![pt k d 0, B.actK k w0] (pderiv k ((1 : Fin 2), c) h) *
-          ∑ j, (∑ b, C (u b) * Jac (lawK k B) j b) * pderiv k ((0 : Fin 1), j) (B.actK k w0 c) := by
+  · have e2 : ∑ j, (∑ b, C (u b) * Jac (lawK k B) j b) * ∑ c, ev (n := 1) ![pt k d 0, B.actK k w0] (pderiv (R := k) ((1 : Fin 2), c) h) *
+        pderiv (R := k) ((0 : Fin 1), j) (B.actK k w0 c) =
+        ∑ c, ev (n := 1) ![pt k d 0, B.actK k w0] (pderiv (R := k) ((1 : Fin 2), c) h) *
+          ∑ j, (∑ b, C (u b) * Jac (lawK k B) j b) * pderiv (R := k) ((0 : Fin 1), j) (B.actK k w0 c) := by
       simp only [Finset.mul_sum]
       rw [Finset.sum_comm]
       exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => by ring
@@ -124,9 +128,9 @@ theorem sig_cancel (B : FB R d O) (h : PS k 2 d) (w0 : O) (hw : w0 + star w0 = 1
   have hu : ∀ c, ∑ b, C (u b) * (C (dAct k B w0 c b) + C (dAct k B (star w0) c b)) = (C (u c) : PS k 1 d) := by
     intro c
     rw [Finset.sum_eq_single c]
-    · rw [← map_add, dAct_sum B w0 hw c c, if_pos rfl, map_one, mul_one]
+    · rw [← map_add (f := _), dAct_sum B w0 hw c c, if_pos rfl, map_one, mul_one]
     · intro b _ hb
-      rw [← map_add, dAct_sum B w0 hw c b, if_neg (Ne.symm hb), map_zero, mul_zero]
+      rw [← map_add (f := _), dAct_sum B w0 hw c b, if_neg (Ne.symm hb), map_zero, mul_zero]
     · intro hc; exact absurd (Finset.mem_univ c) hc
   have L1 : ∑ b, C (u b) * ∑ c, sgOf k h c * C (dAct k B (star w0) c b) =
       ∑ c, ∑ b, sgOf k h c * (C (u b) * C (dAct k B (star w0) c b)) := by
@@ -173,19 +177,19 @@ theorem rel_hL {B : FB R d O} {h : PS k 2 d} (hc : B.IsCanonGauge k h) (w0 : O) 
       funext j c; fin_cases j; simp [pt_apply, ev_X cPA]
     rw [this, gt_ev_pt_self]
   have E1 : ∀ b, ev (n := 1) ![pt k d 0, B.actK k w0]
-      (∑ c, pderiv k ((0 : Fin 2), c) h * ev (n := 2) ![pt k d 0] (Jac (lawK k B) c b)) =
-      (ev (n := 1) ![pt k d 0, B.actK k w0] (∑ c, pderiv k ((0 : Fin 2), c) h * ev (n := 2) ![pt k d 0]
-          (Jac (lawK k B) c b) - ev (n := 2) ![0, pt k d 1] (pderiv k ((0 : Fin 2), b) h)) +
+      (∑ c, pderiv (R := k) ((0 : Fin 2), c) h * ev (n := 2) ![pt k d 0] (Jac (lawK k B) c b)) =
+      (ev (n := 1) ![pt k d 0, B.actK k w0] (∑ c, pderiv (R := k) ((0 : Fin 2), c) h * ev (n := 2) ![pt k d 0]
+          (Jac (lawK k B) c b) - ev (n := 2) ![0, pt k d 1] (pderiv (R := k) ((0 : Fin 2), b) h)) +
         ev (n := 1) ![pt k d 0, B.actK k w0] (ev (n := 2) ![pt k d 1] (sgOf k h b) +
-          ev (n := 2) ![0, pt k d 1] (pderiv k ((0 : Fin 2), b) h)) +
+          ev (n := 2) ![0, pt k d 1] (pderiv (R := k) ((0 : Fin 2), b) h)) +
         (∑ c, sgOf k h c * C (dAct k B (star w0) c b) - ev (n := 1) ![B.actK k w0] (sgOf k h b))) -
       ∑ c, sgOf k h c * C (dAct k B (star w0) c b) := by
     intro b
     rw [ev_sub cPA, ev_add cPA, evz]
     ring
   have E2 : ∀ j, ev (n := 1) ![pt k d 0, B.actK k w0]
-      (∑ c, pderiv k ((1 : Fin 2), c) h * ev (n := 2) ![pt k d 1] (Jac (lawK k B) c j)) =
-      ev (n := 1) ![pt k d 0, B.actK k w0] (∑ c, pderiv k ((1 : Fin 2), c) h * ev (n := 2) ![pt k d 1]
+      (∑ c, pderiv (R := k) ((1 : Fin 2), c) h * ev (n := 2) ![pt k d 1] (Jac (lawK k B) c j)) =
+      ev (n := 1) ![pt k d 0, B.actK k w0] (∑ c, pderiv (R := k) ((1 : Fin 2), c) h * ev (n := 2) ![pt k d 1]
         (Jac (lawK k B) c j) + ev (n := 2) ![pt k d 0] (sgOf k h j)) - sgOf k h j := by
     intro j
     rw [ev_add cPA, evx]

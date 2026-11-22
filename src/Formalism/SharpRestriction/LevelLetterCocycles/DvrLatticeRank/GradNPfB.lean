@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GradNPfA
-import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GradNPfC
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GradNPfA
+public import Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.GradNPfC
+
+@[expose] public section
 
 noncomputable section
 
@@ -83,7 +87,7 @@ theorem gradNPf_expand (π' a : LetA O n) (hπ0 : ∀ i, PowerSeries.constantCoe
     rfl
   have e3 : PowerSeries.constantCoeff (F i) = c₀ := by
     have := congrArg PowerSeries.constantCoeff e1
-    rw [hc i, map_add, map_mul, hπ0 i, zero_mul, zero_add, PowerSeries.constantCoeff_C] at this
+    rw [hc i, map_add (f := _), map_mul, hπ0 i, zero_mul, zero_add, PowerSeries.constantCoeff_C] at this
     exact this.symm
   rw [e3] at e1
   have hC : algebraMap O (PowerSeries O) c₀ = PowerSeries.C c₀ := by
@@ -129,8 +133,8 @@ theorem exists_gam_pi_factor (T : LocLat G Qp LL O) (e s' : ℕ) (hs : 1 ≤ s')
 
 end Local
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 theorem gradNPf_hyps (D : D7) (HW : HWOf D.loc) (F : FonOf D.loc D.locA HW)
     (Cm : CmpOf D.loc D.locA HW F) (h1 : adm1 D HW F Cm) (l : ℕ) [hpf : Fact l.Prime] (hl : l ≠ 2)
     (K LL : FinExt l) (hG : Good K 1 LL) (π' : LetA ↥(OL LL) (finrank ℚ_[l] ↥(K0 K)))

@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGHead
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.PBGHead
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.ActualAdjointnessFromHermitian
+
+@[expose] public section
 
 open Matrix Finset
 
@@ -43,7 +47,7 @@ theorem headAlg_gen (A : Type) [Ring A] [Algebra ℂ A] (M : Type) [AddCommGroup
             (xR k r (m + 2) hm (Fin.castSucc j))) = Z := by
           ext i j
           simp only [Matrix.of_apply]
-          rw [hxi' _ _ (by simp <;> omega), dif_pos (by simp [xR, eI] <;> omega)]
+          rw [hxi' _ _ (by simp <;> omega), dite_eq_left (by simp [xR, eI] <;> omega)]
           congr 1
         rw [h2]
         simp only [Fin.val_last]
@@ -54,14 +58,14 @@ theorem headAlg_gen (A : Type) [Ring A] [Algebra ℂ A] (M : Type) [AddCommGroup
         ring
     · intro a p ha hp
       by_cases ha' : a.val < m + 1
-      · rw [hxi' a p ha', dif_neg (by omega)]
+      · rw [hxi' a p ha', dite_eq_right (by omega)]
       · rw [hxl' a p (by omega), if_neg (by omega)]
   have hA1 : AAx k r E xi (m + 1) (by omega) u = Z.det • qminor E (xR k r (m + 1) (by omega)) (xR k r (m + 1) (by omega)) u := by
     rw [AAx_head k r E xi (m + 1) (by omega) Z u]
     · intro a p ha hp
-      rw [hxi' a p ha, dif_neg (by omega)]
+      rw [hxi' a p ha, dite_eq_right (by omega)]
     · intro a b
-      rw [hxi' _ _ (by simp <;> omega), dif_pos (by simp [xR, eI] <;> omega)]
+      rw [hxi' _ _ (by simp <;> omega), dite_eq_left (by simp [xR, eI] <;> omega)]
       congr 1
   have hA0 : AAx k r E xi m (by omega) u = ∑ l0 : Fin (m + 1),
       (Z.submatrix Fin.castSucc l0.succAbove).det •
@@ -72,10 +76,10 @@ theorem headAlg_gen (A : Type) [Ring A] [Algebra ℂ A] (M : Type) [AddCommGroup
       congr 2
       ext a l
       simp only [Matrix.of_apply, Matrix.submatrix_apply]
-      rw [hxi' _ _ (by simp <;> omega), dif_pos (by simp [xR, eI] <;> omega)]
+      rw [hxi' _ _ (by simp <;> omega), dite_eq_left (by simp [xR, eI] <;> omega)]
       congr 1
     · intro a p ha hp
-      rw [hxi' a p (by omega), dif_neg (by omega)]
+      rw [hxi' a p (by omega), dite_eq_right (by omega)]
 
   set a := xR k r (m + 2) hm with hadef
   have hav : ∀ l, (a l).val = l.val := by intro l; simp [a, xR, eI]
@@ -85,7 +89,8 @@ theorem headAlg_gen (A : Type) [Ring A] [Algebra ℂ A] (M : Type) [AddCommGroup
         Tm E (u - ((m + 1 : ℕ) : ℂ)) (eI k r ⟨m + 1, by omega⟩) (eI k r ⟨m + 1, by omega⟩)) -
       La (qminor E (a ∘ (Fin.castSucc (Fin.last m) : Fin (m + 2)).succAbove) (a ∘ Fin.castSucc) u) := by
     have hexp := Formalism.FourierDecayAlt.P.expansion_last_column A _ (m + 1) E a a u
-    rw [hexp, map_sum, Fin.sum_univ_castSucc, Fin.sum_univ_castSucc]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hexp, map_sum, Fin.sum_univ_castSucc, Fin.sum_univ_castSucc]
     have hzero : ∀ l : Fin m, La ((((-1 : ℤ) ^ (m + 1 + ((Fin.castSucc (Fin.castSucc l) : Fin (m + 2)) : ℕ)) : ℤ) : A) *
         (qminor E (a ∘ (Fin.castSucc (Fin.castSucc l)).succAbove) (a ∘ Fin.castSucc) u *
           Tm E (u - ((m + 1 : ℕ) : ℂ)) (a (Fin.castSucc (Fin.castSucc l))) (a (Fin.last (m + 1))))) = 0 := by
@@ -143,7 +148,8 @@ theorem headAlg_gen (A : Type) [Ring A] [Algebra ℂ A] (M : Type) [AddCommGroup
       ∑ l : Fin (m + 1), ((-1 : ℂ) ^ (m + (l : ℕ)) * (c' * Z⁻¹ l (Fin.last m))) •
         La (qminor E (xR k r m (by omega)) (xR k r (m + 1) (by omega) ∘ l.succAbove) u) := by
     rw [hrows, Formalism.REAL.quantumMinorRowSkew_holds A _ (m + 1) E rowsP _ (finRotate (m + 1)) u, la_intmul, sign_finRotate]
-    rw [Formalism.FourierDecayAlt.P.expansion_first_line A _ m E hG rowsP _ u, map_sum, Finset.smul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [Formalism.FourierDecayAlt.P.expansion_first_line A _ m E hG rowsP _ u, map_sum, Finset.smul_sum]
     apply Finset.sum_congr rfl
     intro l _
     rw [la_intmul]
@@ -161,7 +167,8 @@ theorem headAlg_gen (A : Type) [Ring A] [Algebra ℂ A] (M : Type) [AddCommGroup
   have hT : Tm E (u - ((m + 1 : ℕ) : ℂ)) (eI k r ⟨m + 1, by omega⟩) (eI k r ⟨m + 1, by omega⟩) =
       algebraMap ℂ A (u - ((m + 1 : ℕ) : ℂ)) + E (eI k r ⟨m + 1, by omega⟩) (eI k r ⟨m + 1, by omega⟩) := by
     simp [Tm]
-  rw [hA2, hA1, hA0, map_smul, smul_smul, inv_mul_cancel₀ (mul_ne_zero hZ hc), one_smul, smul_mul_assoc, map_smul,
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [hA2, hA1, hA0, map_smul, smul_smul, inv_mul_cancel₀ (mul_ne_zero hZ hc), one_smul, smul_mul_assoc, map_smul,
     smul_smul, inv_mul_cancel₀ hZ, one_smul, map_sum, hmain, hQ, hT, Finset.smul_sum]
   congr 1
   apply Finset.sum_congr rfl
@@ -269,8 +276,8 @@ theorem rv_xR (m : ℕ) (hm : m ≤ r) : rv ∘ xR k r m hm = sR k r m hm := by
   funext l
   exact rv_eI (Fin.castLE hm l)
 
-open scoped Classical in
 
+open scoped Classical in
 theorem AAx_mirror (E : Fin (2 * r + k + 1) → Fin (2 * r + k + 1) → A) (hG : Formalism.REAL.GlRel E)
     (y : Fin r → Fin (2 * r + k + 1) → ℂ) (m : ℕ) (hm : m ≤ r) (ℓ : ℂ)
     (hsupp : ∀ (a : Fin r) (p : Fin (2 * r + k + 1)), a.val < m → y a p ≠ 0 → r + k < p.val) :
@@ -415,13 +422,13 @@ theorem _root_.Formalism.FourierDecayAlt.P.head_algebra_relations_vector : HeadA
     simp only [hxidef]
     rw [hy a (rv q)]
     by_cases hq : q.val < m + 1
-    · rw [dif_pos (by rw [rv_val]; omega), dif_pos hq, hZdef, Matrix.mul_diagonal]
+    · rw [dite_eq_left (by rw [rv_val]; omega), dite_eq_left hq, hZdef, Matrix.mul_diagonal]
       have e1 : (⟨2 * r + k - (rv q).val, by rw [rv_val]; omega⟩ : Fin (m + 1)) = ⟨q.val, hq⟩ :=
         Fin.ext (by simp only; rw [rv_val]; omega)
       rw [e1]
       simp only [hεv, ep]
       ring
-    · rw [dif_neg (by rw [rv_val]; omega), dif_neg hq, mul_zero]
+    · rw [dite_eq_right (by rw [rv_val]; omega), dite_eq_right hq, mul_zero]
   have hxl'' : ∀ q : Fin (2 * r + k + 1), xi'' ⟨m + 1, by omega⟩ q = if q.val = m + 1 then c else 0 := by
     intro q
     simp only [hxidef]

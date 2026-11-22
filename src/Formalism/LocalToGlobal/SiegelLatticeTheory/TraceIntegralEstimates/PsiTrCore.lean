@@ -1,7 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelCore
-import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.PsiTrCoreApprox
-import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.PsiTrCoreTrace
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.HaarTransversals.UnitaryHaarProducts.LevelCore
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.TraceIntegralEstimates.PsiTrCoreApprox
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,7 +39,7 @@ def congSub (n : ℤ) : Subring (E ⊗[F] Af F) where
   add_mem' := by
     rintro _ _ ⟨o, s, hs, rfl⟩ ⟨o', s', hs', rfl⟩
     refine ⟨o + o', s + s', add_mem hs hs', ?_⟩
-    simp only [RingOfIntegers.coe_eq_algebraMap, map_add]
+    simp only [RingOfIntegers.coe_eq_algebraMap, map_add (f := _)]
     ring
   neg_mem' := by
     rintro _ ⟨o, s, hs, rfl⟩
@@ -127,7 +130,7 @@ private lemma sum_phi_add_star_eq_trace (I : AutInst) (z : I.E) :
     intro v
     have hs : star (I.φ v z) = I.φ v (star z) := by
       rw [I.cm.cmUnram.2.1, starRingEnd_apply]
-    rw [hs, ← map_add, ← ha, I.φ_over]
+    rw [hs, ← map_add (f := _), ← ha, I.φ_over]
   have hTr : Algebra.trace I.F I.E z = a := by
     let e : I.E ≃ₐ[I.F] I.E := AlgEquiv.ofRingEquiv (f := starRingAut) (fun x => by
       rw [starRingAut_apply]; exact (I.cm.fixed _).mpr ⟨x, rfl⟩)
@@ -137,7 +140,7 @@ private lemma sum_phi_add_star_eq_trace (I : AutInst) (z : I.E) :
       | exact (Algebra.trace_eq_of_algEquiv e z).symm
     have e2 : Algebra.trace I.F I.E (z + star z) = 2 • a := by
       rw [← ha, Algebra.trace_algebraMap, I.cm.deg2]
-    rw [map_add, e1, two_nsmul] at e2
+    rw [map_add (f := _), e1, two_nsmul] at e2
     have e3 : (2 : I.F) * Algebra.trace I.F I.E z = 2 * a := by rw [two_mul, two_mul, e2]
     exact mul_left_cancel₀ two_ne_zero e3
   rw [Finset.sum_congr rfl (fun v _ => hφ v), sum_embedding_eq_trace_of_totallyReal I.cm.totReal a,

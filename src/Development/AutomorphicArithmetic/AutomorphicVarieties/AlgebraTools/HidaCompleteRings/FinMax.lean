@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open IsLocalRing
 
@@ -16,7 +20,7 @@ theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.finMax :
   have h3 : IsArtinianRing (T ⧸ I) := IsArtinianRing.of_finite (Λ ⧸ maximalIdeal Λ) (T ⧸ I)
   have hcomap : ∀ m : Ideal T, m.IsMaximal → m.comap (algebraMap Λ T) = maximalIdeal Λ := by
     intro m hm
-    haveI := Ideal.isMaximal_comap_of_isIntegral_of_isMaximal (R := Λ) m
+    haveI := Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := Λ) m
     exact IsLocalRing.eq_maximalIdeal this
   have hIm : ∀ m : Ideal T, m.IsMaximal → I ≤ m := fun m hm =>
     Ideal.map_le_iff_le_comap.2 (hcomap m hm).ge
@@ -50,7 +54,7 @@ theorem UpperTheory.V.AlgebraTools.AnnihilatorQuotientFinite.finMax :
         rw [Ideal.mem_comap, Ideal.mem_jacobson_bot]
         intro y
         obtain ⟨y, rfl⟩ := Ideal.Quotient.mk_surjective y
-        rw [← map_mul, ← map_one (Ideal.Quotient.mk I), ← map_add]
+        rw [← map_mul, ← map_one (Ideal.Quotient.mk I), ← map_add (f := _)]
         exact (Ideal.mem_jacobson_bot.1 hx y).map _
       intro x hx
       have hx' : Ideal.Quotient.mk I x ∈ ((⊥ : Ideal (T ⧸ I)).jacobson) ^ n := by

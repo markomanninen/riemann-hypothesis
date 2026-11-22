@@ -1,4 +1,8 @@
-import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.DifferentiableAtChart
+module
+
+public import ReciprocityTheory.L2DbarEstimates.ChartDerivatives.DifferentiableAtChart
+
+@[expose] public section
 
 namespace ReciprocityTheory.L2DbarEstimates
 
@@ -34,20 +38,6 @@ theorem Smooth.cexp {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (
     Smooth n z (fun x => Complex.exp (f x)) := by
   intro e he
   exact Complex.contDiff_exp.comp_contDiffOn (hf e he)
-
-theorem Smooth.re {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (f : M → ℂ) (hf : Smooth n z f) :
-    SmoothR n z (fun x => (f x).re) := by
-  intro e he
-  have h1 := (Complex.ofRealCLM.comp Complex.reCLM).contDiff.comp_contDiffOn (hf e he)
-  refine h1.congr (fun w _ => ?_)
-  simp
-
-theorem Smooth.normSq {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (f : M → ℂ) (hf : Smooth n z f) :
-    SmoothR n z (fun x => ‖f x‖ ^ 2) := by
-  intro e he
-  have h1 := (Smooth.mul n z f _ hf (Smooth.conj n z f hf)) e he
-  refine h1.congr (fun w _ => ?_)
-  simp only [Function.comp_apply, Complex.mul_conj, Complex.normSq_eq_norm_sq]
 
 theorem SmoothR.comp {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (k : ℝ → ℝ) (hk : ContDiff ℝ ∞ k) (f : M → ℝ) (hf : SmoothR n z f) :
     SmoothR n z (fun x => k (f x)) := by
@@ -113,45 +103,6 @@ theorem Ck.cexp {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (k : 
   intro e he
   exact Complex.contDiff_exp.comp_contDiffOn (hf e he)
 
-theorem Ck.re {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (k : ℕ) (f : M → ℂ) (hf : Ck n z k f) :
-    CkR n z k (fun x => (f x).re) := by
-  intro e he
-  have h1 := (Complex.ofRealCLM.comp Complex.reCLM).contDiff.comp_contDiffOn (hf e he)
-  refine h1.congr (fun w _ => ?_)
-  simp
-
-theorem Ck.normSq {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (k : ℕ) (f : M → ℂ) (hf : Ck n z k f) :
-    CkR n z k (fun x => ‖f x‖ ^ 2) := by
-  intro e he
-  have h1 := (Ck.mul n z k f _ hf (Ck.conj n z k f hf)) e he
-  refine h1.congr (fun w _ => ?_)
-  simp only [Function.comp_apply, Complex.mul_conj, Complex.normSq_eq_norm_sq]
-
-theorem CkR.comp {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (k : ℕ) (φ : ℝ → ℝ) (hφ : ContDiff ℝ ∞ φ) (f : M → ℝ) (hf : CkR n z k f) :
-    CkR n z k (fun x => φ (f x)) := by
-  intro e he
-  have h1 := Complex.reCLM.contDiff.comp_contDiffOn (hf e he)
-  have h2 := Complex.ofRealCLM.contDiff.comp_contDiffOn
-    ((hφ.of_le (by exact_mod_cast le_top)).comp_contDiffOn h1)
-  refine h2.congr (fun w _ => ?_)
-  simp
-
-theorem CkR.add {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (k : ℕ) (f g : M → ℝ) (hf : CkR n z k f) (hg : CkR n z k g) :
-    CkR n z k (fun x => f x + g x) := by
-  have h1 := Ck.add n z k _ _ hf hg
-  unfold CkR
-  simpa using h1
-
-theorem CkR.mul {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (k : ℕ) (f g : M → ℝ) (hf : CkR n z k f) (hg : CkR n z k g) :
-    CkR n z k (fun x => f x * g x) := by
-  have h1 := Ck.mul n z k _ _ hf hg
-  unfold CkR
-  simpa using h1
-
-theorem CkR.ofReal {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (k : ℕ) (f : M → ℝ) (hf : CkR n z k f) :
-    Ck n z k (fun x => (f x : ℂ)) := by
-  exact hf
-
 private theorem isChart_choose_and_symm_apply {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (x : M)
     (h : ∃ e : OpenPartialHomeomorph M (V n), IsChart n z e ∧ x ∈ e.source) :
     IsChart n z (Classical.choose h) ∧ z x ∈ (Classical.choose h).target ∧
@@ -211,7 +162,7 @@ private theorem wdb_conj_eq_conj_wd_and_wd_conj (n : ℕ) (j : Fin n) (F : V n �
   have h2 : ∀ v, fderiv ℝ (fun y => (starRingEnd ℂ) (F y)) w v = (starRingEnd ℂ) (fderiv ℝ F w v) := by
     intro v; rw [h1, Complex.conjCLE.comp_fderiv]; simp
   refine ⟨?_, ?_⟩ <;>
-    simp only [wd, wdb, h2, map_div₀, map_sub, map_add, map_mul, Complex.conj_I, map_ofNat] <;> ring
+    simp only [wd, wdb, h2, map_div₀, map_sub, map_add (f := _), map_mul, Complex.conj_I, map_ofNat] <;> ring
 
 private theorem wd_wdb_ofReal_comp_real_chain (n : ℕ) (j : Fin n) (k : ℝ → ℝ) (hk : Differentiable ℝ k)
     (P : V n → ℝ) (w : V n) (hP : DifferentiableAt ℝ P w) :
@@ -325,19 +276,6 @@ theorem db_cexp {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (f : 
     rw [db_eq_wdb_comp_chosen_chart_symm n z j _ x h, db_eq_wdb_comp_chosen_chart_symm n z j f x h]
     refine (wd_wdb_cexp n j (differentiableAt_comp_chart_symm_of_mem_target n z f hf _ he _ ht)).2.trans ?_
     rw [hx' f]
-  · simp [d, db, h]
-
-theorem d_comp_real {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (k : ℝ → ℝ) (hk : ContDiff ℝ ∞ k) (ph : M → ℝ) (hph : CkR n z 1 ph) (j : Fin n) (x : M) :
-    d n z j (fun y => (k (ph y) : ℂ)) x = ((deriv k (ph x) : ℝ) : ℂ) * d n z j (fun y => (ph y : ℂ)) x := by
-  by_cases h : ∃ e : OpenPartialHomeomorph M (V n), IsChart n z e ∧ x ∈ e.source
-  · obtain ⟨he, ht, hsx⟩ := isChart_choose_and_symm_apply n z x h
-    rw [d_eq_wd_comp_chosen_chart_symm n z j _ x h, d_eq_wd_comp_chosen_chart_symm n z j _ x h]
-    have hP : DifferentiableAt ℝ (ph ∘ (Classical.choose h).symm) (z x) := by
-      have h1 := ((Complex.reCLM.contDiff.comp_contDiffOn (hph _ he)).differentiableOn
-        (by simp)).differentiableAt ((Classical.choose h).open_target.mem_nhds ht)
-      exact h1.congr_of_eventuallyEq (Filter.Eventually.of_forall fun w => by simp)
-    refine (wd_wdb_ofReal_comp_real_chain n j k (hk.differentiable (by simp)) _ _ hP).1.trans ?_
-    simp [hsx, Function.comp_def]
   · simp [d, db, h]
 
 theorem db_comp_real {M : Type*} [TopologicalSpace M] (n : ℕ) (z : M → V n) (k : ℝ → ℝ) (hk : ContDiff ℝ ∞ k) (ph : M → ℝ) (hph : CkR n z 1 ph) (j : Fin n) (x : M) :

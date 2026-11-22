@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.NonemptyDvrSettingOfStandard
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.SegmentDegree.NonemptyDvrSettingOfStandard
+
+@[expose] public section
 
 noncomputable section
 
@@ -12,12 +16,12 @@ namespace Dat
 
 variable {n' r : ℕ} [NeZero n'] (X : Dat n' r) (p K : ℕ)
 
-open Classical in
 
+open Classical in
 def toLate (j : ℤ) : Finset ℤ := (X.F.letters j).filter fun x => ¬ X.F.IsW j x
 
-open Classical in
 
+open Classical in
 def row (j x : ℤ) (i : Fin r) : ℤ :=
   let l := ((X.F.letters j).filter fun z => Even z ∧ z < x).sort (· ≤ ·)
   l.getD (l.length - r + i.val) 0
@@ -59,8 +63,8 @@ def segDegSet (b : ℤ → ℕ) : Set (ℤ × Fin (r + K) →₀ ℕ) := {m | �
 def Bw (j y : ℤ) : ℤ :=
   ((X.a' p K (posOf n' y) / p ^ (X.F.dist j y + X.Rj p K j) : ℕ) : ℤ) - ((r + K + r + 1 : ℕ) : ℤ)
 
-open Classical in
 
+open Classical in
 def thc (j : ℤ) (b : ℤ → ℕ) (x : ℤ) : ℝ :=
   (2 / 3) * (if X.F.IsW j (X.F.oldest j x) then ((X.Bw p K j (X.F.oldest j x) - (X.m0 K : ℤ) : ℤ) : ℝ)
     else (b (X.F.oldest j x) : ℝ))
@@ -111,7 +115,7 @@ theorem finite_restrictSupport (Fd : Type) [Field Fd] (σ : Type) (s : Set (σ �
     rw [MvPolynomial.mem_restrictSupport_iff] at hP
     rw [P.as_sum]
     refine Submodule.sum_mem _ fun m hm => ?_
-    have : (monomial m (coeff m P) : MvPolynomial σ Fd) = coeff m P • monomial m (1 : Fd) := by
+    have : (monomial m (AddMonoidAlgebra.coeff P m) : MvPolynomial σ Fd) = AddMonoidAlgebra.coeff P m • monomial m (1 : Fd) := by
       rw [smul_monomial, smul_eq_mul, mul_one]
     rw [this]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨m, hP (by exact_mod_cast hm), rfl⟩)

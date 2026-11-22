@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.EtaleDegreeZeroCohomologyEquivLocallyConstantFun
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.EtaleDegreeZeroCohomologyEquivLocallyConstantFun
+
+@[expose] public section
 
 noncomputable section
 open GlobalTheory.EtC
@@ -60,8 +64,9 @@ theorem Cover_of : LateralTheory.E.t_E1Cut.Cover := by
     have : (Ideal.comap π p.asIdeal).IsPrime := Ideal.comap_isPrime π p.asIdeal
     obtain ⟨Q, -, hQ, hQc⟩ := Ideal.exists_ideal_over_prime_of_isIntegral (S := T)
       (Ideal.comap π p.asIdeal) (⊥ : Ideal T) (by
-        rw [← RingHom.ker_eq_comap_bot, (RingHom.injective_iff_ker_eq_bot _).1 (inj_P _)]
+        rw [Ideal.under_def, ← RingHom.ker_eq_comap_bot, (RingHom.injective_iff_ker_eq_bot _).1 (inj_P _)]
         exact bot_le)
+    rw [Ideal.under_def] at hQc
     have hIQ : I ≤ Q := by
       apply Ideal.map_le_iff_le_comap.2
       rw [hQc]

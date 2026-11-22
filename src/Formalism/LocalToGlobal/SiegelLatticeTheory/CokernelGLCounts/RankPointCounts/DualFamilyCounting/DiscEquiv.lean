@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.LocFLeSpanK
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.LocFLeSpanK
+
+@[expose] public section
 
 open NumberField Module
 
@@ -18,11 +22,11 @@ local notation "jK" => algebraMap (𝓞 K) K
 def phi {n : ℕ} (b : Fin n → V) (a : Fin n → 𝓞 F) : (Fin n → 𝓞 K) →ₗ[𝓞 K] V where
   toFun z := ∑ i, (jK (z i) / jK (ι (a i))) • b i
   map_add' z z' := by
-    simp only [Pi.add_apply, map_add, add_div, add_smul, Finset.sum_add_distrib]
+    simp only [Pi.add_apply, map_add (f := _), add_div, add_smul, Finset.sum_add_distrib]
   map_smul' c z := by
     simp only [Pi.smul_apply, smul_eq_mul, map_mul, RingHom.id_apply, Finset.smul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [smul_eq_jK c, smul_smul, mul_div_assoc]
+    rw [← algebraMap_smul K c, smul_smul, mul_div_assoc]
 
 section
 
@@ -40,10 +44,13 @@ private theorem jK_iota_ne_zero {a : 𝓞 F} (ha : a ≠ 0) : jK (ι a) ≠ 0 :=
 theorem h_phi (horth : ∀ i j, i ≠ j → h (b i) (b j) = 0)
     (hdiag : ∀ i, h (b i) (b i) = algebraMap F K ((a i : 𝓞 F) : F)) (ha : ∀ i, a i ≠ 0)
     (z : Fin n → 𝓞 K) (k : Fin n) : h (b k) (phi b a z) = jK (z k) := by
-  have hdiag' : ∀ i, h (b i) (b i) = jK (ι (a i)) := fun i => by
-    rw [hdiag i]; exact (coe_iota_eq_algebraMap_coe (a i)).symm
   show h (b k) (∑ i, (jK (z i) / jK (ι (a i))) • b i) = jK (z k)
-  rw [h_sum horth hdiag' _ k, div_mul_cancel₀ _ (jK_iota_ne_zero (ha k))]
+  rw [map_sum, Finset.sum_eq_single k]
+  · rw [LinearMap.map_smul, smul_eq_mul, hdiag k, ← coe_iota_eq_algebraMap_coe,
+      div_mul_cancel₀ _ (jK_iota_ne_zero (ha k))]
+  · intro i _ hik
+    rw [LinearMap.map_smul, horth k i hik.symm, smul_zero]
+  · simp
 
 theorem phi_mem (hbX : ∀ i, b i ∈ X) (z : Fin n → 𝓞 K) : phi b a z ∈ X := by
   show (∑ i, (jK (z i) / jK (ι (a i))) • b i) ∈ X

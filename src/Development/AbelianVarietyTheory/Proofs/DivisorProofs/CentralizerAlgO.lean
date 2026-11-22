@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.MemUQptsStarCIff
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.MemUQptsStarCIff
+
+@[expose] public section
 
 noncomputable section
 open scoped TensorProduct

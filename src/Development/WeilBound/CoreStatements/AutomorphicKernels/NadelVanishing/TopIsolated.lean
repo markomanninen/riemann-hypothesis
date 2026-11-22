@@ -1,5 +1,9 @@
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsolatedNonKltDivisorOfPrincipalisation
-import Development.WeilBound.CoreStatements.ResolutionCharZero.PrincipalisationClosed
+module
+
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsolatedNonKltDivisorOfPrincipalisation
+public import Development.WeilBound.CoreStatements.ResolutionCharZero.PrincipalisationClosed
+
+@[expose] public section
 
 namespace NadelVanishingSeparation.NSI
 

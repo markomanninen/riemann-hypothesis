@@ -1,15 +1,19 @@
-import Mathlib
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocFacts
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabIntPfQ
-import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabIntPfL
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.GlobalConditionOfLocalAgreement
-import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocClosed
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InnerPreimageEqOfLocalInnerLatticeEq
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalInnerLatticeEqOfInnerPreimageEq
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ApproxGen
-import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfA
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.NGData
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.TermLoc
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.LocFacts
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabIntPfQ
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.StabIntPfL
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.GlobalConditionOfLocalAgreement
+public import Development.AbelianVarietyTheory.Definitions.SemilocalFrames.LocClosed
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.InnerPreimageEqOfLocalInnerLatticeEq
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.LocalInnerLatticeEqOfInnerPreimageEq
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.ApproxGen
+public import Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedLocalOrbits.GaugeLatticeShifts.ScalarFramePfA
+
+@[expose] public section
 
 noncomputable section
 
@@ -57,8 +61,8 @@ theorem gS_typed (g : Loc.SplitG (Zd.M p).L) (hs : (Zd.M p).split = some g) :
 theorem localLattice_mono {A B : Submodule (𝓞 D.host.E) (VS D).V} (h : A ≤ B) : lattice₂ D Zd.M p A ≤ lattice₂ D Zd.M p B :=
   Submodule.span_mono (Set.image_mono h)
 
-theorem smul_gS_mem {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T)
-    (F' : LFlag (VS D) D.R.rS T') {v : Vp D p} (hv : v ∈ lattice₂ D Zd.M p Λ) :
+theorem smul_gS_mem {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T)
+    (F' : LFlag (D.sp.Y 0) D.R.rS T') {v : Vp D p} (hv : v ∈ lattice₂ D Zd.M p Λ) :
     (D.s.atP p).ιE ((gS D : ℕ) : D.host.E) • v ∈ lattice₂ D Zd.M p (NgX Λ (gS D) F F') := by
   induction hv using Submodule.span_induction with
   | mem v hv =>
@@ -79,7 +83,7 @@ theorem smul_gS_mem {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T T' : D.host.E} 
     rw [e]; exact Submodule.smul_mem _ _ hv
 
 theorem typed_q_mem (g : Loc.SplitG (Zd.M p).L) (hs : (Zd.M p).split = some g) {Λ : Submodule (𝓞 D.host.E) (VS D).V}
-    {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') {v : Vp D p}
+    {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') {v : Vp D p}
     (hv : v ∈ lattice₂ D Zd.M p Λ) :
     algebraMap (D.s.atP p).Fp (D.s.atP p).Ep (g.q : (D.s.atP p).Fp) • v ∈ lattice₂ D Zd.M p (NgX Λ (gS D) F F') := by
   obtain ⟨w, -, w', hw', he, hww⟩ := gS_typed Zd p g hs
@@ -89,27 +93,19 @@ theorem typed_q_mem (g : Loc.SplitG (Zd.M p).L) (hs : (Zd.M p).split = some g) {
   rw [e]
   exact smul_gS_mem Zd p F F' (smul_mem_localLattice Zd p hw' hv)
 
-theorem xi_mem {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} {F : LFlag (VS D) D.R.rS T} {x : (VS D).V}
+theorem xi_mem {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T : D.host.E} {F : LFlag (D.sp.Y 0) D.R.rS T} {x : (VS D).V}
     (hx : x ∈ XLam Λ F) : x ∈ Λ := (Submodule.mem_inf.1 hx).1
 
 theorem isLattice_NgX {Λ : Submodule (𝓞 D.host.E) (VS D).V} (hΛ : Submodule.IsLattice D.host.E Λ) {T T' : D.host.E}
-    (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') : Submodule.IsLattice D.host.E (NgX Λ (gS D) F F') := by
+    (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') : Submodule.IsLattice D.host.E (NgX Λ (gS D) F F') := by
   have hle : NgX Λ (gS D) F F' ≤ Λ := by
     refine sup_le (sup_le ?_ inf_le_left) inf_le_left
     exact Submodule.smul_le_right
   refine ⟨hΛ.fg.of_le hle, ?_⟩
-  rw [eq_top_iff, ← hΛ.span_eq_top, Submodule.span_le]
-  intro v hv
-  have h0 : ((gS D : ℕ) : D.host.E) ≠ 0 := Formalism.L2.SG.Pf.StabIntSh.gS_ne
-  have hm : ((gS D : ℕ) : 𝓞 D.host.E) • v ∈ NgX Λ (gS D) F F' :=
-    Submodule.mem_sup_left (Submodule.mem_sup_left (Submodule.smul_mem_smul (Ideal.mem_span_singleton_self _) hv))
-  have e : v = (((gS D : ℕ) : D.host.E))⁻¹ • (((gS D : ℕ) : 𝓞 D.host.E) • v) := by
-    rw [← algebraMap_smul D.host.E ((gS D : ℕ) : 𝓞 D.host.E) v, map_natCast, smul_smul, inv_mul_cancel₀ h0, one_smul]
-  rw [SetLike.mem_coe, e]
-  exact Submodule.smul_mem _ _ (Submodule.subset_span hm)
-
-theorem NgX_dec {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T T' : D.host.E} {F : LFlag (VS D) D.R.rS T}
-    {F' : LFlag (VS D) D.R.rS T'} {x : (VS D).V} (hx : x ∈ NgX Λ (gS D) F F') :
+  intro s hs hli
+  exact (LinearIndependent.iff_fractionRing _ _).mp hli
+theorem NgX_dec {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T T' : D.host.E} {F : LFlag (D.sp.Y 0) D.R.rS T}
+    {F' : LFlag (D.sp.Y 0) D.R.rS T'} {x : (VS D).V} (hx : x ∈ NgX Λ (gS D) F F') :
     ∃ l ∈ Λ, ∃ ξ ∈ XLam Λ F, ∃ ξ' ∈ XLam Λ F', x = ((gS D : ℕ) : D.host.E) • l + ξ + ξ' := by
   obtain ⟨a, ha, ξ', hξ', rfl⟩ := Submodule.mem_sup.1 hx
   obtain ⟨b, hb, ξ, hξ, rfl⟩ := Submodule.mem_sup.1 ha
@@ -118,7 +114,7 @@ theorem NgX_dec {Λ : Submodule (𝓞 D.host.E) (VS D).V} {T T' : D.host.E} {F :
   refine ⟨l, hl, ξ, hξ, ξ', hξ', ?_⟩
   rw [← algebraMap_smul D.host.E ((gS D : ℕ) : 𝓞 D.host.E) l, map_natCast]
 
-theorem bcP_X {T : D.host.E} (G : LFlag (VS D) D.R.rS T) (f : Fin (D.R.rS + 1) → Vp D p)
+theorem bcP_X {T : D.host.E} (G : LFlag (D.sp.Y 0) D.R.rS T) (f : Fin (D.R.rS + 1) → Vp D p)
     (hf : f = fun a => frFac Zd.δ p a • baseChange₂ D p (frame G a)) {u : (VS D).V} (hu : u ∈ Xsp G) :
     baseChange₂ D p u ∈ (locH Zd p).X f := by
   refine Submodule.span_induction (p := fun u _ => baseChange₂ D p u ∈ (locH Zd p).X f) ?_ ?_ ?_ ?_ hu
@@ -132,7 +128,7 @@ theorem bcP_X {T : D.host.E} (G : LFlag (VS D) D.R.rS T) (f : Fin (D.R.rS + 1) �
   · intro a b _ _ ha hb; rw [map_add]; exact add_mem ha hb
   · intro c a _ ha; rw [Formalism.L2.SG.TermLoc.baseChange_smul₂]; exact Submodule.smul_mem _ _ ha
 
-theorem rep_of_lsub {T : D.host.E} (G : LFlag (VS D) D.R.rS T) {Λ₁ Λ₂ : LV D} (h : Lsub Λ₁ G = Lsub Λ₂ G)
+theorem rep_of_lsub {T : D.host.E} (G : LFlag (D.sp.Y 0) D.R.rS T) {Λ₁ Λ₂ : LV D} (h : Lsub Λ₁ G = Lsub Λ₂ G)
     {l : (VS D).V} (hl : l ∈ Lrep Λ₁ G) : ∃ m ∈ Lrep Λ₂ G, l - m ∈ Xsp G := by
   have h1 : l ∈ Lsub Λ₁ G := ⟨Submodule.mem_sup_left hl, hl.2⟩
   rw [h] at h1
@@ -146,7 +142,7 @@ theorem q_of_g (g : Loc.SplitG (Zd.M p).L) (hs : (Zd.M p).split = some g) {Λ : 
   exact Submodule.subset_span ⟨w • baseChange₂ D p l, smul_mem_localLattice Zd p hw (baseChange_mem_localLattice Zd hl p), rfl⟩
 
 theorem q_le_NgX (g : Loc.SplitG (Zd.M p).L) (hs : (Zd.M p).split = some g) {Λ : LV D} {T T' : D.host.E}
-    (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') {v : Vp D p}
+    (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') {v : Vp D p}
     (hv : v ∈ (locH Zd p).smulLat (algebraMap (D.s.atP p).Fp (D.s.atP p).Ep (g.q : (D.s.atP p).Fp)) (lattice₂ D Zd.M p Λ)) :
     v ∈ lattice₂ D Zd.M p (NgX Λ (gS D) F F') := by
   refine (Submodule.span_le.2 ?_) hv
@@ -182,7 +178,7 @@ theorem gsmul_q (g : Loc.SplitG (Zd.M p).L) (hs : (Zd.M p).split = some g) {Λ :
 theorem g_mem_O : (D.s.atP p).ιE ((gS D : ℕ) : D.host.E) ∈ (D.s.atP p).O := by
   rw [map_natCast]; exact natCast_mem _ _
 
-theorem rep_loc {T : D.host.E} (G : LFlag (VS D) D.R.rS T) (f : Fin (D.R.rS + 1) → Vp D p)
+theorem rep_loc {T : D.host.E} (G : LFlag (D.sp.Y 0) D.R.rS T) (f : Fin (D.R.rS + 1) → Vp D p)
     (hf : f = fun a => frFac Zd.δ p a • baseChange₂ D p (frame G a)) {Λ₁ Λ₂ : LV D} (h : Lsub Λ₁ G = Lsub Λ₂ G)
     {w : Vp D p} (hw : w ∈ lattice₂ D Zd.M p (Lrep Λ₁ G)) : ∃ v ∈ lattice₂ D Zd.M p Λ₂, w - v ∈ (locH Zd p).X f := by
   induction hw using Submodule.span_induction with
@@ -202,7 +198,7 @@ theorem rep_loc {T : D.host.E} (G : LFlag (VS D) D.R.rS T) (f : Fin (D.R.rS + 1)
     exact Submodule.smul_mem ((locH Zd p).X f) (o : (D.s.atP p).Ep) e1
 
 theorem ngx_step (g : Loc.SplitG (Zd.M p).L) (hs : (Zd.M p).split = some g) {T T' : D.host.E}
-    (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') {Λ₁ : LV D} (h₁ : Submodule.IsLattice D.host.E Λ₁)
+    (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') {Λ₁ : LV D} (h₁ : Submodule.IsLattice D.host.E Λ₁)
     {x x' w w' : Vp D p} {l l' : (VS D).V} (hw : w ∈ lattice₂ D Zd.M p Λ₁) (hw' : w' ∈ lattice₂ D Zd.M p Λ₁)
     (e : baseChange₂ D p l - x = (D.s.atP p).ιE ((gS D : ℕ) : D.host.E) • w)
     (e' : baseChange₂ D p l' - x' = (D.s.atP p).ιE ((gS D : ℕ) : D.host.E) • w')
@@ -222,7 +218,7 @@ theorem ngx_step (g : Loc.SplitG (Zd.M p).L) (hs : (Zd.M p).split = some g) {T T
   · rw [hq]; exact hp
   · rw [map_sub]; exact sub_mem (ho q hq) (ho' q hq)
 
-theorem off_step {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') {Λ₁ N : LV D} (hN : N ≤ Λ₁)
+theorem off_step {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') {Λ₁ N : LV D} (hN : N ≤ Λ₁)
     {v : Vp D p} (h : ∃ w ∈ lattice₂ D Zd.M p N, v = (D.s.atP p).ιE ((gS D : ℕ) : D.host.E) • w) :
     v ∈ lattice₂ D Zd.M p (NgX Λ₁ (gS D) F F') := by
   obtain ⟨u, hu, rfl⟩ := h
@@ -236,7 +232,7 @@ theorem alg1 {R V : Type} [CommRing R] [AddCommGroup V] [Module R V] (c : R) (x 
 
 set_option maxHeartbeats 800000 in
 theorem place_A (g : Loc.SplitG (Zd.M p).L) (hs : (Zd.M p).split = some g) {T T' : D.host.E}
-    (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') (f f' : Fin (D.R.rS + 1) → Vp D p)
+    (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') (f f' : Fin (D.R.rS + 1) → Vp D p)
     (hA : f = fun a => frFac Zd.δ p a • baseChange₂ D p (frame F a)) (hB : f' = fun a => frFac Zd.δ p a • baseChange₂ D p (frame F' a))
     {Λ₁ Λ₂ : LV D} (h₁ : Submodule.IsLattice D.host.E Λ₁) (hL : Lsub Λ₁ F = Lsub Λ₂ F) (hL' : Lsub Λ₁ F' = Lsub Λ₂ F')
     (hG : ∀ l' ∈ Lrep Λ₁ F', ∀ l ∈ Lrep Λ₁ F, l - l' ∈ NgX Λ₁ (gS D) F F' →
@@ -267,12 +263,12 @@ theorem place_A (g : Loc.SplitG (Zd.M p).L) (hs : (Zd.M p).split = some g) {T T'
     sub_mem (baseChange_mem_localLattice Zd (add_mem (Submodule.mem_inf.1 hm').1 (xi_mem hξ')) p) (smul_mem_localLattice Zd p (g_mem_O p) hv'), ?_, ?_, ?_⟩
   · have e4 : x - (baseChange₂ D p (m - ξ) - (D.s.atP p).ιE ((gS D : ℕ) : D.host.E) • v) =
         baseChange₂ D p ((l - m) + ξ) - (D.s.atP p).ιE ((gS D : ℕ) : D.host.E) • (w - v) := by
-      rw [map_sub, map_add, map_sub]; exact (alg1 _ _ _ _ _ _ _ e).1
+      rw [map_sub, map_add (f := _), map_sub]; exact (alg1 _ _ _ _ _ _ _ e).1
     rw [e4]
     exact sub_mem (bcP_X Zd p F f hA (add_mem d hξX)) (Submodule.smul_mem _ _ c)
   · have e4 : x' - (baseChange₂ D p (m' + ξ') - (D.s.atP p).ιE ((gS D : ℕ) : D.host.E) • v') =
         baseChange₂ D p ((l' - m') - ξ') - (D.s.atP p).ιE ((gS D : ℕ) : D.host.E) • (w' - v') := by
-      rw [map_add, map_sub, map_sub]; exact (alg1 _ _ _ _ _ _ _ e').2
+      rw [map_add (f := _), map_sub, map_sub]; exact (alg1 _ _ _ _ _ _ _ e').2
     rw [e4]
     exact sub_mem (bcP_X Zd p F' f' hB (sub_mem d' hξX')) (Submodule.smul_mem _ _ c')
   · have e4 : (baseChange₂ D p (m - ξ) - (D.s.atP p).ιE ((gS D : ℕ) : D.host.E) • v) - (baseChange₂ D p (m' + ξ') - (D.s.atP p).ιE ((gS D : ℕ) : D.host.E) • v') =
@@ -281,7 +277,7 @@ theorem place_A (g : Loc.SplitG (Zd.M p).L) (hs : (Zd.M p).split = some g) {T T'
     rw [e4, hvv]
     exact add_mem (sub_mem (q_of_g Zd p g hs hlam) (gsmul_q Zd p g hs hv)) (gsmul_q Zd p g hs hv')
 
-theorem graph_reps {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS D) D.R.rS T') {Λ₁ Λ₂ : LV D}
+theorem graph_reps {T T' : D.host.E} (F : LFlag (D.sp.Y 0) D.R.rS T) (F' : LFlag (D.sp.Y 0) D.R.rS T') {Λ₁ Λ₂ : LV D}
     (h : (gdat F F' Λ₁).2.2 = (gdat F F' Λ₂).2.2) :
     ∀ l' ∈ Lrep Λ₁ F', ∀ l ∈ Lrep Λ₁ F, l - l' ∈ NgX Λ₁ (gS D) F F' →
       ∃ m' ∈ Lrep Λ₂ F', ∃ m ∈ Lrep Λ₂ F, l' - m' ∈ Xsp F' ∧ l - m ∈ Xsp F ∧ m - m' ∈ NgX Λ₂ (gS D) F F' := by
@@ -291,14 +287,14 @@ theorem graph_reps {T T' : D.host.E} (F : LFlag (VS D) D.R.rS T) (F' : LFlag (VS
   rw [h] at k
   exact k
 
-theorem io_le (Z : LocDat D) (FP : ∀ p : PlF D, LocNG.FPair (locH Z p) D.R.rS) (Tn T'n : ℕ) (F : LFlag (VS D) D.R.rS (Tn : D.host.E)) (F' : LFlag (VS D) D.R.rS (T'n : D.host.E)) (hB : Based Z FP Tn T'n F F') (Λ₁ Λ₂ : LV D) (h₁ : Submodule.IsLattice D.host.E Λ₁) (hL : Lsub Λ₁ F = Lsub Λ₂ F) (hL' : Lsub Λ₁ F' = Lsub Λ₂ F') (h : (gdat F F' Λ₁).2.2 = (gdat F F' Λ₂).2.2) (p : PlF D) (g : Loc.SplitG (Z.M p).L) (hs : (Z.M p).split = some g) :
+theorem io_le (Z : LocDat D) (FP : ∀ p : PlF D, LocNG.FPair (locH Z p) D.R.rS) (Tn T'n : ℕ) (F : LFlag (D.sp.Y 0) D.R.rS (Tn : D.host.E)) (F' : LFlag (D.sp.Y 0) D.R.rS (T'n : D.host.E)) (hB : Based Z FP Tn T'n F F') (Λ₁ Λ₂ : LV D) (h₁ : Submodule.IsLattice D.host.E Λ₁) (hL : Lsub Λ₁ F = Lsub Λ₂ F) (hL' : Lsub Λ₁ F' = Lsub Λ₂ F') (h : (gdat F F' Λ₁).2.2 = (gdat F F' Λ₂).2.2) (p : PlF D) (g : Loc.SplitG (Z.M p).L) (hs : (Z.M p).split = some g) :
     (locH Z p).iotaGraph g ⟨lattice₂ D Z.M p Λ₁, (FP p).A.f, (FP p).B.f, (FP p).A.T, (FP p).B.T⟩ ⊆ (locH Z p).iotaGraph g ⟨lattice₂ D Z.M p Λ₂, (FP p).A.f, (FP p).B.f, (FP p).A.T, (FP p).B.T⟩ :=
   io_sub (locH Z p) g _ _ _ _ _ _ (GlobalTheory.Unfold.InnerLoc.X_le_perp Z p (FP p).A) (GlobalTheory.Unfold.InnerLoc.X_le_perp Z p (FP p).B)
     fun x x' a b c d e => place_A Z p g hs F F' (FP p).A.f (FP p).B.f (hB p).1 (hB p).2.1 h₁ hL hL' (graph_reps F F' h)
       (GlobalTheory.Unfold.InnerLoc.mem_localLattice_lrep Z p F Λ₁ h₁ (FP p).A (hB p).1 x c a)
       (GlobalTheory.Unfold.InnerLoc.mem_localLattice_lrep Z p F' Λ₁ h₁ (FP p).B (hB p).2.1 x' d b) e
 
-theorem io_eq_of_graph : ∀ (D : D7) (Z : LocDat D) (FP : ∀ p : PlF D, LocNG.FPair (locH Z p) D.R.rS) (Tn T'n : ℕ) (F : LFlag (VS D) D.R.rS (Tn : D.host.E)) (F' : LFlag (VS D) D.R.rS (T'n : D.host.E)), Based Z FP Tn T'n F F' → ∀ Λ₁ Λ₂ : LV D, Submodule.IsLattice D.host.E Λ₁ → Submodule.IsLattice D.host.E Λ₂ → Lsub Λ₁ F = Lsub Λ₂ F → Lsub Λ₁ F' = Lsub Λ₂ F' → (gdat F F' Λ₁).2.2 = (gdat F F' Λ₂).2.2 → ∀ (p : PlF D) (g : Loc.SplitG (Z.M p).L), (Z.M p).split = some g → (locH Z p).iotaGraph g ⟨lattice₂ D Z.M p Λ₁, (FP p).A.f, (FP p).B.f, (FP p).A.T, (FP p).B.T⟩ = (locH Z p).iotaGraph g ⟨lattice₂ D Z.M p Λ₂, (FP p).A.f, (FP p).B.f, (FP p).A.T, (FP p).B.T⟩ := by
+theorem io_eq_of_graph : ∀ (D : D7) (Z : LocDat D) (FP : ∀ p : PlF D, LocNG.FPair (locH Z p) D.R.rS) (Tn T'n : ℕ) (F : LFlag (D.sp.Y 0) D.R.rS (Tn : D.host.E)) (F' : LFlag (D.sp.Y 0) D.R.rS (T'n : D.host.E)), Based Z FP Tn T'n F F' → ∀ Λ₁ Λ₂ : LV D, Submodule.IsLattice D.host.E Λ₁ → Submodule.IsLattice D.host.E Λ₂ → Lsub Λ₁ F = Lsub Λ₂ F → Lsub Λ₁ F' = Lsub Λ₂ F' → (gdat F F' Λ₁).2.2 = (gdat F F' Λ₂).2.2 → ∀ (p : PlF D) (g : Loc.SplitG (Z.M p).L), (Z.M p).split = some g → (locH Z p).iotaGraph g ⟨lattice₂ D Z.M p Λ₁, (FP p).A.f, (FP p).B.f, (FP p).A.T, (FP p).B.T⟩ = (locH Z p).iotaGraph g ⟨lattice₂ D Z.M p Λ₂, (FP p).A.f, (FP p).B.f, (FP p).A.T, (FP p).B.T⟩ := by
   intro D Z FP Tn T'n F F' hB Λ₁ Λ₂ h₁ h₂ hL hL' h p g hs
   exact Set.Subset.antisymm (io_le Z FP Tn T'n F F' hB Λ₁ Λ₂ h₁ hL hL' h p g hs)
     (io_le Z FP Tn T'n F F' hB Λ₂ Λ₁ h₂ hL.symm hL'.symm h.symm p g hs)

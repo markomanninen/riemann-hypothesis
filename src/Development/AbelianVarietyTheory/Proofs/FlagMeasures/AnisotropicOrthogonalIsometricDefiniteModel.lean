@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HbApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FlagMeasures.HbApply
+
+@[expose] public section
+
 open scoped Classical ENNReal Pointwise
 open MeasureTheory Matrix NumberField Formalism.BasicNotions Formalism.MainNotions.S Formalism.MainNotions.S.Lat Formalism.L2.SG.HidaSetting Formalism.L2.SG.TermOp Formalism.L2.SG.Full
   Formalism.L2.SG.LocWSOf Formalism.MainNotions.S.Cnt Formalism.L2.SG.KappaOffDiagonal Formalism.MainNotions.LatticeGluingRadicals
@@ -31,7 +36,8 @@ theorem fixedFrameOfWord_isotropicSpan_eq : (GlobalTheory.TypeAsm.F0 X u).X = Su
 theorem hT_span_left {v : (VS D).V} (hv : ∀ a, (VS D).hT (X.eX a) v = 0) {y : (VS D).V}
     (hy : y ∈ Submodule.span D.host.E (Set.range X.eX)) : (VS D).hT y v = 0 := by
   obtain ⟨c, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun _).1 hy
-  simp [map_sum, hv]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp [map_sum, hv]
 
 theorem hT_span_span {y y' : (VS D).V} (hy : y ∈ Submodule.span D.host.E (Set.range X.eX))
     (hy' : y' ∈ Submodule.span D.host.E (Set.range X.eX)) : (VS D).hT y y' = 0 := by
@@ -48,7 +54,8 @@ theorem span_eq_zero {d : (VS D).V} (hd : d ∈ Submodule.span D.host.E (Set.ran
   have hc : ∀ b, c b = 0 := by
     intro b
     have := h b
-    simpa [map_sum, hT_f_e] using this
+    set_option synthInstance.maxHeartbeats 100000 in
+      simpa [map_sum, hT_f_e] using this
   simp [hc]
 
 end GlobalTheory.RowsOrb.ModelIso
@@ -71,8 +78,8 @@ theorem corr_mem (W : Submodule D.host.E (VS D).V) (w : W) :
 
 end GlobalTheory.RowsOrb.ModelIso
 
-open GlobalTheory.RowsOrb.ModelIso in
 
+open GlobalTheory.RowsOrb.ModelIso in
 theorem GlobalTheory.RowsOrb.ub_equiv_model : ∀ (D : D7) (X : HidaSetting D) (u : D.what₂.Word) (W : Submodule D.host.E (VS D).V)
     (HW : Formalism.HermitianLatticeCounting.S6.HermSpace D.host.E W), GlobalTheory.DegAsm.IsEmb (GlobalTheory.TypeAsm.F0 X u) HW W.subtype →
     ∃ e : GlobalTheory.RowsOrb.Ub X u ≃ₗ[D.host.E] W, (∀ x y, HW.B.flip (e x) (e y) = GlobalTheory.RowsOrb.hU X u x y) ∧
@@ -106,9 +113,10 @@ theorem GlobalTheory.RowsOrb.ub_equiv_model : ∀ (D : D7) (X : HidaSetting D) (
     refine ⟨?_, ?_⟩
     · rw [map_sub, hWe w b, zero_sub, neg_eq_zero]
       exact p_symm_zero (VS D) (hT_span_left X (fun a => X.ee a b) hc)
-    · rw [map_sub, corr_apply, map_sum]
-      simp only [map_smul, hT_f_e, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
-        if_true, sub_self]
+    · set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sub, corr_apply, map_sum]
+        simp only [map_smul, hT_f_e, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
+          if_true, sub_self]
   have hmUb : ∀ w : W, (⟨(w : (VS D).V) - corr X W w, hmWb w⟩ : GlobalTheory.RowsOrb.Wb X) ∈ GlobalTheory.RowsOrb.Ub X u := by
     intro w
     rw [GlobalTheory.RowsOrb.mem_Ub]
@@ -117,7 +125,7 @@ theorem GlobalTheory.RowsOrb.ub_equiv_model : ∀ (D : D7) (X : HidaSetting D) (
     refine p_symm_zero (VS D) (hT_span_left X (fun a => (X.zu_orth u a).1) (corr_mem X W w))
   let g : W →ₗ[D.host.E] GlobalTheory.RowsOrb.Ub X u :=
     { toFun := fun w => ⟨⟨(w : (VS D).V) - corr X W w, hmWb w⟩, hmUb w⟩
-      map_add' := fun x y => by ext; simp only [Submodule.coe_add, map_add]; abel
+      map_add' := fun x y => by ext; simp only [Submodule.coe_add, map_add (f := _)]; abel
       map_smul' := fun c x => by ext; simp [smul_sub] }
   have hg : ∀ w, (((g w : GlobalTheory.RowsOrb.Wb X)) : (VS D).V) = (w : (VS D).V) - corr X W w := fun _ => rfl
   have hinj : Function.Injective g := by

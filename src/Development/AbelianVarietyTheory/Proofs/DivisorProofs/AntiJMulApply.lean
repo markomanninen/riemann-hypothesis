@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.SatakeDualWeyl.KpqSubgroupCompact
-import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvMemDoubleCosetAndComm
+module
+
+public import Mathlib
+public import Formalism.SatakeDualWeyl.KpqSubgroupCompact
+public import Development.AbelianVarietyTheory.Proofs.SatakeParameters.InvMemDoubleCosetAndComm
+
+@[expose] public section
 
 noncomputable section
 
@@ -8,8 +12,8 @@ open Formalism.UG
 
 namespace GlobalTheory.SatakeWeyl
 
-open Classical in
 
+open Classical in
 def cellSum {G : Type} [Group G] (K N : Subgroup G) (h : G → ℂ) (g : G) : ℂ :=
   ∑ᶠ x : G ⧸ K, if ∃ u ∈ N, ∃ k ∈ K, x.out = g * u * k then h x.out else 0
 

@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RowSubst
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RowSubst
+
+@[expose] public section
+
 open MvPolynomial Formalism.GradedWeylDivisibility GlobalTheory.GenCoef
 
 namespace GlobalTheory.UpperTransvection

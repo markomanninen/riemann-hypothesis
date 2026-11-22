@@ -1,5 +1,9 @@
-import Development.AutomorphicSpectrum.Definitions.MetricPeriods.HeBranching
-import Development.WeilBound.CoreStatements.BranchingTraces.ExistsIntertwiner
+module
+
+public import Development.AutomorphicSpectrum.Definitions.MetricPeriods.HeBranching
+public import Development.WeilBound.CoreStatements.BranchingTraces.ExistsIntertwiner
+
+@[expose] public section
 
 noncomputable section
 
@@ -13,14 +17,14 @@ theorem _root_.PositivityTheory.UnitaryDecomposition.X4.emb : (∀ {n : ℕ} (ε
   · have key : ∀ h : Matrix (Fin n) (Fin n) ℂ, GlobalTheory.CompanionTheory.PairingAnalysis.emb e h * incl e = incl e * h := fun h => by
       ext a b
       obtain ⟨a, rfl⟩ := e.surjective a
-      rw [mul_apply, mul_apply, ← e.sum_comp]
+      rw [Matrix.mul_apply, Matrix.mul_apply, ← e.sum_comp]
       rcases a with a | a <;> simp [GlobalTheory.CompanionTheory.PairingAnalysis.emb, incl]
     have h1 : ε (e (Sum.inr ())) = true := hF.1
     refine ⟨⟨⟨PositivityTheory.UnitaryDecomposition.embU hF, Subtype.ext (Units.ext PositivityTheory.UnitaryDecomposition.emb_one)⟩,
       fun a b => Subtype.ext (Units.ext (PositivityTheory.UnitaryDecomposition.emb_mul _ _))⟩, fun _ => rfl, ⟨incl e, ⟨rfl, ?_, ?_, ?_, fun h => key _, fun h => ?_⟩,
       ?_, ?_, ?_⟩, fun h => ?_⟩
     · ext a b
-      simp only [Jm, mul_apply (M := _ * _), mul_diagonal]
+      simp only [Jm, Matrix.mul_apply, mul_diagonal]
       rw [← e.sum_comp]
       by_cases hab : a = b
       · subst hab; simp [incl, hF.2]
@@ -32,8 +36,8 @@ theorem _root_.PositivityTheory.UnitaryDecomposition.X4.emb : (∀ {n : ℕ} (ε
       rw [mulVec_single_one]
       exact (PositivityTheory.UnitaryDecomposition.emb_col _ a).trans (by rw [Pi.single_apply]; exact if_congr Iff.rfl rfl rfl)
     · ext a b
-      rw [mul_apply, ← e.sum_comp]
-      simp [incl, one_apply, eq_comm]
+      rw [Matrix.mul_apply, ← e.sum_comp]
+      simp [incl, Matrix.one_apply, eq_comm]
     · funext a
       simp [incl, zi]
     · simp [GlobalTheory.CompanionTheory.UnitaryFramesMetricPeriods.nsq, Pi.single_apply, apply_ite]
@@ -43,7 +47,7 @@ theorem _root_.PositivityTheory.UnitaryDecomposition.X4.emb : (∀ {n : ℕ} (ε
       obtain ⟨b, rfl⟩ := e.surjective b
       rw [key]
       rcases a with a | a <;> rcases b with b | b <;>
-        simp [GlobalTheory.CompanionTheory.PairingAnalysis.emb, incl, mul_apply, vecMulVec_apply, zi, Pi.single_apply]
+        simp [GlobalTheory.CompanionTheory.PairingAnalysis.emb, incl, Matrix.mul_apply, vecMulVec_apply, zi, Pi.single_apply]
   · simp [GlobalTheory.CompanionTheory.UnitaryFramesMetricPeriods.nsq, colSq]
   · exact ⟨hU.1.1, fun a b => hU.1.2 _ a.2 _ b.2, fun g => hU.2.1 _ g.2, (PositivityTheory.UnitaryDecomposition.uRep_self hU).cont⟩
   · have := hπ.1

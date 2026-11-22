@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.OrderedCechToCatCochainsOneApplyValueAtSubset
+module
+
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.OrderedCechToCatCochainsOneApplyValueAtSubset
+
+@[expose] public section
 
 open NumberField NumberField.mixedEmbedding Matrix MeasureTheory GroundTheory.Automorphic GroundTheory.Automorphic.AutomorphicForm UpperTheory.V.Af.Fin
 open scoped TensorProduct
@@ -50,7 +54,7 @@ theorem UpperTheory.height_blockEmbedding_le :
   unfold AutomorphicForm.height
   simp only [hfin, hinf]
   apply mul_le_mul
-  · apply Finset.prod_le_prod
+  · apply Finset.prod_le_prod₀
     · intro w _
       exact pow_nonneg (locHeight_pos _).le _
     · intro w _
@@ -62,7 +66,7 @@ theorem UpperTheory.height_blockEmbedding_le :
         (by intro x hx; simp [hx]),
       finprod_eq_prod_of_mulSupport_subset _ (s := h1.toFinset ∪ h2.toFinset)
         (by intro x hx; simp [hx])]
-    apply Finset.prod_le_prod
+    apply Finset.prod_le_prod₀
     · intro v _
       exact (locHeight_pos _).le
     · intro v _

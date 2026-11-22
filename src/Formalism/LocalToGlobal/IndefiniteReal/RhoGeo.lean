@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.IndefiniteReal.OneMapEq
-import Formalism.LocalToGlobal.IndefiniteReal.FWTie
+module
+
+public import Formalism.LocalToGlobal.IndefiniteReal.OneMapEq
+public import Formalism.LocalToGlobal.IndefiniteReal.FWTie
+
+@[expose] public section
 
 noncomputable section
 

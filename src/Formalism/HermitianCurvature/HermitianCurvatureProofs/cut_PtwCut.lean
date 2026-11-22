@@ -1,7 +1,11 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimEvT
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLemB
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnCVLocal
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCV
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLimET
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutLemB
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutEnCVLocal
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutERCV
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP
 
@@ -24,13 +28,14 @@ theorem jf_congr_level (Bs : B.RealPlaceData k r Wp Wq) {X Y : B.Mat k r → (Wq
   simp only [B.rho]
   rw [h _ (Formalism.FourierDecayAlt.P.B7.sgs_mem Bs hq hg) (Formalism.FourierDecayAlt.P.JCx1.needs.gf_sgs Bs hq g)]
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 
+attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
 theorem ckOn_inter {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E] {f : B.Mat k r → E} (n : ℕ)
     (hf : B.CkOn ⊤ (B.GV k r) f) (U : Set (B.Mat k r)) : B.CkOn (n : ℕ∞) (U ∩ B.GV k r) f := by
   intro g₀ hg₀
   obtain ⟨V, f', hV, hgV, hf', hff⟩ := hf g₀ hg₀.2
-  exact ⟨V, f', hV, hgV, hf'.of_le (by exact_mod_cast le_top), hff⟩
+  open scoped Matrix.Norms.Elementwise in
+    exact ⟨V, f', hV, hgV, hf'.of_le (by exact_mod_cast le_top), hff⟩
 
 variable [FiniteDimensional ℂ Wp] [FiniteDimensional ℂ Wq]
 
@@ -112,37 +117,6 @@ theorem bigCell_pos (p : KB.Pl P Wp Wq) (q : (Fin P.r → ℂ) × ℂ)
     exact hG'
   · exact absurd rfl hw'
 
-attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace in
-
-theorem pointwise_truncation_locality (p : KB.Pl P Wp Wq) {χ : ℝ → ℝ} (hχ : C6.IsCut0 χ) {F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)}
-    (hF : B.CkOn ⊤ (B.GV P.k P.r) F) (w : List C.Letter) : PtwCut p χ F w := by
-  refine Filter.Eventually.of_forall fun q => ?_
-  by_cases hq : bcWeight P.k P.r (Tz P.k P.r p.T.base.z) (Tz P.k P.r p.T.base.z') q = 0
-  · exact Filter.Eventually.of_forall fun ε => by simp [levelZeroRadialIntegral, hq]
-  obtain ⟨hgG, hpos⟩ := bigCell_pos p q hq
-  filter_upwards [Ioo_mem_nhdsGT hpos] with ε hε
-  have hU : IsOpen {x : B.Mat P.k P.r | ε < Gf P.k P.r p.T.base.z p.T.base.z' x} :=
-    isOpen_lt continuous_const (Formalism.FourierDecayAlt.P.JCx1.contDiff_Gf p.T.base.z p.T.base.z').continuous
-  have he : ∀ x ∈ {x : B.Mat P.k P.r | ε < Gf P.k P.r p.T.base.z p.T.base.z' x} ∩ B.GV P.k P.r,
-      D.cutF p.T.base χ F ε x = F x := by
-    intro x hx
-    unfold D.cutF
-    rw [hχ.2.2 _ ((one_le_div hε.1).2 (le_of_lt hx.1))]
-    simp
-  have hcut := Formalism.FourierDecayAlt.P.JCTx6.Link2.ckOn_cutF p.T.base hχ hF ε
-  have hlev : ∀ x ∈ B.GV P.k P.r, Gf P.k P.r p.T.base.z p.T.base.z' x =
-      Gf P.k P.r p.T.base.z p.T.base.z' (bigCell P.k P.r q.1 (p.T.base.μsec q.2)) →
-      x ∈ {x : B.Mat P.k P.r | ε < Gf P.k P.r p.T.base.z p.T.base.z' x} ∩ B.GV P.k P.r :=
-    fun x hx hGx => ⟨by show ε < _; rw [hGx]; exact hε.2, hx⟩
-  unfold levelZeroRadialIntegral
-  rw [jf_congr_level p.T.base hgG (fun x hx hGx => he x (hlev x hx hGx)),
-    jf_congr_level p.T.base hgG (fun x hx hGx =>
-      fold_congr_open (M.sgn P p.l0) hU hcut hF he w x (hlev x hx hGx))]
-
-theorem limEvT_of_dom (p : KB.Pl P Wp Wq) {χ : ℝ → ℝ} (hχ : C6.IsCut0 χ) {F : B.Mat P.k P.r → (Wq →L[ℂ] Wp)}
-    (hF : B.CkOn ⊤ (B.GV P.k P.r) F) (Y : Finset ℝ) (N : ℕ)
-    (hD : ∀ w, TBB.AdmW P p.l0 Y w → w.length ≤ N → DomCut p χ F w) : LimEvT p χ F Y N :=
-  limEvT_of_cut p hχ hF Y N (fun w _ _ => pointwise_truncation_locality p hχ hF w) hD
 
 end place
 

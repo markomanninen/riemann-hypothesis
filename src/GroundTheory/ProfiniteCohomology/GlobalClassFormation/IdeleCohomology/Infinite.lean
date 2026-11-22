@@ -1,7 +1,12 @@
-import Mathlib
-import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups.InfinitePlaces
-import GroundTheory.GlobalFields.IdeleGroups.LocalHerbrandInfinite
-import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleCohomology.Finite
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.IdeleGroups.SIdeleGroups.InfinitePlaces
+public import GroundTheory.GlobalFields.IdeleGroups.LocalHerbrandInfinite
+public import GroundTheory.ProfiniteCohomology.GlobalClassFormation.IdeleCohomology.Finite
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.ProfCoh
@@ -32,7 +37,7 @@ theorem completionCongr_algebraMap {u u' : InfinitePlace M} (h : u = u') (x : M)
 theorem continuous_infiniteCompletionMap {M' : Type} [Field M'] [NumberField M] [NumberField M']
     (τ : M ≃+* M') (w' : InfinitePlace M') : Continuous (infiniteCompletionMap τ w') := by
   let _ : Algebra M M' := (τ : M →+* M').toAlgebra
-  exact NumberField.LiesOver.continuous_completionMap
+  exact continuous_algebraMap (w'.comap (algebraMap M M')).Completion w'.Completion
 
 end Maps
 
@@ -41,8 +46,8 @@ variable {K L : Type} [Field K] [NumberField K] [Field L] [NumberField L] [Algeb
 
 section Representation
 
-variable (L) in
 
+variable (L) in
 noncomputable abbrev infiniteUnitsAboveRep :
     Representation ℤ Gal(L/K) (∀ w : v.placesOver L, Additive (w.1.Completion)ˣ) :=
   piUnitsRep
@@ -91,11 +96,6 @@ noncomputable def infiniteProjAboveRep : ideleRep K L ⟶ Rep.of (infiniteUnitsA
       rw [infiniteProjAbove_smul]
       rfl⟩
 
-@[simp]
-theorem infiniteProjAboveRep_hom_apply (x : ideleRep K L) (w : v.placesOver L) :
-    (infiniteProjAboveRep v).hom x w = Additive.ofMul (infiniteProjAbove v x.toMul w) :=
-  rfl
-
 noncomputable def infiniteEmbedAboveRep : Rep.of (infiniteUnitsAboveRep L v) ⟶ ideleRep K L :=
   Rep.ofHom ⟨AddMonoidHom.toIntLinearMap
     { toFun := fun y => Additive.ofMul (infiniteEmbedAbove v fun w => (y w).toMul)
@@ -112,12 +112,6 @@ noncomputable def infiniteEmbedAboveRep : Rep.of (infiniteUnitsAboveRep L v) ⟶
       change Additive.ofMul (infiniteEmbedAbove v (σ • fun w => (y w).toMul)) = _
       rw [infiniteEmbedAbove_smul]
       rfl⟩
-
-@[simp]
-theorem infiniteEmbedAboveRep_hom_apply (y : ∀ w : v.placesOver L, Additive (w.1.Completion)ˣ) :
-    (infiniteEmbedAboveRep v).hom y =
-      Additive.ofMul (infiniteEmbedAbove v fun w => (y w).toMul) :=
-  rfl
 
 theorem infiniteEmbedAboveRep_comp_infiniteProjAboveRep :
     infiniteEmbedAboveRep (L := L) v ≫ infiniteProjAboveRep (L := L) v = 𝟙 _ := by
@@ -169,14 +163,14 @@ section Decomposition
 
 variable (w : v.placesOver L)
 
-omit [NumberField K] [NumberField L] in
 
+omit [NumberField K] [NumberField L] in
 theorem mem_stabilizer_iff_smul_eq_infinite (σ : Gal(L/K)) :
     σ ∈ MulAction.stabilizer Gal(L/K) w.1 ↔ σ • w = w := by
   rw [MulAction.mem_stabilizer_iff, Subtype.ext_iff, InfinitePlace.coe_smul_placesOver]
 
-omit [NumberField K] in
 
+omit [NumberField K] in
 theorem infiniteCompletionMap_eq_decomposition (σ : MulAction.stabilizer Gal(L/K) w.1)
     (h : w.1 = w.1.comap (((σ : Gal(L/K)) : L ≃+* L) : L →+* L)) (x : w.1.Completion) :
     infiniteCompletionMap ((σ : Gal(L/K)) : L ≃+* L) w.1 (completionCongr h x) = σ • x := by
@@ -186,6 +180,10 @@ theorem infiniteCompletionMap_eq_decomposition (σ : MulAction.stabilizer Gal(L/
     ((continuous_infiniteCompletionMap _ _).comp (continuous_completionCongr h))
     (continuous_completionRingHomOf σ.2) fun y => by
       rw [completionRingHomOf_coe]
+      have hy (y : WithAbs w.1.1) : (y : w.1.Completion) = algebraMap L w.1.Completion y.ofAbs := by
+        rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply]
+        rfl
+      rw [hy y, hy (withAbsMapOf w.1 (σ : Gal(L/K)) y)]
       change infiniteCompletionMap _ w.1 (completionCongr h (algebraMap L w.1.Completion y.ofAbs)) =
         algebraMap L w.1.Completion (withAbsMapOf w.1 (σ : Gal(L/K)) y).ofAbs
       rw [completionCongr_algebraMap, infiniteCompletionMap_algebraMap, ofAbs_withAbsMapOf]

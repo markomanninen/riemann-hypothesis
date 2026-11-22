@@ -1,19 +1,41 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.ThetaAbsoluteSum
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergOperatorThetaFunctionalMixedSourceMode
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittSourceMixedCoordHeisenbergRestriction
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.InfPartEqZero
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilDatumTransportSourceRationalIsometry
-import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittDecompositionMixedCoordsRankZero
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaRestrictionDownWittTowerSurjective
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierUniquenessOfOpenSubgroup
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsOpenSubgroupHalfCharactersSeparate
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HalfSymplZeroRight
-import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.LatticeFrames.IsQuasiFam
+public import Formalism.LocalToGlobal.IndefiniteReal.OrthogonalComplementCharacterisation
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.ExistsHeightLeTwoMulQuotHeight
+public import Development.AbelianVarietyTheory.Definitions.TwistedInnerProducts.WittDecompSymplInclIsotropicInclAnisotropic
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.TransvectionAction
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.WeilDatumExistence
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.AdjointIsotropicDecomposition
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.HeisenbergOperatorThetaFunctionalMixedSourceMode
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittSourceMixedCoordHeisenbergRestriction
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.InfPartEqZero
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WeilDatumTransportSourceRationalIsometry
+public import Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.WittDecompositionMixedCoordsRankZero
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ThetaRestrictionDownWittTowerSurjective
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.FourierUniquenessOfOpenSubgroup
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsOpenSubgroupHalfCharactersSeparate
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.HalfSymplZeroRight
+public import Development.AbelianVarietyTheory.Proofs.TwistedOperators.InfPartOneSubEInfSmul
+
+namespace I195MixedCoordinates_0e01515b61ee225766e35969
+
+open Formalism.BasicNotions Formalism.BasicNotions.TH
+open Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes
+open Formalism.L2.Theta Formalism.IndefR.Datum GlobalTheory.MixModel MeasureTheory
+attribute [local instance] Formalism.BasicNotions.Host.cmStar
+
+public noncomputable abbrev source
+    {D : D7} {S S₀ : HSp D} {ρ : ℕ} (d : HypDec S S₀ ρ) (T : HSp D)
+    (ψ : AddChar (AF D.host.F) ℂ) (μ : Measure (Mx D T.rank ρ))
+    (𝓕 : Set (Mx D T.rank ρ)) (f : WO S T → ℂ) (x : Mx D T.rank ρ) : WO S₀ T → ℂ :=
+  fun w₀ => ∫ a in 𝓕, heisO ψ S T (a * d.pY)
+    (heisO ψ S T (x * d.pX) (heisO ψ S T (w₀ * d.p0) f)) 0 ∂μ
+
+end I195MixedCoordinates_0e01515b61ee225766e35969
+
+@[expose] public section
 
 open Formalism.BasicNotions Formalism.BasicNotions.TH Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes Formalism.MainNotions.StandardLattice Formalism.L2.Theta Formalism.IndefR.Datum MeasureTheory IsDedekindDomain NumberField Matrix
 open GlobalTheory.MixModel GlobalTheory.MixPer GlobalTheory.Grow
@@ -50,22 +72,24 @@ theorem heisO_zero' (ψ : AddChar (AF D.host.F) ℂ) (S T : HSp D) (f : WO S T �
 theorem exists_mixS_zero {ψ : AddChar (AF D.host.F) ℂ} (hψ : IsStdChar D ψ (-1)) {S S₀ T : HSp D} {ρ : ℕ}
     (d : HypDec S S₀ ρ) {μ : Measure (Mx D T.rank ρ)} {𝓕 : Set (Mx D T.rank ρ)}
     (hμ : IsCovolOne (ratMx D T.rank ρ) μ 𝓕) {f₀ : WO S₀ T → ℂ} (hf₀ : IsThetaFunO ψ S₀ T f₀) :
-    ∃ f, IsThetaFunO ψ S T f ∧ d.mixS T ψ μ 𝓕 f 0 = f₀ := by
+    ∃ f, IsThetaFunO ψ S T f ∧ (_root_.I195MixedCoordinates_0e01515b61ee225766e35969.source d) T ψ μ 𝓕 f 0 = f₀ := by
   rcases Nat.eq_zero_or_pos ρ with rfl | hρ
   · obtain ⟨-, hb, hth, -⟩ := GlobalTheory.WeilSrc.om0_ext0_eq_om_emb0_of_isWeilDatumO D ψ S S₀ T d hψ
     have hc : (fun w => (f₀ ∘ (Equiv.ofBijective _ hb).symm) (d.ext0 T w)) = f₀ := by
       funext w
       exact congrArg f₀ ((Equiv.ofBijective _ hb).symm_apply_apply w)
     refine ⟨f₀ ∘ (Equiv.ofBijective _ hb).symm, (hth _).1 (by rw [hc]; exact hf₀), ?_⟩
+    change I195MixedCoordinates_7149a82cc25e6f9e668c8c61.source d T ψ μ 𝓕 _ 0 = f₀
     rw [(GlobalTheory.Unf.mixRankZero D ψ).1 S S₀ T d μ 𝓕 hμ, hc]
   · obtain ⟨h1, h2, -, -, -, h6, -⟩ := GlobalTheory.Bridge.heis_bridge D ψ S S₀ T ρ d
     obtain ⟨f, hf, hff⟩ := GlobalTheory.TowerSurj.res_surjective D S S₀ T ρ d.e d.i₀ (h1 hρ) ψ hψ μ 𝓕 (h2 ▸ hμ) f₀ hf₀
     refine ⟨f, hf, ?_⟩
+    change I195MixedCoordinates_16b53debd46a2c18720dfcab.source d T ψ μ 𝓕 f 0 = f₀
     rw [h6, map_zero, heisO_zero', hff]
 
-set_option maxHeartbeats 1000000 in
 
-theorem avg_mixS_ne_zero : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ (S S₀ T : HSp D) (ρ : ℕ) (d : HypDec S S₀ ρ) (μ : Measure (Mx D T.rank ρ)) (𝓕 : Set (Mx D T.rank ρ)), IsCovolOne (ratMx D T.rank ρ) μ 𝓕 → ∀ e, IsSplitIdem D e → ∀ ℓ₀ : (WO S₀ T → ℂ) →ₗ[ℂ] ℂ, (∃ f, IsThetaFunO ψ S₀ T f ∧ ℓ₀ f ≠ 0) → ∀ H : AddSubgroup (Mx D T.rank ρ), (∀ x, x ∈ H ↔ ∀ i j, cA D e * x i j = x i j) → ∀ [MeasurableSpace H] [BorelSpace H] (ν : Measure H) [ν.IsAddHaarMeasure], ∃ f, IsThetaFunO ψ S T f ∧ ∫ x : H, ℓ₀ (d.mixS T ψ μ 𝓕 f x.1) ∂ν ≠ 0 := by
+set_option maxHeartbeats 1000000 in
+theorem avg_mixS_ne_zero : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdChar D ψ (-1) → ∀ (S S₀ T : HSp D) (ρ : ℕ) (d : HypDec S S₀ ρ) (μ : Measure (Mx D T.rank ρ)) (𝓕 : Set (Mx D T.rank ρ)), IsCovolOne (ratMx D T.rank ρ) μ 𝓕 → ∀ e, IsSplitIdem D e → ∀ ℓ₀ : (WO S₀ T → ℂ) →ₗ[ℂ] ℂ, (∃ f, IsThetaFunO ψ S₀ T f ∧ ℓ₀ f ≠ 0) → ∀ H : AddSubgroup (Mx D T.rank ρ), (∀ x, x ∈ H ↔ ∀ i j, cA D e * x i j = x i j) → ∀ [MeasurableSpace H] [BorelSpace H] (ν : Measure H) [ν.IsAddHaarMeasure], ∃ f, IsThetaFunO ψ S T f ∧ ∫ x : H, ℓ₀ ((_root_.I195MixedCoordinates_0e01515b61ee225766e35969.source d) T ψ μ 𝓕 f x.1) ∂ν ≠ 0 := by
   intro D ψ hψ S S₀ T ρ d μ 𝓕 hμ e he ℓ₀ ⟨f₀, hf₀, hℓ⟩ H hH mH bH ν hν
   obtain rfl : H = halfMx (cA D e) T.rank ρ := AddSubgroup.ext fun x => hH x
   obtain ⟨f, hf, hmix⟩ := exists_mixS_zero hψ d hμ hf₀
@@ -81,21 +105,25 @@ theorem avg_mixS_ne_zero : ∀ (D : D7) (ψ : AddChar (AF D.host.F) ℂ), IsStdC
     (fun a => by simp only [ZeroMemClass.coe_zero, halfSympl_zero_right, AddChar.map_zero_eq_one])
     (fun t => by simp only [ZeroMemClass.coe_zero, halfSympl_zero_left, AddChar.map_zero_eq_one])
     (fun a b t => by simp only [AddSubgroup.coe_add, halfSympl_add_left, AddChar.map_add_eq_mul])
-    L hL hsep (fun t => ℓ₀ (d.mixS T ψ μ 𝓕 f t.1))
+    L hL hsep (fun t => ℓ₀ ((_root_.I195MixedCoordinates_0e01515b61ee225766e35969.source d) T ψ μ 𝓕 f t.1))
     (Subtype.val ⁻¹' K) ((isClosed_halfMx _ _ _).isClosedEmbedding_subtypeVal.isCompact_preimage hK)
     (fun t ht => by
-      have : d.mixS T ψ μ 𝓕 f t.1 = 0 := by
+      have : (_root_.I195MixedCoordinates_0e01515b61ee225766e35969.source d) T ψ μ 𝓕 f t.1 = 0 := by
         by_contra h
         exact ht (hKs t.1 t.2 h)
       simp only [this, map_zero])
     (fun t l hl => by
       simp only [AddSubgroup.coe_add]
+      change ℓ₀ (I195MixedCoordinates_41a545e47d405c9816345b57.source d T ψ μ 𝓕 f (t.1 + l.1)) =
+        ℓ₀ (I195MixedCoordinates_41a545e47d405c9816345b57.source d T ψ μ 𝓕 f t.1)
       rw [hUinv l.1 (hLU hl) l.2])
     (fun a _ => by
       rw [← hall _ (GlobalTheory.ThetaClosed.isThetaFunO_heisO_all hψ hf (d.extY T a.1))]
       refine congrArg (fun g => @integral _ ℂ _ _ mH ν g) (funext fun t => ?_)
       have := hY t.1 a.1
       simp only at this
+      change ψ (halfSympl T a.1 t.1) * ℓ₀ (I195MixedCoordinates_5a743adb4eaabe3d936622f8.source d T ψ μ 𝓕 f t.1) =
+        ℓ₀ (I195MixedCoordinates_5a743adb4eaabe3d936622f8.source d T ψ μ 𝓕 (heisO ψ S T (d.extY T a.1) f) t.1)
       rw [this, map_smul, smul_eq_mul, symplO_extX_extY])
   apply hℓ
   have := congrFun hφ 0

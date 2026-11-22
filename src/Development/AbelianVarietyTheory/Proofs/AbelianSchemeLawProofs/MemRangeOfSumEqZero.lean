@@ -1,9 +1,13 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.SectionArithmetic
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocal
-import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsGenOfLocalOnBase
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.ExtensionDescent.SecBaseChangeAnySt
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.ValCalc
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.SectionArithmetic
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.DiscreteValuationRings.LBLocal
+public import Development.AbelianVarietyTheory.Proofs.AbelianSchemeLawProofs.ExistsGenOfLocalOnBase
+
+@[expose] public section
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory CartesianMonoidalCategory MonObj AlgebraicGeometry
 open ReciprocityTheory.ChartRestriction.G ReciprocityTheory.ChartRestriction.G.Out ReciprocityTheory.ChartRestriction.G.Semi
@@ -94,12 +98,12 @@ theorem mem_range_of_sum_eq_zero {K R : Type} [Field K] [IsAlgClosed K] [CommRin
     x ∈ κ.range := by
   let p : Polynomial K := ∑ k : Fin n, Polynomial.monomial (k : ℕ) (c k)
   have hp : p ≠ 0 := fun h0 => hc (funext fun k => by
-    have := congrArg (fun q => Polynomial.coeff q k) h0
-    simp only [p, Polynomial.finset_sum_coeff, Polynomial.coeff_monomial, Fin.val_inj,
+    have := congrArg (fun q : Polynomial K => q.coeff k) h0
+    simp only [p, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial, Finsupp.single_apply, Fin.val_inj,
       Finset.sum_ite_eq', Finset.mem_univ, if_true, Polynomial.coeff_zero] at this
     exact this)
   refine (IsAlgClosed.splits p).mem_range_of_isRoot hp ?_
-  rw [Polynomial.IsRoot, Polynomial.eval_map, Polynomial.eval₂_finset_sum]
+  rw [Polynomial.IsRoot, Polynomial.eval_map, Polynomial.eval₂_finsetSum]
   simpa [Polynomial.eval₂_monomial] using h
 
 theorem eq_one_of_forall_pow_dvd :
@@ -182,7 +186,7 @@ theorem eq_one_of_forall_pow_dvd :
       refine Eq.symm ((gs_appLE f _ z ⊤ _ le_top hi _).trans
         ((gs_pull _ (⊤ : (Spec (CommRingCat.of K)).Opens).ι z ⊤ trivial c').trans ?_))
       rw [Category.assoc, morphismRestrict_ι, ← Category.assoc, hf, Over.w]
-    | add p p' h h' => rw [map_add, map_add]; exact add_mem h h'
+    | add p p' h h' => rw [map_add (f := _), map_add (f := _)]; exact add_mem h h'
     | mul_X p j h => rw [map_mul, map_mul, MvPolynomial.eval₂Hom_X']; exact mul_mem h (hrj j)
   obtain ⟨p, hp⟩ := exists_factor f w P.A.hom hk _ hD z hi (fun a => by
     obtain ⟨c, hc⟩ := hall a

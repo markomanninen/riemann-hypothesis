@@ -1,5 +1,9 @@
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermTop
-import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralBoundOfParts
+module
+
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGermTop
+public import Formalism.HermitianCurvature.HermitianCurvatureProofs.IntegralBoundOfParts
+
+@[expose] public section
 
 namespace Formalism.FourierDecayAlt.P.CutBP.GT
 
@@ -75,28 +79,6 @@ theorem np_top_two (p : KB.Pl P Wp Wq) (nn : ℝ → ℝ) (F : B.Mat P.k P.r →
     ring
 
 end place
-
-theorem top_level_fibre : FibreTop := by
-  intro hA Wp Wq _ _ _ _ _ _ P p nn F w Cb hCb hF hw a a' ha ha'
-  have hPS : KB.PStd := Formalism.FourierDecayAlt.P.standard_pairing_of_heads Formalism.FourierDecayAlt.P.radial_head Formalism.FourierDecayAlt.P.head_top
-  set A := C.nAux P.k P.r 0 (fun _ _ => 1) 1 a with hAdef
-  set A' := C.nAux P.k P.r 0 (fun _ _ => 1) 1 a' with hA'def
-  set κ : ℝ := √A * √A' / TBB.normC nn w with hκ
-  constructor
-  · obtain ⟨φ, -, hφi, hφ, -⟩ := hPS hA Wp Wq P p F P.r le_rfl w a a ha ha Cb hCb hF hw
-    refine (hφi.const_mul ((√A * √A / TBB.normC nn w : ℝ) : ℂ)).congr ?_
-    filter_upwards [PBL.ae_ne_zero_complex] with c hc
-    rw [← np_top_two p nn F a a ha ha w c, hφ c hc]
-  · obtain ⟨φ, -, -, hφ, hφs⟩ := hPS hA Wp Wq P p F P.r le_rfl w a a' ha ha' Cb hCb hF hw
-    have h0 := hφs 0
-    simp only [PBASM.waveG_zero_eq_self] at h0
-    have hf0 : ∀ c : ℂ, P5.fsv 0 c = 1 := fun c => by simp [P5.fsv]
-    simp only [hf0, one_mul] at h0
-    rw [TBBx5.li_np p nn F P.r le_rfl w a a' ha ha', TBBx5.wv_nPt p P.r le_rfl a ha,
-      TBBx5.wv_nPt p P.r le_rfl a' ha', ← h0, ← integral_const_mul]
-    refine integral_congr_ae ?_
-    filter_upwards [PBL.ae_ne_zero_complex] with c hc
-    rw [← np_top_two p nn F a a' ha ha' w c, hφ c hc]
 
 end
 

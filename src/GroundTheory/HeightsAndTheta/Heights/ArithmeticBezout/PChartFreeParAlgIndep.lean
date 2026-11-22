@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChartPointSeparable
-import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PFreeParAlgIndep
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.ArithmeticBezout.StatementsChartPointSeparable
+public import GroundTheory.HeightsAndTheta.Heights.VerticalDivisors.PFreeParAlgIndep
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights

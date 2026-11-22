@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.EulerFinOf
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ThetaNormCommutation.LocalComparisonSplitting.EulerFactorLevels.EulerFinOf
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.DefiniteUnitaryClassSetFinite
+
+@[expose] public section
+
 open NumberField IsDedekindDomain Matrix Polynomial Filter
 open GlobalTheory.CuspRep GlobalTheory.PRep Formalism.UG Formalism.BasicNotions GlobalTheory.UnitaryBC Formalism.L2.Host GlobalTheory.BCT
 open scoped Classical
@@ -33,20 +38,10 @@ theorem JR_map (H : Matrix (Fin n) (Fin n) E) :
 def toGLH (H : Matrix (Fin n) (Fin n) E) : HH H →* GL (Fin n) (Af E) :=
   (GeneralLinearGroup.map (AEq (E := E))).comp (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.HR (AFr E) (sg E) H).subtype
 
-theorem toGLH_val (H : Matrix (Fin n) (Fin n) E) (g : HH H) : (toGLH H g).val = g.1.val.map AEq := rfl
-
 theorem continuous_toGLH (H : Matrix (Fin n) (Fin n) E) : Continuous (toGLH H) := by
   have h1 : Continuous (GeneralLinearGroup.map (AEq (E := E)) : GL (Fin n) _ → GL (Fin n) (Af E)) :=
     Continuous.units_map _ (continuous_id.matrix_map continuous_finAdEquiv)
   exact h1.comp continuous_subtype_val
-
-theorem toGLH_mem (H : Matrix (Fin n) (Fin n) E) (g : HH H) :
-    toGLH H g ∈ UJ (conjFin (cc E)) (H.map (algebraMap E (Af E))) := by
-  have hg : cT (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.sigR (AFr E) (sg E)) g.1.val * Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR (AFr E) H * g.1.val =
-      Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.JR (AFr E) H := g.2
-  have h := herm_map (AEq (E := E)) _ _ AEq_sig _ _ hg
-  rw [JR_map] at h
-  exact h
 
 theorem exists_toGLH (H : Matrix (Fin n) (Fin n) E) (y : GL (Fin n) (Af E))
     (hy : y ∈ UJ (conjFin (cc E)) (H.map (algebraMap E (Af E)))) : ∃ t : HH H, toGLH H t = y := by
@@ -67,7 +62,7 @@ theorem toGLH_rat (H : Matrix (Fin n) (Fin n) E) (t : HH H)
   obtain ⟨γ₀, hγ₀, e⟩ := ht
   refine ⟨γ₀, hγ₀, Units.ext (Matrix.ext fun i j => ?_)⟩
   have e' : t.1 = Formalism.UG.bc (Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes.inclR (AFr E)) γ₀ := e.symm
-  change AEq (t.1.val i j) = algebraMap E (Af E) (γ₀.val i j)
+  change AEq (E := E) (t.1.val i j) = algebraMap E (Af E) (γ₀.val i j)
   rw [e']
   exact AEq_inclR _
 
@@ -90,7 +85,8 @@ theorem emb_hform (H : Matrix (Fin n) (Fin n) E) (φ : E →+* ℂ) (x : Fin n �
       star (fun i => φ (x i)) ⬝ᵥ (H.map φ).mulVec (fun i => φ (x i)) := by
   have hs : ∀ z : E, φ ((sg E : E →ₐ[Fr E] E) z) = star (φ z) := fun z =>
     IsCMField.complexEmbedding_complexConj E φ z
-  simp only [hform, map_sum, map_mul, dotProduct, Matrix.mulVec, Finset.mul_sum, Pi.star_apply,
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [hform, map_sum, map_mul, dotProduct, Matrix.mulVec, Finset.mul_sum, Pi.star_apply,
     Matrix.map_apply, mul_assoc]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   erw [hs]
@@ -105,7 +101,11 @@ theorem isTotDef (H : Matrix (Fin n) (Fin n) E) (hp : ∀ τ : E →+* ℂ, (H.m
     IsTotDef (sg E) H := by
   refine ⟨inferInstance, fun ι => Or.inl fun x hx => ?_⟩
   letI : Algebra (Fr E) ℂ := (Complex.ofRealHom.comp ι).toAlgebra
-  let τ : E →ₐ[Fr E] ℂ := IsAlgClosed.lift
+  let τ : E →ₐ[Fr E] ℂ := (by
+    refine @_root_.IsAlgClosed.lift _ _ _ _ _ _ _ _ _ _ _ ?_ ?_ ?_
+    solve_by_elim* (maxDepth := 2) only [*,
+      @_root_.DivisionSemiring.to_moduleIsTorsionFree,
+      @_root_.Algebra.IsIntegral.isAlgebraic, @_root_.inferInstance])
   have he : hform ((sg E : E →ₐ[Fr E] E) : E →+* E) H x x ∈ maximalRealSubfield E := fun φ => by
     have := emb_hform_pos H φ (hp φ) x hx
     exact Complex.conj_eq_iff_im.2 (Complex.pos_iff.1 this).2.symm
@@ -133,7 +133,7 @@ theorem exists_compact_cover (H : Matrix (Fin n) (Fin n) E) (hnd : Formalism.Mai
     toGLH H '' ((fun k => Quotient.out q * k) '' (GlobalTheory.Mass.stdLevel (sg E) H : Set (HH H))),
     isCompact_iUnion fun q => (hK.image (continuous_const.mul continuous_id)).image (continuous_toGLH H), fun g hg => ?_⟩
   obtain ⟨h, rfl⟩ := exists_toGLH H g hg
-  obtain ⟨a, b, ha, hb, e⟩ := DoubleCoset.mk_out_eq_mul (GlobalTheory.Mass.ratIn (AFr E) (sg E) H) (GlobalTheory.Mass.stdLevel (sg E) H) h
+  obtain ⟨a, ha, b, hb, e⟩ := DoubleCoset.mk_out_eq_mul (GlobalTheory.Mass.ratIn (AFr E) (sg E) H) (GlobalTheory.Mass.stdLevel (sg E) H) h
   obtain ⟨γ, hγ, hγe⟩ := toGLH_rat H a⁻¹ (inv_mem ha)
   refine ⟨γ, hγ, _, Set.mem_iUnion.2 ⟨DoubleCoset.mk (GlobalTheory.Mass.ratIn (AFr E) (sg E) H) (GlobalTheory.Mass.stdLevel (sg E) H) h,
     ⟨_, ⟨b⁻¹, inv_mem hb, rfl⟩, rfl⟩⟩, ?_⟩
@@ -141,8 +141,8 @@ theorem exists_compact_cover (H : Matrix (Fin n) (Fin n) E) (hnd : Formalism.Mai
   congr 1
   group
 
-omit [IsCMField E] in
 
+omit [IsCMField E] in
 theorem algebraMap_injective (E : Type) [Field E] [NumberField E] : Function.Injective (algebraMap E (Af E)) := by
   haveI : Nontrivial (Af E) := by
     obtain ⟨P, hP⟩ := Ideal.exists_maximal (𝓞 E)

@@ -1,4 +1,8 @@
-import Formalism.PieriBlockIdeals.BranchingBoundLastGradedOneRow
+module
+
+public import Formalism.PieriBlockIdeals.BranchingBoundLastGradedOneRow
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -24,10 +28,6 @@ def DepthDual : Prop :=
 
 def WtBound : Prop :=
   ∀ (r M : ℕ) (ν μ : Fin r → ℕ), Antitone ν → (∀ a, ν a ≤ M) → nablaWt r ν μ ≠ ⊥ → ∀ a, μ a ≤ M
-
-def ExpTwist : Prop :=
-  ∀ (l r c : ℕ) (ν μ : Fin r → ℕ) (e : ℕ), Antitone ν →
-    (ExpLe l r (fun a => ν a + c) (fun a => μ a + c) e ↔ ExpLe l r ν μ e)
 
 def ExpDual : Prop :=
   ∀ (l r M : ℕ) (ν μ : Fin r → ℕ) (e : ℕ), l.Prime → Antitone ν → (∀ a, ν a ≤ M) → (∀ a, μ a ≤ M) →

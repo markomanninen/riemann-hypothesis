@@ -1,5 +1,9 @@
-import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OnePosOf
-import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+module
+
+public import Formalism.SharpRestriction.GrowthBounds.DualFockLinear.OnePosOf
+public import Formalism.GradedWeylDivisibility.DualWeylDominanceOf
+
+@[expose] public section
 
 open MvPolynomial
 
@@ -40,7 +44,7 @@ theorem rowGen_coeff_zero (K : Type) [CommRing K] (k : ℕ) (a b : Fin k) (f : M
     (rowGen K a b f).coeff 0 = f := by
   induction f using MvPolynomial.induction_on with
   | C r => simp [rowGen, Polynomial.algebraMap_apply, MvPolynomial.algebraMap_eq]
-  | add p q hp hq => rw [map_add, Polynomial.coeff_add, hp, hq]
+  | add p q hp hq => rw [map_add (f := _), Polynomial.coeff_add, hp, hq]
   | mul_X p v hp =>
     rw [map_mul, Polynomial.mul_coeff_zero, hp]
     congr 1
@@ -52,7 +56,7 @@ theorem RE_eq_rowDiv (K : Type) [CommRing K] (k : ℕ) (a b : Fin k) (f : MvPoly
   unfold rowDiv
   induction f using MvPolynomial.induction_on with
   | C r => rw [RE_C]; simp [rowGen, Polynomial.algebraMap_apply, MvPolynomial.algebraMap_eq, Polynomial.coeff_C]
-  | add p q hp hq => rw [RE_add, map_add, Polynomial.coeff_add, hp, hq]
+  | add p q hp hq => rw [RE_add, map_add (f := _), Polynomial.coeff_add, hp, hq]
   | mul_X p v hp =>
     rw [RE_mul, map_mul, Polynomial.mul_coeff_one, rowGen_coeff_zero, rowGen_coeff_zero, hp, RE_X]
     have : (rowGen K a b (X v)).coeff 1 = if v.1 = b then X (a, v.2) else 0 := by

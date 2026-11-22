@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.Columns.TiedCls
-import Formalism.LocalToGlobal.Columns.TiedCH
-import Formalism.LocalToGlobal.HermitianForms.BothLemmas
+module
+
+public import Formalism.LocalToGlobal.Columns.TiedCls
+public import Formalism.LocalToGlobal.Columns.TiedCH
+public import Formalism.LocalToGlobal.HermitianForms.BothLemmas
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Module Matrix
 open scoped TensorProduct
@@ -52,8 +56,8 @@ def LocalLevelIsKOneAtT : Prop :=
           (dualSet (hc.sig : X.E →+* X.E) (1 : Matrix (Fin n) (Fin n) X.E) (baseLb X.E n (Pr.vT u)))),
         (x : Matrix (Fin n) (Fin n) (X.E ⊗[X.F] v.adicCompletion X.F)) *ᵥ y - y ∈ Formalism.L2.Herm.locL v (baseLb X.E n (Pr.vT u)))
 
-include hc hPr in
 
+include hc hPr in
 theorem th_plUnder_vGs (v : HeightOneSpectrum (𝓞 X.F)) :
     v ∈ plUnder X.F Pr.vGs ↔ ((Pr.g 0 : 𝓞 X.F) ∈ v.asIdeal ∨ (Pr.g 1 : 𝓞 X.F) ∈ v.asIdeal) := by
   classical
@@ -78,7 +82,7 @@ theorem th_plUnder_vGs (v : HeightOneSpectrum (𝓞 X.F)) :
     · exact ⟨P, Finset.mem_union_left _ hP, h⟩
     · exact ⟨P, Finset.mem_union_right _ hP, h⟩
 
-variable (c₀ : DiaG X.E (Pr.vT u)) (s : DecoCl n (Pr.vT u) Pr.vGs Λ.grp → DecoSet X.E n (Pr.vT u) Pr.vGs)
+variable (c₀ : DiaG (E := X.E) (ST := Pr.vT u)) (s : DecoCl n (Pr.vT u) Pr.vGs Λ.grp → DecoSet (E := X.E) (n := n) (ST := Pr.vT u) (SG := Pr.vGs))
 
 def levPack₁ (hS : DecoPtSurj hc n (Pr.vT u) Pr.vGs) (hs : ∀ c, decoCls n (Pr.vT u) Pr.vGs Λ.grp (s c) = c)
     (hK : LocalLevelIsKOneAtT hc u Λ) :

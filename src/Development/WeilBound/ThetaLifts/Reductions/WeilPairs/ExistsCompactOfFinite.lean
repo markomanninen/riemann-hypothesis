@@ -1,11 +1,16 @@
-import Mathlib
-import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SplitPlaceSiegelLawDiagonalLagrangianCharacterIm
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitPlaceThetaFunctionVacuumConjugatePlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousPlaceAt
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactShellNsmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalMatricesDiscreteCocompactAdelicMatrixSpa
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfTraceMul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSymplecticTraceFormAlternatingSwap
+module
+
+public import Mathlib
+public import Development.WeilBound.ThetaLifts.Reductions.WeilPairs.SplitPlaceSiegelLawDiagonalLagrangianCharacterIm
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SplitPlaceThetaFunctionVacuumConjugatePlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ContinuousPlaceAt
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCompactShellNsmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.RationalMatricesDiscreteCocompactAdelicMatrixSpa
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EqZeroOfTraceMul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdelicSymplecticTraceFormAlternatingSwap
+
+@[expose] public section
+
 open scoped TensorProduct Matrix
 open NumberField IsDedekindDomain Formalism.MainNotions.GlobalTheoryTheory.GenusMassVolumes MeasureTheory
 open GlobalTheory.WeilM GlobalTheory.LFun GlobalTheory.IndefiniteRowSideFullHecke.WeilTensorModels
@@ -80,7 +85,7 @@ theorem exists_detect {F E : Type} [Field F] [NumberField F] [Field E] [NumberFi
       rw [Finset.sum_eq_single d (fun d' _ hd => by simp [Matrix.single_apply, Ne.symm hd])
         (fun h => absurd (Finset.mem_univ d) h), Matrix.single_apply_same]
     have h2 : algebraMap F (AF F) (1 / 2) + algebraMap F (AF F) (1 / 2) = 1 := by
-      rw [← map_add, show (1 / 2 : F) + 1 / 2 = 1 by norm_num, map_one]
+      rw [← map_add (f := _), show (1 / 2 : F) + 1 / 2 = 1 by norm_num, map_one]
     unfold symplOHF
     rw [GlobalTheory.SymplSkew.symplOF_swap F E σ hσ nS nT JS JT hS hT ξ₀ hσξ (Matrix.single d a (e * z)) y, mul_neg,
       sub_neg_eq_add, ← add_mul, h2, one_mul, symplOF, hh, ← mul_assoc]
@@ -189,8 +194,8 @@ theorem isClosed_conjHalf (e : AEF F E) : IsClosed (conjHalf σ e nS nT : Set (W
   rw [hs]
   exact isClosed_eq hcs continuous_id
 
-variable (σ nS nT) in
 
+variable (σ nS nT) in
 def projH {e : AEF F E} (he : e * e = e) : WOF F E nS nT →+ conjHalf σ e nS nT where
   toFun y := ⟨cAF σ e • y, fun i j => by
     rw [Matrix.smul_apply, smul_eq_mul, ← mul_assoc, ← map_mul, he]⟩

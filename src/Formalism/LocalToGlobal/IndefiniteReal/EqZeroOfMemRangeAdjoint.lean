@@ -1,6 +1,10 @@
-import Mathlib
-import Formalism.LocalToGlobal.IndefiniteReal.CutTuples2
-import Formalism.LocalToGlobal.IndefiniteReal.CxLemmas
+module
+
+public import Mathlib
+public import Formalism.LocalToGlobal.IndefiniteReal.CutTuples2
+public import Formalism.LocalToGlobal.IndefiniteReal.CxLemmas
+
+@[expose] public section
 
 open Module NumberField IsDedekindDomain
 open scoped Matrix ComplexOrder InnerProductSpace
@@ -30,7 +34,8 @@ def uQ (t : Bs.Tup) : Fin ((lv (fc X.zs) b).dQ t) → X.FC t :=
 
 theorem iC_eq_comp (t : Bs.Tup) (c : Fin ((lv (fc X.zs) b).dQ t) → ℂ) :
     X.iC cr b t c = X.Θ t (lin (X.uQ cr b t) c) := by
-  simp only [iC, uQ, lin_apply, map_sum, map_smul]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [iC, uQ, lin_apply, map_sum, map_smul]
 
 theorem lin_uQ_cpt (t : Bs.Tup) (x : Fin ((lv (fc X.zs) b).dQ t) → K) :
     lin (X.uQ cr b t) (cpt Bs.v0.embedding x) = X.jR t (cr.toR X.zs b t x) := by
@@ -38,7 +43,8 @@ theorem lin_uQ_cpt (t : Bs.Tup) (x : Fin ((lv (fc X.zs) b).dQ t) → K) :
     funext i
     simp [Finset.sum_apply, Pi.single_apply]
   conv_rhs => rw [hx]
-  simp only [map_sum, map_smul, LinearMap.map_smulₛₗ, lin_apply, uQ, cpt]
+  set_option synthInstance.maxHeartbeats 100000 in
+    simp only [map_sum, map_smul, LinearMap.map_smulₛₗ, lin_apply, uQ, cpt]
 
 theorem gram_uQ (hIso : X.IsoR cr b) (t : Bs.Tup) :
     Matrix.gram ℂ (X.uQ cr b t) = ((X.nP b : ℝ) : ℂ) • metOf ((lv (fc X.zs) b).XQ t Bs.v0) := by
@@ -58,8 +64,8 @@ theorem lin_uQ_injective (hW : (lv (fc X.zs) b).WF) (hn : 0 < X.nP b) (hIso : X.
 
 end CxData
 
-open CxData in
 
+open CxData in
 theorem cutRows {Bs : DefBase K} {A : DefAmb Bs} {X : CxData A} {fc : DefSub A → DefFace Bs} (cr : Crd A fc)
     (cv : CrdV A) (b : Bool) : X.CutRows cr cv b := by
   intro hW hpos hIso hZ hV0' hRat hDn hUp hB hParts

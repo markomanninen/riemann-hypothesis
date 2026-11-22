@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.SameNormBasic
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.IdealSplit
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBirigidifiedKthRootPullbackBundle
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.SectionDivision
+module
+
+public import Mathlib
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.SameNormBasic
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.AnnihilatorModels.IdealSplit
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBirigidifiedKthRootPullbackBundle
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.FirstCohomology.SectionDivision
+
+@[expose] public section
 
 noncomputable section
 
@@ -20,7 +24,7 @@ variable {p : ℕ} [Fact p.Prime] {D : Datum p} {R : Type} [CommRing R] {b : Bas
 private theorem act_add' (o : Obj b N s) {T : Over S} (g : T ⟶ o.A) (a a' : 𝓞 D.F) :
     g ≫ o.act.act (algebraMap (𝓞 D.F) D.O (a + a')) =
       (g ≫ o.act.act (algebraMap (𝓞 D.F) D.O a)) * (g ≫ o.act.act (algebraMap (𝓞 D.F) D.O a')) := by
-  rw [map_add, o.act.add, MonObj.comp_mul]
+  rw [map_add (f := _), o.act.add, MonObj.comp_mul]
 
 private theorem act_mul' (o : Obj b N s) {T : Over S} (g : T ⟶ o.A) (a a' : 𝓞 D.F) :
     g ≫ o.act.act (algebraMap (𝓞 D.F) D.O (a * a')) =

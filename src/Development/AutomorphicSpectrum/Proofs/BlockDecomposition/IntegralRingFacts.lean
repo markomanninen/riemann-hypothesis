@@ -1,9 +1,14 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ConstantCoeffSurjective
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.ObFacts
-import GroundTheory.PAdicHodge.BStPeriod
-import GroundTheory.PAdicHodge.KerTheta
-import GroundTheory.PAdicHodge.TiltValuation
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.AcrisKummerUnits.ConstantCoeffSurjective
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.WittExactSequences.ObFacts
+public import GroundTheory.PAdicHodge.BStPeriod
+public import GroundTheory.PAdicHodge.KerTheta
+public import GroundTheory.PAdicHodge.TiltValuation
+
+@[expose] public section
+
 set_option backward.isDefEq.respectTransparency false
 
 noncomputable section

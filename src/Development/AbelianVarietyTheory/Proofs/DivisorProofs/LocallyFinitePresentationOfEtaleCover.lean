@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinitePartLePreimageOfClosedFibreSubset
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.FinitePartLePreimageOfClosedFibreSubset
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory Limits
 
@@ -102,9 +106,9 @@ end GlobalTheory.LfpDescent
 
 namespace GlobalTheory
 
+
 open LfpDescent in
 set_option backward.isDefEq.respectTransparency.types false in
-
 theorem locallyOfFinitePresentation_of_etale_surjective_comp_finite_etale :
     ∀ (X Y Z : Scheme.{0}) (h : X ⟶ Y) (f : Y ⟶ Z), Etale h → Surjective h → Etale (h ≫ f) →
       IsFinite (h ≫ f) → IsSeparated f → LocallyOfFiniteType f →

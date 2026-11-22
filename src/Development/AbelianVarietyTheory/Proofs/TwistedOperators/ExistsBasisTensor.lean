@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SemilinearExtensionBases
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.BlockTheory.TwistedDiscreteSeries.SemilinearExtensionBases
+
+@[expose] public section
 
 noncomputable section
 
@@ -78,7 +82,8 @@ theorem carries_of_basis {L L' V V' : Type} [Field L] [Field L'] [AddCommGroup V
   have hspan : ⊤ ≤ Submodule.span L' (Set.range fun i => e (b i)) := by
     rw [← C.span_eq, Submodule.span_le]
     rintro _ ⟨k, rfl⟩
-    rw [← h k, ← b.sum_repr (B k), map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← h k, ← b.sum_repr (B k), map_sum]
     refine Submodule.sum_mem _ fun i _ => ?_
     rw [map_smulₛₗ]
     exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
@@ -114,13 +119,16 @@ theorem semilinearExtension : SemilinearExtension := by
     have hsum : (f : WL) = ∑ j, BK.repr f j • bv j := by
       conv_lhs => rw [← BK.sum_repr f]
       simp only [Submodule.coe_sum, Submodule.coe_smul, hBK]
-    rw [hsum, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [hsum, map_sum]
     simp_rw [hterm]
-    rw [← TensorProduct.tmul_sum, ← map_sum eF.symm, ← TensorProduct.tmul_sum, BK.sum_repr]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [← TensorProduct.tmul_sum, ← map_sum eF.symm, ← TensorProduct.tmul_sum, BK.sum_repr]
   have hext : ∀ e : WL →ₛₗ[emb] K'' ⊗[O] Fm,
       (∀ k, e (bv k) = (1 : K'') ⊗ₜ[O] eF.symm ((1 : K) ⊗ₜ[Ks] BK k)) → IsExt O emb eF e := by
     intro e he ι _ a f
-    rw [map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smulₛₗ, hf e he, TensorProduct.smul_tmul', smul_eq_mul, mul_one]
   have hval : ∀ e : WL →ₛₗ[emb] K'' ⊗[O] Fm, IsExt O emb eF e →

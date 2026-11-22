@@ -1,6 +1,11 @@
-import Mathlib
-import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.UnitaryExtremality.SatPowNonvan
-import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenIsCompactUnitaryIntegralPoints
+module
+
+public import Mathlib
+public import Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.IwahoriFactorisation.StrictDominance.UnitaryExtremality.SatPowNonvan
+public import Development.AbelianVarietyTheory.Proofs.FoundationProofs.IsOpenIsCompactUnitaryIntegralPoints
+
+@[expose] public section
+
 open GlobalTheory.PRep Formalism.UG GlobalTheory.LFun PositivityTheory.SphericalProduct
 open scoped Pointwise
 
@@ -51,7 +56,7 @@ theorem ordL_zpow {ϖ : L}
     rw [h1]
     exact WithZero.coe_ne_zero
   unfold ordL
-  rw [dif_neg hne]
+  rw [dite_eq_right hne]
   have key : WithZero.unzero hne = Multiplicative.ofAdd (-d) :=
     WithZero.coe_injective (by rw [WithZero.coe_unzero, h1])
   rw [key, toAdd_ofAdd, neg_neg]

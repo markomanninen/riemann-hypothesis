@@ -1,7 +1,11 @@
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.AbsNormDiscrIdealOfLe
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.FinrankRingOfIntegers
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.VdEqZeroOfNotLe
-import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsMulDvdUnif
+module
+
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.AbsNormDiscrIdealOfLe
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.FinrankRingOfIntegers
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.VdEqZeroOfNotLe
+public import Formalism.GL3MeanSquares.GenusMeanAsymptotics.UnimodularClassRepresentatives.ExistsMulDvdUnif
+
+@[expose] public section
 
 open NumberField Module
 
@@ -33,7 +37,7 @@ theorem discrIdeal_mono {h : V →ₗ⋆[K] V →ₗ[K] K} {A B : Submodule (�
   exact ⟨x, fun i => hAB (hx i), e⟩
 
 theorem exists_pow_smul {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {M N : Submodule (𝓞 K) V}
-    (hM : Submodule.IsLattice K M) (hN : Submodule.IsLattice K N) :
+    (hM : Submodule.IsLattice K M) (hN : Submodule.IsFullLattice K N) :
     ∃ r : ℕ, ∀ a ∈ 𝔭 ^ r, ∀ y ∈ M, ι a • y ∈ locF 𝔭 N := by
   have hp := h𝔭.isPrime
   obtain ⟨n, hn, hnx⟩ := LocF.exists_zsmul_le hM hN
@@ -117,7 +121,7 @@ theorem card_eq_relIndex {𝔭 : Ideal (𝓞 F)} (h𝔭 : 𝔭.IsMaximal) {M N :
   exact (Nat.card_congr (φ.quotKerEquivOfSurjective hsurj).toEquiv).symm
 
 theorem relIndex_ne_zero {M N : Submodule (𝓞 K) V} (hM : Submodule.IsLattice K M)
-    (hN : Submodule.IsLattice K N) (𝔭 : Ideal (𝓞 F)) :
+    (hN : Submodule.IsFullLattice K N) (𝔭 : Ideal (𝓞 F)) :
     (M ⊓ locF 𝔭 N).toAddSubgroup.relIndex M.toAddSubgroup ≠ 0 := by
   obtain ⟨n, hn, hnx⟩ := LocF.exists_zsmul_le hM hN
   have f1 : Module.Finite (𝓞 K) M := Module.Finite.iff_fg.mpr hM.fg
@@ -136,14 +140,14 @@ theorem relIndex_ne_zero {M N : Submodule (𝓞 K) V} (hM : Submodule.IsLattice 
 
 theorem vd_mul {𝔭 : Ideal (𝓞 F)} (hF : IsFixF K F) [FiniteDimensional K V] (hK : Formalism.HermitianLatticesTheory.IsCMUnram K)
     {h : V →ₗ⋆[K] V →ₗ[K] K} (hs : h.IsSymm) (hd : IsTotPosDef h)
-    {M N : Submodule (𝓞 K) V} (hM : Submodule.IsLattice K M) (hMi : Formalism.HermitianLatticesTheory.IsIntegralLat h M)
-    (hN : Submodule.IsLattice K N) (h𝔭 : 𝔭.IsMaximal) :
+    {M N : Submodule (𝓞 K) V} (hM : Submodule.IsFullLattice K M) (hMi : Formalism.HermitianLatticesTheory.IsIntegralLat h M)
+    (hN : Submodule.IsFullLattice K N) (h𝔭 : 𝔭.IsMaximal) :
     (M ⊓ locF 𝔭 N).toAddSubgroup.relIndex M.toAddSubgroup * Ideal.absNorm 𝔭 ^ vd h M 𝔭 =
       Ideal.absNorm 𝔭 ^ vd h (M ⊓ locF 𝔭 N) 𝔭 := by
   set M'' := M ⊓ locF 𝔭 N with hM''
   set n := M''.toAddSubgroup.relIndex M.toAddSubgroup with hn
-  have hn0 : n ≠ 0 := relIndex_ne_zero hM hN 𝔭
-  obtain ⟨r, hr⟩ := exists_pow_smul h𝔭 hM hN
+  have hn0 : n ≠ 0 := relIndex_ne_zero hM.toIsLattice hN 𝔭
+  obtain ⟨r, hr⟩ := exists_pow_smul h𝔭 hM.toIsLattice hN
   have hle : M'' ≤ M := inf_le_left
   have hnorm := BallB.absNorm_discrIdeal_of_le hK hMi (Module.finBasis K V) n M'' hle rfl hn0
   rw [BrA.discrIdeal_eq_map hF hs M'', BrA.discrIdeal_eq_map hF hs M, BrA.absNorm_map hK hF,

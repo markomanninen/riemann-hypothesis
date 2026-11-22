@@ -1,6 +1,11 @@
-import Mathlib
-import Formalism.LocalRingCardinality.SpanPowerMembership.FmZeroHLatEmpty
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+module
+
+public import Mathlib
+public import Formalism.LocalRingCardinality.SpanPowerMembership.FmZeroHLatEmpty
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+
+@[expose] public section
+
 open Formalism.BasicNotions NumberField
 
 namespace GlobalTheory
@@ -33,11 +38,11 @@ def unitColumnChain (R : Ranks) (ι : Type) [Fintype ι] (hc : ι → HCParam R)
   unf _ _ _ := LinearMap.id
   sSharp i τ := if h : i < R.m then (sExp' R ((hc τ).e ⟨i, h⟩) (i + 1)).num else 0
   sSharp_eq i h τ := by
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     exact unitChain_num_sub_half R _ ((hc τ).e_int _) _
   sDiv i τ := if h : i < R.m then (sExp R ((hc τ).e ⟨i, h⟩) (i + 1)).num else 0
   sDiv_eq i h τ := by
-    rw [dif_pos h]
+    rw [dite_eq_left h]
     exact unitChain_num_sub_half R _ ((hc τ).e_int _) _
 
 end GlobalTheory

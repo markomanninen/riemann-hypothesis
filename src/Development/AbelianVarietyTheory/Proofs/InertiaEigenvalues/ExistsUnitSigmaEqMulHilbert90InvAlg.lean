@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.UnitLemmaGroup
+
+@[expose] public section
 
 noncomputable section
 
@@ -14,11 +18,11 @@ theorem exists_unit_sigma (K : UQ) (B : InvAlg K) (u : B.A) (hu : u * B.σ u = 1
   let b : B.A →+ B.A :=
     { toFun := fun a => a + B.σ a * B.σ u
       map_zero' := by simp
-      map_add' := by intro x y; simp only [map_add]; ring }
+      map_add' := by intro x y; simp only [map_add (f := _)]; ring }
   have hb : ∀ a, b a = a + B.σ a * B.σ u := fun a => rfl
   have hbσ : ∀ a, B.σ (b a) = b a * u := by
     intro a
-    rw [hb, map_add, map_mul, B.σ_σ, B.σ_σ]
+    rw [hb, map_add (f := _), map_mul, B.σ_σ, B.σ_σ]
     linear_combination (-(B.σ a)) * hu
   obtain ⟨x, y, hxy, hne⟩ := K.c_res
   set e : K.E := algebraMap K.O K.E x with he
@@ -38,7 +42,7 @@ theorem exists_unit_sigma (K : UQ) (B : InvAlg K) (u : B.A) (hu : u * B.σ u = 1
     { carrier := {a | b a ∈ m.asIdeal}
       add_mem' := fun {a c} ha hc => by
         change b (a + c) ∈ m.asIdeal
-        rw [map_add]; exact m.asIdeal.add_mem ha hc
+        rw [map_add (f := _)]; exact m.asIdeal.add_mem ha hc
       zero_mem' := by change b 0 ∈ m.asIdeal; rw [map_zero]; exact m.asIdeal.zero_mem
       smul_mem' := fun q a ha => by
         change b (q • a) ∈ m.asIdeal

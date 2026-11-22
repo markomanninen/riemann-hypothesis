@@ -1,6 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.SeamDefs
-import Development.AutomorphicSpectrum.Proofs.BlockDecomposition.LaurentPartialDerivationUnique
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.SeamDefs
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -64,7 +67,8 @@ theorem resRPf_linInd (t : Fin (n + 1) → Rˣ) (ht : AlgebraicIndependent K fun
     rw [← Finset.sum_mul, hg, zero_mul]
   have hpoly : ∑ m ∈ s, MvPolynomial.monomial (e m) (g m) = 0 := by
     apply algebraicIndependent_iff_injective_aeval.1 ht
-    rw [map_sum, map_zero, ← hmul]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_zero, ← hmul]
     refine Finset.sum_congr rfl (fun m hm => ?_)
     rw [he m hm]
     simp only [MvPolynomial.aeval_monomial, map_one, one_mul, Algebra.smul_def]
@@ -76,7 +80,7 @@ theorem resRPf_linInd (t : Fin (n + 1) → Rˣ) (ht : AlgebraicIndependent K fun
     have h1 := hbound m hm j
     have h2 := hbound m' hm' j
     omega
-  have hc := congrArg (MvPolynomial.coeff (e m0)) hpoly
+  have hc := congrArg (AddMonoidAlgebra.coeff · (e m0)) hpoly
   rw [MvPolynomial.coeff_sum, MvPolynomial.coeff_zero, Finset.sum_eq_single m0] at hc
   · simpa [MvPolynomial.coeff_monomial] using hc
   · intro m hm hne

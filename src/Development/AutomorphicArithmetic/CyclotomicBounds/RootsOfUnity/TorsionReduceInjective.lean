@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open NumberField IsDedekindDomain Classical
 
@@ -35,7 +39,8 @@ theorem torsion_reduce_injective (L : Type) [Field L] [NumberField L] (v : Heigh
   apply hw
   rw [← Ideal.Quotient.eq_zero_iff_mem]
   have h := congrArg (Ideal.Quotient.mk v.asIdeal) hsum
-  rw [map_sum, map_zero] at h
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum, map_zero] at h
   simp only [map_pow, hmk, one_pow, Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one] at h
   simpa using h
 

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.ExistsAdj
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.AbelianHeightsDuality.DividedPowerAlgebras.ExistsAdj
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -306,9 +310,7 @@ theorem lift_ext (U : X.affineOpens) {d : ℕ} (t : MvPolynomial (Fin d) R →�
     MvPolynomial.algHom_ext (fun k => h k)
   have key := fe_uniq t.toRingHom ht T.π (nil_ker T) (a.φ : Sec s U.1 →+* T.B) (b.φ : Sec s U.1 →+* T.B)
     (RingHom.ext fun p => AlgHom.congr_fun e1 p) (RingHom.ext fun c => π_eq U a b c)
-  apply Thick.hom_ext
-  intro c
-  exact RingHom.congr_fun key c
+  exact Thick.Hom.ext' (AlgHom.ext fun c => RingHom.congr_fun key c)
 
 theorem exists_coprod (U : Chart s) (S : Thick (dp0 R) s) (hS : InN κ S) (h : ⊤ ≤ S.x ⁻¹ᵁ U.1.1) (n : ℕ)
     (hn : 1 ≤ n) : ∃ (P : Thick (dp0 R) s) (i : S ⟶ P) (j : bas s U.1 ⟶ P), InN κ P ∧ IsLev P.δ n ∧
@@ -326,7 +328,7 @@ theorem exists_coprod (U : Chart s) (S : Thick (dp0 R) s) (hS : InN κ S) (h : �
     (fun k => (jS ≫ i).φ (t (MvPolynomial.X k)) + y k)
     (fun k => by
       simp only []
-      rw [map_add, hyπ, add_zero, hbπ])
+      rw [map_add (f := _), hyπ, add_zero, hbπ])
   refine ⟨P, i, j, hP, hlev, fun V hV φ b => ?_⟩
   have hiψ : ∀ (ψ : P ⟶ V), i ≫ ψ = φ → ∀ x, ψ.φ (i.φ x) = φ.φ x := by
     intro ψ e x
@@ -340,7 +342,7 @@ theorem exists_coprod (U : Chart s) (S : Thick (dp0 R) s) (hS : InN κ S) (h : �
   refine ⟨ψ, ⟨hψ1, ?_⟩, ?_⟩
   · apply lift_ext U.1 t ht
     intro k
-    rw [Thick.comp_φ, hj k, map_add, hψ2]
+    rw [Thick.comp_φ, hj k, map_add (f := _), hψ2]
     simp only [zV]
     rw [Thick.comp_φ jS i, Thick.comp_φ jS φ, hiψ ψ hψ1]
     ring
@@ -349,7 +351,7 @@ theorem exists_coprod (U : Chart s) (S : Thick (dp0 R) s) (hS : InN κ S) (h : �
     refine ⟨h1, fun k => ?_⟩
     have e1 : ψ'.φ (j.φ (t (MvPolynomial.X k))) = b.φ (t (MvPolynomial.X k)) := by
       rw [← Thick.comp_φ, h2]
-    rw [hj k, map_add, Thick.comp_φ jS i, hiψ ψ' h1] at e1
+    rw [hj k, map_add (f := _), Thick.comp_φ jS i, hiψ ψ' h1] at e1
     simp only [zV]
     rw [Thick.comp_φ jS φ, ← e1]
     ring

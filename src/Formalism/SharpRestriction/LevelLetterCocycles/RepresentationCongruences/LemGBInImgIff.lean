@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.ArcLiftingSetup
+
+@[expose] public section
 
 noncomputable section
 
@@ -43,14 +47,11 @@ theorem lemGB_q_unit : IsUnit (algebraMap (LetA O n) W.EE W.q) := by
   obtain ⟨w, hw⟩ := lemGB_q W
   obtain ⟨u, hu⟩ : IsUnit (algebraMap (LetA O n) W.EE (letπ ^ (PD.p - 1))) := by
     rw [map_pow]; exact W.EE_π.pow _
-  haveI := W.EE_complete
-  have hJ : ((PD.p : ℕ) : W.EE) ∈ (⊥ : Ideal W.EE).jacobson := by
-    first
-      | exact IsAdicComplete.le_jacobson_bot _ (Ideal.mem_span_singleton_self _)
-      | exact (IsAdicComplete.le_jacobson_bot (I := Ideal.span {((PD.p : ℕ) : W.EE)}))
-          (Ideal.mem_span_singleton_self _)
-  have h1 := Ideal.mem_jacobson_bot.mp hJ ((↑u⁻¹ : W.EE) * algebraMap (LetA O n) W.EE w)
-  rw [hw, map_add, map_mul, map_natCast, ← hu]
+  have := W.EE_complete
+  have hJ : ((PD.p : ℕ) : W.EE) ∈ Ring.jacobson W.EE :=
+    IsAdicComplete.le_jacobson (Ideal.span {((PD.p : ℕ) : W.EE)}) (Ideal.mem_span_singleton_self _)
+  have h1 := Ring.mem_jacobson_iff.mp hJ ((↑u⁻¹ : W.EE) * algebraMap (LetA O n) W.EE w)
+  rw [hw, map_add (f := _), map_mul, map_natCast, ← hu]
   have he : (u : W.EE) + ((PD.p : ℕ) : W.EE) * algebraMap (LetA O n) W.EE w =
       u * (((PD.p : ℕ) : W.EE) * ((↑u⁻¹ : W.EE) * algebraMap (LetA O n) W.EE w) + 1) := by
     linear_combination (-(((PD.p : ℕ) : W.EE) * algebraMap (LetA O n) W.EE w)) * u.mul_inv
@@ -93,7 +94,7 @@ theorem lemG_units (hcase : Formalism.MainNotions.LiftingTheory.CaseA W) (hP9 : 
     exact le_trans (le_min (by rw [hvp]; exact h01.le) (le_of_eq hv1.symm)) (AddValuation.map_add v _ _)
   have hle : v ((PD.p : LL) - 1) ≤ 0 := by
     by_contra hlt
-    push_neg at hlt
+    push Not at hlt
     have hm := AddValuation.map_add v ((PD.p : LL) - 1) (-(PD.p : LL))
     rw [show ((PD.p : LL) - 1) + (-(PD.p : LL)) = -1 by ring, hv1, AddValuation.map_neg, hvp] at hm
     exact absurd hm (not_le.mpr (lt_min hlt h01))
@@ -199,7 +200,8 @@ theorem qA_mem_AΔ (hcase : Formalism.MainNotions.LiftingTheory.CaseA W) (hP9 : 
   have h1 : ∀ δ' ∈ W.DelF, W.γ₀ δ' W.π₀₁ = W.π₀₁ := by
     intro δ' hδ'
     simp only [LocWach.π₀₁]
-    rw [map_add, map_sub, map_one, map_natCast, map_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_add (f := _), map_sub, map_one, map_natCast, map_sum]
     congr 1
     refine Finset.sum_equiv (Equiv.mulLeft δ') (fun δ => ⟨fun h => mul_mem_delF W hδ' h, fun h => ?_⟩)
       (fun δ _ => ?_)
@@ -260,7 +262,8 @@ theorem lemGB_DelF_inv {δ : W.Gam} (h : δ ∈ W.DelF) : δ⁻¹ ∈ W.DelF := 
 
 theorem lemGB_sum_inv (T : LocLat G Qp LL O) (x : W.DD T) (δ' : W.Gam) (h' : δ' ∈ W.DelF) :
     W.γD T δ' (∑ δ ∈ W.DelF, W.γD T δ x) = ∑ δ ∈ W.DelF, W.γD T δ x := by
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   have hm : ∀ δ, W.γD T δ' (W.γD T δ x) = W.γD T (δ' * δ) x := by
     intro δ
     exact (W.γD_mul T δ' δ x).symm
@@ -287,7 +290,8 @@ theorem inImg_of_Nimg (hΔ : IsUnit ((W.DelF.card : ℕ) : O)) {T₁ T₂ : LocL
         | (rw [W.map_γ]; exact hzΔ δ hδ)
         | exact W.map_γ
     have hmapS : W.map F (∑ δ ∈ W.DelF, W.γD T₁ δ y) = ((W.DelF.card : ℕ) : O) • W.map F y := by
-      rw [map_sum, Finset.sum_congr rfl hfix, Finset.sum_const]
+      set_option synthInstance.maxHeartbeats 100000 in
+        rw [map_sum, Finset.sum_congr rfl hfix, Finset.sum_const]
       exact (Nat.cast_smul_eq_nsmul O _ _).symm
     have hc : W.map F ((↑u⁻¹ : O) • ∑ δ ∈ W.DelF, W.γD T₁ δ y) =
         (↑u⁻¹ : O) • W.map F (∑ δ ∈ W.DelF, W.γD T₁ δ y) := by

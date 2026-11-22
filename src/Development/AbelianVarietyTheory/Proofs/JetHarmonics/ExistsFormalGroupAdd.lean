@@ -1,9 +1,13 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UwEllipticFlow
-import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CpTransportedTaylorSeriesInChartRingHomLaws
-import Development.AbelianVarietyTheory.BlockTheory.JetGauges.NodalSeriesPeriods
-import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.NatCastMulCoeffOfPderivEq
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Jets.CmLatticeCommutatorPairingPowEqOneOfGoodLift
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.UwEllipticFlow
+public import Development.AbelianVarietyTheory.Proofs.JetHarmonics.CpTransportedTaylorSeriesInChartRingHomLaws
+public import Development.AbelianVarietyTheory.BlockTheory.JetGauges.NodalSeriesPeriods
+public import Development.AbelianVarietyTheory.Proofs.CovolumeBounds.NatCastMulCoeffOfPderivEq
+
+@[expose] public section
 
 noncomputable section
 
@@ -52,7 +56,7 @@ theorem der_eqn {D : Derivation R A A} {W : WeierstrassCurve A} (hD : Const D W)
     (h : eqn W u w = 0) : fu W u w * D w = fw W u w * D u := by
   obtain ⟨h1, h2, h3, h4, h6⟩ := hD
   have := congrArg D h
-  simp only [eqn, map_add, map_sub, Derivation.leibniz, Derivation.leibniz_pow, h1, h2, h3, h4, h6,
+  simp only [eqn, map_add (f := _), map_sub, Derivation.leibniz, Derivation.leibniz_pow, h1, h2, h3, h4, h6,
     smul_eq_mul, nsmul_eq_mul, map_zero] at this
   simp only [fu, fw]
   push_cast at this
@@ -86,7 +90,7 @@ theorem third_flow [IsDomain A] {D : Derivation R A A} {W : WeierstrassCurve A} 
   have e₁ : D (l * u₁ + n) = 0 := by
     apply mul_left_cancel₀ j₁
     rw [der_eqn hD h₁, d₁, mul_zero, mul_zero]
-  simp only [map_add, Derivation.leibniz, smul_eq_mul, d₀, d₁] at e₀ e₁
+  simp only [map_add (f := _), Derivation.leibniz, smul_eq_mul, d₀, d₁] at e₀ e₁
   have hl : D l = k3 W l * (u₀ - u₃) := by
     apply mul_left_cancel₀ (sub_ne_zero.2 hne)
     linear_combination e₀ - e₁ + (third_eqn h₀ h₁ hne h₃).2
@@ -94,18 +98,18 @@ theorem third_flow [IsDomain A] {D : Derivation R A A} {W : WeierstrassCurve A} 
     rw [← hl]; linear_combination e₁
   obtain ⟨h1, h2, h3, h4, h6⟩ := hD
   have hk3 : D (k3 W l) = (W.a₂ + 2 * W.a₄ * l + 3 * W.a₆ * l ^ 2) * D l := by
-    simp only [k3, map_add, Derivation.leibniz, Derivation.leibniz_pow, h2, h4, h6,
+    simp only [k3, map_add (f := _), Derivation.leibniz, Derivation.leibniz_pow, h2, h4, h6,
       smul_eq_mul, nsmul_eq_mul, Derivation.map_one_eq_zero]
     push_cast
     ring
   have hk2 : D (k2 W l n) = (W.a₁ + 2 * W.a₃ * l + 2 * W.a₄ * n + 6 * W.a₆ * l * n) * D l +
       (W.a₂ + 2 * W.a₄ * l + 3 * W.a₆ * l ^ 2) * D n := by
-    simp only [k2, map_add, Derivation.leibniz, Derivation.leibniz_pow, h1, h2, h3, h4, h6,
+    simp only [k2, map_add (f := _), Derivation.leibniz, Derivation.leibniz_pow, h1, h2, h3, h4, h6,
       smul_eq_mul, nsmul_eq_mul, der_two, der_three]
     push_cast
     ring
   have := congrArg D h₃
-  simp only [map_add, map_sub, map_neg, Derivation.leibniz, smul_eq_mul, d₀, d₁, hk3, hk2, hl, hn] at this
+  simp only [map_add (f := _), map_sub, map_neg, Derivation.leibniz, smul_eq_mul, d₀, d₁, hk3, hk2, hl, hn] at this
   apply mul_left_cancel₀ hk
   generalize k3 W l = κ at *
   simp only [fu] at *
@@ -152,6 +156,8 @@ end Algebra
 section Series
 
 open MvPowerSeries
+
+local notation:max "pderiv" r:arg i:arg => MvPowerSeries.pderiv (R := r) i
 
 variable {R : Type} [CommRing R] {σ : Type}
 
@@ -238,7 +244,7 @@ theorem exists_law [IsDomain R] (W : WeierstrassCurve R) :
     (a := 1 - V.a₁ * X 1 - V.a₂ * X 1 ^ 2 - V.a₃ * (w 0 + w 1) - V.a₄ * X 1 * (w 0 + w 1)
       - V.a₆ * (w 0 ^ 2 + w 0 * w 1 + w 1 ^ 2))
     (b := X 0 ^ 2 + X 0 * X 1 + X 1 ^ 2 + V.a₁ * w 0 + V.a₂ * (X 0 + X 1) * w 0 + V.a₄ * w 0 ^ 2)
-    (by simp [hw0]) (by simp only [map_add, map_mul, map_pow, hw0, constantCoeff_X]; ring)
+    (by simp [hw0]) (by simp only [map_add (f := _), map_mul, map_pow, hw0, constantCoeff_X]; ring)
   have hsl : w 0 - w 1 = l * (X 0 - X 1) := by
     have := eqn_sub (hwe 0) (hwe 1)
     rw [← hl] at this
@@ -351,10 +357,10 @@ theorem log_deriv {W : WeierstrassCurve k} {U V ℓ : PowerSeries k} {c : k}
     (hℓ : PowerSeries.constantCoeff ℓ = 0)
     (hUℓ : PowerSeries.subst ℓ U = PowerSeries.X (R := k))
     (he : eqn (W.map PowerSeries.C) U V = 0)
-    (hd : PowerSeries.derivative k U = PowerSeries.C c * fu (W.map PowerSeries.C) U V)
+    (hd : PowerSeries.derivative (R := k) U = PowerSeries.C c * fu (W.map PowerSeries.C) U V)
     {s t : MvPowerSeries σ k} (hs : constantCoeff s = 0) (ht : constantCoeff t = 0)
     (hst : eqn (up σ W) s t = 0) :
-    PowerSeries.subst s (PowerSeries.derivative k ℓ) * (C c * fu (up σ W) s t) = 1 := by
+    PowerSeries.subst s (PowerSeries.derivative (R := k) ℓ) * (C c * fu (up σ W) s t) = 1 := by
   have Hs := PowerSeries.HasSubst.of_constantCoeff_zero hs
   have Hℓ := PowerSeries.HasSubst.of_constantCoeff_zero' hℓ
   have hg : constantCoeff (PowerSeries.subst s ℓ) = 0 :=
@@ -367,7 +373,7 @@ theorem log_deriv {W : WeierstrassCurve k} {U V ℓ : PowerSeries k} {c : k}
   have eV : PowerSeries.subst (PowerSeries.subst s ℓ) V = t :=
     eqn_unique hs (PowerSeries.constantCoeff_subst_eq_zero hg _ hV) ht e1.symm hst
   rw [eU, eV] at e2
-  have d1 := congrArg (PowerSeries.derivative k) hUℓ
+  have d1 := congrArg (PowerSeries.derivative (R := k)) hUℓ
   rw [PowerSeries.derivative_subst Hℓ, PowerSeries.derivative_X] at d1
   have d2 := congrArg (PowerSeries.subst s) d1
   rw [PowerSeries.subst_mul Hs, psubst_psubst hs hℓ, hd, PowerSeries.subst_mul Hg, e2,
@@ -380,11 +386,11 @@ theorem log_law [IsAddTorsionFree k] {W : WeierstrassCurve k} {U V ℓ : PowerSe
     (hℓ : PowerSeries.constantCoeff ℓ = 0)
     (hUℓ : PowerSeries.subst ℓ U = PowerSeries.X (R := k))
     (he : eqn (W.map PowerSeries.C) U V = 0)
-    (hd : PowerSeries.derivative k U = PowerSeries.C c * fu (W.map PowerSeries.C) U V)
+    (hd : PowerSeries.derivative (R := k) U = PowerSeries.C c * fu (W.map PowerSeries.C) U V)
     {F G : MvPowerSeries (Fin 2) k} {w : Fin 2 → MvPowerSeries (Fin 2) k}
     (hF : constantCoeff F = 0) (hG : constantCoeff G = 0) (hFG : eqn (up _ W) F G = 0)
     (hw : ∀ i, constantCoeff (w i) = 0 ∧ eqn (up _ W) (X i) (w i) = 0 ∧
-        fu (up _ W) (X i) (w i) * pderiv k i F = fu (up _ W) F G) :
+        fu (up _ W) (X i) (w i) * pderiv (R := k) i F = fu (up _ W) F G) :
     PowerSeries.subst F ℓ = PowerSeries.subst (X 0 : MvPowerSeries (Fin 2) k) ℓ +
       PowerSeries.subst (X 1 : MvPowerSeries (Fin 2) k) ℓ := by
   have HX : ∀ i, PowerSeries.HasSubst (X i : MvPowerSeries (Fin 2) k) := fun i =>
@@ -393,19 +399,19 @@ theorem log_law [IsAddTorsionFree k] {W : WeierstrassCurve k} {U V ℓ : PowerSe
   · have a1 := log_deriv hV hℓ hUℓ he hd hF hG hFG
     have a2 := log_deriv hV hℓ hUℓ he hd (constantCoeff_X i) (hw i).1 (hw i).2.1
     have a3 := (hw i).2.2
-    have a4 : pderiv k i (PowerSeries.subst (X 0 : MvPowerSeries (Fin 2) k) ℓ +
+    have a4 : pderiv (R := k) i (PowerSeries.subst (X 0 : MvPowerSeries (Fin 2) k) ℓ +
       PowerSeries.subst (X 1 : MvPowerSeries (Fin 2) k) ℓ) =
-        PowerSeries.subst (X i : MvPowerSeries (Fin 2) k) (PowerSeries.derivative k ℓ) := by
-      rw [map_add, GlobalTheory.FormalCalc.pderiv_powerSeries_subst (HX 0),
+        PowerSeries.subst (X i : MvPowerSeries (Fin 2) k) (PowerSeries.derivative (R := k) ℓ) := by
+      rw [map_add (f := _), GlobalTheory.FormalCalc.pderiv_powerSeries_subst (HX 0),
         GlobalTheory.FormalCalc.pderiv_powerSeries_subst (HX 1)]
       fin_cases i <;> simp [pderiv_X_of_ne]
     rw [id, a4, GlobalTheory.FormalCalc.pderiv_powerSeries_subst (PowerSeries.HasSubst.of_constantCoeff_zero hF)]
-    set p := PowerSeries.subst F (PowerSeries.derivative k ℓ)
-    set r := PowerSeries.subst (X i : MvPowerSeries (Fin 2) k) (PowerSeries.derivative k ℓ)
-    linear_combination r * a1 - p * pderiv k i F * a2 + p * r * C c * a3
+    set p := PowerSeries.subst F (PowerSeries.derivative (R := k) ℓ)
+    set r := PowerSeries.subst (X i : MvPowerSeries (Fin 2) k) (PowerSeries.derivative (R := k) ℓ)
+    linear_combination r * a1 - p * pderiv (R := k) i F * a2 + p * r * C c * a3
   · have : α = 0 := Finsupp.ext hα
     subst this
-    simp only [coeff_zero_eq_constantCoeff_apply, map_add]
+    simp only [coeff_zero_eq_constantCoeff_apply, map_add (f := _)]
     rw [PowerSeries.constantCoeff_subst_eq_zero hF _ hℓ,
       PowerSeries.constantCoeff_subst_eq_zero (constantCoeff_X 0) _ hℓ,
       PowerSeries.constantCoeff_subst_eq_zero (constantCoeff_X 1) _ hℓ, add_zero]
@@ -420,7 +426,7 @@ theorem exists_formalGroup {R k : Type} [CommRing R] [IsDomain R] [Field k] [Cha
     (hφ : Function.Injective φ) (W : WeierstrassCurve R) {U V : PowerSeries k} {c : k} (hc : c ≠ 0)
     (hU : PowerSeries.constantCoeff U = 0) (hV : PowerSeries.constantCoeff V = 0)
     (he : eqn ((W.map φ).map PowerSeries.C) U V = 0)
-    (hd : PowerSeries.derivative k U = PowerSeries.C c * fu ((W.map φ).map PowerSeries.C) U V) :
+    (hd : PowerSeries.derivative (R := k) U = PowerSeries.C c * fu ((W.map φ).map PowerSeries.C) U V) :
     ∃ F : FormalGroup R,
       subst ![PowerSeries.subst (X 0 : MvPowerSeries (Fin 2) k) U,
         PowerSeries.subst (X 1 : MvPowerSeries (Fin 2) k) U] (map φ F.toPowerSeries) =
@@ -456,7 +462,7 @@ theorem exists_formalGroup {R k : Type} [CommRing R] [IsDomain R] [Field k] [Cha
     obtain ⟨a1, -, a3⟩ := hw i
     have := congrArg constantCoeff a3
     rw [map_mul, cc_fu (constantCoeff_X i) a1, cc_fu hF hG, one_mul,
-      ← coeff_zero_eq_constantCoeff_apply, coeff_pderiv] at this
+      ← coeff_zero_eq_constantCoeff_apply, coeff_pderiv (R := R)] at this
     simpa using this
   have hinj : Function.Injective (map φ : MvPowerSeries (Fin 3) R → MvPowerSeries (Fin 3) k) := by
     intro a b h
@@ -487,6 +493,8 @@ section Model
 open PowerSeries GlobalTheory.MomOne
 open scoped ComplexConjugate BigOperators Topology
 
+local notation:max "derivative" r:arg => PowerSeries.derivative (R := r)
+
 def anRing : Subring (ℂ → ℂ) where
   carrier := {f | AnalyticAt ℂ f 0}
   mul_mem' ha hb := AnalyticAt.mul ha hb
@@ -507,11 +515,17 @@ variable {q : ℕ} [Fact q.Prime]
 def tayHom (ι : ℂ ≃+* ℂ_[q]) : anRing →+* ℂ_[q]⟦X⟧ where
   toFun f := hat ι X f
   map_one' := by
-    exact ((TaylorRead.hat_laws q ι X constantCoeff_X).2.1 1).trans (by simp)
-  map_mul' a b := ((TaylorRead.hat_laws q ι X constantCoeff_X).1 a b a.2 b.2).2.1
+    change hat ι X (fun _ => (1 : ℂ)) = 1
+    simp [hat, X_subst, TaylorRead.tay_const]
+  map_mul' a b := by
+    change hat ι X (fun z => a.val z * b.val z) = hat ι X a * hat ι X b
+    simp only [hat, X_subst, TaylorRead.tay_mul a.2 b.2, map_mul]
   map_zero' := by
-    exact ((TaylorRead.hat_laws q ι X constantCoeff_X).2.1 0).trans (by simp)
-  map_add' a b := ((TaylorRead.hat_laws q ι X constantCoeff_X).1 a b a.2 b.2).1
+    change hat ι X (fun _ => (0 : ℂ)) = 0
+    simp [hat, X_subst, TaylorRead.tay_const]
+  map_add' a b := by
+    change hat ι X (fun z => a.val z + b.val z) = hat ι X a + hat ι X b
+    simp only [hat, X_subst, TaylorRead.tay_add a.2 b.2, map_add]
 
 theorem series_flow (M : Mdl q) (h : M.Ok) :
     constantCoeff (hat M.ι X M.u) = 0 ∧ constantCoeff (hat M.ι X M.w) = 0 ∧
@@ -519,9 +533,16 @@ theorem series_flow (M : Mdl q) (h : M.Ok) :
     derivative ℂ_[q] (hat M.ι X M.u) = C (M.ι M.c) * fu (M.W.map C) (hat M.ι X M.u) (hat M.ι X M.w) := by
   obtain ⟨-, -, -, -, u0, w0, -, -, hs⟩ := uw_elliptic_flow q M h
   obtain ⟨au, aw, -, -, -, hev⟩ := hs 0 (Or.inl M.L.lattice.zero_mem)
-  obtain ⟨l1, l2, -, l4, l5, -⟩ := TaylorRead.hat_laws q M.ι X constantCoeff_X
   set V : WeierstrassCurve anRing := M.W.map (anConst.comp (M.ι.symm : ℂ_[q] →+* ℂ)) with hV
-  have hc : ∀ c, tayHom M.ι (anConst c) = C (M.ι c) := l2
+  have hc (c : ℂ) : tayHom M.ι (anConst c) = C (M.ι c) := by
+    change hat M.ι X (fun _ => c) = C (M.ι c)
+    simp only [hat, X_subst, TaylorRead.tay_const, map_C]
+    rfl
+  have hcc (f : ℂ → ℂ) : constantCoeff (hat M.ι X f) = M.ι (f 0) := by
+    rw [hat, X_subst, ← coeff_zero_eq_constantCoeff_apply, coeff_map]
+    simp [tay]
+  have hcongr {f g : ℂ → ℂ} (hfg : f =ᶠ[𝓝 0] g) : hat M.ι X f = hat M.ι X g := by
+    simp only [hat, TaylorRead.tay_congr hfg]
   have hmap : V.map (tayHom M.ι) = M.W.map C := by
     rw [hV, WeierstrassCurve.map_map]
     congr 1
@@ -530,17 +551,24 @@ theorem series_flow (M : Mdl q) (h : M.Ok) :
   have e1 := map_eqn (tayHom M.ι) V ⟨M.u, au⟩ ⟨M.w, aw⟩
   have e2 := map_fu (tayHom M.ι) V ⟨M.u, au⟩ ⟨M.w, aw⟩
   rw [hmap] at e1 e2
-  refine ⟨by rw [l4, u0, map_zero], by rw [l4, w0, map_zero], ?_, ?_⟩
+  refine ⟨by rw [hcc, u0, map_zero], by rw [hcc, w0, map_zero], ?_, ?_⟩
   · refine e1.symm.trans (Eq.trans ?_ (map_zero (tayHom M.ι)))
-    refine (l1 _ _ (eqn V ⟨M.u, au⟩ ⟨M.w, aw⟩).2 (0 : anRing).2).2.2.1 ?_
-    filter_upwards [nhdsWithin_le_nhds hev] with z hz
+    apply hcongr
+    filter_upwards [hev] with z hz
     have := hz.1
     simp [eqn, hV, anConst]
     linear_combination -this
-  · rw [l5 _ au, derivative_X, one_mul, ← hc]
+  · have hd : derivative ℂ_[q] (hat M.ι X M.u) = hat M.ι X (deriv M.u) := by
+      ext n
+      simp only [hat, X_subst, coeff_derivative, coeff_map, tay, coeff_mk,
+        iteratedDeriv_succ', Nat.factorial_succ, map_div₀, map_natCast]
+      push_cast
+      have hn : (n + 1 : ℂ_[q]) ≠ 0 := by exact_mod_cast n.succ_ne_zero
+      field_simp
+    rw [hd, ← hc]
     refine Eq.trans ?_ ((map_mul _ _ _).trans (congrArg _ e2))
-    refine (l1 _ _ au.deriv (anConst M.c * fu V ⟨M.u, au⟩ ⟨M.w, aw⟩).2).2.2.1 ?_
-    filter_upwards [nhdsWithin_le_nhds hev] with z hz
+    apply hcongr
+    filter_upwards [hev] with z hz
     exact hz.2.1
 
 theorem exists_formalGroup_add : ∀ (q : ℕ) [Fact q.Prime] (M : Mdl q), M.Ok → IsAlgebraic ℚ M.W.a₁ → IsAlgebraic ℚ M.W.a₂ → IsAlgebraic ℚ M.W.a₃ → IsAlgebraic ℚ M.W.a₄ → IsAlgebraic ℚ M.W.a₆ → ∃ F : FormalGroup 𝓞_ℂ_[q], (∃ K : IntermediateField ℚ_[q] ℂ_[q], FiniteDimensional ℚ_[q] K ∧ ∀ m : Fin 2 →₀ ℕ, ((MvPowerSeries.coeff m F.toPowerSeries : 𝓞_ℂ_[q]) : ℂ_[q]) ∈ K) ∧ MvPowerSeries.subst (![PowerSeries.subst (MvPowerSeries.X 0 : MvPowerSeries (Fin 2) ℂ_[q]) (PowerSeries.map (M.ι : ℂ →+* ℂ_[q]) (tay M.u)), PowerSeries.subst (MvPowerSeries.X 1 : MvPowerSeries (Fin 2) ℂ_[q]) (PowerSeries.map (M.ι : ℂ →+* ℂ_[q]) (tay M.u))] : Fin 2 → MvPowerSeries (Fin 2) ℂ_[q]) (MvPowerSeries.map (algebraMap 𝓞_ℂ_[q] ℂ_[q]) F.toPowerSeries) = PowerSeries.subst (MvPowerSeries.X 0 + MvPowerSeries.X 1 : MvPowerSeries (Fin 2) ℂ_[q]) (PowerSeries.map (M.ι : ℂ →+* ℂ_[q]) (tay M.u)) := by

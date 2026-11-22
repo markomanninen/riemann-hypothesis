@@ -1,7 +1,11 @@
-import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.RightOnto
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFactorPureTensorComponentAtPlace
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantFinprodSchwartzBruhatFiniteAdel
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportFinprodSchwartzBruhatFiniteAdel
+module
+
+public import Development.WeilBound.CoreStatements.LocallyConstantCoinvariants.RightOnto
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFactorPureTensorComponentAtPlace
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsLocallyConstantFinprodSchwartzBruhatFiniteAdel
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasCompactSupportFinprodSchwartzBruhatFiniteAdel
+
+@[expose] public section
 
 noncomputable section
 
@@ -112,7 +116,7 @@ theorem action_uniqueness : ActsUniq := by
           simp [hψ]
         · congr 1
           funext i
-          rw [Pi.add_apply, map_add, hz_fin w hw i, add_zero]
+          rw [Pi.add_apply, map_add (f := _), hz_fin w hw i, add_zero]
       show f (fun i => evI F ((x + z) i)) * ∏ᶠ w, ψ w (fun i => evFin F w ((x + z) i)) =
         f (fun i => evI F (x i)) * ∏ᶠ w, ψ w (fun i => evFin F w (x i))
       rw [finprod_congr hP]

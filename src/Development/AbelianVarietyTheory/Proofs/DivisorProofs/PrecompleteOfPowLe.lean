@@ -1,8 +1,12 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalEnd
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.MumfordConstruction
-import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalEnd
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.ToroidalCompactification.UniformisationConclusion
+public import Development.AbelianVarietyTheory.Definitions.Degenerations.AdmissibleBaseOfCompleteDvr
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.HeightTheory.FiniteAlgebraLocalCompletion
+
+@[expose] public section
 
 noncomputable section
 
@@ -18,13 +22,14 @@ theorem isLocalHom_of_finite {R R₂ V : Type*} [CommRing R] [IsLocalRing R] [Co
   haveI : Algebra.IsIntegral R R₂ := Algebra.IsIntegral.of_finite R R₂
 
   have hc : (maximalIdeal V).comap (ψ.comp ρ) = maximalIdeal R :=
-    ((IsLocalRing.local_hom_TFAE (ψ.comp ρ)).out 0 4).mp h
+    ((IsLocalRing.local_hom_tfae (ψ.comp ρ)).out 1 5).mp h
   have hP : ((maximalIdeal V).comap ψ).IsMaximal := by
-    apply Ideal.isMaximal_of_isIntegral_of_isMaximal_comap (R := R)
+    apply Ideal.isMaximal_of_isIntegral_of_isMaximal_under (R := R)
     have hc' : ((maximalIdeal V).comap ψ).comap (algebraMap R R₂) = maximalIdeal R := hc
+    change (((maximalIdeal V).comap ψ).comap (algebraMap R R₂)).IsMaximal
     rw [hc']
     infer_instance
-  exact ((IsLocalRing.local_hom_TFAE ψ).out 0 4).mpr (IsLocalRing.eq_maximalIdeal hP)
+  exact ((IsLocalRing.local_hom_tfae ψ).out 1 5).mpr (IsLocalRing.eq_maximalIdeal hP)
 
 theorem exists_extension : ∀ (R R₂ W : Type) [CommRing R] [IsDomain R] [IsLocalRing R] [CommRing R₂] [IsDomain R₂]
     [IsLocalRing R₂] [CommRing W] [IsDomain W] [IsLocalRing W], GlobalTheory.LN.CDvr W → ∀ (φ : R →+* W), IsLocalHom φ →

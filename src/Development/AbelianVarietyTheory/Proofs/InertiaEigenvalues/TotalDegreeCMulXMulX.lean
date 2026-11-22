@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.NonGaloisDescent.FourierMatch
+
+@[expose] public section
 
 noncomputable section
 
@@ -107,7 +111,7 @@ theorem exists_point_mod [LocallyCompactSpace K] (s t c : K) (hs : ‖s‖ ≤ 1
   choose l hl using fun i => Ideal.Quotient.mk_surjective (I := maxIdeal K) (x.1 i)
   have hval : π (l 0 * l 0 + S * (l 0 * l 1) + T * (l 1 * l 1) + (-Cc) * (l 2 * l 2)) = 0 := by
     have := x.2
-    simp only [f, map_add, map_mul, eval_C, eval_X, map_neg, one_mul] at this
+    simp only [f, eval_add, eval_mul, eval_C, eval_X, one_mul] at this
     simp only [map_add, map_mul, map_neg, π, hl]
     linear_combination this
   have hmem := (Ideal.Quotient.eq_zero_iff_mem).1 hval
@@ -143,7 +147,7 @@ theorem exists_sqrt_mod [LocallyCompactSpace K] (t : K) (ht : ‖t‖ ≤ 1) (h2
       rw [Subring.coe_add, Subring.coe_one]; norm_num
     have : (Ideal.Quotient.mk (maxIdeal K) (1 + 1) : Res K) = 0 :=
       (Ideal.Quotient.eq_zero_iff_mem).2 ((mem_maxIdeal K _).2 (by rw [h11]; exact h2))
-    rw [map_add, map_one] at this
+    rw [map_add (f := _), map_one] at this
     rw [← one_add_one_eq_two]; exact this
   have hchar : ringChar (Res K) = 2 := by
     have hd : ringChar (Res K) ∣ 2 := ringChar.dvd (by exact_mod_cast h2k)

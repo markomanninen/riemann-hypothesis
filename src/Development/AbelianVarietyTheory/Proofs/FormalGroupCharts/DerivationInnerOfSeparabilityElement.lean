@@ -1,7 +1,11 @@
-import Mathlib
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
-import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
+module
+
+public import Mathlib
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.ChartChg
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.WickOperatorVanishing
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.TaylorDiscriminants.WickVanishing.GEWick
+
+@[expose] public section
 
 open MvPowerSeries ReciprocityTheory.ChartRestriction.G.Geo.Tor.Germ ReciprocityTheory.ChartRestriction.G.TB
 
@@ -37,7 +41,7 @@ theorem derivation_inner_of_separability_element (O : Type) [CommRing O] (N : �
       simp only [Module.End.mul_apply] at h
       simp [Algebra.TensorProduct.tmul_mul_tmul, hΦ, hδ, h]
     | add x y hx hy =>
-      simp only [mul_add, map_add, hx, hy, LinearMap.add_apply]
+      simp only [mul_add, map_add (f := _), hx, hy, LinearMap.add_apply]
       abel
   have hN' : (N : ℚ) ≠ 0 := by exact_mod_cast hN.ne'
   refine ⟨(N : ℚ)⁻¹ • Φ e, fun c => ?_⟩

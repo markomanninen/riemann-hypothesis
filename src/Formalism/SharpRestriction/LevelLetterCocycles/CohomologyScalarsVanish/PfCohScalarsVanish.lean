@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.LevelLetterCocycles.CohomologyScalarsVanish.CohScalarsVanish
+module
+
+public import Formalism.SharpRestriction.LevelLetterCocycles.CohomologyScalarsVanish.CohScalarsVanish
+
+@[expose] public section
 
 noncomputable section
 

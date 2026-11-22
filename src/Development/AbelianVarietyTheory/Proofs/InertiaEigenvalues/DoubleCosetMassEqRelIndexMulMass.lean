@@ -1,5 +1,9 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteDcOfCover
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.FiniteDcOfCover
+
+@[expose] public section
 
 noncomputable section
 namespace GlobalTheory.UnimodMass

@@ -1,6 +1,11 @@
-import Mathlib
-import GroundTheory.GlobalFields.ComplexMultiplication.MainTheorem
-import GroundTheory.GlobalFields.ComplexMultiplication.WeberFunctionAutomorphisms
+module
+
+public import Mathlib
+public import GroundTheory.GlobalFields.ComplexMultiplication.MainTheorem
+public import GroundTheory.GlobalFields.ComplexMultiplication.WeberFunctionAutomorphisms
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Global
@@ -70,12 +75,12 @@ end Compare
 section Ideal
 
 variable {K : Type} [Field K] [NumberField K] [Algebra K ℂ] (hK : finrank ℚ K = 2)
-  [IsTotallyComplex K]
+  [_root_.NumberField.IsTotallyComplex K]
 
 variable {E₁ E₂ : WeierstrassCurve ℂ} [E₁.IsElliptic] [E₂.IsElliptic]
 
-include hK in
 
+include hK in
 theorem exists_unit_automorphismPoint_eq (𝔞 : (FractionalIdeal (𝓞 K)⁰ K)ˣ) {E : WeierstrassCurve ℂ}
     [E.IsElliptic] {f : ℂ →+ E.toAffine.Point}
     (hf : IsAnalyticUniformization (idealLattice (algebraMap K ℂ) 𝔞) f)

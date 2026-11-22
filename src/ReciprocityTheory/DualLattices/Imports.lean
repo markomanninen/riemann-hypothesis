@@ -1,8 +1,12 @@
-import ReciprocityTheory.DualLattices.DvdOfCoeffZero
-import ReciprocityTheory.DualLattices.ValUntiltESubOne
-import ReciprocityTheory.DualLattices.MulIterateRootEqZero
-import ReciprocityTheory.DualLattices.ZmodTrichotomy
-import ReciprocityTheory.DualLattices.ExistsPrimitiveRoot
+module
+
+public import ReciprocityTheory.DualLattices.DvdOfCoeffZero
+public import ReciprocityTheory.DualLattices.ValUntiltESubOne
+public import ReciprocityTheory.DualLattices.MulIterateRootEqZero
+public import ReciprocityTheory.DualLattices.ZmodTrichotomy
+public import ReciprocityTheory.DualLattices.ExistsPrimitiveRoot
+
+@[expose] public section
 
 namespace ReciprocityTheory.PGsh
 

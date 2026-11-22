@@ -1,7 +1,11 @@
-import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSpanFormsNeBot
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CoefficientSpans.FiniteCoeffSpan
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.FormsFinite
-import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.ArchimedeanCompact.AutomorphicFormsLeSm
+module
+
+public import Development.AbelianVarietyTheory.PublishedTheorems.AutomorphicForms₂.ExistsSpanFormsNeBot
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.CoefficientSpans.FiniteCoeffSpan
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.FormsFiniteness.FormsFinite
+public import Development.AutomorphicArithmetic.AutomorphicVarieties.AutomorphicForms.ArchimedeanCompact.AutomorphicFormsLeSm
+
+@[expose] public section
 
 theorem UpperTheory.V.Af.formsFiniteGL :
     GlobalTheory.Published.AutomorphicFormsFiniteGL := by

@@ -1,5 +1,9 @@
-import ReciprocityTheory.GaloisValuations.Global
-import ReciprocityTheory.Hypotheses.Descent
+module
+
+public import ReciprocityTheory.GaloisValuations.Global
+public import ReciprocityTheory.Hypotheses.Descent
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,7 +44,8 @@ theorem continuous_resGal [Algebra.IsAlgebraic F Ω] : Continuous (resGal F L Ω
   rw [hx', ← b.sum_repr ⟨x, hx⟩]
   simp only [IntermediateField.coe_sum, IntermediateField.coe_smul]
   change resGal F L Ω σ _ = _
-  rw [map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [map_sum]
   refine Finset.sum_congr rfl fun i _ => ?_
   change σ (((b.repr ⟨x, hx⟩) i) • (b i : Ω)) = _
   rw [← algebraMap_smul L ((b.repr ⟨x, hx⟩) i) (b i : Ω), map_smul, hb]
@@ -61,14 +66,6 @@ section places
 variable {F L Ω : Type*} [Field F] [NumberField F] [Field L] [NumberField L] [Field Ω] [Algebra F L]
   [Algebra F Ω] [Algebra L Ω] [IsScalarTower F L Ω]
 
-variable (F) in
-
-def belowV (w : HeightOneSpectrum (𝓞 L)) : HeightOneSpectrum (𝓞 F) where
-  asIdeal := w.asIdeal.comap (algebraMap (𝓞 F) (𝓞 L))
-  isPrime := Ideal.comap_isPrime _ _
-  ne_bot := by
-    obtain ⟨y, hy, hy0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot w.ne_bot
-    exact Ideal.comap_ne_bot_of_integral_mem hy0 hy (Algebra.IsIntegral.isIntegral y)
 
 end places
 

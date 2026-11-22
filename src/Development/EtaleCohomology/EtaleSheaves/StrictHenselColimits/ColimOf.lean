@@ -1,4 +1,8 @@
-import Development.EtaleCohomology.EtaleSheaves.StrictHenselColimits.EtaleLiftToStrictLocalRingUniqueOnResidueField
+module
+
+public import Development.EtaleCohomology.EtaleSheaves.StrictHenselColimits.EtaleLiftToStrictLocalRingUniqueOnResidueField
+
+@[expose] public section
 
 namespace LateralTheory.E.ColimPf.Main
 

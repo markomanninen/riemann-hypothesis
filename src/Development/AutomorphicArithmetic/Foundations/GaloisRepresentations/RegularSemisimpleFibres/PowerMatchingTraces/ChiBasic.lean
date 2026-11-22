@@ -1,4 +1,8 @@
-import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchPowAlt
+module
+
+public import Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.PowerMatchingTraces.MatchPowAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -36,8 +40,7 @@ private theorem isLocallyConstant_chiAt {K : Type} [Field K] [NumberField K] (n 
 theorem chiBasic : ChiBasic := by
   intro K _ _ n χ v
   refine ⟨isLocallyConstant_chiAt n χ v, fun g => ?_, fun f hf => ?_⟩
-  · simp only [chiAt, HChar.loc_inv]
-    rw [← Units.val_mul, mul_inv_cancel, Units.val_one]
+  · simp [chiAt, HChar.loc, ← Units.val_mul]
   · exact ⟨hf.1.mul (isLocallyConstant_chiAt n χ v), hf.2.mul_right⟩
 
 end UpperTheory.Gal.InertialTypesAlt.G

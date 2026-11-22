@@ -1,5 +1,9 @@
-import Mathlib
-import Formalism.SharpRestriction.LevelLetterCocycles.IntegralHeckeForms
+module
+
+public import Mathlib
+public import Formalism.SharpRestriction.LevelLetterCocycles.IntegralHeckeForms
+
+@[expose] public section
 
 noncomputable section
 
@@ -53,8 +57,8 @@ def delAll (i : X.Tw) (M : ℕ) {ι : Type} (d : ι → (GE N →* Multiplicativ
   map_one' := by simp; rfl
   map_mul' g h := by simp only [map_mul, toAdd_mul]; rfl
 
-open Classical in
 
+open Classical in
 def toLam (i : X.Tw) (M : ℕ) (ι : Type) : MvPolynomial ι (X.O0 i) →ₐ[X.O0 i] abelian₂ X i M ι :=
   MvPolynomial.aeval fun q => MonoidAlgebra.of (X.O0 i) (Del X i M ι) (Multiplicative.ofAdd (Pi.single q 1)) - 1
 
@@ -68,8 +72,8 @@ def repOn {G O Λ : Type} [Group G] [CommRing O] [CommRing Λ] [Algebra O Λ] {r
 
 variable {X} (bkP : BKPh X)
 
-open Classical in
 
+open Classical in
 def bkOn (i : X.Tw) {r : ℕ} (ρ : GE N →* GL (Fin r) (X.O0 i)) {Λ : Type} [CommRing Λ] [Algebra (X.O0 i) Λ]
     (κ : GE N →* Λˣ) (B : Type) [AddCommGroup B] [Module Λ B] [TopologicalSpace B] [DiscreteTopology B]
     (v : PlE D.host) : Submodule Λ (H1 ((repOn ρ κ B).comp (DecV N v).subtype)) :=

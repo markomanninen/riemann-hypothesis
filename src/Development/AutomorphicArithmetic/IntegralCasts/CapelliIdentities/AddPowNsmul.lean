@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 theorem UpperTheory.Reformulated.B.Qf49.add_pow_nsmul :
     ∀ {Γ W : Type} [inst : Group Γ] [inst_1 : AddCommGroup W]

@@ -1,5 +1,9 @@
-import Mathlib
-import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.SeamDefs
+module
+
+public import Mathlib
+public import Development.WeilBound.CoreStatements.PadicHodgeComparison.EtaleCohomologyComparison.PerfectoidPullbacks.ConeSectionRestriction.SeamDefs
+
+@[expose] public section
 
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
@@ -169,7 +173,7 @@ theorem infinityCoord_inv_mem (t : Fin (n + 1) → Rˣ) (j : Fin n) :
 theorem infinityCoord_algebraicIndependent (t : Fin (n + 1) → Rˣ) (ht : AlgebraicIndependent K fun k => (t k : R)) :
     Function.Injective (MvPolynomial.aeval fun k => (u0 t k : R) : MvPolynomial (Fin (n + 1)) K →ₐ[K] R) := by
   classical
-  rw [injective_iff_map_eq_zero]
+  set_option backward.isDefEq.respectTransparency.instanceSearchTypes false in rw [injective_iff_map_eq_zero]
   intro f hf
   set N := f.totalDegree
   let deg : (Fin (n + 1) →₀ ℕ) → ℕ := fun α => ∑ i, α i
@@ -204,7 +208,8 @@ theorem infinityCoord_algebraicIndependent (t : Fin (n + 1) → Rˣ) (ht : Algeb
     rw [MvPolynomial.aeval_monomial, map_one, one_mul, Finsupp.prod_fintype _ _ (fun _ => pow_zero _)]
   have hg : MvPolynomial.aeval (fun k => (t k : R)) g = (t 0 : R) ^ N * MvPolynomial.aeval (fun k => (u0 t k : R)) f := by
     conv_rhs => rw [← MvPolynomial.support_sum_monomial_coeff f]
-    simp only [g, map_sum, Finset.mul_sum]
+    set_option synthInstance.maxHeartbeats 100000 in
+      simp only [g, map_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun α hα => ?_
     rw [← mul_one (f.coeff α), ← smul_eq_mul, ← MvPolynomial.smul_monomial, ← MvPolynomial.smul_monomial,
       map_smul, map_smul, hu, htm, mul_smul_comm, infinityCoord_monomial_eq t N α (hdeg α hα)]
@@ -215,7 +220,7 @@ theorem infinityCoord_algebraicIndependent (t : Fin (n + 1) → Rˣ) (ht : Algeb
   rw [MvPolynomial.coeff_zero]
   by_contra hβ
   have hβ' : β ∈ f.support := MvPolynomial.mem_support_iff.2 hβ
-  have := congrArg (MvPolynomial.coeff (h β)) hg0
+  have := congrArg (AddMonoidAlgebra.coeff · (h β)) hg0
   rw [MvPolynomial.coeff_zero, MvPolynomial.coeff_sum, Finset.sum_eq_single β] at this
   · rw [MvPolynomial.coeff_monomial, if_pos rfl] at this
     exact hβ this
@@ -280,7 +285,7 @@ theorem infinityCoord_localization (t : Fin (n + 1) → Rˣ) (ht : AlgebraicInde
       obtain ⟨f2, e2, h2⟩ := hy
       refine ⟨f1 * ∏ j : Fin n, MvPolynomial.X j.succ ^ e2 j + f2 * ∏ j : Fin n, MvPolynomial.X j.succ ^ e1 j,
         e1 + e2, ?_⟩
-      simp only [map_add, map_mul, map_prod, map_pow, MvPolynomial.aeval_X, Pi.add_apply, pow_add,
+      simp only [map_add (f := _), map_mul, map_prod, map_pow, MvPolynomial.aeval_X, Pi.add_apply, pow_add,
         Finset.prod_mul_distrib]
       rw [← h1, ← h2]; ring
     | smul c x _ hx =>

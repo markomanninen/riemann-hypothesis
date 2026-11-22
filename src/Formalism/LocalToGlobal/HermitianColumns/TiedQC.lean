@@ -1,6 +1,10 @@
-import Formalism.LocalToGlobal.HermitianColumns.StepLevelQ
-import Formalism.LocalToGlobal.HermitianColumns.CoordinateLatticeSelfDual
-import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+module
+
+public import Formalism.LocalToGlobal.HermitianColumns.StepLevelQ
+public import Formalism.LocalToGlobal.HermitianColumns.CoordinateLatticeSelfDual
+public import Formalism.LocalRingCardinality.RhoDetPrimeEqMuTildeMulChiPow
+
+@[expose] public section
 
 noncomputable section
 
@@ -11,8 +15,8 @@ namespace Formalism.L2.Herm
 
 attribute [local instance] Formalism.BasicNotions.Host.cmStar
 
-set_option maxHeartbeats 1000000 in
 
+set_option maxHeartbeats 1000000 in
 structure TwChTied (D : D7) (inQ : D.what₂.Tup → HeightOneSpectrum (𝓞 D.host.F) → Prop) where
 
   eCls0 : ∀ u μ, (D.mem u).C.cls 0 ≃ (D.chTw u μ).cls 0

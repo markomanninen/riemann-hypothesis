@@ -1,6 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ComplexPhaseCalculusRootOfUnity
-import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IntMIffInt
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.SiegelThetaTransformation.ComplexPhaseCalculusRootOfUnity
+public import Development.AbelianVarietyTheory.Definitions.SpanningFamilies.IntMIffInt
+
+@[expose] public section
+
 open Matrix Complex GlobalTheory.SW GlobalTheory.Phase
 open scoped ComplexConjugate Real
 set_option maxHeartbeats 1000000 in

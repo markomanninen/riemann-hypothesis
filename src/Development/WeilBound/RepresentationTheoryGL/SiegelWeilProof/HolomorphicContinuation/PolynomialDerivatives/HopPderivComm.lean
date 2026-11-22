@@ -1,4 +1,8 @@
-import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.NullStableAlt
+module
+
+public import Development.WeilBound.RepresentationTheoryGL.SiegelWeilProof.HolomorphicContinuation.PolynomialDerivatives.NullStableAlt
+
+@[expose] public section
 
 noncomputable section
 
@@ -40,13 +44,13 @@ theorem hop_pderiv_cr (c : ℝ) (j k : Fin m × Fin n × Bool) (Q : PX m n) :
   obtain ⟨a, i, e⟩ := j
   cases e
   · rw [cr_false, cr_false]
-    simp only [map_add, map_neg, map_smul, Derivation.leibniz, pderiv_X, smul_eq_mul, smul_eq_C_mul,
+    simp only [map_add (f := _), map_neg, map_smul, Derivation.leibniz, pderiv_X, smul_eq_mul, smul_eq_C_mul,
       hop_pderiv_comm' k (a, i, false)]
     by_cases h : k = (a, i, true)
     · subst h; simp [Pi.single_apply]; ring
     · simp [Pi.single_apply, h, Ne.symm h]
   · rw [cr_true, cr_true]
-    simp only [map_add, map_neg, map_smul, Derivation.leibniz, pderiv_X, smul_eq_mul, smul_eq_C_mul,
+    simp only [map_add (f := _), map_neg, map_smul, Derivation.leibniz, pderiv_X, smul_eq_mul, smul_eq_C_mul,
       hop_pderiv_comm' k (a, i, true)]
     by_cases h : k = (a, i, false)
     · subst h; simp [Pi.single_apply]; ring
@@ -88,7 +92,7 @@ theorem hop_deriv_fock {c : ℝ} (hc : 0 < c) (k : Fin m × Fin n × Bool) (p : 
   induction p using MvPolynomial.induction_on with
   | C r => rw [hop_fock_C, pderiv_C, pderiv_C, fock_zero' hB hc, mul_zero]
   | add p q hp hq =>
-    rw [fock_add'' hB hc, map_add, hp, hq, map_add, fock_add'' hB hc, mul_add]
+    rw [fock_add'' hB hc, map_add (f := _), hp, hq, map_add (f := _), fock_add'' hB hc, mul_add]
   | mul_X p j ih =>
     have hsplit : pderiv k (X j * p) = X j * pderiv k p + (if k = j then p else 0) := by
       rw [Derivation.leibniz, pderiv_X, smul_eq_mul, smul_eq_mul]
@@ -129,35 +133,37 @@ theorem fockHOp_of : FockHOp := by
   unfold hOp Dop
   rw [← fL_apply hB hc]
   by_cases h : ε a = ε b
-  · rw [if_pos h, map_sum, sgn_mul_same ε h]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    rw [map_sub, fL_apply, fL_apply, d1, d2]
-    have e1 := hop_tr_false hB hc b i (pderiv (a, i, true) p)
-    have e2 := hop_tr_true hB hc a i (pderiv (b, i, false) p)
-    rw [hop_pderiv_comm' (b, i, false) (a, i, true)] at e1
-    simp only [sub_self, mul_zero, map_zero, zero_mul, sub_zero, map_one, one_mul]
-    linear_combination e1 - e2
-  · rw [if_neg h, map_sum, sgn_mul_diff ε h]
-    have hab : a ≠ b := fun e => h (e ▸ rfl)
-    refine Finset.sum_congr rfl fun i _ => ?_
-    rw [map_sub, map_smul, map_smul, fL_apply, fL_apply, d1, d2, smul_eq_C_mul, smul_eq_C_mul]
-    have t2 := hop_tr_true hB hc a i (pderiv (b, i, false) p)
-    have t3 := hop_tr_true hB hc a i p
-    have t4 := hop_tr_false hB hc b i (X (a, i, false) * p)
-    have e5 : pderiv (b, i, false) (X (a, i, false) * p) = X (a, i, false) * pderiv (b, i, false) p := by
-      rw [Derivation.leibniz, pderiv_X, smul_eq_mul, smul_eq_mul]
-      have : ((b, i, false) : Fin m × Fin n × Bool) ≠ (a, i, false) := by simp [Ne.symm hab]
-      simp [Pi.single_apply, this]
-    rw [e5] at t4
-    rw [hop_pderiv_comm' (a, i, true) (b, i, false)] at t2
-    have e6 : fock c (X (b, i, true) * (X (a, i, false) * p)) = fock c (X (a, i, false) * X (b, i, true) * p) := by
-      congr 1; ring
-    have hK : (C (1 / (2 * c) : ℂ) : PX m n) * C (2 * c : ℂ) = 1 := by
-      rw [← map_mul, show (1 / (2 * c) : ℂ) * (2 * c) = 1 by field_simp, map_one]
-    have e7 : (c : ℂ) * (1 - -1) = 2 * c := by ring
-    simp only [e7, map_neg, map_one, neg_one_mul, neg_neg]
-    linear_combination t2 - X (b, i, false) * t3 - C (1 / (2 * c) : ℂ) * t4 - C (1 / (2 * c) : ℂ) * e6 +
-      (X (b, i, false) * fock c (X (a, i, false) * p) - fock c (X (a, i, false) * pderiv (b, i, false) p)) * hK
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [if_pos h, map_sum, sgn_mul_same ε h]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      rw [map_sub, fL_apply, fL_apply, d1, d2]
+      have e1 := hop_tr_false hB hc b i (pderiv (a, i, true) p)
+      have e2 := hop_tr_true hB hc a i (pderiv (b, i, false) p)
+      rw [hop_pderiv_comm' (b, i, false) (a, i, true)] at e1
+      simp only [sub_self, mul_zero, map_zero, zero_mul, sub_zero, map_one, one_mul]
+      linear_combination e1 - e2
+  set_option synthInstance.maxHeartbeats 100000 in
+    · rw [if_neg h, map_sum, sgn_mul_diff ε h]
+      have hab : a ≠ b := fun e => h (e ▸ rfl)
+      refine Finset.sum_congr rfl fun i _ => ?_
+      rw [map_sub, map_smul, map_smul, fL_apply, fL_apply, d1, d2, smul_eq_C_mul, smul_eq_C_mul]
+      have t2 := hop_tr_true hB hc a i (pderiv (b, i, false) p)
+      have t3 := hop_tr_true hB hc a i p
+      have t4 := hop_tr_false hB hc b i (X (a, i, false) * p)
+      have e5 : pderiv (b, i, false) (X (a, i, false) * p) = X (a, i, false) * pderiv (b, i, false) p := by
+        rw [Derivation.leibniz, pderiv_X, smul_eq_mul, smul_eq_mul]
+        have : ((b, i, false) : Fin m × Fin n × Bool) ≠ (a, i, false) := by simp [Ne.symm hab]
+        simp [Pi.single_apply, this]
+      rw [e5] at t4
+      rw [hop_pderiv_comm' (a, i, true) (b, i, false)] at t2
+      have e6 : fock c (X (b, i, true) * (X (a, i, false) * p)) = fock c (X (a, i, false) * X (b, i, true) * p) := by
+        congr 1; ring
+      have hK : (C (1 / (2 * c) : ℂ) : PX m n) * C (2 * c : ℂ) = 1 := by
+        rw [← map_mul, show (1 / (2 * c) : ℂ) * (2 * c) = 1 by field_simp, map_one]
+      have e7 : (c : ℂ) * (1 - -1) = 2 * c := by ring
+      simp only [e7, map_neg, map_one, neg_one_mul, neg_neg]
+      linear_combination t2 - X (b, i, false) * t3 - C (1 / (2 * c) : ℂ) * t4 - C (1 / (2 * c) : ℂ) * e6 +
+        (X (b, i, false) * fock c (X (a, i, false) * p) - fock c (X (a, i, false) * pderiv (b, i, false) p)) * hK
 
 end
 

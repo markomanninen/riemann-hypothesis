@@ -1,4 +1,8 @@
-import ReciprocityTheory.DualLattices.ValuationDetEqOfSpanEq
+module
+
+public import ReciprocityTheory.DualLattices.ValuationDetEqOfSpanEq
+
+@[expose] public section
 
 noncomputable section
 

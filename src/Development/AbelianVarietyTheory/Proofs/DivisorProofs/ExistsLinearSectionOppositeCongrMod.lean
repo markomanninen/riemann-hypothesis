@@ -1,5 +1,10 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EquivOfIsometryApply
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.EquivOfIsometryApply
+
+@[expose] public section
+
 open NumberField ReciprocityTheory.ChartRestriction.G.Geo.Tor GlobalTheory.LowDat GlobalTheory.LowFilt
 
 namespace GlobalTheory.LowFilt
@@ -68,7 +73,7 @@ theorem exists_cell_section : ∀ {E : Type} [Field E] [NumberField E] [IsCMFiel
     exact h.proj_of_mem hb
   · obtain ⟨e, he⟩ := hs' (q a)
     refine ⟨N • e, ?_⟩
-    simp only [LinearMap.add_apply, LinearMap.smul_apply, LinearMap.comp_apply, Submodule.subtype_apply, map_add,
+    simp only [LinearMap.add_apply, LinearMap.smul_apply, LinearMap.comp_apply, Submodule.subtype_apply, map_add (f := _),
       map_nsmul]
     have hy : y (q a) = y a - y (h.proj a) := by rw [hqa, map_sub]
     have hqq : q (q a) = q a := by rw [hqa (q a), h.proj_of_perp (hq a), sub_zero]

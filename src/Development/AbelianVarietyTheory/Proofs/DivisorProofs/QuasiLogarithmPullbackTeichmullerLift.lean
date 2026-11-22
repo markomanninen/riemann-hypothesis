@@ -1,12 +1,17 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
-import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowerSeriesEvalTwoGroupsRulesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubstSubSubstIntegralOfIntegralDifferentialStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubstMemIntegralDifferentialSubmoduleStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvPowerSeriesReductionModPrimeRulesStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntegralReducingToMvPowerSeriesSubstStatement
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffSubstLeadingOfAgreeDegreeOneStatement
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Definitions.Divisors.WittOnFalse
+public import Development.AbelianVarietyTheory.Definitions.Divisors.FormalCoboundarySmul
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.PowerSeriesEvalTwoGroupsRulesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubstSubSubstIntegralOfIntegralDifferentialStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.SubstMemIntegralDifferentialSubmoduleStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.MvPowerSeriesReductionModPrimeRulesStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIntegralReducingToMvPowerSeriesSubstStatement
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.CoeffSubstLeadingOfAgreeDegreeOneStatement
+
+@[expose] public section
+
 open CategoryTheory TensorProduct MvPowerSeries GlobalTheory GlobalTheory.PDiv GlobalTheory.PDivGroup GlobalTheory.Katz
 
 namespace GlobalTheory.KatzPull
@@ -51,7 +56,8 @@ theorem lin_subst {R : Type} [CommRing R] {d e : ℕ} (a : Fin e → MvPowerSeri
     (Finsupp.single i 1)).1 (by rw [Finsupp.degree_single]; norm_num)
   rw [subst_sub ha', map_sub, sub_eq_zero] at key
   unfold lin pullLin
-  rw [key, hf1, subst_add ha', subst_C, map_add, coeff_C, if_neg (Finsupp.single_ne_zero.2 one_ne_zero),
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [key, hf1, subst_add ha', subst_C, map_add (f := _), coeff_C, if_neg (Finsupp.single_ne_zero.2 one_ne_zero),
     zero_add, ← coe_substAlgHom ha', map_sum, map_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [map_mul, coe_substAlgHom ha', subst_C, subst_X ha', coeff_C_mul]
@@ -144,8 +150,8 @@ theorem quasiLog_pull : ∀ (p : ℕ) [Fact p.Prime] (k : Type) [Field k] [CharP
     choose a ha ha' using hw
     refine ⟨∑ j, a j * WittVector.teichmuller p (lin (φ j) i), ?_, ?_⟩
     · simp only [pullLin, map_sum, map_mul, ha]
-      rfl
-    · simp only [pullLin, map_sum, map_mul, ha', WittVector.teichmuller_coeff_zero]
-      rfl
+      simp only [lin, coeff_lift]
+    · simp only [pullLin, ← WittVector.constantCoeff_apply, map_sum, map_mul,
+        WittVector.constantCoeff_apply, ha', WittVector.teichmuller_coeff_zero]
 
 end GlobalTheory.KatzPull

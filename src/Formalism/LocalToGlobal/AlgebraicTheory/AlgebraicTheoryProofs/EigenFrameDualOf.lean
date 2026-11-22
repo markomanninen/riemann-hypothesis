@@ -1,5 +1,9 @@
-import Formalism.LocalToGlobal.AlgebraicTheory.StatementEig
-import ReciprocityTheory.EigenFrames.EigenSt
+module
+
+public import Formalism.LocalToGlobal.AlgebraicTheory.StatementEig
+public import ReciprocityTheory.EigenFrames.EigenSt
+
+@[expose] public section
 
 noncomputable section
 open scoped BigOperators

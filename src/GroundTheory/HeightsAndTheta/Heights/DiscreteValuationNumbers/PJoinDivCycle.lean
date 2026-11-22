@@ -1,7 +1,13 @@
-import Mathlib
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsJoinDivCycle
-import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PPolynomialLocalizedLength
-import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PExistsUniqueRelabel
+module
+
+public import Mathlib
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.StatementsJoinDivCycle
+public import GroundTheory.HeightsAndTheta.Heights.DiscreteValuationNumbers.PPolynomialLocalizedLength
+public import GroundTheory.HeightsAndTheta.Heights.OrbitLimits.PExistsUniqueRelabel
+public import ReciprocityTheory.ReductiveGroups.ArithmeticGeometry.BirationalGeometry.IsIntersectionFamily
+
+@[expose] public section
+
 set_option maxSynthPendingDepth 1
 
 namespace GroundTheory.Heights₂.Heights.NumbersDVR
@@ -51,11 +57,9 @@ theorem rename_eq_symm_comp_C :
   ext x <;> simp
 
 set_option hygiene false in
-
 local notation "ψ" => joinPolyEquiv (R := R) (ι := ι)
 
 set_option hygiene false in
-
 local notation "ε" => rename (R := R) (liftVar (ι := ι) ptIdx)
 
 theorem joinPolyEquiv_rename (x : MRing ι R) : joinPolyEquiv (ε x) = Polynomial.C x :=
@@ -151,13 +155,13 @@ theorem multAt_map_rename (P Q : Ideal (MRing ι R)) [Q.IsPrime] (hPQ : P ≤ Q)
   rw [hsup, PolynomialLocalizedLength.full (MRing ι R) Q (P ⊔ Ideal.span {f})] at key
   rw [hm P, hm Q, hf]
   unfold ReciprocityTheory.ChartRestriction.G.Geo.multAt
-  rw [dif_pos hQp, dif_pos ‹Q.IsPrime›]
+  rw [dite_eq_left hQp, dite_eq_left ‹Q.IsPrime›]
   exact congrArg ENat.toNat key
 
 end JoinDivCycle
 
-open JoinDivCycle in
 
+open JoinDivCycle in
 theorem JoinDivCycle.proof : JoinDivCycle.Statement := by
   intro R _ _ K _ ι _ P f
   classical
@@ -183,7 +187,7 @@ theorem JoinDivCycle.proof : JoinDivCycle.Statement := by
   ext W
   by_cases hW : ∃ Q : Ideal (MRing ι R), Q.map (rename (R := R) (liftVar (ι := ι) ptIdx)) = W
   · obtain ⟨Q, rfl⟩ := hW
-    rw [Finsupp.mapDomain_apply hinj]
+    rw [Finsupp.mapDomain_apply_of_injective hinj]
     simp only [ReciprocityTheory.ChartRestriction.G.Geo.divCycle, Finsupp.ofSupportFinite_coe]
     by_cases hQ : Q ∈ ReciprocityTheory.ChartRestriction.G.Geo.divSupp P f
     · haveI : Q.IsPrime := hQ.1.1.1

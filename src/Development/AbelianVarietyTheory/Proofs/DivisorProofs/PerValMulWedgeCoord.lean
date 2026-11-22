@@ -1,7 +1,11 @@
-import Mathlib
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSectionOfChg
-import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHomologyWedgeCoordinateNonzero
-import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PeriodLinearAlgebraHodgeSequenceExact
+module
+
+public import Mathlib
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsSectionOfChg
+public import Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsHomologyWedgeCoordinateNonzero
+public import Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.PeriodLinearAlgebraHodgeSequenceExact
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -129,10 +133,11 @@ theorem dualMat_mul (hx : IsPerBasis Di x hm) (h : PerData c e Di Hm P W Q) :
     congr 1
     · simp only [part, Matrix.mul_apply, Matrix.transpose_apply, Matrix.of_apply, perMat, Finset.sum_mul, Finset.mul_sum]
       exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
-    · simp only [part, Matrix.mul_apply, Matrix.transpose_apply, Matrix.of_apply, perMat, dualMat, Finset.sum_mul,
+    set_option synthInstance.maxHeartbeats 100000 in
+      · simp only [part, Matrix.mul_apply, Matrix.transpose_apply, Matrix.of_apply, perMat, dualMat, Finset.sum_mul,
         Finset.mul_sum, map_sum, map_mul, Complex.conj_conj, ← Finset.sum_neg_distrib]
-      rw [Finset.sum_comm]
-      exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
+        rw [Finset.sum_comm]
+        exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
 
 def IsCoef (x : Hor.Idx D τ → Di.La) (Q : Di.La →+ (Pad.Letter D → ℂ)) (t : Hor.Idx D τ → ℂ)
     (s : Pad.Letter D → ℂ) : Prop :=
@@ -142,7 +147,7 @@ def IsCoef (x : Hor.Idx D τ → Di.La) (Q : Di.La →+ (Pad.Letter D → ℂ)) 
 theorem IsCoef.add {t t' : Hor.Idx D τ → ℂ} {s s' : Pad.Letter D → ℂ} (h : IsCoef x Q t s) (h' : IsCoef x Q t' s') :
     IsCoef x Q (t + t') (s + s') :=
   ⟨fun i => by simp only [Pi.add_apply, h.1, h'.1, add_mul, Finset.sum_add_distrib],
-    fun j => by simp only [Pi.add_apply, map_add, h.2, h'.2, add_mul, Finset.sum_add_distrib]⟩
+    fun j => by simp only [Pi.add_apply, map_add (f := _), h.2, h'.2, add_mul, Finset.sum_add_distrib]⟩
 
 theorem IsCoef.smul {t : Hor.Idx D τ → ℂ} {s : Pad.Letter D → ℂ} (h : IsCoef x Q t s) (r : ℝ) :
     IsCoef x Q (r • t) (r • s) :=
@@ -158,12 +163,14 @@ theorem isCoef_per (h : PerData c e Di Hm P W Q) {v : Di.La} {n : ℕ} (hn : n �
   have hn' : (n : ℂ) ≠ 0 := Nat.cast_ne_zero.2 hn
   have key : ∀ z : Pad.Letter D, Q v z = ∑ k, (n : ℂ)⁻¹ * Formalism.L2.PjFree.relab c e z.1 (b k : E) * Q (x k) z := fun z => by
     have := congrFun (congrArg Q hb) z
-    rw [map_sum, map_nsmul, Finset.sum_apply, Pi.smul_apply, nsmul_eq_mul] at this
+    set_option synthInstance.maxHeartbeats 100000 in
+      rw [map_sum, map_nsmul, Finset.sum_apply, Pi.smul_apply, nsmul_eq_mul] at this
     simp only [h.2.2.2.2.2.2] at this
     simp only [_root_.mul_assoc, ← Finset.mul_sum]
     rw [this, inv_mul_cancel_left₀ hn']
   refine ⟨fun i => key _, fun j => ?_⟩
-  rw [key, map_sum]
+  set_option synthInstance.maxHeartbeats 100000 in
+    rw [key, map_sum]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [relab_conj]
   simp [conjEmb]
@@ -186,7 +193,7 @@ theorem exists_coef {g' : ℕ} {Hm' : Matrix (Fin g') (Fin g') ℂ} {P' : Di.La 
     obtain ⟨t₂, s₂, s₂', b1, b2, b3, b4⟩ := h2
     refine ⟨_, _, _, ?_, ?_, a3.add b3, a4.add b4⟩
     · simp only [a1, b1, Pi.add_apply, add_smul, Finset.sum_add_distrib]
-    · simp only [map_add, a2, b2, Pi.add_apply, add_smul, Finset.sum_add_distrib]
+    · simp only [map_add (f := _), a2, b2, Pi.add_apply, add_smul, Finset.sum_add_distrib]
   | smul r u _ h1 =>
     obtain ⟨t, s, s', a1, a2, a3, a4⟩ := h1
     refine ⟨_, _, _, ?_, ?_, a3.smul r, a4.smul r⟩
@@ -241,8 +248,8 @@ theorem wedge_eq (hp : D.p = D.mult τ) (hq : D.q = D.mult (conjEmb τ)) (hx : I
 
 end GlobalTheory.DetLine.WedgePer
 
-open GlobalTheory.DetLine.WedgePer in
 
+open GlobalTheory.DetLine.WedgePer in
 theorem GlobalTheory.DetLine.perVal_mul_wedgeCoord : ∀ (E : Type) [Field E] [NumberField E] [IsCMField E] (H : ReciprocityTheory.ChartRestriction.G.Geo.Tor.Host E) (D : Datum H) (l : Level H) (c : Coeff l) (e : c.F →+* ℂ) (τ : E →+* ℂ) (Di : Datum H) (x : Hor.Idx D τ → Di.La) (hm : Matrix (Hor.Idx D τ) (Hor.Idx D τ) E) (g g' : ℕ) (Hm : Matrix (Fin g) (Fin g) ℂ) (Hm' : Matrix (Fin g') (Fin g') ℂ) (P : Di.La →+ (Fin g → ℂ)) (P' : Di.La →+ (Fin g' → ℂ)) (W : Pad.Letter D → Fin g → ℂ) (W' : Pad.Letter D → Fin g' → ℂ) (Q Q' : Di.La →+ (Pad.Letter D → ℂ)) (φ : (Fin g → ℂ) ≃ₗ[ℝ] (Fin g' → ℂ)) (V : Fin D.p → Fin g → ℂ) (W₀ : Fin D.q → Fin g → ℂ) (V' : Fin D.p → Fin g' → ℂ) (W₀' : Fin D.q → Fin g' → ℂ) (y : Fin D.q ⊕ Fin D.p → Fin g → ℂ) (Δ Δ' : ℂ), τ (H.rt : E) = H.rt0 → IsPerBasis Di x hm → PerData c e Di Hm P W Q → PerData c e Di Hm' P' W' Q' → GoodPer c e τ x hm Q → GoodPer c e τ x hm Q' → (∀ a, φ (P a) = P' a) → MatchVec τ W V W₀ → MatchVec τ W' V' W₀' → IsWedgeCoord Hm V W₀ y Δ → IsWedgeCoord Hm' V' W₀' (fun k => φ (y k)) Δ' → perVal c e τ x hm Q * Δ' = perVal c e τ x hm Q' * Δ := by
   intro E _ _ _ H D l c e τ Di x hm g g' Hm Hm' P P' W W' Q Q' φ V W₀ V' W₀' y Δ Δ' hτ hx h h' hG hG' hφ hM hM' hΔ hΔ'
   have hp : D.p = D.mult τ := (if_pos hτ).symm

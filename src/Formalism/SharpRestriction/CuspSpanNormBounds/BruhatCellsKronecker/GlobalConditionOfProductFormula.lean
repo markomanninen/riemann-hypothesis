@@ -1,4 +1,8 @@
-import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.GlobalConditionOfLocalAgreement
+module
+
+public import Formalism.SharpRestriction.CuspSpanNormBounds.BruhatCellsKronecker.GlobalConditionOfLocalAgreement
+
+@[expose] public section
 
 noncomputable section
 
@@ -32,9 +36,6 @@ def Uw (p : HeightOneSpectrum (𝓞 F)) (w : (A p).Ep) : AddSubgroup (A p).Ep :=
   (A p).O.toAddSubgroup ⊓ (A p).O.toAddSubgroup.comap (AddMonoidHom.mulLeft (w * algebraMap _ _ (δ p)))
 
 variable {A δ}
-
-theorem mem_Uw (p : HeightOneSpectrum (𝓞 F)) (w u : (A p).Ep) :
-    u ∈ Uw A δ p w ↔ u ∈ (A p).O ∧ w * algebraMap _ _ (δ p) * u ∈ (A p).O := Iff.rfl
 
 variable (H : DiffHyp A δ)
 include H
@@ -93,9 +94,6 @@ def chiX (A : ∀ p : HeightOneSpectrum (𝓞 F), LocAt F E sig p) (p : HeightOn
   (A p).psiE.compAddMonoidHom
     (((A p).ιE.toAddMonoidHom.comp (AddMonoidHom.mulLeft x)).comp (algebraMap (𝓞 E) E).toAddMonoidHom)
 
-omit H in
-theorem chiX_apply (p : HeightOneSpectrum (𝓞 F)) (x : E) (z : 𝓞 E) :
-    chiX A p x z = (A p).psiE ((A p).ιE (x * (z : E))) := rfl
 
 theorem psi_of_approx (p : HeightOneSpectrum (𝓞 F)) (x : E) (y : (A p).Ep) (z : 𝓞 E)
     (h1 : (A p).ιE (z : E) - y ∈ Uw A δ p ((A p).ιE x)) (h2 : (A p).psiE ((A p).ιE (x * (z : E))) = 1) :
@@ -195,8 +193,8 @@ theorem exists_common (p : HeightOneSpectrum (𝓞 F)) (S : Finset E) (c : E)
     · rw [cmul, map_mul, mul_assoc]; exact int_smul_mem _ a _ hx
     · rw [cmul, mul_comm (a : F), map_mul, mul_assoc]; exact int_smul_mem _ b _ (hS y hy)
 
-omit H in
 
+omit H in
 theorem memLocalizedAt_inv (p : HeightOneSpectrum (𝓞 F)) (I : FractionalIdeal (𝓞 E)⁰ E) (hI : I ≠ 0) (c : E)
     (h : ∀ x ∈ I, atP p (1 : FractionalIdeal (𝓞 E)⁰ E) (x * c)) : atP p I⁻¹ c := by
   have hN : IsNoetherian (𝓞 E) (I : Submodule (𝓞 E) E) := FractionalIdeal.isNoetherian I
@@ -222,8 +220,8 @@ theorem memLocalizedAt_inv (p : HeightOneSpectrum (𝓞 F)) (I : FractionalIdeal
     rw [mul_smul_comm]
     exact ((1 : FractionalIdeal (𝓞 E)⁰ E) : Submodule (𝓞 E) E).smul_mem r ih1
 
-omit H in
 
+omit H in
 theorem exists_val_eq (p : HeightOneSpectrum (𝓞 F)) (hδ : δ p ≠ 0) :
     ∃ c : F, valuation (A p).Fp ((A p).ιF c) = valuation (A p).Fp (δ p) := by
   have := (A p).lf
@@ -246,7 +244,7 @@ theorem unit_of (p : HeightOneSpectrum (𝓞 F)) (ϖ : (A p).Fp) (hϖ0 : ϖ ≠ 
     rw [Valuation.mem_integer_iff]; exact hϖ.le
   have hwO : w ∈ (A p).O := (A p).O.add_mem (A p).O.one_mem ((A p).O.mul_mem (alg_mem_O _ _ hϖO) ho)
   have hcw : (A p).cj w = 1 + algebraMap _ _ ϖ * (A p).cj o := by
-    rw [hw, map_add, map_one, map_mul, AlgEquiv.commutes]
+    rw [hw, map_add (f := _), map_one, map_mul, AlgEquiv.commutes]
   obtain ⟨n, hn⟩ := H.cjfix p (w * (A p).cj w) (by rw [map_mul, H.cjcj]; ring)
   have hco := cj_mem (A p) o ho
   have h1 : algebraMap (A p).Fp (A p).Ep ((n - 1) * ϖ⁻¹) =
@@ -398,8 +396,8 @@ theorem locGen_diff (p : HeightOneSpectrum (𝓞 F)) :
   · have := memLocalization_mul hx hb
     rwa [one_mul, div_mul_cancel₀ _ hac] at this
 
-omit H in
 
+omit H in
 theorem LocGen.inv {p : HeightOneSpectrum (𝓞 F)} {I : FractionalIdeal (𝓞 E)⁰ E} {c : E} (hI : I ≠ 0) (h : LocGen p I c) :
     LocGen p I⁻¹ c⁻¹ := by
   refine ⟨inv_ne_zero h.1, fun x => ⟨fun hx => ?_, fun hx => ?_⟩⟩
@@ -432,7 +430,7 @@ theorem dual_of_agree (δ : ∀ p, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model
   rw [hpsi, e, AddChar.map_neg_eq_inv, inv_eq_one]
 
 theorem diffHyp_of (δ : ∀ p, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
-    (hA : ∀ p, Agree δ M p) (h6 : adm6 D) (h7 : adm7 D) : DiffHyp (fun p : PlF D => D.s.atP p) δ where
+    (hA : ∀ p, Agree δ M p) (h6 : adm6 D) (h7 : adm7 D) : DiffHyp (fun p : PlF D => D.s.atP p) δ := {
   hinv := conjF_inv
   hfix := conjF_fix
   hδ := fun p => (hA p).2.1
@@ -451,7 +449,7 @@ theorem diffHyp_of (δ : ∀ p, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model (D
     have := ((M p).L.cj_fix x).1 (by rw [(hA p).2.2.1]; exact hx)
     exact this
   sa := h6
-  pf := h7.2
+  pf := h7.2 }
 
 theorem isDiffGen_of_agree (δ : ∀ p, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
     (hA : ∀ p, Agree δ M p) (h6 : adm6 D) (h7 : adm7 D) (p : PlF D) : IsDiffGen δ p :=
@@ -460,10 +458,6 @@ theorem isDiffGen_of_agree (δ : ∀ p, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.
 theorem laIsPeriod_of_adm (δ : ∀ p, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
     (hA : ∀ p, Agree δ M p) (h6 : adm6 D) (h7 : adm7 D) (ν s : ℕ) : LaIsPeriod δ M ν s :=
   laIsPeriod_of δ M hA (isDiffGen_of_agree δ M hA h6 h7) ν s
-
-theorem global_condition_of_product_formula (δ : ∀ p, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
-    (hA : ∀ p, Agree δ M p) (h6 : adm6 D) (h7 : adm7 D) (i : ℕ) (hi : i ≤ D.R.rS + 1) : G4 δ M i :=
-  global_condition_of_local_agreement δ M hA (isDiffGen_of_agree δ M hA h6 h7) i hi
 
 def LocalModelsAtRemainingPrimes (δ : ∀ p, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep) (m s : ℕ) : Prop :=
   let ν := nu D.R.rS (m + 1) (m + s)
@@ -486,24 +480,6 @@ def LocalModelsAtRemainingPrimes (δ : ∀ p, (D.s.atP p).Fp) (M : ∀ p : PlF D
           (∀ t, Th t ≠ 0 → ∃ a ∈ S, t - a ∈ L) ∧
           ∀ x0 : ι, ((((∏ᶠ p, (detNrmP M δ T T' p (hd x0)) ^ (-(2 * (s : ℤ)))) : ℝ) : ℂ) •
             (Matrix.of fun x y => ∏ᶠ p, locK M δ T T' p m (hd x) (hd y)) - ∑ a ∈ S, Th a).PosSemidef
-
-theorem block_condition_iff_fourth_clause (δ : ∀ p, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
-    (hA : ∀ p, Agree δ M p) (h6 : adm6 D) (h7 : adm7 D) (m s : ℕ) : G3blk δ M m s ↔ LocalModelsAtRemainingPrimes δ M m s := by
-  constructor
-  · intro h; exact h.2.2.2
-  · intro h
-    have h1 := G3lat_of δ M hA (isDiffGen_of_agree δ M hA h6 h7) (nu D.R.rS (m + 1) (m + s)) s
-    exact ⟨h1.1, h1.2.1, h1.2.2, h⟩
-
-theorem statement_of_local_block_conditions {Y : TermTie D} (X : TermLocs D Y) (cN : D.what₂.Word → D.what₂.Word → ℝ)
-    (h6 : adm6 D) (h7 : adm7 D)
-    (h : 4 * D.R.rS + 8 ≤ D.R.k →
-      ∃ (δ : ∀ p, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
-        (hA : ∀ p, Agree δ M p), G2 δ M (X δ M hA) cN ∧
-        (∀ m s, 1 ≤ s → m + s ≤ D.R.rS + 1 → LocalModelsAtRemainingPrimes δ M m s)) : aux₃ D X cN := by
-  refine lattice_statement_of_root_gram_blocks X cN fun hk => ?_
-  obtain ⟨δ, M, hA, h2, h3⟩ := h hk
-  exact ⟨δ, M, hA, G1root_of_agree δ M hA, h2, fun m s hs hm => (block_condition_iff_fourth_clause δ M hA h6 h7 m s).2 (h3 m s hs hm)⟩
 
 end RecD
 
@@ -694,39 +670,7 @@ open Formalism.MainNotions.S.LocalSplitGroups Formalism.MainNotions.JointEigenva
 
 variable {D : Formalism.BasicNotions.D7}
 
-def LocalGeneratorsModelsAgree (D : Formalism.BasicNotions.D7) {Y : TermTie D} (X : TermLocs D Y) (cN : D.what₂.Word → D.what₂.Word → ℝ) : Prop :=
-  4 * D.R.rS + 8 ≤ D.R.k →
-    ∃ (δ : ∀ p, (D.s.atP p).Fp) (M : ∀ p : PlF D, Loc.Model (D.s.atP p).Fp (D.s.atP p).Ep)
-      (hA : ∀ p, Agree δ M p), G2 δ M (X δ M hA) cN ∧
-      (∀ m s, 1 ≤ s → m + s ≤ D.R.rS + 1 → LocalModelsAtRemainingPrimes δ M m s)
-
-theorem statement_iff_local_models {Y : TermTie D} (X : TermLocs D Y) (cN : D.what₂.Word → D.what₂.Word → ℝ)
-    (h6 : adm6 D) (h7 : adm7 D) : aux₃ D X cN ↔ LocalGeneratorsModelsAgree D X cN := by
-  constructor
-  · intro h hk
-    obtain ⟨δ, M, hA, -, h2, h3, -⟩ := h hk
-    exact ⟨δ, M, hA, h2, fun m s hs hm => (h3 m s hs hm).2.2.2⟩
-  · exact statement_of_local_block_conditions X cN h6 h7
-
-theorem packet_iff_local_models {Y : TermTie D} (X : TermLocs D Y) (cN : D.what₂.Word → D.what₂.Word → ℝ) (C : ℝ) :
-    Stmt D X cN C ↔ (admitted D X cN C → LocalGeneratorsModelsAgree D X cN) :=
-  ⟨fun h hA => (statement_iff_local_models X cN hA.2.2.2.2.2.1 hA.2.2.2.2.2.2.1).1 (h hA),
-    fun h hA => (statement_iff_local_models X cN hA.2.2.2.2.2.1 hA.2.2.2.2.2.2.1).2 (h hA)⟩
-
 variable {eps : ℝ} (Fm : FamP eps) {Y : ∀ x, Fm.x1 < x → ∀ i : Fm.Ix x, TermTie (Fm.D x i)}
-
-theorem family_statement_iff_local_models (X : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), TermLocs (Fm.D x i) (Y x hx i))
-    (cN : ∀ x (i : Fm.Ix x), (Fm.D x i).what₂.Word → (Fm.D x i).what₂.Word → ℝ) (h6 : admF6 Fm) (h7 : admF7 Fm) :
-    OrbitValuationBound Fm X cN ↔ OwnEv Fm fun _ _ x i => ∀ hx : Fm.x1 < x, LocalGeneratorsModelsAgree (Fm.D x i) (X x hx i) (cN x i) :=
-  ⟨OwnEv.mono fun _ _ x i h hx => (statement_iff_local_models _ _ (h6 x i) (h7 x i)).1 (h hx),
-    OwnEv.mono fun _ _ x i h hx => (statement_iff_local_models _ _ (h6 x i) (h7 x i)).2 (h hx)⟩
-
-theorem family_packet_iff_local_models (X : ∀ x (hx : Fm.x1 < x) (i : Fm.Ix x), TermLocs (Fm.D x i) (Y x hx i))
-    (cN : ∀ x (i : Fm.Ix x), (Fm.D x i).what₂.Word → (Fm.D x i).what₂.Word → ℝ) :
-    KudlaFamilyStatement Fm X cN ↔ (AdmF Fm X cN →
-      OwnEv Fm fun _ _ x i => ∀ hx : Fm.x1 < x, LocalGeneratorsModelsAgree (Fm.D x i) (X x hx i) (cN x i)) :=
-  ⟨fun h hA => (family_statement_iff_local_models Fm X cN hA.2.2.2.2.2.1 hA.2.2.2.2.2.2.1).1 (h hA),
-    fun h hA => (family_statement_iff_local_models Fm X cN hA.2.2.2.2.2.1 hA.2.2.2.2.2.2.1).2 (h hA)⟩
 
 end Red
 
