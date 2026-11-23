@@ -1,0 +1,23 @@
+You are reading one definition from a large machine-checked proof written in Lean 4. The folder you are in holds one dossier, a Markdown file. The dossier holds the whole Lean text of one definition, the number of project definitions that lie below it, and the definitions of the levels below it with their bodies as far as the dossier reaches. Read the dossier file in this folder and no other files. Do not search the web and do not open the source code.
+
+Say what the definition at the top of the dossier is. Work only from the Lean text in the dossier. Follow these rules.
+
+1. Say what kind of thing it is, for example a proposition, a record type with fields, a function that builds a record, or a property of some object. Then say what it states or holds, with its quantifiers in the right order and with every number and constant as written.
+2. Go through its parts in order. A part is a field of a structure, a conjunct of a proposition, or an argument of a function. For each part say in one or two sentences what the Lean text shows it to be. Use the bodies of the lower definitions that the dossier shows.
+3. When a name has no visible body, or its body rests on names you cannot see into, treat the name as unopened. Write "a condition that the code calls X" or "an object of the type that the code calls X". Never state what an unopened name means in mathematics on the strength of its name alone. You may add what the names suggest in the field "suggests", marked as a suggestion.
+4. Write for a reader who knows undergraduate mathematics and no Lean. Explain a symbol when you use it.
+5. Write full sentences. Use no colons and no semicolons in the prose fields.
+
+Return one JSON object and nothing else:
+
+{
+ "number": the number from the dossier's title,
+ "name": the full name of the definition,
+ "kind": a short phrase for what kind of thing it is,
+ "says": two to five plain sentences on what it is and what it states or holds,
+ "parts": a list of objects {"name": the name of the field, conjunct or argument as written, or a short label when it has no name, "gloss": one or two sentences on what the text shows it to be}, in the order of the Lean text, covering every part,
+ "unopened": a list of the names whose meaning the dossier does not let you see,
+ "suggests": one or two sentences on what the names suggest beyond what the text shows, or an empty string,
+ "confidence": "high", "medium" or "low", for how completely the dossier let you see what the definition is,
+ "why": one sentence that gives the reason for that confidence
+}

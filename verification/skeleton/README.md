@@ -229,6 +229,7 @@ python3 -I verification/skeleton/check_sample.py /tmp/before-merge/verification/
 | `data/tree.npz` | the whole dominator tree as arrays, which git ignores |
 | `published.py`, `published.json`, `OUTLINE-PUBLISHED.txt` | the statements that the code names as published and their marks on the skeleton, which [`PUBLISHED.md`](PUBLISHED.md) describes |
 | `dossier.py`, `briefs/`, `reading.json`, `reading.py` | what each line of the outline states in plain words, which [`READING.md`](READING.md) holds |
+| `glossary.py`, `glossary.json` | what the ten definitions are that the readings leave unopened most often, which [`GLOSSARY.md`](GLOSSARY.md) holds |
 
 One entry of `nodes` in `skeleton.json` holds these fields. An index counts the entries of
 `nodes` from 0.

@@ -350,8 +350,8 @@ Assume a bundle of named hypotheses that the code calls UnitaryGroupThirdPlaceHy
 
 - Premise 1. The proposition UnitaryGroupThirdPlaceHypotheses holds, which is a record of many separately named propositions.
 - Premise 2. The proposition RowRat holds.
-- Premise 3. HL is a proof of RecTExists, which says that for every number field E, every algebraic closure Ω of E, every valuation subring A of Ω, every height one prime w of the ring of integers of E and every proof h of a condition that the code calls IsPlaceOver A w, there exists rc with a condition that the code calls IsRecT h rc.
-- Premise 4. CDep is any real number and A is any predicate of type AtP, that is, a rule that assigns a truth value to a context K, a base B, an element of Fr B.toPre and an element of TwDat B.
+- Premise 3. hL is a proof of RecTExists, which says that for every number field E, every algebraic closure Ω of E, every valuation subring A of Ω, every height one prime w of the ring of integers of E and every proof h of a condition that the code calls IsPlaceOver A w, there exists rc with a condition that the code calls IsRecT h rc.
+- Premise 4. cDep is any real number and A is any predicate of type AtP, that is, a rule that assigns a truth value to a context K, a base B, an element of Fr B.toPre and an element of TwDat B.
 - Premise 5. EvLgG A holds, which unfolds to EvG applied to the map sending K to large₂ K (A K).
 - Premise 6. LinkedAt holds for the parameters parametersOfDependence hL cDep and the row condition that sends a slot Q and a linkage L to SlotNormCondition Q L N₀, where N₀ sends a family class 𝒞 to Closed 𝒞 applied to the property BoundAtTwoThreeFamilyFonAlt.
 - Premise 7. LinkedAt holds for the parameters parametersOfExtension (extensionWithAtProperty hL (extensionWithOrigin hL cDep) A) SExt.none (geoCl anyGeometry) and the row condition FunctionalCondition.
@@ -385,7 +385,7 @@ Assume nine named propositions, six of them stated in the namespace of published
 - Premise 7. DiscreteSeriesClassification holds, a statement whose body the dossier shows and whose details this reading leaves out.
 - Premise 8. SurjectiveOntoX holds, which is Closed FamHyp applied to the property that DIVinN Fm implies the existence of C0 ≥ 0 such that eventually at points p with a condition called More, a condition called ON holds for every C ≥ C0.
 - Premise 9. LambdaLowerBound₂ holds, which is Closed FamHyp applied to the property that eventually at points p a condition called L6 holds for every C.
-- Premise 10. HL is a proof of RecTExists, N is of type NormChoiceExtension hL, S is of type SExt, Γ is a predicate of type GeoP, and NN is a property of family classes.
+- Premise 10. hL is a proof of RecTExists, N is of type NormChoiceExtension hL, S is of type SExt, Γ is a predicate of type GeoP, and NN is a property of family classes.
 - Premise 11. OpenParameterStatements p holds for p = parametersOfExtension N S Γ, which is the conjunction of twelve LinkedAt p statements with the row conditions SlotPrimitivityCondition, SlotLambdaPrimeCondition, SlotDivisorCondition, SlotDecompositionPointCondition, SlotSelectionJumpCondition, Row_tie_alt, RowLabelCondition, RowGoodnessCondition, GeometricWeakCompatibility', RowMultiplicityCondition, RowKappaCondition and RowDefectCondition.
 - Premise 12. LinkedAt p CovolumeBoundThirdPlaceSeries holds.
 - Premise 13. LinkedAt p FunctionalCondition holds.
@@ -414,9 +414,9 @@ The head is `GlobalTheory.LocalRows.at_choice_alt`, in the module Development �
 
 Assume the proposition SiegelWeilUnitaryConvergent. Then for every family class 𝒜 and every selection σ that assigns a BundleCondition record to each family in 𝒜, each x beyond the family's threshold x1 and each index i, three statements hold together, namely SelectionLpBound 𝒜 σ, SelectionOrderBound 𝒜 σ and H_hTF 𝒜. Two wrapper theorems folded into this line restate the same triple in slot form, as SlotLpCondition, SlotOrderCondition and SlotTorsionFreeCondition, for every slot and linkage and also under the operator Lg1.
 
-- Premise 1. HSW is a proof of SiegelWeilUnitaryConvergent, which says that for all number fields F and E with E an F-algebra, every F-algebra map σ from E to E with IsCMExt F E σ, every natural number M and every M by M matrix J over E with IsHermND σ J, the condition SiegelWeilAt F E σ M J holds.
+- Premise 1. hSW is a proof of SiegelWeilUnitaryConvergent, which says that for all number fields F and E with E an F-algebra, every F-algebra map σ from E to E with IsCMExt F E σ, every natural number M and every M by M matrix J over E with IsHermND σ J, the condition SiegelWeilAt F E σ M J holds.
 - Premise 2. 𝒜 is any family class, that is, a predicate on families Fm of type FamP eps for every real eps.
-- Premise 3. Σ is any element of RawSel BundleCondition 𝒜, that is, a rule giving a BundleCondition record over (Fm.D x i, objAt Fm x hx i, Fm.Csz) for every family Fm in 𝒜, every real x with Fm.x1 < x and every index i in Fm.Ix x.
+- Premise 3. σ is any element of RawSel BundleCondition 𝒜, that is, a rule giving a BundleCondition record over (Fm.D x i, objAt Fm x hx i, Fm.Csz) for every family Fm in 𝒜, every real x with Fm.x1 < x and every index i in Fm.Ix x.
 - Conclusion. SelectionLpBound 𝒜 σ and SelectionOrderBound 𝒜 σ and H_hTF 𝒜 all hold.
 
 ```
@@ -492,8 +492,8 @@ Assume a bundle of named propositions that the code calls UnitaryGroupThirdPlace
 
 - Premise 1. UnitaryGroupThirdPlaceHypotheses holds, which is a record of at least 28 named propositions such as ClozelCohomological, GlobalArtinReciprocity, JacquetShalika and WeilSiegelFormulaUnitary, with the list cut off in the dossier.
 - Premise 2. S0.RowRat holds, which is a condition StepW Start applied to a statement whose final conclusion is RowTest (z.R.toCx3 z.F), meaning that finitely many linear functionals jointly separate the space EE and take values in the image of the embedding Bs.v0 on the vectors Θ t (jR t x).
-- Premise 3. HL is a proof of RecTExists, which says that for every number field E, algebraic closure Ω, valuation subring A of Ω, nonzero prime w of the integers of E and proof h of IsPlaceOver A w there exists rc with IsRecT h rc.
-- Premise 4. CDep is any real number and A is any property of a context, a base B, a frame of B and a twisting datum of B.
+- Premise 3. hL is a proof of RecTExists, which says that for every number field E, algebraic closure Ω, valuation subring A of Ω, nonzero prime w of the integers of E and proof h of IsPlaceOver A w there exists rc with IsRecT h rc.
+- Premise 4. cDep is any real number and A is any property of a context, a base B, a frame of B and a twisting datum of B.
 - Premise 5. EvLgG A holds, which is a condition that the code calls EvG applied to the map sending K to large₂ K (A K).
 - Conclusion. SiegelMassRatioCM and MemberE p.s and ExBL KPx (IsBuiltE p.s) (IsGoodE p.s) (BundleLinkage p) all hold, with p = parametersOfExtension (extensionWithAtProperty hL (extensionWithOrigin hL cDep) A) SExt.none (geoCl anyGeometry).
 
@@ -519,9 +519,9 @@ Assume four named bundles of hypotheses, then a proof hL of the statement RecTEx
 - Premise 2. The bundle of 25 assumed statements that the code calls EllipticHypothesis holds.
 - Premise 3. The bundle of 5 assumed statements that the code calls MultiplicityCoverHypotheses holds.
 - Premise 4. The condition that the code calls ExistsUnlocalizedSaturatedState holds.
-- Premise 5. HL is a proof of RecTExists, which says that for every number field E, algebraic closure Ω of E, valuation subring A of Ω, nonzero prime w of the ring of integers of E and proof h of IsPlaceOver A w there is an object rc with IsRecT h rc.
+- Premise 5. hL is a proof of RecTExists, which says that for every number field E, algebraic closure Ω of E, valuation subring A of Ω, nonzero prime w of the ring of integers of E and proof h of IsPlaceOver A w there is an object rc with IsRecT h rc.
 - Premise 6. The bundle of 6 assumed statements that the code calls LocalLanglandsHypothesis hL holds.
-- Premise 7. CDep is any real number.
+- Premise 7. cDep is any real number.
 - Premise 8. MultiplicityCondition holds for the record p = parametersOfExtension (extensionWithOrigin hL cDep) SExt.none (geoCl anyGeometry).
 - Conclusion. MemberE holds for p.s, and ExBL KPx (IsBuiltE p.s) (IsGoodE p.s) (BundleLinkage p) holds, which means that some slot R satisfies LargeBaseCondition KPx (IsBuiltE p.s) R together with ExB (sAnd (IsGoodE p.s) R) (BundleLinkage p).
 
@@ -551,7 +551,7 @@ The theorem proves the proposition that the code calls mainTheorem. That proposi
 - Premise 6. LocalFiniteness holds, which asserts LocalFinitenessAt A rho v for every number field F, algebraic closure Ω, prime l, exponent r, finite discrete module M over the integers modulo l^r, valuation subring A of Ω, representation rho of Dec A on M and height-one prime v of the integers of F.
 - Premise 7. LocalTateDuality holds, which asserts LocalTateDualityAt A rho v over the same range of data.
 - Premise 8. LocalEulerChar holds, which asserts LocalEulerCharAt A rho v over the same range of data.
-- Premise 9. HL is a proof of RecTExists and cDep is any real number.
+- Premise 9. hL is a proof of RecTExists and cDep is any real number.
 - Premise 10. LinkedAt holds for parametersOfDependence hL cDep with the row condition (Q, L) ↦ SlotNormCondition Q L (𝒞 ↦ Closed 𝒞 BoundAtTwoThreeFamilyFonAlt).
 - Conclusion. LinkedAt holds for parametersOfDependence hL cDep with the row condition (Q, L) ↦ SlotNormCondition Q L (𝒞 ↦ Closed 𝒞 LinkN).
 
@@ -575,15 +575,15 @@ The head is `UpperTheory.GalC.final_of_alt`, in the module Development › Autom
 
 Assume five named hypotheses, a proof hL of RecTExists, a real number cDep, and that MemberAtLayerPoint hL holds for the property GaloisPreconditions (w.D Z) nch. If LinkedAt holds for the parameters parametersOfDependence hL cDep with the row condition built from BoundAtTwoThreeFamilyFonAlt, then LinkedAt holds for the same parameters with the row condition built from LinkN. Unfolded, the conclusion says that there are a slot R and an assignment E such that LargeBaseCondition KPx (IsBuiltE p.s) R and RowE hold and every family class 𝒜 with a selection σ that satisfies IsSel has Closed (D3 3 𝒜) LinkN.
 
-- Premise 1. HP, the bundle of 7 assumed statements that the code calls Hypotheses₂, holds.
-- Premise 2. HG, the statement CutGivesAlt, holds, which says that for every D and nch with GaloisPreconditions D nch and Tie4 D there is c in CutD D with c.Good, NormChoiceFacts (cut D c) (nchTr c nch) and Tie4 (cut D c).
-- Premise 3. PrN, the bundle of 14 assumed statements that the code calls PublishedInputsThirdLayerAlt, holds.
-- Premise 4. HX, the bundle of 12 assumed statements that the code calls GeometricGaloisRepCompatibility, holds.
-- Premise 5. Dzs, the statement DepthZeroSupport, holds.
-- Premise 6. HL is a proof of RecTExists.
-- Premise 7. CDep is any real number.
-- Premise 8. HF, the statement MemberAtLayerPoint hL applied to the property that sends its arguments to GaloisPreconditions (w.D Z) nch, holds.
-- Premise 9. HAt, the statement LinkedAt for parametersOfDependence hL cDep with the row condition (Q, L) ↦ SlotNormCondition Q L (𝒞 ↦ Closed 𝒞 BoundAtTwoThreeFamilyFonAlt), holds.
+- Premise 1. hP, the bundle of 7 assumed statements that the code calls Hypotheses₂, holds.
+- Premise 2. hG, the statement CutGivesAlt, holds, which says that for every D and nch with GaloisPreconditions D nch and Tie4 D there is c in CutD D with c.Good, NormChoiceFacts (cut D c) (nchTr c nch) and Tie4 (cut D c).
+- Premise 3. prN, the bundle of 14 assumed statements that the code calls PublishedInputsThirdLayerAlt, holds.
+- Premise 4. hX, the bundle of 12 assumed statements that the code calls GeometricGaloisRepCompatibility, holds.
+- Premise 5. dzs, the statement DepthZeroSupport, holds.
+- Premise 6. hL is a proof of RecTExists.
+- Premise 7. cDep is any real number.
+- Premise 8. hF, the statement MemberAtLayerPoint hL applied to the property that sends its arguments to GaloisPreconditions (w.D Z) nch, holds.
+- Premise 9. hAt, the statement LinkedAt for parametersOfDependence hL cDep with the row condition (Q, L) ↦ SlotNormCondition Q L (𝒞 ↦ Closed 𝒞 BoundAtTwoThreeFamilyFonAlt), holds.
 - Conclusion. LinkedAt holds for parametersOfDependence hL cDep with the row condition (Q, L) ↦ SlotNormCondition Q L (𝒞 ↦ Closed 𝒞 LinkN).
 
 ```
@@ -606,7 +606,7 @@ Assume the bundle of seven statements that the code calls Hypotheses₂ and the 
 
 - Premise 1. The conjunction that the code calls Hypotheses₂ holds, with its seven fields FontaineBcris, GlobalArtinReciprocity, BlochKatoLocal, LocalTateDualityK, LocalEulerCharK, LocalFinitenessK and BhattScholzeIntegral.
 - Premise 2. The condition that the code calls CutGivesAlt holds, which says that every datum D with a choice nch satisfying GaloisPreconditions and Tie4 has a cut c with c.Good, NormChoiceFacts for the cut datum and transported choice, and Tie4 for the cut datum.
-- Premise 3. Eps is a real number and Fm is a family of type FamP eps.
+- Premise 3. eps is a real number and Fm is a family of type FamP eps.
 - Premise 4. Fm satisfies the condition that the code calls TwGood.
 - Premise 5. For every real x with x1 < x and every index i in Ix(x), both GaloisPreconditions(D(x,i), nch(x,i)) and Tie4(D(x,i)) hold, where nch(x,i) is the nch field of the family's extra data ex at x and i.
 - Conclusion. LinkN Fm holds, that is, there exist real C and x0 such that for all x ≥ x0, all i in Ix(x) with ShaFinOdd(D(x,i)) and all j in {1,…,m}, the condition LinkN_at(L(x,i), j, C) holds.
@@ -690,7 +690,7 @@ The head is `GlobalTheory.Fc.S0.Open0ProofU.open_orbit_of_unramified_exponents_a
 Assume a bundle of hypotheses that the code calls UnitaryGroupThirdPlaceHypotheses, which is a conjunction of at least 28 named statements. Then for every proof hL of a statement that the code calls RecTExists and for every real number cDep, a condition that the code calls OpenParameterStatements holds for the parameter object parametersOfDependence hL cDep. That condition is a conjunction of twelve statements, each of the form LinkedAt p r, where p is that parameter object and r runs through twelve named row conditions.
 
 - Premise 1. The bundle UnitaryGroupThirdPlaceHypotheses holds, which is a conjunction of at least 28 named statements whose list is cut off in the dossier.
-- Premise 2. HL is a proof of RecTExists, which says that for every number field E, algebraic closure Ω of E, valuation subring A of Ω, height one prime w of the ring of integers of E and proof h of a condition that the code calls IsPlaceOver A w, there exists an object rc that satisfies a condition that the code calls IsRecT h rc.
+- Premise 2. hL is a proof of RecTExists, which says that for every number field E, algebraic closure Ω of E, valuation subring A of Ω, height one prime w of the ring of integers of E and proof h of a condition that the code calls IsPlaceOver A w, there exists an object rc that satisfies a condition that the code calls IsRecT h rc.
 - Conclusion. For every real cDep, all twelve statements LinkedAt p r hold with p = parametersOfDependence hL cDep and r equal in turn to SlotPrimitivityCondition, SlotLambdaPrimeCondition, SlotDivisorCondition, SlotDecompositionPointCondition, SlotSelectionJumpCondition, Row_tie_alt, RowLabelCondition, RowGoodnessCondition, GeometricWeakCompatibility', RowMultiplicityCondition, RowKappaCondition and RowDefectCondition.
 
 ```
@@ -727,7 +727,7 @@ Assume fourteen named statements, thirteen of them from a namespace called Publi
 - Premise 12. A condition that the code calls Published.DiscreteSeriesClassification.
 - Premise 13. A condition that the code calls Published.StrongApproxSU.
 - Premise 14. A second and different condition that the code calls HeckeCharacterZeroLocus.SiegelWeilU.SiegelWeilUnitaryConvergent.
-- Premise 15. HL is a proof of RecTExists.
+- Premise 15. hL is a proof of RecTExists.
 - Conclusion. For all N of type NormChoiceExtension hL, S of type SExt and Γ of type GeoP, both LinkedAt p (Q, L ↦ Row Q L (AtAll MI)) and LinkedAt p RowMultiplicityCondition hold, where p = parametersOfExtension N S Γ.
 
 ```
@@ -762,7 +762,7 @@ Assume thirteen named statements from the namespaces Published and Hk3, and assu
 - Premise 12. A condition that the code calls Published.DiscreteSeriesClassification.
 - Premise 13. A condition that the code calls Published.StrongApproxSU.
 - Premise 14. RowDiag of the condition E(D, L, C') that says IsScaleWithBoundedGamma D L C' holds and RankMu D u holds for every u.
-- Premise 15. HL is a proof of RecTExists.
+- Premise 15. hL is a proof of RecTExists.
 - Premise 16. For the given p, for every context K and every q of type WPt p.s K, the type RXs q.x.what₂ has at least one element.
 - Conclusion. RowE (IsGoodE p.s) (BundleLinkage p) MI holds, where MI is the property of a bundle b that the code writes as (b.B.Q.Rl.toCx3 b.B.Q.F).MIstar2 (b.B.Q.F.eV (b.B.Q.Rl.toCx3 b.B.Q.F).zs) b.B.Q.sEE.
 
@@ -798,7 +798,7 @@ The theorem assumes thirteen named statements that the code files under publishe
 - Premise 12. The proposition DiscreteSeriesClassification holds.
 - Premise 13. The proposition StrongApproxSU holds.
 - Premise 14. RowDiag holds for the condition E(D, L, C') that says IsScaleWithBoundedGamma D L C' holds and RankMu D u holds for every word u.
-- Premise 15. HL is a proof of RecTExists, and p is any element of Parameters hL.
+- Premise 15. hL is a proof of RecTExists, and p is any element of Parameters hL.
 - Premise 16. For every context K and every point q of WPt p.s K, the type RXs (q.x.what₂) has at least one element.
 - Premise 17. RowE holds for the slot IsGoodE p.s, the linkage BundleLinkage p, and the property that sends a bundle b to BundlePointConditions b.
 - Conclusion. RowE holds for the same slot IsGoodE p.s and the same linkage BundleLinkage p, with the property that sends a bundle b to the condition MIstar2 of the object b.B.Q.Rl.toCx3 b.B.Q.F, applied to b.B.Q.F.eV at the field zs of that object and to b.B.Q.sEE.
@@ -922,14 +922,14 @@ The head is `PositivityTheory.HtPt.Ah.deep_slim_use`, in the module Development 
 
 If eight named propositions hold, each taken as a hypothesis, then the proposition that the code calls DeepStR holds. DeepStR says that there is a single real number C with 0 ≤ C such that, for every datum D of type D7, every T of type CoreJ D that satisfies LawsJ, with D.R.m² ≤ D.R.k, every natural j with 1 ≤ j < D.R.m, every Y of type Deep (T.toCore) j, every natural e and real o with Y.Good e o, and with the number Y.d.l₂.M' having at most 15 distinct prime factors, the condition MeanAll Y.U (xiR D) (ell D) C holds. MeanAll with these arguments says that for every weight u and real g with WtGap u g, a condition called MeanGe holds for Y.U, xiR D, u, bndB u g and C · errX (ell D) u g.
 
-- Premise 1. H₁, ResolutionCharZero holds, which asserts for reduced separated quasi-compact schemes locally of finite type over a field of characteristic zero a map s satisfying IsBlowupSeq with smooth source, an isomorphism over the smooth locus, and Snc holding of the object preRed formed from s and the complement of the smooth locus.
-- Premise 2. H₂, PrincipalisationCharZero holds, which asserts a sequence satisfying IsSncBlowupSeq after which the pulled-back ideal sheaf satisfies EffCartier, its support satisfies Snc, and the map is an isomorphism off the support.
-- Premise 3. HPL, PoincareLelongInv holds, which is an identity expressing a ptsIntegral of logNorm A s as a multiplicity-weighted sum of ptsIntegral terms over horizontal members of divSupp P s minus another ptsIntegral term.
-- Premise 4. HU, HSUse holds, which is the conjunction of ArithKleiman.Statement, G7.Statement and ArithmeticVolumeNef.Statement.
-- Premise 5. HBig, MoriwakiBigStatement holds, which bounds II K ι (mCoordIdeal y) (D + 1) (constant family A) above by arVolP (IsSmallH (mCoordIdeal y) y A) (chartLat y A.a) 1 D under eight listed conditions.
-- Premise 6. HF, FarguesExact holds, which says that hodgeTateLinear G x = 0 exactly when B x y = 0 for all y with dlogLinear G y = 0, for a PDivGroup G over a p-adically complete ring of integers O of an algebraically closed valued field of characteristic zero and a form B matching the map called pairing.
-- Premise 7. HZ, ZarhinStatement holds, which says that an abelian scheme with a relatively ample line bundle datum over the ring of integers of a valued algebraically closed field is a retract, through maps satisfying IsMonHom, of the group object of a PolAV.
-- Premise 8. HN, NefRR holds, which says that D! times the rational dimension of the span of chartLatNm y a τ divided by τ^D tends to genDeg (mCoordIdeal y) D a as τ tends to infinity, under IsArithVar, Birational and NefOnGenericDeg.
+- Premise 1. h₁, ResolutionCharZero holds, which asserts for reduced separated quasi-compact schemes locally of finite type over a field of characteristic zero a map s satisfying IsBlowupSeq with smooth source, an isomorphism over the smooth locus, and Snc holding of the object preRed formed from s and the complement of the smooth locus.
+- Premise 2. h₂, PrincipalisationCharZero holds, which asserts a sequence satisfying IsSncBlowupSeq after which the pulled-back ideal sheaf satisfies EffCartier, its support satisfies Snc, and the map is an isomorphism off the support.
+- Premise 3. hPL, PoincareLelongInv holds, which is an identity expressing a ptsIntegral of logNorm A s as a multiplicity-weighted sum of ptsIntegral terms over horizontal members of divSupp P s minus another ptsIntegral term.
+- Premise 4. hU, HSUse holds, which is the conjunction of ArithKleiman.Statement, G7.Statement and ArithmeticVolumeNef.Statement.
+- Premise 5. hBig, MoriwakiBigStatement holds, which bounds II K ι (mCoordIdeal y) (D + 1) (constant family A) above by arVolP (IsSmallH (mCoordIdeal y) y A) (chartLat y A.a) 1 D under eight listed conditions.
+- Premise 6. hF, FarguesExact holds, which says that hodgeTateLinear G x = 0 exactly when B x y = 0 for all y with dlogLinear G y = 0, for a PDivGroup G over a p-adically complete ring of integers O of an algebraically closed valued field of characteristic zero and a form B matching the map called pairing.
+- Premise 7. hZ, ZarhinStatement holds, which says that an abelian scheme with a relatively ample line bundle datum over the ring of integers of a valued algebraically closed field is a retract, through maps satisfying IsMonHom, of the group object of a PolAV.
+- Premise 8. hN, NefRR holds, which says that D! times the rational dimension of the span of chartLatNm y a τ divided by τ^D tends to genDeg (mCoordIdeal y) D a as τ tends to infinity, under IsArithVar, Birational and NefOnGenericDeg.
 - Conclusion. DeepStR holds, that is, one constant C ≥ 0 exists for which MeanAll Y.U (xiR D) (ell D) C holds for all admissible D, T, j, Y, e and o with at most 15 distinct prime factors in Y.d.l₂.M'.
 
 ```

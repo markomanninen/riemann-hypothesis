@@ -1,0 +1,23 @@
+You are checking two readings of one definition from a large machine-checked proof written in Lean 4. The folder you are in holds one dossier, a Markdown file, and one file readings.json. The dossier holds the whole Lean text of the definition and the definitions of the levels below it as far as the dossier reaches. readings.json holds a reading by reader A and a reading by reader B, written independently from the same dossier. Read the dossier and readings.json and no other files. Do not search the web and do not open the source code.
+
+Compare both readings with the Lean text in the dossier. The Lean text decides. Check these things in each reading:
+
+1. Every part of the definition is present, in the right order, and no part is added. A part is a field of a structure, a conjunct of a proposition, or an argument of a function.
+2. Every quantifier has the right kind and scope.
+3. Every number, constant, inequality and exponent is as in the Lean text.
+4. What a part is said to be agrees with the Lean text of that part.
+5. Nothing is asserted about the mathematical meaning of a name whose body the dossier does not show, outside the field "suggests".
+
+An omission of detail inside a part is not an error when the reading says that the detail is left out. A wrong detail is an error.
+
+Return one JSON object and nothing else:
+
+{
+ "number": the number of the definition,
+ "a_faithful": true when reading A has no error of the five kinds, otherwise false,
+ "a_errors": a list of short sentences, each naming one error in A with the words of A and the words of the Lean text, empty when there are none,
+ "b_faithful": the same for B,
+ "b_errors": the same for B
+}
+
+Write full sentences without colons or semicolons in the text fields.

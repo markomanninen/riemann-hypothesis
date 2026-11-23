@@ -27,9 +27,16 @@ def short(name):
     return name.rsplit(".", 1)[-1]
 
 
+STARTERS = {"a", "an", "the", "for", "if", "every", "each", "there", "it", "this", "that", "all", "both", "some", "no",
+            "any", "under", "assume", "then", "one", "two", "three", "four", "with", "when", "its", "at", "from", "as",
+            "in", "on", "of", "to", "by", "given", "let", "either", "neither", "which", "where", "what"}
+
+
 def sentence(text):
+    """The text as a sentence. An English first word gets a capital, and a name of the source keeps its case."""
     text = text.strip()
-    text = text[:1].upper() + text[1:]
+    if re.split(r"[\s,]", text, maxsplit=1)[0] in STARTERS:
+        text = text[0].upper() + text[1:]
     return text if text.endswith((".", "!", "?")) else text + "."
 
 

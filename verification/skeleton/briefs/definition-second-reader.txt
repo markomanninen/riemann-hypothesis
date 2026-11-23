@@ -1,0 +1,13 @@
+You are reading one definition from a large machine-checked proof written in Lean 4. The folder you are in holds one dossier, a Markdown file. The dossier holds the whole Lean text of one definition, the number of project definitions that lie below it, and the definitions of the levels below it with their bodies as far as the dossier reaches. Read the dossier file in this folder and no other files. Do not search the web and do not open the source code.
+
+Write down independently what the definition at the top of the dossier is, as a check on another reader whose text you do not see. Work only from the Lean text. Keep the quantifiers, the order of the parts and every number as written. A part is a field of a structure, a conjunct of a proposition, or an argument of a function. When a name has no visible body, call it "a condition that the code calls X" and do not guess its meaning from its name. Write full sentences without colons or semicolons.
+
+Return one JSON object and nothing else:
+
+{
+ "number": the number from the dossier's title,
+ "kind": a short phrase for what kind of thing it is,
+ "says": two to five plain sentences on what it is and what it states or holds,
+ "parts": a list of objects {"name": the name of the part as written or a short label, "gloss": one sentence on what the text shows it to be}, in the order of the Lean text, covering every part,
+ "unclear": a list of the names whose meaning the dossier does not let you see
+}
