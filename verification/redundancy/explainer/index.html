@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toistuvat teoreemat Lean-koodissa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* One reading column with the video first, figures in ruled tables, code in mono. */
+  --paper: #f6f7f4;
+  --ink: #17201f;
+  --quiet: #5a6664;
+  --rule: #d5dad6;
+  --card: #ffffff;
+  --accent: #0d6b62;
+  --warn: #a2441f;
+  --display: "Newsreader", Georgia, serif;
+  --body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #101418; --ink: #e9e6dc; --quiet: #969ea3; --rule: #2a323a; --card: #171c22;
+    --accent: #6fd3c4; --warn: #ff9d7a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #101418; --ink: #e9e6dc; --quiet: #969ea3; --rule: #2a323a; --card: #171c22;
+  --accent: #6fd3c4; --warn: #ff9d7a; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; }
+main { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.1rem 4rem; display: flex; flex-direction: column; gap: 2.2rem; }
+main > *, section > *, header > * { min-width: 0; max-width: 100%; }
+header { display: flex; flex-direction: column; gap: 0.9rem; }
+h1 { font-family: var(--display); font-weight: 600; font-size: clamp(1.9rem, 5.2vw, 2.7rem); line-height: 1.12; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--display); font-weight: 600; font-size: 1.5rem; line-height: 1.2; margin: 0 0 0.7rem; text-wrap: balance; }
+h3 { font-size: 1.02rem; font-weight: 600; margin: 1.2rem 0 0.3rem; }
+p { margin: 0 0 0.85rem; }
+p:last-child { margin-bottom: 0; }
+.lead { font-size: 1.14rem; }
+.source { color: var(--quiet); font-size: 0.93rem; }
+code { font-family: var(--mono); font-size: 0.88em; background: var(--card); border: 1px solid var(--rule); border-radius: 4px; padding: 0.05em 0.3em; overflow-wrap: anywhere; }
+figure { margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+video { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid var(--rule); background: #101418; }
+figcaption { color: var(--quiet); font-size: 0.93rem; }
+.scroll { overflow-x: auto; border: 1px solid var(--rule); border-radius: 8px; background: var(--card); }
+table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+th, td { text-align: left; padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-weight: 600; color: var(--quiet); font-size: 0.85rem; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.key td { font-weight: 600; color: var(--accent); }
+tr.odd td.n { color: var(--warn); }
+pre { margin: 0; padding: 0.9rem 1rem; font-family: var(--mono); font-size: 0.85rem; line-height: 1.5; white-space: pre; }
+ol, ul { margin: 0; padding-left: 1.3rem; display: flex; flex-direction: column; gap: 0.55rem; }
+a { color: var(--accent); }
+a:focus-visible, video:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>Toistuvat teoreemat Riemannin hypoteesin Lean-koodissa</h1>
+  <p class="lead">Riemannin hypoteesin todistukseksi julkaistussa Lean-koodissa on 666 738 teoreemaa. Niistä 117 310 väittää täsmälleen saman kuin jokin toinen koodin teoreema. Kun jokaisesta väitteestä säilytetään yksi teoreema, muita on 62 905 eli 9,4 % kaikista teoreemoista. Kutsun näitä 62 905 teoreemaa toistoiksi. Toistot kasvattavat koodia, mutta ne eivät ole virheitä.</p>
+  <p class="lead">Lean vertasi tässä työssä vain väitteitä. Todistusten pätevyyttä tämä työ ei tarkistanut.</p>
+  <p class="source">Luvut on mitattu 23.11.2026. Mitattu koodi on yhteisen lähdekoodivaraston <code>leanprover-community/riemann-hypothesis</code> tallennettu tila <code>611ce0b6</code>, ja se käyttää Leanin versiota 4.36.</p>
+</header>
+
+<figure>
+  <video id="explainer" controls preload="metadata" poster="poster.jpg" src="explainer.mp4"></video>
+  <figcaption>Videon puhe on koneääntä, ja tekstitys on päällä.</figcaption>
+</figure>
+
+<section>
+  <h2>Mitä tehtiin</h2>
+  <h3>Tekstihaku etsi mahdolliset toistot</h3>
+  <p>Skripti <code>scan.py</code> luki jokaisen teoreeman lähdekoodista ja jakoi teoreeman väitteeksi ja todistukseksi. Skripti poimi kahdenlaisia teoreemoja, jotka voivat olla toistoja.</p>
+  <ul>
+    <li>Viittaava teoreema on teoreema, jonka koko todistus on yksi viittaus toiseen teoreemaan. Viitattua teoreemaa kutsun sen kohteeksi, ja nämä kaksi muodostavat parin.</li>
+    <li>Samatekstinen ryhmä on kahden tai useamman teoreeman joukko, jonka jäsenten väite on kirjoitettu samoin.</li>
+  </ul>
+  <h3>Teksti ei yksin ratkaise</h3>
+  <p>Lean-koodissa nimet kuuluvat nimiavaruuksiin, jotka ovat nimien etuliitteitä. Koodi määrittelee joitakin lyhyitä nimiä usean eri etuliitteen alle. Tiedoston <code>open</code>-rivit valitsevat, mitä näistä määritelmistä lyhyt nimi tarkoittaa siinä tiedostossa. Kaksi samoin kirjoitettua väitettä voi siksi puhua eri määritelmistä. Nimi <code>spMap</code> on tällainen, ja esimerkki siitä on alempana.</p>
+  <h3>Lean vertasi käännetyt väitteet</h3>
+  <p>Kun Lean kääntää lähdetiedoston, se kirjoittaa tuloksen käännöstiedostoon. Käännöstiedostossa jokainen väite on muodossa, jossa lyhyet nimet on korvattu täysillä nimillä etuliitteineen. Skripti <code>CheckSame.lean</code> luki tarkasteltavien teoreemojen väitteet noin 96 000 käännöstiedostosta ja vertasi ne.</p>
+  <p>Kaksi väitettä lasketaan samaksi, kun niiden käännetyt muodot ovat täsmälleen samat. Vastaus sama on tarkka, jos käännöstiedostot ovat oikeat. Vastaus eri jättää auki yhden mahdollisuuden. Kaksi väitettä voi osoittautua samaksi vasta, kun jokin nimi korvataan määritelmänsä sisällöllä, eikä tämä vertailu tee sitä.</p>
+</section>
+
+<section>
+  <h2>Mitä löytyi</h2>
+  <h3>Viittaavat teoreemat</h3>
+  <p>Tekstihaku löysi 51 364 viittaavaa teoreemaa. Niistä 47 110 viittaa koodin omaan teoreemaan, ja nämä parit annettiin Leanille. Loput 4 254 viittaavat Leanin kirjaston teoreemaan tai kohteen johdannaiseen, kuten yhtälön kääntävään muotoon <code>.symm</code>.</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Leanin vastaus 47 110 parista</th><th class="n">Pareja</th></tr></thead>
+    <tbody>
+      <tr class="key"><td>Viittaava teoreema väittää saman kuin kohteensa</td><td class="n">42 737</td></tr>
+      <tr><td>Väitteet ovat eri</td><td class="n">3 706</td></tr>
+      <tr><td>Paria ei voitu verrata, koska sen toinen teoreema on yksityinen</td><td class="n">667</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p></p>
+  <p>Yksityinen teoreema on merkitty sanalla <code>private</code>. Sellainen näkyy vain omassa tiedostossaan, eikä käännöstiedoston julkinen osa sisällä sitä.</p>
+  <p>Teksti ja Lean ovat eri mieltä kahteen suuntaan. 12 580 parissa väitteet on kirjoitettu eri tavoin, ja Leanin mukaan väite on silti sama. 170 parissa väitteet on kirjoitettu samoin, ja Leanin mukaan ne ovat eri väitteet. Pelkkä tekstihaku olisi laskenut nämä 170 paria toistoiksi.</p>
+  <p>Samaksi vahvistetuista 42 737 parista 35 411:ssä viittaava teoreema on tiedostossa, jonka nimi päättyy sanaan <code>Statement</code>, ja kohde on toisessa tiedostossa. Koodi siis esittää saman tuloksen kahdessa paikassa.</p>
+  <h3>Samatekstiset ryhmät</h3>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Teoreemat, joiden väite on kirjoitettu samoin</th><th class="n">Määrä</th></tr></thead>
+    <tbody>
+      <tr><td>Ryhmiä</td><td class="n">51 332</td></tr>
+      <tr><td>Teoreemoja ryhmissä</td><td class="n">113 097</td></tr>
+      <tr class="key"><td>Toistoja yksityiset teoreemat pois lukien, kun jokaisesta käännetystä väitteestä jätetään yksi teoreema laskematta</td><td class="n">50 502</td></tr>
+      <tr class="odd"><td>Ryhmiä, joissa Lean löytää kaksi tai useampia eri väitteitä</td><td class="n">3 675</td></tr>
+      <tr><td>Teoreemoja, joita ei voitu verrata, koska ne ovat yksityisiä</td><td class="n">10 438</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p></p>
+  <p>Jäsenmäärältään suurin ryhmä on 156 teoreemaa, joiden väite on rivi <code>spMap g ≫ spMap f = spMap (g.comp f)</code>. Lean löytää niistä kaksi eri väitettä, koska koodi määrittelee nimen <code>spMap</code> useammin kuin kerran. 141 teoreemaa väittää yhtä, 5 väittää toista ja 10 on yksityisiä.</p>
+  <h3>Toistot yhteensä</h3>
+  <p>Viittaavat teoreemat ja samatekstiset ryhmät menevät osin päällekkäin, koska viittaava teoreema voi olla myös kirjoitettu samoin kuin kohteensa. Yhdistin siksi molemmat tulokset. Kun kaikki samaksi vahvistetut väitteet kootaan yhteen, 117 310 teoreemaa jakaa väitteensä vähintään yhden toisen teoreeman kanssa, ja eri väitteitä niillä on 54 405. Jos jokaisesta väitteestä säilytetään yksi teoreema, toistoja on 117 310 − 54 405 = 62 905.</p>
+  <h3>Teoreema, jonka nimi lupaa johdon</h3>
+  <p>Yksi sivuhavainto ei koske toistoja. Teoreema <code>recTExists_of_published_inputs</code> ottaa kaksitoista oletusta, ja sen todistus palauttaa niistä ensimmäisen, väitteen <code>RecTExists</code>, sellaisenaan. Teoreeman nimi tarkoittaa suomeksi, että <code>RecTExists</code> seuraa julkaistuista lähtötiedoista. Todistus ei kuitenkaan käytä yhtätoista muuta oletusta lainkaan.</p>
+  <p>Lähdekoodin mukaan <code>RecTExists</code> ei jää oletukseksi. Teoreema <code>UpperTheory.Zero.LLC.recTExists</code> todistaa sen ilman oletuksia, ja tiedoston <code>Main.lean</code> viiteen päätulokseen johtava teoreemojen ketju käyttää tätä teoreemaa.</p>
+</section>
+
+<section>
+  <h2>Mitä tästä seuraa</h2>
+  <ul>
+    <li><strong>Koodin väitteet eivät muutu.</strong> Toisto väittää saman kuin teoreema, joka koodissa jo on, joten toiston poistaminen ei poista yhtäkään väitettä. Koodin viisi päätulosta ovat tiedostossa <code>Main.lean</code>, ja niiden väitteet pysyvät ennallaan.</li>
+    <li><strong>Koodia on enemmän kuin väitteet vaativat.</strong> 62 905 toistoa on 9,4 % teoreemoista. Toisto, jolla on oma todistus, käännetään erikseen jokaisella käännöskerralla.</li>
+    <li><strong>Toistoista riippumatta yksi nimi johtaa lukijaa harhaan.</strong> Teoreeman <code>recTExists_of_published_inputs</code> nimi lupaa päättelyn julkaistuista tuloksista, ja todistus palauttaa oman oletuksensa.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Mitä toistoille voi tehdä</h2>
+  <ol>
+    <li>Viittaavan teoreeman tilalle kirjoitetaan sen kohteen nimi jokaisessa kohdassa, jossa viittaavaa teoreemaa käytetään, ja viittaava teoreema poistetaan. <code>Statement</code>-tiedostot on ehkä tarkoitettu paikaksi, josta lukija löytää tulokset. En ole varmistanut tätä koodin tekijältä, joten niiden poistamisesta päättävät ylläpitäjät.</li>
+    <li>Samasta väitteestä säilytetään yksi teoreema, ja muiden tilalle kirjoitetaan sen nimi. Yhteisen lähdekoodivaraston muutosehdotus 116 (pull request) tekee näin yhdelle hakemistolle.</li>
+    <li>Koodi käännetään jokaisen poiston jälkeen. Tekstihaku ei näe kaikkia kohtia, joissa teoreemaa käytetään. Saman lähdekoodivaraston keskustelu 3 (issue) kertoo kokeesta, jossa teoreemoja poistettiin tekstihaun perusteella. Ensimmäisistä noin 7 000 tiedostosta 1 087 lakkasi kääntymästä.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>Miten luvut voi tarkistaa itse</h2>
+  <p>Skriptit ovat yhteisen lähdekoodivaraston kopiossa <code>markomanninen/riemann-hypothesis</code>, kansiossa <code>verification/redundancy</code>. Leanin vertailu tarvitsee saman koodin toisen työkansion, johon käännöstiedostot on ladattu.</p>
+  <div class="scroll"><pre>python3 -I verification/decl-graph/build.py
+python3 -I verification/redundancy/scan.py
+
+lake exe cache get        # toisessa työkansiossa, lataa käännöstiedostot
+python3 -I verification/redundancy/check_same.py /polku/toiseen/tyokansioon</pre></div>
+  <p></p>
+  <p>Ensimmäinen komento rakentaa nimien hakemiston, jota tekstihaku käyttää. Viimeinen komento ajaa Leanin vertailun ja kirjoittaa tiedoston <code>data/same_checked.tsv.gz</code>, jossa on jokainen tarkasteltu teoreema ja Leanin vastaus.</p>
+</section>
+
+<section>
+  <h2>Mitä jäi tekemättä</h2>
+  <ul>
+    <li><strong>Todistuksia ei tarkistettu riippumattomasti.</strong> Leanin ydin on ohjelman osa, joka tarkistaa jokaisen todistuksen askeleen, ja se toimii jo käännöksen aikana. Käännöksen tekivät kuitenkin muiden koneet, enkä toistanut sitä. Riippumaton ajo, jossa koko koodi viedään ytimen läpi uudelleen, on yhteisen lähdekoodivaraston ohjeen mukaan nykyiselle koodille vielä tekemättä.</li>
+    <li><strong>Käännöstiedostot tulevat muilta.</strong> Ne ladattiin yhteisen lähdekoodivaraston välimuistista. Välimuisti on verkkopalvelu, johon vapaaehtoisten koneet tallentavat kääntämänsä tiedostot. Jos jokin käännöstiedosto olisi väärä, väitteiden vertailu voisi antaa väärän vastauksen.</li>
+    <li><strong>Määritelmiä ei avattu.</strong> Skripti vertasi samalla tavalla myös määritelmiä, joiden teksti on sama. Tällaisia ryhmiä on 3 425, ja Leanin mukaan 1 889 niistä jakautuu useaksi eri määritelmäksi. Osa jakautuneista ryhmistä voi osoittautua yhdeksi määritelmäksi, kun nimet korvataan määritelmiensä sisällöllä.</li>
+    <li><strong>Yksityiset teoreemat jäivät vertaamatta.</strong> Niitä on samatekstisissä ryhmissä 10 438 ja viittaavien teoreemojen pareissa 667 parin verran.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Seuraava askel</h2>
+  <p>Kirjoitan näistä luvuista ehdotuksen luonnoksen yhteisen lähdekoodivaraston ylläpitäjille. Luonnos kertoo menetelmän, vahvistetut luvut, tarkistusohjeen ja ehdotuksen toistojen poistamisesta. Lähetän ehdotuksen vasta, kun olet lukenut luonnoksen ja hyväksynyt sen.</p>
+</section>
+</main>
+<script>
+// The captions of the video, as start, end and text. build.py prints the same times into captions.vtt.
+const CUES = [[0.4, 8.057, "Riemannin hypoteesin todistukseksi julkaistussa Lean-koodissa on 666 738 teoreemaa."], [8.357, 15.599, "Etsin niistä teoreemat, joilla on sama väite kuin jollakin toisella. Kun jokaisesta väitteestä jätetään yksi teoreema, loput ovat toistoja."], [15.899, 23.952, "Ensin luin koodin tekstinä. 51 364 teoreemalla on todistuksena pelkkä viittaus toiseen teoreemaan."], [24.252, 30.589, "Sama nimi voi tarkoittaa eri tiedostoissa eri määritelmää, joten kaksi samalta näyttävää väitettä voi olla eri väitteet."], [30.889, 35.297, "Lean korvaa kääntäessään jokaisen nimen täydellä nimellä. Vertasin käännetyt väitteet."], [35.597, 42.19, "42 737 teoreemaa väittää täsmälleen saman kuin teoreema, johon se viittaa."], [42.49, 49.094, "Toinen haku etsi teoreemat, joiden väite on tekstinä sama. Niistä 50 502 on Leanin mukaan toistoja."], [49.394, 59.641, "Haut osuvat osin samoihin teoreemoihin. Ilman päällekkäisyyttä toistoja on 62 905 eli yhdeksän prosenttia. Toisto ei ole virhe, mutta se kasvattaa koodia."], [59.941, 65.173, "Todistusten pätevyyden ratkaisee riippumaton ajo Leanin tarkistavan ytimen läpi. Sitä ajoa en tehnyt."], [65.473, 69.175, "Seuraavaksi kirjoitan ylläpitäjille ehdotuksen toistojen poistamisesta."]];
+const track = document.getElementById("explainer").addTextTrack("captions", "Suomi", "fi");
+for (const [start, end, text] of CUES) track.addCue(new VTTCue(start, end, text));
+track.mode = "showing";
+</script>
+</body>
+</html>

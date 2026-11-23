@@ -1,0 +1,42 @@
+[
+ {
+  "id": "s1",
+  "text": "Riemannin hypoteesin todistukseksi julkaistussa Lean-koodissa on 666 738 teoreemaa."
+ },
+ {
+  "id": "s2",
+  "text": "Etsin niistä teoreemat, joilla on sama väite kuin jollakin toisella. Kun jokaisesta väitteestä jätetään yksi teoreema, loput ovat toistoja."
+ },
+ {
+  "id": "s3",
+  "text": "Ensin luin koodin tekstinä. 51 364 teoreemalla on todistuksena pelkkä viittaus toiseen teoreemaan."
+ },
+ {
+  "id": "s4",
+  "text": "Sama nimi voi tarkoittaa eri tiedostoissa eri määritelmää, joten kaksi samalta näyttävää väitettä voi olla eri väitteet."
+ },
+ {
+  "id": "s5",
+  "text": "Lean korvaa kääntäessään jokaisen nimen täydellä nimellä. Vertasin käännetyt väitteet."
+ },
+ {
+  "id": "s6",
+  "text": "42 737 teoreemaa väittää täsmälleen saman kuin teoreema, johon se viittaa."
+ },
+ {
+  "id": "s8",
+  "text": "Toinen haku etsi teoreemat, joiden väite on tekstinä sama. Niistä 50 502 on Leanin mukaan toistoja."
+ },
+ {
+  "id": "s9",
+  "text": "Haut osuvat osin samoihin teoreemoihin. Ilman päällekkäisyyttä toistoja on 62 905 eli yhdeksän prosenttia. Toisto ei ole virhe, mutta se kasvattaa koodia."
+ },
+ {
+  "id": "s10",
+  "text": "Todistusten pätevyyden ratkaisee riippumaton ajo Leanin tarkistavan ytimen läpi. Sitä ajoa en tehnyt."
+ },
+ {
+  "id": "s11",
+  "text": "Seuraavaksi kirjoitan ylläpitäjille ehdotuksen toistojen poistamisesta."
+ }
+]
