@@ -1,0 +1,10 @@
+{
+ "definitions_that_are_always_true": 12,
+ "used_by_main_names": 10,
+ "used_by_main_widest": 10,
+ "with_no_user": 0,
+ "with_a_user_that_names_it_in_its_statement": 11,
+ "named_only_in_proofs_or_values": 1,
+ "with_a_sibling_of_the_same_type_in_the_original": 6,
+ "users_in_total": 249
+}
