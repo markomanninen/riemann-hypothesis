@@ -4,8 +4,12 @@ The five theorems of [`Main.lean`](../../src/Main.lean) use between 91 % and 98 
 836,456 declarations in the project, by the estimate in this folder. Under the widest reading
 of the text, 20,193 declarations, 2.4 % of the project, are used by none of the five theorems.
 
-The estimate reads the source text and does not run Lean. A check against a compiled sample of
-2,681 modules, described below, shows how far the text can be trusted.
+The estimate reads the source text and does not run Lean. The exact graph, read from the
+compiled files of the whole project and described below, gives the real figure. The five
+theorems use 800,344 of the 836,456 declarations, which is 95.7 %, and 36,112 declarations are
+used by none of them. Of the six ways of reading the text, the widest, loose with automation,
+gives the fewest wrong answers. It misses 358 declarations that are really used and counts
+13,750 as used that are not.
 
 These figures are for the Lean 4.36 source of commit `611ce0b6`. The source as it was first
 published, on Lean 4.33.1, had 1,061,531 declarations. The same script reached between 72 % and
@@ -125,6 +129,75 @@ widest run missed two declarations in 2,420 and reached 2.6 times too many. If t
 behaves the same way, more declarations are unused than the widest run counts as unreached. The
 sample makes that likely and does not prove it.
 
+## The exact graph from the compiled project
+
+The compiled files of the whole project come with `lake exe cache get`, so nothing has to be
+built for this graph. `ExactGraph.lean` reads the compiled files of each module without
+importing the module into Lean. A module written with Lean's module system keeps its proofs in
+a private part, `.olean.private`, which shares objects with the public parts `.olean` and
+`.olean.server`, so the script reads the three parts together. For every constant it writes
+every project or library constant that the constant's type and value mention. Reading the
+149,396 modules took about two and a half hours from an external disk. In a timed run of 1,991
+modules Lean computed for 9 of the 246 seconds, so the time is spent waiting for the disk.
+
+`exact_graph.py` then follows these mentions from the five theorems of `Main`. A constant that
+Lean creates itself, such as `_proof_1`, `_simp_1` or `match_1`, is followed like any other, so
+a use that passes through such a helper counts. The figures below are for commit `611ce0b6`.
+
+| Figure | Count |
+|---|---:|
+| compiled constants of the project | 1,550,842 |
+| of them matched with a declaration of the text | 833,920 |
+| of them Lean's helper constants | 716,922 |
+| mentions between project constants | 16,567,357 |
+| declarations of the text that have no compiled constant | 2,536 |
+| declarations reached from the five theorems | 800,344 |
+
+The 2,536 declarations without a compiled constant are 2,498 instances without a name, whose
+name Lean generates and the text does not know, and 38 others. The exact graph cannot say
+whether they are used, and the 36,112 unused declarations above include them. The 800,344
+reached declarations are 95.7 % of all 836,456 and 96.0 % of the 833,920 that have a compiled
+constant. The library `Supplements` holds four theorems, among them `allChi`, and no theorem of
+`Main` uses any of them.
+
+The next table compares each of the six ways of reading the text, described in the section What the script does,
+with the exact graph. It counts only the 833,920 declarations that have a compiled
+constant, since only those have an exact answer. The figures of `summary.json` count all
+836,456 declarations and are therefore a few thousand higher.
+
+| Way | Reached in the text | Reached in both | Only in the text | Only in the exact graph |
+|---|---:|---:|---:|---:|
+| names | 760,884 | 755,497 | 5,387 | 44,847 |
+| names, with automation | 770,045 | 762,598 | 7,447 | 37,746 |
+| fields | 801,470 | 791,576 | 9,894 | 8,768 |
+| fields, with automation | 810,137 | 797,956 | 12,181 | 2,388 |
+| loose | 807,367 | 795,008 | 12,359 | 5,336 |
+| loose, with automation | 813,736 | 799,986 | 13,750 | 358 |
+
+The table shows four things.
+
+- The widest run misses 358 of the 800,344 really reached declarations, which is 0.04 %. In the
+  compiled sample of the previous section it missed two of 2,420, which is 0.08 %.
+- The widest run counts 13,750 declarations as reached that are not, which is 1.7 % more than
+  the real number. In the compiled sample it reached 2.6 times the real number. A wrong count
+  can only come from declarations that are really unused. In the sample the five roots really
+  reach 2,420 of 23,043 declarations, so 20,623 unused declarations are open to a wrong count.
+  In the whole project the five theorems really reach 96 % of the declarations, so only about
+  33,600 are open to it, and the ratio of the sample cannot recur.
+- The names run misses 44,847 really reached declarations, 5.6 % of them, close to the 5.8 % of
+  the sample. The fields way, which also follows a name part after a dot such as `map` in
+  `h.map`, finds 36,079 of these 44,847.
+- The names run also counts 5,387 declarations that the exact graph does not reach. Two causes
+  were seen in the cases read by hand. The text resolves a name to the wrong one of two
+  declarations with the same last part, as `OrdGe` in
+  `GlobalTheory.Poinc.exists_locTuples_theta_of_adm`, which the text takes as
+  `GlobalTheory.LocM.OrdGe` while Lean uses `GlobalTheory.Poinc.OrdGe`. And a lemma named in a
+  `simp` list that `simp` did not use, as `discreteCoindRep_apply` in
+  `GroundTheory.ProfCoh.coindHomotopy_identity_apply`, is no use of that lemma.
+
+The exact graph counts what the compiled terms mention. It does not tell whether a mentioned
+declaration could be removed, since a proof could often be rewritten without it.
+
 ## Limits
 
 - The script reads text. A layout it does not expect can attach a name to the wrong declaration.
@@ -138,14 +211,23 @@ sample makes that likely and does not prove it.
   are not in the text, so the script follows a name ending in `Cpt` to the original.
 - An instance without a name gets its name from Lean. A mention of such a generated name in the
   text is not resolved.
-- The exact graph needs the compiled files of the whole project. `lake exe cache get` now
-  downloads them, so `SampleDeps.lean` could be run for all modules in place of the sample. That
-  run has not been made here.
+- The exact graph reads the compiled files that `lake exe cache get` downloads. Volunteers'
+  machines build those files for the upstream repository, so the graph is as reliable as that
+  cache. It does not check any proof.
 
 ## Running it
 
 ```bash
 python3 -I verification/decl-graph/build.py    # about two minutes, 6 GB of memory
+```
+
+The exact graph needs a checkout of the same commit with the compiled files in place. The chunks
+go to `data/exact`, and an interrupted run continues from the first unfinished chunk.
+
+```bash
+lake exe cache get                                                    # in that checkout
+python3 -I verification/decl-graph/exact_extract.py /path/to/that/checkout   # about 2.5 hours
+python3 -I verification/decl-graph/exact_graph.py                    # about half a minute, 6 GB of memory
 ```
 
 The check needs a checkout of the first published source in which the sample module is built.
@@ -170,6 +252,14 @@ python3 -I verification/decl-graph/check_sample.py deps.tsv \
 | `data/graph.npz` | the edges of the graph as arrays |
 | `data/modules.txt.gz` | the modules in the order the arrays number them |
 | `data/sample-deps.tsv.gz` | the real uses of the compiled sample, as `SampleDeps.lean` wrote them |
+| `ExactGraph.lean` | reads every constant of the compiled modules with the constants it mentions |
+| `exact_extract.py` | runs `ExactGraph.lean` on all modules in chunks |
+| `exact_graph.py` | follows the exact graph from the five theorems and compares it with the text runs |
+| `exact-summary.json` | the figures of the exact graph and of the comparison |
+| `data/exact/chunk-*.tsv.gz` | the constants and their mentions, as `ExactGraph.lean` wrote them |
+| `data/exact_graph.npz` | the exact graph as arrays, with the declaration row of each node and whether it is reached |
+| `data/exact_nodes.tsv.gz` | one row per compiled constant with its module, name, kind, declaration row and reach |
 
 Git ignores `data/`. `build.py` writes its three files again on every run. The sample file
-comes from the compiled sample and has to be kept.
+comes from the compiled sample and has to be kept, and the chunks of the exact graph take
+2.5 hours to write again.
