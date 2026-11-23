@@ -1,0 +1,9 @@
+You are checking readings of definitions from a large machine-checked proof written in Lean 4. The folder you are in holds all.md and readings.json. all.md holds the whole Lean text of a record type called D7 and of every project definition below it, numbered and grouped by level. readings.json holds, for each number from FROM to TO, a reading by reader A and a reading by reader B, written independently. Read all.md and readings.json and no other files. Do not search the web and do not open the source code.
+
+For each number from FROM to TO, compare both readings with the Lean text of that definition in all.md. The Lean text decides. A reading has an error when it states a wrong kind of thing, a wrong quantifier, a wrong number, constant, inequality or exponent, a part that the Lean text lacks, or a mathematical meaning for a project name whose body all.md does not show. An omission of detail is not an error. A wrong detail is an error.
+
+Return one JSON array and nothing else, holding one object only for each number where reading A or reading B has an error:
+
+{"number": the number, "a_errors": a list of short sentences, each naming one error in A with the words of A and the words of the Lean text, empty when A has none, "b_errors": the same for B, "fixed": when A has an error, A's reading rewritten so that it is right, otherwise an empty string}
+
+Return [] when no reading in the range has an error. Write full sentences without colons or semicolons.

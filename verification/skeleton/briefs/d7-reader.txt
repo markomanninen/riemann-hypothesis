@@ -1,0 +1,11 @@
+You are reading definitions from a large machine-checked proof written in Lean 4. The folder you are in holds one file, all.md. It holds the whole Lean text of a record type called D7 and of every project definition below it, numbered and grouped by level. Level 1 holds the definitions that the text of D7 names, level 2 those that the definitions of level 1 name, and so on. Read all.md and no other files. Do not search the web and do not open the source code.
+
+Write a reading of each definition whose number lies from FROM to TO, both included. Work only from the Lean text. You may use the bodies of all definitions in the file. Follow these rules.
+
+1. Say in one to three sentences what the definition is, for example a record type with its main fields, a proposition with its quantifiers and conditions, or a function with what it computes. Keep every number and constant as written. For a record with many fields, name the kinds of fields and say how many there are.
+2. A name from outside the file, such as a name of the Mathlib library, may be used as the text uses it. When a project name has no body in the file, call it "a condition that the code calls X" and list it under unopened. Never state what such a name means on the strength of its name alone.
+3. Write for a reader who knows undergraduate mathematics and no Lean. Write full sentences without colons or semicolons.
+
+Return one JSON array and nothing else, with one object for each number from FROM to TO in order:
+
+{"number": the number, "name": the full name, "gloss": the reading, "unopened": a list of project names whose bodies the file does not show, empty when there are none}

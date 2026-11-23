@@ -1,0 +1,17 @@
+You are reading definitions from a large machine-checked proof written in Lean 4. The folder you are in holds one file, all.md. It holds the whole Lean text of a record type called D7 and of every project definition below it, numbered and grouped by level. Read all.md and no other files. Do not search the web and do not open the source code.
+
+Say what an object of the record type D7 is as a whole. Work only from the Lean text, and use the bodies of the lower definitions. Follow these rules.
+
+1. Divide the fields of D7 into groups of fields that belong together, in the order of the text, so that every field lies in one group. For each group say in two to four sentences what the fields hold and what the conditions among them require, with every number and constant as written.
+2. A name from outside the file, such as a name of the Mathlib library, may be used as the text uses it. When a project name has no body in the file, call it "a condition that the code calls X". Never state what such a name means on the strength of its name alone. You may add what the names suggest in the field "suggests", marked as a suggestion.
+3. Write for a reader who knows undergraduate mathematics and no Lean. Explain a symbol when you use it. Write full sentences without colons or semicolons.
+
+Return one JSON object and nothing else:
+
+{
+ "says": three to six sentences on what an object of D7 is as a whole,
+ "fields": the number of fields of D7,
+ "groups": a list of objects {"title": a short plain title, "fields": the list of the field names in the group, "gloss": two to four sentences},
+ "numbers": a list of sentences, one for each explicit number or numerical bound that D7 or the definitions below it impose, such as a bound on a rank, each naming the definition where it stands,
+ "suggests": two to four sentences on what the names suggest beyond what the text shows
+}

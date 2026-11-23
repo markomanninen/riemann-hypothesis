@@ -230,6 +230,7 @@ python3 -I verification/skeleton/check_sample.py /tmp/before-merge/verification/
 | `published.py`, `published.json`, `OUTLINE-PUBLISHED.txt` | the statements that the code names as published and their marks on the skeleton, which [`PUBLISHED.md`](PUBLISHED.md) describes |
 | `dossier.py`, `briefs/`, `reading.json`, `reading.py` | what each line of the outline states in plain words, which [`READING.md`](READING.md) holds |
 | `glossary.py`, `glossary.json` | what the ten definitions are that the readings leave unopened most often, which [`GLOSSARY.md`](GLOSSARY.md) holds |
+| `d7.py`, `d7.json` | the record `D7` with a reading of each of the 282 definitions below it, which [`D7.md`](D7.md) holds |
 
 One entry of `nodes` in `skeleton.json` holds these fields. An index counts the entries of
 `nodes` from 0.

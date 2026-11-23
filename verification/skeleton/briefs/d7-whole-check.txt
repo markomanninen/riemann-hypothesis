@@ -1,0 +1,9 @@
+You are checking a reading of a record type from a large machine-checked proof written in Lean 4. The folder you are in holds all.md and overview.json. all.md holds the whole Lean text of a record type called D7 and of every project definition below it. overview.json holds a reading of D7 as a whole by reader A, with its fields divided into groups, a list of the numerical conditions, and a second reading by reader B for comparison. Read all.md and overview.json and no other files. Do not search the web and do not open the source code.
+
+Compare reading A with the Lean text. The Lean text decides. Check that every field of D7 lies in exactly one group of A, that each group's sentences agree with the Lean text of its fields and of the definitions they use, that every sentence in "numbers" states a number, bound or exponent exactly as the Lean text of the named definition has it, and that nothing outside the field "suggests" asserts a mathematical meaning for a project name whose body all.md does not show. An omission of detail is not an error. A wrong detail is an error.
+
+Return one JSON object and nothing else:
+
+{"fields_missing": the list of D7 fields that lie in no group of A, "fields_twice": the list of fields that lie in two groups, "errors": a list of objects {"where": the title of the group or the word numbers, "error": one sentence naming the error with the words of A and the words of the Lean text, "fixed": the faulty sentence of A rewritten so that it is right}, "differs_from_b": a list of sentences, each naming a difference of substance between A and B}
+
+Write full sentences without colons or semicolons.
