@@ -1,0 +1,34 @@
+{
+ "forward_pairs": {
+  "same_text": {
+   "pairs": 30456,
+   "different_statement": 170,
+   "same_statement": 30157,
+   "a_constant_not_found": 129
+  },
+  "other_text": {
+   "pairs": 16654,
+   "different_statement": 3536,
+   "same_statement": 12580,
+   "a_constant_not_found": 538
+  }
+ },
+ "theorems_same_statement_text": {
+  "groups": 51332,
+  "members": 113097,
+  "members_not_found": 10438,
+  "groups_with_one_statement": 42666,
+  "groups_with_several_statements": 3675,
+  "groups_with_a_member_not_found": 5038,
+  "copies_beyond_the_first_of_each_statement": 50502
+ },
+ "definitions_same_text": {
+  "groups": 3425,
+  "members": 7922,
+  "members_not_found": 486,
+  "groups_with_one_statement": 1315,
+  "groups_with_several_statements": 1889,
+  "groups_with_a_member_not_found": 224,
+  "copies_beyond_the_first_of_each_statement": 1808
+ }
+}

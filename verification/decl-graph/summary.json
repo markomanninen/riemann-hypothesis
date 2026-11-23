@@ -1,342 +1,318 @@
 {
- "modules": 175187,
- "lines": 17374215,
- "declarations": 1061531,
- "theorems": 818755,
+ "modules": 149396,
+ "lines": 15175520,
+ "declarations": 836456,
+ "theorems": 666737,
  "other_records": {
-  "command": 16,
-  "attribute": 50804,
-  "notation": 1883
+  "attribute": 45698,
+  "notation": 1093,
+  "command": 22
  },
- "public_name_clashes": 135,
- "globally_tagged_or_instance": 15347,
+ "public_name_clashes": 126,
+ "globally_tagged_or_instance": 9414,
  "targets": [
+  "LFunction_ne_zero_of_half_lt_re",
   "riemannHypothesis",
   "riemannZeta_eq_zero_re",
-  "LFunction_ne_zero_of_half_lt_re",
   "LFunction_eq_zero_re",
   "LFunction_eq_zero_re_of_isPrimitive"
  ],
  "edges": {
-  "names": 6839962,
-  "field_parts": 5538810,
-  "loose_names": 18342612
+  "names": 5369274,
+  "field_parts": 4271074,
+  "loose_names": 14547392
  },
  "runs": {
   "names": {
-   "declarations": 763510,
-   "share": 0.7193,
-   "theorems": 619011,
-   "modules_with_a_reached_declaration": 144369,
-   "lines_of_those_modules": 14765566,
+   "declarations": 760989,
+   "share": 0.9098,
+   "theorems": 616958,
+   "modules_with_a_reached_declaration": 143738,
+   "lines_of_those_modules": 14661850,
    "by_library": {
-    "BuildAid": [
-     0,
-     0
-    ],
     "CompanionTheory": [
-     10407,
-     11775
+     10396,
+     10705
     ],
     "Development": [
-     519703,
-     693010
+     518101,
+     565741
     ],
     "Formalism": [
-     160031,
-     240188
+     159290,
+     174526
     ],
     "GroundTheory": [
-     43078,
-     75102
+     43001,
+     50072
     ],
     "Lemmata": [
-     220,
-     251
+     215,
+     235
     ],
     "Main": [
      5,
      5
     ],
     "PositivityTheory": [
-     2870,
-     4746
+     2869,
+     3124
     ],
     "ReciprocityTheory": [
-     27188,
-     36446
+     27108,
+     32040
     ],
     "Statements": [
      4,
      4
     ],
     "Supplements": [
-     4,
+     0,
      4
     ]
    }
   },
   "names+automation": {
-   "declarations": 787461,
-   "share": 0.7418,
-   "theorems": 630041,
-   "modules_with_a_reached_declaration": 145836,
-   "lines_of_those_modules": 15053613,
+   "declarations": 772555,
+   "share": 0.9236,
+   "theorems": 621397,
+   "modules_with_a_reached_declaration": 144300,
+   "lines_of_those_modules": 14747169,
    "by_library": {
-    "BuildAid": [
-     0,
-     0
-    ],
     "CompanionTheory": [
-     10573,
-     11775
+     10454,
+     10705
     ],
     "Development": [
-     531946,
-     693010
+     523302,
+     565741
     ],
     "Formalism": [
-     163291,
-     240188
+     161457,
+     174526
     ],
     "GroundTheory": [
-     48964,
-     75102
+     45037,
+     50072
     ],
     "Lemmata": [
-     222,
-     251
+     217,
+     235
     ],
     "Main": [
      5,
      5
     ],
     "PositivityTheory": [
-     2974,
-     4746
+     2913,
+     3124
     ],
     "ReciprocityTheory": [
-     29478,
-     36446
+     29166,
+     32040
     ],
     "Statements": [
      4,
      4
     ],
     "Supplements": [
-     4,
+     0,
      4
     ]
    }
   },
   "fields": {
-   "declarations": 819875,
-   "share": 0.7724,
-   "theorems": 656675,
-   "modules_with_a_reached_declaration": 147909,
-   "lines_of_those_modules": 15243478,
+   "declarations": 801592,
+   "share": 0.9583,
+   "theorems": 646449,
+   "modules_with_a_reached_declaration": 145806,
+   "lines_of_those_modules": 14891082,
    "by_library": {
-    "BuildAid": [
-     0,
-     0
-    ],
     "CompanionTheory": [
-     10650,
-     11775
+     10605,
+     10705
     ],
     "Development": [
-     551428,
-     693010
+     542630,
+     565741
     ],
     "Formalism": [
-     175965,
-     240188
+     168493,
+     174526
     ],
     "GroundTheory": [
-     48574,
-     75102
+     47124,
+     50072
     ],
     "Lemmata": [
-     232,
-     251
+     227,
+     235
     ],
     "Main": [
      5,
      5
     ],
     "PositivityTheory": [
-     2957,
-     4746
+     2930,
+     3124
     ],
     "ReciprocityTheory": [
-     30056,
-     36446
+     29574,
+     32040
     ],
     "Statements": [
      4,
      4
     ],
     "Supplements": [
-     4,
+     0,
      4
     ]
    }
   },
   "fields+automation": {
-   "declarations": 843752,
-   "share": 0.7948,
-   "theorems": 667967,
-   "modules_with_a_reached_declaration": 149043,
-   "lines_of_those_modules": 15444995,
+   "declarations": 812664,
+   "share": 0.9716,
+   "theorems": 650648,
+   "modules_with_a_reached_declaration": 146222,
+   "lines_of_those_modules": 14947411,
    "by_library": {
-    "BuildAid": [
-     0,
-     0
-    ],
     "CompanionTheory": [
-     10839,
-     11775
+     10659,
+     10705
     ],
     "Development": [
-     563565,
-     693010
+     547635,
+     565741
     ],
     "Formalism": [
-     178943,
-     240188
+     170626,
+     174526
     ],
     "GroundTheory": [
-     54880,
-     75102
+     48957,
+     50072
     ],
     "Lemmata": [
-     234,
-     251
+     229,
+     235
     ],
     "Main": [
      5,
      5
     ],
     "PositivityTheory": [
-     3061,
-     4746
+     2976,
+     3124
     ],
     "ReciprocityTheory": [
-     32217,
-     36446
+     31573,
+     32040
     ],
     "Statements": [
      4,
      4
     ],
     "Supplements": [
-     4,
+     0,
      4
     ]
    }
   },
   "loose": {
-   "declarations": 849490,
-   "share": 0.8002,
-   "theorems": 678144,
-   "modules_with_a_reached_declaration": 152811,
-   "lines_of_those_modules": 15700161,
+   "declarations": 807489,
+   "share": 0.9654,
+   "theorems": 650573,
+   "modules_with_a_reached_declaration": 146318,
+   "lines_of_those_modules": 14955530,
    "by_library": {
-    "BuildAid": [
-     0,
-     0
-    ],
     "CompanionTheory": [
-     10807,
-     11775
+     10612,
+     10705
     ],
     "Development": [
-     573438,
-     693010
+     545744,
+     565741
     ],
     "Formalism": [
-     180248,
-     240188
+     169307,
+     174526
     ],
     "GroundTheory": [
-     49888,
-     75102
+     47637,
+     50072
     ],
     "Lemmata": [
-     233,
-     251
+     228,
+     235
     ],
     "Main": [
      5,
      5
     ],
     "PositivityTheory": [
-     3169,
-     4746
+     2981,
+     3124
     ],
     "ReciprocityTheory": [
-     31694,
-     36446
+     30971,
+     32040
     ],
     "Statements": [
      4,
      4
     ],
     "Supplements": [
-     4,
+     0,
      4
     ]
    }
   },
   "loose+automation": {
-   "declarations": 868813,
-   "share": 0.8185,
-   "theorems": 686930,
-   "modules_with_a_reached_declaration": 153560,
-   "lines_of_those_modules": 15820709,
+   "declarations": 816263,
+   "share": 0.9759,
+   "theorems": 653169,
+   "modules_with_a_reached_declaration": 146564,
+   "lines_of_those_modules": 14980576,
    "by_library": {
-    "BuildAid": [
-     0,
-     0
-    ],
     "CompanionTheory": [
-     10988,
-     11775
+     10664,
+     10705
     ],
     "Development": [
-     583431,
-     693010
+     550117,
+     565741
     ],
     "Formalism": [
-     182901,
-     240188
+     171351,
+     174526
     ],
     "GroundTheory": [
-     55504,
-     75102
+     49237,
+     50072
     ],
     "Lemmata": [
-     235,
-     251
+     230,
+     235
     ],
     "Main": [
      5,
      5
     ],
     "PositivityTheory": [
-     3267,
-     4746
+     3027,
+     3124
     ],
     "ReciprocityTheory": [
-     32474,
-     36446
+     31628,
+     32040
     ],
     "Statements": [
      4,
      4
     ],
     "Supplements": [
-     4,
+     0,
      4
     ]
    }

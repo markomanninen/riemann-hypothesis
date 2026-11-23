@@ -1,11 +1,16 @@
 # Declaration graph from the source text
 
-The five theorems of [`Main.lean`](../../src/Main.lean) use between 72 % and 82 % of the
-1,061,531 declarations in the project, by the estimate in this folder. Under the widest reading
-of the text, 192,718 declarations, 18 % of the project, are used by none of the five theorems.
+The five theorems of [`Main.lean`](../../src/Main.lean) use between 91 % and 98 % of the
+836,456 declarations in the project, by the estimate in this folder. Under the widest reading
+of the text, 20,193 declarations, 2.4 % of the project, are used by none of the five theorems.
 
 The estimate reads the source text and does not run Lean. A check against a compiled sample of
 2,681 modules, described below, shows how far the text can be trusted.
+
+These figures are for the Lean 4.36 source of commit `611ce0b6`. The source as it was first
+published, on Lean 4.33.1, had 1,061,531 declarations. The same script reached between 72 % and
+82 % of them and left 192,718 unreached. Most of the declarations that the five theorems did not
+use are gone from the present source.
 
 ## What the script does
 
@@ -32,26 +37,26 @@ Tactics use declarations that the text never names. `simp` uses the lemmas tagge
 instance search uses the instances. Each way is therefore run a second time, with automation
 counted in. That run takes as reached every instance and every declaration that carries an
 attribute a tactic can read, such as `@[simp]` or `@[ext]`, unless the instance or the attribute
-is marked `local`. The project has 15,347 such declarations, instances included. Local instances, local notation and `variable` lines count, in every run, for the
+is marked `local`. The project has 9,414 such declarations, instances included. Local instances, local notation and `variable` lines count, in every run, for the
 declarations that follow them in their module.
 
 ## Results
 
-The shares are of the project's 1,061,531 declarations.
+The shares are of the project's 836,456 declarations.
 
 | Way | Declarations reached | Share | Theorems and lemmas reached | Modules with a reached declaration |
 |---|---:|---:|---:|---:|
-| names | 763,510 | 71.9 % | 619,011 | 144,369 |
-| fields | 819,875 | 77.2 % | 656,675 | 147,909 |
-| loose | 849,490 | 80.0 % | 678,144 | 152,811 |
-| names, with automation | 787,461 | 74.2 % | 630,041 | 145,836 |
-| fields, with automation | 843,752 | 79.5 % | 667,967 | 149,043 |
-| loose, with automation | 868,813 | 81.8 % | 686,930 | 153,560 |
+| names | 760,989 | 91.0 % | 616,958 | 143,738 |
+| fields | 801,592 | 95.8 % | 646,449 | 145,806 |
+| loose | 807,489 | 96.5 % | 650,573 | 146,318 |
+| names, with automation | 772,555 | 92.4 % | 621,397 | 144,300 |
+| fields, with automation | 812,664 | 97.2 % | 650,648 | 146,222 |
+| loose, with automation | 816,263 | 97.6 % | 653,169 | 146,564 |
 
-The project has 175,187 modules, 17,374,215 lines and 818,755 theorems and lemmas. These counts
+The project has 149,396 modules, 15,175,520 lines and 666,737 theorems and lemmas. These counts
 leave out `Challenge.lean`, a file that this repository added to the submission. The widest run
-is the loose way with automation. It leaves 192,718 declarations unreached, and 21,627 modules,
-with 1,553,506 lines, hold no reached declaration at all. Lean still has to load those modules,
+is the loose way with automation. It leaves 20,193 declarations unreached, and 2,832 modules,
+with 194,944 lines, hold no reached declaration at all. Lean still has to load those modules,
 because other modules import them.
 
 The next table splits the declarations by library, the top folder under `src/`. Its middle
@@ -59,21 +64,24 @@ column is the names way without automation.
 
 | Library | Declarations | Reached by names | Reached by the widest run |
 |---|---:|---:|---:|
-| Development | 693,010 | 519,703 | 583,431 |
-| Formalism | 240,188 | 160,031 | 182,901 |
-| GroundTheory | 75,102 | 43,078 | 55,504 |
-| ReciprocityTheory | 36,446 | 27,188 | 32,474 |
-| CompanionTheory | 11,775 | 10,407 | 10,988 |
-| PositivityTheory | 4,746 | 2,870 | 3,267 |
-| Lemmata | 251 | 220 | 235 |
-| Main, Statements and Supplements | 13 | 13 | 13 |
+| Development | 565,741 | 518,101 | 550,117 |
+| Formalism | 174,526 | 159,290 | 171,351 |
+| GroundTheory | 50,072 | 43,001 | 49,237 |
+| ReciprocityTheory | 32,040 | 27,108 | 31,628 |
+| CompanionTheory | 10,705 | 10,396 | 10,664 |
+| PositivityTheory | 3,124 | 2,869 | 3,027 |
+| Lemmata | 235 | 215 | 230 |
+| Main, Statements and Supplements | 13 | 9 | 9 |
 
-The library `BuildAid` has five modules and no declarations.
+The four declarations of `Supplements` prove the results of `Main` a second time, and `Main`
+does not use them.
 
 ## Check against a compiled sample
 
-The module `Development.WeilBound.CoreStatements.PluriharmonicCharts.XCSqsys` and the 2,680
-project modules it imports were compiled with Lean 4.33.1. They hold 23,043 declarations and
+The check was made on the source as first published, before the port to Lean 4.36, and its
+figures are of that source. The module
+`Development.WeilBound.CoreStatements.PluriharmonicCharts.XCSqsys` and the 2,680 project modules
+it imports were compiled with Lean 4.33.1. They hold 23,043 declarations and
 326,641 lines, 1.9 % of the project's lines. None of these modules defines a tactic, a macro or a
 command, so compiling them ran only Lean's and Mathlib's own code.
 
@@ -114,25 +122,25 @@ The sample is one branch of the project and its roots are not the theorems of `M
 ratios do not carry over to the whole project as they stand. The sample also defines no tactic
 or macro, and automation adds a larger share in it than in the whole project. In the sample the
 widest run missed two declarations in 2,420 and reached 2.6 times too many. If the whole project
-behaves the same way, the 192,718 unreached declarations are too few. The sample makes that
-likely and does not prove it.
+behaves the same way, more declarations are unused than the widest run counts as unreached. The
+sample makes that likely and does not prove it.
 
 ## Limits
 
 - The script reads text. A layout it does not expect can attach a name to the wrong declaration.
-- The script found 135 public names a second time, each in another module. All 135 are theorems
-  or lemmas. One pair that was checked by hand, `Bl.general_b_fact.goal1`, stands in two files
-  that are the same byte for byte. The script takes the copy that the using module imports.
+- The script found 126 public names a second time, each in another module. In the first
+  published source there were 135, all of them theorems or lemmas, and one pair that was checked
+  by hand, `Bl.general_b_fact.goal1`, stood in two files that were the same byte for byte. The
+  script takes the copy that the using module imports.
 - A `scoped` instance counts as automation everywhere, although Lean uses it only where its
-  namespace is open. The project has 220 of them, and they make the automation runs reach more.
+  namespace is open. Such instances make the automation runs reach more.
 - The command `cpt_copy_thms` copies declarations under new names when Lean runs. The copies
   are not in the text, so the script follows a name ending in `Cpt` to the original.
 - An instance without a name gets its name from Lean. A mention of such a generated name in the
   text is not resolved.
-- The exact graph needs the whole project compiled. On the machine used here the sample took
-  4 h 13 min for 2,681 modules, and the same pace over 175,187 modules is about 11.5 days. The
-  pace was set by the external disk and the 48 GB of memory, since the processors stood idle
-  about 80 % of the time.
+- The exact graph needs the compiled files of the whole project. `lake exe cache get` now
+  downloads them, so `SampleDeps.lean` could be run for all modules in place of the sample. That
+  run has not been made here.
 
 ## Running it
 
@@ -140,7 +148,7 @@ likely and does not prove it.
 python3 -I verification/decl-graph/build.py    # about two minutes, 6 GB of memory
 ```
 
-The check needs a checkout in which the sample module is built.
+The check needs a checkout of the first published source in which the sample module is built.
 
 ```bash
 lake build Development.WeilBound.CoreStatements.PluriharmonicCharts.XCSqsys

@@ -1,107 +1,107 @@
 {
- "declarations": 1057878,
+ "declarations": 833979,
  "theorems": {
-  "all": 818755,
-  "reached_by_names": 619011,
-  "reached_by_widest_run": 686930
+  "all": 666738,
+  "reached_by_names": 616958,
+  "reached_by_widest_run": 653169
  },
  "classes": {
   "reflexive": {
-   "all": 2,
+   "all": 1,
    "reached_by_names": 1,
    "reached_by_widest_run": 1
   },
   "premise": {
-   "all": 57,
+   "all": 31,
    "reached_by_names": 25,
-   "reached_by_widest_run": 27
+   "reached_by_widest_run": 26
   },
   "true": {
-   "all": 2,
+   "all": 0,
    "reached_by_names": 0,
    "reached_by_widest_run": 0
   },
   "rfl": {
-   "all": 22421,
-   "reached_by_names": 13755,
-   "reached_by_widest_run": 17791
+   "all": 14838,
+   "reached_by_names": 13638,
+   "reached_by_widest_run": 14499
   },
   "one_tactic": {
-   "all": 697,
-   "reached_by_names": 506,
-   "reached_by_widest_run": 562
+   "all": 546,
+   "reached_by_names": 510,
+   "reached_by_widest_run": 538
   },
   "returns_premise": {
-   "all": 353,
-   "reached_by_names": 207,
-   "reached_by_widest_run": 227
+   "all": 227,
+   "reached_by_names": 206,
+   "reached_by_widest_run": 216
   },
   "forward": {
-   "all": 66185,
-   "reached_by_names": 49952,
-   "reached_by_widest_run": 53730
+   "all": 51364,
+   "reached_by_names": 49402,
+   "reached_by_widest_run": 50425
   },
   "any_statement_class": {
-   "all": 59,
+   "all": 32,
    "reached_by_names": 26,
-   "reached_by_widest_run": 28
+   "reached_by_widest_run": 27
   },
   "any_class": {
-   "all": 89662,
-   "reached_by_names": 64423,
-   "reached_by_widest_run": 72313
+   "all": 66978,
+   "reached_by_names": 63759,
+   "reached_by_widest_run": 65681
   }
  },
  "forward": {
   "to_a_project_declaration": {
-   "all": 61049,
-   "reached_by_names": 46158,
-   "reached_by_widest_run": 49285
+   "all": 47240,
+   "reached_by_names": 45621,
+   "reached_by_widest_run": 46377
   },
   "to_a_project_declaration_with_the_same_statement": {
-   "all": 39793,
-   "reached_by_names": 30318,
-   "reached_by_widest_run": 32103
+   "all": 30456,
+   "reached_by_names": 29688,
+   "reached_by_widest_run": 29977
   },
   "to_a_library_declaration": {
-   "all": 5136,
-   "reached_by_names": 3794,
-   "reached_by_widest_run": 4445
+   "all": 4124,
+   "reached_by_names": 3781,
+   "reached_by_widest_run": 4048
   }
  },
  "duplicates": {
   "theorems_same_statement": {
-   "groups": 65279,
-   "declarations": 144171,
-   "beyond_the_first_of_each_group": 78892,
-   "largest_group": 186,
-   "reached_by_names": 111615,
-   "reached_by_widest_run": 119766,
-   "beyond_the_first_reached_by_widest_run": 62177
+   "groups": 51332,
+   "declarations": 113097,
+   "beyond_the_first_of_each_group": 61765,
+   "largest_group": 156,
+   "reached_by_names": 106404,
+   "reached_by_widest_run": 109121,
+   "beyond_the_first_reached_by_widest_run": 58313
   },
   "theorems_same_statement_and_proof": {
-   "groups": 14682,
-   "declarations": 33617,
-   "beyond_the_first_of_each_group": 18935,
-   "largest_group": 35,
-   "reached_by_names": 24169,
-   "reached_by_widest_run": 26943,
-   "beyond_the_first_reached_by_widest_run": 13191
+   "groups": 11198,
+   "declarations": 25489,
+   "beyond_the_first_of_each_group": 14291,
+   "largest_group": 30,
+   "reached_by_names": 21912,
+   "reached_by_widest_run": 23075,
+   "beyond_the_first_reached_by_widest_run": 11981
   },
   "definitions_same_text": {
-   "groups": 5520,
-   "declarations": 12963,
-   "beyond_the_first_of_each_group": 7443,
-   "largest_group": 22,
-   "reached_by_names": 8288,
-   "reached_by_widest_run": 9970,
-   "beyond_the_first_reached_by_widest_run": 4971
+   "groups": 3425,
+   "declarations": 7922,
+   "beyond_the_first_of_each_group": 4497,
+   "largest_group": 88,
+   "reached_by_names": 7027,
+   "reached_by_widest_run": 7472,
+   "beyond_the_first_reached_by_widest_run": 4067
   }
  },
  "proof_words": {
-  "median": 36,
-  "at_most_5": 94387,
-  "at_most_20": 310587,
-  "over_500": 41772
+  "median": 39,
+  "at_most_5": 70235,
+  "at_most_20": 244567,
+  "over_500": 35945
  }
 }

@@ -365,7 +365,7 @@ def main():
     # that the declaration graph resolves in the theorem, with its import and namespace rules, is the
     # target or the target without its last one or two name parts, as in `X.symm` and `X.le.trans`.
     row_of = {(r[0], r[1]): i for i, r in enumerate(rows)}
-    forward_project, forward_same = [], []
+    forward_project, forward_same, pairs = [], [], []
     for i, r in enumerate(rows):
         if "forward" not in r[3].split(","):
             continue
@@ -380,8 +380,12 @@ def main():
             hits = [u for u in used if u[1] == c or u[1].endswith("." + c)]
             if hits:
                 forward_project.append(i)
-                if cut == len(parts) and any(rows[row_of[u]][5] == r[5] for u in hits if u in row_of):
+                same = [u for u in hits if u in row_of and rows[row_of[u]][5] == r[5]] if cut == len(parts) else []
+                if same:
                     forward_same.append(i)
+                if cut == len(parts) and r[2] in THEOREMS:
+                    u = (same or hits)[0]
+                    pairs.append((r[0], r[1], u[0], u[1], int(bool(same))))
                 break
     fp, fs = set(forward_project), set(forward_same)
     index = {id(r): i for i, r in enumerate(rows)}
@@ -427,6 +431,10 @@ def main():
         for i, r in enumerate(rows):
             if r[3]:
                 f.write(f"{r[0]}\t{r[1]}\t{r[2]}\t{r[3]}\t{r[4]}\t{int(i in fp)}\t{r[8]}\t{int(r[9])}\t{int(r[10])}\n")
+    with gzip.open(os.path.join(DATA, "forward_pairs.tsv.gz"), "wt", encoding="utf-8") as f:
+        f.write("module\tname\ttarget_module\ttarget_name\tsame_statement_text\n")
+        for row in pairs:
+            f.write("\t".join(map(str, row)) + "\n")
     with open(os.path.join(HERE, "summary.json"), "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=1, ensure_ascii=False)
     print(json.dumps(summary, indent=1, ensure_ascii=False))
