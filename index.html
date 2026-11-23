@@ -393,11 +393,19 @@ async function showArg(h){const a=await argReady();ARG_DOCS=a.docs;argHash=h;let
      ${l.unopened.length?`<div class="lab">Names that the reading does not open</div>${chips(l.unopened,16)}`:''}
      ${l.suggests?`<div class="lab">What the names suggest, which the Lean text does not show</div><p class="guess">${esc(sent(l.suggests))}</p>`:''}
      <div class="lab">Confidence and check</div><p>${esc(sent(l.why))} ${l.errors?`The check found ${l.errors===1?'one error':l.errors+' errors'} in the first version of this reading, and this is the corrected one.`:'The check found no error in this reading.'}</p>
+     ${l.deeper?`<details><summary>A deeper reading, with the record D7 at hand</summary>
+      <p class="small mute">A second reader saw the whole text of D7 and the glossary. The check found ${l.deeper.errors_round_1} errors in this reading and then ${l.deeper.errors_round_2} more. They were corrected, and the reading has not passed the check.</p>
+      <p>${esc(sent(l.deeper.says))}</p>
+      ${l.deeper.premises.length?`<div class="lab">Premises, in order</div><ol>${l.deeper.premises.map(p=>`<li>${esc(sent(p))}</li>`).join('')}</ol>`:''}
+      <div class="lab">Conclusion</div><p>${esc(sent(l.deeper.conclusion))}</p>
+      ${l.deeper.opened.length?`<div class="lab">Names that this reading opens</div>${chips(l.deeper.opened,24)}`:''}
+      ${l.deeper.unopened.length?`<div class="lab">Names that it does not open</div>${chips(l.deeper.unopened,16)}`:''}
+      <div class="lab">Confidence</div><p>${esc(sent(l.deeper.why))}</p></details>`:''}
      <div class="acts"><button class="btn" data-mod="${esc(n.m)}" data-tip="Show the module of this theorem on the mountain, with what it rests on lit up">Show in landscape</button>
       <button class="btn" data-mod="${esc(n.m)}" data-to="tree" data-tip="Open the module of this theorem in the Branches tab, with its statements in Lean">Open its module</button></div>
      <h2>Lines below it</h2>
      ${kids.length?`<div class="list">${kids.map(j=>lineRow(a,j)).join('')}</div>`:`<p class="empty">No step below this one gathers 10,000 declarations. The smaller steps are listed under the next heading.</p>`}
-     <details${small.length&&$('#arg details')?.open?' open':''}><summary>Smaller steps below it, ${shownSmall.length}${shownSmall.length<small.length?' of '+small.length:''}</summary>${small.length?`<p class="small mute">Each gathers between 1,000 and 10,000 declarations and has no reading yet.${repeats?` ${repeats===1?'One of them repeats':repeats+' of them repeat'} a statement that another theorem already states.`:''}</p>
+     <details id="d-small"${small.length&&$('#d-small')?.open?' open':''}><summary>Smaller steps below it, ${shownSmall.length}${shownSmall.length<small.length?' of '+small.length:''}</summary>${small.length?`<p class="small mute">Each gathers between 1,000 and 10,000 declarations and has no reading yet.${repeats?` ${repeats===1?'One of them repeats':repeats+' of them repeat'} a statement that another theorem already states.`:''}</p>
       ${repeats?`<div class="acts"><button class="btn" id="b-rep" aria-pressed="${hideRepeats}" data-tip="Leave out the theorems that state exactly what another theorem states, or show them again">Hide repeated statements</button></div>`:''}
       <div class="list">${shownSmall.slice(0,60).map(c=>`<div class="row" tabindex="0" role="link" data-mod="${esc(a.nodes[c].m)}" data-to="tree" data-tip="Open the module of ${esc(short(a.nodes[c].n))} in the Branches tab"><span class="t"><code>${esc(short(a.nodes[c].n))}</code></span><span class="n">${fmt(a.nodes[c].g)}</span><span class="p">${a.nodes[c].k?'States the same as '+esc(a.nodes[c].k)+' · ':''}${trail(a.nodes[c].m.split('.').slice(1,4).join('.'))}</span></div>`).join('')}</div>`:'<p class="empty">None. Every step below this line that gathers 1,000 declarations is a line of the outline.</p>'}</details>
      ${k===1?`<h2>With every repeated statement counted once</h2>
