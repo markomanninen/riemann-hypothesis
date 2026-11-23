@@ -10,7 +10,9 @@ The figures come from the source text after upstream main was merged into this r
 2026-11-22. That merge moved the project to Lean 4.36 and removed files, and the source now
 holds 836,456 declarations in 149,396 modules, where it held 175,187 modules before. The
 scripts read text and do not run Lean. A check against a compiled sample, described below,
-measures how well the text agrees with compiled code on one small part of the project.
+measures how well the text agrees with compiled code on one small part of the project. A second
+check computes the same tree from the exact graph of the whole compiled project. All 38 lines
+of `OUTLINE.txt` keep their place in that tree.
 
 ## Words used here
 
@@ -200,6 +202,42 @@ start declarations are not the five theorems, and they reach 2,420 declarations 
 theorems reach 760,989. The rates above are therefore measured on a small part of the project
 and are not rates of the whole skeleton.
 
+## Check against the exact graph of the whole project
+
+[`../decl-graph`](../decl-graph/README.md) also builds an exact graph from the compiled files of
+the whole project, in which a compiled constant points to every constant that its compiled type
+and value mention. `exact_tree.py` computes the dominator tree of that graph from the five
+theorems with the functions of `build.py`. Lean's helper constants, such as `_proof_1`, are
+nodes of this tree, but a number gathered counts only declarations, as in `build.py`.
+
+| | Exact graph | Text graph |
+|---|---:|---:|
+| Declarations reached | 800,344 | 760,989 |
+| Declarations gathered by `everyCharacter` | 800,326 | 760,225 |
+| Declarations that gather at least 100,000 | 6 | 6 |
+| Declarations that gather at least 10,000 | 65 | 62 |
+| Skeleton declarations, gathering at least 1,000 | 622 | 590 |
+
+The exact graph reaches 39,355 more declarations. In it `everyCharacter` gathers all but 18 of
+the 800,344 reached declarations, as it gathers all but 764 of the 760,989 in the text graph.
+The two skeletons share 582 declarations. The 40 that only the exact skeleton holds gather
+between 1,000 and 2,538 declarations, and the 8 that only the text skeleton holds gather between
+1,008 and 1,254, so none of the 48 gathers more than 2.6 times the limit of 1,000.
+
+`OUTLINE-EXACT.txt` is the outline of the exact tree. Like `OUTLINE.txt` it lists the skeleton
+declarations that gather at least 10,000 and folds a run of wrappers into one line. Each of the
+38 lines of `OUTLINE.txt`
+stands in it at the same level under the same line, and each gathers between 2 % and 19 % more
+declarations than in the text tree. The exact outline has two more lines, for
+`GlobalTheory.T.conclF_of_family_facts_and_bound_at_two_three` and
+`UpperTheory.Top.shape_closed_link_n_of_green`. These two gather 10,275 and 11,590 declarations
+in the exact tree and fewer than 10,000 in the text tree, so only the exact tree puts them above
+the limit of the outline. The first of them folds the wrapper `GlobalTheory.NLinkClose.main_alt_alt`
+into its line, which is why the table counts three more declarations above 10,000 and the
+outline only two more lines. A reading of [`READING.md`](READING.md) says what the statement of
+its line claims, and the exact graph changes no statement, so the 38 readings hold for the exact
+outline too. The two new lines have no reading yet.
+
 ## Limits
 
 - The names way misses uses that the text does not name. By the README of `../decl-graph`, it
@@ -226,6 +264,7 @@ and are not rates of the whole skeleton.
 python3 -I verification/decl-graph/build.py      # about two minutes, 6 GB of memory
 python3 -I verification/skeleton/build.py        # about 3 s with numba, 13 s without
 python3 -I verification/skeleton/test_tree.py    # needs networkx
+python3 -I verification/skeleton/exact_tree.py   # about 4 s, after exact_graph.py of ../decl-graph
 ```
 
 `verification/skeleton/build.py` takes `--min` for the number a skeleton declaration gathers at
@@ -251,6 +290,8 @@ python3 -I verification/skeleton/check_sample.py /tmp/before-merge/verification/
 | `summary.json` | the figures of the run and the 40 largest heads |
 | `skeleton.json` | the 590 skeleton declarations in `nodes`, the limit in `min` and the index of the top one in `top` |
 | `OUTLINE.txt` | the skeleton declarations that gather at least 10,000, as indented lines |
+| `exact_tree.py` | computes the tree of the exact graph and compares it with the text tree |
+| `exact-tree.json`, `OUTLINE-EXACT.txt` | the figures, the 622 skeleton declarations and the outline of the exact tree |
 | `check_sample.py` | compares the text tree with the tree of the compiled sample |
 | `sample-check.json` | the figures of that comparison |
 | `test_tree.py` | tests the dominator routine against networkx |

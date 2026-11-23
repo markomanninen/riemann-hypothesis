@@ -198,6 +198,30 @@ The table shows four things.
 The exact graph counts what the compiled terms mention. It does not tell whether a mentioned
 declaration could be removed, since a proof could often be rewritten without it.
 
+## The axioms of the five theorems
+
+`exact_axioms.py` follows the constants that each constant's type and value mention further,
+through the compiled files of Mathlib, the other packages and Lean's own library, as Lean's
+command `#print axioms` does. It read 2,353,852 constants, of which 1,491,293 are reached from
+the five theorems of `Main`. Besides the 800,344 reached declarations of the project, these are
+Lean's helper constants and the constants of the libraries. Every reached name
+has a compiled entry, so the search has no gap.
+
+The five theorems rest on three axioms, which are the three that Lean and Mathlib use
+throughout.
+
+| Axiom | One chain of mentions that leads to it |
+|---|---|
+| `propext` | `riemannHypothesis`, `Claim.zeta`, `propext` |
+| `Classical.choice` | `riemannHypothesis`, `Claim.zeta`, `Real.linearOrder`, `Classical.propDecidable`, `Classical.choice` |
+| `Quot.sound` | `riemannHypothesis`, `Claim.zeta`, `DirichletCharacter.LFunction_modOne_eq`, `funext`, `Quot.sound` |
+
+The compiled project holds no constant of kind axiom. In Lean 4.36 the tactic `native_decide`
+adds an axiom named `_native.native_decide.ax` with a number to the module that uses it, so the
+project does not use `native_decide` anywhere. No reached constant leads to `sorryAx`, the axiom
+that a `sorry` in a proof leaves behind. The search read `sorryAx` as an axiom of Lean's library
+and reports every reached axiom, so it would have found a chain to it if one existed.
+
 ## Limits
 
 - The script reads text. A layout it does not expect can attach a name to the wrong declaration.
@@ -228,6 +252,7 @@ go to `data/exact`, and an interrupted run continues from the first unfinished c
 lake exe cache get                                                    # in that checkout
 python3 -I verification/decl-graph/exact_extract.py /path/to/that/checkout   # about 2.5 hours
 python3 -I verification/decl-graph/exact_graph.py                    # about half a minute, 6 GB of memory
+python3 -I verification/decl-graph/exact_axioms.py /path/to/that/checkout    # about 20 minutes the first time
 ```
 
 The check needs a checkout of the first published source in which the sample module is built.
@@ -256,6 +281,9 @@ python3 -I verification/decl-graph/check_sample.py deps.tsv \
 | `exact_extract.py` | runs `ExactGraph.lean` on all modules in chunks |
 | `exact_graph.py` | follows the exact graph from the five theorems and compares it with the text runs |
 | `exact-summary.json` | the figures of the exact graph and of the comparison |
+| `exact_axioms.py` | reads the libraries as well and lists the axioms of the five theorems with a chain to each |
+| `exact-axioms.json` | those axioms and chains |
+| `data/exact/lib-*.tsv.gz` | the constants of each library and their mentions |
 | `data/exact/chunk-*.tsv.gz` | the constants and their mentions, as `ExactGraph.lean` wrote them |
 | `data/exact_graph.npz` | the exact graph as arrays, with the declaration row of each node and whether it is reached |
 | `data/exact_nodes.tsv.gz` | one row per compiled constant with its module, name, kind, declaration row and reach |

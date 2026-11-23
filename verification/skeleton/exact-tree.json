@@ -1,0 +1,5313 @@
+{
+ "reached_constants": 1275648,
+ "reached_declarations": 800344,
+ "edges": 14196633,
+ "passes": 2,
+ "gathering_at_least": {
+  "100000": 6,
+  "10000": 65,
+  "1000": 622,
+  "100": 5970
+ },
+ "skeleton": {
+  "min": 1000,
+  "nodes": 622,
+  "top": "LFunction_ne_zero_of_half_lt_re",
+  "top_gathers": 800328,
+  "also_in_text_skeleton": 582,
+  "only_in_exact_skeleton": 40,
+  "only_in_text_skeleton": 8
+ },
+ "outline": {
+  "lines": 38,
+  "same_place": 38,
+  "lines_added_in_exact": [
+   "GlobalTheory.T.conclF_of_family_facts_and_bound_at_two_three",
+   "UpperTheory.Top.shape_closed_link_n_of_green"
+  ]
+ },
+ "outline_lines": [
+  {
+   "name": "LFunction_ne_zero_of_half_lt_re",
+   "level": 0,
+   "parent": null,
+   "text_gathers": 760227,
+   "exact_gathers": 800328,
+   "same_place": true
+  },
+  {
+   "name": "UpperTheory.FinalTheorems.everyCharacter_of_row",
+   "level": 1,
+   "parent": "LFunction_ne_zero_of_half_lt_re",
+   "text_gathers": 577248,
+   "exact_gathers": 605154,
+   "same_place": true
+  },
+  {
+   "name": "UpperTheory.LiteratureTheorems.every_character_of_literature_of_vWin",
+   "level": 2,
+   "parent": "UpperTheory.FinalTheorems.everyCharacter_of_row",
+   "text_gathers": 506214,
+   "exact_gathers": 530260,
+   "same_place": true
+  },
+  {
+   "name": "UpperTheory.Lit.every_character_of_theta_integrals_local_matching",
+   "level": 3,
+   "parent": "UpperTheory.LiteratureTheorems.every_character_of_literature_of_vWin",
+   "text_gathers": 315443,
+   "exact_gathers": 329743,
+   "same_place": true
+  },
+  {
+   "name": "UpperTheory.Lit.nonempty_hyps_definite_side_of_closed_bound",
+   "level": 4,
+   "parent": "UpperTheory.Lit.every_character_of_theta_integrals_local_matching",
+   "text_gathers": 266135,
+   "exact_gathers": 275684,
+   "same_place": true
+  },
+  {
+   "name": "GlobalTheory.Fc.S0.StageU.hypotheses_nonempty_of_unramified_exponents_alt",
+   "level": 5,
+   "parent": "UpperTheory.Lit.nonempty_hyps_definite_side_of_closed_bound",
+   "text_gathers": 89671,
+   "exact_gathers": 92474,
+   "same_place": true
+  },
+  {
+   "name": "GlobalTheory.Fc.AllAtMemberStage0.allRows_of_open0_alt",
+   "level": 6,
+   "parent": "GlobalTheory.Fc.S0.StageU.hypotheses_nonempty_of_unramified_exponents_alt",
+   "text_gathers": 34967,
+   "exact_gathers": 35681,
+   "same_place": true
+  },
+  {
+   "name": "GlobalTheory.LocalRows.lg1_sLp_sO_hTF",
+   "level": 7,
+   "parent": "GlobalTheory.Fc.AllAtMemberStage0.allRows_of_open0_alt",
+   "text_gathers": 14543,
+   "exact_gathers": 15058,
+   "same_place": true
+  },
+  {
+   "name": "GlobalTheory.CarrierGap.offDiag",
+   "level": 8,
+   "parent": "GlobalTheory.LocalRows.lg1_sLp_sO_hTF",
+   "text_gathers": 13933,
+   "exact_gathers": 14429,
+   "same_place": true
+  },
+  {
+   "name": "GlobalTheory.T.hServ_of_linkR",
+   "level": 7,
+   "parent": "GlobalTheory.Fc.AllAtMemberStage0.allRows_of_open0_alt",
+   "text_gathers": 10808,
+   "exact_gathers": 10995,
+   "same_place": true
+  },
+  {
+   "name": "GlobalTheory.T.large_unramified_exponent_bundles_exist_alt",
+   "level": 6,
+   "parent": "GlobalTheory.Fc.S0.StageU.hypotheses_nonempty_of_unramified_exponents_alt",
+   "text_gathers": 20058,
+   "exact_gathers": 20525,
+   "same_place": true
+  },
+  {
+   "name": "GlobalTheory.Mem.Top.Bl.exists_baseLattice_of_prime_alt",
+   "level": 7,
+   "parent": "GlobalTheory.T.large_unramified_exponent_bundles_exist_alt",
+   "text_gathers": 13160,
+   "exact_gathers": 13729,
+   "same_place": true
+  },
+  {
+   "name": "UpperTheory.GalC.final_alt_alt",
+   "level": 6,
+   "parent": "GlobalTheory.Fc.S0.StageU.hypotheses_nonempty_of_unramified_exponents_alt",
+   "text_gathers": 15685,
+   "exact_gathers": 16372,
+   "same_place": true
+  },
+  {
+   "name": "UpperTheory.GalC.final_of_alt",
+   "level": 7,
+   "parent": "UpperTheory.GalC.final_alt_alt",
+   "text_gathers": 14931,
+   "exact_gathers": 15623,
+   "same_place": true
+  },
+  {
+   "name": "UpperTheory.GalC.linkedAt_linkN_of_boundAtTwoThree",
+   "level": 8,
+   "parent": "UpperTheory.GalC.final_of_alt",
+   "text_gathers": 14338,
+   "exact_gathers": 15028,
+   "same_place": true
+  },
+  {
+   "name": "GlobalTheory.Fc.S0.ontoX_and_lamLow_of_unitaryGroupHypotheses'",
+   "level": 5,
+   "parent": "UpperTheory.Lit.nonempty_hyps_definite_side_of_closed_bound",
+   "text_gathers": 20036,
+   "exact_gathers": 21634,
+   "same_place": true
+  },
+  {
+   "name": "GlobalTheory.BigOn.ontoX_of_hypotheses_alt_alt",
+   "level": 6,
+   "parent": "GlobalTheory.Fc.S0.ontoX_and_lamLow_of_unitaryGroupHypotheses'",
+   "text_gathers": 19703,
+   "exact_gathers": 21298,
+   "same_place": true
+  },
+  {
+   "name": "GlobalTheory.T.open0_of_unitary_group_hypotheses",
+   "level": 5,
+   "parent": "UpperTheory.Lit.nonempty_hyps_definite_side_of_closed_bound",
+   "text_gathers": 12471,
+   "exact_gathers": 12778,
+   "same_place": true
+  },
+  {
+   "name": "GlobalTheory.T.main_theorem_published_inputs_third_alt_alt",
+   "level": 6,
+   "parent": "GlobalTheory.T.open0_of_unitary_group_hypotheses",
+   "text_gathers": 10783,
+   "exact_gathers": 11049,
+   "same_place": true
+  },
+  {
+   "name": "GlobalTheory.T.main_theorem_published_inputs_variant_alt_alt",
+   "level": 7,
+   "parent": "GlobalTheory.T.main_theorem_published_inputs_third_alt_alt",
+   "text_gathers": 10559,
+   "exact_gathers": 10830,
+   "same_place": true
+  },
+  {
+   "name": "GlobalTheory.T.main_theorem_published_results_final_alt_alt",
+   "level": 8,
+   "parent": "GlobalTheory.T.main_theorem_published_inputs_variant_alt_alt",
+   "text_gathers": 10306,
+   "exact_gathers": 10581,
+   "same_place": true
+  },
+  {
+   "name": "GlobalTheory.T.main_theorem_from_published_results_alt_alt_alt_alt_alt",
+   "level": 9,
+   "parent": "GlobalTheory.T.main_theorem_published_results_final_alt_alt",
+   "text_gathers": 10050,
+   "exact_gathers": 10330,
+   "same_place": true
+  },
+  {
+   "name": "UpperTheory.Top.every_character_of_green_v_win",
+   "level": 4,
+   "parent": "UpperTheory.Lit.every_character_of_theta_integrals_local_matching",
+   "text_gathers": 12029,
+   "exact_gathers": 14301,
+   "same_place": true
+  },
+  {
+   "name": "SelfIntersectionVolumeEstimates.topCovolSlim2_use_alt_alt",
+   "level": 3,
+   "parent": "UpperTheory.LiteratureTheorems.every_character_of_literature_of_vWin",
+   "text_gathers": 52094,
+   "exact_gathers": 54038,
+   "same_place": true
+  },
+  {
+   "name": "PositivityTheory.HtPt.Ah.deep_slim_use",
+   "level": 4,
+   "parent": "SelfIntersectionVolumeEstimates.topCovolSlim2_use_alt_alt",
+   "text_gathers": 30169,
+   "exact_gathers": 31257,
+   "same_place": true
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Ar.Plug.deepStR_of_use",
+   "level": 5,
+   "parent": "PositivityTheory.HtPt.Ah.deep_slim_use",
+   "text_gathers": 29778,
+   "exact_gathers": 30847,
+   "same_place": true
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Ar.Link.good_tower_volume_theorem_bis",
+   "level": 6,
+   "parent": "GlobalTheory.CompanionTheory.Ar.Plug.deepStR_of_use",
+   "text_gathers": 20438,
+   "exact_gathers": 21817,
+   "same_place": true
+  },
+  {
+   "name": "GlobalTheory.T.good_tower_volume_theorem",
+   "level": 7,
+   "parent": "GlobalTheory.CompanionTheory.Ar.Link.good_tower_volume_theorem_bis",
+   "text_gathers": 17143,
+   "exact_gathers": 18504,
+   "same_place": true
+  },
+  {
+   "name": "SelfIntersectionVolumeEstimates.topCovolG_alt_alt",
+   "level": 4,
+   "parent": "SelfIntersectionVolumeEstimates.topCovolSlim2_use_alt_alt",
+   "text_gathers": 12517,
+   "exact_gathers": 12978,
+   "same_place": true
+  },
+  {
+   "name": "UpperTheory.One.vwin_of_row",
+   "level": 2,
+   "parent": "UpperTheory.FinalTheorems.everyCharacter_of_row",
+   "text_gathers": 55754,
+   "exact_gathers": 56755,
+   "same_place": true
+  },
+  {
+   "name": "UpperTheory.One.Join.v_window_of_depth_zero_residual_bc_cm",
+   "level": 3,
+   "parent": "UpperTheory.One.vwin_of_row",
+   "text_gathers": 55113,
+   "exact_gathers": 56097,
+   "same_place": true
+  },
+  {
+   "name": "UpperTheory.V.HV.DescentVanishingReductions.vwin_of_hypotheses_H_E_alt",
+   "level": 4,
+   "parent": "UpperTheory.One.Join.v_window_of_depth_zero_residual_bc_cm",
+   "text_gathers": 47836,
+   "exact_gathers": 48777,
+   "same_place": true
+  },
+  {
+   "name": "UpperTheory.Gal.Int.galoisLocalGlobalStrong_recParameter",
+   "level": 1,
+   "parent": "LFunction_ne_zero_of_half_lt_re",
+   "text_gathers": 51784,
+   "exact_gathers": 56550,
+   "same_place": true
+  },
+  {
+   "name": "UpperTheory.Gal.Int.galoisRepresentations_of_thetaLift",
+   "level": 2,
+   "parent": "UpperTheory.Gal.Int.galoisLocalGlobalStrong_recParameter",
+   "text_gathers": 48992,
+   "exact_gathers": 53683,
+   "same_place": true
+  },
+  {
+   "name": "UpperTheory.Gal.Int.Geo.geoOne_holds",
+   "level": 3,
+   "parent": "UpperTheory.Gal.Int.galoisRepresentations_of_thetaLift",
+   "text_gathers": 43403,
+   "exact_gathers": 48084,
+   "same_place": true
+  },
+  {
+   "name": "UpperTheory.Gal.Int.Geo.geometric_realization_of_weight_one",
+   "level": 4,
+   "parent": "UpperTheory.Gal.Int.Geo.geoOne_holds",
+   "text_gathers": 41443,
+   "exact_gathers": 46160,
+   "same_place": true
+  },
+  {
+   "name": "UpperTheory.Gal.Int.Geo.steps_holds",
+   "level": 5,
+   "parent": "UpperTheory.Gal.Int.Geo.geometric_realization_of_weight_one",
+   "text_gathers": 26301,
+   "exact_gathers": 30529,
+   "same_place": true
+  },
+  {
+   "name": "UpperTheory.Gal.Int.Geo.kodaira_spencer_of_weight_one",
+   "level": 5,
+   "parent": "UpperTheory.Gal.Int.Geo.geometric_realization_of_weight_one",
+   "text_gathers": 11850,
+   "exact_gathers": 12277,
+   "same_place": true
+  }
+ ],
+ "nodes": [
+  {
+   "name": "LFunction_ne_zero_of_half_lt_re",
+   "kind": "theorem",
+   "module": "Main",
+   "parent": null,
+   "gathers": 800328,
+   "text_gathers": 760227
+  },
+  {
+   "name": "UpperTheory.FinalTheorems.everyCharacter",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.CharacterBoxes.MainConclusion",
+   "parent": 0,
+   "gathers": 800326,
+   "text_gathers": 760225
+  },
+  {
+   "name": "UpperTheory.Gal.Int.galoisLocalGlobalStrong_recParameter",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.RowSrc",
+   "parent": 1,
+   "gathers": 56550,
+   "text_gathers": 51784
+  },
+  {
+   "name": "UpperTheory.TP.K.tLiftK",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.TLiftK",
+   "parent": 2,
+   "gathers": 2853,
+   "text_gathers": 2778
+  },
+  {
+   "name": "UpperTheory.TP.tLift_holds_k",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.TPGHolds",
+   "parent": 3,
+   "gathers": 2852,
+   "text_gathers": 2777
+  },
+  {
+   "name": "UpperTheory.TP.tools_holds_k",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.TPGHolds",
+   "parent": 4,
+   "gathers": 2312,
+   "text_gathers": 2208
+  },
+  {
+   "name": "PositivityTheory.SiegelWeilFormula.Fin.siegelWeilStd_k",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilFinFinal",
+   "parent": 5,
+   "gathers": 1811,
+   "text_gathers": 1690
+  },
+  {
+   "name": "PositivityTheory.SiegelWeilFormula.Fin.siegelWeilStd_of_ct_k",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilFinLt",
+   "parent": 6,
+   "gathers": 1298,
+   "text_gathers": 1203
+  },
+  {
+   "name": "PositivityTheory.SiegelWeilFormula.Fin.siegelWeilStd_pre_k",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilFinPre",
+   "parent": 7,
+   "gathers": 1253,
+   "text_gathers": 1157
+  },
+  {
+   "name": "UpperTheory.Gal.Int.galoisRepresentations_of_thetaLift",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GaloisRepresentationsOfThetaLift",
+   "parent": 2,
+   "gathers": 53683,
+   "text_gathers": 48992
+  },
+  {
+   "name": "UpperTheory.Gal.Int.Geo.geoOne_holds",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.WeightOneGeometricRealization",
+   "parent": 9,
+   "gathers": 48084,
+   "text_gathers": 43403
+  },
+  {
+   "name": "UpperTheory.Gal.Int.Geo.weight_one_geometric_realization",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.WeightOneGeometricRealization",
+   "parent": 10,
+   "gathers": 1820,
+   "text_gathers": 1825
+  },
+  {
+   "name": "GlobalTheory.T.lefschetz_fixedPoint_finite_etale_correspondence",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.LefschetzFixedPointFiniteEtaleCorrespondence",
+   "parent": 11,
+   "gathers": 1819,
+   "text_gathers": 1824
+  },
+  {
+   "name": "UpperTheory.Cb.lefschetz_fixedPoint_finite_etale_correspondence",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.LefschetzFixedPointFiniteEtaleCorrespondence",
+   "parent": 12,
+   "gathers": 1818,
+   "text_gathers": 1823
+  },
+  {
+   "name": "UpperTheory.Core.block_fixed",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.LefschetzFixedPointFiniteEtaleCorrespondence",
+   "parent": 13,
+   "gathers": 1756,
+   "text_gathers": 1761
+  },
+  {
+   "name": "UpperTheory.Cb.holomorphic_lefschetz_finiteEtale_correspondence",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.HolomorphicLefschetzFiniteEtaleCorrespondence",
+   "parent": 14,
+   "gathers": 1733,
+   "text_gathers": 1738
+  },
+  {
+   "name": "UpperTheory.Cb.holomorphic_lefschetz_finiteEtale_integral",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.HolomorphicLefschetzFiniteEtaleIntegral",
+   "parent": 15,
+   "gathers": 1723,
+   "text_gathers": 1728
+  },
+  {
+   "name": "GlobalTheory.T.exists_chart_lift_of_finite_cover",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.ExistsChartLiftOfFiniteCover",
+   "parent": 16,
+   "gathers": 1199,
+   "text_gathers": 1201
+  },
+  {
+   "name": "UpperTheory.Cb.exists_chart_lift_of_finite_cover",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.ExistsChartLiftOfFiniteCover",
+   "parent": 17,
+   "gathers": 1198,
+   "text_gathers": 1200
+  },
+  {
+   "name": "field0",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.ExistsChartLiftOfFiniteCover",
+   "parent": 18,
+   "gathers": 1197,
+   "text_gathers": 1199
+  },
+  {
+   "name": "UpperTheory.Gal.Int.Geo.geometric_realization_of_weight_one",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.GeometricRealizationOfWeightOne",
+   "parent": 10,
+   "gathers": 46160,
+   "text_gathers": 41443
+  },
+  {
+   "name": "UpperTheory.Gal.Int.Geo.Pl.planEx_holds",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.PrimeLevelLocalization.SpecTopHolds",
+   "parent": 20,
+   "gathers": 1981,
+   "text_gathers": 1949
+  },
+  {
+   "name": "UpperTheory.Gal.Int.Geo.kodaira_spencer_of_weight_one",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.GeometricRealizationOfWeightOne",
+   "parent": 20,
+   "gathers": 12277,
+   "text_gathers": 11850
+  },
+  {
+   "name": "UpperTheory.Gal.FixZ.FixK_holds",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IsogenyEtaleTranslation.TrFEtHolds",
+   "parent": 22,
+   "gathers": 1830,
+   "text_gathers": 1788
+  },
+  {
+   "name": "UpperTheory.Gal.FixZ.tower_fixed_points_of_isogeny_data",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IsogenyEtaleTranslation.TranslationFiniteEtaleOfIsogenyData",
+   "parent": 23,
+   "gathers": 1829,
+   "text_gathers": 1787
+  },
+  {
+   "name": "UpperTheory.Gal.W2.fixedPoints_int_base_holds",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalCoordinates.FixedPointsIntBaseHolds",
+   "parent": 24,
+   "gathers": 1680,
+   "text_gathers": 1643
+  },
+  {
+   "name": "UpperTheory.Gal.LocalSmoothExtension.ksHodge_of_geo",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.LefschetzSigmaSums.KsHodgeOfGeo",
+   "parent": 22,
+   "gathers": 1910,
+   "text_gathers": 1890
+  },
+  {
+   "name": "GlobalTheory.UPel.HT.model_nonempty",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.HarrisTaylorIntegralModelNonempty",
+   "parent": 22,
+   "gathers": 2640,
+   "text_gathers": 2580
+  },
+  {
+   "name": "GlobalTheory.T.exists_quasiProjective_harrisTaylor_family",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsQuasiProjectiveHarrisTaylorFamilyStatement",
+   "parent": 27,
+   "gathers": 2121,
+   "text_gathers": 2104
+  },
+  {
+   "name": "GlobalTheory.UPel.HT.exists_repFam_qproj",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsQuasiProjectiveHarrisTaylorFamily",
+   "parent": 28,
+   "gathers": 2120,
+   "text_gathers": 2103
+  },
+  {
+   "name": "GlobalTheory.T.siegelKernelBoundedRepresentable_of_coprime",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegelKernelBoundedRepresentableOfCoprimeStatement",
+   "parent": 29,
+   "gathers": 1044,
+   "text_gathers": 1026
+  },
+  {
+   "name": "GlobalTheory.UPel.HT.sdRep_of_coprime",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegelKernelBoundedRepresentableOfCoprime",
+   "parent": 30,
+   "gathers": 1043,
+   "text_gathers": 1025
+  },
+  {
+   "name": "UpperTheory.Gal.Int.Geo.steps_holds",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.GeometricRealizationOfWeightOne",
+   "parent": 20,
+   "gathers": 30529,
+   "text_gathers": 26301
+  },
+  {
+   "name": "UpperTheory.Gal.Int.Geo.jumpStep_holds",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.GeometricRealizationOfWeightOne",
+   "parent": 32,
+   "gathers": 3109,
+   "text_gathers": 2671
+  },
+  {
+   "name": "UpperTheory.Gal.Seam.HT.htSpecGood",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.ClosedHT",
+   "parent": 33,
+   "gathers": 2770,
+   "text_gathers": 2335
+  },
+  {
+   "name": "UpperTheory.Gal.Seam.HT.htBij",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.ClosedHT",
+   "parent": 34,
+   "gathers": 2192,
+   "text_gathers": 1762
+  },
+  {
+   "name": "CrystallineSemistableComparison.Onto.htBij_of",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.HtBijOf",
+   "parent": 35,
+   "gathers": 1105,
+   "text_gathers": 1058
+  },
+  {
+   "name": "CrystallineSemistableComparison.Onto.parts",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.PadicHodgeComparison.HodgeSurjectivity.HtBijOf",
+   "parent": 36,
+   "gathers": 1033,
+   "text_gathers": 999
+  },
+  {
+   "name": "UpperTheory.Gal.Seam.crysStep_holds",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.Closed",
+   "parent": 32,
+   "gathers": 1350,
+   "text_gathers": 4213
+  },
+  {
+   "name": "UpperTheory.Gal.Seam.crysStep_of",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.LocTowerHolds",
+   "parent": 38,
+   "gathers": 1344,
+   "text_gathers": 4207
+  },
+  {
+   "name": "UpperTheory.Gal.Seam.matIn_holds",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.LocTowerHolds",
+   "parent": 39,
+   "gathers": 1323,
+   "text_gathers": 4188
+  },
+  {
+   "name": "UpperTheory.Gal.G3.vFin_holds",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PAdicWittLattices.VFinHolds",
+   "parent": 40,
+   "gathers": 1320,
+   "text_gathers": 4185
+  },
+  {
+   "name": "UpperTheory.Et.etale_finiteness_of_duality",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.EtaleDualityTraceIsomorphism",
+   "parent": 41,
+   "gathers": 1281,
+   "text_gathers": 4145
+  },
+  {
+   "name": "UpperTheory.Et.etale_duality_trace_isomorphism",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.EtaleDualityTraceIsomorphism",
+   "parent": 42,
+   "gathers": 1279,
+   "text_gathers": 1802
+  },
+  {
+   "name": "UpperTheory.Et.D2.intersectionNumber_baseChange",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.EtaleAxioms.A0",
+   "parent": 43,
+   "gathers": 1278,
+   "text_gathers": 1801
+  },
+  {
+   "name": "UpperTheory.Et.D2.a0",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.EtaleAxioms.A0",
+   "parent": 44,
+   "gathers": 1277,
+   "text_gathers": 1799
+  },
+  {
+   "name": "LateralTheory.Fix.EtaleChapterDTwo.s57",
+   "kind": "theorem",
+   "module": "Development.EtaleCohomology.EtaleSheaves.AwSpec",
+   "parent": 45,
+   "gathers": 1276,
+   "text_gathers": 1798
+  },
+  {
+   "name": "GlobalTheory.EtC.projectiveBundleFormula_vectorBundle_any_space",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjectiveBundleFormulaVectorBundleAnySpace",
+   "parent": 32,
+   "gathers": 1613,
+   "text_gathers": 1593
+  },
+  {
+   "name": "GlobalTheory.T.projectiveBundleFormula_discrete_space",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjectiveBundleFormulaDiscreteSpaceStatement",
+   "parent": 47,
+   "gathers": 1209,
+   "text_gathers": 1195
+  },
+  {
+   "name": "GlobalTheory.EtC.pbf_disc",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ProjectiveBundleFormulaDiscreteSpace",
+   "parent": 48,
+   "gathers": 1208,
+   "text_gathers": 1194
+  },
+  {
+   "name": "GlobalTheory.T.etaleCohomology_projectiveBundle_formula",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleCohomologyProjectiveBundleFormula",
+   "parent": 49,
+   "gathers": 1001,
+   "text_gathers": 984
+  },
+  {
+   "name": "UpperTheory.Cb.etaleCohomology_projectiveBundle_formula",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.EtaleCohomologyProjectiveBundleFormula",
+   "parent": 50,
+   "gathers": 1000,
+   "text_gathers": 983
+  },
+  {
+   "name": "UpperTheory.Gal.KunnethLefschetz.Core.inputs",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.KunnethLefschetz.EtSideGood",
+   "parent": 32,
+   "gathers": 2538,
+   "text_gathers": 0
+  },
+  {
+   "name": "UpperTheory.Et.purGysin",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.PurTop",
+   "parent": 52,
+   "gathers": 2029,
+   "text_gathers": 0
+  },
+  {
+   "name": "UpperTheory.Et.purAll",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.PurTop",
+   "parent": 53,
+   "gathers": 2022,
+   "text_gathers": 0
+  },
+  {
+   "name": "UpperTheory.Et.e4",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.E4",
+   "parent": 32,
+   "gathers": 2063,
+   "text_gathers": 2264
+  },
+  {
+   "name": "UpperTheory.Et.EtaleTopology.top",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.EtaleTopology",
+   "parent": 55,
+   "gathers": 2061,
+   "text_gathers": 2262
+  },
+  {
+   "name": "UpperTheory.Et.E2.main",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.SpecAbsolutelyIntegrallyClosedCohomology",
+   "parent": 32,
+   "gathers": 1300,
+   "text_gathers": 1253
+  },
+  {
+   "name": "UpperTheory.Gal.Int.galoisLocalGlobalStrong_of_geometry_lift",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.Development",
+   "parent": 9,
+   "gathers": 5452,
+   "text_gathers": 5427
+  },
+  {
+   "name": "UpperTheory.Gal.Int.galoisLocalGlobal_of_geometry_lift",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.Development",
+   "parent": 58,
+   "gathers": 5442,
+   "text_gathers": 5426
+  },
+  {
+   "name": "UpperTheory.Gal.Int.coreAll_of",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.Development",
+   "parent": 59,
+   "gathers": 1760,
+   "text_gathers": 1749
+  },
+  {
+   "name": "UpperTheory.Gal.Int.rest",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.Development",
+   "parent": 59,
+   "gathers": 1964,
+   "text_gathers": 1950
+  },
+  {
+   "name": "UpperTheory.Gal.ToralGalois.R2.localGlobalCompatAtIwahoriFixed_of_unlinked",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalGaloisCompatibility.PAdicSplitting.LocalGlobalCompatAtIwahoriFixedOfUnlinked",
+   "parent": 61,
+   "gathers": 1552,
+   "text_gathers": 1543
+  },
+  {
+   "name": "UpperTheory.Gal.ToralGalois.R2.toTor_holds",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.SphericalGaloisCompatibility.PAdicSplitting.LocalGlobalCompatAtIwahoriFixedOfUnlinked",
+   "parent": 62,
+   "gathers": 1536,
+   "text_gathers": 1527
+  },
+  {
+   "name": "UpperTheory.Gal.InertialTypesAlt.suppBC_outright",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.Closed",
+   "parent": 63,
+   "gathers": 1339,
+   "text_gathers": 1325
+  },
+  {
+   "name": "UpperTheory.Gal.InertialTypesAlt.suppBC_holds",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.RegularSemisimpleFibres.TypeOfLblHolds",
+   "parent": 64,
+   "gathers": 1170,
+   "text_gathers": 1155
+  },
+  {
+   "name": "UpperTheory.FinalTheorems.everyCharacter_of_row",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.CharacterBoxes.MainConclusion",
+   "parent": 1,
+   "gathers": 605154,
+   "text_gathers": 577248
+  },
+  {
+   "name": "UpperTheory.One.vwin_of_row",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.VwinOfRow",
+   "parent": 66,
+   "gathers": 56755,
+   "text_gathers": 55754
+  },
+  {
+   "name": "UpperTheory.One.Join.automorphic_window_of_inputs",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TopMainZj",
+   "parent": 67,
+   "gathers": 56752,
+   "text_gathers": 55752
+  },
+  {
+   "name": "UpperTheory.One.Join.v_window_of_depth_zero_residual_bc_cm",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.TopMainZj",
+   "parent": 68,
+   "gathers": 56097,
+   "text_gathers": 55113
+  },
+  {
+   "name": "UpperTheory.V.v_window_of_literal_automorphy_n",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.WindowBoundOfLiteratureLevel",
+   "parent": 69,
+   "gathers": 56037,
+   "text_gathers": 55054
+  },
+  {
+   "name": "UpperTheory.V.HV.DescentVanishingReductions.v_window_of_automorphy_csd_ss_mono_odd",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.WindowBoundOfLiteratureLevel",
+   "parent": 70,
+   "gathers": 56036,
+   "text_gathers": 55052
+  },
+  {
+   "name": "UpperTheory.V.HV.DescentVanishingReductions.published_hypotheses_from_patching_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.PublishedHypothesesFromPatching",
+   "parent": 71,
+   "gathers": 3593,
+   "text_gathers": 3584
+  },
+  {
+   "name": "UpperTheory.ConvolutionTheory.RankTwoDescent.descS",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.AbsNormConj",
+   "parent": 72,
+   "gathers": 1531,
+   "text_gathers": 1531
+  },
+  {
+   "name": "UpperTheory.ConvolutionTheory.RankTwoDescent.downN",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.Convolution.SplitEigenfunctions.UnitOfNormalised",
+   "parent": 73,
+   "gathers": 1526,
+   "text_gathers": 1526
+  },
+  {
+   "name": "UpperTheory.V.HV.DescentVanishingReductions.vwin_of_hypotheses_H_E_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.WindowBoundOfLiteratureLevel",
+   "parent": 71,
+   "gathers": 48777,
+   "text_gathers": 47836
+  },
+  {
+   "name": "UpperTheory.V.Z.Kato.WeilSphericalRecords.katoTwoW_of_printsH",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.KatoTwoWOfPublishedH",
+   "parent": 75,
+   "gathers": 9679,
+   "text_gathers": 9313
+  },
+  {
+   "name": "UpperTheory.V.Z.Kato.WeilSphericalRecords.katoTwoW_of_printsH_of_rT_of_quadBC2",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.KatoTwoWOfPublishedH",
+   "parent": 76,
+   "gathers": 9678,
+   "text_gathers": 9312
+  },
+  {
+   "name": "UpperTheory.V.Z.Kato.WeilSphericalRecords.twoS",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SphericalDecomposition.SphAtTw",
+   "parent": 77,
+   "gathers": 9288,
+   "text_gathers": 8919
+  },
+  {
+   "name": "UpperTheory.V.Z.Kato.Final.zetaUr",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.UnramifiedZeta.ZetaUr",
+   "parent": 78,
+   "gathers": 8310,
+   "text_gathers": 7960
+  },
+  {
+   "name": "UpperTheory.V.Z.Kato.K5.smoothedZetaClass_hodgeTateLaw",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SmoothedZetaClasses.SmoothedZetaClassHodgeTateLaw",
+   "parent": 79,
+   "gathers": 1877,
+   "text_gathers": 1624
+  },
+  {
+   "name": "UpperTheory.V.Z.Kato.K5.top",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SmoothedZetaClasses.Imports",
+   "parent": 80,
+   "gathers": 1876,
+   "text_gathers": 1623
+  },
+  {
+   "name": "UpperTheory.V.Z.Kato.K5.hco",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.SmoothedZetaClasses.Hco",
+   "parent": 81,
+   "gathers": 1519,
+   "text_gathers": 1601
+  },
+  {
+   "name": "UpperTheory.Kd.L.thdiam",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.Thdiam",
+   "parent": 82,
+   "gathers": 1500,
+   "text_gathers": 1564
+  },
+  {
+   "name": "UpperTheory.Kd.L.thcocd",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.Thcocd",
+   "parent": 83,
+   "gathers": 1499,
+   "text_gathers": 1563
+  },
+  {
+   "name": "UpperTheory.Kd.L.twist",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.Imports",
+   "parent": 84,
+   "gathers": 1493,
+   "text_gathers": 1557
+  },
+  {
+   "name": "UpperTheory.Kd.L.law",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.ExistsSeries",
+   "parent": 85,
+   "gathers": 1461,
+   "text_gathers": 379
+  },
+  {
+   "name": "UpperTheory.Kd.L.mackey",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.Mackey",
+   "parent": 86,
+   "gathers": 1089,
+   "text_gathers": 60
+  },
+  {
+   "name": "UpperTheory.Kd.L.one",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.IwahoriReduction.SiegelFixedPoints.CoefQCmulMem",
+   "parent": 87,
+   "gathers": 1029,
+   "text_gathers": 1091
+  },
+  {
+   "name": "UpperTheory.Kd.K4.kato_eulerSystem_integrality",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.AdmissibleWeightedDataMonoCoef",
+   "parent": 79,
+   "gathers": 1500,
+   "text_gathers": 1472
+  },
+  {
+   "name": "UpperTheory.Kd.K4.top",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.AdmissibleWeightedDataMonoCoef",
+   "parent": 89,
+   "gathers": 1499,
+   "text_gathers": 1471
+  },
+  {
+   "name": "UpperTheory.V.Z.Kato.Joint.kato_global_unit_law_of_smoothed_classes",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.KatoGlobalUnitLawOfSmoothedClasses",
+   "parent": 79,
+   "gathers": 2692,
+   "text_gathers": 2659
+  },
+  {
+   "name": "UpperTheory.V.Z.Kato.Joint.kato_global_admissibility_of_admissible",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.KatoQuadraticCharacters.FrobeniusHodgeTateLaws.KatoGlobalAdmissibilityOfAdmissible",
+   "parent": 91,
+   "gathers": 1434,
+   "text_gathers": 1399
+  },
+  {
+   "name": "GlobalTheory.T.heckeProjector_newform_galoisImage",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeProjectorNewformGaloisImageStatement",
+   "parent": 92,
+   "gathers": 1191,
+   "text_gathers": 1163
+  },
+  {
+   "name": "GlobalTheory.KZ.HeckeProj.heckeProj_newform",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.FoundationProofs.HeckeProjectorNewformGaloisImage",
+   "parent": 93,
+   "gathers": 1190,
+   "text_gathers": 1162
+  },
+  {
+   "name": "UpperTheory.V.HV.Core.of_four_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.HVCore",
+   "parent": 75,
+   "gathers": 1038,
+   "text_gathers": 1043
+  },
+  {
+   "name": "UpperTheory.V.HV.DescentVanishingReductions.sp4In0_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.Sp4In0",
+   "parent": 75,
+   "gathers": 7481,
+   "text_gathers": 7434
+  },
+  {
+   "name": "UpperTheory.V.Z.Bc.seedIIs_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.BcIndCs",
+   "parent": 96,
+   "gathers": 3280,
+   "text_gathers": 3279
+  },
+  {
+   "name": "UpperTheory.V.Z.Bc.indCs",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.WsIIOfPrintsH",
+   "parent": 96,
+   "gathers": 2152,
+   "text_gathers": 2177
+  },
+  {
+   "name": "UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.indCs_of_bcfl",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.IndCsOfBcfl",
+   "parent": 98,
+   "gathers": 2151,
+   "text_gathers": 2176
+  },
+  {
+   "name": "UpperTheory.V.Z.InvariantSubmoduleMonicPolynomial.E.indCs_of_gm",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.InductionEstimates.IwahoriHeckeInjectivity.IndCsOfBcfl",
+   "parent": 99,
+   "gathers": 2150,
+   "text_gathers": 2175
+  },
+  {
+   "name": "UpperTheory.V.Z.Bc.seedII_Z_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.SeedIIZ",
+   "parent": 97,
+   "gathers": 1711,
+   "text_gathers": 1679
+  },
+  {
+   "name": "UpperTheory.Esk.mixSeed_of_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.MixSeedOf",
+   "parent": 101,
+   "gathers": 1297,
+   "text_gathers": 1267
+  },
+  {
+   "name": "UpperTheory.Esk.holWC",
+   "kind": "theorem",
+   "module": "PositivityTheory.AutomorphicForms.PublishedInputs.JacquetLanglands.TorusKernels.MixSeedOf",
+   "parent": 102,
+   "gathers": 1216,
+   "text_gathers": 1204
+  },
+  {
+   "name": "UpperTheory.V.Cu.sp4In_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.Sp4In",
+   "parent": 96,
+   "gathers": 1098,
+   "text_gathers": 1022
+  },
+  {
+   "name": "UpperTheory.V.Cu.main4_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.CuFinal",
+   "parent": 104,
+   "gathers": 1095,
+   "text_gathers": 1019
+  },
+  {
+   "name": "UpperTheory.V.Z.Int.slopeAll",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.IntegralDeterminants.SlopeAll",
+   "parent": 75,
+   "gathers": 2439,
+   "text_gathers": 2418
+  },
+  {
+   "name": "UpperTheory.V.Z.Int.slopeAllOf",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.IntegralDeterminants.SlopeAllOf",
+   "parent": 106,
+   "gathers": 2299,
+   "text_gathers": 2275
+  },
+  {
+   "name": "GlobalTheory.JSW.jacquetShalikaRigidity_holds",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JacquetShalikaRigidityHolds",
+   "parent": 107,
+   "gathers": 2286,
+   "text_gathers": 2262
+  },
+  {
+   "name": "GlobalTheory.JSW.Rigid.vanish",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JacquetShalikaRigidityHolds",
+   "parent": 108,
+   "gathers": 2278,
+   "text_gathers": 2254
+  },
+  {
+   "name": "UpperTheory.V.Z.GSp4Splitting.coreG",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.TraceFormula.GL4GeometricSide.CoreG",
+   "parent": 1,
+   "gathers": 2100,
+   "text_gathers": 2113
+  },
+  {
+   "name": "UpperTheory.V.Z.Sym.W.unitary_three_automorphy_dense_of_prints",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.UnitaryThreeInputsOfLiterature",
+   "parent": 75,
+   "gathers": 4385,
+   "text_gathers": 4290
+  },
+  {
+   "name": "UpperTheory.V.Z.Sym.W.unitary_three_automorphy_dense_of_prints_and_row",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.UnitaryThreeInputsOfLiterature",
+   "parent": 111,
+   "gathers": 4384,
+   "text_gathers": 4289
+  },
+  {
+   "name": "UpperTheory.V.Z.Sym.W.adjoint_automorphy_w_of_printed_hida_window",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.UnitaryThreeInputsOfLiterature",
+   "parent": 112,
+   "gathers": 3416,
+   "text_gathers": 3347
+  },
+  {
+   "name": "UpperTheory.V.Z.Sym.W.specOutS",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeilDeligneUnramified.LevUnion",
+   "parent": 113,
+   "gathers": 2972,
+   "text_gathers": 2903
+  },
+  {
+   "name": "core",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeilDeligneUnramified.LevUnion",
+   "parent": 114,
+   "gathers": 1955,
+   "text_gathers": 1924
+  },
+  {
+   "name": "UpperTheory.V.Z.Sym.So.specF",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.UnifLtOne",
+   "parent": 115,
+   "gathers": 1853,
+   "text_gathers": 1827
+  },
+  {
+   "name": "UpperTheory.V.Z.Sym.Glob.tFId0",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.ScalarTuples.TFId0",
+   "parent": 116,
+   "gathers": 1490,
+   "text_gathers": 1393
+  },
+  {
+   "name": "UpperTheory.ConvolutionTheory.GM.gm_of_bcfl",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.GmOfBcfl",
+   "parent": 1,
+   "gathers": 1270,
+   "text_gathers": 1258
+  },
+  {
+   "name": "UpperTheory.ConvolutionTheory.GM.gm_of_unit",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.Convolution.GeneralizedMeasures.LinearMapCompEqOnSmulOfEq",
+   "parent": 118,
+   "gathers": 1249,
+   "text_gathers": 1237
+  },
+  {
+   "name": "UpperTheory.V.Pa.pFromAut",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AutomorphicDetection.PfromAut",
+   "parent": 75,
+   "gathers": 2223,
+   "text_gathers": 2184
+  },
+  {
+   "name": "UpperTheory.V.Pa.raw",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AutomorphicDetection.Raw",
+   "parent": 120,
+   "gathers": 1281,
+   "text_gathers": 1261
+  },
+  {
+   "name": "UpperTheory.V.Pa.coreBC",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AutomorphicDetection.CoreBC",
+   "parent": 121,
+   "gathers": 1165,
+   "text_gathers": 1158
+  },
+  {
+   "name": "UpperTheory.V.Pa.core",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.PatchingModules.AutomorphicDetection.LiftPt",
+   "parent": 122,
+   "gathers": 1008,
+   "text_gathers": 1001
+  },
+  {
+   "name": "UpperTheory.V.ZK.lemmaK_litN_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.KFinal",
+   "parent": 75,
+   "gathers": 2898,
+   "text_gathers": 2843
+  },
+  {
+   "name": "UpperTheory.V.ZK.bOdd",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ClassCounting.BOdd",
+   "parent": 124,
+   "gathers": 1835,
+   "text_gathers": 1797
+  },
+  {
+   "name": "PositivityTheory.KB.bOdd_zk",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.TorsionIntegers.Bridge",
+   "parent": 125,
+   "gathers": 1834,
+   "text_gathers": 1796
+  },
+  {
+   "name": "PositivityTheory.KB.bStarOdd",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.FinalOdd",
+   "parent": 126,
+   "gathers": 1826,
+   "text_gathers": 1788
+  },
+  {
+   "name": "UpperTheory.LiteratureTheorems.every_character_of_literature_of_vWin",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.EveryCharacterOfLiteratureOfVWin",
+   "parent": 66,
+   "gathers": 530260,
+   "text_gathers": 506214
+  },
+  {
+   "name": "UpperTheory.LiteratureTheorems.published_results_arithmetic",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.EveryCharacterOfLiteratureOfVWin",
+   "parent": 128,
+   "gathers": 5314,
+   "text_gathers": 5060
+  },
+  {
+   "name": "UpperTheory.LiteratureTheorems.good_chern_weil_of_literature",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.EveryCharacterOfLiteratureOfVWin",
+   "parent": 129,
+   "gathers": 1515,
+   "text_gathers": 1444
+  },
+  {
+   "name": "GlobalTheory.GoodMetric.goodChernWeil",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.GoodChernWeil",
+   "parent": 130,
+   "gathers": 1514,
+   "text_gathers": 1443
+  },
+  {
+   "name": "PositivityTheory.DualRT.abelianDeRham",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.AutomorphicKernels.DualAbelianScheme.AbelianDeRhamDuality.AbelianDeRhamDuality",
+   "parent": 66,
+   "gathers": 1148,
+   "text_gathers": 1140
+  },
+  {
+   "name": "MainStatements.Hodge.Free.abelianHodgeDeRham",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.AutomorphicKernels.AbelianDeRham.AbelianHodgeDeRham.AbelianHodgeDeRham",
+   "parent": 132,
+   "gathers": 1061,
+   "text_gathers": 1050
+  },
+  {
+   "name": "UpperTheory.LiteratureTheorems.arith_hilbert_samuel_of_literature",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.EveryCharacterOfLiteratureOfVWin",
+   "parent": 129,
+   "gathers": 1837,
+   "text_gathers": 1771
+  },
+  {
+   "name": "GlobalTheory.arithHilbertSamuel_of_principalisation",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ArithHilbertSamuelOfPrincipalisation",
+   "parent": 134,
+   "gathers": 1836,
+   "text_gathers": 1770
+  },
+  {
+   "name": "GlobalTheory.TorKSField.toroidalForFanKS",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToroidalCompactificationFanLogKodairaSpencerIso",
+   "parent": 128,
+   "gathers": 5160,
+   "text_gathers": 5094
+  },
+  {
+   "name": "GlobalTheory.T.rigidBoundaryChartsForFan_unitaryDatum",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigidBoundaryChartsForFanUnitaryDatumStatement",
+   "parent": 136,
+   "gathers": 2827,
+   "text_gathers": 2773
+  },
+  {
+   "name": "GlobalTheory.RigChart.rigidForFan_holds",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigidBoundaryChartsForFanUnitaryDatum",
+   "parent": 137,
+   "gathers": 2826,
+   "text_gathers": 2772
+  },
+  {
+   "name": "GlobalTheory.T.unitaryToroidalSeparation_of_base",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryToroidalSeparationOfBaseStatement",
+   "parent": 138,
+   "gathers": 1421,
+   "text_gathers": 1397
+  },
+  {
+   "name": "GlobalTheory.UPoincTop.uStB",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryToroidalSeparationOfBase",
+   "parent": 139,
+   "gathers": 1420,
+   "text_gathers": 1396
+  },
+  {
+   "name": "GlobalTheory.UPoincTop.uPoinStX_sep",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitaryToroidalSeparationOfBase",
+   "parent": 140,
+   "gathers": 1419,
+   "text_gathers": 1395
+  },
+  {
+   "name": "GlobalTheory.T.rigidBoundaryChartsForFan_of_unitarySeparation",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigidBoundaryChartsForFanOfUnitarySeparationStatement",
+   "parent": 138,
+   "gathers": 1324,
+   "text_gathers": 1298
+  },
+  {
+   "name": "GlobalTheory.UChartJoin.rigidForFan_of_uStB",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.RigidBoundaryChartsForFanOfUnitarySeparation",
+   "parent": 142,
+   "gathers": 1323,
+   "text_gathers": 1297
+  },
+  {
+   "name": "GlobalTheory.T.exists_tripleChart_unitary_boundary_point",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTripleChartUnitaryBoundaryPointStatement",
+   "parent": 143,
+   "gathers": 1068,
+   "text_gathers": 1052
+  },
+  {
+   "name": "GlobalTheory.UChart.uPre_of_boundary",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTripleChartUnitaryBoundaryPoint",
+   "parent": 144,
+   "gathers": 1067,
+   "text_gathers": 1051
+  },
+  {
+   "name": "GlobalTheory.T.exists_tripleChart_unitary_boundary_pointRigid",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTripleChartUnitaryBoundaryPointRigidStatement",
+   "parent": 145,
+   "gathers": 1066,
+   "text_gathers": 1050
+  },
+  {
+   "name": "GlobalTheory.UCanon.uPre_of_boundary_pointRigid",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTripleChartUnitaryBoundaryPointRigid",
+   "parent": 146,
+   "gathers": 1065,
+   "text_gathers": 1049
+  },
+  {
+   "name": "GlobalTheory.T.exists_pointRigid_tautological_chart_unitary_boundary",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPointRigidTautologicalChartUnitaryBoundaryStatement",
+   "parent": 147,
+   "gathers": 1026,
+   "text_gathers": 1010
+  },
+  {
+   "name": "GlobalTheory.UCanon.exists_tautB_chart_at",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsPointRigidTautologicalChartUnitaryBoundary",
+   "parent": 148,
+   "gathers": 1025,
+   "text_gathers": 1009
+  },
+  {
+   "name": "GlobalTheory.T.toroidalFanKodairaSpencer_of_rigidBoundaryCharts",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToroidalFanKodairaSpencerOfRigidBoundaryChartsStatement",
+   "parent": 136,
+   "gathers": 2292,
+   "text_gathers": 2280
+  },
+  {
+   "name": "GlobalTheory.RigChart.toroidalForFanKS_of_rigidForFan",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ToroidalFanKodairaSpencerOfRigidBoundaryCharts",
+   "parent": 150,
+   "gathers": 2291,
+   "text_gathers": 2279
+  },
+  {
+   "name": "GlobalTheory.T.logKodairaSpencer_iso_smooth_snc_toroidalModel",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogKodairaSpencerIsoSmoothSncToroidalModelStatement",
+   "parent": 151,
+   "gathers": 2290,
+   "text_gathers": 2278
+  },
+  {
+   "name": "GlobalTheory.LogKSAssembly.hasLogKS",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.LogKodairaSpencerIsoSmoothSncToroidalModel",
+   "parent": 152,
+   "gathers": 2289,
+   "text_gathers": 2277
+  },
+  {
+   "name": "UpperTheory.LiteratureTheorems.siegel_toroidal_integral_of_literature",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.EveryCharacterOfLiteratureOfVWin",
+   "parent": 128,
+   "gathers": 3733,
+   "text_gathers": 3662
+  },
+  {
+   "name": "GlobalTheory.siegelToroidalIntegral_holds",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegelToroidalIntegralHolds",
+   "parent": 154,
+   "gathers": 3732,
+   "text_gathers": 3661
+  },
+  {
+   "name": "GlobalTheory.T.siegelToroidalCompactification_polarisedCharts",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegelToroidalCompactificationPolarisedChartsStatement",
+   "parent": 155,
+   "gathers": 3612,
+   "text_gathers": 3540
+  },
+  {
+   "name": "GlobalTheory.SiegJoin.siegelToroidalPolCharts",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.SiegelToroidalCompactificationPolarisedCharts",
+   "parent": 156,
+   "gathers": 3611,
+   "text_gathers": 3539
+  },
+  {
+   "name": "GlobalTheory.T.minimalBlowup_smooth_with_semiAbelianCharts",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.MinimalBlowupSmoothWithSemiAbelianChartsStatement",
+   "parent": 157,
+   "gathers": 2295,
+   "text_gathers": 2242
+  },
+  {
+   "name": "GlobalTheory.SiegJoin.chartSt5_holds",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.MinimalBlowupSmoothWithSemiAbelianCharts",
+   "parent": 158,
+   "gathers": 2294,
+   "text_gathers": 2241
+  },
+  {
+   "name": "GlobalTheory.T.exists_tautological_chart_at_siegel_blowup_point",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTautologicalChartAtSiegelBlowupPointStatement",
+   "parent": 159,
+   "gathers": 1233,
+   "text_gathers": 1226
+  },
+  {
+   "name": "GlobalTheory.TChart.exists_chart_at",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsTautologicalChartAtSiegelBlowupPoint",
+   "parent": 160,
+   "gathers": 1232,
+   "text_gathers": 1225
+  },
+  {
+   "name": "GlobalTheory.T.hasSemiAbelianUniformisation_complete_normal_base",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasSemiAbelianUniformisationCompleteNormalBaseStatement",
+   "parent": 128,
+   "gathers": 3562,
+   "text_gathers": 3457
+  },
+  {
+   "name": "GlobalTheory.Mum.has_of_base",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasSemiAbelianUniformisationCompleteNormalBase",
+   "parent": 162,
+   "gathers": 3561,
+   "text_gathers": 3456
+  },
+  {
+   "name": "GlobalTheory.T.hasSemiAbelianUniformisation_of_labelledCover",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasSemiAbelianUniformisationOfLabelledCoverStatement",
+   "parent": 163,
+   "gathers": 1126,
+   "text_gathers": 1094
+  },
+  {
+   "name": "GlobalTheory.Mum.hasFin_of_labCover",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasSemiAbelianUniformisationOfLabelledCover",
+   "parent": 164,
+   "gathers": 1125,
+   "text_gathers": 1093
+  },
+  {
+   "name": "GlobalTheory.dualAbelianScheme",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.DualAbelianSchemeExistsBiduality",
+   "parent": 1,
+   "gathers": 1043,
+   "text_gathers": 1038
+  },
+  {
+   "name": "UpperTheory.Lit.prismaticDieudonneHodge",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.PrismaticDieudonne.PrismaticDieudonneHodge",
+   "parent": 128,
+   "gathers": 1710,
+   "text_gathers": 1702
+  },
+  {
+   "name": "GlobalTheory.QLog.WindowMat.window_matrices",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasPeriodIntegral",
+   "parent": 167,
+   "gathers": 1213,
+   "text_gathers": 1193
+  },
+  {
+   "name": "PositivityTheory.Pf1.HilbertSamuelMoriwaki.hsChain",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.AutomorphicKernels.MoriwakiBigness.MoriwakiBigTheorem.HSChain",
+   "parent": 128,
+   "gathers": 3816,
+   "text_gathers": 3704
+  },
+  {
+   "name": "PositivityTheory.LocalParametersCuspidal.MB.HSM.theoremHSMBlock",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.AutomorphicKernels.MoriwakiBigness.HilbertSamuelBlock.HSMBlock",
+   "parent": 169,
+   "gathers": 2010,
+   "text_gathers": 1927
+  },
+  {
+   "name": "GroundTheory.Heights₂.Heights.HilbertSamuel.TheoremHSMBlock.of_open",
+   "kind": "theorem",
+   "module": "GroundTheory.HeightsAndTheta.Heights.HilbertSamuel.AssemblyConditional",
+   "parent": 170,
+   "gathers": 1252,
+   "text_gathers": 1219
+  },
+  {
+   "name": "SelfIntersectionVolumeEstimates.topCovolSlim2_use_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TopCovolSlim2Use",
+   "parent": 128,
+   "gathers": 54038,
+   "text_gathers": 52094
+  },
+  {
+   "name": "PositivityTheory.HtPt.Ah.deep_slim_use",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.AutomorphicKernels.MoriwakiBigness.HilbertSamuelApplications.AhSlimU",
+   "parent": 172,
+   "gathers": 31257,
+   "text_gathers": 30169
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Ar.Plug.deepStR_of_use",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.AutomorphicKernels.MoriwakiBigness.HilbertSamuelApplications.DeepStROfUse",
+   "parent": 173,
+   "gathers": 30847,
+   "text_gathers": 29778
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Ar.Plug.deepStR_of_volume",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.DeepStROfVolume",
+   "parent": 174,
+   "gathers": 1248,
+   "text_gathers": 1216
+  },
+  {
+   "name": "GlobalTheory.T.abelian_cm_comp_laws_bound",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbelianCmCompLawsBoundStatement",
+   "parent": 175,
+   "gathers": 1196,
+   "text_gathers": 1168
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Ar.Plug.top_meanAll",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.AbelianCmCompLawsBound",
+   "parent": 176,
+   "gathers": 1195,
+   "text_gathers": 1167
+  },
+  {
+   "name": "GlobalTheory.T.uniform_all_norm_height_bound",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.UniformAllNormHeightBoundStatement",
+   "parent": 177,
+   "gathers": 1138,
+   "text_gathers": 1110
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Relay.uniform_all_norm_height_bound",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.UniformAllNormHeightBound",
+   "parent": 178,
+   "gathers": 1137,
+   "text_gathers": 1109
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Ar.Plug.SlopeVolM.slope_sub_cost_le_compVolSlope",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.UniformAllNormHeightBound",
+   "parent": 179,
+   "gathers": 1136,
+   "text_gathers": 1108
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Ar.Link.good_tower_volume_theorem_bis",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.AutomorphicKernels.MoriwakiBigness.HilbertSamuelApplications.GoodTowerVolumeTheoremBis",
+   "parent": 174,
+   "gathers": 21817,
+   "text_gathers": 20438
+  },
+  {
+   "name": "GlobalTheory.T.final_theorem_of_inputs_right",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.FinalTheoremOfInputsRightStatement",
+   "parent": 181,
+   "gathers": 21813,
+   "text_gathers": 20434
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Ar.Top.goodTower_volume_of_reduced",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.FinalTheoremOfInputsRight",
+   "parent": 182,
+   "gathers": 21812,
+   "text_gathers": 20433
+  },
+  {
+   "name": "GlobalTheory.T.good_tower_volume_theorem",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.GoodTowerVolumeTheoremStatement",
+   "parent": 183,
+   "gathers": 18504,
+   "text_gathers": 17143
+  },
+  {
+   "name": "GlobalTheory.T.model_on_hodge_from_family",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.ModelOnHodgeFromFamilyStatement",
+   "parent": 184,
+   "gathers": 2587,
+   "text_gathers": 2530
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Ar.Num.HodgeModel.model_on_hodge_of_family_pos",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.ModelOnHodgeFromFamily",
+   "parent": 185,
+   "gathers": 2586,
+   "text_gathers": 2529
+  },
+  {
+   "name": "GlobalTheory.T.arithmetic_relations_statement_holds",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ArithmeticRelationsStatementHoldsStatement",
+   "parent": 186,
+   "gathers": 2286,
+   "text_gathers": 2213
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Ar.Num.TopRel.relations",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.AlgebraProofs.ArithmeticRelationsStatementHolds",
+   "parent": 187,
+   "gathers": 2283,
+   "text_gathers": 2210
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Ar.Cusp.volumeTheoremX_of_inputs",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.VolumeTheoremOfInputs",
+   "parent": 184,
+   "gathers": 8978,
+   "text_gathers": 8363
+  },
+  {
+   "name": "GlobalTheory.T.tower_weil_inputs_combined",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.TowerWeilInputsCombinedStatement",
+   "parent": 189,
+   "gathers": 1207,
+   "text_gathers": 1203
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Ar.Top.chain_tower",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.TowerWeilInputsCombined",
+   "parent": 190,
+   "gathers": 1206,
+   "text_gathers": 1202
+  },
+  {
+   "name": "GlobalTheory.T.full_intersection_tower_I8_identity",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FullIntersectionTowerI8IdentityStatement",
+   "parent": 189,
+   "gathers": 1665,
+   "text_gathers": 1454
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Ar.Top.full_intersection_tower_I8_relation",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.FullIntersectionTowerI8Identity",
+   "parent": 192,
+   "gathers": 1664,
+   "text_gathers": 1453
+  },
+  {
+   "name": "SquareStatements.good_tower_antisymmetry",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.MultihomogeneousSquares.GoodTowerAntisymmetry",
+   "parent": 193,
+   "gathers": 1663,
+   "text_gathers": 1452
+  },
+  {
+   "name": "SquareStatements.antisymmetry_of_singular_statement",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.MultihomogeneousSquares.AntisymmetryOfSingularStatement",
+   "parent": 194,
+   "gathers": 1525,
+   "text_gathers": 1320
+  },
+  {
+   "name": "SquareStatements.good_tower_antisymmetry_of",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.MultihomogeneousSquares.GoodTowerAntisymmetryOf",
+   "parent": 195,
+   "gathers": 1450,
+   "text_gathers": 1247
+  },
+  {
+   "name": "GlobalTheory.T.flag_cover_realisation_pullback",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverRealisationPullbackStatement",
+   "parent": 189,
+   "gathers": 1177,
+   "text_gathers": 912
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Relay.flag_cover_realisation_pullback",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.MetricProofs.FlagCoverRealisationPullback",
+   "parent": 197,
+   "gathers": 1176,
+   "text_gathers": 911
+  },
+  {
+   "name": "PositivityTheory.Xgp.t_c_sqsys",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.PluriharmonicCharts.XCSqsys",
+   "parent": 198,
+   "gathers": 1175,
+   "text_gathers": 910
+  },
+  {
+   "name": "GlobalTheory.T.family_pos_of_hodge_tate_inputs",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.FamilyPosOfHodgeTateInputsStatement",
+   "parent": 183,
+   "gathers": 1625,
+   "text_gathers": 1628
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Ar.Num.FamEx.familyExistsPos_holds",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.FamilyPosOfHodgeTateInputs",
+   "parent": 200,
+   "gathers": 1624,
+   "text_gathers": 1627
+  },
+  {
+   "name": "GlobalTheory.T.ordinary_curve_hodge_prime",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.OrdinaryCurveHodgePrimeStatement",
+   "parent": 201,
+   "gathers": 1013,
+   "text_gathers": 1026
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Ar.Num.FamEx.TestPt.testFacts",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.OrdinaryCurveHodgePrime",
+   "parent": 202,
+   "gathers": 1012,
+   "text_gathers": 1025
+  },
+  {
+   "name": "GlobalTheory.T.slope_bound_of_line_large_degree",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.SlopeBoundOfLineLargeDegreeStatement",
+   "parent": 174,
+   "gathers": 1207,
+   "text_gathers": 1161
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Ar.Sl.slopeBound_and_lemmaS_of_siegel",
+   "kind": "theorem",
+   "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.SlopeBoundOfLineLargeDegree",
+   "parent": 204,
+   "gathers": 1206,
+   "text_gathers": 1159
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Ar.Giv.lineOfLargeDegree_of_use",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.AutomorphicKernels.MoriwakiBigness.HilbertSamuelApplications.LineOfLargeDegreeOfUse",
+   "parent": 174,
+   "gathers": 1184,
+   "text_gathers": 1182
+  },
+  {
+   "name": "SelfIntersectionVolumeEstimates.topCovolG_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TopCovolG",
+   "parent": 172,
+   "gathers": 12978,
+   "text_gathers": 12517
+  },
+  {
+   "name": "SelfIntersectionVolumeEstimates.height_lower_bound_general_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HeightLowerBoundGeneral",
+   "parent": 207,
+   "gathers": 1887,
+   "text_gathers": 1859
+  },
+  {
+   "name": "GlobalTheory.T.refW_of_prints_deepGood_size_flatDeg",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RefinedSumWeightOfSizeLe",
+   "parent": 208,
+   "gathers": 1380,
+   "text_gathers": 1370
+  },
+  {
+   "name": "GlobalTheory.RefSum.refinedSum_weight_of_size_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RefinedSumWeightOfSizeLe",
+   "parent": 209,
+   "gathers": 1379,
+   "text_gathers": 1369
+  },
+  {
+   "name": "GlobalTheory.CovTop.PublishedHodgeBundleTheorems.toClassicalTheorems",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.CoveringTopologyRefinement",
+   "parent": 207,
+   "gathers": 1359,
+   "text_gathers": 1337
+  },
+  {
+   "name": "GlobalTheory.T.toroidalFlagProportionality_of_goodChernWeil",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ToroidalFlagProportionalityOfGoodChernWeilStatement",
+   "parent": 211,
+   "gathers": 1353,
+   "text_gathers": 1336
+  },
+  {
+   "name": "GlobalTheory.Proportionality.mumfordProportionality_of_goodChernWeil",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ToroidalFlagProportionalityOfGoodChernWeil",
+   "parent": 212,
+   "gathers": 1352,
+   "text_gathers": 1335
+  },
+  {
+   "name": "GlobalTheory.LieBase.exists_goodBase",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsGoodBase",
+   "parent": 213,
+   "gathers": 1313,
+   "text_gathers": 1294
+  },
+  {
+   "name": "FunctorialResolution.functorialResolutionCharZero",
+   "kind": "theorem",
+   "module": "Development.ResolutionOfSingularities.HasSimpleNormalCrossingsOfInStrictNormalCrossing",
+   "parent": 128,
+   "gathers": 1650,
+   "text_gathers": 1141
+  },
+  {
+   "name": "FunctorialResolution.EmbeddedResolution.strongResolutionOfSingularitiesCharZero",
+   "kind": "theorem",
+   "module": "Development.ResolutionOfSingularities.EmbeddedResolution.HironakaTheorem",
+   "parent": 215,
+   "gathers": 1635,
+   "text_gathers": 1140
+  },
+  {
+   "name": "FunctorialResolution.EmbeddedResolution.canonicalAlgorithmRules_isCorrect",
+   "kind": "theorem",
+   "module": "Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.PrincipalizationWithRadicalCenters",
+   "parent": 128,
+   "gathers": 4007,
+   "text_gathers": 3842
+  },
+  {
+   "name": "FunctorialResolution.EmbeddedResolution.isCorrect_canonicalAlgorithmRules",
+   "kind": "theorem",
+   "module": "Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.CanonicalRulesCorrect",
+   "parent": 217,
+   "gathers": 4006,
+   "text_gathers": 3841
+  },
+  {
+   "name": "FunctorialResolution.EmbeddedResolution.isCorrect_canonicalAlgorithmRules_of_hypotheses",
+   "kind": "theorem",
+   "module": "Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.CanonicalRulesCorrect",
+   "parent": 218,
+   "gathers": 2437,
+   "text_gathers": 2369
+  },
+  {
+   "name": "FunctorialResolution.EmbeddedResolution.OrderReductionProperties.isOrderReduction_orderFamily_of_strictTransformIsBlowup",
+   "kind": "theorem",
+   "module": "Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.OrderReductionCompatibility",
+   "parent": 219,
+   "gathers": 1292,
+   "text_gathers": 1299
+  },
+  {
+   "name": "FunctorialResolution.EmbeddedResolution.OrderReductionProperties.isOrderReduction_maxContact_of_isBoundaryPositionInvariant",
+   "kind": "theorem",
+   "module": "Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.OrderReductionCompatibility",
+   "parent": 220,
+   "gathers": 1289,
+   "text_gathers": 1296
+  },
+  {
+   "name": "UpperTheory.LiteratureTheorems.published_results_first",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.EveryCharacterOfLiteratureOfVWin",
+   "parent": 128,
+   "gathers": 2628,
+   "text_gathers": 2335
+  },
+  {
+   "name": "UpperTheory.LiteratureTheorems.kudla_splitting_split_unitary_of_literature",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.EveryCharacterOfLiteratureOfVWin",
+   "parent": 222,
+   "gathers": 1228,
+   "text_gathers": 1016
+  },
+  {
+   "name": "GlobalTheory.kudlaSplittingSplitUnitary",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.KudlaSplittingSplitUnitary",
+   "parent": 223,
+   "gathers": 1227,
+   "text_gathers": 1015
+  },
+  {
+   "name": "GlobalTheory.T.exists_weil_representation_split_unitary_schwartzBruhat",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilRepresentationSplitUnitarySchwartzBruhStatement",
+   "parent": 224,
+   "gathers": 1076,
+   "text_gathers": 863
+  },
+  {
+   "name": "GlobalTheory.KSp.Exist.exists_isKW",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilRepresentationSplitUnitarySchwartzBruh",
+   "parent": 225,
+   "gathers": 1075,
+   "text_gathers": 862
+  },
+  {
+   "name": "GlobalTheory.T.exists_weilRepresentation_bigCell_relation_fourier",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilRepresentationBigCellRelationFourierStatement",
+   "parent": 226,
+   "gathers": 1066,
+   "text_gathers": 853
+  },
+  {
+   "name": "GlobalTheory.KSp.weyl_cell_relation",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsWeilRepresentationBigCellRelationFourier",
+   "parent": 227,
+   "gathers": 1065,
+   "text_gathers": 852
+  },
+  {
+   "name": "GlobalTheory.T.hasGaussIntegral_hermitian_quadratic_character",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasGaussIntegralHermitianQuadraticCharacterStatement",
+   "parent": 228,
+   "gathers": 1047,
+   "text_gathers": 834
+  },
+  {
+   "name": "GlobalTheory.KSp.GaussMain.hasGauss_herm",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.HasGaussIntegralHermitianQuadraticCharacter",
+   "parent": 229,
+   "gathers": 1046,
+   "text_gathers": 833
+  },
+  {
+   "name": "UpperTheory.LiteratureTheorems.published_results_eigen",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.EveryCharacterOfLiteratureOfVWin",
+   "parent": 128,
+   "gathers": 3093,
+   "text_gathers": 3026
+  },
+  {
+   "name": "UpperTheory.LiteratureTheorems.literature_nonexistence",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.EveryCharacterOfLiteratureOfVWin",
+   "parent": 231,
+   "gathers": 1637,
+   "text_gathers": 1620
+  },
+  {
+   "name": "UpperTheory.LiteratureTheorems.join_out_of_literature",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.EveryCharacterOfLiteratureOfVWin",
+   "parent": 232,
+   "gathers": 1619,
+   "text_gathers": 1602
+  },
+  {
+   "name": "GlobalTheory.JoinFun.joinOut_of_five",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.JoinOutOfFive",
+   "parent": 233,
+   "gathers": 1613,
+   "text_gathers": 1596
+  },
+  {
+   "name": "PositivityTheory.Lit1.GEN.globalEulerChar_full",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.GlobalEulerCharOfLemmaX",
+   "parent": 66,
+   "gathers": 1429,
+   "text_gathers": 1200
+  },
+  {
+   "name": "PositivityTheory.Lit1.GEN.globalEulerChar_of_lemmaX",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.GlobalEulerCharOfLemmaX",
+   "parent": 235,
+   "gathers": 1080,
+   "text_gathers": 868
+  },
+  {
+   "name": "PositivityTheory.Lit1.GEN.ratioOne_of_lemmaX",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.PublishedTheorems.GlobalEulerCharacteristic.Assemble",
+   "parent": 236,
+   "gathers": 1045,
+   "text_gathers": 833
+  },
+  {
+   "name": "CompanionTheory.RgExh.dsExhaust",
+   "kind": "theorem",
+   "module": "CompanionTheory.RealGroups.DiscreteSeries.DiscreteSeriesClassification.DiscreteSeriesExhaustion.DsExhaust",
+   "parent": 128,
+   "gathers": 1675,
+   "text_gathers": 1698
+  },
+  {
+   "name": "PositivityTheory.RgHf.harishChandraFinite",
+   "kind": "theorem",
+   "module": "Development.WeilBound.RepresentationTheoryGL.ConstantTermFiniteness.CuspidalConstantTerms.FiniteOfCuspOfConstTerm",
+   "parent": 66,
+   "gathers": 1240,
+   "text_gathers": 92
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.Hypotheses₂.ConstFin.Rg.finite_constTerm",
+   "kind": "theorem",
+   "module": "Development.WeilBound.RepresentationTheoryGL.ConstantTermFiniteness.CuspidalConstantTerms.FormsSubsetFormsOnEmpty",
+   "parent": 239,
+   "gathers": 1124,
+   "text_gathers": 0
+  },
+  {
+   "name": "GlobalTheory.deRham_potentiallySemistable",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DeRhamPotentiallySemistable",
+   "parent": 1,
+   "gathers": 1390,
+   "text_gathers": 1386
+  },
+  {
+   "name": "GlobalTheory.T.pAdicMonodromyTheorem_matrixForm",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PAdicMonodromyTheoremMatrixFormStatement",
+   "parent": 241,
+   "gathers": 1366,
+   "text_gathers": 1362
+  },
+  {
+   "name": "GlobalTheory.PMon.matThm_holds",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.PAdicMonodromyTheoremMatrixForm",
+   "parent": 242,
+   "gathers": 1365,
+   "text_gathers": 1361
+  },
+  {
+   "name": "UpperTheory.BaseChangeIdentities.FrameWordIdentity.frameBound",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.FrameMatching.HeckeWordBounds.FrameBound",
+   "parent": 1,
+   "gathers": 1163,
+   "text_gathers": 1173
+  },
+  {
+   "name": "GlobalTheory.T.jacquetRallisUnitMatch_all_ranks",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JacquetRallisUnitMatchAllRanksStatement",
+   "parent": 1,
+   "gathers": 1373,
+   "text_gathers": 1358
+  },
+  {
+   "name": "GlobalTheory.JR.unitMatch_all",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JacquetRallisUnitMatchAllRanks",
+   "parent": 245,
+   "gathers": 1372,
+   "text_gathers": 1357
+  },
+  {
+   "name": "GlobalTheory.T.jacquetRallisUnitMatch_of_weilRep_quadratic",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JacquetRallisUnitMatchOfWeilRepQuadraticStatement",
+   "parent": 246,
+   "gathers": 1055,
+   "text_gathers": 1041
+  },
+  {
+   "name": "GlobalTheory.JR.unitMatch_of_weilField",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.JacquetRallisUnitMatchOfWeilRepQuadratic",
+   "parent": 247,
+   "gathers": 1054,
+   "text_gathers": 1040
+  },
+  {
+   "name": "PositivityTheory.RgBcC.wave_existence_speed_multiplicity",
+   "kind": "theorem",
+   "module": "Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.ArchimedeanGelfandKernels.WaveFinal",
+   "parent": 1,
+   "gathers": 1032,
+   "text_gathers": 1044
+  },
+  {
+   "name": "UpperTheory.HeckeLevelFrameExistence.frameEx_of_fin",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.Foundations.BaseChangeIdentities.FrameMatching.HeckeEigenvalueFiniteness.FrameExOfFin",
+   "parent": 1,
+   "gathers": 1279,
+   "text_gathers": 1272
+  },
+  {
+   "name": "PositivityTheory.Rg.BcB.F.Eig.eigInert",
+   "kind": "theorem",
+   "module": "Development.WeilBound.RepresentationTheoryGL.ArchimedeanBaseChange.ArchimedeanBaseChangeProof.SatakeExponents.UniformizerValuations.InertEigenvalues.EigInert",
+   "parent": 250,
+   "gathers": 1045,
+   "text_gathers": 1034
+  },
+  {
+   "name": "UpperTheory.Lit.every_character_of_theta_integrals_local_matching",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SiegelEisensteinSecondTermHypotheses",
+   "parent": 128,
+   "gathers": 329743,
+   "text_gathers": 315443
+  },
+  {
+   "name": "UpperTheory.Lit.nonempty_hyps_definite_side_of_closed_bound",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SiegelEisensteinSecondTermHypotheses",
+   "parent": 252,
+   "gathers": 275684,
+   "text_gathers": 266135
+  },
+  {
+   "name": "GlobalTheory.Fc.S0.StageU.hypotheses_nonempty_of_unramified_exponents_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HypothesesNonemptyOfUnramifiedExponents",
+   "parent": 253,
+   "gathers": 92474,
+   "text_gathers": 89671
+  },
+  {
+   "name": "GlobalTheory.Fc.AllAtMemberStage0.allRows_of_open0_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LinkROfIsLinked",
+   "parent": 254,
+   "gathers": 35681,
+   "text_gathers": 34967
+  },
+  {
+   "name": "GlobalTheory.CountRowByName.row_counts_of_labels_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RowCountsOfLabels",
+   "parent": 255,
+   "gathers": 2618,
+   "text_gathers": 2589
+  },
+  {
+   "name": "GlobalTheory.CountRow.row_counts_of_ties_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RowCountsOfTies",
+   "parent": 256,
+   "gathers": 2617,
+   "text_gathers": 2588
+  },
+  {
+   "name": "GlobalTheory.CountConstants.count_constants_of_siegelWeil",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.CountConstantsOfSiegelWeil",
+   "parent": 257,
+   "gathers": 2074,
+   "text_gathers": 2056
+  },
+  {
+   "name": "GlobalTheory.CountBridge.count_typed_of_volumeStep",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.CountTypedOfVolumeStep",
+   "parent": 258,
+   "gathers": 1637,
+   "text_gathers": 1619
+  },
+  {
+   "name": "GlobalTheory.T.unitaryAutomorphicCounting_of_compactDualVolumeRatio",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitaryAutomorphicCountingOfCompactDualVolumeRatStatement",
+   "parent": 259,
+   "gathers": 1627,
+   "text_gathers": 1609
+  },
+  {
+   "name": "GlobalTheory.CountFinal.countingTheorem_of_volumeStep",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.UnitaryAutomorphicCountingOfCompactDualVolumeRat",
+   "parent": 260,
+   "gathers": 1626,
+   "text_gathers": 1608
+  },
+  {
+   "name": "GlobalTheory.T.hServ_of_linkR",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RowHServOfLinkStatement",
+   "parent": 255,
+   "gathers": 10995,
+   "text_gathers": 10808
+  },
+  {
+   "name": "GlobalTheory.row_hServ_of_link_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RowHServOfLink",
+   "parent": 262,
+   "gathers": 10994,
+   "text_gathers": 10807
+  },
+  {
+   "name": "GlobalTheory.T.reciprocity_kernel_of_artin",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ServHRowLinkRStatement",
+   "parent": 263,
+   "gathers": 10986,
+   "text_gathers": 10799
+  },
+  {
+   "name": "GlobalTheory.Svd.servH_row_linkR_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ServHRowLinkR",
+   "parent": 264,
+   "gathers": 10985,
+   "text_gathers": 10798
+  },
+  {
+   "name": "GlobalTheory.T.bundle_bothParts_of_standardKernel_of_globalArtinReciprocity",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.BundleBothPartsOfStandardKernelOfGlobalArtinReciStatement",
+   "parent": 265,
+   "gathers": 10978,
+   "text_gathers": 10791
+  },
+  {
+   "name": "GlobalTheory.Svd.servH_row_of_artin",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.BundleBothPartsOfStandardKernelOfGlobalArtinReci",
+   "parent": 266,
+   "gathers": 10977,
+   "text_gathers": 10790
+  },
+  {
+   "name": "GlobalTheory.TwV.Lt.inert_theta_admissibility_of_complex_multiplication",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.InertThetaAdmissibilityOfComplexMultiplication",
+   "parent": 267,
+   "gathers": 1247,
+   "text_gathers": 1223
+  },
+  {
+   "name": "Formalism.L2.KerInert.AdmLoc2.admissible_entries_small_chain",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.InertKernelTheory.InertCoprimeLemmas.AdmissibleEntriesOfKernelLaw",
+   "parent": 268,
+   "gathers": 1246,
+   "text_gathers": 1222
+  },
+  {
+   "name": "GlobalTheory.T.bundle_bothParts_of_standardKernel_and_six_hypotheses",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.BundleBothPartsOfStandardKernelAndSixHypothesesStatement",
+   "parent": 267,
+   "gathers": 5897,
+   "text_gathers": 5758
+  },
+  {
+   "name": "GlobalTheory.Svd.servH_row",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.BundleBothPartsOfStandardKernelAndSixHypotheses",
+   "parent": 270,
+   "gathers": 5896,
+   "text_gathers": 5757
+  },
+  {
+   "name": "GlobalTheory.Pdv.rowAt_of_stdTie",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.RowAtOfStdTie",
+   "parent": 271,
+   "gathers": 2395,
+   "text_gathers": 2333
+  },
+  {
+   "name": "GlobalTheory.T.kernelDatumConditions_at_standardKernelComparison",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.KernelDatumConditionsAtStandardKernelComparisonStatement",
+   "parent": 272,
+   "gathers": 2376,
+   "text_gathers": 2313
+  },
+  {
+   "name": "GlobalTheory.PdvTie.at_of_stdTie",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.KernelDatumConditionsAtStandardKernelComparison",
+   "parent": 273,
+   "gathers": 2375,
+   "text_gathers": 2312
+  },
+  {
+   "name": "GlobalTheory.PdvClose.at_of_true_columns",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.AtOfTrueColumns",
+   "parent": 274,
+   "gathers": 2370,
+   "text_gathers": 2307
+  },
+  {
+   "name": "GlobalTheory.T.tuplesHaveLocalModels_at_constructedPoint_over_trueColumns",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.TuplesHaveLocalModelsAtConstructedPointOverTrueCStatement",
+   "parent": 271,
+   "gathers": 2901,
+   "text_gathers": 2876
+  },
+  {
+   "name": "GlobalTheory.Svd.modelsAt_bpt",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.TuplesHaveLocalModelsAtConstructedPointOverTrueC",
+   "parent": 276,
+   "gathers": 2900,
+   "text_gathers": 2875
+  },
+  {
+   "name": "GlobalTheory.T.tuplesHaveLocalModels_of_standardColumnObjects",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.TuplesHaveLocalModelsOfStandardColumnObjectsStatement",
+   "parent": 277,
+   "gathers": 2892,
+   "text_gathers": 2867
+  },
+  {
+   "name": "GlobalTheory.Svd.modelsAt_of_part",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.TuplesHaveLocalModelsOfStandardColumnObjects",
+   "parent": 278,
+   "gathers": 2891,
+   "text_gathers": 2866
+  },
+  {
+   "name": "GlobalTheory.T.thetaLocalModels_of_splitUnramified_joints",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaLocalModelsOfSplitUnramifiedJointsStatement",
+   "parent": 279,
+   "gathers": 2389,
+   "text_gathers": 2355
+  },
+  {
+   "name": "GlobalTheory.TwV.modelsOK_of_joints",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.ThetaLocalModelsOfSplitUnramifiedJoints",
+   "parent": 280,
+   "gathers": 2388,
+   "text_gathers": 2354
+  },
+  {
+   "name": "GlobalTheory.T.jointSite_chain_compared_carries_admittedSystem",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.JointSiteChainComparedCarriesAdmittedSystemStatement",
+   "parent": 281,
+   "gathers": 2379,
+   "text_gathers": 2349
+  },
+  {
+   "name": "GlobalTheory.TwV.site_cmpLite_siteAdm",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.JointSiteChainComparedCarriesAdmittedSystem",
+   "parent": 282,
+   "gathers": 2378,
+   "text_gathers": 2348
+  },
+  {
+   "name": "GlobalTheory.TwV.admissible_at_each_site",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.SatakeParameters.JointSiteChainComparedCarriesAdmittedSystem",
+   "parent": 283,
+   "gathers": 1514,
+   "text_gathers": 1496
+  },
+  {
+   "name": "GlobalTheory.LocalRows.lg1_sLp_sO_hTF",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.AtChoice",
+   "parent": 255,
+   "gathers": 15058,
+   "text_gathers": 14543
+  },
+  {
+   "name": "GlobalTheory.LocalRows.sLp_sO_hTF_of_siegelWeil",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.AtChoice",
+   "parent": 285,
+   "gathers": 15057,
+   "text_gathers": 14542
+  },
+  {
+   "name": "GlobalTheory.LocalRows.at_choice_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.AtChoice",
+   "parent": 286,
+   "gathers": 15056,
+   "text_gathers": 14541
+  },
+  {
+   "name": "GlobalTheory.CarrierGap.offDiag",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.OffK0Closed",
+   "parent": 287,
+   "gathers": 14429,
+   "text_gathers": 13933
+  },
+  {
+   "name": "GlobalTheory.CarrierGap.carrierP",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.OffK0Closed",
+   "parent": 288,
+   "gathers": 5068,
+   "text_gathers": 4949
+  },
+  {
+   "name": "Formalism.FourierDecayAlt.P.lemma_model",
+   "kind": "theorem",
+   "module": "Formalism.HermitianCurvature.HermitianCurvatureProofs.IsAdmissibleSplittingCharPairMulTwist",
+   "parent": 289,
+   "gathers": 1526,
+   "text_gathers": 1390
+  },
+  {
+   "name": "GlobalTheory.carrierNeedsFromD",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.CarrierNeedsFromD",
+   "parent": 289,
+   "gathers": 2959,
+   "text_gathers": 2963
+  },
+  {
+   "name": "Formalism.FourierDecayAlt.Final.pb_builtBounds2Cpt",
+   "kind": "theorem",
+   "module": "Formalism.HermitianCurvature.JcRadialModuleFormOfParts",
+   "parent": 291,
+   "gathers": 1008,
+   "text_gathers": 1016
+  },
+  {
+   "name": "Formalism.FourierDecayAlt.P.built_bounds_compact",
+   "kind": "theorem",
+   "module": "Formalism.HermitianCurvature.HermitianCurvatureProofs.BuiltBoundsCompact",
+   "parent": 292,
+   "gathers": 1007,
+   "text_gathers": 1015
+  },
+  {
+   "name": "Formalism.FourierDecayAlt.P.pb_builtBounds2Cpt_of_mkTop",
+   "kind": "theorem",
+   "module": "Formalism.HermitianCurvature.HermitianCurvatureProofs.PbBuiltBounds2CptOfMkTop",
+   "parent": 293,
+   "gathers": 1006,
+   "text_gathers": 1014
+  },
+  {
+   "name": "Formalism.FourierDecayAlt.P.built_bounds_compact_of_head_top",
+   "kind": "theorem",
+   "module": "Formalism.HermitianCurvature.HermitianCurvatureProofs.BuiltBoundsCompactOfHeadTop",
+   "parent": 294,
+   "gathers": 1005,
+   "text_gathers": 1013
+  },
+  {
+   "name": "Formalism.FourierDecayAlt.P.CutMP.SmoothTransferRegularity.model_place_built_holds",
+   "kind": "theorem",
+   "module": "Formalism.HermitianCurvature.HermitianCurvatureProofs.TransferSmoothAtBuiltPlace",
+   "parent": 291,
+   "gathers": 1950,
+   "text_gathers": 1946
+  },
+  {
+   "name": "Formalism.FourierDecayAlt.P.CutMP.modelPlaceBuilt2_of_chartEqs",
+   "kind": "theorem",
+   "module": "Formalism.HermitianCurvature.HermitianCurvatureProofs.ModelPlaceBuilt2OfChartEqs",
+   "parent": 296,
+   "gathers": 1949,
+   "text_gathers": 1945
+  },
+  {
+   "name": "Formalism.FourierDecayAlt.P.CutMP.modelPlaceBuilt2_of_jf",
+   "kind": "theorem",
+   "module": "Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJAPRSSnRep",
+   "parent": 297,
+   "gathers": 1935,
+   "text_gathers": 1931
+  },
+  {
+   "name": "Formalism.FourierDecayAlt.P.CutMP.modelPlaceBuilt2_of_polyS",
+   "kind": "theorem",
+   "module": "Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJASSnRepDone",
+   "parent": 298,
+   "gathers": 1299,
+   "text_gathers": 1296
+  },
+  {
+   "name": "Formalism.FourierDecayAlt.P.CutMP.modelPlaceBuilt2_of_SSnRep",
+   "kind": "theorem",
+   "module": "Formalism.HermitianCurvature.HermitianCurvatureProofs.GaugeConstructionHolds",
+   "parent": 299,
+   "gathers": 1009,
+   "text_gathers": 1009
+  },
+  {
+   "name": "Formalism.FourierDecayAlt.P.CutMP.modelPlaceBuilt2_of_rotK",
+   "kind": "theorem",
+   "module": "Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreDone",
+   "parent": 300,
+   "gathers": 1008,
+   "text_gathers": 1008
+  },
+  {
+   "name": "Formalism.FourierDecayAlt.P.CutMP.modelPlaceBuilt2_of_ssnRep",
+   "kind": "theorem",
+   "module": "Formalism.HermitianCurvature.HermitianCurvatureProofs.CutJABddDone",
+   "parent": 301,
+   "gathers": 1007,
+   "text_gathers": 1007
+  },
+  {
+   "name": "GlobalTheory.CarrierGap.theoremS_leaves_of_carrierG",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.OffK0Closed",
+   "parent": 288,
+   "gathers": 6083,
+   "text_gathers": 6047
+  },
+  {
+   "name": "Formalism.L2.SG.Closed.CutLeavesDeep_outright",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.CutLeavesDeepOutright",
+   "parent": 303,
+   "gathers": 1112,
+   "text_gathers": 1112
+  },
+  {
+   "name": "Formalism.L2.SG.Pf.Coef.rowsDatumP_of_deep",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CoefCutDeep",
+   "parent": 303,
+   "gathers": 2498,
+   "text_gathers": 2466
+  },
+  {
+   "name": "Formalism.L2.SG.Pf.Coef.cutAt_of_deep",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.CoefCutDeep",
+   "parent": 305,
+   "gathers": 2437,
+   "text_gathers": 2416
+  },
+  {
+   "name": "Formalism.L2.SG.Pf.PCount.partnerCount_holds_all",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.PartnerCountHoldsAll",
+   "parent": 306,
+   "gathers": 1419,
+   "text_gathers": 1419
+  },
+  {
+   "name": "Formalism.L2.SG.LsDatumA.integralClosureRank_and_residueTrdegLe",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.IntegralClosureRankAndResidueTrdegLe",
+   "parent": 307,
+   "gathers": 1292,
+   "text_gathers": 1296
+  },
+  {
+   "name": "Formalism.L2.SG.TheoremSConclusion.theoremS_of_conj",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.TheoremSConclusion",
+   "parent": 288,
+   "gathers": 1968,
+   "text_gathers": 1809
+  },
+  {
+   "name": "Formalism.L2.SG.PoincareAmplitudeLowerBounds.theoremS_closedP",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.TheoremSClosedP",
+   "parent": 309,
+   "gathers": 1967,
+   "text_gathers": 1808
+  },
+  {
+   "name": "Formalism.L2.SG.PoincareAmplitudeLowerBounds.theoremS_rec3P",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.TheoremSClosedP",
+   "parent": 310,
+   "gathers": 1964,
+   "text_gathers": 1805
+  },
+  {
+   "name": "Formalism.L2.SG.PoincareAmplitudeLowerBounds.theoremS_rec2P",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.TheoremSClosedP",
+   "parent": 311,
+   "gathers": 1963,
+   "text_gathers": 1804
+  },
+  {
+   "name": "Formalism.L2.SG.SpectralTiesReal.theoremS_rec",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.SpectralTiesReal",
+   "parent": 312,
+   "gathers": 1961,
+   "text_gathers": 1802
+  },
+  {
+   "name": "Formalism.L2.SG.TheoremS.pbApplied",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.SiegelLatticeTheory.FlagStabilizerTensors.TheoremS",
+   "parent": 313,
+   "gathers": 1940,
+   "text_gathers": 1781
+  },
+  {
+   "name": "GlobalTheory.T.period_entries_tie_and_level_valuations_at_built",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SixRowsAtMemberStatement",
+   "parent": 255,
+   "gathers": 3406,
+   "text_gathers": 3280
+  },
+  {
+   "name": "GlobalTheory.Fc.six_rows_at_member_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SixRowsAtMember",
+   "parent": 315,
+   "gathers": 3405,
+   "text_gathers": 3279
+  },
+  {
+   "name": "GlobalTheory.T.levelPrimeColumnValuations_bundlePoints_overColumns",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LevelPrimeColumnValuationsBundlePointsOverColumnStatement",
+   "parent": 316,
+   "gathers": 2535,
+   "text_gathers": 2427
+  },
+  {
+   "name": "GlobalTheory.Fc.Cv.row_level_valuations",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LevelPrimeColumnValuationsBundlePointsOverColumn",
+   "parent": 317,
+   "gathers": 2534,
+   "text_gathers": 2426
+  },
+  {
+   "name": "GlobalTheory.LvT.Built.TrueCols.closing_true_cols",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ClosingTrueCols",
+   "parent": 318,
+   "gathers": 2533,
+   "text_gathers": 2425
+  },
+  {
+   "name": "GlobalTheory.T.trueColumns_row_sharp_bounds",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TrueColumnsRowSharpBoundsStatement",
+   "parent": 319,
+   "gathers": 2532,
+   "text_gathers": 2424
+  },
+  {
+   "name": "GlobalTheory.LvT.Built.TrueCols.row_true",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TrueColumnsRowSharpBounds",
+   "parent": 320,
+   "gathers": 2531,
+   "text_gathers": 2423
+  },
+  {
+   "name": "GlobalTheory.LvT.Built.TrueCols.trueColumns_chain_last_step_sharp_bound",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.TrueColumnsRowSharpBounds",
+   "parent": 321,
+   "gathers": 2471,
+   "text_gathers": 2364
+  },
+  {
+   "name": "GlobalTheory.T.fivePointLaws_trueChains",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FivePointLawsTrueChainsStatement",
+   "parent": 322,
+   "gathers": 2054,
+   "text_gathers": 2027
+  },
+  {
+   "name": "GlobalTheory.LvT.Built.TrueLaws.laws_true_fam",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.FivePointLawsTrueChains",
+   "parent": 323,
+   "gathers": 2053,
+   "text_gathers": 2023
+  },
+  {
+   "name": "GlobalTheory.T.kernelJets_levelPlace_integralMoments",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.KernelJetsLevelPlaceIntegralMomentsStatement",
+   "parent": 324,
+   "gathers": 1607,
+   "text_gathers": 1598
+  },
+  {
+   "name": "GlobalTheory.MomTop.jetMoments",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.KernelJetsLevelPlaceIntegralMoments",
+   "parent": 325,
+   "gathers": 1606,
+   "text_gathers": 1597
+  },
+  {
+   "name": "GlobalTheory.T.unitPeriodTranslates_moments_finite",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnitPeriodTranslatesMomentsFiniteStatement",
+   "parent": 326,
+   "gathers": 1362,
+   "text_gathers": 1355
+  },
+  {
+   "name": "GlobalTheory.MomFin.moments_fin",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.UnitPeriodTranslatesMomentsFinite",
+   "parent": 327,
+   "gathers": 1361,
+   "text_gathers": 1354
+  },
+  {
+   "name": "UpperTheory.GalC.final_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CFinal",
+   "parent": 254,
+   "gathers": 16372,
+   "text_gathers": 15685
+  },
+  {
+   "name": "UpperTheory.GalC.final_of_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LinkNFam",
+   "parent": 329,
+   "gathers": 15623,
+   "text_gathers": 14931
+  },
+  {
+   "name": "UpperTheory.GalC.linkedAt_linkN_of_boundAtTwoThree",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LinkNFam",
+   "parent": 330,
+   "gathers": 15028,
+   "text_gathers": 14338
+  },
+  {
+   "name": "UpperTheory.GalC.linkN_of_boundAtTwoThree_slot",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LinkNFam",
+   "parent": 331,
+   "gathers": 15027,
+   "text_gathers": 14336
+  },
+  {
+   "name": "UpperTheory.GalC.linkN_of_twGood_galoisPreconditions",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LinkNFam",
+   "parent": 332,
+   "gathers": 15026,
+   "text_gathers": 14335
+  },
+  {
+   "name": "GlobalTheory.T.conclF_of_family_facts_and_bound_at_two_three",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ImportsFurtherTailStatement",
+   "parent": 333,
+   "gathers": 10275,
+   "text_gathers": 9924
+  },
+  {
+   "name": "GlobalTheory.NLinkClose.main_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ImportsFurtherTail",
+   "parent": 334,
+   "gathers": 10274,
+   "text_gathers": 9923
+  },
+  {
+   "name": "GlobalTheory.T.star_ad_and_bb_le_of_joint_cond",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RowsADInSettingStatement",
+   "parent": 335,
+   "gathers": 3515,
+   "text_gathers": 3412
+  },
+  {
+   "name": "GlobalTheory.NLink.rowsAD_in_setting_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RowsADInSetting",
+   "parent": 336,
+   "gathers": 3514,
+   "text_gathers": 3411
+  },
+  {
+   "name": "GlobalTheory.T.adm_at_inert_of_range",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ImportsFurtherBisStatement",
+   "parent": 337,
+   "gathers": 3475,
+   "text_gathers": 3372
+  },
+  {
+   "name": "GlobalTheory.NLink.InertStep.main_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ImportsFurtherBis",
+   "parent": 338,
+   "gathers": 3474,
+   "text_gathers": 3371
+  },
+  {
+   "name": "GlobalTheory.T.prv_twenty_five_of_blochKato_tateDuality_eulerChar",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RamifiedCoefficientChainsPrvTwentyFiveStatement",
+   "parent": 339,
+   "gathers": 1341,
+   "text_gathers": 1337
+  },
+  {
+   "name": "GlobalTheory.ramifiedCoefficientChains_prv_twenty_five",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.RamifiedCoefficientChainsPrvTwentyFive",
+   "parent": 340,
+   "gathers": 1340,
+   "text_gathers": 1336
+  },
+  {
+   "name": "GlobalTheory.T.ramified_coefficient_chains_of_hypotheses",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TheoremCConst25OfHypothesesStatement",
+   "parent": 341,
+   "gathers": 1291,
+   "text_gathers": 1287
+  },
+  {
+   "name": "GlobalTheory.theoremC_of_admitted_inputs",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TheoremCConst25OfHypotheses",
+   "parent": 342,
+   "gathers": 1289,
+   "text_gathers": 1285
+  },
+  {
+   "name": "Formalism.MainNotions.RamifiedCoefficientChains.Asm.theorem_of_literature_hypotheses",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusLiftLemmasOfAdmitted",
+   "parent": 343,
+   "gathers": 1288,
+   "text_gathers": 1284
+  },
+  {
+   "name": "GlobalTheory.T.localLiftingTheoremB_of_blochKato_tateDuality_eulerChar",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalLiftingTheoremBOfBlochKatoTateDualityEulerCStatement",
+   "parent": 339,
+   "gathers": 1939,
+   "text_gathers": 1843
+  },
+  {
+   "name": "GlobalTheory.theoremB_closing",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalLiftingTheoremBOfBlochKatoTateDualityEulerC",
+   "parent": 345,
+   "gathers": 1938,
+   "text_gathers": 1842
+  },
+  {
+   "name": "GlobalTheory.T.eventually_congBound_of_facts",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.AdmissibleParameterEventuallyStatement",
+   "parent": 335,
+   "gathers": 2194,
+   "text_gathers": 2103
+  },
+  {
+   "name": "GlobalTheory.NLinkE.main_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.AdmissibleParameterEventually",
+   "parent": 347,
+   "gathers": 2193,
+   "text_gathers": 2102
+  },
+  {
+   "name": "GlobalTheory.T.blochKatoTop_of_localTateDuality_eulerChar",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BlochKatoTopOfLocalTateDualityEulerCharStatement",
+   "parent": 348,
+   "gathers": 1777,
+   "text_gathers": 1673
+  },
+  {
+   "name": "GlobalTheory.TopClosing.blochKatoTop_of_localTateDuality_eulerChar_alt",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.BlochKatoTopOfLocalTateDualityEulerChar",
+   "parent": 349,
+   "gathers": 1776,
+   "text_gathers": 1672
+  },
+  {
+   "name": "GlobalTheory.TopBridge.twistedLatticeCohomology_theoremTOP",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedLatticeCohomologyTheoremTOP",
+   "parent": 350,
+   "gathers": 1580,
+   "text_gathers": 1494
+  },
+  {
+   "name": "GlobalTheory.T.embedding_jumps_aux2_of_setup",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.PolynomialBoundSetup",
+   "parent": 335,
+   "gathers": 1347,
+   "text_gathers": 1329
+  },
+  {
+   "name": "GlobalTheory.TheoremBQD.main_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MainOfAltAlt",
+   "parent": 352,
+   "gathers": 1346,
+   "text_gathers": 1328
+  },
+  {
+   "name": "GlobalTheory.T.twistedPlace_selmerLengthBound_of_localDuality",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedPlaceSelmerLengthBoundOfLocalDualityStatement",
+   "parent": 353,
+   "gathers": 1292,
+   "text_gathers": 1274
+  },
+  {
+   "name": "GlobalTheory.TwistedPlaceBound.closing",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistedPlaceSelmerLengthBoundOfLocalDuality",
+   "parent": 354,
+   "gathers": 1291,
+   "text_gathers": 1273
+  },
+  {
+   "name": "GlobalTheory.T.localLifting_of_blochKato_tateDuality_eulerChar",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalLiftingTheoremAOfBlochKatoTateDualityEulerCStatement",
+   "parent": 355,
+   "gathers": 1192,
+   "text_gathers": 1184
+  },
+  {
+   "name": "GlobalTheory.theoremA_closing",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalLiftingTheoremAOfBlochKatoTateDualityEulerC",
+   "parent": 356,
+   "gathers": 1191,
+   "text_gathers": 1183
+  },
+  {
+   "name": "GlobalTheory.T.integralityFromMetric_of_160_le",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalLiftingOfEtaleExactDeRhamCrystallineConstStatement",
+   "parent": 357,
+   "gathers": 1169,
+   "text_gathers": 1161
+  },
+  {
+   "name": "GlobalTheory.TheoremAFinal.integralityFromMetric_of_le",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LocalLiftingOfEtaleExactDeRhamCrystallineConst",
+   "parent": 358,
+   "gathers": 1167,
+   "text_gathers": 1159
+  },
+  {
+   "name": "Formalism.MainNotions.N.Ln34.integrality_from_metric_of_large_constant",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.LevelLetterCocycles.DvrLatticeRank.MainFinal",
+   "parent": 359,
+   "gathers": 1164,
+   "text_gathers": 1156
+  },
+  {
+   "name": "GlobalTheory.T.globalLatticeIndexTheorem_of_lengthBoundAtPlaces",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SelmerLengthBoundAtPointStatement",
+   "parent": 252,
+   "gathers": 2269,
+   "text_gathers": 2275
+  },
+  {
+   "name": "GlobalTheory.SelmerBoundAtPoint.main",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.SelmerLengthBoundAtPoint",
+   "parent": 361,
+   "gathers": 2268,
+   "text_gathers": 2274
+  },
+  {
+   "name": "Formalism.MainNotions.N.K.Closed.theorem_n5_from_inputs",
+   "kind": "theorem",
+   "module": "Formalism.AdmissibleDesigns.StatementOneBFromUnramified",
+   "parent": 362,
+   "gathers": 1826,
+   "text_gathers": 1839
+  },
+  {
+   "name": "GlobalTheory.T.theoremE_corollaryA_closing_all_data",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TheoremECorollaryAClosingAllDataStatement",
+   "parent": 335,
+   "gathers": 1874,
+   "text_gathers": 1823
+  },
+  {
+   "name": "GlobalTheory.ThmECorA.closing",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TheoremECorollaryAClosingAllData",
+   "parent": 364,
+   "gathers": 1873,
+   "text_gathers": 1799
+  },
+  {
+   "name": "Formalism.MainNotions.N.Ln03.corollary_local_exists_constant",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.LevelLetterCocycles.LocalTheoremOfInputs",
+   "parent": 365,
+   "gathers": 1828,
+   "text_gathers": 1754
+  },
+  {
+   "name": "Formalism.MainNotions.N.Ln03.local_theorem_of_inputs",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.LevelLetterCocycles.LocalTheoremOfInputs",
+   "parent": 366,
+   "gathers": 1743,
+   "text_gathers": 1671
+  },
+  {
+   "name": "GlobalTheory.T.exists_const_tieChi_bound_of_facts",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExtraBoundOfTwistingEigenFacts",
+   "parent": 333,
+   "gathers": 4084,
+   "text_gathers": 3733
+  },
+  {
+   "name": "GlobalTheory.ExtraFromFacts.main_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ImportsExtraAlt",
+   "parent": 368,
+   "gathers": 4083,
+   "text_gathers": 3732
+  },
+  {
+   "name": "GlobalTheory.T.exists_bound_tieChi_of_prints",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ImportsFurtherLastStatement",
+   "parent": 369,
+   "gathers": 3610,
+   "text_gathers": 3269
+  },
+  {
+   "name": "GlobalTheory.NormFromFacts.main_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ImportsFurtherLast",
+   "parent": 370,
+   "gathers": 3609,
+   "text_gathers": 3268
+  },
+  {
+   "name": "GlobalTheory.T.conclusion41_of_pAdicHodge_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.AdmG14OfAuxStatement",
+   "parent": 371,
+   "gathers": 3608,
+   "text_gathers": 3267
+  },
+  {
+   "name": "GlobalTheory.ClosingLocalInputs.main_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.AdmG14OfAux",
+   "parent": 372,
+   "gathers": 3607,
+   "text_gathers": 3266
+  },
+  {
+   "name": "GlobalTheory.T.crystallinePeriodBound_all_constant_ge_forty",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallinePeriodBoundAllConstantGeFortyStatement",
+   "parent": 373,
+   "gathers": 3414,
+   "text_gathers": 3069
+  },
+  {
+   "name": "GlobalTheory.InertiaEigenvalues.theoremT_all_records",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.CrystallinePeriodBoundAllConstantGeForty",
+   "parent": 374,
+   "gathers": 3413,
+   "text_gathers": 3068
+  },
+  {
+   "name": "GlobalTheory.T.liftingStep_theoremT_of_bhattScholze_fontaine",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LiftingStepTheoremTOfBhattScholzeFontaineStatement",
+   "parent": 375,
+   "gathers": 3336,
+   "text_gathers": 2990
+  },
+  {
+   "name": "GlobalTheory.TheoremTClosing.main",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LiftingStepTheoremTOfBhattScholzeFontaine",
+   "parent": 376,
+   "gathers": 3334,
+   "text_gathers": 2988
+  },
+  {
+   "name": "GlobalTheory.T.lift_surjection_good_crystalline_lattices",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LiftSurjectionGoodCrystallineLatticesStatement",
+   "parent": 377,
+   "gathers": 3128,
+   "text_gathers": 2782
+  },
+  {
+   "name": "GlobalTheory.TheoremT.liftF_of_isGood",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.LiftSurjectionGoodCrystallineLattices",
+   "parent": 378,
+   "gathers": 3127,
+   "text_gathers": 2780
+  },
+  {
+   "name": "GlobalTheory.T.exists_breuilKisinModule_tameDescent_goodLattice",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBreuilKisinModuleTameDescentGoodLatticeStatement",
+   "parent": 379,
+   "gathers": 1011,
+   "text_gathers": 1021
+  },
+  {
+   "name": "GlobalTheory.BKGal.exists_pack_isOfType",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsBreuilKisinModuleTameDescentGoodLattice",
+   "parent": 380,
+   "gathers": 1010,
+   "text_gathers": 1020
+  },
+  {
+   "name": "GlobalTheory.T.large_unramified_exponent_bundles_exist_alt",
+   "kind": "alias",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MemberBundlesLargeUnramifiedExponents",
+   "parent": 254,
+   "gathers": 20525,
+   "text_gathers": 20058
+  },
+  {
+   "name": "GlobalTheory.Fc.StageOneU.member_bundles_large_unramified_exponents_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MemberBundlesLargeUnramifiedExponents",
+   "parent": 382,
+   "gathers": 20524,
+   "text_gathers": 20057
+  },
+  {
+   "name": "GlobalTheory.Mem.Top.Bl.exists_baseLattice_of_prime_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExistsBaseLatticeOfPrime",
+   "parent": 383,
+   "gathers": 13729,
+   "text_gathers": 13160
+  },
+  {
+   "name": "GlobalTheory.Mem.Top.Bl.exists_baseLattice_of_pair_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExistsBaseLatticeOfPrime",
+   "parent": 384,
+   "gathers": 7823,
+   "text_gathers": 7393
+  },
+  {
+   "name": "GlobalTheory.Mem.Top.Closing.memberE_closing_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MemberEClosing",
+   "parent": 385,
+   "gathers": 5595,
+   "text_gathers": 5166
+  },
+  {
+   "name": "GlobalTheory.T.has4_of_has3_of_lv3Mv",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LevelThreeToFour",
+   "parent": 386,
+   "gathers": 2346,
+   "text_gathers": 2284
+  },
+  {
+   "name": "GlobalTheory.Mem.SRe.UpS.has4_of_has3_of_sExt_none",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LevelThreeToFour",
+   "parent": 387,
+   "gathers": 2345,
+   "text_gathers": 2283
+  },
+  {
+   "name": "GlobalTheory.Mem.SRe.exists_sPack_integrable_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.ExistsSPackIntegrable",
+   "parent": 388,
+   "gathers": 1927,
+   "text_gathers": 1867
+  },
+  {
+   "name": "GlobalTheory.T.local_bessel_uniqueness_holds",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.LocalBesselUniquenessHolds",
+   "parent": 389,
+   "gathers": 1920,
+   "text_gathers": 1860
+  },
+  {
+   "name": "UpperTheory.Lit.exists_spectralData_gap_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.BesselSpectral",
+   "parent": 390,
+   "gathers": 1919,
+   "text_gathers": 1859
+  },
+  {
+   "name": "GlobalTheory.St.SpectralData.exists_setting",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.ExistsGlobalSetting",
+   "parent": 391,
+   "gathers": 1621,
+   "text_gathers": 1556
+  },
+  {
+   "name": "GlobalTheory.T.exists_member_of_construction_steps_secondPass",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMemberOfConstructionStepsSecondPassStatement",
+   "parent": 386,
+   "gathers": 1930,
+   "text_gathers": 1718
+  },
+  {
+   "name": "GlobalTheory.Mem.Top.Bl.memberE_of_steps2",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsMemberOfConstructionStepsSecondPass",
+   "parent": 393,
+   "gathers": 1929,
+   "text_gathers": 1717
+  },
+  {
+   "name": "GlobalTheory.T.exists_constructedCore_of_all_construction_stages",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsConstructedCoreOfAllConstructionStagesStatement",
+   "parent": 394,
+   "gathers": 1660,
+   "text_gathers": 1462
+  },
+  {
+   "name": "GlobalTheory.Mem.Top.Bl.CoreAsm.stepW_core",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsConstructedCoreOfAllConstructionStages",
+   "parent": 395,
+   "gathers": 1659,
+   "text_gathers": 1461
+  },
+  {
+   "name": "GlobalTheory.T.automorphy_of_hypotheses_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.AutomorphyOfHyp",
+   "parent": 385,
+   "gathers": 2227,
+   "text_gathers": 2226
+  },
+  {
+   "name": "GlobalTheory.Mem.Top.ExportTrue.exportF_prmR_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.AutomorphyOfHyp",
+   "parent": 397,
+   "gathers": 2226,
+   "text_gathers": 2225
+  },
+  {
+   "name": "GlobalTheory.ExportFirst.exportF_isBuiltE_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SExport",
+   "parent": 398,
+   "gathers": 2211,
+   "text_gathers": 2204
+  },
+  {
+   "name": "GlobalTheory.T.series_realization_of_published_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExportAtBundlesStatement",
+   "parent": 399,
+   "gathers": 2146,
+   "text_gathers": 2136
+  },
+  {
+   "name": "GlobalTheory.ExportClose0.exportAt_bundles_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExportAtBundles",
+   "parent": 400,
+   "gathers": 2145,
+   "text_gathers": 2135
+  },
+  {
+   "name": "GlobalTheory.T.realization_of_published_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExportAtOfBundlesStatement",
+   "parent": 401,
+   "gathers": 2144,
+   "text_gathers": 2134
+  },
+  {
+   "name": "GlobalTheory.ExportClose.exportAt_of_bundles_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExportAtOfBundles",
+   "parent": 402,
+   "gathers": 2143,
+   "text_gathers": 2133
+  },
+  {
+   "name": "GlobalTheory.TwExportTop.twistAllPowers_of_galoisCohomology_classField",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.TwistAllPowersOfGaloisCohomologyClassField",
+   "parent": 403,
+   "gathers": 1400,
+   "text_gathers": 1394
+  },
+  {
+   "name": "GlobalTheory.T.all_stages_at_member_of_specializations_alt",
+   "kind": "alias",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.AllStagesAtMemberOfSpecializations",
+   "parent": 384,
+   "gathers": 2446,
+   "text_gathers": 2440
+  },
+  {
+   "name": "GlobalTheory.HeightCounting.Up.all_stages_of_specializations_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.AllStagesAtMemberOfSpecializations",
+   "parent": 405,
+   "gathers": 2445,
+   "text_gathers": 2439
+  },
+  {
+   "name": "GlobalTheory.T.hyps_e_third_layer_ser_n_of_geometric_galois",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ThetaLiftHypothesesOfNonvanishing",
+   "parent": 254,
+   "gathers": 1302,
+   "text_gathers": 1274
+  },
+  {
+   "name": "GlobalTheory.MemberClose.exists_hyp_n_of_geometric_galois_compat",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ThetaLiftHypothesesOfNonvanishing",
+   "parent": 407,
+   "gathers": 1301,
+   "text_gathers": 1273
+  },
+  {
+   "name": "GlobalTheory.HeckeMember.heckeInt_transform_readTie",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.HeckeIntegralityStatements",
+   "parent": 408,
+   "gathers": 1132,
+   "text_gathers": 1109
+  },
+  {
+   "name": "GlobalTheory.RgGu.Leib.Hand.leibnizOrd",
+   "kind": "theorem",
+   "module": "Development.WeilBound.RepresentationTheoryGL.GenericUnitaryGL.ComplementarySeries.HighestDerivativeProducts.HighestDerivProd",
+   "parent": 1,
+   "gathers": 1626,
+   "text_gathers": 1582
+  },
+  {
+   "name": "GlobalTheory.T.liftInj_and_nonVan_typeNZ_of_given",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.LiftInjNonVanTypeNZOfPrints",
+   "parent": 254,
+   "gathers": 4285,
+   "text_gathers": 4267
+  },
+  {
+   "name": "GlobalTheory.Core.Rk.LiftOnto.liftInj_nonVan_typeNZ_of_hypotheses_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.LiftInjNonVanTypeNZOfPrints",
+   "parent": 411,
+   "gathers": 4284,
+   "text_gathers": 4266
+  },
+  {
+   "name": "GlobalTheory.T.downNe_of_eulerRight_doubling",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.EulerFactorFromDoubling",
+   "parent": 412,
+   "gathers": 4194,
+   "text_gathers": 4176
+  },
+  {
+   "name": "GlobalTheory.Core.Rk.Exh.Top.downNe_k_of_hypotheses'",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.KplugFill",
+   "parent": 413,
+   "gathers": 4193,
+   "text_gathers": 4175
+  },
+  {
+   "name": "PositivityTheory.Rg.Rsw.resCore",
+   "kind": "theorem",
+   "module": "Development.WeilBound.RepresentationTheoryGL.RegularisedSiegelWeil.ThetaIdempotents.ThetaCoefficients.ResCore",
+   "parent": 414,
+   "gathers": 4008,
+   "text_gathers": 3993
+  },
+  {
+   "name": "GlobalTheory.T.thetaLift_adjoint_scalarFormula_injective",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaLiftAdjointScalarFormulaInjectiveStatement",
+   "parent": 383,
+   "gathers": 1206,
+   "text_gathers": 1230
+  },
+  {
+   "name": "GlobalTheory.Core.Rk.UpInjRow.upInj",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaLiftAdjointScalarFormulaInjective",
+   "parent": 416,
+   "gathers": 1205,
+   "text_gathers": 1229
+  },
+  {
+   "name": "GlobalTheory.T.thetaChainStep_positive_scalar_standingHypotheses",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaChainStepPositiveScalarStandingHypothesesStatement",
+   "parent": 417,
+   "gathers": 1146,
+   "text_gathers": 1171
+  },
+  {
+   "name": "GlobalTheory.Core.Rk.ScalarsRow.scalars",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaChainStepPositiveScalarStandingHypotheses",
+   "parent": 418,
+   "gathers": 1145,
+   "text_gathers": 1170
+  },
+  {
+   "name": "GlobalTheory.Core.Rk.ScalarsRow.scalars_of_heckeFormNS",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ThetaChainStepPositiveScalarStandingHypotheses",
+   "parent": 419,
+   "gathers": 1144,
+   "text_gathers": 1169
+  },
+  {
+   "name": "GlobalTheory.T.thetaChain_steps_positive_multiple_of_LValue",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ScalarsOfGivenDataStatement",
+   "parent": 420,
+   "gathers": 1143,
+   "text_gathers": 1168
+  },
+  {
+   "name": "GlobalTheory.ChainTw.scalars_of_given_all",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.ScalarsOfGivenData",
+   "parent": 421,
+   "gathers": 1142,
+   "text_gathers": 1167
+  },
+  {
+   "name": "GlobalTheory.T.open0_of_unitary_group_hypotheses",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.OpenOrbitOfUnramifiedExponents",
+   "parent": 253,
+   "gathers": 12778,
+   "text_gathers": 12471
+  },
+  {
+   "name": "GlobalTheory.Fc.S0.Open0ProofU.open_orbit_of_unramified_exponents_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.OpenOrbitOfUnramifiedExponents",
+   "parent": 423,
+   "gathers": 12777,
+   "text_gathers": 12470
+  },
+  {
+   "name": "GlobalTheory.T.weil_unitary_entries'",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.PointEvaluationSideStatement",
+   "parent": 424,
+   "gathers": 1223,
+   "text_gathers": 1194
+  },
+  {
+   "name": "GlobalTheory.Fc.RL.linkedAt_prmR_df_of_cuspRapidDecay",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.PointEvaluationSide",
+   "parent": 425,
+   "gathers": 1222,
+   "text_gathers": 1193
+  },
+  {
+   "name": "GlobalTheory.Fc.RL.DefSide.linkedAt_df_of_parameters",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.PointEvaluationSide",
+   "parent": 426,
+   "gathers": 1221,
+   "text_gathers": 1192
+  },
+  {
+   "name": "GlobalTheory.Fc.RL.DefSide.definiteSideCondition_of_nprimeDef_of_nuFull",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.PointEvaluationSide",
+   "parent": 427,
+   "gathers": 1144,
+   "text_gathers": 1111
+  },
+  {
+   "name": "GlobalTheory.T.kernel_columns_from_ties_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RowsUOfColPinsStatement",
+   "parent": 428,
+   "gathers": 1143,
+   "text_gathers": 1110
+  },
+  {
+   "name": "GlobalTheory.ColRows.rowsU_of_colPins_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RowsUOfColPins",
+   "parent": 429,
+   "gathers": 1142,
+   "text_gathers": 1109
+  },
+  {
+   "name": "GlobalTheory.T.memberRows_of_kernelDatum_sizes",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemberRowsOfKernelDatumSizesStatement",
+   "parent": 430,
+   "gathers": 1094,
+   "text_gathers": 1062
+  },
+  {
+   "name": "GlobalTheory.ColRows.rowsBody_of_kerTies",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemberRowsOfKernelDatumSizes",
+   "parent": 431,
+   "gathers": 1093,
+   "text_gathers": 1059
+  },
+  {
+   "name": "GlobalTheory.T.columnsMemberRows_of_logLevel_le",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ColumnsMemberRowsOfLogLevelLeStatement",
+   "parent": 432,
+   "gathers": 1088,
+   "text_gathers": 1050
+  },
+  {
+   "name": "GlobalTheory.ColRowsTopS.rowsBody_colFace",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ColumnsMemberRowsOfLogLevelLe",
+   "parent": 433,
+   "gathers": 1087,
+   "text_gathers": 1049
+  },
+  {
+   "name": "GlobalTheory.T.twisted_multiplicity_one",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.TwistedMultiplicityOne",
+   "parent": 253,
+   "gathers": 3634,
+   "text_gathers": 3799
+  },
+  {
+   "name": "GlobalTheory.MultEqFinal.twisted_multiplicity_eq",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.TwistedMultiplicityOne",
+   "parent": 435,
+   "gathers": 3633,
+   "text_gathers": 3798
+  },
+  {
+   "name": "UpperTheory.Lit.I5.unitary_theory_of_harishChandra_langlands_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.UnitaryThetaCorrespondenceOfHyp",
+   "parent": 436,
+   "gathers": 3632,
+   "text_gathers": 3797
+  },
+  {
+   "name": "GlobalTheory.T.localPseudoCoefficientExistence_unitaryGroup",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalPseudoCoefficientExistenceUnitaryGroupStatement",
+   "parent": 437,
+   "gathers": 1113,
+   "text_gathers": 1300
+  },
+  {
+   "name": "GlobalTheory.PsCo.Pc.localPC_holds",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalPseudoCoefficientExistenceUnitaryGroup",
+   "parent": 438,
+   "gathers": 1112,
+   "text_gathers": 1299
+  },
+  {
+   "name": "GlobalTheory.T.main_theorem_published_inputs_third_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MainTheoremPublishedInputsThird",
+   "parent": 424,
+   "gathers": 11049,
+   "text_gathers": 10783
+  },
+  {
+   "name": "GlobalTheory.miStarRow_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MainTheoremPublishedInputsThird",
+   "parent": 440,
+   "gathers": 11048,
+   "text_gathers": 10782
+  },
+  {
+   "name": "CompanionTheory.WaveGrid.weighted_bound_rotated_uniform",
+   "kind": "theorem",
+   "module": "CompanionTheory.AutomorphicTheory.BesselWaveGrids.ThmBFinal",
+   "parent": 253,
+   "gathers": 1378,
+   "text_gathers": 1444
+  },
+  {
+   "name": "CompanionTheory.WaveGrid.weighted_bound_rotated_uniform_of_hypsG",
+   "kind": "theorem",
+   "module": "CompanionTheory.AutomorphicTheory.BesselWaveGrids.WeightedBoundRotatedUniformOfHypsG",
+   "parent": 442,
+   "gathers": 1377,
+   "text_gathers": 1443
+  },
+  {
+   "name": "CompanionTheory.WaveGrid.uniform_bessel_rank_three_of_inputs",
+   "kind": "theorem",
+   "module": "CompanionTheory.AutomorphicTheory.BesselWaveGrids.WeightedBoundRotatedUniformOfCubicThreshold",
+   "parent": 443,
+   "gathers": 1321,
+   "text_gathers": 1393
+  },
+  {
+   "name": "CompanionTheory.WaveGrid.weighted_bound_rotated_uniform_of_cubic_threshold",
+   "kind": "theorem",
+   "module": "CompanionTheory.AutomorphicTheory.BesselWaveGrids.WeightedBoundRotatedUniformOfCubicThreshold",
+   "parent": 444,
+   "gathers": 1314,
+   "text_gathers": 1386
+  },
+  {
+   "name": "CompanionTheory.WaveGrid.wave_bessel_period_threshold",
+   "kind": "theorem",
+   "module": "CompanionTheory.AutomorphicTheory.BesselWaveGrids.WeightedBoundRotatedUniformOfCubicThreshold",
+   "parent": 445,
+   "gathers": 1102,
+   "text_gathers": 1162
+  },
+  {
+   "name": "Formalism.FourierDecayAlt.P.CutMP.Gauge.GC.genTransfer_of_rotK",
+   "kind": "theorem",
+   "module": "Formalism.HermitianCurvature.HermitianCurvatureProofs.CutGCoreDone",
+   "parent": 253,
+   "gathers": 1047,
+   "text_gathers": 1020
+  },
+  {
+   "name": "Formalism.L2.SG.Pf.NcAllC.ncTieC_of_closed",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcAllC",
+   "parent": 253,
+   "gathers": 3269,
+   "text_gathers": 3269
+  },
+  {
+   "name": "Formalism.L2.SG.Closed.RealBracket_holds",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.RealBracketHolds",
+   "parent": 448,
+   "gathers": 1642,
+   "text_gathers": 1640
+  },
+  {
+   "name": "Formalism.L2.SG.Closed.AprimeInf_holds",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.SiegelLatticeTheory.ClosedVolumeStatements.RealBracketHolds",
+   "parent": 449,
+   "gathers": 1013,
+   "text_gathers": 994
+  },
+  {
+   "name": "PI.AprimeInfAsm.aprime_infinite_real",
+   "kind": "theorem",
+   "module": "Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AprimeInf",
+   "parent": 450,
+   "gathers": 1012,
+   "text_gathers": 993
+  },
+  {
+   "name": "PI.AprimeInfAsm.aprimeInf_of_hinfCompact",
+   "kind": "theorem",
+   "module": "Formalism.PeriodIntegrals.OrbitalBoundsConclusion.AprimeInf",
+   "parent": 451,
+   "gathers": 1011,
+   "text_gathers": 983
+  },
+  {
+   "name": "Formalism.L2.SG.Pf.NcAllS.ncTie0All_of",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.SiegelLatticeTheory.CokernelGLCounts.RankPointCounts.DualFamilyCounting.NcAllS",
+   "parent": 448,
+   "gathers": 1624,
+   "text_gathers": 1626
+  },
+  {
+   "name": "Formalism.L2.SG.Pf.NcVal.OmVSt.OmVZ.omV_holdsX",
+   "kind": "theorem",
+   "module": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.OmVBadTHoldsX",
+   "parent": 453,
+   "gathers": 1076,
+   "text_gathers": 1073
+  },
+  {
+   "name": "Formalism.L2.SG.Pf.NcX.OmVSt.omVZ_holdsX",
+   "kind": "theorem",
+   "module": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.ValuationLocalVolumes.OmVBadTHoldsX",
+   "parent": 454,
+   "gathers": 1075,
+   "text_gathers": 1072
+  },
+  {
+   "name": "GlobalTheory.discreteSeriesCoef_pointwiseBound",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.JetHarmonics.DiscreteSeriesCoefPointwiseBoundUnconditional",
+   "parent": 253,
+   "gathers": 1097,
+   "text_gathers": 1100
+  },
+  {
+   "name": "Formalism.FourierDecayAlt.P.CutSE.actual_compact_theorem",
+   "kind": "theorem",
+   "module": "Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSETopFinal",
+   "parent": 253,
+   "gathers": 1290,
+   "text_gathers": 1289
+  },
+  {
+   "name": "Formalism.FourierDecayAlt.P.CutSE.thmPActualCpt_of_R",
+   "kind": "theorem",
+   "module": "Formalism.HermitianCurvature.HermitianCurvatureProofs.CutSETopR",
+   "parent": 457,
+   "gathers": 1220,
+   "text_gathers": 1219
+  },
+  {
+   "name": "GlobalTheory.T.pointwiseBound_discreteSeries_coefficients",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.JetHarmonics.PointwiseBoundDiscreteSeriesCoefficientsStatement",
+   "parent": 456,
+   "gathers": 1093,
+   "text_gathers": 1096
+  },
+  {
+   "name": "GlobalTheory.BpDiscreteSeriesTwoInputs.pointwise_bound_discreteSeries",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.JetHarmonics.PointwiseBoundDiscreteSeriesCoefficients",
+   "parent": 459,
+   "gathers": 1092,
+   "text_gathers": 1095
+  },
+  {
+   "name": "GlobalTheory.T.pointwiseBound_capelli_eigenfunction",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.JetHarmonics.PointwiseBoundCapelliEigenfunctionStatement",
+   "parent": 460,
+   "gathers": 1067,
+   "text_gathers": 1068
+  },
+  {
+   "name": "GlobalTheory.BpEigen.pointwise_bound_eigenfunction",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.JetHarmonics.PointwiseBoundCapelliEigenfunction",
+   "parent": 461,
+   "gathers": 1066,
+   "text_gathers": 1066
+  },
+  {
+   "name": "GlobalTheory.rowsPos_typeP",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.RowsPosTypeP",
+   "parent": 253,
+   "gathers": 2535,
+   "text_gathers": 2515
+  },
+  {
+   "name": "GlobalTheory.T.typeBound_of_largeGap_discreteSeries_bessel",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.TypePOfLargeGapDiscreteSeriesBesselStatement",
+   "parent": 463,
+   "gathers": 2534,
+   "text_gathers": 2514
+  },
+  {
+   "name": "GlobalTheory.TypeAsm.TopGap.typeBound_of_gap",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.TypePOfLargeGapDiscreteSeriesBessel",
+   "parent": 464,
+   "gathers": 2533,
+   "text_gathers": 2513
+  },
+  {
+   "name": "GlobalTheory.T.termPairCountBound_of_siegelMassRatios",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermPairCountBoundOfSiegelMassRatiosStatement",
+   "parent": 465,
+   "gathers": 1195,
+   "text_gathers": 1180
+  },
+  {
+   "name": "GlobalTheory.TypeAsm.pair_count_bound_of_siegel_mass",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.FlagMeasures.TermPairCountBoundOfSiegelMassRatios",
+   "parent": 466,
+   "gathers": 1194,
+   "text_gathers": 1179
+  },
+  {
+   "name": "GlobalTheory.T.main_theorem_published_inputs_variant_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MainTheoremPublishedInputsVariant",
+   "parent": 441,
+   "gathers": 10830,
+   "text_gathers": 10559
+  },
+  {
+   "name": "GlobalTheory.miStarRowClosing_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MainTheoremPublishedInputsVariant",
+   "parent": 468,
+   "gathers": 10829,
+   "text_gathers": 10558
+  },
+  {
+   "name": "ReciprocityTheory.ChartRestriction.DS.Lap.TopClosed.besselNVG",
+   "kind": "theorem",
+   "module": "ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.BesselVectors.Closed",
+   "parent": 253,
+   "gathers": 1612,
+   "text_gathers": 0
+  },
+  {
+   "name": "ReciprocityTheory.ChartRestriction.DS.Lap.TopClosed.nvAll",
+   "kind": "theorem",
+   "module": "ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.BesselVectors.Closed",
+   "parent": 470,
+   "gathers": 1490,
+   "text_gathers": 0
+  },
+  {
+   "name": "ReciprocityTheory.ChartRestriction.DS.Lap.nv",
+   "kind": "theorem",
+   "module": "ReciprocityTheory.ReductiveGroups.DiscreteSeries.LaplaceOperators.Imports",
+   "parent": 471,
+   "gathers": 1393,
+   "text_gathers": 0
+  },
+  {
+   "name": "GlobalTheory.T.main_theorem_published_results_final_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MainTheoremPublishedResultsFinal",
+   "parent": 469,
+   "gathers": 10581,
+   "text_gathers": 10306
+  },
+  {
+   "name": "GlobalTheory.Fam.miStar_row_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MainTheoremPublishedResultsFinal",
+   "parent": 473,
+   "gathers": 10580,
+   "text_gathers": 10305
+  },
+  {
+   "name": "GlobalTheory.T.main_theorem_from_published_results_alt_alt_alt_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MainTheoremFromPublishedResultsAltAltAltAltAlt",
+   "parent": 474,
+   "gathers": 10330,
+   "text_gathers": 10050
+  },
+  {
+   "name": "GlobalTheory.Fam.miAt_of_truePack_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MainTheoremFromPublishedResultsAltAltAltAltAlt",
+   "parent": 475,
+   "gathers": 10328,
+   "text_gathers": 10048
+  },
+  {
+   "name": "GlobalTheory.T.main_theorem_from_published_results_alt_alt_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MainTheoremFromPublishedResultsAltAltAltAlt",
+   "parent": 476,
+   "gathers": 10327,
+   "text_gathers": 10047
+  },
+  {
+   "name": "GlobalTheory.Fam.miStar2_of_allTrue_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MainTheoremFromPublishedResultsAltAltAltAlt",
+   "parent": 477,
+   "gathers": 10326,
+   "text_gathers": 10046
+  },
+  {
+   "name": "GlobalTheory.T.true_geometry_family_row_data_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.FamAllQOfAllTrueStatement",
+   "parent": 478,
+   "gathers": 9800,
+   "text_gathers": 9542
+  },
+  {
+   "name": "GlobalTheory.MiTop.famAllQ_of_allTrue_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.FamAllQOfAllTrue",
+   "parent": 479,
+   "gathers": 9799,
+   "text_gathers": 9541
+  },
+  {
+   "name": "GlobalTheory.T.true_geometry_family_column_data_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LawsLinksOfGeoRowsColsStatement",
+   "parent": 480,
+   "gathers": 2639,
+   "text_gathers": 2597
+  },
+  {
+   "name": "GlobalTheory.Fam.lawsLinks_of_geo_rows_cols_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LawsLinksOfGeoRowsCols",
+   "parent": 481,
+   "gathers": 2638,
+   "text_gathers": 2596
+  },
+  {
+   "name": "GlobalTheory.T.seeSaw_latticeFramePins_finiteIntegralLaws",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SeeSawLatticeFramePinsFiniteIntegralLawsStatement",
+   "parent": 482,
+   "gathers": 1338,
+   "text_gathers": 1320
+  },
+  {
+   "name": "GlobalTheory.SeeSaw.pins_finiteIntegrals",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SeeSawLatticeFramePinsFiniteIntegralLaws",
+   "parent": 483,
+   "gathers": 1337,
+   "text_gathers": 1319
+  },
+  {
+   "name": "GlobalTheory.T.true_geometry_family_invariance_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ColSideStatement",
+   "parent": 480,
+   "gathers": 3179,
+   "text_gathers": 3175
+  },
+  {
+   "name": "GlobalTheory.Fam.colSide_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ColSide",
+   "parent": 485,
+   "gathers": 3178,
+   "text_gathers": 3174
+  },
+  {
+   "name": "GlobalTheory.T.true_geometry_family_final_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LawsRescStatement",
+   "parent": 486,
+   "gathers": 1030,
+   "text_gathers": 1024
+  },
+  {
+   "name": "GlobalTheory.QColLaws.laws_resc_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LawsResc",
+   "parent": 487,
+   "gathers": 1029,
+   "text_gathers": 1023
+  },
+  {
+   "name": "GlobalTheory.T.seeSawTwistPlaceLaws_of_rootOfUnityRescaling",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SeeSawTwistPlaceLawsOfRootOfUnityRescalingStatement",
+   "parent": 488,
+   "gathers": 1027,
+   "text_gathers": 1022
+  },
+  {
+   "name": "GlobalTheory.QTw.laws_of_pin_resc",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DecoratedLatticeProofs.SeeSawTwistPlaceLawsOfRootOfUnityRescaling",
+   "parent": 489,
+   "gathers": 1025,
+   "text_gathers": 1019
+  },
+  {
+   "name": "GlobalTheory.T.exists_botDat_of_placedP_framed",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.OneCentralPinStatement",
+   "parent": 480,
+   "gathers": 1087,
+   "text_gathers": 1073
+  },
+  {
+   "name": "GlobalTheory.MiTop.exists_botDat_pin_of_placed_of_framed",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.OneCentralPin",
+   "parent": 491,
+   "gathers": 1086,
+   "text_gathers": 1072
+  },
+  {
+   "name": "GlobalTheory.Fc.S0.ontoX_and_lamLow_of_unitaryGroupHypotheses'",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SurjectiveAndLowWeightOfUnramifiedExponents",
+   "parent": 253,
+   "gathers": 21634,
+   "text_gathers": 20036
+  },
+  {
+   "name": "GlobalTheory.BigOn.ontoX_of_hypotheses_alt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.OntoXOfPrints",
+   "parent": 493,
+   "gathers": 21298,
+   "text_gathers": 19703
+  },
+  {
+   "name": "GlobalTheory.T.expSt_of_base_change_and_crystalline_lattices",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExponentBoundOfUnitaryThetaStandardTheorems",
+   "parent": 494,
+   "gathers": 3848,
+   "text_gathers": 3469
+  },
+  {
+   "name": "GlobalTheory.BigOn.exponent_bound_of_unitaryThetaStandardTheorems_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExponentBoundOfUnitaryThetaStandardTheorems",
+   "parent": 495,
+   "gathers": 3847,
+   "text_gathers": 3468
+  },
+  {
+   "name": "PositivityTheory.AdelicQuotientData.rsPole",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.PublishedTheorems.JacquetShalikaRigidity.JacquetShalikaRigidity",
+   "parent": 1,
+   "gathers": 1041,
+   "text_gathers": 1017
+  },
+  {
+   "name": "GlobalTheory.T.model_statement_of_crystalline_chebotarev_frame_gal",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ModelStOfFramesStatement",
+   "parent": 496,
+   "gathers": 1564,
+   "text_gathers": 1220
+  },
+  {
+   "name": "GlobalTheory.ExpModel.modelSt_of_small_frame_gal",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ModelStOfFrames",
+   "parent": 498,
+   "gathers": 1563,
+   "text_gathers": 1219
+  },
+  {
+   "name": "GlobalTheory.T.crystallineLatticeLink_of_blockData",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystallineLatticeLinkOfBlockDataStatement",
+   "parent": 499,
+   "gathers": 1044,
+   "text_gathers": 712
+  },
+  {
+   "name": "GlobalTheory.ExpLink.latticeLink_of_blockFor",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystallineLatticeLinkOfBlockData",
+   "parent": 500,
+   "gathers": 1043,
+   "text_gathers": 711
+  },
+  {
+   "name": "GlobalTheory.T.crystalline_block_lattices_over_power_series_ring",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystallineBlockLatticesOverPowerSeriesRingStatement",
+   "parent": 501,
+   "gathers": 1026,
+   "text_gathers": 695
+  },
+  {
+   "name": "GlobalTheory.WachBlock.wach_inputs",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.CrystallineBlockLatticesOverPowerSeriesRing",
+   "parent": 502,
+   "gathers": 1025,
+   "text_gathers": 694
+  },
+  {
+   "name": "GlobalTheory.T.expSt_of_num_sumExp_model",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExpStOfStatement",
+   "parent": 496,
+   "gathers": 1368,
+   "text_gathers": 1358
+  },
+  {
+   "name": "GlobalTheory.ExpTie.Asm.expSt_of_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExpStOf",
+   "parent": 504,
+   "gathers": 1367,
+   "text_gathers": 1357
+  },
+  {
+   "name": "GlobalTheory.ExpTie.Asm.hasExpBound_at",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExpansionOfNumericsModel",
+   "parent": 505,
+   "gathers": 1366,
+   "text_gathers": 1356
+  },
+  {
+   "name": "GlobalTheory.ExpTie.Asm.jexpU_le_jrec7",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExpansionOfNumericsModel",
+   "parent": 506,
+   "gathers": 1053,
+   "text_gathers": 1052
+  },
+  {
+   "name": "GlobalTheory.T.primePowerLatticeInclusion_of_localModels",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimePowerLatticeInclusionOfLocalModelsStatement",
+   "parent": 507,
+   "gathers": 1049,
+   "text_gathers": 1048
+  },
+  {
+   "name": "GlobalTheory.ExpTie.lIncl_of_models",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.PrimePowerLatticeInclusionOfLocalModels",
+   "parent": 508,
+   "gathers": 1048,
+   "text_gathers": 1047
+  },
+  {
+   "name": "GlobalTheory.BigOn.geoSt_of_pageSt_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.GeoStOfPageSt",
+   "parent": 494,
+   "gathers": 5462,
+   "text_gathers": 5163
+  },
+  {
+   "name": "GlobalTheory.BigOn.leafDepth_all_record",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.LeafDepthAllRecord",
+   "parent": 510,
+   "gathers": 5163,
+   "text_gathers": 4873
+  },
+  {
+   "name": "GlobalTheory.RunDepth.leafDepth_all_run",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.JetHarmonics.LeafDepthAllRun",
+   "parent": 511,
+   "gathers": 5162,
+   "text_gathers": 4872
+  },
+  {
+   "name": "GlobalTheory.T.depthTable_goodPrimes_of_chartForm",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.JetHarmonics.DepthTableGoodPrimesOfChartFormStatement",
+   "parent": 512,
+   "gathers": 4968,
+   "text_gathers": 4675
+  },
+  {
+   "name": "GlobalTheory.leafDepthGood_of_chartForm",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.JetHarmonics.DepthTableGoodPrimesOfChartForm",
+   "parent": 513,
+   "gathers": 4967,
+   "text_gathers": 4674
+  },
+  {
+   "name": "GlobalTheory.T.allGoodPrimeDepthDataExist_proof",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.JetHarmonics.AllGoodPrimeDepthDataExistProofStatement",
+   "parent": 514,
+   "gathers": 3827,
+   "text_gathers": 3625
+  },
+  {
+   "name": "GlobalTheory.goodPrime_packages",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.JetHarmonics.AllGoodPrimeDepthDataExistProof",
+   "parent": 515,
+   "gathers": 3826,
+   "text_gathers": 3624
+  },
+  {
+   "name": "UpperTheory.exists_pkgCs_of_degree_bound_at_inert_primes",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.OrbitLabellings.ExistsPkgCsOfDegreeBoundAtInertPrimes",
+   "parent": 516,
+   "gathers": 2129,
+   "text_gathers": 2029
+  },
+  {
+   "name": "UpperTheory.OrbitFamilyRestriction.exists_rowFamS",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.OrbitLabellings.ExistsPkgCsOfDegreeBoundAtInertPrimes",
+   "parent": 517,
+   "gathers": 2125,
+   "text_gathers": 2025
+  },
+  {
+   "name": "UpperTheory.labelSetGeo_of_even_of_rankOK_of_not_dvd_discr",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.OrbitLabellings.LabelSetGeoOfEvenOfRankOKOfNotDvdDiscr",
+   "parent": 518,
+   "gathers": 2074,
+   "text_gathers": 1976
+  },
+  {
+   "name": "GlobalTheory.FinalJoin.runHolds_of_parOK",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsThresholdRunHolds",
+   "parent": 494,
+   "gathers": 6893,
+   "text_gathers": 5691
+  },
+  {
+   "name": "GlobalTheory.T.exists_indexBoundHypothesesWithNet_allValuedPoints",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsIndexBoundHypothesesWithNetAllValuedPointsStatement",
+   "parent": 520,
+   "gathers": 5753,
+   "text_gathers": 4520
+  },
+  {
+   "name": "GlobalTheory.InputsAtRecord.inputsNet_recPlus",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsIndexBoundHypothesesWithNetAllValuedPoints",
+   "parent": 521,
+   "gathers": 5752,
+   "text_gathers": 4519
+  },
+  {
+   "name": "GlobalTheory.T.exists_primeData_curve_lifting_heightBounds",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsPrimeDataCurveLiftingHeightBoundsStatement",
+   "parent": 522,
+   "gathers": 2475,
+   "text_gathers": 1404
+  },
+  {
+   "name": "GlobalTheory.RunPrimeData.exists_primeData_heights",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsPrimeDataCurveLiftingHeightBounds",
+   "parent": 523,
+   "gathers": 2474,
+   "text_gathers": 1403
+  },
+  {
+   "name": "GlobalTheory.partI_of_semistableReduction",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.ModuliProofs.PartOneOfSemistableReductionPadicPolarized",
+   "parent": 128,
+   "gathers": 1383,
+   "text_gathers": 1292
+  },
+  {
+   "name": "GlobalTheory.T.exists_fullLevelAmpleModel_of_semistableReduction",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFullLevelAmpleModelOfSemistableReductionStatement",
+   "parent": 128,
+   "gathers": 1090,
+   "text_gathers": 1061
+  },
+  {
+   "name": "GlobalTheory.topAmpExists_of_semistableReduction",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFullLevelAmpleModelOfSemistableReduction",
+   "parent": 526,
+   "gathers": 1089,
+   "text_gathers": 1060
+  },
+  {
+   "name": "GlobalTheory.T.zarhinGeometric_of_semistableReduction",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.ModuliProofs.ZarhinGeometricOfSemistableReductionStatement",
+   "parent": 1,
+   "gathers": 1753,
+   "text_gathers": 1481
+  },
+  {
+   "name": "GlobalTheory.zhGeo_of_semistableReduction",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.ModuliProofs.ZarhinGeometricOfSemistableReduction",
+   "parent": 528,
+   "gathers": 1752,
+   "text_gathers": 1480
+  },
+  {
+   "name": "GlobalTheory.T.semiAbelianScheme_uniformisation_exists_geometric",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SemiAbelianSchemeUniformisationExistsGeometricStatement",
+   "parent": 529,
+   "gathers": 1751,
+   "text_gathers": 1479
+  },
+  {
+   "name": "GlobalTheory.ZH.GeoHalf.zhGeo",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SemiAbelianSchemeUniformisationExistsGeometric",
+   "parent": 530,
+   "gathers": 1750,
+   "text_gathers": 1478
+  },
+  {
+   "name": "GlobalTheory.T.exists_fullLevel_model_ample_frames",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFullLevelModelAmpleFramesStatement",
+   "parent": 527,
+   "gathers": 1066,
+   "text_gathers": 1037
+  },
+  {
+   "name": "GlobalTheory.Models.topAmpExists",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.ModuliProofs.ExistsFullLevelModelAmpleFrames",
+   "parent": 532,
+   "gathers": 1065,
+   "text_gathers": 1036
+  },
+  {
+   "name": "GlobalTheory.BigTop.Fun.Close.fourier_coefficient_fit_of_join_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.FourierCoefficientFitOfJoin",
+   "parent": 253,
+   "gathers": 4240,
+   "text_gathers": 4192
+  },
+  {
+   "name": "GlobalTheory.BigTop.Fun.Close.fittedFunction_at_zero_close_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.FittedFunctionAtZeroClose",
+   "parent": 534,
+   "gathers": 4239,
+   "text_gathers": 4191
+  },
+  {
+   "name": "GlobalTheory.T.sum_size_bound_all_places",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.SumSizeFiniteAwayArchimedeanCombined",
+   "parent": 535,
+   "gathers": 1199,
+   "text_gathers": 1184
+  },
+  {
+   "name": "GlobalTheory.SumSize.Join.sum_size_finite_away_archimedean_combined",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.SumSizeFiniteAwayArchimedeanCombined",
+   "parent": 536,
+   "gathers": 1198,
+   "text_gathers": 1183
+  },
+  {
+   "name": "GlobalTheory.T.square_leading_term_bound",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.SquareTopTermJoinedEstimates",
+   "parent": 535,
+   "gathers": 2387,
+   "text_gathers": 2329
+  },
+  {
+   "name": "GlobalTheory.SqTop.square_top_term_joined_estimates",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.SquareTopTermJoinedEstimates",
+   "parent": 538,
+   "gathers": 2386,
+   "text_gathers": 2328
+  },
+  {
+   "name": "GlobalTheory.SqTower.tower_alt_bis",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.TowerOfThetaMatching",
+   "parent": 253,
+   "gathers": 2004,
+   "text_gathers": 1946
+  },
+  {
+   "name": "UpperTheory.Lit.Sw47.weilUnitary",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.FockModels.FockAnisoFree",
+   "parent": 128,
+   "gathers": 1761,
+   "text_gathers": 1757
+  },
+  {
+   "name": "PositivityTheory.Rg.Wsf.weilSiegelFormula",
+   "kind": "theorem",
+   "module": "Development.WeilBound.RepresentationTheoryGL.SiegelWeil.ArchimedeanSiegelWeil.WeilSiegelFormula",
+   "parent": 541,
+   "gathers": 1722,
+   "text_gathers": 1718
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.WeilSiegel.Deg.siegelDeg",
+   "kind": "theorem",
+   "module": "Development.WeilBound.RepresentationTheoryGL.SiegelWeil.ArchimedeanSiegelWeil.PlaceIntegrals.SiegelDeg",
+   "parent": 542,
+   "gathers": 1487,
+   "text_gathers": 1487
+  },
+  {
+   "name": "GlobalTheory.T.siegel_weil_rank_coefficient",
+   "kind": "theorem",
+   "module": "Development.WeilBound.RepresentationTheoryGL.SiegelWeil.ArchimedeanSiegelWeil.PlaceIntegrals.SiegelWeilRankCoefficientStatement",
+   "parent": 543,
+   "gathers": 1300,
+   "text_gathers": 1299
+  },
+  {
+   "name": "GlobalTheory.CompanionTheory.WeilSiegel.Frame.siegel_frame",
+   "kind": "theorem",
+   "module": "Development.WeilBound.RepresentationTheoryGL.SiegelWeil.ArchimedeanSiegelWeil.PlaceIntegrals.SiegelWeilRankCoefficient",
+   "parent": 544,
+   "gathers": 1299,
+   "text_gathers": 1298
+  },
+  {
+   "name": "PositivityTheory.SiegelWeilCoefficients.field",
+   "kind": "theorem",
+   "module": "Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.IntegralUnitCoefficients.CoefND",
+   "parent": 128,
+   "gathers": 1725,
+   "text_gathers": 1677
+  },
+  {
+   "name": "PositivityTheory.SiegelWeilCoefficients.lit",
+   "kind": "theorem",
+   "module": "Development.WeilBound.RepresentationTheoryGL.EisensteinSeries.SiegelEisensteinHalfPlane.IntegralUnitCoefficients.CoefND",
+   "parent": 546,
+   "gathers": 1711,
+   "text_gathers": 1668
+  },
+  {
+   "name": "GlobalTheory.RowClaim.Join.thetaLift_row_properties_conj",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.ThetaLiftRowPropertiesConj",
+   "parent": 253,
+   "gathers": 5125,
+   "text_gathers": 5148
+  },
+  {
+   "name": "GlobalTheory.T.twisted_jets_assemble",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.TwistedJetSuccEqAssembly",
+   "parent": 548,
+   "gathers": 1001,
+   "text_gathers": 999
+  },
+  {
+   "name": "GlobalTheory.RowClaim.JetsAssembly.twistedJet_succ_eq_assembly",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.TwistedJetSuccEqAssembly",
+   "parent": 549,
+   "gathers": 1000,
+   "text_gathers": 998
+  },
+  {
+   "name": "GlobalTheory.T.twisted_theta_integral_unfolds",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.TwistedThetaIntegralUnfolding",
+   "parent": 548,
+   "gathers": 2005,
+   "text_gathers": 2003
+  },
+  {
+   "name": "GlobalTheory.RowUnfLast.twisted_theta_integral_unfolding",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.TwistedThetaIntegralUnfolding",
+   "parent": 551,
+   "gathers": 2004,
+   "text_gathers": 2002
+  },
+  {
+   "name": "GlobalTheory.FlipRun.cuspStep_of_large_flipRun",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.CuspStepOfLargeFlipRun",
+   "parent": 548,
+   "gathers": 1461,
+   "text_gathers": 1479
+  },
+  {
+   "name": "GlobalTheory.T.cuspidal_lift_smooth_at_cusps",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.CuspidalLiftSmoothAtOfCuspidalLift",
+   "parent": 553,
+   "gathers": 1411,
+   "text_gathers": 1424
+  },
+  {
+   "name": "GlobalTheory.CuspSmoothLift.cuspidal_lift_smooth_at_of_cuspidal_lift",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.CuspidalLiftSmoothAtOfCuspidalLift",
+   "parent": 554,
+   "gathers": 1410,
+   "text_gathers": 1423
+  },
+  {
+   "name": "UpperTheory.Lit.functionalsSeparate_of_howeUnram_of_siegelWeil",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.FunctionalsSeparateOfHoweUnramOfSiegelWeil",
+   "parent": 253,
+   "gathers": 4576,
+   "text_gathers": 4559
+  },
+  {
+   "name": "UpperTheory.Lit.real_functionals_separate_of_hypothesis",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.LocalTypeDictionary.RealFunctionalsSeparateOfHypothesis",
+   "parent": 556,
+   "gathers": 3552,
+   "text_gathers": 3532
+  },
+  {
+   "name": "GlobalTheory.T.bessel_period_nonvanishing_ascent_of_depth_data",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.TwistedOperators.BesselPeriodNonvanishingAscentOfDepthDataStatement",
+   "parent": 557,
+   "gathers": 2122,
+   "text_gathers": 2121
+  },
+  {
+   "name": "GlobalTheory.Asc.ascent_of_depFixed",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.TwistedOperators.BesselPeriodNonvanishingAscentOfDepthData",
+   "parent": 558,
+   "gathers": 2121,
+   "text_gathers": 2120
+  },
+  {
+   "name": "GlobalTheory.T.existsGoodGridFrames_of_depthFixed",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsGoodGridFramesOfDepthFixedStatement",
+   "parent": 559,
+   "gathers": 1360,
+   "text_gathers": 1358
+  },
+  {
+   "name": "GlobalTheory.AscFin.towerEx_of_depFixed",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.TwistedOperators.ExistsGoodGridFramesOfDepthFixed",
+   "parent": 560,
+   "gathers": 1359,
+   "text_gathers": 1357
+  },
+  {
+   "name": "GlobalTheory.T.standardAuxiliaryFrames_good_row_grids",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.TwistedOperators.StandardAuxiliaryFramesGoodRowGridsStatement",
+   "parent": 561,
+   "gathers": 1307,
+   "text_gathers": 1306
+  },
+  {
+   "name": "GlobalTheory.AscFin.GoodStd.std_good",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.TwistedOperators.StandardAuxiliaryFramesGoodRowGrids",
+   "parent": 562,
+   "gathers": 1306,
+   "text_gathers": 1305
+  },
+  {
+   "name": "UpperTheory.Top.every_character_of_green_v_win",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TopPlug",
+   "parent": 252,
+   "gathers": 14301,
+   "text_gathers": 12029
+  },
+  {
+   "name": "UpperTheory.Top.zero_free_all_of_green_v_win",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TopPlug",
+   "parent": 564,
+   "gathers": 14295,
+   "text_gathers": 12024
+  },
+  {
+   "name": "UpperTheory.Top.supplyChi",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.CharacterBoxes.SupplyChi",
+   "parent": 565,
+   "gathers": 1629,
+   "text_gathers": 1483
+  },
+  {
+   "name": "UpperTheory.Top.supplyOfAdm",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.CharacterBoxes.HostOfField",
+   "parent": 566,
+   "gathers": 1613,
+   "text_gathers": 1469
+  },
+  {
+   "name": "UpperTheory.T3.supplyOfAdmOf",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ShortNorms.supplyOfAdmOf",
+   "parent": 567,
+   "gathers": 1038,
+   "text_gathers": 878
+  },
+  {
+   "name": "UpperTheory.Top.shape_closed_link_n_of_green",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TopShape",
+   "parent": 565,
+   "gathers": 11590,
+   "text_gathers": 9473
+  },
+  {
+   "name": "GlobalTheory.Top.closed_family_admissible_twist_link_alt",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ClosedFamilyAdmissibleTwistLink",
+   "parent": 569,
+   "gathers": 1849,
+   "text_gathers": 1816
+  },
+  {
+   "name": "Formalism.L2.G.ServT.closed_servF_of_servT_of_dGamSize",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.GServT",
+   "parent": 570,
+   "gathers": 1775,
+   "text_gathers": 1744
+  },
+  {
+   "name": "Formalism.MainNotions.Pk.sum_over_primes_service",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.SmoothDesignExistence.SumOverPrimesHypotheses",
+   "parent": 571,
+   "gathers": 1771,
+   "text_gathers": 1740
+  },
+  {
+   "name": "Formalism.L2.G.linkG_concrete5",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.GroupLattices.LinkGConcreteNoKer",
+   "parent": 569,
+   "gathers": 6075,
+   "text_gathers": 5580
+  },
+  {
+   "name": "Formalism.L2.G.loc_proved",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.GroupLattices.AdmissibleFamilyNoKernel",
+   "parent": 573,
+   "gathers": 2163,
+   "text_gathers": 2103
+  },
+  {
+   "name": "Formalism.MainNotions.TraceSpectra.stmtE",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.AevalValuation",
+   "parent": 574,
+   "gathers": 2160,
+   "text_gathers": 2100
+  },
+  {
+   "name": "Formalism.MainNotions.PairMembershipBlocks.stmtE_of_chain",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients",
+   "parent": 575,
+   "gathers": 1943,
+   "text_gathers": 1879
+  },
+  {
+   "name": "Formalism.MainNotions.PairMembershipBlocks.stmtE_of_pl",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients",
+   "parent": 576,
+   "gathers": 1836,
+   "text_gathers": 1774
+  },
+  {
+   "name": "Formalism.MainNotions.PairMembershipBlocks.stmtE_of_last",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.PlaneCoefficients",
+   "parent": 577,
+   "gathers": 1726,
+   "text_gathers": 1659
+  },
+  {
+   "name": "Formalism.MainNotions.Proposition5Numerics.stmtE_of_mem",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.DiagonalSupport",
+   "parent": 578,
+   "gathers": 1318,
+   "text_gathers": 1310
+  },
+  {
+   "name": "Formalism.L2.G.linkG_concrete_noKer",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.GroupLattices.LinkGConcreteNoKer",
+   "parent": 573,
+   "gathers": 2049,
+   "text_gathers": 1986
+  },
+  {
+   "name": "Formalism.L2.G.link_of_local_closed",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.GroupLattices.AdmissibleFamilyNoKernel",
+   "parent": 580,
+   "gathers": 2005,
+   "text_gathers": 1943
+  },
+  {
+   "name": "Formalism.MainNotions.G.GramWindowAlt.theorem_A_closed_form_holds",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.FockGramWindow",
+   "parent": 252,
+   "gathers": 3062,
+   "text_gathers": 3022
+  },
+  {
+   "name": "Formalism.MainNotions.G.SymmetricFormBlocks.closed_of_minimal_vector",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ClosedOfMinimalVector",
+   "parent": 582,
+   "gathers": 2733,
+   "text_gathers": 2693
+  },
+  {
+   "name": "Formalism.MainNotions.G.SymmetricFormBlocks.closed_of_splitting_matrix",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ClosedOfSplittingMatrix",
+   "parent": 583,
+   "gathers": 2724,
+   "text_gathers": 2684
+  },
+  {
+   "name": "Formalism.MainNotions.G.SymmetricFormBlocks.closed_of_orthogonal_splitting",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ClosedOfOrthogonalSplitting",
+   "parent": 584,
+   "gathers": 2719,
+   "text_gathers": 2679
+  },
+  {
+   "name": "Formalism.MainNotions.G.SymmetricFormBlocks.integralityFromMetric_of_orthBasisLat",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.IntegralityFromMetricOfOrthBasisLat",
+   "parent": 585,
+   "gathers": 2711,
+   "text_gathers": 2671
+  },
+  {
+   "name": "Formalism.MainNotions.G.SymmetricFormBlocks.closed_of_orthogonal_basis",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ClosedOfOrthogonalBasis",
+   "parent": 586,
+   "gathers": 2673,
+   "text_gathers": 2633
+  },
+  {
+   "name": "Formalism.MainNotions.G.SymmetricFormBlocks.closed_of_orthogonal_lattice",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ClosedOfOrthogonalLattice",
+   "parent": 587,
+   "gathers": 2667,
+   "text_gathers": 2627
+  },
+  {
+   "name": "Formalism.MainNotions.G.SymmetricFormBlocks.closed_of_symmetric_dims",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SymmetryWindowOnAdmissible",
+   "parent": 588,
+   "gathers": 2649,
+   "text_gathers": 2609
+  },
+  {
+   "name": "Formalism.MainNotions.G.SymmetricFormBlocks.closed_of_symmetric_windows",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SymmetryWindowLevelDimOnAdmissible",
+   "parent": 589,
+   "gathers": 2542,
+   "text_gathers": 2512
+  },
+  {
+   "name": "Formalism.MainNotions.G.SymmetricFormBlocks.closed_of_coefficient_function",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ClosedOfCoefficientFunction",
+   "parent": 590,
+   "gathers": 2528,
+   "text_gathers": 2495
+  },
+  {
+   "name": "Formalism.MainNotions.G.SymmetricFormBlocks.closed_of_symmetric_finite",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.SymmetryFinitenessWindowLevelDimOnAdmissible",
+   "parent": 591,
+   "gathers": 2520,
+   "text_gathers": 2487
+  },
+  {
+   "name": "Formalism.MainNotions.G.SymmetricFormBlocks.integrality_from_metric_of_orthogonality_window",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.IntegralityFromMetricOfOrthogonalityWindow",
+   "parent": 592,
+   "gathers": 2510,
+   "text_gathers": 2477
+  },
+  {
+   "name": "Formalism.MainNotions.G.SymmetricFormBlocks.theorem_A_closed_of_nine_open_bounds",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestrictedBoundsWeakenFromNineToEight",
+   "parent": 593,
+   "gathers": 2495,
+   "text_gathers": 2464
+  },
+  {
+   "name": "Formalism.MainNotions.G.SymmetricFormBlocks.theorem_A_closed_of_eight_open_bounds",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestrictedBoundsWeakenFromEightToSeven",
+   "parent": 594,
+   "gathers": 2446,
+   "text_gathers": 2412
+  },
+  {
+   "name": "Formalism.MainNotions.G.SymmetricFormBlocks.closed_of_open_base_dims",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestrictedBoundsWeakenFromSevenToSix",
+   "parent": 595,
+   "gathers": 2428,
+   "text_gathers": 2397
+  },
+  {
+   "name": "Formalism.MainNotions.G.SymmetricFormBlocks.closed_of_open_dimensions",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.PositiveOfDimensionChange",
+   "parent": 596,
+   "gathers": 2414,
+   "text_gathers": 2383
+  },
+  {
+   "name": "Formalism.MainNotions.G.SymmetricFormBlocks.closed_of_open_positive",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.DirectionsOfPositivePart",
+   "parent": 597,
+   "gathers": 2405,
+   "text_gathers": 2374
+  },
+  {
+   "name": "Formalism.MainNotions.G.SymmetricFormBlocks.closed_of_open_directions",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ThresholdsMonoNormalized",
+   "parent": 598,
+   "gathers": 2362,
+   "text_gathers": 2333
+  },
+  {
+   "name": "Formalism.MainNotions.G.SymmetricFormBlocks.openE_of_open4",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.ThresholdsMonoNormalized",
+   "parent": 599,
+   "gathers": 2226,
+   "text_gathers": 2196
+  },
+  {
+   "name": "Formalism.MainNotions.G.SymmetricFormBlocks.restTM_closed",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.EpsilonBoundMConstant",
+   "parent": 600,
+   "gathers": 1815,
+   "text_gathers": 1786
+  },
+  {
+   "name": "Formalism.MainNotions.G.SymmetricFormBlocks.restTM_exists",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.MonomialFactorials.RestTMExists",
+   "parent": 601,
+   "gathers": 1743,
+   "text_gathers": 1722
+  },
+  {
+   "name": "Formalism.MainNotions.G.CountingStatementReduction.alternative_mean_value_theorem",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.CountingStatementReduction",
+   "parent": 602,
+   "gathers": 1709,
+   "text_gathers": 1695
+  },
+  {
+   "name": "Formalism.InvariantFactorPaths.MC.Top.theoremMV7",
+   "kind": "theorem",
+   "module": "Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.LatticeTheoremEps28Valid",
+   "parent": 603,
+   "gathers": 1708,
+   "text_gathers": 1694
+  },
+  {
+   "name": "Formalism.InvariantFactorPaths.MC.theoremMV7",
+   "kind": "theorem",
+   "module": "Formalism.ThetaLogCoordinates.PartnerMeanCoordinates.PartnerMeanProofs.GramHypothesisOfLogBound",
+   "parent": 604,
+   "gathers": 1699,
+   "text_gathers": 1685
+  },
+  {
+   "name": "Formalism.MainNotions.flipOneThree.Pf.theorem_I_closed_form_holds",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.HermitianTensor",
+   "parent": 252,
+   "gathers": 1343,
+   "text_gathers": 1323
+  },
+  {
+   "name": "Formalism.MainNotions.flipOneThree.Pf.theorem_I_of_pairing_GL",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GrowthBounds.HermitianTensor.ModelIdentificationHolds",
+   "parent": 606,
+   "gathers": 1280,
+   "text_gathers": 1263
+  },
+  {
+   "name": "Formalism.L2.G.local_model_results",
+   "kind": "theorem",
+   "module": "Formalism.LocalToGlobal.GroupLattices.AdmissibleFamilyNoKernel",
+   "parent": 581,
+   "gathers": 1014,
+   "text_gathers": 977
+  },
+  {
+   "name": "GlobalTheory.Top.link_gl",
+   "kind": "theorem",
+   "module": "Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.LinkGl",
+   "parent": 569,
+   "gathers": 1089,
+   "text_gathers": 4
+  },
+  {
+   "name": "Formalism.MainNotions.Wire.FamGLmin.link8",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GlobalSchurBounds.LogXLowerFamilyOfTheorems",
+   "parent": 609,
+   "gathers": 1084,
+   "text_gathers": 0
+  },
+  {
+   "name": "Formalism.MainNotions.Wire.FamGLmin.link7",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GlobalSchurBounds.LogXLowerFamilyOfTheorems",
+   "parent": 610,
+   "gathers": 1027,
+   "text_gathers": 0
+  },
+  {
+   "name": "Formalism.MainNotions.linkGLOBAL7_min",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GlobalSchurBounds.LinkMin",
+   "parent": 611,
+   "gathers": 1025,
+   "text_gathers": 0
+  },
+  {
+   "name": "Formalism.MainNotions.linkGLOBAL7_items",
+   "kind": "theorem",
+   "module": "Formalism.SharpRestriction.GlobalSchurBounds.LinkMin",
+   "parent": 612,
+   "gathers": 1021,
+   "text_gathers": 0
+  },
+  {
+   "name": "UpperTheory.LiteratureTheorems.theta_integrals_agree_and_local_matching_of_literature",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.EveryCharacterOfLiteratureOfVWin",
+   "parent": 128,
+   "gathers": 9298,
+   "text_gathers": 8459
+  },
+  {
+   "name": "UpperTheory.LiteratureTheorems.siegel_weil_std_of_literature",
+   "kind": "theorem",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.EveryCharacterOfLiteratureOfVWin",
+   "parent": 614,
+   "gathers": 1811,
+   "text_gathers": 1663
+  },
+  {
+   "name": "PositivityTheory.SiegelWeilFormula.Fin.siegelWeilStd",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilStandard.SiegelWeilStd",
+   "parent": 615,
+   "gathers": 1810,
+   "text_gathers": 1662
+  },
+  {
+   "name": "PositivityTheory.SiegelWeilFormula.Fin.siegelWeilStd_of_ct",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilStandard.SiegelWeilStdOfCt",
+   "parent": 616,
+   "gathers": 1292,
+   "text_gathers": 1180
+  },
+  {
+   "name": "PositivityTheory.SiegelWeilFormula.Fin.siegelWeilStd_pre",
+   "kind": "theorem",
+   "module": "Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilStandard.SiegelWeilStdPre",
+   "parent": 617,
+   "gathers": 1247,
+   "text_gathers": 1136
+  },
+  {
+   "name": "PositivityTheory.ThKR.theoremK_head2",
+   "kind": "theorem",
+   "module": "Development.WeilBound.ThetaLifts.Reductions.FiniteClosure.TheoremKOfMod",
+   "parent": 614,
+   "gathers": 7442,
+   "text_gathers": 6752
+  },
+  {
+   "name": "PositivityTheory.ThKR.theoremK_head2_of_mod",
+   "kind": "theorem",
+   "module": "Development.WeilBound.ThetaLifts.Reductions.FiniteClosure.TheoremKOfMod",
+   "parent": 619,
+   "gathers": 7273,
+   "text_gathers": 6584
+  },
+  {
+   "name": "PositivityTheory.Sph.Tr.closeSph",
+   "kind": "theorem",
+   "module": "Development.WeilBound.ThetaLifts.SphericalLattices.SphericalClosure.CloseSph",
+   "parent": 620,
+   "gathers": 5162,
+   "text_gathers": 4534
+  }
+ ]
+}
