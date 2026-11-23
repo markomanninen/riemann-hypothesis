@@ -5,9 +5,11 @@ main theorems are in [`Main.lean`](../../src/Main.lean). Of the project's 666,73
 lemmas, 51,364 are forwarding theorems. The whole proof of a forwarding theorem is one other
 declaration, its target. Another 14,838 are proved by `rfl` or by another fixed proof of that
 kind. Lean could compare 47,110 forwarding theorems with their targets, and 42,737 of them state
-exactly what the target states, so each of those is a second name for one theorem. Across all
-theorems, Lean confirms 50,502 that repeat the statement of an earlier theorem. This figure
-includes the forwarding theorems whose statement text equals the text of their target.
+exactly what the target states, so each of those is a second name for one theorem. Among
+the theorems whose statement text another theorem shares, Lean confirms 50,502 that repeat the
+statement of an earlier theorem. The two findings overlap. Counted once, 117,310 theorems state
+exactly what some other theorem states, and keeping one theorem of every such statement leaves
+62,905 repeats, 9.4 % of all theorems and lemmas.
 
 The scan in this folder reads the source text and finds the theorems that look redundant, the
 candidates. A second script then has Lean compare the compiled statements of the candidates.
@@ -162,6 +164,24 @@ theorem spMap_comp' {A B C : Type} [CommRing A] [CommRing B] [CommRing C]
     (f : A →+* B) (g : B →+* C) : spMap g ≫ spMap f = spMap (g.comp f)
 ```
 
+### Repeated statements, counted once
+
+The 42,737 forwarding theorems and the 50,502 copies cannot be added, because a forwarding
+theorem whose statement text equals the text of its target is counted in both. `check_same.py`
+therefore joins the two findings. It ties two theorems together when Lean found the same
+statement in them, as a forwarding theorem and its target or as two members of one group with
+the same text. Theorems tied through a chain of such findings state one thing.
+
+| | Theorems |
+|---|---:|
+| Theorems that state exactly what at least one other theorem states | 117,310 |
+| Different statements among them | 54,405 |
+| Repeats, when one theorem of every statement is kept | 62,905 |
+
+The last row is the first minus the second. The 62,905 repeats are 9.4 % of the 666,738
+theorems and lemmas. Private theorems are not in these figures, since the check does not find
+them.
+
 ### Statements that are true by their form
 
 Thirty-two theorems have a statement class, and the widest estimate takes 27 of them as used.
@@ -267,7 +287,7 @@ After an interruption, the option `--resume` continues from the groups already a
 | `summary.json` | the figures of the scan |
 | `check_same.py` | collects the candidates, runs Lean on them and counts the answers |
 | `CheckSame.lean` | compares the compiled statements |
-| `same-check.json` | the figures of Lean's check |
+| `same-check.json` | the figures of Lean's check, with the joined count under `theorems_joined` |
 | `data/findings.tsv.gz` | one row per theorem with a class, with its module, name, classes and forwarded declaration |
 | `data/forward_pairs.tsv.gz` | the forwarding theorems with their resolved targets |
 | `data/theorems_same_statement.tsv.gz` | the groups of theorems with the same statement text, one row per member |

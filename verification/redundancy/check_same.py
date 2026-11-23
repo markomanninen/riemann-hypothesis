@@ -41,7 +41,7 @@ def summarise(checked, text_same):
     groups = collections.OrderedDict()
     for line in checked:
         g, module, name, found, kind, number = line.rstrip("\n").split("\t")
-        groups.setdefault(g, []).append((found == "1", int(number)))
+        groups.setdefault(g, []).append((found == "1", int(number), (module, name)))
     out = {}
     pairs = {"same_text": collections.Counter(), "other_text": collections.Counter()}
     for g, members in groups.items():
@@ -71,7 +71,41 @@ def summarise(checked, text_same):
             c["groups_with_a_member_not_found"] += missing > 0
             c["copies_beyond_the_first_of_each_statement"] += sum(v - 1 for v in found.values())
         out[label] = dict(c)
+    out["theorems_joined"] = joined(groups)
     return out
+
+
+def joined(groups):
+    """Count the repeated statements once, over the forwarding pairs and the same-text groups together.
+
+    Two theorems are tied when Lean found the same statement in them, as a forwarding theorem and
+    its target or as two members of one same-text group. Theorems tied through a chain of such
+    findings state one thing. Keeping one theorem of every such set leaves the others as repeats.
+    """
+    parent = {}
+
+    def find(x):
+        while parent.setdefault(x, x) != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    for g, members in groups.items():
+        if g.startswith("F"):
+            if all(m[0] for m in members) and members[0][1] == members[1][1]:
+                parent[find(members[0][2])] = find(members[1][2])
+        elif g.startswith("T"):
+            first = {}
+            for found, number, who in members:
+                if found:
+                    if number in first:
+                        parent[find(who)] = find(first[number])
+                    else:
+                        first[number] = who
+    sizes = collections.Counter(find(x) for x in list(parent))
+    shared = [n for n in sizes.values() if n > 1]
+    return {"theorems_that_share_their_statement": sum(shared), "statements_they_share": len(shared),
+            "repeats_when_one_theorem_is_kept_per_statement": sum(shared) - len(shared)}
 
 
 def main():
