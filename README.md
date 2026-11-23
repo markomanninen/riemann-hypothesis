@@ -1,7 +1,7 @@
 # Proof explorer, built for the browser
 
 This branch holds a built copy of `verification/explorer` from the branch `main`, at commit
-`78aeec4565`, together with the data that its build scripts make from the Lean code after the
+`243563bfad`, together with the data that its build scripts make from the Lean code after the
 merge of upstream main on 2026-11-22. GitHub
 Pages serves it at <https://markomanninen.github.io/riemann-hypothesis/>.
 
