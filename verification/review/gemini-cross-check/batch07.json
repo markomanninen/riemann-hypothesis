@@ -1,0 +1,41 @@
+[
+  {
+    "a_errors": [
+      "In says, A writes that the assumed row statement says every linked bundle b at a good point satisfies BundlePointConditions and the concluded one says every such bundle satisfies MIstar2, whereas Lean wraps both in RowE and EvP with ParEv, κ.Pos, an existential x0, κ.Of K, and x0 ≤ K.s.x.",
+      "In says, A calls β satisfying β.Is (Bl.IsGoodE p.s) a good point, asserting a meaning for GoodE and BPt.Is whose bodies do not appear in the dossier.",
+      "In premises, A writes that RankMu D u holds for every word u, asserting a meaning for D.what₂.Word even though the definition of Word does not appear in the dossier.",
+      "In says, A calls the RowDiag premise a quantitative statement that the code calls RowDiag without stating its predicate argument fun D L C' => GlobalTheory.Core.Rk.IsScaleWithBoundedGamma D L C' ∧ ∀ u, GlobalTheory.Core.Rk.RankMu D u."
+    ],
+    "a_faithful": false,
+    "b_errors": [
+      "In premises, B writes that RecTExists says for all E, Ω, A, w and h there exists rc with IsRecT h rc, omitting the Lean hypotheses and types Field E, NumberField E, Field Ω, Algebra E Ω, IsAlgClosure E Ω, A of type ValuationSubring Ω, w of type HeightOneSpectrum (𝓞 E), and h of type IsPlaceOver A w without stating they are left out."
+    ],
+    "b_faithful": false,
+    "differ": "Reading A summarizes RowE in says without the EvP and ParEv conditions and reads unshown names such as GoodE and Word as good and word, whereas reading B unfolds RowE, EvP, IsScaleWithBoundedGamma, and RankMu accurately while omitting the hypotheses and types on E, Ω, A, w, and h inside RecTExists.",
+    "fixed_says": "The theorem assumes thirteen named statements, twelve in the namespace GlobalTheory.Published together with GlobalTheory.Hk3.HoweUnram, and RowDiag applied to the property of D, L, and C' that IsScaleWithBoundedGamma D L C' holds and RankMu D u holds for every u. Under these assumptions, for every proof hL of RecTExists and every p of type Parameters hL, if the type Bl.RXs q.x.what₂ is nonempty for every K of type Ctx and every q of type Bl.WPt p.s K, then one RowE statement implies another. Each RowE statement applies EvP, meaning ParEv of the condition that κ.Pos implies there exists a real x0 such that for every K of type Ctx with κ.Of K and x0 ≤ K.s.x, every β of type BPt K with β.Is (Bl.IsGoodE p.s), every real c, and every b of type BundleCondition β.D β.O c satisfying BundleLinkage p K β c b satisfy the target property. The assumed RowE statement uses the property that ignores its first four arguments and sends b to BundlePointConditions b, and the concluded RowE statement uses the property that ignores its first four arguments and sends b to (b.B.Q.Rl.toCx3 b.B.Q.F).MIstar2 applied to b.B.Q.F.eV (b.B.Q.Rl.toCx3 b.B.Q.F).zs and b.B.Q.sEE.",
+    "line": 21
+  },
+  {
+    "a_errors": [
+      "In says, A writes that the auxiliary data X, I, l, Z, L, hT, Gi, Gl, Kc, Yd, cX, ex are built over the datum I.rec7 l Z, whereas in Lean X is of type GlobalTheory.Mem.PreX B.toPre, I is of type TC B X, l is of type I.Laws, Z is of type TC.Later B (I.cols l) which together form I.rec7 l Z rather than depending on it, and Kc of type Formalism.MainNotions.G.Consts and cX of type ExtraC do not depend on I.rec7 l Z."
+    ],
+    "a_faithful": false,
+    "b_errors": [
+      "In says and premises, B writes that B, X, I, l, Z, L, hT, Gi, Gl, Kc, Yd, cX and ex are built over the record I.rec7 l Z or over I.rec7 l Z, whereas in Lean B of type GlobalTheory.Mem.Base, X of type GlobalTheory.Mem.PreX B.toPre, I of type TC B X, l of type I.Laws, Z of type TC.Later B (I.cols l), Kc of type Formalism.MainNotions.G.Consts, and cX of type ExtraC are not built over I.rec7 l Z, and I.rec7 l Z is constructed from I, l, and Z.",
+      "In premises, B writes that PuNZ (I.rec7 l Z) says D.s.Pu u of a transported element is not 0, asserting a meaning for D.s_Cu in (D.s_Cu u).symm ⟨φ.1, φ.2.1⟩ whose body is absent from the dossier, omitting the argument (D.s_Cu u).symm ⟨φ.1, φ.2.1⟩ without saying it is left out, and leaving D unspecified as I.rec7 l Z."
+    ],
+    "b_faithful": false,
+    "differ": "Reading A restricts the claim of being built over I.rec7 l Z to X through ex in says alone and leaves PuNZ and AllFamilyConditions unexpanded, whereas reading B includes B among the data built over I.rec7 l Z in both says and premises, notes the six fields of AllFamilyConditions and the two differing wrappers, and expands PuNZ by calling an expression involving the unshown D.s_Cu a transported element.",
+    "fixed_says": "The theorem assumes thirteen named statements, twelve in the namespace GlobalTheory.Published together with GlobalTheory.Hk3.HoweUnram. Under these assumptions, for every B of type GlobalTheory.Mem.Base, every X of type GlobalTheory.Mem.PreX B.toPre, every I of type TC B X, l of type I.Laws, and Z of type TC.Later B (I.cols l) that form I.rec7 l Z, every L, hT, Gi, Gl, Yd, and ex built over I.rec7 l Z together with parameters Kc of type Formalism.MainNotions.G.Consts and cX of type ExtraC, and every W of type RealPackAlt ex, the three conditions AllFamilyConditions W, 1 ≤ B.R.rS, and PuNZ (I.rec7 l Z) imply that (W.Q.Rl.toCx3 W.Q.F).MIstar2 holds at W.Q.F.eV (W.Q.Rl.toCx3 W.Q.F).zs and W.Q.sEE.",
+    "line": 22
+  },
+  {
+    "a_errors": [],
+    "a_faithful": true,
+    "b_errors": [],
+    "b_faithful": true,
+    "differ": "Reading A gives the polynomial domain and complex-function codomain of τ in Green and writes out Closed in notation, whereas reading B leaves out the domain and codomain of τ in Green while unfolding LinkN inside HypsAlt and noting that the folded wrapper concludes UpperTheory.EveryCharacter.",
+    "fixed_says": "",
+    "line": 23
+  }
+]

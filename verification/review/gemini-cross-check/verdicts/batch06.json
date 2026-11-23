@@ -1,0 +1,32 @@
+[
+ {
+  "line": 19,
+  "index": 0,
+  "verdict": "unfounded",
+  "evidence": "The dossier of line 19 shows the body of Lg1 under the heading GlobalTheory.Fc.Lg1 as \"∃ R : V4.Slot, LargeBaseCondition KP Q R ∧ r (sAnd Q' R)\" and the body of LinkedAt as \"Lg1 KPx (IsBuiltE p.s) (IsGoodE p.s) fun S => r S (BundleLinkage p)\". A's words \"there is a slot R with LargeBaseCondition KPx (IsBuiltE p.s) R\" and \"the slot sAnd (IsGoodE p.s) R\" unfold exactly that text."
+ },
+ {
+  "line": 19,
+  "index": 1,
+  "verdict": "imprecise",
+  "evidence": "A's notation writes \"eV(b.B.Q.F, zs)\" where the Lean text has \"b.B.Q.F.eV (b.B.Q.Rl.toCx3 b.B.Q.F).zs\", so zs stands without the object whose field it is. The object toCx3(b.B.Q.Rl, b.B.Q.F) is the first argument of MIstar2 in the same formula, and the statement read is still the Lean statement."
+ },
+ {
+  "line": 20,
+  "index": 0,
+  "verdict": "unfounded",
+  "evidence": "A's field says has \"for every proof hL of RecTExists and every parameter record p\" and A's notation has \"∀ p ∈ Parameters(hL)\", which is the Lean binder \"p : Parameters hL\". The words \"for the given p\" in the last premise point at that quantifier, which A gives in two other fields."
+ },
+ {
+  "line": 20,
+  "index": 1,
+  "verdict": "imprecise",
+  "evidence": "A's says has \"a condition EvP holds of the statement that for every point β over K\" and names no binder for K there, where the Lean text of RowE has \"EvP fun κ K => ∀ β : BPt K, β.Is Q → …\". A's notation gives the binders as \"EvP(κ, K ↦ ∀ β ∈ BPt(K), …)\" and unfolds EvP, so only the sentence in says is inexact."
+ },
+ {
+  "line": 20,
+  "index": 2,
+  "verdict": "unfounded",
+  "evidence": "A's conclusion field defines MI as \"the property of a bundle b that the code writes as (b.B.Q.Rl.toCx3 b.B.Q.F).MIstar2 (b.B.Q.F.eV (b.B.Q.Rl.toCx3 b.B.Q.F).zs) b.B.Q.sEE\", which is the Lean text word for word. The arguments that says and notation leave out are therefore given in the reading."
+ }
+]

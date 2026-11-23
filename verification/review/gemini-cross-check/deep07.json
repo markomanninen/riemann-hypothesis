@@ -1,0 +1,48 @@
+{
+  "errors": [
+    {
+      "field": "says",
+      "right": "Six of them lie in the namespace GlobalTheory.Published and are named GlobalArtinReciprocity, DiscreteSeriesCover, HarishChandraModules, CuspRapidDecay, CasselmanWallach and DiscreteSeriesClassification, one is HeckeCharacterZeroLocus.SiegelWeilU.SiegelWeilUnitaryConvergent, and two are the Closed FamHyp propositions SurjectiveOntoX and LambdaLowerBound₂.",
+      "why": "In dossier.md, SiegelWeilUnitaryConvergent belongs to HeckeCharacterZeroLocus.SiegelWeilU rather than GlobalTheory.Published, and the definitions of SurjectiveOntoX and LambdaLowerBound₂ use Closed FamHyp and EventuallyAtPoints with unopened names ON and L6 rather than showing eventual bounds or published status.",
+      "wrong": "Seven of them are statements of published results that the code names GlobalArtinReciprocity, SiegelWeilUnitaryConvergent, DiscreteSeriesCover, HarishChandraModules, CuspRapidDecay, CasselmanWallach and DiscreteSeriesClassification, and two are the eventual bounds SurjectiveOntoX and LambdaLowerBound₂."
+    },
+    {
+      "field": "premises",
+      "right": "GlobalArtinReciprocity says that for every number field E and every algebraic closure Ω of E there is a group homomorphism art from Ideles E to Gab E Ω that satisfies IsGlobalArtin.",
+      "why": "The definition GlobalArtinReciprocity in dossier.md names Ideles E without any file showing a body for Ideles, so the reading cannot assert that it means the ideles of E outside the suggests field.",
+      "wrong": "GlobalArtinReciprocity, which says that for every number field E and every algebraic closure Ω of E there is a group homomorphism art from the ideles of E to Gab E Ω that satisfies IsGlobalArtin"
+    },
+    {
+      "field": "premises",
+      "right": "DiscreteSeriesCover says that for all natural numbers p and q with 1 ≤ p + q and every T of type GrpData p q there is a map D from functions lam of type Ix p q → ℚ satisfying IsParam lam to DSRep T such that HasTypes (D lam) lam.1 holds for every such lam and every R of type DSRep T satisfies UnitEquiv R (D lam) for some lam.",
+      "why": "In dossier.md, DiscreteSeriesCover quantifies over natural numbers p and q, takes T of type GrpData p q and functions lam of type Ix p q → ℚ satisfying IsParam lam, and leaves GrpData, DSRep, Ix and IsParam unopened without showing that they mean group data, representations or parameters.",
+      "wrong": "DiscreteSeriesCover, which says that for all p and q with p+q ≥ 1 and all group data T there is an assignment of a representation D lam of type DSRep T to each rational parameter lam with IsParam lam, so that HasTypes (D lam) lam.1 holds for every lam and every R of type DSRep T satisfies UnitEquiv R (D lam) for some lam"
+    },
+    {
+      "field": "premises",
+      "right": "It asks for a complex linear map T from H to E that agrees with T₀ on all vectors satisfying IsKFin ε σ, satisfies IsSmoothGMap ε σ p π T, agrees on all w satisfying SmoothVec (lieSet ε) σ w with any complex linear map T' from H to E meeting those two conditions, maps the set of w satisfying SmoothVec (lieSet ε) σ w to a closed image, and, whenever there exists v satisfying IsKFin ε σ v with T₀ v ≠ 0, gives for every list S of lists of matrices in lieSet ε a continuous seminorm q on E satisfying sobNorm σ S w ≤ q (T w) for all w satisfying SmoothVec (lieSet ε) σ w.",
+      "why": "In CasselmanWallach in dossier.md, the bound is conditioned on the existence of v with IsKFin ε σ v and T₀ v ≠ 0 rather than merely T₀ being nonzero, T₀ already maps from H to E, and the names IsKFin, IsSmoothGMap, SmoothVec, lieSet and sobNorm have no visible bodies in any of the files.",
+      "wrong": "It asks for an extension T that agrees with T₀ on K-finite vectors, is smooth, is unique among such maps on smooth vectors, has closed image of the smooth vectors, and, when T₀ is nonzero, bounds the Sobolev norms by a continuous seminorm of T w"
+    },
+    {
+      "field": "premises",
+      "right": "DiscreteSeriesClassification says that for every natural number n there exist a family of complex inner product spaces H ε lam and maps π ε lam from n by n complex matrices to bounded linear operators on H ε lam such that, for every ε of type Fin n → Bool and every strictly decreasing lam of type Fin n → ℝ with lam a − (n − 1) / 2 an integer for all a, the space H ε lam is complete and nontrivial, π ε lam satisfies IsURepOn (UJset ε), IsIrredOn (UJset ε), IsSqIntOn ε and HasInfChar ε at the complex coercion of lam, there is a unique submodule S satisfying IsKTypeOf ε (π ε lam) (lam + rhoN ε − rhoC ε) S, and every μ of type Fin n → ℝ and submodule S of H ε lam satisfying IsKTypeOf ε (π ε lam) μ S has μ equal to (lam + rhoN ε − rhoC ε) plus ∑ a, ∑ b, (c a b as a real scalar) • root a b for some c of type Fin n → Fin n → ℕ with c a b ≠ 0 implying a < b, and conversely for every ε of type Fin n → Bool and every complete nontrivial complex inner product space H' with σ satisfying IsURepOn (UJset ε), IsIrredOn (UJset ε) and IsSqIntOn ε there exist a permutation s of Fin n satisfying s a < s b whenever a < b and ε (s a) = ε (s b), a strictly decreasing mu of type Fin n → ℝ with mu a − (n − 1) / 2 an integer for all a, and a complex linear isometry equivalence T from H' onto H (ε ∘ s) mu satisfying T (σ (g.submatrix s.symm s.symm) v) = π (ε ∘ s) mu g (T v) for all g in UJset (ε ∘ s) and all v.",
+      "why": "In DiscreteSeriesClassification in dossier.md, the space family H ε lam is quantified alongside π ε lam, a fourth conjunct constrains every IsKTypeOf parameter μ, and the converse places completeness and nontriviality on H' while requiring mu to satisfy StrictAnti and the integrality condition, s to preserve order on equal fibers of ε ∘ s, and T to satisfy T (σ (g.submatrix s.symm s.symm) v) = π (ε ∘ s) mu g (T v) on UJset (ε ∘ s).",
+      "wrong": "DiscreteSeriesClassification, which says that for every n there is a family π ε lam on complete nontrivial spaces satisfying IsURepOn, IsIrredOn, IsSqIntOn and HasInfChar, indexed by strictly decreasing lam with lam a − (n−1)/2 an integer, with a unique submodule satisfying IsKTypeOf for lam + rhoN ε − rhoC ε, and that every complete nontrivial σ satisfying IsURepOn, IsIrredOn and IsSqIntOn is carried by an intertwining linear isometry onto some H (ε ∘ s) mu after a permutation s"
+    },
+    {
+      "field": "premises",
+      "right": "SurjectiveOntoX says that Closed FamHyp holds for the property sending Fm and CH to the statement that, whenever DIVinN Fm holds, there exists a real C0 ≥ 0 and a real x0 such that for every x > Fm.x1 with x0 ≤ x, every i of type Fm.Ix x and every point p satisfying p.PointConditions' and More p, the condition (p.S false).ON (p.N C CH) holds for every C ≥ C0.",
+      "why": "By SurjectiveOntoX and EventuallyAtPoints in dossier.md, the inner condition holds only at points p satisfying p.PointConditions' for x > Fm.x1 with x0 ≤ x rather than at every point p, and the property takes Fm and CH as arguments.",
+      "wrong": "SurjectiveOntoX, which says that Closed FamHyp holds for the property that, whenever DIVinN Fm holds, there is a C0 ≥ 0 such that eventually, at every point p satisfying More p, and for every C ≥ C0, the condition (p.S false).ON (p.N C CH) holds"
+    },
+    {
+      "field": "premises",
+      "right": "LambdaLowerBound₂ says that Closed FamHyp holds for the property sending Fm and CH to the statement that there exists a real x0 such that for every x > Fm.x1 with x0 ≤ x, every i of type Fm.Ix x and every point p satisfying p.PointConditions', the condition (p.S true).L6 (p.N C CH) holds for every C.",
+      "why": "By LambdaLowerBound₂ and EventuallyAtPoints in dossier.md, the condition (p.S true).L6 (p.N C CH) is asserted only at points p satisfying p.PointConditions' for x > Fm.x1 with x0 ≤ x rather than at every point p, and the property takes Fm and CH as arguments.",
+      "wrong": "LambdaLowerBound₂, which says that Closed FamHyp holds for the property that eventually, at every point p and for every C, the condition (p.S true).L6 (p.N C CH) holds"
+    }
+  ],
+  "faithful": false,
+  "line": 7
+}

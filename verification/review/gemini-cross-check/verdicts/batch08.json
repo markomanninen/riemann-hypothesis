@@ -1,0 +1,116 @@
+[
+ {
+  "line": 24,
+  "index": 0,
+  "verdict": "naming",
+  "evidence": "Reading A writes \"to the spectrum of a field k\" and \"projective over the complex numbers\" for the Lean text \"g : X ⟶ Sp k\" and \"p : X ⟶ Sp ℂ\", and the dossier of line 24 has no entry for Sp. The word is the standard reading of the name, and the dossier of line 26 shows Sp as \"Spec (CommRingCat.of R)\"."
+ },
+ {
+  "line": 24,
+  "index": 1,
+  "verdict": "naming",
+  "evidence": "Reading A writes \"a function φ with IsPolFan\" for the Lean text \"φ : InvFun ℤ\" and \"φ : InvFun (𝓞 E)\", and the dossier has no entry for InvFun. The word function is a guess from the letters Fun in the name."
+ },
+ {
+  "line": 24,
+  "index": 2,
+  "verdict": "naming",
+  "evidence": "Reading A writes \"Snc of a boundary ideal\" and \"HasChartOf at boundary points\" for the Lean text \"FinalTheorems.Snc (genBdIdeal Y)\" and \"∀ x ∈ genBd Y\", and the dossier has no entry for genBdIdeal or genBd. The word boundary reads the letters Bd of the names, and the dossier does show that Snc takes \"D : Y.IdealSheafData\"."
+ },
+ {
+  "line": 24,
+  "index": 3,
+  "verdict": "naming",
+  "evidence": "Reading A writes \"the integral of logNorm A s on P\" for the Lean text \"ptsIntegral P …\", after first calling the terms \"quantities called ptsIntegral\". The dossier shows ptsIntegral only as a choice that hands over to ptsIntegralAt, which it does not show, so the word integral is a reading of the name."
+ },
+ {
+  "line": 24,
+  "index": 3,
+  "verdict": "omission",
+  "evidence": "Reading A writes \"times the integral of log B.h on W\" where the Lean text has \"ptsIntegral W (pot L) (fun z => Real.log (B.h z))\". A names the potentials log (L j).h in the two other terms and leaves them out of this one without saying so."
+ },
+ {
+  "line": 24,
+  "index": 4,
+  "verdict": "imprecise",
+  "evidence": "Reading A writes \"a closed set E that satisfies SncAt at each of its points\" where the Lean text has \"∀ x ∈ E, FinalTheorems.SncAt (Scheme.IdealSheafData.vanishingIdeal E) x\". The condition is on the vanishing ideal of E at each point of E, which A shortens to a condition on E, and the dossier does not show SncAt."
+ },
+ {
+  "line": 24,
+  "index": 5,
+  "verdict": "unfounded",
+  "evidence": "The field conclusion writes \"L3 holds at p.N C CH\", and the fields says and notation of the same reading give the full Lean form with \"a condition called L3, attached to p.S false, holds of p.N C CH\" and \"(Fm, CH) ↦ ∃ C0\". The detail that Gemini misses is stated elsewhere in reading A."
+ },
+ {
+  "line": 24,
+  "index": 6,
+  "verdict": "imprecise",
+  "evidence": "Reading A writes in says that the fifteen premises are \"each written in the code as a statement of a result from the literature\". The Lean text shows HSUse only as \"ArithKleiman.Statement ∧ G7.Statement ∧ ArithmeticVolumeNef.Statement\" in a module named SmallGeneratedCountUpperOfUse and MoriwakiBigStatement in a module named MoriwakiSt, so for these two the dossier does not carry that claim, while the implication that A reads is the Lean implication."
+ },
+ {
+  "line": 25,
+  "index": 0,
+  "verdict": "unfounded",
+  "evidence": "Reading A writes \"a map s satisfying IsBlowupSeq with smooth source\" for the Lean text \"IsBlowupSeq s ∧ Smooth (s ≫ g)\", and smoothness of the composite from X' to Sp k is smoothness of the source of s over k. A's \"reduced separated quasi-compact schemes locally of finite type over a field of characteristic zero\" restates \"[LocallyOfFiniteType g], QuasiCompact g → IsSeparated g → IsReduced X\" in the usual words for a scheme over a field."
+ },
+ {
+  "line": 25,
+  "index": 1,
+  "verdict": "imprecise",
+  "evidence": "Reading A writes \"its support satisfies Snc\" where the Lean text has \"FinalTheorems.Snc (Scheme.IdealSheafData.vanishingIdeal (I.comap s).support)\". Snc is stated of the vanishing ideal of the support of the pulled-back ideal sheaf, which A shortens to the support."
+ },
+ {
+  "line": 25,
+  "index": 1,
+  "verdict": "omission",
+  "evidence": "Reading A writes only \"asserts a sequence satisfying IsSncBlowupSeq after which the pulled-back ideal sheaf satisfies EffCartier\". The Lean text also has the hypotheses \"SmoothOfRelativeDimension d g → QuasiCompact g → IsSeparated g\", the two conditions on I and E and the conjunct \"Smooth (s ≫ g)\", and A does not say that it leaves them out."
+ },
+ {
+  "line": 25,
+  "index": 2,
+  "verdict": "naming",
+  "evidence": "Reading A writes \"a multiplicity-weighted sum of ptsIntegral terms\" for the Lean text \"(multAt (P ⊔ Ideal.span {s}) W : ℝ) * ptsIntegral W (pot L) …\", and the dossier of line 25 has no entry for multAt. The word multiplicity is the reading of the name."
+ },
+ {
+  "line": 25,
+  "index": 2,
+  "verdict": "omission",
+  "evidence": "Reading A gives PoincareLelongInv as \"an identity expressing a ptsIntegral of logNorm A s as a multiplicity-weighted sum … minus another ptsIntegral term\". The Lean text has nine hypotheses from \"IsArithVar P (n + 2)\" to \"IsSectionOn P A s\" and the arguments \"Fin.cons (fun z => Real.log (B.h z)) (pot L)\", and A does not say that it leaves them out."
+ },
+ {
+  "line": 25,
+  "index": 3,
+  "verdict": "omission",
+  "evidence": "Reading A writes \"for a PDivGroup G over a p-adically complete ring of integers O of an algebraically closed valued field of characteristic zero and a form B matching the map called pairing\". The Lean text also has \"[Fact p.Prime]\", \"v (p : C) < 1\" and the sequence with \"ζ 0 = 1\", \"ζ (n + 1) ^ p = ζ n\" and \"ζ 1 ≠ 1\", and A does not say that it leaves them out."
+ },
+ {
+  "line": 25,
+  "index": 4,
+  "verdict": "omission",
+  "evidence": "Reading A writes that \"D! times the rational dimension of the span of chartLatNm y a τ divided by τ^D tends to genDeg (mCoordIdeal y) D a\" \"under IsArithVar, Birational and NefOnGenericDeg\". The Lean text also has \"[CharZero Ω]\" and the first conjunct \"∀ τ, FiniteDimensional ℚ (Submodule.span ℚ (chartLatNm y a τ : Set Ω))\", and A does not say that it leaves them out."
+ },
+ {
+  "line": 26,
+  "index": 0,
+  "verdict": "omission",
+  "evidence": "Reading A writes that \"D! times the rational dimension of the span of chartLatNm y a τ divided by τ^D tends to genDeg (mCoordIdeal y) D a\" \"under IsArithVar, Birational and NefOnGenericDeg\". The Lean text also has \"[CharZero Ω]\" and the first conjunct \"∀ τ, FiniteDimensional ℚ (Submodule.span ℚ (chartLatNm y a τ : Set Ω))\", and A does not say that it leaves them out."
+ },
+ {
+  "line": 26,
+  "index": 1,
+  "verdict": "omission",
+  "evidence": "Reading A ends the second part with \"for any form B matching the map called pairing\" and does state \"v(p) < 1\". The Lean text also has \"[Fact p.Prime]\", the sequence with \"ζ 0 = 1\", \"ζ (n + 1) ^ p = ζ n\" and \"ζ 1 ≠ 1\", and the condition \"pairing G O x χ = a • muTate O ζ h0 h ∧ B (1 ⊗ₜ x) (1 ⊗ₜ χ) = algebraMap ℤ_[p] O a\", which A folds into the word matching without saying so."
+ },
+ {
+  "line": 26,
+  "index": 2,
+  "verdict": "omission",
+  "evidence": "Reading A writes \"any family of complex functions h(i) on complex points that is holomorphic along every map satisfying IsHolTo\". The Lean text takes maps \"x : Sp ℂ ⟶ X\" with \"x ≫ s = 𝟙 _\" and has the conditions \"IsOpen B\", \"⊤ ≤ y b ⁻¹ᵁ L.U i\" and \"⊤ ≤ x ⁻¹ᵁ (L.U i ⊓ L.U j)\", which A leaves out or covers only with the words \"complex points\" and \"at each point of U(i)\"."
+ },
+ {
+  "line": 26,
+  "index": 3,
+  "verdict": "omission",
+  "evidence": "Reading A writes \"a closed immersion j of X' into the fibre product of PSpace K M and PSpace K r, and a map f from X' to X compatible with i and j, such that IsResWithCoords holds\". The Lean text has \"pullback (PSpace.str K M) (PSpace.str K r)\", the equation \"f ≫ i = j ≫ pullback.fst _ _\" and the arguments \"IsResWithCoords (i ≫ PSpace.str K M) U D f\", and A leaves the equation and the arguments unstated, while the dossier has no entry for PSpace."
+ }
+]

@@ -1,0 +1,62 @@
+[
+ {
+  "line": 9,
+  "index": 0,
+  "verdict": "naming",
+  "evidence": "Reading A writes \"for the fields, involution, rank n and matrix J of X\" where the Lean text has \"X.B.I.F X.B.I.E X.B.I.cm.sig X.B.I.n X.B.I.J\". The dossier shows only \"cm : Formalism.BasicNotions.CMData F E\" and no body of CMData, so involution is a reading of the name sig of a CM datum."
+ },
+ {
+  "line": 9,
+  "index": 1,
+  "verdict": "omission",
+  "evidence": "Reading A writes \"under listed hypotheses on an instance I, a Haar measure, a fundamental domain, a right regular action R, a locally constant function e supported in I.Kset, and unitary irreducible families σ with unit vectors w\" and then names \"the composite operator Re∘T\". The Lean text also has \"I.IsRConvF μf fund R e Re\", \"IsFdeg (Formalism.REAL.muG (I.ε v)) (σ v) (dv v)\", the Integrable condition on phLoc and \"IsOpInt (muInf I) (fun g => R (g, 1)) (phInf I σ w dv) T\", and A never says what Re and T are or that hypotheses are left out."
+ },
+ {
+  "line": 9,
+  "index": 2,
+  "verdict": "naming",
+  "evidence": "Reading A writes \"a fundamental domain\" and \"a right regular action R\" for the Lean text \"I.IsFundDom (I.muA μf) fund\" and \"I.IsRightReg μf fund R\", and the dossier shows no body for IsFundDom or IsRightReg. Both words are the plain reading of the names."
+ },
+ {
+  "line": 9,
+  "index": 2,
+  "verdict": "unfounded",
+  "evidence": "Reading A writes \"unitary irreducible families σ\" for IsURepOn, and the dossier does show the body of IsURepOn with the clause \"∀ g ∈ G, ∀ v : H, ‖σ g v‖ = ‖v‖\". Norm preservation is in the shown text, so the word unitary rests on the dossier even though IsCRepOn is not shown."
+ },
+ {
+  "line": 9,
+  "index": 3,
+  "verdict": "omission",
+  "evidence": "Reading A writes \"in the Closed sense on 𝒞 and eventually in x, the hypotheses Hyp with constants C', Cl, Fm.CYL + 1, 1/4, 3, 1/2, Fm.CTu, 3 and aF(Fm.cOut), together with ConcTie and AbsConv, imply both RowBig and RowNotScalar\". The Lean text has \"∀ hc : 𝒞 Fm, OwnEv Fm fun C' Cl x i => ∀ (hx : Fm.x1 < x) (h0 : (sel Fm hc).1 ≤ x) (u u' : (Fm.D x i).what₂.Word)\" and OwnEv fills C' and Cl with \"sC' Fm\" and \"sCl Fm\", and A does not say that these binders and the object \"(sel Fm hc).2 x hx h0 i\" are left out."
+ },
+ {
+  "line": 9,
+  "index": 4,
+  "verdict": "imprecise",
+  "evidence": "Reading A writes \"every family Fm in 𝒞, every x with Fm.x1 < x and (sel Fm hc).1 ≤ x\" and \"the two local objects D.s.atP p and locC D p\", so hc and D appear in the premise without a binder. The Lean text has \"(Fm : FamP eps) (hc : 𝒞 Fm)\" and applies LocTied to \"Fm.D x i\", and A's field notation binds hc with \"∀ hc ∈ 𝒞 Fm\", so the statement read is the Lean statement."
+ },
+ {
+  "line": 9,
+  "index": 5,
+  "verdict": "unfounded",
+  "evidence": "The field says of A gives the bound in short form, and the field notation of A gives every item the finding misses, in the words \"hyp(Fm.D x i, Fm.L x i, 3, sC' Fm, sCl Fm, Fm.CYL+1, 1/4, 3, 1/2, Fm.CTu) ⇒ ∀ (Fm.x1 < x) (s.1 ≤ x) ∀ u ≠ u'\" and \"(Fm.L x i).sc.b⁶\". The words \"a standing hypothesis\" follow the shown body of hyp, \"StandingNumericalData D C0 ∧ StandingHypotheses D large₂ C' Cl Cg cb Cu cT CT ∧ 1 ≤ C0\", which A names without unfolding."
+ },
+ {
+  "line": 11,
+  "index": 0,
+  "verdict": "imprecise",
+  "evidence": "Reading A writes \"take values in the image of the embedding Bs.v0\", and the Lean text of RowTest has \"∈ Set.range Bs.v0.embedding\". The embedding is a field of Bs.v0 and not Bs.v0 itself, and the dossier shows no body of DefBase, but the set meant is the same."
+ },
+ {
+  "line": 11,
+  "index": 1,
+  "verdict": "naming",
+  "evidence": "Reading A writes \"any property of a context, a base B, a frame of B and a twisting datum of B\" for the Lean text \"∀ (_ : Ctx) (B : Base), Fr B.toPre → TwDat B → Prop\". The dossier shows no body of Ctx or TwDat and shows Fr only as \"Chr.HFrame B.host (fun j g => (B.hc g).e j)\", so the words are readings of the names."
+ },
+ {
+  "line": 11,
+  "index": 2,
+  "verdict": "unfounded",
+  "evidence": "Reading A writes \"for every number field E, algebraic closure Ω, valuation subring A of Ω\", and the Lean text has \"[Algebra E Ω] [IsAlgClosure E Ω]\". Calling Ω an algebraic closure of E states exactly these two instances in words."
+ }
+]

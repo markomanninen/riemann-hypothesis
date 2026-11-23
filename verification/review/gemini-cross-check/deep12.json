@@ -1,0 +1,54 @@
+{
+  "errors": [
+    {
+      "field": "says",
+      "right": "Then for every proof hL of the proposition RecTExists for which LocalLanglandsHypothesis hL holds, and for every real number cDep, the theorem looks at the single parameter record p built by parametersOfExtension from extensionWithOrigin hL cDep of type NormChoiceExtension hL, the constant PUnit-valued family SExt.none of type SExt and the predicate geoCl anyGeometry of type GeoP.",
+      "why": "The Lean definitions of extensionWithOrigin, SExt.none, anyGeometry and geoCl in dossier.md do not show SExt to mean an extension, NormChoiceExtension to mean a mathematical extension, or GeoP to mean a geometry, because SExt.none returns PUnit and anyGeometry and geoCl produce predicates on triples.",
+      "wrong": "Then for every proof hL of the proposition RecTExists for which LocalLanglandsHypothesis hL holds, and for every real number cDep, the theorem looks at the single parameter record p built by parametersOfExtension from the extension extensionWithOrigin hL cDep, the trivial extension SExt.none and the geometry geoCl anyGeometry."
+    },
+    {
+      "field": "says",
+      "right": "The first is the condition MemberE on p.s of the unopened type Slots.",
+      "why": "The Lean definition of MemberE in dossier.md takes an argument of type Slots whose body none of the files shows, so calling p.s slot data asserts a mathematical meaning for Slots outside suggests.",
+      "wrong": "The first is the condition MemberE on the slot data p.s."
+    },
+    {
+      "field": "says",
+      "right": "The second is ExBL, which says that some slot R exists such that the condition LargeBaseCondition KPx (IsBuiltE p.s) R holds and the condition ExB holds for the slot sAnd (IsGoodE p.s) R with the linkage BundleLinkage p, so that, eventually in a sense the code calls EvP applied to a predicate on an ignored parameter and a context K, every β of type BPt K satisfying β.Is for that slot and every real c have a BundleCondition record b that equals in the dependent triple (β.D, β.O, b) = (q.w.D q.Z, q.O, b') a BundleCondition record b' for which BundleWitness q b' is nonempty, for some q of the unopened type WPt p.s K.",
+      "why": "The Lean definitions of ExB, BundleLinkage and linkOf in dossier.md use the unopened names BPt, BPt.Is and WPt, so calling q a weighted point asserts the mathematical meaning of WPt outside suggests.",
+      "wrong": "The second is ExBL, which says that some slot R exists such that the condition LargeBaseCondition KPx (IsBuiltE p.s) R holds and the condition ExB holds for the slot \"IsGoodE p.s and R\" with the linkage BundleLinkage p, so that, eventually in a sense the code calls EvP, every point in that slot and every real c have a BundleCondition record b that is linked through a BundleWitness to a weighted point of p.s."
+    },
+    {
+      "field": "premises",
+      "right": "HypAAlt holds, which is a record of twenty-one fields a1 to a23 with only a4 and a15 absent, namely eighteen named propositions such as RayField, CasselmanWallach and GlobalArtinReciprocity and three explicit quantified statements a19, a20 and a21 involving unopened names such as IsHCParam, IsDS, UJset, GrpData, Ix, IsParam, DSRep and HasParam.",
+      "why": "The Lean structure HypAAlt in dossier.md uses IsHCParam, IsDS, UJset, GrpData, Ix, IsParam, DSRep and HasParam in a19, a20 and a21 without any body shown in the files, so calling those statements about discrete series representations asserts the meaning of unopened names outside suggests.",
+      "wrong": "HypAAlt holds, which is a record of twenty-one fields a1 to a23 with only a4 and a15 absent, namely eighteen named propositions such as RayField, CasselmanWallach and GlobalArtinReciprocity and three explicit statements a19, a20 and a21 about discrete series representations"
+    },
+    {
+      "field": "premises",
+      "right": "MultiplicityCoverHypotheses holds, which is a record of DiscreteSeriesCover, PublishedThetaConditionTheorems, HeckeLPartialContinuation and two StepW conditions multL and multW that conclude GlobalTheory.CuspMult.MultEq applied to z.R.toRealDat, with multW also concluding Formalism.IndefR.Rat.RowTest applied to z.R.toCx3 z.F.",
+      "why": "The Lean structure MultiplicityCoverHypotheses in dossier.md applies MultEq to z.R.toRealDat without opening toRealDat or RealDat anywhere in the files, so calling it real data asserts the meaning of an unopened name outside suggests.",
+      "wrong": "MultiplicityCoverHypotheses holds, which is a record of DiscreteSeriesCover, PublishedThetaConditionTheorems, HeckeLPartialContinuation and two step conditions multL and multW that give the condition MultEq for certain real data, with multW also giving RowTest"
+    },
+    {
+      "field": "premises",
+      "right": "ExistsUnlocalizedSaturatedState holds, which says through Step applied to KPx and the trivially true predicate that for every K, B, f and T and every w of the unopened type ColW B f T satisfying Start (Pinned, Supp and Coh) there exist a record P of type Pre2 K w and a record x of type St P with SatU P, with the type x.o.N.nd.Loc empty and with x.o.η j v equal to 0 for all j and v.",
+      "why": "The Lean definitions of ExistsUnlocalizedSaturatedState, StepW and St in dossier.md pass KPx, a trivially true predicate and K, B, f and T to Step without opening ColW or defining St P as a state, so the reading omits those parameters and asserts meanings for ColW and St outside suggests.",
+      "wrong": "ExistsUnlocalizedSaturatedState holds, which says through the condition Step that for columns w satisfying Start (Pinned, Supp and Coh) there exist a record P of type Pre2 and a state x of type St P with SatU P, with the type x.o.N.nd.Loc empty and with x.o.η j v equal to 0 for all j and v"
+    },
+    {
+      "field": "premises",
+      "right": "MultiplicityCondition holds for the parameter record p = parametersOfExtension (extensionWithOrigin hL cDep) SExt.none (geoCl anyGeometry), which says that, eventually in the sense of EvP applied to a predicate on an ignored argument and K, GlobalTheory.CuspMult.MultEq holds for q.x.what₂.r.z.R.toRealDat for every q of the unopened type WPt p.s K.",
+      "why": "The Lean definition of MultiplicityCondition in dossier.md applies EvP to a function of an ignored argument and K and quantifies q over WPt p.s K without opening WPt or toRealDat anywhere in the files, so calling them weighted point and real data asserts meanings outside suggests.",
+      "wrong": "MultiplicityCondition holds for the parameter record p = parametersOfExtension (extensionWithOrigin hL cDep) SExt.none (geoCl anyGeometry), which says that, eventually in the sense of EvP, MultEq holds for the real data of every weighted point q of p.s"
+    },
+    {
+      "field": "notation",
+      "right": "EvP(fun _ K ↦ ∀ β ∈ BPt(K), β.Is(sAnd(IsGoodE(p.s), R)) ⇒ ∀ c ∈ ℝ, ∃ b ∈ BundleCondition(β.D, β.O, c), ∃ q ∈ WPt(p.s, K), ∃ b' ∈ BundleCondition(q.w.D q.Z, q.O, c), Nonempty(BundleWitness q b') ∧ (β.D, β.O, b) = (q.w.D q.Z, q.O, b'))",
+      "why": "The Lean definition of ExB in dossier.md passes a function of an ignored parameter and K to EvP rather than a universally quantified statement over K, and applies β.Is to sAnd (IsGoodE p.s) R rather than testing set membership.",
+      "wrong": "EvP(∀ K, ∀ β ∈ BPt(K), β ∈ (IsGoodE(p.s) ∧ R) ⇒ ∀ c ∈ ℝ, ∃ b ∈ BundleCondition(β.D, β.O, c), ∃ q ∈ WPt(p.s,K), ∃ b', Nonempty(BundleWitness q b') ∧ (β.D, β.O, b) = (q.w.D q.Z, q.O, b'))"
+    }
+  ],
+  "faithful": false,
+  "line": 12
+}

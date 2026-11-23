@@ -1,0 +1,12 @@
+{
+  "errors": [
+    {
+      "field": "says",
+      "right": "The hypothesis bundle is the joint assertion of a long list of named statements, most of them labelled in the Published namespace, such as BernsteinUnitaryProductIrreducible (that the unopened operation prod₂ applied to two smooth, irreducible, unitarisable complex representations of general linear groups over a nonarchimedean local field is irreducible), ChebotarevDegreeOne (that outside any finite set of nonzero primes of the ring of integers of a number field there is a prime of inertia degree 1 over the integers with a valuation subring lying over it and an element of G whose restriction to a finite Galois intermediate field equals a given automorphism, under unopened Ine and IsFrob conditions), and GlobalArtinReciprocity (that for every number field E and algebraic closure Ω of E there exists a group homomorphism from Ideles E to Gab E Ω satisfying the unopened condition IsGlobalArtin).",
+      "why": "In the dossier, GlobalTheory.Published.ChebotarevDegreeOne states only the existence of a prime outside a finite set S with inertia degree 1 and unopened conditions Ine and IsFrob rather than any density theorem, while GlobalTheory.Published.GlobalArtinReciprocity and GlobalTheory.Published.BernsteinUnitaryProductIrreducible depend on unopened names such as Ideles, Gab, IsGlobalArtin and prod₂ whose mathematical meanings are not shown in any of the files.",
+      "wrong": "The hypothesis bundle is the joint assertion of a long list of named statements, most of them labelled as published results, such as Bernstein's irreducibility of products of unitary representations, Chebotarev's density theorem in a degree one form, and global Artin reciprocity."
+    }
+  ],
+  "faithful": false,
+  "line": 18
+}

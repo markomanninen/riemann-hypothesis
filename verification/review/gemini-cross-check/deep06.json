@@ -1,0 +1,12 @@
+{
+  "errors": [
+    {
+      "field": "says",
+      "right": "If A satisfies the condition that the code calls EvLgG, if the parameter record built from hL and cDep is linked to the relation sending a slot Q and a linkage L to SlotNormCondition Q L for the property that a family class is closed for the condition BoundAtTwoThreeFamilyFonAlt, which states through Row Q L that there exists a map E satisfying RowE Q L E such that for every family class 𝒜 and every raw selection σ satisfying IsSel Q L E 𝒜 σ the strengthened class D3 3 𝒜 is closed for BoundAtTwoThreeFamilyFonAlt, and if the parameter record built by also attaching the origin data and the property A is linked both to the test FunctionalCondition and to the test CovolumeBoundThirdPlaceSeries, then there is at least one record of the type HypsAlt NL DefiniteSideCondition.",
+      "why": "The Lean text of GlobalTheory.Fc.R1.SlotNormCondition in dossier.md defines it as Row Q Lk applied to the function sending 𝒜 to N (D3 3 𝒜) rather than asking unconditionally that every family class is closed, and neither dossier.md nor d7-all.md opens BoundAtTwoThree or Bd to verify that GlobalTheory.NLink.BoundAtTwoThreeFamilyFonAlt states a bound.",
+      "wrong": "If A satisfies the condition that the code calls EvLgG, if the parameter record built from hL and cDep is linked to the row test asking that each family class is closed for the two-and-three bound BoundAtTwoThreeFamilyFonAlt, and if the parameter record built by also attaching the origin data and the property A is linked both to the test FunctionalCondition and to the test CovolumeBoundThirdPlaceSeries, then there is at least one record of the type HypsAlt NL DefiniteSideCondition."
+    }
+  ],
+  "faithful": false,
+  "line": 6
+}

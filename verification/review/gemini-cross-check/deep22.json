@@ -1,0 +1,84 @@
+{
+  "errors": [
+    {
+      "field": "says",
+      "right": "Then the following holds for every base record B, every record X over it, every I of type TC B X, every l in I.Laws, every later-stage record Z, the D7 bundle D = I.rec7 l Z, every L of type SizeData₂ D, hT of type GatTies D, Gi of type Formalism.MainNotions.G.Inst D L, Gl of type Formalism.MainNotions.G.LatInst D, Kc of type Formalism.MainNotions.G.Consts, Yd of type DivX D, cX of type ExtraC and ex of type Extra D L hT Gi Gl Kc Yd cX, and every package W of type RealPackAlt ex.",
+      "why": "In GlobalTheory.Fam.miStar2_of_allTrue_alt_alt and the definitions in dossier.md, ColIn is unopened so TC B X is not shown to be a column datum, while Kc of type Formalism.MainNotions.G.Consts and cX of type ExtraC take no D7 argument and are not built on I.rec7 l Z.",
+      "wrong": "Then the following holds for every base record B, every record X over it, every column datum I of type TC B X, every l in I.Laws, every later-stage record Z and all the data L, hT, Gi, Gl, Kc, Yd, cX and ex built on the D7 bundle D = I.rec7 l Z, and for every package W of type RealPackAlt ex."
+    },
+    {
+      "field": "says",
+      "right": "Suppose W satisfies all six parts of AllFamilyConditions, the number B.R.rS is at least 1, and for every word u some element φ of the space (D.mem u).A.Mram has its projected pair ⟨φ.1, φ.2.1⟩ in (D.mem u).A.Mu0 carried into D.s.Cu u by the inverse of the linear isomorphism D.s_Cu u and then sent by D.s.Pu u to a nonzero element.",
+      "why": "The definitions GlobalTheory.MiTop.PuNZ in dossier.md and D7.s_Cu in d7-all.md show that D.s_Cu u maps D.s.Cu u to (D.mem u).A.Mu0 rather than (D.mem u).A.Mram and that PuNZ applies the inverse of D.s_Cu u to ⟨φ.1, φ.2.1⟩ rather than directly to φ.",
+      "wrong": "Suppose W satisfies all six parts of AllFamilyConditions, the number B.R.rS is at least 1, and for every word u some element φ of the space (D.mem u).A.Mram has a nonzero image under the map D.s.Pu u after it is carried into D.s.Cu u by the inverse of the linear isomorphism D.s_Cu u."
+    },
+    {
+      "field": "says",
+      "right": "By the glossary, that condition says that for the implicit map fc of MIstar2 there is some d of type C.MIDat fc such that the three opaque conditions C.MIUnit2 d, C.MIid (W.Q.F.eV C.zs) W.Q.sEE d and C.AuNZ d all hold.",
+      "why": "In the MIstar2 entry of glossary.md together with the conclusion of GlobalTheory.Fam.miStar2_of_allTrue_alt_alt in dossier.md, d has type C.MIDat fc for an implicit function fc and C.MIid takes the arguments W.Q.F.eV C.zs, W.Q.sEE and d rather than unbound variables eV and sEE.",
+      "wrong": "By the glossary, that condition says there is some d of type C.MIDat such that the three opaque conditions MIUnit2 d, MIid eV sEE d and AuNZ d all hold."
+    },
+    {
+      "field": "premises",
+      "right": "The proposition that the code calls HarishChandraFinite says that for every D7 bundle D, every θ with IsInfFam θ, every V of type HSp D, every open subgroup U of GA D V, every ε and fr with IsFrameFam V ε fr, every family of finite-dimensional complex modules W τ with representations ρ τ satisfying IsContRep (ρ τ) and every c, the complex span of forms θ V U ε fr ρ c is finite-dimensional.",
+      "why": "The definition GlobalTheory.Published.HarishChandraFinite in dossier.md does not call the inputs admissible data and instead states the explicit quantifiers and unopened conditions IsInfFam, IsOpen, IsFrameFam, FiniteDimensional and IsContRep.",
+      "wrong": "the proposition that the code calls HarishChandraFinite, which says that for every D7 bundle D and all admissible data the complex span of the forms built from that data is finite-dimensional"
+    },
+    {
+      "field": "premises",
+      "right": "The proposition that the code calls HoweUnram says that for every L, ϖ, σ, q, δ, n, n', JS, JT, ψ, M, ρ and ω satisfying LocPair ϖ σ q δ JS JT ψ ρ ω and every nonzero s in M satisfying LocVac ρ s such that the complex span of the vectors ρ x s equals all of M, every vector w in M fixed by ω (g, 1) for all g whose matrix lies in GLint lies in the span of the vectors ω (1, h) s, and the same holds with the two factors swapped.",
+      "why": "In GlobalTheory.Hk3.HoweUnram in dossier.md, ρ maps n' by n matrices to linear endomorphisms of M and the hypothesis states that the complex span of the range of x ↦ ρ x s is all of M rather than calling that range an orbit under a group action.",
+      "wrong": "the proposition that the code calls HoweUnram, which says that for every datum satisfying the condition the code calls LocPair and every nonzero s in M with the condition the code calls LocVac ρ s whose orbit under ρ spans M, every vector w fixed by ω (g, 1) for all g whose matrix lies in the set the code calls GLint lies in the span of the vectors ω (1, h) s, and the same holds with the two factors swapped"
+    },
+    {
+      "field": "premises",
+      "right": "The proposition that the code calls WeilSiegelFormulaUnitary says that for every D of type D7, all A and B of type HSp D and every Haar measure m on GA D B with 1 ≤ A.rank and either wittIdx B = 0 or A.rank + wittIdx B < B.rank, every basis ε of D.host.E over D.host.F indexed by Fin d has a continuous seminorm ν bounding absThetaInt B m (φ.1 ∘ coord ε) by ENNReal.ofReal (ν φ) for all φ, and for every additive character ψ, character χ and homomorphism ω satisfying IsWeilDatumO ψ (dblSp A) B 1 χ ω and every f satisfying IsThetaFunO ψ (dblSp A) B f, the descended function built from thetaKO ω g h f is integrable with respect to autMeasure B m for every g and, when 2 * A.rank < B.rank, for all ν and 𝓖 with IsCovolOne (ratL B A) ν 𝓖, the section swSection A B ν 𝓖 ω f satisfies LeftInv (siegelQ A) and CosetConv (siegel A) (GQ (dblSp A)) at every g and its cosetSum equals the average over q of that descended function with respect to autMeasure B m.",
+      "why": "In GlobalTheory.Published.WeilSiegelFormulaUnitary in dossier.md, CosetConv applies to the section swSection A B ν 𝓖 ω f rather than to cosetSum, and the theorem also includes the quantifiers and hypotheses on D, A, B, m, d, ε, ψ, χ, ω, f, ν and 𝓖 that the reading omits without noting any omission.",
+      "wrong": "the proposition that the code calls WeilSiegelFormulaUnitary, which under 1 ≤ A.rank and either wittIdx B = 0 or A.rank + wittIdx B < B.rank gives a continuous seminorm bounding absThetaInt, gives integrability of the descended function built from thetaKO, and, when 2·A.rank < B.rank, gives LeftInv of swSection, CosetConv of the coset sum and its equality with the average over q of that descended function with respect to autMeasure B m"
+    },
+    {
+      "field": "premises",
+      "right": "The proposition that the code calls SiegelWeilUnitaryConvergent says that for every D of type D7, every ψ, all A and B of type HSp D with A.rank < B.rank, B.rank ≤ 2 * A.rank and A.rank + wittIdx B < B.rank, and under the stated hypotheses IsWeilDatumO, IsMaj, HasIwasawa, IsInfFam, IsCartanInv on sS and sB, commutation with Khat A a, IsCovolOne, Haar measure ν and IsFockVec, the descended function AutomorphicL2Unitary.descend (GQ B) (fun h => thetaKO ω g h f) is integrable with respect to autMeasure B ν for every g and Eis.EisValueAt holds for A, flat A a (swSec A B ω μ 𝓨 f) (sZero A B), sZero A B and thetaMean ω ν f.",
+      "why": "In GlobalTheory.Published.SiegelWeilUnitaryConvergent in dossier.md, the integrable object is the descended function built from thetaKO rather than theta integrals, the bodies of thetaKO, descend, swSec, flat and thetaMean are not shown in any file, and the reading omits the nine intermediate hypotheses without noting any omission.",
+      "wrong": "the proposition that the code calls SiegelWeilUnitaryConvergent, which says that when rank A < rank B ≤ 2·rank A and rank A + wittIdx B < rank B, the theta integrals are integrable and the condition EisValueAt holds for the Siegel–Weil section and the theta mean"
+    },
+    {
+      "field": "premises",
+      "right": "The proposition that the code calls UnramifiedDoublingGL says that for every non-archimedean local field k of characteristic 0, every natural number n, every Haar measure μ on GL n over k with μ (KO k (Fin n)) = 1, every complex representation π of GL n over k on a complex vector space V with α satisfying HasSatake π α and every ω satisfying IsZonal π (KO k (Fin n)) ω, there is a real s₀ such that for every complex s with s₀ < s.re the function g ↦ sphSection k (Fin n) s (io k (Fin n) (g, 1)) * ω g is integrable with respect to μ and its integral over μ equals lFactor (resCard k) α (s + 1/2) * lFactor (resCard k) α⁻¹ (s + 1/2) * invNormFactor (resCard k) n s.",
+      "why": "In GlobalTheory.Published.UnramifiedDoublingGL in dossier.md, the integrand is built from the unopened names sphSection and io rather than a term named doubling integral, and the Lean statement explicitly quantifies over n of type ℕ and passes resCard k, n and s to lFactor and invNormFactor.",
+      "wrong": "the proposition that the code calls UnramifiedDoublingGL, which says that for every non-archimedean local field k of characteristic 0, every Haar measure μ on GL n over k giving KO measure 1, every representation π of GL n over k with α satisfying the condition the code calls HasSatake π α, and every ω with the condition the code calls IsZonal π (KO k (Fin n)) ω there is a real s₀ such that for every complex s with real part above s₀ the doubling integral converges and equals lFactor at α times lFactor at α⁻¹, both at s + 1/2, times invNormFactor"
+    },
+    {
+      "field": "premises",
+      "right": "The proposition that the code calls DiscreteSeriesClassification says that for every natural number n there is a family of inner product spaces H ε lam with maps π ε lam that, for strictly decreasing lam with lam a − (n − 1)/2 an integer, are complete and nontrivial and satisfy IsURepOn, IsIrredOn, IsSqIntOn and HasInfChar, have a unique submodule with IsKTypeOf for lam + rhoN ε − rhoC ε and have every other IsKTypeOf parameter μ differing from that one by a natural-number sum of root a b with a < b, and that every complete nontrivial σ with IsURepOn, IsIrredOn and IsSqIntOn is carried onto H (ε ∘ s) mu by a linear isometry T satisfying T (σ (g.submatrix s.symm s.symm) v) = π (ε ∘ s) mu g (T v) on UJset (ε ∘ s) for some such mu and some permutation s preserving order where ε ∘ s takes equal values.",
+      "why": "In GlobalTheory.Published.DiscreteSeriesClassification in dossier.md, the reading refers to stated IsKTypeOf conditions without stating them and omits the order-preserving condition on s without noting any omission.",
+      "wrong": "the proposition that the code calls DiscreteSeriesClassification, which says that for every n there is a family of spaces H ε lam with maps π ε lam that, for strictly decreasing lam with lam a − (n − 1)/2 an integer, are complete and nontrivial and satisfy IsURepOn, IsIrredOn, IsSqIntOn and HasInfChar with the stated IsKTypeOf conditions, and that every complete nontrivial σ with IsURepOn, IsIrredOn and IsSqIntOn is carried by a linear isometry intertwining the actions onto H (ε ∘ s) mu for some permutation s and some such mu"
+    },
+    {
+      "field": "premises",
+      "right": "The proposition PuNZ (I.rec7 l Z) says that for every word u there is an element φ of (D.mem u).A.Mram whose projected pair ⟨φ.1, φ.2.1⟩ in (D.mem u).A.Mu0 is sent by the inverse of D.s_Cu u into D.s.Cu u and then mapped by D.s.Pu u to a nonzero element.",
+      "why": "In GlobalTheory.MiTop.PuNZ in dossier.md and D7.s_Cu in d7-all.md, D.s_Cu u is a linear isomorphism between D.s.Cu u and (D.mem u).A.Mu0 rather than (D.mem u).A.Mram, PuNZ applies its inverse to ⟨φ.1, φ.2.1⟩ rather than φ, and the unopened D.s.Pu u is only shown to have a nonzero element rather than a vector.",
+      "wrong": "PuNZ (I.rec7 l Z), which says that for every word u there is an element φ of (D.mem u).A.Mram whose image in D.s.Cu u under the inverse isomorphism of D.s_Cu u is sent by D.s.Pu u to a nonzero vector"
+    },
+    {
+      "field": "conclusion",
+      "right": "The coefficient space packageCoefficientSpace W satisfies the condition that the code calls MIstar2 with the maps W.Q.F.eV ((packageCoefficientSpace W).zs) and W.Q.sEE, which by the glossary means that for the implicit map fc of MIstar2 some d of type (packageCoefficientSpace W).MIDat fc satisfies (packageCoefficientSpace W).MIUnit2 d, (packageCoefficientSpace W).MIid (W.Q.F.eV ((packageCoefficientSpace W).zs)) W.Q.sEE d and (packageCoefficientSpace W).AuNZ d.",
+      "why": "By MIstar2 in glossary.md and the conclusion of GlobalTheory.Fam.miStar2_of_allTrue_alt_alt in dossier.md, MIDat takes an implicit map fc and is a field of packageCoefficientSpace W, while MIid takes the actual maps W.Q.F.eV ((packageCoefficientSpace W).zs) and W.Q.sEE rather than unbound names eV and sEE.",
+      "wrong": "the coefficient space packageCoefficientSpace W satisfies the condition that the code calls MIstar2 with the maps W.Q.F.eV (its zs) and W.Q.sEE, which means some d of type MIDat satisfies MIUnit2 d, MIid eV sEE d and AuNZ d"
+    },
+    {
+      "field": "notation",
+      "right": "The PuNZ conjunct in the notation should read (∀ u ∃ φ ∈ (D.mem u).A.Mram, D.s.Pu u ((D.s_Cu u)⁻¹(⟨φ.1, φ.2.1⟩)) ≠ 0).",
+      "why": "In GlobalTheory.MiTop.PuNZ in dossier.md and D7.s_Cu in d7-all.md, D.s_Cu u maps D.s.Cu u to (D.mem u).A.Mu0 so its inverse applies to ⟨φ.1, φ.2.1⟩ rather than directly to φ.",
+      "wrong": "(∀ u ∃ φ ∈ (D.mem u).A.Mram, D.s.Pu_u((D.s_Cu_u)⁻¹(φ)) ≠ 0)"
+    },
+    {
+      "field": "notation",
+      "right": "The conclusion conjunct in the notation should read ∃ d ∈ C.MIDat(fc), C.MIUnit2(d) ∧ C.MIid(W.Q.F.eV(C.zs), W.Q.sEE, d) ∧ C.AuNZ(d) for the implicit map fc.",
+      "why": "In the MIstar2 entry of glossary.md, MIDat depends on the implicit function fc and MIUnit2, MIid and AuNZ are fields on the record C rather than standalone predicates.",
+      "wrong": "∃ d ∈ C.MIDat, MIUnit2(d) ∧ MIid(W.Q.F.eV(C.zs), W.Q.sEE, d) ∧ AuNZ(d)"
+    }
+  ],
+  "faithful": false,
+  "line": 22
+}

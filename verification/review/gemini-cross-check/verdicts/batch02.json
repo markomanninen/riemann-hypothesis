@@ -1,0 +1,56 @@
+[
+ {
+  "line": 7,
+  "index": 0,
+  "verdict": "naming",
+  "evidence": "Reading A writes \"every geometry predicate Γ\" for Γ of type GeoP, whose shown body is \"∀ D : D7, Formalism.L2.Pj.Core D → DivX D → Prop\". The body confirms that Γ is a predicate, and the word geometry is only the reading of the name GeoP."
+ },
+ {
+  "line": 7,
+  "index": 1,
+  "verdict": "omission",
+  "evidence": "Reading A writes \"indexed by parameters lam with IsParam lam, such that each D lam satisfies HasTypes\", while the Lean text has \"{lam : Ix p q → ℚ // IsParam lam}\" and \"HasTypes (D lam) lam.1\". No field of A says that the type of lam and the second argument are left out."
+ },
+ {
+  "line": 7,
+  "index": 2,
+  "verdict": "omission",
+  "evidence": "Reading A writes \"IsURepOn (UJset ε) σ\" and \"IsSmoothModRep ε p π dπ\" with ε never introduced, while the Lean text opens with \"∀ (n : ℕ) (ε : Fin n → Bool)\". This part of the finding names n and ε."
+ },
+ {
+  "line": 7,
+  "index": 2,
+  "verdict": "unfounded",
+  "evidence": "Reading A does introduce the other objects, in the words \"a map σ from complex matrices to continuous linear maps of a Hilbert space H\" and \"maps π and dπ from complex matrices to continuous linear maps of a complete space E with seminorms p\". The claim that H, σ, E, p, π and dπ are omitted is false."
+ },
+ {
+  "line": 7,
+  "index": 3,
+  "verdict": "naming",
+  "evidence": "Reading A writes \"smooth vectors\" twice for the Lean text \"SmoothVec (lieSet ε) σ w\", and the dossier holds no definition of SmoothVec or lieSet. The words are the plain reading of the name SmoothVec."
+ },
+ {
+  "line": 7,
+  "index": 4,
+  "verdict": "unfounded",
+  "evidence": "Reading A lists that T \"agrees with T₀ on vectors with IsKFin, satisfies IsSmoothGMap, is unique on smooth vectors\", and the Lean text says that every T' with \"(∀ v, IsKFin ε σ v → T' v = T₀ v)\" and \"IsSmoothGMap ε σ p π T'\" satisfies \"T' w = T w\" on SmoothVec vectors. Unique among maps with the two properties just listed is a correct paraphrase."
+ },
+ {
+  "line": 7,
+  "index": 5,
+  "verdict": "omission",
+  "evidence": "Reading A writes \"bounds certain norms sobNorm by continuous seminorms of T w\", while the Lean text has \"∀ S … (∀ l ∈ S, ∀ X ∈ l, X ∈ lieSet ε) → ∃ q : Seminorm ℂ E, Continuous q ∧ ∀ w, SmoothVec (lieSet ε) σ w → sobNorm σ S w ≤ q (T w)\". The word certain hints at a restriction, but A neither binds w nor says that the quantifier over S and the condition on w are left out."
+ },
+ {
+  "line": 8,
+  "index": 0,
+  "verdict": "imprecise",
+  "evidence": "Reading A writes that the two wrapper theorems \"restate the same triple in slot form, as SlotLpCondition, SlotOrderCondition and SlotTorsionFreeCondition\", and the dossier shows no body for these three names or for Lg1. The names and their order match the Lean text of lg1_sLp_sO_hTF and sLp_sO_hTF_of_siegelWeil, but the dossier does not show that they state the same triple."
+ },
+ {
+  "line": 8,
+  "index": 1,
+  "verdict": "omission",
+  "evidence": "Reading A writes \"for every slot and linkage and also under the operator Lg1\", while the wrapper lg1_sLp_sO_hTF has \"∀ (KP : ∀ B : GlobalTheory.Mem.Base, Fr B.toPre → Prop) (Q Q' : V4.Slot) (Lk : LkT …)\" and applies \"Lg1 KP Q Q'\". No field of A mentions KP or the second slot Q'."
+ }
+]

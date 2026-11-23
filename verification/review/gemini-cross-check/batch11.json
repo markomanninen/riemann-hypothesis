@@ -1,0 +1,39 @@
+[
+  {
+    "a_errors": [],
+    "a_faithful": true,
+    "b_errors": [
+      "Reading B writes in both says and premises that Z is projective over Spec ℂ, whereas the Lean text only writes IsProjOver s and defines IsProjOver using PSpace and IsClosedImmersion whose bodies the dossier does not show."
+    ],
+    "b_faithful": false,
+    "differ": "Reading A keeps IsProjOver uninterpreted outside its suggests field, whereas reading B renders IsProjOver s as projective over Spec ℂ in both says and premises.",
+    "fixed_says": "",
+    "line": 36
+  },
+  {
+    "a_errors": [],
+    "a_faithful": true,
+    "b_errors": [
+      "In CharEx, reading B says L has L χ n = L χ' n' implying χ = χ' under the clause for IsAlgPos χ n, omitting the premise IsAlgPos χ' n' and not clearly applying IsAlgPos χ n to the injectivity clause of the Lean text ∀ χ n χ' n', IsAlgPos χ n → IsAlgPos χ' n' → L χ n = L χ' n' → χ = χ'.",
+      "In SatCard, JumpsOf and RichOf, reading B states the conditions under every number field E and omits the Lean premise IsCMField E on E.",
+      "In CutStep, reading B places CutStep says GoodAtW implies GoodAt and CongAtW implies CongAt under the quantifiers for θ from H.Γ to Qbar l and continuous ρ with IsPiece H θ ρ and prime w, whereas the Lean text of CutStep quantifies over an arbitrary field L with θ of type H.Γ → L and has no Ω, l, ρ, IsPiece or fixed outer w.",
+      "Reading B omits the quantifier for ι of type Qbar l ≃+* ℂ across ESStep and subsequent components and omits the quantifiers and typeclass hypotheses Group Γ, TopologicalSpace Γ, IsTopologicalGroup Γ, Field k, TopologicalSpace k, IsTopologicalRing k, a and b in SSLeft and ContLeft without stating that those details are left out."
+    ],
+    "b_faithful": false,
+    "differ": "Reading A states every quantifier and hypothesis of all seventeen fields of Steps accurately, whereas reading B drops the IsAlgPos hypotheses in the injectivity clause of CharEx, omits IsCMField E in SatCard, JumpsOf and RichOf, restricts CutStep to θ into Qbar l under ρ and IsPiece instead of an arbitrary field L, and omits quantifiers such as ι, Γ and k.",
+    "fixed_says": "",
+    "line": 37
+  },
+  {
+    "a_errors": [],
+    "a_faithful": true,
+    "b_errors": [
+      "Reading B writes in premises that Z is projective over Spec ℂ, whereas the Lean text has IsProjOver s and defines IsProjOver using PSpace and IsClosedImmersion whose bodies the dossier does not show.",
+      "In says, reading B refers to line 36 instead of stating HolomorphicLefschetzFormula, and in premises its summary omits that Y is over Spec ℂ, that c1 and c2 satisfy c1 ≫ s = s' and c2 ≫ s = s', that F is finite, that A is a map on CxPts s' (RingHom.id ℂ) and that a and b are universally quantified natural numbers without stating that details are left out."
+    ],
+    "b_faithful": false,
+    "differ": "Reading A states HolomorphicLefschetzFormula within its own reading and keeps IsProjOver uninterpreted outside suggests, whereas reading B points externally to line 36 in says, omits several quantifiers and hypotheses of HolomorphicLefschetzFormula in premises, and translates IsProjOver s as projective over Spec ℂ.",
+    "fixed_says": "",
+    "line": 38
+  }
+]

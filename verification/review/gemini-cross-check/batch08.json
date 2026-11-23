@@ -1,0 +1,66 @@
+[
+  {
+    "a_errors": [
+      "In ResolutionCharZero and PointSeparationPair, reading A writes \"to the spectrum of a field k\" and \"over the complex numbers\" for \"g of type X ⟶ Sp k\" and \"p of type X ⟶ Sp ℂ\", asserting the mathematical meaning of Sp even though Sp is not defined in the dossier.",
+      "In SiegelToroidalIntegral and ToroidalForFanKS, reading A calls \"φ of type InvFun ℤ\" and \"φ of type InvFun (𝓞 E)\" \"a function φ\", asserting a mathematical meaning for InvFun when InvFun is not defined in the dossier.",
+      "In ToroidalForFanKS, reading A writes \"Snc of a boundary ideal\" and \"HasChartOf at boundary points\" for \"FinalTheorems.Snc (genBdIdeal Y)\" and \"genBd Y\", asserting meanings for genBdIdeal and genBd when neither is defined in the dossier and FinalTheorems.Snc takes IdealSheafData rather than an ideal.",
+      "In PoincareLelongInv, reading A calls \"ptsIntegral\" \"the integral\" when ptsIntegralAt is not defined in the dossier, and writes \"the integral of log B.h on W\" for \"ptsIntegral W (pot L) (fun z => Real.log (B.h z))\", dropping the potentials \"pot L\" without saying they are left out.",
+      "In PrincipalisationCharZero, reading A writes \"a closed set E that satisfies SncAt at each of its points\" whereas the Lean text applies \"FinalTheorems.SncAt\" to \"Scheme.IdealSheafData.vanishingIdeal E\" at each point x of E.",
+      "In the conclusion field, reading A writes \"L3 holds at p.N C CH\" for \"(p.S false).L3 (p.N C CH)\", omitting \"p.S false\" and omitting the bound variables Fm and CH of the property passed to Closed.",
+      "In the says field, reading A asserts that the fifteen premises are \"each written in the code as a statement of a result from the literature\", whereas the dossier shows HSUse as \"ArithKleiman.Statement ∧ G7.Statement ∧ ArithmeticVolumeNef.Statement\" in SmallGeneratedCountUpperOfUse and MoriwakiBigStatement in MoriwakiSt without labeling them as literature results."
+    ],
+    "a_faithful": false,
+    "b_errors": [
+      "In ResolutionCharZero, reading B writes \"for the ideal that preRed builds from the complement of the smooth locus\" for \"FinalTheorems.Snc (preRed s (g.smoothLocus of type Set X)ᶜ g.smoothLocus.isOpen.isClosed_compl)\", asserting a mathematical meaning for the unshown name preRed and calling the argument an ideal whereas FinalTheorems.Snc takes \"Y.IdealSheafData\".",
+      "In PrincipalisationCharZero, reading B writes \"a closed set E that satisfies SncAt at each of its points\" whereas the Lean text applies \"FinalTheorems.SncAt\" to \"Scheme.IdealSheafData.vanishingIdeal E\" at each point x of E.",
+      "In PoincareLelongInv, reading B calls \"ptsIntegral\" \"the integral\" when ptsIntegralAt is not defined in the dossier, and writes \"times an integral over W\" for \"ptsIntegral W (pot L) (fun z => Real.log (B.h z))\", dropping \"pot L\" and \"Real.log (B.h z)\" without saying they are left out.",
+      "In NefRR, reading B omits the hypothesis \"[CharZero Ω]\" without saying that any premise is left out.",
+      "In PointSeparationPair, reading B writes \"is nonzero at\" for membership in \"nonzeroLocus s\", asserting the mathematical meaning of nonzeroLocus even though its body is not shown in the dossier."
+    ],
+    "b_faithful": false,
+    "differ": "Reading A asserts unshown meanings for Sp, InvFun, genBdIdeal, and genBd and drops pot L in the W term of PoincareLelongInv and p.S false in its conclusion, whereas reading B keeps those four names uninterpreted and keeps p.S false in its conclusion while calling preRed an ideal and omitting the characteristic-zero premise of NefRR.",
+    "fixed_says": "The theorem is a chain of fifteen implications. If the fifteen named propositions ResolutionCharZero, PrincipalisationCharZero, PoincareLelongInv, HSUse, MoriwakiBigStatement, FarguesExact, ZarhinStatement, NefRR, SiegelToroidalIntegral, ToroidalForFanKS, SemiAbelianLieSeminegative, PointSeparationPair, ArDegree, PublishedHodgeBundleTheorems, and GrothendieckDeformation hold in order, then the proposition that the code calls CovolumeBoundOfX holds. The definition CovolumeBoundOfX says that the condition Closed holds of FamHyp and the property mapping Fm and CH to the existence of a real number C0 with 0 ≤ C0 such that EventuallyAtAllPoints holds of Fm and the four-argument predicate ignoring its first three inputs and taking p to the statement that for every real number C with C0 ≤ C, the condition (p.S false).L3 holds of p.N C CH.",
+    "line": 24
+  },
+  {
+    "a_errors": [
+      "In ResolutionCharZero, reading A writes \"a map s satisfying IsBlowupSeq with smooth source\" and shifts properties onto schemes, whereas the Lean text has a map \"g of type X ⟶ Sp k\" with \"LocallyOfFiniteType g\", \"QuasiCompact g\", and \"IsSeparated g\" and asserts \"Smooth (s ≫ g)\" for the composite rather than smoothness of the source of s alone.",
+      "In PrincipalisationCharZero, reading A writes \"its support satisfies Snc\" whereas the Lean text applies \"FinalTheorems.Snc\" to \"Scheme.IdealSheafData.vanishingIdeal (I.comap s).support\", and reading A leaves out all premises of PrincipalisationCharZero and the conjunct \"Smooth (s ≫ g)\" without saying that details are left out.",
+      "In PoincareLelongInv, reading A writes \"multiplicity-weighted sum\" for \"multAt\" even though multAt is not defined in dossier 25, and leaves out all premises and the potential and ideal arguments without saying that details are left out.",
+      "In FarguesExact, reading A omits the hypotheses \"[Fact p.Prime]\", \"v (p of type C) < 1\", and the sequence \"ζ\" satisfying \"ζ 0 = 1\", \"ζ (n + 1) ^ p = ζ n\", and \"ζ 1 ≠ 1\" without saying that details are left out.",
+      "In NefRR, reading A omits the hypothesis \"[CharZero Ω]\" and the first conjunct \"∀ τ, FiniteDimensional ℚ (Submodule.span ℚ (chartLatNm y a τ of type Set Ω))\" of the conclusion without saying that details are left out."
+    ],
+    "a_faithful": false,
+    "b_errors": [
+      "In ResolutionCharZero, reading B writes \"for the preRed ideal of the complement\" for \"FinalTheorems.Snc (preRed s (g.smoothLocus of type Set X)ᶜ g.smoothLocus.isOpen.isClosed_compl)\", asserting that preRed builds an ideal even though neither preRed nor Snc is defined in dossier 25, and writes \"is smooth after composing with g\" without introducing g.",
+      "In PrincipalisationCharZero, reading B writes \"makes the pullback of I satisfy EffCartier and Snc on its support\" whereas the Lean text applies \"FinalTheorems.EffCartier\" to \"I.comap s\" and \"FinalTheorems.Snc\" to \"Scheme.IdealSheafData.vanishingIdeal (I.comap s).support\", and it writes \"a closed set E with SncAt at each point\" instead of applying \"FinalTheorems.SncAt\" to \"Scheme.IdealSheafData.vanishingIdeal E\".",
+      "In PoincareLelongInv, reading B writes \"a finite sum over horizontal members of divSupp P s weighted by multAt\", omitting the factor \"ptsIntegral W (pot L) (fun z => Real.log (B.h z))\" from the sum.",
+      "In PoincareLelongInv, reading B writes \"the integral of logNorm A s over P\" and \"an integral of log B.h over P\" for \"ptsIntegral\", asserting a mathematical meaning for ptsIntegral even though neither ptsIntegral nor ptsIntegralAt is defined in dossier 25, and leaves out all premises and potential arguments of PoincareLelongInv without saying that details are left out.",
+      "In FarguesExact, reading B omits \"[Fact p.Prime]\", \"[IsAlgClosed C]\", \"[CharZero C]\", and the sequence \"ζ\" satisfying \"ζ 0 = 1\", \"ζ (n + 1) ^ p = ζ n\", and \"ζ 1 ≠ 1\" without saying that details are left out.",
+      "In NefRR, reading B omits the hypothesis \"[CharZero Ω]\" and the limit at infinity \"atTop\" in the \"Tendsto\" conclusion without saying that details are left out."
+    ],
+    "b_faithful": false,
+    "differ": "In ResolutionCharZero, reading A replaces smoothness of the composite s ≫ g with smooth source while reading B calls preRed an ideal, and in PoincareLelongInv, reading B omits the ptsIntegral factor over W from the sum and calls ptsIntegral an integral while reading A keeps the summand as ptsIntegral terms and calls multAt a multiplicity.",
+    "fixed_says": "If the eight hypotheses h₁ of type ResolutionCharZero, h₂ of type PrincipalisationCharZero, hPL of type PoincareLelongInv, hU of type HSUse, hBig of type MoriwakiBigStatement, hF of type FarguesExact, hZ of type ZarhinStatement, and hN of type NefRR all hold, then DeepStR holds. The definition DeepStR says that there exists a real number C with 0 ≤ C such that for every D of type D7 and every T of type CoreJ D satisfying LawsJ T and D.R.m ^ 2 ≤ D.R.k, for every natural number j with 1 ≤ j and j < D.R.m, and for every Y of type Deep T.toCore j, every natural number e, and every real number o satisfying Y.Good e o and Y.d.l₂.M'.primeFactors.card ≤ 15, the condition MeanAll Y.U (xiR D) (ell D) C holds. For the implicit datum Dw determined by Y.U, that MeanAll condition says that for every u of type AllWt.Weight Dw and every real number g satisfying WtGap u g, the condition MeanGe Y.U (xiR D) u (bndB u g) (C * errX (ell D) u g) holds.",
+    "line": 25
+  },
+  {
+    "a_errors": [
+      "In NefRR, reading A omits the hypothesis \"[CharZero Ω]\" and omits the first conjunct \"∀ τ, FiniteDimensional ℚ (Submodule.span ℚ (chartLatNm y a τ of type Set Ω))\" of the conclusion without saying that details are left out.",
+      "In FarguesHodgeTate, reading A omits \"[Fact p.Prime]\", the sequence \"ζ\" satisfying \"ζ 0 = 1\", \"ζ (n + 1) ^ p = ζ n\", and \"ζ 1 ≠ 1\", and the \"muTate\" and pure-tensor compatibility formula, compressing them to \"for any form B matching the map called pairing\" without saying that details are left out.",
+      "In GagaSections, reading A writes \"on complex points\" and omits the base-section conditions \"x ≫ s = 𝟙 _\" and \"y b ≫ s = 𝟙 _\", as well as \"IsOpen B\", \"⊤ ≤ y b ⁻¹ᵁ L.U i\", and \"⊤ ≤ x ⁻¹ᵁ (L.U i ⊓ L.U j)\" without saying that details are left out.",
+      "In ResKStatement, reading A writes \"into the fibre product of PSpace K M and PSpace K r\" for \"pullback (PSpace.str K M) (PSpace.str K r)\" even though PSpace and PSpace.str are not defined in the dossier, replaces \"f ≫ i = j ≫ pullback.fst _ _\" with \"compatible with i and j\", and omits the arguments \"(i ≫ PSpace.str K M) U D f\" of \"IsResWithCoords\" without saying that details are left out."
+    ],
+    "a_faithful": false,
+    "b_errors": [
+      "In FarguesHodgeTate, reading B omits the sequence \"ζ\" and omits the entire binder and compatibility hypothesis for \"B\", leaving B unbound and unconstrained in \"hodgeTateLinear G x = 0 exactly when B x y = 0 for every y with dlogLinear G y = 0\", and also omits \"[Fact p.Prime]\", \"[IsAlgClosed C]\", \"[CharZero C]\", and \"G.dual.omega\".",
+      "In ResKStatement, reading B writes \"the two structure maps of PSpace K M and PSpace K r\" for \"PSpace.str K M\" and \"PSpace.str K r\", asserting a mathematical meaning for PSpace.str even though neither PSpace nor PSpace.str is defined in the dossier.",
+      "In GagaSections, reading B writes \"on points\" and \"whose values valAt' are h\", omitting \"x ≫ s = 𝟙 _\", \"y b ≫ s = 𝟙 _\", \"IsOpen B\", \"⊤ ≤ y b ⁻¹ᵁ L.U i\", \"⊤ ≤ x ⁻¹ᵁ (L.U i ⊓ L.U j)\", and \"⊤ ≤ x ⁻¹ᵁ L.U i\" without saying that details are left out.",
+      "In NefRR, reading B omits the hypothesis \"[CharZero Ω]\" and the limit at infinity \"atTop\" in the \"Tendsto\" conclusion without saying that details are left out."
+    ],
+    "b_faithful": false,
+    "differ": "In FarguesHodgeTate, reading A requires B to match pairing while reading B omits all conditions on B and leaves it unbound, and in NefRR, reading A drops the finite-dimensionality conjunct while reading B keeps it and drops the limit at infinity atTop.",
+    "fixed_says": "The theorem is a chain of ten implications. If the ten named propositions ArithIntersectionSystemStatement, HSUse, MoriwakiBigStatement, ResKStatement, SemiAbelianHomExtension, FarguesHodgeTate, GagaSections, QuotientByFiniteFlatStatement, ZarhinStatement, and NefRR hold in order, then DeepStR holds. The definition DeepStR says that there exists a real number C with 0 ≤ C such that for every D of type D7 and every T of type CoreJ D satisfying LawsJ T and D.R.m ^ 2 ≤ D.R.k, for every natural number j with 1 ≤ j and j < D.R.m, and for every Y of type Deep T.toCore j, every natural number e, and every real number o satisfying Y.Good e o and Y.d.l₂.M'.primeFactors.card ≤ 15, the condition MeanAll Y.U (xiR D) (ell D) C holds. For the implicit datum Dw determined by Y.U, that MeanAll condition says that for every u of type AllWt.Weight Dw and every real number g satisfying WtGap u g, the condition MeanGe Y.U (xiR D) u (bndB u g) (C * errX (ell D) u g) holds.",
+    "line": 26
+  }
+]

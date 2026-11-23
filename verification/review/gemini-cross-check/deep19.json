@@ -1,0 +1,102 @@
+{
+  "errors": [
+    {
+      "field": "premises",
+      "right": "The proposition HarishChandraFinite says that for every record D of type D7, every family θ with IsInfFam θ, every V of type HSp D, every open subgroup U of GA D V, every pair ε and fr satisfying IsFrameFam V ε fr, every family of finite-dimensional complex vector spaces W τ with representations ρ τ satisfying IsContRep (ρ τ) for all τ, and every c from D.what₂.Tau and natural numbers to ℂ, the complex span of forms θ V U ε fr ρ c is finite-dimensional, without opening IsInfFam, HSp, GA, IsFrameFam, Formalism.REAL.KG, IsContRep or forms.",
+      "why": "The definition GlobalTheory.Published.HarishChandraFinite in dossier.md leaves IsFrameFam and IsContRep unopened across all four files and also quantifies over V of type HSp D and c from D.what₂.Tau and natural numbers to ℂ.",
+      "wrong": "the proposition HarishChandraFinite, which says that the complex span of the set that the code calls forms θ V U ε fr ρ c is finite-dimensional, for every D7 record, every family θ with IsInfFam θ, every open subgroup U, every frame family and every family of continuous finite-dimensional representations"
+    },
+    {
+      "field": "premises",
+      "right": "The proposition CuspRapidDecay says that for every D of type D7, every family θ satisfying IsInfFam θ, every V of type HSp D, every map e from LieInf V to GA D V satisfying IsExpFam θ V e, and every complex function φ on GA D V satisfying IsAutFun V φ, IsSmoothInf V e φ, IsUnifModerate θ V e φ and IsCuspFun V φ, the condition GlobalTheory.CuspDecay.IsRapidDecay θ V φ holds, without opening any of those named conditions.",
+      "why": "The definition GlobalTheory.Published.CuspRapidDecay in dossier.md states hypotheses using the unopened names IsInfFam, IsExpFam, IsAutFun, IsSmoothInf, IsUnifModerate and IsCuspFun, whose mathematical meanings are not shown in any of the files.",
+      "wrong": "the proposition CuspRapidDecay, which says that cuspidal automorphic functions with the listed smoothness and moderate growth satisfy a condition the code calls IsRapidDecay"
+    },
+    {
+      "field": "premises",
+      "right": "The proposition DiscreteSeriesCover says that for all natural numbers p and q with 1 ≤ p + q and every T of type GrpData p q, there exists a map D sending rational functions lam on Ix p q satisfying IsParam lam to elements of DSRep T such that HasTypes (D lam) lam.1 holds for every lam and every R of type DSRep T satisfies UnitEquiv R (D lam) for some lam, without opening GrpData, Ix, IsParam, DSRep, HasTypes or UnitEquiv.",
+      "why": "The definition GlobalTheory.Published.DiscreteSeriesCover in dossier.md does not open DSRep, IsParam or UnitEquiv in any of the files and also requires T of type GrpData p q and HasTypes (D lam) lam.1 for every lam.",
+      "wrong": "the proposition DiscreteSeriesCover, which says that for p + q ≥ 1 every representation of type DSRep T is unitarily equivalent to one in a family indexed by parameters"
+    },
+    {
+      "field": "premises",
+      "right": "The proposition HarishChandraModules is the conjunction of the statement that HarishChandraModulesOn T holds for all natural numbers p and q with 1 ≤ p + q and all T of type GrpData p q, together with KFiniteAnalyticUJ, without opening GrpData, HarishChandraModulesOn or KFiniteAnalyticUJ.",
+      "why": "The definition GlobalTheory.Published.HarishChandraModules in dossier.md quantifies p and q over natural numbers and restricts T to the type GrpData p q rather than quantifying over all T unconditionally.",
+      "wrong": "the proposition HarishChandraModules, which is HarishChandraModulesOn T for all p, q with p + q ≥ 1 and all T, together with KFiniteAnalyticUJ"
+    },
+    {
+      "field": "premises",
+      "right": "The proposition CasselmanWallach says that for every natural number n, sign tuple ε, complex Hilbert space H with σ satisfying IsURepOn (UJset ε) σ and IsIrredOn (UJset ε) σ, complete Hausdorff space E with seminorms p and maps π and dπ satisfying IsSmoothModRep ε p π dπ, and complex linear map T₀ from H to E satisfying IsGKMap ε σ π dπ T₀, there exists a complex linear map T from H to E that agrees with T₀ on vectors satisfying IsKFin ε σ, satisfies IsSmoothGMap ε σ p π T, agrees on vectors satisfying SmoothVec (lieSet ε) σ with any other such map T', maps the set of SmoothVec vectors to a closed set in E, and whenever T₀ is nonzero on some IsKFin vector satisfies sobNorm σ S w ≤ q (T w) for all lists S of lists in lieSet ε, some continuous seminorm q on E and all SmoothVec vectors w, without opening those named predicates and sobNorm.",
+      "why": "The definition GlobalTheory.Published.CasselmanWallach in dossier.md does not open IsURepOn, IsIrredOn, IsGKMap, IsSmoothGMap or sobNorm in any file, and restricts agreement with T₀ to IsKFin vectors, uniqueness, closedness and the sobNorm bound to SmoothVec vectors, and the sobNorm bound to the case where T₀ is nonzero on an IsKFin vector.",
+      "wrong": "the proposition CasselmanWallach, which says that a (g,K)-map from an irreducible unitary representation extends to a unique smooth map with closed image and Sobolev-type bounds"
+    },
+    {
+      "field": "premises",
+      "right": "The proposition HoweUnram says that for every complete valued field L of characteristic zero with parameters ϖ, σ, q, δ, dimensions n and n', invertible matrices JS and JT, additive character ψ, complex module M, map ρ and homomorphism ω from the product of Formalism.UG.UJ σ JS and Formalism.UG.UJ σ JT to endomorphisms of M satisfying LocPair ϖ σ q δ JS JT ψ ρ ω, and for every nonzero s in M satisfying LocVac ρ s whose ρ-orbit spans M, every w in M fixed by ω (g, 1) for all g in Formalism.UG.GLint (Fin n) (Formalism.UG.intL L) lies in the complex span of the elements ω (1, h) s, and symmetrically every w fixed by ω (1, h) for all h in Formalism.UG.GLint (Fin n') (Formalism.UG.intL L) lies in the complex span of the elements ω (g, 1) s, without opening LocPair, LocVac, Formalism.UG.UJ, Formalism.UG.GLint or Formalism.UG.intL.",
+      "why": "The definition GlobalTheory.Hk3.HoweUnram in dossier.md never opens LocPair, Formalism.UG.GLint or Formalism.UG.intL in any file, and its conclusion places vectors fixed by GLint elements inside the span of the orbit of s under the other factor rather than considering spans of vectors fixed by integral matrices.",
+      "wrong": "the proposition HoweUnram, which is a statement about unramified local pairs and spans of vectors fixed by integral matrices"
+    },
+    {
+      "field": "premises",
+      "right": "The proposition WeilRepresentationUnitaryPair says that for every D of type D7, every additive character ψ on AF D.host.F satisfying IsStdChar D ψ (-1), every S and T of type HSp D, and every pair of circle-valued characters χS and χT on (AE D)ˣ satisfying IsHeckeChar D χS, IsHeckeChar D χT, ResEta D χS S.rank and ResEta D χT T.rank, there exists a homomorphism ω from GA D S × GA D T to complex linear endomorphisms of WO S T → ℂ satisfying IsWeilDatumO ψ S T χS χT ω, without opening HSp, AF, AE, GA, WO, IsStdChar, IsHeckeChar, ResEta or IsWeilDatumO.",
+      "why": "The definition GlobalTheory.Published.WeilRepresentationUnitaryPair in dossier.md leaves HSp, IsStdChar, IsHeckeChar, ResEta and IsWeilDatumO unopened across all four files and requires those character conditions as hypotheses.",
+      "wrong": "the proposition WeilRepresentationUnitaryPair, which says that a Weil datum ω exists for the given characters and Hermitian spaces"
+    },
+    {
+      "field": "premises",
+      "right": "The proposition WeilSiegelFormulaUnitary says that for D of type D7, A and B of type HSp D, and a Haar measure m on GA D B with 1 ≤ A.rank and either wittIdx B = 0 or A.rank + wittIdx B < B.rank, absThetaInt B m (φ.1 ∘ coord ε) is bounded by ENNReal.ofReal (ν φ) for some continuous seminorm ν with IsContSeminorm ν, and for any ω satisfying IsWeilDatumO ψ (dblSp A) B 1 χ ω and f satisfying IsThetaFunO ψ (dblSp A) B f, the descended function from thetaKO ω g h f is integrable against autMeasure B m for every g, and whenever 2 * A.rank < B.rank and IsCovolOne (ratL B A) ν 𝓖 holds, LeftInv (siegelQ A) (swSection A B ν 𝓖 ω f) and CosetConv hold and cosetSum (siegel A) (GQ (dblSp A)) (swSection A B ν 𝓖 ω f) g equals the average of descend (GQ B) (fun h => thetaKO ω g h f) with respect to autMeasure B m, without opening those named objects and predicates.",
+      "why": "The definition GlobalTheory.Published.WeilSiegelFormulaUnitary in dossier.md leaves absThetaInt, thetaKO, swSection, cosetSum and CosetConv unopened across all files, never mentions Eisenstein, and gives a continuous seminorm bound on absThetaInt together with integrability and CosetConv rather than general theta-integral convergence.",
+      "wrong": "the proposition WeilSiegelFormulaUnitary, which states theta-integral convergence and, when 2·rank A < rank B, an identity between an Eisenstein coset sum and a theta average"
+    },
+    {
+      "field": "premises",
+      "right": "The proposition GlobalTheory.Published.SiegelWeilUnitaryConvergent says that for D of type D7 and A and B of type HSp D satisfying A.rank < B.rank, B.rank ≤ 2 * A.rank and A.rank + wittIdx B < B.rank, together with IsWeilDatumO, IsMaj, HasIwasawa, IsInfFam, IsCartanInv, the commutation condition, IsCovolOne, Haar measure ν and IsFockVec on the remaining data, AutomorphicL2Unitary.descend (GQ B) (fun h => thetaKO ω g h f) is integrable against autMeasure B ν for every g and Eis.EisValueAt holds for A, flat A a (swSec A B ω μ 𝓨 f) (sZero A B), sZero A B and thetaMean ω ν f, without opening thetaKO or the named conditions.",
+      "why": "The definition GlobalTheory.Published.SiegelWeilUnitaryConvergent in dossier.md leaves thetaKO, AutomorphicL2Unitary.descend and autMeasure unopened across all files and assumes additional hypotheses such as IsWeilDatumO, IsMaj, HasIwasawa, IsInfFam, IsCartanInv, IsCovolOne and IsFockVec.",
+      "wrong": "the proposition GlobalTheory.Published.SiegelWeilUnitaryConvergent, which gives theta-integral integrability and the condition that the code calls Eis.EisValueAt whenever rank A < rank B and rank B ≤ 2·rank A and rank A + wittIdx B < rank B"
+    },
+    {
+      "field": "premises",
+      "right": "The proposition UnramifiedDoublingGL says that for every field k satisfying IsNonarchimedeanLocalField k and CharZero k, every natural number n, every Haar measure μ on GL (Fin n) k with μ (KO k (Fin n)) = 1, every complex module V with a representation π of GL (Fin n) k on V and family α from Fin n to ℂˣ satisfying HasSatake π α, and every ω from GL (Fin n) k to ℂ satisfying IsZonal π (KO k (Fin n)) ω, there exists a real number s₀ such that for every complex s with s₀ < s.re, the function g ↦ sphSection k (Fin n) s (io k (Fin n) (g, 1)) * ω g is integrable with respect to μ and its integral equals lFactor (resCard k) α (s + 1 / 2) * lFactor (resCard k) α⁻¹ (s + 1 / 2) * invNormFactor (resCard k) n s, without opening IsNonarchimedeanLocalField, HasSatake, IsZonal, KO, sphSection, io, resCard, lFactor or invNormFactor.",
+      "why": "The definition GlobalTheory.Published.UnramifiedDoublingGL in dossier.md leaves sphSection, io, lFactor and invNormFactor unopened across all files, calls the last factor invNormFactor rather than a normalising factor, and includes integrability plus hypotheses on k, μ, π and ω.",
+      "wrong": "the proposition UnramifiedDoublingGL, which says that the unramified doubling zeta integral on GL(n) equals a product of two L-factors at s + 1/2 times a normalising factor once Re s exceeds some s₀"
+    },
+    {
+      "field": "premises",
+      "right": "The proposition DiscreteSeriesClassification says that for every natural number n there exist complex inner product spaces H ε lam with continuous linear actions π ε lam of n by n complex matrices that, whenever lam is strictly decreasing with lam a - (n - 1) / 2 an integer for every a, satisfy CompleteSpace, Nontrivial, IsURepOn (UJset ε), IsIrredOn (UJset ε), IsSqIntOn ε, HasInfChar ε (for lam cast to ℂ) and the stated IsKTypeOf conditions, and conversely any complete nontrivial complex inner product space H' with action σ satisfying CompleteSpace, Nontrivial, IsURepOn (UJset ε), IsIrredOn (UJset ε) and IsSqIntOn ε admits a permutation s preserving order on equal values of ε, a function mu of the same strictly decreasing form, and an intertwining linear isometry T from H' to H (ε ∘ s) mu, without opening IsURepOn, IsIrredOn, IsSqIntOn, UJset, HasInfChar, IsKTypeOf, rhoN, rhoC or root.",
+      "why": "The definition GlobalTheory.Published.DiscreteSeriesClassification in dossier.md leaves IsSqIntOn, IsIrredOn and IsURepOn unopened across all files, never uses the phrase Harish-Chandra parameters, and also states HasInfChar and IsKTypeOf conditions alongside the permutation s and linear isometry T.",
+      "wrong": "the proposition DiscreteSeriesClassification, which classifies square-integrable irreducible unitary representations by Harish-Chandra parameters"
+    },
+    {
+      "field": "premises",
+      "right": "The proposition StrongApproxSU says that for all number fields F and E with an F-algebra automorphism σ satisfying IsCMExt F E σ, every natural number M with 2 ≤ M, every M by M matrix J over E satisfying IsHermND σ J, and any finite place sets S₁ and S₂ and ε of type AF F satisfying IsPlacesIdem S₁ S₂ ε such that SUSupp σ J ε is not compact, every g in SUAdelic σ J belongs to the closure of the set of products γ * h in HA (AF F) σ J with γ in SURat σ J and h in SUSupp σ J ε, without opening IsCMExt, IsHermND, AF, IsPlacesIdem, SUSupp, SUAdelic, HA or SURat.",
+      "why": "The definition GlobalTheory.Published.StrongApproxSU in dossier.md does not open IsCMExt, IsHermND, SUAdelic or SURat in any file and also requires the hypotheses IsPlacesIdem S₁ S₂ ε and non-compactness of SUSupp σ J ε.",
+      "wrong": "the proposition StrongApproxSU, which is strong approximation for special unitary groups of nondegenerate Hermitian matrices of size at least 2 over CM extensions"
+    },
+    {
+      "field": "premises",
+      "right": "The proposition HeckeCharacterZeroLocus.SiegelWeilU.SiegelWeilUnitaryConvergent says that for all number fields F and E with E an algebra over F, every F-algebra automorphism σ of E satisfying IsCMExt F E σ, every natural number M and every M by M matrix J over E satisfying IsHermND σ J, the condition SiegelWeilAt F E σ M J holds, without opening IsCMExt, IsHermND or SiegelWeilAt.",
+      "why": "The definition HeckeCharacterZeroLocus.SiegelWeilU.SiegelWeilUnitaryConvergent in dossier.md leaves IsCMExt and IsHermND unopened across all files, so their mathematical meanings cannot be asserted from the text.",
+      "wrong": "the proposition HeckeCharacterZeroLocus.SiegelWeilU.SiegelWeilUnitaryConvergent, which says that a condition the code calls SiegelWeilAt holds for every CM extension and every nondegenerate Hermitian matrix"
+    },
+    {
+      "field": "conclusion",
+      "right": "The row statement says that there exists E from Par to BdP BundleCondition satisfying RowE Q L E such that for every 𝒜 of type FamClass, every σ of type RawSel BundleCondition 𝒜 satisfying IsSel Q L E 𝒜 σ, every real eps, every Fm of type FamP eps with proof hc of 𝒜 Fm, every real x with proof hx of Fm.x1 < x, and every i of type Fm.Ix x, the bundle b equal to σ Fm hc x hx i satisfies (b.B.Q.Rl.toCx3 b.B.Q.F).MIstar2 (b.B.Q.F.eV (b.B.Q.Rl.toCx3 b.B.Q.F).zs) b.B.Q.sEE.",
+      "why": "The definitions GlobalTheory.miStarRow_alt_alt, Row and AtAll in dossier.md require an existential E with RowE Q L E and IsSel Q L E 𝒜 σ, quantify separately over x exceeding Fm.x1 and i of type Fm.Ix x without naming Fm.x1 a threshold in any open definition, and apply MIstar2 to b.B.Q.Rl.toCx3 b.B.Q.F with arguments b.B.Q.F.eV (b.B.Q.Rl.toCx3 b.B.Q.F).zs and b.B.Q.sEE rather than directly to the bundle.",
+      "wrong": "the row statement that every selected bundle satisfies MIstar2 at every index beyond the threshold"
+    },
+    {
+      "field": "notation",
+      "right": "With b equal to σ(Fm, hc, x, hx, i), the inner test should be written as (b.B.Q.Rl.toCx3 b.B.Q.F).MIstar2(b.B.Q.F.eV((b.B.Q.Rl.toCx3 b.B.Q.F).zs), b.B.Q.sEE).",
+      "why": "The statement GlobalTheory.miStarRow_alt_alt in dossier.md applies MIstar2 to b.B.Q.Rl.toCx3 b.B.Q.F with arguments b.B.Q.F.eV (b.B.Q.Rl.toCx3 b.B.Q.F).zs and b.B.Q.sEE, and σ takes the proofs hc and hx in addition to Fm, x and i.",
+      "wrong": "MIstar2(σ(Fm,x,i))"
+    },
+    {
+      "field": "notation",
+      "right": "The test wrapped by Row in RowMultiplicityCondition should be written as Ind.EvW(b ↦ (b.B.Q.Rl.toCx3 b.B.Q.F).MIstar2(b.B.Q.F.eV((b.B.Q.Rl.toCx3 b.B.Q.F).zs), b.B.Q.sEE))(𝒜, σ).",
+      "why": "The definition GlobalTheory.Fc.RL.RowMultiplicityCondition in dossier.md uses the operator Ind.EvW applied to the function sending b to (b.B.Q.Rl.toCx3 b.B.Q.F).MIstar2 (b.B.Q.F.eV (b.B.Q.Rl.toCx3 b.B.Q.F).zs) b.B.Q.sEE rather than applying EvW directly to MIstar2.",
+      "wrong": "EvW(MIstar2)(𝒜,σ)"
+    }
+  ],
+  "faithful": false,
+  "line": 19
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "a_errors": [
+      "In the summary of SWXS, reading A calls X.B.I.cm.sig an involution, whereas the Lean dossier does not show CMData or the body of cm.sig.",
+      "In the summary of RowsFinDim, reading A omits Re and its condition I.IsRConvF μf fund R e Re, dv and IsFdeg, the Integrable hypothesis on phLoc, and T and its condition IsOpInt (muInf I) (fun g => R (g, 1)) (phInf I σ w dv) T, even though Re∘T appears in the conclusion and A does not state that hypotheses were left out.",
+      "In the summary of RowsFinDim, reading A asserts mathematical meanings for names whose bodies the dossier does not show by calling I.IsFundDom a fundamental domain, I.IsRightReg a right regular action and IsURepOn unitary families when IsCRepOn is not shown.",
+      "In the summary of LoopRowS 3 𝒞 sel, reading A omits the quantifiers for hc of type 𝒞 Fm, i of type Fm.Ix x, Fm.x1 < x, (sel Fm hc).1 ≤ x and u, u' of type (Fm.D x i).what₂.Word, leaves C' and Cl unbound instead of sC' Fm and sCl Fm, and omits the target ((sel Fm hc).2 x hx h0 i) without stating that details were left out.",
+      "In the summary of the LocTied premise, reading A uses hc in (sel Fm hc).1 ≤ x without quantifying over hc of type 𝒞 Fm and writes D instead of Fm.D x i in D.s.atP p and locC D p.",
+      "In the unfolded conclusion of the says field, reading A omits the quantifiers for hc of type 𝒞 Fm, Fm.x1 < x and (sel Fm hc).1 ≤ x, leaves C', Cl and b unbound, and calls AdmissibleBoundsFromSource.hyp a standing hypothesis even though StandingNumericalData and StandingHypotheses are not shown in the dossier and hyp also requires 1 ≤ C0."
+    ],
+    "a_faithful": false,
+    "b_errors": [
+      "In the summary of RowsFinDim, reading B asserts mathematical meanings for names whose bodies the dossier does not show by calling fund a fundamental domain for I.IsFundDom, R a right regular action for I.IsRightReg, Re a convolution operator for I.IsRConvF and σ unitary families when IsCRepOn is not shown.",
+      "In the summary of RowsFinDim, reading B omits the measure muInf I when describing T as the integral of R (g, 1) against phInf without stating that this detail was left out.",
+      "In the says field, reading B refers to the LocTied hypothesis as holding in every selected family member, whereas the Lean premise quantifies over every family Fm in 𝒞 with Fm.x1 < x, (sel Fm hc).1 ≤ x and i of type Fm.Ix x, and in the premises field B refers to D.host.F only as the base field."
+    ],
+    "b_faithful": false,
+    "differ": "Reading A calls X.B.I.cm.sig an involution and omits several operators and hypotheses in RowsFinDim and LoopRowS, whereas reading B leaves X.B.I.cm.sig uninterpreted and preserves the quantifiers and hypotheses in RowsFinDim and LoopRowS while translating I.IsRConvF as convolution operator.",
+    "fixed_says": "Assume the three global conditions that the code calls SWXS, RowNGP and RowsFinDim, whose definitions are left unexpanded here. Then for every 𝒞 of type FamClass and every sel of type SSel 𝒞, if LocTied (Fm.D x i) holds for every real eps, every Fm of type FamP eps, every proof hc of 𝒞 Fm, every x with Fm.x1 < x and (sel Fm hc).1 ≤ x and every i of type Fm.Ix x, and if RanksRow 3 𝒞 and LoopRowS 3 𝒞 sel both hold, then Closed 𝒞 holds for the property sending Fm to the statement that TheoremSSelected Fm 3 (sel Fm hc) holds for every proof hc of 𝒞 Fm. Unfolding Closed 𝒞 says that there exists a real ε1 > 0 such that for every eps with 0 < eps and eps ≤ ε1 there exists K of type TransportedAlt such that for every Fm of type FamP eps and every real CH with 𝒞 Fm and Fm.Large K CH, every proof hc of 𝒞 Fm satisfies TheoremSSelected Fm 3 (sel Fm hc). Unfolding TheoremSSelected Fm 3 (sel Fm hc) says that there exists a real x0 such that for all x ≥ x0 and every i of type Fm.Ix x, the hypothesis AdmissibleBoundsFromSource.hyp (Fm.D x i) (Fm.L x i) 3 (sC' Fm) (sCl Fm) (Fm.CYL + 1) (1/4) 3 (1/2) Fm.CTu implies that for all proofs hx of Fm.x1 < x and h0 of (sel Fm hc).1 ≤ x and all u and u' of type (Fm.D x i).what₂.Word with u ≠ u', the squared norm of (((sel Fm hc).2 x hx h0 i).Y.tO u u').K0 is at most (1 + ((Fm.L x i).sc.b ^ 6)⁻¹) times the real product of (Fm.D x i).duS u and (Fm.D x i).duS u' divided by (Fm.D x i).what₂.Dstar.",
+    "line": 9
+  },
+  {
+    "a_errors": [],
+    "a_faithful": true,
+    "b_errors": [
+      "In the summary of RowE, reading B calls β of type BPt K a base point β of K, whereas the Lean dossier does not show the body of BPt.",
+      "In the summary of positionOf HasPart, reading B calls ⟨X.W, X.V, X.S, X.N, X.G⟩ of type TC.Later X.B C the later stages of X, whereas the Lean dossier does not show the body of TC.Later."
+    ],
+    "b_faithful": false,
+    "differ": "Reading A leaves BPt K and positionOf HasPart unexpanded in its statement and notes the five omitted wrapper theorems, whereas reading B unfolds positionOf HasPart and RowE while calling BPt K a base point and TC.Later the later stages of X and does not mention the wrapper theorems.",
+    "fixed_says": "",
+    "line": 10
+  },
+  {
+    "a_errors": [
+      "In the summary of S0.RowRat, reading A writes in the image of the embedding Bs.v0, whereas the Lean text of RowTest has Set.range Bs.v0.embedding and the dossier does not show DefBase.",
+      "In the summary of AtP, reading A asserts mathematical meanings for names whose bodies the dossier does not show by describing Ctx, Fr B.toPre and TwDat B as a context, a frame of B and a twisting datum of B when Ctx, Chr.HFrame and TwDat are not shown.",
+      "In the summary of RecTExists, reading A writes for every number field E, algebraic closure Ω, omitting the condition Algebra E Ω and IsAlgClosure E Ω that Ω is an algebraic closure of E."
+    ],
+    "a_faithful": false,
+    "b_errors": [
+      "In the summary of S0.RowRat, reading B asserts that every v in Wt has residue characteristic in T.pl for the Lean condition ∀ v ∈ Wt, B.places.resChar v ∈ T.pl, whereas the Lean dossier does not show the definition of Places or resChar.",
+      "In the conclusion, reading B describes mass (stdForm K M) (stdLat K M) divided by mass (stdForm K (M - 1)) (stdLat K (M - 1)) in SiegelMassRatioCM as the mass of the standard lattice of rank M divided by the mass of the standard lattice of rank M - 1, omitting the Hermitian form arguments stdForm K M and stdForm K (M - 1) without stating that they were left out."
+    ],
+    "b_faithful": false,
+    "differ": "Reading A translates Ctx, Fr and TwDat in AtP into English terms, omits that Ω is an algebraic closure of E in RecTExists and states only the conclusion RowTest of S0.RowRat while misnaming Bs.v0.embedding as the embedding Bs.v0, whereas reading B keeps AtP unexpanded, retains the full hypotheses of S0.RowRat with B.places.resChar called residue characteristic and omits stdForm when describing SiegelMassRatioCM.",
+    "fixed_says": "Assume a structure of named propositions that the code calls UnitaryGroupThirdPlaceHypotheses and a condition that the code calls S0.RowRat, whose definitions are left unexpanded here. Then for every proof hL of RecTExists, every real cDep and every A of type AtP satisfying EvLgG A, three things hold together. They are the mass ratio identity StandardLattice.SiegelMassRatioCM, MemberE p.s, and ExBL KPx (IsBuiltE p.s) (IsGoodE p.s) (BundleLinkage p), where p is parametersOfExtension N SExt.none (geoCl anyGeometry), which equals ⟨RX, N, SExt.none, geoCl anyGeometry⟩, and N is extensionWithAtProperty hL (extensionWithOrigin hL cDep) A.",
+    "line": 11
+  }
+]

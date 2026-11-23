@@ -1,0 +1,12 @@
+{
+  "errors": [
+    {
+      "field": "says",
+      "right": "There is a threshold ε1 > 0 such that for every eps with 0 < eps ≤ ε1 there is a K of the type called TransportedAlt for which every family Fm of the type called FamP eps, and every real number CH, that satisfies the family conditions FamHyp and the condition Fm.Large K CH has a further property.",
+      "why": "In Formalism.MainNotions.Closed in dossier.md, the expression Fm.Large K CH appears only as a hypothesis on Fm, K and CH, and none of the four files shows the body of Large or states that it is a size condition.",
+      "wrong": "There is a threshold ε1 > 0 such that for every eps with 0 < eps ≤ ε1 there is a K of the type called TransportedAlt for which every family Fm of the type called FamP eps, and every real number CH, that satisfies the family conditions FamHyp and the size condition Fm.Large K CH has a further property."
+    }
+  ],
+  "faithful": false,
+  "line": 16
+}

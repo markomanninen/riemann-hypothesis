@@ -1,0 +1,54 @@
+{
+  "errors": [
+    {
+      "field": "says",
+      "right": "and Fm also satisfies the condition DIVinN",
+      "why": "The definition Formalism.MainNotions.DIVinN unfolds only to an existential statement over the unopened predicate DIVinN_at and the unopened function SizeData₂.lifts, so none of the files shows that it is a divisibility condition.",
+      "wrong": "and Fm also satisfies the divisibility condition DIVinN"
+    },
+    {
+      "field": "says",
+      "right": "for every x with proof hx of Fm.x1 < x and x ≥ x₀, every index i of type Fm.Ix x and every p of type Pt Fm x hx i",
+      "why": "The definition GlobalTheory.BigTop.EventuallyAtPoints quantifies p over the unopened type Pt Fm x hx i without calling p admissible, and the predicate PointConditions' is itself unopened.",
+      "wrong": "at every admissible point p over every x > Fm.x1 with x ≥ x₀ and every index i"
+    },
+    {
+      "field": "premises",
+      "right": "the proposition HeckeLAdicCharacter, which says that for every number field E with algebraic closure Ω there is a homomorphism art from Ideles E to Gab E Ω satisfying IsGlobalArtin, such that for every prime l, every ring isomorphism ι from Qbar l to ℂ, every χ of type HChar E and every function n from embeddings of E into ℂ to ℤ with IsAlgPos χ n, there is exactly one continuous homomorphism r from G E Ω to the units of Qbar l with IsLAdicOf art ι χ n r",
+      "why": "The definition GlobalTheory.Published.HeckeLAdicCharacter uses the unopened names Ideles and HChar whose mathematical meanings are not shown in any of the files, and it also specifies art as a homomorphism and n as a function from embeddings of E into ℂ to ℤ.",
+      "wrong": "the proposition HeckeLAdicCharacter, which says that for every number field E with algebraic closure Ω there is a map art from the ideles to Gab E Ω satisfying IsGlobalArtin, such that for every prime l, every isomorphism ι from Qbar l to ℂ, every Hecke character χ and every n with IsAlgPos χ n, there is exactly one continuous homomorphism r from G E Ω to the units of Qbar l with IsLAdicOf art ι χ n r"
+    },
+    {
+      "field": "premises",
+      "right": "the proposition CuspUAlt, which says that for every number field E with IsCMField E, every algebraic closure Ω of E, every prime l, every ring isomorphism ι from Qbar l to ℂ, every natural number a ≥ 1, every π of type CuspSub E a and every χ of type HChar (maximalRealSubfield E), if (CG.mk π).IsRegAlg and IsPolarized π χ hold, then there exist a homomorphism r from G E Ω to GL (Fin a) (Qbar l), an integer wt and a function HT from ring homomorphisms from E to Qbar l to Multiset ℤ such that IsGalUAlt π χ ι r wt HT holds",
+      "why": "The definition UpperTheory.GalS.CuspUAlt universally quantifies an algebraic closure Ω of E that the reading omits before writing G E Ω, and none of the files opens IsCMField, HChar or IsRegAlg to support translating them as CM number field, Hecke character or regular algebraic.",
+      "wrong": "the proposition CuspUAlt, which says that for every CM number field E, prime l, isomorphism ι from Qbar l to ℂ, a ≥ 1, π of type CuspSub E a and Hecke character χ of the maximal real subfield, if CG.mk π is regular algebraic and IsPolarized π χ holds, then there are r from G E Ω to GL_a(Qbar l), an integer wt and multisets HT with IsGalUAlt π χ ι r wt HT"
+    },
+    {
+      "field": "premises",
+      "right": "the proposition BaseChangeDefiniteUnitaryGroup, defined as DefiniteN, which says that for every number field E with IsCMField E such that every finite place of E is unramified over the maximal real subfield, every natural number n ≥ 1 and every complex subspace π of UA E n → ℂ with IsAutRepU π, there exist a natural number c, sizes N i with a proof h that they sum to n, complex subspaces V i of Sm E (N i), objects σ assigning to each i and finite place w an element of SmIrr (GL (Fin (N i)) (w.adicCompletion E)), and functions m assigning multisets of complex numbers to embeddings of E into ℂ with IsBaseChangeU π h V σ m",
+      "why": "The definition UpperTheory.BaseChangeIdentities.DefiniteN uses the unopened names IsCMField and SmIrr whose mathematical meanings as CM field and local components are not shown in any of the files.",
+      "wrong": "the proposition BaseChangeDefiniteUnitaryGroup, defined as DefiniteN, which says that for every CM field E such that every finite place of E is unramified over the maximal real subfield, every n ≥ 1 and every π with IsAutRepU π, there are c, sizes N i summing to n, subspaces V i, local components σ and multisets m with IsBaseChangeU π h V σ m"
+    },
+    {
+      "field": "premises",
+      "right": "the proposition DiscreteSeriesCover, which says that for all natural numbers p and q with 1 ≤ p + q and every T of type GrpData p q there is a map D from functions lam from Ix p q to ℚ satisfying IsParam lam to DSRep T such that every D lam satisfies HasTypes (D lam) lam.1 and for every R of type DSRep T there is some lam satisfying UnitEquiv R (D lam)",
+      "why": "The definition GlobalTheory.Published.DiscreteSeriesCover names DSRep without any body in the files, so calling elements of DSRep T representations asserts an unshown mathematical meaning.",
+      "wrong": "the proposition DiscreteSeriesCover, which says that for all p, q with p + q ≥ 1 and every T of type GrpData p q there is a map D from parameters lam satisfying IsParam to representations DSRep T such that every D lam has types lam and for every R in DSRep T there is some lam with UnitEquiv R (D lam)"
+    },
+    {
+      "field": "premises",
+      "right": "the proposition CasselmanWallach, which says that for every natural number n, every ε of type Fin n → Bool, every σ on a complex Hilbert space H with IsURepOn (UJset ε) σ and IsIrredOn (UJset ε) σ, and every complete Hausdorff uniform complex vector space E with seminorms p and maps π and dπ satisfying IsSmoothModRep ε p π dπ, every complex linear map T₀ from H to E with IsGKMap ε σ π dπ T₀ extends to a complex linear map T from H to E that agrees with T₀ on vectors satisfying IsKFin ε σ, satisfies IsSmoothGMap ε σ p π T, is unique on vectors satisfying SmoothVec (lieSet ε) σ among such extensions, has closed image on the set of vectors satisfying SmoothVec (lieSet ε) σ, and, when T₀ is nonzero on some vector with IsKFin ε σ, satisfies that for every list S of lists of n by n complex matrices whose entries all belong to lieSet ε there exists a continuous seminorm q on E such that sobNorm σ S w ≤ q (T w) for every w satisfying SmoothVec (lieSet ε) σ",
+      "why": "The definition GlobalTheory.Published.CasselmanWallach quantifies universally over lists S in lieSet ε, then existentially over a continuous seminorm q, and then universally over vectors w satisfying SmoothVec (lieSet ε) σ, whereas the reading leaves S and w unquantified, places q at the end, and calls IsKFin K-finite even though IsKStableOn is unopened.",
+      "wrong": "the proposition CasselmanWallach, which says that for every irreducible unitary representation σ on a Hilbert space H and every smooth Fréchet-type representation π on E with IsSmoothModRep, every map T₀ with IsGKMap extends to a map T that agrees with T₀ on K-finite vectors, is a smooth G-map, is unique on smooth vectors among such extensions, has closed image on smooth vectors, and, when T₀ is nonzero on some K-finite vector, satisfies a bound sobNorm σ S w ≤ q (T w) for some continuous seminorm q"
+    },
+    {
+      "field": "conclusion",
+      "right": "SurjectiveOntoX holds, that is, there exists a real ε₁ > 0 such that for every real eps with 0 < eps ≤ ε₁ there exists K of type TransportedAlt such that for every family Fm of type FamP eps and every real number CH satisfying FamHyp Fm, Fm.Large K CH and DIVinN Fm there exist a constant C₀ ≥ 0 and a cutoff x₀ such that for every x with proof hx of Fm.x1 < x and x₀ ≤ x, every index i of type Fm.Ix x and every p of type Pt Fm x hx i satisfying p.PointConditions' and More p, we have (p.S false).ON (p.N C CH) for all C ≥ C₀",
+      "why": "The definition GlobalTheory.BigOn.SurjectiveOntoX via Formalism.MainNotions.Closed requires eps to satisfy 0 < eps ≤ ε₁ and universally quantifies CH over ℝ alongside Fm, whereas the conclusion omits both the positivity condition on eps and any quantifier for CH.",
+      "wrong": "SurjectiveOntoX holds, that is, for all small enough eps there is a K such that every family Fm satisfying FamHyp, Large K CH and DIVinN has a constant C₀ ≥ 0 and a cutoff x₀ beyond which every point p satisfying PointConditions' and More satisfies (p.S false).ON (p.N C CH) for all C ≥ C₀"
+    }
+  ],
+  "faithful": false,
+  "line": 17
+}

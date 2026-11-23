@@ -1,0 +1,39 @@
+[
+  {
+    "a_errors": [],
+    "a_faithful": true,
+    "b_errors": [],
+    "b_faithful": true,
+    "differ": "",
+    "fixed_says": "",
+    "line": 15
+  },
+  {
+    "a_errors": [
+      "In says, A places \"from some x0 on, at all points p of the family that satisfy PointConditions'\" before \"For SurjectiveOntoX the property is that DIVinN(Fm) gives some C0 ≥ 0 such that, eventually, More(p)\", which puts x0 and p outside DIVinN Fm and C0 instead of Lean's \"DIVinN Fm → ∃ C0 of type ℝ, 0 ≤ C0 ∧ _root_.GlobalTheory.BigTop.EventuallyAtPoints Fm\" and repeats \"eventually\" for both SurjectiveOntoX and LambdaLowerBound₂.",
+      "In says, A writes \"from some x0 on, at all points p of the family that satisfy PointConditions'\", omitting the quantifiers over x and i and the condition \"Fm.x1 < x\" from Lean's \"∀ (x of type ℝ) (hx of type Fm.x1 < x), x0 ≤ x → ∀ (i of type Fm.Ix x) (p of type Pt Fm x hx i)\" without stating that those details are left out."
+    ],
+    "a_faithful": false,
+    "b_errors": [],
+    "b_faithful": true,
+    "differ": "In says, A places the x0 and point quantifiers outside DIVinN(Fm) and C0 in SurjectiveOntoX and omits the condition Fm.x1 < x, whereas B keeps DIVinN Fm and C0 outside x0 and p and explicitly includes Fm.x1 < x and x0 ≤ x.",
+    "fixed_says": "If the bundle of statements that the code calls UnitaryGroupThirdPlaceHypotheses holds, then both the statement called SurjectiveOntoX and the statement called LambdaLowerBound₂ hold. SurjectiveOntoX says that there is a real ε1 > 0 such that for every real eps with 0 < eps ≤ ε1 there is a K of type TransportedAlt such that, for every family Fm of type FamP eps and every real CH with FamHyp Fm and Fm.Large K CH, if DIVinN Fm holds then there exist real numbers C0 ≥ 0 and x0 such that, for every real x with Fm.x1 < x and x0 ≤ x, every index i of type Fm.Ix x and every point p of type Pt Fm x hx i satisfying p.PointConditions' and More p, the condition (p.S false).ON (p.N C CH) holds for every real C ≥ C0. LambdaLowerBound₂ says that there is a real ε1 > 0 such that for every real eps with 0 < eps ≤ ε1 there is a K of type TransportedAlt such that, for every family Fm of type FamP eps and every real CH with FamHyp Fm and Fm.Large K CH, there exists a real x0 such that, for every real x with Fm.x1 < x and x0 ≤ x, every index i of type Fm.Ix x and every point p of type Pt Fm x hx i satisfying p.PointConditions', the condition (p.S true).L6 (p.N C CH) holds for every real C.",
+    "line": 16
+  },
+  {
+    "a_errors": [
+      "In premises for HeckeLAdicCharacter, A writes \"every χ with IsAlgPos χ n has a unique continuous character r into the units of Qbar l with IsLAdicOf art ι χ n r\", omitting the universal quantifiers over l, ι and n from Lean's \"∀ (l of type ℕ) [Fact l.Prime] (ι of type Qbar l ≃+* ℂ) (χ of type HChar E) (n of type (E →+* ℂ) → ℤ)\".",
+      "In premises for ChebotarevDegreeOne, A writes \"whose inertia fixes L\" for Lean's subgroup inclusion of Ine at B into L.fixingSubgroup, asserting a mathematical meaning for Ine outside \"suggests\" when the dossier does not show the body of Ine, and omits \"(normV v)\" from Lean's \"IsFrob B (normV v) σ\".",
+      "In premises for CuspUAlt, A writes \"for a CM field E, a prime l, an isomorphism ι from Qbar l to ℂ, a ≥ 1, and π with IsRegAlg and IsPolarized π χ\", omitting the universal quantifiers over the algebraic closure Ω and over χ from Lean's \"∀ (E Ω of type Type) [Field E] [NumberField E] [IsCMField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]\" and \"∀ (π of type CuspSub E a) (χ of type HChar (maximalRealSubfield E))\".",
+      "In premises for BhattScholzeCrystallineLattices, A writes \"under the assumption IsAinf K P₀ e\" without the outer universal quantifiers from Lean's \"∀ (l of type ℕ) [Fact l.Prime] (K of type FinExt l) (P₀ of type Obj l ↥(OL K)) (e of type P₀.A ≃+* Ainf l)\", and writes \"between realised lattices\" where Lean quantifies over arbitrary modules T and T' in \"∀ (T T' of type Type) [AddCommGroup T] [Module ℤ_[l] T] [AddCommGroup T'] [Module ℤ_[l] T']\" rather than lattices.",
+      "In premises for CasselmanWallach, A omits n, ε and dπ, writes \"is unique on smooth vectors\" without Lean's conditions \"∀ v, IsKFin ε σ v → T' v = T₀ v\" and \"IsSmoothGMap ε σ p π T'\" on T', and writes \"bounds each sobNorm of a smooth vector w by a continuous seminorm of T(w)\", omitting the quantifier over S with elements in lieSet ε and obscuring the quantifier order in Lean's \"∀ S of type List (List (Matrix (Fin n) (Fin n) ℂ)), (∀ l ∈ S, ∀ X ∈ l, X ∈ lieSet ε) → ∃ q of type Seminorm ℂ E, Continuous q ∧ ∀ w, SmoothVec (lieSet ε) σ w → sobNorm σ S w ≤ q (T w)\".",
+      "In says for SurjectiveOntoX, A writes \"an x0 beyond which every point p with PointConditions' and More(p)\", omitting the quantifiers over x and i and the condition \"Fm.x1 < x\" from Lean's \"∀ (x of type ℝ) (hx of type Fm.x1 < x), x0 ≤ x → ∀ (i of type Fm.Ix x) (p of type Pt Fm x hx i)\" without stating that those details are left out."
+    ],
+    "a_faithful": false,
+    "b_errors": [],
+    "b_faithful": true,
+    "differ": "A omits several universal quantifiers in its premise unfoldings, asserts that Ine in ChebotarevDegreeOne means inertia, restricts T and T' in BhattScholzeCrystallineLattices to lattices, alters the Sobolev-norm quantifier scope in CasselmanWallach and omits Fm.x1 < x in says, whereas B preserves the Lean quantifiers, scopes and unnamed symbols accurately.",
+    "fixed_says": "If twelve named statements hold, namely GreenCuspidal, ClozelCohomological, HeckeLAdicCharacter, ChebotarevDegreeOne, CuspUAlt, BaseChangeDefiniteUnitaryGroup, BhattScholzeCrystallineLattices, HeckeLAdicCharacterAbove, CuspRapidDecay, RecTExists, DiscreteSeriesCover and CasselmanWallach in that order, then SurjectiveOntoX holds. SurjectiveOntoX says there is a real ε1 > 0 such that for every real eps with 0 < eps ≤ ε1 there is a K of type TransportedAlt such that, for every family Fm of type FamP eps and every real CH with FamHyp Fm and Fm.Large K CH, if DIVinN Fm holds then there exist real numbers C0 ≥ 0 and x0 such that, for every real x with Fm.x1 < x and x0 ≤ x, every index i of type Fm.Ix x and every point p of type Pt Fm x hx i satisfying p.PointConditions' and More p, the condition (p.S false).ON (p.N C CH) holds for every real C ≥ C0.",
+    "line": 17
+  }
+]

@@ -1,0 +1,8 @@
+[
+ {
+  "line": 30,
+  "index": 0,
+  "verdict": "imprecise",
+  "evidence": "The field premises of A writes \"if π satisfies IsRegAlg\" where the Lean text of Row0b has \"(CG.mk π).IsRegAlg\", so the condition is stated of the object CG.mk π and A states it of π. The dossier shows CG.mk only in that one place and gives it no body, and the rest of the premise is the Lean statement."
+ }
+]

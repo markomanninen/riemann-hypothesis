@@ -1,0 +1,74 @@
+[
+ {
+  "line": 12,
+  "index": 0,
+  "verdict": "imprecise",
+  "evidence": "Reading A says 'Assume four named bundles of hypotheses' and so counts ExistsUnlocalizedSaturatedState as a bundle, while the Lean text has 'def ExistsUnlocalizedSaturatedState' with the body 'StepW Start fun K _ _ _ w => ∃ (P of type Pre2 K w) ...' and no structure. The premises of A name all five hypotheses and call this one 'the condition', so the complaint that they are unnamed does not hold."
+ },
+ {
+  "line": 12,
+  "index": 1,
+  "verdict": "unfounded",
+  "evidence": "The says field of A writes 'LargeBaseCondition holds from the slot IsBuiltE p.s to R' without KPx, but the conclusion field of A writes 'LargeBaseCondition KPx (IsBuiltE p.s) R' and the notation field writes 'LargeBaseCondition(KPx, IsBuiltE(p.s), R)', as the Lean text 'GlobalTheory.Fc.ExBL KPx (IsBuiltE ...)' has it."
+ },
+ {
+  "line": 12,
+  "index": 2,
+  "verdict": "naming",
+  "evidence": "Reading A writes 'the trivial choice SExt.none', 'the geometry condition geoCl anyGeometry' and 'the slot system p.s', and the dossier has no entry for GeoP, GeoCl, Slots or SExt. The words follow the names and the shown bodies 'fun _ _ _ => True' of anyGeometry and 'fun _ ... => PUnit' of SExt.none."
+ },
+ {
+  "line": 13,
+  "index": 0,
+  "verdict": "naming",
+  "evidence": "Reading A writes 'a representation π over a nonarchimedean local field' for the Lean binder '(π of type Irr k n)', and the dossier has no entry for Irr. The word is the usual reading of the name Irr and of the field π.π."
+ },
+ {
+  "line": 13,
+  "index": 1,
+  "verdict": "omission",
+  "evidence": "Reading A summarises DepthZeroSupport as passing 'a nonzero vector fixed by KOne from a representation π ... to every member σ_a of a family', while the Lean text binds '(n of type ℕ)', '(s of type ℕ)', '(d of type Fin s → ℕ)' and writes 'KOne k (Fin n)' and 'KOne k (Fin (d a))'. No field of A says that these are left out."
+ },
+ {
+  "line": 13,
+  "index": 2,
+  "verdict": "unfounded",
+  "evidence": "The says field of A writes 'under eight named hypotheses', and the premises field of A lists all eight by name, from 'Hypotheses₂' to 'LocalEulerChar', in the order of the Lean text."
+ },
+ {
+  "line": 13,
+  "index": 3,
+  "verdict": "imprecise",
+  "evidence": "The notation of A defines 'Closed(𝒞, P)' with 'P(Fm, CH)' and then passes 'Fm ↦ BoundAtTwoThreeFamilyFonAlt(Fm)' and 'Fm ↦ LinkN(Fm)', while the Lean text has 'fun Fm _ => ...BoundAtTwoThreeFamilyFonAlt Fm' with the second argument ignored. The statement read is the same and only the ignored argument is missing from the notation."
+ },
+ {
+  "line": 14,
+  "index": 0,
+  "verdict": "imprecise",
+  "evidence": "The says field of A writes 'LargeBaseCondition KPx (IsBuiltE p.s) R' after naming only 'parametersOfDependence hL cDep', so p has no antecedent in that field. The notation field of A gives 'with p = parametersOfDependence(hL, cDep)'."
+ },
+ {
+  "line": 14,
+  "index": 1,
+  "verdict": "unfounded",
+  "evidence": "The says field of A shortens to 'RowE hold' and 'a selection σ that satisfies IsSel', but the notation field of A writes 'RowE(IsGoodE(p.s) ∧ R, Lk, E)' and 'IsSel(IsGoodE(p.s) ∧ R, Lk, E, 𝒜, σ)', which are the arguments of the Lean text 'RowE Q Lk E' and 'IsSel Q Lk E 𝒜 σ' in Row."
+ },
+ {
+  "line": 14,
+  "index": 2,
+  "verdict": "naming",
+  "evidence": "Reading A writes 'a selection σ' and 'an assignment E' for the Lean binders '(σ of type RawSel Bd 𝒜)' and 'E of type Par → BdP Bd', and the dossier has no entry for RawSel, IsSel, Par or BdP. The word selection follows the names RawSel and IsSel, and assignment reads the function type."
+ },
+ {
+  "line": 14,
+  "index": 3,
+  "verdict": "imprecise",
+  "evidence": "The says field of A writes 'for the property GaloisPreconditions (w.D Z) nch' with w, Z and nch unbound, while the Lean text has 'fun _ _ _ _ w Z _ _ _ nch _ _ => ...GaloisPreconditions (w.D Z) nch'. The premises of A name all five hypotheses and say 'the property that sends its arguments to GaloisPreconditions (w.D Z) nch', so the naming complaint does not hold and the binding is given outside says."
+ },
+ {
+  "line": 14,
+  "index": 4,
+  "verdict": "omission",
+  "evidence": "Reading A writes 'for every D and nch with GaloisPreconditions D nch and Tie4 D' where the Lean text has '∀ (D of type D7) (nch of type NChoice D)'. Only the two types are missing, and no field of A says so."
+ }
+]

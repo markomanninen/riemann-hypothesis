@@ -1,0 +1,47 @@
+[
+  {
+    "a_errors": [
+      "In says, A writes \"Assume four named bundles of hypotheses\" and \"a fifth bundle\" without naming them and wrongly calls ExistsUnlocalizedSaturatedState a bundle, whereas the Lean text defines ExistsUnlocalizedSaturatedState as a single StepW statement rather than a structure.",
+      "In says, A omits KPx when writing \"LargeBaseCondition holds from the slot IsBuiltE p.s to R\", whereas the Lean statement applies GlobalTheory.Fc.ExBL to KPx and ExBL passes KP to LargeBaseCondition KP Q R.",
+      "In says, A writes \"the geometry condition geoCl anyGeometry\", \"the slot system p.s\" and \"the trivial choice SExt.none\", asserting meanings for GeoP, GeoCl, Slots and SExt although the dossier does not show their bodies."
+    ],
+    "a_faithful": false,
+    "b_errors": [],
+    "b_faithful": true,
+    "differ": "In says, reading A omits KPx from LargeBaseCondition, calls ExistsUnlocalizedSaturatedState a bundle of hypotheses and assigns unshown meanings to geoCl anyGeometry, p.s and SExt.none, whereas reading B includes KPx, names every premise and leaves those Lean terms uninterpreted.",
+    "fixed_says": "Assume the three hypothesis bundles HypAAlt, EllipticHypothesis and MultiplicityCoverHypotheses and the condition ExistsUnlocalizedSaturatedState, then any proof hL of RecTExists, then the hypothesis bundle LocalLanglandsHypothesis hL, then any real number cDep. Let p be the parameter record parametersOfExtension (extensionWithOrigin hL cDep) SExt.none (geoCl anyGeometry). If p satisfies MultiplicityCondition, then p.s satisfies the four-part condition MemberE, and there is a slot R such that LargeBaseCondition KPx (IsBuiltE p.s) R holds and ExB holds for sAnd (IsGoodE p.s) R and BundleLinkage p.",
+    "line": 12
+  },
+  {
+    "a_errors": [
+      "In premises, A describes π of type Irr k n in DepthZeroSupport as \"a representation π\", although the dossier does not show the body of Irr.",
+      "In premises, A omits the quantifiers over n of type ℕ, s of type ℕ and d of type Fin s -> ℕ as well as the arguments k (Fin n) and k (Fin (d a)) of KOne when summarizing DepthZeroSupport, without saying those details are left out.",
+      "In says, A writes \"under eight named hypotheses\" without naming Hypotheses₂, PublishedInputsThirdLayerAlt, GeometricGaloisRepCompatibility, SerN, DepthZeroSupport, LocalFiniteness, LocalTateDuality and LocalEulerChar.",
+      "In notation, A defines Closed(𝒞, P) with a two-argument predicate P(Fm, CH) and then passes one-argument maps Fm ↦ BoundAtTwoThreeFamilyFonAlt(Fm) and Fm ↦ LinkN(Fm), dropping the ignored real argument from fun Fm _ => BoundAtTwoThreeFamilyFonAlt Fm and fun Fm _ => LinkN Fm."
+    ],
+    "a_faithful": false,
+    "b_errors": [
+      "In premises, B unfolds LocalFiniteness as LocalFinitenessAt \"for every number field F, prime l, natural r, finite discrete module M over the integers modulo l to the power r, valuation subring A, representation rho of Dec A on M and height one prime v\" and repeats \"for the same range of data\" for LocalTateDuality and LocalEulerChar, omitting the universally quantified algebraic closure Ω of F as well as that A is a valuation subring of Ω and v is in HeightOneSpectrum (𝓞 F) without saying those details are left out.",
+      "In premises, B omits the quantifiers over s of type ℕ and d of type Fin s -> ℕ and the arguments k (Fin n) and k (Fin (d a)) of KOne when summarizing DepthZeroSupport, without saying those details are left out."
+    ],
+    "b_faithful": false,
+    "differ": "In premises, reading A calls π of type Irr k n a representation despite Irr having no shown body and includes the algebraic closure Ω in LocalFiniteness, whereas reading B keeps Irr k n uninterpreted and omits the algebraic closure Ω from LocalFiniteness, LocalTateDuality and LocalEulerChar.",
+    "fixed_says": "The theorem proves mainTheorem, which states that assuming Hypotheses₂, PublishedInputsThirdLayerAlt, GeometricGaloisRepCompatibility, SerN, DepthZeroSupport, LocalFiniteness, LocalTateDuality and LocalEulerChar, for every proof hL of RecTExists and every real number cDep, if LinkedAt holds for parametersOfDependence hL cDep with the row condition sending Q and L to SlotNormCondition Q L applied to the rule sending 𝒞 to Closed 𝒞 (fun Fm _ => BoundAtTwoThreeFamilyFonAlt Fm), then LinkedAt holds for the same parameters with the row condition sending Q and L to SlotNormCondition Q L applied to the rule sending 𝒞 to Closed 𝒞 (fun Fm _ => LinkN Fm).",
+    "line": 13
+  },
+  {
+    "a_errors": [
+      "In says, A writes \"IsBuiltE p.s\" using \"p\", although \"p\" is never defined in says because the preceding sentence names only \"parametersOfDependence hL cDep\".",
+      "In says, A unfolds the conclusion to \"RowE hold\" and \"a selection σ that satisfies IsSel\", leaving out the arguments sAnd (IsGoodE p.s) R, BundleLinkage p, E, 𝒜 and σ of RowE and IsSel without saying those details are left out.",
+      "In says, A calls σ of type RawSel Bd 𝒜 \"a selection σ\" and E of type Par -> BdP Bd \"an assignment E\", although the dossier does not show the bodies of RawSel, IsSel, Par or BdP.",
+      "In says, A writes \"Assume five named hypotheses\" without naming Hypotheses₂, CutGivesAlt, PublishedInputsThirdLayerAlt, GeometricGaloisRepCompatibility and DepthZeroSupport, and writes \"for the property GaloisPreconditions (w.D Z) nch\" with w, Z and nch unbound.",
+      "In premises, A omits the types D7 of D and NChoice D of nch when summarizing CutGivesAlt without saying those details are left out."
+    ],
+    "a_faithful": false,
+    "b_errors": [],
+    "b_faithful": true,
+    "differ": "In says, reading A unfolds the conclusion through Row with an undefined p, omitted arguments on RowE and IsSel and unshown meanings for RawSel and Par -> BdP Bd, whereas reading B stops unfolding at Row and keeps those terms uninterpreted.",
+    "fixed_says": "Assume Hypotheses₂, CutGivesAlt, PublishedInputsThirdLayerAlt, GeometricGaloisRepCompatibility and DepthZeroSupport, take any proof hL of RecTExists and any real number cDep, and assume MemberAtLayerPoint hL holds for the function sending its arguments including w, Z and nch to GaloisPreconditions (w.D Z) nch. Let p be parametersOfDependence hL cDep and let Lk be BundleLinkage p. If LinkedAt p holds for the row condition sending Q and L to SlotNormCondition Q L (fun 𝒞 => Closed 𝒞 (fun Fm _ => BoundAtTwoThreeFamilyFonAlt Fm)), then LinkedAt p holds for the row condition sending Q and L to SlotNormCondition Q L (fun 𝒞 => Closed 𝒞 (fun Fm _ => LinkN Fm)). Unfolded, the conclusion states that there exist a slot R and a map E from Par to BdP BundleCondition such that LargeBaseCondition KPx (IsBuiltE p.s) R holds, RowE (sAnd (IsGoodE p.s) R) Lk E holds, and for every 𝒜 of type FamClass and every σ of type RawSel BundleCondition 𝒜 satisfying IsSel (sAnd (IsGoodE p.s) R) Lk E 𝒜 σ we have Closed (D3 3 𝒜) (fun Fm _ => LinkN Fm).",
+    "line": 14
+  }
+]

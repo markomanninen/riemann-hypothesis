@@ -1,0 +1,48 @@
+{
+  "errors": [
+    {
+      "field": "says",
+      "right": "Second, the condition RowE holds for Q and Lk with the map sending κ, D, O, c and b to StdTie D O (ker D O c b).",
+      "why": "The theorem GlobalTheory.Svd.servH_row_of_artin passes fun _ D O c b => StdTie D O (ker D O c b) to RowE, and none of the files shows the body of EvP or BdP to justify calling this evidence.",
+      "wrong": "Second, the row-evidence condition RowE holds for Q and Lk with the evidence StdTie D O (ker D O c b)."
+    },
+    {
+      "field": "premises",
+      "right": "It takes a context K, an element β of type BPt K, a real number c and an element of Bd β.D β.O c, and returns a proposition.",
+      "why": "The definition GlobalTheory.Fc.LkT uses BPt K as the type of β, and none of the files shows the body of BPt.",
+      "wrong": "It takes a context K, a base point β over K, a real number c and an element of Bd β.D β.O c, and returns a proposition."
+    },
+    {
+      "field": "premises",
+      "right": "RowE Q Lk holds for the map that sends κ, D, O, c and b to StdTie D O (ker D O c b).",
+      "why": "The definition GlobalTheory.Fc.RowE only types E as a function from Par to BdP Bd and passes the resulting predicate to EvP, with no body of BdP or EvP shown to support calling E evidence.",
+      "wrong": "RowE Q Lk holds for the evidence that sends (κ, D, O, c, b) to StdTie D O (ker D O c b)."
+    },
+    {
+      "field": "premises",
+      "right": "This means the predicate EvP holds of the property of κ and K that says that for every β of type BPt K with β.Is Q, every real c and every b in Bd β.D β.O c with Lk K β c b, the triple (β.D, β.O, ker β.D β.O c b) is standard.",
+      "why": "The definition GlobalTheory.Fc.RowE quantifies β over BPt K, and none of the files shows the body of BPt.",
+      "wrong": "This means the predicate EvP holds of the property of κ and K that says that for every base point β over K with β.Is Q, every real c and every b in Bd β.D β.O c with Lk K β c b, the triple (β.D, β.O, ker β.D β.O c b) is standard."
+    },
+    {
+      "field": "conclusion",
+      "right": "So there is a map E from Par to BdP Bd such that RowE Q Lk E holds and every family class 𝒜 and every raw selection σ with IsSel Q Lk E 𝒜 σ satisfy ServH ker 𝒜 σ.",
+      "why": "The definition GlobalTheory.Fc.Row only states that E maps Par to BdP Bd, and none of the files shows the body of BdP or EvP to establish that E is an evidence assignment.",
+      "wrong": "So there is an evidence assignment E from Par to BdP Bd such that RowE Q Lk E holds and every family class 𝒜 and every raw selection σ with IsSel Q Lk E 𝒜 σ satisfy ServH ker 𝒜 σ."
+    },
+    {
+      "field": "conclusion",
+      "right": "ServH ker 𝒜 σ means that Closed holds of 𝒜 and the map sending Fm and an ignored second argument to GlobalTheory.TwU.RowTwU Fm, and that AtAll holds of the predicate sending D, O, c and b to GlobalTheory.Pdv.At O.ex (ker D O c b).ent together with 𝒜 and σ.",
+      "why": "The definition GlobalTheory.Svd.ServH conjoins Closed 𝒜 applied to fun Fm _ => GlobalTheory.TwU.RowTwU Fm with GlobalTheory.Fc.AtAll applied to fun D O c b => GlobalTheory.Pdv.At O.ex (ker D O c b).ent, 𝒜 and σ, and none of the files shows the body of Closed or AtAll.",
+      "wrong": "ServH ker 𝒜 σ means that 𝒜 is Closed under the property RowTwU of a family Fm and that AtAll holds, with each D, O, c, b required to satisfy Pdv.At O.ex (ker D O c b).ent along 𝒜 and σ."
+    },
+    {
+      "field": "notation",
+      "right": "Closed 𝒜 (λ Fm _. RowTwU Fm)",
+      "why": "The definition GlobalTheory.Svd.ServH applies Closed 𝒜 to the two-argument function fun Fm _ => GlobalTheory.TwU.RowTwU Fm rather than directly to RowTwU.",
+      "wrong": "Closed 𝒜 RowTwU"
+    }
+  ],
+  "faithful": false,
+  "line": 10
+}

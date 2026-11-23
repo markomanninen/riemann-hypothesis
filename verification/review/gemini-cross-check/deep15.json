@@ -1,0 +1,42 @@
+{
+  "errors": [
+    {
+      "field": "says",
+      "right": "Assume the proposition bundle that the code calls Hypotheses₂, which is a list of seven propositions such as local Tate duality, the local Euler characteristic formula, local finiteness of Galois cohomology and global Artin reciprocity, and assume the proposition CutGivesAlt.",
+      "why": "In dossier.md, the structure Hypotheses₂ bundles four propositions from GlobalTheory.Published and three propositions from Formalism.GaloisCohomology, and the Lean text does not state that all seven are cited results.",
+      "wrong": "Assume the bundle of cited results that the code calls Hypotheses₂, which is a list of seven propositions such as local Tate duality, the local Euler characteristic formula, local finiteness of Galois cohomology and global Artin reciprocity, and assume the proposition CutGivesAlt."
+    },
+    {
+      "field": "says",
+      "right": "Then Fm satisfies LinkN, which says that there are real constants C and x0 such that for every real x ≥ x0, every index i in Ix x for which the condition ShaFinOdd holds for D x i, and every whole number j from 1 to the natural number (D x i).R.m, a certain bound on a quantity etaSum holds whenever a certain series is summable.",
+      "why": "In dossier.md and d7-all.md, SizeData₂.lifts D ranges from 1 to the natural number D.R.m from the field R of type Ranks in D7, and neither file shows the body of Ranks or states that m is a rank.",
+      "wrong": "Then Fm satisfies LinkN, which says that there are real constants C and x0 such that for every x ≥ x0, every index i for which the condition ShaFinOdd holds, and every whole number j from 1 to the rank m of D x i, a certain bound on a quantity etaSum holds whenever a certain series is summable."
+    },
+    {
+      "field": "premises",
+      "right": "The bundle Hypotheses₂ of seven propositions holds.",
+      "why": "In dossier.md, the structure Hypotheses₂ contains four fields in GlobalTheory.Published and three fields in Formalism.GaloisCohomology, and the Lean text does not state that all seven propositions are cited.",
+      "wrong": "the bundle Hypotheses₂ of seven cited propositions holds"
+    },
+    {
+      "field": "premises",
+      "right": "The proposition CutGivesAlt holds, which says that for every D7 record D and every choice record nch of type NChoice D such that GaloisPreconditions D nch and Tie4 D hold, there exists c of type CutD D satisfying c.Good such that NormChoiceFacts holds for cut D c and nchTr c nch and Tie4 holds for cut D c.",
+      "why": "In dossier.md, CutGivesAlt applies NormChoiceFacts to both cut D c and nchTr c nch rather than to cut D c alone, applies Tie4 to D alone, and does not open the bodies of CutD, Good, cut, nchTr or NormChoiceFacts.",
+      "wrong": "the proposition CutGivesAlt holds, which says that every D7 record D with a choice record nch that meets GaloisPreconditions and Tie4 admits a good cut c for which the cut record meets NormChoiceFacts and Tie4"
+    },
+    {
+      "field": "premises",
+      "right": "The family Fm satisfies TwGood, which is TwGoodE applied to Fm and twE Fm.",
+      "why": "In dossier.md, twE Fm has target type IntegralHeckeForms.XD and is defined via twEOf from the field xd of type ThData, and none of the files shows the body of IntegralHeckeForms.XD, twEOf or ThData to support calling twE Fm forms.",
+      "wrong": "the family Fm satisfies TwGood, which is TwGoodE applied to Fm and the forms twE Fm"
+    },
+    {
+      "field": "notation",
+      "right": "The inequality is etaSum(L_{x,i}, j) ≤ dZ0(L_{x,i}, j)·(C·(f·m·b·Lsc² + (log(L_{x,i}.sc.x))²·Nc) + Σ_l vvTerm(D_{x,i}, l)).",
+      "why": "In dossier.md, LinkN_at uses Real.log L.sc.x ^ 2 where L is Fm.L x i, and LinkN quantifies over every x ≥ x0 without the assumption Fm.x1 < x that FamCore.L_x requires in order to equate L.sc.x with x.",
+      "wrong": "etaSum(L_{x,i}, j) ≤ dZ0(L_{x,i}, j)·(C·(f·m·b·Lsc² + (log x)²·Nc) + Σ_l vvTerm(D_{x,i}, l))"
+    }
+  ],
+  "faithful": false,
+  "line": 15
+}

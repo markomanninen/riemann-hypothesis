@@ -1,0 +1,36 @@
+{
+  "errors": [
+    {
+      "field": "says",
+      "right": "The first is that every D7 datum D x i of every family in 𝒞 satisfies LocTied whenever x exceeds the family's base point x1 and is at least the selected threshold.",
+      "why": "In offDiag and LocTied of dossier.md together with D7 of d7-all.md, Fm.D x i has the global record type D7 rather than being a local datum, and the threshold hypothesis is the non-strict inequality (sel Fm hc).1 ≤ x rather than strict inequality.",
+      "wrong": "The first is that every local datum D x i of every family in 𝒞 is locally tied (LocTied) once x is past both the family's base point x1 and the selected threshold."
+    },
+    {
+      "field": "says",
+      "right": "TheoremSSelected says that for all large enough x and every index i, whenever AdmissibleBoundsFromSource.hyp holds for Fm.D x i and Fm.L x i with constants 3, sC' Fm, sCl Fm, Fm.CYL + 1, 1/4, 3, 1/2 and Fm.CTu, and whenever hx proves Fm.x1 < x and h0 proves s.1 ≤ x, then for any two distinct words u ≠ u' the squared norm of ((s.2 x hx h0 i).Y.tO u u').K0 is at most (1 + 1/b^6) · duS(u) · duS(u') / Dstar.",
+      "why": "In TheoremSSelected and AdmissibleBoundsFromSource.hyp of dossier.md, the hypothesis is not just StandingHypotheses with C0 = 3 but the conjunction of StandingNumericalData with C0 = 3, StandingHypotheses with the family constants and 1 ≤ 3, and none of the files shows a body defining K0 as an off-diagonal quantity.",
+      "wrong": "TheoremSSelected says that for all large enough x, every index i and any two distinct words u ≠ u', whenever the standing hypotheses hold with C0 = 3, the squared norm of the off-diagonal quantity K0 for the pair (u, u') is at most (1 + 1/b^6) · duS(u) · duS(u') / Dstar."
+    },
+    {
+      "field": "premises",
+      "right": "RowsFinDim holds, meaning that for every record I of type AutInst, σ-finite Haar measure μf on I.Gf, subset fund of I.GA satisfying I.IsFundDom (I.muA μf) fund, map R on I.GA satisfying I.IsRightReg μf fund R, locally constant complex function e on I.Gf vanishing outside I.Kset with operator Re satisfying I.IsRConvF μf fund R e Re, and every family over the infinite places v of I.F of complex Hilbert spaces H v, maps σ v satisfying IsURepOn and IsIrredOn on UJset (I.ε v), reals dv v satisfying IsFdeg for muG (I.ε v), unit vectors w v and integrable functions phLoc (σ v) (w v) (dv v) for I.ε v, every bounded linear operator T on I.L2 μf fund satisfying IsOpInt with measure muInf I, action g ↦ R (g, 1) and phInf I σ w dv has finite-dimensional complex range for Re ∘ T.",
+      "why": "In RowsFinDim and its supporting definitions in dossier.md, the bodies of IsFundDom, IsRightReg, IsRConvF, IsCRepOn inside IsURepOn, inUJ inside UJset, and I.Ginf are not shown in any of the files, so describing them as a fundamental domain, right-regular action, convolution operator, unitary representations and the infinite group asserts mathematical meanings beyond the Lean text.",
+      "wrong": "RowsFinDim holds, meaning that for every automorphic instance I, σ-finite Haar measure μf, fundamental domain fund, right-regular action R, locally constant function e supported in I.Kset with associated convolution operator Re, and every family over the infinite places of unitary irreducible representations σ_v with formal degree d_v, unit vectors w_v and integrable coefficient functions, every operator T whose matrix coefficients equal the integral of phInf against the coefficients of R over the infinite group has a finite-dimensional range for Re ∘ T"
+    },
+    {
+      "field": "conclusion",
+      "right": "Closed holds for 𝒞 with the property that every family Fm in 𝒞, for every proof hc of membership, satisfies TheoremSSelected Fm 3 (sel Fm hc), which says that there is x0 such that for every x ≥ x0 and every index i, whenever AdmissibleBoundsFromSource.hyp holds for Fm.D x i and Fm.L x i with constants 3, sC' Fm, sCl Fm, Fm.CYL + 1, 1/4, 3, 1/2 and Fm.CTu and hx proves Fm.x1 < x and h0 proves (sel Fm hc).1 ≤ x, then for all distinct words u ≠ u' the bound ‖(((sel Fm hc).2 x hx h0 i).Y.tO u u').K0‖² ≤ (1 + 1/b^6) · duS(u) · duS(u') / Dstar holds.",
+      "why": "In TheoremSSelected and AdmissibleBoundsFromSource.hyp of dossier.md, the hypothesis includes StandingNumericalData with C0 = 3 and 1 ≤ 3 alongside StandingHypotheses with the family constants, and the bound quantifies over every index i and proofs hx and h0 for the selected object ((sel Fm hc).2 x hx h0 i).Y.tO u u'.",
+      "wrong": "Closed holds for 𝒞 with the property that every family Fm in 𝒞, for every proof hc of membership, satisfies TheoremSSelected Fm 3 (sel Fm hc), which is the eventual bound ‖K0(u,u')‖² ≤ (1 + 1/b^6) · duS(u) · duS(u') / Dstar for all distinct words u ≠ u' under the standing hypotheses with C0 = 3."
+    },
+    {
+      "field": "notation",
+      "right": "The conclusion part should read ∀ hc (of type 𝒞 Fm), ∃ x0 ∀ x ≥ x0 ∀ i, [hyp(D x i, L x i, 3, sC', sCl, CYL+1, 1/4, 3, 1/2, CTu) ⇒ ∀ (hx of type Fm.x1 < x) (h0 of type (sel Fm hc).1 ≤ x) ∀ u ≠ u', ‖(((sel Fm hc).2 x hx h0 i).Y.tO u u').K0‖² ≤ (1 + b⁻⁶) · duS(u) · duS(u') / Dstar].",
+      "why": "In TheoremSSelected of dossier.md, hx of type Fm.x1 < x and h0 of type s.1 ≤ x are proof hypotheses on the already-bound x from OwnEv rather than a new inner universal quantifier over x, and offDiag quantifies over hc of type 𝒞 Fm so that Y comes from (sel Fm hc).2 x hx h0 i.",
+      "wrong": "∃ x0 ∀ x ≥ x0 ∀ i, [hyp(D x i, L x i, 3, sC', sCl, CYL+1, 1/4, 3, 1/2, CTu) ⇒ ∀ x > x1 with sel(Fm).1 ≤ x ∀ u ≠ u', ‖K0(Y.tO u u')‖² ≤ (1 + b⁻⁶) · duS(u) · duS(u') / Dstar]"
+    }
+  ],
+  "faithful": false,
+  "line": 9
+}

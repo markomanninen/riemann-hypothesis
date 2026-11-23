@@ -1,0 +1,42 @@
+{
+  "errors": [
+    {
+      "field": "says",
+      "right": "Assume first the bundle of stated results Hypotheses₂, then the statement CutGivesAlt, then the bundles PublishedInputsThirdLayerAlt and GeometricGaloisRepCompatibility, then the statement DepthZeroSupport, a proof hL of RecTExists, a real number cDep, and the condition hF that MemberAtLayerPoint hL holds for the predicate that sends the twelve arguments of LayPAlt hL, extracting w, Z and nch, to GaloisPreconditions (w.D Z) nch.",
+      "why": "The statement of UpperTheory.GalC.final_of_alt in dossier.md places hG of type CutGivesAlt second, right after hP of type Hypotheses₂ and before prN, hX and dzs, and none of the files shows the bodies of CutD or cut to justify calling CutGivesAlt a cutting statement.",
+      "wrong": "Assume three bundles of stated results that the code calls Hypotheses₂, PublishedInputsThirdLayerAlt and GeometricGaloisRepCompatibility, and the single statement DepthZeroSupport, the cutting statement CutGivesAlt, a proof hL of the statement RecTExists, a real number cDep, and the condition hF that MemberAtLayerPoint hL holds for the predicate that sends the layer data to GaloisPreconditions (w.D Z) nch."
+    },
+    {
+      "field": "says",
+      "right": "Assume also that the property LinkedAt holds for the parameter record built from hL and cDep, with the test that sends Q of type V4.Slot and L of type LkT BundleCondition to SlotNormCondition Q L applied to the predicate sending 𝒞 of type FamClass to Closed 𝒞 (fun Fm _ => BoundAtTwoThreeFamilyFonAlt Fm).",
+      "why": "In dossier.md, Formalism.MainNotions.Closed is defined as a quantified implication over ε1, eps, K, Fm and CH rather than a closure property, the test passed to LinkedAt is fun Q L => SlotNormCondition Q L (fun 𝒞 => Closed 𝒞 (fun Fm _ => BoundAtTwoThreeFamilyFonAlt Fm)), and none of the files opens BoundAtTwoThree or Bd to show that BoundAtTwoThreeFamilyFonAlt is a family bound.",
+      "wrong": "Assume also that the property LinkedAt holds for the parameter record built from hL and cDep, where the test is SlotNormCondition applied to the closure property Closed of the family bound BoundAtTwoThreeFamilyFonAlt."
+    },
+    {
+      "field": "says",
+      "right": "LinkN for a family Fm means that there are real numbers C and x0 such that, for every real x ≥ x0 and every index i of type Fm.Ix x for which the datum Fm.D x i satisfies ShaFinOdd, and for every natural number j in {1, …, (Fm.D x i).R.m}, the implication LinkN_at (Fm.L x i) j C holds.",
+      "why": "In dossier.md, Formalism.MainNotions.LinkN quantifies j over SizeData₂.lifts (Fm.D x i), which Formalism.BasicNotions.SizeData₂.lifts defines as Finset.Icc 1 (Fm.D x i).R.m rather than an unbound m, and LinkN_at is an implication starting from Summable (vvTerm D) rather than an unconditional inequality.",
+      "wrong": "LinkN for a family Fm means that there are real C and x0 such that, for every x ≥ x0 and every index i of the family at x for which the datum Fm.D x i satisfies ShaFinOdd, and for every j in {1, …, m}, the inequality LinkN_at (Fm.L x i) j C holds."
+    },
+    {
+      "field": "premises",
+      "right": "hG, a proof of CutGivesAlt, which says that for every D7 datum D and every nch of type NChoice D satisfying GaloisPreconditions D nch and Tie4 D there is an element c of type CutD D such that c.Good, NormChoiceFacts (cut D c) (nchTr c nch) and Tie4 (cut D c) all hold",
+      "why": "None of the files shows the bodies of NChoice, CutD, cut or nchTr in UpperTheory.GalC.CutGivesAlt of dossier.md, so calling nch a choice, c a cut of D, cut D c the cut datum and nchTr c nch the carried choice asserts mathematical meanings of unopened names outside suggests.",
+      "wrong": "hG, a proof of CutGivesAlt, which says that for every D7 datum D and every choice nch with GaloisPreconditions D nch and Tie4 D there is a cut c of D that is Good, satisfies NormChoiceFacts for the cut datum and the carried choice, and keeps Tie4 for the cut datum"
+    },
+    {
+      "field": "premises",
+      "right": "dzs, a proof of DepthZeroSupport, which says that for every nonarchimedean local field k, every natural number n, every π of type Irr k n, every natural number s, every function d from Fin s to the natural numbers and every family σ assigning to each a an element of Irr k (d a), if IsCuspSupport π.π d (fun a => (σ a).π) holds and there exists v in fixed π.π (KOne k (Fin n)) with v ≠ 0, then for every a there exists v in fixed (σ a).π (KOne k (Fin (d a))) with v ≠ 0",
+      "why": "None of the files shows the bodies of Irr, IsCuspSupport, fixed or KOne in GlobalTheory.Published.DepthZeroSupport of dossier.md, so asserting that Irr k n is an irreducible representation of GL_n(k), IsCuspSupport gives cuspidal support, KOne is a subgroup and fixed gives fixed vectors asserts mathematical meanings of unopened names outside suggests while also omitting the quantifiers n, s and d.",
+      "wrong": "dzs, a proof of DepthZeroSupport, which says that for every nonarchimedean local field k, if an irreducible representation of GL_n(k) has cuspidal support given by representations σ_a and has a nonzero vector fixed by the subgroup the code calls KOne, then each σ_a also has a nonzero vector fixed by its KOne"
+    },
+    {
+      "field": "premises",
+      "right": "hF, the statement MemberAtLayerPoint for hL, which says that EvLgG holds of the predicate that sends K, B, f and T to the statement that KPx B f implies that, for all further data w, Z, Wt, p0, t, nch, n, xd and c, whenever defaultExtension hL K B f T w Z Wt p0 t nch n xd c and RXs t are nonempty and an element of type ColPin w is given, the condition GaloisPreconditions (w.D Z) nch holds",
+      "why": "In GlobalTheory.HeightCounting.Up.MemberAtLayerPoint in dossier.md, the universal quantifier over w, Z, Wt, p0, t, nch, n, xd and c is the consequent of the implication from KPx B f rather than a separate clause joined by and, and GlobalTheory.Mem.Top.Bl.ColPin w is a structure in Type rather than a proposition that holds.",
+      "wrong": "hF, the statement MemberAtLayerPoint for hL, which says that EvLgG holds of the predicate that sends K, B, f and T to the statement that KPx B f implies, and for all further data w, Z, Wt, p0, t, nch, n, xd and c for which the default extension type and RXs t are nonempty and ColPin w holds, the condition GaloisPreconditions (w.D Z) nch holds"
+    }
+  ],
+  "faithful": false,
+  "line": 14
+}

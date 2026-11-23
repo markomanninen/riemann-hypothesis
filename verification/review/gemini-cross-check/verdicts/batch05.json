@@ -1,0 +1,56 @@
+[
+ {
+  "line": 16,
+  "index": 0,
+  "verdict": "imprecise",
+  "evidence": "Reading A first says that both statements 'satisfy a property that holds, from some x0 on, at all points p of the family' and then that for SurjectiveOntoX 'DIVinN(Fm) gives some C0 ≥ 0 such that, eventually, More(p) implies ...', while the Lean text has 'DIVinN Fm → ∃ C0 of type ℝ, 0 ≤ C0 ∧ ...EventuallyAtPoints Fm fun _ _ _ p => ...' with the eventual clause inside. The second sentence and the notation of A give the Lean order, so the first sentence is a loose frame and the word eventually is doubled."
+ },
+ {
+  "line": 16,
+  "index": 1,
+  "verdict": "unfounded",
+  "evidence": "The says field of A shortens to 'from some x0 on, at all points p of the family that satisfy PointConditions'', but the notation field of A writes 'Ev(Fm,Q) = ∃ x0, ∀ x > x1 with x ≥ x0, ∀ i ∈ Ix(x), ∀ p ∈ Pt(Fm,x,i), PointConditions'(p) ⇒ Q(p)', which holds the quantifiers over x and i and the condition 'Fm.x1 < x' of the Lean text."
+ },
+ {
+  "line": 17,
+  "index": 0,
+  "verdict": "omission",
+  "evidence": "Reading A writes 'every χ with IsAlgPos χ n has a unique continuous character r into the units of Qbar l with IsLAdicOf art ι χ n r' and leaves l, ι and n unbound, while the Lean text has '∀ (l of type ℕ) [Fact l.Prime] (ι of type Qbar l ≃+* ℂ) (χ of type HChar E) (n of type (E →+* ℂ) → ℤ)' inside the existence of art. No field of A says that these binders are left out."
+ },
+ {
+  "line": 17,
+  "index": 1,
+  "verdict": "naming",
+  "evidence": "Reading A writes 'a place B over it whose inertia fixes L' for the Lean text 'Ine (F := F) B ≤ L.fixingSubgroup', and the dossier has no entry for Ine. The word inertia is the reading of the name Ine and the inclusion in the fixing subgroup is rendered rightly."
+ },
+ {
+  "line": 17,
+  "index": 1,
+  "verdict": "omission",
+  "evidence": "Reading A writes 'a σ with IsFrob whose restriction to L is g' where the Lean text has 'IsFrob B (normV v) σ', so the arguments B and normV v are missing. No field of A says so."
+ },
+ {
+  "line": 17,
+  "index": 2,
+  "verdict": "omission",
+  "evidence": "Reading A writes 'π with IsRegAlg and IsPolarized π χ' and 'a homomorphism r from G E Ω' with χ and Ω unbound, while the Lean text has '∀ (E Ω of type Type) ... [IsAlgClosure E Ω]' and '(χ of type HChar (maximalRealSubfield E))'. No field of A says that these binders are left out."
+ },
+ {
+  "line": 17,
+  "index": 3,
+  "verdict": "imprecise",
+  "evidence": "Reading A writes 'any equivariant linear map f between realised lattices', while the Lean text takes '(T T' of type Type) [AddCommGroup T] [Module ℤ_[l] T] ...' with 'Realises K E P₀ e T ρ j → Realises K E' P₀ e T' ρ' j'', so realised is right and lattices narrows arbitrary modules over ℤ_[l]. Reading A also gives 'under the assumption IsAinf K P₀ e' without the Lean binders '(K of type FinExt l) (P₀ of type Obj l ↥(OL K)) (e of type P₀.A ≃+* Ainf l)'."
+ },
+ {
+  "line": 17,
+  "index": 4,
+  "verdict": "omission",
+  "evidence": "Reading A leaves out the Lean binders '(n of type ℕ) (ε of type Fin n → Bool)' and dπ and the condition '(∀ l ∈ S, ∀ X ∈ l, X ∈ lieSet ε)' on S, and no field says so. Its words 'is unique on smooth vectors' and 'bounds each sobNorm of a smooth vector w by a continuous seminorm of T(w)' are a fair paraphrase of the Lean clauses '∀ w, SmoothVec (lieSet ε) σ w → T' w = T w' and '∃ q of type Seminorm ℂ E, Continuous q ∧ ∀ w, ... sobNorm σ S w ≤ q (T w)'."
+ },
+ {
+  "line": 17,
+  "index": 5,
+  "verdict": "unfounded",
+  "evidence": "The says field of A shortens to 'an x0 beyond which every point p with PointConditions' and More(p)', but the notation field of A writes '∃ x0, ∀ x > x1 with x ≥ x0, ∀ i ∈ Ix(x), ∀ p ∈ Pt(Fm,x,i), PointConditions'(p) ⇒ More(p) ⇒ ...', which holds the quantifiers over x and i and the condition 'Fm.x1 < x' of the Lean text."
+ }
+]

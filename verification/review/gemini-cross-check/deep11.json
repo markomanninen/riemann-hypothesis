@@ -1,0 +1,36 @@
+{
+  "errors": [
+    {
+      "field": "says",
+      "right": "Suppose the sixty-field proposition structure UnitaryGroupThirdPlaceHypotheses holds and the condition RowRat holds.",
+      "why": "The structure UnitaryGroupThirdPlaceHypotheses in dossier.md and its reading in glossary.md show a Prop structure whose sixty fields include three sub-bundles and the field siegelEisensteinSimplePole unfolding to True, while the Lean text does not establish that the fields are cited results.",
+      "wrong": "Suppose the bundle of sixty cited results called UnitaryGroupThirdPlaceHypotheses holds and the condition RowRat holds."
+    },
+    {
+      "field": "says",
+      "right": "Then for every proof hL of the proposition RecTExists, every real number cDep and every predicate A on quadruples (context K, base record B, frame f, twisting data T) that satisfies the condition EvLgG, three things hold together.",
+      "why": "The definition RecTExists in dossier.md and its reading in glossary.md leave IsRecT and its inner components unopened, so calling RecTExists a local reciprocity statement asserts mathematical meaning from names outside the suggests field.",
+      "wrong": "Then for every proof hL of the local reciprocity statement RecTExists, every real number cDep and every predicate A on quadruples (context K, base record B, frame f, twisting data T) that satisfies the condition EvLgG, three things hold together."
+    },
+    {
+      "field": "says",
+      "right": "Third, there is a slot R such that LargeBaseCondition KPx (IsBuiltE p.s) R holds, which is the condition that the code calls EvLg applied to the property of K, B, f and T that whenever KPx B f holds, every stage tuple and core satisfying IsBuiltE p.s also satisfies R, and such that ExB (sAnd (IsGoodE p.s) R) (BundleLinkage p) holds, which is the condition that the code calls EvP applied to the property of an ignored first argument and K that every β of type BPt K with β.Is (sAnd (IsGoodE p.s) R) has, at every real number c, a record b of type BundleCondition β.D β.O c satisfying BundleLinkage p K β c b.",
+      "why": "In dossier.md, LargeBaseCondition and ExB pass predicates of (K, B, f, T) to EvLg and of an ignored argument and K to EvP while BPt and BPt.Is have no visible body in any file, so calling β a base point satisfying both IsGoodE p.s and R asserts the meaning of unopened names outside suggests.",
+      "wrong": "Third, there is a slot R such that LargeBaseCondition KPx (IsBuiltE p.s) R holds, which is the condition that the code calls EvLg applied to the property that whenever KPx B f holds, every stage tuple and core satisfying IsBuiltE p.s also satisfies R, and such that ExB (sAnd (IsGoodE p.s) R) (BundleLinkage p) holds, which is the condition that the code calls EvP applied to the property that every base point satisfying both IsGoodE p.s and R has, at every real number c, a BundleCondition record that is linked in the sense of BundleLinkage p."
+    },
+    {
+      "field": "premises",
+      "right": "The record UnitaryGroupThirdPlaceHypotheses holds, which means that each of its sixty proposition fields holds, most of them placed in the namespace Published.",
+      "why": "The structure UnitaryGroupThirdPlaceHypotheses in dossier.md and its reading in glossary.md place most fields in the namespace GlobalTheory.Published without showing literature citations or confirming published-theorem status outside the suggests field.",
+      "wrong": "the record UnitaryGroupThirdPlaceHypotheses holds, which means that each of its sixty named propositions holds, most of them cited published theorems"
+    },
+    {
+      "field": "premises",
+      "right": "The condition RowRat holds, which is StepW Start applied to the property of K, B, f, T and w saying that for all Z, hX, Wt and z, under GrpTrue Z.N f, GrpAt (w.st Z) w.I, DV.KapDef (w.D Z), z.R.toRealDat.ExAt, InGeo z.geo, CoreP z, GIs2 K w Z.G, the identity Wt = z.W1 (F0K K.s (w.D Z)) and the condition that B.places.resChar v belongs to T.pl for all v in Wt, the row test RowTest holds for z.R.toCx3 z.F.",
+      "why": "In dossier.md, the definitions of RowRat, GrpTrue, GrpAt, DV.KapDef and GIs2 show that GrpTrue Z.N f, GrpAt (w.st Z) w.I, DV.KapDef (w.D Z), GIs2 K w Z.G and the residue-characteristic condition on Wt depend on other arguments rather than being conditions on z.",
+      "wrong": "the condition RowRat holds, which is StepW Start applied to a property saying that, under a long list of conditions on the data z (GrpTrue, GrpAt, KapDef, ExAt, InGeo, CoreP, GIs2, a set identity for Wt and a condition on residue characteristics), the row test RowTest holds for z.R.toCx3 z.F"
+    }
+  ],
+  "faithful": false,
+  "line": 11
+}

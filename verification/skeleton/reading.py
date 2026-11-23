@@ -83,6 +83,11 @@ def entry(r, by_line):
     if check["second_errors"]:
         n = len(check["second_errors"])
         out += [f"The check found {count.get(n, str(n) + ' errors')} in the second reading, which the text above does not use.", ""]
+    cross = r.get("cross_check")
+    if cross:
+        k = cross["changes"]
+        out += [f"A second model, Gemini, checked this reading again. {'One passage' if k == 1 else str(k) + ' passages'} of the text "
+                f"above {'was' if k == 1 else 'were'} changed after its findings were compared with the Lean text.", ""]
     deep = r.get("deeper")
     if deep:
         out += ["#### A deeper reading, with the record D7 at hand", "",

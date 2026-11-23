@@ -1,0 +1,30 @@
+{
+  "errors": [
+    {
+      "field": "says",
+      "right": "The first is SelectionLpBound 𝒜 σ, which applies LoopRowS with constant 3 to D3 3 𝒜 and the selection given by Fm.x1 and the STies projections of the S fields of σ, stating that for every aF from List ℝ to ℝ, Closed holds on D3 3 𝒜 for the claim that every proof hc of D3 3 𝒜 Fm yields OwnEv at Fm of the statement that for all x with Fm.x1 < x and (sel Fm hc).1 ≤ x and all words u and u′ in (Fm.D x i).what₂.Word, the opaque conditions Cnt.Hyp (at Fm.CYL + 1, 1 / 4, 3, 1 / 2, Fm.CTu, 3, and aF Fm.cOut), ConcTie, and AbsConv imply the conjunction of the opaque conditions RowBig and RowNotScalar, where Closed asks for a positive ε1 and a TransportedAlt element K such that D3 3 𝒜 Fm and the opaque condition Fm.Large K CH imply that claim for all eps in (0, ε1], all Fm of type FamP eps, and all real CH.",
+      "why": "The Lean definitions of SelectionLpBound, LoopRowS, and Closed show that LoopRowS quantifies over aF, uses Closed with explicit bounds on eps and the opaque condition Fm.Large rather than an unopened eventual condition, wraps the inner claim in the opaque OwnEv, and makes RowBig and RowNotScalar conditional on Cnt.Hyp, ConcTie, and AbsConv.",
+      "wrong": "The first is SelectionLpBound 𝒜 σ, a property of the STies data that the S fields of σ give, stated through the opaque conditions RowBig and RowNotScalar, required eventually on the class D3 3 𝒜."
+    },
+    {
+      "field": "says",
+      "right": "The second is SelectionOrderBound 𝒜 σ, which requires Closed on D3 3 𝒜 for the statement that for every proof hc of D3 3 𝒜 Fm, TheoremSSelected holds at Fm, 3, and the selection built from Fm.x1 and the STies projections of the S fields of σ, meaning that OwnEv holds at Fm of the implication from the opaque hypothesis AdmissibleBoundsFromSource.hyp (at Fm.D x i, Fm.L x i, 3, C', Cl, Fm.CYL + 1, 1 / 4, 3, 1 / 2, and Fm.CTu) to the bound ‖K0‖² ≤ (1 + 1/b⁶)·duS(u)·duS(u′)/Dstar for every x satisfying Fm.x1 < x and s.1 ≤ x and all distinct words u ≠ u′.",
+      "why": "The Lean definitions of SelectionOrderBound and TheoremSSelected place the bound inside Closed on D3 3 𝒜 and OwnEv at Fm under the antecedent AdmissibleBoundsFromSource.hyp and the conditions Fm.x1 < x and s.1 ≤ x, rather than stating an unconditional bound on the class.",
+      "wrong": "The second is SelectionOrderBound 𝒜 σ, a bound ‖K0‖² ≤ (1 + 1/b⁶)·duS(u)·duS(u′)/Dstar for distinct words u ≠ u′, on the same class."
+    },
+    {
+      "field": "says",
+      "right": "The third is H_hTF 𝒜, which requires Closed on D3 3 𝒜 for TFrame at Fm, Fm.CYL + 1, 1 / 4, 3, 1 / 2, Fm.CTu, and 3, meaning that OwnEv holds at Fm of the implication from the opaque hypothesis Cnt.Hyp0 (at Fm.D x i, Fm.L x i, C', Cl, Fm.CYL + 1, 1 / 4, 3, 1 / 2, Fm.CTu, and 3) to the inequality 1 ≤ Tr(D,w)·kaS(D)^(2·rS) for every w.",
+      "why": "The Lean definitions of H_hTF and TFrame place the inequality inside Closed on D3 3 𝒜 and OwnEv at Fm under the antecedent Cnt.Hyp0 with constants Fm.CYL + 1, 1 / 4, 3, 1 / 2, Fm.CTu, and 3, rather than stating an unconditional inequality on the class.",
+      "wrong": "The third is H_hTF 𝒜, the inequality 1 ≤ Tr(D,w)·kaS(D)^(2·rS) for every w, again on that class."
+    },
+    {
+      "field": "notation",
+      "right": "The second and third conjuncts should be written as Closed(D3(3,𝒜), λ(Fm, CH). ∀(hc of type D3 3 𝒜 Fm), TheoremSSelected(Fm, 3, sel_σ(Fm, hc))) ∧ Closed(D3(3,𝒜), λ(Fm, CH). TFrame(Fm, Fm.CYL+1, 1/4, 3, 1/2, Fm.CTu, 3)), where sel_σ(Fm, hc) denotes the selection formed from (familySelection σ) Fm (d3_a hc) and (spectralConditionOfRawSelection σ) Fm (d3_a hc).",
+      "why": "The Lean definitions of Closed, SelectionOrderBound, and H_hTF pass two-argument functions matching P(Fm, CH), pass hc of type D3 3 𝒜 Fm into familySelection and spectralConditionOfRawSelection inside TheoremSSelected instead of leaving hc unused, and take Fm.CYL and Fm.CTu from Fm.",
+      "wrong": "Closed(D3(3,𝒜), λFm. ∀hc, TheoremSSelected(Fm, 3, sel_σ)) ∧ Closed(D3(3,𝒜), λFm. TFrame(Fm, CYL+1, 1/4, 3, 1/2, CTu, 3))"
+    }
+  ],
+  "faithful": false,
+  "line": 8
+}

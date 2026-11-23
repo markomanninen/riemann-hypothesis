@@ -1,0 +1,58 @@
+[
+  {
+    "a_errors": [
+      "In premises, reading A writes \"if π satisfies IsRegAlg\", whereas the Lean text of Row0b writes \"(CG.mk π).IsRegAlg\" and the dossier does not define CG.mk."
+    ],
+    "a_faithful": false,
+    "b_errors": [],
+    "b_faithful": true,
+    "differ": "In expanding RowT, reading A asserts that π satisfies IsRegAlg whereas reading B preserves (CG.mk π).IsRegAlg, and reading B also states the types of V, σ, m, and P in BaseChangeIsobaricN, the nonzero modulus N of ψ, and the folded wrapper vwin_of_row.",
+    "fixed_says": "Assume three things, namely a condition bundle that the code calls OpenImageCondition (whose sole field is RowT), a statement called BaseChangeIsobaricN, and a statement called RowT, which is Row0b applied to IsRecT and states that for every CM number field E with algebraic closure Ω, prime l, ring isomorphism ι from Qbar l to ℂ, a ≥ 1, π of type CuspSub E a, and χ of type HChar on the maximal real subfield, if (CG.mk π).IsRegAlg and PolarizedPair π χ hold then there exist a group homomorphism r from G E Ω to GL_a(Qbar l), an integer wt, and a function HT of type (E →+* Qbar l) → Multiset ℤ satisfying PropsB. Then the statement VWin holds, which says that for every primitive complex Dirichlet character ψ with nonzero modulus N the window statement VWinAt ψ 401 holds. VWinAt ψ 401 says that for every real eps with 0 < eps < 1/52 and every function e from the reals to the natural numbers with PageN eps x (e x) for all x ≥ 1, there are a real J ≥ 1 and a real X0 such that for every X ≥ X0 and every pair of natural numbers q and d with WinPair eps (X^(1/J)) q d, some real Y with X^(1/J) ≤ Y and Y² ≤ X has VAt ψ eps 401 q d (e x) x for every real x with Y ≤ x ≤ Y².",
+    "line": 30
+  },
+  {
+    "a_errors": [],
+    "a_faithful": true,
+    "b_errors": [],
+    "b_faithful": true,
+    "differ": "Reading B states the counts of the 56 named conditions inside the four fields of LiteratureRankNHypothesis, notes that BaseChangeIsobaricN and RowT appear in LiteratureAutomorphyHypothesis, and includes the two folded wrappers in says, whereas reading A only lists the four fields of LiteratureRankNHypothesis outside suggests.",
+    "fixed_says": "",
+    "line": 31
+  },
+  {
+    "a_errors": [],
+    "a_faithful": true,
+    "b_errors": [],
+    "b_faithful": true,
+    "differ": "Reading B summarizes the bodies of the five fields DescWeak, CycC, Desc2, DefQuatExists, and CuspSemisimpleReal added in HypothesesH', whereas reading A only names those five fields and expands Desc2 as DescS or Down2.",
+    "fixed_says": "",
+    "line": 32
+  },
+  {
+    "a_errors": [],
+    "a_faithful": true,
+    "b_errors": [],
+    "b_faithful": true,
+    "differ": "Reading B expands IsRecT in terms of LawsT and expands PolarizedPair into its sign and dual conditions, whereas reading A leaves both IsRecT and PolarizedPair unexpanded.",
+    "fixed_says": "",
+    "line": 33
+  },
+  {
+    "a_errors": [],
+    "a_faithful": true,
+    "b_errors": [],
+    "b_faithful": true,
+    "differ": "Reading B expands IsLift into its aut, wt, and loc conditions, whereas reading A leaves IsLift unexpanded while naming the subgroup K in ResEtaPow.",
+    "fixed_says": "",
+    "line": 34
+  },
+  {
+    "a_errors": [],
+    "a_faithful": true,
+    "b_errors": [],
+    "b_faithful": true,
+    "differ": "Reading B expands the meaning of OneK in prose and states Apart explicitly by name at every occurrence, whereas reading A leaves OneK unexpanded and renders Apart w w₀ and Apart w v' in prose as apart from w₀ and v'.",
+    "fixed_says": "",
+    "line": 35
+  }
+]

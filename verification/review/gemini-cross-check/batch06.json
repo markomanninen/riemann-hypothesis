@@ -1,0 +1,40 @@
+[
+  {
+    "a_errors": [],
+    "a_faithful": true,
+    "b_errors": [
+      "In the says field, reading B describes UnitaryGroupThirdPlaceHypotheses as a structure whose fields are named published statements, whereas the dossier shows galoisRepOfPolarizedCuspidal of type _root_.UpperTheory.GalS.CuspUAlt and localGlobalAboveL of type _root_.UpperTheory.GalS.CarUAlt whose bodies are omitted and whose names are not in Published, and the remaining fields after the twenty-eighth are cut off."
+    ],
+    "b_faithful": false,
+    "differ": "Reading B characterizes all fields of UnitaryGroupThirdPlaceHypotheses as published statements in its says field and leaves LinkedAt unexpanded, whereas reading A calls them named statements outside its suggests field and unfolds LinkedAt and parametersOfDependence in its notation.",
+    "fixed_says": "",
+    "line": 18
+  },
+  {
+    "a_errors": [
+      "In the says and notation fields, reading A unfolds LinkedAt using LargeBaseCondition and sAnd, asserting the meaning of Lg1 even though the dossier for line 19 does not show the body of Lg1 or mention LargeBaseCondition or sAnd.",
+      "In the notation field, reading A writes eV(b.B.Q.F, zs) instead of b.B.Q.F.eV (b.B.Q.Rl.toCx3 b.B.Q.F).zs, dropping the object b.B.Q.Rl.toCx3 b.B.Q.F before .zs."
+    ],
+    "a_faithful": false,
+    "b_errors": [
+      "In the conclusion field, reading B unfolds LinkedAt using LargeBaseCondition and sAnd, asserting the meaning of Lg1 even though the dossier for line 19 does not show the body of Lg1 or mention LargeBaseCondition or sAnd."
+    ],
+    "b_faithful": false,
+    "differ": "Reading B unfolds HeckeCharacterZeroLocus.SiegelWeilU.SiegelWeilUnitaryConvergent in its premises and states the types of N, S and Γ in its says field, whereas reading A leaves that premise unexpanded and unfolds Row and AtAll in its notation with an incomplete argument to eV.",
+    "fixed_says": "Assume fourteen named statements in order, thirteen from the namespaces GlobalTheory.Published or GlobalTheory.Hk3 and the fourteenth called HeckeCharacterZeroLocus.SiegelWeilU.SiegelWeilUnitaryConvergent. Then for every proof hL of RecTExists, every N of type NormChoiceExtension hL, every S of type SExt and every Γ of type GeoP, two statements hold for the parameter record p equal to ⟨RX, N, S, Γ⟩. Both are statements of the form LinkedAt p r, which means Lg1 KPx (IsBuiltE p.s) (IsGoodE p.s) applied to the predicate taking each slot to r applied to that slot and BundleLinkage p. In the first statement r sends Q and L to Row Q L (AtAll MI), and the second statement uses RowMultiplicityCondition, which sends a slot Q and linkage Lk to Row Q Lk (Ind.EvW MI), where MI takes a bundle b to (b.B.Q.Rl.toCx3 b.B.Q.F).MIstar2 (b.B.Q.F.eV (b.B.Q.Rl.toCx3 b.B.Q.F).zs) b.B.Q.sEE.",
+    "line": 19
+  },
+  {
+    "a_errors": [
+      "In the premises and conclusion fields, reading A omits the universal quantifier over p of type _root_.GlobalTheory.Mem.Top.Bl.Parameters hL and writes for the given p in the last premise, leaving p unbound and untyped outside says and notation.",
+      "In the says field, reading A unfolds RowE as EvP holding of the statement for every point β over K without introducing the binders κ and K of EvP fun κ K => ..., leaving K unbound.",
+      "In the says field, reading A writes that the condition that the code calls MIstar2 holds for b without stating its arguments, and in the notation field it writes MI(b) without defining MI there for (b.B.Q.Rl.toCx3 b.B.Q.F).MIstar2 (b.B.Q.F.eV (b.B.Q.Rl.toCx3 b.B.Q.F).zs) b.B.Q.sEE."
+    ],
+    "a_faithful": false,
+    "b_errors": [],
+    "b_faithful": true,
+    "differ": "Reading B introduces p of type Parameters hL in its premises, unfolds RowDiag and EvP in prose, and gives the MIstar2 expression in its conclusion, whereas reading A leaves p out of its premises, leaves K unbound in its says field when unfolding RowE, and puts the unfoldings of IsScaleWithBoundedGamma, RankMu, RowDiag and EvP only in its notation.",
+    "fixed_says": "Assume thirteen named statements in order from the namespaces GlobalTheory.Published and GlobalTheory.Hk3, and assume RowDiag applied to the condition on D, L and C' stating that IsScaleWithBoundedGamma D L C' holds and RankMu D u holds for every word u. Then for every proof hL of RecTExists and every p of type Parameters hL, if for every context K and every q of type WPt p.s K the type RXs q.x.what₂ is nonempty, then RowE holds for the slot IsGoodE p.s, the linkage BundleLinkage p and the bundle property taking κ, D, O, c and b to (b.B.Q.Rl.toCx3 b.B.Q.F).MIstar2 (b.B.Q.F.eV (b.B.Q.Rl.toCx3 b.B.Q.F).zs) b.B.Q.sEE. Unfolded, RowE says that EvP holds of the predicate taking κ and a context K to the statement that for every β of type BPt K with β.Is (IsGoodE p.s), every real c and every b of type BundleCondition β.D β.O c satisfying BundleLinkage p K β c b, that MIstar2 condition holds for b.",
+    "line": 20
+  }
+]

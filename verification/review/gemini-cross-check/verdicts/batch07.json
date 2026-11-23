@@ -1,0 +1,32 @@
+[
+ {
+  "line": 21,
+  "index": 0,
+  "verdict": "unfounded",
+  "evidence": "A's says calls both statements \"one eventual row statement\" and \"another\", and A's notation gives \"RowE(Q, Lk, E) = EvP((κ, K) ↦ ∀ β ∈ BPt(K), β.Is(Q) ⇒ ∀ c ∈ ℝ, ∀ b ∈ Bd(β.D, β.O, c), Lk(K, β, c, b) ⇒ E(κ, β.D, β.O, c, b))\", which is the Lean body of RowE. A keeps EvP as a name and does not open it, which the brief allows, so the wrapper is present in the reading."
+ },
+ {
+  "line": 21,
+  "index": 1,
+  "verdict": "naming",
+  "evidence": "A's says has \"every linked bundle b at a good point\" for the Lean text \"β : BPt K, β.Is Q\" with Q equal to \"IsGoodE p.s\". The dossier shows IsGoodE only as \"positionOf (GoodE 𝒮)\" and shows neither GoodE nor BPt.Is, so the word good is a reading of the name IsGoodE and nothing more."
+ },
+ {
+  "line": 21,
+  "index": 2,
+  "verdict": "naming",
+  "evidence": "A's premise has \"RankMu D u holds for every word u\" for the Lean text \"∀ u, GlobalTheory.Core.Rk.RankMu D u\" with \"u : D.what₂.Word\". The dossier uses the type what₂.Word and does not show its definition, so the word word is a reading of the type name Word."
+ },
+ {
+  "line": 21,
+  "index": 3,
+  "verdict": "unfounded",
+  "evidence": "A's premises field states the argument as \"RowDiag holds for the condition E(D, L, C') that says IsScaleWithBoundedGamma D L C' holds and RankMu D u holds for every word u\", and A's notation has \"RowDiag((D, L, C') ↦ IsScaleWithBoundedGamma(D, L, C') ∧ ∀u RankMu(D, u))\". The Lean argument \"fun D L C' => IsScaleWithBoundedGamma D L C' ∧ ∀ u, RankMu D u\" is therefore given in the reading."
+ },
+ {
+  "line": 22,
+  "index": 0,
+  "verdict": "imprecise",
+  "evidence": "A's says has \"the auxiliary data X, I, l, Z, L, hT, Gi, Gl, Kc, Yd, cX, ex built over the datum I.rec7 l Z\", while the Lean binders are \"{X : PreX B.toPre} {I : TC B X} {l : I.Laws} {Z : TC.Later B (I.cols l)}\", \"{Kc : Formalism.MainNotions.G.Consts}\" and \"{cX : ExtraC}\". X, I, l and Z make up I.rec7 l Z and Kc and cX do not depend on it, and only L, hT, Gi, Gl, Yd and ex are typed over it, so the dependency is misstated while A's premises and notation list the binders correctly."
+ }
+]

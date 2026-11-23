@@ -1,0 +1,50 @@
+[
+  {
+    "a_errors": [],
+    "a_faithful": true,
+    "b_errors": [
+      "In says, B translates the Lean phrase IsPlaceOver A w as saying that A is a place over w, asserting mathematical meaning for IsPlaceOver even though the dossier does not show its body."
+    ],
+    "b_faithful": false,
+    "differ": "A keeps IsPlaceOver A w as a named condition and leaves UnitaryGroupThirdPlaceHypotheses and RowRat unexpanded, while B renders IsPlaceOver A w mathematically as A being a place over w and describes the visible structure of UnitaryGroupThirdPlaceHypotheses and RowRat.",
+    "fixed_says": "",
+    "line": 6
+  },
+  {
+    "a_errors": [
+      "In says, A calls the parameter Γ of type GeoP a geometry predicate, even though the visible body of GeoP does not mention geometry.",
+      "In premise 3 on DiscreteSeriesCover, A omits the domain Ix p q → ℚ of lam and the second argument lam.1 of HasTypes (D lam) lam.1 without saying that details are left out.",
+      "In premise 6 on CasselmanWallach, A omits the outer universal quantifiers over n of type ℕ and ε of type Fin n → Bool while leaving ε free in UJset ε, IsSmoothModRep ε p π dπ and IsGKMap ε σ π dπ T₀, and omits the universal quantifiers over H, σ, E, p, π and dπ.",
+      "In premise 6 on CasselmanWallach, A translates SmoothVec (lieSet ε) σ w twice as smooth vectors, asserting mathematical meaning for SmoothVec and lieSet whose bodies are not shown in the dossier.",
+      "In premise 6 on CasselmanWallach, A says T is unique on smooth vectors without including the Lean hypotheses on T' that T' agrees with T₀ on IsKFin vectors and satisfies IsSmoothGMap ε σ p π T', and does not state that details are left out.",
+      "In premise 6 on CasselmanWallach, A replaces the universal statement over S with elements in lieSet ε and over w satisfying SmoothVec (lieSet ε) σ w with bounds certain norms sobNorm by continuous seminorms of T w, dropping the quantifier over S, the membership condition in lieSet ε and the SmoothVec condition on w."
+    ],
+    "a_faithful": false,
+    "b_errors": [
+      "In premise 6 on CasselmanWallach, B calls ε of type Fin n → Bool a sign vector and translates SmoothVec (lieSet ε) σ w twice as smooth vectors, asserting mathematical meaning for unshown names outside suggests.",
+      "In premise 6 on CasselmanWallach, B says T bounds each sobNorm by a continuous seminorm of T w, omitting the universal quantifier over S, the condition that every matrix in every list of S belongs to lieSet ε, and the condition SmoothVec (lieSet ε) σ w on w without saying that details are left out.",
+      "In premise 7 on DiscreteSeriesClassification, B writes every complete nontrivial σ with the same three properties, attributing CompleteSpace H' and Nontrivial H' from the Lean text to the map σ instead of the space H'.",
+      "In premise 7 on DiscreteSeriesClassification, B omits the conditions StrictAnti mu and integrality of mu a - ((n - 1) / 2) on mu, the order condition on s when ε (s a) = ε (s b), and the intertwining equation on UJset (ε ∘ s) with g.submatrix s.symm s.symm, leaving only after a permutation s without saying that details are left out.",
+      "In premise 7 on DiscreteSeriesClassification, B calls μ and lam + rhoN ε - rhoC ε weights even though the dossier does not show IsKTypeOf, rhoN or rhoC, and writes every other IsKTypeOf weight μ whereas the Lean text quantifies over all μ and S satisfying IsKTypeOf ε (π ε lam) μ S.",
+      "In premise 7 on DiscreteSeriesClassification, B omits the universal quantifiers over ε of type Fin n → Bool and lam of type Fin n → ℝ, omits the coercion of lam a to ℂ in HasInfChar, and shifts the subject between the space and π."
+    ],
+    "b_faithful": false,
+    "differ": "A leaves the details of DiscreteSeriesClassification out explicitly while calling Γ a geometry predicate and omitting the hypotheses on T' in uniqueness in CasselmanWallach, whereas B tries to summarize DiscreteSeriesClassification in full with errors on σ versus H', mu, s and IsKTypeOf and includes the qualification among such maps on T' in CasselmanWallach while calling ε a sign vector.",
+    "fixed_says": "Assume the nine propositions GlobalArtinReciprocity, SiegelWeilUnitaryConvergent, DiscreteSeriesCover, HarishChandraModules, CuspRapidDecay, CasselmanWallach, DiscreteSeriesClassification, SurjectiveOntoX and LambdaLowerBound₂ in that order. Then for every proof hL of RecTExists, every N of type NormChoiceExtension hL, every S of type SExt, every Γ of type GeoP and every predicate NN of type FamClass → Prop, write p for parametersOfExtension N S Γ. If OpenParameterStatements p holds and LinkedAt p holds for each of CovolumeBoundThirdPlaceSeries, FunctionalCondition and the function sending Q and L to SlotNormCondition Q L NN in that order, then the structure of conditions AllRowsAlt holds for KPx, the two slots IsBuiltE p.s and IsGoodE p.s, BundleLinkage p, NN and DefiniteSideCondition.",
+    "line": 7
+  },
+  {
+    "a_errors": [
+      "In says, A states that the two folded wrapper theorems restate the same triple in slot form as SlotLpCondition, SlotOrderCondition and SlotTorsionFreeCondition under Lg1, asserting mathematical equivalence and meaning for names whose bodies the dossier does not show.",
+      "In says, A summarizes the Lg1 wrapper theorem as holding for every slot and linkage and also under the operator Lg1, omitting the universally quantified predicate KP taking B of type GlobalTheory.Mem.Base to Fr B.toPre → Prop and the second slot Q' of type V4.Slot from lg1_sLp_sO_hTF."
+    ],
+    "a_faithful": false,
+    "b_errors": [
+      "In says, B states that the two folded wrappers restate the same three conclusions under the same premise as SlotLpCondition, SlotOrderCondition, SlotTorsionFreeCondition and three corresponding Lg1 statements, asserting mathematical equivalence and meaning for names whose bodies the dossier does not show."
+    ],
+    "b_faithful": false,
+    "differ": "A keeps SelectionLpBound, SelectionOrderBound and H_hTF unexpanded in its prose while showing their definitions in notation and omitting KP and Q' from the Lg1 wrapper, whereas B unfolds IsCMExt, IsHermND and SiegelWeilAt in its premises, expands SelectionLpBound, SelectionOrderBound and H_hTF in its conclusion, and lists KP, Q, Q' and Lk for the Lg1 wrapper.",
+    "fixed_says": "Assume the proposition SiegelWeilUnitaryConvergent. Then for every family class 𝒜 and every selection σ that assigns an element of BundleCondition (Fm.D x i) (objAt Fm x hx i) Fm.Csz to every real eps, every family Fm of type FamP eps with 𝒜 Fm, every real x with Fm.x1 < x and every index i of type Fm.Ix x, three statements hold together, namely SelectionLpBound 𝒜 σ, SelectionOrderBound 𝒜 σ and H_hTF 𝒜. Two wrapper theorems folded into this line derive from SiegelWeilUnitaryConvergent the conjunction of SlotLpCondition Q Lk, SlotOrderCondition Q Lk and SlotTorsionFreeCondition Q Lk for every Q of type V4.Slot and every Lk of type LkT BundleCondition, and the conjunction of Lg1 KP Q Q' (fun S => SlotLpCondition S Lk), Lg1 KP Q Q' (fun S => SlotOrderCondition S Lk) and Lg1 KP Q Q' (fun S => SlotTorsionFreeCondition S Lk) for every predicate KP taking B of type GlobalTheory.Mem.Base to Fr B.toPre → Prop, every Q and Q' of type V4.Slot, and every Lk of type LkT BundleCondition.",
+    "line": 8
+  }
+]

@@ -1,0 +1,44 @@
+[
+ {
+  "line": 27,
+  "index": 0,
+  "verdict": "unfounded",
+  "evidence": "The field says of A writes \"with the listed data\" and \"with 1 ≤ p and 1 ≤ q\", and the field notation of A gives the rest as \"∀ H,D,Xo,l,c,Y [IsGlobal(Xo,l,c,Y) ⇒ SplitComps(Y) ⇒ 1 ≤ p ⇒ 1 ≤ q ⇒ ∃ T ∈ RootTower(CMType H, p+q) ∃ o ∈ GoodOrigin(Y,T), o.Extra]\" with \"p = D.p and q = D.q\". That matches the Lean text \"∃ (T : RootTower (CMType H) (D.p + D.q)) (o : GoodOrigin Y T), o.Extra\", and only the types of the binders such as \"H : Host E\" stay unwritten."
+ },
+ {
+  "line": 27,
+  "index": 1,
+  "verdict": "unfounded",
+  "evidence": "The field says of A writes \"six opaque properties of T hold under the listed numerical conditions\", and the field notation of A lists every quantifier, hypothesis and argument, for example \"IsAbelianGalois(ℚ,E)\", \"3q+1 ≤ p+q\", \"|T.bad| ≤ 4·|CMType H|·(p+q)²\" and \"T.T2(II, C, hostRd E, hostLval H)\". These agree with the Lean text \"3 * D.q + 1 ≤ D.p + D.q → T.bad.card ≤ 4 * Fintype.card (CMType H) * (D.p + D.q) ^ 2\" and \"T.T2 II C (hostRd E) (hostLval H)\"."
+ },
+ {
+  "line": 28,
+  "index": 0,
+  "verdict": "unfounded",
+  "evidence": "The field says of A writes \"the existence of a RootTower T and a GoodOrigin o with o.Extra\", and the field notation of A gives the whole of GoodTowerExistsX as \"∀ E CM number field, ∀ H,D,Xo,l,c,Y [IsGlobal(Xo,l,c,Y) ⇒ SplitComps(Y) ⇒ 1 ≤ p ⇒ 1 ≤ q ⇒ ∃ T ∈ RootTower(CMType H, p+q) ∃ o ∈ GoodOrigin(Y,T), o.Extra]\". That is the Lean text \"IsGlobal Xo l c Y → SplitComps Y → 1 ≤ D.p → 1 ≤ D.q\" with its quantifiers and its four hypotheses."
+ },
+ {
+  "line": 28,
+  "index": 1,
+  "verdict": "unfounded",
+  "evidence": "The field says of A writes \"one constant C ≥ 0 for which six opaque properties of T hold under listed numerical conditions\", and the field notation of A gives all quantifiers, the six hypotheses and the extra arguments, as in \"T.ThmB(II, hhFl(CMType H, p+q, II))\" for the Lean text \"T.ThmB II (hhFl (CMType H) (D.p + D.q) II)\". It is true that A writes \"the same as in line 27\", which points outside the dossier, and the two definitions in the dossier of line 28 are indeed the ones that A then states."
+ },
+ {
+  "line": 29,
+  "index": 0,
+  "verdict": "naming",
+  "evidence": "A writes \"every family Fm of type FamP eps\" for the Lean text \"∀ (Fm : FamP eps) (CH : ℝ)\", and the dossier of line 29 shows no body for FamP. The word family is only the reading of the names Fm and FamP, and A keeps the type name beside it."
+ },
+ {
+  "line": 29,
+  "index": 1,
+  "verdict": "unfounded",
+  "evidence": "The field says of A writes \"there is an object K\", and the field notation of A gives the type as \"∃ K ∈ TransportedAlt\", which is the Lean text \"∃ K : TransportedAlt\"."
+ },
+ {
+  "line": 29,
+  "index": 2,
+  "verdict": "unfounded",
+  "evidence": "The field says of A writes \"a condition L3 holds, for all C ≥ C0, in the sense called EventuallyAtAllPoints\", which leaves the place of the quantifier open, and the field notation of A fixes it as \"∃ C0 ≥ 0, EventuallyAtAllPoints(Fm, p ↦ ∀ C ≥ C0, (p.S false).L3(p.N C CH))\". That is the Lean text \"EventuallyAtAllPoints Fm fun _ _ _ p => ∀ C, C0 ≤ C → (p.S false).L3 (p.N C CH)\" with Fm, p, p.S false and p.N C CH in place."
+ }
+]

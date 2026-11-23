@@ -1,0 +1,50 @@
+[
+  {
+    "a_errors": [],
+    "a_faithful": true,
+    "b_errors": [],
+    "b_faithful": true,
+    "differ": "",
+    "fixed_says": "",
+    "line": 1
+  },
+  {
+    "a_errors": [],
+    "a_faithful": true,
+    "b_errors": [
+      "Reader B calls RecNotion the recognition notion, although neither the body of RecNotion nor any definition in the dossier mentions recognition.",
+      "Reader B calls h a place datum, although in RecNotion the binder h has type IsPlaceOver A w, which is a proposition rather than data."
+    ],
+    "b_faithful": false,
+    "differ": "Reader B labels RecNotion as the recognition notion and calls h a place datum while unfolding IsRecT with LawsT, whereas Reader A refers to RecNotion neutrally as the notion Rc and leaves IsRecT unexpanded.",
+    "fixed_says": "",
+    "line": 2
+  },
+  {
+    "a_errors": [],
+    "a_faithful": true,
+    "b_errors": [],
+    "b_faithful": true,
+    "differ": "",
+    "fixed_says": "",
+    "line": 3
+  },
+  {
+    "a_errors": [],
+    "a_faithful": true,
+    "b_errors": [],
+    "b_faithful": true,
+    "differ": "",
+    "fixed_says": "",
+    "line": 4
+  },
+  {
+    "a_errors": [],
+    "a_faithful": true,
+    "b_errors": [],
+    "b_faithful": true,
+    "differ": "",
+    "fixed_says": "",
+    "line": 5
+  }
+]
