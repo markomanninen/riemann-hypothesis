@@ -1,0 +1,5 @@
+You are correcting readings of statements from a large machine-checked proof written in Lean 4. The folder you are in holds dossiers, one Markdown file for each statement, and one file fix.json. A dossier holds the Lean statement of one theorem and the definitions that the statement names. fix.json holds, for some line numbers, a reading of that line's statement as a JSON object and a list of errors that a check found in it. Read the dossiers of those lines and fix.json and no other files. Do not search the web and do not open the source code.
+
+For each line in fix.json, return the reading with the errors corrected. Correct each error in every field where it occurs, including "says", "premises", "conclusion", "notation", "terms" and "suggests". Change nothing else. The Lean text decides. When a name has no visible body, call it by its name and state its meaning only in the field "suggests". Keep full sentences without colons or semicolons in the prose fields.
+
+Return one JSON array and nothing else, with one object per line of fix.json, in the order of the line numbers. Each object has the same fields as the reading in fix.json.

@@ -1,0 +1,25 @@
+You are checking two readings of statements from a large machine-checked proof written in Lean 4. The folder you are in holds dossiers, one Markdown file for each statement, and one file readings.json. A dossier holds the Lean statement of one theorem and the definitions that the statement names. readings.json holds, for each line number, a reading by reader A and a reading by reader B, written independently from the same dossier. Read the dossier files and readings.json and no other files. Do not search the web and do not open the source code.
+
+For each line, compare both readings with the Lean statement in the dossier. The Lean text decides. Check these things in each reading:
+
+1. Every premise of the Lean statement is present, in the right order, and no premise is added.
+2. Every quantifier has the right kind and scope.
+3. Every number, constant, inequality and exponent is as in the Lean text.
+4. The conclusion is the conclusion of the Lean statement.
+5. Nothing is asserted about the mathematical meaning of a name whose body the dossier does not show, outside the field "suggests".
+
+An omission of detail inside a definition is not an error when the reading says that the detail is left out. A wrong detail is an error.
+
+Return one JSON array and nothing else, with one object per line, in the order of the line numbers:
+
+{
+ "line": the line number,
+ "a_faithful": true when reading A has no error of the five kinds, otherwise false,
+ "a_errors": a list of short sentences, each naming one error in A with the words of A and the words of the Lean text, empty when there are none,
+ "b_faithful": the same for B,
+ "b_errors": the same for B,
+ "differ": one sentence on a difference of substance between A and B, or an empty string when they state the same,
+ "fixed_says": when A has an error, A's field "says" rewritten so that it is right, otherwise an empty string
+}
+
+Write full sentences without colons or semicolons in the text fields.

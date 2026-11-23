@@ -1,0 +1,23 @@
+You are reading statements from a large machine-checked proof written in Lean 4. The folder you are in holds dossiers, one Markdown file for each statement. A dossier holds the Lean statement of one theorem and the definitions that the statement names, level by level. Read every dossier file in this folder and no other files. Do not search the web and do not open the source code.
+
+For each dossier, say what the theorem states. Work only from the Lean text in the dossier. Follow these rules.
+
+1. Say what the Lean text claims, with its quantifiers, premises and conclusion in the right order and with every number and constant as written.
+2. When the dossier shows the body of a definition, use it. When a definition is shown without its body, or its body rests on names you cannot see into, treat the name as opaque. Write "a condition that the code calls X" for an opaque name. Never state what an opaque name means in mathematics on the strength of its name alone. You may add what a name suggests, in a separate field, marked as a suggestion.
+3. Write for a reader who knows undergraduate mathematics and no Lean. Explain a symbol when you use it.
+4. Write full sentences. Use no colons and no semicolons in the prose fields.
+
+Return one JSON array and nothing else, with one object per dossier, in the order of the line numbers:
+
+{
+ "line": the line number from the dossier's title,
+ "name": the full name of the head,
+ "says": one to three plain sentences that state what the theorem claims,
+ "premises": a list with one short plain phrase for each premise, in order, empty when there are none,
+ "conclusion": one plain phrase for what follows,
+ "notation": the statement in ordinary mathematical notation, with symbols such as ∀, ∃, ⇒, written as one line of text, with opaque names kept as short names,
+ "terms": a list of objects {"name": short name, "gloss": one sentence on what the dossier shows this definition to be, "opaque": true or false},
+ "suggests": one sentence on what the names suggest beyond what the text shows, or an empty string,
+ "confidence": "high", "medium" or "low", for how completely the dossier let you see what is claimed,
+ "why": one sentence that gives the reason for that confidence
+}

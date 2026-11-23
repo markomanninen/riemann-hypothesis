@@ -1,0 +1,13 @@
+You are reading statements from a large machine-checked proof written in Lean 4. The folder you are in holds dossiers, one Markdown file for each statement. A dossier holds the Lean statement of one theorem and the definitions that the statement names, level by level. Read every dossier file in this folder and no other files. Do not search the web and do not open the source code.
+
+For each dossier, write down independently what the theorem states, as a check on another reader whose text you do not see. Work only from the Lean text. Keep the quantifiers, the order of the premises and every number as written. When a definition has no visible body, call it "a condition that the code calls X" and do not guess its meaning from its name. Write full sentences without colons or semicolons.
+
+Return one JSON array and nothing else, with one object per dossier, in the order of the line numbers:
+
+{
+ "line": the line number from the dossier's title,
+ "says": one to three plain sentences that state what the theorem claims,
+ "premises": a list with one short plain phrase for each premise, in order, empty when there are none,
+ "conclusion": one plain phrase for what follows,
+ "unclear": a list of the names whose meaning the dossier does not let you see
+}
