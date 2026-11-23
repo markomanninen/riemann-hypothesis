@@ -5,6 +5,9 @@
  "with_no_user": 0,
  "with_a_user_that_names_it_in_its_statement": 11,
  "named_only_in_proofs_or_values": 1,
- "with_a_sibling_of_the_same_type_in_the_original": 6,
- "users_in_total": 249
+ "with_a_sibling_of_the_same_type_in_the_original": 5,
+ "users_in_total": 249,
+ "records_with_an_always_true_field": 26,
+ "records_used_by_main_widest": 21,
+ "always_true_fields_in_them": 137
 }

@@ -14,10 +14,16 @@ For each such definition it lists the declarations that the declaration graph re
 users, and says for each user whether the name stands in the user's statement or only in its
 proof or value. It also looks in the first published source, commit 40e56bab, for definitions
 of the same declared type in the same file, since such a sibling can be the condition that the
-always-true definition stands in for.
+always-true definition stands in for. A definition declared as a bare `Prop` gets no siblings.
 
-It writes true-predicates.json with the counts and data/true_predicates.tsv.gz with one row per
-definition.
+A second search looks inside record values. A definition or an instance counts there when at
+least one field of its value is set to `True` or to a function returning `True`, as in
+
+    def geoDegenerate … where
+      Eff := fun _ _ => True
+
+It writes true-predicates.json with the counts, data/true_predicates.tsv.gz with one row per
+always-true definition and data/true_fields.tsv.gz with one row per record with such a field.
 """
 import collections, gzip, json, multiprocessing, os, re, subprocess, sys
 
@@ -31,6 +37,9 @@ DATA = os.path.join(HERE, "data")
 ORIGINAL = "40e56bab"
 ALWAYS_TRUE = re.compile(r"(?:(?:fun|λ)\s+[^=]*?=>\s*)*True")
 WORD = re.compile(r"[^\W\d][\w'.₀-₉]*")
+DECLARED = re.compile(r"(?:^| ): ")
+# A field set to True, up to the end of the value, a separator or the next field.
+TRUE_FIELD = re.compile(r"([\w'₀-₉]+)\s*:=\s*(?:(?:fun|λ)\s+[^=]*?=>\s*)*True(?=\s*(?:$|[,}\n]|[\w'₀-₉]+\s*:=))")
 
 
 def declarations(module, text=None):
@@ -78,7 +87,16 @@ def declarations(module, text=None):
 
 
 def find(module):
-    return module, [(n, k, s) for n, k, s, v in declarations(module) if k in ("def", "abbrev") and ALWAYS_TRUE.fullmatch(v)]
+    """The always-true definitions of a module, and its records with an always-true field."""
+    whole, fields = [], []
+    for n, k, s, v in declarations(module):
+        if k in ("def", "abbrev") and ALWAYS_TRUE.fullmatch(v):
+            whole.append((n, k, s))
+        elif k in ("def", "abbrev", "instance"):
+            hits = TRUE_FIELD.findall(v)
+            if hits:
+                fields.append((n, k, hits))
+    return module, whole, fields
 
 
 def uses(job):
@@ -108,12 +126,16 @@ def main():
     g = np.load(os.path.join(GRAPH, "graph.npz"))
     strict, ptr = g["strict"], g["strict_ptr"]
 
-    found = {}
+    found, records = {}, []
     with multiprocessing.get_context("fork").Pool() as pool:
-        for module, hits in pool.imap_unordered(find, modules, chunksize=200):
+        for module, hits, fields in pool.imap_unordered(find, modules, chunksize=200):
             for name, kind, statement in hits:
                 if (module, name) in ident:
                     found[ident[(module, name)]] = (module, name, kind, statement)
+            for name, kind, names in fields:
+                d = ident.get((module, name))
+                records.append((module, name, kind, len(names), bool(d is not None and row[d][4]), names))
+    records.sort()
     # The users of each found definition, from the resolved name edges of the declaration graph.
     users = collections.defaultdict(list)
     for d in range(len(ptr) - 1):
@@ -138,11 +160,13 @@ def main():
         path = "src/" + module.replace(".", "/") + ".lean"
         old = subprocess.run(["git", "show", f"{ORIGINAL}:{path}"], capture_output=True, text=True, cwd=bs.REPO)
         siblings = []
-        declared = statement.rsplit(" : ", 1)[-1] if " : " in statement else ""
-        if old.returncode == 0 and declared:
+        # The declared type is what follows the last colon. A bare `Prop` is left out, because it
+        # would match every proposition of the file.
+        declared = DECLARED.split(statement)[-1]
+        if old.returncode == 0 and declared and declared != "Prop":
             short = name.rsplit(".", 1)[-1]
             for n, k, s, v in declarations(module, old.stdout):
-                if k in ("def", "abbrev") and n.rsplit(".", 1)[-1] != short and s.rsplit(" : ", 1)[-1] == declared \
+                if k in ("def", "abbrev") and n.rsplit(".", 1)[-1] != short and DECLARED.split(s)[-1] == declared \
                         and not ALWAYS_TRUE.fullmatch(v):
                     siblings.append(n.rsplit(".", 1)[-1])
         rows.append({"module": module, "name": name, "kind": kind, "statement": statement,
@@ -159,6 +183,10 @@ def main():
         for r in rows:
             f.write("\t".join(str(int(v)) if isinstance(v, bool) else " ".join(v) if isinstance(v, list) else str(v)
                               for v in r.values()) + "\n")
+    with gzip.open(os.path.join(DATA, "true_fields.tsv.gz"), "wt", encoding="utf-8") as f:
+        f.write("module\tname\tkind\talways_true_fields\tused_by_main_widest\tfields\n")
+        for module, name, kind, n, used, names in records:
+            f.write(f"{module}\t{name}\t{kind}\t{n}\t{int(used)}\t{' '.join(names)}\n")
     summary = {
         "definitions_that_are_always_true": len(rows),
         "used_by_main_names": sum(r["used_by_main_names"] for r in rows),
@@ -168,6 +196,9 @@ def main():
         "named_only_in_proofs_or_values": sum(r["users"] > 0 and r["users_with_it_in_statement"] == 0 for r in rows),
         "with_a_sibling_of_the_same_type_in_the_original": sum(bool(r["siblings_in_original"]) for r in rows),
         "users_in_total": sum(r["users"] for r in rows),
+        "records_with_an_always_true_field": len(records),
+        "records_used_by_main_widest": sum(r[4] for r in records),
+        "always_true_fields_in_them": sum(r[3] for r in records),
     }
     with open(os.path.join(HERE, "true-predicates.json"), "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=1)

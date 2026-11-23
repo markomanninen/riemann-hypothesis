@@ -218,6 +218,69 @@ drawn from it to `llOf_alt` as the first premise. In the source text,
 theorems. Whether that proof holds is for Lean's kernel to check, which this folder does not
 do.
 
+## Definitions that are always true
+
+The scans above look at theorems. A third script, `true_predicates.py`, looks at definitions.
+Its first search finds the definitions whose whole value is the proposition `True` or a
+function that returns `True` for every input. Such a definition names a condition that every
+object meets.
+
+```lean
+def anyGeometry : GeoP := fun _ _ _ => True
+```
+
+Nothing follows from `True`, so a proof gains no information from a condition of this kind.
+Theorems can still take the condition as a premise and pass it on.
+
+The first search finds 12 such definitions. The declaration graph resolves 249 declarations as
+their users. A user is a declaration whose text names the definition. The five theorems of
+`Main.lean` use ten of the twelve by both estimates of use. The other two are
+`GlobalTheory.CongL.SeedWtU.noCondition` and
+`GlobalTheory.IndefiniteRowSideFullHecke.UnusedSlot36.trivialClassCondition`, with one user
+each.
+
+Each of the ten used definitions was read by hand together with three of its users. The table
+gives what those three users do with the definition, in the last column as one of three
+readings. The readings are a judgement from three users each and have not been checked further.
+
+| Definition | Users | What three users show | Reading |
+|---|---:|---|---|
+| `GlobalTheory.Mem.Top.Bl.anyGeometry` | 13 | One theorem fills a field of this type with `trivial`. Two theorems take the field and only pass it on. | passed along |
+| `UpperTheory.GalS.NoCondition` | 3 | `noLgc_alt` takes four premises and concludes `NoCondition D`. Its caller gives that conclusion to another theorem as a premise. | passed along |
+| `UpperTheory.GalS.UnusedSlot55` | 3 | One theorem proves it, and another restates it for a datum built from the first. | passed along |
+| `GlobalTheory.Published.UnusedSlot72` | 8 | It is the type of the field `siegelEisensteinSimplePole` in a structure of premises, and theorems take it as a premise. | passed along |
+| `UpperTheory.One.M.TrivialCondition` | 12 | It is the first argument of the three users, written `(_ : TrivialCondition)`. | passed along |
+| `UpperTheory.V.U3.GCond.noCondition` | 166 | The definitions `OnI` and `BoxCond` of the same type take an object built for `noCondition` as an argument. | unrestricted case |
+| `Formalism.L2.Pj.trivialClassCondition` | 22 | `regular₂.int` proves a bound for the valuations of this class from the same bound for a smaller class, `algCls`. | unrestricted case |
+| `Formalism.L2.PjFree.trivialClassCondition` | 9 | The same statements in another namespace. | unrestricted case |
+| `GlobalTheory.IndefiniteRowSideFullHecke.UnusedSlot39.trivialClassCondition` | 5 | A theorem proves one property for this class and for a smaller class, `goodCls`. | unrestricted case |
+| `GlobalTheory.BigTop.Fun.trivialTieCondition` | 6 | Three definitions pass it as an argument. | not settled |
+
+In the reading "passed along" the users treat the definition as a premise that holds
+trivially. In the reading "unrestricted case" the definition stands for all objects, and the
+users state something about all objects or build narrower conditions beside it.
+
+The script also looks in the first published source for definitions of the same declared type
+in the same file. It finds one for five of the twelve. For `anyGeometry` that definition is
+`geoOf`, which asks that its argument come from a geometric object, and the present source no
+longer has it. For `GCond.noCondition` they are `OnI`, `Kills`, `BoxCond` and `NormCond`.
+
+The second search of the script looks inside structure values. It counts a definition or an
+instance whose value sets at least one field to `True` or to a function returning `True`. It
+finds 26 of them, with 137 such fields in all. The five theorems use 21 of the 26 by the widest
+estimate. The largest are `locWithPoints` with 19 such fields, `locT` with 18 and
+`geoDegenerate` with 15. The proof of `GlobalTheory.Mem.Top.DivRec.geoOver_stages` gives a
+value built on `geoDegenerate` as the witness of an existence statement, so that statement is
+proved by a structure whose fields of this kind hold trivially.
+
+An audit of the first published source by Harry Tong
+([`harrytong/rh-verification`](https://github.com/harrytong/rh-verification)) counts 294
+definitions with a value or a field that is `True` by definition, against the 12 definitions
+and 26 structure values here. The two counts are not comparable. Tong's count is made on
+compiled terms, where a definition also counts when it becomes `True` after another definition
+is unfolded, and on the first published source. The text search here unfolds nothing and reads
+the present source.
+
 ## What follows and what can be done
 
 None of these findings shows a fault in the proof of the five theorems. They concern its size
@@ -267,6 +330,7 @@ faults it found are corrected here.
 ```bash
 python3 -I verification/decl-graph/build.py     # first, for the two estimates of use
 python3 -I verification/redundancy/scan.py      # under a minute
+python3 -I verification/redundancy/true_predicates.py   # under a minute
 ```
 
 Lean's check needs a checkout of the same commit with the compiled files in place.
@@ -288,6 +352,10 @@ After an interruption, the option `--resume` continues from the groups already a
 | `check_same.py` | collects the candidates, runs Lean on them and counts the answers |
 | `CheckSame.lean` | compares the compiled statements |
 | `same-check.json` | the figures of Lean's check, with the joined count under `theorems_joined` |
+| `true_predicates.py` | the search for definitions and record fields that are always true |
+| `true-predicates.json` | the figures of both searches of that script |
+| `data/true_predicates.tsv.gz` | one row per always-true definition, with its users and the definitions of the same type in the first published source |
+| `data/true_fields.tsv.gz` | one row per definition or instance with an always-true field |
 | `data/findings.tsv.gz` | one row per theorem with a class, with its module, name, classes and forwarded declaration |
 | `data/forward_pairs.tsv.gz` | the forwarding theorems with their resolved targets |
 | `data/theorems_same_statement.tsv.gz` | the groups of theorems with the same statement text, one row per member |
