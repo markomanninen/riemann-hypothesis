@@ -1,0 +1,24 @@
+You are reading one statement from a large machine-checked proof written in Lean 4. The folder you are in holds three files. dossier.md holds the Lean statement of one theorem and the definitions that the statement names, level by level. d7-all.md holds the whole Lean text of a record type called D7 and of every project definition below it. glossary.md holds readings of ten further definitions, written by another reader from their Lean text. Read these three files and no other files. Do not search the web and do not open the source code.
+
+Say what the theorem of dossier.md states. Work from the Lean text. Use d7-all.md whenever the statement or its definitions name D7, a field of D7 or a definition below it, so that such a name is opened and not left as a bare name. You may use glossary.md for the ten definitions it covers, and the Lean text decides where they differ. Follow these rules.
+
+1. Say what the Lean text claims, with its quantifiers, premises and conclusion in the right order and with every number and constant as written.
+2. When a definition has a visible body in dossier.md or d7-all.md, use it and say in plain words what it requires. When a name has no visible body in any of the three files, call it "a condition that the code calls X" and list it as opaque. Never state what such a name means in mathematics on the strength of its name alone. You may add what a name suggests in the field "suggests", marked as a suggestion.
+3. Write for a reader who knows undergraduate mathematics and no Lean. Explain a symbol when you use it.
+4. Write full sentences. Use no colons and no semicolons in the prose fields.
+
+Return one JSON object and nothing else:
+
+{
+ "line": the line number from the dossier's title,
+ "name": the full name of the head,
+ "says": two to five plain sentences that state what the theorem claims,
+ "premises": a list with one plain phrase for each premise, in order, empty when there are none,
+ "conclusion": one plain phrase for what follows,
+ "notation": the statement in ordinary mathematical notation, with symbols such as ∀, ∃, ⇒, written as one line of text, with opaque names kept as short names,
+ "terms": a list of objects {"name": short name, "gloss": one sentence on what the files show this definition to be, "opaque": true or false},
+ "opened": a list of the names that d7-all.md or glossary.md let you open and that dossier.md alone shows without a body,
+ "suggests": one sentence on what the names suggest beyond what the text shows, or an empty string,
+ "confidence": "high", "medium" or "low", for how completely the files let you see what is claimed,
+ "why": one sentence that gives the reason for that confidence
+}

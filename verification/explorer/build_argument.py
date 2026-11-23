@@ -53,7 +53,7 @@ def main():
                       "says": r["says"], "premises": r["premises"], "conclusion": r["conclusion"], "notation": r["notation"],
                       "unopened": [t["name"] for t in r["terms"] if t.get("opaque")], "suggests": r["suggests"],
                       "confidence": r["confidence"], "why": r["why"], "errors": len(check["first_errors"]),
-                      "rounds": check["rounds"]})
+                      "rounds": check["rounds"], "deeper": r.get("deeper")})
     entries = []
     for e in glossary["entries"]:
         entries.append({"name": e["name"], "module": e["module"], "kind": e["kind"], "what": e["what"], "below": e["below"],

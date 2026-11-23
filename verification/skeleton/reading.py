@@ -83,6 +83,19 @@ def entry(r, by_line):
     if check["second_errors"]:
         n = len(check["second_errors"])
         out += [f"The check found {count.get(n, str(n) + ' errors')} in the second reading, which the text above does not use.", ""]
+    deep = r.get("deeper")
+    if deep:
+        out += ["#### A deeper reading, with the record D7 at hand", "",
+                f"A second reader saw the dossier, the whole text of `D7` and the glossary. The check found "
+                f"{deep['errors_round_1']} errors in this reading and, after they were corrected, {deep['errors_round_2']} more, "
+                "which were corrected too. The reading has not passed the check.", "", sentence(deep["says"]), ""]
+        out += [f"- Premise {i}. {sentence(p)}" for i, p in enumerate(deep["premises"], 1)]
+        out += [f"- Conclusion. {sentence(deep['conclusion'])}", ""]
+        if deep["opened"]:
+            out += ["This reading opens " + listed(deep["opened"]) + ".", ""]
+        if deep["unopened"]:
+            out += ["It does not open " + listed(deep["unopened"]) + ".", ""]
+        out += [f"The reader's confidence is {deep['confidence']}. {sentence(deep['why'])}", ""]
     return out
 
 

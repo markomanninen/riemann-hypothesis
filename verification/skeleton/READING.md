@@ -124,6 +124,26 @@ the reading does not open, what the names suggest, the confidence with its reaso
 the check found. A reading can say that definitions were left out, which refers to the limit
 of 45 definitions of its dossier.
 
+## A deeper reading of lines 6 to 22
+
+The first readings of lines 6 to 22 stayed at the level of names. After the record `D7` was
+opened in [`D7.md`](D7.md), each of these 17 lines was read once more by a run that saw the
+dossier of the line, the whole Lean text of `D7` with the 282 definitions below it, and the ten
+readings of [`GLOSSARY.md`](GLOSSARY.md). The briefs are `briefs/reread-reader.txt` and
+`briefs/reread-check.txt`.
+
+The 17 deeper readings open 107 names that the first readings left unopened, and the number of
+names they leave unopened falls from 180 to 124. They also say more, and the check found more
+to fault. It found 43 errors in 16 of the 17 readings. After those were corrected with the text
+that the check supplied, a second check found 46 further errors in 15 readings, and they were
+corrected in the same way. Most errors of the second round are of one kind. The reading uses a
+word of mathematics, such as irreducible or unitary, for a name whose body no file shows.
+
+The deeper readings have therefore not passed the check. An entry of lines 6 to 22 prints the
+first reading, which passed, and below it the deeper reading under its own heading. The reader
+rated its confidence low for twelve of the 17 deeper readings and medium for five, where the
+first reader gave low for six and medium for eleven.
+
 ## What stays unopened
 
 A name is unopened in a reading when the first reader marked that the dossier did not let it
@@ -370,6 +390,29 @@ The reader's confidence is medium. The shape of the statement and the definition
 
 The check found no error in this reading.
 
+#### A deeper reading, with the record D7 at hand
+
+A second reader saw the dossier, the whole text of `D7` and the glossary. The check found 3 errors in this reading and, after they were corrected, 1 more, which were corrected too. The reading has not passed the check.
+
+Suppose the bundle of hypotheses that the code calls UnitaryGroupThirdPlaceHypotheses holds, and suppose the condition that the code calls RowRat holds. Then the following is claimed for every proof hL of the statement RecTExists, every real number cDep and every predicate A on quadruples (context K, base B, frame f, twisting data T). If A satisfies the condition that the code calls EvLgG, if the parameter record built from hL and cDep is linked to the row test asking that each family class is closed for the two-and-three bound BoundAtTwoThreeFamilyFonAlt, and if the parameter record built by also attaching the origin data and the property A is linked both to the test FunctionalCondition and to the test CovolumeBoundThirdPlaceSeries, then there is at least one record of the type HypsAlt NL DefiniteSideCondition. In words, under these premises a hypothesis package exists for the class property NL and the definite side condition DefiniteSideCondition.
+
+- Premise 1. The bundle UnitaryGroupThirdPlaceHypotheses holds, which the glossary reads as the conjunction of 60 named propositions, most of them stated as published results.
+- Premise 2. The condition RowRat holds, which is a condition that the code calls StepW applied to Start and to a long implication ending in the condition that the code calls Formalism.IndefR.Rat.RowTest of z.R.toCx3 z.F.
+- Premise 3. hL is any proof of RecTExists, which says that for every number field E, every algebraic closure Ω of E, every valuation subring A of Ω and every finite place w of E with A lying over w, there exists a map rc with the property IsRecT.
+- Premise 4. cDep is any real number.
+- Premise 5. A is any predicate on quadruples (K, B, f, T) of a context, a base, a frame and twisting data.
+- Premise 6. A satisfies EvLgG, meaning EvG holds of the map sending K to the statement large₂ K (A K).
+- Premise 7. LinkedAt holds for the parameter record parametersOfDependence hL cDep and the relation that sends a slot Q and a linkage L to SlotNormCondition Q L N, where N says of a family class 𝒞 that Closed 𝒞 holds for BoundAtTwoThreeFamilyFonAlt.
+- Premise 8. LinkedAt holds for the parameter record p′ = parametersOfExtension (extensionWithAtProperty hL (extensionWithOrigin hL cDep) A) SExt.none (geoCl anyGeometry) and the row test FunctionalCondition.
+- Premise 9. LinkedAt holds for the same parameter record p′ and the row test CovolumeBoundThirdPlaceSeries.
+- Conclusion. There exists at least one record of the type HypsAlt NL DefiniteSideCondition.
+
+This reading opens `LinkedAt (Lg1, KPx)`, `SlotNormCondition (Row)`, `parametersOfDependence (extensionWithList)`, `BoundAtTwoThreeFamilyFonAlt`, `UnitaryGroupThirdPlaceHypotheses (all 60 fields)`, `RecTExists (IsRecT)`, `BundleCondition` and `D7`.
+
+It does not open `EvG`, `large₂`, `LinkN` and `Row, Lg1, LargeBaseCondition, IsBuiltE, IsGoodE, BundleLinkage, EvWC, StepW, RowTest, GeoCl, OriginData, extensionWithList`.
+
+The reader's confidence is low. The outer logical shape is fully visible, but the conclusion HypsAlt and DefiniteSideCondition are cut, and key notions such as EvG, large₂, Row, EvWC, StepW and LinkN have no body, so what the premises and the conclusion really demand cannot be seen.
+
 ### Line 7, `allRows_of_open0_alt`
 
 The head is `GlobalTheory.Fc.AllAtMemberStage0.allRows_of_open0_alt`, in the module Development › Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts › Third Place Series › Link R Of Is Linked. The line gathers 34,967 declarations and hangs from line 6, `hypotheses_nonempty_of_unramified_exponents_alt`.
@@ -408,6 +451,33 @@ The check found three errors in the first version of this reading. The text abov
 - A says "a group homomorphism art from Ideles E to Gab E Ω", but the Lean text of GlobalArtinReciprocity writes "art : Ideles E →* Gab E Ω", which is a monoid homomorphism, and the dossier does not show that the two types are groups.
 - A describes CasselmanWallach as a statement about "a linear map T₀ from a Hilbert space H to a complete space E with a condition IsGKMap" and does not say that anything is left out, but the Lean text also requires "IsURepOn (UJset ε) σ", "IsIrredOn (UJset ε) σ" and "IsSmoothModRep ε p π dπ" before the conclusion.
 
+#### A deeper reading, with the record D7 at hand
+
+A second reader saw the dossier, the whole text of `D7` and the glossary. The check found 2 errors in this reading and, after they were corrected, 5 more, which were corrected too. The reading has not passed the check.
+
+The theorem assumes nine propositions taken as hypotheses. Seven of them are statements of published results that the code names GlobalArtinReciprocity, SiegelWeilUnitaryConvergent, DiscreteSeriesCover, HarishChandraModules, CuspRapidDecay, CasselmanWallach and DiscreteSeriesClassification, and two are the eventual bounds SurjectiveOntoX and LambdaLowerBound₂. Under these hypotheses it considers any proof hL of the proposition RecTExists, any norm choice extension N over hL, any S of type SExt, any Γ of type GeoP and any property NN of family classes, and it lets p be the parameter record parametersOfExtension N S Γ, which is the four-part record made of RX, N, S and Γ. If p satisfies every part of the record OpenParameterStatements, and LinkedAt holds at p for the three row conditions CovolumeBoundThirdPlaceSeries, FunctionalCondition and the slot norm condition for NN, then the record AllRowsAlt holds. That record is built from the base predicate KPx, the slots IsBuiltE p.s and IsGoodE p.s, the linkage BundleLinkage p, the property NN and the side condition DefiniteSideCondition. In unfolded form, AllRowsAlt says that each of a long list of row conditions (class count bound, J-invariant, instance rank, divisor, primitivity, Lp, order, torsion-free and others) is linked at p in the same sense as LinkedAt. The list is cut in the dossier, so further fields that may use NN and DefiniteSideCondition are not visible.
+
+- Premise 1. GlobalArtinReciprocity, which says that for every number field E and every algebraic closure Ω of E there is a group homomorphism art from the ideles of E to Gab E Ω that satisfies IsGlobalArtin.
+- Premise 2. SiegelWeilUnitaryConvergent, which says that for all number fields F and E with E an F-algebra, every F-algebra map σ from E to E with IsCMExt F E σ, every natural number M and every M×M matrix J over E with IsHermND σ J, the condition SiegelWeilAt F E σ M J holds.
+- Premise 3. DiscreteSeriesCover, which says that for all p and q with p+q ≥ 1 and all group data T there is an assignment of a representation D lam of type DSRep T to each rational parameter lam with IsParam lam, so that HasTypes (D lam) lam.1 holds for every lam and every R of type DSRep T satisfies UnitEquiv R (D lam) for some lam.
+- Premise 4. HarishChandraModules, which says that HarishChandraModulesOn T holds for every p, q with p+q ≥ 1 and every T of type GrpData p q, and that KFiniteAnalyticUJ holds.
+- Premise 5. CuspRapidDecay, which says that for every D of type D7 and data θ, V and e meeting IsInfFam and IsExpFam, every function φ from GA D V to ℂ that satisfies IsAutFun V φ, IsSmoothInf V e φ, IsUnifModerate θ V e φ and IsCuspFun V φ satisfies IsRapidDecay θ V φ.
+- Premise 6. CasselmanWallach, a long statement about a linear map T₀ with IsGKMap from a complex Hilbert space H carrying σ with IsURepOn and IsIrredOn for UJset ε to a complete Hausdorff uniform space E with seminorms p and maps π and dπ satisfying IsSmoothModRep. It asks for an extension T that agrees with T₀ on K-finite vectors, is smooth, is unique among such maps on smooth vectors, has closed image of the smooth vectors, and, when T₀ is nonzero, bounds the Sobolev norms by a continuous seminorm of T w.
+- Premise 7. DiscreteSeriesClassification, which says that for every n there is a family π ε lam on complete nontrivial spaces satisfying IsURepOn, IsIrredOn, IsSqIntOn and HasInfChar, indexed by strictly decreasing lam with lam a − (n−1)/2 an integer, with a unique submodule satisfying IsKTypeOf for lam + rhoN ε − rhoC ε, and that every complete nontrivial σ satisfying IsURepOn, IsIrredOn and IsSqIntOn is carried by an intertwining linear isometry onto some H (ε ∘ s) mu after a permutation s.
+- Premise 8. SurjectiveOntoX, which says that Closed FamHyp holds for the property that, whenever DIVinN Fm holds, there is a C0 ≥ 0 such that eventually, at every point p satisfying More p, and for every C ≥ C0, the condition (p.S false).ON (p.N C CH) holds.
+- Premise 9. LambdaLowerBound₂, which says that Closed FamHyp holds for the property that eventually, at every point p and for every C, the condition (p.S true).L6 (p.N C CH) holds.
+- Premise 10. OpenParameterStatements p, which says that LinkedAt p r holds for each of twelve row conditions r (primitivity, lambda prime, divisor, decomposition point, selection jump, the alternative tie, label, goodness, geometric weak compatibility, multiplicity, kappa and defect).
+- Premise 11. LinkedAt p CovolumeBoundThirdPlaceSeries.
+- Premise 12. LinkedAt p FunctionalCondition.
+- Premise 13. LinkedAt p applied to the relation that sends Q and L to SlotNormCondition Q L NN.
+- Conclusion. AllRowsAlt KPx (IsBuiltE p.s) (IsGoodE p.s) (BundleLinkage p) NN DefiniteSideCondition holds, where p is parametersOfExtension N S Γ.
+
+This reading opens `D7`, `RecTExists`, `LinkedAt`, `SlotNormCondition`, `KPx` and `BundleCondition`.
+
+It does not open `Lg1, LargeBaseCondition, EvLg`, `Row, EvWC, EvP`, `RX`, `row conditions inside AllRowsAlt and OpenParameterStatements` and `ON, L6, L3, FUN, KsExact, BundleWitness, IsGlobalArtin, SiegelWeilAt, IsRapidDecay, IsRecT`.
+
+The reader's confidence is low. The logical shape of the statement is fully visible, but AllRowsAlt and DefiniteSideCondition are cut, and the meaning rests on many conditions with no visible body, such as Lg1, EvLg, Row, RX and most row conditions.
+
 ### Line 8, `at_choice_alt`
 
 The head is `GlobalTheory.LocalRows.at_choice_alt`, in the module Development › Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts › Third Place Series › At Choice. The line gathers 14,543 declarations and hangs from line 7, `allRows_of_open0_alt`. Folded into the line are the wrappers `lg1_sLp_sO_hTF` and `sLp_sO_hTF_of_siegelWeil`.
@@ -430,6 +500,23 @@ The next sentences are a suggestion from the names, which the Lean text of the d
 The reader's confidence is medium. The statement, its single hypothesis and the outer layers of all three conclusions are shown with their constants, but OwnEv, D3, the hypotheses Hyp, Hyp0 and hyp and the quantities inside the bounds are not shown.
 
 The check found no error in this reading.
+
+#### A deeper reading, with the record D7 at hand
+
+A second reader saw the dossier, the whole text of `D7` and the glossary. The check found 1 errors in this reading and, after they were corrected, 3 more, which were corrected too. The reading has not passed the check.
+
+Assume the proposition that the code calls SiegelWeilUnitaryConvergent. That proposition says the following for all number fields F and E with E an algebra over F, and every automorphism σ of E that fixes F. If F is totally real, E is totally complex, E has degree 2 over F, and every complex embedding τ of E satisfies τ(σ x) = conj(τ x), then for every natural number M and every M by M matrix J over E with σ(J_ji) = J_ij for all i and j and det J ≠ 0, the two opaque conditions FinVol and SiegelDensities both hold. Under this assumption the theorem takes any family class 𝒜 and any raw selection σ, which assigns a BundleCondition record to every family Fm in 𝒜, every real x > Fm.x1 and every index i in Fm.Ix x, and it concludes three statements. The first is SelectionLpBound 𝒜 σ, a property of the STies data that the S fields of σ give, stated through the opaque conditions RowBig and RowNotScalar, required eventually on the class D3 3 𝒜. The second is SelectionOrderBound 𝒜 σ, a bound ‖K0‖² ≤ (1 + 1/b⁶)·duS(u)·duS(u′)/Dstar for distinct words u ≠ u′, on the same class. The third is H_hTF 𝒜, the inequality 1 ≤ Tr(D,w)·kaS(D)^(2·rS) for every w, again on that class.
+
+- Premise 1. The global proposition SiegelWeilUnitaryConvergent holds.
+- Premise 2. 𝒜 is a family class, meaning a predicate on families Fm of type FamP eps for every real eps.
+- Premise 3. σ is a raw selection that gives, for every eps, every Fm with 𝒜 Fm, every real x with Fm.x1 < x and every i in Fm.Ix x, a record of type BundleCondition (Fm.D x i) (objAt Fm x hx i) Fm.Csz.
+- Conclusion. SelectionLpBound 𝒜 σ and SelectionOrderBound 𝒜 σ and H_hTF 𝒜 all hold.
+
+This reading opens `D7`, `Ranks (D.R, including m)`, `SData (D.s, including Del with Del > 0)`, `Des` and `WithChN`.
+
+It does not open `FinVol`, `SiegelDensities`, `FamCore`, `OwnEv`, `Large`, `TransportedAlt`, `Cnt.Hyp, Cnt.Hyp0, AdmissibleBoundsFromSource.hyp`, `ConcTie, AbsConv, RowBig, RowNotScalar, epsL, ddC` and `Tr, kaS, duS, K0, tO`.
+
+The reader's confidence is medium. The logical shape, the quantifiers, the constants 3, 1/4, 1/2 and CYL+1, and the definitions Closed, D3, LoopRowS, TheoremSSelected and TFrame are all visible, but the central operator OwnEv, the hypotheses Cnt.Hyp and AdmissibleBoundsFromSource.hyp, FinVol, SiegelDensities and most quantities inside the bounds have no visible bodies.
 
 ### Line 9, `offDiag`
 
@@ -458,6 +545,28 @@ The reader's confidence is medium. The logical shape, the constants and the fina
 
 The check found no error in this reading.
 
+#### A deeper reading, with the record D7 at hand
+
+A second reader saw the dossier, the whole text of `D7` and the glossary. The check found 4 errors in this reading and, after they were corrected, 1 more, which were corrected too. The reading has not passed the check.
+
+The theorem assumes three global statements, called SWXS, RowNGP and RowsFinDim. It then takes any class 𝒞 of parameter families and any selector sel for that class, and it adds three more assumptions. The first is that every local datum D x i of every family in 𝒞 is locally tied (LocTied) once x is past both the family's base point x1 and the selected threshold. The second is the rank condition RanksRow with constant 3. The third is the row condition LoopRowS with constant 3 and the selector sel. Under these assumptions the property Closed holds for 𝒞. This means there is ε1 > 0 such that for every eps with 0 < eps ≤ ε1 there is a constant package K for which every family Fm in 𝒞 that is large with respect to K and any CH satisfies TheoremSSelected Fm 3 (sel Fm hc). TheoremSSelected says that for all large enough x, every index i and any two distinct words u ≠ u', whenever the standing hypotheses hold with C0 = 3, the squared norm of the off-diagonal quantity K0 for the pair (u, u') is at most (1 + 1/b^6) · duS(u) · duS(u') / Dstar.
+
+- Premise 1. SWXS holds, meaning that for every D of type D7 and every Hida setting X over D, the two opaque conditions SWa1 and StabilizerFirstChernCompatibility hold for the field, CM and Hermitian data of X.
+- Premise 2. RowNGP holds, meaning that for all real constants Cg, cb, Cw, cT, CT, C0 with cb > 0 and cT > 0 there is C4 ≥ 0 and thresholds C'₀ and Cl₀ such that for all C' ≥ C'₀ and Cl ≥ Cl₀ and every D, size datum large₂, Hida setting X, full datum Y and words u, u', the conditions Ties D, Hyp0, Stand D u u', ConcTie X Y and AbsConv of Y.tO u u' together imply RowNG of Y.tO u u' with tolerance epsNG D large₂ C4 = 2^(−(k − 2·rS − 5)) · exp(C4 · mR(D)^5 · f · log b), where k − 2·rS − 5 is a subtraction of natural numbers that is cut off at zero, so the first factor is 1 whenever k < 2·rS + 5 and with the number ddC X Y u u' = duC(u) · duC(u') / DstC.
+- Premise 3. RowsFinDim holds, meaning that for every automorphic instance I, σ-finite Haar measure μf, fundamental domain fund, right-regular action R, locally constant function e supported in I.Kset with associated convolution operator Re, and every family over the infinite places of unitary irreducible representations σ_v with formal degree d_v, unit vectors w_v and integrable coefficient functions, every operator T whose matrix coefficients equal the integral of phInf against the coefficients of R over the infinite group has a finite-dimensional range for Re ∘ T.
+- Premise 4. A class 𝒞 of parameter families is given (a class is a property of families FamP eps for each real eps).
+- Premise 5. A selector sel for 𝒞 is given, which gives every family Fm in 𝒞 a pair made of a threshold x0 and, for each x > x1 with x ≥ x0 and each index i, an object of the opaque type STies for D x i.
+- Premise 6. For every eps, every family Fm in 𝒞, every x with x1 < x and (sel Fm hc).1 ≤ x and every index i, the datum D x i satisfies LocTied, meaning that for every nonzero prime p of the ring of integers of the field host.F there exists a LocIso between the local datum (D.s.atP p) and the local datum locC D p that Examples₂.locAtC builds.
+- Premise 7. RanksRow 3 𝒞 holds, meaning that Closed holds for 𝒞 with the property RanksF Fm 3 (Fm.CYL + 1) (1/4) 3 (1/2) Fm.CTu, which unfolds to the opaque FamilyRanksHypothesis.
+- Premise 8. LoopRowS 3 𝒞 sel holds, meaning that for every function aF from real lists to reals, Closed holds for 𝒞 with the property that for every hc, eventually in x, for all indices and all words u, u', the hypothesis Hyp with C0 = 3 and A = aF(Fm.cOut), together with ConcTie and AbsConv for the selected data, implies both RowBig and RowNotScalar of Y.tO u u' with tolerance epsL = exp(−(1/3) · k · f · log k) and number ddC.
+- Conclusion. Closed holds for 𝒞 with the property that every family Fm in 𝒞, for every proof hc of membership, satisfies TheoremSSelected Fm 3 (sel Fm hc), which is the eventual bound ‖K0(u,u')‖² ≤ (1 + 1/b^6) · duS(u) · duS(u') / Dstar for all distinct words u ≠ u' under the standing hypotheses with C0 = 3.
+
+This reading opens `D7`, `Formalism.MainNotions.S.Draft.SData (the field D.s and its atP)`, `Formalism.MainNotions.S.Loc.LocAt`, `Formalism.MainNotions.S.Loc.resChar` and `Formalism.BasicNotions.Rows.Data (Word, Dstar)`.
+
+It does not open `Large`, `STies`, `SWa1`, `StabilizerFirstChernCompatibility`, `FamilyRanksHypothesis`, `StandingHypotheses / StandingNumericalData`, `tO, K0, AbsConv, RowNG, RowBig, RowNotScalar`, `duS, duC, DstC, sC', sCl, cOut, CYL` and `IsFundDom, IsRightReg, IsRConvF, Kset, IsCRepOn, coefOn, mInf, TFrameAt`.
+
+The reader's confidence is medium. The quantifier structure, the explicit constants and the bodies of Closed, TheoremSSelected, LoopRowS, RanksRow, LocTied and LocAt are all visible, but the key quantities and conditions K0, tO, RowBig, RowNG, Large, STies, StandingHypotheses and FamilyRanksHypothesis have no body in the files.
+
 ### Line 10, `servH_row_of_artin`
 
 The head is `GlobalTheory.Svd.servH_row_of_artin`, in the module Development › Abelian Variety Theory › Proofs › Satake Parameters › Bundle Both Parts Of Standard Kernel Of Global Artin Reci. The line gathers 10,808 declarations and hangs from line 7, `allRows_of_open0_alt`. Folded into the line are the wrappers `hServ_of_linkR`, `row_hServ_of_link_alt`, `reciprocity_kernel_of_artin`, `servH_row_linkR_alt` and `bundle_bothParts_of_standardKernel_of_globalArtinReciprocity`.
@@ -484,6 +593,27 @@ The check found one error in the first version of this reading. The text above i
 
 - A says that of the five wrapper theorems there are "four that specialise it to particular Bd, Q and Lk built from parameters p", but only reciprocity_kernel_of_artin and servH_row_linkR_alt fix Bd, Q and Lk, whereas hServ_of_linkR and row_hServ_of_link_alt quantify over every "Lk : LkT BundleCondition" under a linkage premise and conclude "SlotServiceCondition (IsGoodE p.s) Lk", a name whose body the dossier does not show.
 
+#### A deeper reading, with the record D7 at hand
+
+A second reader saw the dossier, the whole text of `D7` and the glossary. The check found 1 errors in this reading and, after they were corrected, 1 more, which were corrected too. The reading has not passed the check.
+
+Assume the proposition that the code calls GlobalArtinReciprocity. By its visible body, this proposition says that for every number field E and every algebraic closure Ω of E there is a monoid homomorphism art from a type the code calls Ideles E into a type the code calls Gab E Ω, and that art satisfies a condition the code calls IsGlobalArtin. Now take any family Bd of types indexed by a D7 record D, an object O over D and a real number c, any slot predicate Q, any link predicate Lk, and any rule ker that turns each element b of Bd D O c into a kernel record of type KerEntTied over O.ex. Suppose two things. First, every point accepted by Q has the position property positionOf HasPart. Second, the row-evidence condition RowE holds for Q and Lk with the evidence StdTie D O (ker D O c b). Then the row condition Row holds for Q, Lk and the service property ServH ker.
+
+- Premise 1. The proposition the code calls GlobalArtinReciprocity holds. For every number field E with an algebraic closure Ω there is a monoid homomorphism art from Ideles E to Gab E Ω such that IsGlobalArtin art holds.
+- Premise 2. Bd is any family that gives a type for each D7 record D, object O of type Obj D and real number c. It is an implicit argument.
+- Premise 3. Q is any slot predicate of type V4.Slot. Such a predicate takes a context K, stages X, a frame f, twist data T and a core c, and returns a proposition.
+- Premise 4. Lk is any predicate of type LkT Bd. It takes a context K, a base point β over K, a real number c and an element of Bd β.D β.O c, and returns a proposition. Here Lk is a bound variable and not the definition Formalism.L2.Forms.Lk.
+- Premise 5. ker is any function that sends each D, O, c and each b in Bd D O c to a record of type KerEntTied O.ex.
+- Premise 6. For all K, X, f, T and c, if Q K X f T c holds then positionOf HasPart K X f T c holds. This means there exist w, Z and c′ such that Part w Z c′.O is nonempty and the dependent triple formed from X.C, the later data (X.W, X.V, X.S, X.N, X.G) and c is equal to the triple (w.C, Z, c′).
+- Premise 7. RowE Q Lk holds for the evidence that sends (κ, D, O, c, b) to StdTie D O (ker D O c b). This means the predicate EvP holds of the property of κ and K that says that for every base point β over K with β.Is Q, every real c and every b in Bd β.D β.O c with Lk K β c b, the triple (β.D, β.O, ker β.D β.O c b) is standard. Being standard means it equals a triple (I.rec7 l Z, O′, t′) built from some base B, PreX X, TC structure I, laws l with Law0 l, later data Z, object O′ and kernel record t′ that satisfy StdAt I l l0 Z O′ t′.
+- Conclusion. Row Q Lk (ServH ker) holds. So there is an evidence assignment E from Par to BdP Bd such that RowE Q Lk E holds and every family class 𝒜 and every raw selection σ with IsSel Q Lk E 𝒜 σ satisfy ServH ker 𝒜 σ. ServH ker 𝒜 σ means that 𝒜 is Closed under the property RowTwU of a family Fm and that AtAll holds, with each D, O, c, b required to satisfy Pdv.At O.ex (ker D O c b).ent along 𝒜 and σ.
+
+This reading opens `D7`.
+
+It does not open `IsGlobalArtin`, `Ideles`, `Gab`, `Part`, `EvP`, `IsSel`, `Par, BdP, Ctx, BPt, FamClass, RawSel`, `BPt.Is`, `Closed, RowTwU, AtAll, Pdv.At`, `StdAt, TC, TC.Later, I.rec7, I.Laws, I.Law0, Mem.Base, PreX` and `Core, Stages, Fr, TwDat, ColW, Cols, CP`.
+
+The reader's confidence is medium. The logical shape and the visible bodies of Row, RowE, positionOf, HasPart, StdTie, ServH and D7 are clear, but EvP, IsSel, Closed, AtAll, Pdv.At, StdAt, Part, IsGlobalArtin and several base types have no bodies in the files, so the actual content of premises and conclusion is only partly visible.
+
 ### Line 11, `member_bundles_large_unramified_exponents_alt`
 
 The head is `GlobalTheory.Fc.StageOneU.member_bundles_large_unramified_exponents_alt`, in the module Development › Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts › Third Place Series › Member Bundles Large Unramified Exponents. The line gathers 20,058 declarations and hangs from line 6, `hypotheses_nonempty_of_unramified_exponents_alt`. Folded into the line is the wrapper `large_unramified_exponent_bundles_exist_alt`.
@@ -508,6 +638,26 @@ The next sentences are a suggestion from the names, which the Lean text of the d
 The reader's confidence is low. The mass ratio conjunct and the logical shape are visible, but BaseCond, FirstG, ExportF, SecondG, EvP, EvLg, EvG, positionOf, BuiltE, GoodE, linkOf, the field s of the parameter record and most of the hypothesis bundle have no visible bodies, and 55 definitions were left out.
 
 The check found no error in this reading.
+
+#### A deeper reading, with the record D7 at hand
+
+A second reader saw the dossier, the whole text of `D7` and the glossary. The check found 2 errors in this reading and, after they were corrected, 0 more, which were corrected too. The reading has not passed the check.
+
+Suppose the bundle of sixty cited results called UnitaryGroupThirdPlaceHypotheses holds and the condition RowRat holds. Then for every proof hL of the local reciprocity statement RecTExists, every real number cDep and every predicate A on quadruples (context K, base record B, frame f, twisting data T) that satisfies the condition EvLgG, three things hold together. First, for every CM-type number field K that is unramified in the sense of IsCMUnram and every natural number M ≥ 3, the mass of the standard Hermitian lattice of rank M divided by the mass of the one of rank M − 1 equals a fixed explicit expression called massRatioRightSide K M. Second, the condition MemberE holds for the slot data p.s, where p is the parameter record built from hL, cDep and A in the way described below. Third, there is a slot R such that LargeBaseCondition KPx (IsBuiltE p.s) R holds, which is the condition that the code calls EvLg applied to the property that whenever KPx B f holds, every stage tuple and core satisfying IsBuiltE p.s also satisfies R, and such that ExB (sAnd (IsGoodE p.s) R) (BundleLinkage p) holds, which is the condition that the code calls EvP applied to the property that every base point satisfying both IsGoodE p.s and R has, at every real number c, a BundleCondition record that is linked in the sense of BundleLinkage p.
+
+- Premise 1. The record UnitaryGroupThirdPlaceHypotheses holds, which means that each of its sixty named propositions holds, most of them cited published theorems.
+- Premise 2. The condition RowRat holds, which is StepW Start applied to a property saying that, under a long list of conditions on the data z (GrpTrue, GrpAt, KapDef, ExAt, InGeo, CoreP, GIs2, a set identity for Wt and a condition on residue characteristics), the row test RowTest holds for z.R.toCx3 z.F.
+- Premise 3. hL is any proof of RecTExists, the claim that for every number field E, algebraic closure Ω, valuation subring A of Ω and prime w of the ring of integers of E lying under A there is a map rc that satisfies IsRecT.
+- Premise 4. cDep is any real number.
+- Premise 5. A is any predicate on context, base record, frame and twisting data.
+- Premise 6. A satisfies EvLgG, which by definition is EvG applied to the family K ↦ large₂ K (A K).
+- Conclusion. SiegelMassRatioCM holds, MemberE holds for p.s, and ExBL KPx (IsBuiltE p.s) (IsGoodE p.s) (BundleLinkage p) holds, with p = parametersOfExtension (extensionWithAtProperty hL (extensionWithOrigin hL cDep) A) SExt.none (geoCl anyGeometry).
+
+This reading opens `D7`, `BundleCondition`, `UnitaryGroupThirdPlaceHypotheses (fields past the cut)`, `IsRecT`, `PrePin` and `FieldDat`.
+
+It does not open `Step`, `EvG`, `large₂`, `GeoCl`, `Parameters / .s / RX`, `BaseCond, FirstG, ExportF, SecondG`, `positionOf, BuiltE, GoodE`, `KsExact`, `EvLg / EvP` and `linkOf, BundleWitness`.
+
+The reader's confidence is low. The logical shape and the mass-ratio conjunct can be seen in full, but MemberE, the eventuality operators EvG, EvLg and EvP, the slots positionOf, BuiltE and GoodE, Step, Parameters with its field s, and BundleWitness all have no visible body, so most of what is claimed stays opaque.
 
 ### Line 12, `exists_baseLattice_of_prime_alt`
 
@@ -536,6 +686,28 @@ The next sentences are a suggestion from the names, which the Lean text of the d
 The reader's confidence is medium. The logical shape and the first layers of unfolding are visible, but the operators EvP, EvLg, Step, the projection p.s, the four parts of MemberE and nearly all hypothesis components are opaque, and 91 definitions were left out of the dossier.
 
 The check found no error in this reading.
+
+#### A deeper reading, with the record D7 at hand
+
+A second reader saw the dossier, the whole text of `D7` and the glossary. The check found 6 errors in this reading and, after they were corrected, 2 more, which were corrected too. The reading has not passed the check.
+
+Assume four propositions, namely the bundle of hypotheses HypAAlt, the bundle EllipticHypothesis, the bundle MultiplicityCoverHypotheses and the proposition ExistsUnlocalizedSaturatedState. Then for every proof hL of the proposition RecTExists for which LocalLanglandsHypothesis hL holds, and for every real number cDep, the theorem looks at the single parameter record p built by parametersOfExtension from the extension extensionWithOrigin hL cDep, the trivial extension SExt.none and the geometry geoCl anyGeometry. If MultiplicityCondition holds for p, then two things follow together. The first is the condition MemberE on the slot data p.s. The second is ExBL, which says that some slot R exists such that the condition LargeBaseCondition KPx (IsBuiltE p.s) R holds and the condition ExB holds for the slot "IsGoodE p.s and R" with the linkage BundleLinkage p, so that, eventually in a sense the code calls EvP, every point in that slot and every real c have a BundleCondition record b that is linked through a BundleWitness to a weighted point of p.s.
+
+- Premise 1. HypAAlt holds, which is a record of twenty-one fields a1 to a23 with only a4 and a15 absent, namely eighteen named propositions such as RayField, CasselmanWallach and GlobalArtinReciprocity and three explicit statements a19, a20 and a21 about discrete series representations.
+- Premise 2. EllipticHypothesis holds, which is a record of twenty-five propositions e1 to e25, the last saying that for every object D of the record type D7, every prime l and every K of the type FinExt l, the condition bkAll holds of (D.loc l).PD K, where FinExt l is the type of intermediate fields K of Om l over ℚ_[l] that are finite dimensional over ℚ_[l], PD is the field of LocPrime l that gives for each K of type FinExt l a PeriodData record, and only bkAll is not opened.
+- Premise 3. MultiplicityCoverHypotheses holds, which is a record of DiscreteSeriesCover, PublishedThetaConditionTheorems, HeckeLPartialContinuation and two step conditions multL and multW that give the condition MultEq for certain real data, with multW also giving RowTest.
+- Premise 4. ExistsUnlocalizedSaturatedState holds, which says through the condition Step that for columns w satisfying Start (Pinned, Supp and Coh) there exist a record P of type Pre2 and a state x of type St P with SatU P, with the type x.o.N.nd.Loc empty and with x.o.η j v equal to 0 for all j and v.
+- Premise 5. hL is any proof of RecTExists, which says that for every number field E with algebraic closure Ω, every valuation subring A of Ω and every nonzero prime w of the integers of E under A, a map rc satisfying IsRecT exists.
+- Premise 6. LocalLanglandsHypothesis hL holds, which is a record of six propositions pr, ser, arch, par, pt and parMem.
+- Premise 7. cDep is any real number.
+- Premise 8. MultiplicityCondition holds for the parameter record p = parametersOfExtension (extensionWithOrigin hL cDep) SExt.none (geoCl anyGeometry), which says that, eventually in the sense of EvP, MultEq holds for the real data of every weighted point q of p.s.
+- Conclusion. MemberE p.s holds and ExBL KPx (IsBuiltE p.s) (IsGoodE p.s) (BundleLinkage p) holds for that same parameter record p.
+
+This reading opens `D7`, `D.loc (LocTheory)`, `RecTExists (IsRecT, LawsT, IsLocalArtin per glossary)`, `KPx (FieldDat, PrePin per glossary)` and `BundleCondition (RecTAlt, STiesRAlt, RowSideFamily, SquareIntegrableColumns, RealTBAlt per glossary)`.
+
+It does not open `Step`, `geoCl`, `p.s`, `EvP`, `MultEq`, `BaseCond, FirstG, ExportF, SecondG` and `EvLg`.
+
+The reader's confidence is low. The order of quantifiers and the logical shape are fully visible, but the conditions that carry the content, such as EvP, EvLg, Step, MultEq, BaseCond, FirstG, ExportF, SecondG, positionOf, GeoCl and the slot data p.s, have no visible body in the three files.
 
 ### Line 13, `final_alt_alt`
 
@@ -569,6 +741,30 @@ The check found no error in this reading.
 
 The check found one error in the second reading, which the text above does not use.
 
+#### A deeper reading, with the record D7 at hand
+
+A second reader saw the dossier, the whole text of `D7` and the glossary. The check found 1 errors in this reading and, after they were corrected, 1 more, which were corrected too. The reading has not passed the check.
+
+The theorem says that the proposition the code calls mainTheorem holds, and that proposition is one long implication. It assumes four bundles of named statements, called Hypotheses₂, PublishedInputsThirdLayerAlt, GeometricGaloisRepCompatibility and SerN. It also assumes the depth-zero support statement DepthZeroSupport and three statements called LocalFiniteness, LocalTateDuality and LocalEulerChar, each of which says that a per-place condition with no visible body holds for every finite ZMod(l^r)-representation of Dec A at every finite place of every number field. Under these assumptions, it says that for every proof hL of the statement RecTExists and every real number cDep, take the parameter record p = parametersOfDependence hL cDep. If LinkedAt holds for p with the row test built from Closed and BoundAtTwoThreeFamilyFonAlt, then LinkedAt also holds for p with the same row test built from Closed and LinkN. In other words, the theorem transfers a linkage statement from the bound condition BoundAtTwoThreeFamilyFonAlt to the condition LinkN, at the same parameters and in the same row and slot setting, and it does not claim that either linkage holds outright.
+
+- Premise 1. Hypotheses₂ holds, which is the conjunction of seven statements that the code calls FontaineBcris, GlobalArtinReciprocity, BlochKatoLocal, LocalTateDualityK, LocalEulerCharK, LocalFinitenessK and BhattScholzeIntegral.
+- Premise 2. PublishedInputsThirdLayerAlt holds, which is the conjunction of fourteen named statements, among them ThetaLocalInputsAlt, CuspRapidDecay, HarishChandraFinite, GreenCuspidal, Green, ZelevinskyPolynomialRing, RayClassFieldSt, RayField, RayCharacterArtin, BaseChangeDefiniteUnitaryGroup, GenericUnitaryDualGL, StandardCosocleGL, Cheb and HoweUnram.
+- Premise 3. GeometricGaloisRepCompatibility holds, which is the conjunction of twelve named statements, among them WeilRepresentationUnitaryPair, DiscreteSeriesExists, DiscreteSeriesClassification, FlathFactorisation, WeilSiegelFormulaUnitary, DoublingMethodLocalZetaIntegrals, HeckeLPartialContinuation and HtCard.
+- Premise 4. SerN holds, which is the conjunction of six named statements called SeriesRat, SerInt, HeckeInt, HeckeTransform, HeckeReadTie and RatioConj.
+- Premise 5. DepthZeroSupport holds. For every nonarchimedean local field k, every n, every π of the type Irr k n and every family σ of objects of the types Irr k (d a), if IsCuspSupport links π to the σ a and π has a nonzero vector fixed by KOne k (Fin n), then every σ a has a nonzero vector fixed by KOne k (Fin (d a)).
+- Premise 6. LocalFiniteness holds, meaning that LocalFinitenessAt A rho v is true for every number field F with algebraic closure Ω, every prime l, every r, every finite discrete ZMod(l^r)-module M, every valuation subring A of Ω, every representation rho of Dec A on M and every finite place v of F.
+- Premise 7. LocalTateDuality holds, meaning that LocalTateDualityAt A rho v is true for all of the same data.
+- Premise 8. LocalEulerChar holds, meaning that LocalEulerCharAt A rho v is true for all of the same data.
+- Premise 9. hL is any proof of RecTExists, and cDep is any real number.
+- Premise 10. LinkedAt holds at the parameters parametersOfDependence hL cDep for the relation that sends a slot Q and a linkage L to SlotNormCondition Q L applied to the class property 𝒞 ↦ Closed 𝒞 BoundAtTwoThreeFamilyFonAlt.
+- Conclusion. LinkedAt holds at the same parameters for the relation that sends Q and L to SlotNormCondition Q L applied to the class property 𝒞 ↦ Closed 𝒞 LinkN.
+
+This reading opens `D7`, `BundleCondition`, `KPx`, `Lg1`, `Row`, `D3`, `Parameters` and `FamClass`.
+
+It does not open `FamP`, `FamClass`, `TransportedAlt`, `ShaFinOdd`, `lifts`, `LinkN_at`, `SetupAlt, BoundAtTwoThree`, `D3`, `Row, Lg1, IsBuiltE, IsGoodE, BundleLinkage, V4.Slot, LkT, Parameters`, `IsCuspSupport, Irr, KOne, fixed, LocalFinitenessAt, LocalTateDualityAt, LocalEulerCharAt, Dec, IsRecT` and `named published statements`.
+
+The reader's confidence is low. The logical shape is fully visible, but the conditions that carry the mathematical content are opaque names, including LinkN_at, ShaFinOdd, lifts, SetupAlt, BoundAtTwoThree, FamP, D3, Row and the dozens of published statements in the hypotheses.
+
 ### Line 14, `final_of_alt`
 
 The head is `UpperTheory.GalC.final_of_alt`, in the module Development › Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts › Third Place Series › Link N Fam. The line gathers 14,931 declarations and hangs from line 13, `final_alt_alt`.
@@ -598,6 +794,29 @@ The reader's confidence is medium. The dossier unfolds LinkedAt, Lg1, Row, Close
 
 The check found no error in this reading.
 
+#### A deeper reading, with the record D7 at hand
+
+A second reader saw the dossier, the whole text of `D7` and the glossary. The check found 2 errors in this reading and, after they were corrected, 3 more, which were corrected too. The reading has not passed the check.
+
+Assume three bundles of stated results that the code calls Hypotheses₂, PublishedInputsThirdLayerAlt and GeometricGaloisRepCompatibility, and the single statement DepthZeroSupport, the cutting statement CutGivesAlt, a proof hL of the statement RecTExists, a real number cDep, and the condition hF that MemberAtLayerPoint hL holds for the predicate that sends the layer data to GaloisPreconditions (w.D Z) nch. Assume also that the property LinkedAt holds for the parameter record built from hL and cDep, where the test is SlotNormCondition applied to the closure property Closed of the family bound BoundAtTwoThreeFamilyFonAlt. Under these premises the theorem concludes that the same LinkedAt statement holds with the same parameter record and the same SlotNormCondition test, but with BoundAtTwoThreeFamilyFonAlt replaced inside Closed by the family bound LinkN. Here Closed for a class 𝒞 and a property P means that there is a number ε1 > 0 such that for every eps with 0 < eps ≤ ε1 there is a record K of type TransportedAlt, made of one real number and three functions from lists of reals to reals, such that for every family Fm of type FamP eps and every real CH with 𝒞 Fm and Fm.Large K CH the property P holds of Fm and CH. LinkN for a family Fm means that there are real C and x0 such that, for every x ≥ x0 and every index i of the family at x for which the datum Fm.D x i satisfies ShaFinOdd, and for every j in {1, …, m}, the inequality LinkN_at (Fm.L x i) j C holds.
+
+- Premise 1. hP, a proof of the bundle Hypotheses₂, which collects seven stated results that the code calls FontaineBcris, GlobalArtinReciprocity, BlochKatoLocal, LocalTateDualityK, LocalEulerCharK, LocalFinitenessK and BhattScholzeIntegral.
+- Premise 2. hG, a proof of CutGivesAlt, which says that for every D7 datum D and every choice nch with GaloisPreconditions D nch and Tie4 D there is a cut c of D that is Good, satisfies NormChoiceFacts for the cut datum and the carried choice, and keeps Tie4 for the cut datum.
+- Premise 3. prN, a proof of the bundle PublishedInputsThirdLayerAlt, which collects fourteen stated results such as CuspRapidDecay, HarishChandraFinite, Green, RayField, HoweUnram and ThetaLocalInputsAlt.
+- Premise 4. hX, a proof of the bundle GeometricGaloisRepCompatibility, which collects twelve stated results such as WeilRepresentationUnitaryPair, FlathFactorisation and HtCard.
+- Premise 5. dzs, a proof of DepthZeroSupport, which says that for every nonarchimedean local field k, if an irreducible representation of GL_n(k) has cuspidal support given by representations σ_a and has a nonzero vector fixed by the subgroup the code calls KOne, then each σ_a also has a nonzero vector fixed by its KOne.
+- Premise 6. hL, a proof of RecTExists, which says that for every number field E, algebraic closure Ω, valuation subring A of Ω and finite place w of E with A lying over w, there is a map rc satisfying the condition IsRecT.
+- Premise 7. A real number cDep.
+- Premise 8. hF, the statement MemberAtLayerPoint for hL, which says that EvLgG holds of the predicate that sends K, B, f and T to the statement that KPx B f implies, and for all further data w, Z, Wt, p0, t, nch, n, xd and c for which the default extension type and RXs t are nonempty and ColPin w holds, the condition GaloisPreconditions (w.D Z) nch holds.
+- Premise 9. hAt, the statement that LinkedAt holds for parametersOfDependence hL cDep with the test that sends a slot Q and a linkage L to SlotNormCondition Q L applied to Closed of the property BoundAtTwoThreeFamilyFonAlt.
+- Conclusion. LinkedAt holds for parametersOfDependence hL cDep with the test that sends a slot Q and a linkage L to SlotNormCondition Q L applied to Closed of the property LinkN.
+
+This reading opens `D7`, `Ranks`, `LinkedAt`, `parametersOfDependence`, `SlotNormCondition`, `BoundAtTwoThreeFamilyFonAlt`, `KPx`, `BundleCondition` and `RecTExists`.
+
+It does not open `Large`, `etaSum, vvTerm, dZ0, shaLen`, `Tie4, NormChoiceFacts, cut, CutD, NChoice` and `EvLgG, LargeBaseCondition, Row, RowE, IsSel`.
+
+The reader's confidence is medium. The logical shape is fully visible, since the conclusion repeats premise hAt with BoundAtTwoThreeFamilyFonAlt replaced by LinkN and both are unfolded, but many inner conditions such as Large, etaSum, vvTerm, EvLg and the bodies of the bundled published results have no visible text.
+
 ### Line 15, `linkN_of_twGood_galoisPreconditions`
 
 The head is `UpperTheory.GalC.linkN_of_twGood_galoisPreconditions`, in the module Development › Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts › Third Place Series › Link N Fam. The line gathers 14,338 declarations and hangs from line 14, `final_of_alt`. Folded into the line are the wrappers `linkedAt_linkN_of_boundAtTwoThree` and `linkN_of_boundAtTwoThree_slot`.
@@ -625,6 +844,25 @@ The check found one error in the first version of this reading. The text above i
 
 - A writes the bound with "(log x)²" in the same sentence that quantifies over "every x ≥ x0", while the Lean text has Real.log L.sc.x ^ 2 with L = Fm.L x i, and the dossier ties L.sc.x to x only when Fm.x1 < x, which x ≥ x0 does not give.
 
+#### A deeper reading, with the record D7 at hand
+
+A second reader saw the dossier, the whole text of `D7` and the glossary. The check found 5 errors in this reading and, after they were corrected, 0 more, which were corrected too. The reading has not passed the check.
+
+Assume the bundle of cited results that the code calls Hypotheses₂, which is a list of seven propositions such as local Tate duality, the local Euler characteristic formula, local finiteness of Galois cohomology and global Artin reciprocity, and assume the proposition CutGivesAlt. Take any real number eps and any family Fm of type FamP eps, which assigns to every real x and every index i in a type Ix x a D7 record D x i together with size data and much further data and conditions. Suppose that Fm satisfies the condition TwGood, and that for every real x with x1 < x and every index i the record D x i satisfies the condition GaloisPreconditions for the choice record nch stored in the field ex of Fm, and also satisfies the condition Tie4. Then Fm satisfies LinkN, which says that there are real constants C and x0 such that for every x ≥ x0, every index i for which the condition ShaFinOdd holds, and every whole number j from 1 to the rank m of D x i, a certain bound on a quantity etaSum holds whenever a certain series is summable.
+
+- Premise 1. The bundle Hypotheses₂ of seven cited propositions holds.
+- Premise 2. The proposition CutGivesAlt holds, which says that every D7 record D with a choice record nch that meets GaloisPreconditions and Tie4 admits a good cut c for which the cut record meets NormChoiceFacts and Tie4.
+- Premise 3. eps is a real number and Fm is a family of type FamP eps.
+- Premise 4. The family Fm satisfies TwGood, which is TwGoodE applied to Fm and the forms twE Fm.
+- Premise 5. For every real x with Fm.x1 < x and every index i in Fm.Ix x, the record Fm.D x i satisfies GaloisPreconditions with the choice record (Fm.ex x hx i).nch and also satisfies Tie4.
+- Conclusion. The family Fm satisfies LinkN, so there are real constants C and x0 such that for x ≥ x0, every index i where ShaFinOdd holds for D x i, and every j with 1 ≤ j ≤ (D x i).R.m, the bound LinkN_at (Fm.L x i) j C holds.
+
+This reading opens `D7`, `Ranks`, `Frame`, `shaLen` and `Rows.Data`.
+
+It does not open `etaSum`, `vvTerm`, `dZ0` and `SizeData₂`.
+
+The reader's confidence is medium. The logical shape of the statement and the definitions of LinkN, TwGood, CutGivesAlt and Hypotheses₂ are fully visible, but etaSum, vvTerm, dZ0, SizeData₂, the many fields of GaloisPreconditions and Tie4, and parts of FamP are cut or have no visible body.
+
 ### Line 16, `ontoX_and_lamLow_of_unitaryGroupHypotheses'`
 
 The head is `GlobalTheory.Fc.S0.ontoX_and_lamLow_of_unitaryGroupHypotheses'`, in the module Development › Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts › Third Place Series › Surjective And Low Weight Of Unramified Exponents. The line gathers 20,036 declarations and hangs from line 5, `nonempty_hyps_definite_side_of_closed_bound`.
@@ -647,6 +885,21 @@ The reader's confidence is low. The outer quantifier structure of both conclusio
 The check found one error in the first version of this reading. The text above is the corrected version, which passed the check after one round of correction.
 
 - A says the property "holds at all points p of the family from some x0 on", while the Lean text of EventuallyAtPoints requires it only for points p with p.PointConditions', and the field "says" does not state that this condition is left out.
+
+#### A deeper reading, with the record D7 at hand
+
+A second reader saw the dossier, the whole text of `D7` and the glossary. The check found 2 errors in this reading and, after they were corrected, 1 more, which were corrected too. The reading has not passed the check.
+
+The theorem says that if the large bundle of hypotheses called UnitaryGroupThirdPlaceHypotheses holds, then two statements both hold. The first statement, SurjectiveOntoX, says the following. There is a threshold ε1 > 0 such that for every eps with 0 < eps ≤ ε1 there is a K of the type called TransportedAlt for which every family Fm of the type called FamP eps, and every real number CH, that satisfies the family conditions FamHyp and the size condition Fm.Large K CH has a further property. If Fm satisfies the condition DIVinN, then there is a real C0 ≥ 0 and a real x0 such that for every x ≥ x0 with x > Fm.x1, every index i in Fm.Ix x and every point p over (x, i) that meets the condition called PointConditions' and the condition More, the object p.S false satisfies the relation called ON with p.N C CH for every C ≥ C0. The second statement, LambdaLowerBound₂, has the same outer frame of ε1, eps, K, Fm and CH with FamHyp and Large, but no DIVinN premise and no More premise, and it concludes that eventually, at every point p meeting PointConditions', the object p.S true satisfies the relation called L6 with p.N C CH for every real C.
+
+- Premise 1. The proposition UnitaryGroupThirdPlaceHypotheses holds, which is a conjunction of named propositions (clozelCohomological, greenCuspidal, heckeLAdicCharacter, chebotarevDegreeOne and many more, about 60 in all according to the glossary, and the dossier's list is cut).
+- Conclusion. SurjectiveOntoX and LambdaLowerBound₂ both hold.
+
+This reading opens `D7` and `UnitaryGroupThirdPlaceHypotheses`.
+
+It does not open `FamP`, `TransportedAlt`, `Large`, `Pt`, `PointConditions'`, `S`, `N`, `ON`, `L6`, `DIVinN_at`, `SingleIndexPlacesAreTwisted, CoreTies, RecTies` and `PageFix, PageWin, ChosenWall, ChosenE, TwGood and the other FamHyp parts`.
+
+The reader's confidence is low. The logical frame of quantifiers and implications is fully visible, but the actual conclusions ON and L6, the objects p.S and p.N, the point and family types and most hypothesis parts have no visible bodies, and the hypothesis bundle's field list is cut in the dossier.
 
 ### Line 17, `ontoX_of_hypotheses_alt_alt`
 
@@ -683,6 +936,32 @@ The check found two errors in the first version of this reading. The text above 
 - A glosses CuspRapidDecay as holding "for a datum D and a function φ on GA D V with IsAutFun, IsSmoothInf, IsUnifModerate and IsCuspFun", while the Lean text also requires IsInfFam θ and IsExpFam θ V e, and A does not say that these are left out.
 - A glosses BhattScholzeCrystallineLattices as giving E and j "for each lattice in a representation with IsCrys", while the Lean text also requires IsAinf K P₀ e for both parts and IsStd P AI for the first part, and A does not say that these are left out.
 
+#### A deeper reading, with the record D7 at hand
+
+A second reader saw the dossier, the whole text of `D7` and the glossary. The check found 3 errors in this reading and, after they were corrected, 6 more, which were corrected too. The reading has not passed the check.
+
+The theorem is a chain of twelve implications. If twelve propositions all hold, then the proposition that the code calls SurjectiveOntoX holds. Each of the twelve is a closed statement that the code files under the label Published or under UpperTheory, such as a Chebotarev statement with degree-one primes, a statement named after Clozel that for every π of type CuspSub E a the condition IsRegAlg of CG.mk π implies the condition GKCoh.IsCohomological π, a Bhatt–Scholze statement on crystalline lattices, a Casselman–Wallach statement, and an existence statement for maps rc satisfying the condition IsRecT. The conclusion SurjectiveOntoX says the following. There is a threshold ε₁ > 0 such that, for every eps with 0 < eps ≤ ε₁, there is an object K of the type the code calls TransportedAlt with this property. For every family Fm of the type FamP eps and every real number CH, if Fm satisfies the bundle of conditions FamHyp and the condition Fm.Large K CH, and Fm also satisfies the divisibility condition DIVinN, then there is a real C₀ ≥ 0 and a cutoff x₀ such that, at every admissible point p over every x > Fm.x1 with x ≥ x₀ and every index i, if p satisfies PointConditions' and the condition More, then for every C ≥ C₀ the relation ON holds between p.S false and p.N C CH. The meaning of the final relation ON, and of the objects it relates, is not visible in the files.
+
+- Premise 1. The proposition GreenCuspidal, which is defined as an opaque condition the code calls GlobalTheory.GLq.Green.
+- Premise 2. The proposition ClozelCohomological, which says that for every totally complex number field E, every a ≥ 1 and every π of the type CuspSub E a, if CG.mk π satisfies the condition IsRegAlg then π satisfies the condition GKCoh.IsCohomological.
+- Premise 3. The proposition HeckeLAdicCharacter, which says that for every number field E with algebraic closure Ω there is a map art from the ideles to Gab E Ω satisfying IsGlobalArtin, such that for every prime l, every isomorphism ι from Qbar l to ℂ, every Hecke character χ and every n with IsAlgPos χ n, there is exactly one continuous homomorphism r from G E Ω to the units of Qbar l with IsLAdicOf art ι χ n r.
+- Premise 4. The proposition ChebotarevDegreeOne, which says that for every finite Galois subextension L of an algebraic closure of a number field F, every g in Gal(L/F) and every finite set S of finite places, there is a place v outside S with inertia degree 1 over ℤ, a valuation subring B over v whose inertia group (Ine) fixes L, and a Frobenius σ at B (IsFrob) whose restriction to L is g.
+- Premise 5. The proposition CuspUAlt, which says that for every CM number field E, prime l, isomorphism ι from Qbar l to ℂ, a ≥ 1, π of type CuspSub E a and Hecke character χ of the maximal real subfield, if CG.mk π is regular algebraic and IsPolarized π χ holds, then there are r from G E Ω to GL_a(Qbar l), an integer wt and multisets HT with IsGalUAlt π χ ι r wt HT.
+- Premise 6. The proposition BaseChangeDefiniteUnitaryGroup, defined as DefiniteN, which says that for every CM field E such that every finite place of E is unramified over the maximal real subfield, every n ≥ 1 and every π with IsAutRepU π, there are c, sizes N i summing to n, subspaces V i, local components σ and multisets m with IsBaseChangeU π h V σ m.
+- Premise 7. The proposition BhattScholzeCrystallineLattices, which for every prime l, finite extension K of ℚ_l and A_inf-object P₀ with IsAinf says that for every P of type LocPrime l with some AI satisfying IsStd P AI, every finite extension LL and every lattice T with IsCrys (P.PD K) T.ρ comes from some F-crystal E through a realising map j (Realises), and that for any ℤ_l-modules T and T' with maps ρ and ρ' and F-crystals E and E' realised through j and j', every ℤ_l-linear map f from T to T' that commutes with ρ and ρ' comes from exactly one morphism u of F-crystals.
+- Premise 8. The proposition HeckeLAdicCharacterAbove, defined as an opaque condition the code calls GlobalTheory.TripleGal.CharAbove.
+- Premise 9. The proposition CuspRapidDecay, which says that for every D of the record type D7 and every admissible θ, V and e (IsInfFam, IsExpFam), every function φ from GA D V to ℂ that satisfies IsAutFun V φ, IsSmoothInf V e φ, IsUnifModerate θ V e φ and IsCuspFun V φ satisfies IsRapidDecay θ V φ.
+- Premise 10. The proposition RecTExists, which says that for every number field E, algebraic closure Ω, valuation subring A of Ω and finite place w with A over w, there is a map rc with IsRecT h rc.
+- Premise 11. The proposition DiscreteSeriesCover, which says that for all p, q with p + q ≥ 1 and every T of type GrpData p q there is a map D from parameters lam satisfying IsParam to representations DSRep T such that every D lam has types lam and for every R in DSRep T there is some lam with UnitEquiv R (D lam).
+- Premise 12. The proposition CasselmanWallach, which says that for every irreducible unitary representation σ on a Hilbert space H and every smooth Fréchet-type representation π on E with IsSmoothModRep, every map T₀ with IsGKMap extends to a map T that agrees with T₀ on K-finite vectors, is a smooth G-map, is unique on smooth vectors among such extensions, has closed image on smooth vectors, and, when T₀ is nonzero on some K-finite vector, satisfies a bound sobNorm σ S w ≤ q (T w) for some continuous seminorm q.
+- Conclusion. SurjectiveOntoX holds, that is, for all small enough eps there is a K such that every family Fm satisfying FamHyp, Large K CH and DIVinN has a constant C₀ ≥ 0 and a cutoff x₀ beyond which every point p satisfying PointConditions' and More satisfies (p.S false).ON (p.N C CH) for all C ≥ C₀.
+
+This reading opens `D7`, `Host`, `Rows.Data` and `IsRecT`.
+
+It does not open `ON`, `FamP, Pt, TransportedAlt, Large, PointConditions', S, N`, `DIVinN_at, SingleIndexPlacesAreTwisted, CoreTies, RecTies`, `GreenCuspidal`, `HeckeLAdicCharacterAbove` and `CuspSub, IsRegAlg, IsCohomological, IsPolarized, IsGalUAlt, IsGlobalArtin, IsLAdicOf, IsAlgPos, IsFrob, Ine, IsRapidDecay, IsCuspFun, DSRep, UnitEquiv, IsParam, IsBaseChangeU, IsAutRepU, Realises, FCrys`.
+
+The reader's confidence is low. The quantifier structure of the conclusion and of most premises is visible, but the final relation ON, the objects S and N, the family type FamP, the point type Pt and most component conditions have no body in the three files, so what is actually claimed cannot be pinned down.
+
 ### Line 18, `open_orbit_of_unramified_exponents_alt`
 
 The head is `GlobalTheory.Fc.S0.Open0ProofU.open_orbit_of_unramified_exponents_alt`, in the module Development › Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts › Third Place Series › Open Orbit Of Unramified Exponents. The line gathers 12,471 declarations and hangs from line 5, `nonempty_hyps_definite_side_of_closed_bound`. Folded into the line is the wrapper `open0_of_unitary_group_hypotheses`.
@@ -706,6 +985,23 @@ The reader's confidence is low. The outer shape is fully visible, but the hypoth
 The check found no error in this reading.
 
 The check found one error in the second reading, which the text above does not use.
+
+#### A deeper reading, with the record D7 at hand
+
+A second reader saw the dossier, the whole text of `D7` and the glossary. The check found 2 errors in this reading and, after they were corrected, 1 more, which were corrected too. The reading has not passed the check.
+
+The theorem says that if the hypothesis bundle the code calls UnitaryGroupThirdPlaceHypotheses holds, then a conclusion follows for every proof hL of the proposition RecTExists and for every real number cDep. RecTExists says that for every number field E, every algebraic closure Ω of E, every valuation subring A of Ω and every nonzero prime w of the ring of integers of E that A lies over, there is a map rc that satisfies a condition the code calls IsRecT. The hypothesis bundle is the joint assertion of a long list of named statements, most of them labelled as published results, such as Bernstein's irreducibility of products of unitary representations, Chebotarev's density theorem in a degree one form, and global Artin reciprocity. The conclusion is that the parameter record parametersOfDependence hL cDep satisfies OpenParameterStatements. This means that twelve row or slot conditions each hold in the sense the code calls LinkedAt for that record.
+
+- Premise 1. The hypothesis bundle UnitaryGroupThirdPlaceHypotheses holds, which is the joint truth of all its named fields, among them ClozelCohomological, GreenCuspidal, HeckeLAdicCharacter, ChebotarevDegreeOne, BernsteinUnitaryProductIrreducible, GlobalArtinReciprocity, HarishChandraFinite and more (the dossier's listing is cut, and the glossary counts 60 fields).
+- Premise 2. hL is any proof of RecTExists, the statement that a map rc with IsRecT h rc exists for every number field, algebraic closure, valuation subring and prime that the subring lies over.
+- Premise 3. cDep is any real number.
+- Conclusion. The record parametersOfDependence hL cDep satisfies OpenParameterStatements, which means that each of twelve conditions is LinkedAt that record, namely the primitivity, lambda prime, divisor, decomposition point and selection jump slot conditions, the tie, label, goodness, geometric weak compatibility, multiplicity, kappa and defect row conditions.
+
+This reading opens `RecTExists`, `D7`, `UnitaryGroupThirdPlaceHypotheses`, `LinkedAt`, `parametersOfDependence`, `KPx`, `BundleCondition` and `Row`.
+
+It does not open `IsRecT`, `AtAll, Ind.EvW, Ind.EvWC`, `Lg1 inner parts (EvLg, IsBuiltE, IsGoodE, BundleLinkage, p.s)` and `Published fields with unopened bodies (GreenCuspidal, HeckeLAdicCharacterAbove, BaseChangeDefiniteUnitaryGroup, DoublingMethodLocalZetaIntegrals, GeometricLemmaFiltration, JacquetShalika, CuspUAlt, CarUAlt, GreenR, and others)`.
+
+The reader's confidence is low. The logical shape is fully visible, but the content of the conclusion rests on Row, AtAll, EvW, EvLg, Built, GoodO and many bundle conditions with no body, and the listing of the hypothesis bundle is cut.
 
 ### Line 19, `miStarRow_alt_alt`
 
@@ -742,6 +1038,34 @@ The reader's confidence is medium. The logical skeleton through LinkedAt, Lg1, R
 
 The check found no error in this reading.
 
+#### A deeper reading, with the record D7 at hand
+
+A second reader saw the dossier, the whole text of `D7` and the glossary. The check found 0 errors in this reading and, after they were corrected, 2 more, which were corrected too. The reading has not passed the check.
+
+Assume fourteen propositions that the code names after published results, from HarishChandraFinite through the second proposition called SiegelWeilUnitaryConvergent, which lives in the HeckeCharacterZeroLocus namespace. Then for every proof hL of the statement RecTExists, every norm-choice extension N over hL, every S of type SExt and every geometric predicate Γ of type GeoP, two claims hold for the parameter record p = parametersOfExtension N S Γ, which is the four-part record made of RX, N, S and Γ. The first claim is LinkedAt p r, where r takes a slot Q and a linkage L to the proposition Row Q L (AtAll R). Here R is the test that, for a bundle b, holds when the condition MIstar2 holds for the complex datum b.B.Q.Rl.toCx3 b.B.Q.F, with arguments b.B.Q.F.eV applied to that datum's zs and b.B.Q.sEE. The second claim is LinkedAt p RowMultiplicityCondition, which is the same row statement with the test wrapped by an operator the code calls Ind.EvW in place of AtAll. Unfolded, each claim says that there is a slot R0 such that a condition the code calls LargeBaseCondition holds for KPx, IsBuiltE p.s and R0, and such that the row statement holds at the slot that is the pointwise conjunction of IsGoodE p.s with R0, paired with the linkage BundleLinkage p.
+
+- Premise 1. The proposition HarishChandraFinite, which says that the complex span of the set that the code calls forms θ V U ε fr ρ c is finite-dimensional, for every D7 record, every family θ with IsInfFam θ, every open subgroup U, every frame family and every family of continuous finite-dimensional representations.
+- Premise 2. The proposition CuspRapidDecay, which says that cuspidal automorphic functions with the listed smoothness and moderate growth satisfy a condition the code calls IsRapidDecay.
+- Premise 3. The proposition DiscreteSeriesCover, which says that for p + q ≥ 1 every representation of type DSRep T is unitarily equivalent to one in a family indexed by parameters.
+- Premise 4. The proposition HarishChandraModules, which is HarishChandraModulesOn T for all p, q with p + q ≥ 1 and all T, together with KFiniteAnalyticUJ.
+- Premise 5. The proposition CasselmanWallach, which says that a (g,K)-map from an irreducible unitary representation extends to a unique smooth map with closed image and Sobolev-type bounds.
+- Premise 6. The proposition HoweUnram, which is a statement about unramified local pairs and spans of vectors fixed by integral matrices.
+- Premise 7. The proposition WeilRepresentationUnitaryPair, which says that a Weil datum ω exists for the given characters and Hermitian spaces.
+- Premise 8. The proposition WeilSiegelFormulaUnitary, which states theta-integral convergence and, when 2·rank A < rank B, an identity between an Eisenstein coset sum and a theta average.
+- Premise 9. The proposition GlobalTheory.Published.SiegelWeilUnitaryConvergent, which gives theta-integral integrability and the condition that the code calls Eis.EisValueAt whenever rank A < rank B and rank B ≤ 2·rank A and rank A + wittIdx B < rank B.
+- Premise 10. The proposition DoublingMethodLocalZetaIntegrals, which is by definition the proposition the code calls ResidueKilled.DM.
+- Premise 11. The proposition UnramifiedDoublingGL, which says that the unramified doubling zeta integral on GL(n) equals a product of two L-factors at s + 1/2 times a normalising factor once Re s exceeds some s₀.
+- Premise 12. The proposition DiscreteSeriesClassification, which classifies square-integrable irreducible unitary representations by Harish-Chandra parameters.
+- Premise 13. The proposition StrongApproxSU, which is strong approximation for special unitary groups of nondegenerate Hermitian matrices of size at least 2 over CM extensions.
+- Premise 14. The proposition HeckeCharacterZeroLocus.SiegelWeilU.SiegelWeilUnitaryConvergent, which says that a condition the code calls SiegelWeilAt holds for every CM extension and every nondegenerate Hermitian matrix.
+- Conclusion. For all hL, N, S and Γ, the parameter record parametersOfExtension N S Γ is linked both to the row statement that every selected bundle satisfies MIstar2 at every index beyond the threshold and to RowMultiplicityCondition.
+
+This reading opens `D7`, `LinkedAt`, `MIstar2`, `KPx`, `BundleCondition` and `RecTExists`.
+
+It does not open `LargeBaseCondition`, `RowE`, `IsSel`, `Ind.EvW`, `RX`, `toCx3, eV, zs, sEE` and `MIDat, MIUnit2, MIid, AuNZ`.
+
+The reader's confidence is low. The logical shape is visible through LinkedAt, Row and AtAll, but the core conditions MIstar2 internals, RowE, IsSel, EvW, LargeBaseCondition and RX have no visible body, so the mathematical content of the conclusion cannot be seen.
+
 ### Line 20, `miStarRowClosing_alt_alt`
 
 The head is `GlobalTheory.miStarRowClosing_alt_alt`, in the module Development › Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts › Third Place Series › Main Theorem Published Inputs Variant. The line gathers 10,559 declarations and hangs from line 19, `miStarRow_alt_alt`. Folded into the line is the wrapper `main_theorem_published_inputs_variant_alt_alt`.
@@ -777,6 +1101,35 @@ The next sentences are a suggestion from the names, which the Lean text of the d
 The reader's confidence is medium. The premises RowDiag, IsScaleWithBoundedGamma and RankMu and the shape of RowE and EvP are visible, but MIstar2, ParEv, TwoTerm, HD, the projections β.Is and p.s and 140 left out definitions keep the core content opaque.
 
 The check found no error in this reading.
+
+#### A deeper reading, with the record D7 at hand
+
+A second reader saw the dossier, the whole text of `D7` and the glossary. The check found 1 errors in this reading and, after they were corrected, 1 more, which were corrected too. The reading has not passed the check.
+
+The theorem says that if fourteen given statements all hold, then a certain conclusion holds for every proof hL of the statement the code calls RecTExists and for every parameter record p built over hL. The first thirteen are statements from the Published and Hk3 namespaces, such as a Harish-Chandra finiteness statement, a Casselman–Wallach statement, a Siegel–Weil statement and a strong approximation statement for special unitary groups. The fourteenth is RowDiag applied to a predicate E. Here E D L C' holds when D has size data whose scale has L as its field L and whose constant CGam satisfies 1 ≤ CGam and 8·CGam ≤ C', and when for every word u the complex dimension of the space D.s.Cu u equals duStar·(T^k − 1)^f. For each such hL and p there is one more premise, namely that for every context K and every point q of type WPt p.s K the record type RXs q.x.what₂ has an element. The conclusion is RowE for the slot IsGoodE p.s and the linkage BundleLinkage p, with a target predicate that requires MIstar2 to hold for the data read off each linked bundle b.
+
+- Premise 1. HarishChandraFinite holds. For every D in D7, every family θ with IsInfFam θ, every V in HSp D, every open subgroup U of GA D V, all families ε and fr with IsFrameFam V ε fr, every family of finite-dimensional representations ρ with IsContRep for each of them and every c, the complex span of the set the code calls forms θ V U ε fr ρ c is finite-dimensional.
+- Premise 2. CuspRapidDecay holds. For every D in D7, every family θ with IsInfFam θ, every V in HSp D and every family e with IsExpFam θ V e, every function φ from GA D V to the complex numbers that satisfies IsAutFun V φ, IsSmoothInf V e φ, IsUnifModerate θ V e φ and IsCuspFun V φ satisfies the condition the code calls IsRapidDecay θ V φ.
+- Premise 3. DiscreteSeriesCover holds. For all p and q with 1 ≤ p + q and every T in GrpData p q there is a family D indexed by the parameters lam with IsParam lam, such that each D lam has the types lam and every R in DSRep T is unitarily equivalent to some D lam.
+- Premise 4. HarishChandraModules holds. HarishChandraModulesOn T holds for all p and q with 1 ≤ p + q and every T, and KFiniteAnalyticUJ holds.
+- Premise 5. CasselmanWallach holds. Every (g,K)-map T₀ from an irreducible unitary representation to a smooth moderate representation extends to a unique smooth G-map T on smooth vectors, the image of the smooth vectors under T is closed, and Sobolev-type norms are bounded by a continuous seminorm when T₀ is nonzero on some K-finite vector.
+- Premise 6. HoweUnram holds. For every local pair as in LocPair and every nonzero vector s with LocVac ρ s whose translates ρ x s span M, every vector fixed by the integral points of the first unitary group lies in the span of the translates of s under the second group, and symmetrically for the second group.
+- Premise 7. WeilRepresentationUnitaryPair holds. For suitable characters ψ, χS and χT there exists ω with IsWeilDatumO ψ S T χS χT ω.
+- Premise 8. WeilSiegelFormulaUnitary holds. This is a statement about the absolute convergence of theta integrals and the equality of a Siegel Eisenstein coset sum with the average of the theta integral when 2·rank A < rank B.
+- Premise 9. SiegelWeilUnitaryConvergent holds. This is a statement giving integrability of the theta lift and the condition EisValueAt in the range rank A < rank B ≤ 2·rank A with rank A + wittIdx B < rank B.
+- Premise 10. A condition that the code calls DoublingMethodLocalZetaIntegrals holds, defined as ResidueKilled.DM.
+- Premise 11. UnramifiedDoublingGL holds. For a nonarchimedean local field k of characteristic 0, a Haar measure giving the integral points measure 1, and a representation with Satake parameter α and zonal function ω, there is s₀ such that for Re s > s₀ the doubling integral converges and equals L(s+1/2, α)·L(s+1/2, α⁻¹)·invNormFactor.
+- Premise 12. DiscreteSeriesClassification holds. For each n there is a family of square-integrable irreducible unitary representations indexed by signs ε and strictly decreasing parameters lam with prescribed infinitesimal character and minimal K-type, and every square-integrable irreducible unitary representation is isometrically equivalent to one of them after a permutation.
+- Premise 13. StrongApproxSU holds. For a CM extension E over F, a nondegenerate hermitian J of size at least 2 and a set of places whose support group is not compact, every adelic element of SU lies in the closure of the products of rational elements and support elements.
+- Premise 14. RowDiag holds for the predicate E D L C' given by IsScaleWithBoundedGamma D L C' together with RankMu D u for every word u.
+- Premise 15. For every context K and every q in WPt p.s K the type RXs q.x.what₂ is nonempty.
+- Conclusion. RowE (IsGoodE p.s) (BundleLinkage p) holds with the target predicate sending each bundle b to the statement MIstar2 for the record b.B.Q.Rl.toCx3 b.B.Q.F, the map b.B.Q.F.eV evaluated at the zs of that record, and the map b.B.Q.sEE.
+
+This reading opens `D7`, `MIstar2`, `SData (field Cu)`, `ColumnsAtT (fields T and duStar)`, `Member`, `Ranks (field k)` and `Frame`.
+
+It does not open `IsGoodE`, `ParEv`, `Pos, Of, Is`, `TrueE, HD, TwoTerm, mfL, kfk`, `MIDat, MIUnit2, MIid, AuNZ, toCx3, eV, zs`, `p.s`, `R.f, Scale, CGam`, `DoublingMethodLocalZetaIntegrals` and `Published bodies' inner names`.
+
+The reader's confidence is low. The shape of the statement and many definitions are visible, but the conclusion depends on unopened conditions such as ParEv, Pos, Of, Is, positionOf, GoodE, MIDat, MIUnit2, MIid, AuNZ, TwoTerm, TrueE and HD, so its real content cannot be seen.
 
 ### Line 21, `miStar_row_alt_alt`
 
@@ -815,6 +1168,36 @@ The reader's confidence is medium. The logical shape, RowE, EvP, Row and the thi
 
 The check found no error in this reading.
 
+#### A deeper reading, with the record D7 at hand
+
+A second reader saw the dossier, the whole text of `D7` and the glossary. The check found 5 errors in this reading and, after they were corrected, 9 more, which were corrected too. The reading has not passed the check.
+
+The theorem is a long implication with no free variables. It assumes twelve propositions that the project names after published results, together with HoweUnram and a scale-and-rank hypothesis built with RowDiag. Under these assumptions it says the following for every proof hL of RecTExists and every parameter record p over hL. If the record type RXs q.x.what₂ is nonempty for every context K and every point q in WPt p.s K, and if the ten-field bundle condition BundlePointConditions holds on the linked good points in the eventual sense that RowE expresses, then the condition MIstar2 holds on those same points in the same eventual sense. MIstar2 is applied to the complex data b.B.Q.Rl.toCx3 b.B.Q.F, the map b.B.Q.F.eV evaluated at the zs component of that data, and the map b.B.Q.sEE.
+
+- Premise 1. The proposition HarishChandraFinite, which says that the span of forms θ V U ε fr ρ c is finite-dimensional over ℂ for every D7 record and all data with IsInfFam, an open subgroup U, IsFrameFam and continuous finite-dimensional representations ρ.
+- Premise 2. The proposition CuspRapidDecay, which says that every φ satisfying IsAutFun, IsSmoothInf, IsUnifModerate and IsCuspFun, for θ with IsInfFam and e with IsExpFam, satisfies a condition that the code calls IsRapidDecay.
+- Premise 3. The proposition DiscreteSeriesCover, which says that for all natural numbers p and q with 1 ≤ p + q and every T of type GrpData p q there is a family D of DSRep objects indexed by parameters, each with the types of its parameter, such that every DSRep object is UnitEquiv to some member of the family.
+- Premise 4. The proposition HarishChandraModules, which is HarishChandraModulesOn T for all p, q with 1 ≤ p + q and all T, joined by 'and' to a condition that the code calls KFiniteAnalyticUJ.
+- Premise 5. The proposition CasselmanWallach, which says that for every σ on a complete inner product space H with IsURepOn and IsIrredOn for UJset ε, every E with seminorms p and maps π and dπ satisfying IsSmoothModRep, and every linear map T₀ with IsGKMap, there is a linear map T that agrees with T₀ on the IsKFin vectors and satisfies IsSmoothGMap, agrees on the SmoothVec vectors with every other such map, sends the SmoothVec vectors to a closed set, and, when T₀ is nonzero on some IsKFin vector, has every sobNorm bounded by a continuous seminorm of T w.
+- Premise 6. The proposition HoweUnram, which says that for every complete field L of characteristic 0 with a valuation in WithZero (Multiplicative ℤ) and all data satisfying LocPair, every nonzero s with LocVac ρ s whose orbit under ρ spans M satisfies two statements, namely that each w fixed by ω (g, 1) for all g in UJ σ JS whose image lies in GLint (intL L) lies in the span of the vectors ω (1, h) s, and the same with the two factors exchanged.
+- Premise 7. The proposition WeilRepresentationUnitaryPair, which says that for every D7 record, every ψ with IsStdChar D ψ (−1), all S and T in HSp D and all χS and χT with IsHeckeChar and the ResEta conditions there exists ω satisfying IsWeilDatumO.
+- Premise 8. The proposition WeilSiegelFormulaUnitary, which says that for every D7 record D, all A and B in HSp D and every Haar measure m with 1 ≤ rank A and either wittIdx B = 0 or rank A + wittIdx B < rank B, absThetaInt is bounded by a continuous seminorm, the theta kernels are integrable, and when 2·rank A < rank B the conditions LeftInv and CosetConv hold and cosetSum of swSection equals the average of the descended theta kernel.
+- Premise 9. The proposition SiegelWeilUnitaryConvergent, which states, for rank A < rank B ≤ 2·rank A and rank A + wittIdx B < rank B, integrability of theta kernels and a relation called EisValueAt between an Eisenstein value and a theta mean.
+- Premise 10. The proposition DoublingMethodLocalZetaIntegrals, which is by definition a condition that the code calls ResidueKilled.DM.
+- Premise 11. The proposition UnramifiedDoublingGL, which says that for a nonarchimedean local field k of characteristic 0, a Haar measure μ on GL_n(k) giving KO the value 1, a representation π and α with HasSatake π α and a function ω with IsZonal π (KO k (Fin n)) ω, there is s₀ such that for Re s > s₀ the integral of sphSection times ω is integrable and equals lFactor (resCard k) α (s + 1/2) · lFactor (resCard k) α⁻¹ (s + 1/2) · invNormFactor (resCard k) n s.
+- Premise 12. The proposition DiscreteSeriesClassification, which says that for every n there is a family of complete nontrivial spaces with maps π ε λ satisfying IsURepOn, IsIrredOn and IsSqIntOn, indexed by sign functions ε and strictly decreasing λ with λ_a − (n − 1)/2 an integer, with stated infinitesimal character and K-type properties, and that every such representation is isometrically equivalent to one member after a permutation.
+- Premise 13. The proposition StrongApproxSU, which says that for number fields F and E with IsCMExt F E σ, M ≥ 2, a matrix J with IsHermND σ J and data with IsPlacesIdem for which SUSupp σ J ε is not compact, every g in SUAdelic σ J lies in the closure of the products γ·h with γ in SURat σ J and h in SUSupp σ J ε.
+- Premise 14. The proposition RowDiag applied to the condition 'IsScaleWithBoundedGamma D L C′ and RankMu D u for every word u', which says that for all reals Cg, cb, Cu, cT, CT with 0 < cb and 0 < cT there exist C ≥ 1, C′₀ and Cl₀ such that for all C′ ≥ C′₀, Cl ≥ Cl₀, every D7 record D, every real L and every word u, the assumptions TrueE D, the stated condition and HD D L C′ Cl Cg cb Cu cT CT give TwoTerm D u (4(exp(C·mfL D L) + 1)) (4·exp(−kfk D / 2) + 2·exp(−kfk D)).
+- Premise 15. For every proof hL of RecTExists and every p in Parameters hL, the hypothesis that RXs q.x.what₂ is nonempty for every context K and every point q in WPt p.s K.
+- Premise 16. The hypothesis RowE (IsGoodE p.s) (BundleLinkage p) with predicate BundlePointConditions b.
+- Conclusion. RowE (IsGoodE p.s) (BundleLinkage p) holds with the predicate that sends a bundle b to MIstar2 of the complex data b.B.Q.Rl.toCx3 b.B.Q.F with the maps b.B.Q.F.eV(zs) and b.B.Q.sEE, which means that ParEv holds of the statement that, when κ.Pos holds, there is a real x₀ such that for every context K with κ.Of K and x₀ ≤ K.s.x every good point β with a real number c and a linked bundle b satisfies MIstar2.
+
+This reading opens `D7`, `D7.s (SData)`, `SData.Cu`, `D7.mem (Member)`, `ColumnsAtT.duStar`, `ColumnsAtT.T`, `Ranks.k`, `Ranks.m`, `MIstar2`, `GoodE`, `linkOf and BundleWitness inside BundleLinkage`, `IsRecT` and `BundleCondition`.
+
+It does not open `TwoTerm`, `TrueE`, `HD`, `mfL`, `kfk`, `ParEv`, `BundleWitness` and `DoublingMethodLocalZetaIntegrals`.
+
+The reader's confidence is low. The implication structure and many outer definitions are visible, but the eventual quantifier ParEv, the inner parts of MIstar2, TwoTerm, HD, TrueE and many names inside the published hypotheses have no body in the files.
+
 ### Line 22, `miStar2_of_allTrue_alt_alt`
 
 The head is `GlobalTheory.Fam.miStar2_of_allTrue_alt_alt`, in the module Development › Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts › Third Place Series › Main Theorem From Published Results Alt Alt Alt Alt. The line gathers 10,050 declarations and hangs from line 21, `miStar_row_alt_alt`. Folded into the line are the wrappers `main_theorem_from_published_results_alt_alt_alt_alt_alt`, `miAt_of_truePack_alt_alt` and `main_theorem_from_published_results_alt_alt_alt_alt`.
@@ -851,6 +1234,36 @@ The next sentences are a suggestion from the names, which the Lean text of the d
 The reader's confidence is low. The quantifiers and the thirteen hypotheses are visible, but the conclusion MIstar2, all six fields of AllFamilyConditions and the function rec7 are opaque, and 167 definitions were left out.
 
 The check found no error in this reading.
+
+#### A deeper reading, with the record D7 at hand
+
+A second reader saw the dossier, the whole text of `D7` and the glossary. The check found 3 errors in this reading and, after they were corrected, 9 more, which were corrected too. The reading has not passed the check.
+
+Assume thirteen propositions that the project states as published results without proving them, namely HarishChandraFinite, CuspRapidDecay, DiscreteSeriesCover, HarishChandraModules, CasselmanWallach, HoweUnram, WeilRepresentationUnitaryPair, WeilSiegelFormulaUnitary, SiegelWeilUnitaryConvergent, DoublingMethodLocalZetaIntegrals, UnramifiedDoublingGL, DiscreteSeriesClassification and StrongApproxSU. Then the following holds for every base record B, every record X over it, every column datum I of type TC B X, every l in I.Laws, every later-stage record Z and all the data L, hT, Gi, Gl, Kc, Yd, cX and ex built on the D7 bundle D = I.rec7 l Z, and for every package W of type RealPackAlt ex. Suppose W satisfies all six parts of AllFamilyConditions, the number B.R.rS is at least 1, and for every word u some element φ of the space (D.mem u).A.Mram has a nonzero image under the map D.s.Pu u after it is carried into D.s.Cu u by the inverse of the linear isomorphism D.s_Cu u. Then the coefficient space C = W.Q.Rl.toCx3 W.Q.F satisfies the condition that the code calls MIstar2, applied to the maps W.Q.F.eV C.zs and W.Q.sEE. By the glossary, that condition says there is some d of type C.MIDat such that the three opaque conditions MIUnit2 d, MIid eV sEE d and AuNZ d all hold.
+
+- Premise 1. The proposition that the code calls HarishChandraFinite, which says that for every D7 bundle D and all admissible data the complex span of the forms built from that data is finite-dimensional.
+- Premise 2. The proposition that the code calls CuspRapidDecay, which says that for every D7 bundle D, every θ with IsInfFam θ, every V of type HSp D with e satisfying IsExpFam θ V e, every complex function φ on GA D V that satisfies the conditions the code calls IsAutFun, IsSmoothInf, IsUnifModerate and IsCuspFun also satisfies the condition the code calls CuspDecay.IsRapidDecay θ V φ.
+- Premise 3. The proposition that the code calls DiscreteSeriesCover, which says that for all p and q with p + q at least 1 and every T of type GrpData p q there is a map D from parameters to DSRep T such that each D lam has types lam and every R in DSRep T satisfies the condition the code calls UnitEquiv R (D lam) for some lam.
+- Premise 4. The proposition that the code calls HarishChandraModules, which says that HarishChandraModulesOn T holds for every such T and that KFiniteAnalyticUJ holds.
+- Premise 5. The proposition that the code calls CasselmanWallach, which says that for every σ on a complex Hilbert space H with IsURepOn and IsIrredOn for UJset ε, and every complete Hausdorff space E with seminorms p and maps π and dπ satisfying IsSmoothModRep, every linear map T₀ with IsGKMap has a linear map T that agrees with T₀ on the vectors with IsKFin and satisfies IsSmoothGMap, that is unique on the vectors with SmoothVec among such maps, whose image of those vectors is closed, and for which each sobNorm is bounded by a continuous seminorm of T w when T₀ is nonzero on some IsKFin vector.
+- Premise 6. The proposition that the code calls HoweUnram, which says that for every datum satisfying the condition the code calls LocPair and every nonzero s in M with the condition the code calls LocVac ρ s whose orbit under ρ spans M, every vector w fixed by ω (g, 1) for all g whose matrix lies in the set the code calls GLint lies in the span of the vectors ω (1, h) s, and the same holds with the two factors swapped.
+- Premise 7. The proposition that the code calls WeilRepresentationUnitaryPair, which says that for every D7 bundle D, every ψ with IsStdChar D ψ (−1), all S and T of type HSp D and all χS and χT with IsHeckeChar D χS, IsHeckeChar D χT, ResEta D χS S.rank and ResEta D χT T.rank there is a homomorphism ω that satisfies IsWeilDatumO ψ S T χS χT ω.
+- Premise 8. The proposition that the code calls WeilSiegelFormulaUnitary, which under 1 ≤ A.rank and either wittIdx B = 0 or A.rank + wittIdx B < B.rank gives a continuous seminorm bounding absThetaInt, gives integrability of the descended function built from thetaKO, and, when 2·A.rank < B.rank, gives LeftInv of swSection, CosetConv of the coset sum and its equality with the average over q of that descended function with respect to autMeasure B m.
+- Premise 9. The proposition that the code calls SiegelWeilUnitaryConvergent, which says that when rank A < rank B ≤ 2·rank A and rank A + wittIdx B < rank B, the theta integrals are integrable and the condition EisValueAt holds for the Siegel–Weil section and the theta mean.
+- Premise 10. The proposition that the code calls DoublingMethodLocalZetaIntegrals, which is by definition the opaque proposition ResidueKilled.DM.
+- Premise 11. The proposition that the code calls UnramifiedDoublingGL, which says that for every non-archimedean local field k of characteristic 0, every Haar measure μ on GL n over k giving KO measure 1, every representation π of GL n over k with α satisfying the condition the code calls HasSatake π α, and every ω with the condition the code calls IsZonal π (KO k (Fin n)) ω there is a real s₀ such that for every complex s with real part above s₀ the doubling integral converges and equals lFactor at α times lFactor at α⁻¹, both at s + 1/2, times invNormFactor.
+- Premise 12. The proposition that the code calls DiscreteSeriesClassification, which says that for every n there is a family of spaces H ε lam with maps π ε lam that, for strictly decreasing lam with lam a − (n − 1)/2 an integer, are complete and nontrivial and satisfy IsURepOn, IsIrredOn, IsSqIntOn and HasInfChar with the stated IsKTypeOf conditions, and that every complete nontrivial σ with IsURepOn, IsIrredOn and IsSqIntOn is carried by a linear isometry intertwining the actions onto H (ε ∘ s) mu for some permutation s and some such mu.
+- Premise 13. The proposition that the code calls StrongApproxSU, which says that for all number fields F and E with σ satisfying IsCMExt F E σ, every M ≥ 2 and J with IsHermND σ J, and all S₁, S₂ and ε with IsPlacesIdem S₁ S₂ ε such that SUSupp σ J ε is not compact, every g in SUAdelic σ J lies in the closure of the set of products γ·h with γ in SURat σ J and h in SUSupp σ J ε.
+- Premise 14. W satisfies AllFamilyConditions, which means it satisfies PackageHypotheses, ValidRealPackage, GeometricFamilyConditions, TwStdAlt and LevelCondition', and a recursion of type IndefiniteRealisationRecursion W.Q exists.
+- Premise 15. 1 ≤ B.R.rS.
+- Premise 16. PuNZ (I.rec7 l Z), which says that for every word u there is an element φ of (D.mem u).A.Mram whose image in D.s.Cu u under the inverse isomorphism of D.s_Cu u is sent by D.s.Pu u to a nonzero vector.
+- Conclusion. The coefficient space packageCoefficientSpace W satisfies the condition that the code calls MIstar2 with the maps W.Q.F.eV (its zs) and W.Q.sEE, which means some d of type MIDat satisfies MIUnit2 d, MIid eV sEE d and AuNZ d.
+
+This reading opens `D7`, `D.R (Ranks)`, `D.s (SData)`, `D.s.Pu`, `D.s_Cu`, `D.mem (Member)`, `ColumnsAtT`, `MIstar2` and `sEE`.
+
+It does not open `TC`, `rec7`, `rS` and `MIDat, MIUnit2, MIid, AuNZ, zs`.
+
+The reader's confidence is low. The quantifier structure and the premises are visible, but the conclusion MIstar2 reduces to MIDat, MIUnit2, MIid and AuNZ, which have no body, and rec7, TC, rS and many conditions inside the premises are also unopened.
 
 ### Line 23, `zero_free_all_of_green_v_win`
 
