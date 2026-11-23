@@ -131,6 +131,34 @@ the 51,784 that `galoisLocalGlobalStrong_recParameter` gathers, the largest fold
 `Development.AbelianVarietyTheory`, with 18,772 or 36 %. `vwin_of_row` is closer to one folder,
 with 41,081 of its 55,754, or 74 %, in `Development.AutomorphicArithmetic`.
 
+## With every repeated statement counted once
+
+[`../redundancy`](../redundancy/README.md) lists the theorems that Lean found to state exactly
+what another theorem states. `clean.py` joins such theorems into classes and keeps one theorem of
+each class, its keeper. It prefers a keeper that is no forwarding theorem, points every mention
+of another member at the keeper, and leaves the other members out with their own proofs. It then
+computes the dominator tree and the skeleton of this smaller graph.
+
+| Measure | Whole graph | Repeats counted once |
+|---|---:|---:|
+| Declarations that the five theorems reach | 760,989 | 694,428 |
+| Declarations that gather at least 100,000 | 6 | 5 |
+| Declarations that gather at least 10,000 | 62 | 42 |
+| Skeleton declarations, which gather at least 1,000 | 590 | 397 |
+| Wrappers among them | 248 | 100 |
+| Heads among them | 342 | 297 |
+| Levels of the dominator tree | 47 | 38 |
+
+The script leaves out 62,905 theorems, the number of repeats that the README of `../redundancy`
+reports. Of the 590 skeleton declarations of the whole graph, 139 are left out as repeats, 393
+are skeleton declarations of the smaller graph too, and 58 are kept and gather less than 1,000
+there. The largest declarations keep their order. `everyCharacter` gathers 693,666,
+`everyCharacter_of_row` 524,040 and `every_character_of_literature_of_vWin` 459,773.
+
+The figures estimate what such a cleanup would leave. The source is unchanged, and no part of
+the smaller graph has been compiled. A keeper can lie in a module that a user of another member
+does not import, which the count ignores. Definitions with the same text are not joined.
+
 ## Check against a compiled sample
 
 The sample of [`../decl-graph`](../decl-graph/README.md) is the module
@@ -226,6 +254,7 @@ python3 -I verification/skeleton/check_sample.py /tmp/before-merge/verification/
 | `check_sample.py` | compares the text tree with the tree of the compiled sample |
 | `sample-check.json` | the figures of that comparison |
 | `test_tree.py` | tests the dominator routine against networkx |
+| `clean.py`, `clean.json` | the skeleton with every repeated statement counted once |
 | `data/tree.npz` | the whole dominator tree as arrays, which git ignores |
 | `published.py`, `published.json`, `OUTLINE-PUBLISHED.txt` | the statements that the code names as published and their marks on the skeleton, which [`PUBLISHED.md`](PUBLISHED.md) describes |
 | `dossier.py`, `briefs/`, `reading.json`, `reading.py` | what each line of the outline states in plain words, which [`READING.md`](READING.md) holds |

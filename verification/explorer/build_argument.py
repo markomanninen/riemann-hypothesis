@@ -6,7 +6,9 @@ Usage: python3 -I verification/explorer/build_argument.py
 The script reads the files of verification/skeleton and writes data/argument.json:
 
   nodes     the skeleton declarations, each with its parent, the number of declarations it
-            gathers, its own pool, its module and the published statements it takes or proves
+            gathers, its own pool, its module, the published statements it takes or proves, and
+            the theorem that states the same when Lean found one
+  clean     the figures of the skeleton before and after every repeated statement is counted once
   lines     the 38 lines of the outline, each with the reading of its head from READING.md
   glossary  the ten definitions of GLOSSARY.md with their readings
   d7        the reading of the record D7 as a whole, with its groups of fields and its numbers
@@ -32,9 +34,14 @@ def main():
     skeleton, published = load("skeleton.json"), load("published.json")
     reading, glossary, d7, summary = load("reading.json"), load("glossary.json"), load("d7.json"), load("summary.json")
     marks = published["skeleton"]
+    clean = load("clean.json")
+    kept = {x["name"] for x in clean["nodes"]}
     nodes = []
     for node, mark in zip(skeleton["nodes"], marks):
-        nodes.append({"n": node["name"], "m": node["module"], "p": node["parent"], "g": node["gathers"], "o": node["own"],
+        # k names the theorem that states the same and is kept, and c says whether the declaration
+        # is still a step of the skeleton when every repeated statement is counted once.
+        nodes.append({"k": clean["keeper_of"].get(node["name"], "").rsplit(".", 1)[-1], "c": node["name"] in kept,
+                      "n": node["name"], "m": node["module"], "p": node["parent"], "g": node["gathers"], "o": node["own"],
                       "w": node["passes"], "t": [x.rsplit(".", 1)[-1] for x in mark["takes"]],
                       "v": [x.rsplit(".", 1)[-1] for x in mark["proves"] + mark["derives"]]})
     index = {node["name"]: k for k, node in enumerate(skeleton["nodes"])}
@@ -54,7 +61,8 @@ def main():
                         "unopened": e["unopened"], "suggests": e["suggests"], "confidence": e["confidence"], "why": e["why"],
                         "errors": len(e["check"]["first_errors"])})
     whole = d7["whole"]
-    out = {"reached": summary["source"]["reached"], "declarations": summary["source"]["declarations"],
+    out = {"clean": {"left": clean["theorems_left_out"], "before": clean["before"], "after": clean["after"]},
+           "reached": summary["source"]["reached"], "declarations": summary["source"]["declarations"],
            "min": skeleton["min"], "top": skeleton["top"], "nodes": nodes, "lines": lines, "glossary": entries,
            "d7": {"says": whole["says"], "suggests": whole["suggests"], "fields": whole["fields"], "groups": whole["groups"],
                   "numbers": whole["numbers"], "definitions": len(d7["definitions"])},

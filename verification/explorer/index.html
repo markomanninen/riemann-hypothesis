@@ -326,7 +326,7 @@ async function stage(){const post=(path,body)=>fetch('/'+path,{method:'POST',bod
 
 /* Argument: the skeleton of the proof with what each line states, the glossary and the record D7.
    build_argument.py writes the data from verification/skeleton. */
-let ARG=null, argHash='arg';
+let ARG=null, argHash='arg', hideRepeats=true;
 const argReady=()=>ARG||(ARG=getJSON('data/argument.json').then(a=>{a.byLine={};a.kids={};a.nodeKids={};a.lineOfNode={};
   for(const l of a.lines){a.byLine[l.line]=l;(a.kids[l.parent||0]??=[]).push(l.line);a.lineOfNode[l.node]=l.line}
   a.nodes.forEach((n,k)=>{if(n.p!==null)(a.nodeKids[n.p]??=[]).push(k)});return a}));
@@ -377,12 +377,14 @@ async function showArg(h){const a=await argReady();ARG_DOCS=a.docs;argHash=h;let
     const chain=[];for(let j=k;j;j=a.byLine[j].parent)chain.unshift(j);
     cr.hidden=false;scroller(cr,chain.map(j=>`<button data-arg="l${j}" aria-current="${j===k}" data-tip="${j===k?'The line shown below':'Go back to line '+j}">${j}. ${esc(short(a.nodes[a.byLine[j].node].n))}</button>`).join(''));
     const kids=a.kids[k]||[],small=(a.nodeKids[l.node]||[]).filter(c=>!(c in a.lineOfNode)).sort((x,y)=>a.nodes[y].g-a.nodes[x].g);
+    const repeats=small.filter(c=>a.nodes[c].k).length,shownSmall=hideRepeats?small.filter(c=>!a.nodes[c].k):small;
     el.innerHTML=`<div class="ns">Line ${k} of the outline · ${trail(n.m)}</div><div class="name"><code>${esc(short(n.n))}</code></div>
      <p>${esc(sent(l.says))}</p>
      <div class="stats"><div class="stat"><b>${fmt(f.g)}</b><span>declarations it gathers, ${pct(f.g,a.reached)} of what the proof reaches</span></div>
       <div class="stat"><b>${fmt(n.o)}</b><span>of them behind no smaller step below it</span></div>
       <div class="stat"><b>${l.premises.length}</b><span>${l.premises.length===1?'premise':'premises'}</span></div>
       <div class="stat"><b>${esc(l.confidence)}</b><span>confidence of the first reader</span></div></div>
+     ${n.k?`<p class="small mute">Lean found that this theorem states exactly what <code>${esc(n.k)}</code> states, so it is a second name for one statement.</p>`:''}
      ${l.wrappers.length?`<p class="small mute">Folded into this line ${l.wrappers.length===1?'is the wrapper':'are the wrappers'} ${l.wrappers.map(w=>`<code>${esc(w)}</code>`).join(', ')}, which pass at least 99 % of what they gather on to this theorem.</p>`:''}
      ${l.premises.length?`<div class="lab">Premises, in order</div><ol>${l.premises.map(p=>`<li>${esc(sent(p))}</li>`).join('')}</ol>`:''}
      <div class="lab">Conclusion</div><p>${esc(sent(l.conclusion))}</p>
@@ -395,9 +397,14 @@ async function showArg(h){const a=await argReady();ARG_DOCS=a.docs;argHash=h;let
       <button class="btn" data-mod="${esc(n.m)}" data-to="tree" data-tip="Open the module of this theorem in the Branches tab, with its statements in Lean">Open its module</button></div>
      <h2>Lines below it</h2>
      ${kids.length?`<div class="list">${kids.map(j=>lineRow(a,j)).join('')}</div>`:`<p class="empty">No step below this one gathers 10,000 declarations. The smaller steps are listed under the next heading.</p>`}
-     <details><summary>Smaller steps below it, ${small.length}</summary>${small.length?`<p class="small mute">Each gathers between 1,000 and 10,000 declarations and has no reading yet.</p><div class="list">${small.slice(0,60).map(c=>`<div class="row" tabindex="0" role="link" data-mod="${esc(a.nodes[c].m)}" data-to="tree" data-tip="Open the module of ${esc(short(a.nodes[c].n))} in the Branches tab"><span class="t"><code>${esc(short(a.nodes[c].n))}</code></span><span class="n">${fmt(a.nodes[c].g)}</span><span class="p">${trail(a.nodes[c].m.split('.').slice(1,4).join('.'))}</span></div>`).join('')}</div>`:'<p class="empty">None. Every step below this line that gathers 1,000 declarations is a line of the outline.</p>'}</details>
-     ${k===1?`<details><summary>All 38 lines of the outline</summary><div class="list">${a.lines.map(x=>lineRow(a,x.line,true)).join('')}</div></details>`:''}
-     <p class="small">The method and the limits are in ${DOCS('READING.md')} and ${DOCS('README.md')}.</p>`}
+     <details${small.length&&$('#arg details')?.open?' open':''}><summary>Smaller steps below it, ${shownSmall.length}${shownSmall.length<small.length?' of '+small.length:''}</summary>${small.length?`<p class="small mute">Each gathers between 1,000 and 10,000 declarations and has no reading yet.${repeats?` ${repeats===1?'One of them repeats':repeats+' of them repeat'} a statement that another theorem already states.`:''}</p>
+      ${repeats?`<div class="acts"><button class="btn" id="b-rep" aria-pressed="${hideRepeats}" data-tip="Leave out the theorems that state exactly what another theorem states, or show them again">Hide repeated statements</button></div>`:''}
+      <div class="list">${shownSmall.slice(0,60).map(c=>`<div class="row" tabindex="0" role="link" data-mod="${esc(a.nodes[c].m)}" data-to="tree" data-tip="Open the module of ${esc(short(a.nodes[c].n))} in the Branches tab"><span class="t"><code>${esc(short(a.nodes[c].n))}</code></span><span class="n">${fmt(a.nodes[c].g)}</span><span class="p">${a.nodes[c].k?'States the same as '+esc(a.nodes[c].k)+' · ':''}${trail(a.nodes[c].m.split('.').slice(1,4).join('.'))}</span></div>`).join('')}</div>`:'<p class="empty">None. Every step below this line that gathers 1,000 declarations is a line of the outline.</p>'}</details>
+     ${k===1?`<h2>With every repeated statement counted once</h2>
+     <p>Lean found ${fmt(a.clean.left)} theorems that state exactly what another theorem states. With one theorem kept for each such statement, the five main theorems reach ${fmt(a.clean.after.reached)} declarations in place of ${fmt(a.clean.before.reached)}, and ${a.clean.after.skeleton} steps gather at least 1,000 declarations in place of ${a.clean.before.skeleton}. The order of the largest steps stays the same. This is a count on the declaration graph, and the source is unchanged.</p>
+     <details><summary>All 38 lines of the outline</summary><div class="list">${a.lines.map(x=>lineRow(a,x.line,true)).join('')}</div></details>`:''}
+     <p class="small">The method and the limits are in ${DOCS('READING.md')} and ${DOCS('README.md')}.</p>`;
+    const br=$('#b-rep');if(br)br.onclick=()=>{hideRepeats=!hideRepeats;showArg(h)}}
   setHash(h)}
 
 /* Branches */
