@@ -99,8 +99,8 @@ the default settings:
 
 | Tour | Length | Frames | Rendering time | File |
 |---|---:|---:|---:|---:|
-| `longest-chain.json` | 79.4 s | 2,383 | 52 s | 215 MB |
-| `ride-first-modules.json` | 43.0 s | 1,291 | 35 s | 136 MB |
+| `longest-chain.json`, on the data before the merge of upstream main | 79.4 s | 2,383 | 52 s | 215 MB |
+| `ride-first-modules.json`, on the same data | 43.0 s | 1,291 | 35 s | 136 MB |
 
 The recorder renders the first and the last moment of a tour, so a clip has one frame more than
 its length times the frames per second.
@@ -121,7 +121,7 @@ This is `tours/longest-chain.json` with shorter captions.
 {
   "title": "Down the longest chain of imports",
   "steps": [
-    {"view": "mountain", "move": 0, "hold": 2, "caption": "175,174 modules under one theorem"},
+    {"view": "mountain", "move": 0, "hold": 2, "caption": "149,280 modules under one theorem"},
     {"orbit": 30, "move": 6},
     {"chain": "longest", "move": 3, "hop": 0.3, "distance": 1.3, "hold": 2, "caption": "module"},
     {"view": "mountain", "move": 4, "hold": 3}
@@ -176,9 +176,9 @@ lasts for its `hold` alone.
 
 A chain step runs along its chain between its move and its hold. The steps follow each other
 without gaps, so the length of a tour is the sum of the moves that take time, the holds and the
-chain runs. The longest chain has 199 modules, so the chain run of the example makes 198 hops of
-0.3 seconds, which is 59.4 seconds. The example lasts 2, then 6, then 3 and 59.4 and 2, then 4
-and 3 seconds, which is 79.4 seconds. The bar of the page shows the length of a loaded tour, and
+chain runs. The longest chain has 197 modules, so the chain run of the example makes 196 hops of
+0.3 seconds, which is 58.8 seconds. The example lasts 2, then 6, then 3 and 58.8 and 2, then 4
+and 3 seconds, which is 78.8 seconds. The bar of the page shows the length of a loaded tour, and
 the recorder prints it at the end.
 
 Start every tour with a view step, or with a pose step that gives all its numbers, and give that
@@ -228,7 +228,7 @@ A chain step moves a marker, called the head, along a chain of imports, from mod
 
 | `chain` | The chain |
 |---|---|
-| `"longest"` | One longest chain in the proof, 199 modules from the summit down to a module that imports only Mathlib. |
+| `"longest"` | One longest chain in the proof, 197 modules from the summit down to a module that imports only Mathlib. |
 | `{"from": "A", "to": "B"}` | The shortest chain of imports from module A down to module B. The tour fails with a message when A does not rest on B. |
 | `["A", "B", "C"]` | The listed modules, in this order. The tour draws the list as given and leaves the imports unchecked. |
 

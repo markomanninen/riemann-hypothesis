@@ -12,6 +12,16 @@ shows which files Lean has to load before a file, and so it gives an upper bound
 can use. Which declarations a proof really uses is a finer question, and the answer needs the built
 project or its export.
 
+## Which source the figures describe
+
+The data files of this folder, `modules.tsv.gz`, `edges.tsv.gz`, `groups.tsv`, `groups.dot` and
+`summary.json`, were rebuilt on 2026-11-23 from the source after the merge of upstream main. That
+source has 149,397 project modules, of which 149,280 lie below the root of `allChi`, with
+15,167,308 lines, 725,091 import edges between them and a longest chain of 197 modules. The root
+module now has four imports.
+
+The tables and the text under Results describe the source as published, before that merge.
+
 ## Running it
 
 ```bash

@@ -1,6 +1,6 @@
 # Proof spine explorer
 
-`index.html` shows the modules below `allChi` in two views.
+`index.html` shows the modules below `allChi` in two views and the argument of the proof in a third.
 
 The landscape draws every module as a dot. A dot's place on the ground comes from a circle
 packing of the source folders, where a module's circle has its line count as area and a folder's
@@ -21,6 +21,12 @@ The branches view walks the dominator tree of the import graph. A module sits un
 module that every chain of imports from the root to it passes through, so a branch holds the
 modules that only its top module needs.
 
+The Argument tab shows the skeleton of [`../skeleton`](../skeleton/README.md). It lists the 38
+largest steps of the proof as a tree, and for each step what its theorem states, its premises and
+its conclusion, as a language model read them from the Lean text. It also holds the glossary of
+the ten definitions that those readings leave unopened most often and the groups of fields of the
+record `D7`. A step links to its module in the two other views.
+
 The landscape also plays tours. A tour is a camera run described in a file under `tours/`, such
 as a run down the longest chain of imports, seen from outside or from the chain itself. The
 Follow chain button plays one in the page, and `record_tour.py` renders one into an MP4 clip for
@@ -37,6 +43,7 @@ python3 -I verification/import-graph/build.py        # if the import graph is mi
 python3 -I verification/explorer/build_data.py       # about two minutes, 0.6 GB of memory
 python3 -I verification/explorer/build_mountain.py   # about half a minute
 python3 -I verification/explorer/build_statements.py # about ten seconds on an Apple M4 Pro
+python3 -I verification/explorer/build_argument.py   # copies the readings of ../skeleton
 cd verification/explorer && python3 -I -m http.server 8811 --bind 127.0.0.1
 ```
 
@@ -53,23 +60,21 @@ the first `:=` outside brackets and splits it at the first colon outside bracket
 layout can place a split wrongly. With module names as arguments the script prints the statements
 of those modules, which shows how a given file was read.
 
-## Figures from the first build
+## Figures from the build of 2026-11-23
+
+The build is of the source after the merge of upstream main. The build before it, of the source
+as published, had 175,174 modules and a longest chain of 199.
 
 | Measure | Value |
 |---|---:|
-| Modules | 175,174 |
-| Source folders, each a ring on the map | 3,610 |
-| Longest chain of imports | 199 modules |
-| Modules at heights 0 to 39, the lowest fifth | 86,613 |
-| Declarations with a statement | 1,061,375 |
-| Theorems and lemmas among them | 818,718 |
-| Claims longer than the limit of 3,000 characters, shown shortened | 427 |
-| Modules without a declaration | 172 |
-| Direct children of the root in the dominator tree | 47,029 |
+| Modules | 149,280 |
+| Lines | 15,167,308 |
+| Source folders, each a ring on the map | 3,312 |
+| Longest chain of imports | 197 modules |
+| Declarations with a statement | 835,988 |
+| Theorems and lemmas among them | 666,291 |
+| Claims longer than the limit of 3,000 characters, shown shortened | 384 |
+| Modules without a declaration | 292 |
+| Direct children of the root in the dominator tree | 43,811 |
 | Depth of the dominator tree | 34 |
-| Share of lines in the root's 14 largest branches | 23.1 % |
-
-In the dominator tree, 76.9 % of the lines sit directly under the root. These are modules that
-several branches reach by separate routes, so no single branch owns them. The largest branches
-are `RowSrc` with 993,261 lines, `VwinOfRow` with 771,890 and `RiemannHypothesisOfEveryCharacter`
-with 728,548.
+| Size of the data folder | 111 MB in 344 files |
