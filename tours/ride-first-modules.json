@@ -5,6 +5,6 @@
      "caption": {"title": "From the summit, module by module", "text": "Each hop goes to a module that the previous one imports"}},
     {"chain": "longest", "to": 20, "ride": true, "move": 4, "hop": 1.5, "hold": 1.5, "dim": 0.5, "caption": "module"},
     {"view": "mountain", "move": 4, "hold": 2, "dim": 0.5,
-     "caption": {"title": "Twenty hops down, 178 to go", "text": "The chain continues to the ground"}}
+     "caption": {"title": "Twenty hops down, 176 to go", "text": "The chain continues to the ground"}}
   ]
 }

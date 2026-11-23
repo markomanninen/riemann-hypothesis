@@ -34,7 +34,8 @@ function chainIds(spec) {
    an angle of view of `fov` degrees. It looks down by `down` degrees at the height of the summit
    and by 8 degrees at the ground, so the landscape below fills the picture while the chain is
    high. It turns towards the next hop during the last third of a hop and the first third of
-   the next. */
+   the next. A ride with `smooth` above zero glides along the averaged chain and faces from the
+   place `ahead` modules behind it to the place `ahead` modules in front of it. */
 function chainRun(ids, step, from) {
   const ride = step.ride ? { above: 10, down: 35, fov: 70, ...(step.ride === true ? {} : step.ride) } : null;
   const n = ids.length, hop = step.hop || (ride ? 1.5 : 0.3), reach = step.smooth === undefined ? (ride ? 0 : 3) : step.smooth;
@@ -63,12 +64,18 @@ function chainRun(ids, step, from) {
     while (turn < -Math.PI) turn += TURN;
     return a + turn * w * w * (3 - 2 * w);
   };
+  // On a smoothed ride the rider faces along the averaged chain, measured over `ahead` modules either side.
+  const ahead = step.ahead === undefined ? 0.5 : step.ahead;
+  const heading = u => {
+    const a = target(u - ahead), b = target(u + ahead), dx = b[0] - a[0], dy = b[1] - a[1];
+    return dx * dx + dy * dy > 1e-12 ? Math.atan2(dy, dx) : facing(u);
+  };
   const pose = tau => {
     const u = Math.min(n - 1, tau / hop), c = target(u), zs = from.zs;
     if (!ride) return { tx: c[0], ty: c[1], tz: lift(c[2], zs), d, az: from.az + rate * tau, pol: from.pol, zs, fov: from.fov };
     // The eye is over the chain at c and looks ahead and down. The pose holds the same thing as
     // a point looked at, a short way along the line of sight, a distance and two angles.
-    const way = facing(u), far = 0.05, tilt = (8 + (ride.down - 8) * c[2] / M.meta.top) * RAD, flat = far * Math.cos(tilt);
+    const way = reach > 0 ? heading(u) : facing(u), far = 0.05, tilt = (8 + (ride.down - 8) * c[2] / M.meta.top) * RAD, flat = far * Math.cos(tilt);
     return { tx: c[0] + flat * Math.cos(way), ty: c[1] + flat * Math.sin(way), tz: lift(c[2] + ride.above, zs) - far * Math.sin(tilt),
       d: far, az: way + Math.PI, pol: Math.PI / 2 - tilt, zs, fov: ride.fov };
   };

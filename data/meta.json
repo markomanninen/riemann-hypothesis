@@ -1,11 +1,11 @@
 {
  "root": "Development.AutomorphicArithmetic.CharacterBoxes.MainConclusion",
- "modules": 175174,
- "lines": 17373677,
- "edges": 753544,
+ "modules": 149280,
+ "lines": 15167308,
+ "edges": 725091,
  "chunk": 4000,
- "chunks": 44,
- "rootChildren": 47029,
+ "chunks": 38,
+ "rootChildren": 43811,
  "flags": [
   "kexactB",
   "kcopy",
@@ -13,12 +13,9 @@
   "addDecl"
  ],
  "totals": {
-  "theorems": 818718,
-  "defs": 242054,
-  "run_tac": 16,
-  "kexactB": 50,
-  "addDecl": 1,
-  "kcopy": 4
+  "theorems": 666290,
+  "defs": 169091,
+  "run_tac": 18
  },
  "repo": "https://github.com/markomanninen/riemann-hypothesis/blob/main/src/",
  "depth": 34

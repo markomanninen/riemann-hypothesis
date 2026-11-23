@@ -193,6 +193,8 @@ function drawLines(bp, bc, count) {
 function draw() {
   matrices();
   gl.viewport(0, 0, canvas.width, canvas.height);
+  // The last pass of a frame leaves depth writes off, and a clear skips a buffer that is closed to writes.
+  gl.depthMask(true);
   gl.clearColor(SURF[0], SURF[1], SURF[2], 1); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LEQUAL);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);

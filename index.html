@@ -9,7 +9,7 @@
 <style>
 /* VOICE  clinical, exact, quiet, like a reference plate in a mathematics atlas
    IDEA   a relief model of a proof, the kind a survey office builds of a mountain, with every module one grain
-   PICTURE the mountain itself, 175,174 points raised by the length of the import chain below them, on a dark plate
+   PICTURE the mountain itself, every module a point raised by the length of the import chain below them, on a dark plate
    COLOUR and TYPE  white ground, ink #10131a, prussian #0b4f8a for structure, one blue ramp for height, Literata
    LAYOUT one column up to 1100px, short title, the plate, its controls, then the selected part and the lists */
 :root{color-scheme:light dark;--bg:light-dark(#fff,#0f1217);--ink:light-dark(#10131a,#e7e9ee);--mute:light-dark(#5a6170,#9aa1b0);
@@ -85,6 +85,12 @@ details{border-top:1px solid var(--rule);padding:6px 0}summary{cursor:pointer;mi
 .st pre.main{color:var(--ink);background:var(--prs);padding:8px 10px;border-radius:6px}
 .st .cut{margin:4px 0 0}
 .empty{padding:16px;background:var(--panel);border-radius:8px;max-width:none}
+.rd p{max-width:74ch}.rd ol,.rd ul{margin:0 0 10px;padding-left:22px;max-width:74ch}.rd li{margin:0 0 6px}
+.rd pre{margin:0 0 10px;font:13px/1.5 ui-monospace,Menlo,monospace;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--prs);padding:8px 10px;border-radius:6px}
+.rd .lab{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--mute);margin:14px 0 4px}
+.rd .guess{border-left:3px solid var(--rule);padding-left:10px;color:var(--mute)}
+.row.flat{cursor:default}.row.flat:hover{background:none}
+.row .t code{font-size:.9em}
 footer.band{padding-bottom:48px}
 #tip{position:fixed;z-index:1000;max-width:min(320px,calc(100vw - 16px));padding:6px 10px;border-radius:6px;background:var(--ink);color:var(--bg);font-size:13px;line-height:1.4;pointer-events:none;opacity:0;transition:opacity .12s}
 #tip.on{opacity:1}
@@ -93,7 +99,7 @@ footer.band{padding-bottom:48px}
 </head>
 <body>
 <header class="band">
-  <h1>The proof of <code>allChi</code> stands 199 modules tall on a base of 175,174</h1>
+  <h1>The proof of <code>allChi</code> stands <span id="h-top">197</span> modules tall on a base of <span id="h-mod">149,280</span></h1>
   <p>Each dot is a module, placed by its source folder and raised by the length of the longest chain of imports below it. <a href="#how">How to read this page</a></p>
 </header>
 <div class="band">
@@ -106,15 +112,15 @@ footer.band{padding-bottom:48px}
     <div class="plate">
       <canvas id="gl" role="img" aria-label="All modules as points, raised by the length of the import chain below them"></canvas>
       <canvas id="ov" aria-hidden="true"></canvas>
-      <div class="hud" hidden><span>0</span><i></i><span id="hud-top">198</span><span>height, the longest import chain below a module</span></div>
-      <p id="plate-msg">Loading 175,174 modules…</p>
+      <div class="hud" hidden><span>0</span><i></i><span id="hud-top">196</span><span>height, the longest import chain below a module</span></div>
+      <p id="plate-msg">Loading the modules…</p>
     </div>
     <div class="controls">
       <div class="segm" role="group" aria-label="Shape">
         <button class="btn" id="b-mountain" aria-pressed="true" data-tip="Raise every module to its height and tilt the camera">Mountain</button>
         <button class="btn" id="b-map" aria-pressed="false" data-tip="Flatten the mountain and look straight down at the map of source folders">Map</button>
       </div>
-      <button class="btn" id="b-chain" aria-pressed="false" data-tip="Draw one longest chain of imports, 199 modules from the summit to the ground">Longest chain</button>
+      <button class="btn" id="b-chain" aria-pressed="false" data-tip="Draw one longest chain of imports, from the summit to the ground">Longest chain</button>
       <button class="btn" id="b-reset" data-tip="Return the camera to its starting position">Reset view</button>
       <button class="btn" id="b-tour" aria-pressed="false" data-tip="Play a camera run that follows the longest chain of imports from the summit down to the ground">Follow chain</button>
       <button class="btn" id="b-pose" data-tip="Copy the camera position as a step for a tour file">Copy camera</button>
@@ -129,6 +135,12 @@ footer.band{padding-bottom:48px}
     <p class="small mute" id="hint">Drag to turn the mountain or to move the map. Pinch or scroll to zoom, and tap twice to zoom in. Drag with two fingers, or with Shift held, to move the mountain.</p>
     <section id="sel" class="card"></section>
   </section>
+  <section id="view-arg" hidden>
+    <p class="small mute">The readings on this tab were written by a language model from the Lean text and checked by further runs of the same model. No mathematician has checked them.</p>
+    <nav class="hs" id="arg-parts" aria-label="Parts of the argument view"></nav>
+    <nav class="hs" id="arg-crumbs" aria-label="Lines of the outline above this line" hidden></nav>
+    <section id="arg" class="card rd"><p class="mute">Loading the argument…</p></section>
+  </section>
   <section id="view-tree" hidden>
     <nav class="hs" id="crumbs" aria-label="Dominator chain from the root"></nav>
     <section id="node" class="card"><p class="mute">Loading the tree…</p></section>
@@ -140,6 +152,7 @@ footer.band{padding-bottom:48px}
   <p>In the landscape, a module is a dot. Its size is its line count. The rings on the ground are the source folders, which the author named after areas of mathematics, and a folder's ring encloses its modules and subfolders. A module's height is the number of modules in the longest chain of imports below it, so a module that imports only Mathlib lies on the ground and Main Conclusion is the summit. The Longest chain button draws one such chain from the summit to the ground, and the Follow chain button plays a camera run down it.</p>
   <p>Selecting a module colours two sets. Orange marks every module it imports, directly or through other modules. Green marks every module that imports it in the same way. Selecting a ring shows that folder's modules alone.</p>
   <p>Under a selected module the page lists the module's statements. A statement is a declaration as the Lean source writes it, with the proof left out. For a theorem, the part marked given holds the objects and assumptions, and the part marked claim holds what the theorem says about them. A definition also shows what it is defined as. File variables are declared once in the file, and Lean adds to a statement those of them that the statement uses.</p>
+  <p>The Argument tab shows the theorems that the proof passes through. A theorem gathers the declarations that the five main theorems depend on only by way of it, and the outline holds the 38 steps that gather at least 10,000. For each step the tab says what its Lean statement claims, as a language model read it, and it marks what a name only suggests. The Glossary and the record D7 open the definitions that those readings name most often. A scan of the source text finds the declarations, so the numbers are estimates.</p>
   <p>The branches view is the dominator tree of the import graph. A module B sits under a module A when every chain of imports from the summit down to B passes through A. A branch therefore holds the modules that only its top module needs.</p>
   <p>Everything here is built from import lines and a text search of the sources. The search splits a statement at the first colon and the first <code>:=</code> outside brackets, so a rare layout can place the split wrongly, and the source link shows the original. A module shown here may still go unused by the proof terms. Which declarations the proof really uses will follow from the declaration graph of the Comparator export.</p>
 </footer>
@@ -209,13 +222,14 @@ function scroller(nav,buttons){nav.innerHTML=ARROW(-1)+`<div class="track">${but
   const s=t.querySelector('[aria-current=true]');if(s)t.scrollLeft=s.offsetLeft+s.offsetWidth-t.clientWidth+8;upd()}
 
 /* Tabs and routing */
-function drawTabs(){scroller($('#tabs'),[['mountain','Landscape','The mountain and the map of all modules'],['tree','Branches','Lists of the branches that each module alone accounts for']]
+function drawTabs(){scroller($('#tabs'),[['mountain','Landscape','The mountain and the map of all modules'],['arg','Argument','The theorems that the proof passes through, with what each one states'],['tree','Branches','Lists of the branches that each module alone accounts for']]
   .map(([k,t,tip])=>`<button data-tab="${k}" aria-current="${k===tab}" data-tip="${tip}">${t}</button>`).join(''))}
-function setTab(t){tab=t;$('#view-mountain').hidden=t!=='mountain';$('#view-tree').hidden=t!=='tree';drawTabs()}
+function setTab(t){tab=t;$('#view-mountain').hidden=t!=='mountain';$('#view-tree').hidden=t!=='tree';$('#view-arg').hidden=t!=='arg';drawTabs()}
 function setHash(h){if(location.hash!=='#'+h)history.replaceState(null,'','#'+h)}
 async function route(){const h=location.hash;let m;
   if((m=/^#m(\d+)$/.exec(h))){setTab('tree');await showTree(+m[1])}
   else if(h==='#tree'){setTab('tree');await showTree(cur)}
+  else if((m=/^#(arg|d7|g|l(\d+)|g(\d+))$/.exec(h))){setTab('arg');await showArg(h.slice(1))}
   else if(h==='#how'){}
   else{setTab('mountain');try{await mountainReady}catch(e){return}
     if((m=/^#v(\d+)$/.exec(h))&&+m[1]<M.meta.modules)M.selectModule(+m[1],true);
@@ -225,7 +239,7 @@ function go(i){if(tab==='mountain'){M.selectModule(i,true);$('.plate').scrollInt
 
 /* Landscape */
 const mountainReady=M.init({canvas:$('#gl'),overlay:$('#ov'),stage:STAGE,onSelect:renderSel,onHover:hover}).then(()=>{
-  $('#plate-msg').hidden=true;$('.hud').hidden=false;$('#hud-top').textContent=M.meta.top;renderSel(null)});
+  $('#plate-msg').hidden=true;$('.hud').hidden=false;$('#hud-top').textContent=M.meta.top;$('#h-top').textContent=M.meta.top+1;$('#h-mod').textContent=fmt(M.meta.modules);renderSel(null)});
 mountainReady.catch(err=>{
   $('#plate-msg').textContent=err.message==='nowebgl'||err.message==='nogzip'
     ?'This browser cannot draw the landscape. The Branches tab shows the same modules as lists.'
@@ -310,6 +324,82 @@ async function stage(){const post=(path,body)=>fetch('/'+path,{method:'POST',bod
     $('#plate-msg').hidden=false;$('#plate-msg').style.display='grid';$('#plate-msg').textContent='The tour did not run. '+text+'.';
     if(Q.has('record'))fetch('/fail',{method:'POST',body:text}).catch(()=>{})}}
 
+/* Argument: the skeleton of the proof with what each line states, the glossary and the record D7.
+   build_argument.py writes the data from verification/skeleton. */
+let ARG=null, argHash='arg';
+const argReady=()=>ARG||(ARG=getJSON('data/argument.json').then(a=>{a.byLine={};a.kids={};a.nodeKids={};a.lineOfNode={};
+  for(const l of a.lines){a.byLine[l.line]=l;(a.kids[l.parent||0]??=[]).push(l.line);a.lineOfNode[l.node]=l.line}
+  a.nodes.forEach((n,k)=>{if(n.p!==null)(a.nodeKids[n.p]??=[]).push(k)});return a}));
+const short=s=>s.slice(s.lastIndexOf('.')+1), sent=s=>{s=String(s).trim();return /[.!?]$/.test(s)?s:s+'.'};
+const clip=(s,n)=>s.length<=n?s:s.slice(0,s.lastIndexOf(' ',n))+' …';
+const DOCS=f=>`<a href="${ARG_DOCS}${f}" target="_blank" rel="noopener">${f}</a>`;let ARG_DOCS='';
+async function openModule(name,to){await namesReady;const i=names.indexOf(name);if(i<0)return;location.hash=(to==='tree'?'m':'v')+i;if(to!=='tree')scrollTo({top:0})}
+function argParts(part){scroller($('#arg-parts'),[['arg','Outline','The 38 largest steps of the proof, each with what its theorem states'],['g','Glossary','The ten definitions that the readings of the outline leave unopened most often'],['d7','The record D7','The record of data that the middle of the proof is built over']]
+  .map(([k,t,tip])=>`<button data-arg="${k}" aria-current="${k===part}" data-tip="${tip}">${t}</button>`).join(''))}
+const chips=(xs,max)=>xs.length?`<div class="chips">${xs.slice(0,max).map(x=>`<span class="chip">${esc(x)}</span>`).join('')}${xs.length>max?`<span class="chip">and ${xs.length-max} more</span>`:''}</div>`:'';
+function lineRow(a,k,indent){const l=a.byLine[k],n=a.nodes[l.first];
+  return `<div class="row" tabindex="0" role="link" data-arg="l${k}" data-tip="Open line ${k} of the outline"${indent?` style="padding-left:${4+10*l.level}px"`:''}><span class="t"><code>${esc(short(a.nodes[l.node].n))}</code></span><span class="n">${fmt(n.g)} · ${pct(n.g,a.reached)}</span><span class="p">${esc(clip(l.conclusion,170))}</span><span class="bar"><i style="width:${share(n.g,a.reached)}%"></i></span></div>`}
+async function showArg(h){const a=await argReady();ARG_DOCS=a.docs;argHash=h;let m;const el=$('#arg'),cr=$('#arg-crumbs');cr.hidden=true;
+  if(h==='d7'){argParts('d7');const d=a.d7;
+    el.innerHTML=`<div class="ns">Formalism › Basic Notions</div><div class="name"><code>D7</code></div>
+     <p>${esc(sent(d.says))}</p>
+     <div class="stats"><div class="stat"><b>${d.fields}</b><span>fields, in ${d.groups.length} groups</span></div>
+      <div class="stat"><b>${fmt(d.definitions)}</b><span>definitions below it that were read</span></div>
+      <div class="stat"><b>${d.numbers.length}</b><span>numbers and bounds listed</span></div></div>
+     <div class="lab">What the names suggest, which the Lean text does not show</div><p class="guess">${esc(sent(d.suggests))}</p>
+     <h2>The fields in groups</h2>
+     ${d.groups.map(g=>`<details><summary>${esc(g.title)}, ${g.fields.length===1?'one field':g.fields.length+' fields'}</summary>${chips(g.fields,40)}<p>${esc(sent(g.gloss))}</p></details>`).join('')}
+     <h2>The numbers that the definitions fix</h2>
+     <details><summary>${d.numbers.length} numbers and bounds</summary><ul>${d.numbers.map(x=>`<li>${esc(sent(x))}</li>`).join('')}</ul></details>
+     <p class="small">One reading for each of the ${fmt(d.definitions)} definitions is in ${DOCS('D7.md')}.</p>`;
+  }else if(h==='g'){argParts('g');
+    el.innerHTML=`<h2 style="margin-top:0">The ten definitions that the readings leave unopened most often</h2>
+     <p>Each of them has further definitions of the project below it. The count is a lower limit.</p>
+     <div class="list">${a.glossary.map((e,k)=>`<div class="row" tabindex="0" role="link" data-arg="g${k}" data-tip="Open the reading of ${esc(short(e.name))}"><span class="t"><code>${esc(short(e.name))}</code></span><span class="n">${fmt(e.below)} below</span><span class="p">${esc(clip(e.what,150))}</span></div>`).join('')}</div>
+     <p class="small">The method and the limits are in ${DOCS('GLOSSARY.md')}.</p>`;
+  }else if((m=/^g(\d+)$/.exec(h))&&a.glossary[+m[1]]){argParts('g');const e=a.glossary[+m[1]];let shown=0;const PARTS=24;
+    el.innerHTML=`<div class="ns">${trail(e.module)}</div><div class="name"><code>${esc(short(e.name))}</code></div>
+     <p>${esc(sent(e.says))}</p>
+     <div class="stats"><div class="stat"><b>${fmt(e.below)}${e.more?' or more':''}</b><span>definitions below it</span></div>
+      <div class="stat"><b>${fmt(e.shown)}</b><span>of them shown to the readers</span></div>
+      <div class="stat"><b>${e.parts.length}</b><span>parts read</span></div>
+      <div class="stat"><b>${esc(e.confidence)}</b><span>confidence of the first reader</span></div></div>
+     <div class="lab">Its parts, in the order of the Lean text</div><ul id="g-parts"></ul>
+     ${e.unopened.length?`<div class="lab">Names that the reading does not open</div>${chips(e.unopened,16)}`:''}
+     ${e.suggests?`<div class="lab">What the names suggest, which the Lean text does not show</div><p class="guess">${esc(sent(e.suggests))}</p>`:''}
+     <div class="lab">Confidence and check</div><p>${esc(sent(e.why))} ${e.errors?'The check found an error in the first version of this reading, and this is the corrected one.':'The check found no error in this reading.'}</p>
+     <div class="acts"><button class="btn" data-arg="g" data-tip="Go back to the list of the ten definitions">All ten definitions</button>
+      <button class="btn" data-mod="${esc(e.module)}" data-to="tree" data-tip="Open the module of this definition in the Branches tab, with its statements">Open its module</button></div>`;
+    const more=()=>{const part=e.parts.slice(shown,shown+PARTS);$('#g-parts').insertAdjacentHTML('beforeend',part.map(p=>`<li><code>${esc(p.name)}</code>. ${esc(sent(p.gloss))}</li>`).join(''));shown+=part.length;
+      el.querySelector('.more')?.remove();if(shown<e.parts.length)$('#g-parts').insertAdjacentHTML('afterend',`<button class="btn more" data-tip="Show the next ${Math.min(PARTS,e.parts.length-shown)} parts of this definition">Show more parts</button>`)};
+    more();el.onclick=ev=>{if(ev.target.closest('.more'))more()};
+  }else{argParts('arg');el.onclick=null;const k=(m=/^l(\d+)$/.exec(h))&&a.byLine[+m[1]]?+m[1]:1,l=a.byLine[k],n=a.nodes[l.node],f=a.nodes[l.first];
+    const chain=[];for(let j=k;j;j=a.byLine[j].parent)chain.unshift(j);
+    cr.hidden=false;scroller(cr,chain.map(j=>`<button data-arg="l${j}" aria-current="${j===k}" data-tip="${j===k?'The line shown below':'Go back to line '+j}">${j}. ${esc(short(a.nodes[a.byLine[j].node].n))}</button>`).join(''));
+    const kids=a.kids[k]||[],small=(a.nodeKids[l.node]||[]).filter(c=>!(c in a.lineOfNode)).sort((x,y)=>a.nodes[y].g-a.nodes[x].g);
+    el.innerHTML=`<div class="ns">Line ${k} of the outline · ${trail(n.m)}</div><div class="name"><code>${esc(short(n.n))}</code></div>
+     <p>${esc(sent(l.says))}</p>
+     <div class="stats"><div class="stat"><b>${fmt(f.g)}</b><span>declarations it gathers, ${pct(f.g,a.reached)} of what the proof reaches</span></div>
+      <div class="stat"><b>${fmt(n.o)}</b><span>of them behind no smaller step below it</span></div>
+      <div class="stat"><b>${l.premises.length}</b><span>${l.premises.length===1?'premise':'premises'}</span></div>
+      <div class="stat"><b>${esc(l.confidence)}</b><span>confidence of the first reader</span></div></div>
+     ${l.wrappers.length?`<p class="small mute">Folded into this line ${l.wrappers.length===1?'is the wrapper':'are the wrappers'} ${l.wrappers.map(w=>`<code>${esc(w)}</code>`).join(', ')}, which pass at least 99 % of what they gather on to this theorem.</p>`:''}
+     ${l.premises.length?`<div class="lab">Premises, in order</div><ol>${l.premises.map(p=>`<li>${esc(sent(p))}</li>`).join('')}</ol>`:''}
+     <div class="lab">Conclusion</div><p>${esc(sent(l.conclusion))}</p>
+     <div class="lab">In ordinary notation</div><pre>${esc(l.notation)}</pre>
+     ${n.t.length?`<div class="lab">Statements that the code labels as published and that this theorem takes as premises</div>${chips(n.t,20)}`:''}
+     ${l.unopened.length?`<div class="lab">Names that the reading does not open</div>${chips(l.unopened,16)}`:''}
+     ${l.suggests?`<div class="lab">What the names suggest, which the Lean text does not show</div><p class="guess">${esc(sent(l.suggests))}</p>`:''}
+     <div class="lab">Confidence and check</div><p>${esc(sent(l.why))} ${l.errors?`The check found ${l.errors===1?'one error':l.errors+' errors'} in the first version of this reading, and this is the corrected one.`:'The check found no error in this reading.'}</p>
+     <div class="acts"><button class="btn" data-mod="${esc(n.m)}" data-tip="Show the module of this theorem on the mountain, with what it rests on lit up">Show in landscape</button>
+      <button class="btn" data-mod="${esc(n.m)}" data-to="tree" data-tip="Open the module of this theorem in the Branches tab, with its statements in Lean">Open its module</button></div>
+     <h2>Lines below it</h2>
+     ${kids.length?`<div class="list">${kids.map(j=>lineRow(a,j)).join('')}</div>`:`<p class="empty">No step below this one gathers 10,000 declarations. The smaller steps are listed under the next heading.</p>`}
+     <details><summary>Smaller steps below it, ${small.length}</summary>${small.length?`<p class="small mute">Each gathers between 1,000 and 10,000 declarations and has no reading yet.</p><div class="list">${small.slice(0,60).map(c=>`<div class="row" tabindex="0" role="link" data-mod="${esc(a.nodes[c].m)}" data-to="tree" data-tip="Open the module of ${esc(short(a.nodes[c].n))} in the Branches tab"><span class="t"><code>${esc(short(a.nodes[c].n))}</code></span><span class="n">${fmt(a.nodes[c].g)}</span><span class="p">${trail(a.nodes[c].m.split('.').slice(1,4).join('.'))}</span></div>`).join('')}</div>`:'<p class="empty">None. Every step below this line that gathers 1,000 declarations is a line of the outline.</p>'}</details>
+     ${k===1?`<details><summary>All 38 lines of the outline</summary><div class="list">${a.lines.map(x=>lineRow(a,x.line,true)).join('')}</div></details>`:''}
+     <p class="small">The method and the limits are in ${DOCS('READING.md')} and ${DOCS('README.md')}.</p>`}
+  setHash(h)}
+
 /* Branches */
 async function children(i,r,from,count){const out=[];let j=i+1,end=i+r[1],idx=0;
   while(j<end&&out.length<count){const c=await rec(j);if(idx>=from)out.push([j,c]);idx++;j+=c[1]}
@@ -353,10 +443,12 @@ async function showTree(i){await Promise.all([metaReady,namesReady]);cur=i;treeS
     d.addEventListener('toggle',()=>{if(d.open&&!n)fill()});d.addEventListener('click',e=>{const b=e.target.closest('.more');if(b&&b.ariaDisabled!=='true'){b.ariaDisabled='true';fill()}})}
   await crumbs(i);setHash('m'+i)}
 
-document.addEventListener('click',e=>{const t=e.target.closest('[data-tab]');if(t){location.hash=t.dataset.tab==='tree'?(treeShown?'m'+cur:'tree'):(M.sel?(M.sel.type==='area'?'a':'v')+M.sel.id:'mountain');return}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-tab]');if(t){location.hash=t.dataset.tab==='arg'?argHash:t.dataset.tab==='tree'?(treeShown?'m'+cur:'tree'):(M.sel?(M.sel.type==='area'?'a':'v')+M.sel.id:'mountain');return}
+  const ar=e.target.closest('[data-arg]');if(ar){location.hash=ar.dataset.arg;return}
+  const mo=e.target.closest('[data-mod]');if(mo){openModule(mo.dataset.mod,mo.dataset.to);return}
   const a=e.target.closest('[data-area]');if(a){M.selectArea(+a.dataset.area,true);return}
   const g=e.target.closest('[data-go]');if(g){if(g.closest('#res'))go(+g.dataset.go);else location.hash='m'+g.dataset.go}});
-document.addEventListener('keydown',e=>{if(e.key==='Enter'){const g=e.target.closest('.row[data-go]');if(g)g.click()}});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'){const g=e.target.closest('.row[data-go],.row[data-arg],.row[data-mod]');if(g)g.click()}});
 
 /* Search. The text matches a name whether or not it has the spaces, dots and underscores between the words. */
 let qt;$('#q').addEventListener('input',e=>{clearTimeout(qt);qt=setTimeout(async()=>{const q=e.target.value.replace(/[\s._›\/]+/g,''),box=$('#res');
