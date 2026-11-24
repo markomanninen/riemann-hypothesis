@@ -217,14 +217,16 @@ function draw() {
   };
   lineSetup(); drawLines(bGroundP, bGroundC, nGround);
   pointSetup(0);
-  lineSetup(); gl.disable(gl.DEPTH_TEST); if (M.chain) drawLines(bChainP, bChainC, nChain); drawLines(bDynP, bDynC, nDyn);
   // The lit modules stand over everything drawn so far, and among themselves the nearer one covers
-  // the farther one, so they get a depth buffer of their own. The selected module is drawn last
-  // without a depth test, which keeps it in sight from every side.
-  if ((M.sel && M.sel.type === 'module') || M.lit) {
-    gl.depthMask(true); gl.clear(gl.DEPTH_BUFFER_BIT); gl.enable(gl.DEPTH_TEST); pointSetup(1);
-    if (M.sel && M.sel.type === 'module') { gl.disable(gl.DEPTH_TEST); pointSetup(2); }
-  }
+  // the farther one, so they get a depth buffer of their own. The lines of the selection are drawn
+  // after them against that buffer, so a line passes in front of the lit modules that lie behind it
+  // and behind those that lie in front of it. The selected module is drawn last without a depth
+  // test, which keeps it in sight from every side.
+  const lit = (M.sel && M.sel.type === 'module') || M.lit;
+  if (lit) { gl.depthMask(true); gl.clear(gl.DEPTH_BUFFER_BIT); pointSetup(1); }
+  lineSetup(); if (!lit) gl.disable(gl.DEPTH_TEST);
+  if (M.chain) drawLines(bChainP, bChainC, nChain); drawLines(bDynP, bDynC, nDyn);
+  if (M.sel && M.sel.type === 'module') { gl.disable(gl.DEPTH_TEST); pointSetup(2); }
   overlay();
 }
 function schedule() { if (!raf && M.ready !== null) raf = requestAnimationFrame(frame); }
