@@ -3,12 +3,13 @@
 The proof in [`src`](../../src) derives the five theorems of [`Main.lean`](../../src/Main.lean)
 from one inequality. The first theorem states that a Dirichlet L-function has no zero with real
 part above 1/2, and the other four follow from it. The inequality says that a weighted sum over
-the prime powers up to x is at most x^(1/2 + cε) for all x between Y and Y^(3/2), for arbitrarily
-large Y, every small ε > 0 and a constant c. The proof gets the inequality by bounding the slope
-of one lattice from two sides. A divisibility inequality bounds the slope from above by m times a
-main term, where m is the number of theta lifts in a chain between unitary groups. A slope
-inequality bounds the same slope from below. The two bounds leave an error of about x/m + m for
-the weighted sum, and that error is smallest when m is about √x.
+the prime powers up to x, with its main terms subtracted, is at most x^(1/2 + cε) for all x
+between Y and Y^(3/2), for arbitrarily large Y, every small ε > 0 and a constant c. The proof
+gets the inequality by bounding the slope of one lattice from two sides. A divisibility
+inequality bounds the slope from above by m times a main term, where m is the number of theta
+lifts in a chain between unitary groups. A slope inequality bounds the same slope from below.
+The two bounds leave error terms of about x/m and about m for the weighted sum, and the proof
+takes m in a window around √x, where both terms are about √x.
 
 This document follows that route through the Lean text. It goes from `Main.lean` down to the
 upper bound for one lift and the lower bound for the maps into the lattice, and then through the
@@ -94,13 +95,15 @@ marked its own guesses.
 1. The five theorems follow from one statement, that a Dirichlet L-function has no zero with
    real part above 1/2. The Lean statement sets aside the trivial character at s = 1.
 2. That statement follows from an upper bound x^θ, for every θ above 1/2, for a weighted prime
-   sum `Gm x` on the intervals from Y to Y^(3/2). The step is a Landau argument.
+   sum `Gm x` on the intervals from Y to Y^(3/2). The sum has its main terms subtracted. The
+   step is a Landau argument.
 3. The sum `Gm` is a weighted sum of the prime sums of a finite set of characters, the wanted
    characters. The proof places them among the characters of an auxiliary abelian field, the
-   host, and bounds the prime sum of every other character of the host separately. The host
-   depends on two primes q and d. A count of zeros and a mean square bound show that at least
-   half of the candidates for q, and then at least half of the candidates for d, give every
-   other character a prime sum of at most y^(1/2 + ε/2) for the y from Y to Y^A.
+   host. A sum over a subgroup removes the characters that are nontrivial on it, and the proof
+   bounds the prime sum of each remaining unwanted character separately. The host depends on
+   two primes q and d. A count of zeros and a mean square bound show that at least half of the
+   candidates for q, and then at least half of the candidates for d, give every such character
+   a prime sum of at most y^(1/2 + ε/2) for the y from Y to Y^A.
 4. The sum over all characters of the auxiliary field equals an arithmetic quantity `ASK` minus
    its main term, by finite Fourier inversion.
 5. `ASK` is bounded through the slope of a lattice. A divisibility inequality `DIV` bounds the
@@ -114,8 +117,10 @@ marked its own guesses.
    lift by an error term.
 8. The lower bound needs each map to be nearly an isometry, and two maps of different words to
    overlap by no more than a stated amount.
-9. After division by m the two bounds leave an error of about x/m + m for the weighted sum. The
-   error is smallest at m = √x, where it is 2√x, and that gives the exponent 1/2.
+9. After a division the two bounds leave error terms of about x/m and about m for the weighted
+   sum, and a further term of about √x that does not depend on m. The proof takes m between
+   x^(1/2 − ε) and x^(1/2 + ε/2), which keeps every term near √x, and that gives the exponent
+   1/2.
 
 The sections below have names and no numbers, and the word step means one of these nine. The
 four parts of the Landau argument are called stages.
@@ -231,11 +236,12 @@ different object. This document calls `shape_closed_link_n_of_green` the shape t
 
 ### The prime sum
 
-The definitions are in
+The definitions are in [`StatementOC.lean`](../../src/Formalism/StatementOC.lean),
 [`Analytic.lean`](../../src/Formalism/SharpRestriction/RamificationFrobenius/TotientGaloisClasses/Analytic.lean)
 and
 [`ExplicitFormulaErrorOfHostConditions.lean`](../../src/Formalism/SharpRestriction/RamificationFrobenius/TotientGaloisClasses/ExplicitFormulaErrorOfHostConditions.lean).
-Write Λ(n) for the von Mangoldt function and γ for Euler's constant.
+Write Λ(n) for the von Mangoldt function and γ for Euler's constant. The sum `Sz x` below has
+the order x·log x, and `Gz x` is that sum with its main terms subtracted.
 
 - `Sz x` is the sum of Λ(n)·(x/n − 1) over n ≤ x.
 - `Gz x` is `Sz x` − x log x + (1 + γ)x.
@@ -263,7 +269,9 @@ read by statement. The account below has four stages and follows the report, exc
    exists for real part above 2. Φ continues to real part above 0 with a simple pole at every
    zero of one of the L-functions. The residue at a zero ρ is −S/(ρ(ρ − 1)), where S adds the
    weights of the characters whose L-function vanishes at ρ, each times a multiplicity. The
-   weights are positive, so S is positive and the pole stays when two characters share a zero.
+   theorem `poleData` builds Φ from each character and its inverse, with half of the weight
+   each. The weights are positive, so S is positive and the pole stays when two characters share
+   a zero.
 2. For σ > 2 and a real τ, the Taylor coefficient of order k of Φ at σ + iτ is (−1)^k times the
    integral of g(u)·u^k·e^(−(σ + iτ)u)/k! over u > 0. The interval of x from Y to Y^la is the
    interval from U to (1 + δ)U in the variable u, with U = log Y and δ = la − 1. On it the bound
@@ -273,9 +281,11 @@ read by statement. The account below has four stages and follows the report, exc
    on the interval by a multiple of e^(ηU)/(σ − θ)^k, for the sum of two quantities. One is the
    norm of the integral at σ + iτ and the other is the integral at σ itself.
 3. `landau_tails` handles the part of the integral outside the interval. It picks σ from δ alone
-   and the order k = ⌈(1 + δ/2)·σ·U⌉. The weight u^k·e^((2 − σ)u)/k! then has its peak inside the
-   interval, and the lemma bounds its integral outside the interval by C/σ^k with a constant C
-   that is the same for every U. On each side of the interval the proof multiplies the weight by
+   and the order k = ⌈(1 + δ/2)·σ·U⌉. The lemma bounds the integral of the weight
+   u^k·e^((2 − σ)u)/k! outside the interval by C/σ^k with a constant C that is the same for
+   every U. By this session's own calculation, which the Lean text does not state, that choice
+   of k puts the peak of the weight inside the interval. On each side of the interval the proof
+   multiplies the weight by
    an exponential factor that is at least 1 there and integrates over all u > 0.
 4. Suppose a zero has real part above θ. Stages 2 and 3 bound the sum of the norm at σ + iτ and
    the integral at σ by a multiple of e^(ηU)/(σ − θ)^k. The proof splits into two cases. In the
@@ -310,10 +320,13 @@ conditions.
   `SizeData₂` of the next section and fifteen further conditions. `ChainTied` is the form of the
   same statement for a family, with four further conditions that tie the numbers of the record
   to the data of the family, and `tiedCore_of_chainTied` passes from it to the form for a host.
-- The condition `EAtH` concerns the characters. Its field `kept` places the characters of the
-  level among the characters of the host. Its field `bdG` asks that every other character of
-  the host, taken as a primitive Dirichlet character χ, satisfies `‖gChi χ x‖ ≤ x^(1/2 + ε)` at
-  the same point x.
+- The condition `EAtH` concerns the characters and has six fields. Its field `kept` places the
+  characters of the level among the characters of the host. Its field `bdG` speaks about the
+  set `Bounded`, which holds the characters of the host that are trivial on a subgroup `A0` and
+  are not kept. The field asks that each of them, taken as a primitive Dirichlet character χ,
+  satisfies `‖gChi χ x‖ ≤ x^(1/2 + ε)` at the same point x. This document calls the characters
+  of `Bounded` the other characters. A field `bdL` asks for a bound on their logarithmic
+  derivatives at 1.
 
 The field `bdG` is a bound of square-root size for the other characters, so its source matters.
 `cone.py --users` lists `sigA_le` as the one constant that mentions the field. That theorem,
@@ -335,7 +348,9 @@ The proof fills `bdG` from the theorem `boundedTw`, and `boundedTw` reads it off
 - The other characters are the characters of a modulus M that the level fixes, multiplied by
   the quadratic characters of q and d, with at least one of the two present. The field `bounds`
   of `PairGood` says that each of them satisfies `‖gChi χ y‖ ≤ y^(1/2 + ε/2)` for every y
-  between Y and Y^A, for an exponent A ≥ 1 that the caller chooses.
+  between Y and Y^A, for an exponent A ≥ 1 that the caller chooses, and that its logarithmic
+  derivative at 1 is at most 4·log y in absolute value. A further field `boxes` gives a
+  zero-free box for the real ones among them.
 - `pairEx` proves that such a pair exists for every large Y, and it rests on 1,271 declarations.
   It takes the pair from `pair_exists`, which takes it from `pair_share`. That theorem states
   that both ranges hold primes, that all but a share η of the primes q in the first range meet a
@@ -351,14 +366,17 @@ therefore concerns sums whose length is at most a fixed power of the logarithm o
 That observation follows from the ranges above and is this session's own.
 
 A third condition, `ThinScales`, is one of the sixteen conditions of `CoreAtH`. It concerns the
-sums at arguments far above x. The statement `PropTwoSixThinScales` writes it as
-`‖gChi χ y‖ ≤ y·exp(−c·x^(ε/8))` for y at least exp(x^(ε/3))/3. The code derives it from three
-statements that it bundles as `LitThin` and that `litThin` in
+sums at arguments far above x. The statement `PropTwoSixThinScales` has the conclusion
+`‖gChi χ y‖ ≤ y·exp(−c·x^(ε/8))` for y at least exp(x^(ε/3))/3, under a premise
+`PropTwoSixBoxHypothesis` on the host. The code derives it from three statements that it
+bundles as `LitThin` and that `litThin` in
 [`LitThin.lean`](../../src/Development/AbelianVarietyTheory/Proofs/GlobalInterpolation/LitThin.lean)
-proves. They are a zero-density bound near real part 1, the classical zero-free region with one
-possible exceptional real zero, and a truncated explicit formula. `litThin` rests on 319
-declarations. This session read the three statements, and it read neither their proofs nor the
-derivation of `ThinScales` from them.
+proves. The first, `adm6`, holds a bound of a constant times Q^(1/4) on the number of zeros with
+real part at least 1 − 1/400 and the classical zero-free region with one possible exceptional
+real zero. The second, `adm7`, is a truncated explicit formula. The third, `adm11`, bounds the
+number of zeros in each window of height 2 by a constant times a logarithm. `litThin` rests on
+319 declarations. This session read the three statements, and it read neither their proofs nor
+the derivation of `ThinScales` from them.
 
 ### The pair of primes
 
@@ -381,8 +399,8 @@ of n and q, and Λ(n) for the von Mangoldt function as before.
   exp(z′/2) < d ≤ exp(z′) for which q and every odd prime up to z divide d + 1. The theorem lets
   z′ lie between Y^(ε/5)·(log Y)² and K² times that number. `pairEx` takes
   z′ = Y^(ε/5)·(log Y)², which gives the range of d in `WinPair`.
-- `Box` is a condition on a primitive character ψ with parameters Q, C, τ, Y and X, and it has
-  three parts. The first part, `GoodC`, says that ψ is nontrivial, that its modulus is at most Q
+- `Box` is a condition on a character ψ with parameters Q, C, τ, Y and X, and it has three
+  parts. The first part, `GoodC`, says that ψ is nontrivial, that its modulus is at most Q
   and that L(ψ, s) has no zero with real part above 1 − 1/400 and imaginary part between −Q and
   Q. The code calls the last property `ZeroFreeBox`. The second part says that the logarithmic
   derivative of L(ψ, s) at s = 1 is at most C·log Y in absolute value. The third part is the
@@ -404,7 +422,8 @@ share 1 − η of its primes q meet `GoodQ`. For each of those q the second set 
 at least the share 1 − η of its primes d meet `GoodD`. `pair_exists`, which rests on 1,242
 declarations, applies the theorem with η = 1/2 and takes one q and one d. `pairEx` applies
 `pair_exists` with τ = ε/2, K = A and N₀ = 8·M, and it turns the result into the fields of
-`PairGood`.
+`PairGood`. It takes the bound 4·log y on the logarithmic derivative from a further theorem,
+`kappa4`.
 
 The proof of `pair_share` calls two theorems, `stage1` for q and `stage2` for d, which rest on
 1,225 and 1,231 declarations. Each of them states that the primes of its set that fail the
@@ -478,8 +497,9 @@ Y to Y^K. It combines two theorems.
   over p becomes a sum over pairs n, n′ of the coefficients times the sum of (n/p)·(n′/p) over
   p. The proof rewrites the absolute value of that inner sum as the absolute value of the sum
   of (p/r) over p, where r is the product of the primes outside m₀ that divide n·n′ to an odd
-  power. For the pairs with r = 1 it uses the trivial bound by the number of primes. Those
-  pairs form the diagonal, and their part is at most a constant times y·log y. For every other
+  power. For the pairs with r = 1, which are the pairs for which n·n′ is a square up to primes
+  of m₀, it uses the trivial bound by the number of primes. Those pairs include the diagonal
+  n = n′, and their part is at most a constant times y·log y. For every other
   r but one it takes as a premise that the sum of (p/r) over p is at most a factor η′ times the
   number of primes. The pairs of the one excepted r get the trivial bound as well, and their
   part is also at most a constant times y·log y.
@@ -532,12 +552,15 @@ copies of one term and as real numbers in a record.
 `ch_core` in
 [`ChCore.lean`](../../src/Development/AutomorphicArithmetic/DedekindLFunctions/LandauTheorems/ChCore.lean)
 rests on 177 declarations. It works with the characters of a finite abelian group `E0 × H` that
-stands for the Galois group of the host. `ASK` is a sum of log p terms over primes that are
-inert in a subfield, and `MAIN` is its expected size, of the order a·log a. Here a is a number
-`a t` for each element t of a finite set `TT`, and a condition `SizesA` keeps every `a t / b`
-within 1 of x, for a scale b of the record. The theorem assumes the bound that `ch_top` proves
-for `ASK − MAIN`, summed over `TT` and over the m lifts. It concludes the bound for the weighted
-prime sum of the kept characters.
+stands for the Galois group of the host. `ASK` is a weighted sum of 2·log p over the primes p
+up to a bound whose Frobenius class lies outside a set Φ, plus a term for the prime d. The code
+calls those primes inert. `MAIN` is the term that `ASK` is compared with, of the order a·log a.
+Here a is a number `a t` for each element t of a finite set `TT`, and a condition `SizesA`
+keeps every `a t / b` within 1 of x, for a scale b of the record. The theorem assumes the bound
+that `ch_top` proves for `ASK − MAIN`, summed over `TT` and over the m lifts. It concludes that
+the weighted prime sum of the kept characters is at most x^(1/2 + (C + 3)ε) plus a sum `SigA`
+of the absolute values of the prime sums of the other characters. `core_gm` bounds `SigA` with
+`sigA_le` of the section on the wanted characters.
 
 | Row | Lemma | What it does | Rests on |
 |---:|---|---|---:|
@@ -547,36 +570,47 @@ prime sum of the kept characters.
 | 4 | `one_char` | replaces the sum over `TT` by the value at x | 16 |
 | 5 | `proposition_size_bound` | divides by the size of the sum and reads off the exponent | 9 |
 
-This session read the lemmas of rows 2 to 4 in full and those of rows 1 and 5 by statement.
+This session read the lemmas of rows 2 to 4 in full and those of rows 1 and 5 by statement, and
+it read the lines of the proof of row 5 that carry the exponents.
 `De` is an average of twisted von Mangoldt sums over the characters of `E0 × H`, so row 1 is
 finite Fourier inversion between primes in classes and character sums. The summand of row 3
 does not depend on the lift index j, so the sum over the m lifts multiplies it by m. Row 4 uses
 a premise on the set `TT`. The sum of a nontrivial kept character over `TT` differs from its
 expected value by at most a constant times x^(−1 + ε) times the size of `TT`.
 
-Row 5 divides the error by `nT * m * b`, where `nT` is the size of `TT`. The error is x^(Cε)
+Row 5 divides the error by nT·m·b times half of the ratio nT2/n. Here nT is the size of `TT`, n
+is the size of the group `H` and nT2 is the size of a second set `T2`. The error is x^(Cε)
 times the expression `errorBracketSizeWindows`, which is the sum
-nT·aE·(1 + m²/k) + m·(B + N). Here B stands for 2·n·m·b·x^ε and N for nT2·k·b·x^(2ε)/n², where n
-is the size of the group `H` and nT2 is the size of a second set `T2`. The condition `BNBounds`
+nT·aE·(1 + m²/k) + m·(B + N), where B stands for 2·n·m·b·x^ε and N for nT2·k·b·x^(2ε)/n². The
+condition `BNBounds`
 in [`SChain.lean`](../../src/Formalism/SizeWindowBrackets/SChain.lean) says that B and N bound
 two numbers `B0` and `Nc` of the record of the next subsection, and the error terms of the
 condition `DIV` of that subsection contain `nT * a * La` and `m * (B0 + Nc)`. The condition
 `RestSize` bounds aE by 2·x·b, n/nT by 2·x^(ε/8) and k by n²·x^(1/2 − ε), and the theorem assumes
-x·m ≤ k. By this session's own arithmetic the division leaves four terms.
+x·m ≤ k. The list below divides the bracket by nT·m·b alone, and by this session's own
+arithmetic that division leaves four terms.
 
 - The part nT·aE gives aE/(m·b), which is at most 2x/m. The premise x^(1/2 − ε) ≤ m of
   `RestSize` keeps it below 2·x^(1/2 + ε).
 - The part nT·aE·m²/k gives aE·m/(k·b), which is at most 2 because x·m ≤ k.
 - The part m·B gives 2·n·m·x^ε/nT, which is at most 4·m·x^(9ε/8). The premise
   m ≤ x^(1/2 + ε/2) keeps it below 4·x^(1/2 + 13ε/8), the exponent that appears in the proof.
-- The part m·N gives nT2·k·x^(2ε)/(n²·nT), which is at most 2·x^(1/2 + 9ε/8) because nT2 ≤ n.
+- The part m·N gives nT2·k·x^(2ε)/(n²·nT), which is at most 2·x^(1/2 + 9ε/8) because nT2 ≤ n,
+  n/nT ≤ 2·x^(ε/8) and k ≤ n²·x^(1/2 − ε).
+
+The four terms add up to at most 10·x^(1/2 + 13ε/8). The ratio nT2/n is at least x^(−ε) by
+`RestSize`, so the division by half of it costs a further factor of at most 2·x^ε. With the
+factor x^(Cε) of the error and a last factor x^(3ε/8) that absorbs the constants, the exponent
+is 1/2 + (C + 13/8 + 1 + 3/8)·ε, which is 1/2 + (C + 3)·ε.
 
 The first term falls as m grows, and the third term grows with m. Without the factors x^(cε)
-they are x/m and m, which are equal at m = √x, the chain length that the note gives. The first
-term comes from the part of the error that carries no factor m, so the m lifts share it. The
-third comes from the number `B0`, which enters once for each of the m lifts and which is itself
-bounded by a multiple of m. This session did not read what `B0` and `Nc` measure. `core_gm`
-calls `ch_core` with the constant C = `eD` + `eL` + 3, for which `ch_core` gives the exponent
+they are x/m and m, which are equal at m = √x, the chain length that the note gives. The proof
+does not choose m. It takes x^(1/2 − ε) ≤ m ≤ x^(1/2 + ε/2) as premises, and the fourth term
+has the size of about √x for every m, because k is at most n²·x^(1/2 − ε). The first term comes
+from the part of the error that carries no factor m, so the m lifts share it. The third comes
+from the number `B0`, which enters once for each of the m lifts and which is itself bounded by
+a multiple of m. This session did not read what `B0` and `Nc` measure. `core_gm` calls
+`ch_core` with the constant C = `eD` + `eL` + 3, for which `ch_core` gives the exponent
 1/2 + (C + 3)·ε, and its own conclusion has one ε more.
 
 ### `ch_top`
