@@ -69,7 +69,9 @@ void main(){
     else if(aSt<2.5){ col = vec3(.098,.620,.439); size = max(size, uMin*1.7); }
     else if(aSt<3.5){ col = vec3(1.); size = max(size*1.5, uMin*5.); }
   }
-  if((uPass>.5 && !hi) || (uPass<.5 && hi && uSel>.5)) pos = vec4(2.,2.,2.,1.);
+  // Pass 0 draws the modules that are not lit, pass 1 the lit ones and pass 2 the selected one alone.
+  bool mine = uPass<.5 ? !(hi && uSel>.5) : uPass<1.5 ? (hi && aSt<2.5) : aSt>2.5 && aSt<3.5;
+  if(!mine) pos = vec4(2.,2.,2.,1.);
   gl_Position = pos; gl_PointSize = min(size, uMax); vC = col;
 }`;
 const FS_POINTS = `precision mediump float; varying vec3 vC;
@@ -216,7 +218,13 @@ function draw() {
   lineSetup(); drawLines(bGroundP, bGroundC, nGround);
   pointSetup(0);
   lineSetup(); gl.disable(gl.DEPTH_TEST); if (M.chain) drawLines(bChainP, bChainC, nChain); drawLines(bDynP, bDynC, nDyn);
-  if ((M.sel && M.sel.type === 'module') || M.lit) pointSetup(1);
+  // The lit modules stand over everything drawn so far, and among themselves the nearer one covers
+  // the farther one, so they get a depth buffer of their own. The selected module is drawn last
+  // without a depth test, which keeps it in sight from every side.
+  if ((M.sel && M.sel.type === 'module') || M.lit) {
+    gl.depthMask(true); gl.clear(gl.DEPTH_BUFFER_BIT); gl.enable(gl.DEPTH_TEST); pointSetup(1);
+    if (M.sel && M.sel.type === 'module') { gl.disable(gl.DEPTH_TEST); pointSetup(2); }
+  }
   overlay();
 }
 function schedule() { if (!raf && M.ready !== null) raf = requestAnimationFrame(frame); }
