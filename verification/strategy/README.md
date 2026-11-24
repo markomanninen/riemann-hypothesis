@@ -54,8 +54,20 @@ the current source.
   code's type `what₂.Word`. A family holds a datum for every large x and every index of a set
   that depends on x.
 - A host is the code's record for an auxiliary abelian number field.
-- The slope of a lattice and the height of a map are the code's numbers `mu` and `h`. This
-  document uses them as the code names them and did not open their definitions.
+- The slope of a lattice is the code's number `mu`.
+  [`Statement.lean`](../../src/Formalism/LatticeSlopes/Statement.lean) defines the covolume
+  `covol` of a lattice in a Euclidean space as the square root of the Gram determinant of a
+  basis, the degree as minus the logarithm of the covolume, and the slope as the degree divided
+  by the rank. The largest slope `muMax` is the supremum of the slopes of the nonzero
+  sublattices. For a Hermitian lattice over a number field K the definition `muDef` in
+  [`StatementPl.lean`](../../src/Formalism/HarderNarasimhan/StatementPl.lean) sets `mu` to twice
+  that slope, minus log 2, plus the logarithm of the absolute value of the discriminant of K
+  divided by the degree of K.
+- The height of a map is the code's number `htMap` in the file of `muDef`. It is the mean, over
+  the infinite places of K, of the logarithm of the squared operator norm of the map. The
+  number `h` of a word of a datum is a different number. It is a real field of the datum, the
+  condition `WordFacts` requires that the height of the map of the word is at most `h`, and in a
+  family a formula named `hExpl6` gives `h`.
 - A link is one of the conditions on a family in
   [`GlobalTheoremInputs.lean`](../../src/Formalism/SharpRestriction/GlobalTheoremInputs.lean)
   whose names begin with `Link`.
@@ -83,19 +95,23 @@ marked its own guesses.
    real part above 1/2. The Lean statement sets aside the trivial character at s = 1.
 2. That statement follows from an upper bound x^θ, for every θ above 1/2, for a weighted prime
    sum `Gm x` on the intervals from Y to Y^(3/2). The step is a Landau argument.
-3. The sum `Gm` belongs to a finite set of wanted characters. The proof places these characters
-   among all characters of an auxiliary abelian field and bounds the sums of the other characters
-   separately.
+3. The sum `Gm` is a weighted sum of the prime sums of a finite set of characters, the wanted
+   characters. The proof places them among the characters of an auxiliary abelian field, the
+   host, and bounds the prime sum of every other character of the host separately. The host
+   depends on two primes q and d. A count of zeros and a mean square bound show that at least
+   half of the candidates for q, and then at least half of the candidates for d, give every
+   other character a prime sum of at most y^(1/2 + ε/2) for the y from Y to Y^A.
 4. The sum over all characters of the auxiliary field equals an arithmetic quantity `ASK` minus
    its main term, by finite Fourier inversion.
 5. `ASK` is bounded through the slope of a lattice. A divisibility inequality `DIV` bounds the
    slope from above, and a slope inequality `SlopeIneq` bounds it from below.
 6. Both bounds concern linear maps into that lattice, one map for each word of a datum. Each map
-   is the composite of a chain of m theta kernels between unitary groups of ranks k + j(t + 1),
-   for j from 0 to m.
+   factors through a chain of m kernels between unitary groups of ranks k + j(t + 1), for j from
+   0 to m. The first m − 2 kernels are composed one after the other, the last two are composed
+   inside a finite sum, and one more linear map follows.
 7. The upper bound adds one term a·log a − a for each lift and each top place, where a is the
-   top weight at that place. Interlacing weights and a hook product leave exactly that term
-   unmatched.
+   top weight at that place. Interlacing weights and a hook product bound everything else of the
+   lift by an error term.
 8. The lower bound needs each map to be nearly an isometry, and two maps of different words to
    overlap by no more than a stated amount.
 9. After division by m the two bounds leave an error of about x/m + m for the weighted sum. The
@@ -326,13 +342,13 @@ The proof fills `bdG` from the theorem `boundedTw`, and `boundedTw` reads it off
   condition `GoodQ`, and that for each such q all but a share η of the primes d in the second
   range meet a condition `GoodD`. `pair_exists` applies it with η = 1/2.
 
-This session read the statements of `pair_share`, `pairEx` and `PairGood` and the proofs of
-`boundedTw`, `pairEx` and `pair_exists`. The proof of `pair_share` lies in the folder
-[`MeanSquareBounds`](../../src/Development/AutomorphicArithmetic/MeanSquareBounds) and is unread.
-For each fixed exponent B the primes q and d exceed Y^B once Y is large, since the logarithm of q
-is at least Y^(ε/5)/2, while y stays below Y^A. The bound therefore concerns short sums of
-characters with a very large modulus. That observation follows from the ranges above and is this
-session's own.
+This session read the statement of `PairGood` and read in full the proofs of `boundedTw`,
+`pairEx` and `pair_exists`. The subsection on the pair of primes at the end of this section
+follows the proof of `pair_share`. The logarithms of q and d are both at least Y^(ε/5)/2 once
+log Y ≥ 1, so for each fixed exponent B both primes exceed Y^B once Y is large. The argument y
+of the field `bounds` is at most Y^A, which is at most (2·log q)^(5A/ε). The field `bounds`
+therefore concerns sums whose length is at most a fixed power of the logarithm of the modulus.
+That observation follows from the ranges above and is this session's own.
 
 A third condition, `ThinScales`, is one of the sixteen conditions of `CoreAtH`. It concerns the
 sums at arguments far above x. The statement `PropTwoSixThinScales` writes it as
@@ -343,6 +359,167 @@ proves. They are a zero-density bound near real part 1, the classical zero-free 
 possible exceptional real zero, and a truncated explicit formula. `litThin` rests on 319
 declarations. This session read the three statements, and it read neither their proofs nor the
 derivation of `ThinScales` from them.
+
+### The pair of primes
+
+`pair_share` in
+[`PairShare.lean`](../../src/Development/AutomorphicArithmetic/MeanSquareBounds/PairShare.lean)
+rests on 1,239 declarations. It is the source of the bound of square-root size for the other
+characters of the host. Its files lie in the folder
+[`MeanSquareBounds`](../../src/Development/AutomorphicArithmetic/MeanSquareBounds), and the
+definitions that it uses lie in
+[`PrimeSetTwoBounds.lean`](../../src/Development/AutomorphicArithmetic/MeanSquareBounds/PrimeSetTwoBounds.lean)
+and
+[`SecondEstimateOfIntervalHypothesis.lean`](../../src/Formalism/GL3MeanSquares/SecondEstimateOfIntervalHypothesis.lean).
+
+The statement names two sets of primes and three conditions. Write (n/q) for the Jacobi symbol
+of n and q, and Λ(n) for the von Mangoldt function as before.
+
+- `primePairSetFirst` of a number z is the set of the primes q with q ≡ 3 mod 8 and
+  exp(z/2) < q ≤ exp(z). The theorem takes z = Y^(ε/5).
+- `primeSetTwoBounds` of z, z′ and q is the set of the primes d with d ≡ 7 mod 16 and
+  exp(z′/2) < d ≤ exp(z′) for which q and every odd prime up to z divide d + 1. The theorem lets
+  z′ lie between Y^(ε/5)·(log Y)² and K² times that number. `pairEx` takes
+  z′ = Y^(ε/5)·(log Y)², which gives the range of d in `WinPair`.
+- `Box` is a condition on a primitive character ψ with parameters Q, C, τ, Y and X, and it has
+  three parts. The first part, `GoodC`, says that ψ is nontrivial, that its modulus is at most Q
+  and that L(ψ, s) has no zero with real part above 1 − 1/400 and imaginary part between −Q and
+  Q. The code calls the last property `ZeroFreeBox`. The second part says that the logarithmic
+  derivative of L(ψ, s) at s = 1 is at most C·log Y in absolute value. The third part is the
+  bound of square-root size, `‖Gchi ψ y‖ ≤ y^(1/2 + τ)` for every y from Y to X.
+- `GoodQ` says about a prime q that `Box` holds with Q = N₀·exp(z) for every primitive character
+  that agrees with ξ(n)·(n/q) at every n coprime to N₀·q, for every character ξ of a fixed
+  modulus N₀.
+- `GoodD` says about two primes q and d that `Box` holds with Q = N₀·exp(z + z′) for every
+  primitive character that agrees with ξ(n)·(n/d) or with ξ(n)·(n/q)·(n/d) at every n coprime
+  to N₀·q·d, for every such ξ.
+
+`Gchi` has the formula that the section on the prime sum gives for `gChi` of a nontrivial
+character, and a lemma in the file of `pairEx` proves that the two are equal.
+
+`pair_share` states that a constant C exists for which the following holds for every ε below
+1/52, every τ > 0, every K ≥ 1, every η > 0, every modulus N₀, every large Y, every X up to
+Y^K and every z′ of the range above. The first set of primes is nonempty, and at least the
+share 1 − η of its primes q meet `GoodQ`. For each of those q the second set is nonempty, and
+at least the share 1 − η of its primes d meet `GoodD`. `pair_exists`, which rests on 1,242
+declarations, applies the theorem with η = 1/2 and takes one q and one d. `pairEx` applies
+`pair_exists` with τ = ε/2, K = A and N₀ = 8·M, and it turns the result into the fields of
+`PairGood`.
+
+The proof of `pair_share` calls two theorems, `stage1` for q and `stage2` for d, which rest on
+1,225 and 1,231 declarations. Each of them states that the primes of its set that fail the
+condition form at most the share η of the set. Both are cases of one theorem, `stage`, which
+rests on 1,219 declarations.
+
+`stage` treats the set `PPset` of the primes p with p ≡ a₀ mod m₀ and √U < p ≤ U. Its
+condition `admitted` asks that 8 divides m₀, that a₀ is coprime to m₀, that log U lies between
+Y^(ε/6) and Y^(ε/5)·(log Y)², and that (log Y)²·log m₀ is at most 4·log U. A further premise
+asks that every prime factor of m₀ is at most Y^(ε/5) or above Y^(400K). `stage1` takes m₀ = 8,
+a₀ = 3 and U = exp(Y^(ε/5)). `stage2` takes U = exp(z′) and m₀ = 16·`oddM`, where `oddM` is q
+times the product of the odd primes up to z, and a lemma supplies a class a₀ for which
+`primeSetTwoBounds` equals `PPset`. `stage2` applies `stage` with 6ε/5 in place of ε, so that
+the upper limit of log U covers every admitted z′.
+
+`stage` takes a finite set of at most R primitive characters ξ whose moduli are at most a number
+F ≤ √U. It calls a prime p of `PPset` bad when, for one of those ξ, the primitive character that
+agrees with ξ(n)·(n/p) fails `Box` with Q = F·U and X = Y^K. It concludes that the bad primes
+form at most the share η of `PPset`. The proof sorts the bad primes into two kinds and bounds
+each kind by the share η/2.
+
+- A bad prime of the first kind has a primitive character of modulus f·p, with f ≤ F, that fails
+  `ZeroFreeBox`. `count_bad`, which rests on 89 declarations, bounds the number of such primes
+  by a constant times (F·U)^(1/4), which is at most U^(3/8). Its proof calls `count_bad_core`,
+  which takes the bound from `zero_density_box`. That theorem rests on 85 declarations and
+  states that at most a constant times Q^(1/4) primitive characters of modulus up to Q have an
+  L-function with a zero in that box. `count_a`, which rests on 19 declarations, concludes from
+  the condition `admitted` that `PPset` holds at least U^(9/10) primes, and `stage` passes the
+  prime number theorem in progressions and the bound `excBound` of the next list to it. The
+  share of the first kind is therefore at most a constant times U^(−21/40), which falls below
+  η/2 once Y is large, because log U is at least Y^(ε/6).
+- A bad prime of the second kind has a truncated sum that is too large. The code's sum `S` is
+  the sum of Λ(n)·min(1, y/n)·ξ(n)·(n/p) over the n up to Z = Y^(400K), and the prime is of the
+  second kind when the absolute value of `S` exceeds y^(1/2 + τ)/2 for some y from Y to Y^K.
+  `bad_share`, which rests on 18 declarations, bounds the share of such primes for one ξ by
+  η/(2(R + 1)). The at most R characters together give at most R·η/(2(R + 1)), which is below
+  η/2.
+- For a prime of neither kind `box_of_S`, which rests on 174 declarations, proves `Box`, so the
+  prime is not bad.
+
+`box_of_S` passes from the truncated sum to `Gchi`. The identity `finite_splitting_of_group`,
+which rests on 7 declarations, writes `Gchi ψ y` as minus the truncated sum minus y times a tail
+`tailL`. The tail is minus the logarithmic derivative of L(ψ, s) at s = 1 minus the sum of
+Λ(n)·ψ(n)/n over the n up to Z. `tailK`, which rests on 160 declarations, bounds Y^K times the
+tail by Y^ε for a character that meets `GoodC`. Since y is at most Y^K, y times the tail is at
+most Y^ε, which is at most y^(1/2 + τ)/2 for ε ≤ 1/4 and Y ≥ 16. With the truncated sum at most
+y^(1/2 + τ)/2 in absolute value the identity gives the third part of `Box`. `kappaC`, which
+rests on 164 declarations, gives the second part. The number 400 appears twice, as the width
+1/400 of the zero-free box and as the exponent of the truncation point Z = Y^(400K). This
+session read `tailK` by statement. It is this session's guess that the tail is small because a
+zero-free box of width 1/400 gives a saving of Z^(−1/400), which equals Y^(−K).
+
+`bad_share` takes a mean square bound as its premise, the code's `MeanSq`. That premise says
+that the sum of |`S`|² over the primes p of the set is at most a constant C₂ times y·log y times
+the number of those primes, for every y of the interval and every sequence of coefficients of
+absolute value at most 1 in place of ξ. A prime of the second kind has |`S`|² above
+y^(1 + 2τ)/4 at some y. The proof cuts the interval into blocks from 2^i·Y to 2^(i+1)·Y. Write
+V for the left end of a block. Inside the block the proof bounds |`S`|² at any y by twice
+|`S`|² at V plus 2V times the integral of the square of the derivative of `S` in y. The
+derivative times y is the sum `S` with the coefficients of the n ≤ y set to 0, so the premise
+bounds both terms, and their sum over p is at most 4·C₂·V·log(2V) times the number of primes.
+Each prime of the second kind adds at least V^(1 + 2τ)/4, and log(2V) is at most 2·V^τ/τ, so
+the share of the block is at most (32·C₂/τ)·V^(−τ). The sum over the blocks is at most the
+geometric series (32·C₂/τ)·Y^(−τ)/(1 − 2^(−τ)), which falls below every positive share as Y
+grows.
+
+`meanSqK`, which rests on 1,100 declarations, proves `MeanSq` for `PPset` on the interval from
+Y to Y^K. It combines two theorems.
+
+- `meanSq_abs`, which rests on 51 declarations, multiplies the square out. The sum of |`S`|²
+  over p becomes a sum over pairs n, n′ of the coefficients times the sum of (n/p)·(n′/p) over
+  p. The proof rewrites the absolute value of that inner sum as the absolute value of the sum
+  of (p/r) over p, where r is the product of the primes outside m₀ that divide n·n′ to an odd
+  power. For the pairs with r = 1 it uses the trivial bound by the number of primes. Those
+  pairs form the diagonal, and their part is at most a constant times y·log y. For every other
+  r but one it takes as a premise that the sum of (p/r) over p is at most a factor η′ times the
+  number of primes. The pairs of the one excepted r get the trivial bound as well, and their
+  part is also at most a constant times y·log y.
+- `twistK`, which rests on 1,021 declarations, supplies that premise. It states for all
+  exponents A′ and B′ and every large Y that each odd squarefree r > 1 that is coprime to m₀
+  and at most Y^(A′), with one possible exception, has a sum of (p/r) over the primes p of
+  `PPset` of at most Y^(−B′) times their number. `meanSqK` uses it with A′ = 800K, because r
+  is at most n·n′ ≤ Z², and with B′ = K + 1, so the factor η′ is Y^(−(K + 1)). Its proof
+  starts from four statements. `pnt_progressions_relative_weak_holds`, which rests on 982
+  declarations, is the prime number theorem in arithmetic progressions with a relative error
+  and one possible exceptional real zero. `zFRDirichlet`, which rests on 201 declarations, is
+  the zero-free region of the L-functions of one modulus with at most one real zero in it.
+  `excBound`, which rests on 136 declarations, says for every δ > 0 that a real zero of the
+  L-function of a real nontrivial character of modulus N is at most 1 minus a constant times
+  N^(−δ). `page_across`, which rests on 6 declarations, says that two real characters of
+  moduli up to a bound W that each have a real zero close to 1 agree wherever both are
+  defined, which is why one exception is enough.
+
+This paragraph is this session's interpretation of the mechanism, except for the sentence on
+`abs_pair_sum_eq`, which reports a statement. A prime p of `PPset` exceeds √U, and the
+logarithm of U is at least Y^(ε/6), so p exceeds Z², the largest value of n·n′, once Y is
+large. The lemma `abs_pair_sum_eq` shows that the sum of (n/p)·(n′/p) over the primes p of a
+fixed residue class equals the sum of (p/r) over them up to one sign, and (p/r) is a real
+character of p. That character is nontrivial unless n·n′ is a square up to primes of m₀, and
+the prime number theorem in progressions makes the sum of a nontrivial character over the
+primes small. On average over p the values (n/p) for different n therefore cancel as
+independent signs do. The sum `S` has about y/log y terms up to y that are not zero, one for
+each prime power, and each has size about log y. With independent signs its square is about
+(y/log y)·(log y)², which is y·log y. The truncated sums have square-root size for most primes
+p of the set for that reason, and the proof then fixes one prime q and one prime d for which
+they have it. The third part of `Box` speaks about the y from Y to Y^K only, a range far below
+the modulus. This session found no statement about zeros in `Box` other than the zero-free box
+of `GoodC`.
+
+This session read in full the proofs of `pair_share`, `stage1`, `stage2`, `stage`, `box_of_S`,
+`count_bad`, `count_bad_core`, `meanSq_abs`, `meanSqK` and `bad_share` with the five lemmas
+that precede it in its file and carry the blocks. It read by statement `zero_density_box`,
+`count_a`, `tailK`, `kappaC`, `finite_splitting_of_group`, `abs_pair_sum_eq` and the four
+statements that the proof of `twistK` starts from, and it read the first sixty lines of the
+proof of `twistK`.
 
 ## From the two bounds on the slope to the exponent 1/2
 
@@ -377,14 +554,30 @@ does not depend on the lift index j, so the sum over the m lifts multiplies it b
 a premise on the set `TT`. The sum of a nontrivial kept character over `TT` differs from its
 expected value by at most a constant times x^(−1 + ε) times the size of `TT`.
 
-Row 5 divides the error by `nT * m * b`, where `nT` is the size of `TT`. By this session's own
-check of the arithmetic two terms survive. One is about x/m, and the premise x^(1/2 − ε) ≤ m
-keeps it below x^(1/2 + ε). The other is m times a factor of at most x^(9ε/8), and the premise
-m ≤ x^(1/2 + ε/2) keeps it below x^(1/2 + 13ε/8), the exponent that appears in the proof. Without
-the factors x^(cε) the two terms are x/m and m, which are equal at m = √x, the chain length that
-the note gives. This session did not record which terms of the bound of `ch_top` give x/m and
-which give m. `core_gm` calls `ch_core` with the constant C = `eD` + `eL` + 3, for which
-`ch_core` gives the exponent 1/2 + (C + 3)·ε, and its own conclusion has one ε more.
+Row 5 divides the error by `nT * m * b`, where `nT` is the size of `TT`. The error is x^(Cε)
+times the expression `errorBracketSizeWindows`, which is the sum
+nT·aE·(1 + m²/k) + m·(B + N). Here B stands for 2·n·m·b·x^ε and N for nT2·k·b·x^(2ε)/n², where n
+is the size of the group `H` and nT2 is the size of a second set `T2`. The condition `BNBounds`
+in [`SChain.lean`](../../src/Formalism/SizeWindowBrackets/SChain.lean) says that B and N bound
+two numbers `B0` and `Nc` of the record of the next subsection, and the error terms of the
+condition `DIV` of that subsection contain `nT * a * La` and `m * (B0 + Nc)`. The condition
+`RestSize` bounds aE by 2·x·b, n/nT by 2·x^(ε/8) and k by n²·x^(1/2 − ε), and the theorem assumes
+x·m ≤ k. By this session's own arithmetic the division leaves four terms.
+
+- The part nT·aE gives aE/(m·b), which is at most 2x/m. The premise x^(1/2 − ε) ≤ m of
+  `RestSize` keeps it below 2·x^(1/2 + ε).
+- The part nT·aE·m²/k gives aE·m/(k·b), which is at most 2 because x·m ≤ k.
+- The part m·B gives 2·n·m·x^ε/nT, which is at most 4·m·x^(9ε/8). The premise
+  m ≤ x^(1/2 + ε/2) keeps it below 4·x^(1/2 + 13ε/8), the exponent that appears in the proof.
+- The part m·N gives nT2·k·x^(2ε)/(n²·nT), which is at most 2·x^(1/2 + 9ε/8) because nT2 ≤ n.
+
+The first term falls as m grows, and the third term grows with m. Without the factors x^(cε)
+they are x/m and m, which are equal at m = √x, the chain length that the note gives. The first
+term comes from the part of the error that carries no factor m, so the m lifts share it. The
+third comes from the number `B0`, which enters once for each of the m lifts and which is itself
+bounded by a multiple of m. This session did not read what `B0` and `Nc` measure. `core_gm`
+calls `ch_core` with the constant C = `eD` + `eL` + 3, for which `ch_core` gives the exponent
+1/2 + (C + 3)·ε, and its own conclusion has one ε more.
 
 ### `ch_top`
 
@@ -396,19 +589,23 @@ declarations. Its premise `SizeData₂`, defined in
 [`SChain.lean`](../../src/Formalism/SizeWindowBrackets/SChain.lean), is a conjunction of eleven
 conditions on a record `Data` of 39 real numbers and real-valued functions from
 [`MeanBoundSecondForm.lean`](../../src/Formalism/RankGapBounds/MeanBoundSecondForm.lean). The
-record has an index u that runs over a finite set, an index t that runs over a set in bijection
-with `TT`, and a field `aT t` that equals the `a t` of `ch_core`. Its number `Main` stands for
-the sum of `MAIN` over `TT` and the lifts. The code writes `ph y` for y log y − y. Two of the eleven
-conditions hold the idea.
+record has three indices. An index u0 runs over the elements of the group `H`. For each u0 an
+index u runs over a finite set that depends on u0. An index t runs over a set in bijection with
+`TT`, and a field `aT t` equals the `a t` of `ch_core`. The numbers `muCC` and `Fo` depend on
+u0 alone, and the numbers `muN`, `h` and `T` depend on u0 and u. The bullets below fix one u0
+and leave it out of the notation. The number `Main` of the record stands for the sum of `MAIN`
+over `TT` and the lifts. The code writes `ph y` for y log y − y. Two of the eleven conditions
+hold the idea.
 
 - `DIV` bounds a number `muCC` from above. For every u it says that `muCC + h u − Fo` is at most
   the sum over t of `m * (ph (aT t) − aT t * logOm) − aT t * log (T u)`, plus error terms. Here
-  `Fo` and `T u` are further numbers of the record, and `logOm` is a constant that the section
-  on one lift describes. Among the eleven conditions this is the one in which the number m of
-  lifts multiplies the main term.
-- `SlopeIneq` bounds `muCC` from below. It says that a weighted mean over u of `muN u − h u`,
-  minus the logarithm of the number of indices u and further correction terms, is at most
-  `muCC`.
+  `logOm` is a constant that the section on one lift describes. Among the eleven conditions this
+  is the one in which the number m of lifts multiplies the main term.
+- `SlopeIneq` bounds `muCC` from below. It says that the mean over u of `muN u − h u` with
+  weights `d u`, minus the logarithm of the number of indices u and minus correction terms, is
+  at most `muCC`. The statement holds when three small parameters of the record lie in stated
+  ranges and a number `HH` is a positive upper bound for that mean minus a number `muMinCC`.
+  The condition `HHBound` supplies the bound by `HH`.
 
 The mean of `DIV` over u, taken with the weights of `SlopeIneq`, and `SlopeIneq` together cancel
 `muCC` and the mean of `h` and leave an upper bound for the mean of `muN`. The conditions `QuotientSlopeBoundsWith` and `LossBounds`
@@ -427,15 +624,23 @@ characters, of which the reading of six proofs read the beginning.
 The eleven conditions speak about real numbers without saying what they measure. The condition
 `TieLocal` in
 [`TieGlobal.lean`](../../src/Formalism/SharpRestriction/GlobalSchurBounds/TieGlobal.lean) says
-it, for a datum `D` of a family. The index u of the record runs over the words of the datum.
+it for a family. A map `pt` assigns a datum of the family to each element u0 of the group, and
+the index u of the record runs over the words of that datum. The bullets speak about the datum
+of one u0.
 
 - `muCC` is the slope of the dual of a Hermitian lattice `div.RR` of the datum.
-- `muN u` is the slope of a lattice `div.Nu u`, one for each word.
-- `h u` is the height of a linear map `div.Bk u` from `Nu u` into the dual of `RR`.
-- The set of lifts is `Finset.Icc 1 D.R.m`, so m is a field of the datum.
+- `muN u` is the slope of a lattice `div.Nu u`, one for each word, and the weight `d u` is the
+  rank of that lattice.
+- `h u` is the number `div.h u` of the datum. The datum has a linear map `div.Bk u` from `Nu u`
+  into the dual of `RR`, and the condition `WordFacts` in
+  [`RecBridge.lean`](../../src/Formalism/LocalToGlobal/Divisibility/RecBridge.lean) requires
+  that the height `htMap` of a nonzero `Bk u` is at most `h u`.
+- The number of lifts is the field `R.m` of the datum. The definition `lifts` sets the set of
+  lifts to `Finset.Icc 1 D.R.m`.
 
-The slope inequality of step 5 is therefore about the maps `Bk u` of the words into one lattice,
-and the number m of lifts enters through the height of each map.
+The slope inequality of step 5 is therefore about the maps `Bk u` of the words of one datum
+into one lattice, and the number m of lifts enters through the bound `h u` for the height of
+each map.
 
 ### The path of the divisibility inequality
 
@@ -488,9 +693,11 @@ product, and a field `lf` places each lift on a matrix.
 
 - The structure `ChainTie` in
   [`DivisionHeightBoundStatement.lean`](../../src/Formalism/LocalToGlobal/Divisibility/DivisionHeightBoundStatement.lean)
-  links a `ColChain` to a chain of kernels. Its field `kerF` says that the matrix `Kj j`, read
-  in coordinates, is the kernel operator number j. Its field `metF` says that the metric of a
-  space is the inner product on the forms of that space.
+  links a `ColChain` to a chain of kernels, the code's `KerChain`, which has a number n of
+  steps and one coupling. Its field `kerF` says that the matrix `Kj j` for j below n, read in
+  coordinates, is the kernel operator number j. Its field `kerC` says that the last matrix
+  `Kj n` is the coupling `cpl`. Its field `metF` says that the metric of a space is the inner
+  product on the forms of that space.
 - `chainOf` builds the `ColChain` from a chain of kernels by choosing bases. It rests on 54
   declarations.
 - [`FiniteSumNonzeroLargeDepth.lean`](../../src/Formalism/LocalToGlobal/Columns/FiniteSumNonzeroLargeDepth.lean)
@@ -501,11 +708,20 @@ product, and a field `lf` places each lift on a matrix.
   grows by t + 1 from each j to the next. Entry 8 of the note writes a lift as π ↦ π ⊞ μ_j[t].
   That the letter t of the note is this t is an interpretation.
 - The condition `ChIdx.Ok` requires `R.m = m2 + 2` for a natural number `m2`, so m is at least
-  2. The chain has m − 1 matrices and a final pairing, and its ranks run from `N 0` to `N m`.
-- The record `ChTh` holds one distribution of type `ThDist` for each of the m − 1 matrices and
-  one more for the final pairing into rank `N m`, which makes m in all. `ThDist.Ok` requires
-  equivariance under both unitary groups. `XiEntry` writes a kernel entry as a product of local
-  functions over primes.
+  2. The chain of a word has n = `m2` steps, so it has m − 1 matrices, and its ranks run from
+  `N 0` to `N m`.
+- The record `ChTh` holds m distributions of type `ThDist`. The distribution `th i` goes from
+  rank `N i` to rank `N (i + 1)`, and the distribution `top` goes from rank `N (m − 1)` to rank
+  `N m`. `ThDist.Ok` requires equivariance under both unitary groups. `XiEntry` writes a kernel
+  entry as a product of local functions over primes.
+- The first m − 2 matrices are the kernel operators of `th 0` to `th (m − 3)`. The last matrix
+  is the coupling. The definition `CplKer.comp` builds it as a weighted sum, over classes and
+  over a finite set, of products of two kernels, and the definitions `cp1K` and `cp2K` take
+  those two kernels from `th (m − 2)` and from `top`.
+- After the matrices comes a final linear map. `chainOf` takes it as an argument g into a
+  dual space and sets the field `PtL` of the chain to g in coordinates. The field `lf` places
+  lift number l on the matrix with the smaller of the two numbers `no l` and n, so several
+  lifts can sit on the last matrix.
 
 This session read these definitions and the statement of `rowsU_of_colPins_alt`, which proves
 that a datum with its ties has a `ColChain` with a `ChainTie`. That theorem rests on 14,837
@@ -539,22 +755,29 @@ The reading of the chain followed the premises of `rowsU_of_colPins_alt`.
 ## The bound for one lift
 
 [`Numbers.lean`](../../src/Formalism/LocalToGlobal/Divisibility/Numbers.lean) defines the
-numbers of a lift from one record for each place, `HCParam`. A top place is a place in the set
-`TT`. This session read the definitions and the statement of each theorem of this section.
+numbers of a lift from one record for each place, `HCParam`. A place is a pair of a truth value
+and an element of the group, and the top places are the pairs of the value false and an element
+of the set `TT`. This session read the definitions and the statement of each theorem of this
+section.
 
-- A place carries k numbers `u`, k − 1 numbers `v` and m numbers `e`. The fields `u_gt_v` and
-  `v_gt_u` say that the numbers u and v interlace, so u₀ > v₀ > u₁ > … > u_{k−1}. These letters
-  u and v are unrelated to the words u and to the v of the bullet on `kerPlace`.
+- A place carries k numbers `u`, k − 1 numbers `v`, m numbers `e` and m numbers `b`. The fields
+  `u_gt_v` and `v_gt_u` say that the numbers u and v interlace, so u₀ > v₀ > u₁ > … > u_{k−1}.
+  These letters u and v are unrelated to the words u and to the v of the bullet on `kerPlace`.
 - The top weight `aT t` at a top place t is `u 0` − (k − 1)/2. The code uses the letter t both
   for a top place and for the number t of the rank `N j`, and the two are unrelated.
-- The weights `nu` of lift j have one entry for each index below `N (j − 1)`. The first k
-  entries come from the numbers u. The rest come in blocks of t + 1 consecutive values, one
-  block for each earlier lift, centred at minus the number `e` of that lift.
+- The weights `nu` of lift j have one entry for each index below `N (j − 1)`. Among the first k
+  entries the first and the last come from the numbers u₀ and u_{k−1}, and the k − 2 between
+  them come from the numbers v lowered by 1/2 and, where a bit of a code is set, by a further
+  number `Del`. The rest come in blocks of t + 1 consecutive values, one block for each earlier
+  lift, centred at minus the number `e` of that lift. Every entry then gets the number `e` of
+  lift j added and a shift subtracted that depends on its index.
 - `kerPlace` is the sum of `ph` over the weights minus the sum of the weights times `logOm`.
-  Here `logOm` is γ + log(π/v) minus the logarithmic derivative at 1 of the L-function of a
-  quadratic character, with a positive number v of the record `Data`.
-- `logHook` is the logarithm of the hook product of a Young diagram whose rows are built from
-  the numbers v of the place.
+  Here `logOm` is γ + log(π/v) minus the real part of the logarithmic derivative at 1 of the
+  L-function of the quadratic character modulo the prime d of the host. The number v is half of
+  a number `rd` of the host.
+- `logHook` is the logarithm of the hook product of a Young diagram with k + j − 1 rows. The
+  rows are built from the k − 1 numbers v and from j of the numbers b, each shifted by the
+  number `e` of lift j.
 - The height `hU` adds `kerPlace` and subtracts `logHook`, summed over places and over the m
   lifts.
 
@@ -572,17 +795,20 @@ about rows of natural numbers carry it.
   of its row from the cell to the end, and the product of those lengths along a row of length L
   is L!.
 - `young_diagram_step_origin`, which rests on 55 declarations, takes k rows built from the
-  numbers u and k − 1 rows built from the numbers v, with the interlacing as a premise, and
-  concludes the two facts. The reading of six proofs read its proof in full. The proof pairs
-  each of the k − 1 lower rows of the lift with a row under the hook product, bounds the
-  difference of each pair through the interlacing, and leaves the top row, of length `aT` plus
-  w, without a partner. By the reading the weights of the blocks are bounded separately and go
-  into the error term. The error term of the statement grows with w, and this document does not
-  record how the proof moves the shift w of the top row into it.
+  numbers u and k − 1 rows built from the numbers v, with the interlacing as a premise. It
+  concludes the two facts in the form of an inequality and an equation with a remainder, and it
+  bounds the error term and the remainder. The reading of six proofs read its proof in full.
+  The proof pairs each of the k − 1 lower rows of the lift with a row under the hook product,
+  bounds the difference of each pair through the interlacing, and leaves the top row without a
+  partner. By the definition `originRow` the top row at a top place has the length `aT` + w − s,
+  where s is (k + (2j − 1)(t + 1))/2. By the reading the weights of the blocks are bounded
+  separately and go into the error term. The error term of the statement grows with w, and this
+  document does not record how the proof moves the shift w of the top row into it.
 
-The unmatched top row gives one `ph (aT t)` for each lift, and the sum of the weights gives one
-`aT t * logOm`. The main term is m times their difference, summed over `TT`. The multiplicity of
-the note is, in this code, the number of lifts.
+The first fact is an upper bound, so what the top row leaves is at most one `ph (aT t)` for
+each lift, and the sum of the weights gives one `aT t * logOm`. The main term is m times their
+difference, summed over `TT`. The multiplicity of the note is, in this code, the number of
+lifts.
 
 `numFacts_rec`, which rests on 266 declarations, proves the premises of `stepE_num` for the data
 of a family from size conditions and a choice of parameters. Three interpretations in this
@@ -612,21 +838,25 @@ Of the 400 declarations behind `joint_a_ramified_holds`, 190 lie in the folder
 for a map of bounded norm between lattices.
 
 The general statement needs bounds on the Gram matrix of the maps, and the link `LinkS` supplies
-them in the following form, for numbers `duS u`, `Dstar` and `Dall` of the datum whose names
-suggest ranks.
+them through the condition `LinkS_at`, for numbers `duS u`, `Dstar` and `Dall` of the datum.
+`duS u` is the complex dimension of a space of the word u. `LinkS_at` is an implication. Its
+premise says that `duS u`·Γ²/`Dstar` lies between 1/C0 and C0 for every word u, where Γ is the
+number `GamOf`, the exponential of a constant times m⁵·f·L for numbers f and L of the datum.
+Its conclusion has three parts.
 
 - For two different words u and u′ a number `hsSq u u′` is at most
   (1 + η0)·`duS u`·`duS u′`/`Dstar`.
 - For every word u a number `hsDiagFull u` is at most e0·`duS u`.
 - `Dall` is at most (1 + η1)·`Dstar`.
 
-The link gives η0, η1 and e0 below exp(−x^(ε/8)). The names `hsSq` and `hsDiagFull` suggest the
-squared Hilbert-Schmidt norm of a block of two maps and the distance of the block of one map
-from the identity. Under that interpretation each map is an isometry up to a small relative
-error. The bound for two different maps is the value that two subspaces of ranks `duS u` and
-`duS u′` in general position inside a space of rank `Dstar` have, up to the factor 1 + η0, and
-it is not a bound near zero. The note's entry 16 calls its statement the approximate
-orthogonality of the columns, and entry 13 names the Bost slope inequality.
+The link gives η0, η1 and the square root of e0 at most exp(−x^(ε/8)). The definition of
+`hsDiagFull u` is the squared Hilbert-Schmidt norm of a block `KD u u` minus the identity, and
+`hsSq u u′` is defined through the block `KD u u′`, whose definition this session did not open.
+The following reading is this session's interpretation. Each map is an isometry up to a small
+relative error. The bound for two different maps is the value that two subspaces of ranks
+`duS u` and `duS u′` in general position inside a space of rank `Dstar` have, up to the factor
+1 + η0, and it is not a bound near zero. The note's entry 16 calls its statement the
+approximate orthogonality of the columns, and entry 13 names the Bost slope inequality.
 
 ## How the conditions are assembled
 
@@ -832,6 +1062,14 @@ that are weaker than their names. They found the following.
   of such a premise has to follow the projection of the field. The ties of
   `rowsU_of_colPins_alt` are stated with heterogeneous equalities, which the proof removes by
   substitution.
+- The proof of `pair_share` reaches Siegel's theorem. The proof of `excBound` is one line that
+  applies a theorem to `siegelLower`, which rests on 127 declarations. `siegelLower` states for
+  every δ > 0 that a constant c(δ) > 0 exists with |L(χ, 1)| ≥ c(δ)·N^(−δ) for every real
+  nontrivial character χ of modulus N. For δ below 1/2 the textbook proofs of that bound yield
+  no value of c(δ). `stage` and `twistK` pass `excBound` to `count_a`, so if the size of Y from
+  which `count_a` holds depends on c(δ), the proof yields no value of that size either. This
+  session read neither the proof of `siegelLower` nor the proof of `count_a`. The five theorems
+  contain neither a threshold nor a constant, so this point leaves their statements as they are.
 - Two names mislead. `admissibleClassesTwistedChar` names both a theorem about ranks and an
   unrelated definition. A field of `HtNums` is called `MainNotions`, which is the name of a
   namespace and says nothing about the bound that the field enters.
@@ -848,9 +1086,12 @@ a field of the record. The next section lists what stayed unread.
 - `Claim.zeta` and `Claim.strip`, which carry the passage to the other four theorems.
 - The four lemmas of stage 4 of the Landau argument and six further lemmas of it, which were
   read by statement.
-- The proof of `pair_share`, which gives the bound of square-root size for the other characters
-  of the host, the proofs of the three statements behind `litThin`, and the derivation of
-  `ThinScales` from them.
+- The proofs of the theorems beneath `pair_share` that were read by statement. They are
+  `zero_density_box`, `count_a`, `tailK`, `kappaC`, `finite_splitting_of_group`,
+  `abs_pair_sum_eq` and the four statements that the proof of `twistK` starts from. The proof
+  of `twistK` after its first sixty lines is unread as well.
+- The proofs of the three statements behind `litThin`, and the derivation of `ThinScales` from
+  them.
 - The proofs of `ch_balance`, `proposition_size_bound` and `sigA_le`, and most of the proof of
   `core_ineq`.
 - The proofs of `linkDIVt_of_bridge_kernel`, of `slope_bounds` and of the four other
@@ -869,9 +1110,10 @@ a field of the record. The next section lists what stayed unread.
 - The eight statements of `GlobalTheory.Published` behind `Row` for which the reading found no
   closed theorem.
 - Most of the 463,949 declarations behind the record.
-- The definitions of the slope of a lattice and of the height of a map, and whether the
-  definitions of the project are the mathematical objects that their names suggest, which is a
-  question for a mathematician.
+- What the numbers `B0` and `Nc` of the record measure, the formula `hExpl6` for the number `h`
+  of a word, and the definition of the block `KD`.
+- Whether the definitions of the project are the mathematical objects that their names suggest,
+  which is a question for a mathematician.
 
 ## Scripts and files
 
@@ -895,3 +1137,4 @@ of `cones.json` anew.
 | `cone.py` | counts what a constant rests on, and lists the constants that mention a constant |
 | `check.py` | checks the names, the counts and the links of this document |
 | `cones.json` | the full name and the count of every theorem whose count this document gives |
+| `briefs/route-check.txt` | the brief for a second model that tests the route of this document against the Lean text |
