@@ -238,12 +238,14 @@ outline only two more lines. A reading of [`READING.md`](READING.md) says what t
 its line claims, and the exact graph changes no statement, so the 38 readings hold for the exact
 outline too. The two new lines were read in the same way as the 38, from dossiers of
 `dossier.py` by a first reader, a second reader and the check, and they are numbered 39 and 40
-in [`reading-exact.json`](reading-exact.json). The check passed the reading of line 39 at once
-and the reading of line 40 after one correction. Line 39 derives a condition `ConclF` on a family
-`Fm` from the bundle `Hypotheses₂`, the bound `0 ≤ C` and three further conditions on `Fm`, and
-its reader rated its confidence medium. Line 40 derives a statement `TopShapeAlt` from a
-statement `Green`. Its dossier cuts the text of `TopShapeAlt` before its conclusion, so its
-reader rated its confidence low.
+in [`reading-exact.json`](reading-exact.json). The check passed both readings at once, and both
+readers rated their confidence medium. Line 39 derives a condition `ConclF` on a family `Fm`
+from the bundle `Hypotheses₂`, the bound `0 ≤ C` and three further conditions on `Fm`. Line 40
+derives the statement `TopShapeAlt` from a statement `Green`. The statement splitter cuts the
+definition of `TopShapeAlt` before its conclusion, so the dossier of line 40 shows that
+definition in full from the source file. Unfolded, line 40 says that `Green` and 51 further
+hypotheses on a family class 𝒜 and a function `cT` give the statement `TopG`. One of the 51
+hypotheses is the bound `LinkN` on the families of the class `D3 3 𝒜`.
 
 ## Limits
 

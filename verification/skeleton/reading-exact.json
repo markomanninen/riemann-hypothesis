@@ -240,118 +240,595 @@
    "parent": 23,
    "definitions": 45,
    "outline": "exact",
-   "says": "If a statement that the code calls Green holds, then the statement TopShapeAlt holds with its four parameters set to True, True, a property N of classes of family records, and a statement that the code calls TopG. The property N says of a class 𝒞 that Closed 𝒞 LinkN holds, which means that some ε1 > 0 exists such that for every eps with 0 < eps ≤ ε1 there is a record K for which every family record Fm of type FamP eps that lies in 𝒞 and satisfies a condition that the code calls Large (with K and a real number CH) also satisfies LinkN. LinkN is a conditional upper bound on a quantity called etaSum. It says that real numbers C and x0 exist such that for every x ≥ x0 and every index i in Fm.Ix x, if the data record Fm.D x i satisfies the condition ShaFinOdd, then for every whole number j from 1 to the number m stored in that data record, if the series with terms vvTerm of that data record is summable, the upper bound on etaSum holds. TopShapeAlt itself is a universally quantified statement over a class 𝒜, a function cT and a long list of further data and hypotheses, and the dossier cuts its text before the conclusion and before any use of the second, third and fourth parameters, which leaves the final assertion of the theorem unseen.",
+   "says": "The theorem says that if the condition the code calls Green holds, then TopShapeAlt True True N TopG holds, where N is the requirement on a family class 𝒞 that LinkN holds in the Closed sense on 𝒞, which means that there is ε1 > 0 such that for every eps with 0 < eps ≤ ε1 there is a K for which LinkN Fm holds for every family Fm in FamP eps that lies in 𝒞 and satisfies Fm.Large K CH for some real CH. By the shown body of TopShapeAlt this unfolds to the claim that, under Green, for every family class 𝒜, every function cT of two real variables and every choice of the 51 further bound items (auxiliary selection data and hypotheses, among them two trivially true hypotheses in the slots V and NR and the hypothesis N applied to the class D3 3 𝒜), the condition the code calls TopG holds. TopG says that for every real la greater than 1 and every G of the type FReq, if HostExW la G.req holds and every family Fm in the class G.cls la satisfies HypV, then the class G.cls la satisfies a condition that the code calls FamilyClassConnected.",
    "premises": [
-    "Green holds, which says that for every prime g, every label datum for g and every whole number d > 0 a map τ exists from polynomials over the integers modulo g to complex-valued functions on the invertible d by d matrices modulo g that meets three requirements stated with the unseen conditions IsPrimeLab, IsCuspOf and IsCusp."
+    "Green holds, which is a shown statement about complex-valued functions on the matrix groups GL_d over the integers modulo a prime g, built on the opaque conditions IsPrimeLab, IsCuspOf and IsCusp",
+    "𝒜 is an arbitrary family class, that is, a predicate on the families Fm of FamP eps for every real eps",
+    "cT is an arbitrary function that takes two real numbers to a real number",
+    "hEx says that MinkDiv implies ExS 𝒜 cT",
+    "sel is an arbitrary twist selection for 𝒜, which gives for every family Fm in 𝒜 a real threshold (sel Fm hc).1 and one object for each selected point, where a selected point means a real eps, a family Fm in FamP eps, a proof hc that 𝒜 Fm holds, a real x with Fm.x1 < x and (sel Fm hc).1 ≤ x, and an index i in Fm.Ix x",
+    "hduty says that every family Fm in 𝒜 satisfies Duty Fm",
+    "selS is a choice, at every selected point, of an element of STiesRAlt for the object that sel gives there",
+    "selP is a choice, at every selected point, of a P of type RowSideFamily (Fm.ex x hx i) together with a proof of RowSideDeterminedAlt for the field T of the object that sel gives there and P",
+    "selDH is a choice, at every selected point, of a pair p of natural numbers with (Fm.D x i).s.Del = p.1 and (Fm.L x i).etaSz = (Fm.D x i).R.m · p.2",
+    "selC is a choice, at every selected point, of an element of SquareIntegrableColumns for the field T of the object that sel gives there and the P that selP gives there",
+    "selB is a choice, at every selected point, of an element of RealTBAlt built from the choices of sel, selP, selC, selDH and selS at that point",
+    "hRB says that at every selected point IndefiniteRealisationBoundedRows holds for the element that selB gives there",
+    "hTw says that at every selected point TieTwRec (Fm.L x i) Tw holds, where Tw is the field S0.Tw of the P that selP gives there",
+    "hPA says that AllRealisationsPrimitive holds for sel and for the realisation choice read off from selB by indefiniteRealisationChoiceOfSelection",
+    "hLamP says that at every selected point RowsHoldLam3 P holds for the P that selP gives there",
+    "hDivG says that at every selected point DivRows3G P holds for the P that selP gives there",
+    "hDcPtG says that at every selected point DcPtG P holds for the P that selP gives there",
+    "hTu says that, in the Closed sense on the class WithTw (WithSm (WithChN 𝒜)), the inequality cT eps Fm.CYL ≤ Fm.CTu implies TuSize Fm",
+    "hn4 says that, in the Closed sense on the same class WithTw (WithSm (WithChN 𝒜)), ClassNumberFormula₂ (Fm.D x i) (Fm.ex x hx i).lev holds for every real x with Fm.x1 < x and every index i in Fm.Ix x",
+    "hLit says that LitThin holds",
+    "hVC is a proof of the slot V, which the theorem sets to the trivially true proposition True",
+    "hWu says that WuDecayOfGap holds",
+    "hRF says that RowsFinDim holds",
+    "hTF says that, in the Closed sense on the class D3 3 𝒜, TFrame Fm (Fm.CYL + 1) (1/4) 3 (1/2) Fm.CTu 3 holds",
+    "c30 is an arbitrary map from finite lists of real numbers to the type CountingConstants",
+    "hc30 says that for every family Fm the constants c30 Fm.cOut satisfy 0 ≤ (c30 Fm.cOut).C and 2 · (Fm.CYL + 1) ≤ (c30 Fm.cOut).A",
+    "sTy is an element of what the code calls TypeP, which is shown without a body",
+    "sNG is an element of what the code calls RowNGP, which is shown without a body",
+    "sM is an element of what the code calls RowMainEqP, which is shown without a body",
+    "sLp says that LoopRowS holds for the constant 3, the class D3 3 𝒜 and the selection that pairs the threshold (sel Fm (d3_a hc)).1 with the toSTies part of selS",
+    "sO says that, in the Closed sense on D3 3 𝒜, for every proof hc that Fm lies in D3 3 𝒜, TheoremSSelected holds for Fm, the constant 3 and the same pair of the threshold (sel Fm (d3_a hc)).1 and the toSTies part of selS",
+    "h30 says that, in the Closed sense on D3 3 𝒜, CountAllPointsClass PLevT' Fm holds with the five constants n0, A, C, c and cb of c30 Fm.cOut",
+    "hInstR says that at every selected point both VolSigIndep (Fm.D x i) and ClassItemsAt (Fm.D x i) r hold, where r is ((Fm.D x i).sp.Y 0).rank",
+    "selJ is an element of IndefiniteRealisationSelection for 𝒜, sel, selS, selP, selDH, selC, the kernel choice kernelChoiceOfSelection selB and the realisation choice indefiniteRealisationChoiceOfSelection selB",
+    "jOn says that, in the Closed sense on D3 3 𝒜, there is a real x0 such that BaseVectorImageFull (Fm.D x i) holds for every x ≥ x0 and every index i in Fm.Ix x",
+    "hMt says that for every family Fm in 𝒜 there is a real x0 such that for every x ≥ x0, every index i in Fm.Ix x and every μ in (Fm.D x i).what₂.Tup, the set Mtilde μ is closed under scalar multiplication by embLL a for every a in the ring of integers of the field (Fm.D x i).what₂.LL",
+    "rRows says that, in the Closed sense on D3 3 𝒜 with the real CH kept as an argument, for every proof hc that Fm lies in D3 3 𝒜, RowsAtSelAlt holds for sel, the realisation choice from selB, the row condition DefRowsFAlt of that realisation choice, SingleMapCondition selB, Fm, d3_a hc and CH",
+    "aPt0 says that, in the Closed sense on D3 3 𝒜, there is a real x0 such that Conclusion6 (Fm.D x i) u holds for every x with x0 ≤ x and Fm.x1 < x, every index i in Fm.Ix x and every u",
+    "aPtTw says that, in the Closed sense on D3 3 𝒜, there is a real x0 such that TwistedPointIntegral (Fm.D x i) (Fm.ex x hx i).tw holds for every x with x0 ≤ x and Fm.x1 < x and every index i in Fm.Ix x",
+    "aPer0 says that, in the Closed sense on D3 3 𝒜, there is a real x0 such that PeriodClassSumWeyl (Fm.D x i) holds for every x with x0 ≤ x and Fm.x1 < x and every index i in Fm.Ix x",
+    "aPerTw says that, in the Closed sense on D3 3 𝒜, there is a real x0 such that TwistedPeriodAdmissible (Fm.D x i) (Fm.X x i) (Fm.ex x hx i).tw holds for every x with x0 ≤ x and Fm.x1 < x and every index i in Fm.Ix x",
+    "aP10 says that, in the Closed sense on D3 3 𝒜, there is a real x0 such that for every x with x0 ≤ x and Fm.x1 < x, every index i in Fm.Ix x and every u, both Conclusion5Sharp (Fm.D x i) u and TwistedColumnBoundAtT (Fm.X x i) (Fm.ex x hx i).tw u hold",
+    "aAtG says that, in the Closed sense on D3 3 𝒜, there is a real C1 such that familySizeBoundAtTypePrime Fm C1 holds and such that, for some real x0, UsedTuplesBoundByConstant (Fm.D x i) (Fm.L x i) (Fm.ex x hx i).errX C1 holds for every x with Fm.x1 < x and x0 ≤ x and every index i in Fm.Ix x",
+    "aC2 says that, in the Closed sense on D3 3 𝒜, FamilySecondComplementInputs Fm holds",
+    "hServ says that SelectionServed holds for the class D3 3 𝒜 and the selection that sends Fm and hc to sel Fm (d3_a hc)",
+    "nR is a proof of the slot NR, which the theorem sets to the trivially true proposition True",
+    "nRest says that, in the Closed sense on D3 3 𝒜, LinkN Fm holds, which is the slot N of the theorem applied to the class D3 3 𝒜",
+    "cIc is an arbitrary real number",
+    "hcI says that 0 < cIc",
+    "irrC says that, in the Closed sense on D3 3 𝒜, there is a real x0 such that for every x ≥ x0 and every index i in Fm.Ix x there is an A of type AllRows (Fm.D x i) with LabelCountGoodInjective A, AllJoinA A and CountAllRows A (epsC cIc r f), where r is (Fm.D x i).R.r and f is (Fm.D x i).R.f",
+    "zL says that, in the Closed sense on D3 3 𝒜, for every proof hc that Fm lies in D3 3 𝒜 there is a real xr such that for every x with Fm.x1 < x, (sel Fm (d3_a hc)).1 ≤ x and xr ≤ x, every index i in Fm.Ix x and every k below (Fm.D x i).R.m, the map that multiplies vectors by the matrix lPrj, formed from the P that selP gives at that point, is surjective",
+    "tie says that, in the Closed sense on D3 3 𝒜, RealPlaceSecondLayerConditions Fm holds",
+    "hU says that MassRatioUnderVolume D holds for every D",
+    "hG says that GenusMassAt D 2 holds for every D"
    ],
-   "conclusion": "TopShapeAlt True True N TopG holds, where N sends a class 𝒞 of family records to the statement Closed 𝒞 LinkN.",
-   "notation": "Green ⇒ TopShapeAlt(True, True, N, TopG), with N(𝒞) ⇔ Closed(𝒞, (Fm, CH) ↦ LinkN(Fm)), where Closed(𝒞, P) ⇔ ∃ ε1 > 0 ∀ eps ∈ ℝ ( 0 < eps ≤ ε1 ⇒ ∃ K ∈ TransportedAlt ∀ Fm ∈ FamP(eps) ∀ CH ∈ ℝ ( (𝒞(Fm) ∧ Large(Fm, K, CH)) ⇒ P(Fm, CH) ) ), and LinkN(Fm) ⇔ ∃ C, x0 ∈ ℝ ∀ x ≥ x0 ∀ i ∈ Fm.Ix(x) ( ShaFinOdd(D) ⇒ ∀ j ∈ {1, …, D.R.m} ( Summable(vvTerm D) ⇒ etaSum(S, j) ≤ S.dZ0(j) · ( C · ( D.R.f · D.R.m · S.sc.b · (S.sc.L)² + (log S.sc.x)² · S.Nc ) + Σ_l vvTerm(D, l) ) ) ) with D = Fm.D x i and S = Fm.L x i, and Green ⇔ ∀ primes g ∀ Λ ∈ LabelDatum(g) ∀ d ∈ ℕ ( 0 < d ⇒ ∃ τ from (ℤ/g)[X] to functions GL_d(ℤ/g) → ℂ with ( ∀ P ( IsPrimeLab(d, P) ⇒ IsCuspOf(Λ, P, τ(P)) ∧ τ(P)(1) = ∏_{i=1}^{d−1} (g^i − 1) ) ) ∧ ( ∀ P ∀ P′ ( (IsPrimeLab(d, P) ∧ IsPrimeLab(d, P′) ∧ τ(P) = τ(P′)) ⇒ P = P′ ) ) ∧ ( ∀ χ from GL_d(ℤ/g) to ℂ ( IsCusp(χ) ⇒ ∃ P ( IsPrimeLab(d, P) ∧ χ = τ(P) ) ) ) ), and TopG ⇔ ∀ la ∈ ℝ ∀ G ∈ FReq ( (1 < la ∧ HostExW(la, G.req) ∧ ∀ eps ∀ Fm ∈ FamP(eps) ( G.cls(la, Fm) ⇒ HypV(Fm.toFamCore) )) ⇒ FamilyClassConnected(G.cls(la)) ), and TopShapeAlt(V, NR, N, G) ⇔ ∀ 𝒜 ∀ cT ∀ hEx ∀ sel ∀ hduty ∀ selS ∀ selP ∀ selDH ∀ selC ∀ selB ∀ hRB ∀ hTw ∀ hPA ∀ hLamP ∀ hDivG ∀ hDcPtG ∀ hTu ∀ hn4 ∀ hLit ∀ (hVC, a proof of V) ∀ hWu ∀ hRF ∀ hTF … (the text is cut here)",
+   "conclusion": "TopG holds, which reads that for every real la with 1 < la and every G of type FReq, if HostExW la G.req holds and if every family Fm of every FamP eps with G.cls la Fm satisfies HypV Fm.toFamCore, then FamilyClassConnected (G.cls la) holds",
+   "notation": "Green ⇒ ∀𝒜∈FamClass ∀cT∈(ℝ→ℝ→ℝ) ∀sel∈TwistSelection(𝒜) ∀selS ∀selP ∀selDH ∀selC ∀selB ∀c30∈(List ℝ→CountingConstants) ∀cIc∈ℝ ( [ (MinkDiv ⇒ ExS(𝒜,cT)) ∧ (∀eps ∀Fm∈FamP(eps), 𝒜(Fm) ⇒ Duty(Fm)) ∧ (∀pt, IndefiniteRealisationBoundedRows(selB(pt))) ∧ (∀pt, TieTwRec(L, P.S0.Tw)) ∧ AllRealisationsPrimitive(sel, QB) ∧ (∀pt, RowsHoldLam3(P)) ∧ (∀pt, DivRows3G(P)) ∧ (∀pt, DcPtG(P)) ∧ Closed(𝒲, Fm ↦ (cT(eps, Fm.CYL) ≤ Fm.CTu ⇒ TuSize(Fm))) ∧ Closed(𝒲, Fm ↦ ∀x ∀hx∈(Fm.x1<x) ∀i∈Fm.Ix(x), ClassNumberFormula₂(D, ex.lev)) ∧ LitThin ∧ True ∧ WuDecayOfGap ∧ RowsFinDim ∧ Closed(𝒟, Fm ↦ TFrame(Fm, Fm.CYL+1, 1/4, 3, 1/2, Fm.CTu, 3)) ∧ (∀eps ∀Fm∈FamP(eps), 0 ≤ c30(Fm.cOut).C ∧ 2·(Fm.CYL+1) ≤ c30(Fm.cOut).A) ∧ TypeP ∧ RowNGP ∧ RowMainEqP ∧ LoopRowS(3, 𝒟, s) ∧ Closed(𝒟, Fm ↦ ∀hc∈𝒟(Fm), TheoremSSelected(Fm, 3, s(Fm,hc))) ∧ Closed(𝒟, Fm ↦ CountAllPointsClass(PLevT', Fm, k.n0, k.A, k.C, k.c, k.cb) with k = c30(Fm.cOut)) ∧ (∀pt, VolSigIndep(D) ∧ ClassItemsAt(D, (D.sp.Y 0).rank)) ∧ IndefiniteRealisationSelection(𝒜, sel, selS, selP, selDH, selC, kernelChoiceOfSelection(selB), QB) ∧ Closed(𝒟, Fm ↦ ∃x0∈ℝ ∀x≥x0 ∀i∈Fm.Ix(x), BaseVectorImageFull(D)) ∧ (∀eps ∀Fm∈FamP(eps), 𝒜(Fm) ⇒ ∃x0∈ℝ ∀x≥x0 ∀i∈Fm.Ix(x) ∀μ∈D.what₂.Tup ∀a∈𝒪(D.what₂.LL) ∀y∈Mtilde(μ), embLL(a)•y ∈ Mtilde(μ)) ∧ Closed(𝒟, (Fm,CH) ↦ ∀hc∈𝒟(Fm), RowsAtSelAlt(sel, QB, DefRowsFAlt(QB), SingleMapCondition(selB), Fm, d3_a(hc), CH)) ∧ Closed(𝒟, Fm ↦ ∃x0∈ℝ ∀x (x0≤x ⇒ ∀hx∈(Fm.x1<x) ∀i∈Fm.Ix(x) ∀u, Conclusion6(D,u))) ∧ Closed(𝒟, Fm ↦ ∃x0∈ℝ ∀x (x0≤x ⇒ ∀hx∈(Fm.x1<x) ∀i∈Fm.Ix(x), TwistedPointIntegral(D, ex.tw))) ∧ Closed(𝒟, Fm ↦ ∃x0∈ℝ ∀x (x0≤x ⇒ ∀hx∈(Fm.x1<x) ∀i∈Fm.Ix(x), PeriodClassSumWeyl(D))) ∧ Closed(𝒟, Fm ↦ ∃x0∈ℝ ∀x (x0≤x ⇒ ∀hx∈(Fm.x1<x) ∀i∈Fm.Ix(x), TwistedPeriodAdmissible(D, Fm.X x i, ex.tw))) ∧ Closed(𝒟, Fm ↦ ∃x0∈ℝ ∀x (x0≤x ⇒ ∀hx∈(Fm.x1<x) ∀i∈Fm.Ix(x) ∀u, Conclusion5Sharp(D,u) ∧ TwistedColumnBoundAtT(Fm.X x i, ex.tw, u))) ∧ Closed(𝒟, Fm ↦ ∃C1∈ℝ ((∃x0∈ℝ ∀x ∀hx∈(Fm.x1<x) (x0≤x ⇒ ∀i∈Fm.Ix(x), UsedTuplesBoundByConstant(D, L, ex.errX, C1))) ∧ familySizeBoundAtTypePrime(Fm, C1))) ∧ Closed(𝒟, Fm ↦ FamilySecondComplementInputs(Fm)) ∧ SelectionServed(𝒟, (Fm,hc) ↦ sel Fm (d3_a hc)) ∧ True ∧ Closed(𝒟, Fm ↦ LinkN(Fm)) ∧ 0 < cIc ∧ Closed(𝒟, Fm ↦ ∃x0∈ℝ ∀x≥x0 ∀i∈Fm.Ix(x) ∃A∈AllRows(D), LabelCountGoodInjective(A) ∧ AllJoinA(A) ∧ CountAllRows(A, epsC(cIc, D.R.r, D.R.f))) ∧ Closed(𝒟, Fm ↦ ∀hc∈𝒟(Fm) ∃xr∈ℝ ∀x ∀hx∈(Fm.x1<x) ∀h∈((sel Fm (d3_a hc)).1≤x) (xr≤x ⇒ ∀i∈Fm.Ix(x) ∀k∈Fin(D.R.m), (v ↦ M_k·v) is surjective)) ∧ Closed(𝒟, Fm ↦ RealPlaceSecondLayerConditions(Fm)) ∧ (∀D, MassRatioUnderVolume(D)) ∧ (∀D, GenusMassAt(D, 2)) ] ⇒ TopG ), where the data binders are pulled to the front and the hypotheses keep the order of the text, where ∀pt abbreviates ∀eps∈ℝ ∀Fm∈FamP(eps) ∀hc∈𝒜(Fm) ∀x∈ℝ ∀hx∈(Fm.x1<x) ∀h∈((sel Fm hc).1≤x) ∀i∈Fm.Ix(x), where D = Fm.D x i, L = Fm.L x i, ex = Fm.ex x hx i, P = (selP Fm hc x hx h i).1, 𝒲 = WithTw(WithSm(WithChN 𝒜)), 𝒟 = D3 3 𝒜 = Des(WithChN 𝒜, 3), QB = indefiniteRealisationChoiceOfSelection(selB), s(Fm,hc) = ⟨(sel Fm (d3_a hc)).1, (x,hx,h,i) ↦ (selS Fm (d3_a hc) x hx h i).toSTies⟩, M_k = lPrj(D, P'.A3.A, P'.P0, P'.ψ0, P'.A3.fam3.toSub2(P'.Zs), k, P'.A3.A.μ0) with P' = (selP Fm (d3_a hc) x hx h i).1, where Closed(𝒞,φ) ⇔ ∃ε1∈ℝ (0<ε1 ∧ ∀eps∈ℝ (0<eps ⇒ eps≤ε1 ⇒ ∃K∈TransportedAlt ∀Fm∈FamP(eps) ∀CH∈ℝ (𝒞(Fm) ⇒ Fm.Large(K,CH) ⇒ φ(Fm,CH)))), where LinkN(Fm) ⇔ ∃C,x0∈ℝ ∀x≥x0 ∀i∈Fm.Ix(x) (ShaFinOdd(D) ⇒ ∀j∈{1,…,D.R.m}, LinkN_at(L,j,C)), where LinkN_at(L,j,C) ⇔ (the series Σ_l vvTerm(D,l) is summable ⇒ etaSum(L,j) ≤ L.dZ0(j)·(C·(D.R.f·D.R.m·L.sc.b·(L.sc.L)² + (log L.sc.x)²·L.Nc) + Σ_l vvTerm(D,l))), where ShaFinOdd(D) ⇔ ∀ prime p ∀e∈ℕ (0<e ⇒ e<D.R.t ⇒ shaLen(D.nd.ldat p, e) ≠ ⊤), where TopG ⇔ ∀la∈ℝ ∀G∈FReq (1<la ⇒ HostExW(la, G.req) ⇒ (∀eps∈ℝ ∀Fm∈FamP(eps), G.cls(la)(Fm) ⇒ HypV(Fm.toFamCore)) ⇒ FamilyClassConnected(G.cls(la))), and where Green ⇔ ∀ prime g ∀L∈LabelDatum(g) ∀d∈ℕ (0<d ⇒ ∃τ∈((ℤ/g)[X] → (GL_d(ℤ/g) → ℂ)) [ (∀P, IsPrimeLab(d,P) ⇒ IsCuspOf(L,P,τ(P)) ∧ τ(P)(1) = ∏_{i=1}^{d−1} (g^i − 1)) ∧ (∀P ∀P', IsPrimeLab(d,P) ⇒ IsPrimeLab(d,P') ⇒ τ(P)=τ(P') ⇒ P=P') ∧ (∀χ∈(GL_d(ℤ/g) → ℂ), IsCusp(χ) ⇒ ∃P, IsPrimeLab(d,P) ∧ χ=τ(P)) ])",
    "terms": [
     {
      "name": "Green",
-     "gloss": "The statement that for every prime g, every Λ of a type that the code calls LabelDatum g and every whole number d > 0, a map τ exists from polynomials over the integers modulo g to complex-valued functions on the group of invertible d by d matrices modulo g such that, for every polynomial P with IsPrimeLab d P, the function τ P satisfies IsCuspOf Λ P and takes at the identity matrix the value of the product of g^i − 1 over i from 1 to d − 1, such that τ is one-to-one on the polynomials with IsPrimeLab d, and such that every function χ with IsCusp χ equals τ P for some P with IsPrimeLab d P, where LabelDatum, IsPrimeLab, IsCuspOf and IsCusp have no body in the dossier.",
-     "opaque": true
-    },
-    {
-     "name": "TopShapeAlt",
-     "gloss": "A statement with four parameters V, NR, N and G that opens with universal quantifiers over a class 𝒜 of family records, a function cT of two real variables and twenty-one further items named hEx, sel, hduty, selS, selP, selDH, selC, selB, hRB, hTw, hPA, hLamP, hDivG, hDcPtG, hTu, hn4, hLit, hVC, hWu, hRF and hTF, where hVC is a proof of the parameter V, and the dossier cuts the text inside hTF, before any use of NR, N or G and before the conclusion.",
-     "opaque": true
-    },
-    {
-     "name": "Closed",
-     "gloss": "Closed 𝒞 P says that some ε1 > 0 exists such that for every real eps with 0 < eps ≤ ε1 a record K of type TransportedAlt exists for which every family record Fm of type FamP eps in the class 𝒞 and every real CH with Fm.Large K CH satisfy P Fm CH, where Large has no body in the dossier.",
-     "opaque": true
-    },
-    {
-     "name": "Large",
-     "gloss": "A condition on a family record Fm, a TransportedAlt record K and a real number CH that the body of Closed uses and whose definition the dossier does not show.",
-     "opaque": true
-    },
-    {
-     "name": "LinkN",
-     "gloss": "LinkN Fm says that real numbers C and x0 exist such that for every x ≥ x0 and every index i in Fm.Ix x, if Fm.D x i satisfies ShaFinOdd then LinkN_at holds for Fm.L x i, j and C for every whole number j in the set lifts of Fm.D x i.",
-     "opaque": false
-    },
-    {
-     "name": "LinkN_at",
-     "gloss": "LinkN_at L j C is the implication that if the series with terms vvTerm D is summable then etaSum L j ≤ dZ0 j · (C · (f · m · b · 𝓛² + (log x)² · Nc) + the sum of the series vvTerm D), where f and m are the numbers D.R.f and D.R.m, where b, 𝓛 and x are the numbers L.sc.b, L.sc.L and L.sc.x, where dZ0 j and Nc are numbers stored in L, and where etaSum and vvTerm have no body in the dossier.",
-     "opaque": true
-    },
-    {
-     "name": "ShaFinOdd",
-     "gloss": "ShaFinOdd D says that for every prime p and every whole number e with 0 < e < t, where t is the number D.R.t stored in D, the value shaLen (D.nd.ldat p) e differs from the top element ⊤ of its range, and shaLen has no body in the dossier.",
-     "opaque": true
-    },
-    {
-     "name": "lifts",
-     "gloss": "lifts D is the finite set of whole numbers from 1 to m, where m is the number D.R.m stored in the data record D.",
-     "opaque": false
-    },
-    {
-     "name": "TopG",
-     "gloss": "The statement that for every real la and every G of a type that the code calls FReq, if 1 < la, HostExW la G.req holds and every family record in the class G.cls la satisfies HypV on its FamCore part, then FamilyClassConnected (G.cls la) holds, where FReq, HostExW, HypV and FamilyClassConnected have no body in the dossier.",
-     "opaque": true
-    },
-    {
-     "name": "FamClass",
-     "gloss": "A class of family records, that is, a rule that assigns to every family record Fm of type FamP eps, for every real eps, a statement that is true or false.",
-     "opaque": false
-    },
-    {
-     "name": "FamP",
-     "gloss": "A record type that depends on a real number eps, extends a record called FamCore, and holds for each real x and each index i in Ix x a data record D x i and a size record L x i together with many further fields, whose listing the dossier cuts.",
-     "opaque": true
-    },
-    {
-     "name": "TransportedAlt",
-     "gloss": "A record that holds one real number pre and three functions t, mid and last from finite lists of real numbers to real numbers.",
+     "gloss": "A proposition shown in full, which says that for every prime g, every L of type LabelDatum g and every integer d > 0 there is a map τ from polynomials over the integers modulo g to complex-valued functions on GL_d of the integers modulo g such that every P with IsPrimeLab d P has IsCuspOf L P (τ P) and has τ P at the identity matrix equal to the product of g^i − 1 over i from 1 to d − 1, such that τ P = τ P' forces P = P' for two such polynomials, and such that every function χ with IsCusp χ equals τ P for some such P.",
      "opaque": false
     },
     {
      "name": "Gn",
-     "gloss": "Gn g n is the group of invertible n by n matrices with entries in the integers modulo g.",
+     "gloss": "Gn g n is the group GL (Fin n) (ZMod g) of invertible n by n matrices with entries in the integers modulo g.",
      "opaque": false
     },
     {
-     "name": "hTu, hn4 and hTF",
-     "gloss": "Three of the visible hypotheses of TopShapeAlt, each of the form Closed applied to a class built from 𝒜 (with the builders WithTw, WithSm, WithChN and D3) and to a property named through TuSize, ClassNumberFormula₂ or TFrame.",
+     "name": "LabelDatum",
+     "gloss": "A type that depends on g and whose definition the dossier does not show.",
      "opaque": true
+    },
+    {
+     "name": "IsPrimeLab",
+     "gloss": "A condition on an integer d and a polynomial P over the integers modulo g, used in Green and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "IsCuspOf",
+     "gloss": "A condition on a label datum L, a polynomial P and a complex-valued function on GL_d, used in Green and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "IsCusp",
+     "gloss": "A condition on a complex-valued function on GL_d of the integers modulo g, used in Green and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "TopShapeAlt",
+     "gloss": "A proposition with four slots V, NR, N and G, shown in full, which says that for every family class 𝒜, every function cT and 51 further bound items of data and hypotheses, including a proof of V, a proof of NR and a proof of N applied to D3 3 𝒜, the proposition in the slot G holds.",
+     "opaque": false
+    },
+    {
+     "name": "FamClass",
+     "gloss": "A family class is a predicate that gives a truth value to every Fm of type FamP eps, for every real eps.",
+     "opaque": false
+    },
+    {
+     "name": "FamP",
+     "gloss": "A record type that depends on a real eps, extends a record FamCore that is not shown and is itself shown only in part, with visible fields such as lists of real constants PK and PT, real constants CTu, Csz and Cr with 1 ≤ Cr, and many fields indexed by a real x above a threshold x1 and an index i in Ix x.",
+     "opaque": true
+    },
+    {
+     "name": "FamCore",
+     "gloss": "The record that FamP extends, not shown, which by the way the text uses it must supply the real x1, the index types Ix x and the objects D x i and L x i.",
+     "opaque": true
+    },
+    {
+     "name": "selected point",
+     "gloss": "My shorthand, not a Lean name, for the block of quantifiers that recurs in TopShapeAlt and ranges over every real eps, every family Fm in FamP eps, every proof hc of 𝒜 Fm, every real x with Fm.x1 < x and (sel Fm hc).1 ≤ x, and every index i in Fm.Ix x.",
+     "opaque": false
+    },
+    {
+     "name": "Closed",
+     "gloss": "Closed 𝒞 P says that there is a real ε1 > 0 such that for every real eps with 0 < eps ≤ ε1 there is a K of type TransportedAlt such that P Fm CH holds for every Fm in FamP eps and every real CH with 𝒞 Fm and Fm.Large K CH.",
+     "opaque": false
+    },
+    {
+     "name": "TransportedAlt",
+     "gloss": "A record made of one real number pre and three functions t, mid and last from finite lists of reals to reals.",
+     "opaque": false
+    },
+    {
+     "name": "Large",
+     "gloss": "A condition Fm.Large K CH on a family, a TransportedAlt record and a real number, whose definition the dossier does not show.",
+     "opaque": true
+    },
+    {
+     "name": "LinkN",
+     "gloss": "LinkN Fm says that there are reals C and x0 such that for every real x ≥ x0, every index i in Fm.Ix x with ShaFinOdd (Fm.D x i) and every integer j from 1 to (Fm.D x i).R.m, the condition LinkN_at (Fm.L x i) j C holds.",
+     "opaque": false
+    },
+    {
+     "name": "LinkN_at",
+     "gloss": "LinkN_at L j C says that if the series of the terms vvTerm D l over l is summable, then etaSum L j ≤ L.dZ0 j · (C · (D.R.f · D.R.m · L.sc.b · (L.sc.L)² + (log L.sc.x)² · L.Nc) + the sum of that series).",
+     "opaque": false
+    },
+    {
+     "name": "etaSum",
+     "gloss": "A real quantity etaSum L j on the left of the inequality in LinkN_at, not shown.",
+     "opaque": true
+    },
+    {
+     "name": "vvTerm",
+     "gloss": "A sequence of terms vvTerm D l whose infinite sum enters LinkN_at, not shown.",
+     "opaque": true
+    },
+    {
+     "name": "ShaFinOdd",
+     "gloss": "ShaFinOdd D says that for every prime p, with no restriction to odd primes visible in the body, and every integer e with 0 < e < D.R.t, the value shaLen (D.nd.ldat p) e differs from ⊤, the top element of its value type.",
+     "opaque": false
+    },
+    {
+     "name": "shaLen",
+     "gloss": "A function of a datum D.nd.ldat p and an integer e whose values are compared with a top element ⊤, not shown.",
+     "opaque": true
+    },
+    {
+     "name": "lifts",
+     "gloss": "lifts D is the finite set of the integers from 1 to D.R.m.",
+     "opaque": false
+    },
+    {
+     "name": "D7",
+     "gloss": "The type of the objects D x i, shown without a definition, of which the text uses fields such as R.m, R.f, R.t, R.k, R.r, what₂, mem, host and div.",
+     "opaque": true
+    },
+    {
+     "name": "SizeData₂",
+     "gloss": "The type of the objects L x i attached to a D of type D7, shown without a definition, of which the text uses fields such as sc, supp, dZ0, Nc and etaSz.",
+     "opaque": true
+    },
+    {
+     "name": "TopG",
+     "gloss": "TopG says that for every real la and every G of type FReq, if 1 < la, if HostExW la G.req holds and if every Fm of every FamP eps with G.cls la Fm satisfies HypV Fm.toFamCore, then FamilyClassConnected (G.cls la) holds.",
+     "opaque": false
+    },
+    {
+     "name": "FReq",
+     "gloss": "A type, not shown, whose elements G carry a field G.req and a field G.cls that turns a real la into a family class.",
+     "opaque": true
+    },
+    {
+     "name": "HostExW",
+     "gloss": "A condition on a real la and on G.req, used in TopG and in ExS and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "HypV",
+     "gloss": "A condition on the FamCore part of a family, used in TopG and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "FamilyClassConnected",
+     "gloss": "A condition on a family class that forms the final conclusion of TopG and is not shown.",
+     "opaque": true
+    },
+    {
+     "name": "D3",
+     "gloss": "D3 C0 𝒜 is the family class Des (WithChN 𝒜) C0, so D3 3 𝒜 is Des (WithChN 𝒜) 3.",
+     "opaque": false
+    },
+    {
+     "name": "Des",
+     "gloss": "An operation that turns a family class and a real constant into a family class, not shown.",
+     "opaque": true
+    },
+    {
+     "name": "d3_a",
+     "gloss": "A map, not shown, that the text applies to a proof of D3 3 𝒜 Fm in places where a proof of 𝒜 Fm is required.",
+     "opaque": true
+    },
+    {
+     "name": "WithChN",
+     "gloss": "WithChN 𝒞 is the class of the families Fm with 𝒞 Fm, DGamDvdF Fm, TameDistinctF Fm, BoxesF Fm, QDRowsF Fm and Fm.CYL ≤ 9, where the four named conditions are not shown.",
+     "opaque": false
+    },
+    {
+     "name": "WithSm",
+     "gloss": "WithSm 𝒞 is the class of the families Fm with 𝒞 Fm and DGamSmooth Fm, where DGamSmooth is not shown.",
+     "opaque": false
+    },
+    {
+     "name": "WithTw",
+     "gloss": "WithTw 𝒞 is the class of the families Fm with 𝒞 Fm and TwGood Fm, where TwGood is not shown.",
+     "opaque": false
+    },
+    {
+     "name": "MinkDiv",
+     "gloss": "MinkDiv says that MinkMult n (minkM n) holds for every natural number n, where MinkMult and minkM are not shown.",
+     "opaque": false
+    },
+    {
+     "name": "ExS",
+     "gloss": "ExS 𝒜 cT says that for every real la > 1 and every G of type FReq with HostExW la G.req, the condition DesignChoices holds for the class WithTw of the families Fm with 𝒜 Fm and G.cls la Fm, for the constant 3 and for cT.",
+     "opaque": false
+    },
+    {
+     "name": "DesignChoices",
+     "gloss": "A condition on a family class, a constant and a function of two reals, used in ExS and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "Duty",
+     "gloss": "Duty Fm is the conjunction of the seven conditions PageFix Fm, PageWin Fm, SmallFirstModulusBelowScale Fm, TameDistinctF Fm, ChosenWall Fm, TupUsedF Fm and TwAllF Fm, none of which is shown.",
+     "opaque": false
+    },
+    {
+     "name": "TwistSelection",
+     "gloss": "A twist selection for 𝒞 gives for every family Fm in 𝒞 an element of TwistSelectionFunctions Fm, which by its use in the text has a real first part and a second part that yields one object for each x, hx, h and i.",
+     "opaque": false
+    },
+    {
+     "name": "TwistSelectionFunctions",
+     "gloss": "The type of the values of a twist selection at a family Fm, not shown.",
+     "opaque": true
+    },
+    {
+     "name": "SelectionSpectralCondition",
+     "gloss": "A choice, at every selected point, of an element of STiesRAlt applied to the object that sel gives there, where STiesRAlt is not shown.",
+     "opaque": false
+    },
+    {
+     "name": "BaseLevelTiedChoiceAlt",
+     "gloss": "A choice, at every selected point, of a P of type RowSideFamily (Fm.ex x hx i) with a proof of RowSideDeterminedAlt for the field T of the object that sel gives there and P, where RowSideFamily and RowSideDeterminedAlt are not shown.",
+     "opaque": false
+    },
+    {
+     "name": "SelectionDefiniteHeightCondition",
+     "gloss": "A choice, at every selected point, of a pair p of natural numbers with (Fm.D x i).s.Del = p.1 as rational numbers and (Fm.L x i).etaSz = (Fm.D x i).R.m · p.2 as real numbers.",
+     "opaque": false
+    },
+    {
+     "name": "ColumnChoiceCompatibleSelection",
+     "gloss": "A choice, at every selected point, of an element of SquareIntegrableColumns applied to the field T of the object that sel gives there and to the P that selP gives there, where SquareIntegrableColumns is not shown.",
+     "opaque": false
+    },
+    {
+     "name": "SelectionBundle",
+     "gloss": "A choice, at every selected point, of an element of RealTBAlt applied to the choices of sel, selP, selC and selS there and to IndefiniteScaleAtPoint sel selP selDH, where RealTBAlt and IndefiniteScaleAtPoint are not shown.",
+     "opaque": false
+    },
+    {
+     "name": "indefiniteRealisationChoiceOfSelection",
+     "gloss": "The map that sends each selected point to the field Q of the element that selB gives there.",
+     "opaque": false
+    },
+    {
+     "name": "kernelChoiceOfSelection",
+     "gloss": "A map applied to selB whose result is passed to IndefiniteRealisationSelection, not shown.",
+     "opaque": true
+    },
+    {
+     "name": "IndefiniteRealisationBoundedRows",
+     "gloss": "A pair of conditions on an element B of RealTBAlt, namely IoExt B.Q.Rl.toRealDat and, for every i, OneMapRowR B.T B.Q.Rl.toRealDat B.κ B.v₀ B.O (phEff B.Q.Rl) i, where IoExt, OneMapRowR and phEff are not shown.",
+     "opaque": false
+    },
+    {
+     "name": "TieTwRec",
+     "gloss": "TieTwRec L Tw says that every y in the finite set Tw of height-one prime ideals of the ring of integers of the field D.what₂.LL has D.plEq.symm y in L.supp and has D.what₂.muAt (D.plEq.symm y) different from D.what₂.mu0.",
+     "opaque": false
+    },
+    {
+     "name": "AllRealisationsPrimitive",
+     "gloss": "It says that at every selected point PrimRows3 holds for the fields Rl and F of the chosen realisation and the field A3.fam3.TypesSep3 of the P that selP gives there holds, where PrimRows3 and TypesSep3 are not shown.",
+     "opaque": false
+    },
+    {
+     "name": "RowsHoldLam3",
+     "gloss": "RowsHoldLam3 P says that there is a map cOf from D.what₂.FT to the index set P.A3.fam3.base3.Ix such that, first, for every i below D.R.m and every index c the subspaces isot (i+1) σ over the σ with cOf σ = c are independent and their sum equals the complex span of the image under P.I.jW i of the set P.S0.Wp i c, second, lamP (P.I.tup t) (i+1) σ = P.S0.lam i t (cOf σ) v0 whenever P.I.tup t is mu0 or some muAt w and isot (i+1) σ is not the zero subspace, and third, for every c the sum of nRows0 σ over the σ with cOf σ = c equals the dimension of P.S0.Ep c over the field LL.",
+     "opaque": false
+    },
+    {
+     "name": "DivRows3G",
+     "gloss": "A bundle of six conditions on P, namely two conditions of the form HLatTie called sharpRR and baseRR, the conditions RationalLiftSpanAtUsedTuples P, ThThetaG P and NumTieG P, and the equation D.div.Bk u (P.I.eNu u x) (P.I.eRR y) = (P.A3.colData2 P.C ⊥ ⊥ 0).B (P.I.wU u) x y for all u, x and y.",
+     "opaque": false
+    },
+    {
+     "name": "DcPtG",
+     "gloss": "DcPtG P says that for every word u and every t in P.T with Used0 D (P.I.tup t), and for all vectors x and F over the field LL of the stated lengths, the image under embLL of P.Dc.Pt (P.I.wU u) t x F equals perCol u (P.I.tup t) (jN u (P.I.eNu u x)) (P.I.jA t (M·F)), where M is the matrix rV0 D P.A3.A P.Ps P.ψs t.",
+     "opaque": false
+    },
+    {
+     "name": "TuSize",
+     "gloss": "TuSize Fm says that there is a real x0 such that for every x ≥ x0 and every index i in Fm.Ix x the condition (Fm.L x i).TuGe holds and the logarithm of ((Fm.D x i).mem u).A.T is at most Fm.CTu · (Fm.D x i).R.m · (Fm.L x i).sc.L for every u.",
+     "opaque": false
+    },
+    {
+     "name": "ClassNumberFormula₂",
+     "gloss": "ClassNumberFormula₂ D Lv says that if GBig D holds and SplitsF D (D.host.g i) holds for every i, then for every word u with SplitsF D (D.mem u).A.T the number of elements of (D.mem u).C.cls 0 equals massI D D.R.k · idxPi D (D.host.g 0) (D.host.g 1) · (T^k − 1)^f with T = (D.mem u).A.T, k = D.R.k and f = D.R.f, and the body does not use the argument Lv.",
+     "opaque": false
+    },
+    {
+     "name": "LitThin",
+     "gloss": "LitThin says that there are positive reals C1 and c with adm6 D C1 c for every D of type D7, a positive real C with adm7 D C for every D, and a positive real C with adm11 D C for every D, where adm6, adm7 and adm11 are not shown.",
+     "opaque": false
+    },
+    {
+     "name": "WuDecayOfGap",
+     "gloss": "WuDecayOfGap says that for every D of type D7 with GapHyp D and every X of type HidaSetting D, the condition WuDecay X holds and the function X.ph is integrable with respect to the measure muInf X.B.I, where GapHyp, HidaSetting and WuDecay are not shown.",
+     "opaque": false
+    },
+    {
+     "name": "RowsFinDim",
+     "gloss": "RowsFinDim says that for every I of type AutInst, every sigma-finite Haar measure μf on I.Gf, every set fund with IsFundDom, every R with IsRightReg, every locally constant function e that vanishes outside I.Kset with an operator Re satisfying IsRConvF, and every family of complex Hilbert spaces H v with maps σ v, reals dv v and unit vectors w v over the infinite places v of the field I.F that satisfy IsURepOn, IsIrredOn, IsFdeg and integrability of phLoc, every operator T with IsOpInt (muInf I) (g ↦ R (g, 1)) (phInf I σ w dv) T has a finite-dimensional complex space HH I μf fund Re T.",
+     "opaque": false
+    },
+    {
+     "name": "TFrame",
+     "gloss": "TFrame Fm Cg cb Cu cT CT C0 says that OwnEv Fm holds for the property of C', Cl, x and i that Cnt.Hyp0 (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0 implies 1 ≤ Tr (Fm.D x i) w · kaS (Fm.D x i)^(2 · (Fm.D x i).R.rS) for every w, where OwnEv, Cnt.Hyp0, Tr and kaS are not shown.",
+     "opaque": false
+    },
+    {
+     "name": "CountingConstants",
+     "gloss": "A type, not shown, whose elements by their use carry the constants n0, A, C, c and cb.",
+     "opaque": true
+    },
+    {
+     "name": "TypeP",
+     "gloss": "A condition or type that the code calls TypeP, named in the hypothesis sTy and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "RowNGP",
+     "gloss": "A condition or type that the code calls RowNGP, named in the hypothesis sNG and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "RowMainEqP",
+     "gloss": "A condition or type that the code calls RowMainEqP, named in the hypothesis sM and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "LoopRowS",
+     "gloss": "A condition on a constant, a family class and a selection, named in the hypothesis sLp and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "TheoremSSelected",
+     "gloss": "A condition on a family, a constant and a selection, named in the hypothesis sO and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "CountAllPointsClass",
+     "gloss": "A condition on PLevT', a family and five constants, named in the hypothesis h30 and not shown, as PLevT' is also not shown.",
+     "opaque": true
+    },
+    {
+     "name": "VolSigIndep",
+     "gloss": "A condition on Fm.D x i, named in the hypothesis hInstR and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "ClassItemsAt",
+     "gloss": "A condition on Fm.D x i and a rank, named in the hypothesis hInstR and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "IndefiniteRealisationSelection",
+     "gloss": "A condition or type built from 𝒜, sel, selS, selP, selDH, selC and two choices derived from selB, named in the binder selJ and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "BaseVectorImageFull",
+     "gloss": "A condition on Fm.D x i, named in the hypothesis jOn and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "RowsAtSelAlt",
+     "gloss": "A condition named in the hypothesis rRows and not shown, as are its arguments DefRowsFAlt and SingleMapCondition.",
+     "opaque": true
+    },
+    {
+     "name": "Conclusion6",
+     "gloss": "A condition on Fm.D x i and u, named in the hypothesis aPt0 and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "TwistedPointIntegral",
+     "gloss": "A condition on Fm.D x i and (Fm.ex x hx i).tw, named in the hypothesis aPtTw and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "PeriodClassSumWeyl",
+     "gloss": "A condition on Fm.D x i, named in the hypothesis aPer0 and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "TwistedPeriodAdmissible",
+     "gloss": "A condition on Fm.D x i, Fm.X x i and (Fm.ex x hx i).tw, named in the hypothesis aPerTw and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "Conclusion5Sharp",
+     "gloss": "A condition on Fm.D x i and u, named in the hypothesis aP10 and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "TwistedColumnBoundAtT",
+     "gloss": "A condition on Fm.X x i, (Fm.ex x hx i).tw and u, named in the hypothesis aP10 and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "UsedTuplesBoundByConstant",
+     "gloss": "A condition on Fm.D x i, Fm.L x i, (Fm.ex x hx i).errX and a real C1, named in the hypothesis aAtG and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "familySizeBoundAtTypePrime",
+     "gloss": "A condition on a family Fm and a real C1, named in the hypothesis aAtG and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "FamilySecondComplementInputs",
+     "gloss": "A condition on a family Fm, named in the hypothesis aC2 and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "SelectionServed",
+     "gloss": "A condition on a family class and a selection, named in the hypothesis hServ and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "AllRows",
+     "gloss": "A type that depends on Fm.D x i, named in the hypothesis irrC and not shown, on whose elements the opaque conditions LabelCountGoodInjective, AllJoinA and CountAllRows are imposed.",
+     "opaque": true
+    },
+    {
+     "name": "epsC",
+     "gloss": "A function of cIc, (Fm.D x i).R.r and (Fm.D x i).R.f whose value is passed to CountAllRows, not shown.",
+     "opaque": true
+    },
+    {
+     "name": "lPrj",
+     "gloss": "A matrix built from Fm.D x i, parts of the P that selP gives and an index k, named in the hypothesis zL and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "RealPlaceSecondLayerConditions",
+     "gloss": "A condition on a family Fm, named in the hypothesis tie and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "MassRatioUnderVolume",
+     "gloss": "A condition on D, named in the hypothesis hU and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "GenusMassAt",
+     "gloss": "A condition on D and a number, used with the number 2 in the hypothesis hG and not shown.",
+     "opaque": true
+    },
+    {
+     "name": "GlobalTheoryTheory.G",
+     "gloss": "A real function G(y) equal to the sum over n from 1 to the integer part of y of abelian₂ n · max(y/n − 1, 0) minus y · (log y − 1 − γ) with γ the Euler–Mascheroni constant, which the dossier lists under the short name G although in the statement the letter G is a bound variable, a proposition in TopShapeAlt and an element of FReq in TopG, so the statement does not visibly use this function.",
+     "opaque": false
+    },
+    {
+     "name": "Fc.sel, Fc.selS, Fc.selP, Fc.selDH, Fc.selC, Fc.selB",
+     "gloss": "Six definitions that read selection data off a raw selection σ, which the dossier lists under the same short names that TopShapeAlt gives to its own universally quantified variables, so the statement does not refer to them.",
+     "opaque": false
     }
    ],
-   "suggests": "The names and the visible pattern suggest that Green is the classification by J. A. Green of the cuspidal characters of the general linear group over the field with g elements, that N enters TopShapeAlt as one more hypothesis of the Closed kind next to hTu, hn4 and hTF, and that TopShapeAlt ends in its parameter G, which would make the theorem say that TopG follows from the listed hypotheses and a closed LinkN bound that is conditional on ShaFinOdd and on the summability of vvTerm, and the dossier leaves each of these readings unconfirmed.",
-   "confidence": "low",
-   "why": "The dossier cuts the body of TopShapeAlt before its conclusion and before any use of three of its four parameters, which hides the final assertion of the theorem, and Green, Closed and TopG rest on names without shown bodies, with eight definitions left out.",
+   "suggests": "The name Green together with the value ∏(g^i − 1) suggests J. A. Green's description of the cuspidal characters of GL_d over the field with g elements, labelled by irreducible polynomials, the names shaLen and ShaFinOdd suggest finiteness of Tate–Shafarevich-type groups, and the head name with its parent zero_free_all_of_green_v_win suggests that this theorem reduces a zero-free statement to Green plus the one remaining input LinkN, but the dossier confirms none of these readings.",
+   "confidence": "medium",
+   "why": "The dossier shows the head statement, TopShapeAlt, Green, Closed, LinkN and TopG in full, so the logical form and every constant are visible, but the conclusion TopG rests on the unseen names FReq, HostExW, HypV and FamilyClassConnected, the class D3 rests on the unseen Des, the condition Large is not shown, FamP is cut, 8 definitions were left out and most hypotheses are names without bodies.",
    "second": {
-    "says": "If the proposition that the code calls Green holds, then TopShapeAlt holds with its four arguments V, NR, N and G set to True, True, the map that sends a family class 𝒞 to Closed 𝒞 (fun Fm _ => LinkN Fm), and the proposition TopG. That third argument says for a class 𝒞 that there is a real ε1 with 0 < ε1 such that for every real eps with 0 < eps and eps ≤ ε1 there is a K of type TransportedAlt for which every family Fm of type FamP eps and every real CH with 𝒞 Fm and Fm.Large K CH satisfy LinkN Fm, and LinkN Fm says that there exist reals C and x0 such that for every x ≥ x0 and every i in Fm.Ix x, ShaFinOdd (Fm.D x i) implies LinkN_at (Fm.L x i) j C for every j in Finset.Icc 1 (Fm.D x i).R.m. The body of TopShapeAlt is a long universally quantified list of hypotheses that the dossier cuts inside the twenty-third binder, so its final conclusion and the way it uses NR, N and G are not visible.",
+    "says": "If Green holds, then TopShapeAlt holds with its proposition slots V and NR both set to True, its slot N set to the map that sends a family class 𝒞 to Closed 𝒞 (fun Fm _ => LinkN Fm), and its goal slot G set to TopG. Unfolded, this means that for every family class 𝒜, every function cT from two reals to a real and every choice of the further data and hypotheses that TopShapeAlt lists, among them that the class D3 3 𝒜 is Closed for LinkN, the proposition TopG follows. Here Closed 𝒞 P means that there is a real ε1 with 0 < ε1 such that for every real eps with 0 < eps and eps ≤ ε1 there is a K of type TransportedAlt such that every Fm in FamP eps and every real CH with 𝒞 Fm and Fm.Large K CH satisfy P Fm CH, and LinkN Fm means that there are reals C and x0 such that for every x ≥ x0, every i in Fm.Ix x with ShaFinOdd (Fm.D x i) and every j in Finset.Icc 1 (Fm.D x i).R.m the condition LinkN_at (Fm.L x i) j C holds.",
     "premises": [
-     "Green holds, which says that for every prime g, every L of type LabelDatum g and every natural d with 0 < d there exists a function τ that sends each polynomial over ZMod g to a complex-valued function on Gn g d, which is GL (Fin d) (ZMod g), with three properties. First, every P with IsPrimeLab d P satisfies IsCuspOf L P (τ P), and τ P 1 equals the product over i in Finset.Ico 1 d of g ^ i - 1 computed in ℂ. Second, for all P and P' with IsPrimeLab d P and IsPrimeLab d P', the equality τ P = τ P' implies P = P'. Third, every χ from Gn g d to ℂ with IsCusp χ equals τ P for some P with IsPrimeLab d P."
+     "Green holds, which says that for every prime natural number g, every L of type LabelDatum g and every natural number d with 0 < d there is a map τ from polynomials over ZMod g to complex-valued functions on Gn g d, which is GL (Fin d) (ZMod g), such that first every P with IsPrimeLab d P has IsCuspOf L P (τ P) and τ P 1 equal to the product over i in Finset.Ico 1 d of g^i − 1 computed in ℂ, second τ P = τ P' implies P = P' whenever IsPrimeLab d P and IsPrimeLab d P' hold, and third every χ from Gn g d to ℂ with IsCusp χ equals τ P for some P with IsPrimeLab d P",
+     "𝒜 is an arbitrary family class, which is a predicate on FamP eps for every real eps",
+     "cT is an arbitrary function from two reals to a real",
+     "hEx states that MinkDiv implies ExS 𝒜 cT, where MinkDiv says MinkMult n (minkM n) for every natural number n and ExS 𝒜 cT says that for every real la and every G of type FReq with 1 < la and HostExW la G.req the condition DesignChoices holds for the class WithTw (fun Fm => 𝒜 Fm ∧ G.cls la Fm), the number 3 and cT",
+     "sel is an arbitrary element of TwistSelection 𝒜, which gives an element of TwistSelectionFunctions Fm for every Fm with 𝒜 Fm, and sel, selS, selP, selDH, selC, selB and the slot G are bound variables here, so the dossier entries GlobalTheory.Fc.sel, selS, selP, selDH, selC, selB and Formalism.MainNotions.GlobalTheoryTheory.G are different objects",
+     "hduty states that every Fm with 𝒜 Fm satisfies Duty Fm, the conjunction of PageFix Fm, PageWin Fm, SmallFirstModulusBelowScale Fm, TameDistinctF Fm, ChosenWall Fm, TupUsedF Fm and TwAllF Fm",
+     "selS gives an element of STiesRAlt ((sel Fm hc).2 x hx h i) at every selection point, where a selection point is a real eps, an Fm in FamP eps, a proof hc of 𝒜 Fm, a real x with proofs hx of Fm.x1 < x and h of (sel Fm hc).1 ≤ x, and an index i in Fm.Ix x",
+     "selP gives at every selection point a P in RowSideFamily (Fm.ex x hx i) that satisfies RowSideDeterminedAlt ((sel Fm hc).2 x hx h i).T P",
+     "selDH gives at every selection point a pair p of natural numbers with (Fm.D x i).s.Del = p.1 as rationals and (Fm.L x i).etaSz = (Fm.D x i).R.m * p.2 as reals",
+     "selC gives at every selection point an element of SquareIntegrableColumns ((sel Fm hc).2 x hx h i).T (selP Fm hc x hx h i).1",
+     "selB gives at every selection point an element of RealTBAlt formed from (sel Fm hc).2 x hx h i, (selP Fm hc x hx h i).1, (selC Fm hc x hx h i).c.face, (selC Fm hc x hx h i).Sp, IndefiniteScaleAtPoint sel selP selDH Fm hc x hx h i and selS Fm hc x hx h i",
+     "hRB states that IndefiniteRealisationBoundedRows (selB Fm hc x hx h i) holds at every selection point, a structure whose two fields are an IoExt condition and a OneMapRowR condition for every row index",
+     "hTw states that TieTwRec (Fm.L x i) (selP Fm hc x hx h i).1.S0.Tw holds at every selection point, meaning that every y in that finite set Tw has D.plEq.symm y in L.supp and D.what₂.muAt (D.plEq.symm y) ≠ D.what₂.mu0",
+     "hPA states AllRealisationsPrimitive sel (indefiniteRealisationChoiceOfSelection selB), meaning that at every selection point PrimRows3 holds for the fields Rl and F of (selB Fm hc x hx h i).Q and (selP Fm hc x hx h i).1.A3.fam3.TypesSep3 holds",
+     "hLamP states that RowsHoldLam3 (selP Fm hc x hx h i).1 holds at every selection point",
+     "hDivG states that DivRows3G (selP Fm hc x hx h i).1 holds at every selection point",
+     "hDcPtG states that DcPtG (selP Fm hc x hx h i).1 holds at every selection point",
+     "hTu states that the class WithTw (WithSm (WithChN 𝒜)) is Closed for the property that cT eps Fm.CYL ≤ Fm.CTu implies TuSize Fm, where WithChN 𝒞 Fm is 𝒞 Fm ∧ DGamDvdF Fm ∧ TameDistinctF Fm ∧ BoxesF Fm ∧ QDRowsF Fm ∧ Fm.CYL ≤ 9, WithSm adds DGamSmooth Fm and WithTw adds TwGood Fm",
+     "hn4 states that the same class WithTw (WithSm (WithChN 𝒜)) is Closed for the property that ClassNumberFormula₂ (Fm.D x i) (Fm.ex x hx i).lev holds for every x with Fm.x1 < x and every i in Fm.Ix x",
+     "hLit states LitThin, meaning that there are reals C1 and c with 0 < C1 and 0 < c such that adm6 D C1 c holds for every D in D7, a real C with 0 < C such that adm7 D C holds for every D in D7, and a real C with 0 < C such that adm11 D C holds for every D in D7",
+     "hVC is a proof of the slot V, which is True in this theorem",
+     "hWu states WuDecayOfGap, meaning that for every D in D7 with GapHyp D and every X in HidaSetting D, WuDecay X holds and X.ph is integrable with respect to muInf X.B.I",
+     "hRF states RowsFinDim, which says that the space HH I μf fund Re T is finite-dimensional over ℂ for every I in AutInst under the hypotheses that its definition lists",
+     "hTF states that the class D3 3 𝒜, which is Des (WithChN 𝒜) 3, is Closed for the property TFrame Fm (Fm.CYL + 1) (1/4) 3 (1/2) Fm.CTu 3",
+     "c30 is an arbitrary function from lists of reals to CountingConstants",
+     "hc30 states that every Fm has 0 ≤ (c30 Fm.cOut).C and 2 * (Fm.CYL + 1) ≤ (c30 Fm.cOut).A",
+     "sTy is a term of what the code calls Formalism.L2.SG.RowsPos.TypeP",
+     "sNG is a term of what the code calls Formalism.L2.SG.RowsPos.RowNGP",
+     "sM is a term of what the code calls Formalism.L2.SG.RowsPos.RowMainEqP",
+     "sLp is a term of LoopRowS 3 (D3 3 𝒜) applied to the map that sends Fm and hc to the pair made of (sel Fm (d3_a hc)).1 and the function sending x, hx, h, i to (selS Fm (d3_a hc) x hx h i).toSTies",
+     "sO states that the class D3 3 𝒜 is Closed for the property that TheoremSSelected Fm 3 holds for that same pair for every proof hc of D3 3 𝒜 Fm",
+     "h30 states that the class D3 3 𝒜 is Closed for the property CountAllPointsClass PLevT' Fm (c30 Fm.cOut).n0 (c30 Fm.cOut).A (c30 Fm.cOut).C (c30 Fm.cOut).c (c30 Fm.cOut).cb",
+     "hInstR states that VolSigIndep (Fm.D x i) and ClassItemsAt (Fm.D x i) ((Fm.D x i).sp.Y 0).rank hold at every selection point",
+     "selJ is a term of JoinSISel.IndefiniteRealisationSelection 𝒜 sel selS selP selDH selC (kernelChoiceOfSelection selB) (indefiniteRealisationChoiceOfSelection selB)",
+     "jOn states that the class D3 3 𝒜 is Closed for the property that there is a real x0 such that BaseVectorImageFull (Fm.D x i) holds for every x ≥ x0 and every i in Fm.Ix x",
+     "hMt states that for every Fm with 𝒜 Fm there is a real x0 such that for every x ≥ x0, every i in Fm.Ix x, every μ in (Fm.D x i).what₂.Tup, every a in NumberField.RingOfIntegers of (Fm.D x i).what₂.LL and every y in the carrier of (Fm.D x i).what₂.Mtilde μ, the scalar product of embLL a with y lies in that carrier again",
+     "rRows states that the class D3 3 𝒜 is Closed for the property of Fm and CH that for every proof hc of D3 3 𝒜 Fm the condition RowsAtSelAlt holds with the arguments sel, indefiniteRealisationChoiceOfSelection selB, the function built from Top4Wire2.DefRowsFAlt on that same choice, SingleMapCondition selB, Fm, d3_a hc and CH",
+     "aPt0 states that the class D3 3 𝒜 is Closed for the property that there is a real x0 such that Conclusion6 (Fm.D x i) u holds for every x with x0 ≤ x and Fm.x1 < x, every i in Fm.Ix x and every u",
+     "aPtTw states that the class D3 3 𝒜 is Closed for the property that there is a real x0 such that TwistedPointIntegral (Fm.D x i) (Fm.ex x hx i).tw holds for every x with x0 ≤ x and Fm.x1 < x and every i in Fm.Ix x",
+     "aPer0 states that the class D3 3 𝒜 is Closed for the property that there is a real x0 such that PeriodClassSumWeyl (Fm.D x i) holds for every x with x0 ≤ x and Fm.x1 < x and every i in Fm.Ix x",
+     "aPerTw states that the class D3 3 𝒜 is Closed for the property that there is a real x0 such that TwistedPeriodAdmissible (Fm.D x i) (Fm.X x i) (Fm.ex x hx i).tw holds for every x with x0 ≤ x and Fm.x1 < x and every i in Fm.Ix x",
+     "aP10 states that the class D3 3 𝒜 is Closed for the property that there is a real x0 such that for every x with x0 ≤ x and Fm.x1 < x, every i in Fm.Ix x and every u, both Conclusion5Sharp (Fm.D x i) u and TwistedColumnBoundAtT (Fm.X x i) (Fm.ex x hx i).tw u hold",
+     "aAtG states that the class D3 3 𝒜 is Closed for the property that there is a real C1 such that first there is a real x0 with UsedTuplesBoundByConstant (Fm.D x i) (Fm.L x i) (Fm.ex x hx i).errX C1 for every x with Fm.x1 < x and x0 ≤ x and every i in Fm.Ix x, and second familySizeBoundAtTypePrime Fm C1 holds",
+     "aC2 states that the class D3 3 𝒜 is Closed for the property FamilySecondComplementInputs Fm",
+     "hServ states SelectionServed (D3 3 𝒜) for the map that sends Fm and hc to sel Fm (d3_a hc)",
+     "nR is a proof of the slot NR, which is True in this theorem",
+     "nRest is the slot N applied to D3 3 𝒜, which in this theorem states that the class D3 3 𝒜 is Closed for the property LinkN Fm, where LinkN_at L j C says that summability of vvTerm D implies etaSum L j ≤ (L.dZ0 j) * (C * (D.R.f * D.R.m * L.sc.b * L.sc.L^2 + (Real.log L.sc.x)^2 * L.Nc) + the infinite sum over l of vvTerm D l), and ShaFinOdd D says that shaLen (D.nd.ldat p) e ≠ ⊤ for every prime p and every natural number e with 0 < e and e < D.R.t",
+     "cIc is an arbitrary real number",
+     "hcI states 0 < cIc",
+     "irrC states that the class D3 3 𝒜 is Closed for the property that there is a real x0 such that for every x ≥ x0 and every i in Fm.Ix x there is an A in AllRows (Fm.D x i) with LabelCountGoodInjective A, AllJoinA A and CountAllRows A (epsC cIc (Fm.D x i).R.r (Fm.D x i).R.f)",
+     "zL states that the class D3 3 𝒜 is Closed for the property that for every proof hc of D3 3 𝒜 Fm there is a real xr such that for every x with Fm.x1 < x, (sel Fm (d3_a hc)).1 ≤ x and xr ≤ x, every i in Fm.Ix x and every k in Fin (Fm.D x i).R.m, the map mulVec of the matrix lPrj (Fm.D x i) P.A3.A P.P0 P.ψ0 (P.A3.fam3.toSub2 P.Zs) k P.A3.A.μ0 is surjective, with P standing for (selP Fm (d3_a hc) x hx h i).1",
+     "tie states that the class D3 3 𝒜 is Closed for the condition that the code calls RealPlaceSecondLayerConditions Fm",
+     "hU states that the condition that the code calls MassRatioUnderVolume D holds for every D",
+     "hG states that the condition that the code calls GenusMassVolumes.GenusMassAt D 2 holds for every D"
     ],
-    "conclusion": "TopShapeAlt True True (fun 𝒞 => Closed 𝒞 fun Fm _ => LinkN Fm) TopG holds. The visible part of TopShapeAlt V NR N G quantifies universally, in this order, over a family class 𝒜, a function cT from two reals to a real, hEx (MinkDiv implies ExS 𝒜 cT), sel (a TwistSelection for 𝒜), hduty (every Fm with 𝒜 Fm satisfies Duty Fm), selS, selP, selDH, selC and selB (of the types SelectionSpectralCondition 𝒜 sel, BaseLevelTiedChoiceAlt 𝒜 sel, SelectionDefiniteHeightCondition 𝒜 sel, ColumnChoiceCompatibleSelection 𝒜 sel selP and SelectionBundle 𝒜 sel selS selP selDH selC), then four hypotheses stated for every Fm, every proof hc of 𝒜 Fm, every real x, every proof hx that Fm.x1 < x, every proof h that (sel Fm hc).1 ≤ x and every i in Fm.Ix x, namely hRB (IndefiniteRealisationBoundedRows (selB Fm hc x hx h i)), hTw (TieTwRec (Fm.L x i) (selP Fm hc x hx h i).1.S0.Tw), and after hPA (AllRealisationsPrimitive sel (indefiniteRealisationChoiceOfSelection selB)) the further pointwise hypotheses hLamP (RowsHoldLam3 (selP Fm hc x hx h i).1), hDivG (DivRows3G of the same object) and hDcPtG (DcPtG of the same object), then hTu (Closed (WithTw (WithSm (WithChN 𝒜))) for the property that cT eps Fm.CYL ≤ Fm.CTu implies TuSize Fm), hn4 (Closed of the same class for the property that ClassNumberFormula₂ (Fm.D x i) (Fm.ex x hx i).lev holds for every x, every proof hx that Fm.x1 < x and every i), hLit (LitThin), hVC (V, which is True here), hWu (WuDecayOfGap), hRF (RowsFinDim) and hTF (Closed (D3 3 𝒜) for a property that begins TFrame Fm (Fm.CYL + 1) and is cut there). LinkN_at L j C says that if vvTerm D is summable then etaSum L j ≤ (L.dZ0 j) * (C * (D.R.f * D.R.m * L.sc.b * L.sc.L ^ 2 + Real.log L.sc.x ^ 2 * L.Nc) + ∑' l, vvTerm D l), and ShaFinOdd D says that for every prime p and every natural e with 0 < e and e < D.R.t the value shaLen (D.nd.ldat p) e is not ⊤. TopG says that for every real la and every G of type FReq, if 1 < la, if HostExW la G.req holds and if every Fm with G.cls la Fm satisfies HypV Fm.toFamCore, then FamilyClassConnected (G.cls la) holds.",
+    "conclusion": "TopShapeAlt True True (fun 𝒞 => Closed 𝒞 fun Fm _ => LinkN Fm) TopG holds, so under the listed hypotheses TopG holds, which says that for every real la and every G of type FReq, if 1 < la, if HostExW la G.req holds and if every Fm in FamP eps for every real eps with G.cls la Fm satisfies HypV Fm.toFamCore, then FamilyClassConnected (G.cls la) holds",
     "unclear": [
-     "GlobalTheory.Fc.TopShapeAlt (text cut before its conclusion and before any use of NR, N and G)",
-     "Formalism.MainNotions.FamP (text cut)",
-     "FamCore",
-     "D7",
-     "SizeData₂",
-     "Fm.Large",
-     "Fm.CYL",
      "LabelDatum",
      "IsPrimeLab",
      "IsCuspOf",
      "IsCusp",
-     "FReq",
+     "FReq with its fields req and cls",
      "HostExW",
      "HypV",
      "FamilyClassConnected",
-     "etaSum",
+     "FamCore and the cut part of FamP, since the visible part of FamP does not declare the fields x1, Ix, D, L, CYL and cOut that the statement uses",
+     "FamP.Large",
+     "D7",
+     "SizeData₂",
+     "shaLen",
      "vvTerm",
+     "etaSum",
      "dZ0",
-     "Nc",
-     "Formalism.GaloisCohomology.shaLen",
      "MinkMult",
      "minkM",
-     "Formalism.MainNotions.DesignChoices",
-     "Formalism.L2.TwistSelectionFunctions",
+     "DesignChoices",
+     "TwistSelectionFunctions",
      "PageFix",
      "PageWin",
      "SmallFirstModulusBelowScale",
@@ -359,70 +836,99 @@
      "ChosenWall",
      "TupUsedF",
      "TwAllF",
-     "Formalism.L2.SG.SpectralTiesReal.STiesRAlt",
-     "Formalism.L2.Rows.RowSideFamily",
-     "Formalism.L2.Rows.RowSideDeterminedAlt",
-     "Formalism.L2.DIV.SquareIntegrableColumns",
-     "Formalism.IndefR.RealTBAlt",
-     "Formalism.L2.Top4.IndefiniteScaleAtPoint",
+     "STiesRAlt",
+     "toSTies",
+     "RowSideFamily",
+     "RowSideDeterminedAlt",
+     "SquareIntegrableColumns",
+     "RealTBAlt",
+     "IndefiniteScaleAtPoint",
      "IoExt",
      "OneMapRowR",
      "phEff",
-     "Formalism.IndefR.Links.PrimRows3",
+     "PrimRows3",
      "TypesSep3",
-     "Formalism.L2.Top4.IndefiniteRealisationChoice'",
-     "Formalism.L2.Top4.kernelChoiceOfSelection",
-     "Formalism.L2.Top4.KernelSelection",
+     "IndefiniteRealisationChoice'",
+     "KernelSelection",
+     "kernelChoiceOfSelection",
      "HLatTie",
      "RationalLiftSpanAtUsedTuples",
      "ThThetaG",
      "NumTieG",
-     "Formalism.IndefR.RecTie.Used0",
+     "Used0",
+     "rV0",
      "TwGood",
      "DGamSmooth",
      "DGamDvdF",
      "BoxesF",
      "QDRowsF",
      "Des",
+     "d3_a",
      "TuGe",
+     "LevelData",
      "GBig",
      "SplitsF",
      "massI",
      "idxPi",
-     "LevelData",
      "ShortIntervalPrimes.adm6",
      "ShortIntervalPrimes.adm7",
      "ShortIntervalPrimes.adm11",
-     "Formalism.L2.SG.ConcreteSettingExists.GapHyp",
+     "GapHyp",
      "HidaSetting",
      "WuDecay",
      "muInf",
-     "AutInst",
-     "IsFundDom",
-     "IsRightReg",
-     "IsRConvF",
-     "IsURepOn",
-     "IsIrredOn",
-     "IsFdeg",
-     "IsOpInt",
-     "phLoc",
-     "phInf",
-     "UJset",
+     "AutInst and the conditions inside RowsFinDim, namely IsFundDom, IsRightReg, IsRConvF, IsURepOn, IsIrredOn, IsFdeg, IsOpInt, phLoc, phInf, UJset, muG and HH",
      "OwnEv",
      "Cnt.Hyp0",
      "Tr",
-     "kaS"
+     "kaS",
+     "CountingConstants",
+     "TypeP",
+     "RowNGP",
+     "RowMainEqP",
+     "LoopRowS",
+     "TheoremSSelected",
+     "CountAllPointsClass",
+     "PLevT'",
+     "VolSigIndep",
+     "ClassItemsAt",
+     "JoinSISel.IndefiniteRealisationSelection",
+     "BaseVectorImageFull",
+     "Mtilde",
+     "embLL",
+     "RowsAtSelAlt",
+     "DefRowsFAlt",
+     "SingleMapCondition",
+     "Conclusion6",
+     "TwistedPointIntegral",
+     "PeriodClassSumWeyl",
+     "TwistedPeriodAdmissible",
+     "Conclusion5Sharp",
+     "TwistedColumnBoundAtT",
+     "UsedTuplesBoundByConstant",
+     "familySizeBoundAtTypePrime",
+     "FamilySecondComplementInputs",
+     "SelectionServed",
+     "AllRows",
+     "LabelCountGoodInjective",
+     "AllJoinA",
+     "CountAllRows",
+     "epsC",
+     "lPrj",
+     "RealPlaceSecondLayerConditions",
+     "MassRatioUnderVolume",
+     "GenusMassVolumes.GenusMassAt",
+     "Extra",
+     "DivX",
+     "GatTies"
     ]
    },
    "check": {
-    "first_errors": [
-     "A's field says calls LinkN \"an upper bound on a quantity called etaSum that holds from some x0 on\" and does not say that conditions are left out, while the Lean text of LinkN gives the bound only after \"ShaFinOdd (Fm.D x i) →\" and the Lean text of LinkN_at gives it only after \"Summable (vvTerm D) →\", and A states these two conditions in its fields terms and notation alone."
-    ],
-    "rounds": 1,
-    "second_errors": [
-     "B's field conclusion says \"then four hypotheses stated for every Fm\", while the Lean text of TopShapeAlt has five hypotheses of that form, namely hRB, hTw, hLamP, hDivG and hDcPtG, and B itself goes on to list all five."
-    ]
-   }
+    "first_errors": [],
+    "rounds": 0,
+    "second_errors": []
+   },
+   "dossier": "The dossier shows the definition TopShapeAlt in full, taken from the source file, because the statement splitter cuts it before its conclusion. A first reading from the cut dossier had confidence low."
   }
  ]
 }
