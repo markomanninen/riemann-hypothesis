@@ -97,13 +97,20 @@ details{border-top:1px solid var(--rule);padding:6px 0}summary{cursor:pointer;mi
 footer.band{padding-bottom:48px}
 #tip{position:fixed;z-index:1000;max-width:min(320px,calc(100vw - 16px));padding:6px 10px;border-radius:6px;background:var(--ink);color:var(--bg);font-size:13px;line-height:1.4;pointer-events:none;opacity:0;transition:opacity .12s}
 #tip.on{opacity:1}
-@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+/* One progress line for every wait. With a count it is a bar that fills, and without one a stripe that runs. */
+.prog{margin:8px 0;font-size:13px;color:var(--mute);max-width:none}
+.prog .pb{height:4px;background:var(--prs);border-radius:2px;overflow:hidden;margin-top:4px}
+.prog .pb i{display:block;height:100%;background:var(--pr);border-radius:2px;transition:width .2s}
+.prog.any .pb i{width:35%;animation:prog-run 1.1s linear infinite}
+@keyframes prog-run{from{transform:translateX(-100%)}to{transform:translateX(290%)}}
+.row.wait .n{color:var(--mute);font-weight:400}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}.prog.any .pb i{animation:none;width:100%;opacity:.5}}
 </style>
 </head>
 <body>
 <header class="band">
   <h1>The proof of <code>allChi</code> stands <span id="h-top">197</span> modules tall on a base of <span id="h-mod">149,280</span></h1>
-  <p>Each dot is a module, placed by its source folder and raised by the length of the longest chain of imports below it. <a href="#how">How to read this page</a></p>
+  <p>Each dot is a module, placed by its source folder and raised by the length of the longest chain of imports below it. <a href="#how">How to read this page</a> · <a href="overview/index.html">Overview of the verification work</a></p>
 </header>
 <div class="band">
   <nav class="hs" id="tabs" aria-label="Views"></nav>
@@ -195,7 +202,7 @@ const metaReady=getJSON('data/meta.json').then(m=>{meta=m;$('#tm').textContent=f
 const namesReady=(async()=>{let coded;
   try{coded=JSON.parse(new TextDecoder().decode(await M.gunzip('data/names.gz.txt')))}catch(e){coded=await getJSON('data/names.json')}
   let prev='';names=coded.map(([k,s])=>prev=prev.slice(0,k)+s)})();
-async function rec(i){await metaReady;const c=Math.floor(i/meta.chunk);if(!chunks[c])chunks[c]=getJSON('data/chunk'+c+'.json');return (await chunks[c])[i-c*meta.chunk]}
+async function rec(i){await metaReady;const c=Math.floor(i/meta.chunk);if(!chunks[c])chunks[c]=getJSON('data/chunk'+c+'.json').catch(e=>{delete chunks[c];throw e});return (await chunks[c])[i-c*meta.chunk]}
 
 /* Statements: what each declaration of a module says, as the Lean source writes it and without the
    proof. Both views list them with showStatements. */
@@ -210,7 +217,7 @@ function stCard(d,ctxs,prevCtx){const kind=d[0],[lc,lv]=STLABEL[kind.slice(kind.
   const part=(label,j,cut)=>d[j]?`<div class="st-l">${label}</div><pre${j===main?' class="main"':''}>${esc(d[j])}${cut?' …':''}</pre>${cut?`<p class="small mute cut">The source continues for ${fmt(cut)} more characters.</p>`:''}`:'';
   return `<div class="st"><div class="st-h"><span class="st-k">${esc(kind)}</span><span class="st-n">${esc(d[1]||'unnamed')}</span></div>
    ${d[2]&&d[2]!==prevCtx?`<div class="st-l">file variables</div><pre>${esc(ctxs[d[2]-1])}</pre>`:''}${part('given',3,d[6])}${part(lc,4,d[7])}${part(lv,5,d[8])}</div>`}
-async function showStatements(el,i,head){el.dataset.for=i;el.innerHTML=head+'<p class="small mute">Loading the statements…</p>';
+async function showStatements(el,i,head){el.dataset.for=i;el.innerHTML=head+prog('Loading the statements of this module');
   await Promise.all([metaReady,namesReady]);let s;try{s=await stmts(i)}catch(e){s=undefined}
   if(el.dataset.for!==String(i)||!el.isConnected)return;
   const src=head?`<p class="small"><a href="${meta.repo}${names[i].split('.').join('/')}.lean" target="_blank" rel="noopener">Source on GitHub</a></p>`:'';
@@ -348,12 +355,17 @@ const short=s=>s.slice(s.lastIndexOf('.')+1), sent=s=>{s=String(s).trim();return
 const clip=(s,n)=>s.length<=n?s:s.slice(0,s.lastIndexOf(' ',n))+' …';
 const DOCS=f=>`<a href="${ARG_DOCS}${f}" target="_blank" rel="noopener">${f}</a>`;let ARG_DOCS='';
 async function openModule(name,to){await namesReady;const i=names.indexOf(name);if(i<0)return;location.hash=(to==='tree'?'m':'v')+i;if(to!=='tree')scrollTo({top:0})}
+/* What the second model and the check after it found in a deeper reading. */
+function deepChecks(c){if(!c)return '';if(!c.findings)return ' A second model, Gemini, then found no error in it.';
+  let t=` A second model, Gemini, then made ${c.findings===1?'one finding':c.findings+' findings'} on it, and ${c.changes?`the text was changed in ${c.changes===1?'one place':c.changes+' places'}`:'none led to a change'}.`;
+  if('recheck_errors' in c)t+=c.recheck_errors?` A check of the changed text then found ${c.recheck_errors===1?'one error':c.recheck_errors+' errors'}, which the text below corrects.`:' A check of the changed text then found no error.';
+  return t}
 function argParts(part){scroller($('#arg-parts'),[['arg','Outline','The largest steps of the proof, each with what its theorem states'],['g','Glossary','The ten definitions that the readings of the outline leave unopened most often'],['d7','The record D7','The record of data that the middle of the proof is built over']]
   .map(([k,t,tip])=>`<button data-arg="${k}" aria-current="${k===part}" data-tip="${tip}">${t}</button>`).join(''))}
 const chips=(xs,max)=>xs.length?`<div class="chips">${xs.slice(0,max).map(x=>`<span class="chip">${esc(x)}</span>`).join('')}${xs.length>max?`<span class="chip">and ${xs.length-max} more</span>`:''}</div>`:'';
 function lineRow(a,k,indent){const l=a.byLine[k],n=a.nodes[l.first];
   return `<div class="row" tabindex="0" role="link" data-arg="l${k}" data-tip="Open line ${k} of the outline"${indent?` style="padding-left:${4+10*l.level}px"`:''}><span class="t"><code>${esc(short(a.nodes[l.node].n))}</code></span><span class="n">${fmt(n.g)} · ${pct(n.g,a.reached)}</span><span class="p">${l.only?'Only in the exact outline. ':''}${esc(clip(l.conclusion,170))}</span><span class="bar"><i style="width:${share(n.g,a.reached)}%"></i></span></div>`}
-async function showArg(h){const a=await argReady();ARG_DOCS=a.docs;argHash=h;let m;const el=$('#arg'),cr=$('#arg-crumbs');cr.hidden=true;
+async function showArg(h){if(!ARG)$('#arg').innerHTML=prog('Loading the readings of the outline');const a=await argReady();ARG_DOCS=a.docs;argHash=h;let m;const el=$('#arg'),cr=$('#arg-crumbs');cr.hidden=true;
   if(h==='d7'){argParts('d7');const d=a.d7;
     el.innerHTML=`<div class="ns">${ltrail('Formalism.BasicNotions')}</div><div class="name"><code>D7</code></div>
      <p>${esc(sent(d.says))}</p>
@@ -407,9 +419,9 @@ async function showArg(h){const a=await argReady();ARG_DOCS=a.docs;argHash=h;let
      ${n.t.length?`<div class="lab">Statements that the code labels as published and that this theorem takes as premises</div>${chips(n.t,20)}`:''}
      ${l.unopened.length?`<div class="lab">Names that the reading does not open</div>${chips(l.unopened,16)}`:''}
      ${l.suggests?`<div class="lab">What the names suggest, which the Lean text does not show</div><p class="guess">${esc(sent(l.suggests))}</p>`:''}
-     <div class="lab">Confidence and check</div><p>${esc(sent(l.why))} ${l.errors?`The check found ${l.errors===1?'one error':l.errors+' errors'} in the first version of this reading, and this is the corrected one.`:'The check found no error in this reading.'}${l.cross?` A second model, Gemini, checked this reading again, and ${l.cross===1?'one passage was':l.cross+' passages were'} changed after its findings were compared with the Lean text. ${l.recheck?`A further check of the changed text found ${l.recheck===1?'one error':l.recheck+' errors'}, which the text above corrects.`:'A further check of the changed text found no error.'}`:''}</p>
+     <div class="lab">Confidence and check</div><p>${esc(sent(l.why))} ${l.errors?`The check found ${l.errors===1?'one error':l.errors+' errors'} in the first version of this reading, and this is the corrected one.`:'The check found no error in this reading.'}${l.cross?` A second model, Gemini, checked this reading again, and ${l.cross===1?'one passage was':l.cross+' passages were'} changed after its findings were compared with the Lean text. ${l.recheck?`A further check of the changed text found ${l.recheck===1?'one error':l.recheck+' errors'}, which the text above corrects.${l.recheck2?' A second such check found no error.':''}`:'A further check of the changed text found no error.'}`:''}</p>
      ${l.deeper?`<details><summary>A deeper reading, with the record D7 at hand</summary>
-      <p class="small mute">A second reader saw the whole text of D7 and the glossary. The check found ${l.deeper.errors_round_1} errors in this reading and then ${l.deeper.errors_round_2} more. They were corrected, and the reading has not passed the check.${l.deeper.cross_check?` A second model, Gemini, then made ${l.deeper.cross_check.findings===1?'one finding':l.deeper.cross_check.findings+' findings'} on it, and ${l.deeper.cross_check.changes?`the text was changed in ${l.deeper.cross_check.changes===1?'one place':l.deeper.cross_check.changes+' places'}`:'none led to a change'}.`:''}</p>
+      <p class="small mute">A second reader saw the whole text of D7 and the glossary. The check found ${l.deeper.errors_round_1} errors in this reading and then ${l.deeper.errors_round_2} more. They were corrected, and at that point the reading had not passed the check.${deepChecks(l.deeper.cross_check)}</p>
       <p>${esc(sent(l.deeper.says))}</p>
       ${l.deeper.premises.length?`<div class="lab">Premises, in order</div><ol>${l.deeper.premises.map(p=>`<li>${esc(sent(p))}</li>`).join('')}</ol>`:''}
       <div class="lab">Conclusion</div><p>${esc(sent(l.deeper.conclusion))}</p>
@@ -430,6 +442,20 @@ async function showArg(h){const a=await argReady();ARG_DOCS=a.docs;argHash=h;let
     const br=$('#b-rep');if(br)br.onclick=()=>{hideRepeats=!hideRepeats;showArg(h)}}
   setHash(h)}
 
+/* The progress line of a wait. Give done and all when the wait can be counted. */
+const prog=(text,done,all)=>`<div class="prog${all?'':' any'}" role="status"><span>${text}</span><div class="pb"><i${all?` style="width:${100*done/all}%"`:''}></i></div></div>`;
+/* Rows for the modules ids at the end of a list. The names are in memory, so every row stands at once and can be
+   opened, and its sizes come in as the file that holds its record arrives. A line below the list counts the rows done. */
+async function fillRows(list,ids,total,prefix){if(!ids.length)return;
+  list.insertAdjacentHTML('beforeend',ids.map(j=>{const [ns,last]=split(names[j]);const p=prefix&&ns.startsWith(prefix)?ns.slice(prefix.length).replace(/^\./,''):ns;
+    return `<div class="row wait" tabindex="0" role="link" data-go="${j}" data-tip="Open ${wd(last)}"><span class="t">${wd(last)}</span><span class="n">loading</span><span class="p">${p?trail(p):'same namespace'}</span><span class="bar"><i style="width:0"></i></span></div>`}).join(''));
+  const st=document.createElement('div');list.after(st);let done=0;
+  const upd=()=>{st.innerHTML=prog(`Loading the sizes of ${ids.length===1?'one module':ids.length+' modules'}, ${done} done`,done,ids.length)};upd();
+  await Promise.all(ids.map(async j=>{let r=null;try{r=await rec(j)}catch(e){}
+    const el=list.querySelector(`.row.wait[data-go="${j}"]`);
+    if(el&&r)el.outerHTML=row(j,r,total,prefix);else if(el){el.classList.remove('wait');el.querySelector('.n').textContent='sizes did not load'}
+    done++;if(st.isConnected)upd()}));
+  st.remove()}
 /* Branches */
 async function children(i,r,from,count){const out=[];let j=i+1,end=i+r[1],idx=0;
   while(j<end&&out.length<count){const c=await rec(j);if(idx>=from)out.push([j,c]);idx++;j+=c[1]}
@@ -438,7 +464,9 @@ function row(id,r,total,prefix){const [ns,last]=split(names[id]);const p=prefix&
   return `<div class="row" tabindex="0" role="link" data-go="${id}" data-tip="Open ${wd(last)}"><span class="t">${wd(last)}</span><span class="n">${fmt(r[3])} lines · ${fmt(r[1])} mod.</span><span class="p">${p?trail(p):'same namespace'}</span><span class="bar"><i style="width:${share(r[3],total)}%"></i></span></div>`}
 async function crumbs(i){const chain=[];let j=i;while(j>=0){chain.unshift(j);j=(await rec(j))[0]}
   scroller($('#crumbs'),chain.map(k=>`<button data-go="${k}" aria-current="${k===i}" data-tip="${k===i?'The module shown below':'Go back to '+wd(split(names[k])[1])}">${wd(split(names[k])[1])}</button>`).join(''))}
-async function showTree(i){await Promise.all([metaReady,namesReady]);cur=i;treeShown=true;const r=await rec(i);const [ns,last]=split(names[i]);
+async function showTree(i){const slow=setTimeout(()=>{$('#node').innerHTML=prog('Loading the module and its branches')},200);
+  try{await Promise.all([metaReady,namesReady]);await rec(i);await children(i,await rec(i),0,PAGE)}finally{clearTimeout(slow)}
+  cur=i;treeShown=true;const r=await rec(i);const [ns,last]=split(names[i]);
   const kids=await children(i,r,0,PAGE);const flags=meta.flags.filter((f,b)=>r[6]>>b&1);
   const top=kids.list.slice(0,14), shown=top.reduce((s,[,c])=>s+c[3],0), total=meta.lines;
   const strip=r[1]>1?`<div class="strip" role="group" aria-label="Branches by size">${top.map(([j,c],k)=>`<button class="seg" style="width:${100*c[3]/r[3]}%;--o:${1-k*0.05}" data-go="${j}" data-tip="${wd(split(names[j])[1])}, ${fmt(c[3])} lines, ${pct(c[3],r[3])} of this branch"></button>`).join('')}<span class="seg rest" style="flex:1" data-tip="The module itself and its smaller branches, ${fmt(r[3]-shown)} lines"></span></div>
@@ -464,12 +492,13 @@ async function showTree(i){await Promise.all([metaReady,namesReady]);cur=i;treeS
   $('#t-mtn').onclick=()=>{location.hash='v'+i;scrollTo({top:0})};
   $('#stm').addEventListener('toggle',e=>{const box=e.target.querySelector('section');if(e.target.open&&!box.dataset.for)showStatements(box,i,'')});
   let shownKids=kids.list.length;
-  const mk=$('#morekids'); if(mk) mk.onclick=async()=>{if(mk.ariaDisabled==='true')return;mk.ariaDisabled='true';const n=await children(i,r,shownKids,PAGE);shownKids+=n.list.length;
+  const mk=$('#morekids'); if(mk) mk.onclick=async()=>{if(mk.ariaDisabled==='true')return;mk.ariaDisabled='true';mk.insertAdjacentHTML('afterend',prog('Loading the next branches'));const n=await children(i,r,shownKids,PAGE);shownKids+=n.list.length;mk.nextElementSibling?.remove();
     $('#kids').insertAdjacentHTML('beforeend',n.list.map(([j,c])=>row(j,c,r[3],ns)).join(''));if(n.more)mk.ariaDisabled='false';else mk.remove()};
   for(const [sel,ids] of [['#imp',r[7]],['#ipb',r[8]]]){const d=$(sel);let n=0;
-    const fill=async()=>{const part=ids.slice(n,n+PAGE);n+=part.length;const rs=await Promise.all(part.map(rec));
-      d.querySelector('.list').insertAdjacentHTML('beforeend',part.map((j,k)=>row(j,rs[k],total,'')).join('')||'<p class="empty">None.</p>');
-      d.querySelector('.more')?.remove();if(n<ids.length)d.insertAdjacentHTML('beforeend',`<button class="btn more" data-tip="Show the next ${PAGE} modules">Show more</button>`)};
+    const fill=async()=>{const part=ids.slice(n,n+PAGE);n+=part.length;d.querySelector('.more')?.remove();
+      if(!ids.length)d.querySelector('.list').innerHTML='<p class="empty">None.</p>';
+      await fillRows(d.querySelector('.list'),part,total,'');
+      if(n<ids.length)d.insertAdjacentHTML('beforeend',`<button class="btn more" data-tip="Show the next ${PAGE} modules">Show more</button>`)};
     d.addEventListener('toggle',()=>{if(d.open&&!n)fill()});d.addEventListener('click',e=>{const b=e.target.closest('.more');if(b&&b.ariaDisabled!=='true'){b.ariaDisabled='true';fill()}})}
   await crumbs(i);setHash('m'+i)}
 
@@ -483,11 +512,13 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'){const g=e.target.clo
 /* Search. The text matches a name whether or not it has the spaces, dots and underscores between the words. */
 let qt;$('#q').addEventListener('input',e=>{clearTimeout(qt);qt=setTimeout(async()=>{const q=e.target.value.replace(/[\s._›\/]+/g,''),box=$('#res');
   if(q.length<3){box.innerHTML=q?'<p class="small mute">Type at least three characters.</p>':'';return}
-  await Promise.all([metaReady,namesReady]);
+  if(!names.length)box.innerHTML=prog('Loading the names of the modules');
+  await Promise.all([metaReady,namesReady]);if(e.target.value.replace(/[\s._›\/]+/g,'')!==q)return;
   const rx=new RegExp([...q].map(c=>c.replace(/[\\^$.*+?()[\]{}|]/g,'\\$&')).join('[._]?'),'i');
   const hits=[];for(let i=0;i<names.length&&hits.length<30;i++)if(rx.test(names[i]))hits.push(i);
   if(!hits.length){box.innerHTML='<p class="empty">No module name contains that text. Try a shorter part, such as one word of the name.</p>';return}
-  const rs=await Promise.all(hits.map(rec));box.innerHTML=`<p class="small mute" style="margin-top:8px">${hits.length===30?'The first 30 matches':hits.length+' matches'}</p><div class="list">${hits.map((j,k)=>row(j,rs[k],meta.lines,'')).join('')}</div>`},180)});
+  box.innerHTML=`<p class="small mute" style="margin-top:8px">${hits.length===30?'The first 30 matches':hits.length+' matches'}</p><div class="list"></div>`;
+  fillRows(box.querySelector('.list'),hits,meta.lines,'')},180)});
 
 /* Tooltip for mouse, keyboard focus and long press, and for the dot under the cursor */
 const tip=$('#tip'),canvasTip={};let tipEl=null,press;
