@@ -776,9 +776,11 @@
   "the-chain-of-lifts.p4.s1:a4b973c44bd0",
   "the-chain-of-lifts.p4.s2:ca571ee05cc8",
   "the-chain-of-lifts.p4.s3:b6a971834e46",
-  "the-chain-of-lifts.p4.s4:9787b0910ddf",
   "the-chain-of-lifts.p4.s5:85e25a02d95f",
   "the-chain-of-lifts.p4.s6:406140e00a3c"
+ ],
+ "k-unitary": [
+  "the-chain-of-lifts.p4.s4:9787b0910ddf"
  ],
  "k-rank": [
   "the-chain-of-lifts.p5.s1:255a9eb0d376",
@@ -812,7 +814,9 @@
  "k-read": [
   "the-chain-of-lifts.p11.s1:ab80679c9892",
   "the-chain-of-lifts.p11.s2:c81f721c128a",
-  "the-chain-of-lifts.p11.s3:257af0c68426",
+  "the-chain-of-lifts.p11.s3:257af0c68426"
+ ],
+ "k-enters": [
   "the-chain-of-lifts.p11.s4:85cd90d563c0"
  ],
  "k-theta": [

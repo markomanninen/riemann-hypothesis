@@ -429,7 +429,7 @@
    "id": "st6",
    "type": "vaite",
    "section": "the-route-in-nine-steps",
-   "title": "Step 6. A pairing of each word factors through a chain of m kernels between spaces that carry unitary groups, of ranks k + j(t+1) for j up to m − 1 and k + m(t+1) − 1 on the last space, the first m − 2 composed one after the other, the last two inside a finite sum, with one more linear map after them, and the document does not record how the pairing is tied to the map",
+   "title": "Step 6. Both bounds concern linear maps into the lattice, one for each word of a datum, and a pairing of each word factors through a chain of m kernels between spaces that carry unitary groups, of ranks k + j(t+1) for j up to m − 1 and k + m(t+1) − 1 on the last space, the first m − 2 composed one after the other, the last two inside a finite sum, with one more linear map after them, and the document does not record how the pairing is tied to the map",
    "laji": "T",
    "units": [
     "the-route-in-nine-steps.p6"
@@ -442,7 +442,8 @@
     "k-count",
     "k-dists",
     "k-matrices",
-    "k-read"
+    "k-read",
+    "k-enters"
    ],
    "todistus_seuraa": true
   },
@@ -468,7 +469,7 @@
    "id": "st8",
    "type": "vaite",
    "section": "the-route-in-nine-steps",
-   "title": "Step 8. The lower bound applies a general statement about several maps into one lattice, which takes two bounds on products of matrices and one on the number of rows from a link and a family with many words, where the existence of such families is a premise not followed, and by the document's interpretation the bounds say that the maps are nearly isometries after scaling in the mean over the family and that the images fill the target evenly",
+   "title": "Step 8. The lower bound applies a general statement about several maps into one lattice, which takes two bounds on products of matrices from a link, proved for a second set of maps and carried to the maps of the words, and one bound on the number of rows, with a family of many words whose existence is a premise not followed, and by the document's interpretation the bounds say that the maps are nearly isometries after scaling in the mean over the family and that the images fill the target evenly",
    "laji": "T",
    "units": [
     "the-route-in-nine-steps.p8"
@@ -479,6 +480,7 @@
     "lo-twoparts",
     "lo-apply",
     "lo-count",
+    "lo-chosen",
     "lo-linkS",
     "lo-blockreal",
     "lo-interp"
@@ -996,8 +998,11 @@
    ],
    "johto": [
     "c-eath",
-    "c-twistform"
-   ]
+    "c-source",
+    "c-twistform",
+    "c-pairgood"
+   ],
+   "todistus_seuraa": true
   },
   {
    "id": "c-winpair",
@@ -1416,6 +1421,7 @@
    ],
    "johto": [
     "h-balance",
+    "h-bracket",
     "h-exponent",
     "h-chcore"
    ]
@@ -1439,15 +1445,18 @@
    "id": "h-budget",
    "type": "vaite",
    "section": "ch-core",
-   "title": "B0 and Nc are budgets that the code defines by formulas, with B0 = f·m·b·x^ε, so the factor m of the third term is part of the definition of the budget, EComp5 bounds the number Ee by a constant times m·B0, why the errors of the m lifts fit m times a budget that itself grows with m was not read, and the premise NumFacts.sw shows why the budget has to grow with m",
+   "title": "B0 and Nc are budgets that the code defines by formulas, with B0 = f·m·b·x^ε, so the factor m of the third term is part of the definition of the budget, EComp5 says that the number Ee differs from m times a product of two numbers of the record by at most a constant times m·B0, why the errors of the m lifts fit m times a budget that itself grows with m was not read, and the text takes the premise NumFacts.sw, by which the shift w of lift j is at least s, as showing why the budget has to grow with m",
    "laji": "T",
    "units": [
     "ch-core.p17"
    ],
    "johto": [
     "h-bracket",
-    "h-window"
-   ]
+    "h-window",
+    "u-origin",
+    "t-wtie"
+   ],
+   "todistus_seuraa": true
   },
   {
    "id": "t-chtop",
@@ -1503,7 +1512,7 @@
    "id": "t-slope",
    "type": "lahtokohta",
    "section": "ch-top",
-   "title": "SlopeIneq says, when three numbers of the record lie in stated ranges and HH is positive and at least a difference, that the weighted mean over u of muN u − h u, minus the log of the number of u and corrections, is at most muCC, and HHBound and FParams supply those two requirements",
+   "title": "SlopeIneq says, when three numbers of the record lie in stated ranges and HH is positive and at least a difference, that the weighted mean over u of muN u − h u, minus the log of the number of u and corrections, is at most muCC, where HHBound gives HH those two properties and FParams keeps the three numbers below three bounds of the record",
    "laji": "A",
    "units": [
     "ch-top.p3"
@@ -1516,7 +1525,7 @@
    "id": "t-cancel",
    "type": "vaite",
    "section": "ch-top",
-   "title": "QuotientSlopeBoundsWith puts Ga plus Fo below muN u up to further numbers and LossBounds puts ASK below Ga plus a loss, s_lower5 adds DIV, which cancels Fo, and takes the mean with the weights of SlopeIneq, Ga_bound5 adds SlopeIneq, the two bounds for the mean s cancel muCC, and with key_identity5 each_unit_bound_statement concludes ASK ≤ Main plus an explicit error, where s_lower5 and Ga_bound5 were read in full",
+   "title": "QuotientSlopeBoundsWith puts Ga plus Fo below muN u up to further numbers and LossBounds puts ASK below Ga plus a loss, s_lower5 adds DIV, which cancels Fo, and takes the mean with the weights of SlopeIneq, Ga_bound5 adds SlopeIneq, the two bounds for the mean s cancel muCC, and with key_identity5 each_unit_bound_statement concludes ASK ≤ Main plus an explicit error, where the session read the proof of s_lower5 and the reading of six proofs read Ga_bound5 in full",
    "laji": "T",
    "units": [
     "ch-top.p4.s1-s12"
@@ -1753,12 +1762,26 @@
   },
   {
    "id": "k-groups",
-   "type": "lahtokohta",
+   "type": "maaritelma",
    "section": "the-chain-of-lifts",
-   "title": "The group acting on the spaces chF u j contains UF E (N j), the isometry group of the form that adds up star (x i) * y i on E^r, a unitary group because conjE makes star complex conjugation, and the last space evGSD has the group UF E r of rank N m − 1, which the code extends to the rank N m",
-   "laji": "A",
+   "title": "The group acting on the spaces chF u j is UF E (N j) times two further groups, where UF E r is the isometry group of the form that adds up star (x i) * y i on E^r for a number field E of the datum, and the last space evGSD has the group UF E r of rank N m − 1, which the code extends to the rank N m",
+   "laji": "D",
    "units": [
-    "the-chain-of-lifts.p4"
+    "the-chain-of-lifts.p4.s1-s3",
+    "the-chain-of-lifts.p4.s5-s6"
+   ]
+  },
+  {
+   "id": "k-unitary",
+   "type": "vaite",
+   "section": "the-chain-of-lifts",
+   "title": "UF E r is a unitary group, because the condition conjE says that star is complex conjugation under every embedding of E into the complex numbers",
+   "laji": "T",
+   "units": [
+    "the-chain-of-lifts.p4.s4"
+   ],
+   "johto": [
+    "k-groups"
    ]
   },
   {
@@ -1839,10 +1862,23 @@
    "id": "k-read",
    "type": "lahtokohta",
    "section": "the-chain-of-lifts",
-   "title": "rowsU_of_colPins_alt proves for one word of a datum, under conditions on sizes and ties, that the word has a ColChain with a ChainTie, it rests on 14,837 declarations, and by the exact graph it enters the proof only through the condition DefiniteSideCondition of the record, since the shape theorem does not reach it",
+   "title": "rowsU_of_colPins_alt proves for one word of a datum, under conditions on sizes and ties, that the word has a ColChain with a ChainTie, it rests on 14,837 declarations, and by the exact graph its one user is kernel_columns_from_ties_alt, which serves the condition DefiniteSideCondition of the record, while the shape theorem does not reach it",
    "laji": "A",
    "units": [
-    "the-chain-of-lifts.p11.s1-s4"
+    "the-chain-of-lifts.p11.s1-s3"
+   ]
+  },
+  {
+   "id": "k-enters",
+   "type": "vaite",
+   "section": "the-chain-of-lifts",
+   "title": "The chain theorem enters the proof through the condition DefiniteSideCondition of the record alone",
+   "laji": "T",
+   "units": [
+    "the-chain-of-lifts.p11.s4"
+   ],
+   "johto": [
+    "k-read"
    ]
   },
   {
@@ -1859,7 +1895,7 @@
    "id": "k-reading",
    "type": "lahtokohta",
    "section": "the-chain-of-lifts",
-   "title": "The reading of the chain found the kernels defined from the distributions, the theta-lift conditions ThHyp untraced, the height numbers built in two halves, adm2 supplied from the record, and BesselId in two parts, the isometries from join data of the record and BuRational from buRat_rrFull_closed_alt",
+   "title": "The reading of the chain found the kernels defined from the distributions, the theta-lift conditions ThHyp untraced, the height numbers built in two halves, the supply of adm2 in the proof of the shape theorem, and BesselId in two parts, the isometries from join data of the record and BuRational from buRat_rrFull_closed_alt",
    "laji": "A",
    "units": [
     "the-chain-of-lifts.p12",
@@ -2083,16 +2119,18 @@
   },
   {
    "id": "lo-apply",
-   "type": "lahtokohta",
+   "type": "vaite",
    "section": "how-the-statement-is-applied-to-a-datum",
-   "title": "frame_at_of applies the general statement with the words as members, the lattices Nu u, the maps Bk u, the dual of RR as target and σ = x^(−CH), takes the matrices and the three bounds from FrameReal_at, and for a family FrameRealF and frameF_of keep the factor η + 4·√e of the correction at most 6σ",
-   "laji": "A",
+   "title": "frame_at_of applies the general statement with the words as members, the lattices Nu u, the maps Bk u, the dual of RR as target and σ = x^(−CH), takes the matrices and the three bounds from FrameReal_at, and for a family the factor η + 4·√e of the correction is at most 6σ, since FrameRealF asks 3·√(lost share) + 4·√eB ≤ σ and frameF_of takes 5σ + 3·√(lost share) as the bound for η",
+   "laji": "T",
    "units": [
     "how-the-statement-is-applied-to-a-datum.p1"
    ],
    "edellyttaa": [
-    "lo-jointaram",
     "r-ties"
+   ],
+   "johto": [
+    "lo-jointaram"
    ]
   },
   {
@@ -2151,7 +2189,7 @@
    "id": "lo-blockreal",
    "type": "lahtokohta",
    "section": "how-the-bounds-of-the-link-reach-the-map",
-   "title": "The maps Pu u and the maps Bk u are different maps, BlockReal_at says that the matrix of Bk u is the block on the rows of the target of the matrix of Pu u, up to a conjugation, times an isometry, blockReal_at_of proves it from BesselId, matK_at_of states the first two bounds for the first factors of the maps Bk u, Dall stands where the general statement has the number of rows, and what Dstar and Dall are was not opened",
+   "title": "The maps Pu u and the maps Bk u are different maps, BlockReal_at says that the matrix of Bk u is the block on the rows of the target of the matrix of Pu u, up to a conjugation, times an isometry, blockReal_at_of proves it from BesselId, matK_at_of states the first two bounds for the first factors of the maps Bk u, Dall stands where the general statement has the number of rows when the target has Drows rows, and what Dstar and Dall are was not opened",
    "laji": "A",
    "units": [
     "how-the-bounds-of-the-link-reach-the-map.p7"
@@ -2827,19 +2865,19 @@
    "to": "u-each"
   },
   {
-   "from": "c-quadpresent",
-   "type": "toistaa",
-   "to": "c-pairgood"
-  },
-  {
-   "from": "h-budget",
-   "type": "toistaa",
-   "to": "t-keyid"
-  },
-  {
    "from": "s2-branches",
    "type": "toistaa",
    "to": "b-record"
+  },
+  {
+   "from": "k-enters",
+   "type": "rajaa",
+   "to": "st6"
+  },
+  {
+   "from": "t-wtie",
+   "type": "selittaa",
+   "to": "h-budget"
   }
  ]
 }
