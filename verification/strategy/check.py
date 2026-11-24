@@ -6,7 +6,7 @@ Usage: python3 -I verification/strategy/check.py [--write] [FILE]
 FILE is a document of this folder, README.md when it is left out. The counts are checked for
 README.md alone, and the names and the links for any document.
 
-The script makes three checks and prints what fails.
+The script makes four checks and prints what fails.
 
   names   Every name in code font is looked up among the compiled constants of the project, as
           a full name or as the end of one from a dot onwards. A name that the project does not
@@ -17,6 +17,8 @@ The script makes three checks and prints what fails.
           with cone.py and compared with the stored number. The document has to show the number
           in the paragraph or table row that names the theorem.
   links   Every relative link of the document has to lead to a file or folder that exists.
+  calcs   The calculations of README.md that are plain arithmetic of fractions are computed again,
+          and each result has to stand in the document as the function calculations writes it.
 
 With --write the script writes the counts of cones.json anew and makes no check. To give the
 count of one more theorem in the document, add its full name to cones.json with any number and
@@ -26,6 +28,7 @@ import json
 import os
 import re
 import sys
+from fractions import Fraction as Fr
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -73,6 +76,50 @@ def blocks(text):
             out.extend(lines)
         else:
             out.append(para)
+    return out
+
+
+def calculations():
+    """The calculations of README.md that are plain arithmetic of fractions.
+
+    Each entry is a description, whether the calculation holds, and the result as the document
+    writes it. An exponent of x is a pair (a, b) that stands for a + b * eps.
+    """
+    def add(*terms):
+        return (sum(t[0] for t in terms), sum(t[1] for t in terms))
+
+    half = Fr(1, 2)
+    m_low, m_high = (half, Fr(-1)), (half, half)            # RestSize and a premise of ch_core
+    n_over_nT = (Fr(0), Fr(1, 8))                           # n / nT is at most 2 * x^(eps / 8)
+    k_over_n2 = (half, Fr(-1))                              # k is at most n^2 * x^(1/2 - eps)
+    term1 = add((Fr(1), Fr(0)), (-m_low[0], -m_low[1]))     # 2 * x / m at the lowest m
+    factor3 = add((Fr(0), Fr(1)), n_over_nT)                # 2 * n * x^eps / nT
+    term3 = add(m_high, factor3)                            # times the highest m
+    term4 = add(k_over_n2, (Fr(0), Fr(2)), n_over_nT)       # nT2 * k * x^(2 eps) / (n^2 * nT)
+    sigma = Fr(1, 20)
+    out = [
+        ("term 1 of the division at the lowest m", term1 == (half, Fr(1)), "2·x^(1/2 + ε)"),
+        ("the factor of term 3", factor3 == (Fr(0), Fr(9, 8)), "4·m·x^(9ε/8)"),
+        ("term 3 of the division at the highest m", term3 == (half, Fr(13, 8)), "4·x^(1/2 + 13ε/8)"),
+        ("term 4 of the division", term4 == (half, Fr(9, 8)), "2·x^(1/2 + 9ε/8)"),
+        ("the sum of the four coefficients", 2 + 2 + 4 + 2 == 10, "10·x^(1/2 + 13ε/8)"),
+        ("the exponent after the division", Fr(13, 8) + 1 + Fr(3, 8) == 3, "(C + 13/8 + 1 + 3/8)"),
+        ("the exponent of ch_core", Fr(13, 8) + 1 + Fr(3, 8) == 3, "1/2 + (C + 3)·ε"),
+        ("the fifth term after the division by half of the ratio", 2 / half == 4, "4·x^ε/x"),
+        ("the count of bad primes of the first kind", Fr(1, 4) * (half + 1) == Fr(3, 8), "U^(3/8)"),
+        ("the share of the first kind", Fr(3, 8) - Fr(9, 10) == Fr(-21, 40), "U^(−21/40)"),
+        ("the square of the threshold of the second kind", 2 * half == 1 and 2 ** 2 == 4, "y^(1 + 2τ)/4"),
+        ("the constant of a block", 4 * 4 * 2 == 32, "(32·C₂/τ)"),
+        ("the largest squarefree number", 2 * 400 == 800, "A′ = 800K"),
+        ("the saving of the truncation", 400 * Fr(1, 400) == 1, "Z^(−1/400)"),
+        ("the number that takes the place of eta", 5 + 1 == 6, "at most 6σ"),
+        ("columns against rows", 1 / (sigma * (1 + sigma / 2)) >= 19, "at least 19 times"),
+        ("columns of the maps against rows", Fr(3, 4) / (sigma * (1 + sigma / 2)) >= 14,
+         "at least 14 times"),
+    ]
+    landau = all((1 + d / 2) * (4 * (1 + d) / d) / (4 * (1 + d) / d - 2) == 1 + d
+                 for d in (half, Fr(1, 3), Fr(2), Fr(7, 5)))
+    out.append(("the peak of the Landau weight at the limit of sigma", landau, "4(1 + δ)/δ"))
     return out
 
 
@@ -130,15 +177,28 @@ def main():
             bad += 1
 
     links = 0
-    for target in re.findall(r"\]\(([^)\s]+)\)", text):
-        if re.match(r"[a-z]+://", target):
+    for link in re.findall(r"\]\(([^)\s]+)\)", text):
+        if re.match(r"[a-z]+://", link):
             continue
         links += 1
-        if not os.path.exists(os.path.normpath(os.path.join(HERE, target.split("#")[0]))):
-            print("link   %s leads nowhere" % target)
+        if not os.path.exists(os.path.normpath(os.path.join(HERE, link.split("#")[0]))):
+            print("link   %s leads nowhere" % link)
             bad += 1
 
-    print("%d names, %d counts and %d links checked, %d failures" % (names, len(counts), links, bad))
+    calcs = 0
+    if target == "README.md":
+        flat = re.sub(r"\s+", " ", text)
+        for what, holds, shown in calculations():
+            calcs += 1
+            if not holds:
+                print("calc   %s does not come out as the document says" % what)
+                bad += 1
+            elif shown not in flat:
+                print("calc   the document does not show %s for %s" % (shown, what))
+                bad += 1
+
+    print("%d names, %d counts, %d links and %d calculations checked, %d failures"
+          % (names, len(counts), links, calcs, bad))
     sys.exit(1 if bad else 0)
 
 

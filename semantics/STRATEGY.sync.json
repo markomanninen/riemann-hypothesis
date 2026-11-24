@@ -21,9 +21,12 @@
   "the-strategy-of-the-proof-followed-throu.p3.s3:31818d783e65",
   "the-strategy-of-the-proof-followed-throu.p3.s4:6b82c24f697e",
   "the-strategy-of-the-proof-followed-throu.p3.s5:332bef21f7d3",
-  "the-strategy-of-the-proof-followed-throu.p3.s6:497e97d2a910",
-  "the-strategy-of-the-proof-followed-throu.p3.s7:cbae75927f1a",
-  "the-strategy-of-the-proof-followed-throu.p3.s8:139f46748aa2"
+  "the-strategy-of-the-proof-followed-throu.p3.s6:f5b122f05d99",
+  "the-strategy-of-the-proof-followed-throu.p3.s7:a34dd2662668",
+  "the-strategy-of-the-proof-followed-throu.p3.s8:bf5e43bbc974",
+  "the-strategy-of-the-proof-followed-throu.p3.s9:497e97d2a910",
+  "the-strategy-of-the-proof-followed-throu.p3.s10:cbae75927f1a",
+  "the-strategy-of-the-proof-followed-throu.p3.s11:139f46748aa2"
  ],
  "s0-counts": [
   "the-strategy-of-the-proof-followed-throu.p4.s1:023c90ef659b",
@@ -115,13 +118,15 @@
  ],
  "st5": [
   "the-route-in-nine-steps.p5.s1:d010f63bd789",
-  "the-route-in-nine-steps.p5.s2:28ea493074c2"
+  "the-route-in-nine-steps.p5.s2:e9c50ebbb516",
+  "the-route-in-nine-steps.p5.s3:ac5dd8ab1421"
  ],
  "st6": [
   "the-route-in-nine-steps.p6.s1:9dcaf200e9b9",
-  "the-route-in-nine-steps.p6.s2:4a0a1272e30f",
-  "the-route-in-nine-steps.p6.s3:beeab3d35cb9",
-  "the-route-in-nine-steps.p6.s4:a1fc3e5b0813"
+  "the-route-in-nine-steps.p6.s2:adcabc453e75",
+  "the-route-in-nine-steps.p6.s3:a89799b5c0bf",
+  "the-route-in-nine-steps.p6.s4:beeab3d35cb9",
+  "the-route-in-nine-steps.p6.s5:a1fc3e5b0813"
  ],
  "st7": [
   "the-route-in-nine-steps.p7.s1:7c5e76481742",
@@ -131,7 +136,7 @@
   "the-route-in-nine-steps.p8.s1:fad9ab867873",
   "the-route-in-nine-steps.p8.s2:545fb7967a81",
   "the-route-in-nine-steps.p8.s3:1c39db54d6b3",
-  "the-route-in-nine-steps.p8.s4:5a25989e1bc3"
+  "the-route-in-nine-steps.p8.s4:51cbc16723d7"
  ],
  "st9": [
   "the-route-in-nine-steps.p9.s1:ada5a2005063",
@@ -141,14 +146,26 @@
  "s2-map": [
   "the-route-in-nine-steps.p10.s1:0f2847dc2475",
   "the-route-in-nine-steps.p10.s2:2ef82cec3552",
-  "the-route-in-nine-steps.p10.s3:7869145e2220",
-  "the-route-in-nine-steps.p10.s4:075d8b96e099"
+  "the-route-in-nine-steps.p10.s3:7bfa8ba6c29c",
+  "the-route-in-nine-steps.p11.s1:22304f934a86",
+  "the-route-in-nine-steps.p12.s1:001c1c93b263",
+  "the-route-in-nine-steps.p13.s1:a4a18284e5c7",
+  "the-route-in-nine-steps.p14.s1:c08213f95ad9",
+  "the-route-in-nine-steps.p15.s1:f16e857912b7",
+  "the-route-in-nine-steps.p16.s1:8f05991909d9",
+  "the-route-in-nine-steps.p17.s1:4338e872f15a",
+  "the-route-in-nine-steps.p18.s1:4c9c99070bbf",
+  "the-route-in-nine-steps.p19.s1:512bedc88e1d",
+  "the-route-in-nine-steps.p20.s1:dbb12e3cbb13",
+  "the-route-in-nine-steps.p21.s1:7869145e2220",
+  "the-route-in-nine-steps.p21.s2:075d8b96e099"
  ],
  "s2-branches": [
-  "the-route-in-nine-steps.p11.s1:8be7eabeaff6",
-  "the-route-in-nine-steps.p11.s2:eed9b30dbc7e",
-  "the-route-in-nine-steps.p11.s3:769f0eac37a4",
-  "the-route-in-nine-steps.p11.s4:089cf11a8eee"
+  "the-route-in-nine-steps.p22.s1:8be7eabeaff6",
+  "the-route-in-nine-steps.p22.s2:eed9b30dbc7e",
+  "the-route-in-nine-steps.p22.s3:769f0eac37a4",
+  "the-route-in-nine-steps.p22.s4:8a16fa99d799",
+  "the-route-in-nine-steps.p22.s5:3551e4540fed"
  ],
  "n-idea": [
   "what-the-note-says-about-the-strategy.p1.s1:69b13f6686e6",
@@ -208,7 +225,7 @@
  ],
  "f-inputs": [
   "from-the-five-theorems-to-one-statement.p16.s1:720d8a839a10",
-  "from-the-five-theorems-to-one-statement.p17.s1:2fd8e8f7b8a4",
+  "from-the-five-theorems-to-one-statement.p17.s1:5cf8e588d891",
   "from-the-five-theorems-to-one-statement.p18.s1:ff4a16db5413",
   "from-the-five-theorems-to-one-statement.p19.s1:ebb474a85b38",
   "from-the-five-theorems-to-one-statement.p20.s1:74ef3a6f6384",
@@ -221,7 +238,8 @@
   "what-zero-free-all-of-green-v-win-states.p1.s1:6f838bf419f2",
   "what-zero-free-all-of-green-v-win-states.p1.s2:9acedb8c59f3",
   "what-zero-free-all-of-green-v-win-states.p1.s3:f1d5859b5605",
-  "what-zero-free-all-of-green-v-win-states.p1.s4:06cee6003b17"
+  "what-zero-free-all-of-green-v-win-states.p1.s4:9e83357fa6fd",
+  "what-zero-free-all-of-green-v-win-states.p1.s5:d0f940998e55"
  ],
  "z-split": [
   "what-zero-free-all-of-green-v-win-states.p2.s1:98192e89d32f",
@@ -300,7 +318,7 @@
   "the-landau-step.p6.s1:0b08aa403e6d",
   "the-landau-step.p6.s2:0ef6b2c061fd",
   "the-landau-step.p6.s3:6613910747bd",
-  "the-landau-step.p6.s4:bc1da5d7e192",
+  "the-landau-step.p6.s4:116832b454b2",
   "the-landau-step.p6.s5:fdc9416b207f",
   "the-landau-step.p6.s6:2022c05a3f5c",
   "the-landau-step.p6.s7:9c02ef7a2fb8",
@@ -327,17 +345,31 @@
  "c-eath": [
   "the-wanted-characters-inside-an-auxiliar.p3.s1:22aaddea5619",
   "the-wanted-characters-inside-an-auxiliar.p3.s2:e01d7467bda9",
-  "the-wanted-characters-inside-an-auxiliar.p3.s3:003f3737625f",
-  "the-wanted-characters-inside-an-auxiliar.p3.s4:f93588289aa7",
-  "the-wanted-characters-inside-an-auxiliar.p3.s5:ea0209c485e0",
-  "the-wanted-characters-inside-an-auxiliar.p3.s6:3d5d47e35c64"
+  "the-wanted-characters-inside-an-auxiliar.p3.s3:fb7fcacb394b",
+  "the-wanted-characters-inside-an-auxiliar.p3.s4:9c3c8d97a40a",
+  "the-wanted-characters-inside-an-auxiliar.p3.s5:6efa050ff8a4",
+  "the-wanted-characters-inside-an-auxiliar.p3.s6:f371d560bd7a",
+  "the-wanted-characters-inside-an-auxiliar.p3.s7:c549e681382c",
+  "the-wanted-characters-inside-an-auxiliar.p3.s8:ea0209c485e0",
+  "the-wanted-characters-inside-an-auxiliar.p3.s9:3d5d47e35c64"
  ],
  "c-source": [
   "the-wanted-characters-inside-an-auxiliar.p4.s1:da07553dab97",
-  "the-wanted-characters-inside-an-auxiliar.p4.s2:8e8b363e1150",
+  "the-wanted-characters-inside-an-auxiliar.p4.s2:2813b2a7f8e6",
   "the-wanted-characters-inside-an-auxiliar.p5.s1:181e6a24ee8f",
   "the-wanted-characters-inside-an-auxiliar.p5.s2:d22b8411ad0d",
-  "the-wanted-characters-inside-an-auxiliar.p5.s3:a85acbbf35cf"
+  "the-wanted-characters-inside-an-auxiliar.p5.s3:b7adc74c8c20",
+  "the-wanted-characters-inside-an-auxiliar.p5.s4:9733b5dd9f79",
+  "the-wanted-characters-inside-an-auxiliar.p5.s5:202ba13cbea5",
+  "the-wanted-characters-inside-an-auxiliar.p5.s6:85481a4a04bc"
+ ],
+ "c-twistform": [
+  "the-wanted-characters-inside-an-auxiliar.p5.s7:704ab46d4995"
+ ],
+ "c-quadpresent": [
+  "the-wanted-characters-inside-an-auxiliar.p5.s8:15e2942a39ee",
+  "the-wanted-characters-inside-an-auxiliar.p5.s9:94d134480d66",
+  "the-wanted-characters-inside-an-auxiliar.p5.s10:f0683795e853"
  ],
  "c-winpair": [
   "the-wanted-characters-inside-an-auxiliar.p6.s1:b074a3ea613c",
@@ -345,9 +377,10 @@
   "the-wanted-characters-inside-an-auxiliar.p6.s3:24e2cebedb34"
  ],
  "c-pairgood": [
-  "the-wanted-characters-inside-an-auxiliar.p7.s1:2fce1271d081",
-  "the-wanted-characters-inside-an-auxiliar.p7.s2:0d8412eb10b0",
-  "the-wanted-characters-inside-an-auxiliar.p7.s3:57a6e2f6a69c"
+  "the-wanted-characters-inside-an-auxiliar.p7.s1:0c874b25752e",
+  "the-wanted-characters-inside-an-auxiliar.p7.s2:8eb3d47bee95",
+  "the-wanted-characters-inside-an-auxiliar.p7.s3:c0eb3057aa3f",
+  "the-wanted-characters-inside-an-auxiliar.p7.s4:fb7b3efb3a68"
  ],
  "c-pairex": [
   "the-wanted-characters-inside-an-auxiliar.p8.s1:e21f34215ebe",
@@ -454,8 +487,8 @@
   "the-pair-of-primes.p17.s3:e61aa90abc09",
   "the-pair-of-primes.p17.s4:42deee5bd954",
   "the-pair-of-primes.p17.s5:0d899061adb6",
-  "the-pair-of-primes.p17.s6:4ac9a3454b30",
-  "the-pair-of-primes.p17.s7:67d0a287e9ce",
+  "the-pair-of-primes.p17.s6:b0f32e40d2f0",
+  "the-pair-of-primes.p17.s7:bf78cb47c92c",
   "the-pair-of-primes.p17.s8:82ba07114e48",
   "the-pair-of-primes.p17.s9:91d70ff44da0"
  ],
@@ -463,21 +496,22 @@
   "the-pair-of-primes.p18.s1:a246a2f4c671",
   "the-pair-of-primes.p18.s2:2d831a8ea89e",
   "the-pair-of-primes.p19.s1:db9c3af21702",
-  "the-pair-of-primes.p19.s2:952aa14dec9c",
-  "the-pair-of-primes.p19.s3:6180bc1cadc0",
-  "the-pair-of-primes.p19.s4:d31cb8487839",
-  "the-pair-of-primes.p19.s5:82b6ff705f87",
-  "the-pair-of-primes.p19.s6:1caea2d3ba98"
+  "the-pair-of-primes.p19.s2:9dc9f1dd478c",
+  "the-pair-of-primes.p19.s3:ff48df2ef088",
+  "the-pair-of-primes.p19.s4:6180bc1cadc0",
+  "the-pair-of-primes.p19.s5:2d7f7a98eb72",
+  "the-pair-of-primes.p19.s6:737d6d0760c0",
+  "the-pair-of-primes.p19.s7:653e2cb63cc6"
  ],
  "p-twist": [
   "the-pair-of-primes.p20.s1:7d325c5d6462",
-  "the-pair-of-primes.p20.s2:9ca302298d08",
-  "the-pair-of-primes.p20.s3:234e511fce8c"
+  "the-pair-of-primes.p20.s2:f5e91c5c4136",
+  "the-pair-of-primes.p20.s3:6795a95e860f"
  ],
  "p-interp": [
   "the-pair-of-primes.p21.s1:9d62b7b86884",
   "the-pair-of-primes.p21.s2:21d1b98aded0",
-  "the-pair-of-primes.p21.s3:8c4d56749967",
+  "the-pair-of-primes.p21.s3:c39e405e645c",
   "the-pair-of-primes.p21.s4:2ca22c76e78c",
   "the-pair-of-primes.p21.s5:91729e15095e",
   "the-pair-of-primes.p21.s6:641ae41293cb",
@@ -498,12 +532,20 @@
  "h-chcore": [
   "ch-core.p1.s1:803cff8a18c8",
   "ch-core.p1.s2:c0f717171719",
-  "ch-core.p1.s3:ef4c2f8cda88",
-  "ch-core.p1.s4:62b811f1e405",
-  "ch-core.p1.s5:6fe54f4bab0a",
-  "ch-core.p1.s6:76531454263e",
-  "ch-core.p1.s7:6060e35ff0e9",
-  "ch-core.p1.s8:fb54cea911f3"
+  "ch-core.p1.s12:bef0136a52d7",
+  "ch-core.p1.s13:fc7fc9ccaca3",
+  "ch-core.p1.s14:749066e8e869"
+ ],
+ "h-askmain": [
+  "ch-core.p1.s3:d492aaee174e",
+  "ch-core.p1.s4:48afa4e0e689",
+  "ch-core.p1.s5:62b811f1e405",
+  "ch-core.p1.s6:563d430f86ba",
+  "ch-core.p1.s7:1b72728f33b7",
+  "ch-core.p1.s8:1cca6021fcbf",
+  "ch-core.p1.s9:3573cafa8b31",
+  "ch-core.p1.s10:c2a16fa69632",
+  "ch-core.p1.s11:b8c75d10b4a5"
  ],
  "h-rows": [
   "ch-core.p2.s1:4b3c58025c40",
@@ -513,12 +555,16 @@
   "ch-core.p6.s1:6adcc865cf58",
   "ch-core.p7.s1:503c3d631e1a",
   "ch-core.p8.s1:6bbd91005890",
-  "ch-core.p8.s4:7d6b39b66633",
-  "ch-core.p8.s5:0d1448b5ebfb"
+  "ch-core.p8.s8:7d6b39b66633",
+  "ch-core.p8.s9:0d1448b5ebfb"
  ],
  "h-balance": [
-  "ch-core.p8.s2:ae82c563f3ae",
-  "ch-core.p8.s3:d0a19deead3f"
+  "ch-core.p8.s2:56d65f92d049",
+  "ch-core.p8.s3:54c3437c435d",
+  "ch-core.p8.s4:6a5cba1aca74",
+  "ch-core.p8.s5:6310fdc0f8d2",
+  "ch-core.p8.s6:61f835238056",
+  "ch-core.p8.s7:823ff348ebb0"
  ],
  "h-bracket": [
   "ch-core.p9.s1:1bcf3676cc8d",
@@ -543,26 +589,37 @@
   "ch-core.p14.s2:bb601c11bdda",
   "ch-core.p14.s3:2da559702a74"
  ],
+ "h-growth": [
+  "ch-core.p15.s1:f423290a02fc",
+  "ch-core.p15.s2:78892a21f6c3",
+  "ch-core.p15.s3:b558ef89f18a",
+  "ch-core.p15.s4:5cf345843d31",
+  "ch-core.p15.s5:53318558c345",
+  "ch-core.p15.s6:5b684116b6ad",
+  "ch-core.p15.s7:4e256ddf44f3",
+  "ch-core.p15.s8:21e5f9243418"
+ ],
  "h-window": [
-  "ch-core.p15.s1:b8b78fdb7e70",
-  "ch-core.p15.s2:237011c0aa92",
-  "ch-core.p15.s3:a5e195963e1a",
-  "ch-core.p15.s4:48c053e19e8a",
-  "ch-core.p15.s5:b7ad5091d029",
-  "ch-core.p15.s6:51c436839acd"
+  "ch-core.p16.s1:b8b78fdb7e70",
+  "ch-core.p16.s2:237011c0aa92",
+  "ch-core.p16.s3:a5e195963e1a",
+  "ch-core.p16.s4:48c053e19e8a",
+  "ch-core.p16.s5:b7ad5091d029",
+  "ch-core.p16.s6:51c436839acd"
  ],
  "h-budget": [
-  "ch-core.p16.s1:0a1592a8df2c",
-  "ch-core.p16.s2:a5d54bcc2a13",
-  "ch-core.p16.s3:aeb4b2d6f930",
-  "ch-core.p16.s4:18e887cf51db",
-  "ch-core.p16.s5:222c10b6ed11",
-  "ch-core.p16.s6:12c3490400aa",
-  "ch-core.p16.s7:3391b06feb5a",
-  "ch-core.p16.s8:562a32eac9ad",
-  "ch-core.p16.s9:5b960d2889ce",
-  "ch-core.p16.s10:b644973e8b2c",
-  "ch-core.p16.s11:6c37ae6991e1"
+  "ch-core.p17.s1:0a1592a8df2c",
+  "ch-core.p17.s2:a5d54bcc2a13",
+  "ch-core.p17.s3:aeb4b2d6f930",
+  "ch-core.p17.s4:18e887cf51db",
+  "ch-core.p17.s5:477a087787d5",
+  "ch-core.p17.s6:11329f52c762",
+  "ch-core.p17.s7:69cfb96b2432",
+  "ch-core.p17.s8:3391b06feb5a",
+  "ch-core.p17.s9:e554a9bfa9e6",
+  "ch-core.p17.s10:a5302b63dc65",
+  "ch-core.p17.s11:6f3a9dbe9393",
+  "ch-core.p17.s12:6c37ae6991e1"
  ],
  "t-chtop": [
   "ch-top.p1.s1:5aaaee14c3f6",
@@ -570,16 +627,22 @@
   "ch-top.p1.s3:cceb8a9283b3",
   "ch-top.p1.s4:07282d1a7e39"
  ],
+ "t-identu": [
+  "ch-top.p1.s5:9802a4b37fd5",
+  "ch-top.p1.s6:a7995c695d9f",
+  "ch-top.p1.s7:12272bf7ff76",
+  "ch-top.p1.s8:1b667c2176ec"
+ ],
  "t-indices": [
-  "ch-top.p1.s5:182729f023d6",
-  "ch-top.p1.s6:29f67ea774ca",
-  "ch-top.p1.s7:7cc5e20d6c96",
-  "ch-top.p1.s8:d5c4ee9bb493",
-  "ch-top.p1.s9:9dd631a86539",
-  "ch-top.p1.s10:09bd6a07c4f4",
-  "ch-top.p1.s11:753374211040",
-  "ch-top.p1.s12:7f57bfc44275",
-  "ch-top.p1.s13:7efc784419df"
+  "ch-top.p1.s9:182729f023d6",
+  "ch-top.p1.s10:29f67ea774ca",
+  "ch-top.p1.s11:7cc5e20d6c96",
+  "ch-top.p1.s12:d5c4ee9bb493",
+  "ch-top.p1.s13:9dd631a86539",
+  "ch-top.p1.s14:09bd6a07c4f4",
+  "ch-top.p1.s15:753374211040",
+  "ch-top.p1.s16:7f57bfc44275",
+  "ch-top.p1.s17:7efc784419df"
  ],
  "t-div": [
   "ch-top.p2.s1:87e0ed5a12a7",
@@ -590,18 +653,48 @@
  "t-slope": [
   "ch-top.p3.s1:5fede3ac10f9",
   "ch-top.p3.s2:af42c34901ce",
-  "ch-top.p3.s3:9d5c38c79615",
-  "ch-top.p3.s4:b1d8539eb3e5"
+  "ch-top.p3.s3:288dae0e2d54",
+  "ch-top.p3.s4:be4bf57e6df1",
+  "ch-top.p3.s5:e7386e8f8670"
  ],
  "t-cancel": [
-  "ch-top.p4.s1:4ca4fe199444",
-  "ch-top.p4.s2:9849e5cebe37",
-  "ch-top.p4.s3:661124ef14ed",
-  "ch-top.p4.s4:6ff13f2d2909"
+  "ch-top.p4.s1:fdd58f4053a0",
+  "ch-top.p4.s2:6723477a5f9f",
+  "ch-top.p4.s3:ae1856918d4c",
+  "ch-top.p4.s4:0f8a875cc8f0",
+  "ch-top.p4.s5:b9bd5e2d9157",
+  "ch-top.p4.s6:6b4779c19dc3",
+  "ch-top.p4.s7:828ff2164f1d",
+  "ch-top.p4.s8:7f695841ad4d",
+  "ch-top.p4.s9:0f88d8dbea26",
+  "ch-top.p4.s10:83c0f11f70b5",
+  "ch-top.p4.s11:4332bbeef661",
+  "ch-top.p4.s12:b56672632701"
  ],
  "t-rest": [
-  "ch-top.p4.s5:5fa22ce815bf",
-  "ch-top.p4.s6:9566f4da4836"
+  "ch-top.p4.s13:5fa22ce815bf",
+  "ch-top.p4.s14:9566f4da4836"
+ ],
+ "t-count5": [
+  "ch-top.p5.s1:75b59b2e3ae2",
+  "ch-top.p5.s2:3ffebd4e02a8",
+  "ch-top.p5.s3:e7608c243908",
+  "ch-top.p5.s4:a3eaf9de20e1",
+  "ch-top.p5.s5:9ff3cbef5627"
+ ],
+ "t-maindef": [
+  "ch-top.p5.s6:25305983786f",
+  "ch-top.p5.s7:5f1708951197",
+  "ch-top.p5.s8:505756d4fc7b"
+ ],
+ "t-keyid": [
+  "ch-top.p5.s9:bcc5b42e4bce",
+  "ch-top.p5.s10:2ec973de5737",
+  "ch-top.p5.s11:a4bcc11ea336"
+ ],
+ "t-wtie": [
+  "ch-top.p5.s12:4b7ccb2550cf",
+  "ch-top.p5.s13:9cef00f3aef1"
  ],
  "r-tie": [
   "what-the-numbers-of-the-record-are.p1.s1:947977f499d5",
@@ -647,21 +740,27 @@
  "d-slope": [
   "the-path-of-the-divisibility-inequality.p12.s1:45c92c21363a",
   "the-path-of-the-divisibility-inequality.p12.s2:be4797ab1932",
-  "the-path-of-the-divisibility-inequality.p12.s3:6d14c5fea438"
+  "the-path-of-the-divisibility-inequality.p12.s3:0d0086dd5b1c",
+  "the-path-of-the-divisibility-inequality.p12.s4:3385448b2014"
  ],
  "d-chain": [
   "the-path-of-the-divisibility-inequality.p13.s1:671564cfb63f",
-  "the-path-of-the-divisibility-inequality.p13.s2:92ecf6bd5b39"
+  "the-path-of-the-divisibility-inequality.p13.s2:92ecf6bd5b39",
+  "the-path-of-the-divisibility-inequality.p13.s3:faaae7559f3d"
  ],
  "d-link": [
-  "the-path-of-the-divisibility-inequality.p14.s1:2fe20b5277e3",
-  "the-path-of-the-divisibility-inequality.p14.s3:246fcf4f8abc"
+  "the-path-of-the-divisibility-inequality.p14.s1:a12e03da0bb0",
+  "the-path-of-the-divisibility-inequality.p14.s2:11f5844ca5dc",
+  "the-path-of-the-divisibility-inequality.p14.s3:116a97cadd5d",
+  "the-path-of-the-divisibility-inequality.p14.s4:f43442794a6f",
+  "the-path-of-the-divisibility-inequality.p14.s6:45d8471867aa",
+  "the-path-of-the-divisibility-inequality.p14.s7:d3ee93fc8fc9"
  ],
  "d-e17": [
-  "the-path-of-the-divisibility-inequality.p14.s2:0d38307e9977"
+  "the-path-of-the-divisibility-inequality.p14.s5:5e7311a17a4c"
  ],
  "d-bessel": [
-  "the-path-of-the-divisibility-inequality.p14.s4:0f74c89d7931"
+  "the-path-of-the-divisibility-inequality.p14.s8:0f74c89d7931"
  ],
  "k-colchain": [
   "the-chain-of-lifts.p1.s1:7f132403133c",
@@ -674,9 +773,12 @@
   "the-chain-of-lifts.p3.s2:1fbbe1283996"
  ],
  "k-groups": [
-  "the-chain-of-lifts.p4.s1:580d0fc44683",
-  "the-chain-of-lifts.p4.s2:67150d5dc9eb",
-  "the-chain-of-lifts.p4.s3:adbcaf65dd18"
+  "the-chain-of-lifts.p4.s1:a4b973c44bd0",
+  "the-chain-of-lifts.p4.s2:ca571ee05cc8",
+  "the-chain-of-lifts.p4.s3:b6a971834e46",
+  "the-chain-of-lifts.p4.s4:9787b0910ddf",
+  "the-chain-of-lifts.p4.s5:85e25a02d95f",
+  "the-chain-of-lifts.p4.s6:406140e00a3c"
  ],
  "k-rank": [
   "the-chain-of-lifts.p5.s1:255a9eb0d376",
@@ -708,12 +810,14 @@
   "the-chain-of-lifts.p10.s3:2118109bff59"
  ],
  "k-read": [
-  "the-chain-of-lifts.p11.s1:fbcd12aab847",
-  "the-chain-of-lifts.p11.s2:b22673863b10"
+  "the-chain-of-lifts.p11.s1:ab80679c9892",
+  "the-chain-of-lifts.p11.s2:c81f721c128a",
+  "the-chain-of-lifts.p11.s3:257af0c68426",
+  "the-chain-of-lifts.p11.s4:85cd90d563c0"
  ],
  "k-theta": [
-  "the-chain-of-lifts.p11.s3:51ef41386569",
-  "the-chain-of-lifts.p11.s4:a8257a37de8f"
+  "the-chain-of-lifts.p11.s5:51ef41386569",
+  "the-chain-of-lifts.p11.s6:a8257a37de8f"
  ],
  "k-reading": [
   "the-chain-of-lifts.p12.s1:4c6aa640a05a",
@@ -729,8 +833,8 @@
   "the-chain-of-lifts.p17.s1:1a0d2370236e",
   "the-chain-of-lifts.p17.s2:35a24655985a",
   "the-chain-of-lifts.p17.s3:8b3842bf4891",
-  "the-chain-of-lifts.p18.s1:d8e4861ed736",
-  "the-chain-of-lifts.p18.s2:39e0df8d81a9"
+  "the-chain-of-lifts.p18.s1:f93d5cee29d1",
+  "the-chain-of-lifts.p18.s2:8fcdd1c3473d"
  ],
  "u-place": [
   "the-bound-for-one-lift.p1.s1:80ed0d731579",
@@ -755,15 +859,17 @@
   "the-bound-for-one-lift.p5.s2:e77846ccf7f9",
   "the-bound-for-one-lift.p5.s3:7fe2998fff52",
   "the-bound-for-one-lift.p6.s1:2ae0edf75bb9",
-  "the-bound-for-one-lift.p6.s2:a4047c15c057",
+  "the-bound-for-one-lift.p6.s2:8d91730ad0fd",
+  "the-bound-for-one-lift.p6.s3:95e7501ff5ca",
   "the-bound-for-one-lift.p7.s1:ec00339b014d",
   "the-bound-for-one-lift.p7.s2:22fd908ae3ba"
  ],
  "u-stepE": [
-  "the-bound-for-one-lift.p8.s1:fc6396b3af1b",
+  "the-bound-for-one-lift.p8.s1:4a774c570152",
   "the-bound-for-one-lift.p8.s2:3acda5d697ac",
-  "the-bound-for-one-lift.p8.s3:8725bcf266bc",
-  "the-bound-for-one-lift.p8.s4:6b580d03e731"
+  "the-bound-for-one-lift.p8.s3:043975e3c4d1",
+  "the-bound-for-one-lift.p8.s4:0b0b889ad367",
+  "the-bound-for-one-lift.p8.s5:6b580d03e731"
  ],
  "u-hook": [
   "the-bound-for-one-lift.p9.s1:e103bb15af3b",
@@ -774,21 +880,32 @@
  ],
  "u-origin": [
   "the-bound-for-one-lift.p10.s1:6c6949e0d756",
-  "the-bound-for-one-lift.p10.s2:5ef74399cd54",
-  "the-bound-for-one-lift.p10.s3:d5cfd3494fca",
-  "the-bound-for-one-lift.p10.s4:866ddbf4dc8d",
-  "the-bound-for-one-lift.p10.s5:7c97b5684a24",
-  "the-bound-for-one-lift.p10.s6:abc52b052dd1",
-  "the-bound-for-one-lift.p10.s7:e28a1a8e5fb1",
-  "the-bound-for-one-lift.p10.s8:4c36640a7bb7"
+  "the-bound-for-one-lift.p10.s2:1e788087c7a3",
+  "the-bound-for-one-lift.p10.s3:17181fa9d3a3",
+  "the-bound-for-one-lift.p10.s4:d5cfd3494fca",
+  "the-bound-for-one-lift.p10.s5:866ddbf4dc8d",
+  "the-bound-for-one-lift.p10.s6:14e0651afdaf",
+  "the-bound-for-one-lift.p10.s7:ff38df7358c9",
+  "the-bound-for-one-lift.p10.s8:6d72ebe3b6c9",
+  "the-bound-for-one-lift.p10.s9:6930b593e5f1",
+  "the-bound-for-one-lift.p10.s10:387778c11063",
+  "the-bound-for-one-lift.p10.s11:c361b6f3f166",
+  "the-bound-for-one-lift.p10.s12:abc52b052dd1",
+  "the-bound-for-one-lift.p10.s13:e28a1a8e5fb1",
+  "the-bound-for-one-lift.p10.s14:08579355a371"
  ],
  "u-each": [
   "the-bound-for-one-lift.p11.s1:a8037d64fa72",
-  "the-bound-for-one-lift.p11.s2:f3eb83579f52",
+  "the-bound-for-one-lift.p11.s2:a031065258cd",
   "the-bound-for-one-lift.p11.s3:dff3c98a0a96"
  ],
+ "u-wways": [
+  "the-bound-for-one-lift.p11.s4:2b0ea14df7a7",
+  "the-bound-for-one-lift.p11.s5:9cffb906e206",
+  "the-bound-for-one-lift.p11.s6:84e43e4fe4cd"
+ ],
  "u-open": [
-  "the-bound-for-one-lift.p11.s4:09f8fbe98b67"
+  "the-bound-for-one-lift.p11.s7:e8d2d95487cc"
  ],
  "u-numfacts": [
   "the-bound-for-one-lift.p12.s1:2622053008e0"
@@ -815,7 +932,7 @@
   "the-lower-bound-for-the-lattices-of-a-da.p6.s1:3a775be35c03",
   "the-lower-bound-for-the-lattices-of-a-da.p7.s1:bcbedbd22b2b",
   "the-lower-bound-for-the-lattices-of-a-da.p8.s1:68293fc6a0fa",
-  "the-lower-bound-for-the-lattices-of-a-da.p9.s1:46a33b2af1ca",
+  "the-lower-bound-for-the-lattices-of-a-da.p9.s1:fbe3ebf86bf7",
   "the-lower-bound-for-the-lattices-of-a-da.p10.s1:1255b5d9751c",
   "the-lower-bound-for-the-lattices-of-a-da.p11.s1:ad66c5905993",
   "the-lower-bound-for-the-lattices-of-a-da.p12.s1:bbe0627d29fd",
@@ -863,7 +980,9 @@
   "how-the-statement-is-applied-to-a-datum.p1.s3:99477e4c07f8",
   "how-the-statement-is-applied-to-a-datum.p1.s4:ac530ce02436",
   "how-the-statement-is-applied-to-a-datum.p1.s5:1e17efc088af",
-  "how-the-statement-is-applied-to-a-datum.p1.s6:3189196cd685"
+  "how-the-statement-is-applied-to-a-datum.p1.s6:447369adcf90",
+  "how-the-statement-is-applied-to-a-datum.p1.s7:9cd056bec77b",
+  "how-the-statement-is-applied-to-a-datum.p1.s8:8ed8e8dadb43"
  ],
  "lo-count": [
   "how-the-statement-is-applied-to-a-datum.p2.s1:4e05d9acebb5",
@@ -891,22 +1010,25 @@
  ],
  "lo-blockreal": [
   "how-the-bounds-of-the-link-reach-the-map.p7.s1:65ff90508840",
-  "how-the-bounds-of-the-link-reach-the-map.p7.s2:26e7ede0e899",
-  "how-the-bounds-of-the-link-reach-the-map.p7.s3:e6f573f8e46e",
-  "how-the-bounds-of-the-link-reach-the-map.p7.s4:94a49c92096a",
-  "how-the-bounds-of-the-link-reach-the-map.p7.s5:4069c0906fb1"
+  "how-the-bounds-of-the-link-reach-the-map.p7.s2:a561de45ffd6",
+  "how-the-bounds-of-the-link-reach-the-map.p7.s3:e51b860ae195",
+  "how-the-bounds-of-the-link-reach-the-map.p7.s4:e6f573f8e46e",
+  "how-the-bounds-of-the-link-reach-the-map.p7.s5:94a49c92096a",
+  "how-the-bounds-of-the-link-reach-the-map.p7.s6:4069c0906fb1"
  ],
  "lo-interp": [
   "how-the-bounds-of-the-link-reach-the-map.p8.s1:f4d523eccdec",
-  "how-the-bounds-of-the-link-reach-the-map.p8.s2:e9f0cffa4df1",
-  "how-the-bounds-of-the-link-reach-the-map.p8.s3:7cf7ff4b5a43",
-  "how-the-bounds-of-the-link-reach-the-map.p8.s4:de77e4466110",
-  "how-the-bounds-of-the-link-reach-the-map.p8.s5:b8b5e094d455",
-  "how-the-bounds-of-the-link-reach-the-map.p8.s6:9225d9ccd8b1",
-  "how-the-bounds-of-the-link-reach-the-map.p8.s7:eefed640aaf0",
-  "how-the-bounds-of-the-link-reach-the-map.p8.s8:6f2420c149d6",
-  "how-the-bounds-of-the-link-reach-the-map.p8.s9:bdedabc98d70",
-  "how-the-bounds-of-the-link-reach-the-map.p8.s10:7747e42d2b02"
+  "how-the-bounds-of-the-link-reach-the-map.p8.s2:05952662550d",
+  "how-the-bounds-of-the-link-reach-the-map.p8.s3:7635b142e789",
+  "how-the-bounds-of-the-link-reach-the-map.p8.s4:7cf7ff4b5a43",
+  "how-the-bounds-of-the-link-reach-the-map.p8.s5:de77e4466110",
+  "how-the-bounds-of-the-link-reach-the-map.p8.s6:7a5d432e1257",
+  "how-the-bounds-of-the-link-reach-the-map.p8.s7:60227e89d275",
+  "how-the-bounds-of-the-link-reach-the-map.p8.s8:9225d9ccd8b1",
+  "how-the-bounds-of-the-link-reach-the-map.p8.s9:eefed640aaf0",
+  "how-the-bounds-of-the-link-reach-the-map.p8.s10:6f2420c149d6",
+  "how-the-bounds-of-the-link-reach-the-map.p8.s11:bdedabc98d70",
+  "how-the-bounds-of-the-link-reach-the-map.p8.s12:7747e42d2b02"
  ],
  "a-linkcore": [
   "how-the-conditions-are-assembled.p1.s1:25b5d52aab9f",
@@ -915,7 +1037,7 @@
   "how-the-conditions-are-assembled.p1.s4:61e5b601da4e",
   "how-the-conditions-are-assembled.p1.s5:3163a564bd86",
   "how-the-conditions-are-assembled.p1.s6:2e0fe1675b5e",
-  "how-the-conditions-are-assembled.p1.s7:bb08527a4286"
+  "how-the-conditions-are-assembled.p1.s7:02e6d949319d"
  ],
  "a-sources": [
   "how-the-conditions-are-assembled.p2.s1:328194ab9ac7",
@@ -946,12 +1068,13 @@
   "how-the-conditions-are-assembled.p20.s2:c7011d00a162"
  ],
  "a-53": [
-  "how-the-conditions-are-assembled.p21.s1:23c9cf74e725",
-  "how-the-conditions-are-assembled.p21.s2:2fecaeae5c4b",
-  "how-the-conditions-are-assembled.p21.s3:6afd852ba1ad"
+  "how-the-conditions-are-assembled.p21.s1:4d8d1fd66cd3",
+  "how-the-conditions-are-assembled.p21.s2:440fb681b9bf",
+  "how-the-conditions-are-assembled.p21.s3:2fecaeae5c4b",
+  "how-the-conditions-are-assembled.p21.s4:c5d452c83ec0"
  ],
  "a-true": [
-  "how-the-conditions-are-assembled.p21.s4:e34f923ccff1"
+  "how-the-conditions-are-assembled.p21.s5:e3c1a750c9f9"
  ],
  "v-def": [
   "vwin-the-bound-on-lengths.p1.s1:4c3ab4c4bd10",
@@ -965,7 +1088,7 @@
   "vwin-the-bound-on-lengths.p2.s3:aab935825ed3"
  ],
  "v-uses": [
-  "vwin-the-bound-on-lengths.p4.s1:1d3af279866e"
+  "vwin-the-bound-on-lengths.p4.s1:c7d16925300c"
  ],
  "v-weak": [
   "vwin-the-bound-on-lengths.p5.s1:5c5cc54ab622",
@@ -1017,7 +1140,7 @@
   "the-record-and-the-two-bundles.p4.s3:9e859cec9448"
  ],
  "b-record": [
-  "the-record-and-the-two-bundles.p5.s1:ae48a55f4b48",
+  "the-record-and-the-two-bundles.p5.s1:6806f85ac344",
   "the-record-and-the-two-bundles.p5.s2:8da7a859ceeb",
   "the-record-and-the-two-bundles.p5.s3:4278109d2256",
   "the-record-and-the-two-bundles.p6.s1:401f16b23d1b",
@@ -1116,11 +1239,12 @@
   "what-stays-unread.p11.s1:d2ced44a0a6b",
   "what-stays-unread.p12.s1:22d8e4c9f5dc",
   "what-stays-unread.p13.s1:b7007cc17ece",
-  "what-stays-unread.p14.s1:25e75f6bc912"
+  "what-stays-unread.p14.s1:aa5e9fcbcf34",
+  "what-stays-unread.p15.s1:6c8152ba786c"
  ],
  "un-math": [
-  "what-stays-unread.p15.s1:c9773898ce08",
-  "what-stays-unread.p15.s2:46ef6b95792a"
+  "what-stays-unread.p16.s1:c9773898ce08",
+  "what-stays-unread.p16.s2:46ef6b95792a"
  ],
  "x-files": [
   "scripts-and-files.p1.s1:22c2c8cfc1ab",
@@ -1129,12 +1253,15 @@
   "scripts-and-files.p2.s2:b9e2efc5113e",
   "scripts-and-files.p2.s3:9a5b02a4396d",
   "scripts-and-files.p2.s4:e23b5af727dc",
-  "scripts-and-files.p2.s5:0036e00d7299",
+  "scripts-and-files.p2.s5:54621ff6c33a",
+  "scripts-and-files.p2.s6:0036e00d7299",
   "scripts-and-files.p3.s1:55a86baf17c3",
   "scripts-and-files.p4.s1:e7e0c9f2b3d5",
   "scripts-and-files.p5.s1:931f5febd5b2",
   "scripts-and-files.p6.s1:80e637c6f773",
   "scripts-and-files.p7.s1:c8ea54245bd6",
-  "scripts-and-files.p8.s1:fd971954a838"
+  "scripts-and-files.p8.s1:fd971954a838",
+  "scripts-and-files.p9.s1:5cdfd19b311b",
+  "scripts-and-files.p10.s1:40d9f391ecdd"
  ]
 }

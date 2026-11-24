@@ -185,7 +185,7 @@
    "id": "s0-reader",
    "type": "lahtokohta",
    "section": "the-strategy-of-the-proof-followed-throu",
-   "title": "A language model read the route in one session with seven parallel readings and two further comparisons with the Lean text, no mathematician checked it, Lean was not run, and a reading leaves open whether a definition is the object its name suggests",
+   "title": "A language model read the route in one session with seven parallel readings and two further comparisons with the Lean text, Gemini, a model of another maker, compared four parts and the list of claims with the Lean text, no mathematician checked it, Lean was not run, and a reading leaves open whether a definition is the object its name suggests",
    "laji": "A",
    "units": [
     "the-strategy-of-the-proof-followed-throu.p3"
@@ -412,7 +412,7 @@
    "id": "st5",
    "type": "vaite",
    "section": "the-route-in-nine-steps",
-   "title": "Step 5. ASK is bounded through the slope of a lattice, from above by DIV and from below by SlopeIneq",
+   "title": "Step 5. ASK is bounded through the slope of a lattice, which DIV bounds from above and SlopeIneq from below by a mean over further lattices, while a third condition puts a quantity below the slope of each further lattice and ASK is at most that quantity plus a loss",
    "laji": "T",
    "units": [
     "the-route-in-nine-steps.p5"
@@ -429,7 +429,7 @@
    "id": "st6",
    "type": "vaite",
    "section": "the-route-in-nine-steps",
-   "title": "Step 6. A pairing of each word factors through a chain of m kernels between unitary groups of ranks k + j(t+1), the first m − 2 composed one after the other, the last two inside a finite sum, with one more linear map after them, and the document does not record how the pairing is tied to the map",
+   "title": "Step 6. A pairing of each word factors through a chain of m kernels between spaces that carry unitary groups, of ranks k + j(t+1) for j up to m − 1 and k + m(t+1) − 1 on the last space, the first m − 2 composed one after the other, the last two inside a finite sum, with one more linear map after them, and the document does not record how the pairing is tied to the map",
    "laji": "T",
    "units": [
     "the-route-in-nine-steps.p6"
@@ -468,7 +468,7 @@
    "id": "st8",
    "type": "vaite",
    "section": "the-route-in-nine-steps",
-   "title": "Step 8. The lower bound applies a general statement about several maps into one lattice, which takes two bounds on products of matrices and one on the number of rows from a link and a family with many words, where the existence of such families is a premise not followed, and by the document's interpretation the bounds say that each map is nearly an isometry and that the images fill the target evenly",
+   "title": "Step 8. The lower bound applies a general statement about several maps into one lattice, which takes two bounds on products of matrices and one on the number of rows from a link and a family with many words, where the existence of such families is a premise not followed, and by the document's interpretation the bounds say that the maps are nearly isometries after scaling in the mean over the family and that the images fill the target evenly",
    "laji": "T",
    "units": [
     "the-route-in-nine-steps.p8"
@@ -505,20 +505,31 @@
    "id": "s2-map",
    "type": "meta",
    "section": "the-route-in-nine-steps",
-   "title": "Which section covers which step",
+   "title": "Which section covers which step, with a short name for each of the nine steps",
    "meta": true,
    "units": [
-    "the-route-in-nine-steps.p10"
+    "the-route-in-nine-steps.p10",
+    "the-route-in-nine-steps.p11",
+    "the-route-in-nine-steps.p12",
+    "the-route-in-nine-steps.p13",
+    "the-route-in-nine-steps.p14",
+    "the-route-in-nine-steps.p15",
+    "the-route-in-nine-steps.p16",
+    "the-route-in-nine-steps.p17",
+    "the-route-in-nine-steps.p18",
+    "the-route-in-nine-steps.p19",
+    "the-route-in-nine-steps.p20",
+    "the-route-in-nine-steps.p21"
    ]
   },
   {
    "id": "s2-branches",
    "type": "vaite",
    "section": "the-route-in-nine-steps",
-   "title": "Further branches supply the premises, namely VWin, Row and a record of 46 fields fed by a covolume bound",
+   "title": "Further branches supply the premises, namely VWin, Row and a record of 46 fields, five of data and 41 conditions on the families, one of which says that the chains of lifts exist, fed by a covolume bound",
    "laji": "T",
    "units": [
-    "the-route-in-nine-steps.p11"
+    "the-route-in-nine-steps.p22"
    ],
    "johto": [
     "f-inputs",
@@ -704,7 +715,7 @@
    "id": "z-states",
    "type": "lahtokohta",
    "section": "what-zero-free-all-of-green-v-win-states",
-   "title": "zero_free_all_of_green_v_win takes Green, VWin and one record and concludes zero-freeness for primitive characters, which imprimitive extends to all",
+   "title": "zero_free_all_of_green_v_win takes Green, VWin and one record and concludes zero-freeness for primitive characters, which imprimitive extends to all characters through finitely many nonzero Euler factors, with the trivial character at s = 1 set aside",
    "laji": "A",
    "units": [
     "what-zero-free-all-of-green-v-win-states.p1"
@@ -938,7 +949,7 @@
    "id": "c-eath",
    "type": "maaritelma",
    "section": "the-wanted-characters-inside-an-auxiliar",
-   "title": "EAtH places the kept characters among those of the host and asks ‖gChi χ x‖ ≤ x^(1/2+ε) for the other characters, those trivial on A0 and not kept",
+   "title": "EAtH says that every character of the level induces a character of the host from the set Xp, the characters trivial on A0 with the value 1 at iod, and asks ‖gChi χ x‖ ≤ x^(1/2+ε) for the set Bounded, the characters of Xp that are not kept and all of Xm, where the value at iod is −1, which the document calls the other characters",
    "laji": "D",
    "units": [
     "the-wanted-characters-inside-an-auxiliar.p3"
@@ -951,14 +962,41 @@
    "id": "c-source",
    "type": "lahtokohta",
    "section": "the-wanted-characters-inside-an-auxiliar",
-   "title": "The field bdG is used by sigA_le alone and filled by supplyOfAdmOf from boundedTw, which reads it off PairGood",
+   "title": "The field bdG is used by sigA_le alone and filled by supplyOfAdmOf, which takes three premises for the level of the powers of one ψ, from boundedTw, which reads it off PairGood under a condition TwistForm whose source the document does not record",
    "laji": "A",
    "units": [
     "the-wanted-characters-inside-an-auxiliar.p4",
-    "the-wanted-characters-inside-an-auxiliar.p5"
+    "the-wanted-characters-inside-an-auxiliar.p5.s1-s6"
    ],
    "edellyttaa": [
     "c-eath"
+   ]
+  },
+  {
+   "id": "c-twistform",
+   "type": "maaritelma",
+   "section": "the-wanted-characters-inside-an-auxiliar",
+   "title": "TwistForm says that every character of the host that is trivial on A0 agrees with a power of ψ times the quadratic characters of q and d, each to the exponent 0 or 1, and that its value at iod is 1 or −1 as the exponent of d is 0 or 1",
+   "laji": "D",
+   "units": [
+    "the-wanted-characters-inside-an-auxiliar.p5.s7"
+   ],
+   "edellyttaa": [
+    "c-eath"
+   ]
+  },
+  {
+   "id": "c-quadpresent",
+   "type": "vaite",
+   "section": "the-wanted-characters-inside-an-auxiliar",
+   "title": "Every character of Bounded has at least one of the two quadratic characters present, since Xm has the exponent 1 of d and a character of Xp that is not kept has the exponent 1 of q, and boundedTw applies PairGood at y = x, where y^(1/2+ε/2) is at most x^(1/2+ε)",
+   "laji": "T",
+   "units": [
+    "the-wanted-characters-inside-an-auxiliar.p5.s8-s10"
+   ],
+   "johto": [
+    "c-eath",
+    "c-twistform"
    ]
   },
   {
@@ -975,7 +1013,7 @@
    "id": "c-pairgood",
    "type": "maaritelma",
    "section": "the-wanted-characters-inside-an-auxiliar",
-   "title": "PairGood says that each other character has ‖gChi χ y‖ ≤ y^(1/2+ε/2) for y from Y to Y^A and a bounded logarithmic derivative, with zero-free boxes for the real ones",
+   "title": "PairGood says that every primitive character inducing a character of modulus M times the quadratic characters of q and d, at least one present, has ‖gChi χ y‖ ≤ y^(1/2+ε/2) for y from Y to an upper end X and a bounded logarithmic derivative, with zero-free boxes for the products with a real character whose modulus divides 8·M, and pairEx proves it with X = Y^A",
    "laji": "D",
    "units": [
     "the-wanted-characters-inside-an-auxiliar.p7"
@@ -1272,13 +1310,27 @@
    "id": "h-chcore",
    "type": "lahtokohta",
    "section": "ch-core",
-   "title": "ch_core assumes the bound of ch_top for ASK − MAIN and concludes that the prime sum of the kept characters is at most x^(1/2+(C+3)ε) plus the sum SigA of the other characters",
+   "title": "ch_core assumes the bound of ch_top for ASK − MAIN for every u0 in A0 and twelve conditions, and concludes that GmA, a weighted sum of the real parts of the prime sums of the kept characters, is at most x^(1/2+(C+3)ε) plus SigA, the sum over the characters trivial on A0 and not kept",
    "laji": "A",
    "units": [
-    "ch-core.p1"
+    "ch-core.p1.s1-s2",
+    "ch-core.p1.s12-s14"
    ],
    "edellyttaa": [
     "c-eath"
+   ]
+  },
+  {
+   "id": "h-askmain",
+   "type": "maaritelma",
+   "section": "ch-core",
+   "title": "GPsi is the prime sum of a character, ASK adds 2·log p times the positive parts max(a/p^i − w, 0) over the powers of the inert odd primes up to P with a term for d, MAIN is a·(log a − 1 − γ + L − W) with W the mean of log w over PhiSet, and both depend on t, u0 and the lift j through a and the weights w",
+   "laji": "D",
+   "units": [
+    "ch-core.p1.s3-s11"
+   ],
+   "edellyttaa": [
+    "ps-gchi"
    ]
   },
   {
@@ -1295,20 +1347,21 @@
     "ch-core.p6",
     "ch-core.p7",
     "ch-core.p8.s1",
-    "ch-core.p8.s4-s5"
+    "ch-core.p8.s8-s9"
    ]
   },
   {
    "id": "h-balance",
    "type": "vaite",
    "section": "ch-core",
-   "title": "Row 1 is finite Fourier inversion because De is an average of twisted sums over the characters, and the sum over the m lifts multiplies the summand of row 3 by m",
+   "title": "Row 1 is finite Fourier inversion because De is a double sum, over the classes outside PhiSet and the characters, of w times GPsi at a/w, row 3 concludes nT·m·b·((nT2/n)/2)·g ≤ Err + 2·nT·m·b/x, and the quantity that row 2 bounds holds no weight w, so the sum over the m lifts multiplies it by m",
    "laji": "T",
    "units": [
-    "ch-core.p8.s2-s3"
+    "ch-core.p8.s2-s7"
    ],
    "johto": [
-    "h-rows"
+    "h-rows",
+    "h-askmain"
    ]
   },
   {
@@ -1353,13 +1406,28 @@
    ]
   },
   {
+   "id": "h-growth",
+   "type": "vaite",
+   "section": "ch-core",
+   "title": "GrowthSizeBound, which proposition_size_bound proves, has the conclusion of row 3 as premise with G − 4·x^(1/2+ε) in the place of g, its two small terms 4·x^ε/x and 4·x^(1/2+ε) are absorbed by the exponent when 26 ≤ x^(3ε/8), and ch_core applies it to GmA − SigA, which gives the bound for GmA with SigA added",
+   "laji": "T",
+   "units": [
+    "ch-core.p15"
+   ],
+   "johto": [
+    "h-balance",
+    "h-exponent",
+    "h-chcore"
+   ]
+  },
+  {
    "id": "h-window",
    "type": "vaite",
    "section": "ch-core",
    "title": "The terms x/m and m are equal at m = √x, the proof takes the window for m as premises and does not choose m, the fourth term is about √x for every m, and core_gm calls ch_core with C = eD + eL + 3, which gives its conclusion one ε more",
    "laji": "T",
    "units": [
-    "ch-core.p15"
+    "ch-core.p16"
    ],
    "johto": [
     "h-four",
@@ -1371,10 +1439,10 @@
    "id": "h-budget",
    "type": "vaite",
    "section": "ch-core",
-   "title": "B0 and Nc are budgets that the code defines by formulas, with B0 = f·m·b·x^ε, so the factor m of the third term is part of the definition of the budget, and why the errors of one lift fit a budget that grows with m was not read",
+   "title": "B0 and Nc are budgets that the code defines by formulas, with B0 = f·m·b·x^ε, so the factor m of the third term is part of the definition of the budget, EComp5 bounds the number Ee by a constant times m·B0, why the errors of the m lifts fit m times a budget that itself grows with m was not read, and the premise NumFacts.sw shows why the budget has to grow with m",
    "laji": "T",
    "units": [
-    "ch-core.p16"
+    "ch-core.p17"
    ],
    "johto": [
     "h-bracket",
@@ -1396,13 +1464,26 @@
    ]
   },
   {
+   "id": "t-identu",
+   "type": "maaritelma",
+   "section": "ch-top",
+   "title": "ch_top takes four further premises, of which IdentU sets the fields aT, w, gam, LpL and ASK of the record to the numbers a t, the weights of ASK, γ, the real part of L and the sum of ASK over TT and the lifts, and ErrWindows, LargeX and BNBoundsU are conditions on sizes and budgets",
+   "laji": "D",
+   "units": [
+    "ch-top.p1.s5-s8"
+   ],
+   "edellyttaa": [
+    "h-askmain"
+   ]
+  },
+  {
    "id": "t-indices",
    "type": "maaritelma",
    "section": "ch-top",
    "title": "The record has indices u0, u and t, the numbers muCC and Fo depend on u0 and muN, h and T on u0 and u, Main is the sum of MAIN, and ph y is y log y − y",
    "laji": "D",
    "units": [
-    "ch-top.p1.s5-s13"
+    "ch-top.p1.s9-s17"
    ]
   },
   {
@@ -1422,7 +1503,7 @@
    "id": "t-slope",
    "type": "lahtokohta",
    "section": "ch-top",
-   "title": "SlopeIneq says, when three small parameters lie in stated ranges and HH bounds a difference, that the weighted mean over u of muN u − h u, minus the log of the number of u and corrections, is at most muCC",
+   "title": "SlopeIneq says, when three numbers of the record lie in stated ranges and HH is positive and at least a difference, that the weighted mean over u of muN u − h u, minus the log of the number of u and corrections, is at most muCC, and HHBound and FParams supply those two requirements",
    "laji": "A",
    "units": [
     "ch-top.p3"
@@ -1435,15 +1516,17 @@
    "id": "t-cancel",
    "type": "vaite",
    "section": "ch-top",
-   "title": "The mean of DIV and SlopeIneq cancel muCC and the mean of h and bound the mean of muN, and two further conditions bound ASK through Ga, so ASK ≤ Main plus errors",
+   "title": "QuotientSlopeBoundsWith puts Ga plus Fo below muN u up to further numbers and LossBounds puts ASK below Ga plus a loss, s_lower5 adds DIV, which cancels Fo, and takes the mean with the weights of SlopeIneq, Ga_bound5 adds SlopeIneq, the two bounds for the mean s cancel muCC, and with key_identity5 each_unit_bound_statement concludes ASK ≤ Main plus an explicit error, where s_lower5 and Ga_bound5 were read in full",
    "laji": "T",
    "units": [
-    "ch-top.p4.s1-s4"
+    "ch-top.p4.s1-s12"
    ],
    "johto": [
     "t-div",
-    "t-slope"
-   ]
+    "t-slope",
+    "t-keyid"
+   ],
+   "todistus_seuraa": true
   },
   {
    "id": "t-rest",
@@ -1452,7 +1535,62 @@
    "title": "The rest of ch_top fits the errors inside the bound through core_ineq, of which the beginning was read",
    "laji": "A",
    "units": [
-    "ch-top.p4.s5-s6"
+    "ch-top.p4.s13-s14"
+   ]
+  },
+  {
+   "id": "t-count5",
+   "type": "maaritelma",
+   "section": "ch-top",
+   "title": "The record has a positive number w for each lift and each place, and Count5 says that the logarithm of T u is at least the sum over the lifts of the mean over the places of log(w·v/π) plus m·lg minus an error, bounds it from above and bounds its variation over u",
+   "laji": "D",
+   "units": [
+    "ch-top.p5.s1-s5"
+   ],
+   "edellyttaa": [
+    "t-indices"
+   ]
+  },
+  {
+   "id": "t-maindef",
+   "type": "maaritelma",
+   "section": "ch-top",
+   "title": "Main holds for each lift and each t the product of aT t and log aT t − 1 − gam + LpL − ℓ, with ℓ the mean over the places of log w, logOm is gam + log(π/v) − LpL, and by IdentU gam is γ and LpL the real part of L",
+   "laji": "D",
+   "units": [
+    "ch-top.p5.s6-s8"
+   ],
+   "edellyttaa": [
+    "t-identu",
+    "t-indices"
+   ]
+  },
+  {
+   "id": "t-keyid",
+   "type": "vaite",
+   "section": "ch-top",
+   "title": "key_identity5 shows that with the lower bound of Count5 in place of log T u the main term of DIV equals Main minus m times the sum of aT t times lg plus an error, since the two logarithms of π/v cancel, and EComp5 matches the subtracted term with the number Ee",
+   "laji": "T",
+   "units": [
+    "ch-top.p5.s9-s11"
+   ],
+   "johto": [
+    "t-div",
+    "t-count5",
+    "t-maindef"
+   ]
+  },
+  {
+   "id": "t-wtie",
+   "type": "lahtokohta",
+   "section": "ch-top",
+   "title": "IdentU ties the w of the record to the weights w of ASK, and TieArith gives those weights as the number e of the lift at the place, which is also the definition of the shift w of the section on one lift",
+   "laji": "A",
+   "units": [
+    "ch-top.p5.s12-s13"
+   ],
+   "edellyttaa": [
+    "t-identu"
    ]
   },
   {
@@ -1571,11 +1709,11 @@
    "id": "d-link",
    "type": "lahtokohta",
    "section": "the-path-of-the-divisibility-inequality",
-   "title": "LinkDIV follows from LinkEta and DIVinN, DIVinN comes from the bound of VWin, and LinkDIV at one datum includes BesselId",
+   "title": "LinkDIV follows from LinkEta and DIVinN, divinN_of_hypV gets DIVinN from a bound HypV for a family and the conditions LinkN and SmallLevelRankEq, by their statements HypV is the bound VVle that supplyOfAdmOf derives from the bound of VWin, how the class of families carries the bound and where the two conditions come from was not read, and LinkDIV at one datum includes BesselId with its two parts",
    "laji": "A",
    "units": [
-    "the-path-of-the-divisibility-inequality.p14.s1",
-    "the-path-of-the-divisibility-inequality.p14.s3"
+    "the-path-of-the-divisibility-inequality.p14.s1-s4",
+    "the-path-of-the-divisibility-inequality.p14.s6-s7"
    ],
    "edellyttaa": [
     "w-link"
@@ -1588,7 +1726,7 @@
    "title": "By the form of the bound of VWin this is where entry 17 of the note enters the divisibility, which the text marks as an interpretation",
    "laji": "O",
    "units": [
-    "the-path-of-the-divisibility-inequality.p14.s2"
+    "the-path-of-the-divisibility-inequality.p14.s5"
    ]
   },
   {
@@ -1598,7 +1736,7 @@
    "title": "The names match the Bessel period of entry 12",
    "laji": "O",
    "units": [
-    "the-path-of-the-divisibility-inequality.p14.s4"
+    "the-path-of-the-divisibility-inequality.p14.s8"
    ]
   },
   {
@@ -1617,7 +1755,7 @@
    "id": "k-groups",
    "type": "lahtokohta",
    "section": "the-chain-of-lifts",
-   "title": "The group acting on the spaces chF u j contains UF E (N j), the isometry group of the standard Hermitian form on E^r, so a unitary group",
+   "title": "The group acting on the spaces chF u j contains UF E (N j), the isometry group of the form that adds up star (x i) * y i on E^r, a unitary group because conjE makes star complex conjugation, and the last space evGSD has the group UF E r of rank N m − 1, which the code extends to the rank N m",
    "laji": "A",
    "units": [
     "the-chain-of-lifts.p4"
@@ -1701,10 +1839,10 @@
    "id": "k-read",
    "type": "lahtokohta",
    "section": "the-chain-of-lifts",
-   "title": "rowsU_of_colPins_alt proves that a datum with its ties has a ColChain with a ChainTie and rests on 14,837 declarations",
+   "title": "rowsU_of_colPins_alt proves for one word of a datum, under conditions on sizes and ties, that the word has a ColChain with a ChainTie, it rests on 14,837 declarations, and by the exact graph it enters the proof only through the condition DefiniteSideCondition of the record, since the shape theorem does not reach it",
    "laji": "A",
    "units": [
-    "the-chain-of-lifts.p11.s1-s2"
+    "the-chain-of-lifts.p11.s1-s4"
    ]
   },
   {
@@ -1714,14 +1852,14 @@
    "title": "That the definitions fit a theta kernel for a pair of unitary groups is the session's interpretation from the names",
    "laji": "O",
    "units": [
-    "the-chain-of-lifts.p11.s3-s4"
+    "the-chain-of-lifts.p11.s5-s6"
    ]
   },
   {
    "id": "k-reading",
    "type": "lahtokohta",
    "section": "the-chain-of-lifts",
-   "title": "The reading of the chain found the kernels defined from the distributions, the theta-lift conditions ThHyp untraced, the height numbers built in two halves, and adm2 and BesselId supplied from the record",
+   "title": "The reading of the chain found the kernels defined from the distributions, the theta-lift conditions ThHyp untraced, the height numbers built in two halves, adm2 supplied from the record, and BesselId in two parts, the isometries from join data of the record and BuRational from buRat_rrFull_closed_alt",
    "laji": "A",
    "units": [
     "the-chain-of-lifts.p12",
@@ -1781,7 +1919,7 @@
    "id": "u-stepE",
    "type": "lahtokohta",
    "section": "the-bound-for-one-lift",
-   "title": "stepE_num proves that the sum of ph over the weights minus logHook is at most ph(aT ρ) at a top place and 0 elsewhere up to an error, and that the weights sum to aT ρ + k·w",
+   "title": "stepE_num proves under the 32 premises of NumFacts that the sum of ph over the weights minus logHook is at most ph(aT ρ) at a top place and 0 elsewhere up to an error, and that the weights sum to aT ρ + k·w up to a constant times w plus further terms, where w is the number e of the lift at the place",
    "laji": "A",
    "units": [
     "the-bound-for-one-lift.p8"
@@ -1817,7 +1955,7 @@
    "id": "u-origin",
    "type": "lahtokohta",
    "section": "the-bound-for-one-lift",
-   "title": "young_diagram_step_origin pairs each lower row with a row under the hook product through the interlacing and leaves the top row, of length aT + w − s, without a partner",
+   "title": "young_diagram_step_origin reaches young_diagram_factorial, which at a place that is not a top place pairs the first k − 1 rows of the lift with the k − 1 rows under the hook product through the interlacing and at a top place pairs only the k − 2 middle rows, where the top row has the length aT + w − s, and the j rows from the numbers b take no part",
    "laji": "A",
    "units": [
     "the-bound-for-one-lift.p10"
@@ -1842,13 +1980,26 @@
    ]
   },
   {
+   "id": "u-wways",
+   "type": "lahtokohta",
+   "section": "the-bound-for-one-lift",
+   "title": "By a comparison run of 24 November the terms that are linear in w and hold logOm cancel inside divisor_inequality_assembly up to a multiple of the absolute value of w, and the logarithm of w enters Main through the number T u",
+   "laji": "A",
+   "units": [
+    "the-bound-for-one-lift.p11.s4-s6"
+   ],
+   "edellyttaa": [
+    "t-count5"
+   ]
+  },
+  {
    "id": "u-open",
    "type": "lahtokohta",
    "section": "the-bound-for-one-lift",
-   "title": "The document does not record where the proof puts the terms that contain w and s",
+   "title": "The document does not record where the proof puts the terms that contain s",
    "laji": "A",
    "units": [
-    "the-bound-for-one-lift.p11.s4"
+    "the-bound-for-one-lift.p11.s7"
    ]
   },
   {
@@ -1934,7 +2085,7 @@
    "id": "lo-apply",
    "type": "lahtokohta",
    "section": "how-the-statement-is-applied-to-a-datum",
-   "title": "frame_at_of applies the general statement with the words as members, the lattices Nu u, the maps Bk u, the dual of RR as target and σ = x^(−CH), takes the matrices and the three bounds from FrameReal_at, and for a family the number in the place of η is at most 6σ",
+   "title": "frame_at_of applies the general statement with the words as members, the lattices Nu u, the maps Bk u, the dual of RR as target and σ = x^(−CH), takes the matrices and the three bounds from FrameReal_at, and for a family FrameRealF and frameF_of keep the factor η + 4·√e of the correction at most 6σ",
    "laji": "A",
    "units": [
     "how-the-statement-is-applied-to-a-datum.p1"
@@ -2000,7 +2151,7 @@
    "id": "lo-blockreal",
    "type": "lahtokohta",
    "section": "how-the-bounds-of-the-link-reach-the-map",
-   "title": "The maps Pu u and the maps Bk u are different maps, BlockReal_at says that their matrices agree up to a conjugation and an isometry, blockReal_at_of proves it from BesselId, matK_at_of states the first two bounds for the first factors of the maps Bk u, Dall stands where the general statement has the number of rows, and what Dstar and Dall are was not opened",
+   "title": "The maps Pu u and the maps Bk u are different maps, BlockReal_at says that the matrix of Bk u is the block on the rows of the target of the matrix of Pu u, up to a conjugation, times an isometry, blockReal_at_of proves it from BesselId, matK_at_of states the first two bounds for the first factors of the maps Bk u, Dall stands where the general statement has the number of rows, and what Dstar and Dall are was not opened",
    "laji": "A",
    "units": [
     "how-the-bounds-of-the-link-reach-the-map.p7"
@@ -2014,7 +2165,7 @@
    "id": "lo-interp",
    "type": "oletus",
    "section": "the-lower-bound-for-the-lattices-of-a-da",
-   "title": "The session's interpretation is that the second bound makes each map an isometry up to a small relative error, that the columns outnumber the rows at least 19 times so the images overlap as random subspaces do, that the trace condition makes the images fill the target evenly, and that the logarithm of the number of words is the price of the mean",
+   "title": "The session's interpretation is that the second bound makes the first factor of each word an isometry up to a small relative error in the mean over its columns, and the maps themselves only in the sum over the family, that the first factors have at least 19 times and the maps at least 14 times as many columns as there are rows so the images overlap as random subspaces do, that the trace condition makes the images fill the target evenly, and that the logarithm of the number of words is the price of the mean",
    "laji": "O",
    "units": [
     "how-the-bounds-of-the-link-reach-the-map.p8"
@@ -2087,10 +2238,10 @@
    "id": "a-53",
    "type": "lahtokohta",
    "section": "how-the-conditions-are-assembled",
-   "title": "The shape theorem takes Green and 53 hypotheses, and goal_of_shape_of_hyps fills 51 of them, 45 from one field each of the record of 46 fields and six from the remaining field",
+   "title": "The shape theorem takes Green and concludes TopShapeAlt, which has 53 binders of data and hypotheses, and goal_of_shape_of_hyps fills 51 of them, 45 from one field each of the record of 46 fields and six from the remaining field, a selection σ",
    "laji": "A",
    "units": [
-    "how-the-conditions-are-assembled.p21.s1-s3"
+    "how-the-conditions-are-assembled.p21.s1-s4"
    ]
   },
   {
@@ -2100,7 +2251,7 @@
    "title": "The other two hypotheses, hVC and nR, are the proposition True in this use and are filled with trivial",
    "laji": "A",
    "units": [
-    "how-the-conditions-are-assembled.p21.s4"
+    "how-the-conditions-are-assembled.p21.s5"
    ]
   },
   {
@@ -2230,7 +2381,7 @@
    "id": "b-record",
    "type": "lahtokohta",
    "section": "the-record-and-the-two-bundles",
-   "title": "nonempty_hyps_definite_side_of_closed_bound builds the record HypsAlt of 46 fields, whose existence zero_free_all_of_green_v_win opens and passes to the shape theorem",
+   "title": "nonempty_hyps_definite_side_of_closed_bound builds the record HypsAlt of 46 fields, five of data and 41 conditions on the families, whose existence zero_free_all_of_green_v_win opens and passes to the shape theorem",
    "laji": "A",
    "units": [
     "the-record-and-the-two-bundles.p5",
@@ -2440,7 +2591,8 @@
     "what-stays-unread.p11",
     "what-stays-unread.p12",
     "what-stays-unread.p13",
-    "what-stays-unread.p14"
+    "what-stays-unread.p14",
+    "what-stays-unread.p15"
    ]
   },
   {
@@ -2450,7 +2602,7 @@
    "title": "Whether the definitions are the mathematical objects their names suggest is a question for a mathematician",
    "laji": "A",
    "units": [
-    "what-stays-unread.p15"
+    "what-stays-unread.p16"
    ]
   },
   {
@@ -2467,7 +2619,9 @@
     "scripts-and-files.p5",
     "scripts-and-files.p6",
     "scripts-and-files.p7",
-    "scripts-and-files.p8"
+    "scripts-and-files.p8",
+    "scripts-and-files.p9",
+    "scripts-and-files.p10"
    ]
   }
  ],
@@ -2656,6 +2810,36 @@
    "from": "lo-interp",
    "type": "tulkitsee",
    "to": "lo-twoparts"
+  },
+  {
+   "from": "t-wtie",
+   "type": "toistaa",
+   "to": "u-stepE"
+  },
+  {
+   "from": "u-wways",
+   "type": "rajaa",
+   "to": "u-open"
+  },
+  {
+   "from": "t-keyid",
+   "type": "rajaa",
+   "to": "u-each"
+  },
+  {
+   "from": "c-quadpresent",
+   "type": "toistaa",
+   "to": "c-pairgood"
+  },
+  {
+   "from": "h-budget",
+   "type": "toistaa",
+   "to": "t-keyid"
+  },
+  {
+   "from": "s2-branches",
+   "type": "toistaa",
+   "to": "b-record"
   }
  ]
 }
