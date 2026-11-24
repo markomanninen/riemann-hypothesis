@@ -1,0 +1,285 @@
+{
+ "o-counts": [
+  "published-statements-and-the-terms-of-th.p1.s1:921218983117"
+ ],
+ "o-proved": [
+  "published-statements-and-the-terms-of-th.p1.s2:62111d074de9"
+ ],
+ "o-39190": [
+  "published-statements-and-the-terms-of-th.p1.s3:a696b83590a8"
+ ],
+ "o-lower": [
+  "published-statements-and-the-terms-of-th.p1.s4:9ee92f696e79"
+ ],
+ "o-132": [
+  "published-statements-and-the-terms-of-th.p1.s5:cb99e4dd693a"
+ ],
+ "o-scope": [
+  "published-statements-and-the-terms-of-th.p2.s1:8f20b04888cd",
+  "published-statements-and-the-terms-of-th.p2.s2:c7da77f73521",
+  "published-statements-and-the-terms-of-th.p2.s3:9aa8e96f6176"
+ ],
+ "o-note": [
+  "published-statements-and-the-terms-of-th.p3.s1:759ab0d2f2a1"
+ ],
+ "o-plan": [
+  "published-statements-and-the-terms-of-th.p3.s2:9b55640b876f",
+  "published-statements-and-the-terms-of-th.p4.s1:e6a3ee020726"
+ ],
+ "o-source": [
+  "published-statements-and-the-terms-of-th.p4.s2:0008a8d787b9"
+ ],
+ "d-published": [
+  "words-used-here.p1.s1:a751750cbc6a",
+  "words-used-here.p1.s2:5593f3fde765",
+  "words-used-here.p1.s3:ab3ca2371530"
+ ],
+ "a-namespaces": [
+  "words-used-here.p1.s4:b5b478991657"
+ ],
+ "d-claim": [
+  "words-used-here.p2.s1:3ce0bf41a421",
+  "words-used-here.p2.s2:12bbd982789e",
+  "words-used-here.p2.s3:07fd52945c9d"
+ ],
+ "d-proves": [
+  "words-used-here.p3.s1:aa69ea7680cd"
+ ],
+ "d-derives": [
+  "words-used-here.p4.s1:512ebd2fca00"
+ ],
+ "d-takes": [
+  "words-used-here.p5.s1:6d50bc94a9bc"
+ ],
+ "d-marks": [
+  "words-used-here.p6.s1:2f4edef0e882",
+  "words-used-here.p6.s2:a4237ddcb7c4"
+ ],
+ "a-method": [
+  "how-the-script-finds-them.p1.s1:efd22ce57a8b",
+  "how-the-script-finds-them.p1.s2:65ec0766b9a7",
+  "how-the-script-finds-them.p1.s3:2b03ed6eaf97"
+ ],
+ "a-rows": [
+  "what-the-code-labels-as-published.p1.s1:640638fd34dd",
+  "what-the-code-labels-as-published.p2.s1:524e14e9d878",
+  "what-the-code-labels-as-published.p3.s1:f6c34dbade7e",
+  "what-the-code-labels-as-published.p4.s1:5af356a33fd6",
+  "what-the-code-labels-as-published.p5.s1:9e56b2617704",
+  "what-the-code-labels-as-published.p6.s1:895e5ffeea7d",
+  "what-the-code-labels-as-published.p7.s1:a49ea2f3c1f8"
+ ],
+ "t-69": [
+  "what-the-code-labels-as-published.p8.s1:b3fc16a96e49"
+ ],
+ "a-202": [
+  "what-the-code-labels-as-published.p8.s2:dccd709ff888",
+  "what-the-code-labels-as-published.p8.s3:e3fe015cf05d"
+ ],
+ "t-60": [
+  "what-the-code-labels-as-published.p9.s1:33b8a7a435b3",
+  "what-the-code-labels-as-published.p9.s2:885305dbcf76"
+ ],
+ "t-26": [
+  "what-the-code-labels-as-published.p10.s1:b98e915bc089",
+  "what-the-code-labels-as-published.p10.s2:e28a4ecca3b5"
+ ],
+ "e-26": [
+  "what-the-code-labels-as-published.p10.s3:5654270a9d0e"
+ ],
+ "a-top10": [
+  "what-the-code-labels-as-published.p11.s1:507223bcd20b",
+  "what-the-code-labels-as-published.p12.s1:017c28370a23",
+  "what-the-code-labels-as-published.p13.s1:ea97c07556ec",
+  "what-the-code-labels-as-published.p14.s1:27b7980e2a15",
+  "what-the-code-labels-as-published.p15.s1:fd2e7ae9a0e4",
+  "what-the-code-labels-as-published.p16.s1:29b949ea8ebc",
+  "what-the-code-labels-as-published.p17.s1:9ac957271477",
+  "what-the-code-labels-as-published.p18.s1:69a7c7ac7497",
+  "what-the-code-labels-as-published.p19.s1:8495661c28f6",
+  "what-the-code-labels-as-published.p20.s1:fd1ca2dc1e3f",
+  "what-the-code-labels-as-published.p21.s1:1375df8cbfc5",
+  "what-the-code-labels-as-published.p22.s1:6ecf039fdd10"
+ ],
+ "d-39190": [
+  "what-the-code-labels-as-published.p23.s1:8e1a4449efe3"
+ ],
+ "t-second-chain": [
+  "what-the-code-labels-as-published.p23.s2:00267dbdc6c1"
+ ],
+ "a-marks": [
+  "marks-on-the-skeleton.p1.s1:c8462d4663ab",
+  "marks-on-the-skeleton.p2.s1:5deb8b2daf6b",
+  "marks-on-the-skeleton.p3.s1:c650691cfe94",
+  "marks-on-the-skeleton.p4.s1:b4df7e9b0d65",
+  "marks-on-the-skeleton.p5.s1:6cb9886226db",
+  "marks-on-the-skeleton.p6.s1:4fec9b435f7a"
+ ],
+ "t-150": [
+  "marks-on-the-skeleton.p7.s1:c4fcd545cb42"
+ ],
+ "a-heads": [
+  "marks-on-the-skeleton.p7.s2:d39be3dfa4e7"
+ ],
+ "t-supply": [
+  "marks-on-the-skeleton.p8.s1:26c167ce0589",
+  "marks-on-the-skeleton.p8.s2:c57c1e6eb426"
+ ],
+ "a-nosupplier": [
+  "marks-on-the-skeleton.p8.s3:2dde533c709f"
+ ],
+ "e-takers": [
+  "marks-on-the-skeleton.p9.s1:5cdaf75554b2",
+  "marks-on-the-skeleton.p9.s2:e31e8fb647a3",
+  "marks-on-the-skeleton.p9.s3:a124fbdea595"
+ ],
+ "d-outline": [
+  "marks-on-the-skeleton.p10.s1:d4faa2ea6b04",
+  "marks-on-the-skeleton.p10.s2:e7c7d6b78048",
+  "marks-on-the-skeleton.p10.s3:5af3d235def9",
+  "marks-on-the-skeleton.p10.s4:578699a38ddb",
+  "marks-on-the-skeleton.p10.s5:03036d0505e1",
+  "marks-on-the-skeleton.p10.s6:1ea52d431a12"
+ ],
+ "a-note-arg": [
+  "the-author-s-note.p1.s1:f481c10d206d",
+  "the-author-s-note.p1.s2:082cbb8c42a6",
+  "the-author-s-note.p2.s1:0e9f333a5d08",
+  "the-author-s-note.p3.s1:72fd210e8b17",
+  "the-author-s-note.p4.s1:b188300f484a"
+ ],
+ "a-timeline": [
+  "the-author-s-note.p5.s1:69e11fe2cc26",
+  "the-author-s-note.p5.s2:28bfedfb2c1f"
+ ],
+ "a-claude": [
+  "the-author-s-note.p6.s1:8cfc147ee67e"
+ ],
+ "d-patterns": [
+  "the-author-s-note.p7.s1:9ad19e636e73",
+  "the-author-s-note.p7.s2:f8a681d8c780",
+  "the-author-s-note.p7.s3:4f5d76366eeb",
+  "the-author-s-note.p7.s4:b224896e2378",
+  "the-author-s-note.p7.s5:1ad4781f2f5d",
+  "the-author-s-note.p7.s6:a9f87933e755"
+ ],
+ "d-columns": [
+  "the-author-s-note.p8.s1:3ea55234e22a",
+  "the-author-s-note.p8.s2:80180a1e24f7",
+  "the-author-s-note.p8.s3:0e81943b9c69"
+ ],
+ "a-columns": [
+  "the-author-s-note.p9.s1:16098fc786db",
+  "the-author-s-note.p10.s1:cd96cac61297",
+  "the-author-s-note.p11.s1:7c4ad9ade2f0",
+  "the-author-s-note.p12.s1:a48853de4178",
+  "the-author-s-note.p13.s1:6af767dd152a",
+  "the-author-s-note.p14.s1:e15441aa89bc"
+ ],
+ "d-baseline": [
+  "the-author-s-note.p15.s1:1ee3c10dd9f5",
+  "the-author-s-note.p15.s2:0517ff6e86cd"
+ ],
+ "a-table": [
+  "the-author-s-note.p16.s1:8c667cbb68fe",
+  "the-author-s-note.p17.s1:ef29960de219",
+  "the-author-s-note.p18.s1:043116a44f94",
+  "the-author-s-note.p19.s1:0eeec62df2a9",
+  "the-author-s-note.p20.s1:803bd66d0e15",
+  "the-author-s-note.p21.s1:e05dddfa3674",
+  "the-author-s-note.p22.s1:f88e68719a84",
+  "the-author-s-note.p23.s1:d5ffef135167",
+  "the-author-s-note.p24.s1:3c55700bd6f9",
+  "the-author-s-note.p25.s1:8d029596e42e",
+  "the-author-s-note.p26.s1:73952161315d",
+  "the-author-s-note.p27.s1:841f7ae18162",
+  "the-author-s-note.p28.s1:adc149f186a3",
+  "the-author-s-note.p29.s1:279bbc4c6d90",
+  "the-author-s-note.p30.s1:070acbfb9cac",
+  "the-author-s-note.p31.s1:23a940892d2f",
+  "the-author-s-note.p32.s1:b3ae6a9b2f80",
+  "the-author-s-note.p33.s1:42138ff05826",
+  "the-author-s-note.p34.s1:f3519edbbd79",
+  "the-author-s-note.p35.s1:cfdbbd195180",
+  "the-author-s-note.p36.s1:28b12f3e3091",
+  "the-author-s-note.p37.s1:c2ab81d13a07"
+ ],
+ "m-five": [
+  "the-author-s-note.p38.s1:d124f9e6745a"
+ ],
+ "t-16": [
+  "the-author-s-note.p39.s1:8ed3e4492200",
+  "the-author-s-note.p39.s2:76ef4a133d66"
+ ],
+ "t-belowB": [
+  "the-author-s-note.p40.s1:84c3e42300f2",
+  "the-author-s-note.p40.s2:c2bd7e63741d"
+ ],
+ "t-AnotB": [
+  "the-author-s-note.p41.s1:33a6b84a8852",
+  "the-author-s-note.p41.s2:e03fdb5a4318"
+ ],
+ "t-else": [
+  "the-author-s-note.p42.s1:16b8937b3cc9",
+  "the-author-s-note.p42.s2:b5fe215c708c"
+ ],
+ "t-spread": [
+  "the-author-s-note.p43.s1:855b91020a9c"
+ ],
+ "a-iwasawa": [
+  "the-author-s-note.p44.s1:2ac68f866494",
+  "the-author-s-note.p44.s2:b37f5c9de27c",
+  "the-author-s-note.p44.s3:d646f3ad52cd"
+ ],
+ "o-vwin": [
+  "the-author-s-note.p45.s1:744cd3896445",
+  "the-author-s-note.p45.s2:140bddf22cba"
+ ],
+ "a-vvle": [
+  "the-author-s-note.p45.s3:3bf0a017b9c0",
+  "the-author-s-note.p45.s4:4cc51d277caa"
+ ],
+ "a-vwin-place": [
+  "the-author-s-note.p45.s5:cc6fd3ad2223",
+  "the-author-s-note.p45.s6:86aacab6b734"
+ ],
+ "t-labels": [
+  "limits.p1.s1:2c313d78c5d3",
+  "limits.p1.s2:26b95874a8f0"
+ ],
+ "e-unlabelled": [
+  "limits.p1.s3:0a14332042fa",
+  "limits.p1.s4:d509c57998bd"
+ ],
+ "t-lowerlimit": [
+  "limits.p2.s1:e0c0aa0b048b"
+ ],
+ "t-nomark": [
+  "limits.p2.s2:3141e89df6ba"
+ ],
+ "t-text": [
+  "limits.p3.s1:5bf0f7325bbc",
+  "limits.p3.s2:2f87b5637ddd",
+  "limits.p3.s3:0a4957287737"
+ ],
+ "t-name": [
+  "limits.p4.s1:777643f805c5",
+  "limits.p4.s2:e4c2a5df53c9"
+ ],
+ "a-chosen": [
+  "limits.p4.s3:18ac9a271633"
+ ],
+ "t-nomatch": [
+  "limits.p5.s1:66af3aaa9355",
+  "limits.p5.s2:a11c9ec2a1ad"
+ ],
+ "t-paraphrase": [
+  "limits.p5.s3:ca82e9b98f5a"
+ ],
+ "m-files": [
+  "files.p1.s1:55a86baf17c3",
+  "files.p2.s1:6f91e7e700f9",
+  "files.p3.s1:e55241eb6f92",
+  "files.p4.s1:e2e4c03cf469"
+ ]
+}

@@ -1,0 +1,983 @@
+{
+ "title": "PUBLISHED.md, published statements and the note's terms on the skeleton",
+ "source": "verification/skeleton/PUBLISHED.md",
+ "sections": [
+  {
+   "id": "published-statements-and-the-terms-of-th",
+   "map_code": "1",
+   "otsikko": "Published statements, and the terms of the author's note located on the skeleton",
+   "thread": "Summary of the counts and the limit of what they show"
+  },
+  {
+   "id": "words-used-here",
+   "map_code": "2",
+   "otsikko": "Words used here",
+   "thread": "Definitions of published statement, claim, premises and the three roles"
+  },
+  {
+   "id": "how-the-script-finds-them",
+   "map_code": "3",
+   "otsikko": "How the script finds them",
+   "thread": "Method of the text search"
+  },
+  {
+   "id": "what-the-code-labels-as-published",
+   "map_code": "4",
+   "otsikko": "What the code labels as published",
+   "thread": "Counts of published statements by role"
+  },
+  {
+   "id": "marks-on-the-skeleton",
+   "map_code": "5",
+   "otsikko": "Marks on the skeleton",
+   "thread": "Roles of the 590 skeleton declarations"
+  },
+  {
+   "id": "the-author-s-note",
+   "map_code": "6",
+   "otsikko": "The author's note",
+   "thread": "Where the names that match the note's terms lie"
+  },
+  {
+   "id": "limits",
+   "map_code": "7",
+   "otsikko": "Limits",
+   "thread": "What the labels, the text reading and the name matches cannot show"
+  },
+  {
+   "id": "files",
+   "map_code": "8",
+   "otsikko": "Files",
+   "thread": "File list"
+  }
+ ],
+ "nodes": [
+  {
+   "id": "o-counts",
+   "type": "vaite",
+   "section": "published-statements-and-the-terms-of-th",
+   "title": "The source labels 361 propositions as literature results and the five theorems reach 292 of them",
+   "laji": "T",
+   "units": [
+    "published-statements-and-the-terms-of-th.p1.s1"
+   ],
+   "johto": [
+    "d-published",
+    "a-rows"
+   ],
+   "todistus_seuraa": true
+  },
+  {
+   "id": "o-proved",
+   "type": "vaite",
+   "section": "published-statements-and-the-terms-of-th",
+   "title": "A premise-free theorem of the project proves 206 of the 292",
+   "laji": "T",
+   "units": [
+    "published-statements-and-the-terms-of-th.p1.s2"
+   ],
+   "johto": [
+    "d-proves",
+    "a-rows"
+   ],
+   "todistus_seuraa": true
+  },
+  {
+   "id": "o-39190",
+   "type": "lahtokohta",
+   "section": "published-statements-and-the-terms-of-th",
+   "title": "The proving theorems gather 39,190 declarations, 5.1 % of the 760,989 reached",
+   "laji": "A",
+   "units": [
+    "published-statements-and-the-terms-of-th.p1.s3"
+   ],
+   "taustatieto": "The figure is computed by published.py. README.md of the skeleton defines reach, gather, dominate and the dominator tree. A declaration gathers what it dominates."
+  },
+  {
+   "id": "o-lower",
+   "type": "vaite",
+   "section": "published-statements-and-the-terms-of-th",
+   "title": "39,190 is a lower limit for what the proofs rest on, because it counts only what is reached solely through them",
+   "laji": "T",
+   "units": [
+    "published-statements-and-the-terms-of-th.p1.s4"
+   ],
+   "johto": [
+    "o-39190",
+    "d-39190",
+    "t-second-chain"
+   ],
+   "todistus_seuraa": true
+  },
+  {
+   "id": "o-132",
+   "type": "vaite",
+   "section": "published-statements-and-the-terms-of-th",
+   "title": "132 of the 590 skeleton declarations have a labelled proposition among their premises",
+   "laji": "T",
+   "units": [
+    "published-statements-and-the-terms-of-th.p1.s5"
+   ],
+   "johto": [
+    "d-takes",
+    "a-marks"
+   ],
+   "todistus_seuraa": true
+  },
+  {
+   "id": "o-scope",
+   "type": "vaite",
+   "section": "published-statements-and-the-terms-of-th",
+   "title": "The figures count namespace labels, the project may still prove a labelled result itself, and the figures do not show which part of the argument is new",
+   "laji": "T",
+   "units": [
+    "published-statements-and-the-terms-of-th.p2"
+   ],
+   "johto": [
+    "d-published",
+    "a-rows",
+    "t-nomark"
+   ],
+   "todistus_seuraa": true
+  },
+  {
+   "id": "o-note",
+   "type": "lahtokohta",
+   "section": "published-statements-and-the-terms-of-th",
+   "title": "The author announced the proof in a four-page note",
+   "laji": "A",
+   "units": [
+    "published-statements-and-the-terms-of-th.p3.s1"
+   ]
+  },
+  {
+   "id": "o-plan",
+   "type": "meta",
+   "section": "published-statements-and-the-terms-of-th",
+   "title": "The second half looks for the note's terms in the names, and README.md defines the vocabulary",
+   "meta": true,
+   "units": [
+    "published-statements-and-the-terms-of-th.p3.s2",
+    "published-statements-and-the-terms-of-th.p4.s1"
+   ]
+  },
+  {
+   "id": "o-source",
+   "type": "lahtokohta",
+   "section": "published-statements-and-the-terms-of-th",
+   "title": "The figures come from the source after the merge of 2026-11-22, read as text without running Lean",
+   "laji": "A",
+   "units": [
+    "published-statements-and-the-terms-of-th.p4.s2"
+   ]
+  },
+  {
+   "id": "d-published",
+   "type": "maaritelma",
+   "section": "words-used-here",
+   "title": "A published statement is a parameterless Prop definition in one of five namespaces, and it states a result without proving it",
+   "laji": "D",
+   "units": [
+    "words-used-here.p1.s1-s3"
+   ]
+  },
+  {
+   "id": "a-namespaces",
+   "type": "lahtokohta",
+   "section": "words-used-here",
+   "title": "350 of the 361 lie in Published, four in Hypotheses₂, three in Lit, two in Pub, two in LiteratureTheorems",
+   "laji": "A",
+   "units": [
+    "words-used-here.p1.s4"
+   ],
+   "edellyttaa": [
+    "d-published"
+   ]
+  },
+  {
+   "id": "d-claim",
+   "type": "maaritelma",
+   "section": "words-used-here",
+   "title": "Claim, end of a claim and premises of a theorem are read from its statement text at the first colon and the last arrow",
+   "laji": "D",
+   "units": [
+    "words-used-here.p2"
+   ]
+  },
+  {
+   "id": "d-proves",
+   "type": "maaritelma",
+   "section": "words-used-here",
+   "title": "A theorem proves a published statement when it has no premises and its claim is that statement",
+   "laji": "D",
+   "units": [
+    "words-used-here.p3"
+   ],
+   "edellyttaa": [
+    "d-published",
+    "d-claim"
+   ]
+  },
+  {
+   "id": "d-derives",
+   "type": "maaritelma",
+   "section": "words-used-here",
+   "title": "A theorem derives a published statement when its claim ends in it and the theorem has premises",
+   "laji": "D",
+   "units": [
+    "words-used-here.p4"
+   ],
+   "edellyttaa": [
+    "d-published",
+    "d-claim"
+   ]
+  },
+  {
+   "id": "d-takes",
+   "type": "maaritelma",
+   "section": "words-used-here",
+   "title": "A theorem takes a published statement when the statement stands among its premises",
+   "laji": "D",
+   "units": [
+    "words-used-here.p5"
+   ],
+   "edellyttaa": [
+    "d-published",
+    "d-claim"
+   ]
+  },
+  {
+   "id": "d-marks",
+   "type": "maaritelma",
+   "section": "words-used-here",
+   "title": "Proves, derives and takes are the roles, and the marks of a skeleton declaration are its roles",
+   "laji": "D",
+   "units": [
+    "words-used-here.p6"
+   ],
+   "edellyttaa": [
+    "d-proves",
+    "d-derives",
+    "d-takes"
+   ]
+  },
+  {
+   "id": "a-method",
+   "type": "lahtokohta",
+   "section": "how-the-script-finds-them",
+   "title": "published.py lists the statements, takes the theorems naming each from the declaration graph and finds the role by the last part of the name",
+   "laji": "A",
+   "units": [
+    "how-the-script-finds-them.p1"
+   ],
+   "edellyttaa": [
+    "d-published",
+    "d-marks"
+   ]
+  },
+  {
+   "id": "a-rows",
+   "type": "lahtokohta",
+   "section": "what-the-code-labels-as-published",
+   "title": "Of 361 published statements 350 are in Published, 292 reached, 206 proved, 60 only derived, 26 neither",
+   "laji": "A",
+   "units": [
+    "what-the-code-labels-as-published.p1",
+    "what-the-code-labels-as-published.p2",
+    "what-the-code-labels-as-published.p3",
+    "what-the-code-labels-as-published.p4",
+    "what-the-code-labels-as-published.p5",
+    "what-the-code-labels-as-published.p6",
+    "what-the-code-labels-as-published.p7"
+   ],
+   "edellyttaa": [
+    "d-published",
+    "d-proves",
+    "d-derives"
+   ],
+   "taustatieto": "The figures are computed by published.py."
+  },
+  {
+   "id": "t-69",
+   "type": "vaite",
+   "section": "what-the-code-labels-as-published",
+   "title": "The 69 unreached published statements are left out of the rest",
+   "laji": "T",
+   "units": [
+    "what-the-code-labels-as-published.p8.s1"
+   ],
+   "johto": [
+    "a-rows"
+   ]
+  },
+  {
+   "id": "a-202",
+   "type": "lahtokohta",
+   "section": "what-the-code-labels-as-published",
+   "title": "For 202 of the 206 the five theorems also reach a proving theorem, for four only the statement",
+   "laji": "A",
+   "units": [
+    "what-the-code-labels-as-published.p8.s2-s3"
+   ],
+   "edellyttaa": [
+    "a-rows"
+   ]
+  },
+  {
+   "id": "t-60",
+   "type": "vaite",
+   "section": "what-the-code-labels-as-published",
+   "title": "The row of 60 does not show how the project completes those proofs, because the script does not follow the premises",
+   "laji": "T",
+   "units": [
+    "what-the-code-labels-as-published.p9"
+   ],
+   "johto": [
+    "a-rows",
+    "d-derives",
+    "a-method"
+   ]
+  },
+  {
+   "id": "t-26",
+   "type": "vaite",
+   "section": "what-the-code-labels-as-published",
+   "title": "The 26 with neither role can be supplied in a form that the definitions of proves and derives miss",
+   "laji": "T",
+   "units": [
+    "what-the-code-labels-as-published.p10.s1-s2"
+   ],
+   "johto": [
+    "a-rows",
+    "d-proves",
+    "d-derives"
+   ]
+  },
+  {
+   "id": "e-26",
+   "type": "esim",
+   "section": "what-the-code-labels-as-published",
+   "title": "The last name parts of the 26",
+   "laji": "E",
+   "units": [
+    "what-the-code-labels-as-published.p10.s3"
+   ]
+  },
+  {
+   "id": "a-top10",
+   "type": "lahtokohta",
+   "section": "what-the-code-labels-as-published",
+   "title": "The ten published statements whose proving theorem gathers most, from 5,094 down to 1,443",
+   "laji": "A",
+   "units": [
+    "what-the-code-labels-as-published.p11",
+    "what-the-code-labels-as-published.p12",
+    "what-the-code-labels-as-published.p13",
+    "what-the-code-labels-as-published.p14",
+    "what-the-code-labels-as-published.p15",
+    "what-the-code-labels-as-published.p16",
+    "what-the-code-labels-as-published.p17",
+    "what-the-code-labels-as-published.p18",
+    "what-the-code-labels-as-published.p19",
+    "what-the-code-labels-as-published.p20",
+    "what-the-code-labels-as-published.p21",
+    "what-the-code-labels-as-published.p22"
+   ],
+   "edellyttaa": [
+    "d-proves"
+   ],
+   "taustatieto": "README.md of the skeleton defines reach, gather, dominate and the dominator tree. A declaration gathers what it dominates."
+  },
+  {
+   "id": "d-39190",
+   "type": "maaritelma",
+   "section": "what-the-code-labels-as-published",
+   "title": "The 39,190 are the declarations at or below at least one proving theorem in the dominator tree, each counted once",
+   "laji": "D",
+   "units": [
+    "what-the-code-labels-as-published.p23.s1"
+   ],
+   "edellyttaa": [
+    "d-proves"
+   ],
+   "taustatieto": "README.md of the skeleton defines reach, gather, dominate and the dominator tree. A declaration gathers what it dominates."
+  },
+  {
+   "id": "t-second-chain",
+   "type": "vaite",
+   "section": "what-the-code-labels-as-published",
+   "title": "A declaration that a second chain reaches is left out of the 39,190, because the proving theorem does not dominate it",
+   "laji": "T",
+   "units": [
+    "what-the-code-labels-as-published.p23.s2"
+   ],
+   "johto": [
+    "d-39190"
+   ],
+   "taustatieto": "README.md of the skeleton defines reach, gather, dominate and the dominator tree. A declaration gathers what it dominates."
+  },
+  {
+   "id": "a-marks",
+   "type": "lahtokohta",
+   "section": "marks-on-the-skeleton",
+   "title": "Of 590 skeleton declarations 132 take, 25 prove or derive, 7 do both and 440 carry no mark",
+   "laji": "A",
+   "units": [
+    "marks-on-the-skeleton.p1",
+    "marks-on-the-skeleton.p2",
+    "marks-on-the-skeleton.p3",
+    "marks-on-the-skeleton.p4",
+    "marks-on-the-skeleton.p5",
+    "marks-on-the-skeleton.p6"
+   ],
+   "edellyttaa": [
+    "d-marks"
+   ],
+   "taustatieto": "The figures are computed by published.py."
+  },
+  {
+   "id": "t-150",
+   "type": "vaite",
+   "section": "marks-on-the-skeleton",
+   "title": "150 declarations carry a mark, since the seven are counted in both rows",
+   "laji": "T",
+   "units": [
+    "marks-on-the-skeleton.p7.s1"
+   ],
+   "johto": [
+    "a-marks"
+   ]
+  },
+  {
+   "id": "a-heads",
+   "type": "lahtokohta",
+   "section": "marks-on-the-skeleton",
+   "title": "64 of the 342 heads take at least one published statement",
+   "laji": "A",
+   "units": [
+    "marks-on-the-skeleton.p7.s2"
+   ],
+   "edellyttaa": [
+    "d-takes"
+   ],
+   "taustatieto": "README.md of the skeleton defines a head."
+  },
+  {
+   "id": "t-supply",
+   "type": "vaite",
+   "section": "marks-on-the-skeleton",
+   "title": "The project has to supply every taken result between the five theorems and the taking step, because the five theorems have no premises",
+   "laji": "T",
+   "units": [
+    "marks-on-the-skeleton.p8.s1-s2"
+   ],
+   "johto": [
+    "d-takes"
+   ],
+   "taustatieto": "The five theorems of Main.lean are stated without premises."
+  },
+  {
+   "id": "a-nosupplier",
+   "type": "lahtokohta",
+   "section": "marks-on-the-skeleton",
+   "title": "The script does not locate the supplying declarations, which may lie outside the skeleton",
+   "laji": "A",
+   "units": [
+    "marks-on-the-skeleton.p8.s3"
+   ],
+   "edellyttaa": [
+    "a-method"
+   ]
+  },
+  {
+   "id": "e-takers",
+   "type": "esim",
+   "section": "marks-on-the-skeleton",
+   "title": "topCovolSlim2_use_alt_alt takes ten published statements, and a run of ten skeleton declarations takes twelve each",
+   "laji": "E",
+   "units": [
+    "marks-on-the-skeleton.p9"
+   ]
+  },
+  {
+   "id": "d-outline",
+   "type": "maaritelma",
+   "section": "marks-on-the-skeleton",
+   "title": "OUTLINE-PUBLISHED.txt repeats the 38 outline lines with short names, module words in square brackets and marks in curly brackets",
+   "laji": "D",
+   "units": [
+    "marks-on-the-skeleton.p10"
+   ],
+   "edellyttaa": [
+    "d-marks"
+   ]
+  },
+  {
+   "id": "a-note-arg",
+   "type": "lahtokohta",
+   "section": "the-author-s-note",
+   "title": "The note says the argument descends from Stepanov's and wins multiplicity through a chain of about √X theta lifts between definite unitary groups",
+   "laji": "A",
+   "units": [
+    "the-author-s-note.p1",
+    "the-author-s-note.p2",
+    "the-author-s-note.p3",
+    "the-author-s-note.p4"
+   ]
+  },
+  {
+   "id": "a-timeline",
+   "type": "lahtokohta",
+   "section": "the-author-s-note",
+   "title": "A timeline of 20 entries in the note names further ingredients, from Chowla-Selberg to Behrend",
+   "laji": "A",
+   "units": [
+    "the-author-s-note.p5"
+   ]
+  },
+  {
+   "id": "a-claude",
+   "type": "lahtokohta",
+   "section": "the-author-s-note",
+   "title": "The author writes that Claude compiled the timeline and that some entries paraphrase a summary of parts he has not mastered yet",
+   "laji": "A",
+   "units": [
+    "the-author-s-note.p6"
+   ]
+  },
+  {
+   "id": "d-patterns",
+   "type": "maaritelma",
+   "section": "the-author-s-note",
+   "title": "published.py holds 20 name patterns, one per term and unrelated to the number of timeline entries, tried on every part of a name and module path, and the columns Matches and Reached count them",
+   "laji": "D",
+   "units": [
+    "the-author-s-note.p7"
+   ]
+  },
+  {
+   "id": "d-columns",
+   "type": "maaritelma",
+   "section": "the-author-s-note",
+   "title": "The last five columns give the shares of a row's reached matches that lie below four outline declarations, where below means gathered by",
+   "laji": "D",
+   "units": [
+    "the-author-s-note.p8"
+   ],
+   "edellyttaa": [
+    "d-patterns"
+   ],
+   "taustatieto": "README.md of the skeleton defines reach, gather, dominate and the dominator tree. A declaration gathers what it dominates."
+  },
+  {
+   "id": "a-columns",
+   "type": "lahtokohta",
+   "section": "the-author-s-note",
+   "title": "A gathers 506,214 declarations, B below A 266,135, C 55,754 and D 51,784, and Else is below none of A, C and D",
+   "laji": "A",
+   "units": [
+    "the-author-s-note.p9",
+    "the-author-s-note.p10",
+    "the-author-s-note.p11",
+    "the-author-s-note.p12",
+    "the-author-s-note.p13",
+    "the-author-s-note.p14"
+   ],
+   "edellyttaa": [
+    "d-columns"
+   ],
+   "taustatieto": "The figures are computed by build.py of the skeleton."
+  },
+  {
+   "id": "d-baseline",
+   "type": "maaritelma",
+   "section": "the-author-s-note",
+   "title": "The first table row is the share of all reached declarations, and a row far above it is gathered in one part",
+   "laji": "D",
+   "units": [
+    "the-author-s-note.p15"
+   ],
+   "edellyttaa": [
+    "d-columns",
+    "a-columns"
+   ]
+  },
+  {
+   "id": "a-table",
+   "type": "lahtokohta",
+   "section": "the-author-s-note",
+   "title": "The table of the 20 terms with their matches, reached matches and shares",
+   "laji": "A",
+   "units": [
+    "the-author-s-note.p16",
+    "the-author-s-note.p17",
+    "the-author-s-note.p18",
+    "the-author-s-note.p19",
+    "the-author-s-note.p20",
+    "the-author-s-note.p21",
+    "the-author-s-note.p22",
+    "the-author-s-note.p23",
+    "the-author-s-note.p24",
+    "the-author-s-note.p25",
+    "the-author-s-note.p26",
+    "the-author-s-note.p27",
+    "the-author-s-note.p28",
+    "the-author-s-note.p29",
+    "the-author-s-note.p30",
+    "the-author-s-note.p31",
+    "the-author-s-note.p32",
+    "the-author-s-note.p33",
+    "the-author-s-note.p34",
+    "the-author-s-note.p35",
+    "the-author-s-note.p36",
+    "the-author-s-note.p37"
+   ],
+   "edellyttaa": [
+    "d-patterns",
+    "d-columns"
+   ],
+   "taustatieto": "The figures are computed by published.py."
+  },
+  {
+   "id": "m-five",
+   "type": "meta",
+   "section": "the-author-s-note",
+   "title": "Five things can be read from the table",
+   "meta": true,
+   "units": [
+    "the-author-s-note.p38"
+   ]
+  },
+  {
+   "id": "t-16",
+   "type": "vaite",
+   "section": "the-author-s-note",
+   "title": "Sixteen of the 20 terms have matches, and Stepanov, Vandiver, Behrend and Iwasawa tower have none",
+   "laji": "T",
+   "units": [
+    "the-author-s-note.p39"
+   ],
+   "johto": [
+    "a-table",
+    "d-patterns"
+   ]
+  },
+  {
+   "id": "t-belowB",
+   "type": "vaite",
+   "section": "the-author-s-note",
+   "title": "Seesaw, Bessel period, Gan-Gross-Prasad, Siegel mass and Chowla-Selberg lie 74 to 94 % below B, which gathers 35 % of everything",
+   "laji": "T",
+   "units": [
+    "the-author-s-note.p40"
+   ],
+   "johto": [
+    "a-table",
+    "d-baseline"
+   ]
+  },
+  {
+   "id": "t-AnotB",
+   "type": "vaite",
+   "section": "the-author-s-note",
+   "title": "Divisibility of the lift, Bost slope, von Mangoldt sum and explicit formula lie 69 to 83 % in A outside B, which gathers 31.5 %",
+   "laji": "T",
+   "units": [
+    "the-author-s-note.p41"
+   ],
+   "johto": [
+    "a-table",
+    "a-columns"
+   ]
+  },
+  {
+   "id": "t-else",
+   "type": "vaite",
+   "section": "the-author-s-note",
+   "title": "96 % of the trace formula matches and 73 % of GradedWeylDivisibility lie in Else, which holds 19 %",
+   "laji": "T",
+   "units": [
+    "the-author-s-note.p42"
+   ],
+   "johto": [
+    "a-table",
+    "d-baseline"
+   ]
+  },
+  {
+   "id": "t-spread",
+   "type": "vaite",
+   "section": "the-author-s-note",
+   "title": "Theta lifts, Rallis and covolumes are spread more widely, and definite unitary groups lie mostly in Else and B",
+   "laji": "T",
+   "units": [
+    "the-author-s-note.p43"
+   ],
+   "johto": [
+    "a-table",
+    "d-baseline"
+   ]
+  },
+  {
+   "id": "a-iwasawa",
+   "type": "lahtokohta",
+   "section": "the-author-s-note",
+   "title": "26,784 declarations carry the word Iwasawa, 24,882 of them through IwasawaDecomposition, and the other 1,902 were not examined",
+   "laji": "A",
+   "units": [
+    "the-author-s-note.p44"
+   ]
+  },
+  {
+   "id": "o-vwin",
+   "type": "oletus",
+   "section": "the-author-s-note",
+   "title": "The writer reads UpperTheory.Top.VWin as the note's weakening of Vandiver, on resemblance alone",
+   "laji": "O",
+   "units": [
+    "the-author-s-note.p45.s1-s2"
+   ]
+  },
+  {
+   "id": "a-vvle",
+   "type": "lahtokohta",
+   "section": "the-author-s-note",
+   "title": "VVle bounds a sum over primes l and exponents e of lengths shaLen from Galois cohomology, and the note's entry speaks of classes indexed by ℓ and e",
+   "laji": "A",
+   "units": [
+    "the-author-s-note.p45.s3-s4"
+   ]
+  },
+  {
+   "id": "a-vwin-place",
+   "type": "lahtokohta",
+   "section": "the-author-s-note",
+   "title": "VWin is built from VVle, is a premise of every_character_of_literature_of_vWin and is the end of vwin_of_row, which gathers 55,754",
+   "laji": "A",
+   "units": [
+    "the-author-s-note.p45.s5-s6"
+   ],
+   "edellyttaa": [
+    "a-vvle",
+    "a-columns"
+   ]
+  },
+  {
+   "id": "t-labels",
+   "type": "vaite",
+   "section": "limits",
+   "title": "A literature result that the code states outside the five namespaces is not counted",
+   "laji": "T",
+   "units": [
+    "limits.p1.s1-s2"
+   ],
+   "johto": [
+    "d-published"
+   ]
+  },
+  {
+   "id": "e-unlabelled",
+   "type": "oletus",
+   "section": "limits",
+   "title": "The writer reads three premises of topCovolSlim2_use_alt_alt as literature results, by their names, and they lie in none of the five namespaces",
+   "laji": "O",
+   "units": [
+    "limits.p1.s3-s4"
+   ]
+  },
+  {
+   "id": "t-lowerlimit",
+   "type": "vaite",
+   "section": "limits",
+   "title": "If each of the 361 is a literature result, 361 is a lower limit for the literature results the code states",
+   "laji": "T",
+   "units": [
+    "limits.p2.s1"
+   ],
+   "johto": [
+    "t-labels",
+    "a-rows"
+   ]
+  },
+  {
+   "id": "t-nomark",
+   "type": "vaite",
+   "section": "limits",
+   "title": "A skeleton declaration without a mark can still restate a known result",
+   "laji": "T",
+   "units": [
+    "limits.p2.s2"
+   ],
+   "johto": [
+    "t-labels",
+    "d-marks"
+   ]
+  },
+  {
+   "id": "t-text",
+   "type": "vaite",
+   "section": "limits",
+   "title": "Reading roles from text miscounts a claim that ends in a quantifier or a conjunction, which can move items into the row of 26 or the row without a mark",
+   "laji": "T",
+   "units": [
+    "limits.p3"
+   ],
+   "johto": [
+    "a-method",
+    "d-claim",
+    "d-proves",
+    "d-derives",
+    "d-marks"
+   ]
+  },
+  {
+   "id": "t-name",
+   "type": "vaite",
+   "section": "limits",
+   "title": "A match shows where the code uses a word and not that the mathematics is the step the note means",
+   "laji": "T",
+   "units": [
+    "limits.p4.s1-s2"
+   ],
+   "johto": [
+    "d-patterns"
+   ]
+  },
+  {
+   "id": "a-chosen",
+   "type": "lahtokohta",
+   "section": "limits",
+   "title": "The writer chose the patterns, which stand in TERMS in published.py",
+   "laji": "A",
+   "units": [
+    "limits.p4.s3"
+   ],
+   "edellyttaa": [
+    "d-patterns"
+   ]
+  },
+  {
+   "id": "t-nomatch",
+   "type": "vaite",
+   "section": "limits",
+   "title": "A term without a match can mean a missing ingredient or another name for it",
+   "laji": "T",
+   "units": [
+    "limits.p5.s1-s2"
+   ],
+   "johto": [
+    "d-patterns",
+    "t-16"
+   ]
+  },
+  {
+   "id": "t-paraphrase",
+   "type": "vaite",
+   "section": "limits",
+   "title": "The timeline that names Iwasawa tower, Vandiver and Behrend is partly a paraphrase by the author's own account",
+   "laji": "T",
+   "units": [
+    "limits.p5.s3"
+   ],
+   "johto": [
+    "a-timeline",
+    "a-claude"
+   ]
+  },
+  {
+   "id": "m-files",
+   "type": "meta",
+   "section": "files",
+   "title": "The files of this analysis",
+   "meta": true,
+   "units": [
+    "files.p1",
+    "files.p2",
+    "files.p3",
+    "files.p4"
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "from": "e-26",
+   "type": "havainnollistaa",
+   "to": "t-26"
+  },
+  {
+   "from": "e-takers",
+   "type": "havainnollistaa",
+   "to": "t-supply"
+  },
+  {
+   "from": "e-unlabelled",
+   "type": "havainnollistaa",
+   "to": "t-labels"
+  },
+  {
+   "from": "a-vvle",
+   "type": "tukee",
+   "to": "o-vwin"
+  },
+  {
+   "from": "a-vwin-place",
+   "type": "sijoittaa",
+   "to": "o-vwin"
+  },
+  {
+   "from": "a-iwasawa",
+   "type": "rajaa",
+   "to": "t-16"
+  },
+  {
+   "from": "t-name",
+   "type": "rajaa",
+   "to": "t-else"
+  },
+  {
+   "from": "t-name",
+   "type": "rajaa",
+   "to": "t-spread"
+  },
+  {
+   "from": "t-text",
+   "type": "rajaa",
+   "to": "t-26"
+  },
+  {
+   "from": "t-16",
+   "type": "rajaa",
+   "to": "o-vwin"
+  },
+  {
+   "from": "t-name",
+   "type": "rajaa",
+   "to": "t-belowB"
+  },
+  {
+   "from": "t-name",
+   "type": "rajaa",
+   "to": "t-AnotB"
+  },
+  {
+   "from": "t-text",
+   "type": "rajaa",
+   "to": "a-rows"
+  },
+  {
+   "from": "t-text",
+   "type": "rajaa",
+   "to": "a-marks"
+  },
+  {
+   "from": "t-paraphrase",
+   "type": "rajaa",
+   "to": "t-nomatch"
+  },
+  {
+   "from": "a-top10",
+   "type": "havainnollistaa",
+   "to": "o-39190"
+  }
+ ]
+}

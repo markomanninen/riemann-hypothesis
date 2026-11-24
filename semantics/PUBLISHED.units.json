@@ -1,0 +1,1735 @@
+{
+ "source": "/Users/markomanninen/Documents/GitHub/riemann-hypothesis/verification/skeleton/PUBLISHED.md",
+ "tool": "semanttinen-verkko/scripts/extract.py",
+ "language": "en",
+ "sections": [
+  {
+   "id": "published-statements-and-the-terms-of-th",
+   "title": "Published statements, and the terms of the author's note located on the skeleton",
+   "level": "h1",
+   "line": 1,
+   "paragraphs": [
+    {
+     "id": "published-statements-and-the-terms-of-th.p1",
+     "kind": "text",
+     "line": 3,
+     "sentences": [
+      {
+       "id": "published-statements-and-the-terms-of-th.p1.s1",
+       "line": 3,
+       "hash": "921218983117",
+       "text": "The source labels 361 named propositions as results from the literature, and the five theorems of Main.lean reach 292 of them."
+      },
+      {
+       "id": "published-statements-and-the-terms-of-th.p1.s2",
+       "line": 3,
+       "hash": "62111d074de9",
+       "text": "For 206 of the 292, a theorem of the project proves the proposition without premises."
+      },
+      {
+       "id": "published-statements-and-the-terms-of-th.p1.s3",
+       "line": 3,
+       "hash": "a696b83590a8",
+       "text": "The proving theorems together gather 39,190 declarations, which is 5.1 % of the 760,989 declarations that the five theorems reach."
+      },
+      {
+       "id": "published-statements-and-the-terms-of-th.p1.s4",
+       "line": 3,
+       "hash": "9ee92f696e79",
+       "text": "That figure counts only what the five theorems reach solely through those proofs, so it is a lower limit for what the proofs rest on."
+      },
+      {
+       "id": "published-statements-and-the-terms-of-th.p1.s5",
+       "line": 3,
+       "hash": "cb99e4dd693a",
+       "text": "Of the 590 declarations of the skeleton, 132 have at least one of the 361 propositions among their premises."
+      }
+     ]
+    },
+    {
+     "id": "published-statements-and-the-terms-of-th.p2",
+     "kind": "text",
+     "line": 11,
+     "sentences": [
+      {
+       "id": "published-statements-and-the-terms-of-th.p2.s1",
+       "line": 11,
+       "hash": "8f20b04888cd",
+       "text": "These figures count what the code places in namespaces for results from the literature."
+      },
+      {
+       "id": "published-statements-and-the-terms-of-th.p2.s2",
+       "line": 11,
+       "hash": "c7da77f73521",
+       "text": "Such a proposition is a known result that the code states, and the project may still prove it itself."
+      },
+      {
+       "id": "published-statements-and-the-terms-of-th.p2.s3",
+       "line": 11,
+       "hash": "9aa8e96f6176",
+       "text": "The figures do not show which part of the argument is new."
+      }
+     ]
+    },
+    {
+     "id": "published-statements-and-the-terms-of-th.p3",
+     "kind": "text",
+     "line": 15,
+     "sentences": [
+      {
+       "id": "published-statements-and-the-terms-of-th.p3.s1",
+       "line": 15,
+       "hash": "759ab0d2f2a1",
+       "text": "The author of the proof announced it in a four-page note."
+      },
+      {
+       "id": "published-statements-and-the-terms-of-th.p3.s2",
+       "line": 15,
+       "hash": "9b55640b876f",
+       "text": "The second half of this document searches the names of the source for the terms of that note and reports where on the skeleton the matching names lie."
+      }
+     ]
+    },
+    {
+     "id": "published-statements-and-the-terms-of-th.p4",
+     "kind": "text",
+     "line": 19,
+     "sentences": [
+      {
+       "id": "published-statements-and-the-terms-of-th.p4.s1",
+       "line": 19,
+       "hash": "e6a3ee020726",
+       "text": "README.md defines the skeleton, its heads, the verbs reach and gather, and the statement of a declaration."
+      },
+      {
+       "id": "published-statements-and-the-terms-of-th.p4.s2",
+       "line": 19,
+       "hash": "0008a8d787b9",
+       "text": "The figures come from the source after the merge of upstream main on 2026-11-22, and the scripts read text and do not run Lean."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "words-used-here",
+   "title": "Words used here",
+   "level": "h2",
+   "line": 23,
+   "paragraphs": [
+    {
+     "id": "words-used-here.p1",
+     "kind": "item",
+     "line": 25,
+     "sentences": [
+      {
+       "id": "words-used-here.p1.s1",
+       "line": 25,
+       "hash": "a751750cbc6a",
+       "text": "A published statement is a definition of type Prop without parameters whose name has the form ….Published.X, ….Pub.X, ….Lit.X, ….LiteratureTheorems.X or ….Hypotheses₂.X."
+      },
+      {
+       "id": "words-used-here.p1.s2",
+       "line": 25,
+       "hash": "5593f3fde765",
+       "text": "An example is GlobalTheory.Published.JacquetShalikaRigidity."
+      },
+      {
+       "id": "words-used-here.p1.s3",
+       "line": 25,
+       "hash": "ab3ca2371530",
+       "text": "Such a definition states a result and proves nothing."
+      },
+      {
+       "id": "words-used-here.p1.s4",
+       "line": 25,
+       "hash": "b5b478991657",
+       "text": "Of the 361, 350 lie in a namespace Published, four in Hypotheses₂, three in Lit, two in Pub and two in LiteratureTheorems."
+      }
+     ]
+    },
+    {
+     "id": "words-used-here.p2",
+     "kind": "item",
+     "line": 30,
+     "sentences": [
+      {
+       "id": "words-used-here.p2.s1",
+       "line": 30,
+       "hash": "3ce0bf41a421",
+       "text": "The claim of a theorem is the part of its statement after the first colon outside brackets, and its end is the part after the last arrow outside brackets."
+      },
+      {
+       "id": "words-used-here.p2.s2",
+       "line": 30,
+       "hash": "12bbd982789e",
+       "text": "The end of a claim without an arrow is the whole claim."
+      },
+      {
+       "id": "words-used-here.p2.s3",
+       "line": 30,
+       "hash": "07fd52945c9d",
+       "text": "The premises of a theorem are the hypotheses written before that colon and the parts of the claim before its end."
+      }
+     ]
+    },
+    {
+     "id": "words-used-here.p3",
+     "kind": "item",
+     "line": 34,
+     "sentences": [
+      {
+       "id": "words-used-here.p3.s1",
+       "line": 34,
+       "hash": "aa69ea7680cd",
+       "text": "A theorem proves a published statement when the theorem has no premises and its claim is the published statement."
+      }
+     ]
+    },
+    {
+     "id": "words-used-here.p4",
+     "kind": "item",
+     "line": 36,
+     "sentences": [
+      {
+       "id": "words-used-here.p4.s1",
+       "line": 36,
+       "hash": "512ebd2fca00",
+       "text": "A theorem derives a published statement when the end of its claim is the published statement and the theorem has premises."
+      }
+     ]
+    },
+    {
+     "id": "words-used-here.p5",
+     "kind": "item",
+     "line": 38,
+     "sentences": [
+      {
+       "id": "words-used-here.p5.s1",
+       "line": 38,
+       "hash": "6d50bc94a9bc",
+       "text": "A theorem takes a published statement when the published statement stands among its premises."
+      }
+     ]
+    },
+    {
+     "id": "words-used-here.p6",
+     "kind": "item",
+     "line": 39,
+     "sentences": [
+      {
+       "id": "words-used-here.p6.s1",
+       "line": 39,
+       "hash": "2f4edef0e882",
+       "text": "Proves, derives and takes are the three roles."
+      },
+      {
+       "id": "words-used-here.p6.s2",
+       "line": 39,
+       "hash": "a4237ddcb7c4",
+       "text": "The marks of a skeleton declaration are the roles it has towards published statements."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "how-the-script-finds-them",
+   "title": "How the script finds them",
+   "level": "h2",
+   "line": 42,
+   "paragraphs": [
+    {
+     "id": "how-the-script-finds-them.p1",
+     "kind": "text",
+     "line": 44,
+     "sentences": [
+      {
+       "id": "how-the-script-finds-them.p1.s1",
+       "line": 44,
+       "hash": "efd22ce57a8b",
+       "text": "published.py lists the published statements."
+      },
+      {
+       "id": "how-the-script-finds-them.p1.s2",
+       "line": 44,
+       "hash": "65ec0766b9a7",
+       "text": "For each one, the declaration graph gives the theorems whose text names it."
+      },
+      {
+       "id": "how-the-script-finds-them.p1.s3",
+       "line": 44,
+       "hash": "2b03ed6eaf97",
+       "text": "The script reads from the source the text of each such theorem before its proof and finds the role by looking for the last part of the published statement's name, so it looks for JacquetShalikaRigidity in a theorem that names GlobalTheory.Published.JacquetShalikaRigidity."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "what-the-code-labels-as-published",
+   "title": "What the code labels as published",
+   "level": "h2",
+   "line": 50,
+   "paragraphs": [
+    {
+     "id": "what-the-code-labels-as-published.p1",
+     "kind": "row",
+     "line": 52,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p1.s1",
+       "line": 52,
+       "hash": "640638fd34dd",
+       "text": "Published statements — Number"
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p2",
+     "kind": "row",
+     "line": 54,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p2.s1",
+       "line": 54,
+       "hash": "524e14e9d878",
+       "text": "All — 361"
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p3",
+     "kind": "row",
+     "line": 55,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p3.s1",
+       "line": 55,
+       "hash": "f6c34dbade7e",
+       "text": "In a namespace Published — 350"
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p4",
+     "kind": "row",
+     "line": 56,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p4.s1",
+       "line": 56,
+       "hash": "5af356a33fd6",
+       "text": "Reached by the five theorems — 292"
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p5",
+     "kind": "row",
+     "line": 57,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p5.s1",
+       "line": 57,
+       "hash": "9e56b2617704",
+       "text": "Reached, and a theorem proves it — 206"
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p6",
+     "kind": "row",
+     "line": 58,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p6.s1",
+       "line": 58,
+       "hash": "895e5ffeea7d",
+       "text": "Reached, and theorems only derive it — 60"
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p7",
+     "kind": "row",
+     "line": 59,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p7.s1",
+       "line": 59,
+       "hash": "a49ea2f3c1f8",
+       "text": "Reached, and the script finds neither — 26"
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p8",
+     "kind": "text",
+     "line": 61,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p8.s1",
+       "line": 61,
+       "hash": "b3fc16a96e49",
+       "text": "The 69 published statements that the five theorems do not reach are left out of the rest of this document."
+      },
+      {
+       "id": "what-the-code-labels-as-published.p8.s2",
+       "line": 61,
+       "hash": "dccd709ff888",
+       "text": "For 202 of the 206 published statements of the fourth row, the five theorems also reach a theorem that proves it."
+      },
+      {
+       "id": "what-the-code-labels-as-published.p8.s3",
+       "line": 61,
+       "hash": "e3fe015cf05d",
+       "text": "For the other four, they reach only the statement."
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p9",
+     "kind": "text",
+     "line": 65,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p9.s1",
+       "line": 65,
+       "hash": "33b8a7a435b3",
+       "text": "For the 60 published statements of the fifth row, every theorem that the script finds concludes the statement from premises."
+      },
+      {
+       "id": "what-the-code-labels-as-published.p9.s2",
+       "line": 65,
+       "hash": "885305dbcf76",
+       "text": "The script does not follow where those premises are proved in turn, so that row does not show how the project completes the proof."
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p10",
+     "kind": "text",
+     "line": 69,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p10.s1",
+       "line": 69,
+       "hash": "b98e915bc089",
+       "text": "The five theorems reach the 26 published statements of the last row, and the script finds no theorem that proves or derives them."
+      },
+      {
+       "id": "what-the-code-labels-as-published.p10.s2",
+       "line": 69,
+       "hash": "e28a4ecca3b5",
+       "text": "A published statement can be supplied in a form that the definitions of proves and derives miss, for example as a field of a structure or through a definition that unfolds to another proposition."
+      },
+      {
+       "id": "what-the-code-labels-as-published.p10.s3",
+       "line": 69,
+       "hash": "5654270a9d0e",
+       "text": "The last name parts of the 26 are BaseChangeIsobaric, CaraianiLocalGlobalDual, CaraianiTempered, CharacterRegularity, ChebotarevOpenNormal, CohDimTwo, DelignePappasModel, DepthZeroCuspidalLL, DepthZeroTypeInertia, DiscreteSeriesCharacter, DiscreteSpectrumResidual, GaloisRepOfPolarizedPair, GoetzkyKoecher, GoodChernNumbers, HarishChandraCharacters, HilbertBlumenthal, HilbertKodairaSpencer, HilbertQExpansion, InducedCharacterSupport, LocalLanglandsExists, MinguezThetaGL, OpenImageCondition, OpenLiteratureStatements, RealMultDeRhamRank, UnitaryDualGL and WeylIntegrationFormula."
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p11",
+     "kind": "text",
+     "line": 81,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p11.s1",
+       "line": 81,
+       "hash": "507223bcd20b",
+       "text": "The table lists the ten published statements whose proving theorem gathers most declarations."
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p12",
+     "kind": "row",
+     "line": 83,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p12.s1",
+       "line": 83,
+       "hash": "017c28370a23",
+       "text": "Published statement — Theorem that proves it — Gathers"
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p13",
+     "kind": "row",
+     "line": 85,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p13.s1",
+       "line": 85,
+       "hash": "ea97c07556ec",
+       "text": "GlobalTheory.Published.ToroidalForFanKS — GlobalTheory.TorKSField.toroidalForFanKS — 5,094"
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p14",
+     "kind": "row",
+     "line": 86,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p14.s1",
+       "line": 86,
+       "hash": "27b7980e2a15",
+       "text": "GlobalTheory.Published.SiegelToroidalIntegral — GlobalTheory.siegelToroidalIntegral_holds — 3,661"
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p15",
+     "kind": "row",
+     "line": 87,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p15.s1",
+       "line": 87,
+       "hash": "fd2e7ae9a0e4",
+       "text": "GlobalTheory.Published.SiegelToroidalPolCharts — GlobalTheory.T.siegelToroidalCompactification_polarisedCharts — 3,540"
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p16",
+     "kind": "row",
+     "line": 88,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p16.s1",
+       "line": 88,
+       "hash": "29b949ea8ebc",
+       "text": "GlobalTheory.Published.JacquetShalikaRigidity — GlobalTheory.JSW.jacquetShalikaRigidity_holds — 2,262"
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p17",
+     "kind": "row",
+     "line": 89,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p17.s1",
+       "line": 89,
+       "hash": "9ac957271477",
+       "text": "GlobalTheory.Published.WeilSiegelFormulaUnitary — UpperTheory.Lit.Sw47.weilUnitary — 1,757"
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p18",
+     "kind": "row",
+     "line": 90,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p18.s1",
+       "line": 90,
+       "hash": "69a7c7ac7497",
+       "text": "GlobalTheory.Published.WeilSiegelFormula — PositivityTheory.Rg.Wsf.weilSiegelFormula — 1,718"
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p19",
+     "kind": "row",
+     "line": 91,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p19.s1",
+       "line": 91,
+       "hash": "8495661c28f6",
+       "text": "GlobalTheory.Published.PrismaticDieudonneHodge — UpperTheory.Lit.prismaticDieudonneHodge — 1,702"
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p20",
+     "kind": "row",
+     "line": 92,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p20.s1",
+       "line": 92,
+       "hash": "fd1ca2dc1e3f",
+       "text": "GlobalTheory.Published.SiegelWeilUnitarySchrodinger — PositivityTheory.SiegelWeilCoefficients.field — 1,677"
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p21",
+     "kind": "row",
+     "line": 93,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p21.s1",
+       "line": 93,
+       "hash": "1375df8cbfc5",
+       "text": "GlobalTheory.Published.SiegelWeilUnitarySchrodingerLit — PositivityTheory.SiegelWeilCoefficients.lit — 1,668"
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p22",
+     "kind": "row",
+     "line": 94,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p22.s1",
+       "line": 94,
+       "hash": "6ecf039fdd10",
+       "text": "GlobalTheory.Published.GoodChernWeil — GlobalTheory.GoodMetric.goodChernWeil — 1,443"
+      }
+     ]
+    },
+    {
+     "id": "what-the-code-labels-as-published.p23",
+     "kind": "text",
+     "line": 96,
+     "sentences": [
+      {
+       "id": "what-the-code-labels-as-published.p23.s1",
+       "line": 96,
+       "hash": "8e1a4449efe3",
+       "text": "The 39,190 declarations of the opening are the declarations that lie at or below at least one of the proving theorems in the dominator tree, each counted once."
+      },
+      {
+       "id": "what-the-code-labels-as-published.p23.s2",
+       "line": 96,
+       "hash": "00267dbdc6c1",
+       "text": "The figure leaves out a declaration that a second chain reaches without passing through the proving theorem, because the proving theorem then does not dominate it."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "marks-on-the-skeleton",
+   "title": "Marks on the skeleton",
+   "level": "h2",
+   "line": 101,
+   "paragraphs": [
+    {
+     "id": "marks-on-the-skeleton.p1",
+     "kind": "row",
+     "line": 103,
+     "sentences": [
+      {
+       "id": "marks-on-the-skeleton.p1.s1",
+       "line": 103,
+       "hash": "c8462d4663ab",
+       "text": "Skeleton declarations — Number"
+      }
+     ]
+    },
+    {
+     "id": "marks-on-the-skeleton.p2",
+     "kind": "row",
+     "line": 105,
+     "sentences": [
+      {
+       "id": "marks-on-the-skeleton.p2.s1",
+       "line": 105,
+       "hash": "5deb8b2daf6b",
+       "text": "All — 590"
+      }
+     ]
+    },
+    {
+     "id": "marks-on-the-skeleton.p3",
+     "kind": "row",
+     "line": 106,
+     "sentences": [
+      {
+       "id": "marks-on-the-skeleton.p3.s1",
+       "line": 106,
+       "hash": "c650691cfe94",
+       "text": "Take at least one published statement — 132"
+      }
+     ]
+    },
+    {
+     "id": "marks-on-the-skeleton.p4",
+     "kind": "row",
+     "line": 107,
+     "sentences": [
+      {
+       "id": "marks-on-the-skeleton.p4.s1",
+       "line": 107,
+       "hash": "b4df7e9b0d65",
+       "text": "Prove or derive a published statement — 25"
+      }
+     ]
+    },
+    {
+     "id": "marks-on-the-skeleton.p5",
+     "kind": "row",
+     "line": 108,
+     "sentences": [
+      {
+       "id": "marks-on-the-skeleton.p5.s1",
+       "line": 108,
+       "hash": "6cb9886226db",
+       "text": "Take one, and prove or derive one — 7"
+      }
+     ]
+    },
+    {
+     "id": "marks-on-the-skeleton.p6",
+     "kind": "row",
+     "line": 109,
+     "sentences": [
+      {
+       "id": "marks-on-the-skeleton.p6.s1",
+       "line": 109,
+       "hash": "4fec9b435f7a",
+       "text": "Carry no mark — 440"
+      }
+     ]
+    },
+    {
+     "id": "marks-on-the-skeleton.p7",
+     "kind": "text",
+     "line": 111,
+     "sentences": [
+      {
+       "id": "marks-on-the-skeleton.p7.s1",
+       "line": 111,
+       "hash": "c4fcd545cb42",
+       "text": "The seven declarations of the fourth row are counted in the second and the third row as well, so 150 declarations carry a mark."
+      },
+      {
+       "id": "marks-on-the-skeleton.p7.s2",
+       "line": 111,
+       "hash": "d39be3dfa4e7",
+       "text": "Of the 342 heads, 64 take at least one published statement."
+      }
+     ]
+    },
+    {
+     "id": "marks-on-the-skeleton.p8",
+     "kind": "text",
+     "line": 114,
+     "sentences": [
+      {
+       "id": "marks-on-the-skeleton.p8.s1",
+       "line": 114,
+       "hash": "26c167ce0589",
+       "text": "A skeleton declaration that takes published statements is a step that holds when those results and its other premises hold."
+      },
+      {
+       "id": "marks-on-the-skeleton.p8.s2",
+       "line": 114,
+       "hash": "c57c1e6eb426",
+       "text": "The five theorems are stated without premises, so the project has to supply those results somewhere between the five theorems and that step."
+      },
+      {
+       "id": "marks-on-the-skeleton.p8.s3",
+       "line": 114,
+       "hash": "2dde533c709f",
+       "text": "The script does not locate the declarations that supply them, which may lie outside the skeleton."
+      }
+     ]
+    },
+    {
+     "id": "marks-on-the-skeleton.p9",
+     "kind": "text",
+     "line": 119,
+     "sentences": [
+      {
+       "id": "marks-on-the-skeleton.p9.s1",
+       "line": 119,
+       "hash": "5cdaf75554b2",
+       "text": "SelfIntersectionVolumeEstimates.topCovolSlim2_use_alt_alt, which gathers 52,094 declarations, takes ten published statements, among them ResolutionCharZero, PrincipalisationCharZero, SiegelToroidalIntegral and ToroidalForFanKS."
+      },
+      {
+       "id": "marks-on-the-skeleton.p9.s2",
+       "line": 119,
+       "hash": "e31e8fb647a3",
+       "text": "The largest number that a skeleton declaration takes is twelve."
+      },
+      {
+       "id": "marks-on-the-skeleton.p9.s3",
+       "line": 119,
+       "hash": "a124fbdea595",
+       "text": "Ten skeleton declarations take that many, and they hang in one run from main_theorem_published_inputs_third_alt_alt down to miStar2_of_allTrue_alt_alt."
+      }
+     ]
+    },
+    {
+     "id": "marks-on-the-skeleton.p10",
+     "kind": "text",
+     "line": 125,
+     "sentences": [
+      {
+       "id": "marks-on-the-skeleton.p10.s1",
+       "line": 125,
+       "hash": "d4faa2ea6b04",
+       "text": "OUTLINE-PUBLISHED.txt has one line for each of the 38 lines of OUTLINE.txt, in the same order and with the same numbers."
+      },
+      {
+       "id": "marks-on-the-skeleton.p10.s2",
+       "line": 125,
+       "hash": "e7c7d6b78048",
+       "text": "It differs in three ways."
+      },
+      {
+       "id": "marks-on-the-skeleton.p10.s3",
+       "line": 125,
+       "hash": "5af3d235def9",
+       "text": "Every line shows a name without its namespaces, and a line that stands for a folded run of wrappers shows the name of the head that the run ends in and keeps the number of the first wrapper."
+      },
+      {
+       "id": "marks-on-the-skeleton.p10.s4",
+       "line": 125,
+       "hash": "578699a38ddb",
+       "text": "Square brackets hold the second, third and fourth parts of the module name of the declaration shown, written as words, so ThetaPairLifts reads Theta Pair Lifts."
+      },
+      {
+       "id": "marks-on-the-skeleton.p10.s5",
+       "line": 125,
+       "hash": "03036d0505e1",
+       "text": "They replace the count of folded declarations."
+      },
+      {
+       "id": "marks-on-the-skeleton.p10.s6",
+       "line": 125,
+       "hash": "1ea52d431a12",
+       "text": "Curly brackets hold the marks of the declarations of the line."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "the-author-s-note",
+   "title": "The author's note",
+   "level": "h2",
+   "line": 133,
+   "paragraphs": [
+    {
+     "id": "the-author-s-note.p1",
+     "kind": "text",
+     "line": 135,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p1.s1",
+       "line": 135,
+       "hash": "f481c10d206d",
+       "text": "The note is remark.pdf."
+      },
+      {
+       "id": "the-author-s-note.p1.s2",
+       "line": 135,
+       "hash": "082cbb8c42a6",
+       "text": "It says the following about the argument."
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p2",
+     "kind": "item",
+     "line": 137,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p2.s1",
+       "line": 137,
+       "hash": "0e9f333a5d08",
+       "text": "The argument descends from the argument of Stepanov for the Riemann Hypothesis over function fields, which uses a divisor with multiplicity."
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p3",
+     "kind": "item",
+     "line": 139,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p3.s1",
+       "line": 139,
+       "hash": "72fd210e8b17",
+       "text": "Multiplicity is hard to find over the integers, and the argument gets it from a chain of theta lifts between totally definite unitary groups, where each lift wins one more order of multiplicity."
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p4",
+     "kind": "item",
+     "line": 142,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p4.s1",
+       "line": 142,
+       "hash": "b188300f484a",
+       "text": "For a von Mangoldt sum of length X the chain has about the square root of X lifts."
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p5",
+     "kind": "item",
+     "line": 143,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p5.s1",
+       "line": 143,
+       "hash": "69e11fe2cc26",
+       "text": "A timeline of 20 entries names further ingredients."
+      },
+      {
+       "id": "the-author-s-note.p5.s2",
+       "line": 143,
+       "hash": "28bfedfb2c1f",
+       "text": "Among them are norms of the lifts with divisibility by Chowla-Selberg, Weyl and the Siegel mass formula, a lower bound for the divisibility of the iterated lift, an Iwasawa tower, a seesaw with the name of Rallis that turns the period of the iterated lift into a Bessel period, the Bost slope inequality, a relative trace formula with Poincaré series, periods of Gan, Gross and Prasad, the explicit formula of Guinand and Weil, covolumes, a weakening of the Vandiver conjecture and a choice of the tower that uses a result of Behrend."
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p6",
+     "kind": "item",
+     "line": 150,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p6.s1",
+       "line": 150,
+       "hash": "8cfc147ee67e",
+       "text": "The author writes that Claude compiled the timeline and that some of its entries paraphrase a summary of parts he has not mastered yet."
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p7",
+     "kind": "text",
+     "line": 153,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p7.s1",
+       "line": 153,
+       "hash": "9ad19e636e73",
+       "text": "published.py holds 20 search patterns, one for each term of the table below."
+      },
+      {
+       "id": "the-author-s-note.p7.s2",
+       "line": 153,
+       "hash": "f8a681d8c780",
+       "text": "The number of patterns has nothing to do with the number of timeline entries."
+      },
+      {
+       "id": "the-author-s-note.p7.s3",
+       "line": 153,
+       "hash": "4f5d76366eeb",
+       "text": "A pattern is tried on every part of a declaration's name and of its module path, and a declaration matches when one part fits."
+      },
+      {
+       "id": "the-author-s-note.p7.s4",
+       "line": 153,
+       "hash": "b224896e2378",
+       "text": "A pattern can be wider than its row label, and the second column shows the parts that it matched most often."
+      },
+      {
+       "id": "the-author-s-note.p7.s5",
+       "line": 153,
+       "hash": "1ad4781f2f5d",
+       "text": "The counts of that column and of the column Matches take in every declaration of the source."
+      },
+      {
+       "id": "the-author-s-note.p7.s6",
+       "line": 153,
+       "hash": "a9f87933e755",
+       "text": "The column Reached counts the matches that the five theorems reach, and a declaration can match the patterns of two rows."
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p8",
+     "kind": "text",
+     "line": 161,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p8.s1",
+       "line": 161,
+       "hash": "3ea55234e22a",
+       "text": "The last five columns say where the reached matches lie in the dominator tree, as shares of the reached matches of the row."
+      },
+      {
+       "id": "the-author-s-note.p8.s2",
+       "line": 161,
+       "hash": "80180a1e24f7",
+       "text": "The columns stand for these declarations of the outline."
+      },
+      {
+       "id": "the-author-s-note.p8.s3",
+       "line": 161,
+       "hash": "0e81943b9c69",
+       "text": "A match lies below a declaration when that declaration gathers it."
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p9",
+     "kind": "row",
+     "line": 165,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p9.s1",
+       "line": 165,
+       "hash": "16098fc786db",
+       "text": "Column — Declaration — Gathers"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p10",
+     "kind": "row",
+     "line": 167,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p10.s1",
+       "line": 167,
+       "hash": "cd96cac61297",
+       "text": "A — UpperTheory.LiteratureTheorems.every_character_of_literature_of_vWin — 506,214"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p11",
+     "kind": "row",
+     "line": 168,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p11.s1",
+       "line": 168,
+       "hash": "7c4ad9ade2f0",
+       "text": "B — UpperTheory.Lit.nonempty_hyps_definite_side_of_closed_bound, which lies below A — 266,135"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p12",
+     "kind": "row",
+     "line": 169,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p12.s1",
+       "line": 169,
+       "hash": "a48853de4178",
+       "text": "C — UpperTheory.One.vwin_of_row — 55,754"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p13",
+     "kind": "row",
+     "line": 170,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p13.s1",
+       "line": 170,
+       "hash": "6af767dd152a",
+       "text": "D — UpperTheory.Gal.Int.galoisLocalGlobalStrong_recParameter — 51,784"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p14",
+     "kind": "row",
+     "line": 171,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p14.s1",
+       "line": 171,
+       "hash": "e15441aa89bc",
+       "text": "Else — below none of A, C and D"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p15",
+     "kind": "text",
+     "line": 173,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p15.s1",
+       "line": 173,
+       "hash": "1ee3c10dd9f5",
+       "text": "The first row of the table gives the same shares for all reached declarations."
+      },
+      {
+       "id": "the-author-s-note.p15.s2",
+       "line": 173,
+       "hash": "0517ff6e86cd",
+       "text": "A row of matches is spread like the whole proof when its shares are near that row, and its names are gathered in one part when a share is far above it."
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p16",
+     "kind": "row",
+     "line": 177,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p16.s1",
+       "line": 177,
+       "hash": "8c667cbb68fe",
+       "text": "Term of the note — Name parts that match most often — Matches — Reached — A — B — C — D — Else"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p17",
+     "kind": "row",
+     "line": 179,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p17.s1",
+       "line": 179,
+       "hash": "ef29960de219",
+       "text": "all reached declarations — 760,989 — 67 % — 35 % — 7 % — 7 % — 19 %"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p18",
+     "kind": "row",
+     "line": 180,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p18.s1",
+       "line": 180,
+       "hash": "043116a44f94",
+       "text": "theta lifts — ThetaLifts 7,527, ThetaCorrespondence 6,345 — 14,609 — 13,328 — 82 % — 38 % — 1 % — 1 % — 16 %"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p19",
+     "kind": "row",
+     "line": 181,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p19.s1",
+       "line": 181,
+       "hash": "0eeec62df2a9",
+       "text": "definite unitary groups — DefiniteUnitaryClassSetFinite 33, BaseChangeDefiniteUnitary 32 — 548 — 541 — 35 % — 32 % — 1 % — 10 % — 55 %"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p20",
+     "kind": "row",
+     "line": 182,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p20.s1",
+       "line": 182,
+       "hash": "803bd66d0e15",
+       "text": "Chowla-Selberg — MeanLogPeriodConjugatesEqChowlaSelberg 5, MeanLogPeriodChowlaSelberg 3 — 19 — 19 — 100 % — 74 % — 0 % — 0 % — 0 %"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p21",
+     "kind": "row",
+     "line": 183,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p21.s1",
+       "line": 183,
+       "hash": "e05dddfa3674",
+       "text": "Siegel mass — UnitaryGroupMassFormula 23,477, SiegelMassRatios 68 — 23,651 — 22,355 — 94 % — 74 % — 0 % — 0 % — 6 %"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p22",
+     "kind": "row",
+     "line": 184,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p22.s1",
+       "line": 184,
+       "hash": "f88e68719a84",
+       "text": "Weyl, with divisibility — GradedWeylDivisibility 603 — 603 — 602 — 27 % — 8 % — 0 % — 0 % — 73 %"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p23",
+     "kind": "row",
+     "line": 185,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p23.s1",
+       "line": 185,
+       "hash": "d5ffef135167",
+       "text": "divisibility of the lift — Divisibility 4,633, DivisibilityProofs 1,146 — 5,908 — 4,839 — 98 % — 18 % — 0 % — 0 % — 2 %"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p24",
+     "kind": "row",
+     "line": 186,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p24.s1",
+       "line": 186,
+       "hash": "3c55700bd6f9",
+       "text": "Iwasawa tower — none — 0 — 0"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p25",
+     "kind": "row",
+     "line": 187,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p25.s1",
+       "line": 187,
+       "hash": "8d029596e42e",
+       "text": "seesaw — SeeSaw 698, HermitianAdaptedPlaneSeesaw 33 — 1,583 — 1,458 — 95 % — 93 % — 0 % — 0 % — 4 %"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p26",
+     "kind": "row",
+     "line": 188,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p26.s1",
+       "line": 188,
+       "hash": "73952161315d",
+       "text": "Bessel period — ThetaBesselIsometries 428, FormalDegreeBessel 427 — 6,375 — 6,066 — 98 % — 94 % — 0 % — 0 % — 2 %"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p27",
+     "kind": "row",
+     "line": 189,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p27.s1",
+       "line": 189,
+       "hash": "841f7ae18162",
+       "text": "Rallis — Rallis 89, RallisInnerProduct 88 — 401 — 398 — 55 % — 27 % — 0 % — 2 % — 43 %"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p28",
+     "kind": "row",
+     "line": 190,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p28.s1",
+       "line": 190,
+       "hash": "adc149f186a3",
+       "text": "Bost slope inequality — ChainSlopeWindows 379, DiagonalSlopes 302 — 2,105 — 1,590 — 93 % — 10 % — 3 % — 1 % — 3 %"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p29",
+     "kind": "row",
+     "line": 191,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p29.s1",
+       "line": 191,
+       "hash": "279bbc4c6d90",
+       "text": "relative trace formula — TraceFormula 1,650 — 1,652 — 1,604 — 2 % — 0 % — 1 % — 0 % — 96 %"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p30",
+     "kind": "row",
+     "line": 192,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p30.s1",
+       "line": 192,
+       "hash": "070acbfb9cac",
+       "text": "Poincaré series — PoincareSeriesInner 14, PoincareSeriesUnitaryAbsolutelyConvergentModerat 14 — 120 — 120 — 96 % — 49 % — 0 % — 0 % — 4 %"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p31",
+     "kind": "row",
+     "line": 193,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p31.s1",
+       "line": 193,
+       "hash": "23a940892d2f",
+       "text": "periods of Gan, Gross and Prasad — ExistsGanGrossPrasadRowWeights 17, ExistsGanGrossPrasadColumnWeights 14 — 68 — 59 — 88 % — 88 % — 0 % — 0 % — 12 %"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p32",
+     "kind": "row",
+     "line": 194,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p32.s1",
+       "line": 194,
+       "hash": "b3ae6a9b2f80",
+       "text": "weakening of Vandiver — none — 0 — 0"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p33",
+     "kind": "row",
+     "line": 195,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p33.s1",
+       "line": 195,
+       "hash": "42138ff05826",
+       "text": "covolumes — CovolumeBounds 1,047, FiniteCovolume 873 — 4,095 — 3,581 — 57 % — 21 % — 1 % — 0 % — 43 %"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p34",
+     "kind": "row",
+     "line": 196,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p34.s1",
+       "line": 196,
+       "hash": "f3519edbbd79",
+       "text": "Behrend — none — 0 — 0"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p35",
+     "kind": "row",
+     "line": 197,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p35.s1",
+       "line": 197,
+       "hash": "cfdbbd195180",
+       "text": "explicit formula of Guinand and Weil — ExplicitFormula 288, FirstKernelExplicitFormula 146 — 499 — 493 — 100 % — 31 % — 0 % — 0 % — 0 %"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p36",
+     "kind": "row",
+     "line": 198,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p36.s1",
+       "line": 198,
+       "hash": "28b12f3e3091",
+       "text": "von Mangoldt sum — AdditiveMulEqVonMangoldtConvolution 9, AdditiveEqPolynomialVonMangoldtConvolutionOne 8 — 80 — 76 — 74 % — 1 % — 0 % — 3 % — 24 %"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p37",
+     "kind": "row",
+     "line": 199,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p37.s1",
+       "line": 199,
+       "hash": "c2ab81d13a07",
+       "text": "Stepanov — none — 0 — 0"
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p38",
+     "kind": "text",
+     "line": 201,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p38.s1",
+       "line": 201,
+       "hash": "d124f9e6745a",
+       "text": "Five things can be read from the table."
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p39",
+     "kind": "item",
+     "line": 203,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p39.s1",
+       "line": 203,
+       "hash": "8ed3e4492200",
+       "text": "Sixteen of the 20 terms have matches."
+      },
+      {
+       "id": "the-author-s-note.p39.s2",
+       "line": 203,
+       "hash": "76ef4a133d66",
+       "text": "No name and no module path of the source holds the words Stepanov, Vandiver, Behrend or Iwasawa tower."
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p40",
+     "kind": "item",
+     "line": 205,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p40.s1",
+       "line": 205,
+       "hash": "84c3e42300f2",
+       "text": "B gathers 35 % of all reached declarations."
+      },
+      {
+       "id": "the-author-s-note.p40.s2",
+       "line": 205,
+       "hash": "c2bd7e63741d",
+       "text": "For the seesaw, the Bessel period, the periods of Gan, Gross and Prasad, the Siegel mass and Chowla-Selberg, between 74 % and 94 % of the reached matches lie below B."
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p41",
+     "kind": "item",
+     "line": 208,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p41.s1",
+       "line": 208,
+       "hash": "33a6b84a8852",
+       "text": "The part of A outside B gathers 31.5 % of all reached declarations."
+      },
+      {
+       "id": "the-author-s-note.p41.s2",
+       "line": 208,
+       "hash": "e03fdb5a4318",
+       "text": "For the divisibility of the lift, the Bost slope inequality, the von Mangoldt sum and the explicit formula, between 69 % and 83 % of the reached matches lie there."
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p42",
+     "kind": "item",
+     "line": 211,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p42.s1",
+       "line": 211,
+       "hash": "16b8937b3cc9",
+       "text": "Else holds 19 % of all reached declarations."
+      },
+      {
+       "id": "the-author-s-note.p42.s2",
+       "line": 211,
+       "hash": "b5fe215c708c",
+       "text": "Of the reached matches of the pattern for the relative trace formula, 96 % lie there, and so do 73 % of the matches of GradedWeylDivisibility."
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p43",
+     "kind": "item",
+     "line": 214,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p43.s1",
+       "line": 214,
+       "hash": "855b91020a9c",
+       "text": "The matches for theta lifts, Rallis and covolumes are spread more widely, and the matches for definite unitary groups lie mostly in Else and in B."
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p44",
+     "kind": "text",
+     "line": 217,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p44.s1",
+       "line": 217,
+       "hash": "2ac68f866494",
+       "text": "A separate count finds the word Iwasawa in the name or the module path of 26,784 declarations of the source."
+      },
+      {
+       "id": "the-author-s-note.p44.s2",
+       "line": 217,
+       "hash": "b37f5c9de27c",
+       "text": "Of these, 24,882 lie in modules whose path has the part IwasawaDecomposition, which names a decomposition of a group."
+      },
+      {
+       "id": "the-author-s-note.p44.s3",
+       "line": 217,
+       "hash": "d646f3ad52cd",
+       "text": "The other 1,902 were not examined."
+      }
+     ]
+    },
+    {
+     "id": "the-author-s-note.p45",
+     "kind": "text",
+     "line": 221,
+     "sentences": [
+      {
+       "id": "the-author-s-note.p45.s1",
+       "line": 221,
+       "hash": "744cd3896445",
+       "text": "The writer of this document reads the proposition UpperTheory.Top.VWin as the weakening of Vandiver that the note speaks of."
+      },
+      {
+       "id": "the-author-s-note.p45.s2",
+       "line": 221,
+       "hash": "140bddf22cba",
+       "text": "No name says so, and the reading rests on a resemblance alone."
+      },
+      {
+       "id": "the-author-s-note.p45.s3",
+       "line": 221,
+       "hash": "3bf0a017b9c0",
+       "text": "The definition UpperTheory.Top.VVle in ExistsPageN.lean bounds a sum over primes l and exponents e of lengths written shaLen, which the source takes from Formalism.GaloisCohomology."
+      },
+      {
+       "id": "the-author-s-note.p45.s4",
+       "line": 221,
+       "hash": "4cc51d277caa",
+       "text": "The note's entry speaks of cohomology classes indexed by a prime ℓ and an exponent e."
+      },
+      {
+       "id": "the-author-s-note.p45.s5",
+       "line": 221,
+       "hash": "cc6fd3ad2223",
+       "text": "VWin is built from VVle, and it is one of the two premises of every_character_of_literature_of_vWin."
+      },
+      {
+       "id": "the-author-s-note.p45.s6",
+       "line": 221,
+       "hash": "86aacab6b734",
+       "text": "The theorem vwin_of_row has one premise and VWin as the end of its claim, and it gathers 55,754 declarations, 7.3 % of what the five theorems reach."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "limits",
+   "title": "Limits",
+   "level": "h2",
+   "line": 232,
+   "paragraphs": [
+    {
+     "id": "limits.p1",
+     "kind": "item",
+     "line": 234,
+     "sentences": [
+      {
+       "id": "limits.p1.s1",
+       "line": 234,
+       "hash": "2c313d78c5d3",
+       "text": "The five namespaces are labels that the code gives."
+      },
+      {
+       "id": "limits.p1.s2",
+       "line": 234,
+       "hash": "26b95874a8f0",
+       "text": "A result from the literature that the code states under another name is not counted."
+      },
+      {
+       "id": "limits.p1.s3",
+       "line": 234,
+       "hash": "0a14332042fa",
+       "text": "The claim of topCovolSlim2_use_alt_alt, for example, has the premises HT.FarguesExact, GR.ZarhinStatement and ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.MoriwakiBigStatement."
+      },
+      {
+       "id": "limits.p1.s4",
+       "line": 234,
+       "hash": "d509c57998bd",
+       "text": "The writer of this document reads those three as results from the literature, by their names, and they lie in none of the five namespaces."
+      }
+     ]
+    },
+    {
+     "id": "limits.p2",
+     "kind": "item",
+     "line": 240,
+     "sentences": [
+      {
+       "id": "limits.p2.s1",
+       "line": 240,
+       "hash": "e0c0aa0b048b",
+       "text": "If each of the 361 is a result from the literature, as its namespace says, the 361 are a lower limit for the number of literature results that the code states."
+      },
+      {
+       "id": "limits.p2.s2",
+       "line": 240,
+       "hash": "3141e89df6ba",
+       "text": "A skeleton declaration without a mark can still restate a known result."
+      }
+     ]
+    },
+    {
+     "id": "limits.p3",
+     "kind": "item",
+     "line": 243,
+     "sentences": [
+      {
+       "id": "limits.p3.s1",
+       "line": 243,
+       "hash": "5bf0f7325bbc",
+       "text": "The script reads the roles from text."
+      },
+      {
+       "id": "limits.p3.s2",
+       "line": 243,
+       "hash": "2f87b5637ddd",
+       "text": "It compares last name parts and splits a claim at its last arrow outside brackets."
+      },
+      {
+       "id": "limits.p3.s3",
+       "line": 243,
+       "hash": "0a4957287737",
+       "text": "A theorem whose claim ends in a quantifier or a conjunction is counted neither as proving nor as deriving, which can move a published statement into the row of 26 and a skeleton declaration into the row without a mark."
+      }
+     ]
+    },
+    {
+     "id": "limits.p4",
+     "kind": "item",
+     "line": 247,
+     "sentences": [
+      {
+       "id": "limits.p4.s1",
+       "line": 247,
+       "hash": "777643f805c5",
+       "text": "A match in the table of note terms is a match of a name."
+      },
+      {
+       "id": "limits.p4.s2",
+       "line": 247,
+       "hash": "e4c2a5df53c9",
+       "text": "It shows where the code uses a word, and it does not show that the mathematics behind the name is the step that the note means."
+      },
+      {
+       "id": "limits.p4.s3",
+       "line": 247,
+       "hash": "18ac9a271633",
+       "text": "The patterns were chosen by the writer of this document and stand in TERMS at the top of published.py."
+      }
+     ]
+    },
+    {
+     "id": "limits.p5",
+     "kind": "item",
+     "line": 251,
+     "sentences": [
+      {
+       "id": "limits.p5.s1",
+       "line": 251,
+       "hash": "66af3aaa9355",
+       "text": "A term without a match can mean that the code lacks the ingredient."
+      },
+      {
+       "id": "limits.p5.s2",
+       "line": 251,
+       "hash": "a11c9ec2a1ad",
+       "text": "It can equally mean that the code names the ingredient with other words."
+      },
+      {
+       "id": "limits.p5.s3",
+       "line": 251,
+       "hash": "ca82e9b98f5a",
+       "text": "The author describes the timeline, which names the Iwasawa tower, Vandiver and Behrend, as partly a paraphrase."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "running-it",
+   "title": "Running it",
+   "level": "h2",
+   "line": 255,
+   "paragraphs": []
+  },
+  {
+   "id": "files",
+   "title": "Files",
+   "level": "h2",
+   "line": 262,
+   "paragraphs": [
+    {
+     "id": "files.p1",
+     "kind": "row",
+     "line": 264,
+     "sentences": [
+      {
+       "id": "files.p1.s1",
+       "line": 264,
+       "hash": "55a86baf17c3",
+       "text": "File — Content"
+      }
+     ]
+    },
+    {
+     "id": "files.p2",
+     "kind": "row",
+     "line": 266,
+     "sentences": [
+      {
+       "id": "files.p2.s1",
+       "line": 266,
+       "hash": "6f91e7e700f9",
+       "text": "published.py — finds the published statements, their roles and the name matches"
+      }
+     ]
+    },
+    {
+     "id": "files.p3",
+     "kind": "row",
+     "line": 267,
+     "sentences": [
+      {
+       "id": "files.p3.s1",
+       "line": 267,
+       "hash": "e55241eb6f92",
+       "text": "published.json — the figures in summary, the 361 published statements in statements, the marks of the 590 skeleton declarations in skeleton, in the order of nodes in skeleton.json, and the name matches in terms"
+      }
+     ]
+    },
+    {
+     "id": "files.p4",
+     "kind": "row",
+     "line": 268,
+     "sentences": [
+      {
+       "id": "files.p4.s1",
+       "line": 268,
+       "hash": "e2e4c03cf469",
+       "text": "OUTLINE-PUBLISHED.txt — the outline with module paths and marks"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "counts": {
+  "sections": 9,
+  "paragraphs": 98,
+  "sentences": 161
+ }
+}

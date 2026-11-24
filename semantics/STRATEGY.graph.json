@@ -1,0 +1,2506 @@
+{
+ "title": "The strategy of the proof, followed through the Lean text",
+ "source": "verification/strategy/README.md",
+ "sections": [
+  {
+   "id": "the-strategy-of-the-proof-followed-throu",
+   "map_code": "0",
+   "otsikko": "The strategy of the proof, followed through the Lean text"
+  },
+  {
+   "id": "words-used-here",
+   "map_code": "1",
+   "otsikko": "Words used here"
+  },
+  {
+   "id": "the-route-in-nine-steps",
+   "map_code": "2",
+   "otsikko": "The route in nine steps"
+  },
+  {
+   "id": "what-the-note-says-about-the-strategy",
+   "map_code": "3",
+   "otsikko": "What the note says about the strategy"
+  },
+  {
+   "id": "from-the-five-theorems-to-one-statement",
+   "map_code": "4",
+   "otsikko": "From the five theorems to one statement"
+  },
+  {
+   "id": "what-zero-free-all-of-green-v-win-states",
+   "map_code": "6",
+   "otsikko": "What zero_free_all_of_green_v_win states and how it splits"
+  },
+  {
+   "id": "the-prime-sum",
+   "map_code": "7",
+   "otsikko": "The prime sum"
+  },
+  {
+   "id": "the-landau-step",
+   "map_code": "8",
+   "otsikko": "The Landau step"
+  },
+  {
+   "id": "the-wanted-characters-inside-an-auxiliar",
+   "map_code": "9",
+   "otsikko": "The wanted characters inside an auxiliary field"
+  },
+  {
+   "id": "the-pair-of-primes",
+   "map_code": "10",
+   "otsikko": "The pair of primes"
+  },
+  {
+   "id": "from-the-two-bounds-on-the-slope-to-the-",
+   "map_code": "11",
+   "otsikko": "From the two bounds on the slope to the exponent 1/2"
+  },
+  {
+   "id": "ch-core",
+   "map_code": "12",
+   "otsikko": "ch_core"
+  },
+  {
+   "id": "ch-top",
+   "map_code": "13",
+   "otsikko": "ch_top"
+  },
+  {
+   "id": "what-the-numbers-of-the-record-are",
+   "map_code": "15",
+   "otsikko": "What the numbers of the record are"
+  },
+  {
+   "id": "the-path-of-the-divisibility-inequality",
+   "map_code": "16",
+   "otsikko": "The path of the divisibility inequality"
+  },
+  {
+   "id": "the-chain-of-lifts",
+   "map_code": "17",
+   "otsikko": "The chain of lifts"
+  },
+  {
+   "id": "the-bound-for-one-lift",
+   "map_code": "18",
+   "otsikko": "The bound for one lift"
+  },
+  {
+   "id": "the-lower-bound-for-the-lattices-of-a-da",
+   "map_code": "19",
+   "otsikko": "The lower bound for the lattices of a datum"
+  },
+  {
+   "id": "how-the-conditions-are-assembled",
+   "map_code": "20",
+   "otsikko": "How the conditions are assembled"
+  },
+  {
+   "id": "vwin-the-bound-on-lengths",
+   "map_code": "22",
+   "otsikko": "VWin, the bound on lengths"
+  },
+  {
+   "id": "row-the-galois-representations",
+   "map_code": "23",
+   "otsikko": "Row, the Galois representations"
+  },
+  {
+   "id": "the-record-and-the-two-bundles",
+   "map_code": "24",
+   "otsikko": "The record and the two bundles"
+  },
+  {
+   "id": "the-covolume-bound",
+   "map_code": "25",
+   "otsikko": "The covolume bound"
+  },
+  {
+   "id": "what-a-checker-should-know",
+   "map_code": "26",
+   "otsikko": "What a checker should know"
+  },
+  {
+   "id": "what-stays-unread",
+   "map_code": "27",
+   "otsikko": "What stays unread"
+  },
+  {
+   "id": "scripts-and-files",
+   "map_code": "28",
+   "otsikko": "Scripts and files"
+  }
+ ],
+ "nodes": [
+  {
+   "id": "s0-route",
+   "type": "vaite",
+   "section": "the-strategy-of-the-proof-followed-throu",
+   "title": "The proof derives the five theorems from one inequality on a weighted prime sum, which it gets by bounding the slope of one lattice from two sides with m near √x",
+   "laji": "T",
+   "units": [
+    "the-strategy-of-the-proof-followed-throu.p1"
+   ],
+   "johto": [
+    "st1",
+    "st2",
+    "st3",
+    "st4",
+    "st5",
+    "st6",
+    "st7",
+    "st8",
+    "st9"
+   ],
+   "todistus_seuraa": true
+  },
+  {
+   "id": "s0-plan",
+   "type": "meta",
+   "section": "the-strategy-of-the-proof-followed-throu",
+   "title": "The document follows the route from Main.lean down and names for each step the theorem, what was read and its count",
+   "meta": true,
+   "units": [
+    "the-strategy-of-the-proof-followed-throu.p2"
+   ]
+  },
+  {
+   "id": "s0-reader",
+   "type": "lahtokohta",
+   "section": "the-strategy-of-the-proof-followed-throu",
+   "title": "A language model read the route in one session with seven parallel readings, no mathematician checked it, Lean was not run, and a reading leaves open whether a definition is the object its name suggests",
+   "laji": "A",
+   "units": [
+    "the-strategy-of-the-proof-followed-throu.p3"
+   ]
+  },
+  {
+   "id": "s0-counts",
+   "type": "lahtokohta",
+   "section": "the-strategy-of-the-proof-followed-throu",
+   "title": "The counts come from compiled files of the build cache, and the README records no complete comparator run on the current source",
+   "laji": "A",
+   "units": [
+    "the-strategy-of-the-proof-followed-throu.p4"
+   ]
+  },
+  {
+   "id": "w-rests",
+   "type": "maaritelma",
+   "section": "words-used-here",
+   "title": "A constant is a compiled declaration, and a theorem rests on the project declarations its compiled statement and proof reach, Mathlib excluded",
+   "laji": "D",
+   "units": [
+    "words-used-here.p1",
+    "words-used-here.p2.s1-s2"
+   ],
+   "taustatieto": "The README of the skeleton defines declaration, module, outline and gathers."
+  },
+  {
+   "id": "w-outline-le",
+   "type": "vaite",
+   "section": "words-used-here",
+   "title": "An outline number of the exact graph is at most the rests-on number, because the outline counts only what is reached through the theorem alone",
+   "laji": "T",
+   "units": [
+    "words-used-here.p2.s3"
+   ],
+   "johto": [
+    "w-rests"
+   ],
+   "taustatieto": "The README of the skeleton defines gathers through dominance."
+  },
+  {
+   "id": "w-read",
+   "type": "maaritelma",
+   "section": "words-used-here",
+   "title": "Read in full, read at its top and read by statement are three depths of reading, and this session is the model session that wrote the document",
+   "laji": "D",
+   "units": [
+    "words-used-here.p3",
+    "words-used-here.p4"
+   ]
+  },
+  {
+   "id": "w-premise",
+   "type": "maaritelma",
+   "section": "words-used-here",
+   "title": "Premise, supplied, closed theorem, record and bundle",
+   "laji": "D",
+   "units": [
+    "words-used-here.p5",
+    "words-used-here.p6"
+   ]
+  },
+  {
+   "id": "w-datum",
+   "type": "maaritelma",
+   "section": "words-used-here",
+   "title": "A datum is a value of the record D7 with a host, lattices, maps, words and the number m of lifts, a family holds a datum for every large x and index, and a host is the record of an auxiliary abelian number field",
+   "laji": "D",
+   "units": [
+    "words-used-here.p7",
+    "words-used-here.p8"
+   ]
+  },
+  {
+   "id": "w-slope",
+   "type": "maaritelma",
+   "section": "words-used-here",
+   "title": "The slope of a lattice is degree over rank with degree minus log covolume, and mu of a Hermitian lattice is twice the slope with two corrections",
+   "laji": "D",
+   "units": [
+    "words-used-here.p9"
+   ]
+  },
+  {
+   "id": "w-height",
+   "type": "maaritelma",
+   "section": "words-used-here",
+   "title": "The height htMap of a map is the mean over infinite places of the log of the squared operator norm, and the number h of a word is a separate field that bounds it",
+   "laji": "D",
+   "units": [
+    "words-used-here.p10"
+   ],
+   "edellyttaa": [
+    "w-datum"
+   ]
+  },
+  {
+   "id": "w-link",
+   "type": "maaritelma",
+   "section": "words-used-here",
+   "title": "A link is a condition on a family whose name begins with Link",
+   "laji": "D",
+   "units": [
+    "words-used-here.p11"
+   ],
+   "edellyttaa": [
+    "w-datum"
+   ]
+  },
+  {
+   "id": "w-note",
+   "type": "maaritelma",
+   "section": "words-used-here",
+   "title": "The note is the author's four-page note, whose timeline has 20 entries",
+   "laji": "D",
+   "units": [
+    "words-used-here.p12"
+   ]
+  },
+  {
+   "id": "w-interp",
+   "type": "maaritelma",
+   "section": "words-used-here",
+   "title": "A sentence marked as suggestion, interpretation or guess goes beyond what the Lean text shows",
+   "laji": "D",
+   "units": [
+    "words-used-here.p13"
+   ]
+  },
+  {
+   "id": "w-readings",
+   "type": "lahtokohta",
+   "section": "words-used-here",
+   "title": "The seven parallel readings and what each read",
+   "laji": "A",
+   "units": [
+    "words-used-here.p14",
+    "words-used-here.p15",
+    "words-used-here.p16",
+    "words-used-here.p17",
+    "words-used-here.p18",
+    "words-used-here.p19",
+    "words-used-here.p20",
+    "words-used-here.p21",
+    "words-used-here.p22"
+   ],
+   "edellyttaa": [
+    "w-read"
+   ]
+  },
+  {
+   "id": "st1",
+   "type": "vaite",
+   "section": "the-route-in-nine-steps",
+   "title": "Step 1. The five theorems follow from zero-freeness of Dirichlet L-functions for real part above 1/2",
+   "laji": "T",
+   "units": [
+    "the-route-in-nine-steps.p1"
+   ],
+   "johto": [
+    "f-five",
+    "f-claims",
+    "f-calls"
+   ],
+   "todistus_seuraa": true
+  },
+  {
+   "id": "st2",
+   "type": "vaite",
+   "section": "the-route-in-nine-steps",
+   "title": "Step 2. Zero-freeness follows by a Landau argument from an upper bound x^θ, for every θ above 1/2, for the prime sum Gm with its main terms subtracted on intervals from Y to Y^(3/2), for arbitrarily large Y",
+   "laji": "T",
+   "units": [
+    "the-route-in-nine-steps.p2"
+   ],
+   "johto": [
+    "ps-gm",
+    "l-formB",
+    "l-contra"
+   ],
+   "todistus_seuraa": true
+  },
+  {
+   "id": "st3",
+   "type": "vaite",
+   "section": "the-route-in-nine-steps",
+   "title": "Step 3. The wanted characters sit among the characters of a host, a subgroup sum removes some unwanted ones, and a count of zeros with a mean square bound shows that at least half of the candidates for q and then for d give the others a prime sum of at most y^(1/2+ε/2) for y from Y to Y^A",
+   "laji": "T",
+   "units": [
+    "the-route-in-nine-steps.p3"
+   ],
+   "johto": [
+    "c-eath",
+    "c-winpair",
+    "c-pairgood",
+    "c-pairex",
+    "p-share",
+    "p-kind1",
+    "p-kind2",
+    "p-badshare",
+    "p-meansq",
+    "h-rows"
+   ],
+   "todistus_seuraa": true
+  },
+  {
+   "id": "st4",
+   "type": "vaite",
+   "section": "the-route-in-nine-steps",
+   "title": "Step 4. The sum over all characters of the host equals ASK minus its main term by finite Fourier inversion",
+   "laji": "T",
+   "units": [
+    "the-route-in-nine-steps.p4"
+   ],
+   "johto": [
+    "h-chcore",
+    "h-balance"
+   ],
+   "todistus_seuraa": true
+  },
+  {
+   "id": "st5",
+   "type": "vaite",
+   "section": "the-route-in-nine-steps",
+   "title": "Step 5. ASK is bounded through the slope of a lattice, from above by DIV and from below by SlopeIneq",
+   "laji": "T",
+   "units": [
+    "the-route-in-nine-steps.p5"
+   ],
+   "johto": [
+    "t-div",
+    "t-slope",
+    "t-cancel",
+    "r-ties"
+   ],
+   "todistus_seuraa": true
+  },
+  {
+   "id": "st6",
+   "type": "vaite",
+   "section": "the-route-in-nine-steps",
+   "title": "Step 6. Each map into the lattice factors through a chain of m kernels between unitary groups of ranks k + j(t+1), the first m − 2 composed one after the other, the last two inside a finite sum, with one more linear map after them",
+   "laji": "T",
+   "units": [
+    "the-route-in-nine-steps.p6"
+   ],
+   "johto": [
+    "r-ties",
+    "k-colchain",
+    "k-groups",
+    "k-rank",
+    "k-count",
+    "k-dists",
+    "k-matrices",
+    "k-read"
+   ],
+   "todistus_seuraa": true
+  },
+  {
+   "id": "st7",
+   "type": "vaite",
+   "section": "the-route-in-nine-steps",
+   "title": "Step 7. The upper bound adds one term a·log a − a − a·logOm per lift and top place, and interlacing with a hook product bounds the rest",
+   "laji": "T",
+   "units": [
+    "the-route-in-nine-steps.p7"
+   ],
+   "johto": [
+    "u-kerplace",
+    "u-stepE",
+    "u-hook",
+    "u-origin",
+    "u-each"
+   ],
+   "todistus_seuraa": true
+  },
+  {
+   "id": "st8",
+   "type": "vaite",
+   "section": "the-route-in-nine-steps",
+   "title": "Step 8. The lower bound needs each map to be nearly an isometry and two maps of different words to overlap little",
+   "laji": "T",
+   "units": [
+    "the-route-in-nine-steps.p8"
+   ],
+   "johto": [
+    "lo-frame",
+    "lo-linkS",
+    "lo-interp"
+   ],
+   "todistus_seuraa": true
+  },
+  {
+   "id": "st9",
+   "type": "vaite",
+   "section": "the-route-in-nine-steps",
+   "title": "Step 9. The two bounds leave errors of about x/m, m and √x, and m between x^(1/2−ε) and x^(1/2+ε/2) gives the exponent 1/2 + cε",
+   "laji": "T",
+   "units": [
+    "the-route-in-nine-steps.p9"
+   ],
+   "johto": [
+    "h-four",
+    "h-exponent",
+    "h-window"
+   ],
+   "todistus_seuraa": true
+  },
+  {
+   "id": "s2-map",
+   "type": "meta",
+   "section": "the-route-in-nine-steps",
+   "title": "Which section covers which step",
+   "meta": true,
+   "units": [
+    "the-route-in-nine-steps.p10"
+   ]
+  },
+  {
+   "id": "s2-branches",
+   "type": "vaite",
+   "section": "the-route-in-nine-steps",
+   "title": "Further branches supply the premises, namely VWin, Row and a record of 46 fields fed by a covolume bound",
+   "laji": "T",
+   "units": [
+    "the-route-in-nine-steps.p11"
+   ],
+   "johto": [
+    "f-inputs",
+    "v-def",
+    "g-row",
+    "b-record",
+    "b-covol"
+   ],
+   "todistus_seuraa": true
+  },
+  {
+   "id": "n-idea",
+   "type": "lahtokohta",
+   "section": "what-the-note-says-about-the-strategy",
+   "title": "The note calls the argument a descendant of Stepanov's, in which multiplicity is hard to find over the integers",
+   "laji": "A",
+   "units": [
+    "what-the-note-says-about-the-strategy.p1",
+    "what-the-note-says-about-the-strategy.p2"
+   ],
+   "edellyttaa": [
+    "w-note"
+   ]
+  },
+  {
+   "id": "n-e5",
+   "type": "lahtokohta",
+   "section": "what-the-note-says-about-the-strategy",
+   "title": "Entry 5 of the timeline switches to the sum Σ Λ(n)(X/n − 1) − X log X + (1+γ)X",
+   "laji": "A",
+   "units": [
+    "what-the-note-says-about-the-strategy.p3.s1"
+   ]
+  },
+  {
+   "id": "n-gz",
+   "type": "vaite",
+   "section": "what-the-note-says-about-the-strategy",
+   "title": "The Lean definition Gz is the expression of entry 5 and the trivial-character part of Gm",
+   "laji": "T",
+   "units": [
+    "what-the-note-says-about-the-strategy.p3.s2"
+   ],
+   "johto": [
+    "n-e5",
+    "ps-gz",
+    "ps-gm"
+   ],
+   "todistus_seuraa": true
+  },
+  {
+   "id": "n-entries",
+   "type": "lahtokohta",
+   "section": "what-the-note-says-about-the-strategy",
+   "title": "Entries 7, 8, 9, 10, 12, 13, 16 and 17 name interlacing weights, iterated theta lifts with m like √X, divisibility, the seesaw, the Bost slope inequality, approximate orthogonality and a weakening of Vandiver",
+   "laji": "A",
+   "units": [
+    "what-the-note-says-about-the-strategy.p4",
+    "what-the-note-says-about-the-strategy.p5",
+    "what-the-note-says-about-the-strategy.p6",
+    "what-the-note-says-about-the-strategy.p7"
+   ]
+  },
+  {
+   "id": "n-author",
+   "type": "lahtokohta",
+   "section": "what-the-note-says-about-the-strategy",
+   "title": "The author writes that Claude provided the timeline and that he has not mastered the surrounding mathematics",
+   "laji": "A",
+   "units": [
+    "what-the-note-says-about-the-strategy.p8.s1"
+   ]
+  },
+  {
+   "id": "n-plan",
+   "type": "meta",
+   "section": "what-the-note-says-about-the-strategy",
+   "title": "A later section names an entry where the Lean text matches it",
+   "meta": true,
+   "units": [
+    "what-the-note-says-about-the-strategy.p8.s2"
+   ]
+  },
+  {
+   "id": "f-five",
+   "type": "lahtokohta",
+   "section": "from-the-five-theorems-to-one-statement",
+   "title": "Statements.lean states five propositions, the first being that a Dirichlet L-function is nonzero for real part above 1/2 except the trivial character at 1",
+   "laji": "A",
+   "units": [
+    "from-the-five-theorems-to-one-statement.p1",
+    "from-the-five-theorems-to-one-statement.p2",
+    "from-the-five-theorems-to-one-statement.p3",
+    "from-the-five-theorems-to-one-statement.p4"
+   ]
+  },
+  {
+   "id": "f-claims",
+   "type": "lahtokohta",
+   "section": "from-the-five-theorems-to-one-statement",
+   "title": "The other four follow through Claim.zeta and Claim.strip, which rest on 9 and 7 declarations and were not read",
+   "laji": "A",
+   "units": [
+    "from-the-five-theorems-to-one-statement.p5"
+   ],
+   "edellyttaa": [
+    "w-rests"
+   ]
+  },
+  {
+   "id": "f-calls",
+   "type": "lahtokohta",
+   "section": "from-the-five-theorems-to-one-statement",
+   "title": "The calls below everyCharacter run through six theorems that rest on 800,327 down to 54,874 declarations",
+   "laji": "A",
+   "units": [
+    "from-the-five-theorems-to-one-statement.p6",
+    "from-the-five-theorems-to-one-statement.p7",
+    "from-the-five-theorems-to-one-statement.p8",
+    "from-the-five-theorems-to-one-statement.p9",
+    "from-the-five-theorems-to-one-statement.p10",
+    "from-the-five-theorems-to-one-statement.p11",
+    "from-the-five-theorems-to-one-statement.p12",
+    "from-the-five-theorems-to-one-statement.p13"
+   ],
+   "edellyttaa": [
+    "w-rests",
+    "w-read"
+   ]
+  },
+  {
+   "id": "f-outline",
+   "type": "lahtokohta",
+   "section": "from-the-five-theorems-to-one-statement",
+   "title": "The first four outline lines are rows 1 to 4, and the fifth builds the record",
+   "laji": "A",
+   "units": [
+    "from-the-five-theorems-to-one-statement.p14"
+   ]
+  },
+  {
+   "id": "f-55k",
+   "type": "vaite",
+   "section": "from-the-five-theorems-to-one-statement",
+   "title": "The passage from three inputs to the statement rests on about 55,000 declarations, and the other 745,000 behind everyCharacter supply the inputs",
+   "laji": "T",
+   "units": [
+    "from-the-five-theorems-to-one-statement.p15"
+   ],
+   "johto": [
+    "f-calls"
+   ]
+  },
+  {
+   "id": "f-inputs",
+   "type": "lahtokohta",
+   "section": "from-the-five-theorems-to-one-statement",
+   "title": "Green rests on 64 declarations, VWin on 173,628, the record on 463,949 and Row on 195,170",
+   "laji": "A",
+   "units": [
+    "from-the-five-theorems-to-one-statement.p16",
+    "from-the-five-theorems-to-one-statement.p17",
+    "from-the-five-theorems-to-one-statement.p18",
+    "from-the-five-theorems-to-one-statement.p19",
+    "from-the-five-theorems-to-one-statement.p20.s1-s2"
+   ]
+  },
+  {
+   "id": "f-share",
+   "type": "vaite",
+   "section": "from-the-five-theorems-to-one-statement",
+   "title": "The branches share declarations, because their counts add up to more than 800,327",
+   "laji": "T",
+   "units": [
+    "from-the-five-theorems-to-one-statement.p20.s3"
+   ],
+   "johto": [
+    "f-inputs",
+    "f-calls"
+   ]
+  },
+  {
+   "id": "z-states",
+   "type": "lahtokohta",
+   "section": "what-zero-free-all-of-green-v-win-states",
+   "title": "zero_free_all_of_green_v_win takes Green, VWin and one record and concludes zero-freeness for primitive characters, which imprimitive extends to all",
+   "laji": "A",
+   "units": [
+    "what-zero-free-all-of-green-v-win-states.p1"
+   ]
+  },
+  {
+   "id": "z-split",
+   "type": "lahtokohta",
+   "section": "what-zero-free-all-of-green-v-win-states",
+   "title": "Its one-line proof splits into the Landau step, the main inequality, the supply of tied families and the supply of fields",
+   "laji": "A",
+   "units": [
+    "what-zero-free-all-of-green-v-win-states.p2",
+    "what-zero-free-all-of-green-v-win-states.p3",
+    "what-zero-free-all-of-green-v-win-states.p4",
+    "what-zero-free-all-of-green-v-win-states.p5",
+    "what-zero-free-all-of-green-v-win-states.p6",
+    "what-zero-free-all-of-green-v-win-states.p7"
+   ]
+  },
+  {
+   "id": "z-tied",
+   "type": "maaritelma",
+   "section": "what-zero-free-all-of-green-v-win-states",
+   "title": "A tied family satisfies ChainTied, ChainTie is a different object, and shape_closed_link_n_of_green is called the shape theorem",
+   "laji": "D",
+   "units": [
+    "what-zero-free-all-of-green-v-win-states.p8"
+   ],
+   "edellyttaa": [
+    "w-datum"
+   ]
+  },
+  {
+   "id": "ps-gz",
+   "type": "maaritelma",
+   "section": "the-prime-sum",
+   "title": "Sz x is the sum of Λ(n)(x/n − 1) over n ≤ x and Gz x is Sz x − x log x + (1+γ)x",
+   "laji": "D",
+   "units": [
+    "the-prime-sum.p1",
+    "the-prime-sum.p2",
+    "the-prime-sum.p3"
+   ]
+  },
+  {
+   "id": "ps-gchi",
+   "type": "maaritelma",
+   "section": "the-prime-sum",
+   "title": "gChi χ y is the twisted sum plus y times the logarithmic derivative of L(χ,s) at 1, and equals Gz for the trivial character",
+   "laji": "D",
+   "units": [
+    "the-prime-sum.p4"
+   ],
+   "edellyttaa": [
+    "ps-gz"
+   ]
+  },
+  {
+   "id": "ps-gm",
+   "type": "maaritelma",
+   "section": "the-prime-sum",
+   "title": "A level holds a finite set KEPT of primitive characters, and Gm is Gz plus the weighted real parts of gChi over KEPT",
+   "laji": "D",
+   "units": [
+    "the-prime-sum.p5"
+   ],
+   "edellyttaa": [
+    "ps-gz",
+    "ps-gchi"
+   ]
+  },
+  {
+   "id": "l-formB",
+   "type": "lahtokohta",
+   "section": "the-landau-step",
+   "title": "formB states that an upper bound Gm x ≤ x^θ on intervals from Y to Y^la for arbitrarily large Y gives no zero with real part above θ for every character of KEPT",
+   "laji": "A",
+   "units": [
+    "the-landau-step.p1"
+   ],
+   "edellyttaa": [
+    "ps-gm"
+   ]
+  },
+  {
+   "id": "l-reduce",
+   "type": "lahtokohta",
+   "section": "the-landau-step",
+   "title": "formB reduces to zeroFree_of_rpow_window, and the account has four stages that follow the report except stage 3",
+   "laji": "A",
+   "units": [
+    "the-landau-step.p2"
+   ],
+   "edellyttaa": [
+    "w-readings"
+   ]
+  },
+  {
+   "id": "l-st1",
+   "type": "lahtokohta",
+   "section": "the-landau-step",
+   "title": "Stage 1. The Laplace transform Φ of g(u) = Gm(e^u) continues to real part above 0 with a simple pole of positive-weight residue at every zero, and g grows at most like e^(2u)",
+   "laji": "A",
+   "units": [
+    "the-landau-step.p3"
+   ],
+   "edellyttaa": [
+    "ps-gm"
+   ]
+  },
+  {
+   "id": "l-st2",
+   "type": "vaite",
+   "section": "the-landau-step",
+   "title": "Stage 2. On the interval the bound on Gm bounds the Taylor-coefficient integrals at σ+iτ and at σ by a multiple of e^(ηU)/(σ−θ)^k",
+   "laji": "T",
+   "units": [
+    "the-landau-step.p4"
+   ],
+   "johto": [
+    "l-formB",
+    "l-st1"
+   ]
+  },
+  {
+   "id": "l-st3",
+   "type": "lahtokohta",
+   "section": "the-landau-step",
+   "title": "Stage 3. landau_tails bounds the integral outside the interval by C/σ^k with k = ⌈(1+δ/2)σU⌉",
+   "laji": "A",
+   "units": [
+    "the-landau-step.p5.s1-s4",
+    "the-landau-step.p5.s6"
+   ],
+   "edellyttaa": [
+    "l-st1"
+   ]
+  },
+  {
+   "id": "l-peak",
+   "type": "vaite",
+   "section": "the-landau-step",
+   "title": "By the session's own calculation the weight peaks at u = k/(σ−2), inside the interval when σ ≥ 4(1+δ)/δ",
+   "laji": "T",
+   "units": [
+    "the-landau-step.p5.s5"
+   ],
+   "johto": [
+    "l-st3"
+   ]
+  },
+  {
+   "id": "l-contra",
+   "type": "vaite",
+   "section": "the-landau-step",
+   "title": "Stage 4. A zero with real part above θ makes a coefficient of size c/d^k with d below σ−θ, which contradicts the bounds for large U",
+   "laji": "T",
+   "units": [
+    "the-landau-step.p6"
+   ],
+   "johto": [
+    "l-reduce",
+    "l-st1",
+    "l-st2",
+    "l-st3"
+   ]
+  },
+  {
+   "id": "l-once",
+   "type": "vaite",
+   "section": "the-landau-step",
+   "title": "One interval for each Y of an unbounded sequence suffices, because the hypothesis enters once for each large U",
+   "laji": "T",
+   "units": [
+    "the-landau-step.p7.s1"
+   ],
+   "johto": [
+    "l-contra"
+   ]
+  },
+  {
+   "id": "l-mathlib",
+   "type": "lahtokohta",
+   "section": "the-landau-step",
+   "title": "By the report the proof uses Mathlib's continuation and nonvanishing on real part at least 1 and no functional equation, and the four lemmas of stage 4 were read by statement",
+   "laji": "A",
+   "units": [
+    "the-landau-step.p7.s2-s3"
+   ]
+  },
+  {
+   "id": "c-coregm",
+   "type": "lahtokohta",
+   "section": "the-wanted-characters-inside-an-auxiliar",
+   "title": "core_gm proves Gm x ≤ x^(1/2 + (eD+eL+7)ε) at one x from a host and two conditions",
+   "laji": "A",
+   "units": [
+    "the-wanted-characters-inside-an-auxiliar.p1"
+   ],
+   "edellyttaa": [
+    "ps-gm",
+    "w-datum"
+   ]
+  },
+  {
+   "id": "c-coreath",
+   "type": "maaritelma",
+   "section": "the-wanted-characters-inside-an-auxiliar",
+   "title": "CoreAtH says that a record Data with SizeData₂ and fifteen further conditions exists over the host, and ChainTied is its form for a family",
+   "laji": "D",
+   "units": [
+    "the-wanted-characters-inside-an-auxiliar.p2"
+   ]
+  },
+  {
+   "id": "c-eath",
+   "type": "maaritelma",
+   "section": "the-wanted-characters-inside-an-auxiliar",
+   "title": "EAtH places the kept characters among those of the host and asks ‖gChi χ x‖ ≤ x^(1/2+ε) for the other characters, those trivial on A0 and not kept",
+   "laji": "D",
+   "units": [
+    "the-wanted-characters-inside-an-auxiliar.p3"
+   ],
+   "edellyttaa": [
+    "ps-gchi"
+   ]
+  },
+  {
+   "id": "c-source",
+   "type": "lahtokohta",
+   "section": "the-wanted-characters-inside-an-auxiliar",
+   "title": "The field bdG is used by sigA_le alone and filled by supplyOfAdmOf from boundedTw, which reads it off PairGood",
+   "laji": "A",
+   "units": [
+    "the-wanted-characters-inside-an-auxiliar.p4",
+    "the-wanted-characters-inside-an-auxiliar.p5"
+   ],
+   "edellyttaa": [
+    "c-eath"
+   ]
+  },
+  {
+   "id": "c-winpair",
+   "type": "maaritelma",
+   "section": "the-wanted-characters-inside-an-auxiliar",
+   "title": "WinPair fixes the primes q and d of the host with log q near Y^(ε/5), log d near Y^(ε/5)(log Y)² and divisibility conditions on d + 1",
+   "laji": "D",
+   "units": [
+    "the-wanted-characters-inside-an-auxiliar.p6"
+   ]
+  },
+  {
+   "id": "c-pairgood",
+   "type": "maaritelma",
+   "section": "the-wanted-characters-inside-an-auxiliar",
+   "title": "PairGood says that each other character has ‖gChi χ y‖ ≤ y^(1/2+ε/2) for y from Y to Y^A and a bounded logarithmic derivative, with zero-free boxes for the real ones",
+   "laji": "D",
+   "units": [
+    "the-wanted-characters-inside-an-auxiliar.p7"
+   ],
+   "edellyttaa": [
+    "c-winpair",
+    "c-eath"
+   ]
+  },
+  {
+   "id": "c-pairex",
+   "type": "lahtokohta",
+   "section": "the-wanted-characters-inside-an-auxiliar",
+   "title": "pairEx proves that such a pair exists for every large Y, through pair_exists and pair_share with η = 1/2",
+   "laji": "A",
+   "units": [
+    "the-wanted-characters-inside-an-auxiliar.p8"
+   ],
+   "edellyttaa": [
+    "c-pairgood"
+   ]
+  },
+  {
+   "id": "c-read",
+   "type": "meta",
+   "section": "the-wanted-characters-inside-an-auxiliar",
+   "title": "What was read of this section",
+   "meta": true,
+   "units": [
+    "the-wanted-characters-inside-an-auxiliar.p9.s1-s2"
+   ]
+  },
+  {
+   "id": "c-short",
+   "type": "vaite",
+   "section": "the-wanted-characters-inside-an-auxiliar",
+   "title": "The field bounds concerns sums whose length is at most a fixed power of the logarithm of the modulus, since Y^A ≤ (2 log q)^(5A/ε)",
+   "laji": "T",
+   "units": [
+    "the-wanted-characters-inside-an-auxiliar.p9.s3-s6"
+   ],
+   "johto": [
+    "c-winpair",
+    "c-pairgood"
+   ]
+  },
+  {
+   "id": "c-thin",
+   "type": "lahtokohta",
+   "section": "the-wanted-characters-inside-an-auxiliar",
+   "title": "ThinScales bounds the prime sums far above x, and the code derives its form for a datum from three statements on zeros that litThin proves and whose proofs were not read",
+   "laji": "A",
+   "units": [
+    "the-wanted-characters-inside-an-auxiliar.p10"
+   ],
+   "edellyttaa": [
+    "c-coreath"
+   ]
+  },
+  {
+   "id": "p-role",
+   "type": "lahtokohta",
+   "section": "the-pair-of-primes",
+   "title": "pair_share rests on 1,239 declarations and is the source of the square-root bound for the other characters",
+   "laji": "A",
+   "units": [
+    "the-pair-of-primes.p1"
+   ],
+   "edellyttaa": [
+    "c-pairex"
+   ]
+  },
+  {
+   "id": "p-sets",
+   "type": "maaritelma",
+   "section": "the-pair-of-primes",
+   "title": "The two sets of primes, q ≡ 3 mod 8 in a range from z, and d ≡ 7 mod 16 in a range from z′ with q and the small odd primes dividing d + 1",
+   "laji": "D",
+   "units": [
+    "the-pair-of-primes.p2",
+    "the-pair-of-primes.p3",
+    "the-pair-of-primes.p4"
+   ]
+  },
+  {
+   "id": "p-box",
+   "type": "maaritelma",
+   "section": "the-pair-of-primes",
+   "title": "Box asks for a zero-free box of width 1/400, a logarithmic derivative at most C·log Y and ‖Gchi ψ y‖ ≤ y^(1/2+τ) for y from Y to X",
+   "laji": "D",
+   "units": [
+    "the-pair-of-primes.p5"
+   ]
+  },
+  {
+   "id": "p-good",
+   "type": "maaritelma",
+   "section": "the-pair-of-primes",
+   "title": "GoodQ and GoodD say that Box holds for the primitive characters built from ξ and the Jacobi symbols of q and d, and Gchi equals gChi",
+   "laji": "D",
+   "units": [
+    "the-pair-of-primes.p6",
+    "the-pair-of-primes.p7",
+    "the-pair-of-primes.p8"
+   ],
+   "edellyttaa": [
+    "p-box",
+    "p-sets",
+    "ps-gchi"
+   ]
+  },
+  {
+   "id": "p-share",
+   "type": "lahtokohta",
+   "section": "the-pair-of-primes",
+   "title": "pair_share states that all but a share η of the primes q meet GoodQ and for each such q all but a share η of the primes d meet GoodD, and pairEx turns the case η = 1/2 into PairGood",
+   "laji": "A",
+   "units": [
+    "the-pair-of-primes.p9"
+   ],
+   "edellyttaa": [
+    "p-good"
+   ]
+  },
+  {
+   "id": "p-stages",
+   "type": "lahtokohta",
+   "section": "the-pair-of-primes",
+   "title": "The proof calls stage1 and stage2, both cases of one theorem stage on a set PPset of primes in a residue class between √U and U",
+   "laji": "A",
+   "units": [
+    "the-pair-of-primes.p10",
+    "the-pair-of-primes.p11"
+   ]
+  },
+  {
+   "id": "p-stage",
+   "type": "lahtokohta",
+   "section": "the-pair-of-primes",
+   "title": "stage calls a prime bad when one of at most R twisted characters fails Box, and bounds the bad primes by the share η through two kinds of η/2 each",
+   "laji": "A",
+   "units": [
+    "the-pair-of-primes.p12"
+   ],
+   "edellyttaa": [
+    "p-box"
+   ]
+  },
+  {
+   "id": "p-kind1",
+   "type": "vaite",
+   "section": "the-pair-of-primes",
+   "title": "Bad primes of the first kind, which fail ZeroFreeBox, have share at most a constant times U^(−21/40), from a zero density bound U^(3/8) against at least U^(9/10) primes",
+   "laji": "T",
+   "units": [
+    "the-pair-of-primes.p13"
+   ],
+   "johto": [
+    "p-stage",
+    "p-box"
+   ]
+  },
+  {
+   "id": "p-kind2",
+   "type": "vaite",
+   "section": "the-pair-of-primes",
+   "title": "Bad primes of the second kind have a truncated sum above y^(1/2+τ)/2, and bad_share gives them a share below η/2 over the R characters",
+   "laji": "T",
+   "units": [
+    "the-pair-of-primes.p14"
+   ],
+   "johto": [
+    "p-stage"
+   ]
+  },
+  {
+   "id": "p-neither",
+   "type": "lahtokohta",
+   "section": "the-pair-of-primes",
+   "title": "For a prime of neither kind box_of_S proves Box",
+   "laji": "A",
+   "units": [
+    "the-pair-of-primes.p15"
+   ]
+  },
+  {
+   "id": "p-boxS",
+   "type": "vaite",
+   "section": "the-pair-of-primes",
+   "title": "box_of_S passes from the truncated sum to Gchi, because an identity writes Gchi as minus the truncated sum minus y times a tail, and tailK bounds Y^K times the tail by Y^ε for a character that meets GoodC",
+   "laji": "T",
+   "units": [
+    "the-pair-of-primes.p16.s1-s5"
+   ],
+   "johto": [
+    "p-box",
+    "p-good",
+    "p-kind1",
+    "p-kind2",
+    "p-neither"
+   ]
+  },
+  {
+   "id": "p-400",
+   "type": "lahtokohta",
+   "section": "the-pair-of-primes",
+   "title": "The number 400 is the width of the zero-free box and the exponent of the truncation point, and tailK was read by statement",
+   "laji": "A",
+   "units": [
+    "the-pair-of-primes.p16.s6-s7"
+   ]
+  },
+  {
+   "id": "p-tailguess",
+   "type": "oletus",
+   "section": "the-pair-of-primes",
+   "title": "The session guesses that the tail is small because a zero-free box of width 1/400 saves Z^(−1/400) = Y^(−K)",
+   "laji": "O",
+   "units": [
+    "the-pair-of-primes.p16.s8"
+   ]
+  },
+  {
+   "id": "p-badshare",
+   "type": "vaite",
+   "section": "the-pair-of-primes",
+   "title": "bad_share follows from the mean square premise MeanSq by cutting the interval into dyadic blocks, which gives a share at most (32·C₂/τ)·Y^(−τ)/(1 − 2^(−τ))",
+   "laji": "T",
+   "units": [
+    "the-pair-of-primes.p17"
+   ],
+   "johto": [
+    "p-kind2"
+   ]
+  },
+  {
+   "id": "p-meansq",
+   "type": "lahtokohta",
+   "section": "the-pair-of-primes",
+   "title": "meanSqK proves MeanSq by multiplying the square out, with the trivial bound for the pairs where n·n′ is a square and a premise on sums of (p/r) for the others",
+   "laji": "A",
+   "units": [
+    "the-pair-of-primes.p18",
+    "the-pair-of-primes.p19"
+   ],
+   "edellyttaa": [
+    "p-badshare"
+   ]
+  },
+  {
+   "id": "p-twist",
+   "type": "lahtokohta",
+   "section": "the-pair-of-primes",
+   "title": "twistK supplies that premise from the prime number theorem in progressions, a zero-free region, excBound and page_across, with one possible exception",
+   "laji": "A",
+   "units": [
+    "the-pair-of-primes.p20"
+   ],
+   "edellyttaa": [
+    "p-meansq"
+   ]
+  },
+  {
+   "id": "p-interp",
+   "type": "oletus",
+   "section": "the-pair-of-primes",
+   "title": "The session's interpretation is that the values (n/p) cancel on average over p as independent signs do, which gives truncated sums of square-root size for most primes, in a range of y far below the modulus",
+   "laji": "O",
+   "units": [
+    "the-pair-of-primes.p21"
+   ]
+  },
+  {
+   "id": "p-read",
+   "type": "meta",
+   "section": "the-pair-of-primes",
+   "title": "What was read of the pair of primes",
+   "meta": true,
+   "units": [
+    "the-pair-of-primes.p22"
+   ]
+  },
+  {
+   "id": "h-two",
+   "type": "lahtokohta",
+   "section": "from-the-two-bounds-on-the-slope-to-the-",
+   "title": "Two theorems carry the main inequality, and neither proof contains a theta lift or a lattice, only m copies of one term and real numbers of a record",
+   "laji": "A",
+   "units": [
+    "from-the-two-bounds-on-the-slope-to-the-.p1"
+   ]
+  },
+  {
+   "id": "h-chcore",
+   "type": "lahtokohta",
+   "section": "ch-core",
+   "title": "ch_core assumes the bound of ch_top for ASK − MAIN and concludes that the prime sum of the kept characters is at most x^(1/2+(C+3)ε) plus the sum SigA of the other characters",
+   "laji": "A",
+   "units": [
+    "ch-core.p1"
+   ],
+   "edellyttaa": [
+    "c-eath"
+   ]
+  },
+  {
+   "id": "h-rows",
+   "type": "lahtokohta",
+   "section": "ch-core",
+   "title": "Five lemmas carry ch_core, an exact identity ASK − MAIN = De, a common argument, a subgroup sum, the value at x and the division, with a premise on the set TT",
+   "laji": "A",
+   "units": [
+    "ch-core.p2",
+    "ch-core.p3",
+    "ch-core.p4",
+    "ch-core.p5",
+    "ch-core.p6",
+    "ch-core.p7",
+    "ch-core.p8.s1",
+    "ch-core.p8.s4-s5"
+   ]
+  },
+  {
+   "id": "h-balance",
+   "type": "vaite",
+   "section": "ch-core",
+   "title": "Row 1 is finite Fourier inversion because De is an average of twisted sums over the characters, and the sum over the m lifts multiplies the summand of row 3 by m",
+   "laji": "T",
+   "units": [
+    "ch-core.p8.s2-s3"
+   ],
+   "johto": [
+    "h-rows"
+   ]
+  },
+  {
+   "id": "h-bracket",
+   "type": "lahtokohta",
+   "section": "ch-core",
+   "title": "Row 5 divides the error x^(Cε)·(nT·aE·(1 + m²/k) + m·(B + N)) by nT·m·b times half of nT2/n, under the bounds of RestSize and the premises m ≤ x^(1/2+ε/2) and x·m ≤ k",
+   "laji": "A",
+   "units": [
+    "ch-core.p9.s1-s7"
+   ]
+  },
+  {
+   "id": "h-four",
+   "type": "vaite",
+   "section": "ch-core",
+   "title": "By the session's arithmetic the division leaves four terms, at most 2x^(1/2+ε), 2, 4x^(1/2+13ε/8) and 2x^(1/2+9ε/8)",
+   "laji": "T",
+   "units": [
+    "ch-core.p9.s8",
+    "ch-core.p10",
+    "ch-core.p11",
+    "ch-core.p12",
+    "ch-core.p13"
+   ],
+   "johto": [
+    "h-bracket"
+   ]
+  },
+  {
+   "id": "h-exponent",
+   "type": "vaite",
+   "section": "ch-core",
+   "title": "The four terms add up to at most 10·x^(1/2+13ε/8), and with the further factors the exponent is 1/2 + (C+3)ε",
+   "laji": "T",
+   "units": [
+    "ch-core.p14"
+   ],
+   "johto": [
+    "h-four",
+    "h-bracket"
+   ]
+  },
+  {
+   "id": "h-window",
+   "type": "vaite",
+   "section": "ch-core",
+   "title": "The terms x/m and m are equal at m = √x, the proof takes the window for m as premises and does not choose m, the fourth term is about √x for every m, and core_gm calls ch_core with C = eD + eL + 3, which gives its conclusion one ε more",
+   "laji": "T",
+   "units": [
+    "ch-core.p15"
+   ],
+   "johto": [
+    "h-four",
+    "h-bracket",
+    "c-coregm"
+   ]
+  },
+  {
+   "id": "h-budget",
+   "type": "vaite",
+   "section": "ch-core",
+   "title": "B0 and Nc are budgets that the code defines by formulas, with B0 = f·m·b·x^ε, so the factor m of the third term is part of the definition of the budget, and why the errors of one lift fit a budget that grows with m was not read",
+   "laji": "T",
+   "units": [
+    "ch-core.p16"
+   ],
+   "johto": [
+    "h-bracket",
+    "h-window"
+   ]
+  },
+  {
+   "id": "t-chtop",
+   "type": "lahtokohta",
+   "section": "ch-top",
+   "title": "ch_top proves the assumption of ch_core from SizeData₂, a conjunction of eleven conditions on a record Data of 39 numbers and functions",
+   "laji": "A",
+   "units": [
+    "ch-top.p1.s1-s4"
+   ],
+   "edellyttaa": [
+    "h-chcore",
+    "c-coreath"
+   ]
+  },
+  {
+   "id": "t-indices",
+   "type": "maaritelma",
+   "section": "ch-top",
+   "title": "The record has indices u0, u and t, the numbers muCC and Fo depend on u0 and muN, h and T on u0 and u, Main is the sum of MAIN, and ph y is y log y − y",
+   "laji": "D",
+   "units": [
+    "ch-top.p1.s5-s13"
+   ]
+  },
+  {
+   "id": "t-div",
+   "type": "lahtokohta",
+   "section": "ch-top",
+   "title": "DIV says that muCC + h u − Fo is at most the sum over t of m·(ph(aT t) − aT t·logOm) − aT t·log(T u) plus errors, the one condition where m multiplies the main term",
+   "laji": "A",
+   "units": [
+    "ch-top.p2"
+   ],
+   "edellyttaa": [
+    "t-indices"
+   ]
+  },
+  {
+   "id": "t-slope",
+   "type": "lahtokohta",
+   "section": "ch-top",
+   "title": "SlopeIneq says, when three small parameters lie in stated ranges and HH bounds a difference, that the weighted mean over u of muN u − h u, minus the log of the number of u and corrections, is at most muCC",
+   "laji": "A",
+   "units": [
+    "ch-top.p3"
+   ],
+   "edellyttaa": [
+    "t-indices"
+   ]
+  },
+  {
+   "id": "t-cancel",
+   "type": "vaite",
+   "section": "ch-top",
+   "title": "The mean of DIV and SlopeIneq cancel muCC and the mean of h and bound the mean of muN, and two further conditions bound ASK through Ga, so ASK ≤ Main plus errors",
+   "laji": "T",
+   "units": [
+    "ch-top.p4.s1-s4"
+   ],
+   "johto": [
+    "t-div",
+    "t-slope"
+   ]
+  },
+  {
+   "id": "t-rest",
+   "type": "lahtokohta",
+   "section": "ch-top",
+   "title": "The rest of ch_top fits the errors inside the bound through core_ineq, of which the beginning was read",
+   "laji": "A",
+   "units": [
+    "ch-top.p4.s5-s6"
+   ]
+  },
+  {
+   "id": "r-tie",
+   "type": "lahtokohta",
+   "section": "what-the-numbers-of-the-record-are",
+   "title": "TieLocal says for a family what the numbers of the record measure, with the index u running over the words of the datum of u0",
+   "laji": "A",
+   "units": [
+    "what-the-numbers-of-the-record-are.p1"
+   ],
+   "edellyttaa": [
+    "t-indices",
+    "w-datum"
+   ]
+  },
+  {
+   "id": "r-ties",
+   "type": "lahtokohta",
+   "section": "what-the-numbers-of-the-record-are",
+   "title": "muCC is the slope of the dual of the lattice RR, muN u the slope of the lattice Nu u, h u bounds the height of the map Bk u from Nu u into the dual of RR, and the number of lifts is R.m",
+   "laji": "A",
+   "units": [
+    "what-the-numbers-of-the-record-are.p2",
+    "what-the-numbers-of-the-record-are.p3",
+    "what-the-numbers-of-the-record-are.p4",
+    "what-the-numbers-of-the-record-are.p5"
+   ],
+   "edellyttaa": [
+    "w-slope",
+    "w-height"
+   ]
+  },
+  {
+   "id": "r-about",
+   "type": "vaite",
+   "section": "what-the-numbers-of-the-record-are",
+   "title": "The slope inequality is therefore about the maps Bk u of the words of one datum into one lattice, and m enters through the bound h u",
+   "laji": "T",
+   "units": [
+    "what-the-numbers-of-the-record-are.p6"
+   ],
+   "johto": [
+    "r-ties",
+    "t-slope",
+    "d-height"
+   ],
+   "todistus_seuraa": true
+  },
+  {
+   "id": "d-ineq",
+   "type": "lahtokohta",
+   "section": "the-path-of-the-divisibility-inequality",
+   "title": "For the lattices of a datum the divisibility inequality bounds the dual slope of RR plus h u minus Fo by a main term with m times a sum of ph(aT t)",
+   "laji": "A",
+   "units": [
+    "the-path-of-the-divisibility-inequality.p1"
+   ],
+   "edellyttaa": [
+    "r-ties"
+   ]
+  },
+  {
+   "id": "d-path",
+   "type": "lahtokohta",
+   "section": "the-path-of-the-divisibility-inequality",
+   "title": "Seven theorems carry it, from linkDIVt_of_bridge_kernel down to rhs_le_record, and three sums run over a set J of lifts of size m",
+   "laji": "A",
+   "units": [
+    "the-path-of-the-divisibility-inequality.p2",
+    "the-path-of-the-divisibility-inequality.p3",
+    "the-path-of-the-divisibility-inequality.p4",
+    "the-path-of-the-divisibility-inequality.p5",
+    "the-path-of-the-divisibility-inequality.p6",
+    "the-path-of-the-divisibility-inequality.p7",
+    "the-path-of-the-divisibility-inequality.p8",
+    "the-path-of-the-divisibility-inequality.p9",
+    "the-path-of-the-divisibility-inequality.p10"
+   ]
+  },
+  {
+   "id": "d-height",
+   "type": "vaite",
+   "section": "the-path-of-the-divisibility-inequality",
+   "title": "The first sum is in the height, where each lift contributes at most ph(aT t) at each t, so m lifts give m times that term",
+   "laji": "T",
+   "units": [
+    "the-path-of-the-divisibility-inequality.p11"
+   ],
+   "johto": [
+    "d-path",
+    "d-ineq"
+   ]
+  },
+  {
+   "id": "d-slope",
+   "type": "lahtokohta",
+   "section": "the-path-of-the-divisibility-inequality",
+   "title": "The second sum is in the slope, where boundsMu bounds the dual slope of RR by sums over the lifts through five propositions",
+   "laji": "A",
+   "units": [
+    "the-path-of-the-divisibility-inequality.p12"
+   ]
+  },
+  {
+   "id": "d-chain",
+   "type": "lahtokohta",
+   "section": "the-path-of-the-divisibility-inequality",
+   "title": "The third sum is in the chain, where height_chain_atR is submultiplicativity of the operator norm in logarithms",
+   "laji": "A",
+   "units": [
+    "the-path-of-the-divisibility-inequality.p13"
+   ]
+  },
+  {
+   "id": "d-link",
+   "type": "lahtokohta",
+   "section": "the-path-of-the-divisibility-inequality",
+   "title": "LinkDIV follows from LinkEta and DIVinN, DIVinN comes from the bound of VWin, and LinkDIV at one datum includes BesselId",
+   "laji": "A",
+   "units": [
+    "the-path-of-the-divisibility-inequality.p14.s1",
+    "the-path-of-the-divisibility-inequality.p14.s3"
+   ],
+   "edellyttaa": [
+    "w-link"
+   ]
+  },
+  {
+   "id": "d-e17",
+   "type": "oletus",
+   "section": "the-path-of-the-divisibility-inequality",
+   "title": "This is where entry 17 of the note enters the divisibility",
+   "laji": "O",
+   "units": [
+    "the-path-of-the-divisibility-inequality.p14.s2"
+   ]
+  },
+  {
+   "id": "d-bessel",
+   "type": "oletus",
+   "section": "the-path-of-the-divisibility-inequality",
+   "title": "The names match the Bessel period of entry 12",
+   "laji": "O",
+   "units": [
+    "the-path-of-the-divisibility-inequality.p14.s4"
+   ]
+  },
+  {
+   "id": "k-colchain",
+   "type": "maaritelma",
+   "section": "the-chain-of-lifts",
+   "title": "A ColChain holds matrices Kj through whose product the pairing of the datum factors, and a ChainTie identifies them with the kernel operators and the coupling of a KerChain",
+   "laji": "D",
+   "units": [
+    "the-chain-of-lifts.p1",
+    "the-chain-of-lifts.p2",
+    "the-chain-of-lifts.p3"
+   ]
+  },
+  {
+   "id": "k-groups",
+   "type": "lahtokohta",
+   "section": "the-chain-of-lifts",
+   "title": "The group acting on the spaces chF u j contains UF E (N j), the isometry group of the standard Hermitian form on E^r, so a unitary group",
+   "laji": "A",
+   "units": [
+    "the-chain-of-lifts.p4"
+   ]
+  },
+  {
+   "id": "k-rank",
+   "type": "lahtokohta",
+   "section": "the-chain-of-lifts",
+   "title": "The rank is N j = k + j·(t+1), and entry 8 of the note writes a lift as π ↦ π ⊞ μ_j[t]",
+   "laji": "A",
+   "units": [
+    "the-chain-of-lifts.p5.s1-s2"
+   ]
+  },
+  {
+   "id": "k-t",
+   "type": "oletus",
+   "section": "the-chain-of-lifts",
+   "title": "That the letter t of the note is this t is an interpretation",
+   "laji": "O",
+   "units": [
+    "the-chain-of-lifts.p5.s3"
+   ]
+  },
+  {
+   "id": "k-count",
+   "type": "vaite",
+   "section": "the-chain-of-lifts",
+   "title": "Since R.m = m2 + 2, the chain of a word has m2 steps and so m − 1 matrices, with ranks from N 0 to N m because the last matrix covers two lifts",
+   "laji": "T",
+   "units": [
+    "the-chain-of-lifts.p6",
+    "the-chain-of-lifts.p7"
+   ],
+   "johto": [
+    "k-colchain",
+    "k-rank",
+    "k-matrices"
+   ],
+   "todistus_seuraa": true
+  },
+  {
+   "id": "k-dists",
+   "type": "lahtokohta",
+   "section": "the-chain-of-lifts",
+   "title": "The record ChTh holds m distributions th 0 to th (m−2) and top, equivariant under both unitary groups",
+   "laji": "A",
+   "units": [
+    "the-chain-of-lifts.p8"
+   ]
+  },
+  {
+   "id": "k-matrices",
+   "type": "lahtokohta",
+   "section": "the-chain-of-lifts",
+   "title": "The first m − 2 matrices are kernel operators, the last is a coupling built as a finite sum of products of two kernels, and a final linear map follows",
+   "laji": "A",
+   "units": [
+    "the-chain-of-lifts.p9",
+    "the-chain-of-lifts.p10.s1-s2"
+   ],
+   "edellyttaa": [
+    "k-dists"
+   ]
+  },
+  {
+   "id": "k-pigeon",
+   "type": "vaite",
+   "section": "the-chain-of-lifts",
+   "title": "Some matrix holds more than one lift, because m lifts sit on m − 1 matrices",
+   "laji": "T",
+   "units": [
+    "the-chain-of-lifts.p10.s3"
+   ],
+   "johto": [
+    "k-count"
+   ]
+  },
+  {
+   "id": "k-read",
+   "type": "lahtokohta",
+   "section": "the-chain-of-lifts",
+   "title": "rowsU_of_colPins_alt proves that a datum with its ties has a ColChain with a ChainTie and rests on 14,837 declarations",
+   "laji": "A",
+   "units": [
+    "the-chain-of-lifts.p11.s1-s2"
+   ]
+  },
+  {
+   "id": "k-theta",
+   "type": "oletus",
+   "section": "the-chain-of-lifts",
+   "title": "That the definitions fit a theta kernel for a pair of unitary groups is the session's interpretation from the names",
+   "laji": "O",
+   "units": [
+    "the-chain-of-lifts.p11.s3-s4"
+   ]
+  },
+  {
+   "id": "k-reading",
+   "type": "lahtokohta",
+   "section": "the-chain-of-lifts",
+   "title": "The reading of the chain found the kernels defined from the distributions, the theta-lift conditions ThHyp untraced, the height numbers built in two halves, and adm2 and BesselId supplied from the record",
+   "laji": "A",
+   "units": [
+    "the-chain-of-lifts.p12",
+    "the-chain-of-lifts.p13",
+    "the-chain-of-lifts.p14",
+    "the-chain-of-lifts.p15",
+    "the-chain-of-lifts.p16",
+    "the-chain-of-lifts.p17",
+    "the-chain-of-lifts.p18"
+   ],
+   "edellyttaa": [
+    "w-readings"
+   ]
+  },
+  {
+   "id": "u-place",
+   "type": "maaritelma",
+   "section": "the-bound-for-one-lift",
+   "title": "A place is a pair of a truth value and an element of H, it carries interlacing numbers u and v and numbers e and b, and the top weight aT t is u 0 − (k−1)/2",
+   "laji": "D",
+   "units": [
+    "the-bound-for-one-lift.p1",
+    "the-bound-for-one-lift.p2",
+    "the-bound-for-one-lift.p3"
+   ]
+  },
+  {
+   "id": "u-weights",
+   "type": "maaritelma",
+   "section": "the-bound-for-one-lift",
+   "title": "The weights nu of lift j come from the numbers uW and from blocks of t + 1 values for each earlier lift",
+   "laji": "D",
+   "units": [
+    "the-bound-for-one-lift.p4"
+   ],
+   "edellyttaa": [
+    "u-place"
+   ]
+  },
+  {
+   "id": "u-kerplace",
+   "type": "maaritelma",
+   "section": "the-bound-for-one-lift",
+   "title": "kerPlace is the sum of ph over the weights minus their sum times logOm, logHook is the log of a hook product, and hU adds kerPlace and subtracts logHook over places and lifts",
+   "laji": "D",
+   "units": [
+    "the-bound-for-one-lift.p5",
+    "the-bound-for-one-lift.p6",
+    "the-bound-for-one-lift.p7"
+   ],
+   "edellyttaa": [
+    "u-weights",
+    "t-indices"
+   ]
+  },
+  {
+   "id": "u-stepE",
+   "type": "lahtokohta",
+   "section": "the-bound-for-one-lift",
+   "title": "stepE_num proves that the sum of ph over the weights minus logHook is at most ph(aT ρ) at a top place and 0 elsewhere up to an error, and that the weights sum to aT ρ + k·w",
+   "laji": "A",
+   "units": [
+    "the-bound-for-one-lift.p8"
+   ],
+   "edellyttaa": [
+    "u-kerplace"
+   ]
+  },
+  {
+   "id": "u-hook",
+   "type": "lahtokohta",
+   "section": "the-bound-for-one-lift",
+   "title": "young_diagram_hook says that the sum of the logs of the factorials of the row lengths is at most the log of the hook product",
+   "laji": "A",
+   "units": [
+    "the-bound-for-one-lift.p9.s1-s2"
+   ]
+  },
+  {
+   "id": "u-hookwhy",
+   "type": "vaite",
+   "section": "the-bound-for-one-lift",
+   "title": "It holds because the hook of a cell is at least as long as the rest of its row, and those lengths multiply to L! along a row of length L",
+   "laji": "T",
+   "units": [
+    "the-bound-for-one-lift.p9.s3"
+   ],
+   "johto": [
+    "u-hook"
+   ]
+  },
+  {
+   "id": "u-origin",
+   "type": "lahtokohta",
+   "section": "the-bound-for-one-lift",
+   "title": "young_diagram_step_origin pairs each lower row with a row under the hook product through the interlacing and leaves the top row, of length aT + w − s, without a partner",
+   "laji": "A",
+   "units": [
+    "the-bound-for-one-lift.p10"
+   ],
+   "edellyttaa": [
+    "u-stepE"
+   ]
+  },
+  {
+   "id": "u-each",
+   "type": "vaite",
+   "section": "the-bound-for-one-lift",
+   "title": "Each lift contributes at most ph(aT t) plus an error at a top place, and kerPlace multiplies the weight sum aT t + k·w by logOm, while the main term of DIV holds m·(ph(aT t) − aT t·logOm)",
+   "laji": "T",
+   "units": [
+    "the-bound-for-one-lift.p11.s1-s3"
+   ],
+   "johto": [
+    "u-stepE",
+    "u-kerplace",
+    "t-div"
+   ]
+  },
+  {
+   "id": "u-open",
+   "type": "lahtokohta",
+   "section": "the-bound-for-one-lift",
+   "title": "The document does not record where the proof puts the terms that contain w and s",
+   "laji": "A",
+   "units": [
+    "the-bound-for-one-lift.p11.s4"
+   ]
+  },
+  {
+   "id": "u-numfacts",
+   "type": "lahtokohta",
+   "section": "the-bound-for-one-lift",
+   "title": "numFacts_rec proves the premises of stepE_num for a family from size conditions",
+   "laji": "A",
+   "units": [
+    "the-bound-for-one-lift.p12.s1"
+   ]
+  },
+  {
+   "id": "u-guess",
+   "type": "oletus",
+   "section": "the-bound-for-one-lift",
+   "title": "Four guesses from names and the note, logOm as the Chowla-Selberg period, the hook product as the Weyl dimension formula, the interlacing as that of entry 7 and the number of lifts as the multiplicity",
+   "laji": "O",
+   "units": [
+    "the-bound-for-one-lift.p12.s2-s3"
+   ]
+  },
+  {
+   "id": "lo-frame",
+   "type": "lahtokohta",
+   "section": "the-lower-bound-for-the-lattices-of-a-da",
+   "title": "Frame_at is the slope inequality for the lattices of a datum, derived from a general statement about several maps into one lattice that rests on 400 declarations",
+   "laji": "A",
+   "units": [
+    "the-lower-bound-for-the-lattices-of-a-da.p1",
+    "the-lower-bound-for-the-lattices-of-a-da.p2",
+    "the-lower-bound-for-the-lattices-of-a-da.p3",
+    "the-lower-bound-for-the-lattices-of-a-da.p4",
+    "the-lower-bound-for-the-lattices-of-a-da.p5",
+    "the-lower-bound-for-the-lattices-of-a-da.p6",
+    "the-lower-bound-for-the-lattices-of-a-da.p7",
+    "the-lower-bound-for-the-lattices-of-a-da.p8",
+    "the-lower-bound-for-the-lattices-of-a-da.p9"
+   ]
+  },
+  {
+   "id": "lo-linkS",
+   "type": "lahtokohta",
+   "section": "the-lower-bound-for-the-lattices-of-a-da",
+   "title": "LinkS bounds the Gram matrix of the maps under a premise that duS u·Γ²/Dstar lies between 1/C0 and C0, with hsSq u u′ ≤ (1+η0)·duS u·duS u′/Dstar, hsDiagFull u ≤ e0·duS u and Dall ≤ (1+η1)·Dstar, with η0, η1 and √e0 at most exp(−x^(ε/8))",
+   "laji": "A",
+   "units": [
+    "the-lower-bound-for-the-lattices-of-a-da.p10",
+    "the-lower-bound-for-the-lattices-of-a-da.p11",
+    "the-lower-bound-for-the-lattices-of-a-da.p12",
+    "the-lower-bound-for-the-lattices-of-a-da.p13",
+    "the-lower-bound-for-the-lattices-of-a-da.p14.s1-s2"
+   ],
+   "edellyttaa": [
+    "w-link"
+   ]
+  },
+  {
+   "id": "lo-interp",
+   "type": "oletus",
+   "section": "the-lower-bound-for-the-lattices-of-a-da",
+   "title": "The session's interpretation is that each map is an isometry up to a small relative error and that two different maps overlap as two random subspaces do, which the note calls approximate orthogonality",
+   "laji": "O",
+   "units": [
+    "the-lower-bound-for-the-lattices-of-a-da.p14.s3-s8"
+   ]
+  },
+  {
+   "id": "a-linkcore",
+   "type": "lahtokohta",
+   "section": "how-the-conditions-are-assembled",
+   "title": "linkCore builds every witness of ChainTied from a family, with none left free, and the reading names no source for HidaSetting",
+   "laji": "A",
+   "units": [
+    "how-the-conditions-are-assembled.p1"
+   ],
+   "edellyttaa": [
+    "c-coreath"
+   ]
+  },
+  {
+   "id": "a-sources",
+   "type": "lahtokohta",
+   "section": "how-the-conditions-are-assembled",
+   "title": "The source of each part of SizeData₂, as the reading reports it",
+   "laji": "A",
+   "units": [
+    "how-the-conditions-are-assembled.p2",
+    "how-the-conditions-are-assembled.p3",
+    "how-the-conditions-are-assembled.p4",
+    "how-the-conditions-are-assembled.p5",
+    "how-the-conditions-are-assembled.p6",
+    "how-the-conditions-are-assembled.p7",
+    "how-the-conditions-are-assembled.p8",
+    "how-the-conditions-are-assembled.p9",
+    "how-the-conditions-are-assembled.p10"
+   ]
+  },
+  {
+   "id": "a-links",
+   "type": "lahtokohta",
+   "section": "how-the-conditions-are-assembled",
+   "title": "topDesWin takes the links as premises, and seven theorems supply them in the proof of the shape theorem",
+   "laji": "A",
+   "units": [
+    "how-the-conditions-are-assembled.p11",
+    "how-the-conditions-are-assembled.p12",
+    "how-the-conditions-are-assembled.p13",
+    "how-the-conditions-are-assembled.p14",
+    "how-the-conditions-are-assembled.p15",
+    "how-the-conditions-are-assembled.p16",
+    "how-the-conditions-are-assembled.p17",
+    "how-the-conditions-are-assembled.p18",
+    "how-the-conditions-are-assembled.p19"
+   ],
+   "edellyttaa": [
+    "w-link",
+    "z-tied"
+   ]
+  },
+  {
+   "id": "a-green",
+   "type": "lahtokohta",
+   "section": "how-the-conditions-are-assembled",
+   "title": "Green goes to the supplier of LinkIRR alone and is derived from a statement on regular characters that the project proves",
+   "laji": "A",
+   "units": [
+    "how-the-conditions-are-assembled.p20"
+   ]
+  },
+  {
+   "id": "a-53",
+   "type": "lahtokohta",
+   "section": "how-the-conditions-are-assembled",
+   "title": "The shape theorem takes Green and 53 hypotheses, and goal_of_shape_of_hyps fills 45 of them from one field each of the record of 46 fields and six from the remaining field",
+   "laji": "A",
+   "units": [
+    "how-the-conditions-are-assembled.p21.s1-s3"
+   ]
+  },
+  {
+   "id": "a-true",
+   "type": "lahtokohta",
+   "section": "how-the-conditions-are-assembled",
+   "title": "The other two hypotheses, hVC and nR, are the proposition True in this use and are filled with trivial",
+   "laji": "A",
+   "units": [
+    "how-the-conditions-are-assembled.p21.s4"
+   ]
+  },
+  {
+   "id": "v-def",
+   "type": "lahtokohta",
+   "section": "vwin-the-bound-on-lengths",
+   "title": "VWin says that the lengths shaLen of certain Galois cohomology groups are finite and that the sum of log l times the lengths is at most √exp(x^ε), for subfields of cyclotomic fields cut out by ψ, q, d and an exponent",
+   "laji": "A",
+   "units": [
+    "vwin-the-bound-on-lengths.p1",
+    "vwin-the-bound-on-lengths.p2.s1-s2",
+    "vwin-the-bound-on-lengths.p3"
+   ]
+  },
+  {
+   "id": "v-e17",
+   "type": "oletus",
+   "section": "vwin-the-bound-on-lengths",
+   "title": "The formula suggests the group of entry 17 of the note, with an added condition at the places above l",
+   "laji": "O",
+   "units": [
+    "vwin-the-bound-on-lengths.p2.s3"
+   ]
+  },
+  {
+   "id": "v-uses",
+   "type": "lahtokohta",
+   "section": "vwin-the-bound-on-lengths",
+   "title": "The bound is used to declare a host good and to absorb a term of the divisibility inequality",
+   "laji": "A",
+   "units": [
+    "vwin-the-bound-on-lengths.p4"
+   ]
+  },
+  {
+   "id": "v-weak",
+   "type": "vaite",
+   "section": "vwin-the-bound-on-lengths",
+   "title": "For each fixed B the allowed bound exp(x^ε/2) exceeds x^B once x is large",
+   "laji": "T",
+   "units": [
+    "vwin-the-bound-on-lengths.p5"
+   ],
+   "johto": [
+    "v-def"
+   ]
+  },
+  {
+   "id": "v-proof",
+   "type": "lahtokohta",
+   "section": "vwin-the-bound-on-lengths",
+   "title": "The proof runs through five theorems read at their tops, down to ferreroWashington and bounds on lengths in five cases, with statements named after Poitou-Tate, Greenberg-Wiles and Bloch-Kato filled by project theorems",
+   "laji": "A",
+   "units": [
+    "vwin-the-bound-on-lengths.p6",
+    "vwin-the-bound-on-lengths.p7",
+    "vwin-the-bound-on-lengths.p8",
+    "vwin-the-bound-on-lengths.p9",
+    "vwin-the-bound-on-lengths.p10",
+    "vwin-the-bound-on-lengths.p11",
+    "vwin-the-bound-on-lengths.p12",
+    "vwin-the-bound-on-lengths.p13"
+   ]
+  },
+  {
+   "id": "g-row",
+   "type": "lahtokohta",
+   "section": "row-the-galois-representations",
+   "title": "Row says that every regular algebraic polarized cuspidal representation of GL_n over a CM field has a continuous semisimple Galois representation with the condition PropsB",
+   "laji": "A",
+   "units": [
+    "row-the-galois-representations.p1"
+   ]
+  },
+  {
+   "id": "g-proof",
+   "type": "lahtokohta",
+   "section": "row-the-galois-representations",
+   "title": "Its proof combines a theta lift existence theorem with a geometric realisation, and of 77 Published statements behind it 69 have a closed proving theorem and 8 only derivations",
+   "laji": "A",
+   "units": [
+    "row-the-galois-representations.p2",
+    "row-the-galois-representations.p3",
+    "row-the-galois-representations.p4",
+    "row-the-galois-representations.p5",
+    "row-the-galois-representations.p6",
+    "row-the-galois-representations.p7",
+    "row-the-galois-representations.p8"
+   ]
+  },
+  {
+   "id": "g-passed",
+   "type": "lahtokohta",
+   "section": "row-the-galois-representations",
+   "title": "Row is passed on to VWin and into the record OpenLiteratureStatements",
+   "laji": "A",
+   "units": [
+    "row-the-galois-representations.p9"
+   ]
+  },
+  {
+   "id": "b-wiring",
+   "type": "lahtokohta",
+   "section": "the-record-and-the-two-bundles",
+   "title": "every_character_of_literature_of_vWin supplies seven premises, two bundles, two premises from theoremK_head2, the covolume bound, a local map and VWin",
+   "laji": "A",
+   "units": [
+    "the-record-and-the-two-bundles.p1",
+    "the-record-and-the-two-bundles.p2"
+   ]
+  },
+  {
+   "id": "b-bundles",
+   "type": "lahtokohta",
+   "section": "the-record-and-the-two-bundles",
+   "title": "The two bundles have 58 and 49 fields, and each of 16 sampled fields is filled by a project theorem, fourteen of them closed",
+   "laji": "A",
+   "units": [
+    "the-record-and-the-two-bundles.p3",
+    "the-record-and-the-two-bundles.p4"
+   ],
+   "edellyttaa": [
+    "w-premise"
+   ]
+  },
+  {
+   "id": "b-record",
+   "type": "lahtokohta",
+   "section": "the-record-and-the-two-bundles",
+   "title": "nonempty_hyps_definite_side_of_closed_bound builds the record HypsAlt of 46 fields, whose existence zero_free_all_of_green_v_win opens and passes to the shape theorem",
+   "laji": "A",
+   "units": [
+    "the-record-and-the-two-bundles.p5",
+    "the-record-and-the-two-bundles.p6",
+    "the-record-and-the-two-bundles.p7"
+   ]
+  },
+  {
+   "id": "b-covol",
+   "type": "lahtokohta",
+   "section": "the-covolume-bound",
+   "title": "topCovolSlim2_use_alt_alt derives the covolume bound hX from fifteen premises that project theorems fill, the largest described by their names as a toroidal compactification statement and a toroidal integral of Siegel",
+   "laji": "A",
+   "units": [
+    "the-covolume-bound.p1",
+    "the-covolume-bound.p2",
+    "the-covolume-bound.p3",
+    "the-covolume-bound.p4",
+    "the-covolume-bound.p5",
+    "the-covolume-bound.p6",
+    "the-covolume-bound.p7",
+    "the-covolume-bound.p8"
+   ]
+  },
+  {
+   "id": "ck-intro",
+   "type": "meta",
+   "section": "what-a-checker-should-know",
+   "title": "The readings looked for premises that hold by construction, wrappers and definitions weaker than their names",
+   "meta": true,
+   "units": [
+    "what-a-checker-should-know.p1"
+   ]
+  },
+  {
+   "id": "ck-isrect",
+   "type": "lahtokohta",
+   "section": "what-a-checker-should-know",
+   "title": "IsRecT constrains the local Langlands map only on GL₁ and twists of depth-zero representations, and every other cuspidal representation goes to a fixed fallback object",
+   "laji": "A",
+   "units": [
+    "what-a-checker-should-know.p2"
+   ]
+  },
+  {
+   "id": "ck-awayb",
+   "type": "lahtokohta",
+   "section": "what-a-checker-should-know",
+   "title": "AwayB asks for equal dimension, equality in a torsion case and equal characteristic polynomials in a tame case",
+   "laji": "A",
+   "units": [
+    "what-a-checker-should-know.p3.s1-s3"
+   ]
+  },
+  {
+   "id": "ck-weaker",
+   "type": "lahtokohta",
+   "section": "what-a-checker-should-know",
+   "title": "The usual local-global compatibility asks for an isomorphism at every such place",
+   "laji": "A",
+   "units": [
+    "what-a-checker-should-know.p3.s4"
+   ],
+   "edellyttaa": [
+    "ck-awayb"
+   ],
+   "taustatieto": "Background knowledge that the text states without a source."
+  },
+  {
+   "id": "ck-unused",
+   "type": "lahtokohta",
+   "section": "what-a-checker-should-know",
+   "title": "OpenLiteratureStatements holds Row twice, most theorems named …_of_literature and …_of_open prove their statements without the record, and llOf_alt ignores eleven premises",
+   "laji": "A",
+   "units": [
+    "what-a-checker-should-know.p4",
+    "what-a-checker-should-know.p5",
+    "what-a-checker-should-know.p6"
+   ]
+  },
+  {
+   "id": "ck-true",
+   "type": "lahtokohta",
+   "section": "what-a-checker-should-know",
+   "title": "UnusedSlot72 is True and filled by trivial, hVC and nR are True, and FamP.Large contains a conjunct True",
+   "laji": "A",
+   "units": [
+    "what-a-checker-should-know.p7"
+   ]
+  },
+  {
+   "id": "ck-theta",
+   "type": "lahtokohta",
+   "section": "what-a-checker-should-know",
+   "title": "The hypothesis θ < 1 of the Landau step stays unused in the proofs that were read",
+   "laji": "A",
+   "units": [
+    "what-a-checker-should-know.p8"
+   ]
+  },
+  {
+   "id": "ck-fields",
+   "type": "lahtokohta",
+   "section": "what-a-checker-should-know",
+   "title": "Several premises reach their use as fields of a record, and the ties of rowsU_of_colPins_alt use heterogeneous equalities",
+   "laji": "A",
+   "units": [
+    "what-a-checker-should-know.p9"
+   ]
+  },
+  {
+   "id": "ck-siegel",
+   "type": "lahtokohta",
+   "section": "what-a-checker-should-know",
+   "title": "The proof of pair_share reaches Siegel's theorem through excBound and siegelLower",
+   "laji": "A",
+   "units": [
+    "what-a-checker-should-know.p10.s1-s2"
+   ]
+  },
+  {
+   "id": "ck-ineff",
+   "type": "vaite",
+   "section": "what-a-checker-should-know",
+   "title": "If the threshold of count_a depends on c(δ), the proof yields no value of that threshold, because the textbook proofs of Siegel's bound yield no value of c(δ)",
+   "laji": "T",
+   "units": [
+    "what-a-checker-should-know.p10.s3"
+   ],
+   "johto": [
+    "ck-siegel",
+    "p-kind1"
+   ],
+   "taustatieto": "That Siegel's theorem is ineffective is background knowledge."
+  },
+  {
+   "id": "ck-siegel-unread",
+   "type": "lahtokohta",
+   "section": "what-a-checker-should-know",
+   "title": "The proofs of siegelLower and count_a were not read",
+   "laji": "A",
+   "units": [
+    "what-a-checker-should-know.p10.s4"
+   ]
+  },
+  {
+   "id": "ck-nochange",
+   "type": "vaite",
+   "section": "what-a-checker-should-know",
+   "title": "The point leaves the five theorems as they are, since their statements contain neither a threshold nor a constant",
+   "laji": "T",
+   "units": [
+    "what-a-checker-should-know.p10.s5"
+   ],
+   "johto": [
+    "f-five",
+    "ck-ineff"
+   ]
+  },
+  {
+   "id": "ck-names",
+   "type": "lahtokohta",
+   "section": "what-a-checker-should-know",
+   "title": "Two names mislead, admissibleClassesTwistedChar and MainNotions",
+   "laji": "A",
+   "units": [
+    "what-a-checker-should-know.p11"
+   ]
+  },
+  {
+   "id": "ck-axioms",
+   "type": "lahtokohta",
+   "section": "what-a-checker-should-know",
+   "title": "The five theorems rest on propext, Classical.choice and Quot.sound alone, by the report of the declaration graph",
+   "laji": "A",
+   "units": [
+    "what-a-checker-should-know.p12"
+   ]
+  },
+  {
+   "id": "ck-all",
+   "type": "lahtokohta",
+   "section": "what-a-checker-should-know",
+   "title": "Every premise that a reading followed to its end was supplied by a project theorem or a field of the record",
+   "laji": "A",
+   "units": [
+    "what-a-checker-should-know.p13"
+   ]
+  },
+  {
+   "id": "un-list",
+   "type": "lahtokohta",
+   "section": "what-stays-unread",
+   "title": "The proofs and definitions that stayed unread, from Claim.zeta to most of the 463,949 declarations behind the record",
+   "laji": "A",
+   "units": [
+    "what-stays-unread.p1",
+    "what-stays-unread.p2",
+    "what-stays-unread.p3",
+    "what-stays-unread.p4",
+    "what-stays-unread.p5",
+    "what-stays-unread.p6",
+    "what-stays-unread.p7",
+    "what-stays-unread.p8",
+    "what-stays-unread.p9",
+    "what-stays-unread.p10",
+    "what-stays-unread.p11",
+    "what-stays-unread.p12",
+    "what-stays-unread.p13",
+    "what-stays-unread.p14"
+   ]
+  },
+  {
+   "id": "un-math",
+   "type": "lahtokohta",
+   "section": "what-stays-unread",
+   "title": "Whether the definitions are the mathematical objects their names suggest is a question for a mathematician",
+   "laji": "A",
+   "units": [
+    "what-stays-unread.p15"
+   ]
+  },
+  {
+   "id": "x-files",
+   "type": "meta",
+   "section": "scripts-and-files",
+   "title": "Scripts and files",
+   "meta": true,
+   "units": [
+    "scripts-and-files.p1",
+    "scripts-and-files.p2",
+    "scripts-and-files.p3",
+    "scripts-and-files.p4",
+    "scripts-and-files.p5",
+    "scripts-and-files.p6",
+    "scripts-and-files.p7"
+   ]
+  }
+ ],
+ "edges": [
+  {
+   "from": "ck-true",
+   "type": "toistaa",
+   "to": "a-true"
+  },
+  {
+   "from": "ck-ineff",
+   "type": "rajaa",
+   "to": "p-kind1"
+  },
+  {
+   "from": "ck-ineff",
+   "type": "rajaa",
+   "to": "p-twist"
+  },
+  {
+   "from": "un-list",
+   "type": "rajaa",
+   "to": "s0-route"
+  },
+  {
+   "from": "un-math",
+   "type": "rajaa",
+   "to": "s0-route"
+  },
+  {
+   "from": "k-reading",
+   "type": "rajaa",
+   "to": "st6"
+  },
+  {
+   "from": "p-interp",
+   "type": "selittaa",
+   "to": "p-meansq"
+  },
+  {
+   "from": "p-tailguess",
+   "type": "selittaa",
+   "to": "p-boxS"
+  },
+  {
+   "from": "lo-interp",
+   "type": "selittaa",
+   "to": "lo-linkS"
+  },
+  {
+   "from": "k-theta",
+   "type": "rajaa",
+   "to": "s0-route"
+  },
+  {
+   "from": "k-reading",
+   "type": "rajaa",
+   "to": "s0-route"
+  },
+  {
+   "from": "u-open",
+   "type": "rajaa",
+   "to": "st7"
+  },
+  {
+   "from": "l-mathlib",
+   "type": "rajaa",
+   "to": "l-contra"
+  },
+  {
+   "from": "ck-weaker",
+   "type": "rajaa",
+   "to": "ck-awayb"
+  },
+  {
+   "from": "u-guess",
+   "type": "tulkitsee",
+   "to": "u-kerplace"
+  },
+  {
+   "from": "d-e17",
+   "type": "tulkitsee",
+   "to": "d-link"
+  },
+  {
+   "from": "d-bessel",
+   "type": "tulkitsee",
+   "to": "d-link"
+  },
+  {
+   "from": "v-e17",
+   "type": "tulkitsee",
+   "to": "v-def"
+  },
+  {
+   "from": "k-t",
+   "type": "tulkitsee",
+   "to": "k-rank"
+  },
+  {
+   "from": "k-theta",
+   "type": "tulkitsee",
+   "to": "k-dists"
+  },
+  {
+   "from": "ck-theta",
+   "type": "rajaa",
+   "to": "l-formB"
+  },
+  {
+   "from": "ck-isrect",
+   "type": "rajaa",
+   "to": "g-row"
+  },
+  {
+   "from": "ck-awayb",
+   "type": "rajaa",
+   "to": "g-row"
+  },
+  {
+   "from": "ck-unused",
+   "type": "rajaa",
+   "to": "g-passed"
+  },
+  {
+   "from": "u-open",
+   "type": "rajaa",
+   "to": "u-each"
+  },
+  {
+   "from": "h-budget",
+   "type": "selittaa",
+   "to": "h-window"
+  },
+  {
+   "from": "h-budget",
+   "type": "vertaa",
+   "to": "u-origin"
+  },
+  {
+   "from": "c-short",
+   "type": "rajaa",
+   "to": "c-pairgood"
+  },
+  {
+   "from": "v-weak",
+   "type": "rajaa",
+   "to": "v-def"
+  },
+  {
+   "from": "h-two",
+   "type": "rajaa",
+   "to": "st5"
+  },
+  {
+   "from": "n-entries",
+   "type": "vertaa",
+   "to": "st6"
+  },
+  {
+   "from": "s0-reader",
+   "type": "rajaa",
+   "to": "s0-route"
+  },
+  {
+   "from": "l-peak",
+   "type": "selittaa",
+   "to": "l-st3"
+  },
+  {
+   "from": "h-window",
+   "type": "vertaa",
+   "to": "n-entries"
+  }
+ ]
+}

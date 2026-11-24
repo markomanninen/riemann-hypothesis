@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PUBLISHED.md, published statements and the note's terms on the skeleton &mdash; argumenttikartta</title>
+<style>
+:root {
+  color-scheme: light;
+  --surface-1: #fcfcfb; --surface-2: #f4f3f1; --border: #dedcd7;
+  --ink-1: #0b0b0b; --ink-2: #52514e;
+  --c-vaite: #2a78d6; --c-oletus: #eb6834; --c-peruste: #1baf7a;
+  --c-esim: #eda100; --c-sitaatti: #e87ba4; --c-tuomio: #008300;
+  --c-vastaus: #4a3aa7;
+  --c-maaritelma: #8a5a2b; --c-lause: #0b7285;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface-1: #1a1a19; --surface-2: #242423; --border: #3a3a38;
+  --ink-1: #ffffff; --ink-2: #c3c2b7;
+  --c-vaite: #3987e5; --c-oletus: #d95926; --c-peruste: #199e70;
+  --c-esim: #c98500; --c-sitaatti: #d55181; --c-tuomio: #008300;
+  --c-vastaus: #9085e9;
+  --c-maaritelma: #c08a55; --c-lause: #3bb0c4;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--surface-1); color: var(--ink-1);
+  font: 16px/1.55 -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+main { max-width: 920px; margin: 0 auto; padding: 32px 20px 80px; }
+h1 { font-size: 1.55rem; line-height: 1.25; margin: 0 0 4px; }
+.subtitle { color: var(--ink-2); margin: 0 0 20px; font-size: .9rem; }
+h2 { font-size: 1.15rem; margin: 44px 0 2px; }
+h3 { font-size: 1.02rem; margin: 34px 0 2px; }
+.thread { color: var(--ink-2); font-style: italic; font-size: .92rem; margin: 0 0 14px; }
+.toggle { position: fixed; top: 14px; right: 14px; font-size: .8rem;
+  background: var(--surface-2); color: var(--ink-1); border: 1px solid var(--border);
+  border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+.thesis { border: 1px solid var(--border); border-left: 4px solid var(--c-tuomio);
+  background: var(--surface-2); border-radius: 6px; padding: 14px 16px; margin: 18px 0; }
+.thesis strong { display: block; margin-bottom: 4px; }
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px;
+  margin: 28px 0 4px; padding-top: 14px; border-top: 1px solid var(--border); font-size: .82rem; }
+.legend .lead { color: var(--ink-2); flex-basis: 100%; }
+.legend .key { display: inline-flex; align-items: center; gap: 6px; }
+.legend .sw { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+.node { border: 1px solid var(--border); border-left: 4px solid var(--c, var(--border));
+  background: var(--surface-2); border-radius: 6px; padding: 10px 14px; margin: 10px 0; }
+.node p { margin: 6px 0 0; }
+.chip { display: inline-block; font-size: .68rem; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--ink-1);
+  background: color-mix(in srgb, var(--c, var(--ink-2)) 16%, transparent);
+  border-radius: 4px; padding: 2px 7px; }
+.laji { display: inline-block; font-size: .68rem; font-weight: 700; border: 1px solid var(--border);
+  border-radius: 4px; padding: 1px 6px; margin-left: 6px; color: var(--ink-2); }
+.nid { float: right; font-size: .72rem; color: var(--ink-2); font-family: ui-monospace, monospace; }
+.meta-line { display: block; margin-top: 6px; font-size: .78rem; color: var(--ink-2); }
+.meta-line a { color: inherit; }
+.warn { border: 1px dashed var(--c-oletus); border-radius: 6px; font-size: .82rem;
+  color: var(--ink-2); padding: 6px 10px; margin-top: 8px; }
+.warn b { color: var(--ink-1); font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; }
+.vaite { --c: var(--c-vaite); } .oletus { --c: var(--c-oletus); }
+.peruste { --c: var(--c-peruste); } .esim { --c: var(--c-esim); }
+.sitaatti { --c: var(--c-sitaatti); } .tuomio { --c: var(--c-tuomio); }
+.vastaus { --c: var(--c-vastaus); }
+.maaritelma { --c: var(--c-maaritelma); } .lause { --c: var(--c-lause); }
+.sitaatti p.body { font-family: Georgia, "Times New Roman", serif; font-style: italic; }
+.gen-note { border: 1px dashed var(--border); border-radius: 6px; color: var(--ink-2);
+  font-size: .85rem; padding: 8px 12px; margin: 14px 0; }
+.flowmap { margin: 14px 0 6px; font-size: .82rem; }
+.flowmap .stage { display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap; }
+.flowmap .box { background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 5px; padding: 5px 11px; }
+.flowmap .box b { display: block; }
+.flowmap .box small { color: var(--ink-2); }
+.flowmap .box a { color: inherit; text-decoration: none; }
+.flowmap .box a:hover b { text-decoration: underline; }
+.flowmap .down { text-align: center; color: var(--ink-2); margin: 3px 0; }
+.flowmap .claims { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.flowmap .steps { margin: 5px 0 0; padding-left: 4px; list-style: none; color: var(--ink-2); }
+.flowmap .steps li { margin: 2px 0; }
+.flowmap i { color: var(--ink-2); font-style: normal; }
+.uplink { margin: 0 0 14px; font-size: .84rem; }
+.uplink a { color: var(--ink-2); text-decoration: none; }
+.uplink a:hover { color: var(--ink-1); text-decoration: underline; }
+@media (max-width: 640px) { .flowmap .claims { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<button class="toggle" onclick="const r=document.documentElement;r.dataset.theme=r.dataset.theme==='dark'?'light':'dark'">Vaihda teema</button>
+<main>
+<h1>PUBLISHED.md, published statements and the note's terms on the skeleton</h1>
+<p class="subtitle">Argumenttikartta &middot; lähde: <code>/Users/markomanninen/Documents/GitHub/riemann-hypothesis/verification/skeleton/PUBLISHED.md</code></p>
+<div class="gen-note">Tämä tiedosto generoidaan. Muokkaa verkkoa <code>PUBLISHED.graph.json</code> ja yksiköintiä <code>PUBLISHED.units.json</code>, ja piirrä kartta uudelleen skriptillä render.py.</div>
+<div class="legend"><span class="lead">Solmutyypit ja runkolajit (D määritelmä, A aksiooma tai lähtökohta, T teoreema johtoineen, E esimerkki tai havainto, O oletus tai kehys):</span>
+<span class="key"><span class="sw" style="background:var(--c-vaite)"></span>Väite</span>
+<span class="key"><span class="sw" style="background:var(--c-oletus)"></span>Oletus</span>
+<span class="key"><span class="sw" style="background:var(--c-peruste)"></span>Peruste</span>
+<span class="key"><span class="sw" style="background:var(--c-maaritelma)"></span>Määritelmä</span>
+<span class="key"><span class="sw" style="background:var(--c-lause)"></span>Lause</span>
+<span class="key"><span class="sw" style="background:var(--c-esim)"></span>Esimerkki</span>
+<span class="key"><span class="sw" style="background:var(--c-sitaatti)"></span>Sitaatti</span>
+<span class="key"><span class="sw" style="background:var(--c-tuomio)"></span>Tulos</span>
+<span class="key"><span class="sw" style="background:var(--c-vastaus)"></span>Vastaus</span>
+</div>
+<h2 id="sec-published-statements-and-the-terms-of-th">1 &middot; Published statements, and the terms of the author's note located on the skeleton</h2>
+<p class="thread">Summary of the counts and the limit of what they show</p>
+<div class="node vaite" id="o-counts">
+<span class="nid">o-counts &middot; r.&nbsp;3</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>The source labels 361 propositions as literature results and the five theorems reach 292 of them</strong></p>
+<p class="body">The source labels 361 named propositions as results from the literature, and the five theorems of Main.lean reach 292 of them.</p>
+<span class="meta-line">Johto: <a href="#d-published" title="A published statement is a parameterless Prop definition in one of five namespaces, and it states a result without proving it">d-published</a> &middot; <a href="#a-rows" title="Of 361 published statements 350 are in Published, 292 reached, 206 proved, 60 only derived, 26 neither">a-rows</a> (todistus seuraa tulosta)</span>
+</div>
+<div class="node vaite" id="o-proved">
+<span class="nid">o-proved &middot; r.&nbsp;3</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>A premise-free theorem of the project proves 206 of the 292</strong></p>
+<p class="body">For 206 of the 292, a theorem of the project proves the proposition without premises.</p>
+<span class="meta-line">Johto: <a href="#d-proves" title="A theorem proves a published statement when it has no premises and its claim is that statement">d-proves</a> &middot; <a href="#a-rows" title="Of 361 published statements 350 are in Published, 292 reached, 206 proved, 60 only derived, 26 neither">a-rows</a> (todistus seuraa tulosta)</span>
+</div>
+<div class="node lahtokohta" id="o-39190">
+<span class="nid">o-39190 &middot; r.&nbsp;3</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The proving theorems gather 39,190 declarations, 5.1 % of the 760,989 reached</strong></p>
+<p class="body">The proving theorems together gather 39,190 declarations, which is 5.1 % of the 760,989 declarations that the five theorems reach.</p>
+<span class="meta-line"><a href="#a-top10" title="The ten published statements whose proving theorem gathers most, from 5,094 down to 1,443">a-top10</a> &rarr; havainnollistaa</span>
+</div>
+<div class="node vaite" id="o-lower">
+<span class="nid">o-lower &middot; r.&nbsp;3</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>39,190 is a lower limit for what the proofs rest on, because it counts only what is reached solely through them</strong></p>
+<p class="body">That figure counts only what the five theorems reach solely through those proofs, so it is a lower limit for what the proofs rest on.</p>
+<span class="meta-line">Johto: <a href="#o-39190" title="The proving theorems gather 39,190 declarations, 5.1 % of the 760,989 reached">o-39190</a> &middot; <a href="#d-39190" title="The 39,190 are the declarations at or below at least one proving theorem in the dominator tree, each counted once">d-39190</a> &middot; <a href="#t-second-chain" title="A declaration that a second chain reaches is left out of the 39,190, because the proving theorem does not dominate it">t-second-chain</a> (todistus seuraa tulosta)</span>
+</div>
+<div class="node vaite" id="o-132">
+<span class="nid">o-132 &middot; r.&nbsp;3</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>132 of the 590 skeleton declarations have a labelled proposition among their premises</strong></p>
+<p class="body">Of the 590 declarations of the skeleton, 132 have at least one of the 361 propositions among their premises.</p>
+<span class="meta-line">Johto: <a href="#d-takes" title="A theorem takes a published statement when the statement stands among its premises">d-takes</a> &middot; <a href="#a-marks" title="Of 590 skeleton declarations 132 take, 25 prove or derive, 7 do both and 440 carry no mark">a-marks</a> (todistus seuraa tulosta)</span>
+</div>
+<div class="node vaite" id="o-scope">
+<span class="nid">o-scope &middot; r.&nbsp;11</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>The figures count namespace labels, the project may still prove a labelled result itself, and the figures do not show which part of the argument is new</strong></p>
+<p class="body">These figures count what the code places in namespaces for results from the literature. Such a proposition is a known result that the code states, and the project may still prove it itself. The figures do not show which part of the argument is new.</p>
+<span class="meta-line">Johto: <a href="#d-published" title="A published statement is a parameterless Prop definition in one of five namespaces, and it states a result without proving it">d-published</a> &middot; <a href="#a-rows" title="Of 361 published statements 350 are in Published, 292 reached, 206 proved, 60 only derived, 26 neither">a-rows</a> &middot; <a href="#t-nomark" title="A skeleton declaration without a mark can still restate a known result">t-nomark</a> (todistus seuraa tulosta)</span>
+</div>
+<div class="node lahtokohta" id="o-note">
+<span class="nid">o-note &middot; r.&nbsp;15</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The author announced the proof in a four-page note</strong></p>
+<p class="body">The author of the proof announced it in a four-page note.</p>
+</div>
+<div class="node lahtokohta" id="o-source">
+<span class="nid">o-source &middot; r.&nbsp;19</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The figures come from the source after the merge of 2026-11-22, read as text without running Lean</strong></p>
+<p class="body">The figures come from the source after the merge of upstream main on 2026-11-22, and the scripts read text and do not run Lean.</p>
+</div>
+<h2 id="sec-words-used-here">2 &middot; Words used here</h2>
+<p class="thread">Definitions of published statement, claim, premises and the three roles</p>
+<div class="node maaritelma" id="d-published">
+<span class="nid">d-published &middot; r.&nbsp;25</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>A published statement is a parameterless Prop definition in one of five namespaces, and it states a result without proving it</strong></p>
+<p class="body">A published statement is a definition of type Prop without parameters whose name has the form ….Published.X, ….Pub.X, ….Lit.X, ….LiteratureTheorems.X or ….Hypotheses₂.X. An example is GlobalTheory.Published.JacquetShalikaRigidity. Such a definition states a result and proves nothing.</p>
+</div>
+<div class="node lahtokohta" id="a-namespaces">
+<span class="nid">a-namespaces &middot; r.&nbsp;25</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>350 of the 361 lie in Published, four in Hypotheses₂, three in Lit, two in Pub, two in LiteratureTheorems</strong></p>
+<p class="body">Of the 361, 350 lie in a namespace Published, four in Hypotheses₂, three in Lit, two in Pub and two in LiteratureTheorems.</p>
+</div>
+<div class="node maaritelma" id="d-claim">
+<span class="nid">d-claim &middot; r.&nbsp;30</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>Claim, end of a claim and premises of a theorem are read from its statement text at the first colon and the last arrow</strong></p>
+<p class="body">The claim of a theorem is the part of its statement after the first colon outside brackets, and its end is the part after the last arrow outside brackets. The end of a claim without an arrow is the whole claim. The premises of a theorem are the hypotheses written before that colon and the parts of the claim before its end.</p>
+</div>
+<div class="node maaritelma" id="d-proves">
+<span class="nid">d-proves &middot; r.&nbsp;34</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>A theorem proves a published statement when it has no premises and its claim is that statement</strong></p>
+<p class="body">A theorem proves a published statement when the theorem has no premises and its claim is the published statement.</p>
+</div>
+<div class="node maaritelma" id="d-derives">
+<span class="nid">d-derives &middot; r.&nbsp;36</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>A theorem derives a published statement when its claim ends in it and the theorem has premises</strong></p>
+<p class="body">A theorem derives a published statement when the end of its claim is the published statement and the theorem has premises.</p>
+</div>
+<div class="node maaritelma" id="d-takes">
+<span class="nid">d-takes &middot; r.&nbsp;38</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>A theorem takes a published statement when the statement stands among its premises</strong></p>
+<p class="body">A theorem takes a published statement when the published statement stands among its premises.</p>
+</div>
+<div class="node maaritelma" id="d-marks">
+<span class="nid">d-marks &middot; r.&nbsp;39</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>Proves, derives and takes are the roles, and the marks of a skeleton declaration are its roles</strong></p>
+<p class="body">Proves, derives and takes are the three roles. The marks of a skeleton declaration are the roles it has towards published statements.</p>
+</div>
+<h2 id="sec-how-the-script-finds-them">3 &middot; How the script finds them</h2>
+<p class="thread">Method of the text search</p>
+<div class="node lahtokohta" id="a-method">
+<span class="nid">a-method &middot; r.&nbsp;44</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>published.py lists the statements, takes the theorems naming each from the declaration graph and finds the role by the last part of the name</strong></p>
+<p class="body">published.py lists the published statements. For each one, the declaration graph gives the theorems whose text names it. The script reads from the source the text of each such theorem before its proof and finds the role by looking for the last part of the published statement's name, so it looks for JacquetShalikaRigidity in a theorem that names GlobalTheory.Published.JacquetShalikaRigidity.</p>
+</div>
+<h2 id="sec-what-the-code-labels-as-published">4 &middot; What the code labels as published</h2>
+<p class="thread">Counts of published statements by role</p>
+<div class="node lahtokohta" id="a-rows">
+<span class="nid">a-rows &middot; r.&nbsp;52</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Of 361 published statements 350 are in Published, 292 reached, 206 proved, 60 only derived, 26 neither</strong></p>
+<p class="body">Published statements — Number</p>
+<p class="body">All — 361</p>
+<p class="body">In a namespace Published — 350</p>
+<p class="body">Reached by the five theorems — 292</p>
+<p class="body">Reached, and a theorem proves it — 206</p>
+<p class="body">Reached, and theorems only derive it — 60</p>
+<p class="body">Reached, and the script finds neither — 26</p>
+<span class="meta-line"><a href="#t-text" title="Reading roles from text miscounts a claim that ends in a quantifier or a conjunction, which can move items into the row of 26 or the row without a mark">t-text</a> &rarr; rajaa</span>
+</div>
+<div class="node vaite" id="t-69">
+<span class="nid">t-69 &middot; r.&nbsp;61</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>The 69 unreached published statements are left out of the rest</strong></p>
+<p class="body">The 69 published statements that the five theorems do not reach are left out of the rest of this document.</p>
+<span class="meta-line">Johto: <a href="#a-rows" title="Of 361 published statements 350 are in Published, 292 reached, 206 proved, 60 only derived, 26 neither">a-rows</a></span>
+</div>
+<div class="node lahtokohta" id="a-202">
+<span class="nid">a-202 &middot; r.&nbsp;61</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>For 202 of the 206 the five theorems also reach a proving theorem, for four only the statement</strong></p>
+<p class="body">For 202 of the 206 published statements of the fourth row, the five theorems also reach a theorem that proves it. For the other four, they reach only the statement.</p>
+</div>
+<div class="node vaite" id="t-60">
+<span class="nid">t-60 &middot; r.&nbsp;65</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>The row of 60 does not show how the project completes those proofs, because the script does not follow the premises</strong></p>
+<p class="body">For the 60 published statements of the fifth row, every theorem that the script finds concludes the statement from premises. The script does not follow where those premises are proved in turn, so that row does not show how the project completes the proof.</p>
+<span class="meta-line">Johto: <a href="#a-rows" title="Of 361 published statements 350 are in Published, 292 reached, 206 proved, 60 only derived, 26 neither">a-rows</a> &middot; <a href="#d-derives" title="A theorem derives a published statement when its claim ends in it and the theorem has premises">d-derives</a> &middot; <a href="#a-method" title="published.py lists the statements, takes the theorems naming each from the declaration graph and finds the role by the last part of the name">a-method</a></span>
+</div>
+<div class="node vaite" id="t-26">
+<span class="nid">t-26 &middot; r.&nbsp;69</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>The 26 with neither role can be supplied in a form that the definitions of proves and derives miss</strong></p>
+<p class="body">The five theorems reach the 26 published statements of the last row, and the script finds no theorem that proves or derives them. A published statement can be supplied in a form that the definitions of proves and derives miss, for example as a field of a structure or through a definition that unfolds to another proposition.</p>
+<span class="meta-line">Johto: <a href="#a-rows" title="Of 361 published statements 350 are in Published, 292 reached, 206 proved, 60 only derived, 26 neither">a-rows</a> &middot; <a href="#d-proves" title="A theorem proves a published statement when it has no premises and its claim is that statement">d-proves</a> &middot; <a href="#d-derives" title="A theorem derives a published statement when its claim ends in it and the theorem has premises">d-derives</a></span>
+<span class="meta-line"><a href="#e-26" title="The last name parts of the 26">e-26</a> &rarr; havainnollistaa &middot; <a href="#t-text" title="Reading roles from text miscounts a claim that ends in a quantifier or a conjunction, which can move items into the row of 26 or the row without a mark">t-text</a> &rarr; rajaa</span>
+</div>
+<div class="node esim" id="e-26">
+<span class="nid">e-26 &middot; r.&nbsp;69</span>
+<span class="chip">Esimerkki</span>
+<span class="laji" title="esimerkki tai havainto">E</span>
+<p><strong>The last name parts of the 26</strong></p>
+<p class="body">The last name parts of the 26 are BaseChangeIsobaric, CaraianiLocalGlobalDual, CaraianiTempered, CharacterRegularity, ChebotarevOpenNormal, CohDimTwo, DelignePappasModel, DepthZeroCuspidalLL, DepthZeroTypeInertia, DiscreteSeriesCharacter, DiscreteSpectrumResidual, GaloisRepOfPolarizedPair, GoetzkyKoecher, GoodChernNumbers, HarishChandraCharacters, HilbertBlumenthal, HilbertKodairaSpencer, HilbertQExpansion, InducedCharacterSupport, LocalLanglandsExists, MinguezThetaGL, OpenImageCondition, OpenLiteratureStatements, RealMultDeRhamRank, UnitaryDualGL and WeylIntegrationFormula.</p>
+<span class="meta-line">havainnollistaa &rarr; <a href="#t-26" title="The 26 with neither role can be supplied in a form that the definitions of proves and derives miss">t-26</a></span>
+</div>
+<div class="node lahtokohta" id="a-top10">
+<span class="nid">a-top10 &middot; r.&nbsp;81</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The ten published statements whose proving theorem gathers most, from 5,094 down to 1,443</strong></p>
+<p class="body">The table lists the ten published statements whose proving theorem gathers most declarations.</p>
+<p class="body">Published statement — Theorem that proves it — Gathers</p>
+<p class="body">GlobalTheory.Published.ToroidalForFanKS — GlobalTheory.TorKSField.toroidalForFanKS — 5,094</p>
+<p class="body">GlobalTheory.Published.SiegelToroidalIntegral — GlobalTheory.siegelToroidalIntegral_holds — 3,661</p>
+<p class="body">GlobalTheory.Published.SiegelToroidalPolCharts — GlobalTheory.T.siegelToroidalCompactification_polarisedCharts — 3,540</p>
+<p class="body">GlobalTheory.Published.JacquetShalikaRigidity — GlobalTheory.JSW.jacquetShalikaRigidity_holds — 2,262</p>
+<p class="body">GlobalTheory.Published.WeilSiegelFormulaUnitary — UpperTheory.Lit.Sw47.weilUnitary — 1,757</p>
+<p class="body">GlobalTheory.Published.WeilSiegelFormula — PositivityTheory.Rg.Wsf.weilSiegelFormula — 1,718</p>
+<p class="body">GlobalTheory.Published.PrismaticDieudonneHodge — UpperTheory.Lit.prismaticDieudonneHodge — 1,702</p>
+<p class="body">GlobalTheory.Published.SiegelWeilUnitarySchrodinger — PositivityTheory.SiegelWeilCoefficients.field — 1,677</p>
+<p class="body">GlobalTheory.Published.SiegelWeilUnitarySchrodingerLit — PositivityTheory.SiegelWeilCoefficients.lit — 1,668</p>
+<p class="body">GlobalTheory.Published.GoodChernWeil — GlobalTheory.GoodMetric.goodChernWeil — 1,443</p>
+<span class="meta-line">havainnollistaa &rarr; <a href="#o-39190" title="The proving theorems gather 39,190 declarations, 5.1 % of the 760,989 reached">o-39190</a></span>
+</div>
+<div class="node maaritelma" id="d-39190">
+<span class="nid">d-39190 &middot; r.&nbsp;96</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>The 39,190 are the declarations at or below at least one proving theorem in the dominator tree, each counted once</strong></p>
+<p class="body">The 39,190 declarations of the opening are the declarations that lie at or below at least one of the proving theorems in the dominator tree, each counted once.</p>
+</div>
+<div class="node vaite" id="t-second-chain">
+<span class="nid">t-second-chain &middot; r.&nbsp;96</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>A declaration that a second chain reaches is left out of the 39,190, because the proving theorem does not dominate it</strong></p>
+<p class="body">The figure leaves out a declaration that a second chain reaches without passing through the proving theorem, because the proving theorem then does not dominate it.</p>
+<span class="meta-line">Johto: <a href="#d-39190" title="The 39,190 are the declarations at or below at least one proving theorem in the dominator tree, each counted once">d-39190</a></span>
+</div>
+<h2 id="sec-marks-on-the-skeleton">5 &middot; Marks on the skeleton</h2>
+<p class="thread">Roles of the 590 skeleton declarations</p>
+<div class="node lahtokohta" id="a-marks">
+<span class="nid">a-marks &middot; r.&nbsp;103</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Of 590 skeleton declarations 132 take, 25 prove or derive, 7 do both and 440 carry no mark</strong></p>
+<p class="body">Skeleton declarations — Number</p>
+<p class="body">All — 590</p>
+<p class="body">Take at least one published statement — 132</p>
+<p class="body">Prove or derive a published statement — 25</p>
+<p class="body">Take one, and prove or derive one — 7</p>
+<p class="body">Carry no mark — 440</p>
+<span class="meta-line"><a href="#t-text" title="Reading roles from text miscounts a claim that ends in a quantifier or a conjunction, which can move items into the row of 26 or the row without a mark">t-text</a> &rarr; rajaa</span>
+</div>
+<div class="node vaite" id="t-150">
+<span class="nid">t-150 &middot; r.&nbsp;111</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>150 declarations carry a mark, since the seven are counted in both rows</strong></p>
+<p class="body">The seven declarations of the fourth row are counted in the second and the third row as well, so 150 declarations carry a mark.</p>
+<span class="meta-line">Johto: <a href="#a-marks" title="Of 590 skeleton declarations 132 take, 25 prove or derive, 7 do both and 440 carry no mark">a-marks</a></span>
+</div>
+<div class="node lahtokohta" id="a-heads">
+<span class="nid">a-heads &middot; r.&nbsp;111</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>64 of the 342 heads take at least one published statement</strong></p>
+<p class="body">Of the 342 heads, 64 take at least one published statement.</p>
+</div>
+<div class="node vaite" id="t-supply">
+<span class="nid">t-supply &middot; r.&nbsp;114</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>The project has to supply every taken result between the five theorems and the taking step, because the five theorems have no premises</strong></p>
+<p class="body">A skeleton declaration that takes published statements is a step that holds when those results and its other premises hold. The five theorems are stated without premises, so the project has to supply those results somewhere between the five theorems and that step.</p>
+<span class="meta-line">Johto: <a href="#d-takes" title="A theorem takes a published statement when the statement stands among its premises">d-takes</a></span>
+<span class="meta-line"><a href="#e-takers" title="topCovolSlim2_use_alt_alt takes ten published statements, and a run of ten skeleton declarations takes twelve each">e-takers</a> &rarr; havainnollistaa</span>
+</div>
+<div class="node lahtokohta" id="a-nosupplier">
+<span class="nid">a-nosupplier &middot; r.&nbsp;114</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The script does not locate the supplying declarations, which may lie outside the skeleton</strong></p>
+<p class="body">The script does not locate the declarations that supply them, which may lie outside the skeleton.</p>
+</div>
+<div class="node esim" id="e-takers">
+<span class="nid">e-takers &middot; r.&nbsp;119</span>
+<span class="chip">Esimerkki</span>
+<span class="laji" title="esimerkki tai havainto">E</span>
+<p><strong>topCovolSlim2_use_alt_alt takes ten published statements, and a run of ten skeleton declarations takes twelve each</strong></p>
+<p class="body">SelfIntersectionVolumeEstimates.topCovolSlim2_use_alt_alt, which gathers 52,094 declarations, takes ten published statements, among them ResolutionCharZero, PrincipalisationCharZero, SiegelToroidalIntegral and ToroidalForFanKS. The largest number that a skeleton declaration takes is twelve. Ten skeleton declarations take that many, and they hang in one run from main_theorem_published_inputs_third_alt_alt down to miStar2_of_allTrue_alt_alt.</p>
+<span class="meta-line">havainnollistaa &rarr; <a href="#t-supply" title="The project has to supply every taken result between the five theorems and the taking step, because the five theorems have no premises">t-supply</a></span>
+</div>
+<div class="node maaritelma" id="d-outline">
+<span class="nid">d-outline &middot; r.&nbsp;125</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>OUTLINE-PUBLISHED.txt repeats the 38 outline lines with short names, module words in square brackets and marks in curly brackets</strong></p>
+<p class="body">OUTLINE-PUBLISHED.txt has one line for each of the 38 lines of OUTLINE.txt, in the same order and with the same numbers. It differs in three ways. Every line shows a name without its namespaces, and a line that stands for a folded run of wrappers shows the name of the head that the run ends in and keeps the number of the first wrapper. Square brackets hold the second, third and fourth parts of the module name of the declaration shown, written as words, so ThetaPairLifts reads Theta Pair Lifts. They replace the count of folded declarations. Curly brackets hold the marks of the declarations of the line.</p>
+</div>
+<h2 id="sec-the-author-s-note">6 &middot; The author's note</h2>
+<p class="thread">Where the names that match the note's terms lie</p>
+<div class="node lahtokohta" id="a-note-arg">
+<span class="nid">a-note-arg &middot; r.&nbsp;135</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The note says the argument descends from Stepanov's and wins multiplicity through a chain of about √X theta lifts between definite unitary groups</strong></p>
+<p class="body">The note is remark.pdf. It says the following about the argument.</p>
+<p class="body">The argument descends from the argument of Stepanov for the Riemann Hypothesis over function fields, which uses a divisor with multiplicity.</p>
+<p class="body">Multiplicity is hard to find over the integers, and the argument gets it from a chain of theta lifts between totally definite unitary groups, where each lift wins one more order of multiplicity.</p>
+<p class="body">For a von Mangoldt sum of length X the chain has about the square root of X lifts.</p>
+</div>
+<div class="node lahtokohta" id="a-timeline">
+<span class="nid">a-timeline &middot; r.&nbsp;143</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>A timeline of 20 entries in the note names further ingredients, from Chowla-Selberg to Behrend</strong></p>
+<p class="body">A timeline of 20 entries names further ingredients. Among them are norms of the lifts with divisibility by Chowla-Selberg, Weyl and the Siegel mass formula, a lower bound for the divisibility of the iterated lift, an Iwasawa tower, a seesaw with the name of Rallis that turns the period of the iterated lift into a Bessel period, the Bost slope inequality, a relative trace formula with Poincaré series, periods of Gan, Gross and Prasad, the explicit formula of Guinand and Weil, covolumes, a weakening of the Vandiver conjecture and a choice of the tower that uses a result of Behrend.</p>
+</div>
+<div class="node lahtokohta" id="a-claude">
+<span class="nid">a-claude &middot; r.&nbsp;150</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The author writes that Claude compiled the timeline and that some entries paraphrase a summary of parts he has not mastered yet</strong></p>
+<p class="body">The author writes that Claude compiled the timeline and that some of its entries paraphrase a summary of parts he has not mastered yet.</p>
+</div>
+<div class="node maaritelma" id="d-patterns">
+<span class="nid">d-patterns &middot; r.&nbsp;153</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>published.py holds 20 name patterns, one per term and unrelated to the number of timeline entries, tried on every part of a name and module path, and the columns Matches and Reached count them</strong></p>
+<p class="body">published.py holds 20 search patterns, one for each term of the table below. The number of patterns has nothing to do with the number of timeline entries. A pattern is tried on every part of a declaration's name and of its module path, and a declaration matches when one part fits. A pattern can be wider than its row label, and the second column shows the parts that it matched most often. The counts of that column and of the column Matches take in every declaration of the source. The column Reached counts the matches that the five theorems reach, and a declaration can match the patterns of two rows.</p>
+</div>
+<div class="node maaritelma" id="d-columns">
+<span class="nid">d-columns &middot; r.&nbsp;161</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>The last five columns give the shares of a row's reached matches that lie below four outline declarations, where below means gathered by</strong></p>
+<p class="body">The last five columns say where the reached matches lie in the dominator tree, as shares of the reached matches of the row. The columns stand for these declarations of the outline. A match lies below a declaration when that declaration gathers it.</p>
+</div>
+<div class="node lahtokohta" id="a-columns">
+<span class="nid">a-columns &middot; r.&nbsp;165</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>A gathers 506,214 declarations, B below A 266,135, C 55,754 and D 51,784, and Else is below none of A, C and D</strong></p>
+<p class="body">Column — Declaration — Gathers</p>
+<p class="body">A — UpperTheory.LiteratureTheorems.every_character_of_literature_of_vWin — 506,214</p>
+<p class="body">B — UpperTheory.Lit.nonempty_hyps_definite_side_of_closed_bound, which lies below A — 266,135</p>
+<p class="body">C — UpperTheory.One.vwin_of_row — 55,754</p>
+<p class="body">D — UpperTheory.Gal.Int.galoisLocalGlobalStrong_recParameter — 51,784</p>
+<p class="body">Else — below none of A, C and D</p>
+</div>
+<div class="node maaritelma" id="d-baseline">
+<span class="nid">d-baseline &middot; r.&nbsp;173</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>The first table row is the share of all reached declarations, and a row far above it is gathered in one part</strong></p>
+<p class="body">The first row of the table gives the same shares for all reached declarations. A row of matches is spread like the whole proof when its shares are near that row, and its names are gathered in one part when a share is far above it.</p>
+</div>
+<div class="node lahtokohta" id="a-table">
+<span class="nid">a-table &middot; r.&nbsp;177</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The table of the 20 terms with their matches, reached matches and shares</strong></p>
+<p class="body">Term of the note — Name parts that match most often — Matches — Reached — A — B — C — D — Else</p>
+<p class="body">all reached declarations — 760,989 — 67 % — 35 % — 7 % — 7 % — 19 %</p>
+<p class="body">theta lifts — ThetaLifts 7,527, ThetaCorrespondence 6,345 — 14,609 — 13,328 — 82 % — 38 % — 1 % — 1 % — 16 %</p>
+<p class="body">definite unitary groups — DefiniteUnitaryClassSetFinite 33, BaseChangeDefiniteUnitary 32 — 548 — 541 — 35 % — 32 % — 1 % — 10 % — 55 %</p>
+<p class="body">Chowla-Selberg — MeanLogPeriodConjugatesEqChowlaSelberg 5, MeanLogPeriodChowlaSelberg 3 — 19 — 19 — 100 % — 74 % — 0 % — 0 % — 0 %</p>
+<p class="body">Siegel mass — UnitaryGroupMassFormula 23,477, SiegelMassRatios 68 — 23,651 — 22,355 — 94 % — 74 % — 0 % — 0 % — 6 %</p>
+<p class="body">Weyl, with divisibility — GradedWeylDivisibility 603 — 603 — 602 — 27 % — 8 % — 0 % — 0 % — 73 %</p>
+<p class="body">divisibility of the lift — Divisibility 4,633, DivisibilityProofs 1,146 — 5,908 — 4,839 — 98 % — 18 % — 0 % — 0 % — 2 %</p>
+<p class="body">Iwasawa tower — none — 0 — 0</p>
+<p class="body">seesaw — SeeSaw 698, HermitianAdaptedPlaneSeesaw 33 — 1,583 — 1,458 — 95 % — 93 % — 0 % — 0 % — 4 %</p>
+<p class="body">Bessel period — ThetaBesselIsometries 428, FormalDegreeBessel 427 — 6,375 — 6,066 — 98 % — 94 % — 0 % — 0 % — 2 %</p>
+<p class="body">Rallis — Rallis 89, RallisInnerProduct 88 — 401 — 398 — 55 % — 27 % — 0 % — 2 % — 43 %</p>
+<p class="body">Bost slope inequality — ChainSlopeWindows 379, DiagonalSlopes 302 — 2,105 — 1,590 — 93 % — 10 % — 3 % — 1 % — 3 %</p>
+<p class="body">relative trace formula — TraceFormula 1,650 — 1,652 — 1,604 — 2 % — 0 % — 1 % — 0 % — 96 %</p>
+<p class="body">Poincaré series — PoincareSeriesInner 14, PoincareSeriesUnitaryAbsolutelyConvergentModerat 14 — 120 — 120 — 96 % — 49 % — 0 % — 0 % — 4 %</p>
+<p class="body">periods of Gan, Gross and Prasad — ExistsGanGrossPrasadRowWeights 17, ExistsGanGrossPrasadColumnWeights 14 — 68 — 59 — 88 % — 88 % — 0 % — 0 % — 12 %</p>
+<p class="body">weakening of Vandiver — none — 0 — 0</p>
+<p class="body">covolumes — CovolumeBounds 1,047, FiniteCovolume 873 — 4,095 — 3,581 — 57 % — 21 % — 1 % — 0 % — 43 %</p>
+<p class="body">Behrend — none — 0 — 0</p>
+<p class="body">explicit formula of Guinand and Weil — ExplicitFormula 288, FirstKernelExplicitFormula 146 — 499 — 493 — 100 % — 31 % — 0 % — 0 % — 0 %</p>
+<p class="body">von Mangoldt sum — AdditiveMulEqVonMangoldtConvolution 9, AdditiveEqPolynomialVonMangoldtConvolutionOne 8 — 80 — 76 — 74 % — 1 % — 0 % — 3 % — 24 %</p>
+<p class="body">Stepanov — none — 0 — 0</p>
+</div>
+<div class="node vaite" id="t-16">
+<span class="nid">t-16 &middot; r.&nbsp;203</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Sixteen of the 20 terms have matches, and Stepanov, Vandiver, Behrend and Iwasawa tower have none</strong></p>
+<p class="body">Sixteen of the 20 terms have matches. No name and no module path of the source holds the words Stepanov, Vandiver, Behrend or Iwasawa tower.</p>
+<span class="meta-line">Johto: <a href="#a-table" title="The table of the 20 terms with their matches, reached matches and shares">a-table</a> &middot; <a href="#d-patterns" title="published.py holds 20 name patterns, one per term and unrelated to the number of timeline entries, tried on every part of a name and module path, and the columns Matches and Reached count them">d-patterns</a></span>
+<span class="meta-line">rajaa &rarr; <a href="#o-vwin" title="The writer reads UpperTheory.Top.VWin as the note's weakening of Vandiver, on resemblance alone">o-vwin</a> &middot; <a href="#a-iwasawa" title="26,784 declarations carry the word Iwasawa, 24,882 of them through IwasawaDecomposition, and the other 1,902 were not examined">a-iwasawa</a> &rarr; rajaa</span>
+</div>
+<div class="node vaite" id="t-belowB">
+<span class="nid">t-belowB &middot; r.&nbsp;205</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Seesaw, Bessel period, Gan-Gross-Prasad, Siegel mass and Chowla-Selberg lie 74 to 94 % below B, which gathers 35 % of everything</strong></p>
+<p class="body">B gathers 35 % of all reached declarations. For the seesaw, the Bessel period, the periods of Gan, Gross and Prasad, the Siegel mass and Chowla-Selberg, between 74 % and 94 % of the reached matches lie below B.</p>
+<span class="meta-line">Johto: <a href="#a-table" title="The table of the 20 terms with their matches, reached matches and shares">a-table</a> &middot; <a href="#d-baseline" title="The first table row is the share of all reached declarations, and a row far above it is gathered in one part">d-baseline</a></span>
+<span class="meta-line"><a href="#t-name" title="A match shows where the code uses a word and not that the mathematics is the step the note means">t-name</a> &rarr; rajaa</span>
+</div>
+<div class="node vaite" id="t-AnotB">
+<span class="nid">t-AnotB &middot; r.&nbsp;208</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Divisibility of the lift, Bost slope, von Mangoldt sum and explicit formula lie 69 to 83 % in A outside B, which gathers 31.5 %</strong></p>
+<p class="body">The part of A outside B gathers 31.5 % of all reached declarations. For the divisibility of the lift, the Bost slope inequality, the von Mangoldt sum and the explicit formula, between 69 % and 83 % of the reached matches lie there.</p>
+<span class="meta-line">Johto: <a href="#a-table" title="The table of the 20 terms with their matches, reached matches and shares">a-table</a> &middot; <a href="#a-columns" title="A gathers 506,214 declarations, B below A 266,135, C 55,754 and D 51,784, and Else is below none of A, C and D">a-columns</a></span>
+<span class="meta-line"><a href="#t-name" title="A match shows where the code uses a word and not that the mathematics is the step the note means">t-name</a> &rarr; rajaa</span>
+</div>
+<div class="node vaite" id="t-else">
+<span class="nid">t-else &middot; r.&nbsp;211</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>96 % of the trace formula matches and 73 % of GradedWeylDivisibility lie in Else, which holds 19 %</strong></p>
+<p class="body">Else holds 19 % of all reached declarations. Of the reached matches of the pattern for the relative trace formula, 96 % lie there, and so do 73 % of the matches of GradedWeylDivisibility.</p>
+<span class="meta-line">Johto: <a href="#a-table" title="The table of the 20 terms with their matches, reached matches and shares">a-table</a> &middot; <a href="#d-baseline" title="The first table row is the share of all reached declarations, and a row far above it is gathered in one part">d-baseline</a></span>
+<span class="meta-line"><a href="#t-name" title="A match shows where the code uses a word and not that the mathematics is the step the note means">t-name</a> &rarr; rajaa</span>
+</div>
+<div class="node vaite" id="t-spread">
+<span class="nid">t-spread &middot; r.&nbsp;214</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Theta lifts, Rallis and covolumes are spread more widely, and definite unitary groups lie mostly in Else and B</strong></p>
+<p class="body">The matches for theta lifts, Rallis and covolumes are spread more widely, and the matches for definite unitary groups lie mostly in Else and in B.</p>
+<span class="meta-line">Johto: <a href="#a-table" title="The table of the 20 terms with their matches, reached matches and shares">a-table</a> &middot; <a href="#d-baseline" title="The first table row is the share of all reached declarations, and a row far above it is gathered in one part">d-baseline</a></span>
+<span class="meta-line"><a href="#t-name" title="A match shows where the code uses a word and not that the mathematics is the step the note means">t-name</a> &rarr; rajaa</span>
+</div>
+<div class="node lahtokohta" id="a-iwasawa">
+<span class="nid">a-iwasawa &middot; r.&nbsp;217</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>26,784 declarations carry the word Iwasawa, 24,882 of them through IwasawaDecomposition, and the other 1,902 were not examined</strong></p>
+<p class="body">A separate count finds the word Iwasawa in the name or the module path of 26,784 declarations of the source. Of these, 24,882 lie in modules whose path has the part IwasawaDecomposition, which names a decomposition of a group. The other 1,902 were not examined.</p>
+<span class="meta-line">rajaa &rarr; <a href="#t-16" title="Sixteen of the 20 terms have matches, and Stepanov, Vandiver, Behrend and Iwasawa tower have none">t-16</a></span>
+</div>
+<div class="node oletus" id="o-vwin">
+<span class="nid">o-vwin &middot; r.&nbsp;221</span>
+<span class="chip">Oletus</span>
+<span class="laji" title="oletus tai kehys">O</span>
+<p><strong>The writer reads UpperTheory.Top.VWin as the note's weakening of Vandiver, on resemblance alone</strong></p>
+<p class="body">The writer of this document reads the proposition UpperTheory.Top.VWin as the weakening of Vandiver that the note speaks of. No name says so, and the reading rests on a resemblance alone.</p>
+<span class="meta-line"><a href="#a-vvle" title="VVle bounds a sum over primes l and exponents e of lengths shaLen from Galois cohomology, and the note's entry speaks of classes indexed by ℓ and e">a-vvle</a> &rarr; tukee &middot; <a href="#a-vwin-place" title="VWin is built from VVle, is a premise of every_character_of_literature_of_vWin and is the end of vwin_of_row, which gathers 55,754">a-vwin-place</a> &rarr; sijoittaa &middot; <a href="#t-16" title="Sixteen of the 20 terms have matches, and Stepanov, Vandiver, Behrend and Iwasawa tower have none">t-16</a> &rarr; rajaa</span>
+</div>
+<div class="node lahtokohta" id="a-vvle">
+<span class="nid">a-vvle &middot; r.&nbsp;221</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>VVle bounds a sum over primes l and exponents e of lengths shaLen from Galois cohomology, and the note's entry speaks of classes indexed by ℓ and e</strong></p>
+<p class="body">The definition UpperTheory.Top.VVle in ExistsPageN.lean bounds a sum over primes l and exponents e of lengths written shaLen, which the source takes from Formalism.GaloisCohomology. The note's entry speaks of cohomology classes indexed by a prime ℓ and an exponent e.</p>
+<span class="meta-line">tukee &rarr; <a href="#o-vwin" title="The writer reads UpperTheory.Top.VWin as the note's weakening of Vandiver, on resemblance alone">o-vwin</a></span>
+</div>
+<div class="node lahtokohta" id="a-vwin-place">
+<span class="nid">a-vwin-place &middot; r.&nbsp;221</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>VWin is built from VVle, is a premise of every_character_of_literature_of_vWin and is the end of vwin_of_row, which gathers 55,754</strong></p>
+<p class="body">VWin is built from VVle, and it is one of the two premises of every_character_of_literature_of_vWin. The theorem vwin_of_row has one premise and VWin as the end of its claim, and it gathers 55,754 declarations, 7.3 % of what the five theorems reach.</p>
+<span class="meta-line">sijoittaa &rarr; <a href="#o-vwin" title="The writer reads UpperTheory.Top.VWin as the note's weakening of Vandiver, on resemblance alone">o-vwin</a></span>
+</div>
+<h2 id="sec-limits">7 &middot; Limits</h2>
+<p class="thread">What the labels, the text reading and the name matches cannot show</p>
+<div class="node vaite" id="t-labels">
+<span class="nid">t-labels &middot; r.&nbsp;234</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>A literature result that the code states outside the five namespaces is not counted</strong></p>
+<p class="body">The five namespaces are labels that the code gives. A result from the literature that the code states under another name is not counted.</p>
+<span class="meta-line">Johto: <a href="#d-published" title="A published statement is a parameterless Prop definition in one of five namespaces, and it states a result without proving it">d-published</a></span>
+<span class="meta-line"><a href="#e-unlabelled" title="The writer reads three premises of topCovolSlim2_use_alt_alt as literature results, by their names, and they lie in none of the five namespaces">e-unlabelled</a> &rarr; havainnollistaa</span>
+</div>
+<div class="node oletus" id="e-unlabelled">
+<span class="nid">e-unlabelled &middot; r.&nbsp;234</span>
+<span class="chip">Oletus</span>
+<span class="laji" title="oletus tai kehys">O</span>
+<p><strong>The writer reads three premises of topCovolSlim2_use_alt_alt as literature results, by their names, and they lie in none of the five namespaces</strong></p>
+<p class="body">The claim of topCovolSlim2_use_alt_alt, for example, has the premises HT.FarguesExact, GR.ZarhinStatement and ReciprocityTheory.ChartRestriction.G.ArakelovGeometry.MoriwakiBigStatement. The writer of this document reads those three as results from the literature, by their names, and they lie in none of the five namespaces.</p>
+<span class="meta-line">havainnollistaa &rarr; <a href="#t-labels" title="A literature result that the code states outside the five namespaces is not counted">t-labels</a></span>
+</div>
+<div class="node vaite" id="t-lowerlimit">
+<span class="nid">t-lowerlimit &middot; r.&nbsp;240</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>If each of the 361 is a literature result, 361 is a lower limit for the literature results the code states</strong></p>
+<p class="body">If each of the 361 is a result from the literature, as its namespace says, the 361 are a lower limit for the number of literature results that the code states.</p>
+<span class="meta-line">Johto: <a href="#t-labels" title="A literature result that the code states outside the five namespaces is not counted">t-labels</a> &middot; <a href="#a-rows" title="Of 361 published statements 350 are in Published, 292 reached, 206 proved, 60 only derived, 26 neither">a-rows</a></span>
+</div>
+<div class="node vaite" id="t-nomark">
+<span class="nid">t-nomark &middot; r.&nbsp;240</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>A skeleton declaration without a mark can still restate a known result</strong></p>
+<p class="body">A skeleton declaration without a mark can still restate a known result.</p>
+<span class="meta-line">Johto: <a href="#t-labels" title="A literature result that the code states outside the five namespaces is not counted">t-labels</a> &middot; <a href="#d-marks" title="Proves, derives and takes are the roles, and the marks of a skeleton declaration are its roles">d-marks</a></span>
+</div>
+<div class="node vaite" id="t-text">
+<span class="nid">t-text &middot; r.&nbsp;243</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Reading roles from text miscounts a claim that ends in a quantifier or a conjunction, which can move items into the row of 26 or the row without a mark</strong></p>
+<p class="body">The script reads the roles from text. It compares last name parts and splits a claim at its last arrow outside brackets. A theorem whose claim ends in a quantifier or a conjunction is counted neither as proving nor as deriving, which can move a published statement into the row of 26 and a skeleton declaration into the row without a mark.</p>
+<span class="meta-line">Johto: <a href="#a-method" title="published.py lists the statements, takes the theorems naming each from the declaration graph and finds the role by the last part of the name">a-method</a> &middot; <a href="#d-claim" title="Claim, end of a claim and premises of a theorem are read from its statement text at the first colon and the last arrow">d-claim</a> &middot; <a href="#d-proves" title="A theorem proves a published statement when it has no premises and its claim is that statement">d-proves</a> &middot; <a href="#d-derives" title="A theorem derives a published statement when its claim ends in it and the theorem has premises">d-derives</a> &middot; <a href="#d-marks" title="Proves, derives and takes are the roles, and the marks of a skeleton declaration are its roles">d-marks</a></span>
+<span class="meta-line">rajaa &rarr; <a href="#t-26" title="The 26 with neither role can be supplied in a form that the definitions of proves and derives miss">t-26</a> &middot; rajaa &rarr; <a href="#a-rows" title="Of 361 published statements 350 are in Published, 292 reached, 206 proved, 60 only derived, 26 neither">a-rows</a> &middot; rajaa &rarr; <a href="#a-marks" title="Of 590 skeleton declarations 132 take, 25 prove or derive, 7 do both and 440 carry no mark">a-marks</a></span>
+</div>
+<div class="node vaite" id="t-name">
+<span class="nid">t-name &middot; r.&nbsp;247</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>A match shows where the code uses a word and not that the mathematics is the step the note means</strong></p>
+<p class="body">A match in the table of note terms is a match of a name. It shows where the code uses a word, and it does not show that the mathematics behind the name is the step that the note means.</p>
+<span class="meta-line">Johto: <a href="#d-patterns" title="published.py holds 20 name patterns, one per term and unrelated to the number of timeline entries, tried on every part of a name and module path, and the columns Matches and Reached count them">d-patterns</a></span>
+<span class="meta-line">rajaa &rarr; <a href="#t-else" title="96 % of the trace formula matches and 73 % of GradedWeylDivisibility lie in Else, which holds 19 %">t-else</a> &middot; rajaa &rarr; <a href="#t-spread" title="Theta lifts, Rallis and covolumes are spread more widely, and definite unitary groups lie mostly in Else and B">t-spread</a> &middot; rajaa &rarr; <a href="#t-belowB" title="Seesaw, Bessel period, Gan-Gross-Prasad, Siegel mass and Chowla-Selberg lie 74 to 94 % below B, which gathers 35 % of everything">t-belowB</a> &middot; rajaa &rarr; <a href="#t-AnotB" title="Divisibility of the lift, Bost slope, von Mangoldt sum and explicit formula lie 69 to 83 % in A outside B, which gathers 31.5 %">t-AnotB</a></span>
+</div>
+<div class="node lahtokohta" id="a-chosen">
+<span class="nid">a-chosen &middot; r.&nbsp;247</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The writer chose the patterns, which stand in TERMS in published.py</strong></p>
+<p class="body">The patterns were chosen by the writer of this document and stand in TERMS at the top of published.py.</p>
+</div>
+<div class="node vaite" id="t-nomatch">
+<span class="nid">t-nomatch &middot; r.&nbsp;251</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>A term without a match can mean a missing ingredient or another name for it</strong></p>
+<p class="body">A term without a match can mean that the code lacks the ingredient. It can equally mean that the code names the ingredient with other words.</p>
+<span class="meta-line">Johto: <a href="#d-patterns" title="published.py holds 20 name patterns, one per term and unrelated to the number of timeline entries, tried on every part of a name and module path, and the columns Matches and Reached count them">d-patterns</a> &middot; <a href="#t-16" title="Sixteen of the 20 terms have matches, and Stepanov, Vandiver, Behrend and Iwasawa tower have none">t-16</a></span>
+<span class="meta-line"><a href="#t-paraphrase" title="The timeline that names Iwasawa tower, Vandiver and Behrend is partly a paraphrase by the author's own account">t-paraphrase</a> &rarr; rajaa</span>
+</div>
+<div class="node vaite" id="t-paraphrase">
+<span class="nid">t-paraphrase &middot; r.&nbsp;251</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>The timeline that names Iwasawa tower, Vandiver and Behrend is partly a paraphrase by the author's own account</strong></p>
+<p class="body">The author describes the timeline, which names the Iwasawa tower, Vandiver and Behrend, as partly a paraphrase.</p>
+<span class="meta-line">Johto: <a href="#a-timeline" title="A timeline of 20 entries in the note names further ingredients, from Chowla-Selberg to Behrend">a-timeline</a> &middot; <a href="#a-claude" title="The author writes that Claude compiled the timeline and that some entries paraphrase a summary of parts he has not mastered yet">a-claude</a></span>
+<span class="meta-line">rajaa &rarr; <a href="#t-nomatch" title="A term without a match can mean a missing ingredient or another name for it">t-nomatch</a></span>
+</div>
+<h2 id="sec-files">8 &middot; Files</h2>
+<p class="thread">File list</p>
+</main>
+</body>
+</html>

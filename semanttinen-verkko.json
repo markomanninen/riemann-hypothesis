@@ -1,0 +1,9 @@
+{
+  "hakemisto": "semantics",
+  "kieli": "en",
+  "tekstit": {
+    "PUBLISHED": "verification/skeleton/PUBLISHED.md",
+    "READING": "verification/skeleton/READING.md",
+    "STRATEGY": "verification/strategy/README.md"
+  }
+}

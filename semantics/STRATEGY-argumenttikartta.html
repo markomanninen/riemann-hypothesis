@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The strategy of the proof, followed through the Lean text &mdash; argumenttikartta</title>
+<style>
+:root {
+  color-scheme: light;
+  --surface-1: #fcfcfb; --surface-2: #f4f3f1; --border: #dedcd7;
+  --ink-1: #0b0b0b; --ink-2: #52514e;
+  --c-vaite: #2a78d6; --c-oletus: #eb6834; --c-peruste: #1baf7a;
+  --c-esim: #eda100; --c-sitaatti: #e87ba4; --c-tuomio: #008300;
+  --c-vastaus: #4a3aa7;
+  --c-maaritelma: #8a5a2b; --c-lause: #0b7285;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface-1: #1a1a19; --surface-2: #242423; --border: #3a3a38;
+  --ink-1: #ffffff; --ink-2: #c3c2b7;
+  --c-vaite: #3987e5; --c-oletus: #d95926; --c-peruste: #199e70;
+  --c-esim: #c98500; --c-sitaatti: #d55181; --c-tuomio: #008300;
+  --c-vastaus: #9085e9;
+  --c-maaritelma: #c08a55; --c-lause: #3bb0c4;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--surface-1); color: var(--ink-1);
+  font: 16px/1.55 -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+main { max-width: 920px; margin: 0 auto; padding: 32px 20px 80px; }
+h1 { font-size: 1.55rem; line-height: 1.25; margin: 0 0 4px; }
+.subtitle { color: var(--ink-2); margin: 0 0 20px; font-size: .9rem; }
+h2 { font-size: 1.15rem; margin: 44px 0 2px; }
+h3 { font-size: 1.02rem; margin: 34px 0 2px; }
+.thread { color: var(--ink-2); font-style: italic; font-size: .92rem; margin: 0 0 14px; }
+.toggle { position: fixed; top: 14px; right: 14px; font-size: .8rem;
+  background: var(--surface-2); color: var(--ink-1); border: 1px solid var(--border);
+  border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+.thesis { border: 1px solid var(--border); border-left: 4px solid var(--c-tuomio);
+  background: var(--surface-2); border-radius: 6px; padding: 14px 16px; margin: 18px 0; }
+.thesis strong { display: block; margin-bottom: 4px; }
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px;
+  margin: 28px 0 4px; padding-top: 14px; border-top: 1px solid var(--border); font-size: .82rem; }
+.legend .lead { color: var(--ink-2); flex-basis: 100%; }
+.legend .key { display: inline-flex; align-items: center; gap: 6px; }
+.legend .sw { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+.node { border: 1px solid var(--border); border-left: 4px solid var(--c, var(--border));
+  background: var(--surface-2); border-radius: 6px; padding: 10px 14px; margin: 10px 0; }
+.node p { margin: 6px 0 0; }
+.chip { display: inline-block; font-size: .68rem; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--ink-1);
+  background: color-mix(in srgb, var(--c, var(--ink-2)) 16%, transparent);
+  border-radius: 4px; padding: 2px 7px; }
+.laji { display: inline-block; font-size: .68rem; font-weight: 700; border: 1px solid var(--border);
+  border-radius: 4px; padding: 1px 6px; margin-left: 6px; color: var(--ink-2); }
+.nid { float: right; font-size: .72rem; color: var(--ink-2); font-family: ui-monospace, monospace; }
+.meta-line { display: block; margin-top: 6px; font-size: .78rem; color: var(--ink-2); }
+.meta-line a { color: inherit; }
+.warn { border: 1px dashed var(--c-oletus); border-radius: 6px; font-size: .82rem;
+  color: var(--ink-2); padding: 6px 10px; margin-top: 8px; }
+.warn b { color: var(--ink-1); font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; }
+.vaite { --c: var(--c-vaite); } .oletus { --c: var(--c-oletus); }
+.peruste { --c: var(--c-peruste); } .esim { --c: var(--c-esim); }
+.sitaatti { --c: var(--c-sitaatti); } .tuomio { --c: var(--c-tuomio); }
+.vastaus { --c: var(--c-vastaus); }
+.maaritelma { --c: var(--c-maaritelma); } .lause { --c: var(--c-lause); }
+.sitaatti p.body { font-family: Georgia, "Times New Roman", serif; font-style: italic; }
+.gen-note { border: 1px dashed var(--border); border-radius: 6px; color: var(--ink-2);
+  font-size: .85rem; padding: 8px 12px; margin: 14px 0; }
+.flowmap { margin: 14px 0 6px; font-size: .82rem; }
+.flowmap .stage { display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap; }
+.flowmap .box { background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 5px; padding: 5px 11px; }
+.flowmap .box b { display: block; }
+.flowmap .box small { color: var(--ink-2); }
+.flowmap .box a { color: inherit; text-decoration: none; }
+.flowmap .box a:hover b { text-decoration: underline; }
+.flowmap .down { text-align: center; color: var(--ink-2); margin: 3px 0; }
+.flowmap .claims { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.flowmap .steps { margin: 5px 0 0; padding-left: 4px; list-style: none; color: var(--ink-2); }
+.flowmap .steps li { margin: 2px 0; }
+.flowmap i { color: var(--ink-2); font-style: normal; }
+.uplink { margin: 0 0 14px; font-size: .84rem; }
+.uplink a { color: var(--ink-2); text-decoration: none; }
+.uplink a:hover { color: var(--ink-1); text-decoration: underline; }
+@media (max-width: 640px) { .flowmap .claims { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<button class="toggle" onclick="const r=document.documentElement;r.dataset.theme=r.dataset.theme==='dark'?'light':'dark'">Vaihda teema</button>
+<main>
+<h1>The strategy of the proof, followed through the Lean text</h1>
+<p class="subtitle">Argumenttikartta &middot; lähde: <code>/Users/markomanninen/Documents/GitHub/riemann-hypothesis/verification/strategy/README.md</code></p>
+<div class="gen-note">Tämä tiedosto generoidaan. Muokkaa verkkoa <code>STRATEGY.graph.json</code> ja yksiköintiä <code>STRATEGY.units.json</code>, ja piirrä kartta uudelleen skriptillä render.py.</div>
+<div class="legend"><span class="lead">Solmutyypit ja runkolajit (D määritelmä, A aksiooma tai lähtökohta, T teoreema johtoineen, E esimerkki tai havainto, O oletus tai kehys):</span>
+<span class="key"><span class="sw" style="background:var(--c-vaite)"></span>Väite</span>
+<span class="key"><span class="sw" style="background:var(--c-oletus)"></span>Oletus</span>
+<span class="key"><span class="sw" style="background:var(--c-peruste)"></span>Peruste</span>
+<span class="key"><span class="sw" style="background:var(--c-maaritelma)"></span>Määritelmä</span>
+<span class="key"><span class="sw" style="background:var(--c-lause)"></span>Lause</span>
+<span class="key"><span class="sw" style="background:var(--c-esim)"></span>Esimerkki</span>
+<span class="key"><span class="sw" style="background:var(--c-sitaatti)"></span>Sitaatti</span>
+<span class="key"><span class="sw" style="background:var(--c-tuomio)"></span>Tulos</span>
+<span class="key"><span class="sw" style="background:var(--c-vastaus)"></span>Vastaus</span>
+</div>
+<h2 id="sec-the-strategy-of-the-proof-followed-throu">0 &middot; The strategy of the proof, followed through the Lean text</h2>
+<div class="node vaite" id="s0-route">
+<span class="nid">s0-route &middot; r.&nbsp;3</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>The proof derives the five theorems from one inequality on a weighted prime sum, which it gets by bounding the slope of one lattice from two sides with m near √x</strong></p>
+<p class="body">The proof in src derives the five theorems of Main.lean from one inequality. The first theorem states that a Dirichlet L-function has no zero with real part above 1/2, and the other four follow from it. The inequality says that a weighted sum over the prime powers up to x, with its main terms subtracted, is at most x^(1/2 + cε) for all x between Y and Y^(3/2). This holds for every small ε &gt; 0 and for arbitrarily large Y, with a constant c that depends on neither ε nor Y. The proof gets the inequality by bounding the slope of one lattice from two sides. A divisibility inequality bounds that slope, together with a height term, from above by m times a main term, where m is the number of theta lifts in a chain between unitary groups. A slope inequality bounds the same slope from below. The two bounds leave error terms of about x/m and about m for the weighted sum, and the proof assumes that m lies in a window around √x, where both terms are about √x.</p>
+<span class="meta-line">Johto: <a href="#st1" title="Step 1. The five theorems follow from zero-freeness of Dirichlet L-functions for real part above 1/2">st1</a> &middot; <a href="#st2" title="Step 2. Zero-freeness follows by a Landau argument from an upper bound x^θ, for every θ above 1/2, for the prime sum Gm with its main terms subtracted on intervals from Y to Y^(3/2), for arbitrarily large Y">st2</a> &middot; <a href="#st3" title="Step 3. The wanted characters sit among the characters of a host, a subgroup sum removes some unwanted ones, and a count of zeros with a mean square bound shows that at least half of the candidates for q and then for d give the others a prime sum of at most y^(1/2+ε/2) for y from Y to Y^A">st3</a> &middot; <a href="#st4" title="Step 4. The sum over all characters of the host equals ASK minus its main term by finite Fourier inversion">st4</a> &middot; <a href="#st5" title="Step 5. ASK is bounded through the slope of a lattice, from above by DIV and from below by SlopeIneq">st5</a> &middot; <a href="#st6" title="Step 6. Each map into the lattice factors through a chain of m kernels between unitary groups of ranks k + j(t+1), the first m − 2 composed one after the other, the last two inside a finite sum, with one more linear map after them">st6</a> &middot; <a href="#st7" title="Step 7. The upper bound adds one term a·log a − a − a·logOm per lift and top place, and interlacing with a hook product bounds the rest">st7</a> &middot; <a href="#st8" title="Step 8. The lower bound needs each map to be nearly an isometry and two maps of different words to overlap little">st8</a> &middot; <a href="#st9" title="Step 9. The two bounds leave errors of about x/m, m and √x, and m between x^(1/2−ε) and x^(1/2+ε/2) gives the exponent 1/2 + cε">st9</a> (todistus seuraa tulosta)</span>
+<span class="meta-line"><a href="#un-list" title="The proofs and definitions that stayed unread, from Claim.zeta to most of the 463,949 declarations behind the record">un-list</a> &rarr; rajaa &middot; <a href="#un-math" title="Whether the definitions are the mathematical objects their names suggest is a question for a mathematician">un-math</a> &rarr; rajaa &middot; <a href="#k-theta" title="That the definitions fit a theta kernel for a pair of unitary groups is the session's interpretation from the names">k-theta</a> &rarr; rajaa &middot; <a href="#k-reading" title="The reading of the chain found the kernels defined from the distributions, the theta-lift conditions ThHyp untraced, the height numbers built in two halves, and adm2 and BesselId supplied from the record">k-reading</a> &rarr; rajaa &middot; <a href="#s0-reader" title="A language model read the route in one session with seven parallel readings, no mathematician checked it, Lean was not run, and a reading leaves open whether a definition is the object its name suggests">s0-reader</a> &rarr; rajaa</span>
+</div>
+<div class="node lahtokohta" id="s0-reader">
+<span class="nid">s0-reader &middot; r.&nbsp;21</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>A language model read the route in one session with seven parallel readings, no mathematician checked it, Lean was not run, and a reading leaves open whether a definition is the object its name suggests</strong></p>
+<p class="body">A language model, Claude, read the route in one session on 23 and 24 November 2026. Seven further runs of the same model each read one branch and reported back. A table below names the seven readings, and a section names the reading behind a sentence that comes from a report. A sentence without a named reading reports what this session read. No mathematician has checked the readings, and Lean was not run for this document. A reading shows what the text states and how the proofs call each other. It leaves open whether a definition is the mathematical object that its name suggests.</p>
+<span class="meta-line">rajaa &rarr; <a href="#s0-route" title="The proof derives the five theorems from one inequality on a weighted prime sum, which it gets by bounding the slope of one lattice from two sides with m near √x">s0-route</a></span>
+</div>
+<div class="node lahtokohta" id="s0-counts">
+<span class="nid">s0-counts &middot; r.&nbsp;29</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The counts come from compiled files of the build cache, and the README records no complete comparator run on the current source</strong></p>
+<p class="body">The counts of this document come from compiled files of the project, which lake exe cache get downloads from the build cache of the repository. The check that the README of the repository describes, lake comparator, compiles the source and checks the proof against Challenge.lean, and that README records no complete run of it on the current source.</p>
+</div>
+<h2 id="sec-words-used-here">1 &middot; Words used here</h2>
+<div class="node maaritelma" id="w-rests">
+<span class="nid">w-rests &middot; r.&nbsp;37</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>A constant is a compiled declaration, and a theorem rests on the project declarations its compiled statement and proof reach, Mathlib excluded</strong></p>
+<p class="body">A declaration, a module, the outline and the verb gathers mean what the README of the skeleton says. A constant is a compiled declaration or a name that Lean creates for one, such as the constructor of a record.</p>
+<p class="body">A theorem rests on the declarations of the project that its compiled statement and proof reach through other constants of the project, the theorem itself included. cone.py counts them in the exact graph of../decl-graph, which was built on 2026-11-23. Mathlib and Lean's library are outside the count.</p>
+</div>
+<div class="node vaite" id="w-outline-le">
+<span class="nid">w-outline-le &middot; r.&nbsp;40</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>An outline number of the exact graph is at most the rests-on number, because the outline counts only what is reached through the theorem alone</strong></p>
+<p class="body">The outline counts what a theorem gathers, which is the part that the five theorems reach through that theorem alone, so a number of the outline of the exact graph is at most the number given here.</p>
+<span class="meta-line">Johto: <a href="#w-rests" title="A constant is a compiled declaration, and a theorem rests on the project declarations its compiled statement and proof reach, Mathlib excluded">w-rests</a></span>
+</div>
+<div class="node maaritelma" id="w-read">
+<span class="nid">w-read &middot; r.&nbsp;46</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>Read in full, read at its top and read by statement are three depths of reading, and this session is the model session that wrote the document</strong></p>
+<p class="body">A proof was read in full when every line of it was read. A proof was read at its top when its first call and the premises passed to that call were read. A theorem was read by statement when its statement was read and its proof was left unread.</p>
+<p class="body">This session means the model session that wrote this document.</p>
+</div>
+<div class="node maaritelma" id="w-premise">
+<span class="nid">w-premise &middot; r.&nbsp;50</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>Premise, supplied, closed theorem, record and bundle</strong></p>
+<p class="body">A premise is a hypothesis of a theorem. A premise is supplied when a call of the theorem passes a proof of it. A closed theorem is a theorem that takes no premises.</p>
+<p class="body">A record is a Lean structure. A bundle is a record whose fields are propositions, so a field of it is one premise.</p>
+</div>
+<div class="node maaritelma" id="w-datum">
+<span class="nid">w-datum &middot; r.&nbsp;54</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>A datum is a value of the record D7 with a host, lattices, maps, words and the number m of lifts, a family holds a datum for every large x and index, and a host is the record of an auxiliary abelian number field</strong></p>
+<p class="body">A datum is a value of the code's record D7, which D7.md opens. It holds a host, lattices, maps and the number m of lifts. A datum has a finite set of words, the code's type what₂.Word. A family holds a datum for every large x and every index of a set that depends on x.</p>
+<p class="body">A host is the code's record for an auxiliary abelian number field.</p>
+</div>
+<div class="node maaritelma" id="w-slope">
+<span class="nid">w-slope &middot; r.&nbsp;59</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>The slope of a lattice is degree over rank with degree minus log covolume, and mu of a Hermitian lattice is twice the slope with two corrections</strong></p>
+<p class="body">The slope of a lattice is the code's number mu. Statement.lean defines the covolume covol of a lattice in a Euclidean space as the square root of the Gram determinant of a basis, the degree as minus the logarithm of the covolume, and the slope as the degree divided by the rank. The largest slope muMax is the supremum of the slopes of the nonzero sublattices. For a Hermitian lattice over a number field K the definition muDef in StatementPl.lean sets mu to twice the slope of the lattice, minus log 2, plus the quotient of log |d_K| by the degree of K over the rational numbers, where d_K is the discriminant of K.</p>
+</div>
+<div class="node maaritelma" id="w-height">
+<span class="nid">w-height &middot; r.&nbsp;68</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>The height htMap of a map is the mean over infinite places of the log of the squared operator norm, and the number h of a word is a separate field that bounds it</strong></p>
+<p class="body">The height of a map is the code's number htMap in the file of muDef. It is the mean, over the infinite places of K, of the logarithm of the squared operator norm of the map. The number h of a word of a datum is a different number. It is a real field of the datum, the condition WordFacts requires that the height of the map of the word, when the map is not zero, is at most h, and in a family a formula named hExpl6 gives h.</p>
+</div>
+<div class="node maaritelma" id="w-link">
+<span class="nid">w-link &middot; r.&nbsp;73</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>A link is a condition on a family whose name begins with Link</strong></p>
+<p class="body">A link is one of the conditions on a family in GlobalTheoremInputs.lean whose names begin with Link.</p>
+</div>
+<div class="node maaritelma" id="w-note">
+<span class="nid">w-note &middot; r.&nbsp;76</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>The note is the author's four-page note, whose timeline has 20 entries</strong></p>
+<p class="body">The note is the four-page note by the author of the Lean source at. Its timeline has 20 numbered entries.</p>
+</div>
+<div class="node maaritelma" id="w-interp">
+<span class="nid">w-interp &middot; r.&nbsp;78</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>A sentence marked as suggestion, interpretation or guess goes beyond what the Lean text shows</strong></p>
+<p class="body">A sentence that says the names suggest something, or that calls itself an interpretation or a guess, goes beyond what the Lean text shows.</p>
+</div>
+<div class="node lahtokohta" id="w-readings">
+<span class="nid">w-readings &middot; r.&nbsp;81</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The seven parallel readings and what each read</strong></p>
+<p class="body">The seven parallel readings are these. Each brief asked for the Lean text only, and each report marked its own guesses.</p>
+<p class="body">Name used below — What it read</p>
+<p class="body">the Landau reading — the proof of zeroFree_of_rpow_window, 22 lemmas in full and 11 by statement</p>
+<p class="body">the reading of six proofs — Ga_bound5, boundsMu, height_chain_atR and young_diagram_step_origin in full, the statement divIneqRecord that RecNums.divIneq applies, and the beginning of core_ineq</p>
+<p class="body">the reading of the chain — the premises of rowsU_of_colPins_alt, at the top of each proof</p>
+<p class="body">the reading of the links — linkCore in full and the statements of the links</p>
+<p class="body">the reading of VWin — the statement of VWin two definitions deep, and the proofs above it at their tops</p>
+<p class="body">the reading of Row — the statement of Row with its definitions, and the proofs above it at their tops</p>
+<p class="body">the wiring reading — the file of every_character_of_literature_of_vWin, and three proofs in full</p>
+</div>
+<h2 id="sec-the-route-in-nine-steps">2 &middot; The route in nine steps</h2>
+<div class="node vaite" id="st1">
+<span class="nid">st1 &middot; r.&nbsp;96</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Step 1. The five theorems follow from zero-freeness of Dirichlet L-functions for real part above 1/2</strong></p>
+<p class="body">The five theorems follow from one statement, that a Dirichlet L-function has no zero with real part above 1/2. The Lean statement sets aside the trivial character at s = 1.</p>
+<span class="meta-line">Johto: <a href="#f-five" title="Statements.lean states five propositions, the first being that a Dirichlet L-function is nonzero for real part above 1/2 except the trivial character at 1">f-five</a> &middot; <a href="#f-claims" title="The other four follow through Claim.zeta and Claim.strip, which rest on 9 and 7 declarations and were not read">f-claims</a> &middot; <a href="#f-calls" title="The calls below everyCharacter run through six theorems that rest on 800,327 down to 54,874 declarations">f-calls</a> (todistus seuraa tulosta)</span>
+</div>
+<div class="node vaite" id="st2">
+<span class="nid">st2 &middot; r.&nbsp;98</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Step 2. Zero-freeness follows by a Landau argument from an upper bound x^θ, for every θ above 1/2, for the prime sum Gm with its main terms subtracted on intervals from Y to Y^(3/2), for arbitrarily large Y</strong></p>
+<p class="body">That statement follows from an upper bound x^θ, for every θ above 1/2, for a weighted prime sum Gm x on the intervals from Y to Y^(3/2), for arbitrarily large Y. The sum has its main terms subtracted. The step is a Landau argument.</p>
+<span class="meta-line">Johto: <a href="#ps-gm" title="A level holds a finite set KEPT of primitive characters, and Gm is Gz plus the weighted real parts of gChi over KEPT">ps-gm</a> &middot; <a href="#l-formB" title="formB states that an upper bound Gm x ≤ x^θ on intervals from Y to Y^la for arbitrarily large Y gives no zero with real part above θ for every character of KEPT">l-formB</a> &middot; <a href="#l-contra" title="Stage 4. A zero with real part above θ makes a coefficient of size c/d^k with d below σ−θ, which contradicts the bounds for large U">l-contra</a> (todistus seuraa tulosta)</span>
+</div>
+<div class="node vaite" id="st3">
+<span class="nid">st3 &middot; r.&nbsp;101</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Step 3. The wanted characters sit among the characters of a host, a subgroup sum removes some unwanted ones, and a count of zeros with a mean square bound shows that at least half of the candidates for q and then for d give the others a prime sum of at most y^(1/2+ε/2) for y from Y to Y^A</strong></p>
+<p class="body">The sum Gm is a weighted sum of the prime sums of a finite set of characters, the wanted characters. The proof places them among the characters of an auxiliary abelian field, the host. A sum over a subgroup removes the characters that are nontrivial on it, and the proof bounds the prime sum of each remaining unwanted character separately. The host depends on two primes q and d. A count of zeros and a mean square bound show that at least half of the candidates for q, and then at least half of the candidates for d, give every such character a prime sum of at most y^(1/2 + ε/2) for the y from Y to Y^A, where A ≥ 1 is an exponent that the caller chooses. The sections below call the wanted characters kept and the unwanted characters that remain the other characters.</p>
+<span class="meta-line">Johto: <a href="#c-eath" title="EAtH places the kept characters among those of the host and asks ‖gChi χ x‖ ≤ x^(1/2+ε) for the other characters, those trivial on A0 and not kept">c-eath</a> &middot; <a href="#c-winpair" title="WinPair fixes the primes q and d of the host with log q near Y^(ε/5), log d near Y^(ε/5)(log Y)² and divisibility conditions on d + 1">c-winpair</a> &middot; <a href="#c-pairgood" title="PairGood says that each other character has ‖gChi χ y‖ ≤ y^(1/2+ε/2) for y from Y to Y^A and a bounded logarithmic derivative, with zero-free boxes for the real ones">c-pairgood</a> &middot; <a href="#c-pairex" title="pairEx proves that such a pair exists for every large Y, through pair_exists and pair_share with η = 1/2">c-pairex</a> &middot; <a href="#p-share" title="pair_share states that all but a share η of the primes q meet GoodQ and for each such q all but a share η of the primes d meet GoodD, and pairEx turns the case η = 1/2 into PairGood">p-share</a> &middot; <a href="#p-kind1" title="Bad primes of the first kind, which fail ZeroFreeBox, have share at most a constant times U^(−21/40), from a zero density bound U^(3/8) against at least U^(9/10) primes">p-kind1</a> &middot; <a href="#p-kind2" title="Bad primes of the second kind have a truncated sum above y^(1/2+τ)/2, and bad_share gives them a share below η/2 over the R characters">p-kind2</a> &middot; <a href="#p-badshare" title="bad_share follows from the mean square premise MeanSq by cutting the interval into dyadic blocks, which gives a share at most (32·C₂/τ)·Y^(−τ)/(1 − 2^(−τ))">p-badshare</a> &middot; <a href="#p-meansq" title="meanSqK proves MeanSq by multiplying the square out, with the trivial bound for the pairs where n·n′ is a square and a premise on sums of (p/r) for the others">p-meansq</a> &middot; <a href="#h-rows" title="Five lemmas carry ch_core, an exact identity ASK − MAIN = De, a common argument, a subgroup sum, the value at x and the division, with a premise on the set TT">h-rows</a> (todistus seuraa tulosta)</span>
+</div>
+<div class="node vaite" id="st4">
+<span class="nid">st4 &middot; r.&nbsp;110</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Step 4. The sum over all characters of the host equals ASK minus its main term by finite Fourier inversion</strong></p>
+<p class="body">The sum over all characters of the auxiliary field equals an arithmetic quantity ASK minus its main term, by finite Fourier inversion.</p>
+<span class="meta-line">Johto: <a href="#h-chcore" title="ch_core assumes the bound of ch_top for ASK − MAIN and concludes that the prime sum of the kept characters is at most x^(1/2+(C+3)ε) plus the sum SigA of the other characters">h-chcore</a> &middot; <a href="#h-balance" title="Row 1 is finite Fourier inversion because De is an average of twisted sums over the characters, and the sum over the m lifts multiplies the summand of row 3 by m">h-balance</a> (todistus seuraa tulosta)</span>
+</div>
+<div class="node vaite" id="st5">
+<span class="nid">st5 &middot; r.&nbsp;112</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Step 5. ASK is bounded through the slope of a lattice, from above by DIV and from below by SlopeIneq</strong></p>
+<p class="body">ASK is bounded through the slope of a lattice. A divisibility inequality DIV bounds the slope from above, and a slope inequality SlopeIneq bounds it from below.</p>
+<span class="meta-line">Johto: <a href="#t-div" title="DIV says that muCC + h u − Fo is at most the sum over t of m·(ph(aT t) − aT t·logOm) − aT t·log(T u) plus errors, the one condition where m multiplies the main term">t-div</a> &middot; <a href="#t-slope" title="SlopeIneq says, when three small parameters lie in stated ranges and HH bounds a difference, that the weighted mean over u of muN u − h u, minus the log of the number of u and corrections, is at most muCC">t-slope</a> &middot; <a href="#t-cancel" title="The mean of DIV and SlopeIneq cancel muCC and the mean of h and bound the mean of muN, and two further conditions bound ASK through Ga, so ASK ≤ Main plus errors">t-cancel</a> &middot; <a href="#r-ties" title="muCC is the slope of the dual of the lattice RR, muN u the slope of the lattice Nu u, h u bounds the height of the map Bk u from Nu u into the dual of RR, and the number of lifts is R.m">r-ties</a> (todistus seuraa tulosta)</span>
+<span class="meta-line"><a href="#h-two" title="Two theorems carry the main inequality, and neither proof contains a theta lift or a lattice, only m copies of one term and real numbers of a record">h-two</a> &rarr; rajaa</span>
+</div>
+<div class="node vaite" id="st6">
+<span class="nid">st6 &middot; r.&nbsp;114</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Step 6. Each map into the lattice factors through a chain of m kernels between unitary groups of ranks k + j(t+1), the first m − 2 composed one after the other, the last two inside a finite sum, with one more linear map after them</strong></p>
+<p class="body">Both bounds concern linear maps into that lattice, one map for each word of a datum. Each map factors through a chain of m kernels between unitary groups of ranks k + j(t + 1), for j from 0 to m, where k and t are two natural numbers of the datum. The first m − 2 kernels are composed one after the other, the last two are composed inside a finite sum, and one more linear map follows.</p>
+<span class="meta-line">Johto: <a href="#r-ties" title="muCC is the slope of the dual of the lattice RR, muN u the slope of the lattice Nu u, h u bounds the height of the map Bk u from Nu u into the dual of RR, and the number of lifts is R.m">r-ties</a> &middot; <a href="#k-colchain" title="A ColChain holds matrices Kj through whose product the pairing of the datum factors, and a ChainTie identifies them with the kernel operators and the coupling of a KerChain">k-colchain</a> &middot; <a href="#k-groups" title="The group acting on the spaces chF u j contains UF E (N j), the isometry group of the standard Hermitian form on E^r, so a unitary group">k-groups</a> &middot; <a href="#k-rank" title="The rank is N j = k + j·(t+1), and entry 8 of the note writes a lift as π ↦ π ⊞ μ_j[t]">k-rank</a> &middot; <a href="#k-count" title="Since R.m = m2 + 2, the chain of a word has m2 steps and so m − 1 matrices, with ranks from N 0 to N m because the last matrix covers two lifts">k-count</a> &middot; <a href="#k-dists" title="The record ChTh holds m distributions th 0 to th (m−2) and top, equivariant under both unitary groups">k-dists</a> &middot; <a href="#k-matrices" title="The first m − 2 matrices are kernel operators, the last is a coupling built as a finite sum of products of two kernels, and a final linear map follows">k-matrices</a> &middot; <a href="#k-read" title="rowsU_of_colPins_alt proves that a datum with its ties has a ColChain with a ChainTie and rests on 14,837 declarations">k-read</a> (todistus seuraa tulosta)</span>
+<span class="meta-line"><a href="#k-reading" title="The reading of the chain found the kernels defined from the distributions, the theta-lift conditions ThHyp untraced, the height numbers built in two halves, and adm2 and BesselId supplied from the record">k-reading</a> &rarr; rajaa &middot; <a href="#n-entries" title="Entries 7, 8, 9, 10, 12, 13, 16 and 17 name interlacing weights, iterated theta lifts with m like √X, divisibility, the seesaw, the Bost slope inequality, approximate orthogonality and a weakening of Vandiver">n-entries</a> &rarr; vertaa</span>
+</div>
+<div class="node vaite" id="st7">
+<span class="nid">st7 &middot; r.&nbsp;119</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Step 7. The upper bound adds one term a·log a − a − a·logOm per lift and top place, and interlacing with a hook product bounds the rest</strong></p>
+<p class="body">The upper bound adds one term a·log a − a − a·logOm for each lift and each top place, where a is the top weight at that place and logOm is a constant of the host. Interlacing weights and a hook product bound the rest of the lift by an error term.</p>
+<span class="meta-line">Johto: <a href="#u-kerplace" title="kerPlace is the sum of ph over the weights minus their sum times logOm, logHook is the log of a hook product, and hU adds kerPlace and subtracts logHook over places and lifts">u-kerplace</a> &middot; <a href="#u-stepE" title="stepE_num proves that the sum of ph over the weights minus logHook is at most ph(aT ρ) at a top place and 0 elsewhere up to an error, and that the weights sum to aT ρ + k·w">u-stepE</a> &middot; <a href="#u-hook" title="young_diagram_hook says that the sum of the logs of the factorials of the row lengths is at most the log of the hook product">u-hook</a> &middot; <a href="#u-origin" title="young_diagram_step_origin pairs each lower row with a row under the hook product through the interlacing and leaves the top row, of length aT + w − s, without a partner">u-origin</a> &middot; <a href="#u-each" title="Each lift contributes at most ph(aT t) plus an error at a top place, and kerPlace multiplies the weight sum aT t + k·w by logOm, while the main term of DIV holds m·(ph(aT t) − aT t·logOm)">u-each</a> (todistus seuraa tulosta)</span>
+<span class="meta-line"><a href="#u-open" title="The document does not record where the proof puts the terms that contain w and s">u-open</a> &rarr; rajaa</span>
+</div>
+<div class="node vaite" id="st8">
+<span class="nid">st8 &middot; r.&nbsp;122</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Step 8. The lower bound needs each map to be nearly an isometry and two maps of different words to overlap little</strong></p>
+<p class="body">The lower bound needs each map to be nearly an isometry, and two maps of different words to overlap by no more than a stated amount.</p>
+<span class="meta-line">Johto: <a href="#lo-frame" title="Frame_at is the slope inequality for the lattices of a datum, derived from a general statement about several maps into one lattice that rests on 400 declarations">lo-frame</a> &middot; <a href="#lo-linkS" title="LinkS bounds the Gram matrix of the maps under a premise that duS u·Γ²/Dstar lies between 1/C0 and C0, with hsSq u u′ ≤ (1+η0)·duS u·duS u′/Dstar, hsDiagFull u ≤ e0·duS u and Dall ≤ (1+η1)·Dstar, with η0, η1 and √e0 at most exp(−x^(ε/8))">lo-linkS</a> &middot; <a href="#lo-interp" title="The session's interpretation is that each map is an isometry up to a small relative error and that two different maps overlap as two random subspaces do, which the note calls approximate orthogonality">lo-interp</a> (todistus seuraa tulosta)</span>
+</div>
+<div class="node vaite" id="st9">
+<span class="nid">st9 &middot; r.&nbsp;124</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Step 9. The two bounds leave errors of about x/m, m and √x, and m between x^(1/2−ε) and x^(1/2+ε/2) gives the exponent 1/2 + cε</strong></p>
+<p class="body">After a division the two bounds leave error terms of about x/m and about m for the weighted sum, and a further term of about √x that does not depend on m. The proof assumes that m lies between x^(1/2 − ε) and x^(1/2 + ε/2), which keeps every term at most 4·x^(1/2 + 13ε/8), and that gives the exponent 1/2 + cε.</p>
+<span class="meta-line">Johto: <a href="#h-four" title="By the session's arithmetic the division leaves four terms, at most 2x^(1/2+ε), 2, 4x^(1/2+13ε/8) and 2x^(1/2+9ε/8)">h-four</a> &middot; <a href="#h-exponent" title="The four terms add up to at most 10·x^(1/2+13ε/8), and with the further factors the exponent is 1/2 + (C+3)ε">h-exponent</a> &middot; <a href="#h-window" title="The terms x/m and m are equal at m = √x, the proof takes the window for m as premises and does not choose m, the fourth term is about √x for every m, and core_gm calls ch_core with C = eD + eL + 3, which gives its conclusion one ε more">h-window</a> (todistus seuraa tulosta)</span>
+</div>
+<div class="node vaite" id="s2-branches">
+<span class="nid">s2-branches &middot; r.&nbsp;134</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Further branches supply the premises, namely VWin, Row and a record of 46 fields fed by a covolume bound</strong></p>
+<p class="body">Further branches supply the premises of this route. One proves a bound on lengths of Galois cohomology groups, which the code calls VWin. One proves the existence of Galois representations, which the code calls Row. The largest one builds a record of 46 fields that holds the chains of lifts and their properties, and a covolume bound feeds it.</p>
+<span class="meta-line">Johto: <a href="#f-inputs" title="Green rests on 64 declarations, VWin on 173,628, the record on 463,949 and Row on 195,170">f-inputs</a> &middot; <a href="#v-def" title="VWin says that the lengths shaLen of certain Galois cohomology groups are finite and that the sum of log l times the lengths is at most √exp(x^ε), for subfields of cyclotomic fields cut out by ψ, q, d and an exponent">v-def</a> &middot; <a href="#g-row" title="Row says that every regular algebraic polarized cuspidal representation of GL_n over a CM field has a continuous semisimple Galois representation with the condition PropsB">g-row</a> &middot; <a href="#b-record" title="nonempty_hyps_definite_side_of_closed_bound builds the record HypsAlt of 46 fields, whose existence zero_free_all_of_green_v_win opens and passes to the shape theorem">b-record</a> &middot; <a href="#b-covol" title="topCovolSlim2_use_alt_alt derives the covolume bound hX from fifteen premises that project theorems fill, the largest described by their names as a toroidal compactification statement and a toroidal integral of Siegel">b-covol</a> (todistus seuraa tulosta)</span>
+</div>
+<h2 id="sec-what-the-note-says-about-the-strategy">3 &middot; What the note says about the strategy</h2>
+<div class="node lahtokohta" id="n-idea">
+<span class="nid">n-idea &middot; r.&nbsp;141</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The note calls the argument a descendant of Stepanov's, in which multiplicity is hard to find over the integers</strong></p>
+<p class="body">The note gives the idea in one paragraph and a timeline. This session read the PDF directly.</p>
+<p class="body">The note says that "In Stepanov's argument resolving Riemann over function fields one uses a divisor involving multiplicity" and that the argument "is a descendant of Stepanov's, but multiplicity is hard to find over the integers".</p>
+</div>
+<div class="node lahtokohta" id="n-e5">
+<span class="nid">n-e5 &middot; r.&nbsp;146</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Entry 5 of the timeline switches to the sum Σ Λ(n)(X/n − 1) − X log X + (1+γ)X</strong></p>
+<p class="body">Entry 5 of the timeline switches to the sum Σ Λ(n)·(X/n − 1) over n ≤ X, minus X log X, plus (1 + γ)·X.</p>
+</div>
+<div class="node vaite" id="n-gz">
+<span class="nid">n-gz &middot; r.&nbsp;146</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>The Lean definition Gz is the expression of entry 5 and the trivial-character part of Gm</strong></p>
+<p class="body">The Lean definition Gz, which the section on the prime sum gives, is this expression, and it is the part of the sum Gm of step 2 that belongs to the trivial character.</p>
+<span class="meta-line">Johto: <a href="#n-e5" title="Entry 5 of the timeline switches to the sum Σ Λ(n)(X/n − 1) − X log X + (1+γ)X">n-e5</a> &middot; <a href="#ps-gz" title="Sz x is the sum of Λ(n)(x/n − 1) over n ≤ x and Gz x is Sz x − x log x + (1+γ)x">ps-gz</a> &middot; <a href="#ps-gm" title="A level holds a finite set KEPT of primitive characters, and Gm is Gz plus the weighted real parts of gChi over KEPT">ps-gm</a> (todistus seuraa tulosta)</span>
+</div>
+<div class="node lahtokohta" id="n-entries">
+<span class="nid">n-entries &middot; r.&nbsp;149</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Entries 7, 8, 9, 10, 12, 13, 16 and 17 name interlacing weights, iterated theta lifts with m like √X, divisibility, the seesaw, the Bost slope inequality, approximate orthogonality and a weakening of Vandiver</strong></p>
+<p class="body">Entry 7 speaks of "GGP periods, with values 0, 1 meaning interlacing weights".</p>
+<p class="body">Entry 8 reads "Iterated theta lifts U(X_0) → U(X_1) → ··· → U(X_m) between totally definite unitary groups, π ↦ π ⊞ μ_j[t], wins multiplicity m. Time to take m like √X".</p>
+<p class="body">Entries 9, 10, 12, 13 and 16 name the norms of the lifts with divisibility "via Chowla-Selberg, Weyl, and Siegel mass", a lower bound on the divisibility of the m-fold lift, a seesaw that makes the period of the iterated lift a Bessel period, the Bost slope inequality, and the "approximate orthogonality of the columns of the integral structure".</p>
+<p class="body">Entry 17 speaks of classes in H¹(𝒪_E[1/ℓ], ℚ_ℓ/ℤ_ℓ(−e)) and "a significant weakening of Vandiver".</p>
+<span class="meta-line">vertaa &rarr; <a href="#st6" title="Step 6. Each map into the lattice factors through a chain of m kernels between unitary groups of ranks k + j(t+1), the first m − 2 composed one after the other, the last two inside a finite sum, with one more linear map after them">st6</a> &middot; <a href="#h-window" title="The terms x/m and m are equal at m = √x, the proof takes the window for m as premises and does not choose m, the fourth term is about √x for every m, and core_gm calls ch_core with C = eD + eL + 3, which gives its conclusion one ε more">h-window</a> &rarr; vertaa</span>
+</div>
+<div class="node lahtokohta" id="n-author">
+<span class="nid">n-author &middot; r.&nbsp;159</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The author writes that Claude provided the timeline and that he has not mastered the surrounding mathematics</strong></p>
+<p class="body">The author writes that Claude provided the timeline, that parts of it paraphrase a summary "which might make zero sense", and that he presents the argument "before having mastered a massive neighbourhood around its mathematics".</p>
+</div>
+<h2 id="sec-from-the-five-theorems-to-one-statement">4 &middot; From the five theorems to one statement</h2>
+<div class="node lahtokohta" id="f-five">
+<span class="nid">f-five &middot; r.&nbsp;166</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Statements.lean states five propositions, the first being that a Dirichlet L-function is nonzero for real part above 1/2 except the trivial character at 1</strong></p>
+<p class="body">Statements.lean states the five propositions.</p>
+<p class="body">LFunction_ne_zero_of_half_lt_re says that the value of a Dirichlet L-function of Mathlib is not zero at any s with real part above 1/2, except for a trivial character at s = 1.</p>
+<p class="body">riemannHypothesis is Mathlib's proposition RiemannHypothesis, and riemannZeta_eq_zero_re says that every zero of the zeta function other than the trivial zeros has real part 1/2.</p>
+<p class="body">LFunction_eq_zero_re says that every zero of a Dirichlet L-function with real part between 0 and 1 has real part 1/2, and LFunction_eq_zero_re_of_isPrimitive says the same for primitive characters.</p>
+</div>
+<div class="node lahtokohta" id="f-claims">
+<span class="nid">f-claims &middot; r.&nbsp;176</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The other four follow through Claim.zeta and Claim.strip, which rest on 9 and 7 declarations and were not read</strong></p>
+<p class="body">riemannHypothesis applies Claim.zeta to the first theorem, and LFunction_eq_zero_re applies Claim.strip to it. The two remaining theorems are restatements of these two. Claim.zeta rests on 9 declarations of the project and Claim.strip on 7, and whatever else the two proofs use is Mathlib's. This session did not read them. NOTES.md describes the step as the standard argument with the functional equation, which moves a zero with real part below 1/2 to one above it.</p>
+</div>
+<div class="node lahtokohta" id="f-calls">
+<span class="nid">f-calls &middot; r.&nbsp;182</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The calls below everyCharacter run through six theorems that rest on 800,327 down to 54,874 declarations</strong></p>
+<p class="body">The proof of the first theorem is the theorem everyCharacter of MainConclusion.lean. The calls below it run as follows. This session read the proofs of rows 1, 2, 5 and 6 in full, and the wiring reading read those of rows 3 and 4 in full.</p>
+<p class="body">Row — Theorem — What its proof does — Rests on</p>
+<p class="body">1 — everyCharacter — applies everyCharacter_of_row to galoisLocalGlobalStrong_recParameter, which proves Row — 800,327</p>
+<p class="body">2 — everyCharacter_of_row — passes Row and vwin_of_row to every_character_of_literature_of_vWin — 743,776</p>
+<p class="body">3 — every_character_of_literature_of_vWin — supplies seven premises of the next theorem — 670,733</p>
+<p class="body">4 — every_character_of_theta_integrals_local_matching — calls the next theorem with Green, VWin and a record — 478,597</p>
+<p class="body">5 — every_character_of_green_v_win — applies imprimitive to zero_free_all_of_green_v_win — 54,878</p>
+<p class="body">6 — zero_free_all_of_green_v_win — concludes zero-freeness for primitive characters — 54,874</p>
+</div>
+<div class="node lahtokohta" id="f-outline">
+<span class="nid">f-outline &middot; r.&nbsp;196</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The first four outline lines are rows 1 to 4, and the fifth builds the record</strong></p>
+<p class="body">The first four lines of OUTLINE.txt are the theorems of rows 1 to 4, and its fifth line is nonempty_hyps_definite_side_of_closed_bound, which builds the record.</p>
+</div>
+<div class="node vaite" id="f-55k">
+<span class="nid">f-55k &middot; r.&nbsp;199</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>The passage from three inputs to the statement rests on about 55,000 declarations, and the other 745,000 behind everyCharacter supply the inputs</strong></p>
+<p class="body">Rows 5 and 6 are the passage from three inputs to the statement, and that passage rests on about 55,000 declarations. The other 745,000 declarations behind everyCharacter supply the inputs.</p>
+<span class="meta-line">Johto: <a href="#f-calls" title="The calls below everyCharacter run through six theorems that rest on 800,327 down to 54,874 declarations">f-calls</a></span>
+</div>
+<div class="node lahtokohta" id="f-inputs">
+<span class="nid">f-inputs &middot; r.&nbsp;202</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Green rests on 64 declarations, VWin on 173,628, the record on 463,949 and Row on 195,170</strong></p>
+<p class="body">Input of row 5 — Supplied by — Rests on</p>
+<p class="body">Green, a parametrisation of characters of finite general linear groups — green_of_regular, which takes a statement on regular characters as a premise — 64</p>
+<p class="body">VWin, a bound on lengths in Galois cohomology — vwin_of_row, which takes Row as a premise — 173,628</p>
+<p class="body">a record of type HypsAlt with the condition DefiniteSideCondition — nonempty_hyps_definite_side_of_closed_bound — 463,949</p>
+<p class="body">Row, the existence of Galois representations, enters one level higher. Its proof galoisLocalGlobalStrong_recParameter rests on 195,170 declarations.</p>
+</div>
+<div class="node vaite" id="f-share">
+<span class="nid">f-share &middot; r.&nbsp;208</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>The branches share declarations, because their counts add up to more than 800,327</strong></p>
+<p class="body">The numbers 173,628, 463,949 and 195,170 add up to more than the 800,327 behind everyCharacter, so the branches share declarations.</p>
+<span class="meta-line">Johto: <a href="#f-inputs" title="Green rests on 64 declarations, VWin on 173,628, the record on 463,949 and Row on 195,170">f-inputs</a> &middot; <a href="#f-calls" title="The calls below everyCharacter run through six theorems that rest on 800,327 down to 54,874 declarations">f-calls</a></span>
+</div>
+<h2 id="sec-what-zero-free-all-of-green-v-win-states">6 &middot; What zero_free_all_of_green_v_win states and how it splits</h2>
+<div class="node lahtokohta" id="z-states">
+<span class="nid">z-states &middot; r.&nbsp;217</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>zero_free_all_of_green_v_win takes Green, VWin and one record and concludes zero-freeness for primitive characters, which imprimitive extends to all</strong></p>
+<p class="body">The theorem in TopPlug.lean takes Green, VWin and the existence of one record of type HypsAlt. It concludes ZeroFreeAll, which unfolds into Mathlib terms. For every primitive Dirichlet character ψ and every s with real part above 1/2, DirichletCharacter.LFunction ψ.χ s ≠ 0. The theorem imprimitive, which rests on 7 declarations, extends the conclusion to all characters through the Euler factors.</p>
+</div>
+<div class="node lahtokohta" id="z-split">
+<span class="nid">z-split &middot; r.&nbsp;225</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Its one-line proof splits into the Landau step, the main inequality, the supply of tied families and the supply of fields</strong></p>
+<p class="body">The proof is one line. It calls zeroFreeAll_of_topG, which rests on 791 declarations and contains the first two rows of the next table, and it passes the last two rows to it as supplies. This session read the proofs of all four rows in full, without the theorems that they call.</p>
+<p class="body">Part — Theorem — What it gives — Rests on</p>
+<p class="body">Landau step — formB — an upper bound for a prime sum on intervals gives zero-freeness — 108</p>
+<p class="body">Main inequality — level_gm_le_on_family_scales — a tied family gives that upper bound with exponent 1/2 + cε — 546</p>
+<p class="body">Supply of tied families — shape_closed_link_n_of_green — the record and Green give a tied family for every small ε — 51,775</p>
+<p class="body">Supply of fields — supplyChi — VWin gives the hosts that the families live on — 3,488</p>
+</div>
+<div class="node maaritelma" id="z-tied">
+<span class="nid">z-tied &middot; r.&nbsp;237</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>A tied family satisfies ChainTied, ChainTie is a different object, and shape_closed_link_n_of_green is called the shape theorem</strong></p>
+<p class="body">A tied family is a family that satisfies the code's condition ChainTied, which the section on the wanted characters describes. The structure ChainTie of the section on the chain is a different object. This document calls shape_closed_link_n_of_green the shape theorem.</p>
+</div>
+<h2 id="sec-the-prime-sum">7 &middot; The prime sum</h2>
+<div class="node maaritelma" id="ps-gz">
+<span class="nid">ps-gz &middot; r.&nbsp;243</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>Sz x is the sum of Λ(n)(x/n − 1) over n ≤ x and Gz x is Sz x − x log x + (1+γ)x</strong></p>
+<p class="body">The definitions are in StatementOC.lean, Analytic.lean and ExplicitFormulaErrorOfHostConditions.lean. Write Λ(n) for the von Mangoldt function and γ for Euler's constant. The sum Sz x below has the order x·log x, and Gz x is that sum with its main terms subtracted.</p>
+<p class="body">Sz x is the sum of Λ(n)·(x/n − 1) over n ≤ x.</p>
+<p class="body">Gz x is Sz x − x log x + (1 + γ)x.</p>
+</div>
+<div class="node maaritelma" id="ps-gchi">
+<span class="nid">ps-gchi &middot; r.&nbsp;252</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>gChi χ y is the twisted sum plus y times the logarithmic derivative of L(χ,s) at 1, and equals Gz for the trivial character</strong></p>
+<p class="body">gChi χ y for a nontrivial character χ is the sum of Λ(n)·χ(n)·(y/n − 1) over n ≤ y, plus y times the logarithmic derivative of L(χ, s) at s = 1. For a trivial character it equals Gz y.</p>
+</div>
+<div class="node maaritelma" id="ps-gm">
+<span class="nid">ps-gm &middot; r.&nbsp;255</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>A level holds a finite set KEPT of primitive characters, and Gm is Gz plus the weighted real parts of gChi over KEPT</strong></p>
+<p class="body">A level holds a finite set KEPT of primitive characters, which contains the trivial character, and a natural number o. The sum Gm y of the level is Gz y plus the real parts of gChi ψ y over the nontrivial ψ in KEPT, each with a positive weight. The weight is 1/(3·o + 1), except for one optional character psK whose weight is 1.</p>
+</div>
+<h2 id="sec-the-landau-step">8 &middot; The Landau step</h2>
+<div class="node lahtokohta" id="l-formB">
+<span class="nid">l-formB &middot; r.&nbsp;262</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>formB states that an upper bound Gm x ≤ x^θ on intervals from Y to Y^la for arbitrarily large Y gives no zero with real part above θ for every character of KEPT</strong></p>
+<p class="body">formB states the step for every level. Let 0 &lt; θ &lt; 1 and la &gt; 1. Suppose that for every bound there is a Y above it such that Gm x ≤ x^θ holds for all x between Y and Y^la. Then the L-function of every character of KEPT, the zeta function among them, has no zero with real part above θ. The condition asks only for an upper bound, and only on such intervals. The proof of zero_free_all_of_green_v_win uses la = 3/2.</p>
+<span class="meta-line"><a href="#ck-theta" title="The hypothesis θ &lt; 1 of the Landau step stays unused in the proofs that were read">ck-theta</a> &rarr; rajaa</span>
+</div>
+<div class="node lahtokohta" id="l-reduce">
+<span class="nid">l-reduce &middot; r.&nbsp;268</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>formB reduces to zeroFree_of_rpow_window, and the account has four stages that follow the report except stage 3</strong></p>
+<p class="body">formB reduces to zeroFree_of_rpow_window, which rests on 86 declarations. The Landau reading read that proof, and this session read in full the lemma landau_tails that the reading had read by statement. The account below has four stages and follows the report, except for stage 3.</p>
+</div>
+<div class="node lahtokohta" id="l-st1">
+<span class="nid">l-st1 &middot; r.&nbsp;272</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Stage 1. The Laplace transform Φ of g(u) = Gm(e^u) continues to real part above 0 with a simple pole of positive-weight residue at every zero, and g grows at most like e^(2u)</strong></p>
+<p class="body">Put g(u) = Gm(e^u). Its Laplace transform Φ(s), the integral of g(u)·e^(−su) over u &gt; 0, exists for real part above 2. Φ continues to real part above 0 with a simple pole at every zero of one of the L-functions. The theorem poleData builds Φ from each character and its inverse, with half of the weight each. The residue at a zero ρ is −S/(ρ(ρ − 1)), where S adds, for each character and for its inverse, half of the weight times the multiplicity of ρ as a zero of its L-function. The weights are positive, so S is positive and the pole stays when two characters share a zero. A growth bound |g(u)| ≤ C·e^(2u) is part of the same record of facts about g and Φ.</p>
+</div>
+<div class="node vaite" id="l-st2">
+<span class="nid">l-st2 &middot; r.&nbsp;280</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Stage 2. On the interval the bound on Gm bounds the Taylor-coefficient integrals at σ+iτ and at σ by a multiple of e^(ηU)/(σ−θ)^k</strong></p>
+<p class="body">For σ &gt; 2 and a real τ, the Taylor coefficient of order k of Φ at σ + iτ is (−1)^k times the integral of g(u)·u^k·e^(−(σ + iτ)u)/k! over u &gt; 0. The interval of x from Y to Y^la is the interval from U to (1 + δ)U in the variable u, with U = log Y and δ = la − 1. On it the bound on Gm gives |g| + g ≤ 2R with R = e^(θu). The integral of R·e^(−θu) over the interval is δ·U, which is below e^(ηU) for every η &gt; 0 and large U, and the weight u^k·e^(−(σ − θ)u)/k! is at most (σ − θ)^(−k). Together these bound the part of the integral on the interval by a multiple of e^(ηU)/(σ − θ)^k, for the sum of two quantities. One is the norm of the integral at σ + iτ and the other is the integral at σ itself.</p>
+<span class="meta-line">Johto: <a href="#l-formB" title="formB states that an upper bound Gm x ≤ x^θ on intervals from Y to Y^la for arbitrarily large Y gives no zero with real part above θ for every character of KEPT">l-formB</a> &middot; <a href="#l-st1" title="Stage 1. The Laplace transform Φ of g(u) = Gm(e^u) continues to real part above 0 with a simple pole of positive-weight residue at every zero, and g grows at most like e^(2u)">l-st1</a></span>
+</div>
+<div class="node lahtokohta" id="l-st3">
+<span class="nid">l-st3 &middot; r.&nbsp;288</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Stage 3. landau_tails bounds the integral outside the interval by C/σ^k with k = ⌈(1+δ/2)σU⌉</strong></p>
+<p class="body">landau_tails handles the part of the integral outside the interval. It picks σ from δ alone and the order k = ⌈(1 + δ/2)·σ·U⌉. The lemma bounds the integral of the weight u^k·e^((2 − σ)u)/k! outside the interval by C/σ^k with a constant C that is the same for every U. The factor e^(2u) of the weight comes from the growth bound of stage 1. On each side of the interval the proof multiplies the weight by an exponential factor that is at least 1 there and integrates over all u &gt; 0.</p>
+<span class="meta-line"><a href="#l-peak" title="By the session's own calculation the weight peaks at u = k/(σ−2), inside the interval when σ ≥ 4(1+δ)/δ">l-peak</a> &rarr; selittaa</span>
+</div>
+<div class="node vaite" id="l-peak">
+<span class="nid">l-peak &middot; r.&nbsp;288</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>By the session's own calculation the weight peaks at u = k/(σ−2), inside the interval when σ ≥ 4(1+δ)/δ</strong></p>
+<p class="body">By this session's own calculation, which the Lean text does not state, the weight peaks at u = k/(σ − 2), and that point lies inside the interval when σ is at least 4(1 + δ)/δ.</p>
+<span class="meta-line">Johto: <a href="#l-st3" title="Stage 3. landau_tails bounds the integral outside the interval by C/σ^k with k = ⌈(1+δ/2)σU⌉">l-st3</a></span>
+<span class="meta-line">selittaa &rarr; <a href="#l-st3" title="Stage 3. landau_tails bounds the integral outside the interval by C/σ^k with k = ⌈(1+δ/2)σU⌉">l-st3</a></span>
+</div>
+<div class="node vaite" id="l-contra">
+<span class="nid">l-contra &middot; r.&nbsp;297</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Stage 4. A zero with real part above θ makes a coefficient of size c/d^k with d below σ−θ, which contradicts the bounds for large U</strong></p>
+<p class="body">Suppose a zero has real part above θ. Stages 2 and 3 bound the sum of the norm at σ + iτ and the integral at σ by a multiple of e^(ηU)/(σ − θ)^k. The proof splits into two cases. In the first a zero ρ at height τ is the singularity nearest to σ + iτ, at a distance d below σ − θ, and the integral at σ + iτ has norm about c/d^k. By the report a disc around σ with a radius e above d holds no singularity in this case, and a Cauchy estimate keeps the integral at σ above −M/e^k. In the second case the nearest singularity of σ is a real zero at a distance d below σ − θ, and its positive residue makes the integral at σ about c/d^k, while the norm at σ + iτ is at least 0. In both cases c/d^k is at most M/e^k plus a multiple of e^(ηU)/(σ − θ)^k, with d below e and e at most σ − θ. The order k grows in proportion to U, so for a small η the left side outgrows the right side, and the two contradict each other for large U.</p>
+<span class="meta-line">Johto: <a href="#l-reduce" title="formB reduces to zeroFree_of_rpow_window, and the account has four stages that follow the report except stage 3">l-reduce</a> &middot; <a href="#l-st1" title="Stage 1. The Laplace transform Φ of g(u) = Gm(e^u) continues to real part above 0 with a simple pole of positive-weight residue at every zero, and g grows at most like e^(2u)">l-st1</a> &middot; <a href="#l-st2" title="Stage 2. On the interval the bound on Gm bounds the Taylor-coefficient integrals at σ+iτ and at σ by a multiple of e^(ηU)/(σ−θ)^k">l-st2</a> &middot; <a href="#l-st3" title="Stage 3. landau_tails bounds the integral outside the interval by C/σ^k with k = ⌈(1+δ/2)σU⌉">l-st3</a></span>
+<span class="meta-line"><a href="#l-mathlib" title="By the report the proof uses Mathlib's continuation and nonvanishing on real part at least 1 and no functional equation, and the four lemmas of stage 4 were read by statement">l-mathlib</a> &rarr; rajaa</span>
+</div>
+<div class="node vaite" id="l-once">
+<span class="nid">l-once &middot; r.&nbsp;309</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>One interval for each Y of an unbounded sequence suffices, because the hypothesis enters once for each large U</strong></p>
+<p class="body">The hypothesis enters once for each large U, so one interval for each Y of an unbounded sequence suffices.</p>
+<span class="meta-line">Johto: <a href="#l-contra" title="Stage 4. A zero with real part above θ makes a coefficient of size c/d^k with d below σ−θ, which contradicts the bounds for large U">l-contra</a></span>
+</div>
+<div class="node lahtokohta" id="l-mathlib">
+<span class="nid">l-mathlib &middot; r.&nbsp;309</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>By the report the proof uses Mathlib's continuation and nonvanishing on real part at least 1 and no functional equation, and the four lemmas of stage 4 were read by statement</strong></p>
+<p class="body">By the report the proof uses Mathlib's analytic continuation of the L-functions and their nonvanishing for real part at least 1, and no functional equation. The lemmas landau_pole_asym, landau_cauchy, landau_nearest and landau_finite, which carry stage 4, were read by statement.</p>
+<span class="meta-line">rajaa &rarr; <a href="#l-contra" title="Stage 4. A zero with real part above θ makes a coefficient of size c/d^k with d below σ−θ, which contradicts the bounds for large U">l-contra</a></span>
+</div>
+<h2 id="sec-the-wanted-characters-inside-an-auxiliar">9 &middot; The wanted characters inside an auxiliary field</h2>
+<div class="node lahtokohta" id="c-coregm">
+<span class="nid">c-coregm &middot; r.&nbsp;317</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>core_gm proves Gm x ≤ x^(1/2 + (eD+eL+7)ε) at one x from a host and two conditions</strong></p>
+<p class="body">core_gm in CoreGm.lean proves the main inequality at one point x, and level_gm_le_on_family_scales applies it on the intervals. core_gm rests on 440 declarations, and this session read its statement and its proof. For a level and all large x it takes a host and two conditions on the host. The conclusion is Gm x ≤ x^(1/2 + (eD + eL + 7)·ε), where eD and eL are two constants of the conditions.</p>
+</div>
+<div class="node maaritelma" id="c-coreath">
+<span class="nid">c-coreath &middot; r.&nbsp;325</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>CoreAtH says that a record Data with SizeData₂ and fifteen further conditions exists over the host, and ChainTied is its form for a family</strong></p>
+<p class="body">The condition CoreAtH is an existence statement with 23 witnesses and sixteen conditions. It says that a record Data of real numbers exists over the host with the condition SizeData₂ of the next section and fifteen further conditions. ChainTied is the form of the same statement for a family, with four further conditions that tie the numbers of the record to the data of the family, and tiedCore_of_chainTied passes from it to the form for a host.</p>
+</div>
+<div class="node maaritelma" id="c-eath">
+<span class="nid">c-eath &middot; r.&nbsp;330</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>EAtH places the kept characters among those of the host and asks ‖gChi χ x‖ ≤ x^(1/2+ε) for the other characters, those trivial on A0 and not kept</strong></p>
+<p class="body">The condition EAtH concerns the characters and has six fields. Its field kept places the characters of the level among the characters of the host. Its field bdG speaks about the set Bounded, which holds the characters of the host that are trivial on a subgroup A0 and are not kept. The field asks that each of them, taken as a primitive Dirichlet character χ, satisfies ‖gChi χ x‖ ≤ x^(1/2 + ε) at the point x of core_gm. This document calls the characters of Bounded the other characters. A field bdL asks for a bound on their logarithmic derivatives at 1.</p>
+</div>
+<div class="node lahtokohta" id="c-source">
+<span class="nid">c-source &middot; r.&nbsp;339</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The field bdG is used by sigA_le alone and filled by supplyOfAdmOf from boundedTw, which reads it off PairGood</strong></p>
+<p class="body">The field bdG is a bound of square-root size for the other characters, so its source matters. cone.py --users lists sigA_le as the one constant that mentions the field. That theorem, which rests on 108 declarations and was read by statement, bounds the sum SigA of the other characters by 4·o·x^(1/2 + ε).</p>
+<p class="body">cone.py --users also lists one theorem that mentions the constructor of the record EAtH, which is supplyOfAdmOf in supplyOfAdmOf.lean. It rests on 1,964 declarations, supplyChi reaches it, and this session read its proof in full. The proof fills bdG from the theorem boundedTw, and boundedTw reads it off the condition PairGood in PairGood.lean.</p>
+</div>
+<div class="node maaritelma" id="c-winpair">
+<span class="nid">c-winpair &middot; r.&nbsp;352</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>WinPair fixes the primes q and d of the host with log q near Y^(ε/5), log d near Y^(ε/5)(log Y)² and divisibility conditions on d + 1</strong></p>
+<p class="body">The host depends on two primes q and d. The condition WinPair fixes them for a parameter Y. The logarithm of q lies between Y^(ε/5)/2 and Y^(ε/5), the logarithm of d lies between Y^(ε/5)·(log Y)²/2 and Y^(ε/5)·(log Y)², q divides d + 1, and every odd prime up to Y^(ε/5) divides d + 1.</p>
+</div>
+<div class="node maaritelma" id="c-pairgood">
+<span class="nid">c-pairgood &middot; r.&nbsp;356</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>PairGood says that each other character has ‖gChi χ y‖ ≤ y^(1/2+ε/2) for y from Y to Y^A and a bounded logarithmic derivative, with zero-free boxes for the real ones</strong></p>
+<p class="body">The other characters are the characters of a modulus M that the level fixes, multiplied by the quadratic characters of q and d, with at least one of the two present. The field bounds of PairGood says that each of them satisfies ‖gChi χ y‖ ≤ y^(1/2 + ε/2) for every y between Y and Y^A, for an exponent A ≥ 1 that the caller chooses, and that its logarithmic derivative at 1 is at most 4·log y in absolute value. A further field boxes gives a zero-free box for the real ones among them.</p>
+<span class="meta-line"><a href="#c-short" title="The field bounds concerns sums whose length is at most a fixed power of the logarithm of the modulus, since Y^A ≤ (2 log q)^(5A/ε)">c-short</a> &rarr; rajaa</span>
+</div>
+<div class="node lahtokohta" id="c-pairex">
+<span class="nid">c-pairex &middot; r.&nbsp;362</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>pairEx proves that such a pair exists for every large Y, through pair_exists and pair_share with η = 1/2</strong></p>
+<p class="body">pairEx proves that such a pair exists for every large Y, and it rests on 1,271 declarations. It takes the pair from pair_exists, which takes it from pair_share. That theorem states that both ranges hold primes, that all but a share η of the primes q in the first range meet a condition GoodQ, and that for each such q all but a share η of the primes d in the second range meet a condition GoodD. pair_exists applies it with η = 1/2.</p>
+</div>
+<div class="node vaite" id="c-short">
+<span class="nid">c-short &middot; r.&nbsp;368</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>The field bounds concerns sums whose length is at most a fixed power of the logarithm of the modulus, since Y^A ≤ (2 log q)^(5A/ε)</strong></p>
+<p class="body">The logarithms of q and d are both at least Y^(ε/5)/2 once log Y ≥ 1, so for each fixed exponent B both primes exceed Y^B once Y is large. The argument y of the field bounds is at most Y^A, which is at most (2·log q)^(5A/ε). The field bounds therefore concerns sums whose length is at most a fixed power of the logarithm of the modulus. That observation follows from the ranges above and is this session's own.</p>
+<span class="meta-line">Johto: <a href="#c-winpair" title="WinPair fixes the primes q and d of the host with log q near Y^(ε/5), log d near Y^(ε/5)(log Y)² and divisibility conditions on d + 1">c-winpair</a> &middot; <a href="#c-pairgood" title="PairGood says that each other character has ‖gChi χ y‖ ≤ y^(1/2+ε/2) for y from Y to Y^A and a bounded logarithmic derivative, with zero-free boxes for the real ones">c-pairgood</a></span>
+<span class="meta-line">rajaa &rarr; <a href="#c-pairgood" title="PairGood says that each other character has ‖gChi χ y‖ ≤ y^(1/2+ε/2) for y from Y to Y^A and a bounded logarithmic derivative, with zero-free boxes for the real ones">c-pairgood</a></span>
+</div>
+<div class="node lahtokohta" id="c-thin">
+<span class="nid">c-thin &middot; r.&nbsp;376</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>ThinScales bounds the prime sums far above x, and the code derives its form for a datum from three statements on zeros that litThin proves and whose proofs were not read</strong></p>
+<p class="body">One of the sixteen conditions of CoreAtH is ThinScales. It concerns the prime sums at arguments far above x, and it says that each of them is at most y·θ in absolute value for every y from a third of a bound X′ on, with two free numbers X′ and θ. The statement PropTwoSixThinScales is a second statement of that shape, for a datum. For every character χ of the host it has the conclusion ‖gChi χ y‖ ≤ y·exp(−c·x^(ε/8)) for y at least exp(x^(ε/3))/3 and a constant c, under a premise PropTwoSixBoxHypothesis on the host. The code derives PropTwoSixThinScales from three statements that it bundles as LitThin and that litThin in LitThin.lean proves. The first, adm6, holds a bound of a constant times Q^(1/4) on the number of zeros with real part at least 1 − 1/400 and the classical zero-free region with one possible exceptional real zero. The second, adm7, is a truncated explicit formula. The third, adm11, bounds the number of zeros in each window of height 2 by a constant times a logarithm. litThin rests on 319 declarations. This session read the three statements, and it read neither their proofs nor the derivation of ThinScales from them.</p>
+</div>
+<h2 id="sec-the-pair-of-primes">10 &middot; The pair of primes</h2>
+<div class="node lahtokohta" id="p-role">
+<span class="nid">p-role &middot; r.&nbsp;394</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>pair_share rests on 1,239 declarations and is the source of the square-root bound for the other characters</strong></p>
+<p class="body">pair_share in PairShare.lean rests on 1,239 declarations. It is the source of the bound of square-root size for the other characters of the host. Its files lie in the folder MeanSquareBounds, and the definitions that it uses lie in PrimeSetTwoBounds.lean and SecondEstimateOfIntervalHypothesis.lean.</p>
+</div>
+<div class="node maaritelma" id="p-sets">
+<span class="nid">p-sets &middot; r.&nbsp;404</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>The two sets of primes, q ≡ 3 mod 8 in a range from z, and d ≡ 7 mod 16 in a range from z′ with q and the small odd primes dividing d + 1</strong></p>
+<p class="body">The statement names two sets of primes and three conditions. Write (n/q) for the Jacobi symbol of n and q, and Λ(n) for the von Mangoldt function as before.</p>
+<p class="body">primePairSetFirst of a number z is the set of the primes q with q ≡ 3 mod 8 and exp(z/2) &lt; q ≤ exp(z). The theorem takes z = Y^(ε/5).</p>
+<p class="body">primeSetTwoBounds of z, z′ and q is the set of the primes d with d ≡ 7 mod 16 and exp(z′/2) &lt; d ≤ exp(z′) for which q and every odd prime up to z divide d + 1. The theorem lets z′ lie between Y^(ε/5)·(log Y)² and K² times that number. pairEx takes z′ = Y^(ε/5)·(log Y)², which gives the range of d in WinPair.</p>
+</div>
+<div class="node maaritelma" id="p-box">
+<span class="nid">p-box &middot; r.&nbsp;413</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>Box asks for a zero-free box of width 1/400, a logarithmic derivative at most C·log Y and ‖Gchi ψ y‖ ≤ y^(1/2+τ) for y from Y to X</strong></p>
+<p class="body">Box is a condition on a character ψ with parameters Q, C, τ, Y and X, and it has three parts. The first part, GoodC, says that ψ is nontrivial, that its modulus is at most Q and that L(ψ, s) has no zero with real part above 1 − 1/400 and imaginary part between −Q and Q. The code calls the last property ZeroFreeBox. The second part says that the logarithmic derivative of L(ψ, s) at s = 1 is at most C·log Y in absolute value. The third part is the bound of square-root size, ‖Gchi ψ y‖ ≤ y^(1/2 + τ) for every y from Y to X.</p>
+</div>
+<div class="node maaritelma" id="p-good">
+<span class="nid">p-good &middot; r.&nbsp;419</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>GoodQ and GoodD say that Box holds for the primitive characters built from ξ and the Jacobi symbols of q and d, and Gchi equals gChi</strong></p>
+<p class="body">GoodQ says about a prime q that Box holds with Q = N₀·exp(z) for every primitive character that agrees with ξ(n)·(n/q) at every n coprime to N₀·q, for every character ξ of a fixed modulus N₀.</p>
+<p class="body">GoodD says about two primes q and d that Box holds with Q = N₀·exp(z + z′) for every primitive character that agrees with ξ(n)·(n/d) or with ξ(n)·(n/q)·(n/d) at every n coprime to N₀·q·d, for every such ξ.</p>
+<p class="body">Gchi has the formula that the section on the prime sum gives for gChi of a nontrivial character, and a lemma in the file of pairEx proves that the two are equal.</p>
+</div>
+<div class="node lahtokohta" id="p-share">
+<span class="nid">p-share &middot; r.&nbsp;429</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>pair_share states that all but a share η of the primes q meet GoodQ and for each such q all but a share η of the primes d meet GoodD, and pairEx turns the case η = 1/2 into PairGood</strong></p>
+<p class="body">pair_share states that a constant C exists for which the following holds for every ε below 1/52, every τ &gt; 0, every K ≥ 1, every η &gt; 0, every modulus N₀, every large Y, every X up to Y^K and every z′ of the range above. The first set of primes is nonempty, and at least the share 1 − η of its primes q meet GoodQ. For each of those q the second set is nonempty, and at least the share 1 − η of its primes d meet GoodD. pair_exists, which rests on 1,242 declarations, applies the theorem with η = 1/2 and takes one q and one d. pairEx applies pair_exists with τ = ε/2, K = A and N₀ = 8·M, and it turns the result into the fields of PairGood. It takes the bound 4·log y on the logarithmic derivative from a further theorem, kappa4.</p>
+</div>
+<div class="node lahtokohta" id="p-stages">
+<span class="nid">p-stages &middot; r.&nbsp;439</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The proof calls stage1 and stage2, both cases of one theorem stage on a set PPset of primes in a residue class between √U and U</strong></p>
+<p class="body">The proof of pair_share calls two theorems, stage1 for q and stage2 for d, which rest on 1,225 and 1,231 declarations. Each of them states that the primes of its set that fail the condition form at most the share η of the set. Both are cases of one theorem, stage, which rests on 1,219 declarations.</p>
+<p class="body">stage treats the set PPset of the primes p with p ≡ a₀ mod m₀ and √U &lt; p ≤ U. Its condition admitted asks that 8 divides m₀, that a₀ is coprime to m₀, that log U lies between Y^(ε/6) and Y^(ε/5)·(log Y)², and that (log Y)²·log m₀ is at most 4·log U. A further premise asks that every prime factor of m₀ is at most Y^(ε/5) or above Y^(400K). stage1 takes m₀ = 8, a₀ = 3 and U = exp(Y^(ε/5)). stage2 takes U = exp(z′) and m₀ = 16·oddM, where oddM is q times the product of the odd primes up to z, and a lemma supplies a class a₀ for which primeSetTwoBounds equals PPset. stage2 applies stage with 6ε/5 in place of ε, so that the upper limit of log U covers every admitted z′.</p>
+</div>
+<div class="node lahtokohta" id="p-stage">
+<span class="nid">p-stage &middot; r.&nbsp;453</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>stage calls a prime bad when one of at most R twisted characters fails Box, and bounds the bad primes by the share η through two kinds of η/2 each</strong></p>
+<p class="body">stage takes a finite set of at most R primitive characters ξ whose moduli are at most a number F ≤ √U. It calls a prime p of PPset bad when, for one of those ξ, the primitive character that agrees with ξ(n)·(n/p) fails Box with Q = F·U and X = Y^K. It concludes that the bad primes form at most the share η of PPset. The proof sorts the bad primes into two kinds and bounds each kind by the share η/2.</p>
+</div>
+<div class="node vaite" id="p-kind1">
+<span class="nid">p-kind1 &middot; r.&nbsp;459</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Bad primes of the first kind, which fail ZeroFreeBox, have share at most a constant times U^(−21/40), from a zero density bound U^(3/8) against at least U^(9/10) primes</strong></p>
+<p class="body">A bad prime of the first kind has a primitive character of modulus f·p, with f ≤ F, that fails ZeroFreeBox. count_bad, which rests on 89 declarations, bounds the number of such primes by a constant times (F·U)^(1/4), which is at most U^(3/8). Its proof calls count_bad_core, which takes the bound from zero_density_box. That theorem rests on 85 declarations and states that at most a constant times Q^(1/4) primitive characters of modulus up to Q have an L-function with a zero in that box. count_a, which rests on 19 declarations, concludes from the condition admitted that PPset holds at least U^(9/10) primes, and stage passes the prime number theorem in progressions and the bound excBound of the next list to it. The share of the first kind is therefore at most a constant times U^(−21/40), which falls below η/2 once Y is large, because log U is at least Y^(ε/6).</p>
+<span class="meta-line">Johto: <a href="#p-stage" title="stage calls a prime bad when one of at most R twisted characters fails Box, and bounds the bad primes by the share η through two kinds of η/2 each">p-stage</a> &middot; <a href="#p-box" title="Box asks for a zero-free box of width 1/400, a logarithmic derivative at most C·log Y and ‖Gchi ψ y‖ ≤ y^(1/2+τ) for y from Y to X">p-box</a></span>
+<span class="meta-line"><a href="#ck-ineff" title="If the threshold of count_a depends on c(δ), the proof yields no value of that threshold, because the textbook proofs of Siegel's bound yield no value of c(δ)">ck-ineff</a> &rarr; rajaa</span>
+</div>
+<div class="node vaite" id="p-kind2">
+<span class="nid">p-kind2 &middot; r.&nbsp;469</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Bad primes of the second kind have a truncated sum above y^(1/2+τ)/2, and bad_share gives them a share below η/2 over the R characters</strong></p>
+<p class="body">A bad prime of the second kind has a truncated sum that is too large. The code's sum S is the sum of Λ(n)·min(1, y/n)·ξ(n)·(n/p) over the n up to Z = Y^(400K), and the prime is of the second kind when the absolute value of S exceeds y^(1/2 + τ)/2 for some y from Y to Y^K. bad_share, which rests on 18 declarations, bounds the share of such primes for one ξ by η/(2(R + 1)). The at most R characters together give at most R·η/(2(R + 1)), which is below η/2.</p>
+<span class="meta-line">Johto: <a href="#p-stage" title="stage calls a prime bad when one of at most R twisted characters fails Box, and bounds the bad primes by the share η through two kinds of η/2 each">p-stage</a></span>
+</div>
+<div class="node lahtokohta" id="p-neither">
+<span class="nid">p-neither &middot; r.&nbsp;475</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>For a prime of neither kind box_of_S proves Box</strong></p>
+<p class="body">For a prime of neither kind box_of_S, which rests on 174 declarations, proves Box, so the prime is not bad.</p>
+</div>
+<div class="node vaite" id="p-boxS">
+<span class="nid">p-boxS &middot; r.&nbsp;478</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>box_of_S passes from the truncated sum to Gchi, because an identity writes Gchi as minus the truncated sum minus y times a tail, and tailK bounds Y^K times the tail by Y^ε for a character that meets GoodC</strong></p>
+<p class="body">box_of_S passes from the truncated sum to Gchi. The identity finite_splitting_of_group, which rests on 7 declarations, writes Gchi ψ y as minus the truncated sum minus y times a tail tailL. The tail is minus the logarithmic derivative of L(ψ, s) at s = 1 minus the sum of Λ(n)·ψ(n)/n over the n up to Z. tailK, which rests on 160 declarations, bounds Y^K times the tail by Y^ε for a character that meets GoodC. Since y is at most Y^K, y times the tail is at most Y^ε, which is at most y^(1/2 + τ)/2 for ε ≤ 1/4 and Y ≥ 16. With the truncated sum at most y^(1/2 + τ)/2 in absolute value the identity gives the third part of Box. kappaC, which rests on 164 declarations, gives the second part.</p>
+<span class="meta-line">Johto: <a href="#p-box" title="Box asks for a zero-free box of width 1/400, a logarithmic derivative at most C·log Y and ‖Gchi ψ y‖ ≤ y^(1/2+τ) for y from Y to X">p-box</a> &middot; <a href="#p-good" title="GoodQ and GoodD say that Box holds for the primitive characters built from ξ and the Jacobi symbols of q and d, and Gchi equals gChi">p-good</a> &middot; <a href="#p-kind1" title="Bad primes of the first kind, which fail ZeroFreeBox, have share at most a constant times U^(−21/40), from a zero density bound U^(3/8) against at least U^(9/10) primes">p-kind1</a> &middot; <a href="#p-kind2" title="Bad primes of the second kind have a truncated sum above y^(1/2+τ)/2, and bad_share gives them a share below η/2 over the R characters">p-kind2</a> &middot; <a href="#p-neither" title="For a prime of neither kind box_of_S proves Box">p-neither</a></span>
+<span class="meta-line"><a href="#p-tailguess" title="The session guesses that the tail is small because a zero-free box of width 1/400 saves Z^(−1/400) = Y^(−K)">p-tailguess</a> &rarr; selittaa</span>
+</div>
+<div class="node lahtokohta" id="p-400">
+<span class="nid">p-400 &middot; r.&nbsp;478</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The number 400 is the width of the zero-free box and the exponent of the truncation point, and tailK was read by statement</strong></p>
+<p class="body">The number 400 appears twice, as the width 1/400 of the zero-free box and as the exponent of the truncation point Z = Y^(400K). This session read tailK by statement.</p>
+</div>
+<div class="node oletus" id="p-tailguess">
+<span class="nid">p-tailguess &middot; r.&nbsp;478</span>
+<span class="chip">Oletus</span>
+<span class="laji" title="oletus tai kehys">O</span>
+<p><strong>The session guesses that the tail is small because a zero-free box of width 1/400 saves Z^(−1/400) = Y^(−K)</strong></p>
+<p class="body">It is this session's guess that the tail is small because a zero-free box of width 1/400 gives a saving of Z^(−1/400), which equals Y^(−K).</p>
+<span class="meta-line">selittaa &rarr; <a href="#p-boxS" title="box_of_S passes from the truncated sum to Gchi, because an identity writes Gchi as minus the truncated sum minus y times a tail, and tailK bounds Y^K times the tail by Y^ε for a character that meets GoodC">p-boxS</a></span>
+</div>
+<div class="node vaite" id="p-badshare">
+<span class="nid">p-badshare &middot; r.&nbsp;490</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>bad_share follows from the mean square premise MeanSq by cutting the interval into dyadic blocks, which gives a share at most (32·C₂/τ)·Y^(−τ)/(1 − 2^(−τ))</strong></p>
+<p class="body">bad_share takes a mean square bound as its premise, the code's MeanSq. That premise says that the sum of |S|² over the primes p of the set is at most a constant C₂ times y·log y times the number of those primes, for every y of the interval and every sequence of coefficients of absolute value at most 1 in place of ξ. A prime of the second kind has |S|² above y^(1 + 2τ)/4 at some y. The proof cuts the interval into blocks from 2^i·Y to 2^(i+1)·Y. Write V for the left end of a block. Inside the block the proof bounds |S|² at any y by twice |S|² at V plus 2V times the integral of the square of the derivative of S in y. The derivative times y is the sum S with the coefficients of the n ≤ y set to 0, so the premise bounds both terms, and their sum over p is at most 4·C₂·V·log(2V) times the number of primes. Each prime of the second kind adds at least V^(1 + 2τ)/4, and log(2V) is at most 2·V^τ/τ, so the share of the block is at most (32·C₂/τ)·V^(−τ). The sum over the blocks is at most the geometric series (32·C₂/τ)·Y^(−τ)/(1 − 2^(−τ)), which falls below every positive share as Y grows.</p>
+<span class="meta-line">Johto: <a href="#p-kind2" title="Bad primes of the second kind have a truncated sum above y^(1/2+τ)/2, and bad_share gives them a share below η/2 over the R characters">p-kind2</a></span>
+</div>
+<div class="node lahtokohta" id="p-meansq">
+<span class="nid">p-meansq &middot; r.&nbsp;504</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>meanSqK proves MeanSq by multiplying the square out, with the trivial bound for the pairs where n·n′ is a square and a premise on sums of (p/r) for the others</strong></p>
+<p class="body">meanSqK, which rests on 1,100 declarations, proves MeanSq for PPset on the interval from Y to Y^K. It combines two theorems.</p>
+<p class="body">meanSq_abs, which rests on 51 declarations, multiplies the square out. The sum of |S|² over p becomes a sum over pairs n, n′ of the coefficients times the sum of (n/p)·(n′/p) over p. The proof rewrites the absolute value of that inner sum as the absolute value of the sum of (p/r) over p, where r is the product of the primes outside m₀ that divide n·n′ to an odd power. For the pairs with r = 1, which are the pairs for which n·n′ is a square up to primes of m₀, it uses the trivial bound by the number of primes. Those pairs include the diagonal n = n′, and their part is at most a constant times y·log y. For every other r but one it takes as a premise that the sum of (p/r) over p is at most a factor η′ times the number of primes. The pairs of the one excepted r get the trivial bound as well, and their part is also at most a constant times y·log y.</p>
+<span class="meta-line"><a href="#p-interp" title="The session's interpretation is that the values (n/p) cancel on average over p as independent signs do, which gives truncated sums of square-root size for most primes, in a range of y far below the modulus">p-interp</a> &rarr; selittaa</span>
+</div>
+<div class="node lahtokohta" id="p-twist">
+<span class="nid">p-twist &middot; r.&nbsp;517</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>twistK supplies that premise from the prime number theorem in progressions, a zero-free region, excBound and page_across, with one possible exception</strong></p>
+<p class="body">twistK, which rests on 1,021 declarations, supplies that premise. It states for all exponents A′ and B′ and every large Y that each odd squarefree r &gt; 1 that is coprime to m₀ and at most Y^(A′), with one possible exception, has a sum of (p/r) over the primes p of PPset of at most Y^(−B′) times their number. meanSqK uses it with A′ = 800K, because r is at most n·n′ ≤ Z², and with B′ = K + 1, so the factor η′ is Y^(−(K + 1)). Its proof starts from four statements. pnt_progressions_relative_weak_holds, which rests on 982 declarations, is the prime number theorem in arithmetic progressions with a relative error and one possible exceptional real zero. zFRDirichlet, which rests on 201 declarations, is the zero-free region of the L-functions of one modulus with at most one real zero in it. excBound, which rests on 136 declarations, says for every δ &gt; 0 that a real zero of the L-function of a real nontrivial character of modulus N is at most 1 minus a constant times N^(−δ). page_across, which rests on 6 declarations, says that two real characters of moduli up to a bound W that each have a real zero close to 1 agree wherever both are defined, which is why one exception is enough.</p>
+<span class="meta-line"><a href="#ck-ineff" title="If the threshold of count_a depends on c(δ), the proof yields no value of that threshold, because the textbook proofs of Siegel's bound yield no value of c(δ)">ck-ineff</a> &rarr; rajaa</span>
+</div>
+<div class="node oletus" id="p-interp">
+<span class="nid">p-interp &middot; r.&nbsp;532</span>
+<span class="chip">Oletus</span>
+<span class="laji" title="oletus tai kehys">O</span>
+<p><strong>The session's interpretation is that the values (n/p) cancel on average over p as independent signs do, which gives truncated sums of square-root size for most primes, in a range of y far below the modulus</strong></p>
+<p class="body">This paragraph is this session's interpretation of the mechanism, except for the sentence on abs_pair_sum_eq, which reports a statement. A prime p of PPset exceeds √U, and the logarithm of U is at least Y^(ε/6), so p exceeds Z², the largest value of n·n′, once Y is large. The lemma abs_pair_sum_eq shows that the sum of (n/p)·(n′/p) over the primes p of a fixed residue class equals the sum of (p/r) over them up to one sign, and (p/r) is a real character of p. That character is nontrivial unless n·n′ is a square up to primes of m₀, and the prime number theorem in progressions makes the sum of a nontrivial character over the primes small. On average over p the values (n/p) for different n therefore cancel as independent signs do. The sum S has about y/log y terms up to y that are not zero, one for each prime power, and each has size about log y. With independent signs its square is about (y/log y)·(log y)², which is y·log y. The truncated sums have square-root size for most primes p of the set for that reason, and the proof then fixes one prime q and one prime d for which they have it. The third part of Box speaks about the y from Y to Y^K only, a range far below the modulus. This session found no statement about zeros in Box other than the zero-free box of GoodC.</p>
+<span class="meta-line">selittaa &rarr; <a href="#p-meansq" title="meanSqK proves MeanSq by multiplying the square out, with the trivial bound for the pairs where n·n′ is a square and a premise on sums of (p/r) for the others">p-meansq</a></span>
+</div>
+<h2 id="sec-from-the-two-bounds-on-the-slope-to-the-">11 &middot; From the two bounds on the slope to the exponent 1/2</h2>
+<div class="node lahtokohta" id="h-two">
+<span class="nid">h-two &middot; r.&nbsp;557</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Two theorems carry the main inequality, and neither proof contains a theta lift or a lattice, only m copies of one term and real numbers of a record</strong></p>
+<p class="body">Two theorems carry the main inequality. This session read both proofs in full, without all the lemmas that they call. Neither proof contains a theta lift or a lattice. The lifts appear as m copies of one term and as real numbers in a record.</p>
+<span class="meta-line">rajaa &rarr; <a href="#st5" title="Step 5. ASK is bounded through the slope of a lattice, from above by DIV and from below by SlopeIneq">st5</a></span>
+</div>
+<h2 id="sec-ch-core">12 &middot; ch_core</h2>
+<div class="node lahtokohta" id="h-chcore">
+<span class="nid">h-chcore &middot; r.&nbsp;563</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>ch_core assumes the bound of ch_top for ASK − MAIN and concludes that the prime sum of the kept characters is at most x^(1/2+(C+3)ε) plus the sum SigA of the other characters</strong></p>
+<p class="body">ch_core in ChCore.lean rests on 177 declarations. It works with the characters of a finite abelian group E0 × H that stands for the Galois group of the host. ASK is a weighted sum of 2·log p over the primes p that lie below a bound and whose Frobenius class lies outside a set of classes, the code's PhiSet, plus a term for the prime d. The code calls those primes inert. MAIN is the term that ASK is compared with, of the order a·log a. Here a is a number a t for each element t of a finite set TT, and a condition SizesA keeps every a t / b within 1 of x, for a scale b of the record. The theorem assumes the bound that ch_top proves for ASK − MAIN, summed over TT and over the m lifts. It concludes that the weighted prime sum of the kept characters is at most x^(1/2 + (C + 3)ε) plus a sum SigA of the absolute values of the prime sums of the other characters, where C is a constant that the caller chooses. core_gm bounds SigA with sigA_le of the section on the wanted characters.</p>
+</div>
+<div class="node lahtokohta" id="h-rows">
+<span class="nid">h-rows &middot; r.&nbsp;577</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Five lemmas carry ch_core, an exact identity ASK − MAIN = De, a common argument, a subgroup sum, the value at x and the division, with a premise on the set TT</strong></p>
+<p class="body">Row — Lemma — What it does — Rests on</p>
+<p class="body">1 — ch_balance — proves the exact identity ASK − MAIN = De by orthogonality of characters — 67</p>
+<p class="body">2 — th_le — moves every prime sum inside De to one common argument — 55</p>
+<p class="body">3 — core — sums over a subgroup A0, which removes every character that is nontrivial on it — 134</p>
+<p class="body">4 — one_char — replaces the sum over TT by the value at x — 16</p>
+<p class="body">5 — proposition_size_bound — divides by the size of the sum and reads off the exponent — 9</p>
+<p class="body">This session read the lemmas of rows 2 to 4 in full and those of rows 1 and 5 by statement, and it read the lines of the proof of row 5 that carry the exponents. Row 4 uses a premise on the set TT. The sum of a nontrivial kept character over TT differs from its expected value by at most a constant times x^(−1 + ε) times the size of TT.</p>
+</div>
+<div class="node vaite" id="h-balance">
+<span class="nid">h-balance &middot; r.&nbsp;585</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Row 1 is finite Fourier inversion because De is an average of twisted sums over the characters, and the sum over the m lifts multiplies the summand of row 3 by m</strong></p>
+<p class="body">De is an average of twisted von Mangoldt sums over the characters of E0 × H, so row 1 is finite Fourier inversion between primes in classes and character sums. The summand of row 3 does not depend on the lift index j, so the sum over the m lifts multiplies it by m.</p>
+<span class="meta-line">Johto: <a href="#h-rows" title="Five lemmas carry ch_core, an exact identity ASK − MAIN = De, a common argument, a subgroup sum, the value at x and the division, with a premise on the set TT">h-rows</a></span>
+</div>
+<div class="node lahtokohta" id="h-bracket">
+<span class="nid">h-bracket &middot; r.&nbsp;593</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Row 5 divides the error x^(Cε)·(nT·aE·(1 + m²/k) + m·(B + N)) by nT·m·b times half of nT2/n, under the bounds of RestSize and the premises m ≤ x^(1/2+ε/2) and x·m ≤ k</strong></p>
+<p class="body">Row 5 divides the error by nT·m·b times half of the ratio nT2/n. Here nT is the size of TT, n is the size of the group H and nT2 is the size of a second set T2. The error is x^(Cε) times the expression errorBracketSizeWindows, which is the sum nT·aE·(1 + m²/k) + m·(B + N), where B stands for 2·n·m·b·x^ε and N for nT2·k·b·x^(2ε)/n². The condition BNBounds in SChain.lean says that B and N bound two numbers B0 and Nc of the record of the next subsection, and the error terms of the condition DIV of that subsection contain nT * a * La and m * (B0 + Nc). The condition RestSize bounds aE by 2·x·b, n/nT by 2·x^(ε/8) and k by n²·x^(1/2 − ε), and it gives x^(1/2 − ε) ≤ m and x^(−ε) ≤ nT2/n. Here aE is the scale a of the record and k is the number k of the ranks of the datum, which this subsection uses in that one meaning. The theorem assumes m ≤ x^(1/2 + ε/2) and x·m ≤ k, and nT2 ≤ n holds because T2 is a subset of H.</p>
+</div>
+<div class="node vaite" id="h-four">
+<span class="nid">h-four &middot; r.&nbsp;593</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>By the session's arithmetic the division leaves four terms, at most 2x^(1/2+ε), 2, 4x^(1/2+13ε/8) and 2x^(1/2+9ε/8)</strong></p>
+<p class="body">The list below divides the bracket by nT·m·b alone, and by this session's own arithmetic that division leaves four terms.</p>
+<p class="body">The part nT·aE gives aE/(m·b), which is at most 2x/m. The premise x^(1/2 − ε) ≤ m of RestSize keeps it below 2·x^(1/2 + ε).</p>
+<p class="body">The part nT·aE·m²/k gives aE·m/(k·b), which is at most 2 because x·m ≤ k.</p>
+<p class="body">The part m·B gives 2·n·m·x^ε/nT, which is at most 4·m·x^(9ε/8). The premise m ≤ x^(1/2 + ε/2) keeps it below 4·x^(1/2 + 13ε/8), the exponent that appears in the proof.</p>
+<p class="body">The part m·N gives nT2·k·x^(2ε)/(n²·nT), which is at most 2·x^(1/2 + 9ε/8) because nT2 ≤ n, n/nT ≤ 2·x^(ε/8) and k ≤ n²·x^(1/2 − ε).</p>
+<span class="meta-line">Johto: <a href="#h-bracket" title="Row 5 divides the error x^(Cε)·(nT·aE·(1 + m²/k) + m·(B + N)) by nT·m·b times half of nT2/n, under the bounds of RestSize and the premises m ≤ x^(1/2+ε/2) and x·m ≤ k">h-bracket</a></span>
+</div>
+<div class="node vaite" id="h-exponent">
+<span class="nid">h-exponent &middot; r.&nbsp;616</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>The four terms add up to at most 10·x^(1/2+13ε/8), and with the further factors the exponent is 1/2 + (C+3)ε</strong></p>
+<p class="body">The four terms add up to at most 10·x^(1/2 + 13ε/8). The ratio nT2/n is at least x^(−ε) by RestSize, so the division by half of it costs a further factor of at most 2·x^ε. With the factor x^(Cε) of the error and a last factor x^(3ε/8) that absorbs the constants, the exponent is 1/2 + (C + 13/8 + 1 + 3/8)·ε, which is 1/2 + (C + 3)·ε.</p>
+<span class="meta-line">Johto: <a href="#h-four" title="By the session's arithmetic the division leaves four terms, at most 2x^(1/2+ε), 2, 4x^(1/2+13ε/8) and 2x^(1/2+9ε/8)">h-four</a> &middot; <a href="#h-bracket" title="Row 5 divides the error x^(Cε)·(nT·aE·(1 + m²/k) + m·(B + N)) by nT·m·b times half of nT2/n, under the bounds of RestSize and the premises m ≤ x^(1/2+ε/2) and x·m ≤ k">h-bracket</a></span>
+</div>
+<div class="node vaite" id="h-window">
+<span class="nid">h-window &middot; r.&nbsp;621</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>The terms x/m and m are equal at m = √x, the proof takes the window for m as premises and does not choose m, the fourth term is about √x for every m, and core_gm calls ch_core with C = eD + eL + 3, which gives its conclusion one ε more</strong></p>
+<p class="body">The first term falls as m grows, and the third term grows with m. Without the factors x^(cε) they are x/m and m, which are equal at m = √x, the chain length that the note gives. The proof does not choose m. It takes x^(1/2 − ε) ≤ m ≤ x^(1/2 + ε/2) as premises, and the fourth term has the size of about √x for every m, because k is at most n²·x^(1/2 − ε). The first term comes from the part of the error that carries no factor m, so the m lifts share it. The third comes from the number B0, which enters once for each of the m lifts and which is itself a multiple of m. core_gm calls ch_core with the constant C = eD + eL + 3, for which ch_core gives the exponent 1/2 + (C + 3)·ε, and its own conclusion has one ε more.</p>
+<span class="meta-line">Johto: <a href="#h-four" title="By the session's arithmetic the division leaves four terms, at most 2x^(1/2+ε), 2, 4x^(1/2+13ε/8) and 2x^(1/2+9ε/8)">h-four</a> &middot; <a href="#h-bracket" title="Row 5 divides the error x^(Cε)·(nT·aE·(1 + m²/k) + m·(B + N)) by nT·m·b times half of nT2/n, under the bounds of RestSize and the premises m ≤ x^(1/2+ε/2) and x·m ≤ k">h-bracket</a> &middot; <a href="#c-coregm" title="core_gm proves Gm x ≤ x^(1/2 + (eD+eL+7)ε) at one x from a host and two conditions">c-coregm</a></span>
+<span class="meta-line">vertaa &rarr; <a href="#n-entries" title="Entries 7, 8, 9, 10, 12, 13, 16 and 17 name interlacing weights, iterated theta lifts with m like √X, divisibility, the seesaw, the Bost slope inequality, approximate orthogonality and a weakening of Vandiver">n-entries</a> &middot; <a href="#h-budget" title="B0 and Nc are budgets that the code defines by formulas, with B0 = f·m·b·x^ε, so the factor m of the third term is part of the definition of the budget, and why the errors of one lift fit a budget that grows with m was not read">h-budget</a> &rarr; selittaa</span>
+</div>
+<div class="node vaite" id="h-budget">
+<span class="nid">h-budget &middot; r.&nbsp;630</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>B0 and Nc are budgets that the code defines by formulas, with B0 = f·m·b·x^ε, so the factor m of the third term is part of the definition of the budget, and why the errors of one lift fit a budget that grows with m was not read</strong></p>
+<p class="body">B0 and Nc are budgets that the code defines by formulas, in DataArith.lean and DataParams₂.lean. For a datum, B0 is the number sizeBudget, the product f·m·b·x^ε, where b is exp(x^ε) and f is twice a number n of the ranks of the datum. Nc is the number budgetNc, which has the form of the N of this subsection with that n. The condition BNBounds bounds both by the B and the N of this subsection. The conditions of the next subsection then require that errors of one lift stay within a constant times B0. The condition EComp5 is one of them. The factor m of the third term is therefore part of the definition of the budget. The reason why the errors of one lift fit a budget that grows with m lies in the proofs of those conditions, which this session did not read. One premise of the section on one lift points to it. The shift w of lift j is at least (k + (2j − 1)(t + 1))/2, so it grows with j, and the error term of that section grows with w.</p>
+<span class="meta-line">Johto: <a href="#h-bracket" title="Row 5 divides the error x^(Cε)·(nT·aE·(1 + m²/k) + m·(B + N)) by nT·m·b times half of nT2/n, under the bounds of RestSize and the premises m ≤ x^(1/2+ε/2) and x·m ≤ k">h-bracket</a> &middot; <a href="#h-window" title="The terms x/m and m are equal at m = √x, the proof takes the window for m as premises and does not choose m, the fourth term is about √x for every m, and core_gm calls ch_core with C = eD + eL + 3, which gives its conclusion one ε more">h-window</a></span>
+<span class="meta-line">selittaa &rarr; <a href="#h-window" title="The terms x/m and m are equal at m = √x, the proof takes the window for m as premises and does not choose m, the fourth term is about √x for every m, and core_gm calls ch_core with C = eD + eL + 3, which gives its conclusion one ε more">h-window</a> &middot; vertaa &rarr; <a href="#u-origin" title="young_diagram_step_origin pairs each lower row with a row under the hook product through the interlacing and leaves the top row, of length aT + w − s, without a partner">u-origin</a></span>
+</div>
+<h2 id="sec-ch-top">13 &middot; ch_top</h2>
+<div class="node lahtokohta" id="t-chtop">
+<span class="nid">t-chtop &middot; r.&nbsp;646</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>ch_top proves the assumption of ch_core from SizeData₂, a conjunction of eleven conditions on a record Data of 39 numbers and functions</strong></p>
+<p class="body">ch_top in ChTop.lean proves the assumption of ch_core. It bounds ASK − MAIN, summed over TT and the lifts, by x^(Cε) times the expression errorBracketSizeWindows that the subsection on ch_core writes out. Here C is the code's CErr, which is eD + eL + 3. ch_top rests on 90 declarations. Its premise SizeData₂, defined in SChain.lean, is a conjunction of eleven conditions on a record Data of 39 real numbers and real-valued functions from MeanBoundSecondForm.lean.</p>
+</div>
+<div class="node maaritelma" id="t-indices">
+<span class="nid">t-indices &middot; r.&nbsp;646</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>The record has indices u0, u and t, the numbers muCC and Fo depend on u0 and muN, h and T on u0 and u, Main is the sum of MAIN, and ph y is y log y − y</strong></p>
+<p class="body">The record has three indices. An index u0 runs over a finite set, which for a family is the set of the elements of the group H. For each u0 an index u runs over a finite set that depends on u0. An index t runs over a set in bijection with TT, and a field aT t equals the a t of ch_core. The numbers muCC and Fo depend on u0 alone, and the numbers muN, h and T depend on u0 and u. The bullets below fix one u0 and leave it out of the notation. The number Main of the record stands for the sum of MAIN over TT and the lifts. The code writes ph y for y log y − y. Two of the eleven conditions hold the idea.</p>
+</div>
+<div class="node lahtokohta" id="t-div">
+<span class="nid">t-div &middot; r.&nbsp;664</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>DIV says that muCC + h u − Fo is at most the sum over t of m·(ph(aT t) − aT t·logOm) − aT t·log(T u) plus errors, the one condition where m multiplies the main term</strong></p>
+<p class="body">DIV bounds a number muCC from above. For every u it says that muCC + h u − Fo is at most the sum over t of m * (ph (aT t) − aT t * logOm) − aT t * log (T u), plus error terms. Here logOm is a constant that the section on one lift describes. Among the eleven conditions this is the one in which the number m of lifts multiplies the main term.</p>
+</div>
+<div class="node lahtokohta" id="t-slope">
+<span class="nid">t-slope &middot; r.&nbsp;668</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>SlopeIneq says, when three small parameters lie in stated ranges and HH bounds a difference, that the weighted mean over u of muN u − h u, minus the log of the number of u and corrections, is at most muCC</strong></p>
+<p class="body">SlopeIneq bounds muCC from below. It says that the mean over u of muN u − h u with weights d u, minus the logarithm of the number of indices u and minus correction terms, is at most muCC. The statement holds when three small parameters of the record lie in stated ranges and a number HH is a positive upper bound for that mean minus a number muMinCC. The condition HHBound supplies the bound by HH.</p>
+</div>
+<div class="node vaite" id="t-cancel">
+<span class="nid">t-cancel &middot; r.&nbsp;674</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>The mean of DIV and SlopeIneq cancel muCC and the mean of h and bound the mean of muN, and two further conditions bound ASK through Ga, so ASK ≤ Main plus errors</strong></p>
+<p class="body">The mean of DIV over u, taken with the weights of SlopeIneq, and SlopeIneq together cancel muCC and the mean of h and leave an upper bound for the mean of muN. The conditions QuotientSlopeBoundsWith and LossBounds bound ASK from above through a quantity Ga, and Ga through the mean of muN, so ASK ≤ Main plus errors follows. The theorem each_unit_bound_statement, which rests on 58 declarations, states this deduction, and this session checked by hand that the leftover terms add up to Main. The reading of six proofs read the proof Ga_bound5 behind it in full and found the same cancellation of muCC.</p>
+<span class="meta-line">Johto: <a href="#t-div" title="DIV says that muCC + h u − Fo is at most the sum over t of m·(ph(aT t) − aT t·logOm) − aT t·log(T u) plus errors, the one condition where m multiplies the main term">t-div</a> &middot; <a href="#t-slope" title="SlopeIneq says, when three small parameters lie in stated ranges and HH bounds a difference, that the weighted mean over u of muN u − h u, minus the log of the number of u and corrections, is at most muCC">t-slope</a></span>
+</div>
+<div class="node lahtokohta" id="t-rest">
+<span class="nid">t-rest &middot; r.&nbsp;674</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The rest of ch_top fits the errors inside the bound through core_ineq, of which the beginning was read</strong></p>
+<p class="body">The rest of ch_top shows that the errors fit inside the bound. It calls core_ineq, an inequality between real numbers whose proof has about 10,000 characters, of which the reading of six proofs read the beginning.</p>
+</div>
+<h2 id="sec-what-the-numbers-of-the-record-are">15 &middot; What the numbers of the record are</h2>
+<div class="node lahtokohta" id="r-tie">
+<span class="nid">r-tie &middot; r.&nbsp;688</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>TieLocal says for a family what the numbers of the record measure, with the index u running over the words of the datum of u0</strong></p>
+<p class="body">The eleven conditions speak about real numbers without saying what they measure. The condition TieLocal in TieGlobal.lean says it for a family. A map pt assigns a datum of the family to each element u0 of the group H, and the index u of the record runs over the words of that datum. The bullets give four of the ties of TieLocal, for the datum of one u0. The condition ties further numbers of the record, among them Fo, T u and Ga, to numbers of the datum that this document did not open.</p>
+</div>
+<div class="node lahtokohta" id="r-ties">
+<span class="nid">r-ties &middot; r.&nbsp;696</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>muCC is the slope of the dual of the lattice RR, muN u the slope of the lattice Nu u, h u bounds the height of the map Bk u from Nu u into the dual of RR, and the number of lifts is R.m</strong></p>
+<p class="body">muCC is the slope of the dual of a Hermitian lattice div.RR of the datum.</p>
+<p class="body">muN u is the slope of a lattice div.Nu u, one for each word, and the weight d u is the rank of that lattice.</p>
+<p class="body">h u is the number div.h u of the datum. The datum has a linear map div.Bk u from Nu u into the dual of RR, and the condition WordFacts in RecBridge.lean requires that the height htMap of a nonzero Bk u is at most h u.</p>
+<p class="body">The number of lifts is the field R.m of the datum. The definition lifts sets the set of lifts to Finset.Icc 1 D.R.m.</p>
+</div>
+<div class="node vaite" id="r-about">
+<span class="nid">r-about &middot; r.&nbsp;706</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>The slope inequality is therefore about the maps Bk u of the words of one datum into one lattice, and m enters through the bound h u</strong></p>
+<p class="body">The slope inequality of step 5 is therefore about the maps Bk u of the words of one datum into one lattice. The next subsection shows that the bound h u for the height of each map is a sum over the m lifts, which is how m enters.</p>
+<span class="meta-line">Johto: <a href="#r-ties" title="muCC is the slope of the dual of the lattice RR, muN u the slope of the lattice Nu u, h u bounds the height of the map Bk u from Nu u into the dual of RR, and the number of lifts is R.m">r-ties</a> &middot; <a href="#t-slope" title="SlopeIneq says, when three small parameters lie in stated ranges and HH bounds a difference, that the weighted mean over u of muN u − h u, minus the log of the number of u and corrections, is at most muCC">t-slope</a> &middot; <a href="#d-height" title="The first sum is in the height, where each lift contributes at most ph(aT t) at each t, so m lifts give m times that term">d-height</a> (todistus seuraa tulosta)</span>
+</div>
+<h2 id="sec-the-path-of-the-divisibility-inequality">16 &middot; The path of the divisibility inequality</h2>
+<div class="node lahtokohta" id="d-ineq">
+<span class="nid">d-ineq &middot; r.&nbsp;712</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>For the lattices of a datum the divisibility inequality bounds the dual slope of RR plus h u minus Fo by a main term with m times a sum of ph(aT t)</strong></p>
+<p class="body">For the lattices of a datum the inequality says that the dual slope of RR plus h u minus Fo is at most a main term plus error terms, and the main term contains m times a sum of ph (aT t) over TT. The proof passes through RecBridge.lean and its neighbours in the folder Divisibility.</p>
+</div>
+<div class="node lahtokohta" id="d-path">
+<span class="nid">d-path &middot; r.&nbsp;718</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Seven theorems carry it, from linkDIVt_of_bridge_kernel down to rhs_le_record, and three sums run over a set J of lifts of size m</strong></p>
+<p class="body">Theorem — What it does — Rests on — Read</p>
+<p class="body">linkDIVt_of_bridge_kernel — gives the inequality for every datum of a family — 2,662 — statement</p>
+<p class="body">wordFacts_of_face — moves it from coordinates to the lattices of the datum — 157 — in full</p>
+<p class="body">divClausesR_of — derives it from a record of inputs, DivInputsR — 814 — in full</p>
+<p class="body">IndefSide.boundsMu — bounds the dual slope of RR from above — 111 — in full, by the reading of six proofs</p>
+<p class="body">height_chain_atR — bounds the height of a product of maps by the sum of the heights — 87 — in full, by the reading of six proofs</p>
+<p class="body">RecNums.divIneq — adds the slope bound and the height bound — 34 — in full</p>
+<p class="body">rhs_le_record — shows that the sum stays below the main term plus errors — 206 — in full</p>
+<p class="body">This session read the rows that are marked in full without a named reading. Three sums run over a set J of lifts, and the record RecNums in Inputs.lean fixes the size of J as m.</p>
+</div>
+<div class="node vaite" id="d-height">
+<span class="nid">d-height &middot; r.&nbsp;733</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>The first sum is in the height, where each lift contributes at most ph(aT t) at each t, so m lifts give m times that term</strong></p>
+<p class="body">The first sum is in the height. The number hu of the record, which stands for h u, is hA plus the sum over j of hB j − hX j. The fact weight_height_sum_le of the record bounds the part of each such term at an element t of TT by ph (aT t). Each lift contributes the same main term, and m lifts give m times that term.</p>
+<span class="meta-line">Johto: <a href="#d-path" title="Seven theorems carry it, from linkDIVt_of_bridge_kernel down to rhs_le_record, and three sums run over a set J of lifts of size m">d-path</a> &middot; <a href="#d-ineq" title="For the lattices of a datum the divisibility inequality bounds the dual slope of RR plus h u minus Fo by a main term with m times a sum of ph(aT t)">d-ineq</a></span>
+</div>
+<div class="node lahtokohta" id="d-slope">
+<span class="nid">d-slope &middot; r.&nbsp;737</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The second sum is in the slope, where boundsMu bounds the dual slope of RR by sums over the lifts through five propositions</strong></p>
+<p class="body">The second sum is in the slope. boundsMu bounds the dual slope of RR by a sum over the lifts of numbers l3 j and further sums. By the reading of six proofs it uses five propositions, a slope bound slope_bounds, a determinant formula, a Gram identity for a quotient metric, a gluing of local lattices and a bound at ramified places. The numbers l3, F0 and E1 are fields of a record, bounded by further fields of the same record.</p>
+</div>
+<div class="node lahtokohta" id="d-chain">
+<span class="nid">d-chain &middot; r.&nbsp;742</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The third sum is in the chain, where height_chain_atR is submultiplicativity of the operator norm in logarithms</strong></p>
+<p class="body">The third sum is in the chain. By the same reading height_chain_atR is submultiplicativity of the operator norm at each place, written in logarithms, with the matrices of the chain grouped by their lift.</p>
+</div>
+<div class="node lahtokohta" id="d-link">
+<span class="nid">d-link &middot; r.&nbsp;746</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>LinkDIV follows from LinkEta and DIVinN, DIVinN comes from the bound of VWin, and LinkDIV at one datum includes BesselId</strong></p>
+<p class="body">The theorem of the first row derives the link LinkDIV from two premises, LinkEta and DIVinN. divinN_of_hypV, which rests on 72 declarations, gets DIVinN from the bound of VWin over the host. The form of LinkDIV at one datum, LinkDIV_at, also includes BesselId, which says that a pairing Bu of the datum equals a nonzero constant times a pairing besS after two isometries.</p>
+<span class="meta-line"><a href="#d-e17" title="This is where entry 17 of the note enters the divisibility">d-e17</a> &rarr; tulkitsee &middot; <a href="#d-bessel" title="The names match the Bessel period of entry 12">d-bessel</a> &rarr; tulkitsee</span>
+</div>
+<div class="node oletus" id="d-e17">
+<span class="nid">d-e17 &middot; r.&nbsp;746</span>
+<span class="chip">Oletus</span>
+<span class="laji" title="oletus tai kehys">O</span>
+<p><strong>This is where entry 17 of the note enters the divisibility</strong></p>
+<p class="body">This is where entry 17 of the note enters the divisibility.</p>
+<span class="meta-line">tulkitsee &rarr; <a href="#d-link" title="LinkDIV follows from LinkEta and DIVinN, DIVinN comes from the bound of VWin, and LinkDIV at one datum includes BesselId">d-link</a></span>
+</div>
+<div class="node oletus" id="d-bessel">
+<span class="nid">d-bessel &middot; r.&nbsp;746</span>
+<span class="chip">Oletus</span>
+<span class="laji" title="oletus tai kehys">O</span>
+<p><strong>The names match the Bessel period of entry 12</strong></p>
+<p class="body">The names match the Bessel period of entry 12.</p>
+<span class="meta-line">tulkitsee &rarr; <a href="#d-link" title="LinkDIV follows from LinkEta and DIVinN, DIVinN comes from the bound of VWin, and LinkDIV at one datum includes BesselId">d-link</a></span>
+</div>
+<h2 id="sec-the-chain-of-lifts">17 &middot; The chain of lifts</h2>
+<div class="node maaritelma" id="k-colchain">
+<span class="nid">k-colchain &middot; r.&nbsp;755</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>A ColChain holds matrices Kj through whose product the pairing of the datum factors, and a ChainTie identifies them with the kernel operators and the coupling of a KerChain</strong></p>
+<p class="body">The chain is a concrete object in the code. A record ColChain holds matrices Kj between spaces with metrics, a field fact says that the pairing of the datum factors through their product, and a field lf places each lift on a matrix.</p>
+<p class="body">The structure ChainTie in DivisionHeightBoundStatement.lean links a ColChain to a chain of kernels, the code's KerChain, which has a number n of steps and one coupling. Its field kerF says that the matrix Kj j for j below n, read in coordinates, is the kernel operator number j. Its field kerC says that the last matrix Kj n is the coupling cpl. Its field metF says that the metric of a space is the inner product on the forms of that space.</p>
+<p class="body">chainOf builds the ColChain from a chain of kernels by choosing bases. It rests on 54 declarations.</p>
+</div>
+<div class="node lahtokohta" id="k-groups">
+<span class="nid">k-groups &middot; r.&nbsp;768</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The group acting on the spaces chF u j contains UF E (N j), the isometry group of the standard Hermitian form on E^r, so a unitary group</strong></p>
+<p class="body">FiniteSumNonzeroLargeDepth.lean defines the family chF u j of spaces for a word u and a number j. The group that acts on those spaces is UF E (N j) times two further groups, where E is a field of the host. UF E r is the isometry group of the standard Hermitian form on E^r, the sum of star (x i) * y i, so it is a unitary group.</p>
+</div>
+<div class="node lahtokohta" id="k-rank">
+<span class="nid">k-rank &middot; r.&nbsp;773</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The rank is N j = k + j·(t+1), and entry 8 of the note writes a lift as π ↦ π ⊞ μ_j[t]</strong></p>
+<p class="body">The rank is N j = k + j * (t + 1) for natural numbers k and t of the datum, so the rank grows by t + 1 from each j to the next. Entry 8 of the note writes a lift as π ↦ π ⊞ μ_j[t].</p>
+<span class="meta-line"><a href="#k-t" title="That the letter t of the note is this t is an interpretation">k-t</a> &rarr; tulkitsee</span>
+</div>
+<div class="node oletus" id="k-t">
+<span class="nid">k-t &middot; r.&nbsp;773</span>
+<span class="chip">Oletus</span>
+<span class="laji" title="oletus tai kehys">O</span>
+<p><strong>That the letter t of the note is this t is an interpretation</strong></p>
+<p class="body">That the letter t of the note is this t is an interpretation.</p>
+<span class="meta-line">tulkitsee &rarr; <a href="#k-rank" title="The rank is N j = k + j·(t+1), and entry 8 of the note writes a lift as π ↦ π ⊞ μ_j[t]">k-rank</a></span>
+</div>
+<div class="node vaite" id="k-count">
+<span class="nid">k-count &middot; r.&nbsp;776</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Since R.m = m2 + 2, the chain of a word has m2 steps and so m − 1 matrices, with ranks from N 0 to N m because the last matrix covers two lifts</strong></p>
+<p class="body">The condition ChIdx.Ok requires R.m = m2 + 2 for a natural number m2, so m is at least</p>
+<p class="body">The chain of a word has n = m2 steps, so it has n + 1 = m − 1 matrices. Its ranks run from N 0 to N m, because the last matrix covers the two lifts from N (m − 2) to N m.</p>
+<span class="meta-line">Johto: <a href="#k-colchain" title="A ColChain holds matrices Kj through whose product the pairing of the datum factors, and a ChainTie identifies them with the kernel operators and the coupling of a KerChain">k-colchain</a> &middot; <a href="#k-rank" title="The rank is N j = k + j·(t+1), and entry 8 of the note writes a lift as π ↦ π ⊞ μ_j[t]">k-rank</a> &middot; <a href="#k-matrices" title="The first m − 2 matrices are kernel operators, the last is a coupling built as a finite sum of products of two kernels, and a final linear map follows">k-matrices</a> (todistus seuraa tulosta)</span>
+</div>
+<div class="node lahtokohta" id="k-dists">
+<span class="nid">k-dists &middot; r.&nbsp;779</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The record ChTh holds m distributions th 0 to th (m−2) and top, equivariant under both unitary groups</strong></p>
+<p class="body">The record ChTh holds distributions of type ThDist. The distribution th i goes from rank N i to rank N (i + 1), and the distribution top goes from rank N (m − 1) to rank N m. The chain uses th i for i from 0 to m − 2 and top, which are m distributions. ThDist.Ok requires equivariance under both unitary groups. XiEntry writes a kernel entry as a product of local functions over primes.</p>
+<span class="meta-line"><a href="#k-theta" title="That the definitions fit a theta kernel for a pair of unitary groups is the session's interpretation from the names">k-theta</a> &rarr; tulkitsee</span>
+</div>
+<div class="node lahtokohta" id="k-matrices">
+<span class="nid">k-matrices &middot; r.&nbsp;784</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The first m − 2 matrices are kernel operators, the last is a coupling built as a finite sum of products of two kernels, and a final linear map follows</strong></p>
+<p class="body">The first m − 2 matrices are the kernel operators of th 0 to th (m − 3). The last matrix is the coupling. The definition CplKer.comp builds it as a weighted sum, over classes and over a finite set, of products of two kernels, and the definitions cp1K and cp2K take those two kernels from th (m − 2) and from top.</p>
+<p class="body">After the matrices comes a final linear map. chainOf takes it as an argument g into a dual space and sets the field PtL of the chain to g in coordinates. The field lf places lift number l on the matrix with the smaller of n and a number no l that the caller gives.</p>
+</div>
+<div class="node vaite" id="k-pigeon">
+<span class="nid">k-pigeon &middot; r.&nbsp;788</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Some matrix holds more than one lift, because m lifts sit on m − 1 matrices</strong></p>
+<p class="body">The m lifts sit on m − 1 matrices, so some matrix holds more than one lift.</p>
+<span class="meta-line">Johto: <a href="#k-count" title="Since R.m = m2 + 2, the chain of a word has m2 steps and so m − 1 matrices, with ranks from N 0 to N m because the last matrix covers two lifts">k-count</a></span>
+</div>
+<div class="node lahtokohta" id="k-read">
+<span class="nid">k-read &middot; r.&nbsp;793</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>rowsU_of_colPins_alt proves that a datum with its ties has a ColChain with a ChainTie and rests on 14,837 declarations</strong></p>
+<p class="body">This session read these definitions and the statement of rowsU_of_colPins_alt, which proves that a datum with its ties has a ColChain with a ChainTie. That theorem rests on 14,837 declarations, and link_brest_alt, which carries it into the shape theorem, rests on 27,645.</p>
+</div>
+<div class="node oletus" id="k-theta">
+<span class="nid">k-theta &middot; r.&nbsp;793</span>
+<span class="chip">Oletus</span>
+<span class="laji" title="oletus tai kehys">O</span>
+<p><strong>That the definitions fit a theta kernel for a pair of unitary groups is the session's interpretation from the names</strong></p>
+<p class="body">The name ThDist, a condition named WeilTied on the additive characters and the folder name Theta Pair Lifts say theta and Weil. That the definitions fit a theta kernel for a pair of unitary groups is this session's interpretation.</p>
+<span class="meta-line">rajaa &rarr; <a href="#s0-route" title="The proof derives the five theorems from one inequality on a weighted prime sum, which it gets by bounding the slope of one lattice from two sides with m near √x">s0-route</a> &middot; tulkitsee &rarr; <a href="#k-dists" title="The record ChTh holds m distributions th 0 to th (m−2) and top, equivariant under both unitary groups">k-dists</a></span>
+</div>
+<div class="node lahtokohta" id="k-reading">
+<span class="nid">k-reading &middot; r.&nbsp;800</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The reading of the chain found the kernels defined from the distributions, the theta-lift conditions ThHyp untraced, the height numbers built in two halves, and adm2 and BesselId supplied from the record</strong></p>
+<p class="body">The reading of the chain followed the premises of rowsU_of_colPins_alt.</p>
+<p class="body">The kernel of the chain is defined from the distributions. The code sets matK to kerOf (T.th i) applied to XiEntry, so the kernel number i is the kernel of the distribution number i by definition. The statement KerEquivC, which the theorem kerEquivC proves, adds equivariance.</p>
+<p class="body">That each lift is a theta lift is the content of a condition ThHyp with companions AnaStep and FamilyLaws. The reading did not trace them for the data of a family.</p>
+<p class="body">The numbers of the heights come from a record HtNums, which by the reading is built in one theorem from two halves. The half for the kernels is proved by kerSide_chainS, which rests on 12,981 declarations and uses a theorem named meanLogPeriod_chowlaSelberg. The half for the final pairing is a statement LastSide, which the reading did not open.</p>
+<p class="body">The lattice Nu u is defined through a field nprimeDef of the family, whose construction the reading did not trace.</p>
+<p class="body">The valuation condition val2 of the inputs is a theorem. It follows from val2AllAtR, which rests on 269 declarations, and from a condition adm2, which says that every period value is zero or has at least a prescribed valuation. This session found the supply of adm2 in the proof of the shape theorem, where closed_family_admissible_twist_link_alt, resting on 5,172 declarations, derives it from fields of the record.</p>
+<p class="body">BesselId is proved by besselId_of_joins from join data that the field selJ of the record feeds. The reading did not follow selJ further.</p>
+<span class="meta-line">rajaa &rarr; <a href="#st6" title="Step 6. Each map into the lattice factors through a chain of m kernels between unitary groups of ranks k + j(t+1), the first m − 2 composed one after the other, the last two inside a finite sum, with one more linear map after them">st6</a> &middot; rajaa &rarr; <a href="#s0-route" title="The proof derives the five theorems from one inequality on a weighted prime sum, which it gets by bounding the slope of one lattice from two sides with m near √x">s0-route</a></span>
+</div>
+<h2 id="sec-the-bound-for-one-lift">18 &middot; The bound for one lift</h2>
+<div class="node maaritelma" id="u-place">
+<span class="nid">u-place &middot; r.&nbsp;824</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>A place is a pair of a truth value and an element of H, it carries interlacing numbers u and v and numbers e and b, and the top weight aT t is u 0 − (k−1)/2</strong></p>
+<p class="body">Numbers.lean defines the numbers of a lift from one record for each place, HCParam. A place is a pair of a truth value and an element of the group H, and the top places are the pairs of the value false and an element of the set TT. This session read the definitions and the statement of each theorem of this section.</p>
+<p class="body">A place carries k numbers u, k − 1 numbers v, m numbers e and m numbers b. The fields u_gt_v and v_gt_u say that the numbers u and v interlace, so u₀ &gt; v₀ &gt; u₁ &gt; … &gt; u_{k−1}. These letters u and v are unrelated to the words u and to the v of the bullet on kerPlace.</p>
+<p class="body">The top weight aT t at a top place t is u 0 − (k − 1)/2. The code uses the letter t both for a top place and for the number t of the rank N j, and the two are unrelated.</p>
+</div>
+<div class="node maaritelma" id="u-weights">
+<span class="nid">u-weights &middot; r.&nbsp;835</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>The weights nu of lift j come from the numbers uW and from blocks of t + 1 values for each earlier lift</strong></p>
+<p class="body">The weights nu of lift j have one entry for each index below N (j − 1). The first k entries come from k numbers that the code calls uW. The first and the last of them are the numbers u₀ and u_{k−1}. The k − 2 between them are the numbers v₀ to v_{k−3}, each lowered by 1/2 and, where a bit of a code is set, by a further number Del. The rest of the entries come in blocks of t + 1 consecutive values, one block for each earlier lift, centred at minus the number e of that lift. Every entry then gets the number e of lift j added and a shift subtracted that depends on its index.</p>
+</div>
+<div class="node maaritelma" id="u-kerplace">
+<span class="nid">u-kerplace &middot; r.&nbsp;842</span>
+<span class="chip">Määritelmä</span>
+<span class="laji" title="määritelmä">D</span>
+<p><strong>kerPlace is the sum of ph over the weights minus their sum times logOm, logHook is the log of a hook product, and hU adds kerPlace and subtracts logHook over places and lifts</strong></p>
+<p class="body">kerPlace is the sum of ph over the weights minus the sum of the weights times logOm. Here logOm is γ + log(π/v) minus the real part of the logarithmic derivative at 1 of the L-function of the quadratic character modulo the prime d of the host. The number v is half of a number rd of the host.</p>
+<p class="body">logHook is the logarithm of the hook product of a Young diagram with k + j − 1 rows. The rows are built from the k − 1 numbers v and from j of the numbers b, each shifted by the number e of lift j.</p>
+<p class="body">The number hU adds kerPlace and subtracts logHook, summed over places and over the m lifts.</p>
+<span class="meta-line"><a href="#u-guess" title="Four guesses from names and the note, logOm as the Chowla-Selberg period, the hook product as the Weyl dimension formula, the interlacing as that of entry 7 and the number of lifts as the multiplicity">u-guess</a> &rarr; tulkitsee</span>
+</div>
+<div class="node lahtokohta" id="u-stepE">
+<span class="nid">u-stepE &middot; r.&nbsp;852</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>stepE_num proves that the sum of ph over the weights minus logHook is at most ph(aT ρ) at a top place and 0 elsewhere up to an error, and that the weights sum to aT ρ + k·w</strong></p>
+<p class="body">stepE_num in NumbersLink.lean proves two facts for every lift j and place ρ, and it rests on 160 declarations. The sum of ph over the weights minus logHook is at most ph (aT ρ) at a top place and at most 0 elsewhere, up to an error term. The sum of the weights is aT ρ + k·w at a top place, up to a bounded error, where w is a shift that all rows of the lift share at that place. Two statements about rows of natural numbers carry it.</p>
+</div>
+<div class="node lahtokohta" id="u-hook">
+<span class="nid">u-hook &middot; r.&nbsp;860</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>young_diagram_hook says that the sum of the logs of the factorials of the row lengths is at most the log of the hook product</strong></p>
+<p class="body">young_diagram_hook, which rests on 5 declarations, says that for every Young diagram the sum of the logarithms of the factorials of the row lengths is at most the logarithm of the hook product. This session read its proof.</p>
+</div>
+<div class="node vaite" id="u-hookwhy">
+<span class="nid">u-hookwhy &middot; r.&nbsp;860</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>It holds because the hook of a cell is at least as long as the rest of its row, and those lengths multiply to L! along a row of length L</strong></p>
+<p class="body">The hook of a cell is at least as long as the part of its row from the cell to the end, and the product of those lengths along a row of length L is L!.</p>
+<span class="meta-line">Johto: <a href="#u-hook" title="young_diagram_hook says that the sum of the logs of the factorials of the row lengths is at most the log of the hook product">u-hook</a></span>
+</div>
+<div class="node lahtokohta" id="u-origin">
+<span class="nid">u-origin &middot; r.&nbsp;865</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>young_diagram_step_origin pairs each lower row with a row under the hook product through the interlacing and leaves the top row, of length aT + w − s, without a partner</strong></p>
+<p class="body">young_diagram_step_origin, which rests on 55 declarations, takes k rows built from k numbers and k − 1 rows built from k − 1 numbers that interlace with them. In the use for a lift the k numbers are the numbers uW of the list above and the k − 1 numbers are the numbers v, and the premise inter of stepE_num states the interlacing for them. It concludes the two facts in the form of an inequality and an equation with a remainder, and it bounds the error term and the remainder. The reading of six proofs read its proof in full. The proof pairs each of the k − 1 lower rows of the lift with a row under the hook product, bounds the difference of each pair through the interlacing, and leaves the top row without a partner. By the definition originRow the top row at a top place has the length aT + w − s, where s is (k + (2j − 1)(t + 1))/2. By the reading the weights of the blocks are bounded separately and go into the error term. The error term of the statement grows with w, and this document does not record how the proof moves the shift w of the top row into it.</p>
+<span class="meta-line"><a href="#h-budget" title="B0 and Nc are budgets that the code defines by formulas, with B0 = f·m·b·x^ε, so the factor m of the third term is part of the definition of the budget, and why the errors of one lift fit a budget that grows with m was not read">h-budget</a> &rarr; vertaa</span>
+</div>
+<div class="node vaite" id="u-each">
+<span class="nid">u-each &middot; r.&nbsp;878</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>Each lift contributes at most ph(aT t) plus an error at a top place, and kerPlace multiplies the weight sum aT t + k·w by logOm, while the main term of DIV holds m·(ph(aT t) − aT t·logOm)</strong></p>
+<p class="body">By the first fact each lift contributes at most ph (aT t) plus the error term at a top place t. By the second fact the sum of the weights at that place is aT t + k·w up to a bounded error, and kerPlace multiplies that sum by logOm. The main term of DIV holds m·(ph (aT t) − aT t * logOm), summed over TT.</p>
+<span class="meta-line">Johto: <a href="#u-stepE" title="stepE_num proves that the sum of ph over the weights minus logHook is at most ph(aT ρ) at a top place and 0 elsewhere up to an error, and that the weights sum to aT ρ + k·w">u-stepE</a> &middot; <a href="#u-kerplace" title="kerPlace is the sum of ph over the weights minus their sum times logOm, logHook is the log of a hook product, and hU adds kerPlace and subtracts logHook over places and lifts">u-kerplace</a> &middot; <a href="#t-div" title="DIV says that muCC + h u − Fo is at most the sum over t of m·(ph(aT t) − aT t·logOm) − aT t·log(T u) plus errors, the one condition where m multiplies the main term">t-div</a></span>
+<span class="meta-line"><a href="#u-open" title="The document does not record where the proof puts the terms that contain w and s">u-open</a> &rarr; rajaa</span>
+</div>
+<div class="node lahtokohta" id="u-open">
+<span class="nid">u-open &middot; r.&nbsp;878</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The document does not record where the proof puts the terms that contain w and s</strong></p>
+<p class="body">This document does not record where the proof puts the terms that contain w and s.</p>
+<span class="meta-line">rajaa &rarr; <a href="#st7" title="Step 7. The upper bound adds one term a·log a − a − a·logOm per lift and top place, and interlacing with a hook product bounds the rest">st7</a> &middot; rajaa &rarr; <a href="#u-each" title="Each lift contributes at most ph(aT t) plus an error at a top place, and kerPlace multiplies the weight sum aT t + k·w by logOm, while the main term of DIV holds m·(ph(aT t) − aT t·logOm)">u-each</a></span>
+</div>
+<div class="node lahtokohta" id="u-numfacts">
+<span class="nid">u-numfacts &middot; r.&nbsp;884</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>numFacts_rec proves the premises of stepE_num for a family from size conditions</strong></p>
+<p class="body">numFacts_rec, which rests on 266 declarations, proves the premises of stepE_num for the data of a family from size conditions and a choice of parameters.</p>
+</div>
+<div class="node oletus" id="u-guess">
+<span class="nid">u-guess &middot; r.&nbsp;884</span>
+<span class="chip">Oletus</span>
+<span class="laji" title="oletus tai kehys">O</span>
+<p><strong>Four guesses from names and the note, logOm as the Chowla-Selberg period, the hook product as the Weyl dimension formula, the interlacing as that of entry 7 and the number of lifts as the multiplicity</strong></p>
+<p class="body">Four interpretations in this section are guesses from the names and the note. They are logOm as the Chowla-Selberg period and the hook product as the Weyl dimension formula, both of entry 9, the interlacing as the interlacing weights of entry 7, and the number of lifts as the multiplicity of the note.</p>
+<span class="meta-line">tulkitsee &rarr; <a href="#u-kerplace" title="kerPlace is the sum of ph over the weights minus their sum times logOm, logHook is the log of a hook product, and hU adds kerPlace and subtracts logHook over places and lifts">u-kerplace</a></span>
+</div>
+<h2 id="sec-the-lower-bound-for-the-lattices-of-a-da">19 &middot; The lower bound for the lattices of a datum</h2>
+<div class="node lahtokohta" id="lo-frame">
+<span class="nid">lo-frame &middot; r.&nbsp;892</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Frame_at is the slope inequality for the lattices of a datum, derived from a general statement about several maps into one lattice that rests on 400 declarations</strong></p>
+<p class="body">Frame_at in QuadraticLogDerivCongr.lean is the slope inequality for the lattices of a datum. This session read the statements of this section and, of the proofs, that of frame_at_of.</p>
+<p class="body">Theorem — What it does — Rests on</p>
+<p class="body">frame_at_of — derives Frame_at from a general statement about several maps into one lattice — 441</p>
+<p class="body">joint_a_ramified_holds — proves that general statement — 400</p>
+<p class="body">blockReal_at_of — takes the blocks of the maps from BesselId — 59</p>
+<p class="body">matKF_of — builds the matrices of the maps for a family — 178</p>
+<p class="body">data_SlopeIneq — turns Frame_at into the condition SlopeIneq of the record Data — 137</p>
+<p class="body">link_alt_alt_bis — supplies the link LinkS — 11,188</p>
+<p class="body">Of the 400 declarations behind joint_a_ramified_holds, 190 lie in the folder HarderNarasimhan and 74 in the folder LatticeSlopes. Statement.lean states a slope inequality for a map of bounded norm between lattices.</p>
+</div>
+<div class="node lahtokohta" id="lo-linkS">
+<span class="nid">lo-linkS &middot; r.&nbsp;911</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>LinkS bounds the Gram matrix of the maps under a premise that duS u·Γ²/Dstar lies between 1/C0 and C0, with hsSq u u′ ≤ (1+η0)·duS u·duS u′/Dstar, hsDiagFull u ≤ e0·duS u and Dall ≤ (1+η1)·Dstar, with η0, η1 and √e0 at most exp(−x^(ε/8))</strong></p>
+<p class="body">The general statement needs bounds on the Gram matrix of the maps, and the link LinkS supplies them through the condition LinkS_at, for numbers duS u, Dstar and Dall of the datum. duS u is the complex dimension of a space of the word u. LinkS_at is an implication. Its premise says that duS u·Γ²/Dstar lies between 1/C0 and C0 for every word u, where Γ is the number GamOf, the exponential of a constant times m⁵·f·L for numbers f and L of the datum. Its conclusion has three parts.</p>
+<p class="body">For two different words u and u′ a number hsSq u u′ is at most (1 + η0)·duS u·duS u′/Dstar.</p>
+<p class="body">For every word u a number hsDiagFull u is at most e0·duS u.</p>
+<p class="body">Dall is at most (1 + η1)·Dstar.</p>
+<p class="body">The link gives η0, η1 and the square root of e0 at most exp(−x^(ε/8)), so e0 is at most exp(−2·x^(ε/8)). The definition of hsDiagFull u is the squared Hilbert-Schmidt norm of a block KD u u minus the identity, and hsSq u u′ is defined through the block KD u u′, whose definition this session did not open.</p>
+<span class="meta-line"><a href="#lo-interp" title="The session's interpretation is that each map is an isometry up to a small relative error and that two different maps overlap as two random subspaces do, which the note calls approximate orthogonality">lo-interp</a> &rarr; selittaa</span>
+</div>
+<div class="node oletus" id="lo-interp">
+<span class="nid">lo-interp &middot; r.&nbsp;923</span>
+<span class="chip">Oletus</span>
+<span class="laji" title="oletus tai kehys">O</span>
+<p><strong>The session's interpretation is that each map is an isometry up to a small relative error and that two different maps overlap as two random subspaces do, which the note calls approximate orthogonality</strong></p>
+<p class="body">The rest of this paragraph is this session's interpretation. Each map is an isometry up to a small relative error, because the squared distance of its block from the identity is at most the share e0 of duS u. The bound for two different maps is 1 + η0 times duS u·duS u′/Dstar. That product is the mean of the squared Hilbert-Schmidt norm of the product of the projections onto two random subspaces of those dimensions in a space of dimension Dstar. By the premise it is at most (1 + η0)·C0·duS u/Γ², which is a small share of duS u when Γ is large. The note's entry 16 calls its statement the approximate orthogonality of the columns, and entry 13 names the Bost slope inequality.</p>
+<span class="meta-line">selittaa &rarr; <a href="#lo-linkS" title="LinkS bounds the Gram matrix of the maps under a premise that duS u·Γ²/Dstar lies between 1/C0 and C0, with hsSq u u′ ≤ (1+η0)·duS u·duS u′/Dstar, hsDiagFull u ≤ e0·duS u and Dall ≤ (1+η1)·Dstar, with η0, η1 and √e0 at most exp(−x^(ε/8))">lo-linkS</a></span>
+</div>
+<h2 id="sec-how-the-conditions-are-assembled">20 &middot; How the conditions are assembled</h2>
+<div class="node lahtokohta" id="a-linkcore">
+<span class="nid">a-linkcore &middot; r.&nbsp;938</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>linkCore builds every witness of ChainTied from a family, with none left free, and the reading names no source for HidaSetting</strong></p>
+<p class="body">The reading of the links read linkCore in LossesSmallShares.lean in full. It rests on 373 declarations and builds every witness of ChainTied from a family. The number m is the field R.m of the datum. A further witness, which the code calls θ and which is unrelated to the θ of the Landau step, enters ThinScales and is exp(−c6·x^(ε/8)) for a constant c6. The reading found every witness constructed and none left free. The table gives the source of each part of SizeData₂ as the reading reports it. The report names no source for the eleventh part, HidaSetting, which is a list of sign conditions.</p>
+</div>
+<div class="node lahtokohta" id="a-sources">
+<span class="nid">a-sources &middot; r.&nbsp;947</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The source of each part of SizeData₂, as the reading reports it</strong></p>
+<p class="body">Part — Comes from</p>
+<p class="body">DIV, EComp5, HComp — the link LinkDIV</p>
+<p class="body">Count5 — PartFiveFamilyBounds</p>
+<p class="body">Slopes — two conditions on the slopes of the family</p>
+<p class="body">QuotientSlopeBoundsWith — the links LinkG and LinkMu</p>
+<p class="body">LossBounds — stLoss7 and a condition on weights</p>
+<p class="body">SlopeIneq — frameF_of, the form of frame_at_of for a family, with LinkDIV, LinkIRR and LinkS</p>
+<p class="body">HHBound — LinkDIV</p>
+<p class="body">FParams — the link LinkIRR</p>
+</div>
+<div class="node lahtokohta" id="a-links">
+<span class="nid">a-links &middot; r.&nbsp;958</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>topDesWin takes the links as premises, and seven theorems supply them in the proof of the shape theorem</strong></p>
+<p class="body">topDesWin, which rests on 724 declarations and whose proof this session read, takes the links as premises, and the proof of the shape theorem supplies them by these theorems.</p>
+<p class="body">Link — What it states, by the reading — Supplied by — Rests on</p>
+<p class="body">LinkG — local length bounds and a bound on von Mangoldt sums — closed_linkG_of_duty — 19,922</p>
+<p class="body">LinkS — the bounds of the section on the lower bound — link_alt_alt_bis — 11,188</p>
+<p class="body">LinkEta — a covering condition on places — closed_linkEta_of_duty — 1,008</p>
+<p class="body">LinkIRR — 0 ≤ delp ≤ exp(−x^(c/7)) for a number delp of the datum and a constant c — closed_linkIRR_of_join_count — 1,840</p>
+<p class="body">LinkDIV — the divisibility inequality — closed_linkDIVt_of_closed_bridge_kernel — 2,704</p>
+<p class="body">LinkMu — a bound on the difference of two slopes — linkMu_of_linkDIV, from LinkDIV — 219</p>
+<p class="body">LinkGLOBAL — the passage from the links to ChainTied — link_gl, which reaches linkCore — 15,442</p>
+</div>
+<div class="node lahtokohta" id="a-green">
+<span class="nid">a-green &middot; r.&nbsp;971</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Green goes to the supplier of LinkIRR alone and is derived from a statement on regular characters that the project proves</strong></p>
+<p class="body">The proof of the shape theorem passes Green to one call, the supplier of LinkIRR. By the reading Green is Green's parametrisation of the cuspidal characters of GL_d over a prime field. green_of_regular, of whose proof the wiring reading read about two thirds, derives it from a statement about regular characters that greenCuspidalCharsByRegularChars_proof proves, resting on 1,170 declarations.</p>
+</div>
+<div class="node lahtokohta" id="a-53">
+<span class="nid">a-53 &middot; r.&nbsp;977</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The shape theorem takes Green and 53 hypotheses, and goal_of_shape_of_hyps fills 45 of them from one field each of the record of 46 fields and six from the remaining field</strong></p>
+<p class="body">The shape theorem takes Green and 53 further hypotheses, which TopShapeAlt.lean lists. The theorem goal_of_shape_of_hyps in ShapeOf.lean fills the 53 from the 46 fields of the record. It passes 45 fields to one hypothesis each, three of them through a conversion, and derives six hypotheses from the remaining field, a selection σ.</p>
+</div>
+<div class="node lahtokohta" id="a-true">
+<span class="nid">a-true &middot; r.&nbsp;977</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The other two hypotheses, hVC and nR, are the proposition True in this use and are filled with trivial</strong></p>
+<p class="body">The other two hypotheses, hVC and nR, are the proposition True in this use, and zero_free_all_of_green_v_win fills them with trivial.</p>
+<span class="meta-line"><a href="#ck-true" title="UnusedSlot72 is True and filled by trivial, hVC and nR are True, and FamP.Large contains a conjunct True">ck-true</a> &rarr; toistaa</span>
+</div>
+<h2 id="sec-vwin-the-bound-on-lengths">22 &middot; VWin, the bound on lengths</h2>
+<div class="node lahtokohta" id="v-def">
+<span class="nid">v-def &middot; r.&nbsp;991</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>VWin says that the lengths shaLen of certain Galois cohomology groups are finite and that the sum of log l times the lengths is at most √exp(x^ε), for subfields of cyclotomic fields cut out by ψ, q, d and an exponent</strong></p>
+<p class="body">The reading of VWin read the statement in ExistsPageN.lean.</p>
+<p class="body">For a number field E, a prime l and a twist e, shaLen is the length over ℤ_l of a group of classes. The classes lie in the first continuous cohomology of the Galois group of the maximal extension of E unramified outside l, with coefficients ℚ_l/ℤ_l twisted by the power −e of the cyclotomic character, and they vanish at every place above l.</p>
+<p class="body">VWin concerns the subfields E of cyclotomic fields that a primitive character ψ, the two primes q and d and an exponent cut out. It says that the lengths are finite for every prime l and every twist e below x^401. It also says that for every finite set of primes the sum of log l times the lengths, over the primes l of the set and the twists e below x^401, is at most √exp(x^ε).</p>
+<span class="meta-line"><a href="#v-e17" title="The formula suggests the group of entry 17 of the note, with an added condition at the places above l">v-e17</a> &rarr; tulkitsee &middot; <a href="#v-weak" title="For each fixed B the allowed bound exp(x^ε/2) exceeds x^B once x is large">v-weak</a> &rarr; rajaa</span>
+</div>
+<div class="node oletus" id="v-e17">
+<span class="nid">v-e17 &middot; r.&nbsp;994</span>
+<span class="chip">Oletus</span>
+<span class="laji" title="oletus tai kehys">O</span>
+<p><strong>The formula suggests the group of entry 17 of the note, with an added condition at the places above l</strong></p>
+<p class="body">The formula suggests the group of entry 17 of the note, with the added condition at the places above l.</p>
+<span class="meta-line">tulkitsee &rarr; <a href="#v-def" title="VWin says that the lengths shaLen of certain Galois cohomology groups are finite and that the sum of log l times the lengths is at most √exp(x^ε), for subfields of cyclotomic fields cut out by ψ, q, d and an exponent">v-def</a></span>
+</div>
+<div class="node lahtokohta" id="v-uses">
+<span class="nid">v-uses &middot; r.&nbsp;1004</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The bound is used to declare a host good and to absorb a term of the divisibility inequality</strong></p>
+<p class="body">The reading found two uses of the bound. supplyOfAdmOf uses it to declare a host good, and divinN_of_hypV uses it to absorb a term of the divisibility inequality.</p>
+</div>
+<div class="node vaite" id="v-weak">
+<span class="nid">v-weak &middot; r.&nbsp;1007</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>For each fixed B the allowed bound exp(x^ε/2) exceeds x^B once x is large</strong></p>
+<p class="body">For each fixed exponent B the allowed bound exp(x^ε/2) exceeds x^B once x is large. That estimate is this session's own and follows from the formula alone.</p>
+<span class="meta-line">Johto: <a href="#v-def" title="VWin says that the lengths shaLen of certain Galois cohomology groups are finite and that the sum of log l times the lengths is at most √exp(x^ε), for subfields of cyclotomic fields cut out by ψ, q, d and an exponent">v-def</a></span>
+<span class="meta-line">rajaa &rarr; <a href="#v-def" title="VWin says that the lengths shaLen of certain Galois cohomology groups are finite and that the sum of log l times the lengths is at most √exp(x^ε), for subfields of cyclotomic fields cut out by ψ, q, d and an exponent">v-def</a></span>
+</div>
+<div class="node lahtokohta" id="v-proof">
+<span class="nid">v-proof &middot; r.&nbsp;1010</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The proof runs through five theorems read at their tops, down to ferreroWashington and bounds on lengths in five cases, with statements named after Poitou-Tate, Greenberg-Wiles and Bloch-Kato filled by project theorems</strong></p>
+<p class="body">The proof runs through these theorems, each read at its top.</p>
+<p class="body">Theorem — Rests on</p>
+<p class="body">vwin_of_row — 173,628</p>
+<p class="body">automorphic_window_of_inputs — 173,460</p>
+<p class="body">v_window_of_depth_zero_residual_bc_cm — 150,837</p>
+<p class="body">v_window_of_automorphy_csd_ss_mono_odd — 132,516</p>
+<p class="body">vwin_of_hypotheses_H_E_alt — 128,455</p>
+<p class="body">By the reading the last theorem combines a project theorem ferreroWashington, which rests on 5,560 declarations and bounds indices of class groups in a cyclotomic tower, with bounds of the form (l·n·e)^C on lengths, for a number n of the host, in five cases named CountI, CountII, CountIII, CountV and CountZ. The supplier of the first case, count_i_of_printed_bound_k_kato_automorphy, rests on 101,821 declarations. Statements named after Poitou and Tate, Greenberg and Wiles, and Bloch and Kato enter as fields of a record, and each field is filled by a theorem of the project, for example blochKatoLocal, which rests on 6,075. The reading read those statements and the one-line proofs that fill the fields, and left the proofs of the theorems unread.</p>
+</div>
+<h2 id="sec-row-the-galois-representations">23 &middot; Row, the Galois representations</h2>
+<div class="node lahtokohta" id="g-row">
+<span class="nid">g-row &middot; r.&nbsp;1032</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Row says that every regular algebraic polarized cuspidal representation of GL_n over a CM field has a continuous semisimple Galois representation with the condition PropsB</strong></p>
+<p class="body">The reading of Row read the statement in WeightsConjBis.lean. Row says that for every CM field E, every prime l and every cuspidal automorphic representation π of GL_n over E that is regular algebraic and polarized, there is a continuous semisimple representation of the Galois group of E in GL_n over the algebraic closure of ℚ_l with a condition PropsB. The fields of PropsB fix the Hodge-Tate weights and compare the representation with π at the places away from l and above l.</p>
+<span class="meta-line"><a href="#ck-isrect" title="IsRecT constrains the local Langlands map only on GL₁ and twists of depth-zero representations, and every other cuspidal representation goes to a fixed fallback object">ck-isrect</a> &rarr; rajaa &middot; <a href="#ck-awayb" title="AwayB asks for equal dimension, equality in a torsion case and equal characteristic polynomials in a tame case">ck-awayb</a> &rarr; rajaa</span>
+</div>
+<div class="node lahtokohta" id="g-proof">
+<span class="nid">g-proof &middot; r.&nbsp;1040</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Its proof combines a theta lift existence theorem with a geometric realisation, and of 77 Published statements behind it 69 have a closed proving theorem and 8 only derivations</strong></p>
+<p class="body">Theorem — What its proof does — Rests on</p>
+<p class="body">galoisLocalGlobalStrong_recParameter — applies the next theorem to a theta lift existence theorem — 195,170</p>
+<p class="body">galoisRepresentations_of_thetaLift — combines the lift with a geometric realisation — 169,094</p>
+<p class="body">tLift_holds_k — proves that lifts to unitary groups of all large ranks exist — 29,973</p>
+<p class="body">geoOne_holds — proves the geometric realisation — 99,280</p>
+<p class="body">kodaira_spencer_of_weight_one — supplies six parts of it — 45,942</p>
+<p class="body">By the reading geoOne_holds takes one premise, a Lefschetz fixed-point formula for finite étale correspondences, and lefschetz_fixedPoint_finite_etale_correspondence, which rests on 4,259 declarations, proves it inside the project. The reading counted 77 statements of the namespace GlobalTheory.Published behind Row. For 69 of them it found a closed theorem that proves the statement, and for 8 it found only derivations from other statements, which it did not trace.</p>
+</div>
+<div class="node lahtokohta" id="g-passed">
+<span class="nid">g-passed &middot; r.&nbsp;1054</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Row is passed on to VWin and into the record OpenLiteratureStatements</strong></p>
+<p class="body">Row is passed on in two ways. vwin_of_row derives VWin from it. everyCharacter_of_row puts it into a record OpenLiteratureStatements, and three theorems derive from that record three fields of a bundle of the next section, which state variants of Row for unitary groups.</p>
+<span class="meta-line"><a href="#ck-unused" title="OpenLiteratureStatements holds Row twice, most theorems named …_of_literature and …_of_open prove their statements without the record, and llOf_alt ignores eleven premises">ck-unused</a> &rarr; rajaa</span>
+</div>
+<h2 id="sec-the-record-and-the-two-bundles">24 &middot; The record and the two bundles</h2>
+<div class="node lahtokohta" id="b-wiring">
+<span class="nid">b-wiring &middot; r.&nbsp;1060</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>every_character_of_literature_of_vWin supplies seven premises, two bundles, two premises from theoremK_head2, the covolume bound, a local map and VWin</strong></p>
+<p class="body">The wiring reading read EveryCharacterOfLiteratureOfVWin.lean and the proofs of rows 3 and 4 of the table of calls below everyCharacter and of nonempty_hyps_definite_side_of_closed_bound in full.</p>
+<p class="body">every_character_of_literature_of_vWin takes the record OpenLiteratureStatements of three fields and VWin. It supplies the seven premises of row 4 of that table. They are two bundles, two premises from theoremK_head2, which rests on 25,083 declarations, the covolume bound hX, the existence of a local map, and VWin itself.</p>
+</div>
+<div class="node lahtokohta" id="b-bundles">
+<span class="nid">b-bundles &middot; r.&nbsp;1069</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The two bundles have 58 and 49 fields, and each of 16 sampled fields is filled by a project theorem, fourteen of them closed</strong></p>
+<p class="body">The two bundles have 58 and 49 fields. READING.md reports at least 28 and 29, because the text it worked from was cut.</p>
+<p class="body">The reading sampled 16 of the 107 fields. Each sampled field is filled by a theorem of the project whose statement is the field. Fourteen of those theorems are closed, and two take premises that further theorems of the project supply.</p>
+</div>
+<div class="node lahtokohta" id="b-record">
+<span class="nid">b-record &middot; r.&nbsp;1074</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>nonempty_hyps_definite_side_of_closed_bound builds the record HypsAlt of 46 fields, whose existence zero_free_all_of_green_v_win opens and passes to the shape theorem</strong></p>
+<p class="body">nonempty_hyps_definite_side_of_closed_bound builds the record HypsAlt with its 46 fields. Its last call is hypotheses_nonempty_of_unramified_exponents_alt, which rests on 421,135 declarations. Eight fields are named propositions that closed theorems fill, for example the statements on thin scales from litThin.</p>
+<p class="body">The condition DefiniteSideCondition of the record says that a bundle with the numbers of the section on one lift and its ties has the tied chain of the section on the chain, for every word.</p>
+<p class="body">The conclusion of nonempty_hyps_definite_side_of_closed_bound is the existence of a record, written with Nonempty. The proof of zero_free_all_of_green_v_win takes a record out of that existence, and goal_of_shape_of_hyps passes every field of it to a hypothesis of the shape theorem, as the section on the assembly describes.</p>
+</div>
+<h2 id="sec-the-covolume-bound">25 &middot; The covolume bound</h2>
+<div class="node lahtokohta" id="b-covol">
+<span class="nid">b-covol &middot; r.&nbsp;1089</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>topCovolSlim2_use_alt_alt derives the covolume bound hX from fifteen premises that project theorems fill, the largest described by their names as a toroidal compactification statement and a toroidal integral of Siegel</strong></p>
+<p class="body">The premise hX of every_character_of_theta_integrals_local_matching is a covolume bound. By the wiring reading topCovolSlim2_use_alt_alt, which rests on 157,435 declarations, derives it from fifteen premises, and a theorem of the project fills each of them. The largest are these.</p>
+<p class="body">Premise — Supplied by — Rests on</p>
+<p class="body">a toroidal compactification statement — toroidalForFanKS — 52,864</p>
+<p class="body">a toroidal integral of Siegel — siegelToroidalIntegral_holds — 52,439</p>
+<p class="body">a bigness statement named after Moriwaki — moriwakiBig_outright — 24,601</p>
+<p class="body">an arithmetic Hilbert-Samuel statement — hsUse_outright — 24,600</p>
+<p class="body">resolution of singularities in characteristic zero — resolutionCharZero — 7,699</p>
+<p class="body">The descriptions in the first column follow the names. By the reading the bound goes into one call, where it becomes the entry covol of the field rRows of the record.</p>
+</div>
+<h2 id="sec-what-a-checker-should-know">26 &middot; What a checker should know</h2>
+<div class="node lahtokohta" id="ck-isrect">
+<span class="nid">ck-isrect &middot; r.&nbsp;1109</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>IsRecT constrains the local Langlands map only on GL₁ and twists of depth-zero representations, and every other cuspidal representation goes to a fixed fallback object</strong></p>
+<p class="body">IsRecT, the notion of a local Langlands map in Row, constrains the map on GL₁ and on twists of depth-zero representations over the field ℚ_g of g-adic numbers. The definition requires the laws twist, central, dual, inj and depth only for representations whose cuspidal support is of that kind. This session confirmed in the definition cuspEx of RecTExists.lean that every other cuspidal representation is sent to a fixed fallback object of the right dimension. The theorem recTExists, which rests on 12,598 declarations, proves that such a map exists, and the reading of Row read its proof except for three steps.</p>
+<span class="meta-line">rajaa &rarr; <a href="#g-row" title="Row says that every regular algebraic polarized cuspidal representation of GL_n over a CM field has a continuous semisimple Galois representation with the condition PropsB">g-row</a></span>
+</div>
+<div class="node lahtokohta" id="ck-awayb">
+<span class="nid">ck-awayb &middot; r.&nbsp;1117</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>AwayB asks for equal dimension, equality in a torsion case and equal characteristic polynomials in a tame case</strong></p>
+<p class="body">AwayB, the comparison of Row at a place away from l, has three clauses. It asks for equal dimension, for equality of the two objects in a torsion case, and for equal characteristic polynomials in a tame case. This session confirmed the three clauses in the source.</p>
+<span class="meta-line">rajaa &rarr; <a href="#g-row" title="Row says that every regular algebraic polarized cuspidal representation of GL_n over a CM field has a continuous semisimple Galois representation with the condition PropsB">g-row</a> &middot; <a href="#ck-weaker" title="The usual local-global compatibility asks for an isomorphism at every such place">ck-weaker</a> &rarr; rajaa</span>
+</div>
+<div class="node lahtokohta" id="ck-weaker">
+<span class="nid">ck-weaker &middot; r.&nbsp;1117</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The usual local-global compatibility asks for an isomorphism at every such place</strong></p>
+<p class="body">The usual local-global compatibility asks for an isomorphism at every such place.</p>
+<span class="meta-line">rajaa &rarr; <a href="#ck-awayb" title="AwayB asks for equal dimension, equality in a torsion case and equal characteristic polynomials in a tame case">ck-awayb</a></span>
+</div>
+<div class="node lahtokohta" id="ck-unused">
+<span class="nid">ck-unused &middot; r.&nbsp;1121</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>OpenLiteratureStatements holds Row twice, most theorems named …_of_literature and …_of_open prove their statements without the record, and llOf_alt ignores eleven premises</strong></p>
+<p class="body">OpenLiteratureStatements holds Row twice and the existence of a local map once, and everyCharacter_of_row fills both Row fields with the same proof. Of the 194 theorems named …_of_literature in the file of every_character_of_literature_of_vWin, three read a field of that record. The others take the record and prove their statement without it.</p>
+<p class="body">OpenImageCondition is a record whose one field is Row, and the theorems named …_of_open that take it prove their statements without it.</p>
+<p class="body">llOf_alt returns its first premise and ignores eleven others. field_of_starFull_alt ignores one premise.</p>
+<span class="meta-line">rajaa &rarr; <a href="#g-passed" title="Row is passed on to VWin and into the record OpenLiteratureStatements">g-passed</a></span>
+</div>
+<div class="node lahtokohta" id="ck-true">
+<span class="nid">ck-true &middot; r.&nbsp;1130</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>UnusedSlot72 is True and filled by trivial, hVC and nR are True, and FamP.Large contains a conjunct True</strong></p>
+<p class="body">One field type of the first bundle, UnusedSlot72, is the proposition True, and its field is filled by trivial. The two hypotheses hVC and nR of the shape theorem are True as well, as the section on the assembly says. FamP.Large contains a conjunct True.</p>
+<span class="meta-line">toistaa &rarr; <a href="#a-true" title="The other two hypotheses, hVC and nR, are the proposition True in this use and are filled with trivial">a-true</a></span>
+</div>
+<div class="node lahtokohta" id="ck-theta">
+<span class="nid">ck-theta &middot; r.&nbsp;1133</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The hypothesis θ &lt; 1 of the Landau step stays unused in the proofs that were read</strong></p>
+<p class="body">The hypothesis hθ1 of the Landau step, θ &lt; 1, is passed along and stays unused in the proofs that were read.</p>
+<span class="meta-line">rajaa &rarr; <a href="#l-formB" title="formB states that an upper bound Gm x ≤ x^θ on intervals from Y to Y^la for arbitrarily large Y gives no zero with real part above θ for every character of KEPT">l-formB</a></span>
+</div>
+<div class="node lahtokohta" id="ck-fields">
+<span class="nid">ck-fields &middot; r.&nbsp;1135</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Several premises reach their use as fields of a record, and the ties of rowsU_of_colPins_alt use heterogeneous equalities</strong></p>
+<p class="body">Several premises reach their use as fields of a record, for example StdKer, RecordCompatibleExtended and the field sharp of KerTies. A checker who looks for the use of such a premise has to follow the projection of the field. The ties of rowsU_of_colPins_alt are stated with heterogeneous equalities, which the proof removes by substitution.</p>
+</div>
+<div class="node lahtokohta" id="ck-siegel">
+<span class="nid">ck-siegel &middot; r.&nbsp;1140</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The proof of pair_share reaches Siegel's theorem through excBound and siegelLower</strong></p>
+<p class="body">The proof of pair_share reaches Siegel's theorem. The proof of excBound is one line that applies a theorem to siegelLower, which rests on 127 declarations. siegelLower states for every δ &gt; 0 that a constant c(δ) &gt; 0 exists with |L(χ, 1)| ≥ c(δ)·N^(−δ) for every real nontrivial character χ of modulus N.</p>
+</div>
+<div class="node vaite" id="ck-ineff">
+<span class="nid">ck-ineff &middot; r.&nbsp;1140</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>If the threshold of count_a depends on c(δ), the proof yields no value of that threshold, because the textbook proofs of Siegel's bound yield no value of c(δ)</strong></p>
+<p class="body">For δ below 1/2 the textbook proofs of that bound yield no value of c(δ). stage and twistK pass excBound to count_a, so if the size of Y from which count_a holds depends on c(δ), the proof yields no value of that size either.</p>
+<span class="meta-line">Johto: <a href="#ck-siegel" title="The proof of pair_share reaches Siegel's theorem through excBound and siegelLower">ck-siegel</a> &middot; <a href="#p-kind1" title="Bad primes of the first kind, which fail ZeroFreeBox, have share at most a constant times U^(−21/40), from a zero density bound U^(3/8) against at least U^(9/10) primes">p-kind1</a></span>
+<span class="meta-line">rajaa &rarr; <a href="#p-kind1" title="Bad primes of the first kind, which fail ZeroFreeBox, have share at most a constant times U^(−21/40), from a zero density bound U^(3/8) against at least U^(9/10) primes">p-kind1</a> &middot; rajaa &rarr; <a href="#p-twist" title="twistK supplies that premise from the prime number theorem in progressions, a zero-free region, excBound and page_across, with one possible exception">p-twist</a></span>
+</div>
+<div class="node lahtokohta" id="ck-siegel-unread">
+<span class="nid">ck-siegel-unread &middot; r.&nbsp;1140</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The proofs of siegelLower and count_a were not read</strong></p>
+<p class="body">This session read neither the proof of siegelLower nor the proof of count_a.</p>
+</div>
+<div class="node vaite" id="ck-nochange">
+<span class="nid">ck-nochange &middot; r.&nbsp;1140</span>
+<span class="chip">Väite</span>
+<span class="laji" title="teoreema johtoineen">T</span>
+<p><strong>The point leaves the five theorems as they are, since their statements contain neither a threshold nor a constant</strong></p>
+<p class="body">The five theorems contain neither a threshold nor a constant, so this point leaves their statements as they are.</p>
+<span class="meta-line">Johto: <a href="#f-five" title="Statements.lean states five propositions, the first being that a Dirichlet L-function is nonzero for real part above 1/2 except the trivial character at 1">f-five</a> &middot; <a href="#ck-ineff" title="If the threshold of count_a depends on c(δ), the proof yields no value of that threshold, because the textbook proofs of Siegel's bound yield no value of c(δ)">ck-ineff</a></span>
+</div>
+<div class="node lahtokohta" id="ck-names">
+<span class="nid">ck-names &middot; r.&nbsp;1148</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Two names mislead, admissibleClassesTwistedChar and MainNotions</strong></p>
+<p class="body">Two names mislead. admissibleClassesTwistedChar names both a theorem about ranks and an unrelated definition. A field of HtNums is called MainNotions, which is the name of a namespace and says nothing about the bound that the field enters.</p>
+</div>
+<div class="node lahtokohta" id="ck-axioms">
+<span class="nid">ck-axioms &middot; r.&nbsp;1152</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The five theorems rest on propext, Classical.choice and Quot.sound alone, by the report of the declaration graph</strong></p>
+<p class="body">../decl-graph reports that the five theorems rest on the axioms propext, Classical.choice and Quot.sound and on no other axiom. This session read that report and did not repeat its check.</p>
+</div>
+<div class="node lahtokohta" id="ck-all">
+<span class="nid">ck-all &middot; r.&nbsp;1156</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Every premise that a reading followed to its end was supplied by a project theorem or a field of the record</strong></p>
+<p class="body">Every premise that a reading followed to its end was supplied by a theorem of the project or by a field of the record. The next section lists what stayed unread.</p>
+</div>
+<h2 id="sec-what-stays-unread">27 &middot; What stays unread</h2>
+<div class="node lahtokohta" id="un-list">
+<span class="nid">un-list &middot; r.&nbsp;1161</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>The proofs and definitions that stayed unread, from Claim.zeta to most of the 463,949 declarations behind the record</strong></p>
+<p class="body">Claim.zeta and Claim.strip, which carry the passage to the other four theorems.</p>
+<p class="body">The four lemmas of stage 4 of the Landau argument and six further lemmas of it, which were read by statement.</p>
+<p class="body">The proofs of the theorems beneath pair_share that were read by statement. They are zero_density_box, count_a, tailK, kappaC, finite_splitting_of_group, abs_pair_sum_eq and the four statements that the proof of twistK starts from. The proof of twistK after its first sixty lines is unread as well.</p>
+<p class="body">The proofs of the three statements behind litThin, and the derivation of ThinScales from them.</p>
+<p class="body">The proofs of ch_balance, proposition_size_bound and sigA_le, and most of the proof of core_ineq.</p>
+<p class="body">The proofs of linkDIVt_of_bridge_kernel, of slope_bounds and of the four other propositions that boundsMu uses.</p>
+<p class="body">The proof of rowsU_of_colPins_alt below its top, the conditions ThHyp, AnaStep and FamilyLaws, which say that each lift is a theta lift, the statement LastSide, the field nprimeDef and the field selJ behind BesselId.</p>
+<p class="body">The proofs of stepE_num and numFacts_rec.</p>
+<p class="body">The proofs that carry the lower bound, which are those of joint_a_ramified_holds, blockReal_at_of, matKF_of, data_SlopeIneq and link_alt_alt_bis, and the definitions of hsSq, Dstar and Dall.</p>
+<p class="body">The suppliers of the links other than linkCore.</p>
+<p class="body">The proofs below the first call in the supply branches, for example ferreroWashington, count_i_of_printed_bound_k_kato_automorphy, tLift_holds_k and the fifteen suppliers of the covolume bound.</p>
+<p class="body">The eight statements of GlobalTheory.Published behind Row for which the reading found no closed theorem.</p>
+<p class="body">Most of the 463,949 declarations behind the record.</p>
+<p class="body">Why the errors of one lift fit the budget B0, the formula hExpl6 for the number h of a word, and the definition of the block KD.</p>
+<span class="meta-line">rajaa &rarr; <a href="#s0-route" title="The proof derives the five theorems from one inequality on a weighted prime sum, which it gets by bounding the slope of one lattice from two sides with m near √x">s0-route</a></span>
+</div>
+<div class="node lahtokohta" id="un-math">
+<span class="nid">un-math &middot; r.&nbsp;1190</span>
+<span class="chip">lahtokohta</span>
+<span class="laji" title="aksiooma tai lähtökohta">A</span>
+<p><strong>Whether the definitions are the mathematical objects their names suggest is a question for a mathematician</strong></p>
+<p class="body">Whether the definitions of the project are the mathematical objects that their names suggest, which is a question for a mathematician.</p>
+<span class="meta-line">rajaa &rarr; <a href="#s0-route" title="The proof derives the five theorems from one inequality on a weighted prime sum, which it gets by bounding the slope of one lattice from two sides with m near √x">s0-route</a></span>
+</div>
+<h2 id="sec-scripts-and-files">28 &middot; Scripts and files</h2>
+</main>
+</body>
+</html>

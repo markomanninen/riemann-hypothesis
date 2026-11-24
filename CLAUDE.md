@@ -14,3 +14,13 @@ Työjono on Draversalissa ja Markon päätökset Päätösjonossa.
 | Päätösjonon avainlähde | repon juuren yksityinen `.env`, muuttuja `PAATOSJONO_TOKEN` |
 
 `.env` on ohitettu tiedostossa `.git/info/exclude`, ja sen oikeudet ovat 0600.
+
+## Kirjoitusasetukset
+
+NeuroPajan kirjoitus- ja tarkastusskillit lukevat projektin tiedostojen sijainnit tästä taulukosta. Suhteelliset polut luetaan projektin juuresta.
+
+| Asetus | Arvo |
+| --- | --- |
+| Semanttinen verkko | `semanttinen-verkko.json`, jonka kentät kuvaa skilli semanttinen-verkko |
+
+Commitin portti tarkistaa semanttisen verkon jokaisessa commitissa, joka muuttaa verkotettua tekstiä tai sen verkkoa. Kun portti pysäyttää commitin, näytä löydökset käyttäjälle ja korjaa ne skillin semanttinen-verkko ohjeen mukaan, tai ohita ne käyttäjän vahvistuksella muuttujalla `SEMANTTINEN_VERKKO_OHITA=1`.
