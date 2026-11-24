@@ -23,7 +23,9 @@ modules that only its top module needs.
 
 The Argument tab shows the skeleton of [`../skeleton`](../skeleton/README.md). It lists the 38
 largest steps of the proof as a tree, and for each step what its theorem states, its premises and
-its conclusion, as a language model read them from the Lean text. It also holds the glossary of
+its conclusion, as a language model read them from the Lean text. Each step also gives the number of
+declarations that the exact graph of the compiled project has behind it, and the tree holds the
+two steps that pass the limit of the outline only in that graph. It also holds the glossary of
 the ten definitions that those readings leave unopened most often and the groups of fields of the
 record `D7`. A step links to its module in the two other views.
 

@@ -9,7 +9,10 @@ The script reads the files of verification/skeleton and writes data/argument.jso
             gathers, its own pool, its module, the published statements it takes or proves, and
             the theorem that states the same when Lean found one
   clean     the figures of the skeleton before and after every repeated statement is counted once
-  lines     the 38 lines of the outline, each with the reading of its head from READING.md
+  lines     the 38 lines of the outline, each with the reading of its head from READING.md, and
+            after its parent each of the two lines that only the outline of the exact graph has,
+            with its reading from reading-exact.json
+  exact     the figures of the tree that exact_tree.py computes from the exact graph
   glossary  the ten definitions of GLOSSARY.md with their readings
   d7        the reading of the record D7 as a whole, with its groups of fields and its numbers
   reached   the number of declarations that the five theorems reach
@@ -45,8 +48,20 @@ def main():
                       "w": node["passes"], "t": [x.rsplit(".", 1)[-1] for x in mark["takes"]],
                       "v": [x.rsplit(".", 1)[-1] for x in mark["proves"] + mark["derives"]]})
     index = {node["name"]: k for k, node in enumerate(skeleton["nodes"])}
-    lines = []
+    exact, extra = load("exact-tree.json"), load("reading-exact.json")
+    # x is what a line gathers in the exact graph. The outline of the exact graph names a line by
+    # the first declaration of its run of wrappers, and the two lines that only it has are nodes
+    # of the exact skeleton.
+    gathers = {x["name"]: x["gathers"] for x in exact["nodes"]}
+    gathers.update({x["name"]: x["exact_gathers"] for x in exact["outline_lines"]})
+    after = {}
+    for r in extra["lines"]:
+        after.setdefault(r["parent"], []).append(r)
+    ordered = []
     for r in reading["lines"]:
+        ordered += [r] + after.get(r["line"], [])
+    lines = []
+    for r in ordered:
         check = r["check"]
         lines.append({"line": r["line"], "level": r["level"], "parent": r["parent"], "node": index[r["name"]],
                       "first": index[r["first"]], "wrappers": [x.rsplit(".", 1)[-1] for x in r["wrappers"]],
@@ -54,7 +69,7 @@ def main():
                       "unopened": [t["name"] for t in r["terms"] if t.get("opaque")], "suggests": r["suggests"],
                       "confidence": r["confidence"], "why": r["why"], "errors": len(check["first_errors"]),
                       "rounds": check["rounds"], "cross": r.get("cross_check", {}).get("changes", 0), "recheck": r.get("cross_check", {}).get("recheck_errors", 0),
-                      "deeper": r.get("deeper")})
+                      "x": gathers[r["first"]], "only": r.get("outline") == "exact", "deeper": r.get("deeper")})
     entries = []
     for e in glossary["entries"]:
         entries.append({"name": e["name"], "module": e["module"], "kind": e["kind"], "what": e["what"], "below": e["below"],
@@ -63,6 +78,8 @@ def main():
                         "errors": len(e["check"]["first_errors"])})
     whole = d7["whole"]
     out = {"clean": {"left": clean["theorems_left_out"], "before": clean["before"], "after": clean["after"]},
+           "exact": {"reached": exact["reached_declarations"], "skeleton": exact["skeleton"]["nodes"],
+                     "shared": exact["skeleton"]["also_in_text_skeleton"]},
            "reached": summary["source"]["reached"], "declarations": summary["source"]["declarations"],
            "min": skeleton["min"], "top": skeleton["top"], "nodes": nodes, "lines": lines, "glossary": entries,
            "d7": {"says": whole["says"], "suggests": whole["suggests"], "fields": whole["fields"], "groups": whole["groups"],
