@@ -236,7 +236,14 @@ the limit of the outline. The first of them folds the wrapper `GlobalTheory.NLin
 into its line, which is why the table counts three more declarations above 10,000 and the
 outline only two more lines. A reading of [`READING.md`](READING.md) says what the statement of
 its line claims, and the exact graph changes no statement, so the 38 readings hold for the exact
-outline too. The two new lines have no reading yet.
+outline too. The two new lines were read in the same way as the 38, from dossiers of
+`dossier.py` by a first reader, a second reader and the check, and they are numbered 39 and 40
+in [`reading-exact.json`](reading-exact.json). The check passed the reading of line 39 at once
+and the reading of line 40 after one correction. Line 39 derives a condition `ConclF` on a family
+`Fm` from the bundle `Hypotheses₂`, the bound `0 ≤ C` and three further conditions on `Fm`, and
+its reader rated its confidence medium. Line 40 derives a statement `TopShapeAlt` from a
+statement `Green`. Its dossier cuts the text of `TopShapeAlt` before its conclusion, so its
+reader rated its confidence low.
 
 ## Limits
 
@@ -253,7 +260,8 @@ outline too. The two new lines have no reading yet.
 - The number gathered counts declarations. It does not measure how hard a theorem is or how
   long its proof is.
 - The skeleton tells which declarations the argument passes through and what lies behind each.
-  It does not tell why a step holds.
+  It does not tell why a step holds. [`../strategy`](../strategy/README.md) follows the steps
+  through the proofs.
 - [`../explorer`](../explorer/README.md) shows the modules of the source before the merge, so
   a skeleton declaration may lie in a module that the explorer does not show or shows in
   another place.
@@ -292,6 +300,7 @@ python3 -I verification/skeleton/check_sample.py /tmp/before-merge/verification/
 | `OUTLINE.txt` | the skeleton declarations that gather at least 10,000, as indented lines |
 | `exact_tree.py` | computes the tree of the exact graph and compares it with the text tree |
 | `exact-tree.json`, `OUTLINE-EXACT.txt` | the figures, the 622 skeleton declarations and the outline of the exact tree |
+| `reading-exact.json` | the readings of lines 39 and 40, the two lines that only the exact outline has |
 | `check_sample.py` | compares the text tree with the tree of the compiled sample |
 | `sample-check.json` | the figures of that comparison |
 | `test_tree.py` | tests the dominator routine against networkx |

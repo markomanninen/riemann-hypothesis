@@ -1,0 +1,428 @@
+{
+ "made": "2026-11-24",
+ "source": "the source after the merge of upstream main, commit 53f247af5a",
+ "outline": "OUTLINE-EXACT.txt",
+ "lines": [
+  {
+   "line": 39,
+   "level": 9,
+   "name": "GlobalTheory.NLinkClose.main_alt_alt",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ImportsFurtherTail",
+   "first": "GlobalTheory.T.conclF_of_family_facts_and_bound_at_two_three",
+   "wrappers": [
+    "GlobalTheory.T.conclF_of_family_facts_and_bound_at_two_three"
+   ],
+   "gathers": 10275,
+   "parent": 15,
+   "definitions": 45,
+   "outline": "exact",
+   "says": "Assume a bundle of seven background statements that the code calls Hypotheses₂, and then take any real number eps, any family record Fm of type FamP eps, any real number C and any natural number CT. If 0 ≤ C, and Fm satisfies the condition TwGood, the condition FactsFAlt with the constants C and CT, and the condition BoundAtTwoThreeFamilyFonAlt, then Fm satisfies ConclF. The dossier unfolds ConclF to the claim that real numbers C′ and x0 exist such that, for every real x ≥ x0 with Fm.x1 < x and every index i in Fm.Ix x, if the data record Fm.D x i satisfies ShaFinOdd then a record X of type HubData exists for which a fifteen-part condition that the code calls Concl holds for the size record Fm.L x i, the parameter record that Fm.params gives at x and i, the record X and the constant C′.",
+   "premises": [
+    "The bundle Hypotheses₂ holds, which is assumed before eps, Fm, C and CT are chosen and which consists of seven named statements.",
+    "The real number C satisfies 0 ≤ C.",
+    "Fm satisfies TwGood, which unfolds to the existence of a real x0 such that for every x ≥ x0 with Fm.x1 < x and every index i a condition that the code calls TwConjAt holds and some N0 and S make a condition that the code calls TwGoodAt hold.",
+    "Fm satisfies FactsFAlt with C and CT, which says that for every x with Fm.x1 < x and every index i the data record Fm.D x i satisfies a bundle that the code calls NormChoiceFacts and a condition that the code calls ExtraAlt with C and CT.",
+    "Fm satisfies BoundAtTwoThreeFamilyFonAlt, which says that real numbers C″ and x0 exist such that for every x ≥ x0 with Fm.x1 < x, every index i and every choice of data HW, F, a comparison datum, a HubData record X and a real C₂, the bundle SetupAlt for these data implies the condition BoundAtTwoThree for Fm.L x i, the component ρ of X and C″."
+   ],
+   "conclusion": "Fm satisfies ConclF, which says that real numbers C′ and x0 exist such that for every x ≥ x0 with Fm.x1 < x and every index i, ShaFinOdd for Fm.D x i implies that a HubData record X exists with Concl for Fm.L x i, Fm.params at x and i, X and C′.",
+   "notation": "Hypotheses₂ ⇒ ∀ eps ∈ ℝ ∀ Fm ∈ FamP(eps) ∀ C ∈ ℝ ∀ CT ∈ ℕ ( (0 ≤ C ∧ TwGood(Fm) ∧ FactsFAlt(Fm, C, CT) ∧ BoundAtTwoThreeFamilyFonAlt(Fm)) ⇒ ConclF(Fm) ), where hx denotes a proof of Fm.x1 < x, i ranges over Fm.Ix(x), D = Fm.D x i, S = Fm.L x i, nch = (Fm.ex x hx i).nch, and TwGood(Fm) ⇔ ∃ x0 ∈ ℝ ∀ x ≥ x0 ∀ hx ∀ i ( TwConjAt(D, nch) ∧ ∃ N0 ∃ T TwGoodAt(D, nch, ⟨twE(Fm, x, hx, i), N0, T⟩) ), FactsFAlt(Fm, C, CT) ⇔ ∀ x ∈ ℝ ∀ hx ∀ i ( NormChoiceFacts(D, nch) ∧ ExtraAlt(D, C, CT) ), BoundAtTwoThreeFamilyFonAlt(Fm) ⇔ ∃ C″, x0 ∈ ℝ ∀ x ≥ x0 ∀ hx ∀ i ∀ HW ∀ F ∀ cmp ∀ X ∈ HubData(D) ∀ C₂ ∈ ℝ ( SetupAlt(S, nch, HW, X, C₂) ⇒ BoundAtTwoThree(S, X.ρ, C″) ), ConclF(Fm) ⇔ ∃ C′, x0 ∈ ℝ ∀ x ≥ x0 ∀ hx ∀ i ( ShaFinOdd(D) ⇒ ∃ X ∈ HubData(D) Concl(S, Fm.params x hx i, X, C′) )",
+   "terms": [
+    {
+     "name": "Hypotheses₂",
+     "gloss": "A bundle of seven statements under the field names font, artin, bk, tate, euler, fin and bs, whose contents are the names FontaineBcris, GlobalArtinReciprocity, BlochKatoLocal, LocalTateDualityK, LocalEulerCharK, LocalFinitenessK and BhattScholzeIntegral, and the dossier shows a body for LocalEulerCharK and LocalFinitenessK only.",
+     "opaque": true
+    },
+    {
+     "name": "LocalEulerCharK",
+     "gloss": "The statement that for every prime l, every field K between the l-adic numbers and a field that the code calls PadicAlgCl l with finite dimension n over the l-adic numbers, every whole number r > 0, every finite module M over the integers modulo l^r with the discrete topology and every representation rho on M of a group that the code calls GK l K with a condition called ContAction, the number of elements of H1 rho equals the number of elements of H0 rho times the number of elements of H2 rho times the n-th power of the number of elements of M, where H0, H1, H2, GK, PadicAlgCl and ContAction have no body in the dossier.",
+     "opaque": true
+    },
+    {
+     "name": "LocalFinitenessK",
+     "gloss": "The statement, under the same quantifiers and conditions as LocalEulerCharK, that H0 rho, H1 rho and H2 rho are finite and that Hn rho n has at most one element for every n ≥ 3, where H0, H1, H2 and Hn have no body in the dossier.",
+     "opaque": true
+    },
+    {
+     "name": "FamP",
+     "gloss": "A record type that depends on a real number eps and extends a record FamCore, which holds a threshold x1 > 1, an index type Ix x for each real x, a data record D x i of type D7 and a size record L x i for each x and each index i, and FamP adds many further fields such as params and ex, whose listing the dossier cuts.",
+     "opaque": true
+    },
+    {
+     "name": "D7",
+     "gloss": "A large data record with fields such as R of a type called Ranks, host, sp, vol, what₂ and a number field what₂.LL that is totally complex and Galois over the rational numbers, and the dossier cuts its listing.",
+     "opaque": true
+    },
+    {
+     "name": "TwGood",
+     "gloss": "TwGood Fm is defined as TwGoodE applied to Fm and to twE Fm, and the dossier shows both TwGoodE and twE one level down.",
+     "opaque": false
+    },
+    {
+     "name": "TwGoodE",
+     "gloss": "TwGoodE Fm E says that a real x0 exists such that for every x ≥ x0 with Fm.x1 < x and every index i, the condition TwConjAt holds for Fm.D x i and the component nch of the Extra record of Fm at x and i, and a function N0 into the natural numbers and a family S of finite sets exist for which TwGoodAt holds for the triple made of E at x and i, N0 and S, where TwConjAt and TwGoodAt have no body in the dossier.",
+     "opaque": true
+    },
+    {
+     "name": "twE",
+     "gloss": "twE Fm assigns to x and i the value of a function called twEOf at the component xd of the Extra record of Fm at x and i, and twEOf has no body in the dossier.",
+     "opaque": true
+    },
+    {
+     "name": "FactsFAlt",
+     "gloss": "FactsFAlt Fm C CT says that for every real x with Fm.x1 < x and every index i in Fm.Ix x, NormChoiceFacts holds for Fm.D x i and the component nch of the Extra record of Fm at x and i, and ExtraAlt holds for Fm.D x i, C and CT.",
+     "opaque": false
+    },
+    {
+     "name": "NormChoiceFacts",
+     "gloss": "A bundle that extends a bundle called CoreNormFacts and adds seven conditions named LocalisationUniqueness, Large, Duties, NChTie, TriplesGood, SameTwist and GoodFTAll, none of which has a body in the dossier.",
+     "opaque": true
+    },
+    {
+     "name": "ExtraAlt",
+     "gloss": "The conjunction of a condition on D that the code calls CommutingEndomorphismCondition and a condition on D, C and CT that the code calls PairedCharacterConditionAlt, neither of which has a body in the dossier.",
+     "opaque": true
+    },
+    {
+     "name": "BoundAtTwoThreeFamilyFonAlt",
+     "gloss": "The statement that real numbers C″ and x0 exist such that for every x ≥ x0 with Fm.x1 < x, every index i, every HW of type HWOf, every F of type FonOf, every element of type CmpOf, every HubData record X and every real C₂, SetupAlt for Fm.L x i, the component nch, HW, X and C₂ implies BoundAtTwoThree for Fm.L x i, the component ρ of X and C″.",
+     "opaque": false
+    },
+    {
+     "name": "HWOf",
+     "gloss": "HWOf L is the type of choices, for every prime l, of an element of a type that the code calls LocHW l (L l), which has no body in the dossier.",
+     "opaque": true
+    },
+    {
+     "name": "FonOf",
+     "gloss": "FonOf L A H is the type of choices, for every prime l, of an element of a type that the code calls LocFon l (L l) (A l) (H l), which has no body in the dossier.",
+     "opaque": true
+    },
+    {
+     "name": "CmpOf",
+     "gloss": "CmpOf L A H F is the type of choices, for every prime l, of an element of a type that the code calls LocCmpT l (L l) (A l) (H l) (F l), which has no body in the dossier.",
+     "opaque": true
+    },
+    {
+     "name": "SetupAlt",
+     "gloss": "A bundle of eight conditions, namely NormChoiceFacts, a condition called Canon that involves C₂, conditions called AdmPar and ParametersPolynomiallyBounded, the inequality 8 ≤ L.sc.L, the inequality 60 ≤ D.host.splitBound, a condition called KillAt on the component ρ of X, and ShaFinOdd for D, where Canon, AdmPar, ParametersPolynomiallyBounded and KillAt have no body in the dossier.",
+     "opaque": true
+    },
+    {
+     "name": "BoundAtTwoThree",
+     "gloss": "BoundAtTwoThree L ρ C says that for every index i that satisfies a condition called TwLoc and whose number D.nd.l i equals 2, or equals 3 while lying outside the set D.host.small, and for every π in the set D.nd.Zgood i, a condition called Bd holds for ρ, i, π and the value midF L C, where TwLoc, Bd and midF have no body in the dossier.",
+     "opaque": true
+    },
+    {
+     "name": "ConclF",
+     "gloss": "The statement that real numbers C′ and x0 exist such that for every x ≥ x0 with Fm.x1 < x and every index i, ShaFinOdd for Fm.D x i implies that a HubData record X exists for which Concl holds for Fm.L x i, Fm.params at x and i, X and C′.",
+     "opaque": false
+    },
+    {
+     "name": "ShaFinOdd",
+     "gloss": "ShaFinOdd D says that for every prime p and every whole number e with 0 < e < t, where t is the number D.R.t stored in D, the value shaLen (D.nd.ldat p) e differs from the top element ⊤ of its range, and shaLen has no body in the dossier.",
+     "opaque": true
+    },
+    {
+     "name": "HubData",
+     "gloss": "A record attached to a data record D with fourteen fields, among them r, ρ, len0, errorBoundHub, a finite set exc of natural numbers and a natural number eta, and the types RFam, RhoFam, Decl and TwIn of several fields have no body in the dossier.",
+     "opaque": true
+    },
+    {
+     "name": "Concl",
+     "gloss": "A bundle of fifteen conditions on L, P, X and C, the first of which is 0 ≤ C and the other fourteen of which are conditions under the names adm1, MultLe, adm3, KillAt, RowNum, StarAD, BBLe, StarE, ExcOK, StarF, StarG, StarH, ParametersPolynomiallyBounded and Small, none of which has a body in the dossier.",
+     "opaque": true
+    },
+    {
+     "name": "conclF_of_family_facts_and_bound_at_two_three",
+     "gloss": "A second theorem, in the namespace GlobalTheory.T, whose statement is word for word the same as that of main_alt_alt and which the dossier folds into this line as a wrapper.",
+     "opaque": false
+    }
+   ],
+   "suggests": "The names suggest that Hypotheses₂ gathers published theorems (Fontaine's theory of B_cris, global Artin reciprocity, the Bloch–Kato local conditions, local Tate duality, the local Euler characteristic formula, finiteness of local Galois cohomology and an integral result of Bhatt and Scholze), that H0, H1 and H2 are cohomology groups of a local Galois group GK, that ShaFinOdd expresses finiteness of Tate–Shafarevich-type groups, and that BoundAtTwoThree is a bound at the primes 2 and 3, and the dossier leaves each of these readings unconfirmed.",
+   "confidence": "medium",
+   "why": "The dossier shows the whole logical skeleton of the statement, of its four conditions on Fm and of ConclF, yet nearly every condition inside them ends in a name without a shown body, the listings of FamP and D7 are cut, and five definitions were left out.",
+   "second": {
+    "says": "Assume first the bundle of seven propositions that the code calls Hypotheses₂, and then take any real number eps, any family Fm of type FamP eps, any real number C and any natural number CT. If 0 ≤ C, TwGood Fm, FactsFAlt Fm C CT and BoundAtTwoThreeFamilyFonAlt Fm all hold, then ConclF Fm holds, which says that there exist real numbers C and x0, new ones that are separate from the C of the theorem, such that for every x ≥ x0, every proof hx that Fm.x1 < x and every index i in Fm.Ix x, the condition ShaFinOdd (Fm.D x i) implies that there exists hub data X of type HubData (Fm.D x i) for which the structure Concl (Fm.L x i) (Fm.params x hx i) X C holds. The wrapper theorem conclF_of_family_facts_and_bound_at_two_three that the dossier folds into this line has the same statement word for word.",
+    "premises": [
+     "Hypotheses₂ holds, and this premise stands before the quantifiers over eps, Fm, C and CT. It is a structure of seven propositions with the fields font (FontaineBcris), artin (GlobalArtinReciprocity), bk (BlochKatoLocal), tate (LocalTateDualityK), euler (LocalEulerCharK), fin (LocalFinitenessK) and bs (BhattScholzeIntegral). The dossier shows a body for euler and fin only. LocalEulerCharK says that for every prime l, every intermediate field K between ℚ_[l] and PadicAlgCl l that is finite dimensional over ℚ_[l], every natural r, every finite discrete module M over ZMod (l ^ r) and every representation rho of GK l K on M with 0 < r and ContAction rho, the cardinality of H1 rho equals the cardinality of H0 rho times the cardinality of H2 rho times the cardinality of M raised to the power finrank of K over ℚ_[l]. LocalFinitenessK says under the same assumptions that H0 rho, H1 rho and H2 rho are finite and that Hn rho n is a subsingleton for every n with 3 ≤ n.",
+     "0 ≤ C holds for the real number C.",
+     "TwGood Fm holds, which is defined as TwGoodE Fm (twE Fm). It says that there is a real x0 such that for every x ≥ x0, every proof hx that Fm.x1 < x and every i in Fm.Ix x, a condition that the code calls TwConjAt holds for Fm.D x i and (Fm.ex x hx i).nch, and there exist a function N0 into the natural numbers and a family of finite sets S such that a condition that the code calls TwGoodAt holds for Fm.D x i, (Fm.ex x hx i).nch and the triple made of twE Fm x hx i, N0 and S. Here twE Fm x hx i is twEOf (Fm.ex x hx i).xd.",
+     "FactsFAlt Fm C CT holds, which says that for every real x, every proof hx that Fm.x1 < x and every i in Fm.Ix x, both NormChoiceFacts (Fm.D x i) (Fm.ex x hx i).nch and ExtraAlt (Fm.D x i) C CT hold. NormChoiceFacts D nch extends a structure that the code calls CoreNormFacts D and adds the fields c2 (LocalisationUniqueness D), large (CoefDuty.Large D), duties (CoefDuty.Duties D), nct (NChTie D nch), trip (PtCore.TriplesGood D), same (PtCore.SameTwist D nch) and good (GoodFTAll D). ExtraAlt D C CT is the conjunction of CommutingEndomorphismCondition D and PairedCharacterConditionAlt for D with C and CT.",
+     "BoundAtTwoThreeFamilyFonAlt Fm holds, which says that there exist reals C and x0, separate from the C of the theorem, such that for every x ≥ x0, every proof hx that Fm.x1 < x, every i in Fm.Ix x, every HW of type HWOf (Fm.D x i).loc, every F of type FonOf (Fm.D x i).loc (Fm.D x i).locA HW, every element of CmpOf (Fm.D x i).loc (Fm.D x i).locA HW F, every hub data X for Fm.D x i and every real C₂, SetupAlt (Fm.L x i) (Fm.ex x hx i).nch HW X C₂ implies BoundAtTwoThree (Fm.L x i) X.ρ C. SetupAlt L nch HW X C₂ is a structure with the fields facts (NormChoiceFacts D nch), canon (HubX.Canon L HW (rowC C₂) X), par (AdmPar L), par67 (EmbeddingTypeJumps.ParametersPolynomiallyBounded L), big (8 ≤ L.sc.L), split (60 ≤ D.host.splitBound), kill (KillAt X.ρ) and sha (ShaFinOdd D). BoundAtTwoThree L ρ C says that for every i with TwLoc D i and with either D.nd.l i = 2 or both D.nd.l i = 3 and D.nd.l i not in D.host.small, every π in D.nd.Zgood i satisfies Bd ρ i π (midF L C)."
+    ],
+    "conclusion": "ConclF Fm holds, that is there exist reals C and x0 such that for every x ≥ x0, every proof hx that Fm.x1 < x and every i in Fm.Ix x, ShaFinOdd (Fm.D x i) implies that some X of type HubData (Fm.D x i) satisfies Concl (Fm.L x i) (Fm.params x hx i) X C. ShaFinOdd D says that for every prime p and every natural e with 0 < e and e < D.R.t the value shaLen (D.nd.ldat p) e, with e read as an integer, is not ⊤. Concl L P X C is a structure with the fifteen fields pos (0 ≤ C), pass (adm1 D), mult (MultLe L), rank (adm3 L), kill (KillAt X.ρ), num (RowNum L X C), mid (StarAD L X), bb (BBLe L X C), large (StarE L X.ρ X.exc), exc (ExcOK L X.exc), two (StarF L X.ρ C), ram (StarG L X.ρ C), typ (StarH L C), par (TwistedPlaces.ParametersPolynomiallyBounded L C P) and small (Small L C).",
+    "unclear": [
+     "GlobalTheory.Published.FontaineBcris",
+     "GlobalTheory.Published.GlobalArtinReciprocity",
+     "GlobalTheory.Published.BlochKatoLocal",
+     "Formalism.GaloisCohomology.LocalTateDualityK",
+     "GlobalTheory.Published.BhattScholzeIntegral",
+     "GK",
+     "ContAction",
+     "H0",
+     "H1",
+     "H2",
+     "Hn",
+     "PadicAlgCl",
+     "TwConjAt",
+     "TwGoodAt",
+     "twEOf",
+     "IntegralHeckeForms.XD",
+     "NChoice",
+     "ThData",
+     "GlobalTheory.NFacts.CoreNormFacts",
+     "KillingConditions.LocalisationUniqueness",
+     "GlobalTheory.CoefDuty.Large",
+     "GlobalTheory.CoefDuty.Duties",
+     "NChTie",
+     "GlobalTheory.PtCore.TriplesGood",
+     "GlobalTheory.PtCore.SameTwist",
+     "GoodFTAll",
+     "KillingConditions.CommutingEndomorphismCondition",
+     "PairedCharacterCondition.PairedCharacterConditionAlt",
+     "LocTheory",
+     "LocAinf",
+     "LocHW",
+     "LocFon",
+     "LocCmpT",
+     "GlobalTheory.HubX.Canon",
+     "rowC",
+     "AdmissibleParameterJ.AdmPar",
+     "EmbeddingTypeJumps.ParametersPolynomiallyBounded",
+     "KillingConditions.KillAt",
+     "TwistedPlaces.TwLoc",
+     "Bd",
+     "midF",
+     "Formalism.GaloisCohomology.shaLen",
+     "TwistedPlaces.adm1",
+     "MultLe",
+     "TwistedPlaces.adm3",
+     "RowNum",
+     "KillingConditions.StarAD",
+     "KillingConditions.BBLe",
+     "StarE",
+     "ExcOK",
+     "StarF",
+     "StarG",
+     "StarH",
+     "TwistedPlaces.ParametersPolynomiallyBounded",
+     "Small",
+     "FamilyRepresentationConstants.RFam",
+     "FamilyRepresentationConstants.RhoFam",
+     "TwIn",
+     "TruncatedSeriesCountingIdentities.Decl",
+     "SizeData₂",
+     "Ranks",
+     "Host",
+     "the fields nd, loc, locA, ntw and nexp of D7, whose text is cut before they appear",
+     "Formalism.MainNotions.FamP (text cut)",
+     "Formalism.MainNotions.FamCore (text cut)",
+     "Formalism.BasicNotions.D7 (text cut)",
+     "Formalism.BasicNotions.DivX (text cut)",
+     "Formalism.BasicNotions.ParameterChoice' (text cut)",
+     "Formalism.BasicNotions.ParamsT (text cut)"
+    ]
+   },
+   "check": {
+    "first_errors": [],
+    "rounds": 0,
+    "second_errors": []
+   }
+  },
+  {
+   "line": 40,
+   "level": 5,
+   "name": "UpperTheory.Top.shape_closed_link_n_of_green",
+   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TopShape",
+   "first": "UpperTheory.Top.shape_closed_link_n_of_green",
+   "wrappers": [],
+   "gathers": 11590,
+   "parent": 23,
+   "definitions": 45,
+   "outline": "exact",
+   "says": "If a statement that the code calls Green holds, then the statement TopShapeAlt holds with its four parameters set to True, True, a property N of classes of family records, and a statement that the code calls TopG. The property N says of a class 𝒞 that Closed 𝒞 LinkN holds, which means that some ε1 > 0 exists such that for every eps with 0 < eps ≤ ε1 there is a record K for which every family record Fm of type FamP eps that lies in 𝒞 and satisfies a condition that the code calls Large (with K and a real number CH) also satisfies LinkN. LinkN is a conditional upper bound on a quantity called etaSum. It says that real numbers C and x0 exist such that for every x ≥ x0 and every index i in Fm.Ix x, if the data record Fm.D x i satisfies the condition ShaFinOdd, then for every whole number j from 1 to the number m stored in that data record, if the series with terms vvTerm of that data record is summable, the upper bound on etaSum holds. TopShapeAlt itself is a universally quantified statement over a class 𝒜, a function cT and a long list of further data and hypotheses, and the dossier cuts its text before the conclusion and before any use of the second, third and fourth parameters, which leaves the final assertion of the theorem unseen.",
+   "premises": [
+    "Green holds, which says that for every prime g, every label datum for g and every whole number d > 0 a map τ exists from polynomials over the integers modulo g to complex-valued functions on the invertible d by d matrices modulo g that meets three requirements stated with the unseen conditions IsPrimeLab, IsCuspOf and IsCusp."
+   ],
+   "conclusion": "TopShapeAlt True True N TopG holds, where N sends a class 𝒞 of family records to the statement Closed 𝒞 LinkN.",
+   "notation": "Green ⇒ TopShapeAlt(True, True, N, TopG), with N(𝒞) ⇔ Closed(𝒞, (Fm, CH) ↦ LinkN(Fm)), where Closed(𝒞, P) ⇔ ∃ ε1 > 0 ∀ eps ∈ ℝ ( 0 < eps ≤ ε1 ⇒ ∃ K ∈ TransportedAlt ∀ Fm ∈ FamP(eps) ∀ CH ∈ ℝ ( (𝒞(Fm) ∧ Large(Fm, K, CH)) ⇒ P(Fm, CH) ) ), and LinkN(Fm) ⇔ ∃ C, x0 ∈ ℝ ∀ x ≥ x0 ∀ i ∈ Fm.Ix(x) ( ShaFinOdd(D) ⇒ ∀ j ∈ {1, …, D.R.m} ( Summable(vvTerm D) ⇒ etaSum(S, j) ≤ S.dZ0(j) · ( C · ( D.R.f · D.R.m · S.sc.b · (S.sc.L)² + (log S.sc.x)² · S.Nc ) + Σ_l vvTerm(D, l) ) ) ) with D = Fm.D x i and S = Fm.L x i, and Green ⇔ ∀ primes g ∀ Λ ∈ LabelDatum(g) ∀ d ∈ ℕ ( 0 < d ⇒ ∃ τ from (ℤ/g)[X] to functions GL_d(ℤ/g) → ℂ with ( ∀ P ( IsPrimeLab(d, P) ⇒ IsCuspOf(Λ, P, τ(P)) ∧ τ(P)(1) = ∏_{i=1}^{d−1} (g^i − 1) ) ) ∧ ( ∀ P ∀ P′ ( (IsPrimeLab(d, P) ∧ IsPrimeLab(d, P′) ∧ τ(P) = τ(P′)) ⇒ P = P′ ) ) ∧ ( ∀ χ from GL_d(ℤ/g) to ℂ ( IsCusp(χ) ⇒ ∃ P ( IsPrimeLab(d, P) ∧ χ = τ(P) ) ) ) ), and TopG ⇔ ∀ la ∈ ℝ ∀ G ∈ FReq ( (1 < la ∧ HostExW(la, G.req) ∧ ∀ eps ∀ Fm ∈ FamP(eps) ( G.cls(la, Fm) ⇒ HypV(Fm.toFamCore) )) ⇒ FamilyClassConnected(G.cls(la)) ), and TopShapeAlt(V, NR, N, G) ⇔ ∀ 𝒜 ∀ cT ∀ hEx ∀ sel ∀ hduty ∀ selS ∀ selP ∀ selDH ∀ selC ∀ selB ∀ hRB ∀ hTw ∀ hPA ∀ hLamP ∀ hDivG ∀ hDcPtG ∀ hTu ∀ hn4 ∀ hLit ∀ (hVC, a proof of V) ∀ hWu ∀ hRF ∀ hTF … (the text is cut here)",
+   "terms": [
+    {
+     "name": "Green",
+     "gloss": "The statement that for every prime g, every Λ of a type that the code calls LabelDatum g and every whole number d > 0, a map τ exists from polynomials over the integers modulo g to complex-valued functions on the group of invertible d by d matrices modulo g such that, for every polynomial P with IsPrimeLab d P, the function τ P satisfies IsCuspOf Λ P and takes at the identity matrix the value of the product of g^i − 1 over i from 1 to d − 1, such that τ is one-to-one on the polynomials with IsPrimeLab d, and such that every function χ with IsCusp χ equals τ P for some P with IsPrimeLab d P, where LabelDatum, IsPrimeLab, IsCuspOf and IsCusp have no body in the dossier.",
+     "opaque": true
+    },
+    {
+     "name": "TopShapeAlt",
+     "gloss": "A statement with four parameters V, NR, N and G that opens with universal quantifiers over a class 𝒜 of family records, a function cT of two real variables and twenty-one further items named hEx, sel, hduty, selS, selP, selDH, selC, selB, hRB, hTw, hPA, hLamP, hDivG, hDcPtG, hTu, hn4, hLit, hVC, hWu, hRF and hTF, where hVC is a proof of the parameter V, and the dossier cuts the text inside hTF, before any use of NR, N or G and before the conclusion.",
+     "opaque": true
+    },
+    {
+     "name": "Closed",
+     "gloss": "Closed 𝒞 P says that some ε1 > 0 exists such that for every real eps with 0 < eps ≤ ε1 a record K of type TransportedAlt exists for which every family record Fm of type FamP eps in the class 𝒞 and every real CH with Fm.Large K CH satisfy P Fm CH, where Large has no body in the dossier.",
+     "opaque": true
+    },
+    {
+     "name": "Large",
+     "gloss": "A condition on a family record Fm, a TransportedAlt record K and a real number CH that the body of Closed uses and whose definition the dossier does not show.",
+     "opaque": true
+    },
+    {
+     "name": "LinkN",
+     "gloss": "LinkN Fm says that real numbers C and x0 exist such that for every x ≥ x0 and every index i in Fm.Ix x, if Fm.D x i satisfies ShaFinOdd then LinkN_at holds for Fm.L x i, j and C for every whole number j in the set lifts of Fm.D x i.",
+     "opaque": false
+    },
+    {
+     "name": "LinkN_at",
+     "gloss": "LinkN_at L j C is the implication that if the series with terms vvTerm D is summable then etaSum L j ≤ dZ0 j · (C · (f · m · b · 𝓛² + (log x)² · Nc) + the sum of the series vvTerm D), where f and m are the numbers D.R.f and D.R.m, where b, 𝓛 and x are the numbers L.sc.b, L.sc.L and L.sc.x, where dZ0 j and Nc are numbers stored in L, and where etaSum and vvTerm have no body in the dossier.",
+     "opaque": true
+    },
+    {
+     "name": "ShaFinOdd",
+     "gloss": "ShaFinOdd D says that for every prime p and every whole number e with 0 < e < t, where t is the number D.R.t stored in D, the value shaLen (D.nd.ldat p) e differs from the top element ⊤ of its range, and shaLen has no body in the dossier.",
+     "opaque": true
+    },
+    {
+     "name": "lifts",
+     "gloss": "lifts D is the finite set of whole numbers from 1 to m, where m is the number D.R.m stored in the data record D.",
+     "opaque": false
+    },
+    {
+     "name": "TopG",
+     "gloss": "The statement that for every real la and every G of a type that the code calls FReq, if 1 < la, HostExW la G.req holds and every family record in the class G.cls la satisfies HypV on its FamCore part, then FamilyClassConnected (G.cls la) holds, where FReq, HostExW, HypV and FamilyClassConnected have no body in the dossier.",
+     "opaque": true
+    },
+    {
+     "name": "FamClass",
+     "gloss": "A class of family records, that is, a rule that assigns to every family record Fm of type FamP eps, for every real eps, a statement that is true or false.",
+     "opaque": false
+    },
+    {
+     "name": "FamP",
+     "gloss": "A record type that depends on a real number eps, extends a record called FamCore, and holds for each real x and each index i in Ix x a data record D x i and a size record L x i together with many further fields, whose listing the dossier cuts.",
+     "opaque": true
+    },
+    {
+     "name": "TransportedAlt",
+     "gloss": "A record that holds one real number pre and three functions t, mid and last from finite lists of real numbers to real numbers.",
+     "opaque": false
+    },
+    {
+     "name": "Gn",
+     "gloss": "Gn g n is the group of invertible n by n matrices with entries in the integers modulo g.",
+     "opaque": false
+    },
+    {
+     "name": "hTu, hn4 and hTF",
+     "gloss": "Three of the visible hypotheses of TopShapeAlt, each of the form Closed applied to a class built from 𝒜 (with the builders WithTw, WithSm, WithChN and D3) and to a property named through TuSize, ClassNumberFormula₂ or TFrame.",
+     "opaque": true
+    }
+   ],
+   "suggests": "The names and the visible pattern suggest that Green is the classification by J. A. Green of the cuspidal characters of the general linear group over the field with g elements, that N enters TopShapeAlt as one more hypothesis of the Closed kind next to hTu, hn4 and hTF, and that TopShapeAlt ends in its parameter G, which would make the theorem say that TopG follows from the listed hypotheses and a closed LinkN bound that is conditional on ShaFinOdd and on the summability of vvTerm, and the dossier leaves each of these readings unconfirmed.",
+   "confidence": "low",
+   "why": "The dossier cuts the body of TopShapeAlt before its conclusion and before any use of three of its four parameters, which hides the final assertion of the theorem, and Green, Closed and TopG rest on names without shown bodies, with eight definitions left out.",
+   "second": {
+    "says": "If the proposition that the code calls Green holds, then TopShapeAlt holds with its four arguments V, NR, N and G set to True, True, the map that sends a family class 𝒞 to Closed 𝒞 (fun Fm _ => LinkN Fm), and the proposition TopG. That third argument says for a class 𝒞 that there is a real ε1 with 0 < ε1 such that for every real eps with 0 < eps and eps ≤ ε1 there is a K of type TransportedAlt for which every family Fm of type FamP eps and every real CH with 𝒞 Fm and Fm.Large K CH satisfy LinkN Fm, and LinkN Fm says that there exist reals C and x0 such that for every x ≥ x0 and every i in Fm.Ix x, ShaFinOdd (Fm.D x i) implies LinkN_at (Fm.L x i) j C for every j in Finset.Icc 1 (Fm.D x i).R.m. The body of TopShapeAlt is a long universally quantified list of hypotheses that the dossier cuts inside the twenty-third binder, so its final conclusion and the way it uses NR, N and G are not visible.",
+    "premises": [
+     "Green holds, which says that for every prime g, every L of type LabelDatum g and every natural d with 0 < d there exists a function τ that sends each polynomial over ZMod g to a complex-valued function on Gn g d, which is GL (Fin d) (ZMod g), with three properties. First, every P with IsPrimeLab d P satisfies IsCuspOf L P (τ P), and τ P 1 equals the product over i in Finset.Ico 1 d of g ^ i - 1 computed in ℂ. Second, for all P and P' with IsPrimeLab d P and IsPrimeLab d P', the equality τ P = τ P' implies P = P'. Third, every χ from Gn g d to ℂ with IsCusp χ equals τ P for some P with IsPrimeLab d P."
+    ],
+    "conclusion": "TopShapeAlt True True (fun 𝒞 => Closed 𝒞 fun Fm _ => LinkN Fm) TopG holds. The visible part of TopShapeAlt V NR N G quantifies universally, in this order, over a family class 𝒜, a function cT from two reals to a real, hEx (MinkDiv implies ExS 𝒜 cT), sel (a TwistSelection for 𝒜), hduty (every Fm with 𝒜 Fm satisfies Duty Fm), selS, selP, selDH, selC and selB (of the types SelectionSpectralCondition 𝒜 sel, BaseLevelTiedChoiceAlt 𝒜 sel, SelectionDefiniteHeightCondition 𝒜 sel, ColumnChoiceCompatibleSelection 𝒜 sel selP and SelectionBundle 𝒜 sel selS selP selDH selC), then four hypotheses stated for every Fm, every proof hc of 𝒜 Fm, every real x, every proof hx that Fm.x1 < x, every proof h that (sel Fm hc).1 ≤ x and every i in Fm.Ix x, namely hRB (IndefiniteRealisationBoundedRows (selB Fm hc x hx h i)), hTw (TieTwRec (Fm.L x i) (selP Fm hc x hx h i).1.S0.Tw), and after hPA (AllRealisationsPrimitive sel (indefiniteRealisationChoiceOfSelection selB)) the further pointwise hypotheses hLamP (RowsHoldLam3 (selP Fm hc x hx h i).1), hDivG (DivRows3G of the same object) and hDcPtG (DcPtG of the same object), then hTu (Closed (WithTw (WithSm (WithChN 𝒜))) for the property that cT eps Fm.CYL ≤ Fm.CTu implies TuSize Fm), hn4 (Closed of the same class for the property that ClassNumberFormula₂ (Fm.D x i) (Fm.ex x hx i).lev holds for every x, every proof hx that Fm.x1 < x and every i), hLit (LitThin), hVC (V, which is True here), hWu (WuDecayOfGap), hRF (RowsFinDim) and hTF (Closed (D3 3 𝒜) for a property that begins TFrame Fm (Fm.CYL + 1) and is cut there). LinkN_at L j C says that if vvTerm D is summable then etaSum L j ≤ (L.dZ0 j) * (C * (D.R.f * D.R.m * L.sc.b * L.sc.L ^ 2 + Real.log L.sc.x ^ 2 * L.Nc) + ∑' l, vvTerm D l), and ShaFinOdd D says that for every prime p and every natural e with 0 < e and e < D.R.t the value shaLen (D.nd.ldat p) e is not ⊤. TopG says that for every real la and every G of type FReq, if 1 < la, if HostExW la G.req holds and if every Fm with G.cls la Fm satisfies HypV Fm.toFamCore, then FamilyClassConnected (G.cls la) holds.",
+    "unclear": [
+     "GlobalTheory.Fc.TopShapeAlt (text cut before its conclusion and before any use of NR, N and G)",
+     "Formalism.MainNotions.FamP (text cut)",
+     "FamCore",
+     "D7",
+     "SizeData₂",
+     "Fm.Large",
+     "Fm.CYL",
+     "LabelDatum",
+     "IsPrimeLab",
+     "IsCuspOf",
+     "IsCusp",
+     "FReq",
+     "HostExW",
+     "HypV",
+     "FamilyClassConnected",
+     "etaSum",
+     "vvTerm",
+     "dZ0",
+     "Nc",
+     "Formalism.GaloisCohomology.shaLen",
+     "MinkMult",
+     "minkM",
+     "Formalism.MainNotions.DesignChoices",
+     "Formalism.L2.TwistSelectionFunctions",
+     "PageFix",
+     "PageWin",
+     "SmallFirstModulusBelowScale",
+     "TameDistinctF",
+     "ChosenWall",
+     "TupUsedF",
+     "TwAllF",
+     "Formalism.L2.SG.SpectralTiesReal.STiesRAlt",
+     "Formalism.L2.Rows.RowSideFamily",
+     "Formalism.L2.Rows.RowSideDeterminedAlt",
+     "Formalism.L2.DIV.SquareIntegrableColumns",
+     "Formalism.IndefR.RealTBAlt",
+     "Formalism.L2.Top4.IndefiniteScaleAtPoint",
+     "IoExt",
+     "OneMapRowR",
+     "phEff",
+     "Formalism.IndefR.Links.PrimRows3",
+     "TypesSep3",
+     "Formalism.L2.Top4.IndefiniteRealisationChoice'",
+     "Formalism.L2.Top4.kernelChoiceOfSelection",
+     "Formalism.L2.Top4.KernelSelection",
+     "HLatTie",
+     "RationalLiftSpanAtUsedTuples",
+     "ThThetaG",
+     "NumTieG",
+     "Formalism.IndefR.RecTie.Used0",
+     "TwGood",
+     "DGamSmooth",
+     "DGamDvdF",
+     "BoxesF",
+     "QDRowsF",
+     "Des",
+     "TuGe",
+     "GBig",
+     "SplitsF",
+     "massI",
+     "idxPi",
+     "LevelData",
+     "ShortIntervalPrimes.adm6",
+     "ShortIntervalPrimes.adm7",
+     "ShortIntervalPrimes.adm11",
+     "Formalism.L2.SG.ConcreteSettingExists.GapHyp",
+     "HidaSetting",
+     "WuDecay",
+     "muInf",
+     "AutInst",
+     "IsFundDom",
+     "IsRightReg",
+     "IsRConvF",
+     "IsURepOn",
+     "IsIrredOn",
+     "IsFdeg",
+     "IsOpInt",
+     "phLoc",
+     "phInf",
+     "UJset",
+     "OwnEv",
+     "Cnt.Hyp0",
+     "Tr",
+     "kaS"
+    ]
+   },
+   "check": {
+    "first_errors": [
+     "A's field says calls LinkN \"an upper bound on a quantity called etaSum that holds from some x0 on\" and does not say that conditions are left out, while the Lean text of LinkN gives the bound only after \"ShaFinOdd (Fm.D x i) →\" and the Lean text of LinkN_at gives it only after \"Summable (vvTerm D) →\", and A states these two conditions in its fields terms and notation alone."
+    ],
+    "rounds": 1,
+    "second_errors": [
+     "B's field conclusion says \"then four hypotheses stated for every Fm\", while the Lean text of TopShapeAlt has five hypotheses of that form, namely hRB, hTw, hLamP, hDivG and hDcPtG, and B itself goes on to list all five."
+    ]
+   }
+  }
+ ]
+}
