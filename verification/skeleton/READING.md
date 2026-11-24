@@ -218,7 +218,8 @@ see the mathematics of those lines can start by opening these ten definitions.
 | `dossier.py` | writes the dossiers into `data/dossiers`, which git ignores |
 | `briefs/` | the briefs of the first reader, the second reader, the check and the correction |
 | `reading.json` | the 38 readings, each with the second reading and the errors that the check found |
-| `reading.py` | writes the part of this document below this section from `reading.json` |
+| `reading-exact.json` | the readings of lines 39 and 40, the two lines that only the exact outline has |
+| `reading.py` | writes the part of this document below this section from `reading.json` and `reading-exact.json` |
 
 ## How to read the table and the entries
 
@@ -1734,3 +1735,113 @@ The reader's confidence is medium. The hypothesis and the quantifier shape of al
 The check found one error in the first version of this reading. The text above is the corrected version, which passed the check after one round of correction.
 
 - A says that the tower satisfies HOcc "after base change to ℂ", but the Lean text reads "HOcc (bcAlong (T.tower N g) τ) (fun j => σ (θ j)) (h i)" and the dossier shows only "def bcAlong (H : HTower k) {K : Type} [Field K] (τ : k →+* K) : HTower K" without a body, so the meaning of bcAlong is asserted outside the field suggests.
+
+## Two lines of the exact outline
+
+The outline of the exact graph, [`OUTLINE-EXACT.txt`](OUTLINE-EXACT.txt), has two lines that `OUTLINE.txt` lacks. [`README.md`](README.md) describes that graph. The heads of the two lines gather at least 10,000 declarations only in the exact tree, so the outline of the 38 lines leaves them out. They were read with the same briefs as the 38 lines, and their readings are in `reading-exact.json`. The numbers 39 and 40 continue the count of the 38 lines and give no place in the outline. The column Gathers gives the count of the exact tree.
+
+| Line | Head | Hangs from | Gathers | Conclusion of the statement | Confidence |
+|---:|---|---:|---:|---|---|
+| 39 | `main_alt_alt` | 15 | 10,275 | Fm satisfies ConclF, which says that real numbers C′ and x0 exist such that for every x ≥ x0 with Fm.x1 < x and every index i, ShaFinOdd for Fm.D x i … | medium |
+| 40 | `shape_closed_link_n_of_green` | 23 | 11,590 | TopG holds, which reads that for every real la with 1 < la and every G of type FReq, if HostExW la G.req holds and if every family Fm of every FamP … | medium |
+
+### Line 39, `main_alt_alt`
+
+The head is `GlobalTheory.NLinkClose.main_alt_alt`, in the module Development › Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts › Third Place Series › Imports Further Tail. The line stands only in `OUTLINE-EXACT.txt`, gathers 10,275 declarations in the exact tree and hangs from line 15, `linkN_of_twGood_galoisPreconditions`. Folded into the line is the wrapper `conclF_of_family_facts_and_bound_at_two_three`.
+
+Assume a bundle of seven background statements that the code calls Hypotheses₂, and then take any real number eps, any family record Fm of type FamP eps, any real number C and any natural number CT. If 0 ≤ C, and Fm satisfies the condition TwGood, the condition FactsFAlt with the constants C and CT, and the condition BoundAtTwoThreeFamilyFonAlt, then Fm satisfies ConclF. The dossier unfolds ConclF to the claim that real numbers C′ and x0 exist such that, for every real x ≥ x0 with Fm.x1 < x and every index i in Fm.Ix x, if the data record Fm.D x i satisfies ShaFinOdd then a record X of type HubData exists for which a fifteen-part condition that the code calls Concl holds for the size record Fm.L x i, the parameter record that Fm.params gives at x and i, the record X and the constant C′.
+
+- Premise 1. The bundle Hypotheses₂ holds, which is assumed before eps, Fm, C and CT are chosen and which consists of seven named statements.
+- Premise 2. The real number C satisfies 0 ≤ C.
+- Premise 3. Fm satisfies TwGood, which unfolds to the existence of a real x0 such that for every x ≥ x0 with Fm.x1 < x and every index i a condition that the code calls TwConjAt holds and some N0 and S make a condition that the code calls TwGoodAt hold.
+- Premise 4. Fm satisfies FactsFAlt with C and CT, which says that for every x with Fm.x1 < x and every index i the data record Fm.D x i satisfies a bundle that the code calls NormChoiceFacts and a condition that the code calls ExtraAlt with C and CT.
+- Premise 5. Fm satisfies BoundAtTwoThreeFamilyFonAlt, which says that real numbers C″ and x0 exist such that for every x ≥ x0 with Fm.x1 < x, every index i and every choice of data HW, F, a comparison datum, a HubData record X and a real C₂, the bundle SetupAlt for these data implies the condition BoundAtTwoThree for Fm.L x i, the component ρ of X and C″.
+- Conclusion. Fm satisfies ConclF, which says that real numbers C′ and x0 exist such that for every x ≥ x0 with Fm.x1 < x and every index i, ShaFinOdd for Fm.D x i implies that a HubData record X exists with Concl for Fm.L x i, Fm.params at x and i, X and C′.
+
+```
+Hypotheses₂ ⇒ ∀ eps ∈ ℝ ∀ Fm ∈ FamP(eps) ∀ C ∈ ℝ ∀ CT ∈ ℕ ( (0 ≤ C ∧ TwGood(Fm) ∧ FactsFAlt(Fm, C, CT) ∧ BoundAtTwoThreeFamilyFonAlt(Fm)) ⇒ ConclF(Fm) ), where hx denotes a proof of Fm.x1 < x, i ranges over Fm.Ix(x), D = Fm.D x i, S = Fm.L x i, nch = (Fm.ex x hx i).nch, and TwGood(Fm) ⇔ ∃ x0 ∈ ℝ ∀ x ≥ x0 ∀ hx ∀ i ( TwConjAt(D, nch) ∧ ∃ N0 ∃ T TwGoodAt(D, nch, ⟨twE(Fm, x, hx, i), N0, T⟩) ), FactsFAlt(Fm, C, CT) ⇔ ∀ x ∈ ℝ ∀ hx ∀ i ( NormChoiceFacts(D, nch) ∧ ExtraAlt(D, C, CT) ), BoundAtTwoThreeFamilyFonAlt(Fm) ⇔ ∃ C″, x0 ∈ ℝ ∀ x ≥ x0 ∀ hx ∀ i ∀ HW ∀ F ∀ cmp ∀ X ∈ HubData(D) ∀ C₂ ∈ ℝ ( SetupAlt(S, nch, HW, X, C₂) ⇒ BoundAtTwoThree(S, X.ρ, C″) ), ConclF(Fm) ⇔ ∃ C′, x0 ∈ ℝ ∀ x ≥ x0 ∀ hx ∀ i ( ShaFinOdd(D) ⇒ ∃ X ∈ HubData(D) Concl(S, Fm.params x hx i, X, C′) )
+```
+
+The reading does not open the names `Hypotheses₂`, `LocalEulerCharK`, `LocalFinitenessK`, `FamP`, `D7`, `TwGoodE`, `twE`, `NormChoiceFacts`, `ExtraAlt`, `HWOf`, `FonOf`, `CmpOf`, `SetupAlt`, `BoundAtTwoThree`, `ShaFinOdd`, `HubData` and `Concl`.
+
+The next sentences are a suggestion from the names, which the Lean text of the dossier does not show. The names suggest that Hypotheses₂ gathers published theorems (Fontaine's theory of B_cris, global Artin reciprocity, the Bloch–Kato local conditions, local Tate duality, the local Euler characteristic formula, finiteness of local Galois cohomology and an integral result of Bhatt and Scholze), that H0, H1 and H2 are cohomology groups of a local Galois group GK, that ShaFinOdd expresses finiteness of Tate–Shafarevich-type groups, and that BoundAtTwoThree is a bound at the primes 2 and 3, and the dossier leaves each of these readings unconfirmed.
+
+The reader's confidence is medium. The dossier shows the whole logical skeleton of the statement, of its four conditions on Fm and of ConclF, yet nearly every condition inside them ends in a name without a shown body, the listings of FamP and D7 are cut, and five definitions were left out.
+
+The check found no error in this reading.
+
+### Line 40, `shape_closed_link_n_of_green`
+
+The head is `UpperTheory.Top.shape_closed_link_n_of_green`, in the module Development › Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts › Third Place Series › Top Shape. The line stands only in `OUTLINE-EXACT.txt`, gathers 11,590 declarations in the exact tree and hangs from line 23, `zero_free_all_of_green_v_win`.
+
+The theorem says that if the condition the code calls Green holds, then TopShapeAlt True True N TopG holds, where N is the requirement on a family class 𝒞 that LinkN holds in the Closed sense on 𝒞, which means that there is ε1 > 0 such that for every eps with 0 < eps ≤ ε1 there is a K for which LinkN Fm holds for every family Fm in FamP eps that lies in 𝒞 and satisfies Fm.Large K CH for some real CH. By the shown body of TopShapeAlt this unfolds to the claim that, under Green, for every family class 𝒜, every function cT of two real variables and every choice of the 51 further bound items (auxiliary selection data and hypotheses, among them two trivially true hypotheses in the slots V and NR and the hypothesis N applied to the class D3 3 𝒜), the condition the code calls TopG holds. TopG says that for every real la greater than 1 and every G of the type FReq, if HostExW la G.req holds and every family Fm in the class G.cls la satisfies HypV, then the class G.cls la satisfies a condition that the code calls FamilyClassConnected.
+
+- Premise 1. Green holds, which is a shown statement about complex-valued functions on the matrix groups GL_d over the integers modulo a prime g, built on the opaque conditions IsPrimeLab, IsCuspOf and IsCusp.
+- Premise 2. 𝒜 is an arbitrary family class, that is, a predicate on the families Fm of FamP eps for every real eps.
+- Premise 3. cT is an arbitrary function that takes two real numbers to a real number.
+- Premise 4. hEx says that MinkDiv implies ExS 𝒜 cT.
+- Premise 5. sel is an arbitrary twist selection for 𝒜, which gives for every family Fm in 𝒜 a real threshold (sel Fm hc).1 and one object for each selected point, where a selected point means a real eps, a family Fm in FamP eps, a proof hc that 𝒜 Fm holds, a real x with Fm.x1 < x and (sel Fm hc).1 ≤ x, and an index i in Fm.Ix x.
+- Premise 6. hduty says that every family Fm in 𝒜 satisfies Duty Fm.
+- Premise 7. selS is a choice, at every selected point, of an element of STiesRAlt for the object that sel gives there.
+- Premise 8. selP is a choice, at every selected point, of a P of type RowSideFamily (Fm.ex x hx i) together with a proof of RowSideDeterminedAlt for the field T of the object that sel gives there and P.
+- Premise 9. selDH is a choice, at every selected point, of a pair p of natural numbers with (Fm.D x i).s.Del = p.1 and (Fm.L x i).etaSz = (Fm.D x i).R.m · p.2.
+- Premise 10. selC is a choice, at every selected point, of an element of SquareIntegrableColumns for the field T of the object that sel gives there and the P that selP gives there.
+- Premise 11. selB is a choice, at every selected point, of an element of RealTBAlt built from the choices of sel, selP, selC, selDH and selS at that point.
+- Premise 12. hRB says that at every selected point IndefiniteRealisationBoundedRows holds for the element that selB gives there.
+- Premise 13. hTw says that at every selected point TieTwRec (Fm.L x i) Tw holds, where Tw is the field S0.Tw of the P that selP gives there.
+- Premise 14. hPA says that AllRealisationsPrimitive holds for sel and for the realisation choice read off from selB by indefiniteRealisationChoiceOfSelection.
+- Premise 15. hLamP says that at every selected point RowsHoldLam3 P holds for the P that selP gives there.
+- Premise 16. hDivG says that at every selected point DivRows3G P holds for the P that selP gives there.
+- Premise 17. hDcPtG says that at every selected point DcPtG P holds for the P that selP gives there.
+- Premise 18. hTu says that, in the Closed sense on the class WithTw (WithSm (WithChN 𝒜)), the inequality cT eps Fm.CYL ≤ Fm.CTu implies TuSize Fm.
+- Premise 19. hn4 says that, in the Closed sense on the same class WithTw (WithSm (WithChN 𝒜)), ClassNumberFormula₂ (Fm.D x i) (Fm.ex x hx i).lev holds for every real x with Fm.x1 < x and every index i in Fm.Ix x.
+- Premise 20. hLit says that LitThin holds.
+- Premise 21. hVC is a proof of the slot V, which the theorem sets to the trivially true proposition True.
+- Premise 22. hWu says that WuDecayOfGap holds.
+- Premise 23. hRF says that RowsFinDim holds.
+- Premise 24. hTF says that, in the Closed sense on the class D3 3 𝒜, TFrame Fm (Fm.CYL + 1) (1/4) 3 (1/2) Fm.CTu 3 holds.
+- Premise 25. c30 is an arbitrary map from finite lists of real numbers to the type CountingConstants.
+- Premise 26. hc30 says that for every family Fm the constants c30 Fm.cOut satisfy 0 ≤ (c30 Fm.cOut).C and 2 · (Fm.CYL + 1) ≤ (c30 Fm.cOut).A.
+- Premise 27. sTy is an element of what the code calls TypeP, which is shown without a body.
+- Premise 28. sNG is an element of what the code calls RowNGP, which is shown without a body.
+- Premise 29. sM is an element of what the code calls RowMainEqP, which is shown without a body.
+- Premise 30. sLp says that LoopRowS holds for the constant 3, the class D3 3 𝒜 and the selection that pairs the threshold (sel Fm (d3_a hc)).1 with the toSTies part of selS.
+- Premise 31. sO says that, in the Closed sense on D3 3 𝒜, for every proof hc that Fm lies in D3 3 𝒜, TheoremSSelected holds for Fm, the constant 3 and the same pair of the threshold (sel Fm (d3_a hc)).1 and the toSTies part of selS.
+- Premise 32. h30 says that, in the Closed sense on D3 3 𝒜, CountAllPointsClass PLevT' Fm holds with the five constants n0, A, C, c and cb of c30 Fm.cOut.
+- Premise 33. hInstR says that at every selected point both VolSigIndep (Fm.D x i) and ClassItemsAt (Fm.D x i) r hold, where r is ((Fm.D x i).sp.Y 0).rank.
+- Premise 34. selJ is an element of IndefiniteRealisationSelection for 𝒜, sel, selS, selP, selDH, selC, the kernel choice kernelChoiceOfSelection selB and the realisation choice indefiniteRealisationChoiceOfSelection selB.
+- Premise 35. jOn says that, in the Closed sense on D3 3 𝒜, there is a real x0 such that BaseVectorImageFull (Fm.D x i) holds for every x ≥ x0 and every index i in Fm.Ix x.
+- Premise 36. hMt says that for every family Fm in 𝒜 there is a real x0 such that for every x ≥ x0, every index i in Fm.Ix x and every μ in (Fm.D x i).what₂.Tup, the set Mtilde μ is closed under scalar multiplication by embLL a for every a in the ring of integers of the field (Fm.D x i).what₂.LL.
+- Premise 37. rRows says that, in the Closed sense on D3 3 𝒜 with the real CH kept as an argument, for every proof hc that Fm lies in D3 3 𝒜, RowsAtSelAlt holds for sel, the realisation choice from selB, the row condition DefRowsFAlt of that realisation choice, SingleMapCondition selB, Fm, d3_a hc and CH.
+- Premise 38. aPt0 says that, in the Closed sense on D3 3 𝒜, there is a real x0 such that Conclusion6 (Fm.D x i) u holds for every x with x0 ≤ x and Fm.x1 < x, every index i in Fm.Ix x and every u.
+- Premise 39. aPtTw says that, in the Closed sense on D3 3 𝒜, there is a real x0 such that TwistedPointIntegral (Fm.D x i) (Fm.ex x hx i).tw holds for every x with x0 ≤ x and Fm.x1 < x and every index i in Fm.Ix x.
+- Premise 40. aPer0 says that, in the Closed sense on D3 3 𝒜, there is a real x0 such that PeriodClassSumWeyl (Fm.D x i) holds for every x with x0 ≤ x and Fm.x1 < x and every index i in Fm.Ix x.
+- Premise 41. aPerTw says that, in the Closed sense on D3 3 𝒜, there is a real x0 such that TwistedPeriodAdmissible (Fm.D x i) (Fm.X x i) (Fm.ex x hx i).tw holds for every x with x0 ≤ x and Fm.x1 < x and every index i in Fm.Ix x.
+- Premise 42. aP10 says that, in the Closed sense on D3 3 𝒜, there is a real x0 such that for every x with x0 ≤ x and Fm.x1 < x, every index i in Fm.Ix x and every u, both Conclusion5Sharp (Fm.D x i) u and TwistedColumnBoundAtT (Fm.X x i) (Fm.ex x hx i).tw u hold.
+- Premise 43. aAtG says that, in the Closed sense on D3 3 𝒜, there is a real C1 such that familySizeBoundAtTypePrime Fm C1 holds and such that, for some real x0, UsedTuplesBoundByConstant (Fm.D x i) (Fm.L x i) (Fm.ex x hx i).errX C1 holds for every x with Fm.x1 < x and x0 ≤ x and every index i in Fm.Ix x.
+- Premise 44. aC2 says that, in the Closed sense on D3 3 𝒜, FamilySecondComplementInputs Fm holds.
+- Premise 45. hServ says that SelectionServed holds for the class D3 3 𝒜 and the selection that sends Fm and hc to sel Fm (d3_a hc).
+- Premise 46. nR is a proof of the slot NR, which the theorem sets to the trivially true proposition True.
+- Premise 47. nRest says that, in the Closed sense on D3 3 𝒜, LinkN Fm holds, which is the slot N of the theorem applied to the class D3 3 𝒜.
+- Premise 48. cIc is an arbitrary real number.
+- Premise 49. hcI says that 0 < cIc.
+- Premise 50. irrC says that, in the Closed sense on D3 3 𝒜, there is a real x0 such that for every x ≥ x0 and every index i in Fm.Ix x there is an A of type AllRows (Fm.D x i) with LabelCountGoodInjective A, AllJoinA A and CountAllRows A (epsC cIc r f), where r is (Fm.D x i).R.r and f is (Fm.D x i).R.f.
+- Premise 51. zL says that, in the Closed sense on D3 3 𝒜, for every proof hc that Fm lies in D3 3 𝒜 there is a real xr such that for every x with Fm.x1 < x, (sel Fm (d3_a hc)).1 ≤ x and xr ≤ x, every index i in Fm.Ix x and every k below (Fm.D x i).R.m, the map that multiplies vectors by the matrix lPrj, formed from the P that selP gives at that point, is surjective.
+- Premise 52. tie says that, in the Closed sense on D3 3 𝒜, RealPlaceSecondLayerConditions Fm holds.
+- Premise 53. hU says that MassRatioUnderVolume D holds for every D.
+- Premise 54. hG says that GenusMassAt D 2 holds for every D.
+- Conclusion. TopG holds, which reads that for every real la with 1 < la and every G of type FReq, if HostExW la G.req holds and if every family Fm of every FamP eps with G.cls la Fm satisfies HypV Fm.toFamCore, then FamilyClassConnected (G.cls la) holds.
+
+```
+Green ⇒ ∀𝒜∈FamClass ∀cT∈(ℝ→ℝ→ℝ) ∀sel∈TwistSelection(𝒜) ∀selS ∀selP ∀selDH ∀selC ∀selB ∀c30∈(List ℝ→CountingConstants) ∀cIc∈ℝ ( [ (MinkDiv ⇒ ExS(𝒜,cT)) ∧ (∀eps ∀Fm∈FamP(eps), 𝒜(Fm) ⇒ Duty(Fm)) ∧ (∀pt, IndefiniteRealisationBoundedRows(selB(pt))) ∧ (∀pt, TieTwRec(L, P.S0.Tw)) ∧ AllRealisationsPrimitive(sel, QB) ∧ (∀pt, RowsHoldLam3(P)) ∧ (∀pt, DivRows3G(P)) ∧ (∀pt, DcPtG(P)) ∧ Closed(𝒲, Fm ↦ (cT(eps, Fm.CYL) ≤ Fm.CTu ⇒ TuSize(Fm))) ∧ Closed(𝒲, Fm ↦ ∀x ∀hx∈(Fm.x1<x) ∀i∈Fm.Ix(x), ClassNumberFormula₂(D, ex.lev)) ∧ LitThin ∧ True ∧ WuDecayOfGap ∧ RowsFinDim ∧ Closed(𝒟, Fm ↦ TFrame(Fm, Fm.CYL+1, 1/4, 3, 1/2, Fm.CTu, 3)) ∧ (∀eps ∀Fm∈FamP(eps), 0 ≤ c30(Fm.cOut).C ∧ 2·(Fm.CYL+1) ≤ c30(Fm.cOut).A) ∧ TypeP ∧ RowNGP ∧ RowMainEqP ∧ LoopRowS(3, 𝒟, s) ∧ Closed(𝒟, Fm ↦ ∀hc∈𝒟(Fm), TheoremSSelected(Fm, 3, s(Fm,hc))) ∧ Closed(𝒟, Fm ↦ CountAllPointsClass(PLevT', Fm, k.n0, k.A, k.C, k.c, k.cb) with k = c30(Fm.cOut)) ∧ (∀pt, VolSigIndep(D) ∧ ClassItemsAt(D, (D.sp.Y 0).rank)) ∧ IndefiniteRealisationSelection(𝒜, sel, selS, selP, selDH, selC, kernelChoiceOfSelection(selB), QB) ∧ Closed(𝒟, Fm ↦ ∃x0∈ℝ ∀x≥x0 ∀i∈Fm.Ix(x), BaseVectorImageFull(D)) ∧ (∀eps ∀Fm∈FamP(eps), 𝒜(Fm) ⇒ ∃x0∈ℝ ∀x≥x0 ∀i∈Fm.Ix(x) ∀μ∈D.what₂.Tup ∀a∈𝒪(D.what₂.LL) ∀y∈Mtilde(μ), embLL(a)•y ∈ Mtilde(μ)) ∧ Closed(𝒟, (Fm,CH) ↦ ∀hc∈𝒟(Fm), RowsAtSelAlt(sel, QB, DefRowsFAlt(QB), SingleMapCondition(selB), Fm, d3_a(hc), CH)) ∧ Closed(𝒟, Fm ↦ ∃x0∈ℝ ∀x (x0≤x ⇒ ∀hx∈(Fm.x1<x) ∀i∈Fm.Ix(x) ∀u, Conclusion6(D,u))) ∧ Closed(𝒟, Fm ↦ ∃x0∈ℝ ∀x (x0≤x ⇒ ∀hx∈(Fm.x1<x) ∀i∈Fm.Ix(x), TwistedPointIntegral(D, ex.tw))) ∧ Closed(𝒟, Fm ↦ ∃x0∈ℝ ∀x (x0≤x ⇒ ∀hx∈(Fm.x1<x) ∀i∈Fm.Ix(x), PeriodClassSumWeyl(D))) ∧ Closed(𝒟, Fm ↦ ∃x0∈ℝ ∀x (x0≤x ⇒ ∀hx∈(Fm.x1<x) ∀i∈Fm.Ix(x), TwistedPeriodAdmissible(D, Fm.X x i, ex.tw))) ∧ Closed(𝒟, Fm ↦ ∃x0∈ℝ ∀x (x0≤x ⇒ ∀hx∈(Fm.x1<x) ∀i∈Fm.Ix(x) ∀u, Conclusion5Sharp(D,u) ∧ TwistedColumnBoundAtT(Fm.X x i, ex.tw, u))) ∧ Closed(𝒟, Fm ↦ ∃C1∈ℝ ((∃x0∈ℝ ∀x ∀hx∈(Fm.x1<x) (x0≤x ⇒ ∀i∈Fm.Ix(x), UsedTuplesBoundByConstant(D, L, ex.errX, C1))) ∧ familySizeBoundAtTypePrime(Fm, C1))) ∧ Closed(𝒟, Fm ↦ FamilySecondComplementInputs(Fm)) ∧ SelectionServed(𝒟, (Fm,hc) ↦ sel Fm (d3_a hc)) ∧ True ∧ Closed(𝒟, Fm ↦ LinkN(Fm)) ∧ 0 < cIc ∧ Closed(𝒟, Fm ↦ ∃x0∈ℝ ∀x≥x0 ∀i∈Fm.Ix(x) ∃A∈AllRows(D), LabelCountGoodInjective(A) ∧ AllJoinA(A) ∧ CountAllRows(A, epsC(cIc, D.R.r, D.R.f))) ∧ Closed(𝒟, Fm ↦ ∀hc∈𝒟(Fm) ∃xr∈ℝ ∀x ∀hx∈(Fm.x1<x) ∀h∈((sel Fm (d3_a hc)).1≤x) (xr≤x ⇒ ∀i∈Fm.Ix(x) ∀k∈Fin(D.R.m), (v ↦ M_k·v) is surjective)) ∧ Closed(𝒟, Fm ↦ RealPlaceSecondLayerConditions(Fm)) ∧ (∀D, MassRatioUnderVolume(D)) ∧ (∀D, GenusMassAt(D, 2)) ] ⇒ TopG ), where the data binders are pulled to the front and the hypotheses keep the order of the text, where ∀pt abbreviates ∀eps∈ℝ ∀Fm∈FamP(eps) ∀hc∈𝒜(Fm) ∀x∈ℝ ∀hx∈(Fm.x1<x) ∀h∈((sel Fm hc).1≤x) ∀i∈Fm.Ix(x), where D = Fm.D x i, L = Fm.L x i, ex = Fm.ex x hx i, P = (selP Fm hc x hx h i).1, 𝒲 = WithTw(WithSm(WithChN 𝒜)), 𝒟 = D3 3 𝒜 = Des(WithChN 𝒜, 3), QB = indefiniteRealisationChoiceOfSelection(selB), s(Fm,hc) = ⟨(sel Fm (d3_a hc)).1, (x,hx,h,i) ↦ (selS Fm (d3_a hc) x hx h i).toSTies⟩, M_k = lPrj(D, P'.A3.A, P'.P0, P'.ψ0, P'.A3.fam3.toSub2(P'.Zs), k, P'.A3.A.μ0) with P' = (selP Fm (d3_a hc) x hx h i).1, where Closed(𝒞,φ) ⇔ ∃ε1∈ℝ (0<ε1 ∧ ∀eps∈ℝ (0<eps ⇒ eps≤ε1 ⇒ ∃K∈TransportedAlt ∀Fm∈FamP(eps) ∀CH∈ℝ (𝒞(Fm) ⇒ Fm.Large(K,CH) ⇒ φ(Fm,CH)))), where LinkN(Fm) ⇔ ∃C,x0∈ℝ ∀x≥x0 ∀i∈Fm.Ix(x) (ShaFinOdd(D) ⇒ ∀j∈{1,…,D.R.m}, LinkN_at(L,j,C)), where LinkN_at(L,j,C) ⇔ (the series Σ_l vvTerm(D,l) is summable ⇒ etaSum(L,j) ≤ L.dZ0(j)·(C·(D.R.f·D.R.m·L.sc.b·(L.sc.L)² + (log L.sc.x)²·L.Nc) + Σ_l vvTerm(D,l))), where ShaFinOdd(D) ⇔ ∀ prime p ∀e∈ℕ (0<e ⇒ e<D.R.t ⇒ shaLen(D.nd.ldat p, e) ≠ ⊤), where TopG ⇔ ∀la∈ℝ ∀G∈FReq (1<la ⇒ HostExW(la, G.req) ⇒ (∀eps∈ℝ ∀Fm∈FamP(eps), G.cls(la)(Fm) ⇒ HypV(Fm.toFamCore)) ⇒ FamilyClassConnected(G.cls(la))), and where Green ⇔ ∀ prime g ∀L∈LabelDatum(g) ∀d∈ℕ (0<d ⇒ ∃τ∈((ℤ/g)[X] → (GL_d(ℤ/g) → ℂ)) [ (∀P, IsPrimeLab(d,P) ⇒ IsCuspOf(L,P,τ(P)) ∧ τ(P)(1) = ∏_{i=1}^{d−1} (g^i − 1)) ∧ (∀P ∀P', IsPrimeLab(d,P) ⇒ IsPrimeLab(d,P') ⇒ τ(P)=τ(P') ⇒ P=P') ∧ (∀χ∈(GL_d(ℤ/g) → ℂ), IsCusp(χ) ⇒ ∃P, IsPrimeLab(d,P) ∧ χ=τ(P)) ])
+```
+
+The reading does not open the names `LabelDatum`, `IsPrimeLab`, `IsCuspOf`, `IsCusp`, `FamP`, `FamCore`, `Large`, `etaSum`, `vvTerm`, `shaLen`, `D7`, `SizeData₂`, `FReq`, `HostExW`, `HypV`, `FamilyClassConnected`, `Des`, `d3_a`, `DesignChoices`, `TwistSelectionFunctions`, `kernelChoiceOfSelection`, `CountingConstants`, `TypeP`, `RowNGP`, `RowMainEqP`, `LoopRowS`, `TheoremSSelected`, `CountAllPointsClass`, `VolSigIndep`, `ClassItemsAt`, `IndefiniteRealisationSelection`, `BaseVectorImageFull`, `RowsAtSelAlt`, `Conclusion6`, `TwistedPointIntegral`, `PeriodClassSumWeyl`, `TwistedPeriodAdmissible`, `Conclusion5Sharp`, `TwistedColumnBoundAtT`, `UsedTuplesBoundByConstant`, `familySizeBoundAtTypePrime`, `FamilySecondComplementInputs`, `SelectionServed`, `AllRows`, `epsC`, `lPrj`, `RealPlaceSecondLayerConditions`, `MassRatioUnderVolume` and `GenusMassAt`.
+
+The next sentences are a suggestion from the names, which the Lean text of the dossier does not show. The name Green together with the value ∏(g^i − 1) suggests J. A. Green's description of the cuspidal characters of GL_d over the field with g elements, labelled by irreducible polynomials, the names shaLen and ShaFinOdd suggest finiteness of Tate–Shafarevich-type groups, and the head name with its parent zero_free_all_of_green_v_win suggests that this theorem reduces a zero-free statement to Green plus the one remaining input LinkN, but the dossier confirms none of these readings.
+
+The reader's confidence is medium. The dossier shows the head statement, TopShapeAlt, Green, Closed, LinkN and TopG in full, so the logical form and every constant are visible, but the conclusion TopG rests on the unseen names FReq, HostExW, HypV and FamilyClassConnected, the class D3 rests on the unseen Des, the condition Large is not shown, FamP is cut, 8 definitions were left out and most hypotheses are names without bodies.
+
+The dossier shows the definition TopShapeAlt in full, taken from the source file, because the statement splitter cuts it before its conclusion. A first reading from the cut dossier had confidence low.
+
+The check found no error in this reading.

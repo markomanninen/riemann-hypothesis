@@ -7,7 +7,8 @@ reading.json holds, for each of the 38 lines of the outline, what a reader wrote
 statement of its head and what a check of that reading found. The readings were written by
 language models from the dossiers of dossier.py, as READING.md describes, so this script does
 not make them. It lays them out as the second part of READING.md, below the line that starts
-with `<!-- lines -->`, and keeps the text above that line as it is.
+with `<!-- lines -->`, and keeps the text above that line as it is. The readings of the two lines
+that only OUTLINE-EXACT.txt has, in reading-exact.json, follow in a section of their own.
 """
 import json
 import os
@@ -54,7 +55,10 @@ def clip(text, limit=150):
 def entry(r, by_line):
     out = [f"### Line {r['line']}, `{short(r['name'])}`", ""]
     place = f"The head is `{r['name']}`, in the module {' › '.join(words(p) for p in r['module'].split('.'))}. "
-    place += f"The line gathers {r['gathers']:,} declarations"
+    if r.get("outline") == "exact":
+        place += f"The line stands only in `OUTLINE-EXACT.txt`, gathers {r['gathers']:,} declarations in the exact tree"
+    else:
+        place += f"The line gathers {r['gathers']:,} declarations"
     place += f" and hangs from line {r['parent']}, `{short(by_line[r['parent']]['name'])}`." if r["parent"] else " and is the top of the outline."
     if r["wrappers"]:
         place += " Folded into the line " + ("is the wrapper " if len(r["wrappers"]) == 1 else "are the wrappers ")
@@ -70,6 +74,8 @@ def entry(r, by_line):
         out += ["The next sentences are a suggestion from the names, which the Lean text of the dossier does not show. "
                 + sentence(r["suggests"]), ""]
     out += [f"The reader's confidence is {r['confidence']}. {sentence(r['why'])}", ""]
+    if r.get("dossier"):
+        out += [r["dossier"], ""]
     check = r["check"]
     count = {1: "one error", 2: "two errors", 3: "three errors", 4: "four errors"}
     rounds = {1: "one round", 2: "two rounds", 3: "three rounds"}
@@ -122,13 +128,33 @@ def main():
     body += ["", "## The lines", ""]
     for r in lines:
         body += entry(r, by_line)
+    exact_path = os.path.join(HERE, "reading-exact.json")
+    extra = []
+    if os.path.exists(exact_path):
+        with open(exact_path, encoding="utf-8") as f:
+            extra = json.load(f)["lines"]
+    if extra:
+        by_line.update({r["line"]: r for r in extra})
+        body += ["## Two lines of the exact outline", "",
+                 "The outline of the exact graph, [`OUTLINE-EXACT.txt`](OUTLINE-EXACT.txt), has two lines that "
+                 "`OUTLINE.txt` lacks. [`README.md`](README.md) describes that graph. The heads of the two lines gather "
+                 "at least 10,000 declarations only in the exact tree, so the outline of the 38 lines leaves them out. "
+                 "They were read with the same briefs as the 38 lines, and their readings are in `reading-exact.json`. "
+                 "The numbers 39 and 40 continue the count of the 38 lines and give no place in the outline. The column "
+                 "Gathers gives the count of the exact tree.", "",
+                 "| Line | Head | Hangs from | Gathers | Conclusion of the statement | Confidence |", "|---:|---|---:|---:|---|---|"]
+        for r in extra:
+            body.append(f"| {r['line']} | `{short(r['name'])}` | {r['parent']} | {r['gathers']:,} | {clip(r['conclusion'])} | {r['confidence']} |")
+        body.append("")
+        for r in extra:
+            body += entry(r, by_line)
     path = os.path.join(HERE, "READING.md")
     with open(path, encoding="utf-8") as f:
         text = f.read()
     head = text[:text.index(MARK) + len(MARK)] if MARK in text else text.rstrip() + "\n\n" + MARK
     with open(path, "w", encoding="utf-8") as f:
         f.write(head + "\n\n" + "\n".join(body).rstrip() + "\n")
-    print(f"{len(lines)} lines written to READING.md")
+    print(f"{len(lines) + len(extra)} lines written to READING.md")
 
 
 if __name__ == "__main__":
