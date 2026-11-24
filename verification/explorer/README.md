@@ -29,6 +29,11 @@ two steps that pass the limit of the outline only in that graph. It also holds t
 the ten definitions that those readings leave unopened most often and the groups of fields of the
 record `D7`. A step links to its module in the two other views.
 
+`build_overview.py` writes `overview/index.html`, a page from which every part of the verification
+work opens. It says what the proof claims, what has been checked and by whom, where each part
+can be read and what is open, with figures from the JSON files of the verification folders. The
+open items that no JSON file states are in `overview/open.json`.
+
 The landscape also plays tours. A tour is a camera run described in a file under `tours/`, such
 as a run down the longest chain of imports, seen from outside or from the chain itself. The
 Follow chain button plays one in the page, and `record_tour.py` renders one into an MP4 clip for
