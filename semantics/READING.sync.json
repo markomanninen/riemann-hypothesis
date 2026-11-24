@@ -1,0 +1,2693 @@
+{
+ "r-top": [
+  "the-outline-in-plain-words.p1.s1:aed20e90abb9",
+  "the-outline-in-plain-words.p1.s2:04914406c4fc"
+ ],
+ "r-38": [
+  "the-outline-in-plain-words.p1.s3:9a3c20afc337",
+  "the-outline-in-plain-words.p1.s4:f028fa084790"
+ ],
+ "r-made": [
+  "the-outline-in-plain-words.p2.s1:ea5e51aaf785",
+  "the-outline-in-plain-words.p2.s2:fb2512b463c5",
+  "the-outline-in-plain-words.p2.s3:77c87830c251"
+ ],
+ "r-conf": [
+  "the-outline-in-plain-words.p3.s1:4165e85cc57e",
+  "the-outline-in-plain-words.p3.s2:aa24556f49c8",
+  "the-outline-in-plain-words.p3.s3:91d70ae7a1c1",
+  "the-outline-in-plain-words.p3.s4:a2ed7ad6dde9"
+ ],
+ "r-confcount": [
+  "the-outline-in-plain-words.p3.s5:e0a6433552c9"
+ ],
+ "r-source": [
+  "the-outline-in-plain-words.p4.s1:d5516ff9c739",
+  "the-outline-in-plain-words.p4.s2:5c4b50f53a32"
+ ],
+ "t-scope": [
+  "what-the-top-of-the-outline-says.p1.s1:0aca0ab4bf5f",
+  "what-the-top-of-the-outline-says.p1.s2:236cc80610b2",
+  "what-the-top-of-the-outline-says.p1.s3:9dadd78c20ba",
+  "what-the-top-of-the-outline-says.p1.s4:023ef16f3680"
+ ],
+ "t-premise": [
+  "what-the-top-of-the-outline-says.p2.s1:08e2370abab1",
+  "what-the-top-of-the-outline-says.p2.s2:e0d58fd0867c"
+ ],
+ "t-l1": [
+  "what-the-top-of-the-outline-says.p3.s1:abdf0c7117f8",
+  "what-the-top-of-the-outline-says.p3.s2:3d63ef92705b",
+  "what-the-top-of-the-outline-says.p3.s3:f92954db0f69",
+  "what-the-top-of-the-outline-says.p3.s4:b2a7811d3f7b"
+ ],
+ "t-l2": [
+  "what-the-top-of-the-outline-says.p4.s1:5d971c989a74",
+  "what-the-top-of-the-outline-says.p4.s2:a30b34fc29a5",
+  "what-the-top-of-the-outline-says.p4.s3:bfd3828b7f1e",
+  "what-the-top-of-the-outline-says.p4.s4:a60784fa4309",
+  "what-the-top-of-the-outline-says.p4.s5:e3d4dd6cfa4e",
+  "what-the-top-of-the-outline-says.p4.s6:df7cdc50b397"
+ ],
+ "t-l2-guess": [
+  "what-the-top-of-the-outline-says.p4.s7:29db0841345a"
+ ],
+ "t-l33": [
+  "what-the-top-of-the-outline-says.p5.s1:63078295e6f4",
+  "what-the-top-of-the-outline-says.p5.s2:47c1c89d0e34"
+ ],
+ "t-l3": [
+  "what-the-top-of-the-outline-says.p6.s1:0b15eaf3c006",
+  "what-the-top-of-the-outline-says.p6.s2:ce66c2545990",
+  "what-the-top-of-the-outline-says.p6.s3:ce37442c63c9",
+  "what-the-top-of-the-outline-says.p6.s4:3819942ae4f1",
+  "what-the-top-of-the-outline-says.p6.s5:473bd94559e6"
+ ],
+ "t-l30": [
+  "what-the-top-of-the-outline-says.p7.s1:ec0bdde95c99",
+  "what-the-top-of-the-outline-says.p7.s2:8989bf7d4705"
+ ],
+ "t-l4": [
+  "what-the-top-of-the-outline-says.p8.s1:3d6d1d3e7b4a",
+  "what-the-top-of-the-outline-says.p8.s2:dfb17f602d16",
+  "what-the-top-of-the-outline-says.p8.s3:2658f3849ecc",
+  "what-the-top-of-the-outline-says.p8.s4:3c878f495ce9",
+  "what-the-top-of-the-outline-says.p8.s5:87a45a3e6f64",
+  "what-the-top-of-the-outline-says.p8.s6:f00e941258f5"
+ ],
+ "t-l24": [
+  "what-the-top-of-the-outline-says.p9.s1:e9f9e73386cb"
+ ],
+ "t-l5": [
+  "what-the-top-of-the-outline-says.p10.s1:7b14477c7ba2",
+  "what-the-top-of-the-outline-says.p10.s2:9bbb2a063dfe",
+  "what-the-top-of-the-outline-says.p10.s3:6daf2a0062b6",
+  "what-the-top-of-the-outline-says.p10.s4:f9108dfb9e96",
+  "what-the-top-of-the-outline-says.p10.s5:55e0b3bb9529"
+ ],
+ "t-6-22": [
+  "what-the-top-of-the-outline-says.p11.s1:bf2973bce6d3",
+  "what-the-top-of-the-outline-says.p11.s2:731874cc4976",
+  "what-the-top-of-the-outline-says.p11.s3:5d2717f98931",
+  "what-the-top-of-the-outline-says.p11.s4:2cd880130130"
+ ],
+ "t-nopremise": [
+  "what-the-top-of-the-outline-says.p12.s1:6be14ed5941f",
+  "what-the-top-of-the-outline-says.p12.s2:7cf63feba9a1"
+ ],
+ "t-hang": [
+  "what-the-top-of-the-outline-says.p12.s3:000c52b01afa",
+  "what-the-top-of-the-outline-says.p12.s4:011476f808ef",
+  "what-the-top-of-the-outline-says.p12.s5:03572d089931",
+  "what-the-top-of-the-outline-says.p12.s6:6c30b6f1bc17"
+ ],
+ "m-dossier": [
+  "how-the-readings-were-made.p1.s1:cc8ae7e948c2",
+  "how-the-readings-were-made.p1.s2:bd6a7f0c579d",
+  "how-the-readings-were-made.p1.s3:b3a547fabf10",
+  "how-the-readings-were-made.p1.s4:de9605838b89",
+  "how-the-readings-were-made.p1.s5:a218a5a947fe",
+  "how-the-readings-were-made.p1.s6:c4d3763212b3"
+ ],
+ "m-readers": [
+  "how-the-readings-were-made.p2.s1:bf32e71888ba",
+  "how-the-readings-were-made.p2.s2:0bba28fa8f94",
+  "how-the-readings-were-made.p3.s1:71bf89abd81a"
+ ],
+ "m-check": [
+  "how-the-readings-were-made.p4.s1:f9e58a6740b8",
+  "how-the-readings-were-made.p4.s2:db746d3ac3b3",
+  "how-the-readings-were-made.p5.s1:9dd602487f41",
+  "how-the-readings-were-made.p6.s1:0370ab35e77e",
+  "how-the-readings-were-made.p6.s2:7d716e441966",
+  "how-the-readings-were-made.p6.s3:ea43668fdbf5",
+  "how-the-readings-were-made.p7.s1:17e6f8986aed",
+  "how-the-readings-were-made.p7.s2:08e7085e833c"
+ ],
+ "m-errors": [
+  "how-the-readings-were-made.p8.s1:aab99bef6a2f",
+  "how-the-readings-were-made.p8.s2:70238e57d703",
+  "how-the-readings-were-made.p8.s3:976ff32a7ae2",
+  "how-the-readings-were-made.p8.s4:a1ecb0e0d5b5",
+  "how-the-readings-were-made.p8.s5:9bb3882bd384",
+  "how-the-readings-were-made.p8.s6:c3a8d74a292e",
+  "how-the-readings-were-made.p8.s7:07f918d3c1b7",
+  "how-the-readings-were-made.p8.s8:6951f2252c4c"
+ ],
+ "m-gemini": [
+  "how-the-readings-were-made.p9.s1:3511bd892fcb",
+  "how-the-readings-were-made.p9.s2:66c02950beec",
+  "how-the-readings-were-made.p9.s3:0527c80e1da0",
+  "how-the-readings-were-made.p9.s4:5a7bd6fc1da6",
+  "how-the-readings-were-made.p9.s5:c5268b8fd728",
+  "how-the-readings-were-made.p9.s6:65738deff6e4",
+  "how-the-readings-were-made.p9.s7:962d8bcb8ce6",
+  "how-the-readings-were-made.p9.s8:cc779c4bf420",
+  "how-the-readings-were-made.p9.s9:5ddf990ec3e6",
+  "how-the-readings-were-made.p9.s10:915276631881",
+  "how-the-readings-were-made.p9.s11:c5212e7e97af",
+  "how-the-readings-were-made.p9.s12:9f470d9999bd",
+  "how-the-readings-were-made.p9.s13:1cc658352145"
+ ],
+ "m-entry": [
+  "how-the-readings-were-made.p10.s1:96dc5f4a9c42",
+  "how-the-readings-were-made.p10.s2:6438f4c6ac93"
+ ],
+ "dp-how": [
+  "a-deeper-reading-of-lines-6-to-22.p1.s1:4ad6aca63401",
+  "a-deeper-reading-of-lines-6-to-22.p1.s2:70ea62869ff1",
+  "a-deeper-reading-of-lines-6-to-22.p1.s3:c0029362c185"
+ ],
+ "dp-opens": [
+  "a-deeper-reading-of-lines-6-to-22.p2.s1:b9a477cac63b"
+ ],
+ "dp-errors": [
+  "a-deeper-reading-of-lines-6-to-22.p2.s2:a5931b3d1e1f",
+  "a-deeper-reading-of-lines-6-to-22.p2.s3:083ef1221182",
+  "a-deeper-reading-of-lines-6-to-22.p2.s4:fb411846f61d",
+  "a-deeper-reading-of-lines-6-to-22.p2.s5:de004160c08c",
+  "a-deeper-reading-of-lines-6-to-22.p2.s6:90642e0ee196"
+ ],
+ "dp-gemini": [
+  "a-deeper-reading-of-lines-6-to-22.p3.s1:966d050c4599",
+  "a-deeper-reading-of-lines-6-to-22.p3.s2:2b4d564517db",
+  "a-deeper-reading-of-lines-6-to-22.p3.s3:fe88a3a638ba",
+  "a-deeper-reading-of-lines-6-to-22.p3.s4:791ab017cb85",
+  "a-deeper-reading-of-lines-6-to-22.p3.s5:9e024677dced",
+  "a-deeper-reading-of-lines-6-to-22.p3.s6:3ead4fb78444",
+  "a-deeper-reading-of-lines-6-to-22.p3.s7:0553e88710e2",
+  "a-deeper-reading-of-lines-6-to-22.p3.s8:145ebb0198a8"
+ ],
+ "dp-recheck": [
+  "a-deeper-reading-of-lines-6-to-22.p4.s1:cfc12c6d4480",
+  "a-deeper-reading-of-lines-6-to-22.p4.s2:ae780f745fe2",
+  "a-deeper-reading-of-lines-6-to-22.p4.s3:44fc18e5aa18",
+  "a-deeper-reading-of-lines-6-to-22.p4.s4:2fea35226c18",
+  "a-deeper-reading-of-lines-6-to-22.p4.s5:48f9952377a1",
+  "a-deeper-reading-of-lines-6-to-22.p4.s6:24d87e72c24f"
+ ],
+ "dp-print": [
+  "a-deeper-reading-of-lines-6-to-22.p4.s7:bee4432a8ceb"
+ ],
+ "dp-conf": [
+  "a-deeper-reading-of-lines-6-to-22.p4.s8:abd99fce4df2"
+ ],
+ "u-def": [
+  "what-stays-unopened.p1.s1:1dc892574fb1",
+  "what-stays-unopened.p1.s2:70f557fd57b9",
+  "what-stays-unopened.p1.s3:0755fa85ebdc"
+ ],
+ "u-count": [
+  "what-stays-unopened.p2.s1:bdd054c12e0c",
+  "what-stays-unopened.p2.s2:34469f2b78b5",
+  "what-stays-unopened.p3.s1:2cbce3b6bdfc",
+  "what-stays-unopened.p4.s1:43382fd1236c",
+  "what-stays-unopened.p5.s1:dbcb764f3257",
+  "what-stays-unopened.p6.s1:62e1a2d19ec9",
+  "what-stays-unopened.p7.s1:9cae5ddf1a72",
+  "what-stays-unopened.p8.s1:b05760b92515",
+  "what-stays-unopened.p9.s1:9aa5f8231527",
+  "what-stays-unopened.p10.s1:bb272bb72f2e",
+  "what-stays-unopened.p11.s1:e95ca1cbdfe3",
+  "what-stays-unopened.p12.s1:e20b9765a183",
+  "what-stays-unopened.p13.s1:d1516246a874"
+ ],
+ "u-start": [
+  "what-stays-unopened.p14.s1:7d34730a2327",
+  "what-stays-unopened.p14.s2:6f9cebca4fc7"
+ ],
+ "lim-cut": [
+  "limits.p1.s1:7277d967f989",
+  "limits.p1.s2:b300d5f9d881"
+ ],
+ "lim-head": [
+  "limits.p2.s1:236cc80610b2",
+  "limits.p2.s2:25934b4853bf"
+ ],
+ "lim-same": [
+  "limits.p3.s1:469439a228d1"
+ ],
+ "lim-what": [
+  "limits.p4.s1:e44debf6f90c",
+  "limits.p4.s2:ca28bc6928e5"
+ ],
+ "lim-guess": [
+  "limits.p5.s1:5fe3ca649464"
+ ],
+ "x-files": [
+  "files.p1.s1:55a86baf17c3",
+  "files.p2.s1:4587022fa346",
+  "files.p3.s1:f42daa1b4fb7",
+  "files.p4.s1:e5d4887d9acc",
+  "files.p5.s1:9a0550c1a34f",
+  "files.p6.s1:bf5aab696814"
+ ],
+ "g-how": [
+  "how-to-read-the-table-and-the-entries.p1.s1:8d30f9628c02",
+  "how-to-read-the-table-and-the-entries.p1.s2:4551b960dafd",
+  "how-to-read-the-table-and-the-entries.p1.s3:92fed8df5cbd"
+ ],
+ "g-table": [
+  "the-outline-at-a-glance.p1.s1:e4ba00d32b30",
+  "the-outline-at-a-glance.p2.s1:dbf190beb098",
+  "the-outline-at-a-glance.p3.s1:04b3d7ba932f",
+  "the-outline-at-a-glance.p4.s1:1b90dc07e4cc",
+  "the-outline-at-a-glance.p5.s1:0974a2c30a62",
+  "the-outline-at-a-glance.p6.s1:d9d6b8fc4065",
+  "the-outline-at-a-glance.p7.s1:d2bf03fcf718",
+  "the-outline-at-a-glance.p8.s1:a77186d0182a",
+  "the-outline-at-a-glance.p9.s1:4d0c247b6f96",
+  "the-outline-at-a-glance.p10.s1:449859c5ff6e",
+  "the-outline-at-a-glance.p11.s1:10274c3dc531",
+  "the-outline-at-a-glance.p12.s1:e97da70848fb",
+  "the-outline-at-a-glance.p13.s1:47e5696acd59",
+  "the-outline-at-a-glance.p14.s1:10f5f80b375b",
+  "the-outline-at-a-glance.p15.s1:7c0e0dba993f",
+  "the-outline-at-a-glance.p16.s1:8ac0edd1bfe0",
+  "the-outline-at-a-glance.p17.s1:95bc9a7cc346",
+  "the-outline-at-a-glance.p18.s1:7cbf7d597163",
+  "the-outline-at-a-glance.p19.s1:3d714ca6fc22",
+  "the-outline-at-a-glance.p20.s1:f1943b9945d4",
+  "the-outline-at-a-glance.p21.s1:142c9c64637a",
+  "the-outline-at-a-glance.p22.s1:98104f2a1d12",
+  "the-outline-at-a-glance.p23.s1:fcdb3aa1d5bb",
+  "the-outline-at-a-glance.p24.s1:9a006f32704c",
+  "the-outline-at-a-glance.p25.s1:c1f4cd2a0517",
+  "the-outline-at-a-glance.p26.s1:d91bb727fcd1",
+  "the-outline-at-a-glance.p27.s1:58eed149ec7c",
+  "the-outline-at-a-glance.p28.s1:db6ef96cc1d3",
+  "the-outline-at-a-glance.p29.s1:ddbefe413969",
+  "the-outline-at-a-glance.p30.s1:524fbe0c4eca",
+  "the-outline-at-a-glance.p31.s1:b078f57fe15f",
+  "the-outline-at-a-glance.p32.s1:1031ed03c23d",
+  "the-outline-at-a-glance.p33.s1:32d37f1d8807",
+  "the-outline-at-a-glance.p34.s1:2581c1bdc01b",
+  "the-outline-at-a-glance.p35.s1:6edada6cdbea",
+  "the-outline-at-a-glance.p36.s1:bf50be538b8b",
+  "the-outline-at-a-glance.p37.s1:7764f8f72459",
+  "the-outline-at-a-glance.p38.s1:2db827a7a5c4",
+  "the-outline-at-a-glance.p39.s1:e2cf27c01dd8"
+ ],
+ "L1-place": [
+  "line-1-everycharacter.p1.s1:436eeb14d514",
+  "line-1-everycharacter.p1.s2:b915b62c0819",
+  "line-1-everycharacter.p1.s3:7b2962033c38"
+ ],
+ "L1-states": [
+  "line-1-everycharacter.p2.s1:29d70f638e4e",
+  "line-1-everycharacter.p2.s2:18f1853e0885",
+  "line-1-everycharacter.p2.s3:d924639adf39",
+  "line-1-everycharacter.p3.s1:e703e32cf0c8",
+  "line-1-everycharacter.p3.s2:3fef2bbc50fb"
+ ],
+ "L1-unopened": [
+  "line-1-everycharacter.p4.s1:160da410ec3a"
+ ],
+ "L1-guess": [
+  "line-1-everycharacter.p5.s1:76176b0c5586",
+  "line-1-everycharacter.p5.s2:97b2eaa1d792"
+ ],
+ "L1-confidence": [
+  "line-1-everycharacter.p6.s1:7eb71492c7d2",
+  "line-1-everycharacter.p6.s2:492729121464",
+  "line-1-everycharacter.p6.s3:2b944707db2b",
+  "line-1-everycharacter.p6.s4:04843bb62ba7"
+ ],
+ "L1-check": [
+  "line-1-everycharacter.p7.s1:04a1e1071e1d"
+ ],
+ "L2-place": [
+  "line-2-everycharacter-of-row.p1.s1:9b2799fd5f4d",
+  "line-2-everycharacter-of-row.p1.s2:13e44a5daebc"
+ ],
+ "L2-states": [
+  "line-2-everycharacter-of-row.p2.s1:a31e78103688",
+  "line-2-everycharacter-of-row.p2.s2:c723982a84ad",
+  "line-2-everycharacter-of-row.p2.s3:98a87d129e5e",
+  "line-2-everycharacter-of-row.p3.s1:38c6dc9de9fa",
+  "line-2-everycharacter-of-row.p3.s2:fb4641873f62",
+  "line-2-everycharacter-of-row.p4.s1:e703e32cf0c8",
+  "line-2-everycharacter-of-row.p4.s2:6f07000440f9"
+ ],
+ "L2-unopened": [
+  "line-2-everycharacter-of-row.p5.s1:36bcb62e155b"
+ ],
+ "L2-guess": [
+  "line-2-everycharacter-of-row.p6.s1:76176b0c5586",
+  "line-2-everycharacter-of-row.p6.s2:6bdf1cac6f00"
+ ],
+ "L2-confidence": [
+  "line-2-everycharacter-of-row.p7.s1:f84e1f16a6d1",
+  "line-2-everycharacter-of-row.p7.s2:973e6de5ce55"
+ ],
+ "L2-check": [
+  "line-2-everycharacter-of-row.p8.s1:04a1e1071e1d"
+ ],
+ "L3-place": [
+  "line-3-every-character-of-literature-of-.p1.s1:2cffcb34481f",
+  "line-3-every-character-of-literature-of-.p1.s2:14778f5d237b"
+ ],
+ "L3-states": [
+  "line-3-every-character-of-literature-of-.p2.s1:c83cc20485bb",
+  "line-3-every-character-of-literature-of-.p2.s2:0aaed11d646c",
+  "line-3-every-character-of-literature-of-.p2.s3:c4dd3107cdfe",
+  "line-3-every-character-of-literature-of-.p3.s1:38c6dc9de9fa",
+  "line-3-every-character-of-literature-of-.p3.s2:1fa52718618a",
+  "line-3-every-character-of-literature-of-.p4.s1:8eb305024739",
+  "line-3-every-character-of-literature-of-.p4.s2:b208a13b9d31",
+  "line-3-every-character-of-literature-of-.p5.s1:e703e32cf0c8",
+  "line-3-every-character-of-literature-of-.p5.s2:6f07000440f9"
+ ],
+ "L3-unopened": [
+  "line-3-every-character-of-literature-of-.p6.s1:77a192bd31b2"
+ ],
+ "L3-guess": [
+  "line-3-every-character-of-literature-of-.p7.s1:76176b0c5586",
+  "line-3-every-character-of-literature-of-.p7.s2:a607ceec1579"
+ ],
+ "L3-confidence": [
+  "line-3-every-character-of-literature-of-.p8.s1:f84e1f16a6d1",
+  "line-3-every-character-of-literature-of-.p8.s2:16ef353de8d3"
+ ],
+ "L3-check": [
+  "line-3-every-character-of-literature-of-.p9.s1:04a1e1071e1d"
+ ],
+ "L4-place": [
+  "line-4-every-character-of-theta-integral.p1.s1:0835dcfd3308",
+  "line-4-every-character-of-theta-integral.p1.s2:b47535f74c8d"
+ ],
+ "L4-states": [
+  "line-4-every-character-of-theta-integral.p2.s1:016205fc9538",
+  "line-4-every-character-of-theta-integral.p2.s2:8c0f501e2431",
+  "line-4-every-character-of-theta-integral.p2.s3:4eb35c226a01",
+  "line-4-every-character-of-theta-integral.p3.s1:38c6dc9de9fa",
+  "line-4-every-character-of-theta-integral.p3.s2:4fff51de441d",
+  "line-4-every-character-of-theta-integral.p4.s1:8eb305024739",
+  "line-4-every-character-of-theta-integral.p4.s2:9c122648a6db",
+  "line-4-every-character-of-theta-integral.p5.s1:abd15a1498ee",
+  "line-4-every-character-of-theta-integral.p5.s2:fe45e7b21496",
+  "line-4-every-character-of-theta-integral.p6.s1:ed7ddefac9b8",
+  "line-4-every-character-of-theta-integral.p6.s2:9b488c42bd4d",
+  "line-4-every-character-of-theta-integral.p7.s1:98bd3fbfb4f0",
+  "line-4-every-character-of-theta-integral.p7.s2:e1366dab6bcb",
+  "line-4-every-character-of-theta-integral.p8.s1:735f8d0b318e",
+  "line-4-every-character-of-theta-integral.p8.s2:5afe6d5162f9",
+  "line-4-every-character-of-theta-integral.p9.s1:941c01bf3488",
+  "line-4-every-character-of-theta-integral.p9.s2:b208a13b9d31",
+  "line-4-every-character-of-theta-integral.p10.s1:e703e32cf0c8",
+  "line-4-every-character-of-theta-integral.p10.s2:6f07000440f9"
+ ],
+ "L4-unopened": [
+  "line-4-every-character-of-theta-integral.p11.s1:e22392f9a204"
+ ],
+ "L4-guess": [
+  "line-4-every-character-of-theta-integral.p12.s1:76176b0c5586",
+  "line-4-every-character-of-theta-integral.p12.s2:aabd7dc64ead"
+ ],
+ "L4-confidence": [
+  "line-4-every-character-of-theta-integral.p13.s1:f84e1f16a6d1",
+  "line-4-every-character-of-theta-integral.p13.s2:d8d18a48bf07"
+ ],
+ "L4-check": [
+  "line-4-every-character-of-theta-integral.p14.s1:04a1e1071e1d"
+ ],
+ "L5-place": [
+  "line-5-nonempty-hyps-definite-side-of-cl.p1.s1:4d7d575105d2",
+  "line-5-nonempty-hyps-definite-side-of-cl.p1.s2:fe5f6f5b5cb2"
+ ],
+ "L5-states": [
+  "line-5-nonempty-hyps-definite-side-of-cl.p2.s1:c4556becb038",
+  "line-5-nonempty-hyps-definite-side-of-cl.p2.s2:4c785e1f02ca",
+  "line-5-nonempty-hyps-definite-side-of-cl.p2.s3:23303df5ad0c",
+  "line-5-nonempty-hyps-definite-side-of-cl.p3.s1:38c6dc9de9fa",
+  "line-5-nonempty-hyps-definite-side-of-cl.p3.s2:db9768f77c0c",
+  "line-5-nonempty-hyps-definite-side-of-cl.p4.s1:8eb305024739",
+  "line-5-nonempty-hyps-definite-side-of-cl.p4.s2:59f51c9c50f9",
+  "line-5-nonempty-hyps-definite-side-of-cl.p5.s1:abd15a1498ee",
+  "line-5-nonempty-hyps-definite-side-of-cl.p5.s2:7ea8910495e7",
+  "line-5-nonempty-hyps-definite-side-of-cl.p6.s1:ed7ddefac9b8",
+  "line-5-nonempty-hyps-definite-side-of-cl.p6.s2:d62f4a2d8c54",
+  "line-5-nonempty-hyps-definite-side-of-cl.p7.s1:98bd3fbfb4f0",
+  "line-5-nonempty-hyps-definite-side-of-cl.p7.s2:f26e13e9205d",
+  "line-5-nonempty-hyps-definite-side-of-cl.p8.s1:735f8d0b318e",
+  "line-5-nonempty-hyps-definite-side-of-cl.p8.s2:97ba56fc8bad",
+  "line-5-nonempty-hyps-definite-side-of-cl.p9.s1:941c01bf3488",
+  "line-5-nonempty-hyps-definite-side-of-cl.p9.s2:4543125e4195",
+  "line-5-nonempty-hyps-definite-side-of-cl.p10.s1:e703e32cf0c8",
+  "line-5-nonempty-hyps-definite-side-of-cl.p10.s2:b77b2ff55563"
+ ],
+ "L5-unopened": [
+  "line-5-nonempty-hyps-definite-side-of-cl.p11.s1:3e3ac937f4e1"
+ ],
+ "L5-guess": [
+  "line-5-nonempty-hyps-definite-side-of-cl.p12.s1:76176b0c5586",
+  "line-5-nonempty-hyps-definite-side-of-cl.p12.s2:e2c79c30eaaf"
+ ],
+ "L5-confidence": [
+  "line-5-nonempty-hyps-definite-side-of-cl.p13.s1:51096638a562",
+  "line-5-nonempty-hyps-definite-side-of-cl.p13.s2:352cd20544b8"
+ ],
+ "L5-check": [
+  "line-5-nonempty-hyps-definite-side-of-cl.p14.s1:04a1e1071e1d"
+ ],
+ "L6-place": [
+  "line-6-hypotheses-nonempty-of-unramified.p1.s1:c97bf7780011",
+  "line-6-hypotheses-nonempty-of-unramified.p1.s2:024c63b471bf"
+ ],
+ "L6-states": [
+  "line-6-hypotheses-nonempty-of-unramified.p2.s1:21d6cec2dc73",
+  "line-6-hypotheses-nonempty-of-unramified.p2.s2:2e3fa3cae9ff",
+  "line-6-hypotheses-nonempty-of-unramified.p2.s3:945c76b6b6c1",
+  "line-6-hypotheses-nonempty-of-unramified.p3.s1:38c6dc9de9fa",
+  "line-6-hypotheses-nonempty-of-unramified.p3.s2:5d197c3b66c9",
+  "line-6-hypotheses-nonempty-of-unramified.p4.s1:8eb305024739",
+  "line-6-hypotheses-nonempty-of-unramified.p4.s2:789edd5caaf8",
+  "line-6-hypotheses-nonempty-of-unramified.p5.s1:2e818f31944a",
+  "line-6-hypotheses-nonempty-of-unramified.p6.s1:ee90ce9d232c",
+  "line-6-hypotheses-nonempty-of-unramified.p7.s1:98bd3fbfb4f0",
+  "line-6-hypotheses-nonempty-of-unramified.p7.s2:2e295b4ba865",
+  "line-6-hypotheses-nonempty-of-unramified.p8.s1:735f8d0b318e",
+  "line-6-hypotheses-nonempty-of-unramified.p8.s2:28494a22c36a",
+  "line-6-hypotheses-nonempty-of-unramified.p9.s1:941c01bf3488",
+  "line-6-hypotheses-nonempty-of-unramified.p9.s2:fbf6628c7640",
+  "line-6-hypotheses-nonempty-of-unramified.p10.s1:430c63c40f9b",
+  "line-6-hypotheses-nonempty-of-unramified.p10.s2:7346bed1ce70",
+  "line-6-hypotheses-nonempty-of-unramified.p11.s1:e703e32cf0c8",
+  "line-6-hypotheses-nonempty-of-unramified.p11.s2:99836ed3560a"
+ ],
+ "L6-unopened": [
+  "line-6-hypotheses-nonempty-of-unramified.p12.s1:d7313028c6db"
+ ],
+ "L6-guess": [
+  "line-6-hypotheses-nonempty-of-unramified.p13.s1:76176b0c5586",
+  "line-6-hypotheses-nonempty-of-unramified.p13.s2:ef8bf20b076e"
+ ],
+ "L6-confidence": [
+  "line-6-hypotheses-nonempty-of-unramified.p14.s1:f84e1f16a6d1",
+  "line-6-hypotheses-nonempty-of-unramified.p14.s2:27536032f0dc"
+ ],
+ "L6-check": [
+  "line-6-hypotheses-nonempty-of-unramified.p15.s1:04a1e1071e1d"
+ ],
+ "D6-how": [
+  "a-deeper-reading-with-the-record-d7-at-h.p1.s1:6fd5ce614464",
+  "a-deeper-reading-with-the-record-d7-at-h.p1.s2:891548543087",
+  "a-deeper-reading-with-the-record-d7-at-h.p1.s3:57a55b9cc4e6",
+  "a-deeper-reading-with-the-record-d7-at-h.p1.s4:23806762c1c5",
+  "a-deeper-reading-with-the-record-d7-at-h.p1.s5:e09bcb56c868"
+ ],
+ "D6-states": [
+  "a-deeper-reading-with-the-record-d7-at-h.p2.s1:655a484950e5",
+  "a-deeper-reading-with-the-record-d7-at-h.p2.s2:d238aecf282e",
+  "a-deeper-reading-with-the-record-d7-at-h.p2.s3:8d07aeadf67b",
+  "a-deeper-reading-with-the-record-d7-at-h.p2.s4:1ebd756dfa46",
+  "a-deeper-reading-with-the-record-d7-at-h.p3.s1:38c6dc9de9fa",
+  "a-deeper-reading-with-the-record-d7-at-h.p3.s2:63ff7193c9b6",
+  "a-deeper-reading-with-the-record-d7-at-h.p4.s1:8eb305024739",
+  "a-deeper-reading-with-the-record-d7-at-h.p4.s2:a45cd3b5e39d",
+  "a-deeper-reading-with-the-record-d7-at-h.p5.s1:13910545fab2",
+  "a-deeper-reading-with-the-record-d7-at-h.p6.s1:4dc4516e1302",
+  "a-deeper-reading-with-the-record-d7-at-h.p7.s1:98bd3fbfb4f0",
+  "a-deeper-reading-with-the-record-d7-at-h.p7.s2:b93e93740b75",
+  "a-deeper-reading-with-the-record-d7-at-h.p8.s1:735f8d0b318e",
+  "a-deeper-reading-with-the-record-d7-at-h.p8.s2:3c1b9631ea03",
+  "a-deeper-reading-with-the-record-d7-at-h.p9.s1:941c01bf3488",
+  "a-deeper-reading-with-the-record-d7-at-h.p9.s2:d530af33aaca",
+  "a-deeper-reading-with-the-record-d7-at-h.p10.s1:430c63c40f9b",
+  "a-deeper-reading-with-the-record-d7-at-h.p10.s2:080771ed6285",
+  "a-deeper-reading-with-the-record-d7-at-h.p11.s1:14195d6fdc5b",
+  "a-deeper-reading-with-the-record-d7-at-h.p11.s2:f2390a182b39",
+  "a-deeper-reading-with-the-record-d7-at-h.p12.s1:e703e32cf0c8",
+  "a-deeper-reading-with-the-record-d7-at-h.p12.s2:a500f4bbd2cb"
+ ],
+ "D6-unopened": [
+  "a-deeper-reading-with-the-record-d7-at-h.p13.s1:101e29bea065",
+  "a-deeper-reading-with-the-record-d7-at-h.p14.s1:a6ec7a5c6992"
+ ],
+ "D6-confidence": [
+  "a-deeper-reading-with-the-record-d7-at-h.p15.s1:51096638a562",
+  "a-deeper-reading-with-the-record-d7-at-h.p15.s2:6feee84086cd"
+ ],
+ "L7-place": [
+  "line-7-allrows-of-open0-alt.p1.s1:814be84a4258",
+  "line-7-allrows-of-open0-alt.p1.s2:bfc68bd57e28"
+ ],
+ "L7-states": [
+  "line-7-allrows-of-open0-alt.p2.s1:570329423859",
+  "line-7-allrows-of-open0-alt.p2.s2:cafa8336400c",
+  "line-7-allrows-of-open0-alt.p2.s3:70dbb464bd6d",
+  "line-7-allrows-of-open0-alt.p3.s1:38c6dc9de9fa",
+  "line-7-allrows-of-open0-alt.p3.s2:d20e06dff389",
+  "line-7-allrows-of-open0-alt.p4.s1:8eb305024739",
+  "line-7-allrows-of-open0-alt.p4.s2:914c1bd3dc88",
+  "line-7-allrows-of-open0-alt.p5.s1:abd15a1498ee",
+  "line-7-allrows-of-open0-alt.p5.s2:159af68463b0",
+  "line-7-allrows-of-open0-alt.p6.s1:ed7ddefac9b8",
+  "line-7-allrows-of-open0-alt.p6.s2:bbb52156e120",
+  "line-7-allrows-of-open0-alt.p7.s1:98bd3fbfb4f0",
+  "line-7-allrows-of-open0-alt.p7.s2:88a2447b317a",
+  "line-7-allrows-of-open0-alt.p8.s1:735f8d0b318e",
+  "line-7-allrows-of-open0-alt.p8.s2:52d818604e25",
+  "line-7-allrows-of-open0-alt.p9.s1:941c01bf3488",
+  "line-7-allrows-of-open0-alt.p9.s2:ef3ca0b25132",
+  "line-7-allrows-of-open0-alt.p10.s1:430c63c40f9b",
+  "line-7-allrows-of-open0-alt.p10.s2:88964275194a",
+  "line-7-allrows-of-open0-alt.p11.s1:14195d6fdc5b",
+  "line-7-allrows-of-open0-alt.p11.s2:4836778379bd",
+  "line-7-allrows-of-open0-alt.p12.s1:d1f0b34cc4d3",
+  "line-7-allrows-of-open0-alt.p13.s1:811c798ac2e1",
+  "line-7-allrows-of-open0-alt.p13.s2:3c0ce65f8972",
+  "line-7-allrows-of-open0-alt.p14.s1:375db1863eef",
+  "line-7-allrows-of-open0-alt.p14.s2:72644f989eed",
+  "line-7-allrows-of-open0-alt.p15.s1:521824635bb1",
+  "line-7-allrows-of-open0-alt.p15.s2:cd20d2b3206c",
+  "line-7-allrows-of-open0-alt.p16.s1:d2cf76c0adf9",
+  "line-7-allrows-of-open0-alt.p16.s2:09cf29ed0a67",
+  "line-7-allrows-of-open0-alt.p17.s1:e703e32cf0c8",
+  "line-7-allrows-of-open0-alt.p17.s2:49f78865dbfe"
+ ],
+ "L7-unopened": [
+  "line-7-allrows-of-open0-alt.p18.s1:b37c51347e5a"
+ ],
+ "L7-guess": [
+  "line-7-allrows-of-open0-alt.p19.s1:76176b0c5586",
+  "line-7-allrows-of-open0-alt.p19.s2:137eae2178be"
+ ],
+ "L7-confidence": [
+  "line-7-allrows-of-open0-alt.p20.s1:f84e1f16a6d1",
+  "line-7-allrows-of-open0-alt.p20.s2:0e118bfab766"
+ ],
+ "L7-check": [
+  "line-7-allrows-of-open0-alt.p21.s1:f9a07c1a88db",
+  "line-7-allrows-of-open0-alt.p21.s2:0d44e8b788f9",
+  "line-7-allrows-of-open0-alt.p22.s1:8ec5f86e3bd0",
+  "line-7-allrows-of-open0-alt.p23.s1:615c3794d07c",
+  "line-7-allrows-of-open0-alt.p24.s1:129ed8a527d1",
+  "line-7-allrows-of-open0-alt.p25.s1:68c7adfadb9c",
+  "line-7-allrows-of-open0-alt.p25.s2:ce60688bb6aa",
+  "line-7-allrows-of-open0-alt.p25.s3:94b18278ab76"
+ ],
+ "D7-how": [
+  "a-deeper-reading-with-the-record-d7-at-h-2.p1.s1:6fd5ce614464",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p1.s2:f32ef3ef897a",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p1.s3:57a55b9cc4e6",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p1.s4:cd8ee3b8d8cd",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p1.s5:e09bcb56c868"
+ ],
+ "D7-states": [
+  "a-deeper-reading-with-the-record-d7-at-h-2.p2.s1:82b84a622117",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p2.s2:2231fb606b6b",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p2.s3:d0a68f2b1e0d",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p2.s4:9df4ec36d0c9",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p2.s5:bacc264b3fd7",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p2.s6:86bf00389f69",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p2.s7:f417e19b7c51",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p3.s1:38c6dc9de9fa",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p3.s2:a1f2cef8d181",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p4.s1:8eb305024739",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p4.s2:581fe82413da",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p5.s1:abd15a1498ee",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p5.s2:b6723e0db007",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p6.s1:ed7ddefac9b8",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p6.s2:9c8b1cd5a7b0",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p7.s1:98bd3fbfb4f0",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p7.s2:8b62d6cd0c71",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p8.s1:735f8d0b318e",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p8.s2:de0560827496",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p8.s3:196acfa99f2c",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p9.s1:941c01bf3488",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p9.s2:09b82003c9ec",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p9.s3:b219acfac850",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p9.s4:b8204b627def",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p10.s1:430c63c40f9b",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p10.s2:b9e0024e7baa",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p11.s1:14195d6fdc5b",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p11.s2:b78d3d4426c7",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p12.s1:fe68cee9be11",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p12.s2:1451eec68fd0",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p13.s1:811c798ac2e1",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p13.s2:d739ebc1d77d",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p14.s1:375db1863eef",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p14.s2:b75dfcd1f909",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p15.s1:521824635bb1",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p15.s2:d9ab5d9d1115",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p16.s1:e703e32cf0c8",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p16.s2:3e442d39c56a"
+ ],
+ "D7-unopened": [
+  "a-deeper-reading-with-the-record-d7-at-h-2.p17.s1:1b5da8245c6d",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p18.s1:a2838c03b088"
+ ],
+ "D7-confidence": [
+  "a-deeper-reading-with-the-record-d7-at-h-2.p19.s1:51096638a562",
+  "a-deeper-reading-with-the-record-d7-at-h-2.p19.s2:17dd20c9a240"
+ ],
+ "L8-place": [
+  "line-8-at-choice-alt.p1.s1:80840f967a6f",
+  "line-8-at-choice-alt.p1.s2:4f02ae77e0f8",
+  "line-8-at-choice-alt.p1.s3:53002449fa73"
+ ],
+ "L8-states": [
+  "line-8-at-choice-alt.p2.s1:fbd6e342a332",
+  "line-8-at-choice-alt.p2.s2:8d38f15a941f",
+  "line-8-at-choice-alt.p2.s3:18a4b8763278",
+  "line-8-at-choice-alt.p2.s4:8ab6b702f766",
+  "line-8-at-choice-alt.p2.s5:404090a802f8",
+  "line-8-at-choice-alt.p3.s1:1bced87e244d",
+  "line-8-at-choice-alt.p4.s1:7e725aa7c6b9",
+  "line-8-at-choice-alt.p5.s1:76aab0121bb9",
+  "line-8-at-choice-alt.p6.s1:e703e32cf0c8",
+  "line-8-at-choice-alt.p6.s2:2c5ac92230f0"
+ ],
+ "L8-unopened": [
+  "line-8-at-choice-alt.p7.s1:4c36101f1835"
+ ],
+ "L8-guess": [
+  "line-8-at-choice-alt.p8.s1:76176b0c5586",
+  "line-8-at-choice-alt.p8.s2:efba4db74723"
+ ],
+ "L8-confidence": [
+  "line-8-at-choice-alt.p9.s1:f84e1f16a6d1",
+  "line-8-at-choice-alt.p9.s2:1fa4aad95f6c"
+ ],
+ "L8-check": [
+  "line-8-at-choice-alt.p10.s1:04a1e1071e1d",
+  "line-8-at-choice-alt.p11.s1:68c7adfadb9c",
+  "line-8-at-choice-alt.p11.s2:17118e778fea",
+  "line-8-at-choice-alt.p11.s3:fe2094da25ac",
+  "line-8-at-choice-alt.p11.s4:91cfa0c00ac8"
+ ],
+ "D8-how": [
+  "a-deeper-reading-with-the-record-d7-at-h-3.p1.s1:6fd5ce614464",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p1.s2:79712cd4df62",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p1.s3:57a55b9cc4e6",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p1.s4:a6da74ae957a",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p1.s5:e09bcb56c868"
+ ],
+ "D8-states": [
+  "a-deeper-reading-with-the-record-d7-at-h-3.p2.s1:4d29ee87f018",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p2.s2:c7042b53f62f",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p2.s3:07fa9e4b2ccd",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p2.s4:e83af1d71899",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p2.s5:e3837934a109",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p2.s6:d35f010731f8",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p2.s7:5bb47358506a",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p2.s8:4d40b78c1703",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p2.s9:0a082c35733b",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p2.s10:548d038aa4ba",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p2.s11:a18ac5702007",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p3.s1:38c6dc9de9fa",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p3.s2:7cec20ea72a8",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p4.s1:cf075cd73167",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p5.s1:b4a9dc1077b0",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p6.s1:e703e32cf0c8",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p6.s2:2c5ac92230f0"
+ ],
+ "D8-unopened": [
+  "a-deeper-reading-with-the-record-d7-at-h-3.p7.s1:93555a719e61",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p8.s1:1aab6e35d3bc"
+ ],
+ "D8-confidence": [
+  "a-deeper-reading-with-the-record-d7-at-h-3.p9.s1:f84e1f16a6d1",
+  "a-deeper-reading-with-the-record-d7-at-h-3.p9.s2:f5cf15af7bb2"
+ ],
+ "L9-place": [
+  "line-9-offdiag.p1.s1:997744fc23a9",
+  "line-9-offdiag.p1.s2:9f4908ca5258"
+ ],
+ "L9-states": [
+  "line-9-offdiag.p2.s1:82003655edb7",
+  "line-9-offdiag.p2.s2:2cc3baa18044",
+  "line-9-offdiag.p2.s3:0b8493c30a79",
+  "line-9-offdiag.p3.s1:38c6dc9de9fa",
+  "line-9-offdiag.p3.s2:6af3842c6b01",
+  "line-9-offdiag.p4.s1:8eb305024739",
+  "line-9-offdiag.p4.s2:b8b0f9b59739",
+  "line-9-offdiag.p5.s1:abd15a1498ee",
+  "line-9-offdiag.p5.s2:a8038d37cd14",
+  "line-9-offdiag.p5.s3:fef62310a4c7",
+  "line-9-offdiag.p6.s1:9578eaa59a84",
+  "line-9-offdiag.p7.s1:98bd3fbfb4f0",
+  "line-9-offdiag.p7.s2:e425ab07c5db",
+  "line-9-offdiag.p8.s1:735f8d0b318e",
+  "line-9-offdiag.p8.s2:b1e843d378e6",
+  "line-9-offdiag.p9.s1:941c01bf3488",
+  "line-9-offdiag.p9.s2:25879373ae68",
+  "line-9-offdiag.p9.s3:f0f6de150fa3",
+  "line-9-offdiag.p10.s1:e703e32cf0c8",
+  "line-9-offdiag.p10.s2:322cc8343f41"
+ ],
+ "L9-unopened": [
+  "line-9-offdiag.p11.s1:93d67ecd3afe"
+ ],
+ "L9-guess": [
+  "line-9-offdiag.p12.s1:76176b0c5586",
+  "line-9-offdiag.p12.s2:54ab3d2b3991"
+ ],
+ "L9-confidence": [
+  "line-9-offdiag.p13.s1:f84e1f16a6d1",
+  "line-9-offdiag.p13.s2:d5ad7903a6c5"
+ ],
+ "L9-check": [
+  "line-9-offdiag.p14.s1:04a1e1071e1d",
+  "line-9-offdiag.p15.s1:68c7adfadb9c",
+  "line-9-offdiag.p15.s2:ce890e44bea9",
+  "line-9-offdiag.p15.s3:c070f664f61a",
+  "line-9-offdiag.p15.s4:91cfa0c00ac8"
+ ],
+ "D9-how": [
+  "a-deeper-reading-with-the-record-d7-at-h-4.p1.s1:6fd5ce614464",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p1.s2:95fb5fe8a395",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p1.s3:57a55b9cc4e6",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p1.s4:e213f78f1dc7",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p1.s5:e09bcb56c868"
+ ],
+ "D9-states": [
+  "a-deeper-reading-with-the-record-d7-at-h-4.p2.s1:a9585aac31f0",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p2.s2:fe1127373ca4",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p2.s3:c46b2ae73b72",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p2.s4:023af836e6e8",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p2.s5:961319dca442",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p2.s6:34c7fa581703",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p2.s7:5ee2088e493b",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p2.s8:1f64723d5f92",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p3.s1:38c6dc9de9fa",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p3.s2:e496f8a4cef1",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p4.s1:8eb305024739",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p4.s2:37597aea51b8",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p5.s1:abd15a1498ee",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p5.s2:b62a565b650e",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p6.s1:ed7ddefac9b8",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p6.s2:927569d5754f",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p7.s1:98bd3fbfb4f0",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p7.s2:f2f087c7e5aa",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p8.s1:735f8d0b318e",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p8.s2:e4ef30d4cf72",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p9.s1:941c01bf3488",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p9.s2:ed50511c4609",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p10.s1:430c63c40f9b",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p10.s2:0a29880353ec",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p11.s1:e703e32cf0c8",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p11.s2:cf6050df1234"
+ ],
+ "D9-unopened": [
+  "a-deeper-reading-with-the-record-d7-at-h-4.p12.s1:4482dcd80818",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p13.s1:86af743e9ef6"
+ ],
+ "D9-confidence": [
+  "a-deeper-reading-with-the-record-d7-at-h-4.p14.s1:f84e1f16a6d1",
+  "a-deeper-reading-with-the-record-d7-at-h-4.p14.s2:0624e6b34d8f"
+ ],
+ "L10-place": [
+  "line-10-servh-row-of-artin.p1.s1:b9045faa5b9d",
+  "line-10-servh-row-of-artin.p1.s2:fbd2c22e5fc5",
+  "line-10-servh-row-of-artin.p1.s3:71910f0cd1c6"
+ ],
+ "L10-states": [
+  "line-10-servh-row-of-artin.p2.s1:9a3eb46b0327",
+  "line-10-servh-row-of-artin.p2.s2:cddd3588d5d0",
+  "line-10-servh-row-of-artin.p2.s3:b2866e359a19",
+  "line-10-servh-row-of-artin.p3.s1:38c6dc9de9fa",
+  "line-10-servh-row-of-artin.p3.s2:e5fb7daa4a62",
+  "line-10-servh-row-of-artin.p4.s1:8eb305024739",
+  "line-10-servh-row-of-artin.p4.s2:ca577a348ce6",
+  "line-10-servh-row-of-artin.p5.s1:abd15a1498ee",
+  "line-10-servh-row-of-artin.p5.s2:f60ff4669477",
+  "line-10-servh-row-of-artin.p6.s1:ed7ddefac9b8",
+  "line-10-servh-row-of-artin.p6.s2:6aafd62c45c7",
+  "line-10-servh-row-of-artin.p7.s1:e703e32cf0c8",
+  "line-10-servh-row-of-artin.p7.s2:59a0b592be02"
+ ],
+ "L10-unopened": [
+  "line-10-servh-row-of-artin.p8.s1:4a4703f04eda"
+ ],
+ "L10-guess": [
+  "line-10-servh-row-of-artin.p9.s1:76176b0c5586",
+  "line-10-servh-row-of-artin.p9.s2:d5810d5f55c6"
+ ],
+ "L10-confidence": [
+  "line-10-servh-row-of-artin.p10.s1:51096638a562",
+  "line-10-servh-row-of-artin.p10.s2:9d4a587b08c3"
+ ],
+ "L10-check": [
+  "line-10-servh-row-of-artin.p11.s1:4decb8b44f0a",
+  "line-10-servh-row-of-artin.p11.s2:2b3583440429",
+  "line-10-servh-row-of-artin.p12.s1:783f608ca470"
+ ],
+ "D10-how": [
+  "a-deeper-reading-with-the-record-d7-at-h-5.p1.s1:6fd5ce614464",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p1.s2:da1dd9352214",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p1.s3:57a55b9cc4e6",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p1.s4:cd8ee3b8d8cd",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p1.s5:e09bcb56c868"
+ ],
+ "D10-states": [
+  "a-deeper-reading-with-the-record-d7-at-h-5.p2.s1:fc7ced7fb4f7",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p2.s2:9a324b3d5e39",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p2.s3:a58e7f4d796c",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p2.s4:777c88f8eb11",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p2.s5:568b6f70a4b3",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p2.s6:0d3f9c5c7ba0",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p2.s7:1cb71883f171",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p3.s1:38c6dc9de9fa",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p3.s2:352b02454a5f",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p3.s3:02cb37b44d09",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p4.s1:8eb305024739",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p4.s2:b2037f8b313d",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p4.s3:643865975a27",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p5.s1:abd15a1498ee",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p5.s2:884afdef30b4",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p5.s3:cb824f8ff797",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p6.s1:ed7ddefac9b8",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p6.s2:d17c9135dc27",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p6.s3:a6da1fc89f33",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p6.s4:0b7022e4437d",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p7.s1:0c1b8c7f3e20",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p8.s1:735f8d0b318e",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p8.s2:db286ba3943f",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p8.s3:acdb035b1b3b",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p9.s1:941c01bf3488",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p9.s2:0a8290d00c1e",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p9.s3:8fa68e3cb26f",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p9.s4:fb5e835f9e9e",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p10.s1:e703e32cf0c8",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p10.s2:525ee502051b",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p10.s3:491368ba11ce",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p10.s4:930421e2685a"
+ ],
+ "D10-unopened": [
+  "a-deeper-reading-with-the-record-d7-at-h-5.p11.s1:83c473157307",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p12.s1:6176a78a85d2"
+ ],
+ "D10-confidence": [
+  "a-deeper-reading-with-the-record-d7-at-h-5.p13.s1:f84e1f16a6d1",
+  "a-deeper-reading-with-the-record-d7-at-h-5.p13.s2:f44b72e999ac"
+ ],
+ "L11-place": [
+  "line-11-member-bundles-large-unramified-.p1.s1:68cd2a059f9d",
+  "line-11-member-bundles-large-unramified-.p1.s2:7c790adae541",
+  "line-11-member-bundles-large-unramified-.p1.s3:2b6b4e4d46ab"
+ ],
+ "L11-states": [
+  "line-11-member-bundles-large-unramified-.p2.s1:d1f9db5ad999",
+  "line-11-member-bundles-large-unramified-.p2.s2:c1589e5ff1ef",
+  "line-11-member-bundles-large-unramified-.p2.s3:da53868f15a3",
+  "line-11-member-bundles-large-unramified-.p3.s1:38c6dc9de9fa",
+  "line-11-member-bundles-large-unramified-.p3.s2:4ca3e57ad6d0",
+  "line-11-member-bundles-large-unramified-.p4.s1:8eb305024739",
+  "line-11-member-bundles-large-unramified-.p4.s2:82fcefe7953a",
+  "line-11-member-bundles-large-unramified-.p5.s1:b5eb067e78c4",
+  "line-11-member-bundles-large-unramified-.p6.s1:50eb4d56045b",
+  "line-11-member-bundles-large-unramified-.p7.s1:98bd3fbfb4f0",
+  "line-11-member-bundles-large-unramified-.p7.s2:3706594284ec",
+  "line-11-member-bundles-large-unramified-.p8.s1:e703e32cf0c8",
+  "line-11-member-bundles-large-unramified-.p8.s2:68e9d1534b70"
+ ],
+ "L11-unopened": [
+  "line-11-member-bundles-large-unramified-.p9.s1:97bf92b34cd0"
+ ],
+ "L11-guess": [
+  "line-11-member-bundles-large-unramified-.p10.s1:76176b0c5586",
+  "line-11-member-bundles-large-unramified-.p10.s2:2be6d3788798"
+ ],
+ "L11-confidence": [
+  "line-11-member-bundles-large-unramified-.p11.s1:51096638a562",
+  "line-11-member-bundles-large-unramified-.p11.s2:269ff32d99b5"
+ ],
+ "L11-check": [
+  "line-11-member-bundles-large-unramified-.p12.s1:04a1e1071e1d",
+  "line-11-member-bundles-large-unramified-.p13.s1:68c7adfadb9c",
+  "line-11-member-bundles-large-unramified-.p13.s2:17118e778fea",
+  "line-11-member-bundles-large-unramified-.p13.s3:94b18278ab76"
+ ],
+ "D11-how": [
+  "a-deeper-reading-with-the-record-d7-at-h-6.p1.s1:6fd5ce614464",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p1.s2:2a6e111bce70",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p1.s3:57a55b9cc4e6",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p1.s4:e213f78f1dc7",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p1.s5:e09bcb56c868"
+ ],
+ "D11-states": [
+  "a-deeper-reading-with-the-record-d7-at-h-6.p2.s1:774a8887d133",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p2.s2:17f466707ec0",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p2.s3:a22d86eff3a3",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p2.s4:7040e5083c8d",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p2.s5:f681e77d05ee",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p3.s1:38c6dc9de9fa",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p3.s2:208d88c98403",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p4.s1:8eb305024739",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p4.s2:fcdc937e512a",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p5.s1:183d781585b4",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p6.s1:4dc4516e1302",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p7.s1:98bd3fbfb4f0",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p7.s2:eaa37180d470",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p8.s1:735f8d0b318e",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p8.s2:7407c4061877",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p9.s1:e703e32cf0c8",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p9.s2:6a91f3fb06ea"
+ ],
+ "D11-unopened": [
+  "a-deeper-reading-with-the-record-d7-at-h-6.p10.s1:59d8aff0512d",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p11.s1:71836a9c9abc"
+ ],
+ "D11-confidence": [
+  "a-deeper-reading-with-the-record-d7-at-h-6.p12.s1:51096638a562",
+  "a-deeper-reading-with-the-record-d7-at-h-6.p12.s2:30855013710c"
+ ],
+ "L12-place": [
+  "line-12-exists-baselattice-of-prime-alt.p1.s1:9959f7843d2c",
+  "line-12-exists-baselattice-of-prime-alt.p1.s2:fd6014b7b6ea"
+ ],
+ "L12-states": [
+  "line-12-exists-baselattice-of-prime-alt.p2.s1:8b33606651e7",
+  "line-12-exists-baselattice-of-prime-alt.p2.s2:3676926854b7",
+  "line-12-exists-baselattice-of-prime-alt.p2.s3:fb8c6bbefa63",
+  "line-12-exists-baselattice-of-prime-alt.p3.s1:38c6dc9de9fa",
+  "line-12-exists-baselattice-of-prime-alt.p3.s2:cc130f8b52e4",
+  "line-12-exists-baselattice-of-prime-alt.p4.s1:8eb305024739",
+  "line-12-exists-baselattice-of-prime-alt.p4.s2:67ed746b3cbb",
+  "line-12-exists-baselattice-of-prime-alt.p5.s1:abd15a1498ee",
+  "line-12-exists-baselattice-of-prime-alt.p5.s2:daad0c4359d1",
+  "line-12-exists-baselattice-of-prime-alt.p6.s1:ed7ddefac9b8",
+  "line-12-exists-baselattice-of-prime-alt.p6.s2:6457ccf987f4",
+  "line-12-exists-baselattice-of-prime-alt.p7.s1:759cac2d2e7f",
+  "line-12-exists-baselattice-of-prime-alt.p8.s1:735f8d0b318e",
+  "line-12-exists-baselattice-of-prime-alt.p8.s2:c270c2d0421b",
+  "line-12-exists-baselattice-of-prime-alt.p9.s1:e0d30d3e5d5e",
+  "line-12-exists-baselattice-of-prime-alt.p10.s1:430c63c40f9b",
+  "line-12-exists-baselattice-of-prime-alt.p10.s2:a0a729e6f3fe",
+  "line-12-exists-baselattice-of-prime-alt.p11.s1:e703e32cf0c8",
+  "line-12-exists-baselattice-of-prime-alt.p11.s2:dc9d45c0c11a"
+ ],
+ "L12-unopened": [
+  "line-12-exists-baselattice-of-prime-alt.p12.s1:5cc7888e82ac"
+ ],
+ "L12-guess": [
+  "line-12-exists-baselattice-of-prime-alt.p13.s1:76176b0c5586",
+  "line-12-exists-baselattice-of-prime-alt.p13.s2:2349d13e6afa"
+ ],
+ "L12-confidence": [
+  "line-12-exists-baselattice-of-prime-alt.p14.s1:f84e1f16a6d1",
+  "line-12-exists-baselattice-of-prime-alt.p14.s2:61867eda1594"
+ ],
+ "L12-check": [
+  "line-12-exists-baselattice-of-prime-alt.p15.s1:04a1e1071e1d",
+  "line-12-exists-baselattice-of-prime-alt.p16.s1:68c7adfadb9c",
+  "line-12-exists-baselattice-of-prime-alt.p16.s2:17118e778fea",
+  "line-12-exists-baselattice-of-prime-alt.p16.s3:94b18278ab76"
+ ],
+ "D12-how": [
+  "a-deeper-reading-with-the-record-d7-at-h-7.p1.s1:6fd5ce614464",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p1.s2:28a5dc13798e",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p1.s3:57a55b9cc4e6",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p1.s4:c00e45b9c443",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p1.s5:9a47ca6870cf"
+ ],
+ "D12-states": [
+  "a-deeper-reading-with-the-record-d7-at-h-7.p2.s1:146f1f4dea01",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p2.s2:29b22aac6eab",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p2.s3:e90a02e721ae",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p2.s4:f2a600b06fcf",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p2.s5:fd9dcf92c113",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p3.s1:38c6dc9de9fa",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p3.s2:bdcb2b7ee45d",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p4.s1:8eb305024739",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p4.s2:dd129b3c0b8d",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p5.s1:abd15a1498ee",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p5.s2:fb504cddce29",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p6.s1:ed7ddefac9b8",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p6.s2:718392bd8e4f",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p7.s1:884de5ba8504",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p8.s1:735f8d0b318e",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p8.s2:1a05ea57aa64",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p9.s1:e0d30d3e5d5e",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p10.s1:430c63c40f9b",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p10.s2:5368a01bf2b2",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p11.s1:e703e32cf0c8",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p11.s2:84f28e01df86"
+ ],
+ "D12-unopened": [
+  "a-deeper-reading-with-the-record-d7-at-h-7.p12.s1:545d218c4342",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p13.s1:051c18d75a34"
+ ],
+ "D12-confidence": [
+  "a-deeper-reading-with-the-record-d7-at-h-7.p14.s1:51096638a562",
+  "a-deeper-reading-with-the-record-d7-at-h-7.p14.s2:8ffa5095b532"
+ ],
+ "L13-place": [
+  "line-13-final-alt-alt.p1.s1:5414795e01a2",
+  "line-13-final-alt-alt.p1.s2:d1276ac659e0"
+ ],
+ "L13-states": [
+  "line-13-final-alt-alt.p2.s1:ea5a67101925",
+  "line-13-final-alt-alt.p2.s2:d81c73f26cf0",
+  "line-13-final-alt-alt.p2.s3:cd8c28806baa",
+  "line-13-final-alt-alt.p3.s1:38c6dc9de9fa",
+  "line-13-final-alt-alt.p3.s2:81ff47781471",
+  "line-13-final-alt-alt.p4.s1:8eb305024739",
+  "line-13-final-alt-alt.p4.s2:e06f7a9455d0",
+  "line-13-final-alt-alt.p5.s1:abd15a1498ee",
+  "line-13-final-alt-alt.p5.s2:5a21fc2afc43",
+  "line-13-final-alt-alt.p6.s1:ed7ddefac9b8",
+  "line-13-final-alt-alt.p6.s2:760194d1f575",
+  "line-13-final-alt-alt.p7.s1:98bd3fbfb4f0",
+  "line-13-final-alt-alt.p7.s2:cb7c0f59d1bf",
+  "line-13-final-alt-alt.p7.s3:f5e540ec1f85",
+  "line-13-final-alt-alt.p8.s1:735f8d0b318e",
+  "line-13-final-alt-alt.p8.s2:1ddc1a3a81b6",
+  "line-13-final-alt-alt.p9.s1:941c01bf3488",
+  "line-13-final-alt-alt.p9.s2:b29d10c4b226",
+  "line-13-final-alt-alt.p10.s1:430c63c40f9b",
+  "line-13-final-alt-alt.p10.s2:b97805e718ac",
+  "line-13-final-alt-alt.p11.s1:67f5a7e3f3a9",
+  "line-13-final-alt-alt.p12.s1:fe68cee9be11",
+  "line-13-final-alt-alt.p12.s2:c594fea5bbd5",
+  "line-13-final-alt-alt.p13.s1:e703e32cf0c8",
+  "line-13-final-alt-alt.p13.s2:ab68c5088564"
+ ],
+ "L13-unopened": [
+  "line-13-final-alt-alt.p14.s1:62c5e9791e4d"
+ ],
+ "L13-guess": [
+  "line-13-final-alt-alt.p15.s1:76176b0c5586",
+  "line-13-final-alt-alt.p15.s2:c79c73e3e2e3"
+ ],
+ "L13-confidence": [
+  "line-13-final-alt-alt.p16.s1:51096638a562",
+  "line-13-final-alt-alt.p16.s2:c491fda4ea13"
+ ],
+ "L13-check": [
+  "line-13-final-alt-alt.p17.s1:04a1e1071e1d",
+  "line-13-final-alt-alt.p18.s1:2c80bc96c1e5",
+  "line-13-final-alt-alt.p19.s1:68c7adfadb9c",
+  "line-13-final-alt-alt.p19.s2:ce60688bb6aa",
+  "line-13-final-alt-alt.p19.s3:94b18278ab76"
+ ],
+ "D13-how": [
+  "a-deeper-reading-with-the-record-d7-at-h-8.p1.s1:6fd5ce614464",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p1.s2:da1dd9352214",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p1.s3:57a55b9cc4e6",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p1.s4:0a98ed24cc7b"
+ ],
+ "D13-states": [
+  "a-deeper-reading-with-the-record-d7-at-h-8.p2.s1:d4c59ea8b57f",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p2.s2:2efebb4867b2",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p2.s3:d1e02a16c377",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p2.s4:026255307495",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p2.s5:73fedff796f3",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p2.s6:965ad0969614",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p3.s1:38c6dc9de9fa",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p3.s2:2e9de8290571",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p4.s1:8eb305024739",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p4.s2:ee1b36c59709",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p5.s1:abd15a1498ee",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p5.s2:78af3ab45d22",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p6.s1:ed7ddefac9b8",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p6.s2:e1018ff74f4a",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p7.s1:98bd3fbfb4f0",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p7.s2:a21660d8de6e",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p7.s3:f177d3358005",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p8.s1:735f8d0b318e",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p8.s2:f05b4199653c",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p9.s1:941c01bf3488",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p9.s2:99088b9edfbf",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p10.s1:430c63c40f9b",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p10.s2:cd28abfef7e3",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p11.s1:6762f332e2f0",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p12.s1:fe68cee9be11",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p12.s2:2a9475d49a36",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p13.s1:e703e32cf0c8",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p13.s2:e0e6a1604ce0"
+ ],
+ "D13-unopened": [
+  "a-deeper-reading-with-the-record-d7-at-h-8.p14.s1:ec8e4b5d0a5d",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p15.s1:27a241ed3ad7"
+ ],
+ "D13-confidence": [
+  "a-deeper-reading-with-the-record-d7-at-h-8.p16.s1:51096638a562",
+  "a-deeper-reading-with-the-record-d7-at-h-8.p16.s2:2382ddb4a025"
+ ],
+ "L14-place": [
+  "line-14-final-of-alt.p1.s1:72d449c40f50",
+  "line-14-final-of-alt.p1.s2:0d443b12c463"
+ ],
+ "L14-states": [
+  "line-14-final-of-alt.p2.s1:fc684a584181",
+  "line-14-final-of-alt.p2.s2:2f5751330c33",
+  "line-14-final-of-alt.p2.s3:5714b7f7e80b",
+  "line-14-final-of-alt.p3.s1:7636766a8012",
+  "line-14-final-of-alt.p4.s1:4110cbbc574b",
+  "line-14-final-of-alt.p5.s1:18bae0c933d0",
+  "line-14-final-of-alt.p6.s1:fc75f3fc1d45",
+  "line-14-final-of-alt.p7.s1:56c1e74c4c67",
+  "line-14-final-of-alt.p8.s1:5b9b58dd1bb2",
+  "line-14-final-of-alt.p9.s1:e0d30d3e5d5e",
+  "line-14-final-of-alt.p10.s1:b91071490931",
+  "line-14-final-of-alt.p11.s1:e05fd40025c2",
+  "line-14-final-of-alt.p12.s1:e703e32cf0c8",
+  "line-14-final-of-alt.p12.s2:ab68c5088564"
+ ],
+ "L14-unopened": [
+  "line-14-final-of-alt.p13.s1:7d2005c12916"
+ ],
+ "L14-guess": [
+  "line-14-final-of-alt.p14.s1:76176b0c5586",
+  "line-14-final-of-alt.p14.s2:122d1512c96b"
+ ],
+ "L14-confidence": [
+  "line-14-final-of-alt.p15.s1:f84e1f16a6d1",
+  "line-14-final-of-alt.p15.s2:79058ca3fa04"
+ ],
+ "L14-check": [
+  "line-14-final-of-alt.p16.s1:04a1e1071e1d",
+  "line-14-final-of-alt.p17.s1:68c7adfadb9c",
+  "line-14-final-of-alt.p17.s2:ce60688bb6aa",
+  "line-14-final-of-alt.p17.s3:c070f664f61a",
+  "line-14-final-of-alt.p17.s4:91cfa0c00ac8"
+ ],
+ "D14-how": [
+  "a-deeper-reading-with-the-record-d7-at-h-9.p1.s1:6fd5ce614464",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p1.s2:8746076856c3",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p1.s3:57a55b9cc4e6",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p1.s4:d4b6cc151a67",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p1.s5:e09bcb56c868"
+ ],
+ "D14-states": [
+  "a-deeper-reading-with-the-record-d7-at-h-9.p2.s1:5c98a5e52549",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p2.s2:aca8b60635cf",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p2.s3:e0f2a9d06751",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p2.s4:678be63612e7",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p2.s5:e0d70eae5ed3",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p3.s1:b660d47d086c",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p4.s1:c8491b05b863",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p5.s1:5609e40cc4bf",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p6.s1:fd704e435453",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p7.s1:a685817b71f0",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p8.s1:baff770f48d3",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p9.s1:941c01bf3488",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p9.s2:078d47d6e7ec",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p10.s1:ad2335eb3092",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p11.s1:6704f3538a83",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p12.s1:e703e32cf0c8",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p12.s2:e9029754cfce"
+ ],
+ "D14-unopened": [
+  "a-deeper-reading-with-the-record-d7-at-h-9.p13.s1:83216f4fae5e",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p14.s1:75f58b734807"
+ ],
+ "D14-confidence": [
+  "a-deeper-reading-with-the-record-d7-at-h-9.p15.s1:f84e1f16a6d1",
+  "a-deeper-reading-with-the-record-d7-at-h-9.p15.s2:64f52cc95643"
+ ],
+ "L15-place": [
+  "line-15-linkn-of-twgood-galoispreconditi.p1.s1:28bf999218dd",
+  "line-15-linkn-of-twgood-galoispreconditi.p1.s2:d3684a6fe160",
+  "line-15-linkn-of-twgood-galoispreconditi.p1.s3:96f05285742a"
+ ],
+ "L15-states": [
+  "line-15-linkn-of-twgood-galoispreconditi.p2.s1:a9fa0bb42bfa",
+  "line-15-linkn-of-twgood-galoispreconditi.p2.s2:ca9ee7d7ff49",
+  "line-15-linkn-of-twgood-galoispreconditi.p2.s3:45c379b542d4",
+  "line-15-linkn-of-twgood-galoispreconditi.p3.s1:38c6dc9de9fa",
+  "line-15-linkn-of-twgood-galoispreconditi.p3.s2:cf045a006fc8",
+  "line-15-linkn-of-twgood-galoispreconditi.p4.s1:8eb305024739",
+  "line-15-linkn-of-twgood-galoispreconditi.p4.s2:ee4ac6b70611",
+  "line-15-linkn-of-twgood-galoispreconditi.p5.s1:e4481708ee48",
+  "line-15-linkn-of-twgood-galoispreconditi.p6.s1:ed7ddefac9b8",
+  "line-15-linkn-of-twgood-galoispreconditi.p6.s2:e9b1e3f52a92",
+  "line-15-linkn-of-twgood-galoispreconditi.p7.s1:98bd3fbfb4f0",
+  "line-15-linkn-of-twgood-galoispreconditi.p7.s2:4f9ceb20a7bd",
+  "line-15-linkn-of-twgood-galoispreconditi.p8.s1:e703e32cf0c8",
+  "line-15-linkn-of-twgood-galoispreconditi.p8.s2:ab0671fbce69"
+ ],
+ "L15-unopened": [
+  "line-15-linkn-of-twgood-galoispreconditi.p9.s1:a0198df7a7e5"
+ ],
+ "L15-guess": [
+  "line-15-linkn-of-twgood-galoispreconditi.p10.s1:76176b0c5586",
+  "line-15-linkn-of-twgood-galoispreconditi.p10.s2:6f944ff24e62"
+ ],
+ "L15-confidence": [
+  "line-15-linkn-of-twgood-galoispreconditi.p11.s1:f84e1f16a6d1",
+  "line-15-linkn-of-twgood-galoispreconditi.p11.s2:d4da8b3014a9"
+ ],
+ "L15-check": [
+  "line-15-linkn-of-twgood-galoispreconditi.p12.s1:4decb8b44f0a",
+  "line-15-linkn-of-twgood-galoispreconditi.p12.s2:4269f6429fbc",
+  "line-15-linkn-of-twgood-galoispreconditi.p13.s1:d202171d8257"
+ ],
+ "D15-how": [
+  "a-deeper-reading-with-the-record-d7-at-h-10.p1.s1:6fd5ce614464",
+  "a-deeper-reading-with-the-record-d7-at-h-10.p1.s2:e2c2fc63cd9d",
+  "a-deeper-reading-with-the-record-d7-at-h-10.p1.s3:57a55b9cc4e6",
+  "a-deeper-reading-with-the-record-d7-at-h-10.p1.s4:fef1030f7dd1",
+  "a-deeper-reading-with-the-record-d7-at-h-10.p1.s5:e09bcb56c868"
+ ],
+ "D15-states": [
+  "a-deeper-reading-with-the-record-d7-at-h-10.p2.s1:1be68b17384b",
+  "a-deeper-reading-with-the-record-d7-at-h-10.p2.s2:c325db0e2036",
+  "a-deeper-reading-with-the-record-d7-at-h-10.p2.s3:ce912b76bfd4",
+  "a-deeper-reading-with-the-record-d7-at-h-10.p2.s4:f6496ab7258c",
+  "a-deeper-reading-with-the-record-d7-at-h-10.p3.s1:38c6dc9de9fa",
+  "a-deeper-reading-with-the-record-d7-at-h-10.p3.s2:092e6acc24d5",
+  "a-deeper-reading-with-the-record-d7-at-h-10.p4.s1:8eb305024739",
+  "a-deeper-reading-with-the-record-d7-at-h-10.p4.s2:85b5da36dae6",
+  "a-deeper-reading-with-the-record-d7-at-h-10.p5.s1:e4481708ee48",
+  "a-deeper-reading-with-the-record-d7-at-h-10.p6.s1:ed7ddefac9b8",
+  "a-deeper-reading-with-the-record-d7-at-h-10.p6.s2:e23eaf345086",
+  "a-deeper-reading-with-the-record-d7-at-h-10.p7.s1:98bd3fbfb4f0",
+  "a-deeper-reading-with-the-record-d7-at-h-10.p7.s2:a0fb7770a0b9",
+  "a-deeper-reading-with-the-record-d7-at-h-10.p8.s1:e703e32cf0c8",
+  "a-deeper-reading-with-the-record-d7-at-h-10.p8.s2:25d93ff3033f"
+ ],
+ "D15-unopened": [
+  "a-deeper-reading-with-the-record-d7-at-h-10.p9.s1:2e9af5eb931a",
+  "a-deeper-reading-with-the-record-d7-at-h-10.p10.s1:e5f9667a642b"
+ ],
+ "D15-confidence": [
+  "a-deeper-reading-with-the-record-d7-at-h-10.p11.s1:f84e1f16a6d1",
+  "a-deeper-reading-with-the-record-d7-at-h-10.p11.s2:4b6d626a1873"
+ ],
+ "L16-place": [
+  "line-16-ontox-and-lamlow-of-unitarygroup.p1.s1:e0a841b03385",
+  "line-16-ontox-and-lamlow-of-unitarygroup.p1.s2:9343818a2900"
+ ],
+ "L16-states": [
+  "line-16-ontox-and-lamlow-of-unitarygroup.p2.s1:81c12e4b0caa",
+  "line-16-ontox-and-lamlow-of-unitarygroup.p2.s2:3246bc8c79f1",
+  "line-16-ontox-and-lamlow-of-unitarygroup.p2.s3:836022239c11",
+  "line-16-ontox-and-lamlow-of-unitarygroup.p2.s4:0877efc45c9a",
+  "line-16-ontox-and-lamlow-of-unitarygroup.p3.s1:38c6dc9de9fa",
+  "line-16-ontox-and-lamlow-of-unitarygroup.p3.s2:38a385493841",
+  "line-16-ontox-and-lamlow-of-unitarygroup.p4.s1:e703e32cf0c8",
+  "line-16-ontox-and-lamlow-of-unitarygroup.p4.s2:82c82771e67d"
+ ],
+ "L16-unopened": [
+  "line-16-ontox-and-lamlow-of-unitarygroup.p5.s1:e9f3df28d376"
+ ],
+ "L16-guess": [
+  "line-16-ontox-and-lamlow-of-unitarygroup.p6.s1:76176b0c5586",
+  "line-16-ontox-and-lamlow-of-unitarygroup.p6.s2:3dd3cd6bf9eb"
+ ],
+ "L16-confidence": [
+  "line-16-ontox-and-lamlow-of-unitarygroup.p7.s1:51096638a562",
+  "line-16-ontox-and-lamlow-of-unitarygroup.p7.s2:85247925997b"
+ ],
+ "L16-check": [
+  "line-16-ontox-and-lamlow-of-unitarygroup.p8.s1:4decb8b44f0a",
+  "line-16-ontox-and-lamlow-of-unitarygroup.p8.s2:4269f6429fbc",
+  "line-16-ontox-and-lamlow-of-unitarygroup.p9.s1:6f5ace584ed5",
+  "line-16-ontox-and-lamlow-of-unitarygroup.p10.s1:68c7adfadb9c",
+  "line-16-ontox-and-lamlow-of-unitarygroup.p10.s2:17118e778fea",
+  "line-16-ontox-and-lamlow-of-unitarygroup.p10.s3:94b18278ab76"
+ ],
+ "D16-how": [
+  "a-deeper-reading-with-the-record-d7-at-h-11.p1.s1:6fd5ce614464",
+  "a-deeper-reading-with-the-record-d7-at-h-11.p1.s2:962d2563a07c",
+  "a-deeper-reading-with-the-record-d7-at-h-11.p1.s3:57a55b9cc4e6",
+  "a-deeper-reading-with-the-record-d7-at-h-11.p1.s4:23806762c1c5",
+  "a-deeper-reading-with-the-record-d7-at-h-11.p1.s5:e09bcb56c868"
+ ],
+ "D16-states": [
+  "a-deeper-reading-with-the-record-d7-at-h-11.p2.s1:a1535d7bf63e",
+  "a-deeper-reading-with-the-record-d7-at-h-11.p2.s2:88a0f20c72ce",
+  "a-deeper-reading-with-the-record-d7-at-h-11.p2.s3:a7387a8f4ddf",
+  "a-deeper-reading-with-the-record-d7-at-h-11.p2.s4:f4765dff904c",
+  "a-deeper-reading-with-the-record-d7-at-h-11.p2.s5:7d46590cdc53",
+  "a-deeper-reading-with-the-record-d7-at-h-11.p3.s1:38c6dc9de9fa",
+  "a-deeper-reading-with-the-record-d7-at-h-11.p3.s2:8a331f8076fd",
+  "a-deeper-reading-with-the-record-d7-at-h-11.p4.s1:e703e32cf0c8",
+  "a-deeper-reading-with-the-record-d7-at-h-11.p4.s2:82c82771e67d"
+ ],
+ "D16-unopened": [
+  "a-deeper-reading-with-the-record-d7-at-h-11.p5.s1:59324624f059",
+  "a-deeper-reading-with-the-record-d7-at-h-11.p6.s1:170484db89e5"
+ ],
+ "D16-confidence": [
+  "a-deeper-reading-with-the-record-d7-at-h-11.p7.s1:51096638a562",
+  "a-deeper-reading-with-the-record-d7-at-h-11.p7.s2:699f95f8618b"
+ ],
+ "L17-place": [
+  "line-17-ontox-of-hypotheses-alt-alt.p1.s1:f7908900e27b",
+  "line-17-ontox-of-hypotheses-alt-alt.p1.s2:530bc098ce31"
+ ],
+ "L17-states": [
+  "line-17-ontox-of-hypotheses-alt-alt.p2.s1:5aad332116d8",
+  "line-17-ontox-of-hypotheses-alt-alt.p2.s2:91ccd0834a90",
+  "line-17-ontox-of-hypotheses-alt-alt.p3.s1:38c6dc9de9fa",
+  "line-17-ontox-of-hypotheses-alt-alt.p3.s2:25d266161ddf",
+  "line-17-ontox-of-hypotheses-alt-alt.p4.s1:8eb305024739",
+  "line-17-ontox-of-hypotheses-alt-alt.p4.s2:85e62275a3be",
+  "line-17-ontox-of-hypotheses-alt-alt.p5.s1:abd15a1498ee",
+  "line-17-ontox-of-hypotheses-alt-alt.p5.s2:109ad704f127",
+  "line-17-ontox-of-hypotheses-alt-alt.p6.s1:ed7ddefac9b8",
+  "line-17-ontox-of-hypotheses-alt-alt.p6.s2:5f37756512cb",
+  "line-17-ontox-of-hypotheses-alt-alt.p7.s1:98bd3fbfb4f0",
+  "line-17-ontox-of-hypotheses-alt-alt.p7.s2:f3c2202bf3ea",
+  "line-17-ontox-of-hypotheses-alt-alt.p8.s1:735f8d0b318e",
+  "line-17-ontox-of-hypotheses-alt-alt.p8.s2:cec2a7249350",
+  "line-17-ontox-of-hypotheses-alt-alt.p9.s1:941c01bf3488",
+  "line-17-ontox-of-hypotheses-alt-alt.p9.s2:18b31bd41aa1",
+  "line-17-ontox-of-hypotheses-alt-alt.p9.s3:8184d8406c50",
+  "line-17-ontox-of-hypotheses-alt-alt.p10.s1:430c63c40f9b",
+  "line-17-ontox-of-hypotheses-alt-alt.p10.s2:23cc3bc818bd",
+  "line-17-ontox-of-hypotheses-alt-alt.p11.s1:14195d6fdc5b",
+  "line-17-ontox-of-hypotheses-alt-alt.p11.s2:ad6c349f800d",
+  "line-17-ontox-of-hypotheses-alt-alt.p12.s1:fe68cee9be11",
+  "line-17-ontox-of-hypotheses-alt-alt.p12.s2:511364bfe4b5",
+  "line-17-ontox-of-hypotheses-alt-alt.p13.s1:811c798ac2e1",
+  "line-17-ontox-of-hypotheses-alt-alt.p13.s2:b0ce7da0e82a",
+  "line-17-ontox-of-hypotheses-alt-alt.p14.s1:375db1863eef",
+  "line-17-ontox-of-hypotheses-alt-alt.p14.s2:f44753fca61d",
+  "line-17-ontox-of-hypotheses-alt-alt.p14.s3:2ebe2c4dda8c",
+  "line-17-ontox-of-hypotheses-alt-alt.p15.s1:e703e32cf0c8",
+  "line-17-ontox-of-hypotheses-alt-alt.p15.s2:4584fb1a037f"
+ ],
+ "L17-unopened": [
+  "line-17-ontox-of-hypotheses-alt-alt.p16.s1:e8929634d63b"
+ ],
+ "L17-guess": [
+  "line-17-ontox-of-hypotheses-alt-alt.p17.s1:76176b0c5586",
+  "line-17-ontox-of-hypotheses-alt-alt.p17.s2:d6b79f5de476"
+ ],
+ "L17-confidence": [
+  "line-17-ontox-of-hypotheses-alt-alt.p18.s1:f84e1f16a6d1",
+  "line-17-ontox-of-hypotheses-alt-alt.p18.s2:50a5b227664c"
+ ],
+ "L17-check": [
+  "line-17-ontox-of-hypotheses-alt-alt.p19.s1:583c656b57df",
+  "line-17-ontox-of-hypotheses-alt-alt.p19.s2:4269f6429fbc",
+  "line-17-ontox-of-hypotheses-alt-alt.p20.s1:110635771514",
+  "line-17-ontox-of-hypotheses-alt-alt.p21.s1:2f0a2e45a035",
+  "line-17-ontox-of-hypotheses-alt-alt.p22.s1:68c7adfadb9c",
+  "line-17-ontox-of-hypotheses-alt-alt.p22.s2:962fd6c7f2d1",
+  "line-17-ontox-of-hypotheses-alt-alt.p22.s3:c070f664f61a",
+  "line-17-ontox-of-hypotheses-alt-alt.p22.s4:91cfa0c00ac8"
+ ],
+ "D17-how": [
+  "a-deeper-reading-with-the-record-d7-at-h-12.p1.s1:6fd5ce614464",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p1.s2:c11d5274208a",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p1.s3:57a55b9cc4e6",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p1.s4:1034ede2e348",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p1.s5:e09bcb56c868"
+ ],
+ "D17-states": [
+  "a-deeper-reading-with-the-record-d7-at-h-12.p2.s1:5f27c74479b0",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p2.s2:7ade92a1ede1",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p2.s3:6ca28096d29f",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p2.s4:388c81afc4b1",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p2.s5:062b3a3c6d0a",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p2.s6:e4865d965d65",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p2.s7:6e915c92c130",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p3.s1:38c6dc9de9fa",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p3.s2:6d2eeeca7098",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p4.s1:8eb305024739",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p4.s2:25a4783048c9",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p5.s1:abd15a1498ee",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p5.s2:326d844f18e8",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p6.s1:ed7ddefac9b8",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p6.s2:33cbb2e18993",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p7.s1:98bd3fbfb4f0",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p7.s2:98e72522c78f",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p8.s1:735f8d0b318e",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p8.s2:274efde1cf82",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p9.s1:941c01bf3488",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p9.s2:2da113a23484",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p10.s1:430c63c40f9b",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p10.s2:d88e308f82a9",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p11.s1:14195d6fdc5b",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p11.s2:f47183994655",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p12.s1:fe68cee9be11",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p12.s2:5848d5e96f6d",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p13.s1:811c798ac2e1",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p13.s2:f582536bba0b",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p14.s1:375db1863eef",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p14.s2:d6e6539d4299",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p15.s1:e703e32cf0c8",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p15.s2:be140d856286"
+ ],
+ "D17-unopened": [
+  "a-deeper-reading-with-the-record-d7-at-h-12.p16.s1:bc110c94a2f1",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p17.s1:4a947a6020f4"
+ ],
+ "D17-confidence": [
+  "a-deeper-reading-with-the-record-d7-at-h-12.p18.s1:51096638a562",
+  "a-deeper-reading-with-the-record-d7-at-h-12.p18.s2:1b020457e294"
+ ],
+ "L18-place": [
+  "line-18-open-orbit-of-unramified-exponen.p1.s1:42b277a814aa",
+  "line-18-open-orbit-of-unramified-exponen.p1.s2:6e479cedcce7",
+  "line-18-open-orbit-of-unramified-exponen.p1.s3:70cf292bd5ac"
+ ],
+ "L18-states": [
+  "line-18-open-orbit-of-unramified-exponen.p2.s1:f6bda23c329d",
+  "line-18-open-orbit-of-unramified-exponen.p2.s2:9cc71bdee90f",
+  "line-18-open-orbit-of-unramified-exponen.p2.s3:4b15bf14d831",
+  "line-18-open-orbit-of-unramified-exponen.p3.s1:38c6dc9de9fa",
+  "line-18-open-orbit-of-unramified-exponen.p3.s2:d0625fb19770",
+  "line-18-open-orbit-of-unramified-exponen.p4.s1:c8ed044eaaea",
+  "line-18-open-orbit-of-unramified-exponen.p5.s1:e703e32cf0c8",
+  "line-18-open-orbit-of-unramified-exponen.p5.s2:f5c6fc7b068a"
+ ],
+ "L18-unopened": [
+  "line-18-open-orbit-of-unramified-exponen.p6.s1:45c444642fad"
+ ],
+ "L18-guess": [
+  "line-18-open-orbit-of-unramified-exponen.p7.s1:76176b0c5586",
+  "line-18-open-orbit-of-unramified-exponen.p7.s2:2d8a910e3d13"
+ ],
+ "L18-confidence": [
+  "line-18-open-orbit-of-unramified-exponen.p8.s1:51096638a562",
+  "line-18-open-orbit-of-unramified-exponen.p8.s2:b7e2b58e77c9"
+ ],
+ "L18-check": [
+  "line-18-open-orbit-of-unramified-exponen.p9.s1:04a1e1071e1d",
+  "line-18-open-orbit-of-unramified-exponen.p10.s1:2c80bc96c1e5"
+ ],
+ "D18-how": [
+  "a-deeper-reading-with-the-record-d7-at-h-13.p1.s1:6fd5ce614464",
+  "a-deeper-reading-with-the-record-d7-at-h-13.p1.s2:962d2563a07c",
+  "a-deeper-reading-with-the-record-d7-at-h-13.p1.s3:57a55b9cc4e6",
+  "a-deeper-reading-with-the-record-d7-at-h-13.p1.s4:23806762c1c5",
+  "a-deeper-reading-with-the-record-d7-at-h-13.p1.s5:e09bcb56c868"
+ ],
+ "D18-states": [
+  "a-deeper-reading-with-the-record-d7-at-h-13.p2.s1:81421c7bd689",
+  "a-deeper-reading-with-the-record-d7-at-h-13.p2.s2:cedaa97079ac",
+  "a-deeper-reading-with-the-record-d7-at-h-13.p2.s3:fc6285ed97cb",
+  "a-deeper-reading-with-the-record-d7-at-h-13.p2.s4:e2aae6156cb7",
+  "a-deeper-reading-with-the-record-d7-at-h-13.p2.s5:30dce13c2310",
+  "a-deeper-reading-with-the-record-d7-at-h-13.p3.s1:38c6dc9de9fa",
+  "a-deeper-reading-with-the-record-d7-at-h-13.p3.s2:2b77d61815b4",
+  "a-deeper-reading-with-the-record-d7-at-h-13.p4.s1:1c44df9b5c40",
+  "a-deeper-reading-with-the-record-d7-at-h-13.p5.s1:a8e08633ae7b",
+  "a-deeper-reading-with-the-record-d7-at-h-13.p6.s1:e703e32cf0c8",
+  "a-deeper-reading-with-the-record-d7-at-h-13.p6.s2:c473bab0d0ed"
+ ],
+ "D18-unopened": [
+  "a-deeper-reading-with-the-record-d7-at-h-13.p7.s1:35fb0b099d9b",
+  "a-deeper-reading-with-the-record-d7-at-h-13.p8.s1:671d2ffac1ce"
+ ],
+ "D18-confidence": [
+  "a-deeper-reading-with-the-record-d7-at-h-13.p9.s1:51096638a562",
+  "a-deeper-reading-with-the-record-d7-at-h-13.p9.s2:6f6aeb13e099"
+ ],
+ "L19-place": [
+  "line-19-mistarrow-alt-alt.p1.s1:25b6687f11a3",
+  "line-19-mistarrow-alt-alt.p1.s2:34c5d5828123",
+  "line-19-mistarrow-alt-alt.p1.s3:74bd4b54189c"
+ ],
+ "L19-states": [
+  "line-19-mistarrow-alt-alt.p2.s1:67bee7c9a78c",
+  "line-19-mistarrow-alt-alt.p2.s2:b92d1836f9d0",
+  "line-19-mistarrow-alt-alt.p2.s3:49e9b5d1241a",
+  "line-19-mistarrow-alt-alt.p3.s1:38c6dc9de9fa",
+  "line-19-mistarrow-alt-alt.p3.s2:8135cafad594",
+  "line-19-mistarrow-alt-alt.p4.s1:8eb305024739",
+  "line-19-mistarrow-alt-alt.p4.s2:12aa753a7d5f",
+  "line-19-mistarrow-alt-alt.p5.s1:abd15a1498ee",
+  "line-19-mistarrow-alt-alt.p5.s2:0438cb804efb",
+  "line-19-mistarrow-alt-alt.p6.s1:ed7ddefac9b8",
+  "line-19-mistarrow-alt-alt.p6.s2:d253f36820a7",
+  "line-19-mistarrow-alt-alt.p7.s1:98bd3fbfb4f0",
+  "line-19-mistarrow-alt-alt.p7.s2:a6f94d3f0f60",
+  "line-19-mistarrow-alt-alt.p8.s1:735f8d0b318e",
+  "line-19-mistarrow-alt-alt.p8.s2:4b801c9156af",
+  "line-19-mistarrow-alt-alt.p9.s1:941c01bf3488",
+  "line-19-mistarrow-alt-alt.p9.s2:a1bf727b9305",
+  "line-19-mistarrow-alt-alt.p10.s1:430c63c40f9b",
+  "line-19-mistarrow-alt-alt.p10.s2:950c9b2f9246",
+  "line-19-mistarrow-alt-alt.p11.s1:14195d6fdc5b",
+  "line-19-mistarrow-alt-alt.p11.s2:70cca44bd0e6",
+  "line-19-mistarrow-alt-alt.p12.s1:fe68cee9be11",
+  "line-19-mistarrow-alt-alt.p12.s2:8d97e271dd57",
+  "line-19-mistarrow-alt-alt.p13.s1:811c798ac2e1",
+  "line-19-mistarrow-alt-alt.p13.s2:d155a415873e",
+  "line-19-mistarrow-alt-alt.p14.s1:375db1863eef",
+  "line-19-mistarrow-alt-alt.p14.s2:c639a72fb1fc",
+  "line-19-mistarrow-alt-alt.p15.s1:521824635bb1",
+  "line-19-mistarrow-alt-alt.p15.s2:98262ca8802f",
+  "line-19-mistarrow-alt-alt.p16.s1:d2cf76c0adf9",
+  "line-19-mistarrow-alt-alt.p16.s2:e922d568a3c0",
+  "line-19-mistarrow-alt-alt.p17.s1:49d5c9e49d29",
+  "line-19-mistarrow-alt-alt.p18.s1:e703e32cf0c8",
+  "line-19-mistarrow-alt-alt.p18.s2:4b6d7400c6e9"
+ ],
+ "L19-unopened": [
+  "line-19-mistarrow-alt-alt.p19.s1:960699b8d76d"
+ ],
+ "L19-guess": [
+  "line-19-mistarrow-alt-alt.p20.s1:76176b0c5586",
+  "line-19-mistarrow-alt-alt.p20.s2:fd7e38c84637"
+ ],
+ "L19-confidence": [
+  "line-19-mistarrow-alt-alt.p21.s1:f84e1f16a6d1",
+  "line-19-mistarrow-alt-alt.p21.s2:4c95282d4552"
+ ],
+ "L19-check": [
+  "line-19-mistarrow-alt-alt.p22.s1:04a1e1071e1d",
+  "line-19-mistarrow-alt-alt.p23.s1:68c7adfadb9c",
+  "line-19-mistarrow-alt-alt.p23.s2:17118e778fea",
+  "line-19-mistarrow-alt-alt.p23.s3:94b18278ab76"
+ ],
+ "D19-how": [
+  "a-deeper-reading-with-the-record-d7-at-h-14.p1.s1:6fd5ce614464",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p1.s2:1f3a2401874a",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p1.s3:57a55b9cc4e6",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p1.s4:6d6010c7afa9",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p1.s5:e09bcb56c868"
+ ],
+ "D19-states": [
+  "a-deeper-reading-with-the-record-d7-at-h-14.p2.s1:ded3ca8864b6",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p2.s2:614cbafa80c4",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p2.s3:6f0c8de69fba",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p2.s4:c5b29de6c7be",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p2.s5:074fda332e72",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p2.s6:99afa3c935a6",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p3.s1:38c6dc9de9fa",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p3.s2:9c50802d5df4",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p4.s1:8eb305024739",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p4.s2:434a350c113b",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p5.s1:abd15a1498ee",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p5.s2:c163ee1890fd",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p6.s1:ed7ddefac9b8",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p6.s2:d1f3c9b0fbd5",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p7.s1:98bd3fbfb4f0",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p7.s2:187efb4a54a9",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p8.s1:735f8d0b318e",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p8.s2:013aa83511a7",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p9.s1:941c01bf3488",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p9.s2:e97d403d0885",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p10.s1:430c63c40f9b",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p10.s2:f18a52ace018",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p10.s3:e3302a15ea1c",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p10.s4:35ca32a667d7",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p11.s1:14195d6fdc5b",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p11.s2:0db818d93262",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p12.s1:fe68cee9be11",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p12.s2:f0dc35200de9",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p13.s1:811c798ac2e1",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p13.s2:10d34216f615",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p14.s1:375db1863eef",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p14.s2:2647121245b4",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p14.s3:7927d2ba117a",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p14.s4:175cfa1c8ff3",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p15.s1:521824635bb1",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p15.s2:a625d28435b9",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p16.s1:d2cf76c0adf9",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p16.s2:286ceecf8de7",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p17.s1:e703e32cf0c8",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p17.s2:11a6d7edd5ae"
+ ],
+ "D19-unopened": [
+  "a-deeper-reading-with-the-record-d7-at-h-14.p18.s1:3bf2658a61bb",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p19.s1:d6a4cdb89e69"
+ ],
+ "D19-confidence": [
+  "a-deeper-reading-with-the-record-d7-at-h-14.p20.s1:51096638a562",
+  "a-deeper-reading-with-the-record-d7-at-h-14.p20.s2:c5e24545d7e1"
+ ],
+ "L20-place": [
+  "line-20-mistarrowclosing-alt-alt.p1.s1:bd16ea23f740",
+  "line-20-mistarrowclosing-alt-alt.p1.s2:07b7ef61335c",
+  "line-20-mistarrowclosing-alt-alt.p1.s3:1984ec1ebd39"
+ ],
+ "L20-states": [
+  "line-20-mistarrowclosing-alt-alt.p2.s1:83692cf3bd75",
+  "line-20-mistarrowclosing-alt-alt.p2.s2:3013f06e10e5",
+  "line-20-mistarrowclosing-alt-alt.p2.s3:7c96ee138c59",
+  "line-20-mistarrowclosing-alt-alt.p3.s1:38c6dc9de9fa",
+  "line-20-mistarrowclosing-alt-alt.p3.s2:8135cafad594",
+  "line-20-mistarrowclosing-alt-alt.p4.s1:8eb305024739",
+  "line-20-mistarrowclosing-alt-alt.p4.s2:12aa753a7d5f",
+  "line-20-mistarrowclosing-alt-alt.p5.s1:abd15a1498ee",
+  "line-20-mistarrowclosing-alt-alt.p5.s2:0438cb804efb",
+  "line-20-mistarrowclosing-alt-alt.p6.s1:ed7ddefac9b8",
+  "line-20-mistarrowclosing-alt-alt.p6.s2:d253f36820a7",
+  "line-20-mistarrowclosing-alt-alt.p7.s1:98bd3fbfb4f0",
+  "line-20-mistarrowclosing-alt-alt.p7.s2:a6f94d3f0f60",
+  "line-20-mistarrowclosing-alt-alt.p8.s1:735f8d0b318e",
+  "line-20-mistarrowclosing-alt-alt.p8.s2:4b801c9156af",
+  "line-20-mistarrowclosing-alt-alt.p9.s1:941c01bf3488",
+  "line-20-mistarrowclosing-alt-alt.p9.s2:a1bf727b9305",
+  "line-20-mistarrowclosing-alt-alt.p10.s1:430c63c40f9b",
+  "line-20-mistarrowclosing-alt-alt.p10.s2:950c9b2f9246",
+  "line-20-mistarrowclosing-alt-alt.p11.s1:14195d6fdc5b",
+  "line-20-mistarrowclosing-alt-alt.p11.s2:70cca44bd0e6",
+  "line-20-mistarrowclosing-alt-alt.p12.s1:fe68cee9be11",
+  "line-20-mistarrowclosing-alt-alt.p12.s2:8d97e271dd57",
+  "line-20-mistarrowclosing-alt-alt.p13.s1:811c798ac2e1",
+  "line-20-mistarrowclosing-alt-alt.p13.s2:d155a415873e",
+  "line-20-mistarrowclosing-alt-alt.p14.s1:375db1863eef",
+  "line-20-mistarrowclosing-alt-alt.p14.s2:c639a72fb1fc",
+  "line-20-mistarrowclosing-alt-alt.p15.s1:521824635bb1",
+  "line-20-mistarrowclosing-alt-alt.p15.s2:98262ca8802f",
+  "line-20-mistarrowclosing-alt-alt.p16.s1:d2cf76c0adf9",
+  "line-20-mistarrowclosing-alt-alt.p16.s2:87a98174aa49",
+  "line-20-mistarrowclosing-alt-alt.p17.s1:49d5c9e49d29",
+  "line-20-mistarrowclosing-alt-alt.p18.s1:2b54f72f38b7",
+  "line-20-mistarrowclosing-alt-alt.p18.s2:53a6c6e21582",
+  "line-20-mistarrowclosing-alt-alt.p19.s1:e703e32cf0c8",
+  "line-20-mistarrowclosing-alt-alt.p19.s2:ccca41c3e181"
+ ],
+ "L20-unopened": [
+  "line-20-mistarrowclosing-alt-alt.p20.s1:e926c17b418b"
+ ],
+ "L20-guess": [
+  "line-20-mistarrowclosing-alt-alt.p21.s1:76176b0c5586",
+  "line-20-mistarrowclosing-alt-alt.p21.s2:73b3f6fddfe6"
+ ],
+ "L20-confidence": [
+  "line-20-mistarrowclosing-alt-alt.p22.s1:f84e1f16a6d1",
+  "line-20-mistarrowclosing-alt-alt.p22.s2:44cbe64bd0e2"
+ ],
+ "L20-check": [
+  "line-20-mistarrowclosing-alt-alt.p23.s1:04a1e1071e1d",
+  "line-20-mistarrowclosing-alt-alt.p24.s1:68c7adfadb9c",
+  "line-20-mistarrowclosing-alt-alt.p24.s2:17118e778fea",
+  "line-20-mistarrowclosing-alt-alt.p24.s3:94b18278ab76"
+ ],
+ "D20-how": [
+  "a-deeper-reading-with-the-record-d7-at-h-15.p1.s1:6fd5ce614464",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p1.s2:da1dd9352214",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p1.s3:57a55b9cc4e6",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p1.s4:429796371dea",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p1.s5:e09bcb56c868"
+ ],
+ "D20-states": [
+  "a-deeper-reading-with-the-record-d7-at-h-15.p2.s1:6a302b251f20",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p2.s2:669c9f7d483b",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p2.s3:f25eec3c8f29",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p2.s4:e0866a439021",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p2.s5:ec20f4b0a8aa",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p2.s6:8acb38a90a3a",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p3.s1:38c6dc9de9fa",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p3.s2:767c275a1cbb",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p3.s3:0d4ad03b0499",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p4.s1:8eb305024739",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p4.s2:b1152f75024a",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p4.s3:ca17b50cb1d5",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p5.s1:abd15a1498ee",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p5.s2:e4815a559560",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p5.s3:1742deda9771",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p6.s1:ed7ddefac9b8",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p6.s2:e83627914414",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p6.s3:642c6be44d81",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p7.s1:98bd3fbfb4f0",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p7.s2:e1773e3e3c6e",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p7.s3:b3f89bc84923",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p8.s1:735f8d0b318e",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p8.s2:677dbb7f60ec",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p8.s3:5e0c65c4033c",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p9.s1:941c01bf3488",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p9.s2:ea47b6c97a39",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p9.s3:f5b6cc296016",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p10.s1:430c63c40f9b",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p10.s2:ab74dfc55ae1",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p10.s3:f42abe70f6aa",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p11.s1:14195d6fdc5b",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p11.s2:dcdc6a9fad15",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p11.s3:624975ea90ca",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p12.s1:fe68cee9be11",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p12.s2:42052a18a4e8",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p13.s1:811c798ac2e1",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p13.s2:fb7100e007ad",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p13.s3:7d64ebec0924",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p14.s1:375db1863eef",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p14.s2:95a8ae1fabeb",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p14.s3:b4775c840502",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p15.s1:521824635bb1",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p15.s2:77512f277871",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p15.s3:2feda5236bff",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p16.s1:d2cf76c0adf9",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p16.s2:38a697b91c64",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p17.s1:fcbd9805dddf",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p17.s2:3913cf4ce724",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p18.s1:e703e32cf0c8",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p18.s2:991c30420557"
+ ],
+ "D20-unopened": [
+  "a-deeper-reading-with-the-record-d7-at-h-15.p19.s1:b360e7902926",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p20.s1:97fd8abac502"
+ ],
+ "D20-confidence": [
+  "a-deeper-reading-with-the-record-d7-at-h-15.p21.s1:51096638a562",
+  "a-deeper-reading-with-the-record-d7-at-h-15.p21.s2:f1c5bb37252e"
+ ],
+ "L21-place": [
+  "line-21-mistar-row-alt-alt.p1.s1:63b2959cb803",
+  "line-21-mistar-row-alt-alt.p1.s2:81841da855d4",
+  "line-21-mistar-row-alt-alt.p1.s3:acfc6f4bd9a2"
+ ],
+ "L21-states": [
+  "line-21-mistar-row-alt-alt.p2.s1:0ad03ec8f47a",
+  "line-21-mistar-row-alt-alt.p2.s2:2c02b3ab8b09",
+  "line-21-mistar-row-alt-alt.p2.s3:51c86f555e97",
+  "line-21-mistar-row-alt-alt.p3.s1:38c6dc9de9fa",
+  "line-21-mistar-row-alt-alt.p3.s2:b22b0a66a04d",
+  "line-21-mistar-row-alt-alt.p4.s1:8eb305024739",
+  "line-21-mistar-row-alt-alt.p4.s2:5b6738a5884b",
+  "line-21-mistar-row-alt-alt.p5.s1:abd15a1498ee",
+  "line-21-mistar-row-alt-alt.p5.s2:01cc47341d38",
+  "line-21-mistar-row-alt-alt.p6.s1:ed7ddefac9b8",
+  "line-21-mistar-row-alt-alt.p6.s2:fe9e1f3272c1",
+  "line-21-mistar-row-alt-alt.p7.s1:98bd3fbfb4f0",
+  "line-21-mistar-row-alt-alt.p7.s2:2e17e6d071b1",
+  "line-21-mistar-row-alt-alt.p8.s1:735f8d0b318e",
+  "line-21-mistar-row-alt-alt.p8.s2:a001ef58c947",
+  "line-21-mistar-row-alt-alt.p9.s1:941c01bf3488",
+  "line-21-mistar-row-alt-alt.p9.s2:c5d70c244e59",
+  "line-21-mistar-row-alt-alt.p10.s1:430c63c40f9b",
+  "line-21-mistar-row-alt-alt.p10.s2:b133a43ebb14",
+  "line-21-mistar-row-alt-alt.p11.s1:14195d6fdc5b",
+  "line-21-mistar-row-alt-alt.p11.s2:a2c13bebee57",
+  "line-21-mistar-row-alt-alt.p12.s1:fe68cee9be11",
+  "line-21-mistar-row-alt-alt.p12.s2:5d79035baaf2",
+  "line-21-mistar-row-alt-alt.p13.s1:811c798ac2e1",
+  "line-21-mistar-row-alt-alt.p13.s2:f6c6abdbcd26",
+  "line-21-mistar-row-alt-alt.p14.s1:375db1863eef",
+  "line-21-mistar-row-alt-alt.p14.s2:9827d32a3917",
+  "line-21-mistar-row-alt-alt.p15.s1:521824635bb1",
+  "line-21-mistar-row-alt-alt.p15.s2:185fd9f468d0",
+  "line-21-mistar-row-alt-alt.p16.s1:d2cf76c0adf9",
+  "line-21-mistar-row-alt-alt.p16.s2:f4aa3504e741",
+  "line-21-mistar-row-alt-alt.p17.s1:413ce2f88ac5",
+  "line-21-mistar-row-alt-alt.p18.s1:2b54f72f38b7",
+  "line-21-mistar-row-alt-alt.p18.s2:b9d15e1ffd52",
+  "line-21-mistar-row-alt-alt.p19.s1:e7e5ce75feaa",
+  "line-21-mistar-row-alt-alt.p19.s2:7041717d569f",
+  "line-21-mistar-row-alt-alt.p20.s1:e703e32cf0c8",
+  "line-21-mistar-row-alt-alt.p20.s2:b0c1f5f2e6b8"
+ ],
+ "L21-unopened": [
+  "line-21-mistar-row-alt-alt.p21.s1:e2ae908571da"
+ ],
+ "L21-guess": [
+  "line-21-mistar-row-alt-alt.p22.s1:76176b0c5586",
+  "line-21-mistar-row-alt-alt.p22.s2:bc2b55892ba0"
+ ],
+ "L21-confidence": [
+  "line-21-mistar-row-alt-alt.p23.s1:f84e1f16a6d1",
+  "line-21-mistar-row-alt-alt.p23.s2:c84c60a2de32"
+ ],
+ "L21-check": [
+  "line-21-mistar-row-alt-alt.p24.s1:04a1e1071e1d"
+ ],
+ "D21-how": [
+  "a-deeper-reading-with-the-record-d7-at-h-16.p1.s1:6fd5ce614464",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p1.s2:fa8d9da59671",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p1.s3:57a55b9cc4e6",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p1.s4:c00e45b9c443",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p1.s5:e09bcb56c868"
+ ],
+ "D21-states": [
+  "a-deeper-reading-with-the-record-d7-at-h-16.p2.s1:ebe1bf00ec58",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p2.s2:a5c3852fbb1d",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p2.s3:ac09f19b1007",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p2.s4:3322b5968c4f",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p2.s5:4f78ed46435e",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p3.s1:38c6dc9de9fa",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p3.s2:91c1a7b30c12",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p4.s1:8eb305024739",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p4.s2:20ffacd7ba49",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p5.s1:abd15a1498ee",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p5.s2:cab53f8dc9ed",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p6.s1:ed7ddefac9b8",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p6.s2:c65ebbd023a6",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p7.s1:98bd3fbfb4f0",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p7.s2:ea2f0c7bd580",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p8.s1:735f8d0b318e",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p8.s2:f9be798d1b23",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p9.s1:941c01bf3488",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p9.s2:97b91812e35e",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p10.s1:430c63c40f9b",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p10.s2:b661ffc510e0",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p11.s1:14195d6fdc5b",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p11.s2:884097149e3d",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p12.s1:fe68cee9be11",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p12.s2:41a37d87b4d8",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p13.s1:811c798ac2e1",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p13.s2:b936aee8e426",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p14.s1:375db1863eef",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p14.s2:474342aca046",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p15.s1:521824635bb1",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p15.s2:65b2cf0a1038",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p16.s1:d2cf76c0adf9",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p16.s2:676a39fe3ef4",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p17.s1:fcbd9805dddf",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p17.s2:931637180f73",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p18.s1:2b54f72f38b7",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p18.s2:0b1b60be538c",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p19.s1:e703e32cf0c8",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p19.s2:38df2ad2e2af"
+ ],
+ "D21-unopened": [
+  "a-deeper-reading-with-the-record-d7-at-h-16.p20.s1:26630230f8b4",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p21.s1:dadca6911864"
+ ],
+ "D21-confidence": [
+  "a-deeper-reading-with-the-record-d7-at-h-16.p22.s1:51096638a562",
+  "a-deeper-reading-with-the-record-d7-at-h-16.p22.s2:7a0a9870f7e5"
+ ],
+ "L22-place": [
+  "line-22-mistar2-of-alltrue-alt-alt.p1.s1:7e2f836f9022",
+  "line-22-mistar2-of-alltrue-alt-alt.p1.s2:090cbc717492",
+  "line-22-mistar2-of-alltrue-alt-alt.p1.s3:6034adb4661d"
+ ],
+ "L22-states": [
+  "line-22-mistar2-of-alltrue-alt-alt.p2.s1:7f3b3444f533",
+  "line-22-mistar2-of-alltrue-alt-alt.p2.s2:9276b64aef84",
+  "line-22-mistar2-of-alltrue-alt-alt.p3.s1:38c6dc9de9fa",
+  "line-22-mistar2-of-alltrue-alt-alt.p3.s2:b22b0a66a04d",
+  "line-22-mistar2-of-alltrue-alt-alt.p4.s1:8eb305024739",
+  "line-22-mistar2-of-alltrue-alt-alt.p4.s2:5b6738a5884b",
+  "line-22-mistar2-of-alltrue-alt-alt.p5.s1:abd15a1498ee",
+  "line-22-mistar2-of-alltrue-alt-alt.p5.s2:01cc47341d38",
+  "line-22-mistar2-of-alltrue-alt-alt.p6.s1:ed7ddefac9b8",
+  "line-22-mistar2-of-alltrue-alt-alt.p6.s2:fe9e1f3272c1",
+  "line-22-mistar2-of-alltrue-alt-alt.p7.s1:98bd3fbfb4f0",
+  "line-22-mistar2-of-alltrue-alt-alt.p7.s2:2e17e6d071b1",
+  "line-22-mistar2-of-alltrue-alt-alt.p8.s1:735f8d0b318e",
+  "line-22-mistar2-of-alltrue-alt-alt.p8.s2:a001ef58c947",
+  "line-22-mistar2-of-alltrue-alt-alt.p9.s1:941c01bf3488",
+  "line-22-mistar2-of-alltrue-alt-alt.p9.s2:c5d70c244e59",
+  "line-22-mistar2-of-alltrue-alt-alt.p10.s1:430c63c40f9b",
+  "line-22-mistar2-of-alltrue-alt-alt.p10.s2:b133a43ebb14",
+  "line-22-mistar2-of-alltrue-alt-alt.p11.s1:14195d6fdc5b",
+  "line-22-mistar2-of-alltrue-alt-alt.p11.s2:a2c13bebee57",
+  "line-22-mistar2-of-alltrue-alt-alt.p12.s1:fe68cee9be11",
+  "line-22-mistar2-of-alltrue-alt-alt.p12.s2:5d79035baaf2",
+  "line-22-mistar2-of-alltrue-alt-alt.p13.s1:811c798ac2e1",
+  "line-22-mistar2-of-alltrue-alt-alt.p13.s2:f6c6abdbcd26",
+  "line-22-mistar2-of-alltrue-alt-alt.p14.s1:375db1863eef",
+  "line-22-mistar2-of-alltrue-alt-alt.p14.s2:9827d32a3917",
+  "line-22-mistar2-of-alltrue-alt-alt.p15.s1:521824635bb1",
+  "line-22-mistar2-of-alltrue-alt-alt.p15.s2:185fd9f468d0",
+  "line-22-mistar2-of-alltrue-alt-alt.p16.s1:d2cf76c0adf9",
+  "line-22-mistar2-of-alltrue-alt-alt.p16.s2:ecb86365271e",
+  "line-22-mistar2-of-alltrue-alt-alt.p17.s1:fcbd9805dddf",
+  "line-22-mistar2-of-alltrue-alt-alt.p17.s2:6ee4c8d2aa6d",
+  "line-22-mistar2-of-alltrue-alt-alt.p18.s1:2b54f72f38b7",
+  "line-22-mistar2-of-alltrue-alt-alt.p18.s2:36b802afa642",
+  "line-22-mistar2-of-alltrue-alt-alt.p19.s1:e7e5ce75feaa",
+  "line-22-mistar2-of-alltrue-alt-alt.p19.s2:e1c6c4fbdedf",
+  "line-22-mistar2-of-alltrue-alt-alt.p20.s1:e703e32cf0c8",
+  "line-22-mistar2-of-alltrue-alt-alt.p20.s2:b8464331f39a"
+ ],
+ "L22-unopened": [
+  "line-22-mistar2-of-alltrue-alt-alt.p21.s1:539955baa527"
+ ],
+ "L22-guess": [
+  "line-22-mistar2-of-alltrue-alt-alt.p22.s1:76176b0c5586",
+  "line-22-mistar2-of-alltrue-alt-alt.p22.s2:4adacbadeeed"
+ ],
+ "L22-confidence": [
+  "line-22-mistar2-of-alltrue-alt-alt.p23.s1:51096638a562",
+  "line-22-mistar2-of-alltrue-alt-alt.p23.s2:f24800241628"
+ ],
+ "L22-check": [
+  "line-22-mistar2-of-alltrue-alt-alt.p24.s1:04a1e1071e1d",
+  "line-22-mistar2-of-alltrue-alt-alt.p25.s1:68c7adfadb9c",
+  "line-22-mistar2-of-alltrue-alt-alt.p25.s2:17118e778fea",
+  "line-22-mistar2-of-alltrue-alt-alt.p25.s3:94b18278ab76"
+ ],
+ "D22-how": [
+  "a-deeper-reading-with-the-record-d7-at-h-17.p1.s1:6fd5ce614464",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p1.s2:892d2c148f54",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p1.s3:57a55b9cc4e6",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p1.s4:2378e10deea5",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p1.s5:9a47ca6870cf"
+ ],
+ "D22-states": [
+  "a-deeper-reading-with-the-record-d7-at-h-17.p2.s1:e60e657c5b43",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p2.s2:43e420e5e47d",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p2.s3:7dea32555b58",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p2.s4:970ad2a938f8",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p2.s5:eea7308bd7d8",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p3.s1:38c6dc9de9fa",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p3.s2:cd4a6d93e81e",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p4.s1:8eb305024739",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p4.s2:d3bdbae21258",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p5.s1:abd15a1498ee",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p5.s2:ce9c834565af",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p6.s1:ed7ddefac9b8",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p6.s2:e2c21a9b0f30",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p7.s1:98bd3fbfb4f0",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p7.s2:df9d14734e37",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p8.s1:735f8d0b318e",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p8.s2:7e5d98ffb1f4",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p9.s1:941c01bf3488",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p9.s2:894202bfca38",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p10.s1:430c63c40f9b",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p10.s2:2f1a35e72721",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p10.s3:0c71aca7d3c3",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p10.s4:960bde0c9c0f",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p11.s1:14195d6fdc5b",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p11.s2:a03e03019ce0",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p12.s1:fe68cee9be11",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p12.s2:0536539008f1",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p13.s1:811c798ac2e1",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p13.s2:0cb5f320dd2d",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p14.s1:375db1863eef",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p14.s2:58603f3d7c6e",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p15.s1:521824635bb1",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p15.s2:eb4cbee19f39",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p16.s1:d2cf76c0adf9",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p16.s2:b11f515a7729",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p17.s1:fcbd9805dddf",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p17.s2:1f1ddf3eb51e",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p18.s1:2b54f72f38b7",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p18.s2:fc160a2f0873",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p19.s1:e703e32cf0c8",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p19.s2:0da12a388f9b"
+ ],
+ "D22-unopened": [
+  "a-deeper-reading-with-the-record-d7-at-h-17.p20.s1:78b239ce0051",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p21.s1:6e9ef15dfd97"
+ ],
+ "D22-confidence": [
+  "a-deeper-reading-with-the-record-d7-at-h-17.p22.s1:51096638a562",
+  "a-deeper-reading-with-the-record-d7-at-h-17.p22.s2:f35041352409"
+ ],
+ "L23-place": [
+  "line-23-zero-free-all-of-green-v-win.p1.s1:8eb01e11e29d",
+  "line-23-zero-free-all-of-green-v-win.p1.s2:8e7f0119483f",
+  "line-23-zero-free-all-of-green-v-win.p1.s3:f28fadf22144"
+ ],
+ "L23-states": [
+  "line-23-zero-free-all-of-green-v-win.p2.s1:c0720a78cd1c",
+  "line-23-zero-free-all-of-green-v-win.p2.s2:a4634eea5294",
+  "line-23-zero-free-all-of-green-v-win.p3.s1:38c6dc9de9fa",
+  "line-23-zero-free-all-of-green-v-win.p3.s2:653d5af0c09d",
+  "line-23-zero-free-all-of-green-v-win.p4.s1:8eb305024739",
+  "line-23-zero-free-all-of-green-v-win.p4.s2:4749a5a5b784",
+  "line-23-zero-free-all-of-green-v-win.p5.s1:abd15a1498ee",
+  "line-23-zero-free-all-of-green-v-win.p5.s2:ff992bae9ebf",
+  "line-23-zero-free-all-of-green-v-win.p6.s1:e703e32cf0c8",
+  "line-23-zero-free-all-of-green-v-win.p6.s2:4cb1d950a106"
+ ],
+ "L23-unopened": [
+  "line-23-zero-free-all-of-green-v-win.p7.s1:68a8e26dae98"
+ ],
+ "L23-guess": [
+  "line-23-zero-free-all-of-green-v-win.p8.s1:76176b0c5586",
+  "line-23-zero-free-all-of-green-v-win.p8.s2:b3bc920bc0ab"
+ ],
+ "L23-confidence": [
+  "line-23-zero-free-all-of-green-v-win.p9.s1:51096638a562",
+  "line-23-zero-free-all-of-green-v-win.p9.s2:ac5cbc9c93d6"
+ ],
+ "L23-check": [
+  "line-23-zero-free-all-of-green-v-win.p10.s1:583c656b57df",
+  "line-23-zero-free-all-of-green-v-win.p10.s2:4269f6429fbc",
+  "line-23-zero-free-all-of-green-v-win.p11.s1:d694c95ee828",
+  "line-23-zero-free-all-of-green-v-win.p12.s1:99d2b2678460"
+ ],
+ "L24-place": [
+  "line-24-topcovolslim2-use-alt-alt.p1.s1:926a64a2fc59",
+  "line-24-topcovolslim2-use-alt-alt.p1.s2:945f3d314c52"
+ ],
+ "L24-states": [
+  "line-24-topcovolslim2-use-alt-alt.p2.s1:424ea51da033",
+  "line-24-topcovolslim2-use-alt-alt.p2.s2:29f2e0e446a5",
+  "line-24-topcovolslim2-use-alt-alt.p2.s3:289bd71eb9aa",
+  "line-24-topcovolslim2-use-alt-alt.p3.s1:38c6dc9de9fa",
+  "line-24-topcovolslim2-use-alt-alt.p3.s2:a51278a5801e",
+  "line-24-topcovolslim2-use-alt-alt.p4.s1:8eb305024739",
+  "line-24-topcovolslim2-use-alt-alt.p4.s2:eb25137646ae",
+  "line-24-topcovolslim2-use-alt-alt.p5.s1:abd15a1498ee",
+  "line-24-topcovolslim2-use-alt-alt.p5.s2:f05a7e1ef09d",
+  "line-24-topcovolslim2-use-alt-alt.p6.s1:ed7ddefac9b8",
+  "line-24-topcovolslim2-use-alt-alt.p6.s2:05c2a662537a",
+  "line-24-topcovolslim2-use-alt-alt.p7.s1:98bd3fbfb4f0",
+  "line-24-topcovolslim2-use-alt-alt.p7.s2:84dd9891365a",
+  "line-24-topcovolslim2-use-alt-alt.p8.s1:735f8d0b318e",
+  "line-24-topcovolslim2-use-alt-alt.p8.s2:1db594b20ef8",
+  "line-24-topcovolslim2-use-alt-alt.p9.s1:941c01bf3488",
+  "line-24-topcovolslim2-use-alt-alt.p9.s2:8cc19f37e76f",
+  "line-24-topcovolslim2-use-alt-alt.p10.s1:430c63c40f9b",
+  "line-24-topcovolslim2-use-alt-alt.p10.s2:f06e8634098d",
+  "line-24-topcovolslim2-use-alt-alt.p11.s1:14195d6fdc5b",
+  "line-24-topcovolslim2-use-alt-alt.p11.s2:6bccd3c5b56c",
+  "line-24-topcovolslim2-use-alt-alt.p12.s1:fe68cee9be11",
+  "line-24-topcovolslim2-use-alt-alt.p12.s2:3c13d5881fdf",
+  "line-24-topcovolslim2-use-alt-alt.p13.s1:811c798ac2e1",
+  "line-24-topcovolslim2-use-alt-alt.p13.s2:d54fba67cbf8",
+  "line-24-topcovolslim2-use-alt-alt.p14.s1:375db1863eef",
+  "line-24-topcovolslim2-use-alt-alt.p14.s2:d99025cd2c3d",
+  "line-24-topcovolslim2-use-alt-alt.p15.s1:521824635bb1",
+  "line-24-topcovolslim2-use-alt-alt.p15.s2:442ded27eeb3",
+  "line-24-topcovolslim2-use-alt-alt.p16.s1:d2cf76c0adf9",
+  "line-24-topcovolslim2-use-alt-alt.p16.s2:360c71b8ec78",
+  "line-24-topcovolslim2-use-alt-alt.p17.s1:fcbd9805dddf",
+  "line-24-topcovolslim2-use-alt-alt.p17.s2:58153a13d718",
+  "line-24-topcovolslim2-use-alt-alt.p18.s1:e703e32cf0c8",
+  "line-24-topcovolslim2-use-alt-alt.p18.s2:d46355ef6d4f"
+ ],
+ "L24-unopened": [
+  "line-24-topcovolslim2-use-alt-alt.p19.s1:29907564285e"
+ ],
+ "L24-guess": [
+  "line-24-topcovolslim2-use-alt-alt.p20.s1:76176b0c5586",
+  "line-24-topcovolslim2-use-alt-alt.p20.s2:9e49d6fa9caa",
+  "line-24-topcovolslim2-use-alt-alt.p20.s3:0f00c7c7ac72"
+ ],
+ "L24-confidence": [
+  "line-24-topcovolslim2-use-alt-alt.p21.s1:51096638a562",
+  "line-24-topcovolslim2-use-alt-alt.p21.s2:9a1e9d8c5ab9"
+ ],
+ "L24-check": [
+  "line-24-topcovolslim2-use-alt-alt.p22.s1:583c656b57df",
+  "line-24-topcovolslim2-use-alt-alt.p22.s2:4269f6429fbc",
+  "line-24-topcovolslim2-use-alt-alt.p23.s1:6b4c2e36afa5",
+  "line-24-topcovolslim2-use-alt-alt.p24.s1:5ffd610336a7",
+  "line-24-topcovolslim2-use-alt-alt.p25.s1:68c7adfadb9c",
+  "line-24-topcovolslim2-use-alt-alt.p25.s2:ce60688bb6aa",
+  "line-24-topcovolslim2-use-alt-alt.p25.s3:94b18278ab76"
+ ],
+ "L25-place": [
+  "line-25-deep-slim-use.p1.s1:063d9cb165e3",
+  "line-25-deep-slim-use.p1.s2:04653da6ba26"
+ ],
+ "L25-states": [
+  "line-25-deep-slim-use.p2.s1:589535192c54",
+  "line-25-deep-slim-use.p2.s2:6e32bf543395",
+  "line-25-deep-slim-use.p2.s3:b29cd51b742d",
+  "line-25-deep-slim-use.p3.s1:76006880880b",
+  "line-25-deep-slim-use.p4.s1:2db0bfe36d8b",
+  "line-25-deep-slim-use.p4.s2:0a513f5c73dc",
+  "line-25-deep-slim-use.p5.s1:9fb8469bd2a0",
+  "line-25-deep-slim-use.p5.s2:2eb0b7d9a0ff",
+  "line-25-deep-slim-use.p6.s1:d6906e9a2b67",
+  "line-25-deep-slim-use.p7.s1:7d6dd64ed785",
+  "line-25-deep-slim-use.p8.s1:f5f76cba323b",
+  "line-25-deep-slim-use.p8.s2:67a74e3783e8",
+  "line-25-deep-slim-use.p9.s1:1f7392ecb996",
+  "line-25-deep-slim-use.p10.s1:1b4e1731e01a",
+  "line-25-deep-slim-use.p10.s2:cb760ca4f809",
+  "line-25-deep-slim-use.p11.s1:e703e32cf0c8",
+  "line-25-deep-slim-use.p11.s2:cf609db0f541"
+ ],
+ "L25-unopened": [
+  "line-25-deep-slim-use.p12.s1:ed1c96f9693f"
+ ],
+ "L25-guess": [
+  "line-25-deep-slim-use.p13.s1:76176b0c5586",
+  "line-25-deep-slim-use.p13.s2:38841383a768",
+  "line-25-deep-slim-use.p13.s3:0f00c7c7ac72"
+ ],
+ "L25-confidence": [
+  "line-25-deep-slim-use.p14.s1:f84e1f16a6d1",
+  "line-25-deep-slim-use.p14.s2:b24da4797bae"
+ ],
+ "L25-check": [
+  "line-25-deep-slim-use.p15.s1:4decb8b44f0a",
+  "line-25-deep-slim-use.p15.s2:4269f6429fbc",
+  "line-25-deep-slim-use.p16.s1:828df4bb6777",
+  "line-25-deep-slim-use.p17.s1:68c7adfadb9c",
+  "line-25-deep-slim-use.p17.s2:f2b5ba118e71",
+  "line-25-deep-slim-use.p17.s3:94b18278ab76"
+ ],
+ "L26-place": [
+  "line-26-deepstr-of-use.p1.s1:e2f685268f0a",
+  "line-26-deepstr-of-use.p1.s2:186aa7f7c505"
+ ],
+ "L26-states": [
+  "line-26-deepstr-of-use.p2.s1:086566ef9eb3",
+  "line-26-deepstr-of-use.p2.s2:436df083d578",
+  "line-26-deepstr-of-use.p2.s3:f8706eae2ff6",
+  "line-26-deepstr-of-use.p3.s1:38c6dc9de9fa",
+  "line-26-deepstr-of-use.p3.s2:af0ccee0c285",
+  "line-26-deepstr-of-use.p4.s1:8eb305024739",
+  "line-26-deepstr-of-use.p4.s2:c44f12f31865",
+  "line-26-deepstr-of-use.p5.s1:abd15a1498ee",
+  "line-26-deepstr-of-use.p5.s2:ec6f368d45ce",
+  "line-26-deepstr-of-use.p6.s1:ed7ddefac9b8",
+  "line-26-deepstr-of-use.p6.s2:ad94d28cc479",
+  "line-26-deepstr-of-use.p6.s3:ca8617cccd5c",
+  "line-26-deepstr-of-use.p7.s1:98bd3fbfb4f0",
+  "line-26-deepstr-of-use.p7.s2:ddd47b43adbe",
+  "line-26-deepstr-of-use.p8.s1:735f8d0b318e",
+  "line-26-deepstr-of-use.p8.s2:60280c371cac",
+  "line-26-deepstr-of-use.p8.s3:20bd5da506ca",
+  "line-26-deepstr-of-use.p9.s1:941c01bf3488",
+  "line-26-deepstr-of-use.p9.s2:422396c2f1c3",
+  "line-26-deepstr-of-use.p9.s3:74380c03fd01",
+  "line-26-deepstr-of-use.p10.s1:430c63c40f9b",
+  "line-26-deepstr-of-use.p10.s2:65f5c6170175",
+  "line-26-deepstr-of-use.p11.s1:14195d6fdc5b",
+  "line-26-deepstr-of-use.p11.s2:e1fba2e08262",
+  "line-26-deepstr-of-use.p12.s1:fe68cee9be11",
+  "line-26-deepstr-of-use.p12.s2:ed210c80eecb",
+  "line-26-deepstr-of-use.p12.s3:cb760ca4f809",
+  "line-26-deepstr-of-use.p13.s1:e703e32cf0c8",
+  "line-26-deepstr-of-use.p13.s2:cf609db0f541"
+ ],
+ "L26-unopened": [
+  "line-26-deepstr-of-use.p14.s1:89da70d59350"
+ ],
+ "L26-guess": [
+  "line-26-deepstr-of-use.p15.s1:76176b0c5586",
+  "line-26-deepstr-of-use.p15.s2:79e2c4683732"
+ ],
+ "L26-confidence": [
+  "line-26-deepstr-of-use.p16.s1:f84e1f16a6d1",
+  "line-26-deepstr-of-use.p16.s2:bdf98368dc27"
+ ],
+ "L26-check": [
+  "line-26-deepstr-of-use.p17.s1:04a1e1071e1d",
+  "line-26-deepstr-of-use.p18.s1:68c7adfadb9c",
+  "line-26-deepstr-of-use.p18.s2:ce890e44bea9",
+  "line-26-deepstr-of-use.p18.s3:94b18278ab76"
+ ],
+ "L27-place": [
+  "line-27-goodtower-volume-of-reduced.p1.s1:18832b2e50ed",
+  "line-27-goodtower-volume-of-reduced.p1.s2:2ffde1f9abc6",
+  "line-27-goodtower-volume-of-reduced.p1.s3:43cd1f5fea99"
+ ],
+ "L27-states": [
+  "line-27-goodtower-volume-of-reduced.p2.s1:4b37150ef735",
+  "line-27-goodtower-volume-of-reduced.p2.s2:1809fbfa4a60",
+  "line-27-goodtower-volume-of-reduced.p2.s3:4a12b5a8aa65",
+  "line-27-goodtower-volume-of-reduced.p2.s4:eee17820e62a",
+  "line-27-goodtower-volume-of-reduced.p3.s1:38c6dc9de9fa",
+  "line-27-goodtower-volume-of-reduced.p3.s2:4304e42d566b",
+  "line-27-goodtower-volume-of-reduced.p4.s1:8eb305024739",
+  "line-27-goodtower-volume-of-reduced.p4.s2:6301937bb8b6",
+  "line-27-goodtower-volume-of-reduced.p5.s1:abd15a1498ee",
+  "line-27-goodtower-volume-of-reduced.p5.s2:bf92b2c1af5f",
+  "line-27-goodtower-volume-of-reduced.p6.s1:ed7ddefac9b8",
+  "line-27-goodtower-volume-of-reduced.p6.s2:011a5cd91696",
+  "line-27-goodtower-volume-of-reduced.p7.s1:98bd3fbfb4f0",
+  "line-27-goodtower-volume-of-reduced.p7.s2:89d22303cb2a",
+  "line-27-goodtower-volume-of-reduced.p8.s1:735f8d0b318e",
+  "line-27-goodtower-volume-of-reduced.p8.s2:5e74d953f517",
+  "line-27-goodtower-volume-of-reduced.p9.s1:941c01bf3488",
+  "line-27-goodtower-volume-of-reduced.p9.s2:0765d27b559f",
+  "line-27-goodtower-volume-of-reduced.p10.s1:430c63c40f9b",
+  "line-27-goodtower-volume-of-reduced.p10.s2:93f30a3ed74b",
+  "line-27-goodtower-volume-of-reduced.p11.s1:14195d6fdc5b",
+  "line-27-goodtower-volume-of-reduced.p11.s2:29ef5a25d29d",
+  "line-27-goodtower-volume-of-reduced.p12.s1:fe68cee9be11",
+  "line-27-goodtower-volume-of-reduced.p12.s2:d258b22f9235",
+  "line-27-goodtower-volume-of-reduced.p13.s1:811c798ac2e1",
+  "line-27-goodtower-volume-of-reduced.p13.s2:c96b37c1bc8c",
+  "line-27-goodtower-volume-of-reduced.p14.s1:375db1863eef",
+  "line-27-goodtower-volume-of-reduced.p14.s2:64558aabbda7",
+  "line-27-goodtower-volume-of-reduced.p15.s1:521824635bb1",
+  "line-27-goodtower-volume-of-reduced.p15.s2:0229ffbb72d4",
+  "line-27-goodtower-volume-of-reduced.p16.s1:d2cf76c0adf9",
+  "line-27-goodtower-volume-of-reduced.p16.s2:0ec85bd054af",
+  "line-27-goodtower-volume-of-reduced.p17.s1:fcbd9805dddf",
+  "line-27-goodtower-volume-of-reduced.p17.s2:2ccdbc5d58ca",
+  "line-27-goodtower-volume-of-reduced.p18.s1:2b54f72f38b7",
+  "line-27-goodtower-volume-of-reduced.p18.s2:00039750c360",
+  "line-27-goodtower-volume-of-reduced.p19.s1:e7e5ce75feaa",
+  "line-27-goodtower-volume-of-reduced.p19.s2:dee09c9ee48a",
+  "line-27-goodtower-volume-of-reduced.p20.s1:e703e32cf0c8",
+  "line-27-goodtower-volume-of-reduced.p20.s2:e5028a775394"
+ ],
+ "L27-unopened": [
+  "line-27-goodtower-volume-of-reduced.p21.s1:251164b0c2ba"
+ ],
+ "L27-guess": [
+  "line-27-goodtower-volume-of-reduced.p22.s1:76176b0c5586",
+  "line-27-goodtower-volume-of-reduced.p22.s2:9467efb1e848"
+ ],
+ "L27-confidence": [
+  "line-27-goodtower-volume-of-reduced.p23.s1:f84e1f16a6d1",
+  "line-27-goodtower-volume-of-reduced.p23.s2:1a90fcf8cf2e"
+ ],
+ "L27-check": [
+  "line-27-goodtower-volume-of-reduced.p24.s1:04a1e1071e1d"
+ ],
+ "L28-place": [
+  "line-28-good-tower-volume-theorem.p1.s1:77e24271c0e1",
+  "line-28-good-tower-volume-theorem.p1.s2:66c7d83560c4"
+ ],
+ "L28-states": [
+  "line-28-good-tower-volume-theorem.p2.s1:4b37150ef735",
+  "line-28-good-tower-volume-theorem.p2.s2:987917ec4f04",
+  "line-28-good-tower-volume-theorem.p2.s3:ae4c6f4b2660",
+  "line-28-good-tower-volume-theorem.p3.s1:38c6dc9de9fa",
+  "line-28-good-tower-volume-theorem.p3.s2:88fee6373d75",
+  "line-28-good-tower-volume-theorem.p4.s1:8eb305024739",
+  "line-28-good-tower-volume-theorem.p4.s2:0229ffbb72d4",
+  "line-28-good-tower-volume-theorem.p5.s1:abd15a1498ee",
+  "line-28-good-tower-volume-theorem.p5.s2:0ec85bd054af",
+  "line-28-good-tower-volume-theorem.p6.s1:ed7ddefac9b8",
+  "line-28-good-tower-volume-theorem.p6.s2:747f280088ae",
+  "line-28-good-tower-volume-theorem.p7.s1:98bd3fbfb4f0",
+  "line-28-good-tower-volume-theorem.p7.s2:291c70dbba26",
+  "line-28-good-tower-volume-theorem.p8.s1:735f8d0b318e",
+  "line-28-good-tower-volume-theorem.p8.s2:ab3269ac8302",
+  "line-28-good-tower-volume-theorem.p9.s1:e703e32cf0c8",
+  "line-28-good-tower-volume-theorem.p9.s2:e5028a775394"
+ ],
+ "L28-unopened": [
+  "line-28-good-tower-volume-theorem.p10.s1:88148c74cfa2"
+ ],
+ "L28-guess": [
+  "line-28-good-tower-volume-theorem.p11.s1:76176b0c5586",
+  "line-28-good-tower-volume-theorem.p11.s2:e3c7b080bd46"
+ ],
+ "L28-confidence": [
+  "line-28-good-tower-volume-theorem.p12.s1:f84e1f16a6d1",
+  "line-28-good-tower-volume-theorem.p12.s2:cc46375d7a19"
+ ],
+ "L28-check": [
+  "line-28-good-tower-volume-theorem.p13.s1:04a1e1071e1d"
+ ],
+ "L29-place": [
+  "line-29-topcovolg-alt-alt.p1.s1:d3470fc61451",
+  "line-29-topcovolg-alt-alt.p1.s2:a6af93609abd"
+ ],
+ "L29-states": [
+  "line-29-topcovolg-alt-alt.p2.s1:4b37150ef735",
+  "line-29-topcovolg-alt-alt.p2.s2:ac8b22afcafc",
+  "line-29-topcovolg-alt-alt.p2.s3:c43a29e69b55",
+  "line-29-topcovolg-alt-alt.p3.s1:38c6dc9de9fa",
+  "line-29-topcovolg-alt-alt.p3.s2:5942bb567345",
+  "line-29-topcovolg-alt-alt.p4.s1:8eb305024739",
+  "line-29-topcovolg-alt-alt.p4.s2:1e0ddc279328",
+  "line-29-topcovolg-alt-alt.p5.s1:abd15a1498ee",
+  "line-29-topcovolg-alt-alt.p5.s2:ed086cdfbe4c",
+  "line-29-topcovolg-alt-alt.p6.s1:ed7ddefac9b8",
+  "line-29-topcovolg-alt-alt.p6.s2:098ca9d222d1",
+  "line-29-topcovolg-alt-alt.p7.s1:98bd3fbfb4f0",
+  "line-29-topcovolg-alt-alt.p7.s2:64f661f6770c",
+  "line-29-topcovolg-alt-alt.p8.s1:735f8d0b318e",
+  "line-29-topcovolg-alt-alt.p8.s2:0ff32af8261c",
+  "line-29-topcovolg-alt-alt.p9.s1:941c01bf3488",
+  "line-29-topcovolg-alt-alt.p9.s2:07b1d0af65e5",
+  "line-29-topcovolg-alt-alt.p10.s1:e703e32cf0c8",
+  "line-29-topcovolg-alt-alt.p10.s2:0341b2e67331"
+ ],
+ "L29-unopened": [
+  "line-29-topcovolg-alt-alt.p11.s1:d67545bc01df"
+ ],
+ "L29-guess": [
+  "line-29-topcovolg-alt-alt.p12.s1:76176b0c5586",
+  "line-29-topcovolg-alt-alt.p12.s2:8c53552b580f"
+ ],
+ "L29-confidence": [
+  "line-29-topcovolg-alt-alt.p13.s1:51096638a562",
+  "line-29-topcovolg-alt-alt.p13.s2:b04ba62482f0"
+ ],
+ "L29-check": [
+  "line-29-topcovolg-alt-alt.p14.s1:04a1e1071e1d"
+ ],
+ "L30-place": [
+  "line-30-automorphic-window-of-inputs.p1.s1:e3578b5d9bc0",
+  "line-30-automorphic-window-of-inputs.p1.s2:091a31fc499b",
+  "line-30-automorphic-window-of-inputs.p1.s3:f5034a6f2629"
+ ],
+ "L30-states": [
+  "line-30-automorphic-window-of-inputs.p2.s1:481d88aaf138",
+  "line-30-automorphic-window-of-inputs.p2.s2:44d2ea8e2912",
+  "line-30-automorphic-window-of-inputs.p2.s3:0d8dd787e3c4",
+  "line-30-automorphic-window-of-inputs.p3.s1:38c6dc9de9fa",
+  "line-30-automorphic-window-of-inputs.p3.s2:9c7b2ae32fd9",
+  "line-30-automorphic-window-of-inputs.p4.s1:8eb305024739",
+  "line-30-automorphic-window-of-inputs.p4.s2:c50b3606a50f",
+  "line-30-automorphic-window-of-inputs.p5.s1:abd15a1498ee",
+  "line-30-automorphic-window-of-inputs.p5.s2:5fa494b4c2b9",
+  "line-30-automorphic-window-of-inputs.p6.s1:e703e32cf0c8",
+  "line-30-automorphic-window-of-inputs.p6.s2:026f36976598"
+ ],
+ "L30-unopened": [
+  "line-30-automorphic-window-of-inputs.p7.s1:e23ddd3325e6"
+ ],
+ "L30-guess": [
+  "line-30-automorphic-window-of-inputs.p8.s1:76176b0c5586",
+  "line-30-automorphic-window-of-inputs.p8.s2:df2c106fbca6"
+ ],
+ "L30-confidence": [
+  "line-30-automorphic-window-of-inputs.p9.s1:f84e1f16a6d1",
+  "line-30-automorphic-window-of-inputs.p9.s2:3afd4a1c0257"
+ ],
+ "L30-check": [
+  "line-30-automorphic-window-of-inputs.p10.s1:04a1e1071e1d",
+  "line-30-automorphic-window-of-inputs.p11.s1:68c7adfadb9c",
+  "line-30-automorphic-window-of-inputs.p11.s2:17118e778fea",
+  "line-30-automorphic-window-of-inputs.p11.s3:94b18278ab76"
+ ],
+ "L31-place": [
+  "line-31-v-window-of-automorphy-csd-ss-mo.p1.s1:5f7d5a6d4b01",
+  "line-31-v-window-of-automorphy-csd-ss-mo.p1.s2:f4545e1600cb",
+  "line-31-v-window-of-automorphy-csd-ss-mo.p1.s3:9965689f5d70"
+ ],
+ "L31-states": [
+  "line-31-v-window-of-automorphy-csd-ss-mo.p2.s1:4390e5237569",
+  "line-31-v-window-of-automorphy-csd-ss-mo.p2.s2:96505cf638ae",
+  "line-31-v-window-of-automorphy-csd-ss-mo.p2.s3:9ae5915429ed",
+  "line-31-v-window-of-automorphy-csd-ss-mo.p3.s1:38c6dc9de9fa",
+  "line-31-v-window-of-automorphy-csd-ss-mo.p3.s2:f657e4903769",
+  "line-31-v-window-of-automorphy-csd-ss-mo.p4.s1:e703e32cf0c8",
+  "line-31-v-window-of-automorphy-csd-ss-mo.p4.s2:026f36976598"
+ ],
+ "L31-unopened": [
+  "line-31-v-window-of-automorphy-csd-ss-mo.p5.s1:bb89aecf3d91"
+ ],
+ "L31-guess": [
+  "line-31-v-window-of-automorphy-csd-ss-mo.p6.s1:76176b0c5586",
+  "line-31-v-window-of-automorphy-csd-ss-mo.p6.s2:5afaf31a4cbe",
+  "line-31-v-window-of-automorphy-csd-ss-mo.p6.s3:d4892e200524"
+ ],
+ "L31-confidence": [
+  "line-31-v-window-of-automorphy-csd-ss-mo.p7.s1:51096638a562",
+  "line-31-v-window-of-automorphy-csd-ss-mo.p7.s2:875057a62a30"
+ ],
+ "L31-check": [
+  "line-31-v-window-of-automorphy-csd-ss-mo.p8.s1:04a1e1071e1d"
+ ],
+ "L32-place": [
+  "line-32-vwin-of-hypotheses-h-e-alt.p1.s1:c7ff2017d0a6",
+  "line-32-vwin-of-hypotheses-h-e-alt.p1.s2:55b20d0f7e13"
+ ],
+ "L32-states": [
+  "line-32-vwin-of-hypotheses-h-e-alt.p2.s1:ff49d3ee88d0",
+  "line-32-vwin-of-hypotheses-h-e-alt.p2.s2:bc95032acb89",
+  "line-32-vwin-of-hypotheses-h-e-alt.p2.s3:e38b13ab4635",
+  "line-32-vwin-of-hypotheses-h-e-alt.p3.s1:38c6dc9de9fa",
+  "line-32-vwin-of-hypotheses-h-e-alt.p3.s2:dcb11ce2e179",
+  "line-32-vwin-of-hypotheses-h-e-alt.p4.s1:e703e32cf0c8",
+  "line-32-vwin-of-hypotheses-h-e-alt.p4.s2:026f36976598"
+ ],
+ "L32-unopened": [
+  "line-32-vwin-of-hypotheses-h-e-alt.p5.s1:c4f84625cf8e"
+ ],
+ "L32-guess": [
+  "line-32-vwin-of-hypotheses-h-e-alt.p6.s1:76176b0c5586",
+  "line-32-vwin-of-hypotheses-h-e-alt.p6.s2:2d84ffc231a6"
+ ],
+ "L32-confidence": [
+  "line-32-vwin-of-hypotheses-h-e-alt.p7.s1:51096638a562",
+  "line-32-vwin-of-hypotheses-h-e-alt.p7.s2:33c91759f305"
+ ],
+ "L32-check": [
+  "line-32-vwin-of-hypotheses-h-e-alt.p8.s1:04a1e1071e1d"
+ ],
+ "L33-place": [
+  "line-33-galoislocalglobalstrong-recparam.p1.s1:ae560e3e09a7",
+  "line-33-galoislocalglobalstrong-recparam.p1.s2:99e3818811c8"
+ ],
+ "L33-states": [
+  "line-33-galoislocalglobalstrong-recparam.p2.s1:62f936a3239a",
+  "line-33-galoislocalglobalstrong-recparam.p2.s2:744429c116c6",
+  "line-33-galoislocalglobalstrong-recparam.p2.s3:137ab7168225",
+  "line-33-galoislocalglobalstrong-recparam.p3.s1:e703e32cf0c8",
+  "line-33-galoislocalglobalstrong-recparam.p3.s2:a7403520187b"
+ ],
+ "L33-unopened": [
+  "line-33-galoislocalglobalstrong-recparam.p4.s1:0f45343e3658"
+ ],
+ "L33-guess": [
+  "line-33-galoislocalglobalstrong-recparam.p5.s1:76176b0c5586",
+  "line-33-galoislocalglobalstrong-recparam.p5.s2:b5c75ad6dd98"
+ ],
+ "L33-confidence": [
+  "line-33-galoislocalglobalstrong-recparam.p6.s1:f84e1f16a6d1",
+  "line-33-galoislocalglobalstrong-recparam.p6.s2:fe44e24cb470"
+ ],
+ "L33-check": [
+  "line-33-galoislocalglobalstrong-recparam.p7.s1:04a1e1071e1d"
+ ],
+ "L34-place": [
+  "line-34-galoisrepresentations-of-thetali.p1.s1:ab2716ecc2ce",
+  "line-34-galoisrepresentations-of-thetali.p1.s2:a42455294e97"
+ ],
+ "L34-states": [
+  "line-34-galoisrepresentations-of-thetali.p2.s1:91d5cfbf6e25",
+  "line-34-galoisrepresentations-of-thetali.p2.s2:a4d2848afa26",
+  "line-34-galoisrepresentations-of-thetali.p2.s3:f90a53f317b6",
+  "line-34-galoisrepresentations-of-thetali.p3.s1:38c6dc9de9fa",
+  "line-34-galoisrepresentations-of-thetali.p3.s2:6aa6fe1e5afd",
+  "line-34-galoisrepresentations-of-thetali.p4.s1:e703e32cf0c8",
+  "line-34-galoisrepresentations-of-thetali.p4.s2:a7403520187b"
+ ],
+ "L34-unopened": [
+  "line-34-galoisrepresentations-of-thetali.p5.s1:3f5a7f49f870"
+ ],
+ "L34-guess": [
+  "line-34-galoisrepresentations-of-thetali.p6.s1:76176b0c5586",
+  "line-34-galoisrepresentations-of-thetali.p6.s2:60d96baeddb3"
+ ],
+ "L34-confidence": [
+  "line-34-galoisrepresentations-of-thetali.p7.s1:f84e1f16a6d1",
+  "line-34-galoisrepresentations-of-thetali.p7.s2:eecc7f6601d1"
+ ],
+ "L34-check": [
+  "line-34-galoisrepresentations-of-thetali.p8.s1:04a1e1071e1d"
+ ],
+ "L35-place": [
+  "line-35-geoone-holds.p1.s1:6360dcaf0a07",
+  "line-35-geoone-holds.p1.s2:e4dac776f264"
+ ],
+ "L35-states": [
+  "line-35-geoone-holds.p2.s1:8a4dc9b78fc4",
+  "line-35-geoone-holds.p2.s2:fb521e6d3905",
+  "line-35-geoone-holds.p2.s3:1fb794fc96d6",
+  "line-35-geoone-holds.p3.s1:e703e32cf0c8",
+  "line-35-geoone-holds.p3.s2:5d6f0bf2cd99"
+ ],
+ "L35-unopened": [
+  "line-35-geoone-holds.p4.s1:65dca915b919"
+ ],
+ "L35-guess": [
+  "line-35-geoone-holds.p5.s1:76176b0c5586",
+  "line-35-geoone-holds.p5.s2:502daa6568fd"
+ ],
+ "L35-confidence": [
+  "line-35-geoone-holds.p6.s1:f84e1f16a6d1",
+  "line-35-geoone-holds.p6.s2:5495c5fcd846"
+ ],
+ "L35-check": [
+  "line-35-geoone-holds.p7.s1:04a1e1071e1d"
+ ],
+ "L36-place": [
+  "line-36-geometric-realization-of-weight-.p1.s1:936bb72e59e5",
+  "line-36-geometric-realization-of-weight-.p1.s2:c5a2b8373f91"
+ ],
+ "L36-states": [
+  "line-36-geometric-realization-of-weight-.p2.s1:0199dbd4b52a",
+  "line-36-geometric-realization-of-weight-.p2.s2:2402e2fbc11d",
+  "line-36-geometric-realization-of-weight-.p2.s3:23126ad4b470",
+  "line-36-geometric-realization-of-weight-.p3.s1:38c6dc9de9fa",
+  "line-36-geometric-realization-of-weight-.p3.s2:c4934ede3267",
+  "line-36-geometric-realization-of-weight-.p3.s3:d266cde90934",
+  "line-36-geometric-realization-of-weight-.p4.s1:e703e32cf0c8",
+  "line-36-geometric-realization-of-weight-.p4.s2:5740fb15e332",
+  "line-36-geometric-realization-of-weight-.p4.s3:89aa21a7fa53",
+  "line-36-geometric-realization-of-weight-.p4.s4:5da4cb835763",
+  "line-36-geometric-realization-of-weight-.p4.s5:8ad5604993e0",
+  "line-36-geometric-realization-of-weight-.p4.s6:3340e6a10053"
+ ],
+ "L36-unopened": [
+  "line-36-geometric-realization-of-weight-.p5.s1:d481cadc58f8"
+ ],
+ "L36-guess": [
+  "line-36-geometric-realization-of-weight-.p6.s1:76176b0c5586",
+  "line-36-geometric-realization-of-weight-.p6.s2:12889477119d"
+ ],
+ "L36-confidence": [
+  "line-36-geometric-realization-of-weight-.p7.s1:f84e1f16a6d1",
+  "line-36-geometric-realization-of-weight-.p7.s2:de488e3fd755"
+ ],
+ "L36-check": [
+  "line-36-geometric-realization-of-weight-.p8.s1:04a1e1071e1d"
+ ],
+ "L37-place": [
+  "line-37-steps-holds.p1.s1:92868eb28afd",
+  "line-37-steps-holds.p1.s2:f51ae08559f4"
+ ],
+ "L37-states": [
+  "line-37-steps-holds.p2.s1:bdb61d81cedc",
+  "line-37-steps-holds.p2.s2:5dfe38da3f60",
+  "line-37-steps-holds.p2.s3:ce954aadadf7",
+  "line-37-steps-holds.p2.s4:66b09d09ece9",
+  "line-37-steps-holds.p3.s1:e703e32cf0c8",
+  "line-37-steps-holds.p3.s2:69b335869353"
+ ],
+ "L37-unopened": [
+  "line-37-steps-holds.p4.s1:b8c5d03d66a8"
+ ],
+ "L37-guess": [
+  "line-37-steps-holds.p5.s1:76176b0c5586",
+  "line-37-steps-holds.p5.s2:b53e5f35435e",
+  "line-37-steps-holds.p5.s3:e5de61e518b5"
+ ],
+ "L37-confidence": [
+  "line-37-steps-holds.p6.s1:51096638a562",
+  "line-37-steps-holds.p6.s2:d8c81ce2169a"
+ ],
+ "L37-check": [
+  "line-37-steps-holds.p7.s1:583c656b57df",
+  "line-37-steps-holds.p7.s2:4269f6429fbc",
+  "line-37-steps-holds.p8.s1:6a63d7391737",
+  "line-37-steps-holds.p9.s1:e5fac09e581b",
+  "line-37-steps-holds.p10.s1:7d32bf8db8d3"
+ ],
+ "L38-place": [
+  "line-38-kodaira-spencer-of-weight-one.p1.s1:a48544fba86f",
+  "line-38-kodaira-spencer-of-weight-one.p1.s2:95a3dad05460"
+ ],
+ "L38-states": [
+  "line-38-kodaira-spencer-of-weight-one.p2.s1:0199dbd4b52a",
+  "line-38-kodaira-spencer-of-weight-one.p2.s2:a371766932c7",
+  "line-38-kodaira-spencer-of-weight-one.p2.s3:3cac7f851458",
+  "line-38-kodaira-spencer-of-weight-one.p3.s1:38c6dc9de9fa",
+  "line-38-kodaira-spencer-of-weight-one.p3.s2:c4934ede3267",
+  "line-38-kodaira-spencer-of-weight-one.p3.s3:d266cde90934",
+  "line-38-kodaira-spencer-of-weight-one.p4.s1:e703e32cf0c8",
+  "line-38-kodaira-spencer-of-weight-one.p4.s2:5160d8ce9fd4"
+ ],
+ "L38-unopened": [
+  "line-38-kodaira-spencer-of-weight-one.p5.s1:202affe76cd9"
+ ],
+ "L38-guess": [
+  "line-38-kodaira-spencer-of-weight-one.p6.s1:76176b0c5586",
+  "line-38-kodaira-spencer-of-weight-one.p6.s2:43473ce1d2a8",
+  "line-38-kodaira-spencer-of-weight-one.p6.s3:07233342dcf7"
+ ],
+ "L38-confidence": [
+  "line-38-kodaira-spencer-of-weight-one.p7.s1:f84e1f16a6d1",
+  "line-38-kodaira-spencer-of-weight-one.p7.s2:f6b9f6de8ed9"
+ ],
+ "L38-check": [
+  "line-38-kodaira-spencer-of-weight-one.p8.s1:4decb8b44f0a",
+  "line-38-kodaira-spencer-of-weight-one.p8.s2:4269f6429fbc",
+  "line-38-kodaira-spencer-of-weight-one.p9.s1:5332a411fdd4"
+ ],
+ "x-two": [
+  "two-lines-of-the-exact-outline.p1.s1:2af5a64ae74f",
+  "two-lines-of-the-exact-outline.p1.s2:12e4bfa90490",
+  "two-lines-of-the-exact-outline.p1.s3:c49d1447baef",
+  "two-lines-of-the-exact-outline.p1.s4:e499b2ad4cd0",
+  "two-lines-of-the-exact-outline.p1.s5:45cb51d1c5f9",
+  "two-lines-of-the-exact-outline.p1.s6:0fdf323ce3b7"
+ ],
+ "x-table": [
+  "two-lines-of-the-exact-outline.p2.s1:ce014343e885",
+  "two-lines-of-the-exact-outline.p3.s1:a1bf1e569b99",
+  "two-lines-of-the-exact-outline.p4.s1:d77739be341a"
+ ],
+ "L39-place": [
+  "line-39-main-alt-alt.p1.s1:cc804b9af465",
+  "line-39-main-alt-alt.p1.s2:65d8b12f98ea",
+  "line-39-main-alt-alt.p1.s3:d7dc28467053"
+ ],
+ "L39-states": [
+  "line-39-main-alt-alt.p2.s1:5cb000b38f5f",
+  "line-39-main-alt-alt.p2.s2:baa087463066",
+  "line-39-main-alt-alt.p2.s3:79c719a5fba3",
+  "line-39-main-alt-alt.p3.s1:38c6dc9de9fa",
+  "line-39-main-alt-alt.p3.s2:441d98587ef3",
+  "line-39-main-alt-alt.p4.s1:8eb305024739",
+  "line-39-main-alt-alt.p4.s2:1646b382193b",
+  "line-39-main-alt-alt.p5.s1:abd15a1498ee",
+  "line-39-main-alt-alt.p5.s2:5f9225c427fa",
+  "line-39-main-alt-alt.p6.s1:ed7ddefac9b8",
+  "line-39-main-alt-alt.p6.s2:e0a34bf18834",
+  "line-39-main-alt-alt.p7.s1:98bd3fbfb4f0",
+  "line-39-main-alt-alt.p7.s2:9c084a775fe1",
+  "line-39-main-alt-alt.p8.s1:e703e32cf0c8",
+  "line-39-main-alt-alt.p8.s2:2c1276708c2f"
+ ],
+ "L39-unopened": [
+  "line-39-main-alt-alt.p9.s1:228f14a88bef"
+ ],
+ "L39-guess": [
+  "line-39-main-alt-alt.p10.s1:76176b0c5586",
+  "line-39-main-alt-alt.p10.s2:9d926662be92"
+ ],
+ "L39-confidence": [
+  "line-39-main-alt-alt.p11.s1:f84e1f16a6d1",
+  "line-39-main-alt-alt.p11.s2:b130f60dc5af"
+ ],
+ "L39-check": [
+  "line-39-main-alt-alt.p12.s1:04a1e1071e1d"
+ ],
+ "L40-place": [
+  "line-40-shape-closed-link-n-of-green.p1.s1:5017e4819c17",
+  "line-40-shape-closed-link-n-of-green.p1.s2:65f04bdac7e8"
+ ],
+ "L40-states": [
+  "line-40-shape-closed-link-n-of-green.p2.s1:8ba0b3e0b029",
+  "line-40-shape-closed-link-n-of-green.p2.s2:aa43d13fc706",
+  "line-40-shape-closed-link-n-of-green.p2.s3:f465ba8418da",
+  "line-40-shape-closed-link-n-of-green.p3.s1:38c6dc9de9fa",
+  "line-40-shape-closed-link-n-of-green.p3.s2:ff35c48113d6",
+  "line-40-shape-closed-link-n-of-green.p4.s1:a8726ea6c44f",
+  "line-40-shape-closed-link-n-of-green.p5.s1:753623eecfeb",
+  "line-40-shape-closed-link-n-of-green.p6.s1:48d41010e55b",
+  "line-40-shape-closed-link-n-of-green.p7.s1:a1dd2b5a2d5d",
+  "line-40-shape-closed-link-n-of-green.p8.s1:7b07cab45ba8",
+  "line-40-shape-closed-link-n-of-green.p9.s1:3b47d6ca0db9",
+  "line-40-shape-closed-link-n-of-green.p10.s1:a04a49e1db51",
+  "line-40-shape-closed-link-n-of-green.p11.s1:3dd025989bea",
+  "line-40-shape-closed-link-n-of-green.p12.s1:b49901002238",
+  "line-40-shape-closed-link-n-of-green.p13.s1:bff02e9cfedc",
+  "line-40-shape-closed-link-n-of-green.p14.s1:263ac7c92019",
+  "line-40-shape-closed-link-n-of-green.p15.s1:d5c9df89e311",
+  "line-40-shape-closed-link-n-of-green.p16.s1:a671eb00bac4",
+  "line-40-shape-closed-link-n-of-green.p17.s1:ce52662b1826",
+  "line-40-shape-closed-link-n-of-green.p18.s1:c4dfcde13602",
+  "line-40-shape-closed-link-n-of-green.p19.s1:7e251277c78e",
+  "line-40-shape-closed-link-n-of-green.p20.s1:39d7a0e7c51b",
+  "line-40-shape-closed-link-n-of-green.p21.s1:7d1038a03300",
+  "line-40-shape-closed-link-n-of-green.p22.s1:7174804c2e6d",
+  "line-40-shape-closed-link-n-of-green.p23.s1:44e0ebd5fd8c",
+  "line-40-shape-closed-link-n-of-green.p24.s1:b8aa1da0a580",
+  "line-40-shape-closed-link-n-of-green.p25.s1:7bd338e5c0fc",
+  "line-40-shape-closed-link-n-of-green.p26.s1:f9765ec2c34c",
+  "line-40-shape-closed-link-n-of-green.p27.s1:30a7f9cd61cd",
+  "line-40-shape-closed-link-n-of-green.p28.s1:987181328eda",
+  "line-40-shape-closed-link-n-of-green.p29.s1:32783ec3efff",
+  "line-40-shape-closed-link-n-of-green.p30.s1:5bce0466574a",
+  "line-40-shape-closed-link-n-of-green.p31.s1:4db3abbb0445",
+  "line-40-shape-closed-link-n-of-green.p32.s1:a95f30ef60d5",
+  "line-40-shape-closed-link-n-of-green.p33.s1:3a0393099f83",
+  "line-40-shape-closed-link-n-of-green.p34.s1:4f2c3b08f219",
+  "line-40-shape-closed-link-n-of-green.p35.s1:28265c2f077a",
+  "line-40-shape-closed-link-n-of-green.p36.s1:823bf6be78e9",
+  "line-40-shape-closed-link-n-of-green.p37.s1:1ac98aa8928f",
+  "line-40-shape-closed-link-n-of-green.p38.s1:8425b1de6cd2",
+  "line-40-shape-closed-link-n-of-green.p39.s1:12290976e499",
+  "line-40-shape-closed-link-n-of-green.p40.s1:c2768baa2fd3",
+  "line-40-shape-closed-link-n-of-green.p41.s1:634c95207816",
+  "line-40-shape-closed-link-n-of-green.p42.s1:97e4e7bcb70f",
+  "line-40-shape-closed-link-n-of-green.p43.s1:91b96b01c524",
+  "line-40-shape-closed-link-n-of-green.p44.s1:f7f5a847999b",
+  "line-40-shape-closed-link-n-of-green.p45.s1:a35413edb208",
+  "line-40-shape-closed-link-n-of-green.p46.s1:ede12fe8ac3f",
+  "line-40-shape-closed-link-n-of-green.p47.s1:6dc745fc5c35",
+  "line-40-shape-closed-link-n-of-green.p48.s1:fc7321b832f8",
+  "line-40-shape-closed-link-n-of-green.p49.s1:2a761b331766",
+  "line-40-shape-closed-link-n-of-green.p50.s1:24141035c32b",
+  "line-40-shape-closed-link-n-of-green.p51.s1:e1045a36b424",
+  "line-40-shape-closed-link-n-of-green.p52.s1:493579bdb67d",
+  "line-40-shape-closed-link-n-of-green.p53.s1:52257d2c0324",
+  "line-40-shape-closed-link-n-of-green.p54.s1:c78d25f1f8b0",
+  "line-40-shape-closed-link-n-of-green.p55.s1:a11adaa8499b",
+  "line-40-shape-closed-link-n-of-green.p56.s1:578cd42778f6",
+  "line-40-shape-closed-link-n-of-green.p57.s1:e703e32cf0c8",
+  "line-40-shape-closed-link-n-of-green.p57.s2:83aef07118a2"
+ ],
+ "L40-unopened": [
+  "line-40-shape-closed-link-n-of-green.p58.s1:b5996f3e6dfe"
+ ],
+ "L40-guess": [
+  "line-40-shape-closed-link-n-of-green.p59.s1:76176b0c5586",
+  "line-40-shape-closed-link-n-of-green.p59.s2:969abf790a1e"
+ ],
+ "L40-confidence": [
+  "line-40-shape-closed-link-n-of-green.p60.s1:f84e1f16a6d1",
+  "line-40-shape-closed-link-n-of-green.p60.s2:1738eb06260a",
+  "line-40-shape-closed-link-n-of-green.p61.s1:d08c443cc7b0",
+  "line-40-shape-closed-link-n-of-green.p61.s2:7c7b3bf139be"
+ ],
+ "L40-check": [
+  "line-40-shape-closed-link-n-of-green.p62.s1:04a1e1071e1d"
+ ]
+}
