@@ -1,0 +1,72 @@
+[
+ {
+  "line": 7,
+  "index": 0,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "Seven of them are statements of published results that the code names GlobalArtinReciprocity, SiegelWeilUnitaryConvergent, DiscreteSeriesCover, HarishChandraModules, CuspRapidDecay, CasselmanWallach and DiscreteSeriesClassification, and two are the eventual bounds SurjectiveOntoX and LambdaLowerBound₂.",
+  "fix": "Six of them lie in the namespace GlobalTheory.Published and are named GlobalArtinReciprocity, DiscreteSeriesCover, HarishChandraModules, CuspRapidDecay, CasselmanWallach and DiscreteSeriesClassification, one is HeckeCharacterZeroLocus.SiegelWeilU.SiegelWeilUnitaryConvergent, and two are the propositions SurjectiveOntoX and LambdaLowerBound₂, each of the form Closed FamHyp.",
+  "kind": "inexact",
+  "evidence": "The reading says \"Seven of them are statements of published results\" and lists SiegelWeilUnitaryConvergent among them, while the dossier has it as \"HeckeCharacterZeroLocus.SiegelWeilU.SiegelWeilUnitaryConvergent\" in the module \"Formalism.UnipotentAdelicQuotients.SiegelWeilUnitaryConvergent\" and the other six under \"GlobalTheory.Published\". The words \"the eventual bounds\" for SurjectiveOntoX and LambdaLowerBound₂ read the names ON and L6, whose bodies no file shows."
+ },
+ {
+  "line": 7,
+  "index": 1,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "from the ideles of E to Gab E Ω",
+  "fix": "from Ideles E to Gab E Ω",
+  "kind": "naming",
+  "evidence": "The reading says \"a group homomorphism art from the ideles of E to Gab E Ω\", while the Lean text has \"∃ art : Ideles E →* Gab E Ω, IsGlobalArtin art\" and no file shows a body of Ideles. The word is the ordinary reading of the name."
+ },
+ {
+  "line": 7,
+  "index": 2,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "DiscreteSeriesCover, which says that for all p and q with p+q ≥ 1 and all group data T there is an assignment of a representation D lam of type DSRep T to each rational parameter lam with IsParam lam, so that HasTypes (D lam) lam.1 holds for every lam and every R of type DSRep T satisfies UnitEquiv R (D lam) for some lam",
+  "fix": "DiscreteSeriesCover, which says that for all natural numbers p and q with 1 ≤ p + q and every T of type GrpData p q there is a map D from the functions lam of type Ix p q → ℚ that satisfy IsParam lam to DSRep T, so that HasTypes (D lam) lam.1 holds for every such lam and every R of type DSRep T satisfies UnitEquiv R (D lam) for some lam",
+  "kind": "naming",
+  "evidence": "The reading says \"all group data T\", \"a representation D lam of type DSRep T\" and \"each rational parameter lam\", while the Lean text has \"∀ T : GrpData p q, ∃ D : {lam : Ix p q → ℚ // IsParam lam} → DSRep T\" and the dossier shows no body of GrpData, DSRep, Ix or IsParam. The logical form in the reading agrees with the Lean text."
+ },
+ {
+  "line": 7,
+  "index": 3,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "It asks for an extension T that agrees with T₀ on K-finite vectors, is smooth, is unique among such maps on smooth vectors, has closed image of the smooth vectors, and, when T₀ is nonzero, bounds the Sobolev norms by a continuous seminorm of T w",
+  "fix": "It asks for a complex linear map T from H to E that agrees with T₀ on all vectors satisfying IsKFin ε σ, satisfies IsSmoothGMap ε σ p π T, agrees on all w satisfying SmoothVec (lieSet ε) σ w with any complex linear map T' from H to E meeting those two conditions, has a closed image of the set of w satisfying SmoothVec (lieSet ε) σ w, and, whenever there exists v satisfying IsKFin ε σ v with T₀ v ≠ 0, gives for every list S of lists of matrices in lieSet ε a continuous seminorm q on E satisfying sobNorm σ S w ≤ q (T w) for all w satisfying SmoothVec (lieSet ε) σ w",
+  "kind": "inexact",
+  "evidence": "The reading says \"when T₀ is nonzero, bounds the Sobolev norms by a continuous seminorm of T w\", while the Lean text has \"(∃ v, IsKFin ε σ v ∧ T₀ v ≠ 0) → ∀ S : List (List (Matrix (Fin n) (Fin n) ℂ)), (∀ l ∈ S, ∀ X ∈ l, X ∈ lieSet ε) → ∃ q : Seminorm ℂ E, Continuous q ∧ ∀ w, SmoothVec (lieSet ε) σ w → sobNorm σ S w ≤ q (T w)\". The condition is that T₀ is nonzero on a vector with IsKFin, the quantifier over S is dropped, and the words K-finite, smooth and Sobolev read names whose bodies no file shows."
+ },
+ {
+  "line": 7,
+  "index": 4,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "DiscreteSeriesClassification, which says that for every n there is a family π ε lam on complete nontrivial spaces satisfying IsURepOn, IsIrredOn, IsSqIntOn and HasInfChar, indexed by strictly decreasing lam with lam a − (n−1)/2 an integer, with a unique submodule satisfying IsKTypeOf for lam + rhoN ε − rhoC ε, and that every complete nontrivial σ satisfying IsURepOn, IsIrredOn and IsSqIntOn is carried by an intertwining linear isometry onto some H (ε ∘ s) mu after a permutation s",
+  "fix": "DiscreteSeriesClassification, which says that for every natural number n there are complex inner product spaces H ε lam and maps π ε lam from n by n complex matrices to continuous linear maps of H ε lam with two properties. First, for every ε of type Fin n → Bool and every strictly decreasing lam of type Fin n → ℝ with lam a − (n − 1)/2 an integer for all a, the space H ε lam is complete and nontrivial, π ε lam satisfies IsURepOn (UJset ε), IsIrredOn (UJset ε), IsSqIntOn ε and HasInfChar ε at lam, there is a unique submodule S with IsKTypeOf ε (π ε lam) (lam + rhoN ε − rhoC ε) S, and every μ and submodule S with IsKTypeOf ε (π ε lam) μ S has μ equal to lam + rhoN ε − rhoC ε plus a sum of the terms c a b • root a b with natural numbers c a b that are nonzero only when a < b. Second, for every ε and every complete nontrivial complex inner product space H' with a map σ satisfying IsURepOn (UJset ε), IsIrredOn (UJset ε) and IsSqIntOn ε there are a permutation s of Fin n with s a < s b whenever a < b and ε (s a) = ε (s b), a strictly decreasing mu with mu a − (n − 1)/2 an integer for all a, and a linear isometric equivalence T from H' onto H (ε ∘ s) mu with T (σ (g.submatrix s.symm s.symm) v) = π (ε ∘ s) mu g (T v) for all g in UJset (ε ∘ s) and all v",
+  "kind": "omission",
+  "evidence": "The reading gives the first part as a family \"with a unique submodule satisfying IsKTypeOf for lam + rhoN ε − rhoC ε\" and stops there, while the Lean text adds \"∀ (μ : Fin n → ℝ) (S : Submodule ℂ (H ε lam)), IsKTypeOf ε (π ε lam) μ S → ∃ c : Fin n → Fin n → ℕ, (∀ a b, c a b ≠ 0 → a < b) ∧ μ = (lam + rhoN ε - rhoC ε) + ∑ a, ∑ b, (c a b : ℝ) • root a b\". The reading also leaves out the condition \"∀ a b, a < b → ε (s a) = ε (s b) → s a < s b\" on the permutation s and the conditions on mu, and it does not say that it leaves anything out."
+ },
+ {
+  "line": 7,
+  "index": 5,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "SurjectiveOntoX, which says that Closed FamHyp holds for the property that, whenever DIVinN Fm holds, there is a C0 ≥ 0 such that eventually, at every point p satisfying More p, and for every C ≥ C0, the condition (p.S false).ON (p.N C CH) holds",
+  "fix": "SurjectiveOntoX, which says that Closed FamHyp holds for the property sending Fm and CH to the statement that, whenever DIVinN Fm holds, there are a real C0 ≥ 0 and a real x0 such that for every x > Fm.x1 with x0 ≤ x, every i of type Fm.Ix x and every point p satisfying p.PointConditions' and More p, the condition (p.S false).ON (p.N C CH) holds for every C ≥ C0",
+  "kind": "omission",
+  "evidence": "The reading says \"eventually, at every point p satisfying More p\", while the Lean text of EventuallyAtPoints is \"∃ x0 : ℝ, ∀ (x : ℝ) (hx : Fm.x1 < x), x0 ≤ x → ∀ (i : Fm.Ix x) (p : Pt Fm x hx i), p.PointConditions' → Q x hx i p\". The condition p.PointConditions' is missing from every field of the reading."
+ },
+ {
+  "line": 7,
+  "index": 6,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "LambdaLowerBound₂, which says that Closed FamHyp holds for the property that eventually, at every point p and for every C, the condition (p.S true).L6 (p.N C CH) holds",
+  "fix": "LambdaLowerBound₂, which says that Closed FamHyp holds for the property sending Fm and CH to the statement that there is a real x0 such that for every x > Fm.x1 with x0 ≤ x, every i of type Fm.Ix x and every point p satisfying p.PointConditions', the condition (p.S true).L6 (p.N C CH) holds for every C",
+  "kind": "omission",
+  "evidence": "The reading says \"eventually, at every point p and for every C\", while the Lean text of EventuallyAtPoints requires the property only under \"p.PointConditions' → Q x hx i p\". The condition p.PointConditions' is missing from every field of the reading."
+ }
+]

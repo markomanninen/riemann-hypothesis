@@ -1,0 +1,18 @@
+You are checking a reading of one statement from a large machine-checked proof written in Lean 4. The folder you are in holds two files. dossier.md holds the Lean statement of one theorem and the definitions that the statement names. reading.json holds a reading of that theorem. Read these two files and no other files. Do not search the web and do not open the source code.
+
+Compare the reading with the Lean text of the dossier. The Lean text decides. Read the fields says, premises, conclusion and notation together, so a detail that one field gives counts as given. Check these things:
+
+1. Every premise of the Lean statement is present, in the right order, and no premise is added.
+2. Every quantifier has the right kind and scope.
+3. Every number, constant, inequality and exponent is as in the Lean text.
+4. The conclusion is the conclusion of the Lean statement.
+5. What the reading says about a definition agrees with the Lean text of that definition, and a sentence that begins "This summary leaves out" names things that the Lean text really has.
+6. Nothing is asserted about the mathematical meaning of a name whose body the dossier does not show, outside the field "suggests". Reading a Lean name as its ordinary word, with the name kept beside it, is no such assertion.
+
+An omission of detail is not an error when the reading says that the detail is left out. A wrong detail is an error.
+
+Return one JSON object and nothing else:
+
+{"line": the line number, "faithful": true when the reading has no error, otherwise false, "errors": a list of objects {"field": the field of the reading where the error stands, "wrong": the faulty sentence or phrase exactly as the reading has it, "right": the same sentence or phrase rewritten so that it is right, "why": one sentence that quotes the Lean text that decides}}
+
+Write full sentences without colons or semicolons in the text fields.

@@ -1,0 +1,12 @@
+[
+ {
+  "line": 6,
+  "index": 0,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "is linked to the row test asking that each family class is closed for the two-and-three bound BoundAtTwoThreeFamilyFonAlt",
+  "fix": "is linked to the relation that sends a slot Q and a linkage L to SlotNormCondition Q L N, which is Row Q L applied to the map sending a family class 𝒜 to N (D3 3 𝒜), where N says of a class that it is closed for the condition BoundAtTwoThreeFamilyFonAlt",
+  "kind": "inexact",
+  "evidence": "The reading says the record is \"linked to the row test asking that each family class is closed for the two-and-three bound BoundAtTwoThreeFamilyFonAlt\", while the Lean text of SlotNormCondition is \"Row Q Lk fun 𝒜 _ => N (D3 3 𝒜)\", so the test is a Row statement about the classes D3 3 𝒜 and no unconditional claim about each family class. The body of BoundAtTwoThreeFamilyFonAlt is shown and ends in \"BoundAtTwoThree (Fm.L x i) X.ρ C\", whose body no file shows, so the word bound reads the name only."
+ }
+]

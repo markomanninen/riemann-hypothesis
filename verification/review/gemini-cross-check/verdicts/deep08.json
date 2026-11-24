@@ -1,0 +1,42 @@
+[
+ {
+  "line": 8,
+  "index": 0,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "The first is SelectionLpBound 𝒜 σ, a property of the STies data that the S fields of σ give, stated through the opaque conditions RowBig and RowNotScalar, required eventually on the class D3 3 𝒜.",
+  "fix": "The first is SelectionLpBound 𝒜 σ, which is LoopRowS with constant 3 for the class D3 3 𝒜 and the selection made of Fm.x1 and the STies data that the S fields of σ give. It says that for every function aF from lists of reals to reals, Closed holds on D3 3 𝒜 for the statement that every proof hc of D3 3 𝒜 Fm gives OwnEv at Fm of the following. For all x with Fm.x1 < x and (sel Fm hc).1 ≤ x and all words u and u′ of (Fm.D x i).what₂.Word, the opaque conditions Cnt.Hyp, with the constants Fm.CYL + 1, 1/4, 3, 1/2, Fm.CTu, 3 and aF Fm.cOut, ConcTie and AbsConv together imply the opaque conditions RowBig and RowNotScalar.",
+  "kind": "omission",
+  "evidence": "The reading calls SelectionLpBound \"a property of the STies data that the S fields of σ give, stated through the opaque conditions RowBig and RowNotScalar, required eventually on the class D3 3 𝒜\", while the Lean text of LoopRowS is \"∀ aF : List ℝ → ℝ, Closed 𝒞 fun Fm _ => ∀ hc : 𝒞 Fm, OwnEv Fm fun C' Cl x i => … Cnt.Hyp … → ConcTie … → … AbsConv → … RowBig … ∧ … RowNotScalar\". The quantifier over aF and the three antecedents Hyp, ConcTie and AbsConv are in no field of the reading, and the notation leaves LoopRowS₃ unopened."
+ },
+ {
+  "line": 8,
+  "index": 1,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "The second is SelectionOrderBound 𝒜 σ, a bound ‖K0‖² ≤ (1 + 1/b⁶)·duS(u)·duS(u′)/Dstar for distinct words u ≠ u′, on the same class.",
+  "fix": "The second is SelectionOrderBound 𝒜 σ, which requires Closed on D3 3 𝒜 for the statement that for every proof hc of D3 3 𝒜 Fm, TheoremSSelected holds at Fm, 3 and the same selection. TheoremSSelected says that OwnEv holds at Fm of the implication from the hypothesis AdmissibleBoundsFromSource.hyp, taken at Fm.D x i and Fm.L x i with the constants 3, C′, Cl, Fm.CYL + 1, 1/4, 3, 1/2 and Fm.CTu, to the bound ‖K0‖² ≤ (1 + 1/b⁶)·duS(u)·duS(u′)/Dstar for every x with Fm.x1 < x and s.1 ≤ x and all distinct words u ≠ u′.",
+  "kind": "omission",
+  "evidence": "The reading calls SelectionOrderBound \"a bound ‖K0‖² ≤ (1 + 1/b⁶)·duS(u)·duS(u′)/Dstar for distinct words u ≠ u′, on the same class\", while the Lean text of TheoremSSelected has \"AdmissibleBoundsFromSource.hyp (Fm.D x i) (Fm.L x i) C0 C' Cl (Fm.CYL + 1) (1 / 4) 3 (1 / 2) Fm.CTu → ∀ (hx : Fm.x1 < x) (h0 : s.1 ≤ x) …\" inside OwnEv. The antecedent hyp is in no field of the reading, so the bound reads as unconditional."
+ },
+ {
+  "line": 8,
+  "index": 2,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "The third is H_hTF 𝒜, the inequality 1 ≤ Tr(D,w)·kaS(D)^(2·rS) for every w, again on that class.",
+  "fix": "The third is H_hTF 𝒜, which requires Closed on D3 3 𝒜 for TFrame at Fm with the constants Fm.CYL + 1, 1/4, 3, 1/2, Fm.CTu and 3. TFrame says that OwnEv holds at Fm of the implication from the opaque hypothesis Cnt.Hyp0, taken at Fm.D x i and Fm.L x i with C′, Cl and those constants, to the inequality 1 ≤ Tr(D,w)·kaS(D)^(2·rS) for every w, where D is Fm.D x i.",
+  "kind": "omission",
+  "evidence": "The reading calls H_hTF \"the inequality 1 ≤ Tr(D,w)·kaS(D)^(2·rS) for every w, again on that class\", while the Lean text of TFrame is \"OwnEv Fm fun C' Cl x i => Cnt.Hyp0 (Fm.D x i) (Fm.L x i) C' Cl Cg cb Cu cT CT C0 → ∀ w, 1 ≤ Tr (Fm.D x i) w * kaS (Fm.D x i) ^ (2 * (Fm.D x i).R.rS)\". The antecedent Cnt.Hyp0 is in no field of the reading, so the inequality reads as unconditional."
+ },
+ {
+  "line": 8,
+  "index": 3,
+  "field": "notation",
+  "verdict": "holds",
+  "wrong_exact": "Closed(D3(3,𝒜), λFm. ∀hc, TheoremSSelected(Fm, 3, sel_σ)) ∧ Closed(D3(3,𝒜), λFm. TFrame(Fm, CYL+1, 1/4, 3, 1/2, CTu, 3))",
+  "fix": "Closed(D3(3,𝒜), λ(Fm,CH). ∀hc : D3(3,𝒜)(Fm), TheoremSSelected(Fm, 3, sel_σ(Fm,hc))) ∧ Closed(D3(3,𝒜), λ(Fm,CH). TFrame(Fm, Fm.CYL+1, 1/4, 3, 1/2, Fm.CTu, 3))",
+  "kind": "inexact",
+  "evidence": "The notation writes \"Closed(D3(3,𝒜), λFm. ∀hc, TheoremSSelected(Fm, 3, sel_σ))\" and \"TFrame(Fm, CYL+1, 1/4, 3, 1/2, CTu, 3)\", while the Lean text has \"Closed (D3 3 𝒜) fun Fm _ => ∀ hc : D3 3 𝒜 Fm, …\" with the selection built from hc, and \"TFrame Fm (Fm.CYL + 1) (1 / 4) 3 (1 / 2) Fm.CTu 3\". The notation's own Closed takes P(Fm,CH), so the second argument and the dependence of the selection on hc are dropped."
+ }
+]

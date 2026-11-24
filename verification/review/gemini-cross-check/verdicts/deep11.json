@@ -1,0 +1,52 @@
+[
+ {
+  "line": 11,
+  "index": 0,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "",
+  "fix": "Suppose the sixty-field proposition structure UnitaryGroupThirdPlaceHypotheses holds and the condition RowRat holds.",
+  "kind": "inexact",
+  "evidence": "The reading writes \"the bundle of sixty cited results\", and the Lean text shows \"structure UnitaryGroupThirdPlaceHypotheses : Prop\" with fields typed by names such as \"GlobalTheory.Published.ClozelCohomological\". The glossary reads three fields as smaller bundles and one field as unfolding to True, so not every field is a cited result and no file shows a citation."
+ },
+ {
+  "line": 11,
+  "index": 1,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "",
+  "fix": "Then for every proof hL of the proposition RecTExists, every real number cDep and every predicate A on quadruples (context K, base record B, frame f, twisting data T) that satisfies the condition EvLgG, three things hold together.",
+  "kind": "naming",
+  "evidence": "The reading writes \"the local reciprocity statement RecTExists\", and the Lean text has \"∀ (E Ω : Type) … (h : IsPlaceOver A w), ∃ rc, IsRecT h rc\". No file shows a body of IsRecT, so local reciprocity is a reading of the name."
+ },
+ {
+  "line": 11,
+  "index": 2,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "EvP applied to the property that every base point satisfying both IsGoodE p.s and R has",
+  "fix": "EvP applied to the property of an ignored argument and a context K that every β of type BPt K with β.Is (sAnd (IsGoodE p.s) R) has",
+  "kind": "naming",
+  "evidence": "The reading writes \"every base point satisfying both IsGoodE p.s and R\", and the Lean text of ExB has \"EvP fun _ K => ∀ β : BPt K, β.Is Q → ∀ c : ℝ, ∃ b : Bd β.D β.O c, Lk K β c b\". No file shows a body of BPt or BPt.Is, so base point is a reading of the name, while the rest of the sentence, the unfolding of LargeBaseCondition included, follows the Lean text."
+ },
+ {
+  "line": 11,
+  "index": 3,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "",
+  "fix": "the record UnitaryGroupThirdPlaceHypotheses holds, which means that each of its sixty proposition fields holds, most of them placed in the namespace Published",
+  "kind": "naming",
+  "evidence": "The reading writes \"most of them cited published theorems\", and the Lean text shows only field types such as \"GlobalTheory.Published.GreenCuspidal\". The namespace is called Published, and no file shows a citation or that the statements are published theorems."
+ },
+ {
+  "line": 11,
+  "index": 4,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "",
+  "fix": "the condition RowRat holds, which is StepW Start applied to the property of K, B, f, T and w saying that for all Z, hX, Wt and z, under GrpTrue Z.N f, GrpAt (w.st Z) w.I, DV.KapDef (w.D Z), z.R.toRealDat.ExAt, InGeo z.geo, CoreP z, GIs2 K w Z.G, the identity Wt = z.W1 (F0K K.s (w.D Z)) and the condition that B.places.resChar v belongs to T.pl for all v in Wt, the row test RowTest holds for z.R.toCx3 z.F",
+  "kind": "inexact",
+  "evidence": "The reading writes \"under a long list of conditions on the data z (GrpTrue, GrpAt, KapDef, ExAt, InGeo, CoreP, GIs2, …)\", and the Lean text has \"GrpTrue Z.N f → GlobalTheory.Mem.R3.GrpAt (w.st Z) w.I → DV.KapDef (w.D Z) → … → GIs2 K w Z.G\". Five of the nine conditions are on Z, w, f, K, B and T and not on z."
+ }
+]

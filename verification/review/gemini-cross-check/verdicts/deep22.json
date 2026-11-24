@@ -1,0 +1,132 @@
+[
+ {
+  "line": 22,
+  "index": 0,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "every column datum I of type TC B X, every l in I.Laws, every later-stage record Z and all the data L, hT, Gi, Gl, Kc, Yd, cX and ex built on the D7 bundle D = I.rec7 l Z, and for every package W of type RealPackAlt ex.",
+  "fix": "every I of type TC B X, every l in I.Laws and every later-stage record Z, which together give the D7 bundle D = I.rec7 l Z, every L of type SizeData₂ D, hT of type GatTies D, Gi of type G.Inst D L, Gl of type G.LatInst D, Yd of type DivX D and ex of type Extra D L hT Gi Gl Kc Yd cX, every Kc of type G.Consts and cX of type ExtraC, which do not depend on D, and for every package W of type RealPackAlt ex.",
+  "kind": "inexact",
+  "evidence": "The reading has \"all the data L, hT, Gi, Gl, Kc, Yd, cX and ex built on the D7 bundle D = I.rec7 l Z\", while the Lean statement has \"{Kc in Formalism.MainNotions.G.Consts}\" and \"{cX in ExtraC}\" with no argument D. The dossier shows TC only as \"abbrev TC (B) (X) := ColIn B X\" with no body for ColIn, so the words column datum read the name."
+ },
+ {
+  "line": 22,
+  "index": 1,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "some element φ of the space (D.mem u).A.Mram has a nonzero image under the map D.s.Pu u after it is carried into D.s.Cu u by the inverse of the linear isomorphism D.s_Cu u.",
+  "fix": "some element φ of the space (D.mem u).A.Mram has a pair ⟨φ.1, φ.2.1⟩ in (D.mem u).A.Mu0 that the inverse of the linear isomorphism D.s_Cu u carries into D.s.Cu u and that the map D.s.Pu u then sends to a nonzero element.",
+  "kind": "inexact",
+  "evidence": "The Lean text of PuNZ has \"D.s.Pu u ((D.s_Cu u).symm ⟨φ.1, φ.2.1⟩) ≠ 0\" and d7-all.md has \"s_Cu u\" as a linear isomorphism from \"s.Cu u\" to \"(mem u).A.Mu0\". The reading applies the inverse to φ itself with the words \"after it is carried into D.s.Cu u by the inverse of the linear isomorphism D.s_Cu u\"."
+ },
+ {
+  "line": 22,
+  "index": 2,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "there is some d of type C.MIDat such that the three opaque conditions MIUnit2 d, MIid eV sEE d and AuNZ d all hold.",
+  "fix": "for the implicit map fc of MIstar2 there is some d of type C.MIDat fc such that the three opaque conditions C.MIUnit2 d, C.MIid (W.Q.F.eV C.zs) W.Q.sEE d and C.AuNZ d all hold.",
+  "kind": "omission",
+  "evidence": "The glossary entry of MIstar2 says it takes \"a function fc from DefSub A to DefFace Bs\" and states that \"there exists an object d of the type that the code calls X.MIDat fc\", and the Lean conclusion gives MIstar2 only the two maps, so fc is implicit. The reading has \"some d of type C.MIDat\" and never mentions fc, while its short names eV and sEE are introduced in the sentence before."
+ },
+ {
+  "line": 22,
+  "index": 3,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "which says that for every D7 bundle D and all admissible data the complex span of the forms built from that data is finite-dimensional",
+  "fix": "which says that for every D7 bundle D, every θ with IsInfFam θ, every V of type HSp D, every subgroup U of GA D V that is open, every ε and fr with IsFrameFam V ε fr, every family of finite-dimensional complex modules W τ with representations ρ τ that all satisfy IsContRep, and every c, the complex span of forms θ V U ε fr ρ c is finite-dimensional",
+  "kind": "omission",
+  "evidence": "The reading has \"all admissible data\", while the Lean text of HarishChandraFinite lists \"IsInfFam θ\", \"IsOpen U\", \"IsFrameFam V ε fr\", \"(∀ τ, IsContRep (ρ τ))\" and ends with \"FiniteDimensional ℂ (Submodule.span ℂ (forms θ V U ε fr ρ c))\". The word admissible stands for these conditions and the reading does not say that it leaves them out."
+ },
+ {
+  "line": 22,
+  "index": 4,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "whose orbit under ρ spans M",
+  "fix": "such that the vectors ρ x s, for x over the n' by n matrices, span M",
+  "kind": "inexact",
+  "evidence": "The reading has \"whose orbit under ρ spans M\", while the Lean text has \"ρ in Matrix (Fin n') (Fin n) L → Module.End ℂ M\" and \"Submodule.span ℂ (Set.range fun x => ρ x s) = ⊤\". The map ρ is defined on rectangular matrices and no group action is shown, so orbit is inexact while the span condition itself is read rightly."
+ },
+ {
+  "line": 22,
+  "index": 5,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "which under 1 ≤ A.rank and either wittIdx B = 0 or A.rank + wittIdx B < B.rank gives a continuous seminorm bounding absThetaInt, gives integrability of the descended function built from thetaKO, and, when 2·A.rank < B.rank, gives LeftInv of swSection, CosetConv of the coset sum and its equality with the average over q of that descended function with respect to autMeasure B m",
+  "fix": "which says that for every D of type D7, all A and B of type HSp D and every Haar measure m on GA D B with 1 ≤ A.rank and either wittIdx B = 0 or A.rank + wittIdx B < B.rank, two things hold. First, for every d and every basis ε of D.host.E over D.host.F indexed by Fin d there is a continuous seminorm ν with absThetaInt B m (φ.1 ∘ coord ε) ≤ ENNReal.ofReal (ν φ) for all φ. Second, for every ψ, χ and ω with IsWeilDatumO ψ (dblSp A) B 1 χ ω and every f with IsThetaFunO ψ (dblSp A) B f, the descended function built from thetaKO ω g h f is integrable with respect to autMeasure B m for every g, and, when 2·A.rank < B.rank, for all ν and 𝓖 with IsCovolOne (ratL B A) ν 𝓖 the section swSection A B ν 𝓖 ω f satisfies LeftInv (siegelQ A), satisfies CosetConv (siegel A) (GQ (dblSp A)) at every g, and has a cosetSum at g equal to the average over q of that descended function with respect to autMeasure B m",
+  "kind": "omission",
+  "evidence": "The reading has \"CosetConv of the coset sum\", while the Lean text has \"CosetConv (siegel A) (GQ (dblSp A)) (swSection A B ν 𝓖 ω f) g\", so CosetConv is stated of the section. The reading also leaves out \"m.IsHaarMeasure\", \"IsWeilDatumO ψ (dblSp A) B 1 χ ω\", \"IsThetaFunO ψ (dblSp A) B f\" and \"IsCovolOne (ratL B A) ν 𝓖\" without saying so."
+ },
+ {
+  "line": 22,
+  "index": 6,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "which says that when rank A < rank B ≤ 2·rank A and rank A + wittIdx B < rank B, the theta integrals are integrable and the condition EisValueAt holds for the Siegel–Weil section and the theta mean",
+  "fix": "which says that for every D of type D7, every ψ and all A and B of type HSp D with A.rank < B.rank, B.rank ≤ 2·A.rank and A.rank + wittIdx B < B.rank, and under further hypotheses with the names IsWeilDatumO, IsMaj, HasIwasawa, IsInfFam, IsCartanInv for sS and for sB, a commutation rule for the elements of Khat A a, IsCovolOne, a Haar measure ν and IsFockVec, the descended function built from thetaKO ω g h f is integrable with respect to autMeasure B ν for every g and Eis.EisValueAt holds for A, flat A a (swSec A B ω μ 𝓨 f) (sZero A B), sZero A B and thetaMean ω ν f",
+  "kind": "omission",
+  "evidence": "The reading has \"the theta integrals are integrable\", while the Lean text has \"∀ g, Integrable (AutomorphicL2Unitary.descend (GQ B) fun h => thetaKO ω g h f) (autMeasure B ν)\" after the hypotheses \"IsWeilDatumO\", \"IsMaj A a\", \"HasIwasawa\", \"IsInfFam θ\", two \"IsCartanInv\" conditions, a commutation rule, \"IsCovolOne\", \"ν.IsHaarMeasure\" and \"IsFockVec\". The reading names none of these hypotheses and does not say that it leaves them out."
+ },
+ {
+  "line": 22,
+  "index": 7,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "the doubling integral converges and equals lFactor at α times lFactor at α⁻¹, both at s + 1/2, times invNormFactor",
+  "fix": "the function g ↦ sphSection k (Fin n) s (io k (Fin n) (g, 1)) · ω g is integrable with respect to μ and its integral equals lFactor (resCard k) α (s + 1/2) · lFactor (resCard k) α⁻¹ (s + 1/2) · invNormFactor (resCard k) n s",
+  "kind": "naming",
+  "evidence": "The reading has \"the doubling integral converges\", while the Lean text has \"Integrable (fun g => sphSection k (Fin n) s (io k (Fin n) (g, 1)) * ω g) μ\" and no name with the word doubling inside the statement. The files show no body for sphSection or io, so the reading names an integral that the text only writes out, and it drops the arguments \"resCard k\", \"n\" and \"s\"."
+ },
+ {
+  "line": 22,
+  "index": 8,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "satisfy IsURepOn, IsIrredOn, IsSqIntOn and HasInfChar with the stated IsKTypeOf conditions, and that every complete nontrivial σ with IsURepOn, IsIrredOn and IsSqIntOn is carried by a linear isometry intertwining the actions onto H (ε ∘ s) mu for some permutation s and some such mu",
+  "fix": "satisfy IsURepOn, IsIrredOn, IsSqIntOn and HasInfChar, have exactly one submodule S with IsKTypeOf for the parameter lam + rhoN ε − rhoC ε, and have every other parameter μ with IsKTypeOf equal to that one plus a sum of root a b with natural coefficients that vanish unless a < b, and that every complete nontrivial σ with IsURepOn, IsIrredOn and IsSqIntOn is carried onto H (ε ∘ s) mu by a linear isometry T with T (σ (g.submatrix s.symm s.symm) v) = π (ε ∘ s) mu g (T v) for g in UJset (ε ∘ s), for some such mu and some permutation s with s a < s b whenever a < b and ε (s a) = ε (s b)",
+  "kind": "omission",
+  "evidence": "The reading has \"for some permutation s and some such mu\", while the Lean text also requires \"∀ a b, a < b → ε (s a) = ε (s b) → s a < s b\" of s. The reading leaves this condition out without saying so, and its words \"the stated IsKTypeOf conditions\" point to conditions that it does not state."
+ },
+ {
+  "line": 22,
+  "index": 9,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "whose image in D.s.Cu u under the inverse isomorphism of D.s_Cu u is sent by D.s.Pu u to a nonzero vector",
+  "fix": "whose pair ⟨φ.1, φ.2.1⟩ in (D.mem u).A.Mu0 is carried into D.s.Cu u by the inverse of the isomorphism D.s_Cu u and then sent by D.s.Pu u to a nonzero element",
+  "kind": "inexact",
+  "evidence": "The Lean text of PuNZ has \"D.s.Pu u ((D.s_Cu u).symm ⟨φ.1, φ.2.1⟩) ≠ 0\" and d7-all.md has \"s_Cu u\" as a linear isomorphism from \"s.Cu u\" to \"(mem u).A.Mu0\". The reading takes the image of φ itself with the words \"whose image in D.s.Cu u under the inverse isomorphism of D.s_Cu u\"."
+ },
+ {
+  "line": 22,
+  "index": 10,
+  "field": "conclusion",
+  "verdict": "holds",
+  "wrong_exact": "which means some d of type MIDat satisfies MIUnit2 d, MIid eV sEE d and AuNZ d",
+  "fix": "which by the glossary means that, for the implicit map fc of MIstar2, some d of type MIDat fc of that coefficient space satisfies its conditions MIUnit2 d, MIid (W.Q.F.eV zs) W.Q.sEE d and AuNZ d",
+  "kind": "omission",
+  "evidence": "The glossary entry of MIstar2 says it takes \"a function fc from DefSub A to DefFace Bs\" and states that \"there exists an object d of the type that the code calls X.MIDat fc\", and the Lean conclusion gives MIstar2 only the two maps, so fc is implicit. The reading has \"some d of type MIDat\" without fc."
+ },
+ {
+  "line": 22,
+  "index": 11,
+  "field": "notation",
+  "verdict": "holds",
+  "wrong_exact": "D.s.Pu_u((D.s_Cu_u)⁻¹(φ)) ≠ 0",
+  "fix": "D.s.Pu_u((D.s_Cu_u)⁻¹(⟨φ.1, φ.2.1⟩)) ≠ 0",
+  "kind": "inexact",
+  "evidence": "The Lean text of PuNZ has \"D.s.Pu u ((D.s_Cu u).symm ⟨φ.1, φ.2.1⟩) ≠ 0\" and d7-all.md has \"s_Cu u\" as a linear isomorphism from \"s.Cu u\" to \"(mem u).A.Mu0\". The notation of the reading has \"(D.s_Cu_u)⁻¹(φ)\" with φ in Mram, which is not the domain of that inverse."
+ },
+ {
+  "line": 22,
+  "index": 12,
+  "field": "notation",
+  "verdict": "holds",
+  "wrong_exact": "∃ d ∈ C.MIDat, MIUnit2(d) ∧ MIid(W.Q.F.eV(C.zs), W.Q.sEE, d) ∧ AuNZ(d)",
+  "fix": "∃ d ∈ C.MIDat(fc), C.MIUnit2(d) ∧ C.MIid(W.Q.F.eV(C.zs), W.Q.sEE, d) ∧ C.AuNZ(d), with fc the implicit map of MIstar2",
+  "kind": "omission",
+  "evidence": "The glossary entry of MIstar2 says it takes \"a function fc from DefSub A to DefFace Bs\" and states that \"there exists an object d of the type that the code calls X.MIDat fc\", and the Lean conclusion gives MIstar2 only the two maps, so fc is implicit. The notation of the reading has \"∃ d ∈ C.MIDat\" without fc, while its arguments of MIid are complete."
+ }
+]

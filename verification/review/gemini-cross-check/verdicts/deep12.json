@@ -1,0 +1,82 @@
+[
+ {
+  "line": 12,
+  "index": 0,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "",
+  "fix": "Then for every proof hL of the proposition RecTExists for which LocalLanglandsHypothesis hL holds, and for every real number cDep, the theorem looks at the single parameter record p built by parametersOfExtension from extensionWithOrigin hL cDep of type NormChoiceExtension hL, the constant PUnit-valued family SExt.none of type SExt and the predicate geoCl anyGeometry of type GeoP.",
+  "kind": "naming",
+  "evidence": "The reading writes \"the trivial extension SExt.none and the geometry geoCl anyGeometry\", and the Lean text has \"def none : SExt := fun _ _ _ _ _ _ _ _ _ _ _ => PUnit\" and \"def anyGeometry : GeoP := fun _ _ _ => True\". No file shows a body of SExt, GeoP or GeoCl, so extension and geometry are readings of the names."
+ },
+ {
+  "line": 12,
+  "index": 1,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "",
+  "fix": "The first is the condition MemberE on p.s, which has the unopened type Slots.",
+  "kind": "naming",
+  "evidence": "The reading writes \"the slot data p.s\", and the Lean text has \"def MemberE (𝒮 : Slots)\". No file shows a body of Slots."
+ },
+ {
+  "line": 12,
+  "index": 2,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "so that, eventually in a sense the code calls EvP, every point in that slot and every real c have a BundleCondition record b that is linked through a BundleWitness to a weighted point of p.s.",
+  "fix": "so that, in the sense the code calls EvP applied to a predicate of an ignored argument and a context K, for every β of type BPt K with β.Is of that slot and every real c there are a BundleCondition record b over β.D, β.O and c, a q of the unopened type WPt p.s K and a BundleCondition record b' with BundleWitness q b' nonempty, such that the dependent triple (β.D, β.O, b) equals (q.w.D q.Z, q.O, b').",
+  "kind": "naming",
+  "evidence": "The reading writes \"every point in that slot\" and \"a weighted point of p.s\", and the Lean text has \"∀ β : BPt K, β.Is Q →\" in ExB and \"∃ (p : WPt 𝒮 K) (b' : Bd (p.w.D p.Z) p.O c), P K p c b' ∧ … = ⟨p.w.D p.Z, p.O, b'⟩\" in linkOf. No file shows a body of BPt, BPt.Is or WPt, and the notation of the reading gives the same logical form as the Lean text."
+ },
+ {
+  "line": 12,
+  "index": 3,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "",
+  "fix": "HypAAlt holds, which is a record of twenty-one fields a1 to a23 with only a4 and a15 absent, namely eighteen named propositions such as RayField, CasselmanWallach and GlobalArtinReciprocity and three explicit quantified statements a19, a20 and a21 involving unopened names such as IsHCParam, IsDS, UJset, GrpData, Ix, IsParam, DSRep and HasParam.",
+  "kind": "naming",
+  "evidence": "The reading writes \"three explicit statements a19, a20 and a21 about discrete series representations\", and the Lean text has \"Formalism.MainNotions.S.IsDS ε lam σ\" in a19 and a20 and \"∃ R : DSRep T, HasParam R lam\" in a21. No file shows a body of IsDS, DSRep or IsHCParam, while the counts of twenty-one fields and eighteen named propositions agree with the Lean text."
+ },
+ {
+  "line": 12,
+  "index": 4,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "",
+  "fix": "MultiplicityCoverHypotheses holds, which is a record of DiscreteSeriesCover, PublishedThetaConditionTheorems, HeckeLPartialContinuation and two StepW conditions multL and multW that conclude GlobalTheory.CuspMult.MultEq applied to z.R.toRealDat, with multW also concluding Formalism.IndefR.Rat.RowTest applied to z.R.toCx3 z.F.",
+  "kind": "naming",
+  "evidence": "The reading writes \"give the condition MultEq for certain real data\", and the Lean text of multL and multW ends in \"GlobalTheory.CuspMult.MultEq z.R.toRealDat\". No file shows a body of toRealDat or RealDat, so real data is a reading of the name."
+ },
+ {
+  "line": 12,
+  "index": 5,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "",
+  "fix": "ExistsUnlocalizedSaturatedState holds, which is the unopened condition Step applied to KPx, the constantly true predicate and the property of K, B, f and T which says that for every w of the unopened type ColW B f T satisfying Start (Pinned, Supp and Coh) there exist a record P of type Pre2 K w and a record x of type St P with SatU P, with the type x.o.N.nd.Loc empty and with x.o.η j v equal to 0 for all j and v",
+  "kind": "omission",
+  "evidence": "The reading writes \"says through the condition Step that for columns w satisfying Start\", and the Lean text of StepW has \"Step KPx (fun _ _ _ _ => True) fun K B f T => ∀ w : ColW B f T, p K B f T w → q K B f T w\". The arguments KPx and the true predicate are left out without a note and no file shows a body of ColW or Step, and Gemini's own rewrite turns the function of K, B, f and T into a universal quantifier, which the Lean text does not show."
+ },
+ {
+  "line": 12,
+  "index": 6,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "",
+  "fix": "MultiplicityCondition holds for the parameter record p = parametersOfExtension (extensionWithOrigin hL cDep) SExt.none (geoCl anyGeometry), which says that, eventually in the sense of EvP applied to a predicate on an ignored argument and K, GlobalTheory.CuspMult.MultEq holds for q.x.what₂.r.z.R.toRealDat for every q of the unopened type WPt p.s K.",
+  "kind": "naming",
+  "evidence": "The reading writes \"MultEq holds for the real data of every weighted point q of p.s\", and the Lean text has \"GlobalTheory.Fc.EvP fun _ K => ∀ q : WPt p.s K, GlobalTheory.CuspMult.MultEq q.x.what₂.r.z.R.toRealDat\". No file shows a body of WPt or toRealDat."
+ },
+ {
+  "line": 12,
+  "index": 7,
+  "field": "notation",
+  "verdict": "holds",
+  "wrong_exact": "",
+  "fix": "EvP(fun _ K ↦ ∀ β ∈ BPt(K), β.Is(sAnd(IsGoodE(p.s), R)) ⇒ ∀ c ∈ ℝ, ∃ b ∈ BundleCondition(β.D, β.O, c), ∃ q ∈ WPt(p.s, K), ∃ b' ∈ BundleCondition(q.w.D q.Z, q.O, c), Nonempty(BundleWitness q b') ∧ (β.D, β.O, b) = (q.w.D q.Z, q.O, b'))",
+  "kind": "inexact",
+  "evidence": "The notation writes \"EvP(∀ K, ∀ β ∈ BPt(K), β ∈ (IsGoodE(p.s) ∧ R) ⇒ …\" and \"∃ b'\" without a type, and the Lean text has \"EvP fun _ K => ∀ β : BPt K, β.Is Q →\" and \"(b' : Bd (p.w.D p.Z) p.O c)\". EvP takes a function of an ignored argument and K and not a statement quantified over K, and β.Is is applied to the slot sAnd (IsGoodE p.s) R."
+ }
+]

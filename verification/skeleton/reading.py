@@ -87,13 +87,19 @@ def entry(r, by_line):
     if cross:
         k = cross["changes"]
         out += [f"A second model, Gemini, checked this reading again. {'One passage' if k == 1 else str(k) + ' passages'} of the text "
-                f"above {'was' if k == 1 else 'were'} changed after its findings were compared with the Lean text.", ""]
+                f"above {'was' if k == 1 else 'were'} changed after its findings were compared with the Lean text. "
+                + ("A further check of the changed text found no error." if not cross.get("recheck_errors") else
+                   f"A further check of the changed text found {'one error' if cross['recheck_errors'] == 1 else str(cross['recheck_errors']) + ' errors'}, "
+                   "which the text above corrects."), ""]
     deep = r.get("deeper")
     if deep:
         out += ["#### A deeper reading, with the record D7 at hand", "",
                 f"A second reader saw the dossier, the whole text of `D7` and the glossary. The check found "
                 f"{deep['errors_round_1']} errors in this reading and, after they were corrected, {deep['errors_round_2']} more, "
-                "which were corrected too. The reading has not passed the check.", "", sentence(deep["says"]), ""]
+                "which were corrected too. The reading has not passed the check."
+                + (f" A second model, Gemini, then made {cc['findings']} finding{'s' if cc['findings'] != 1 else ''} on it, and "
+                   f"{'the text was changed in ' + str(cc['changes']) + (' places' if cc['changes'] != 1 else ' place') if cc['changes'] else 'none led to a change'}."
+                   if (cc := deep.get("cross_check")) else ""), "", sentence(deep["says"]), ""]
         out += [f"- Premise {i}. {sentence(p)}" for i, p in enumerate(deep["premises"], 1)]
         out += [f"- Conclusion. {sentence(deep['conclusion'])}", ""]
         if deep["opened"]:

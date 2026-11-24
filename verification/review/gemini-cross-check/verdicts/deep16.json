@@ -1,0 +1,12 @@
+[
+ {
+  "line": 16,
+  "index": 0,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "There is a threshold ε1 > 0 such that for every eps with 0 < eps ≤ ε1 there is a K of the type called TransportedAlt for which every family Fm of the type called FamP eps, and every real number CH, that satisfies the family conditions FamHyp and the size condition Fm.Large K CH has a further property.",
+  "fix": "There is a threshold ε1 > 0 such that for every eps with 0 < eps ≤ ε1 there is a K of the type called TransportedAlt for which every family Fm of the type called FamP eps, and every real number CH, that satisfies the family conditions FamHyp and the condition Fm.Large K CH has a further property.",
+  "kind": "naming",
+  "evidence": "The reading writes 'the size condition Fm.Large K CH', while the Lean text of Closed has only '𝒞 Fm → Fm.Large K CH → P Fm CH'. None of the three files has an entry for Large, so the word size rests on the name alone."
+ }
+]

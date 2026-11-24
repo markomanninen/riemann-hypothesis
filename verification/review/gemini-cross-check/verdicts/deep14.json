@@ -1,0 +1,62 @@
+[
+ {
+  "line": 14,
+  "index": 0,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "Assume three bundles of stated results that the code calls Hypotheses₂, PublishedInputsThirdLayerAlt and GeometricGaloisRepCompatibility, and the single statement DepthZeroSupport, the cutting statement CutGivesAlt, a proof hL of the statement RecTExists, a real number cDep, and the condition hF that MemberAtLayerPoint hL holds for the predicate that sends the layer data to GaloisPreconditions (w.D Z) nch.",
+  "fix": "Assume the bundle of stated results that the code calls Hypotheses₂, the statement CutGivesAlt, the two bundles PublishedInputsThirdLayerAlt and GeometricGaloisRepCompatibility, the single statement DepthZeroSupport, a proof hL of the statement RecTExists, a real number cDep, and the condition hF that MemberAtLayerPoint hL holds for the predicate that sends the layer data to GaloisPreconditions (w.D Z) nch.",
+  "kind": "inexact",
+  "evidence": "The reading's says lists 'three bundles … and the single statement DepthZeroSupport, the cutting statement CutGivesAlt', while the Lean statement has '(hP : Hypotheses₂) (hG : …CutGivesAlt) (prN : …) (hX : …) (dzs : …)' with CutGivesAlt second. The premises and notation fields give the Lean order, so only the order in says and the word cutting, for a statement whose names CutD and cut have no body in the files, are at fault."
+ },
+ {
+  "line": 14,
+  "index": 1,
+  "field": "says",
+  "verdict": "unfounded",
+  "wrong_exact": "",
+  "fix": "",
+  "kind": "naming",
+  "evidence": "The reading writes 'the closure property Closed of the family bound BoundAtTwoThreeFamilyFonAlt' and then states the body of Closed in full in the same field, as the Lean text 'def Closed (𝒞 : FamClass) (P : …)' has it. The dossier has an entry for BoundAtTwoThreeFamilyFonAlt, and the words closure property and family bound only read the names Closed and BoundAtTwoThreeFamilyFonAlt, which stay beside them."
+ },
+ {
+  "line": 14,
+  "index": 2,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "LinkN for a family Fm means that there are real C and x0 such that, for every x ≥ x0 and every index i of the family at x for which the datum Fm.D x i satisfies ShaFinOdd, and for every j in {1, …, m}, the inequality LinkN_at (Fm.L x i) j C holds.",
+  "fix": "LinkN for a family Fm means that there are real C and x0 such that, for every x ≥ x0 and every index i of the family at x for which the datum Fm.D x i satisfies ShaFinOdd, and for every j in {1, …, (Fm.D x i).R.m}, the condition LinkN_at (Fm.L x i) j C holds, which is an inequality required whenever the series vvTerm of the datum is summable.",
+  "kind": "inexact",
+  "evidence": "The reading writes 'for every j in {1, …, m}, the inequality LinkN_at (Fm.L x i) j C holds', while the Lean text has '∀ j ∈ SizeData₂.lifts (Fm.D x i)' with 'Finset.Icc 1 D.R.m' and LinkN_at begins with 'Summable (vvTerm D) →'. The notation field gives (Fm.D x i).R.m, but no field of this reading says that LinkN_at is an inequality under a summability condition."
+ },
+ {
+  "line": 14,
+  "index": 3,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "hG, a proof of CutGivesAlt, which says that for every D7 datum D and every choice nch with GaloisPreconditions D nch and Tie4 D there is a cut c of D that is Good, satisfies NormChoiceFacts for the cut datum and the carried choice, and keeps Tie4 for the cut datum",
+  "fix": "hG, a proof of CutGivesAlt, which says that for every D7 datum D and every nch of type NChoice D satisfying GaloisPreconditions D nch and Tie4 D there is an element c of type CutD D such that c.Good, NormChoiceFacts (cut D c) (nchTr c nch) and Tie4 (cut D c) all hold",
+  "kind": "naming",
+  "evidence": "The reading writes 'there is a cut c of D that is Good, satisfies NormChoiceFacts for the cut datum and the carried choice', while the Lean text has '∃ c : CutD D, c.Good ∧ …NormChoiceFacts (cut D c) (nchTr c nch) ∧ Tie4 (cut D c)'. None of the three files of this folder has an entry for NChoice, CutD, cut or nchTr, so the words cut, cut datum and carried choice rest on the names alone."
+ },
+ {
+  "line": 14,
+  "index": 4,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "dzs, a proof of DepthZeroSupport, which says that for every nonarchimedean local field k, if an irreducible representation of GL_n(k) has cuspidal support given by representations σ_a and has a nonzero vector fixed by the subgroup the code calls KOne, then each σ_a also has a nonzero vector fixed by its KOne",
+  "fix": "dzs, a proof of DepthZeroSupport, which says that for every nonarchimedean local field k, every natural number n, every π of type Irr k n, every natural number s, every function d from Fin s to the natural numbers and every family σ assigning to each a an element of Irr k (d a), if IsCuspSupport π.π d (fun a => (σ a).π) holds and there exists v in fixed π.π (KOne k (Fin n)) with v ≠ 0, then for every a there exists v in fixed (σ a).π (KOne k (Fin (d a))) with v ≠ 0",
+  "kind": "naming",
+  "evidence": "The reading writes 'an irreducible representation of GL_n(k) has cuspidal support given by representations σ_a and has a nonzero vector fixed by the subgroup the code calls KOne', while the Lean text has '(n : ℕ) (π : Irr k n) (s : ℕ) (d : Fin s → ℕ) (σ : ∀ a, Irr k (d a)), IsCuspSupport π.π d (fun a => (σ a).π)'. No file of the folder has an entry for Irr, IsCuspSupport, fixed or KOne, and the binders s and d are left out without a note."
+ },
+ {
+  "line": 14,
+  "index": 5,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "hF, the statement MemberAtLayerPoint for hL, which says that EvLgG holds of the predicate that sends K, B, f and T to the statement that KPx B f implies, and for all further data w, Z, Wt, p0, t, nch, n, xd and c for which the default extension type and RXs t are nonempty and ColPin w holds, the condition GaloisPreconditions (w.D Z) nch holds",
+  "fix": "hF, the statement MemberAtLayerPoint for hL, which says that EvLgG holds of the predicate that sends K, B, f and T to the statement that KPx B f implies that, for all further data w, Z, Wt, p0, t, nch, n, xd and c, whenever defaultExtension hL K B f T w Z Wt p0 t nch n xd c and RXs t are nonempty and an element of type ColPin w is given, the condition GaloisPreconditions (w.D Z) nch holds",
+  "kind": "inexact",
+  "evidence": "The reading writes 'the statement that KPx B f implies, and for all further data … for which the default extension type and RXs t are nonempty and ColPin w holds', while the Lean text has 'KPx B f → ∀ w Z Wt p0 t nch n xd c, Nonempty (…defaultExtension …) → Nonempty (RXs t) → ColPin w → p K B f T w Z Wt p0 t nch n c'. The clause after implies is broken, and ColPin is a 'structure ColPin (w : ColW B f T) : Type', so it is given and does not hold."
+ }
+]

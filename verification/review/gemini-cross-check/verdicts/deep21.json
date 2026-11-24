@@ -1,0 +1,82 @@
+[
+ {
+  "line": 21,
+  "index": 0,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "the proposition HarishChandraFinite, which says that the span of forms θ V U ε fr ρ c is finite-dimensional over ℂ for every D7 record and all data with IsInfFam, an open subgroup U, IsFrameFam and continuous finite-dimensional representations ρ",
+  "fix": "the proposition HarishChandraFinite, which says that the complex span of forms θ V U ε fr ρ c is finite-dimensional over ℂ for every D7 record D, every family θ with IsInfFam θ, every V of type HSp D, every open subgroup U of GA D V, every pair ε and fr with IsFrameFam V ε fr, every family of finite-dimensional complex spaces W τ with representations ρ τ of Formalism.REAL.KG (ε τ) that satisfy IsContRep, and every c from D.what₂.Tau and ℕ to ℂ",
+  "kind": "naming",
+  "evidence": "The reading writes \"continuous finite-dimensional representations ρ\", while the Lean text has \"(ρ : ∀ τ, Representation ℂ (Formalism.REAL.KG (ε τ)) (W τ)), (∀ τ, IsContRep (ρ τ)) →\" and no file shows a body of IsContRep. The words \"all data\" also leave out the binders \"∀ (V : HSp D) (U : Subgroup (GA D V))\" and \"∀ c : D.what₂.Tau → ℕ → ℂ\" without a note."
+ },
+ {
+  "line": 21,
+  "index": 1,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "the proposition CasselmanWallach, which says that for every σ on a complete inner product space H with IsURepOn and IsIrredOn for UJset ε, every E with seminorms p and maps π and dπ satisfying IsSmoothModRep, and every linear map T₀ with IsGKMap, there is a linear map T that agrees with T₀ on the IsKFin vectors and satisfies IsSmoothGMap, agrees on the SmoothVec vectors with every other such map, sends the SmoothVec vectors to a closed set, and, when T₀ is nonzero on some IsKFin vector, has every sobNorm bounded by a continuous seminorm of T w",
+  "fix": "the proposition CasselmanWallach, which says that for every natural number n, every ε of type Fin n → Bool, every σ on a complete complex inner product space H with IsURepOn and IsIrredOn for UJset ε, every complete Hausdorff complex vector space E that is a uniform additive group, with seminorms p and maps π and dπ satisfying IsSmoothModRep ε p π dπ, and every linear map T₀ from H to E with IsGKMap ε σ π dπ T₀, there is a linear map T from H to E that agrees with T₀ on the vectors with IsKFin ε σ and satisfies IsSmoothGMap ε σ p π T, agrees on the vectors with SmoothVec (lieSet ε) σ with every other such map, sends the set of the vectors with SmoothVec (lieSet ε) σ to a closed set, and, when T₀ is nonzero on some vector with IsKFin ε σ, gives for every list S of lists of matrices that all lie in lieSet ε a continuous seminorm q on E with sobNorm σ S w ≤ q (T w) for every w with SmoothVec (lieSet ε) σ w",
+  "kind": "omission",
+  "evidence": "The reading writes \"every E with seminorms p\" and \"has every sobNorm bounded by a continuous seminorm of T w\". The Lean text has \"∀ (E : Type) [AddCommGroup E] [Module ℂ E] [UniformSpace E] [IsUniformAddGroup E] [CompleteSpace E] [T2Space E]\" and \"∀ S : List (List (Matrix (Fin n) (Fin n) ℂ)), (∀ l ∈ S, ∀ X ∈ l, X ∈ lieSet ε) → ∃ q : Seminorm ℂ E, Continuous q ∧ ∀ w, SmoothVec (lieSet ε) σ w → sobNorm σ S w ≤ q (T w)\". The instances on E, the restriction of S to lieSet ε and the restriction of w to SmoothVec vectors are left out without a note."
+ },
+ {
+  "line": 21,
+  "index": 2,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "the proposition WeilSiegelFormulaUnitary, which says that for every D7 record D, all A and B in HSp D and every Haar measure m with 1 ≤ rank A and either wittIdx B = 0 or rank A + wittIdx B < rank B, absThetaInt is bounded by a continuous seminorm, the theta kernels are integrable, and when 2·rank A < rank B the conditions LeftInv and CosetConv hold and cosetSum of swSection equals the average of the descended theta kernel",
+  "fix": "the proposition WeilSiegelFormulaUnitary, which says that for every D7 record D, all A and B in HSp D and every Haar measure m on GA D B with 1 ≤ A.rank and either wittIdx B = 0 or A.rank + wittIdx B < B.rank, first, for every natural number d and every basis ε of D.host.E over D.host.F indexed by Fin d there is a seminorm ν with IsContSeminorm ν such that absThetaInt B m (φ.1 ∘ coord ε) ≤ ENNReal.ofReal (ν φ) for every φ in WeilM.schA D.host.F (Fin B.rank × Fin A.rank × Fin d), and second, for all ψ, χ and ω with IsWeilDatumO ψ (dblSp A) B 1 χ ω and every f with IsThetaFunO ψ (dblSp A) B f, the function descend (GQ B) (fun h => thetaKO ω g h f) is integrable for autMeasure B m for every g, and when 2 · A.rank < B.rank, for all ν and 𝓖 with IsCovolOne (ratL B A) ν 𝓖, LeftInv (siegelQ A) (swSection A B ν 𝓖 ω f) holds and for every g both CosetConv (siegel A) (GQ (dblSp A)) (swSection A B ν 𝓖 ω f) g holds and cosetSum (siegel A) (GQ (dblSp A)) (swSection A B ν 𝓖 ω f) g equals the average over autMeasure B m of descend (GQ B) (fun h => thetaKO ω g h f)",
+  "kind": "inexact",
+  "evidence": "The reading writes \"the theta kernels are integrable\" and \"bounded by a continuous seminorm\". The Lean text has \"∀ g, Integrable (descend (GQ B) fun h => thetaKO ω g h f) (autMeasure B m)\", so the integrable function is the descended one, and it has \"IsContSeminorm ν\", of which no file shows a body, as none shows a body of thetaKO. The hypotheses \"IsWeilDatumO ψ (dblSp A) B 1 χ ω → ∀ f, IsThetaFunO ψ (dblSp A) B f →\" and \"IsCovolOne (ratL B A) ν 𝓖 →\" are left out without a note."
+ },
+ {
+  "line": 21,
+  "index": 3,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "the proposition SiegelWeilUnitaryConvergent, which states, for rank A < rank B ≤ 2·rank A and rank A + wittIdx B < rank B, integrability of theta kernels and a relation called EisValueAt between an Eisenstein value and a theta mean",
+  "fix": "the proposition SiegelWeilUnitaryConvergent, which says that for every D7 record D, every ψ of type AddChar (AF D.host.F) ℂ, all A and B in HSp D with A.rank < B.rank ≤ 2 · A.rank and A.rank + wittIdx B < B.rank, all χB and ω with IsWeilDatumO ψ (dblSp A) B 1 χB ω, every a in GL (Fin A.rank) (AE D) with IsMaj A a and HasIwasawa D.sp.cm.sig (dblSp A).gram (Khat A a), all θ, sS and sB with IsInfFam θ, with IsCartanInv (gramAt D (dblSp A) τ) (sS τ) and IsCartanInv (gramAt D B τ) (sB τ) for every τ, and with compAt θ τ (Formalism.L2.Theta.mt (dblSp A) k) * sS τ = sS τ * compAt θ τ (Formalism.L2.Theta.mt (dblSp A) k) for every k in Khat A a and every τ, all μ and 𝓨 with IsCovolOne (ratL B A) μ 𝓨, every Haar measure ν on GA D B and every f with IsFockVec ψ θ (dblSp A) B sS sB f, the function AutomorphicL2Unitary.descend (GQ B) (fun h => thetaKO ω g h f) is integrable for autMeasure B ν for every g and Eis.EisValueAt A (flat A a (swSec A B ω μ 𝓨 f) (sZero A B)) (sZero A B) (thetaMean ω ν f) holds, where no file shows a body of thetaKO, Eis.EisValueAt, flat, swSec, sZero or thetaMean",
+  "kind": "naming",
+  "evidence": "The reading writes \"integrability of theta kernels and a relation called EisValueAt between an Eisenstein value and a theta mean\". The Lean text has \"(∀ g, Integrable (AutomorphicL2Unitary.descend (GQ B) fun h => thetaKO ω g h f) (autMeasure B ν)) ∧ Eis.EisValueAt A (flat A a (swSec A B ω μ 𝓨 f) (sZero A B)) (sZero A B) (thetaMean ω ν f)\". No file shows a body of thetaKO, Eis.EisValueAt, flat, swSec, sZero or thetaMean, so \"an Eisenstein value\" and \"a theta mean\" are meanings taken from the names. The hypotheses from \"IsWeilDatumO ψ (dblSp A) B 1 χB ω →\" to \"IsFockVec ψ θ (dblSp A) B sS sB f →\" are left out without a note."
+ },
+ {
+  "line": 21,
+  "index": 4,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "the proposition UnramifiedDoublingGL, which says that for a nonarchimedean local field k of characteristic 0, a Haar measure μ on GL_n(k) giving KO the value 1, a representation π and α with HasSatake π α and a function ω with IsZonal π (KO k (Fin n)) ω, there is s₀ such that for Re s > s₀ the integral of sphSection times ω is integrable and equals lFactor (resCard k) α (s + 1/2) · lFactor (resCard k) α⁻¹ (s + 1/2) · invNormFactor (resCard k) n s",
+  "fix": "the proposition UnramifiedDoublingGL, which says that for a nonarchimedean local field k of characteristic 0, a natural number n, a Haar measure μ on GL (Fin n) k with μ (KO k (Fin n)) = 1, a representation π of GL (Fin n) k on a complex vector space V and α of type Fin n → ℂˣ with HasSatake π α, and a function ω from GL (Fin n) k to ℂ with IsZonal π (KO k (Fin n)) ω, there is a real s₀ such that for every complex s with s₀ < Re s the function that sends g to sphSection k (Fin n) s (io k (Fin n) (g, 1)) · ω g is integrable for μ and its integral over μ equals lFactor (resCard k) α (s + 1/2) · lFactor (resCard k) α⁻¹ (s + 1/2) · invNormFactor (resCard k) n s",
+  "kind": "inexact",
+  "evidence": "The reading writes \"the integral of sphSection times ω is integrable\". The Lean text has \"Integrable (fun g => sphSection k (Fin n) s (io k (Fin n) (g, 1)) * ω g) μ ∧ ∫ g, sphSection k (Fin n) s (io k (Fin n) (g, 1)) * ω g ∂μ = …\", so the integrand is integrable and its integral has the stated value, and sphSection is evaluated at io k (Fin n) (g, 1), which the reading leaves out."
+ },
+ {
+  "line": 21,
+  "index": 5,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "the proposition DiscreteSeriesClassification, which says that for every n there is a family of complete nontrivial spaces with maps π ε λ satisfying IsURepOn, IsIrredOn and IsSqIntOn, indexed by sign functions ε and strictly decreasing λ with λ_a − (n − 1)/2 an integer, with stated infinitesimal character and K-type properties, and that every such representation is isometrically equivalent to one member after a permutation",
+  "fix": "the proposition DiscreteSeriesClassification, which says that for every natural number n there is a family of complex inner product spaces H ε lam with maps π ε lam such that, first, for every ε of type Fin n → Bool and every strictly decreasing lam of type Fin n → ℝ with lam a − (n − 1)/2 an integer for every a, the space H ε lam is complete and nontrivial, π ε lam satisfies IsURepOn (UJset ε), IsIrredOn (UJset ε) and IsSqIntOn ε, HasInfChar ε holds of lam read as complex numbers and of π ε lam, exactly one submodule S satisfies IsKTypeOf ε (π ε lam) (lam + rhoN ε − rhoC ε) S, and every μ and S with IsKTypeOf ε (π ε lam) μ S have μ = (lam + rhoN ε − rhoC ε) + ∑ a, ∑ b, c a b • root a b for some natural numbers c a b that are zero unless a < b, and second, for every ε of type Fin n → Bool and every complete nontrivial complex inner product space H′ with a map σ satisfying IsURepOn (UJset ε), IsIrredOn (UJset ε) and IsSqIntOn ε there are a permutation s of Fin n with s a < s b whenever a < b and ε (s a) = ε (s b), a strictly decreasing mu with mu a − (n − 1)/2 an integer for every a, and a linear isometric equivalence T from H′ to H (ε ∘ s) mu with T (σ (g.submatrix s.symm s.symm) v) = π (ε ∘ s) mu g (T v) for every g in UJset (ε ∘ s) and every v",
+  "kind": "naming",
+  "evidence": "The reading writes \"sign functions ε\" and \"with stated infinitesimal character and K-type properties\". The Lean text has \"∀ (ε : Fin n → Bool) (lam : Fin n → ℝ)\", \"HasInfChar ε (fun a => (lam a : ℂ)) (π ε lam)\" and \"∃! S : Submodule ℂ (H ε lam), IsKTypeOf ε (π ε lam) (lam + rhoN ε - rhoC ε) S\", and no file shows a body of HasInfChar or IsKTypeOf, so the two descriptions are meanings taken from the names and ε is a Boolean function. The second part reads \"(CompleteSpace H' ∧ Nontrivial H' ∧ IsURepOn (UJset ε) σ ∧ IsIrredOn (UJset ε) σ ∧ IsSqIntOn ε σ) → ∃ (s : Equiv.Perm (Fin n)) (mu : Fin n → ℝ), …\", which the words \"every such representation\" and \"after a permutation\" give only loosely."
+ },
+ {
+  "line": 21,
+  "index": 6,
+  "field": "conclusion",
+  "verdict": "holds",
+  "wrong_exact": "the maps b.B.Q.F.eV(zs) and b.B.Q.sEE",
+  "fix": "the maps b.B.Q.F.eV ((b.B.Q.Rl.toCx3 b.B.Q.F).zs) and b.B.Q.sEE",
+  "kind": "inexact",
+  "evidence": "The conclusion writes \"b.B.Q.F.eV(zs)\" with an unbound zs, while the Lean text has \"(b.B.Q.Rl.toCx3 b.B.Q.F).MIstar2 (b.B.Q.F.eV (b.B.Q.Rl.toCx3 b.B.Q.F).zs) b.B.Q.sEE\". The field says of the same reading already states that eV is evaluated at the zs component of that data, so the fault is a shortened spelling in the conclusion alone."
+ },
+ {
+  "line": 21,
+  "index": 7,
+  "field": "notation",
+  "verdict": "holds",
+  "wrong_exact": "RowE(IsGoodE(p.s), BundleLinkage(p), λ b. BundlePointConditions(b)) ⇒ RowE(IsGoodE(p.s), BundleLinkage(p), λ b. MIstar2(toCx3(b.B.Q.Rl, b.B.Q.F), b.B.Q.F.eV(zs), b.B.Q.sEE))",
+  "fix": "RowE(IsGoodE(p.s), BundleLinkage(p), λ κ D O c b. BundlePointConditions(b)) ⇒ RowE(IsGoodE(p.s), BundleLinkage(p), λ κ D O c b. MIstar2(toCx3(b.B.Q.Rl, b.B.Q.F), b.B.Q.F.eV(toCx3(b.B.Q.Rl, b.B.Q.F).zs), b.B.Q.sEE))",
+  "kind": "inexact",
+  "evidence": "The finding concerns the field notation of the deeper reading itself, which reading.json holds as deeper.notation and READING.md does not print. The Lean text has \"(fun _ _ _ _ b => _root_.GlobalTheory.Fam.BundlePointConditions b)\" and \"(fun _ _ _ _ b => (b.B.Q.Rl.toCx3 b.B.Q.F).MIstar2 (b.B.Q.F.eV (b.B.Q.Rl.toCx3 b.B.Q.F).zs) b.B.Q.sEE)\", and RowE applies its predicate as \"E κ β.D β.O c b\". The notation writes \"λ b.\" with one parameter, against its own line \"E(κ,β.D,β.O,c,b)\", and an unbound zs."
+ }
+]

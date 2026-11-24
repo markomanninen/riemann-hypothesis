@@ -1,0 +1,12 @@
+[
+ {
+  "line": 18,
+  "index": 0,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "The hypothesis bundle is the joint assertion of a long list of named statements, most of them labelled as published results, such as Bernstein's irreducibility of products of unitary representations, Chebotarev's density theorem in a degree one form, and global Artin reciprocity.",
+  "fix": "The hypothesis bundle is the joint assertion of a long list of named statements, most of them in the namespace Published, such as BernsteinUnitaryProductIrreducible, ChebotarevDegreeOne, which gives for every finite set S of primes a prime outside S of inertia degree 1 with a Frobenius condition IsFrob, and GlobalArtinReciprocity.",
+  "kind": "naming",
+  "evidence": "The reading writes \"Chebotarev's density theorem in a degree one form\", while the Lean text of ChebotarevDegreeOne has '∃ v : HeightOneSpectrum (𝓞 F), v ∉ S ∧ v.asIdeal.inertiaDeg ℤ = 1 ∧ …', an existence statement with no density. The phrases for Bernstein and Artin also put a mathematical content on the names BernsteinUnitaryProductIrreducible and GlobalArtinReciprocity outside the field suggests."
+ }
+]

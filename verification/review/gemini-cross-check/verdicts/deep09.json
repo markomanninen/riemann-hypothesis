@@ -1,0 +1,52 @@
+[
+ {
+  "line": 9,
+  "index": 0,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "The first is that every local datum D x i of every family in 𝒞 is locally tied (LocTied) once x is past both the family's base point x1 and the selected threshold.",
+  "fix": "The first is that every datum Fm.D x i of every family in 𝒞 satisfies LocTied whenever x exceeds the family's base point x1 and is at least the selected threshold.",
+  "kind": "inexact",
+  "evidence": "The reading says \"every local datum D x i of every family in 𝒞 is locally tied (LocTied) once x is past both the family's base point x1 and the selected threshold\", while the Lean text has \"(hx : Fm.x1 < x) (h0 : (sel Fm hc).1 ≤ x) (i : Fm.Ix x), Formalism.L2.SG.Pf.LocCP.LocTied (Fm.D x i)\". The second inequality is not strict, which the premises of the reading give correctly, and Fm.D x i is the datum of the family and no local object."
+ },
+ {
+  "line": 9,
+  "index": 1,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "TheoremSSelected says that for all large enough x, every index i and any two distinct words u ≠ u', whenever the standing hypotheses hold with C0 = 3, the squared norm of the off-diagonal quantity K0 for the pair (u, u') is at most (1 + 1/b^6) · duS(u) · duS(u') / Dstar.",
+  "fix": "TheoremSSelected says that for all large enough x and every index i, whenever AdmissibleBoundsFromSource.hyp holds for Fm.D x i and Fm.L x i with the constants 3, sC' Fm, sCl Fm, Fm.CYL + 1, 1/4, 3, 1/2 and Fm.CTu, and whenever Fm.x1 < x and s.1 ≤ x hold, then for any two distinct words u ≠ u' the squared norm of the quantity K0 of (s.2 x hx h0 i).Y.tO u u' is at most (1 + 1/b^6) · duS(u) · duS(u') / Dstar.",
+  "kind": "naming",
+  "evidence": "The reading says \"whenever the standing hypotheses hold with C0 = 3, the squared norm of the off-diagonal quantity K0\", while the Lean text of hyp is \"StandingNumericalData D C0 ∧ StandingHypotheses D large₂ C' Cl Cg cb Cu cT CT ∧ 1 ≤ C0\" and the dossier shows no body of K0, StandingNumericalData or StandingHypotheses. The constant C0 enters StandingNumericalData and the conjunct 1 ≤ C0 and not StandingHypotheses."
+ },
+ {
+  "line": 9,
+  "index": 2,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "RowsFinDim holds, meaning that for every automorphic instance I, σ-finite Haar measure μf, fundamental domain fund, right-regular action R, locally constant function e supported in I.Kset with associated convolution operator Re, and every family over the infinite places of unitary irreducible representations σ_v with formal degree d_v, unit vectors w_v and integrable coefficient functions, every operator T whose matrix coefficients equal the integral of phInf against the coefficients of R over the infinite group has a finite-dimensional range for Re ∘ T",
+  "fix": "RowsFinDim holds, meaning that for every record I of type AutInst, every σ-finite Haar measure μf on I.Gf, every subset fund of I.GA with I.IsFundDom (I.muA μf) fund, every map R on I.GA with I.IsRightReg μf fund R, every locally constant complex function e on I.Gf that vanishes outside I.Kset with an operator Re satisfying I.IsRConvF μf fund R e Re, and every family over the infinite places v of I.F of complex Hilbert spaces H v, maps σ v satisfying IsURepOn and IsIrredOn on UJset (I.ε v), reals dv v satisfying IsFdeg for muG (I.ε v), unit vectors w v and integrable functions phLoc (σ v) (w v) (dv v), every continuous linear operator T on I.L2 μf fund that satisfies IsOpInt with the measure muInf I, the action g ↦ R (g, 1) and the function phInf I σ w dv has a finite-dimensional complex space HH I μf fund Re T",
+  "kind": "naming",
+  "evidence": "The reading says \"fundamental domain fund, right-regular action R\" and \"associated convolution operator Re\", while the Lean text has \"I.IsFundDom (I.muA μf) fund\", \"I.IsRightReg μf fund R\" and \"I.IsRConvF μf fund R e Re\" and the dossier shows no body of these three. The word unitary is supported, since the shown body of IsURepOn has \"∀ g ∈ G, ∀ v : H, ‖σ g v‖ = ‖v‖\", and the body of IsFdeg is shown too."
+ },
+ {
+  "line": 9,
+  "index": 3,
+  "field": "conclusion",
+  "verdict": "holds",
+  "wrong_exact": "Closed holds for 𝒞 with the property that every family Fm in 𝒞, for every proof hc of membership, satisfies TheoremSSelected Fm 3 (sel Fm hc), which is the eventual bound ‖K0(u,u')‖² ≤ (1 + 1/b^6) · duS(u) · duS(u') / Dstar for all distinct words u ≠ u' under the standing hypotheses with C0 = 3.",
+  "fix": "Closed holds for 𝒞 with the property that every family Fm in 𝒞, for every proof hc of membership, satisfies TheoremSSelected Fm 3 (sel Fm hc), which says that there is x0 such that for every x ≥ x0 and every index i, whenever AdmissibleBoundsFromSource.hyp holds for Fm.D x i and Fm.L x i with the constants 3, sC' Fm, sCl Fm, Fm.CYL + 1, 1/4, 3, 1/2 and Fm.CTu, and Fm.x1 < x and (sel Fm hc).1 ≤ x hold, the bound ‖K0(u,u')‖² ≤ (1 + 1/b^6) · duS(u) · duS(u') / Dstar holds for all distinct words u ≠ u'.",
+  "kind": "inexact",
+  "evidence": "The reading says \"under the standing hypotheses with C0 = 3\", while the Lean text of hyp is \"StandingNumericalData D C0 ∧ StandingHypotheses D large₂ C' Cl Cg cb Cu cT CT ∧ 1 ≤ C0\". The constant 3 enters StandingNumericalData and the conjunct 1 ≤ C0, and the index i and the conditions on x are given in the notation of the reading."
+ },
+ {
+  "line": 9,
+  "index": 4,
+  "field": "notation",
+  "verdict": "holds",
+  "wrong_exact": "∃ x0 ∀ x ≥ x0 ∀ i, [hyp(D x i, L x i, 3, sC', sCl, CYL+1, 1/4, 3, 1/2, CTu) ⇒ ∀ x > x1 with sel(Fm).1 ≤ x ∀ u ≠ u', ‖K0(Y.tO u u')‖² ≤ (1 + b⁻⁶) · duS(u) · duS(u') / Dstar]",
+  "fix": "∀ hc : 𝒞 Fm, ∃ x0 ∀ x ≥ x0 ∀ i, [hyp(D x i, L x i, 3, sC', sCl, CYL+1, 1/4, 3, 1/2, CTu) ⇒ (Fm.x1 < x ∧ sel(Fm,hc).1 ≤ x) ⇒ ∀ u ≠ u', ‖K0(Y.tO u u')‖² ≤ (1 + b⁻⁶) · duS(u) · duS(u') / Dstar]",
+  "kind": "inexact",
+  "evidence": "The notation writes \"∃ x0 ∀ x ≥ x0 ∀ i, [hyp(…) ⇒ ∀ x > x1 with sel(Fm).1 ≤ x ∀ u ≠ u', …]\", which binds x a second time, while the Lean text has \"∀ (hx : Fm.x1 < x) (h0 : s.1 ≤ x) (u u' : (Fm.D x i).what₂.Word)\" as conditions on the x that OwnEv already bound. The notation also has no binder for the proof hc of \"∀ hc : 𝒞 Fm\" that sel takes."
+ }
+]

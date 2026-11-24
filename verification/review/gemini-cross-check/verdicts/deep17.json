@@ -1,0 +1,82 @@
+[
+ {
+  "line": 17,
+  "index": 0,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "and Fm also satisfies the divisibility condition DIVinN",
+  "fix": "and Fm also satisfies the condition DIVinN",
+  "kind": "naming",
+  "evidence": "The reading writes 'the divisibility condition DIVinN', while the Lean text has '∃ C x0 : ℝ, ∀ x ≥ x0, ∀ i : Fm.Ix x, ∀ j ∈ SizeData₂.lifts (Fm.D x i), DIVinN_at (Fm.L x i) j C'. No file has an entry for DIVinN_at, so the word divisibility rests on the name alone."
+ },
+ {
+  "line": 17,
+  "index": 1,
+  "field": "says",
+  "verdict": "holds",
+  "wrong_exact": "at every admissible point p over every x > Fm.x1 with x ≥ x₀ and every index i",
+  "fix": "for every x with proof hx of Fm.x1 < x and x ≥ x₀, every index i of type Fm.Ix x and every p of type Pt Fm x hx i",
+  "kind": "naming",
+  "evidence": "The reading writes 'at every admissible point p over every x > Fm.x1 with x ≥ x₀ and every index i', while the Lean text of EventuallyAtPoints has '∀ (x : ℝ) (hx : Fm.x1 < x), x0 ≤ x → ∀ (i : Fm.Ix x) (p : Pt Fm x hx i)'. The word admissible has no counterpart in the Lean text, and no file has an entry for Pt."
+ },
+ {
+  "line": 17,
+  "index": 2,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "the proposition HeckeLAdicCharacter, which says that for every number field E with algebraic closure Ω there is a map art from the ideles to Gab E Ω satisfying IsGlobalArtin, such that for every prime l, every isomorphism ι from Qbar l to ℂ, every Hecke character χ and every n with IsAlgPos χ n, there is exactly one continuous homomorphism r from G E Ω to the units of Qbar l with IsLAdicOf art ι χ n r",
+  "fix": "the proposition HeckeLAdicCharacter, which says that for every number field E with algebraic closure Ω there is a group homomorphism art from Ideles E to Gab E Ω satisfying IsGlobalArtin, such that for every prime l, every ring isomorphism ι from Qbar l to ℂ, every χ of type HChar E and every function n from the ring homomorphisms E → ℂ to ℤ with IsAlgPos χ n, there is exactly one continuous homomorphism r from G E Ω to the units of Qbar l with IsLAdicOf art ι χ n r",
+  "kind": "naming",
+  "evidence": "The reading writes 'a map art from the ideles to Gab E Ω' and 'every Hecke character χ and every n with IsAlgPos χ n', while the Lean text has 'art : Ideles E →* Gab E Ω', '(χ : HChar E) (n : (E →+* ℂ) → ℤ)'. No file has an entry for Ideles or HChar, and the type of n is left out."
+ },
+ {
+  "line": 17,
+  "index": 3,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "the proposition CuspUAlt, which says that for every CM number field E, prime l, isomorphism ι from Qbar l to ℂ, a ≥ 1, π of type CuspSub E a and Hecke character χ of the maximal real subfield, if CG.mk π is regular algebraic and IsPolarized π χ holds, then there are r from G E Ω to GL_a(Qbar l), an integer wt and multisets HT with IsGalUAlt π χ ι r wt HT",
+  "fix": "the proposition CuspUAlt, which says that for every number field E with IsCMField E, every algebraic closure Ω of E, every prime l, every ring isomorphism ι from Qbar l to ℂ, every natural number a ≥ 1, every π of type CuspSub E a and every χ of type HChar (maximalRealSubfield E), if (CG.mk π).IsRegAlg and IsPolarized π χ hold, then there exist a homomorphism r from G E Ω to GL (Fin a) (Qbar l), an integer wt and a function HT from the ring homomorphisms E → Qbar l to multisets of integers with IsGalUAlt π χ ι r wt HT",
+  "kind": "omission",
+  "evidence": "The reading writes 'for every CM number field E, prime l, …' and then 'r from G E Ω to GL_a(Qbar l)', while the Lean text opens with '∀ (E Ω : Type) [Field E] [NumberField E] [IsCMField E] [Field Ω] [Algebra E Ω] [IsAlgClosure E Ω]'. Ω is used without being introduced, and 'CG.mk π is regular algebraic' and 'Hecke character' read IsRegAlg and HChar, which have no entry in the files."
+ },
+ {
+  "line": 17,
+  "index": 4,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "the proposition BaseChangeDefiniteUnitaryGroup, defined as DefiniteN, which says that for every CM field E such that every finite place of E is unramified over the maximal real subfield, every n ≥ 1 and every π with IsAutRepU π, there are c, sizes N i summing to n, subspaces V i, local components σ and multisets m with IsBaseChangeU π h V σ m",
+  "fix": "the proposition BaseChangeDefiniteUnitaryGroup, defined as DefiniteN, which says that for every number field E with IsCMField E such that every finite place of E is unramified over the maximal real subfield, every natural number n ≥ 1 and every complex subspace π of the functions from UA E n to ℂ with IsAutRepU π, there exist a natural number c, sizes N i with a proof h that they sum to n, complex subspaces V i of Sm E (N i), a family σ that gives for each i and each finite place w an element of SmIrr (GL (Fin (N i)) (w.adicCompletion E)), and a family m that gives for each i and each ring homomorphism E → ℂ a multiset of complex numbers, with IsBaseChangeU π h V σ m",
+  "kind": "naming",
+  "evidence": "The reading writes 'every π with IsAutRepU π' and 'local components σ and multisets m', while the Lean text has 'π : Submodule ℂ (UA E n → ℂ)', 'σ : ∀ i (w : HeightOneSpectrum (𝓞 E)), SmIrr (GL (Fin (N i)) (w.adicCompletion E))' and 'm : Fin c → (E →+* ℂ) → Multiset ℂ'. No file has an entry for SmIrr or IsCMField, so local components and CM field rest on the names, and the types of π, σ and m are left out."
+ },
+ {
+  "line": 17,
+  "index": 5,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "the proposition DiscreteSeriesCover, which says that for all p, q with p + q ≥ 1 and every T of type GrpData p q there is a map D from parameters lam satisfying IsParam to representations DSRep T such that every D lam has types lam and for every R in DSRep T there is some lam with UnitEquiv R (D lam)",
+  "fix": "the proposition DiscreteSeriesCover, which says that for all natural numbers p and q with 1 ≤ p + q and every T of type GrpData p q there is a map D from functions lam from Ix p q to ℚ satisfying IsParam lam to DSRep T such that every D lam satisfies HasTypes (D lam) lam.1 and for every R of type DSRep T there is some lam satisfying UnitEquiv R (D lam)",
+  "kind": "naming",
+  "evidence": "The reading writes 'a map D from parameters lam satisfying IsParam to representations DSRep T such that every D lam has types lam', while the Lean text has '∃ D : {lam : Ix p q → ℚ // IsParam lam} → DSRep T, (∀ lam, HasTypes (D lam) lam.1)'. No file has an entry for DSRep, so the word representations rests on the name, and the type of lam is left out."
+ },
+ {
+  "line": 17,
+  "index": 6,
+  "field": "premises",
+  "verdict": "holds",
+  "wrong_exact": "the proposition CasselmanWallach, which says that for every irreducible unitary representation σ on a Hilbert space H and every smooth Fréchet-type representation π on E with IsSmoothModRep, every map T₀ with IsGKMap extends to a map T that agrees with T₀ on K-finite vectors, is a smooth G-map, is unique on smooth vectors among such extensions, has closed image on smooth vectors, and, when T₀ is nonzero on some K-finite vector, satisfies a bound sobNorm σ S w ≤ q (T w) for some continuous seminorm q",
+  "fix": "the proposition CasselmanWallach, which says that for every natural number n, every ε of type Fin n → Bool, every σ on a complex Hilbert space H with IsURepOn (UJset ε) σ and IsIrredOn (UJset ε) σ, and every complete Hausdorff uniform complex vector space E with seminorms p and maps π and dπ satisfying IsSmoothModRep ε p π dπ, every complex linear map T₀ from H to E with IsGKMap ε σ π dπ T₀ has a complex linear map T from H to E that agrees with T₀ on the vectors satisfying IsKFin ε σ, satisfies IsSmoothGMap ε σ p π T, is unique on the vectors satisfying SmoothVec (lieSet ε) σ among the maps with these two properties, has closed image of the set of vectors satisfying SmoothVec (lieSet ε) σ, and, when T₀ is nonzero on some vector with IsKFin ε σ, has for every list S of lists of n by n complex matrices whose members all belong to lieSet ε a continuous seminorm q on E such that sobNorm σ S w ≤ q (T w) for every w satisfying SmoothVec (lieSet ε) σ",
+  "kind": "inexact",
+  "evidence": "The reading writes 'satisfies a bound sobNorm σ S w ≤ q (T w) for some continuous seminorm q' with S and w unbound, while the Lean text quantifies over all lists S in lieSet ε, then gives one continuous seminorm q, then takes every w with SmoothVec (lieSet ε) σ w. The order of these quantifiers cannot be read from the phrase, and the binders n and ε of '∀ (n : ℕ) (ε : Fin n → Bool)' are left out without a note."
+ },
+ {
+  "line": 17,
+  "index": 7,
+  "field": "conclusion",
+  "verdict": "unfounded",
+  "wrong_exact": "",
+  "fix": "",
+  "kind": "omission",
+  "evidence": "The conclusion field shortens to 'for all small enough eps there is a K such that every family Fm satisfying FamHyp, Large K CH and DIVinN has a constant C₀ ≥ 0', and the says and notation fields of the same reading give '∃ε₁>0 ∀eps∈(0,ε₁] ∃K∈TransportedAlt ∀Fm∈FamP(eps) ∀CH∈ℝ' as the Lean text of Closed has it. The detail said to be missing is given elsewhere in the reading."
+ }
+]
