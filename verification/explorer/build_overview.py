@@ -17,6 +17,7 @@ import datetime
 import html
 import json
 import os
+import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -75,6 +76,8 @@ def main():
     deep_changed = [c for c in deep_checks if c["changes"]]
     deep_passed = sum(1 for c in deep_changed if c.get("recheck_errors") == 0)
     deep_fixed = [r["line"] for r in reading["lines"] if r.get("deeper", {}).get("cross_check", {}).get("recheck_errors")]
+    deep_unread = [k for k in deep_fixed
+                   if next(r for r in reading["lines"] if r["line"] == k)["deeper"]["cross_check"].get("fix_recheck_errors") != 0]
     names = sorted(axioms["axioms"])
 
     stats = [(n(meta["modules"]), "modules of Lean source"), (n(meta["lines"]), "lines in them"),
@@ -95,7 +98,8 @@ def main():
                      f"{len(deep_changed)} deeper readings. None of the findings that held was a sentence that the Lean text "
                      "contradicts."),
         ("After the corrections", f"A further check passed {deep_passed} of the {len(deep_changed)} corrected deeper readings and "
-                                  f"found {count(len(deep_fixed), 'error', 'errors')} in the others, which were corrected."),
+                                  f"found {count(len(deep_fixed), 'error', 'errors')} in the others, which were corrected."
+                                  + ("" if deep_unread else " A check of the corrected texts then found no error.")),
         ("Mathematics", "No mathematician has checked the readings or the account of the strategy. Both say what the Lean text "
                         "states. Whether a statement labelled as published agrees with the literature is a separate question, "
                         "and nobody has compared them."),
@@ -133,9 +137,17 @@ def main():
              n(meta["modules"]), "modules"),
     ]
 
+    # The names of the nine steps stand in one table of the strategy document, and the page reads them from it.
+    with open(os.path.join(os.path.dirname(HERE), "strategy", "README.md"), encoding="utf-8") as f:
+        section = f.read().split("## The route in nine steps", 1)[1].split("\n## ", 1)[0]
+    steps = re.findall(r"^\| (\d) \| (.+?) \|$", section, re.M)
+    if [int(k) for k, _ in steps] != list(range(1, 10)):
+        raise SystemExit("The table of step names in strategy/README.md does not hold steps 1 to 9.")
+    steps_html = "".join("<li>" + re.sub(r"`([^`]+)`", r"<code>\1</code>", esc(name)) + "</li>" for _, name in steps)
+
     derived = []
-    if deep_fixed:
-        derived.append(f"The deeper readings of lines {' and '.join(map(str, deep_fixed))} were corrected after the last check "
+    if deep_unread:
+        derived.append(f"The deeper readings of lines {' and '.join(map(str, deep_unread))} were corrected after the last check "
                        "and have not been checked since.")
     derived.append("Gemini has read the first versions of the readings and has not read the corrected texts.")
     derived.append("No mathematician has compared a statement labelled as published with its source in the literature.")
@@ -162,7 +174,7 @@ h1{{font-size:clamp(26px,4.2vw,40px);line-height:1.08;margin:0 0 10px;font-weigh
 h2{{font-size:22px;margin:36px 0 10px;font-weight:600;border-top:3px solid var(--pr);padding-top:12px}}
 h3{{font-size:16px;margin:0 0 2px;font-weight:600}}
 p{{margin:0 0 10px;max-width:70ch}}.mute{{color:var(--mute)}}
-a{{color:var(--pr)}}
+a{{color:var(--pr)}}a.tap{{display:inline-block;padding:10px 0;min-height:44px}}
 code{{font-family:ui-monospace,Menlo,monospace;font-size:.85em;overflow-wrap:anywhere}}
 .stats{{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0}}
 .stat{{background:var(--panel);border-radius:8px;padding:12px}}
@@ -180,6 +192,8 @@ background:var(--panel);color:inherit;text-decoration:none}}
 .card .f{{font-size:13px;color:var(--mute)}}.card .f b{{color:var(--ink);font-size:15px;font-variant-numeric:tabular-nums}}
 .card .p{{font-size:14px}}
 .card .go{{font-size:13px;color:var(--pr);margin-top:4px}}
+.steps{{padding-left:28px;margin:0}}.steps li{{padding:8px 0;border-bottom:1px solid var(--rule);max-width:70ch}}
+.steps li::marker{{color:var(--mute);font-variant-numeric:tabular-nums}}
 .open{{padding-left:20px;margin:0}}.open li{{margin:0 0 8px;max-width:70ch}}
 footer.band{{margin-top:36px;padding-bottom:40px;font-size:13px;color:var(--mute)}}
 </style>
@@ -190,7 +204,7 @@ footer.band{{margin-top:36px;padding-bottom:40px;font-size:13px;color:var(--mute
   <p>Levent Alpöge announced on 20 November 2026 a proof of the Riemann Hypothesis written in Lean 4, a language in which a
   program checks every step of a proof. This page leads to the work that reads the proof. It says what the proof claims, what
   has been checked and by whom, where each part can be read, and what is open.</p>
-  <p><a href="../index.html">Open the proof explorer</a></p>
+  <p><a class="tap" href="../index.html">Open the proof explorer</a></p>
 </header>
 <main class="band">
   <h2>What the proof claims</h2>
@@ -204,6 +218,13 @@ footer.band{{margin-top:36px;padding-bottom:40px;font-size:13px;color:var(--mute
 
   <h2>Where to read</h2>
   <div class="cards">{''.join(cards)}</div>
+
+  <h2>The route of the proof in nine steps</h2>
+  <p>The account of the strategy follows the proof from the five theorems down to two bounds on one lattice. It numbers the
+  steps of that route and gives each a short name. </p>
+  <p><a class="tap" href="{DOCS}strategy/README.md#the-route-in-nine-steps" target="_blank" rel="noopener">Read the nine steps on
+  GitHub</a></p>
+  <ol class="steps">{steps_html}</ol>
 
   <h2>What is open</h2>
   <ul class="open">{open_html}</ul>

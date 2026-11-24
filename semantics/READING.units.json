@@ -976,8 +976,8 @@
       {
        "id": "a-deeper-reading-of-lines-6-to-22.p4.s4",
        "line": 170,
-       "hash": "2fea35226c18",
-       "text": "Those two readings have not been checked after that."
+       "hash": "12767bf3b6bd",
+       "text": "A further check of the two corrected readings found no error."
       },
       {
        "id": "a-deeper-reading-of-lines-6-to-22.p4.s5",
@@ -6920,6 +6920,12 @@
        "line": 737,
        "hash": "9a47ca6870cf",
        "text": "A check of the changed text then found one error, which the text below corrects."
+      },
+      {
+       "id": "a-deeper-reading-with-the-record-d7-at-h-7.p1.s6",
+       "line": 737,
+       "hash": "0578bd05d3e4",
+       "text": "A check of the corrected text found no error."
       }
      ]
     },
@@ -13750,6 +13756,12 @@
        "line": 1299,
        "hash": "9a47ca6870cf",
        "text": "A check of the changed text then found one error, which the text below corrects."
+      },
+      {
+       "id": "a-deeper-reading-with-the-record-d7-at-h-17.p1.s6",
+       "line": 1299,
+       "hash": "0578bd05d3e4",
+       "text": "A check of the corrected text found no error."
       }
      ]
     },
@@ -19273,6 +19285,6 @@
  "counts": {
   "sections": 68,
   "paragraphs": 975,
-  "sentences": 1983
+  "sentences": 1985
  }
 }

@@ -775,7 +775,7 @@
    "id": "dp-recheck",
    "type": "lahtokohta",
    "section": "a-deeper-reading-of-lines-6-to-22",
-   "title": "Of the 16 changed deeper readings fourteen passed a new check, lines 12 and 22 were corrected once more and not checked after that, the check found two planted errors, and Gemini has not read the corrected texts",
+   "title": "Of the 16 changed deeper readings fourteen passed a new check, lines 12 and 22 were corrected once more and then passed a further check, the check found two planted errors, and Gemini has not read the corrected texts",
    "laji": "A",
    "units": [
     "a-deeper-reading-of-lines-6-to-22.p4.s1-s6"

@@ -64,6 +64,8 @@ def deep_checks(cc):
         n = cc["recheck_errors"]
         text += (" A check of the changed text then found no error." if not n else
                  f" A check of the changed text then found {'one error' if n == 1 else str(n) + ' errors'}, which the text below corrects.")
+    if cc.get("fix_recheck_errors") == 0:
+        text += " A check of the corrected text found no error."
     return text
 
 

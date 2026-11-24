@@ -2503,7 +2503,8 @@
      "findings": 8,
      "held": 8,
      "changes": 8,
-     "recheck_errors": 1
+     "recheck_errors": 1,
+     "fix_recheck_errors": 0
     }
    },
    "cross_check": {
@@ -4962,7 +4963,8 @@
      "findings": 13,
      "held": 13,
      "changes": 13,
-     "recheck_errors": 1
+     "recheck_errors": 1,
+     "fix_recheck_errors": 0
     }
    },
    "cross_check": {

@@ -32,7 +32,8 @@ record `D7`. A step links to its module in the two other views.
 `build_overview.py` writes `overview/index.html`, a page from which every part of the verification
 work opens. It says what the proof claims, what has been checked and by whom, where each part
 can be read and what is open, with figures from the JSON files of the verification folders. The
-open items that no JSON file states are in `overview/open.json`.
+open items that no JSON file states are in `overview/open.json`. The page lists the nine steps of the
+strategy by the names that the table of [`../strategy/README.md`](../strategy/README.md) gives them.
 
 The landscape also plays tours. A tour is a camera run described in a file under `tours/`, such
 as a run down the longest chain of imports, seen from outside or from the chain itself. The
