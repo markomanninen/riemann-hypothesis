@@ -55,6 +55,9 @@ input[type=search]{width:100%;min-height:44px;padding:0 12px;font-size:16px;bord
 .segm{display:flex}.segm .btn:first-child{border-radius:8px 0 0 8px}.segm .btn:last-child{border-radius:0 8px 8px 0;border-left:0}
 .card{border-top:3px solid var(--pr);padding-top:12px;margin-top:14px}
 .ns{color:var(--mute);font-size:14px}
+/* A part of a trail links to its folder or module. The padding gives a finger 44 px of height, and the margin keeps the line where it was. */
+.ns a{color:inherit;text-decoration:underline dotted;text-underline-offset:3px;display:inline-block;padding:12px 1px;margin:-12px 0}
+.ns a:hover,.ns a:focus-visible{color:var(--pr);text-decoration-style:solid}
 .name{font-size:clamp(22px,4vw,32px);line-height:1.15;font-weight:600;margin:2px 0 10px}
 .name,.ns,.row .t,.row .p{overflow-wrap:anywhere}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px 18px;margin:10px 0}
@@ -172,6 +175,15 @@ const STAGE=SIZE?{w:SIZE[1]/SCALE,h:SIZE[2]/SCALE,scale:SCALE}:null;
 if(STAGE){const r=document.documentElement;r.classList.add('stage');r.style.setProperty('--sw',STAGE.w+'px');r.style.setProperty('--sh',STAGE.h+'px')}
 /* Names are shown as words. wd writes one name, trail writes a dotted path as a trail of names. */
 const words=M.words, wd=s=>esc(words(s)), trail=s=>s.split('.').map(wd).join(' › ');
+/* The trail of a heading, where each part carries the dotted name up to it, so that linkTrails can turn it into a link. */
+const ltrail=s=>{const p=s.split('.');return p.map((x,k)=>`<span data-path="${esc(p.slice(0,k+1).join('.'))}">${wd(x)}</span>`).join(' › ')};
+let areaIds=null;
+/* Every folder of the source is a ring of the landscape, and a part that names a module opens it in the Branches tab. */
+async function linkTrails(root){try{await Promise.all([mountainReady,namesReady])}catch(e){return}
+  areaIds??=new Map(M.areas.map((a,k)=>[a.name,k]));
+  for(const s of root.querySelectorAll('.ns span[data-path]')){const name=s.dataset.path,a=areaIds.get(name),i=a===undefined?names.indexOf(name):-1;
+    if(a===undefined&&i<0)continue;const link=document.createElement('a');link.href='#'+(a===undefined?'m'+i:'a'+a);link.textContent=s.textContent;
+    link.dataset.tip=a===undefined?`Open the module ${s.textContent} in the Branches tab`:`Show the folder ${s.textContent} in the landscape`;s.replaceWith(link)}}
 let meta, names=[], chunks={}, cur=0, tab='mountain', treeShown=false;
 const FLAGTEXT={kexactB:'Uses kexactB, which assigns a term to the goal without the elaborator checking its type. The kernel is the only check.',
   kcopy:'Uses kcopy, which rebuilds a term field by field and assigns it without the elaborator check. The kernel is the only check.',
@@ -234,6 +246,8 @@ async function route(){const h=location.hash;let m;
   else{setTab('mountain');try{await mountainReady}catch(e){return}
     if((m=/^#v(\d+)$/.exec(h))&&+m[1]<M.meta.modules)M.selectModule(+m[1],true);
     else if((m=/^#a(\d+)$/.exec(h))&&+m[1]<M.areas.length)M.selectArea(+m[1],true)}}
+/* Each view writes its heading anew when it changes, and the trail of the new heading gets its links then. */
+for(const id of ['#node','#arg'])new MutationObserver(()=>linkTrails($(id))).observe($(id),{childList:true});
 addEventListener('hashchange',route);
 function go(i){if(tab==='mountain'){M.selectModule(i,true);$('.plate').scrollIntoView({block:'nearest'})}else location.hash='m'+i}
 
@@ -341,7 +355,7 @@ function lineRow(a,k,indent){const l=a.byLine[k],n=a.nodes[l.first];
   return `<div class="row" tabindex="0" role="link" data-arg="l${k}" data-tip="Open line ${k} of the outline"${indent?` style="padding-left:${4+10*l.level}px"`:''}><span class="t"><code>${esc(short(a.nodes[l.node].n))}</code></span><span class="n">${fmt(n.g)} · ${pct(n.g,a.reached)}</span><span class="p">${l.only?'Only in the exact outline. ':''}${esc(clip(l.conclusion,170))}</span><span class="bar"><i style="width:${share(n.g,a.reached)}%"></i></span></div>`}
 async function showArg(h){const a=await argReady();ARG_DOCS=a.docs;argHash=h;let m;const el=$('#arg'),cr=$('#arg-crumbs');cr.hidden=true;
   if(h==='d7'){argParts('d7');const d=a.d7;
-    el.innerHTML=`<div class="ns">Formalism › Basic Notions</div><div class="name"><code>D7</code></div>
+    el.innerHTML=`<div class="ns">${ltrail('Formalism.BasicNotions')}</div><div class="name"><code>D7</code></div>
      <p>${esc(sent(d.says))}</p>
      <div class="stats"><div class="stat"><b>${d.fields}</b><span>fields, in ${d.groups.length} groups</span></div>
       <div class="stat"><b>${fmt(d.definitions)}</b><span>definitions below it that were read</span></div>
@@ -358,7 +372,7 @@ async function showArg(h){const a=await argReady();ARG_DOCS=a.docs;argHash=h;let
      <div class="list">${a.glossary.map((e,k)=>`<div class="row" tabindex="0" role="link" data-arg="g${k}" data-tip="Open the reading of ${esc(short(e.name))}"><span class="t"><code>${esc(short(e.name))}</code></span><span class="n">${fmt(e.below)} below</span><span class="p">${esc(clip(e.what,150))}</span></div>`).join('')}</div>
      <p class="small">The method and the limits are in ${DOCS('GLOSSARY.md')}.</p>`;
   }else if((m=/^g(\d+)$/.exec(h))&&a.glossary[+m[1]]){argParts('g');const e=a.glossary[+m[1]];let shown=0;const PARTS=24;
-    el.innerHTML=`<div class="ns">${trail(e.module)}</div><div class="name"><code>${esc(short(e.name))}</code></div>
+    el.innerHTML=`<div class="ns">${ltrail(e.module)}</div><div class="name"><code>${esc(short(e.name))}</code></div>
      <p>${esc(sent(e.says))}</p>
      <div class="stats"><div class="stat"><b>${fmt(e.below)}${e.more?' or more':''}</b><span>definitions below it</span></div>
       <div class="stat"><b>${fmt(e.shown)}</b><span>of them shown to the readers</span></div>
@@ -378,7 +392,7 @@ async function showArg(h){const a=await argReady();ARG_DOCS=a.docs;argHash=h;let
     cr.hidden=false;scroller(cr,chain.map(j=>`<button data-arg="l${j}" aria-current="${j===k}" data-tip="${j===k?'The line shown below':'Go back to line '+j}">${j}. ${esc(short(a.nodes[a.byLine[j].node].n))}</button>`).join(''));
     const kids=a.kids[k]||[],small=(a.nodeKids[l.node]||[]).filter(c=>!(c in a.lineOfNode)).sort((x,y)=>a.nodes[y].g-a.nodes[x].g);
     const repeats=small.filter(c=>a.nodes[c].k).length,shownSmall=hideRepeats?small.filter(c=>!a.nodes[c].k):small;
-    el.innerHTML=`<div class="ns">Line ${k} of the outline · ${trail(n.m)}</div><div class="name"><code>${esc(short(n.n))}</code></div>
+    el.innerHTML=`<div class="ns">Line ${k} of the outline · ${ltrail(n.m)}</div><div class="name"><code>${esc(short(n.n))}</code></div>
      <p>${esc(sent(l.says))}</p>
      <div class="stats"><div class="stat"><b>${fmt(f.g)}</b><span>declarations it gathers, ${pct(f.g,a.reached)} of what the proof reaches</span></div>
       <div class="stat"><b>${fmt(n.o)}</b><span>of them behind no smaller step below it</span></div>
@@ -429,7 +443,7 @@ async function showTree(i){await Promise.all([metaReady,namesReady]);cur=i;treeS
   const top=kids.list.slice(0,14), shown=top.reduce((s,[,c])=>s+c[3],0), total=meta.lines;
   const strip=r[1]>1?`<div class="strip" role="group" aria-label="Branches by size">${top.map(([j,c],k)=>`<button class="seg" style="width:${100*c[3]/r[3]}%;--o:${1-k*0.05}" data-go="${j}" data-tip="${wd(split(names[j])[1])}, ${fmt(c[3])} lines, ${pct(c[3],r[3])} of this branch"></button>`).join('')}<span class="seg rest" style="flex:1" data-tip="The module itself and its smaller branches, ${fmt(r[3]-shown)} lines"></span></div>
    <p class="legend">${top.length<kids.list.length||kids.more?'The '+top.length+' largest':'The'} branches below this module hold ${pct(shown,r[3])} of its ${fmt(r[3])} lines. The grey part, ${pct(r[3]-shown,r[3])}, is the module itself${kids.more||kids.list.length>top.length?' and its smaller branches':''}.${i===0?' At the top it consists mostly of shared modules, which several branches reach by separate routes.':''}</p>`:'';
-  $('#node').innerHTML=`<div class="ns">${trail(ns)}</div><div class="name">${wd(last)}</div>
+  $('#node').innerHTML=`<div class="ns">${ltrail(ns)}</div><div class="name">${wd(last)}</div>
    ${strip}
    <div class="stats">
     <div class="stat"><b>${fmt(r[3])}</b><span>lines in this branch, ${(100*r[3]/total).toFixed(r[3]/total<.001?3:1)} % of the whole</span></div>
