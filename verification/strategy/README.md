@@ -4,12 +4,13 @@ The proof in [`src`](../../src) derives the five theorems of [`Main.lean`](../..
 from one inequality. The first theorem states that a Dirichlet L-function has no zero with real
 part above 1/2, and the other four follow from it. The inequality says that a weighted sum over
 the prime powers up to x, with its main terms subtracted, is at most x^(1/2 + cε) for all x
-between Y and Y^(3/2), for arbitrarily large Y, every small ε > 0 and a constant c. The proof
-gets the inequality by bounding the slope of one lattice from two sides. A divisibility
-inequality bounds the slope from above by m times a main term, where m is the number of theta
-lifts in a chain between unitary groups. A slope inequality bounds the same slope from below.
-The two bounds leave error terms of about x/m and about m for the weighted sum, and the proof
-takes m in a window around √x, where both terms are about √x.
+between Y and Y^(3/2). This holds for every small ε > 0 and for arbitrarily large Y, with a
+constant c that depends on neither ε nor Y. The proof gets the inequality by bounding the slope
+of one lattice from two sides. A divisibility inequality bounds that slope, together with a
+height term, from above by m times a main term, where m is the number of theta lifts in a
+chain between unitary groups. A slope inequality bounds the same slope from below. The two
+bounds leave error terms of about x/m and about m for the weighted sum, and the proof assumes
+that m lies in a window around √x, where both terms are about √x.
 
 This document follows that route through the Lean text. It goes from `Main.lean` down to the
 upper bound for one lift and the lower bound for the maps into the lattice, and then through the
@@ -62,13 +63,13 @@ the current source.
   by the rank. The largest slope `muMax` is the supremum of the slopes of the nonzero
   sublattices. For a Hermitian lattice over a number field K the definition `muDef` in
   [`StatementPl.lean`](../../src/Formalism/HarderNarasimhan/StatementPl.lean) sets `mu` to twice
-  that slope, minus log 2, plus the logarithm of the absolute value of the discriminant of K
-  divided by the degree of K.
+  the slope of the lattice, minus log 2, plus the quotient of log |d_K| by the degree of K over
+  the rational numbers, where d_K is the discriminant of K.
 - The height of a map is the code's number `htMap` in the file of `muDef`. It is the mean, over
   the infinite places of K, of the logarithm of the squared operator norm of the map. The
   number `h` of a word of a datum is a different number. It is a real field of the datum, the
-  condition `WordFacts` requires that the height of the map of the word is at most `h`, and in a
-  family a formula named `hExpl6` gives `h`.
+  condition `WordFacts` requires that the height of the map of the word, when the map is not
+  zero, is at most `h`, and in a family a formula named `hExpl6` gives `h`.
 - A link is one of the conditions on a family in
   [`GlobalTheoremInputs.lean`](../../src/Formalism/SharpRestriction/GlobalTheoremInputs.lean)
   whose names begin with `Link`.
@@ -95,32 +96,35 @@ marked its own guesses.
 1. The five theorems follow from one statement, that a Dirichlet L-function has no zero with
    real part above 1/2. The Lean statement sets aside the trivial character at s = 1.
 2. That statement follows from an upper bound x^θ, for every θ above 1/2, for a weighted prime
-   sum `Gm x` on the intervals from Y to Y^(3/2). The sum has its main terms subtracted. The
-   step is a Landau argument.
+   sum `Gm x` on the intervals from Y to Y^(3/2), for arbitrarily large Y. The sum has its main
+   terms subtracted. The step is a Landau argument.
 3. The sum `Gm` is a weighted sum of the prime sums of a finite set of characters, the wanted
    characters. The proof places them among the characters of an auxiliary abelian field, the
    host. A sum over a subgroup removes the characters that are nontrivial on it, and the proof
    bounds the prime sum of each remaining unwanted character separately. The host depends on
    two primes q and d. A count of zeros and a mean square bound show that at least half of the
    candidates for q, and then at least half of the candidates for d, give every such character
-   a prime sum of at most y^(1/2 + ε/2) for the y from Y to Y^A.
+   a prime sum of at most y^(1/2 + ε/2) for the y from Y to Y^A, where A ≥ 1 is an exponent
+   that the caller chooses. The sections below call the wanted characters kept and the
+   unwanted characters that remain the other characters.
 4. The sum over all characters of the auxiliary field equals an arithmetic quantity `ASK` minus
    its main term, by finite Fourier inversion.
 5. `ASK` is bounded through the slope of a lattice. A divisibility inequality `DIV` bounds the
    slope from above, and a slope inequality `SlopeIneq` bounds it from below.
 6. Both bounds concern linear maps into that lattice, one map for each word of a datum. Each map
    factors through a chain of m kernels between unitary groups of ranks k + j(t + 1), for j from
-   0 to m. The first m − 2 kernels are composed one after the other, the last two are composed
-   inside a finite sum, and one more linear map follows.
-7. The upper bound adds one term a·log a − a for each lift and each top place, where a is the
-   top weight at that place. Interlacing weights and a hook product bound everything else of the
-   lift by an error term.
+   0 to m, where k and t are two natural numbers of the datum. The first m − 2 kernels are
+   composed one after the other, the last two are composed inside a finite sum, and one more
+   linear map follows.
+7. The upper bound adds one term a·log a − a − a·`logOm` for each lift and each top place,
+   where a is the top weight at that place and `logOm` is a constant of the host. Interlacing
+   weights and a hook product bound the rest of the lift by an error term.
 8. The lower bound needs each map to be nearly an isometry, and two maps of different words to
    overlap by no more than a stated amount.
 9. After a division the two bounds leave error terms of about x/m and about m for the weighted
-   sum, and a further term of about √x that does not depend on m. The proof takes m between
-   x^(1/2 − ε) and x^(1/2 + ε/2), which keeps every term near √x, and that gives the exponent
-   1/2.
+   sum, and a further term of about √x that does not depend on m. The proof assumes that m lies
+   between x^(1/2 − ε) and x^(1/2 + ε/2), which keeps every term at most 4·x^(1/2 + 13ε/8), and
+   that gives the exponent 1/2 + cε.
 
 The sections below have names and no numbers, and the word step means one of these nine. The
 four parts of the Landau argument are called stages.
@@ -267,11 +271,12 @@ read by statement. The account below has four stages and follows the report, exc
 
 1. Put g(u) = `Gm`(e^u). Its Laplace transform Φ(s), the integral of g(u)·e^(−su) over u > 0,
    exists for real part above 2. Φ continues to real part above 0 with a simple pole at every
-   zero of one of the L-functions. The residue at a zero ρ is −S/(ρ(ρ − 1)), where S adds the
-   weights of the characters whose L-function vanishes at ρ, each times a multiplicity. The
-   theorem `poleData` builds Φ from each character and its inverse, with half of the weight
-   each. The weights are positive, so S is positive and the pole stays when two characters share
-   a zero.
+   zero of one of the L-functions. The theorem `poleData` builds Φ from each character and its
+   inverse, with half of the weight each. The residue at a zero ρ is −S/(ρ(ρ − 1)), where S
+   adds, for each character and for its inverse, half of the weight times the multiplicity of ρ
+   as a zero of its L-function. The weights are positive, so S is positive and the pole stays
+   when two characters share a zero. A growth bound |g(u)| ≤ C·e^(2u) is part of the same
+   record of facts about g and Φ.
 2. For σ > 2 and a real τ, the Taylor coefficient of order k of Φ at σ + iτ is (−1)^k times the
    integral of g(u)·u^k·e^(−(σ + iτ)u)/k! over u > 0. The interval of x from Y to Y^la is the
    interval from U to (1 + δ)U in the variable u, with U = log Y and δ = la − 1. On it the bound
@@ -283,8 +288,10 @@ read by statement. The account below has four stages and follows the report, exc
 3. `landau_tails` handles the part of the integral outside the interval. It picks σ from δ alone
    and the order k = ⌈(1 + δ/2)·σ·U⌉. The lemma bounds the integral of the weight
    u^k·e^((2 − σ)u)/k! outside the interval by C/σ^k with a constant C that is the same for
-   every U. By this session's own calculation, which the Lean text does not state, that choice
-   of k puts the peak of the weight inside the interval. On each side of the interval the proof
+   every U. The factor e^(2u) of the weight comes from the growth bound of stage 1. By this
+   session's own calculation, which the Lean text does not state, the weight peaks at
+   u = k/(σ − 2), and that point lies inside the interval when σ is at least 4(1 + δ)/δ. On
+   each side of the interval the proof
    multiplies the weight by
    an exponential factor that is at least 1 there and integrates over all u > 0.
 4. Suppose a zero has real part above θ. Stages 2 and 3 bound the sum of the norm at σ + iτ and
@@ -324,7 +331,8 @@ conditions.
   characters of the level among the characters of the host. Its field `bdG` speaks about the
   set `Bounded`, which holds the characters of the host that are trivial on a subgroup `A0` and
   are not kept. The field asks that each of them, taken as a primitive Dirichlet character χ,
-  satisfies `‖gChi χ x‖ ≤ x^(1/2 + ε)` at the same point x. This document calls the characters
+  satisfies `‖gChi χ x‖ ≤ x^(1/2 + ε)` at the point x of `core_gm`. This document calls the
+  characters
   of `Bounded` the other characters. A field `bdL` asks for a bound on their logarithmic
   derivatives at 1.
 
@@ -365,11 +373,14 @@ of the field `bounds` is at most Y^A, which is at most (2·log q)^(5A/ε). The f
 therefore concerns sums whose length is at most a fixed power of the logarithm of the modulus.
 That observation follows from the ranges above and is this session's own.
 
-A third condition, `ThinScales`, is one of the sixteen conditions of `CoreAtH`. It concerns the
-sums at arguments far above x. The statement `PropTwoSixThinScales` has the conclusion
-`‖gChi χ y‖ ≤ y·exp(−c·x^(ε/8))` for y at least exp(x^(ε/3))/3, under a premise
-`PropTwoSixBoxHypothesis` on the host. The code derives it from three statements that it
-bundles as `LitThin` and that `litThin` in
+One of the sixteen conditions of `CoreAtH` is `ThinScales`. It concerns the prime sums at
+arguments far above x, and it says that each of them is at most y·θ in absolute value for every
+y from a third of a bound X′ on, with two free numbers X′ and θ. The statement
+`PropTwoSixThinScales` is a second statement of that shape, for a datum. For every character χ
+of the host it has the conclusion `‖gChi χ y‖ ≤ y·exp(−c·x^(ε/8))` for y at least
+exp(x^(ε/3))/3 and a constant c, under a premise `PropTwoSixBoxHypothesis` on the
+host. The code derives `PropTwoSixThinScales` from three statements that it bundles as
+`LitThin` and that `litThin` in
 [`LitThin.lean`](../../src/Development/AbelianVarietyTheory/Proofs/GlobalInterpolation/LitThin.lean)
 proves. The first, `adm6`, holds a bound of a constant times Q^(1/4) on the number of zeros with
 real part at least 1 − 1/400 and the classical zero-free region with one possible exceptional
@@ -553,13 +564,14 @@ copies of one term and as real numbers in a record.
 [`ChCore.lean`](../../src/Development/AutomorphicArithmetic/DedekindLFunctions/LandauTheorems/ChCore.lean)
 rests on 177 declarations. It works with the characters of a finite abelian group `E0 × H` that
 stands for the Galois group of the host. `ASK` is a weighted sum of 2·log p over the primes p
-up to a bound whose Frobenius class lies outside a set Φ, plus a term for the prime d. The code
-calls those primes inert. `MAIN` is the term that `ASK` is compared with, of the order a·log a.
-Here a is a number `a t` for each element t of a finite set `TT`, and a condition `SizesA`
-keeps every `a t / b` within 1 of x, for a scale b of the record. The theorem assumes the bound
-that `ch_top` proves for `ASK − MAIN`, summed over `TT` and over the m lifts. It concludes that
-the weighted prime sum of the kept characters is at most x^(1/2 + (C + 3)ε) plus a sum `SigA`
-of the absolute values of the prime sums of the other characters. `core_gm` bounds `SigA` with
+that lie below a bound and whose Frobenius class lies outside a set of classes, the code's
+`PhiSet`, plus a term for the prime d. The code calls those primes inert. `MAIN` is the term
+that `ASK` is compared with, of the order a·log a. Here a is a number `a t` for each element t
+of a finite set `TT`, and a condition `SizesA` keeps every `a t / b` within 1 of x, for a scale
+b of the record. The theorem assumes the bound that `ch_top` proves for `ASK − MAIN`, summed
+over `TT` and over the m lifts. It concludes that the weighted prime sum of the kept characters
+is at most x^(1/2 + (C + 3)ε) plus a sum `SigA` of the absolute values of the prime sums of the
+other characters, where C is a constant that the caller chooses. `core_gm` bounds `SigA` with
 `sigA_le` of the section on the wanted characters.
 
 | Row | Lemma | What it does | Rests on |
@@ -586,9 +598,12 @@ condition `BNBounds`
 in [`SChain.lean`](../../src/Formalism/SizeWindowBrackets/SChain.lean) says that B and N bound
 two numbers `B0` and `Nc` of the record of the next subsection, and the error terms of the
 condition `DIV` of that subsection contain `nT * a * La` and `m * (B0 + Nc)`. The condition
-`RestSize` bounds aE by 2·x·b, n/nT by 2·x^(ε/8) and k by n²·x^(1/2 − ε), and the theorem assumes
-x·m ≤ k. The list below divides the bracket by nT·m·b alone, and by this session's own
-arithmetic that division leaves four terms.
+`RestSize` bounds aE by 2·x·b, n/nT by 2·x^(ε/8) and k by n²·x^(1/2 − ε), and it gives
+x^(1/2 − ε) ≤ m and x^(−ε) ≤ nT2/n. Here aE is the scale `a` of the record and k is the number
+k of the ranks of the datum, which this subsection uses in that one meaning. The theorem
+assumes m ≤ x^(1/2 + ε/2) and x·m ≤ k, and nT2 ≤ n holds because `T2` is a subset of `H`. The
+list below divides the bracket by nT·m·b alone, and by this session's own arithmetic that
+division leaves four terms.
 
 - The part nT·aE gives aE/(m·b), which is at most 2x/m. The premise x^(1/2 − ε) ≤ m of
   `RestSize` keeps it below 2·x^(1/2 + ε).
@@ -618,13 +633,15 @@ a multiple of m. This session did not read what `B0` and `Nc` measure. `core_gm`
 `ch_top` in
 [`ChTop.lean`](../../src/Development/AutomorphicArithmetic/DedekindLFunctions/LandauTheorems/ChTop.lean)
 proves the assumption of `ch_core`. It bounds `ASK − MAIN`, summed over `TT` and the lifts, by
-an explicit expression that the code calls `errorBracketSizeWindows`. It rests on 90
+x^(Cε) times the expression `errorBracketSizeWindows` that the subsection on `ch_core` writes
+out. Here C is the code's `CErr`, which is `eD` + `eL` + 3. `ch_top` rests on 90
 declarations. Its premise `SizeData₂`, defined in
 [`SChain.lean`](../../src/Formalism/SizeWindowBrackets/SChain.lean), is a conjunction of eleven
 conditions on a record `Data` of 39 real numbers and real-valued functions from
 [`MeanBoundSecondForm.lean`](../../src/Formalism/RankGapBounds/MeanBoundSecondForm.lean). The
-record has three indices. An index u0 runs over the elements of the group `H`. For each u0 an
-index u runs over a finite set that depends on u0. An index t runs over a set in bijection with
+record has three indices. An index u0 runs over a finite set, which for a family is the set of
+the elements of the group `H`. For each u0 an index u runs over a finite set that depends on
+u0. An index t runs over a set in bijection with
 `TT`, and a field `aT t` equals the `a t` of `ch_core`. The numbers `muCC` and `Fo` depend on
 u0 alone, and the numbers `muN`, `h` and `T` depend on u0 and u. The bullets below fix one u0
 and leave it out of the notation. The number `Main` of the record stands for the sum of `MAIN`
@@ -658,9 +675,10 @@ characters, of which the reading of six proofs read the beginning.
 The eleven conditions speak about real numbers without saying what they measure. The condition
 `TieLocal` in
 [`TieGlobal.lean`](../../src/Formalism/SharpRestriction/GlobalSchurBounds/TieGlobal.lean) says
-it for a family. A map `pt` assigns a datum of the family to each element u0 of the group, and
-the index u of the record runs over the words of that datum. The bullets speak about the datum
-of one u0.
+it for a family. A map `pt` assigns a datum of the family to each element u0 of the group `H`,
+and the index u of the record runs over the words of that datum. The bullets give four of the
+ties of `TieLocal`, for the datum of one u0. The condition ties further numbers of the record,
+among them `Fo`, `T u` and `Ga`, to numbers of the datum that this document did not open.
 
 - `muCC` is the slope of the dual of a Hermitian lattice `div.RR` of the datum.
 - `muN u` is the slope of a lattice `div.Nu u`, one for each word, and the weight `d u` is the
@@ -673,8 +691,8 @@ of one u0.
   lifts to `Finset.Icc 1 D.R.m`.
 
 The slope inequality of step 5 is therefore about the maps `Bk u` of the words of one datum
-into one lattice, and the number m of lifts enters through the bound `h u` for the height of
-each map.
+into one lattice. The next subsection shows that the bound `h u` for the height of each map is
+a sum over the m lifts, which is how m enters.
 
 ### The path of the divisibility inequality
 
@@ -735,27 +753,29 @@ product, and a field `lf` places each lift on a matrix.
 - `chainOf` builds the `ColChain` from a chain of kernels by choosing bases. It rests on 54
   declarations.
 - [`FiniteSumNonzeroLargeDepth.lean`](../../src/Formalism/LocalToGlobal/Columns/FiniteSumNonzeroLargeDepth.lean)
-  defines the family `chF u j` of spaces for a word u and a number j. Its group is `UF E (N j)`
-  times two further groups. `UF E n` is the isometry group of the standard Hermitian form on
-  Eⁿ, the sum of `star (x i) * y i`, so it is a unitary group.
+  defines the family `chF u j` of spaces for a word u and a number j. The group that acts on
+  those spaces is `UF E (N j)` times two further groups, where E is a field of the host.
+  `UF E r` is the isometry group of the standard Hermitian form on E^r, the sum of
+  `star (x i) * y i`, so it is a unitary group.
 - The rank is `N j = k + j * (t + 1)` for natural numbers k and t of the datum, so the rank
   grows by t + 1 from each j to the next. Entry 8 of the note writes a lift as π ↦ π ⊞ μ_j[t].
   That the letter t of the note is this t is an interpretation.
 - The condition `ChIdx.Ok` requires `R.m = m2 + 2` for a natural number `m2`, so m is at least
-  2. The chain of a word has n = `m2` steps, so it has m − 1 matrices, and its ranks run from
-  `N 0` to `N m`.
-- The record `ChTh` holds m distributions of type `ThDist`. The distribution `th i` goes from
+  2. The chain of a word has n = `m2` steps, so it has n + 1 = m − 1 matrices. Its ranks run
+  from `N 0` to `N m`, because the last matrix covers the two lifts from `N (m − 2)` to `N m`.
+- The record `ChTh` holds distributions of type `ThDist`. The distribution `th i` goes from
   rank `N i` to rank `N (i + 1)`, and the distribution `top` goes from rank `N (m − 1)` to rank
-  `N m`. `ThDist.Ok` requires equivariance under both unitary groups. `XiEntry` writes a kernel
-  entry as a product of local functions over primes.
+  `N m`. The chain uses `th i` for i from 0 to m − 2 and `top`, which are m distributions.
+  `ThDist.Ok` requires equivariance under both unitary groups. `XiEntry` writes a kernel entry
+  as a product of local functions over primes.
 - The first m − 2 matrices are the kernel operators of `th 0` to `th (m − 3)`. The last matrix
   is the coupling. The definition `CplKer.comp` builds it as a weighted sum, over classes and
   over a finite set, of products of two kernels, and the definitions `cp1K` and `cp2K` take
   those two kernels from `th (m − 2)` and from `top`.
 - After the matrices comes a final linear map. `chainOf` takes it as an argument g into a
   dual space and sets the field `PtL` of the chain to g in coordinates. The field `lf` places
-  lift number l on the matrix with the smaller of the two numbers `no l` and n, so several
-  lifts can sit on the last matrix.
+  lift number l on the matrix with the smaller of n and a number `no l` that the caller gives.
+  The m lifts sit on m − 1 matrices, so some matrix holds more than one lift.
 
 This session read these definitions and the statement of `rowsU_of_colPins_alt`, which proves
 that a datum with its ties has a `ColChain` with a `ChainTie`. That theorem rests on 14,837
@@ -790,8 +810,8 @@ The reading of the chain followed the premises of `rowsU_of_colPins_alt`.
 
 [`Numbers.lean`](../../src/Formalism/LocalToGlobal/Divisibility/Numbers.lean) defines the
 numbers of a lift from one record for each place, `HCParam`. A place is a pair of a truth value
-and an element of the group, and the top places are the pairs of the value false and an element
-of the set `TT`. This session read the definitions and the statement of each theorem of this
+and an element of the group `H`, and the top places are the pairs of the value false and an
+element of the set `TT`. This session read the definitions and the statement of each theorem of this
 section.
 
 - A place carries k numbers `u`, k − 1 numbers `v`, m numbers `e` and m numbers `b`. The fields
@@ -799,12 +819,13 @@ section.
   These letters u and v are unrelated to the words u and to the v of the bullet on `kerPlace`.
 - The top weight `aT t` at a top place t is `u 0` − (k − 1)/2. The code uses the letter t both
   for a top place and for the number t of the rank `N j`, and the two are unrelated.
-- The weights `nu` of lift j have one entry for each index below `N (j − 1)`. Among the first k
-  entries the first and the last come from the numbers u₀ and u_{k−1}, and the k − 2 between
-  them come from the numbers v lowered by 1/2 and, where a bit of a code is set, by a further
-  number `Del`. The rest come in blocks of t + 1 consecutive values, one block for each earlier
-  lift, centred at minus the number `e` of that lift. Every entry then gets the number `e` of
-  lift j added and a shift subtracted that depends on its index.
+- The weights `nu` of lift j have one entry for each index below `N (j − 1)`. The first k
+  entries come from k numbers that the code calls `uW`. The first and the last of them are the
+  numbers u₀ and u_{k−1}. The k − 2 between them are the numbers v₀ to v_{k−3}, each lowered by
+  1/2 and, where a bit of a code is set, by a further number `Del`. The rest of the entries
+  come in blocks of t + 1 consecutive values, one block for each earlier lift, centred at minus
+  the number `e` of that lift. Every entry then gets the number `e` of lift j added and a shift
+  subtracted that depends on its index.
 - `kerPlace` is the sum of `ph` over the weights minus the sum of the weights times `logOm`.
   Here `logOm` is γ + log(π/v) minus the real part of the logarithmic derivative at 1 of the
   L-function of the quadratic character modulo the prime d of the host. The number v is half of
@@ -812,7 +833,7 @@ section.
 - `logHook` is the logarithm of the hook product of a Young diagram with k + j − 1 rows. The
   rows are built from the k − 1 numbers v and from j of the numbers b, each shifted by the
   number `e` of lift j.
-- The height `hU` adds `kerPlace` and subtracts `logHook`, summed over places and over the m
+- The number `hU` adds `kerPlace` and subtracts `logHook`, summed over places and over the m
   lifts.
 
 `stepE_num` in
@@ -828,8 +849,10 @@ about rows of natural numbers carry it.
   hook product. This session read its proof. The hook of a cell is at least as long as the part
   of its row from the cell to the end, and the product of those lengths along a row of length L
   is L!.
-- `young_diagram_step_origin`, which rests on 55 declarations, takes k rows built from the
-  numbers u and k − 1 rows built from the numbers v, with the interlacing as a premise. It
+- `young_diagram_step_origin`, which rests on 55 declarations, takes k rows built from k
+  numbers and k − 1 rows built from k − 1 numbers that interlace with them. In the use for a
+  lift the k numbers are the numbers `uW` of the list above and the k − 1 numbers are the
+  numbers v, and the premise `inter` of `stepE_num` states the interlacing for them. It
   concludes the two facts in the form of an inequality and an equation with a remainder, and it
   bounds the error term and the remainder. The reading of six proofs read its proof in full.
   The proof pairs each of the k − 1 lower rows of the lift with a row under the hook product,
@@ -839,16 +862,17 @@ about rows of natural numbers carry it.
   separately and go into the error term. The error term of the statement grows with w, and this
   document does not record how the proof moves the shift w of the top row into it.
 
-The first fact is an upper bound, so what the top row leaves is at most one `ph (aT t)` for
-each lift, and the sum of the weights gives one `aT t * logOm`. The main term is m times their
-difference, summed over `TT`. The multiplicity of the note is, in this code, the number of
-lifts.
+By the first fact each lift contributes at most `ph (aT t)` plus the error term at a top place
+t. By the second fact the sum of the weights at that place is `aT t` + k·w up to a bounded
+error, and `kerPlace` multiplies that sum by `logOm`. The main term of `DIV` holds
+m·(`ph (aT t)` − `aT t * logOm`), summed over `TT`. This document does not record where the
+proof puts the terms that contain w and s.
 
 `numFacts_rec`, which rests on 266 declarations, proves the premises of `stepE_num` for the data
-of a family from size conditions and a choice of parameters. Three interpretations in this
+of a family from size conditions and a choice of parameters. Four interpretations in this
 section are guesses from the names and the note. They are `logOm` as the Chowla-Selberg period
-and the hook product as the Weyl dimension formula, both of entry 9, and the interlacing as the
-interlacing weights of entry 7.
+and the hook product as the Weyl dimension formula, both of entry 9, the interlacing as the
+interlacing weights of entry 7, and the number of lifts as the multiplicity of the note.
 
 ## The lower bound for the lattices of a datum
 
@@ -883,14 +907,18 @@ Its conclusion has three parts.
 - For every word u a number `hsDiagFull u` is at most e0·`duS u`.
 - `Dall` is at most (1 + η1)·`Dstar`.
 
-The link gives η0, η1 and the square root of e0 at most exp(−x^(ε/8)). The definition of
-`hsDiagFull u` is the squared Hilbert-Schmidt norm of a block `KD u u` minus the identity, and
-`hsSq u u′` is defined through the block `KD u u′`, whose definition this session did not open.
-The following reading is this session's interpretation. Each map is an isometry up to a small
-relative error. The bound for two different maps is the value that two subspaces of ranks
-`duS u` and `duS u′` in general position inside a space of rank `Dstar` have, up to the factor
-1 + η0, and it is not a bound near zero. The note's entry 16 calls its statement the
-approximate orthogonality of the columns, and entry 13 names the Bost slope inequality.
+The link gives η0, η1 and the square root of e0 at most exp(−x^(ε/8)), so e0 is at most
+exp(−2·x^(ε/8)). The definition of `hsDiagFull u` is the squared Hilbert-Schmidt norm of a
+block `KD u u` minus the identity, and `hsSq u u′` is defined through the block `KD u u′`,
+whose definition this session did not open. The rest of this paragraph is this session's
+interpretation. Each map is an isometry up to a small relative error, because the squared
+distance of its block from the identity is at most the share e0 of `duS u`. The bound for two
+different maps is 1 + η0 times `duS u`·`duS u′`/`Dstar`. That product is the mean of the
+squared Hilbert-Schmidt norm of the product of the projections onto two random subspaces of
+those dimensions in a space of dimension `Dstar`. By the premise it is at most
+(1 + η0)·C0·`duS u`/Γ², which is a small share of `duS u` when Γ is large. The note's entry 16
+calls its statement the approximate orthogonality of the columns, and entry 13 names the Bost
+slope inequality.
 
 ## How the conditions are assembled
 
@@ -1136,7 +1164,7 @@ a field of the record. The next section lists what stayed unread.
 - The proofs of `stepE_num` and `numFacts_rec`.
 - The proofs that carry the lower bound, which are those of `joint_a_ramified_holds`,
   `blockReal_at_of`, `matKF_of`, `data_SlopeIneq` and `link_alt_alt_bis`, and the definitions of
-  `hsSq`, `hsDiagFull`, `duS`, `Dstar` and `Dall`.
+  `hsSq`, `Dstar` and `Dall`.
 - The suppliers of the links other than `linkCore`.
 - The proofs below the first call in the supply branches, for example `ferreroWashington`,
   `count_i_of_printed_bound_k_kato_automorphy`, `tLift_holds_k` and the fifteen suppliers of the
