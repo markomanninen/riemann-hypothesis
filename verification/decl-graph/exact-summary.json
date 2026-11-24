@@ -1,17 +1,19 @@
 {
  "chunks": 15,
  "compiled_constants": 1550842,
- "edges": 16567357,
+ "edges": 16574237,
+ "inductive_types_with_constructors": 6629,
+ "constructors": 6880,
  "constants_with_a_row": 833920,
  "rows": 836456,
  "rows_found_compiled": 833920,
- "reached_constants": 1275648,
- "reached_rows": 800344,
+ "reached_constants": 1275664,
+ "reached_rows": 800348,
  "reached_rows_share": 0.9568,
  "reached_constants_without_a_row_by_kind": {
-  "thm": 437835,
+  "thm": 437838,
   "def": 31351,
-  "ctor": 5698,
+  "ctor": 5707,
   "rec": 420
  },
  "reached_rows_by_library": {
@@ -20,7 +22,7 @@
    10705
   ],
   "Development": [
-   540870,
+   540874,
    565741
   ],
   "Formalism": [
@@ -59,38 +61,38 @@
  "text_runs": {
   "names": {
    "text_reached": 760884,
-   "both": 755497,
-   "text_only": 5387,
+   "both": 755501,
+   "text_only": 5383,
    "exact_only": 44847
   },
   "names+automation": {
    "text_reached": 770045,
-   "both": 762598,
-   "text_only": 7447,
+   "both": 762602,
+   "text_only": 7443,
    "exact_only": 37746
   },
   "fields": {
    "text_reached": 801470,
-   "both": 791576,
-   "text_only": 9894,
+   "both": 791580,
+   "text_only": 9890,
    "exact_only": 8768
   },
   "fields+automation": {
    "text_reached": 810137,
-   "both": 797956,
-   "text_only": 12181,
+   "both": 797960,
+   "text_only": 12177,
    "exact_only": 2388
   },
   "loose": {
    "text_reached": 807367,
-   "both": 795008,
-   "text_only": 12359,
+   "both": 795012,
+   "text_only": 12355,
    "exact_only": 5336
   },
   "loose+automation": {
    "text_reached": 813736,
-   "both": 799986,
-   "text_only": 13750,
+   "both": 799990,
+   "text_only": 13746,
    "exact_only": 358
   }
  }

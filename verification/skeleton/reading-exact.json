@@ -12,7 +12,7 @@
    "wrappers": [
     "GlobalTheory.T.conclF_of_family_facts_and_bound_at_two_three"
    ],
-   "gathers": 10275,
+   "gathers": 10240,
    "parent": 15,
    "definitions": 45,
    "outline": "exact",
@@ -236,7 +236,7 @@
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TopShape",
    "first": "UpperTheory.Top.shape_closed_link_n_of_green",
    "wrappers": [],
-   "gathers": 11590,
+   "gathers": 11586,
    "parent": 23,
    "definitions": 45,
    "outline": "exact",

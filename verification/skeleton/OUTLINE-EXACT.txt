@@ -1,40 +1,40 @@
-  800,328  LFunction_ne_zero_of_half_lt_re  [1 more to UpperTheory.FinalTheorems.everyCharacter]
-  605,154    UpperTheory.FinalTheorems.everyCharacter_of_row
-  530,260      UpperTheory.LiteratureTheorems.every_character_of_literature_of_vWin
-  329,743        UpperTheory.Lit.every_character_of_theta_integrals_local_matching
-  275,684          UpperTheory.Lit.nonempty_hyps_definite_side_of_closed_bound
-   92,474            GlobalTheory.Fc.S0.StageU.hypotheses_nonempty_of_unramified_exponents_alt
+  800,332  LFunction_ne_zero_of_half_lt_re  [1 more to UpperTheory.FinalTheorems.everyCharacter]
+  605,147    UpperTheory.FinalTheorems.everyCharacter_of_row
+  530,045      UpperTheory.LiteratureTheorems.every_character_of_literature_of_vWin
+  326,657        UpperTheory.Lit.every_character_of_theta_integrals_local_matching
+  273,246          UpperTheory.Lit.nonempty_hyps_definite_side_of_closed_bound
+   91,750            GlobalTheory.Fc.S0.StageU.hypotheses_nonempty_of_unramified_exponents_alt
    35,681              GlobalTheory.Fc.AllAtMemberStage0.allRows_of_open0_alt
    15,058                GlobalTheory.LocalRows.lg1_sLp_sO_hTF  [2 more to GlobalTheory.LocalRows.at_choice_alt]
    14,429                  GlobalTheory.CarrierGap.offDiag
    10,995                GlobalTheory.T.hServ_of_linkR  [5 more to GlobalTheory.Svd.servH_row_of_artin]
-   20,525              GlobalTheory.T.large_unramified_exponent_bundles_exist_alt  [1 more to GlobalTheory.Fc.StageOneU.member_bundles_large_unramified_exponents_alt]
-   13,729                GlobalTheory.Mem.Top.Bl.exists_baseLattice_of_prime_alt
-   16,372              UpperTheory.GalC.final_alt_alt
-   15,623                UpperTheory.GalC.final_of_alt
-   15,028                  UpperTheory.GalC.linkedAt_linkN_of_boundAtTwoThree  [2 more to UpperTheory.GalC.linkN_of_twGood_galoisPreconditions]
-   10,275                    GlobalTheory.T.conclF_of_family_facts_and_bound_at_two_three  [1 more to GlobalTheory.NLinkClose.main_alt_alt]
-   21,634            GlobalTheory.Fc.S0.ontoX_and_lamLow_of_unitaryGroupHypotheses'
-   21,298              GlobalTheory.BigOn.ontoX_of_hypotheses_alt_alt
-   12,778            GlobalTheory.T.open0_of_unitary_group_hypotheses  [1 more to GlobalTheory.Fc.S0.Open0ProofU.open_orbit_of_unramified_exponents_alt]
+   20,469              GlobalTheory.T.large_unramified_exponent_bundles_exist_alt  [1 more to GlobalTheory.Fc.StageOneU.member_bundles_large_unramified_exponents_alt]
+   13,725                GlobalTheory.Mem.Top.Bl.exists_baseLattice_of_prime_alt
+   16,318              UpperTheory.GalC.final_alt_alt
+   15,580                UpperTheory.GalC.final_of_alt
+   14,985                  UpperTheory.GalC.linkedAt_linkN_of_boundAtTwoThree  [2 more to UpperTheory.GalC.linkN_of_twGood_galoisPreconditions]
+   10,240                    GlobalTheory.T.conclF_of_family_facts_and_bound_at_two_three  [1 more to GlobalTheory.NLinkClose.main_alt_alt]
+   21,631            GlobalTheory.Fc.S0.ontoX_and_lamLow_of_unitaryGroupHypotheses'
+   21,295              GlobalTheory.BigOn.ontoX_of_hypotheses_alt_alt
+   12,775            GlobalTheory.T.open0_of_unitary_group_hypotheses  [1 more to GlobalTheory.Fc.S0.Open0ProofU.open_orbit_of_unramified_exponents_alt]
    11,049              GlobalTheory.T.main_theorem_published_inputs_third_alt_alt  [1 more to GlobalTheory.miStarRow_alt_alt]
    10,830                GlobalTheory.T.main_theorem_published_inputs_variant_alt_alt  [1 more to GlobalTheory.miStarRowClosing_alt_alt]
    10,581                  GlobalTheory.T.main_theorem_published_results_final_alt_alt  [1 more to GlobalTheory.Fam.miStar_row_alt_alt]
    10,330                    GlobalTheory.T.main_theorem_from_published_results_alt_alt_alt_alt_alt  [3 more to GlobalTheory.Fam.miStar2_of_allTrue_alt_alt]
-   14,301          UpperTheory.Top.every_character_of_green_v_win  [1 more to UpperTheory.Top.zero_free_all_of_green_v_win]
-   11,590            UpperTheory.Top.shape_closed_link_n_of_green
+   14,297          UpperTheory.Top.every_character_of_green_v_win  [1 more to UpperTheory.Top.zero_free_all_of_green_v_win]
+   11,586            UpperTheory.Top.shape_closed_link_n_of_green
    54,038        SelfIntersectionVolumeEstimates.topCovolSlim2_use_alt_alt
    31,257          PositivityTheory.HtPt.Ah.deep_slim_use
    30,847            GlobalTheory.CompanionTheory.Ar.Plug.deepStR_of_use
-   21,817              GlobalTheory.CompanionTheory.Ar.Link.good_tower_volume_theorem_bis  [2 more to GlobalTheory.CompanionTheory.Ar.Top.goodTower_volume_of_reduced]
-   18,504                GlobalTheory.T.good_tower_volume_theorem
-   12,978          SelfIntersectionVolumeEstimates.topCovolG_alt_alt
+   21,803              GlobalTheory.CompanionTheory.Ar.Link.good_tower_volume_theorem_bis  [2 more to GlobalTheory.CompanionTheory.Ar.Top.goodTower_volume_of_reduced]
+   18,490                GlobalTheory.T.good_tower_volume_theorem
+   12,976          SelfIntersectionVolumeEstimates.topCovolG_alt_alt
    56,755      UpperTheory.One.vwin_of_row  [1 more to UpperTheory.One.Join.automorphic_window_of_inputs]
    56,097        UpperTheory.One.Join.v_window_of_depth_zero_residual_bc_cm  [2 more to UpperTheory.V.HV.DescentVanishingReductions.v_window_of_automorphy_csd_ss_mono_odd]
    48,777          UpperTheory.V.HV.DescentVanishingReductions.vwin_of_hypotheses_H_E_alt
-   56,550    UpperTheory.Gal.Int.galoisLocalGlobalStrong_recParameter
-   53,683      UpperTheory.Gal.Int.galoisRepresentations_of_thetaLift
+   56,554    UpperTheory.Gal.Int.galoisLocalGlobalStrong_recParameter
+   53,687      UpperTheory.Gal.Int.galoisRepresentations_of_thetaLift
    48,084        UpperTheory.Gal.Int.Geo.geoOne_holds
    46,160          UpperTheory.Gal.Int.Geo.geometric_realization_of_weight_one
    30,529            UpperTheory.Gal.Int.Geo.steps_holds
-   12,277            UpperTheory.Gal.Int.Geo.kodaira_spencer_of_weight_one
+   12,262            UpperTheory.Gal.Int.Geo.kodaira_spencer_of_weight_one

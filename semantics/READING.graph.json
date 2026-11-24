@@ -4771,7 +4771,7 @@
    "id": "L39-place",
    "type": "lahtokohta",
    "section": "line-39-main-alt-alt",
-   "title": "The head of line 39 is main_alt_alt, which gathers 10,275 declarations and hangs from line 15",
+   "title": "The head of line 39 is main_alt_alt, which gathers 10,240 declarations and hangs from line 15",
    "laji": "A",
    "units": [
     "line-39-main-alt-alt.p1"
@@ -4841,7 +4841,7 @@
    "id": "L40-place",
    "type": "lahtokohta",
    "section": "line-40-shape-closed-link-n-of-green",
-   "title": "The head of line 40 is shape_closed_link_n_of_green, which gathers 11,590 declarations and hangs from line 23",
+   "title": "The head of line 40 is shape_closed_link_n_of_green, which gathers 11,586 declarations and hangs from line 23",
    "laji": "A",
    "units": [
     "line-40-shape-closed-link-n-of-green.p1"

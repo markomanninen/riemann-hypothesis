@@ -1,10 +1,10 @@
 {
  "rows": 836456,
- "used_rows": 800344,
- "unused_rows": 36112,
+ "used_rows": 800348,
+ "unused_rows": 36108,
  "unused_by_kind": {
   "theorem": 20207,
-  "def": 10448,
+  "def": 10444,
   "instance": 2723,
   "abbrev": 1032,
   "structure": 996,
@@ -14,7 +14,7 @@
   "class": 7
  },
  "unused_by_library": {
-  "Development": 24871,
+  "Development": 24867,
   "Formalism": 7306,
   "GroundTheory": 2095,
   "ReciprocityTheory": 1481,
@@ -24,7 +24,7 @@
   "Supplements": 4
  },
  "sorts": {
-  "states its own statement": 30516,
+  "states its own statement": 30512,
   "not compiled": 2536,
   "states what only unused declarations state": 1671,
   "states what a used declaration states": 1389
@@ -32,7 +32,7 @@
  "sorts_by_kind": {
   "states its own statement": {
    "theorem": 17348,
-   "def": 10294,
+   "def": 10290,
    "structure": 996,
    "abbrev": 994,
    "lemma": 575,
@@ -65,7 +65,7 @@
  "unused_rows_in_those_modules": 16120,
  "unused_rows_outside_the_imports_of_main": 471,
  "modules_outside_the_imports_of_main_with_rows": 112,
- "unused_constants": 275194,
+ "unused_constants": 275178,
  "tops": 9021,
  "tops_by_kind": {
   "theorem": 6004,
@@ -76,13 +76,13 @@
   "instance": 44
  },
  "tops_reaching_no_other_declaration": 5513,
- "unused_rows_reached_by_one_top": 24582,
- "unused_rows_reached_by_several_tops": 7046,
- "unused_rows_reached_by_no_top": 1948,
+ "unused_rows_reached_by_one_top": 24749,
+ "unused_rows_reached_by_several_tops": 7767,
+ "unused_rows_reached_by_no_top": 1056,
  "groups": 7340,
  "groups_of_one": 5456,
  "largest_groups": [
-  11556,
+  11552,
   611,
   439,
   400,
@@ -98,7 +98,7 @@
   "Development.AbelianVarietyTheory.Definitions": 3409,
   "Development.AutomorphicArithmetic.AutomorphicVarieties": 1754,
   "Formalism.LocalToGlobal.Columns": 495,
-  "Development.AbelianVarietyTheory.PublishedTheorems": 390,
+  "Development.AbelianVarietyTheory.PublishedTheorems": 386,
   "Development.AbelianVarietyTheory.BlockTheory": 379,
   "Formalism.SharpRestriction.Divisibility": 353,
   "Formalism.LocalToGlobal.GlobalTheory": 254,
@@ -111,22 +111,36 @@
    "name": "GlobalTheory.ThK.Partner.partner_of_big",
    "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.LocalMatchingExists",
    "kind": "theorem",
-   "reaches": 869,
+   "reaches": 1045,
    "reaches_alone": 748
+  },
+  {
+   "name": "GlobalTheory.ShFam.IsKitOf",
+   "module": "Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.IsKitWithKitWith",
+   "kind": "def",
+   "reaches": 988,
+   "reaches_alone": 266
   },
   {
    "name": "UpperTheory.V.Th.core",
    "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.TheoremsMuLinked.VwinOf",
    "kind": "theorem",
-   "reaches": 853,
+   "reaches": 891,
    "reaches_alone": 214
   },
   {
    "name": "GlobalTheory.T.weil_convergence_of_kernel",
    "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.WeilConvergenceOfKernelStatement",
    "kind": "theorem",
-   "reaches": 576,
+   "reaches": 752,
    "reaches_alone": 301
+  },
+  {
+   "name": "GlobalTheory.ThK.ModelPol.exists_modelChange_pol",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEigenIntertwinerModels",
+   "kind": "theorem",
+   "reaches": 678,
+   "reaches_alone": 153
   },
   {
    "name": "GlobalTheory.T.transportedFundDomain_volume_classical",
@@ -136,88 +150,95 @@
    "reaches_alone": 533
   },
   {
-   "name": "GlobalTheory.ThK.ModelPol.exists_modelChange_pol",
-   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEigenIntertwinerModels",
-   "kind": "theorem",
-   "reaches": 537,
-   "reaches_alone": 153
-  },
-  {
    "name": "UpperTheory.V.Sd.EG.core",
    "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeilDeligneUnramified.EGCore",
    "kind": "theorem",
-   "reaches": 478,
+   "reaches": 522,
    "reaches_alone": 63
   },
   {
    "name": "s4",
    "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.SubquotientSupport.LevelU",
    "kind": "theorem",
-   "reaches": 472,
+   "reaches": 514,
    "reaches_alone": 11
   },
   {
    "name": "s3",
    "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SemisimpleLevels.LevelUFast",
    "kind": "theorem",
-   "reaches": 464,
+   "reaches": 506,
    "reaches_alone": 10
   },
   {
    "name": "UpperTheory.V.Sd.EG.core",
    "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.IdeleGenerators.HolomorphicIrreducibility.PropEG2",
    "kind": "theorem",
-   "reaches": 452,
+   "reaches": 496,
    "reaches_alone": 8
   },
   {
    "name": "UpperTheory.V.Sd.EG.core",
    "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PrimeIndexConstruction.DirGNeOne",
    "kind": "theorem",
-   "reaches": 452,
+   "reaches": 496,
    "reaches_alone": 8
   },
   {
    "name": "core",
    "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.HeckeAlgebras.OrdinaryHeckeCharacters.IrrOfComp",
    "kind": "theorem",
-   "reaches": 390,
+   "reaches": 432,
    "reaches_alone": 4
   },
   {
-   "name": "Formalism.L2.Col.tilAd",
-   "module": "Formalism.LocalToGlobal.Columns.TiedXpU",
-   "kind": "def",
-   "reaches": 375,
-   "reaches_alone": 57
+   "name": "GlobalTheory.T.linear_witt_model_unitary_action",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinearWittModelUnitaryActionStatement",
+   "kind": "theorem",
+   "reaches": 416,
+   "reaches_alone": 196
   },
   {
    "name": "GlobalTheory.T.slope_max_squared_bound",
    "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.SlopeMaxSquaredBoundStatement",
    "kind": "theorem",
-   "reaches": 357,
+   "reaches": 394,
    "reaches_alone": 5
   },
   {
-   "name": "Formalism.L2.Col.hermAtT",
-   "module": "Formalism.LocalToGlobal.Columns.HermOwed",
+   "name": "Formalism.L2.Col.tilAd",
+   "module": "Formalism.LocalToGlobal.Columns.TiedXpU",
    "kind": "def",
-   "reaches": 348,
-   "reaches_alone": 35
+   "reaches": 376,
+   "reaches_alone": 57
   },
   {
    "name": "GlobalTheory.T.antitone_weight_log_bound",
    "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.AntitoneWeightLogBoundStatement",
    "kind": "theorem",
-   "reaches": 345,
+   "reaches": 354,
    "reaches_alone": 4
   },
   {
    "name": "GlobalTheory.BergRank.berg_sup_rank",
    "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.AntitoneWeightLogBound",
    "kind": "theorem",
-   "reaches": 342,
+   "reaches": 351,
    "reaches_alone": 1
+  },
+  {
+   "name": "Formalism.L2.Col.hermAtT",
+   "module": "Formalism.LocalToGlobal.Columns.HermOwed",
+   "kind": "def",
+   "reaches": 349,
+   "reaches_alone": 34
+  },
+  {
+   "name": "core",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.OrdinaryJacquetModules.EndOrd",
+   "kind": "theorem",
+   "reaches": 344,
+   "reaches_alone": 28
   },
   {
    "name": "ReciprocityTheory.ChartRestriction.G.Geo.resExists",
@@ -227,11 +248,11 @@
    "reaches_alone": 305
   },
   {
-   "name": "core",
-   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.OrdinaryJacquetModules.EndOrd",
+   "name": "pt_part",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.SphericalTwists.JTwist",
    "kind": "theorem",
-   "reaches": 302,
-   "reaches_alone": 28
+   "reaches": 303,
+   "reaches_alone": 4
   },
   {
    "name": "CompanionTheory.WaveGrid.BallW.bigCellDerivativeExpansion_of_isDS_of_coefOf",
@@ -255,60 +276,74 @@
    "reaches_alone": 6
   },
   {
-   "name": "Formalism.L2.Col.hermCols",
-   "module": "Formalism.LocalToGlobal.Columns.LocalLevelIsKOneEverywhere",
-   "kind": "def",
-   "reaches": 293,
-   "reaches_alone": 27
-  },
-  {
    "name": "GlobalTheory.Mean4O.Setup.Y",
    "module": "Development.AbelianVarietyTheory.Definitions.Divisors.ExistsUniqueLiesUnder",
    "kind": "def",
-   "reaches": 283,
+   "reaches": 295,
    "reaches_alone": 35
+  },
+  {
+   "name": "Formalism.L2.Col.hermCols",
+   "module": "Formalism.LocalToGlobal.Columns.LocalLevelIsKOneEverywhere",
+   "kind": "def",
+   "reaches": 294,
+   "reaches_alone": 27
+  },
+  {
+   "name": "selmer_h1_vanishes_at_rigid_point",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.LogarithmicNormBounds.HostRigidU",
+   "kind": "theorem",
+   "reaches": 289,
+   "reaches_alone": 73
   },
   {
    "name": "GlobalTheory.ShFam.Pad.NModel.capDeg_divP_copies",
    "module": "Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ChiLenPicPushforwardOfIsClosedImmersion",
    "kind": "theorem",
    "reaches": 283,
-   "reaches_alone": 41
+   "reaches_alone": 34
   },
   {
-   "name": "GlobalTheory.T.linear_witt_model_unitary_action",
-   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.LinearWittModelUnitaryActionStatement",
+   "name": "coreA",
+   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PlainTorsionPairs.EndoscopyRank2Ordinary",
    "kind": "theorem",
-   "reaches": 275,
-   "reaches_alone": 196
-  },
-  {
-   "name": "pt_part",
-   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.SphericalTwists.JTwist",
-   "kind": "theorem",
-   "reaches": 261,
+   "reaches": 282,
    "reaches_alone": 4
+  },
+  {
+   "name": "UpperTheory.V.Sd.up",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PrimeIndexConstruction.FinOrderOfKills",
+   "kind": "theorem",
+   "reaches": 274,
+   "reaches_alone": 10
+  },
+  {
+   "name": "GlobalTheory.DblEval.exists_dblEv",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.AdaptedPlanePairRestrictionFirst",
+   "kind": "theorem",
+   "reaches": 271,
+   "reaches_alone": 3
+  },
+  {
+   "name": "GlobalTheory.Mean4O.Setup.Core",
+   "module": "Development.AbelianVarietyTheory.Definitions.Divisors.ReferenceMetricMulDualEqOne",
+   "kind": "def",
+   "reaches": 270,
+   "reaches_alone": 5
   },
   {
    "name": "Formalism.L2.Col.lamT_eq",
    "module": "Formalism.LocalToGlobal.Columns.TiedVal",
    "kind": "theorem",
-   "reaches": 248,
+   "reaches": 249,
    "reaches_alone": 3
   },
   {
    "name": "Formalism.L2.Col.T_eq",
    "module": "Formalism.LocalToGlobal.Columns.TiedCrd",
    "kind": "theorem",
-   "reaches": 246,
+   "reaches": 247,
    "reaches_alone": 1
-  },
-  {
-   "name": "selmer_h1_vanishes_at_rigid_point",
-   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.LogarithmicNormBounds.HostRigidU",
-   "kind": "theorem",
-   "reaches": 239,
-   "reaches_alone": 73
   },
   {
    "name": "GlobalTheory.Vert.Model.FlagPair.toFPair_ofSMul_Dv",
@@ -318,18 +353,25 @@
    "reaches_alone": 37
   },
   {
-   "name": "UpperTheory.V.Sd.up",
-   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PrimeIndexConstruction.FinOrderOfKills",
+   "name": "via",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.RankTwoDescentSplit",
    "kind": "theorem",
-   "reaches": 228,
-   "reaches_alone": 10
+   "reaches": 237,
+   "reaches_alone": 16
   },
   {
-   "name": "coreA",
-   "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.PlainTorsionPairs.EndoscopyRank2Ordinary",
+   "name": "te_loc",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.CuspidalDescent.UnitaryTorusDescent.TypeEx",
    "kind": "theorem",
-   "reaches": 227,
-   "reaches_alone": 4
+   "reaches": 232,
+   "reaches_alone": 6
+  },
+  {
+   "name": "GlobalTheory.LocM.thbTrue",
+   "module": "Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RestrictionPoincareBundle",
+   "kind": "def",
+   "reaches": 231,
+   "reaches_alone": 137
   },
   {
    "name": "Formalism.HC.EvenGrp.exact",
@@ -339,53 +381,11 @@
    "reaches_alone": 217
   },
   {
-   "name": "GlobalTheory.LocM.thbTrue",
-   "module": "Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.RestrictionPoincareBundle",
-   "kind": "def",
-   "reaches": 209,
-   "reaches_alone": 139
-  },
-  {
-   "name": "GroundTheory.Arith.Abelian.E1",
-   "module": "GroundTheory.ArithmeticGeometry.AbelianVarieties.FormalGroupFiltration",
-   "kind": "def",
-   "reaches": 203,
-   "reaches_alone": 167
-  },
-  {
-   "name": "GlobalTheory.LocM.crdTrue",
-   "module": "Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsTangentEquiv",
-   "kind": "def",
-   "reaches": 199,
-   "reaches_alone": 121
-  },
-  {
-   "name": "GlobalTheory.SlopeRec.facOf",
-   "module": "Development.AbelianVarietyTheory.Definitions.Foundations.ExistsIsDeepOfField",
-   "kind": "def",
-   "reaches": 196,
-   "reaches_alone": 160
-  },
-  {
-   "name": "UpperTheory.Lit.Mix.prod₂_detRep'",
-   "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.FockModels.GlnMixed",
+   "name": "UpperTheory.V.Z.Win.good_all",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.AutomorphyLifting.PolarizedLinkage.AUpDownOf",
    "kind": "theorem",
-   "reaches": 190,
-   "reaches_alone": 190
-  },
-  {
-   "name": "GlobalTheory.LocM.crhOf",
-   "module": "Development.AbelianVarietyTheory.Definitions.AutomorphicMembership.ExistsExtendResidue",
-   "kind": "def",
-   "reaches": 188,
-   "reaches_alone": 125
-  },
-  {
-   "name": "via",
-   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.BaseChangeUnits.RankTwoDescentSplit",
-   "kind": "theorem",
-   "reaches": 187,
-   "reaches_alone": 16
+   "reaches": 217,
+   "reaches_alone": 30
   }
  ],
  "axioms_reached_from_the_unused_constants": [

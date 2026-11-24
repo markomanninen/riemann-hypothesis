@@ -221,16 +221,23 @@ def main():
                 _, c, k, r = line.rstrip("\n").split("\t")
                 if c not in refs:
                     refs[c], kind[c] = r, k
+    ctors = {}
+    for c, k in kind.items():
+        if k == "ctor":
+            of_type = c.rsplit(".", 1)[0]
+            if kind.get(of_type) == "ind":
+                ctors.setdefault(of_type, []).append(c)
     start = [names[i] for i in np.flatnonzero(unused).tolist()]
     seen = set(start)
     queue = collections.deque(start)
     missing = 0
     while queue:
-        r = refs.get(queue.popleft())
+        c = queue.popleft()
+        r = refs.get(c)
         if r is None:
             missing += 1
             continue
-        for x in r.split(" ") if r else ():
+        for x in (r.split(" ") if r else []) + ctors.get(c, []):
             if x not in seen:
                 seen.add(x)
                 queue.append(x)

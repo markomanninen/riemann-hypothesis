@@ -1747,12 +1747,12 @@ The outline of the exact graph, [`OUTLINE-EXACT.txt`](OUTLINE-EXACT.txt), has tw
 
 | Line | Head | Hangs from | Gathers | Conclusion of the statement | Confidence |
 |---:|---|---:|---:|---|---|
-| 39 | `main_alt_alt` | 15 | 10,275 | Fm satisfies ConclF, which says that real numbers C′ and x0 exist such that for every x ≥ x0 with Fm.x1 < x and every index i, ShaFinOdd for Fm.D x i … | medium |
-| 40 | `shape_closed_link_n_of_green` | 23 | 11,590 | TopG holds, which reads that for every real la with 1 < la and every G of type FReq, if HostExW la G.req holds and if every family Fm of every FamP … | medium |
+| 39 | `main_alt_alt` | 15 | 10,240 | Fm satisfies ConclF, which says that real numbers C′ and x0 exist such that for every x ≥ x0 with Fm.x1 < x and every index i, ShaFinOdd for Fm.D x i … | medium |
+| 40 | `shape_closed_link_n_of_green` | 23 | 11,586 | TopG holds, which reads that for every real la with 1 < la and every G of type FReq, if HostExW la G.req holds and if every family Fm of every FamP … | medium |
 
 ### Line 39, `main_alt_alt`
 
-The head is `GlobalTheory.NLinkClose.main_alt_alt`, in the module Development › Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts › Third Place Series › Imports Further Tail. The line stands only in `OUTLINE-EXACT.txt`, gathers 10,275 declarations in the exact tree and hangs from line 15, `linkN_of_twGood_galoisPreconditions`. Folded into the line is the wrapper `conclF_of_family_facts_and_bound_at_two_three`.
+The head is `GlobalTheory.NLinkClose.main_alt_alt`, in the module Development › Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts › Third Place Series › Imports Further Tail. The line stands only in `OUTLINE-EXACT.txt`, gathers 10,240 declarations in the exact tree and hangs from line 15, `linkN_of_twGood_galoisPreconditions`. Folded into the line is the wrapper `conclF_of_family_facts_and_bound_at_two_three`.
 
 Assume a bundle of seven background statements that the code calls Hypotheses₂, and then take any real number eps, any family record Fm of type FamP eps, any real number C and any natural number CT. If 0 ≤ C, and Fm satisfies the condition TwGood, the condition FactsFAlt with the constants C and CT, and the condition BoundAtTwoThreeFamilyFonAlt, then Fm satisfies ConclF. The dossier unfolds ConclF to the claim that real numbers C′ and x0 exist such that, for every real x ≥ x0 with Fm.x1 < x and every index i in Fm.Ix x, if the data record Fm.D x i satisfies ShaFinOdd then a record X of type HubData exists for which a fifteen-part condition that the code calls Concl holds for the size record Fm.L x i, the parameter record that Fm.params gives at x and i, the record X and the constant C′.
 
@@ -1777,7 +1777,7 @@ The check found no error in this reading.
 
 ### Line 40, `shape_closed_link_n_of_green`
 
-The head is `UpperTheory.Top.shape_closed_link_n_of_green`, in the module Development › Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts › Third Place Series › Top Shape. The line stands only in `OUTLINE-EXACT.txt`, gathers 11,590 declarations in the exact tree and hangs from line 23, `zero_free_all_of_green_v_win`.
+The head is `UpperTheory.Top.shape_closed_link_n_of_green`, in the module Development › Automorphic Arithmetic › Theta Correspondence › Theta Pair Lifts › Third Place Series › Top Shape. The line stands only in `OUTLINE-EXACT.txt`, gathers 11,586 declarations in the exact tree and hangs from line 23, `zero_free_all_of_green_v_win`.
 
 The theorem says that if the condition the code calls Green holds, then TopShapeAlt True True N TopG holds, where N is the requirement on a family class 𝒞 that LinkN holds in the Closed sense on 𝒞, which means that there is ε1 > 0 such that for every eps with 0 < eps ≤ ε1 there is a K for which LinkN Fm holds for every family Fm in FamP eps that lies in 𝒞 and satisfies Fm.Large K CH for some real CH. By the shown body of TopShapeAlt this unfolds to the claim that, under Green, for every family class 𝒜, every function cT of two real variables and every choice of the 51 further bound items (auxiliary selection data and hypotheses, among them two trivially true hypotheses in the slots V and NR and the hypothesis N applied to the class D3 3 𝒜), the condition the code calls TopG holds. TopG says that for every real la greater than 1 and every G of the type FReq, if HostExW la G.req holds and every family Fm in the class G.cls la satisfies HypV, then the class G.cls la satisfies a condition that the code calls FamilyClassConnected.
 

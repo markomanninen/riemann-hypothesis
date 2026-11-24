@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """List the axioms that the five theorems of Main rest on, with a path to each, from the compiled files.
 
-Usage: python3 -I verification/decl-graph/exact_axioms.py PROJECT
+Usage: python3 -I verification/decl-graph/exact_axioms.py PROJECT [NAME ...]
 
 PROJECT is the checkout that exact_extract.py read. The project's own constants come from the
 chunks in data/exact. This script also reads, with ExactGraph.lean, every compiled module of the
@@ -9,8 +9,11 @@ packages under PROJECT/.lake/packages and of Lean's own library in the toolchain
 them to data/exact/lib-NAME.tsv.gz. A library file that exists is not read again.
 
 It then follows every mention from the five theorems of Main through the project and the
-libraries, as Lean's `#print axioms` does, and lists each reached constant of kind axiom with
+libraries, and from an inductive type to its constructors, as Lean's `#print axioms` does, and lists each reached constant of kind axiom with
 one shortest chain of mentions that leads to it. The result goes to exact-axioms.json.
+
+With one or more NAMEs after PROJECT the script makes the same search from each named constant
+alone, prints the axioms that it reaches and leaves exact-axioms.json as it is.
 
 The search reads what the compiled terms mention. It does not check any proof.
 """
@@ -60,7 +63,7 @@ def extract(project, name, root):
 
 
 def main():
-    if len(sys.argv) != 2:
+    if len(sys.argv) < 2:
         sys.exit(__doc__)
     project = os.path.abspath(sys.argv[1])
     sysroot = subprocess.run(["lake", "env", "lean", "--print-prefix"], cwd=project, check=True,
@@ -81,19 +84,41 @@ def main():
                 if n not in refs:
                     refs[n], kind[n], module[n] = r, k, m
 
-    parent = {t: None for t in TARGETS}
-    queue = collections.deque(TARGETS)
-    missing = set()
-    while queue:
-        n = queue.popleft()
-        r = refs.get(n)
-        if r is None:
-            missing.add(n)
-            continue
-        for x in r.split(" ") if r else ():
-            if x not in parent:
-                parent[x] = n
-                queue.append(x)
+    # An inductive type leads to its constructors, as in Lean's `#print axioms`.
+    ctors = {}
+    for c, k in kind.items():
+        if k == "ctor":
+            owner = c.rsplit(".", 1)[0]
+            if kind.get(owner) == "ind":
+                ctors.setdefault(owner, []).append(c)
+
+    def search(roots):
+        parent = {t: None for t in roots}
+        queue = collections.deque(roots)
+        missing = set()
+        while queue:
+            n = queue.popleft()
+            r = refs.get(n)
+            if r is None:
+                missing.add(n)
+                continue
+            for x in (r.split(" ") if r else []) + ctors.get(n, []):
+                if x not in parent:
+                    parent[x] = n
+                    queue.append(x)
+        return parent, missing
+
+    if len(sys.argv) > 2:
+        for name in sys.argv[2:]:
+            if name not in refs:
+                print(f"{name}: no compiled constant of this name")
+                continue
+            parent, missing = search([name])
+            found = sorted(n for n in parent if kind.get(n) == "axiom")
+            print(f"{name}: {len(parent):,} constants reached, {len(missing)} without a compiled entry, "
+                  f"axioms {', '.join(found) or 'none'}")
+        return
+    parent, missing = search(TARGETS)
 
     def chain(n):
         out = []

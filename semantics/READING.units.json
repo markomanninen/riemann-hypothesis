@@ -18163,8 +18163,8 @@
       {
        "id": "two-lines-of-the-exact-outline.p3.s1",
        "line": 1750,
-       "hash": "a1bf1e569b99",
-       "text": "39 — main_alt_alt — 15 — 10,275 — Fm satisfies ConclF, which says that real numbers C′ and x0 exist such that for every x ≥ x0 with Fm.x1 < x and every index i, ShaFinOdd for Fm.D x i … — medium"
+       "hash": "2dec37993189",
+       "text": "39 — main_alt_alt — 15 — 10,240 — Fm satisfies ConclF, which says that real numbers C′ and x0 exist such that for every x ≥ x0 with Fm.x1 < x and every index i, ShaFinOdd for Fm.D x i … — medium"
       }
      ]
     },
@@ -18176,8 +18176,8 @@
       {
        "id": "two-lines-of-the-exact-outline.p4.s1",
        "line": 1751,
-       "hash": "d77739be341a",
-       "text": "40 — shape_closed_link_n_of_green — 23 — 11,590 — TopG holds, which reads that for every real la with 1 < la and every G of type FReq, if HostExW la G.req holds and if every family Fm of every FamP … — medium"
+       "hash": "94b6ddb0b0fe",
+       "text": "40 — shape_closed_link_n_of_green — 23 — 11,586 — TopG holds, which reads that for every real la with 1 < la and every G of type FReq, if HostExW la G.req holds and if every family Fm of every FamP … — medium"
       }
      ]
     }
@@ -18203,8 +18203,8 @@
       {
        "id": "line-39-main-alt-alt.p1.s2",
        "line": 1755,
-       "hash": "65d8b12f98ea",
-       "text": "The line stands only in OUTLINE-EXACT.txt, gathers 10,275 declarations in the exact tree and hangs from line 15, linkN_of_twGood_galoisPreconditions."
+       "hash": "dadb3b4c70be",
+       "text": "The line stands only in OUTLINE-EXACT.txt, gathers 10,240 declarations in the exact tree and hangs from line 15, linkN_of_twGood_galoisPreconditions."
       },
       {
        "id": "line-39-main-alt-alt.p1.s3",
@@ -18439,8 +18439,8 @@
       {
        "id": "line-40-shape-closed-link-n-of-green.p1.s2",
        "line": 1780,
-       "hash": "65f04bdac7e8",
-       "text": "The line stands only in OUTLINE-EXACT.txt, gathers 11,590 declarations in the exact tree and hangs from line 23, zero_free_all_of_green_v_win."
+       "hash": "45bc6c4bca49",
+       "text": "The line stands only in OUTLINE-EXACT.txt, gathers 11,586 declarations in the exact tree and hangs from line 23, zero_free_all_of_green_v_win."
       }
      ]
     },

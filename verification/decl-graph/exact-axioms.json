@@ -12,7 +12,7 @@
   "proofwidgets": "/Volumes/rhbuild/proj436/.lake/packages/proofwidgets/.lake/build/lib/lean"
  },
  "constants_read": 2353852,
- "constants_reached": 1491293,
+ "constants_reached": 1491315,
  "reached_names_without_a_compiled_entry": [],
  "axioms": {
   "Classical.choice": {

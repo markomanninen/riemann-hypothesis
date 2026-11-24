@@ -212,14 +212,14 @@ nodes of this tree, but a number gathered counts only declarations, as in `build
 
 | | Exact graph | Text graph |
 |---|---:|---:|
-| Declarations reached | 800,344 | 760,989 |
-| Declarations gathered by `everyCharacter` | 800,326 | 760,225 |
+| Declarations reached | 800,348 | 760,989 |
+| Declarations gathered by `everyCharacter` | 800,330 | 760,225 |
 | Declarations that gather at least 100,000 | 6 | 6 |
 | Declarations that gather at least 10,000 | 65 | 62 |
 | Skeleton declarations, gathering at least 1,000 | 622 | 590 |
 
-The exact graph reaches 39,355 more declarations. In it `everyCharacter` gathers all but 18 of
-the 800,344 reached declarations, as it gathers all but 764 of the 760,989 in the text graph.
+The exact graph reaches 39,359 more declarations. In it `everyCharacter` gathers all but 18 of
+the 800,348 reached declarations, as it gathers all but 764 of the 760,989 in the text graph.
 The two skeletons share 582 declarations. The 40 that only the exact skeleton holds gather
 between 1,000 and 2,538 declarations, and the 8 that only the text skeleton holds gather between
 1,008 and 1,254, so none of the 48 gathers more than 2.6 times the limit of 1,000.
@@ -230,7 +230,7 @@ declarations that gather at least 10,000 and folds a run of wrappers into one li
 stands in it at the same level under the same line, and each gathers between 2 % and 19 % more
 declarations than in the text tree. The exact outline has two more lines, for
 `GlobalTheory.T.conclF_of_family_facts_and_bound_at_two_three` and
-`UpperTheory.Top.shape_closed_link_n_of_green`. These two gather 10,275 and 11,590 declarations
+`UpperTheory.Top.shape_closed_link_n_of_green`. These two gather 10,240 and 11,586 declarations
 in the exact tree and fewer than 10,000 in the text tree, so only the exact tree puts them above
 the limit of the outline. The first of them folds the wrapper `GlobalTheory.NLinkClose.main_alt_alt`
 into its line, which is why the table counts three more declarations above 10,000 and the

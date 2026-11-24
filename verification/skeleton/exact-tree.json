@@ -1,19 +1,19 @@
 {
- "reached_constants": 1275648,
- "reached_declarations": 800344,
- "edges": 14196633,
- "passes": 2,
+ "reached_constants": 1275664,
+ "reached_declarations": 800348,
+ "edges": 14202500,
+ "passes": 3,
  "gathering_at_least": {
   "100000": 6,
   "10000": 65,
   "1000": 622,
-  "100": 5970
+  "100": 5966
  },
  "skeleton": {
   "min": 1000,
   "nodes": 622,
   "top": "LFunction_ne_zero_of_half_lt_re",
-  "top_gathers": 800328,
+  "top_gathers": 800332,
   "also_in_text_skeleton": 582,
   "only_in_exact_skeleton": 40,
   "only_in_text_skeleton": 8
@@ -32,7 +32,7 @@
    "level": 0,
    "parent": null,
    "text_gathers": 760227,
-   "exact_gathers": 800328,
+   "exact_gathers": 800332,
    "same_place": true
   },
   {
@@ -40,7 +40,7 @@
    "level": 1,
    "parent": "LFunction_ne_zero_of_half_lt_re",
    "text_gathers": 577248,
-   "exact_gathers": 605154,
+   "exact_gathers": 605147,
    "same_place": true
   },
   {
@@ -48,7 +48,7 @@
    "level": 2,
    "parent": "UpperTheory.FinalTheorems.everyCharacter_of_row",
    "text_gathers": 506214,
-   "exact_gathers": 530260,
+   "exact_gathers": 530045,
    "same_place": true
   },
   {
@@ -56,7 +56,7 @@
    "level": 3,
    "parent": "UpperTheory.LiteratureTheorems.every_character_of_literature_of_vWin",
    "text_gathers": 315443,
-   "exact_gathers": 329743,
+   "exact_gathers": 326657,
    "same_place": true
   },
   {
@@ -64,7 +64,7 @@
    "level": 4,
    "parent": "UpperTheory.Lit.every_character_of_theta_integrals_local_matching",
    "text_gathers": 266135,
-   "exact_gathers": 275684,
+   "exact_gathers": 273246,
    "same_place": true
   },
   {
@@ -72,7 +72,7 @@
    "level": 5,
    "parent": "UpperTheory.Lit.nonempty_hyps_definite_side_of_closed_bound",
    "text_gathers": 89671,
-   "exact_gathers": 92474,
+   "exact_gathers": 91750,
    "same_place": true
   },
   {
@@ -112,7 +112,7 @@
    "level": 6,
    "parent": "GlobalTheory.Fc.S0.StageU.hypotheses_nonempty_of_unramified_exponents_alt",
    "text_gathers": 20058,
-   "exact_gathers": 20525,
+   "exact_gathers": 20469,
    "same_place": true
   },
   {
@@ -120,7 +120,7 @@
    "level": 7,
    "parent": "GlobalTheory.T.large_unramified_exponent_bundles_exist_alt",
    "text_gathers": 13160,
-   "exact_gathers": 13729,
+   "exact_gathers": 13725,
    "same_place": true
   },
   {
@@ -128,7 +128,7 @@
    "level": 6,
    "parent": "GlobalTheory.Fc.S0.StageU.hypotheses_nonempty_of_unramified_exponents_alt",
    "text_gathers": 15685,
-   "exact_gathers": 16372,
+   "exact_gathers": 16318,
    "same_place": true
   },
   {
@@ -136,7 +136,7 @@
    "level": 7,
    "parent": "UpperTheory.GalC.final_alt_alt",
    "text_gathers": 14931,
-   "exact_gathers": 15623,
+   "exact_gathers": 15580,
    "same_place": true
   },
   {
@@ -144,7 +144,7 @@
    "level": 8,
    "parent": "UpperTheory.GalC.final_of_alt",
    "text_gathers": 14338,
-   "exact_gathers": 15028,
+   "exact_gathers": 14985,
    "same_place": true
   },
   {
@@ -152,7 +152,7 @@
    "level": 5,
    "parent": "UpperTheory.Lit.nonempty_hyps_definite_side_of_closed_bound",
    "text_gathers": 20036,
-   "exact_gathers": 21634,
+   "exact_gathers": 21631,
    "same_place": true
   },
   {
@@ -160,7 +160,7 @@
    "level": 6,
    "parent": "GlobalTheory.Fc.S0.ontoX_and_lamLow_of_unitaryGroupHypotheses'",
    "text_gathers": 19703,
-   "exact_gathers": 21298,
+   "exact_gathers": 21295,
    "same_place": true
   },
   {
@@ -168,7 +168,7 @@
    "level": 5,
    "parent": "UpperTheory.Lit.nonempty_hyps_definite_side_of_closed_bound",
    "text_gathers": 12471,
-   "exact_gathers": 12778,
+   "exact_gathers": 12775,
    "same_place": true
   },
   {
@@ -208,7 +208,7 @@
    "level": 4,
    "parent": "UpperTheory.Lit.every_character_of_theta_integrals_local_matching",
    "text_gathers": 12029,
-   "exact_gathers": 14301,
+   "exact_gathers": 14297,
    "same_place": true
   },
   {
@@ -240,7 +240,7 @@
    "level": 6,
    "parent": "GlobalTheory.CompanionTheory.Ar.Plug.deepStR_of_use",
    "text_gathers": 20438,
-   "exact_gathers": 21817,
+   "exact_gathers": 21803,
    "same_place": true
   },
   {
@@ -248,7 +248,7 @@
    "level": 7,
    "parent": "GlobalTheory.CompanionTheory.Ar.Link.good_tower_volume_theorem_bis",
    "text_gathers": 17143,
-   "exact_gathers": 18504,
+   "exact_gathers": 18490,
    "same_place": true
   },
   {
@@ -256,7 +256,7 @@
    "level": 4,
    "parent": "SelfIntersectionVolumeEstimates.topCovolSlim2_use_alt_alt",
    "text_gathers": 12517,
-   "exact_gathers": 12978,
+   "exact_gathers": 12976,
    "same_place": true
   },
   {
@@ -288,7 +288,7 @@
    "level": 1,
    "parent": "LFunction_ne_zero_of_half_lt_re",
    "text_gathers": 51784,
-   "exact_gathers": 56550,
+   "exact_gathers": 56554,
    "same_place": true
   },
   {
@@ -296,7 +296,7 @@
    "level": 2,
    "parent": "UpperTheory.Gal.Int.galoisLocalGlobalStrong_recParameter",
    "text_gathers": 48992,
-   "exact_gathers": 53683,
+   "exact_gathers": 53687,
    "same_place": true
   },
   {
@@ -328,7 +328,7 @@
    "level": 5,
    "parent": "UpperTheory.Gal.Int.Geo.geometric_realization_of_weight_one",
    "text_gathers": 11850,
-   "exact_gathers": 12277,
+   "exact_gathers": 12262,
    "same_place": true
   }
  ],
@@ -338,7 +338,7 @@
    "kind": "theorem",
    "module": "Main",
    "parent": null,
-   "gathers": 800328,
+   "gathers": 800332,
    "text_gathers": 760227
   },
   {
@@ -346,7 +346,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.CharacterBoxes.MainConclusion",
    "parent": 0,
-   "gathers": 800326,
+   "gathers": 800330,
    "text_gathers": 760225
   },
   {
@@ -354,7 +354,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.RowSrc",
    "parent": 1,
-   "gathers": 56550,
+   "gathers": 56554,
    "text_gathers": 51784
   },
   {
@@ -394,7 +394,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilFinLt",
    "parent": 6,
-   "gathers": 1298,
+   "gathers": 1295,
    "text_gathers": 1203
   },
   {
@@ -402,7 +402,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.ThetaParseval.ThetaKernels.SiegelWeilFinPre",
    "parent": 7,
-   "gathers": 1253,
+   "gathers": 1250,
    "text_gathers": 1157
   },
   {
@@ -410,7 +410,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GaloisRepresentationsOfThetaLift",
    "parent": 2,
-   "gathers": 53683,
+   "gathers": 53687,
    "text_gathers": 48992
   },
   {
@@ -514,7 +514,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.GeometricFlagBases.GeometricRealizationOfWeightOne",
    "parent": 20,
-   "gathers": 12277,
+   "gathers": 12262,
    "text_gathers": 11850
   },
   {
@@ -618,7 +618,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.CrystallineTowers.ClosedHT",
    "parent": 34,
-   "gathers": 2192,
+   "gathers": 2189,
    "text_gathers": 1762
   },
   {
@@ -770,7 +770,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.CommutativeAlgebra.EtaleCohomology.PurTop",
    "parent": 53,
-   "gathers": 2022,
+   "gathers": 2002,
    "text_gathers": 0
   },
   {
@@ -802,7 +802,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.Development",
    "parent": 9,
-   "gathers": 5452,
+   "gathers": 5456,
    "text_gathers": 5427
   },
   {
@@ -810,7 +810,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.Foundations.GaloisRepresentations.IntegralStructures.Development",
    "parent": 58,
-   "gathers": 5442,
+   "gathers": 5446,
    "text_gathers": 5426
   },
   {
@@ -866,7 +866,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.CharacterBoxes.MainConclusion",
    "parent": 1,
-   "gathers": 605154,
+   "gathers": 605147,
    "text_gathers": 577248
   },
   {
@@ -914,7 +914,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.PublishedHypothesesFromPatching",
    "parent": 71,
-   "gathers": 3593,
+   "gathers": 3591,
    "text_gathers": 3584
   },
   {
@@ -1146,7 +1146,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.ThresholdArguments.DenseThresholdCases.SeedIIZ",
    "parent": 97,
-   "gathers": 1711,
+   "gathers": 1709,
    "text_gathers": 1679
   },
   {
@@ -1258,7 +1258,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.WeilDeligneUnramified.LevUnion",
    "parent": 114,
-   "gathers": 1955,
+   "gathers": 1954,
    "text_gathers": 1924
   },
   {
@@ -1266,7 +1266,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GeneralizedEigenspaces.CharacterShapes.UnifLtOne",
    "parent": 115,
-   "gathers": 1853,
+   "gathers": 1852,
    "text_gathers": 1827
   },
   {
@@ -1274,7 +1274,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.SymmetricPowerTransfer.GlobalUnitaryForms.ScalarTuples.TFId0",
    "parent": 116,
-   "gathers": 1490,
+   "gathers": 1489,
    "text_gathers": 1393
   },
   {
@@ -1362,7 +1362,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.EveryCharacterOfLiteratureOfVWin",
    "parent": 66,
-   "gathers": 530260,
+   "gathers": 530045,
    "text_gathers": 506214
   },
   {
@@ -1786,7 +1786,7 @@
    "kind": "theorem",
    "module": "Development.WeilBound.CoreStatements.AutomorphicKernels.MoriwakiBigness.HilbertSamuelApplications.GoodTowerVolumeTheoremBis",
    "parent": 174,
-   "gathers": 21817,
+   "gathers": 21803,
    "text_gathers": 20438
   },
   {
@@ -1794,7 +1794,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.FinalTheoremOfInputsRightStatement",
    "parent": 181,
-   "gathers": 21813,
+   "gathers": 21799,
    "text_gathers": 20434
   },
   {
@@ -1802,7 +1802,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.FinalTheoremOfInputsRight",
    "parent": 182,
-   "gathers": 21812,
+   "gathers": 21798,
    "text_gathers": 20433
   },
   {
@@ -1810,7 +1810,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.GoodTowerVolumeTheoremStatement",
    "parent": 183,
-   "gathers": 18504,
+   "gathers": 18490,
    "text_gathers": 17143
   },
   {
@@ -1850,7 +1850,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicSpectrum.Proofs.DivisibilityProofs.VolumeTheoremOfInputs",
    "parent": 184,
-   "gathers": 8978,
+   "gathers": 8977,
    "text_gathers": 8363
   },
   {
@@ -1994,7 +1994,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TopCovolG",
    "parent": 172,
-   "gathers": 12978,
+   "gathers": 12976,
    "text_gathers": 12517
   },
   {
@@ -2026,7 +2026,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.HodgeBundleWeights.CoveringTopologyRefinement",
    "parent": 207,
-   "gathers": 1359,
+   "gathers": 1358,
    "text_gathers": 1337
   },
   {
@@ -2074,7 +2074,7 @@
    "kind": "theorem",
    "module": "Development.ResolutionOfSingularities.EmbeddedResolution.StrongResolution.PrincipalizationWithRadicalCenters",
    "parent": 128,
-   "gathers": 4007,
+   "gathers": 4001,
    "text_gathers": 3842
   },
   {
@@ -2082,7 +2082,7 @@
    "kind": "theorem",
    "module": "Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.CanonicalRulesCorrect",
    "parent": 217,
-   "gathers": 4006,
+   "gathers": 4000,
    "text_gathers": 3841
   },
   {
@@ -2090,7 +2090,7 @@
    "kind": "theorem",
    "module": "Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.CanonicalRulesCorrect",
    "parent": 218,
-   "gathers": 2437,
+   "gathers": 2436,
    "text_gathers": 2369
   },
   {
@@ -2098,7 +2098,7 @@
    "kind": "theorem",
    "module": "Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.OrderReductionCompatibility",
    "parent": 219,
-   "gathers": 1292,
+   "gathers": 1291,
    "text_gathers": 1299
   },
   {
@@ -2106,7 +2106,7 @@
    "kind": "theorem",
    "module": "Development.ResolutionOfSingularities.EmbeddedResolution.IdealPrincipalization.OrderReduction.OrderReductionCompatibility",
    "parent": 220,
-   "gathers": 1289,
+   "gathers": 1288,
    "text_gathers": 1296
   },
   {
@@ -2114,7 +2114,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.EveryCharacterOfLiteratureOfVWin",
    "parent": 128,
-   "gathers": 2628,
+   "gathers": 2575,
    "text_gathers": 2335
   },
   {
@@ -2354,7 +2354,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SiegelEisensteinSecondTermHypotheses",
    "parent": 128,
-   "gathers": 329743,
+   "gathers": 326657,
    "text_gathers": 315443
   },
   {
@@ -2362,7 +2362,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SiegelEisensteinSecondTermHypotheses",
    "parent": 252,
-   "gathers": 275684,
+   "gathers": 273246,
    "text_gathers": 266135
   },
   {
@@ -2370,7 +2370,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.HypothesesNonemptyOfUnramifiedExponents",
    "parent": 253,
-   "gathers": 92474,
+   "gathers": 91750,
    "text_gathers": 89671
   },
   {
@@ -2970,7 +2970,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.CFinal",
    "parent": 254,
-   "gathers": 16372,
+   "gathers": 16318,
    "text_gathers": 15685
   },
   {
@@ -2978,7 +2978,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LinkNFam",
    "parent": 329,
-   "gathers": 15623,
+   "gathers": 15580,
    "text_gathers": 14931
   },
   {
@@ -2986,7 +2986,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LinkNFam",
    "parent": 330,
-   "gathers": 15028,
+   "gathers": 14985,
    "text_gathers": 14338
   },
   {
@@ -2994,7 +2994,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LinkNFam",
    "parent": 331,
-   "gathers": 15027,
+   "gathers": 14984,
    "text_gathers": 14336
   },
   {
@@ -3002,7 +3002,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.LinkNFam",
    "parent": 332,
-   "gathers": 15026,
+   "gathers": 14983,
    "text_gathers": 14335
   },
   {
@@ -3010,7 +3010,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ImportsFurtherTailStatement",
    "parent": 333,
-   "gathers": 10275,
+   "gathers": 10240,
    "text_gathers": 9924
   },
   {
@@ -3018,7 +3018,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ImportsFurtherTail",
    "parent": 334,
-   "gathers": 10274,
+   "gathers": 10239,
    "text_gathers": 9923
   },
   {
@@ -3394,7 +3394,7 @@
    "kind": "alias",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MemberBundlesLargeUnramifiedExponents",
    "parent": 254,
-   "gathers": 20525,
+   "gathers": 20469,
    "text_gathers": 20058
   },
   {
@@ -3402,7 +3402,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MemberBundlesLargeUnramifiedExponents",
    "parent": 382,
-   "gathers": 20524,
+   "gathers": 20468,
    "text_gathers": 20057
   },
   {
@@ -3410,7 +3410,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExistsBaseLatticeOfPrime",
    "parent": 383,
-   "gathers": 13729,
+   "gathers": 13725,
    "text_gathers": 13160
   },
   {
@@ -3418,7 +3418,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ExistsBaseLatticeOfPrime",
    "parent": 384,
-   "gathers": 7823,
+   "gathers": 7822,
    "text_gathers": 7393
   },
   {
@@ -3426,7 +3426,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.MemberEClosing",
    "parent": 385,
-   "gathers": 5595,
+   "gathers": 5594,
    "text_gathers": 5166
   },
   {
@@ -3722,7 +3722,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.OpenOrbitOfUnramifiedExponents",
    "parent": 253,
-   "gathers": 12778,
+   "gathers": 12775,
    "text_gathers": 12471
   },
   {
@@ -3730,7 +3730,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.OpenOrbitOfUnramifiedExponents",
    "parent": 423,
-   "gathers": 12777,
+   "gathers": 12774,
    "text_gathers": 12470
   },
   {
@@ -3738,7 +3738,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.PointEvaluationSideStatement",
    "parent": 424,
-   "gathers": 1223,
+   "gathers": 1220,
    "text_gathers": 1194
   },
   {
@@ -3746,7 +3746,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.PointEvaluationSide",
    "parent": 425,
-   "gathers": 1222,
+   "gathers": 1219,
    "text_gathers": 1193
   },
   {
@@ -3754,7 +3754,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.PointEvaluationSide",
    "parent": 426,
-   "gathers": 1221,
+   "gathers": 1218,
    "text_gathers": 1192
   },
   {
@@ -3762,7 +3762,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.PointEvaluationSide",
    "parent": 427,
-   "gathers": 1144,
+   "gathers": 1141,
    "text_gathers": 1111
   },
   {
@@ -3770,7 +3770,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RowsUOfColPinsStatement",
    "parent": 428,
-   "gathers": 1143,
+   "gathers": 1140,
    "text_gathers": 1110
   },
   {
@@ -3778,7 +3778,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.RowsUOfColPins",
    "parent": 429,
-   "gathers": 1142,
+   "gathers": 1139,
    "text_gathers": 1109
   },
   {
@@ -3786,7 +3786,7 @@
    "kind": "theorem",
    "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemberRowsOfKernelDatumSizesStatement",
    "parent": 430,
-   "gathers": 1094,
+   "gathers": 1091,
    "text_gathers": 1062
   },
   {
@@ -3794,7 +3794,7 @@
    "kind": "theorem",
    "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemberRowsOfKernelDatumSizes",
    "parent": 431,
-   "gathers": 1093,
+   "gathers": 1090,
    "text_gathers": 1059
   },
   {
@@ -3802,7 +3802,7 @@
    "kind": "theorem",
    "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ColumnsMemberRowsOfLogLevelLeStatement",
    "parent": 432,
-   "gathers": 1088,
+   "gathers": 1085,
    "text_gathers": 1050
   },
   {
@@ -3810,7 +3810,7 @@
    "kind": "theorem",
    "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ColumnsMemberRowsOfLogLevelLe",
    "parent": 433,
-   "gathers": 1087,
+   "gathers": 1084,
    "text_gathers": 1049
   },
   {
@@ -4218,7 +4218,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ColSideStatement",
    "parent": 480,
-   "gathers": 3179,
+   "gathers": 3165,
    "text_gathers": 3175
   },
   {
@@ -4226,7 +4226,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.ColSide",
    "parent": 485,
-   "gathers": 3178,
+   "gathers": 3164,
    "text_gathers": 3174
   },
   {
@@ -4282,7 +4282,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.SurjectiveAndLowWeightOfUnramifiedExponents",
    "parent": 253,
-   "gathers": 21634,
+   "gathers": 21631,
    "text_gathers": 20036
   },
   {
@@ -4290,7 +4290,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.OntoXOfPrints",
    "parent": 493,
-   "gathers": 21298,
+   "gathers": 21295,
    "text_gathers": 19703
   },
   {
@@ -4458,7 +4458,7 @@
    "kind": "theorem",
    "module": "Development.AbelianVarietyTheory.Proofs.JetHarmonics.AllGoodPrimeDepthDataExistProofStatement",
    "parent": 514,
-   "gathers": 3827,
+   "gathers": 3826,
    "text_gathers": 3625
   },
   {
@@ -4466,7 +4466,7 @@
    "kind": "theorem",
    "module": "Development.AbelianVarietyTheory.Proofs.JetHarmonics.AllGoodPrimeDepthDataExistProof",
    "parent": 515,
-   "gathers": 3826,
+   "gathers": 3825,
    "text_gathers": 3624
   },
   {
@@ -4562,7 +4562,7 @@
    "kind": "theorem",
    "module": "Development.AbelianVarietyTheory.Proofs.ModuliProofs.ZarhinGeometricOfSemistableReductionStatement",
    "parent": 1,
-   "gathers": 1753,
+   "gathers": 1752,
    "text_gathers": 1481
   },
   {
@@ -4570,7 +4570,7 @@
    "kind": "theorem",
    "module": "Development.AbelianVarietyTheory.Proofs.ModuliProofs.ZarhinGeometricOfSemistableReduction",
    "parent": 528,
-   "gathers": 1752,
+   "gathers": 1751,
    "text_gathers": 1480
   },
   {
@@ -4578,7 +4578,7 @@
    "kind": "theorem",
    "module": "Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SemiAbelianSchemeUniformisationExistsGeometricStatement",
    "parent": 529,
-   "gathers": 1751,
+   "gathers": 1750,
    "text_gathers": 1479
   },
   {
@@ -4586,7 +4586,7 @@
    "kind": "theorem",
    "module": "Development.AbelianVarietyTheory.Proofs.DegenerationProofs.SemiAbelianSchemeUniformisationExistsGeometric",
    "parent": 530,
-   "gathers": 1750,
+   "gathers": 1749,
    "text_gathers": 1478
   },
   {
@@ -4850,7 +4850,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TopPlug",
    "parent": 252,
-   "gathers": 14301,
+   "gathers": 14297,
    "text_gathers": 12029
   },
   {
@@ -4858,7 +4858,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TopPlug",
    "parent": 564,
-   "gathers": 14295,
+   "gathers": 14291,
    "text_gathers": 12024
   },
   {
@@ -4890,7 +4890,7 @@
    "kind": "theorem",
    "module": "Development.AutomorphicArithmetic.ThetaCorrespondence.ThetaPairLifts.ThirdPlaceSeries.TopShape",
    "parent": 565,
-   "gathers": 11590,
+   "gathers": 11586,
    "text_gathers": 9473
   },
   {
@@ -5274,7 +5274,7 @@
    "kind": "theorem",
    "module": "Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilStandard.SiegelWeilStdOfCt",
    "parent": 616,
-   "gathers": 1292,
+   "gathers": 1289,
    "text_gathers": 1180
   },
   {
@@ -5282,7 +5282,7 @@
    "kind": "theorem",
    "module": "Development.WeilBound.CoreStatements.AutomorphicKernels.SiegelWeilFormula.SiegelWeilStandard.SiegelWeilStdPre",
    "parent": 617,
-   "gathers": 1247,
+   "gathers": 1244,
    "text_gathers": 1136
   },
   {

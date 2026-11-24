@@ -7,7 +7,9 @@ The script reads the chunks that exact_extract.py wrote to data/exact, or the fi
 the declaration table of build.py. Every constant of the project is a node, and an edge leads
 from a constant to each project constant that its compiled type or value mentions. Constants
 that Lean creates itself, such as `_proof_1`, `match_1` or `eq_1`, are nodes as well, so a path
-through them counts. The five theorems of Main are followed through these edges.
+through them counts. An inductive type or structure also gets an edge to each of its
+constructors, whose types hold the types of its fields, as Lean's `#print axioms` follows
+them. The five theorems of Main are followed through these edges.
 
 A compiled private name `_private.P.0.n`, where P is the dotted file path of module M, is
 matched with the source name n of module M. The reached constants are then compared with each of the six text runs of build.py.
@@ -43,6 +45,18 @@ def user_name(module, name):
     return name
 
 
+def constructors(names, kinds):
+    """For each inductive type, its constructors. A constructor `T.c` belongs to the type `T`."""
+    at = {name: i for i, name in enumerate(names)}
+    out = {}
+    for i, k in enumerate(kinds):
+        if k == "ctor":
+            parent = at.get(names[i].rsplit(".", 1)[0])
+            if parent is not None and kinds[parent] == "ind":
+                out.setdefault(parent, []).append(i)
+    return out
+
+
 def library(module):
     return module.split(".", 1)[0]
 
@@ -67,8 +81,10 @@ def main():
     n = len(names)
     ptr = np.zeros(n + 1, dtype=np.int64)
     targets_of = []
+    ctors = constructors(names, kinds)
     for i, refs in enumerate(mentions):
         out = [index[r] for r in refs.split(" ") if r in index] if refs else []
+        out += [c for c in ctors.get(i, ()) if c not in out]
         targets_of.append(out)
         ptr[i + 1] = ptr[i] + len(out)
     edges = np.fromiter((j for out in targets_of for j in out), dtype=np.int32, count=int(ptr[-1]))
@@ -111,6 +127,8 @@ def main():
         "chunks": len(files),
         "compiled_constants": n,
         "edges": int(ptr[-1]),
+        "inductive_types_with_constructors": len(ctors),
+        "constructors": sum(len(c) for c in ctors.values()),
         "constants_with_a_row": int(matched.sum()),
         "rows": len(table),
         "rows_found_compiled": int(compiled_rows.sum()),

@@ -33,7 +33,7 @@ repository.
 
 ## What a build is here
 
-The project has 149,397 modules, and `Main.lean` imports 149,284 of them, directly or through
+The project has 149,397 modules, and `Main.lean` imports 149,283 of them, directly or through
 other modules. Compiling a module means that Lean elaborates its source, checks every proof
 with its kernel and writes the result to compiled files under `.lake/build`. A build from
 scratch, without downloaded files, takes 7 to 10 hours on a machine with 48 cores and 503 GB of

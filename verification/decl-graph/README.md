@@ -6,13 +6,13 @@ of the text, 20,193 declarations, 2.4 % of the project, are used by none of the 
 
 The estimate reads the source text and does not run Lean. The exact graph, read from the
 compiled files of the whole project and described below, gives the real figure. The five
-theorems use 800,344 of the 836,456 declarations, which is 95.7 %, and 36,112 declarations are
+theorems use 800,348 of the 836,456 declarations, which is 95.7 %, and 36,108 declarations are
 used by none of them. Of the six ways of reading the text, the widest, loose with automation,
 gives the fewest wrong answers. It counts as unused 358 declarations that are really used, and
-it counts as used 13,750 that are not. Both counts cover the 833,920 declarations that have a
+it counts as used 13,746 that are not. Both counts cover the 833,920 declarations that have a
 compiled constant. Of the 20,193 declarations that the widest reading leaves unused, 20,184
-have a compiled constant, and among those the exact graph leaves 33,576 unused, which is
-20,184 plus 13,750 minus 358.
+have a compiled constant, and among those the exact graph leaves 33,572 unused, which is
+20,184 plus 13,746 minus 358.
 
 These figures are for the Lean 4.36 source of commit `611ce0b6`. The source as it was first
 published, on Lean 4.33.1, had 1,061,531 declarations. The same script reached between 72 % and
@@ -145,20 +145,23 @@ modules Lean computed for 9 of the 246 seconds, so the time is spent waiting for
 
 `exact_graph.py` then follows these mentions from the five theorems of `Main`. A constant that
 Lean creates itself, such as `_proof_1`, `_simp_1` or `match_1`, is followed like any other, so
-a use that passes through such a helper counts. The figures below are for commit `611ce0b6`.
+a use that passes through such a helper counts. An inductive type or a structure also leads to
+each of its constructors, because the type of a constructor holds the types of the fields, and
+Lean's command `#print axioms` takes the same step. The project has 6,629 such types with 6,880
+constructors. The figures below are for commit `611ce0b6`.
 
 | Figure | Count |
 |---|---:|
 | compiled constants of the project | 1,550,842 |
 | of them matched with a declaration of the text | 833,920 |
 | of them Lean's helper constants | 716,922 |
-| mentions between project constants | 16,567,357 |
+| mentions between project constants, the 6,880 steps to constructors included | 16,574,237 |
 | declarations of the text that have no compiled constant | 2,536 |
-| declarations reached from the five theorems | 800,344 |
+| declarations reached from the five theorems | 800,348 |
 
 The 2,536 declarations without a compiled constant are 2,498 instances without a name, whose
 name Lean generates and the text does not know, and 38 others. The exact graph cannot say
-whether they are used, and the 36,112 unused declarations above include them. The 800,344
+whether they are used, and the 36,108 unused declarations above include them. The 800,348
 reached declarations are 95.7 % of all 836,456 and 96.0 % of the 833,920 that have a compiled
 constant. The library `Supplements` holds four theorems, among them `allChi`, and no theorem of
 `Main` uses any of them.
@@ -170,18 +173,18 @@ constant, since only those have an exact answer. The figures of `summary.json` c
 
 | Way | Reached in the text | Reached in both | Only in the text | Only in the exact graph |
 |---|---:|---:|---:|---:|
-| names | 760,884 | 755,497 | 5,387 | 44,847 |
-| names, with automation | 770,045 | 762,598 | 7,447 | 37,746 |
-| fields | 801,470 | 791,576 | 9,894 | 8,768 |
-| fields, with automation | 810,137 | 797,956 | 12,181 | 2,388 |
-| loose | 807,367 | 795,008 | 12,359 | 5,336 |
-| loose, with automation | 813,736 | 799,986 | 13,750 | 358 |
+| names | 760,884 | 755,501 | 5,383 | 44,847 |
+| names, with automation | 770,045 | 762,602 | 7,443 | 37,746 |
+| fields | 801,470 | 791,580 | 9,890 | 8,768 |
+| fields, with automation | 810,137 | 797,960 | 12,177 | 2,388 |
+| loose | 807,367 | 795,012 | 12,355 | 5,336 |
+| loose, with automation | 813,736 | 799,990 | 13,746 | 358 |
 
 The table shows four things.
 
-- The widest run misses 358 of the 800,344 really reached declarations, which is 0.04 %. In the
+- The widest run misses 358 of the 800,348 really reached declarations, which is 0.04 %. In the
   compiled sample of the previous section it missed two of 2,420, which is 0.08 %.
-- The widest run counts 13,750 declarations as reached that are not, which is 1.7 % more than
+- The widest run counts 13,746 declarations as reached that are not, which is 1.7 % more than
   the real number. In the compiled sample it reached 2.6 times the real number. A wrong count
   can only come from declarations that are really unused. In the sample the five roots really
   reach 2,420 of 23,043 declarations, so 20,623 unused declarations are open to a wrong count.
@@ -190,7 +193,7 @@ The table shows four things.
 - The names run misses 44,847 really reached declarations, 5.6 % of them, close to the 5.8 % of
   the sample. The fields way, which also follows a name part after a dot such as `map` in
   `h.map`, finds 36,079 of these 44,847.
-- The names run also counts 5,387 declarations that the exact graph does not reach. Two causes
+- The names run also counts 5,383 declarations that the exact graph does not reach. Two causes
   were seen in the cases read by hand. The text resolves a name to the wrong one of two
   declarations with the same last part, as `OrdGe` in
   `GlobalTheory.Poinc.exists_locTuples_theta_of_adm`, which the text takes as
@@ -205,8 +208,9 @@ declaration could be removed, since a proof could often be rewritten without it.
 
 `exact_axioms.py` follows the constants that each constant's type and value mention further,
 through the compiled files of Mathlib, the other packages and Lean's own library, as Lean's
-command `#print axioms` does. It read 2,353,852 constants, of which 1,491,293 are reached from
-the five theorems of `Main`. Besides the 800,344 reached declarations of the project, these are
+command `#print axioms` does. Like that command it also goes from an inductive type to its
+constructors. It read 2,353,852 constants, of which 1,491,315 are reached from
+the five theorems of `Main`. Besides the 800,348 reached declarations of the project, these are
 Lean's helper constants and the constants of the libraries. Every reached name
 has a compiled entry, so the search has no gap.
 
@@ -227,12 +231,12 @@ and reports every reached axiom, so it would have found a chain to it if one exi
 
 ## The declarations that the five theorems do not use
 
-[`unused.py`](unused.py) sorts the 36,112 declarations that the exact graph does not reach from
+[`unused.py`](unused.py) sorts the 36,108 declarations that the exact graph does not reach from
 the five theorems of `Main`. They are 4.3 % of the 836,456 declarations, and among them are
-20,207 theorems, 10,448 definitions, 2,723 instances, 1,032 abbreviations, 996 structures, 622
-lemmas and 84 others. The library `Development` holds 24,871 of them and `Formalism` 7,306.
+20,207 theorems, 10,444 definitions, 2,723 instances, 1,032 abbreviations, 996 structures, 622
+lemmas and 84 others. The library `Development` holds 24,867 of them and `Formalism` 7,306.
 
-The table sorts the 36,112 declarations by whether another declaration states the same thing.
+The table sorts the 36,108 declarations by whether another declaration states the same thing.
 Two declarations state the same thing when the table `same_checked.tsv.gz` of
 [`../redundancy`](../redundancy/README.md) lists them as a pair whose compiled statements Lean
 compared and found equal.
@@ -242,17 +246,17 @@ compared and found equal.
 | Has no compiled constant of its own, so the exact graph cannot judge it | 2,536 |
 | States exactly what a used declaration states | 1,389 |
 | States exactly what only other unused declarations state | 1,671 |
-| States a statement of its own | 30,516 |
+| States a statement of its own | 30,512 |
 
 Of the 2,536 without a compiled constant, 2,498 are instances without a name. Lean compiles
 each of them under a name it makes up, and the declaration table `data/declarations.tsv.gz`,
 which `build.py` makes from the source text, has no such name to match. The
-30,516 with a statement of their own are 17,923 theorems and lemmas, 10,294 definitions and
+30,512 with a statement of their own are 17,923 theorems and lemmas, 10,290 definitions and
 2,299 others. A theorem among them can still be a weaker form or a special case of a used
 theorem, which a comparison of exact statements does not find.
 
 The unused declarations lie almost all in modules that the five theorems import. The import
-graph of [`../import-graph`](../import-graph/README.md) puts 35,641 of them in modules that
+graph of [`../import-graph`](../import-graph/README.md) puts 35,637 of them in modules that
 `Main.lean` imports, directly or through other modules. The other 471 lie in 112 modules that
 `Main.lean` does not import, and the build compiles those because the lakefile names every
 module of a library. In 3,494 modules no declaration is used, and these modules hold 16,120
@@ -262,20 +266,20 @@ of the unused declarations.
 
 A constant mentions another when its compiled type or value names it. Besides the declarations
 of the source, Lean compiles helper constants of its own, such as the equation lemmas of a
-definition, and these have no row in the declaration table. The five theorems leave 275,194
-constants of the project unreached, the 33,576 unused declarations that have a compiled
-constant and 241,618 helper constants.
+definition, and these have no row in the declaration table. The five theorems leave 275,178
+constants of the project unreached, the 33,572 unused declarations that have a compiled
+constant and 241,606 helper constants.
 
 A top is an unused declaration that no constant of the project mentions. There are 9,021 tops,
 6,222 theorems and lemmas, 2,694 definitions and abbreviations and 105 others. A top reaches a
 declaration when a chain of mentions through unused constants, helper constants included, leads
 from the top to it, and every top reaches itself. 5,513 tops reach no other declaration, and
-the other 3,508 do. The 33,576 compiled unused declarations, tops included, divide by how many
+the other 3,508 do. The 33,572 compiled unused declarations, tops included, divide by how many
 tops reach them.
 
-- 24,582 are reached from one top only.
-- 7,046 are reached from several tops.
-- 1,948 are reached from no top. Each of them is mentioned only by unused helper constants,
+- 24,749 are reached from one top only.
+- 7,767 are reached from several tops.
+- 1,056 are reached from no top. Each of them is mentioned only by unused helper constants,
   and no top leads to those.
 
 When the direction of a mention is ignored, the compiled unused declarations and the helper
@@ -284,7 +288,7 @@ tops that reach no other declaration, 197 share a group with other declarations,
 helper constant that such a top mentions is also mentioned by another declaration. The other
 5,316 tops are groups of one, and 140 further groups of one hold a declaration that only helper
 constants mention.
-The largest group holds 11,556 declarations with 721 tops. Most of its declarations lie in
+The largest group holds 11,552 declarations with 721 tops. Most of its declarations lie in
 `Development.AbelianVarietyTheory.Proofs` (3,750), in
 `Development.AbelianVarietyTheory.Definitions` (3,409) and in
 `Development.AutomorphicArithmetic.AutomorphicVarieties` (1,754). The next groups hold 611, 439
@@ -296,17 +300,17 @@ that no other top reaches.
 
 | Top | Reaches | Alone |
 |---|---:|---:|
-| `GlobalTheory.ThK.Partner.partner_of_big` | 869 | 748 |
-| `UpperTheory.V.Th.core` | 853 | 214 |
-| `GlobalTheory.T.weil_convergence_of_kernel` | 576 | 301 |
-| `GlobalTheory.T.transportedFundDomain_volume_classical` | 544 | 533 |
-| `GlobalTheory.ThK.ModelPol.exists_modelChange_pol` | 537 | 153 |
+| `GlobalTheory.ThK.Partner.partner_of_big` | 1,045 | 748 |
+| `GlobalTheory.ShFam.IsKitOf` | 988 | 266 |
+| `UpperTheory.V.Th.core` | 891 | 214 |
+| `GlobalTheory.T.weil_convergence_of_kernel` | 752 | 301 |
+| `GlobalTheory.ThK.ModelPol.exists_modelChange_pol` | 678 | 153 |
 
-`weil_convergence_of_kernel` and `transportedFundDomain_volume_classical` stand in modules whose
-names end in `Statement`. The proof of each consists of one other theorem, so the declarations
-that each reaches are that theorem and the declarations its proof uses. Three modules each hold
-a private theorem of their own with the source name `UpperTheory.V.Sd.EG.core`. These three
-theorems are tops, and they reach 478, 452 and 452 declarations, each itself included.
+`IsKitOf` is a definition, and the other four are theorems. `weil_convergence_of_kernel` stands
+in a module whose name ends in `Statement`. Its proof consists of one other theorem, so the
+declarations that it reaches are that theorem and the declarations its proof uses. Three modules
+each hold a private theorem of their own with the source name `UpperTheory.V.Sd.EG.core`. These
+three theorems are tops, and they reach 522, 496 and 496 declarations, each itself included.
 
 ### The supplements and the lemmata
 
@@ -329,12 +333,12 @@ theorems named `goal1` in six modules, and three are private helper theorems of 
 
 ### The axioms of the unused part
 
-`unused.py` follows the mentions of all 275,194 unreached constants through the project,
+`unused.py` follows the mentions of all 275,178 unreached constants through the project,
 Mathlib, the other packages and Lean's own library, as `exact_axioms.py` does from the five
 theorems in the section on their axioms. These constants lead to the same
 three axioms as the five theorems, `propext`, `Classical.choice` and `Quot.sound`, and every
 name met on the way has a compiled entry. Every constant of the project is either reached from
-the five theorems or is one of the 275,194 unreached ones, so the two parts together cover the
+the five theorems or is one of the 275,178 unreached ones, so the two parts together cover the
 project, and neither part leads to `sorryAx` or to an axiom of the project. A `sorry` leaves
 `sorryAx` behind, and `native_decide` adds an axiom of the project to the module that uses it,
 as the section on the axioms of the five theorems says. No compiled declaration of the project
@@ -376,7 +380,9 @@ lake exe cache get                                                    # in that 
 python3 -I verification/decl-graph/exact_extract.py /path/to/that/checkout   # about 2.5 hours
 python3 -I verification/decl-graph/exact_graph.py                    # about half a minute, 6 GB of memory
 python3 -I verification/decl-graph/exact_axioms.py /path/to/that/checkout    # about 20 minutes the first time
+python3 -I verification/decl-graph/exact_axioms.py /path/to/that/checkout NAME   # the axioms of one constant
 python3 -I verification/decl-graph/unused.py                         # about half a minute, 7 GB of memory
+python3 -I verification/decl-graph/statement_extract.py /path/to/that/checkout   # about two hours
 ```
 
 The check needs a checkout of the first published source in which the sample module is built.
@@ -408,6 +414,9 @@ python3 -I verification/decl-graph/check_sample.py deps.tsv \
 | `exact_axioms.py` | reads the libraries as well and lists the axioms of the five theorems with a chain to each |
 | `exact-axioms.json` | those axioms and chains |
 | `unused.py` | sorts the declarations that the five theorems do not use |
+| `StatementGraph.lean` | reads, for every public constant, the constants that its type mentions |
+| `statement_extract.py` | runs `StatementGraph.lean` on all modules in chunks, for [`../reuse`](../reuse/README.md) |
+| `data/exact/types-*.tsv.gz` | the public constants and what their types mention |
 | `unused.json` | the figures of that sorting and the 40 tops that reach the most |
 | `data/exact/lib-*.tsv.gz` | the constants of each library and their mentions |
 | `data/exact/chunk-*.tsv.gz` | the constants and their mentions, as `ExactGraph.lean` wrote them |
