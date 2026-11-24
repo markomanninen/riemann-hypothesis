@@ -64,6 +64,7 @@
   "Formalism.LFunctionChainParameters.MatrixLatticeEstimates.joint_a_ramified_holds": 400,
   "Formalism.MainNotions.Lnk.linkCore": 373,
   "GlobalTheory.ThinScaleLiterature.litThin": 319,
+  "Formalism.HN.theoremF": 294,
   "Formalism.L2.G.ServJoint.val2AllAtR": 269,
   "Formalism.L2.DIV.Arith4S.numFacts_rec": 266,
   "Formalism.MainNotions.J.linkMu_of_linkDIV": 219,
@@ -83,6 +84,7 @@
   "Formalism.L2.Indef.IndefSide.boundsMu": 111,
   "UpperTheory.Comparison₂.formB": 108,
   "UpperTheory.Comparison₂.sigA_le": 108,
+  "Formalism.LFunctionChainParameters.MatrixLatticeEstimates.ramification_linear_case_holds": 100,
   "Deduction.ch_top": 90,
   "QH.count_bad": 89,
   "Formalism.L2.DIV.height_chain_atR": 87,
@@ -90,14 +92,17 @@
   "Formalism.HermitianLattices.Ext.PrimitiveCharacterCasts.ZD.zero_density_box": 85,
   "UpperTheory.Top.divinN_of_hypV": 72,
   "Deduction.ch_balance": 67,
+  "Formalism.MainNotions.Lnk.matK_at_of": 64,
   "GlobalTheory.GreenBridge.green_of_regular": 64,
   "Formalism.MainNotions.Lnk.blockReal_at_of": 59,
   "Formalism.LFunctionChainParameters.WeightedSlopeBounds.each_unit_bound_statement": 58,
   "Deduction.CharacterBalanceMoves.th_le": 55,
   "Formalism.DivisionValues.young_diagram_step_origin": 55,
+  "Formalism.LFunctionChainParameters.HilbertSchmidtNormSquare.compressTraceSquareBound": 55,
   "GlobalTheory.DefRowsChain.chainOf": 54,
   "QH.meanSq_abs": 51,
   "Formalism.L2.DIV.RecNums.divIneq": 34,
+  "Formalism.LFunctionChainParameters.HilbertSchmidtNormSquare.compressDiagDefectBound": 22,
   "Formalism.HermitianLattices.Ext.LogarithmicIntegralBounds.count_a": 19,
   "QH.bad_share": 18,
   "Deduction.CharacterBalanceMoves.one_char": 16,
@@ -107,6 +112,7 @@
   "Formalism.HermitianLattices.ZeroFreeRegionGL2.finite_splitting_of_group": 7,
   "UpperTheory.Top.imprimitive": 7,
   "Formalism.HermitianLattices.Ext.LogarithmicIntegralBounds.page_across": 6,
-  "Formalism.DivisionValues.young_diagram_hook": 5
+  "Formalism.DivisionValues.young_diagram_hook": 5,
+  "Formalism.LFunctionChainParameters.MatrixLatticeEstimates.word_count_bound_holds": 3
  }
 }

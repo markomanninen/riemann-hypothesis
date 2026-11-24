@@ -1,49 +1,49 @@
-You are an independent checker of a commentary on a Lean 4 proof. The commentary is
-verification/strategy/README.md in this repository, and the Lean source is under src/. Read the
-files you need, write one report, and change no other file.
+You are an independent checker of two documents about a Lean 4 proof. The documents are
+verification/strategy/CLAIMS.md and verification/strategy/README.md in this repository, and the
+Lean source is under src/. Read the files you need, write one report, and change no other file.
 
-The commentary will be the source of a public explainer video, so a wrong claim in it would be
-repeated in public. Your task is to test whether the Lean text supports what the commentary says
-about the route of the proof. You test the commentary against the Lean text. Whether the
-mathematics is true is outside this task. Treat the commentary as a list of claims to test, and
-trust only what you see in the Lean files.
+CLAIMS.md lists the claims that carry the route of the proof. README.md is the commentary behind
+it. The claims will be the source of public explainer videos, so a wrong claim would be repeated
+in public. Your task is to test whether the Lean text supports each claim. You test the documents
+against the Lean text. Whether the mathematics is true is outside this task. Treat every claim as
+something to test, and trust only what you see in the Lean files.
 
-Check these parts, in this order of importance.
+First part, the claims. Take every table row of CLAIMS.md in order.
 
-1. The nine numbered steps under the heading "The route in nine steps".
-2. The section "From the two bounds on the slope to the exponent 1/2". Above all the four terms
-   that the division of the error bracket leaves, and the claim that the exponent 1/2 comes from
-   the term x/m against the term m. Compute the four terms yourself from the definitions
-   errorBracketSizeWindows, RestSize and BNBounds and from the hypotheses of ch_core. Check what
-   the conditions DIV and SlopeIneq say, with the direction of each inequality.
-3. The subsection "The pair of primes". Above all what pair_share, stage, bad_share, meanSq_abs,
-   twistK, box_of_S and count_bad state, every exponent and share, and how stage sorts the bad
-   primes.
-4. The sections "The upper bound for the lattices of a datum", "The chain of lifts", "The bound
-   for one lift" and "The lower bound for the lattices of a datum". Above all the claim that each
-   map is a composite of a chain of m theta kernels between unitary groups of ranks k + j(t + 1),
-   the claim that interlacing weights leave one term a log a - a for each lift and top place, and
-   what the three bounds of LinkS_at say.
-5. The section "From a bound on intervals to zero-freeness", the Landau step in four stages.
-6. In the section "Words used here", the two list items on the slope of a lattice and the height
-   of a map.
+1. Open each declaration that the row names in its column of declarations. The source has about
+   149,000 modules, so search for a name with a text search over src/ and read only the files you
+   need. The script verification/strategy/cone.py finds a compiled constant by name, and its
+   header explains the usage.
+2. Compare the row with the statement of the declaration, and with its proof where the row
+   speaks about the proof. A row has to say what the Lean text states, neither more nor less.
+3. Record a verdict for the row. The verdicts are supported, says more, says less, differs, and
+   could not test. For every verdict other than supported, quote the Lean lines with file and
+   line, say what they state, and write a corrected row.
 
-For each claim that you test, open the Lean file that the commentary links or names, find the
-declaration, and compare the statement. Compare the proof as well where the commentary describes
-the proof. The source has about 149,000 modules, so search for a name with a text search over
-src/ and read only the files you need. The script verification/strategy/cone.py finds a compiled
-constant by name, and its header explains the usage.
+Then take the lists under the tables. An entry there is an explanation, an interpretation or a
+finding. Report an entry that the Lean text contradicts.
 
-Write the report as Markdown to verification/review/strategy-route-check/gemini.md, with three
+Second part, the commentary. Check these parts of README.md in the same way, as far as they go
+beyond the claims.
+
+1. The section "From the two bounds on the slope to the exponent 1/2". Compute the four terms
+   that the division of the error bracket leaves yourself, from the definitions
+   errorBracketSizeWindows, RestSize and BNBounds and from the hypotheses of ch_core.
+2. The subsection "The pair of primes".
+3. The sections "The upper bound for the lattices of a datum", "The chain of lifts", "The bound
+   for one lift" and "The lower bound for the lattices of a datum".
+4. The section "From a bound on intervals to zero-freeness", the Landau step in four stages.
+
+Write the report as Markdown to verification/review/strategy-route-check/gemini.md, with four
 parts.
 
-- Part A, findings. Each finding has the quoted sentence of the commentary, the Lean file and
-  line that contradicts it or fails to support it, the Lean lines themselves, and a corrected
-  sentence. Order the findings by how visible the claim would be in a public explainer of the
-  nine steps. Give at most 25 findings.
-- Part B, confirmed claims. One line for each claim that you compared with the Lean text and
-  found supported, with the file and line.
-- Part C, claims that you could not test, each with the reason.
+- Part A, a table with one line for each row of CLAIMS.md, with the number of the row, the
+  verdict and the file and line of the Lean text that you compared it with.
+- Part B, the findings on the claims, one for each verdict other than supported, ordered by the
+  number of the row.
+- Part C, the findings on the commentary, at most 20, each with the quoted sentence, the Lean
+  file and line, the Lean lines themselves and a corrected sentence.
+- Part D, what you could not test, each with the reason.
 
 Mark every statement of your own that goes beyond the Lean text as an interpretation. Write the
 prose in full sentences.

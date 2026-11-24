@@ -29,72 +29,87 @@
   },
   {
    "id": "what-zero-free-all-of-green-v-win-states",
-   "map_code": "6",
+   "map_code": "5",
    "otsikko": "What zero_free_all_of_green_v_win states and how it splits"
   },
   {
    "id": "the-prime-sum",
-   "map_code": "7",
+   "map_code": "6",
    "otsikko": "The prime sum"
   },
   {
    "id": "the-landau-step",
-   "map_code": "8",
+   "map_code": "7",
    "otsikko": "The Landau step"
   },
   {
    "id": "the-wanted-characters-inside-an-auxiliar",
-   "map_code": "9",
+   "map_code": "8",
    "otsikko": "The wanted characters inside an auxiliary field"
   },
   {
    "id": "the-pair-of-primes",
-   "map_code": "10",
+   "map_code": "9",
    "otsikko": "The pair of primes"
   },
   {
    "id": "from-the-two-bounds-on-the-slope-to-the-",
-   "map_code": "11",
+   "map_code": "10",
    "otsikko": "From the two bounds on the slope to the exponent 1/2"
   },
   {
    "id": "ch-core",
-   "map_code": "12",
+   "map_code": "11",
    "otsikko": "ch_core"
   },
   {
    "id": "ch-top",
-   "map_code": "13",
+   "map_code": "12",
    "otsikko": "ch_top"
   },
   {
    "id": "what-the-numbers-of-the-record-are",
-   "map_code": "15",
+   "map_code": "13",
    "otsikko": "What the numbers of the record are"
   },
   {
    "id": "the-path-of-the-divisibility-inequality",
-   "map_code": "16",
+   "map_code": "14",
    "otsikko": "The path of the divisibility inequality"
   },
   {
    "id": "the-chain-of-lifts",
-   "map_code": "17",
+   "map_code": "15",
    "otsikko": "The chain of lifts"
   },
   {
    "id": "the-bound-for-one-lift",
-   "map_code": "18",
+   "map_code": "16",
    "otsikko": "The bound for one lift"
   },
   {
    "id": "the-lower-bound-for-the-lattices-of-a-da",
-   "map_code": "19",
+   "map_code": "17",
    "otsikko": "The lower bound for the lattices of a datum"
   },
   {
-   "id": "how-the-conditions-are-assembled",
+   "id": "the-general-statement",
+   "map_code": "18",
+   "otsikko": "The general statement"
+  },
+  {
+   "id": "how-the-statement-is-applied-to-a-datum",
+   "map_code": "19",
+   "otsikko": "How the statement is applied to a datum"
+  },
+  {
+   "id": "how-the-bounds-of-the-link-reach-the-map",
    "map_code": "20",
+   "otsikko": "How the bounds of the link reach the maps"
+  },
+  {
+   "id": "how-the-conditions-are-assembled",
+   "map_code": "21",
    "otsikko": "How the conditions are assembled"
   },
   {
@@ -138,7 +153,7 @@
    "id": "s0-route",
    "type": "vaite",
    "section": "the-strategy-of-the-proof-followed-throu",
-   "title": "The proof derives the five theorems from one inequality on a weighted prime sum, which it gets by bounding the slope of one lattice from two sides with m near √x",
+   "title": "The proof derives the five theorems from one inequality on a weighted prime sum, which it gets by bounding the slope of one lattice from two sides, with m the number of lifts in a chain between unitary groups, which the author's note calls theta lifts, and m near √x",
    "laji": "T",
    "units": [
     "the-strategy-of-the-proof-followed-throu.p1"
@@ -170,7 +185,7 @@
    "id": "s0-reader",
    "type": "lahtokohta",
    "section": "the-strategy-of-the-proof-followed-throu",
-   "title": "A language model read the route in one session with seven parallel readings, no mathematician checked it, Lean was not run, and a reading leaves open whether a definition is the object its name suggests",
+   "title": "A language model read the route in one session with seven parallel readings and two further comparisons with the Lean text, no mathematician checked it, Lean was not run, and a reading leaves open whether a definition is the object its name suggests",
    "laji": "A",
    "units": [
     "the-strategy-of-the-proof-followed-throu.p3"
@@ -350,6 +365,7 @@
    "johto": [
     "ps-gm",
     "l-formB",
+    "l-level",
     "l-contra"
    ],
    "todistus_seuraa": true
@@ -413,7 +429,7 @@
    "id": "st6",
    "type": "vaite",
    "section": "the-route-in-nine-steps",
-   "title": "Step 6. Each map into the lattice factors through a chain of m kernels between unitary groups of ranks k + j(t+1), the first m − 2 composed one after the other, the last two inside a finite sum, with one more linear map after them",
+   "title": "Step 6. A pairing of each word factors through a chain of m kernels between unitary groups of ranks k + j(t+1), the first m − 2 composed one after the other, the last two inside a finite sum, with one more linear map after them, and the document does not record how the pairing is tied to the map",
    "laji": "T",
    "units": [
     "the-route-in-nine-steps.p6"
@@ -434,7 +450,7 @@
    "id": "st7",
    "type": "vaite",
    "section": "the-route-in-nine-steps",
-   "title": "Step 7. The upper bound adds one term a·log a − a − a·logOm per lift and top place, and interlacing with a hook product bounds the rest",
+   "title": "Step 7. The main term of the upper bound holds one term a·log a − a − a·logOm per lift and top place, and for one lift interlacing weights and a hook product bound a sum over its weights by a·log a − a plus an error",
    "laji": "T",
    "units": [
     "the-route-in-nine-steps.p7"
@@ -452,14 +468,19 @@
    "id": "st8",
    "type": "vaite",
    "section": "the-route-in-nine-steps",
-   "title": "Step 8. The lower bound needs each map to be nearly an isometry and two maps of different words to overlap little",
+   "title": "Step 8. The lower bound applies a general statement about several maps into one lattice, which takes two bounds on products of matrices and one on the number of rows from a link and a family with many words, where the existence of such families is a premise not followed, and by the document's interpretation the bounds say that each map is nearly an isometry and that the images fill the target evenly",
    "laji": "T",
    "units": [
     "the-route-in-nine-steps.p8"
    ],
    "johto": [
     "lo-frame",
+    "lo-jointaram",
+    "lo-twoparts",
+    "lo-apply",
+    "lo-count",
     "lo-linkS",
+    "lo-blockreal",
     "lo-interp"
    ],
    "todistus_seuraa": true
@@ -468,7 +489,7 @@
    "id": "st9",
    "type": "vaite",
    "section": "the-route-in-nine-steps",
-   "title": "Step 9. The two bounds leave errors of about x/m, m and √x, and m between x^(1/2−ε) and x^(1/2+ε/2) gives the exponent 1/2 + cε",
+   "title": "Step 9. The two bounds leave errors of about x/m, m and √x, and m between x^(1/2−ε) and x^(1/2+ε/2), with further premises on the numbers of the error, gives the exponent 1/2 + cε",
    "laji": "T",
    "units": [
     "the-route-in-nine-steps.p9"
@@ -763,9 +784,23 @@
    "title": "formB states that an upper bound Gm x ≤ x^θ on intervals from Y to Y^la for arbitrarily large Y gives no zero with real part above θ for every character of KEPT",
    "laji": "A",
    "units": [
-    "the-landau-step.p1"
+    "the-landau-step.p1.s1-s5"
    ],
    "edellyttaa": [
+    "ps-gm"
+   ]
+  },
+  {
+   "id": "l-level",
+   "type": "lahtokohta",
+   "section": "the-landau-step",
+   "title": "The proof uses la = 3/2 and applies the step to every primitive character ψ separately, with the level of the powers of ψ, among whose kept characters ψ lies by Level.mem_cyc",
+   "laji": "A",
+   "units": [
+    "the-landau-step.p1.s6-s7"
+   ],
+   "edellyttaa": [
+    "l-formB",
     "ps-gm"
    ]
   },
@@ -827,7 +862,7 @@
    "id": "l-peak",
    "type": "vaite",
    "section": "the-landau-step",
-   "title": "By the session's own calculation the weight peaks at u = k/(σ−2), inside the interval when σ ≥ 4(1+δ)/δ",
+   "title": "By the session's own calculation the weight peaks at u = k/(σ−2), inside the interval when σ is above 4(1+δ)/δ and U is large",
    "laji": "T",
    "units": [
     "the-landau-step.p5.s5"
@@ -879,7 +914,7 @@
    "id": "c-coregm",
    "type": "lahtokohta",
    "section": "the-wanted-characters-inside-an-auxiliar",
-   "title": "core_gm proves Gm x ≤ x^(1/2 + (eD+eL+7)ε) at one x from a host and two conditions",
+   "title": "core_gm proves Gm x ≤ x^(1/2 + (eD+eL+7)ε) at one x from a host and two conditions, and since ChebyshevInequalityAtWindowScale asks for eD and eL before ε, the constant c depends on neither ε nor Y",
    "laji": "A",
    "units": [
     "the-wanted-characters-inside-an-auxiliar.p1"
@@ -1550,7 +1585,7 @@
    "id": "d-e17",
    "type": "oletus",
    "section": "the-path-of-the-divisibility-inequality",
-   "title": "This is where entry 17 of the note enters the divisibility",
+   "title": "By the form of the bound of VWin this is where entry 17 of the note enters the divisibility, which the text marks as an interpretation",
    "laji": "O",
    "units": [
     "the-path-of-the-divisibility-inequality.p14.s2"
@@ -1730,7 +1765,7 @@
    "id": "u-kerplace",
    "type": "maaritelma",
    "section": "the-bound-for-one-lift",
-   "title": "kerPlace is the sum of ph over the weights minus their sum times logOm, logHook is the log of a hook product, and hU adds kerPlace and subtracts logHook over places and lifts",
+   "title": "kerPlace is the sum of ph over the weights minus their sum times logOm, logHook is the log of a hook product, hU adds kerPlace and subtracts logHook over places and lifts, and the document does not record how hU is tied to the number h of a word",
    "laji": "D",
    "units": [
     "the-bound-for-one-lift.p5",
@@ -1840,7 +1875,7 @@
    "id": "lo-frame",
    "type": "lahtokohta",
    "section": "the-lower-bound-for-the-lattices-of-a-da",
-   "title": "Frame_at is the slope inequality for the lattices of a datum, derived from a general statement about several maps into one lattice that rests on 400 declarations",
+   "title": "Frame_at says that the weighted mean s of mu − h over the words, minus the logarithm of the number of words and a correction built from the excess, η, e and HH, is at most the dual slope of RR, and the proofs of frame_at_of and joint_a_ramified_holds were read in full",
    "laji": "A",
    "units": [
     "the-lower-bound-for-the-lattices-of-a-da.p1",
@@ -1851,34 +1886,138 @@
     "the-lower-bound-for-the-lattices-of-a-da.p6",
     "the-lower-bound-for-the-lattices-of-a-da.p7",
     "the-lower-bound-for-the-lattices-of-a-da.p8",
-    "the-lower-bound-for-the-lattices-of-a-da.p9"
+    "the-lower-bound-for-the-lattices-of-a-da.p9",
+    "the-lower-bound-for-the-lattices-of-a-da.p10",
+    "the-lower-bound-for-the-lattices-of-a-da.p11",
+    "the-lower-bound-for-the-lattices-of-a-da.p12",
+    "the-lower-bound-for-the-lattices-of-a-da.p13",
+    "the-lower-bound-for-the-lattices-of-a-da.p14"
+   ]
+  },
+  {
+   "id": "lo-jointaram",
+   "type": "lahtokohta",
+   "section": "the-general-statement",
+   "title": "JointARam is a statement without a datum about a family of lattices with maps into one target lattice, whose premises are the geometry LatGeom, the numbers LatNum, a factorisation of each matrix into a first factor and an isometry with a lost share of columns, three bounds InputSG on the first factors and sizes bounded by σ ≤ 1/20, and whose conclusion is the inequality of Frame_at with 2·e0 for e and 5σ plus three times the square root of the lost share for η",
+   "laji": "A",
+   "units": [
+    "the-general-statement.p1",
+    "the-general-statement.p2",
+    "the-general-statement.p3",
+    "the-general-statement.p4",
+    "the-general-statement.p5",
+    "the-general-statement.p6",
+    "the-general-statement.p7"
+   ],
+   "edellyttaa": [
+    "lo-frame",
+    "w-slope",
+    "w-height"
+   ]
+  },
+  {
+   "id": "lo-twoparts",
+   "type": "lahtokohta",
+   "section": "the-general-statement",
+   "title": "The proof has two parts, ramification_linear_case_holds, which turns the three bounds into a bound on the trace of Q² and a bound on the distances of the Gram matrices from the identity, and the frame theorem of the folder HarderNarasimhan, whose proof through frame_theorem_sharp is unread",
+   "laji": "A",
+   "units": [
+    "the-general-statement.p8",
+    "the-general-statement.p9",
+    "the-general-statement.p10"
+   ],
+   "edellyttaa": [
+    "lo-jointaram"
+   ]
+  },
+  {
+   "id": "lo-apply",
+   "type": "lahtokohta",
+   "section": "how-the-statement-is-applied-to-a-datum",
+   "title": "frame_at_of applies the general statement with the words as members, the lattices Nu u, the maps Bk u, the dual of RR as target and σ = x^(−CH), takes the matrices and the three bounds from FrameReal_at, and for a family the number in the place of η is at most 6σ",
+   "laji": "A",
+   "units": [
+    "how-the-statement-is-applied-to-a-datum.p1"
+   ],
+   "edellyttaa": [
+    "lo-jointaram",
+    "r-ties"
+   ]
+  },
+  {
+   "id": "lo-count",
+   "type": "vaite",
+   "section": "how-the-statement-is-applied-to-a-datum",
+   "title": "The words together have at least Dstar/σ columns, because each has at least Dstar/(C0·Γ²) by ChProviso_at and there are at least C0·Γ²·x^CH of them by ChCode_at",
+   "laji": "T",
+   "units": [
+    "how-the-statement-is-applied-to-a-datum.p2.s1-s4"
+   ],
+   "johto": [
+    "lo-apply",
+    "lo-jointaram"
+   ]
+  },
+  {
+   "id": "lo-chosen",
+   "type": "lahtokohta",
+   "section": "how-the-statement-is-applied-to-a-datum",
+   "title": "The two conditions are parts of the condition Chosen on a family, DesignExists says that families with Chosen exist, and where DesignExists is proved was not read",
+   "laji": "A",
+   "units": [
+    "how-the-statement-is-applied-to-a-datum.p2.s5-s6"
+   ]
+  },
+  {
+   "id": "lo-kd",
+   "type": "maaritelma",
+   "section": "how-the-bounds-of-the-link-reach-the-map",
+   "title": "Each word has a space of dimension duS u with a map Pu u into one Hilbert space, the block KD u u′ is the scaled product of the adjoint of Pu u with Pu u′, hsSq is its squared Hilbert-Schmidt norm and hsDiagFull that of KD u u minus the identity",
+   "laji": "D",
+   "units": [
+    "how-the-bounds-of-the-link-reach-the-map.p1"
    ]
   },
   {
    "id": "lo-linkS",
    "type": "lahtokohta",
    "section": "the-lower-bound-for-the-lattices-of-a-da",
-   "title": "LinkS bounds the Gram matrix of the maps under a premise that duS u·Γ²/Dstar lies between 1/C0 and C0, with hsSq u u′ ≤ (1+η0)·duS u·duS u′/Dstar, hsDiagFull u ≤ e0·duS u and Dall ≤ (1+η1)·Dstar, with η0, η1 and √e0 at most exp(−x^(ε/8))",
+   "title": "LinkS_at is an implication from ChProviso_at to three bounds, hsSq u u′ ≤ (1+η0)·duS u·duS u′/Dstar, hsDiagFull u ≤ e0·duS u and Dall ≤ (1+η1)·Dstar, and the link gives η0, η1 and √e0 at most exp(−x^(ε/8)), which is below σ/2 for large x",
    "laji": "A",
    "units": [
-    "the-lower-bound-for-the-lattices-of-a-da.p10",
-    "the-lower-bound-for-the-lattices-of-a-da.p11",
-    "the-lower-bound-for-the-lattices-of-a-da.p12",
-    "the-lower-bound-for-the-lattices-of-a-da.p13",
-    "the-lower-bound-for-the-lattices-of-a-da.p14.s1-s2"
+    "how-the-bounds-of-the-link-reach-the-map.p2",
+    "how-the-bounds-of-the-link-reach-the-map.p3",
+    "how-the-bounds-of-the-link-reach-the-map.p4",
+    "how-the-bounds-of-the-link-reach-the-map.p5",
+    "how-the-bounds-of-the-link-reach-the-map.p6"
    ],
    "edellyttaa": [
-    "w-link"
+    "w-link",
+    "lo-kd"
+   ]
+  },
+  {
+   "id": "lo-blockreal",
+   "type": "lahtokohta",
+   "section": "how-the-bounds-of-the-link-reach-the-map",
+   "title": "The maps Pu u and the maps Bk u are different maps, BlockReal_at says that their matrices agree up to a conjugation and an isometry, blockReal_at_of proves it from BesselId, matK_at_of states the first two bounds for the first factors of the maps Bk u, Dall stands where the general statement has the number of rows, and what Dstar and Dall are was not opened",
+   "laji": "A",
+   "units": [
+    "how-the-bounds-of-the-link-reach-the-map.p7"
+   ],
+   "edellyttaa": [
+    "lo-kd",
+    "lo-apply"
    ]
   },
   {
    "id": "lo-interp",
    "type": "oletus",
    "section": "the-lower-bound-for-the-lattices-of-a-da",
-   "title": "The session's interpretation is that each map is an isometry up to a small relative error and that two different maps overlap as two random subspaces do, which the note calls approximate orthogonality",
+   "title": "The session's interpretation is that the second bound makes each map an isometry up to a small relative error, that the columns outnumber the rows at least 19 times so the images overlap as random subspaces do, that the trace condition makes the images fill the target evenly, and that the logarithm of the number of words is the price of the mean",
    "laji": "O",
    "units": [
-    "the-lower-bound-for-the-lattices-of-a-da.p14.s3-s8"
+    "how-the-bounds-of-the-link-reach-the-map.p8"
    ]
   },
   {
@@ -1916,7 +2055,7 @@
    "id": "a-links",
    "type": "lahtokohta",
    "section": "how-the-conditions-are-assembled",
-   "title": "topDesWin takes the links as premises, and seven theorems supply them in the proof of the shape theorem",
+   "title": "topDesWin takes the links as premises and concludes FamilyClassConnected, which the premise of zeroFreeAll_of_topG asks for, and seven theorems supply the links in the proof of the shape theorem",
    "laji": "A",
    "units": [
     "how-the-conditions-are-assembled.p11",
@@ -1948,7 +2087,7 @@
    "id": "a-53",
    "type": "lahtokohta",
    "section": "how-the-conditions-are-assembled",
-   "title": "The shape theorem takes Green and 53 hypotheses, and goal_of_shape_of_hyps fills 45 of them from one field each of the record of 46 fields and six from the remaining field",
+   "title": "The shape theorem takes Green and 53 hypotheses, and goal_of_shape_of_hyps fills 51 of them, 45 from one field each of the record of 46 fields and six from the remaining field",
    "laji": "A",
    "units": [
     "how-the-conditions-are-assembled.p21.s1-s3"
@@ -2327,7 +2466,8 @@
     "scripts-and-files.p4",
     "scripts-and-files.p5",
     "scripts-and-files.p6",
-    "scripts-and-files.p7"
+    "scripts-and-files.p7",
+    "scripts-and-files.p8"
    ]
   }
  ],
@@ -2501,6 +2641,21 @@
    "from": "h-window",
    "type": "vertaa",
    "to": "n-entries"
+  },
+  {
+   "from": "lo-chosen",
+   "type": "rajaa",
+   "to": "lo-count"
+  },
+  {
+   "from": "lo-twoparts",
+   "type": "rajaa",
+   "to": "st8"
+  },
+  {
+   "from": "lo-interp",
+   "type": "tulkitsee",
+   "to": "lo-twoparts"
   }
  ]
 }

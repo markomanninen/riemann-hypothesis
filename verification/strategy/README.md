@@ -7,8 +7,9 @@ the prime powers up to x, with its main terms subtracted, is at most x^(1/2 + c�
 between Y and Y^(3/2). This holds for every small ε > 0 and for arbitrarily large Y, with a
 constant c that depends on neither ε nor Y. The proof gets the inequality by bounding the slope
 of one lattice from two sides. A divisibility inequality bounds that slope, together with a
-height term, from above by m times a main term, where m is the number of theta lifts in a
-chain between unitary groups. A slope inequality bounds the same slope from below. The two
+height term, from above by m times a main term, where m is the number of lifts in a chain
+between unitary groups. The author's note calls them theta lifts. A slope inequality bounds the
+same slope from below. The two
 bounds leave error terms of about x/m and about m for the weighted sum, and the proof assumes
 that m lies in a window around √x, where both terms are about √x.
 
@@ -21,7 +22,9 @@ and gives the number of declarations that the theorem rests on.
 A language model, Claude, read the route in one session on 23 and 24 November 2026. Seven further
 runs of the same model each read one branch and reported back. A table below names the seven
 readings, and a section names the reading behind a sentence that comes from a report. A sentence
-without a named reading reports what this session read. No mathematician has checked
+without a named reading reports what this session read. On 24 November two more runs of the same
+model compared the nine steps with the Lean text, one for each half of the route, and their
+twenty findings are worked in. No mathematician has checked
 the readings, and Lean was not run for this document. A reading shows what the text states and
 how the proofs call each other. It leaves open whether a definition is the mathematical object
 that its name suggests.
@@ -61,7 +64,8 @@ the current source.
   `covol` of a lattice in a Euclidean space as the square root of the Gram determinant of a
   basis, the degree as minus the logarithm of the covolume, and the slope as the degree divided
   by the rank. The largest slope `muMax` is the supremum of the slopes of the nonzero
-  sublattices. For a Hermitian lattice over a number field K the definition `muDef` in
+  sublattices. The smallest slope `muMin` is the infimum of the slopes of the quotients of the
+  lattice by its saturated proper sublattices. For a Hermitian lattice over a number field K the definition `muDef` in
   [`StatementPl.lean`](../../src/Formalism/HarderNarasimhan/StatementPl.lean) sets `mu` to twice
   the slope of the lattice, minus log 2, plus the quotient of log |d_K| by the degree of K over
   the rational numbers, where d_K is the discriminant of K.
@@ -111,20 +115,26 @@ marked its own guesses.
    its main term, by finite Fourier inversion.
 5. `ASK` is bounded through the slope of a lattice. A divisibility inequality `DIV` bounds the
    slope from above, and a slope inequality `SlopeIneq` bounds it from below.
-6. Both bounds concern linear maps into that lattice, one map for each word of a datum. Each map
-   factors through a chain of m kernels between unitary groups of ranks k + j(t + 1), for j from
-   0 to m, where k and t are two natural numbers of the datum. The first m − 2 kernels are
-   composed one after the other, the last two are composed inside a finite sum, and one more
-   linear map follows.
-7. The upper bound adds one term a·log a − a − a·`logOm` for each lift and each top place,
-   where a is the top weight at that place and `logOm` is a constant of the host. Interlacing
-   weights and a hook product bound the rest of the lift by an error term.
-8. The lower bound needs each map to be nearly an isometry, and two maps of different words to
-   overlap by no more than a stated amount.
+6. Both bounds concern linear maps into that lattice, one map for each word of a datum. A
+   pairing of each word factors through a chain of m kernels between unitary groups of ranks
+   k + j(t + 1), for j from 0 to m, where k and t are two natural numbers of the datum. The
+   first m − 2 kernels are composed one after the other, the last two are composed inside a
+   finite sum, and one more linear map follows. This document does not record how the pairing
+   is tied to the map.
+7. The main term of the upper bound holds one term a·log a − a − a·`logOm` for each lift and
+   each top place, where a is the top weight at that place and `logOm` is a constant of the
+   host. For one lift, interlacing weights and a hook product bound a sum over its weights by
+   a·log a − a plus an error term.
+8. The lower bound applies a general statement about several maps into one lattice. It takes
+   two bounds on products of matrices of the maps and one bound on their number of rows, which
+   a link supplies for a second set of maps, and it takes a family with many words. A premise
+   says that such families exist, and this document does not follow where that premise is
+   proved. By this document's interpretation the bounds say that each map is nearly an
+   isometry and that the images of the maps fill the target evenly.
 9. After a division the two bounds leave error terms of about x/m and about m for the weighted
    sum, and a further term of about √x that does not depend on m. The proof assumes that m lies
-   between x^(1/2 − ε) and x^(1/2 + ε/2), which keeps every term at most 4·x^(1/2 + 13ε/8), and
-   that gives the exponent 1/2 + cε.
+   between x^(1/2 − ε) and x^(1/2 + ε/2). With further premises on the numbers of the error,
+   that keeps every term at most 4·x^(1/2 + 13ε/8) and gives the exponent 1/2 + cε.
 
 The sections below have names and no numbers, and the word step means one of these nine. The
 four parts of the Landau argument are called stages.
@@ -263,7 +273,9 @@ the order x·log x, and `Gz x` is that sum with its main terms subtracted.
 there is a Y above it such that `Gm x ≤ x^θ` holds for all x between Y and Y^la. Then the
 L-function of every character of `KEPT`, the zeta function among them, has no zero with real
 part above θ. The condition asks only for an upper bound, and only on such intervals. The proof
-of `zero_free_all_of_green_v_win` uses la = 3/2.
+of `zero_free_all_of_green_v_win` uses la = 3/2. `zeroFreeAll_of_topG` applies the step to every
+primitive character ψ separately. It takes the level `Level.cyc ψ` of the powers of ψ, and the
+theorem `Level.mem_cyc` says that ψ is among the kept characters of that level.
 
 `formB` reduces to `zeroFree_of_rpow_window`, which rests on 86 declarations. The Landau reading
 read that proof, and this session read in full the lemma `landau_tails` that the reading had
@@ -290,7 +302,8 @@ read by statement. The account below has four stages and follows the report, exc
    u^k·e^((2 − σ)u)/k! outside the interval by C/σ^k with a constant C that is the same for
    every U. The factor e^(2u) of the weight comes from the growth bound of stage 1. By this
    session's own calculation, which the Lean text does not state, the weight peaks at
-   u = k/(σ − 2), and that point lies inside the interval when σ is at least 4(1 + δ)/δ. On
+   u = k/(σ − 2), and that point lies inside the interval when σ is above 4(1 + δ)/δ and U is
+   large. On
    each side of the interval the proof
    multiplies the weight by
    an exponential factor that is at least 1 there and integrates over all u > 0.
@@ -320,7 +333,10 @@ the main inequality at one point x, and `level_gm_le_on_family_scales` applies i
 intervals. `core_gm` rests on 440 declarations, and this session read its statement and its
 proof. For a level and all large x it takes a host and two conditions on the host. The
 conclusion is `Gm x ≤ x^(1/2 + (eD + eL + 7)·ε)`, where `eD` and `eL` are two constants of the
-conditions.
+conditions. The statement `ChebyshevInequalityAtWindowScale` in
+[`TopWin.lean`](../../src/Formalism/SharpRestriction/RamificationFrobenius/TotientGaloisClasses/TopWin.lean)
+asks for `eD` and `eL` first and for every small ε after them, so the exponent is 1/2 + c·ε with
+a constant c that depends on neither ε nor Y.
 
 - The condition `CoreAtH` is an existence statement with 23 witnesses and sixteen conditions.
   It says that a record `Data` of real numbers exists over the host with the condition
@@ -623,10 +639,25 @@ they are x/m and m, which are equal at m = √x, the chain length that the note 
 does not choose m. It takes x^(1/2 − ε) ≤ m ≤ x^(1/2 + ε/2) as premises, and the fourth term
 has the size of about √x for every m, because k is at most n²·x^(1/2 − ε). The first term comes
 from the part of the error that carries no factor m, so the m lifts share it. The third comes
-from the number `B0`, which enters once for each of the m lifts and which is itself bounded by
-a multiple of m. This session did not read what `B0` and `Nc` measure. `core_gm` calls
-`ch_core` with the constant C = `eD` + `eL` + 3, for which `ch_core` gives the exponent
-1/2 + (C + 3)·ε, and its own conclusion has one ε more.
+from the number `B0`, which enters once for each of the m lifts and which is itself a multiple
+of m. `core_gm` calls `ch_core` with the constant C = `eD` + `eL` + 3, for which `ch_core`
+gives the exponent 1/2 + (C + 3)·ε, and its own conclusion has one ε more.
+
+`B0` and `Nc` are budgets that the code defines by formulas, in
+[`DataArith.lean`](../../src/Formalism/LocalRingCardinality/DataArith.lean) and
+[`DataParams₂.lean`](../../src/Formalism/LocalRingCardinality/DataParams₂.lean). For a datum,
+`B0` is the number `sizeBudget`, the product f·m·b·x^ε, where b is exp(x^ε) and f is twice a
+number of the datum, written n′ in this paragraph. The product has the form of the B of this
+subsection, and `budgetNc`, which is `Nc`, has the form of the N, each with n′ in place of n.
+The condition `BNBounds` bounds `B0` and `Nc` by the B and the N of this subsection. The conditions of the next subsection then require that errors of one lift stay
+within a constant
+times `B0`. The condition `EComp5` is one of them. `B0` contains the factor m by its formula,
+so the factor m of the third term is part of the definition of the budget. The reason why the errors of one lift fit a budget that
+grows with m lies in the proofs of those conditions, which this session did not read. One
+premise of `stepE_num` points to it. The field `NumFacts.sw` of its bundle of premises says that
+the shift w of lift j is at least the number s of the section on one lift, which is
+(k + (2j − 1)(t + 1))/2. The lower bound for the shift grows with j, and the error term of that
+section grows with w.
 
 ### `ch_top`
 
@@ -732,7 +763,9 @@ as m.
 
 The theorem of the first row derives the link `LinkDIV` from two premises, `LinkEta` and
 `DIVinN`. `divinN_of_hypV`, which rests on 72 declarations, gets `DIVinN` from the bound of
-`VWin` over the host. This is where entry 17 of the note enters the divisibility. The form of
+`VWin` over the host. By the form of that bound, which the section on `VWin` gives, this is
+where entry 17 of the note enters the divisibility, and that reading is an interpretation. The
+form of
 `LinkDIV` at one datum, `LinkDIV_at`, also includes `BesselId`, which says that a pairing `Bu`
 of the datum equals a nonzero constant times a pairing `besS` after two isometries. The names
 match the Bessel period of entry 12.
@@ -834,7 +867,8 @@ section.
   rows are built from the k − 1 numbers v and from j of the numbers b, each shifted by the
   number `e` of lift j.
 - The number `hU` adds `kerPlace` and subtracts `logHook`, summed over places and over the m
-  lifts.
+  lifts. This document does not record how `hU` is tied to the number `hu` of the record of the
+  path, which stands for the number h of a word.
 
 `stepE_num` in
 [`NumbersLink.lean`](../../src/Formalism/LocalToGlobal/Divisibility/NumbersLink.lean) proves two
@@ -878,47 +912,156 @@ interlacing weights of entry 7, and the number of lifts as the multiplicity of t
 
 `Frame_at` in
 [`QuadraticLogDerivCongr.lean`](../../src/Formalism/SharpRestriction/GlobalSchurBounds/QuadraticLogDerivCongr.lean)
-is the slope inequality for the lattices of a datum. This session read the statements of this
-section and, of the proofs, that of `frame_at_of`.
+is the slope inequality for the lattices of a datum. Write s for the mean of `mu` − h over the
+words of the datum, with the ranks of the lattices `Nu u` as weights, which the code calls
+`sFrame`. Call the largest value of `muMax` − h over the words, minus s, the excess. The code
+calls it `uFrame`. `Frame_at` takes two bounds as parameters. It says that a number η below the
+first and a number e below the second exist for which the following holds for every positive
+number HH that is at least s minus `muMinDual`, the smallest slope of the dual of `RR`. The
+number s, minus the logarithm of the number of words, minus a correction, is at most the dual
+slope of `RR`. The correction is (1 − `delp`)⁻¹ times the sum of 4·excess·log(1 + HH/excess) and
+(η + 4·√e)·HH, where `delp` is a number of the datum. `TieLocal` ties one of the three small
+numbers of the condition `SlopeIneq` of the record to `delp`.
+
+This session read in full the proofs of `frame_at_of`, `joint_a_ramified_holds`,
+`ramification_condition_holds`, `ramification_linear_case_holds`, `flat_lattice_theorem_holds`
+and `word_count_bound_holds`. It read the definitions that this section names, except those of
+`Dstar` and `Dall`, and the statements of the other theorems of the table.
 
 | Theorem | What it does | Rests on |
 |---|---|---:|
 | `frame_at_of` | derives `Frame_at` from a general statement about several maps into one lattice | 441 |
-| `joint_a_ramified_holds` | proves that general statement | 400 |
-| `blockReal_at_of` | takes the blocks of the maps from `BesselId` | 59 |
-| `matKF_of` | builds the matrices of the maps for a family | 178 |
+| `joint_a_ramified_holds` | proves that general statement from the two theorems of the next two rows | 400 |
+| `ramification_linear_case_holds` | turns the three bounds of `InputSG` into two conditions on the whole family of maps | 100 |
+| `theoremF` | the frame theorem, which derives the inequality from those two conditions | 294 |
+| `word_count_bound_holds` | bounds the sum `RsG` of the numbers of columns from below when the words are many | 3 |
+| `blockReal_at_of` | shows that the matrix of the map of a word is the matrix of a second map times an isometry, from `BesselId` | 59 |
+| `matK_at_of` | carries two bounds of the link over to the matrices of the maps of a datum | 64 |
+| `matKF_of` | does the same for a family | 178 |
 | `data_SlopeIneq` | turns `Frame_at` into the condition `SlopeIneq` of the record `Data` | 137 |
 | `link_alt_alt_bis` | supplies the link `LinkS` | 11,188 |
 
 Of the 400 declarations behind `joint_a_ramified_holds`, 190 lie in the folder
 [`HarderNarasimhan`](../../src/Formalism/HarderNarasimhan) and 74 in the folder LatticeSlopes.
-[`Statement.lean`](../../src/Formalism/HarderNarasimhan/Statement.lean) states a slope inequality
-for a map of bounded norm between lattices.
 
-The general statement needs bounds on the Gram matrix of the maps, and the link `LinkS` supplies
-them through the condition `LinkS_at`, for numbers `duS u`, `Dstar` and `Dall` of the datum.
-`duS u` is the complex dimension of a space of the word u. `LinkS_at` is an implication. Its
-premise says that `duS u`·Γ²/`Dstar` lies between 1/C0 and C0 for every word u, where Γ is the
-number `GamOf`, the exponential of a constant times m⁵·f·L for numbers f and L of the datum.
-Its conclusion has three parts.
+### The general statement
 
-- For two different words u and u′ a number `hsSq u u′` is at most
+`JointARam` in
+[`FrameTraceRatioFinEquiv.lean`](../../src/Formalism/SizeWindowBrackets/FrameTraceRatioFinEquiv.lean)
+is a statement about a totally complex number field, a target space with a lattice, and a finite
+family of spaces, each with a lattice and a linear map into the target. It has no datum in it.
+Its premises are these.
+
+- `LatGeom` holds the geometry. Each map sends its lattice into the lattice of the target. The
+  height of each map that is not zero is at most a number h of that map. At one infinite place
+  a matrix is given for each map. On the rows of the target it is the matrix of the map in
+  chosen frames, and it may have further rows, which number at most δ times all its rows.
+- `LatNum` holds the numbers. A number s is at most the mean of `mu` − h over the family with
+  the ranks as weights, the sum of s and an excess bounds `muMax` − h for every member, and HH
+  is at least s minus the smallest slope of the target.
+- Each matrix is the product of a first factor and an isometry. A first factor may have more
+  columns than its map, and the surplus over all members is at most a share of the columns of
+  the first factors. This section calls that share the lost share.
+- `InputSG` holds three bounds on the first factors, with a positive weight for each member.
+  For two different members the squared Hilbert-Schmidt norm of the adjoint of one first factor
+  times the other, times the two weights, is at most (1 + η0) times the product of their
+  numbers of columns divided by a number `Dstar`. For one member the squared Hilbert-Schmidt
+  norm of the weight times its Gram matrix, minus the identity, is at most e0 times its number
+  of columns. The number of rows is at most (1 + η1)·`Dstar`.
+- Sizes are bounded by a number σ between 0 and 1/20. The numbers η0, η1 and the square root of
+  e0 are at most σ/2, the lost share is at most 1/4, and the sum `RsG` of the numbers of
+  columns of the first factors is at least `Dstar`/σ.
+
+The conclusion is the inequality of `Frame_at` for the target lattice, with the number of
+members in the logarithm, δ in place of `delp`, 2·e0 in place of e, and 5σ plus three times the
+square root of the lost share in place of η.
+
+The proof has two parts, and the proofs that join them are a few lines each.
+
+- `ramification_linear_case_holds`, the code's statement `RamLin`, derives two conditions on
+  the whole family from the three bounds of `InputSG`. Write Q for the sum over the members of
+  the weight times the matrix times its adjoint, and n for the number of rows. The first
+  condition says that the trace of Q² is at most (1 + η) times the square of the trace of Q
+  divided by n. The second says that the squared Hilbert-Schmidt distances of the weighted Gram
+  matrices from the identity add up to at most e times the sum of the numbers of columns. Its
+  proof calls `compressTraceSquareBound` and `compressDiagDefectBound`, which rest on 55 and 22
+  declarations and whose proofs are unread.
+- `theoremF`, which the code also calls the frame theorem, derives the inequality from the two
+  conditions with `LatGeom` and `LatNum`. Its proof is one line that names the theorem
+  `frame_theorem_log_ideal` of the folder HarderNarasimhan, which in turn is derived from
+  `frame_theorem_sharp`, and the proof of that theorem is unread. The file that names `theoremF`
+  lists the parts of a theory of Harder-Narasimhan polygons by name. One of them,
+  `slope_inequality_mean`, is the slope inequality for one map. For a linear map and a lattice
+  with a nonzero image it says that the smallest slope of the lattice minus the height of the
+  map is at most the smallest slope of the image, and that the smallest slope of the lattice is
+  at most the largest slope of any lattice that contains the image plus the height.
+
+### How the statement is applied to a datum
+
+`frame_at_of` applies the general statement with these choices. The number field is the field
+`LL` of the datum, and the target is the dual of `RR` with its dual lattice. The members are the
+words, with the lattices `Nu u` and the maps `Bk u`. The number h of a member is the number h of
+the word, s and the excess are `sFrame` and `uFrame`, δ is `delp`, and σ is x^(−CH) for a
+constant CH. The matrices, the isometries, the weights and the three bounds come from a
+condition `FrameReal_at`, in which the first factor of the matrix of a word u has `duS u`
+columns. For a family the condition `FrameRealF` asks that three times the square root of the
+lost share is at most σ, so the number that takes the place of η is at most 6σ.
+
+The premise on the sum `RsG` comes from `word_count_bound_holds` and from two conditions on the
+datum. `ChProviso_at` says that `duS u`·Γ²/`Dstar` lies between 1/C0 and C0 for every word u,
+where Γ is the exponential of a constant times m⁵·f·L for numbers f and L of the datum.
+`ChCode_at` says that the number of words is at least C0·Γ²·x^CH. Each word then has at least
+`Dstar`/(C0·Γ²) columns, and the words together have at least `Dstar`·x^CH, which is
+`Dstar`/σ. The two conditions are parts of the condition `Chosen` on a family, which has seven
+parts. The statement `DesignExists`, a premise of `topDesWin`, says that families with `Chosen`
+exist. `designExists_of_choices` is one of two theorems that mention it besides `topDesWin` and
+the shape theorem, and this session did not read where `DesignExists` is proved.
+
+### How the bounds of the link reach the maps
+
+The link `LinkS` gives bounds through the condition `LinkS_at`, for a second set of maps. Each
+word u has a space `Cu u` and a map `Pu u` from it into one Hilbert space of the datum. The
+block `KD u u′` is the adjoint of `Pu u` composed with `Pu u′`, times the power −1/2 of the
+product of two numbers `c0 u` and `c0 u′`. `hsSq u u′` is the squared Hilbert-Schmidt norm of
+`KD u u′`, and `hsDiagFull u` is the squared Hilbert-Schmidt norm of `KD u u` minus the
+identity. `duS u` is the complex dimension of a further space of the word.
+
+`LinkS_at` is an implication. Its premise is the condition `ChProviso_at` of the previous
+subsection, and its conclusion has three parts.
+
+- For two different words u and u′ the number `hsSq u u′` is at most
   (1 + η0)·`duS u`·`duS u′`/`Dstar`.
-- For every word u a number `hsDiagFull u` is at most e0·`duS u`.
-- `Dall` is at most (1 + η1)·`Dstar`.
+- For every word u the number `hsDiagFull u` is at most e0·`duS u`.
+- A number `Dall` of the datum is at most (1 + η1)·`Dstar`.
 
-The link gives η0, η1 and the square root of e0 at most exp(−x^(ε/8)), so e0 is at most
-exp(−2·x^(ε/8)). The definition of `hsDiagFull u` is the squared Hilbert-Schmidt norm of a
-block `KD u u` minus the identity, and `hsSq u u′` is defined through the block `KD u u′`,
-whose definition this session did not open. The rest of this paragraph is this session's
-interpretation. Each map is an isometry up to a small relative error, because the squared
-distance of its block from the identity is at most the share e0 of `duS u`. The bound for two
-different maps is 1 + η0 times `duS u`·`duS u′`/`Dstar`. That product is the mean of the
-squared Hilbert-Schmidt norm of the product of the projections onto two random subspaces of
-those dimensions in a space of dimension `Dstar`. By the premise it is at most
-(1 + η0)·C0·`duS u`/Γ², which is a small share of `duS u` when Γ is large. The note's entry 16
-calls its statement the approximate orthogonality of the columns, and entry 13 names the Bost
-slope inequality.
+The link gives η0, η1 and the square root of e0 at most exp(−x^(ε/8)). For large x that number
+is below x^(−CH)/2, the σ/2 of the general statement, by this session's own arithmetic.
+
+The maps `Pu u` and the maps `Bk u` of the slope inequality are different maps, and the
+condition `BlockReal_at` ties them. It says that at one infinite place, in chosen frames, the
+matrix of `Bk u` equals the matrix of `Pu u` in an orthonormal basis, up to a complex
+conjugation, times an isometry. `blockReal_at_of` proves it from `BesselId`. `matK_at_of` and
+`matKF_of` then state the first two bounds for the first factors of the matrices of the maps
+`Bk u`, in a condition `MatK_at`. In that condition the matrices have the rows of the target and
+`Dall` − `Drows` further rows, for a second number `Drows` of the datum, so `Dall` stands where
+the general statement has the number of rows when the target has `Drows` rows. By the form of
+the block `KD` the weight of a word u is 1/`c0 u`. This session did not open what `Dstar` and
+`Dall` are.
+
+The rest of this section is this session's interpretation. The second bound says that each map
+is an isometry up to a small relative error after scaling. For one pair of words the first
+bound is (1 + η0) times the mean of the squared Hilbert-Schmidt norm of the product of the
+projections onto two random subspaces of dimensions `duS u` and `duS u′` in a space of
+dimension `Dstar`. By the upper side of `ChProviso_at` it is at most (1 + η0)·C0·`duS u`/Γ² for
+that pair. The columns of all words outnumber the rows at least 19 times, since their sum is at
+least `Dstar`/σ with σ at most 1/20 and the rows number at most (1 + η1)·`Dstar`. The images of
+the maps therefore overlap, and the first bound says that they overlap as random subspaces do.
+The condition on the trace of Q² is close to an equality that holds only when Q is a multiple
+of the identity, since the square of the trace of Q is at most n times the trace of Q² for
+every positive semidefinite Q. In that sense the images fill the target evenly. The logarithm
+of the number of words is what the inequality pays for the mean over many words. The note's
+entry 16 calls its statement the approximate orthogonality of the columns, and entry 13 names
+the Bost slope inequality.
 
 ## How the conditions are assembled
 
@@ -943,7 +1086,9 @@ list of sign conditions.
 | `FParams` | the link `LinkIRR` |
 
 `topDesWin`, which rests on 724 declarations and whose proof this session read, takes the links
-as premises, and the proof of the shape theorem supplies them by these theorems.
+as premises. It concludes the statement `FamilyClassConnected` for a class of families, which is
+the conclusion that the premise of `zeroFreeAll_of_topG` asks for. The proof of the shape
+theorem supplies the links by these theorems.
 
 | Link | What it states, by the reading | Supplied by | Rests on |
 |---|---|---|---:|
@@ -953,7 +1098,7 @@ as premises, and the proof of the shape theorem supplies them by these theorems.
 | `LinkIRR` | 0 ≤ `delp` ≤ exp(−x^(c/7)) for a number `delp` of the datum and a constant c | `closed_linkIRR_of_join_count` | 1,840 |
 | `LinkDIV` | the divisibility inequality | `closed_linkDIVt_of_closed_bridge_kernel` | 2,704 |
 | `LinkMu` | a bound on the difference of two slopes | `linkMu_of_linkDIV`, from `LinkDIV` | 219 |
-| `LinkGLOBAL` | the passage from the links to `ChainTied` | `link_gl`, which reaches `linkCore` | 15,442 |
+| `LinkGLOBAL` | the statement that the links give `ChainTied` | `link_gl`, whose proof reaches `linkCore`, the builder of the witnesses | 15,442 |
 
 The proof of the shape theorem passes `Green` to one call, the supplier of `LinkIRR`. By the
 reading `Green` is Green's parametrisation of the cuspidal characters of GL_d over a prime field.
@@ -965,7 +1110,7 @@ The shape theorem takes `Green` and 53 further hypotheses, which
 [`TopShapeAlt.lean`](../../src/Development/AutomorphicArithmetic/ThetaCorrespondence/ThetaPairLifts/ThirdPlaceSeries/TopShapeAlt.lean)
 lists. The theorem `goal_of_shape_of_hyps` in
 [`ShapeOf.lean`](../../src/Development/AutomorphicArithmetic/ThetaCorrespondence/ThetaPairLifts/ThirdPlaceSeries/ShapeOf.lean)
-fills the 53 from the 46 fields of the record. It passes 45 fields to one hypothesis each, three
+fills 51 of the 53 from the 46 fields of the record. It passes 45 fields to one hypothesis each, three
 of them through a conversion, and derives six hypotheses from the remaining field, a selection
 σ. The other two hypotheses, `hVC`
 and `nR`, are the proposition `True` in this use, and `zero_free_all_of_green_v_win` fills them
@@ -1162,9 +1307,11 @@ a field of the record. The next section lists what stayed unread.
   `FamilyLaws`, which say that each lift is a theta lift, the statement `LastSide`, the field
   `nprimeDef` and the field `selJ` behind `BesselId`.
 - The proofs of `stepE_num` and `numFacts_rec`.
-- The proofs that carry the lower bound, which are those of `joint_a_ramified_holds`,
-  `blockReal_at_of`, `matKF_of`, `data_SlopeIneq` and `link_alt_alt_bis`, and the definitions of
-  `hsSq`, `Dstar` and `Dall`.
+- The proofs that carry the lower bound below the general statement, which are those of
+  `frame_theorem_sharp`, `compressTraceSquareBound`, `compressDiagDefectBound`,
+  `blockReal_at_of`, `matK_at_of`, `matKF_of`, `data_SlopeIneq` and `link_alt_alt_bis`, the
+  theorems that supply `DesignExists`, and what the numbers `Dstar` and `Dall` of the datum
+  are.
 - The suppliers of the links other than `linkCore`.
 - The proofs below the first call in the supply branches, for example `ferreroWashington`,
   `count_i_of_printed_bound_k_kato_automorphy`, `tLift_holds_k` and the fifteen suppliers of the
@@ -1172,10 +1319,11 @@ a field of the record. The next section lists what stayed unread.
 - The eight statements of `GlobalTheory.Published` behind `Row` for which the reading found no
   closed theorem.
 - Most of the 463,949 declarations behind the record.
-- What the numbers `B0` and `Nc` of the record measure, the formula `hExpl6` for the number `h`
-  of a word, and the definition of the block `KD`.
-- Whether the definitions of the project are the mathematical objects that their names suggest,
-  which is a question for a mathematician.
+- Why the errors of one lift fit the budget `B0`, and the formula `hExpl6` for the number `h`
+  of a word.
+- Whether the definitions of the project are the objects of the literature that their names
+  suggest. This document compares a definition with the literature only where it says so, and
+  the comparison of the others is work still to do.
 
 ## Scripts and files
 
@@ -1196,7 +1344,8 @@ of `cones.json` anew.
 
 | File | Content |
 |---|---|
+| `CLAIMS.md` | the claims that carry the route, step by step, each with its declarations, how much was read and the form for an explainer |
 | `cone.py` | counts what a constant rests on, and lists the constants that mention a constant |
-| `check.py` | checks the names, the counts and the links of this document |
+| `check.py` | checks the names, the counts and the links of this document, and the names and the links of `CLAIMS.md` when that file is named |
 | `cones.json` | the full name and the count of every theorem whose count this document gives |
 | `briefs/route-check.txt` | the brief for a second model that tests the route of this document against the Lean text |

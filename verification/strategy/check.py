@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Check README.md of this folder against the exact graph and the source tree.
 
-Usage: python3 -I verification/strategy/check.py [--write]
+Usage: python3 -I verification/strategy/check.py [--write] [FILE]
+
+FILE is a document of this folder, README.md when it is left out. The counts are checked for
+README.md alone, and the names and the links for any document.
 
 The script makes three checks and prints what fails.
 
@@ -75,7 +78,9 @@ def blocks(text):
 
 def main():
     write = "--write" in sys.argv[1:]
-    with open(os.path.join(HERE, "README.md"), encoding="utf-8") as f:
+    files = [a for a in sys.argv[1:] if not a.startswith("--")]
+    target = files[0] if files else "README.md"
+    with open(os.path.join(HERE, target), encoding="utf-8") as f:
         text = f.read()
     with open(os.path.join(HERE, "cones.json"), encoding="utf-8") as f:
         stored = json.load(f)
@@ -83,7 +88,7 @@ def main():
     bad = 0
 
     counts = {}
-    for name in stored["rests_on"]:
+    for name in stored["rests_on"] if (write or target == "README.md") else []:
         hits = g.by_name.get(name, [])
         if len(hits) != 1:
             print("cones.json  %s names %d constants" % (name, len(hits)))

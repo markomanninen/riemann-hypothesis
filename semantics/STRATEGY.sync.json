@@ -5,9 +5,10 @@
   "the-strategy-of-the-proof-followed-throu.p1.s3:287183110b69",
   "the-strategy-of-the-proof-followed-throu.p1.s4:43f2ba7f68af",
   "the-strategy-of-the-proof-followed-throu.p1.s5:2ee05a120689",
-  "the-strategy-of-the-proof-followed-throu.p1.s6:77793c322125",
-  "the-strategy-of-the-proof-followed-throu.p1.s7:bdbb5c85d74e",
-  "the-strategy-of-the-proof-followed-throu.p1.s8:aa3ef840f751"
+  "the-strategy-of-the-proof-followed-throu.p1.s6:78ffaf40f77a",
+  "the-strategy-of-the-proof-followed-throu.p1.s7:a3a45ea98965",
+  "the-strategy-of-the-proof-followed-throu.p1.s8:bdbb5c85d74e",
+  "the-strategy-of-the-proof-followed-throu.p1.s9:aa3ef840f751"
  ],
  "s0-plan": [
   "the-strategy-of-the-proof-followed-throu.p2.s1:ef1ccc70719a",
@@ -19,9 +20,10 @@
   "the-strategy-of-the-proof-followed-throu.p3.s2:e0179d970673",
   "the-strategy-of-the-proof-followed-throu.p3.s3:31818d783e65",
   "the-strategy-of-the-proof-followed-throu.p3.s4:6b82c24f697e",
-  "the-strategy-of-the-proof-followed-throu.p3.s5:497e97d2a910",
-  "the-strategy-of-the-proof-followed-throu.p3.s6:cbae75927f1a",
-  "the-strategy-of-the-proof-followed-throu.p3.s7:139f46748aa2"
+  "the-strategy-of-the-proof-followed-throu.p3.s5:332bef21f7d3",
+  "the-strategy-of-the-proof-followed-throu.p3.s6:497e97d2a910",
+  "the-strategy-of-the-proof-followed-throu.p3.s7:cbae75927f1a",
+  "the-strategy-of-the-proof-followed-throu.p3.s8:139f46748aa2"
  ],
  "s0-counts": [
   "the-strategy-of-the-proof-followed-throu.p4.s1:023c90ef659b",
@@ -60,7 +62,8 @@
   "words-used-here.p9.s1:11d60a2694b9",
   "words-used-here.p9.s2:f57fd1dbcc60",
   "words-used-here.p9.s3:0769afeffd53",
-  "words-used-here.p9.s4:c5595b5d0313"
+  "words-used-here.p9.s4:e9ef0f4f7871",
+  "words-used-here.p9.s5:c5595b5d0313"
  ],
  "w-height": [
   "words-used-here.p10.s1:5b1e9454e258",
@@ -116,19 +119,24 @@
  ],
  "st6": [
   "the-route-in-nine-steps.p6.s1:9dcaf200e9b9",
-  "the-route-in-nine-steps.p6.s2:bf8b402403b5",
-  "the-route-in-nine-steps.p6.s3:beeab3d35cb9"
+  "the-route-in-nine-steps.p6.s2:4a0a1272e30f",
+  "the-route-in-nine-steps.p6.s3:beeab3d35cb9",
+  "the-route-in-nine-steps.p6.s4:a1fc3e5b0813"
  ],
  "st7": [
-  "the-route-in-nine-steps.p7.s1:085465960a72",
-  "the-route-in-nine-steps.p7.s2:3aaa39e771e7"
+  "the-route-in-nine-steps.p7.s1:7c5e76481742",
+  "the-route-in-nine-steps.p7.s2:d7550fd03781"
  ],
  "st8": [
-  "the-route-in-nine-steps.p8.s1:51a082a5eadf"
+  "the-route-in-nine-steps.p8.s1:fad9ab867873",
+  "the-route-in-nine-steps.p8.s2:545fb7967a81",
+  "the-route-in-nine-steps.p8.s3:1c39db54d6b3",
+  "the-route-in-nine-steps.p8.s4:5a25989e1bc3"
  ],
  "st9": [
   "the-route-in-nine-steps.p9.s1:ada5a2005063",
-  "the-route-in-nine-steps.p9.s2:bbaf34e307ee"
+  "the-route-in-nine-steps.p9.s2:71c888a7d8e9",
+  "the-route-in-nine-steps.p9.s3:c0a6373fa474"
  ],
  "s2-map": [
   "the-route-in-nine-steps.p10.s1:0f2847dc2475",
@@ -251,8 +259,11 @@
   "the-landau-step.p1.s2:02ca9f8538e4",
   "the-landau-step.p1.s3:4acbaec9babd",
   "the-landau-step.p1.s4:58f0985f0796",
-  "the-landau-step.p1.s5:506aeef9c16d",
-  "the-landau-step.p1.s6:dcd9dcd0c442"
+  "the-landau-step.p1.s5:506aeef9c16d"
+ ],
+ "l-level": [
+  "the-landau-step.p1.s6:6f93d807c860",
+  "the-landau-step.p1.s7:96e2bbc06710"
  ],
  "l-reduce": [
   "the-landau-step.p2.s1:fa29477922d5",
@@ -283,7 +294,7 @@
   "the-landau-step.p5.s6:9e470283a312"
  ],
  "l-peak": [
-  "the-landau-step.p5.s5:cd1635a845cc"
+  "the-landau-step.p5.s5:9228fbe7a792"
  ],
  "l-contra": [
   "the-landau-step.p6.s1:0b08aa403e6d",
@@ -305,7 +316,8 @@
  "c-coregm": [
   "the-wanted-characters-inside-an-auxiliar.p1.s1:5f8d9048d914",
   "the-wanted-characters-inside-an-auxiliar.p1.s2:dba23eb3fbf3",
-  "the-wanted-characters-inside-an-auxiliar.p1.s3:206cf5e650db"
+  "the-wanted-characters-inside-an-auxiliar.p1.s3:206cf5e650db",
+  "the-wanted-characters-inside-an-auxiliar.p1.s4:488906cbeb1b"
  ],
  "c-coreath": [
   "the-wanted-characters-inside-an-auxiliar.p2.s1:66c1478ebffa",
@@ -541,15 +553,16 @@
  ],
  "h-budget": [
   "ch-core.p16.s1:0a1592a8df2c",
-  "ch-core.p16.s2:a333b0fecd87",
-  "ch-core.p16.s3:2994ca787a6d",
-  "ch-core.p16.s4:9066f03cfaf7",
+  "ch-core.p16.s2:a5d54bcc2a13",
+  "ch-core.p16.s3:aeb4b2d6f930",
+  "ch-core.p16.s4:18e887cf51db",
   "ch-core.p16.s5:222c10b6ed11",
   "ch-core.p16.s6:12c3490400aa",
-  "ch-core.p16.s7:7ac1297fc141",
+  "ch-core.p16.s7:3391b06feb5a",
   "ch-core.p16.s8:562a32eac9ad",
-  "ch-core.p16.s9:e8c475e0768c",
-  "ch-core.p16.s10:5d26f42f2324"
+  "ch-core.p16.s9:5b960d2889ce",
+  "ch-core.p16.s10:b644973e8b2c",
+  "ch-core.p16.s11:6c37ae6991e1"
  ],
  "t-chtop": [
   "ch-top.p1.s1:5aaaee14c3f6",
@@ -645,7 +658,7 @@
   "the-path-of-the-divisibility-inequality.p14.s3:246fcf4f8abc"
  ],
  "d-e17": [
-  "the-path-of-the-divisibility-inequality.p14.s2:273ae5ceae45"
+  "the-path-of-the-divisibility-inequality.p14.s2:0d38307e9977"
  ],
  "d-bessel": [
   "the-path-of-the-divisibility-inequality.p14.s4:0f74c89d7931"
@@ -743,7 +756,8 @@
   "the-bound-for-one-lift.p5.s3:7fe2998fff52",
   "the-bound-for-one-lift.p6.s1:2ae0edf75bb9",
   "the-bound-for-one-lift.p6.s2:a4047c15c057",
-  "the-bound-for-one-lift.p7.s1:ec00339b014d"
+  "the-bound-for-one-lift.p7.s1:ec00339b014d",
+  "the-bound-for-one-lift.p7.s2:22fd908ae3ba"
  ],
  "u-stepE": [
   "the-bound-for-one-lift.p8.s1:fc6396b3af1b",
@@ -785,35 +799,114 @@
  ],
  "lo-frame": [
   "the-lower-bound-for-the-lattices-of-a-da.p1.s1:970e7c1e88b7",
-  "the-lower-bound-for-the-lattices-of-a-da.p1.s2:137e25a6be8c",
-  "the-lower-bound-for-the-lattices-of-a-da.p2.s1:f77988ff922c",
-  "the-lower-bound-for-the-lattices-of-a-da.p3.s1:db04c1d3ecaa",
-  "the-lower-bound-for-the-lattices-of-a-da.p4.s1:b2cc7a72e79b",
-  "the-lower-bound-for-the-lattices-of-a-da.p5.s1:0cb794a80656",
-  "the-lower-bound-for-the-lattices-of-a-da.p6.s1:17d71fb422e1",
-  "the-lower-bound-for-the-lattices-of-a-da.p7.s1:bbe0627d29fd",
-  "the-lower-bound-for-the-lattices-of-a-da.p8.s1:12b033e87818",
-  "the-lower-bound-for-the-lattices-of-a-da.p9.s1:11e043c5b416",
-  "the-lower-bound-for-the-lattices-of-a-da.p9.s2:79f0d68fc6c3"
+  "the-lower-bound-for-the-lattices-of-a-da.p1.s2:934c43749d11",
+  "the-lower-bound-for-the-lattices-of-a-da.p1.s3:6f987e38fb63",
+  "the-lower-bound-for-the-lattices-of-a-da.p1.s4:8c50112c6490",
+  "the-lower-bound-for-the-lattices-of-a-da.p1.s5:fcf7e533ff65",
+  "the-lower-bound-for-the-lattices-of-a-da.p1.s6:3cc149f729f7",
+  "the-lower-bound-for-the-lattices-of-a-da.p1.s7:ac235d3983fd",
+  "the-lower-bound-for-the-lattices-of-a-da.p1.s8:a96b56d15e6b",
+  "the-lower-bound-for-the-lattices-of-a-da.p1.s9:679adb05bb5b",
+  "the-lower-bound-for-the-lattices-of-a-da.p2.s1:586039d25a9c",
+  "the-lower-bound-for-the-lattices-of-a-da.p2.s2:9adf0cf046b6",
+  "the-lower-bound-for-the-lattices-of-a-da.p3.s1:f77988ff922c",
+  "the-lower-bound-for-the-lattices-of-a-da.p4.s1:db04c1d3ecaa",
+  "the-lower-bound-for-the-lattices-of-a-da.p5.s1:6515f443a870",
+  "the-lower-bound-for-the-lattices-of-a-da.p6.s1:3a775be35c03",
+  "the-lower-bound-for-the-lattices-of-a-da.p7.s1:bcbedbd22b2b",
+  "the-lower-bound-for-the-lattices-of-a-da.p8.s1:68293fc6a0fa",
+  "the-lower-bound-for-the-lattices-of-a-da.p9.s1:46a33b2af1ca",
+  "the-lower-bound-for-the-lattices-of-a-da.p10.s1:1255b5d9751c",
+  "the-lower-bound-for-the-lattices-of-a-da.p11.s1:ad66c5905993",
+  "the-lower-bound-for-the-lattices-of-a-da.p12.s1:bbe0627d29fd",
+  "the-lower-bound-for-the-lattices-of-a-da.p13.s1:12b033e87818",
+  "the-lower-bound-for-the-lattices-of-a-da.p14.s1:11e043c5b416"
+ ],
+ "lo-jointaram": [
+  "the-general-statement.p1.s1:572aef65032b",
+  "the-general-statement.p1.s2:915dcbd0718a",
+  "the-general-statement.p1.s3:84c0fa3db41a",
+  "the-general-statement.p2.s1:0667c37be520",
+  "the-general-statement.p2.s2:652bab31a604",
+  "the-general-statement.p2.s3:972bd8d6523d",
+  "the-general-statement.p2.s4:c87a3d984b26",
+  "the-general-statement.p2.s5:8aecd2502f44",
+  "the-general-statement.p3.s1:b4353e603103",
+  "the-general-statement.p3.s2:ee7075ff34d5",
+  "the-general-statement.p4.s1:d1ec775f7722",
+  "the-general-statement.p4.s2:0b93c2b1f97c",
+  "the-general-statement.p4.s3:72e39d0c7d00",
+  "the-general-statement.p5.s1:56538e8b18d7",
+  "the-general-statement.p5.s2:b798a02e6e56",
+  "the-general-statement.p5.s3:088203174682",
+  "the-general-statement.p5.s4:d1218e66598f",
+  "the-general-statement.p6.s1:d90f8de017df",
+  "the-general-statement.p6.s2:9f6984504862",
+  "the-general-statement.p7.s1:8d307e18a7a1"
+ ],
+ "lo-twoparts": [
+  "the-general-statement.p8.s1:658e93402b33",
+  "the-general-statement.p9.s1:3d51f8285538",
+  "the-general-statement.p9.s2:8c858b53a69a",
+  "the-general-statement.p9.s3:ea2d826a7482",
+  "the-general-statement.p9.s4:989daeb1f94f",
+  "the-general-statement.p9.s5:c126c94a9963",
+  "the-general-statement.p10.s1:748ccb5d4b89",
+  "the-general-statement.p10.s2:d495377bf9c1",
+  "the-general-statement.p10.s3:7fe1ab08209a",
+  "the-general-statement.p10.s4:e161874239bb",
+  "the-general-statement.p10.s5:0e44c31927f9"
+ ],
+ "lo-apply": [
+  "how-the-statement-is-applied-to-a-datum.p1.s1:91e86a5415db",
+  "how-the-statement-is-applied-to-a-datum.p1.s2:28d60c953ab0",
+  "how-the-statement-is-applied-to-a-datum.p1.s3:99477e4c07f8",
+  "how-the-statement-is-applied-to-a-datum.p1.s4:ac530ce02436",
+  "how-the-statement-is-applied-to-a-datum.p1.s5:1e17efc088af",
+  "how-the-statement-is-applied-to-a-datum.p1.s6:3189196cd685"
+ ],
+ "lo-count": [
+  "how-the-statement-is-applied-to-a-datum.p2.s1:4e05d9acebb5",
+  "how-the-statement-is-applied-to-a-datum.p2.s2:328936a042df",
+  "how-the-statement-is-applied-to-a-datum.p2.s3:b32e38107bdc",
+  "how-the-statement-is-applied-to-a-datum.p2.s4:4bd8fa3d73c5"
+ ],
+ "lo-chosen": [
+  "how-the-statement-is-applied-to-a-datum.p2.s5:b7459e9e2d3d",
+  "how-the-statement-is-applied-to-a-datum.p2.s6:8432845b8357"
+ ],
+ "lo-kd": [
+  "how-the-bounds-of-the-link-reach-the-map.p1.s1:2302c217298d",
+  "how-the-bounds-of-the-link-reach-the-map.p1.s2:8b7bd442cd03",
+  "how-the-bounds-of-the-link-reach-the-map.p1.s3:483db056f8c9"
  ],
  "lo-linkS": [
-  "the-lower-bound-for-the-lattices-of-a-da.p10.s1:a8e6b8b12787",
-  "the-lower-bound-for-the-lattices-of-a-da.p10.s2:3466b177c598",
-  "the-lower-bound-for-the-lattices-of-a-da.p10.s3:0a86f4ec926c",
-  "the-lower-bound-for-the-lattices-of-a-da.p10.s4:b868b316ff93",
-  "the-lower-bound-for-the-lattices-of-a-da.p11.s1:cd8a6dfc8cf5",
-  "the-lower-bound-for-the-lattices-of-a-da.p12.s1:cfbf18efca67",
-  "the-lower-bound-for-the-lattices-of-a-da.p13.s1:bcbb3a312178",
-  "the-lower-bound-for-the-lattices-of-a-da.p14.s1:85c35942bd8e",
-  "the-lower-bound-for-the-lattices-of-a-da.p14.s2:07dcf2ad6422"
+  "how-the-bounds-of-the-link-reach-the-map.p2.s1:3466b177c598",
+  "how-the-bounds-of-the-link-reach-the-map.p2.s2:670a0faba8b7",
+  "how-the-bounds-of-the-link-reach-the-map.p3.s1:8053741175ac",
+  "how-the-bounds-of-the-link-reach-the-map.p4.s1:e957e6a6f565",
+  "how-the-bounds-of-the-link-reach-the-map.p5.s1:0d4a91c3e296",
+  "how-the-bounds-of-the-link-reach-the-map.p6.s1:adcd801491ba",
+  "how-the-bounds-of-the-link-reach-the-map.p6.s2:ab7e25d9712c"
+ ],
+ "lo-blockreal": [
+  "how-the-bounds-of-the-link-reach-the-map.p7.s1:65ff90508840",
+  "how-the-bounds-of-the-link-reach-the-map.p7.s2:26e7ede0e899",
+  "how-the-bounds-of-the-link-reach-the-map.p7.s3:e6f573f8e46e",
+  "how-the-bounds-of-the-link-reach-the-map.p7.s4:94a49c92096a",
+  "how-the-bounds-of-the-link-reach-the-map.p7.s5:4069c0906fb1"
  ],
  "lo-interp": [
-  "the-lower-bound-for-the-lattices-of-a-da.p14.s3:6f8ff1429530",
-  "the-lower-bound-for-the-lattices-of-a-da.p14.s4:b274f8d0fd62",
-  "the-lower-bound-for-the-lattices-of-a-da.p14.s5:08c25bb00ea6",
-  "the-lower-bound-for-the-lattices-of-a-da.p14.s6:93133ad35229",
-  "the-lower-bound-for-the-lattices-of-a-da.p14.s7:38583f8b0bd5",
-  "the-lower-bound-for-the-lattices-of-a-da.p14.s8:7747e42d2b02"
+  "how-the-bounds-of-the-link-reach-the-map.p8.s1:f4d523eccdec",
+  "how-the-bounds-of-the-link-reach-the-map.p8.s2:e9f0cffa4df1",
+  "how-the-bounds-of-the-link-reach-the-map.p8.s3:7cf7ff4b5a43",
+  "how-the-bounds-of-the-link-reach-the-map.p8.s4:de77e4466110",
+  "how-the-bounds-of-the-link-reach-the-map.p8.s5:b8b5e094d455",
+  "how-the-bounds-of-the-link-reach-the-map.p8.s6:9225d9ccd8b1",
+  "how-the-bounds-of-the-link-reach-the-map.p8.s7:eefed640aaf0",
+  "how-the-bounds-of-the-link-reach-the-map.p8.s8:6f2420c149d6",
+  "how-the-bounds-of-the-link-reach-the-map.p8.s9:bdedabc98d70",
+  "how-the-bounds-of-the-link-reach-the-map.p8.s10:7747e42d2b02"
  ],
  "a-linkcore": [
   "how-the-conditions-are-assembled.p1.s1:25b5d52aab9f",
@@ -836,7 +929,9 @@
   "how-the-conditions-are-assembled.p10.s1:e88571219523"
  ],
  "a-links": [
-  "how-the-conditions-are-assembled.p11.s1:ad2cd77e7596",
+  "how-the-conditions-are-assembled.p11.s1:f398816ce805",
+  "how-the-conditions-are-assembled.p11.s2:5a9adaf0f2db",
+  "how-the-conditions-are-assembled.p11.s3:3e317cfa35d8",
   "how-the-conditions-are-assembled.p12.s1:618616e476c5",
   "how-the-conditions-are-assembled.p13.s1:7bb469b2c4df",
   "how-the-conditions-are-assembled.p14.s1:d1b16fb8fe5d",
@@ -844,7 +939,7 @@
   "how-the-conditions-are-assembled.p16.s1:7a12643615dc",
   "how-the-conditions-are-assembled.p17.s1:6451f0b3d7a5",
   "how-the-conditions-are-assembled.p18.s1:ad680bc80984",
-  "how-the-conditions-are-assembled.p19.s1:9e9c24229ec0"
+  "how-the-conditions-are-assembled.p19.s1:d84a3507f974"
  ],
  "a-green": [
   "how-the-conditions-are-assembled.p20.s1:89706dc58e51",
@@ -852,7 +947,7 @@
  ],
  "a-53": [
   "how-the-conditions-are-assembled.p21.s1:23c9cf74e725",
-  "how-the-conditions-are-assembled.p21.s2:b762332956bd",
+  "how-the-conditions-are-assembled.p21.s2:2fecaeae5c4b",
   "how-the-conditions-are-assembled.p21.s3:6afd852ba1ad"
  ],
  "a-true": [
@@ -1016,15 +1111,16 @@
   "what-stays-unread.p6.s1:a329870b8003",
   "what-stays-unread.p7.s1:2cba69cb4587",
   "what-stays-unread.p8.s1:6186bdefac34",
-  "what-stays-unread.p9.s1:94a6a19d54af",
+  "what-stays-unread.p9.s1:6892e13fd33a",
   "what-stays-unread.p10.s1:a42fd27f0ae5",
   "what-stays-unread.p11.s1:d2ced44a0a6b",
   "what-stays-unread.p12.s1:22d8e4c9f5dc",
   "what-stays-unread.p13.s1:b7007cc17ece",
-  "what-stays-unread.p14.s1:0c8188c3436d"
+  "what-stays-unread.p14.s1:25e75f6bc912"
  ],
  "un-math": [
-  "what-stays-unread.p15.s1:a8e70cd780c6"
+  "what-stays-unread.p15.s1:c9773898ce08",
+  "what-stays-unread.p15.s2:46ef6b95792a"
  ],
  "x-files": [
   "scripts-and-files.p1.s1:22c2c8cfc1ab",
@@ -1035,9 +1131,10 @@
   "scripts-and-files.p2.s4:e23b5af727dc",
   "scripts-and-files.p2.s5:0036e00d7299",
   "scripts-and-files.p3.s1:55a86baf17c3",
-  "scripts-and-files.p4.s1:931f5febd5b2",
-  "scripts-and-files.p5.s1:2ede9b90accd",
-  "scripts-and-files.p6.s1:c8ea54245bd6",
-  "scripts-and-files.p7.s1:fd971954a838"
+  "scripts-and-files.p4.s1:e7e0c9f2b3d5",
+  "scripts-and-files.p5.s1:931f5febd5b2",
+  "scripts-and-files.p6.s1:80e637c6f773",
+  "scripts-and-files.p7.s1:c8ea54245bd6",
+  "scripts-and-files.p8.s1:fd971954a838"
  ]
 }
