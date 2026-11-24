@@ -149,15 +149,15 @@ its number alone says too little.
 
 | Step | Short name |
 |---:|---|
-| 1 | Zero-free half-plane |
-| 2 | Landau argument |
-| 3 | Host field and kept characters |
-| 4 | Fourier inversion to `ASK` |
-| 5 | Two bounds on one slope |
-| 6 | Chain of kernels |
-| 7 | Upper bound for one lift |
-| 8 | Lower bound for the maps |
-| 9 | Window for m |
+| 1 | Reduction of the five theorems to zero-freeness above 1/2 |
+| 2 | Landau argument from a bound x^θ on the prime sum `Gm` |
+| 3 | Host field that holds the kept characters, and a bound for the other characters |
+| 4 | Fourier inversion from the sum over characters to `ASK` |
+| 5 | Upper and lower bound on the slope of one lattice |
+| 6 | Chain of m kernels for the pairing of each word |
+| 7 | Upper bound for one lift from interlacing weights and a hook product |
+| 8 | Lower bound from many maps into one lattice |
+| 9 | Window for m that keeps the error terms x/m and m near √x |
 
 The section on the two bounds covers steps 4, 5 and 9. Two sections cover the upper bound and
 step 7, one covers the chain of step 6, and one covers the lower bound of step 8.

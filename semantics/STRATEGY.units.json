@@ -892,8 +892,8 @@
       {
        "id": "the-route-in-nine-steps.p12.s1",
        "line": 152,
-       "hash": "001c1c93b263",
-       "text": "1 — Zero-free half-plane"
+       "hash": "88650f55f057",
+       "text": "1 — Reduction of the five theorems to zero-freeness above 1/2"
       }
      ]
     },
@@ -905,8 +905,8 @@
       {
        "id": "the-route-in-nine-steps.p13.s1",
        "line": 153,
-       "hash": "a4a18284e5c7",
-       "text": "2 — Landau argument"
+       "hash": "cdc9d6a90b8f",
+       "text": "2 — Landau argument from a bound x^θ on the prime sum Gm"
       }
      ]
     },
@@ -918,8 +918,8 @@
       {
        "id": "the-route-in-nine-steps.p14.s1",
        "line": 154,
-       "hash": "c08213f95ad9",
-       "text": "3 — Host field and kept characters"
+       "hash": "5b8a5b9b9be6",
+       "text": "3 — Host field that holds the kept characters, and a bound for the other characters"
       }
      ]
     },
@@ -931,8 +931,8 @@
       {
        "id": "the-route-in-nine-steps.p15.s1",
        "line": 155,
-       "hash": "f16e857912b7",
-       "text": "4 — Fourier inversion to ASK"
+       "hash": "42ad10ef9a2f",
+       "text": "4 — Fourier inversion from the sum over characters to ASK"
       }
      ]
     },
@@ -944,8 +944,8 @@
       {
        "id": "the-route-in-nine-steps.p16.s1",
        "line": 156,
-       "hash": "8f05991909d9",
-       "text": "5 — Two bounds on one slope"
+       "hash": "44d388c73d16",
+       "text": "5 — Upper and lower bound on the slope of one lattice"
       }
      ]
     },
@@ -957,8 +957,8 @@
       {
        "id": "the-route-in-nine-steps.p17.s1",
        "line": 157,
-       "hash": "4338e872f15a",
-       "text": "6 — Chain of kernels"
+       "hash": "6ce388573d07",
+       "text": "6 — Chain of m kernels for the pairing of each word"
       }
      ]
     },
@@ -970,8 +970,8 @@
       {
        "id": "the-route-in-nine-steps.p18.s1",
        "line": 158,
-       "hash": "4c9c99070bbf",
-       "text": "7 — Upper bound for one lift"
+       "hash": "a11f65c7cc7e",
+       "text": "7 — Upper bound for one lift from interlacing weights and a hook product"
       }
      ]
     },
@@ -983,8 +983,8 @@
       {
        "id": "the-route-in-nine-steps.p19.s1",
        "line": 159,
-       "hash": "512bedc88e1d",
-       "text": "8 — Lower bound for the maps"
+       "hash": "856560de9c5f",
+       "text": "8 — Lower bound from many maps into one lattice"
       }
      ]
     },
@@ -996,8 +996,8 @@
       {
        "id": "the-route-in-nine-steps.p20.s1",
        "line": 160,
-       "hash": "dbb12e3cbb13",
-       "text": "9 — Window for m"
+       "hash": "955d64b5290c",
+       "text": "9 — Window for m that keeps the error terms x/m and m near √x"
       }
      ]
     },
