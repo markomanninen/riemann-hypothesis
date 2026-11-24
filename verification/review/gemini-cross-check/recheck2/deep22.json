@@ -1,0 +1,12 @@
+{
+ "line": 22,
+ "faithful": false,
+ "errors": [
+  {
+   "field": "premises",
+   "wrong": "First, for every d and every basis ε of D.host.E over D.host.F indexed by Fin d there is a continuous seminorm ν with absThetaInt B m (φ.1 ∘ coord ε) ≤ ENNReal.ofReal (ν φ) for all φ.",
+   "right": "First, for every d and every basis ε of D.host.E over D.host.F indexed by Fin d there is a seminorm ν that satisfies the condition the code calls IsContSeminorm ν and has absThetaInt B m (φ.1 ∘ coord ε) ≤ ENNReal.ofReal (ν φ) for all φ.",
+   "why": "The Lean text of WeilSiegelFormulaUnitary in dossier.md writes IsContSeminorm ν, a project name whose body none of the four files shows, so the reading may not assert outside the field suggests that ν is continuous."
+  }
+ ]
+}

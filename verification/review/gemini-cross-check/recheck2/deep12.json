@@ -1,0 +1,12 @@
+{
+ "line": 12,
+ "faithful": false,
+ "errors": [
+  {
+   "field": "premises",
+   "wrong": "eventually in the sense of EvP applied to a predicate on an ignored argument and K",
+   "right": "in the sense that the code calls EvP applied to a predicate on an ignored argument and K",
+   "why": "The body of MultiplicityCondition in dossier.md is GlobalTheory.Fc.EvP applied to a function of an ignored argument and K, and none of the four files shows the body of EvP, so the word eventually asserts a meaning for EvP that the Lean text does not show."
+  }
+ ]
+}

@@ -931,7 +931,8 @@
      "date": "2026-11-24",
      "findings": 1,
      "held": 1,
-     "changes": 1
+     "changes": 1,
+     "recheck_errors": 0
     }
    }
   },
@@ -1290,7 +1291,8 @@
      "date": "2026-11-24",
      "findings": 7,
      "held": 7,
-     "changes": 7
+     "changes": 7,
+     "recheck_errors": 0
     }
    },
    "cross_check": {
@@ -1518,14 +1520,16 @@
      "date": "2026-11-24",
      "findings": 4,
      "held": 4,
-     "changes": 4
+     "changes": 4,
+     "recheck_errors": 0
     }
    },
    "cross_check": {
     "model": "gemini-4-neon-high",
     "date": "2026-11-24",
     "changes": 1,
-    "recheck_errors": 2
+    "recheck_errors": 2,
+    "second_recheck_errors": 0
    }
   },
   {
@@ -1783,14 +1787,16 @@
      "date": "2026-11-24",
      "findings": 5,
      "held": 5,
-     "changes": 5
+     "changes": 5,
+     "recheck_errors": 0
     }
    },
    "cross_check": {
     "model": "gemini-4-neon-high",
     "date": "2026-11-24",
     "changes": 4,
-    "recheck_errors": 1
+    "recheck_errors": 1,
+    "second_recheck_errors": 0
    }
   },
   {
@@ -1984,7 +1990,8 @@
      "date": "2026-11-24",
      "findings": 7,
      "held": 7,
-     "changes": 7
+     "changes": 7,
+     "recheck_errors": 0
     }
    }
   },
@@ -2245,7 +2252,8 @@
      "date": "2026-11-24",
      "findings": 5,
      "held": 5,
-     "changes": 5
+     "changes": 5,
+     "recheck_errors": 0
     }
    },
    "cross_check": {
@@ -2464,7 +2472,7 @@
      "hL is any proof of RecTExists, which says that for every number field E with algebraic closure Ω, every valuation subring A of Ω and every nonzero prime w of the integers of E under A, a map rc satisfying IsRecT exists",
      "LocalLanglandsHypothesis hL holds, which is a record of six propositions pr, ser, arch, par, pt and parMem",
      "cDep is any real number",
-     "MultiplicityCondition holds for the parameter record p = parametersOfExtension (extensionWithOrigin hL cDep) SExt.none (geoCl anyGeometry), which says that, eventually in the sense of EvP applied to a predicate on an ignored argument and K, GlobalTheory.CuspMult.MultEq holds for q.x.what₂.r.z.R.toRealDat for every q of the unopened type WPt p.s K."
+     "MultiplicityCondition holds for the parameter record p = parametersOfExtension (extensionWithOrigin hL cDep) SExt.none (geoCl anyGeometry), which says that, in the sense that the code calls EvP applied to a predicate on an ignored argument and K, GlobalTheory.CuspMult.MultEq holds for q.x.what₂.r.z.R.toRealDat for every q of the unopened type WPt p.s K."
     ],
     "conclusion": "MemberE p.s holds and ExBL KPx (IsBuiltE p.s) (IsGoodE p.s) (BundleLinkage p) holds for that same parameter record p",
     "notation": "HypAAlt ⇒ EllipticHyp ⇒ MultCoverHyp ⇒ ExUnlocSatState ⇒ ∀ hL ∈ RecTExists, LLHyp(hL) ⇒ ∀ cDep ∈ ℝ, [p := params(extOrigin(hL,cDep), SExt.none, geoCl(anyGeometry))] MultCond(p) ⇒ MemberE(p.s) ∧ ∃ R, LargeBase(KPx, IsBuiltE(p.s), R) ∧ EvP(fun _ K ↦ ∀ β ∈ BPt(K), β.Is(sAnd(IsGoodE(p.s), R)) ⇒ ∀ c ∈ ℝ, ∃ b ∈ BundleCondition(β.D, β.O, c), ∃ q ∈ WPt(p.s, K), ∃ b' ∈ BundleCondition(q.w.D q.Z, q.O, c), Nonempty(BundleWitness q b') ∧ (β.D, β.O, b) = (q.w.D q.Z, q.O, b'))",
@@ -2494,7 +2502,8 @@
      "date": "2026-11-24",
      "findings": 8,
      "held": 8,
-     "changes": 8
+     "changes": 8,
+     "recheck_errors": 1
     }
    },
    "cross_check": {
@@ -2716,7 +2725,14 @@
     "confidence": "low",
     "why": "The logical shape is fully visible, but the conditions that carry the mathematical content are opaque names, including LinkN_at, ShaFinOdd, lifts, SetupAlt, BoundAtTwoThree, FamP, D3, Row and the dozens of published statements in the hypotheses.",
     "errors_round_1": 1,
-    "errors_round_2": 1
+    "errors_round_2": 1,
+    "cross_check": {
+     "model": "gemini-4-neon-high",
+     "date": "2026-11-24",
+     "findings": 0,
+     "held": 0,
+     "changes": 0
+    }
    },
    "cross_check": {
     "model": "gemini-4-neon-high",
@@ -2985,14 +3001,16 @@
      "date": "2026-11-24",
      "findings": 6,
      "held": 5,
-     "changes": 5
+     "changes": 5,
+     "recheck_errors": 0
     }
    },
    "cross_check": {
     "model": "gemini-4-neon-high",
     "date": "2026-11-24",
     "changes": 3,
-    "recheck_errors": 1
+    "recheck_errors": 1,
+    "second_recheck_errors": 0
    }
   },
   {
@@ -3217,7 +3235,8 @@
      "date": "2026-11-24",
      "findings": 6,
      "held": 6,
-     "changes": 6
+     "changes": 6,
+     "recheck_errors": 0
     }
    }
   },
@@ -3440,7 +3459,8 @@
      "date": "2026-11-24",
      "findings": 1,
      "held": 1,
-     "changes": 1
+     "changes": 1,
+     "recheck_errors": 0
     }
    },
    "cross_check": {
@@ -3718,14 +3738,16 @@
      "date": "2026-11-24",
      "findings": 8,
      "held": 7,
-     "changes": 7
+     "changes": 7,
+     "recheck_errors": 0
     }
    },
    "cross_check": {
     "model": "gemini-4-neon-high",
     "date": "2026-11-24",
     "changes": 7,
-    "recheck_errors": 1
+    "recheck_errors": 1,
+    "second_recheck_errors": 0
    }
   },
   {
@@ -3905,7 +3927,8 @@
      "date": "2026-11-24",
      "findings": 1,
      "held": 1,
-     "changes": 1
+     "changes": 1,
+     "recheck_errors": 0
     }
    }
   },
@@ -4190,7 +4213,8 @@
      "date": "2026-11-24",
      "findings": 16,
      "held": 15,
-     "changes": 15
+     "changes": 15,
+     "recheck_errors": 0
     }
    },
    "cross_check": {
@@ -4451,7 +4475,8 @@
      "date": "2026-11-24",
      "findings": 10,
      "held": 10,
-     "changes": 10
+     "changes": 10,
+     "recheck_errors": 0
     }
    },
    "cross_check": {
@@ -4720,7 +4745,8 @@
      "date": "2026-11-24",
      "findings": 8,
      "held": 8,
-     "changes": 8
+     "changes": 8,
+     "recheck_errors": 0
     }
    }
   },
@@ -4896,7 +4922,7 @@
      "the proposition that the code calls CasselmanWallach, which says that for every σ on a complex Hilbert space H with IsURepOn and IsIrredOn for UJset ε, and every complete Hausdorff space E with seminorms p and maps π and dπ satisfying IsSmoothModRep, every linear map T₀ with IsGKMap has a linear map T that agrees with T₀ on the vectors with IsKFin and satisfies IsSmoothGMap, that is unique on the vectors with SmoothVec among such maps, whose image of those vectors is closed, and for which each sobNorm is bounded by a continuous seminorm of T w when T₀ is nonzero on some IsKFin vector",
      "the proposition that the code calls HoweUnram, which says that for every datum satisfying the condition the code calls LocPair and every nonzero s in M with the condition the code calls LocVac ρ s such that the vectors ρ x s, for x over the n' by n matrices, span M, every vector w fixed by ω (g, 1) for all g whose matrix lies in the set the code calls GLint lies in the span of the vectors ω (1, h) s, and the same holds with the two factors swapped",
      "the proposition that the code calls WeilRepresentationUnitaryPair, which says that for every D7 bundle D, every ψ with IsStdChar D ψ (−1), all S and T of type HSp D and all χS and χT with IsHeckeChar D χS, IsHeckeChar D χT, ResEta D χS S.rank and ResEta D χT T.rank there is a homomorphism ω that satisfies IsWeilDatumO ψ S T χS χT ω",
-     "the proposition that the code calls WeilSiegelFormulaUnitary, which says that for every D of type D7, all A and B of type HSp D and every Haar measure m on GA D B with 1 ≤ A.rank and either wittIdx B = 0 or A.rank + wittIdx B < B.rank, two things hold. First, for every d and every basis ε of D.host.E over D.host.F indexed by Fin d there is a continuous seminorm ν with absThetaInt B m (φ.1 ∘ coord ε) ≤ ENNReal.ofReal (ν φ) for all φ. Second, for every ψ, χ and ω with IsWeilDatumO ψ (dblSp A) B 1 χ ω and every f with IsThetaFunO ψ (dblSp A) B f, the descended function built from thetaKO ω g h f is integrable with respect to autMeasure B m for every g, and, when 2·A.rank < B.rank, for all ν and 𝓖 with IsCovolOne (ratL B A) ν 𝓖 the section swSection A B ν 𝓖 ω f satisfies LeftInv (siegelQ A), satisfies CosetConv (siegel A) (GQ (dblSp A)) at every g, and has a cosetSum at g equal to the average over q of that descended function with respect to autMeasure B m",
+     "the proposition that the code calls WeilSiegelFormulaUnitary, which says that for every D of type D7, all A and B of type HSp D and every Haar measure m on GA D B with 1 ≤ A.rank and either wittIdx B = 0 or A.rank + wittIdx B < B.rank, two things hold. First, for every d and every basis ε of D.host.E over D.host.F indexed by Fin d there is a seminorm ν that satisfies the condition the code calls IsContSeminorm ν and has absThetaInt B m (φ.1 ∘ coord ε) ≤ ENNReal.ofReal (ν φ) for all φ. Second, for every ψ, χ and ω with IsWeilDatumO ψ (dblSp A) B 1 χ ω and every f with IsThetaFunO ψ (dblSp A) B f, the descended function built from thetaKO ω g h f is integrable with respect to autMeasure B m for every g, and, when 2·A.rank < B.rank, for all ν and 𝓖 with IsCovolOne (ratL B A) ν 𝓖 the section swSection A B ν 𝓖 ω f satisfies LeftInv (siegelQ A), satisfies CosetConv (siegel A) (GQ (dblSp A)) at every g, and has a cosetSum at g equal to the average over q of that descended function with respect to autMeasure B m",
      "the proposition that the code calls SiegelWeilUnitaryConvergent, which says that for every D of type D7, every ψ and all A and B of type HSp D with A.rank < B.rank, B.rank ≤ 2·A.rank and A.rank + wittIdx B < B.rank, and under further hypotheses with the names IsWeilDatumO, IsMaj, HasIwasawa, IsInfFam, IsCartanInv for sS and for sB, a commutation rule for the elements of Khat A a, IsCovolOne, a Haar measure ν and IsFockVec, the descended function built from thetaKO ω g h f is integrable with respect to autMeasure B ν for every g and Eis.EisValueAt holds for A, flat A a (swSec A B ω μ 𝓨 f) (sZero A B), sZero A B and thetaMean ω ν f",
      "the proposition that the code calls DoublingMethodLocalZetaIntegrals, which is by definition the opaque proposition ResidueKilled.DM",
      "the proposition that the code calls UnramifiedDoublingGL, which says that for every non-archimedean local field k of characteristic 0, every Haar measure μ on GL n over k giving KO measure 1, every representation π of GL n over k with α satisfying the condition the code calls HasSatake π α, and every ω with the condition the code calls IsZonal π (KO k (Fin n)) ω there is a real s₀ such that for every complex s with real part above s₀ the function g ↦ sphSection k (Fin n) s (io k (Fin n) (g, 1)) · ω g is integrable with respect to μ and its integral equals lFactor (resCard k) α (s + 1/2) · lFactor (resCard k) α⁻¹ (s + 1/2) · invNormFactor (resCard k) n s",
@@ -4935,7 +4961,8 @@
      "date": "2026-11-24",
      "findings": 13,
      "held": 13,
-     "changes": 13
+     "changes": 13,
+     "recheck_errors": 1
     }
    },
    "cross_check": {

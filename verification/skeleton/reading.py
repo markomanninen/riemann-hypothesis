@@ -52,6 +52,21 @@ def clip(text, limit=150):
     return text if len(text) <= limit else text[:limit].rsplit(" ", 1)[0] + " …"
 
 
+def deep_checks(cc):
+    """What the second model and the check after it found in a deeper reading."""
+    if not cc:
+        return ""
+    if not cc["findings"]:
+        return " A second model, Gemini, then found no error in it."
+    text = (f" A second model, Gemini, then made {cc['findings']} finding{'s' if cc['findings'] != 1 else ''} on it, and "
+            + (f"the text was changed in {cc['changes']} place{'s' if cc['changes'] != 1 else ''}." if cc["changes"] else "none led to a change."))
+    if "recheck_errors" in cc:
+        n = cc["recheck_errors"]
+        text += (" A check of the changed text then found no error." if not n else
+                 f" A check of the changed text then found {'one error' if n == 1 else str(n) + ' errors'}, which the text below corrects.")
+    return text
+
+
 def entry(r, by_line):
     out = [f"### Line {r['line']}, `{short(r['name'])}`", ""]
     place = f"The head is `{r['name']}`, in the module {' › '.join(words(p) for p in r['module'].split('.'))}. "
@@ -96,16 +111,15 @@ def entry(r, by_line):
                 f"above {'was' if k == 1 else 'were'} changed after its findings were compared with the Lean text. "
                 + ("A further check of the changed text found no error." if not cross.get("recheck_errors") else
                    f"A further check of the changed text found {'one error' if cross['recheck_errors'] == 1 else str(cross['recheck_errors']) + ' errors'}, "
-                   "which the text above corrects."), ""]
+                   "which the text above corrects.")
+                + (" A second such check found no error." if cross.get("second_recheck_errors") == 0 else ""), ""]
     deep = r.get("deeper")
     if deep:
         out += ["#### A deeper reading, with the record D7 at hand", "",
                 f"A second reader saw the dossier, the whole text of `D7` and the glossary. The check found "
                 f"{deep['errors_round_1']} errors in this reading and, after they were corrected, {deep['errors_round_2']} more, "
-                "which were corrected too. The reading has not passed the check."
-                + (f" A second model, Gemini, then made {cc['findings']} finding{'s' if cc['findings'] != 1 else ''} on it, and "
-                   f"{'the text was changed in ' + str(cc['changes']) + (' places' if cc['changes'] != 1 else ' place') if cc['changes'] else 'none led to a change'}."
-                   if (cc := deep.get("cross_check")) else ""), "", sentence(deep["says"]), ""]
+                "which were corrected too. At that point the reading had not passed the check."
+                + deep_checks(deep.get("cross_check")), "", sentence(deep["says"]), ""]
         out += [f"- Premise {i}. {sentence(p)}" for i, p in enumerate(deep["premises"], 1)]
         out += [f"- Conclusion. {sentence(deep['conclusion'])}", ""]
         if deep["opened"]:

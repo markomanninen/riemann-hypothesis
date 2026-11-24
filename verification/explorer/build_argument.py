@@ -69,6 +69,7 @@ def main():
                       "unopened": [t["name"] for t in r["terms"] if t.get("opaque")], "suggests": r["suggests"],
                       "confidence": r["confidence"], "why": r["why"], "errors": len(check["first_errors"]),
                       "rounds": check["rounds"], "cross": r.get("cross_check", {}).get("changes", 0), "recheck": r.get("cross_check", {}).get("recheck_errors", 0),
+                      "recheck2": r.get("cross_check", {}).get("second_recheck_errors") == 0,
                       "x": gathers[r["first"]], "only": r.get("outline") == "exact", "deeper": r.get("deeper")})
     entries = []
     for e in glossary["entries"]:
