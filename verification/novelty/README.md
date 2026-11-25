@@ -32,6 +32,14 @@ cited source and checks the quote, as the readings of [`../skeleton`](../skeleto
 were checked by two makers' models. A class N says that a search found nothing. It does not
 say that nothing exists, and the judgement of a specialist stays open.
 
+## Where the labelled results end
+
+[`KNOWN.md`](KNOWN.md) is a result that needs no search of the literature. It places the 296
+results that the source labels as known, or that the catalogue of `../reuse` names, on the
+outline of the proof and counts the declarations that their proofs use. They are 26.9 % of the
+declarations that the five theorems use, and 0.1 % of the branch that carries the route of the
+proof.
+
 ## Files
 
 | File | Content |
@@ -39,3 +47,4 @@ say that nothing exists, and the judgement of a specialist stays open.
 | `units.py` | collects the units from `CLAIMS.md` and holds the paraphrases of the timeline |
 | `units.json` | the 64 units in twelve batches |
 | `brief-gemini.md` | the brief of the literature search |
+| `KNOWN.md`, `known.py`, `known.json` | the known results placed on the outline of the proof |
