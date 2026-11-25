@@ -1,0 +1,1123 @@
+{
+ "modules_of_the_project": 149397,
+ "main_imports": 149283,
+ "median": 123,
+ "smallest": 2,
+ "largest": 149283,
+ "at_most_1000": 124,
+ "statements": [
+  {
+   "number": 1,
+   "name": "critAll",
+   "module": "Supplements.Kernels.MainTheorems",
+   "rests_on": 800343,
+   "imports": 149281
+  },
+  {
+   "number": 2,
+   "name": "riemannHypothesis",
+   "module": "Main",
+   "rests_on": 800342,
+   "imports": 149283
+  },
+  {
+   "number": 3,
+   "name": "rhOfAll",
+   "module": "Supplements.Kernels.MainTheorems",
+   "rests_on": 800341,
+   "imports": 149281
+  },
+  {
+   "number": 4,
+   "name": "PositivityTheory.KB.PrincipalPrimes.exists_prime",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PrincipalPrimes.ExistsPrincipal",
+   "rests_on": 4930,
+   "imports": 368
+  },
+  {
+   "number": 5,
+   "name": "PositivityTheory.KB.PrincipalPrimes.exists_principal",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.LiteratureResults.KTheoryStability.ReductionBoundsTorsion.PrincipalPrimes.ExistsPrincipal",
+   "rests_on": 4928,
+   "imports": 368
+  },
+  {
+   "number": 6,
+   "name": "UpperTheory.V.FW.embed",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.FerreroWashingtonIndex.EmbedDeg",
+   "rests_on": 4905,
+   "imports": 415
+  },
+  {
+   "number": 7,
+   "name": "UpperTheory.V.CF.kwHom",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.KwHom",
+   "rests_on": 4902,
+   "imports": 410
+  },
+  {
+   "number": 8,
+   "name": "UpperTheory.V.CF.kw",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.Kw",
+   "rests_on": 4901,
+   "imports": 409
+  },
+  {
+   "number": 9,
+   "name": "GlobalTheory.T.stein_factorisation_connected_fibres",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.SteinFactorisationConnectedFibresStatement",
+   "rests_on": 2002,
+   "imports": 9131
+  },
+  {
+   "number": 10,
+   "name": "PositivityTheory.Xgn.SpecialFibreConnected.isConnected_closed",
+   "module": "Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.ZeroSetSpecialFibreConnected",
+   "rests_on": 1586,
+   "imports": 124
+  },
+  {
+   "number": 11,
+   "name": "GlobalTheory.ZariskiSections.finite_appTop_restrict",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.BijectiveSectionsPreimageAffineProperBirational",
+   "rests_on": 1499,
+   "imports": 7055
+  },
+  {
+   "number": 12,
+   "name": "GlobalTheory.SteinFact.finite_app_of_isProper",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.SteinFactorisationConnectedFibres",
+   "rests_on": 1493,
+   "imports": 9130
+  },
+  {
+   "number": 13,
+   "name": "GroundTheory.ProfCoh.exists_zmod_char_not_norm",
+   "module": "GroundTheory.ProfiniteCohomology.LocalTateDuality.NormCharacters",
+   "rests_on": 1468,
+   "imports": 101
+  },
+  {
+   "number": 14,
+   "name": "GroundTheory.LocalField.Padic.exists_le_adjoin_rootsOfUnity",
+   "module": "GroundTheory.LocalFields.KroneckerWeber",
+   "rests_on": 1460,
+   "imports": 96
+  },
+  {
+   "number": 15,
+   "name": "GlobalTheory.pic_localization_strictHenselisation_no_torsion",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.PicLocalizationStrictHenselisationNoTorsion",
+   "rests_on": 1155,
+   "imports": 7390
+  },
+  {
+   "number": 16,
+   "name": "GlobalTheory.T.isProper_of_properSpecialFibre_universallyOpen_dvr",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsProperOfProperSpecialFibreUniversallyOpenDvrStatement",
+   "rests_on": 910,
+   "imports": 9125
+  },
+  {
+   "number": 17,
+   "name": "GlobalTheory.T.zariski_connectedness_isPreconnected_fibre",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ZariskiConnectednessIsPreconnectedFibreStatement",
+   "rests_on": 905,
+   "imports": 9121
+  },
+  {
+   "number": 18,
+   "name": "GlobalTheory.T.isProper_of_irreducible_properSpecialFibre_completeDvr",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsProperOfIrreducibleProperSpecialFibreCompleteDStatement",
+   "rests_on": 902,
+   "imports": 9122
+  },
+  {
+   "number": 19,
+   "name": "GlobalTheory.T.isClosed_image_closure_completeDVR_specialFibre",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsClosedImageClosureCompleteDVRSpecialFibreStatement",
+   "rests_on": 898,
+   "imports": 9118
+  },
+  {
+   "number": 20,
+   "name": "GlobalTheory.T.zariskiConnectedness_isPreconnected_fibre_affine",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ZariskiConnectednessIsPreconnectedFibreAffineStatement",
+   "rests_on": 891,
+   "imports": 9104
+  },
+  {
+   "number": 21,
+   "name": "GlobalTheory.ZariskiConn.isPreconnected_closedFibre",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ZariskiConnectednessIsPreconnectedFibreAffine",
+   "rests_on": 882,
+   "imports": 9103
+  },
+  {
+   "number": 22,
+   "name": "GlobalTheory.T.gaussian_fourier_self_dual_adelic",
+   "module": "Development.AutomorphicSpectrum.Proofs.BlockDecomposition.GaussianFourierSelfDualAdelicStatement",
+   "rests_on": 824,
+   "imports": 821
+  },
+  {
+   "number": 23,
+   "name": "GroundTheory.ProfCoh.eq_top_of_forall_exists_norm",
+   "module": "GroundTheory.ProfiniteCohomology.LocalTateDuality.NormCharacters",
+   "rests_on": 791,
+   "imports": 101
+  },
+  {
+   "number": 24,
+   "name": "GlobalTheory.T.positive_majorant_gaussian",
+   "module": "CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.PositiveMajorantGaussianStatement",
+   "rests_on": 757,
+   "imports": 815
+  },
+  {
+   "number": 25,
+   "name": "GlobalTheory.CompanionTheory.SW.Core.core_estimate",
+   "module": "CompanionTheory.SpectralGeometry.LocalGlobalProofs.AdelicAnalysis.PositiveMajorantGaussian",
+   "rests_on": 756,
+   "imports": 814
+  },
+  {
+   "number": 26,
+   "name": "GlobalTheory.T.classNumber_finite_integralLevel_closedSubgroupGL",
+   "module": "Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ClassNumberFiniteIntegralLevelClosedSubgroupGLStatement",
+   "rests_on": 530,
+   "imports": 794
+  },
+  {
+   "number": 27,
+   "name": "GlobalTheory.LocAcycUnits.units_localization_pow_surj",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitsLocalizationPowSurj",
+   "rests_on": 418,
+   "imports": 210
+  },
+  {
+   "number": 28,
+   "name": "GlobalTheory.T.units_localization_strictHenselian_eq_const_mul_unit",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.UnitsLocalizationStrictHenselianEqConstMulUnitStatement",
+   "rests_on": 415,
+   "imports": 208
+  },
+  {
+   "number": 29,
+   "name": "UpperTheory.Cb.exists_finite_etale_representing_clopen_subschemes",
+   "module": "Development.AutomorphicArithmetic.Foundations.EtaleClopenDescent.ExistsFiniteEtaleRepresentingClopenSubschemes",
+   "rests_on": 388,
+   "imports": 6978
+  },
+  {
+   "number": 30,
+   "name": "GlobalTheory.T.kummer_cocycle_norm_criterion",
+   "module": "Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KummerCocycleNormCriterionStatement",
+   "rests_on": 381,
+   "imports": 157
+  },
+  {
+   "number": 31,
+   "name": "GlobalTheory.CompanionTheory.KummerCup.exists_lift_of_norm",
+   "module": "Development.AutomorphicSpectrum.Proofs.BlockDecomposition.KummerCocycleNormCriterion",
+   "rests_on": 366,
+   "imports": 156
+  },
+  {
+   "number": 32,
+   "name": "GlobalTheory.T.oddWeight_modular_cusp_dimension_lower_bound",
+   "module": "Development.AbelianVarietyTheory.Proofs.FoundationProofs.OddWeightModularCuspDimensionLowerBoundStatement",
+   "rests_on": 363,
+   "imports": 66
+  },
+  {
+   "number": 33,
+   "name": "GlobalTheory.T.exists_base_element_negative_at_two_embeddings",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBaseElementNegativeAtTwoEmbeddingsStatement",
+   "rests_on": 341,
+   "imports": 1463
+  },
+  {
+   "number": 34,
+   "name": "GlobalTheory.QuadSigns.exists_signs",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsBaseElementNegativeAtTwoEmbeddings",
+   "rests_on": 340,
+   "imports": 1462
+  },
+  {
+   "number": 35,
+   "name": "GlobalTheory.JR.WeilQuad.NormSign.mul_norm_of_not_norm",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.NormGroupSignMulAndNegOne",
+   "rests_on": 314,
+   "imports": 40
+  },
+  {
+   "number": 36,
+   "name": "GlobalTheory.LandherrSignature.congr_of_det_norm",
+   "module": "Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.DetNeZeroOfHasSignature",
+   "rests_on": 301,
+   "imports": 1263
+  },
+  {
+   "number": 37,
+   "name": "GlobalTheory.T.exists_eliminationForm_generalLinearForms_cone",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsEliminationFormGeneralLinearFormsConeStatement",
+   "rests_on": 300,
+   "imports": 677
+  },
+  {
+   "number": 38,
+   "name": "GlobalTheory.T.homogeneous_correction_next_level_alt",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.HomogeneousCorrectionNextLevelStatement",
+   "rests_on": 280,
+   "imports": 25
+  },
+  {
+   "number": 39,
+   "name": "GlobalTheory.T.uniform_serre_sections_alt",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformSerreSectionsStatement",
+   "rests_on": 276,
+   "imports": 23
+  },
+  {
+   "number": 40,
+   "name": "GroundTheory.ProfCoh.subsingleton_groupCohomology_three_of_tate",
+   "module": "GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.TateThree",
+   "rests_on": 274,
+   "imports": 34
+  },
+  {
+   "number": 41,
+   "name": "GroundTheory.ProfCoh.subsingleton_groupCohomology_three_of_tate_int",
+   "module": "GroundTheory.ProfiniteCohomology.LocalClassFormation.FiniteVanishing.TateThree",
+   "rests_on": 265,
+   "imports": 34
+  },
+  {
+   "number": 42,
+   "name": "ReciprocityTheory.ChartRestriction.L1.unit_prod",
+   "module": "ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedValB",
+   "rests_on": 258,
+   "imports": 492
+  },
+  {
+   "number": 43,
+   "name": "ReciprocityTheory.ChartRestriction.L1.unit_point",
+   "module": "ReciprocityTheory.ReductiveGroups.UnramifiedIntegrals.RedValB",
+   "rests_on": 257,
+   "imports": 492
+  },
+  {
+   "number": 44,
+   "name": "GlobalTheory.UU.SpecialPairing.torsion_ext",
+   "module": "Development.AbelianVarietyTheory.Proofs.UniformizationProofs.PairingNondegenerate",
+   "rests_on": 256,
+   "imports": 174
+  },
+  {
+   "number": 45,
+   "name": "GlobalTheory.T.etale_atPrime_of_regular_of_isIntegrallyClosedIn",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleAtPrimeOfRegularOfIsIntegrallyClosedInStatement",
+   "rests_on": 254,
+   "imports": 135
+  },
+  {
+   "number": 46,
+   "name": "GlobalTheory.existsUnique_torsion_lift",
+   "module": "Development.AbelianVarietyTheory.Proofs.UniformizationProofs.ExistsUniqueOfIsAdicComplete",
+   "rests_on": 254,
+   "imports": 75
+  },
+  {
+   "number": 47,
+   "name": "GlobalTheory.T.uniform_serre_vanishing_cech_cocycles",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.UniformSerreVanishingCechCocyclesStatement",
+   "rests_on": 253,
+   "imports": 22
+  },
+  {
+   "number": 48,
+   "name": "Formalism.MainNotions.LiftingTheory.desc_sub",
+   "module": "Formalism.SharpRestriction.LevelLetterCocycles.FrobeniusPowUniformizerFactorisation",
+   "rests_on": 251,
+   "imports": 254
+  },
+  {
+   "number": 49,
+   "name": "GlobalTheory.ChevalleySUnits.exists_places",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsKummerField",
+   "rests_on": 251,
+   "imports": 284
+  },
+  {
+   "number": 50,
+   "name": "GlobalTheory.PurityProd.etale_integralClosure_of_isArtinianRing",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleIntegralClosureOfIsArtinianRing",
+   "rests_on": 249,
+   "imports": 128
+  },
+  {
+   "number": 51,
+   "name": "GlobalTheory.T.exists_homogeneous_form_of_compatible_fractions",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsFormOfCompatibleFractionsStatement",
+   "rests_on": 249,
+   "imports": 19
+  },
+  {
+   "number": 52,
+   "name": "GlobalTheory.ChevalleyUnitsProof.core",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ChevalleyUnits",
+   "rests_on": 247,
+   "imports": 276
+  },
+  {
+   "number": 53,
+   "name": "GlobalTheory.T.mem_span_sup_pow_of_forall_complete_dvr_local_test",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.MemSpanSupPowOfForallCompleteDvrLocalTestStatement",
+   "rests_on": 247,
+   "imports": 6909
+  },
+  {
+   "number": 54,
+   "name": "GlobalTheory.ChevalleySUnits.exists_places_of_fg",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsKummerField",
+   "rests_on": 245,
+   "imports": 284
+  },
+  {
+   "number": 55,
+   "name": "GlobalTheory.ChevalleySUnits.core",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsKummerField",
+   "rests_on": 244,
+   "imports": 284
+  },
+  {
+   "number": 56,
+   "name": "GlobalTheory.T.etale_of_etale_height_one_of_regularLocalRing",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleOfEtaleHeightOneOfRegularLocalRingStatement",
+   "rests_on": 243,
+   "imports": 126
+  },
+  {
+   "number": 57,
+   "name": "GlobalTheory.BranchPurity.finiteRing_sq_sub_mul_sq_eq_of_card",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.EtaleOfEtaleHeightOneOfRegularLocalRing",
+   "rests_on": 241,
+   "imports": 125
+  },
+  {
+   "number": 58,
+   "name": "GlobalTheory.OddGenus.orthonormal_of_diagonal",
+   "module": "Development.AbelianVarietyTheory.Proofs.FoundationProofs.StandardPairLatticeLocallyOrthonormalBasis",
+   "rests_on": 225,
+   "imports": 709
+  },
+  {
+   "number": 59,
+   "name": "GlobalTheory.T.exists_coboundary_of_fraction_cocycle_homogeneous_ideal",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsCoboundaryOfFractionCocycleHomogeneousIdeaStatement",
+   "rests_on": 225,
+   "imports": 18
+  },
+  {
+   "number": 60,
+   "name": "GlobalTheory.T.exists_orthonormal_hermitian_of_diag_pos_isSquare",
+   "module": "Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsOrthonormalHermitianOfDiagPosIsSquareStatement",
+   "rests_on": 224,
+   "imports": 158
+  },
+  {
+   "number": 61,
+   "name": "GlobalTheory.HermGlobal.exists_represent",
+   "module": "Development.AbelianVarietyTheory.PublishedTheorems.GlobalTheta.HermitianHassePrincipleHolds",
+   "rests_on": 223,
+   "imports": 135
+  },
+  {
+   "number": 62,
+   "name": "GlobalTheory.T.adicCompletion_isDomain_and_isIntegrallyClosed",
+   "module": "Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.CompletionIsDomainAndIsIntegrallyClosedStatement",
+   "rests_on": 220,
+   "imports": 127
+  },
+  {
+   "number": 63,
+   "name": "PI.GalTorsConj.W.wp_isAlgebraic",
+   "module": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GaloisTorsionConjugacy.TorsValsFinite",
+   "rests_on": 218,
+   "imports": 41
+  },
+  {
+   "number": 64,
+   "name": "GlobalTheory.ThetaNullNormSquares.jacobiTheta₂_eq_zero_iff",
+   "module": "Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.MeanSquareNormalizedThetaTwoTorsion",
+   "rests_on": 211,
+   "imports": 309
+  },
+  {
+   "number": 65,
+   "name": "GlobalTheory.T.free_of_etale_on_punctured_spectrum",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.FreeOfEtalePuncturedStatement",
+   "rests_on": 209,
+   "imports": 87
+  },
+  {
+   "number": 66,
+   "name": "GlobalTheory.c_one_h2_units_subsingleton",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.COneH2UnitsSubsingleton",
+   "rests_on": 195,
+   "imports": 31
+  },
+  {
+   "number": 67,
+   "name": "GlobalTheory.T.exists_place_pow_and_not_pow'",
+   "module": "Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsPlacePowAndNotPowStatement",
+   "rests_on": 189,
+   "imports": 114
+  },
+  {
+   "number": 68,
+   "name": "GroundTheory.Global.Elliptic.exists_le_forall_torsion_mem",
+   "module": "GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremFields",
+   "rests_on": 189,
+   "imports": 488
+  },
+  {
+   "number": 69,
+   "name": "GlobalTheory.QNorm.exists_odd_order_at_even_elsewhere",
+   "module": "Development.AbelianVarietyTheory.Proofs.FoundationProofs.ExistsOddOrderAtEvenElsewhere",
+   "rests_on": 188,
+   "imports": 122
+  },
+  {
+   "number": 70,
+   "name": "GroundTheory.Global.Elliptic.isAlgebraic_of_nsmul_eq_zero",
+   "module": "GroundTheory.GlobalFields.ComplexMultiplication.MainTheoremFields",
+   "rests_on": 188,
+   "imports": 488
+  },
+  {
+   "number": 71,
+   "name": "GlobalTheory.T.exists_prime_absNorm_eq_of_irreducible_cyclotomic'",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsPrimeAbsNormEqOfIrreducibleCyclotomicStatement",
+   "rests_on": 180,
+   "imports": 59
+  },
+  {
+   "number": 72,
+   "name": "GlobalTheory.T.exists_place_not_pow_adicCompletion",
+   "module": "Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsPlaceNotPowAdicCompletionStatement",
+   "rests_on": 179,
+   "imports": 79
+  },
+  {
+   "number": 73,
+   "name": "GroundTheory.Arith.Abelian.finite_torsionBy_natCast",
+   "module": "GroundTheory.ArithmeticGeometry.AbelianVarieties.Supersingular",
+   "rests_on": 177,
+   "imports": 20
+  },
+  {
+   "number": 74,
+   "name": "GlobalTheory.T.elliptic_points_stabilizer",
+   "module": "Development.AbelianVarietyTheory.Proofs.FoundationProofs.EllipticPointsStabilizerStatement",
+   "rests_on": 173,
+   "imports": 17
+  },
+  {
+   "number": 75,
+   "name": "GlobalTheory.EtaleCompletionRadical.isReduced_adicCompletion_tensor_residueField",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsReducedAdicCompletionTensorResidueField",
+   "rests_on": 171,
+   "imports": 8480
+  },
+  {
+   "number": 76,
+   "name": "GlobalTheory.T.isOpen_identityComponents_smooth_groupScheme",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenIdentityComponentsSmoothGroupSchemeStatement",
+   "rests_on": 171,
+   "imports": 115
+  },
+  {
+   "number": 77,
+   "name": "GlobalTheory.TorsionZero.card_zeros_le_of_growth",
+   "module": "Development.AbelianVarietyTheory.Proofs.ModuliProofs.CardZerosOnTorsionLeOfSymmetricVeryAmple",
+   "rests_on": 171,
+   "imports": 289
+  },
+  {
+   "number": 78,
+   "name": "GlobalTheory.T.exists_idele_ne_algebraMap_mul_norm_of_not_isSquare",
+   "module": "Development.AbelianVarietyTheory.Proofs.HeightProofs.ExistsIdeleNotMulNormStatement",
+   "rests_on": 170,
+   "imports": 81
+  },
+  {
+   "number": 79,
+   "name": "GlobalTheory.T.smoothAffineCurve_divisor_unit_decomposition",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.SmoothAffineCurveDivisorUnitDecompositionStatement",
+   "rests_on": 170,
+   "imports": 92
+  },
+  {
+   "number": 80,
+   "name": "GlobalTheory.T.weber_values_congruences_mod_degree_one_prime",
+   "module": "Development.AbelianVarietyTheory.Proofs.HeightProofs.WeberValuesCongruencesModDegreeOnePrimeStatement",
+   "rests_on": 170,
+   "imports": 325
+  },
+  {
+   "number": 81,
+   "name": "GlobalTheory.WeberCongruence.weber_congruences",
+   "module": "Development.AbelianVarietyTheory.Proofs.HeightProofs.WeberInvariantCongruencesImaginaryQuadratic",
+   "rests_on": 169,
+   "imports": 319
+  },
+  {
+   "number": 82,
+   "name": "GlobalTheory.T.j_invariant_equal_sl2_orbit",
+   "module": "Development.AbelianVarietyTheory.Proofs.FoundationProofs.JInvariantEqualSl2OrbitStatement",
+   "rests_on": 166,
+   "imports": 15
+  },
+  {
+   "number": 83,
+   "name": "GlobalTheory.exists_strictHenselisation",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsStrictHenselisation",
+   "rests_on": 165,
+   "imports": 102
+  },
+  {
+   "number": 84,
+   "name": "UpperTheory.Kd.K4.nsAbs",
+   "module": "Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.RelOfComap",
+   "rests_on": 165,
+   "imports": 19922
+  },
+  {
+   "number": 85,
+   "name": "GlobalTheory.QNorm.exists_place_isSquare_and_not_isSquare",
+   "module": "Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsPlaceIsSquareAndNotIsSquare",
+   "rests_on": 162,
+   "imports": 115
+  },
+  {
+   "number": 86,
+   "name": "GlobalTheory.T.classGroup_dedekind_algClosed_divisible",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ClassGroupDedekindAlgClosedDivisibleStatement",
+   "rests_on": 162,
+   "imports": 87
+  },
+  {
+   "number": 87,
+   "name": "GlobalTheory.Dict.ThetaHalf.exists_ne_zero_of_scaled",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLevelOneThetaNeZeroOnIdealHalfLattice",
+   "rests_on": 160,
+   "imports": 290
+  },
+  {
+   "number": 88,
+   "name": "GlobalTheory.T.pic_divisible_dedekind_finiteType_algClosed",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.PicDivisibleDedekindFiniteTypeAlgClosedStatement",
+   "rests_on": 160,
+   "imports": 85
+  },
+  {
+   "number": 89,
+   "name": "GlobalTheory.T.thetaFunction_ne_zero_at_divisionPoint_selfDual",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaFunctionNeZeroAtDivisionPointSelfDualStatement",
+   "rests_on": 159,
+   "imports": 23
+  },
+  {
+   "number": 90,
+   "name": "GlobalTheory.T.exists_place_not_isSquare_adicCompletion",
+   "module": "Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.ExistsPlaceNotIsSquareAdicCompletionStatement",
+   "rests_on": 156,
+   "imports": 79
+  },
+  {
+   "number": 91,
+   "name": "GlobalTheory.ThetaDivisionPoints.exists_ne_zero_of_principal",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ThetaFunctionNeZeroAtDivisionPointSelfDual",
+   "rests_on": 156,
+   "imports": 22
+  },
+  {
+   "number": 92,
+   "name": "GlobalTheory.CMData.exists_field",
+   "module": "Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsCmCurvesOfWeierstrassCurves",
+   "rests_on": 153,
+   "imports": 119
+  },
+  {
+   "number": 93,
+   "name": "GlobalTheory.graded_bezout_bound",
+   "module": "Development.AbelianVarietyTheory.Proofs.ThetaFamilyOrigin.RingKrullDimQuotientLeOne",
+   "rests_on": 153,
+   "imports": 24
+  },
+  {
+   "number": 94,
+   "name": "GlobalTheory.IdCompOpen.isOpen_sectionComponents_of_family",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsOpenIdentityComponentsSmoothGroupScheme",
+   "rests_on": 152,
+   "imports": 114
+  },
+  {
+   "number": 95,
+   "name": "PI.GalTorsConj.W.ZetaDoubling.dblA",
+   "module": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GaloisTorsionConjugacy.AddDbl",
+   "rests_on": 152,
+   "imports": 36
+  },
+  {
+   "number": 96,
+   "name": "UpperTheory.Kd.K4.cdAbs",
+   "module": "Development.AutomorphicArithmetic.Foundations.IwahoriReduction.NormProducts.CountSpanEqZero",
+   "rests_on": 152,
+   "imports": 19920
+  },
+  {
+   "number": 97,
+   "name": "GlobalTheory.JR.UnramInt.alg_main",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.UnramifiedQuadraticExistsIntegersUniformiser",
+   "rests_on": 150,
+   "imports": 51
+  },
+  {
+   "number": 98,
+   "name": "PI.GalTorsConj.W.OriginCoordinatesAdd.stepA",
+   "module": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GaloisTorsionConjugacy.AddLaw",
+   "rests_on": 150,
+   "imports": 35
+  },
+  {
+   "number": 99,
+   "name": "Formalism.L2.Th1.E.AddThm.collinear",
+   "module": "Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.ExistsFinitePartOneIdeleSplitCongruenceQuotient",
+   "rests_on": 149,
+   "imports": 105
+  },
+  {
+   "number": 100,
+   "name": "Formalism.L2.Th1.E.AddThm.P_add",
+   "module": "Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.ExistsFinitePartOneIdeleSplitCongruenceQuotient",
+   "rests_on": 148,
+   "imports": 105
+  },
+  {
+   "number": 101,
+   "name": "PI.GalTorsConj.W.pNeg",
+   "module": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GaloisTorsionConjugacy.StAddRight",
+   "rests_on": 144,
+   "imports": 35
+  },
+  {
+   "number": 102,
+   "name": "GlobalTheory.T.weierstrassP_superlattice_half_period_prod",
+   "module": "Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.WeierstrassPSuperlatticeHalfPeriodProdStatement",
+   "rests_on": 143,
+   "imports": 31
+  },
+  {
+   "number": 103,
+   "name": "PI.GalTorsConj.W.pInj",
+   "module": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GaloisTorsionConjugacy.StAddRight",
+   "rests_on": 143,
+   "imports": 35
+  },
+  {
+   "number": 104,
+   "name": "GlobalTheory.T.exists_continuous_normCharLFunction_ne_zero_one",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.ExistsContinuousNormCharLFunctionNeZeroOneStatement",
+   "rests_on": 142,
+   "imports": 45
+  },
+  {
+   "number": 105,
+   "name": "GlobalTheory.KeyFourth.exists_eq_smul_pow",
+   "module": "Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsKeySectionUnif",
+   "rests_on": 140,
+   "imports": 7690
+  },
+  {
+   "number": 106,
+   "name": "GlobalTheory.ZeroDensityMult.zero_density_mult",
+   "module": "Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ReLtOneOfZero",
+   "rests_on": 139,
+   "imports": 123
+  },
+  {
+   "number": 107,
+   "name": "PI.GalTorsConj.W.ZetaDoubling.derivWeierstrassP_ne_zero",
+   "module": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GaloisTorsionConjugacy.AddDbl",
+   "rests_on": 137,
+   "imports": 36
+  },
+  {
+   "number": 108,
+   "name": "GlobalTheory.T.rational_units_haar_character_one",
+   "module": "Development.AutomorphicSpectrum.Proofs.MembershipProofs.ThetaHeisenbergTranslatesSeparateStatement",
+   "rests_on": 135,
+   "imports": 53
+  },
+  {
+   "number": 109,
+   "name": "GroundTheory.Automorphic.exists_dixmierMalliavin_line",
+   "module": "GroundTheory.AutomorphicForms.DixmierMalliavinLine",
+   "rests_on": 133,
+   "imports": 4
+  },
+  {
+   "number": 110,
+   "name": "Formalism.L2.Th1.E.AddThm.P_sub_ne",
+   "module": "Formalism.LocalToGlobal.TorsionIntegrality.TorsionTranslationPowers.NonsingularJetNorms.ExistsFinitePartOneIdeleSplitCongruenceQuotient",
+   "rests_on": 132,
+   "imports": 105
+  },
+  {
+   "number": 111,
+   "name": "PI.GalTorsConj.W.OriginCoordinatesAdd.wp_ne",
+   "module": "Formalism.PeriodIntegrals.UnitaryGroupMassFormula.GaloisTorsionConjugacy.AddLaw",
+   "rests_on": 132,
+   "imports": 35
+  },
+  {
+   "number": 112,
+   "name": "GlobalTheory.T.exists_open_nbhd_section_fiber_isPreirreducible",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsOpenNbhdSectionFibreIsPreirreducibleStatement",
+   "rests_on": 131,
+   "imports": 83
+  },
+  {
+   "number": 113,
+   "name": "GlobalTheory.TraitLift.exists_lift_adicCompletion",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsLiftAdicCompletion",
+   "rests_on": 130,
+   "imports": 8459
+  },
+  {
+   "number": 114,
+   "name": "GlobalTheory.T.ferrand_glue_flat_artinian_fibreProduct",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.FerrandGlueFlatArtinianFibreProductStatement",
+   "rests_on": 128,
+   "imports": 6885
+  },
+  {
+   "number": 115,
+   "name": "GlobalTheory.exists_field_cm_curves_unit_discriminant",
+   "module": "Development.AbelianVarietyTheory.Proofs.CubicalLineBundles.ExistsFieldCmCurvesUnitDiscriminant",
+   "rests_on": 127,
+   "imports": 27
+  },
+  {
+   "number": 116,
+   "name": "GlobalTheory.SmoothDedekind.exists_isStandardSmoothOfRelativeDimension_of_isMaximal",
+   "module": "Development.AbelianVarietyTheory.Proofs.ModuliProofs.SmoothOfRelativeDimensionOfFlatDedekindTangentLe",
+   "rests_on": 126,
+   "imports": 72
+  },
+  {
+   "number": 117,
+   "name": "GlobalTheory.T.exists_theta_division_point_ne_zero",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.ExistsThetaDivisionPointNeZeroStatement",
+   "rests_on": 126,
+   "imports": 19
+  },
+  {
+   "number": 118,
+   "name": "GlobalTheory.idealCharacterL_continuation_ne_zero_one",
+   "module": "Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IdealCharacterLContinuationNeZeroOne",
+   "rests_on": 126,
+   "imports": 36
+  },
+  {
+   "number": 119,
+   "name": "GlobalTheory.AbMonoIso.isIso_of_isClosedImmersion",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.IsIsoOfIsClosedImmersion",
+   "rests_on": 125,
+   "imports": 7549
+  },
+  {
+   "number": 120,
+   "name": "GlobalTheory.formalFibre_isReduced_of_field",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalFibreIsReducedOfField",
+   "rests_on": 124,
+   "imports": 8398
+  },
+  {
+   "number": 121,
+   "name": "Formalism.MainNotions.CrystallineLiftingInputs.rem_2",
+   "module": "Formalism.SharpRestriction.LevelLetterCocycles.LevelClauseOfOpenTool",
+   "rests_on": 122,
+   "imports": 295
+  },
+  {
+   "number": 122,
+   "name": "Formalism.MainNotions.CrystallineLiftingInputs.rem_M",
+   "module": "Formalism.SharpRestriction.LevelLetterCocycles.LevelClauseOfOpenTool",
+   "rests_on": 122,
+   "imports": 295
+  },
+  {
+   "number": 123,
+   "name": "Formalism.MainNotions.RamifiedCoefficientChains.S9.DetD.length_coker_le",
+   "module": "Formalism.SharpRestriction.LevelLetterCocycles.LengthCokerLe",
+   "rests_on": 122,
+   "imports": 297
+  },
+  {
+   "number": 124,
+   "name": "GroundTheory.ProfCoh.eq_zero_of_forall_sylow_map_eq_zero",
+   "module": "GroundTheory.ProfiniteCohomology.GlobalClassFormation.NatCardGroupCohomologyTwoIdeleClassRepDvd",
+   "rests_on": 122,
+   "imports": 173
+  },
+  {
+   "number": 125,
+   "name": "GlobalTheory.T.holomorphic_disc_ratio_growth",
+   "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.HolomorphicDiscRatioGrowthStatement",
+   "rests_on": 120,
+   "imports": 181
+  },
+  {
+   "number": 126,
+   "name": "GlobalTheory.WeberSplit.invariant_isAlgebraic",
+   "module": "Development.AbelianVarietyTheory.Proofs.HeightProofs.PrimesOneModNSplitCompletelyWeberField",
+   "rests_on": 120,
+   "imports": 1326
+  },
+  {
+   "number": 127,
+   "name": "GlobalTheory.AbMonoIsoAny.isIso_of_isClosedImmersion",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.AbelianSchemeIsIsoOfMonoSameDimension",
+   "rests_on": 119,
+   "imports": 7550
+  },
+  {
+   "number": 128,
+   "name": "GlobalTheory.T.exists_dirichletLFunction_zero_gap_near_one",
+   "module": "Development.AbelianVarietyTheory.Proofs.GlobalInterpolation.ExistsDirichletLFunctionZeroGapNearOneStatement",
+   "rests_on": 118,
+   "imports": 22
+  },
+  {
+   "number": 129,
+   "name": "GlobalTheory.SmoothDedekind.exists_isStandardSmoothOfRelativeDimension_of_localization",
+   "module": "Development.AbelianVarietyTheory.Proofs.ModuliProofs.SmoothOfRelativeDimensionOfFlatDedekindTangentLe",
+   "rests_on": 117,
+   "imports": 72
+  },
+  {
+   "number": 130,
+   "name": "GlobalTheory.T.exists_conductor_adicCompletion_essFiniteType",
+   "module": "Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsConductorAdicCompletionEssFiniteTypeStatement",
+   "rests_on": 117,
+   "imports": 93
+  },
+  {
+   "number": 131,
+   "name": "GlobalTheory.T.exists_pow_eq_unit_of_continuous_complex_root",
+   "module": "Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.ExistsPowEqUnitOfContinuousComplexRootStatement",
+   "rests_on": 115,
+   "imports": 6878
+  },
+  {
+   "number": 132,
+   "name": "GlobalTheory.isSmoothAt_of_flat_of_finrank_cotangent_le_of_surjective",
+   "module": "Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpanFinrankMaximalIdealLeNcardOfLeSupSq",
+   "rests_on": 113,
+   "imports": 21
+  },
+  {
+   "number": 133,
+   "name": "GroundTheory.Global.Elliptic.weierstrassP_halfPeriods_ne",
+   "module": "GroundTheory.GlobalFields.ComplexMultiplication.Uniformization",
+   "rests_on": 112,
+   "imports": 8
+  },
+  {
+   "number": 134,
+   "name": "PositivityTheory.Xgn.TightHopfOrder.exists_complete_normal",
+   "module": "Development.WeilBound.CoreStatements.TorusUniformisation.ChowMahlerFamilies.SplitMultiplicativeHopfOrder",
+   "rests_on": 112,
+   "imports": 7423
+  },
+  {
+   "number": 135,
+   "name": "GlobalTheory.isSmoothAt_of_flat_of_finrank_cotangentSpace_le",
+   "module": "Development.AbelianVarietyTheory.Proofs.FoundationProofs.SpanFinrankMaximalIdealLeNcardOfLeSupSq",
+   "rests_on": 111,
+   "imports": 21
+  },
+  {
+   "number": 136,
+   "name": "GroundTheory.Global.Elliptic.halfPeriod_facts",
+   "module": "GroundTheory.GlobalFields.ComplexMultiplication.Uniformization",
+   "rests_on": 111,
+   "imports": 8
+  },
+  {
+   "number": 137,
+   "name": "GlobalTheory.CompanionTheory.Ar.Flat.PoleDisc.disc_of_pole",
+   "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.HolomorphicDiscRatioGrowth",
+   "rests_on": 110,
+   "imports": 180
+  },
+  {
+   "number": 138,
+   "name": "GlobalTheory.T.exists_entire_sub_one_mul_euler_exp_ne_zero_one",
+   "module": "Development.AbelianVarietyTheory.Proofs.InertiaEigenvalues.DedekindZetaEulerProductMulSubOneEntireNeZeroStatement",
+   "rests_on": 110,
+   "imports": 44
+  },
+  {
+   "number": 139,
+   "name": "GroundTheory.Global.differentiable_discr_cpow_mul_gamma_inv",
+   "module": "GroundTheory.GlobalFields.TateThesis.DedekindContinuation",
+   "rests_on": 110,
+   "imports": 77
+  },
+  {
+   "number": 140,
+   "name": "GlobalTheory.T.formalFibre_isRegularRing_essFiniteType_int",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalFibreIsRegularRingEssFiniteTypeIntStatement",
+   "rests_on": 109,
+   "imports": 8397
+  },
+  {
+   "number": 141,
+   "name": "GlobalTheory.ThetaGauss.exists_zero_fderiv_ne_zero",
+   "module": "Development.AbelianVarietyTheory.Proofs.UnitaryExistence.DifferentiableFderivApply",
+   "rests_on": 109,
+   "imports": 13
+  },
+  {
+   "number": 142,
+   "name": "GlobalTheory.WeierstrassCurve.isReduced_coordinateRing",
+   "module": "Development.AbelianVarietyTheory.Proofs.HomogeneousIdeals.IsStandardSmoothOfRelativeDimensionAwayJacobian",
+   "rests_on": 109,
+   "imports": 2
+  },
+  {
+   "number": 143,
+   "name": "GroundTheory.Global.Elliptic.sub_mem_or_add_mem_of_weierstrassP_eq",
+   "module": "GroundTheory.GlobalFields.ComplexMultiplication.Uniformization",
+   "rests_on": 109,
+   "imports": 8
+  },
+  {
+   "number": 144,
+   "name": "GroundTheory.Global.Elliptic.two_mul_mem_lattice_iff_derivWeierstrassP_eq_zero",
+   "module": "GroundTheory.GlobalFields.ComplexMultiplication.Uniformization",
+   "rests_on": 109,
+   "imports": 8
+  },
+  {
+   "number": 145,
+   "name": "GlobalTheory.GeomConn.isPreconnected_points_over",
+   "module": "Development.AbelianVarietyTheory.Proofs.GenericRegularity.LinearDisjointAlgebraicClosure",
+   "rests_on": 108,
+   "imports": 2560
+  },
+  {
+   "number": 146,
+   "name": "GroundTheory.GroupCoh.isZero_tateCohomology_of_index",
+   "module": "GroundTheory.TateCohomology.CohTrivial",
+   "rests_on": 107,
+   "imports": 20
+  },
+  {
+   "number": 147,
+   "name": "GlobalTheory.T.isRegularRing_formalFibre_of_essFiniteType",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.FormalFibreIsRegularRingOfEssFiniteTypeStatement",
+   "rests_on": 106,
+   "imports": 8395
+  },
+  {
+   "number": 148,
+   "name": "GlobalTheory.dedekindZeta_eulerProduct_mul_sub_one_entire",
+   "module": "Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.DedekindZetaEulerProductMulSubOneEntire",
+   "rests_on": 106,
+   "imports": 31
+  },
+  {
+   "number": 149,
+   "name": "GlobalTheory.T.function_field_class_group_powers",
+   "module": "Development.AbelianVarietyTheory.Proofs.FoundationProofs.FunctionFieldClassGroupPowersStatement",
+   "rests_on": 105,
+   "imports": 58
+  },
+  {
+   "number": 150,
+   "name": "GlobalTheory.exists_basis_unique_min_and_sums_separated",
+   "module": "Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsBasisUniqueMinAndSumsSeparated",
+   "rests_on": 105,
+   "imports": 12
+  },
+  {
+   "number": 151,
+   "name": "GlobalTheory.exists_basis_unique_min_pair_sums",
+   "module": "Development.AbelianVarietyTheory.Proofs.DegenerationProofs.ExistsBasisUniqueMinPairSums",
+   "rests_on": 104,
+   "imports": 12
+  },
+  {
+   "number": 152,
+   "name": "GlobalTheory.T.adic_completion_reduced_of_jacobson",
+   "module": "Development.AbelianVarietyTheory.Proofs.IwasawaDecomposition.AdicCompletionReducedOfJacobsonStatement",
+   "rests_on": 103,
+   "imports": 58
+  },
+  {
+   "number": 153,
+   "name": "GlobalTheory.T.schwartzSubmodule_eq_top_of_gaussian_mem_derivStable",
+   "module": "Development.AbelianVarietyTheory.Proofs.DivisorProofs.SchwartzSubmoduleEqTopOfGaussianMemDerivStableStatement",
+   "rests_on": 103,
+   "imports": 3037
+  },
+  {
+   "number": 154,
+   "name": "GlobalTheory.idealCharacter_LSeries_continuation",
+   "module": "Development.AbelianVarietyTheory.Proofs.AdelicLatticeProofs.IdealCharacterLSeriesContinuation",
+   "rests_on": 103,
+   "imports": 29
+  },
+  {
+   "number": 155,
+   "name": "GroundTheory.Global.index_range_powMonoidHom_adicCompletion_mul_norm",
+   "module": "GroundTheory.GlobalFields.ExistenceTheorem.IndexRangePowMonoidHomAdicCompletionMulNorm",
+   "rests_on": 103,
+   "imports": 64
+  },
+  {
+   "number": 156,
+   "name": "GroundTheory.Global.index_range_powMonoidHom_adicCompletion_of_hasEnoughRootsOfUnity",
+   "module": "GroundTheory.GlobalFields.KummerTheory.LocalIndexAtPlace",
+   "rests_on": 103,
+   "imports": 5
+  },
+  {
+   "number": 157,
+   "name": "GroundTheory.Global.index_range_powMonoidHom_adicCompletion",
+   "module": "GroundTheory.GlobalFields.KummerTheory.LocalIndexAtPlace",
+   "rests_on": 102,
+   "imports": 5
+  },
+  {
+   "number": 158,
+   "name": "GlobalTheory.T.primitive_derivation_pairing",
+   "module": "Development.AutomorphicSpectrum.Proofs.GeometryProofs.PrimitiveDerivationPairingStatement",
+   "rests_on": 101,
+   "imports": 13
+  },
+  {
+   "number": 159,
+   "name": "UpperTheory.V.J.htPres",
+   "module": "Development.AutomorphicArithmetic.AutomorphicVarieties.ModularityArgument.LinkedUnramifiedChains.ScalarIrreducibility.HtPres",
+   "rests_on": 101,
+   "imports": 19909
+  }
+ ]
+}

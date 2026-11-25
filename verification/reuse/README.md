@@ -107,6 +107,21 @@ product formula and Hecke's continuation of the L-functions of ideal characters.
 named the published results from the model's own knowledge, and no mathematician has checked
 the catalogue.
 
+[`MATHLIB.md`](MATHLIB.md) asks how many of the statements in library terms Mathlib already
+holds, as one theorem of its own or within one run of a proof-search tactic. A test gave
+statements to Lean with Mathlib loaded and the project left out, and let four proof-search
+tactics of Lean try each of them. The tactics proved none of the 159 statements of the
+catalogue. They proved 8 of the 2,655 statements whose proofs in the source rest on 11 to 100
+declarations, all of which the test posed. They proved 93 of a random sample of 1,000 of the
+72,983 statements, and each of the 93 has a proof in the source that rests on at most 10
+declarations. Each of these counts is a lower bound for what Mathlib holds. A tactic was
+stopped at its limit of work before it finished on 23 statements of the catalogue, 348 of the
+2,655 and 95 of the sample, and a tactic can miss a theorem that is there. In a control the
+tactic that looks for one fitting theorem found 273 of 279 theorems of Mathlib itself. The same
+document searches the text of Mathlib's files for the names of the published results and counts
+the modules of the project that a Lean file has to load in order to use a statement of the
+catalogue.
+
 `statements.py` writes every theorem with a vocabulary of at most 20 definitions, these 79,265
 included, to `data/small_vocabulary.tsv.gz`, and `summary.json` holds the 150 theorems in
 library terms with the largest proofs.
@@ -263,8 +278,10 @@ what the source holds. It tests none of them.
 ## Using one theorem in another Lean file
 
 A Lean file that imports the module of one theorem loads only the modules that this module
-imports, and leaves the rest of the project out. The module of `kwHom` imports 411 modules
-of the project, directly or through others, where `Main.lean` imports 149,283.
+imports, and leaves the rest of the project out. By the `import` lines of the source the
+module of `kwHom` imports 410 modules of the project, directly or through others, where
+`Main.lean` imports 149,283. [`import_cost.py`](import_cost.py) counts the same for every
+statement of the catalogue.
 
 ```lean
 import Development.AutomorphicArithmetic.AutomorphicVarieties.GaloisLibrary.ClassFieldRamification.KwHom
@@ -280,7 +297,7 @@ Lean compiled this file without an error in the compiled checkout on 25 November
 command `lake env lean`. Its last line printed that `UpperTheory.V.CF.kwHom` depends on the
 axioms `propext`, `Classical.choice` and `Quot.sound`. The run took 174 minutes, of which Lean
 computed for 3 seconds. The rest was spent loading the compiled files of Mathlib, of the module
-of `kwHom` and of the 411 modules that it imports from a disk image on an external drive. The test ran inside a checkout of this
+of `kwHom` and of the modules that it imports from a disk image on an external drive. The test ran inside a checkout of this
 repository. A project of its own that wants the theorem would have to use the Lean and Mathlib
 versions that this repository pins and name this repository as a dependency in its lakefile.
 That setup was not tested.
@@ -331,5 +348,9 @@ python3 -I verification/reuse/statements.py                                     
 | `audit.py`, `briefs/`, `audit.json` | the dossiers, the briefs of the readers and the check, and their answers |
 | `CATALOGUE.md` | the 159 statements in library terms with large proofs, each with the published result that it is |
 | `catalogue.py`, `catalogue.json` | the dossiers of the catalogue and the answers of its readers and its check |
+| `MATHLIB.md` | what Lean's search and automation find in Mathlib of the statements in library terms |
+| `MathlibHas.lean`, `mathlib_has.py` | the test of `MATHLIB.md` and its runs |
+| `mathlib_has.json`, `mathlib_medium.json`, `mathlib_sample.json`, `mathlib_control.json`, `mathlib_names.json` | the answers for the catalogue, the 2,655 statements with proofs of middle size, the sample and the control, and the files of Mathlib that match a name |
+| `import_cost.py`, `import_cost.json` | the modules of the project that come along with each statement of the catalogue |
 
 Git ignores `data/`.

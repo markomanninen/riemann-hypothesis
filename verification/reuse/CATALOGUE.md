@@ -28,6 +28,13 @@ imported without the rest of the proof. [`AUDIT.md`](AUDIT.md) compares 70 propo
 the source itself labels as results from the literature with the published theorems that they
 are named after.
 
+[`MATHLIB.md`](MATHLIB.md) tests whether Mathlib already holds a statement of this catalogue,
+as one theorem of its own or within one run of a proof-search tactic. Four proof-search tactics
+of Lean, run with Mathlib and without the project, proved none of the 159 statements. They
+proved 8 of the 2,655 statements in library terms whose proofs rest on 11 to 100 declarations.
+The same document counts the modules of the project that a Lean file has to load in order to
+use each statement.
+
 ## Words used here
 
 - A statement is in library terms when it mentions no constant of the project. A theorem rests

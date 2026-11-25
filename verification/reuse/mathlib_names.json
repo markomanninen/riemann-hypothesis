@@ -1,0 +1,172 @@
+{
+ "files_searched": 8712,
+ "results": [
+  {
+   "result": "the Kronecker-Weber theorem, global and local",
+   "entries": [
+    7,
+    8,
+    14
+   ],
+   "pattern": "Kronecker.{0,3}Weber",
+   "files": []
+  },
+  {
+   "result": "Stein factorisation",
+   "entries": [
+    9
+   ],
+   "pattern": "Stein factori[sz]ation",
+   "files": []
+  },
+  {
+   "result": "Zariski's connectedness theorem",
+   "entries": [
+    10,
+    17,
+    20
+   ],
+   "pattern": "Zariski.{0,40}connected|connectedness theorem",
+   "files": []
+  },
+  {
+   "result": "Borel's finiteness of class numbers",
+   "entries": [
+    26
+   ],
+   "pattern": "Borel.{0,30}finiteness|class number.{0,40}algebraic group",
+   "files": []
+  },
+  {
+   "result": "Landherr's classification of hermitian forms",
+   "entries": [
+    36
+   ],
+   "pattern": "Landherr|[Hh]ermitian forms?.{0,60}classif",
+   "files": []
+  },
+  {
+   "result": "purity of the branch locus",
+   "entries": [
+    45,
+    50,
+    56,
+    57,
+    65
+   ],
+   "pattern": "purity of the branch|branch locus|Zariski.{0,3}Nagata",
+   "files": []
+  },
+  {
+   "result": "Chevalley's theorem on units",
+   "entries": [
+    49,
+    54
+   ],
+   "pattern": "Chevalley.{0,60}(unit|congruence)|congruence subgroup.{0,60}unit",
+   "files": []
+  },
+  {
+   "result": "Serre's vanishing theorem",
+   "entries": [
+    59
+   ],
+   "pattern": "Serre.{0,12}vanishing",
+   "files": []
+  },
+  {
+   "result": "analytic normality",
+   "entries": [
+    62
+   ],
+   "pattern": "analytically (normal|unramified|irreducible)|analytic normality",
+   "files": []
+  },
+  {
+   "result": "the first inequality of class field theory",
+   "entries": [
+    78
+   ],
+   "pattern": "(first|second|fundamental) inequality",
+   "files": [
+    "Mathlib/Analysis/Normed/Module/Multilinear/Basic.lean",
+    "Mathlib/MeasureTheory/Covering/Differentiation.lean",
+    "Mathlib/MeasureTheory/Group/Prod.lean",
+    "Mathlib/MeasureTheory/Integral/Bochner/Basic.lean",
+    "Mathlib/MeasureTheory/Integral/Lebesgue/Markov.lean",
+    "Mathlib/RingTheory/KrullDimension/Regular.lean"
+   ]
+  },
+  {
+   "result": "addition and duplication of the Weierstrass function",
+   "entries": [
+    95,
+    100
+   ],
+   "pattern": "weierstrassP|Weierstrass.{0,3}℘",
+   "files": [
+    "Mathlib/Analysis/SpecialFunctions/Elliptic/Weierstrass.lean"
+   ]
+  },
+  {
+   "result": "L-functions of ideal and Hecke characters",
+   "entries": [
+    104,
+    118,
+    154
+   ],
+   "pattern": "Hecke character|Gr(ö|oe)(ß|ss)en|ray class|[Ii]deal character",
+   "files": [
+    "Mathlib/NumberTheory/NumberField/HeckeLFunction.lean"
+   ]
+  },
+  {
+   "result": "the product formula",
+   "entries": [
+    108
+   ],
+   "pattern": "[Pp]roduct formula",
+   "files": [
+    "Mathlib/Analysis/Normed/Ring/InfiniteSum.lean",
+    "Mathlib/Analysis/Real/Pi/Wallis.lean",
+    "Mathlib/Analysis/SpecialFunctions/Trigonometric/EulerSineProd.lean",
+    "Mathlib/Data/Nat/Totient.lean",
+    "Mathlib/NumberTheory/EulerProduct/DirichletLSeries.lean",
+    "Mathlib/NumberTheory/EulerProduct/ExpLog.lean",
+    "Mathlib/NumberTheory/Height/Basic.lean",
+    "Mathlib/NumberTheory/NumberField/AdeleRing.lean",
+    "Mathlib/NumberTheory/NumberField/InfiniteAdeleRing.lean",
+    "Mathlib/NumberTheory/NumberField/InfinitePlace/Basic.lean",
+    "Mathlib/NumberTheory/NumberField/ProductFormula.lean",
+    "Mathlib/Topology/Algebra/InfiniteSum/Ring.lean"
+   ]
+  },
+  {
+   "result": "singular moduli and complex multiplication",
+   "entries": [
+    126
+   ],
+   "pattern": "singular modul|[Cc]omplex multiplication",
+   "files": []
+  },
+  {
+   "result": "continuation of the Dedekind zeta function",
+   "entries": [
+    138,
+    148
+   ],
+   "pattern": "dedekindZeta",
+   "files": [
+    "Mathlib/NumberTheory/NumberField/DedekindZeta.lean"
+   ]
+  },
+  {
+   "result": "connectedness of a complex variety",
+   "entries": [
+    145
+   ],
+   "pattern": "irreducible.{0,80}connected.{0,80}(analytic|classical|complex)",
+   "files": []
+  }
+ ]
+}

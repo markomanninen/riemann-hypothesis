@@ -1,0 +1,3133 @@
+{
+ "set": "control",
+ "population": 8712,
+ "seed": 1,
+ "tactics": [
+  "exact?"
+ ],
+ "summary": {
+  "modules": 300,
+  "modules_without_a_theorem": 21,
+  "theorems": 279,
+  "closed": 273,
+  "share": 0.9785,
+  "interval": [
+   0.9539,
+   0.9901
+  ],
+  "closed_with_the_theorem_itself": 268,
+  "answers": {
+   "closed": 273,
+   "failed": 3,
+   "limit": 3
+  }
+ },
+ "theorems": [
+  {
+   "module": "Mathlib.Algebra.Algebra.Shrink",
+   "name": "Shrink.algEquiv_apply",
+   "theorems": [
+    "Shrink.algEquiv_apply"
+   ],
+   "answer": "closed",
+   "ms": 85,
+   "text": "Try this:   [apply] (expose_names; exact Shrink.algEquiv_apply R α a)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Algebra.Subalgebra.Lattice",
+   "name": "Algebra.range_ofId",
+   "theorems": [
+    "Algebra.range_ofId"
+   ],
+   "answer": "closed",
+   "ms": 9,
+   "text": "Try this:   [apply] exact Algebra.range_ofId",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Category.AlgCat.Basic",
+   "name": "AlgCat.hom_inv_apply",
+   "theorems": [
+    "AlgCat.hom_inv_apply"
+   ],
+   "answer": "closed",
+   "ms": 13,
+   "text": "Try this:   [apply] (expose_names; exact AlgCat.hom_inv_apply R e x)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Category.Grp.Ulift",
+   "name": "CommGrpCat.uliftFunctor_preservesLimitsOfSize",
+   "theorems": [
+    "CommGrpCat.uliftFunctor_preservesLimitsOfSize"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] exact CommGrpCat.uliftFunctor_preservesLimitsOfSize",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Category.ModuleCat.Biproducts",
+   "name": "ModuleCat.biproductIsoPi_inv_comp_π",
+   "theorems": [
+    "ModuleCat.biproductIsoPi_inv_comp_π"
+   ],
+   "answer": "closed",
+   "ms": 14,
+   "text": "Try this:   [apply] (expose_names; exact ModuleCat.biproductIsoPi_inv_comp_π f j)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Category.ModuleCat.Limits",
+   "name": "ModuleCat.forget_preservesLimits",
+   "theorems": [],
+   "answer": "failed",
+   "ms": 4,
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Category.ModuleCat.Sheaf.ChangeOfRings",
+   "name": "SheafOfModules.instAdditiveRestrictScalars",
+   "theorems": [
+    "SheafOfModules.instAdditiveRestrictScalars"
+   ],
+   "answer": "closed",
+   "ms": 5,
+   "text": "Try this:   [apply] (expose_names; exact SheafOfModules.instAdditiveRestrictScalars α)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Category.Ring.Instances",
+   "name": "Localization.epi'",
+   "theorems": [
+    "Localization.epi'"
+   ],
+   "answer": "closed",
+   "ms": 15,
+   "text": "Try this:   [apply] (expose_names; exact Localization.epi' M)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Colimit.DirectLimit",
+   "name": "DirectLimit.instIsScalarTower",
+   "theorems": [
+    "DirectLimit.instIsScalarTower"
+   ],
+   "answer": "closed",
+   "ms": 12,
+   "text": "Try this:   [apply] exact DirectLimit.instIsScalarTower",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.ContinuedFractions.Computation.Basic",
+   "name": "GenContFract.IntFractPair.stream_isSeq",
+   "theorems": [
+    "GenContFract.IntFractPair.stream_isSeq"
+   ],
+   "answer": "closed",
+   "ms": 1,
+   "text": "Try this:   [apply] (expose_names; exact @GenContFract.IntFractPair.stream_isSeq K inst inst_1 inst_2 v)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.DirectSum.AddChar",
+   "name": "AddChar.directSum_apply",
+   "theorems": [
+    "AddChar.directSum_apply"
+   ],
+   "answer": "closed",
+   "ms": 7,
+   "text": "Try this:   [apply] (expose_names; exact AddChar.directSum_apply ψ a)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.DirectSum.Finsupp",
+   "name": "finsuppLEquivDirectSum_single",
+   "theorems": [
+    "finsuppLEquivDirectSum_single"
+   ],
+   "answer": "closed",
+   "ms": 34,
+   "text": "Try this:   [apply] (expose_names; exact finsuppLEquivDirectSum_single R M ι i m)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.FreeAlgebra",
+   "name": "FreeAlgebra.Rel.brecOn",
+   "theorems": [
+    "FreeAlgebra.Rel.brecOn"
+   ],
+   "answer": "closed",
+   "ms": 1218,
+   "text": "Try this:   [apply] (expose_names; exact FreeAlgebra.Rel.brecOn t F_1)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.GCDMonoid.IntegrallyClosed",
+   "name": "IsLocalization.surj_of_gcd_domain",
+   "theorems": [
+    "IsLocalization.surj_of_gcd_domain"
+   ],
+   "answer": "closed",
+   "ms": 327,
+   "text": "Try this:   [apply] (expose_names; exact IsLocalization.surj_of_gcd_domain M z)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Group.Action.Hom",
+   "name": "MulAction.compHom_smul_def",
+   "theorems": [
+    "MulAction.compHom_smul_def"
+   ],
+   "answer": "closed",
+   "ms": 7,
+   "text": "Try this:   [apply] (expose_names; exact MulAction.compHom_smul_def f a x)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Group.Conj",
+   "name": "isConj_one_left",
+   "theorems": [
+    "isConj_one_left"
+   ],
+   "answer": "closed",
+   "ms": 41,
+   "text": "Try this:   [apply] exact isConj_one_left",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Group.Int.Defs",
+   "name": "Int.instHasUniqueDiv",
+   "theorems": [
+    "Int.instHasUniqueDiv"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] exact Int.instHasUniqueDiv",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Group.Pointwise.Finset.BigOperators",
+   "name": "Finset.coe_prod",
+   "theorems": [
+    "Finset.coe_prod"
+   ],
+   "answer": "closed",
+   "ms": 62,
+   "text": "Try this:   [apply] (expose_names; exact Finset.coe_prod s f)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Group.Pointwise.Set.SelfInv",
+   "name": "Set.isSelfInv_iff_inv_subset",
+   "theorems": [
+    "Set.isSelfInv_iff_inv_subset"
+   ],
+   "answer": "closed",
+   "ms": 12,
+   "text": "Try this:   [apply] exact Set.isSelfInv_iff_inv_subset",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Group.Semiconj.Defs",
+   "name": "AddSemiconjBy.addConj_mk",
+   "theorems": [
+    "AddSemiconjBy.addConj_mk"
+   ],
+   "answer": "closed",
+   "ms": 11312,
+   "text": "Try this:   [apply] (expose_names; exact AddSemiconjBy.addConj_mk a x)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Group.Subgroup.Lattice",
+   "name": "AddSubgroup.closure_empty",
+   "theorems": [
+    "AddSubgroup.closure_empty"
+   ],
+   "answer": "closed",
+   "ms": 11,
+   "text": "Try this:   [apply] exact AddSubgroup.closure_empty",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Group.Submonoid.BigOperators",
+   "name": "SubmonoidClass.coe_finsetProd",
+   "theorems": [
+    "SubmonoidClass.coe_finsetProd"
+   ],
+   "answer": "closed",
+   "ms": 20,
+   "text": "Try this:   [apply] (expose_names; exact SubmonoidClass.coe_finsetProd f s)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Group.Subsemigroup.MulOpposite",
+   "name": "AddSubsemigroup.op_iSup",
+   "theorems": [
+    "AddSubsemigroup.op_iSup"
+   ],
+   "answer": "closed",
+   "ms": 8,
+   "text": "Try this:   [apply] (expose_names; exact AddSubsemigroup.op_iSup S)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Group.Subsemigroup.Operations",
+   "name": "Subsemigroup.map_iInf_comap_of_surjective",
+   "theorems": [
+    "Subsemigroup.map_iInf_comap_of_surjective"
+   ],
+   "answer": "closed",
+   "ms": 5,
+   "text": "Try this:   [apply] (expose_names; exact Subsemigroup.map_iInf_comap_of_surjective hf S)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.GroupWithZero.Action.Pointwise.Finset",
+   "name": "Finset.Nonempty.zero_smul",
+   "theorems": [
+    "Finset.Nonempty.zero_smul"
+   ],
+   "answer": "closed",
+   "ms": 26,
+   "text": "Try this:   [apply] (expose_names; exact Finset.Nonempty.zero_smul ht)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.GroupWithZero.Subgroup",
+   "name": "Subgroup.smul_mem_pointwise_smul_iff₀",
+   "theorems": [
+    "Subgroup.smul_mem_pointwise_smul_iff₀"
+   ],
+   "answer": "closed",
+   "ms": 5818,
+   "text": "Try this:   [apply] (expose_names; exact Subgroup.smul_mem_pointwise_smul_iff₀ ha S x)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Homology.DerivedCategory.Plus",
+   "name": "DerivedCategory.Plus.instIsLocalizationPlusQhQuasiIso",
+   "theorems": [
+    "DerivedCategory.Plus.instIsLocalizationPlusQhQuasiIso"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] (expose_names; exact DerivedCategory.Plus.instIsLocalizationPlusQhQuasiIso C)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Homology.Embedding.AreComplementary",
+   "name": "ComplexShape.Embedding.AreComplementary.desc'_inl",
+   "theorems": [
+    "ComplexShape.Embedding.AreComplementary.desc'_inl"
+   ],
+   "answer": "closed",
+   "ms": 8,
+   "text": "Try this:   [apply] (expose_names; exact ComplexShape.Embedding.AreComplementary.desc'_inl ac x₁ x₂ i i₁ h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Homology.ExactSequenceFour",
+   "name": "CategoryTheory.ComposableArrows.Exact.cokerIsoKer'_hom_inv_id_assoc",
+   "theorems": [
+    "CategoryTheory.ComposableArrows.map'._proof_6",
+    "CategoryTheory.ComposableArrows.IsComplex.cokerToKer'._proof_2",
+    "CategoryTheory.ComposableArrows.IsComplex.cokerToKer'._proof_4",
+    "CategoryTheory.ComposableArrows.map'._proof_8",
+    "CategoryTheory.ComposableArrows.IsComplex.cokerToKer'._proof_6",
+    "CategoryTheory.ComposableArrows.IsComplex.cokerToKer'._proof_8",
+    "CategoryTheory.ComposableArrows.Exact.cokerIsoKer'_hom_inv_id_assoc"
+   ],
+   "answer": "closed",
+   "ms": 11,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.ComposableArrows.Exact.cokerIsoKer'_hom_inv_id_assoc hS k hk cc kf hcc hkf     h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Homology.HomologicalBicomplex",
+   "name": "HomologicalComplex₂.ofGradedObject_toGradedObject",
+   "theorems": [
+    "HomologicalComplex₂.ofGradedObject_toGradedObject"
+   ],
+   "answer": "closed",
+   "ms": 4,
+   "text": "Try this:   [apply] (expose_names; exact HomologicalComplex₂.ofGradedObject_toGradedObject c₁ c₂ X d₁ d₂ shape₁ shape₂ d₁_comp_d₁     d₂_comp_d₂ comm)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Homology.HomologicalComplexLimitsEventuallyConstant",
+   "name": "HomologicalComplex.quasiIsoAt_π_of_isLimit_of_isEventuallyConstantTo",
+   "theorems": [
+    "HomologicalComplex.quasiIsoAt_π_of_isLimit_of_isEventuallyConstantTo"
+   ],
+   "answer": "closed",
+   "ms": 9,
+   "text": "Try this:   [apply] (expose_names; exact HomologicalComplex.quasiIsoAt_π_of_isLimit_of_isEventuallyConstantTo F hcF q₀ q₁ q₂ h₀ h₂     j hq₀ hq₁ hq₂)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Homology.HomotopyCategory.ChainComplex",
+   "name": "ChainComplex.homotopyEquivalences_shortComplexF_iff_of_degreewiseSplit",
+   "theorems": [
+    "AddRightCancelSemigroup.toIsRightCancelAdd",
+    "HomologicalComplex.instPreservesZeroMorphismsEval",
+    "ChainComplex.homotopyEquivalences_shortComplexF_iff_of_degreewiseSplit"
+   ],
+   "answer": "closed",
+   "ms": 6,
+   "text": "Try this:   [apply] (expose_names; exact ChainComplex.homotopyEquivalences_shortComplexF_iff_of_degreewiseSplit S σ)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Homology.ShortComplex.PreservesHomology",
+   "name": "CategoryTheory.Functor.PreservesRightHomologyOf.isPreservedBy",
+   "theorems": [
+    "CategoryTheory.ShortComplex.RightHomologyData.isPreservedBy_of_preserves"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.ShortComplex.RightHomologyData.isPreservedBy_of_preserves h F)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Lie.CartanCriterion",
+   "name": "LieAlgebra.HasTrivialRadical.instIsKilling",
+   "theorems": [
+    "LieAlgebra.HasTrivialRadical.instIsKilling"
+   ],
+   "answer": "closed",
+   "ms": 24,
+   "text": "Try this:   [apply] (expose_names; exact LieAlgebra.HasTrivialRadical.instIsKilling R L)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Lie.Rank",
+   "name": "LieModule.isRegular_iff_coeff_polyCharpoly_rank_ne_zero",
+   "theorems": [
+    "LieModule.isRegular_iff_coeff_polyCharpoly_rank_ne_zero"
+   ],
+   "answer": "closed",
+   "ms": 9,
+   "text": "Try this:   [apply] (expose_names; exact LieModule.isRegular_iff_coeff_polyCharpoly_rank_ne_zero R M b x)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.MvPolynomial.Equiv",
+   "name": "MvPolynomial.support_finSuccEquiv",
+   "theorems": [
+    "MvPolynomial.support_finSuccEquiv"
+   ],
+   "answer": "closed",
+   "ms": 21,
+   "text": "Try this:   [apply] (expose_names; exact MvPolynomial.support_finSuccEquiv f)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Order.Archimedean.Class",
+   "name": "ArchimedeanClass.mk_left_le_mk_sub",
+   "theorems": [
+    "Iff.mpr",
+    "ArchimedeanClass.mk_left_le_mk_sub_iff"
+   ],
+   "answer": "closed",
+   "ms": 55,
+   "text": "Try this:   [apply] (expose_names; exact ArchimedeanClass.mk_left_le_mk_sub_iff.mpr hab)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Order.Group.Pointwise.Interval",
+   "name": "Set.preimage_div_const_Ico",
+   "theorems": [
+    "Set.preimage_div_const_Ico"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] (expose_names; exact Set.preimage_div_const_Ico a b c)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Order.Interval.Set.Instances",
+   "name": "Set.Icc.instIsLeftCancelMulZero",
+   "theorems": [
+    "Set.Icc.instIsLeftCancelMulZero"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] exact Set.Icc.instIsLeftCancelMulZero",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Order.Ring.IsNonarchimedean",
+   "name": "IsNonarchimedean.multiset_powerset_image_add",
+   "theorems": [
+    "IsNonarchimedean.multiset_powerset_image_add"
+   ],
+   "answer": "closed",
+   "ms": 8,
+   "text": "Try this:   [apply] (expose_names; exact IsNonarchimedean.multiset_powerset_image_add hna n s)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Order.Round",
+   "name": "abs_sub_round",
+   "theorems": [
+    "abs_sub_round"
+   ],
+   "answer": "closed",
+   "ms": 52,
+   "text": "Try this:   [apply] (expose_names; exact abs_sub_round x)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Order.Star.Int",
+   "name": "Int.instStarOrderedRing",
+   "theorems": [
+    "Int.instStarOrderedRing"
+   ],
+   "answer": "closed",
+   "ms": 1,
+   "text": "Try this:   [apply] exact Int.instStarOrderedRing",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Polynomial.Degree.TrailingDegree",
+   "name": "Polynomial.coeff_natTrailingDegree_eq_zero",
+   "theorems": [
+    "Polynomial.coeff_natTrailingDegree_eq_zero"
+   ],
+   "answer": "closed",
+   "ms": 37,
+   "text": "Try this:   [apply] exact Polynomial.coeff_natTrailingDegree_eq_zero",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.QuadraticAlgebra.Discriminant",
+   "name": "QuadraticAlgebra.im_sq_mul_discr",
+   "theorems": [
+    "QuadraticAlgebra.im_sq_mul_discr"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] (expose_names; exact QuadraticAlgebra.im_sq_mul_discr z)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.QuadraticAlgebra.IsQuadraticExtension",
+   "name": "Algebra.IsQuadraticExtension.exists_algEquiv_quadraticAlgebra",
+   "theorems": [
+    "Algebra.IsQuadraticExtension.exists_algEquiv_quadraticAlgebra"
+   ],
+   "answer": "closed",
+   "ms": 370,
+   "text": "Try this:   [apply] exact Algebra.IsQuadraticExtension.exists_algEquiv_quadraticAlgebra",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Ring.Subring.Pointwise",
+   "name": "Subring.pointwise_smul_def",
+   "theorems": [
+    "Subring.pointwise_smul_def"
+   ],
+   "answer": "closed",
+   "ms": 8,
+   "text": "Try this:   [apply] (expose_names; exact Subring.pointwise_smul_def S)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Star.Center",
+   "name": "Set.star_mem_centralizer",
+   "theorems": [
+    "Set.star_mem_centralizer"
+   ],
+   "answer": "closed",
+   "ms": 4,
+   "text": "Try this:   [apply] (expose_names; exact Set.star_mem_centralizer ha)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Algebra.Star.UnitaryStarAlgAut",
+   "name": "Unitary.conjStarAlgAut_trans_conjStarAlgAut",
+   "theorems": [
+    "Unitary.conjStarAlgAut_trans_conjStarAlgAut"
+   ],
+   "answer": "closed",
+   "ms": 5,
+   "text": "Try this:   [apply] (expose_names; exact Unitary.conjStarAlgAut_trans_conjStarAlgAut u₁ u₂)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.AlgebraicGeometry.Cover.Sigma",
+   "name": "AlgebraicGeometry.Scheme.Cover.sigmaFunctor_obj",
+   "theorems": [
+    "AlgebraicGeometry.Scheme.Cover.sigmaFunctor_obj"
+   ],
+   "answer": "closed",
+   "ms": 20,
+   "text": "Try this:   [apply] (expose_names; exact AlgebraicGeometry.Scheme.Cover.sigmaFunctor_obj 𝒰)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.AlgebraicGeometry.OrderOfVanishing.Basic",
+   "name": "AlgebraicGeometry.Scheme.ord_algebraMap_nonneg",
+   "theorems": [
+    "CommRingCat.Colimits.hasColimits_commRingCat",
+    "AlgebraicGeometry.Scheme.ord_algebraMap_nonneg"
+   ],
+   "answer": "closed",
+   "ms": 11,
+   "text": "Try this:   [apply] (expose_names; exact AlgebraicGeometry.Scheme.ord_algebraMap_nonneg ha)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.AlgebraicGeometry.Over",
+   "name": "AlgebraicGeometry.Scheme.Hom.isOver_iff",
+   "theorems": [
+    "AlgebraicGeometry.Scheme.Hom.isOver_iff"
+   ],
+   "answer": "closed",
+   "ms": 4,
+   "text": "Try this:   [apply] (expose_names; exact AlgebraicGeometry.Scheme.Hom.isOver_iff S)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.AlgebraicGeometry.Stalk",
+   "name": "AlgebraicGeometry.Scheme.fromSpecStalk_closedPoint",
+   "theorems": [
+    "AlgebraicGeometry.Scheme.fromSpecStalk_closedPoint"
+   ],
+   "answer": "closed",
+   "ms": 74,
+   "text": "Try this:   [apply] exact AlgebraicGeometry.Scheme.fromSpecStalk_closedPoint",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.AlgebraicTopology.ModelCategory.FibrantObjectHomotopy",
+   "name": "HomotopicalAlgebra.FibrantObject.instIsIsoFunctorWhiskerRightHoCatιCompResolutionNatTransOfIsLocalizationWeakEquivalences",
+   "theorems": [
+    "HomotopicalAlgebra.FibrantObject.homRel._proof_1",
+    "HomotopicalAlgebra.FibrantObject.instIsIsoFunctorWhiskerRightHoCatιCompResolutionNatTransOfIsLocalizationWeakEquivalences"
+   ],
+   "answer": "closed",
+   "ms": 35,
+   "text": "Try this:   [apply] (expose_names; exact HomotopicalAlgebra.FibrantObject.instIsIsoFunctorWhiskerRightHoCatιCompResolutionNatTransOfIsLocalizationWeakEquivalences     L)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.AlgebraicTopology.SimplicialObject.ChainHomotopy",
+   "name": "Fin.castSucc.hcongr_2",
+   "theorems": [
+    "Fin.castSucc.hcongr_2"
+   ],
+   "answer": "closed",
+   "ms": 15,
+   "text": "Try this:   [apply] (expose_names; exact Fin.castSucc.hcongr_2 n n' e_1 a a' e_2)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.AlgebraicTopology.SimplicialSet.AnodyneExtensions.RankNat",
+   "name": "SSet.Subcomplex.Pairing.instFiniteSubtypeElemNIIAncestralRel",
+   "theorems": [
+    "SSet.Subcomplex.Pairing.instFiniteSubtypeElemNIIAncestralRel"
+   ],
+   "answer": "closed",
+   "ms": 4,
+   "text": "Try this:   [apply] (expose_names; exact SSet.Subcomplex.Pairing.instFiniteSubtypeElemNIIAncestralRel P y)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.AlgebraicTopology.SimplicialSet.AnodyneExtensions.UnionProd",
+   "name": "SSet.prodStdSimplex.pairingCore.IsType₂.simplex_mem_nonDegenerate",
+   "theorems": [
+    "SSet.prodStdSimplex.pairingCore.IsType₂.simplex_mem_nonDegenerate"
+   ],
+   "answer": "closed",
+   "ms": 44,
+   "text": "Try this:   [apply] (expose_names; exact SSet.prodStdSimplex.pairingCore.IsType₂.simplex_mem_nonDegenerate hx hd)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.AlgebraicTopology.SimplicialSet.NonDegenerateSimplices",
+   "name": "SSet.N.dim_le_of_le",
+   "theorems": [
+    "SSet.N.dim_le_of_le"
+   ],
+   "answer": "closed",
+   "ms": 107,
+   "text": "Try this:   [apply] (expose_names; exact SSet.N.dim_le_of_le h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.AlgebraicTopology.SimplicialSet.ProdStdSimplex",
+   "name": "SSet.prodStdSimplex.instHasDimensionLETensorObjObjSimplexCategoryStdSimplexMkHAddNat",
+   "theorems": [
+    "SSet.prodStdSimplex.instHasDimensionLETensorObjObjSimplexCategoryStdSimplexMkHAddNat"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] exact SSet.prodStdSimplex.instHasDimensionLETensorObjObjSimplexCategoryStdSimplexMkHAddNat",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.Analytic.Basic",
+   "name": "hasFPowerSeriesWithinAt_iff_of_nhds",
+   "theorems": [
+    "IsTopologicalAddGroup.toContinuousAdd",
+    "SeminormedAddCommGroup.toIsTopologicalAddGroup",
+    "UniformContinuousConstSMul.instContinuousConstSMul",
+    "IsBoundedSMul.toUniformContinuousConstSMul",
+    "NormedSpace.toIsBoundedSMul",
+    "hasFPowerSeriesWithinAt_iff_of_nhds"
+   ],
+   "answer": "closed",
+   "ms": 5,
+   "text": "Try this:   [apply] (expose_names; exact hasFPowerSeriesWithinAt_iff_of_nhds f p hU)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.Analytic.CPolynomial",
+   "name": "ContinuousMultilinearMap.cpolynomialOn",
+   "theorems": [
+    "ContinuousMultilinearMap.cpolynomialOn"
+   ],
+   "answer": "closed",
+   "ms": 4,
+   "text": "Try this:   [apply] (expose_names; exact ContinuousMultilinearMap.cpolynomialOn f)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Instances",
+   "name": "IsSelfAdjoint.quasispectrumRestricts",
+   "theorems": [
+    "Complex.instNontrivial",
+    "IsTopologicalRing.toIsTopologicalSemiring",
+    "IsTopologicalDivisionRing.toIsTopologicalRing",
+    "NormedDivisionRing.to_isTopologicalDivisionRing",
+    "Complex.instContinuousStar",
+    "IsSelfAdjoint.quasispectrumRestricts"
+   ],
+   "answer": "closed",
+   "ms": 10,
+   "text": "Try this:   [apply] (expose_names; exact IsSelfAdjoint.quasispectrumRestricts ha)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.NonUnital",
+   "name": "cfcₙ_def",
+   "theorems": [],
+   "answer": "failed",
+   "ms": 11,
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.CStarAlgebra.PositiveLinearFunctional",
+   "name": "PositiveContinuousLinearMap.nnNorm_map_le_sqrt_opNNNorm_mul",
+   "theorems": [
+    "PositiveContinuousLinearMap.nnNorm_map_le_sqrt_opNNNorm_mul"
+   ],
+   "answer": "closed",
+   "ms": 7,
+   "text": "Try this:   [apply] (expose_names; exact PositiveContinuousLinearMap.nnNorm_map_le_sqrt_opNNNorm_mul f x)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.Calculus.ContDiff.Operations",
+   "name": "ContDiff.sub",
+   "theorems": [
+    "ContDiff.sub"
+   ],
+   "answer": "closed",
+   "ms": 25,
+   "text": "Try this:   [apply] (expose_names; exact ContDiff.sub hf hg)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.Calculus.FDeriv.ContinuousMultilinearMap",
+   "name": "HasFDerivWithinAt.continuousMultilinearMapCompContinuousLinearMap",
+   "theorems": [
+    "SeminormedAddCommGroup.toIsTopologicalAddGroup",
+    "IsTopologicalAddGroup.toContinuousAdd",
+    "UniformContinuousConstSMul.instContinuousConstSMul",
+    "IsBoundedSMul.toUniformContinuousConstSMul",
+    "NormedSpace.toIsBoundedSMul",
+    "smulCommClass_self",
+    "HasFDerivWithinAt.continuousMultilinearMapCompContinuousLinearMap"
+   ],
+   "answer": "closed",
+   "ms": 20,
+   "text": "Try this:   [apply] (expose_names; exact HasFDerivWithinAt.continuousMultilinearMapCompContinuousLinearMap hf hg)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.Calculus.FDeriv.Linear",
+   "name": "IsBoundedLinearMap.differentiableAt",
+   "theorems": [
+    "IsBoundedLinearMap.differentiableAt"
+   ],
+   "answer": "closed",
+   "ms": 23,
+   "text": "Try this:   [apply] (expose_names; exact IsBoundedLinearMap.differentiableAt h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.Calculus.FDeriv.Mul",
+   "name": "HasStrictFDerivAt.fun_mul'",
+   "theorems": [
+    "HasStrictFDerivAt.fun_mul'"
+   ],
+   "answer": "closed",
+   "ms": 11,
+   "text": "Try this:   [apply] (expose_names; exact HasStrictFDerivAt.fun_mul' ha hb)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.Calculus.FDeriv.RestrictScalars",
+   "name": "DifferentiableOn.restrictScalars",
+   "theorems": [
+    "DifferentiableOn.restrictScalars"
+   ],
+   "answer": "closed",
+   "ms": 117,
+   "text": "Try this:   [apply] (expose_names; exact DifferentiableOn.restrictScalars 𝕜 h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.Calculus.Implicit",
+   "name": "HasStrictFDerivAt.map_implicitFunctionOfComplemented_eq",
+   "theorems": [
+    "RingHomSurjective.ids",
+    "HasStrictFDerivAt.map_implicitFunctionOfComplemented_eq"
+   ],
+   "answer": "closed",
+   "ms": 15,
+   "text": "Try this:   [apply] (expose_names; exact HasStrictFDerivAt.map_implicitFunctionOfComplemented_eq hf hf' hker)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.Calculus.InverseFunctionTheorem.FDeriv",
+   "name": "HasStrictFDerivAt.map_nhds_eq_of_equiv",
+   "theorems": [
+    "RingHomInvPair.ids",
+    "HasStrictFDerivAt.map_nhds_eq_of_equiv"
+   ],
+   "answer": "closed",
+   "ms": 553,
+   "text": "Try this:   [apply] (expose_names; exact HasStrictFDerivAt.map_nhds_eq_of_equiv hf)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.Calculus.VectorField",
+   "name": "VectorField.lieBracketWithin_zero_left",
+   "theorems": [
+    "VectorField.lieBracketWithin_zero_left"
+   ],
+   "answer": "closed",
+   "ms": 11445,
+   "text": "Try this:   [apply] exact VectorField.lieBracketWithin_zero_left",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.Complex.SqrtDeriv",
+   "name": "Complex.differentiableOn_sqrt",
+   "theorems": [
+    "Complex.differentiableOn_sqrt"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] exact Complex.differentiableOn_sqrt",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.Convex.Piecewise",
+   "name": "concaveOn_univ_piecewise_Ici_of_antitoneOn_Ici_monotoneOn_Iic",
+   "theorems": [
+    "concaveOn_univ_piecewise_Ici_of_antitoneOn_Ici_monotoneOn_Iic"
+   ],
+   "answer": "closed",
+   "ms": 13,
+   "text": "Try this:   [apply] (expose_names; exact concaveOn_univ_piecewise_Ici_of_antitoneOn_Ici_monotoneOn_Iic hf hg h_anti h_mono h_eq)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.Convex.Star",
+   "name": "StarConvex.preimage_add_right",
+   "theorems": [
+    "StarConvex.preimage_add_right"
+   ],
+   "answer": "closed",
+   "ms": 4,
+   "text": "Try this:   [apply] (expose_names; exact StarConvex.preimage_add_right hs)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.InnerProductSpace.EuclideanDist",
+   "name": "Euclidean.mem_ball_self",
+   "theorems": [
+    "Euclidean.mem_ball_self"
+   ],
+   "answer": "closed",
+   "ms": 73,
+   "text": "Try this:   [apply] (expose_names; exact Euclidean.mem_ball_self hr)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.InnerProductSpace.Orthonormal",
+   "name": "Orthonormal.linearIndependent",
+   "theorems": [],
+   "answer": "limit",
+   "ms": 10835,
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.LocallyConvex.WithSeminorms",
+   "name": "withSeminorms_iff_mem_nhds_isVonNBounded",
+   "theorems": [
+    "withSeminorms_iff_mem_nhds_isVonNBounded"
+   ],
+   "answer": "closed",
+   "ms": 4,
+   "text": "Try this:   [apply] exact withSeminorms_iff_mem_nhds_isVonNBounded",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.Meromorphic.RCLike",
+   "name": "Meromorphic.exists_meromorphicOrderAt_eq_top_iff_eventually_zero",
+   "theorems": [
+    "Meromorphic.exists_meromorphicOrderAt_eq_top_iff_eventually_zero"
+   ],
+   "answer": "closed",
+   "ms": 11537,
+   "text": "Try this:   [apply] (expose_names; exact Meromorphic.exists_meromorphicOrderAt_eq_top_iff_eventually_zero hf)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.Normed.Algebra.Exponential",
+   "name": "Commute.exp_right",
+   "theorems": [
+    "Commute.exp_right"
+   ],
+   "answer": "closed",
+   "ms": 5,
+   "text": "Try this:   [apply] (expose_names; exact Commute.exp_right h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.Normed.Algebra.GelfandRadius",
+   "name": "tendsto_gelfandRadius",
+   "theorems": [
+    "tendsto_gelfandRadius"
+   ],
+   "answer": "closed",
+   "ms": 16,
+   "text": "Try this:   [apply] (expose_names; exact tendsto_gelfandRadius a)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.Real.Pi.Bounds",
+   "name": "Real.pi_lt_d6",
+   "theorems": [
+    "Real.pi_lt_d6"
+   ],
+   "answer": "closed",
+   "ms": 22,
+   "text": "Try this:   [apply] exact Real.pi_lt_d6",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Analysis.SpecialFunctions.BinaryEntropy",
+   "name": "Real.deriv_binEntropy",
+   "theorems": [
+    "Real.deriv_binEntropy"
+   ],
+   "answer": "closed",
+   "ms": 40,
+   "text": "Try this:   [apply] (expose_names; exact Real.deriv_binEntropy p)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Basic.Sign.Basic",
+   "name": "sign_intCast",
+   "theorems": [
+    "sign_intCast"
+   ],
+   "answer": "closed",
+   "ms": 5,
+   "text": "Try this:   [apply] (expose_names; exact sign_intCast n)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Abelian.GrothendieckAxioms.SheafOfModules",
+   "name": "SheafOfModules.instIsGrothendieckAbelian",
+   "theorems": [
+    "SheafOfModules.instIsGrothendieckAbelian"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] (expose_names; exact SheafOfModules.instIsGrothendieckAbelian R)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Abelian.Images",
+   "name": "CategoryTheory.Abelian.image.fac",
+   "theorems": [
+    "CategoryTheory.Abelian.image.fac"
+   ],
+   "answer": "closed",
+   "ms": 25,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.Abelian.image.fac f)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Abelian.OrthogonalClosed",
+   "name": "CategoryTheory.ObjectProperty.instIsClosedUnderExtensionsLeftOrthogonal",
+   "theorems": [
+    "CategoryTheory.ObjectProperty.instIsClosedUnderExtensionsLeftOrthogonal"
+   ],
+   "answer": "closed",
+   "ms": 1,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.ObjectProperty.instIsClosedUnderExtensionsLeftOrthogonal P)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Abelian.Refinements",
+   "name": "CategoryTheory.ShortComplex.mono_homologyMap_iff_up_to_refinements",
+   "theorems": [
+    "CategoryTheory.ShortComplex.mono_homologyMap_iff_up_to_refinements"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.ShortComplex.mono_homologyMap_iff_up_to_refinements φ)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Adjunction.FullyFaithfulLimits",
+   "name": "CategoryTheory.Adjunction.preservesColimitsOfSize_iff",
+   "theorems": [
+    "CategoryTheory.Adjunction.preservesColimitsOfSize_iff"
+   ],
+   "answer": "closed",
+   "ms": 4,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.Adjunction.preservesColimitsOfSize_iff adj H)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Bicategory.Functor.Cat.ObjectProperty",
+   "name": "CategoryTheory.Pseudofunctor.ObjectProperty.fullsubcategory_toPrelaxFunctor_toPrelaxFunctorStruct_toPrefunctor_obj",
+   "theorems": [
+    "CategoryTheory.Pseudofunctor.ObjectProperty.fullsubcategory_toPrelaxFunctor_toPrelaxFunctorStruct_toPrefunctor_obj"
+   ],
+   "answer": "closed",
+   "ms": 10,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.Pseudofunctor.ObjectProperty.fullsubcategory_toPrelaxFunctor_toPrelaxFunctorStruct_toPrefunctor_obj     P X)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Center.NegOnePow",
+   "name": "CategoryTheory.CatCenter.app_neg_one_zpow",
+   "theorems": [
+    "CategoryTheory.CatCenter.app_neg_one_zpow"
+   ],
+   "answer": "closed",
+   "ms": 6,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.CatCenter.app_neg_one_zpow n X)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Center.Preadditive",
+   "name": "CategoryTheory.CatCenter.app_sub",
+   "theorems": [
+    "CategoryTheory.CatCenter.app_sub"
+   ],
+   "answer": "closed",
+   "ms": 4,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.CatCenter.app_sub z₁ z₂ X)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Comma.Over.OverClass",
+   "name": "CategoryTheory.homIsOver_of_isOverTower",
+   "theorems": [
+    "CategoryTheory.homIsOver_of_isOverTower"
+   ],
+   "answer": "closed",
+   "ms": 6,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.homIsOver_of_isOverTower f S S')",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Comma.StructuredArrow.Functor",
+   "name": "CategoryTheory.CostructuredArrow.grothendieckPrecompFunctorToComma_map_left",
+   "theorems": [
+    "CategoryTheory.CostructuredArrow.grothendieckPrecompFunctorToComma_map_left"
+   ],
+   "answer": "closed",
+   "ms": 279,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.CostructuredArrow.grothendieckPrecompFunctorToComma_map_left L R f)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.CopyDiscardCategory.Cartesian",
+   "name": "CategoryTheory.CartesianCopyDiscard.instDeterministic",
+   "theorems": [
+    "CategoryTheory.CartesianCopyDiscard.instDeterministic"
+   ],
+   "answer": "closed",
+   "ms": 5,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.CartesianCopyDiscard.instDeterministic f)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Discrete.SumsProducts",
+   "name": "CategoryTheory.Discrete.sumEquiv_counitIso_inv_app",
+   "theorems": [
+    "CategoryTheory.Discrete.sumEquiv_counitIso_inv_app"
+   ],
+   "answer": "closed",
+   "ms": 356,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.Discrete.sumEquiv_counitIso_inv_app X)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Filtered.Final",
+   "name": "CategoryTheory.IsFiltered.final_fst",
+   "theorems": [
+    "CategoryTheory.IsFiltered.final_fst"
+   ],
+   "answer": "closed",
+   "ms": 22,
+   "text": "Try this:   [apply] exact CategoryTheory.IsFiltered.final_fst",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Galois.Topology",
+   "name": "CategoryTheory.PreGaloisCategory.instT2SpaceAutFunctorFintypeCat",
+   "theorems": [
+    "CategoryTheory.PreGaloisCategory.instT2SpaceAutFunctorFintypeCat"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.PreGaloisCategory.instT2SpaceAutFunctorFintypeCat F)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.LiftingProperties.Basic",
+   "name": "CategoryTheory.HasLiftingProperty.unop",
+   "theorems": [
+    "Iff.mp",
+    "CategoryTheory.HasLiftingProperty.iff_unop"
+   ],
+   "answer": "closed",
+   "ms": 5,
+   "text": "Try this:   [apply] (expose_names; exact (CategoryTheory.HasLiftingProperty.iff_unop i p).mp h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Limits.Indization.Category",
+   "name": "CategoryTheory.instIsClosedUnderLimitsOfShapeFunctorOppositeTypeIsIndObjectDiscreteOfHasLimitsOfShape",
+   "theorems": [
+    "CategoryTheory.instIsClosedUnderLimitsOfShapeFunctorOppositeTypeIsIndObjectDiscreteOfHasLimitsOfShape"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] exact CategoryTheory.instIsClosedUnderLimitsOfShapeFunctorOppositeTypeIsIndObjectDiscreteOfHasLimitsOfShape",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts.BinaryProducts",
+   "name": "CategoryTheory.Limits.prod.rightUnitor_hom",
+   "theorems": [
+    "CategoryTheory.Limits.prod.rightUnitor_hom"
+   ],
+   "answer": "closed",
+   "ms": 262,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.Limits.prod.rightUnitor_hom P)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts.WalkingPair",
+   "name": "CategoryTheory.Limits.diagramIsoPair_hom_app",
+   "theorems": [
+    "CategoryTheory.Limits.diagramIsoPair_hom_app"
+   ],
+   "answer": "closed",
+   "ms": 4,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.Limits.diagramIsoPair_hom_app F X)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Limits.Shapes.Preorder.Basic",
+   "name": "Preorder.instHasColimitsOfShape",
+   "theorems": [
+    "Preorder.instHasColimitsOfShape"
+   ],
+   "answer": "closed",
+   "ms": 64,
+   "text": "Try this:   [apply] (expose_names; exact Preorder.instHasColimitsOfShape C J)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Linear.Basic",
+   "name": "CategoryTheory.Linear.instMonoHSMulHomOfInvertible",
+   "theorems": [
+    "CategoryTheory.Linear.instMonoHSMulHomOfInvertible"
+   ],
+   "answer": "closed",
+   "ms": 18,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.Linear.instMonoHSMulHomOfInvertible R f r)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Monoidal.Cartesian.InfSemilattice",
+   "name": "CategoryTheory.SemilatticeInf.tensorUnit",
+   "theorems": [
+    "CategoryTheory.SemilatticeInf.tensorUnit"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] exact CategoryTheory.SemilatticeInf.tensorUnit",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Monoidal.Cartesian.ShrinkYoneda",
+   "name": "CategoryTheory.shrinkYonedaMonObjObjEquiv_symm_comp",
+   "theorems": [
+    "CategoryTheory.shrinkYonedaMonObjObjEquiv_symm_comp"
+   ],
+   "answer": "closed",
+   "ms": 11,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.shrinkYonedaMonObjObjEquiv_symm_comp g f)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Monoidal.Closed.FunctorCategory.Complete",
+   "name": "CategoryTheory.Functor.instIsLeftAdjointDiscreteTensorLeftCompIncl",
+   "theorems": [
+    "CategoryTheory.Functor.instIsLeftAdjointDiscreteTensorLeftCompIncl"
+   ],
+   "answer": "closed",
+   "ms": 4,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.Functor.instIsLeftAdjointDiscreteTensorLeftCompIncl I C F)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.MorphismProperty.Quotient",
+   "name": "CategoryTheory.MorphismProperty.eq_inverseImage_quotientFunctor",
+   "theorems": [
+    "CategoryTheory.MorphismProperty.eq_inverseImage_quotientFunctor"
+   ],
+   "answer": "closed",
+   "ms": 5,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.MorphismProperty.eq_inverseImage_quotientFunctor W homRel)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.MorphismProperty.WeakFactorizationSystem",
+   "name": "CategoryTheory.MorphismProperty.IsWeakFactorizationSystem.mk'",
+   "theorems": [
+    "CategoryTheory.MorphismProperty.IsWeakFactorizationSystem.mk'"
+   ],
+   "answer": "closed",
+   "ms": 4,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.MorphismProperty.IsWeakFactorizationSystem.mk' W₁ W₂ h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.ObjectProperty.LimitsOfShape",
+   "name": "CategoryTheory.ObjectProperty.instIsClosedUnderLimitsOfShapeTop",
+   "theorems": [
+    "CategoryTheory.ObjectProperty.instIsClosedUnderLimitsOfShapeTop"
+   ],
+   "answer": "closed",
+   "ms": 1,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.ObjectProperty.instIsClosedUnderLimitsOfShapeTop J)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Preadditive.EndoFunctor",
+   "name": "CategoryTheory.Endofunctor.algebraPreadditive_homGroup_neg_f",
+   "theorems": [
+    "CategoryTheory.Endofunctor.algebraPreadditive_homGroup_neg_f"
+   ],
+   "answer": "closed",
+   "ms": 5,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.Endofunctor.algebraPreadditive_homGroup_neg_f C F A₁ A₂ α)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Preadditive.OfBiproducts",
+   "name": "CategoryTheory.SemiadditiveOfBinaryBiproducts.comp_add",
+   "theorems": [
+    "CategoryTheory.SemiadditiveOfBinaryBiproducts.comp_add"
+   ],
+   "answer": "closed",
+   "ms": 425,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.SemiadditiveOfBinaryBiproducts.comp_add f g h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Presentable.StrongGenerator",
+   "name": "CategoryTheory.ObjectProperty.colimitsCardinalClosure_le_isCardinalPresentable",
+   "theorems": [
+    "CategoryTheory.ObjectProperty.colimitsCardinalClosure_le_isCardinalPresentable"
+   ],
+   "answer": "closed",
+   "ms": 5,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.ObjectProperty.colimitsCardinalClosure_le_isCardinalPresentable P hP)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.RegularCategory.Basic",
+   "name": "CategoryTheory.Regular.frobeniusStrongEpiMonoFactorisation_I",
+   "theorems": [
+    "CategoryTheory.Regular.frobeniusStrongEpiMonoFactorisation_I"
+   ],
+   "answer": "closed",
+   "ms": 18,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.Regular.frobeniusStrongEpiMonoFactorisation_I f A' B')",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.RepresentedBy",
+   "name": "CategoryTheory.Functor.IsRepresentedBy.of_natIso",
+   "theorems": [
+    "Iff.mpr",
+    "CategoryTheory.Functor.IsRepresentedBy.iff_natIso"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] (expose_names; exact (CategoryTheory.Functor.IsRepresentedBy.iff_natIso e).mpr h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Sites.Coherent.ExtensiveColimits",
+   "name": "CategoryTheory.instPreservesFiniteColimitsSheafExtensiveTopologyFunctorOppositeSheafToPresheafOfPreadditiveOfHasFiniteColimits",
+   "theorems": [
+    "CategoryTheory.instPreservesFiniteColimitsSheafExtensiveTopologyFunctorOppositeSheafToPresheafOfPreadditiveOfHasFiniteColimits"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] exact CategoryTheory.instPreservesFiniteColimitsSheafExtensiveTopologyFunctorOppositeSheafToPresheafOfPreadditiveOfHasFiniteColimits",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Sites.DenseSubsite.InducedTopology",
+   "name": "CategoryTheory.Functor.mem_restrictedTopology_iff",
+   "theorems": [
+    "CategoryTheory.Functor.mem_restrictedTopology_iff"
+   ],
+   "answer": "closed",
+   "ms": 82,
+   "text": "Try this:   [apply] exact CategoryTheory.Functor.mem_restrictedTopology_iff",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Sites.Hypercover.IsSheaf",
+   "name": "CategoryTheory.GrothendieckTopology.OneHypercoverFamily.IsSheafIff.fac",
+   "theorems": [
+    "CategoryTheory.GrothendieckTopology.superset_covering",
+    "CategoryTheory.GrothendieckTopology.OneHypercover.mem₀",
+    "CategoryTheory.GrothendieckTopology.OneHypercoverFamily.IsSheafIff.fac"
+   ],
+   "answer": "closed",
+   "ms": 50,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.GrothendieckTopology.OneHypercoverFamily.IsSheafIff.fac hP hE le F f hf)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Sites.MayerVietorisSquare",
+   "name": "CategoryTheory.GrothendieckTopology.MayerVietorisSquare.shortComplex_X₃",
+   "theorems": [
+    "CategoryTheory.GrothendieckTopology.MayerVietorisSquare.shortComplex_X₃"
+   ],
+   "answer": "closed",
+   "ms": 21,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.GrothendieckTopology.MayerVietorisSquare.shortComplex_X₃ S)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Sites.SheafCohomology.Basic",
+   "name": "CategoryTheory.Sheaf.H.map_add_apply",
+   "theorems": [
+    "CategoryTheory.Sheaf.H.map_add_apply"
+   ],
+   "answer": "closed",
+   "ms": 115,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.Sheaf.H.map_add_apply f g x)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Sites.Whiskering",
+   "name": "CategoryTheory.hasSheafCompose_of_preservesMulticospan",
+   "theorems": [
+    "CategoryTheory.hasSheafCompose_of_preservesMulticospan"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.hasSheafCompose_of_preservesMulticospan J F)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Subobject.Classifier.Defs",
+   "name": "CategoryTheory.Subobject.Classifier.mono_truth",
+   "theorems": [
+    "CategoryTheory.Subobject.Classifier.mono_truth"
+   ],
+   "answer": "closed",
+   "ms": 14,
+   "text": "Try this:   [apply] (expose_names; exact self.mono_truth)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Subobject.Types",
+   "name": "Types.monoOverEquivalenceSet_inverse_map",
+   "theorems": [
+    "Types.monoOverEquivalenceSet_inverse_map"
+   ],
+   "answer": "closed",
+   "ms": 5,
+   "text": "Try this:   [apply] (expose_names; exact Types.monoOverEquivalenceSet_inverse_map α b)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.CategoryTheory.Triangulated.TStructure.Basic",
+   "name": "CategoryTheory.Triangulated.TStructure.instIsStableUnderShiftBoundedInt",
+   "theorems": [
+    "CategoryTheory.Triangulated.TStructure.instIsStableUnderShiftBoundedInt"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] (expose_names; exact CategoryTheory.Triangulated.TStructure.instIsStableUnderShiftBoundedInt t)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Combinatorics.Additive.ApproximateSubgroup",
+   "name": "isApproximateAddSubgroup_zero",
+   "theorems": [
+    "isApproximateAddSubgroup_zero"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] exact isApproximateAddSubgroup_zero",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Combinatorics.Enumerative.Composition",
+   "name": "Composition.orderEmbOfFin_boundaries",
+   "theorems": [
+    "Composition.orderEmbOfFin_boundaries"
+   ],
+   "answer": "closed",
+   "ms": 5,
+   "text": "Try this:   [apply] (expose_names; exact Composition.orderEmbOfFin_boundaries c)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Combinatorics.Enumerative.Pentagonal.Ring",
+   "name": "Pentagonal.tprod_one_sub_pow",
+   "theorems": [
+    "Pentagonal.tprod_one_sub_pow"
+   ],
+   "answer": "closed",
+   "ms": 2637,
+   "text": "Try this:   [apply] (expose_names; exact Pentagonal.tprod_one_sub_pow hx hsum hlhs hrhs htail)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Combinatorics.Matroid.Dual",
+   "name": "Matroid.base_iff_dual_isBase_compl",
+   "theorems": [
+    "Matroid.base_iff_dual_isBase_compl"
+   ],
+   "answer": "closed",
+   "ms": 302,
+   "text": "Try this:   [apply] (expose_names; exact Matroid.base_iff_dual_isBase_compl hB)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Combinatorics.Quiver.Path",
+   "name": "Quiver.Hom.reachable",
+   "theorems": [
+    "Quiver.Hom.reachable"
+   ],
+   "answer": "closed",
+   "ms": 6,
+   "text": "Try this:   [apply] (expose_names; exact Quiver.Hom.reachable e)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Combinatorics.SetFamily.DualVC",
+   "name": "Finset.vcDim_dualFamily_le",
+   "theorems": [
+    "Finset.vcDim_dualFamily_le"
+   ],
+   "answer": "closed",
+   "ms": 75,
+   "text": "Try this:   [apply] (expose_names; exact Finset.vcDim_dualFamily_le 𝒜 X hvc)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Combinatorics.SimpleGraph.Copy",
+   "name": "SimpleGraph.killCopies_bot",
+   "theorems": [
+    "SimpleGraph.killCopies_bot"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] (expose_names; exact SimpleGraph.killCopies_bot G)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Combinatorics.SimpleGraph.Extremal.Basic",
+   "name": "SimpleGraph.extremalNumber_congr",
+   "theorems": [
+    "SimpleGraph.extremalNumber_congr"
+   ],
+   "answer": "closed",
+   "ms": 309,
+   "text": "Try this:   [apply] (expose_names; exact SimpleGraph.extremalNumber_congr h e)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Computability.RecursiveIn",
+   "name": "RecursiveIn.partrec_of_oracle",
+   "theorems": [
+    "RecursiveIn.partrec_of_oracle"
+   ],
+   "answer": "closed",
+   "ms": 7,
+   "text": "Try this:   [apply] (expose_names; exact RecursiveIn.partrec_of_oracle hO hf)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Condensed.Light.Instances",
+   "name": "LightProfinite.hasSheafify",
+   "theorems": [
+    "LightProfinite.hasSheafify"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] (expose_names; exact LightProfinite.hasSheafify A)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Data.Finset.Dedup",
+   "name": "List.toFinset.ext_iff",
+   "theorems": [
+    "List.toFinset.ext_iff"
+   ],
+   "answer": "closed",
+   "ms": 42,
+   "text": "Try this:   [apply] exact List.toFinset.ext_iff",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Data.Finset.Finsupp",
+   "name": "Finset.mem_finsupp_iff",
+   "theorems": [
+    "Finset.mem_finsupp_iff"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] exact Finset.mem_finsupp_iff",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Data.Finset.Sym",
+   "name": "Finset.sym_univ",
+   "theorems": [
+    "Finset.sym_univ"
+   ],
+   "answer": "closed",
+   "ms": 21,
+   "text": "Try this:   [apply] (expose_names; exact Finset.sym_univ n)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Data.Finsupp.MonomialOrder.DegLex",
+   "name": "toDegLex_inj",
+   "theorems": [
+    "toDegLex_inj"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] exact toDegLex_inj",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Data.Finsupp.Multiset",
+   "name": "Finsupp.sum_toMultiset",
+   "theorems": [
+    "Finsupp.sum_toMultiset"
+   ],
+   "answer": "closed",
+   "ms": 4,
+   "text": "Try this:   [apply] (expose_names; exact Finsupp.sum_toMultiset f)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Data.Fintype.Order",
+   "name": "Finite.exists_le",
+   "theorems": [
+    "Finite.exists_le"
+   ],
+   "answer": "closed",
+   "ms": 11465,
+   "text": "Try this:   [apply] (expose_names; exact Finite.exists_le f)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Data.Fintype.Perm",
+   "name": "Fintype.card_perm",
+   "theorems": [
+    "Fintype.card_perm"
+   ],
+   "answer": "closed",
+   "ms": 87,
+   "text": "Try this:   [apply] exact Fintype.card_perm",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Data.Fintype.Pi",
+   "name": "Fintype.mem_piFinset",
+   "theorems": [
+    "Fintype.mem_piFinset"
+   ],
+   "answer": "closed",
+   "ms": 9,
+   "text": "Try this:   [apply] exact Fintype.mem_piFinset",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Data.Int.Order.Lemmas",
+   "name": "Int.abs_le_sqrt",
+   "theorems": [
+    "Int.abs_le_sqrt"
+   ],
+   "answer": "closed",
+   "ms": 19,
+   "text": "Try this:   [apply] (expose_names; exact Int.abs_le_sqrt hn)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Data.Nat.BinaryRec",
+   "name": "Nat.bitCasesOn_bit",
+   "theorems": [
+    "Nat.bitCasesOn_bit"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] (expose_names; exact Nat.bitCasesOn_bit h b n)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Data.Nat.Bitwise",
+   "name": "Nat.land_bit",
+   "theorems": [
+    "Nat.land_bit"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] (expose_names; exact Nat.land_bit a m b n)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Data.Nat.Cast.Field",
+   "name": "Nat.cast_div_charZero",
+   "theorems": [
+    "Nat.cast_div_charZero"
+   ],
+   "answer": "closed",
+   "ms": 6,
+   "text": "Try this:   [apply] (expose_names; exact Nat.cast_div_charZero hnm)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Data.Nat.Choose.Vandermonde",
+   "name": "Nat.sum_range_choose_sq",
+   "theorems": [
+    "Nat.sum_range_choose_sq"
+   ],
+   "answer": "closed",
+   "ms": 60,
+   "text": "Try this:   [apply] (expose_names; exact Nat.sum_range_choose_sq n)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Data.Nat.Factorial.Cast",
+   "name": "Nat.cast_descFactorial_two",
+   "theorems": [
+    "Nat.cast_descFactorial_two"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] (expose_names; exact Nat.cast_descFactorial_two S a)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Data.Nat.Factorization.Root",
+   "name": "Nat.floorRoot_eq_zero",
+   "theorems": [
+    "Nat.floorRoot_eq_zero"
+   ],
+   "answer": "closed",
+   "ms": 38,
+   "text": "Try this:   [apply] exact Nat.floorRoot_eq_zero",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Data.PFunctor.Univariate.M",
+   "name": "PFunctor.Approx.agree_children",
+   "theorems": [
+    "PFunctor.Approx.agree_children"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] (expose_names; exact PFunctor.Approx.agree_children x y h₀ h₁)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Data.Set.Card",
+   "name": "Function.Embedding.encard_le",
+   "theorems": [
+    "Function.Embedding.encard_le"
+   ],
+   "answer": "closed",
+   "ms": 18,
+   "text": "Try this:   [apply] (expose_names; exact Function.Embedding.encard_le e)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Data.String.Basic",
+   "name": "String.ltb_cons_addChar",
+   "theorems": [
+    "String.ltb_cons_addChar"
+   ],
+   "answer": "closed",
+   "ms": 26,
+   "text": "Try this:   [apply] (expose_names; exact String.ltb_cons_addChar c cs₁ cs₂ i₁ i₂)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Data.ZMod.Units",
+   "name": "ZMod.unitsMap_surjective",
+   "theorems": [
+    "ZMod.unitsMap_surjective"
+   ],
+   "answer": "closed",
+   "ms": 13,
+   "text": "Try this:   [apply] (expose_names; exact ZMod.unitsMap_surjective h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.FieldTheory.Minpoly.Finite",
+   "name": "minpoly.degree_le",
+   "theorems": [
+    "minpoly.degree_le"
+   ],
+   "answer": "closed",
+   "ms": 6,
+   "text": "Try this:   [apply] (expose_names; exact minpoly.degree_le x)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.FieldTheory.Perfect",
+   "name": "powMulEquiv_eq_toMulEquiv_frobeniusEquiv",
+   "theorems": [
+    "powMulEquiv_eq_toMulEquiv_frobeniusEquiv"
+   ],
+   "answer": "closed",
+   "ms": 6,
+   "text": "Try this:   [apply] (expose_names; exact powMulEquiv_eq_toMulEquiv_frobeniusEquiv R p)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.FieldTheory.RatFunc.Luroth",
+   "name": "RatFunc.Luroth.generator_ne_zero",
+   "theorems": [
+    "instIsDomain",
+    "RatFunc.Luroth.generator_ne_zero"
+   ],
+   "answer": "closed",
+   "ms": 39,
+   "text": "Try this:   [apply] (expose_names; exact RatFunc.Luroth.generator_ne_zero h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Geometry.Euclidean.Angle.Sphere",
+   "name": "EuclideanGeometry.Sphere.thales_theorem",
+   "theorems": [
+    "EuclideanGeometry.Sphere.thales_theorem"
+   ],
+   "answer": "closed",
+   "ms": 18,
+   "text": "Try this:   [apply] (expose_names; exact EuclideanGeometry.Sphere.thales_theorem hd)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Geometry.Euclidean.Angle.Unoriented.TriangleInequality",
+   "name": "EuclideanGeometry.angle_le_angle_add_angle",
+   "theorems": [
+    "EuclideanGeometry.angle_le_angle_add_angle"
+   ],
+   "answer": "closed",
+   "ms": 69,
+   "text": "Try this:   [apply] (expose_names; exact EuclideanGeometry.angle_le_angle_add_angle p p₁ p₂ p₃)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Geometry.Euclidean.Sphere.Basic",
+   "name": "EuclideanGeometry.Sphere.ne_center_of_mem_of_mem_of_ne",
+   "theorems": [
+    "EuclideanGeometry.Sphere.ne_center_of_mem_of_mem_of_ne"
+   ],
+   "answer": "closed",
+   "ms": 6,
+   "text": "Try this:   [apply] (expose_names; exact EuclideanGeometry.Sphere.ne_center_of_mem_of_mem_of_ne hp hq hpq)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Geometry.Euclidean.Sphere.Power",
+   "name": "EuclideanGeometry.Sphere.mul_dist_eq_abs_power",
+   "theorems": [
+    "EuclideanGeometry.Sphere.mul_dist_eq_abs_power"
+   ],
+   "answer": "closed",
+   "ms": 8,
+   "text": "Try this:   [apply] (expose_names; exact EuclideanGeometry.Sphere.mul_dist_eq_abs_power hp ha hb)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Geometry.Euclidean.Volume.Basic",
+   "name": "Affine.Simplex.volume_eq_one",
+   "theorems": [
+    "Affine.Simplex.volume_eq_one"
+   ],
+   "answer": "closed",
+   "ms": 37,
+   "text": "Try this:   [apply] (expose_names; exact Affine.Simplex.volume_eq_one s)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Geometry.Group.Growth.QuotientInter",
+   "name": "Finset.card_nsmul_quotient_add_nsmul_inter_addSubgroup_le",
+   "theorems": [
+    "Finset.card_nsmul_quotient_add_nsmul_inter_addSubgroup_le"
+   ],
+   "answer": "closed",
+   "ms": 7,
+   "text": "Try this:   [apply] exact Finset.card_nsmul_quotient_add_nsmul_inter_addSubgroup_le",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Geometry.Manifold.GroupLieAlgebra",
+   "name": "AddGroupLieAlgebra.bracket_def",
+   "theorems": [
+    "AddGroupLieAlgebra.bracket_def"
+   ],
+   "answer": "closed",
+   "ms": 6,
+   "text": "Try this:   [apply] (expose_names; exact AddGroupLieAlgebra.bracket_def v w)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Geometry.Manifold.IntegralCurve.UniformTime",
+   "name": "eqOn_of_isMIntegralCurveOn_Ioo",
+   "theorems": [
+    "eqOn_of_isMIntegralCurveOn_Ioo"
+   ],
+   "answer": "closed",
+   "ms": 13,
+   "text": "Try this:   [apply] (expose_names; exact eqOn_of_isMIntegralCurveOn_Ioo hv γ hγx hγ hle)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.GroupTheory.Coset.Defs",
+   "name": "QuotientAddGroup.leftRel_apply",
+   "theorems": [
+    "QuotientAddGroup.leftRel_apply"
+   ],
+   "answer": "closed",
+   "ms": 228,
+   "text": "Try this:   [apply] exact QuotientAddGroup.leftRel_apply",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.GroupTheory.GroupAction.Period",
+   "name": "MulAction.period_dvd_exponent",
+   "theorems": [
+    "MulAction.period_dvd_exponent"
+   ],
+   "answer": "closed",
+   "ms": 7,
+   "text": "Try this:   [apply] (expose_names; exact MulAction.period_dvd_exponent m a)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.GroupTheory.NoncommCoprod",
+   "name": "AddHom.comp_noncommCoprod",
+   "theorems": [
+    "AddHom.comp_noncommCoprod"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] (expose_names; exact AddHom.comp_noncommCoprod f g h comm)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.GroupTheory.PushoutI",
+   "name": "Monoid.PushoutI.hom_ext",
+   "theorems": [
+    "Monoid.PushoutI.hom_ext"
+   ],
+   "answer": "closed",
+   "ms": 33,
+   "text": "Try this:   [apply] (expose_names; exact Monoid.PushoutI.hom_ext h hbase)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.GroupTheory.Subgroup.Centralizer",
+   "name": "AddSubgroup.mem_centralizer_iff_addCommutator_eq_zero'",
+   "theorems": [
+    "AddSubgroup.mem_centralizer_iff_addCommutator_eq_zero'"
+   ],
+   "answer": "closed",
+   "ms": 23,
+   "text": "Try this:   [apply] exact AddSubgroup.mem_centralizer_iff_addCommutator_eq_zero'",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.LinearAlgebra.Basis.Cardinality",
+   "name": "basis_finite_of_finite_spans",
+   "theorems": [
+    "basis_finite_of_finite_spans"
+   ],
+   "answer": "closed",
+   "ms": 44,
+   "text": "Try this:   [apply] (expose_names; exact basis_finite_of_finite_spans hs hsspan b)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.LinearAlgebra.Basis.Defs",
+   "name": "Module.Basis.eq_ofRepr_eq_repr",
+   "theorems": [
+    "RingHomInvPair.ids",
+    "Module.Basis.eq_ofRepr_eq_repr"
+   ],
+   "answer": "closed",
+   "ms": 43,
+   "text": "Try this:   [apply] (expose_names; exact Module.Basis.eq_ofRepr_eq_repr h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.LinearAlgebra.DFinsupp",
+   "name": "DFinsupp.coprodMap_apply",
+   "theorems": [
+    "DFinsupp.coprodMap_apply"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] (expose_names; exact DFinsupp.coprodMap_apply f x)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.LinearAlgebra.Dimension.Finrank",
+   "name": "CommSemiring.finrank_self",
+   "theorems": [
+    "CommSemiring.finrank_self"
+   ],
+   "answer": "closed",
+   "ms": 7,
+   "text": "Try this:   [apply] (expose_names; exact CommSemiring.finrank_self R)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.LinearAlgebra.Dimension.Torsion.Basic",
+   "name": "finrank_quotient_eq_of_le_torsion",
+   "theorems": [
+    "finrank_quotient_eq_of_le_torsion"
+   ],
+   "answer": "closed",
+   "ms": 81,
+   "text": "Try this:   [apply] (expose_names; exact finrank_quotient_eq_of_le_torsion hN)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.LinearAlgebra.Eigenspace.ContinuousLinearMap",
+   "name": "ContinuousLinearMap.isClosed_genEigenspace",
+   "theorems": [
+    "ContinuousLinearMap.isClosed_genEigenspace"
+   ],
+   "answer": "closed",
+   "ms": 9,
+   "text": "Try this:   [apply] (expose_names; exact ContinuousLinearMap.isClosed_genEigenspace f μ n)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.LinearAlgebra.LinearIndependent.Algebra",
+   "name": "LinearIndepOn.id_image_algebraMap_iff",
+   "theorems": [
+    "LinearIndepOn.id_image_algebraMap_iff"
+   ],
+   "answer": "closed",
+   "ms": 5,
+   "text": "Try this:   [apply] exact LinearIndepOn.id_image_algebraMap_iff",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.LinearAlgebra.Matrix.DualNumber",
+   "name": "Matrix.dualNumberEquiv_symm_apply",
+   "theorems": [
+    "Matrix.dualNumberEquiv_symm_apply"
+   ],
+   "answer": "closed",
+   "ms": 37,
+   "text": "Try this:   [apply] (expose_names; exact Matrix.dualNumberEquiv_symm_apply d)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.LinearAlgebra.Matrix.WithConv",
+   "name": "convOne_def",
+   "theorems": [
+    "convOne_def"
+   ],
+   "answer": "closed",
+   "ms": 4,
+   "text": "Try this:   [apply] exact convOne_def",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.LinearAlgebra.PiTensorProduct.Basic",
+   "name": "PiTensorProduct.lift_reindex",
+   "theorems": [
+    "PiTensorProduct.lift_reindex"
+   ],
+   "answer": "closed",
+   "ms": 27,
+   "text": "Try this:   [apply] (expose_names; exact PiTensorProduct.lift_reindex e φ x)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.LinearAlgebra.PiTensorProduct.Generators",
+   "name": "PiTensorProduct.equivPiTensorComplSingletonTensor_symm_tmul",
+   "theorems": [
+    "PiTensorProduct.equivPiTensorComplSingletonTensor_symm_tmul"
+   ],
+   "answer": "closed",
+   "ms": 17,
+   "text": "Try this:   [apply] (expose_names; exact PiTensorProduct.equivPiTensorComplSingletonTensor_symm_tmul R M i₀ m x)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.LinearAlgebra.TensorProduct.Tower",
+   "name": "TensorProduct.AlgebraTensorModule.distribBaseChange_symm_tmul",
+   "theorems": [
+    "TensorProduct.AlgebraTensorModule.distribBaseChange_symm_tmul"
+   ],
+   "answer": "closed",
+   "ms": 37,
+   "text": "Try this:   [apply] (expose_names; exact TensorProduct.AlgebraTensorModule.distribBaseChange_symm_tmul R A n q a b)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.LinearAlgebra.Transvection.Generation",
+   "name": "LinearEquiv.le_one_add_finrank_fixedSubmodule_dilatransvection_mul",
+   "theorems": [
+    "RingHomInvPair.ids",
+    "LinearEquiv.le_one_add_finrank_fixedSubmodule_dilatransvection_mul"
+   ],
+   "answer": "closed",
+   "ms": 5,
+   "text": "Try this:   [apply] (expose_names; exact LinearEquiv.le_one_add_finrank_fixedSubmodule_dilatransvection_mul e f hf)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Logic.Equiv.Multiset",
+   "name": "Denumerable.isChain_raise",
+   "theorems": [
+    "Denumerable.isChain_raise"
+   ],
+   "answer": "closed",
+   "ms": 1,
+   "text": "Try this:   [apply] (expose_names; exact Denumerable.isChain_raise l n)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Logic.Function.Coequalizer",
+   "name": "Function.Coequalizer.desc_mk",
+   "theorems": [
+    "Function.Coequalizer.desc_mk"
+   ],
+   "answer": "closed",
+   "ms": 1,
+   "text": "Try this:   [apply] (expose_names; exact Function.Coequalizer.desc_mk f g u hu x)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.MeasureTheory.Constructions.Polish.StronglyMeasurable",
+   "name": "MeasureTheory.StronglyMeasurable.tprod'",
+   "theorems": [
+    "MeasureTheory.StronglyMeasurable.tprod'"
+   ],
+   "answer": "closed",
+   "ms": 4,
+   "text": "Try this:   [apply] (expose_names; exact MeasureTheory.StronglyMeasurable.tprod' h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.MeasureTheory.Covering.DensityTheorem",
+   "name": "IsUnifLocDoublingMeasure.ae_tendsto_measure_inter_div",
+   "theorems": [
+    "IsUnifLocDoublingMeasure.ae_tendsto_measure_inter_div"
+   ],
+   "answer": "closed",
+   "ms": 20,
+   "text": "Try this:   [apply] (expose_names; exact IsUnifLocDoublingMeasure.ae_tendsto_measure_inter_div μ S K)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.MeasureTheory.Function.AEMeasurableOrder",
+   "name": "MeasureTheory.aemeasurable_of_exist_almost_disjoint_supersets",
+   "theorems": [
+    "MeasureTheory.aemeasurable_of_exist_almost_disjoint_supersets"
+   ],
+   "answer": "closed",
+   "ms": 139,
+   "text": "Try this:   [apply] (expose_names; exact MeasureTheory.aemeasurable_of_exist_almost_disjoint_supersets μ s s_count s_dense f h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.MeasureTheory.Function.EssSup",
+   "name": "essSup_le_of_ae_le",
+   "theorems": [
+    "MeasureTheory.Measure.instOuterMeasureClass",
+    "essSup_le_of_ae_le"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] (expose_names; exact essSup_le_of_ae_le c hf hfbdd)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.MeasureTheory.Function.L1Space.AEEqFun",
+   "name": "MeasureTheory.Integrable.toL1_eq_toL1_iff",
+   "theorems": [
+    "MeasureTheory.Integrable.toL1_eq_toL1_iff"
+   ],
+   "answer": "closed",
+   "ms": 47,
+   "text": "Try this:   [apply] (expose_names; exact MeasureTheory.Integrable.toL1_eq_toL1_iff f g hf hg)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.MeasureTheory.Function.LpSeminorm.Prod",
+   "name": "MeasureTheory.MemLp.comp_snd",
+   "theorems": [
+    "MeasureTheory.MemLp.comp_snd"
+   ],
+   "answer": "closed",
+   "ms": 17,
+   "text": "Try this:   [apply] (expose_names; exact MeasureTheory.MemLp.comp_snd hf μ)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.MeasureTheory.Integral.RieszMarkovKakutani.Real",
+   "name": "MeasureTheory.Measure.exists_innerRegular_eq_of_isCompact",
+   "theorems": [
+    "MeasureTheory.Measure.exists_innerRegular_eq_of_isCompact"
+   ],
+   "answer": "closed",
+   "ms": 45,
+   "text": "Try this:   [apply] (expose_names; exact MeasureTheory.Measure.exists_innerRegular_eq_of_isCompact μ hK h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.MeasureTheory.Measure.Haar.Extension",
+   "name": "TopologicalGroup.IsSES.inducedMeasure_regular",
+   "theorems": [
+    "TopologicalGroup.IsSES.inducedMeasure_regular"
+   ],
+   "answer": "closed",
+   "ms": 5,
+   "text": "Try this:   [apply] (expose_names; exact TopologicalGroup.IsSES.inducedMeasure_regular H μA μC)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.ModelTheory.Semantics",
+   "name": "FirstOrder.Language.LHom.realize_onBoundedFormula",
+   "theorems": [
+    "FirstOrder.Language.LHom.realize_onBoundedFormula"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] (expose_names; exact FirstOrder.Language.LHom.realize_onBoundedFormula φ ψ)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.ModelTheory.Syntax",
+   "name": "FirstOrder.Language.LEquiv.onTerm_symm_apply",
+   "theorems": [
+    "FirstOrder.Language.LEquiv.onTerm_symm_apply"
+   ],
+   "answer": "closed",
+   "ms": 7,
+   "text": "Try this:   [apply] (expose_names; exact FirstOrder.Language.LEquiv.onTerm_symm_apply φ a)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.NumberTheory.DirichletCharacter.Basic",
+   "name": "DirichletCharacter.changeLevel_eq_cast_of_dvd'",
+   "theorems": [
+    "DirichletCharacter.changeLevel_eq_cast_of_dvd'"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] (expose_names; exact DirichletCharacter.changeLevel_eq_cast_of_dvd' χ hm ha)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.NumberTheory.FrobeniusNumber",
+   "name": "frobeniusNumber_pair",
+   "theorems": [
+    "frobeniusNumber_pair"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] (expose_names; exact frobeniusNumber_pair cop hm hn)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.NumberTheory.LSeries.SumCoeff",
+   "name": "LSeries_eq_mul_integral_of_nonneg",
+   "theorems": [
+    "LSeries_eq_mul_integral_of_nonneg"
+   ],
+   "answer": "closed",
+   "ms": 18,
+   "text": "Try this:   [apply] (expose_names; exact LSeries_eq_mul_integral_of_nonneg f hr hs hO hf)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.NumberTheory.NumberField.CanonicalEmbedding.ConvexBody",
+   "name": "NumberField.mixedEmbedding.convexBodyLT'_mem",
+   "theorems": [
+    "NumberField.mixedEmbedding.convexBodyLT'_mem"
+   ],
+   "answer": "closed",
+   "ms": 7,
+   "text": "Try this:   [apply] (expose_names; exact NumberField.mixedEmbedding.convexBodyLT'_mem K f w₀)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.NumberTheory.Padics.PadicVal.Basic",
+   "name": "padicValRat.zpow",
+   "theorems": [
+    "padicValRat.zpow"
+   ],
+   "answer": "closed",
+   "ms": 19,
+   "text": "Try this:   [apply] (expose_names; exact padicValRat.zpow q)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.NumberTheory.Padics.PadicVal.Defs",
+   "name": "Nat.toNat_emultiplicity",
+   "theorems": [
+    "Nat.toNat_emultiplicity"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] (expose_names; exact Nat.toNat_emultiplicity p n)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.NumberTheory.Padics.WithVal",
+   "name": "Padic.withValUniformEquiv_norm_le_one_iff",
+   "theorems": [
+    "Padic.withValUniformEquiv_norm_le_one_iff"
+   ],
+   "answer": "closed",
+   "ms": 4,
+   "text": "Try this:   [apply] (expose_names; exact Padic.withValUniformEquiv_norm_le_one_iff x)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.NumberTheory.Rayleigh",
+   "name": "beattySeq'_symmDiff_beattySeq_pos",
+   "theorems": [
+    "beattySeq'_symmDiff_beattySeq_pos"
+   ],
+   "answer": "closed",
+   "ms": 61,
+   "text": "Try this:   [apply] (expose_names; exact beattySeq'_symmDiff_beattySeq_pos hrs)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.NumberTheory.SumFourSquares",
+   "name": "euler_four_squares",
+   "theorems": [
+    "euler_four_squares"
+   ],
+   "answer": "closed",
+   "ms": 16,
+   "text": "Try this:   [apply] (expose_names; exact euler_four_squares a b c d x y z w)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.NumberTheory.WellApproximable",
+   "name": "approxAddOrderOf.vadd_eq_of_mul_dvd",
+   "theorems": [
+    "approxAddOrderOf.vadd_eq_of_mul_dvd"
+   ],
+   "answer": "closed",
+   "ms": 56,
+   "text": "Try this:   [apply] (expose_names; exact approxAddOrderOf.vadd_eq_of_mul_dvd δ hn han)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Order.BooleanGenerators",
+   "name": "IsCompactlyGenerated.BooleanGenerators.complementedLattice_of_sSup_eq_top",
+   "theorems": [
+    "IsCompactlyGenerated.BooleanGenerators.complementedLattice_of_sSup_eq_top"
+   ],
+   "answer": "closed",
+   "ms": 14,
+   "text": "Try this:   [apply] (expose_names; exact IsCompactlyGenerated.BooleanGenerators.complementedLattice_of_sSup_eq_top hS h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Order.CompleteLattice.Chain",
+   "name": "maxChain_spec",
+   "theorems": [
+    "maxChain_spec"
+   ],
+   "answer": "closed",
+   "ms": 0,
+   "text": "Try this:   [apply] exact maxChain_spec",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Order.Filter.AtTopBot.Finset",
+   "name": "Filter.tendsto_comp_card_atTop_iff_of_fintype",
+   "theorems": [
+    "Filter.tendsto_comp_card_atTop_iff_of_fintype"
+   ],
+   "answer": "closed",
+   "ms": 5,
+   "text": "Try this:   [apply] exact Filter.tendsto_comp_card_atTop_iff_of_fintype",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Order.Fin.Prod",
+   "name": "Fin.prod_lt_last_last_iff",
+   "theorems": [
+    "Fin.prod_lt_last_last_iff"
+   ],
+   "answer": "closed",
+   "ms": 288,
+   "text": "Try this:   [apply] (expose_names; exact Fin.prod_lt_last_last_iff i)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Order.GaloisConnection.Basic",
+   "name": "GaloisConnection.isGreatest_u",
+   "theorems": [
+    "GaloisConnection.isGreatest_u"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] (expose_names; exact GaloisConnection.isGreatest_u gc)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Order.InitialSeg",
+   "name": "InitialSeg.trans_apply",
+   "theorems": [
+    "InitialSeg.trans_apply"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] (expose_names; exact InitialSeg.trans_apply f g a)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Order.Interval.Set.OrderIso",
+   "name": "OrderIso.image_Icc",
+   "theorems": [
+    "OrderIso.image_Icc"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] (expose_names; exact OrderIso.image_Icc e a b)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Order.Interval.Set.Pi",
+   "name": "Set.image_single_uIcc_right",
+   "theorems": [
+    "Set.image_single_uIcc_right"
+   ],
+   "answer": "closed",
+   "ms": 69,
+   "text": "Try this:   [apply] (expose_names; exact Set.image_single_uIcc_right i b)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Order.Interval.Set.SurjOn",
+   "name": "surjOn_Ioo_of_monotone_surjective",
+   "theorems": [
+    "surjOn_Ioo_of_monotone_surjective"
+   ],
+   "answer": "closed",
+   "ms": 4,
+   "text": "Try this:   [apply] (expose_names; exact surjOn_Ioo_of_monotone_surjective h_mono h_surj a b)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Order.Monotone.Extension",
+   "name": "AntitoneOn.exists_antitone_extension",
+   "theorems": [
+    "AntitoneOn.exists_antitone_extension"
+   ],
+   "answer": "closed",
+   "ms": 19,
+   "text": "Try this:   [apply] (expose_names; exact AntitoneOn.exists_antitone_extension h hl hu)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Order.SaddlePoint",
+   "name": "isSaddlePointOn_value",
+   "theorems": [
+    "isSaddlePointOn_value"
+   ],
+   "answer": "closed",
+   "ms": 35,
+   "text": "Try this:   [apply] (expose_names; exact isSaddlePointOn_value ha hb h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Order.SuccPred.Basic",
+   "name": "Order.succ_ne_bot",
+   "theorems": [
+    "Order.succ_ne_bot"
+   ],
+   "answer": "closed",
+   "ms": 38,
+   "text": "Try this:   [apply] (expose_names; exact Order.succ_ne_bot a)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Probability.Distributions.Exponential",
+   "name": "ProbabilityTheory.lintegral_exponentialPDF_eq_one",
+   "theorems": [
+    "ProbabilityTheory.lintegral_exponentialPDF_eq_one"
+   ],
+   "answer": "closed",
+   "ms": 23,
+   "text": "Try this:   [apply] (expose_names; exact ProbabilityTheory.lintegral_exponentialPDF_eq_one hr)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Probability.Independence.Integration",
+   "name": "ProbabilityTheory.Indep.setIntegral_eq_smul",
+   "theorems": [
+    "ProbabilityTheory.Indep.setIntegral_eq_smul"
+   ],
+   "answer": "closed",
+   "ms": 29,
+   "text": "Try this:   [apply] (expose_names; exact ProbabilityTheory.Indep.setIntegral_eq_smul hm hA1 hX hA2 hf)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Probability.Independence.Process.Basic",
+   "name": "ProbabilityTheory.Kernel.IndepFun.process_congr_left",
+   "theorems": [
+    "MeasureTheory.Measure.instOuterMeasureClass",
+    "ProbabilityTheory.Kernel.IndepFun.process_congr_left"
+   ],
+   "answer": "closed",
+   "ms": 81,
+   "text": "Try this:   [apply] (expose_names; exact ProbabilityTheory.Kernel.IndepFun.process_congr_left h1 h2)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Probability.Kernel.Integral",
+   "name": "ProbabilityTheory.Kernel.setIntegral_deterministic'",
+   "theorems": [
+    "ProbabilityTheory.Kernel.setIntegral_deterministic'"
+   ],
+   "answer": "closed",
+   "ms": 14,
+   "text": "Try this:   [apply] (expose_names; exact ProbabilityTheory.Kernel.setIntegral_deterministic' hg hf hs)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.Adjoin.Polynomial.Bivariate",
+   "name": "IsAlgebraic.adjoin_singleton",
+   "theorems": [
+    "IsAlgebraic.adjoin_singleton"
+   ],
+   "answer": "closed",
+   "ms": 17,
+   "text": "Try this:   [apply] (expose_names; exact IsAlgebraic.adjoin_singleton hx hy h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.Adjoin.PowerBasis",
+   "name": "PowerBasis.repr_pow_isIntegral",
+   "theorems": [
+    "RingHomInvPair.ids",
+    "PowerBasis.repr_pow_isIntegral"
+   ],
+   "answer": "closed",
+   "ms": 6,
+   "text": "Try this:   [apply] (expose_names; exact PowerBasis.repr_pow_isIntegral hB hx hmin n i)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.Algebraic.StronglyTranscendental",
+   "name": "IsStronglyTranscendental.of_map",
+   "theorems": [
+    "IsStronglyTranscendental.of_map"
+   ],
+   "answer": "closed",
+   "ms": 7,
+   "text": "Try this:   [apply] (expose_names; exact IsStronglyTranscendental.of_map hf h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.AlgebraicIndependent.Adjoin",
+   "name": "AlgebraicIndependent.lift_reprField",
+   "theorems": [
+    "AlgebraicIndependent.lift_reprField"
+   ],
+   "answer": "closed",
+   "ms": 25,
+   "text": "Try this:   [apply] (expose_names; exact AlgebraicIndependent.lift_reprField hx p)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.Coalgebra.CoassocSimps",
+   "name": "CoassocSimps.assoc_symm_comp_map_rid_symm_assoc",
+   "theorems": [
+    "CoassocSimps.assoc_symm_comp_map_rid_symm_assoc"
+   ],
+   "answer": "closed",
+   "ms": 76,
+   "text": "Try this:   [apply] (expose_names; exact CoassocSimps.assoc_symm_comp_map_rid_symm_assoc f g)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.Extension.Presentation.Core",
+   "name": "Algebra.Presentation.HasCoeffs.of_isScalarTower",
+   "theorems": [
+    "Algebra.Presentation.HasCoeffs.of_isScalarTower"
+   ],
+   "answer": "closed",
+   "ms": 10,
+   "text": "Try this:   [apply] (expose_names; exact Algebra.Presentation.HasCoeffs.of_isScalarTower R₀)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.Extension.Presentation.Submersive",
+   "name": "Algebra.PreSubmersivePresentation.jacobian_ofAlgEquiv",
+   "theorems": [
+    "Algebra.PreSubmersivePresentation.jacobian_ofAlgEquiv"
+   ],
+   "answer": "closed",
+   "ms": 5,
+   "text": "Try this:   [apply] (expose_names; exact Algebra.PreSubmersivePresentation.jacobian_ofAlgEquiv P e)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.Finiteness.ModuleFinitePresentation",
+   "name": "Module.FinitePresentation.iff_finitePresentation_of_finite",
+   "theorems": [
+    "Module.FinitePresentation.iff_finitePresentation_of_finite"
+   ],
+   "answer": "closed",
+   "ms": 220,
+   "text": "Try this:   [apply] (expose_names; exact Module.FinitePresentation.iff_finitePresentation_of_finite R S)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.HopkinsLevitzki",
+   "name": "instIsNoetherianRingOfIsArtinianRing",
+   "theorems": [
+    "isNoetherian_of_isNoetherianRing_of_finite",
+    "instIsNoetherianRingOfIsArtinianRing",
+    "Module.Finite.self"
+   ],
+   "answer": "closed",
+   "ms": 22,
+   "text": "Try this:   [apply] (expose_names; exact isNoetherian_of_isNoetherianRing_of_finite R R)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.Ideal.AssociatedPrime.Localization",
+   "name": "Module.associatedPrimes.mem_associatedPrimes_of_comap_mem_associatedPrimes_of_isLocalizedModule",
+   "theorems": [
+    "RingHom.instRingHomClass",
+    "Module.associatedPrimes.mem_associatedPrimes_of_comap_mem_associatedPrimes_of_isLocalizedModule"
+   ],
+   "answer": "closed",
+   "ms": 61,
+   "text": "Try this:   [apply] (expose_names; exact Module.associatedPrimes.mem_associatedPrimes_of_comap_mem_associatedPrimes_of_isLocalizedModule     S f p ass)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.Ideal.CotangentBaseChange",
+   "name": "Ideal.tensorCotangentEquiv_tmul",
+   "theorems": [
+    "Ideal.tensorCotangentEquiv_tmul"
+   ],
+   "answer": "closed",
+   "ms": 16,
+   "text": "Try this:   [apply] (expose_names; exact Ideal.tensorCotangentEquiv_tmul R T I t x)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.Ideal.Quotient.Operations",
+   "name": "Ideal.quotientEquivAlgOfEq_coe_eq_factorₐ",
+   "theorems": [
+    "Ideal.quotientEquivAlgOfEq_coe_eq_factorₐ"
+   ],
+   "answer": "closed",
+   "ms": 18,
+   "text": "Try this:   [apply] (expose_names; exact Ideal.quotientEquivAlgOfEq_coe_eq_factorₐ R₁ h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.KrullDimension.Basic",
+   "name": "Ring.jacobson_eq_nilradical_of_krullDimLE_zero",
+   "theorems": [
+    "Ring.jacobson_eq_nilradical_of_krullDimLE_zero"
+   ],
+   "answer": "closed",
+   "ms": 46,
+   "text": "Try this:   [apply] (expose_names; exact Ring.jacobson_eq_nilradical_of_krullDimLE_zero R)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.LocalProperties.Injective",
+   "name": "Module.injective_of_localization_maximal'",
+   "theorems": [
+    "Ideal.IsMaximal.isPrime'",
+    "Module.injective_of_localization_maximal'"
+   ],
+   "answer": "closed",
+   "ms": 546,
+   "text": "Try this:   [apply] (expose_names; exact Module.injective_of_localization_maximal' Rₚ Mₚ f H)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.LocalProperties.Invertible",
+   "name": "Module.FinitePresentation.of_finite_of_flat_of_rankAtStalk_constant",
+   "theorems": [
+    "Ideal.IsMaximal.isPrime'",
+    "Module.FinitePresentation.of_finite_of_flat_of_rankAtStalk_constant"
+   ],
+   "answer": "closed",
+   "ms": 97,
+   "text": "Try this:   [apply] (expose_names; exact Module.FinitePresentation.of_finite_of_flat_of_rankAtStalk_constant n h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.Localization.Basic",
+   "name": "IsLocalization.algebraMap_apply_eq_map_map_submonoid",
+   "theorems": [
+    "IsLocalization.algebraMap_apply_eq_map_map_submonoid"
+   ],
+   "answer": "closed",
+   "ms": 13,
+   "text": "Try this:   [apply] (expose_names; exact IsLocalization.algebraMap_apply_eq_map_map_submonoid M S Rₘ Sₘ x)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.MvPowerSeries.Expand",
+   "name": "MvPowerSeries.support_expand",
+   "theorems": [
+    "MvPowerSeries.support_expand"
+   ],
+   "answer": "closed",
+   "ms": 70,
+   "text": "Try this:   [apply] (expose_names; exact MvPowerSeries.support_expand p hp φ)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.Nilpotent.GeometricallyReduced",
+   "name": "Algebra.instIsReducedTensorProductOfIsAlgebraicOfIsGeometricallyReduced",
+   "theorems": [
+    "Algebra.instIsReducedTensorProductOfIsAlgebraicOfIsGeometricallyReduced"
+   ],
+   "answer": "closed",
+   "ms": 61,
+   "text": "Try this:   [apply] (expose_names; exact Algebra.instIsReducedTensorProductOfIsAlgebraicOfIsGeometricallyReduced k A K)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.QuasiFinite.Basic",
+   "name": "Algebra.QuasiFinite.of_surjective_algHom",
+   "theorems": [
+    "Algebra.QuasiFinite.of_surjective_algHom"
+   ],
+   "answer": "closed",
+   "ms": 81,
+   "text": "Try this:   [apply] (expose_names; exact Algebra.QuasiFinite.of_surjective_algHom f hf)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.Radical.Basic",
+   "name": "UniqueFactorizationMonoid.dvd_radical_iff",
+   "theorems": [
+    "UniqueFactorizationMonoid.dvd_radical_iff"
+   ],
+   "answer": "closed",
+   "ms": 7,
+   "text": "Try this:   [apply] (expose_names; exact UniqueFactorizationMonoid.dvd_radical_iff ha hb₀)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.Smooth.Kaehler",
+   "name": "retractionOfSectionOfKerSqZero_comp_kerToTensor",
+   "theorems": [
+    "RingHom.instRingHomClass",
+    "retractionOfSectionOfKerSqZero_comp_kerToTensor"
+   ],
+   "answer": "closed",
+   "ms": 67,
+   "text": "Try this:   [apply] (expose_names; exact retractionOfSectionOfKerSqZero_comp_kerToTensor g hf' hg)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.Smooth.StandardSmooth",
+   "name": "Algebra.IsStandardSmoothOfRelativeDimension.baseChange",
+   "theorems": [
+    "Algebra.IsStandardSmoothOfRelativeDimension.baseChange"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] (expose_names; exact Algebra.IsStandardSmoothOfRelativeDimension.baseChange n T)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.Spectrum.Prime.LTSeries",
+   "name": "PrimeSpectrum.exist_mem_one_of_mem_two",
+   "theorems": [
+    "PrimeSpectrum.exist_mem_one_of_mem_two"
+   ],
+   "answer": "closed",
+   "ms": 59,
+   "text": "Try this:   [apply] (expose_names; exact PrimeSpectrum.exist_mem_one_of_mem_two h₀ h₁ hx)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.Spectrum.Prime.Module",
+   "name": "LocalizedModule.subsingleton_iff_disjoint",
+   "theorems": [
+    "LocalizedModule.subsingleton_iff_disjoint"
+   ],
+   "answer": "closed",
+   "ms": 4,
+   "text": "Try this:   [apply] exact LocalizedModule.subsingleton_iff_disjoint",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.UniqueFactorizationDomain.Basic",
+   "name": "UniqueFactorizationMonoid.factors_one",
+   "theorems": [
+    "UniqueFactorizationMonoid.factors_one"
+   ],
+   "answer": "closed",
+   "ms": 6,
+   "text": "Try this:   [apply] exact UniqueFactorizationMonoid.factors_one",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.Valuation.Discrete.IsDiscreteValuationRing",
+   "name": "IsDiscreteValuationRing.maximalIdeal_valuation_isEquiv",
+   "theorems": [
+    "ValuationSubring.instIsDomainSubtypeMem",
+    "IsDiscreteValuationRing.maximalIdeal_valuation_isEquiv"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] (expose_names; exact IsDiscreteValuationRing.maximalIdeal_valuation_isEquiv A)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.RingTheory.WittVector.Compare",
+   "name": "WittVector.toZModPow_compat",
+   "theorems": [
+    "WittVector.toZModPow_compat"
+   ],
+   "answer": "closed",
+   "ms": 12,
+   "text": "Try this:   [apply] (expose_names; exact WittVector.toZModPow_compat p m n h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.SetTheory.Cardinal.Continuum",
+   "name": "Cardinal.continuum_mul_ofNat",
+   "theorems": [
+    "Cardinal.continuum_mul_ofNat"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] exact Cardinal.continuum_mul_ofNat",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.SetTheory.Cardinal.ENat",
+   "name": "Cardinal.ofENat_top",
+   "theorems": [
+    "Cardinal.ofENat_top"
+   ],
+   "answer": "closed",
+   "ms": 9,
+   "text": "Try this:   [apply] exact Cardinal.ofENat_top",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.SetTheory.Cardinal.ToNat",
+   "name": "Cardinal.toNat_ofENat",
+   "theorems": [
+    "Cardinal.toNat_ofENat"
+   ],
+   "answer": "closed",
+   "ms": 126,
+   "text": "Try this:   [apply] (expose_names; exact Cardinal.toNat_ofENat n)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.SetTheory.Ordinal.Enum",
+   "name": "Ordinal.enumOrd_range",
+   "theorems": [
+    "Ordinal.enumOrd_range"
+   ],
+   "answer": "closed",
+   "ms": 185,
+   "text": "Try this:   [apply] (expose_names; exact Ordinal.enumOrd_range hf)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Tactic.Abel",
+   "name": "Mathlib.Tactic.Abel.const_add_termg",
+   "theorems": [],
+   "answer": "failed",
+   "ms": 150,
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Tactic.Module",
+   "name": "Mathlib.Tactic.Module.NF.eval_algebraMap",
+   "theorems": [],
+   "answer": "limit",
+   "ms": 12369,
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Tactic.Polynomial.Basic",
+   "name": "Mathlib.Tactic.Polynomial.map_algebraMap",
+   "theorems": [],
+   "answer": "limit",
+   "ms": 10793,
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.Algebra.Group.Pointwise",
+   "name": "IsOpen.mul_left",
+   "theorems": [
+    "IsOpen.mul_left"
+   ],
+   "answer": "closed",
+   "ms": 58,
+   "text": "Try this:   [apply] (expose_names; exact IsOpen.mul_left h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.Algebra.InfiniteSum.Defs",
+   "name": "Function.Injective.hasProd_comap_iff",
+   "theorems": [
+    "Function.Injective.hasProd_comap_iff"
+   ],
+   "answer": "closed",
+   "ms": 35,
+   "text": "Try this:   [apply] (expose_names; exact Function.Injective.hasProd_comap_iff hg hf)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.Algebra.Module.EmbeddingOfLocal",
+   "name": "LinearMap.isEmbedding_of_restrict_nhds_zero",
+   "theorems": [
+    "LinearMap.isEmbedding_of_restrict_nhds_zero"
+   ],
+   "answer": "closed",
+   "ms": 13,
+   "text": "Try this:   [apply] (expose_names; exact LinearMap.isEmbedding_of_restrict_nhds_zero V_mem H)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.Algebra.Order.Module",
+   "name": "instContinuousSMulNonneg",
+   "theorems": [
+    "instContinuousSMulNonneg"
+   ],
+   "answer": "closed",
+   "ms": 11351,
+   "text": "Try this:   [apply] exact instContinuousSMulNonneg",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.Algebra.Projectivization",
+   "name": "Projectivization.continuous_map",
+   "theorems": [
+    "Projectivization.continuous_map"
+   ],
+   "answer": "closed",
+   "ms": 16,
+   "text": "Try this:   [apply] (expose_names; exact Projectivization.continuous_map hf hfc)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.Algebra.Ring.Ideal",
+   "name": "Ideal.closure_eq_of_isClosed",
+   "theorems": [
+    "Ideal.closure_eq_of_isClosed"
+   ],
+   "answer": "closed",
+   "ms": 48,
+   "text": "Try this:   [apply] (expose_names; exact Ideal.closure_eq_of_isClosed I hI)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.CWComplex.Classical.Graph",
+   "name": "Topology.CWComplex.OneSkeletonGraph.not_exists_isLoopAt_iff_nontrivial",
+   "theorems": [
+    "Topology.CWComplex.OneSkeletonGraph.not_exists_isLoopAt_iff_nontrivial"
+   ],
+   "answer": "closed",
+   "ms": 8,
+   "text": "Try this:   [apply] (expose_names; exact Topology.CWComplex.OneSkeletonGraph.not_exists_isLoopAt_iff_nontrivial e)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.Category.CompHaus.Limits",
+   "name": "CompHaus.instHasExplicitPullbacksTrue",
+   "theorems": [
+    "CompHaus.instHasExplicitPullbacksTrue"
+   ],
+   "answer": "closed",
+   "ms": 1,
+   "text": "Try this:   [apply] exact CompHaus.instHasExplicitPullbacksTrue",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.Category.LightProfinite.Limits",
+   "name": "LightProfinite.instEpiCompHausLikeAndTotallyDisconnectedSpaceCarrierSecondCountableTopologySnd",
+   "theorems": [
+    "LightProfinite.instEpiCompHausLikeAndTotallyDisconnectedSpaceCarrierSecondCountableTopologySnd"
+   ],
+   "answer": "closed",
+   "ms": 14,
+   "text": "Try this:   [apply] (expose_names; exact LightProfinite.instEpiCompHausLikeAndTotallyDisconnectedSpaceCarrierSecondCountableTopologySnd     f g)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.Category.TopCat.EffectiveEpi",
+   "name": "TopCat.effectiveEpi_iff_isQuotientMap",
+   "theorems": [
+    "TopCat.effectiveEpi_iff_isQuotientMap"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] (expose_names; exact TopCat.effectiveEpi_iff_isQuotientMap π)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.Compactness.CompactlyGeneratedSpace",
+   "name": "UCompactlyGeneratedSpace.le_compactlyGenerated",
+   "theorems": [
+    "UCompactlyGeneratedSpace.le_compactlyGenerated"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] exact UCompactlyGeneratedSpace.le_compactlyGenerated",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.Connected.CardComponents",
+   "name": "IsOpenMap.finite_connectedComponents_of_finite_preimage_singleton_of_connectedSpace",
+   "theorems": [
+    "IsOpenMap.finite_connectedComponents_of_finite_preimage_singleton_of_connectedSpace"
+   ],
+   "answer": "closed",
+   "ms": 31,
+   "text": "Try this:   [apply] (expose_names; exact IsOpenMap.finite_connectedComponents_of_finite_preimage_singleton_of_connectedSpace hf₁     hf₂ hy)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.Connected.TotallyDisconnected",
+   "name": "totallyDisconnectedSpace_iff_connectedComponent_singleton",
+   "theorems": [
+    "totallyDisconnectedSpace_iff_connectedComponent_singleton"
+   ],
+   "answer": "closed",
+   "ms": 2,
+   "text": "Try this:   [apply] exact totallyDisconnectedSpace_iff_connectedComponent_singleton",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.ContinuousMap.Bounded.Star",
+   "name": "BoundedContinuousFunction.coe_toContinuousMapStarₐ",
+   "theorems": [
+    "BoundedContinuousFunction.coe_toContinuousMapStarₐ"
+   ],
+   "answer": "closed",
+   "ms": 126,
+   "text": "Try this:   [apply] (expose_names; exact BoundedContinuousFunction.coe_toContinuousMapStarₐ 𝕜 f)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.ContinuousMap.Defs",
+   "name": "ContinuousMap.ext_iff",
+   "theorems": [
+    "ContinuousMap.ext_iff"
+   ],
+   "answer": "closed",
+   "ms": 6,
+   "text": "Try this:   [apply] exact ContinuousMap.ext_iff",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.Convenient.HomSpace",
+   "name": "Topology.ContinuousMapGeneratedBy.continuousGeneratedBy_iff_uncurry",
+   "theorems": [
+    "Topology.ContinuousMapGeneratedBy.continuousGeneratedBy_iff_uncurry"
+   ],
+   "answer": "closed",
+   "ms": 19,
+   "text": "Try this:   [apply] (expose_names; exact Topology.ContinuousMapGeneratedBy.continuousGeneratedBy_iff_uncurry g)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.EMetricSpace.Defs",
+   "name": "Metric.nhdsWithin_basis_eball",
+   "theorems": [
+    "Metric.nhdsWithin_basis_eball"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] exact Metric.nhdsWithin_basis_eball",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.Gluing",
+   "name": "TopCat.GlueData.eqvGen_of_π_eq",
+   "theorems": [
+    "CategoryTheory.Limits.instHasColimitOfHasColimitsOfShape",
+    "TopCat.topCat_hasColimitsOfShape",
+    "CategoryTheory.instSmallDiscrete",
+    "UnivLE.small",
+    "UnivLE.self",
+    "CategoryTheory.Limits.WalkingMultispan.instSmallOfLOfR",
+    "CategoryTheory.Limits.hasCoproductsOfShape_of_hasCoproducts",
+    "CategoryTheory.Limits.instHasColimitsOfShapeOfHasColimitsOfSize",
+    "TopCat.topCat_hasColimits",
+    "TopCat.GlueData.eqvGen_of_π_eq"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] (expose_names; exact TopCat.GlueData.eqvGen_of_π_eq D h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.Instances.NNReal.Lemmas",
+   "name": "NNReal.summable_coe",
+   "theorems": [
+    "NNReal.summable_coe"
+   ],
+   "answer": "closed",
+   "ms": 3,
+   "text": "Try this:   [apply] exact NNReal.summable_coe",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.LocallyConstant.Basic",
+   "name": "LocallyConstant.congrRight_apply",
+   "theorems": [
+    "LocallyConstant.congrRight_apply"
+   ],
+   "answer": "closed",
+   "ms": 59,
+   "text": "Try this:   [apply] (expose_names; exact LocallyConstant.congrRight_apply e g)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.MetricSpace.MetricSeparated",
+   "name": "Metric.AreSeparated.finset_iUnion_right_iff",
+   "theorems": [
+    "Metric.AreSeparated.finset_iUnion_right_iff"
+   ],
+   "answer": "closed",
+   "ms": 1,
+   "text": "Try this:   [apply] exact Metric.AreSeparated.finset_iUnion_right_iff",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.NhdsSet",
+   "name": "nhdsSet_insert",
+   "theorems": [
+    "nhdsSet_insert"
+   ],
+   "answer": "closed",
+   "ms": 10,
+   "text": "Try this:   [apply] (expose_names; exact nhdsSet_insert x s)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.Order.LocalExtr",
+   "name": "IsLocalMaxOn.max",
+   "theorems": [
+    "IsLocalMaxOn.sup"
+   ],
+   "answer": "closed",
+   "ms": 19,
+   "text": "Try this:   [apply] (expose_names; exact IsLocalMaxOn.sup hf hg)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.Separation.SeparatedNhds",
+   "name": "SeparatedNhds.disjoint",
+   "theorems": [
+    "SeparatedNhds.disjoint"
+   ],
+   "answer": "closed",
+   "ms": 246,
+   "text": "Try this:   [apply] (expose_names; exact SeparatedNhds.disjoint h)",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.UniformSpace.Closeds",
+   "name": "TopologicalSpace.NonemptyCompacts.uniformContinuous_toCloseds",
+   "theorems": [
+    "TopologicalSpace.NonemptyCompacts.uniformContinuous_toCloseds"
+   ],
+   "answer": "closed",
+   "ms": 4,
+   "text": "Try this:   [apply] exact TopologicalSpace.NonemptyCompacts.uniformContinuous_toCloseds",
+   "beats": 400000
+  },
+  {
+   "module": "Mathlib.Topology.UniformSpace.CompleteSeparated",
+   "name": "IsComplete.isClosed",
+   "theorems": [
+    "IsComplete.isClosed"
+   ],
+   "answer": "closed",
+   "ms": 84,
+   "text": "Try this:   [apply] (expose_names; exact IsComplete.isClosed h)",
+   "beats": 400000
+  }
+ ]
+}
