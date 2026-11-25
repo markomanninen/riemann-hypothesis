@@ -30,6 +30,10 @@ data/, which git ignores.
   3. Which areas of Mathlib does a statement touch, directly or through its vocabulary, and in
      particular how many statements involve zeta and L-functions?
   4. What do the statements need that the source labels as results from the literature?
+
+For each of those propositions that has a proof and a vocabulary of at most 20 definitions it
+also writes the names of the definitions to data/published_vocabulary.json, which audit.py
+reads.
 """
 import collections
 import glob
@@ -502,6 +506,31 @@ def main():
                               "proof_rests_on": psize.get(p) if p is not None else None})
 
     pub_proved = [p for p in published if p["proof"] and p["reached"]]
+
+    # The vocabulary of each proved proposition with a small vocabulary, by name, for audit.py.
+    vocabularies = {}
+    small_names = {p["name"] for p in pub_proved if p["vocabulary"] <= SMALL}
+    for name in sorted(small_names):
+        start = index[name]
+        seen_nodes, stack, found, unnamed = {start}, [start], [], []
+        while stack:
+            v = stack.pop()
+            for w in medges[mptr[v]:mptr[v + 1]].tolist():
+                if w not in seen_nodes:
+                    seen_nodes.add(w)
+                    stack.append(w)
+                    if definition[w]:
+                        r = int(row[w])
+                        found.append({"name": table[r][1], "module": table[r][0], "kind": table[r][2]})
+                    elif kinds[w] == "def" and names[w].rsplit(".", 1)[-1].startswith("inst"):
+                        # An instance without a name in the source, which Lean names itself.
+                        unnamed.append({"name": names[w], "module": modules[w]})
+        r = int(row[start])
+        vocabularies[name] = {"module": table[r][0], "kind": table[r][2],
+                              "definitions": sorted(found, key=lambda d: (d["module"], d["name"])),
+                              "unnamed_instances": sorted(unnamed, key=lambda d: (d["module"], d["name"]))}
+    with open(os.path.join(OUT, "published_vocabulary.json"), "w", encoding="utf-8") as f:
+        json.dump(vocabularies, f, indent=1, ensure_ascii=False)
     summary = {
         "constants": n,
         "theorems_with_a_public_statement": len(theorems),

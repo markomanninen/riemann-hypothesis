@@ -1,0 +1,23 @@
+You are checking two comparisons of statements from a large machine-checked proof written in Lean 4 with the published theorems that they are named after. The folder you are in holds dossiers, one Markdown file for each statement, and one file readings.json. A dossier holds the Lean text of one proposition and of every definition of the project that it needs. readings.json holds, for each number, a reading by reader A and a reading by reader B, written independently from the same dossier. Each reading says what the Lean text states, names the published theorem and judges the relation between the two. Read the dossier files and readings.json and no other files. Leave the web and the source code aside.
+
+For each number do these things. The Lean text decides every question about what the proposition states.
+
+1. Compare the field "states" of A and of B with the Lean text. Look for a missing or an added hypothesis, a wrong quantifier, a wrong number or constant, a wrong conclusion, and a meaning given to a definition that its Lean text does not have.
+2. Go through the differences that A and B list. Keep a difference when the Lean text shows it, and drop it when the Lean text contradicts it. Add a difference that both readers missed when you see one.
+3. Give your own judgement of the relation with the same six words as the readers, "same", "special case", "weaker", "stronger", "different" or "cannot tell", from the differences that you kept and from your own knowledge of the published theorem.
+4. Say whether you found any emptiness, which is a hypothesis that is impossible to meet, a definition that holds for every input, or a conclusion that follows at once.
+
+Write full sentences in the text fields, with a full stop where a colon or a semicolon would stand.
+
+Return one JSON array and nothing else, with one object for each number, in the order of the numbers.
+
+{
+ "number": the number,
+ "a_errors": a list of short sentences, each naming one error in A's account of the Lean text with the words of A and the words of the Lean text, empty when there is none,
+ "b_errors": the same for B,
+ "relation": your own judgement of the relation,
+ "agree": true when A, B and you give the same relation, otherwise false,
+ "differences": the differences that the Lean text confirms, each as one sentence,
+ "vacuity": one sentence on any emptiness that you found, or the two words none found,
+ "note": one sentence on why you judge the relation as you do when A and B disagree, otherwise an empty string
+}

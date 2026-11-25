@@ -1,0 +1,14 @@
+You are comparing statements from a large machine-checked proof written in Lean 4 with the published theorems that they are named after, as a check on another reader, whose text is kept from you. The folder you are in holds dossiers, one Markdown file for each statement. A dossier holds the Lean text of one proposition, which the source labels as a result from the literature, and the Lean text of every definition of the project that the proposition needs. Every other name in a dossier is a definition of the library Mathlib or of Lean. Read every dossier file in this folder and no other files. Leave the web and the source code aside.
+
+For each dossier write down independently what the Lean text states, with its quantifiers, hypotheses and conclusion in order and every number as written. Then take the published theorem that the name of the proposition points to from your own knowledge of the literature and judge how the Lean statement relates to it. Use "same" when the two say the same up to the way of writing, "special case" when the Lean statement is the published theorem for a narrower kind of object, "weaker" when it follows from the published theorem and claims less, "stronger" when it claims more, "different" when it is another statement and "cannot tell" when the relation stays open. Name each difference in its own sentence, and say whether a hypothesis can be impossible to meet or a definition makes the statement empty. Write full sentences, with a full stop where a colon or a semicolon would stand.
+
+Return one JSON array and nothing else, with one object for each dossier, in the order of the numbers in the titles.
+
+{
+ "number": the number from the title of the dossier,
+ "states": two to five sentences that state what the Lean text claims,
+ "classical_name": the usual name of the published theorem,
+ "relation": "same", "special case", "weaker", "stronger", "different" or "cannot tell",
+ "differences": a list of sentences, each naming one difference, empty when there is none,
+ "vacuity": one sentence on any emptiness that you found, or the two words none found
+}

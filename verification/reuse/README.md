@@ -7,7 +7,8 @@ as the Kronecker-Weber theorem, Stein factorisation and Zariski's connectedness 
 source also labels 361 propositions as results from the literature. The five theorems of
 `Main.lean` reach 292 of the 361, and for 206 of those 292 the source holds a theorem with no
 hypotheses whose statement is the proposition itself. 70 of those 206 propositions can be read
-with at most 20 definitions of the project, six of them with none.
+with at most 20 definitions of the project, six of them with none. Lean compiled a test file
+that imports the module of the Kronecker-Weber theorem alone and uses the theorem.
 
 This folder sorts the theorems by what a reader has to know in order to read their statements.
 A statement written with library constants alone can be read without learning any definition
@@ -136,20 +137,18 @@ gives the number of project definitions that the proposition needs.
 | `ChebotarevDegreeOne` | For a finite Galois extension L of a number field F, an element g of its Galois group and a finite set S of primes of F, there is a prime v of F outside S of residue degree one over ℚ and a place above it, given through the conditions `IsPlaceOver` and `Ine` of the project, with an element σ of the group that the code writes `G F Ω`, for an algebraic closure Ω of F, that meets the condition `IsFrob` for that place and restricts to g on L. | 6 | 236 |
 | `ResolutionCharZero` | For a reduced scheme X that is separated and of finite type over a field of characteristic zero, there is a morphism s from X′ to X that meets the condition `IsBlowupSeq`, such that X′ is smooth over the field, s is an isomorphism over the smooth locus of X, and a condition `Snc` holds for the preimage of the complement of that locus. | 7 | 7,699 |
 
-A name says what a proposition is meant to be, and the Lean text says what it states. The first
-three propositions of the table are in library terms, and the two definitions behind `Linnik`
-were read. The last three use definitions of the project that this session did not open, which
-the table keeps in code font, so their descriptions say no more than the names of those
-definitions. The proposition `DeligneRibet`
-has a vocabulary of 8 definitions and a proof that rests on 4,444 declarations. Its Lean text
-is written with the conditions `IsRayFun` and `IsRayValue` of the project throughout, and this
-session gives no description of it.
-
-Further propositions with a vocabulary of at most 20 definitions carry the names of the Néron,
-Ogg and Shafarevich criterion (18 definitions, the proof rests on 9,201 declarations), of the
-dual abelian scheme (19 and 7,912), of the ray class field (7 and 3,873), of Weber's ray class
-field (8 and 7,141) and of global Artin reciprocity (17 and 3,761). This session read their
-names only. `summary.json` lists all 361 with their figures.
+A name says what a proposition is meant to be, and the Lean text says what it states.
+[`AUDIT.md`](AUDIT.md) compares the two for all 70 propositions with a vocabulary of at most 20
+definitions. For each of them a dossier holds the whole Lean text of the proposition and of
+its vocabulary, two readers state what the text says and judge its relation to the published
+theorem, and a check compares both with the Lean text. By the check 18 of the 70 state the same
+as the published theorem, 34 a special case, 14 something weaker, 2 something stronger and 1
+something different, and 1 stays undecided. No reading found an empty proposition. Of the seven
+propositions of the table above, the check takes `HasseNorm` and `StoneVonNeumann` for the same
+statement as the published theorem, `FerreroWashington` and `ChevalleyUnits` for a special
+case, and `Linnik`, `ChebotarevDegreeOne` and `ResolutionCharZero` for a weaker statement. The
+readers stated the published theorems from the model's own knowledge, and no mathematician has
+checked the comparison.
 
 The count of declarations says how much of the project a proof draws on. It does not say how
 long the proof is, since one declaration can be a proof of any length.
@@ -267,19 +266,23 @@ example (L : Type) [Field L] [NumberField L] [IsAbelianGalois ℚ L] :
 #print axioms UpperTheory.V.CF.kwHom
 ```
 
-This file was not compiled for this document. A run of it in the compiled checkout was started
-on 24 November 2026, and Lean was still loading the compiled files of Mathlib from an external
-disk when the document was written. A project of its own that wants the theorem would have to
-use the Lean and Mathlib versions that this repository pins and name this repository as a
-dependency in its lakefile. That setup was not tested either.
+Lean compiled this file without an error in the compiled checkout on 25 November 2026, with the
+command `lake env lean`. Its last line printed that `UpperTheory.V.CF.kwHom` depends on the
+axioms `propext`, `Classical.choice` and `Quot.sound`. The run took 174 minutes, of which Lean
+computed for 3 seconds. The rest was spent loading the compiled files of Mathlib, of the module
+of `kwHom` and of the 411 modules that it imports from a disk image on an external drive. The test ran inside a checkout of this
+repository. A project of its own that wants the theorem would have to use the Lean and Mathlib
+versions that this repository pins and name this repository as a dependency in its lakefile.
+That setup was not tested.
 
-What was checked is the answer that the last line of the file asks for. `exact_axioms.py` of
-[`../decl-graph`](../decl-graph/README.md) searched the compiled files from each of the eight
-theorems of the first table alone, and from each of the eight theorems that prove a proposition
-of the second table or `DeligneRibet`. Every one of the 16 searches reached the axioms `propext`,
-`Classical.choice` and `Quot.sound` and no other axiom, and every name that a search met has a
-compiled entry. The search from `kwHom` reached 112,181 constants of the project and the
-libraries.
+The other theorems of the two tables were not compiled in this way. For them `exact_axioms.py`
+of [`../decl-graph`](../decl-graph/README.md) searched the compiled files from each of the
+eight theorems of the first table alone, from the theorems that prove the seven propositions of
+the second table, and from the theorem that proves the proposition `DeligneRibet` of
+`AUDIT.md`. Every one of the 16 searches reached the
+axioms `propext`, `Classical.choice` and `Quot.sound` and no other axiom, and every name that a
+search met has a compiled entry. The search from `kwHom` reached 112,181 constants of the
+project and the libraries, and its answer agrees with the answer of Lean.
 
 ## Limits
 
@@ -289,8 +292,8 @@ libraries.
   does not make the check. The commentary of the strategy found two notions in the branch on
   Galois representations that are weaker than their names.
 - A statement in library terms can still have a hypothesis that nothing satisfies, and then it
-  says nothing. This session read the statements of the two tables above and the text of
-  `DeligneRibet`, and no others.
+  says nothing. This session read the statements of the two tables above. The readers of
+  `AUDIT.md` read the 70 propositions that it covers, and nobody read the other statements.
 - No proof was read, and the compiled files come from the build cache of the repository.
 - An area is the folder of a library constant, which is a coarse label.
 - Equal statements are counted once only where the redundancy check compared them.
@@ -313,5 +316,7 @@ python3 -I verification/reuse/statements.py                                     
 | `statements.py` | computes the vocabularies, the proof sizes and the areas |
 | `summary.json` | the figures of this document, the 150 largest proofs of each kind, the 40 lines of the outline and the 361 propositions from the literature |
 | `data/small_vocabulary.tsv.gz` | every theorem with a vocabulary of at most 20 definitions, with its proof size and areas |
+| `AUDIT.md` | the 70 propositions from the literature with a small vocabulary, each compared with the published theorem |
+| `audit.py`, `briefs/`, `audit.json` | the dossiers, the briefs of the readers and the check, and their answers |
 
 Git ignores `data/`.

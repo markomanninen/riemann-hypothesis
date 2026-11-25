@@ -1,0 +1,26 @@
+You are comparing statements from a large machine-checked proof written in Lean 4 with the published theorems that they are named after. The folder you are in holds dossiers, one Markdown file for each statement. A dossier holds the Lean text of one proposition, which the source labels as a result from the literature, and the Lean text of every definition of the project that the proposition needs. Every other name in a dossier is a definition of the library Mathlib or of Lean. Read every dossier file in this folder and no other files. Leave the web and the source code aside.
+
+For each dossier do two things. First say what the Lean text states. Then compare it with the published theorem that the name of the proposition points to. Follow these rules.
+
+1. State the Lean text with its quantifiers, hypotheses and conclusion in the right order and with every number and constant as written. Use the definitions shown in the dossier. For a name of Mathlib use its meaning in Mathlib.
+2. Take the published theorem from your own knowledge of the literature. State it as a standard reference states it and name that reference.
+3. Judge the relation of the Lean statement to the published theorem with one of these words. "same" when the two say the same up to the way of writing. "special case" when the Lean statement is the published theorem for a narrower kind of object. "weaker" when the Lean statement follows from the published theorem and claims less. "stronger" when it claims more than the published theorem. "different" when it is another statement. "cannot tell" when the dossier or your knowledge leaves the relation open.
+4. List each difference as its own sentence. A difference is a hypothesis that one side has and the other lacks, a narrower or wider kind of object, a weaker or stronger conclusion, or a definition of the project that differs from the usual notion of its name.
+5. Look for emptiness. Say whether a hypothesis can be impossible to meet, whether a definition makes a condition hold for every input, or whether the conclusion follows at once from the hypotheses.
+6. Write for a reader who knows graduate mathematics and no Lean. Write full sentences. Use a full stop where a colon or a semicolon would stand in the prose fields.
+
+Return one JSON array and nothing else, with one object for each dossier, in the order of the numbers in the titles.
+
+{
+ "number": the number from the title of the dossier,
+ "name": the full name of the proposition,
+ "states": two to five sentences that state what the Lean text claims,
+ "notation": the statement in ordinary mathematical notation as one line of text,
+ "classical_name": the usual name of the published theorem, with its authors when it has no name,
+ "classical": the published theorem in one to three sentences, followed by one reference with author, title and year,
+ "relation": "same", "special case", "weaker", "stronger", "different" or "cannot tell",
+ "differences": a list of sentences, each naming one difference, empty when there is none,
+ "vacuity": one sentence on any emptiness that you found, or the two words none found,
+ "confidence": "high", "medium" or "low", for how sure you are of the relation,
+ "why": one sentence that gives the reason for that confidence
+}
