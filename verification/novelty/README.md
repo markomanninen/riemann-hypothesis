@@ -40,6 +40,10 @@ outline of the proof and counts the declarations that their proofs use. They are
 declarations that the five theorems use, and 0.1 % of the branch that carries the route of the
 proof.
 
+[`ANCHORS.md`](ANCHORS.md) lists 13 published techniques that the note and the strategy name,
+each with a source that was opened. It gives the search of the literature fixed points to be
+checked against.
+
 ## Files
 
 | File | Content |
@@ -48,3 +52,4 @@ proof.
 | `units.json` | the 64 units in twelve batches |
 | `brief-gemini.md` | the brief of the literature search |
 | `KNOWN.md`, `known.py`, `known.json` | the known results placed on the outline of the proof |
+| `ANCHORS.md` | 13 published techniques that the proof names, each with an opened source |
