@@ -1,0 +1,26 @@
+You are reading theorems from a large machine-checked proof written in Lean 4. Every theorem here has a statement that is written with definitions of the library Mathlib and of Lean alone, so it can be read without any definition of the project. The folder you are in holds dossiers, one Markdown file for each theorem, with the Lean statement and the variable lines in scope. Read every dossier file in this folder and no other files. Leave the web and the source code aside.
+
+For each dossier say what the statement claims and what place it has in the literature. Follow these rules.
+
+1. State the Lean text with its quantifiers, hypotheses and conclusion in the right order and with every number and constant as written. For a name of Mathlib use its meaning in Mathlib.
+2. Say from your own knowledge of the literature whether the statement is a published result. Give the usual name of that result, or a phrase that says which result it is, and one reference with author, title and year. When you know no published result that it matches, say so and describe in a phrase what kind of statement it is.
+3. Judge the relation of the Lean statement to that published result with one of these words. "same" when the two say the same up to the way of writing. "special case" when the Lean statement is the published result for a narrower kind of object. "weaker" when the Lean statement follows from the published result and claims less. "stronger" when it claims more. "different" when it is another statement. "none" when you named no published result.
+4. Give the statement one of three kinds. "named theorem" when textbooks state the result under a name or as a main theorem. "standard fact" when a textbook states it as a lemma, a proposition or an exercise. "technical step" when the statement is shaped for one use inside a larger proof.
+5. Look for emptiness. Say whether a hypothesis can be impossible to meet or whether the conclusion follows at once from the hypotheses.
+6. Write for a reader who knows graduate mathematics and no Lean. Write full sentences. Use a full stop where a colon or a semicolon would stand in the prose fields.
+
+Return one JSON array and nothing else, with one object for each dossier, in the order of the numbers in the titles.
+
+{
+ "number": the number from the title of the dossier,
+ "name": the full name of the theorem,
+ "states": one to four sentences that state what the Lean text claims,
+ "notation": the statement in ordinary mathematical notation as one line of text,
+ "known_as": the usual name of the published result or a phrase that says which result it is, or the words no published result known with a phrase on the kind of statement,
+ "reference": one reference with author, title and year, or an empty string,
+ "relation": "same", "special case", "weaker", "stronger", "different" or "none",
+ "kind": "named theorem", "standard fact" or "technical step",
+ "vacuity": one sentence on any emptiness that you found, or the two words none found,
+ "confidence": "high", "medium" or "low", for how sure you are of the kind and the relation,
+ "why": one sentence that gives the reason for that confidence
+}

@@ -413,12 +413,14 @@ def main():
     seen = {k: set() for k in lists}
     distinct_library_only = set()
     with gzip.open(os.path.join(OUT, "small_vocabulary.tsv.gz"), "wt", encoding="utf-8") as f:
-        f.write("module\tname\tkind\tused\tvocabulary\trests_on\tcut\tstates\tareas\n")
+        f.write("module\tname\tkind\tused\tvocabulary\trests_on\tcut\tstates\tareas\tlibrary_terms\tsame_as\n")
         for k in order.tolist():
             e, key = entry(k)
             j = int(small[k])
+            # The last column names the group of statements that Lean found equal, when there is one.
             f.write("\t".join([e["module"], e["name"], e["kind"], str(int(e["used"])), str(e["vocabulary"]),
-                               str(e["rests_on"]), str(int(e["cut"])), e.get("states", ""), ", ".join(e["areas"])]) + "\n")
+                               str(e["rests_on"]), str(int(e["cut"])), e.get("states", ""), ", ".join(e["areas"]),
+                               str(int(library_only[j])), key if isinstance(key, str) else ""]) + "\n")
             which = "library_only" if library_only[j] else ("named_propositions" if names_one[j] else "small_vocabulary")
             if library_only[j]:
                 distinct_library_only.add(key)

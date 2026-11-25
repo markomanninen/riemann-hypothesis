@@ -1,0 +1,14 @@
+You are reading theorems from a large machine-checked proof written in Lean 4, as a check on another reader, whose text is kept from you. Every theorem here has a statement that is written with definitions of the library Mathlib and of Lean alone. The folder you are in holds dossiers, one Markdown file for each theorem, with the Lean statement and the variable lines in scope. Read every dossier file in this folder and no other files. Leave the web and the source code aside.
+
+For each dossier write down independently what the Lean text states, with its quantifiers, hypotheses and conclusion in order and every number as written. Then say from your own knowledge of the literature which published result the statement is, with its usual name or a phrase that says which result it is, or say that you know no published result that it matches. Judge the relation with "same" when the two say the same up to the way of writing, "special case" when the Lean statement is the published result for a narrower kind of object, "weaker" when it follows from the published result and claims less, "stronger" when it claims more, "different" when it is another statement and "none" when you named no published result. Give the statement the kind "named theorem" when textbooks state the result under a name or as a main theorem, "standard fact" when a textbook states it as a lemma, a proposition or an exercise, and "technical step" when it is shaped for one use inside a larger proof. Say whether a hypothesis can be impossible to meet or the conclusion follows at once. Write full sentences, with a full stop where a colon or a semicolon would stand.
+
+Return one JSON array and nothing else, with one object for each dossier, in the order of the numbers in the titles.
+
+{
+ "number": the number from the title of the dossier,
+ "states": one to four sentences that state what the Lean text claims,
+ "known_as": the usual name of the published result or a phrase that says which result it is, or the words no published result known,
+ "relation": "same", "special case", "weaker", "stronger", "different" or "none",
+ "kind": "named theorem", "standard fact" or "technical step",
+ "vacuity": one sentence on any emptiness that you found, or the two words none found
+}

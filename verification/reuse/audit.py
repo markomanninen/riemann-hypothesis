@@ -190,8 +190,10 @@ def collect(folder):
 
 
 def clip(text, limit=70):
+    """A text for a table cell, cut at a word and with its bars escaped."""
     text = " ".join(str(text).split()).rstrip(".")
-    return text if len(text) <= limit else text[:limit].rsplit(" ", 1)[0] + " …"
+    text = text if len(text) <= limit else text[:limit].rsplit(" ", 1)[0] + " …"
+    return text.replace("|", "\\|")
 
 
 def sentence(text):

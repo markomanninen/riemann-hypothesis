@@ -97,6 +97,16 @@ Kronecker followed by Weber, Stein followed by factorisation, Zariski followed b
 Ferrero, Hasse followed by norm, and Chebotarev. No name matched. Mathlib can still hold one of these results under another name, and a
 later Mathlib can hold more.
 
+[`CATALOGUE.md`](CATALOGUE.md) goes through all 212 theorems in library terms whose proofs
+rest on more than 100 declarations. They hold 159 different statements, and for each of them
+two readers and a check say what it states and which published result it is. By the check 32
+are named theorems, 61 are standard facts of textbooks and 66 are technical steps. Besides the
+theorems of the table above, the named theorems include the purity of the branch locus of
+Zariski and Nagata, Borel's finiteness of class numbers, Chevalley's theorem on units, the
+product formula and Hecke's continuation of the L-functions of ideal characters. The readers
+named the published results from the model's own knowledge, and no mathematician has checked
+the catalogue.
+
 `statements.py` writes every theorem with a vocabulary of at most 20 definitions, these 79,265
 included, to `data/small_vocabulary.tsv.gz`, and `summary.json` holds the 150 theorems in
 library terms with the largest proofs.
@@ -293,7 +303,8 @@ project and the libraries, and its answer agrees with the answer of Lean.
   Galois representations that are weaker than their names.
 - A statement in library terms can still have a hypothesis that nothing satisfies, and then it
   says nothing. This session read the statements of the two tables above. The readers of
-  `AUDIT.md` read the 70 propositions that it covers, and nobody read the other statements.
+  `AUDIT.md` and `CATALOGUE.md` read the 70 propositions and the 159 statements that those
+  documents cover, and nobody read the other statements.
 - No proof was read, and the compiled files come from the build cache of the repository.
 - An area is the folder of a library constant, which is a coarse label.
 - Equal statements are counted once only where the redundancy check compared them.
@@ -318,5 +329,7 @@ python3 -I verification/reuse/statements.py                                     
 | `data/small_vocabulary.tsv.gz` | every theorem with a vocabulary of at most 20 definitions, with its proof size and areas |
 | `AUDIT.md` | the 70 propositions from the literature with a small vocabulary, each compared with the published theorem |
 | `audit.py`, `briefs/`, `audit.json` | the dossiers, the briefs of the readers and the check, and their answers |
+| `CATALOGUE.md` | the 159 statements in library terms with large proofs, each with the published result that it is |
+| `catalogue.py`, `catalogue.json` | the dossiers of the catalogue and the answers of its readers and its check |
 
 Git ignores `data/`.

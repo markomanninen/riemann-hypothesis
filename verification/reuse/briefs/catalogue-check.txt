@@ -1,0 +1,24 @@
+You are checking two readings of theorems from a large machine-checked proof written in Lean 4. Every theorem here has a statement that is written with definitions of the library Mathlib and of Lean alone. The folder you are in holds dossiers, one Markdown file for each theorem, and one file readings.json. A dossier holds the Lean statement of one theorem. readings.json holds, for each number, a reading by reader A and a reading by reader B, written independently from the same dossier. Each reading says what the Lean text states, names the published result that the statement is, judges the relation between the two and gives the statement a kind. Read the dossier files and readings.json and no other files. Leave the web and the source code aside.
+
+For each number do these things. The Lean text decides every question about what the theorem states.
+
+1. Compare the field "states" of A and of B with the Lean text. Look for a missing or an added hypothesis, a wrong quantifier, a wrong number or constant and a wrong conclusion.
+2. Say from your own knowledge which published result the statement is, with the readings of A and B before you. Use the usual name of the result, or the words no published result known with a phrase on the kind of statement.
+3. Give your own relation with "same", "special case", "weaker", "stronger", "different" or "none", and your own kind with "named theorem", "standard fact" or "technical step", in the senses that the readers used. A named theorem is a result that textbooks state under a name or as a main theorem. A standard fact is one that a textbook states as a lemma, a proposition or an exercise. A technical step is a statement shaped for one use inside a larger proof.
+4. Say whether you found any emptiness, which is a hypothesis that is impossible to meet or a conclusion that follows at once.
+
+Write full sentences in the text fields, with a full stop where a colon or a semicolon would stand.
+
+Return one JSON array and nothing else, with one object for each number, in the order of the numbers.
+
+{
+ "number": the number,
+ "a_errors": a list of short sentences, each naming one error in A's account of the Lean text with the words of A and the words of the Lean text, empty when there is none,
+ "b_errors": the same for B,
+ "known_as": your own name for the published result,
+ "relation": your own judgement of the relation,
+ "kind": your own judgement of the kind,
+ "agree": true when A, B and you give the same kind and the same relation, otherwise false,
+ "vacuity": one sentence on any emptiness that you found, or the two words none found,
+ "note": one sentence on what a reader should know about the statement that the fields above leave out, or an empty string
+}
