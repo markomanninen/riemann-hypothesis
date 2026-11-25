@@ -6,9 +6,10 @@ definitions of the library Mathlib, of the packages that Mathlib uses and of Lea
 comparison by Lean found some of these statements equal, which leaves at most 72,983 different
 statements, and fewer if the comparison missed a pair. This document asks how many of the
 72,983 Mathlib already holds. Mathlib holds a statement here when one of its theorems gives the
-statement or when one run of a proof-search program of Lean derives it from the libraries. A
-test gives a lower bound for this number. It gave a statement to Lean with Mathlib loaded and
-the project left out, and four such programs tried it within a fixed limit of work. The number
+statement or when one of
+the four proof-search programs of this test derives it from the libraries in one run. A test
+gives a lower bound for this number. It gave a statement to Lean with Mathlib loaded and the
+project left out, and the four programs tried it within a fixed limit of work. The number
 that they prove is a lower bound, since a program can be stopped at its limit and can miss a
 theorem that is there.
 
@@ -27,17 +28,21 @@ first set and 42 with the second, so the three sets hold 3,768 different stateme
 - They proved 93 of the sample of 1,000, which is 9.3 %. Each of the 93 has a proof in the
   project that rests on at most 10 declarations. The 95 % score interval of Wilson for this
   share reaches from 7.7 % to 11.3 %, which is 5,500 to 8,300 of the 72,983 statements after
-  rounding outward to the hundred.
+  rounding outward to the hundred. The four programs thus close at least 5,500 of the 72,983
+  statements with 95 % confidence, and the test sets no upper bound on what Mathlib holds.
 - For 23 of the 159 statements and 95 of the 1,000 no program found a proof and at least one
   program was stopped at its limit of work, also in a second run with five times the limit. For
   348 of the 2,655 the same holds after one run with the first limit. For these statements the
   search is unfinished.
 - In a control the program `exact?`, which looks for one theorem that proves a goal, proved 273
-  of 279 theorems of Mathlib itself, which is 97.8 %.
+  of 279 theorems of Mathlib itself, which is 97.8 %. The control poses a theorem word for word
+  as Mathlib states it, and it measures neither a statement that Mathlib states with other
+  definitions nor the other three programs.
 
 Mathlib can also prove the same mathematics in another form, which this sense of holding leaves
-out, and the product formula in the section on the text of Mathlib's files is such a case. The
-test compares the project with a library and says nothing about what is published.
+out, and the product formula in the section on the text of Mathlib's files is such a case. A statement that Mathlib
+lacks can still be a published result, since the test compares the project with one library and
+not with the literature.
 `CATALOGUE.md` sorts its 159 statements into 32 named theorems, 61 standard facts of textbooks
 and 66 technical steps, by a check that a language model made. By that check 29 of the 32 named
 theorems correspond to a published result, and several of them can correspond to one result.
@@ -86,8 +91,8 @@ mathematician has checked the document.
   - `aesop` searches for a proof by applying the rules that the libraries register for it.
   - `grind` reasons from the equalities of the goal and from the theorems that the libraries
     mark for it.
-- Mathlib holds a statement when one of its theorems gives the statement or when one run of a
-  tactic derives it from the libraries. The test gives a lower bound in this sense and asks for
+- Mathlib holds a statement when one of its theorems gives the statement or when one run of
+  one of the four tactics derives it from the libraries. The test gives a lower bound in this sense and asks for
   no wider one. In a wider sense every statement that the project proves without an axiom of
   its own follows from the libraries.
 - A tactic closes a statement when it proves it. It gives up when it ends without a proof
@@ -95,7 +100,7 @@ mathematician has checked the document.
 - A heartbeat is the unit in which Lean counts the work of a tactic. A tactic that uses more
   heartbeats than its limit is stopped.
 - The catalogue is `CATALOGUE.md`. It lists the 159 statements in library terms whose proofs
-  rest on more than 100 declarations. Two readers and a check, all runs of a language model,
+  rest on more than 100 declarations. Two runs of a language model, called the readers, and a third run, called the check,
   say for each statement which published result or textbook fact it matches or that it is a
   step of a larger proof. The check sorts the statements into three kinds, 32 named theorems,
   61 standard facts of textbooks and 66 technical steps.
@@ -306,7 +311,8 @@ the test finds nothing.
 ## What comes along with a statement
 
 A statement that Mathlib lacks can be used in another Lean file, with the proof of the project,
-only by importing it from the project. A Lean file that uses a theorem of the project imports
+by importing it from the project or by copying the declarations that its proof rests on. This
+section counts what the import brings along. A Lean file that uses a theorem of the project imports
 the module of the theorem, and Lean then loads every module that this module imports, directly
 or through others. These are the modules that come along with the theorem. This section counts
 the modules of the project among them and leaves out the module of the theorem itself.
@@ -386,8 +392,8 @@ other 28 theorems of the table were not compiled in this way.
 - The search of the text of Mathlib's files goes by patterns that a language model wrote. A
   file of Mathlib can treat a result without matching its pattern. The language model read the
   files that the patterns and the name `distribHaarChar` matched and no other file of Mathlib.
-- The published results of the tables are the readings of `CATALOGUE.md`, which a language
-  model made from its own knowledge of the literature.
+- The published results of the tables are the answers of the check in `CATALOGUE.md`, which a
+  language model gave from its own knowledge of the literature.
 - The 72,983 statements count equal statements once only where the comparison of
   `../redundancy` covered them, so two of them can still be the same statement under two
   names.
