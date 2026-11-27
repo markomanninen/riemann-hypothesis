@@ -45,4 +45,4 @@ Muistiinpanot Part 3 -videon editoinnista, järjestyksessä sitä mukaa kuin nii
 - Taustan pistekaavion pitää täyttää ruudusta enemmän, ja sen pitää olla nykyistä himmeämpi, jotta vasemman puolen teksti erottuu.
 - Kohtauksen loppuosassa nimen "one file" tilalle tulee hyödyllinen tieto, jos mahdollista: esimerkiksi tiedoston nimi tai polku ja lyhyesti se lause, joka antaa eksponentin 1/2.
 
-**Avoinna:** kuka tiedosto on kyseessä. Nimi tarkistetaan repon `src`-hakemistosta ennen kuin se kirjoitetaan kuvaan.
+**Avoinna:** mikä tiedosto on kyseessä. Nimi tarkistetaan repon `src`-hakemistosta ennen kuin se kirjoitetaan kuvaan.
