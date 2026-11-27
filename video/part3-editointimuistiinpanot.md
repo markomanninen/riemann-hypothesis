@@ -6,6 +6,9 @@ Muistiinpanot Part 3 -videon editoinnista, järjestyksessä sitä mukaa kuin nii
 
 - **Tyhjää ääntä voi lisätä.** Tietyissä kohdissa ääniraitaan saa lisätä hiljaisuutta, jos grafiikkaa tai tekstiä pitää näyttää enemmän tai pidempään. Lisäykset tehdään harkiten, ja jokainen tarkistetaan erikseen: rytmi ei saa katketa, ja kertojan lause ei saa jäädä kesken.
 - **Hengähdystauoissa tausta häivytetään** (ks. kohta 7).
+- **Uuden matematiikan erottaminen (koskee kaikkia perehdytysjaksoja).** Selvitä jaksoja tehdessä, mikä osa todistuksesta on uutta matematiikkaa. Toisin sanoen: mitkä todistukset ja ideat ovat ne tärkeimmät, jotka varsinaisesti ratkaisevat RH:n, ja mikä on tunnettua tekniikkaa tai kirjanpitoa. Jakson pitää kertoa katsojalle, missä uusi idea on.
+  - Lähde repossa: `verification/novelty/` luokittelee todistuksen 64 askelta luokkiin K (julkaistu ennen), A (tunnettu tekniikka uudessa käytössä), N (lähdettä ei löytynyt), G (kirjanpitoa) ja U (ei vertailukelpoinen). Kirjallisuushaun tuloksia ei README:n mukaan ole vielä (tehtävä `rh-novelty-literature-search`). Tarkista tilanne ennen kuin jaksossa sanotaan mitään uutuudesta.
+  - Ennen tuloksia uutuudesta puhutaan väitteenä, ei toteamuksena.
 
 ## 1. Ruutu "How does the claimed proof get from the zeros to the exponent one half?"
 
