@@ -84,3 +84,12 @@ Muistiinpanot Part 3 -videon editoinnista, järjestyksessä sitä mukaa kuin nii
 - Kansionimet leikkautuvat kortin reunaan ("…pondence", "…ndations", vasemmassa reunassa yksinäinen "A"). Himmeämpi tausta vähentää tätä; nimet voi myös piilottaa kortin alta kokonaan.
 - Haalea "Development"-teksti on aivan otsikkorivin alla ja sekoittuu siihen.
 - Ruutu lunastaa osan kohtien 2 ja 4 lupauksista: asemilla on ikonit, ja x^(1/2)-askeleen tiedosto nimetään (Zero Free Of Rpow Window). Tarkista, että sama nimi näytetään myös kohdan 4 ruudussa "one file" -merkinnän tilalla.
+
+## 8. Ruutu "Station 3 · Primes in classes: Adding up over a subgroup"
+
+**Nyt kuvassa:** vasemmalla luokat 1–4 (mod 5), joista aliryhmä {1, 4} on korostettu, ja niiden alla karakterit χ0–χ3. Oikealla teksti "a subgroup, the classes 1 and 4", kolme kertolaskuriviä (1·1 → 1, 1·4 → 4, 4·4 = 16 = 3·5 + 1 → 1) ja "combining two members gives a member again".
+
+**Korjattava:**
+- Loppuosan tekstit ovat näkyvillä liian vähän aikaa: rivit ilmestyvät yksi kerrallaan, ja kokonaisuus ehtii olla ruudulla vain hetken ennen siirtymää.
+- Korjaus: tuo kolme kertolaskuriviä ja alateksti näkyviin nopeammin, yhdellä pyyhkäisyllä. Pidä sen jälkeen valmis kuva ruudulla, kunnes kertoja on lopettanut, ja vielä hetki sen päälle.
+- Jos rivien tahti on sidottu kertojan puheeseen, vaihtoehto on pidentää valmiin kuvan loppupitoa, kunhan valmis kuva on ruudulla riittävän kauan.
