@@ -46,3 +46,15 @@ Muistiinpanot Part 3 -videon editoinnista, järjestyksessä sitä mukaa kuin nii
 - Kohtauksen loppuosassa nimen "one file" tilalle tulee hyödyllinen tieto, jos mahdollista: esimerkiksi tiedoston nimi tai polku ja lyhyesti se lause, joka antaa eksponentin 1/2.
 
 **Avoinna:** mikä tiedosto on kyseessä. Nimi tarkistetaan repon `src`-hakemistosta ennen kuin se kirjoitetaan kuvaan.
+
+## 5. Ruutu "The formal text in numbers"
+
+**Nyt kuvassa:** vasemmalla kansioiden sisäkkäisistä renkaista koostuva pistekuva ("every file as a dot, inside the rings of its folders"). Oikealla luvut "about 149,000 files now" ja "about 15.0 million lines" sekä leima "AS OF 24 NOVEMBER 2026".
+
+**Korjattava:**
+- Vasemman puolen graafianimaatio on todennäköisesti turha, koska se pyörii ruudulla hyvin lyhyen aikaa. Se myös toistaa edellisen kohtauksen pistekaaviota.
+- Sen tilalle tulee jotain hyödyllistä.
+
+**Ehdotuksia korvaajaksi (ei vielä päätetty):**
+- Tiedostot ja rivit jaettuna `src`-hakemiston pääkansioittain (esimerkiksi GroundTheory, PositivityTheory, ReciprocityTheory ja muut) yksinkertaisena pylväs- tai palkkikuvana.
+- Kasvukäyrä, joka näyttää tiedostojen tai rivien määrän ajan mittaan 24.11.2026 asti.
