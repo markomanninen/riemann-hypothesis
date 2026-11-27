@@ -2,6 +2,11 @@
 
 Muistiinpanot Part 3 -videon editoinnista, järjestyksessä sitä mukaa kuin niitä tulee.
 
+## Yleiset periaatteet
+
+- **Tyhjää ääntä voi lisätä.** Tietyissä kohdissa ääniraitaan saa lisätä hiljaisuutta, jos grafiikkaa tai tekstiä pitää näyttää enemmän tai pidempään. Lisäykset tehdään harkiten, ja jokainen tarkistetaan erikseen: rytmi ei saa katketa, ja kertojan lause ei saa jäädä kesken.
+- **Hengähdystauoissa tausta häivytetään** (ks. kohta 7).
+
 ## 1. Ruutu "How does the claimed proof get from the zeros to the exponent one half?"
 
 **Nyt kuvassa:** vasemmalla laatikko, jossa keltainen pystyviiva ja sen päällä valkoiset nollat. Laatikossa ei ole akseleita, lukuja eikä funktion nimeä. Oikealla katkoviivaketju ympyröitä, joka päättyy merkintään x^(1/2).
@@ -93,3 +98,18 @@ Muistiinpanot Part 3 -videon editoinnista, järjestyksessä sitä mukaa kuin nii
 - Loppuosan tekstit ovat näkyvillä liian vähän aikaa: rivit ilmestyvät yksi kerrallaan, ja kokonaisuus ehtii olla ruudulla vain hetken ennen siirtymää.
 - Korjaus: tuo kolme kertolaskuriviä ja alateksti näkyviin nopeammin, yhdellä pyyhkäisyllä. Pidä sen jälkeen valmis kuva ruudulla, kunnes kertoja on lopettanut, ja vielä hetki sen päälle.
 - Jos rivien tahti on sidottu kertojan puheeseen, vaihtoehto on pidentää valmiin kuvan loppupitoa, kunhan valmis kuva on ruudulla riittävän kauan.
+
+## 9. Ruutu "Station 4 · One slope between two bounds: Eleven conditions on a list of real numbers"
+
+**Nyt kuvassa:** vasemmalla yksitoista ehtoriviä muotoa "— < —", joista neljä on korostettu ja numeroitu 1–4 ("the four that this station tells"). Keskellä laatikko "taken as given", jossa on neljä riviä ("four further statements"). Oikealla nuoli palkkiin "a bound on that excess".
+
+**Korjattava:**
+- Korostetut ehdot ovat yhtä tyhjiä kuin reittiruudun pallot (kohta 2). Näytä vähintään asema 4:n omat neljä ehtoa sanoin tai kaavana, esimerkiksi lyhyt muoto rivin sisällä tai rivin vieressä.
+- Kirjanpito ei täsmää ruudulla: 11 = 4 korostettua + 4 annettua + 3, joita ei mainita. Kerro, mihin kolme muuta ehtoa kuuluvat, tai näytä se.
+- Tarvittaessa lisää tähän hiljaisuutta (ks. yleiset periaatteet), jotta ehtojen sisällön ehtii lukea.
+
+**Avoinna:** tulevatko "taken as given" -ehdot ja kolme mainitsematonta ehtoa esille myöhemmin? Loppujakson ruudun (kohta 6) mukaan "Station 5 belongs to the part that proves the conditions", joten annetut ehdot ehkä todistetaan asemalla 5. Jos niin on, se kannattaa sanoa tässä ääneen tai merkitä näkyviin ("→ asema 5").
+
+**Tarkistettava:**
+- Alateksti "the four that this station tells" on kuvakaappauksessa rikkinäinen (glitch-efekti tai animaation välikuva).
+- Numero 4 on himmeä, vaikka rivi on korostettu. Se on ehkä vielä ilmestymässä.
