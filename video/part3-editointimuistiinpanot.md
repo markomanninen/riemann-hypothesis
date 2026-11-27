@@ -58,3 +58,17 @@ Muistiinpanot Part 3 -videon editoinnista, järjestyksessä sitä mukaa kuin nii
 **Ehdotuksia korvaajaksi (ei vielä päätetty):**
 - Tiedostot ja rivit jaettuna `src`-hakemiston pääkansioittain (esimerkiksi GroundTheory, PositivityTheory, ReciprocityTheory ja muut) yksinkertaisena pylväs- tai palkkikuvana.
 - Kasvukäyrä, joka näyttää tiedostojen tai rivien määrän ajan mittaan 24.11.2026 asti.
+
+## 6. Viimeinen jakso: kaksi askelta ja kaksi tarviketta
+
+**Nyt kuvassa:** "first step": jos katto pätee, kriittisen suoran oikealla puolella ei ole nollia. "second step": jos kaksi asiaa on annettu, katto pätee. Toiseen askeleen tulevat nuolet kahdesta katkoviivaboksista: "an auxiliary field with a property" ja "lattices with their conditions". Alhaalla vasemmalla tekstit "Station 2 tells where the field comes from" ja "Station 5 belongs to the part that proves the conditions".
+
+**Arvio:** rakenne toimii. Ketju tarvikkeet → askel 2 → askel 1 on selvä, ja kaksi askelta ja kaksi tarviketta näkyvät samassa kuvassa. Kolme aiempaa lupausta jää kuitenkin osin lunastamatta:
+
+- **Eksponentti 1/2 puuttuu.** Part 3 alkoi kysymyksellä, miten nollista päästään eksponenttiin 1/2 (kohta 1). Tässä ruudussa ei sanota, että katto on x^(1/2), eikä askeleen 1 ikonin suoraa ole merkitty Re(s) = 1/2:ksi. Ikonissa on sama akseliton laatikko kuin kohdassa 1.
+- **Asemat 2 ja 5 eivät avaudu.** Reittiruudun asemia ei nimetty (kohta 2), joten katsoja ei tiedä, mitä "Station 2" ja "Station 5" ovat. Korjaus: näytä tässä reitin yhdeksän palloa pienenä ja väritä, mihin boksiin kukin asema kuuluu.
+- **x^(1/2)-tiedosto ei kytkeydy tähän.** Kohdan 4 tiedosto ("the step that gives the exponent one half sits in this file") kannattaa merkitä siihen boksiin, johon se kuuluu.
+
+**Pienempiä huomioita:**
+- "No zero lies to the right of the line" voi jättää katsojalle kysymyksen vasemmasta puolesta. Puolilause nollien symmetriasta suoran Re(s) = 1/2 suhteen sulkisi aukon.
+- Kerro lopussa jokaisen boksin tila: mikä on Leanilla tarkistettu ja mikä on vielä väitettä. Muuten "claimed proof" -kehys jää auki.
