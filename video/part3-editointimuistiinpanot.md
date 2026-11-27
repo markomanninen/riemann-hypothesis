@@ -36,3 +36,13 @@ Muistiinpanot Part 3 -videon editoinnista, järjestyksessä sitä mukaa kuin nii
 **Huomioita samasta ruudusta (tarkistettava):**
 - Luku 37 näyttää kuvakaappauksessa sotkuiselta ("ʒ7"). Se voi olla laskurianimaation välikuva, mutta tarkista lopullinen kuva.
 - Vasemman keskiboksin päällä on ylimääräinen ääriviivakehys, joka ulottuu keskimmäiseen boksiin asti. Jos se on korostus, se näyttää nyt kohdistusvirheeltä.
+
+## 4. Ruutu "Which statement uses which"
+
+**Nyt kuvassa:** vasemmalla otsikko, selitteet (oranssi = "the files that it rests on", vihreä = "the files that are built on it") ja haalea teksti "the step that gives the exponent one half of the ceiling sits in this file" sekä x^(1/2). Oikealla tiedostojen pistekaavio (piste jokaista tiedostoa kohden), josta yksi piste on ympyröity ja nimetty "one file". Kaavio täyttää vain ruudun oikean reunan.
+
+**Korjattava:**
+- Taustan pistekaavion pitää täyttää ruudusta enemmän, ja sen pitää olla nykyistä himmeämpi, jotta vasemman puolen teksti erottuu.
+- Kohtauksen loppuosassa nimen "one file" tilalle tulee hyödyllinen tieto, jos mahdollista: esimerkiksi tiedoston nimi tai polku ja lyhyesti se lause, joka antaa eksponentin 1/2.
+
+**Avoinna:** kuka tiedosto on kyseessä. Nimi tarkistetaan repon `src`-hakemistosta ennen kuin se kirjoitetaan kuvaan.
