@@ -24,3 +24,15 @@ Muistiinpanot Part 3 -videon editoinnista, järjestyksessä sitä mukaa kuin nii
 - Tyhjät pallot eivät kerro katsojalle mitään, vaikka otsikko lupaa lukea koko reitin.
 
 **Avoinna:** askelten nimet ja niiden järjestys pitää vielä sopia. Niiden lähteeksi sopinee strategiakartta (`semantics/STRATEGY-argumenttikartta.html`, `verification/strategy/`).
+
+## 3. Ruutu "What the reader's map is"
+
+**Nyt kuvassa:** vasemmalla Lean-teksti piirrettynä harmaina palkkeina ("drawn as blocks in place of its words"). Oikealla kaavio: yläboksista lähtee nuolia kolmeen keskiboksiin ja niistä kahteen alaboksiin, ja osassa bokseja on vihreä ruksi. Yläpuolella teksti "CHECKED BY A SECOND AI MODEL · 37 rows of the list of claims, compared with the formal text".
+
+**Korjattava:**
+- Oikean puolen boksit ovat yhtä abstrakteja palkkeja kuin vasen Lean-teksti, joten kartta ei näytä eroavan tekstistä mitenkään. Bokseihin pitää kirjoittaa jotain hyödyllistä, esimerkiksi väitteen lyhyt nimi tai sisältö luonnollisella kielellä ja tarvittaessa viittaus vastaavaan Lean-lauseeseen.
+- Silloin katsoja näkee, mitä lukijan kartta lisää: se kertoo sanoin, mitä vasemman puolen palkit väittävät ja miten väitteet riippuvat toisistaan.
+
+**Huomioita samasta ruudusta (tarkistettava):**
+- Luku 37 näyttää kuvakaappauksessa sotkuiselta ("ʒ7"). Se voi olla laskurianimaation välikuva, mutta tarkista lopullinen kuva.
+- Vasemman keskiboksin päällä on ylimääräinen ääriviivakehys, joka ulottuu keskimmäiseen boksiin asti. Jos se on korostus, se näyttää nyt kohdistusvirheeltä.
