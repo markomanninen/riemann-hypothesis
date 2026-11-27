@@ -14,3 +14,13 @@ Muistiinpanot Part 3 -videon editoinnista, järjestyksessä sitä mukaa kuin nii
 **Miksi:** ilman näitä merkintöjä kertojan puheen ja kuvan väliin jää aukko. Katsoja ei näe, että keltainen viiva on juuri Re(s) = 1/2, eikä siksi ymmärrä, mistä eksponentti 1/2 tulee.
 
 **Ehdotus (ei vielä päätetty):** katkoviivaketjun alkuun tai päälle voisi lisätä välivaiheen Re(ρ) = 1/2 ⇒ |x^ρ| = x^(1/2). Silloin ketju kertoo, miten nollan reaaliosasta tulee eksponentti.
+
+## 2. Ruutu "A first reading of the whole route"
+
+**Nyt kuvassa:** yhdeksän palloa vaakaketjussa, vasemmassa reunassa teksti "the goal" ja alla "the route of the claimed proof, step by step". Seitsemän ensimmäistä palloa on keltaisia, kahdeksas on korostettu nykyiseksi kohdaksi ja yhdeksäs on tyhjä. Palloilla ei ole nimiä.
+
+**Korjattava:**
+- Kirjoita jokaisen pallon kohdalle, mikä todistuksen askel se on (lyhyt nimi pallon ylä- tai alapuolelle).
+- Tyhjät pallot eivät kerro katsojalle mitään, vaikka otsikko lupaa lukea koko reitin.
+
+**Avoinna:** askelten nimet ja niiden järjestys pitää vielä sopia. Niiden lähteeksi sopinee strategiakartta (`semantics/STRATEGY-argumenttikartta.html`, `verification/strategy/`).
