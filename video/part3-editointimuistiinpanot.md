@@ -72,3 +72,15 @@ Muistiinpanot Part 3 -videon editoinnista, järjestyksessä sitä mukaa kuin nii
 **Pienempiä huomioita:**
 - "No zero lies to the right of the line" voi jättää katsojalle kysymyksen vasemmasta puolesta. Puolilause nollien symmetriasta suoran Re(s) = 1/2 suhteen sulkisi aukon.
 - Kerro lopussa jokaisen boksin tila: mikä on Leanilla tarkistettu ja mikä on vielä väitettä. Muuten "claimed proof" -kehys jää auki.
+
+## 7. Hengähdystauot (yleinen sääntö), esimerkkinä "Station 1 · A statement about zeros"
+
+**Nyt kuvassa:** taustalla kirkkaansininen tiedostokartta kansionimineen (Abelian Variety Theory, Weil Bound, Reciprocity Theory ...). Sen päällä kortti "Station 1 in the formal text · Landau Theorems", jossa polku Development › Automorphic Arithmetic › Dedekind L Functions ja selite: tiedosto Zero Free Of Rpow Window sisältää askeleen, joka vie ikkunoiden katosta nollia koskevaan väitteeseen. Ylhäällä oikealla kuuden aseman ikonirivi.
+
+**Korjattava, koskee kaikkia vastaavia taukoja:**
+- Taustan animaatio häivytetään hengähdystauoissa selvästi nykyistä enemmän, jotta otsikot ja kortin teksti erottuvat.
+
+**Huomioita tästä ruudusta (tarkistettava):**
+- Kansionimet leikkautuvat kortin reunaan ("…pondence", "…ndations", vasemmassa reunassa yksinäinen "A"). Himmeämpi tausta vähentää tätä; nimet voi myös piilottaa kortin alta kokonaan.
+- Haalea "Development"-teksti on aivan otsikkorivin alla ja sekoittuu siihen.
+- Ruutu lunastaa osan kohtien 2 ja 4 lupauksista: asemilla on ikonit, ja x^(1/2)-askeleen tiedosto nimetään (Zero Free Of Rpow Window). Tarkista, että sama nimi näytetään myös kohdan 4 ruudussa "one file" -merkinnän tilalla.
