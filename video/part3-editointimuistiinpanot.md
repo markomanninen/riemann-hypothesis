@@ -113,3 +113,15 @@ Muistiinpanot Part 3 -videon editoinnista, järjestyksessä sitä mukaa kuin nii
 **Tarkistettava:**
 - Alateksti "the four that this station tells" on kuvakaappauksessa rikkinäinen (glitch-efekti tai animaation välikuva).
 - Numero 4 on himmeä, vaikka rivi on korostettu. Se on ehkä vielä ilmestymässä.
+
+## 10. Taustamusiikki: toinen pätkä alussa
+
+**Ongelma:** videon alussa soiva toinen musiikkipätkä on liian voimakas, ja kertojan puhetta on vaikea kuulla sen alta. Pätkän dynamiikka vaihtelee luultavasti enemmän kuin muiden pätkien.
+
+**Korjausvaihtoehdot:**
+- Siloittele dynamiikkaa kompressorilla, jotta voimakkaat kohdat eivät nouse puheen päälle.
+- Laske pätkän äänenvoimakkuutta.
+- Tai tee molemmat: ensin kompressio, sitten taso muiden pätkien kanssa samaan.
+- Vaihtoehtoisesti musiikki voi väistää puhetta automaattisesti (ducking/sidechain kertojan raidasta).
+
+**Tarkistettava:** kuuntele lopuksi koko alku putkeen, jotta siirtymä ensimmäisestä pätkästä toiseen ei hyppää äänenvoimakkuudessa.
