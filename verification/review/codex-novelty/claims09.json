@@ -57,7 +57,7 @@
         "quote": "Since the number of roots of a polynomial does not exceed its degree"
       },
       {
-        "citation": "Enrico Bombieri, Counting points on curves over finite fields, Séminaire Bourbaki, exposé 430, Springer-Verlag, 1974.",
+        "citation": "Enrico Bombieri, Counting points on curves over finite fields (d’après S. A. Stepanov), Séminaire Bourbaki 1972/73, exposé 430, Lecture Notes in Mathematics 383, Springer, 1974, pp. 234–241.",
         "url": "https://www.numdam.org/article/SB_1972-1973__15__234_0.pdf",
         "locator": "Section II, proof of Theorem 1, equation (7) and the parameter choice immediately following it.",
         "says": "Bombieri divides a pole-degree bound by the vanishing multiplicity p^μ and sets p^μ = √q for square q to obtain a square-root error for the point count.",

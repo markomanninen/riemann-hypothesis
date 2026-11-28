@@ -104,7 +104,7 @@
     "class": "U",
     "nearest": [
       {
-        "citation": "André Weil, Sur les « formules explicites » de la théorie des nombres premiers, Communications du Séminaire Mathématique de l’Université de Lund, Tome Supplémentaire, 1952.",
+        "citation": "André Weil, Sur les « formules explicites » de la théorie des nombres premiers, Communications du Séminaire Mathématique de l’Université de Lund (Meddelanden från Lunds Universitets Matematiska Seminarium), Tome Supplémentaire dédié à Marcel Riesz, 1952, pp. 252–265.",
         "url": "https://denisevellachemla.eu/transc-Weil-1952.pdf",
         "locator": "See equation (12) and the positivity criterion immediately following it.",
         "says": "Weil gives a criterion for RH for Hecke L-functions in terms of positivity of a distribution on a family of convolution squares.",
@@ -134,7 +134,7 @@
     "class": "A",
     "nearest": [
       {
-        "citation": "André Weil, Sur les « formules explicites » de la théorie des nombres premiers, Communications du Séminaire Mathématique de l’Université de Lund, Tome Supplémentaire, 1952.",
+        "citation": "André Weil, Sur les « formules explicites » de la théorie des nombres premiers, Communications du Séminaire Mathématique de l’Université de Lund (Meddelanden från Lunds Universitets Matematiska Seminarium), Tome Supplémentaire dédié à Marcel Riesz, 1952, pp. 252–265.",
         "url": "https://denisevellachemla.eu/transc-Weil-1952.pdf",
         "locator": "See equation (11) and its introductory sentence.",
         "says": "The explicit formula for Hecke L-functions writes the sum of transformed test values at zeros in terms of pole, conductor and archimedean terms and a prime-power sum with a minus sign.",

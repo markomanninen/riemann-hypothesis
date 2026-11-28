@@ -1344,7 +1344,7 @@
   }
  },
  {
-  "citation": "Enrico Bombieri, Le grand crible dans la théorie analytique des nombres, Astérisque 18, Société mathématique de France, 1974.",
+  "citation": "Enrico Bombieri, Le grand crible dans la théorie analytique des nombres, second edition, Astérisque 18, Société mathématique de France, 1987.",
   "url": "https://smf.emath.fr/system/files/filepdf/AST_1987__18__1_0.pdf",
   "units": [
    "3.6"
@@ -1367,8 +1367,7 @@
     ],
     "volume": "18",
     "pages": "",
-    "source": "Astérisque, 18. Publié avec le concours du Centre National de la Recherche Scintifique. Paris: Société Mathématique de France. 103 p.; FF 70.00; {\\$} 11.00 (1987).",
-    "other_edition": true
+    "source": "Astérisque, 18. Publié avec le concours du Centre National de la Recherche Scintifique. Paris: Société Mathématique de France. 103 p.; FF 70.00; {\\$} 11.00 (1987)."
    }
   ],
   "fields": {
@@ -1380,17 +1379,17 @@
     }
    },
    "title": {
-    "outcome": "differs",
-    "note": "zbMATH, Zbl 0618.10042. The citation holds the first words of the title of the record, which is `Le grand crible dans la théorie analytique des nombres. (2e éd. rev. et augmentée). (The large sieve in analytic number theory)`.",
+    "outcome": "same",
+    "note": "The record adds a remark in brackets to the title, which is `Le grand crible dans la théorie analytique des nombres. (2e éd. rev. et augmentée). (The large sieve in analytic number theory)`.",
     "against": {
-     "Zbl 0618.10042": "differs"
+     "Zbl 0618.10042": "same"
     }
    },
    "year": {
-    "outcome": "differs",
-    "note": "zbMATH, Zbl 0618.10042. The record has 1987. The record may be of another edition or a reprint.",
+    "outcome": "same",
+    "note": "",
     "against": {
-     "Zbl 0618.10042": "differs"
+     "Zbl 0618.10042": "same"
     }
    },
    "place": {
@@ -4200,7 +4199,7 @@
   }
  },
  {
-  "citation": "Enrico Bombieri, Counting points on curves over finite fields, Séminaire Bourbaki, exposé 430, Springer-Verlag, 1974.",
+  "citation": "Enrico Bombieri, Counting points on curves over finite fields (d’après S. A. Stepanov), Séminaire Bourbaki 1972/73, exposé 430, Lecture Notes in Mathematics 383, Springer, 1974, pp. 234–241.",
   "url": "https://www.numdam.org/article/SB_1972-1973__15__234_0.pdf",
   "units": [
    "9.3"
@@ -4253,10 +4252,10 @@
    },
    "title": {
     "outcome": "same",
-    "note": "zbMATH, Zbl 0307.14011. The citation holds the first words of the title of the record, which is `Counting points on curves over finite fields (d'après S. A. Stepanov)`.",
+    "note": "",
     "against": {
      "doi:10.1007/bfb0057311": "same",
-     "Zbl 0307.14011": "differs"
+     "Zbl 0307.14011": "same"
     }
    },
    "year": {
@@ -4268,10 +4267,10 @@
     }
    },
    "place": {
-    "outcome": "differs",
-    "note": "Crossref, doi:10.1007/bfb0057311. The record has `Lecture Notes in Mathematics`. The record may be of another edition or a reprint.",
+    "outcome": "same",
+    "note": "",
     "against": {
-     "doi:10.1007/bfb0057311": "differs",
+     "doi:10.1007/bfb0057311": "same",
      "Zbl 0307.14011": "no data"
     }
    },
@@ -4284,11 +4283,11 @@
     }
    },
    "pages": {
-    "outcome": "absent",
+    "outcome": "same",
     "note": "",
     "against": {
-     "doi:10.1007/bfb0057311": "absent",
-     "Zbl 0307.14011": "absent"
+     "doi:10.1007/bfb0057311": "same",
+     "Zbl 0307.14011": "same"
     }
    }
   }
@@ -5259,7 +5258,7 @@
   }
  },
  {
-  "citation": "André Weil, Sur les « formules explicites » de la théorie des nombres premiers, Communications du Séminaire Mathématique de l’Université de Lund, Tome Supplémentaire, 1952.",
+  "citation": "André Weil, Sur les « formules explicites » de la théorie des nombres premiers, Communications du Séminaire Mathématique de l’Université de Lund (Meddelanden från Lunds Universitets Matematiska Seminarium), Tome Supplémentaire dédié à Marcel Riesz, 1952, pp. 252–265.",
   "url": "https://denisevellachemla.eu/transc-Weil-1952.pdf",
   "units": [
    "T4",
@@ -5322,17 +5321,17 @@
    },
    "year": {
     "outcome": "same",
-    "note": "Crossref, doi:10.1007/978-1-4757-1705-1_60. The record has 1979. The record may be of another edition or a reprint.",
+    "note": "",
     "against": {
-     "doi:10.1007/978-1-4757-1705-1_60": "differs",
+     "doi:10.1007/978-1-4757-1705-1_60": "no data",
      "Zbl 0049.03205": "same"
     }
    },
    "place": {
-    "outcome": "differs",
-    "note": "Crossref, doi:10.1007/978-1-4757-1705-1_60. The record has `Œuvres Scientifiques Collected Papers`. The record may be of another edition or a reprint.",
+    "outcome": "no data",
+    "note": "",
     "against": {
-     "doi:10.1007/978-1-4757-1705-1_60": "differs",
+     "doi:10.1007/978-1-4757-1705-1_60": "no data",
      "Zbl 0049.03205": "no data"
     }
    },
@@ -5345,11 +5344,11 @@
     }
    },
    "pages": {
-    "outcome": "absent",
+    "outcome": "same",
     "note": "",
     "against": {
-     "doi:10.1007/978-1-4757-1705-1_60": "absent",
-     "Zbl 0049.03205": "absent"
+     "doi:10.1007/978-1-4757-1705-1_60": "no data",
+     "Zbl 0049.03205": "same"
     }
    }
   }

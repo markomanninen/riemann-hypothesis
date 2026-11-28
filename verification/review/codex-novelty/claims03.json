@@ -130,7 +130,7 @@
     "class": "A",
     "nearest": [
       {
-        "citation": "Enrico Bombieri, Le grand crible dans la théorie analytique des nombres, Astérisque 18, Société mathématique de France, 1974.",
+        "citation": "Enrico Bombieri, Le grand crible dans la théorie analytique des nombres, second edition, Astérisque 18, Société mathématique de France, 1987.",
         "url": "https://smf.emath.fr/system/files/filepdf/AST_1987__18__1_0.pdf",
         "locator": "Section 10, Theorem 20 and the attribution in the notes to Section 10.",
         "says": "The chapter proves a form of Montgomery’s density estimate for the total number of zeros near 1, summed over primitive characters with conductors up to Q.",

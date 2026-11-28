@@ -1,0 +1,39 @@
+[
+ {
+  "file": "claims03.json",
+  "units": [
+   "3.6"
+  ],
+  "field": "citation",
+  "model_wrote": "Enrico Bombieri, Le grand crible dans la théorie analytique des nombres, Astérisque 18, Société mathématique de France, 1974.",
+  "corrected_to": "Enrico Bombieri, Le grand crible dans la théorie analytique des nombres, second edition, Astérisque 18, Société mathématique de France, 1987.",
+  "reason": "The file that the answer opened holds section 12 with the heading `Some recent developments (added for the second edition, 1987)`, and zbMATH has the record Zbl 0618.10042 of that edition, with 103 pages. The first edition appeared in 1974. The place that the answer names, Theorem 20 of section 10, is a place of the opened file.",
+  "date": "2026-11-28",
+  "by": "Claude, from the records named in the reason"
+ },
+ {
+  "file": "claims09.json",
+  "units": [
+   "9.3"
+  ],
+  "field": "citation",
+  "model_wrote": "Enrico Bombieri, Counting points on curves over finite fields, Séminaire Bourbaki, exposé 430, Springer-Verlag, 1974.",
+  "corrected_to": "Enrico Bombieri, Counting points on curves over finite fields (d’après S. A. Stepanov), Séminaire Bourbaki 1972/73, exposé 430, Lecture Notes in Mathematics 383, Springer, 1974, pp. 234–241.",
+  "reason": "The record Zbl 0307.14011 gives the title with the words d'après S. A. Stepanov and the source as Sémin. Bourbaki 1972/73, Exp. No. 430, Lect. Notes Math. 383, 234-241 (1974). The Crossref record 10.1007/bfb0057311 gives the series and the same pages.",
+  "date": "2026-11-28",
+  "by": "Claude, from the records named in the reason"
+ },
+ {
+  "file": "timeline01.json",
+  "units": [
+   "T4",
+   "T5"
+  ],
+  "field": "citation",
+  "model_wrote": "André Weil, Sur les « formules explicites » de la théorie des nombres premiers, Communications du Séminaire Mathématique de l’Université de Lund, Tome Supplémentaire, 1952.",
+  "corrected_to": "André Weil, Sur les « formules explicites » de la théorie des nombres premiers, Communications du Séminaire Mathématique de l’Université de Lund (Meddelanden från Lunds Universitets Matematiska Seminarium), Tome Supplémentaire dédié à Marcel Riesz, 1952, pp. 252–265.",
+  "reason": "The record Zbl 0049.03205 gives the source as Meddel. Lunds Univ. Mat. Sem., Suppl.-band M. Riesz, 252-265 (1952). The citation now names the journal in both of its languages, the dedication of the volume and the pages, so that it can be found under either name.",
+  "date": "2026-11-28",
+  "by": "Claude, from the records named in the reason"
+ }
+]

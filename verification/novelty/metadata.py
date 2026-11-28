@@ -22,7 +22,10 @@ Where a record comes from
              taken by the same rule
 
 A work can have several records in one catalogue, of the first printing and of reprints. The
-script then takes the record with a year that the citation gives, if there is one.
+script then takes the record with a year that the citation gives, if there is one. When it has
+to take a record whose year and place both differ from the citation, and a record of another
+catalogue confirms the year of the citation, the first record counts as a reprint and is not
+held against the year, the place, the volume or the pages.
 
 What is compared
 
@@ -318,6 +321,11 @@ def compare(citation, record, lead=None):
             if len(words(place)) >= 2 and run_at(words(place), cited) >= 0:
                 at, used, part_of_book = run_at(words(place), cited), words(place), True
                 break
+    # a catalogue can add a remark in brackets to a title, such as the edition
+    bare = words(re.sub(r"\([^)]*\)", " ", record["title"]))
+    added = False
+    if at < 0 and len(bare) >= 3 and bare != title and run_at(bare, cited) >= 0:
+        at, used, added = run_at(bare, cited), bare, True
     longer = 0
     if at < 0 and title:
         longer = next((n for n in range(len(title) - 1, 3, -1) if run_at(title[:n], cited) >= 0), 0)
@@ -325,6 +333,8 @@ def compare(citation, record, lead=None):
             at, used = run_at(title[:longer], cited), title[:longer]
     if not words(record["title"]):
         out["title"] = ("no data", "")
+    elif added:
+        out["title"] = ("same", "The record adds a remark in brackets to the title, which is `" + record["title"] + "`.")
     elif longer:
         out["title"] = ("differs", "The citation holds the first words of the title of the record, which is `" + record["title"] + "`.")
     elif part_of_book:
@@ -420,6 +430,13 @@ NAMES = {"arxiv": "arXiv", "doi": "Crossref", "search": "Crossref", "zbmath": "z
 def merge(per_record):
     """One outcome for each field from the outcomes against the single records."""
     out = {}
+    # a record of a reprint says nothing against the year and the place of the cited printing
+    dated = any(f["year"][0] == "same" for r, f in per_record)
+    for r, f in per_record:
+        if r.get("other_edition") and dated and f["year"][0] == "differs" and f["place"][0] == "differs":
+            for field in ("year", "place", "volume", "pages"):
+                if f[field][0] == "differs":
+                    f[field] = ("no data", "")
     for field in FIELDS:
         got = [(r["id"], NAMES[r["how"]], f[field]) for r, f in per_record]
         outcomes = [g[2][0] for g in got]

@@ -172,39 +172,42 @@ differs when it agrees with no record and differs from at least one.
 | Field | Same as a record | Differs from every record that gives it | Citation does not give it | No record gives it |
 |---|---:|---:|---:|---:|
 | Authors | 80 | 0 | 0 | 0 |
-| Title | 79 | 1 | 0 | 0 |
-| Year | 79 | 1 | 0 | 0 |
-| Journal or series | 72 | 2 | 4 | 2 |
+| Title | 80 | 0 | 0 | 0 |
+| Year | 80 | 0 | 0 | 0 |
+| Journal or series | 73 | 0 | 4 | 3 |
 | Volume | 27 | 0 | 35 | 18 |
-| Pages | 8 | 0 | 71 | 1 |
+| Pages | 10 | 0 | 69 | 1 |
 
-In 77 of the 80 citations with a record no field differs. No citation has a wrong author, a
-wrong volume or wrong pages by its records. Most citations give no pages, so the pages were
-compared for 8 citations only.
+In all 80 citations with a record no field differs from every record. Most citations give no
+pages, so the pages were compared for 10 citations only.
 
-The 3 citations with a field that differs are these, each read against its records by the
-language model Claude.
+The table describes the citations after three corrections. As the model wrote them, three
+citations had a field that differed, and the language model Claude corrected each one from the
+records on 28 November 2026. The file
+[`corrections.json`](../review/codex-novelty/corrections.json) holds the words of the model,
+the corrected words and the reason, and the answer files hold the corrected words.
 
-- Bombieri, Le grand crible dans la théorie analytique des nombres, is cited in unit 3.6 as
-  Astérisque 18 of 1974. The address that the answer opened is the file `AST_1987__18__1_0`,
-  and the one record, of zbMATH, is the second, revised and enlarged edition of 1987. The
-  citation therefore dates the first edition while the answer quotes the second, and a page
-  or theorem number of one edition may not hold in the other.
-- Bombieri, Counting points on curves over finite fields, is cited in unit 9.3 as Séminaire
-  Bourbaki, exposé 430, Springer-Verlag, 1974. The Crossref record names the series Lecture
-  Notes in Mathematics, which that citation leaves out and which the citation of the same
-  exposé in unit T1 gives. The zbMATH record adds the words d'après S. A. Stepanov to the
-  title, as the citation of unit T1 does.
-- Weil, Sur les formules explicites de la théorie des nombres premiers, is cited with its
-  first publication in Lund in 1952. zbMATH confirms the year 1952 and gives the place in an
-  abbreviation that the script cannot compare, Meddel. Lunds Univ. Mat. Sem. The Crossref
-  record is the reprint in the collected papers of 1979.
+- Bombieri, Le grand crible dans la théorie analytique des nombres, was cited in unit 3.6 as
+  Astérisque 18 of 1974, which is the first edition. The file that the answer opened holds a
+  section 12 with the heading "Some recent developments (added for the second edition, 1987)",
+  and zbMATH has the record of that second, revised and enlarged edition. The citation now
+  names the second edition of 1987. The place that the answer gives, Theorem 20 of section 10,
+  is a place of the opened file.
+- Bombieri, Counting points on curves over finite fields, was cited in unit 9.3 without the
+  words d'après S. A. Stepanov in the title and without the series. The citation now gives the
+  title of the zbMATH record, the Séminaire Bourbaki 1972/73, exposé 430, Lecture Notes in
+  Mathematics 383 and the pages 234 to 241, which Crossref and zbMATH both give.
+- Weil, Sur les formules explicites de la théorie des nombres premiers, was cited in units T4
+  and T5 with the French name of the journal of Lund and no pages. zbMATH confirms the year
+  1952 and gives the journal under its Swedish name in an abbreviation, with the pages 252 to
+  265. The citation now gives both names, the dedication of the volume to Marcel Riesz and the
+  pages. The one Crossref record is the reprint in the collected papers of 1979, which the
+  script sets aside as a reprint. No record gives the name of the journal in a form that the
+  script can compare, so the place of this citation counts as not given by a record.
 
-In 14 citations a field agrees with one record while another record has something else. These
+In 12 citations a field agrees with one record while another record has something else. These
 are differences between the catalogues or between a preprint and its printed version, and the
-file [`metadata.json`](../review/codex-novelty/metadata.json) names the records for each. Two
-of the 14 are the citations of Bombieri's exposé and of Weil's article in the list above, and
-the other 12 are these.
+file [`metadata.json`](../review/codex-novelty/metadata.json) names the records for each.
 
 - The textbook of Montgomery and Vaughan is cited with 2006 in units 1.2 and 1.3 and with 2007
   in unit 3.1. Crossref has 2006 and zbMATH has 2007, so each citation has one catalogue
@@ -263,7 +266,7 @@ confirmed. The full answers, with the places, the quotes and the search phrases,
 | 3.3 | G | high | The unit assigns a pointwise bound on the regularized, smoothed von Mangoldt sum to a sign-selected set of host characters. | none | none |
 | 3.4 | A | medium | The unit applies zero-density exclusion and moment bounds in a two-stage selection of auxiliary primes, with simultaneous control of three quadratic twists. | Youness Lamzouri, The number of imaginary quadratic fields with prime discriminant and class number up to H 2017 | 3 of 3 |
 | 3.5 | A | high | The unit combines a density estimate for zeros in a fixed-width rectangle with a maximal second-moment bound for short Dirichlet polynomials. | Youness Lamzouri, The number of imaginary quadratic fields with prime discriminant and class number up to H 2017 | 3 of 3 |
-| 3.6 | A | high | The unit compares a large-sieve zero-density upper bound for excluded conductors with a lower bound from the prime number theorem for a reduced progression in the presence of a possible exceptional real zero. | Enrico Bombieri 1974 | 2 of 2 |
+| 3.6 | A | high | The unit compares a large-sieve zero-density upper bound for excluded conductors with a lower bound from the prime number theorem for a reduced progression in the presence of a possible exceptional real zero. | Enrico Bombieri 1987 | 2 of 2 |
 | 3.7 | A | high | The unit expands a second moment over prime-conductor quadratic characters and groups pairs by the squarefree kernel of their product. | Hugh L. Montgomery and Robert C. Vaughan 1979 | 2 of 2 |
 | 3.8 | A | high | Quadratic reciprocity turns the pair correlation into a real Dirichlet character evaluated at the varying prime, up to a constant sign on the progression. | Youness Lamzouri, The number of imaginary quadratic fields with prime discriminant and class number up to H 2017 | 2 of 3 |
 
