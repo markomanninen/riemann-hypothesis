@@ -35,7 +35,7 @@
         "quote": "the generalized Riemann hypothesis (GRH, in short) for L(s, χ) is equivalent to Θ(χ) = 1/2."
       },
       {
-        "citation": "Hugh L. Montgomery and Robert C. Vaughan, Multiplicative Number Theory I. Classical Theory, Cambridge University Press, 2006.",
+        "citation": "Hugh L. Montgomery and Robert C. Vaughan, Multiplicative Number Theory I. Classical Theory, Cambridge University Press, 2007.",
         "url": "https://ndl.ethernet.edu.et/bitstream/123456789/23715/1/Hugh%20L.%20Montgomery.pdf",
         "locator": "Section 10.1, Corollary 10.8 and the paragraph following it, p. 333, and equation (10.20), p. 334.",
         "says": "The authors derive the symmetry of primitive Dirichlet zeros from the functional equation and give the finite Euler product for imprimitive characters.",
@@ -66,7 +66,7 @@
     "class": "K",
     "nearest": [
       {
-        "citation": "Hugh L. Montgomery and Robert C. Vaughan, Multiplicative Number Theory I. Classical Theory, Cambridge University Press, 2006.",
+        "citation": "Hugh L. Montgomery and Robert C. Vaughan, Multiplicative Number Theory I. Classical Theory, Cambridge University Press, 2007.",
         "url": "https://ndl.ethernet.edu.et/bitstream/123456789/23715/1/Hugh%20L.%20Montgomery.pdf",
         "locator": "Section 10.1, equation (10.20) and the following two paragraphs, p. 334.",
         "says": "The authors give the inducing-character factorization, locate the additional zeros on the imaginary axis, and identify the simple pole for the principal character.",

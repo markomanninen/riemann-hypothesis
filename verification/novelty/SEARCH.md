@@ -147,7 +147,7 @@ preprint only if the exposé alone carries it.
 ## The citations against three catalogues
 
 A citation is the line in which an answer names a source, with the authors, the title, the
-place of publication and the year. The answers hold 85 different citations. The script
+place of publication and the year. The answers hold 84 different citations. The script
 [`metadata.py`](metadata.py) looked for records of each one in three catalogues.
 
 - In arXiv, when the address or the citation holds an arXiv identifier.
@@ -163,27 +163,27 @@ differs when it agrees with no record and differs from at least one.
 | Catalogue | Citations with a record |
 |---|---:|
 | arXiv | 29 |
-| Crossref | 62 |
-| zbMATH | 68 |
-| At least one of the three | 80 |
+| Crossref | 61 |
+| zbMATH | 67 |
+| At least one of the three | 79 |
 | All three | 15 |
 | None | 5 |
 
 | Field | Same as a record | Differs from every record that gives it | Citation does not give it | No record gives it |
 |---|---:|---:|---:|---:|
-| Authors | 80 | 0 | 0 | 0 |
-| Title | 80 | 0 | 0 | 0 |
-| Year | 80 | 0 | 0 | 0 |
-| Journal or series | 73 | 0 | 4 | 3 |
-| Volume | 27 | 0 | 35 | 18 |
-| Pages | 10 | 0 | 69 | 1 |
+| Authors | 79 | 0 | 0 | 0 |
+| Title | 79 | 0 | 0 | 0 |
+| Year | 79 | 0 | 0 | 0 |
+| Journal or series | 73 | 0 | 3 | 3 |
+| Volume | 27 | 0 | 34 | 18 |
+| Pages | 10 | 0 | 68 | 1 |
 
-In all 80 citations with a record no field differs from every record. Most citations give no
+In all 79 citations with a record no field differs from every record. Most citations give no
 pages, so the pages were compared for 10 citations only.
 
-The table describes the citations after three corrections. As the model wrote them, three
-citations had a field that differed, and the language model Claude corrected each one from the
-records on 28 November 2026. The file
+The tables describe the citations after four corrections, which the language model Claude made
+on 28 November 2026. As the model wrote them, the answers held 85 different citations, and
+three of them had a field that differed from every record. The file
 [`corrections.json`](../review/codex-novelty/corrections.json) holds the words of the model,
 the corrected words and the reason, and the answer files hold the corrected words.
 
@@ -205,13 +205,15 @@ the corrected words and the reason, and the answer files hold the corrected word
   script sets aside as a reprint. No record gives the name of the journal in a form that the
   script can compare, so the place of this citation counts as not given by a record.
 
-In 12 citations a field agrees with one record while another record has something else. These
+In 11 citations a field agrees with one record while another record has something else. These
 are differences between the catalogues or between a preprint and its printed version, and the
 file [`metadata.json`](../review/codex-novelty/metadata.json) names the records for each.
 
-- The textbook of Montgomery and Vaughan is cited with 2006 in units 1.2 and 1.3 and with 2007
-  in unit 3.1. Crossref has 2006 and zbMATH has 2007, so each citation has one catalogue
-  behind it, and the two citations still disagree with each other.
+- The textbook of Montgomery and Vaughan was cited with 2006 in units 1.2 and 1.3 and with
+  2007 in unit 3.1. Crossref has 2006 and 2010 and zbMATH has 2007 for the printed book. The
+  fourth correction sets the two citations of 2006 to 2007, by a decision of the owner of the
+  repository, so the three units now hold one citation, which agrees with zbMATH and differs
+  from Crossref.
 - Four articles are cited with the year of their volume, which zbMATH also gives, while
   Crossref has the year in which the article went online. They are Ford, Green, Konyagin,
   Maynard and Tao (2018 against 2017), Chen and Zou (2025 against 2024), Furusawa and Morimoto
@@ -246,7 +248,7 @@ confirmed. The full answers, with the places, the quotes and the search phrases,
 |---|---|---|---|---|---|
 | 1.1 | K | high | This is the right-half-plane formulation of the generalized Riemann hypothesis for Dirichlet L-functions. | Yifan Yang 2001 | 1 of 1 |
 | 1.2 | K | high | The functional equation reflects a zero of a primitive Dirichlet L-function at s to a zero for the conjugate character at 1 − s. | Hirotaka Akatsuka and Ade Irma Suriajaya 2018 | 2 of 3 |
-| 1.3 | K | high | This is the conductor reduction for Dirichlet L-functions. | Hugh L. Montgomery and Robert C. Vaughan 2006 | 0 of 1 |
+| 1.3 | K | high | This is the conductor reduction for Dirichlet L-functions. | Hugh L. Montgomery and Robert C. Vaughan 2007 | 0 of 1 |
 | 1.4 | G | high | This declaration assembles premises for primitive Dirichlet zero-freeness. | none | none |
 
 **Step 2, from a bound on intervals to zero-freeness**

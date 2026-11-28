@@ -219,11 +219,12 @@
   }
  },
  {
-  "citation": "Hugh L. Montgomery and Robert C. Vaughan, Multiplicative Number Theory I. Classical Theory, Cambridge University Press, 2006.",
+  "citation": "Hugh L. Montgomery and Robert C. Vaughan, Multiplicative Number Theory I. Classical Theory, Cambridge University Press, 2007.",
   "url": "https://ndl.ethernet.edu.et/bitstream/123456789/23715/1/Hugh%20L.%20Montgomery.pdf",
   "units": [
    "1.2",
-   "1.3"
+   "1.3",
+   "3.1"
   ],
   "records": [
    {
@@ -242,7 +243,8 @@
     "place": "",
     "places": [],
     "volume": "",
-    "pages": ""
+    "pages": "",
+    "other_edition": true
    },
    {
     "how": "zbmath",
@@ -262,8 +264,7 @@
     ],
     "volume": "97",
     "pages": "",
-    "source": "Cambridge Studies in Advanced Mathematics 97. Cambridge: Cambridge University Press (ISBN 0-521-84903-9/hbk). xvii, 552~p. \\textsterling~48.00; \\$~90.00; \\$~72.00/e-book (2007).",
-    "other_edition": true
+    "source": "Cambridge Studies in Advanced Mathematics 97. Cambridge: Cambridge University Press (ISBN 0-521-84903-9/hbk). xvii, 552~p. \\textsterling~48.00; \\$~90.00; \\$~72.00/e-book (2007)."
    }
   ],
   "fields": {
@@ -285,10 +286,10 @@
    },
    "year": {
     "outcome": "same",
-    "note": "zbMATH, Zbl 1142.11001. The record has 2007. The record may be of another edition or a reprint.",
+    "note": "Crossref, doi:10.1017/cbo9780511618314. The record has 2006, 2010. The record may be of another edition or a reprint.",
     "against": {
-     "doi:10.1017/cbo9780511618314": "same",
-     "Zbl 1142.11001": "differs"
+     "doi:10.1017/cbo9780511618314": "differs",
+     "Zbl 1142.11001": "same"
     }
    },
    "place": {
@@ -706,104 +707,6 @@
    "2.3"
   ],
   "records": []
- },
- {
-  "citation": "Hugh L. Montgomery and Robert C. Vaughan, Multiplicative Number Theory I. Classical Theory, Cambridge University Press, 2007.",
-  "url": "https://personal.science.psu.edu/rcv4/personal/Publications/MNTI/13.0_pp_282_325_Primitive_characters_and_Gauss_sums.pdf",
-  "units": [
-   "3.1"
-  ],
-  "records": [
-   {
-    "how": "search",
-    "id": "doi:10.1017/cbo9780511618314",
-    "authors": [
-     "Montgomery",
-     "Vaughan"
-    ],
-    "title": "Multiplicative Number Theory I",
-    "kind": "monograph",
-    "years": [
-     2006,
-     2010
-    ],
-    "place": "",
-    "places": [],
-    "volume": "",
-    "pages": "",
-    "other_edition": true
-   },
-   {
-    "how": "zbmath",
-    "id": "Zbl 1142.11001",
-    "authors": [
-     "Montgomery",
-     "Vaughan"
-    ],
-    "title": "Multiplicative number theory. I. Classical theory",
-    "kind": "book",
-    "years": [
-     2007
-    ],
-    "place": "Cambridge Studies in Advanced Mathematics",
-    "places": [
-     "Cambridge Studies in Advanced Mathematics"
-    ],
-    "volume": "97",
-    "pages": "",
-    "source": "Cambridge Studies in Advanced Mathematics 97. Cambridge: Cambridge University Press (ISBN 0-521-84903-9/hbk). xvii, 552~p. \\textsterling~48.00; \\$~90.00; \\$~72.00/e-book (2007)."
-   }
-  ],
-  "fields": {
-   "authors": {
-    "outcome": "same",
-    "note": "",
-    "against": {
-     "doi:10.1017/cbo9780511618314": "same",
-     "Zbl 1142.11001": "same"
-    }
-   },
-   "title": {
-    "outcome": "same",
-    "note": "",
-    "against": {
-     "doi:10.1017/cbo9780511618314": "same",
-     "Zbl 1142.11001": "same"
-    }
-   },
-   "year": {
-    "outcome": "same",
-    "note": "Crossref, doi:10.1017/cbo9780511618314. The record has 2006, 2010. The record may be of another edition or a reprint.",
-    "against": {
-     "doi:10.1017/cbo9780511618314": "differs",
-     "Zbl 1142.11001": "same"
-    }
-   },
-   "place": {
-    "outcome": "absent",
-    "note": "The citation gives the publisher, and the record names the series Cambridge Studies in Advanced Mathematics.",
-    "against": {
-     "doi:10.1017/cbo9780511618314": "no data",
-     "Zbl 1142.11001": "absent"
-    }
-   },
-   "volume": {
-    "outcome": "absent",
-    "note": "",
-    "against": {
-     "doi:10.1017/cbo9780511618314": "no data",
-     "Zbl 1142.11001": "absent"
-    }
-   },
-   "pages": {
-    "outcome": "absent",
-    "note": "",
-    "against": {
-     "doi:10.1017/cbo9780511618314": "absent",
-     "Zbl 1142.11001": "absent"
-    }
-   }
-  }
  },
  {
   "citation": "Youness Lamzouri, The number of imaginary quadratic fields with prime discriminant and class number up to H, The Quarterly Journal of Mathematics, 2017.",
