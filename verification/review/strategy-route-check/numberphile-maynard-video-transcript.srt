@@ -1,0 +1,2028 @@
+1
+00:00:00,160 --> 00:00:04,880
+I never really believed or dreamt that I
+
+2
+00:00:03,520 --> 00:00:06,560
+there would be a proof of the rumin
+
+3
+00:00:04,880 --> 00:00:11,000
+hypothesis that I would be able to
+
+4
+00:00:06,560 --> 00:00:11,000
+understand within my lifetime.
+
+5
+00:00:13,920 --> 00:00:18,320
+>> Can you tell us where you were when you
+
+6
+00:00:15,599 --> 00:00:20,400
+heard that the reman hypothesis had
+
+7
+00:00:18,320 --> 00:00:23,519
+probably been proven?
+
+8
+00:00:20,400 --> 00:00:26,080
+>> Uh yeah, so I was in China at a
+
+9
+00:00:23,519 --> 00:00:28,720
+conference celebrating 200 years since
+
+10
+00:00:26,080 --> 00:00:30,960
+Reman's birth. So this was just as the
+
+11
+00:00:28,720 --> 00:00:33,040
+conference was about to start and the
+
+12
+00:00:30,960 --> 00:00:35,440
+next day I was due to give a talk about
+
+13
+00:00:33,040 --> 00:00:37,760
+the room hypothesis. So I went back to
+
+14
+00:00:35,440 --> 00:00:39,920
+uh my hotel room that evening after the
+
+15
+00:00:37,760 --> 00:00:42,399
+first dinner of uh the conference where
+
+16
+00:00:39,920 --> 00:00:44,399
+I met lots of the other speakers and I
+
+17
+00:00:42,399 --> 00:00:46,320
+was just checking my phone and suddenly
+
+18
+00:00:44,399 --> 00:00:48,719
+I realized that uh it looked like the
+
+19
+00:00:46,320 --> 00:00:50,879
+reman hypothesis had been solved. I just
+
+20
+00:00:48,719 --> 00:00:53,120
+saw it on social media I think quite
+
+21
+00:00:50,879 --> 00:00:55,680
+soon after it broke. So I straight away
+
+22
+00:00:53,120 --> 00:00:57,760
+emailed a few of my colleagues uh to see
+
+23
+00:00:55,680 --> 00:00:59,359
+if they'd heard about this and whether
+
+24
+00:00:57,760 --> 00:01:00,879
+it seemed legit or not.
+
+25
+00:00:59,359 --> 00:01:02,320
+>> I mean I imagine someone who does your
+
+26
+00:01:00,879 --> 00:01:03,440
+job must always hear from people who
+
+27
+00:01:02,320 --> 00:01:05,600
+claim they've solved the reman
+
+28
+00:01:03,440 --> 00:01:07,119
+hypothesis. Was your first instinct that
+
+29
+00:01:05,600 --> 00:01:08,479
+this was going to be a false alarm or
+
+30
+00:01:07,119 --> 00:01:09,200
+did it have the credibility straight
+
+31
+00:01:08,479 --> 00:01:12,400
+away?
+
+32
+00:01:09,200 --> 00:01:14,560
+>> So I knew it was coming from Levent who
+
+33
+00:01:12,400 --> 00:01:16,640
+uh has been involved in many of these
+
+34
+00:01:14,560 --> 00:01:18,640
+maths and AI breakthroughs as a
+
+35
+00:01:16,640 --> 00:01:20,320
+mathematician working at Anthropic. So
+
+36
+00:01:18,640 --> 00:01:23,600
+it automatically gave it a little bit of
+
+37
+00:01:20,320 --> 00:01:25,680
+credibility. Equally, uh the
+
+38
+00:01:23,600 --> 00:01:28,159
+announcement was a little bit unorthodox
+
+39
+00:01:25,680 --> 00:01:29,439
+that there wasn't any kind of human
+
+40
+00:01:28,159 --> 00:01:31,439
+readable document that you could look
+
+41
+00:01:29,439 --> 00:01:32,640
+at. There was just this lean code and so
+
+42
+00:01:31,439 --> 00:01:34,159
+it was a little bit difficult to know
+
+43
+00:01:32,640 --> 00:01:36,159
+exactly what to make of it straight
+
+44
+00:01:34,159 --> 00:01:37,680
+away. But I thought there was a pretty
+
+45
+00:01:36,159 --> 00:01:38,479
+high chance of it being correct straight
+
+46
+00:01:37,680 --> 00:01:40,640
+away.
+
+47
+00:01:38,479 --> 00:01:42,640
+>> Was your first instinct like a little
+
+48
+00:01:40,640 --> 00:01:44,640
+tickle of excitement or a little sort of
+
+49
+00:01:42,640 --> 00:01:46,399
+feeling of dread and disappointment? How
+
+50
+00:01:44,640 --> 00:01:52,079
+would you describe your like first
+
+51
+00:01:46,399 --> 00:01:55,439
+visceral reaction? Um it was very mixed
+
+52
+00:01:52,079 --> 00:01:57,680
+reading the uh report announcement. Uh I
+
+53
+00:01:55,439 --> 00:02:00,079
+didn't get a huge sense of what the
+
+54
+00:01:57,680 --> 00:02:03,280
+content of the proof was and so I was
+
+55
+00:02:00,079 --> 00:02:05,119
+very excited at the idea that um for me
+
+56
+00:02:03,280 --> 00:02:06,799
+the whole point is the understanding of
+
+57
+00:02:05,119 --> 00:02:08,879
+the structure behind the reman
+
+58
+00:02:06,799 --> 00:02:11,039
+hypothesis. So I was very excited at the
+
+59
+00:02:08,879 --> 00:02:12,879
+possibility that I might actually end up
+
+60
+00:02:11,039 --> 00:02:14,239
+being able to understand the reman
+
+61
+00:02:12,879 --> 00:02:16,560
+hypothesis and the proof of the reman
+
+62
+00:02:14,239 --> 00:02:19,120
+hypothesis. That was an incredible
+
+63
+00:02:16,560 --> 00:02:21,680
+feeling. But the fact that when it was
+
+64
+00:02:19,120 --> 00:02:24,000
+first announced, there was only this uh
+
+65
+00:02:21,680 --> 00:02:26,480
+lean code. There wasn't too much for me
+
+66
+00:02:24,000 --> 00:02:29,840
+to be able to digest and there was this
+
+67
+00:02:26,480 --> 00:02:31,840
+comment mentioning 250,000 pages that
+
+68
+00:02:29,840 --> 00:02:33,760
+scared me about to what extent am I
+
+69
+00:02:31,840 --> 00:02:36,480
+going to really be able to understand
+
+70
+00:02:33,760 --> 00:02:39,599
+this proof or is this going to be some
+
+71
+00:02:36,480 --> 00:02:42,640
+completely monstrous uh machine slop
+
+72
+00:02:39,599 --> 00:02:44,000
+that uh is outside the the ability for
+
+73
+00:02:42,640 --> 00:02:46,560
+me to understand? and that would be
+
+74
+00:02:44,000 --> 00:02:50,400
+really disappointing for me. So for the
+
+75
+00:02:46,560 --> 00:02:52,319
+Reman 200 conference in China um I was
+
+76
+00:02:50,400 --> 00:02:55,120
+talking about the room hypothesis and my
+
+77
+00:02:52,319 --> 00:02:58,560
+talk title was the reman hypothesis past
+
+78
+00:02:55,120 --> 00:03:00,560
+present and future. So I give my slides
+
+79
+00:02:58,560 --> 00:03:02,720
+uh the day before just before the
+
+80
+00:03:00,560 --> 00:03:05,200
+ruminant hypothesis announcement had
+
+81
+00:03:02,720 --> 00:03:07,519
+come out and obviously they were made
+
+82
+00:03:05,200 --> 00:03:09,280
+out of date pretty quickly. So but it
+
+83
+00:03:07,519 --> 00:03:10,720
+was a very fun way and it's going to
+
+84
+00:03:09,280 --> 00:03:12,560
+stick with me for a long time. I think
+
+85
+00:03:10,720 --> 00:03:14,879
+it's going to be a memorable way for me
+
+86
+00:03:12,560 --> 00:03:18,400
+finding out about the reman hypothesis.
+
+87
+00:03:14,879 --> 00:03:21,680
+And so it meant that I could uh put in a
+
+88
+00:03:18,400 --> 00:03:23,360
+few jokes in my actual talk. Um given
+
+89
+00:03:21,680 --> 00:03:24,720
+that we were now at this historic moment
+
+90
+00:03:23,360 --> 00:03:26,560
+where the reman hypothesis had been
+
+91
+00:03:24,720 --> 00:03:28,560
+proven and I was talking about it the
+
+92
+00:03:26,560 --> 00:03:30,159
+next day. I thought the talk went fine.
+
+93
+00:03:28,560 --> 00:03:33,760
+I'm not sure the jokes landed quite as
+
+94
+00:03:30,159 --> 00:03:36,159
+well as I'd hoped, but um uh but yeah, I
+
+95
+00:03:33,760 --> 00:03:38,480
+think it was a fun event. As the dust
+
+96
+00:03:36,159 --> 00:03:40,879
+has settled and you've been able to look
+
+97
+00:03:38,480 --> 00:03:42,239
+more at what was published and you've
+
+98
+00:03:40,879 --> 00:03:44,720
+spoken to colleagues and stuff like
+
+99
+00:03:42,239 --> 00:03:46,319
+that, where are you at now? Are you you
+
+100
+00:03:44,720 --> 00:03:47,920
+you're pretty confident that it's been
+
+101
+00:03:46,319 --> 00:03:48,879
+done that the reman hypothesis has
+
+102
+00:03:47,920 --> 00:03:51,280
+fallen or
+
+103
+00:03:48,879 --> 00:03:54,239
+>> uh yeah, I'm confident that it's been
+
+104
+00:03:51,280 --> 00:03:57,840
+done and maybe more importantly for me,
+
+105
+00:03:54,239 --> 00:04:00,400
+I'm now totally convinced that uh within
+
+106
+00:03:57,840 --> 00:04:02,400
+the not too distant future, humans will
+
+107
+00:04:00,400 --> 00:04:04,400
+have a completely well understood proof
+
+108
+00:04:02,400 --> 00:04:07,280
+of the room hypothesis. So for me that
+
+109
+00:04:04,400 --> 00:04:09,599
+was always uh my slight fear that if an
+
+110
+00:04:07,280 --> 00:04:11,840
+AI proved the room hypothesis would this
+
+111
+00:04:09,599 --> 00:04:13,120
+be some horrible incomprehensible thing
+
+112
+00:04:11,840 --> 00:04:15,360
+that we wouldn't ever be able to
+
+113
+00:04:13,120 --> 00:04:18,000
+understand. Um but I'm confident that
+
+114
+00:04:15,360 --> 00:04:19,919
+we're not in that uh this topic world
+
+115
+00:04:18,000 --> 00:04:21,199
+and I will eventually be able to
+
+116
+00:04:19,919 --> 00:04:23,520
+understand the proof of the reman
+
+117
+00:04:21,199 --> 00:04:25,600
+hypothesis even if I'm not there yet.
+
+118
+00:04:23,520 --> 00:04:28,240
+>> From what you've seen and gleaned so far
+
+119
+00:04:25,600 --> 00:04:30,080
+the little snippets are the techniques
+
+120
+00:04:28,240 --> 00:04:32,400
+and the way it was done what you would
+
+121
+00:04:30,080 --> 00:04:34,320
+have expected. Is it surprising? Is it
+
+122
+00:04:32,400 --> 00:04:36,240
+really clever? Are you impressed? What's
+
+123
+00:04:34,320 --> 00:04:36,960
+your what have you what have you thought
+
+124
+00:04:36,240 --> 00:04:39,680
+so far?
+
+125
+00:04:36,960 --> 00:04:42,880
+>> Um, a mixture of various things. So, I
+
+126
+00:04:39,680 --> 00:04:45,759
+always believed that the uh Reman
+
+127
+00:04:42,880 --> 00:04:49,280
+hypothesis kind of required deep
+
+128
+00:04:45,759 --> 00:04:51,680
+analysis and deep algebra and you needed
+
+129
+00:04:49,280 --> 00:04:53,040
+insights from both sides. And so I
+
+130
+00:04:51,680 --> 00:04:54,800
+always assumed that a proof would
+
+131
+00:04:53,040 --> 00:04:56,720
+involve these two ingredients in a
+
+132
+00:04:54,800 --> 00:04:58,800
+fairly substantial way. And I think
+
+133
+00:04:56,720 --> 00:05:01,040
+that's exactly what the current proof
+
+134
+00:04:58,800 --> 00:05:03,360
+looks like. um it's really involving
+
+135
+00:05:01,040 --> 00:05:05,199
+very deep algebraic and arithmetic ideas
+
+136
+00:05:03,360 --> 00:05:07,440
+coming from algebraic number theory but
+
+137
+00:05:05,199 --> 00:05:09,759
+combining them with like very serious
+
+138
+00:05:07,440 --> 00:05:11,919
+analytic ingredients. Although it's
+
+139
+00:05:09,759 --> 00:05:14,240
+maybe early days for humans really
+
+140
+00:05:11,919 --> 00:05:16,880
+understanding the full proof um there's
+
+141
+00:05:14,240 --> 00:05:19,360
+certain nuggets that you can extract
+
+142
+00:05:16,880 --> 00:05:21,039
+from the proof um that are already kind
+
+143
+00:05:19,360 --> 00:05:25,120
+of clear proof of principle
+
+144
+00:05:21,039 --> 00:05:27,600
+breakthroughs. For example, one of the
+
+145
+00:05:25,120 --> 00:05:30,240
+most celebrated results in mathematics
+
+146
+00:05:27,600 --> 00:05:32,880
+is a result of Pierre Delene who proved
+
+147
+00:05:30,240 --> 00:05:34,560
+the vague conjectures which is an analog
+
+148
+00:05:32,880 --> 00:05:37,440
+of the room hypothesis in a different
+
+149
+00:05:34,560 --> 00:05:40,240
+situation. And within this proof of the
+
+150
+00:05:37,440 --> 00:05:43,120
+room hypothesis, there's a actually
+
+151
+00:05:40,240 --> 00:05:45,600
+remarkably simple proof of Delen's work
+
+152
+00:05:43,120 --> 00:05:47,039
+using completely uh different and new
+
+153
+00:05:45,600 --> 00:05:50,080
+ideas that are somehow much more
+
+154
+00:05:47,039 --> 00:05:51,440
+concrete. And um there's always been
+
+155
+00:05:50,080 --> 00:05:54,080
+this dream that maybe you could prove
+
+156
+00:05:51,440 --> 00:05:56,639
+the reman hypothesis by finding by
+
+157
+00:05:54,080 --> 00:05:58,000
+taking Delen's work and transporting it
+
+158
+00:05:56,639 --> 00:06:01,039
+into the setting of the real reman
+
+159
+00:05:58,000 --> 00:06:03,360
+hypothesis. And in some sense uh this
+
+160
+00:06:01,039 --> 00:06:05,039
+new proof seems to be enacting that
+
+161
+00:06:03,360 --> 00:06:07,680
+dream but not with Delen's original
+
+162
+00:06:05,039 --> 00:06:09,840
+proof but with this new maybe slightly
+
+163
+00:06:07,680 --> 00:06:12,560
+more concrete proof um that's something
+
+164
+00:06:09,840 --> 00:06:14,800
+that's much more um manageable from the
+
+165
+00:06:12,560 --> 00:06:16,800
+point of view of analytic number theory.
+
+166
+00:06:14,800 --> 00:06:18,639
+Have you looked at it and thought, "Oh,
+
+167
+00:06:16,800 --> 00:06:19,759
+yeah, you know, if I'd gotten lucky, I
+
+168
+00:06:18,639 --> 00:06:20,880
+could have done that, or another human
+
+169
+00:06:19,759 --> 00:06:22,319
+could have done that." Or have you
+
+170
+00:06:20,880 --> 00:06:24,000
+looked at it and thought, "Wow, that was
+
+171
+00:06:22,319 --> 00:06:24,880
+that was quite the leap. That's that's
+
+172
+00:06:24,000 --> 00:06:27,039
+extraordinary."
+
+173
+00:06:24,880 --> 00:06:29,680
+>> It's early days, but it seems to be much
+
+174
+00:06:27,039 --> 00:06:33,360
+more on the extraordinary end to me now
+
+175
+00:06:29,680 --> 00:06:35,840
+uh than on the uh this is something that
+
+176
+00:06:33,360 --> 00:06:38,400
+um is in any way close to anything that
+
+177
+00:06:35,840 --> 00:06:42,000
+I or anyone else was thinking about. um
+
+178
+00:06:38,400 --> 00:06:43,919
+even that first nugget of this more
+
+179
+00:06:42,000 --> 00:06:46,160
+concrete proof of Delen's work which is
+
+180
+00:06:43,919 --> 00:06:48,560
+actually remarkably simple um this is
+
+181
+00:06:46,160 --> 00:06:52,319
+something that uh various mathematicians
+
+182
+00:06:48,560 --> 00:06:54,080
+had tried quite hard to uh produce um it
+
+183
+00:06:52,319 --> 00:06:55,600
+was certainly something that people had
+
+184
+00:06:54,080 --> 00:06:57,440
+thought and put quite a lot of effort
+
+185
+00:06:55,600 --> 00:06:59,199
+into but no one had been successful in
+
+186
+00:06:57,440 --> 00:07:01,599
+that and that's almost the most
+
+187
+00:06:59,199 --> 00:07:03,440
+elementary proof of concept for this
+
+188
+00:07:01,599 --> 00:07:06,479
+much much more substantial and
+
+189
+00:07:03,440 --> 00:07:08,960
+arithmetically complicated proof. So my
+
+190
+00:07:06,479 --> 00:07:10,479
+feeling is that no one was really close
+
+191
+00:07:08,960 --> 00:07:12,560
+to this or thinking along the same
+
+192
+00:07:10,479 --> 00:07:14,880
+lines. Um although you can certainly see
+
+193
+00:07:12,560 --> 00:07:17,039
+that it feels like it's building on some
+
+194
+00:07:14,880 --> 00:07:20,080
+of the ideas of some of the other recent
+
+195
+00:07:17,039 --> 00:07:21,599
+breakthroughs. Um like some of the ideas
+
+196
+00:07:20,080 --> 00:07:24,400
+that were present in the proof of the
+
+197
+00:07:21,599 --> 00:07:27,360
+quazy reven hypothesis recently and so
+
+198
+00:07:24,400 --> 00:07:29,680
+it feels like it's digested some of
+
+199
+00:07:27,360 --> 00:07:31,680
+those recent breakthrough ideas much
+
+200
+00:07:29,680 --> 00:07:34,400
+much more quickly than other humans and
+
+201
+00:07:31,680 --> 00:07:36,000
+is able to build on those to get here. I
+
+202
+00:07:34,400 --> 00:07:37,520
+know you haven't spoken to Leavon. I
+
+203
+00:07:36,000 --> 00:07:39,120
+don't think anyone anyone has really
+
+204
+00:07:37,520 --> 00:07:42,160
+particularly much. He's been a bit
+
+205
+00:07:39,120 --> 00:07:43,360
+enigmatic, but everyone loves a hero and
+
+206
+00:07:42,160 --> 00:07:44,800
+we're and it's trying to figure out
+
+207
+00:07:43,360 --> 00:07:47,039
+where the credit goes here. Like, you
+
+208
+00:07:44,800 --> 00:07:48,800
+know, has AI cracked this or has this
+
+209
+00:07:47,039 --> 00:07:51,039
+guy called Leavant, you know, been some
+
+210
+00:07:48,800 --> 00:07:52,240
+superstar like do you care about that?
+
+211
+00:07:51,039 --> 00:07:53,680
+Do you have any thoughts on that
+
+212
+00:07:52,240 --> 00:07:57,360
+attribution credit?
+
+213
+00:07:53,680 --> 00:08:00,479
+>> It's a difficult question. Uh for me the
+
+214
+00:07:57,360 --> 00:08:02,879
+we're in this strange world now where um
+
+215
+00:08:00,479 --> 00:08:05,599
+AI is going to play a very fundamental
+
+216
+00:08:02,879 --> 00:08:09,440
+role in uh coming up with formal proofs
+
+217
+00:08:05,599 --> 00:08:10,879
+of maths. Um but that's only a small
+
+218
+00:08:09,440 --> 00:08:13,120
+part of the overall process of
+
+219
+00:08:10,879 --> 00:08:14,560
+mathematics and the most important thing
+
+220
+00:08:13,120 --> 00:08:16,080
+is the contributions to human
+
+221
+00:08:14,560 --> 00:08:18,319
+understanding. And I don't want to
+
+222
+00:08:16,080 --> 00:08:20,160
+downplay this. This is a particularly
+
+223
+00:08:18,319 --> 00:08:22,800
+given that it seems clear that humans
+
+224
+00:08:20,160 --> 00:08:24,879
+will understand this proof. uh just this
+
+225
+00:08:22,800 --> 00:08:27,599
+lean code is a huge contribution to
+
+226
+00:08:24,879 --> 00:08:30,160
+human understanding and I'm sure that I
+
+227
+00:08:27,599 --> 00:08:31,280
+will have a much better uh feel like I
+
+228
+00:08:30,160 --> 00:08:34,159
+have a much better understanding of
+
+229
+00:08:31,280 --> 00:08:36,399
+prime numbers in a year's time than I do
+
+230
+00:08:34,159 --> 00:08:38,080
+now because I'll have been able to
+
+231
+00:08:36,399 --> 00:08:40,560
+absorb at least some of the ideas in
+
+232
+00:08:38,080 --> 00:08:42,880
+this streaming hypothesis proof. Um it's
+
+233
+00:08:40,560 --> 00:08:44,640
+very difficult to know exactly how
+
+234
+00:08:42,880 --> 00:08:47,440
+credit should be applied in this new
+
+235
+00:08:44,640 --> 00:08:50,000
+world. how much uh we should put an
+
+236
+00:08:47,440 --> 00:08:52,080
+emphasis on just finishing off a problem
+
+237
+00:08:50,000 --> 00:08:54,800
+compared to generating new
+
+238
+00:08:52,080 --> 00:08:57,920
+understanding. It seems clear to me that
+
+239
+00:08:54,800 --> 00:08:59,680
+Levent had a non-trivial input, but a
+
+240
+00:08:57,920 --> 00:09:02,399
+huge amount of the really deep heavy
+
+241
+00:08:59,680 --> 00:09:06,880
+lifting was done by AI in this context.
+
+242
+00:09:02,399 --> 00:09:09,760
+Um and I think everyone in the field is
+
+243
+00:09:06,880 --> 00:09:12,160
+slowly uh adjusting to this new reality
+
+244
+00:09:09,760 --> 00:09:15,120
+and so we don't have a well definfined
+
+245
+00:09:12,160 --> 00:09:17,360
+and set up structures for really
+
+246
+00:09:15,120 --> 00:09:19,040
+disentangling these two if indeed it's
+
+247
+00:09:17,360 --> 00:09:20,880
+possible to disentangle them.
+
+248
+00:09:19,040 --> 00:09:22,080
+>> You're obviously a prime number guy.
+
+249
+00:09:20,880 --> 00:09:26,000
+Were you working on the reman
+
+250
+00:09:22,080 --> 00:09:27,920
+hypothesis? Um, I didn't spend much time
+
+251
+00:09:26,000 --> 00:09:30,560
+directly working on the reman hypothesis
+
+252
+00:09:27,920 --> 00:09:34,000
+itself because I didn't really feel that
+
+253
+00:09:30,560 --> 00:09:35,920
+I had any uh unique insights that got to
+
+254
+00:09:34,000 --> 00:09:39,920
+the core of the problem. Don't get me
+
+255
+00:09:35,920 --> 00:09:41,760
+wrong, if I stumbled upon any uh uh such
+
+256
+00:09:39,920 --> 00:09:44,880
+insight, then I'm sure I would drop
+
+257
+00:09:41,760 --> 00:09:46,880
+everything to uh try and think what that
+
+258
+00:09:44,880 --> 00:09:48,560
+would happen. So I was doing lots of
+
+259
+00:09:46,880 --> 00:09:50,560
+work in the vicinity of the reman
+
+260
+00:09:48,560 --> 00:09:53,040
+hypothesis and thinking about related
+
+261
+00:09:50,560 --> 00:09:55,040
+things but not much of my day-to-day
+
+262
+00:09:53,040 --> 00:09:56,800
+thinking was really spent uh directly
+
+263
+00:09:55,040 --> 00:09:58,959
+attacking the reman hypothesis itself.
+
+264
+00:09:56,800 --> 00:10:02,800
+One thing that I've really enjoyed uh in
+
+265
+00:09:58,959 --> 00:10:04,720
+my career thinking about is um often uh
+
+266
+00:10:02,800 --> 00:10:06,800
+if you really care about applications to
+
+267
+00:10:04,720 --> 00:10:08,720
+prime numbers the room hypothesis would
+
+268
+00:10:06,800 --> 00:10:10,000
+have these fantastic consequences but
+
+269
+00:10:08,720 --> 00:10:13,200
+you don't necessarily need the full
+
+270
+00:10:10,000 --> 00:10:15,279
+strength of the room hypothesis. So one
+
+271
+00:10:13,200 --> 00:10:17,440
+uh important aspect of my research was
+
+272
+00:10:15,279 --> 00:10:19,600
+trying to find substitutes for the reman
+
+273
+00:10:17,440 --> 00:10:20,959
+hypothesis that I could prove with my
+
+274
+00:10:19,600 --> 00:10:23,200
+bare hands which would have the same
+
+275
+00:10:20,959 --> 00:10:25,200
+sorts of implications for prime numbers
+
+276
+00:10:23,200 --> 00:10:28,320
+but is a workound for the re hypothesis.
+
+277
+00:10:25,200 --> 00:10:29,839
+Obviously that circle of ideas at least
+
+278
+00:10:28,320 --> 00:10:31,279
+as headline results has been completely
+
+279
+00:10:29,839 --> 00:10:33,839
+blown out of the water now the re
+
+280
+00:10:31,279 --> 00:10:37,600
+hypothesis has come. Um but nevertheless
+
+281
+00:10:33,839 --> 00:10:40,320
+I think uh the underlying techniques are
+
+282
+00:10:37,600 --> 00:10:42,079
+likely to have further applicability um
+
+283
+00:10:40,320 --> 00:10:43,360
+and are going to still hold up even in a
+
+284
+00:10:42,079 --> 00:10:46,079
+world where the reman hypothesis has
+
+285
+00:10:43,360 --> 00:10:47,839
+been proven in exactly the same way that
+
+286
+00:10:46,079 --> 00:10:50,800
+just because there's a new proof of
+
+287
+00:10:47,839 --> 00:10:53,040
+Delen's work that is somewhat simpler
+
+288
+00:10:50,800 --> 00:10:55,040
+nobody would say that all the huge
+
+289
+00:10:53,040 --> 00:10:57,760
+developments in algebraic number theory
+
+290
+00:10:55,040 --> 00:11:00,480
+and the work of growth that led to uh
+
+291
+00:10:57,760 --> 00:11:03,839
+Delen's proof are in any way undermined
+
+292
+00:11:00,480 --> 00:11:05,839
+or invalidated by this new proof. So
+
+293
+00:11:03,839 --> 00:11:08,880
+often the core mathematical ideas have a
+
+294
+00:11:05,839 --> 00:11:11,040
+life of their own that um exists far
+
+295
+00:11:08,880 --> 00:11:12,640
+beyond the immediate application that it
+
+296
+00:11:11,040 --> 00:11:13,920
+might have. But certainly lots of my
+
+297
+00:11:12,640 --> 00:11:15,440
+immediate applications are now
+
+298
+00:11:13,920 --> 00:11:18,640
+completely blown out of the water.
+
+299
+00:11:15,440 --> 00:11:20,640
+>> Shortly after the anthropic proof was
+
+300
+00:11:18,640 --> 00:11:23,440
+revealed, it was also revealed that
+
+301
+00:11:20,640 --> 00:11:25,040
+there may be this other human proof. It
+
+302
+00:11:23,440 --> 00:11:27,279
+was it was sort of incomplete. I think
+
+303
+00:11:25,040 --> 00:11:28,959
+from a chap called Misulu. Has that
+
+304
+00:11:27,279 --> 00:11:30,640
+crossed your desk? Is is that still
+
+305
+00:11:28,959 --> 00:11:32,399
+considered also a possible proof or
+
+306
+00:11:30,640 --> 00:11:33,839
+where where are sort of mathematicians
+
+307
+00:11:32,399 --> 00:11:36,480
+looking at that now?
+
+308
+00:11:33,839 --> 00:11:39,519
+>> Yes, I saw this. I think the author
+
+309
+00:11:36,480 --> 00:11:44,079
+Msulo has been very open that the proof
+
+310
+00:11:39,519 --> 00:11:46,079
+is not complete as uh stated as um it is
+
+311
+00:11:44,079 --> 00:11:48,880
+right now. And so I think it's important
+
+312
+00:11:46,079 --> 00:11:51,040
+to just uh give him the time and space
+
+313
+00:11:48,880 --> 00:11:53,040
+to try and think through his ideas and
+
+314
+00:11:51,040 --> 00:11:54,720
+see where they end up. If it turns out
+
+315
+00:11:53,040 --> 00:11:57,200
+that he does end up with a proof of the
+
+316
+00:11:54,720 --> 00:11:58,800
+room hypothesis, um then there'll be no
+
+317
+00:11:57,200 --> 00:12:00,880
+shortage of credit and it's certainly a
+
+318
+00:11:58,800 --> 00:12:03,040
+different approach uh to what's going on
+
+319
+00:12:00,880 --> 00:12:04,959
+here. Um but I think it's too early to
+
+320
+00:12:03,040 --> 00:12:07,760
+say when this is still a somewhat
+
+321
+00:12:04,959 --> 00:12:09,200
+speculative um approach and he admits
+
+322
+00:12:07,760 --> 00:12:10,800
+that it's incomplete. So I think we
+
+323
+00:12:09,200 --> 00:12:13,279
+should just give him uh the time and
+
+324
+00:12:10,800 --> 00:12:13,839
+space to work out uh where this will all
+
+325
+00:12:13,279 --> 00:12:14,959
+lead.
+
+326
+00:12:13,839 --> 00:12:17,040
+>> There's a lot of talk about, you know,
+
+327
+00:12:14,959 --> 00:12:18,880
+an existential crisis for mathematics.
+
+328
+00:12:17,040 --> 00:12:21,760
+Should young people go into mathematics
+
+329
+00:12:18,880 --> 00:12:23,920
+now all the all the precious stones are
+
+330
+00:12:21,760 --> 00:12:25,200
+being mined? What's the mood at the
+
+331
+00:12:23,920 --> 00:12:25,920
+moment and where do you stand on all
+
+332
+00:12:25,200 --> 00:12:27,839
+this?
+
+333
+00:12:25,920 --> 00:12:29,600
+>> I think the mood is pretty mixed amongst
+
+334
+00:12:27,839 --> 00:12:32,399
+mathematicians. So there's certainly
+
+335
+00:12:29,600 --> 00:12:34,160
+some who are um quite fearful about
+
+336
+00:12:32,399 --> 00:12:35,440
+mathematics and there's others who are
+
+337
+00:12:34,160 --> 00:12:37,519
+exceptionally optimistic and then
+
+338
+00:12:35,440 --> 00:12:40,880
+there's everyone in between. Um,
+
+339
+00:12:37,519 --> 00:12:44,480
+unsurprisingly, I may be uh somewhat in
+
+340
+00:12:40,880 --> 00:12:46,000
+between uh that uh it's clear that AI is
+
+341
+00:12:44,480 --> 00:12:48,160
+going to fundamentally change and
+
+342
+00:12:46,000 --> 00:12:50,000
+revolutionize mathematics in many ways.
+
+343
+00:12:48,160 --> 00:12:52,800
+And so some of the old aspects of doing
+
+344
+00:12:50,000 --> 00:12:55,200
+mathematics, you know, maybe the lone
+
+345
+00:12:52,800 --> 00:12:57,040
+human who was struggling with pen and
+
+346
+00:12:55,200 --> 00:12:58,880
+paper against a problem over many many
+
+347
+00:12:57,040 --> 00:13:01,440
+years, something that was sort of
+
+348
+00:12:58,880 --> 00:13:04,160
+romantic and I actually enjoyed and was
+
+349
+00:13:01,440 --> 00:13:06,399
+a big part of my work in practices. Um I
+
+350
+00:13:04,160 --> 00:13:10,399
+think that's much less sustainable in
+
+351
+00:13:06,399 --> 00:13:13,279
+the modern world of AI. Um on the flip
+
+352
+00:13:10,399 --> 00:13:16,240
+side, um it seems clear that AI is going
+
+353
+00:13:13,279 --> 00:13:18,720
+to generate answers to all these um
+
+354
+00:13:16,240 --> 00:13:21,519
+amazing problems. You know, I never
+
+355
+00:13:18,720 --> 00:13:23,200
+really believed or dreamt that I there
+
+356
+00:13:21,519 --> 00:13:25,120
+would be a proof of the rumin hypothesis
+
+357
+00:13:23,200 --> 00:13:27,440
+that I would be able to understand
+
+358
+00:13:25,120 --> 00:13:29,760
+within my lifetime. Uh so it's
+
+359
+00:13:27,440 --> 00:13:31,519
+completely incredible for me that I am
+
+360
+00:13:29,760 --> 00:13:34,079
+going to understand a proof of the reman
+
+361
+00:13:31,519 --> 00:13:36,079
+hypothesis you know maybe in a year's
+
+362
+00:13:34,079 --> 00:13:37,680
+time maybe it will take me two years um
+
+363
+00:13:36,079 --> 00:13:38,880
+but I claim that in the not too distant
+
+364
+00:13:37,680 --> 00:13:41,200
+future I'll have an understanding of
+
+365
+00:13:38,880 --> 00:13:43,519
+this and you know this is just the
+
+366
+00:13:41,200 --> 00:13:46,959
+beginning of this new era of AI powered
+
+367
+00:13:43,519 --> 00:13:49,200
+mathematics um this is the worst that AI
+
+368
+00:13:46,959 --> 00:13:51,279
+is ever going to be. AI is going to
+
+369
+00:13:49,200 --> 00:13:53,120
+continue to get much better, much
+
+370
+00:13:51,279 --> 00:13:56,000
+faster, and there'll be all kinds of
+
+371
+00:13:53,120 --> 00:13:57,680
+incredible mathematical insights uh that
+
+372
+00:13:56,000 --> 00:14:00,480
+seemed completely out of reach that are
+
+373
+00:13:57,680 --> 00:14:02,639
+suddenly going to be within our grasp.
+
+374
+00:14:00,480 --> 00:14:06,399
+Um but now the key bottleneck is in
+
+375
+00:14:02,639 --> 00:14:08,560
+human understanding that just as if um
+
+376
+00:14:06,399 --> 00:14:11,680
+there's a message from aliens from outer
+
+377
+00:14:08,560 --> 00:14:13,040
+space saying um oh, we've got a proof of
+
+378
+00:14:11,680 --> 00:14:14,399
+the room hypothesis, but we're not going
+
+379
+00:14:13,040 --> 00:14:16,000
+to tell you anything about it, but
+
+380
+00:14:14,399 --> 00:14:17,600
+here's a zero knowledge proof that it's
+
+381
+00:14:16,000 --> 00:14:19,199
+definitely correct. this would be
+
+382
+00:14:17,600 --> 00:14:21,279
+completely unsatisfying and it wouldn't
+
+383
+00:14:19,199 --> 00:14:22,880
+really change anything for me. An AI
+
+384
+00:14:21,279 --> 00:14:24,240
+producing a proof doesn't change too
+
+385
+00:14:22,880 --> 00:14:26,880
+much in the grand scheme of things for
+
+386
+00:14:24,240 --> 00:14:29,440
+me. Um what really does change things is
+
+387
+00:14:26,880 --> 00:14:32,320
+when we get the insights as to why these
+
+388
+00:14:29,440 --> 00:14:35,360
+results are true. We will gain this uh
+
+389
+00:14:32,320 --> 00:14:37,519
+very deep insights into mathematics uh
+
+390
+00:14:35,360 --> 00:14:39,920
+which would have taken us maybe hundreds
+
+391
+00:14:37,519 --> 00:14:41,680
+of years if we didn't have AI to help us
+
+392
+00:14:39,920 --> 00:14:43,920
+and it was just human mathematicians on
+
+393
+00:14:41,680 --> 00:14:46,160
+their own. Um so that's exceptionally
+
+394
+00:14:43,920 --> 00:14:48,000
+exciting. Uh but we should acknowledge
+
+395
+00:14:46,160 --> 00:14:49,600
+that there's going to be things that
+
+396
+00:14:48,000 --> 00:14:51,279
+change and some parts of the old
+
+397
+00:14:49,600 --> 00:14:53,199
+practices will be lost.
+
+398
+00:14:51,279 --> 00:14:55,760
+>> Are you going all in? Are you like are
+
+399
+00:14:53,199 --> 00:14:57,600
+you, you know, buying up the best AI
+
+400
+00:14:55,760 --> 00:14:58,959
+model you can? And are you already
+
+401
+00:14:57,600 --> 00:15:00,480
+making the move or because you know
+
+402
+00:14:58,959 --> 00:15:01,920
+you're like you said you're sort of from
+
+403
+00:15:00,480 --> 00:15:03,360
+the old school, the pen and paper old
+
+404
+00:15:01,920 --> 00:15:05,279
+school. You are you are you going to be
+
+405
+00:15:03,360 --> 00:15:09,440
+a dinosaur or are you making the move?
+
+406
+00:15:05,279 --> 00:15:13,279
+>> Uh I think I'm uh in between that uh for
+
+407
+00:15:09,440 --> 00:15:17,120
+me my personal understanding is really
+
+408
+00:15:13,279 --> 00:15:19,360
+important. So, I'm very happy to use AI
+
+409
+00:15:17,120 --> 00:15:22,639
+when it's helping me understand things.
+
+410
+00:15:19,360 --> 00:15:25,839
+And it's in fact incredible to be able
+
+411
+00:15:22,639 --> 00:15:29,600
+to talk through a proof with an AI,
+
+412
+00:15:25,839 --> 00:15:31,279
+maybe to get it to uh walk you through a
+
+413
+00:15:29,600 --> 00:15:33,040
+simple special case of a proof so you
+
+414
+00:15:31,279 --> 00:15:36,000
+can start to build up your intuition.
+
+415
+00:15:33,040 --> 00:15:38,399
+But I also find that um I get a lot out
+
+416
+00:15:36,000 --> 00:15:40,399
+of having a short chat with an AI. But
+
+417
+00:15:38,399 --> 00:15:42,720
+then I need to go away and really think
+
+418
+00:15:40,399 --> 00:15:45,199
+about things for me to properly
+
+419
+00:15:42,720 --> 00:15:48,399
+understand things that I've always found
+
+420
+00:15:45,199 --> 00:15:50,320
+that you know even before AI just
+
+421
+00:15:48,399 --> 00:15:51,839
+reading the answer in a textbook never
+
+422
+00:15:50,320 --> 00:15:54,800
+really generated my personal
+
+423
+00:15:51,839 --> 00:15:56,560
+understanding. I always needed to get a
+
+424
+00:15:54,800 --> 00:15:58,480
+pen and paper and really struggle with
+
+425
+00:15:56,560 --> 00:16:00,480
+things and try and do things for myself.
+
+426
+00:15:58,480 --> 00:16:03,440
+And it was only when I ran into brick
+
+427
+00:16:00,480 --> 00:16:05,680
+walls and I failed to uh prove things
+
+428
+00:16:03,440 --> 00:16:07,440
+that I appreciated the problem and I
+
+429
+00:16:05,680 --> 00:16:09,440
+appreciated why you make some choices
+
+430
+00:16:07,440 --> 00:16:10,959
+and not other choices. And I think this
+
+431
+00:16:09,440 --> 00:16:12,959
+is going to be an important part of
+
+432
+00:16:10,959 --> 00:16:15,360
+mathematics going forwards that I don't
+
+433
+00:16:12,959 --> 00:16:17,920
+think you can gain human understanding
+
+434
+00:16:15,360 --> 00:16:20,560
+by simply reading the answer. I think
+
+435
+00:16:17,920 --> 00:16:22,959
+it's always going to be a bit of a human
+
+436
+00:16:20,560 --> 00:16:24,320
+struggle where you have to put in the
+
+437
+00:16:22,959 --> 00:16:26,560
+time and effort to gain that
+
+438
+00:16:24,320 --> 00:16:28,880
+understanding. And for me that needs to
+
+439
+00:16:26,560 --> 00:16:30,800
+be pen and paper. I'm sure lots of
+
+440
+00:16:28,880 --> 00:16:34,160
+different practices will change. I'm
+
+441
+00:16:30,800 --> 00:16:36,000
+very happy to use AI in as far as it
+
+442
+00:16:34,160 --> 00:16:37,680
+helps me like I often do when I talk
+
+443
+00:16:36,000 --> 00:16:39,839
+with a colleague. If I talk with an
+
+444
+00:16:37,680 --> 00:16:42,560
+amazing colleague, they'll tell me all
+
+445
+00:16:39,839 --> 00:16:44,399
+these uh fantastic ideas, but I won't be
+
+446
+00:16:42,560 --> 00:16:46,320
+able to sort of fully appreciate them.
+
+447
+00:16:44,399 --> 00:16:48,560
+And so sometimes when we're working on a
+
+448
+00:16:46,320 --> 00:16:50,160
+problem together, I say, "Okay, stop
+
+449
+00:16:48,560 --> 00:16:52,160
+telling me things now. I need to go away
+
+450
+00:16:50,160 --> 00:16:53,759
+and sit down and think about what you've
+
+451
+00:16:52,160 --> 00:16:55,920
+told me so I can really appreciate and
+
+452
+00:16:53,759 --> 00:16:57,279
+understand these things." um I kind of
+
+453
+00:16:55,920 --> 00:16:59,120
+can't keep this conversation going
+
+454
+00:16:57,279 --> 00:17:00,480
+anymore because I need to I have too
+
+455
+00:16:59,120 --> 00:17:02,720
+many things floating in my head that
+
+456
+00:17:00,480 --> 00:17:04,400
+aren't settled. Um and I feel it very
+
+457
+00:17:02,720 --> 00:17:05,199
+similar sometimes when I'm chatting with
+
+458
+00:17:04,400 --> 00:17:06,959
+an AI.
+
+459
+00:17:05,199 --> 00:17:08,400
+>> Do you feel lucky you got you got in
+
+460
+00:17:06,959 --> 00:17:09,839
+when you did like you were able to
+
+461
+00:17:08,400 --> 00:17:11,439
+publish a few great proofs. You got some
+
+462
+00:17:09,839 --> 00:17:13,679
+nice prizes under your belt and that and
+
+463
+00:17:11,439 --> 00:17:15,679
+now everything's changing dramatically.
+
+464
+00:17:13,679 --> 00:17:16,880
+It feels like you're you're lucky you're
+
+465
+00:17:15,679 --> 00:17:19,199
+going to get the best of both worlds.
+
+466
+00:17:16,880 --> 00:17:20,640
+You got to be like the lone wolf hero
+
+467
+00:17:19,199 --> 00:17:22,240
+and now you get to see the Reman
+
+468
+00:17:20,640 --> 00:17:22,720
+hypothesis get solved. You get the best
+
+469
+00:17:22,240 --> 00:17:23,919
+of both.
+
+470
+00:17:22,720 --> 00:17:25,600
+>> Yeah. It's very difficult to know
+
+471
+00:17:23,919 --> 00:17:29,679
+exactly where things go in, but I
+
+472
+00:17:25,600 --> 00:17:31,120
+certainly um uh I think it's very
+
+473
+00:17:29,679 --> 00:17:33,760
+important for more established
+
+474
+00:17:31,120 --> 00:17:35,440
+mathematicians to really help guide
+
+475
+00:17:33,760 --> 00:17:38,720
+early career mathematicians through this
+
+476
+00:17:35,440 --> 00:17:41,840
+process because um I'm lucky that I'm
+
+477
+00:17:38,720 --> 00:17:44,000
+protected in various ways. And so um I
+
+478
+00:17:41,840 --> 00:17:46,799
+can enjoy some of the ride without
+
+479
+00:17:44,000 --> 00:17:48,960
+feeling uh my own position disrupted and
+
+480
+00:17:46,799 --> 00:17:51,120
+threatened too much. Whereas I know lots
+
+481
+00:17:48,960 --> 00:17:53,360
+of younger mathematicians, even if
+
+482
+00:17:51,120 --> 00:17:55,760
+they're cautiously optimistic about what
+
+483
+00:17:53,360 --> 00:17:58,400
+the long-term future for mathematics is,
+
+484
+00:17:55,760 --> 00:17:59,919
+the short-term disruption and uh the
+
+485
+00:17:58,400 --> 00:18:01,120
+ways that mathematics is going to change
+
+486
+00:17:59,919 --> 00:18:04,720
+and the way that they're all caught up
+
+487
+00:18:01,120 --> 00:18:06,640
+in that um I think is certainly uh very
+
+488
+00:18:04,720 --> 00:18:09,280
+difficult to navigate for them. And so
+
+489
+00:18:06,640 --> 00:18:11,840
+it's really incumbent on people who have
+
+490
+00:18:09,280 --> 00:18:14,480
+had the benefit of uh establishing
+
+491
+00:18:11,840 --> 00:18:17,280
+themselves in the old regime to help try
+
+492
+00:18:14,480 --> 00:18:20,640
+and guide people as best as we can um
+
+493
+00:18:17,280 --> 00:18:22,160
+into this new year in this new regime.
+
+494
+00:18:20,640 --> 00:18:23,840
+>> Can you make me a promise when you
+
+495
+00:18:22,160 --> 00:18:25,520
+finally understand the reman hypothesis
+
+496
+00:18:23,840 --> 00:18:27,280
+in a year or two, will you make a video
+
+497
+00:18:25,520 --> 00:18:30,559
+with me explaining it to me?
+
+498
+00:18:27,280 --> 00:18:31,840
+>> I promise I'll do my best.
+
+499
+00:18:30,559 --> 00:18:34,080
+>> You don't have to allocate certain
+
+500
+00:18:31,840 --> 00:18:35,200
+fishing areas to certain people. Um you
+
+501
+00:18:34,080 --> 00:18:36,480
+know, there's just enough fish in the
+
+502
+00:18:35,200 --> 00:18:38,080
+ocean for everybody. But now we have
+
+503
+00:18:36,480 --> 00:18:39,600
+this sort of strip mining of mathematics
+
+504
+00:18:38,080 --> 00:18:42,160
+where we have these huge machines that
+
+505
+00:18:39,600 --> 00:18:44,240
+can sort of uh you know like like
+
+506
+00:18:42,160 --> 00:18:47,039
+dynamite fish like hundreds of problems
+
+507
+00:18:44,240 --> 00:18:47,039
+at a time.
+
