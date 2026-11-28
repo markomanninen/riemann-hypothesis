@@ -229,9 +229,21 @@ file [`metadata.json`](../review/codex-novelty/metadata.json) names the records 
 - Stepanov's article is cited in its English translation, which Crossref holds, and zbMATH
   holds the Russian original.
 
-Five citations have no record in any of the three catalogues, so their fields are unchecked.
-They are Riemann's paper of 1859, Chebyshev's memoir of 1852, Bost's exposé in Astérisque 237
-of 1996, and the course notes of Milne and of Kedlaya.
+Five citations have no record in any of the three catalogues. The language model Claude read
+each of them against another source on 28 November 2026, and all five agree with it in every
+field that they give.
+
+| Citation | Read against | Outcome |
+|---|---|---|
+| Riemann, Ueber die Anzahl der Primzahlen unter einer gegebenen Grösse, 1859, in the translation of Wilkins of 1998, unit 1.2 | the head of the opened file | The file gives the German title, Monatsberichte der Berliner Akademie, November 1859, and the translation as a preliminary version of December 1998. |
+| Bost, Périodes et isogénies des variétés abéliennes sur les corps de nombres, Astérisque 237, 1996, unit 2.3 | the cover page of the opened Numdam file and the record Zbl 0936.11042 | Both give Astérisque 237 of 1996. The citation leaves out that the text is exposé 795 of the Séminaire Bourbaki 1994/95 on pages 115 to 161, with the subtitle d'après D. Masser et G. Wüstholz. zbMATH holds the title in English, which is why the search by title missed the record. |
+| Chebyshev, Mémoire sur les nombres premiers, Journal de Mathématiques Pures et Appliquées 17, 1852, unit 2.3 | the Numdam record of the article | The record gives the same title, journal, volume and year, and adds the pages 366 to 390. It spells the author Tchebichef, as the journal printed the name. |
+| Milne, Algebraic Number Theory, version 3.08, 2020, unit 6.2 | the title page of the opened file | The title page gives Version 3.08, July 19, 2020. |
+| Kedlaya, von Mangoldt's formula, lecture notes of MIT 18.785, 2007, unit T5 | the head of the opened file | The head gives 18.785, Analytic Number Theory, MIT, spring 2007. |
+
+Four of the five were read against the file that the answer itself opened, which shows that the
+citation describes that file. Only the citations of Bost and of Chebyshev were read against a
+record that a catalogue or an archive keeps apart from the file.
 
 ## Every unit
 

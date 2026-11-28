@@ -49,6 +49,10 @@ all the records of a citation the field is `same` when it agrees with at least o
 `no data`. The note of a field names the records that it differs from, also when another
 record agrees.
 
+A citation without a record in any catalogue cannot be compared by the script. The table READ
+holds the outcome of a reading of such a citation against another source, and the script copies
+it into the output.
+
 The script keeps the answers of the catalogues in data/catalogue next to itself, which git
 ignores, writes metadata.json into the answers folder and prints the counts. A citation that
 agrees with its records is a correct description of that work. Whether the work says what the
@@ -423,6 +427,31 @@ def compare(citation, record, lead=None):
     return out
 
 
+# Citations without a record in the three catalogues, read against another source by the language
+# model Claude on 28 November 2026. The key is the start of the citation.
+READ = {
+    "Bernhard Riemann, Ueber die Anzahl": {
+        "source": "the head of the opened file, the translation of Wilkins at claymath.org",
+        "agrees": True,
+        "note": "The file gives the German title, Monatsberichte der Berliner Akademie, November 1859, the translator David R. Wilkins and the date December 1998 of a preliminary version."},
+    "Jean-Benoît Bost, Périodes et isogénies": {
+        "source": "the cover page of the opened Numdam file and the record Zbl 0936.11042",
+        "agrees": True,
+        "note": "Both give Astérisque 237 of 1996. They add what the citation leaves out, that the text is exposé 795 of the Séminaire Bourbaki 1994/95 on pages 115 to 161, with the subtitle d'après D. Masser et G. Wüstholz. zbMATH holds the title in English, so the search by the French title did not find it."},
+    "Pafnuty L. Chebyshev, Mémoire sur les nombres premiers": {
+        "source": "the Numdam record JMPA_1852_1_17__366_0",
+        "agrees": True,
+        "note": "The record gives the title, the Journal de Mathématiques Pures et Appliquées, volume 17, 1852, and adds the pages 366 to 390. It spells the author Tchebichef, as the journal printed the name."},
+    "James S. Milne, Algebraic Number Theory": {
+        "source": "the title page of the opened file at jmilne.org",
+        "agrees": True,
+        "note": "The title page gives Version 3.08, July 19, 2020, and a BibTeX entry with the year 2020."},
+    "Kiran S. Kedlaya, von Mangoldt": {
+        "source": "the head of the opened file at kskedlaya.org",
+        "agrees": True,
+        "note": "The head reads 18.785: Analytic Number Theory, MIT, spring 2007 (K.S. Kedlaya), and the title von Mangoldt's formula follows."},
+}
+
 FIELDS = ("authors", "title", "year", "place", "volume", "pages")
 NAMES = {"arxiv": "arXiv", "doi": "Crossref", "search": "Crossref", "zbmath": "zbMATH"}
 
@@ -470,6 +499,8 @@ def main():
             starts = sorted(s for s in starts if s[0] >= 0)
             lead = starts[0][1] if starts else None
             row["fields"] = merge([(r, compare(entry["citation"], r, lead)) for r in records])
+        else:
+            row["read"] = next((v for k, v in READ.items() if entry["citation"].startswith(k)), None)
         rows.append(row)
     (folder / "metadata.json").write_text(json.dumps(rows, ensure_ascii=False, indent=1) + "\n")
     print("citations", len(rows))
@@ -477,6 +508,9 @@ def main():
         print("with a record of", name, sum(1 for r in rows if any(NAMES[x["how"]] == name for x in r["records"])))
     for n in (0, 1, 2, 3):
         print("with records of", n, "catalogues", sum(1 for r in rows if len({NAMES[x["how"]] for x in r["records"]}) == n))
+    none = [r for r in rows if not r["records"]]
+    print("without a record and read against another source", sum(1 for r in none if r.get("read")),
+          "of which agree", sum(1 for r in none if r.get("read") and r["read"]["agrees"]))
     for field in FIELDS:
         tally = {}
         for r in rows:

@@ -324,7 +324,12 @@
   "units": [
    "1.2"
   ],
-  "records": []
+  "records": [],
+  "read": {
+   "source": "the head of the opened file, the translation of Wilkins at claymath.org",
+   "agrees": true,
+   "note": "The file gives the German title, Monatsberichte der Berliner Akademie, November 1859, the translator David R. Wilkins and the date December 1998 of a preliminary version."
+  }
  },
  {
   "citation": "Youness Lamzouri, Xiannan Li, and Kannan Soundararajan, Conditional bounds for the least quadratic non-residue and related problems, Mathematics of Computation 84, 2015.",
@@ -626,7 +631,12 @@
   "units": [
    "2.3"
   ],
-  "records": []
+  "records": [],
+  "read": {
+   "source": "the cover page of the opened Numdam file and the record Zbl 0936.11042",
+   "agrees": true,
+   "note": "Both give Astérisque 237 of 1996. They add what the citation leaves out, that the text is exposé 795 of the Séminaire Bourbaki 1994/95 on pages 115 to 161, with the subtitle d'après D. Masser et G. Wüstholz. zbMATH holds the title in English, so the search by the French title did not find it."
+  }
  },
  {
   "citation": "Jeffrey C. Lagarias and Andrew M. Odlyzko, Effective Versions of the Chebotarev Density Theorem, in Algebraic Number Fields, Academic Press, 1977.",
@@ -706,7 +716,12 @@
   "units": [
    "2.3"
   ],
-  "records": []
+  "records": [],
+  "read": {
+   "source": "the Numdam record JMPA_1852_1_17__366_0",
+   "agrees": true,
+   "note": "The record gives the title, the Journal de Mathématiques Pures et Appliquées, volume 17, 1852, and adds the pages 366 to 390. It spells the author Tchebichef, as the journal printed the name."
+  }
  },
  {
   "citation": "Youness Lamzouri, The number of imaginary quadratic fields with prime discriminant and class number up to H, The Quarterly Journal of Mathematics, 2017.",
@@ -2458,7 +2473,12 @@
   "units": [
    "6.2"
   ],
-  "records": []
+  "records": [],
+  "read": {
+   "source": "the title page of the opened file at jmilne.org",
+   "agrees": true,
+   "note": "The title page gives Version 3.08, July 19, 2020, and a BibTeX entry with the year 2020."
+  }
  },
  {
   "citation": "Jean-Benoît Bost, Algebraic leaves of algebraic foliations over number fields, Publications Mathématiques de l’IHÉS, 2001.",
@@ -5262,7 +5282,12 @@
   "units": [
    "T5"
   ],
-  "records": []
+  "records": [],
+  "read": {
+   "source": "the head of the opened file at kskedlaya.org",
+   "agrees": true,
+   "note": "The head reads 18.785: Analytic Number Theory, MIT, spring 2007 (K.S. Kedlaya), and the title von Mangoldt's formula follows."
+  }
  },
  {
   "citation": "Pedro Freitas, A Li-Type Criterion for Zero-Free Half-Planes of Riemann’s Zeta Function, Journal of the London Mathematical Society 73, 2006.",
