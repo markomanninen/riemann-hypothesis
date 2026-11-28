@@ -1,22 +1,28 @@
 #!/usr/bin/env python3
-"""Compare the citations of the literature search with the records of two catalogues.
+"""Compare the citations of the literature search with the records of three catalogues.
 
 Usage: python3 -I verification/novelty/metadata.py [answers folder]
 
 The answers folder defaults to verification/review/codex-novelty. A citation is the field
 `citation` of a source of an answer, one line of text with the authors, the title, the place of
-publication and the year, as the model wrote it. The script finds a record for each different
-citation and compares the citation with it field by field.
+publication and the year, as the model wrote it. The script looks for records of each different
+citation in arXiv, Crossref and zbMATH and compares the citation with every record that it
+finds, field by field.
 
-Where the record comes from
+Where a record comes from
 
   arxiv      the address or the citation holds an arXiv identifier, and the record is the
-             answer of the arXiv interface for it. When that record names a DOI, the Crossref
-             record of the DOI is fetched as well, for the journal, the volume and the pages.
-  doi        the address holds a DOI, and the record is the Crossref record of it
-  search     Crossref is asked for the whole citation as free text, and the first of its
-             answers whose title stands in the citation word for word is taken
-  none       none of the three gave a record, so the citation is not compared
+             answer of the arXiv interface for it
+  doi        the Crossref record of a DOI that the address holds or that the arXiv record names
+  search     Crossref is asked for the whole citation as free text, when no DOI gave a record,
+             and an answer is taken whose title stands in the citation word for word and whose
+             first author stands there too
+  zbmath     zbMATH Open is asked for a title, first for the titles of the records found so
+             far and then for each part of the citation between two commas, and an answer is
+             taken by the same rule
+
+A work can have several records in one catalogue, of the first printing and of reprints. The
+script then takes the record with a year that the citation gives, if there is one.
 
 What is compared
 
@@ -25,18 +31,24 @@ What is compared
   title      the words of the title of the record stand in the citation in order
   year       a year of the citation is one of the years of the record. A record of Crossref
              has up to three years, of the printed issue, of the online version and of the
-             issue as catalogued, and an arXiv record has the year of each version.
-  place      the words of the journal or the book series of the record stand in the citation
+             issue as catalogued. An arXiv record has the years of its first and its last
+             version, and a zbMATH record the year of the volume or the book.
+  place      the words of the journal or the book series of the record stand in the citation,
+             in full or as initials
   volume     the volume of the record stands in the citation after the title
   pages      the pages that the citation gives are the pages of the record
 
-Each field gets one of four outcomes. `same` means that the citation agrees with the record.
-`differs` means that the citation gives something else, and the note says what. `absent` means
-that the citation does not give the field. `no data` means that the record does not give it.
+Against one record a field gets one of four outcomes. `same` means that the citation agrees
+with the record. `differs` means that the citation gives something else. `absent` means that
+the citation does not give the field. `no data` means that the record does not give it. Over
+all the records of a citation the field is `same` when it agrees with at least one record,
+`differs` when it agrees with none and differs from at least one, and otherwise `absent` or
+`no data`. The note of a field names the records that it differs from, also when another
+record agrees.
 
 The script keeps the answers of the catalogues in data/catalogue next to itself, which git
 ignores, writes metadata.json into the answers folder and prints the counts. A citation that
-agrees with its record is a correct description of that work. Whether the work says what the
+agrees with its records is a correct description of that work. Whether the work says what the
 answer takes from it is another question, which quotes.py approaches.
 """
 import hashlib
@@ -75,7 +87,8 @@ def fetch(url, good):
     for attempt in range(5):
         if path.exists() and good in path.read_text(errors="replace"):
             return path.read_text(errors="replace")
-        time.sleep(4 + 20 * attempt)  # the arXiv interface asks for a pause between calls
+        # a pause before every call, longer for arXiv, whose interface asks for it
+        time.sleep((4 if "arxiv.org" in url else 1) + 20 * attempt)
         subprocess.run(["curl", "-sL", "-m", "60", "-A", AGENT, "-o", str(path), url])
     text = path.read_text(errors="replace") if path.exists() else ""
     if good not in text:
@@ -159,24 +172,97 @@ def arxiv_record(ident):
     }
 
 
-def find_record(citation, url):
+def zbmath_record(item):
+    source = item.get("source") or {}
+    series = source.get("series") or []
+    books = source.get("book") or []
+    years = {item.get("year")} | {s.get("year") for s in series} | {b.get("year") for b in books}
+    pages = source.get("pages") or ""
+    if not re.fullmatch(r"\d+\s*[-–]\s*\d+", pages.strip()):
+        found = re.search(r"(\d+)-(\d+) \(\d{4}\)", source.get("source") or "")
+        pages = found.group(1) + "-" + found.group(2) if found else ""
+    code = (item.get("document_type") or {}).get("code")
+    return {
+        "how": "zbmath",
+        "id": "Zbl " + item["identifier"] if item.get("identifier") else "zbMATH " + str(item.get("id")),
+        "authors": [a["name"].split(",")[0] for a in item["contributors"]["authors"]],
+        "title": item["title"]["title"] or "",
+        "kind": {"j": "journal-article", "b": "book"}.get(code, "other"),
+        "years": sorted({int(y) for y in years if y and str(y).isdigit()}),
+        "place": series[0]["title"] if series else "",
+        "places": [s[k] for s in series for k in ("title",) if s.get(k)],
+        "volume": (series[0].get("volume") or "") if series else "",
+        "pages": pages,
+        "source": source.get("source") or "",
+    }
+
+
+def zbmath_search(citation, hints):
+    cited_words = words(citation)
+    cited = " " + " ".join(cited_words) + " "
+    years = {int(y) for y in re.findall(r"\b(1[5-9]\d\d|20\d\d)\b", citation)}
+    parts = [s.strip(" .“”\"") for s in citation.split(", ")]
+    guesses = list(hints) + parts[1:] + [a + ", " + b for a, b in zip(parts[1:], parts[2:])]
+    asked = set()
+    for guess in guesses:
+        guess = re.sub(r"[\"“”«»]", " ", guess).strip()
+        key = " ".join(words(guess))
+        if len(key.split()) < 3 or key in asked:
+            continue
+        asked.add(key)
+        family = words(parts[0])[-1:] if parts and words(parts[0]) else []
+        hits = []
+        for query in ('ti:"' + guess + '"', " ".join(family + [re.sub(r"[^\w\s]", " ", guess)])):
+            url = ("https://api.zbmath.org/v1/document/_search?results_per_page=10&search_string="
+                   + urllib.parse.quote(query))
+            try:
+                items = json.loads(fetch(url, '"status"')).get("result") or []
+            except ValueError:
+                items = []
+            for item in items:
+                if str(item.get("identifier") or "").startswith("arXiv"):
+                    continue  # a preprint entry, which the arXiv record covers
+                record = zbmath_record(item)
+                title = words(record["title"])
+                author = words(record["authors"][0]) if record["authors"] else []
+                if not author or not set(author) <= set(cited_words):
+                    continue
+                stands = " " + " ".join(title) + " " in cited
+                longer = len(key.split()) >= 4 and title[:len(key.split())] == key.split()
+                if (stands and len(title) >= 3) or longer or (stands and len(title) == 2 and years & set(record["years"])):
+                    hits.append(record)
+            if hits:
+                break
+        for record in hits:
+            if years & set(record["years"]):
+                return record
+        if hits:
+            hits[0]["other_edition"] = True
+            return hits[0]
+    return None
+
+
+def find_records(citation, url):
+    records = []
     m = ARXIV.search(url) or ARXIV.search(citation)
     if m:
         record = arxiv_record(m.group(1) or m.group(2))
         if record:
-            journal = crossref_doi(record["doi"], "arxiv") if record.get("doi") else None
-            if not journal and "arxiv" not in words(citation):
-                journal = crossref_search(citation)
+            records.append(record)
+            journal = crossref_doi(record["doi"]) if record.get("doi") else None
             if journal:
-                record["journal"] = journal
-            return record
-    m = DOI.search(urllib.parse.unquote(url))
-    if m:
-        doi = re.sub(r"(\.pdf|/pdf|/full)$", "", m.group(1))
-        record = crossref_doi(doi)
+                records.append(journal)
+    if not any(r["how"] == "doi" for r in records):
+        m = DOI.search(urllib.parse.unquote(url))
+        record = crossref_doi(re.sub(r"(\.pdf|/pdf|/full)$", "", m.group(1))) if m else None
+        if not record and not (records and "arxiv" in words(citation)):
+            record = crossref_search(citation)
         if record:
-            return record
-    return crossref_search(citation)
+            records.append(record)
+    record = zbmath_search(citation, [r["title"] for r in records if r["title"]])
+    if record:
+        records.append(record)
+    return records
 
 
 def run_at(needle, hay):
@@ -197,7 +283,14 @@ def place_stands(place, tail):
     full = words(place)
     if not full:
         return False
-    if all(w in tail for w in full if w not in SMALL):
+    main = [w for w in full if w not in SMALL]
+    if all(w in tail for w in main):
+        return True
+    # a catalogue can add the series or the country to the name of a journal
+    lead = 0
+    while lead < len(main) and main[lead] in tail:
+        lead += 1
+    if lead >= 3 or (lead >= 2 and len(main) - lead <= 2 and len(main[0]) > 3):
         return True
     for i in range(len(full)):
         for j in range(i + 3, len(full) + 1):
@@ -209,25 +302,31 @@ def place_stands(place, tail):
     return False
 
 
-def compare(citation, record):
+def compare(citation, record, lead=None):
     """Outcome and note for each field of one citation against one record."""
     cited = words(citation)
     out = {}
-    pub = record.get("journal") or record
-    # the title, of the preprint or of the printed version, or of the book that holds the part
+    pub = record
+    # the title, or the title of the book that holds the part
     at, used = -1, []
     part_of_book = False
-    for title in [words(record["title"]), words(pub["title"])]:
-        here = run_at(title, cited) if title else -1
-        if here >= 0 and (at < 0 or here < at):
-            at, used = here, title
+    title = words(record["title"])
+    if title and run_at(title, cited) >= 0:
+        at, used = run_at(title, cited), title
     if at < 0:
         for place in pub.get("places", []):
             if len(words(place)) >= 2 and run_at(words(place), cited) >= 0:
                 at, used, part_of_book = run_at(words(place), cited), words(place), True
                 break
+    longer = 0
+    if at < 0 and title:
+        longer = next((n for n in range(len(title) - 1, 3, -1) if run_at(title[:n], cited) >= 0), 0)
+        if longer:
+            at, used = run_at(title[:longer], cited), title[:longer]
     if not words(record["title"]):
         out["title"] = ("no data", "")
+    elif longer:
+        out["title"] = ("differs", "The citation holds the first words of the title of the record, which is `" + record["title"] + "`.")
     elif part_of_book:
         out["title"] = ("same", "The record is the part `" + record["title"] + "` of the cited book.")
     elif at >= 0:
@@ -237,7 +336,7 @@ def compare(citation, record):
     # the authors stand before the title
     head = citation
     if at >= 0:
-        m = re.search(r"\W+".join(map(re.escape, used[:3])), plain(citation), re.I)
+        m = re.search(r"\W+".join(map(re.escape, lead or used[:3])), plain(citation), re.I)
         if m:
             head = citation[:m.start()]
     names = [n for n in re.split(r",\s*(?:and\s+)?|\s+and\s+", head.strip(" ,“\"")) if n.strip()]
@@ -261,27 +360,29 @@ def compare(citation, record):
         out["year"] = ("absent", "")
     elif cited_years & years:
         out["year"] = ("same", "")
+    elif record["how"] == "arxiv" and "arxiv" not in cited:
+        out["year"] = ("no data", "")
     else:
         note = "The record has " + ", ".join(map(str, sorted(years))) + "."
-        if pub.get("kind") == "journal-article" and pub["volume"]:
+        if pub.get("kind") == "journal-article" and pub["volume"] and record["how"] in ("doi", "search"):
             note += " A journal can date an article by the year of its volume, here volume " + pub["volume"] + ", and the record by the day it went online."
         out["year"] = ("differs", note)
     tail = cited[at + len(used):] if at >= 0 else cited
     places = [pl for pl in pub.get("places", []) or [pub["place"]] if pl]
-    if record["how"] == "arxiv" and "journal" not in record:
+    if record["how"] == "arxiv":
         if "arxiv" in cited:
             out["place"] = ("same", "")
-        elif record["place"] and place_stands(record["place"].split(",")[0].split("(")[0], tail):
-            out["place"] = ("same", "The arXiv record names the journal, and no record of the journal was found.")
+        elif record["place"] and place_stands(re.split(r"[,(\d]", record["place"])[0], tail):
+            out["place"] = ("same", "")
         else:
-            out["place"] = ("differs", "The record is an arXiv preprint, and no record of a journal was found.")
+            out["place"] = ("no data", "")
     elif not places:
         out["place"] = ("no data", "")
     elif part_of_book or any(place_stands(pl, tail) for pl in places):
         out["place"] = ("same", "")
     elif pub.get("kind") in ("book", "monograph", "edited-book", "reference-book"):
         out["place"] = ("absent", "The citation gives the publisher, and the record names the series " + pub["place"] + ".")
-    elif "arxiv" in tail and record["how"] == "arxiv":
+    elif "arxiv" in tail:
         out["place"] = ("absent", "The citation gives the preprint, and the record names " + pub["place"] + ".")
     else:
         out["place"] = ("differs", "The record has `" + pub["place"] + "`.")
@@ -313,6 +414,22 @@ def compare(citation, record):
 
 
 FIELDS = ("authors", "title", "year", "place", "volume", "pages")
+NAMES = {"arxiv": "arXiv", "doi": "Crossref", "search": "Crossref", "zbmath": "zbMATH"}
+
+
+def merge(per_record):
+    """One outcome for each field from the outcomes against the single records."""
+    out = {}
+    for field in FIELDS:
+        got = [(r["id"], NAMES[r["how"]], f[field]) for r, f in per_record]
+        outcomes = [g[2][0] for g in got]
+        outcome = next(o for o in ("same", "differs", "absent", "no data") if o in outcomes)
+        notes = [f"{name}, {ident}. {g[1]}" for ident, name, g in got if g[0] == "differs"]
+        if outcome != "differs":
+            notes += [g[1] for _, _, g in got if g[0] == outcome and g[1]][:1]
+        out[field] = {"outcome": outcome, "note": " ".join(notes),
+                      "against": {ident: g[0] for ident, _, g in got}}
+    return out
 
 
 def main():
@@ -327,24 +444,33 @@ def main():
                     entry["units"].append(unit["id"])
     rows = []
     for entry in cites.values():
-        record = find_record(entry["citation"], entry["url"])
-        row = dict(entry, record=record)
-        if record:
-            row["fields"] = {k: {"outcome": v[0], "note": v[1]} for k, v in compare(entry["citation"], record).items()}
+        records = find_records(entry["citation"], entry["url"])
+        row = dict(entry, records=records)
+        if records:
+            # the authors end where the earliest of the titles of the records begins
+            cited = words(entry["citation"])
+            starts = [(run_at(words(r["title"]), cited), words(r["title"])[:3]) for r in records if words(r["title"])]
+            starts = sorted(s for s in starts if s[0] >= 0)
+            lead = starts[0][1] if starts else None
+            row["fields"] = merge([(r, compare(entry["citation"], r, lead)) for r in records])
         rows.append(row)
     (folder / "metadata.json").write_text(json.dumps(rows, ensure_ascii=False, indent=1) + "\n")
     print("citations", len(rows))
-    for how in ("arxiv", "doi", "search"):
-        print("record by", how, sum(1 for r in rows if r["record"] and r["record"]["how"] == how))
-    print("no record", sum(1 for r in rows if not r["record"]))
+    for name in ("arXiv", "Crossref", "zbMATH"):
+        print("with a record of", name, sum(1 for r in rows if any(NAMES[x["how"]] == name for x in r["records"])))
+    for n in (0, 1, 2, 3):
+        print("with records of", n, "catalogues", sum(1 for r in rows if len({NAMES[x["how"]] for x in r["records"]}) == n))
     for field in FIELDS:
         tally = {}
         for r in rows:
-            if r["record"]:
+            if r["records"]:
                 tally[r["fields"][field]["outcome"]] = tally.get(r["fields"][field]["outcome"], 0) + 1
         print(field, tally)
-    clean = sum(1 for r in rows if r["record"] and all(f["outcome"] != "differs" for f in r["fields"].values()))
-    print("with a record and no field that differs", clean)
+    print("with a record and no field that differs",
+          sum(1 for r in rows if r["records"] and all(f["outcome"] != "differs" for f in r["fields"].values())))
+    print("with a field that one record contradicts while another agrees",
+          sum(1 for r in rows if r["records"] and any(
+              f["outcome"] == "same" and "differs" in f["against"].values() for f in r["fields"].values())))
 
 
 main()

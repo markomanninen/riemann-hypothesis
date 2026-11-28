@@ -144,54 +144,89 @@ independent of the proof here was not examined. The answer to T1 rests its class
 preprint and on Bombieri's exposé of Stepanov's method, so its class K holds without the
 preprint only if the exposé alone carries it.
 
-## The citations against two catalogues
+## The citations against three catalogues
 
 A citation is the line in which an answer names a source, with the authors, the title, the
 place of publication and the year. The answers hold 85 different citations. The script
-[`metadata.py`](metadata.py) looked for a record of each one, in arXiv when the address or the
-citation holds an arXiv identifier, in Crossref when the address holds a DOI, and otherwise by
-asking Crossref for the citation as free text and taking an answer whose title stands in the
-citation word for word and whose first author stands there too. It then compared six fields of
-the citation with the record.
+[`metadata.py`](metadata.py) looked for records of each one in three catalogues.
 
-| Field | Same as the record | Differs | Citation does not give it | Record does not give it |
+- In arXiv, when the address or the citation holds an arXiv identifier.
+- In Crossref, by a DOI that the address holds or that the arXiv record names, and otherwise
+  by asking Crossref for the citation as free text.
+- In zbMATH Open, by asking for the title.
+
+An answer of a search counts as a record of the citation when its title stands in the citation
+word for word and its first author stands there too. The script compared six fields of the
+citation with each record. A field is the same when it agrees with at least one record. It
+differs when it agrees with no record and differs from at least one.
+
+| Catalogue | Citations with a record |
+|---|---:|
+| arXiv | 29 |
+| Crossref | 62 |
+| zbMATH | 68 |
+| At least one of the three | 80 |
+| All three | 15 |
+| None | 5 |
+
+| Field | Same as a record | Differs from every record that gives it | Citation does not give it | No record gives it |
 |---|---:|---:|---:|---:|
-| Authors | 75 | 0 | 0 | 0 |
-| Title | 75 | 0 | 0 | 0 |
-| Year | 66 | 5 | 0 | 4 |
-| Journal or series | 69 | 2 | 2 | 2 |
-| Volume | 26 | 0 | 24 | 25 |
-| Pages | 8 | 0 | 66 | 1 |
+| Authors | 80 | 0 | 0 | 0 |
+| Title | 79 | 1 | 0 | 0 |
+| Year | 79 | 1 | 0 | 0 |
+| Journal or series | 72 | 2 | 4 | 2 |
+| Volume | 27 | 0 | 35 | 18 |
+| Pages | 8 | 0 | 71 | 1 |
 
-75 of the 85 citations have a record, 29 through arXiv, 5 through a DOI and 41 through the
-search. In 69 of the 75 no field differs from the record. No citation has a wrong author, a
-wrong title, a wrong volume or wrong pages by its record. Most citations give no pages, so the
-pages were compared for 8 citations only.
+In 77 of the 80 citations with a record no field differs. No citation has a wrong author, a
+wrong volume or wrong pages by its records. Most citations give no pages, so the pages were
+compared for 8 citations only.
 
-The 6 citations with a difference are these, each read against its record by the language
-model Claude.
+The 3 citations with a field that differs are these, each read against its records by the
+language model Claude.
 
-- Montgomery and Vaughan, Multiplicative Number Theory I, is cited with the year 2007 in unit
-  3.1 and with 2006 in units 1.2 and 1.3. The Crossref record of the book has 2006 and 2010.
-  The year 2007 has no support in the record.
-- Three articles are cited with the year of their volume, and Crossref has the year in which
-  the article went online. They are Ford, Green, Konyagin, Maynard and Tao in volume 31 of the
-  Journal of the American Mathematical Society, cited as 2018 with 2017 in the record, Chen and
-  Zou in volume 27 of the Journal of the European Mathematical Society, cited as 2025 with 2024
-  in the record, and Furusawa and Morimoto in volume 23 of the same journal, cited as 2021 with
-  2020 in the record. The year of a volume was not looked up in a second catalogue.
+- Bombieri, Le grand crible dans la théorie analytique des nombres, is cited in unit 3.6 as
+  Astérisque 18 of 1974. The address that the answer opened is the file `AST_1987__18__1_0`,
+  and the one record, of zbMATH, is the second, revised and enlarged edition of 1987. The
+  citation therefore dates the first edition while the answer quotes the second, and a page
+  or theorem number of one edition may not hold in the other.
 - Bombieri, Counting points on curves over finite fields, is cited in unit 9.3 as Séminaire
-  Bourbaki, exposé 430, Springer-Verlag, 1974. The record names the series Lecture Notes in
-  Mathematics, which that citation leaves out and which the citation of the same exposé in
-  unit T1 gives.
-- Weil, Sur les formules explicites de la théorie des nombres premiers, is cited with its first
-  publication of 1952. The one record that Crossref has is the reprint in the collected papers
-  of 1979, so the year and the place of 1952 are unconfirmed.
+  Bourbaki, exposé 430, Springer-Verlag, 1974. The Crossref record names the series Lecture
+  Notes in Mathematics, which that citation leaves out and which the citation of the same
+  exposé in unit T1 gives. The zbMATH record adds the words d'après S. A. Stepanov to the
+  title, as the citation of unit T1 does.
+- Weil, Sur les formules explicites de la théorie des nombres premiers, is cited with its
+  first publication in Lund in 1952. zbMATH confirms the year 1952 and gives the place in an
+  abbreviation that the script cannot compare, Meddel. Lunds Univ. Mat. Sem. The Crossref
+  record is the reprint in the collected papers of 1979.
 
-Ten citations have no record in either catalogue, so their fields are unchecked. They are
-Riemann's paper of 1859, Chebyshev's memoir of 1852, three volumes of Astérisque (Bost 1996,
-Bombieri 1974 and Katz 1977), the chapter of Lagarias and Odlyzko of 1977, the book of Tao and
-Vu, the course notes of Milne and of Kedlaya, and Kurihara's paper of 1992.
+In 14 citations a field agrees with one record while another record has something else. These
+are differences between the catalogues or between a preprint and its printed version, and the
+file [`metadata.json`](../review/codex-novelty/metadata.json) names the records for each. Two
+of the 14 are the citations of Bombieri's exposé and of Weil's article in the list above, and
+the other 12 are these.
+
+- The textbook of Montgomery and Vaughan is cited with 2006 in units 1.2 and 1.3 and with 2007
+  in unit 3.1. Crossref has 2006 and zbMATH has 2007, so each citation has one catalogue
+  behind it, and the two citations still disagree with each other.
+- Four articles are cited with the year of their volume, which zbMATH also gives, while
+  Crossref has the year in which the article went online. They are Ford, Green, Konyagin,
+  Maynard and Tao (2018 against 2017), Chen and Zou (2025 against 2024), Furusawa and Morimoto
+  (2021 against 2020), and, the other way round, Deligne's La conjecture de Weil I, which
+  Crossref dates 1974 as the citation does and zbMATH 1973.
+- Four citations give a preprint with its year on arXiv, and zbMATH or Crossref holds a
+  printed version of a later year. They are Massey, Ruiz and Stojanoff (2008, printed 2010),
+  Berger (2009, printed 2014), Brown and Klosin (2018, printed 2020), and Gan, Qiu and Takeda
+  in unit T14 (2012, printed 2014). The answer to unit T9 cites the printed version of the
+  last one.
+- The titles of two preprints differ on arXiv from the printed titles that the citations
+  give, for Bannai and Kobayashi and for Furusawa and Morimoto.
+- Stepanov's article is cited in its English translation, which Crossref holds, and zbMATH
+  holds the Russian original.
+
+Five citations have no record in any of the three catalogues, so their fields are unchecked.
+They are Riemann's paper of 1859, Chebyshev's memoir of 1852, Bost's exposé in Astérisque 237
+of 1996, and the course notes of Milne and of Kedlaya.
 
 ## Every unit
 
@@ -414,8 +449,8 @@ python3 -I verification/novelty/search.py
 ```
 
 The first command downloads the sources into `verification/novelty/data/sources`, which git
-ignores, and writes `quotes.json`. It needs `curl` and `pdftotext`. The second command asks arXiv
-and Crossref for the records, with pauses between the calls, keeps their answers in
+ignores, and writes `quotes.json`. It needs `curl` and `pdftotext`. The second command asks arXiv,
+Crossref and zbMATH for the records, with pauses between the calls, keeps their answers in
 `verification/novelty/data/catalogue` and writes `metadata.json`. The third command writes
 the table of the section Every unit and the list of the section The differences, and prints
 the counts that the hand-written prose quotes. The answers themselves came from twelve runs of
