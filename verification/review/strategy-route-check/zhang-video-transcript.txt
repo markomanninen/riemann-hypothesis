@@ -1,0 +1,3567 @@
+Okay, so let's let's learn little bit
+
+about the
+
+the details of this
+
+proof.
+
+>> Yeah, so
+
+okay, just a reminder again, this is a
+
+very, you know, preliminary early
+
+summary of my understanding
+
+of the general structure of the proof.
+
+So there are going to be many details
+
+missing.
+
+And maybe, you know,
+
+a lot of the a lot of the big picture
+
+might become clearer
+
+or simplified as we as a whole
+
+mathematical community begin to
+
+understand this proof. But just to give
+
+at least the basic ingredients as as I
+
+see it
+
+now, only five days after its release,
+
+is that there are really four
+
+Okay, so there are four main points.
+
+>> I I also say that, of course, this is
+
+even a
+
+summary of what you have already written
+
+down, which is a longer document and
+
+that I will link in the description of
+
+to this video. I will make a link to it
+
+so people can also access that for more
+
+details, a larger summary.
+
+But
+
+>> And I also apologize because the slides
+
+I also wrote very quickly so that
+
+But I hope you I get the main the main
+
+points across. So
+
+today today there's really four main
+
+topics I want to talk about. The first
+
+is how using classical analytic number
+
+theory of mathematicians from from the
+
+first half of the 20th century, how we
+
+can go from the Riemann hypothesis Oh,
+
+first the original motivation of the
+
+Riemann hypothesis, then go into
+
+how that can be
+
+using classical number theory
+
+transformed into like a particular
+
+estimate.
+
+So it's almost equivalent form. If we
+
+prove this estimate, we prove Riemann
+
+hypothesis.
+
+And then describe
+
+Okay, from this estimate, how do we get
+
+all of this modern number theory that
+
+enters through, you know, from
+
+automorphic forms, Galois
+
+representations, CM theory, lattices,
+
+uh diophantine geometry.
+
+So how does that enter this estimate?
+
+And then of course still pointing out
+
+that
+
+even even these building blocks um
+
+there's a lot there are a lot of deeper
+
+points within them that I won't be
+
+talking about today and many of which I
+
+still don't understand.
+
+Um but at least just to get a picture of
+
+the very
+
+the very
+
+at a very broad scale what goes into the
+
+proof.
+
+Um
+
+so from the starting point for for here
+
+is the motivation. Okay so so at the
+
+very fundamental level what are we
+
+studying when we say we want to
+
+understand the Riemann hypothesis?
+
+Um
+
+so one of the the original motivations
+
+is just to understand where the prime
+
+numbers are.
+
+Um [clears throat and snorts]
+
+so up to some number X, say up to
+
+10,000, how many primes are there
+
+between 2 and 10,000?
+
+Right so we we define this counting
+
+uh as a function, a counting function
+
+called pi of X
+
+that just counts how many primes there
+
+are up to X.
+
+And
+
+early on the prime number theorem sort
+
+of gave a an asymptotic
+
+formula for for how often the primes
+
+should appear.
+
+So there's this function called li of X
+
+um the logarithmic integral. It's
+
+I mean okay I don't want to get into the
+
+details already of the prime number
+
+theorem, but essentially the prime
+
+number theorem is saying that the number
+
+of primes up to X is roughly X over log
+
+X.
+
+And and then okay that's the main term,
+
+but then you have some error that's
+
+smaller than that, but we don't know
+
+what the error quite is.
+
+Right and
+
+[clears throat] what and one main
+
+implication of the Riemann hypothesis is
+
+that we can actually say what the error
+
+term is um to a much better degree. So
+
+it's actually um
+
+it's actually square root of X times log
+
+X. So so maybe just to give a table of
+
+what I'm talking about, right say we
+
+want to count how many primes there are
+
+up to 10 to the fourth.
+
+Well, the actual number of primes, if
+
+you do a computation, you'll find that
+
+there are 1,229 primes
+
+uh smaller than smaller than 10 to the
+
+fourth.
+
+Now, there's logarithmic integral
+
+function which one can compute um
+
+numerically
+
+for 10 to the fourth is 1,246.
+
+Right, so already the prime number
+
+theorem is amazing. It tells us to a
+
+really good accuracy how many primes
+
+there are. Here the error was just 17.
+
+This main term li of x is only off by
+
+17.
+
+Um [clears throat] now as x grows,
+
+right, this error might grow to become
+
+very large. And we don't know anything
+
+except that it's
+
+uh you know is smaller than x over log
+
+x, which can be very big that goes to
+
+infinity.
+
+Uh if we knew the Riemann hypothesis,
+
+what this tells us is that this error
+
+term is not just on the order of x over
+
+log x, it's on the order of square root
+
+of x times log x. So you see okay, this
+
+error is
+
+uh it doesn't matter what the actual
+
+value of square root of x log x is, but
+
+how it grows. So you see
+
+um okay, maybe these three data points
+
+are not quite enough to see the the
+
+pattern, but
+
+um
+
+this third column, this error term, 17
+
+130 754, right, it grows very closely
+
+similarly to the growth of square root
+
+of x log x.
+
+Um so the point of Riemann hypothesis is
+
+okay, we can refine the prime number
+
+theorem. Not only do we know
+
+how quickly it grows, but we also know
+
+how quickly the error
+
+of this grows.
+
+This is the classical motivation
+
+um going back to right, the late 1800s
+
+um essentially. And [clears throat] this
+
+is one of the things that Riemann was
+
+studying when he came up with this
+
+hypothesis.
+
+Um
+
+so okay, now that comes now we get to
+
+what is the actual Riemann hypothesis.
+
+Uh so there is something called the
+
+Dirichlet series. It's this infinite
+
+sum. You take all the integers n and you
+
+raise them you take one over n to the s
+
+power where s is some complex number.
+
+So So [clears throat and snorts] had
+
+already um actually Euler had already
+
+studied
+
+essentially this function
+
+and he realized that you can decompose
+
+this infinite sum as an infinite product
+
+over all the primes.
+
+And the fact that you can do this
+
+decomposition is where uh why the prime
+
+numbers are are linked to this Riemann
+
+zeta function.
+
+Um it's [snorts] named after Riemann
+
+though because of course he formalized
+
+this
+
+uh this notion of this as a function and
+
+proved many properties of it.
+
+And
+
+uh what we call the Riemann hypothesis
+
+is the conjecture or the assertion that
+
+the Riemann zeta function, this infinite
+
+sum or infinite product that I've
+
+written as a function of complex numbers
+
+um whenever it has a zero
+
+between zero and one
+
+um
+
+[clears throat] the real part of it must
+
+lie on on the line the real part equals
+
+one half.
+
+So it's just telling you sort of like
+
+roots of the polynomial, where do all
+
+the roots of this function lie? They
+
+should all be on the line one half. And
+
+if this was true, then you would get
+
+these consequences about where the prime
+
+numbers appear.
+
+Uh and maybe just as a historical point,
+
+actually Riemann never really
+
+conjectured the Riemann hypothesis. The
+
+reason why it's called the Riemann
+
+hypothesis is because
+
+he was actually just using it as a
+
+working hypothesis. He thought, okay, if
+
+I assume this, then I can get all these
+
+amazing things.
+
+And he thought I mean
+
+he might have thought that okay
+
+eventually I'll come back to this and
+
+I'll prove my hypothesis is true.
+
+Um but he didn't even you know view it
+
+as sort of like a conjecture for people
+
+to prove. It was just a working
+
+hypothesis like any other scientific
+
+hypothesis one might do when doing an
+
+experiment. He was this is something
+
+that he was going to revisit
+
+um hopefully one day.
+
+Okay, but so [clears throat] the point
+
+was that the zero of this function, the
+
+zeros of this function
+
+somehow control um where primes appear.
+
+So at this very basic level is why
+
+number theorists started caring about
+
+uh his working hypothesis.
+
+And then there's a generalization of
+
+this, so the the GRH, generalized
+
+Riemann hypothesis.
+
+Um, [clears throat] so this involves
+
+something called the Dirichlet Dirichlet
+
+characters. Something studied by
+
+Dirichlet actually before the Riemann
+
+hypothesis.
+
+So what is the Dirichlet character chi?
+
+It's a kind of periodic function on the
+
+integers.
+
+And
+
+we can put this into the definition of
+
+the Riemann zeta function. Or before we
+
+had one over n to the s.
+
+We can put our periodic function chi of
+
+n instead of the one. And then we can
+
+also get a product decomposition just
+
+like for the Riemann zeta function.
+
+And so the generalized Riemann
+
+hypothesis is the same hypothesis that
+
+this function of s
+
+all of the all of the zeros between zero
+
+and one are on the line one half.
+
+Right. And if in particular you took chi
+
+to just be a trivial function. If chi of
+
+n was just equal to one, then this is
+
+the same thing as the Riemann
+
+hypothesis.
+
+But this sort of generalizes it by
+
+allowing one to actually be any kind of
+
+periodic function.
+
+And the consequence of this, like the
+
+consequence of the Riemann zeta
+
+function, Riemann hypothesis says we
+
+know where the
+
+if we knew the Riemann hypothesis, we
+
+would know where the primes are.
+
+The generalized Riemann hypothesis tells
+
+us not only where primes are but where
+
+the primes are in arithmetic
+
+progression. So okay, where are all the
+
+primes that are one mod
+
+you know n where are all the primes are
+
+two mod n so on and so forth.
+
+Okay, [clears throat] so this is the
+
+very the first
+
+basic development in the story on the
+
+generalized Riemann hypothesis.
+
+And then at the end of the 1800s
+
+early 1900s essentially we had
+
+a formulation of it involving what's
+
+called the von Mangoldt function. So
+
+this function is just it just picks out
+
+out of all the numbers n it picks out
+
+all the prime powers.
+
+So if n is not a prime power this
+
+function is just zero. If it is a prime
+
+power then we just take log of the prime
+
+and we don't care about the exponent.
+
+And so the one of the key sum that
+
+appears in this proof of the Riemann
+
+hypothesis is this S chi,
+
+which takes the von mangoldt function
+
+together with your character chi and
+
+this sort of waiting chi x over n minus
+
+one.
+
+Okay, so how does this sum relate Okay,
+
+first why do I call this a prime power
+
+sum? Because the mangoldt function is in
+
+there.
+
+Right, this this sum
+
+all the terms are zero if n is not a
+
+prime power.
+
+So this is essentially a sum over
+
+prime powers p to the k.
+
+And and so we just have log p times this
+
+character times x over n minus one
+
+[snorts] at each prime power.
+
+>> Is that
+
+Is that weighted prime power sum
+
+something that is new or is this
+
+something that has appeared in the
+
+literature before?
+
+>> No, no. So this has appeared in the
+
+literature
+
+Actually, I think this goes all the way
+
+back to
+
+so in the top right corner you'll see
+
+He essentially does He looks at
+
+this kind of sum with the von mangoldt
+
+function already in the 1890s.
+
+And there This is already connected to
+
+values of the dirichlet l function
+
+already back then. So it doesn't appear
+
+with this exact x over n minus one.
+
+But some version [clears throat] of this
+
+appears and then Okay, in the years that
+
+followed well before this proof of the
+
+Riemann hypothesis we already had
+
+this S chi essentially appearing in
+
+connection to values of the l function.
+
+[clears throat] And and this next step
+
+as well so you you take this integral of
+
+S chi. It's called the mellin transform.
+
+If you take this integral you get this
+
+expression
+
+for the derivative of the dirichlet l
+
+function over s times s minus one times
+
+the original l function.
+
+Right, so this is
+
+this particular integral
+
+being related to the l function is is
+
+how you can relate the generalized
+
+Riemann hypothesis to this sum S chi.
+
+Right, if you had a In particular, if
+
+you knew that the dirichlet l function
+
+vanished at some S like on the right
+
+side. Like the L function is in the
+
+denominator.
+
+So zero on the right would mean you'd
+
+have a pole of the entire function.
+
+Uh so that means that you know the
+
+integral on the left must have a pole
+
+everywhere that
+
+we have a
+
+a zero of the L function. Or you can do
+
+the same thing with the Riemann zeta
+
+function. Say you have a a a non-trivial
+
+zero of the Riemann zeta function. That
+
+means I have some integral of this
+
+weighted sum
+
+goes to infinity.
+
+So I've translated a problem about when
+
+does this function vanish
+
+to a problem about when does this
+
+function blow up to infinity.
+
+So this is the first sort of we've just
+
+sort of like inverted the problem. I
+
+don't want to understand where a
+
+function vanishes. Now I want to
+
+understand when a function is big.
+
+Um
+
+right so
+
+zeros [clears throat] become poles.
+
+And this is
+
+okay now
+
+slightly later in the 1900s
+
+um one problem when you when you look at
+
+the sum that this integral that I had
+
+before is that you had an S minus one
+
+factor in the denominator as well.
+
+Right so you have a you can have a pole
+
+at S equals one if
+
+S equals one you get a one over zero you
+
+you also get a pole. And we want to
+
+remove this pole. We want to study all
+
+the poles of this function and we don't
+
+want any poles that don't come from
+
+the Dirichlet L function. Right so we
+
+want a we want a function where all the
+
+poles
+
+just come from
+
+hypothetical counterexamples to the
+
+Riemann hypothesis.
+
+[snorts] And okay so how do we get rid
+
+of this pole at S equals one?
+
+Um
+
+[clears throat] so if Kai is not trivial
+
+then you add this extra term X times the
+
+derivative
+
+of L
+
+um the value at one and then divided by
+
+the actual value at one.
+
+And [clears throat]
+
+if [snorts] your character happened to
+
+be trivial so if you were looking at the
+
+Riemann zeta function okay then you get
+
+a slightly different correction term.
+
+Um
+
+okay we're right gamma is just some
+
+constant
+
+um that I that I be talking about. So,
+
+if you do this,
+
+then
+
+[clears throat] this G
+
+or G1 doesn't have a pole when the L
+
+function has a pole at one.
+
+Right? So so we've taken our S which
+
+captures all the poles of the Dirichlet
+
+L function or the Riemann zeta function
+
+and we just add this this little
+
+correction term
+
+and now we've gotten rid of that extra
+
+pole that we that we had acquired.
+
+And
+
+so in this way, now if we understand
+
+this G
+
+we understand exactly where the poles
+
+are, then we can understand exactly
+
+where the zeros of the Dirichlet L
+
+function or the Riemann zeta function.
+
+[snorts]
+
+And again, this sort of
+
+adding this little error term to get rid
+
+of this pole at S = 1
+
+is essentially goes back to Landau and
+
+Turan in the late in the early 1900s.
+
+They do some they don't do exactly this
+
+sum, but they do something very similar
+
+to sort of treat
+
+extra poles that you somehow acquired in
+
+doing this process that
+
+does.
+
+Okay, so now we have a function G whose
+
+poles detect the zeros of the Dirichlet
+
+L function and they precisely detect the
+
+zeros because you don't have this extra
+
+any extra poles like this one at S = 1.
+
+So now so now we want to understand the
+
+poles of G
+
+and the way that the proof does that
+
+[clears throat] is by introducing
+
+another sum, which I've written here as
+
+G
+
+Okay, so some combination of G
+
+the real parts of G
+
+and
+
+Okay, so now I mean there's there's now
+
+going to be a lot of mathematics that
+
+I'm kind of glossing over,
+
+but the reason he introduces this G
+
+is
+
+to be able to then bring in the theory
+
+of automorphic periods. So you can
+
+understand this G psi through
+
+automorphic periods, which I'll talk
+
+about in a second.
+
+And
+
+ultimately from the way that this G psi
+
+is defined,
+
+um using orthogonality of characters and
+
+quite a bit of algebraic number theory,
+
+uh if you have a bound on G psi, then
+
+you can extract the original G chi
+
+terms. Right? So again, G chi is what we
+
+want to understand to get the Riemann
+
+hypothesis.
+
+Uh he has this particular sum of G chi's
+
+and okay, using [clears throat] a bit of
+
+algebraic number theory and a lot of
+
+technical manipulation, you can you can
+
+get a bound for G chi from the bounds on
+
+G psi.
+
+>> Okay.
+
+>> Um so in the end, okay, the the key
+
+estimate that the proof wants is
+
+uh to show that this this new sum G psi
+
+that was constructed from G chi's
+
+um is bounded
+
+at x by x to the 1/2 + epsilon
+
+um for all the x like consecutive x in
+
+some arbitrarily large interval
+
+um between y and y to the 3 halves. So I
+
+have some big interval y and y to the 3
+
+halves
+
+and for every x in there, I want
+
+uh the sum to be bounded by x to the 1/2
+
++ epsilon.
+
+[snorts] So if [clears throat] we do
+
+okay, sort of the same idea again, this
+
+Mellin
+
+transform
+
+um basically this bound allows us to
+
+figure out where the poles are and
+
+eventually okay, going going through
+
+this algebraic number theory and
+
+orthogonal characters back to G chi
+
+um
+
+this bound allows us to understand
+
+the poles of G chi, which allows us to
+
+understand zeros of the L function or
+
+Riemann zeta function to the right of
+
+1/2.
+
+Right?
+
+>> And this estimate and this methodology
+
+was also around now or is this a new
+
+trick?
+
+>> So again, okay, so in the precise form
+
+that I've written, I haven't found this
+
+somewhere, but
+
+um
+
+this this is extremely close to
+
+something that Landau and Turan did
+
+um in the early 1900s. So you can find
+
+historical literature um
+
+where okay, here here you only need a
+
+one-sided estimate like okay you only
+
+want to bound it above by g to the 1/2
+
+plus eps plus eta
+
+but there are versions of things that
+
+look like this
+
+um the sums of g k's where if you have a
+
+bound from below and a bound from above
+
+then there's connection to the poles and
+
+then zeros of the
+
+of the Riemann zeta function and
+
+Dirichlet L function. So
+
+uh essentially this idea
+
+the variance of this idea can be found
+
+in in um
+
+analytic number theory from from the
+
+20th century.
+
+>> Bunow and Turan.
+
+>> Yeah and among others but yeah in
+
+particular those too.
+
+Um so this is the key estimate and this
+
+is where now the proof then uses the
+
+full power of
+
+um
+
+of a lot of modern number theory.
+
+>> Of everything.
+
+>> Yeah. So okay um
+
+so how do we go from how do we go from
+
+this estimating the sum to automorphic
+
+periods or what are automorphic periods?
+
+So let me first describe the
+
+relationship before I even talk about
+
+what
+
+this is.
+
+So an automorphic period for now is just
+
+it's just some algebraic number the p m
+
+uh so I have a bunch of numbers p m that
+
+are in some number field k
+
+uh that are not zero.
+
+Okay? [clears throat]
+
+Um so later okay you maybe people who
+
+have looked at this four-page note of
+
+Lavandsee ah you have some number of
+
+theta lifts so this m is the number of
+
+theta lifts
+
+and for each number of theta lifts we
+
+get some number some algebraic number p.
+
+[clears throat]
+
+Okay so uh these g k's that we want to
+
+understand
+
+uh there's a there's a huge sum of these
+
+g k's that can be bounded from above
+
+by these periods p m.
+
+Okay so okay maybe if you can try to
+
+look past the technical notation I have
+
+a g k on the right side
+
+and I can precisely bound it somehow in
+
+terms of my periods p m right and
+
+remember to prove the Riemann hypothesis
+
+what we want to do is bound g k
+
+in some Windows X.
+
+So the key step
+
+for getting this estimate is okay, he
+
+shows that
+
+you can bound some combination of G very
+
+precisely in terms of these algebraic
+
+numbers called automorphic periods.
+
+Okay, you [clears throat] might imagine
+
+why have we taken the sum over P these
+
+are so these are sums over prime ideals.
+
+We've taken a sum over every prime ideal
+
+in our number field.
+
+The idea now is to use what's called the
+
+product formula. So this is
+
+I think from a joint paper of Emmy
+
+Larton and I never knew how to pronounce
+
+his name Wapples Wapples
+
+where they essentially show that
+
+at each of these primes if you if you
+
+know what the valuation
+
+of your of your algebraic number at all
+
+all of the primes
+
+[clears throat] this is equal to sort of
+
+the all of the Archimedean absolute
+
+values of
+
+of the algebraic number.
+
+Right? So so this is the same I've just
+
+rewritten kind of the same thing as
+
+saying
+
+if you look at a number at all of its
+
+embeddings into the periodic numbers and
+
+its embeddings into the real numbers or
+
+complex numbers this product is one.
+
+So here I've split up this product sort
+
+of the product of all these finite
+
+valuations
+
+is equal to the product of all the
+
+Archimedean ones.
+
+So this is this is how we want to get
+
+the
+
+the bound from the so we want so we have
+
+a bound we know that the product of the
+
+finite ones bounds G
+
+So we want to bound this product of
+
+finite places
+
+and now we know that we can understand
+
+the
+
+all the finite places collectively by
+
+looking at all of these
+
+complex places these Archimedean ones.
+
+Okay? So we we have these algebraic
+
+numbers
+
+if we understand the Archimedean size we
+
+can understand all the non Archimedean
+
+sizes all these the sum over P's if we
+
+understand all the sum over P's then we
+
+get some bound on G
+
+So that that's why we to understand
+
+these automorphic periods.
+
+[clears throat]
+
+[snorts] Um
+
+Oh and sorry yes this is something I
+
+mentioned before if you understand we
+
+have this sum of G K's this is related
+
+to G psi
+
+um and then this number M appears again
+
+and how you extract one from the other
+
+this this number of fatal lifts.
+
+Uh okay but I haven't actually defined
+
+anything I'm talking about but just to
+
+give an idea why do we understand G K
+
+because we can bound them by
+
+understanding the automorphic periods.
+
+And okay how do we now we want to
+
+understand how do we
+
+bound the size of these automorphic
+
+periods.
+
+And also how do they come in again.
+
+[snorts] Um
+
+so maybe one more thing I'll say is also
+
+this uh again this repeated fatal lifts.
+
+So what is this if we do um
+
+[clears throat]
+
+okay so everything I explained in the
+
+last page leads us to
+
+uh this mysterious bound number of fatal
+
+lifts times G psi is at most okay some
+
+constant times X to the Epsilon times X
+
+plus M squared.
+
+Right so so I'm just trying to connect
+
+this bound
+
+if we if we have a bound for the
+
+Archimedean size of periods and we get a
+
+bound on G K's
+
+how do we get the key estimate that he
+
+wanted.
+
+Um
+
+[clears throat] okay divide M on both
+
+sides.
+
+And then he he's okay in his mysterious
+
+four page note he talks about ah but if
+
+you you want to balance M and you want
+
+to balance X over M because we have this
+
+estimate X over M and M
+
+and we wanted again to get a bound X to
+
+the one half plus Epsilon right so we
+
+want this thing in parentheses X over M
+
+plus M
+
+to be on the order of X to the one half.
+
+Well how do we do that
+
+uh you just take M
+
+to be roughly square of X.
+
+X over square of X plus square of X
+
+is square on the order of square of X.
+
+Um
+
+[clears throat]
+
+so okay maybe I'm talking a bit quickly
+
+now but uh
+
+to get this one half plus Epsilon
+
+we get bound that gives us in terms of x
+
++ a number of fatal lifts squared,
+
+which means that we get this bound in
+
+terms of x over m + m.
+
+And since we want this to be on the
+
+order of x to the 1/2,
+
+we just take m to be
+
+roughly x to the 1/2.
+
+Right? So so
+
+>> [snorts]
+
+>> And again, m was a number of theta
+
+lifts.
+
+>> Yeah. So m is a number of fatal lifts.
+
+Again, this first line I'm taking
+
+right now I'm just taking as for
+
+granted, like
+
+but this is ultimately how
+
+these automorphic periods enter. Somehow
+
+if we take a bunch of fatal lifts, we
+
+get a bound on
+
+the size of the automorphic periods, the
+
+size, but this bound is actually
+
+in terms of what are these fatal lifts.
+
+So this this c epsilon x to the epsilon
+
+x + m squared. This is the bound on the
+
+automorphic periods that we'll magically
+
+get that I haven't explained.
+
+Then
+
+with this bound on g psi,
+
+you get this x over m + m term
+
+and we want this bound to be 1/2 like x
+
+to the 1/2 + epsilon. So
+
+you want to choose m to be square root
+
+of x.
+
+Right? This is this is a way to get the
+
+bound that we wanted.
+
+So [clears throat] okay, presented a
+
+little bit backwards, but this means
+
+that what we really want to get the
+
+estimate we want, the estimate we want,
+
+which is boxed, what we really need to
+
+show is that we can bound
+
+the
+
+the Archimedean sizes of those
+
+automorphic periods by the thing in the
+
+top right, like this first equation
+
+under it, the c epsilon x to the epsilon
+
+x + m squared. If we get this bound on
+
+the automorphic periods, then we get
+
+this bound on g psi,
+
+and then taking m to be about square
+
+root of x, then we get the estimate we
+
+wanted, and then we get
+
+okay, after some more technical
+
+manipulations, then we get grh.
+
+Right?
+
+[snorts]
+
+Okay.
+
+So we know what we want to do, even
+
+though I I haven't actually defined what
+
+these automorphic periods are, we know
+
+that there's some object called an
+
+automorphic period, and we want to bound
+
+their sizes in the complex numbers by
+
+x to the epsilon x plus n squared in
+
+terms of some mysterious thing called
+
+the theta lift.
+
+So, okay, maybe now it's time to rewind
+
+and
+
+in history at least and say what Let me
+
+let me tell you what an automorphic form
+
+is.
+
+[clears throat]
+
+So, automorphic form is this huge branch
+
+of mathematics.
+
+I mean,
+
+it now maybe a lot of people consider
+
+part of number theory, but actually it
+
+really has its roots in analysis and
+
+differential equations.
+
+Uh but the basic idea of an automorphic
+
+form is we want to
+
+We want special functions that are kind
+
+of like sine and cosine.
+
+So, sine and cosine,
+
+right, are periodic under 2 pi.
+
+Uh so one way to think about it is is
+
+periodic
+
+under If if you view like the real
+
+numbers, you have a You have like a
+
+lattice in the real numbers
+
+uh which is 2 pi
+
+z, right? So, 2 pi n for any integer n
+
+makes sine and cosine periodic function
+
+on this uh on this sort of lattice
+
+inside the real numbers.
+
+Modular forms are
+
+similar to sine and cosine. They're
+
+complex functions. Okay, they're
+
+functions technically on just the upper
+
+half plane of the complex So, on the
+
+complex numbers,
+
+and they have a sort of periodicity.
+
+I mean, they're not quite periodic,
+
+but um they behave almost periodically.
+
+So, so this If you take SL2 z and allow
+
+it to act on the upper half plane by
+
+fractional linear transformations, so
+
+you take a z and you send it to az plus
+
+b over cz plus d,
+
+uh then you get f back again with just
+
+some extra term. So, so it's If k is 0 k
+
+is 0, okay, it's periodic. If k is
+
+bigger, it's not quite periodic, but you
+
+know how not periodic your function is.
+
+Right? So, this is kind of like sine and
+
+cosine, but now we've allowed now we've
+
+allowed it one to be two-dimensional and
+
+we allow it to have some uh what's
+
+called an automorphy factor.
+
+[snorts] Um [clears throat] so you have
+
+some some well-understood symmetry, and
+
+then automorphic forms are like modular
+
+forms, I mean, they include modular
+
+forms, but you also allow yourself to
+
+have symmetry under other groups, so not
+
+just SL2Z.
+
+Right, so we have some some complex
+
+functions with a certain specified
+
+symmetry that makes it almost periodic.
+
+Um and in this in the particular proof
+
+uh
+
+in the lean code that
+
+released,
+
+the automorphic forms, which will lead
+
+to the automorphic periods, are going to
+
+be functions that have this sort of
+
+periodicity under
+
+uh what are called unitary groups.
+
+Um so [clears throat] like the unitary
+
+group of matrices, you can view them as
+
+sort of
+
+functions on a vector space
+
+uh preserve a certain Hermitian form, so
+
+they preserve some kind of complex
+
+structure on a on a vector space.
+
+Right, but so the idea is you have some
+
+very abstractly generalized version of
+
+sine and cosine in terms of unitary
+
+groups and their symmetries.
+
+And now these Ah, sorry. So
+
+so if I have Okay, I just written it. If
+
+I have some element of the unitary group
+
+T, I really want it to be periodic
+
+under T acting on both uh two vectors, V
+
+and W, in my vector space. Okay.
+
+Um
+
+Okay, and then so we have these
+
+automorphic forms on a unitary group,
+
+and then the proof uses a notion called
+
+a Bessel period.
+
+Um
+
+Oh wait, so this is a good example of
+
+how even when I try to write the
+
+history, I can't even name everybody
+
+because Bessel is also a mathematician
+
+from the 1800s and
+
+having to mention his name. But um
+
+so Bessel periods
+
+are related to Fourier analysis. So
+
+in Fourier analysis, right, you want to
+
+study a function F, what you can do is
+
+take an integral from 0 to 1 of F
+
+against e to the -2π nt, and you get
+
+these things called Fourier
+
+coefficients, and you can write F as a
+
+series involving these Fourier
+
+coefficients, right, again with sine and
+
+cosine.
+
+And we can do the similar kind of thing
+
+for automorphic forms, right, so again
+
+we have the symmetric function on the
+
+unitary group. Uh not now I've denoted
+
+this particular unitary group U of Y
+
+not. So maybe the first unitary group we
+
+look at.
+
+And then okay, we take some special
+
+subgroup called the unipotent subgroup
+
+of the unitary group
+
+and then some multiplicative function
+
+called a character.
+
+And we define Fourier coefficients now
+
+on this very generalized
+
+uh function, holomorphic forms.
+
+So an holomorphic form you can also
+
+define these Fourier coefficients and
+
+Fourier series. So instead of
+
+integrating from zero to one
+
+for like the entire
+
+uh real numbers, now we're integrating
+
+on some very particular subgroup
+
+of the big unitary group we're looking
+
+at.
+
+And
+
+instead of E to the two pi I N T,
+
+we're integrating our holomorphic form
+
+against some function of the some
+
+function of the subgroup or some
+
+character. [snorts] So this is some
+
+generalization of the Fourier series and
+
+Fourier coefficients.
+
+And now [clears throat] the Bessel
+
+period is a way of
+
+doing this on on a unitary group
+
+embedded in another unitary group,
+
+right? So before we just had some some
+
+unipotent subgroup of the unitary group.
+
+Now imagine you have two unitary groups
+
+and I have some holomorphic form on the
+
+big one and I have some holomorphic form
+
+on the small one. I kind of generalize
+
+this notion of Fourier coefficients to
+
+involve both of these.
+
+So okay, this is this Bessel period,
+
+this curly B.
+
+Um again and keep in mind I have to have
+
+some character fixed, but this is a way
+
+for me to integrate before we integrate
+
+F against E to the two pi I or
+
+integrated G and some character. Now
+
+we're integrating these two holomorphic
+
+forms against each other, one
+
+holomorphic form on the bigger unitary
+
+group
+
+and integrate it against the holomorphic
+
+form on the smaller one.
+
+So [clears throat] this is some
+
+generalization of of Fourier analysis.
+
+Um
+
+and this notion of Bessel period, you
+
+know,
+
+uh was first done by in the 70s by
+
+and then okay, greatly became very
+
+important um in the conjectures of Gross
+
+and Prasad and Gan Gross GGP Gan Gross
+
+Prasad for example.
+
+Um
+
+okay, so we have
+
+[clears throat and snorts] notion of
+
+automorphic forms. We have this these
+
+numbers we can get out called vessel
+
+periods.
+
+And then now we okay, now let me talk
+
+about theta lifts.
+
+So theta lift is a way to sort of
+
+Okay, maybe maybe I should here okay,
+
+maybe let me give the full diagram and
+
+then start talking. So the reason I
+
+wrote Y not is because I had one unitary
+
+group,
+
+right? And then we and then we have a X
+
+not so you have some subgroup in it. So
+
+you have two unitary groups.
+
+But then
+
+there's something called the theta lifts
+
+which lets you sort of move
+
+between
+
+a whole bunch of different automorph
+
+unitary groups.
+
+So now we have like a whole like layers
+
+of unitary groups. We have some subgroup
+
+U of X I and some bigger unitary group U
+
+of Y I. And these theta lifts you can
+
+maybe conceptually think of as moving my
+
+automorphic form from one to the other.
+
+And then we have these thing these
+
+periods these vessel periods on each
+
+layer.
+
+And every time you lift then you get you
+
+can also look at the vessel period of
+
+the next layer, you can look at the
+
+vessel period of the next layer.
+
+And after M lifts okay, you have some
+
+now you have some period on the Mth
+
+layer,
+
+which is some number again, right? This
+
+is the automorphic periods are numbers
+
+that we want to understand and we want
+
+to bound.
+
+Here I've taken an automorphic form and
+
+I get a whole a whole bunch of periods.
+
+[clears throat]
+
+And now okay, this is a
+
+my attempt to again decrypt one of the
+
+one of the timeline things from Levant's
+
+remark PDF. So he says a repeated lifts
+
+increase divisibility.
+
+What this really means is that
+
+so at each level we have some number
+
+called the vessel period that we've gone
+
+from integrating an automorphic form
+
+two automorphic forms to the other like
+
+one on a subgroup and one on the bigger
+
+group.
+
+And every time you you take a lift, you
+
+can compare the original vessel period
+
+against the next vessel period.
+
+And then these are algebraic numbers so
+
+there's some notion of divisibility
+
+or like what are the primes that divide
+
+the vessel periods.
+
+And each time you do a lift, that
+
+changes the divisibility.
+
+But they are okay. And then there's
+
+something called these costs. You have
+
+to understand
+
+you you don't get for free just lifting
+
+it and then I want to understand it at,
+
+you know, x infinity, y infinity. So so
+
+you really have to do it in a controlled
+
+way.
+
+I mean, okay, now now I'm just
+
+oversimplifying maybe to the point where
+
+details are so lost that maybe what I'm
+
+saying doesn't make sense. But um
+
+the big picture you you do these lifts
+
+to get new numbers that we can
+
+understand using the entire development
+
+of
+
+um theta correspondence and automorphic
+
+forms.
+
+This is just super broadly what it was
+
+going on here. [snorts]
+
+[clears throat]
+
+Uh so we have these algebraic periods PM
+
+that you somehow get from these
+
+automorphic forms and you're doing these
+
+Bessel periods, this sort of Fourier
+
+analysis.
+
+And then there are three questions about
+
+these periods we want to understand.
+
+Right? We want to understand how they
+
+behave at the finite primes,
+
+which by the product formula we
+
+mentioned was related to how big they
+
+are under embeddings into the complex
+
+numbers. We have so we have the finite
+
+[snorts] behavior,
+
+the non-archimedean behavior, and then
+
+we have the complex embeddings or the
+
+archimedean behavior.
+
+And then you have these um
+
+okay
+
+these things which in in in my note they
+
+call these denominators
+
+which sort of
+
+are are another factor between relating
+
+these periods to to the original
+
+estimates we want. So these are these
+
+are three big questions about the
+
+periods we want to understand.
+
+Um and now this is where we really
+
+branch into even more
+
+algebraic number theory and arithmetic
+
+geometry besides already all the
+
+automorphic forms things I've been
+
+talking about.
+
+[clears throat] So there's three more
+
+ingredients
+
+um
+
+and each of these ingredients okay I'm
+
+not going to be able to do a good job of
+
+explaining, but let me just try to give
+
+big picture again. So for the the
+
+leftmost one, the finite primes, what is
+
+this divisibility? We're trying to
+
+understand when do finite primes divide
+
+these automorphic periods.
+
+Um [clears throat]
+
+okay so how how much a prime can divide
+
+the automorphic period can be somewhat
+
+understood by
+
+by a lot of work from the late 20th
+
+century and theta correspondence.
+
+Okay, so okay, just again a very cursory
+
+non-detailed overview
+
+is
+
+[clears throat] as you increase as you
+
+take more and more lifts
+
+you get you get more
+
+more more conditions on whether a prime
+
+can divide this algebraic number
+
+right.
+
+And [clears throat] and how how much a
+
+prime can divide
+
+the next lift you've taken is linear in
+
+the number of lifts you've taken.
+
+So so imagine like I have I don't know
+
+the prime five dividing my algebraic
+
+number and then I lift it one more time
+
+I lift it n times
+
+the
+
+you know the power to which five divided
+
+my algebraic number now has increased
+
+linearly with the number of lifts I'm
+
+taking
+
+for each finite prime.
+
+So this is what he calls like gain
+
+or the divisibility increases as I take
+
+the number of lifts.
+
+But we also want to understand the
+
+period
+
+on Archimedean level, right? So what
+
+what is the absolute value of the period
+
+once you embed it into C?
+
+And then this is where CM theory
+
+comes into the proof
+
+again for my preliminary understanding.
+
+[clears throat] So to introduce CM
+
+theory
+
+we need to talk about elliptic curves
+
+again one of my favorite subjects and I
+
+think Alvaro's as well.
+
+So one way to think of an elliptic curve
+
+is as a geometric object
+
+curve. So some curve y squared equals x
+
+cubed plus something times x plus
+
+something times you know.
+
+You can view it as a geometric curve but
+
+one way to view elliptic curves
+
+is as a lattice inside the complex
+
+numbers.
+
+That's what I've written here is complex
+
+tori. So you can take imagine take the
+
+complex numbers, you view the complex
+
+plane
+
+and then you can cut it into lattice
+
+points. [clears throat] So I have some I
+
+have some integers and then I have some
+
+tau times an integer. Tau just being
+
+some complex number
+
+um whose imaginary part is positive. So
+
+this gives me some lattice in the
+
+complex plane.
+
+And say for example if I take tau equals
+
+I. So so I view my complex plane now as
+
+having a lattice
+
+um all the numbers like you know 2 + I,
+
+2 + 2 I, 2 + 3 I, 3 + I, 3 + 2 I, 3 + 3
+
+I.
+
+You know this entire lattice is
+
+preserved
+
+by multiplication by I.
+
+Like Z Z + I * Z doesn't change if I
+
+multiply that whole thing by I.
+
+So my lattice is fixed but the numbers
+
+inside the lattice don't necessarily
+
+stay fixed, right? So I so I sort of
+
+have
+
+um
+
+an action
+
+or an endomorphism of my lattice
+
+by multiplication of I by I.
+
+And so this is what we call complex
+
+multiplication roughly. We have extra
+
+symmetries of our lattice which ends an
+
+elliptic curve
+
+um from multiplication by I.
+
+And
+
+if we know that an elliptic curve has CM
+
+has complex multiplication then we have
+
+particularly we have particular formulas
+
+for understanding
+
+um
+
+okay the complex periods. Right so
+
+before I was talking about finite but
+
+now we have complex periods. We can
+
+understand this using CM theory
+
+uh using using this whole body of
+
+literature
+
+um also from the late 20th century into
+
+what happens when you have
+
+uh complex multiplication on elliptic
+
+curve.
+
+So these okay again I'm being very vague
+
+these formulas
+
+uh
+
+the proof uses to estimate these
+
+automorphic periods at complex places.
+
+So maybe you'll note in like if you find
+
+in my note
+
+um
+
+or maybe even in the original four-page
+
+note there's a little bit of a mention
+
+of Chalo Selberg and Anderson
+
+um
+
+[clears throat] basically relating
+
+um
+
+bringing in the CM theory into
+
+understanding the sizes of these periods
+
+and ultimately the estimates of
+
+G Chi.
+
+Um
+
+okay and then to briefly talk more about
+
+um so the Archimedean behavior we have
+
+Arakelov theory.
+
+So now this is a totally different
+
+branch
+
+within number theory, modern number
+
+theory
+
+um
+
+which uses
+
+basically algebraic geometry and
+
+differential geometry, right? So the
+
+study of of curves and surfaces and
+
+algebraic spaces
+
+um but in an in an arithmetic way.
+
+So okay
+
+what is it roughly? In algebraic
+
+geometry there's something called
+
+intersection theory. So say if I have
+
+you know algebraic curves, algebraic
+
+surfaces and algebraic varieties, I want
+
+to study what happens when you intersect
+
+them.
+
+Um
+
+traditionally over the complex numbers
+
+in differential geometry you're
+
+basically doing calculus, doing analysis
+
+on these surfaces over the complex
+
+numbers.
+
+Arakelov wanted to develop some
+
+arithmetic version of this.
+
+Uh but one problem is when you
+
+when you look at say Spec Z where you
+
+look at some variety um [clears throat]
+
+say Spec Z for example is not is not
+
+compact
+
+uh
+
+from the most naive way of looking at it
+
+because you don't have um
+
+you don't have you okay to reformulate
+
+maybe if you introduce extra metrics at
+
+the infinite place then you can you can
+
+turn turn Spec Z into a compact space
+
+into into a complete variety.
+
+Um so there's a way to sort of
+
+view the integers and things defined
+
+over the integers
+
+like in in the same framework as
+
+algebraic geometry if we add extra
+
+structure at infinity. So maybe one good
+
+analog of this uh for anyone who's who's
+
+studied um
+
+like the basic principles of algebraic
+
+geometry is Bezout's theorem. Right?
+
+Bezout's theorem, you you want to study
+
+the intersection of
+
+of curves say in some space and if you
+
+just
+
+in the most naive way like in affine
+
+geometry if you if you take some curves
+
+and you just intersect them you might
+
+lose
+
+uh the multiplicity
+
+due to be like intersections at
+
+infinity. [clears throat] Right? Just
+
+purely from the degrees you don't get
+
+all the multiplicities of intersections
+
+if you don't consider things at infinity
+
+so you have to sort of projectivize
+
+to get Bezout's theorem and actually be
+
+able to count all the intersections
+
+correctly.
+
+In the same way this is saying okay we
+
+have all these finite primes
+
+but we have to add extra structure at
+
+infinity to be able to correctly
+
+intersect things over Z.
+
+Okay? So if we want to understand the
+
+discrete geometry
+
+adding this extra
+
+uh extra sort of differential structure
+
+at infinity is what
+
+uh how we should do it.
+
+[clears throat] This is the idea
+
+introduced by Arakelov so we have these
+
+finite primes but there's sort of
+
+missing information infinity so let's
+
+add
+
+um some some Hermitian metrics at
+
+infinity.
+
+[snorts] Um
+
+and this enters the proof in in bounding
+
+these norms of these
+
+uh so the the Archimedean norms of these
+
+automorphic periods.
+
+Um
+
+okay so this is sort of where it enters
+
+it but there's I think
+
+okay one this is actually quite far from
+
+my expertise that I can't possibly give
+
+a I don't think I I'm able to give a
+
+nice high level
+
+understanding beyond this of how this
+
+enters the proof and also haven't
+
+totally understood the proof at this
+
+point yet.
+
+>> It is very [clears throat] far from my
+
+own expertise also Arakelov of geometry
+
+very far.
+
+>> [laughter]
+
+>> Yeah so but uh
+
+this is really enter I mean this is one
+
+of the big surprises for me I think
+
+because that this really entered the
+
+proof of the Riemann hypothesis
+
+um as released in the 17 million lines
+
+of lean code in a very crucial way.
+
+Um and I don't think actually many of
+
+the people who worked in Arakelov theory
+
+also
+
+uh anticipated this I mean I think this
+
+was
+
+quite a bit of a surprise actually.
+
+[clears throat] Um
+
+okay and then again I'm hiding some
+
+things like these lattices which come
+
+from
+
+Harter and Narasimhan, and there's the
+
+works of, you know, Faltings, Chai.
+
+There are many things going on that I'm
+
+totally hiding between how to use
+
+Arakelov theory to enter the
+
+to study [laughter] automorphic periods.
+
+Um, so so again, my summary here is
+
+quite incomplete. I'm I'm just giving
+
+little pieces, but just to give a a
+
+sense of
+
+okay, we we're really using math from
+
+all over modern number theory that maybe
+
+we didn't quite know how to relate to
+
+um
+
+to the Riemann hypothesis before. So so
+
+okay, this is one of them.
+
+And then, okay, another big part of
+
+number theory that enters the picture is
+
+the theory of Galois representations.
+
+These enters these these serious things
+
+that are called denominators and haven't
+
+written down yet.
+
+Um,
+
+[clears throat]
+
+okay. So Galois representations
+
+okay, maybe maybe this is a good point
+
+again for me to sort of bring it back to
+
+a more accessible level of just what is
+
+Galois theory.
+
+Again, Galois theory is studying
+
+symmetries um of algebraic objects.
+
+So for example, the symmetries of the
+
+rotations of a square, I view it as a
+
+group element.
+
+And Galois's idea is that this sort of
+
+matches arithmetic symmetries between
+
+uh
+
+I mean, in algebra, like taking roots of
+
+a polynomial. So you have geometric
+
+symmetries and algebraic symmetries are
+
+sort of one and the same thing.
+
+Just as how I can rotate points on a on
+
+a square, I can also or reflect a
+
+square, I can also sort of reflect or
+
+take symmetries of roots of polynomials.
+
+Um,
+
+[clears throat] for example, here
+
+complex conjugation or multiplication by
+
+I, which we already saw was kind of
+
+important.
+
+Um, this is Galois theory, symmetries of
+
+algebraic numbers.
+
+[snorts] And one thing you can do is
+
+view them from sort of a linear algebra
+
+point of view. So view Galois theory
+
+using as as representations or as as
+
+linear transformations on a vector
+
+space.
+
+Um, okay. So I want to make these
+
+symmetries linear.
+
+So I take a number field E, and I look
+
+at
+
+um its algebraic closure E bar and look
+
+at this huge Galois group E bar over E.
+
+Uh I can view it as acting on some
+
+uh
+
+some vector space.
+
+Okay here I've already Okay here maybe I
+
+didn't need to do it over Q L bar but
+
+over over C and then okay
+
+the most
+
+uh big picture Galois representation
+
+theory
+
+uh thing we want to do is we view
+
+the entire all the possible symmetries
+
+of any possible equation defined over a
+
+number field E and I view it as some
+
+matrix
+
+um and now I've taken Q L bar so
+
+right the complex numbers is just one
+
+way of completing the reals. You can
+
+also take the p-adic numbers or the
+
+l-adic numbers and take the algebraic
+
+closure of that.
+
+Those are isomorphic as
+
+as fields but um
+
+they're [snorts] quite different
+
+topologically. So here I'm going to do
+
+it over Q L bar.
+
+[clears throat]
+
+And
+
+um this
+
+okay
+
+still skipping some things. This
+
+will allow us to study congruences
+
+between automorphic forms. Okay I'm
+
+implicitly using the Langlands
+
+correspondence and sort of a dictionary
+
+between Galois representations and
+
+automorphic forms.
+
+Um
+
+so okay
+
+jumped in two slides from Galois theory
+
+to
+
+using the Langlands program.
+
+Um these allow us to study denominators.
+
+What are these denominators I'm talking
+
+about?
+
+Um so again [clears throat] we have
+
+these automorphic forms
+
+and then
+
+uh
+
+these automorphic forms have have
+
+symmetries under things called Hecke
+
+operators.
+
+And we want to study eigenspaces right
+
+so so
+
+where do the automorphic forms um sort
+
+of
+
+like in linear algebra they form an
+
+eigenspace under some linear operator.
+
+How do how what are these eigenspaces
+
+under these symmetries called Hecke
+
+operators or the Hecke algebra?
+
+Um
+
+okay [clears throat]
+
+uh
+
+again maybe
+
+because it's so preliminary I'm I'm I'm
+
+I'm putting too many details and not
+
+explaining some other details.
+
+Uh
+
+the point is when you when you take
+
+these lattices these automorphic forms
+
+and I want to study the eigen spaces
+
+[clears throat] you have these
+
+denominators come up which are
+
+differences of eigen values a minus b.
+
+And to study
+
+so okay so
+
+understanding these eigen spaces
+
+allows me to understand
+
+[clears throat] again these automorphic
+
+periods and then to study these the
+
+denominators of these this
+
+ea this a minus b then I then the proof
+
+uses a lot of
+
+the theory of galois representations.
+
+In [clears throat] particular
+
+right so I have this l attic galois
+
+representation if I have congruence
+
+between a and b in the denominator
+
+this affects the the divisibility of the
+
+automorphic periods that I was looking
+
+about at before which relates to point
+
+one
+
+in this three part box that I'm
+
+describing.
+
+And okay to understand these
+
+denominators and what happens to them
+
+under congruences then then
+
+we need to use galois representations
+
+and galois cohomology and again I'm
+
+compressing way too much to the point
+
+where this is probably even
+
+incomprehensible to someone who knows
+
+this subject.
+
+>> To anyone who doesn't know like what
+
+you're citing there wiles taylor wiles
+
+comes from the proof of the taniyama
+
+shimura vey conjecture which is what was
+
+used to prove for matzla's theorem
+
+and
+
+so that work it comes in into the proof?
+
+>> Yeah I mean no you need
+
+again I'm like
+
+this is a problem I think maybe the last
+
+10 minutes the last few slides might not
+
+even made sense to a lot of people
+
+because
+
+somehow I have to
+
+yeah all all of this comes into the
+
+proof of
+
+grh as
+
+like literally in the lean code and then
+
+in my my preliminary digestion of it
+
+Um.
+
+And I apologize again.
+
+One if if uh
+
+if a lot of what I'm saying here doesn't
+
+make sense and I'm being very vague
+
+about it.
+
+There's more detail in my note, but also
+
+apologies because my note doesn't give
+
+it full justice, anywhere close to full
+
+justice either.
+
+[snorts] Um because there are there are
+
+again just so many ingredients going
+
+into this.
+
+But [clears throat] just trying to give
+
+a big picture of how this possibly
+
+relates to the GRH. Again, you want to
+
+understand these automorphic periods
+
+from a number of different points of
+
+view. In order to get a bound on
+
+automorphic periods, we need to
+
+understand the
+
+how big they are finite places, how big
+
+they are the Archimedean places.
+
+And then in understanding this, we have
+
+these hecke eigenspaces eigenspaces
+
+under the action of hecke operators and
+
+the automorphic forms underlying the
+
+automorphic periods. And then to
+
+understand that [clears throat]
+
+right
+
+I mean in the end we want to understand
+
+the periods and
+
+how primes divide the period are related
+
+to um the behavior of these these
+
+eigenspaces and then to understand these
+
+eigenspaces you need Galois
+
+representations. Okay, I don't know if
+
+you need it, but they use Galois
+
+representations, you use the work that
+
+goes into
+
+um the proof of Fermat's Last Theorem. I
+
+mean actually already many of the things
+
+I mentioned before
+
+going to the proof of Fermat's Last
+
+Theorem on elliptic curves and but uh
+
+yeah here here is another instance of
+
+that.
+
+>> [laughter]
+
+>> Right right right.
+
+>> Um you need modularity and you need and
+
+then you need okay then you also need
+
+Langlands [snorts] correspondence.
+
+Um
+
+right I've hidden a lot of mathematics,
+
+a lot of details some of which
+
+I have written down in more detail in my
+
+notes and also some of which okay I
+
+still don't completely understand and I
+
+can't possibly give a complete account
+
+for.
+
+Um
+
+but yeah okay so some some places where
+
+there are way more details, way more
+
+mathematics, way more people to mention
+
+the study of theta correspondences
+
+and how we calculate these periods.
+
+I mean I didn't even mention really what
+
+was going on in the Eric Kelloway
+
+theory, um,
+
+you know, in in the in the understanding
+
+of
+
+bigness and slopes, Boks-slope
+
+inequality, all these things come in. I
+
+didn't even write a slide on integral
+
+p-adic Hodge theory because that's also
+
+um,
+
+I mean one is as is quite far from me
+
+like Eric Kelloway theory is, but I I
+
+don't even know how to even give a
+
+high-level
+
+description of integral p-adic Hodge
+
+theory.
+
+But um,
+
+right. I mean you you have a lot of
+
+involvement when you're studying
+
+[clears throat] these lattices
+
+which go into the automorphisms of the
+
+lattices, automorphic forms.
+
+You're controlling the behavior of these
+
+lattices.
+
+Okay, one you need to understand the
+
+work of Faltings and Nori Seshadri, you
+
+need to understand Eric Kelloway theory,
+
+that has an input, but there's also a
+
+lot of integral structure, you need
+
+integral p-adic Hodge theory. Things
+
+developed like prismatic cohomology,
+
+things developed by Bhatt, Scholze,
+
+Fargues.
+
+Um,
+
+I think in the very beginning of this
+
+video I mentioned like there's some work
+
+from 2023. I think that was referring to
+
+Anschütz and Arthur César Le Bras.
+
+This integral p-adic Hodge theory going
+
+to this.
+
+Um,
+
+and then yes, on the Galois side you
+
+have deformation theory which again
+
+right is related to the proof of
+
+Fermat's Last Theorem.
+
+Um,
+
+deformation [clears throat] theory R
+
+equals T theorems, Selmer groups,
+
+Iwasawa theory.
+
+Uh, I mentioned Kisin's work on
+
+congruences.
+
+Um,
+
+I mean you have a huge amount of modern
+
+mathematics that I've completely not
+
+touched
+
+um,
+
+in the slides and and also many of which
+
+I haven't touched at all in in my
+
+preliminary notes.
+
+Um,
+
+so again I mean maybe this is my apology
+
+to the mathematical community just as at
+
+this such an early stage, but it really
+
+is a huge amount of code one for AI to
+
+digest and then let alone for
+
+human the human community to digest and
+
+then here is my extremely noisy
+
+compression into my human understanding
+
+and then my noisy compression my human
+
+understanding into
+
+20 slot pages.
+
+>> No not at all
+
+>> And the need to apologize cuz I mean,
+
+just the
+
+names, just the the topics that you have
+
+on this slide
+
+um it's just incredible. Like what
+
+you've gone through in these slides, the
+
+amount of different
+
+um material and areas and theorems that
+
+seem to go into this.
+
+It's just um
+
+very much insane. Um and I expect that
+
+we're going to spend
+
+you know
+
+years trying to make this into some
+
+um some more understandable and
+
+digestible proof.
+
+Um and I my hope is that the Mazur proof
+
+has a more uh
+
+approachable understanding and maybe
+
+that's where we'll go, but I think it's
+
+very important to
+
+for this this is such a
+
+something of this magnitude
+
+any effort to try to understand it is
+
+well worth it. So anyway, thank you very
+
+much for for doing that.
+
+>> Thanks. Yeah, I also um
+
+I mean, just want to mention
+
+Oh, I have I have a picture
+
+Again, this is from my note, but
+
+[clears throat] so maybe I've just
+
+brushed the very top overarching
+
+argument up to these colored boxes,
+
+which each
+
+have I mean, many many more boxes of
+
+detailed mathematics going into it.
+
+Um
+
+and then under these boxes are lots of
+
+things that I haven't even touched with
+
+I mean, imagine this diagram goes
+
+I mean, not infinitely far down, but
+
+goes extremely far
+
+and many more many more inputs that I
+
+haven't even begun to chart. And maybe
+
+I'm guilty So I am guilty
+
+of
+
+sort of writing the abstract or the It's
+
+like writing the abstract or
+
+introduction into a paper before you've
+
+even finished
+
+like writing out the rest of the paper.
+
+Um so I'm sure there are tons of
+
+inaccuracies and incomplete things that
+
+I've said here, but
+
+um there's a huge amount. But I I mean
+
+one, I think again, just to reiterate, I
+
+think what's exciting is this connects
+
+so many different parts of number theory
+
+that we didn't realize could be
+
+connected in such a powerful way.
+
+And also a lot of this I'm sure will be
+
+simplified
+
+um
+
+in I mean a ton of different ways. I
+
+mean I've already started looking into
+
+at least the parts that I understand a
+
+bit better.
+
+Um some simplifications entering for
+
+example the CM periods.
+
+Um
+
+I'm sure the experts in Eric Helloff
+
+theory will find lots of ways to
+
+simplify that where does where integral
+
+p adic Hodge theory enters.
+
+Uh
+
+Galois representations. Do we need
+
+congruences for example? Do we need to
+
+use
+
+um
+
+do we need to use Iwasawa theory? These
+
+are all
+
+lots of questions for us to look into in
+
+the future.
+
+>> And I think it's actually some
+
+takeaway for me
+
+is that all these little corners of
+
+number theory that you might
+
+feel at times are so disconnected of
+
+like you know like elliptic curves with
+
+complex multiplication or something that
+
+they somehow many of these are finding
+
+their way
+
+into this proof and
+
+um to prove something as important as a
+
+generalized Riemann hypothesis for all
+
+these topics to make their way into it.
+
+It's sort of like a a victory of all
+
+these remote areas and like cipher
+
+specialization of number theory and of
+
+mathematics that somehow it's finding
+
+its way um into proving some like really
+
+interesting and deep mathematics.
+
+>> Yeah I think it'll be a great tool for
+
+us to learn about
+
+each other's work and how everything is
+
+connected. [laughter]
+
+>> Yes.
+
+Yeah.
+
+All right. Well Robin thank you very
+
+much again um for putting this together
+
+in such a short period of time and I'm
+
+I'm I hope that um
+
+all the people read it and that we we
+
+keep digging into this.
+
+>> Thank you.
+
+>> All right. Thank you so much.
+
+
