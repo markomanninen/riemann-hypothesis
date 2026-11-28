@@ -1,0 +1,4252 @@
+[
+ {
+  "citation": "Yifan Yang, Inverse Problems for Partition Functions, Canadian Journal of Mathematics, 53(4), 2001, pp. 866–896.",
+  "url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/C7E3CA7011F60F57947090E89CF0BE00/S0008414X00023208a.pdf/inverse-problems-for-partition-functions.pdf",
+  "units": [
+   "1.1"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.4153/cjm-2001-035-9",
+   "authors": [
+    "Yang"
+   ],
+   "title": "Inverse Problems for Partition Functions",
+   "kind": "journal-article",
+   "years": [
+    2001,
+    2018
+   ],
+   "place": "Canadian Journal of Mathematics",
+   "places": [
+    "Canadian Journal of Mathematics"
+   ],
+   "volume": "53",
+   "pages": "866-896"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "same",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Hirotaka Akatsuka and Ade Irma Suriajaya, Zeros of the First Derivative of Dirichlet L-Functions, Journal of Number Theory, 184, 2018, pp. 300–329.",
+  "url": "https://arxiv.org/pdf/1604.08015",
+  "units": [
+   "1.2"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:1604.08015",
+   "authors": [
+    "Akatsuka",
+    "Suriajaya"
+   ],
+   "title": "Zeros of the first derivative of Dirichlet $L$-functions",
+   "years": [
+    2016,
+    2017
+   ],
+   "place": "J. Number Theory 184 (2018), 300-329",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": "10.1016/j.jnt.2017.08.023",
+   "journal": {
+    "how": "arxiv",
+    "id": "doi:10.1016/j.jnt.2017.08.023",
+    "authors": [
+     "Akatsuka",
+     "Suriajaya"
+    ],
+    "title": "Zeros of the first derivative of Dirichlet L-functions",
+    "kind": "journal-article",
+    "years": [
+     2018
+    ],
+    "place": "Journal of Number Theory",
+    "places": [
+     "Journal of Number Theory"
+    ],
+    "volume": "184",
+    "pages": "300-329"
+   }
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "same",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Hugh L. Montgomery and Robert C. Vaughan, Multiplicative Number Theory I. Classical Theory, Cambridge University Press, 2006.",
+  "url": "https://ndl.ethernet.edu.et/bitstream/123456789/23715/1/Hugh%20L.%20Montgomery.pdf",
+  "units": [
+   "1.2",
+   "1.3"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1017/cbo9780511618314",
+   "authors": [
+    "Montgomery",
+    "Vaughan"
+   ],
+   "title": "Multiplicative Number Theory I",
+   "kind": "monograph",
+   "years": [
+    2006,
+    2010
+   ],
+   "place": "",
+   "places": [],
+   "volume": "",
+   "pages": ""
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Bernhard Riemann, Ueber die Anzahl der Primzahlen unter einer gegebenen Grösse, Monatsberichte der Berliner Akademie, 1859, translated by David R. Wilkins, 1998.",
+  "url": "https://www.claymath.org/wp-content/uploads/2023/04/Wilkins-translation.pdf",
+  "units": [
+   "1.2"
+  ],
+  "record": null
+ },
+ {
+  "citation": "Youness Lamzouri, Xiannan Li, and Kannan Soundararajan, Conditional bounds for the least quadratic non-residue and related problems, Mathematics of Computation 84, 2015.",
+  "url": "https://www.math.ksu.edu/about/personal/xiannan/papers/QuaResL1ver2Sound.pdf",
+  "units": [
+   "2.1"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1090/s0025-5718-2015-02925-1",
+   "authors": [
+    "Lamzouri",
+    "Li",
+    "Soundararajan"
+   ],
+   "title": "Conditional bounds for the least quadratic non-residue and related problems",
+   "kind": "journal-article",
+   "years": [
+    2015
+   ],
+   "place": "Mathematics of Computation",
+   "places": [
+    "Mathematics of Computation"
+   ],
+   "volume": "84",
+   "pages": "2391-2412"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Jerzy Kaczorowski and János Pintz, Oscillatory properties of arithmetical functions. I, Acta Mathematica Hungarica 48, 1986.",
+  "url": "https://personal.math.ubc.ca/~gerg/teaching/592-Fall2018/papers/1986.Kaczorowski_1.pdf",
+  "units": [
+   "2.2"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1007/bf01949062",
+   "authors": [
+    "Kaczorowski",
+    "Pintz"
+   ],
+   "title": "Oscillatory properties of arithmetical functions. I",
+   "kind": "journal-article",
+   "years": [
+    1986
+   ],
+   "place": "Acta Mathematica Hungarica",
+   "places": [
+    "Acta Mathematica Hungarica"
+   ],
+   "volume": "48",
+   "pages": "173-185"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "János Pintz, On the remainder term of the prime number formula and the zeros of Riemann’s zeta-function, Lecture Notes in Mathematics, Springer, 1984.",
+  "url": "https://personal.math.ubc.ca/~gerg/teaching/592-Fall2018/papers/1984.Pintz_0.pdf",
+  "units": [
+   "2.2"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1007/bfb0099452",
+   "authors": [
+    "Pintz"
+   ],
+   "title": "On the remainder term of the prime number formula and the zeros of Riemann’s zeta-function",
+   "kind": "book-chapter",
+   "years": [
+    1984,
+    2006
+   ],
+   "place": "Lecture Notes in Mathematics",
+   "places": [
+    "Lecture Notes in Mathematics",
+    "Number Theory Noordwijkerhout 1983"
+   ],
+   "volume": "",
+   "pages": "186-197"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Jean-Benoît Bost, Périodes et isogénies des variétés abéliennes sur les corps de nombres, Astérisque 237, 1996.",
+  "url": "https://www.numdam.org/article/SB_1994-1995__37__115_0.pdf",
+  "units": [
+   "2.3"
+  ],
+  "record": null
+ },
+ {
+  "citation": "Jeffrey C. Lagarias and Andrew M. Odlyzko, Effective Versions of the Chebotarev Density Theorem, in Algebraic Number Fields, Academic Press, 1977.",
+  "url": "https://aareyanmanzoor.github.io/assets/articles/lagarias-odlyzko.pdf",
+  "units": [
+   "2.3",
+   "4.2"
+  ],
+  "record": null
+ },
+ {
+  "citation": "Pafnuty L. Chebyshev, Mémoire sur les nombres premiers, Journal de Mathématiques Pures et Appliquées 17, 1852.",
+  "url": "https://www.numdam.org/item/JMPA_1852_1_17__366_0.pdf",
+  "units": [
+   "2.3"
+  ],
+  "record": null
+ },
+ {
+  "citation": "Hugh L. Montgomery and Robert C. Vaughan, Multiplicative Number Theory I. Classical Theory, Cambridge University Press, 2007.",
+  "url": "https://personal.science.psu.edu/rcv4/personal/Publications/MNTI/13.0_pp_282_325_Primitive_characters_and_Gauss_sums.pdf",
+  "units": [
+   "3.1"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1017/cbo9780511618314",
+   "authors": [
+    "Montgomery",
+    "Vaughan"
+   ],
+   "title": "Multiplicative Number Theory I",
+   "kind": "monograph",
+   "years": [
+    2006,
+    2010
+   ],
+   "place": "",
+   "places": [],
+   "volume": "",
+   "pages": "",
+   "other_edition": true
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "differs",
+    "note": "The record has 2006, 2010. The record may be of another edition or a reprint."
+   },
+   "place": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Youness Lamzouri, The number of imaginary quadratic fields with prime discriminant and class number up to H, The Quarterly Journal of Mathematics, 2017.",
+  "url": "https://arxiv.org/pdf/1701.05267",
+  "units": [
+   "3.4",
+   "3.5",
+   "3.8"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:1701.05267",
+   "authors": [
+    "Lamzouri"
+   ],
+   "title": "The number of imaginary quadratic fields with prime discriminant and class number up to $H$",
+   "years": [
+    2017
+   ],
+   "place": "",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": "",
+   "journal": {
+    "how": "search",
+    "id": "doi:10.1093/qmath/hax026",
+    "authors": [
+     "Lamzouri"
+    ],
+    "title": "The number of imaginary quadratic fields with prime discriminant and class number up to H",
+    "kind": "journal-article",
+    "years": [
+     2017
+    ],
+    "place": "The Quarterly Journal of Mathematics",
+    "places": [
+     "The Quarterly Journal of Mathematics"
+    ],
+    "volume": "68",
+    "pages": "1379-1393"
+   }
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Hugh L. Montgomery and Robert C. Vaughan, Mean values of character sums, Canadian Journal of Mathematics, 1979.",
+  "url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/9372DCDEE648FF605F66A10314977F5F/S0008414X00012116a.pdf/mean-values-of-character-sums.pdf",
+  "units": [
+   "3.4",
+   "3.7"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.4153/cjm-1979-053-2",
+   "authors": [
+    "Montgomery",
+    "Vaughan"
+   ],
+   "title": "Mean Values of Character Sums",
+   "kind": "journal-article",
+   "years": [
+    1979,
+    2018
+   ],
+   "place": "Canadian Journal of Mathematics",
+   "places": [
+    "Canadian Journal of Mathematics"
+   ],
+   "volume": "31",
+   "pages": "476-487"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Jesse Thorner and Asif Zaman, Refinements to the prime number theorem for arithmetic progressions, Mathematische Zeitschrift, 2024.",
+  "url": "https://arxiv.org/pdf/2108.10878",
+  "units": [
+   "3.4",
+   "3.6",
+   "3.8"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:2108.10878",
+   "authors": [
+    "Thorner",
+    "Zaman"
+   ],
+   "title": "Refinements to the prime number theorem for arithmetic progressions",
+   "years": [
+    2021
+   ],
+   "place": "Math. Z. 306 (2024), no. 3, Paper No. 54",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": "10.1007/s00209-023-03414-3",
+   "journal": {
+    "how": "arxiv",
+    "id": "doi:10.1007/s00209-023-03414-3",
+    "authors": [
+     "Thorner",
+     "Zaman"
+    ],
+    "title": "Refinements to the prime number theorem for arithmetic progressions",
+    "kind": "journal-article",
+    "years": [
+     2024
+    ],
+    "place": "Mathematische Zeitschrift",
+    "places": [
+     "Mathematische Zeitschrift"
+    ],
+    "volume": "306",
+    "pages": ""
+   }
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Youness Lamzouri, The distribution of large quadratic character sums and applications, Algebra & Number Theory, 2024.",
+  "url": "https://msp.org/ant/2024/18-11/ant-v18-n11-p05-p.pdf",
+  "units": [
+   "3.5",
+   "3.7"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.2140/ant.2024.18.2091",
+   "authors": [
+    "Lamzouri"
+   ],
+   "title": "The distribution of large quadratic character sums and applications",
+   "kind": "journal-article",
+   "years": [
+    2024
+   ],
+   "place": "Algebra & Number Theory",
+   "places": [
+    "Algebra & Number Theory"
+   ],
+   "volume": "18",
+   "pages": "2091-2131"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Andrew Granville and Kannan Soundararajan, The distribution of values of L(1, χ_d), Geometric and Functional Analysis, 2003.",
+  "url": "https://dms.umontreal.ca/~andrew/PDF/L1chi2002.pdf",
+  "units": [
+   "3.5"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1007/s00039-003-0438-3",
+   "authors": [
+    "Granville",
+    "Soundararajan"
+   ],
+   "title": "The distribution of values of L(1, χ d )",
+   "kind": "journal-article",
+   "years": [
+    2003
+   ],
+   "place": "Geometric and Functional Analysis",
+   "places": [
+    "Geometric and Functional Analysis"
+   ],
+   "volume": "13",
+   "pages": "992-1028"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Enrico Bombieri, Le grand crible dans la théorie analytique des nombres, Astérisque 18, Société mathématique de France, 1974.",
+  "url": "https://smf.emath.fr/system/files/filepdf/AST_1987__18__1_0.pdf",
+  "units": [
+   "3.6"
+  ],
+  "record": null
+ },
+ {
+  "citation": "Kevin Ford, Ben Green, Sergei Konyagin, James Maynard and Terence Tao, Long gaps between primes, Journal of the American Mathematical Society, 2018.",
+  "url": "https://www.ams.org/journals/jams/2018-31-01/S0894-0347-2017-00876-2/S0894-0347-2017-00876-2.pdf",
+  "units": [
+   "3.8"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1090/jams/876",
+   "authors": [
+    "Ford",
+    "Green",
+    "Konyagin",
+    "Maynard",
+    "Tao"
+   ],
+   "title": "Long gaps between primes",
+   "kind": "journal-article",
+   "years": [
+    2017
+   ],
+   "place": "Journal of the American Mathematical Society",
+   "places": [
+    "Journal of the American Mathematical Society"
+   ],
+   "volume": "31",
+   "pages": "65-105",
+   "other_edition": true
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "differs",
+    "note": "The record has 2017. A journal can date an article by the year of its volume, here volume 31, and the record by the day it went online."
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Yasutaka Ihara, On the Euler-Kronecker constants of global fields and primes with small norms, in Algebraic Geometry and Number Theory, Birkhäuser, 2006.",
+  "url": "https://www.kurims.kyoto-u.ac.jp/~kenkyubu/emeritus/ihara/Publications-and-Recent-Preprints/RecentArticles/pdf-files/1A.pdf",
+  "units": [
+   "4.1",
+   "4.3"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1007/978-0-8176-4532-8_5",
+   "authors": [
+    "Ihara"
+   ],
+   "title": "On the Euler-Kronecker constants of global fields and primes with small norms",
+   "kind": "book-chapter",
+   "years": [],
+   "place": "Progress in Mathematics",
+   "places": [
+    "Progress in Mathematics",
+    "Algebraic Geometry and Number Theory"
+   ],
+   "volume": "",
+   "pages": "407-451",
+   "other_edition": true
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Régis de la Bretèche, Daniel Fiorilli, and Florent Jouve, Moments in the Chebotarev density theorem: general class functions, Algebra & Number Theory, 2025.",
+  "url": "https://msp.org/ant/2025/19-3/ant-v19-n3-p03-s.pdf",
+  "units": [
+   "4.1"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.2140/ant.2025.19.481",
+   "authors": [
+    "de la Bretèche",
+    "Fiorilli",
+    "Jouve"
+   ],
+   "title": "Moments in the Chebotarev density theorem: general class functions",
+   "kind": "journal-article",
+   "years": [
+    2025
+   ],
+   "place": "Algebra & Number Theory",
+   "places": [
+    "Algebra & Number Theory"
+   ],
+   "volume": "19",
+   "pages": "481-520"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Yasutaka Ihara, V. Kumar Murty, and Mahoro Shimura, On the logarithmic derivatives of Dirichlet L-functions at s = 1, Acta Arithmetica, 2009.",
+  "url": "https://www.impan.pl/shop/publication/transaction/download/product/82940",
+  "units": [
+   "4.2",
+   "4.4"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.4064/aa137-3-6",
+   "authors": [
+    "Ihara",
+    "Murty",
+    "Shimura"
+   ],
+   "title": "On the logarithmic derivatives of Dirichlet L-functions at s=1",
+   "kind": "journal-article",
+   "years": [
+    2009
+   ],
+   "place": "Acta Arithmetica",
+   "places": [
+    "Acta Arithmetica"
+   ],
+   "volume": "137",
+   "pages": "253-276"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Terence Tao and Van H. Vu, Additive Combinatorics, Cambridge University Press, 2006.",
+  "url": "https://math.bme.hu/~gabor/oktatas/SztoM/TaoVu.AddComb.pdf",
+  "units": [
+   "4.3",
+   "4.4"
+  ],
+  "record": null
+ },
+ {
+  "citation": "Frank Calegari, Vesselin Dimitrov, and Yunqing Tang, The linear independence of 1, ζ(2), and L(2, χ₋₃), arXiv:2408.15403, 2024.",
+  "url": "https://arxiv.org/pdf/2408.15403",
+  "units": [
+   "5.2"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:2408.15403",
+   "authors": [
+    "Calegari",
+    "Dimitrov",
+    "Tang"
+   ],
+   "title": "The linear independence of $1$, $ζ(2)$, and $L(2,χ_{-3})$",
+   "years": [
+    2024
+   ],
+   "place": "",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": ""
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Fabrizio Andreatta, Eyal Z. Goren, Benjamin Howard, and Keerthi Madapusi Pera, Faltings heights of abelian varieties with complex multiplication, Annals of Mathematics 187, 2018.",
+  "url": "https://annals.math.princeton.edu/wp-content/uploads/annals-v187-n2-p03-p.pdf",
+  "units": [
+   "5.2"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.4007/annals.2018.187.2.3",
+   "authors": [
+    "Andreatta",
+    "Goren",
+    "Howard",
+    "Madapusi Pera"
+   ],
+   "title": "Faltings heights of abelian varieties with complex multiplication",
+   "kind": "journal-article",
+   "years": [
+    2018
+   ],
+   "place": "Annals of Mathematics",
+   "places": [
+    "Annals of Mathematics"
+   ],
+   "volume": "187",
+   "pages": "391-531"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Jean-Benoît Bost, Algebraic leaves of algebraic foliations over number fields, Publications Mathématiques de l’IHÉS 93, 2001.",
+  "url": "https://numdam.org/item/10.1007/s10240-001-8191-3.pdf",
+  "units": [
+   "5.3",
+   "8.2",
+   "9.1"
+  ],
+  "record": {
+   "how": "doi",
+   "id": "doi:10.1007/s10240-001-8191-3",
+   "authors": [
+    "Bost"
+   ],
+   "title": "Algebraic leaves of algebraic foliations over number fields",
+   "kind": "journal-article",
+   "years": [
+    2001
+   ],
+   "place": "Publications Mathématiques de l'IHÉS",
+   "places": [
+    "Publications Mathématiques de l'IHÉS"
+   ],
+   "volume": "93",
+   "pages": "161-221"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Pedro G. Massey, Mariano A. Ruiz, and Demetrio Stojanoff, The structure of minimizers of the frame potential on fusion frames, arXiv:0811.3159, 2008.",
+  "url": "https://arxiv.org/pdf/0811.3159",
+  "units": [
+   "5.3"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:0811.3159",
+   "authors": [
+    "Massey",
+    "Ruiz",
+    "Stojanoff"
+   ],
+   "title": "The structure of minimizers of the frame potential on fusion frames",
+   "years": [
+    2008
+   ],
+   "place": "",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": ""
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Aidan Roy, Bounds for codes and designs in complex subspaces, Journal of Algebraic Combinatorics 31, 2010.",
+  "url": "https://www2.math.ethz.ch/EMIS/journals/JACO/Volume31_1/621h01251t23v451.fulltext.pdf",
+  "units": [
+   "5.5"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1007/s10801-009-0170-7",
+   "authors": [
+    "Roy"
+   ],
+   "title": "Bounds for codes and designs in complex subspaces",
+   "kind": "journal-article",
+   "years": [
+    2009,
+    2010
+   ],
+   "place": "Journal of Algebraic Combinatorics",
+   "places": [
+    "Journal of Algebraic Combinatorics"
+   ],
+   "volume": "31",
+   "pages": "1-32"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Sungmun Cho, Group schemes and local densities of ramified hermitian lattices in residue characteristic 2 Part I, Algebra & Number Theory 10, 2016.",
+  "url": "https://arxiv.org/pdf/1210.7894",
+  "units": [
+   "5.5"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:1210.7894",
+   "authors": [
+    "Cho"
+   ],
+   "title": "Group schemes and local densities of ramified hermitian lattices in residue characteristic 2 Part I",
+   "years": [
+    2012,
+    2015
+   ],
+   "place": "Algebra Number Theory 10 (2016) 451-532",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": "10.2140/ant.2016.10.451",
+   "journal": {
+    "how": "arxiv",
+    "id": "doi:10.2140/ant.2016.10.451",
+    "authors": [
+     "Cho"
+    ],
+    "title": "Group schemes and local densities of ramified hermitian lattices in residue characteristic 2 Part I",
+    "kind": "journal-article",
+    "years": [
+     2016
+    ],
+    "place": "Algebra & Number Theory",
+    "places": [
+     "Algebra & Number Theory"
+    ],
+    "volume": "10",
+    "pages": "451-532"
+   }
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Jean-Benoît Bost and Klaus Künnemann, Hermitian vector bundles and extension groups on arithmetic schemes. I. Geometry of numbers, Advances in Mathematics, 2010.",
+  "url": "https://webusers.imj-prg.fr/~vincent.maillot/Arakelov/0036/BostKuennemann-07-01-11.pdf",
+  "units": [
+   "6.2"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1016/j.aim.2009.09.005",
+   "authors": [
+    "Bost",
+    "Künnemann"
+   ],
+   "title": "Hermitian vector bundles and extension groups on arithmetic schemes. I. Geometry of numbers",
+   "kind": "journal-article",
+   "years": [
+    2010
+   ],
+   "place": "Advances in Mathematics",
+   "places": [
+    "Advances in Mathematics"
+   ],
+   "volume": "223",
+   "pages": "987-1106"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "James S. Milne, Algebraic Number Theory, version 3.08, published by the author, 2020.",
+  "url": "https://www.jmilne.org/math/CourseNotes/ANT.pdf",
+  "units": [
+   "6.2"
+  ],
+  "record": null
+ },
+ {
+  "citation": "Jean-Benoît Bost, Algebraic leaves of algebraic foliations over number fields, Publications Mathématiques de l’IHÉS, 2001.",
+  "url": "https://www.numdam.org/item/PMIHES_2001__93__161_0.pdf",
+  "units": [
+   "6.3",
+   "T13"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1007/s10240-001-8191-3",
+   "authors": [
+    "Bost"
+   ],
+   "title": "Algebraic leaves of algebraic foliations over number fields",
+   "kind": "journal-article",
+   "years": [
+    2001
+   ],
+   "place": "Publications Mathématiques de l'IHÉS",
+   "places": [
+    "Publications Mathématiques de l'IHÉS"
+   ],
+   "volume": "93",
+   "pages": "161-221"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Jean-Benoît Bost and Huayi Chen, Concerning the semistability of tensor products in Arakelov geometry, Journal de Mathématiques Pures et Appliquées, 2013.",
+  "url": "https://webusers.imj-prg.fr/~huayi.chen/Recherche/bost_chen.pdf",
+  "units": [
+   "6.3"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1016/j.matpur.2012.09.009",
+   "authors": [
+    "Bost",
+    "Chen"
+   ],
+   "title": "Concerning the semistability of tensor products in Arakelov geometry",
+   "kind": "journal-article",
+   "years": [
+    2013
+   ],
+   "place": "Journal de Mathématiques Pures et Appliquées",
+   "places": [
+    "Journal de Mathématiques Pures et Appliquées"
+   ],
+   "volume": "99",
+   "pages": "436-488"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Chenyan Wu, Irreducibility of theta lifting for unitary groups, Journal of Number Theory, 2013.",
+  "url": "https://arxiv.org/pdf/1409.0770",
+  "units": [
+   "6.4",
+   "6.5"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:1409.0770",
+   "authors": [
+    "Wu"
+   ],
+   "title": "Irreducibility of Theta Lifting for Unitary Groups",
+   "years": [
+    2014
+   ],
+   "place": "",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": "10.1016/j.jnt.2013.04.014",
+   "journal": {
+    "how": "arxiv",
+    "id": "doi:10.1016/j.jnt.2013.04.014",
+    "authors": [
+     "Wu"
+    ],
+    "title": "Irreducibility of theta lifting for unitary groups",
+    "kind": "journal-article",
+    "years": [
+     2013
+    ],
+    "place": "Journal of Number Theory",
+    "places": [
+     "Journal of Number Theory"
+    ],
+    "volume": "133",
+    "pages": "3296-3318"
+   }
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Rui Chen and Jialiang Zou, Arthur’s multiplicity formula for even orthogonal and unitary groups, Journal of the European Mathematical Society, 2025.",
+  "url": "https://ems.press/content/serial-article-files/51452",
+  "units": [
+   "6.4"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.4171/jems/1564",
+   "authors": [
+    "Chen",
+    "Zou"
+   ],
+   "title": "Arthur’s multiplicity formula for even orthogonal and unitary groups",
+   "kind": "journal-article",
+   "years": [
+    2024
+   ],
+   "place": "Journal of the European Mathematical Society",
+   "places": [
+    "Journal of the European Mathematical Society"
+   ],
+   "volume": "27",
+   "pages": "4769-4843",
+   "other_edition": true
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "differs",
+    "note": "The record has 2024. A journal can date an article by the year of its volume, here volume 27, and the record by the day it went online."
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Kimball Martin and Satoshi Wakatsuki, Mass formulas and Eisenstein congruences in higher rank, Journal of Number Theory, 2024.",
+  "url": "https://arxiv.org/pdf/1907.03417",
+  "units": [
+   "6.5"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:1907.03417",
+   "authors": [
+    "Martin",
+    "Wakatsuki"
+   ],
+   "title": "Mass formulas and Eisenstein congruences in higher rank",
+   "years": [
+    2019
+   ],
+   "place": "J. Number Theory 257 (2024), 249-272",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": "10.1016/j.jnt.2023.10.004",
+   "journal": {
+    "how": "arxiv",
+    "id": "doi:10.1016/j.jnt.2023.10.004",
+    "authors": [
+     "Martin",
+     "Wakatsuki"
+    ],
+    "title": "Mass formulas and Eisenstein congruences in higher rank",
+    "kind": "journal-article",
+    "years": [
+     2024
+    ],
+    "place": "Journal of Number Theory",
+    "places": [
+     "Journal of Number Theory"
+    ],
+    "volume": "257",
+    "pages": "249-272"
+   }
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Herbert Robbins, A Remark on Stirling's Formula, The American Mathematical Monthly 62, 1955, pp. 26–29.",
+  "url": "https://heuklyd.github.io/papers/pdf/Robbins-1955.pdf",
+  "units": [
+   "7.1",
+   "7.4"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.2307/2308012",
+   "authors": [
+    "Robbins"
+   ],
+   "title": "A Remark on Stirling's Formula",
+   "kind": "journal-article",
+   "years": [
+    1955
+   ],
+   "place": "The American Mathematical Monthly",
+   "places": [
+    "The American Mathematical Monthly"
+   ],
+   "volume": "62",
+   "pages": "26"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "no data",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "J. S. Frame, G. de B. Robinson, and R. M. Thrall, The Hook Graphs of the Symmetric Group, Canadian Journal of Mathematics 6, 1954, pp. 316–324.",
+  "url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/B1533D44F5B1DBF6B6903C79AFFDCFEE/S0008414X00023749a.pdf/div-class-title-the-hook-graphs-of-the-symmetric-group-div.pdf",
+  "units": [
+   "7.1",
+   "7.2"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.4153/cjm-1954-030-1",
+   "authors": [
+    "Frame",
+    "Robinson",
+    "Thrall"
+   ],
+   "title": "The Hook Graphs of the Symmetric Group",
+   "kind": "journal-article",
+   "years": [
+    1954,
+    2018
+   ],
+   "place": "Canadian Journal of Mathematics",
+   "places": [
+    "Canadian Journal of Mathematics"
+   ],
+   "volume": "6",
+   "pages": "316-324"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "same",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Hongyu He, On the Gan–Gross–Prasad Conjecture for U(p, q), Inventiones Mathematicae 209, 2017, pp. 837–884.",
+  "url": "https://www.math.lsu.edu/~hongyu/pub/ggp_hhe_final.pdf",
+  "units": [
+   "7.1",
+   "7.3"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1007/s00222-017-0720-x",
+   "authors": [
+    "He"
+   ],
+   "title": "On the Gan–Gross–Prasad conjecture for U(p, q)",
+   "kind": "journal-article",
+   "years": [
+    2017
+   ],
+   "place": "Inventiones mathematicae",
+   "places": [
+    "Inventiones mathematicae"
+   ],
+   "volume": "209",
+   "pages": "837-884"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "same",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Shalosh B. Ekhad and Doron Zeilberger, Experimenting with Standard Young Tableaux, Mathematics in Computer Science 18, article 10, 2024.",
+  "url": "https://link.springer.com/article/10.1007/s11786-024-00585-y",
+  "units": [
+   "7.2"
+  ],
+  "record": {
+   "how": "doi",
+   "id": "doi:10.1007/s11786-024-00585-y",
+   "authors": [
+    "Ekhad",
+    "Zeilberger"
+   ],
+   "title": "Experimenting with Standard Young Tableaux",
+   "kind": "journal-article",
+   "years": [
+    2024
+   ],
+   "place": "Mathematics in Computer Science",
+   "places": [
+    "Mathematics in Computer Science"
+   ],
+   "volume": "18",
+   "pages": ""
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Yasutaka Ihara, On the Euler-Kronecker Constants of Global Fields and Primes with Small Norms, Algebraic Geometry and Number Theory, Birkhäuser, 2006, pp. 407–451.",
+  "url": "https://www.math.uci.edu/~mfried/conflist-rims/yihara10-14-07.pdf",
+  "units": [
+   "7.4"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1007/978-0-8176-4532-8_5",
+   "authors": [
+    "Ihara"
+   ],
+   "title": "On the Euler-Kronecker constants of global fields and primes with small norms",
+   "kind": "book-chapter",
+   "years": [],
+   "place": "Progress in Mathematics",
+   "places": [
+    "Progress in Mathematics",
+    "Algebraic Geometry and Number Theory"
+   ],
+   "volume": "",
+   "pages": "407-451",
+   "other_edition": true
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "same",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Bernhard G. Bodmann, Random fusion frames are nearly equiangular and tight, Linear Algebra and its Applications 439, 2013.",
+  "url": "https://arxiv.org/pdf/1303.5816",
+  "units": [
+   "8.2",
+   "8.5"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:1303.5816",
+   "authors": [
+    "Bodmann"
+   ],
+   "title": "Random fusion frames are nearly equiangular and tight",
+   "years": [
+    2013
+   ],
+   "place": "",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": "",
+   "journal": {
+    "how": "search",
+    "id": "doi:10.1016/j.laa.2013.04.024",
+    "authors": [
+     "Bodmann"
+    ],
+    "title": "Random fusion frames are nearly equiangular and tight",
+    "kind": "journal-article",
+    "years": [
+     2013
+    ],
+    "place": "Linear Algebra and its Applications",
+    "places": [
+     "Linear Algebra and its Applications"
+    ],
+    "volume": "439",
+    "pages": "1401-1414"
+   }
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Pedro G. Massey, Optimal reconstruction systems for erasures and for the q-potential, Linear Algebra and its Applications 431, 2009.",
+  "url": "https://arxiv.org/pdf/0805.2917",
+  "units": [
+   "8.3"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:0805.2917",
+   "authors": [
+    "Massey"
+   ],
+   "title": "Optimal reconstruction systems for erasures and for the q-potential",
+   "years": [
+    2008
+   ],
+   "place": "",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": "",
+   "journal": {
+    "how": "search",
+    "id": "doi:10.1016/j.laa.2009.05.001",
+    "authors": [
+     "Massey"
+    ],
+    "title": "Optimal reconstruction systems for erasures and for the q-potential",
+    "kind": "journal-article",
+    "years": [
+     2009
+    ],
+    "place": "Linear Algebra and its Applications",
+    "places": [
+     "Linear Algebra and its Applications"
+    ],
+    "volume": "431",
+    "pages": "1302-1316"
+   }
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Jean-Benoît Bost and Huayi Chen, Concerning the semistability of tensor products in Arakelov geometry, Journal de Mathématiques Pures et Appliquées 99, 2013.",
+  "url": "https://webusers.imj-prg.fr/~huayi.chen/Recherche/bost_chen.pdf",
+  "units": [
+   "8.3"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1016/j.matpur.2012.09.009",
+   "authors": [
+    "Bost",
+    "Chen"
+   ],
+   "title": "Concerning the semistability of tensor products in Arakelov geometry",
+   "kind": "journal-article",
+   "years": [
+    2013
+   ],
+   "place": "Journal de Mathématiques Pures et Appliquées",
+   "places": [
+    "Journal de Mathématiques Pures et Appliquées"
+   ],
+   "volume": "99",
+   "pages": "436-488"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Philippe Michel, Dinakar Ramakrishnan, and Liyang Yang, Bessel Periods on U(2,1) × U(1,1), Relative Trace Formula and Non-Vanishing of Central L-values, arXiv:2309.08490v1, 2023.",
+  "url": "https://www.its.caltech.edu/~dinakar/papers/arxiv-BesselPeriods.pdf",
+  "units": [
+   "8.5"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:2309.08490",
+   "authors": [
+    "Michel",
+    "Ramakrishnan",
+    "Yang"
+   ],
+   "title": "Bessel Periods on $U(2,1) \\times U(1,1)$, Relative Trace Formula and Non-Vanishing of Central $L$-values",
+   "years": [
+    2023,
+    2026
+   ],
+   "place": "",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": ""
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Yifeng Liu, Relative trace formulae toward Bessel and Fourier-Jacobi periods of unitary groups, arXiv:1012.4538, 2010.",
+  "url": "https://arxiv.org/pdf/1012.4538",
+  "units": [
+   "8.5"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:1012.4538",
+   "authors": [
+    "Liu"
+   ],
+   "title": "Relative trace formulae toward Bessel and Fourier-Jacobi periods of unitary groups",
+   "years": [
+    2010
+   ],
+   "place": "",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": ""
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Frank Calegari, Vesselin Dimitrov, and Yunqing Tang, Arithmetic holonomy bounds and effective Diophantine approximation, arXiv:2510.04156, 2025.",
+  "url": "https://arxiv.org/html/2510.04156v1",
+  "units": [
+   "9.1"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:2510.04156",
+   "authors": [
+    "Calegari",
+    "Dimitrov",
+    "Tang"
+   ],
+   "title": "Arithmetic holonomy bounds and effective Diophantine approximation",
+   "years": [
+    2025
+   ],
+   "place": "",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": ""
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "S. A. Stepanov, On the number of points of a hyperelliptic curve over a finite prime field, Mathematics of the USSR-Izvestiya 3, 1969.",
+  "url": "https://www.mathnet.ru/links/f1c0c8bd0655b01a2c7d9cdcfb735204/im2197_eng.pdf",
+  "units": [
+   "9.3"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1070/im1969v003n05abeh000834",
+   "authors": [
+    "Stepanov"
+   ],
+   "title": "ON THE NUMBER OF POINTS OF A HYPERELLIPTIC CURVE OVER A FINITE PRIME FIELD",
+   "kind": "journal-article",
+   "years": [
+    1969,
+    2007
+   ],
+   "place": "Mathematics of the USSR-Izvestiya",
+   "places": [
+    "Mathematics of the USSR-Izvestiya"
+   ],
+   "volume": "3",
+   "pages": "1103-1114"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Enrico Bombieri, Counting points on curves over finite fields, Séminaire Bourbaki, exposé 430, Springer-Verlag, 1974.",
+  "url": "https://www.numdam.org/article/SB_1972-1973__15__234_0.pdf",
+  "units": [
+   "9.3"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1007/bfb0057311",
+   "authors": [
+    "Bombieri"
+   ],
+   "title": "Counting points on curves over finite fields",
+   "kind": "book-chapter",
+   "years": [],
+   "place": "Lecture Notes in Mathematics",
+   "places": [
+    "Lecture Notes in Mathematics",
+    "Séminaire Bourbaki vol. 1972/73 Exposés 418–435"
+   ],
+   "volume": "",
+   "pages": "234-241",
+   "other_edition": true
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "place": {
+    "outcome": "differs",
+    "note": "The record has `Lecture Notes in Mathematics`. The record may be of another edition or a reprint."
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Christophe Soulé, “A Bound for the Torsion in the K-Theory of Algebraic Integers,” Documenta Mathematica, Extra Volume Kato, 2003, pp. 761–788.",
+  "url": "https://ems.press/content/book-chapter-files/27335",
+  "units": [
+   "10.2"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.4171/dms/3/21",
+   "authors": [
+    "Soulé"
+   ],
+   "title": "A bound for the torsion in the $K$-theory of algebraic integers",
+   "kind": "book-chapter",
+   "years": [
+    2003
+   ],
+   "place": "Documenta Mathematica Series",
+   "places": [
+    "Documenta Mathematica Series",
+    "A Collection of Manuscripts Written in Honour of Kazuya Kato on the Occasion of His Fiftieth Birthday"
+   ],
+   "volume": "",
+   "pages": "761-788"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "same",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Thomas Barnet-Lamb, Toby Gee, David Geraghty, and Richard Taylor, “Potential Automorphy and Change of Weight,” Annals of Mathematics 179, 2014, pp. 501–609.",
+  "url": "https://annals.math.princeton.edu/wp-content/uploads/annals-v179-n2-p03-p.pdf",
+  "units": [
+   "10.2"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.4007/annals.2014.179.2.3",
+   "authors": [
+    "Barnet-Lamb",
+    "Gee",
+    "Geraghty",
+    "Taylor"
+   ],
+   "title": "Potential automorphy and change of weight",
+   "kind": "journal-article",
+   "years": [
+    2014
+   ],
+   "place": "Annals of Mathematics",
+   "places": [
+    "Annals of Mathematics"
+   ],
+   "volume": "179",
+   "pages": "501-609"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "same",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "J. A. Green, “The Characters of the Finite General Linear Groups,” Transactions of the American Mathematical Society 80, 1955, pp. 402–447.",
+  "url": "https://www.ams.org/tran/1955-080-02/S0002-9947-1955-0072878-2/S0002-9947-1955-0072878-2.pdf",
+  "units": [
+   "10.2"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1090/s0002-9947-1955-0072878-2",
+   "authors": [
+    "Green"
+   ],
+   "title": "The characters of the finite general linear groups",
+   "kind": "journal-article",
+   "years": [
+    1955
+   ],
+   "place": "Transactions of the American Mathematical Society",
+   "places": [
+    "Transactions of the American Mathematical Society"
+   ],
+   "volume": "80",
+   "pages": "402-447"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "same",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "William D. Banks, On the OpenAI proof that Landau–Siegel zeros do not exist, arXiv preprint, 2026.",
+  "url": "https://arxiv.org/pdf/2610.15483",
+  "units": [
+   "T1",
+   "T4"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:2610.15483",
+   "authors": [
+    "Banks"
+   ],
+   "title": "On the OpenAI proof that Landau-Siegel zeros do not exist",
+   "years": [
+    2026
+   ],
+   "place": "",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": ""
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Enrico Bombieri, Counting points on curves over finite fields (d’après S. A. Stepanov), Séminaire Bourbaki, Lecture Notes in Mathematics 383, Springer, 1974.",
+  "url": "https://www.numdam.org/item/SB_1972-1973__15__234_0.pdf",
+  "units": [
+   "T1"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1007/bfb0057311",
+   "authors": [
+    "Bombieri"
+   ],
+   "title": "Counting points on curves over finite fields",
+   "kind": "book-chapter",
+   "years": [],
+   "place": "Lecture Notes in Mathematics",
+   "places": [
+    "Lecture Notes in Mathematics",
+    "Séminaire Bourbaki vol. 1972/73 Exposés 418–435"
+   ],
+   "volume": "",
+   "pages": "234-241",
+   "other_edition": true
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Nicholas M. Katz, Formal groups and p-adic interpolation, Astérisque 41–42, 1977.",
+  "url": "https://www.numdam.org/article/AST_1977__41-42__55_0.pdf",
+  "units": [
+   "T2"
+  ],
+  "record": null
+ },
+ {
+  "citation": "Kenichi Bannai and Shinichi Kobayashi, Algebraic theta functions and the p-adic interpolation of Eisenstein–Kronecker numbers, Duke Mathematical Journal 153, 2010.",
+  "url": "https://arxiv.org/pdf/math/0610163",
+  "units": [
+   "T2"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:math/0610163",
+   "authors": [
+    "Bannai",
+    "Kobayashi"
+   ],
+   "title": "Algebraic theta functions and p-adic interpolation of Eisenstein-Kronecker numbers",
+   "years": [
+    2006,
+    2007
+   ],
+   "place": "Duke Math. J. 153, no. 2 (2010), 229-295",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": "10.1215/00127094-2010-024",
+   "journal": {
+    "how": "arxiv",
+    "id": "doi:10.1215/00127094-2010-024",
+    "authors": [
+     "Bannai",
+     "Kobayashi"
+    ],
+    "title": "Algebraic theta functions and the p-adic interpolation of Eisenstein-Kronecker numbers",
+    "kind": "journal-article",
+    "years": [
+     2010
+    ],
+    "place": "Duke Mathematical Journal",
+    "places": [
+     "Duke Mathematical Journal"
+    ],
+    "volume": "153",
+    "pages": "229-295"
+   }
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Sean Howe, The spectral p-adic Jacquet–Langlands correspondence and a question of Serre, Compositio Mathematica, 2022.",
+  "url": "https://www.cambridge.org/core/journals/compositio-mathematica/article/spectral-padic-jacquetlanglands-correspondence-and-a-question-of-serre/7398F4C0CFA138C6C5CAA4C16ABD2415",
+  "units": [
+   "T2"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1112/s0010437x22007308",
+   "authors": [
+    "Howe"
+   ],
+   "title": "The spectral\n                    <i>p</i>\n                    -adic Jacquet–Langlands correspondence and a question of Serre",
+   "kind": "journal-article",
+   "years": [
+    2022
+   ],
+   "place": "Compositio Mathematica",
+   "places": [
+    "Compositio Mathematica"
+   ],
+   "volume": "158",
+   "pages": "245-286"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Pierre Deligne, La conjecture de Weil. I, Publications Mathématiques de l’IHÉS 43, 1974, English translation hosted by J. S. Milne.",
+  "url": "https://www.jmilne.org/math/Documents/DeligneWeilI.pdf",
+  "units": [
+   "T3"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1007/bf02684373",
+   "authors": [
+    "Deligne"
+   ],
+   "title": "La conjecture de Weil : I",
+   "kind": "journal-article",
+   "years": [
+    1974
+   ],
+   "place": "Publications Mathématiques de l'IHÉS",
+   "places": [
+    "Publications Mathématiques de l'IHÉS"
+   ],
+   "volume": "43",
+   "pages": "273-307"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Solomon Friedberg and David Ginzburg, Metaplectic theta functions and global integrals, Journal of Number Theory 146, 2015.",
+  "url": "https://arxiv.org/pdf/1403.3929",
+  "units": [
+   "T3"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:1403.3929",
+   "authors": [
+    "Friedberg",
+    "Ginzburg"
+   ],
+   "title": "Metaplectic Theta Functions and Global Integrals",
+   "years": [
+    2014
+   ],
+   "place": "Journal of Number Theory 146 (2015), 134-149",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": "10.1016/j.jnt.2014.04.001",
+   "journal": {
+    "how": "arxiv",
+    "id": "doi:10.1016/j.jnt.2014.04.001",
+    "authors": [
+     "Friedberg",
+     "Ginzburg"
+    ],
+    "title": "Metaplectic theta functions and global integrals",
+    "kind": "journal-article",
+    "years": [
+     2015
+    ],
+    "place": "Journal of Number Theory",
+    "places": [
+     "Journal of Number Theory"
+    ],
+    "volume": "146",
+    "pages": "134-149"
+   }
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "André Weil, Sur les « formules explicites » de la théorie des nombres premiers, Communications du Séminaire Mathématique de l’Université de Lund, Tome Supplémentaire, 1952.",
+  "url": "https://denisevellachemla.eu/transc-Weil-1952.pdf",
+  "units": [
+   "T4",
+   "T5"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1007/978-1-4757-1705-1_60",
+   "authors": [
+    "Weil"
+   ],
+   "title": "Sur les “formules explicites” de la théorie des nombres premiers",
+   "kind": "book-chapter",
+   "years": [
+    1979
+   ],
+   "place": "Œuvres Scientifiques Collected Papers",
+   "places": [
+    "Œuvres Scientifiques Collected Papers"
+   ],
+   "volume": "",
+   "pages": "570-583",
+   "other_edition": true
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "differs",
+    "note": "The record has 1979. The record may be of another edition or a reprint."
+   },
+   "place": {
+    "outcome": "differs",
+    "note": "The record has `Œuvres Scientifiques Collected Papers`. The record may be of another edition or a reprint."
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Kiran S. Kedlaya, von Mangoldt’s formula, MIT 18.785 Analytic Number Theory lecture notes, 2007.",
+  "url": "https://kskedlaya.org/18.785/von-mangoldt.pdf",
+  "units": [
+   "T5"
+  ],
+  "record": null
+ },
+ {
+  "citation": "Pedro Freitas, A Li-Type Criterion for Zero-Free Half-Planes of Riemann’s Zeta Function, Journal of the London Mathematical Society 73, 2006.",
+  "url": "https://arxiv.org/pdf/math/0507368",
+  "units": [
+   "T6"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:math/0507368",
+   "authors": [
+    "Freitas"
+   ],
+   "title": "A Li-type criterion for zero-free half-planes of Riemann's zeta function",
+   "years": [
+    2005
+   ],
+   "place": "",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": "",
+   "journal": {
+    "how": "search",
+    "id": "doi:10.1112/s0024610706022599",
+    "authors": [
+     "FREITAS"
+    ],
+    "title": "A LI-TYPE CRITERION FOR ZERO-FREE HALF-PLANES OF RIEMANN'S ZETA FUNCTION",
+    "kind": "journal-article",
+    "years": [
+     2006
+    ],
+    "place": "Journal of the London Mathematical Society",
+    "places": [
+     "Journal of the London Mathematical Society"
+    ],
+    "volume": "73",
+    "pages": "399-414"
+   }
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Hongyu He, On the Gan–Gross–Prasad Conjecture for U(p,q), Inventiones Mathematicae 209, 2017.",
+  "url": "https://arxiv.org/pdf/1508.02032",
+  "units": [
+   "T7"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:1508.02032",
+   "authors": [
+    "He"
+   ],
+   "title": "Gan-Gross-Prasad Conjecture for U(p,q)",
+   "years": [
+    2015,
+    2017
+   ],
+   "place": "Invent Math.209 (2017)",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": "10.1007/s00222-017-0720-x",
+   "journal": {
+    "how": "arxiv",
+    "id": "doi:10.1007/s00222-017-0720-x",
+    "authors": [
+     "He"
+    ],
+    "title": "On the Gan–Gross–Prasad conjecture for U(p, q)",
+    "kind": "journal-article",
+    "years": [
+     2017
+    ],
+    "place": "Inventiones mathematicae",
+    "places": [
+     "Inventiones mathematicae"
+    ],
+    "volume": "209",
+    "pages": "837-884"
+   }
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Mario Kieburg, Products of Complex Rectangular and Hermitian Random Matrices, Advances in Pure and Applied Mathematics 11, 2020.",
+  "url": "https://www.openscience.fr/IMG/pdf/iste_apam20v11n1_3.pdf",
+  "units": [
+   "T7"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.21494/iste.op.2020.0553",
+   "authors": [
+    "Kieburg"
+   ],
+   "title": "Products of Complex Rectangular and Hermitian Random Matrices",
+   "kind": "journal-article",
+   "years": [
+    2020
+   ],
+   "place": "Advances in Pure and Applied Mathematics",
+   "places": [
+    "Advances in Pure and Applied Mathematics"
+   ],
+   "volume": "11",
+   "pages": ""
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Rui Chen and Jialiang Zou, Theta Correspondence and Arthur Packets, arXiv preprint, 2021.",
+  "url": "https://arxiv.org/pdf/2104.12354",
+  "units": [
+   "T8"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:2104.12354",
+   "authors": [
+    "Chen",
+    "Zou"
+   ],
+   "title": "Theta Correspondence and Arthur packets",
+   "years": [
+    2021
+   ],
+   "place": "",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": ""
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Wee Teck Gan, Yannan Qiu and Shuichiro Takeda, The Regularized Siegel–Weil Formula (The Second Term Identity) and the Rallis Inner Product Formula, Inventiones Mathematicae 198, 2014.",
+  "url": "https://arxiv.org/pdf/1207.4709",
+  "units": [
+   "T8",
+   "T9"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:1207.4709",
+   "authors": [
+    "Gan",
+    "Qiu",
+    "Takeda"
+   ],
+   "title": "The Regularized Siegel-Weil Formula (The Second Term Identity) and the Rallis Inner Product Formula",
+   "years": [
+    2012,
+    2014
+   ],
+   "place": "",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": "",
+   "journal": {
+    "how": "search",
+    "id": "doi:10.1007/s00222-014-0509-0",
+    "authors": [
+     "Gan",
+     "Qiu",
+     "Takeda"
+    ],
+    "title": "The regularized Siegel–Weil formula (the second term identity) and the Rallis inner product formula",
+    "kind": "journal-article",
+    "years": [
+     2014
+    ],
+    "place": "Inventiones mathematicae",
+    "places": [
+     "Inventiones mathematicae"
+    ],
+    "volume": "198",
+    "pages": "739-831"
+   }
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Benedict H. Gross, On the periods of abelian varieties, ICCM Notices 8, 2020.",
+  "url": "https://people.math.harvard.edu/~gross/preprints/cs.pdf",
+  "units": [
+   "T9"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.4310/iccm.2020.v8.n2.a2",
+   "authors": [
+    "Gross"
+   ],
+   "title": "On the periods of abelian varieties",
+   "kind": "journal-article",
+   "years": [
+    2020
+   ],
+   "place": "Notices of the International Congress of Chinese Mathematicians",
+   "places": [
+    "Notices of the International Congress of Chinese Mathematicians"
+   ],
+   "volume": "8",
+   "pages": "10-18"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "same",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Yasuhiro Terakado and Chia-Fu Yu, Mass formulas and the basic locus of unitary Shimura varieties, arXiv preprint, 2022.",
+  "url": "https://arxiv.org/pdf/2210.04054",
+  "units": [
+   "T9"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:2210.04054",
+   "authors": [
+    "Terakado",
+    "Yu"
+   ],
+   "title": "Mass formulas and the basic locus of unitary Shimura varieties",
+   "years": [
+    2022
+   ],
+   "place": "",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": ""
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Tobias Berger, Arithmetic properties of similitude theta lifts from orthogonal to symplectic groups, arXiv preprint, 2009.",
+  "url": "https://arxiv.org/pdf/0902.4619",
+  "units": [
+   "T10"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:0902.4619",
+   "authors": [
+    "Berger"
+   ],
+   "title": "Arithmetic properties of similitude theta lifts from orthogonal to symplectic groups",
+   "years": [
+    2009
+   ],
+   "place": "",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": ""
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Jim Brown and Krzysztof Klosin, Congruence primes for automorphic forms on unitary groups and applications to the arithmetic of Ikeda lifts, arXiv preprint, 2018 revision.",
+  "url": "https://arxiv.org/pdf/1606.01294",
+  "units": [
+   "T10"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:1606.01294",
+   "authors": [
+    "Brown",
+    "Klosin"
+   ],
+   "title": "Congruence primes for automorphic forms on unitary groups and applications to the arithmetic of Ikeda lifts",
+   "years": [
+    2016,
+    2018
+   ],
+   "place": "Kyoto J. Math. 60, no. 1 (2020), 179-217",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": "10.1215/21562261-2019-0007",
+   "journal": {
+    "how": "arxiv",
+    "id": "doi:10.1215/21562261-2019-0007",
+    "authors": [
+     "Brown",
+     "Klosin"
+    ],
+    "title": "Congruence primes for automorphic forms on unitary groups and applications to the arithmetic of Ikeda lifts",
+    "kind": "journal-article",
+    "years": [
+     2020
+    ],
+    "place": "Kyoto Journal of Mathematics",
+    "places": [
+     "Kyoto Journal of Mathematics"
+    ],
+    "volume": "60",
+    "pages": "179-217"
+   }
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "absent",
+    "note": "The citation gives the preprint, and the record names Kyoto Journal of Mathematics."
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Lawrence C. Washington, Introduction to Cyclotomic Fields, Springer, 1982.",
+  "url": "https://page-one.springer.com/pdf/preview/10.1007/978-1-4684-0133-2_13",
+  "units": [
+   "T11",
+   "T19"
+  ],
+  "record": {
+   "how": "doi",
+   "id": "doi:10.1007/978-1-4684-0133-2_13",
+   "authors": [
+    "Washington"
+   ],
+   "title": "Iwasawa’s Theory of ℤp-extensions",
+   "kind": "book-chapter",
+   "years": [
+    1982
+   ],
+   "place": "Graduate Texts in Mathematics",
+   "places": [
+    "Graduate Texts in Mathematics",
+    "Introduction to Cyclotomic Fields"
+   ],
+   "volume": "",
+   "pages": "263-318"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": "The record is the part `Iwasawa’s Theory of ℤp-extensions` of the cited book."
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Wee Teck Gan and Atsushi Ichino, The Gross–Prasad conjecture and local theta correspondence, Inventiones Mathematicae, 2016.",
+  "url": "https://arxiv.org/pdf/1409.6824",
+  "units": [
+   "T12"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:1409.6824",
+   "authors": [
+    "Gan",
+    "Ichino"
+   ],
+   "title": "The Gross-Prasad conjecture and local theta correspondence",
+   "years": [
+    2014,
+    2015
+   ],
+   "place": "",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": "",
+   "journal": {
+    "how": "search",
+    "id": "doi:10.1007/s00222-016-0662-8",
+    "authors": [
+     "Gan",
+     "Ichino"
+    ],
+    "title": "The Gross–Prasad conjecture and local theta correspondence",
+    "kind": "journal-article",
+    "years": [
+     2016
+    ],
+    "place": "Inventiones mathematicae",
+    "places": [
+     "Inventiones mathematicae"
+    ],
+    "volume": "206",
+    "pages": "705-799"
+   }
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Masaaki Furusawa and Kazuki Morimoto, Refined global Gross–Prasad conjecture on special Bessel periods and Böcherer’s conjecture, Journal of the European Mathematical Society, 2021.",
+  "url": "https://arxiv.org/pdf/1611.05567",
+  "units": [
+   "T12"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:1611.05567",
+   "authors": [
+    "Furusawa",
+    "Morimoto"
+   ],
+   "title": "Refined global Gross-Prasad conjecture on special Bessel periods and Boecherer's conjecture",
+   "years": [
+    2016,
+    2019
+   ],
+   "place": "J. Eur. Math. Soc. 23 (2021), no. 4, pp. 1295--1331",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": "10.4171/JEMS/1034",
+   "journal": {
+    "how": "arxiv",
+    "id": "doi:10.4171/jems/1034",
+    "authors": [
+     "Furusawa",
+     "Morimoto"
+    ],
+    "title": "Refined global Gross–Prasad conjecture on special Bessel periods and Böcherer’s conjecture",
+    "kind": "journal-article",
+    "years": [
+     2020
+    ],
+    "place": "Journal of the European Mathematical Society",
+    "places": [
+     "Journal of the European Mathematical Society"
+    ],
+    "volume": "23",
+    "pages": "1295-1331"
+   }
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "differs",
+    "note": "The record has 2016, 2019, 2020. A journal can date an article by the year of its volume, here volume 23, and the record by the day it went online."
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Wee Teck Gan, Yannan Qiu, and Shuichiro Takeda, The Regularized Siegel-Weil Formula (The Second Term Identity) and the Rallis Inner Product Formula, arXiv, 2012.",
+  "url": "https://arxiv.org/pdf/1207.4709",
+  "units": [
+   "T14"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:1207.4709",
+   "authors": [
+    "Gan",
+    "Qiu",
+    "Takeda"
+   ],
+   "title": "The Regularized Siegel-Weil Formula (The Second Term Identity) and the Rallis Inner Product Formula",
+   "years": [
+    2012,
+    2014
+   ],
+   "place": "",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": ""
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "J. S. Frame, G. de B. Robinson, and R. M. Thrall, The Hook Graphs of the Symmetric Group, Canadian Journal of Mathematics, 1954.",
+  "url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/B1533D44F5B1DBF6B6903C79AFFDCFEE/S0008414X00023749a.pdf/div-class-title-the-hook-graphs-of-the-symmetric-group-div.pdf",
+  "units": [
+   "T14"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.4153/cjm-1954-030-1",
+   "authors": [
+    "Frame",
+    "Robinson",
+    "Thrall"
+   ],
+   "title": "The Hook Graphs of the Symmetric Group",
+   "kind": "journal-article",
+   "years": [
+    1954,
+    2018
+   ],
+   "place": "Canadian Journal of Mathematics",
+   "places": [
+    "Canadian Journal of Mathematics"
+   ],
+   "volume": "6",
+   "pages": "316-324"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Haruzo Hida and Jacques Tilouine, Anti-cyclotomic Katz p-adic L-functions and congruence modules, Annales Scientifiques de l’École Normale Supérieure, 1993.",
+  "url": "https://www.numdam.org/article/ASENS_1993_4_26_2_189_0.pdf",
+  "units": [
+   "T15"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.24033/asens.1671",
+   "authors": [
+    "Hida",
+    "Tilouine"
+   ],
+   "title": "Anti-cyclotomic Katz $p$-adic $L$-functions and congruence modules",
+   "kind": "journal-article",
+   "years": [
+    1993
+   ],
+   "place": "Annales scientifiques de l'École normale supérieure",
+   "places": [
+    "Annales scientifiques de l'École normale supérieure"
+   ],
+   "volume": "26",
+   "pages": "189-259"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Ming-Lun Hsieh and Bharathwaj Palvannan, On the congruence ideal associated to p-adic families of Yoshida lifts, arXiv, 2025.",
+  "url": "https://arxiv.org/html/2505.09975v1",
+  "units": [
+   "T15",
+   "T18"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:2505.09975",
+   "authors": [
+    "Hsieh",
+    "Palvannan"
+   ],
+   "title": "On the congruence ideal associated to $p$-adic families of Yoshida lifts",
+   "years": [
+    2025,
+    2026
+   ],
+   "place": "",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": ""
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Simon Marshall, Subconvexity for L-functions on U(n) × U(n+1) in the depth aspect, arXiv, 2023.",
+  "url": "https://arxiv.org/pdf/2309.16667",
+  "units": [
+   "T16"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:2309.16667",
+   "authors": [
+    "Marshall"
+   ],
+   "title": "Subconvexity for $L$-functions on ${\\rm U}(n) \\times {\\rm U}(n+1)$ in the depth aspect",
+   "years": [
+    2023
+   ],
+   "place": "",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": ""
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Yifeng Liu, Relative trace formulae toward Bessel and Fourier–Jacobi periods of unitary groups, arXiv, 2010.",
+  "url": "https://arxiv.org/pdf/1012.4538",
+  "units": [
+   "T16"
+  ],
+  "record": {
+   "how": "arxiv",
+   "id": "arXiv:1012.4538",
+   "authors": [
+    "Liu"
+   ],
+   "title": "Relative trace formulae toward Bessel and Fourier-Jacobi periods of unitary groups",
+   "years": [
+    2010
+   ],
+   "place": "",
+   "volume": "",
+   "pages": "",
+   "places": [],
+   "doi": ""
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Manfred Kolster and Abbas Movahhedi, Galois co-descent for étale wild kernels and capitulation, Annales de l’Institut Fourier, 2000.",
+  "url": "https://www.numdam.org/item/10.5802/aif.1746.pdf",
+  "units": [
+   "T17"
+  ],
+  "record": {
+   "how": "doi",
+   "id": "doi:10.5802/aif.1746",
+   "authors": [
+    "Kolster",
+    "Movahhedi"
+   ],
+   "title": "Galois co-descent for étale wild kernels and capitulation",
+   "kind": "journal-article",
+   "years": [
+    2000
+   ],
+   "place": "Annales de l'Institut Fourier",
+   "places": [
+    "Annales de l'Institut Fourier"
+   ],
+   "volume": "50",
+   "pages": "35-65"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Christophe Soulé, A Bound for the Torsion in the K-Theory of Algebraic Integers, Documenta Mathematica, Extra Volume Kato, 2003.",
+  "url": "https://www.maths.tcd.ie/EMIS/journals/DMJDMV/vol-kato/soule.dm.pdf",
+  "units": [
+   "T17"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.4171/dms/3/21",
+   "authors": [
+    "Soulé"
+   ],
+   "title": "A bound for the torsion in the $K$-theory of algebraic integers",
+   "kind": "book-chapter",
+   "years": [
+    2003
+   ],
+   "place": "Documenta Mathematica Series",
+   "places": [
+    "Documenta Mathematica Series",
+    "A Collection of Manuscripts Written in Honour of Kazuya Kato on the Occasion of His Fiftieth Birthday"
+   ],
+   "volume": "",
+   "pages": "761-788"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Masato Kurihara, Some remarks on conjectures about cyclotomic fields and K-groups of Z, Compositio Mathematica, 1992.",
+  "url": "https://www.numdam.org/item/CM_1992__81_2_223_0.pdf",
+  "units": [
+   "T17"
+  ],
+  "record": null
+ },
+ {
+  "citation": "Huayi Chen and Atsushi Moriwaki, Positivity in Arakelov Geometry over Adelic Curves. Hilbert-Samuel Formula and Equidistribution Theorem, Springer, 2024.",
+  "url": "https://webusers.imj-prg.fr/~huayi.chen/Recherche/Hilbert_Samuel_Adelic_Curves.pdf",
+  "units": [
+   "T18"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1007/978-3-031-61668-6",
+   "authors": [
+    "Chen",
+    "Moriwaki"
+   ],
+   "title": "Positivity in Arakelov Geometry over Adelic Curves",
+   "kind": "book",
+   "years": [
+    2024
+   ],
+   "place": "Progress in Mathematics",
+   "places": [
+    "Progress in Mathematics"
+   ],
+   "volume": "",
+   "pages": ""
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "absent",
+    "note": "The citation gives the publisher, and the record names the series Progress in Mathematics."
+   },
+   "volume": {
+    "outcome": "no data",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Neil Dummigan and Dan Fretwell, Automorphic forms for some even unimodular lattices, Abhandlungen aus dem Mathematischen Seminar der Universität Hamburg, 2021.",
+  "url": "https://eprints.whiterose.ac.uk/id/eprint/170076/1/Lattices5.pdf",
+  "units": [
+   "T18"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1007/s12188-021-00231-5",
+   "authors": [
+    "Dummigan",
+    "Fretwell"
+   ],
+   "title": "Automorphic forms for some even unimodular lattices",
+   "kind": "journal-article",
+   "years": [
+    2021
+   ],
+   "place": "Abhandlungen aus dem Mathematischen Seminar der Universität Hamburg",
+   "places": [
+    "Abhandlungen aus dem Mathematischen Seminar der Universität Hamburg"
+   ],
+   "volume": "91",
+   "pages": "29-67"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "Felix A. Behrend, On Sets of Integers Which Contain No Three Terms in Arithmetical Progression, Proceedings of the National Academy of Sciences, 1946.",
+  "url": "https://www.pnas.org/doi/pdf/10.1073/pnas.32.12.331",
+  "units": [
+   "T19"
+  ],
+  "record": {
+   "how": "doi",
+   "id": "doi:10.1073/pnas.32.12.331",
+   "authors": [
+    "Behrend"
+   ],
+   "title": "On Sets of Integers Which Contain No Three Terms in Arithmetical Progression",
+   "kind": "journal-article",
+   "years": [
+    1946
+   ],
+   "place": "Proceedings of the National Academy of Sciences",
+   "places": [
+    "Proceedings of the National Academy of Sciences"
+   ],
+   "volume": "32",
+   "pages": "331-332"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ },
+ {
+  "citation": "David J. Platt, Numerical Computations Concerning the GRH, Mathematics of Computation, 2016.",
+  "url": "https://research-information.bris.ac.uk/en/publications/numerical-computations-concerning-the-grh/",
+  "units": [
+   "T20"
+  ],
+  "record": {
+   "how": "search",
+   "id": "doi:10.1090/mcom/3077",
+   "authors": [
+    "Platt"
+   ],
+   "title": "Numerical computations concerning the GRH",
+   "kind": "journal-article",
+   "years": [
+    2016
+   ],
+   "place": "Mathematics of Computation",
+   "places": [
+    "Mathematics of Computation"
+   ],
+   "volume": "85",
+   "pages": "3009-3027"
+  },
+  "fields": {
+   "title": {
+    "outcome": "same",
+    "note": ""
+   },
+   "authors": {
+    "outcome": "same",
+    "note": ""
+   },
+   "year": {
+    "outcome": "same",
+    "note": ""
+   },
+   "place": {
+    "outcome": "same",
+    "note": ""
+   },
+   "volume": {
+    "outcome": "absent",
+    "note": ""
+   },
+   "pages": {
+    "outcome": "absent",
+    "note": ""
+   }
+  }
+ }
+]

@@ -144,6 +144,55 @@ independent of the proof here was not examined. The answer to T1 rests its class
 preprint and on Bombieri's exposé of Stepanov's method, so its class K holds without the
 preprint only if the exposé alone carries it.
 
+## The citations against two catalogues
+
+A citation is the line in which an answer names a source, with the authors, the title, the
+place of publication and the year. The answers hold 85 different citations. The script
+[`metadata.py`](metadata.py) looked for a record of each one, in arXiv when the address or the
+citation holds an arXiv identifier, in Crossref when the address holds a DOI, and otherwise by
+asking Crossref for the citation as free text and taking an answer whose title stands in the
+citation word for word and whose first author stands there too. It then compared six fields of
+the citation with the record.
+
+| Field | Same as the record | Differs | Citation does not give it | Record does not give it |
+|---|---:|---:|---:|---:|
+| Authors | 75 | 0 | 0 | 0 |
+| Title | 75 | 0 | 0 | 0 |
+| Year | 66 | 5 | 0 | 4 |
+| Journal or series | 69 | 2 | 2 | 2 |
+| Volume | 26 | 0 | 24 | 25 |
+| Pages | 8 | 0 | 66 | 1 |
+
+75 of the 85 citations have a record, 29 through arXiv, 5 through a DOI and 41 through the
+search. In 69 of the 75 no field differs from the record. No citation has a wrong author, a
+wrong title, a wrong volume or wrong pages by its record. Most citations give no pages, so the
+pages were compared for 8 citations only.
+
+The 6 citations with a difference are these, each read against its record by the language
+model Claude.
+
+- Montgomery and Vaughan, Multiplicative Number Theory I, is cited with the year 2007 in unit
+  3.1 and with 2006 in units 1.2 and 1.3. The Crossref record of the book has 2006 and 2010.
+  The year 2007 has no support in the record.
+- Three articles are cited with the year of their volume, and Crossref has the year in which
+  the article went online. They are Ford, Green, Konyagin, Maynard and Tao in volume 31 of the
+  Journal of the American Mathematical Society, cited as 2018 with 2017 in the record, Chen and
+  Zou in volume 27 of the Journal of the European Mathematical Society, cited as 2025 with 2024
+  in the record, and Furusawa and Morimoto in volume 23 of the same journal, cited as 2021 with
+  2020 in the record. The year of a volume was not looked up in a second catalogue.
+- Bombieri, Counting points on curves over finite fields, is cited in unit 9.3 as Séminaire
+  Bourbaki, exposé 430, Springer-Verlag, 1974. The record names the series Lecture Notes in
+  Mathematics, which that citation leaves out and which the citation of the same exposé in
+  unit T1 gives.
+- Weil, Sur les formules explicites de la théorie des nombres premiers, is cited with its first
+  publication of 1952. The one record that Crossref has is the reprint in the collected papers
+  of 1979, so the year and the place of 1952 are unconfirmed.
+
+Ten citations have no record in either catalogue, so their fields are unchecked. They are
+Riemann's paper of 1859, Chebyshev's memoir of 1852, three volumes of Astérisque (Bost 1996,
+Bombieri 1974 and Katz 1977), the chapter of Lagarias and Odlyzko of 1977, the book of Tao and
+Vu, the course notes of Milne and of Kedlaya, and Kurihara's paper of 1992.
+
 ## Every unit
 
 The table gives the first sentence of the field `technique` of each answer, the first of its
@@ -341,11 +390,9 @@ names in an entry, such as `PairGood`, are names of the Lean text.
   classed the same units. The planned run of Gemini would give that comparison.
 - No mathematician has read the answers. The brief asks each answer for the point that a
   specialist should check first, and those points are in the field `specialist`.
-- The citations are as the model wrote them. The quote check opens the address of a citation,
-  and nobody compared the authors, the title, the year, the volume and the pages of a citation
-  with a catalogue such as Crossref, zbMATH or arXiv. The table shows one sign of this, since
-  the same textbook of Montgomery and Vaughan appears with the year 2006 in unit 1.3 and 2007
-  in unit 3.1.
+- The comparison of the citations with the catalogues covers the description of a work. A
+  citation that agrees with its record can still be attached to a claim that the work does
+  not make.
 - Class N says that a search found no source for the result or the technique. A source may
   exist that the search did not reach.
 - Class A does not separate a routine use of a technique from a use that needed a new idea.
@@ -362,11 +409,14 @@ names in an entry, such as `PairGood`, are names of the Lean text.
 
 ```
 python3 -I verification/novelty/quotes.py
+python3 -I verification/novelty/metadata.py
 python3 -I verification/novelty/search.py
 ```
 
 The first command downloads the sources into `verification/novelty/data/sources`, which git
-ignores, and writes `quotes.json`. It needs `curl` and `pdftotext`. The second command writes
+ignores, and writes `quotes.json`. It needs `curl` and `pdftotext`. The second command asks arXiv
+and Crossref for the records, with pauses between the calls, keeps their answers in
+`verification/novelty/data/catalogue` and writes `metadata.json`. The third command writes
 the table of the section Every unit and the list of the section The differences, and prints
 the counts that the hand-written prose quotes. The answers themselves came from twelve runs of
 this form, one for each batch.

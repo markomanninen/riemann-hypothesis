@@ -55,6 +55,7 @@ checked against.
 | `brief-gemini.md` | the brief of the literature search |
 | `SEARCH.md` | the result of the search by Codex, with the class of every unit and the check of the quotes |
 | `quotes.py` | downloads the cited sources and looks for each quote |
+| `metadata.py` | compares the authors, the title, the year, the place, the volume and the pages of each citation with its record in arXiv or Crossref |
 | `search.py` | writes the table of `SEARCH.md` from the answers |
 | `KNOWN.md`, `known.py`, `known.json` | the known results placed on the outline of the proof |
 | `ANCHORS.md` | 13 published techniques that the proof names, each with an opened source |
