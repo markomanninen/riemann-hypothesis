@@ -1,0 +1,99 @@
+[
+  {
+    "id": "1.1",
+    "technique": "This is the right-half-plane formulation of the generalized Riemann hypothesis for Dirichlet L-functions. It asserts nonvanishing for Re(s) > 1/2 and explicitly excludes the principal character at s = 1.",
+    "class": "K",
+    "nearest": [
+      {
+        "citation": "Yifan Yang, Inverse Problems for Partition Functions, Canadian Journal of Mathematics, 53(4), 2001, pp. 866–896.",
+        "url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/C7E3CA7011F60F57947090E89CF0BE00/S0008414X00023208a.pdf/inverse-problems-for-partition-functions.pdf",
+        "locator": "Corollary 1, p. 873.",
+        "says": "Yang characterizes zero-freeness for all characters modulo k in Re(s) > θ by a weighted partition asymptotic and identifies θ = 1/2 for all k with GRH.",
+        "quote": "has no zeros in the half-plane {s : Re s > θ} for all characters χ modulo k"
+      }
+    ],
+    "difference": "Yang treats the half-plane condition as an equivalent formulation of GRH. Lean presents that condition as a theorem and explicitly excludes the principal character at its classical pole.",
+    "searches": [
+      "Dirichlet L-functions generalized Riemann hypothesis no zeros Re(s)>1/2 Davenport Montgomery Vaughan primitive imprimitive Euler product DLMF",
+      "Dirichlet L-functions generalized Riemann hypothesis no zeros half-plane 'Re(s)' 1/2 conjecture Dirichlet L-function book arxiv",
+      "Dirichlet L function zero free half plane Re s greater than 1/2 generalized Riemann hypothesis all characters conjectural unconditional Dirichlet L-functions pre-November 2026 arxiv"
+    ],
+    "confidence": "high",
+    "why": "Yang explicitly states the all-character half-plane condition, so the classification applies to the prior publication of the proposition as a conjectural formulation.",
+    "specialist": "Check the quantification over positive moduli and the treatment of the principal pole when matching the Lean proposition to Yang's formulation."
+  },
+  {
+    "id": "1.2",
+    "technique": "The functional equation reflects a zero of a primitive Dirichlet L-function at s to a zero for the conjugate character at 1 − s. Finite Euler factors transfer zeros in the open critical strip to the inducing primitive character, and the modulus-one specialization gives the zeta case.",
+    "class": "K",
+    "nearest": [
+      {
+        "citation": "Hirotaka Akatsuka and Ade Irma Suriajaya, Zeros of the First Derivative of Dirichlet L-Functions, Journal of Number Theory, 184, 2018, pp. 300–329.",
+        "url": "https://arxiv.org/pdf/1604.08015",
+        "locator": "Section 1, arXiv version 2, pp. 1–2, definition of Θ(χ) and the list immediately following it.",
+        "says": "For a primitive character of modulus greater than one, the authors state that GRH is equivalent to the supremum of the real parts of the zeros being 1/2.",
+        "quote": "the generalized Riemann hypothesis (GRH, in short) for L(s, χ) is equivalent to Θ(χ) = 1/2."
+      },
+      {
+        "citation": "Hugh L. Montgomery and Robert C. Vaughan, Multiplicative Number Theory I. Classical Theory, Cambridge University Press, 2006.",
+        "url": "https://ndl.ethernet.edu.et/bitstream/123456789/23715/1/Hugh%20L.%20Montgomery.pdf",
+        "locator": "Section 10.1, Corollary 10.8 and the paragraph following it, p. 333, and equation (10.20), p. 334.",
+        "says": "The authors derive the symmetry of primitive Dirichlet zeros from the functional equation and give the finite Euler product for imprimitive characters.",
+        "quote": "symmetrically placed with respect to the critical line."
+      },
+      {
+        "citation": "Bernhard Riemann, Ueber die Anzahl der Primzahlen unter einer gegebenen Grösse, Monatsberichte der Berliner Akademie, 1859, translated by David R. Wilkins, 1998.",
+        "url": "https://www.claymath.org/wp-content/uploads/2023/04/Wilkins-translation.pdf",
+        "locator": "Wilkins translation, pp. 2–3, the first derivation of the zeta functional equation.",
+        "says": "Riemann derives the invariance of the product of ζ(s) and its gamma and π factors under s ↦ 1 − s.",
+        "quote": "remains unchanged when s is replaced by 1 − s."
+      }
+    ],
+    "difference": "Akatsuka and Suriajaya state the equivalence for primitive characters of modulus greater than one. Lean derives four conclusions from one all-character hypothesis, including the imprimitive case and the zeta case, and exports two of the conclusions in equivalent or specialized forms.",
+    "searches": [
+      "Dirichlet L functions imprimitive induced primitive Euler factors zeros imaginary axis Montgomery Vaughan Davenport Kowalski analytic number theory functional equation",
+      "Riemann 1859 On the number of primes less than a given magnitude all roots real Dirichlet generalized Riemann hypothesis functional equation Iwaniec Kowalski",
+      "Dirichlet L-functions \"equivalent\" \"no zeros\" \"Generalized Riemann Hypothesis\" half-plane 1/2 paper functional equation primitive principal character",
+      "Akatsuka Suriajaya Zeros of the first derivative of Dirichlet L-functions theta equivalent GRH arxiv"
+    ],
+    "confidence": "high",
+    "why": "The published equivalence and functional equations give the implication in the Lean declarations, whose remaining steps specialize the character or transfer zeros through the finite factors.",
+    "specialist": "Check that `Claim.strip` reflects the zero for the inducing primitive character and that `Claim.zeta` handles the trivial zeros and the boundaries of the open strip."
+  },
+  {
+    "id": "1.3",
+    "technique": "This is the conductor reduction for Dirichlet L-functions. The finite Euler factors relating a character to its inducing primitive character are nonzero throughout Re(s) > 0.",
+    "class": "K",
+    "nearest": [
+      {
+        "citation": "Hugh L. Montgomery and Robert C. Vaughan, Multiplicative Number Theory I. Classical Theory, Cambridge University Press, 2006.",
+        "url": "https://ndl.ethernet.edu.et/bitstream/123456789/23715/1/Hugh%20L.%20Montgomery.pdf",
+        "locator": "Section 10.1, equation (10.20) and the following two paragraphs, p. 334.",
+        "says": "The authors give the inducing-character factorization, locate the additional zeros on the imaginary axis, and identify the simple pole for the principal character.",
+        "quote": "whose zeros form an arithmetic progression on the imaginary axis."
+      }
+    ],
+    "difference": "The textbook gives the stronger fact that the additional Euler factors introduce no zeros anywhere in Re(s) > 0. Lean uses this in Re(s) > 1/2 and explicitly excludes the principal character at s = 1 in the conclusion.",
+    "searches": [
+      "Dirichlet L functions imprimitive induced primitive Euler factors zeros imaginary axis Montgomery Vaughan Davenport Kowalski analytic number theory functional equation",
+      "primitive imprimitive Dirichlet L functions same zeros right half plane generalized Riemann hypothesis finite Euler factors Apostol theorem 12.9 Iwaniec Kowalski"
+    ],
+    "confidence": "high",
+    "why": "Equation (10.20) and its description of the additional zeros give exactly the conductor reduction used by `imprimitive`.",
+    "specialist": "Check that `LFunction_changeLevel` uses the primitive conductor and that its principal-pole proviso follows from the stated exception."
+  },
+  {
+    "id": "1.4",
+    "technique": "This declaration assembles premises for primitive Dirichlet zero-freeness. It uses the finite general linear group character parametrization and the hypothesis record to supply the families, and it uses the Galois cohomology bound to supply the hosts.",
+    "class": "G",
+    "nearest": [],
+    "difference": "The declaration specializes `zeroFreeAll_of_topG` to the interval exponent 3/2 and passes it the family and host existence results obtained from the three inputs.",
+    "searches": [
+      "Dirichlet generalized Riemann hypothesis theta lifts lattice slopes Galois cohomology Green cuspidal character zero free primitive Dirichlet L functions",
+      "theta correspondence automorphic proof Dirichlet L-function Riemann hypothesis Galois cohomology cuspidal Green three premises before 2026"
+    ],
+    "confidence": "high",
+    "why": "The Lean body consists of unpacking the hypothesis record and passing the two supplied existence statements to `zeroFreeAll_of_topG`.",
+    "specialist": "Trace `forall_goal_of_shape_of_hyps` and `supplyChi` to identify the mathematical assertions that supply the two premises."
+  }
+]

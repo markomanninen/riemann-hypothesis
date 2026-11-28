@@ -1,0 +1,316 @@
+[
+  {
+    "id": "T1",
+    "technique": "The entry names a Stepanov-style interpolation determinant, a method for turning vanishing or Frobenius congruences into a bound by comparing divisibility with size.",
+    "class": "K",
+    "nearest": [
+      {
+        "citation": "William D. Banks, On the OpenAI proof that Landau–Siegel zeros do not exist, arXiv preprint, 2026.",
+        "url": "https://arxiv.org/pdf/2610.15483",
+        "locator": "See the abstract and Sections 4–6.",
+        "says": "A nonzero interpolation determinant over a biquadratic field gains divisibility at Frobenius primes, and an Archimedean upper bound limits that divisibility.",
+        "quote": "The proof is an interpolation determinant argument in the biquadratic field"
+      },
+      {
+        "citation": "Enrico Bombieri, Counting points on curves over finite fields (d’après S. A. Stepanov), Séminaire Bourbaki, Lecture Notes in Mathematics 383, Springer, 1974.",
+        "url": "https://www.numdam.org/item/SB_1972-1973__15__234_0.pdf",
+        "locator": "See Section I, p. 235.",
+        "says": "Stepanov bounds the number of rational points by constructing an auxiliary rational function whose high-order zeros at the points are paid for by its poles.",
+        "quote": "they consider derivatives or hyperderivatives of f"
+      }
+    ],
+    "difference": "The entry gives only the name of the method. Banks supplies a specific number-field determinant for real zeros of quadratic Dirichlet L-functions, and Bombieri describes the finite-field vanishing argument behind the analogy.",
+    "searches": [
+      "Stepanov determinant multiplicity function fields Bombieri Weil elementary proof auxiliary polynomial original paper Stepanov Schmidt",
+      "Stepanov determinant Alpoge 10/6/26 determinant Stepanov matrix Riemann Hypothesis",
+      "Uniform exclusion Landau Siegel zeros October 1 2026 determinant OpenAI math paper"
+    ],
+    "confidence": "medium",
+    "why": "The named technique has a clear published antecedent, while the terse entry leaves the intended matrix and application unspecified.",
+    "specialist": "Identify the matrix and its entries in the October argument and compare its row operations with Banks’s Frobenius divisibility argument."
+  },
+  {
+    "id": "T2",
+    "technique": "At a good inert prime the CM elliptic formal group has height two, and the vanishing Hasse invariant gives Dᵖ ≡ 0. The further claim applies height-two derivative divisibility with slope p/(p² − 1) to a period-normalized theta section.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Nicholas M. Katz, Formal groups and p-adic interpolation, Astérisque 41–42, 1977.",
+        "url": "https://www.numdam.org/article/AST_1977__41-42__55_0.pdf",
+        "locator": "See Section V, Lemma 1 and Corollary 2, pp. 61–62.",
+        "says": "For an integral formal function on a height-two group over an absolutely unramified base whose translates by the p-torsion sum to zero, Katz obtains a derivative valuation bound with slope p/(p² − 1).",
+        "quote": "divisibility and congruence properties of the numbers c(n)"
+      },
+      {
+        "citation": "Kenichi Bannai and Shinichi Kobayashi, Algebraic theta functions and the p-adic interpolation of Eisenstein–Kronecker numbers, Duke Mathematical Journal 153, 2010.",
+        "url": "https://arxiv.org/pdf/math/0610163",
+        "locator": "See Sections 0.2 and 4.",
+        "says": "The authors compute examples of supersingular Kronecker theta expansions in formal coordinates and find nonintegral coefficients and a convergence radius below one.",
+        "quote": "the two-variable power series in the supersingular case is not only non-integral"
+      },
+      {
+        "citation": "Sean Howe, The spectral p-adic Jacquet–Langlands correspondence and a question of Serre, Compositio Mathematica, 2022.",
+        "url": "https://www.cambridge.org/core/journals/compositio-mathematica/article/spectral-padic-jacquetlanglands-correspondence-and-a-question-of-serre/7398F4C0CFA138C6C5CAA4C16ABD2415",
+        "locator": "See Section 3.2.2.",
+        "says": "In characteristic p the p-fold iterate of the invariant derivation is the Hasse invariant times that derivation.",
+        "quote": "which is also an invariant derivation and thus a multiple of"
+      }
+    ],
+    "difference": "Katz’s slope expands as 1/p + 1/p³ + 1/p⁵ + ⋯ under his formal-function hypotheses. The timeline applies that slope with a logarithmic loss to a particular theta section normalized by Ωᵃ, so the trivialization, integrality and torsion-trace hypotheses determine how closely the results match.",
+    "searches": [
+      "Katz formal groups and p-adic interpolation 1977 lemma corollary 2 p 63 PDF",
+      "Bannai Kobayashi integral structures p-adic Fourier theory proposition 3.5 algebraic theta supersingular reduced theta functions not integral",
+      "theta derivatives supersingular CM elliptic inert prime a/p a/p^3 divisibility Taylor coefficients modular forms",
+      "elliptic curve invariant derivation D^p Hasse invariant supersingular Katz invariant differential D^p coefficient p 1970"
+    ],
+    "confidence": "medium",
+    "why": "The exponent and the mod-p identity have close precedents, while the precise normalized theta section requires a separate comparison.",
+    "specialist": "Identify the theta trivialization and Ω, then test whether the resulting formal series is integral and satisfies Katz’s p-torsion trace condition."
+  },
+  {
+    "id": "T3",
+    "technique": "The entry uses additive-character orthogonality on a path-shaped quadric to split a weighted count into a zero-frequency term and a remainder. It proposes using the signs in that identity to bound Frobenius eigenvalues and envisages realizing the count by a metaplectic theta period.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Pierre Deligne, La conjecture de Weil. I, Publications Mathématiques de l’IHÉS 43, 1974, English translation hosted by J. S. Milne.",
+        "url": "https://www.jmilne.org/math/Documents/DeligneWeilI.pdf",
+        "locator": "See Lemmas 3.3–3.6.",
+        "says": "Deligne takes even tensor powers to obtain nonnegative local coefficients and uses their positivity to compare local pole radii with the global pole radius.",
+        "quote": "is a formal series with positive rational coefficients"
+      },
+      {
+        "citation": "Solomon Friedberg and David Ginzburg, Metaplectic theta functions and global integrals, Journal of Number Theory 146, 2015.",
+        "url": "https://arxiv.org/pdf/1403.3929",
+        "locator": "See the abstract and Section 1.",
+        "says": "The authors construct global integrals using metaplectic theta representations, with examples producing Dirichlet series involving Gauss sums.",
+        "quote": "we induce the theta function to the n-fold cover of GL4 and use a Shalika integral"
+      }
+    ],
+    "difference": "Deligne obtains positivity from even powers of traces and uses the poles of an Euler product. The timeline instead pairs a signed path-quadric count with iterated Parseval, and presents the sixfold GL₅ realization of N as a proposed construction. Friedberg and Ginzburg give global integrals for different covering groups and inputs.",
+    "searches": [
+      "Alpoge sign-only proof Deligne Frobenius eigenvalues path quadric qN Mk R",
+      "Deligne Weil conjectures proof positivity trace formula even tensor powers nonnegative trace original Weil I pdf and Gauss sums orthogonality",
+      "metaplectic theta representation sixfold cover GL5 Gauss sums n-fold cover general linear groups Kazhdan Patterson",
+      "finite field quadratic form additive character sum x1 x2 path orthogonality number solutions Weil exponential sum proof"
+    ],
+    "confidence": "medium",
+    "why": "The sources establish the two broad techniques, while the note gives the specific quadric argument as a sketch and the automorphic realization as a goal.",
+    "specialist": "Specify the summand and cohomological contribution to N and verify how their signs and the Parseval estimate constrain the largest Frobenius eigenvalue."
+  },
+  {
+    "id": "T4",
+    "technique": "The entry proposes to prove positivity of a Weil functional on an indicator using a determinant with first-order vanishing, then bootstrap the positivity.",
+    "class": "U",
+    "nearest": [
+      {
+        "citation": "André Weil, Sur les « formules explicites » de la théorie des nombres premiers, Communications du Séminaire Mathématique de l’Université de Lund, Tome Supplémentaire, 1952.",
+        "url": "https://denisevellachemla.eu/transc-Weil-1952.pdf",
+        "locator": "See equation (12) and the positivity criterion immediately following it.",
+        "says": "Weil gives a criterion for RH for Hecke L-functions in terms of positivity of a distribution on a family of convolution squares.",
+        "quote": "cette condition peut s’exprimer en disant que D est “de type positif”"
+      },
+      {
+        "citation": "William D. Banks, On the OpenAI proof that Landau–Siegel zeros do not exist, arXiv preprint, 2026.",
+        "url": "https://arxiv.org/pdf/2610.15483",
+        "locator": "See the abstract and Section 6.",
+        "says": "Frobenius congruences on interpolation rows give a lower bound for the valuation of a nonzero determinant in the proof of a real-zero exclusion bound.",
+        "quote": "Frobenius congruence at these primes makes a certain nonzero determinant divisible"
+      }
+    ],
+    "difference": "Weil tests convolution squares, and Banks bounds the valuations of an algebraic determinant. The timeline proposes a determinant proof of W(1_S) ≥ 0 but leaves the test set, determinant identity and bootstrap step unspecified.",
+    "searches": [
+      "Weil explicit formula positivity determinant indicator function Weil functional Riemann hypothesis Connes Consani positivity Sonin",
+      "Stepanov determinant Alpoge 10/6/26 determinant Stepanov matrix Riemann Hypothesis",
+      "\"positivity\" \"determinant\" Weil functional prime numbers positivity Weil criterion determinant Landau Siegel 2026"
+    ],
+    "confidence": "low",
+    "why": "A comparison of the result needs the definition of W on indicators and the identity connecting that value to the determinant.",
+    "specialist": "Recover the intended test set S and determinant and check whether W acts on the indicator itself or on its autocorrelation."
+  },
+  {
+    "id": "T5",
+    "technique": "The entry adopts a centered first Riesz mean of Λ(n)/n and uses the Guinand–Weil explicit-formula sign. It also proposes a variance test to put the argument in a trace-formula form.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "André Weil, Sur les « formules explicites » de la théorie des nombres premiers, Communications du Séminaire Mathématique de l’Université de Lund, Tome Supplémentaire, 1952.",
+        "url": "https://denisevellachemla.eu/transc-Weil-1952.pdf",
+        "locator": "See equation (11) and its introductory sentence.",
+        "says": "The explicit formula for Hecke L-functions writes the sum of transformed test values at zeros in terms of pole, conductor and archimedean terms and a prime-power sum with a minus sign.",
+        "quote": "Si F(x) satisfait aux conditions (A), (B), la somme"
+      },
+      {
+        "citation": "Kiran S. Kedlaya, von Mangoldt’s formula, MIT 18.785 Analytic Number Theory lecture notes, 2007.",
+        "url": "https://kskedlaya.org/18.785/von-mangoldt.pdf",
+        "locator": "See Theorem 1 and the residue calculation in Section 2.",
+        "says": "The notes derive the explicit formula for the unsmoothed Chebyshev function by taking residues of the logarithmic derivative of ζ times xˢ/s.",
+        "quote": "The pole of ζ at s = 1 contributes x"
+      }
+    ],
+    "difference": "The timeline and Lean’s Gz use the weight (X/n − 1)₊. For this weight the shifted Perron integrand is −(ζ′/ζ)(1+s)X^(1+s)/(s(s+1)), and its double pole at s = 0 gives X log X − (1 + γ)X. The variance test is the additional proposed application, and the note leaves its test and averaging measure unspecified.",
+    "searches": [
+      "Guinand a summation formula in the theory of prime numbers 1948 Weil sur les formules explicites théorie des nombres premiers pdf",
+      "\"(x/n-1)\" \"von Mangoldt\" explicit formula zeta Euler constant",
+      "von Mangoldt integrated psi(t)/t squared explicit formula sum Lambda n/n Euler constant zeta",
+      "Riesz mean von Mangoldt weight (1 - n/x) divide n shifted Perron prime number theorem exact summatory"
+    ],
+    "confidence": "medium",
+    "why": "The kernel, sign and centering can be checked explicitly, while the variance step is described only as an idea.",
+    "specialist": "Identify the variance test and its averaging measure, then check which explicit-formula terms it is intended to control."
+  },
+  {
+    "id": "T6",
+    "technique": "The entry proposes a zero-free half-plane criterion from positivity on a test made from indicators at two scales, with relative weight of order X^η.",
+    "class": "U",
+    "nearest": [
+      {
+        "citation": "Pedro Freitas, A Li-Type Criterion for Zero-Free Half-Planes of Riemann’s Zeta Function, Journal of the London Mathematical Society 73, 2006.",
+        "url": "https://arxiv.org/pdf/math/0507368",
+        "locator": "See Theorem 1.",
+        "says": "Freitas characterizes zero-freeness for ζ in Re(s) > τ/2 by nonnegativity of all the generalized Li coefficients αₙ(τ).",
+        "quote": "if and only if αn(τ) is nonnegative for all positive integers n"
+      }
+    ],
+    "difference": "Freitas tests an entire sequence of generalized Li coefficients for ζ. The timeline instead specifies two cutoffs in one X-dependent test and a boundary at 1 − η, while leaving the normalization of W, the quantifier on X and the family of L-functions implicit.",
+    "searches": [
+      "Weil criterion positivity two characteristic functions zero-free region 1 eta explicit formula test function",
+      "Weil explicit formula restricted positivity zero free strip Bombieri Li criterion zero free regions restricted test functions",
+      "\"A Li-type criterion for zero-free half-planes\" Freitas journal"
+    ],
+    "confidence": "low",
+    "why": "The precise zero-free implication can be compared only after the definition of W and the quantifier on the two-cutoff test are supplied.",
+    "specialist": "Recover the exact test family and compute its Mellin transform with the intended normalization before comparing the criterion with generalized Li positivity."
+  },
+  {
+    "id": "T7",
+    "technique": "The entry proposes putting unitary Gan–Gross–Prasad periods into a determinant, using the multiplicity-zero-or-one branching law governed by interlacing of weights.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Hongyu He, On the Gan–Gross–Prasad Conjecture for U(p,q), Inventiones Mathematicae 209, 2017.",
+        "url": "https://arxiv.org/pdf/1508.02032",
+        "locator": "See the compact branching discussion in the introduction and Theorem 0.1.",
+        "says": "The compact branching law is governed by Cauchy interlacing, and the discrete-series branching law in Theorem 0.1 has one summand for each parameter satisfying the Gan–Gross–Prasad interlacing rule.",
+        "quote": "satisfy the GGP interlacing relation"
+      },
+      {
+        "citation": "Mario Kieburg, Products of Complex Rectangular and Hermitian Random Matrices, Advances in Pure and Applied Mathematics 11, 2020.",
+        "url": "https://www.openscience.fr/IMG/pdf/iste_apam20v11n1_3.pdf",
+        "locator": "See Theorem A.1 and Remark A.2.",
+        "says": "A determinant of step functions in a rank-one projection formula imposes eigenvalue interlacing.",
+        "quote": "the determinant is equivalent with the interlacing condition"
+      }
+    ],
+    "difference": "The binary value in He’s branching rule is the dimension of a local multiplicity space. Kieburg encodes interlacing of eigenvalues by a determinant. The timeline proposes a determinant for W using period entries and refers to up to m failures of interlacing without identifying the quantity being counted.",
+    "searches": [
+      "Gan Gross Prasad compact unitary branching interlacing weights multiplicity one archimedean Gan Gross Prasad PDF",
+      "interlacing determinant branching Schur functions indicator interlacing determinant Gelfand Tsetlin",
+      "\"determinant\" \"interlacing\" unitary branching indicator Borodin Ferrari phi x greater Gelfand-Tsetlin determinant"
+    ],
+    "confidence": "medium",
+    "why": "The interlacing law and determinantal encodings have clear precedents, while the period normalization and determinant for W remain unspecified.",
+    "specialist": "Determine whether each binary entry is a Hom-space dimension or a normalized period, and identify exactly what the allowance of m measures."
+  },
+  {
+    "id": "T8",
+    "technique": "The entry iterates unitary theta lifts whose parameter rule adds one Hecke-character block per lift. It uses the length of the chain as arithmetic multiplicity and chooses m on the scale √X.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Rui Chen and Jialiang Zou, Theta Correspondence and Arthur Packets, arXiv preprint, 2021.",
+        "url": "https://arxiv.org/pdf/2104.12354",
+        "locator": "See Section 5.1, the proof of Proposition 5.5 and equation (5.1).",
+        "says": "In the stated globalization, the target Arthur parameter is the source parameter twisted by a splitting-character ratio plus a character tensored with an irreducible SL₂ block.",
+        "quote": "We claim that ψ̇H is of the form ψ̇H = θ(ψ̇)"
+      },
+      {
+        "citation": "Wee Teck Gan, Yannan Qiu and Shuichiro Takeda, The Regularized Siegel–Weil Formula (The Second Term Identity) and the Rallis Inner Product Formula, Inventiones Mathematicae 198, 2014.",
+        "url": "https://arxiv.org/pdf/1207.4709",
+        "locator": "See Theorem 1.4.",
+        "says": "The theorem gives a local-global nonvanishing criterion for a single global theta lift under the stated range and lower-lift hypotheses.",
+        "quote": "Assume that Θn,j(π) = 0 for j < r"
+      }
+    ],
+    "difference": "The sources describe one lift at a time and make the parameter twists and nonvanishing conditions explicit. The timeline uses successive totally definite groups with an unbounded number of lifts, treating their contributions as arithmetic multiplicity and balancing the X/m and m errors at m ≍ √X.",
+    "searches": [
+      "Adams character lifting Arthur parameters theta correspondence unitary stable range adding character S_d theta tower Atobe Gan Ichino",
+      "iterated theta lifts unitary groups Arthur parameter iterated theta lifting definite unitary groups Gan Ichino",
+      "\"iterated theta lifts\" \"unitary\" Arthur parameters addition splitting character",
+      "unitary theta lifting composable iterated theta correspondence chains Arthur parameters additive blocks stable range unitary groups"
+    ],
+    "confidence": "medium",
+    "why": "The one-step block rule has a close precedent, and the searched sources address neither the prime-sum scale nor the arithmetic use of the chain length.",
+    "specialist": "Check that the splitting-character twists and global nonvanishing hypotheses remain compatible at every stage as m grows."
+  },
+  {
+    "id": "T9",
+    "technique": "The entry combines theta-lift norm and level calculations with CM period normalization, Weyl weight factors and Hermitian lattice masses. The resulting estimates are used in a divisibility comparison in which terms in the accumulated lift cost cancel.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Wee Teck Gan, Yannan Qiu and Shuichiro Takeda, The Regularized Siegel–Weil Formula (The Second Term Identity) and the Rallis Inner Product Formula, Inventiones Mathematicae 198, 2014.",
+        "url": "https://arxiv.org/pdf/1207.4709",
+        "locator": "See Theorem 1.3.",
+        "says": "Under the stated hypotheses, the Petersson inner product of two theta lifts is expressed by a standard L-value and normalized doubling zeta integrals.",
+        "quote": "where L(s, π) is the standard L-function of π"
+      },
+      {
+        "citation": "Benedict H. Gross, On the periods of abelian varieties, ICCM Notices 8, 2020.",
+        "url": "https://people.math.harvard.edu/~gross/preprints/cs.pdf",
+        "locator": "See Section 4, the period product and its logarithmic form.",
+        "says": "Gross derives the Chowla–Selberg product of periods of a normalized CM elliptic curve over the complex places of its class field and expresses its logarithmic mean using a Dirichlet L-derivative.",
+        "quote": "the Chowla-Selberg formula gives a formula for the product of its periods"
+      },
+      {
+        "citation": "Yasuhiro Terakado and Chia-Fu Yu, Mass formulas and the basic locus of unitary Shimura varieties, arXiv preprint, 2022.",
+        "url": "https://arxiv.org/pdf/2210.04054",
+        "locator": "See the abstract and Theorem 2.3.4.",
+        "says": "The theorem evaluates the mass of a unimodular lattice in a Hermitian space over a CM field in terms of L-values and local factors under the stated condition at 2.",
+        "quote": "we compute the mass associated to any unimodular lattice in a Hermitian space over an arbitrary CM field under a condition at 2"
+      }
+    ],
+    "difference": "The sources evaluate separate norm, period and mass quantities. In the project, divisor_inequality_assembly uses an identity for the sum of the weights to cancel terms involving the shift times the CM period logarithm at each lift, with a residual error, and then sums the bounds over the chain.",
+    "searches": [
+      "Rallis inner product formula unitary theta lifts Petersson norms Gan Qiu Takeda Siegel Weil",
+      "Chowla Selberg CM periods original Selberg Chowla Epstein zeta Weyl dimension formula Siegel mass unitary theta lift divisibility",
+      "Mass formulas and the basic locus of unitary Shimura varieties Gan Yu Hermitian mass formula Gan Hanke Yu theorem arxiv definite",
+      "Chowla Selberg Gross period average product gamma colony imaginary quadratic periods Gross 2020 ICCM section 4"
+    ],
+    "confidence": "medium",
+    "why": "The component formulas and the algebraic cancellation are identifiable, while their normalization on the same integral theta data requires a further comparison.",
+    "specialist": "Trace the Haar measures, lattice levels, Weyl factors and CM period normalization into the same one-lift identity before summing it over j."
+  },
+  {
+    "id": "T10",
+    "technique": "The entry concerns a lower valuation bound for period values after a chain of theta lifts. The comparison uses an ideal whose prime exponents sum the gains from the lifts after accounting for local losses.",
+    "class": "N",
+    "nearest": [
+      {
+        "citation": "Tobias Berger, Arithmetic properties of similitude theta lifts from orthogonal to symplectic groups, arXiv preprint, 2009.",
+        "url": "https://arxiv.org/pdf/0902.4619",
+        "locator": "See Section 5.2 and Corollary 14.",
+        "says": "For the stated choice of Schwartz function and integral input cohomology, a single orthogonal-to-symplectic theta lift gives a prime-integral Siegel modular form.",
+        "quote": "is a ℘-integral holomorphic Siegel modular form of weight 2 and trivial central character"
+      },
+      {
+        "citation": "Jim Brown and Krzysztof Klosin, Congruence primes for automorphic forms on unitary groups and applications to the arithmetic of Ikeda lifts, arXiv preprint, 2018 revision.",
+        "url": "https://arxiv.org/pdf/1606.01294",
+        "locator": "See Theorem 5.8.",
+        "says": "Under the stated hypotheses, a unitary Ikeda lift has a Fourier coefficient of valuation zero at the prime in question.",
+        "quote": "at least one of the Fourier coefficients of Iφ has ℓ-adic valuation equal to zero"
+      }
+    ],
+    "difference": "Berger treats integrality of a single lift, and Brown and Klosin study coefficients of a single Ikeda lift for use in congruences. The timeline’s quantitative object is the ideal of values of a period pairing after m lifts, with contributions at selected primes and losses from passing to the integral lattices used in the comparison.",
+    "searches": [
+      "theta lifting p integral divisibility lattice iterated theta lifts valuation CM periods product divisibility",
+      "automorphic theta lift integral Fourier coefficients divisibility theta iteration period-normalized definite unitary",
+      "m-fold theta lifts multiplicative divisibility integral theta operators definite unitary lattice congruences",
+      "composition invariant factors divisibility maps DVR theta integrality unitary CM periods prime valuations iterated lifts",
+      "sufficient divisibility iterated theta lifts Alpoge coefficient valuation multiplicity m exact theorem"
+    ],
+    "confidence": "medium",
+    "why": "The closest pre-announcement results found concern single-lift integrality or congruences, while the timeline’s bound depends on the prime selection and on losses across the entire chain.",
+    "specialist": "Trace the prime-by-prime bound through SecondLevelValuationAtRestricted and verify which contributions survive the projections and lattice changes before entering LinkDIV_at."
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "id": "9.1",
+    "technique": "The unit applies an Arakelov slope comparison and termwise error estimates to bound a smoothed prime-power discrepancy summed over a chain of theta lifts. The resulting error bracket has one term with no explicit factor of the chain length m, a rank-dependent correction, and two budget terms charged across the chain.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Frank Calegari, Vesselin Dimitrov, and Yunqing Tang, Arithmetic holonomy bounds and effective Diophantine approximation, arXiv:2510.04156, 2025.",
+        "url": "https://arxiv.org/html/2510.04156v1",
+        "locator": "Section 2.3, Lemma 2.9 and equation (2.8).",
+        "says": "The authors bound an Arakelov degree by summing local heights of graded evaluation maps and combine the resulting terms into a parameter-dependent estimate.",
+        "quote": "We provide an upper bound on each local evaluation height"
+      },
+      {
+        "citation": "Jean-Benoît Bost, Algebraic leaves of algebraic foliations over number fields, Publications Mathématiques de l’IHÉS 93, 2001.",
+        "url": "https://numdam.org/item/10.1007/s10240-001-8191-3.pdf",
+        "locator": "Section 4.1.4, Proposition 4.6, equation (4.14).",
+        "says": "Bost bounds the normalized degree of a Hermitian bundle under a filtered injection by a rank-weighted sum of maximal slopes and map heights.",
+        "quote": "a variant of the slope inequality (4.11) for injective maps which involves filtered vector bundles"
+      }
+    ],
+    "difference": "Calegari, Dimitrov, and Tang estimate the heights of graded evaluations of power series for Diophantine approximation. Here the slope comparison controls a weighted prime-power sum over theta lifts, with the bracket nT·aE·(1 + m²/k) + m·(B + N) and explicit hypotheses on the two budgets. The summand nT·aE is charged once in this estimate, which is what lets the next step divide that term by m.",
+    "searches": [
+      "prime power discrepancy theta correspondence unitary group slope rank dependent error chain of lifts before:2026-11-20 -Alpoge -Alpöge",
+      "Arakelov divisibility estimate smoothed prime sums Hermitian lattices slope multiplicity Stepanov before:2026-11-20 -Alpoge -Alpöge",
+      "slope method prime counting sum over primes Arakelov fixed error rank prime number theorem Calegari Dimitrov Tang Bost before:2026-11-20",
+      "Bost 2001 algebraic leaves of algebraic foliations over number fields slope inequality evaluation maps pdf proposition"
+    ],
+    "confidence": "medium",
+    "why": "The slope method has a documented precedent, and the sources examined apply it to different objects and yield different error terms.",
+    "specialist": "Trace the term nT·aE through the divisibility and counting bounds into `ErrText` and check which estimates keep it free of an additional factor of m."
+  },
+  {
+    "id": "9.2",
+    "technique": "The unit defines a uniform error allowance B0 = f·m·b·x^ε with b = exp(x^ε), so the allowance itself grows linearly with the chain length m when the other parameters are held fixed.",
+    "class": "G",
+    "nearest": [],
+    "difference": "The formula assigns a scale to the budget. The downstream aggregation lemma `data_EComp5` takes a bound on each actual lift error by a multiple of B0 as a premise.",
+    "searches": [
+      "\"size budget\" \"theta lifts\" chain error multiplicity Arakelov before:2026-11-20",
+      "\"theta lift\" \"error budget\" chain slope auxiliary lattice before:2026-11-20"
+    ],
+    "confidence": "high",
+    "why": "`B0` unfolds directly to `sizeBudget`, whose defining formula contains the factor m.",
+    "specialist": "Check the estimate supplied to `data_EComp5` for each lift, where the linear dependence on the full chain length must be justified."
+  },
+  {
+    "id": "9.3",
+    "technique": "The unit divides an aggregate inequality by its positive multiplicity and density factor, then estimates each normalized error term. The two opposing contributions have leading scales x/m and m, so the assumed square-root window for m gives a square-root bound up to powers of x^ε.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "S. A. Stepanov, On the number of points of a hyperelliptic curve over a finite prime field, Mathematics of the USSR-Izvestiya 3, 1969.",
+        "url": "https://www.mathnet.ru/links/f1c0c8bd0655b01a2c7d9cdcfb735204/im2197_eng.pdf",
+        "locator": "Section 3, inequalities (24) and (25), p. 1113.",
+        "says": "Stepanov divides an auxiliary polynomial degree bound by a root multiplicity proportional to m, obtains a bound with terms on the scales p/m and m, and takes m of order √p for fixed curve degree.",
+        "quote": "Since the number of roots of a polynomial does not exceed its degree"
+      },
+      {
+        "citation": "Enrico Bombieri, Counting points on curves over finite fields, Séminaire Bourbaki, exposé 430, Springer-Verlag, 1974.",
+        "url": "https://www.numdam.org/article/SB_1972-1973__15__234_0.pdf",
+        "locator": "Section II, proof of Theorem 1, equation (7) and the parameter choice immediately following it.",
+        "says": "Bombieri divides a pole-degree bound by the vanishing multiplicity p^μ and sets p^μ = √q for square q to obtain a square-root error for the point count.",
+        "quote": "hence f vanishes at every fixed point of φ, except at xₒ."
+      }
+    ],
+    "difference": "The finite-field arguments divide a degree bound by a vanishing multiplicity, while the Lean lemma divides a prime-sum inequality by nT·m·b·((nT2/n)/2), with m counting theta lifts in its application. The Lean lemma assumes the window for m and uses the rank bounds, the density lower bound, and 26 ≤ x^(3ε/8) to obtain the explicit exponent 1/2 + (C + 3)ε.",
+    "searches": [
+      "Stepanov method x/m m square root derivative multiplicity p / m + m finite fields original Bombieri 1971 pdf",
+      "Stepanov On the number of points of a hyperelliptic curve over a finite prime field 1969 site:mathnet.ru",
+      "Bombieri Counting points on curves over finite fields Seminaire Bourbaki 1974 430 1973 site:numdam.org",
+      "analytic number theory x/m + m square root parameter balancing error Stepanov finite field point counts"
+    ],
+    "confidence": "high",
+    "why": "Stepanov’s original proof gives a direct precedent for dividing by multiplicity and balancing reciprocal and linear terms, and the Lean statement makes its different input and size hypotheses explicit.",
+    "specialist": "Check that the surrounding construction supplies both ends of the assumed window for m and the bound nT2/n ≥ x^(−ε) at the same scales."
+  },
+  {
+    "id": "9.4",
+    "technique": "The unit substitutes GmA − SigA into the scalar size bound and rearranges the resulting inequality to bound the kept character sum.",
+    "class": "G",
+    "nearest": [],
+    "difference": "The substitution transfers the exponent from 9.3 directly to GmA and puts the sum of absolute values for the omitted characters on the upper-bound side with coefficient one.",
+    "searches": [
+      "\"prime sums\" \"discarded characters\" triangle inequality Dirichlet character sums exceptional characters before:2026-11-20",
+      "abelian character sum orthogonality kept omitted characters triangle inequality prime powers explicit formula Dirichlet character sums Montgomery Vaughan before:2026-11-20"
+    ],
+    "confidence": "high",
+    "why": "The final lines of `ch_core` pass the previously established hypotheses to `proposition_size_bound` and rearrange its conclusion.",
+    "specialist": "Check that `one_char` and `core` give the required inequality with the same `SigA` and with the correction 4·x^(1/2 + ε)."
+  }
+]

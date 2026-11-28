@@ -1,0 +1,136 @@
+[
+  {
+    "id": "6.1",
+    "technique": "The predicate TieLocal identifies scalar inputs to the slope argument with invariants of the lattices assigned to each group element and word.",
+    "class": "G",
+    "nearest": [],
+    "difference": "TieLocal assigns the slope of the dual of RR to muCC and the slope of each word lattice Nu to muN. Its remaining equalities identify the other inputs with fields or sums from the same datum.",
+    "searches": [
+      "\"TieLocal\" \"muCC\" \"muN\" hermitian lattice dual slope indexing",
+      "hermitian vector bundle dual slope lattice Arakelov degree determinant Bost Chen dual lattice slope"
+    ],
+    "confidence": "high",
+    "why": "The Lean definition consists of identifications indexed by group elements, words, and lifts.",
+    "specialist": "Check that muCC uses the integral dual with its dual metric and that the word weights use rank over the number field."
+  },
+  {
+    "id": "6.2",
+    "technique": "This is the Arakelov slope of a Euclidean lattice and its expression through restriction of scalars from a totally imaginary number field.",
+    "class": "K",
+    "nearest": [
+      {
+        "citation": "Jean-Benoît Bost and Klaus Künnemann, Hermitian vector bundles and extension groups on arithmetic schemes. I. Geometry of numbers, Advances in Mathematics, 2010.",
+        "url": "https://webusers.imj-prg.fr/~vincent.maillot/Arakelov/0036/BostKuennemann-07-01-11.pdf",
+        "locator": "See Sections 3.1 and 3.2, especially equation (3.14).",
+        "says": "The authors give the Euclidean degree as minus log covolume and show that restriction of scalars with the metric summed over all embeddings subtracts log |ΔK| divided by 2[K:ℚ] from the normalized slope.",
+        "quote": "the arithmetic degree of π∗E is given by"
+      },
+      {
+        "citation": "James S. Milne, Algebraic Number Theory, version 3.08, published by the author, 2020.",
+        "url": "https://www.jmilne.org/math/CourseNotes/ANT.pdf",
+        "locator": "See Proposition 4.26 and its proof.",
+        "says": "The usual Minkowski embedding gives an ideal 𝔞 covolume 2 to the power −r₂ times its ideal norm times the square root of the absolute discriminant.",
+        "quote": "volume of a fundamental parallelopiped"
+      }
+    ],
+    "difference": "In the totally imaginary setting used here, summing over both embeddings in each complex pair multiplies squared Euclidean lengths by 2 relative to Lean's realization. After that metric conversion, muDef is twice the standard normalized Arakelov slope, and equation (3.14) gives the correction −log 2 + log |d_K|/[K:ℚ].",
+    "searches": [
+      "Bost Chen slopes Euclidean lattices normalized Arakelov degree discriminant covolume complex factor 2 hermitian vector bundles number field slope",
+      "number field Minkowski embedding covolume 2^-r2 square root discriminant Neukirch Milne algebraic number theory lattice pdf",
+      "Bost Kunnemann arithmetic vector bundles direct image number fields discriminant Arakelov degree pushforward formula hermitian metric covolume"
+    ],
+    "confidence": "high",
+    "why": "The published direct-image identity yields the displayed constants after the change of metric and the factor-of-two convention.",
+    "specialist": "Check that the applications use totally imaginary fields and count each conjugate pair once in the real Euclidean realization."
+  },
+  {
+    "id": "6.3",
+    "technique": "The unit applies the archimedean operator-norm part of the Arakelov height of a linear map to an integral map from each word lattice into a common dual lattice.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Jean-Benoît Bost, Algebraic leaves of algebraic foliations over number fields, Publications Mathématiques de l’IHÉS, 2001.",
+        "url": "https://www.numdam.org/item/PMIHES_2001__93__161_0.pdf",
+        "locator": "See Section 4.1.4, page 199, equations (4.10) and (4.11).",
+        "says": "Bost defines the height of a nonzero map between Hermitian vector bundles by summing logarithms of its local operator norms and uses that height in a slope inequality.",
+        "quote": "we define the height of ϕ with respect to Ē and F̄"
+      },
+      {
+        "citation": "Jean-Benoît Bost and Huayi Chen, Concerning the semistability of tensor products in Arakelov geometry, Journal de Mathématiques Pures et Appliquées, 2013.",
+        "url": "https://webusers.imj-prg.fr/~huayi.chen/Recherche/bost_chen.pdf",
+        "locator": "See Section 2.6, page 461, and Proposition 2.10.",
+        "says": "The authors state the local-degree-weighted operator-norm formula for the height and give slope inequalities for injective, surjective, and nonzero maps.",
+        "quote": "where ‖fK,v‖ denotes the operator norm"
+      }
+    ],
+    "difference": "For a totally imaginary field, htMap is twice the archimedean part of the usual normalized height because it uses squared operator norms. The finite-place terms of the usual height are nonpositive for a lattice-preserving map, and WordFacts takes a separate upper bound h as a hypothesis for each nonzero word map.",
+    "searches": [
+      "Bost Chen tensor product hermitian vector bundles height linear map operator norms archimedean height integral morphism height slopes arxiv",
+      "Bost Algebraic leaves of algebraic foliations over number fields 4.1.4 height morphism archimedean operator norm numdam"
+    ],
+    "confidence": "high",
+    "why": "The source formulas and the Lean definition make the height convention explicit, and WordFacts specifies the lattice inclusion and the role of h.",
+    "specialist": "Check that the source and target frames give the intended Hermitian norms on Nu and the integral dual of RR."
+  },
+  {
+    "id": "6.4",
+    "technique": "The unit factors a word-indexed pairing through a chain of equivariant kernels on spaces carrying unitary-group actions, with coordinate and metric identifications at each stage.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Chenyan Wu, Irreducibility of theta lifting for unitary groups, Journal of Number Theory, 2013.",
+        "url": "https://arxiv.org/pdf/1409.0770",
+        "locator": "See Theorem 5.1, Remark 5.2, and equation (5.1).",
+        "says": "Wu composes two twisted global theta lifts through a unitary group and proves an involution identity at first occurrence.",
+        "quote": "the theta lifts in opposite directions use additive characters inverse to each other."
+      },
+      {
+        "citation": "Rui Chen and Jialiang Zou, Arthur’s multiplicity formula for even orthogonal and unitary groups, Journal of the European Mathematical Society, 2025.",
+        "url": "https://ems.press/content/serial-article-files/51452",
+        "locator": "See Section 5.1 and Corollary 5.2.",
+        "says": "In the generic case a single stable-range theta lift uses a target Arthur parameter obtained by twisting the source parameter and adjoining a character tensored with an irreducible representation of Arthur’s SL₂.",
+        "quote": "be a generic elliptic A-parameter for G."
+      }
+    ],
+    "difference": "Wu composes a lift and a return lift, while Chen and Zou use one stable-range step with a quasi-split unitary target in the unitary case. The Lean theorem conditionally realizes a prescribed word pairing via a chain of arbitrary length m, with rank k + j(t + 1), a terminal rank-one extension, and exact coordinate and metric ties.",
+    "searches": [
+      "unitary theta correspondence Atobe Gan going up tower repeated theta lifts unitary groups stable range chain see-saw composition theta kernel Ichino",
+      "global theta lifting unitary groups iterated theta lifts unitary group chain regular algebraic Adams parameter Ichino Yamana persistence rank unitary theta lift",
+      "Chen Zou Arthur multiplicity formula unitary groups theta lift tau character stable range global parameter arxiv theta lift append summand",
+      "\"iterated theta lifts\" successive lifts \"unitary groups\" definite theta kernel chain period factorization"
+    ],
+    "confidence": "medium",
+    "why": "The literature establishes the constituent theta-lift techniques, and the opened Lean definitions specify the chain, but the identification of every kernel with a classical global theta lift remains untraced.",
+    "specialist": "Trace the ThHyp and AnaStep premises to see which Weil representations and global theta operators realize the successive kernels."
+  },
+  {
+    "id": "6.5",
+    "technique": "The unit composes kernels in coordinates and forms the last matrix by contracting two kernels over intermediate classes with reciprocal stabilizer weights.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Chenyan Wu, Irreducibility of theta lifting for unitary groups, Journal of Number Theory, 2013.",
+        "url": "https://arxiv.org/pdf/1409.0770",
+        "locator": "See Section 5, equations (5.1) through (5.3).",
+        "says": "Wu writes a two-step lift as a double integral with a product of theta kernels sharing the intermediate unitary-group variable.",
+        "quote": "consists of functions of the form"
+      },
+      {
+        "citation": "Kimball Martin and Satoshi Wakatsuki, Mass formulas and Eisenstein congruences in higher rank, Journal of Number Theory, 2024.",
+        "url": "https://arxiv.org/pdf/1907.03417",
+        "locator": "See Sections 2 and 2.1, especially equation (2.2) and the inner-product formula after (2.4).",
+        "says": "The authors express the mass and normalized inner product of definite algebraic modular forms as finite class sums weighted by reciprocal stabilizer orders.",
+        "quote": "this mass corresponds to the classical mass of Λ."
+      }
+    ],
+    "difference": "Lean combines the two-kernel composition with reciprocal stabilizer weights and an additional sum over a finite set attached to each intermediate class. For m ≥ 2, this coupling occupies the last of m − 1 matrices, and a supplied map into a dual space follows the matrix product.",
+    "searches": [
+      "global theta correspondence unitary groups iterated theta lift composition kernel Wu 1409.0770",
+      "\"Mass formulas and Eisenstein congruences in higher rank\" arxiv Martin unitary inner product stabilizer orders",
+      "\"unitary groups\" \"theta\" \"weighted\" finite class sum kernel composition stabilizer automorphic forms"
+    ],
+    "confidence": "medium",
+    "why": "The sources give explicit precedents for the two-kernel contraction and the class weights, while the additional finite sum uses the project's specific intermediate data.",
+    "specialist": "Check how the allowed intermediate subsets and their local coefficients in cp1K and cp2K correspond to the intermediate automorphic measure."
+  }
+]

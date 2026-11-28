@@ -1,0 +1,130 @@
+[
+  {
+    "id": "8.1",
+    "technique": "This step instantiates a common-target slope inequality with the lattices and linear maps indexed by the words of the datum.",
+    "class": "G",
+    "nearest": [],
+    "difference": "The specialization takes the word lattices as the sources, the dual lattice of RR as the target, and the maps Bk as the morphisms. The general slope estimate is the mathematical content of 8.2 and 8.3.",
+    "searches": [
+      "Bost Chen Arakelov slopes sum morphisms hermitian vector bundles quotient slope log number Siegel lemma frame",
+      "\"slope\" Hermitian lattices rank-weighted mean common target frame operator Arakelov lattice map nearly tight"
+    ],
+    "confidence": "high",
+    "why": "The proof of frame_at_of assembles the hypotheses and then invokes joint_a_ramified_holds with explicit substitutions.",
+    "specialist": "Check the identification of the rank weights and of the mean and minimum slopes of the dual target in the application."
+  },
+  {
+    "id": "8.2",
+    "technique": "This is a lower bound on the mean Arakelov slope of a common target, using a rank-weighted mean of source slopes shifted by morphism heights. Its archimedean hypotheses are fusion-frame-type Hilbert–Schmidt bounds on larger factors, together with a bound on the number of columns removed by isometric compression.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Jean-Benoît Bost, Algebraic leaves of algebraic foliations over number fields, Publications Mathématiques de l’IHÉS 93, 2001.",
+        "url": "https://numdam.org/item/10.1007/s10240-001-8191-3.pdf",
+        "locator": "Proposition 4.5, equation (4.11), p. 199.",
+        "says": "For an injective map of generic fibers, Bost bounds the mean slope of the source by the maximal slope of the target plus the height of the map.",
+        "quote": "In the proof below, the following inequalities will play the role of Siegel’s Lemma."
+      },
+      {
+        "citation": "Bernhard G. Bodmann, Random fusion frames are nearly equiangular and tight, Linear Algebra and its Applications 439, 2013.",
+        "url": "https://arxiv.org/pdf/1303.5816",
+        "locator": "Abstract and Theorems 3.6 and 4.5.",
+        "says": "Random real subspaces give nearly tight fusion frames, and in the equal-dimensional case the pairwise projection overlaps concentrate near the square of the subspace dimension divided by the ambient dimension.",
+        "quote": "nearly tight, nearly equiangular fusion frames."
+      }
+    ],
+    "difference": "Bost compares slopes along a single injective map, and Bodmann controls overlaps of random orthogonal projections. The unit uses deterministic weighted Gram bounds with variable block sizes, additional rows, and a controlled loss of columns to lower-bound the mean slope of one target over a totally complex number field. Its correction depends explicitly on the excess of maximal source slope over the shifted mean, the target minimum slope, and the frame errors.",
+    "searches": [
+      "Bost Chen Arakelov slopes sum morphisms hermitian vector bundles quotient slope log number Siegel lemma frame",
+      "Arakelov slopes frame potential slope inequality hermitian lattices many morphisms determinant restricted invertibility",
+      "\"mean slope\" \"frame potential\" Arakelov Hermitian vector bundle slope",
+      "pairwise Hilbert Schmidt overlap Grassmannian simplex bound trace rank product Calderbank random subspace tight fusion frame"
+    ],
+    "confidence": "medium",
+    "why": "The literature gives clear precedents for the slope and overlap techniques, while the deterministic mean-slope inequality with these compression hypotheses did not turn up in the search.",
+    "specialist": "Compare JointARam with adelic slope inequalities for a family of morphisms, paying particular attention to whether control at one infinite place has previously been used to bound the target mean slope."
+  },
+  {
+    "id": "8.3",
+    "technique": "The proof expands the frame potential as a sum of squared Hilbert–Schmidt norms of Gram blocks and bounds the change under isometric compression. It then uses rank bounds for sums of images of Harder–Narasimhan filtration steps and integrates the resulting bound on the target slope distribution.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Pedro G. Massey, Optimal reconstruction systems for erasures and for the q-potential, Linear Algebra and its Applications 431, 2009.",
+        "url": "https://arxiv.org/pdf/0805.2917",
+        "locator": "Definition 3.2 and the proof of Theorem 3.3.",
+        "says": "The scalar trace of the q-potential sums the squared Hilbert–Schmidt norms of the Gram blocks and equals the trace of the square of the frame operator.",
+        "quote": "the partial trace of the square of the Grammian operator"
+      },
+      {
+        "citation": "Jean-Benoît Bost and Huayi Chen, Concerning the semistability of tensor products in Arakelov geometry, Journal de Mathématiques Pures et Appliquées 99, 2013.",
+        "url": "https://webusers.imj-prg.fr/~huayi.chen/Recherche/bost_chen.pdf",
+        "locator": "Proposition 2.10(2), p. 461.",
+        "says": "For a surjective map of generic fibers, the minimum slope of the target is at least the minimum slope of the source minus the height of the map.",
+        "quote": "If f is surjective, then μ̂min(E) ≤ μ̂min(F) + h(f)."
+      }
+    ],
+    "difference": "The unit turns blockwise estimates into a near-minimal frame potential and an aggregate diagonal Gram bound after compression. It applies the one-map slope inequality to the image of each source filtration step, uses the frame estimates to bound the codimension of their sum, and integrates this bound to control the target mean slope. The sharper Lean theorem proves the estimate before the nonnegative logarithm of the number of maps is subtracted.",
+    "searches": [
+      "Benedetto Fickus finite normalized tight frames frame potential trace Welch bound fusion frames Casazza Fickus frame potential",
+      "Massey optimal reconstruction protocols erasures operator-valued frames q potential 2008 tight projection trace inequality arxiv",
+      "Arakelov Harder Narasimhan polygon layer cake slope filtration codimension arithmetic vector bundles Bost hermitian lattices slope inequality",
+      "\"Harder–Narasimhan\" \"fusion frame\" slope Hermitian lattice"
+    ],
+    "confidence": "high",
+    "why": "Both ingredients have explicit published statements, and the Lean proof shows where the frame bound and the one-map slope inequality enter the filtration argument.",
+    "specialist": "Check whether a prior Arakelov argument uses near-minimal frame potential to bound the codimensions of all target filtration steps before integrating them."
+  },
+  {
+    "id": "8.4",
+    "technique": "This step bounds total column count by multiplying a lower bound on the number of words by a uniform lower bound on the number of columns per word.",
+    "class": "G",
+    "nearest": [],
+    "difference": "The lower bounds multiply to Dstar·x^CH = Dstar/σ because C0 and Γ² cancel. DesignExists supplies an existence premise for families with these bounds and the other design conditions.",
+    "searches": [
+      "fusion frame redundancy total subspace dimensions number of subspaces rank over ambient dimension Casazza Kutyniok",
+      "automorphic family code words auxiliary primes Hamming distance Gilbert Varshamov counting unitary theta lift Bessel period"
+    ],
+    "confidence": "high",
+    "why": "The proof of word_count_bound_holds sums the given per-word lower bound and applies the given cardinality lower bound.",
+    "specialist": "Trace the construction behind DesignExists to locate the argument that supplies the word cardinality and per-word dimensions simultaneously."
+  },
+  {
+    "id": "8.5",
+    "technique": "This is a quantitative Gram-matrix estimate for normalized automorphic Bessel-period operators, combined with a matrix realization at one infinite place. The Bessel-period identity supplies the target row block up to isometric column compression and possible complex conjugation, and the Hilbert–Schmidt bounds transfer in orthonormal coordinates.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Philippe Michel, Dinakar Ramakrishnan, and Liyang Yang, Bessel Periods on U(2,1) × U(1,1), Relative Trace Formula and Non-Vanishing of Central L-values, arXiv:2309.08490v1, 2023.",
+        "url": "https://www.its.caltech.edu/~dinakar/papers/arxiv-BesselPeriods.pdf",
+        "locator": "Theorem 1.2 and §1.4, equation (1.21) and the discussion following it.",
+        "says": "A relative trace formula gives an asymptotic for a scalar second moment of Bessel periods on U(2,1) × U(1,1), with the identity orbital integral supplying the main term.",
+        "quote": "The identity orbital integral is calculated in Section 7. Its contribution provides the main term in Theorem 1.2."
+      },
+      {
+        "citation": "Yifeng Liu, Relative trace formulae toward Bessel and Fourier-Jacobi periods of unitary groups, arXiv:1012.4538, 2010.",
+        "url": "https://arxiv.org/pdf/1012.4538",
+        "locator": "§4.2, the definition of the spectral distribution and equation (4.3).",
+        "says": "Liu expresses a Bessel-period spectral distribution through products of periods summed over orthonormal bases and introduces the corresponding automorphic kernel.",
+        "quote": "We describe the relative trace formula on the unitary pair relating the Bessel periods."
+      },
+      {
+        "citation": "Bernhard G. Bodmann, Random fusion frames are nearly equiangular and tight, Linear Algebra and its Applications 439, 2013.",
+        "url": "https://arxiv.org/pdf/1303.5816",
+        "locator": "Abstract and Theorem 4.5.",
+        "says": "For independent random subspaces of equal dimension, Bodmann bounds every pairwise projection overlap around the rank-squared over ambient-dimension scale with high probability.",
+        "quote": "Hilbert-Schmidt inner product of the corresponding orthogonal projections."
+      }
+    ],
+    "difference": "The unit requires simultaneous Hilbert–Schmidt bounds for individual operator blocks in a deterministic word family, with off-diagonal scale duS(u)·duS(u′)/Dstar and diagonal blocks close to the identity. It gives exp(−x^(ε/8)) control on the off-diagonal relative error, the square root of the diagonal error parameter, and the relative row-count error. It also identifies the target row block with a lattice morphism using BesselId, adding an arithmetic realization to the period estimates.",
+    "searches": [
+      "automorphic Bessel periods matrix coefficients orthogonality theta lift quantitative relative trace formula diagonal off diagonal Ichino Ikeda",
+      "Bessel Poincaré series Gram matrix relative trace formula unitary groups Bessel periods asymptotic orthogonality Dickson Pitale Saha Schmidt Nelson",
+      "Poincare series Bessel periods relative trace formula products two periods complex conjugate unitary groups Liu kernel spectral",
+      "fusion frame block coherence normalized cross Gram Hilbert Schmidt Welch bound Grassmannian simplex bound Frobenius Fickus"
+    ],
+    "confidence": "medium",
+    "why": "The sources establish the period-kernel and block-overlap precedents, while the search did not locate the stated uniform block bounds and their realization on the lattice maps.",
+    "specialist": "Inspect the off-diagonal and diagonal estimates feeding LinkS to see whether a published relative trace or counting estimate gives the required uniformity as the number and dimensions of the word spaces grow."
+  }
+]

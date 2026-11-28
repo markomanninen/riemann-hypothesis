@@ -1,0 +1,298 @@
+[
+  {
+    "id": "T11",
+    "technique": "The unit uses the finite layers of a cyclotomic ℤ₂-extension of a biquadratic CM field as auxiliary fields. Their cyclic Galois factor provides the setting for a Frobenius-orbit counting argument motivated by finite-field pigeonholing.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Lawrence C. Washington, Introduction to Cyclotomic Fields, Springer, 1982.",
+        "url": "https://page-one.springer.com/pdf/preview/10.1007/978-1-4684-0133-2_13",
+        "locator": "Chapter 13 introduction and Proposition 13.1, pp. 263–264.",
+        "says": "Washington motivates Iwasawa towers by extending the constants of curves over finite fields and describes the unique finite layer of each degree pⁿ in a ℤₚ-extension.",
+        "quote": "The subject receives its motivation from the theory of curves over finite fields"
+      }
+    ],
+    "difference": "The finite-field analogy and the cyclotomic tower are classical. The unit uses the cyclic factor to organize Frobenius orbits over the compositum with two imaginary quadratic fields, with the quadratic primes chosen for the Dirichlet-character argument.",
+    "searches": [
+      "Iwasawa On Z_l extensions of algebraic number fields 1973 pdf cyclotomic tower Iwasawa 1959",
+      "finite field extension pigeonhole Iwasawa tower cyclotomic extension splitting arithmetic pigeonhole number fields",
+      "Iwasawa on Z_l extensions 1973 246 326 Iwasawa notes full text cyclotomic Z2 extension Washington introduction cyclotomic fields chapter 13 Springer pdf"
+    ],
+    "confidence": "medium",
+    "why": "The host construction is explicit in Lean, while the timeline gives the finite-field pigeonhole argument only as motivation.",
+    "specialist": "Check which orbit-counting statement first uses the cyclic factor in `hostE` and identify the finite-field counting argument it is meant to parallel."
+  },
+  {
+    "id": "T12",
+    "technique": "The unit uses seesaw unfolding to identify a period of an iterated definite-unitary theta lift with a Bessel period. It also asserts that the resulting period is independent of the Hecke characters used in the chain.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Wee Teck Gan and Atsushi Ichino, The Gross–Prasad conjecture and local theta correspondence, Inventiones Mathematicae, 2016.",
+        "url": "https://arxiv.org/pdf/1409.6824",
+        "locator": "Introduction, p. 3, and Section 5.",
+        "says": "The authors use unitary seesaw identities to relate the local Bessel and Fourier–Jacobi multiplicity problems through theta correspondence.",
+        "quote": "The Bessel and Fourier–Jacobi cases of the GP conjecture are related by the local theta correspondence."
+      },
+      {
+        "citation": "Masaaki Furusawa and Kazuki Morimoto, Refined global Gross–Prasad conjecture on special Bessel periods and Böcherer’s conjecture, Journal of the European Mathematical Society, 2021.",
+        "url": "https://arxiv.org/pdf/1611.05567",
+        "locator": "Section 2.4, p. 17 of the preprint.",
+        "says": "The authors give a global pull-back formula that expresses a Whittaker period on the metaplectic theta lift using an orthogonal Bessel period.",
+        "quote": "Now we recall the pull-back formula for the ψλ-Whittaker period."
+      }
+    ],
+    "difference": "The precedents give a local unitary seesaw and a global period transfer for a single lift on a different dual pair. The unit iterates the transfer along a global definite-unitary chain and asserts independence from its varying Hecke characters. The Lean interface `BesselId` allows a nonzero scalar and isometries indexed by the input word, so the normalization matters for the independence claim.",
+    "searches": [
+      "Kudla seesaw dual reductive pairs Rallis Bessel periods theta lifts unitary groups Furusawa Morimoto refined Gan Gross Prasad Bessel period seesaw",
+      "Gan Ichino Gross Prasad conjecture local theta correspondence seesaw identity section 6.1 arxiv Gan Ichino unitary",
+      "Furusawa Morimoto special Bessel periods theta lifting unitary unitary groups refined global Gan Gross Prasad arxiv special Bessel period"
+    ],
+    "confidence": "medium",
+    "why": "The sources establish the relevant period-transfer techniques, and the exact meaning of character independence depends on the normalization in the iterated identity.",
+    "specialist": "Trace the period through each rung and check whether the scalar, the isometries, or the test data vary with the Hecke characters."
+  },
+  {
+    "id": "T13",
+    "technique": "This is Bost’s Arakelov slope inequality for a linear map of Hermitian bundles. The map height limits the slope loss when passing from source to target.",
+    "class": "K",
+    "nearest": [
+      {
+        "citation": "Jean-Benoît Bost, Algebraic leaves of algebraic foliations over number fields, Publications Mathématiques de l’IHÉS, 2001.",
+        "url": "https://numdam.org/item/10.1007/s10240-001-8191-3.pdf",
+        "locator": "Section 4.1.4, Proposition 4.5 and inequality (4.11), pp. 199–200.",
+        "says": "For a generically injective map of Hermitian bundles, Bost bounds the source slope above by the target’s maximal slope plus the height of the map.",
+        "quote": "With the notation above, if moreover φ is injective, then"
+      }
+    ],
+    "difference": "The named single-map estimate is classical. The project writes it in Euclidean lattice language, with a logarithmic norm bound, and later uses a separate many-map estimate with an averaged slope and a correction for the number of maps.",
+    "searches": [
+      "Bost slope inequalities hermitian vector bundles slopes height slope inequality injective morphism Bost Chen pdf",
+      "Jean-Benoit Bost algebraic leaves algebraic foliations number fields Publ IHES 93 2001 slope inequalities Numdam"
+    ],
+    "confidence": "high",
+    "why": "Bost states the slope-versus-height estimate explicitly, and the Lean statement `Formalism.HN.SlopeIneq` identifies its single-map counterpart.",
+    "specialist": "Check the factors from squared operator norms and the number-field degree when comparing Bost’s height with the project’s lattice normalization."
+  },
+  {
+    "id": "T14",
+    "technique": "The unit combines the norm calculation for one theta lift with hook-product estimates for the archimedean weights. It then separates an arithmetic main term and divides the remaining error by the multiplicity accumulated along the chain.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Wee Teck Gan, Yannan Qiu, and Shuichiro Takeda, The Regularized Siegel-Weil Formula (The Second Term Identity) and the Rallis Inner Product Formula, arXiv, 2012.",
+        "url": "https://arxiv.org/pdf/1207.4709",
+        "locator": "Theorem 1.3, pp. 6–7 of the preprint.",
+        "says": "The theorem expresses the Petersson inner product of global theta lifts in the second-term range through a special value of a normalized doubling zeta integral.",
+        "quote": "As we noted, the second term identity leads to the following Rallis inner product formula"
+      },
+      {
+        "citation": "J. S. Frame, G. de B. Robinson, and R. M. Thrall, The Hook Graphs of the Symmetric Group, Canadian Journal of Mathematics, 1954.",
+        "url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/B1533D44F5B1DBF6B6903C79AFFDCFEE/S0008414X00023749a.pdf/div-class-title-the-hook-graphs-of-the-symmetric-group-div.pdf",
+        "locator": "Sections 1–2, pp. 316–319.",
+        "says": "The authors define the Young-diagram hook product and give the symmetric-group dimension formula in terms of it.",
+        "quote": "divided by the hook product"
+      }
+    ],
+    "difference": "The project compares log-factorials with log hook products at each lift and uses the resulting inequality in its slope and prime-sum estimates. After main-term cancellation, the final division leaves leading scales x/m and m. The announced earlier 2/3 barrier has no matching derivation in the sources examined or in the final size estimate.",
+    "searches": [
+      "unitary theta lifting slope per lift exponent two thirds lattice divisibility covolume Arakelov",
+      "unitary theta lift two thirds 2/3 exponent Riemann arithmetic slope iterated lift divisibility Arakelov",
+      "theta lift main term division slope Rallis norm unitary Arakelov prime sum 2/3",
+      "Frame Robinson Thrall hook length formula 1954 the hook graphs of symmetric group original Canadian Journal mathematics pdf"
+    ],
+    "confidence": "medium",
+    "why": "The local hook estimate, main-term cancellation, and final division are identifiable, while the intermediate optimization yielding 2/3 remains unresolved.",
+    "specialist": "Reconstruct the error before main-term cancellation and determine which two terms would have to balance to give 2/3."
+  },
+  {
+    "id": "T15",
+    "technique": "The unit combines integral structures from several Hecke-character components to obtain a common divisibility constraint. It uses this common structure to take a further average of the contributions.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Haruzo Hida and Jacques Tilouine, Anti-cyclotomic Katz p-adic L-functions and congruence modules, Annales Scientifiques de l’École Normale Supérieure, 1993.",
+        "url": "https://www.numdam.org/article/ASENS_1993_4_26_2_189_0.pdf",
+        "locator": "Abstract and Section 0, p. 189.",
+        "says": "The authors relate the characteristic power series of the congruence module of a CM theta-series family to a specialization of Katz’s p-adic L-function by divisibility.",
+        "quote": "family of theta series coming from a CM-field"
+      },
+      {
+        "citation": "Ming-Lun Hsieh and Bharathwaj Palvannan, On the congruence ideal associated to p-adic families of Yoshida lifts, arXiv, 2025.",
+        "url": "https://arxiv.org/html/2505.09975v1",
+        "locator": "Section 1.2, construction of the congruence module and congruence ideal.",
+        "says": "The authors construct a congruence module for families of Yoshida lifts and realize it as a Hecke-algebra quotient by a congruence ideal.",
+        "quote": "the congruence module is in fact a ring."
+      }
+    ],
+    "difference": "The precedents measure congruences in p-adic Hecke families. The unit describes common integral data for the word-indexed maps of a definite-unitary lift chain, with a shared target lattice whose slope enters an average. The correspondence between that target lattice and the timeline’s greatest common divisor is tentative.",
+    "searches": [
+      "theta series integral structures across Hecke characters congruence ideals Hida congruence modules lattices periods Fitting ideals",
+      "Hida Tilouine Anti-cyclotomic Katz p-adic L-functions and congruence modules numdam 1993 integral CM Hecke characters",
+      "Hida congruence ideal Yoshida lifts Iwasawa congruence ideal Hsieh Nam arxiv congruence"
+    ],
+    "confidence": "medium",
+    "why": "Congruence modules are clear precedents for organizing integral data across characters, while the timeline leaves the precise gluing operation implicit.",
+    "specialist": "Identify the lattice or ideal meant by the greatest common divisor and trace how its local defining conditions enter the additional average."
+  },
+  {
+    "id": "T16",
+    "technique": "The unit uses a relative trace formula and Cauchy–Schwarz to reduce a period estimate to the squared norm of a projected Poincaré series. It controls the columns of a lattice map through diagonal and cross-Gram estimates.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Simon Marshall, Subconvexity for L-functions on U(n) × U(n+1) in the depth aspect, arXiv, 2023.",
+        "url": "https://arxiv.org/pdf/2309.16667",
+        "locator": "Section 3, Lemma 3.1 and its proof, p. 14 of the preprint.",
+        "says": "Marshall applies Cauchy–Schwarz to an automorphic kernel to bound a unitary period, interpreting the inequality as retaining one spectral term of a relative trace formula.",
+        "quote": "the result of dropping all but one term from the spectral side of the relative trace formula"
+      },
+      {
+        "citation": "Yifeng Liu, Relative trace formulae toward Bessel and Fourier–Jacobi periods of unitary groups, arXiv, 2010.",
+        "url": "https://arxiv.org/pdf/1012.4538",
+        "locator": "Abstract and Sections 4.1–4.2.",
+        "says": "Liu sets up relative trace distributions for unitary Bessel periods and decomposes them into geometric and spectral contributions.",
+        "quote": "We propose a relative trace formula approach and state the corresponding fundamental lemma"
+      }
+    ],
+    "difference": "Marshall bounds a unitary period for a depth-aspect subconvexity problem. The unit routes the norm estimate into a simultaneous bound on the Hilbert–Schmidt overlaps of integral columns and uses that bound in a lattice slope estimate. The note also mentions an earlier sixfold-cover argument whose relation to the final projection remains unclear.",
+    "searches": [
+      "Jacquet relative trace formula Poincare series Cauchy Schwarz relative periods projected Poincare series period bound",
+      "Simon Marshall Subconvexity for L-functions on U(n) x U(n+1) relative trace formula arxiv",
+      "Simon Marshall bounds for periods of automorphic forms on U n × U n+1 Poincare relative trace formula matrix coefficient arxiv"
+    ],
+    "confidence": "medium",
+    "why": "The period-to-norm reduction has a close precedent, and the quantitative Gram conditions in the project have a different target.",
+    "specialist": "Identify the projected Poincaré series in the final argument and trace how its norm controls each cross-Gram matrix in `LinkS_at`."
+  },
+  {
+    "id": "T17",
+    "technique": "The unit bounds the sizes of the locally trivial classes in H¹(𝒪_E[1/ℓ], ℚ_ℓ/ℤ_ℓ(−e)) that remain after twisting. The Lean condition `VVle` asks for finite lengths and bounds their sum over twists and primes with weights log ℓ.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Manfred Kolster and Abbas Movahhedi, Galois co-descent for étale wild kernels and capitulation, Annales de l’Institut Fourier, 2000.",
+        "url": "https://www.numdam.org/item/10.5802/aif.1746.pdf",
+        "locator": "Section 1, p. 41, and the opening of Section 2.",
+        "says": "The authors define higher étale wild kernels by localization in degree-two Tate-twisted cohomology and use Poitou–Tate duality to study them.",
+        "quote": "part of the Poitou-Tate duality sequence yields the exact sequence"
+      },
+      {
+        "citation": "Christophe Soulé, A Bound for the Torsion in the K-Theory of Algebraic Integers, Documenta Mathematica, Extra Volume Kato, 2003.",
+        "url": "https://www.maths.tcd.ie/EMIS/journals/DMJDMV/vol-kato/soule.dm.pdf",
+        "locator": "Introduction, pp. 761–762, and Section 5.1.",
+        "says": "Soulé gives bounds for K-group torsion away from small primes and deduces bounds for étale cohomology with positive Tate twists.",
+        "quote": "The bound on the K-theory of A implies a similar upper bound for the étale cohomology"
+      },
+      {
+        "citation": "Masato Kurihara, Some remarks on conjectures about cyclotomic fields and K-groups of Z, Compositio Mathematica, 1992.",
+        "url": "https://www.numdam.org/item/CM_1992__81_2_223_0.pdf",
+        "locator": "Section 3, Conjecture 3.5.",
+        "says": "Kurihara states Kummer–Vandiver as the vanishing of the even eigenspaces of the p-primary cyclotomic class group.",
+        "quote": "For an even integer i, A[i] = 0."
+      }
+    ],
+    "difference": "The degree-one localization kernel in the unit is the Poitou–Tate dual object to a higher étale wild kernel, with the usual local conventions. The project needs a simultaneous bound over primes and twists on varying CM host fields at the size required by the lift argument. Kummer–Vandiver supplies a vanishing comparison for specific class-group eigenspaces.",
+    "searches": [
+      "Vandiver conjecture étale cohomology Q/Z negative Tate twists cyclotomic K groups Kurihara Soulé Sharifi eigenspaces",
+      "étale wild kernel H2 Zp(i) higher wild kernels log order number fields Poitou Tate Tate twists K theory Kolster PDF",
+      "higher wild kernels bounds order number field discriminant etale K groups Soule quantitative size wild kernel Tate twists",
+      "upper bounds for K groups of rings of integers number field wildly ramified kernels ETNC cyclotomic CM Coates Sinnott"
+    ],
+    "confidence": "medium",
+    "why": "The localization kernel and aggregate bound are explicit in Lean, and the closest papers use different families, prime ranges, or quantitative bounds.",
+    "specialist": "Check the bound for the plus eigenspaces at the exceptional odd primes, the separate contribution at 2, and how both compare with the bound required by `HypV`."
+  },
+  {
+    "id": "T18",
+    "technique": "The unit assembles arithmetic covolume estimates, bounds on indices of lattices generated by theta series, and congruences between theta lifts and cusp forms.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Huayi Chen and Atsushi Moriwaki, Positivity in Arakelov Geometry over Adelic Curves. Hilbert-Samuel Formula and Equidistribution Theorem, Springer, 2024.",
+        "url": "https://webusers.imj-prg.fr/~huayi.chen/Recherche/Hilbert_Samuel_Adelic_Curves.pdf",
+        "locator": "Section 5.5, Theorem 5.5.1.",
+        "says": "The arithmetic Hilbert–Samuel formula identifies the asymptotic arithmetic volume of an ample line bundle with its arithmetic self-intersection under semipositive metrics.",
+        "quote": "Let 𝑋 be an integral projective 𝐾-scheme"
+      },
+      {
+        "citation": "Neil Dummigan and Dan Fretwell, Automorphic forms for some even unimodular lattices, Abhandlungen aus dem Mathematischen Seminar der Universität Hamburg, 2021.",
+        "url": "https://eprints.whiterose.ac.uk/id/eprint/170076/1/Lattices5.pdf",
+        "locator": "Section 10, p. 30 of the accepted manuscript.",
+        "says": "The authors construct a theta-series map from classes of Hermitian lattices to Hermitian modular forms and express it by a unitary theta integral.",
+        "quote": "There is another way to construct the theta series"
+      },
+      {
+        "citation": "Ming-Lun Hsieh and Bharathwaj Palvannan, On the congruence ideal associated to p-adic families of Yoshida lifts, arXiv, 2025.",
+        "url": "https://arxiv.org/html/2505.09975v1",
+        "locator": "Abstract and Theorem 2.",
+        "says": "The authors show that the congruence ideal of a Yoshida-lift family divides the characteristic ideal of an associated nonprimitive Rankin–Selberg Selmer group.",
+        "quote": "is divisible by the congruence ideal of the Yoshida lift"
+      }
+    ],
+    "difference": "The sources treat asymptotic arithmetic volumes, theta maps for specified lattice genera, and congruences for p-adic Yoshida families. The project combines finite-scale covolume bounds with a scaled theta-lattice index and congruence bounds for its definite-unitary chain over varying host fields.",
+    "searches": [
+      "congruences theta lift unitary groups algebraic modular forms mass formula lattice theta series index Böcherer Dummigan",
+      "theta series span index integral lattice modular forms Böcherer Schulze-Pillot theta series basis lattice congruences theta lift",
+      "Gillet Soulé arithmetic Hilbert Samuel theorem arithmetic ampleness covolume lattices of sections pdf original 1992",
+      "Hida congruence ideal Yoshida lifts Iwasawa congruence ideal Hsieh Nam arxiv congruence"
+    ],
+    "confidence": "medium",
+    "why": "The Lean covolume and theta-lattice statements and their methodological precedents are identifiable, while the compressed timeline wording leaves the precise congruence calculation implicit.",
+    "specialist": "Match the lattices in `CovolumeBoundOfX` and `thetaIndexBound_hypotheses_at_instance` to the congruence calculation and check the comparison at ramified primes."
+  },
+  {
+    "id": "T19",
+    "technique": "The unit uses a Behrend digit-sphere construction to select many indices in the cyclic part of the auxiliary Galois group. The set avoids three-point affine relations with bounded coefficients, which limits how often short Frobenius orbit segments meet a translate.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Felix A. Behrend, On Sets of Integers Which Contain No Three Terms in Arithmetical Progression, Proceedings of the National Academy of Sciences, 1946.",
+        "url": "https://www.pnas.org/doi/pdf/10.1073/pnas.32.12.331",
+        "locator": "pp. 331–332, definition and count of the sets Sₖ(n,d).",
+        "says": "Behrend encodes equal-norm digit vectors as integers and counts a large resulting set with no three-term arithmetic progression.",
+        "quote": "This set is progression-free"
+      },
+      {
+        "citation": "Lawrence C. Washington, Introduction to Cyclotomic Fields, Springer, 1982.",
+        "url": "https://page-one.springer.com/pdf/preview/10.1007/978-1-4684-0133-2_13",
+        "locator": "Section 13.1, Proposition 13.1, p. 264.",
+        "says": "Washington characterizes the finite layers of a ℤₚ-extension and shows that there is a unique layer of degree pⁿ for every n.",
+        "quote": "these Kn, plus K∞, are the only fields between K and K∞."
+      }
+    ],
+    "difference": "Behrend avoids three-term progressions, while `HostThickExists` enlarges the digit base to avoid all relations of the specified bounded-coefficient form and obtains a lower bound depending on that coefficient limit. The orbit lemma applies the selected indices inside a cyclic Galois layer, giving a concrete interpretation of the note’s link between Behrend and the tower choice.",
+    "searches": [
+      "Behrend on sets of integers which contain no three terms in arithmetical progression 1946 PNAS Behrend original",
+      "Iwasawa cyclotomic tower Behrend progression free sets number field tower Hecke characters Behrend tower Frobenius",
+      "Behrend bounded coefficient invariant three variable equations sphere Ruzsa genus 1 proof pdf"
+    ],
+    "confidence": "high",
+    "why": "The Lean proof explicitly uses Behrend’s sphere and digit map, and the orbit statements specify the new use of those sets.",
+    "specialist": "Check where the bound on the coefficient range determines the chosen layer or index set, and verify the separate estimates for long and short Frobenius orbits."
+  },
+  {
+    "id": "T20",
+    "technique": "The claimed conclusion is Dirichlet GRH. It asserts that every zero in the open critical strip of every Dirichlet L-function has real part 1/2.",
+    "class": "N",
+    "nearest": [
+      {
+        "citation": "David J. Platt, Numerical Computations Concerning the GRH, Mathematics of Computation, 2016.",
+        "url": "https://research-information.bris.ac.uk/en/publications/numerical-computations-concerning-the-grh/",
+        "locator": "Abstract, corresponding to p. 3009 of the journal article.",
+        "says": "Platt rigorously verifies Dirichlet GRH for primitive characters of modulus at most 400,000 up to explicit height bounds that depend on modulus and parity.",
+        "quote": "associated with primitive characters of modulus q ≤ 400000"
+      }
+    ],
+    "difference": "Platt proves a bounded verification in modulus and height. The unit asserts the unrestricted zero statement for all moduli and heights, and the Lean entry points include the passage from primitive characters to arbitrary Dirichlet characters.",
+    "searches": [
+      "Dirichlet generalized Riemann hypothesis Montgomery Vaughan multiplicative number theory all zeros critical line Clay Bombieri Riemann hypothesis PDF GRH Dirichlet",
+      "Chandee Soundararajan partial GRH Dirichlet L functions Platt numerical computations generalized Riemann hypothesis Rigorous verification zeros arxiv",
+      "Dirichlet generalized Riemann hypothesis theorem partial Platt all Dirichlet L functions conductor 400000 height critical line",
+      "Dirichlet L generalized Riemann hypothesis primitive characters conjecture critical line all t before 2026 paper Dirichlet hypothesis prime sums unsolved Platt"
+    ],
+    "confidence": "high",
+    "why": "The mathematical scope of Dirichlet GRH is explicit, and the pre-announcement sources located provide conjectural formulations or results in restricted ranges.",
+    "specialist": "Compare the primitive-character theorem in `Main.lean` with the standard Dirichlet GRH formulation and check that the Euler factors for imprimitive characters add no zeros in the open critical strip."
+  }
+]

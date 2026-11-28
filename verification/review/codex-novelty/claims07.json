@@ -1,0 +1,124 @@
+[
+  {
+    "id": "7.1",
+    "technique": "The estimate combines a Stirling-type lower bound for log factorials, a rowwise lower bound for the Young-diagram hook product, and telescoping bounds on gaps between interlacing weights. It also controls the sum of the shifted weights after subtracting k times the common shift and, at a top place, the top weight.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Herbert Robbins, A Remark on Stirling's Formula, The American Mathematical Monthly 62, 1955, pp. 26–29.",
+        "url": "https://heuklyd.github.io/papers/pdf/Robbins-1955.pdf",
+        "locator": "Page 26, equations (1)–(4).",
+        "says": "Robbins gives explicit bounds for the Stirling remainder for each positive integer factorial and derives the logarithmic expansion by comparing a sum with an integral.",
+        "quote": "Since ∫ log x dx = x log x − x we can write"
+      },
+      {
+        "citation": "J. S. Frame, G. de B. Robinson, and R. M. Thrall, The Hook Graphs of the Symmetric Group, Canadian Journal of Mathematics 6, 1954, pp. 316–324.",
+        "url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/B1533D44F5B1DBF6B6903C79AFFDCFEE/S0008414X00023749a.pdf/div-class-title-the-hook-graphs-of-the-symmetric-group-div.pdf",
+        "locator": "Sections 1–2, equations (1.1) and (2.1).",
+        "says": "The authors give the cellwise hook-length identity and an exact expression for the hook product within each row.",
+        "quote": "P_i = (h_{i1})! / ∏_{s>i} (h_{i1}−h_{s1})."
+      },
+      {
+        "citation": "Hongyu He, On the Gan–Gross–Prasad Conjecture for U(p, q), Inventiones Mathematicae 209, 2017, pp. 837–884.",
+        "url": "https://www.math.lsu.edu/~hongyu/pub/ggp_hhe_final.pdf",
+        "locator": "Section 1, the displayed strict interlacing immediately before Definition 1.",
+        "says": "He states the strict interlacing inequalities for the Harish-Chandra parameters in compact unitary branching.",
+        "quote": "χ₁ > η₁ > χ₂ > η₂ > ⋯ > χₚ₋₁ > ηₚ₋₁ > χₚ."
+      }
+    ],
+    "difference": "The unit combines these inputs for two specific arrays of rows whose shifts depend on the lift index. The row pairing changes at top places so that a log a − a survives there, and the theorem gives a simultaneous weight-sum estimate with explicit allowances for the extra blocks and the top-place correction.",
+    "searches": [
+      "Herbert Robbins A remark on Stirling's formula 1955 n factorial bound PDF",
+      "theta lift Young diagram hook length Stirling factorial height interlacing weights theta correspondence archimedean norm factorial arithmetic",
+      "arithmetic theta correspondence archimedean kernel norm Stirling factorial interlacing unitary groups Harish Chandra rational weights hook length",
+      "\"interlacing\" \"hook\" \"Stirling\" Young diagrams Gelfand Tsetlin log dimension estimates factorials"
+    ],
+    "confidence": "medium",
+    "why": "The published sources identify the three ingredients directly, while the searches yielded no earlier statement of the paired estimates with these shifts and error terms.",
+    "specialist": "Compare the two row pairings and the weight-sum remainder with quantitative archimedean estimates for chains of unitary theta lifts."
+  },
+  {
+    "id": "7.2",
+    "technique": "This is the elementary Young-diagram hook-product lower bound obtained by retaining the arm and the cell itself in each hook. The retained lengths in a row of length r multiply to r factorial.",
+    "class": "K",
+    "nearest": [
+      {
+        "citation": "J. S. Frame, G. de B. Robinson, and R. M. Thrall, The Hook Graphs of the Symmetric Group, Canadian Journal of Mathematics 6, 1954, pp. 316–324.",
+        "url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/B1533D44F5B1DBF6B6903C79AFFDCFEE/S0008414X00023749a.pdf/div-class-title-the-hook-graphs-of-the-symmetric-group-div.pdf",
+        "locator": "Section 1, equation (1.1) and the definition of the hook product, p. 316.",
+        "says": "The authors express each hook length as one plus the arm and leg lengths and define the hook product as the product of these cellwise factors.",
+        "quote": "hᵢⱼ = 1 + (λᵢ − j) + (λ′ⱼ − i)."
+      },
+      {
+        "citation": "Shalosh B. Ekhad and Doron Zeilberger, Experimenting with Standard Young Tableaux, Mathematics in Computer Science 18, article 10, 2024.",
+        "url": "https://link.springer.com/article/10.1007/s11786-024-00585-y",
+        "locator": "Sections 2 and 5, the hook-length enumeration and the lattice-walk description.",
+        "says": "The authors identify standard tableaux with lattice walks restricted to ordered coordinates and give the multinomial count of the unrestricted walks, which supplies the equivalent upper bound on the tableau count.",
+        "quote": "and they are all left symbolic."
+      }
+    ],
+    "difference": "The Lean statement discards the nonnegative leg in the published cellwise identity, multiplies over the same diagram, and takes logarithms.",
+    "searches": [
+      "Young diagrams hook product lower bound product row factorials hook lengths inequality row factorials hook length formula Fomin Fulton",
+      "Frame Robinson Thrall The hook graphs of the symmetric group 1954 pdf hook graphs row factors",
+      "\"standard Young tableaux\" \"multinomial coefficient\" upper bound row lengths hook length dimension"
+    ],
+    "confidence": "high",
+    "why": "The claimed bound follows directly from the 1954 cellwise identity on exactly the same class of diagrams.",
+    "specialist": "Check that the Lean hook product uses the ordinary arm-plus-leg-plus-one convention."
+  },
+  {
+    "id": "7.3",
+    "technique": "The numerical estimate uses strict Cauchy interlacing of two adjacent-rank rows, the pattern obtained by expressing compact unitary branching in Harish-Chandra coordinates.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Hongyu He, On the Gan–Gross–Prasad Conjecture for U(p, q), Inventiones Mathematicae 209, 2017, pp. 837–884.",
+        "url": "https://www.math.lsu.edu/~hongyu/pub/ggp_hhe_final.pdf",
+        "locator": "Section 1, the discussion and displayed inequalities immediately before Definition 1.",
+        "says": "He explains that weak interlacing of the highest weights for compact unitary restriction becomes strict interlacing in Harish-Chandra coordinates.",
+        "quote": "This interlacing relation, expressed in terms of Harish-Chandra parameters, becomes a strict interlacing relation:"
+      }
+    ],
+    "difference": "The inequality pattern agrees term for term. Lean assumes it for the code-dependent rational row uW, whose interior entries include a half-unit shift and an optional further offset, and for the first k − 1 entries of sigPar. He uses the inequalities to characterize compact unitary restriction, while Lean uses them to compare the shifted rows in a factorial estimate.",
+    "searches": [
+      "strict interlacing shifted highest weights U(n) branching Gelfand Tsetlin l_i m_i Molev signature unitary theta lift interlacing Gan Ichino",
+      "real unitary Gan Gross Prasad interlacing Harish Chandra parameters strict Beuzart Plessis He discrete series theta correspondence interlacing signature Gan Ichino",
+      "Molev Gelfand Tsetlin bases classical Lie algebras theorem interlacing shifted labels l strict betweenness arxiv"
+    ],
+    "confidence": "high",
+    "why": "He displays the identical chain of inequalities, and the Lean definitions show precisely which perturbed entries are supplied to it.",
+    "specialist": "Check whether the code-dependent perturbation of uW has an earlier interpretation in terms of the shifted parameters of the actual unitary representations."
+  },
+  {
+    "id": "7.4",
+    "technique": "The top-place contribution combines the leading logarithmic Stirling term with a weight times a quadratic CM period term in first Kronecker limit formula normalization.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Yasutaka Ihara, On the Euler-Kronecker Constants of Global Fields and Primes with Small Norms, Algebraic Geometry and Number Theory, Birkhäuser, 2006, pp. 407–451.",
+        "url": "https://www.math.uci.edu/~mfried/conflist-rims/yihara10-14-07.pdf",
+        "locator": "Introduction, equations (0.1)–(0.2), and section 2.2, equations (2.2.1)–(2.2.2).",
+        "says": "Ihara gives the first Kronecker limit formula averaged over the ideal classes of an imaginary quadratic field, expressing its Euler–Kronecker constant using the discriminant, Euler's constant, and Dedekind eta values.",
+        "quote": "Then the Kronecker limit formula, averaged over all the ideal classes of K, gives"
+      },
+      {
+        "citation": "Herbert Robbins, A Remark on Stirling's Formula, The American Mathematical Monthly 62, 1955, pp. 26–29.",
+        "url": "https://heuklyd.github.io/papers/pdf/Robbins-1955.pdf",
+        "locator": "Page 26, equation (4).",
+        "says": "The logarithmic factorial expansion contains n log n − n together with a half-logarithmic correction and a remainder.",
+        "quote": "S_n = (n + 1/2) log n − n + 1 − ∑_{p=1}^{n−1} ε_p"
+      }
+    ],
+    "difference": "Writing K for the imaginary quadratic field and γ_K for its Euler–Kronecker constant gives logOm = 2γ + log(π/v) − γ_K by quadratic zeta factorization. The unit uses half the root discriminant of the host field for v and combines this normalized constant with the Stirling term as a log a − a − a logOm for each lift at each top place.",
+    "searches": [
+      "Chowla Selberg formula Euler Mascheroni log pi L prime over L 1 quadratic Dirichlet Faltings height imaginary quadratic Colmez derivative discriminant Kronecker",
+      "Kronecker limit formula Epstein zeta imaginary quadratic class group Euler gamma L'(1) Dedekind eta height discriminant D Duke Imamoğlu",
+      "Chowla Selberg gamma factorial arithmetic theta lift \"Chowla\" automorphic unitary height norms symmetric powers CM period factorial",
+      "\"Chowla\" \"factorials\" CM elliptic height symmetric power Petersson Faltings archimedean theta lift unitary norm"
+    ],
+    "confidence": "medium",
+    "why": "The quadratic period comparison follows by explicit normalization, while the searches yielded no earlier use of this combined term in the same divisibility inequality.",
+    "specialist": "Check the factor of two and the root-discriminant normalization by tracing the metric contribution from the quadratic CM field to the host field."
+  }
+]

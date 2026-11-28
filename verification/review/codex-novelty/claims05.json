@@ -1,0 +1,123 @@
+[
+  {
+    "id": "5.1",
+    "technique": "The theorem transfers a conditional pointwise bound to a weighted prime-power sum indexed by the image of the record in H. It reindexes the main term and uses size inequalities to put the pointwise error into the bracket used in Step 9.",
+    "class": "G",
+    "nearest": [],
+    "difference": "The pointwise bound comes from 5.4. The work specific to this unit is the identification of ASK and MAIN and the comparison of the explicit error with x^(Cε) times the stated bracket.",
+    "searches": [
+      "\"ch_top\" \"each_unit_bound_statement\" slope weighted prime sum arithmetic Riemann hypothesis Alpoge before:2026-11-20",
+      "\"weighted prime\" \"Arakelov\" \"slope\" prime powers theta lifts before:2026-11-20"
+    ],
+    "confidence": "high",
+    "why": "The proof explicitly invokes the pointwise bound and then uses reindexing and real inequalities to obtain the stated conclusion.",
+    "specialist": "Check the reindexing in ch_top_main_eq and the two comparisons that carry ErrX5at into the Step 9 bracket."
+  },
+  {
+    "id": "5.2",
+    "technique": "DIV packages a pointwise upper bound for a dual Arakelov slope plus a logarithmic height bound for a composite map. The right-hand side combines contributions from the individual lifts with a correction involving the auxiliary level prime.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Frank Calegari, Vesselin Dimitrov, and Yunqing Tang, The linear independence of 1, ζ(2), and L(2, χ₋₃), arXiv:2408.15403, 2024.",
+        "url": "https://arxiv.org/pdf/2408.15403",
+        "locator": "Section 7.3, equation (7.3.16), p. 103.",
+        "says": "The authors bound the arithmetic degree of their auxiliary lattice by the sum of the archimedean and finite-place heights of evaluation maps.",
+        "quote": "Now Bost’s slopes inequality (7.2.14) reads, in our situation:"
+      },
+      {
+        "citation": "Fabrizio Andreatta, Eyal Z. Goren, Benjamin Howard, and Keerthi Madapusi Pera, Faltings heights of abelian varieties with complex multiplication, Annals of Mathematics 187, 2018.",
+        "url": "https://annals.math.princeton.edu/wp-content/uploads/annals-v187-n2-p03-p.pdf",
+        "locator": "Introduction, equations (6.0.1)–(6.0.2), and Proposition 9.3.1.",
+        "says": "The authors relate the averaged Colmez height to a quadratic L-function’s logarithmic derivative and give the functional equation and gamma-factor normalization.",
+        "quote": "When d = 1, so E is a quadratic imaginary ﬁeld, Colmez’s conjecture is a form of the famous Chowla-Selberg formula."
+      }
+    ],
+    "difference": "Calegari, Dimitrov, and Tang bound a degree using heights of evaluation maps on power series. DIV bounds a common dual slope plus a word-dependent height and subtracts the offset Fo. Its main term sums m copies of the CM-normalized expression a log a − a − a logOm at each designated place and deducts a log T once at that place.",
+    "searches": [
+      "Calegari Dimitrov Tang slope method Hermitian lattices arithmetic holonomicity slope equation Hadamard logarithmic capacity pdf",
+      "unitary Bessel period p-adic divisibility Arakelov slope height quadratic CM before:2026-11-20",
+      "Arakelov lattice \"composition\" \"height\" Bost Chen operator norms height morphisms subadditivity",
+      "Chowla Selberg quadratic Dirichlet L logarithmic derivative at 1 Euler constant pi period Kronecker limit formula"
+    ],
+    "confidence": "medium",
+    "why": "The source code identifies the slope, height and CM normalization, and the literature gives precedents for those ingredients, while the pointwise combination and level term are specific to the construction examined.",
+    "specialist": "Trace the contribution −a log T and the coefficient m through divisor_inequality_assembly to the level-dependent height estimate."
+  },
+  {
+    "id": "5.3",
+    "technique": "This is a quantitative Arakelov mean-slope estimate for a family of lattice maps whose matrices are controlled by nearly tight frame bounds. It gives a lower bound on the target’s mean slope from the rank-weighted mean of source slopes minus map heights.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Jean-Benoît Bost, Algebraic leaves of algebraic foliations over number fields, Publications Mathématiques de l’IHÉS 93, 2001.",
+        "url": "https://numdam.org/item/10.1007/s10240-001-8191-3.pdf",
+        "locator": "Proposition 4.5, equation (4.11), p. 199.",
+        "says": "For an injective map of generic fibers, the source mean slope is bounded above by the target maximal slope plus the height of the map.",
+        "quote": "deĝₙ E ⩽ rk E[μ̂max(F) + h(E, F, ϕ)]."
+      },
+      {
+        "citation": "Pedro G. Massey, Mariano A. Ruiz, and Demetrio Stojanoff, The structure of minimizers of the frame potential on fusion frames, arXiv:0811.3159, 2008.",
+        "url": "https://arxiv.org/pdf/0811.3159",
+        "locator": "Definition 2.2.2 and Proposition 2.2.3.",
+        "says": "For a trace-one fusion frame operator, its frame potential minus 1/n equals its squared Frobenius distance from I/n.",
+        "quote": "the FF-potential can be seen as a measure of the (Frobenius) distance of their frame operators to a fixed multiple of the identity"
+      }
+    ],
+    "difference": "Bost’s inequality uses one injective map and the maximal target slope. The frame estimate supplies rank control for the combined images of the maps in the Harder–Narasimhan filtration, leading to a bound for the mean target slope with a log-cardinality loss and a correction depending on the slope excess, frame defects and HH. The accompanying HHBound imposes the additional scale cap x^cHH b.",
+    "searches": [
+      "Bost intrinsic algebraic leaves algebraic foliations slope inequality IHES 2001 4.11 numdam",
+      "Arakelov slope lower bound many maps nearly tight frame Hermitian lattice Harder Narasimhan average logarithmic rank slope inequality",
+      "Harder Narasimhan frame theorem slope Hermitian lattices \"frame\" Arakelov Hilbert Schmidt",
+      "Benedetto Fickus finite normalized tight frames frame potential theorem Welch trace square arxiv"
+    ],
+    "confidence": "medium",
+    "why": "The sources establish the single-map slope and frame-potential ingredients, and the Lean statements identify their combination, but the search found no antecedent for the quantitative mean-slope correction.",
+    "specialist": "Check how the frame rank estimate at each Harder–Narasimhan cutoff yields the log-cardinality and logarithmic excess terms after integration."
+  },
+  {
+    "id": "5.4",
+    "technique": "The proof takes a positive rank-weighted mean of pointwise inequalities and eliminates the common intermediate slope from the two bounds on that mean. It then applies the assumed loss estimate to transfer the resulting bound from Ga to ASK.",
+    "class": "G",
+    "nearest": [],
+    "difference": "The unit assumes the two slope estimates and the comparison between ASK and Ga. Its contribution is the cancellation of Fo and then muCC, followed by substitution of the explicit bounds for the remaining errors.",
+    "searches": [
+      "\"ch_top\" \"each_unit_bound_statement\" slope weighted prime sum arithmetic Riemann hypothesis Alpoge before:2026-11-20",
+      "Calegari Dimitrov Tang arithmetic holonomicity slopes denominator lower bound upper Arakelov unbounded denominators Theorem height"
+    ],
+    "confidence": "high",
+    "why": "The statements and proofs of s_lower5, Ga_bound5 and each_unit_bound_statement expose the averaging, cancellation and loss comparison directly.",
+    "specialist": "Check that the same muCC enters both estimates with the same normalization and that the bound on the weighted mean of Lo5 is absorbed with the stated coefficient."
+  },
+  {
+    "id": "5.5",
+    "technique": "Count5 controls an auxiliary level prime through a normalized logarithmic ratio involving unitary representation dimensions, Hermitian lattice masses and level indices. The accompanying identity expands the logarithms and cancels the shared π/v normalization to recover the weighted-prime main term.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Aidan Roy, Bounds for codes and designs in complex subspaces, Journal of Algebraic Combinatorics 31, 2010.",
+        "url": "https://www2.math.ethz.ch/EMIS/journals/JACO/Volume31_1/621h01251t23v451.fulltext.pdf",
+        "locator": "Section 3, equation (1), p. 6.",
+        "says": "The Weyl dimension formula for U(n) expresses the dimension as the product of the shifted highest-weight differences divided by the product of j − i over i < j.",
+        "quote": "The dimension of the irreducible representation Vλ indexed by λ is given by Weyl’s character formula"
+      },
+      {
+        "citation": "Sungmun Cho, Group schemes and local densities of ramified hermitian lattices in residue characteristic 2 Part I, Algebra & Number Theory 10, 2016.",
+        "url": "https://arxiv.org/pdf/1210.7894",
+        "locator": "Section 1.1, p. 2.",
+        "says": "The mass formula computes the mass of the genus of a Hermitian lattice using a product of local densities.",
+        "quote": "The mass formula expresses the mass of (L, H) as a product of local factors, called the local densities of (L, H)."
+      }
+    ],
+    "difference": "The unit uses Weyl dimension factors and Hermitian lattice masses in a ratio that fixes the scale of a word-dependent auxiliary prime. It requires a lower bound built from the place averages of log(wv/π) and the two fixed level primes, an upper bound of order mL and variation of order log k across words. The π/v cancellation in key_identity5 follows algebraically after that lower bound is substituted.",
+    "searches": [
+      "Vandermonde Weyl dimension formula product differences uniform estimate branching unitary high rank representation dimension logarithm Fulton Harris",
+      "unitary dimension ratios Vandermonde torus level auxiliary prime mass comparison log variation weights",
+      "finite volume adelic unitary lattice counting Siegel mass formula hermitian Gan Yu unitary group local densities covolume",
+      "Wee Teck Gan Jiu Kang Yu Group schemes and local densities hermitian forms Theorem 10.20 mass pdf"
+    ],
+    "confidence": "medium",
+    "why": "The declarations identify the dimension and mass factors and the cancellation exactly, while the literature comparison supports those inputs and leaves the specific three-part prime estimate unmatched.",
+    "specialist": "Check how the dimension and mass ratio and the auxiliary prime window give the uniform log k variation and the lower-bound error of order Lₐ(1 + m²/k)."
+  }
+]

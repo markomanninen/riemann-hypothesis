@@ -1,0 +1,126 @@
+[
+  {
+    "id": "4.1",
+    "technique": "The unit defines a Chebotarev prime-power sum with the linear weight (a/p^i − w)₊ and a separate term at the ramified prime d. Its centering combines the Euler–Mascheroni term, one quadratic-character term, and the mean of log w.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Yasutaka Ihara, On the Euler-Kronecker constants of global fields and primes with small norms, in Algebraic Geometry and Number Theory, Birkhäuser, 2006.",
+        "url": "https://www.kurims.kyoto-u.ac.jp/~kenkyubu/emeritus/ihara/Publications-and-Recent-Preprints/RecentArticles/pdf-files/1A.pdf",
+        "locator": "Sections 1.1 and 1.5, equations (1.1.1) and (1.5.1).",
+        "says": "Ihara defines a normalized prime-ideal-power sum with weight (x/N(P)^k − 1)₊ and expresses its discrepancy from log x using the Euler–Kronecker constant and correction terms.",
+        "quote": "at each critical point ΦK(x) acquires new summands but their values are 0 at this point"
+      },
+      {
+        "citation": "Régis de la Bretèche, Daniel Fiorilli, and Florent Jouve, Moments in the Chebotarev density theorem: general class functions, Algebra & Number Theory, 2025.",
+        "url": "https://msp.org/ant/2025/19-3/ant-v19-n3-p03-s.pdf",
+        "locator": "Section 1, equation (3).",
+        "says": "The authors define a smoothed prime-ideal-power sum that multiplies a fixed function of the Frobenius power by a common function of the prime-power norm.",
+        "quote": "we fix a real-valued class function"
+      }
+    ],
+    "difference": "With constant w and the stated splitting at 2 and q1, the prime sum follows from twice Ihara’s unnormalized sum over the rationals minus the corresponding sum over the quadratic subfield, at x = a/w, multiplied by w. The Lean definition lets the Frobenius power determine w through a translated class, so the cutoff a/w can vary with the class and the lift.",
+    "searches": [
+      "Yasutaka Ihara On the Euler Kronecker constants of global fields and primes with small norms 2006 Phi_K(x) pdf theorem 1 proposition 3",
+      "Ihara Euler Kronecker constants weighted sum 1 - Np/x logarithmic derivative Euler constant prime powers psi smoothing",
+      "quadratic field inert primes Euler Kronecker Chebotarev log derivative L(1,chi) Mertens product complement split primes Williams",
+      "\"weighted\" \"prime powers\" Chebotarev \"class-dependent\" cutoff Fourier inversion inertia smoothing"
+    ],
+    "confidence": "medium",
+    "why": "The kernel and its constant-weight quadratic specialization have clear antecedents, while the sources opened use a common cutoff or a common smoothing profile.",
+    "specialist": "Check the constant-weight specialization prime by prime, especially the contribution at d, before comparing the dependence of w on the translated Frobenius class."
+  },
+  {
+    "id": "4.2",
+    "technique": "Finite character orthogonality rewrites the weighted Frobenius prime-power sum as a sum of smoothed character sums with inertia-averaged local coefficients. Centering those sums leaves contributions from the trivial character and the quadratic character of the index-two subgroup.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Jeffrey C. Lagarias and Andrew M. Odlyzko, Effective Versions of the Chebotarev Density Theorem, in Algebraic Number Fields, Academic Press, 1977.",
+        "url": "https://aareyanmanzoor.github.io/assets/articles/lagarias-odlyzko.pdf",
+        "locator": "Section 3, equations (3.1)–(3.6).",
+        "says": "Lagarias and Odlyzko average the local character coefficients over inertia and expand a Frobenius-class indicator in irreducible characters with conjugated character values.",
+        "quote": "Then the orthogonality relations for characters imply that"
+      },
+      {
+        "citation": "Yasutaka Ihara, V. Kumar Murty, and Mahoro Shimura, On the logarithmic derivatives of Dirichlet L-functions at s = 1, Acta Arithmetica, 2009.",
+        "url": "https://www.impan.pl/shop/publication/transaction/download/product/82940",
+        "locator": "Sections 2.1–2.2, especially the definition of ΦK,χ and Theorem 1.",
+        "says": "The authors use the same linear kernel after normalization and center the principal and nonprincipal sums using γK + 1 and L′(χ,1)/L(χ,1), respectively.",
+        "quote": "represents the average of the partial sums of"
+      }
+    ],
+    "difference": "The Lean identity combines the inertia-aware class expansion with a separate rescaling y = a/w for each class and allows arbitrary centering data ℓ. Summation over the complement of an index-two subgroup retains the quadratic component of ℓ, and the translation to PhiSet gives the mean of log w in MAIN.",
+    "searches": [
+      "Lagarias Odlyzko effective versions Chebotarev density theorem PDF formula 3.4 indicator character",
+      "Chebotarev prime powers weighted sum abelian group orthogonality conjugacy classes Fourier Lagarias Odlyzko explicit formula smoothed",
+      "Ihara Murty Shimura On logarithmic derivatives Dirichlet L-functions s=1 2009 pdf sum kernel L prime L",
+      "\"weighted\" \"prime powers\" Chebotarev \"class-dependent\" cutoff Fourier inversion inertia smoothing"
+    ],
+    "confidence": "high",
+    "why": "The opened sources give the exact local orthogonality rule and the exact scalar kernel, and the Lean statement specifies how it combines them with class-dependent rescaling and arbitrary centering.",
+    "specialist": "Check the factor 2/|I| in the ramified coefficient and the sign of the quadratic contribution obtained by summing over the complementary coset."
+  },
+  {
+    "id": "4.3",
+    "technique": "Averaging translates over A0 projects the finite Fourier expansion onto the characters trivial on A0. A pointwise comparison replaces the lift-dependent weights by a common scale on the translates of T2, so the resulting sum is repeated m times.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Terence Tao and Van H. Vu, Additive Combinatorics, Cambridge University Press, 2006.",
+        "url": "https://math.bme.hu/~gabor/oktatas/SztoM/TaoVu.AddComb.pdf",
+        "locator": "Section 4.1, equation (4.6) and Exercise 4.1.7, pages 153 and 155.",
+        "says": "Averaging a function over subgroup cosets multiplies its Fourier transform by the indicator of the subgroup annihilator.",
+        "quote": "is the average of f on cosets of H"
+      },
+      {
+        "citation": "Yasutaka Ihara, On the Euler-Kronecker constants of global fields and primes with small norms, in Algebraic Geometry and Number Theory, Birkhäuser, 2006.",
+        "url": "https://www.kurims.kyoto-u.ac.jp/~kenkyubu/emeritus/ihara/Publications-and-Recent-Preprints/RecentArticles/pdf-files/1A.pdf",
+        "locator": "Section 1.1, immediately after equation (1.1.1).",
+        "says": "Ihara describes how the sum with the linear kernel varies as the cutoff moves between consecutive prime-power norms.",
+        "quote": "The slope of ΦK(x) between two adjacent critical points"
+      }
+    ],
+    "difference": "Tao and Vu give the projection identity for any finite abelian group, and Ihara treats cutoff variation for a scalar prime sum. The Lean inequality combines the projection with two weight ranges and a per-lift cost of 2b/x, yielding the normalization m·b·|T2|/(2|H|) before averaging over TT.",
+    "searches": [
+      "subgroup averaging finite abelian Fourier transform annihilator orthogonality Poisson summation Terras Tao Vu finite abelian",
+      "Tao Vu Additive Combinatorics Fourier Poisson summation subgroup annihilator Lemma 4.2 PDF",
+      "finite Fourier subgroup prime number theorem Chebotarev quotient class functions Frobenius \"annihilator\" character average",
+      "prime sum class dependent smoothing Fourier thick thin weights lift multiplicity lattice slope absorbed square root error Chebotarev"
+    ],
+    "confidence": "medium",
+    "why": "The subgroup projection is stated explicitly in the literature, and the closest source for cutoff variation treats a single scale.",
+    "specialist": "Check the pointwise weight comparison in th_le, which supplies the uniform per-lift error needed before the subgroup average."
+  },
+  {
+    "id": "4.4",
+    "technique": "The unit uses bounds on the character averages over TT and on the variation of smoothed sums to transfer the projected estimate to the common argument x. It bounds the unwanted surviving terms by their absolute values and divides by the lift multiplicity and subgroup density.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Yasutaka Ihara, V. Kumar Murty, and Mahoro Shimura, On the logarithmic derivatives of Dirichlet L-functions at s = 1, Acta Arithmetica, 2009.",
+        "url": "https://www.impan.pl/shop/publication/transaction/download/product/82940",
+        "locator": "Sections 5.2–5.4, Lemma 2 and equation (5.4.1).",
+        "says": "The authors isolate the quadratic character and bound a sum of absolute errors for the remaining characters in their approximation by prime-power sums with the same linear kernel.",
+        "quote": "where χ1 denotes the unique quadratic character in Xm"
+      },
+      {
+        "citation": "Terence Tao and Van H. Vu, Additive Combinatorics, Cambridge University Press, 2006.",
+        "url": "https://math.bme.hu/~gabor/oktatas/SztoM/TaoVu.AddComb.pdf",
+        "locator": "Section 4.1, equations (4.4) and (4.6) and Exercise 4.1.7.",
+        "says": "Finite Fourier inversion recovers the character expansion, and averaging over subgroup cosets restricts that expansion to the annihilator.",
+        "quote": "and conclude in particular the Poisson summation formula"
+      }
+    ],
+    "difference": "The earlier analytic estimate controls the discarded characters to obtain moments, while ch_core takes a one-sided bound for the aggregate prime sum and carries the discarded characters as the explicit remainder SigA. The exponent 1/2 + (C + 3)ε comes from the assumed error bracket and the size windows, including the window for m and the lower bound on |T2|/|H|.",
+    "searches": [
+      "smoothed prime sums recovering selected characters orthogonality Fourier prime progressions positive weights upper bound triangle inequality Chebotarev error subgroup averaging",
+      "prime number theorem arithmetic progressions converse character sums ψ(x,χ) sum χ(a) ψ(x;q,a) discrepancy Davenport Fourier inversion",
+      "Fourier extraction from smoothed Chebotarev prime counts subgroup average character sum triangle inequality weighted subset equidistribution",
+      "Ihara Murty Shimura On logarithmic derivatives Dirichlet L-functions s=1 2009 pdf sum kernel L prime L"
+    ],
+    "confidence": "medium",
+    "why": "The sources establish the component techniques, while the Lean argument couples them to a specific one-sided input and a prescribed normalization.",
+    "specialist": "Check the use of the character averages in one_char and the division of the four error terms by |TT|·m·b·|T2|/(2|H|)."
+  }
+]

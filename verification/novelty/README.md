@@ -2,8 +2,10 @@
 
 This folder prepares a search of the published literature for each step of the proof. The
 search is to say for every step whether its mathematics was published before 20 November 2026,
-the day the proof was announced, and where. No result is in yet. The task
-`rh-novelty-literature-search` waits for a run of Gemini in the Antigravity editor.
+the day the proof was announced, and where. A first search is in. A model of OpenAI, run through
+Codex on 27 and 28 November 2026, classed all 64 steps, and [`SEARCH.md`](SEARCH.md) gives its
+result. The run of Gemini in the Antigravity editor, the task `rh-novelty-literature-search`,
+waits for the quota of that account and would give a second classification.
 
 A step is called a unit here. There are 64 units of two kinds.
 
@@ -26,10 +28,10 @@ puts the unit in one of five classes.
 | G | the unit is bookkeeping of the proof without a technique of its own |
 | U | the unit is too much in the project's own vocabulary to compare |
 
-The answers go to `verification/review/gemini-novelty/`, one file for each of the twelve
-batches of `units.json` and one file with a synthesis. After that a second model opens every
-cited source and checks the quote, as the readings of [`../skeleton`](../skeleton/READING.md)
-were checked by two makers' models. A class N says that a search found nothing. It does not
+The answers of Codex are in [`../review/codex-novelty`](../review/codex-novelty), one file for
+each of the twelve batches of `units.json`, and the answers of Gemini are to go to
+`verification/review/gemini-novelty/`. The script [`quotes.py`](quotes.py) opens every cited
+source and looks for the quote in it. A class N says that a search found nothing. It does not
 say that nothing exists, and the judgement of a specialist stays open.
 
 ## Where the labelled results end
@@ -51,5 +53,8 @@ checked against.
 | `units.py` | collects the units from `CLAIMS.md` and holds the paraphrases of the timeline |
 | `units.json` | the 64 units in twelve batches |
 | `brief-gemini.md` | the brief of the literature search |
+| `SEARCH.md` | the result of the search by Codex, with the class of every unit and the check of the quotes |
+| `quotes.py` | downloads the cited sources and looks for each quote |
+| `search.py` | writes the table of `SEARCH.md` from the answers |
 | `KNOWN.md`, `known.py`, `known.json` | the known results placed on the outline of the proof |
 | `ANCHORS.md` | 13 published techniques that the proof names, each with an opened source |

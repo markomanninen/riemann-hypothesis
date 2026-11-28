@@ -1,0 +1,56 @@
+[
+  {
+    "id": "10.1",
+    "technique": "This step instantiates a conditional family-existence theorem and passes its conclusion to the zero-free argument. It supplies the host-existence premise separately for each primitive Dirichlet character.",
+    "class": "G",
+    "nearest": [],
+    "difference": "The application supplies 51 of the 53 arguments from the family record and discharges the other two as propositions equal to True. The host branch applies the cohomology-window bound for the chosen character together with an admissibility theorem.",
+    "searches": [
+      "Green finite general linear groups cuspidal types unitary theta correspondence chain of lifts iterative kernel composition global CM families",
+      "\"Green\" cuspidal finite general linear \"theta\" unitary kernel composition rank chain Dirichlet zero free windows"
+    ],
+    "confidence": "high",
+    "why": "The Lean declarations show the record projections, the two trivial arguments, and the separate host supply passed to the conditional theorem.",
+    "specialist": "Check that the hosts supplied by supplyChi meet the same character and scale requirements used by the family theorem at window exponent 3/2."
+  },
+  {
+    "id": "10.2",
+    "technique": "The unit combines Green's parametrization of finite general linear group cuspidal characters with the attachment of ℓ-adic Galois representations to regular algebraic polarized cuspidal automorphic representations over CM fields. It uses the Galois-representation statement to obtain a uniform bound on strict localization kernels for negative Tate twists and requires a compatible chain of unitary kernels for every word in the family.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Christophe Soulé, “A Bound for the Torsion in the K-Theory of Algebraic Integers,” Documenta Mathematica, Extra Volume Kato, 2003, pp. 761–788.",
+        "url": "https://ems.press/content/book-chapter-files/27335",
+        "locator": "Section 4.3, Theorem 3 and the paragraph immediately preceding it.",
+        "says": "For a fixed number field and a fixed positive Tate twist, Soulé bounds the product of the orders of the second étale cohomology groups over primes above explicit thresholds.",
+        "quote": "From [12], we know that this group is finite and zero for almost all p."
+      },
+      {
+        "citation": "Thomas Barnet-Lamb, Toby Gee, David Geraghty, and Richard Taylor, “Potential Automorphy and Change of Weight,” Annals of Mathematics 179, 2014, pp. 501–609.",
+        "url": "https://annals.math.princeton.edu/wp-content/uploads/annals-v179-n2-p03-p.pdf",
+        "locator": "Theorem 2.1.1, p. 538.",
+        "says": "The theorem attaches a continuous semisimple ℓ-adic Galois representation to each regular algebraic polarized cuspidal pair over a CM field, with specified Hodge–Tate weights and local–global compatibility.",
+        "quote": "Suppose that (π, χ) is a regular algebraic, cuspidal, polarized automorphic representation of GL_n(A_F)."
+      },
+      {
+        "citation": "J. A. Green, “The Characters of the Finite General Linear Groups,” Transactions of the American Mathematical Society 80, 1955, pp. 402–447.",
+        "url": "https://www.ams.org/tran/1955-080-02/S0002-9947-1955-0072878-2/S0002-9947-1955-0072878-2.pdf",
+        "locator": "Section 7, Lemma 7.7, p. 439, and Section 8, Theorem 14, pp. 443–444.",
+        "says": "Green matches Frobenius orbits of full size with irreducible polynomials and uses these orbits as character parameters, with a single orbit of full degree giving the cuspidal case.",
+        "quote": "There are exactly as many simplexes of degree s as there are irreducible polynomials f ∈ 𝔽 of degree s."
+      }
+    ],
+    "difference": "Green works over all finite fields, while the Lean parametrization uses prime fields, and the Lean Galois-representation statement uses a weaker comparison away from ℓ than the published Weil–Deligne isomorphism. VWin requires finiteness and a single bound of exp(x^ε/2) for the sum weighted by log ℓ over arbitrary finite prime sets and all positive integers e below floor(x^401), using the localization kernels for ℚℓ/ℤℓ(−e) over specified cyclotomic subfields throughout windows [Y, Y²]. The cited results provide precedents for the inputs and for cohomology bounds, while this unit combines them with the window estimate and a compatible unitary kernel chain for every word.",
+    "searches": [
+      "J A Green 1955 characters finite general linear groups cuspidal irreducible characters Frobenius orbits regular characters irreducible polynomials GLn(q)",
+      "Barnet Lamb Gee Geraghty Taylor 2014 potential automorphy change of weight Galois representations regular algebraic polarized cuspidal CM theorem 2.1.1",
+      "strict Selmer groups Tate twists H^1 Q_l Z_l negative twist effective bounds cyclotomic abelian number fields Iwasawa main conjecture wild kernel Schneider",
+      "\"Galois cohomology\" \"Dirichlet\" \"negative Tate twists\" bounds window logarithms primes cyclotomic fields Riemann hypothesis",
+      "Christophe Soulé explicit bounds second Galois cohomology groups Tate twists number fields K theory order torsion Z_l bounds discriminant abelian Lichtenbaum",
+      "uniform bounds orders etale wild kernels varying weight twist prime cyclotomic number fields special zeta value Banaszak Kolster Tate twists"
+    ],
+    "confidence": "medium",
+    "why": "The primary sources identify the classical ingredients and a quantitative antecedent, and the search yielded no pre-announcement source for the joint window estimate and family conditions.",
+    "specialist": "Trace vwin_of_row to the first estimate uniform in the auxiliary cyclotomic field, the prime ℓ, and the twist, including ℓ = 2, and compare its quantifiers with published bounds for étale wild kernels."
+  }
+]

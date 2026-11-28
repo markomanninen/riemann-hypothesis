@@ -1,0 +1,983 @@
+[
+ {
+  "id": "1.1",
+  "url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/C7E3CA7011F60F57947090E89CF0BE00/S0008414X00023208a.pdf/inverse-problems-for-partition-functions.pdf",
+  "quote": "has no zeros in the half-plane {s : Re s > θ} for all characters χ modulo k",
+  "quote_words": 15,
+  "longest_run": 14,
+  "state": "read",
+  "note": "The quote stands in Corollary 1. A formula splits it in the text layer."
+ },
+ {
+  "id": "1.2",
+  "url": "https://arxiv.org/pdf/1604.08015",
+  "quote": "the generalized Riemann hypothesis (GRH, in short) for L(s, χ) is equivalent to Θ(χ) = 1/2.",
+  "quote_words": 15,
+  "longest_run": 15,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "1.2",
+  "url": "https://ndl.ethernet.edu.et/bitstream/123456789/23715/1/Hugh%20L.%20Montgomery.pdf",
+  "quote": "symmetrically placed with respect to the critical line.",
+  "quote_words": 8,
+  "longest_run": 2,
+  "state": "unopened",
+  "note": "The address returned a web page without the text of the book."
+ },
+ {
+  "id": "1.2",
+  "url": "https://www.claymath.org/wp-content/uploads/2023/04/Wilkins-translation.pdf",
+  "quote": "remains unchanged when s is replaced by 1 − s.",
+  "quote_words": 9,
+  "longest_run": 9,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "1.3",
+  "url": "https://ndl.ethernet.edu.et/bitstream/123456789/23715/1/Hugh%20L.%20Montgomery.pdf",
+  "quote": "whose zeros form an arithmetic progression on the imaginary axis.",
+  "quote_words": 10,
+  "longest_run": 2,
+  "state": "unopened",
+  "note": "The address returned a web page without the text of the book."
+ },
+ {
+  "id": "2.1",
+  "url": "https://www.math.ksu.edu/about/personal/xiannan/papers/QuaResL1ver2Sound.pdf",
+  "quote": "We sum the above over the h−1 non-principal characters",
+  "quote_words": 11,
+  "longest_run": 11,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "2.2",
+  "url": "https://personal.math.ubc.ca/~gerg/teaching/592-Fall2018/papers/1986.Kaczorowski_1.pdf",
+  "quote": "contains at least one sign change of f(s).",
+  "quote_words": 9,
+  "longest_run": 6,
+  "state": "read",
+  "note": "The scanned text reads `contains at least one sign change off(s)` after (2.2)."
+ },
+ {
+  "id": "2.2",
+  "url": "https://personal.math.ubc.ca/~gerg/teaching/592-Fall2018/papers/1984.Pintz_0.pdf",
+  "quote": "then there exists a value",
+  "quote_words": 5,
+  "longest_run": 3,
+  "state": "read",
+  "note": "The words stand in Theorem 1, with the conditions (1.7) between them in the scan."
+ },
+ {
+  "id": "2.3",
+  "url": "https://www.numdam.org/article/SB_1994-1995__37__115_0.pdf",
+  "quote": "Pour cela, nous allons évaluer les divers termes qui apparaissent dans cette inégalité, en supposant φ_K injective.",
+  "quote_words": 19,
+  "longest_run": 17,
+  "state": "read",
+  "note": "The sentence stands in the text with the symbol of the map between its words."
+ },
+ {
+  "id": "2.3",
+  "url": "https://aareyanmanzoor.github.io/assets/articles/lagarias-odlyzko.pdf",
+  "quote": "We conclude this paper by applying the explicit formula of Theorem 7.1 to estimate ψ_C(x) and π_C(x).",
+  "quote_words": 20,
+  "longest_run": 20,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "2.3",
+  "url": "https://www.numdam.org/item/JMPA_1852_1_17__366_0.pdf",
+  "quote": "D'après cette équation, il n'est pas difficile de trouver plusieurs inégalités que la fonction ψ (χ) vérifie.",
+  "quote_words": 22,
+  "longest_run": 22,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "3.1",
+  "url": "https://personal.science.psu.edu/rcv4/personal/Publications/MNTI/13.0_pp_282_325_Primitive_characters_and_Gauss_sums.pdf",
+  "quote": "there is a unique primitive character χ* modulo d that induces χ.",
+  "quote_words": 10,
+  "longest_run": 10,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "3.4",
+  "url": "https://arxiv.org/pdf/1701.05267",
+  "quote": "we use the following zero-density result",
+  "quote_words": 7,
+  "longest_run": 7,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "3.4",
+  "url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/9372DCDEE648FF605F66A10314977F5F/S0008414X00012116a.pdf/mean-values-of-character-sums.pdf",
+  "quote": "of the prime numbers not exceeding",
+  "quote_words": 6,
+  "longest_run": 6,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "3.4",
+  "url": "https://arxiv.org/pdf/2108.10878",
+  "quote": "secondary main term",
+  "quote_words": 3,
+  "longest_run": 3,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "3.5",
+  "url": "https://arxiv.org/pdf/1701.05267",
+  "quote": "has no zeros inside the rectangle",
+  "quote_words": 6,
+  "longest_run": 6,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "3.5",
+  "url": "https://msp.org/ant/2024/18-11/ant-v18-n11-p05-p.pdf",
+  "quote": "for all primes p ≤ x except for a set",
+  "quote_words": 9,
+  "longest_run": 9,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "3.5",
+  "url": "https://dms.umontreal.ca/~andrew/PDF/L1chi2002.pdf",
+  "quote": "Using this lemma together with the large sieve and zero density results",
+  "quote_words": 12,
+  "longest_run": 0,
+  "state": "read",
+  "note": "The text layer of this copy is unreadable. The sentence stands before Proposition 2.2 in arXiv:math/0206031."
+ },
+ {
+  "id": "3.6",
+  "url": "https://smf.emath.fr/system/files/filepdf/AST_1987__18__1_0.pdf",
+  "quote": "le premier résultat valable uniformément en T et Q est dû à Montgomery",
+  "quote_words": 15,
+  "longest_run": 15,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "3.6",
+  "url": "https://arxiv.org/pdf/2108.10878",
+  "quote": "there exists an effectively computable constant",
+  "quote_words": 6,
+  "longest_run": 6,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "3.7",
+  "url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/9372DCDEE648FF605F66A10314977F5F/S0008414X00012116a.pdf/mean-values-of-character-sums.pdf",
+  "quote": "are arbitrary complex numbers",
+  "quote_words": 4,
+  "longest_run": 4,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "3.7",
+  "url": "https://msp.org/ant/2024/18-11/ant-v18-n11-p05-p.pdf",
+  "quote": "the following large sieve inequality for prime discriminants",
+  "quote_words": 8,
+  "longest_run": 8,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "3.8",
+  "url": "https://arxiv.org/pdf/1701.05267",
+  "quote": "it follows from the law of quadratic reciprocity",
+  "quote_words": 8,
+  "longest_run": 8,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "3.8",
+  "url": "https://arxiv.org/pdf/2108.10878",
+  "quote": "a unique nontrivial real Dirichlet character",
+  "quote_words": 6,
+  "longest_run": 6,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "3.8",
+  "url": "https://www.ams.org/journals/jams/2018-31-01/S0894-0347-2017-00876-2/S0894-0347-2017-00876-2.pdf",
+  "quote": "χ is a quadratic character χQ, which is unique.",
+  "quote_words": 8,
+  "longest_run": 1,
+  "state": "unopened",
+  "note": "The site answered with a page that checks the connection."
+ },
+ {
+  "id": "4.1",
+  "url": "https://www.kurims.kyoto-u.ac.jp/~kenkyubu/emeritus/ihara/Publications-and-Recent-Preprints/RecentArticles/pdf-files/1A.pdf",
+  "quote": "at each critical point ΦK(x) acquires new summands but their values are 0 at this point",
+  "quote_words": 17,
+  "longest_run": 17,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "4.1",
+  "url": "https://msp.org/ant/2025/19-3/ant-v19-n3-p03-s.pdf",
+  "quote": "we fix a real-valued class function",
+  "quote_words": 7,
+  "longest_run": 7,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "4.2",
+  "url": "https://aareyanmanzoor.github.io/assets/articles/lagarias-odlyzko.pdf",
+  "quote": "Then the orthogonality relations for characters imply that",
+  "quote_words": 8,
+  "longest_run": 8,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "4.2",
+  "url": "https://www.impan.pl/shop/publication/transaction/download/product/82940",
+  "quote": "represents the average of the partial sums of",
+  "quote_words": 8,
+  "longest_run": 8,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "4.3",
+  "url": "https://math.bme.hu/~gabor/oktatas/SztoM/TaoVu.AddComb.pdf",
+  "quote": "is the average of f on cosets of H",
+  "quote_words": 9,
+  "longest_run": 9,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "4.3",
+  "url": "https://www.kurims.kyoto-u.ac.jp/~kenkyubu/emeritus/ihara/Publications-and-Recent-Preprints/RecentArticles/pdf-files/1A.pdf",
+  "quote": "The slope of ΦK(x) between two adjacent critical points",
+  "quote_words": 10,
+  "longest_run": 10,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "4.4",
+  "url": "https://www.impan.pl/shop/publication/transaction/download/product/82940",
+  "quote": "where χ1 denotes the unique quadratic character in Xm",
+  "quote_words": 9,
+  "longest_run": 9,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "4.4",
+  "url": "https://math.bme.hu/~gabor/oktatas/SztoM/TaoVu.AddComb.pdf",
+  "quote": "and conclude in particular the Poisson summation formula",
+  "quote_words": 8,
+  "longest_run": 8,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "5.2",
+  "url": "https://arxiv.org/pdf/2408.15403",
+  "quote": "Now Bost’s slopes inequality (7.2.14) reads, in our situation:",
+  "quote_words": 12,
+  "longest_run": 12,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "5.2",
+  "url": "https://annals.math.princeton.edu/wp-content/uploads/annals-v187-n2-p03-p.pdf",
+  "quote": "When d = 1, so E is a quadratic imaginary ﬁeld, Colmez’s conjecture is a form of the famous Chowla-Selberg formula.",
+  "quote_words": 22,
+  "longest_run": 22,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "5.3",
+  "url": "https://numdam.org/item/10.1007/s10240-001-8191-3.pdf",
+  "quote": "deĝₙ E ⩽ rk E[μ̂max(F) + h(E, F, ϕ)].",
+  "quote_words": 10,
+  "longest_run": 4,
+  "state": "read",
+  "note": "The quote is formula (4.11) of Proposition 4.5, which stands in the text over several lines."
+ },
+ {
+  "id": "5.3",
+  "url": "https://arxiv.org/pdf/0811.3159",
+  "quote": "the FF-potential can be seen as a measure of the (Frobenius) distance of their frame operators to a fixed multiple of the identity",
+  "quote_words": 24,
+  "longest_run": 24,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "5.5",
+  "url": "https://www2.math.ethz.ch/EMIS/journals/JACO/Volume31_1/621h01251t23v451.fulltext.pdf",
+  "quote": "The dimension of the irreducible representation Vλ indexed by λ is given by Weyl’s character formula",
+  "quote_words": 16,
+  "longest_run": 1,
+  "state": "unopened",
+  "note": "The address answered 404."
+ },
+ {
+  "id": "5.5",
+  "url": "https://arxiv.org/pdf/1210.7894",
+  "quote": "The mass formula expresses the mass of (L, H) as a product of local factors, called the local densities of (L, H).",
+  "quote_words": 22,
+  "longest_run": 22,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "6.2",
+  "url": "https://webusers.imj-prg.fr/~vincent.maillot/Arakelov/0036/BostKuennemann-07-01-11.pdf",
+  "quote": "the arithmetic degree of π∗E is given by",
+  "quote_words": 8,
+  "longest_run": 8,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "6.2",
+  "url": "https://www.jmilne.org/math/CourseNotes/ANT.pdf",
+  "quote": "volume of a fundamental parallelopiped",
+  "quote_words": 5,
+  "longest_run": 5,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "6.3",
+  "url": "https://www.numdam.org/item/PMIHES_2001__93__161_0.pdf",
+  "quote": "we define the height of ϕ with respect to Ē and F̄",
+  "quote_words": 11,
+  "longest_run": 11,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "6.3",
+  "url": "https://webusers.imj-prg.fr/~huayi.chen/Recherche/bost_chen.pdf",
+  "quote": "where ‖fK,v‖ denotes the operator norm",
+  "quote_words": 7,
+  "longest_run": 7,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "6.4",
+  "url": "https://arxiv.org/pdf/1409.0770",
+  "quote": "the theta lifts in opposite directions use additive characters inverse to each other.",
+  "quote_words": 13,
+  "longest_run": 13,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "6.4",
+  "url": "https://ems.press/content/serial-article-files/51452",
+  "quote": "be a generic elliptic A-parameter for G.",
+  "quote_words": 8,
+  "longest_run": 8,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "6.5",
+  "url": "https://arxiv.org/pdf/1409.0770",
+  "quote": "consists of functions of the form",
+  "quote_words": 6,
+  "longest_run": 6,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "6.5",
+  "url": "https://arxiv.org/pdf/1907.03417",
+  "quote": "this mass corresponds to the classical mass of Λ.",
+  "quote_words": 8,
+  "longest_run": 8,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "7.1",
+  "url": "https://heuklyd.github.io/papers/pdf/Robbins-1955.pdf",
+  "quote": "Since ∫ log x dx = x log x − x we can write",
+  "quote_words": 11,
+  "longest_run": 10,
+  "state": "read",
+  "note": "The sentence stands before formula (4), with the integral sign as another character."
+ },
+ {
+  "id": "7.1",
+  "url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/B1533D44F5B1DBF6B6903C79AFFDCFEE/S0008414X00023749a.pdf/div-class-title-the-hook-graphs-of-the-symmetric-group-div.pdf",
+  "quote": "P_i = (h_{i1})! / ∏_{s>i} (h_{i1}−h_{s1}).",
+  "quote_words": 10,
+  "longest_run": 2,
+  "state": "read",
+  "note": "The quote is formula 2.1 on page 317, read from the image of the scanned page."
+ },
+ {
+  "id": "7.1",
+  "url": "https://www.math.lsu.edu/~hongyu/pub/ggp_hhe_final.pdf",
+  "quote": "χ₁ > η₁ > χ₂ > η₂ > ⋯ > χₚ₋₁ > ηₚ₋₁ > χₚ.",
+  "quote_words": 9,
+  "longest_run": 9,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "7.2",
+  "url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/B1533D44F5B1DBF6B6903C79AFFDCFEE/S0008414X00023749a.pdf/div-class-title-the-hook-graphs-of-the-symmetric-group-div.pdf",
+  "quote": "hᵢⱼ = 1 + (λᵢ − j) + (λ′ⱼ − i).",
+  "quote_words": 6,
+  "longest_run": 2,
+  "state": "read",
+  "note": "The quote is formula 1.1 on page 316, read from the image of the scanned page."
+ },
+ {
+  "id": "7.2",
+  "url": "https://link.springer.com/article/10.1007/s11786-024-00585-y",
+  "quote": "and they are all left symbolic.",
+  "quote_words": 6,
+  "longest_run": 1,
+  "state": "unopened",
+  "note": "The address returned a page without the text of the article."
+ },
+ {
+  "id": "7.3",
+  "url": "https://www.math.lsu.edu/~hongyu/pub/ggp_hhe_final.pdf",
+  "quote": "This interlacing relation, expressed in terms of Harish-Chandra parameters, becomes a strict interlacing relation:",
+  "quote_words": 15,
+  "longest_run": 15,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "7.4",
+  "url": "https://www.math.uci.edu/~mfried/conflist-rims/yihara10-14-07.pdf",
+  "quote": "Then the Kronecker limit formula, averaged over all the ideal classes of K, gives",
+  "quote_words": 14,
+  "longest_run": 14,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "7.4",
+  "url": "https://heuklyd.github.io/papers/pdf/Robbins-1955.pdf",
+  "quote": "S_n = (n + 1/2) log n − n + 1 − ∑_{p=1}^{n−1} ε_p",
+  "quote_words": 14,
+  "longest_run": 5,
+  "state": "read",
+  "note": "The quote is formula (4), which stands in the text over several lines."
+ },
+ {
+  "id": "8.2",
+  "url": "https://numdam.org/item/10.1007/s10240-001-8191-3.pdf",
+  "quote": "In the proof below, the following inequalities will play the role of Siegel’s Lemma.",
+  "quote_words": 15,
+  "longest_run": 15,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "8.2",
+  "url": "https://arxiv.org/pdf/1303.5816",
+  "quote": "nearly tight, nearly equiangular fusion frames.",
+  "quote_words": 6,
+  "longest_run": 6,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "8.3",
+  "url": "https://arxiv.org/pdf/0805.2917",
+  "quote": "the partial trace of the square of the Grammian operator",
+  "quote_words": 10,
+  "longest_run": 10,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "8.3",
+  "url": "https://webusers.imj-prg.fr/~huayi.chen/Recherche/bost_chen.pdf",
+  "quote": "If f is surjective, then μ̂min(E) ≤ μ̂min(F) + h(f).",
+  "quote_words": 11,
+  "longest_run": 11,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "8.5",
+  "url": "https://www.its.caltech.edu/~dinakar/papers/arxiv-BesselPeriods.pdf",
+  "quote": "The identity orbital integral is calculated in Section 7. Its contribution provides the main term in Theorem 1.2.",
+  "quote_words": 19,
+  "longest_run": 19,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "8.5",
+  "url": "https://arxiv.org/pdf/1012.4538",
+  "quote": "We describe the relative trace formula on the unitary pair relating the Bessel periods.",
+  "quote_words": 14,
+  "longest_run": 14,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "8.5",
+  "url": "https://arxiv.org/pdf/1303.5816",
+  "quote": "Hilbert-Schmidt inner product of the corresponding orthogonal projections.",
+  "quote_words": 9,
+  "longest_run": 9,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "9.1",
+  "url": "https://arxiv.org/html/2510.04156v1",
+  "quote": "We provide an upper bound on each local evaluation height",
+  "quote_words": 10,
+  "longest_run": 10,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "9.1",
+  "url": "https://numdam.org/item/10.1007/s10240-001-8191-3.pdf",
+  "quote": "a variant of the slope inequality (4.11) for injective maps which involves filtered vector bundles",
+  "quote_words": 16,
+  "longest_run": 16,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "9.3",
+  "url": "https://www.mathnet.ru/links/f1c0c8bd0655b01a2c7d9cdcfb735204/im2197_eng.pdf",
+  "quote": "Since the number of roots of a polynomial does not exceed its degree",
+  "quote_words": 13,
+  "longest_run": 1,
+  "state": "unopened",
+  "note": "The address returned a web page without the text of the article."
+ },
+ {
+  "id": "9.3",
+  "url": "https://www.numdam.org/article/SB_1972-1973__15__234_0.pdf",
+  "quote": "hence f vanishes at every fixed point of φ, except at xₒ.",
+  "quote_words": 11,
+  "longest_run": 4,
+  "state": "read",
+  "note": "The scanned text reads `vanishes at every fixed point of`, then the symbol of the map, then `except at`."
+ },
+ {
+  "id": "10.2",
+  "url": "https://ems.press/content/book-chapter-files/27335",
+  "quote": "From [12], we know that this group is finite and zero for almost all p.",
+  "quote_words": 15,
+  "longest_run": 15,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "10.2",
+  "url": "https://annals.math.princeton.edu/wp-content/uploads/annals-v179-n2-p03-p.pdf",
+  "quote": "Suppose that (π, χ) is a regular algebraic, cuspidal, polarized automorphic representation of GL_n(A_F).",
+  "quote_words": 15,
+  "longest_run": 11,
+  "state": "read",
+  "note": "The sentence opens Theorem 2.1.1. The group is written with a subscript in the text."
+ },
+ {
+  "id": "10.2",
+  "url": "https://www.ams.org/tran/1955-080-02/S0002-9947-1955-0072878-2/S0002-9947-1955-0072878-2.pdf",
+  "quote": "There are exactly as many simplexes of degree s as there are irreducible polynomials f ∈ 𝔽 of degree s.",
+  "quote_words": 19,
+  "longest_run": 1,
+  "state": "unopened",
+  "note": "The site answered with a page that checks the connection."
+ },
+ {
+  "id": "T1",
+  "url": "https://arxiv.org/pdf/2610.15483",
+  "quote": "The proof is an interpolation determinant argument in the biquadratic field",
+  "quote_words": 11,
+  "longest_run": 11,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T1",
+  "url": "https://www.numdam.org/item/SB_1972-1973__15__234_0.pdf",
+  "quote": "they consider derivatives or hyperderivatives of f",
+  "quote_words": 7,
+  "longest_run": 3,
+  "state": "read",
+  "note": "The scanned text reads `consider derivatives an hyperderivatives of f` with the words out of order."
+ },
+ {
+  "id": "T2",
+  "url": "https://www.numdam.org/article/AST_1977__41-42__55_0.pdf",
+  "quote": "divisibility and congruence properties of the numbers c(n)",
+  "quote_words": 9,
+  "longest_run": 9,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T2",
+  "url": "https://arxiv.org/pdf/math/0610163",
+  "quote": "the two-variable power series in the supersingular case is not only non-integral",
+  "quote_words": 14,
+  "longest_run": 7,
+  "state": "read",
+  "note": "The sentence stands in the introduction, with a page header between its words."
+ },
+ {
+  "id": "T2",
+  "url": "https://www.cambridge.org/core/journals/compositio-mathematica/article/spectral-padic-jacquetlanglands-correspondence-and-a-question-of-serre/7398F4C0CFA138C6C5CAA4C16ABD2415",
+  "quote": "which is also an invariant derivation and thus a multiple of",
+  "quote_words": 11,
+  "longest_run": 11,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T3",
+  "url": "https://www.jmilne.org/math/Documents/DeligneWeilI.pdf",
+  "quote": "is a formal series with positive rational coefficients",
+  "quote_words": 8,
+  "longest_run": 8,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T3",
+  "url": "https://arxiv.org/pdf/1403.3929",
+  "quote": "we induce the theta function to the n-fold cover of GL4 and use a Shalika integral",
+  "quote_words": 17,
+  "longest_run": 17,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T4",
+  "url": "https://denisevellachemla.eu/transc-Weil-1952.pdf",
+  "quote": "cette condition peut s’exprimer en disant que D est “de type positif”",
+  "quote_words": 13,
+  "longest_run": 13,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T4",
+  "url": "https://arxiv.org/pdf/2610.15483",
+  "quote": "Frobenius congruence at these primes makes a certain nonzero determinant divisible",
+  "quote_words": 11,
+  "longest_run": 11,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T5",
+  "url": "https://denisevellachemla.eu/transc-Weil-1952.pdf",
+  "quote": "Si F(x) satisfait aux conditions (A), (B), la somme",
+  "quote_words": 10,
+  "longest_run": 10,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T5",
+  "url": "https://kskedlaya.org/18.785/von-mangoldt.pdf",
+  "quote": "The pole of ζ at s = 1 contributes x",
+  "quote_words": 8,
+  "longest_run": 8,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T6",
+  "url": "https://arxiv.org/pdf/math/0507368",
+  "quote": "if and only if αn(τ) is nonnegative for all positive integers n",
+  "quote_words": 12,
+  "longest_run": 10,
+  "state": "read",
+  "note": "The source reads `for all positive integer n`, one letter away from the quote."
+ },
+ {
+  "id": "T7",
+  "url": "https://arxiv.org/pdf/1508.02032",
+  "quote": "satisfy the GGP interlacing relation",
+  "quote_words": 5,
+  "longest_run": 5,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T7",
+  "url": "https://www.openscience.fr/IMG/pdf/iste_apam20v11n1_3.pdf",
+  "quote": "the determinant is equivalent with the interlacing condition",
+  "quote_words": 8,
+  "longest_run": 8,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T8",
+  "url": "https://arxiv.org/pdf/2104.12354",
+  "quote": "We claim that ψ̇H is of the form ψ̇H = θ(ψ̇)",
+  "quote_words": 9,
+  "longest_run": 9,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T8",
+  "url": "https://arxiv.org/pdf/1207.4709",
+  "quote": "Assume that Θn,j(π) = 0 for j < r",
+  "quote_words": 8,
+  "longest_run": 8,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T9",
+  "url": "https://arxiv.org/pdf/1207.4709",
+  "quote": "where L(s, π) is the standard L-function of π",
+  "quote_words": 9,
+  "longest_run": 8,
+  "state": "read",
+  "note": "The sentence stands after Theorem 1.3, with a line of a formula before `L(s, π)`."
+ },
+ {
+  "id": "T9",
+  "url": "https://people.math.harvard.edu/~gross/preprints/cs.pdf",
+  "quote": "the Chowla-Selberg formula gives a formula for the product of its periods",
+  "quote_words": 13,
+  "longest_run": 13,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T9",
+  "url": "https://arxiv.org/pdf/2210.04054",
+  "quote": "we compute the mass associated to any unimodular lattice in a Hermitian space over an arbitrary CM field under a condition at 2",
+  "quote_words": 23,
+  "longest_run": 23,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T10",
+  "url": "https://arxiv.org/pdf/0902.4619",
+  "quote": "is a ℘-integral holomorphic Siegel modular form of weight 2 and trivial central character",
+  "quote_words": 14,
+  "longest_run": 14,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T10",
+  "url": "https://arxiv.org/pdf/1606.01294",
+  "quote": "at least one of the Fourier coefficients of Iφ has ℓ-adic valuation equal to zero",
+  "quote_words": 16,
+  "longest_run": 16,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T11",
+  "url": "https://page-one.springer.com/pdf/preview/10.1007/978-1-4684-0133-2_13",
+  "quote": "The subject receives its motivation from the theory of curves over finite fields",
+  "quote_words": 13,
+  "longest_run": 13,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T12",
+  "url": "https://arxiv.org/pdf/1409.6824",
+  "quote": "The Bessel and Fourier–Jacobi cases of the GP conjecture are related by the local theta correspondence.",
+  "quote_words": 17,
+  "longest_run": 17,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T12",
+  "url": "https://arxiv.org/pdf/1611.05567",
+  "quote": "Now we recall the pull-back formula for the ψλ-Whittaker period.",
+  "quote_words": 11,
+  "longest_run": 11,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T13",
+  "url": "https://numdam.org/item/10.1007/s10240-001-8191-3.pdf",
+  "quote": "With the notation above, if moreover φ is injective, then",
+  "quote_words": 9,
+  "longest_run": 9,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T14",
+  "url": "https://arxiv.org/pdf/1207.4709",
+  "quote": "As we noted, the second term identity leads to the following Rallis inner product formula",
+  "quote_words": 15,
+  "longest_run": 15,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T14",
+  "url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/B1533D44F5B1DBF6B6903C79AFFDCFEE/S0008414X00023749a.pdf/div-class-title-the-hook-graphs-of-the-symmetric-group-div.pdf",
+  "quote": "divided by the hook product",
+  "quote_words": 5,
+  "longest_run": 5,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T15",
+  "url": "https://www.numdam.org/article/ASENS_1993_4_26_2_189_0.pdf",
+  "quote": "family of theta series coming from a CM-field",
+  "quote_words": 9,
+  "longest_run": 9,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T15",
+  "url": "https://arxiv.org/html/2505.09975v1",
+  "quote": "the congruence module is in fact a ring.",
+  "quote_words": 8,
+  "longest_run": 8,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T16",
+  "url": "https://arxiv.org/pdf/2309.16667",
+  "quote": "the result of dropping all but one term from the spectral side of the relative trace formula",
+  "quote_words": 17,
+  "longest_run": 17,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T16",
+  "url": "https://arxiv.org/pdf/1012.4538",
+  "quote": "We propose a relative trace formula approach and state the corresponding fundamental lemma",
+  "quote_words": 13,
+  "longest_run": 13,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T17",
+  "url": "https://www.numdam.org/item/10.5802/aif.1746.pdf",
+  "quote": "part of the Poitou-Tate duality sequence yields the exact sequence",
+  "quote_words": 11,
+  "longest_run": 11,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T17",
+  "url": "https://www.maths.tcd.ie/EMIS/journals/DMJDMV/vol-kato/soule.dm.pdf",
+  "quote": "The bound on the K-theory of A implies a similar upper bound for the étale cohomology",
+  "quote_words": 18,
+  "longest_run": 18,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T17",
+  "url": "https://www.numdam.org/item/CM_1992__81_2_223_0.pdf",
+  "quote": "For an even integer i, A[i] = 0.",
+  "quote_words": 8,
+  "longest_run": 8,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T18",
+  "url": "https://webusers.imj-prg.fr/~huayi.chen/Recherche/Hilbert_Samuel_Adelic_Curves.pdf",
+  "quote": "Let 𝑋 be an integral projective 𝐾-scheme",
+  "quote_words": 8,
+  "longest_run": 8,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T18",
+  "url": "https://eprints.whiterose.ac.uk/id/eprint/170076/1/Lattices5.pdf",
+  "quote": "There is another way to construct the theta series",
+  "quote_words": 9,
+  "longest_run": 9,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T18",
+  "url": "https://arxiv.org/html/2505.09975v1",
+  "quote": "is divisible by the congruence ideal of the Yoshida lift",
+  "quote_words": 10,
+  "longest_run": 10,
+  "state": "found",
+  "note": ""
+ },
+ {
+  "id": "T19",
+  "url": "https://www.pnas.org/doi/pdf/10.1073/pnas.32.12.331",
+  "quote": "This set is progression-free",
+  "quote_words": 5,
+  "longest_run": 0,
+  "state": "unopened",
+  "note": "The site returned no text of the article."
+ },
+ {
+  "id": "T19",
+  "url": "https://page-one.springer.com/pdf/preview/10.1007/978-1-4684-0133-2_13",
+  "quote": "these Kn, plus K∞, are the only fields between K and K∞.",
+  "quote_words": 12,
+  "longest_run": 7,
+  "state": "read",
+  "note": "The sentence stands in Proposition 13.1, with subscripts spaced apart in the scan."
+ },
+ {
+  "id": "T20",
+  "url": "https://research-information.bris.ac.uk/en/publications/numerical-computations-concerning-the-grh/",
+  "quote": "associated with primitive characters of modulus q ≤ 400000",
+  "quote_words": 8,
+  "longest_run": 8,
+  "state": "found",
+  "note": ""
+ }
+]

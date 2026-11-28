@@ -1,0 +1,94 @@
+[
+  {
+    "id": "2.1",
+    "technique": "The unit defines a positively weighted real combination of smoothed Chebyshev error terms for primitive Dirichlet characters. It uses the first-order Riesz weight (x/n − 1) and removes the contribution at s = 1 from each term.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Youness Lamzouri, Xiannan Li, and Kannan Soundararajan, Conditional bounds for the least quadratic non-residue and related problems, Mathematics of Computation 84, 2015.",
+        "url": "https://www.math.ksu.edu/about/personal/xiannan/papers/QuaResL1ver2Sound.pdf",
+        "locator": "Lemmas 2.3 and 2.4 and the paragraph preceding equation (4.10).",
+        "says": "The lemmas use the kernel x^(s−1)/(s(s−1)) for primitive Dirichlet characters and zeta, and the later argument sums the resulting smoothed prime sums over characters trivial on a subgroup.",
+        "quote": "We sum the above over the h−1 non-principal characters"
+      }
+    ],
+    "difference": "Multiplying the source's sums by x gives the same weight, and Lemma 2.4 gives exactly the zeta main term x log x − (1 + γ)x. The Lean definition combines the centered terms with weight 1 on zeta and any distinguished character and weight 1/(3o + 1) on the remaining characters. The source uses an unweighted character sum for a subgroup calculation.",
+    "searches": [
+      "smoothed von Mangoldt sum (x/n - 1) Euler constant log derivative L(1 chi) explicit formula sum Lambda x log x gamma Riemann hypothesis",
+      "smoothed explicit formula \"s(s-1)\" \"von Mangoldt\" \"Euler\" prime powers weighted log derivative 1 x gamma",
+      "Lamzouri Li Soundararajan conditional bounds least quadratic nonresidue Dirichlet L functions logarithmic derivative Lemma 2.3 x/n log kernel arxiv 2015"
+    ],
+    "confidence": "high",
+    "why": "The published contour formulas match the individual kernels and centering terms after rescaling, and the Lean declarations specify the distinct family weights directly.",
+    "specialist": "Compare the linear combination with smoothed explicit formulas for abelian Dedekind zeta functions and their Dirichlet factors to check for an earlier use of the same weights."
+  },
+  {
+    "id": "2.2",
+    "technique": "This is a Landau-type oscillation criterion localized to intervals of the form [Y, Y^la]. High Taylor coefficients of the Mellin transform detect poles, and positive character weights prevent cancellation at a zero shared by several L-functions.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Jerzy Kaczorowski and János Pintz, Oscillatory properties of arithmetical functions. I, Acta Mathematica Hungarica 48, 1986.",
+        "url": "https://personal.math.ubc.ca/~gerg/teaching/592-Fall2018/papers/1986.Kaczorowski_1.pdf",
+        "locator": "Theorem 1, Corollary 1, and the proof of equation (3.30).",
+        "says": "The authors obtain sign changes with power-size oscillation on every sufficiently large interval [T^(1−ε), T] from the meromorphic Mellin transform, with the oscillation proof using conjugate nonreal singularities.",
+        "quote": "contains at least one sign change of f(s)."
+      },
+      {
+        "citation": "János Pintz, On the remainder term of the prime number formula and the zeros of Riemann’s zeta-function, Lecture Notes in Mathematics, Springer, 1984.",
+        "url": "https://personal.math.ubc.ca/~gerg/teaching/592-Fall2018/papers/1984.Pintz_0.pdf",
+        "locator": "Theorem 1 and equations (1.7)–(1.9), pp. 186–187.",
+        "says": "A specified zeta zero forces a large absolute value of the unsmoothed Chebyshev error on a power interval whose exponent depends on the zero's height.",
+        "quote": "then there exists a value"
+      }
+    ],
+    "difference": "Taking T = Y^la and ε = 1 − 1/la gives exactly the interval used in the unit. The unit applies the one-sided test to a positively weighted family of smoothed errors and explicitly uses the positive residue at a real zero. The published sign-change proof uses repeated logarithmic integration, while Lean estimates high Taylor coefficients.",
+    "searches": [
+      "Landau oscillation theorem Riemann zeta upper bound interval [X,X^A] zero free Riemann hypothesis long intervals one sided prime counting Pintz",
+      "Kaczorowski Pintz Oscillatory properties of arithmetical functions I 1986 48 Mellin full pdf impan",
+      "one-sided effective oscillation Mellin transform Laplace real poles Kaczorowski Pintz Revész Dirichlet L functions power intervals 1986",
+      "one-sided oscillation positive residue real pole oscillations remainder terms positive Omega Mellin transform Landau theorem effective interval real poles arxiv"
+    ],
+    "confidence": "high",
+    "why": "The 1986 theorem gives the same interval geometry, and the weighted Dirichlet specialization and treatment of real poles are explicit in the Lean argument.",
+    "specialist": "Check whether subtracting the positive real-pole monomials and, if needed, adding a smaller oscillatory term yields the full one-sided criterion directly from the 1986 corollary."
+  },
+  {
+    "id": "2.3",
+    "technique": "The unit obtains a one-sided smoothed prime-sum estimate by combining a Chebyshev-style comparison of divisibility and lattice size with finite character projection and bounds for the remaining characters. It then applies the pointwise estimate throughout the intervals supplied by the family.",
+    "class": "A",
+    "nearest": [
+      {
+        "citation": "Jean-Benoît Bost, Périodes et isogénies des variétés abéliennes sur les corps de nombres, Astérisque 237, 1996.",
+        "url": "https://www.numdam.org/article/SB_1994-1995__37__115_0.pdf",
+        "locator": "Section 5.3.2, equation (5.23) and the estimates that follow.",
+        "says": "Bost compares the Arakelov degree of a source bundle with a rank-weighted sum of maximal slopes and log norms for a filtered evaluation map in a proof of a period bound.",
+        "quote": "Pour cela, nous allons évaluer les divers termes qui apparaissent dans cette inégalité, en supposant φ_K injective."
+      },
+      {
+        "citation": "Jeffrey C. Lagarias and Andrew M. Odlyzko, Effective Versions of the Chebotarev Density Theorem, in Algebraic Number Fields, Academic Press, 1977.",
+        "url": "https://aareyanmanzoor.github.io/assets/articles/lagarias-odlyzko.pdf",
+        "locator": "Section 3, equations (3.3)–(3.6), and Theorem 9.1.",
+        "says": "Character orthogonality projects a Frobenius class onto logarithmic derivatives of Artin L-functions, and an explicit formula gives a square-root-scale error under GRH.",
+        "quote": "We conclude this paper by applying the explicit formula of Theorem 7.1 to estimate ψ_C(x) and π_C(x)."
+      },
+      {
+        "citation": "Pafnuty L. Chebyshev, Mémoire sur les nombres premiers, Journal de Mathématiques Pures et Appliquées 17, 1852.",
+        "url": "https://www.numdam.org/item/JMPA_1852_1_17__366_0.pdf",
+        "locator": "Sections II–III, equations (2)–(4), pp. 369–371.",
+        "says": "Chebyshev identifies a sum over prime powers with the logarithm of a factorial and uses combinations of those identities to bound his prime-power counting function.",
+        "quote": "D'après cette équation, il n'est pas difficile de trouver plusieurs inégalités que la fonction ψ (χ) vérifie."
+      }
+    ],
+    "difference": "The Lean implication combines divisibility and slope bounds for lattices associated with iterated theta lifts with a character projection on an auxiliary field. Its hypotheses supply the character estimates and lattice data used to obtain x^(1/2 + (eD + eL + 7)ε), with eD and eL fixed across small ε. The top-level application uses intervals [Y, Y^(3/2)].",
+    "searches": [
+      "Dirichlet L prime counting one-sided coefficient upper bound determinant lattice divisibility covolume theta lifts square root Chebyshev explicit formula before 2026",
+      "Bost slope method arakelov slopes upper lower arithmetic algebraic independence slope inequalities determinant covolume arithmetic Hilbert Samuel pdf",
+      "Lagarias Odlyzko effective versions Chebotarev density theorem pdf character orthogonality explicit formula 1977",
+      "Chebyshev Mémoire sur les nombres premiers 1852 factorial Tchebychef pdf Stirling prime numbers"
+    ],
+    "confidence": "medium",
+    "why": "The sources establish the individual methods, and the search found no earlier statement combining them under the auxiliary-field and lattice hypotheses of this bound.",
+    "specialist": "Trace the passage from the slope bounds to the terms of size x/m and m, and check how their balance and the character error yield the stated exponent with constants fixed across ε."
+  }
+]
