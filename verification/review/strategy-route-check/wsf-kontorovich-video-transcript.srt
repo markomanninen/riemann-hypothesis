@@ -1,0 +1,4472 @@
+1
+00:00:00,000 --> 00:00:04,000
+Isn't it crazy that we're actually
+
+2
+00:00:01,800 --> 00:00:06,600
+talking about is it September or October
+
+3
+00:00:04,000 --> 00:00:09,000
+when we're talking 167 years of work?
+
+4
+00:00:06,600 --> 00:00:10,100
+>> Yeah. What what week was it? What hour
+
+5
+00:00:09,000 --> 00:00:13,700
+was it?
+
+6
+00:00:10,100 --> 00:00:16,400
+>> Proving the Riemann hypothesis has been
+
+7
+00:00:13,700 --> 00:00:19,200
+widely viewed as math's greatest and
+
+8
+00:00:16,400 --> 00:00:21,700
+most important challenge and it has
+
+9
+00:00:19,200 --> 00:00:26,000
+resisted being solved by the most
+
+10
+00:00:21,700 --> 00:00:28,700
+accomplished mathematicians for 167
+
+11
+00:00:26,000 --> 00:00:30,800
+years. Now the hypothesis itself it has
+
+12
+00:00:28,700 --> 00:00:32,599
+to do with the distribution of prime
+
+13
+00:00:30,800 --> 00:00:35,400
+numbers, but
+
+14
+00:00:32,599 --> 00:00:38,500
+look even if prime numbers are not
+
+15
+00:00:35,400 --> 00:00:41,100
+something you think all that much about
+
+16
+00:00:38,500 --> 00:00:44,800
+the recent news should knock you off
+
+17
+00:00:41,100 --> 00:00:47,900
+your chair. AI guided in part by human
+
+18
+00:00:44,800 --> 00:00:50,800
+mathematician it seems to now have
+
+19
+00:00:47,900 --> 00:00:54,800
+proven the Riemann hypothesis. That is
+
+20
+00:00:50,800 --> 00:00:56,400
+AI has gone where no human brain has
+
+21
+00:00:54,800 --> 00:00:58,400
+gone before.
+
+22
+00:00:56,400 --> 00:01:01,400
+Now in its raw form
+
+23
+00:00:58,400 --> 00:01:04,600
+this AI proof it runs to something like
+
+24
+00:01:01,400 --> 00:01:06,200
+a quarter of a million pages and in its
+
+25
+00:01:04,600 --> 00:01:10,000
+formalized version that's the one that
+
+26
+00:01:06,200 --> 00:01:13,400
+you can run through the automated
+
+27
+00:01:10,000 --> 00:01:17,800
+theorem checker called Lean. It's about
+
+28
+00:01:13,400 --> 00:01:20,600
+17 million lines of code. So clearly at
+
+29
+00:01:17,800 --> 00:01:24,700
+this point suffice it to say
+
+30
+00:01:20,600 --> 00:01:27,700
+no human understands the proof. But
+
+31
+00:01:24,700 --> 00:01:29,700
+we've got the next best thing. Alex
+
+32
+00:01:27,700 --> 00:01:32,400
+Kontorovich professor of mathematics at
+
+33
+00:01:29,700 --> 00:01:35,500
+Rutgers he's going to help us grasp as
+
+34
+00:01:32,400 --> 00:01:37,100
+much as we can about this momentous
+
+35
+00:01:35,500 --> 00:01:40,200
+development.
+
+36
+00:01:37,100 --> 00:01:41,500
+Alex it is so good to see you again.
+
+37
+00:01:40,200 --> 00:01:44,300
+>> Long time no see.
+
+38
+00:01:41,500 --> 00:01:45,800
+>> Yeah it is rare that we ever do a a
+
+39
+00:01:44,300 --> 00:01:47,200
+follow-up
+
+40
+00:01:45,800 --> 00:01:49,000
+a few days after we've had a
+
+41
+00:01:47,200 --> 00:01:52,000
+conversation, but this is an unusual
+
+42
+00:01:49,000 --> 00:01:54,800
+time in mathematics, right? The recent
+
+43
+00:01:52,000 --> 00:01:57,900
+announcement that there may be a proof
+
+44
+00:01:54,800 --> 00:02:00,800
+using Claude and human as well of the
+
+45
+00:01:57,900 --> 00:02:02,292
+Riemann hypothesis which
+
+46
+00:02:00,800 --> 00:02:04,692
+is kind amazing. Now, there's something
+
+47
+00:02:02,292 --> 00:02:05,792
+you said to me in our last conversation,
+
+48
+00:02:04,692 --> 00:02:07,092
+which was
+
+49
+00:02:05,792 --> 00:02:11,092
+you can only
+
+50
+00:02:07,092 --> 00:02:12,392
+once have an experience of oh my god,
+
+51
+00:02:11,092 --> 00:02:13,792
+what has happened? How could this be
+
+52
+00:02:12,392 --> 00:02:17,392
+happening?
+
+53
+00:02:13,792 --> 00:02:18,692
+Do you stand by that statement now?
+
+54
+00:02:17,392 --> 00:02:21,192
+>> The other thing I said to you it was
+
+55
+00:02:18,692 --> 00:02:23,792
+that I was constantly wrong.
+
+56
+00:02:21,192 --> 00:02:24,692
+And I was wrong then.
+
+57
+00:02:23,792 --> 00:02:26,692
+And
+
+58
+00:02:24,692 --> 00:02:28,292
+uh yeah, when I said, you know, how
+
+59
+00:02:26,692 --> 00:02:30,792
+could I be shocked again? I'm completely
+
+60
+00:02:28,292 --> 00:02:32,792
+shocked. I mean, this is beyond any
+
+61
+00:02:30,792 --> 00:02:34,792
+anyone's imagination.
+
+62
+00:02:32,792 --> 00:02:36,892
+>> Yeah. So just for those who perhaps have
+
+63
+00:02:34,792 --> 00:02:39,192
+not heard the news, I think many people
+
+64
+00:02:36,892 --> 00:02:42,092
+who follow this kind of arena
+
+65
+00:02:39,192 --> 00:02:44,192
+of human thought have heard. But what is
+
+66
+00:02:42,092 --> 00:02:45,992
+the announcement that we're both
+
+67
+00:02:44,192 --> 00:02:48,792
+responding to here?
+
+68
+00:02:45,992 --> 00:02:51,992
+>> Yeah, so on Friday uh 11th El iezer
+
+69
+00:02:48,792 --> 00:02:55,192
+posted uh I guess just on his website a
+
+70
+00:02:51,992 --> 00:02:57,792
+little four-page description of his
+
+71
+00:02:55,192 --> 00:02:59,392
+experience over the last few weeks, I
+
+72
+00:02:57,792 --> 00:03:01,592
+guess it's been
+
+73
+00:02:59,392 --> 00:03:03,592
+uh where he had been iterating with
+
+74
+00:03:01,592 --> 00:03:05,592
+Claude and at the end Claude just went
+
+75
+00:03:03,592 --> 00:03:07,292
+off on its own, you know, thousands of
+
+76
+00:03:05,592 --> 00:03:08,392
+agents talking to one another. They
+
+77
+00:03:07,292 --> 00:03:11,792
+wrote some
+
+78
+00:03:08,392 --> 00:03:14,492
+uh apparently 250,000 page natural
+
+79
+00:03:11,792 --> 00:03:17,092
+language paper which he then uh asked it
+
+80
+00:03:14,492 --> 00:03:18,192
+to formalize in Lean and it did and it
+
+81
+00:03:17,092 --> 00:03:20,492
+came out with
+
+82
+00:03:18,192 --> 00:03:21,292
+uh a formal proof of
+
+83
+00:03:20,492 --> 00:03:24,292
+the Riemann hypothesis.
+
+84
+00:03:21,292 --> 00:03:26,292
+>> Wow. Yeah, it's kind of crazy. Um so
+
+85
+00:03:24,292 --> 00:03:28,792
+just to you know, I like this
+
+86
+00:03:26,292 --> 00:03:31,292
+conversation to be self-contained as it
+
+87
+00:03:28,792 --> 00:03:32,792
+can be. We won't go quite as in depth as
+
+88
+00:03:31,292 --> 00:03:35,092
+perhaps in our previous conversation,
+
+89
+00:03:32,792 --> 00:03:36,592
+which I'll direct people to for a little
+
+90
+00:03:35,092 --> 00:03:38,592
+bit more detail.
+
+91
+00:03:36,592 --> 00:03:42,092
+But I thought we would just sort of give
+
+92
+00:03:38,592 --> 00:03:45,192
+the overview of what this is all about
+
+93
+00:03:42,092 --> 00:03:47,992
+and then we can dive a little bit into
+
+94
+00:03:45,192 --> 00:03:49,692
+whatever you can tell us about the
+
+95
+00:03:47,992 --> 00:03:51,492
+details. I'm sure you've digested that
+
+96
+00:03:49,692 --> 00:03:53,892
+250,000
+
+97
+00:03:51,492 --> 00:03:56,292
+page paper over the weekend. But anyway,
+
+98
+00:03:53,892 --> 00:03:59,492
+so I just have a a couple slides just to
+
+99
+00:03:56,292 --> 00:04:01,692
+sort of get us all on the same page. So
+
+100
+00:03:59,492 --> 00:04:05,794
+you know, if we [clears throat] see here
+
+101
+00:04:01,692 --> 00:04:07,494
+uh a sort of outline the the the the big
+
+102
+00:04:05,794 --> 00:04:09,794
+issues here. So maybe we can just start
+
+103
+00:04:07,494 --> 00:04:11,394
+with, you know, the question, right? So
+
+104
+00:04:09,794 --> 00:04:12,894
+the big questions concerns prime
+
+105
+00:04:11,394 --> 00:04:16,094
+numbers. Just just take us through a
+
+106
+00:04:12,894 --> 00:04:18,194
+little bit of what this is all about.
+
+107
+00:04:16,094 --> 00:04:21,494
+>> Yeah, it starts with Gauss computing
+
+108
+00:04:18,194 --> 00:04:23,094
+huge tables of primes and uh wondering
+
+109
+00:04:21,494 --> 00:04:24,794
+what the distribution is. And other
+
+110
+00:04:23,094 --> 00:04:26,994
+people were doing this at at the time.
+
+111
+00:04:24,794 --> 00:04:29,694
+And Gauss conjectured sort of a main
+
+112
+00:04:26,994 --> 00:04:31,494
+term for how many primes there are in uh
+
+113
+00:04:29,694 --> 00:04:34,294
+in a window as the window varies. That
+
+114
+00:04:31,494 --> 00:04:36,294
+main term being that the the proportion
+
+115
+00:04:34,294 --> 00:04:39,494
+of primes in an interval is like one
+
+116
+00:04:36,294 --> 00:04:41,194
+over log uh where you started.
+
+117
+00:04:39,494 --> 00:04:44,994
+And um
+
+118
+00:04:41,194 --> 00:04:46,394
+and Riemann had a uh
+
+119
+00:04:44,994 --> 00:04:49,394
+Riemann observed that there was a
+
+120
+00:04:46,394 --> 00:04:52,094
+complex analytic function that
+
+121
+00:04:49,394 --> 00:04:54,494
+would explain both Gauss's conjecture
+
+122
+00:04:52,094 --> 00:04:56,494
+and give you the sharpest distribution,
+
+123
+00:04:54,494 --> 00:04:58,694
+the the sharpest count you can, which
+
+124
+00:04:56,494 --> 00:05:00,994
+basically says that Gauss's guess for
+
+125
+00:04:58,694 --> 00:05:02,894
+the main term um gives you the first
+
+126
+00:05:00,994 --> 00:05:09,094
+half of the digits accurately.
+
+127
+00:05:02,894 --> 00:05:11,194
+>> And so that was in the mid 1800s
+
+128
+00:05:09,094 --> 00:05:12,494
+that this idea was put forward. And it
+
+129
+00:05:11,194 --> 00:05:15,494
+definitely
+
+130
+00:05:12,494 --> 00:05:17,394
+captured people's imagination. And in
+
+131
+00:05:15,494 --> 00:05:19,794
+particular,
+
+132
+00:05:17,394 --> 00:05:21,494
+the hypothesis was that the zeros of
+
+133
+00:05:19,794 --> 00:05:22,994
+that function, and we'll write down that
+
+134
+00:05:21,494 --> 00:05:25,294
+function in just a moment, the zeta
+
+135
+00:05:22,994 --> 00:05:27,494
+function, just so people can sort of see
+
+136
+00:05:25,294 --> 00:05:29,294
+it on the screen. But where this
+
+137
+00:05:27,494 --> 00:05:30,694
+particular function, the details don't
+
+138
+00:05:29,294 --> 00:05:32,894
+really matter, but where this particular
+
+139
+00:05:30,694 --> 00:05:35,394
+function has its zeros
+
+140
+00:05:32,894 --> 00:05:39,494
+is vital to understanding where the
+
+141
+00:05:35,394 --> 00:05:41,294
+primes are, statistically speaking, on
+
+142
+00:05:39,494 --> 00:05:44,694
+the number line.
+
+143
+00:05:41,294 --> 00:05:47,394
+And and and so the goal was to prove
+
+144
+00:05:44,694 --> 00:05:50,094
+that the hypothesis that the zeros were
+
+145
+00:05:47,394 --> 00:05:51,894
+on a very specific contour, vertical
+
+146
+00:05:50,094 --> 00:05:53,794
+line whose real part was a half. Again,
+
+147
+00:05:51,894 --> 00:05:55,594
+the details don't really matter.
+
+148
+00:05:53,794 --> 00:05:57,894
+Trying to prove that,
+
+149
+00:05:55,594 --> 00:06:00,694
+where would you say that has sat in the
+
+150
+00:05:57,894 --> 00:06:03,794
+pantheon of mathematical problems that
+
+151
+00:06:00,694 --> 00:06:06,395
+mathematicians have kind of viewed as
+
+152
+00:06:03,794 --> 00:06:08,295
+critical to the field.
+
+153
+00:06:06,395 --> 00:06:10,795
+>> Yeah, it's basically, know, in some
+
+154
+00:06:08,295 --> 00:06:12,595
+sense the iconic problem of the the
+
+155
+00:06:10,795 --> 00:06:14,695
+entire field. Anytime somebody wanted to
+
+156
+00:06:12,595 --> 00:06:18,895
+say something like, oh yeah, that's as
+
+157
+00:06:14,695 --> 00:06:20,795
+hard as X, X was, you know, 99 times out
+
+158
+00:06:18,895 --> 00:06:23,995
+of 100 the Riemann hypothesis.
+
+159
+00:06:20,795 --> 00:06:25,695
+And so in the year 1900 there was a
+
+160
+00:06:23,995 --> 00:06:29,395
+Congress, you know, the International
+
+161
+00:06:25,695 --> 00:06:31,095
+Math Congress of Mathematicians, which
+
+162
+00:06:29,395 --> 00:06:32,195
+happens every four years. This is where
+
+163
+00:06:31,095 --> 00:06:33,595
+the Fields Medal is given out. Of
+
+164
+00:06:32,195 --> 00:06:36,695
+course, there was no Fields Medal back
+
+165
+00:06:33,595 --> 00:06:38,895
+in the year 1900, but David Hilbert was
+
+166
+00:06:36,695 --> 00:06:41,195
+kind of thinking, what are the
+
+167
+00:06:38,895 --> 00:06:42,695
+challenges for the 20th century? And he
+
+168
+00:06:41,195 --> 00:06:45,295
+wrote down
+
+169
+00:06:42,695 --> 00:06:47,095
+23 problems and among them is the
+
+170
+00:06:45,295 --> 00:06:48,695
+Riemann hypothesis,
+
+171
+00:06:47,095 --> 00:06:51,295
+which
+
+172
+00:06:48,695 --> 00:06:54,595
+there had just been incredible progress
+
+173
+00:06:51,295 --> 00:06:57,395
+in that direction in the year 1896
+
+174
+00:06:54,595 --> 00:06:59,395
+by two mathematicians, Adamard and de la
+
+175
+00:06:57,395 --> 00:07:01,995
+Vallée-Poussin, who independently
+
+176
+00:06:59,395 --> 00:07:03,695
+resolved Riemann's approach towards
+
+177
+00:07:01,995 --> 00:07:05,895
+Gauss's conjecture by proving the prime
+
+178
+00:07:03,695 --> 00:07:07,095
+number theorem, but with an error term
+
+179
+00:07:05,895 --> 00:07:09,995
+that doesn't tell you anything about how
+
+180
+00:07:07,095 --> 00:07:11,095
+many digits there would be in the in the
+
+181
+00:07:09,995 --> 00:07:13,395
+error.
+
+182
+00:07:11,095 --> 00:07:15,295
+And so this was one of the things
+
+183
+00:07:13,395 --> 00:07:16,995
+Hilbert said, you know, the 20th century
+
+184
+00:07:15,295 --> 00:07:19,195
+we should try to prove this. Fast
+
+185
+00:07:16,995 --> 00:07:22,095
+forward 100 years and it's the turn of
+
+186
+00:07:19,195 --> 00:07:23,895
+the millennium and the Clay Institute,
+
+187
+00:07:22,095 --> 00:07:26,095
+newly founded Clay Institute says, okay,
+
+188
+00:07:23,895 --> 00:07:28,895
+so let's follow Hilbert's ideas, you
+
+189
+00:07:26,095 --> 00:07:29,995
+know, one step further. What are the
+
+190
+00:07:28,895 --> 00:07:31,895
+what are the problems that
+
+191
+00:07:29,995 --> 00:07:33,695
+mathematicians should work on in the
+
+192
+00:07:31,895 --> 00:07:36,695
+third millennium?
+
+193
+00:07:33,695 --> 00:07:38,895
+And they gave these, you know, seven
+
+194
+00:07:36,695 --> 00:07:41,695
+problems, a million dollar bounty each.
+
+195
+00:07:38,895 --> 00:07:43,995
+And number one is the Riemann hypothesis
+
+196
+00:07:41,695 --> 00:07:45,995
+and it's the only one that continued to
+
+197
+00:07:43,995 --> 00:07:48,695
+haunt mathematicians from Hilbert's time
+
+198
+00:07:45,995 --> 00:07:51,495
+and before Hilbert's time to the turn of
+
+199
+00:07:48,695 --> 00:07:52,295
+the millennium and for the 26 years
+
+200
+00:07:51,495 --> 00:07:54,895
+thereafter.
+
+201
+00:07:52,295 --> 00:07:57,695
+>> And so going back to Riemann himself,
+
+202
+00:07:54,895 --> 00:08:01,395
+that's 167 years
+
+203
+00:07:57,695 --> 00:08:03,695
+since this hypothesis was put forward.
+
+204
+00:08:01,395 --> 00:08:06,395
+And then the amazing thing is in just
+
+205
+00:08:03,695 --> 00:08:09,197
+the last few months there was
+
+206
+00:08:06,395 --> 00:08:12,597
+incremental progress and
+
+207
+00:08:09,197 --> 00:08:15,597
+in the last few days announced that that
+
+208
+00:08:12,597 --> 00:08:18,197
+incremental progress had now culminated
+
+209
+00:08:15,597 --> 00:08:20,497
+in actual proof. I thought we might go
+
+210
+00:08:18,197 --> 00:08:22,597
+through the the the timeline of that for
+
+211
+00:08:20,497 --> 00:08:25,297
+just a moment because I think
+
+212
+00:08:22,597 --> 00:08:28,497
+putting this in historical context
+
+213
+00:08:25,297 --> 00:08:30,997
+is what really gives the breathtaking
+
+214
+00:08:28,497 --> 00:08:33,397
+sense of what has happened even for
+
+215
+00:08:30,997 --> 00:08:34,997
+folks who don't work on prime numbers or
+
+216
+00:08:33,397 --> 00:08:36,897
+the distribution on the number line or
+
+217
+00:08:34,997 --> 00:08:39,397
+haven't heard of the zeta function. So
+
+218
+00:08:36,897 --> 00:08:42,097
+if we can just go over to the the
+
+219
+00:08:39,397 --> 00:08:44,097
+timeline, on the timeline, if we begin
+
+220
+00:08:42,097 --> 00:08:46,597
+say with Gauss,
+
+221
+00:08:44,097 --> 00:08:48,597
+Gauss was thinking about this at what
+
+222
+00:08:46,597 --> 00:08:50,497
+point?
+
+223
+00:08:48,597 --> 00:08:53,097
+>> Yeah, so if you want you can jump all
+
+224
+00:08:50,497 --> 00:08:54,197
+the way back to Euclid 2,000 years ago
+
+225
+00:08:53,097 --> 00:08:56,097
+who proved that
+
+226
+00:08:54,197 --> 00:08:58,597
+that was sort of the first big result on
+
+227
+00:08:56,097 --> 00:09:00,197
+the prime numbers and Euclid proved that
+
+228
+00:08:58,597 --> 00:09:00,997
+there's infinitely many. So you would
+
+229
+00:09:00,197 --> 00:09:02,297
+you don't have to worry about their
+
+230
+00:09:00,997 --> 00:09:03,797
+distribution is if if there's only
+
+231
+00:09:02,297 --> 00:09:05,797
+finitely many of them.
+
+232
+00:09:03,797 --> 00:09:08,497
+So we know there's finitely many
+
+233
+00:09:05,797 --> 00:09:10,097
+elementary particles in the universe but
+
+234
+00:09:08,497 --> 00:09:11,797
+or at least we believe
+
+235
+00:09:10,097 --> 00:09:13,897
+but in terms of the multiplicative
+
+236
+00:09:11,797 --> 00:09:15,597
+structure of the whole numbers, namely
+
+237
+00:09:13,897 --> 00:09:17,097
+the primes, it turns out you need
+
+238
+00:09:15,597 --> 00:09:19,097
+infinitely many fundamental particles
+
+239
+00:09:17,097 --> 00:09:21,997
+and that was Euclid's
+
+240
+00:09:19,097 --> 00:09:24,097
+big theorem from you know 300 BC. Okay,
+
+241
+00:09:21,997 --> 00:09:28,597
+let's skip forward to
+
+242
+00:09:24,097 --> 00:09:31,897
+Gauss who this is like 1793 94. He's a a
+
+243
+00:09:28,597 --> 00:09:34,997
+teenager who's sort of bored and has
+
+244
+00:09:31,897 --> 00:09:37,797
+some idle an idle hour or two here and
+
+245
+00:09:34,997 --> 00:09:39,697
+there and computes chiliads of of tables
+
+246
+00:09:37,797 --> 00:09:41,297
+of primes you know by the thousands he's
+
+247
+00:09:39,697 --> 00:09:42,997
+sort of sieving out numbers that he
+
+248
+00:09:41,297 --> 00:09:44,697
+knows
+
+249
+00:09:42,997 --> 00:09:46,597
+he's he's taking multiples of numbers
+
+250
+00:09:44,697 --> 00:09:49,097
+that he knows and
+
+251
+00:09:46,597 --> 00:09:51,097
+removing those multiples and and what
+
+252
+00:09:49,097 --> 00:09:53,597
+remains
+
+253
+00:09:51,097 --> 00:09:55,797
+in that little interval that he's
+
+254
+00:09:53,597 --> 00:09:56,397
+experimenting with are the prime numbers
+
+255
+00:09:55,797 --> 00:09:58,997
+in that interval.
+
+256
+00:09:56,397 --> 00:10:01,397
+>> And then Riemann comes along that's the
+
+257
+00:09:58,997 --> 00:10:04,097
+exact year is what 18
+
+258
+00:10:01,397 --> 00:10:04,997
+>> 1859 is the yeah when his paper is
+
+259
+00:10:04,097 --> 00:10:07,697
+published.
+
+260
+00:10:04,997 --> 00:10:08,697
+>> And then 1896 you mentioned was a big
+
+261
+00:10:07,697 --> 00:10:10,098
+year.
+
+262
+00:10:08,697 --> 00:10:11,898
+>> Yeah, so that's when the prime number
+
+263
+00:10:10,098 --> 00:10:14,898
+theorem was proved,
+
+264
+00:10:11,898 --> 00:10:16,398
+uh, following Riemann's, um, blueprint
+
+265
+00:10:14,898 --> 00:10:18,898
+for how to do it. So Riemann gave sort
+
+266
+00:10:16,398 --> 00:10:20,598
+of two blueprints. One is if you just
+
+267
+00:10:18,898 --> 00:10:22,498
+want the prime number theorem, you have
+
+268
+00:10:20,598 --> 00:10:24,998
+to show that there are no zeros of this
+
+269
+00:10:22,498 --> 00:10:26,898
+function on the real part of S equals 1
+
+270
+00:10:24,998 --> 00:10:28,798
+line, and that's what was accomplished
+
+271
+00:10:26,898 --> 00:10:30,298
+in 1896. And he said, but really I
+
+272
+00:10:28,798 --> 00:10:32,398
+believe the truth to be much better than
+
+273
+00:10:30,298 --> 00:10:34,398
+that. I think there are no zeros on up
+
+274
+00:10:32,398 --> 00:10:36,798
+to the 1/2 line. He knew that there were
+
+275
+00:10:34,398 --> 00:10:39,298
+zeros on the 1/2 line, but there's he he
+
+276
+00:10:36,798 --> 00:10:41,598
+guessed, hypothesized that there were no
+
+277
+00:10:39,298 --> 00:10:43,798
+zeros between real part of S is a half
+
+278
+00:10:41,598 --> 00:10:47,198
+and and one, including one.
+
+279
+00:10:43,798 --> 00:10:49,698
+And, um, so 1896 we know that there are
+
+280
+00:10:47,198 --> 00:10:51,998
+no zeros on the one line. Uh,
+
+281
+00:10:49,698 --> 00:10:53,598
+what is it? October or something? Well,
+
+282
+00:10:51,998 --> 00:10:55,098
+maybe there's some more some more steps
+
+283
+00:10:53,598 --> 00:10:56,698
+in the timeline you want to go over.
+
+284
+00:10:55,098 --> 00:10:58,498
+>> a few more steps if we want. So you
+
+285
+00:10:56,698 --> 00:11:01,198
+mentioned 1900. Hilbert of course
+
+286
+00:10:58,498 --> 00:11:04,698
+mentions this as a key problem for, you
+
+287
+00:11:01,198 --> 00:11:07,298
+know, the next century. You know,
+
+288
+00:11:04,698 --> 00:11:10,198
+in 1914, Hardy,
+
+289
+00:11:07,298 --> 00:11:12,398
+he proved something about the the the
+
+290
+00:11:10,198 --> 00:11:13,798
+zeros of the zeta function too. Do you
+
+291
+00:11:12,398 --> 00:11:14,798
+do you happen to know that off the top
+
+292
+00:11:13,798 --> 00:11:16,598
+of your head?
+
+293
+00:11:14,798 --> 00:11:19,198
+>> That's right. So Riemann computed the
+
+294
+00:11:16,598 --> 00:11:20,798
+first few zeros by hand. This is again
+
+295
+00:11:19,198 --> 00:11:22,898
+1859
+
+296
+00:11:20,798 --> 00:11:24,998
+or so, probably a little bit before he
+
+297
+00:11:22,898 --> 00:11:26,798
+actually wrote that paper. And he saw
+
+298
+00:11:24,998 --> 00:11:28,398
+that three of them were on the line. And
+
+299
+00:11:26,798 --> 00:11:29,398
+the the first question is, well, can we
+
+300
+00:11:28,398 --> 00:11:31,698
+at least prove that there's infinitely
+
+301
+00:11:29,398 --> 00:11:33,498
+many on the line? So Hardy was the first
+
+302
+00:11:31,698 --> 00:11:34,998
+to establish that indeed infinitely many
+
+303
+00:11:33,498 --> 00:11:37,198
+of the zeros of the Riemann zeta
+
+304
+00:11:34,998 --> 00:11:39,698
+function do lie on the one half line.
+
+305
+00:11:37,198 --> 00:11:41,298
+Uh, Selberg, before we get to Levinson,
+
+306
+00:11:39,698 --> 00:11:43,798
+Selberg proved that actually a positive
+
+307
+00:11:41,298 --> 00:11:44,698
+proportion of the zeros do lie on the
+
+308
+00:11:43,798 --> 00:11:46,398
+one half line.
+
+309
+00:11:44,698 --> 00:11:46,698
+>> And that was in the 1940s or something,
+
+310
+00:11:46,398 --> 00:11:49,198
+right?
+
+311
+00:11:46,698 --> 00:11:49,398
+>> in the 1940 yeah, 1940s. That's right.
+
+312
+00:11:49,198 --> 00:11:49,998
+Yeah.
+
+313
+00:11:49,398 --> 00:11:52,398
+>> Yeah.
+
+314
+00:11:49,998 --> 00:11:53,598
+>> And then Levinson got that method up to
+
+315
+00:11:52,398 --> 00:11:53,898
+a third.
+
+316
+00:11:53,598 --> 00:11:54,998
+>> Yep.
+
+317
+00:11:53,898 --> 00:11:57,098
+>> Um,
+
+318
+00:11:54,998 --> 00:11:58,598
+Brian Conrey pushed that a a little
+
+319
+00:11:57,098 --> 00:12:00,898
+further.
+
+320
+00:11:58,598 --> 00:12:03,698
+So we're up to
+
+321
+00:12:00,898 --> 00:12:04,798
+the year 2000, okay, the Clay Institute.
+
+322
+00:12:03,698 --> 00:12:07,098
+Um,
+
+323
+00:12:04,798 --> 00:12:08,798
+I guess there's there there is a little
+
+324
+00:12:07,098 --> 00:12:11,298
+bit more human I think something like
+
+325
+00:12:08,798 --> 00:12:13,499
+40% of the zeros were was proved by
+
+326
+00:12:11,298 --> 00:12:15,399
+Brian Conrey and then Conrey and it's
+
+327
+00:12:13,499 --> 00:12:16,699
+and uh maybe I'm blanking on some other
+
+328
+00:12:15,399 --> 00:12:18,999
+collaborators in that project. Got a
+
+329
+00:12:16,699 --> 00:12:22,099
+little bit far higher up than 40, maybe
+
+330
+00:12:18,999 --> 00:12:23,099
+41% or 40.5 %
+
+331
+00:12:22,099 --> 00:12:24,699
+>> Um
+
+332
+00:12:23,099 --> 00:12:26,599
+>> so there was, you know, incremental
+
+333
+00:12:24,699 --> 00:12:29,199
+progress in that direction.
+
+334
+00:12:26,599 --> 00:12:31,299
+Uh I see there's 12 trillion lines
+
+335
+00:12:29,199 --> 00:12:33,599
+>> us to what? Like the the early years of
+
+336
+00:12:31,299 --> 00:12:35,899
+the 21st century or so?
+
+337
+00:12:33,599 --> 00:12:38,299
+>> Yeah, like 2015,
+
+338
+00:12:35,899 --> 00:12:40,199
+let's say. 2010, something like that.
+
+339
+00:12:38,299 --> 00:12:44,299
+>> And and so right there you're talking
+
+340
+00:12:40,199 --> 00:12:46,599
+about, you know, whatever, 150
+
+341
+00:12:44,299 --> 00:12:49,899
+years of work or something like that.
+
+342
+00:12:46,599 --> 00:12:51,999
+Just sort of narrowing down, you know,
+
+343
+00:12:49,899 --> 00:12:55,499
+uh where the zeros could be, the
+
+344
+00:12:51,999 --> 00:12:56,699
+fraction that might be here and so on.
+
+345
+00:12:55,499 --> 00:12:58,699
+But
+
+346
+00:12:56,699 --> 00:12:59,699
+I think the general feeling was that we
+
+347
+00:12:58,699 --> 00:13:02,399
+were
+
+348
+00:12:59,699 --> 00:13:04,799
+really making incremental baby steps
+
+349
+00:13:02,399 --> 00:13:07,699
+toward trying to actually get to the
+
+350
+00:13:04,799 --> 00:13:10,199
+real deal until the year 2026
+
+351
+00:13:07,699 --> 00:13:12,499
+and then sort of, you know, three key
+
+352
+00:13:10,199 --> 00:13:14,599
+moments there if we just take us through
+
+353
+00:13:12,499 --> 00:13:15,599
+what now is just a couple of months of
+
+354
+00:13:14,599 --> 00:13:18,899
+work
+
+355
+00:13:15,599 --> 00:13:21,599
+in the 20 uh 2026.
+
+356
+00:13:18,899 --> 00:13:24,899
+>> Yeah, so uh I guess we're talking August
+
+357
+00:13:21,599 --> 00:13:27,099
+now. So the um
+
+358
+00:13:24,899 --> 00:13:28,399
+Alpog and Claude and uh
+
+359
+00:13:27,099 --> 00:13:29,799
+Furman, I guess. I don't know who else
+
+360
+00:13:28,399 --> 00:13:32,499
+was involved in this project, but
+
+361
+00:13:29,799 --> 00:13:34,099
+basically Claude um they I think they
+
+362
+00:13:32,499 --> 00:13:35,099
+told Claude something like, come on,
+
+363
+00:13:34,099 --> 00:13:37,199
+make some progress on the Riemann
+
+364
+00:13:35,099 --> 00:13:39,599
+hypothesis, you know, do a breakthrough.
+
+365
+00:13:37,199 --> 00:13:41,199
+And uh and and Claude had a fantastic
+
+366
+00:13:39,599 --> 00:13:44,899
+result, which is that instead of, you
+
+367
+00:13:41,199 --> 00:13:48,499
+know, we went from 40% to 40.5 % or 41
+
+368
+00:13:44,899 --> 00:13:50,899
+%, it jumped all the way to 66 %. So 2/3
+
+369
+00:13:48,499 --> 00:13:52,799
+of the zero. There's some uh clever uh
+
+370
+00:13:50,899 --> 00:13:53,699
+things that apparently humans had missed
+
+371
+00:13:52,799 --> 00:13:55,899
+and
+
+372
+00:13:53,699 --> 00:13:57,899
+um and this kind of optimization AI was
+
+373
+00:13:55,899 --> 00:14:00,299
+already getting good at and it showed
+
+374
+00:13:57,899 --> 00:14:02,899
+that 2/3 of the zero do of the zeros do
+
+375
+00:14:00,299 --> 00:14:05,899
+lie on the uh on the one half line.
+
+376
+00:14:02,899 --> 00:14:07,299
+Now at that time I mentioned uh
+
+377
+00:14:05,899 --> 00:14:08,999
+something like, you know, people were
+
+378
+00:14:07,299 --> 00:14:10,099
+getting very excited about this and I
+
+379
+00:14:08,999 --> 00:14:12,099
+said, okay, but you know that this
+
+380
+00:14:10,099 --> 00:14:13,499
+doesn't actually make any progress, any
+
+381
+00:14:12,099 --> 00:14:15,299
+real progress towards the Riemann
+
+382
+00:14:13,499 --> 00:14:17,201
+hypothesis because
+
+383
+00:14:15,299 --> 00:14:18,901
+if it had proved that 100% of the zeros
+
+384
+00:14:17,201 --> 00:14:20,201
+were on the half line, that would still
+
+385
+00:14:18,901 --> 00:14:21,501
+say nothing about the Riemann
+
+386
+00:14:20,201 --> 00:14:22,501
+hypothesis.
+
+387
+00:14:21,501 --> 00:14:23,301
+Because
+
+388
+00:14:22,501 --> 00:14:25,601
+uh
+
+389
+00:14:23,301 --> 00:14:27,101
+when you're dealing with infinite sets,
+
+390
+00:14:25,601 --> 00:14:30,301
+what you mean by percent is an
+
+391
+00:14:27,101 --> 00:14:33,501
+asymptotic formula. So asymptotically,
+
+392
+00:14:30,301 --> 00:14:34,501
+no whole numbers are perfect squares.
+
+393
+00:14:33,501 --> 00:14:37,601
+Because the proportion of perfect
+
+394
+00:14:34,501 --> 00:14:39,701
+squares up to x is, you know,
+
+395
+00:14:37,601 --> 00:14:39,901
+is 1 over square root of x.
+
+396
+00:14:39,701 --> 00:14:41,501
+>> Sure.
+
+397
+00:14:39,901 --> 00:14:44,001
+>> only square root of x perfect squares up
+
+398
+00:14:41,501 --> 00:14:45,901
+to x and so the asymptotic count of them
+
+399
+00:14:44,001 --> 00:14:47,201
+goes to zero and so 100% of the numbers
+
+400
+00:14:45,901 --> 00:14:47,401
+are not perfect squares. That doesn't
+
+401
+00:14:47,201 --> 00:14:49,001
+mean
+
+402
+00:14:47,401 --> 00:14:50,601
+>> an important point that that I don't I
+
+403
+00:14:49,001 --> 00:14:52,301
+don't think many people fully
+
+404
+00:14:50,601 --> 00:14:54,301
+appreciate, which is like like you're
+
+405
+00:14:52,301 --> 00:14:55,701
+saying, if you're talking about
+
+406
+00:14:54,301 --> 00:14:57,501
+fractions,
+
+407
+00:14:55,701 --> 00:15:00,201
+when those fractions are dealing with
+
+408
+00:14:57,501 --> 00:15:03,201
+infinite sets, there can be a whole
+
+409
+00:15:00,201 --> 00:15:06,501
+bunch of things that lie outside of even
+
+410
+00:15:03,201 --> 00:15:09,101
+100% because you're really talking about
+
+411
+00:15:06,501 --> 00:15:11,601
+a ratio and if the ratio goes to zero as
+
+412
+00:15:09,101 --> 00:15:13,701
+the set grows to infinity, it's as if
+
+413
+00:15:11,601 --> 00:15:15,601
+they're not there from statistics, but
+
+414
+00:15:13,701 --> 00:15:17,501
+by God they actually are there. So there
+
+415
+00:15:15,601 --> 00:15:20,101
+could be zeros outside of the s equal
+
+416
+00:15:17,501 --> 00:15:22,301
+1/2 line even if you had, as you
+
+417
+00:15:20,101 --> 00:15:25,201
+mentioned, proven asymptotically that
+
+418
+00:15:22,301 --> 00:15:26,801
+100% of them lie in s equal 1/2.
+
+419
+00:15:25,201 --> 00:15:28,301
+>> Exactly right. So this is a fraction
+
+420
+00:15:26,801 --> 00:15:29,701
+where the numerator and the denominator
+
+421
+00:15:28,301 --> 00:15:31,501
+are infinite
+
+422
+00:15:29,701 --> 00:15:32,501
+and so you don't you know, how are you
+
+423
+00:15:31,501 --> 00:15:34,301
+going to make sense of that? Well, you
+
+424
+00:15:32,501 --> 00:15:36,801
+cut them off at a finite amount and then
+
+425
+00:15:34,301 --> 00:15:38,801
+you look at the limit and in the limit,
+
+426
+00:15:36,801 --> 00:15:40,801
+what this result said was 66% of the
+
+427
+00:15:38,801 --> 00:15:42,301
+zeros, you know, in the limit will be on
+
+428
+00:15:40,801 --> 00:15:44,001
+the one half line.
+
+429
+00:15:42,301 --> 00:15:45,701
+And I pointed out, well, okay, if they
+
+430
+00:15:44,001 --> 00:15:47,701
+got 100% of the zeros on the one half
+
+431
+00:15:45,701 --> 00:15:50,101
+line, we still would not know if there
+
+432
+00:15:47,701 --> 00:15:52,001
+aren't some some lacunary zeros that are
+
+433
+00:15:50,101 --> 00:15:53,201
+approaching the one line arbitrarily
+
+434
+00:15:52,001 --> 00:15:54,901
+close. So
+
+435
+00:15:53,201 --> 00:15:57,301
+in terms of what it does for the Riemann
+
+436
+00:15:54,901 --> 00:15:59,501
+hypothesis, it basically does nothing
+
+437
+00:15:57,301 --> 00:16:00,601
+there. It's a fantastic result, but it's
+
+438
+00:15:59,501 --> 00:16:01,801
+just not
+
+439
+00:16:00,601 --> 00:16:02,501
+making progress towards the Riemann
+
+440
+00:16:01,801 --> 00:16:04,801
+hypothesis.
+
+441
+00:16:02,501 --> 00:16:06,201
+>> And then September?
+
+442
+00:16:04,801 --> 00:16:08,701
+>> In September and I think that's the last
+
+443
+00:16:06,201 --> 00:16:10,501
+time we spoke was about this OpenAI
+
+444
+00:16:08,701 --> 00:16:12,701
+result.
+
+445
+00:16:10,501 --> 00:16:13,801
+Uh was it September or October? I I
+
+446
+00:16:12,701 --> 00:16:16,301
+can't remember.
+
+447
+00:16:13,801 --> 00:16:17,502
+>> Uh you know, we spoke in October. I
+
+448
+00:16:16,301 --> 00:16:19,402
+don't know exactly when the result
+
+449
+00:16:17,502 --> 00:16:20,502
+happened. Let's call it September/
+
+450
+00:16:19,402 --> 00:16:22,702
+October then maybe.
+
+451
+00:16:20,502 --> 00:16:23,202
+>> yeah. I thought it was early October uh
+
+452
+00:16:22,702 --> 00:16:24,902
+when OpenAI
+
+453
+00:16:23,202 --> 00:16:27,102
+>> Isn't it crazy that we're actually
+
+454
+00:16:24,902 --> 00:16:29,702
+talking about is it September or October
+
+455
+00:16:27,102 --> 00:16:32,102
+when we're talking 167 years of work?
+
+456
+00:16:29,702 --> 00:16:33,502
+>> Yeah. What what week was it? What hour
+
+457
+00:16:32,102 --> 00:16:36,902
+was it?
+
+458
+00:16:33,502 --> 00:16:39,302
+Yeah, exactly right. Um wild wild times.
+
+459
+00:16:36,902 --> 00:16:41,602
+So yeah, so whether it was late
+
+460
+00:16:39,302 --> 00:16:44,702
+September or early October OpenAI came
+
+461
+00:16:41,602 --> 00:16:46,602
+out with a a slew of papers among them a
+
+462
+00:16:44,702 --> 00:16:48,502
+proof of the quasi-Riemann hypothesis
+
+463
+00:16:46,602 --> 00:16:49,802
+which says that the zeros okay, we can't
+
+464
+00:16:48,502 --> 00:16:51,402
+prove that they that there aren't any
+
+465
+00:16:49,802 --> 00:16:54,502
+between a half and one but there aren't
+
+466
+00:16:51,402 --> 00:16:57,002
+any between 7/8 and one. And so that
+
+467
+00:16:54,502 --> 00:16:59,702
+zero free strip zero strip vertical
+
+468
+00:16:57,002 --> 00:17:01,302
+strip was already an absolutely massive
+
+469
+00:16:59,702 --> 00:17:02,202
+breakthrough for the first time we knew
+
+470
+00:17:01,302 --> 00:17:03,602
+that
+
+471
+00:17:02,202 --> 00:17:06,202
+uh in this prediction for how many
+
+472
+00:17:03,602 --> 00:17:08,302
+primes there are up to X of Gauss the
+
+473
+00:17:06,202 --> 00:17:09,902
+first 1/8 of the digits you would get
+
+474
+00:17:08,302 --> 00:17:12,902
+out of that prediction are correct.
+
+475
+00:17:09,902 --> 00:17:17,102
+>> And and that's when we spoke and that's
+
+476
+00:17:12,902 --> 00:17:19,602
+when you um very nicely informed me and
+
+477
+00:17:17,102 --> 00:17:22,502
+our audience that you didn't expect to
+
+478
+00:17:19,602 --> 00:17:25,702
+see that result in your lifetime.
+
+479
+00:17:22,502 --> 00:17:28,002
+And then here we are what I don't know
+
+480
+00:17:25,702 --> 00:17:29,602
+10 days later
+
+481
+00:17:28,002 --> 00:17:31,802
+something like that.
+
+482
+00:17:29,602 --> 00:17:32,902
+And now take us take us up to the
+
+483
+00:17:31,802 --> 00:17:34,902
+moment.
+
+484
+00:17:32,902 --> 00:17:38,102
+>> My my phone and and email started
+
+485
+00:17:34,902 --> 00:17:40,102
+blowing up on Friday morning and um
+
+486
+00:17:38,102 --> 00:17:42,102
+uh with with you know lots of people
+
+487
+00:17:40,102 --> 00:17:43,902
+saying what what's going on here and
+
+488
+00:17:42,102 --> 00:17:46,302
+what do I know about it and and I knew
+
+489
+00:17:43,902 --> 00:17:48,002
+nothing about it and uh
+
+490
+00:17:46,302 --> 00:17:49,302
+of course I immediately looked at what
+
+491
+00:17:48,002 --> 00:17:52,402
+was going on.
+
+492
+00:17:49,302 --> 00:17:54,502
+Uh saw that Levitan posted this um four
+
+493
+00:17:52,402 --> 00:17:57,202
+page sort of explanation of a little bit
+
+494
+00:17:54,502 --> 00:17:58,702
+of the the history of what
+
+495
+00:17:57,202 --> 00:18:01,602
+uh what progress he had made
+
+496
+00:17:58,702 --> 00:18:03,702
+incrementally, what he had asked the AI
+
+497
+00:18:01,602 --> 00:18:05,002
+to do and then he basically says in that
+
+498
+00:18:03,702 --> 00:18:06,202
+in that document at some point and I
+
+499
+00:18:05,002 --> 00:18:07,902
+don't know if that point is halfway
+
+500
+00:18:06,202 --> 00:18:09,302
+through the proof or or a tenth of the
+
+501
+00:18:07,902 --> 00:18:11,902
+way through the proof but at some point
+
+502
+00:18:09,302 --> 00:18:14,702
+the agents just took off on their own
+
+503
+00:18:11,902 --> 00:18:17,502
+and he has no idea what they really did
+
+504
+00:18:14,702 --> 00:18:19,002
+and they came out with this uh document
+
+505
+00:18:17,502 --> 00:18:20,003
+and
+
+506
+00:18:19,002 --> 00:18:21,403
+I I imagine we didn't have
+
+507
+00:18:20,003 --> 00:18:25,203
+formalization.
+
+508
+00:18:21,403 --> 00:18:26,603
+And the AI gives us 250,000 page
+
+509
+00:18:25,203 --> 00:18:27,903
+document that it says is a proof of the
+
+510
+00:18:26,603 --> 00:18:30,503
+Riemann hypothesis.
+
+511
+00:18:27,903 --> 00:18:32,403
+That would be In fact I actually spoke
+
+512
+00:18:30,503 --> 00:18:33,703
+about this something like three years
+
+513
+00:18:32,403 --> 00:18:36,403
+ago. There was a meeting of the National
+
+514
+00:18:33,703 --> 00:18:38,403
+Academy of Sciences trying to understand
+
+515
+00:18:36,403 --> 00:18:41,203
+the state of things with AI and
+
+516
+00:18:38,403 --> 00:18:43,303
+formalization and and so on. And I I
+
+517
+00:18:41,203 --> 00:18:45,403
+thankfully wrote down my notes of what I
+
+518
+00:18:43,303 --> 00:18:47,003
+said in that meeting and because was one
+
+519
+00:18:45,403 --> 00:18:49,003
+of the very first things I said and it's
+
+520
+00:18:47,003 --> 00:18:51,103
+sort of the obvious thing to think about
+
+521
+00:18:49,003 --> 00:18:52,803
+like imagine this world where AI comes
+
+522
+00:18:51,103 --> 00:18:55,003
+out with
+
+523
+00:18:52,803 --> 00:18:56,903
+you know a quarter million page
+
+524
+00:18:55,003 --> 00:18:59,303
+natural language written proof of the
+
+525
+00:18:56,903 --> 00:19:00,703
+Riemann hypothesis. And now what? I'm
+
+526
+00:18:59,303 --> 00:19:02,503
+going to spend the rest of my life just
+
+527
+00:19:00,703 --> 00:19:04,203
+you know going page by page. I mean I'll
+
+528
+00:19:02,503 --> 00:19:06,403
+I'll never get there. I'll get through
+
+529
+00:19:04,203 --> 00:19:08,503
+10,000 pages in my lifetime, 100,000
+
+530
+00:19:06,403 --> 00:19:11,503
+pages you know and I'll just be
+
+531
+00:19:08,503 --> 00:19:12,603
+this this task of trying to make my way
+
+532
+00:19:11,503 --> 00:19:14,503
+to towards the Riemann hypothesis
+
+533
+00:19:12,603 --> 00:19:15,903
+knowing that I can't get there.
+
+534
+00:19:14,503 --> 00:19:17,703
+>> You didn't really conjecture a quarter
+
+535
+00:19:15,903 --> 00:19:19,703
+million pages, did you back then?
+
+536
+00:19:17,703 --> 00:19:21,403
+>> I no I did not say
+
+537
+00:19:19,703 --> 00:19:24,103
+maybe I said a million pages or you know
+
+538
+00:19:21,403 --> 00:19:26,803
+just some abstractly large number.
+
+539
+00:19:24,103 --> 00:19:28,303
+Yeah yeah I I wasn't that
+
+540
+00:19:26,803 --> 00:19:31,203
+yeah that precise.
+
+541
+00:19:28,303 --> 00:19:33,703
+>> But your point is without having
+
+542
+00:19:31,203 --> 00:19:36,903
+an automated theorem checker
+
+543
+00:19:33,703 --> 00:19:38,603
+that can actually go through it, we'd
+
+544
+00:19:36,903 --> 00:19:40,903
+have no idea
+
+545
+00:19:38,603 --> 00:19:43,103
+whether this thing is right or not.
+
+546
+00:19:40,903 --> 00:19:46,203
+>> That's right. That's right. So unlike
+
+547
+00:19:43,103 --> 00:19:48,203
+the quasi RH result where within a few
+
+548
+00:19:46,203 --> 00:19:50,603
+days we
+
+549
+00:19:48,203 --> 00:19:53,203
+you know it wasn't even maybe
+
+550
+00:19:50,603 --> 00:19:55,403
+two weeks not even where people had gone
+
+551
+00:19:53,203 --> 00:19:56,803
+through what the AI was doing. For seven
+
+552
+00:19:55,403 --> 00:19:58,103
+eighths the the argument is very
+
+553
+00:19:56,803 --> 00:19:59,503
+technical and and sort of the
+
+554
+00:19:58,103 --> 00:20:01,803
+technicalities are not interesting. It
+
+555
+00:19:59,503 --> 00:20:04,103
+actually had another proof for 11/12 a
+
+556
+00:20:01,803 --> 00:20:06,603
+weaker proof. But that proof we really
+
+557
+00:20:04,103 --> 00:20:08,403
+just almost immediately could understand
+
+558
+00:20:06,603 --> 00:20:11,103
+exactly what was going on.
+
+559
+00:20:08,403 --> 00:20:12,703
+And and I think as I said last time I
+
+560
+00:20:11,103 --> 00:20:15,003
+was speaking with you was basically take
+
+561
+00:20:12,703 --> 00:20:16,603
+my colleague Henrik this work
+
+562
+00:20:15,003 --> 00:20:18,003
+life work and put it all together and
+
+563
+00:20:16,603 --> 00:20:19,203
+supercharge it and do all kinds of you
+
+564
+00:20:18,003 --> 00:20:22,803
+know highly technical things he had
+
+565
+00:20:19,203 --> 00:20:24,305
+predicted that process as being
+
+566
+00:20:22,803 --> 00:20:25,605
+potentially leading to the Riemann
+
+567
+00:20:24,305 --> 00:20:28,305
+hypothesis.
+
+568
+00:20:25,605 --> 00:20:30,205
+Of course, no human is claiming it. No
+
+569
+00:20:28,305 --> 00:20:32,305
+one no one says they they knew how to do
+
+570
+00:20:30,205 --> 00:20:32,305
+it.
+
+571
+00:20:32,705 --> 00:20:40,105
+But what's happened now is we have this
+
+572
+00:20:36,005 --> 00:20:43,005
+17 million line formal proof
+
+573
+00:20:40,105 --> 00:20:44,605
+that Levent put out that Claude wrote
+
+574
+00:20:43,005 --> 00:20:46,805
+that people just immediately put in
+
+575
+00:20:44,605 --> 00:20:48,005
+their computers and verified. I mean,
+
+576
+00:20:46,805 --> 00:20:49,805
+Levent's not an idiot. He wouldn't be
+
+577
+00:20:48,005 --> 00:20:51,805
+putting this out if it didn't compile.
+
+578
+00:20:49,805 --> 00:20:53,705
+But it's obviously you have to just
+
+579
+00:20:51,805 --> 00:20:55,105
+independently check it once and for all.
+
+580
+00:20:53,705 --> 00:20:57,305
+It was checked in in a thousand
+
+581
+00:20:55,105 --> 00:20:59,105
+different ways but using every known
+
+582
+00:20:57,305 --> 00:21:01,405
+>> Yeah.
+
+583
+00:20:59,105 --> 00:21:03,605
+>> process to to certify and it was, you
+
+584
+00:21:01,405 --> 00:21:06,005
+know, within hours certified as a
+
+585
+00:21:03,605 --> 00:21:06,505
+correct complete proof of the Riemann
+
+586
+00:21:06,005 --> 00:21:08,305
+hypothesis.
+
+587
+00:21:06,505 --> 00:21:12,905
+>> So there is general feeling in the
+
+588
+00:21:08,305 --> 00:21:15,705
+community that this is correct.
+
+589
+00:21:12,905 --> 00:21:18,505
+>> Yes. The correctness is not, I think,
+
+590
+00:21:15,705 --> 00:21:20,905
+generally in doubt. I mean, among the
+
+591
+00:21:18,505 --> 00:21:22,105
+people that I talk to and the people who
+
+592
+00:21:20,905 --> 00:21:24,005
+have experienced with this software,
+
+593
+00:21:22,105 --> 00:21:25,305
+it's not in doubt at all. In fact, we
+
+594
+00:21:24,005 --> 00:21:27,005
+know this result with more certainty
+
+595
+00:21:25,305 --> 00:21:28,505
+than we know anything, you know, that we
+
+596
+00:21:27,005 --> 00:21:29,605
+know 100% of what's in the published
+
+597
+00:21:28,505 --> 00:21:30,205
+literature
+
+598
+00:21:29,605 --> 00:21:31,805
+>> Yeah.
+
+599
+00:21:30,205 --> 00:21:32,705
+>> in natural language.
+
+600
+00:21:31,805 --> 00:21:36,505
+But
+
+601
+00:21:32,705 --> 00:21:38,405
+there is a a deep discussion about
+
+602
+00:21:36,505 --> 00:21:40,705
+you know, math isn't about correct
+
+603
+00:21:38,405 --> 00:21:42,105
+statements. It's about understanding.
+
+604
+00:21:40,705 --> 00:21:43,805
+And so
+
+605
+00:21:42,105 --> 00:21:45,605
+if we just go by understanding and
+
+606
+00:21:43,805 --> 00:21:47,405
+intuition alone, we make all kinds of
+
+607
+00:21:45,605 --> 00:21:48,605
+mistakes. We We've known, you know,
+
+608
+00:21:47,405 --> 00:21:50,605
+there are a thousand mistakes through
+
+609
+00:21:48,605 --> 00:21:51,705
+the history of mathematics when we said
+
+610
+00:21:50,605 --> 00:21:53,005
+something that seemed right but we
+
+611
+00:21:51,705 --> 00:21:54,105
+didn't have a rigorous proof to back it
+
+612
+00:21:53,005 --> 00:21:57,105
+up and it turned out that we got
+
+613
+00:21:54,105 --> 00:21:59,905
+nonsense out of it. So we
+
+614
+00:21:57,105 --> 00:22:01,705
+we predicate our understanding on we
+
+615
+00:21:59,905 --> 00:22:02,905
+build it on top of formal rigorous
+
+616
+00:22:01,705 --> 00:22:05,105
+proof.
+
+617
+00:22:02,905 --> 00:22:06,905
+And in this case, it's sort of the cart
+
+618
+00:22:05,105 --> 00:22:08,605
+came before the horse
+
+619
+00:22:06,905 --> 00:22:10,305
+in the sense that the proof used to be
+
+620
+00:22:08,605 --> 00:22:11,505
+impossible to come up with a proof
+
+621
+00:22:10,305 --> 00:22:12,705
+without having that rigorous
+
+622
+00:22:11,505 --> 00:22:14,405
+understanding.
+
+623
+00:22:12,705 --> 00:22:16,605
+And now we have it the other way around.
+
+624
+00:22:14,405 --> 00:22:18,605
+No human being understands this proof.
+
+625
+00:22:16,605 --> 00:22:20,405
+Levent himself says, you know, I don't
+
+626
+00:22:18,605 --> 00:22:20,605
+know what what's going on here. Again,
+
+627
+00:22:20,405 --> 00:22:22,105
+there are
+
+628
+00:22:20,605 --> 00:22:23,605
+>> had actually some very wonderfully
+
+629
+00:22:22,105 --> 00:22:25,705
+poetic
+
+630
+00:22:23,605 --> 00:22:27,406
+words as I read his four-page paper and
+
+631
+00:22:25,705 --> 00:22:29,106
+this has been quoted widely in the
+
+632
+00:22:27,406 --> 00:22:31,106
+media, of course, where he I I don't
+
+633
+00:22:29,106 --> 00:22:33,906
+remember it exactly, but something like
+
+634
+00:22:31,106 --> 00:22:35,906
+he said, I set it up. I I I helped it
+
+635
+00:22:33,906 --> 00:22:38,406
+get to a certain point, and then it
+
+636
+00:22:35,906 --> 00:22:40,706
+sparkled and danced and flew or
+
+637
+00:22:38,406 --> 00:22:43,006
+something, you know, across the finish
+
+638
+00:22:40,706 --> 00:22:45,906
+line, you know. And it's just a
+
+639
+00:22:43,006 --> 00:22:48,306
+wonderful wonderful description.
+
+640
+00:22:45,906 --> 00:22:51,506
+But but it's an interesting vital point
+
+641
+00:22:48,306 --> 00:22:53,706
+because I think the question in the math
+
+642
+00:22:51,506 --> 00:22:55,506
+is right now a proxy
+
+643
+00:22:53,706 --> 00:22:57,606
+for what's going to happen to the world,
+
+644
+00:22:55,506 --> 00:23:00,906
+which is why like we're focused on the
+
+645
+00:22:57,606 --> 00:23:03,306
+Riemann hypothesis, beautiful idea that
+
+646
+00:23:00,906 --> 00:23:04,806
+has had such ramifications in terms of
+
+647
+00:23:03,306 --> 00:23:06,706
+people assuming it's true, figuring out
+
+648
+00:23:04,806 --> 00:23:08,706
+its implications over the course of of
+
+649
+00:23:06,706 --> 00:23:11,206
+decades, centuries.
+
+650
+00:23:08,706 --> 00:23:13,006
+But even if you're not a math person,
+
+651
+00:23:11,206 --> 00:23:15,506
+this is one of those
+
+652
+00:23:13,006 --> 00:23:18,006
+civilization-changing moments when an
+
+653
+00:23:15,506 --> 00:23:20,306
+automated system can do the kind of
+
+654
+00:23:18,006 --> 00:23:22,206
+things that we thought were special to
+
+655
+00:23:20,306 --> 00:23:23,906
+us. And I think that ultimately what all
+
+656
+00:23:22,206 --> 00:23:26,506
+what this is all about. So the natural
+
+657
+00:23:23,906 --> 00:23:28,406
+question is what happens to mathematics?
+
+658
+00:23:26,506 --> 00:23:32,406
+And and and and the simplest answer,
+
+659
+00:23:28,406 --> 00:23:35,706
+which may be naive, is well, we used to
+
+660
+00:23:32,406 --> 00:23:37,706
+prove the theorems and understand them.
+
+661
+00:23:35,706 --> 00:23:40,706
+Now we understand them. It's like our
+
+662
+00:23:37,706 --> 00:23:43,206
+charge may no longer be to prove them
+
+663
+00:23:40,706 --> 00:23:46,406
+because we have a better tool for
+
+664
+00:23:43,206 --> 00:23:48,306
+proving them. But obviously a 250,000
+
+665
+00:23:46,406 --> 00:23:50,406
+page proof doesn't provide much
+
+666
+00:23:48,306 --> 00:23:54,406
+understanding. And it's up to us to
+
+667
+00:23:50,406 --> 00:23:55,706
+extract it. But presumably that 250,000
+
+668
+00:23:54,406 --> 00:23:58,806
+page proof
+
+669
+00:23:55,706 --> 00:24:01,406
+AI itself will in short order
+
+670
+00:23:58,806 --> 00:24:02,906
+compress it, whittle it down, get rid of
+
+671
+00:24:01,406 --> 00:24:06,506
+all the extraneous stuff that it
+
+672
+00:24:02,906 --> 00:24:09,606
+typically seems to do in proving these
+
+673
+00:24:06,506 --> 00:24:11,306
+deep theorems and and and and so is that
+
+674
+00:24:09,606 --> 00:24:13,306
+likely where this is headed?
+
+675
+00:24:11,306 --> 00:24:15,906
+>> Exactly right. Yeah. The way I see it is
+
+676
+00:24:13,306 --> 00:24:18,606
+that um what we now have at this
+
+677
+00:24:15,906 --> 00:24:21,406
+artifact, this 17 million line uh formal
+
+678
+00:24:18,606 --> 00:24:22,806
+lean proof, I see it as a compass. So it
+
+679
+00:24:21,406 --> 00:24:24,206
+used to be if you drop me in the middle
+
+680
+00:24:22,806 --> 00:24:25,706
+of the woods and you say go find the
+
+681
+00:24:24,206 --> 00:24:28,306
+Riemann hypothesis, I don't know which
+
+682
+00:24:25,706 --> 00:24:29,908
+way to to to start moving. And so I'll
+
+683
+00:24:28,306 --> 00:24:31,908
+just wander my whole life and sort of
+
+684
+00:24:29,908 --> 00:24:33,307
+never get anywhere. Now I have a compass
+
+685
+00:24:31,908 --> 00:24:34,807
+pointing north.
+
+686
+00:24:33,307 --> 00:24:36,707
+So it's still an arduous journey. It's
+
+687
+00:24:34,807 --> 00:24:38,707
+still going to take, you know, maybe
+
+688
+00:24:36,707 --> 00:24:40,707
+weeks, maybe months, maybe years to
+
+689
+00:24:38,707 --> 00:24:42,107
+really write down uh a human
+
+690
+00:24:40,707 --> 00:24:43,307
+understandable version of this proof. I
+
+691
+00:24:42,107 --> 00:24:46,707
+actually think it's not going to take
+
+692
+00:24:43,307 --> 00:24:48,507
+that long. Just uh from the interactions
+
+693
+00:24:46,707 --> 00:24:50,807
+uh I've had with AI and that that other
+
+694
+00:24:48,507 --> 00:24:52,408
+people have reported, um it's using
+
+695
+00:24:50,807 --> 00:24:55,807
+human mathematics. It's using basically
+
+696
+00:24:52,408 --> 00:24:57,107
+the entire uh the Langlands program, the
+
+697
+00:24:55,807 --> 00:24:59,107
+sort of
+
+698
+00:24:57,107 --> 00:25:00,408
+uh topology, geometry analysis, sort of
+
+699
+00:24:59,107 --> 00:25:03,408
+everything that human beings have done
+
+700
+00:25:00,408 --> 00:25:05,507
+over the last 150 years um
+
+701
+00:25:03,408 --> 00:25:06,807
+put it all together and you get and out
+
+702
+00:25:05,507 --> 00:25:07,307
+comes the Riemann hypothesis.
+
+703
+00:25:06,807 --> 00:25:09,707
+>> Right. Right.
+
+704
+00:25:07,307 --> 00:25:12,408
+>> the the ingredients are understood by
+
+705
+00:25:09,707 --> 00:25:14,107
+enough people that I think we will
+
+706
+00:25:12,408 --> 00:25:16,307
+maybe within weeks, maybe within months,
+
+707
+00:25:14,107 --> 00:25:18,507
+actually have a human-written proof
+
+708
+00:25:16,307 --> 00:25:20,908
+because people will take that compass
+
+709
+00:25:18,507 --> 00:25:21,807
+and follow that compass until you reach
+
+710
+00:25:20,908 --> 00:25:23,908
+treasure.
+
+711
+00:25:21,807 --> 00:25:25,607
+>> Yeah. And having said that
+
+712
+00:25:23,908 --> 00:25:27,007
+having said that there there is a
+
+713
+00:25:25,607 --> 00:25:29,207
+purported
+
+714
+00:25:27,007 --> 00:25:29,507
+human proof.
+
+715
+00:25:29,207 --> 00:25:32,807
+>> That's right.
+
+716
+00:25:29,507 --> 00:25:34,807
+>> I don't know much uh about that. Can you
+
+717
+00:25:32,807 --> 00:25:36,908
+Can you tell us? I mean, basically on
+
+718
+00:25:34,807 --> 00:25:39,607
+the same day a 960-odd
+
+719
+00:25:36,908 --> 00:25:40,807
+page paper was released by by who What's
+
+720
+00:25:39,607 --> 00:25:43,807
+the name of the mathematician?
+
+721
+00:25:40,807 --> 00:25:46,607
+>> So it's Alessandro Massolo. He's a PhD
+
+722
+00:25:43,807 --> 00:25:49,107
+student of Brian Conrad, who is Brian is
+
+723
+00:25:46,607 --> 00:25:50,707
+a professor at Stanford, very uh
+
+724
+00:25:49,107 --> 00:25:54,107
+you know, very highly respected
+
+725
+00:25:50,707 --> 00:25:55,507
+mathematician who um for the last
+
+726
+00:25:54,107 --> 00:25:57,107
+I don't know, decade, I I don't know how
+
+727
+00:25:55,507 --> 00:25:59,307
+long they were working on this, but uh
+
+728
+00:25:57,107 --> 00:26:00,807
+basically Alessandro had these ideas uh
+
+729
+00:25:59,307 --> 00:26:02,707
+in graduate school, was sort of
+
+730
+00:26:00,807 --> 00:26:05,207
+continued working on them ever since.
+
+731
+00:26:02,707 --> 00:26:08,007
+And over the last year or so, he's
+
+732
+00:26:05,207 --> 00:26:09,807
+gotten much farther along in uh what he
+
+733
+00:26:08,007 --> 00:26:12,908
+believes to be a proof of the Riemann
+
+734
+00:26:09,807 --> 00:26:15,707
+hypothesis. Um he and Brian spent many
+
+735
+00:26:12,908 --> 00:26:17,807
+months going over this and uh checking
+
+736
+00:26:15,707 --> 00:26:20,007
+every detail to the point where Brian
+
+737
+00:26:17,807 --> 00:26:21,807
+actually thinks the proof is right.
+
+738
+00:26:20,007 --> 00:26:24,908
+And the problem is it's at the moment
+
+739
+00:26:21,807 --> 00:26:27,107
+940 pages, and it's done by human
+
+740
+00:26:24,908 --> 00:26:28,607
+effort, so the old-fashioned way where
+
+741
+00:26:27,107 --> 00:26:30,408
+you actually want to You know, once you
+
+742
+00:26:28,607 --> 00:26:32,409
+have a proof in your head,
+
+743
+00:26:30,408 --> 00:26:35,009
+it's still going to you months if not
+
+744
+00:26:32,409 --> 00:26:36,309
+years to get it down on paper in such a
+
+745
+00:26:35,009 --> 00:26:37,309
+way that it's explainable to other human
+
+746
+00:26:36,309 --> 00:26:39,409
+beings.
+
+747
+00:26:37,309 --> 00:26:41,309
+So they were doing that slow careful
+
+748
+00:26:39,409 --> 00:26:43,109
+painstaking work.
+
+749
+00:26:41,309 --> 00:26:45,009
+Uh very few other people knew about what
+
+750
+00:26:43,109 --> 00:26:46,609
+was what was going on in that project.
+
+751
+00:26:45,009 --> 00:26:49,109
+It's sort of like, you know, how Andrew
+
+752
+00:26:46,609 --> 00:26:50,809
+Wiles had spent these seven years uh
+
+753
+00:26:49,109 --> 00:26:53,109
+proving Fermat's Last
+
+754
+00:26:50,809 --> 00:26:56,009
+And and imagine in his attic exactly.
+
+755
+00:26:53,109 --> 00:26:58,009
+And imagine uh in year
+
+756
+00:26:56,009 --> 00:26:59,409
+seven minus, you know, the last probably
+
+757
+00:26:58,009 --> 00:27:00,909
+year of that was just writing. He
+
+758
+00:26:59,409 --> 00:27:02,609
+probably had the proof already after
+
+759
+00:27:00,909 --> 00:27:04,809
+year six and it took him a year to write
+
+760
+00:27:02,609 --> 00:27:06,809
+it up. Well, imagine uh year six and a
+
+761
+00:27:04,809 --> 00:27:08,309
+quarter AI comes out with a proof of
+
+762
+00:27:06,809 --> 00:27:10,909
+Fermat's Last Theorem.
+
+763
+00:27:08,309 --> 00:27:12,409
+He says, well, I also had it. I just let
+
+764
+00:27:10,909 --> 00:27:13,509
+me show you what I have so far so that
+
+765
+00:27:12,409 --> 00:27:15,709
+you can see that I actually have a
+
+766
+00:27:13,509 --> 00:27:16,609
+proof, but uh that's not how I was going
+
+767
+00:27:15,709 --> 00:27:18,309
+to do it.
+
+768
+00:27:16,609 --> 00:27:20,609
+>> But that's not far enough along to put
+
+769
+00:27:18,309 --> 00:27:22,709
+it through Lean, the automated check
+
+770
+00:27:20,609 --> 00:27:22,909
+that that wasn't quite developed to that
+
+771
+00:27:22,709 --> 00:27:24,609
+point.
+
+772
+00:27:22,909 --> 00:27:26,909
+>> Well, it might be. So it there are
+
+773
+00:27:24,609 --> 00:27:29,409
+ongoing efforts to take what Massulo has
+
+774
+00:27:26,909 --> 00:27:31,509
+already put out and do exactly the same
+
+775
+00:27:29,409 --> 00:27:33,809
+thing with that as what we do with any
+
+776
+00:27:31,509 --> 00:27:36,409
+other uh difficult proof these days
+
+777
+00:27:33,809 --> 00:27:39,309
+where we run it through uh Lean and see
+
+778
+00:27:36,409 --> 00:27:41,809
+if it actually will um
+
+779
+00:27:39,309 --> 00:27:44,309
+it's going to get through every single
+
+780
+00:27:41,809 --> 00:27:46,209
+step, decompose it down into the tiniest
+
+781
+00:27:44,309 --> 00:27:48,609
+uh details. Wherever it gets stuck, the
+
+782
+00:27:46,209 --> 00:27:51,609
+difference between having, you know, uh
+
+783
+00:27:48,609 --> 00:27:53,109
+if if Claude gets stuck, nobody knows
+
+784
+00:27:51,609 --> 00:27:54,909
+where it's stuck, why it's stuck or how
+
+785
+00:27:53,109 --> 00:27:56,709
+how to help it across. Whereas
+
+786
+00:27:54,909 --> 00:27:58,009
+Alessandro apparently knows the entire
+
+787
+00:27:56,709 --> 00:27:59,909
+proof inside and out has thought about
+
+788
+00:27:58,009 --> 00:28:02,809
+every last detail over the last decade.
+
+789
+00:27:59,909 --> 00:28:05,209
+And so if the AI gets stuck at line, you
+
+790
+00:28:02,809 --> 00:28:06,709
+know, 7,314,
+
+791
+00:28:05,209 --> 00:28:08,009
+it can ask him a question and say, I
+
+792
+00:28:06,709 --> 00:28:09,709
+don't understand how to do this. And he
+
+793
+00:28:08,009 --> 00:28:12,309
+can say, oh, you're right, that's a
+
+794
+00:28:09,709 --> 00:28:13,709
+mistake in my proof. Or no, I actually
+
+795
+00:28:12,309 --> 00:28:15,209
+know how to do this. Let me tell you,
+
+796
+00:28:13,709 --> 00:28:16,109
+you know, actually you took a wrong step
+
+797
+00:28:15,209 --> 00:28:18,809
+10
+
+798
+00:28:16,109 --> 00:28:20,209
+10 lines ago or a thousand lines ago and
+
+799
+00:28:18,809 --> 00:28:21,909
+what you should be doing is this and not
+
+800
+00:28:20,209 --> 00:28:24,509
+that. And so so I think we're going to
+
+801
+00:28:21,909 --> 00:28:26,709
+iterate through this process and also
+
+802
+00:28:24,509 --> 00:28:27,809
+within days or weeks or months we'll get
+
+803
+00:28:26,709 --> 00:28:30,209
+to the bottom of whether there's a
+
+804
+00:28:27,809 --> 00:28:33,009
+foundational error, some fundamental
+
+805
+00:28:30,209 --> 00:28:35,710
+flaw in what Massulo had in mind for the
+
+806
+00:28:33,009 --> 00:28:37,210
+proof or if we have a second independent
+
+807
+00:28:35,710 --> 00:28:41,359
+proof of the Riemann hypothesis.
+
+808
+00:28:37,210 --> 00:28:42,210
+>> And so with AI and maybe even a human
+
+809
+00:28:41,359 --> 00:28:43,810
+[clears throat]
+
+810
+00:28:42,210 --> 00:28:45,410
+having now
+
+811
+00:28:43,810 --> 00:28:47,110
+potentially
+
+812
+00:28:45,410 --> 00:28:48,710
+summited the Mount Everest of
+
+813
+00:28:47,110 --> 00:28:51,110
+mathematics,
+
+814
+00:28:48,710 --> 00:28:51,110
+you know,
+
+815
+00:28:51,310 --> 00:28:56,210
+do you think that
+
+816
+00:28:53,010 --> 00:28:59,710
+mathematicians who even two or three
+
+817
+00:28:56,210 --> 00:29:01,910
+weeks ago were still imagining
+
+818
+00:28:59,710 --> 00:29:05,010
+yeah, you know, I'm going to continue on
+
+819
+00:29:01,910 --> 00:29:08,010
+the way that I always have, do you think
+
+820
+00:29:05,010 --> 00:29:11,010
+that this is now going to basically
+
+821
+00:29:08,010 --> 00:29:14,210
+undercut the traditional approach that
+
+822
+00:29:11,010 --> 00:29:16,410
+people have taken up until now?
+
+823
+00:29:14,210 --> 00:29:18,610
+>> So there are two things to separate, I
+
+824
+00:29:16,410 --> 00:29:20,810
+think. One is mathematical practice and
+
+825
+00:29:18,610 --> 00:29:23,610
+one is the mathematical profession. So
+
+826
+00:29:20,810 --> 00:29:26,010
+in terms of practice, um
+
+827
+00:29:23,610 --> 00:29:27,810
+I've there have been often occasions
+
+828
+00:29:26,010 --> 00:29:29,710
+where I've wanted to prove something and
+
+829
+00:29:27,810 --> 00:29:31,510
+somebody else proved it first.
+
+830
+00:29:29,710 --> 00:29:33,610
+And to me, that doesn't take anything
+
+831
+00:29:31,510 --> 00:29:35,710
+away. Of course, if it's something I was
+
+832
+00:29:33,610 --> 00:29:38,510
+actively writing or
+
+833
+00:29:35,710 --> 00:29:40,010
+or made some some progress on, that's
+
+834
+00:29:38,510 --> 00:29:41,610
+time wasted. But
+
+835
+00:29:40,010 --> 00:29:43,210
+the vast majority of my time is wasted
+
+836
+00:29:41,610 --> 00:29:44,510
+because I'm following, you know, ends
+
+837
+00:29:43,210 --> 00:29:46,810
+that don't
+
+838
+00:29:44,510 --> 00:29:48,510
+dead ends and so on. And that's just the
+
+839
+00:29:46,810 --> 00:29:51,610
+nature of the subject. If you don't love
+
+840
+00:29:48,510 --> 00:29:53,810
+being stuck and frustrated and confused
+
+841
+00:29:51,610 --> 00:29:55,710
+for years at a time, then you probably
+
+842
+00:29:53,810 --> 00:29:57,810
+don't want to be a mathematician.
+
+843
+00:29:55,710 --> 00:29:59,310
+Um so the fact that someone else proves
+
+844
+00:29:57,810 --> 00:30:00,810
+a theorem that I'm interested in is
+
+845
+00:29:59,310 --> 00:30:02,510
+always a plus for me. I want to know how
+
+846
+00:30:00,810 --> 00:30:03,610
+to do how to do it. I was I wanted to
+
+847
+00:30:02,510 --> 00:30:06,110
+solve the puzzle, but somebody else
+
+848
+00:30:03,610 --> 00:30:08,010
+solved the puzzle, great. Teach me how
+
+849
+00:30:06,110 --> 00:30:09,110
+I'll I'll get all kinds of insights from
+
+850
+00:30:08,010 --> 00:30:12,010
+that process.
+
+851
+00:30:09,110 --> 00:30:13,810
+So in terms of that, for me personally,
+
+852
+00:30:12,010 --> 00:30:15,110
+I'm extremely excited because for the
+
+853
+00:30:13,810 --> 00:30:16,810
+first time in my life, I have a compass
+
+854
+00:30:15,110 --> 00:30:20,010
+that will point me in in whatever
+
+855
+00:30:16,810 --> 00:30:21,310
+direction I can try to dream up
+
+856
+00:30:20,010 --> 00:30:24,910
+following.
+
+857
+00:30:21,310 --> 00:30:26,410
+Um the profession itself, so you know,
+
+858
+00:30:24,910 --> 00:30:28,110
+there are people who say we don't need
+
+859
+00:30:26,410 --> 00:30:30,410
+mathematicians anymore. I think people
+
+860
+00:30:28,110 --> 00:30:31,510
+who choose to discard mathematicians
+
+861
+00:30:30,410 --> 00:30:33,310
+will
+
+862
+00:30:31,510 --> 00:30:35,110
+pay the consequences of that decision. I
+
+863
+00:30:33,310 --> 00:30:37,212
+think not everyone will make that
+
+864
+00:30:35,110 --> 00:30:39,512
+decision and those who do have
+
+865
+00:30:37,212 --> 00:30:42,412
+mathematicians around will discover what
+
+866
+00:30:39,512 --> 00:30:43,912
+their actual worth is. So I'm sort of
+
+867
+00:30:42,412 --> 00:30:46,512
+not worried about that aspect. What I'm
+
+868
+00:30:43,912 --> 00:30:48,312
+much more worried about is if I'm a
+
+869
+00:30:46,512 --> 00:30:50,912
+young person today, if I'm a, you know,
+
+870
+00:30:48,312 --> 00:30:53,712
+finishing graduate student, if I'm a
+
+871
+00:30:50,912 --> 00:30:55,912
+a postdoc and I'm trying to
+
+872
+00:30:53,712 --> 00:30:58,912
+make a name for myself. The way you made
+
+873
+00:30:55,912 --> 00:31:02,512
+a name for yourself was very well
+
+874
+00:30:58,912 --> 00:31:04,212
+laid out until yesterday, and that was
+
+875
+00:31:02,512 --> 00:31:06,212
+find a hard problem and solve it. No one
+
+876
+00:31:04,212 --> 00:31:07,512
+can argue with success. You find a hard
+
+877
+00:31:06,212 --> 00:31:09,112
+problem, something a lot of people
+
+878
+00:31:07,512 --> 00:31:10,912
+wanted to work on, or you make up your
+
+879
+00:31:09,112 --> 00:31:13,612
+own problem that's really interesting
+
+880
+00:31:10,912 --> 00:31:17,412
+and uses a mix of ideas and and so on.
+
+881
+00:31:13,612 --> 00:31:19,112
+You solve a problem that's difficult and
+
+882
+00:31:17,412 --> 00:31:20,712
+you you, you know, you get all of the
+
+883
+00:31:19,112 --> 00:31:23,712
+the goodies that come with that, a
+
+884
+00:31:20,712 --> 00:31:25,512
+position or prizes or whatever.
+
+885
+00:31:23,712 --> 00:31:27,012
+Recognition is really the only thing
+
+886
+00:31:25,512 --> 00:31:28,512
+that that
+
+887
+00:31:27,012 --> 00:31:30,612
+I think most mathematicians want is
+
+888
+00:31:28,512 --> 00:31:33,312
+recognition that they've done something
+
+889
+00:31:30,612 --> 00:31:35,412
+valuable and important.
+
+890
+00:31:33,312 --> 00:31:37,112
+How do you do that today? How do you
+
+891
+00:31:35,412 --> 00:31:39,312
+say, you know,
+
+892
+00:31:37,112 --> 00:31:40,612
+I did this well, did you do it with AI?
+
+893
+00:31:39,312 --> 00:31:42,612
+Did you do it without AI? I think those
+
+894
+00:31:40,612 --> 00:31:44,712
+questions are are temporary. Pretty soon
+
+895
+00:31:42,612 --> 00:31:46,112
+you just have to evaluate all work as if
+
+896
+00:31:44,712 --> 00:31:47,612
+it was
+
+897
+00:31:46,112 --> 00:31:49,612
+AI generated.
+
+898
+00:31:47,612 --> 00:31:52,012
+I think it becomes much more do you have
+
+899
+00:31:49,612 --> 00:31:53,912
+good taste? Can you explain, you know,
+
+900
+00:31:52,012 --> 00:31:55,712
+what problems are you are you interested
+
+901
+00:31:53,912 --> 00:31:57,512
+in? How have you understood the
+
+902
+00:31:55,712 --> 00:31:57,712
+landscape of what you're discussing?
+
+903
+00:31:57,512 --> 00:31:59,912
+>> Yeah.
+
+904
+00:31:57,712 --> 00:32:02,312
+>> So
+
+905
+00:31:59,912 --> 00:32:05,212
+it it's it's very
+
+906
+00:32:02,312 --> 00:32:05,512
+in that sense very interesting times as
+
+907
+00:32:05,212 --> 00:32:08,612
+well.
+
+908
+00:32:05,512 --> 00:32:10,412
+>> So let me ask one one question that you
+
+909
+00:32:08,612 --> 00:32:13,012
+know, it's not really answerable, but
+
+910
+00:32:10,412 --> 00:32:15,212
+just your your feeling on it.
+
+911
+00:32:13,012 --> 00:32:17,412
+You know, the Riemann hypothesis is one
+
+912
+00:32:15,212 --> 00:32:20,512
+of those problems that because it's the
+
+913
+00:32:17,412 --> 00:32:22,912
+Mount Everest of mathematics, many
+
+914
+00:32:20,512 --> 00:32:24,312
+people have tried to scale it.
+
+915
+00:32:22,912 --> 00:32:26,712
+And so
+
+916
+00:32:24,312 --> 00:32:28,712
+there is so much out there in the
+
+917
+00:32:26,712 --> 00:32:31,912
+literature, as we discussed even
+
+918
+00:32:28,712 --> 00:32:34,312
+historically, chipping away, narrowing
+
+919
+00:32:31,912 --> 00:32:36,712
+down the critical strip, figuring out
+
+920
+00:32:34,312 --> 00:32:41,513
+percentages of zeros on the critical
+
+921
+00:32:36,712 --> 00:32:41,513
+line, all sorts of techniques and ideas.
+
+922
+00:32:41,713 --> 00:32:46,713
+Presumably that was
+
+923
+00:32:44,013 --> 00:32:48,213
+vital to the fact that
+
+924
+00:32:46,713 --> 00:32:50,113
+Claude
+
+925
+00:32:48,213 --> 00:32:51,613
+and Leontyne Applegate could do what
+
+926
+00:32:50,113 --> 00:32:54,813
+what they did.
+
+927
+00:32:51,613 --> 00:32:57,513
+If there are other problems that haven't
+
+928
+00:32:54,813 --> 00:33:01,013
+attracted that much attention from the
+
+929
+00:32:57,513 --> 00:33:03,213
+mathematical community over centuries,
+
+930
+00:33:01,013 --> 00:33:06,013
+is it conceivable
+
+931
+00:33:03,213 --> 00:33:09,113
+that there just won't be enough basis
+
+932
+00:33:06,013 --> 00:33:10,813
+for AI, even with a human working
+
+933
+00:33:09,113 --> 00:33:12,713
+together, whatever,
+
+934
+00:33:10,813 --> 00:33:14,213
+to make the progress that we've just
+
+935
+00:33:12,713 --> 00:33:16,813
+seen?
+
+936
+00:33:14,213 --> 00:33:18,913
+>> Yeah, that's a really good question. Um
+
+937
+00:33:16,813 --> 00:33:20,813
+the the question of what AI's
+
+938
+00:33:18,913 --> 00:33:23,313
+capabilities are, you know, one thing
+
+939
+00:33:20,813 --> 00:33:25,013
+that humans do is they write papers that
+
+940
+00:33:23,313 --> 00:33:27,413
+are interesting to read.
+
+941
+00:33:25,013 --> 00:33:30,413
+And so far, reading AI papers is not
+
+942
+00:33:27,413 --> 00:33:32,413
+very interesting uh or illuminating. And
+
+943
+00:33:30,413 --> 00:33:33,913
+maybe part of the reason for that is I
+
+944
+00:33:32,413 --> 00:33:35,213
+don't know how to gradient descent to
+
+945
+00:33:33,913 --> 00:33:36,913
+interesting.
+
+946
+00:33:35,213 --> 00:33:38,713
+I do know how to gradient descent to a
+
+947
+00:33:36,913 --> 00:33:39,813
+solution. Are you making progress? Well,
+
+948
+00:33:38,713 --> 00:33:41,213
+maybe I don't know actually how to do
+
+949
+00:33:39,813 --> 00:33:44,313
+that in a gradient descent way,
+
+950
+00:33:41,213 --> 00:33:46,013
+otherwise I would do it uh myself. Um
+
+951
+00:33:44,313 --> 00:33:47,013
+but but I certainly know a solution when
+
+952
+00:33:46,013 --> 00:33:49,113
+I have one.
+
+953
+00:33:47,013 --> 00:33:50,513
+Uh how do you tell AI, you know, this is
+
+954
+00:33:49,113 --> 00:33:52,713
+a well-written paper, this is not, and
+
+955
+00:33:50,513 --> 00:33:54,113
+train on the good the the well-written
+
+956
+00:33:52,713 --> 00:33:55,213
+papers?
+
+957
+00:33:54,113 --> 00:33:56,913
+Um
+
+958
+00:33:55,213 --> 00:33:59,713
+so in the same way, how do you train the
+
+959
+00:33:56,913 --> 00:34:01,913
+AI on this is an interesting theory and
+
+960
+00:33:59,713 --> 00:34:03,113
+this is not an interesting theory?
+
+961
+00:34:01,913 --> 00:34:05,013
+So
+
+962
+00:34:03,113 --> 00:34:06,713
+that's the kind of thing that, you know,
+
+963
+00:34:05,013 --> 00:34:09,513
+human beings
+
+964
+00:34:06,713 --> 00:34:12,313
+over time develop a feel for what is or
+
+965
+00:34:09,513 --> 00:34:14,213
+isn't uh a feel that they want to go
+
+966
+00:34:12,313 --> 00:34:16,913
+into or create.
+
+967
+00:34:14,213 --> 00:34:18,613
+Uh AI has not yet created its own
+
+968
+00:34:16,913 --> 00:34:20,213
+mathematical field. Maybe it will at
+
+969
+00:34:18,613 --> 00:34:21,713
+some point. I'm not saying it's it's not
+
+970
+00:34:20,213 --> 00:34:23,613
+possible, but it's
+
+971
+00:34:21,713 --> 00:34:25,813
+again hard to say how do you make
+
+972
+00:34:23,613 --> 00:34:26,913
+incremental progress towards creating uh
+
+973
+00:34:25,813 --> 00:34:27,613
+an important new field.
+
+974
+00:34:26,913 --> 00:34:29,213
+>> Right.
+
+975
+00:34:27,613 --> 00:34:31,913
+>> Incremental progress towards a problem
+
+976
+00:34:29,213 --> 00:34:33,013
+is something that AI can get good at.
+
+977
+00:34:31,913 --> 00:34:34,613
+>> So
+
+978
+00:34:33,013 --> 00:34:36,313
+for the for the person who wants to
+
+979
+00:34:34,613 --> 00:34:38,413
+cling
+
+980
+00:34:36,313 --> 00:34:40,814
+to the human role,
+
+981
+00:34:38,413 --> 00:34:44,814
+it's still at least at this point in
+
+982
+00:34:40,814 --> 00:34:46,114
+time, reasonable to imagine
+
+983
+00:34:44,814 --> 00:34:48,414
+that
+
+984
+00:34:46,114 --> 00:34:52,414
+AI may be really good
+
+985
+00:34:48,414 --> 00:34:56,114
+at completing a project that humans have
+
+986
+00:34:52,414 --> 00:34:59,614
+seeded through a tremendous and long
+
+987
+00:34:56,114 --> 00:35:01,714
+developed history of ideas. And it's
+
+988
+00:34:59,614 --> 00:35:03,514
+just able to say, oh, if you do this,
+
+989
+00:35:01,714 --> 00:35:05,514
+that, put that, you know, now we can get
+
+990
+00:35:03,514 --> 00:35:07,514
+to this other thing.
+
+991
+00:35:05,514 --> 00:35:10,314
+But is it reasonable to say that we've
+
+992
+00:35:07,514 --> 00:35:13,014
+not yet seen AI
+
+993
+00:35:10,314 --> 00:35:16,214
+start from scratch, so to speak, and and
+
+994
+00:35:13,014 --> 00:35:17,814
+develop a whole subject the way humans
+
+995
+00:35:16,214 --> 00:35:19,314
+have had to.
+
+996
+00:35:17,814 --> 00:35:20,914
+>> Yeah, and I and I can't remember if we
+
+997
+00:35:19,314 --> 00:35:22,914
+discussed this last time, but Peter
+
+998
+00:35:20,914 --> 00:35:25,614
+Sarnak has exactly this
+
+999
+00:35:22,914 --> 00:35:27,514
+challenge to the AI systems. Don't start
+
+1000
+00:35:25,614 --> 00:35:29,314
+with with mathematics that has already
+
+1001
+00:35:27,514 --> 00:35:30,714
+been created by human beings, but start
+
+1002
+00:35:29,314 --> 00:35:33,914
+with nothing, just the rules of
+
+1003
+00:35:30,714 --> 00:35:35,114
+mathematics as encoded in Lean and
+
+1004
+00:35:33,914 --> 00:35:37,414
+go
+
+1005
+00:35:35,114 --> 00:35:38,914
+develop like Alpha Zero developed chess
+
+1006
+00:35:37,414 --> 00:35:40,114
+from scratch, go develop mathematics
+
+1007
+00:35:38,914 --> 00:35:41,914
+from scratch and see how far you can
+
+1008
+00:35:40,114 --> 00:35:44,214
+get. Um
+
+1009
+00:35:41,914 --> 00:35:45,814
+no one, as far as I know, has made
+
+1010
+00:35:44,214 --> 00:35:48,114
+significant progress on that challenge,
+
+1011
+00:35:45,814 --> 00:35:50,614
+so we don't know what it's capable of.
+
+1012
+00:35:48,114 --> 00:35:53,014
+Um and we also, you know, it could be a
+
+1013
+00:35:50,614 --> 00:35:55,814
+matter of the fact that people have been
+
+1014
+00:35:53,014 --> 00:35:56,914
+asking AI, you know, people are asking
+
+1015
+00:35:55,814 --> 00:35:58,414
+the questions. So where are they
+
+1016
+00:35:56,914 --> 00:36:00,314
+directing them? They're at the moment,
+
+1017
+00:35:58,414 --> 00:36:02,714
+at least not as far as I know, people
+
+1018
+00:36:00,314 --> 00:36:04,114
+aren't directing AI to make a new field
+
+1019
+00:36:02,714 --> 00:36:05,914
+of mathematics.
+
+1020
+00:36:04,114 --> 00:36:06,914
+>> Right. And that that's to me
+
+1021
+00:36:05,914 --> 00:36:08,714
+>> can't.
+
+1022
+00:36:06,914 --> 00:36:12,014
+>> Yeah, that to me is sort of the next the
+
+1023
+00:36:08,714 --> 00:36:14,514
+next critical moment when AI develops a
+
+1024
+00:36:12,014 --> 00:36:17,414
+whole new field of understanding where
+
+1025
+00:36:14,514 --> 00:36:19,714
+we're like, where did that come from?
+
+1026
+00:36:17,414 --> 00:36:21,914
+The next critical moment too will be
+
+1027
+00:36:19,714 --> 00:36:25,014
+when it begins to
+
+1028
+00:36:21,914 --> 00:36:26,414
+bleed over to say theoretical physics,
+
+1029
+00:36:25,014 --> 00:36:28,414
+which has already begun, the one
+
+1030
+00:36:26,414 --> 00:36:29,714
+millennium problem having to do with
+
+1031
+00:36:28,414 --> 00:36:33,714
+Yang Mills theory, but it's still a
+
+1032
+00:36:29,714 --> 00:36:35,514
+math-y version of physics as it bleeds
+
+1033
+00:36:33,714 --> 00:36:38,414
+over and, you know, gives us quantum
+
+1034
+00:36:35,514 --> 00:36:40,514
+gravity or understands the Big Bang
+
+1035
+00:36:38,414 --> 00:36:42,114
+singularity in ways that we've never
+
+1036
+00:36:40,514 --> 00:36:44,516
+done before. I think those are sort of
+
+1037
+00:36:42,114 --> 00:36:45,616
+the next moments to look for if it ever
+
+1038
+00:36:44,516 --> 00:36:47,016
+happens.
+
+1039
+00:36:45,616 --> 00:36:48,416
+Two quick questions. Have you heard
+
+1040
+00:36:47,016 --> 00:36:52,016
+anything about any of the other
+
+1041
+00:36:48,416 --> 00:36:54,116
+millennium problems? Are we like on the
+
+1042
+00:36:52,016 --> 00:36:56,516
+cusp of next week
+
+1043
+00:36:54,116 --> 00:36:57,516
+about to hear another one fall?
+
+1044
+00:36:56,516 --> 00:36:59,516
+>> Well,
+
+1045
+00:36:57,516 --> 00:37:01,216
+every time I've prognosticated I've been
+
+1046
+00:36:59,516 --> 00:37:02,716
+wrong and so let me say yes, we're on
+
+1047
+00:37:01,216 --> 00:37:04,616
+the cusp of
+
+1048
+00:37:02,716 --> 00:37:05,416
+of solving lots and lots of solving
+
+1049
+00:37:04,616 --> 00:37:07,316
+everything.
+
+1050
+00:37:05,416 --> 00:37:08,616
+>> A human optimist right there, right
+
+1051
+00:37:07,316 --> 00:37:11,216
+there.
+
+1052
+00:37:08,616 --> 00:37:13,516
+But finally, you know, just I know
+
+1053
+00:37:11,216 --> 00:37:15,416
+you've got to run.
+
+1054
+00:37:13,516 --> 00:37:18,816
+In this conversation
+
+1055
+00:37:15,416 --> 00:37:20,116
+someone watching us with the sound off
+
+1056
+00:37:18,816 --> 00:37:22,816
+would say, hey, those guys look pretty
+
+1057
+00:37:20,116 --> 00:37:24,216
+excited, pretty happy, right? You know,
+
+1058
+00:37:22,816 --> 00:37:26,216
+on the other hand, there's a lot of
+
+1059
+00:37:24,216 --> 00:37:27,416
+consternation out there for a variety of
+
+1060
+00:37:26,216 --> 00:37:29,816
+reasons,
+
+1061
+00:37:27,416 --> 00:37:32,916
+AI destroying the environment. There's a
+
+1062
+00:37:29,816 --> 00:37:34,916
+whole area of thought that this is
+
+1063
+00:37:32,916 --> 00:37:37,516
+something that we haven't been taken
+
+1064
+00:37:34,916 --> 00:37:39,816
+sufficiently seriously. AI
+
+1065
+00:37:37,516 --> 00:37:42,216
+destroying humanity and, you know, the
+
+1066
+00:37:39,816 --> 00:37:45,216
+existential crises and so forth.
+
+1067
+00:37:42,216 --> 00:37:47,516
+Putting it all together,
+
+1068
+00:37:45,216 --> 00:37:50,916
+is your disposition
+
+1069
+00:37:47,516 --> 00:37:54,616
+as positive as the person might think
+
+1070
+00:37:50,916 --> 00:37:54,616
+based on watching us with the sound off?
+
+1071
+00:37:55,316 --> 00:37:58,416
+>> I think it is. I think it is. I think
+
+1072
+00:37:57,316 --> 00:38:00,416
+there's
+
+1073
+00:37:58,416 --> 00:38:03,516
+there's of course potential that many
+
+1074
+00:38:00,416 --> 00:38:05,216
+many of us all make drastically bad
+
+1075
+00:38:03,516 --> 00:38:07,416
+decisions simultaneously. There is a
+
+1076
+00:38:05,216 --> 00:38:08,816
+chance of that.
+
+1077
+00:38:07,416 --> 00:38:10,516
+I just don't think it's a very high
+
+1078
+00:38:08,816 --> 00:38:12,216
+chance and I think the chance of the
+
+1079
+00:38:10,516 --> 00:38:13,316
+opposite direction where we get these
+
+1080
+00:38:12,216 --> 00:38:15,216
+tools
+
+1081
+00:38:13,316 --> 00:38:16,616
+that allow us to answer for the first
+
+1082
+00:38:15,216 --> 00:38:20,116
+time fundamental questions that have
+
+1083
+00:38:16,616 --> 00:38:22,816
+been plaguing humanity for centuries
+
+1084
+00:38:20,116 --> 00:38:25,316
+are are resolved and I'm
+
+1085
+00:38:22,816 --> 00:38:27,316
+just extremely happy that such tools are
+
+1086
+00:38:25,316 --> 00:38:29,616
+coming online and they've already been I
+
+1087
+00:38:27,316 --> 00:38:31,916
+mean, if AI dies tomorrow and someone
+
+1088
+00:38:29,616 --> 00:38:33,216
+erases all the AI code in the world and
+
+1089
+00:38:31,916 --> 00:38:34,816
+sort of well, you'd have to do a lot
+
+1090
+00:38:33,216 --> 00:38:37,216
+more than that because human beings know
+
+1091
+00:38:34,816 --> 00:38:39,616
+how to reconstruct it.
+
+1092
+00:38:37,216 --> 00:38:42,516
+But we would already it would already
+
+1093
+00:38:39,616 --> 00:38:44,516
+have done absolutely incredible things
+
+1094
+00:38:42,516 --> 00:38:46,616
+for humanity and of course
+
+1095
+00:38:44,516 --> 00:38:48,117
+those are just things that someone like
+
+1096
+00:38:46,616 --> 00:38:50,717
+me cares about. I think in the near
+
+1097
+00:38:48,117 --> 00:38:51,717
+future it'll do things, you know, I
+
+1098
+00:38:50,717 --> 00:38:53,517
+don't know.
+
+1099
+00:38:51,717 --> 00:38:56,317
+Let me again be wrong and say it'll cure
+
+1100
+00:38:53,517 --> 00:38:57,617
+cancer and it'll cure Alzheimer's and
+
+1101
+00:38:56,317 --> 00:38:59,217
+and so on.
+
+1102
+00:38:57,617 --> 00:39:00,817
+Who knows what the what the realm of
+
+1103
+00:38:59,217 --> 00:39:02,317
+possibility is. If it can do this in
+
+1104
+00:39:00,817 --> 00:39:03,717
+mathematics, what else can it do that it
+
+1105
+00:39:02,317 --> 00:39:05,317
+will actually affect humanity?
+
+1106
+00:39:03,717 --> 00:39:06,917
+>> Yeah. Yeah. Look, there could be a
+
+1107
+00:39:05,317 --> 00:39:08,317
+utopian future, there could be a
+
+1108
+00:39:06,917 --> 00:39:11,517
+dystopian future, there could be
+
+1109
+00:39:08,317 --> 00:39:13,617
+something likely in the middle and
+
+1110
+00:39:11,517 --> 00:39:17,117
+let's just see where it goes.
+
+1111
+00:39:13,617 --> 00:39:18,917
+So let's let's end it here and look,
+
+1112
+00:39:17,117 --> 00:39:21,017
+we'll wait for the next great
+
+1113
+00:39:18,917 --> 00:39:23,217
+breakthrough, which means I'll probably
+
+1114
+00:39:21,017 --> 00:39:25,717
+be talking to you again in a couple of
+
+1115
+00:39:23,217 --> 00:39:27,417
+days. All right. So until then, Alex,
+
+1116
+00:39:25,717 --> 00:39:28,417
+thanks thanks so much for joining us
+
+1117
+00:39:27,417 --> 00:39:31,717
+again.
+
+1118
+00:39:28,417 --> 00:39:31,717
+>> Thanks for having me. Always a pleasure.
+
