@@ -40,6 +40,18 @@ prime sum, the auxiliary field, the lattice, the theta lifts or the number m.
   ([`zhang-video-comparison.md`](zhang-video-comparison.md)). The commentary counts 149,098 Lean
   files in the old text and does not count lines, and this report did not count them. The text
   in natural language is not in this repository.
+- The order of the two texts. The guest says that the 250,000 pages came first and that the
+  author "then asked it to formalize in Lean" (3:05 to 3:20). The note does not say that. Its
+  first page says that the "formalization is finished and it is routine to produce a huge,
+  unreadable document containing sufficient detail". Its second page says that the author found
+  it inappropriate "to post some massive unreadable travesty" and "decided to only present
+  Lean", and a footnote to that sentence reads "I of course amused myself, and hit 250,000+
+  pages. Claude cutely called it the GRH … 'book'", with a remark on what its Theorem 1 says.
+  By the note the 250,000 pages are therefore a text in prose that was produced and not
+  published. The note does not say that the Lean text was formalized from it, and the word
+  "routine" after "formalization is finished" suggests the opposite order. The pages are also
+  not a printout of the Lean code, since the footnote describes a book with numbered theorems.
+  This report read the note on 28 November 2026 for this entry.
 - Checking. The guest says that the proof was "within hours certified as a correct complete
   proof" and "checked in a thousand different ways", and that its correctness is "not … in
   doubt" among the people he talks to (20:20 to 21:35). The [README](../../../README.md) of this

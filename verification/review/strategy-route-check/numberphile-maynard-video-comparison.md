@@ -40,12 +40,17 @@ Three statements of the guest concern the content of the proof as a whole.
   remarkably simple proof" of Deligne's proof of the Weil conjectures, "using completely
   different and new ideas that are somehow much more concrete", that several mathematicians had
   tried to produce such a proof without success, and that the proof of the Riemann hypothesis
-  carries that new proof over to the integers (5:20 to 7:10). The repository holds three things
-  on this point, and none of them confirms the statement.
+  carries that new proof over to the integers (5:20 to 7:10). The repository holds four things
+  on this point, and none of them confirms the statement for the Lean text.
   - The commentary quotes the note of the author of the Lean source, which calls the argument
     "a descendant of Stepanov's". Stepanov's method proves the Riemann hypothesis for curves
-    over finite fields. Deligne's theorem covers varieties of every dimension. The guest names
-    Deligne and not Stepanov.
+    over finite fields. Deligne's theorem covers varieties of every dimension.
+  - The note itself names Deligne. Entry 3 of its timeline, dated 19 October 2026, gives an
+    identity q·N = M^k + R for a sum over a quadric of path shape, and the second page of the
+    note calls it the "sign-only proof of Weil and Deligne" and says that with it the author
+    saw that the problem "would fall". The guest's statement therefore has a source in the
+    note. The note says this of the path to the proof and does not say that the Lean text
+    contains that proof.
   - The literature search gives entry T1 of the note's timeline, a Stepanov-style interpolation
     determinant, the class K of results published before, and entry T3, which it compares with
     Deligne's article of 1974, the class A of a known technique in a new use.
@@ -69,7 +74,9 @@ Three statements of the guest concern the content of the proof as a whole.
   "announced earlier 2/3 barrier" of the note, for which it found no derivation.
 - The announcement. The guest says that at first "there was just this lean code" and no
   document for a human reader, and that a comment mentioned 250,000 pages (1:25 to 1:35, 2:20 to
-  2:35). The conversation of the World Science Festival gives the same number of pages.
+  2:35). The conversation of the World Science Festival gives the same number of pages, and
+  its report quotes the footnote of the note that the number comes from. The guest's account,
+  that only Lean code was published, agrees with the note.
 - The author. The guest says that the author of the Lean source works at Anthropic (1:10 to
   1:20), and that he "had a non-trivial input, but a huge amount of the really deep heavy
   lifting was done by AI" (8:55 to 9:05). The commentary quotes the note, in which the author
